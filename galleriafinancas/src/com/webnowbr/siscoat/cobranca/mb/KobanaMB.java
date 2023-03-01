@@ -302,12 +302,15 @@ public class KobanaMB {
 								contrato = contratoDao.findById(Long.valueOf(objetoDataBoleto.getString("idContrato")));
 								boleto.setContrato(contrato);
 								
+								boleto.setVlrParcela(BigDecimal.ZERO);
+								
 								if (objetoDataBoleto.has("qtdeParcelas")) { 
 									if (objetoDataBoleto.getString("qtdeParcelas").equals("unica")) {
 										if (objetoDataBoleto.has("idParcela")) {
 											ContratoCobrancaDetalhes parcela = new ContratoCobrancaDetalhes();
 											parcela = parcelaDao.findById(Long.valueOf(objetoDataBoleto.getString("idParcela")));
 											boleto.setParcela(parcela);
+											boleto.setVlrParcela(parcela.getVlrParcela());
 										}
 									} else {
 										// se gerou para mais de parcela
@@ -330,6 +333,13 @@ public class KobanaMB {
 											}
 					
 											boleto.setMultiParcelas(parcelasBoleto);
+											
+											for (ContratoCobrancaDetalhes parcelas : boleto.getMultiParcelas()) {
+												if (parcelas.getVlrParcela() != null) {
+													// TODO VER COMO CAPTURAR O VALOR DAS PARCELAS DOS BOLETOS
+													//boleto.setVlrParcela(boleto.getVlrParcela().add(parcelas.getVlrParcela()));
+												}
+											}
 										}
 									}
 								} else {
@@ -337,6 +347,7 @@ public class KobanaMB {
 										ContratoCobrancaDetalhes parcela = new ContratoCobrancaDetalhes();
 										parcela = parcelaDao.findById(Long.valueOf(objetoDataBoleto.getString("idParcela")));
 										boleto.setParcela(parcela);
+										boleto.setVlrParcela(parcela.getVlrParcela());
 									}
 								}
 							}

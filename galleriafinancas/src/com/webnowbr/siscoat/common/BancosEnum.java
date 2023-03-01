@@ -53,6 +53,7 @@ public enum BancosEnum {
 	CAIXA_ECONOMICA_FEDERAL("104", "Caixa Econômica Federal"), //
 	BANCO_BBM_S_A("107", "Banco BBM S.A."), //
 	BANCO_WESTERN_UNION_DO_BRASIL_S_A("119", "Banco Western Union do Brasil S.A."),
+	AGIBANK("121", "Agibank"),
 	BRASIL_PLURAL_S_A_BANCO_MULTIPLO("125", "Brasil Plural S.A. - Banco Múltiplo"),
 	BANCO_UNICRED("136", "Banco Unicred"),
 	BANCO_ITAU_BBA_S_A("184", "Banco Itaú BBA S.A."),

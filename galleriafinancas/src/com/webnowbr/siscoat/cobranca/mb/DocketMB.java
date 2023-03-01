@@ -58,10 +58,13 @@ public class DocketMB {
 	protected LoginBean loginBean;
 	
 	private String urlHomologacao = "https://sandbox-saas.docket.com.br";
+	private String urlProducao = "https://saascompany.docket.com.br";
 	private String kitIdGalleria = "02859d48-ff2a-45a4-922b-d6b9842affcc";
 	private String kitNomeGalleria = "1 - GALLERIA BANK";
 	private String login = "galleria-bank.api";
 	private String senha = "5TM*sgZKJ3hoh@J";
+	private String loginProd = "tatiane.galleria";
+	private String senhaProd = "Nina2021@";
 	private String organizacao_url = "galleria-bank";	
 	private String tokenLogin;
 	
@@ -129,6 +132,16 @@ public class DocketMB {
 		return "/Atendimento/Cobranca/Docket.xhtml";
 	}
 	
+	public void teste() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		tokenLogin = null;
+		loginDocket();
+		if(!CommonsUtil.semValor(tokenLogin)) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+			"[Docket - Login] Docket conectada", ""));
+		}
+	}
+	
 	public void loginDocket() {	//POST pra pegar token	
 		try {		
 			FacesContext context = FacesContext.getCurrentInstance();
@@ -136,16 +149,31 @@ public class DocketMB {
 
 			URL myURL;
 			
+			JSONObject jsonObj = new JSONObject();
+			String loginDocket;
+			String senhaDocket;
+			
 			if(SiscoatConstants.DEV) {
 				myURL = new URL(urlHomologacao + "/api/v2/auth/login");
+				loginDocket = login;
+				senhaDocket = senha;
+				
 			} else {
-				myURL = new URL(urlHomologacao + "/api/v2/auth/login");
+				myURL = new URL(urlProducao + "/api/v2/auth/login");
+				loginDocket = loginProd;
+				senhaDocket = senhaProd;
+				User user = getUsuarioLogado();
+				if(!CommonsUtil.semValor(user)) {
+					if(!CommonsUtil.semValor(user.getLoginDocket()) && !CommonsUtil.semValor(user.getSenhaDocket())) {
+						loginDocket = user.getLoginDocket();
+						senhaDocket = user.getSenhaDocket();
+					}
+				}
 			}
 
-			JSONObject jsonObj = new JSONObject();
+			jsonObj.put("login", loginDocket);
+			jsonObj.put("senha", senhaDocket);
 			
-			jsonObj.put("login", login);
-			jsonObj.put("senha", senha);
 			
 			byte[] postDataBytes = jsonObj.toString().getBytes();
 
@@ -171,7 +199,7 @@ public class DocketMB {
 			this.tokenLogin = "";
 			
 			if (status == HTTP_COD_SUCESSO) {
-				if (myResponse.has("token")) {					
+				if (myResponse.has("token")) {
 					if (!myResponse.isNull("token")) {
 						this.tokenLogin = myResponse.getString("token");
 					}
@@ -231,7 +259,7 @@ public class DocketMB {
 			if(SiscoatConstants.DEV) {
 				myURL = new URL(urlHomologacao + "/api/v2/"+organizacao_url+"/cidades?estadoId=" + estadoID);
 			} else {
-				myURL = new URL(urlHomologacao + "/api/v2/"+organizacao_url+"/cidades?estadoId=" + estadoID);
+				myURL = new URL(urlProducao + "/api/v2/"+organizacao_url+"/cidades?estadoId=" + estadoID);
 			}
 
 			// GET TOKEN Login
@@ -335,7 +363,7 @@ public class DocketMB {
 			if(SiscoatConstants.DEV) {
 				myURL = new URL(urlHomologacao + "/api/v2/"+organizacao_url+"/shopping-documentos/alpha/pedidos");
 			} else {
-				myURL = new URL(urlHomologacao + "/api/v2/"+organizacao_url+"/shopping-documentos/alpha/pedidos");
+				myURL = new URL(urlProducao + "/api/v2/"+organizacao_url+"/shopping-documentos/alpha/pedidos");
 			}
 			
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();

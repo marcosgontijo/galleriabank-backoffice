@@ -2073,6 +2073,9 @@ public class ContratoCobrancaMB {
 		
 		ContratoCobranca contrato = new ContratoCobranca();
 		contrato = populaStatusUnitario(this.objetoContratoCobranca);
+		if(CommonsUtil.semValor(contrato)) {
+			return;
+		}
 		ContratoCobranca c = contrato;
 
 		String mensagemHtmlTeste = "<html>\n" + "<head>\n" + "<meta charset=\"UTF-8\">\n"
@@ -12479,6 +12482,9 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		// POPULA STATUS
 		ContratoCobranca c = contrato;
 		ContratoCobranca s = contratoCobrancaCheckList;
+		if(CommonsUtil.semValor(s)) {
+			return null;
+		}
 
 		if (CommonsUtil.mesmoValor(c.getStatus(), "Aprovado")
 				&& !CommonsUtil.mesmoValor(c.getStatus(), s.getStatus())) {
@@ -19705,65 +19711,80 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 	public void baixarMultiParcelaParcial() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		
-		PagadorRecebedorDao prDao = new PagadorRecebedorDao();
-		this.selectedRecebedor = new PagadorRecebedor();
-		if (this.objetoContratoCobranca.getEmpresa() != null) {
-			if (this.objetoContratoCobranca.getEmpresa().equals("FIDC GALLERIA")) { 
-				this.selectedRecebedor = prDao.findById((long) 6625);
-			} else if(this.objetoContratoCobranca.getEmpresa().equals("CRI 1") || this.objetoContratoCobranca.getEmpresa().equals("CRI 2")){
-				this.selectedRecebedor = prDao.findById((long) 15765);
+		// valida se existe parcelas baixadas dentre as seleciondas, se sim não processamos.
+		boolean temParcelaBaixada = false;
+		for (ContratoCobrancaDetalhes parcelasSelecionadas : this.selectedParcelas) {
+			if (parcelasSelecionadas.isParcelaPaga()) {
+				temParcelaBaixada = true;
+				break;
+			}
+		}
+		
+		if (!temParcelaBaixada) {		
+			PagadorRecebedorDao prDao = new PagadorRecebedorDao();
+			this.selectedRecebedor = new PagadorRecebedor();
+			if (this.objetoContratoCobranca.getEmpresa() != null) {
+				if (this.objetoContratoCobranca.getEmpresa().equals("FIDC GALLERIA")) { 
+					this.selectedRecebedor = prDao.findById((long) 6625);
+				} else if(this.objetoContratoCobranca.getEmpresa().equals("CRI 1") || this.objetoContratoCobranca.getEmpresa().equals("CRI 2")){
+					this.selectedRecebedor = prDao.findById((long) 15765);
+				} else {
+					this.selectedRecebedor = prDao.findById((long) 803);
+				}
 			} else {
 				this.selectedRecebedor = prDao.findById((long) 803);
 			}
-		} else {
-			this.selectedRecebedor = prDao.findById((long) 803);
-		}
-
-		if (this.selectedParcelas.size() > 0) {
-			this.vlrRecebido = this.vlrRecebido.divide(BigDecimal.valueOf(this.selectedParcelas.size()));
-		}
-		
-		ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
-		TimeZone zone = TimeZone.getDefault();
-		Locale locale = new Locale("pt", "BR");
-		
-		Calendar dataPagamento = Calendar.getInstance(zone, locale);
-		dataPagamento.setTime(this.rowEditNewDate);
-
-		//if (this.selectedRecebedor != null) {
-		//	if (this.selectedRecebedor.getId() > 0) {
-		//		contratoCobrancaDetalhesParcial.setRecebedor(this.selectedRecebedor);
-		//	}
-		//}
-
-		//if (this.observacao != null) {
-		//	contratoCobrancaDetalhesParcial.setObservacaoRecebedor(this.observacao);
-		//}
-		
-		ContratoCobrancaDetalhesParcial contratoCobrancaDetalhesParcial = new ContratoCobrancaDetalhesParcial();
-		
-		for (ContratoCobrancaDetalhes parcelasBoleto : this.selectedParcelas) {
-			if (this.vlrRecebido != null && this.vlrRecebido.intValue() != 0) {
-				
-				contratoCobrancaDetalhesParcial.setNumeroParcela(parcelasBoleto.getNumeroParcela());
-				
-				contratoCobrancaDetalhesParcial.setDataPagamento(dataPagamento.getTime());
-				
-				contratoCobrancaDetalhesParcial.setDataVencimento(parcelasBoleto.getDataVencimento());
-				contratoCobrancaDetalhesParcial.setVlrParcela(parcelasBoleto.getVlrParcelaAtualizada());
-				contratoCobrancaDetalhesParcial.setDataPagamentoGalleria(dataPagamento.getTime());
-				contratoCobrancaDetalhesParcial.setVlrRecebido(this.vlrRecebido);
 	
-				parcelasBoleto.setVlrParcelaAtualizada(null);
-				parcelasBoleto.setParcelaPaga(true);
-				parcelasBoleto.getListContratoCobrancaDetalhesParcial().add(contratoCobrancaDetalhesParcial);
-				
-				contratoCobrancaDetalhesDao.merge(parcelasBoleto);
-			} 
+			if (this.selectedParcelas.size() > 0) {
+				this.vlrRecebido = this.vlrRecebido.divide(BigDecimal.valueOf(this.selectedParcelas.size()));//Usa MathContext.DECIMAL128
+			}
+			
+			ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
+			TimeZone zone = TimeZone.getDefault();
+			Locale locale = new Locale("pt", "BR");
+			
+			Calendar dataPagamento = Calendar.getInstance(zone, locale);
+			dataPagamento.setTime(this.rowEditNewDate);
+	
+			//if (this.selectedRecebedor != null) {
+			//	if (this.selectedRecebedor.getId() > 0) {
+			//		contratoCobrancaDetalhesParcial.setRecebedor(this.selectedRecebedor);
+			//	}
+			//}
+	
+			//if (this.observacao != null) {
+			//	contratoCobrancaDetalhesParcial.setObservacaoRecebedor(this.observacao);
+			//}
+			
+			ContratoCobrancaDetalhesParcial contratoCobrancaDetalhesParcial = new ContratoCobrancaDetalhesParcial();
+			
+			for (ContratoCobrancaDetalhes parcelasBoleto : this.selectedParcelas) {
+				if (this.vlrRecebido != null && this.vlrRecebido.intValue() != 0 ) {
+					if (this.vlrRecebido.compareTo(parcelasBoleto.getVlrParcela()) >= 0) {					
+						contratoCobrancaDetalhesParcial.setNumeroParcela(parcelasBoleto.getNumeroParcela());
+						
+						contratoCobrancaDetalhesParcial.setDataPagamento(dataPagamento.getTime());
+						
+						contratoCobrancaDetalhesParcial.setDataVencimento(parcelasBoleto.getDataVencimento());
+						contratoCobrancaDetalhesParcial.setVlrParcela(parcelasBoleto.getVlrParcelaAtualizada());
+						contratoCobrancaDetalhesParcial.setDataPagamentoGalleria(dataPagamento.getTime());
+						contratoCobrancaDetalhesParcial.setVlrRecebido(this.vlrRecebido);
+			
+						parcelasBoleto.setVlrParcelaAtualizada(null);
+						parcelasBoleto.setParcelaPaga(true);
+						parcelasBoleto.getListContratoCobrancaDetalhesParcial().add(contratoCobrancaDetalhesParcial);
+						
+						contratoCobrancaDetalhesDao.merge(parcelasBoleto);
+					}
+				} 
+			}
+			
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+					"Baixa - Boletos Kobana: Parcela(s) baixada(s) com sucesso!", ""));
+		} else {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Baixa - Boletos Kobana: Existem parcelas já baixada dentre as selecionadas!", ""));
 		}
-		
-		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-				"Baixa - Boletos Kobana: Parcela(s) baixada(s) com sucesso!", ""));
 	}
 	
 	public void baixarParcelaParcial() {

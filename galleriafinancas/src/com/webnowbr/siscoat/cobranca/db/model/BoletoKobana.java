@@ -24,6 +24,7 @@ public class BoletoKobana implements Serializable {
 	private String beneficiaryName;
 	private String documentNumber;
 	private String description;
+	private BigDecimal vlrParcela;
 	
 	private ContratoCobranca contrato;
 	private ContratoCobrancaDetalhes parcela;
@@ -125,5 +126,11 @@ public class BoletoKobana implements Serializable {
 	}
 	public void setMultiParcelas(List<ContratoCobrancaDetalhes> multiParcelas) {
 		this.multiParcelas = multiParcelas;
+	}
+	public BigDecimal getVlrParcela() {
+		return vlrParcela;
+	}
+	public void setVlrParcela(BigDecimal vlrParcela) {
+		this.vlrParcela = vlrParcela;
 	}
 }

@@ -49,6 +49,8 @@ public class IPCAMB {
 	
 	private static final Log LOGGER = LogFactory.getLog(IpcaJobContrato.class);
 	
+	private String numeroContrato;
+	
 	@ManagedProperty(value = "#{contratoCobrancaMB}")
 	protected ContratoCobrancaMB contratoCobrancaMB;
 	
@@ -667,5 +669,13 @@ public class IPCAMB {
 
 	public void setContratoCobrancaMB(ContratoCobrancaMB contratoCobrancaMB) {
 		this.contratoCobrancaMB = contratoCobrancaMB;
+	}
+
+	public String getNumeroContrato() {
+		return numeroContrato;
+	}
+
+	public void setNumeroContrato(String numeroContrato) {
+		this.numeroContrato = numeroContrato;
 	}
 }
