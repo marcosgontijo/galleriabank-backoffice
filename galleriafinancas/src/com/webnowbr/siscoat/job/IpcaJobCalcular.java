@@ -677,9 +677,9 @@ public class IpcaJobCalcular {
 			dataCorteParcelasBaixadas.set(Calendar.DAY_OF_MONTH, 13);
 			
 			Calendar dataCorteParcelasMalucas = Calendar.getInstance();
-			dataCorteParcelasMalucas.set(Calendar.YEAR, 2022);
-			dataCorteParcelasMalucas.set(Calendar.MONTH, 11);
-			dataCorteParcelasMalucas.set(Calendar.DAY_OF_MONTH, 21);
+			dataCorteParcelasMalucas.set(Calendar.YEAR, 2023);
+			dataCorteParcelasMalucas.set(Calendar.MONTH, 0);
+			dataCorteParcelasMalucas.set(Calendar.DAY_OF_MONTH, 1);
 
 			for (int iDetalhe = 0; iDetalhe < contratoCobranca.getListContratoCobrancaDetalhes().size(); iDetalhe++) {
 
