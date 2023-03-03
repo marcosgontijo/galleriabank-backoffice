@@ -2,6 +2,7 @@ package com.webnowbr.siscoat.contab.mb;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -21,6 +22,8 @@ import com.webnowbr.siscoat.contab.db.model.BalancoPatrimonial;
 public class BalancoPatrimonialMB {
 	
 	private BalancoPatrimonial objetoBalanco;
+	private Date relDataContratoInicio;
+	private Date relDataContratoFim;
 
 	public BalancoPatrimonialMB() {
 		
@@ -36,17 +39,29 @@ public class BalancoPatrimonialMB {
 	}
 	
 	
+	public Date getRelDataContratoInicio() {
+		return relDataContratoInicio;
+	}
+
+	public void setRelDataContratoInicio(Date relDataContratoInicio) {
+		this.relDataContratoInicio = relDataContratoInicio;
+	}
+
+	public Date getRelDataContratoFim() {
+		return relDataContratoFim;
+	}
+
+	public void setRelDataContratoFim(Date relDataContratoFim) {
+		this.relDataContratoFim = relDataContratoFim;
+	}
+
 	public String clearFieldsBalancoPatrimonial() {
 		TimeZone zone = TimeZone.getDefault();
 		Locale locale = new Locale("pt", "BR");
 		Calendar dataInicio = Calendar.getInstance(zone, locale);
 		this.relDataContratoInicio = dataInicio.getTime();
 		this.relDataContratoFim = dataInicio.getTime();
-		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
-
-		this.contratoGerado = false;
-		
-		
-		return "/Atendimento/Cobranca/BalancoPatrimonial.xhtml";
+				
+		return "/Atendimento/Cobranca/Contabilidade/BalancoPatrimonial.xhtml";
 	}
 }
