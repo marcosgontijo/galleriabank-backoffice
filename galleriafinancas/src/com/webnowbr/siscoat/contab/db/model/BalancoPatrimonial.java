@@ -4,14 +4,16 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.webnowbr.siscoat.common.CommonsUtil;
+
 public class BalancoPatrimonial implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 634225993537962423L;
-	  /** Chave primaria. */
-    private long id;
+	/** Chave primaria. */
+	private long id;
 
 	private BigDecimal saldoTotalApi;
 	private Date aaaaMM;
@@ -32,27 +34,44 @@ public class BalancoPatrimonial implements Serializable {
 	private BigDecimal investOperAntigas;
 	private BigDecimal investimentos;
 	private BigDecimal bensImobilizados;
-	
+
 	public BigDecimal getTotalAtivos() {
 		BigDecimal result = BigDecimal.ZERO;
-		result.add(saldoCaixa);
+		if (!CommonsUtil.semValor(saldoCaixa))
+			result.add(saldoCaixa);
+		if (!CommonsUtil.semValor(saldoBancos))
 		result.add(saldoBancos);
-		result.add(saldoAplFin);
-		result.add(opPagasReceberFidc);
-		result.add(apItauSoberano);
-		result.add(provisaoDevedoresDuvidosos);
-		result.add(saldoCobrancaFidc);
-		result.add(depositoBacenScd);
-		result.add(direitosCreditorios);
-		result.add(tributosCompensar);
-		result.add(adiantamentos);
-		result.add(outrosCreditos);
-		result.add(estoque);
-		result.add(depositosJudiciais);
-		result.add(investOperAntigas);
-		result.add(investimentos);
-		result.add(bensImobilizados);		
-		
+		if (!CommonsUtil.semValor(saldoAplFin))
+			result.add(saldoAplFin);
+		if (!CommonsUtil.semValor(opPagasReceberFidc))
+			result.add(opPagasReceberFidc);
+		if (!CommonsUtil.semValor(apItauSoberano))
+			result.add(apItauSoberano);
+		if (!CommonsUtil.semValor(provisaoDevedoresDuvidosos))
+			result.add(provisaoDevedoresDuvidosos);
+		if (!CommonsUtil.semValor(saldoCobrancaFidc))
+			result.add(saldoCobrancaFidc);
+		if (!CommonsUtil.semValor(depositoBacenScd))
+			result.add(depositoBacenScd);
+		if (!CommonsUtil.semValor(direitosCreditorios))
+			result.add(direitosCreditorios);
+		if (!CommonsUtil.semValor(tributosCompensar))
+			result.add(tributosCompensar);
+		if (!CommonsUtil.semValor(adiantamentos))
+			result.add(adiantamentos);
+		if (!CommonsUtil.semValor(outrosCreditos))
+			result.add(outrosCreditos);
+		if (!CommonsUtil.semValor(estoque))
+			result.add(estoque);
+		if (!CommonsUtil.semValor(depositosJudiciais))
+			result.add(depositosJudiciais);
+		if (!CommonsUtil.semValor(investOperAntigas))
+			result.add(investOperAntigas);
+		if (!CommonsUtil.semValor(investimentos))
+			result.add(investimentos);
+		if (!CommonsUtil.semValor(bensImobilizados))
+			result.add(bensImobilizados);
+
 		return result;
 	};
 
@@ -63,7 +82,7 @@ public class BalancoPatrimonial implements Serializable {
 	public void setId(long id) {
 		this.id = id;
 	}
-	
+
 	public BigDecimal getSaldo_total_api() {
 		return saldoTotalApi;
 	}
@@ -243,5 +262,5 @@ public class BalancoPatrimonial implements Serializable {
 	public void setAaaaMM(Date aaaaMM) {
 		this.aaaaMM = aaaaMM;
 	}
-	
+
 }
