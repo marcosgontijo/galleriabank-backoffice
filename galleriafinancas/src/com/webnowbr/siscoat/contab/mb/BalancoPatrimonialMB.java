@@ -1,19 +1,15 @@
 package com.webnowbr.siscoat.contab.mb;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 
-import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobranca;
-import com.webnowbr.siscoat.cobranca.db.model.ContasPagar;
-import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
-import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
-import com.webnowbr.siscoat.cobranca.mb.ContratoCobrancaMB.FileUploaded;
+import com.webnowbr.siscoat.contab.db.dao.BalancoPatrimonialDao;
 import com.webnowbr.siscoat.contab.db.model.BalancoPatrimonial;
 
 /** ManagedBean. */
@@ -24,6 +20,10 @@ public class BalancoPatrimonialMB {
 	private BalancoPatrimonial objetoBalanco;
 	private Date relDataContratoInicio;
 	private Date relDataContratoFim;
+	
+	private String tituloPagina = "Todos";
+	private List<BalancoPatrimonial> todosBalancos;
+	
 
 	public BalancoPatrimonialMB() {
 		
@@ -56,12 +56,19 @@ public class BalancoPatrimonialMB {
 	}
 
 	public String clearFieldsBalancoPatrimonial() {
+		
 		TimeZone zone = TimeZone.getDefault();
 		Locale locale = new Locale("pt", "BR");
 		Calendar dataInicio = Calendar.getInstance(zone, locale);
 		this.relDataContratoInicio = dataInicio.getTime();
 		this.relDataContratoFim = dataInicio.getTime();
-				
+		BalancoPatrimonialDao balancopatrimonialDao = new BalancoPatrimonialDao();
+		this.todosBalancos = balancopatrimonialDao.consultaBalancoPatrimonial();		
 		return "/Atendimento/Cobranca/Contabilidade/BalancoPatrimonialConsulta.xhtml";
+	}
+	
+	public String clearBalancoPatrimonial() {
+		objetoBalanco = new BalancoPatrimonial();
+		return "/Atendimento/Cobranca/ContabilidadeEdicao.xhtml";
 	}
 }

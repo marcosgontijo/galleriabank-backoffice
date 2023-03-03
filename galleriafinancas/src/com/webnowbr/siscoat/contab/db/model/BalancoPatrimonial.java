@@ -27,10 +27,33 @@ public class BalancoPatrimonial implements Serializable {
 	private BigDecimal adiantamentos;
 	private BigDecimal outrosCreditos;
 	private BigDecimal estoque;
-	private BigDecimal depositosjudiciais;
-	private BigDecimal investOperantigas;
+	private BigDecimal depositosJudiciais;
+	private BigDecimal investOperAntigas;
 	private BigDecimal investimentos;
 	private BigDecimal bensImobilizados;
+	
+	public BigDecimal getTotalAtivos() {
+		BigDecimal result = BigDecimal.ZERO;
+		result.add(saldoCaixa);
+		result.add(saldoBancos);
+		result.add(saldoAplFin);
+		result.add(opPagasReceberFidc);
+		result.add(apItauSoberano);
+		result.add(provisaoDevedoresDuvidosos);
+		result.add(saldoCobrancaFidc);
+		result.add(depositoBacenScd);
+		result.add(direitosCreditorios);
+		result.add(tributosCompensar);
+		result.add(adiantamentos);
+		result.add(outrosCreditos);
+		result.add(estoque);
+		result.add(depositosJudiciais);
+		result.add(investOperAntigas);
+		result.add(investimentos);
+		result.add(bensImobilizados);		
+		
+		return result;
+	};
 
 	public long getId() {
 		return id;
@@ -161,19 +184,19 @@ public class BalancoPatrimonial implements Serializable {
 	}
 
 	public BigDecimal getDepositosjudiciais() {
-		return depositosjudiciais;
+		return depositosJudiciais;
 	}
 
 	public void setDepositosjudiciais(BigDecimal depositosjudiciais) {
-		this.depositosjudiciais = depositosjudiciais;
+		this.depositosJudiciais = depositosjudiciais;
 	}
 
 	public BigDecimal getInvestOperantigas() {
-		return investOperantigas;
+		return investOperAntigas;
 	}
 
 	public void setInvestOperantigas(BigDecimal investOperantigas) {
-		this.investOperantigas = investOperantigas;
+		this.investOperAntigas = investOperantigas;
 	}
 
 	public BigDecimal getInvestimentos() {

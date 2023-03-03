@@ -20,35 +20,102 @@
 			}	 
    		</h:outputStylesheet>
 
-		<h:form	id="form" style="margin-bottom:10px;" >
-			<script src="#{request.contextPath}/resources/js/functions.js"></script>
-		    <script src="#{request.contextPath}/resources/js/locale-primefaces.js"></script>
-			<p:messages id="mensagens" showDetail="true" />
-
-			<p:panel id="BalancoPatrimonial" header="Balanço Patrimonial"
-				style="margin-bottom:10px;">
-				<h:panelGrid columns="2">
-					<p:outputLabel for="dataInicio" value="Data Inicio: "
-						styleClass="labelBold" />
-					<p:calendar id="dataInicio"
-						value="#{demonstrativoResultadoMB.dataInicio}" required="true"
-						label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt"
-						styleClass="dateTimeField" />
-					<p:outputLabel for="dataFim" value="Data Fim "
-						styleClass="labelBold" />
-					<p:calendar id="dataFim"
-						value="#{demonstrativoResultadoMB.dataFim}" required="true"
-						label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt"
-						styleClass="dateTimeField" />
-				</h:panelGrid>
-
-
-				<p:commandButton value="Consultar"
-					action="#{demonstrativoResultadoMB.gerarDRE}"
-					icon="ui-icon ui-icon-check"
-					update=":form:ConsultaResultados mensagens"
-					style="TEXT-DECORATION: bold;" />
+		<p:panel id="ConsultaBalanco" header="Balanço Patrimonial - #{BalancoPatrimonialMB.tituloPagina}" style="margin-bottom:10px;">		    		    
+   		         <p:dataTable id="dtBalancoPat" var="balanco" value="#{BalancoPatrimonialMB.todosBalancos}" selection="" emptyMessage="" sortBy="#{balanco.aaaaMM}" sortOrder="descending">                 
+   		         	<f:facet name="header">						
+						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearPreContratoCustomizado}">
+							<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
+							<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+						</p:commandButton>
+			        </f:facet>                 
+                	<p:column style="text-align: center;width:105px;" headerText="Referência" filterBy="#{balanco.aaaaMM}" filterMatchMode="contains" sortBy="#{balanco.aaaaMM}">
+			            <h:outputText value="#{balanco.aaaaMM}" />
+			        </p:column>
+			       
+			       <p:column style="text-align: center;width:105px;" headerText="Referência" filterBy="#{balanco.totalativo}" filterMatchMode="contains" sortBy="#{balanco.totalativo}">
+			            <h:outputText value="#{balanco.totalativos}" />
+			        </p:column>
+			        
+			        	
+<!-- 			        <p:column style="width:200px;"> -->
+<!-- 		                <shiro:hasAnyRoles name="ROOT, PRECOBRANCA">  	 -->
+<!-- 		                	<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentesSimples}" ajax="false" icon="ui-icon-pencil" value="Editar Operação" title="Editar Simples"> -->
+<!-- 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" /> -->
+<!-- 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{contratos.pagador}" /> -->
+<!-- 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{contratos.imovel}" /> -->
+<!-- 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" /> -->
+<!-- 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" /> -->
+<!-- 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" /> -->
+<!-- 			                </p:commandButton>			 -->
+<!-- 			                <p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-arrowthick-1-s" value="Baixar" title="Baixar"> -->
+<!-- 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" /> -->
+<!-- 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{contratos.pagador}" /> -->
+<!-- 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{contratos.imovel}" /> -->
+<!-- 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" /> -->
+<!-- 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" /> -->
+<!-- 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="true" /> -->
+<!-- 			                </p:commandButton> -->
+			                
+<!-- 			               	<p:commandButton value="PDF P.A." ajax="false" icon="ui-icon-print" rendered="#{contratos.analiseReprovada == false  -->
+<!-- 				                and contratos.statusLead == 'Completo'  -->
+<!-- 				                and contratos.inicioAnalise == true -->
+<!-- 								and contratos.cadastroAprovadoValor == 'Aprovado' -->
+<!-- 								and contratos.aprovadoComite == false}" -->
+<!-- 							action="#{contratoCobrancaMB.downloadPreAprovadoPDF(contratos.id)}" /> -->
+							
+<!-- 							<p:commandButton value="PDF Aprovado" ajax="false" icon="ui-icon-print" rendered="#{contratos.analiseReprovada == false  -->
+<!-- 				                and contratos.statusLead == 'Completo'  -->
+<!-- 				                and contratos.inicioAnalise == true -->
+<!-- 								and contratos.cadastroAprovadoValor == 'Aprovado' -->
+<!-- 								and contratos.aprovadoComite == true}" -->
+<!-- 							action="#{contratoCobrancaMB.downloadAprovadoComitePDF(contratos.id)}" /> -->
+							
+<!-- 		                </shiro:hasAnyRoles> -->
+<!-- 		                <p:spacer height="10"/> -->
+<!-- 		                <shiro:hasAnyRoles name="ROOT">  -->
+<!-- 							<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-trash" value="Excluir" title="Excluir"> -->
+<!-- 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" /> -->
+<!-- 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{contratos.pagador}" /> -->
+<!-- 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{contratos.imovel}" /> -->
+<!-- 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" /> -->
+<!-- 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="true" /> -->
+<!-- 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" /> -->
+<!-- 			                </p:commandButton>	 -->
+			                
+<!-- 			                <p:commandButton action="#{contratoCobrancaMB.enviaEmailAtualizacaoPreContratoNovo}" ajax="false" icon="ui-icon-trash" value="Enviar email" > -->
+<!-- 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" /> -->
+<!-- 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{contratos.pagador}" /> -->
+<!-- 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{contratos.imovel}" /> -->
+<!-- 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" /> -->
+<!-- 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="true" /> -->
+<!-- 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" /> -->
+<!-- 			                </p:commandButton>			                	             	 -->
+<!-- 		                </shiro:hasAnyRoles> -->
+		                <!-- 
+		                <p:spacer height="10"/>
+		                <p:commandButton onclick="PF('bpGerarBoletoIUGUDialog').show();"
+								icon="ui-icon-video"
+								update=":formBpGerarBoletoIUGU"
+								style="height: 25px;width: 70px;"
+								rendered="#{!parcelas.parcelaPaga}" value="IUGU" title="IUGU">
+								<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.splitBoletoIugu}" value="false" />
+							</p:commandButton>
+						 --> 
+		            </p:column>	
+					<f:facet name="footer">
+						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearPreContratoCustomizado}">
+							<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
+							<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+						</p:commandButton>
+			        </f:facet>		            		        		               		        			        			           			 		
+				</p:dataTable>
 			</p:panel>
+			
+			
+			
+			
 			<p:panel id="ConsultaResultados"
 				header="Balanço Patrimonial" style="margin-bottom:10px;">
 			<p:outputLabel for="Caixa" value="Saldo Caixa: "
