@@ -21,7 +21,7 @@
    		</h:outputStylesheet>
 		<h:form>
 		<p:panel id="ConsultaBalanco" header="Balanço Patrimonial #{BalancoPatrimonialMB.tituloPagina}" style="margin-bottom:10px;">		    		    
-   		         <p:dataTable id="dtBalancoPat" var="balanco" value="#{BalancoPatrimonialMB.todosBalancos}" selection="" emptyMessage="" sortBy="#{balanco.aaaaMM}" sortOrder="descending">                 
+   		         <p:dataTable id="dtBalancoPat" var="balanco" value="#{balancoPatrimonialMB.todosBalancos}" selection="" emptyMessage="" sortBy="#{balanco.aaaaMM}" sortOrder="descending">                 
    		         	<f:facet name="header">						
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearPreContratoCustomizado}">
 							<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />

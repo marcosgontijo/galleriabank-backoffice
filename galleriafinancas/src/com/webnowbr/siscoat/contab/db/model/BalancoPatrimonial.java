@@ -214,4 +214,33 @@ public class BalancoPatrimonial implements Serializable {
 	public void setBensImobilizados(BigDecimal bensImobilizados) {
 		this.bensImobilizados = bensImobilizados;
 	}
+
+	public BigDecimal getSaldoTotalApi() {
+		return saldoTotalApi;
+	}
+
+	public void setSaldoTotalApi(BigDecimal saldoTotalApi) {
+		this.saldoTotalApi = saldoTotalApi;
+	}
+
+	public BigDecimal getDepositosJudiciais() {
+		return depositosJudiciais;
+	}
+
+	public void setDepositosJudiciais(BigDecimal depositosJudiciais) {
+		this.depositosJudiciais = depositosJudiciais;
+	}
+
+	public BigDecimal getInvestOperAntigas() {
+		return investOperAntigas;
+	}
+
+	public void setInvestOperAntigas(BigDecimal investOperAntigas) {
+		this.investOperAntigas = investOperAntigas;
+	}
+
+	public void setAaaaMM(BigDecimal aaaaMM) {
+		this.aaaaMM = aaaaMM;
+	}
+	
 }

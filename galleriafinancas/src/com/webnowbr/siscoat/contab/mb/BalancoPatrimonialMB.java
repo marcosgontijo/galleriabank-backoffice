@@ -23,7 +23,23 @@ public class BalancoPatrimonialMB {
 	
 	private String tituloPagina = "Todos";
 	private List<BalancoPatrimonial> todosBalancos;
+
+public String clearFieldsBalancoPatrimonial() {
+		
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataInicio = Calendar.getInstance(zone, locale);
+		this.relDataContratoInicio = dataInicio.getTime();
+		this.relDataContratoFim = dataInicio.getTime();
+		BalancoPatrimonialDao balancopatrimonialDao = new BalancoPatrimonialDao();
+		this.todosBalancos = balancopatrimonialDao.consultaBalancoPatrimonial();		
+		return "/Atendimento/Cobranca/Contabilidade/BalancoPatrimonialConsulta.xhtml";
+	}
 	
+	public String clearBalancoPatrimonial() {
+		objetoBalanco = new BalancoPatrimonial();
+		return "/Atendimento/Cobranca/ContabilidadeEdicao.xhtml";
+	}
 
 	public BalancoPatrimonialMB() {
 		
@@ -55,20 +71,21 @@ public class BalancoPatrimonialMB {
 		this.relDataContratoFim = relDataContratoFim;
 	}
 
-	public String clearFieldsBalancoPatrimonial() {
-		
-		TimeZone zone = TimeZone.getDefault();
-		Locale locale = new Locale("pt", "BR");
-		Calendar dataInicio = Calendar.getInstance(zone, locale);
-		this.relDataContratoInicio = dataInicio.getTime();
-		this.relDataContratoFim = dataInicio.getTime();
-		BalancoPatrimonialDao balancopatrimonialDao = new BalancoPatrimonialDao();
-		this.todosBalancos = balancopatrimonialDao.consultaBalancoPatrimonial();		
-		return "/Atendimento/Cobranca/Contabilidade/BalancoPatrimonialConsulta.xhtml";
+	public String getTituloPagina() {
+		return tituloPagina;
 	}
+
+	public void setTituloPagina(String tituloPagina) {
+		this.tituloPagina = tituloPagina;
+	}
+
+	public List<BalancoPatrimonial> getTodosBalancos() {
+		return todosBalancos;
+	}
+
+	public void setTodosBalancos(List<BalancoPatrimonial> todosBalancos) {
+		this.todosBalancos = todosBalancos;
+	}
+
 	
-	public String clearBalancoPatrimonial() {
-		objetoBalanco = new BalancoPatrimonial();
-		return "/Atendimento/Cobranca/ContabilidadeEdicao.xhtml";
-	}
 }
