@@ -13,7 +13,7 @@
 		<!-- <property name="saldo_total_api" type="big_decimal">
 			<column name="saldo_total_api" />
 		</property>
-		<property name="aaaa_mm" type="big_decimal">
+		<property name="aaaaMM" type="java.util.Date">
 			<column name="aaaa_mm" />
 		</property>
 		<property name="saldo_caixa" type="big_decimal">

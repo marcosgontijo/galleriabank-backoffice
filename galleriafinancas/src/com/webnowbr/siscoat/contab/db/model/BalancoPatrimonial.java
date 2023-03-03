@@ -2,6 +2,7 @@ package com.webnowbr.siscoat.contab.db.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 public class BalancoPatrimonial implements Serializable {
 
@@ -13,7 +14,7 @@ public class BalancoPatrimonial implements Serializable {
     private long id;
 
 	private BigDecimal saldoTotalApi;
-	private BigDecimal aaaaMM;
+	private Date aaaaMM;
 	private BigDecimal saldoCaixa;
 	private BigDecimal saldoBancos;
 	private BigDecimal saldoAplFin;
@@ -71,11 +72,11 @@ public class BalancoPatrimonial implements Serializable {
 		this.saldoTotalApi = saldo_total_api;
 	}
 
-	public BigDecimal getAaaaMM() {
+	public Date getAaaaMM() {
 		return aaaaMM;
 	}
 
-	public void setAaaamm(BigDecimal aaaaMM) {
+	public void setAaaamm(Date aaaaMM) {
 		this.aaaaMM = aaaaMM;
 	}
 
@@ -239,7 +240,7 @@ public class BalancoPatrimonial implements Serializable {
 		this.investOperAntigas = investOperAntigas;
 	}
 
-	public void setAaaaMM(BigDecimal aaaaMM) {
+	public void setAaaaMM(Date aaaaMM) {
 		this.aaaaMM = aaaaMM;
 	}
 	

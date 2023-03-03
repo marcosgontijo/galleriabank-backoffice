@@ -13,7 +13,7 @@ import com.webnowbr.siscoat.contab.db.dao.BalancoPatrimonialDao;
 import com.webnowbr.siscoat.contab.db.model.BalancoPatrimonial;
 
 /** ManagedBean. */
-@ManagedBean(name = "balancopatrimonialMB")
+@ManagedBean(name = "balancoPatrimonialMB")
 @SessionScoped
 public class BalancoPatrimonialMB {
 	

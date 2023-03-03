@@ -20,7 +20,7 @@
 			}	 
    		</h:outputStylesheet>
 		<h:form>
-		<p:panel id="ConsultaBalanco" header="Balanço Patrimonial #{BalancoPatrimonialMB.tituloPagina}" style="margin-bottom:10px;">		    		    
+		<p:panel id="ConsultaBalanco" header="Balanço Patrimonial #{balancoPatrimonialMB.tituloPagina}" style="margin-bottom:10px;">		    		    
    		         <p:dataTable id="dtBalancoPat" var="balanco" value="#{balancoPatrimonialMB.todosBalancos}" selection="" emptyMessage="" sortBy="#{balanco.aaaaMM}" sortOrder="descending">                 
    		         	<f:facet name="header">						
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearPreContratoCustomizado}">
@@ -28,12 +28,12 @@
 							<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
 						</p:commandButton>
 			        </f:facet>                 
-                	<p:column style="text-align: center;width:105px;" headerText="Referência" filterBy="#{balanco.aaaaMM}" filterMatchMode="contains" sortBy="#{balanco.aaaaMM}">
+                	<p:column style="text-align: center;width:105px;" headerText="Referência" sortBy="#{balanco.aaaaMM}">
 			            <h:outputText value="#{balanco.aaaaMM}" />
 			        </p:column>
 			       
-			       <p:column style="text-align: center;width:105px;" headerText="Total do Ativo" filterBy="#{balanco.totalativo}" filterMatchMode="contains" sortBy="#{balanco.totalativo}">
-			            <h:outputText value="#{balanco.totalativos}" />
+			       <p:column style="text-align: center;width:105px;" headerText="Total do Ativo" sortBy="#{balanco.totalAtivo}">
+			            <h:outputText value="#{balanco.totalAtivos}" />
 					</p:column>
 					<f:facet name="footer">
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{contratoCobrancaMB.clearPreContratoCustomizado}">
@@ -43,111 +43,6 @@
 			        </f:facet>		            		        		               		        			        			           			 		
 				</p:dataTable>
 			</p:panel>
-
-<!-- 			<p:panel id="ConsultaResultados" -->
-<!-- 				header="Balanço Patrimonial" style="margin-bottom:10px;"> -->
-<!-- 			<p:outputLabel for="Caixa" value="Saldo Caixa: " -->
-<!-- 				styleClass="labelBold"/> -->
-<!-- 			<p:inputText id="Caixa" -->
-<!-- 				value="#{BalancoPatrimonialMB.objetoBalanco.saldoCaixa}" -->
-<!-- 				label="Caixa" onblur="" style="width:400px;" required="true" /> -->
-			
-<!-- 			<p:outputLabel for="Bancos" value="Saldo Bancos: " -->
-<!-- 				styleClass="labelBold"/> -->
-<!-- 			<p:inputText id="Bancos" -->
-<!-- 				value="#{BalancoPatrimonialMB.objetoBalanco.saldoBancos}" -->
-<!-- 				label="Bancos" onblur="" style="width:400px;" required="true" /> -->
-			
-<!-- 			<p:outputLabel for="saldo_apl_fin" value="Saldo aplicação financeira: " -->
-<!-- 				styleClass="labelBold"/> -->
-<!-- 			<p:inputText id="saldo_apl_fin" -->
-<!-- 				value="#{BalancoPatrimonialMB.objetoBalanco.saldoAplFin}" -->
-<!-- 				label="saldo_apl_fin" onblur="" style="width:400px;" required="true" /> -->
-			
-<!-- 			<p:outputLabel for="sop_pagas_receber_fidc" value="Operações pagas e a receber do FIDC: " -->
-<!-- 				styleClass="labelBold"/> -->
-<!-- 			<p:inputText id="sop_pagas_receber_fidc" -->
-<!-- 				value="#{BalancoPatrimonialMB.objetoBalanco.opPagasReceberFidc}" -->
-<!-- 				label="sop_pagas_receber_fidc" onblur="" style="width:400px;" required="true" /> -->
-			
-<!-- 			<p:outputLabel for="ap_itau_soberano" value="Aplicação fundo Itaú soberano: " -->
-<!-- 				styleClass="labelBold"/> -->
-<!-- 			<p:inputText id="ap_itau_soberano" -->
-<!-- 				value="#{BalancoPatrimonialMB.objetoBalanco.apItauSoberano}" -->
-<!-- 				label="ap_itau_soberano" onblur="" style="width:400px;" required="true" /> -->
-				
-<!-- 			<p:outputLabel for="provisao_devedores_duvidosos" value="Provisãodevedores duvidosos: " -->
-<!-- 				styleClass="labelBold"/> -->
-<!-- 			<p:inputText id="provisao_devedores_duvidosos" -->
-<!-- 				value="#{BalancoPatrimonialMB.objetoBalanco.provisaoDevedoresDuvidosos}" -->
-<!-- 				label="provisao_devedores_duvidosos" onblur="" style="width:400px;" required="true" /> -->
-			
-<!-- 			<p:outputLabel for="saldo_cobranca_fidc" value="Saldo conta cobrança FIDC: " -->
-<!-- 				styleClass="labelBold"/> -->
-<!-- 			<p:inputText id="saldo_cobranca_fidc" -->
-<!-- 				value="#{BalancoPatrimonialMB.objetoBalanco.saldoCobrancaFidc}" -->
-<!-- 				label="saldo_cobranca_fidc" onblur="" style="width:400px;" required="true" /> -->
-			
-<!-- 			<p:outputLabel for="deposito_bacen_scd" value="Depósito Bacen para SCD: " -->
-<!-- 				styleClass="labelBold"/> -->
-<!-- 			<p:inputText id="deposito_bacen_scd" -->
-<!-- 				value="#{BalancoPatrimonialMB.objetoBalanco.depositoBacenScd}" -->
-<!-- 				label="deposito_bacen_scd" onblur="" style="width:400px;" required="true" /> -->
-				
-<!-- 			<p:outputLabel for="direitos_creditorios" value="Direitos creditórios: " -->
-<!-- 				styleClass="labelBold"/> -->
-<!-- 			<p:inputText id="direitos_creditorios" -->
-<!-- 				value="#{BalancoPatrimonialMB.objetoBalanco.direitosCreditorios}" -->
-<!-- 				label="direitos_creditorios" onblur="" style="width:400px;" required="true" /> -->
-				
-<!-- 			<p:outputLabel for="tributos_compensar" value="Tributos a compensar: " -->
-<!-- 				styleClass="labelBold"/> -->
-<!-- 			<p:inputText id="tributos_compensar" -->
-<!-- 				value="#{BalancoPatrimonialMB.objetoBalanco.tributosCompensar}" -->
-<!-- 				label="tributos_compensar" onblur="" style="width:400px;" required="true" /> -->
-				
-<!-- 			<p:outputLabel for="adiantamentos" value="Adiantamentos: " -->
-<!-- 				styleClass="labelBold"/> -->
-<!-- 			<p:inputText id="adiantamentos" -->
-<!-- 				value="#{BalancoPatrimonialMB.objetoBalanco.adiantamentos}" -->
-<!-- 				label="adiantamentos" onblur="" style="width:400px;" required="true" /> -->
-				
-<!-- 			<p:outputLabel for="outros_creditos" value="Outros créditos a identificar: " -->
-<!-- 				styleClass="labelBold"/> -->
-<!-- 			<p:inputText id="outros_creditos" -->
-<!-- 				value="#{BalancoPatrimonialMB.objetoBalanco.outrosCreditos}" -->
-<!-- 				label="outros_creditos" onblur="" style="width:400px;" required="true" /> -->
-				
-<!-- 			<p:outputLabel for="estoque" value="Estoque (imóveis): " -->
-<!-- 				styleClass="labelBold"/> -->
-<!-- 			<p:inputText id="estoque" -->
-<!-- 				value="#{BalancoPatrimonialMB.objetoBalanco.estoque}" -->
-<!-- 				label="estoque" onblur="" style="width:400px;" required="true" /> -->
-				
-<!-- 			<p:outputLabel for="depositos_judiciais" value="Depósitos judiciais: " -->
-<!-- 				styleClass="labelBold"/> -->
-<!-- 			<p:inputText id="depositos_judiciais" -->
-<!-- 				value="#{BalancoPatrimonialMB.objetoBalanco.depositosJudiciais}" -->
-<!-- 				label="depositos_judiciais" onblur="" style="width:400px;" required="true" /> -->
-				
-<!-- 			<p:outputLabel for="invest_oper_antigas" value="Investidores operações antigas: " -->
-<!-- 				styleClass="labelBold"/> -->
-<!-- 			<p:inputText id="invest_oper_antigas" -->
-<!-- 				value="#{BalancoPatrimonialMB.objetoBalanco.investOperAntigas}" -->
-<!-- 				label="invest_oper_antigas" onblur="" style="width:400px;" required="true" /> -->
-				
-<!-- 			<p:outputLabel for="investimentos" value="Investimentos: " -->
-<!-- 				styleClass="labelBold"/> -->
-<!-- 			<p:inputText id="investimentos" -->
-<!-- 				value="#{BalancoPatrimonialMB.objetoBalanco.investimentos}" -->
-<!-- 				label="investimentos" onblur="" style="width:400px;" required="true" /> -->
-				
-<!-- 			<p:outputLabel for="bens_imobilizados" value="Bens (móveis e informática) " -->
-<!-- 				styleClass="labelBold"/> -->
-<!-- 			<p:inputText id="bens_imobilizados" -->
-<!-- 				value="#{BalancoPatrimonialMB.objetoBalanco.bensImobilizados}" -->
-<!-- 				label="bens_imobilizados" onblur="" style="width:400px;" required="true" /> -->
-<!-- 			</p:panel> -->
 		</h:form>
 	</ui:define>
 </ui:composition>
