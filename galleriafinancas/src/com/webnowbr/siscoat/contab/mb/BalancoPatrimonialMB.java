@@ -62,6 +62,6 @@ public class BalancoPatrimonialMB {
 		this.relDataContratoInicio = dataInicio.getTime();
 		this.relDataContratoFim = dataInicio.getTime();
 				
-		return "/Atendimento/Cobranca/Contabilidade/BalancoPatrimonial.xhtml";
+		return "/Atendimento/Cobranca/Contabilidade/BalancoPatrimonialConsulta.xhtml";
 	}
 }
