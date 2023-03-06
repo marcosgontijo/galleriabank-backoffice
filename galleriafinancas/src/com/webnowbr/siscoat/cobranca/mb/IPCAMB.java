@@ -42,6 +42,7 @@ import com.webnowbr.siscoat.simulador.SimulacaoVO;
 public class IPCAMB {
 	private List<IPCA> listIPCA;
 	private Date data;
+	private Date dataCorteBaixa;
 	private BigDecimal taxa;	
 	private IPCA selectedIPCA;
 	
@@ -55,7 +56,14 @@ public class IPCAMB {
 	protected ContratoCobrancaMB contratoCobrancaMB;
 	
 	public IPCAMB() {
-		this.ipcaJobCalcular = new IpcaJobCalcular();		
+		this.ipcaJobCalcular = new IpcaJobCalcular();	
+		
+		Calendar dataCorteParcelasMalucas = Calendar.getInstance();
+		dataCorteParcelasMalucas.set(Calendar.YEAR, 2023);
+		dataCorteParcelasMalucas.set(Calendar.MONTH, 0);
+		dataCorteParcelasMalucas.set(Calendar.DAY_OF_MONTH, 1);
+		
+		dataCorteBaixa = dataCorteParcelasMalucas.getTime();
 	}
 	
 	public String clearFieldsIPCA() {
@@ -292,7 +300,7 @@ public class IPCAMB {
 		}
 	}
 	
-	public void atualizaIPCAPorContratoMaluco(String numeroContrato) {
+	public void atualizaIPCAPorContratoMaluco() {
 		try {
 			FacesContext context = FacesContext.getCurrentInstance();
 			IPCADao ipcaDao = new IPCADao();
@@ -300,7 +308,7 @@ public class IPCAMB {
 			ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 			ContratoCobrancaDetalhesParcialDao contratoCobrancaDetalhesParcialDao = new ContratoCobrancaDetalhesParcialDao();
 			
-			List<ContratoCobranca> contratosCobranca = contratoCobrancaDao.findByFilter("numeroContrato", numeroContrato);
+			List<ContratoCobranca> contratosCobranca = contratoCobrancaDao.findByFilter("numeroContrato", this.numeroContrato);
 
 			LOGGER.info("incio atualizaIPCAPorContrato");
 			
@@ -318,7 +326,7 @@ public class IPCAMB {
 								continue;
 							
 							try {
-								if (!ipcaJobCalcular.calcularIPCACustomMaluco(ipcaDao, contratoCobrancaDetalhesDao, contratoCobrancaDao, contratoCobrancaDetalhesParcialDao, contratoCobranca.getListContratoCobrancaDetalhes().get(iDetalhe), contratoCobranca))
+								if (!ipcaJobCalcular.calcularIPCACustomMaluco(ipcaDao, contratoCobrancaDetalhesDao, contratoCobrancaDao, contratoCobrancaDetalhesParcialDao, contratoCobranca.getListContratoCobrancaDetalhes().get(iDetalhe), contratoCobranca, dataCorteBaixa))
 									break;
 							} catch (Exception e) {
 								LOGGER.error("IpcaJobContrato.execute " + "atualizaIPCAInicioContrato: EXCEPTION", e);
@@ -359,12 +367,17 @@ public class IPCAMB {
 			contratoCobranca.setCorrigidoNovoIPCA(false);
 			contratoCobranca.setCorrigidoIPCAHibrido(true);
 			
+			Calendar dataCorteParcelasMalucas = Calendar.getInstance();
+			dataCorteParcelasMalucas.set(Calendar.YEAR, 2023);
+			dataCorteParcelasMalucas.set(Calendar.MONTH, 0);
+			dataCorteParcelasMalucas.set(Calendar.DAY_OF_MONTH, 1);
+			
 			for (int iDetalhe = 0; iDetalhe < contratoCobranca.getListContratoCobrancaDetalhes().size(); iDetalhe++) {
 				if (CommonsUtil.mesmoValor(contratoCobranca.getListContratoCobrancaDetalhes().get(iDetalhe).getNumeroParcela() , "0") )
 					continue;
 				
 				try {
-					if (!ipcaJobCalcular.calcularIPCACustomMaluco(ipcaDao, contratoCobrancaDetalhesDao, contratoCobrancaDao, contratoCobrancaDetalhesParcialDao, contratoCobranca.getListContratoCobrancaDetalhes().get(iDetalhe), contratoCobranca))
+					if (!ipcaJobCalcular.calcularIPCACustomMaluco(ipcaDao, contratoCobrancaDetalhesDao, contratoCobrancaDao, contratoCobrancaDetalhesParcialDao, contratoCobranca.getListContratoCobrancaDetalhes().get(iDetalhe), contratoCobranca, dataCorteParcelasMalucas.getTime()))
 						break;
 				} catch (Exception e) {
 					LOGGER.error("IpcaJobContrato.execute " + "atualizaIPCAInicioContrato: EXCEPTION", e);
@@ -677,5 +690,13 @@ public class IPCAMB {
 
 	public void setNumeroContrato(String numeroContrato) {
 		this.numeroContrato = numeroContrato;
+	}
+
+	public Date getDataCorteBaixa() {
+		return dataCorteBaixa;
+	}
+
+	public void setDataCorteBaixa(Date dataCorteBaixa) {
+		this.dataCorteBaixa = dataCorteBaixa;
 	}
 }

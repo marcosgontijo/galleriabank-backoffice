@@ -1343,20 +1343,26 @@ public class BRLTrustMB {
 					BigDecimal valorTotalFaceCessaoCalc = BigDecimal.ZERO;
 					
 					//valorTotalFaceCessaoCalc = parcela.getValorAmortizacaoSemIPCA().add(parcela.getValorJurosSemIPCA()).setScale(2, RoundingMode.HALF_EVEN);
-					valorTotalFaceCessaoCalc = parcela.getVlrParcela().subtract(parcela.getSeguroDFI()).subtract(parcela.getSeguroMIP()).subtract(parcela.getTaxaAdm());
+					//valorTotalFaceCessaoCalc = parcela.getVlrParcela().subtract(parcela.getSeguroDFI()).subtract(parcela.getSeguroMIP()).subtract(parcela.getTaxaAdm());
+					if (parcela.getVlrAmortizacaoParcela() != null && parcela.getVlrJurosParcela() != null) {
+						valorTotalFaceCessaoCalc = parcela.getVlrAmortizacaoParcela().add(parcela.getVlrJurosParcela()).setScale(2, RoundingMode.HALF_EVEN);
+						jsonValores.put("face", valorTotalFaceCessaoCalc);
+					}
 					
 					this.valorTotalFaceCessao = this.valorTotalFaceCessao.add(valorTotalFaceCessaoCalc);
 					jsonValores.put("face", valorTotalFaceCessaoCalc);
 					
-					BigDecimal valorTotalAquisicaoCessaoCalc = BigDecimal.ZERO;
+					BigDecimal valorTotalAquisicaoCessaoCalc = BigDecimal.ZERO;		
 					
-					if (this.usaTaxaJurosDiferenciada) {
-						valorTotalAquisicaoCessaoCalc = calcularValorPresenteParcela(parcela.getId(), this.txJurosCessao, this.dataAquisicao);
-						jsonValores.put("aquisicao", valorTotalAquisicaoCessaoCalc);
-					} else {
-						valorTotalAquisicaoCessaoCalc = calcularValorPresenteParcela(parcela.getId(), this.objetoContratoCobranca.getTxJurosParcelas(), this.dataAquisicao);
-						jsonValores.put("aquisicao", valorTotalAquisicaoCessaoCalc);
-					}					
+					if (this.objetoContratoCobranca != null) {
+						if (this.objetoContratoCobranca.getTxJurosCessao() != null) {
+							valorTotalAquisicaoCessaoCalc = calcularValorPresenteParcelaComIPCA(parcela.getId(), this.objetoContratoCobranca.getTxJurosCessao(), this.objetoContratoCobranca.getDataAquisicaoCessao());
+							jsonValores.put("aquisicao", valorTotalAquisicaoCessaoCalc);
+						} else {
+							valorTotalAquisicaoCessaoCalc = calcularValorPresenteParcelaComIPCA(parcela.getId(), this.objetoContratoCobranca.getTxJurosParcelas(), this.objetoContratoCobranca.getDataAquisicaoCessao());
+							jsonValores.put("aquisicao", valorTotalAquisicaoCessaoCalc);
+						}
+					} 
 
 					this.valorTotalAquisicaoCessao = this.valorTotalAquisicaoCessao.add(valorTotalAquisicaoCessaoCalc);
 					
