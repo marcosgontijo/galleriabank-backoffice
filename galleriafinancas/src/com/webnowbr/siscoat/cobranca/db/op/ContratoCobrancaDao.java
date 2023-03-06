@@ -7527,9 +7527,9 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ " (select count(id) from cobranca.contratocobranca " 
 			+ " where statusLead = 'Novo Lead') novolead,  " 
 			+ " (select count(id) from cobranca.contratocobranca " 
-			+ " where statusLead = 'Em Tratamento') leademtratamento "
+			+ " where statusLead = 'Em Tratamento') leademtratamento, "
 			+ " (select count(id) from cobranca.contratocobranca " 
-			+ " where statusLead = 'Ag. Contato') leadagcontato "
+			+ " where statusLead = 'Ag. Contato') leadagcontato, "
 			+ " (select count(id) from cobranca.contratocobranca " 
 			+ " where statusLead = 'Ag. Doc.') leadagdoc ";
 

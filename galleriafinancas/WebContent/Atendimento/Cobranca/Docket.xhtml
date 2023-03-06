@@ -108,7 +108,7 @@
 												 update=":form:DocketPanel" />
 											<p:outputLabel value="#{docs.documentoDocket.documentoNome}" style="FONT-SIZE: 15pt;margin-left: 5px" styleClass="ui-panel-title"/>
 										</f:facet>
-										<h:panelGrid columns="4">		
+										<h:panelGrid columns="5">		
 											<p:outputLabel value="Estado" style="FONT-SIZE: 10pt;" />
 	    									<h:selectOneMenu value="#{docs.estadoSelecionado}" >								
 												<f:selectItems value="#{docketMB.listaEstados}" var="estado"
@@ -120,11 +120,17 @@
 											<p:autoComplete value="#{docs.cidade}"
 												completeMethod="#{docketMB.completeCidades}" autocomplete="no" 
 												var="cidade" itemLabel="#{cidade}" itemValue="#{cidade}"
-												forceSelection="true" styleClass="labelBold" style="width:100px;"
+												forceSelection="true" styleClass="labelBold" style="width:100px;margin-right: 30px;"
 												scrollHeight="250" >
 												<p:ajax update="cidadeID" event="blur" listener="#{docs.getCidadeDocketId}" />
 												<f:attribute name="documentoAtual" value="#{docs}" />	
 											</p:autoComplete>
+											
+											<p:selectBooleanButton style="margin-left: 40px"
+												value="#{docs.travado}"
+												onLabel="" offLabel=""
+												onIcon="ui-icon-locked" offIcon="ui-icon-unlocked">
+											</p:selectBooleanButton>
 										</h:panelGrid>
 										<h:panelGrid columns="2">	
 											<p:outputLabel id="estadoID" value="#{docs.estadoId}" style="FONT-SIZE: 10pt;" />

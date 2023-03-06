@@ -4434,11 +4434,10 @@ public class ContratoCobrancaMB {
 	}
 	
 	public void enviarWhatsappGislaine(String template, String nomeCliente, String numeroContrato, String taxaAprovada, String prazoAprovado) {
-		if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 5)
-			|| CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 60)) {			
+		if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 5)) {			
 			TakeBlipMB takeBlipMB = new TakeBlipMB();
 			ResponsavelDao rDao = new ResponsavelDao();
-			if(!CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(), (long) 5)) {
+			/*if(!CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(), (long) 5)) {
 				Responsavel rGerente = new Responsavel();
 				rGerente = rDao.findById((long) 5);
 				takeBlipMB.sendWhatsAppMessage(rGerente,
@@ -4447,7 +4446,9 @@ public class ContratoCobrancaMB {
 						numeroContrato,
 						taxaAprovada,
 						prazoAprovado);
-			}
+			}*/ 
+			//comentado pois dono responsavel já envia mensagem e gislaine não tem mais pessoas na equipe
+			
 			// Bia (assistente Gislaine)
 			Responsavel rAssistente = new Responsavel();
 			rAssistente = rDao.findById((long) 359);
