@@ -31,5 +31,9 @@
 		<property name="cidadeId" type="java.lang.String">
 			<column name="cidadeId" />
 		</property>
+		
+		<property name="travado" type="boolean">
+			<column name="travado" not-null="true" default="false"/>
+		</property>
 	</class>
 </hibernate-mapping>

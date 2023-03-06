@@ -604,7 +604,18 @@ public class DocketMB {
 						}	
 					}
 				}
-				if(!CommonsUtil.semValor(cidadeImovel)) {
+				if(CommonsUtil.mesmoValor(doc.getDocumentoNome(), "Certidão de Distribuição de Ações Trabalhistas - Tribunal Regional do Trabalho (1° instância)")
+					&& CommonsUtil.mesmoValor(estadoSelecionadoImovel.getUf(), "SP")) {
+					docPagador.setCidade("São Paulo");
+					docPagador.getCidadeDocketId();
+					docPagador.setTravado(true);
+					DocumentosPagadorDocket trtCampinas = new DocumentosPagadorDocket(doc);
+					trtCampinas.setEstadoSelecionado(estadoSelecionadoImovel);
+					trtCampinas.setCidade("Campinas");
+					trtCampinas.getCidadeDocketId();
+					trtCampinas.setTravado(true);
+					pagador.getDocumentosDocket().add(trtCampinas);
+				} else if(!CommonsUtil.semValor(cidadeImovel)) {
 					docPagador.setCidade(cidadeImovel);
 					docPagador.getCidadeDocketId();
 				} 
@@ -660,15 +671,18 @@ public class DocketMB {
 		}
 		for(PagadorRecebedor pagador : listaPagador) {
 			if(CommonsUtil.semValor(pagador.getDocumentosDocket()) 
-					&& CommonsUtil.semValor(estadoSelecionadoImovel) 
-					&& CommonsUtil.semValor(cidadeImovel)
-					&& CommonsUtil.semValor(listaCidadesImovel)) {
+					|| CommonsUtil.semValor(estadoSelecionadoImovel) 
+					|| CommonsUtil.semValor(cidadeImovel)
+					|| CommonsUtil.semValor(listaCidadesImovel)) {
 				return;
 			}
 			for(DocumentosPagadorDocket doc : pagador.getDocumentosDocket()) {
+				if(doc.isTravado()) {
+					continue;
+				}
 				doc.setEstadoSelecionado(estadoSelecionadoImovel);
-				doc.setCidade(cidadeImovel);
 				doc.setListaCidades(listaCidadesImovel);
+				doc.setCidade(cidadeImovel);
 				doc.getCidadeDocketId();
 			}		
 		}	                                         

@@ -22,6 +22,7 @@ public class DocumentosPagadorDocket implements Serializable {
 	private String cidadeId;
 	private EstadosEnum estadoSelecionado;
 	private List<DocketCidades> listaCidades;
+	private boolean travado;
 	
 	public DocumentosPagadorDocket() {
 		
@@ -89,6 +90,14 @@ public class DocumentosPagadorDocket implements Serializable {
 
 	public void setListaCidades(List<DocketCidades> listaCidades) {
 		this.listaCidades = listaCidades;
+	}
+
+	public boolean isTravado() {
+		return travado;
+	}
+
+	public void setTravado(boolean travado) {
+		this.travado = travado;
 	}	
 	
 	
