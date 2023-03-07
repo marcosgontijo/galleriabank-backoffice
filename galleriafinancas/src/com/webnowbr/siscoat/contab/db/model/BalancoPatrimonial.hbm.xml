@@ -10,16 +10,16 @@
             <column name="ID" />
             <generator class="increment" />
         </id>
-		<!-- <property name="saldo_total_api" type="big_decimal">
+		<property name="saldo_total_api" type="big_decimal">
 			<column name="saldo_total_api" />
 		</property>
 		<property name="aaaaMM" type="java.util.Date">
-			<column name="aaaa_mm" />
-		</property>
+			<column name="aaaa_m_m" />
+		</property> 	
 		<property name="saldo_caixa" type="big_decimal">
 			<column name="saldo_caixa" />
 		</property>
-		<property name="saldo_bancos" type="big_decimal">
+		<!-- <property name="saldo_bancos" type="big_decimal">
 			<column name="saldo_bancos" />
 		</property>
 		<property name="saldo_apl_fin" type="big_decimal">
@@ -69,7 +69,6 @@
 		</property>
 		<property name="empresa" type="big_decimal">
 			<column name="empresa" />
-		</property> -->
-
+		</property>-->
 	</class>
 </hibernate-mapping>
