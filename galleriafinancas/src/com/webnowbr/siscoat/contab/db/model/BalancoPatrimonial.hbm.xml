@@ -11,64 +11,26 @@
             <generator class="increment" />
         </id>
 		<property name="saldo_total_api" type="big_decimal">
-			<column name="saldo_total_api" />
-		</property>
+			<column name="saldo_total_api" /></property>
 		<property name="aaaaMM" type="java.util.Date">
-			<column name="aaaa_m_m" />
-		</property> 	
-		<property name="saldo_caixa" type="big_decimal">
-			<column name="saldo_caixa" />
-		</property>
-		<!-- <property name="saldo_bancos" type="big_decimal">
-			<column name="saldo_bancos" />
-		</property>
-		<property name="saldo_apl_fin" type="big_decimal">
-			<column name="saldo_apl_fin" />
-		</property>
-		<property name="op_pagas_receber_fidc" type="big_decimal">
-			<column name="op_pagas_receber_fidc" />
-		</property>
-		<property name="ap_itau_soberano" type="big_decimal">
-			<column name="ap_itau_soberano" />
-		</property>
-		<property name="provisao_devedores_duvidosos" type="big_decimal">
-			<column name="provisao_devedores_duvidosos" />
-		</property>
-		<property name="saldo_cobranca_fidc" type="big_decimal">
-			<column name="saldo_cobranca_fidc" />
-		</property>
-		<property name="deposito_bacen_scd" type="big_decimal">
-			<column name="deposito_bacen_scd" />
-		</property>
-		<property name="direitos_creditorios" type="big_decimal">
-			<column name="direitos_creditorios" />
-		</property>
-		<property name="tributos_compensar" type="big_decimal">
-			<column name="tributos_compensar" />
-		</property>
-		<property name="adiantamentos" type="big_decimal">
-			<column name="adiantamentos" />
-		</property>
-		<property name="outros_creditos" type="big_decimal">
-			<column name="outros_creditos" />
-		</property>
-		<property name="estoque" type="big_decimal">
-			<column name="estoque" />
-		</property>
-		<property name="depositos_judiciais" type="big_decimal">
-			<column name="depositos_judiciais" />
-		</property>
-		<property name="invest_oper_antigas" type="big_decimal">
-			<column name="invest_oper_antigas" />
-		</property>
-		<property name="investimentos" type="big_decimal">
-			<column name="investimentos" />
-		</property>
-		<property name="bens_imobilizados" type="big_decimal">
-			<column name="bens_imobilizados" />
-		</property>
-		<property name="empresa" type="big_decimal">
-			<column name="empresa" />
-		</property>-->
+			<column name="aaaa_m_m" /></property> 	
+		<property name="saldoCaixa" type="big_decimal"></property>
+		<property name="saldoBancos" type="big_decimal"></property>
+		<property name="saldoAplFin" type="big_decimal"></property>
+	 	<property name="opPagasReceberFidc" type="big_decimal"></property>
+		<property name="apItauSoberano" type="big_decimal"></property>
+		<property name="provisaoDevedoresDuvidosos" type="big_decimal"></property>
+		<property name="saldoCobrancaFidc" type="big_decimal"></property>
+		<property name="depositoBacenScd" type="big_decimal"></property>
+		<property name="direitosCreditorios" type="big_decimal"></property>
+ 		<property name="tributosCompensar" type="big_decimal"></property>
+ 		<property name="adiantamentos" type="big_decimal"></property>
+ 		<property name="outrosCreditos" type="big_decimal"></property>
+		<property name="estoque" type="big_decimal"></property>
+		<property name="depositosJudiciais" type="big_decimal"></property>
+		<property name="investOperAntigas" type="big_decimal"></property>
+ 		<property name="investimentos" type="big_decimal"></property>
+ 		<property name="bensImobilizados" type="big_decimal"></property>
+ 		<!--<property name="empresa" type="big_decimal"></property> -->
 	</class>
 </hibernate-mapping>

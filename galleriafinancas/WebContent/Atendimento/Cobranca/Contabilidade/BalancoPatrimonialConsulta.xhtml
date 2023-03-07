@@ -27,7 +27,11 @@
 							<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
 							<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
 						</p:commandButton>
-			        </f:facet>                 
+			        </f:facet>  
+			        
+			        <p:column style="text-align: center;width:105px;" headerText="Id" sortBy="#{balanco.id}">
+			            <h:outputText value="#{balanco.id}" />
+			        </p:column>               
                 	<p:column style="text-align: center;width:105px;" headerText="Referência" sortBy="#{balanco.aaaaMM}">
 			            <h:outputText value="#{balanco.aaaaMM}" />
 			        </p:column>
