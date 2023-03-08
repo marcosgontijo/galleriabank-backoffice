@@ -29,14 +29,17 @@
 						</p:commandButton>
 			        </f:facet>  
 			        
-			        <p:column style="text-align: center;width:105px;" headerText="Id" sortBy="#{balanco.id}">
+			        <p:column style="text-align: center;width:105px;" headerText="ID" sortBy="#{balanco.aaaaMM}">
 			            <h:outputText value="#{balanco.id}" />
 			        </p:column>               
                 	<p:column style="text-align: center;width:105px;" headerText="Referência" sortBy="#{balanco.aaaaMM}">
 			            <h:outputText value="#{balanco.aaaaMM}" />
 			        </p:column>
 			       
-			       <p:column style="text-align: center;width:105px;" headerText="Total do Ativo" sortBy="#{balanco.totalAtivo}">
+			       <p:column style="text-align: center;width:105px;" headerText="Total do Ativo" sortBy="#{balanco.totalAtivos}">
+			            <h:outputText value="#{balanco.totalAtivos}" />
+					</p:column>
+					<p:column style="text-align: center;width:105px;" headerText="Total do Passivo" sortBy="#{balanco.totalAtivos}">
 			            <h:outputText value="#{balanco.totalAtivos}" />
 					</p:column>
 					<f:facet name="footer">

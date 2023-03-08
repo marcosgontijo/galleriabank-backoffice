@@ -1,5 +1,6 @@
 package com.webnowbr.siscoat.contab.mb;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -23,6 +24,7 @@ public class BalancoPatrimonialMB {
 	
 	private String tituloPagina = "Todos";
 	private List<BalancoPatrimonial> todosBalancos;
+	
 
 public String clearFieldsBalancoPatrimonial() {
 		

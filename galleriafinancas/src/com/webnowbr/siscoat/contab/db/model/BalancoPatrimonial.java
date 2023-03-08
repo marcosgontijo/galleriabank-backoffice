@@ -35,45 +35,45 @@ public class BalancoPatrimonial implements Serializable {
 	private BigDecimal investimentos;
 	private BigDecimal bensImobilizados;
 
-	public BigDecimal getTotalAtivos() {
+	public BigDecimal getTotalAtivos(){
 		BigDecimal result = BigDecimal.ZERO;
 		if (!CommonsUtil.semValor(saldoCaixa))
-			result.add(saldoCaixa);
+			result=result.add(saldoCaixa);
 		if (!CommonsUtil.semValor(saldoBancos))
-		result.add(saldoBancos);
+			result=result.add(saldoBancos);
 		if (!CommonsUtil.semValor(saldoAplFin))
-			result.add(saldoAplFin);
+			result=result.add(saldoAplFin);
 		if (!CommonsUtil.semValor(opPagasReceberFidc))
-			result.add(opPagasReceberFidc);
+			result=result.add(opPagasReceberFidc);
 		if (!CommonsUtil.semValor(apItauSoberano))
-			result.add(apItauSoberano);
+			result=result.add(apItauSoberano);
 		if (!CommonsUtil.semValor(provisaoDevedoresDuvidosos))
-			result.add(provisaoDevedoresDuvidosos);
+			result=result.add(provisaoDevedoresDuvidosos);
 		if (!CommonsUtil.semValor(saldoCobrancaFidc))
-			result.add(saldoCobrancaFidc);
+			result=result.add(saldoCobrancaFidc);
 		if (!CommonsUtil.semValor(depositoBacenScd))
-			result.add(depositoBacenScd);
+			result=result.add(depositoBacenScd);
 		if (!CommonsUtil.semValor(direitosCreditorios))
-			result.add(direitosCreditorios);
+			result=result.add(direitosCreditorios);
 		if (!CommonsUtil.semValor(tributosCompensar))
-			result.add(tributosCompensar);
+			result=result.add(tributosCompensar);
 		if (!CommonsUtil.semValor(adiantamentos))
-			result.add(adiantamentos);
+			result=result.add(adiantamentos);
 		if (!CommonsUtil.semValor(outrosCreditos))
-			result.add(outrosCreditos);
+			result=result.add(outrosCreditos);
 		if (!CommonsUtil.semValor(estoque))
-			result.add(estoque);
+			result=result.add(estoque);
 		if (!CommonsUtil.semValor(depositosJudiciais))
-			result.add(depositosJudiciais);
+			result=result.add(depositosJudiciais);
 		if (!CommonsUtil.semValor(investOperAntigas))
-			result.add(investOperAntigas);
+			result=result.add(investOperAntigas);
 		if (!CommonsUtil.semValor(investimentos))
-			result.add(investimentos);
+			result=result.add(investimentos);
 		if (!CommonsUtil.semValor(bensImobilizados))
-			result.add(bensImobilizados);
+			result=result.add(bensImobilizados);
 
 		return result;
-	};
+	}
 
 	public long getId() {
 		return id;
