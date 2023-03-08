@@ -2002,6 +2002,9 @@ public class ContratoCobrancaMB {
 	 * novo método para envio de emails
 	 */
 	public void enviaEmailCriacaoPreContratoNovo() {
+		if (this.objetoContratoCobranca.getResponsavel().isDesativado()) {
+			return;
+		}
 		Locale locale = new Locale("pt", "BR");
 		SimpleDateFormat sdfDataRelComHoras = new SimpleDateFormat("dd/MM/yyyy HH:mm", locale);
 		Date dataHoje = gerarDataHoje();
@@ -2067,6 +2070,9 @@ public class ContratoCobrancaMB {
 	
 	}
 	public void enviaEmailAtualizacaoPreContratoNovo() {
+		if (this.objetoContratoCobranca.getResponsavel().isDesativado()) {
+			return;
+		}
 		Locale locale = new Locale("pt", "BR");
 		SimpleDateFormat sdfDataRelComHoras = new SimpleDateFormat("dd/MM/yyyy HH:mm", locale);
 		Date dataHoje = gerarDataHoje();
@@ -3035,7 +3041,7 @@ public class ContratoCobrancaMB {
 			// senao valida se houve alteração no checklist para envio de email.
 			if(!SiscoatConstants.DEV) {
 				enviaEmailAtualizacaoPreContratoNovo();
-				System.out.println("saveLeadTerceiros");
+				//System.out.println("saveLeadTerceiros");
 			}
 			contratoCobrancaCheckList = null;
 
@@ -3136,7 +3142,7 @@ public class ContratoCobrancaMB {
 			// senao valida se houve alteração no checklist para envio de email.
 			if(!SiscoatConstants.DEV) {
 				enviaEmailAtualizacaoPreContratoNovo();
-				System.out.println("editPreContrato");
+				//System.out.println("editPreContrato");
 			}
 			contratoCobrancaCheckList = null;
 
@@ -3755,7 +3761,7 @@ public class ContratoCobrancaMB {
 				// senao valida se houve alteração no checklist para envio de email.
 				if(!SiscoatConstants.DEV) {
 					enviaEmailAtualizacaoPreContratoNovo();	
-					System.out.println("editPreContratoPorStatus");
+					//System.out.println("editPreContratoPorStatus");
 				}
 				contratoCobrancaCheckList = null;
 				
@@ -3837,6 +3843,9 @@ public class ContratoCobrancaMB {
 	}
 	
 	public void notificaStatusWhatsApp(long idContrato) {
+		if (this.objetoContratoCobranca.getResponsavel().isDesativado()) {
+			return;
+		}
 		FacesContext context = FacesContext.getCurrentInstance();
 		try {
 			ContratoCobrancaDao cDao = new ContratoCobrancaDao();
