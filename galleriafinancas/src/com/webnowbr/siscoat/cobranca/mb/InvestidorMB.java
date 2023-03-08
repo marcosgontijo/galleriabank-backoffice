@@ -427,7 +427,8 @@ public class InvestidorMB {
 				IrpfContrato irpfContrato = BuscaDadosIRPF(contrato, utltimaParcela);
 
 				boolean parcelaFimContrato = false;
-				if (irpfContrato != null)
+				if (irpfContrato != null && irpfContrato.getQtdeParcelasInvestidor() != null
+						&& irpfContrato.getCarenciaInvestidor() != null)
 					parcelaFimContrato = (irpfContrato.getQtdeParcelasInvestidor()
 							- irpfContrato.getCarenciaInvestidor()) == 1;
 
