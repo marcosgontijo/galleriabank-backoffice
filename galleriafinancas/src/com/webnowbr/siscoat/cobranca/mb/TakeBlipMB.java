@@ -913,9 +913,10 @@ public class TakeBlipMB {
 	
 					retornoWhatsAPP = getJsonSucesso(myURLConnection.getInputStream());
 					
-					JSONObject resource = retornoWhatsAPP.getJSONObject("resource");
-					
-					whatsAppNumber = resource.getString("alternativeAccount");
+					if (retornoWhatsAPP.has("resource")) {
+						JSONObject resource = retornoWhatsAPP.getJSONObject("resource");
+						whatsAppNumber = resource.getString("alternativeAccount");
+					}
 					
 					responsavel.setWhatsAppNumero(whatsAppNumber);
 					
