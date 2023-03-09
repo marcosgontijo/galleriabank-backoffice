@@ -1,14 +1,15 @@
 package com.webnowbr.siscoat.contab.mb;
 
-import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 
 import com.webnowbr.siscoat.contab.db.dao.BalancoPatrimonialDao;
 import com.webnowbr.siscoat.contab.db.model.BalancoPatrimonial;
@@ -40,7 +41,27 @@ public String clearFieldsBalancoPatrimonial() {
 	
 	public String clearBalancoPatrimonial() {
 		objetoBalanco = new BalancoPatrimonial();
-		return "/Atendimento/Cobranca/ContabilidadeEdicao.xhtml";
+		return "/Atendimento/Cobranca/Contabilidade/BalancoPatrimonialInserir.xhtml";
+	}
+	
+	
+	public void salvarBalanco() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		BalancoPatrimonialDao balancoPatrimonialDao = new BalancoPatrimonialDao();
+		try {				
+			balancoPatrimonialDao.merge(this.objetoBalanco);
+			
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO,
+							"Balanço Inserido com sucesso!!",
+							""));
+			clearBalancoPatrimonial();
+		}
+		catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro: " + e, ""));
+		}
 	}
 
 	public BalancoPatrimonialMB() {
