@@ -434,7 +434,9 @@ public class InvestidorMB {
 
 				irRetidoTotalContrato = parcelasContrato.stream().map(p -> CommonsUtil.bigDecimalValue(p.getIrRetido()))
 						.reduce(BigDecimal.ZERO, BigDecimal::add);
-				jurosTotalContrato = parcelasContrato.stream().map(p -> CommonsUtil.bigDecimalValue(p.getJuros()))
+				jurosTotalContrato = parcelasContrato.stream().map(p -> (
+						  BigDecimal.ZERO.compareTo(CommonsUtil.bigDecimalValue(p.getJuros()))== 0 &&
+						  BigDecimal.ZERO.compareTo(CommonsUtil.bigDecimalValue(p.getCapitalizacao())) == -1)?p.getCapitalizacao():p.getJuros()   )
 						.reduce(BigDecimal.ZERO, BigDecimal::add);
 
 				// pegar sempre o saldo da última parcela baixada
