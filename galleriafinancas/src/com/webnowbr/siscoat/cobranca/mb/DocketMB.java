@@ -353,8 +353,18 @@ public class DocketMB {
 		}	
 	}
 	
-	public void criarPedido() {	//POST para gerar pedido
+	public void criarPedido() {	//POST para gerar pedido	
 		FacesContext context = FacesContext.getCurrentInstance();
+		DocketDao docketDao = new DocketDao();
+		if(CommonsUtil.semValor(objetoContratoCobranca)) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Contrato não vinculado!!!", ""));	
+			return;
+		}
+		if(docketDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca).size() > 0) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Pedido desse contrato já existe!!!!!!", ""));	
+			return;
+		}
+		
 		try {
 			loginDocket();
 			int HTTP_COD_SUCESSO = 200;
@@ -399,7 +409,7 @@ public class DocketMB {
 				System.out.println(jsonWhatsApp.toString());
 			} else {
 				docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" , cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
-				DocketDao docketDao = new DocketDao();
+				//DocketDao docketDao = new DocketDao();
 				docketDao.create(docket);
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Pedido feito com sucesso", ""));	
 				myResponse = getJSONSucesso(myURLConnection.getInputStream());
@@ -413,7 +423,65 @@ public class DocketMB {
 			e.printStackTrace();
 		}
 	}
+	
+	public void uploadREA() {	//POST para gerar pedido
+		FacesContext context = FacesContext.getCurrentInstance();
+		try {
+			loginDocket();
+			int HTTP_COD_SUCESSO = 200;
+			
+			URL myURL;
+			if(SiscoatConstants.DEV) {
+				myURL = new URL(urlHomologacao + "/api/v2/"+organizacao_url+"/rea/matriculas");
+			} else {
+				myURL = new URL(urlProducao + "/api/v2/"+organizacao_url+"/rea/matriculas");
+			}
+			
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			
+			myURLConnection.setRequestMethod("POST");
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			myURLConnection.setRequestProperty("Authorization", "Bearer " + this.tokenLogin);
+			myURLConnection.setDoOutput(true);		
+			
+			JSONObject myResponse = null;
+			JSONObject jsonREA = getBodyREA();
+			
+			try (OutputStream os = myURLConnection.getOutputStream()) {
+				byte[] input = jsonREA.toString().getBytes("utf-8");
+				os.write(input, 0, input.length);
+			}
+														
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {	
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Docket: Falha  (Cod: " + myURLConnection.getResponseCode() + ")",""));
+				System.out.println(jsonREA.toString());
+			} else {
+				docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" , cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
+				DocketDao docketDao = new DocketDao();
+				docketDao.create(docket);
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Matrícula enviada com sucesso", ""));	
+				myResponse = getJSONSucesso(myURLConnection.getInputStream());
+			}
+			myURLConnection.disconnect();		
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 		
+	public JSONObject getBodyREA() { //JSON p/ pedido	
+		JSONObject jsonDocketBodyREA = new JSONObject();	
+		jsonDocketBodyREA.put("arquivo","" /*arquivo_Da_Matricula*/);
+		jsonDocketBodyREA.put("urlWebhook","" /*URL_Para_Resposta*/);
+		return jsonDocketBodyREA;
+	}
+	
 	public JSONObject getBodyJsonPedido(List<PagadorRecebedor> listaPagador) { //JSON p/ pedido	
 		JSONObject jsonDocketBodyPedido = new JSONObject();	
 		jsonDocketBodyPedido.put("pedido", getJsonPedido(listaPagador));
@@ -599,7 +667,9 @@ public class DocketMB {
 							|| CommonsUtil.mesmoValor(doc.getDocumentoNome(),
 									"Certidão de Distribuição de Ações Criminais - Justiça Estadual (1° instância) - Processos Judiciais Eletrônicos")
 							|| CommonsUtil.mesmoValor(doc.getDocumentoNome(), 
-									"Certidão de Distribuição de Ações Cíveis - Justiça Estadual (1° instância)")){
+									"Certidão de Distribuição de Ações Cíveis - Justiça Estadual (1° instância)")
+							|| CommonsUtil.mesmoValor(doc.getDocumentoNome(), 
+									"Certidão de Distribuição de Ações Cíveis - Justiça Estadual (1° instância) - Processos Judiciais Eletrônicos")){						
 							continue;
 						}	
 					}
