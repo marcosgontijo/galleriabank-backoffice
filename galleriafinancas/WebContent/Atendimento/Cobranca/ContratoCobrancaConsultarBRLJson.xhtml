@@ -144,6 +144,9 @@
 				        <p:commandButton action="#{brlTrustMB.geraJSONCessao()}" ajax="false" icon="ui-icon-print" value="Gerar JSON Cessão" title="Gerar JSON Cessão">
 				        		<f:setPropertyActionListener target="#{brlTrustMB.objetoContratoCobranca}" value="#{contratos}" />  			        		
 			            </p:commandButton>
+			            <p:commandButton action="#{brlTrustMB.geraJSONCessaoGambiarra()}" ajax="false" icon="ui-icon-print" value="Gerar JSON Cessão" title="Gerar JSON Cessão">
+				        		<f:setPropertyActionListener target="#{brlTrustMB.objetoContratoCobranca}" value="#{contratos}" />  			        		
+			            </p:commandButton>
 			            <p:spacer width="10" height="10"/>		 
 		            </p:column>			        		               		        			        			           			 		
 				</p:dataTable>
