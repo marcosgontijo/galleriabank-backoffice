@@ -18,48 +18,44 @@ import com.webnowbr.siscoat.contab.db.model.BalancoPatrimonial;
 @ManagedBean(name = "balancoPatrimonialMB")
 @SessionScoped
 public class BalancoPatrimonialMB {
-	
+
 	private BalancoPatrimonial objetoBalanco;
 	private Date relDataContratoInicio;
 	private Date relDataContratoFim;
-	
+
 	private String tituloPagina = "Todos";
 	private List<BalancoPatrimonial> todosBalancos;
 	private boolean editar;
 	private boolean excluir;
-	
 
-public String clearFieldsBalancoPatrimonial() {
-		
+	public String clearFieldsBalancoPatrimonialConsulta() {
+
 		TimeZone zone = TimeZone.getDefault();
 		Locale locale = new Locale("pt", "BR");
 		Calendar dataInicio = Calendar.getInstance(zone, locale);
 		this.relDataContratoInicio = dataInicio.getTime();
 		this.relDataContratoFim = dataInicio.getTime();
 		BalancoPatrimonialDao balancopatrimonialDao = new BalancoPatrimonialDao();
-		this.todosBalancos = balancopatrimonialDao.consultaBalancoPatrimonial();		
+		this.todosBalancos = balancopatrimonialDao.consultaBalancoPatrimonial();
 		return "/Atendimento/Cobranca/Contabilidade/BalancoPatrimonialConsulta.xhtml";
 	}
-	
-	public String clearBalancoPatrimonial() {
-		objetoBalanco = new BalancoPatrimonial();
+
+	public String clearBalancoPatrimonialEditar() {
+		if (!this.editar)
+			objetoBalanco = new BalancoPatrimonial();
 		return "/Atendimento/Cobranca/Contabilidade/BalancoPatrimonialInserir.xhtml";
 	}
-	
-	
+
 	public void salvarBalanco() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		BalancoPatrimonialDao balancoPatrimonialDao = new BalancoPatrimonialDao();
-		try {				
+		try {
 			balancoPatrimonialDao.merge(this.objetoBalanco);
-			
+
 			context.addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_INFO,
-							"Balanço Inserido com sucesso!!",
-							""));
-			clearBalancoPatrimonial();
-		}
-		catch (Exception e) {
+					new FacesMessage(FacesMessage.SEVERITY_INFO, "Balanço Inserido com sucesso!!", ""));
+			clearFieldsBalancoPatrimonialConsulta();
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro: " + e, ""));
@@ -69,15 +65,15 @@ public String clearFieldsBalancoPatrimonial() {
 	public String editarBalanco() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		BalancoPatrimonialDao cDao = new BalancoPatrimonialDao();
-		
-		if (this.objetoBalanco.getId() >0) { 
+
+		if (this.objetoBalanco.getId() > 0) {
 			cDao.merge(this.objetoBalanco);
 		}
 
 		facesContext.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO, "Balanço Patrimonial: Balanço alterado com sucesso!", ""));
 
-		return clearFieldsBalancoPatrimonial();
+		return clearFieldsBalancoPatrimonialConsulta();
 	}
 
 	public String excluirBalanco() {
@@ -91,10 +87,11 @@ public String clearFieldsBalancoPatrimonial() {
 		facesContext.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO, "Balanço Patrimonial: Balanço excluído com sucesso!", ""));
 
-		return clearFieldsBalancoPatrimonial();
+		return clearFieldsBalancoPatrimonialConsulta();
 	}
+
 	public BalancoPatrimonialMB() {
-		
+
 		objetoBalanco = new BalancoPatrimonial();
 	}
 
@@ -105,8 +102,7 @@ public String clearFieldsBalancoPatrimonial() {
 	public void setObjetoBalanco(BalancoPatrimonial objetoBalanco) {
 		this.objetoBalanco = objetoBalanco;
 	}
-	
-	
+
 	public Date getRelDataContratoInicio() {
 		return relDataContratoInicio;
 	}
@@ -155,5 +151,4 @@ public String clearFieldsBalancoPatrimonial() {
 		this.excluir = excluir;
 	}
 
-	
 }
