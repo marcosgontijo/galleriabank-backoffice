@@ -25,6 +25,8 @@ public class BalancoPatrimonialMB {
 	
 	private String tituloPagina = "Todos";
 	private List<BalancoPatrimonial> todosBalancos;
+	private boolean editar;
+	private boolean excluir;
 	
 
 public String clearFieldsBalancoPatrimonial() {
@@ -64,6 +66,33 @@ public String clearFieldsBalancoPatrimonial() {
 		}
 	}
 
+	public String editarBalanco() {
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		BalancoPatrimonialDao cDao = new BalancoPatrimonialDao();
+		
+		if (this.objetoBalanco.getId() >0) { 
+			cDao.merge(this.objetoBalanco);
+		}
+
+		facesContext.addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO, "Balanço Patrimonial: Balanço alterado com sucesso!", ""));
+
+		return clearFieldsBalancoPatrimonial();
+	}
+
+	public String excluirBalanco() {
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		BalancoPatrimonialDao cDao = new BalancoPatrimonialDao();
+
+		cDao.delete(this.objetoBalanco);
+
+		this.todosBalancos.remove(this.objetoBalanco);
+
+		facesContext.addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO, "Balanço Patrimonial: Balanço excluído com sucesso!", ""));
+
+		return clearFieldsBalancoPatrimonial();
+	}
 	public BalancoPatrimonialMB() {
 		
 		objetoBalanco = new BalancoPatrimonial();
@@ -108,6 +137,22 @@ public String clearFieldsBalancoPatrimonial() {
 
 	public void setTodosBalancos(List<BalancoPatrimonial> todosBalancos) {
 		this.todosBalancos = todosBalancos;
+	}
+
+	public boolean isEditar() {
+		return editar;
+	}
+
+	public void setEditar(boolean editar) {
+		this.editar = editar;
+	}
+
+	public boolean isExcluir() {
+		return excluir;
+	}
+
+	public void setExcluir(boolean excluir) {
+		this.excluir = excluir;
 	}
 
 	

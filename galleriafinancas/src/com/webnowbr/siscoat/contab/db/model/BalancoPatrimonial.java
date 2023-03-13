@@ -13,7 +13,7 @@ public class BalancoPatrimonial implements Serializable {
 	 */
 	private static final long serialVersionUID = 634225993537962423L;
 	/** Chave primaria. */
-	private long id;
+	private Long id;
 
 	private BigDecimal saldoTotalApi;
 	private Date aaaaMM;
@@ -75,11 +75,11 @@ public class BalancoPatrimonial implements Serializable {
 		return result;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

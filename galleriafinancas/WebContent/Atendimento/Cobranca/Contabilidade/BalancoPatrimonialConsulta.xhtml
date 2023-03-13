@@ -41,7 +41,30 @@
 					</p:column>
 					<f:facet name="footer">
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{balancoPatrimonialMB.clearBalancoPatrimonial}">	</p:commandButton>
-			        </f:facet>		            		        		               		        			        			           			 		
+			        </f:facet>	
+			        <p:column styleClass="colunaResponsiva">
+						<p:commandButton action="#{balancoPatrimonialMB.clearFieldsBalancoPatrimonial}"
+							ajax="false" icon="ui-icon-pencil" title="Editar">
+							<f:setPropertyActionListener
+								target="#{balancoPatrimonialMB.objetoBalanco}"
+								value="#{balanco}" />
+							<f:setPropertyActionListener target="#{balancoPatrimonialMB.editar}"
+								value="true" />
+							<f:setPropertyActionListener target="#{balancoPatrimonialMB.excluir}"
+								value="false" />
+						</p:commandButton>
+						<p:spacer width="10" height="10" />
+						<p:commandButton action="#{balancoPatrimonialMB.clearFieldsBalancoPatrimonial}"
+							ajax="false" icon="ui-icon-trash" title="Excluir">
+							<f:setPropertyActionListener
+								target="#{balancoPatrimonialMB.objetoBalanco}"
+								value="#{balanco}" />
+							<f:setPropertyActionListener target="#{balancoPatrimonialMB.editar}"
+								value="false" />
+							<f:setPropertyActionListener target="#{balancoPatrimonialMB.excluir}"
+								value="true" />
+						</p:commandButton>
+					</p:column>	            		        		               		        			        			           			 		
 				</p:dataTable>
 			</p:panel>
 		</h:form>
