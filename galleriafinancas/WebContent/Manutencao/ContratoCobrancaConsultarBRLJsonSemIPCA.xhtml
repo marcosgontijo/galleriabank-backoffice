@@ -4,7 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:shiro="http://shiro.apache.org/tags"
-	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
+	xmlns:p="http://primefaces.org/ui" template="./MenuManutencao.xhtml">
 
 	<ui:define name="conteudo">
 		<h:form id="form" style="margin-bottom:10px;">
@@ -141,7 +141,7 @@
 			            </h:outputText>
 			        </p:column>		
 			        <p:column styleClass="colunaResponsiva">	 
-				        <p:commandButton action="#{brlTrustMB.geraJSONCessao()}" ajax="false" icon="ui-icon-print" value="Gerar JSON Cessão" title="Gerar JSON Cessão">
+			            <p:commandButton action="#{brlTrustMB.geraJSONCessaoSemIPCA()}" ajax="false" icon="ui-icon-print" value="Gerar JSON Cessão Sem IPCA" title="Gerar JSON Cessão Sem IPCA">
 				        		<f:setPropertyActionListener target="#{brlTrustMB.objetoContratoCobranca}" value="#{contratos}" />  			        		
 			            </p:commandButton>
 			            <p:spacer width="10" height="10"/>		 
