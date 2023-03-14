@@ -74,7 +74,105 @@ public class BalancoPatrimonial implements Serializable {
 
 		return result;
 	}
-
+	public BigDecimal getTotalCaixa(){
+		BigDecimal result = BigDecimal.ZERO;
+		if (!CommonsUtil.semValor(saldoCaixa))
+			result=result.add(saldoCaixa);
+		if (!CommonsUtil.semValor(saldoBancos))
+			result=result.add(saldoBancos);
+		if (!CommonsUtil.semValor(saldoAplFin))
+			result=result.add(saldoAplFin);
+		if (!CommonsUtil.semValor(opPagasReceberFidc))
+			result=result.add(opPagasReceberFidc);
+		if (!CommonsUtil.semValor(apItauSoberano))
+			result=result.add(apItauSoberano);
+		if (!CommonsUtil.semValor(provisaoDevedoresDuvidosos))
+			result=result.add(provisaoDevedoresDuvidosos);
+		if (!CommonsUtil.semValor(saldoCobrancaFidc))
+			result=result.add(saldoCobrancaFidc);
+		if (!CommonsUtil.semValor(depositoBacenScd))
+			result=result.add(depositoBacenScd);
+		return result;
+	}
+	
+	public BigDecimal getTotalRealizavelCurtoPrazo(){
+		BigDecimal result = BigDecimal.ZERO;
+		if (!CommonsUtil.semValor(direitosCreditorios))
+			result=result.add(direitosCreditorios);
+		if (!CommonsUtil.semValor(tributosCompensar))
+			result=result.add(tributosCompensar);
+		if (!CommonsUtil.semValor(adiantamentos))
+			result=result.add(adiantamentos);
+		if (!CommonsUtil.semValor(outrosCreditos))
+			result=result.add(outrosCreditos);
+		if (!CommonsUtil.semValor(estoque))
+			result=result.add(estoque);
+		return result;
+	}
+	
+	public BigDecimal getTotalAtivoCirculante(){
+		BigDecimal result = BigDecimal.ZERO;
+		if (!CommonsUtil.semValor(saldoCaixa))
+			result=result.add(saldoCaixa);
+		if (!CommonsUtil.semValor(saldoBancos))
+			result=result.add(saldoBancos);
+		if (!CommonsUtil.semValor(saldoAplFin))
+			result=result.add(saldoAplFin);
+		if (!CommonsUtil.semValor(opPagasReceberFidc))
+			result=result.add(opPagasReceberFidc);
+		if (!CommonsUtil.semValor(apItauSoberano))
+			result=result.add(apItauSoberano);
+		if (!CommonsUtil.semValor(provisaoDevedoresDuvidosos))
+			result=result.add(provisaoDevedoresDuvidosos);
+		if (!CommonsUtil.semValor(saldoCobrancaFidc))
+			result=result.add(saldoCobrancaFidc);
+		if (!CommonsUtil.semValor(depositoBacenScd));
+		if (!CommonsUtil.semValor(direitosCreditorios))
+			result=result.add(direitosCreditorios);
+		if (!CommonsUtil.semValor(tributosCompensar))
+			result=result.add(tributosCompensar);
+		if (!CommonsUtil.semValor(adiantamentos))
+			result=result.add(adiantamentos);
+		if (!CommonsUtil.semValor(outrosCreditos))
+			result=result.add(outrosCreditos);
+		if (!CommonsUtil.semValor(estoque))
+			result=result.add(estoque);
+		return result;
+	}
+	
+	public BigDecimal getTotalRealizavelLongoPrazo(){
+		BigDecimal result = BigDecimal.ZERO;
+		if (!CommonsUtil.semValor(depositosJudiciais))
+			result=result.add(depositosJudiciais);
+		if (!CommonsUtil.semValor(investOperAntigas))
+			result=result.add(investOperAntigas);
+		return result;
+	}
+	
+	public BigDecimal getTotalAtivoNaoCirculante(){
+		BigDecimal result = BigDecimal.ZERO;
+		if (!CommonsUtil.semValor(investimentos))
+			result=result.add(investimentos);
+		if (!CommonsUtil.semValor(bensImobilizados))
+			result=result.add(bensImobilizados);
+		return result;
+	}
+	
+	public BigDecimal getTotalInvestimentos(){
+		BigDecimal result = BigDecimal.ZERO;
+		if (!CommonsUtil.semValor(investimentos))
+			result=result.add(investimentos);
+		
+		return result;
+	}
+	
+	public BigDecimal getTotalImobilizados(){
+		BigDecimal result = BigDecimal.ZERO;
+		if (!CommonsUtil.semValor(bensImobilizados))
+			result=result.add(bensImobilizados);
+		return result;
+	}
+	
 	public Long getId() {
 		return id;
 	}

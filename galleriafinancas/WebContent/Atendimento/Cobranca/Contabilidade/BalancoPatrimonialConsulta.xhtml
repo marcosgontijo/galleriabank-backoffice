@@ -64,6 +64,16 @@
 							<f:setPropertyActionListener target="#{balancoPatrimonialMB.excluir}"
 								value="true" />
 						</p:commandButton>
+						<p:commandButton action="#{balancoPatrimonialMB.geraXLSBalancoPatrimonial}"
+							ajax="false" icon="ui-icon-arrowthick-1-s" title="Gerar XLS">
+							<f:setPropertyActionListener
+								target="#{balancoPatrimonialMB.objetoBalanco}"
+								value="#{balanco}" />
+							<f:setPropertyActionListener target="#{balancoPatrimonialMB.editar}"
+								value="false" />
+							<f:setPropertyActionListener target="#{balancoPatrimonialMB.excluir}"
+								value="true" />
+						</p:commandButton>
 					</p:column>	            		        		               		        			        			           			 		
 				</p:dataTable>
 			</p:panel>
