@@ -5053,7 +5053,7 @@ public class InvestidorMB {
 			this.nomePDF = "Informe de rendimentos - " + this.selectedPagador.getNome() + ".pdf";
 			this.pathPDF = pDao.findByFilter("nome", "ARQUIVOS_PDF").get(0).getValorString();
 
-			os = new FileOutputStream(this.pathPDF + this.nomePDF);
+			os = new FileOutputStream(this.pathPDF.startsWith(anexoPDFStr) + this.nomePDF);
 
 			// Associa a stream de saída ao
 			PdfWriter writer = PdfWriter.getInstance(doc, os);
@@ -5074,13 +5074,13 @@ public class InvestidorMB {
 				PDFCabecalhoRodapeInformeRendimentos event = new PDFCabecalhoRodapeInformeRendimentos();
 				writer.setPageEvent(event);
 
-				BufferedImage buff = ImageIO.read(getClass().getResourceAsStream("/resource/LogoFinancas.png"));
+				BufferedImage buff = ImageIO.read(getClass().getResourceAsStream("/resource/logo-galleria-ok.png"));
 				ByteArrayOutputStream bos = new ByteArrayOutputStream();
 				ImageIO.write(buff, "png", bos);
 				Image img = Image.getInstance(bos.toByteArray());
 
 				img.setAlignment(Element.ALIGN_CENTER);
-				img.scaleAbsolute(90, 65);
+				img.scaleAbsolute(190, 45);
 				cell1 = new PdfPCell(img);
 				cell1.setBorder(0);
 				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
