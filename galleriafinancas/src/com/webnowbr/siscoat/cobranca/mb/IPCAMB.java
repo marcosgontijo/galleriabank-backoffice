@@ -303,7 +303,7 @@ public class IPCAMB {
 	public void atualizaIPCAChamadaTela(String numeroContrato) {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		
-		List<ContratoCobranca> contratosCobranca = contratoCobrancaDao.findByFilter("numeroContrato", this.numeroContrato);
+		List<ContratoCobranca> contratosCobranca = contratoCobrancaDao.findByFilter("numeroContrato", numeroContrato);
 
 		LOGGER.info("incio atualizaIPCAPorContrato");
 		

@@ -25,7 +25,7 @@
 						required="true" label="Data Corte Baixa" size="100"
 						pattern="dd/MM/yyyy" styleClass="dateTimeField">
 					</p:calendar>
-					<p:commandButton action="#{ipcaMB.atualizaIPCAPorContratoMaluco()}" icon="ui-icon-calculator" value="ATENÇÃO!! Reprocessar IPCA Híbrido" title="ATENÇÃO!! Reprocessar IPCA Híbrido" update=":form:mensagens">
+					<p:commandButton action="#{ipcaMB.atualizaIPCAChamadaTela(ipcaMB.numeroContrato)}" icon="ui-icon-calculator" value="ATENÇÃO!! Reprocessar IPCA Híbrido" title="ATENÇÃO!! Reprocessar IPCA Híbrido" update=":form:mensagens">
 	                    <p:confirm header="Confirmação" message="Deseja realmente reprocessar este contrato pelo IPCA?" icon="ui-icon-alert" />		                	
 	                </p:commandButton> 
 	            </h:panelGrid>
