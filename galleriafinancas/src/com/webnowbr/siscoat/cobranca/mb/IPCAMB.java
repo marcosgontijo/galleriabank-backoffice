@@ -300,6 +300,24 @@ public class IPCAMB {
 		}
 	}
 	
+	public void atualizaIPCAChamadaTela(String numeroContrato) {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		
+		List<ContratoCobranca> contratosCobranca = contratoCobrancaDao.findByFilter("numeroContrato", this.numeroContrato);
+
+		LOGGER.info("incio atualizaIPCAPorContrato");
+		
+		if (contratosCobranca.size() > 0) {	
+			ContratoCobranca contrato = contratosCobranca.get(0);
+			
+			if (contrato.isCorrigidoIPCAHibrido()) {
+				atualizaIPCAPorContratoMaluco();
+			} else {
+				this.atualizaIPCAPorContrato(numeroContrato);
+			}			
+		}
+	}
+	
 	public void atualizaIPCAPorContratoMaluco() {
 		try {
 			FacesContext context = FacesContext.getCurrentInstance();
