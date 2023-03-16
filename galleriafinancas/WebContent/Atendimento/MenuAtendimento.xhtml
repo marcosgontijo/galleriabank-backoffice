@@ -152,7 +152,11 @@
 									<p:menuitem value="Consulta SCR"
 										action="#{bmpDigitalMB.clearFields}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu"/>								
+										styleClass="itemMenu"/>		
+									<p:menuitem value="Data Engine"
+										action="#{dataEngineMB.clearFieldsDataEngine}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />						
 									<p:menuitem value="01 - Ag. Análise"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Aguardando Análise')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
