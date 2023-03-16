@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	template="../MenuAtendimento.xhtml">
+	
+	<ui:define name="conteudo">
+		<h:form id="form">
+			<script src="#{request.contextPath}/resources/resources/js/functions.js"></script>
+			<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>
+			<link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/resources/css/Style.css" title="" media="all" />
+			
+			<p:panel id="EnginePanel" header="Engine"
+				style="margin-bottom:10px;">
+				<p:focus />
+				<p:messages id="msgs" />
+					
+				<h:panelGrid columns="2">							
+					<p:outputLabel value="Adicionar Pagadores: "
+						styleClass="labelBold"
+						style="font-weight: bold; font-size: 18px;" />
+					<p:commandButton action="#{dataEngineMB.clearPessoaDialog}"
+						icon="ui-icon ui-icon-plus" ajax="true"
+						oncomplete="PF('pessoaDialog').show();"
+						update="pessoaDialogdlg" />
+				</h:panelGrid>
+			
+				<h:panelGroup id="Dados">
+					<p:dataList id="engineDataList" value="#{dataEngineMB.listEngine}" var="engine" 
+						style="padding: 0" type="definition">
+						<h:panelGrid columns="2">
+							<h:panelGrid columns="2">				
+								<h:panelGroup rendered="#{engine.pagador.cpf != null and engine.pagador.cpf != ''}">
+									<p:outputLabel value="Nome:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
+									<p:outputLabel value="#{engine.pagador.nome}" style="FONT-SIZE: 5pt; margin-right: 5px"  />  								
+									<p:outputLabel value="| CPF:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
+									<p:inputText value="#{engine.pagador.cpf}" style="FONT-SIZE: 5pt; margin-right: 5px; width:100px" />  															
+									<p:outputLabel value="| Data Nascimento:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
+									<p:calendar value="#{engine.pagador.dtNascimento}" size="50" styleClass="dateTimeField" pattern="dd/MM/yyyy" 
+										inputStyle="margin-right: 5px; width:70px"/>	
+								</h:panelGroup>
+								<h:panelGroup rendered="#{engine.pagador.cpf eq null or engine.pagador.cpf eq ''}">
+									<p:outputLabel value="Razão Social:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
+									<p:outputLabel value="#{engine.pagador.nome}" style="FONT-SIZE: 5pt; margin-right: 5px" />  							
+									<p:outputLabel value="| CNPJ:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
+									<p:inputText value="#{engine.pagador.cnpj}" style="FONT-SIZE: 5pt; margin-right: 5px; width:120px" />  						
+								</h:panelGroup> 
+							</h:panelGrid>	
+							
+							<h:panelGrid columns="2" align="right">
+								<p:commandButton action="#{dataEngineMB.criarConsulta(engine)}"
+									icon="ui-icon ui-icon-print" value="Fazer Consulta"  
+									update=":form  :form:msgs" 
+									disabled="#{engine.data != null}"/>
+								<p:commandButton action="#{dataEngineMB.baixarDocumento(engine)}"
+									icon="ui-icon ui-icon-print" value="Gerar PDF"  
+									update=":form  :form:msgs" ajax="false"
+									disabled="#{engine.idCallManager == null}"/>
+							</h:panelGrid>
+
+						</h:panelGrid>		
+					</p:dataList>
+				</h:panelGroup>
+			</p:panel>		
+		</h:form>
+	
+		<p:dialog header="Nova Pessoa" widgetVar="pessoaDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="400">
+			<h:form id="pessoaDialogdlg">			
+				<div align="center">		
+					<h:panelGrid columns="2">
+						<p:outputLabel for="Pessoa" value="Pessoa: "
+							styleClass="labelBold" />
+						<p:selectOneRadio id="Pessoa"
+							value="#{dataEngineMB.tipoPessoaIsFisica}" required="true">
+							<f:selectItem itemLabel="Física" itemValue="true" />
+							<f:selectItem itemLabel="Jurídica" itemValue="false" />
+							<p:ajax update="pessoaDialogdlg" event="valueChange"
+								listener="#{dataEngineMB.selectedTipoPessoaPublico}" />
+						</p:selectOneRadio>
+					</h:panelGrid>		
+					<h:panelGrid columns="2" rendered="#{dataEngineMB.tipoPessoaIsFisica}">
+						<p:outputLabel value="CPF:"  styleClass="labelBold"/>			
+						<p:inputMask value="#{dataEngineMB.pagadorAdicionar.cpf}"
+							style=" width:100px" mask="999.999.999-99">
+							<p:ajax event="blur" update="pessoaDialogdlg"
+								listener="#{dataEngineMB.procurarPF}" />
+						</p:inputMask>
+						<p:outputLabel value="Nome:" styleClass="labelBold"/>
+						<p:inputText value="#{dataEngineMB.pagadorAdicionar.nome}" />					
+						<p:outputLabel value="Data Nascimento:"  styleClass="labelBold"/>
+						<p:calendar value="#{dataEngineMB.pagadorAdicionar.dtNascimento}" size="50" 
+							styleClass="dateTimeField" pattern="dd/MM/yyyy" inputStyle="margin-right: 5px; width:70px"/>
+					</h:panelGrid>	
+					<h:panelGrid columns="2" rendered="#{!dataEngineMB.tipoPessoaIsFisica}">
+						<p:outputLabel value="CNPJ:"  styleClass="labelBold"/>
+						<p:inputMask value="#{dataEngineMB.pagadorAdicionar.cnpj}"
+							label="CNPJ" mask="99.999.999/9999-99" style=" width:100px">
+							<p:ajax event="blur" update="pessoaDialogdlg"
+								listener="#{dataEngineMB.procurarPJ}" />
+						</p:inputMask>
+						<p:outputLabel value="Razão Social:" styleClass="labelBold"/>
+						<p:inputText value="#{dataEngineMB.pagadorAdicionar.nome}"/>				
+					</h:panelGrid>
+					<p:commandButton  value="Adicionar" action="#{dataEngineMB.inserirPessoa}" 
+						onclick="PF('pessoaDialog').close();" update=":form:EnginePanel" 
+						style="margin-bottom:50px; margin-top:10px"/>	
+				</div>
+			</h:form>
+		</p:dialog>
+		
+	</ui:define>
+</ui:composition>
