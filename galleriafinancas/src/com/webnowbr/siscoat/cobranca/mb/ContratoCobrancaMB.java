@@ -19845,6 +19845,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			calcularValorPresenteParcelaData(rowEditNewDate, bpContratoCobrancaDetalhes);
 		}
 
+		boolean baixaTotal = false;
 		// se valor recebido é igual ao valor atualizado
 		if (this.vlrRecebido.intValue() != 0) {
 			// se valor recebido é igual ou maior
@@ -19894,6 +19895,9 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 
 				bpContratoCobrancaDetalhes.setVlrParcela(valorParcelaAtual);
 				bpContratoCobrancaDetalhes.setVlrParcelaAtualizada(BigDecimal.ZERO);
+				
+				baixaTotal = true;
+				
 				// bpContratoCobrancaDetalhes.setVlrSaldoParcela(BigDecimal.ZERO);
 				
 				// verifica se pagamento é igual ao valor presente
@@ -19916,6 +19920,8 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 				contratoCobrancaDetalhesParcial.setSaldoAPagar(BigDecimal.ZERO);
 				bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial().add(contratoCobrancaDetalhesParcial);
 				bpContratoCobrancaDetalhes.setParcelaPaga(true);
+				
+				baixaTotal = true;
 				
 				//valor da parcela continua o mesmo
 				
@@ -19977,9 +19983,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		}
 
 		contratoCobrancaDetalhesDao.merge(bpContratoCobrancaDetalhes);
-		
 
-		
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 
 		this.objetoContratoCobranca = contratoCobrancaDao.findById(this.objetoContratoCobranca.getId());
@@ -20052,6 +20056,11 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			} else {
 				ccd.setPagoParcial(false);
 			}
+		}
+		
+		if (baixaTotal) {	
+			IPCAMB ipcaMB = new IPCAMB();
+			ipcaMB.atualizaIPCAChamadaTela(this.objetoContratoCobranca.getNumeroContrato());
 		}
 
 		/*
