@@ -5053,7 +5053,7 @@ public class InvestidorMB {
 			this.nomePDF = "Informe de rendimentos - " + this.selectedPagador.getNome() + ".pdf";
 			this.pathPDF = pDao.findByFilter("nome", "ARQUIVOS_PDF").get(0).getValorString();
 
-			os = new FileOutputStream(this.pathPDF.startsWith(anexoPDFStr) + this.nomePDF);
+			os = new FileOutputStream(this.pathPDF + this.nomePDF);
 
 			// Associa a stream de saída ao
 			PdfWriter writer = PdfWriter.getInstance(doc, os);
