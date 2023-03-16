@@ -8547,7 +8547,9 @@ public class ContratoCobrancaMB {
 			this.objetoContratoCobranca.setTemSeguroMIP(true);
 			this.objetoContratoCobranca.setValorImovel(this.objetoContratoCobranca.getValorMercadoImovel());
 			this.qtdeParcelas = this.objetoContratoCobranca.getPrazoMaxAprovado().toString();
-			this.objetoContratoCobranca.setValorCCB(this.objetoContratoCobranca.getValorAprovadoComite());
+			if(CommonsUtil.semValor(this.objetoContratoCobranca.getValorCCB())) {
+				this.objetoContratoCobranca.setValorCCB(this.objetoContratoCobranca.getValorAprovadoComite());
+			}
 			this.objetoContratoCobranca.setTxJurosParcelas(this.objetoContratoCobranca.getTaxaAprovada());
 		}
 
