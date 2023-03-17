@@ -489,6 +489,8 @@ public class CcbMB {
 					this.objetoCcb.setTitularConta(participanteSelecionado.getPessoa().getNomeCC());
 				}
 			}
+			
+			//fazer pix
 		}
 		this.participanteSelecionado = new CcbParticipantes();
 		this.participanteSelecionado.setPessoa(new PagadorRecebedor());
@@ -7306,7 +7308,7 @@ public class CcbMB {
 			} else {
 				estadoCivilStr = "casado";
 			}		
-			conjugeStr = ", sob o regime de comunhão " + pessoa.getRegimeCasamento() + ", na vigência da lei 6.515/77 (" + 
+			conjugeStr = ", sob o regime " + pessoa.getRegimeCasamento() + ", na vigência da lei 6.515/77 (" + 
 					pessoa.getNomeConjuge() + " " + pessoa.getCpfConjuge() + "), conforme pacto antenupcial registrado no "+
 					pessoa.getRegistroPactoAntenupcial() + ", sob livro " + pessoa.getLivroPactoAntenupcial() + ", folhas " + 
 					pessoa.getFolhasPactoAntenupcial() + ", datada de " + CommonsUtil.formataData(pessoa.getDataPactoAntenupcial()) ;
