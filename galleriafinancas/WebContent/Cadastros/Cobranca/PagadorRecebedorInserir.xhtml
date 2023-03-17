@@ -291,10 +291,10 @@
 								<f:selectItem itemValue="SEPARADO" itemLabel="SEPARADO" />
 								<p:ajax update="PanelCasado" event="valueChange" />
 							</p:selectOneMenu>
-							<p:outputLabel for="regimeCasamentoEmitente"
+							<p:outputLabel for="regimeCasamentoEmitente" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"
 								value="Regime do Casamento: " styleClass="labelBold"
 								style="font-weight: bold; font-size: 18px;" />
-							<p:selectOneMenu id="regimeCasamentoEmitente"
+							<p:selectOneMenu id="regimeCasamentoEmitente" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"
 								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.regimeCasamento}" ajax="true">			
 								<f:selectItem itemValue="universal de bens" 
 									itemLabel="Universal de bens" />
