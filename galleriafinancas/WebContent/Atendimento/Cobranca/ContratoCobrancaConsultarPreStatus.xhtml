@@ -112,7 +112,8 @@
 				        	  
 			        <p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.nomePagador}" filterMatchMode="contains" sortBy="#{contratos.nomePagador}">
 			            <h:outputText value="#{contratos.nomePagador}" />
-			        </p:column>	    	       
+			        </p:column>	    
+    
 			        <p:column style="text-align: center;" headerText="Valor Solicitado (R$)"
 			        	rendered="#!{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. DOC'
 			        	or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. CCB'
@@ -157,6 +158,22 @@
 						filterMatchMode="contains" sortBy="#{contratos.nomeCidadeImovel}">
 						<h:outputText value="#{contratos.nomeCidadeImovel}" />
 					</p:column>
+					
+					<p:column style="text-align: center;width: 100px" headerText="Data Vistoria Imóvel" 
+						filterBy="#{contratos.dataPrevistaVistoria}" filterMatchMode="contains" 
+						sortBy="#{contratos.dataPrevistaVistoria}"
+						rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Pedir Laudo'}">
+			           <p:outputLabel value="#{contratos.dataPrevistaVistoria}" >			            	
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+						</p:outputLabel>
+			        </p:column>
+					
+					<p:column style="text-align: center;" headerText="Observação" 
+					filterBy="#{contratos.avaliacaoLaudoObservacao}" filterMatchMode="contains" 
+					sortBy="#{contratos.avaliacaoLaudoObservacao}"
+					rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Pedir Laudo'}">
+			            <h:outputText value="#{contratos.avaliacaoLaudoObservacao}" style="FONT-SIZE: 10pt; white-space: pre-wrap;" />
+			        </p:column>
 					
 					<p:column style="text-align: center;width: 100px"
 						headerText="Analista" 
