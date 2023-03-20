@@ -2066,7 +2066,7 @@ public class BRLTrustMB {
 			}
 			
 			//jsonValores.put("liquidacao", parcela.getVlrRecebido());
-			jsonValores.put("liquidacao", parcela.getVlrParcela());
+			jsonValores.put("liquidacao", parcela.getVlrJurosParcela().add(parcela.getVlrAmortizacaoParcela()));
 			
 			jsonRecebivel.put("valores", jsonValores);
 			
