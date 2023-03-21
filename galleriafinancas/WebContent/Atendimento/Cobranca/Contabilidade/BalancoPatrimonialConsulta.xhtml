@@ -30,14 +30,16 @@
 			            <h:outputText value="#{balanco.id}" />
 			        </p:column>               
                 	<p:column style="text-align: center;width:105px;" headerText="Referência" sortBy="#{balanco.aaaaMM}">
-			            <h:outputText value="#{balanco.aaaaMM}" />
+			            <p:outputLabel value="#{balanco.aaaaMM}" >
+			            <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+			            </p:outputLabel>
 			        </p:column>
 			       
 			       <p:column style="text-align: center;width:105px;" headerText="Total do Ativo" sortBy="#{balanco.totalAtivos}">
 			            <h:outputText value="#{balanco.totalAtivos}" />
 					</p:column>
-					<p:column style="text-align: center;width:105px;" headerText="Total do Passivo" sortBy="#{balanco.totalAtivos}">
-			            <h:outputText value="#{balanco.totalAtivos}" />
+					<p:column style="text-align: center;width:105px;" headerText="Total do Passivo" sortBy="#{balanco.totalPassivo}">
+			            <h:outputText value="#{balanco.totalPassivo}" />
 					</p:column>
 					<f:facet name="footer">
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{balancoPatrimonialMB.clearBalancoPatrimonialEditar}">	</p:commandButton>
@@ -54,15 +56,13 @@
 								value="false" />
 						</p:commandButton>
 						<p:spacer width="10" height="10" />
-						<p:commandButton action="#{balancoPatrimonialMB.clearBalancoPatrimonialEditar}"
+						<p:commandButton action="#{balancoPatrimonialMB.excluirBalanco}"
 							ajax="false" icon="ui-icon-trash" title="Excluir">
-							<f:setPropertyActionListener
+						<f:setPropertyActionListener
 								target="#{balancoPatrimonialMB.objetoBalanco}"
 								value="#{balanco}" />
-							<f:setPropertyActionListener target="#{balancoPatrimonialMB.editar}"
-								value="false" />
-							<f:setPropertyActionListener target="#{balancoPatrimonialMB.excluir}"
-								value="true" />
+						<p:confirm header="Confirmação"
+								message="Deseja realmente excluir este Balanço?" icon="ui-icon-trash" />			
 						</p:commandButton>
 						<p:commandButton action="#{balancoPatrimonialMB.geraXLSBalancoPatrimonial}"
 							ajax="false" icon="ui-icon-arrowthick-1-s" title="Gerar XLS">

@@ -30,7 +30,23 @@
 		<property name="depositosJudiciais" type="big_decimal"></property>
 		<property name="investOperAntigas" type="big_decimal"></property>
  		<property name="investimentos" type="big_decimal"></property>
- 		<property name="bensImobilizados" type="big_decimal"></property>
+ 		<property name="contaCorrenteClientes" type="big_decimal"></property>
+ 		<property name="fornecedoresConsorcio" type="big_decimal"></property>
+ 		<property name="obrigacoesTributarias" type="big_decimal"></property>
+ 		<property name="obrigacoesSociaisEstatutarias" type="big_decimal"></property>
+ 		<property name="recursosDebentures" type="big_decimal"></property>
+ 		<property name="recursosFidc" type="big_decimal"></property>
+ 		<property name="recursosCri" type="big_decimal"></property>
+ 		<property name="provisaoLiquidAntecipada" type="big_decimal"></property>
+ 		<property name="valorExigivelLongoPrazo" type="big_decimal"></property>
+ 		<property name="capitalSocial" type="big_decimal"></property>
+ 		<property name="lucrosAcumuladosAnoAnterior" type="big_decimal"></property>
+ 		<property name="distribuicao2Pago1" type="big_decimal"></property>
+ 		<property name="lucroSemestreAnterior" type="big_decimal"></property>
+ 		<property name="aumentoCapitalSocial" type="big_decimal"></property>
+ 		<property name="distribuicao1Pago2" type="big_decimal"></property>
+ 		<property name="lucroAnterior" type="big_decimal"></property>
+
  		<!--<property name="empresa" type="big_decimal"></property> -->
 	</class>
 </hibernate-mapping>

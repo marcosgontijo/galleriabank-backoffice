@@ -34,6 +34,22 @@ public class BalancoPatrimonial implements Serializable {
 	private BigDecimal investOperAntigas;
 	private BigDecimal investimentos;
 	private BigDecimal bensImobilizados;
+	private BigDecimal contaCorrenteClientes;
+	private BigDecimal fornecedoresConsorcio;
+	private BigDecimal obrigacoesTributarias;
+	private BigDecimal obrigacoesSociaisEstatutarias;
+	private BigDecimal recursosDebentures;
+	private BigDecimal recursosFidc;
+	private BigDecimal recursosCri;
+	private BigDecimal provisaoLiquidAntecipada;
+	private BigDecimal valorExigivelLongoPrazo;
+	private BigDecimal capitalSocial;
+	private BigDecimal lucrosAcumuladosAnoAnterior;
+	private BigDecimal distribuicao2Pago1;
+	private BigDecimal lucroSemestreAnterior;
+	private BigDecimal aumentoCapitalSocial;
+	private BigDecimal distribuicao1Pago2;
+	private BigDecimal lucroAnterior;
 
 	public BigDecimal getTotalAtivos(){
 		BigDecimal result = BigDecimal.ZERO;
@@ -170,6 +186,140 @@ public class BalancoPatrimonial implements Serializable {
 		BigDecimal result = BigDecimal.ZERO;
 		if (!CommonsUtil.semValor(bensImobilizados))
 			result=result.add(bensImobilizados);
+		return result;
+	}
+	
+	public BigDecimal getTotalPassivo(){
+		BigDecimal result = BigDecimal.ZERO;
+		if (!CommonsUtil.semValor(contaCorrenteClientes))
+			result=result.add(contaCorrenteClientes);
+		if (!CommonsUtil.semValor(fornecedoresConsorcio))
+			result=result.add(fornecedoresConsorcio);
+		if (!CommonsUtil.semValor(obrigacoesTributarias))
+			result=result.add(obrigacoesTributarias);
+		if (!CommonsUtil.semValor(obrigacoesSociaisEstatutarias))
+			result=result.add(obrigacoesSociaisEstatutarias);
+		if (!CommonsUtil.semValor(recursosDebentures))
+			result=result.add(recursosDebentures);
+		if (!CommonsUtil.semValor(recursosFidc))
+			result=result.add(recursosFidc);
+		if (!CommonsUtil.semValor(recursosCri))
+			result=result.add(recursosCri);
+		if (!CommonsUtil.semValor(provisaoLiquidAntecipada))
+			result=result.add(provisaoLiquidAntecipada);
+		if (!CommonsUtil.semValor(valorExigivelLongoPrazo))
+			result=result.add(valorExigivelLongoPrazo);
+		if (!CommonsUtil.semValor(capitalSocial))
+			result=result.add(capitalSocial);
+		if (!CommonsUtil.semValor(lucrosAcumuladosAnoAnterior))
+			result=result.add(lucrosAcumuladosAnoAnterior);
+		if (!CommonsUtil.semValor(distribuicao2Pago1))
+			result=result.add(distribuicao2Pago1);
+		if (!CommonsUtil.semValor(lucroSemestreAnterior))
+			result=result.add(lucroSemestreAnterior);
+		if (!CommonsUtil.semValor(aumentoCapitalSocial))
+			result=result.add(aumentoCapitalSocial);
+		if (!CommonsUtil.semValor(distribuicao1Pago2))
+			result=result.add(distribuicao1Pago2);
+		if (!CommonsUtil.semValor(lucroAnterior))
+			result=result.add(lucroAnterior);
+
+		return result;
+	}
+	
+	public BigDecimal getTotalPassivoCirculante(){
+		BigDecimal result = BigDecimal.ZERO;
+		if (!CommonsUtil.semValor(contaCorrenteClientes))
+			result=result.add(contaCorrenteClientes);
+		if (!CommonsUtil.semValor(fornecedoresConsorcio))
+			result=result.add(fornecedoresConsorcio);
+		if (!CommonsUtil.semValor(obrigacoesTributarias))
+			result=result.add(obrigacoesTributarias);
+		if (!CommonsUtil.semValor(obrigacoesSociaisEstatutarias))
+			result=result.add(obrigacoesSociaisEstatutarias);
+		if (!CommonsUtil.semValor(recursosDebentures))
+			result=result.add(recursosDebentures);
+		if (!CommonsUtil.semValor(recursosFidc))
+			result=result.add(recursosFidc);
+		if (!CommonsUtil.semValor(recursosCri))
+			result=result.add(recursosCri);
+		if (!CommonsUtil.semValor(provisaoLiquidAntecipada))
+			result=result.add(provisaoLiquidAntecipada);
+		return result;
+	}
+	
+	public BigDecimal getTotalExigivelCurtoPrazo(){
+		BigDecimal result = BigDecimal.ZERO;
+		if (!CommonsUtil.semValor(contaCorrenteClientes))
+			result=result.add(contaCorrenteClientes);
+		if (!CommonsUtil.semValor(fornecedoresConsorcio))
+			result=result.add(fornecedoresConsorcio);
+		if (!CommonsUtil.semValor(obrigacoesTributarias))
+			result=result.add(obrigacoesTributarias);
+		if (!CommonsUtil.semValor(obrigacoesSociaisEstatutarias))
+			result=result.add(obrigacoesSociaisEstatutarias);
+		if (!CommonsUtil.semValor(recursosDebentures))
+			result=result.add(recursosDebentures);
+		if (!CommonsUtil.semValor(recursosFidc))
+			result=result.add(recursosFidc);
+		if (!CommonsUtil.semValor(recursosCri))
+			result=result.add(recursosCri);
+		
+		return result;
+	}
+	
+	
+	public BigDecimal getTotalExigivelLongoPrazo(){
+		BigDecimal result = BigDecimal.ZERO;
+		if (!CommonsUtil.semValor(valorExigivelLongoPrazo))
+			result=result.add(valorExigivelLongoPrazo);
+		
+		return result;
+	}
+	
+	public BigDecimal getTotalPatrimonioLiquido(){
+		BigDecimal result = BigDecimal.ZERO;
+		if (!CommonsUtil.semValor(capitalSocial))
+			result=result.add(capitalSocial);
+		if (!CommonsUtil.semValor(lucrosAcumuladosAnoAnterior))
+			result=result.add(lucrosAcumuladosAnoAnterior);
+		if (!CommonsUtil.semValor(distribuicao2Pago1))
+			result=result.add(distribuicao2Pago1);
+		if (!CommonsUtil.semValor(lucroSemestreAnterior))
+			result=result.add(lucroSemestreAnterior);
+		if (!CommonsUtil.semValor(aumentoCapitalSocial))
+			result=result.add(aumentoCapitalSocial);
+		if (!CommonsUtil.semValor(distribuicao1Pago2))
+			result=result.add(distribuicao1Pago2);
+		if (!CommonsUtil.semValor(lucroAnterior))
+			result=result.add(lucroAnterior);
+		
+		return result;
+	}
+	
+	public BigDecimal getTotalCapitalSocial(){
+		BigDecimal result = BigDecimal.ZERO;
+		if (!CommonsUtil.semValor(capitalSocial))
+			result=result.add(capitalSocial);
+		
+		return result;
+	}
+	
+	public BigDecimal getTotalAcumuladosSemestreAnterior(){
+		BigDecimal result = BigDecimal.ZERO;
+		if (!CommonsUtil.semValor(lucrosAcumuladosAnoAnterior))
+			result=result.add(lucrosAcumuladosAnoAnterior);
+		if (!CommonsUtil.semValor(distribuicao2Pago1))
+			result=result.add(distribuicao2Pago1);
+		if (!CommonsUtil.semValor(lucroSemestreAnterior))
+			result=result.add(lucroSemestreAnterior);
+		if (!CommonsUtil.semValor(aumentoCapitalSocial))
+			result=result.add(aumentoCapitalSocial);
+		if (!CommonsUtil.semValor(distribuicao1Pago2))
+			result=result.add(distribuicao1Pago2);
+		if (!CommonsUtil.semValor(lucroAnterior))
+			result=result.add(lucroAnterior);
+		
 		return result;
 	}
 	
@@ -359,6 +509,102 @@ public class BalancoPatrimonial implements Serializable {
 
 	public void setAaaaMM(Date aaaaMM) {
 		this.aaaaMM = aaaaMM;
+	}
+	public BigDecimal getContaCorrenteClientes() {
+		return contaCorrenteClientes;
+	}
+	public void setContaCorrenteClientes(BigDecimal contaCorrenteClientes) {
+		this.contaCorrenteClientes = contaCorrenteClientes;
+	}
+	public BigDecimal getFornecedoresConsorcio() {
+		return fornecedoresConsorcio;
+	}
+	public void setFornecedoresConsorcio(BigDecimal fornecedoresConsorcio) {
+		this.fornecedoresConsorcio = fornecedoresConsorcio;
+	}
+	public BigDecimal getObrigacoesTributarias() {
+		return obrigacoesTributarias;
+	}
+	public void setObrigacoesTributarias(BigDecimal obrigacoesTributarias) {
+		this.obrigacoesTributarias = obrigacoesTributarias;
+	}
+	public BigDecimal getObrigacoesSociaisEstatutarias() {
+		return obrigacoesSociaisEstatutarias;
+	}
+	public void setObrigacoesSociaisEstatutarias(BigDecimal obrigacoesSociaisEstatutarias) {
+		this.obrigacoesSociaisEstatutarias = obrigacoesSociaisEstatutarias;
+	}
+	public BigDecimal getRecursosDebentures() {
+		return recursosDebentures;
+	}
+	public void setRecursosDebentures(BigDecimal recursosDebentures) {
+		this.recursosDebentures = recursosDebentures;
+	}
+	public BigDecimal getRecursosFidc() {
+		return recursosFidc;
+	}
+	public void setRecursosFidc(BigDecimal recursosFidc) {
+		this.recursosFidc = recursosFidc;
+	}
+	public BigDecimal getRecursosCri() {
+		return recursosCri;
+	}
+	public void setRecursosCri(BigDecimal recursosCri) {
+		this.recursosCri = recursosCri;
+	}
+	public BigDecimal getProvisaoLiquidAntecipada() {
+		return provisaoLiquidAntecipada;
+	}
+	public void setProvisaoLiquidAntecipada(BigDecimal provisaoLiquidAntecipada) {
+		this.provisaoLiquidAntecipada = provisaoLiquidAntecipada;
+	}
+	public BigDecimal getValorExigivelLongoPrazo() {
+		return valorExigivelLongoPrazo;
+	}
+	public void setValorExigivelLongoPrazo(BigDecimal valorExigivelLongoPrazo) {
+		this.valorExigivelLongoPrazo = valorExigivelLongoPrazo;
+	}
+	public BigDecimal getCapitalSocial() {
+		return capitalSocial;
+	}
+	public void setCapitalSocial(BigDecimal capitalSocial) {
+		this.capitalSocial = capitalSocial;
+	}
+	public BigDecimal getLucrosAcumuladosAnoAnterior() {
+		return lucrosAcumuladosAnoAnterior;
+	}
+	public void setLucrosAcumuladosAnoAnterior(BigDecimal lucrosAcumuladosAnoAnterior) {
+		this.lucrosAcumuladosAnoAnterior = lucrosAcumuladosAnoAnterior;
+	}
+	public BigDecimal getDistribuicao2Pago1() {
+		return distribuicao2Pago1;
+	}
+	public void setDistribuicao2Pago1(BigDecimal distribuicao2Pago1) {
+		this.distribuicao2Pago1 = distribuicao2Pago1;
+	}
+	public BigDecimal getLucroSemestreAnterior() {
+		return lucroSemestreAnterior;
+	}
+	public void setLucroSemestreAnterior(BigDecimal lucroSemestreAnterior) {
+		this.lucroSemestreAnterior = lucroSemestreAnterior;
+	}
+	public BigDecimal getAumentoCapitalSocial() {
+		return aumentoCapitalSocial;
+	}
+	public void setAumentoCapitalSocial(BigDecimal aumentoCapitalSocial) {
+		this.aumentoCapitalSocial = aumentoCapitalSocial;
+	}
+	public BigDecimal getDistribuicao1Pago2() {
+		return distribuicao1Pago2;
+	}
+	public void setDistribuicao1Pago2(BigDecimal distribuicao1Pago2) {
+		this.distribuicao1Pago2 = distribuicao1Pago2;
+	}
+	public BigDecimal getLucroAnterior() {
+		return lucroAnterior;
+	}
+	public void setLucroAnterior(BigDecimal lucroAnterior) {
+		this.lucroAnterior = lucroAnterior;
 	}
 
 }
