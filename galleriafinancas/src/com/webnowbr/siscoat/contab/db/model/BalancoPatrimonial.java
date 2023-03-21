@@ -90,6 +90,7 @@ public class BalancoPatrimonial implements Serializable {
 
 		return result;
 	}
+	//ATIVO
 	public BigDecimal getTotalCaixa(){
 		BigDecimal result = BigDecimal.ZERO;
 		if (!CommonsUtil.semValor(saldoCaixa))
@@ -111,6 +112,7 @@ public class BalancoPatrimonial implements Serializable {
 		return result;
 	}
 	
+	//ATIVO
 	public BigDecimal getTotalRealizavelCurtoPrazo(){
 		BigDecimal result = BigDecimal.ZERO;
 		if (!CommonsUtil.semValor(direitosCreditorios))
@@ -126,6 +128,7 @@ public class BalancoPatrimonial implements Serializable {
 		return result;
 	}
 	
+	//ATIVO
 	public BigDecimal getTotalAtivoCirculante(){
 		BigDecimal result = BigDecimal.ZERO;
 		if (!CommonsUtil.semValor(saldoCaixa))
@@ -156,6 +159,7 @@ public class BalancoPatrimonial implements Serializable {
 		return result;
 	}
 	
+	//ATIVO
 	public BigDecimal getTotalRealizavelLongoPrazo(){
 		BigDecimal result = BigDecimal.ZERO;
 		if (!CommonsUtil.semValor(depositosJudiciais))
@@ -165,6 +169,7 @@ public class BalancoPatrimonial implements Serializable {
 		return result;
 	}
 	
+	//ATIVO
 	public BigDecimal getTotalAtivoNaoCirculante(){
 		BigDecimal result = BigDecimal.ZERO;
 		if (!CommonsUtil.semValor(investimentos))
@@ -174,6 +179,7 @@ public class BalancoPatrimonial implements Serializable {
 		return result;
 	}
 	
+	//ATIVO
 	public BigDecimal getTotalInvestimentos(){
 		BigDecimal result = BigDecimal.ZERO;
 		if (!CommonsUtil.semValor(investimentos))
@@ -182,6 +188,7 @@ public class BalancoPatrimonial implements Serializable {
 		return result;
 	}
 	
+	//ATIVO
 	public BigDecimal getTotalImobilizados(){
 		BigDecimal result = BigDecimal.ZERO;
 		if (!CommonsUtil.semValor(bensImobilizados))
@@ -189,6 +196,7 @@ public class BalancoPatrimonial implements Serializable {
 		return result;
 	}
 	
+	//PASSIVO
 	public BigDecimal getTotalPassivo(){
 		BigDecimal result = BigDecimal.ZERO;
 		if (!CommonsUtil.semValor(contaCorrenteClientes))
@@ -227,6 +235,7 @@ public class BalancoPatrimonial implements Serializable {
 		return result;
 	}
 	
+	//PASSIVO
 	public BigDecimal getTotalPassivoCirculante(){
 		BigDecimal result = BigDecimal.ZERO;
 		if (!CommonsUtil.semValor(contaCorrenteClientes))
@@ -248,6 +257,7 @@ public class BalancoPatrimonial implements Serializable {
 		return result;
 	}
 	
+	//PASSIVO
 	public BigDecimal getTotalExigivelCurtoPrazo(){
 		BigDecimal result = BigDecimal.ZERO;
 		if (!CommonsUtil.semValor(contaCorrenteClientes))
@@ -269,6 +279,7 @@ public class BalancoPatrimonial implements Serializable {
 	}
 	
 	
+	//PASSIVO
 	public BigDecimal getTotalExigivelLongoPrazo(){
 		BigDecimal result = BigDecimal.ZERO;
 		if (!CommonsUtil.semValor(valorExigivelLongoPrazo))
@@ -277,6 +288,7 @@ public class BalancoPatrimonial implements Serializable {
 		return result;
 	}
 	
+	//PASSIVO
 	public BigDecimal getTotalPatrimonioLiquido(){
 		BigDecimal result = BigDecimal.ZERO;
 		if (!CommonsUtil.semValor(capitalSocial))
@@ -297,6 +309,7 @@ public class BalancoPatrimonial implements Serializable {
 		return result;
 	}
 	
+	//PASSIVO
 	public BigDecimal getTotalCapitalSocial(){
 		BigDecimal result = BigDecimal.ZERO;
 		if (!CommonsUtil.semValor(capitalSocial))
@@ -305,6 +318,7 @@ public class BalancoPatrimonial implements Serializable {
 		return result;
 	}
 	
+	//PASSIVO
 	public BigDecimal getTotalAcumuladosSemestreAnterior(){
 		BigDecimal result = BigDecimal.ZERO;
 		if (!CommonsUtil.semValor(lucrosAcumuladosAnoAnterior))

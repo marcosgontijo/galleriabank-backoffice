@@ -10,6 +10,7 @@
             <column name="ID" />
             <generator class="increment" />
         </id>
+<!--ATIVO-->
 		<property name="saldo_total_api" type="big_decimal">
 			<column name="saldo_total_api" /></property>
 		<property name="aaaaMM" type="java.util.Date">
@@ -30,6 +31,9 @@
 		<property name="depositosJudiciais" type="big_decimal"></property>
 		<property name="investOperAntigas" type="big_decimal"></property>
  		<property name="investimentos" type="big_decimal"></property>
+ 		<property name="bensImobilizados" type="big_decimal"></property>
+ 		
+<!--PASSIVO-->
  		<property name="contaCorrenteClientes" type="big_decimal"></property>
  		<property name="fornecedoresConsorcio" type="big_decimal"></property>
  		<property name="obrigacoesTributarias" type="big_decimal"></property>
