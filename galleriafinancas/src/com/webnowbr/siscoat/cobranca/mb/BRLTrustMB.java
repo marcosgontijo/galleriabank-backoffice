@@ -2065,8 +2065,14 @@ public class BRLTrustMB {
 				jsonValores.put("aquisicao", calcularValorPresenteParcela(parcela.getId(), parcela.getContrato().getTxJurosParcelas(), parcela.getContrato().getDataAquisicaoCessao()));
 			}
 			
-			//jsonValores.put("liquidacao", parcela.getVlrRecebido());
-			jsonValores.put("liquidacao", parcela.getVlrJurosParcela().add(parcela.getVlrAmortizacaoParcela()));
+			BigDecimal valorParcelaOriginal = parcela.getVlrJurosParcela().add(parcela.getVlrAmortizacaoParcela());
+			
+			if (parcela.getDataPagamento().before(parcela.getDataVencimento()) &&
+					parcela.getVlrRecebido().compareTo(valorParcelaOriginal) < 0) {
+				jsonValores.put("liquidacao", parcela.getVlrRecebido());
+			} else {	
+				jsonValores.put("liquidacao", valorParcelaOriginal); 
+			}
 			
 			jsonRecebivel.put("valores", jsonValores);
 			
@@ -2269,7 +2275,14 @@ public class BRLTrustMB {
 			jsonValores.put("aquisicao", calcularValorPresenteParcela(parcelaLiquidacao.getId(), parcelaLiquidacao.getContrato().getTxJurosParcelas(), parcelaLiquidacao.getContrato().getDataAquisicaoCessao()));
 		}
 		
-		jsonValores.put("liquidacao", this.parcelaLiquidacao.getVlrRecebido());
+		BigDecimal valorParcelaOriginal = this.parcelaLiquidacao.getVlrJurosParcela().add(this.parcelaLiquidacao.getVlrAmortizacaoParcela());
+		
+		if (this.parcelaLiquidacao.getDataPagamento().before(this.parcelaLiquidacao.getDataVencimento()) &&
+				this.parcelaLiquidacao.getVlrRecebido().compareTo(valorParcelaOriginal) < 0) {
+			jsonValores.put("liquidacao", this.parcelaLiquidacao.getVlrRecebido());
+		} else {	
+			jsonValores.put("liquidacao", valorParcelaOriginal); 
+		} 	
 		
 		jsonRecebivel.put("valores", jsonValores);
 		
