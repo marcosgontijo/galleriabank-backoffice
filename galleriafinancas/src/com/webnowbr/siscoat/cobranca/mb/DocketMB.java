@@ -27,6 +27,7 @@ import javax.faces.model.SelectItem;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.primefaces.PrimeFaces;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.Docket;
@@ -70,9 +71,7 @@ public class DocketMB {
 	
 	private List<PagadorRecebedor> listRecebedorPagador;	//lista de consulta
 	private List<ContratoCobranca> listaContratosConsultar;	//lista de consulta
-	private PagadorRecebedor selectedPagadorGenerico; //usado para consulta	de pessoa
 	private PagadorRecebedor selectedPagadorDocumentos; //usado para consulta de docs
-	String updatePagadorRecebedor = ":form";
 	private PagadorRecebedor pagadorAdicionar;
 	private boolean tipoPessoaIsFisica;
 	
@@ -86,6 +85,11 @@ public class DocketMB {
 	private List<DocketCidades> listaCidadesImovel;
 	private String estadoImovel;
 	private String cidadeImovel;
+	
+	private List<DocumentosPagadorDocket> listaLocalidades;
+	private DocumentosPagadorDocket localidadesSelecionada;
+
+	
 	private Docket docket = new Docket();
 	
 	public DocketMB() {
@@ -113,6 +117,9 @@ public class DocketMB {
 		estadoImovel = null;
 		cidadeImovel = null;
 		docket = new Docket();
+		
+		listaLocalidades = new ArrayList<DocumentosPagadorDocket>();
+		localidadesSelecionada = new DocumentosPagadorDocket();
 		
 		DocumentosDocketDao docDao = new DocumentosDocketDao();	
 		listaDococumentosDocket = docDao.findAll();
@@ -242,12 +249,12 @@ public class DocketMB {
 	public void pegarListaCidadesImovel() {
 		DocketCidadesDao dcDao = new DocketCidadesDao();
 		List<DocketCidades> lista = new ArrayList<DocketCidades>();
-		lista = dcDao.getListaCidades(estadoSelecionadoImovel.getUf());
+		lista = dcDao.getListaCidades(localidadesSelecionada.getEstadoSelecionado().getUf());
 		if(CommonsUtil.semValor(lista)) {
-			pegarCidadesPorEstadoID(estadoSelecionadoImovel.getIdDocket());
-			lista = dcDao.getListaCidades(estadoSelecionadoImovel.getUf());
+			pegarCidadesPorEstadoID(localidadesSelecionada.getEstadoSelecionado().getIdDocket());
+			lista = dcDao.getListaCidades(localidadesSelecionada.getEstadoSelecionado().getUf());
 		}
-		this.setListaCidadesImovel(lista);
+		listaCidadesImovel = lista;
 	}
 	
 	public void pegarCidadesPorEstadoID(String estadoID) {	//GET pra pegar cidades na API
@@ -594,13 +601,6 @@ public class DocketMB {
 		this.listaContratosConsultar = cDao.consultaContratosDocket();
 	}	
 	
-	public void pesquisaPagadorRecebedor() {
-		PagadorRecebedorDao pDao = new PagadorRecebedorDao();
-		listRecebedorPagador = new ArrayList<PagadorRecebedor>();
-		this.listRecebedorPagador = pDao.getPagadoresRecebedores();
-		selectedPagadorGenerico = new PagadorRecebedor();
-	}
-	
 	public void clearContratoCobranca() {
 		
 	}
@@ -617,32 +617,37 @@ public class DocketMB {
 		//if(CommonsUtil.semValor(this.objetoContratoCobranca)){
 			this.objetoContratoCobranca = contrato;
 			if(!CommonsUtil.semValor(imovel.getEstado())) {
-				this.setEstadoSelecionadoImovel(EstadosEnum.getByUf(imovel.getEstado()));
+				localidadesSelecionada.setEstadoSelecionado(EstadosEnum.getByUf(imovel.getEstado()));
 			}
 			if(!CommonsUtil.semValor(imovel.getCidade())) {
-				setCidadeImovel(imovel.getCidade());
+				localidadesSelecionada.setCidade(imovel.getCidade());
+				localidadesSelecionada.getCidadeDocketId();
 			}
 			pegarListaCidadesImovel();
 			
-			adiconarDocumentospagador(contrato.getPagador());
-			listaPagador.add(contrato.getPagador());
+			if(!CommonsUtil.semValor(localidadesSelecionada.getCidadeId())) {
+				inserirLocalidade();
+			}
 			
-			this.atualizaTodosDocumentos(); 
-			
+			//adiconarDocumentospagador(contrato.getPagador());
+			//listaPagador.add(contrato.getPagador());
+			pagadorAdicionar = new PagadorRecebedor();
+			pagadorAdicionar = contrato.getPagador();
+			if(!CommonsUtil.semValor(pagadorAdicionar.getCpf())) {
+				tipoPessoaIsFisica = true;
+			} else { 
+				tipoPessoaIsFisica 
+				= false;
+			}
+			PrimeFaces current = PrimeFaces.current();
+			current.executeScript("PF('pessoaDialog').show();");
+						
 			if(docketDao.findByFilter("objetoContratoCobranca", contrato).size() > 0) {
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Pedido desse contrato já existe!", ""));	
 			}
 		//}
 	}
-	
-	public void populateSelectedPagadorRecebedor() {
-		PagadorRecebedorDao pDao = new PagadorRecebedorDao();
-		selectedPagadorGenerico = pDao.findById(selectedPagadorGenerico.getId());
-		adiconarDocumentospagador(selectedPagadorGenerico);
-		listaPagador.add(selectedPagadorGenerico);
-		selectedPagadorGenerico = new PagadorRecebedor();
-	}
-	
+		
 	public void removeDoc(PagadorRecebedor pagador, DocumentosPagadorDocket doc) {
 		pagador.getDocumentosDocket().remove(doc);
 	}
@@ -653,15 +658,19 @@ public class DocketMB {
 	}
 	
 	public void adiconarDocumentospagador(PagadorRecebedor pagador) {
+		adiconarDocumentospagador(pagador, estadoSelecionadoImovel, cidadeImovel);
+	}
+	
+	public void adiconarDocumentospagador(PagadorRecebedor pagador, EstadosEnum estado,  String cidadeImovel) {
 		DocumentosDocketDao docDao = new DocumentosDocketDao();
 		List<DocumentosDocket> listaDocs = docDao.findAll();
-		if(CommonsUtil.semValor(pagador.getDocumentosDocket())) {
+		//if(CommonsUtil.semValor(pagador.getDocumentosDocket())) {
 			for(DocumentosDocket doc : listaDocs) {
 				DocumentosPagadorDocket docPagador = new DocumentosPagadorDocket(doc);
-				if(!CommonsUtil.semValor(estadoSelecionadoImovel)) {
-					docPagador.setEstadoSelecionado(estadoSelecionadoImovel);
-					if(CommonsUtil.mesmoValor(estadoSelecionadoImovel.getUf(), "RJ")
-						||CommonsUtil.mesmoValor(estadoSelecionadoImovel.getUf(), "PR")) {
+				if(!CommonsUtil.semValor(estado)) {
+					docPagador.setEstadoSelecionado(estado);
+					if(CommonsUtil.mesmoValor(estado.getUf(), "RJ")
+						||CommonsUtil.mesmoValor(estado.getUf(), "PR")) {
 						if(CommonsUtil.mesmoValor(doc.getDocumentoNome(), 
 								"Certidão de Distribuição de Ações Criminais - Justiça Estadual (1° instância)")
 							|| CommonsUtil.mesmoValor(doc.getDocumentoNome(),
@@ -675,12 +684,12 @@ public class DocketMB {
 					}
 				}
 				if(CommonsUtil.mesmoValor(doc.getDocumentoNome(), "Certidão de Distribuição de Ações Trabalhistas - Tribunal Regional do Trabalho (1° instância)")
-					&& CommonsUtil.mesmoValor(estadoSelecionadoImovel.getUf(), "SP")) {
+					&& CommonsUtil.mesmoValor(estado.getUf(), "SP")) {
 					docPagador.setCidade("São Paulo");
 					docPagador.getCidadeDocketId();
 					docPagador.setTravado(true);
 					DocumentosPagadorDocket trtCampinas = new DocumentosPagadorDocket(doc);
-					trtCampinas.setEstadoSelecionado(estadoSelecionadoImovel);
+					trtCampinas.setEstadoSelecionado(estado);
 					trtCampinas.setCidade("Campinas");
 					trtCampinas.getCidadeDocketId();
 					trtCampinas.setTravado(true);
@@ -691,11 +700,7 @@ public class DocketMB {
 				} 
 				pagador.getDocumentosDocket().add(docPagador);
 			}
-		}		
-	}
-	
-	public void clearPagadorRecebedor() {
-		this.selectedPagadorGenerico = new PagadorRecebedor();
+		//}		
 	}
 
 	public List<SelectItem> pesquisaEstadosListaNome() {
@@ -707,8 +712,7 @@ public class DocketMB {
 		}
 		return listaEstados;
 	}
-	
-	
+		
 	public List<String> completeCidades(String query) {
 		String queryLowerCase = query.toLowerCase();
 		List<String> cidades = new ArrayList<>();
@@ -735,37 +739,33 @@ public class DocketMB {
 		return cidades.stream().filter(t -> t.toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());
 	 }
 	
-	public void atualizaTodosDocumentos() {
-		if(CommonsUtil.semValor(listaPagador)) {
-			return;
-		}
-		for(PagadorRecebedor pagador : listaPagador) {
-			if(CommonsUtil.semValor(pagador.getDocumentosDocket()) 
-					|| CommonsUtil.semValor(estadoSelecionadoImovel) 
-					|| CommonsUtil.semValor(cidadeImovel)
-					|| CommonsUtil.semValor(listaCidadesImovel)) {
-				return;
-			}
-			for(DocumentosPagadorDocket doc : pagador.getDocumentosDocket()) {
-				if(doc.isTravado()) {
-					continue;
-				}
-				doc.setEstadoSelecionado(estadoSelecionadoImovel);
-				doc.setListaCidades(listaCidadesImovel);
-				doc.setCidade(cidadeImovel);
-				doc.getCidadeDocketId();
-			}		
-		}	                                         
-		return;
-	}
-	
 	public void clearPessoaDialog() {
 		pagadorAdicionar = new PagadorRecebedor();
 		tipoPessoaIsFisica = true;
 	}
 	
+	public void populateCidadeLocalidade() {
+		localidadesSelecionada.getCidadeDocketId();
+	}
+	
+	public void inserirLocalidade() {
+		if(CommonsUtil.semValor(localidadesSelecionada.getCidadeId()) 
+				|| CommonsUtil.semValor(localidadesSelecionada.getEstadoId())) {
+			return;
+		}
+		listaLocalidades.add(localidadesSelecionada);
+		localidadesSelecionada = new DocumentosPagadorDocket();
+	}
+	
+	public void removerLocalidade(DocumentosPagadorDocket local) {
+		listaLocalidades.remove(local);
+	}
+	
 	public void inserirPessoa() {
-		adiconarDocumentospagador(pagadorAdicionar);
+		for(DocumentosPagadorDocket doc : listaLocalidades) {
+			adiconarDocumentospagador(pagadorAdicionar,doc.getEstadoSelecionado(), doc.getCidade());
+		}
+		
 		if(pagadorAdicionar.getId() <= 0) {
 			PagadorRecebedorDao pDao = new PagadorRecebedorDao();
 			pDao.create(pagadorAdicionar);
@@ -841,7 +841,6 @@ public class DocketMB {
 		return usuario;
 	}
 	
-		
 	public List<ContratoCobranca> getListaContratosConsultar() {
 		return listaContratosConsultar;
 	}
@@ -872,22 +871,6 @@ public class DocketMB {
 
 	public void setListRecebedorPagador(List<PagadorRecebedor> listRecebedorPagador) {
 		this.listRecebedorPagador = listRecebedorPagador;
-	}
-
-	public PagadorRecebedor getSelectedPagadorGenerico() {
-		return selectedPagadorGenerico;
-	}
-
-	public void setSelectedPagadorGenerico(PagadorRecebedor selectedPagadorGenerico) {
-		this.selectedPagadorGenerico = selectedPagadorGenerico;
-	}
-
-	public String getUpdatePagadorRecebedor() {
-		return updatePagadorRecebedor;
-	}
-
-	public void setUpdatePagadorRecebedor(String updatePagadorRecebedor) {
-		this.updatePagadorRecebedor = updatePagadorRecebedor;
 	}
 
 	public List<DocumentosDocket> getListaDococumentosDocket() {
@@ -981,6 +964,22 @@ public class DocketMB {
 
 	public void setTipoPessoaIsFisica(boolean tipoPessoaIsFisica) {
 		this.tipoPessoaIsFisica = tipoPessoaIsFisica;
+	}
+
+	public List<DocumentosPagadorDocket> getListaLocalidades() {
+		return listaLocalidades;
+	}
+
+	public void setListaLocalidades(List<DocumentosPagadorDocket> listaLocalidades) {
+		this.listaLocalidades = listaLocalidades;
+	}
+
+	public DocumentosPagadorDocket getLocalidadesSelecionada() {
+		return localidadesSelecionada;
+	}
+
+	public void setLocalidadesSelecionada(DocumentosPagadorDocket localidadesSelecionada) {
+		this.localidadesSelecionada = localidadesSelecionada;
 	}	
-				
+
 }
