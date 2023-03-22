@@ -692,6 +692,16 @@ public class DocketMB {
 						}	
 					}
 				}
+				
+				if(CommonsUtil.mesmoValor(doc.getDocumentoNome(), 
+						"Certidão Conjunta de Débitos Relativos a Tributos Federais e a Dívida Ativa da União - Receita Federal")
+					|| CommonsUtil.mesmoValor(doc.getDocumentoNome(),
+							"Certidão Negativa de Débitos Trabalhistas - CNDT")) {
+					if(pagador.getDocumentosDocket().size() > 0 ) {
+						continue;
+					}
+				}
+				
 				if(CommonsUtil.mesmoValor(doc.getDocumentoNome(), "Certidão de Distribuição de Ações Trabalhistas - Tribunal Regional do Trabalho (1° instância)")
 					&& CommonsUtil.mesmoValor(estado.getUf(), "SP")) {
 					docPagador.setCidade("São Paulo");
