@@ -178,7 +178,10 @@
 						icon="ui-icon ui-icon-print" value="Fazer Pedido"  update=":form  msgs" />			
 				</h:panelGrid>
 			</p:panel>
-			
+			<h:panelGrid columns="3">	
+				<p:commandButton action="#{dataEngineMB.pedirEngineDocket(docketMB.docket)}"
+					icon="ui-icon ui-icon-print" value="Pedir Engine"  update=":form  msgs" />			
+			</h:panelGrid>
 		</h:form>
 	
 		<p:dialog header="Documentos" widgetVar="documentosDialog"

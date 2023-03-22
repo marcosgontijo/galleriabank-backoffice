@@ -29,6 +29,7 @@ import org.json.JSONObject;
 import org.primefaces.model.StreamedContent;
 
 import com.webnowbr.siscoat.cobranca.db.model.DataEngine;
+import com.webnowbr.siscoat.cobranca.db.model.Docket;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.DataEngineDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
@@ -72,6 +73,15 @@ public class DataEngineMB {
 	
 	public String clearFieldsDataEngine() {
 		listEngine = new ArrayList<DataEngine>();
+		return "/Atendimento/Cobranca/DataEngine.xhtml";
+	}
+	
+	public String pedirEngineDocket(Docket docket) {
+		listEngine = new ArrayList<DataEngine>();
+		for(PagadorRecebedor pagador : docket.getListaPagador()) {
+			pagadorAdicionar = pagador;
+			inserirPessoa();
+		}
 		return "/Atendimento/Cobranca/DataEngine.xhtml";
 	}
 	
