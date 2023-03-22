@@ -28,9 +28,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.primefaces.model.StreamedContent;
 
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.DataEngine;
 import com.webnowbr.siscoat.cobranca.db.model.Docket;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
+import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.DataEngineDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -66,6 +68,7 @@ public class DataEngineMB {
 	private boolean tipoPessoaIsFisica;
 	private List<DataEngine> listEngine;
 	private PagadorRecebedor pagadorAdicionar;
+	private ContratoCobranca objetoContratoCobranca;
 	
 	public DataEngineMB() {
 		
@@ -73,23 +76,29 @@ public class DataEngineMB {
 	
 	public String clearFieldsDataEngine() {
 		listEngine = new ArrayList<DataEngine>();
+		this.objetoContratoCobranca = new ContratoCobranca();
 		return "/Atendimento/Cobranca/DataEngine.xhtml";
 	}
 	
-	public String pedirEngineDocket(Docket docket) {
+	public String clearFieldsContratoCobranca(ContratoCobranca contrato) { 
+		clearFieldsDataEngine();
+		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+		this.objetoContratoCobranca = cDao.findById(contrato.getId());  
+		PagadorRecebedorDao pDao = new PagadorRecebedorDao();
+		pagadorAdicionar = pDao.findById(contrato.getPagador().getId());
+		inserirPessoa();
+		return "/Atendimento/Cobranca/DataEngine.xhtml";
+	}
+	
+	public String pedirEngineDocket( List<PagadorRecebedor> lista, ContratoCobranca contrato) {
+		objetoContratoCobranca = contrato;
 		listEngine = new ArrayList<DataEngine>();
-		for(PagadorRecebedor pagador : docket.getListaPagador()) {
+		for(PagadorRecebedor pagador : lista) {
 			pagadorAdicionar = pagador;
 			inserirPessoa();
 		}
 		return "/Atendimento/Cobranca/DataEngine.xhtml";
 	}
-	
-	/*public void testeConsulta() {
-		PagadorRecebedorDao pDao = new PagadorRecebedorDao();
-		PagadorRecebedor pagador = pDao.findById((long) 28081);
-		criarConsulta(pagador);
-	}*/
 	
 	public void baixarDocumento(DataEngine engine) {
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -311,7 +320,6 @@ public class DataEngineMB {
 		return null;
 	}
 
-
 	public StreamedContent decodarBaixarArquivo(String base64) {
 		byte[] decoded = Base64.getDecoder().decode(base64);
 		
@@ -375,6 +383,9 @@ public class DataEngineMB {
 		if(CommonsUtil.semValor(engine)) {
 			engine = new DataEngine(pagadorAdicionar);
 		}	
+		if(!CommonsUtil.semValor(objetoContratoCobranca)) {
+			engine.setContrato(objetoContratoCobranca);
+		}
 		
 		this.listEngine.add(engine);
 		
@@ -484,6 +495,14 @@ public class DataEngineMB {
 
 	public void setPagadorAdicionar(PagadorRecebedor pagadorAdicionar) {
 		this.pagadorAdicionar = pagadorAdicionar;
+	}
+
+	public ContratoCobranca getObjetoContratoCobranca() {
+		return objetoContratoCobranca;
+	}
+
+	public void setObjetoContratoCobranca(ContratoCobranca objetoContratoCobranca) {
+		this.objetoContratoCobranca = objetoContratoCobranca;
 	}	
 	
 	

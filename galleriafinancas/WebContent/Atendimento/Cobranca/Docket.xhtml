@@ -48,45 +48,7 @@
 					</h:panelGrid>
 				
 					
-					<h:panelGrid columns="2" id="grid">
-						<p:dataView var="local" style="min-width: 150px;"
-							value="#{docketMB.listaLocalidades}"
-							paginator="false" layout="list">
-							<p:dataViewListItem>
-								<p:outputLabel value="#{local.estado} - #{local.cidade}" styleClass="labelBold" />
-								<p:spacer width="10px"></p:spacer>
-								<p:commandButton ajax="false" icon="ui-icon-trash"
-									action="#{docketMB.removerLocalidade(local)}"
-									update="grid" />
-							</p:dataViewListItem>
-						</p:dataView>
-	
-						<h:panelGroup id="locaisValor">
-							<h:panelGrid columns="3">
-								<p:outputLabel value="Estado" style="FONT-SIZE: 10pt;" />
-								<h:selectOneMenu value="#{docketMB.localidadesSelecionada.estadoSelecionado}" >								
-									<f:selectItems value="#{docketMB.listaEstados}" var="estado"
-										itemValue="#{estado}" itemLabel="#{estado}" />		
-									<p:ajax update="locaisValor" event="change" listener="#{docketMB.pegarListaCidadesImovel}"/>										
-								</h:selectOneMenu>
-								<p:outputLabel value="#{docketMB.localidadesSelecionada.estadoId}" style="FONT-SIZE: 10pt;" />
-								<p:outputLabel value="Cidade" style="FONT-SIZE: 10pt;" />
-								<p:autoComplete id="cidadesImovel" value="#{docketMB.localidadesSelecionada.cidade}"
-									completeMethod="#{docketMB.completeCidadesImovel}" autocomplete="no" 
-									var="cidade" itemLabel="#{cidade}" itemValue="#{cidade}"  dropdown="true"
-									forceSelection="true"
-									scrollHeight="250">
-									<p:ajax update="grid" event="itemSelect" listener="#{docketMB.populateCidadeLocalidade}" /> 
-								</p:autoComplete>
-								<p:outputLabel value="#{docketMB.localidadesSelecionada.cidadeId}" style="FONT-SIZE: 10pt;" />
-							</h:panelGrid>
-							<p:commandButton value="Inserir local" ajax="false"
-								icon="ui-icon-check"
-								action="#{docketMB.inserirLocalidade}"
-								update="grid">
-							</p:commandButton>
-						</h:panelGroup>
-					</h:panelGrid>
+					
 				
 				</h:panelGrid>	
 				
@@ -178,10 +140,8 @@
 						icon="ui-icon ui-icon-print" value="Fazer Pedido"  update=":form  msgs" />			
 				</h:panelGrid>
 			</p:panel>
-			<h:panelGrid columns="3">	
-				<p:commandButton action="#{dataEngineMB.pedirEngineDocket(docketMB.docket)}"
-					icon="ui-icon ui-icon-print" value="Pedir Engine"  update=":form  msgs" />			
-			</h:panelGrid>
+			<p:commandButton action="#{dataEngineMB.pedirEngineDocket(docketMB.listaPagador, docketMB.objetoContratoCobranca)}"
+				icon="ui-icon ui-icon-print" value="Pedir Engine"  update=":form  msgs" />			
 		</h:form>
 	
 		<p:dialog header="Documentos" widgetVar="documentosDialog"
@@ -354,6 +314,7 @@
 						style="margin-bottom:50px; margin-top:10px"/>	
 				</div>
 			</h:form>
+			<p:ajax event="close" listener="#{docketMB.closeDialog}" update="pessoaDialogdlg" />
 		</p:dialog>
 		
 	</ui:define>

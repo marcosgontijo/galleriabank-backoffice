@@ -30,6 +30,7 @@ import org.json.JSONObject;
 import org.primefaces.PrimeFaces;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.DataEngine;
 import com.webnowbr.siscoat.cobranca.db.model.Docket;
 import com.webnowbr.siscoat.cobranca.db.model.DocketCidades;
 import com.webnowbr.siscoat.cobranca.db.model.DocketEstados;
@@ -88,8 +89,8 @@ public class DocketMB {
 	
 	private List<DocumentosPagadorDocket> listaLocalidades;
 	private DocumentosPagadorDocket localidadesSelecionada;
+	private List<PagadorRecebedor> listaEsperaPagador;
 
-	
 	private Docket docket = new Docket();
 	
 	public DocketMB() {
@@ -100,6 +101,7 @@ public class DocketMB {
 		listaEstados = pesquisaEstadosListaNome(); 
 		objetoContratoCobranca = new ContratoCobranca(); 
 		listaPagador = new ArrayList<PagadorRecebedor>(); 
+		listaEsperaPagador = new ArrayList<PagadorRecebedor>();
 		clearContratoCobranca();
 	}
 	
@@ -123,6 +125,8 @@ public class DocketMB {
 		
 		DocumentosDocketDao docDao = new DocumentosDocketDao();	
 		listaDococumentosDocket = docDao.findAll();
+		
+		listaEsperaPagador = new ArrayList<PagadorRecebedor>();
 
 		for(DocumentosDocket doc : listaDococumentosDocket) {
 			DocumentosPagadorDocket docPagador = new DocumentosPagadorDocket();
@@ -136,6 +140,20 @@ public class DocketMB {
 		clearFieldsDocket();
 		this.objetoContratoCobranca = contrato;  
 		populateSelectedContratoCobranca();
+		return "/Atendimento/Cobranca/Docket.xhtml";
+	}
+	
+	public String clearFieldsEngine(ContratoCobranca contrato, List<DataEngine> lista) { //chama clearFields populado com dados do contrato
+		clearFieldsDocket();
+		this.objetoContratoCobranca = contrato; 
+		populateSelectedContratoCobranca();	
+		for(DataEngine engine : lista) {
+			PagadorRecebedor pagador = engine.getPagador();
+			if(CommonsUtil.mesmoValor(pagador.getNome(), contrato.getPagador().getNome())) {
+				continue;
+			}
+			listaEsperaPagador.add(pagador);
+		}
 		return "/Atendimento/Cobranca/Docket.xhtml";
 	}
 	
@@ -628,19 +646,10 @@ public class DocketMB {
 			if(!CommonsUtil.semValor(localidadesSelecionada.getCidadeId())) {
 				inserirLocalidade();
 			}
-			
-			//adiconarDocumentospagador(contrato.getPagador());
-			//listaPagador.add(contrato.getPagador());
-			pagadorAdicionar = new PagadorRecebedor();
-			pagadorAdicionar = contrato.getPagador();
-			if(!CommonsUtil.semValor(pagadorAdicionar.getCpf())) {
-				tipoPessoaIsFisica = true;
-			} else { 
-				tipoPessoaIsFisica 
-				= false;
-			}
-			PrimeFaces current = PrimeFaces.current();
-			current.executeScript("PF('pessoaDialog').show();");
+			PagadorRecebedorDao pDao = new PagadorRecebedorDao();
+			PagadorRecebedor pagador = pDao.findById(contrato.getPagador().getId());
+		
+			adicionarPagadorOpendialog(pagador);
 						
 			if(docketDao.findByFilter("objetoContratoCobranca", contrato).size() > 0) {
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Pedido desse contrato já existe!", ""));	
@@ -742,6 +751,28 @@ public class DocketMB {
 	public void clearPessoaDialog() {
 		pagadorAdicionar = new PagadorRecebedor();
 		tipoPessoaIsFisica = true;
+		listaEsperaPagador.add(pagadorAdicionar);
+	}
+	
+	public void adicionarPagadorOpendialog(PagadorRecebedor pagador){
+		pagadorAdicionar = pagador;
+		if(!CommonsUtil.semValor(pagadorAdicionar.getCpf())) {
+			tipoPessoaIsFisica = true;
+		} else { 
+			tipoPessoaIsFisica = false;
+		}
+		PrimeFaces current = PrimeFaces.current();
+		current.executeScript("PF('pessoaDialog').show();");
+	}
+	
+	public void closeDialog() {
+		listaEsperaPagador.remove(pagadorAdicionar);
+		
+		if(listaEsperaPagador.size() > 0) {
+			adicionarPagadorOpendialog(listaEsperaPagador.get(0));
+		} else {
+			pagadorAdicionar = new PagadorRecebedor();
+		}
 	}
 	
 	public void populateCidadeLocalidade() {
@@ -762,6 +793,7 @@ public class DocketMB {
 	}
 	
 	public void inserirPessoa() {
+		pagadorAdicionar.getDocumentosDocket().clear();
 		for(DocumentosPagadorDocket doc : listaLocalidades) {
 			adiconarDocumentospagador(pagadorAdicionar,doc.getEstadoSelecionado(), doc.getCidade());
 		}
@@ -770,9 +802,15 @@ public class DocketMB {
 			PagadorRecebedorDao pDao = new PagadorRecebedorDao();
 			pDao.create(pagadorAdicionar);
 		}
-		this.listaPagador.add(pagadorAdicionar);
 		
-		pagadorAdicionar = new PagadorRecebedor();
+		this.listaPagador.add(pagadorAdicionar);
+		this.listaEsperaPagador.remove(pagadorAdicionar);
+		
+		if(listaEsperaPagador.size() > 0) {
+			adicionarPagadorOpendialog(listaEsperaPagador.get(0));
+		} else {
+			pagadorAdicionar = new PagadorRecebedor();
+		}
 	}
 	
 	public void procurarPF() {

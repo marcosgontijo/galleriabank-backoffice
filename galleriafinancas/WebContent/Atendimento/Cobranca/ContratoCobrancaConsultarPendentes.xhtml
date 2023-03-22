@@ -166,6 +166,7 @@
 							and contratos.aprovadoComite == true}"
 						action="#{contratoCobrancaMB.downloadAprovadoComitePDF(contratos.id)}" />
 						<p:commandButton value="Certidões Docket" action="#{docketMB.clearFieldsContratoCobranca(contratos)}"/>	
+						<p:commandButton value="Data Engine" action="#{dataEngineMB.clearFieldsContratoCobranca(contratos)}"/>
 						<shiro:hasAnyRoles name="ROOT, PROFILE_GERENTE_ANALISE"> 
 							<p:commandButton value="Baixar" action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-arrowthick-1-s" title="Baixar">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />

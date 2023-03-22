@@ -13,6 +13,7 @@ public class DataEngine implements Serializable {
 	private String pdfBase64;
 	private String usuario;
 	private Date data;
+	private ContratoCobranca contrato;
 	
 	
 	public DataEngine(){
@@ -88,5 +89,15 @@ public class DataEngine implements Serializable {
 	public void setData(Date data) {
 		this.data = data;
 	}
+
+	public ContratoCobranca getContrato() {
+		return contrato;
+	}
+
+	public void setContrato(ContratoCobranca contrato) {
+		this.contrato = contrato;
+	}
+	
+	
 	
 }

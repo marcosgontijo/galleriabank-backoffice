@@ -64,6 +64,9 @@
 						</h:panelGrid>		
 					</p:dataList>
 				</h:panelGroup>
+			
+				<p:commandButton action="#{docketMB.clearFieldsEngine(dataEngineMB.objetoContratoCobranca, dataEngineMB.listEngine)}"
+				icon="ui-icon ui-icon-print" value="Pedir Docket"  update=":form  msgs" />		
 			</p:panel>		
 		</h:form>
 	
