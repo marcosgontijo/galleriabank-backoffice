@@ -130,10 +130,8 @@ public class DataEngineMB {
 			int HTTP_COD_SUCESSO = 200;
 			int HTTP_COD_SUCESSO2 = 201;
 			
-			URL myURL;
-			if(SiscoatConstants.DEV) {
-				myURL = new URL(url + "/api/callmanager");
-			}
+			URL myURL;		
+			myURL = new URL(url + "/api/callmanager");
 			
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();		
 			myURLConnection.setRequestMethod("POST");
@@ -197,9 +195,7 @@ public class DataEngineMB {
 			int HTTP_COD_SUCESSO = 200;
 			
 			URL myURL;
-			if(SiscoatConstants.DEV) {
-				myURL = new URL(url + "/dossie/"+ idproviderFlow + "/"+ engine.getIdCallManager() + "?base64=true");
-			}
+			myURL = new URL(url + "/dossie/"+ idproviderFlow + "/"+ engine.getIdCallManager() + "?base64=true");		
 	
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();		
 			myURLConnection.setRequestMethod("GET");

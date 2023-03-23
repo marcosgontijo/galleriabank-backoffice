@@ -675,6 +675,7 @@ public class DocketMB {
 		List<DocumentosDocket> listaDocs = docDao.findAll();
 		//if(CommonsUtil.semValor(pagador.getDocumentosDocket())) {
 			for(DocumentosDocket doc : listaDocs) {
+				boolean addDoc = true;
 				DocumentosPagadorDocket docPagador = new DocumentosPagadorDocket(doc);
 				if(!CommonsUtil.semValor(estado)) {
 					docPagador.setEstadoSelecionado(estado);
@@ -694,11 +695,22 @@ public class DocketMB {
 				}
 				
 				if(CommonsUtil.mesmoValor(doc.getDocumentoNome(), 
-						"Certidão Conjunta de Débitos Relativos a Tributos Federais e a Dívida Ativa da União - Receita Federal")
-					|| CommonsUtil.mesmoValor(doc.getDocumentoNome(),
-							"Certidão Negativa de Débitos Trabalhistas - CNDT")) {
-					if(pagador.getDocumentosDocket().size() > 0 ) {
-						continue;
+						"Certidão Conjunta de Débitos Relativos a Tributos Federais e a Dívida Ativa da União - Receita Federal")) {
+					for(DocumentosPagadorDocket docsSalvos : pagador.getDocumentosDocket()) {
+						if(CommonsUtil.mesmoValor(docsSalvos.getDocumentoDocket().getDocumentoNome(), doc.getDocumentoNome())) {
+							addDoc = false;
+							break;
+						}
+					}
+				}
+				
+				if(CommonsUtil.mesmoValor(doc.getDocumentoNome(),
+						"Certidão Negativa de Débitos Trabalhistas - CNDT")) {
+					for(DocumentosPagadorDocket docsSalvos : pagador.getDocumentosDocket()) {
+						if(CommonsUtil.mesmoValor(docsSalvos.getDocumentoDocket().getDocumentoNome(), doc.getDocumentoNome())) {
+							addDoc = false;
+							break;
+						}
 					}
 				}
 				
@@ -717,7 +729,9 @@ public class DocketMB {
 					docPagador.setCidade(cidadeImovel);
 					docPagador.getCidadeDocketId();
 				} 
-				pagador.getDocumentosDocket().add(docPagador);
+				if(addDoc) {
+					pagador.getDocumentosDocket().add(docPagador);
+				}
 			}
 		//}		
 	}
