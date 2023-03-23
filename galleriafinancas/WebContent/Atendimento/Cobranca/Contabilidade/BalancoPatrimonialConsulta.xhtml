@@ -19,16 +19,22 @@
 				text-align:center;
 			}	 
    		</h:outputStylesheet>
-		<h:form>
+		<h:form id="form"> 	
 		<p:panel id="ConsultaBalanco" header="Balanço Patrimonial #{balancoPatrimonialMB.tituloPagina}" style="margin-bottom:10px;">		    		    
    		         <p:dataTable id="dtBalancoPat" var="balanco" value="#{balancoPatrimonialMB.todosBalancos}" selection="" emptyMessage="" sortBy="#{balanco.aaaaMM}" sortOrder="descending">                 
    		         	<f:facet name="header">						
-						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{balancoPatrimonialMB.clearBalancoPatrimonial}"></p:commandButton>
+						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{balancoPatrimonialMB.clearBalancoPatrimonialEditar}">
+						<f:setPropertyActionListener target="#{balancoPatrimonialMB.editar}"
+								value="false" />
+							<f:setPropertyActionListener target="#{balancoPatrimonialMB.excluir}"
+								value="false" />
+						</p:commandButton>
 			        </f:facet>  
 			        
 			        <p:column style="text-align: center;width:105px;" headerText="ID" sortBy="#{balanco.aaaaMM}">
-			            <h:outputText value="#{balanco.id}" />
+			            <h:outputText value="#{balanco.id}" />	
 			        </p:column>               
+                	
                 	<p:column style="text-align: center;width:105px;" headerText="Referência" sortBy="#{balanco.aaaaMM}">
 			            <p:outputLabel value="#{balanco.aaaaMM}" >
 			            <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
@@ -36,17 +42,29 @@
 			        </p:column>
 			       
 			       <p:column style="text-align: center;width:105px;" headerText="Total do Ativo" sortBy="#{balanco.totalAtivos}">
-			            <h:outputText value="#{balanco.totalAtivos}" />
+			            <h:outputText value="#{balanco.totalAtivos}" 
+			            converter="bigDecimalConverter" style="margin-left:10px;" >
+						<f:convertNumber pattern="#,##0.00"/>
+						</h:outputText>
 					</p:column>
+					
 					<p:column style="text-align: center;width:105px;" headerText="Total do Passivo" sortBy="#{balanco.totalPassivo}">
-			            <h:outputText value="#{balanco.totalPassivo}" />
+			            <h:outputText value="#{balanco.totalPassivo}" 
+			            converter="bigDecimalConverter" style="margin-left:10px;" >
+						<f:convertNumber pattern="#,##0.00"/>
+						</h:outputText>
 					</p:column>
 					<f:facet name="footer">
-						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{balancoPatrimonialMB.clearBalancoPatrimonialEditar}">	</p:commandButton>
+					<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{balancoPatrimonialMB.clearBalancoPatrimonialEditar}">	
+					<f:setPropertyActionListener target="#{balancoPatrimonialMB.editar}"
+								value="false" />
+					<f:setPropertyActionListener target="#{balancoPatrimonialMB.excluir}"
+								value="false" />
+					</p:commandButton>	
 			        </f:facet>	
 			        <p:column styleClass="colunaResponsiva">
 						<p:commandButton action="#{balancoPatrimonialMB.clearBalancoPatrimonialEditar}"
-							ajax="false" icon="ui-icon-pencil" title="Editar">
+								ajax="false" icon="ui-icon-pencil" title="Editar">
 							<f:setPropertyActionListener
 								target="#{balancoPatrimonialMB.objetoBalanco}"
 								value="#{balanco}" />
@@ -55,10 +73,9 @@
 							<f:setPropertyActionListener target="#{balancoPatrimonialMB.excluir}"
 								value="false" />
 						</p:commandButton>
-						<p:spacer width="10" height="10" />
-						<p:commandButton action="#{balancoPatrimonialMB.excluirBalanco}"
-							ajax="false" icon="ui-icon-trash" title="Excluir">
-						<f:setPropertyActionListener
+						<p:commandButton action="#{balancoPatrimonialMB.excluirBalanco}" update=":form:ConsultaBalanco"
+							icon="ui-icon-trash" title="Excluir">
+								<f:setPropertyActionListener
 								target="#{balancoPatrimonialMB.objetoBalanco}"
 								value="#{balanco}" />
 						<p:confirm header="Confirmação"
@@ -69,10 +86,6 @@
 							<f:setPropertyActionListener
 								target="#{balancoPatrimonialMB.objetoBalanco}"
 								value="#{balanco}" />
-							<f:setPropertyActionListener target="#{balancoPatrimonialMB.editar}"
-								value="false" />
-							<f:setPropertyActionListener target="#{balancoPatrimonialMB.excluir}"
-								value="true" />
 						</p:commandButton>
 					</p:column>	            		        		               		        			        			           			 		
 				</p:dataTable>
