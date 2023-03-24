@@ -45,7 +45,16 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
 
+import fr.opensagres.xdocreport.converter.ConverterTypeTo;
+import fr.opensagres.xdocreport.converter.ConverterTypeVia;
+import fr.opensagres.xdocreport.converter.Options;
+import fr.opensagres.xdocreport.document.IXDocReport;
+import fr.opensagres.xdocreport.document.registry.XDocReportRegistry;
+import fr.opensagres.xdocreport.template.IContext;
+import fr.opensagres.xdocreport.template.TemplateEngineKind;
 /**
  * Rotinas utilitarias gerais
  * 
@@ -1757,5 +1766,36 @@ public class CommonsUtil {
 		
 		//MaskFormatter mf = new MaskFormatter("##.###.###/####-##");        
 		//cpfCnpjCCResp =  mf.valueToString(cpfCnpjCCResp);
+	}
+
+	public static ByteArrayOutputStream wordToPdf(InputStream templateWord) throws IOException {
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		try {
+
+			// Prepara o documento
+			IXDocReport report = XDocReportRegistry.getRegistry().loadReport(templateWord,
+					TemplateEngineKind.Freemarker);
+
+			// Options options =
+			// Options.getTo(ConverterTypeTo.PDF).via(ConverterTypeVia.DOCX4J);
+			Options options = Options.getTo(ConverterTypeTo.PDF).via(ConverterTypeVia.DOCX4J);
+
+			 //Adiciona propriedades para o context
+            IContext ctx = report.createContext();
+			// gera arquivo de saida
+			report.convert(ctx, options, outputStream);
+//			PDDocument document = PDDocument.load(outputStream.toByteArray());
+//			PDPage pageDoc = document.getPage(0);
+
+		} catch (Exception ex) {
+			try {
+				outputStream.close();
+			} catch (IOException e) {
+				//
+			}
+			throw new RuntimeException(ex);
+		}
+
+		return outputStream;
 	}
 }
