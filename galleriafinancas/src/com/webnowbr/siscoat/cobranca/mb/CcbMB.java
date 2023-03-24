@@ -1522,6 +1522,9 @@ public class CcbMB {
 			}
 			
 			if(!CommonsUtil.semValor(objetoCcb.getObjetoContratoCobranca())) {
+				if(CommonsUtil.semValor(objetoCcb.getNumeroCcb())) {
+					objetoCcb.getObjetoContratoCobranca().setNumeroContratoSeguro(objetoCcb.getNumeroCcb());
+				}
 				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 				cDao.merge(objetoCcb.getObjetoContratoCobranca());
 			}
