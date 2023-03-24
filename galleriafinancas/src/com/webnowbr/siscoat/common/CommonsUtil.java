@@ -1773,15 +1773,16 @@ public class CommonsUtil {
 		try {
 
 			// Prepara o documento
-			IXDocReport report = XDocReportRegistry.getRegistry().loadReport(templateWord,
-					TemplateEngineKind.Freemarker);
+			IXDocReport report = XDocReportRegistry.getRegistry().loadReport(templateWord
+					);
 
 			// Options options =
 			// Options.getTo(ConverterTypeTo.PDF).via(ConverterTypeVia.DOCX4J);
 			Options options = Options.getTo(ConverterTypeTo.PDF).via(ConverterTypeVia.DOCX4J);
 
 			 //Adiciona propriedades para o context
-            IContext ctx = report.createContext();
+           // IContext ctx = report.createContext();
+			Map<String, Object> ctx = new HashMap<>();
 			// gera arquivo de saida
 			report.convert(ctx, options, outputStream);
 //			PDDocument document = PDDocument.load(outputStream.toByteArray());

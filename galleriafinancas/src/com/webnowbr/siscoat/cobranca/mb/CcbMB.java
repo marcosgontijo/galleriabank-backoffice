@@ -9209,13 +9209,16 @@ public class CcbMB {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			document.write(out);
 			document.close();
+			
+			InputStream in = new ByteArrayInputStream(out.toByteArray());
+					
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(FacesContext.getCurrentInstance());
 			String nomeSemvirgula = this.objetoCcb.getNomeEmitente();
 			if(nomeSemvirgula.contains(",")) {
 				nomeSemvirgula = nomeSemvirgula.replace(",", "");
 		    }
-			gerador.open(String.format("Galleria Bank - CESSAO %s.docx", ""));
-			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
+			gerador.open(String.format("Galleria Bank - CESSAO %s.pdf", ""));
+			gerador.feed(new ByteArrayInputStream(CommonsUtil.wordToPdf(in).toByteArray()));
 			gerador.close();
 			criarCcbNosistema();	
 		} catch (Throwable e) {
