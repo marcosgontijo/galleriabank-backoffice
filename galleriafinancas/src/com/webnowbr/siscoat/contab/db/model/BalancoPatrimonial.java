@@ -324,13 +324,13 @@ public class BalancoPatrimonial implements Serializable {
 		if (!CommonsUtil.semValor(lucrosAcumuladosAnoAnterior))
 			result=result.add(lucrosAcumuladosAnoAnterior);
 		if (!CommonsUtil.semValor(distribuicao2Pago1))
-			result=result.add(distribuicao2Pago1);
+			result=result.subtract(distribuicao2Pago1);
 		if (!CommonsUtil.semValor(lucroSemestreAnterior))
 			result=result.add(lucroSemestreAnterior);
 		if (!CommonsUtil.semValor(aumentoCapitalSocial))
-			result=result.add(aumentoCapitalSocial);
+			result=result.subtract(aumentoCapitalSocial);
 		if (!CommonsUtil.semValor(distribuicao1Pago2))
-			result=result.add(distribuicao1Pago2);
+			result=result.subtract(distribuicao1Pago2);
 		if (!CommonsUtil.semValor(lucroAnterior))
 			result=result.add(lucroAnterior);
 		

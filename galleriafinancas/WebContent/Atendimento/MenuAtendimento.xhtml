@@ -545,10 +545,12 @@
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroContabilidade}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
 										styleClass="itemMenu" />
+									<shiro:hasAnyRoles name="ROOT">
 									<p:menuitem value="Balanco Patrimonial"
 										action="#{balancoPatrimonialMB.clearFieldsBalancoPatrimonialConsulta}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
 										styleClass="itemMenu" />
+									</shiro:hasAnyRoles>
 								</shiro:hasAnyRoles>
 							</p:submenu>
 						</shiro:hasAnyRoles>

@@ -211,6 +211,7 @@ public class BalancoPatrimonialMB {
 		cell.setCellStyle(dateStyle);
 		cell.setCellValue(record.getAaaaMM());
 		
+		countLine++;
 		XSSFRow row2 = sheet.createRow(countLine);
 		cell = row2.createCell(0);
 		cell.setCellValue("TOTAL ATIVO CIRCULANTE");
@@ -225,6 +226,7 @@ public class BalancoPatrimonialMB {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
 		
+		countLine++;
 		XSSFRow row3 = sheet.createRow(countLine);
 		cell = row3.createCell(0);
 		cell.setCellValue("	CAIXA E EQUIVALENTES DE CAIXA");
@@ -239,6 +241,7 @@ public class BalancoPatrimonialMB {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
 		
+		countLine++;
 		XSSFRow row4 = sheet.createRow(countLine);
 		cell = row4.createCell(0);
 		cell.setCellValue("		CAIXA");
@@ -253,6 +256,7 @@ public class BalancoPatrimonialMB {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
 		
+		countLine++;
 		XSSFRow row5 = sheet.createRow(countLine);
 		cell = row5.createCell(0);
 		cell.setCellValue("		BANCOS");
@@ -267,6 +271,7 @@ public class BalancoPatrimonialMB {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
 		
+		countLine++;
 		XSSFRow row6 = sheet.createRow(countLine);
 		cell = row6.createCell(0);
 		cell.setCellValue("		APLICAÇÃO FINANCEIRA");
@@ -281,6 +286,7 @@ public class BalancoPatrimonialMB {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
 		
+		countLine++;
 		XSSFRow row7 = sheet.createRow(countLine);
 		cell = row7.createCell(0);
 		cell.setCellValue("		OPERAÇÕES PAGAS E A RECEBER DO FIDC");
@@ -295,6 +301,7 @@ public class BalancoPatrimonialMB {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
 		
+		countLine++;
 		XSSFRow row8 = sheet.createRow(countLine);
 		cell = row8.createCell(0);
 		cell.setCellValue("		APLICAÇÃO FUNDO ITAÚ SOBERANO");
@@ -309,6 +316,7 @@ public class BalancoPatrimonialMB {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
 		
+		countLine++;
 		XSSFRow row9 = sheet.createRow(countLine);
 		cell = row9.createCell(0);
 		cell.setCellValue("		PROVISÃO DEVEDORES DUVIDOSOS");
@@ -323,6 +331,7 @@ public class BalancoPatrimonialMB {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
 		
+		countLine++;
 		XSSFRow row10 = sheet.createRow(countLine);
 		cell = row10.createCell(0);
 		cell.setCellValue("		SALDO CONTA COBRANÇA FIDC");
@@ -336,6 +345,7 @@ public class BalancoPatrimonialMB {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
 		
+		countLine++;
 		XSSFRow row11 = sheet.createRow(countLine);
 		cell.setCellStyle(cell_style);
 		cell = row11.createCell(0);
@@ -350,11 +360,13 @@ public class BalancoPatrimonialMB {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
 		
+		countLine++;
 		XSSFRow row12 = sheet.createRow(countLine);
 		cell.setCellStyle(cell_style);
 		cell = row12.createCell(0);
 		cell.setCellValue("	");
 		
+		countLine++;
 		XSSFRow row13 = sheet.createRow(countLine);
 		cell.setCellStyle(cell_style);
 		cell = row12.createCell(0);
@@ -369,6 +381,7 @@ public class BalancoPatrimonialMB {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
 		
+		countLine++;
 		XSSFRow row14 = sheet.createRow(countLine);
 		cell.setCellStyle(cell_style);
 		cell = row14.createCell(0);
@@ -383,6 +396,7 @@ public class BalancoPatrimonialMB {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
 		
+		countLine++;
 		XSSFRow row15 = sheet.createRow(countLine);
 		cell.setCellStyle(cell_style);
 		cell = row15.createCell(0);
@@ -397,6 +411,7 @@ public class BalancoPatrimonialMB {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
 		
+		countLine++;
 		XSSFRow row16 = sheet.createRow(countLine);
 		cell.setCellStyle(cell_style);
 		cell = row16.createCell(16);
@@ -411,6 +426,7 @@ public class BalancoPatrimonialMB {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
 		
+		countLine++;
 		XSSFRow row17 = sheet.createRow(countLine);
 		cell.setCellStyle(cell_style);
 		cell = row17.createCell(0);
@@ -425,6 +441,7 @@ public class BalancoPatrimonialMB {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
 		
+		countLine++;
 		XSSFRow row18 = sheet.createRow(countLine);
 		cell.setCellStyle(cell_style);
 		cell = row18.createCell(0);
@@ -440,6 +457,7 @@ public class BalancoPatrimonialMB {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
 		
+		countLine++;
 		XSSFRow row19 = sheet.createRow(countLine);
 		cell = row19.createCell(0);
 		cell.setCellValue("VALORES REALIZÁVEIS A LONGO PRAZO");
@@ -453,6 +471,7 @@ public class BalancoPatrimonialMB {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
 		
+		countLine++;
 		XSSFRow row20 = sheet.createRow(countLine);
 		cell.setCellStyle(cell_style);
 		cell = row20.createCell(0);
@@ -467,6 +486,7 @@ public class BalancoPatrimonialMB {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
 		
+		countLine++;
 		XSSFRow row21 = sheet.createRow(countLine);
 		cell.setCellStyle(cell_style);
 		cell = row21.createCell(0);
@@ -481,6 +501,7 @@ public class BalancoPatrimonialMB {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
 		
+		countLine++;
 		XSSFRow row22 = sheet.createRow(countLine);
 		cell.setCellStyle(cell_style);
 		cell = row22.createCell(0);
@@ -495,6 +516,7 @@ public class BalancoPatrimonialMB {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
 		
+		countLine++;
 		XSSFRow row23 = sheet.createRow(countLine);
 		cell.setCellStyle(cell_style);
 		cell = row23.createCell(0);
@@ -509,6 +531,7 @@ public class BalancoPatrimonialMB {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
 		
+		countLine++;
 		XSSFRow row24 = sheet.createRow(countLine);
 		cell.setCellStyle(cell_style);
 		cell = row24.createCell(0);
@@ -523,6 +546,7 @@ public class BalancoPatrimonialMB {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
 		
+		countLine++;
 		XSSFRow row25 = sheet.createRow(countLine);
 		cell.setCellStyle(cell_style);
 		cell = row25.createCell(0);
@@ -537,6 +561,7 @@ public class BalancoPatrimonialMB {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
 		
+		countLine++;
 		XSSFRow row26 = sheet.createRow(countLine);
 		cell.setCellStyle(cell_style);
 		cell = row26.createCell(0);
@@ -551,6 +576,7 @@ public class BalancoPatrimonialMB {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
 		
+		countLine++;
 		XSSFRow row27 = sheet.createRow(countLine);
 		cell.setCellStyle(cell_style);
 		cell = row27.createCell(0);
@@ -565,6 +591,319 @@ public class BalancoPatrimonialMB {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
 		
+		//PASSIVO
+		
+		cell.setCellStyle(cell_style);
+		cell = row2.createCell(4);
+		cell.setCellValue("TOTAL DO PASSIVO CIRCULANTE");
+		
+		cell = row2.createCell(5);
+		cell.setCellStyle(numericStyle);
+		cell.setCellType(CellType.NUMERIC);
+		if (record.getTotalPassivoCirculante() != null) {
+			cell.setCellValue(((BigDecimal) record.getTotalPassivoCirculante()).doubleValue());
+		} else {
+			cell.setCellValue(Double.valueOf("0.00"));
+		}
+		
+		cell.setCellStyle(cell_style);
+		cell = row3.createCell(4);
+		cell.setCellValue("	VALORES EXIGÍVEIS A CURTO PRAZO");
+		
+		cell = row3.createCell(5);
+		cell.setCellStyle(numericStyle);
+		cell.setCellType(CellType.NUMERIC);
+		if (record.getTotalExigivelCurtoPrazo() != null) {
+			cell.setCellValue(((BigDecimal) record.getTotalExigivelCurtoPrazo()).doubleValue());
+		} else {
+			cell.setCellValue(Double.valueOf("0.00"));
+		}
+		
+		cell.setCellStyle(cell_style);
+		cell = row4.createCell(4);
+		cell.setCellValue("		CONTA CORRENTE CLIENTES");
+		
+		cell = row4.createCell(5);
+		cell.setCellStyle(numericStyle);
+		cell.setCellType(CellType.NUMERIC);
+		if (record.getContaCorrenteClientes() != null) {
+			cell.setCellValue(((BigDecimal) record.getContaCorrenteClientes()).doubleValue());
+		} else {
+			cell.setCellValue(Double.valueOf("0.00"));
+		}
+		
+		cell.setCellStyle(cell_style);
+		cell = row5.createCell(4);
+		cell.setCellValue("		FORNECEDORES-CONSÓRCIO");
+		
+		cell = row5.createCell(5);
+		cell.setCellStyle(numericStyle);
+		cell.setCellType(CellType.NUMERIC);
+		if (record.getFornecedoresConsorcio() != null) {
+			cell.setCellValue(((BigDecimal) record.getFornecedoresConsorcio()).doubleValue());
+		} else {
+			cell.setCellValue(Double.valueOf("0.00"));
+		}
+		
+		cell.setCellStyle(cell_style);
+		cell = row6.createCell(4);
+		cell.setCellValue("		OBRIGAÇÕES TRIBUTÁRIAS");
+		
+		cell = row6.createCell(5);
+		cell.setCellStyle(numericStyle);
+		cell.setCellType(CellType.NUMERIC);
+		if (record.getObrigacoesTributarias() != null) {
+			cell.setCellValue(((BigDecimal) record.getObrigacoesTributarias()).doubleValue());
+		} else {
+			cell.setCellValue(Double.valueOf("0.00"));
+		}
+		
+		cell.setCellStyle(cell_style);
+		cell = row7.createCell(4);
+		cell.setCellValue("		OBRIGAÇÕES SOCIAIS ESTATUTÁRIAS");
+		
+		cell = row7.createCell(5);
+		cell.setCellStyle(numericStyle);
+		cell.setCellType(CellType.NUMERIC);
+		if (record.getObrigacoesSociaisEstatutarias() != null) {
+			cell.setCellValue(((BigDecimal) record.getObrigacoesSociaisEstatutarias()).doubleValue());
+		} else {
+			cell.setCellValue(Double.valueOf("0.00"));
+		}
+		
+		cell.setCellStyle(cell_style);
+		cell = row8.createCell(4);
+		cell.setCellValue("		OBRIGAÇÕES SOCIAIS ESTATUTÁRIAS");
+		
+		cell = row8.createCell(5);
+		cell.setCellStyle(numericStyle);
+		cell.setCellType(CellType.NUMERIC);
+		if (record.getObrigacoesSociaisEstatutarias() != null) {
+			cell.setCellValue(((BigDecimal) record.getObrigacoesSociaisEstatutarias()).doubleValue());
+		} else {
+			cell.setCellValue(Double.valueOf("0.00"));
+		}
+		
+		cell.setCellStyle(cell_style);
+		cell = row9.createCell(4);
+		cell.setCellValue("		RECURSOS DE DEBENTURES");
+		
+		cell = row9.createCell(5);
+		cell.setCellStyle(numericStyle);
+		cell.setCellType(CellType.NUMERIC);
+		if (record.getRecursosDebentures() != null) {
+			cell.setCellValue(((BigDecimal) record.getRecursosDebentures()).doubleValue());
+		} else {
+			cell.setCellValue(Double.valueOf("0.00"));
+		}
+		
+		cell.setCellStyle(cell_style);
+		cell = row10.createCell(4);
+		cell.setCellValue("		RECURSOS DO FIDC");
+		
+		cell = row10.createCell(5);
+		cell.setCellStyle(numericStyle);
+		cell.setCellType(CellType.NUMERIC);
+		if (record.getRecursosFidc() != null) {
+			cell.setCellValue(((BigDecimal) record.getRecursosFidc()).doubleValue());
+		} else {
+			cell.setCellValue(Double.valueOf("0.00"));
+		}
+		
+		cell.setCellStyle(cell_style);
+		cell = row11.createCell(4);
+		cell.setCellValue("		RECURSOS DO CRI");
+		
+		cell = row11.createCell(5);
+		cell.setCellStyle(numericStyle);
+		cell.setCellType(CellType.NUMERIC);
+		if (record.getRecursosCri() != null) {
+			cell.setCellValue(((BigDecimal) record.getRecursosCri()).doubleValue());
+		} else {
+			cell.setCellValue(Double.valueOf("0.00"));
+		}
+		
+		cell.setCellStyle(cell_style);
+		cell = row12.createCell(4);
+		cell.setCellValue("	PROVISÃO PARA LIQUIDAÇÃO ANTECIPADA");
+		
+		cell = row12.createCell(5);
+		cell.setCellStyle(numericStyle);
+		cell.setCellType(CellType.NUMERIC);
+		if (record.getProvisaoLiquidAntecipada() != null) {
+			cell.setCellValue(((BigDecimal) record.getProvisaoLiquidAntecipada()).doubleValue());
+		} else {
+			cell.setCellValue(Double.valueOf("0.00"));
+		}
+		
+		cell.setCellStyle(cell_style);
+		cell = row13.createCell(4);
+		cell.setCellValue("TOTAL PASSIVO EXIGÍVEL A LONGO PRAZO");
+		
+		cell = row13.createCell(5);
+		cell.setCellStyle(numericStyle);
+		cell.setCellType(CellType.NUMERIC);
+		if (record.getTotalExigivelLongoPrazo() != null) {
+			cell.setCellValue(((BigDecimal) record.getTotalExigivelLongoPrazo()).doubleValue());
+		} else {
+			cell.setCellValue(Double.valueOf("0.00"));
+		}
+		
+		cell.setCellStyle(cell_style);
+		cell = row14.createCell(4);
+		cell.setCellValue("VALORES EXIGÍVEIS A LONGO PRAZO");
+		
+		cell = row14.createCell(5);
+		cell.setCellStyle(numericStyle);
+		cell.setCellType(CellType.NUMERIC);
+		if (record.getValorExigivelLongoPrazo() != null) {
+			cell.setCellValue(((BigDecimal) record.getValorExigivelLongoPrazo()).doubleValue());
+		} else {
+			cell.setCellValue(Double.valueOf("0.00"));
+		}
+		
+		cell.setCellStyle(cell_style);
+		cell = row15.createCell(4);
+		cell.setCellValue("TOTAL PATRIMÔNIO LÍQUIDO");
+		
+		cell = row15.createCell(5);
+		cell.setCellStyle(numericStyle);
+		cell.setCellType(CellType.NUMERIC);
+		if (record.getTotalPatrimonioLiquido() != null) {
+			cell.setCellValue(((BigDecimal) record.getTotalPatrimonioLiquido()).doubleValue());
+		} else {
+			cell.setCellValue(Double.valueOf("0.00"));
+		}
+		
+		cell.setCellStyle(cell_style);
+		cell = row16.createCell(4);
+		cell.setCellValue("	TOTAL CAPITAL SOCIAL");
+		
+		cell = row16.createCell(5);
+		cell.setCellStyle(numericStyle);
+		cell.setCellType(CellType.NUMERIC);
+		if (record.getTotalCapitalSocial() != null) {
+			cell.setCellValue(((BigDecimal) record.getTotalCapitalSocial()).doubleValue());
+		} else {
+			cell.setCellValue(Double.valueOf("0.00"));
+		}
+		
+		cell.setCellStyle(cell_style);
+		cell = row17.createCell(4);
+		cell.setCellValue("		CAPITAL SOCIAL");
+		
+		cell = row17.createCell(5);
+		cell.setCellStyle(numericStyle);
+		cell.setCellType(CellType.NUMERIC);
+		if (record.getCapitalSocial() != null) {
+			cell.setCellValue(((BigDecimal) record.getCapitalSocial()).doubleValue());
+		} else {
+			cell.setCellValue(Double.valueOf("0.00"));
+		}
+		
+		cell.setCellStyle(cell_style);
+		cell = row18.createCell(4);
+		cell.setCellValue("	TOTAL LUCROS ACUMULADOS ATÉ SEMESTRE ANTERIOR");
+		
+		cell = row18.createCell(5);
+		cell.setCellStyle(numericStyle);
+		cell.setCellType(CellType.NUMERIC);
+		if (record.getTotalAcumuladosSemestreAnterior() != null) {
+			cell.setCellValue(((BigDecimal) record.getTotalAcumuladosSemestreAnterior()).doubleValue());
+		} else {
+			cell.setCellValue(Double.valueOf("0.00"));
+		}
+		
+		cell.setCellStyle(cell_style);
+		cell = row19.createCell(4);
+		cell.setCellValue("	LUCROS ACUMULADOS ATÉ ANO ANTERIOR");
+		
+		cell = row19.createCell(5);
+		cell.setCellStyle(numericStyle);
+		cell.setCellType(CellType.NUMERIC);
+		if (record.getLucrosAcumuladosAnoAnterior() != null) {
+			cell.setCellValue(((BigDecimal) record.getLucrosAcumuladosAnoAnterior()).doubleValue());
+		} else {
+			cell.setCellValue(Double.valueOf("0.00"));
+		}
+		
+		cell.setCellStyle(cell_style);
+		cell = row20.createCell(4);
+		cell.setCellValue("	(-)DISTRIBUIÇÃO LUCROS DO 2º SEMESTRE PAGO NO 1º SEMESTRE");
+		
+		cell = row20.createCell(5);
+		cell.setCellStyle(numericStyle);
+		cell.setCellType(CellType.NUMERIC);
+		if (record.getDistribuicao2Pago1() != null) {
+			cell.setCellValue(((BigDecimal) record.getDistribuicao2Pago1()).doubleValue());
+		} else {
+			cell.setCellValue(Double.valueOf("0.00"));
+		}
+		
+		cell.setCellStyle(cell_style);
+		cell = row21.createCell(4);
+		cell.setCellValue("	LUCRO 1º SEMESTRE DO ANO ANTERIOR");
+		
+		cell = row21.createCell(5);
+		cell.setCellStyle(numericStyle);
+		cell.setCellType(CellType.NUMERIC);
+		if (record.getLucroSemestreAnterior() != null) {
+			cell.setCellValue(((BigDecimal) record.getLucroSemestreAnterior()).doubleValue());
+		} else {
+			cell.setCellValue(Double.valueOf("0.00"));
+		}
+		
+		cell.setCellStyle(cell_style);
+		cell = row22.createCell(4);
+		cell.setCellValue("	(-)AUMENTO DE CAPITAL SOCIAL");
+		
+		cell = row22.createCell(5);
+		cell.setCellStyle(numericStyle);
+		cell.setCellType(CellType.NUMERIC);
+		if (record.getAumentoCapitalSocial() != null) {
+			cell.setCellValue(((BigDecimal) record.getAumentoCapitalSocial()).doubleValue());
+		} else {
+			cell.setCellValue(Double.valueOf("0.00"));
+		}
+		
+		cell.setCellStyle(cell_style);
+		cell = row23.createCell(4);
+		cell.setCellValue("	(-)DISTRIBUIÇÃO LUCROS DO 1º SEMESTRE PAGO NO 2º SEMESTRE");
+		
+		cell = row23.createCell(5);
+		cell.setCellStyle(numericStyle);
+		cell.setCellType(CellType.NUMERIC);
+		if (record.getDistribuicao1Pago2() != null) {
+			cell.setCellValue(((BigDecimal) record.getDistribuicao1Pago2()).doubleValue());
+		} else {
+			cell.setCellValue(Double.valueOf("0.00"));
+		}
+		
+		cell.setCellStyle(cell_style);
+		cell = row25.createCell(4);
+		cell.setCellValue("	ÚLTIMO LUCRO");
+		
+		cell = row25.createCell(5);
+		cell.setCellStyle(numericStyle);
+		cell.setCellType(CellType.NUMERIC);
+		if (record.getLucroAnterior() != null) {
+			cell.setCellValue(((BigDecimal) record.getLucroAnterior()).doubleValue());
+		} else {
+			cell.setCellValue(Double.valueOf("0.00"));
+		}
+		
+		cell.setCellStyle(cell_style);
+		cell = row27.createCell(4);
+		cell.setCellValue("TOTAL DO PASSIVO");
+		
+		cell = row27.createCell(5);
+		cell.setCellStyle(numericStyle);
+		cell.setCellType(CellType.NUMERIC);
+		if (record.getTotalPassivo() != null) {
+			cell.setCellValue(((BigDecimal) record.getTotalPassivo()).doubleValue());
+		} else {
+			cell.setCellValue(Double.valueOf("0.00"));
+		}
 
 		FileOutputStream fileOut = new FileOutputStream(excelFileName);
 
