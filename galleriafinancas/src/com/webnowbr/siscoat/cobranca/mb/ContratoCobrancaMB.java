@@ -109,6 +109,7 @@ import com.webnowbr.siscoat.auxiliar.BigDecimalConverter;
 import com.webnowbr.siscoat.auxiliar.EnviaEmail;
 import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.AnaliseComite;
+import com.webnowbr.siscoat.cobranca.db.model.BoletoKobana;
 import com.webnowbr.siscoat.cobranca.db.model.CadastroStatus;
 import com.webnowbr.siscoat.cobranca.db.model.ContasPagar;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
@@ -219,6 +220,8 @@ public class ContratoCobrancaMB {
 	private boolean baixaCustasDiversas = false;
 	
 	private long idAnalistaGeracaoPAJU = 0;
+	
+	private List<BoletoKobana> selectedBoletosKobana = new ArrayList<BoletoKobana>();
 	
 	/************************************************************
 	 * Objetos para antecipacao de parcela
@@ -7873,6 +7876,8 @@ public class ContratoCobrancaMB {
 				contratoCobrancaDetalhesParcial.setVlrParcelaAtualizado(parcelas.getVlrParcelaAtualizada());
 				parcelas.getListContratoCobrancaDetalhesParcial().add(contratoCobrancaDetalhesParcial);
 				parcelas.setParcelaPaga(true);
+				parcelas.setOrigemBaixa("quitarContrato");
+				
 				contratoCobrancaDetalhesDao.merge(parcelas);
 				this.selectedListContratoCobrancaDetalhes.add(parcelas);
 			}
@@ -7998,6 +8003,7 @@ public class ContratoCobrancaMB {
 				contratoCobrancaDetalhesParcial.setSaldoAPagar(BigDecimal.ZERO);
 				bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial().add(contratoCobrancaDetalhesParcial);
 				bpContratoCobrancaDetalhes.setParcelaPaga(true);
+				bpContratoCobrancaDetalhes.setOrigemBaixa("amortizarContratoValorPresente");
 				
 				//valor da parcela continua o mesmo
 				amortizacaoPresenteTotal = amortizacaoPresenteTotal.subtract(valorPresenteParcela);
@@ -17866,6 +17872,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 
 		if (parcela.getValorParcela().compareTo(BigDecimal.ZERO) == 0) {
 			contratoCobrancaDetalhes.setParcelaPaga(true);
+			contratoCobrancaDetalhes.setOrigemBaixa("criaContratoCobrancaDetalhe");
 			contratoCobrancaDetalhes.setDataPagamento(dataParcela);
 			contratoCobrancaDetalhes.setVlrParcela(BigDecimal.ZERO);
 		}
@@ -18441,6 +18448,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 					detalhe.setTaxaAdm(parcela.getTxAdm());
 					if (parcela.getValorParcela().compareTo(BigDecimal.ZERO) == 0) {
 						detalhe.setParcelaPaga(true);
+						detalhe.setOrigemBaixa("concluirReparcelamento");
 						detalhe.setDataPagamento(detalhe.getDataVencimento());
 						detalhe.setVlrParcela(BigDecimal.ZERO);
 					}
@@ -19784,6 +19792,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			
 						parcelasBoleto.setVlrParcelaAtualizada(null);
 						parcelasBoleto.setParcelaPaga(true);
+						parcelasBoleto.setOrigemBaixa("baixarMultiParcelaParcial");
 						parcelasBoleto.getListContratoCobrancaDetalhesParcial().add(contratoCobrancaDetalhesParcial);
 						
 						contratoCobrancaDetalhesDao.merge(parcelasBoleto);
@@ -19796,6 +19805,39 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		} else {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Baixa - Boletos Kobana: Existem parcelas já baixada dentre as selecionadas!", ""));
+		}
+	}
+	
+	public void baixarParcelasKobanaLote() {
+		FacesContext context = FacesContext.getCurrentInstance();
+
+		// valida se tem multi parcelas
+		boolean temMultiParcelas = false;
+		for (BoletoKobana boletosKokanaSelecionados : this.selectedBoletosKobana) {
+			if (boletosKokanaSelecionados.getParcela() == null) {
+				temMultiParcelas = true;
+				break;
+			}			
+		}
+		// baixa parcelas em lote da tela kobana, apenas parcelas simples
+		if (!temMultiParcelas) { 
+			for (BoletoKobana boletosKokanaSelecionados : this.selectedBoletosKobana) { 
+				this.callMetodoPorDialogBaixaParcial = true;
+				this.objetoContratoCobranca = boletosKokanaSelecionados.getContrato();
+				setBpContratoCobrancaDetalhesCustom(boletosKokanaSelecionados.getParcela());
+				this.reciboGerado = false;
+				this.txZero = true;
+				this.vlrRecebido = this.vlrParcelaAtualizadaNew;
+				this.rowEditNewDate = boletosKokanaSelecionados.getPaidAt();
+				
+				baixarParcelaParcial();
+			}
+			
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+					"Contrato Cobrança: Parcelas Baixadas com Sucesso!", ""));
+		} else {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
+					"Contrato Cobrança: Esta operação não é válida para Multi-Parcelas!", ""));
 		}
 	}
 	
@@ -19886,6 +19928,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 						.add(contratoCobrancaDetalhesParcial);
 
 				bpContratoCobrancaDetalhes.setParcelaPaga(true);
+				bpContratoCobrancaDetalhes.setOrigemBaixa("baixarParcelaParcial");
 
 				// compoem o valor da parcela de acordo com o historico de baixas
 				BigDecimal valorParcelaAtual = BigDecimal.ZERO;
@@ -19922,6 +19965,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 				contratoCobrancaDetalhesParcial.setSaldoAPagar(BigDecimal.ZERO);
 				bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial().add(contratoCobrancaDetalhesParcial);
 				bpContratoCobrancaDetalhes.setParcelaPaga(true);
+				bpContratoCobrancaDetalhes.setOrigemBaixa("baixarParcelaParcial");
 				
 				baixaTotal = true;
 				
@@ -20226,6 +20270,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			if (this.selectedListContratoCobrancaDetalhes.size() > 0) {
 				for (ContratoCobrancaDetalhes c : this.selectedListContratoCobrancaDetalhes) {
 					c.setParcelaPaga(true);
+					c.setOrigemBaixa("baixarParcela");
 					c.setVlrSaldoParcela(BigDecimal.ZERO);
 					c.setVlrParcelaAtualizada(c.getVlrParcelaAtualizada());
 					c.setDataPagamento(data.getTime());
@@ -20311,7 +20356,9 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		amortizacao.setTaxaAdm(BigDecimal.ZERO);
 		amortizacao.setVlrParcela(amortizacao.getVlrAmortizacaoParcela());
 		amortizacao.setNumeroParcela("Amortização");
-		amortizacao.setParcelaPaga(true);		
+		amortizacao.setParcelaPaga(true);	
+		amortizacao.setOrigemBaixa("incluirAmortizacaoSaldo");
+		
 		amortizacao.setDataPagamento(amortizacao.getDataVencimento());
 		//amortizacao.setVlrRecebido(amortizacao.getVlrParcela());
 		amortizacao.setValorTotalPagamento(amortizacao.getVlrParcela());
@@ -32288,5 +32335,12 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 	public void setTituloTelaLead(String tituloTelaLead) {
 		this.tituloTelaLead = tituloTelaLead;
 	}
-	
+
+	public List<BoletoKobana> getSelectedBoletosKobana() {
+		return selectedBoletosKobana;
+	}
+
+	public void setSelectedBoletosKobana(List<BoletoKobana> selectedBoletosKobana) {
+		this.selectedBoletosKobana = selectedBoletosKobana;
+	}
 }

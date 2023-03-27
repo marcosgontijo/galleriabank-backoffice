@@ -138,6 +138,9 @@
        </property>
        <property name="statusBoletoKonana" type="java.lang.String">
             <column name="statusBoletoKonana"/>
-       </property>      		
+       </property>      
+       <property name="origemBaixa" type="java.lang.String">
+            <column name="origemBaixa"/>
+       </property>       		
 	</class>
 </hibernate-mapping>

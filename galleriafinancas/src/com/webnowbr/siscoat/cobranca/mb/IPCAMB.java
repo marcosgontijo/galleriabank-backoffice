@@ -527,6 +527,7 @@ public class IPCAMB {
 					detalhe.setTaxaAdm(parcela.getTxAdm());
 					if (parcela.getValorParcela().compareTo(BigDecimal.ZERO) == 0) {
 						detalhe.setParcelaPaga(true);
+						detalhe.setOrigemBaixa("atualizaNovoIPCAPorContrato");
 						detalhe.setDataPagamento(detalhe.getDataVencimento());
 						detalhe.setVlrParcela(BigDecimal.ZERO);
 					}

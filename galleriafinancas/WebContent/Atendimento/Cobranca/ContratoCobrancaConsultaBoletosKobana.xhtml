@@ -73,7 +73,18 @@
 					value="#{kobanaMB.listBoletosKobana}"
 					emptyMessage="" sortBy="#{boleto.createdAt}"
 					rowStyleClass="#{(boleto.status eq 'Pago' and boleto.parcela.parcelaPaga eq 'true') ? 'parcelaPaga' : (boleto.status eq 'Pago' and boleto.parcela.parcelaPaga eq 'false') ? 'parcelaBoletoPago' : null}"
-					sortOrder="descending">
+					sortOrder="descending"
+					rowKey="#{boleto.id}"
+					selection="#{contratoCobrancaMB.selectedBoletosKobana}">
+
+					<f:facet name="header">
+						<p:commandButton onclick="PF('baixaParcelasLoteDialog').show();"
+							title="Baixar Parcela(s) Lote" value="Baixar Parcela(s) Lote" icon="ui-icon-transferthick-e-w"
+							update=":formBaixaParcelasLote" style="">
+						</p:commandButton>
+			        </f:facet>
+			        
+					<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
 					
 					<p:column style="text-align: center;"
 						headerText="Registro" sortBy="#{boleto.createdAt}">
@@ -215,10 +226,70 @@
 								target="#{kobanaMB.parcela}"
 								value="#{boleto.parcela}" />
 						</p:commandButton>
-					</p:column>											
+					</p:column>	
+					<f:facet name="footer">
+						<p:commandButton onclick="PF('baixaParcelasLoteDialog').show();"
+							title="Baixar Parcela(s) Lote" value="Baixar Parcela(s) Lote" icon="ui-icon-transferthick-e-w"
+							update=":formBaixaParcelasLote" style="">
+						</p:commandButton>
+			        </f:facet>										
 				</p:dataTable>
 			</p:panel>
 		</h:form>
+		<p:dialog header="Baixa Parcelas - Lote" widgetVar="baixaParcelasLoteDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" responsive="true"
+			height="650" width="500">
+			<h:form id="formBaixaParcelasLote">
+				<h:panelGrid columns="1">			
+					<p:dataTable id="dtParcelasSelecionadas" var="parcelasSelecionadas"
+								value="#{contratoCobrancaMB.selectedBoletosKobana}"
+								rowStyleClass="#{parcelasSelecionadas.parcela.parcelaPaga eq true ? 'parcelaPaga' : 'parcelaVencendo'}"
+								emptyMessage="Nenhuma parcela selecionada!!!" style="margin-top: 20px;" sortBy="#{parcelasSelecionadas.id}">
+						<p:column style="text-align: center;"
+							headerText="Parcela">
+							<h:outputText value="#{parcelasSelecionadas.parcela.numeroParcela}"/>
+						</p:column>		
+						<p:column style="text-align: center;"
+							headerText="Valor da Parcela">
+							<h:outputText value="#{parcelasSelecionadas.parcela.vlrParcela}" converter="bigDecimalConverter" />
+						</p:column>	
+						<p:column style="text-align: center;"
+							headerText="Baixada?">
+							<ui:fragment rendered="#{parcelasSelecionadas.parcela.parcelaPaga}">
+								<h:outputText value="Sim" />
+							</ui:fragment>
+							<ui:fragment rendered="#{!parcelasSelecionadas.parcela.parcelaPaga}">
+								<h:outputText value="Não" />
+							</ui:fragment>
+						</p:column>			
+					</p:dataTable>
+				</h:panelGrid>
+
+				<p:panel id="ConsultaObservacores" header="Detalhes do Pagamento"
+					style="margin-bottom:10px;margin-top:10px;">
+					<h:panelGrid columns="2">
+						<p:outputLabel for="Observacao" value="Observação: " />
+						<p:inputTextarea rows="10" cols="50" id="Observacao"
+							value="#{contratoCobrancaMB.observacao}" label="Observação"
+							onblur="" style="width:300px;" />
+						<p:spacer width="10" />
+					</h:panelGrid>
+				</p:panel>
+
+				<div align="center" style="margin-top: 20px;">
+					<shiro:hasAnyRoles name="ROOT">
+						<p:commandButton
+							action="#{contratoCobrancaMB.baixarParcelasKobanaLote()}" ajax="false" 
+							icon="ui-icon-transferthick-e-w" value="Baixar"
+							update=":form:DetalheParcelas" />
+						<p:spacer width="10" />
+					</shiro:hasAnyRoles>
+					<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
+						oncomplete="PF('baixaParcelasLoteDialog').hide();" />
+				</div>
+			</h:form>
+		</p:dialog>
+	
 		<p:dialog header="Baixa Parcial - MultiParcelas" widgetVar="baixaParcialMultiParcelasDialog"
 			resizable="false" style="FONT-SIZE: 10pt;" responsive="true"
 			height="650" width="500">
