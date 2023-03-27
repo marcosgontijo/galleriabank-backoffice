@@ -39,6 +39,7 @@ import com.webnowbr.siscoat.cobranca.db.model.DocumentosPagadorDocket;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
+import com.webnowbr.siscoat.cobranca.db.op.DataEngineDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocketCidadesDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocketDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocketEstadosDao;
@@ -147,13 +148,13 @@ public class DocketMB {
 		clearFieldsDocket();
 		this.objetoContratoCobranca = contrato; 
 		populateSelectedContratoCobranca();	
-		for(DataEngine engine : lista) {
+		/*for(DataEngine engine : lista) {
 			PagadorRecebedor pagador = engine.getPagador();
 			if(CommonsUtil.mesmoValor(pagador.getNome(), contrato.getPagador().getNome())) {
 				continue;
 			}
 			listaEsperaPagador.add(pagador);
-		}
+		}*/
 		return "/Atendimento/Cobranca/Docket.xhtml";
 	}
 	
@@ -646,10 +647,21 @@ public class DocketMB {
 			if(!CommonsUtil.semValor(localidadesSelecionada.getCidadeId())) {
 				inserirLocalidade();
 			}
+			List<DataEngine> listEngine;
+			DataEngineDao engineDao = new DataEngineDao();
 			PagadorRecebedorDao pDao = new PagadorRecebedorDao();
-			PagadorRecebedor pagador = pDao.findById(contrato.getPagador().getId());
-		
-			adicionarPagadorOpendialog(pagador);
+			PagadorRecebedor pagador;
+			listEngine = engineDao.findByFilter("contrato", objetoContratoCobranca);
+			if(listEngine.size() <= 0) {
+				for(DataEngine engine : listEngine) {
+					pagador = pDao.findById(engine.getPagador().getId());	
+					listaEsperaPagador.add(pagador);
+					adicionarPagadorOpendialog(listaEsperaPagador.get(0));
+				}
+			} else {
+				pagador = pDao.findById(contrato.getPagador().getId());	
+				adicionarPagadorOpendialog(pagador);
+			}
 						
 			if(docketDao.findByFilter("objetoContratoCobranca", contrato).size() > 0) {
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Pedido desse contrato já existe!", ""));	
