@@ -45,16 +45,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-
-import fr.opensagres.xdocreport.converter.ConverterTypeTo;
-import fr.opensagres.xdocreport.converter.ConverterTypeVia;
-import fr.opensagres.xdocreport.converter.Options;
-import fr.opensagres.xdocreport.document.IXDocReport;
-import fr.opensagres.xdocreport.document.registry.XDocReportRegistry;
-import fr.opensagres.xdocreport.template.IContext;
-import fr.opensagres.xdocreport.template.TemplateEngineKind;
 /**
  * Rotinas utilitarias gerais
  * 
@@ -1770,19 +1760,36 @@ public class CommonsUtil {
 
 	public static ByteArrayOutputStream wordToPdf(InputStream templateWord) throws IOException {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		try {
+		/*try {
+			
+			
+			TemplateEngineKind[] aaa = TemplateEngineKind.Freemarker.values();
 
 			// Prepara o documento
-			IXDocReport report = XDocReportRegistry.getRegistry().loadReport(templateWord
-					);
+			IXDocReport report = XDocReportRegistry.getRegistry().loadReport(templateWord,
+					TemplateEngineKind.Freemarker);
+			
+			ITemplateEngine a = new TemplateEngineInitializerRegistry().getTemplateEngine(TemplateEngineKind.Freemarker
+					, DocumentKind.DOCX);
+			report.setTemplateEngine(a);
+			
+			
+			Properties properties = new Properties();
+		    properties.setProperty("resource.loader", "class");
+		    properties.setProperty("class.resource.loader.class",
+		    		"org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
 
+		    ITemplateEngine templateEngine = new VelocityTemplateEngine(properties);
+		    report.setTemplateEngine(templateEngine);
+		    FieldsMetadata metadata = report.createFieldsMetadata();
+		    metadata.setTemplateEngineKind("Velocity");
+			
 			// Options options =
 			// Options.getTo(ConverterTypeTo.PDF).via(ConverterTypeVia.DOCX4J);
-			Options options = Options.getTo(ConverterTypeTo.PDF).via(ConverterTypeVia.DOCX4J);
+			Options options = Options.getTo(ConverterTypeTo.PDF).via(ConverterTypeVia.XWPF).from(DocumentKind.DOCX);
 
 			 //Adiciona propriedades para o context
-           // IContext ctx = report.createContext();
-			Map<String, Object> ctx = new HashMap<>();
+            IContext ctx = report.createContext();
 			// gera arquivo de saida
 			report.convert(ctx, options, outputStream);
 //			PDDocument document = PDDocument.load(outputStream.toByteArray());
@@ -1795,7 +1802,7 @@ public class CommonsUtil {
 				//
 			}
 			throw new RuntimeException(ex);
-		}
+		}*/
 
 		return outputStream;
 	}
