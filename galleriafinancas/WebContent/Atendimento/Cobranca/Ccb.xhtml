@@ -2079,6 +2079,15 @@
 									<f:selectItem itemValue="SAC" itemLabel="SAC" />						
 								</p:selectOneMenu>
 								
+								<p:outputLabel for="tipoCalculoFinal" value="Tipo Crédito: "
+									styleClass="labelBold" />
+								<p:selectOneMenu id="tipoCalculoFinal"
+									value="#{ccbMB.objetoCcb.tipoCalculoFinal}" required="true"
+									style="width: 80px;">
+									<f:selectItem itemValue="B" itemLabel="Bruto" />
+									<f:selectItem itemValue="L" itemLabel="Liquido" />						
+								</p:selectOneMenu>
+								
 								<p:outputLabel for="prazo"
 									value="Prazo:  " styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />

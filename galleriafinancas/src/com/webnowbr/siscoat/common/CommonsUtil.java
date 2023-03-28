@@ -45,7 +45,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 /**
  * Rotinas utilitarias gerais
  * 
@@ -1757,5 +1756,54 @@ public class CommonsUtil {
 		
 		//MaskFormatter mf = new MaskFormatter("##.###.###/####-##");        
 		//cpfCnpjCCResp =  mf.valueToString(cpfCnpjCCResp);
+	}
+
+	public static ByteArrayOutputStream wordToPdf(InputStream templateWord) throws IOException {
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		/*try {
+			
+			
+			TemplateEngineKind[] aaa = TemplateEngineKind.Freemarker.values();
+
+			// Prepara o documento
+			IXDocReport report = XDocReportRegistry.getRegistry().loadReport(templateWord,
+					TemplateEngineKind.Freemarker);
+			
+			ITemplateEngine a = new TemplateEngineInitializerRegistry().getTemplateEngine(TemplateEngineKind.Freemarker
+					, DocumentKind.DOCX);
+			report.setTemplateEngine(a);
+			
+			
+			Properties properties = new Properties();
+		    properties.setProperty("resource.loader", "class");
+		    properties.setProperty("class.resource.loader.class",
+		    		"org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+
+		    ITemplateEngine templateEngine = new VelocityTemplateEngine(properties);
+		    report.setTemplateEngine(templateEngine);
+		    FieldsMetadata metadata = report.createFieldsMetadata();
+		    metadata.setTemplateEngineKind("Velocity");
+			
+			// Options options =
+			// Options.getTo(ConverterTypeTo.PDF).via(ConverterTypeVia.DOCX4J);
+			Options options = Options.getTo(ConverterTypeTo.PDF).via(ConverterTypeVia.XWPF).from(DocumentKind.DOCX);
+
+			 //Adiciona propriedades para o context
+            IContext ctx = report.createContext();
+			// gera arquivo de saida
+			report.convert(ctx, options, outputStream);
+//			PDDocument document = PDDocument.load(outputStream.toByteArray());
+//			PDPage pageDoc = document.getPage(0);
+
+		} catch (Exception ex) {
+			try {
+				outputStream.close();
+			} catch (IOException e) {
+				//
+			}
+			throw new RuntimeException(ex);
+		}*/
+
+		return outputStream;
 	}
 }

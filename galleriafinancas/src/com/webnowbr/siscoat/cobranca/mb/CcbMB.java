@@ -824,6 +824,11 @@ public class CcbMB {
 		objetoCcb.setValorCredito(objetoContratoCobranca.getValorAprovadoComite());
 		objetoCcb.setTaxaDeJurosMes(objetoContratoCobranca.getTaxaAprovada());
 		objetoCcb.setPrazo(objetoContratoCobranca.getPrazoMaxAprovado().toString());
+		if(CommonsUtil.mesmoValor(objetoContratoCobranca.getTipoValorComite(), "liquido")) {
+			objetoCcb.setTipoCalculoFinal('L');
+		} else {
+			objetoCcb.setTipoCalculoFinal('B');
+		}
 		
 		if(!CommonsUtil.semValor(objetoContratoCobranca.getValorLaudoPajuFaltante())) {
 			this.temLaudoDeAvaliacao = true;
@@ -1522,6 +1527,9 @@ public class CcbMB {
 			}
 			
 			if(!CommonsUtil.semValor(objetoCcb.getObjetoContratoCobranca())) {
+				if(CommonsUtil.semValor(objetoCcb.getNumeroCcb())) {
+					objetoCcb.getObjetoContratoCobranca().setNumeroContratoSeguro(objetoCcb.getNumeroCcb());
+				}
 				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 				cDao.merge(objetoCcb.getObjetoContratoCobranca());
 			}
@@ -9206,13 +9214,21 @@ public class CcbMB {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			document.write(out);
 			document.close();
+			
+			InputStream in = new ByteArrayInputStream(out.toByteArray());
+					
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(FacesContext.getCurrentInstance());
 			String nomeSemvirgula = this.objetoCcb.getNomeEmitente();
 			if(nomeSemvirgula.contains(",")) {
 				nomeSemvirgula = nomeSemvirgula.replace(",", "");
 		    }
-			gerador.open(String.format("Galleria Bank - CESSAO %s.docx", ""));
-			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
+			if(SiscoatConstants.DEV) {
+				gerador.open(String.format("Galleria Bank - CESSAO %s.pdf", ""));
+				gerador.feed(new ByteArrayInputStream(CommonsUtil.wordToPdf(in).toByteArray()));
+			} else {
+				gerador.open(String.format("Galleria Bank - CESSAO %s.docx", ""));
+				gerador.feed(new ByteArrayInputStream(out.toByteArray()));
+			}
 			gerador.close();
 			criarCcbNosistema();	
 		} catch (Throwable e) {
@@ -9800,7 +9816,11 @@ public class CcbMB {
 		BigDecimal custoEmissaoValor = SiscoatConstants.CUSTO_EMISSAO_MINIMO;
 		
 		final BigDecimal custoEmissaoPercentual;
-		custoEmissaoPercentual = SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL_BRUTO;
+		if (CommonsUtil.mesmoValor('L', this.objetoCcb.getTipoCalculoFinal())) {
+			custoEmissaoPercentual = SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL_LIQUIDO;
+		} else {
+			custoEmissaoPercentual = SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL_BRUTO;
+		}
 
 		if (objetoCcb.getValorCredito().multiply(custoEmissaoPercentual.divide(BigDecimal.valueOf(100)))
 				.compareTo(SiscoatConstants.CUSTO_EMISSAO_MINIMO) > 0) {
@@ -9849,6 +9869,48 @@ public class CcbMB {
 		
 		if (simulador.getIOFTotal() != null) {
 			simulador.setValorCreditoLiberado(simulador.getValorCreditoLiberado().subtract(simulador.getIOFTotal()));
+		}
+		
+		if (CommonsUtil.mesmoValor('L', this.objetoCcb.getTipoCalculoFinal())) {
+			BigDecimal fator = simulador.getIOFTotal().divide(simulador.getValorCredito(), MathContext.DECIMAL128);
+			fator = BigDecimal.ONE.subtract(fator);
+			BigDecimal valorBruto = (simulador.getValorCredito().add(custoEmissaoValor)).divide(fator,
+					MathContext.DECIMAL128);
+
+			SimulacaoVO simuladorLiquido = new SimulacaoVO();
+			simuladorLiquido.setDataSimulacao(DateUtil.getDataHoje());
+			simuladorLiquido.setTarifaIOFDiario(tarifaIOFDiario);
+			simuladorLiquido.setTarifaIOFAdicional(tarifaIOFAdicional);
+			simuladorLiquido.setSeguroMIP(SiscoatConstants.SEGURO_MIP);
+			simuladorLiquido.setSeguroDFI(SiscoatConstants.SEGURO_DFI);
+			simuladorLiquido.setTipoPessoa(this.objetoCcb.getTipoPessoaEmitente());
+			// valores
+			simuladorLiquido.setValorCreditoLiberado(simulador.getValorCredito());
+			simuladorLiquido.setValorCredito(valorBruto);
+			simuladorLiquido.setTaxaJuros(this.objetoCcb.getTaxaDeJurosMes());
+			simuladorLiquido.setCarencia(BigInteger.valueOf( Long.parseLong(this.objetoCcb.getPrazo()) - Long.parseLong(this.objetoCcb.getNumeroParcelasPagamento())));
+			simuladorLiquido.setQtdParcelas(BigInteger.valueOf(Long.parseLong(this.objetoCcb.getPrazo())));
+			simuladorLiquido.setValorImovel(this.objetoCcb.getVlrImovel());
+			simuladorLiquido.setCustoEmissaoValor(custoEmissaoValor);
+			simuladorLiquido.setTipoCalculo(this.objetoCcb.getSistemaAmortizacao());
+			simuladorLiquido.setNaoCalcularDFI(false);
+			simuladorLiquido.setNaoCalcularMIP(false);
+			simuladorLiquido.setNaoCalcularTxAdm(false);
+			simuladorLiquido.setSimularComIPCA(false);
+			simuladorLiquido.setIpcaSimulado(BigDecimal.ZERO);
+			simuladorLiquido.calcular();
+
+			if (this.objetoCcb.getValorCredito().add(simuladorLiquido.getIOFTotal())
+					.add(simuladorLiquido.getCustoEmissaoValor()) != valorBruto) {
+				valorBruto = this.objetoCcb.getValorCredito().add(simuladorLiquido.getIOFTotal())
+						.add(simuladorLiquido.getCustoEmissaoValor());
+				simuladorLiquido.setValorCredito(valorBruto);
+				simuladorLiquido.calcular();
+			}
+
+			this.simulador = simuladorLiquido;
+		} else {
+			this.simulador = simulador;
 		}
 		
 		if (simulador.getParcelas().size() > 0 ) {
@@ -9947,7 +10009,14 @@ public class CcbMB {
 		this.objetoCcb.setValorParcela(vlrPrimeiraParcela.setScale(2, BigDecimal.ROUND_HALF_UP));
 		
 		populateParcelaSeguro();
-		calculaValorLiquidoCredito();
+		if(CommonsUtil.mesmoValor(this.objetoCcb.getTipoCalculoFinal(),'L')) {
+			this.objetoCcb.setValorLiquidoCredito(simulador.getValorCreditoLiberado());
+			this.objetoCcb.setValorLiquidoCredito(
+					this.objetoCcb.getValorLiquidoCredito().subtract(this.objetoCcb.getValorDespesas()));
+		} else {
+			calculaValorLiquidoCredito();
+		}
+		
 		calculaPorcentagemImovel();
 		FacesContext context = FacesContext.getCurrentInstance();
 		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Percelas Geradas com sucesso", ""));	

@@ -3755,6 +3755,18 @@ public class ContratoCobrancaMB {
 						} 
 					}
 				}
+				
+				if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getSolicitarNota(), "Solicitado")) {
+					if(!this.objetoContratoCobranca.isNotaSolicitadaWhatsapp()) {
+						this.objetoContratoCobranca.setNotaSolicitadaWhatsapp(true);
+						//if(!SiscoatConstants.DEV) {
+							TakeBlipMB takeBlipMB = new TakeBlipMB();
+							takeBlipMB.sendWhatsAppEmitirNota(this.objetoContratoCobranca);
+						//}
+					}
+				}
+				
+				
 
 				updateCheckList();
 
@@ -18716,6 +18728,12 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		if(CommonsUtil.mesmoValor(menorValorAprovado, BigDecimal.valueOf(Double.MAX_VALUE))) {
 			contrato.setValorAprovadoComite(BigDecimal.ZERO);
 		} else {
+			if(CommonsUtil.semValor(contrato.getValorEmprestimo())) {
+				if(contrato.getValorEmprestimo().compareTo(menorValorAprovado) < 0) {
+					contrato.setValorAprovadoComite(contrato.getValorEmprestimo());
+					return;
+				} 
+			} 		
 			contrato.setValorAprovadoComite(menorValorAprovado);
 		}
 	}

@@ -77,6 +77,7 @@ public class CcbContrato implements Serializable{
 	private Date vencimentoUltimaParcelaPagamento;
 	private BigDecimal montantePagamento;
 	private BigDecimal valorParcela;
+	private char tipoCalculoFinal; 
 
 	private String numeroParcelasDFI;
 	private Date vencimentoPrimeiraParcelaDFI;
@@ -1202,6 +1203,14 @@ public class CcbContrato implements Serializable{
 
 	public void setBairroEmitente(String bairroEmitente) {
 		this.bairroEmitente = bairroEmitente;
+	}
+
+	public char getTipoCalculoFinal() {
+		return tipoCalculoFinal;
+	}
+
+	public void setTipoCalculoFinal(char tipoCalculoFinal) {
+		this.tipoCalculoFinal = tipoCalculoFinal;
 	}
 	
 	

@@ -83,10 +83,14 @@ public class DataEngineMB {
 	public String clearFieldsContratoCobranca(ContratoCobranca contrato) { 
 		clearFieldsDataEngine();
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-		this.objetoContratoCobranca = cDao.findById(contrato.getId());  
-		PagadorRecebedorDao pDao = new PagadorRecebedorDao();
-		pagadorAdicionar = pDao.findById(contrato.getPagador().getId());
-		inserirPessoa();
+		this.objetoContratoCobranca = cDao.findById(contrato.getId()); 
+		DataEngineDao engineDao = new DataEngineDao();
+		listEngine = engineDao.findByFilter("contrato", objetoContratoCobranca);
+		if(listEngine.size() <= 0) {
+			PagadorRecebedorDao pDao = new PagadorRecebedorDao();
+			pagadorAdicionar = pDao.findById(contrato.getPagador().getId());
+			inserirPessoa();
+		}	
 		return "/Atendimento/Cobranca/DataEngine.xhtml";
 	}
 	
