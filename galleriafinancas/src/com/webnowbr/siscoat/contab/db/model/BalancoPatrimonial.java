@@ -145,7 +145,8 @@ public class BalancoPatrimonial implements Serializable {
 			result=result.add(provisaoDevedoresDuvidosos);
 		if (!CommonsUtil.semValor(saldoCobrancaFidc))
 			result=result.add(saldoCobrancaFidc);
-		if (!CommonsUtil.semValor(depositoBacenScd));
+		if (!CommonsUtil.semValor(depositoBacenScd))
+			result=result.add(depositoBacenScd);;
 		if (!CommonsUtil.semValor(direitosCreditorios))
 			result=result.add(direitosCreditorios);
 		if (!CommonsUtil.semValor(tributosCompensar))
