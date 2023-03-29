@@ -881,7 +881,7 @@ public class IpcaJobCalcular {
 									if (diferencaPagto.compareTo(BigDecimal.ZERO) == 1) {
 										detalheIpca.setVlrAmortizacaoParcela(detalheIpca.getVlrAmortizacaoParcela().add(diferencaPagto));
 										vlrSaldoParcela = vlrSaldoParcela.subtract(diferencaPagto);
-									}
+									} 
 								} 
 								
 								if (detalheIpca.getDataVencimento().before(dataCorteParcelasMalucas.getTime()) && !estaNoCorte) {
@@ -898,7 +898,7 @@ public class IpcaJobCalcular {
 									
 									BigDecimal diferencaPagto = vlrPago.subtract(detalheIpca.getVlrParcela());
 									
-									if (diferencaPagto.compareTo(BigDecimal.ZERO) != 0) {
+									if (diferencaPagto.compareTo(BigDecimal.ZERO) == 1) {
 										detalheIpca.setVlrAmortizacaoParcela(detalheIpca.getVlrAmortizacaoParcela().add(diferencaPagto));
 										
 										//vlrParcela = parcela.getJuros().add(detalheIpca.getVlrAmortizacaoParcela())
