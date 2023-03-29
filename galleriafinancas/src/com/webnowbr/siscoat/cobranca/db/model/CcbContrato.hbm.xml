@@ -467,6 +467,14 @@
 		<property name="tipoContaBancoVendedor" type="java.lang.String">
 			<column name="tipoContaBancoVendedor" />
 		</property>
+		
+		<property name="bairroEmitente" type="java.lang.String">
+			<column name="bairroEmitente" />
+		</property>
+		
+		<property name="tipoCalculoFinal" type="char">
+		    <column name="tipoCalculoFinal" default="B"/>
+		</property>
 		        
     </class>
 </hibernate-mapping>

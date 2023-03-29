@@ -26,6 +26,12 @@
 		<property name="data" type="java.util.Date">
 			<column name="data" />
 		</property>
+		
+		<many-to-one name="contrato"
+			class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca"
+			lazy="false">
+			<column name="contrato" />
+		</many-to-one>
 	
     </class>
 </hibernate-mapping>
