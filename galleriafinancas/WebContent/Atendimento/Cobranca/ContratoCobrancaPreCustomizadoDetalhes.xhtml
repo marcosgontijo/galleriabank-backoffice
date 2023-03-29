@@ -639,6 +639,14 @@
 											<p:outputLabel value="#{comite.tipoValorComite}"
 												label="Status" style="width:100px;" />
 										</h:panelGroup>
+										
+										<p:outputLabel value="Carência: "
+											styleClass="labelBold" />
+										<h:panelGroup>
+											<p:outputLabel value="#{comite.carenciaComite}" size="100"
+												style="width:60px;" />
+											<p:outputLabel value=" meses" />
+										</h:panelGroup>
 	
 										<p:outputLabel value="Comentários comitê: "
 											styleClass="labelBold" />
@@ -691,6 +699,14 @@
 								<p:outputLabel id="tipoValorComiteView"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.tipoValorComite}"
 									label="Status" style="width:100px;" />
+									
+								<p:outputLabel value="Carência: "
+									styleClass="labelBold" />
+								<h:panelGroup>
+									<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.carenciaComite}" size="100"
+										style="width:60px;" />
+									<p:outputLabel value=" meses" />
+								</h:panelGroup>
 
 								<p:outputLabel for="comentarioComiteView"
 									value="Comentários comitê: " styleClass="labelBold" />

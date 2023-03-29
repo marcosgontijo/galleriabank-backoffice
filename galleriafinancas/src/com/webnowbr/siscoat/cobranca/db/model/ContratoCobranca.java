@@ -634,6 +634,7 @@ public class ContratoCobranca implements Serializable {
 	private String comentarioComite;
 	private String processosQuitarComite;
 	private String obsValidacaoDocumentos;
+	private int carenciaComite;
 	
 	private String empresaCertificado;
 	private Date dataSolicitacaoCertificado;
@@ -707,6 +708,10 @@ public class ContratoCobranca implements Serializable {
 	private String pixCustoEmissao;
 	
 	private String observacaoPagamento;
+	
+	private String solicitarNota;
+	private boolean notaSolicitadaWhatsapp;
+	private BigDecimal valorNotaFiscal;
 	
 	private boolean contratoResgatadoBaixar;
 	private Date contratoResgatadoData;
@@ -6159,6 +6164,37 @@ public class ContratoCobranca implements Serializable {
 	public void setListCadastroStatus(List<CadastroStatus> listCadastroStatus) {
 		this.listCadastroStatus = listCadastroStatus;
 	}
-		
+	
+	public String getSolicitarNota() {
+		return solicitarNota;
+	}
+
+	public void setSolicitarNota(String solicitarNota) {
+		this.solicitarNota = solicitarNota;
+	}
+
+	public boolean isNotaSolicitadaWhatsapp() {
+		return notaSolicitadaWhatsapp;
+	}
+
+	public void setNotaSolicitadaWhatsapp(boolean notaSolicitadaWhatsapp) {
+		this.notaSolicitadaWhatsapp = notaSolicitadaWhatsapp;
+	}
+
+	public BigDecimal getValorNotaFiscal() {
+		return valorNotaFiscal;
+	}
+
+	public void setValorNotaFiscal(BigDecimal valorNotaFiscal) {
+		this.valorNotaFiscal = valorNotaFiscal;
+	}
+
+	public int getCarenciaComite() {
+		return carenciaComite;
+	}
+
+	public void setCarenciaComite(int carenciaComite) {
+		this.carenciaComite = carenciaComite;
+	}
 	
 }

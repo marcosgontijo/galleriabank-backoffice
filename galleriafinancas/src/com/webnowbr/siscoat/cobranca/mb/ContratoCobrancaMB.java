@@ -8642,6 +8642,10 @@ public class ContratoCobrancaMB {
 		if(CommonsUtil.semValor(this.objetoContratoCobranca.getProcessosQuitarComite())){
 			this.objetoContratoCobranca.setProcessosQuitarComite(this.objetoContratoCobranca.getProcessosPajuInterno());
 		}
+		
+		if(CommonsUtil.semValor(this.objetoAnaliseComite.getCarenciaComite())) {
+			this.objetoAnaliseComite.setCarenciaComite(1);
+		}
 	}
 
 	
@@ -18696,6 +18700,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 	public void concluirComite(ContratoCobranca contrato) {
 		BigDecimal maiorTaxaAprovada = BigDecimal.ZERO;
 		BigInteger menorPrazoAprovado = BigInteger.valueOf(999999999);
+		int menorCarencia = 2147483647;
 		BigDecimal menorValorAprovado = BigDecimal.valueOf(Double.MAX_VALUE);
 		String menorValorAprovadoTipo = "";
 		String comentarioComiteFinal = "";
@@ -18712,6 +18717,9 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 					menorValorAprovado = comite.getValorComite();
 					menorValorAprovadoTipo = comite.getTipoValorComite();
 				}			
+				if(comite.getCarenciaComite() < menorCarencia) {
+					menorCarencia = comite.getCarenciaComite();
+				}
 			}
 			comentarioComiteFinal += comite.getUsuarioComite() + ": " + comite.getComentarioComite() + "  //  ";
 		}
@@ -18728,13 +18736,19 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		if(CommonsUtil.mesmoValor(menorValorAprovado, BigDecimal.valueOf(Double.MAX_VALUE))) {
 			contrato.setValorAprovadoComite(BigDecimal.ZERO);
 		} else {
-			if(CommonsUtil.semValor(contrato.getValorEmprestimo())) {
+			if(!CommonsUtil.semValor(contrato.getValorEmprestimo())) {
 				if(contrato.getValorEmprestimo().compareTo(menorValorAprovado) < 0) {
 					contrato.setValorAprovadoComite(contrato.getValorEmprestimo());
 					return;
 				} 
 			} 		
 			contrato.setValorAprovadoComite(menorValorAprovado);
+		}
+		
+		if(menorCarencia == 2147483647) {
+			contrato.setCarenciaComite(1);
+		} else {
+			contrato.setCarenciaComite(menorCarencia);
 		}
 	}
 	

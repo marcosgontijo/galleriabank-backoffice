@@ -2068,5 +2068,17 @@
 				class="com.webnowbr.siscoat.cobranca.db.model.CadastroStatus" />
 		</list>	
 		
+		<property name="solicitarNota" type="java.lang.String">
+			<column name="solicitarNota" />
+		</property>
+		
+		<property name="notaSolicitadaWhatsapp" type="boolean">
+			<column name="notaSolicitadaWhatsapp" not-null="true" default="false"/>
+		</property>	
+		
+		<property name="carenciaComite" type="int">
+			<column name="carenciaComite"  default="1" />
+		</property>
+		
 	</class>
 </hibernate-mapping>
