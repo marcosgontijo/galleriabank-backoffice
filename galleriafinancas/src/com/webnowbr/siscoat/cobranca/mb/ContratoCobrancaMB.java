@@ -3755,7 +3755,7 @@ public class ContratoCobrancaMB {
 						} 
 					}
 				}
-				
+				/*
 				if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getSolicitarNota(), "Solicitado")) {
 					if(!this.objetoContratoCobranca.isNotaSolicitadaWhatsapp()) {
 						this.objetoContratoCobranca.setNotaSolicitadaWhatsapp(true);
@@ -3765,9 +3765,8 @@ public class ContratoCobrancaMB {
 						//}
 					}
 				}
+				*/
 				
-				
-
 				updateCheckList();
 
 				contratoCobrancaDao.merge(this.objetoContratoCobranca);
