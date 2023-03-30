@@ -475,6 +475,10 @@
 		<property name="tipoCalculoFinal" type="char">
 		    <column name="tipoCalculoFinal" default="B"/>
 		</property>
+		
+		<property name="CCBDocumento" type="java.lang.String">
+			<column name="CCBDocumento" />
+		</property> 
 		        
     </class>
 </hibernate-mapping>

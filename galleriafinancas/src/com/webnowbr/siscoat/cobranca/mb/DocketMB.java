@@ -652,7 +652,7 @@ public class DocketMB {
 			PagadorRecebedorDao pDao = new PagadorRecebedorDao();
 			PagadorRecebedor pagador;
 			listEngine = engineDao.findByFilter("contrato", objetoContratoCobranca);
-			if(listEngine.size() <= 0) {
+			if(listEngine.size() > 0) {
 				for(DataEngine engine : listEngine) {
 					pagador = pDao.findById(engine.getPagador().getId());	
 					listaEsperaPagador.add(pagador);
@@ -829,19 +829,19 @@ public class DocketMB {
 	}
 	
 	public void inserirPessoa() {
+		FacesContext context = FacesContext.getCurrentInstance();
 		pagadorAdicionar.getDocumentosDocket().clear();
 		for(DocumentosPagadorDocket doc : listaLocalidades) {
 			adiconarDocumentospagador(pagadorAdicionar,doc.getEstadoSelecionado(), doc.getCidade());
-		}
-		
+		}		
 		if(pagadorAdicionar.getId() <= 0) {
 			PagadorRecebedorDao pDao = new PagadorRecebedorDao();
 			pDao.create(pagadorAdicionar);
-		}
+		}	
 		
-		this.listaPagador.add(pagadorAdicionar);
+		this.listaPagador.add(pagadorAdicionar);	
 		this.listaEsperaPagador.remove(pagadorAdicionar);
-		
+
 		if(listaEsperaPagador.size() > 0) {
 			adicionarPagadorOpendialog(listaEsperaPagador.get(0));
 		} else {
@@ -850,27 +850,46 @@ public class DocketMB {
 	}
 	
 	public void procurarPF() {
+		FacesContext context = FacesContext.getCurrentInstance();
 		if(CommonsUtil.semValor(pagadorAdicionar.getCpf())) {
 			return;
 		}
 		PagadorRecebedorDao pDao = new PagadorRecebedorDao();
 		if(pDao.findByFilter("cpf", pagadorAdicionar.getCpf()).size() > 0) {
 			pagadorAdicionar = pDao.findByFilter("cpf", pagadorAdicionar.getCpf()).get(0);	
+			if(verificaPagadorTaNaLista(pagadorAdicionar)) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Pessoa já inserida", ""));	
+				pagadorAdicionar = new PagadorRecebedor();
+			}
 		} else {
 			return;
 		}
 	}
 	
 	public void procurarPJ() {
+		FacesContext context = FacesContext.getCurrentInstance();
 		if(CommonsUtil.semValor(pagadorAdicionar.getCnpj())) {
 			return;
 		}		
 		PagadorRecebedorDao pDao = new PagadorRecebedorDao();
 		if(pDao.findByFilter("cnpj", pagadorAdicionar.getCnpj()).size() > 0) {
 			pagadorAdicionar = pDao.findByFilter("cnpj", pagadorAdicionar.getCnpj()).get(0);
+			if(verificaPagadorTaNaLista(pagadorAdicionar)) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Pessoa já inserida", ""));	
+				pagadorAdicionar = new PagadorRecebedor();
+			}
 		} else {
 			return;
 		}	
+	}
+	
+	public boolean verificaPagadorTaNaLista(PagadorRecebedor pagador) {
+		for(PagadorRecebedor p : listaPagador) {
+			if(CommonsUtil.mesmoValor(p.getId(), pagador.getId())){
+				return true;
+			}
+		} 
+		return false;
 	}
 	
 	public void selectedTipoPessoaPublico() {

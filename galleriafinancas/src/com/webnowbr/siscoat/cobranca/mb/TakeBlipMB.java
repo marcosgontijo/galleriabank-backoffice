@@ -17,16 +17,13 @@ import javax.faces.context.FacesContext;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.primefaces.util.DateUtils;
 
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
-import com.webnowbr.siscoat.cobranca.db.model.TransferenciasObservacoesIUGU;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
-import com.webnowbr.siscoat.cobranca.db.op.TransferenciasObservacoesIUGUDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
-import com.webnowbr.siscoat.common.DateUtil;
 
 public class TakeBlipMB {
 	
@@ -853,6 +850,87 @@ public class TakeBlipMB {
 		senderWhatsAppMessage(jsonWhatsApp);
 	}
 	
+	public void sendWhatsAppEmitirNota(ContratoCobranca contrato) {
+		String nomeTemplateMensagem = "solicitar_nota";
+		JSONObject jsonWhatsApp = new JSONObject();
+		jsonWhatsApp.put("id", generateUUID());
+
+		jsonWhatsApp.put("to", getWhatsAppURL(contrato.getResponsavel()));
+		//jsonWhatsApp.put("to", "5519999933015@wa.gw.msging.net");
+				
+		jsonWhatsApp.put("type", "application/json"); 
+		
+		JSONArray jsonWhatsAppComponents = new JSONArray();
+		JSONObject jsonWhatsAppComponent = new JSONObject();
+		jsonWhatsAppComponent.put("type", "body");
+		
+		JSONArray jsonWhatsAppParameters = new JSONArray();
+		JSONObject jsonWhatsAppParameter = new JSONObject();
+		
+		// Nome do notificado
+		jsonWhatsAppParameter = new JSONObject();
+		jsonWhatsAppParameter.put("type", "text");
+		jsonWhatsAppParameter.put("text", contrato.getResponsavel().getNome());
+		jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+		
+		// Número do pedido
+		jsonWhatsAppParameter = new JSONObject();
+		jsonWhatsAppParameter.put("type", "text");
+		jsonWhatsAppParameter.put("text", contrato.getNumeroContrato());
+		jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+		
+		// Nome do cliente
+		jsonWhatsAppParameter = new JSONObject();
+		jsonWhatsAppParameter.put("type", "text");
+		jsonWhatsAppParameter.put("text", contrato.getPagador().getNome());
+		jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+		
+		// Valor do pedido
+		jsonWhatsAppParameter = new JSONObject();
+		jsonWhatsAppParameter.put("type", "text");
+		jsonWhatsAppParameter.put("text", CommonsUtil.formataValorMonetario(contrato.getValorCCB(), "R$ "));
+		jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+		
+		// Valor da Nota
+		jsonWhatsAppParameter = new JSONObject();
+		jsonWhatsAppParameter.put("type", "text");
+		jsonWhatsAppParameter.put("text", CommonsUtil.formataValorMonetario(contrato.getValorNotaFiscal(), "R$ "));
+		jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+		
+		// Nome Gerente
+		String nomeDono = "";
+		if(!CommonsUtil.semValor(contrato.getResponsavel().getDonoResponsavel().getNome())) {
+			nomeDono =  contrato.getResponsavel().getDonoResponsavel().getNome();
+		}
+		jsonWhatsAppParameter = new JSONObject();
+		jsonWhatsAppParameter.put("type", "text");
+		jsonWhatsAppParameter.put("text", nomeDono);
+		jsonWhatsAppParameters.put(jsonWhatsAppParameter);				
+	
+									
+		jsonWhatsAppComponent.put("parameters", jsonWhatsAppParameters);
+			
+		jsonWhatsAppComponents.put(jsonWhatsAppComponent);
+		
+		JSONObject jsonWhatsAppLanguage = new JSONObject();
+		jsonWhatsAppLanguage.put("code", "pt_BR");
+		jsonWhatsAppLanguage.put("policy", "deterministic");				
+			
+		JSONObject jsonWhatsAppTemplate = new JSONObject();
+		jsonWhatsAppTemplate.put("namespace", "37de7635_839c_4792_92a6_5d40dc299b2a");
+		jsonWhatsAppTemplate.put("name", nomeTemplateMensagem);		
+		jsonWhatsAppTemplate.put("components", jsonWhatsAppComponents);
+		jsonWhatsAppTemplate.put("language", jsonWhatsAppLanguage);	
+		
+		JSONObject jsonWhatsAppConteudo = new JSONObject();
+		jsonWhatsAppConteudo.put("type", "template");
+		
+		jsonWhatsAppConteudo.put("template", jsonWhatsAppTemplate);	
+		
+		jsonWhatsApp.put("content", jsonWhatsAppConteudo);
+		
+		senderWhatsAppMessage(jsonWhatsApp);
+	}
 	
 	/**
 	 * CRIA ENDEREÇO DA MENSAGEM DO WHATSAPP

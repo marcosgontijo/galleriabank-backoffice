@@ -21,6 +21,7 @@ public class AnaliseComite implements Serializable {
 	private String comentarioComite;
 	private String usuarioComite;
 	private String votoAnaliseComite;
+	private int carenciaComite;
 	
 	private ContratoCobranca contratoCobranca;
 
@@ -103,4 +104,14 @@ public class AnaliseComite implements Serializable {
 	public void setVotoAnaliseComite(String votoAnaliseComite) {
 		this.votoAnaliseComite = votoAnaliseComite;
 	}
+
+	public int getCarenciaComite() {
+		return carenciaComite;
+	}
+
+	public void setCarenciaComite(int carenciaComite) {
+		this.carenciaComite = carenciaComite;
+	}
+	
+	
 }

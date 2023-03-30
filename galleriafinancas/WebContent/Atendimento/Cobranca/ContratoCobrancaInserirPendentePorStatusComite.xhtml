@@ -627,6 +627,14 @@
 												<f:selectItem itemValue="liquido" itemLabel="Líquido" />
 											</p:selectOneMenu>
 										</h:panelGroup>
+										
+										<p:outputLabel value="Carência: "
+											styleClass="labelBold" />					
+										<h:panelGroup>
+											<p:inputText value="#{contratoCobrancaMB.objetoAnaliseComite.carenciaComite}" size="100"
+												style="width:60px;" />
+											<p:outputLabel value=" meses" />
+										</h:panelGroup>
 	
 										<p:outputLabel for="comentarioComiteComite"
 											value="Comentários comitê: " styleClass="labelBold" />
@@ -1421,6 +1429,14 @@
 									value="#{contratoCobrancaMB.objetoContratoCobranca.valorAprovadoComite}"
 									converter="bigDecimalConverter"
 									style="FONT-SIZE: 10pt;width:100px;" />
+							</h:panelGroup>
+							
+							<p:outputLabel value="Carência: "
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.carenciaComite}" size="100"
+									style="width:60px;" />
+								<p:outputLabel value=" meses" />
 							</h:panelGroup>
 
 							<p:outputLabel for="tipoValorComiteView" value="Tipo do Valor: "

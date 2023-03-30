@@ -4,6 +4,9 @@ import java.awt.image.RenderedImage;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -17,6 +20,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -84,6 +88,7 @@ import com.webnowbr.siscoat.cobranca.db.op.CcbDao;
 import com.webnowbr.siscoat.cobranca.db.op.CcbParticipantesDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
+import com.webnowbr.siscoat.cobranca.mb.ContratoCobrancaMB.FileUploaded;
 import com.webnowbr.siscoat.common.BancosEnum;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
@@ -91,6 +96,7 @@ import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.common.ValidaCNPJ;
 import com.webnowbr.siscoat.common.ValidaCPF;
+import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.simulador.SimulacaoDetalheVO;
 import com.webnowbr.siscoat.simulador.SimulacaoVO;
 import com.webnowbr.siscoat.simulador.SimuladorMB;
@@ -347,7 +353,7 @@ public class CcbMB {
 	
 	public void pesquisaSegurado() {
 		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
-		this.listPagadores = pagadorRecebedorDao.findAll();		
+		this.listPagadores = pagadorRecebedorDao.getPagadoresRecebedores();		
 		this.tipoPesquisa = "Segurado";
 		this.tituloPagadorRecebedorDialog = "Segurados";
 		this.updatePagadorRecebedor = " :form:SeguradoresPanel ";
@@ -457,23 +463,27 @@ public class CcbMB {
 		} else {
 			ccbDao.create(this.participanteSelecionado);
 		}
+		
 		if(CommonsUtil.mesmoValor(participanteSelecionado.getTipoParticipante(), "EMITENTE")) {
 			if(CommonsUtil.semValor(this.objetoCcb.getContaCorrente())) {
 				if(!CommonsUtil.semValor(participanteSelecionado.getPessoa().getConta())) {
 					this.objetoCcb.setContaCorrente(participanteSelecionado.getPessoa().getConta());
+					this.objetoCcb.setCCBCC(participanteSelecionado.getPessoa().getConta());
 				}
 			}
 			
 			if(CommonsUtil.semValor(this.objetoCcb.getAgencia())) {
 				if(!CommonsUtil.semValor(participanteSelecionado.getPessoa().getAgencia())) {
 					this.objetoCcb.setAgencia(participanteSelecionado.getPessoa().getAgencia());
+					this.objetoCcb.setCCBAgencia(participanteSelecionado.getPessoa().getAgencia());
 				}
 			}
 			
-			if(!CommonsUtil.semValor(participanteSelecionado.getPessoa().getBanco())) {			
+			if(!CommonsUtil.semValor(participanteSelecionado.getPessoa().getBanco())) {		
+				this.objetoCcb.setCCBBanco(participanteSelecionado.getPessoa().getBanco());
 				String[] banco = participanteSelecionado.getPessoa().getBanco().split(Pattern.quote("|"));
-				if (CommonsUtil.semValor(this.objetoCcb.getNomeBanco())) {
 					if (banco.length > 0) {
+						if (CommonsUtil.semValor(this.objetoCcb.getNomeBanco())) {
 						this.objetoCcb.setNomeBanco(CommonsUtil.trimNull(banco[1]));
 					}
 				}
@@ -487,6 +497,24 @@ public class CcbMB {
 			if(CommonsUtil.semValor(this.objetoCcb.getTitularConta())) {
 				if(!CommonsUtil.semValor(participanteSelecionado.getPessoa().getNomeCC())) {
 					this.objetoCcb.setTitularConta(participanteSelecionado.getPessoa().getNomeCC());
+					this.objetoCcb.setCCBNome(participanteSelecionado.getPessoa().getNomeCC());
+				}
+			}
+			
+			if(CommonsUtil.semValor(this.objetoCcb.getPixBanco())) {
+				if(!CommonsUtil.semValor(participanteSelecionado.getPessoa().getPix())) {
+					this.objetoCcb.setPixBanco(participanteSelecionado.getPessoa().getPix());
+					this.objetoCcb.setCCBPix(participanteSelecionado.getPessoa().getPix());
+				}
+			}
+			
+			if(CommonsUtil.semValor(this.objetoCcb.getCCBCNPJ())) {
+				if(!CommonsUtil.semValor(participanteSelecionado.getPessoa().getCpf())) {
+					this.objetoCcb.setCCBDocumento("CPF");
+					this.objetoCcb.setCCBCNPJ(participanteSelecionado.getPessoa().getCpf());
+				} else if (!CommonsUtil.semValor(participanteSelecionado.getPessoa().getCnpj())) {
+					this.objetoCcb.setCCBDocumento("CNPJ");
+					this.objetoCcb.setCCBCNPJ(participanteSelecionado.getPessoa().getCnpj());
 				}
 			}
 			
@@ -824,6 +852,7 @@ public class CcbMB {
 		objetoCcb.setValorCredito(objetoContratoCobranca.getValorAprovadoComite());
 		objetoCcb.setTaxaDeJurosMes(objetoContratoCobranca.getTaxaAprovada());
 		objetoCcb.setPrazo(objetoContratoCobranca.getPrazoMaxAprovado().toString());
+		this.carencia = CommonsUtil.stringValue(objetoContratoCobranca.getCarenciaComite());
 		if(CommonsUtil.mesmoValor(objetoContratoCobranca.getTipoValorComite(), "liquido")) {
 			objetoCcb.setTipoCalculoFinal('L');
 		} else {
@@ -1109,6 +1138,9 @@ public class CcbMB {
 	}
 	
 	public void populateSelectedPagadorRecebedor() {
+		PagadorRecebedorDao pDao = new PagadorRecebedorDao();
+		selectedPagadorGenerico = pDao.findById(selectedPagadorGenerico.getId());
+		
 		if (CommonsUtil.mesmoValor(this.tipoPesquisa , "Emitente")) {
 			this.emitenteSelecionado = (this.selectedPagadorGenerico);
 			this.setNomeEmitente(this.emitenteSelecionado.getNome());
@@ -1561,10 +1593,101 @@ public class CcbMB {
 		return text;
 	}
 
-	public void handleFileUpload(FileUploadEvent event) {
-		uploadedFile = event.getFile();
-	    filesList.add(uploadedFile);
+	public void handleFileUpload(FileUploadEvent event) throws IOException {
+		FacesContext context = FacesContext.getCurrentInstance();
+		// recupera local onde será gravado o arquivo
+		ParametrosDao pDao = new ParametrosDao();
+		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+		//String pathContrato = "C:/Users/Usuario/Desktop/"
+				+ this.objetoCcb.getObjetoContratoCobranca().getNumeroContrato() + "//CCI/";
+
+		// cria o diretório, caso não exista
+		File diretorio = new File(pathContrato);
+		if (!diretorio.isDirectory()) {
+			diretorio.mkdir();
+		}
+
+		// cria o arquivo
+		if(event.getFile().getFileName().endsWith(".zip")) {	
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
+		} else {
+			byte[] conteudo = event.getFile().getContents();
+			FileOutputStream fos;
+			try {
+				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
+				fos.write(conteudo);
+				fos.close();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				System.out.println(e);
+			}
+		}
+		// atualiza lista de arquivos contidos no diretório
+	    for(FileUploaded file : listaArquivos()) {
+			filesList.add((UploadedFile) file.file);
+	    }
     }
+	
+	public Collection<FileUploaded> listaArquivos() {
+		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
+		ParametrosDao pDao = new ParametrosDao();
+		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+		//String pathContrato = "C:/Users/Usuario/Desktop/"
+				+ this.objetoCcb.getObjetoContratoCobranca().getNumeroContrato() + "//CCI/";
+		File diretorio = new File(pathContrato);
+		File arqs[] = diretorio.listFiles();
+		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
+		if (arqs != null) {
+			for (int i = 0; i < arqs.length; i++) {
+				File arquivo = arqs[i];
+
+				// String nome = arquivo.getName();
+				// String dt_ateracao = formatData.format(new Date(arquivo.lastModified()));
+				lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
+			}
+		}
+		return lista;
+	}
+	
+	public class FileUploaded {
+		private File file;
+		private String name;
+		private String path;
+
+		public FileUploaded() {
+		}
+
+		public FileUploaded(String name, File file, String path) {
+			this.name = name;
+			this.file = file;
+			this.path = path;
+		}
+
+		public File getFile() {
+			return file;
+		}
+
+		public void setFile(File file) {
+			this.file = file;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public String getPath() {
+			return path;
+		}
+
+		public void setPath(String path) {
+			this.path = path;
+		}
+	}
+
 	
 	public void populateFiles(int index) throws IOException {
 		uploadedFile = filesList.get(index);
@@ -6693,7 +6816,7 @@ public class CcbMB {
 				run = tableRow1.getCell(0).getParagraphArray(0).createRun();
 				run.setFontSize(12);
 				run.setColor("000000");
-				run.setText("Crédito CCI/CCB");
+				run.setText("Crédito CCI");
 
 				tableRow1.getCell(1).setParagraph(paragraph);
 				tableRow1.getCell(1).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
@@ -6703,7 +6826,7 @@ public class CcbMB {
 				run.setFontSize(12);
 				run.setText("Ted no "+ this.objetoCcb.getCCBBanco() +" AG: "+ this.objetoCcb.getCCBAgencia()
 					+" C/C: "+ this.objetoCcb.getCCBCC() +" Chave Pix: "+ this.objetoCcb.getCCBPix()
-					+ this.objetoCcb.getCCBNome() +" CNPJ: "+ this.objetoCcb.getCCBCNPJ() );
+					+ this.objetoCcb.getCCBNome() + " " + this.objetoCcb.getCCBDocumento() + ": " + this.objetoCcb.getCCBCNPJ());
 				run.setColor("000000");	
 				run2 = tableRow1.getCell(1).getParagraphArray(0).createRun();
 				run2.addBreak();
@@ -7316,11 +7439,16 @@ public class CcbMB {
 			} else {
 				estadoCivilStr = "casado";
 			}		
-			conjugeStr = ", sob o regime " + pessoa.getRegimeCasamento() + ", na vigência da lei 6.515/77 (" + 
+			if(!CommonsUtil.mesmoValor(pessoa.getRegimeCasamento(), "parcial de bens")) {
+				conjugeStr = ", sob o regime " + pessoa.getRegimeCasamento() + ", na vigência da lei 6.515/77 (" + 
 					pessoa.getNomeConjuge() + " " + pessoa.getCpfConjuge() + "), conforme pacto antenupcial registrado no "+
 					pessoa.getRegistroPactoAntenupcial() + ", sob livro " + pessoa.getLivroPactoAntenupcial() + ", folhas " + 
 					pessoa.getFolhasPactoAntenupcial() + ", datada de " + CommonsUtil.formataData(pessoa.getDataPactoAntenupcial()) ;
-					;
+			} else {
+				conjugeStr = ", sob o regime " + pessoa.getRegimeCasamento() + ", na vigência da lei 6.515/77 (" + 
+						pessoa.getNomeConjuge() + " " + pessoa.getCpfConjuge() + ")" ;
+			}
+			
 		} else {
 			if (participante.isFeminino()) {
 				if (CommonsUtil.mesmoValor(pessoa.getEstadocivil(), "SOLTEIRO")) {
@@ -8048,7 +8176,8 @@ public class CcbMB {
 			int iParticipante = 0;
 			for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {		
 				
-				if(CommonsUtil.mesmoValor(participante.getTipoOriginal(), "TERCEIRO GARANTIDOR")) {
+				if(CommonsUtil.mesmoValor(participante.getTipoOriginal(), "TERCEIRO GARANTIDOR") 
+						|| CommonsUtil.mesmoValor(participante.getTipoOriginal(), "Vendedor")) {
 					participante.setTipoParticipante("Vendedor");
 				
 					run = tableRowAux.getCell(0).getParagraphArray(0).createRun();	
@@ -8573,7 +8702,8 @@ public class CcbMB {
 			int iParticipante = 0;
 			for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {		
 				
-				if(CommonsUtil.mesmoValor(participante.getTipoOriginal(), "TERCEIRO GARANTIDOR")) {
+				if(CommonsUtil.mesmoValor(participante.getTipoOriginal(), "TERCEIRO GARANTIDOR") 
+						|| CommonsUtil.mesmoValor(participante.getTipoOriginal(), "Vendedor")) {
 					participante.setTipoParticipante("Vendedor");
 				
 					run = tableRowAux.getCell(0).getParagraphArray(0).createRun();	
@@ -10288,15 +10418,22 @@ public class CcbMB {
 	    this.simulador = new SimulacaoVO();
 	    
 	    clearPagadorRecebedor();
+	    
+	    CcbDao ccbDao = new CcbDao();
+	    int serie = CommonsUtil.intValue(ccbDao.ultimaSerieCCB()) + 1;
+	    objetoCcb.setSerieCcb(CommonsUtil.stringValue(serie));
 		
 		return "/Atendimento/Cobranca/Ccb.xhtml";
 	}
 	
 	public void loadLovs() {
 		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
-		this.listPagadores = pagadorRecebedorDao.findAll();
+		this.listPagadores = pagadorRecebedorDao.getPagadoresRecebedores();
 		
-		this.filesList = new ArrayList<UploadedFile>();
+		filesList = new ArrayList<UploadedFile>();
+		for(FileUploaded file : listaArquivos()) {
+			filesList.add((UploadedFile) file.file);
+	    }
 	}
 	
 	public void getEnderecoByViaNet() {

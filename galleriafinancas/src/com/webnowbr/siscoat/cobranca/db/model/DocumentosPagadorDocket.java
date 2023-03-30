@@ -30,7 +30,7 @@ public class DocumentosPagadorDocket implements Serializable {
 	
 	public void getCidadeDocketId() {
 		DocketCidadesDao dcDao = new DocketCidadesDao();
-		cidadeId = dcDao.getCidadeId(cidade);
+		cidadeId = dcDao.getCidadeId(cidade, estadoSelecionado.getUf());
 	}
 	
 	public DocumentosPagadorDocket(DocumentosDocket doc) {
