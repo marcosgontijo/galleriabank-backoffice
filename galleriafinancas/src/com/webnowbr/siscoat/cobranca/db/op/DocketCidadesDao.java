@@ -54,10 +54,11 @@ public class DocketCidadesDao extends HibernateDao <DocketCidades,Long> {
 		});	
 	}
 	
-	private static final String QUERY_GET_CIDADES_DOCKET_ID = "select iddocket from cobranca.docketcidades where nome = ? ";
+	private static final String QUERY_GET_CIDADES_DOCKET_ID = "select iddocket from cobranca.docketcidades where nome = ? "
+			+ " and url like ? ";
 	
 	@SuppressWarnings("unchecked")
-	public String getCidadeId(final String nomeCidade) {
+	public String getCidadeId(final String nomeCidade, final String uf) {
 		return (String) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -75,6 +76,7 @@ public class DocketCidadesDao extends HibernateDao <DocketCidades,Long> {
 							.prepareStatement(QUERY_GET_CIDADES_DOCKET_ID);	
 					
 					ps.setString(1, nomeCidade);
+					ps.setString(2, uf.toLowerCase() + "-%");
 					
 					rs = ps.executeQuery();
 										
