@@ -160,7 +160,7 @@
 					</p:column>
 					<p:column style="text-align: center;width: 130px;"
 						headerText="Baixar Parcela" styleClass="colunaHiddenRelFinanceiro">
-						<p:commandButton onclick="PF('baixaParcialDialog').show();"
+						<p:commandButton action="#{contratoCobrancaMB.updateDialogBaixaKobana}" oncomplete="PF('baixaParcialDialog').show();"
 							title="Baixar Parcela" icon="ui-icon-transferthick-e-w"
 							update=":formBaixaParcial" style="height: 25px;width: 30px;" rendered="#{boleto.status eq 'Pago' and boleto.parcela.id gt 0}">
 							<f:setPropertyActionListener
@@ -178,6 +178,9 @@
 							<f:setPropertyActionListener
 								target="#{contratoCobrancaMB.vlrRecebido}"
 								value="#{contratoCobrancaMB.vlrParcelaAtualizadaNew}" />
+							<f:setPropertyActionListener
+								target="#{contratoCobrancaMB.rowEditNewDate}"
+								value="#{boleto.paidAt}" />
 						</p:commandButton>
 						<p:commandButton onclick="PF('baixaParcialMultiParcelasDialog').show();"
 							title="Baixar Parcela - MultiParcelas" icon="ui-icon-circle-plus"
@@ -444,7 +447,7 @@
 						<p:outputLabel for="Recebedor" value="Favorecido: "
 							styleClass="labelBold" />
 						<p:inputText id="Recebedor"
-							value="#{contratoCobrancaMB.nomeRecebedor}" label="Recebedor"
+							value="#{contratoCobrancaMB.selectedRecebedor.nome}" label="Recebedor"
 							readonly="TRUE" required="true"
 							style="FONT-SIZE: 10pt;width:290px;" />
 						<p:commandButton id="botaoRecebedor" type="button"

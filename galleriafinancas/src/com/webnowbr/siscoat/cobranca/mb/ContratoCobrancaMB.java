@@ -19744,6 +19744,24 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		contratoCobrancaDetalhesDao.merge(bpContratoCobrancaDetalhes);
 	}
 	
+	public void updateDialogBaixaKobana() {
+		PagadorRecebedorDao prDao = new PagadorRecebedorDao();
+		
+		if (this.objetoContratoCobranca.getEmpresa() != null) {
+			if (this.objetoContratoCobranca.getEmpresa().equals("FIDC GALLERIA")) {
+				this.selectedRecebedor = prDao.findById((long) 6625);
+			} else if(this.objetoContratoCobranca.getEmpresa().equals("CRI 1")) {
+				this.selectedRecebedor = prDao.findById((long) 15765);
+			} else if(this.objetoContratoCobranca.getEmpresa().equals("CRI 2")) {
+				this.selectedRecebedor = prDao.findById((long) 34630);
+			} else {
+				this.selectedRecebedor = prDao.findById((long) 803); //galleria sec
+			}
+		} else {
+			this.selectedRecebedor = prDao.findById((long) 803);
+		}
+	}
+	
 	/* BAIXA MULTI PARCELAS PARCIAL */
 	public void baixarMultiParcelaParcial() {
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -19846,6 +19864,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 				this.txZero = true;
 				this.vlrRecebido = this.vlrParcelaAtualizadaNew;
 				this.rowEditNewDate = boletosKokanaSelecionados.getPaidAt();
+				this.selectedRecebedor = this.objetoContratoCobranca.getRecebedor();
 				
 				baixarParcelaParcial();
 			}
