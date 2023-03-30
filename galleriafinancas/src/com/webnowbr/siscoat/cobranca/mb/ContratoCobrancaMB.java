@@ -18436,6 +18436,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 						
 						if ( CommonsUtil.mesmoValor(BigDecimal.ZERO, detalhe.getVlrParcela()))
 							detalhe.setParcelaPaga(false);
+							detalhe.setOrigemBaixa("concluirReparcelamento");
 					}
 					
 					
@@ -19860,17 +19861,20 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 	public void baixarParcelasKobanaLote() {
 		FacesContext context = FacesContext.getCurrentInstance();
 
-		// valida se tem multi parcelas
-		boolean temMultiParcelas = false;
-		for (BoletoKobana boletosKokanaSelecionados : this.selectedBoletosKobana) {
+		for (BoletoKobana boletosKokanaSelecionados : this.selectedBoletosKobana) { 
+			// baixa multiparcelas
 			if (boletosKokanaSelecionados.getParcela() == null) {
-				temMultiParcelas = true;
-				break;
-			}			
-		}
-		// baixa parcelas em lote da tela kobana, apenas parcelas simples
-		if (!temMultiParcelas) { 
-			for (BoletoKobana boletosKokanaSelecionados : this.selectedBoletosKobana) { 
+				this.callMetodoPorDialogBaixaParcial = true;
+				this.objetoContratoCobranca = boletosKokanaSelecionados.getContrato();
+				this.rowEditNewDate = boletosKokanaSelecionados.getPaidAt();
+				this.selectedParcelas = boletosKokanaSelecionados.getMultiParcelas();			
+				this.reciboGerado = false;
+				this.txZero = true;
+				this.vlrRecebido = boletosKokanaSelecionados.getPaidAmount();		
+				
+				baixarMultiParcelaParcial();
+			} else {
+				// baixa normal
 				this.callMetodoPorDialogBaixaParcial = true;
 				this.objetoContratoCobranca = boletosKokanaSelecionados.getContrato();
 				setBpContratoCobrancaDetalhesCustom(boletosKokanaSelecionados.getParcela());
@@ -19882,12 +19886,9 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 				
 				baixarParcelaParcial();
 			}
-			
+		
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-					"Contrato Cobrança: Parcelas Baixadas com Sucesso!", ""));
-		} else {
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
-					"Contrato Cobrança: Esta operação não é válida para Multi-Parcelas!", ""));
+				"Contrato Cobrança: Parcelas Baixadas com Sucesso!", ""));
 		}
 	}
 	

@@ -500,6 +500,7 @@ public class IPCAMB {
 						
 						if ( CommonsUtil.mesmoValor(BigDecimal.ZERO, detalhe.getVlrParcela()))
 							detalhe.setParcelaPaga(false);
+							detalhe.setOrigemBaixa("atualizaNovoIPCAPorContrato");
 					}
 					
 					
