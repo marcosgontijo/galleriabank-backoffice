@@ -30,7 +30,9 @@
 				style="margin-bottom:10px;">
 				<p:focus />
 				<p:messages />
-				<p:messages id="msgs" />				
+				<p:messages id="msgs" />	
+				<p:commandButton ajax="false" action="#{ccbMB.readXWPFile}"
+						icon="ui-icon ui-icon-print" value="Fazer Download"  update=" :form  msgs" />			
 
 				<h:panelGrid columns="2">							
 					<p:outputLabel for="tipoDownload"
@@ -1111,8 +1113,11 @@
 											value="#{ccbMB.participanteSelecionado.tipoParticipante}">
 											<f:selectItem itemValue="EMITENTE" itemLabel="EMITENTE" />
 											<f:selectItem itemValue="INTERVENIENTE ANUENTE" itemLabel="INTERVENIENTE ANUENTE" />
-											<f:selectItem itemValue="TERCEIRO GARANTIDOR" itemLabel="TERCEIRO GARANTIDOR" />
 											<f:selectItem itemValue="AVALISTA" itemLabel="AVALISTA" />
+											<f:selectItem itemValue="DEVEDOR FIDUCIANTE" itemLabel="DEVEDOR FIDUCIANTE" />	
+											<f:selectItem itemValue="DEVEDOR" itemLabel="DEVEDOR" />		
+											<f:selectItem itemValue="Comprador" itemLabel="COMPRADOR" />	
+											<f:selectItem itemValue="Vendedor" itemLabel="VENDEDOR" />						
 										</p:selectOneMenu>
 
 										<p:outputLabel for="nacionalidadeParticipante"
@@ -1337,8 +1342,11 @@
 											value="#{ccbMB.participanteSelecionado.tipoParticipante}">
 											<f:selectItem itemValue="EMITENTE" itemLabel="EMITENTE" />
 											<f:selectItem itemValue="INTERVENIENTE ANUENTE" itemLabel="INTERVENIENTE ANUENTE" />
-											<f:selectItem itemValue="TERCEIRO GARANTIDOR" itemLabel="TERCEIRO GARANTIDOR" />
 											<f:selectItem itemValue="AVALISTA" itemLabel="AVALISTA" />
+											<f:selectItem itemValue="DEVEDOR FIDUCIANTE" itemLabel="DEVEDOR FIDUCIANTE" />	
+											<f:selectItem itemValue="DEVEDOR" itemLabel="DEVEDOR" />		
+											<f:selectItem itemValue="Comprador" itemLabel="COMPRADOR" />	
+											<f:selectItem itemValue="Vendedor" itemLabel="VENDEDOR" />
 										</p:selectOneMenu>
 
 										<p:outputLabel for="tipoEmpresa" value="Tipo: "
@@ -1761,7 +1769,7 @@
 							</h:panelGroup>
 
 							<h:panelGrid columns="1">
-								<p:outputLabel for="CCBValor" value="Crédito CCI/CCB "
+								<p:outputLabel for="CCBValor" value="Crédito CCI "
 									styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
 								<p:selectOneRadio id="temCCBValor" unselectable="true"

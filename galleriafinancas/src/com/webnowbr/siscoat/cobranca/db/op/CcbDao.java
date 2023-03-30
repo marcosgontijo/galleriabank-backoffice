@@ -88,7 +88,6 @@ public class CcbDao extends HibernateDao <CcbContrato,Long> {
 		});	
 	}	
 	
-	
 
 	private static final String QUERY_CONSULTA_TESTEMUNHAS= "select id, nome, cpf, rg from cobranca.pagadorrecebedor p ";
 	
@@ -118,6 +117,37 @@ public class CcbDao extends HibernateDao <CcbContrato,Long> {
 					closeResources(connection, ps, rs);					
 				}
 				return object;
+			}
+		});	
+	}	
+	
+	private static final String QUERY_CONSULTA_SERIECCB = "select distinct length(serieccb),serieccb from cobranca.ccbcontrato c \r\n"
+			+ "where serieccb != ''\r\n"
+			+ "and serieccb is not null\r\n"
+			+ "order by length(serieccb) desc,serieccb desc";
+	
+	@SuppressWarnings("unchecked")
+	public String ultimaSerieCCB() {
+		return (String) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				String retorno = "";
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				String query = QUERY_CONSULTA_SERIECCB;
+				
+				try {
+					connection = getConnection();
+					ps = connection.prepareStatement(query);
+					rs = ps.executeQuery();
+					rs.next();
+					retorno = rs.getString("serieccb");
+					
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return retorno;
 			}
 		});	
 	}	

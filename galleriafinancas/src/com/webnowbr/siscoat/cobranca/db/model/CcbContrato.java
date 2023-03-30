@@ -153,6 +153,7 @@ public class CcbContrato implements Serializable{
     private String CCBCNPJ; 
     private String CCBNome; 
     private String CCBPix;
+    private String CCBDocumento;
     
     private List<CcbProcessosJudiciais> processosJucidiais; // (++)
     private BigDecimal iptuEmAtrasoValor = BigDecimal.ZERO;
@@ -1212,6 +1213,13 @@ public class CcbContrato implements Serializable{
 	public void setTipoCalculoFinal(char tipoCalculoFinal) {
 		this.tipoCalculoFinal = tipoCalculoFinal;
 	}
-	
+
+	public String getCCBDocumento() {
+		return CCBDocumento;
+	}
+
+	public void setCCBDocumento(String cCBDocumento) {
+		CCBDocumento = cCBDocumento;
+	}
 	
 }
