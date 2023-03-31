@@ -626,6 +626,7 @@ public class CcbMB {
 			this.objetoCcb.setLogradouroNumeroImovel(CommonsUtil.removeEspacos(endereco[1]));
 		}
 		this.objetoCcb.setBairroImovel(imovel.getBairro());
+		listaArquivos();
 	}
 	
 	public void clearContratoCobranca() {
@@ -1629,6 +1630,9 @@ public class CcbMB {
     }
 	
 	public Collection<FileUploaded> listaArquivos() {
+		if(CommonsUtil.semValor(this.objetoCcb.getObjetoContratoCobranca())) {
+			return null;
+		}
 		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
 		ParametrosDao pDao = new ParametrosDao();
 		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
