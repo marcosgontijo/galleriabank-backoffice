@@ -1631,7 +1631,7 @@ public class CcbMB {
 	
 	public Collection<FileUploaded> listaArquivos() {
 		if(CommonsUtil.semValor(this.objetoCcb.getObjetoContratoCobranca())) {
-			return null;
+			return new ArrayList<CcbMB.FileUploaded>();
 		}
 		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
 		ParametrosDao pDao = new ParametrosDao();
