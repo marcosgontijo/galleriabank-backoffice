@@ -48,7 +48,10 @@
 						<f:selectItem itemValue="EndossosEmPretoGalleria" itemLabel="Endossos Em Preto" />		
 						<f:selectItem itemValue="FinanciamentoCCI" itemLabel="FinanciamentoCCI" />			
 						<f:selectItem itemValue="Ficha PPE" itemLabel="Ficha PPE - PF" />	
-						<f:selectItem itemValue="Ficha PLD e FT" itemLabel="Ficha PLD e FT - PJ" />							
+						<f:selectItem itemValue="Ficha PLD e FT" itemLabel="Ficha PLD e FT - PJ" />	
+						<f:selectItem itemValue="DeclaracaoNaoUniaoEstavel" itemLabel="DeclaracaoNaoUniaoEstavel" />	
+						
+												
 						<p:ajax update="pagadoresAntigos pagadoresNovos despesasPanel SeguradoresPanel PanelBanco PgmntBancoVendedor" event="valueChange"
 							listener="#{ccbMB.verificaModeloAntigo()}" />
 					</p:selectOneMenu>	

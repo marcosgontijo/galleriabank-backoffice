@@ -691,7 +691,7 @@ public class DocketMB {
 				DocumentosPagadorDocket docPagador = new DocumentosPagadorDocket(doc);
 				if(!CommonsUtil.semValor(estado)) {
 					docPagador.setEstadoSelecionado(estado);
-					if(CommonsUtil.mesmoValor(estado.getUf(), "RJ")
+					/*if(CommonsUtil.mesmoValor(estado.getUf(), "RJ")
 						||CommonsUtil.mesmoValor(estado.getUf(), "PR")) {
 						if(CommonsUtil.mesmoValor(doc.getDocumentoNome(), 
 								"Certidão de Distribuição de Ações Criminais - Justiça Estadual (1° instância)")
@@ -703,7 +703,7 @@ public class DocketMB {
 									"Certidão de Distribuição de Ações Cíveis - Justiça Estadual (1° instância) - Processos Judiciais Eletrônicos")){						
 							continue;
 						}	
-					}
+					}*/
 				}
 				
 				if(CommonsUtil.mesmoValor(doc.getDocumentoNome(), 

@@ -8635,7 +8635,13 @@ public class ContratoCobrancaMB {
 					valorSugerido = valorSugerido.divide(BigDecimal.valueOf(100),  MathContext.DECIMAL128);
 				}
 			}
-			this.objetoAnaliseComite.setValorComite(valorSugerido);
+			
+			if(!CommonsUtil.semValor(this.objetoContratoCobranca.getValorEmprestimo())
+					&& this.objetoContratoCobranca.getValorEmprestimo().compareTo(valorSugerido) < 0) {
+				objetoAnaliseComite.setValorComite(this.objetoContratoCobranca.getValorEmprestimo());
+			} else {
+				this.objetoAnaliseComite.setValorComite(valorSugerido);
+			}			
 		}
 		
 		if(CommonsUtil.semValor(this.objetoContratoCobranca.getProcessosQuitarComite())){
@@ -18736,12 +18742,6 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		if(CommonsUtil.mesmoValor(menorValorAprovado, BigDecimal.valueOf(Double.MAX_VALUE))) {
 			contrato.setValorAprovadoComite(BigDecimal.ZERO);
 		} else {
-			if(!CommonsUtil.semValor(contrato.getValorEmprestimo())) {
-				if(contrato.getValorEmprestimo().compareTo(menorValorAprovado) < 0) {
-					contrato.setValorAprovadoComite(contrato.getValorEmprestimo());
-					return;
-				} 
-			} 		
 			contrato.setValorAprovadoComite(menorValorAprovado);
 		}
 		
