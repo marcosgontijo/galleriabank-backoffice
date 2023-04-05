@@ -54,6 +54,8 @@ public class ContractService {
 	private Set<PagadorRecebedorAdicionais> listaPagadores;
 	private Set<PagadorRecebedorSocio> listSocios;
 	private PagadorRecebedorAdicionais pagadorRecebedorAdicionais;
+	private static final String PENDENTE = "Pendente";
+	private static final String COMPLETO = "Completo";
 	
 	@ManagedProperty(value = "#{loginBean}")
 	protected LoginBean loginBean;
@@ -142,7 +144,11 @@ public class ContractService {
 						 */
 						this.objetoContratoCobranca.setUserCadastro(contratoAPP.has("userCadastro") ? contratoAPP.getString("userCadastro") : getNomeUsuarioLogado());
 						this.objetoContratoCobranca.setInicioAnalise(false);
-						this.objetoContratoCobranca.setStatusLead("Completo");
+						this.objetoContratoCobranca.setStatus(contratoAPP.has("status") ? contratoAPP.getString("status") : PENDENTE);
+						this.objetoContratoCobranca.setStatusContrato(contratoAPP.has("statusContrato") ? contratoAPP.getString("statusContrato") : PENDENTE);
+						this.objetoContratoCobranca.setStatusLead(contratoAPP.has("statusLead") ? contratoAPP.getString("statusLead") : COMPLETO);
+						this.objetoContratoCobranca.setContratoLead(contratoAPP.has("contratoLead") ? contratoAPP.getBoolean("contratoLead") : false);
+						
 						this.objetoContratoCobranca.setDocumentosComite(false);
 						this.objetoContratoCobranca.setCadastroAprovado(false);
 						this.objetoContratoCobranca.setPedidoPreLaudo(false);
@@ -229,14 +235,14 @@ public class ContractService {
 								this.objetoImovelCobranca.setEndereco(contratoAPPImovel.getString("endereco"));									
 							}
 							this.objetoImovelCobranca.setComplemento(contratoAPPImovel.has("complemento") ? contratoAPPImovel.getString("complemento") : null);
-							this.objetoImovelCobranca.setCidade(contratoAPPImovel.getString("cidade"));
+							this.objetoImovelCobranca.setCidade(contratoAPPImovel.has("cidade") ? contratoAPPImovel.getString("cidade") : null);
 							this.objetoImovelCobranca.setBairro(contratoAPPImovel.has("bairro") ? contratoAPPImovel.getString("bairro") : null);
-							this.objetoImovelCobranca.setEstado(contratoAPPImovel.getString("estado"));
+							this.objetoImovelCobranca.setEstado(contratoAPPImovel.has("estado") ? contratoAPPImovel.getString("estado") : null);
 							this.objetoImovelCobranca.setNumeroCartorio(contratoAPPImovel.has("numeroCartorio") ? contratoAPPImovel.getString("numeroCartorio") : null);
 							this.objetoImovelCobranca.setCartorio(contratoAPPImovel.has("cartorioRegistro") ? contratoAPPImovel.getString("cartorioRegistro") : null);
 							this.objetoImovelCobranca.setCartorioEstado(contratoAPPImovel.has("cartorioEstado") ? contratoAPPImovel.getString("cartorioEstado") : null);
 							this.objetoImovelCobranca.setCartorioMunicipio(contratoAPPImovel.has("cartorioMunicipio") ? contratoAPPImovel.getString("cartorioMunicipio") : null);
-							this.objetoImovelCobranca.setNumeroMatricula(contratoAPPImovel.getString("numeroMatricula"));
+							this.objetoImovelCobranca.setNumeroMatricula(contratoAPPImovel.has("numeroMatricula") ? contratoAPPImovel.getString("numeroMatricula") : null);
 							this.objetoImovelCobranca.setTipo(contratoAPPImovel.has("tipoImovel") ? contratoAPPImovel.getString("tipoImovel") : null);
 							this.objetoImovelCobranca.setComprovanteMatriculaCheckList(contratoAPPImovel.has("comprovanteMatriculaCheckList") ? contratoAPPImovel.getBoolean("comprovanteMatriculaCheckList") : false);
 							this.objetoImovelCobranca.setComprovanteFotosImovelCheckList(contratoAPPImovel.has("comprovanteFotosImovelCheckList") ? contratoAPPImovel.getBoolean("comprovanteFotosImovelCheckList") : false);
@@ -362,6 +368,11 @@ public class ContractService {
 									? contratoAPP.getString("divida") : this.objetoContratoCobranca.getDivida());
 							this.objetoContratoCobranca.setDividaValor(contratoAPP.has("dividaValor") 
 									? new BigDecimal(contratoAPP.getDouble("dividaValor")) : this.objetoContratoCobranca.getDividaValor());
+							
+							/***
+							 * VALORES DEFAULT
+							 */
+							this.objetoContratoCobranca.setStatusLead(contratoAPP.has("statusLead") ? contratoAPP.getString("statusLead") : COMPLETO);
 							
 							/***
 							 * DADOS DO FLUXO DO CONTRATO COBRANCA - APP	
@@ -656,14 +667,11 @@ public class ContractService {
 		this.objetoImovelCobranca = new ImovelCobranca();
 		this.objetoPagador = new PagadorRecebedor();
 
-		this.objetoContratoCobranca.setStatus("Pendente");
-		this.objetoContratoCobranca.setStatusContrato("Pendente");
 		this.objetoContratoCobranca.setAgAssinatura(true);
 		this.objetoContratoCobranca.setAgEnvioCartorio(true);
 		this.objetoContratoCobranca.setAgRegistro(true);
 		this.objetoContratoCobranca.setAnaliseReprovada(false);
 		this.objetoContratoCobranca.setInicioAnalise(false);
-		this.objetoContratoCobranca.setStatusLead("Completo");
 		
 		ParametrosDao pDao = new ParametrosDao();
 		List<Parametros> cobrancaRecTxJuros = pDao.findByFilter("nome", "COBRANCA_REC_TX_JUROS");
