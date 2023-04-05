@@ -41,6 +41,10 @@
 										action="#{brlTrustMB.clearFieldsBRLJsonSemIPCA()}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
+										<p:menuitem value="Teste Stark Bank"
+										action="#{starkBankAPI.getBalance()}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
 									</shiro:hasRole>																							
 								</p:submenu>																																		
 							</p:menu>  	

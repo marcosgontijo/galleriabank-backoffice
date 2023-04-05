@@ -19353,6 +19353,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		if(dateSelected.before(this.bpContratoCobrancaDetalhes.getDataVencimento())) {
 			calcularValorPresenteParcelaData(this.rowEditNewDate, this.bpContratoCobrancaDetalhes);
 			this.setVlrRecebido(this.valorPresenteParcela);
+			this.setVlrParcelaAtualizadaNew(this.getVlrRecebido());
 		} else {
 			this.setVlrRecebido(this.vlrParcelaAtualizadaNew);
 		}		
