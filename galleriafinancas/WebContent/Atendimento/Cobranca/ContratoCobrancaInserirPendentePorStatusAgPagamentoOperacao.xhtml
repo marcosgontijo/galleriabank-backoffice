@@ -368,7 +368,7 @@
 									styleClass="labelBold" />
 								<!-- espaço em branco para formação dos elementos na tela -->
 
-								<p:outputLabel for="ContaPagarDescricao" value="Descrição: "
+						<p:outputLabel for="ContaPagarDescricao" value="Descrição: "
 									styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
 								<p:autoComplete id="ContaPagarDescricao" dropdown="true"
@@ -505,50 +505,43 @@
 								update=":form:ContasPagarPanel" icon="ui-icon ui-icon-check" />
 						</h:panelGroup>
 
-						<p:dataView var="contas"
+						<p:dataTable var="contas"
 							value="#{contratoCobrancaMB.objetoContratoCobranca.listContasPagar}"
 							paginator="false" layout="list"
-							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
-							<p:dataViewListItem>
-								<p:outputLabel value="Descrição: " styleClass="labelBold" />
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							>
+								<p:column headerText="Descrição: " styleClass="labelBold" >
 								<p:outputLabel value="#{contas.descricao}"
 									styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
-								<p:spacer height="5" />
-								<p:outputLabel value="|" />
-								<p:spacer height="5" />
-
-								<p:outputLabel value="Valor: " styleClass="labelBold" />
+								</p:column>
+								
+								<p:column headerText="Valor: " styleClass="labelBold" >
 								<p:outputLabel value="#{contas.valor}"
 									converter="bigDecimalConverter" styleClass="labelBold"
 									style="FONT-SIZE: 10pt;width:100px;" />
-								<p:spacer height="5" />
-								<p:outputLabel value="|" />
-								<p:spacer height="5" />
-
-								<p:outputLabel value="Data Vencimento: " styleClass="labelBold" />
+								</p:column>
+								
+								<p:column headerText="Data Vencimento: " styleClass="labelBold" >
 								<h:outputText value="#{contas.dataVencimento}"
 									styleClass="labelBold">
 									<f:convertDateTime pattern="dd/MM/yyyy" />
-								</h:outputText>
+								</h:outputText>								
+								</p:column>
 								
-								<p:spacer height="5" />
-								<p:outputLabel value="|" />
-								<p:spacer height="5" />
-
-								<p:outputLabel value="Valor Pago: " styleClass="labelBold" />
+								<p:column headerText="Valor Pago: " styleClass="labelBold" >
 								<p:outputLabel value="#{contas.valorPagamento}"
 									converter="bigDecimalConverter" styleClass="labelBold"
 									style="FONT-SIZE: 10pt;width:100px;" />
-								<p:spacer height="5" />
-								<p:outputLabel value="|" />
-								<p:spacer height="5" />
-
-								<p:outputLabel value="Data Pagamento: " styleClass="labelBold" />
+								</p:column>
+								
+								<p:column headerText="Data Pagamento: " styleClass="labelBold">
 								<h:outputText value="#{contas.dataPagamento}"
 									styleClass="labelBold">
 									<f:convertDateTime pattern="dd/MM/yyyy" />
 								</h:outputText>
-								<p:spacer height="10" />
+								</p:column>
+								
+								<p:column styleClass="colunaResponsiva">
 									<p:commandButton value="Arquivos" icon="ui-icon-print"
 										action="#{contratoCobrancaMB.populateFilesContasPagar(contas)}"
 										ajax="true" update=":form:ContasPagarPanel" />
@@ -561,12 +554,10 @@
 										action="#{contratoCobrancaMB.removerConta(contas)}"
 										ajax="true" update=":form:ContasPagarPanel" />
 									<p:spacer height="10" />
-									<p:commandButton value="Arquivos" icon="ui-icon-print"
-										action="#{contratoCobrancaMB.populateFilesContasPagar(contas)}"
-										ajax="true" update=":form:ContasPagarPanel" />		
+											
 								</shiro:hasAnyRoles>
-							</p:dataViewListItem>
-						</p:dataView>
+								</p:column>
+							</p:dataTable>
 						<!-- VALOR TOTAL PAGO -->
 						<p:outputLabel value="Valor total Pago: " styleClass="labelBold" />
 						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.somaValorPago}"
