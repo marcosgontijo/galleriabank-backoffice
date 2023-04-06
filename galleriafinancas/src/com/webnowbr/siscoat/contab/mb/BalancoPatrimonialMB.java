@@ -30,6 +30,7 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.contab.db.dao.BalancoPatrimonialDao;
 import com.webnowbr.siscoat.contab.db.model.BalancoPatrimonial;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
@@ -41,6 +42,7 @@ import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 public class BalancoPatrimonialMB {
 
 	private BalancoPatrimonial objetoBalanco;
+	private BalancoPatrimonial ultimoBalanco;
 	private Date relDataContratoInicio;
 	private Date relDataContratoFim;
 
@@ -51,6 +53,7 @@ public class BalancoPatrimonialMB {
 	private boolean balancoPatrimonialXLSGerado;
 	private String pathBalanco;
 	private String nomeBalanco;
+	
 
 	public String clearFieldsBalancoPatrimonialConsulta() {
 
@@ -65,9 +68,29 @@ public class BalancoPatrimonialMB {
 	}
 
 	public String clearBalancoPatrimonialEditar() {
-		if (!this.editar)
+		BalancoPatrimonialDao balancopatrimonialDao = new BalancoPatrimonialDao();
+		if (!this.editar) {
 			objetoBalanco = new BalancoPatrimonial();
+			ultimoBalanco = balancopatrimonialDao.consultaUltimoBalanco();
+		//VALOR DEFAULT NO CÓDIGO
+		this.objetoBalanco.setDepositoBacenScd(CommonsUtil.bigDecimalValue(1016095.04));
+		//VALOR DEFAULT NO DAO - VALOR DO SISTEMA
+		this.objetoBalanco.setDireitosCreditorios(balancopatrimonialDao.consultaDireitosCreditorios());
+		// VALOR DEFAULT ÚLTIMO BALANÇO
+		this.objetoBalanco.setDepositosjudiciais(ultimoBalanco.getDepositosjudiciais());
+		this.objetoBalanco.setInvestOperantigas(ultimoBalanco.getInvestOperantigas());
+		this.objetoBalanco.setCapitalSocial(ultimoBalanco.getCapitalSocial());
+		this.objetoBalanco.setProvisaoLiquidAntecipada(balancopatrimonialDao.consultaContasPagar());
+		}
 		return "/Atendimento/Cobranca/Contabilidade/BalancoPatrimonialInserir.xhtml";
+	}
+
+	public BalancoPatrimonial getUltimoBalanco() {
+		return ultimoBalanco;
+	}
+
+	public void setUltimoBalanco(BalancoPatrimonial ultimoBalanco) {
+		this.ultimoBalanco = ultimoBalanco;
 	}
 
 	public String salvarBalanco() {
@@ -114,6 +137,52 @@ public class BalancoPatrimonialMB {
 
 		clearFieldsBalancoPatrimonialConsulta();
 	}
+	
+//	public String carregaDadosBalanco() {
+//		FacesContext facesContext = FacesContext.getCurrentInstance();
+//		BalancoPatrimonialDao cDao = new BalancoPatrimonialDao();
+//		ATIVO
+//		saldoCaixa = api Omie
+//		saldoBancos = api Omie
+//		saldoAplFin = api Omie
+//		opPagasReceberFidc = comparação do relatório lucas e operações fora do sistema
+//		apItauSoberano = manual
+//		provisaoDevedoresDuvidosos = excel Fabricio
+//		saldoCobrancaFidc = manual
+//		depositoBacenScd = 1016095,04 default
+//		direitosCreditorios = relatório Lucas contas a receber
+//		tributosCompensar = manual/contador
+//		adiantamentos = comparação do relatório lucas e operações fora do sistema
+//		outrosCreditos = manual
+//		estoque = manual
+//		depositosJudiciais = default ultimo valor
+//		investOperAntigas = default ultimo valor
+//		investimentos = manual
+//		bensImobilizados = manual
+//		
+//		PASSIVO
+//		contaCorrenteClientes = manual/contador
+//		fornecedoresConsorcio = manual
+//		obrigacoesTributarias = manual/contador
+//		obrigacoesSociaisEstatutarias = manual/contador
+//		recursosDebentures = siscoat relatorio a pagar
+//		recursosFidc = siscoat relatorio a pagar
+//		recursosCri = siscoat relatorio a pagar
+//		provisaoLiquidAntecipada = excel Fabricio
+//		valorExigivelLongoPrazo = manual
+//		capitalSocial = manual default anterior
+//		lucrosAcumuladosAnoAnterior = MUTAÇÕES PL - EXCEL
+//		distribuicao2Pago1 = MUTAÇÕES PL - EXCEL
+//		lucroSemestreAnterior = MUTAÇÕES PL - EXCEL
+//		aumentoCapitalSocial = manual
+//		distribuicao1Pago2 = MUTAÇÕES PL - EXCEL
+//		lucroAnterior = TOTAL DO ATIVO - TOTAL DO PASSIVO CIRCULANTE - TOTAL PASSIVO EXIGÍVEL A LONGO PRAZO - TOTAL PATRIMÔNIO LÍQUIDO
+
+//		facesContext.addMessage(null,
+//				new FacesMessage(FacesMessage.SEVERITY_INFO, "Dados carregados com sucesso!", ""));
+//		
+//		return clearFieldsBalancoPatrimonialConsulta();
+//	}
 	
 	public void geraXLSBalancoPatrimonial() throws IOException {
 		ParametrosDao pDao = new ParametrosDao();
