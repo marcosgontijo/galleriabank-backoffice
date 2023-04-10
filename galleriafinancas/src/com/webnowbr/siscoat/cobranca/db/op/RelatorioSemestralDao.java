@@ -786,11 +786,6 @@ public class RelatorioSemestralDao extends HibernateDao<RelatorioSemestre, Long>
 					String numeroContratoantigo = "numeroContrato";
 					int numeroInvestidoAntigo = 99999;
 					while (rs.next()) {
-						
-						if(CommonsUtil.mesmoValor(rs.getString("numerocontrato"), "39131")) {
-							String aa = "asda";	
-						}
-						
 						if(!CommonsUtil.mesmoValor(rs.getString("numerocontrato"), numeroContratoantigo)
 								|| !CommonsUtil.mesmoValor(rs.getInt("numeroinvestidor"), numeroInvestidoAntigo)) {
 							if(!CommonsUtil.mesmoValor(numeroContratoantigo, "numeroContrato")) {

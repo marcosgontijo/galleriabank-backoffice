@@ -86,6 +86,7 @@ public enum BancosEnum {
 	BANCO_MIZUHO_DO_BRASIL_S_A("370", "Banco Mizuho do Brasil S.A."),
 	BANCO_J_P_MORGAN_S_A("376", "Banco J. P. Morgan S.A."),
 	BANCO_PICPAY_SERVIÇOS_S_A("380", "Banco PicPay Serviços S.A."),
+	BANCO_FIDUCIA_SCMEPP_LTDA("382", "Fiducia SCMEPP LTDA."),
 	BANCO_MERCANTIL_DO_BRASIL_S_A("389", "Banco Mercantil do Brasil S.A."),
 	BANCO_BRADESCO_FINANCIAMENTOS_S_A("394", "Banco Bradesco Financiamentos S.A."),
 	HSBC_BANK_BRASIL_S_A_BANCO_MULTIPLO("399", "HSBC Bank Brasil S.A. - Banco Múltiplo"),
