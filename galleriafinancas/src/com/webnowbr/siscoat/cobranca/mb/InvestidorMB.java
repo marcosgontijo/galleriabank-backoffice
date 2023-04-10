@@ -3225,6 +3225,7 @@ public class InvestidorMB {
 
 			// Finalize task.
 			output.flush();
+			output.close();
 			facesContext.responseComplete();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block

@@ -29928,6 +29928,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 
 			// Finalize task.
 			output.flush();
+			output.close();
 			facesContext.responseComplete();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -30000,6 +30001,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 
 			// Finalize task.
 			output.flush();
+			output.close();
 			facesContext.responseComplete();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -30072,6 +30074,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 
 			// Finalize task.
 			output.flush();
+			output.close();
 			facesContext.responseComplete();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -30144,6 +30147,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 
 			// Finalize task.
 			output.flush();
+			output.close();
 			facesContext.responseComplete();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -30216,6 +30220,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 
 			// Finalize task.
 			output.flush();
+			output.close();
 			facesContext.responseComplete();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -30288,6 +30293,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 
 			// Finalize task.
 			output.flush();
+			output.close();
 			facesContext.responseComplete();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -30360,6 +30366,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 
 			// Finalize task.
 			output.flush();
+			output.close();
 			facesContext.responseComplete();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
