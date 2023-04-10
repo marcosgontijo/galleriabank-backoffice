@@ -20153,7 +20153,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			}
 		}
 		
-		if (baixaTotal) {	
+		if (baixaTotal && (this.objetoContratoCobranca.isCorrigidoIPCA() || this.objetoContratoCobranca.isCorrigidoIPCAHibrido())) {	
 			IPCAMB ipcaMB = new IPCAMB();
 			ipcaMB.atualizaIPCAChamadaTela(this.objetoContratoCobranca.getNumeroContrato());
 		}
