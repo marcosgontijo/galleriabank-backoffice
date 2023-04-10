@@ -148,7 +148,6 @@ import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
-import com.webnowbr.siscoat.common.GeracaoBoletoMB;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.common.ReportUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
@@ -17774,10 +17773,6 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		//Date dataParcela = this.objetoContratoCobranca.getDataInicio();
 
 		// Adiciona parcelas de pagamento
-		
-		 GeracaoBoletoMB geracaoBoletoMB = new GeracaoBoletoMB();
-		  
-		  this.fileBoleto = null;
 		  
 		  if (this.objetoContratoCobranca.getStatusLead() != null) {
 			  if (this.objetoContratoCobranca.getStatusLead().equals("Completo")) {
@@ -17816,40 +17811,11 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		
 							this.objetoContratoCobranca.getListContratoCobrancaDetalhes().add(contratoCobrancaDetalhes);
 							saldoAnterior = contratoCobrancaDetalhes.getVlrSaldoParcela();
-		
-							// gera boleto 
-							
-							if(this.objetoContratoCobranca.getEmpresa() != null) {
-								if (this.isGeraBoletoInclusaoContrato()) {
-									geracaoBoletoMB.geraBoletosBradesco("Locação", this.objetoContratoCobranca.getNumeroContrato(),
-											this.objetoContratoCobranca.getPagador().getNome(),
-											this.objetoContratoCobranca.getPagador().getCpf(),
-											this.objetoContratoCobranca.getPagador().getCnpj(),
-											this.objetoContratoCobranca.getPagador().getEndereco()
-													+ this.objetoContratoCobranca.getPagador().getNumero(),
-											this.objetoContratoCobranca.getPagador().getBairro(),
-											this.objetoContratoCobranca.getPagador().getCep(),
-											this.objetoContratoCobranca.getPagador().getCidade(),
-											this.objetoContratoCobranca.getPagador().getEstado(),
-											contratoCobrancaDetalhes.getDataVencimento(),
-											this.objetoContratoCobranca.getVlrParcela(),
-											contratoCobrancaDetalhes.getNumeroParcela());
-								}
-							}
 						}
 					}
 				 }
 			  }
 		  }
-		 
-
-
-		if (this.isGeraBoletoInclusaoContrato()) {
-			geracaoBoletoMB.geraPDFBoletos(
-					"Boletos Bradesco - Contrato: " + this.objetoContratoCobranca.getNumeroContrato());
-
-			this.fileBoleto = geracaoBoletoMB.getFile();
-		}
 	}
 	
 

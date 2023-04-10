@@ -31,7 +31,7 @@ import com.webnowbr.siscoat.common.LoggerFactory;
  * @param <ID> DAO id type.
  */
 public abstract class HibernateDao<T, ID extends Serializable> implements DAO<T, ID> {
-    /**
+    /** 
      * Logger.
      */
     private static final Log LOG = LoggerFactory.getLogger();
