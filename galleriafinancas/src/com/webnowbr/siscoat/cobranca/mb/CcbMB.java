@@ -1625,7 +1625,7 @@ public class CcbMB {
 		}
 		// atualiza lista de arquivos contidos no diretório
 	    for(FileUploaded file : listaArquivos()) {
-			filesList.add((UploadedFile) file.file);
+			//filesList.add((UploadedFile) file.file);
 	    }
     }
 	
@@ -10530,7 +10530,7 @@ public class CcbMB {
 		
 		filesList = new ArrayList<UploadedFile>();
 		for(FileUploaded file : listaArquivos()) {
-			filesList.add((UploadedFile) file.file);
+			//filesList.add((UploadedFile) file.file);
 	    }
 	}
 	

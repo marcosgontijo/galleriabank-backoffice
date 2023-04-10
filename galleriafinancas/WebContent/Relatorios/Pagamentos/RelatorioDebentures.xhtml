@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuRelatorio.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<p:panel id="Debentures" header="Debentures">
+				<h:panelGrid columns="2">
+					<p:outputLabel for="dataInicio2" value="data Inicio" />
+					<p:calendar id="dataInicio2" showOn="button"
+						value="#{relatorioSemestralMB.dataInicio2}" size="100"
+						pattern="dd/MM/yyyy" styleClass="dateTimeField" />
+
+					<p:outputLabel for="dataFim2" value="data Fim" />
+					<p:calendar id="dataFim2" showOn="button"
+						value="#{relatorioSemestralMB.dataFim2}" size="100"
+						pattern="dd/MM/yyyy" styleClass="dateTimeField" />		
+					<p:outputLabel for="pesquisaEnvelope" value="pesquisa Envelope" />
+					<p:selectBooleanCheckbox id="pesquisaEnvelope" value="#{relatorioSemestralMB.pesquisaEnvelope}"/>
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:dataView var="data" style="min-width: 150px;"
+						value="#{relatorioSemestralMB.listaDatasCalculo}"
+						paginator="false" layout="list">
+						<p:dataViewListItem>
+							<p:outputLabel value="#{data.dataCalculo}" styleClass="labelBold"
+								size="100">
+								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"
+									timeZone="GMT-3" />
+							</p:outputLabel>
+							<p:spacer width="10px"></p:spacer>
+							<p:commandButton ajax="false" icon="ui-icon-trash"
+								action="#{relatorioSemestralMB.removeData(data)}"
+								update="Debentures valorFuturo" />
+						</p:dataViewListItem>
+					</p:dataView>
+
+					<h:panelGroup id="datasValor">
+						<h:panelGrid columns="2">
+							<p:outputLabel for="dataCalculo" value="dataCalculo" />
+							<p:calendar id="dataCalculo" showOn="button"
+								value="#{relatorioSemestralMB.dataCalculo}" size="50"
+								pattern="dd/MM/yyyy" styleClass="dateTimeField" />
+						</h:panelGrid>
+						<p:commandButton value="Inserir Data" ajax="false"
+							icon="ui-icon-check"
+							action="#{relatorioSemestralMB.addValorData}"
+							update="Debentures valorFuturo">
+						</p:commandButton>
+					</h:panelGroup>
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:spacer width="10px"></p:spacer>
+					<p:spacer width="10px"></p:spacer>
+					<p:commandButton  value="Gerar Excel" ajax="false"
+						action="#{relatorioSemestralMB.consultarCalcularBaixar}"
+						update="Debentures valorFuturo" />
+				</h:panelGrid>
+			</p:panel>
+
+			<p:panel id="valorFuturo" header="valorFuturo">
+				<h:panelGrid columns="2">
+					
+					<p:outputLabel for="valorAntigo" value="valorAntigo"
+						styleClass="labelBold" />
+					<p:inputText id="valorAntigo"
+						value="#{relatorioSemestralMB.valorAntigo}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter" />
+								
+					<p:outputLabel for="taxaMensal" value="taxaMensal"
+						styleClass="labelBold" />
+					<p:inputText id="taxaMensal"
+						value="#{relatorioSemestralMB.taxaMensal}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter" />				
+					
+					<p:outputLabel for="dataInicio" value="dataInicio" />
+					<p:calendar id="dataInicio" showOn="button"
+						value="#{relatorioSemestralMB.dataInicio}"
+						size="100" pattern="dd/MM/yyyy" styleClass="dateTimeField" />
+						
+					<p:outputLabel for="dataFim" value="dataFim" />
+					<p:calendar id="dataFim" showOn="button"
+						value="#{relatorioSemestralMB.dataFim}"
+						size="100" pattern="dd/MM/yyyy" styleClass="dateTimeField" />		
+						
+					<p:commandButton value="Calcular Valor Presente Mensal" 
+						action="#{relatorioSemestralMB.calcularValorPresenteParcela()}" 
+						update="valorPresenteParcela" />
+					
+					<p:commandButton value="Calcular Valor Presente Dario" 
+						action="#{relatorioSemestralMB.calcularValorPresenteDiario}" 
+						update="valorPresenteParcela" />
+
+					<p:outputLabel for="valorPresenteParcela" value="valorPresenteParcela" />
+					<p:outputLabel id="valorPresenteParcela" value="#{relatorioSemestralMB.valorPresenteParcela}"
+						converter="bigDecimalConverter" />
+				</h:panelGrid>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

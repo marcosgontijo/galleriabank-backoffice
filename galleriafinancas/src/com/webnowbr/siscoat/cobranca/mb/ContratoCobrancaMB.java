@@ -19804,7 +19804,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			}
 	
 			if (this.selectedParcelas.size() > 0) {
-				this.vlrRecebido = this.vlrRecebido.divide(BigDecimal.valueOf(this.selectedParcelas.size()));//Usa MathContext.DECIMAL128
+				this.vlrRecebido = this.vlrRecebido.divide(BigDecimal.valueOf(this.selectedParcelas.size()), MathContext.DECIMAL128);
 			}
 			
 			ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
