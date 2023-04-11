@@ -231,6 +231,7 @@ public class DocketMB {
 					}
 				}
 			} else {
+				System.out.println(jsonObj.toString());
 				if (status == 401) {
 					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 							"[Docket - Login] Falha de autenticação. Token inválido!", ""));
@@ -385,6 +386,10 @@ public class DocketMB {
 		if(CommonsUtil.semValor(objetoContratoCobranca)) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Contrato não vinculado!!!", ""));	
 			return;
+		}
+		else {
+			ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+			cDao.merge(objetoContratoCobranca);
 		}
 		if(docketDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca).size() > 0) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Pedido desse contrato já existe!!!!!!", ""));	

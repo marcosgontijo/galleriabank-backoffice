@@ -9,7 +9,7 @@
 			<generator class="increment" />
 		</id>
 		
-		<many-to-one name="objetoContratoCobranca"
+		<many-to-one name="objetoContratoCobranca" cascade="all"
 			class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca"
 			lazy="false">
 			<column name="objetoContratoCobranca" />
