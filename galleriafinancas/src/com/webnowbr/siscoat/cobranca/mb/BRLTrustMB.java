@@ -1774,12 +1774,24 @@ public class BRLTrustMB {
 					
 					String numeroParcela = "";
 					
-					if (parcela.getNumeroParcela().length() == 1) {
-						numeroParcela = "00" + parcela.getNumeroParcela();
-					} else if (parcela.getNumeroParcela().length() == 2) {
-						numeroParcela = "0" + parcela.getNumeroParcela();
+					if (!contrato.getNumeroContrato().equals("01306")) {
+						if (parcela.getNumeroParcela().length() == 1) {
+							numeroParcela = "00" + parcela.getNumeroParcela();
+						} else if (parcela.getNumeroParcela().length() == 2) {
+							numeroParcela = "0" + parcela.getNumeroParcela();
+						} else {
+							numeroParcela = parcela.getNumeroParcela();
+						}
 					} else {
-						numeroParcela = parcela.getNumeroParcela();
+						int numeroParcelaInt = Integer.valueOf(parcela.getNumeroParcela()) - 6;
+						
+						numeroParcela = String.valueOf(numeroParcelaInt);
+						
+						if (numeroParcela.length() == 1) {
+							numeroParcela = "00" + numeroParcela;
+						} else if (numeroParcela.length() == 2) {
+							numeroParcela = "0" + numeroParcela;
+						} 
 					}
 					
 					jsonRecebivel.put("numeroControle", contrato.getNumeroContratoSeguro() + "-" + numeroParcela);
