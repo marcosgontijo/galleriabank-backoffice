@@ -1075,15 +1075,14 @@ public class TakeBlipMB {
 	
 					retornoWhatsAPP = getJsonSucesso(myURLConnection.getInputStream());
 					
-					JSONObject resource = retornoWhatsAPP.getJSONObject("resource");
+					if(retornoWhatsAPP.has("resource")){
+						JSONObject resource = retornoWhatsAPP.getJSONObject("resource");
+						whatsAppNumber = resource.getString("alternativeAccount");
+						pessoa.setWhatsAppNumero(whatsAppNumber);
+						pDao.merge(pessoa);
 					
-					whatsAppNumber = resource.getString("alternativeAccount");
-					
-					pessoa.setWhatsAppNumero(whatsAppNumber);
-					
-					pDao.merge(pessoa);
-					
-					System.out.println("Take Blip: URL do WhatsApp criada com sucesso para o Responsável " + pessoa.getNome());
+						System.out.println("Take Blip: URL do WhatsApp criada com sucesso para o Responsável " + pessoa.getNome());
+					}
 				}
 	
 				myURLConnection.disconnect();

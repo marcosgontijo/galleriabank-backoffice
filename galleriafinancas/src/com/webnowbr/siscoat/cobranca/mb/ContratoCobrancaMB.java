@@ -29935,6 +29935,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
+			System.out.println("arquivo: " + this.objetoContratoCobranca.getNumeroContrato() + "/" + fileName);
 			e.printStackTrace();
 		}
 	}
