@@ -214,7 +214,8 @@ public class DocketMB {
 			
 			try(OutputStream os = myURLConnection.getOutputStream()) {
 			    byte[] input = jsonObj.toString().getBytes("utf-8");
-			    os.write(input, 0, input.length);			
+			    os.write(input, 0, input.length);
+			    os.close();
 			}
 	
 			JSONObject myResponse = null;
@@ -388,8 +389,8 @@ public class DocketMB {
 			return;
 		}
 		else {
-			ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-			cDao.merge(objetoContratoCobranca);
+			//ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+			//cDao.merge(objetoContratoCobranca);
 		}
 		if(docketDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca).size() > 0) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Pedido desse contrato já existe!!!!!!", ""));	
@@ -439,6 +440,8 @@ public class DocketMB {
 						"Docket: Falha  (Cod: " + myURLConnection.getResponseCode() + ")",""));
 				System.out.println(jsonWhatsApp.toString());
 			} else {
+				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+				cDao.merge(objetoContratoCobranca);
 				docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" , cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
 				//DocketDao docketDao = new DocketDao();
 				docketDao.create(docket);
