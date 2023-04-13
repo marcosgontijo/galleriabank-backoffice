@@ -72,7 +72,7 @@
 				<p:dataTable id="dtBoletosKobana" var="boleto" 
 					value="#{kobanaMB.listBoletosKobana}"
 					emptyMessage="" sortBy="#{boleto.createdAt}"
-					rowStyleClass="#{(boleto.status eq 'Pago' and boleto.parcela.parcelaPaga eq 'true') ? 'parcelaPaga' : (boleto.status eq 'Pago' and boleto.parcela.parcelaPaga eq 'false') ? 'parcelaBoletoPago' : null}"
+					rowStyleClass="#{(boleto.status eq 'Pago' and boleto.parcela.parcelaPaga eq true) ? 'parcelaPaga' : (boleto.status eq 'Pago' and boleto.parcela.parcelaPaga eq false) ? 'parcelaBoletoPago' : null}"
 					sortOrder="descending"
 					rowKey="#{boleto.id}"
 					selection="#{contratoCobrancaMB.selectedBoletosKobana}">
@@ -84,7 +84,8 @@
 						</p:commandButton>
 			        </f:facet>
 			        
-					<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+					<p:column selectionMode="multiple" style="width:16px;text-align:center" rendered="#{boleto.parcela.parcelaPaga ne true}"/>
+					<p:column  rendered="#{boleto.parcela.parcelaPaga eq true}"/>
 					
 					<p:column style="text-align: center;"
 						headerText="Registro" sortBy="#{boleto.createdAt}">
@@ -146,11 +147,11 @@
 					</p:column>
 					<p:column style="text-align: center;"
 						headerText="# Parcela / Baixada?">
-						<ui:fragment rendered="#{boleto.parcela.id gt 0} ">
-							<ui:fragment rendered="#{boleto.parcela.parcelaPaga}">
+						<ui:fragment rendered="#{boleto.parcela ne null}">
+							<ui:fragment rendered="#{boleto.parcela.parcelaPaga eq true}">
 								<h:outputText value="#{boleto.parcela.numeroParcela} / Sim" />
 							</ui:fragment>
-							<ui:fragment rendered="#{boleto.parcela.parcelaPaga}">
+							<ui:fragment rendered="#{boleto.parcela.parcelaPaga eq false}">
 								<h:outputText value="#{boleto.parcela.numeroParcela} / Não" />
 							</ui:fragment>
 						</ui:fragment>
@@ -160,7 +161,7 @@
 					</p:column>
 					<p:column style="text-align: center;width: 130px;"
 						headerText="Baixar Parcela" styleClass="colunaHiddenRelFinanceiro">
-						<p:commandButton action="#{contratoCobrancaMB.updateDialogBaixaKobana}" oncomplete="PF('baixaParcialDialog').show();"
+						<p:commandButton action="#{contratoCobrancaMB.updateDialogBaixaKobana(boleto)}" oncomplete="PF('baixaParcialDialog').show();"
 							title="Baixar Parcela" icon="ui-icon-transferthick-e-w"
 							update=":formBaixaParcial" style="height: 25px;width: 30px;" rendered="#{boleto.status eq 'Pago' and boleto.parcela.id gt 0}">
 							<f:setPropertyActionListener
@@ -176,9 +177,12 @@
 							<f:setPropertyActionListener
 								target="#{contratoCobrancaMB.txZero}" value="true" />
 							<f:setPropertyActionListener
-								target="#{contratoCobrancaMB.vlrRecebido}"
-								value="#{contratoCobrancaMB.vlrParcelaAtualizadaNew}" />
+								value="#{boleto.paidAmount}"
+								target="#{contratoCobrancaMB.vlrParcelaAtualizadaNew}" />
 							<f:setPropertyActionListener
+								value="#{boleto.paidAmount}"
+								target="#{contratoCobrancaMB.vlrRecebido}" />
+							<f:setPropertyActionListener 
 								target="#{contratoCobrancaMB.rowEditNewDate}"
 								value="#{boleto.paidAt}" />
 						</p:commandButton>
@@ -393,22 +397,12 @@
 						value="#{contratoCobrancaMB.bpContratoCobrancaDetalhes.numeroParcela}"
 						label="Número da Parcela:"
 						style="font-weight: bold; font-size: 18px;" />
-					<p:outputLabel for="taxa" value="Método de Cálculo:" />
-					<p:selectOneRadio id="taxa" value="#{contratoCobrancaMB.txZero}">
-						<f:selectItem itemLabel="Cálculo normal" itemValue="true" />
-						<f:selectItem itemLabel="Taxa 0%" itemValue="false" />
-						<p:ajax update="dataPagamento valorAt" event="valueChange"
-							listener="#{contratoCobrancaMB.verificaTaxaZero}" />
-					</p:selectOneRadio>
 					<p:outputLabel for="dataPagamento" value="Data do Pagamento: "
 						styleClass="labelBold" style="margin-right: 59px;" />
-					<p:calendar id="dataPagamento"
-						value="#{contratoCobrancaMB.rowEditNewDate}" required="true"
-						label="Data do Pagamento" size="100" pattern="dd/MM/yyyy"
-						styleClass="dateTimeField">
-						<p:ajax event="dateSelect" update="ValoresAtualizados Pessoas"
-							listener="#{contratoCobrancaMB.atualizaValorBaixaParcelada}" />
-					</p:calendar>
+					<h:outputText id="dataPagamento" value="#{contratoCobrancaMB.rowEditNewDate}" style="font-weight: bold; font-size: 18px;">
+						<f:convertDateTime locale="pt_BR" />
+						<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"  />
+					</h:outputText>
 				</h:panelGrid>
 				<p:panel id="ValoresAtualizados" header="Valores Atualizados"
 					style="margin-top:20px;margin-bottom:20px;">

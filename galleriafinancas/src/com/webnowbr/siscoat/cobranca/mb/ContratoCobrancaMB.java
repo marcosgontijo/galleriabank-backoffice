@@ -19757,7 +19757,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		contratoCobrancaDetalhesDao.merge(bpContratoCobrancaDetalhes);
 	}
 	
-	public void updateDialogBaixaKobana() {
+	public void updateDialogBaixaKobana(BoletoKobana boletoSelecionado) {
 		PagadorRecebedorDao prDao = new PagadorRecebedorDao();
 		
 		if (this.objetoContratoCobranca.getEmpresa() != null) {
@@ -19773,6 +19773,36 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		} else {
 			this.selectedRecebedor = prDao.findById((long) 803);
 		}
+		
+		this.rowEditNewDate = boletoSelecionado.getPaidAt();
+		this.vlrParcelaAtualizadaNew = boletoSelecionado.getPaidAmount();
+		this.vlrRecebido = boletoSelecionado.getPaidAmount();
+		
+		/*
+		<f:setPropertyActionListener
+		target="#{contratoCobrancaMB.callMetodoPorDialogBaixaParcial}" value="true" />	
+	<f:setPropertyActionListener
+		target="#{contratoCobrancaMB.objetoContratoCobranca}"
+		value="#{boleto.contrato}" />							
+	<f:setPropertyActionListener
+		target="#{contratoCobrancaMB.bpContratoCobrancaDetalhesCustom}"
+		value="#{boleto.parcela}" />
+	<f:setPropertyActionListener
+		target="#{contratoCobrancaMB.reciboGerado}" value="false" />
+	<f:setPropertyActionListener
+		target="#{contratoCobrancaMB.txZero}" value="true" />
+	<f:setPropertyActionListener
+		target="#{boleto.paidAmount}"
+		value="#{contratoCobrancaMB.vlrParcelaAtualizadaNew}" />
+	<f:setPropertyActionListener
+		target="#{boleto.paidAmount}"
+		value="#{contratoCobrancaMB.vlrRecebido}" />
+	<f:setPropertyActionListener
+		target="#{contratoCobrancaMB.rowEditNewDate}"
+		value="#{boleto.paidAt}" />
+	
+	*/
+	
 	}
 	
 	/* BAIXA MULTI PARCELAS PARCIAL */
