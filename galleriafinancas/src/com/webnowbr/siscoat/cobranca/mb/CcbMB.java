@@ -304,6 +304,8 @@ public class CcbMB {
     
     private String numeroProcesso = "";
     
+    private ContasPagar despesaSelecionada;
+    
     private String carencia = "";
     
     private String aviso = " a ";
@@ -9988,6 +9990,7 @@ public class CcbMB {
 	}
 	
 	public void clearDespesas() {
+		despesaSelecionada = new ContasPagar();
 		if(!CommonsUtil.semValor(this.objetoCcb.getCustasCartorariasValor())) {
 			setTemCustasCartorarias(true);
 		} else {
@@ -12096,6 +12099,14 @@ public class CcbMB {
 
 	public void setAviso(String aviso) {
 		this.aviso = aviso;
+	}
+
+	public ContasPagar getDespesaSelecionada() {
+		return despesaSelecionada;
+	}
+
+	public void setDespesaSelecionada(ContasPagar despesaSelecionada) {
+		this.despesaSelecionada = despesaSelecionada;
 	}
 	
 	
