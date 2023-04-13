@@ -363,6 +363,7 @@ public class CcbMB {
 		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
 	}
 	
+	
 	public void enviarMoneyPlus() {
 		FacesContext context = FacesContext.getCurrentInstance();
 
@@ -9358,7 +9359,7 @@ public class CcbMB {
 			if(nomeSemvirgula.contains(",")) {
 				nomeSemvirgula = nomeSemvirgula.replace(",", "");
 		    }
-			if(SiscoatConstants.DEV) {
+			if(SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
 				gerador.open(String.format("Galleria Bank - CESSAO %s.pdf", ""));
 				gerador.feed(new ByteArrayInputStream(CommonsUtil.wordToPdf(in).toByteArray()));
 			} else {

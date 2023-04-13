@@ -293,7 +293,7 @@ public class DocketMB {
 			int HTTP_COD_SUCESSO = 200;
 
 			URL myURL;
-			if(SiscoatConstants.DEV) {
+			if(SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
 				myURL = new URL(urlHomologacao + "/api/v2/"+organizacao_url+"/cidades?estadoId=" + estadoID);
 			} else {
 				myURL = new URL(urlProducao + "/api/v2/"+organizacao_url+"/cidades?estadoId=" + estadoID);
@@ -411,7 +411,7 @@ public class DocketMB {
 			int HTTP_COD_SUCESSO = 200;
 			
 			URL myURL;
-			if(SiscoatConstants.DEV) {
+			if(SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
 				myURL = new URL(urlHomologacao + "/api/v2/"+organizacao_url+"/shopping-documentos/alpha/pedidos");
 			} else {
 				myURL = new URL(urlProducao + "/api/v2/"+organizacao_url+"/shopping-documentos/alpha/pedidos");
