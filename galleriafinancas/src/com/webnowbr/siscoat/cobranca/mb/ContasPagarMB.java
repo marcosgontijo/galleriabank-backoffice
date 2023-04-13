@@ -41,7 +41,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
-import com.webnowbr.siscoat.cobranca.mb.ContratoCobrancaMB.FileUploaded;
+import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
@@ -92,11 +92,10 @@ public class ContasPagarMB {
 	List<FileUploaded> DeleteFilesPagar = new ArrayList<FileUploaded>();
 	List<FileUploaded> deleteFilesContas= new ArrayList<FileUploaded>();
 	
-	ContratoCobrancaMB ccMB = new ContratoCobrancaMB();
 	
 	private boolean addContasPagar;
 	StreamedContent downloadFile;
-	FileUploaded selectedFile =  ccMB.new FileUploaded();
+	FileUploaded selectedFile =  new FileUploaded();
 	
 	public ContasPagarMB() {
 
@@ -263,7 +262,7 @@ public class ContasPagarMB {
 				File arquivo = arqs[i];
 
 				if(arquivo.isFile()) {
-					lista.add(ccMB.new FileUploaded(arquivo.getName(), arquivo, pathContrato));
+					lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
 				}
 				
 			}
@@ -290,7 +289,7 @@ public class ContasPagarMB {
 
 				// String nome = arquivo.getName();
 				// String dt_ateracao = formatData.format(new Date(arquivo.lastModified()));
-				lista.add(ccMB.new FileUploaded(arquivo.getName(), arquivo, pathContrato));
+				lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
 			}
 		}
 		return lista;

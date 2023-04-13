@@ -901,6 +901,100 @@
 					</p:tooltip>
 				</p:panel>
 
+
+				<shiro:hasAnyRoles
+					name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO">
+					<p:panel id="ArquivosAnalisados" header="Analise Documentos" rendered="#{objetoContratoCobranca.emAnalise}"
+						style="margin-bottom:10px;text-align: center;">
+						<h:panelGrid columns="1">
+							<p:fileUpload label="Selecionar Arquivo"
+								uploadLabel="Salvar Arquivo" multiple="false"
+								cancelLabel="Cancelar"
+								fileUploadListener="#{contratoCobrancaMB.handleAnaliseDocumentoFileUpload}"
+								mode="advanced" dragDropSupport="true" update="dtFilesAnalise">
+								<f:attribute name="foo"
+									value="#{contratoCobrancaMB.contasPagarSelecionada}" />
+							</p:fileUpload>
+						</h:panelGrid>
+
+						<p:panel id="ArquivosSalvosAnalise" 
+							header="Arquivo(s) Salvo(s) na analise"
+							style="margin-bottom:10px;">
+							<h:panelGrid columns="1">
+								<p:dataTable id="dtFilesAnalise" var="files"
+									value="#{contratoCobrancaMB.listaDocumentoAnalise}"
+									rowKey="#{files.identificacao}"
+									selection="#{contratoCobrancaMB.deletefiles}" emptyMessage=""
+									sortBy="#{files.identificacao}">
+									<p:column selectionMode="multiple"
+										style="width:16px;text-align:center" />
+									<f:facet name="header">
+										<p:commandButton value="Download Selecionado(s)" ajax="false"
+											icon="ui-icon-arrowthick-1-s">
+											<p:fileDownload
+												value="#{contratoCobrancaMB.downloadAllFiles}" />
+										</p:commandButton>
+										<p:commandButton value="Excluir Selecionado(s)" ajax="false"
+											icon="ui-icon-trash"
+											action="#{contratoCobrancaMB.deleteFile}" />
+									</f:facet>
+
+									<p:column style="text-align: center;"
+										headerText="Nome do Arquivo" filterBy="#{files.identificacao}"
+										filterMatchMode="contains" sortBy="#{files.identificacao}">
+										<h:outputText value="#{files.identificacao}" />
+										<p:spacer height="10" />
+										
+										<p:commandButton value="Solicitar Rea" ajax="false"
+											rendered="#{files.rea and files.reaNaoEnviado}"
+											action="#{docketMB.uploadREA(files)}" immediate="true"
+											icon="ui-icon-search">
+										</p:commandButton>
+										
+										<h:outputText value="REA Enviado"
+										rendered="#{files.rea and !files.reaNaoEnviado and !files.reaProcessado }" />
+										<h:outputText value="REA Processado"
+										rendered="#{files.rea and files.reaProcessado }" />
+									</p:column>
+
+									<p:column style="text-align: center;" headerText="Situação"
+										filterMatchMode="contains">
+										
+										<h:outputText value="REA Enviado"
+											rendered="#{files.rea and !files.reaNaoEnviado and !files.reaProcessado }" />
+										<h:outputText value="REA Processado"
+											rendered="#{files.rea and files.reaProcessado }" />
+									</p:column>
+
+									<p:column style="width:100px;" rendered="#{false}">
+										<p:commandButton value="Download" ajax="false"
+											icon="ui-icon-arrowthick-1-s">
+											<f:setPropertyActionListener
+												target="#{contratoCobrancaMB.selectedFile}" value="#{files}" />
+											<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
+										</p:commandButton>
+									</p:column>
+
+									<f:facet name="footer">
+										<p:commandButton value="Download Selecionado(s)" ajax="false"
+											icon="ui-icon-arrowthick-1-s">
+											<p:fileDownload
+												value="#{contratoCobrancaMB.downloadAllFiles}" />
+										</p:commandButton>
+										<p:commandButton value="Excluir Selecionado(s)" ajax="false"
+											icon="ui-icon-trash"
+											action="#{contratoCobrancaMB.deleteFile}" />
+									</f:facet>
+								</p:dataTable>
+							</h:panelGrid>
+							
+						</p:panel>
+
+					</p:panel>
+
+				</shiro:hasAnyRoles>
+				
+				
 				<h:panelGroup id="comentarioComitePanel" style="margin-bottom:20px;">
 					<p:panel header="Comentário Comitê" rendered="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite.size() > 0}">
 						<p:outputLabel id="comentarioComite"
@@ -1138,7 +1232,7 @@
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
-
+							
 				<h:panelGroup id="comentarioPreComitePanel"
 					style="margin-bottom:20px;">
 					<p:panel header="Comentário Pré-Comitê">

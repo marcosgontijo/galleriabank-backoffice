@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.webnowbr.siscoat.cobranca.mb.ContratoCobrancaMB.FileUploaded;
+import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.common.BancosEnum;
 
 public class ContasPagar implements Serializable {
