@@ -3047,7 +3047,7 @@ public class ContratoCobrancaMB {
 
 			// verifica se o contrato for aprovado, manda um tipo de email..
 			// senao valida se houve alteração no checklist para envio de email.
-			if(!SiscoatConstants.DEV) {
+			if(!SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
 				enviaEmailAtualizacaoPreContratoNovo();
 				//System.out.println("saveLeadTerceiros");
 			}
@@ -3078,7 +3078,7 @@ public class ContratoCobrancaMB {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		
 		try {
-			if(!SiscoatConstants.DEV) {
+			if(!SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
 				notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
 			}
 		} catch (Exception e) {
@@ -3656,7 +3656,7 @@ public class ContratoCobrancaMB {
 
 		try {
 			
-			if(!SiscoatConstants.DEV) {
+			if(!SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
 				// envia WhatsApp
 				notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
 	
@@ -12021,7 +12021,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 	}
 
 	public String geraConsultaContratosPendentes() {
-		if(!SiscoatConstants.DEV) {
+		if(!SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
 			this.baixarPreContratoAutomatico();
 			this.enviaZapLeadEmTratamento();
 			enviaZapCartorio();
@@ -12569,7 +12569,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 	}
 
 	public String geraConsultaContratosPorStatus(String status) {
-		if(!SiscoatConstants.DEV) {
+		if(!SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
 			this.baixarPreContratoAutomatico();
 			this.enviaZapLeadEmTratamento();
 			enviaZapCartorio();
@@ -29374,12 +29374,22 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		// recupera local onde será gravado o arquivo
 		ParametrosDao pDao = new ParametrosDao();
-		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-				// String pathContrato = "C:/Users/Usuario/Desktop/"
-				+ this.objetoContratoCobranca.getNumeroContrato() + "/analise/";
+		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString();
+
+		File diretorio = new File(pathContrato);
+		if (!diretorio.isDirectory()) {
+			diretorio.mkdir();
+		}
+		pathContrato += this.objetoContratoCobranca.getNumeroContrato();
+		diretorio = new File(pathContrato);
+		if (!diretorio.isDirectory()) {
+			diretorio.mkdir();
+		}
+		pathContrato += "/analise/";
+		;
 
 		// cria o diretório, caso não exista
-		File diretorio = new File(pathContrato);
+		diretorio = new File(pathContrato);
 		if (!diretorio.isDirectory()) {
 			diretorio.mkdir();
 		}
@@ -29401,10 +29411,10 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 				System.out.println(e);
 			}
 
-
 			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 			DocumentoAnalise documentoAnalise = new DocumentoAnalise();
 			documentoAnalise.setContratoCobranca(this.objetoContratoCobranca);
+			documentoAnalise.setMotivoAnalise("Matricula para consulta");
 			documentoAnalise.setIdentificacao(event.getFile().getFileName());
 			documentoAnalise.setPath(pathContrato + event.getFile().getFileName());
 			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.REA);

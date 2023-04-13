@@ -6,9 +6,7 @@ public class ReaWebhookRetornoBloco {
 	public String nomeClassificacao;
 	public Integer numeroPagina;
 	public Integer numeroSequencia;
-	public String relacionadoAoProprietarioAtual;
-
-	
+	public boolean relacionadoAoProprietarioAtual;
 
 	public ReaWebhookRetornoBlocoConteudo getConteudo() {
 		return conteudo;
@@ -34,7 +32,6 @@ public class ReaWebhookRetornoBloco {
 		this.nomeClassificacao = nomeClassificacao;
 	}
 
-
 	public Integer getNumeroPagina() {
 		return numeroPagina;
 	}
@@ -51,11 +48,11 @@ public class ReaWebhookRetornoBloco {
 		this.numeroSequencia = numeroSequencia;
 	}
 
-	public String getRelacionadoAoProprietarioAtual() {
+	public boolean isRelacionadoAoProprietarioAtual() {
 		return relacionadoAoProprietarioAtual;
 	}
 
-	public void setRelacionadoAoProprietarioAtual(String relacionadoAoProprietarioAtual) {
+	public void setRelacionadoAoProprietarioAtual(boolean relacionadoAoProprietarioAtual) {
 		this.relacionadoAoProprietarioAtual = relacionadoAoProprietarioAtual;
 	}
 

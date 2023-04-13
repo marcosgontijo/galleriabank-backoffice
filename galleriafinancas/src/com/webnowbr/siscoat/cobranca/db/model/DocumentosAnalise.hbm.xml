@@ -32,8 +32,14 @@
 			<column name="tipo" />
 		</property>
 		
-		<property name="retorno" type="java.lang.String"  length="65000">
-			<column name="retorno" />
+		<property name="cnpjcpf" type="java.lang.String"  >
+			<column name="cnpjcpf" />
+		</property>
+		<property name="tipoPessoa" type="java.lang.String"  length="65000">
+			<column name="tipoPessoa" />
+		</property>
+		<property name="motivoAnalise" type="java.lang.String"  length="65000">
+			<column name="motivoAnalise" />
 		</property>
 		
     </class>

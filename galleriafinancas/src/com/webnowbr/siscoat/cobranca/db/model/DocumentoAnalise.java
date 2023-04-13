@@ -18,8 +18,10 @@ public class DocumentoAnalise implements Serializable {
 	private ContratoCobranca contratoCobranca;
 
 	private String identificacao;
+	private String cnpjcpf;
+	private String tipoPessoa;
+	private String motivoAnalise;
 	private String path;
-
 	private String tipo;
 
 	private DocumentosAnaliseEnum tipoEnum;
@@ -114,6 +116,30 @@ public class DocumentoAnalise implements Serializable {
 
 	public void setRetorno(String retorno) {
 		this.retorno = retorno;
+	}
+
+	public String getCnpjcpf() {
+		return cnpjcpf;
+	}
+
+	public void setCnpjcpf(String cnpjcpf) {
+		this.cnpjcpf = cnpjcpf;
+	}
+
+	public String getTipoPessoa() {
+		return tipoPessoa;
+	}
+
+	public void setTipoPessoa(String tipoPessoa) {
+		this.tipoPessoa = tipoPessoa;
+	}
+
+	public String getMotivoAnalise() {
+		return motivoAnalise;
+	}
+
+	public void setMotivoAnalise(String motivoAnalise) {
+		this.motivoAnalise = motivoAnalise;
 	}
 
 }
