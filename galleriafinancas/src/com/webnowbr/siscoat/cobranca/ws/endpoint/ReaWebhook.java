@@ -1,6 +1,5 @@
 package com.webnowbr.siscoat.cobranca.ws.endpoint;
 
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -13,7 +12,6 @@ import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GsonUtil;
-import com.webnowbr.siscoat.common.JwtUtil;
 
 import io.jsonwebtoken.Jwts;
 
@@ -21,12 +19,6 @@ import io.jsonwebtoken.Jwts;
 public class ReaWebhook {
 
 	private static final Log LOGGER = LogFactory.getLog(ReaWebhook.class);
-
-	@GET
-	@Path("/")
-	public String token() {
-		return JwtUtil.generateJWTReaWebwook(false);
-	}
 
 	@POST
 	@Path("/webhook/")
