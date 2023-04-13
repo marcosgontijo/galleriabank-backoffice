@@ -384,9 +384,15 @@ public class ContractService {
 							this.objetoContratoCobranca.setFormaDePagamentoLaudoPAJU(contratoAPP.has("formaPagamentoLaudoPaju")
 									? contratoAPP.getString("formaPagamentoLaudoPaju") 
 									: this.objetoContratoCobranca.getFormaDePagamentoLaudoPAJU());
+							this.objetoContratoCobranca.setNomeContatoAgendaLaudoAvaliacao(contratoAPP.has("nomeContatoAgendaLaudoAvaliacao")
+									? contratoAPP.getString("nomeContatoAgendaLaudoAvaliacao")
+									: this.objetoContratoCobranca.getNomeContatoAgendaLaudoAvaliacao());
 							this.objetoContratoCobranca.setContatoAgendamendoLaudoAvaliacao(contratoAPP.has("contatoAgendamentoLaudoAvaliacao")
 									? contratoAPP.getString("contatoAgendamentoLaudoAvaliacao")
 									: this.objetoContratoCobranca.getContatoAgendamendoLaudoAvaliacao());
+							this.objetoContratoCobranca.setObservacaoContatoAgendaLaudoAvaliacao(contratoAPP.has("observacaoContatoAgendaLaudoAvaliacao")
+									? contratoAPP.getString("observacaoContatoAgendaLaudoAvaliacao")
+									: this.objetoContratoCobranca.getObservacaoContatoAgendaLaudoAvaliacao());
 							
 							this.objetoContratoCobranca.setComentarioPreComite(contratoAPP.has("comentarioPreComite")
 									? contratoAPP.getString("comentarioPreComite") : this.objetoContratoCobranca.getComentarioPreComite());
@@ -484,7 +490,11 @@ public class ContractService {
 					
 							// atualizar contrato
 							atualizarContratoBD();
-							contratoCobrancaDao.merge(this.objetoContratoCobranca);
+							try {
+								contratoCobrancaDao.merge(this.objetoContratoCobranca);
+							} catch (RuntimeException e) {
+								e.printStackTrace();
+							}
 							criarEditarPagadoresAdicionais(contratoAPP);
 							
 							String message = "{\"retorno\": \"[Galleria Bank] Operação editada com sucesso!!!\"}";
