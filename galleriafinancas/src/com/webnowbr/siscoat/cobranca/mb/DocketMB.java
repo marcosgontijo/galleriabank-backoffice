@@ -1,6 +1,7 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -9,6 +10,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -34,6 +36,7 @@ import com.webnowbr.siscoat.cobranca.db.model.DataEngine;
 import com.webnowbr.siscoat.cobranca.db.model.Docket;
 import com.webnowbr.siscoat.cobranca.db.model.DocketCidades;
 import com.webnowbr.siscoat.cobranca.db.model.DocketEstados;
+import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentosDocket;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentosPagadorDocket;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
@@ -43,15 +46,21 @@ import com.webnowbr.siscoat.cobranca.db.op.DataEngineDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocketCidadesDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocketDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocketEstadosDao;
+import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentosDocketDao;
 import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
+import com.webnowbr.siscoat.cobranca.ws.endpoint.ReaWebhookRetorno;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.EstadosEnum;
+import com.webnowbr.siscoat.common.JwtUtil;
+import com.webnowbr.siscoat.common.MultipartUtility;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
 import com.webnowbr.siscoat.security.LoginBean;
+
+import br.com.galleriabank.serasarelato.cliente.util.GsonUtil;
 
 @ManagedBean(name="docketMB")
 @SessionScoped
@@ -179,7 +188,7 @@ public class DocketMB {
 			String loginDocket;
 			String senhaDocket;
 			
-			if(SiscoatConstants.DEV) {
+			if(SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
 				myURL = new URL(urlHomologacao + "/api/v2/auth/login");
 				loginDocket = login;
 				senhaDocket = senha;
@@ -214,7 +223,8 @@ public class DocketMB {
 			
 			try(OutputStream os = myURLConnection.getOutputStream()) {
 			    byte[] input = jsonObj.toString().getBytes("utf-8");
-			    os.write(input, 0, input.length);			
+			    os.write(input, 0, input.length);
+			    os.close();
 			}
 	
 			JSONObject myResponse = null;
@@ -283,7 +293,7 @@ public class DocketMB {
 			int HTTP_COD_SUCESSO = 200;
 
 			URL myURL;
-			if(SiscoatConstants.DEV) {
+			if(SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
 				myURL = new URL(urlHomologacao + "/api/v2/"+organizacao_url+"/cidades?estadoId=" + estadoID);
 			} else {
 				myURL = new URL(urlProducao + "/api/v2/"+organizacao_url+"/cidades?estadoId=" + estadoID);
@@ -388,8 +398,8 @@ public class DocketMB {
 			return;
 		}
 		else {
-			ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-			cDao.merge(objetoContratoCobranca);
+			//ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+			//cDao.merge(objetoContratoCobranca);
 		}
 		if(docketDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca).size() > 0) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Pedido desse contrato já existe!!!!!!", ""));	
@@ -401,7 +411,7 @@ public class DocketMB {
 			int HTTP_COD_SUCESSO = 200;
 			
 			URL myURL;
-			if(SiscoatConstants.DEV) {
+			if(SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
 				myURL = new URL(urlHomologacao + "/api/v2/"+organizacao_url+"/shopping-documentos/alpha/pedidos");
 			} else {
 				myURL = new URL(urlProducao + "/api/v2/"+organizacao_url+"/shopping-documentos/alpha/pedidos");
@@ -439,6 +449,8 @@ public class DocketMB {
 						"Docket: Falha  (Cod: " + myURLConnection.getResponseCode() + ")",""));
 				System.out.println(jsonWhatsApp.toString());
 			} else {
+				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+				cDao.merge(objetoContratoCobranca);
 				docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" , cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
 				//DocketDao docketDao = new DocketDao();
 				docketDao.create(docket);
@@ -455,48 +467,72 @@ public class DocketMB {
 		}
 	}
 	
-	public void uploadREA() {	//POST para gerar pedido
+	public void uploadREA(DocumentoAnalise documentoAnalise) {	//POST para gerar pedido
 		FacesContext context = FacesContext.getCurrentInstance();
+		File file = new File(documentoAnalise.getPath());
+		String twoHyphens = "--";
+		String boundary =  "*****";
+		String crlf = "\r\n";
 		try {
 			loginDocket();
-			int HTTP_COD_SUCESSO = 200;
+			int HTTP_COD_SUCESSO = 201;
 			
 			URL myURL;
-			if(SiscoatConstants.DEV) {
+			if(SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
 				myURL = new URL(urlHomologacao + "/api/v2/"+organizacao_url+"/rea/matriculas");
 			} else {
 				myURL = new URL(urlProducao + "/api/v2/"+organizacao_url+"/rea/matriculas");
 			}
 			
-			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
-			
-			myURLConnection.setRequestMethod("POST");
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json");
-			myURLConnection.setRequestProperty("Authorization", "Bearer " + this.tokenLogin);
-			myURLConnection.setDoOutput(true);		
-			
-			JSONObject myResponse = null;
-			JSONObject jsonREA = getBodyREA();
-			
-			try (OutputStream os = myURLConnection.getOutputStream()) {
-				byte[] input = jsonREA.toString().getBytes("utf-8");
-				os.write(input, 0, input.length);
+			String webHookJWT = JwtUtil.generateJWTReaWebwook(true);
+			while (webHookJWT.length() > (256 - SiscoatConstants.URL_SISCOAT_WEBHOOK.length())){
+				webHookJWT = JwtUtil.generateJWTReaWebwook(false);
 			}
-														
+			
+			String s = new String(webHookJWT.getBytes(), Charset.forName("UTF-8"));
+			
+			String urlWebhook = SiscoatConstants.URL_SISCOAT_WEBHOOK + webHookJWT;
+			String authorization = "Bearer " + this.tokenLogin;
+//			LZString.compress(webHookJWT);
+//			LZString.compressToBase64(webHookJWT);
+//			LZString.compressToUTF16(webHookJWT);
+			
+			MultipartUtility multipart = new MultipartUtility(myURL.toString(), "utf-8", authorization);
+			
+			multipart.addFormField("urlWebhook",urlWebhook);
+			
+			 multipart.addFilePart("arquivo",
+                     new File(file.getPath()));
+			
+			 HttpURLConnection myURLConnection = multipart.finish();
+			 
+			JSONObject myResponse = null;			
 			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {	
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 						"Docket: Falha  (Cod: " + myURLConnection.getResponseCode() + ")",""));
-				System.out.println(jsonREA.toString());
+				//System.out.println(jsonREA.toString());
 			} else {
-				docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" , cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
-				DocketDao docketDao = new DocketDao();
-				docketDao.create(docket);
+				BufferedReader  br = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream()));
+				StringBuffer response = new StringBuffer();
+				String inputLine;
+				while ((inputLine = br.readLine()) != null) {
+					response.append(inputLine);
+				}
+				br.close();
+				
+			
+				ReaWebhookRetorno reaWebhookRetorno = GsonUtil.fromJson(response.toString(), ReaWebhookRetorno.class);
+
+				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+				
+				documentoAnalise.setIdRemoto(reaWebhookRetorno.getId());
+				documentoAnaliseDao.merge(documentoAnalise);
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Matrícula enviada com sucesso", ""));	
-				myResponse = getJSONSucesso(myURLConnection.getInputStream());
+				//myResponse = getJSONSucesso(myURLConnection.getInputStream());
 			}
-			myURLConnection.disconnect();		
+			myURLConnection.disconnect();
+			
+			
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

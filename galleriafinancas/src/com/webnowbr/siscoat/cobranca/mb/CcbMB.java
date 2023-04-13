@@ -88,7 +88,7 @@ import com.webnowbr.siscoat.cobranca.db.op.CcbDao;
 import com.webnowbr.siscoat.cobranca.db.op.CcbParticipantesDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
-import com.webnowbr.siscoat.cobranca.mb.ContratoCobrancaMB.FileUploaded;
+import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.common.BancosEnum;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
@@ -304,6 +304,8 @@ public class CcbMB {
     
     private String numeroProcesso = "";
     
+    private ContasPagar despesaSelecionada;
+    
     private String carencia = "";
     
     private String aviso = " a ";
@@ -360,6 +362,7 @@ public class CcbMB {
 		this.seguradoSelecionado = new Segurado();
 		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
 	}
+	
 	
 	public void enviarMoneyPlus() {
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -9356,7 +9359,7 @@ public class CcbMB {
 			if(nomeSemvirgula.contains(",")) {
 				nomeSemvirgula = nomeSemvirgula.replace(",", "");
 		    }
-			if(SiscoatConstants.DEV) {
+			if(SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
 				gerador.open(String.format("Galleria Bank - CESSAO %s.pdf", ""));
 				gerador.feed(new ByteArrayInputStream(CommonsUtil.wordToPdf(in).toByteArray()));
 			} else {
@@ -9988,6 +9991,7 @@ public class CcbMB {
 	}
 	
 	public void clearDespesas() {
+		despesaSelecionada = new ContasPagar();
 		if(!CommonsUtil.semValor(this.objetoCcb.getCustasCartorariasValor())) {
 			setTemCustasCartorarias(true);
 		} else {
@@ -12096,6 +12100,14 @@ public class CcbMB {
 
 	public void setAviso(String aviso) {
 		this.aviso = aviso;
+	}
+
+	public ContasPagar getDespesaSelecionada() {
+		return despesaSelecionada;
+	}
+
+	public void setDespesaSelecionada(ContasPagar despesaSelecionada) {
+		this.despesaSelecionada = despesaSelecionada;
 	}
 	
 	

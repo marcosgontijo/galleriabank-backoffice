@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="cobranca">
+	<class name="com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise" table="DOCUMENTOSANALISE">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="increment" />
+		</id>		 
+		
+		<property name="idRemoto" type="java.lang.String">
+			<column name="idRemoto" />
+		</property>
+		
+		<many-to-one name="contratoCobranca" 
+			class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca"
+			lazy="false">
+			<column name="contratoCobranca" />
+		</many-to-one>		
+
+
+		<property name="identificacao" type="java.lang.String">
+			<column name="identificacao" />
+		</property>
+		
+		<property name="path" type="java.lang.String">
+			<column name="path" />
+		</property>
+		
+		<property name="tipo" type="java.lang.String">
+			<column name="tipo" />
+		</property>
+		
+		<property name="cnpjcpf" type="java.lang.String"  >
+			<column name="cnpjcpf" />
+		</property>
+		<property name="tipoPessoa" type="java.lang.String"  length="65000">
+			<column name="tipoPessoa" />
+		</property>
+		<property name="motivoAnalise" type="java.lang.String"  length="65000">
+			<column name="motivoAnalise" />
+		</property>
+		
+    </class>
+</hibernate-mapping>

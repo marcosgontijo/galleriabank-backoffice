@@ -120,6 +120,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFavorecidos;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaParcelasInvestidor;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaStatus;
+import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.FilaInvestidores;
 import com.webnowbr.siscoat.cobranca.db.model.GruposFavorecidos;
 import com.webnowbr.siscoat.cobranca.db.model.GruposPagadores;
@@ -139,6 +140,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaParcelasInvestidorDao;
 import com.webnowbr.siscoat.cobranca.db.op.DashboardDao;
+import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.db.op.FilaInvestidoresDao;
 import com.webnowbr.siscoat.cobranca.db.op.GruposFavorecidosDao;
 import com.webnowbr.siscoat.cobranca.db.op.GruposPagadoresDao;
@@ -146,8 +148,10 @@ import com.webnowbr.siscoat.cobranca.db.op.IPCADao;
 import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
+import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
+import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.common.GeracaoBoletoMB;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.common.ReportUtil;
@@ -222,6 +226,7 @@ public class ContratoCobrancaMB {
 	private long idAnalistaGeracaoPAJU = 0;
 	
 	private List<BoletoKobana> selectedBoletosKobana = new ArrayList<BoletoKobana>();
+	private List<DocumentoAnalise> listaDocumentoAnalise;
 	
 	/************************************************************
 	 * Objetos para antecipacao de parcela
@@ -3042,7 +3047,7 @@ public class ContratoCobrancaMB {
 
 			// verifica se o contrato for aprovado, manda um tipo de email..
 			// senao valida se houve alteração no checklist para envio de email.
-			if(!SiscoatConstants.DEV) {
+			if(!SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
 				enviaEmailAtualizacaoPreContratoNovo();
 				//System.out.println("saveLeadTerceiros");
 			}
@@ -3073,7 +3078,7 @@ public class ContratoCobrancaMB {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		
 		try {
-			if(!SiscoatConstants.DEV) {
+			if(!SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
 				notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
 			}
 		} catch (Exception e) {
@@ -3651,7 +3656,7 @@ public class ContratoCobrancaMB {
 
 		try {
 			
-			if(!SiscoatConstants.DEV) {
+			if(!SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
 				// envia WhatsApp
 				notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
 	
@@ -8502,6 +8507,9 @@ public class ContratoCobrancaMB {
 		
 		getIndexStepContrato();
 		
+		//monta listagem de Arquivo para analise 
+		listaArquivosAnaliseDocumentos();
+		
 		this.objetoAnaliseComite = new AnaliseComite();
 		this.objetoContratoCobranca.setQtdeVotosAprovadosComite(BigInteger.ZERO);
 		this.objetoContratoCobranca.setQtdeVotosReprovadosComite(BigInteger.ZERO);
@@ -12013,7 +12021,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 	}
 
 	public String geraConsultaContratosPendentes() {
-		if(!SiscoatConstants.DEV) {
+		if(!SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
 			this.baixarPreContratoAutomatico();
 			this.enviaZapLeadEmTratamento();
 			enviaZapCartorio();
@@ -12561,7 +12569,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 	}
 
 	public String geraConsultaContratosPorStatus(String status) {
-		if(!SiscoatConstants.DEV) {
+		if(!SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
 			this.baixarPreContratoAutomatico();
 			this.enviaZapLeadEmTratamento();
 			enviaZapCartorio();
@@ -29385,6 +29393,68 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		}
 	}
 	
+
+	/***
+	 * handler de upload do arquivo
+	 * 
+	 * @param event
+	 * @throws IOException
+	 */
+	public void handleAnaliseDocumentoFileUpload(FileUploadEvent event) throws IOException {
+		FacesContext context = FacesContext.getCurrentInstance();
+		// recupera local onde será gravado o arquivo
+		ParametrosDao pDao = new ParametrosDao();
+		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString();
+
+		File diretorio = new File(pathContrato);
+		if (!diretorio.isDirectory()) {
+			diretorio.mkdir();
+		}
+		pathContrato += this.objetoContratoCobranca.getNumeroContrato();
+		diretorio = new File(pathContrato);
+		if (!diretorio.isDirectory()) {
+			diretorio.mkdir();
+		}
+		pathContrato += "/analise/";
+		;
+
+		// cria o diretório, caso não exista
+		diretorio = new File(pathContrato);
+		if (!diretorio.isDirectory()) {
+			diretorio.mkdir();
+		}
+
+		// cria o arquivo
+		if (event.getFile().getFileName().endsWith(".zip")) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
+		} else {
+			byte[] conteudo = event.getFile().getContents();
+			FileOutputStream fos;
+			try {
+				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
+				fos.write(conteudo);
+				fos.close();
+
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				System.out.println(e);
+			}
+
+			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+			DocumentoAnalise documentoAnalise = new DocumentoAnalise();
+			documentoAnalise.setContratoCobranca(this.objetoContratoCobranca);
+			documentoAnalise.setMotivoAnalise("Matricula para consulta");
+			documentoAnalise.setIdentificacao(event.getFile().getFileName());
+			documentoAnalise.setPath(pathContrato + event.getFile().getFileName());
+			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.REA);
+			documentoAnaliseDao.create(documentoAnalise);
+			// atualiza lista de arquivos contidos no diretório
+			listaArquivosAnaliseDocumentos();
+
+		}
+	}
+	
 	public void handleFileInternoUpload(FileUploadEvent event) throws IOException {
 		FacesContext context = FacesContext.getCurrentInstance();
 		// recupera local onde será gravado o arquivo
@@ -29745,30 +29815,37 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
 		ParametrosDao pDao = new ParametrosDao();
 		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-		//String pathContrato = "C:/Users/Usuario/Desktop/"
+				// String pathContrato = "C:/Users/Usuario/Desktop/"
 				+ this.objetoContratoCobranca.getNumeroContrato() + "/";
 		File diretorio = new File(pathContrato);
 		File arqs[] = diretorio.listFiles();
-		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
-		if (arqs != null) {
-			for (int i = 0; i < arqs.length; i++) {
-				File arquivo = arqs[i];
-
-				// String nome = arquivo.getName();
-				// String dt_ateracao = formatData.format(new Date(arquivo.lastModified()));
-				
-				if(!arquivo.getName().contains("interno") 
-						&& !arquivo.getName().contains("faltante") 
-						&& !arquivo.getName().contains("juridico") 
-						&& !arquivo.getName().contains("comite")
-						&& !arquivo.getName().contains("pagar")){
-					lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
-				}
-			}
-		}
+		Collection<FileUploaded> lista = CommonsUtil.listFilesileUploaded(diretorio);
 		return lista;
 	}
 	
+	/***
+	 * Lista ois arquivos contidos no diretório
+	 * 
+	 * @return
+	 */
+	
+	public void listaArquivosAnaliseDocumentos() {		
+		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+		this.listaDocumentoAnalise =  documentoAnaliseDao.findByFilter("contratoCobranca", this.objetoContratoCobranca);
+	}
+			
+	
+	public List<DocumentoAnalise> getListaDocumentoAnalise() {
+//		if (CommonsUtil.semValor(listaDocumentoAnalise)) {
+//			listaArquivosAnaliseDocumentos();
+//		}
+		return listaDocumentoAnalise;
+	}
+
+	public void setListaDocumentoAnalise(List<DocumentoAnalise> listaDocumentoAnalise) {
+		this.listaDocumentoAnalise = listaDocumentoAnalise;
+	}
+
 	public Collection<FileUploaded> listaArquivosInterno() {
 		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
 		ParametrosDao pDao = new ParametrosDao();
@@ -30648,63 +30725,6 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		this.deletefilesJuridico = deletefilesJuridico;
 	}
 
-
-	public class FileUploaded {
-		private File file;
-		private String name;
-		private String path;
-
-		public FileUploaded() {
-		}
-
-		public FileUploaded(String name, File file, String path) {
-			this.name = name;
-			this.file = file;
-			this.path = path;
-		}
-
-		/**
-		 * @return the file
-		 */
-		public File getFile() {
-			return file;
-		}
-
-		/**
-		 * @param file the file to set
-		 */
-		public void setFile(File file) {
-			this.file = file;
-		}
-
-		/**
-		 * @return the name
-		 */
-		public String getName() {
-			return name;
-		}
-
-		/**
-		 * @param name the name to set
-		 */
-		public void setName(String name) {
-			this.name = name;
-		}
-
-		/**
-		 * @return the path
-		 */
-		public String getPath() {
-			return path;
-		}
-
-		/**
-		 * @param path the path to set
-		 */
-		public void setPath(String path) {
-			this.path = path;
-		}
-	}
 
 	/**
 	 * @return the selectedRecebedorFinal1

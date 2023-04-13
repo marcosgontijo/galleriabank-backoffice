@@ -2,7 +2,7 @@ package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger; 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -752,8 +752,10 @@ public class ContratoCobranca implements Serializable {
 	private String chequeDevolvidoRessalva;
 	private String obsDocsPendentesRessalva;
 	
-	private String contatoAgendamendoLaudoAvaliacao;
 	private String formaDePagamentoLaudoPAJU;
+	private String nomeContatoAgendaLaudoAvaliacao;
+	private String contatoAgendamendoLaudoAvaliacao;
+	private String observacaoContatoAgendaLaudoAvaliacao;
 
 	private String avaliacaoLaudo;
 	private String avaliacaoLaudoObservacao;
@@ -962,6 +964,10 @@ public class ContratoCobranca implements Serializable {
 			}
 		});
 
+	}
+
+	public boolean isEmAnalise() {
+		return CommonsUtil.semValor(this.cadastroAprovadoValor) && CommonsUtil.mesmoValor("Pendente", this.status);
 	}
 
 	/**
@@ -5178,23 +5184,45 @@ public class ContratoCobranca implements Serializable {
 	public void setPedidoLaudoPajuComercialUsuario(String pedidoLaudoPajuComercialUsuario) {
 		this.pedidoLaudoPajuComercialUsuario = pedidoLaudoPajuComercialUsuario;
 	}
+	
 	public boolean isTemTxAdm() {
 		return temTxAdm;
 	}
+	
 	public void setTemTxAdm(boolean temTxAdm) {
 		this.temTxAdm = temTxAdm;
 	}
-	public String getContatoAgendamendoLaudoAvaliacao() {
-		return contatoAgendamendoLaudoAvaliacao;
-	}
-	public void setContatoAgendamendoLaudoAvaliacao(String contatoAgendamendoLaudoAvaliacao) {
-		this.contatoAgendamendoLaudoAvaliacao = contatoAgendamendoLaudoAvaliacao;
-	}
+
 	public String getFormaDePagamentoLaudoPAJU() {
 		return formaDePagamentoLaudoPAJU;
 	}
+	
 	public void setFormaDePagamentoLaudoPAJU(String formaDePagamentoLaudoPAJU) {
 		this.formaDePagamentoLaudoPAJU = formaDePagamentoLaudoPAJU;
+	}
+	
+	public String getNomeContatoAgendaLaudoAvaliacao() {
+		return nomeContatoAgendaLaudoAvaliacao;
+	}
+
+	public void setNomeContatoAgendaLaudoAvaliacao(String nomeContatoAgendaLaudoAvaliacao) {
+		this.nomeContatoAgendaLaudoAvaliacao = nomeContatoAgendaLaudoAvaliacao;
+	}
+
+	public String getContatoAgendamendoLaudoAvaliacao() {
+		return contatoAgendamendoLaudoAvaliacao;
+	}
+
+	public void setContatoAgendamendoLaudoAvaliacao(String contatoAgendamendoLaudoAvaliacao) {
+		this.contatoAgendamendoLaudoAvaliacao = contatoAgendamendoLaudoAvaliacao;
+	}
+
+	public String getObservacaoContatoAgendaLaudoAvaliacao() {
+		return observacaoContatoAgendaLaudoAvaliacao;
+	}
+
+	public void setObservacaoContatoAgendaLaudoAvaliacao(String observacaoContatoAgendaLaudoAvaliacao) {
+		this.observacaoContatoAgendaLaudoAvaliacao = observacaoContatoAgendaLaudoAvaliacao;
 	}
 
 	public Date getPedidoLaudoData() {
