@@ -966,7 +966,7 @@ public class ContratoCobranca implements Serializable {
 
 	}
 
-	private boolean isEmAnalise() {
+	public boolean isEmAnalise() {
 		return CommonsUtil.semValor(this.cadastroAprovadoValor) && CommonsUtil.mesmoValor("Pendente", this.status);
 	}
 

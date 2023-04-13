@@ -904,7 +904,7 @@
 
 				<shiro:hasAnyRoles
 					name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO">
-					<p:panel id="ArquivosAnalisados" header="Analise Documentos" rendered="#{objetoContratoCobranca.emAnalise}"
+					<p:panel id="ArquivosAnalisados" header="Analise Documentos" rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
 						style="margin-bottom:10px;text-align: center;">
 						<h:panelGrid columns="1">
 							<p:fileUpload label="Selecionar Arquivo"

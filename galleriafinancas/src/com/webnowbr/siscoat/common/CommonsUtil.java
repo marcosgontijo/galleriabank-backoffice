@@ -1379,7 +1379,7 @@ public class CommonsUtil {
 	public static final boolean sistemaWindows() {
 		String sistemaOperacional = System.getProperty("os.name").toUpperCase();
 		boolean result = false;
-		if (sistemaOperacional.contains("WINDOWS")) {
+		if (sistemaOperacional.contains("WINDOWS") || sistemaOperacional.indexOf("MAC") >= 0)  {
 			// System.out.println("Rodando em Windows: "+sistemaOperacional);
 			result = true;
 		}

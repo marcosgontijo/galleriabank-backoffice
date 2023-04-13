@@ -9358,7 +9358,7 @@ public class CcbMB {
 			if(nomeSemvirgula.contains(",")) {
 				nomeSemvirgula = nomeSemvirgula.replace(",", "");
 		    }
-			if(SiscoatConstants.DEV) {
+			if(SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
 				gerador.open(String.format("Galleria Bank - CESSAO %s.pdf", ""));
 				gerador.feed(new ByteArrayInputStream(CommonsUtil.wordToPdf(in).toByteArray()));
 			} else {
