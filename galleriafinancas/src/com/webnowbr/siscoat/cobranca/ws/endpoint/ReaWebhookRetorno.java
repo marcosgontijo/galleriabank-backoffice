@@ -1,6 +1,9 @@
 package com.webnowbr.siscoat.cobranca.ws.endpoint;
 
+import java.util.Comparator;
 import java.util.List;
+
+import com.webnowbr.siscoat.common.CommonsUtil;
 
 public class ReaWebhookRetorno {
 
@@ -16,6 +19,22 @@ public class ReaWebhookRetorno {
 	public ReaWebhookRetornoArquivo arquivo;
 	public List<ReaWebhookRetornoBloco> blocos;
 
+	
+	public ReaWebhookRetornoBloco getProprietarioAtual() {		
+		ReaWebhookRetornoBloco proprietarioAtual = blocos.stream().filter( b -> CommonsUtil.mesmoValor( b.getTipo(), "PROPRIETARIO") && b.isRelacionadoAoProprietarioAtual()).findFirst().orElse(null);
+		return proprietarioAtual;
+	}
+	
+	public ReaWebhookRetornoBloco getProprietarioAnterior() {
+		ReaWebhookRetornoBloco proprietarioAtual = getProprietarioAtual();
+		ReaWebhookRetornoBloco proprietarioAnterior = blocos.stream()
+				.sorted(Comparator.comparingInt(ReaWebhookRetornoBloco::getNumeroSequencia).reversed())
+				.filter( b -> CommonsUtil.mesmoValor( b.getTipo(), "PROPRIETARIO") && !b.isRelacionadoAoProprietarioAtual() &&
+				                                                              b.numeroSequencia < proprietarioAtual.getNumeroSequencia() ).findFirst().orElse(null);
+		return proprietarioAnterior;
+	}
+	
+	
 	public String getId() {
 		return id;
 	}

@@ -928,33 +928,40 @@
 									sortBy="#{files.identificacao}">
 									<p:column selectionMode="multiple"
 										style="width:16px;text-align:center" />
-									<f:facet name="header">
-										<p:commandButton value="Download Selecionado(s)" ajax="false"
+									<!--<f:facet name="header">
+										 <p:commandButton value="Download Selecionado(s)" ajax="false"
 											icon="ui-icon-arrowthick-1-s">
 											<p:fileDownload
 												value="#{contratoCobrancaMB.downloadAllFiles}" />
 										</p:commandButton>
 										<p:commandButton value="Excluir Selecionado(s)" ajax="false"
 											icon="ui-icon-trash"
-											action="#{contratoCobrancaMB.deleteFile}" />
-									</f:facet>
+											action="#{contratoCobrancaMB.deleteFile}" /> 
+									</f:facet>-->
 
 									<p:column style="text-align: center;"
-										headerText="Nome do Arquivo" filterBy="#{files.identificacao}"
+										headerText="Identificação" filterBy="#{files.identificacao}"
 										filterMatchMode="contains" sortBy="#{files.identificacao}">
-										<h:outputText value="#{files.identificacao}" />
+
+										<h:outputText value="#{files.identificacao}"
+											rendered="#{files.rea}" />
+										<h:outputText
+											value="#{files.identificacao} #{files.cnpjcpf} "
+											rendered="#{!files.rea}" />
 										<p:spacer height="10" />
-										
+
 										<p:commandButton value="Solicitar Rea" ajax="false"
 											rendered="#{files.rea and files.reaNaoEnviado}"
 											action="#{docketMB.uploadREA(files)}" immediate="true"
 											icon="ui-icon-search">
 										</p:commandButton>
-										
-										<h:outputText value="REA Enviado"
-										rendered="#{files.rea and !files.reaNaoEnviado and !files.reaProcessado }" />
-										<h:outputText value="REA Processado"
-										rendered="#{files.rea and files.reaProcessado }" />
+
+
+									</p:column>
+
+									<p:column style="text-align: center;" headerText="Motivo"
+										filterMatchMode="contains">
+										<h:outputText value="#{files.motivoAnalise}" />										
 									</p:column>
 
 									<p:column style="text-align: center;" headerText="Situação"
@@ -974,17 +981,17 @@
 											<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
 										</p:commandButton>
 									</p:column>
-
+<!--
 									<f:facet name="footer">
-										<p:commandButton value="Download Selecionado(s)" ajax="false"
+										 <p:commandButton value="Download Selecionado(s)" ajax="false"
 											icon="ui-icon-arrowthick-1-s">
 											<p:fileDownload
 												value="#{contratoCobrancaMB.downloadAllFiles}" />
 										</p:commandButton>
 										<p:commandButton value="Excluir Selecionado(s)" ajax="false"
 											icon="ui-icon-trash"
-											action="#{contratoCobrancaMB.deleteFile}" />
-									</f:facet>
+											action="#{contratoCobrancaMB.deleteFile}" /> 
+									</f:facet>-->
 								</p:dataTable>
 							</h:panelGrid>
 							

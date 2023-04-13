@@ -29414,6 +29414,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 			DocumentoAnalise documentoAnalise = new DocumentoAnalise();
 			documentoAnalise.setContratoCobranca(this.objetoContratoCobranca);
+			documentoAnalise.setMotivoAnalise("Matricula para consulta");
 			documentoAnalise.setIdentificacao(event.getFile().getFileName());
 			documentoAnalise.setPath(pathContrato + event.getFile().getFileName());
 			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.REA);
