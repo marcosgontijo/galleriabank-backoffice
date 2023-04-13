@@ -42,6 +42,10 @@
 									action="#{relatorioSemestralMB.clearFields}" ajax="false"
 									icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />
 									
+								<p:menuitem value="Relatorio Debentures"
+									action="#{relatorioSemestralMB.clearFieldsDebentures}" ajax="false"
+									icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />
+									
 								<shiro:hasAnyRoles name="ROOT">
 									<p:menuitem value="Laudo + Paju"
 										action="#{laudoPajuMB.clearFields}" ajax="false"

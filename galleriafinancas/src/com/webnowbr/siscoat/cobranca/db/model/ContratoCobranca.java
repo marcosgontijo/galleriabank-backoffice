@@ -2,7 +2,7 @@ package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger; 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -964,6 +964,10 @@ public class ContratoCobranca implements Serializable {
 			}
 		});
 
+	}
+
+	private boolean isEmAnalise() {
+		return CommonsUtil.semValor(this.cadastroAprovadoValor) && CommonsUtil.mesmoValor("Pendente", this.status);
 	}
 
 	/**

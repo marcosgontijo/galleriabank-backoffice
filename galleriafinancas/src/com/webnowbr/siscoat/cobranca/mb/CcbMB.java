@@ -88,7 +88,7 @@ import com.webnowbr.siscoat.cobranca.db.op.CcbDao;
 import com.webnowbr.siscoat.cobranca.db.op.CcbParticipantesDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
-import com.webnowbr.siscoat.cobranca.mb.ContratoCobrancaMB.FileUploaded;
+import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.common.BancosEnum;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
@@ -1625,7 +1625,7 @@ public class CcbMB {
 		}
 		// atualiza lista de arquivos contidos no diretório
 	    for(FileUploaded file : listaArquivos()) {
-			filesList.add((UploadedFile) file.file);
+			//filesList.add((UploadedFile) file.file);
 	    }
     }
 	
@@ -10530,7 +10530,7 @@ public class CcbMB {
 		
 		filesList = new ArrayList<UploadedFile>();
 		for(FileUploaded file : listaArquivos()) {
-			filesList.add((UploadedFile) file.file);
+			//filesList.add((UploadedFile) file.file);
 	    }
 	}
 	

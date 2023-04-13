@@ -86,7 +86,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.TransferenciasObservacoesIUGUDao;
 import com.webnowbr.siscoat.cobranca.db.op.UniProofDao;
-import com.webnowbr.siscoat.cobranca.mb.ContratoCobrancaMB.FileUploaded;
+import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.BcMsgRetorno;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ResumoDaOperacao;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ResumoDoCliente;

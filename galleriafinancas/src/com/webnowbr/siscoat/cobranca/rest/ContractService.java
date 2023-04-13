@@ -935,4 +935,8 @@ public class ContractService {
 		this.pagadorRecebedorAdicionais = pagadorRecebedorAdicionais;
 	}
 	
+	@Path("/")
+	public String olaMundo() {
+		return "Ola Mundo!!!";
+	}
 }
