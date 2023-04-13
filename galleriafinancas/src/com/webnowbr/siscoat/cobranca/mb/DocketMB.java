@@ -528,7 +528,7 @@ public class DocketMB {
 				documentoAnalise.setIdRemoto(reaWebhookRetorno.getId());
 				documentoAnaliseDao.merge(documentoAnalise);
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Matrícula enviada com sucesso", ""));	
-				myResponse = getJSONSucesso(myURLConnection.getInputStream());
+				//myResponse = getJSONSucesso(myURLConnection.getInputStream());
 			}
 			myURLConnection.disconnect();
 			

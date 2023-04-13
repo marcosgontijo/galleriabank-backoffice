@@ -476,7 +476,7 @@
 
 								<ui:fragment
 									rendered="#{!(contratoCobrancaMB.indexStepsStatusContrato == 0  
-								|| contratoCobrancaMB.indexStepsStatusContrato == 1 || contratoCobrancaMB.indexStepsStatusContrato == 5 || contratoCobrancaMB.indexStepsStatusContrato == 7
+								|| contratoCobrancaMB.indexStepsStatusContrato == 1 || contratoCobrancaMB.indexStepsStatusContrato == 2 || contratoCobrancaMB.indexStepsStatusContrato == 5 || contratoCobrancaMB.indexStepsStatusContrato == 7
 								|| contratoCobrancaMB.indexStepsStatusContrato == 8)}">
 									<h:panelGrid columns="2"
 										style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
@@ -904,7 +904,7 @@
 
 				<shiro:hasAnyRoles
 					name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO">
-					<p:panel id="ArquivosAnalisados" header="Analise Documentos" rendered="#{objetoContratoCobranca.emAnalise}"
+					<p:panel id="ArquivosAnalisados" header="Analise Documentos" rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
 						style="margin-bottom:10px;text-align: center;">
 						<h:panelGrid columns="1">
 							<p:fileUpload label="Selecionar Arquivo"
