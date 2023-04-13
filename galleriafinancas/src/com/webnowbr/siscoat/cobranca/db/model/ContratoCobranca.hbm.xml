@@ -1642,8 +1642,16 @@
 			<column name="temTxAdm" />
 		</property>	
 		
+		<property name="nomeContatoAgendaLaudoAvaliacao" type="java.lang.String">
+			<column name="nomeContatoAgendaLaudoAvaliacao" />
+		</property>	
+		
 		<property name="contatoAgendamendoLaudoAvaliacao" type="java.lang.String">
 			<column name="contatoAgendamendoLaudoAvaliacao" />
+		</property>	
+		
+		<property name="observacaoContatoAgendaLaudoAvaliacao" type="java.lang.String">
+			<column name="observacaoContatoAgendaLaudoAvaliacao" />
 		</property>	
 		
 		<property name="formaDePagamentoLaudoPAJU" type="java.lang.String">

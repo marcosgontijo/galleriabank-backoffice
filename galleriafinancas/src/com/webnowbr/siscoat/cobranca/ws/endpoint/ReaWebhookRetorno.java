@@ -1,0 +1,91 @@
+package com.webnowbr.siscoat.cobranca.ws.endpoint;
+
+import java.util.List;
+
+public class ReaWebhookRetorno {
+
+	public String id;
+	public String nome;
+	public String status;
+	public String dataCriacao;
+	public Integer quantidadeBlocosGravames;
+	public List<Integer> paginasRotacionadas; /*
+												 * ":[ 1, 2, 3 ],
+												 */
+	public String urlWebhook;
+	public ReaWebhookRetornoArquivo arquivo;
+	public List<ReaWebhookRetornoBloco> blocos;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getDataCriacao() {
+		return dataCriacao;
+	}
+
+	public void setDataCriacao(String dataCriacao) {
+		this.dataCriacao = dataCriacao;
+	}
+
+	public Integer getQuantidadeBlocosGravames() {
+		return quantidadeBlocosGravames;
+	}
+
+	public void setQuantidadeBlocosGravames(Integer quantidadeBlocosGravames) {
+		this.quantidadeBlocosGravames = quantidadeBlocosGravames;
+	}
+
+	public List<Integer> getPaginasRotacionadas() {
+		return paginasRotacionadas;
+	}
+
+	public void setPaginasRotacionadas(List<Integer> paginasRotacionadas) {
+		this.paginasRotacionadas = paginasRotacionadas;
+	}
+
+	public String getUrlWebhook() {
+		return urlWebhook;
+	}
+
+	public void setUrlWebhook(String urlWebhook) {
+		this.urlWebhook = urlWebhook;
+	}
+
+	public ReaWebhookRetornoArquivo getArquivo() {
+		return arquivo;
+	}
+
+	public void setArquivo(ReaWebhookRetornoArquivo arquivo) {
+		this.arquivo = arquivo;
+	}
+
+	public List<ReaWebhookRetornoBloco> getBlocos() {
+		return blocos;
+	}
+
+	public void setBlocos(List<ReaWebhookRetornoBloco> blocos) {
+		this.blocos = blocos;
+	}
+
+}

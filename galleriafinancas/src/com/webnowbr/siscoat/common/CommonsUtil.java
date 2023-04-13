@@ -1,3 +1,4 @@
+
 package com.webnowbr.siscoat.common;
 
 import java.awt.image.BufferedImage;
@@ -20,6 +21,7 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -39,12 +41,18 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import javax.crypto.SecretKey;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
+
+import io.jsonwebtoken.security.Keys;
+
 /**
  * Rotinas utilitarias gerais
  * 
@@ -53,6 +61,9 @@ import org.apache.commons.logging.LogFactory;
 public class CommonsUtil {
 	/** Logger instance. */
 	private static final Log LOGGER = LogFactory.getLog(CommonsUtil.class);
+
+	public final static SecretKey CHAVE = Keys
+			.hmacShaKeyFor("MukS3mqD2ooKCddDumCGTtiNBVotiMFB".getBytes(StandardCharsets.UTF_8));
 
 	public static Double castAsDouble(Object value) {
 		return value == null ? null : doubleValue(value);
@@ -174,14 +185,13 @@ public class CommonsUtil {
 		}
 		return Double.parseDouble(object.toString());
 	}
-	
+
 	public static BigDecimal bigDecimalValue(Object object) {
 		if (object == null) {
 			return BigDecimal.ZERO;
-		}		
+		}
 		return BigDecimal.valueOf(doubleValue(object));
 	}
-	
 
 	public static Date dateValue(Object object) {
 		if (object == null) {
@@ -190,7 +200,7 @@ public class CommonsUtil {
 		if (object instanceof Date) {
 			return ((Date) object);
 		}
-		
+
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		try {
 			return sdf.parse(stringValue(object));
@@ -222,22 +232,22 @@ public class CommonsUtil {
 	public static String stringValueVazio(Object object) {
 		return object == null ? "" : object.toString();
 	}
-	
+
 	public static String stringValueUTF8(String str) {
-		
-	        Charset utf8charset = Charset.forName("UTF-8");
-	        Charset iso88591charset = Charset.forName("ISO-8859-1");
 
-	        ByteBuffer inputBuffer = ByteBuffer.wrap(str.getBytes());
+		Charset utf8charset = Charset.forName("UTF-8");
+		Charset iso88591charset = Charset.forName("ISO-8859-1");
 
-	        // decode UTF-8
-	        CharBuffer data = utf8charset.decode(inputBuffer);
+		ByteBuffer inputBuffer = ByteBuffer.wrap(str.getBytes());
 
-	        // encode ISO-8559-1
-	        ByteBuffer outputBuffer = iso88591charset.encode(data);
-	        byte[] outputData = outputBuffer.array();
+		// decode UTF-8
+		CharBuffer data = utf8charset.decode(inputBuffer);
 
-	        return new String(outputData);
+		// encode ISO-8559-1
+		ByteBuffer outputBuffer = iso88591charset.encode(data);
+		byte[] outputData = outputBuffer.array();
+
+		return new String(outputData);
 	}
 
 	/**
@@ -296,13 +306,13 @@ public class CommonsUtil {
 	}
 
 	public static double doubleToDecimal(final Double value, final int decimals) {
-		//String valor = value.toString();
+		// String valor = value.toString();
 		if (semValor(value)) {
 			return 0d;
 		}
 		String valor = formataValorMonetario(value);
 		valor = valor.replace(".", "");
-		
+
 		int ponto = valor.indexOf(",");
 		if (ponto >= 0) {
 			String inteiro = valor.substring(0, ponto);
@@ -378,16 +388,20 @@ public class CommonsUtil {
 		return b == a;
 	}
 
+	public static final boolean mesmoValor(Object a, Object b) {
+		return a == null ? b == null : a.equals(b);
+	}
+
 	public static final boolean mesmoValor(Number a, Number b) {
 		return a == null ? b == null : a.equals(b);
 	}
-	
+
 	public static final boolean mesmoValor(BigDecimal a, BigDecimal b) {
-		return a == null ? b == null : a.compareTo(b)==0;
+		return a == null ? b == null : a.compareTo(b) == 0;
 	}
-	
+
 	public static final boolean mesmoValor(BigInteger a, BigInteger b) {
-		return a == null ? b == null : a.compareTo(b)==0;
+		return a == null ? b == null : a.compareTo(b) == 0;
 	}
 
 	public static final boolean mesmoValor(String a, String b) {
@@ -423,7 +437,7 @@ public class CommonsUtil {
 	public static final boolean semValor(BigDecimal value) {
 		return value == null || value.compareTo(BigDecimal.ZERO) == 0;
 	}
-	
+
 	public static boolean semValor(StringBuilder value) {
 		return value == null || value.length() == 0;
 	}
@@ -431,7 +445,7 @@ public class CommonsUtil {
 	public static final boolean semValor(BigInteger value) {
 		return value == null || value.compareTo(BigInteger.ZERO) == 0;
 	}
-	
+
 	public static final boolean semValor(Integer value) {
 		return value == null || value.intValue() == 0;
 	}
@@ -563,7 +577,7 @@ public class CommonsUtil {
 		PT_BR_SYMBOLS.setGroupingSeparator('.');
 		PT_BR_SYMBOLS.setCurrencySymbol("R$");
 	};
-	
+
 	public static final DecimalFormatSymbols EN_US_SYMBOLS;
 	static {
 		EN_US_SYMBOLS = new DecimalFormatSymbols(new Locale("en_US"));
@@ -597,39 +611,39 @@ public class CommonsUtil {
 	public static final String formataValorMonetario(Number valor) {
 		return formataNumero(valor, "#,##0.00");
 	}
-	
+
 	public static final String formataValorMonetario(BigDecimal valor, String moeda) {
-		if(!CommonsUtil.semValor(valor)) {
-			DecimalFormat df = new DecimalFormat("#,##0.00",  PT_BR_SYMBOLS);
-			return moeda + df.format(valor);	
+		if (!CommonsUtil.semValor(valor)) {
+			DecimalFormat df = new DecimalFormat("#,##0.00", PT_BR_SYMBOLS);
+			return moeda + df.format(valor);
 		} else {
 			return "";
 		}
 	}
-	
+
 	public static final String formataValorMonetarioCci(BigDecimal valor, String moeda) {
-		DecimalFormat df = new DecimalFormat("#,##0.00",  PT_BR_SYMBOLS);
-		if(!CommonsUtil.semValor(valor)) {
-			return moeda + df.format(valor);	
+		DecimalFormat df = new DecimalFormat("#,##0.00", PT_BR_SYMBOLS);
+		if (!CommonsUtil.semValor(valor)) {
+			return moeda + df.format(valor);
 		} else {
 			return moeda + df.format(BigDecimal.ZERO);
 		}
 	}
-	
+
 	public static final String formataValorMonetarioCciArredondado(BigDecimal valor, String moeda) {
 		valor = valor.setScale(2, BigDecimal.ROUND_HALF_UP);
-		DecimalFormat df = new DecimalFormat("#,##0.00",  PT_BR_SYMBOLS);
-		if(!CommonsUtil.semValor(valor)) {
-			return moeda + df.format(valor);	
+		DecimalFormat df = new DecimalFormat("#,##0.00", PT_BR_SYMBOLS);
+		if (!CommonsUtil.semValor(valor)) {
+			return moeda + df.format(valor);
 		} else {
 			return moeda + df.format(BigDecimal.ZERO);
 		}
 	}
-	
+
 	public static final String formataValorTaxa(BigDecimal valor) {
 		return formataNumero(valor, "#,##0.0000");
 	}
-	
+
 	public static final String formataValorInteiro(int valor) {
 		return formataNumero(valor, "#,##0");
 	}
@@ -832,12 +846,12 @@ public class CommonsUtil {
 		lista.addAll(valores);
 		return lista;
 	}
-	
-	   public static final  Long[] getListLongToArray(Collection<Long> valores) {
-		    Long[] itemsArray = new Long[valores.size()];
-	        itemsArray = valores.toArray(itemsArray);
-	        return itemsArray;
-	    }
+
+	public static final Long[] getListLongToArray(Collection<Long> valores) {
+		Long[] itemsArray = new Long[valores.size()];
+		itemsArray = valores.toArray(itemsArray);
+		return itemsArray;
+	}
 
 	public static final <T> List<T> merge(List<T> destino, List<T> novos) {
 		if (destino == null) {
@@ -851,8 +865,6 @@ public class CommonsUtil {
 		return destino;
 
 	}
-
-	
 
 	/**
 	 * Ajusta tamanho de um String Se String maior que tamanho - Se ajusta a
@@ -908,51 +920,50 @@ public class CommonsUtil {
 	}
 
 	public static final <T, Y> void simpleCopyProperties(T destiny, Y source, String... excludedFields)
-			throws SecurityException , IllegalArgumentException , IllegalAccessException {
+			throws SecurityException, IllegalArgumentException, IllegalAccessException {
 
-	
-			Class<?> classSource = source.getClass();
-			Class<?> classDestiny = destiny.getClass();
+		Class<?> classSource = source.getClass();
+		Class<?> classDestiny = destiny.getClass();
 
-			while (classSource != null && classDestiny != null) {
-				Field[] fields = classSource.getDeclaredFields();
-				List<String> lstExcludedFields = new ArrayList<String>();
-				lstExcludedFields.add("class");
-				if (excludedFields != null) {
-					lstExcludedFields.addAll(Arrays.asList(excludedFields));
-				}
-				for (Field field : fields) {
+		while (classSource != null && classDestiny != null) {
+			Field[] fields = classSource.getDeclaredFields();
+			List<String> lstExcludedFields = new ArrayList<String>();
+			lstExcludedFields.add("class");
+			if (excludedFields != null) {
+				lstExcludedFields.addAll(Arrays.asList(excludedFields));
+			}
+			for (Field field : fields) {
 
-					if (!lstExcludedFields.contains(field.getName())
-							&& (field.getType() == String.class || field.getType() == Character.class
-									|| field.getType() == Date.class || field.getType() == Boolean.class
-									|| field.getType() == Short.class || field.getType() == Integer.class
-									|| field.getType() == Long.class || field.getType() == Float.class
-									|| field.getType() == Double.class || field.getType() == BigDecimal.class)) {
+				if (!lstExcludedFields.contains(field.getName())
+						&& (field.getType() == String.class || field.getType() == Character.class
+								|| field.getType() == Date.class || field.getType() == Boolean.class
+								|| field.getType() == Short.class || field.getType() == Integer.class
+								|| field.getType() == Long.class || field.getType() == Float.class
+								|| field.getType() == Double.class || field.getType() == BigDecimal.class)) {
 
-						field.setAccessible(true);
+					field.setAccessible(true);
 
-						try {
-							Field destinyField = classDestiny.getDeclaredField(field.getName());
+					try {
+						Field destinyField = classDestiny.getDeclaredField(field.getName());
 
-							Object value = field.get(source);
+						Object value = field.get(source);
 
-							destinyField.setAccessible(true);
-							destinyField.set(destiny, value);
-						} catch (NoSuchFieldException e) {
-							// Se não encontra campo na classe de destino,
-							// continua
-							// para o próximo campo silenciosamente.
-						}
-
+						destinyField.setAccessible(true);
+						destinyField.set(destiny, value);
+					} catch (NoSuchFieldException e) {
+						// Se não encontra campo na classe de destino,
+						// continua
+						// para o próximo campo silenciosamente.
 					}
 
 				}
 
-				classSource = classSource.getSuperclass();
-				classDestiny = classDestiny.getSuperclass();
-
 			}
+
+			classSource = classSource.getSuperclass();
+			classDestiny = classDestiny.getSuperclass();
+
+		}
 
 	}
 
@@ -1397,8 +1408,6 @@ public class CommonsUtil {
 		return result;
 	}
 
-	
-
 	public static Integer retornaCodigoPessoaDoNome(String nome) {
 		Integer codigoPessoa = null;
 		Integer inicio = nome.indexOf("[");
@@ -1538,7 +1547,6 @@ public class CommonsUtil {
 		return mapArquivoDescompactado;
 	}
 
-	
 	public static final String formataMesExtensoAbreviadoAno(Date data) {
 		return formataMesExtensoAbreviadoAno(data, null);
 	}
@@ -1555,7 +1563,7 @@ public class CommonsUtil {
 	public static final String formataMesExtensoAno(Date data) {
 		return formataMesExtensoAno(data, null);
 	}
-	
+
 	public static final String formataMesExtensoAno(Date data, String separador) {
 		String mesAno = formataData(data, "MMyyyy");
 		String result = formataMesAnoFull(mesAno);
@@ -1564,13 +1572,12 @@ public class CommonsUtil {
 		}
 		return result;
 	}
-	
 
 	public static final String formataMesAno(String mesAno) {
 		if (mesAno == null) {
 			mesAno = "";
 		}
-		if (!mesAno.isEmpty() && (eSomenteNumero(mesAno)) ) {
+		if (!mesAno.isEmpty() && (eSomenteNumero(mesAno))) {
 			Integer mes = Integer.parseInt(mesAno.substring(0, 2));
 			Integer mesPosicao = ((mes - 1) * 3);
 
@@ -1588,7 +1595,7 @@ public class CommonsUtil {
 		if (mesAno == null) {
 			mesAno = "";
 		}
-		if (!mesAno.isEmpty() && (eSomenteNumero(mesAno)) ) {
+		if (!mesAno.isEmpty() && (eSomenteNumero(mesAno))) {
 			Integer mes = Integer.parseInt(mesAno.substring(0, 2));
 			Integer mesPosicao = ((mes - 1) * 9);
 
@@ -1601,12 +1608,13 @@ public class CommonsUtil {
 		}
 		return mesAno;
 	}
+
 	public static final String formataMesExtenso(Date data) {
 		String mesAno = formataData(data, "MMyyyy");
 		if (mesAno == null) {
 			mesAno = "";
 		}
-		if (!mesAno.isEmpty() && (eSomenteNumero(mesAno)) ) {
+		if (!mesAno.isEmpty() && (eSomenteNumero(mesAno))) {
 			Integer mes = Integer.parseInt(mesAno.substring(0, 2));
 			Integer mesPosicao = ((mes - 1) * 9);
 
@@ -1617,7 +1625,7 @@ public class CommonsUtil {
 		}
 		return mesAno;
 	}
-	
+
 	public static String formataAnoMes(String anoMes) {
 		if (anoMes == null) {
 			anoMes = "";
@@ -1636,7 +1644,7 @@ public class CommonsUtil {
 	public static final String formataAnoMesExtenso(Date data, String separador) {
 		String anoMes = formataData(data, "yyyyMM");
 		String result = formataAnoMes(anoMes);
-		String anoMesExt = result.substring(4, 8)+"/"+result.substring(0, 3);
+		String anoMesExt = result.substring(4, 8) + "/" + result.substring(0, 3);
 		if (!semValor(separador)) {
 			anoMesExt = anoMesExt.replace("/", separador);
 		}
@@ -1651,23 +1659,23 @@ public class CommonsUtil {
 		int mes = intValue(anoMes.substring(5, 6));
 
 		if (meses == 0) {
-			anoMesesRetorno.add(strZero( stringValue(ano), 4)+ strZero(stringValue(mes) ,2));
+			anoMesesRetorno.add(strZero(stringValue(ano), 4) + strZero(stringValue(mes), 2));
 		}
 		if (meses > 0) {
-			for (int i=0; i < meses; i++) {
-				anoMesesRetorno.add(strZero( stringValue(ano), 4)+ strZero(stringValue(mes) ,2));
+			for (int i = 0; i < meses; i++) {
+				anoMesesRetorno.add(strZero(stringValue(ano), 4) + strZero(stringValue(mes), 2));
 				mes++;
 				if (mes > 12) {
 					mes = 1;
 					ano++;
 				}
-				anoMesesRetorno.add(strZero( stringValue(ano), 4)+ strZero(stringValue(mes) ,2));
+				anoMesesRetorno.add(strZero(stringValue(ano), 4) + strZero(stringValue(mes), 2));
 			}
 		}
 		if (meses < 0) {
 			meses = meses * -1;
-			for (int i=0; i < meses; i++) {
-				anoMesesRetorno.add(strZero( stringValue(ano), 4)+ strZero(stringValue(mes) ,2));
+			for (int i = 0; i < meses; i++) {
+				anoMesesRetorno.add(strZero(stringValue(ano), 4) + strZero(stringValue(mes), 2));
 				mes--;
 				if (mes <= 0) {
 					mes = 12;
@@ -1677,14 +1685,14 @@ public class CommonsUtil {
 		}
 		return anoMesesRetorno;
 	}
-	
+
 	public static final Integer retornaAnoMesDeUmaData(Date data, int meses) {
 		String anoMes = formataData(data, "yyyyMM");
 		int ano = intValue(anoMes.substring(0, 4));
 		int mes = intValue(anoMes.substring(5, 6));
 
 		if (meses > 0) {
-			for (int i=0; i < meses; i++) {
+			for (int i = 0; i < meses; i++) {
 				mes++;
 				if (mes > 12) {
 					mes = 1;
@@ -1694,7 +1702,7 @@ public class CommonsUtil {
 		}
 		if (meses < 0) {
 			meses = meses * -1;
-			for (int i=0; i < meses; i++) {
+			for (int i = 0; i < meses; i++) {
 				mes--;
 				if (mes <= 0) {
 					mes = 12;
@@ -1702,41 +1710,41 @@ public class CommonsUtil {
 				}
 			}
 		}
-		Integer anoMesResult = integerValue( strZero( stringValue(ano), 4)+ strZero(stringValue(mes) ,2) );
-		
+		Integer anoMesResult = integerValue(strZero(stringValue(ano), 4) + strZero(stringValue(mes), 2));
+
 		return anoMesResult;
 	}
-	
+
 	public static Date retornaPrimeiroDiaDoMes(String anoMes) {
 		Date dataRetorno = null;
 		if (anoMes.length() == 6) {
-			String data = anoMes.substring(0, 4)+"-"+anoMes.substring(4, 6)+"-01";
-			dataRetorno = dateValue(data); 
+			String data = anoMes.substring(0, 4) + "-" + anoMes.substring(4, 6) + "-01";
+			dataRetorno = dateValue(data);
 		}
 		return dataRetorno;
 	}
-	
+
 	public static String formataCpf(String cpf) {
-		//cpf = CommonsUtil.somenteNumeros(cpf);
+		// cpf = CommonsUtil.somenteNumeros(cpf);
 		char[] temp = cpf.toCharArray();
 		char[] array = new char[14];
 		array[3] = '.';
 		array[7] = '.';
 		array[11] = '-';
 		int j = 0;
-		for(int i = 0; i < array.length; i++) {
-			if(!CommonsUtil.semValor(array[i])) {
+		for (int i = 0; i < array.length; i++) {
+			if (!CommonsUtil.semValor(array[i])) {
 				i++;
 			}
 			array[i] = temp[j];
 			j++;
-		}  
+		}
 		cpf = new String(array);
 		return cpf;
 	}
-	
+
 	public static String formataCnpj(String cnpj) {
-		//cnpj = CommonsUtil.somenteNumeros(cnpj);
+		// cnpj = CommonsUtil.somenteNumeros(cnpj);
 		char[] temp = cnpj.toCharArray();
 		char[] array = new char[17];
 		array[2] = '.';
@@ -1744,65 +1752,81 @@ public class CommonsUtil {
 		array[10] = '/';
 		array[14] = '-';
 		int j = 0;
-		for(int i = 0; i < array.length; i++) {
-			if(!CommonsUtil.semValor(array[i])) {
+		for (int i = 0; i < array.length; i++) {
+			if (!CommonsUtil.semValor(array[i])) {
 				i++;
 			}
 			array[i] = temp[j];
 			j++;
-		}  
+		}
 		cnpj = new String(array);
 		return cnpj;
-		
-		//MaskFormatter mf = new MaskFormatter("##.###.###/####-##");        
-		//cpfCnpjCCResp =  mf.valueToString(cpfCnpjCCResp);
+
+		// MaskFormatter mf = new MaskFormatter("##.###.###/####-##");
+		// cpfCnpjCCResp = mf.valueToString(cpfCnpjCCResp);
+	}
+
+	public static Collection<FileUploaded> listFilesileUploaded(File diretorio) {
+
+		File arqs[] = diretorio.listFiles();
+		List<String> subDiretorios = new ArrayList<>();
+		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
+
+		if (arqs != null) {
+			for (int i = 0; i < arqs.length; i++) {
+				File arquivo = arqs[i];
+				if (arquivo.isDirectory()) {
+					subDiretorios.add(arquivo.getName());
+					continue;
+				} else if (subDiretorios.stream().filter(d -> arquivo.getName().contains(d)).findAny().isPresent())
+					continue;
+
+				lista.add(new FileUploaded(arquivo.getName(), arquivo, diretorio.getPath()));
+			}
+		}
+
+		return lista;
 	}
 
 	public static ByteArrayOutputStream wordToPdf(InputStream templateWord) throws IOException {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		/*try {
-			
-			
-			TemplateEngineKind[] aaa = TemplateEngineKind.Freemarker.values();
-
-			// Prepara o documento
-			IXDocReport report = XDocReportRegistry.getRegistry().loadReport(templateWord,
-					TemplateEngineKind.Freemarker);
-			
-			ITemplateEngine a = new TemplateEngineInitializerRegistry().getTemplateEngine(TemplateEngineKind.Freemarker
-					, DocumentKind.DOCX);
-			report.setTemplateEngine(a);
-			
-			
-			Properties properties = new Properties();
-		    properties.setProperty("resource.loader", "class");
-		    properties.setProperty("class.resource.loader.class",
-		    		"org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
-
-		    ITemplateEngine templateEngine = new VelocityTemplateEngine(properties);
-		    report.setTemplateEngine(templateEngine);
-		    FieldsMetadata metadata = report.createFieldsMetadata();
-		    metadata.setTemplateEngineKind("Velocity");
-			
-			// Options options =
-			// Options.getTo(ConverterTypeTo.PDF).via(ConverterTypeVia.DOCX4J);
-			Options options = Options.getTo(ConverterTypeTo.PDF).via(ConverterTypeVia.XWPF).from(DocumentKind.DOCX);
-
-			 //Adiciona propriedades para o context
-            IContext ctx = report.createContext();
-			// gera arquivo de saida
-			report.convert(ctx, options, outputStream);
-//			PDDocument document = PDDocument.load(outputStream.toByteArray());
-//			PDPage pageDoc = document.getPage(0);
-
-		} catch (Exception ex) {
-			try {
-				outputStream.close();
-			} catch (IOException e) {
-				//
-			}
-			throw new RuntimeException(ex);
-		}*/
+		/*
+		 * try {
+		 * 
+		 * 
+		 * TemplateEngineKind[] aaa = TemplateEngineKind.Freemarker.values();
+		 * 
+		 * // Prepara o documento IXDocReport report =
+		 * XDocReportRegistry.getRegistry().loadReport(templateWord,
+		 * TemplateEngineKind.Freemarker);
+		 * 
+		 * ITemplateEngine a = new
+		 * TemplateEngineInitializerRegistry().getTemplateEngine(TemplateEngineKind.
+		 * Freemarker , DocumentKind.DOCX); report.setTemplateEngine(a);
+		 * 
+		 * 
+		 * Properties properties = new Properties();
+		 * properties.setProperty("resource.loader", "class");
+		 * properties.setProperty("class.resource.loader.class",
+		 * "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+		 * 
+		 * ITemplateEngine templateEngine = new VelocityTemplateEngine(properties);
+		 * report.setTemplateEngine(templateEngine); FieldsMetadata metadata =
+		 * report.createFieldsMetadata(); metadata.setTemplateEngineKind("Velocity");
+		 * 
+		 * // Options options = //
+		 * Options.getTo(ConverterTypeTo.PDF).via(ConverterTypeVia.DOCX4J); Options
+		 * options = Options.getTo(ConverterTypeTo.PDF).via(ConverterTypeVia.XWPF).from(
+		 * DocumentKind.DOCX);
+		 * 
+		 * //Adiciona propriedades para o context IContext ctx = report.createContext();
+		 * // gera arquivo de saida report.convert(ctx, options, outputStream); //
+		 * PDDocument document = PDDocument.load(outputStream.toByteArray()); // PDPage
+		 * pageDoc = document.getPage(0);
+		 * 
+		 * } catch (Exception ex) { try { outputStream.close(); } catch (IOException e)
+		 * { // } throw new RuntimeException(ex); }
+		 */
 
 		return outputStream;
 	}
