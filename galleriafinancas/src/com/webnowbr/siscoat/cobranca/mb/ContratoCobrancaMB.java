@@ -3047,7 +3047,7 @@ public class ContratoCobrancaMB {
 
 			// verifica se o contrato for aprovado, manda um tipo de email..
 			// senao valida se houve alteração no checklist para envio de email.
-			if(!SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
+			if(!SiscoatConstants.DEV && !CommonsUtil.sistemaWindows()) {
 				enviaEmailAtualizacaoPreContratoNovo();
 				//System.out.println("saveLeadTerceiros");
 			}
@@ -3078,7 +3078,7 @@ public class ContratoCobrancaMB {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		
 		try {
-			if(!SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
+			if(!SiscoatConstants.DEV && !CommonsUtil.sistemaWindows()) {
 				notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
 			}
 		} catch (Exception e) {
@@ -3656,7 +3656,7 @@ public class ContratoCobrancaMB {
 
 		try {
 			
-			if(!SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
+			if(!SiscoatConstants.DEV && !CommonsUtil.sistemaWindows()) {
 				// envia WhatsApp
 				notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
 	
@@ -3749,7 +3749,7 @@ public class ContratoCobrancaMB {
 									this.objetoContratoCobranca.setQtdeVotosAprovadosComite(this.objetoContratoCobranca.getQtdeVotosAprovadosComite().add(BigInteger.ONE));
 									if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getQtdeVotosAprovadosComite(), BigInteger.valueOf(2))) {
 										this.objetoContratoCobranca.setAprovadoComite(true);
-										if(!SiscoatConstants.DEV) {
+										if(!SiscoatConstants.DEV && !CommonsUtil.sistemaWindows()) {
 											notificaStatusWhatsApp(this.objetoContratoCobranca.getId());
 										}
 									}
@@ -3778,7 +3778,7 @@ public class ContratoCobrancaMB {
 
 				// verifica se o contrato for aprovado, manda um tipo de email..
 				// senao valida se houve alteração no checklist para envio de email.
-				if(!SiscoatConstants.DEV) {
+				if(!SiscoatConstants.DEV && !CommonsUtil.sistemaWindows()) {
 					enviaEmailAtualizacaoPreContratoNovo();	
 					//System.out.println("editPreContratoPorStatus");
 				}
@@ -12021,7 +12021,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 	}
 
 	public String geraConsultaContratosPendentes() {
-		if(!SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
+		if(!SiscoatConstants.DEV && !CommonsUtil.sistemaWindows()) {
 			this.baixarPreContratoAutomatico();
 			this.enviaZapLeadEmTratamento();
 			enviaZapCartorio();
@@ -12569,7 +12569,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 	}
 
 	public String geraConsultaContratosPorStatus(String status) {
-		if(!SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
+		if(!SiscoatConstants.DEV && !CommonsUtil.sistemaWindows()) {
 			this.baixarPreContratoAutomatico();
 			this.enviaZapLeadEmTratamento();
 			enviaZapCartorio();
