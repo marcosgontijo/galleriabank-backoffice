@@ -120,6 +120,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFavorecidos;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaParcelasInvestidor;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaStatus;
+import com.webnowbr.siscoat.cobranca.db.model.DataVistoria;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.FilaInvestidores;
 import com.webnowbr.siscoat.cobranca.db.model.GruposFavorecidos;
@@ -272,6 +273,7 @@ public class ContratoCobrancaMB {
 	String updateResponsavel = "";
 	String tituloPagadorRecebedorDialog = "";
 	AnaliseComite objetoAnaliseComite;
+	DataVistoria dataVistoriaSelecionada = new DataVistoria();
 	
 	ContasPagar contasPagarSelecionada;
 	ContasPagar contasPagarArquivos;
@@ -8663,6 +8665,7 @@ public class ContratoCobrancaMB {
 		clearMensagensWhatsApp();
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
+		this.objetoPagadorRecebedor = this.objetoContratoCobranca.getPagador();
 		
 		if (this.objetoContratoCobranca.getResponsavel() != null) {
 			this.codigoResponsavel = this.objetoContratoCobranca.getResponsavel().getCodigo();
@@ -8683,6 +8686,7 @@ public class ContratoCobrancaMB {
 		clearMensagensWhatsApp();
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
+		this.objetoPagadorRecebedor = this.objetoContratoCobranca.getPagador();
 		
 		this.tituloPainel = "Editar";
 		
@@ -8748,16 +8752,18 @@ public class ContratoCobrancaMB {
 			else if (this.objetoContratoCobranca.getCadastroAprovadoValor() != null) {
 				if (!this.objetoContratoCobranca.isAnaliseReprovada() && this.objetoContratoCobranca.isInicioAnalise() && 
 						this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
-						(!this.objetoContratoCobranca.isPagtoLaudoConfirmada() || !this.objetoContratoCobranca.isPedidoLaudo())){
+						(!this.objetoContratoCobranca.isPedidoLaudo())){
 					this.indexStepsStatusContrato = 2;
 				}
 				
 				else if ( (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Avaliação de Imóvel - Galache - Consultar") 
 						|| CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Avaliação de Imóvel - Consultar")
-						|| CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Laudo")) && 
+						|| CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Laudo")
+						|| CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Pedir Laudo")
+						|| CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Pedir PAJU")) && 
 						!this.objetoContratoCobranca.isAnaliseReprovada() && this.objetoContratoCobranca.isInicioAnalise() && 
 						this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
-						this.objetoContratoCobranca.isPagtoLaudoConfirmada() && 
+						this.objetoContratoCobranca.isPedidoLaudo() && 
 						(!this.objetoContratoCobranca.isPajurFavoravel() || !this.objetoContratoCobranca.isLaudoRecebido())) {
 					this.indexStepsStatusContrato = 3;
 				}
@@ -18915,6 +18921,22 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			conta.setDataPagamento(gerarDataHoje());
 			cDao.merge(conta);
 		} 
+	}
+	
+	public void removeDataVistoria(DataVistoria data) {
+		this.objetoContratoCobranca.getListDatasVistoria().remove(data);
+	}
+	
+	public void selecionaDataVistoria(DataVistoria data) {
+		this.objetoContratoCobranca.setDataPrevistaVistoria(data.getDataVistoria());
+	}
+	
+	public void addDataVistoria() {
+		//java.sql.Date dataSQL = new java.sql.Date(dataVistoriaSelecionada.getDataVistoria().getTime());
+		//dataVistoriaSelecionada.setDataVistoria(dataSQL);
+		this.dataVistoriaSelecionada.setContratoCobranca(objetoContratoCobranca);
+		this.objetoContratoCobranca.getListDatasVistoria().add(dataVistoriaSelecionada);
+		this.dataVistoriaSelecionada = new DataVistoria();
 	}
 	
 	public void criarPagadorRecebedorNoSistema(PagadorRecebedor pagador) {
@@ -32448,5 +32470,13 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 
 	public void setSelectedBoletosKobana(List<BoletoKobana> selectedBoletosKobana) {
 		this.selectedBoletosKobana = selectedBoletosKobana;
+	}
+
+	public DataVistoria getDataVistoriaSelecionada() {
+		return dataVistoriaSelecionada;
+	}
+
+	public void setDataVistoriaSelecionada(DataVistoria dataVistoriaSelecionada) {
+		this.dataVistoriaSelecionada = dataVistoriaSelecionada;
 	}
 }

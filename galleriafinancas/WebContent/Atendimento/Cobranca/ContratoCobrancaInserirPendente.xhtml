@@ -2029,13 +2029,25 @@
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}">
 						<p:spacer height="10"></p:spacer>
 						<p:panel id="DataVistoriaPanel" style="border: none">						
-							<h:panelGrid columns="2">					
-								<p:outputLabel for="dataVistoria"
-									value="Data Vistoria Imóvel: " styleClass="labelBold" />				
-								<p:calendar id="dataVistoria" showOn="button"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria}"
-									label="Data Vistoria Imóvel" size="100" pattern="dd/MM/yyyy"
-									locale="pt" styleClass="dateTimeField" />									
+							<h:panelGrid columns="2">	
+							
+								<shiro:lacksRole name="ROOT">
+									<shiro:lacksRole name="PROFILE_GERENTE_ANALISE">
+										<p:outputLabel value="Data Vistoria Imóvel: " styleClass="labelBold" />
+										<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria}" styleClass="labelBold" size="100">
+											<f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+										</p:outputLabel>
+									</shiro:lacksRole>
+								</shiro:lacksRole>
+								
+								<shiro:hasAnyRoles name="ROOT, PROFILE_GERENTE_ANALISE">
+									<p:outputLabel for="dataVistoria"
+										value="Data Vistoria Imóvel: " styleClass="labelBold" />				
+									<p:calendar id="dataVistoria" showOn="button"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria}"
+										label="Data Vistoria Imóvel" size="100" pattern="dd/MM/yyyy HH:mm"
+										styleClass="dateTimeField" />		
+								</shiro:hasAnyRoles>							
 								
 								<p:outputLabel for="nomeVistoriador"
 									value="Nome Vistoriador: " styleClass="labelBold" />
@@ -2044,7 +2056,7 @@
 									style="FONT-SIZE: 10pt;width:300px;"/>			
 									
 								<shiro:hasAnyRoles name="ROOT, USER_GALACHE, AVALIADORIMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_AVALIADOR_IMOVEL_GALACHE">				
-									<p:outputLabel for="avaliacaoEngenharia" 
+									<p:outputLabel for="avaliacaoEngenharia"
 										value="Avaliação Engenharia: " styleClass="labelBold" />
 									<p:selectOneMenu id="avaliacaoEngenharia" 
 										value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoEngenharia}" style="width:100px;">
@@ -2052,19 +2064,59 @@
 										<f:selectItem itemValue="Bom" itemLabel="Bom" />
 										<f:selectItem itemValue="Ruim" itemLabel="Ruim" />
 									</p:selectOneMenu>
-								</shiro:hasAnyRoles>			
-								
-								<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCAANALISTA, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE,  
-									PROFILE_LAUDO, PROFILE_AVALIADOR_IMOVEL">				
+								</shiro:hasAnyRoles>	
+									
+								<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,PRECOBRANCA, PROFILE_AVALIADOR_IMOVEL, PROFILE_LAUDO, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">				
 									<p:outputLabel for="avaliacaoEquipeLaudo" rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}"
 										value="Avaliação Equipe Laudo: " styleClass="labelBold" />
-									<p:selectOneMenu id="avaliacaoEquipeLaudo" rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}"
+									<p:selectOneMenu id="avaliacaoEquipeLaudo" required="true" rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoEquipeLaudo}" style="width:100px;" >
 										<f:selectItem itemValue="" itemLabel="" />
 										<f:selectItem itemValue="Bom" itemLabel="Bom" />
 										<f:selectItem itemValue="Ruim" itemLabel="Ruim" />
 									</p:selectOneMenu>
-								</shiro:hasAnyRoles>
+								</shiro:hasAnyRoles>				
+							
+								<p:dataView var="data" style="min-width: 150px;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.listDatasVistoria}"
+									paginator="false" layout="list">
+									<p:dataViewListItem>
+										<p:outputLabel value="#{data.dataVistoria}" styleClass="labelBold"
+											size="100">
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm"/>
+										</p:outputLabel>
+										<p:spacer width="10px"></p:spacer>
+										
+										<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,PRECOBRANCA, PROFILE_AVALIADOR_IMOVEL, PROFILE_LAUDO, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">
+											<p:commandButton icon="ui-icon-trash"
+												action="#{contratoCobrancaMB.removeDataVistoria(data)}"
+												update="form:CheckListInformacoesAdicionais" />
+										</shiro:hasAnyRoles>
+										
+										<shiro:hasAnyRoles name="ROOT, USER_GALACHE, AVALIADORIMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_AVALIADOR_IMOVEL_GALACHE, PROFILE_GERENTE_ANALISE">
+											<p:commandButton icon="ui-icon-check" 
+												rendered="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria == null 
+												|| contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria == ''}"
+												action="#{contratoCobrancaMB.selecionaDataVistoria(data)}"
+												update="form:CheckListInformacoesAdicionais" />
+										</shiro:hasAnyRoles>
+									</p:dataViewListItem>
+								</p:dataView>
+			
+								<h:panelGroup id="datasValor">
+									<h:panelGrid columns="2">
+										<p:outputLabel for="dataCalculo" value="Datas Vistoria" />
+										<p:calendar id="dataCalculo" showOn="button"
+											value="#{contratoCobrancaMB.dataVistoriaSelecionada.dataVistoria}" size="100"
+											pattern="dd/MM/yyyy HH:mm" styleClass="dateTimeField" />
+									</h:panelGrid>
+									<p:commandButton value="Inserir Data" 
+										icon="ui-icon-check"
+										action="#{contratoCobrancaMB.addDataVistoria}"
+										update="DataVistoriaPanel">
+									</p:commandButton>
+								</h:panelGroup>
+								
 							</h:panelGrid>
 						</p:panel>
 					</p:panel>

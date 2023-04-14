@@ -158,6 +158,7 @@ public class ContratoCobranca implements Serializable {
 	private Set<PagadorRecebedorAdicionais> listaPagadores;
 	private Set<ContasPagar> listContasPagar;
 	private Set<AnaliseComite> listaAnaliseComite;
+	private Set<DataVistoria> listDatasVistoria;
 	
 	
 	// n�o persistida a lista abaixo
@@ -6224,5 +6225,14 @@ public class ContratoCobranca implements Serializable {
 	public void setCarenciaComite(int carenciaComite) {
 		this.carenciaComite = carenciaComite;
 	}
+
+	public Set<DataVistoria> getListDatasVistoria() {
+		return listDatasVistoria;
+	}
+
+	public void setListDatasVistoria(Set<DataVistoria> listDatasVistoria) {
+		this.listDatasVistoria = listDatasVistoria;
+	}
+	
 	
 }
