@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.webnowbr.siscoat.cobranca.db.op.DocketCidadesDao;
+import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.EstadosEnum;
 
 public class DocumentosPagadorDocket implements Serializable {
@@ -30,7 +31,9 @@ public class DocumentosPagadorDocket implements Serializable {
 	
 	public void getCidadeDocketId() {
 		DocketCidadesDao dcDao = new DocketCidadesDao();
-		cidadeId = dcDao.getCidadeId(cidade, estadoSelecionado.getUf());
+		if(!CommonsUtil.semValor(cidade) && !CommonsUtil.semValor(estadoSelecionado)){
+			cidadeId = dcDao.getCidadeId(cidade, estadoSelecionado.getUf());
+		}
 	}
 	
 	public DocumentosPagadorDocket(DocumentosDocket doc) {

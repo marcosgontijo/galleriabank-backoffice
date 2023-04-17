@@ -24,12 +24,16 @@ public class ReaWebhook {
 
 	@POST
 	@Path("/webhook/")
-	public Response olaMundo(String webhookRetorno, @QueryParam("Token") String token) {
+	public Response webhookRea(String webhookRetorno, @QueryParam("Token") String token) {
 		LOGGER.debug(webhookRetorno);
 
 		try {
+			
 			Jwts.parserBuilder().setSigningKey(CommonsUtil.CHAVE).build().parseClaimsJws(token);
 
+			System.out.println("---------------- webhookRetorno ---------------- ");
+			System.out.println(webhookRetorno);
+			System.out.println("---------------- webhookRetorno ---------------- ");
 			ReaWebhookRetorno reaWebhookRetorno = GsonUtil.fromJson(webhookRetorno, ReaWebhookRetorno.class);
 			
 			ReaWebhookRetornoBloco proprietarioAtual =reaWebhookRetorno.getProprietarioAtual();

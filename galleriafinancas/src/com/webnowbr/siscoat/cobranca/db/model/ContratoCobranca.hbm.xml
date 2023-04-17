@@ -1123,6 +1123,14 @@
             <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.AnaliseComite" />
         </set>
         
+        <set name="listDatasVistoria" table="DataVistoria" cascade="all-delete-orphan"
+                 lazy="false" fetch="select">
+            <key>
+                <column name="contratoCobranca" not-null="true" />
+            </key>
+            <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.DataVistoria" />
+        </set>
+        
         <property name="tipoCalculoInvestidor1" type="java.lang.String">
 			<column name="tipoCalculoInvestidor1" />
 		</property>
