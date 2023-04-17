@@ -1,5 +1,6 @@
 package com.webnowbr.siscoat.cobranca.ws.endpoint;
 
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -14,6 +15,7 @@ import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.common.GsonUtil;
+import com.webnowbr.siscoat.common.JwtUtil;
 
 import io.jsonwebtoken.Jwts;
 
@@ -22,36 +24,40 @@ public class ReaWebhook {
 
 	private static final Log LOGGER = LogFactory.getLog(ReaWebhook.class);
 
+//	@GET
+//	@Path("/token/")
+//	public Response webhookReaToken(String webhookRetorno, @QueryParam("Token") String token) {
+//		return Response.status(200).entity(JwtUtil.generateJWTReaWebwook(false)).build();
+//	}
+	
 	@POST
 	@Path("/webhook/")
 	public Response webhookRea(String webhookRetorno, @QueryParam("Token") String token) {
 		LOGGER.debug(webhookRetorno);
 
 		try {
-			
+
 			Jwts.parserBuilder().setSigningKey(CommonsUtil.CHAVE).build().parseClaimsJws(token);
 
 			System.out.println("---------------- webhookRetorno ---------------- ");
 			System.out.println(webhookRetorno);
 			System.out.println("---------------- webhookRetorno ---------------- ");
 			ReaWebhookRetorno reaWebhookRetorno = GsonUtil.fromJson(webhookRetorno, ReaWebhookRetorno.class);
-			
-			ReaWebhookRetornoBloco proprietarioAtual =reaWebhookRetorno.getProprietarioAtual();
-			ReaWebhookRetornoBloco proprietarioAnterior =reaWebhookRetorno.getProprietarioAnterior();
-			proprietarioAtual.getConteudo().getExtraido().getProprietarios().getNome();
-			
-			
+
+			ReaWebhookRetornoBloco proprietarioAtual = reaWebhookRetorno.getProprietarioAtual();
+			ReaWebhookRetornoBloco proprietarioAnterior = reaWebhookRetorno.getProprietarioAnterior();
 			
 			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 			DocumentoAnalise documentoAnalise = documentoAnaliseDao.findByFilter("idRemoto", reaWebhookRetorno.getId())
 					.stream().findFirst().orElse(null);
 			documentoAnalise.setRetorno(webhookRetorno);
 			documentoAnaliseDao.merge(documentoAnalise);
-			
-			cadastrarPessoRetornoRea(proprietarioAtual, documentoAnaliseDao, documentoAnalise.getContratoCobranca(), "Proprietario Atual" );
 
-			cadastrarPessoRetornoRea(proprietarioAnterior, documentoAnaliseDao, documentoAnalise.getContratoCobranca(), "Proprietario Anterior");
-			
+			cadastrarPessoRetornoRea(proprietarioAtual, documentoAnaliseDao, documentoAnalise.getContratoCobranca(),
+					"Proprietario Atual");
+
+			cadastrarPessoRetornoRea(proprietarioAnterior, documentoAnaliseDao, documentoAnalise.getContratoCobranca(),
+					"Proprietario Anterior");
 
 			return Response.status(200).entity("Processado").build();
 		} catch (io.jsonwebtoken.ExpiredJwtException eJwt) {
@@ -65,20 +71,26 @@ public class ReaWebhook {
 
 	private void cadastrarPessoRetornoRea(ReaWebhookRetornoBloco bloco, DocumentoAnaliseDao documentoAnaliseDao,
 			ContratoCobranca contratoCobranca, String motivo) {
-		DocumentoAnalise documentoAnalise = new DocumentoAnalise();
-		documentoAnalise.setContratoCobranca(contratoCobranca);
-		documentoAnalise.setIdentificacao(bloco.getConteudo().getExtraido().getProprietarios().getNome());
 
-		documentoAnalise.setTipoPessoa(bloco.getConteudo().getExtraido().getProprietarios().getFisicaJuridica());
-		documentoAnalise.setMotivoAnalise(motivo);
-		if (documentoAnalise.getTipoPessoa() == "PJ") {
-			documentoAnalise.setCnpjcpf(bloco.getConteudo().getExtraido().getProprietarios().getCPF());
-			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.RELATO);
-			documentoAnalise.setPath(bloco.getConteudo().getExtraido().getProprietarios().getCPF());
-		} else {
-			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.CREDNET);
-			documentoAnalise.setCnpjcpf(bloco.getConteudo().getExtraido().getProprietarios().getCNPJ());
+		for (ReaWebhookRetornoProprietario propietario : bloco.getConteudo().getExtraido().getProprietarios()
+				.getDadosProprietarios()) {
+
+			DocumentoAnalise documentoAnalise = new DocumentoAnalise();
+			documentoAnalise.setContratoCobranca(contratoCobranca);
+			documentoAnalise.setIdentificacao(propietario.getNome());
+
+			documentoAnalise.setTipoPessoa(propietario.getFisicaJuridica());
+			documentoAnalise.setMotivoAnalise(motivo);
+			
+			if (documentoAnalise.getTipoPessoa() == "PJ") {
+				documentoAnalise.setCnpjcpf(propietario.getCnpj());
+				documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.RELATO);
+			} else {
+				documentoAnalise.setCnpjcpf(propietario.getCpf());
+				documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.CREDNET);
+			}
+			documentoAnaliseDao.create(documentoAnalise);
 		}
-		documentoAnaliseDao.create(documentoAnalise);
+
 	}
 }

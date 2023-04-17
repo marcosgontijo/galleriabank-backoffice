@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
-import org.hibernate.annotations.Type;
 
 public class DocumentoAnalise implements Serializable {
 
@@ -15,6 +14,9 @@ public class DocumentoAnalise implements Serializable {
 
 	private long id;
 	private String idRemoto;
+
+	private DataEngine engine;
+	
 	private ContratoCobranca contratoCobranca;
 
 	private String identificacao;
@@ -27,9 +29,11 @@ public class DocumentoAnalise implements Serializable {
 	private DocumentosAnaliseEnum tipoEnum;
 
 	private String retorno;
+	private String retornoEngine;
+	private String retornoSerasa;
 	
 
-	public boolean isRea() {
+	public boolean isPodeChamarRea() {
 		return CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
 	}
 
@@ -40,7 +44,23 @@ public class DocumentoAnalise implements Serializable {
 	public boolean isReaProcessado() {
 		return !CommonsUtil.semValor(retorno);
 	}
+	
+	public boolean isPodeChamarEngine() {
+		return  !isEngineProcessado() && (CommonsUtil.mesmoValor("PJ", tipoPessoa) || CommonsUtil.mesmoValor("PF", tipoPessoa));
+	}
 
+	public boolean isEngineProcessado() {
+		return !CommonsUtil.semValor(engine) && !CommonsUtil.semValor(engine.getIdCallManager());
+	}	
+	
+	public boolean isPodeChamarSerasa() {
+		return isEngineProcessado() && (CommonsUtil.mesmoValor("PJ", tipoPessoa) || CommonsUtil.mesmoValor("PF", tipoPessoa));
+	}
+
+	public boolean isSerasaProcessado() {
+		return !CommonsUtil.semValor(retornoSerasa);
+	}	
+			
 	public long getId() {
 		return id;
 	}
@@ -118,6 +138,22 @@ public class DocumentoAnalise implements Serializable {
 		this.retorno = retorno;
 	}
 
+	public String getRetornoEngine() {
+		return retornoEngine;
+	}
+
+	public void setRetornoEngine(String retornoEngine) {
+		this.retornoEngine = retornoEngine;
+	}
+
+	public String getRetornoSerasa() {
+		return retornoSerasa;
+	}
+
+	public void setRetornoSerasa(String retornoSerasa) {
+		this.retornoSerasa = retornoSerasa;
+	}
+
 	public String getCnpjcpf() {
 		return cnpjcpf;
 	}
@@ -136,6 +172,14 @@ public class DocumentoAnalise implements Serializable {
 
 	public String getMotivoAnalise() {
 		return motivoAnalise;
+	}
+
+	public DataEngine getEngine() {
+		return engine;
+	}
+
+	public void setEngine(DataEngine engine) {
+		this.engine = engine;
 	}
 
 	public void setMotivoAnalise(String motivoAnalise) {
