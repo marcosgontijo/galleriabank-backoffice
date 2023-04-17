@@ -19783,7 +19783,13 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		}
 		
 		this.rowEditNewDate = boletoSelecionado.getPaidAt();
-		this.vlrParcelaAtualizadaNew = boletoSelecionado.getPaidAmount();
+		
+		if (boletoSelecionado.getPaidAmount().compareTo(boletoSelecionado.getVlrParcela()) >= 0) {
+			this.vlrParcelaAtualizadaNew = boletoSelecionado.getPaidAmount();	
+		} else {
+			this.vlrParcelaAtualizadaNew = boletoSelecionado.getVlrParcela();	
+		}
+		
 		this.vlrRecebido = boletoSelecionado.getPaidAmount();
 		
 		/*
