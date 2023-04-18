@@ -19944,9 +19944,16 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 				setBpContratoCobrancaDetalhesCustom(boletosKokanaSelecionados.getParcela());
 				this.reciboGerado = false;
 				this.txZero = true;
-				this.vlrRecebido = this.vlrParcelaAtualizadaNew;
 				this.rowEditNewDate = boletosKokanaSelecionados.getPaidAt();
 				this.selectedRecebedor = this.objetoContratoCobranca.getRecebedor();
+				
+				if (boletosKokanaSelecionados.getPaidAmount().compareTo(boletosKokanaSelecionados.getVlrParcela()) >= 0) {
+					this.vlrParcelaAtualizadaNew = boletosKokanaSelecionados.getPaidAmount();	
+				} else {
+					this.vlrParcelaAtualizadaNew = boletosKokanaSelecionados.getVlrParcela();	
+				}
+				
+				this.vlrRecebido = boletosKokanaSelecionados.getPaidAmount();
 				
 				baixarParcelaParcial();
 			}
