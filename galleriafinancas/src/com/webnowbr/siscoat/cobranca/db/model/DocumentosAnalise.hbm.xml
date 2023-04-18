@@ -13,11 +13,18 @@
 			<column name="idRemoto" />
 		</property>
 		
-		<many-to-one name="contratoCobranca" 
+		<many-to-one name="contratoCobranca"  
 			class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca"
 			lazy="false">
 			<column name="contratoCobranca" />
 		</many-to-one>		
+		
+		<many-to-one name="engine" 
+			class="com.webnowbr.siscoat.cobranca.db.model.DataEngine"
+			lazy="false">
+			<column name="engine" />
+		</many-to-one>		
+		
 
 
 		<property name="identificacao" type="java.lang.String">
@@ -37,6 +44,15 @@
 		</property>
 		<property name="tipoPessoa" type="java.lang.String"  length="65000">
 			<column name="tipoPessoa" />
+		</property>
+		<property name="retorno" type="java.lang.String"  length="65000">
+			<column name="retorno" />
+		</property>
+		<property name="retornoEngine" type="java.lang.String"  length="65000">
+			<column name="retornoEngine" />
+		</property>		
+		<property name="retornoSerasa" type="java.lang.String"  length="65000">
+			<column name="retornoSerasa" />
 		</property>
 		<property name="motivoAnalise" type="java.lang.String"  length="65000">
 			<column name="motivoAnalise" />

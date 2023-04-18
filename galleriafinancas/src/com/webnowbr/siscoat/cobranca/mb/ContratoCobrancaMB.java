@@ -27,6 +27,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -120,6 +121,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFavorecidos;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaParcelasInvestidor;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaStatus;
+import com.webnowbr.siscoat.cobranca.db.model.DataEngine;
 import com.webnowbr.siscoat.cobranca.db.model.DataVistoria;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.FilaInvestidores;
@@ -149,6 +151,7 @@ import com.webnowbr.siscoat.cobranca.db.op.IPCADao;
 import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
+import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
@@ -241,6 +244,10 @@ public class ContratoCobrancaMB {
 	private BigDecimal saldoDevedorReparcelamento;
 	private BigInteger carenciaReparcelamento;
 	private Date dataParcela;
+	/************************************************************
+	 * Objetos para docket
+	 ************************************************************/
+	DocketService docketService;
 
 	/************************************************************
 	 * Objetos utilizados pelas LoVs
@@ -784,6 +791,8 @@ public class ContratoCobrancaMB {
 
 		objetoContratoCobranca = new ContratoCobranca();
 
+		docketService = new DocketService();
+		
 		lazyModel = new LazyDataModel<ContratoCobranca>() {
 
 			/** Serial. */
@@ -4570,6 +4579,34 @@ public class ContratoCobrancaMB {
 			taxaAprovada,
 			prazoAprovado);
 		}
+	}
+	
+	/*******
+	 * Chamadas do docket
+	 * 
+	 * senão nada
+	 * 
+	 * @return
+	 */
+	
+	public void baixarEngineDocumento(DocumentoAnalise documentoAnalise) {
+		if (docketService ==null)
+			docketService = new DocketService();
+		docketService.baixarDocumentoEngine(documentoAnalise.getEngine());
+		docketService.salvarDetalheDocumentoEngine(documentoAnalise);
+		
+		decodarBaixarArquivo(documentoAnalise.getEngine().getPdfBase64());
+	}
+	
+	public StreamedContent decodarBaixarArquivo(String base64) {
+		byte[] decoded = Base64.getDecoder().decode(base64);
+		
+		InputStream in = new ByteArrayInputStream(decoded);
+		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(FacesContext.getCurrentInstance());
+		gerador.open(String.format("Galleria Bank - Data Engine %s.pdf", ""));
+		gerador.feed(in);
+		gerador.close();
+		return null;
 	}
 	
 	public String cancelarEdicaoPreContrato() {
