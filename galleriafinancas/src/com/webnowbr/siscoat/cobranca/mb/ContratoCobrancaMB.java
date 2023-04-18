@@ -3927,10 +3927,30 @@ public class ContratoCobrancaMB {
 					pagador = this.objetoContratoCobranca.getPagador();
 					//pagador = new PagadorRecebedorDao().findById(10737l);
 					if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoLaudo(), "Compass")) {
-						tkblpMb.sendWhatsAppMessagePagadorRecebedor(pagador, "aprovacao_credito_compass", pagador.getNome(), "", "", "");
+						tkblpMb.sendWhatsAppMessagePagadorRecebedor(pagador, "aprovacao_credito_compass_v2", pagador.getNome(), "", "", "");
 					} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoLaudo(), "Galache")) {
 						tkblpMb.sendWhatsAppMessagePagadorRecebedor(pagador, "aprovacao_credito_galache", pagador.getNome(), "", "", "");
 					}
+				}
+			}
+			
+			// Mensagem DATA VISTORIA
+			if (!CommonsUtil.semValor(this.objetoContratoCobranca.getDataPrevistaVistoria())) {
+				if (this.objetoContratoCobranca.isEnviadoWhatsappVistoria()) {
+					TakeBlipMB tkblpMb = new TakeBlipMB();
+					PagadorRecebedor pagador;
+					pagador = this.objetoContratoCobranca.getPagador();
+					//pagador = new PagadorRecebedorDao().findById(32396);
+					tkblpMb.sendWhatsAppMessageVistoria(pagador,
+							this.objetoContratoCobranca.getDataPrevistaVistoria(), this.objetoContratoCobranca.getNomeVistoriador());
+					
+					ResponsavelDao rDao = new ResponsavelDao();
+					Responsavel rVistoria1 = new Responsavel();
+					
+					// Tatiane
+					rVistoria1 = rDao.findById((long) 643);
+					tkblpMb.sendWhatsAppMessageVistoria(rVistoria1,
+							this.objetoContratoCobranca.getDataPrevistaVistoria(), this.objetoContratoCobranca.getNomeVistoriador());
 				}
 			}
 			
@@ -30067,8 +30087,10 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			facesContext.responseComplete();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
+			System.out.println(pathContrato);
 			e.printStackTrace();
 		} catch (IOException e) {
+			System.out.println(pathContrato);
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

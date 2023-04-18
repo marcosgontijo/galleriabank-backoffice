@@ -2096,5 +2096,9 @@
 			<column name="carenciaComite"  default="1" />
 		</property>
 		
+		<property name="enviadoWhatsappVistoria" type="boolean">
+			<column name="enviadoWhatsappVistoria" not-null="true" default="false"/>
+		</property>	
+		
 	</class>
 </hibernate-mapping>

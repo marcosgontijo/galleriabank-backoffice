@@ -594,6 +594,7 @@ public class ContratoCobranca implements Serializable {
 	
 	private Date dataPrevistaVistoria;
 	private String nomeVistoriador;
+	private boolean enviadoWhatsappVistoria;
 	
 	private String motivoReprovacaoAnalise;
 	private String motivoReprovaSelectItem;
@@ -777,7 +778,7 @@ public class ContratoCobranca implements Serializable {
 	private Date contratoEmCartorioData;
 	private String contratoEmCartorioUsuario;
 	
-	private boolean corrigidoIPCAHibrido;	
+	private boolean corrigidoIPCAHibrido;
 
  //FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13	
 	public BigDecimal calcularValorTotalContasPagas() {
@@ -6232,6 +6233,14 @@ public class ContratoCobranca implements Serializable {
 
 	public void setListDatasVistoria(Set<DataVistoria> listDatasVistoria) {
 		this.listDatasVistoria = listDatasVistoria;
+	}
+
+	public boolean isEnviadoWhatsappVistoria() {
+		return enviadoWhatsappVistoria;
+	}
+
+	public void setEnviadoWhatsappVistoria(boolean enviadoWhatsappVistoria) {
+		this.enviadoWhatsappVistoria = enviadoWhatsappVistoria;
 	}
 	
 	
