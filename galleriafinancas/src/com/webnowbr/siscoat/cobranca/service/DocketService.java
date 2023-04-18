@@ -9,6 +9,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Comparator;
+import java.util.List;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -24,6 +26,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.DataEngineDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
+import com.webnowbr.siscoat.cobranca.ws.endpoint.ReaWebhookRetornoBloco;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.infra.db.model.User;
@@ -57,7 +60,12 @@ public class DocketService {
 			return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta já existente!", "");
 		}
 		if (!CommonsUtil.semValor(engine.getIdCallManager())) {
-//			context.addMessage(null, );	
+			if (documentoAnalise != null ) {
+				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+				documentoAnalise.setEngine(engine);
+				documentoAnaliseDao.merge(documentoAnalise);
+			}
+			
 			return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta já existente!" + engine.getIdCallManager(),
 					"");
 		}
@@ -145,10 +153,12 @@ public class DocketService {
 			} else {
 				pDao.create(pagadorAdicionar);
 			}		
-		} 
+		}
 		if (engineDao.findByFilter("pagador", pagadorAdicionar).size() > 0) {
-			engine = engineDao.findByFilter("pagador", pagadorAdicionar).get(0);
-		} 
+			List<DataEngine> engines = engineDao.findByFilter("pagador", pagadorAdicionar);
+			
+			engine = engines.stream().sorted(Comparator.comparing(DataEngine::getData).reversed()).findFirst().orElse(null);
+		}
 		
 		if(CommonsUtil.semValor(engine)) {
 			engine = new DataEngine(pagadorAdicionar);

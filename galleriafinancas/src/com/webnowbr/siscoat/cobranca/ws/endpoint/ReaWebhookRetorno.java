@@ -21,7 +21,7 @@ public class ReaWebhookRetorno {
 
 	
 	public ReaWebhookRetornoBloco getProprietarioAtual() {		
-		ReaWebhookRetornoBloco proprietarioAtual = blocos.stream().filter( b -> CommonsUtil.mesmoValor( b.getTipo(), "PROPRIETARIO") && b.isRelacionadoAoProprietarioAtual()).findFirst().orElse(null);
+		ReaWebhookRetornoBloco proprietarioAtual = blocos.stream().filter( b -> CommonsUtil.mesmoValor( b.getTipo(), "PROPRIETARIO") && CommonsUtil.mesmoValor( b.getNomeClassificacao(), "Compra e Venda") && b.isRelacionadoAoProprietarioAtual()).findFirst().orElse(null);
 		return proprietarioAtual;
 	}
 	
@@ -29,7 +29,7 @@ public class ReaWebhookRetorno {
 		ReaWebhookRetornoBloco proprietarioAtual = getProprietarioAtual();
 		ReaWebhookRetornoBloco proprietarioAnterior = blocos.stream()
 				.sorted(Comparator.comparingInt(ReaWebhookRetornoBloco::getNumeroSequencia).reversed())
-				.filter( b -> CommonsUtil.mesmoValor( b.getTipo(), "PROPRIETARIO") && !b.isRelacionadoAoProprietarioAtual() &&
+				.filter( b -> CommonsUtil.mesmoValor( b.getTipo(), "PROPRIETARIO") && CommonsUtil.mesmoValor( b.getNomeClassificacao(), "Compra e Venda")  &&  !b.isRelacionadoAoProprietarioAtual() &&
 				                                                              b.numeroSequencia < proprietarioAtual.getNumeroSequencia() ).findFirst().orElse(null);
 		return proprietarioAnterior;
 	}

@@ -29,7 +29,7 @@ public class ReaWebhook {
 //	public Response webhookReaToken(String webhookRetorno, @QueryParam("Token") String token) {
 //		return Response.status(200).entity(JwtUtil.generateJWTReaWebwook(false)).build();
 //	}
-	
+
 	@POST
 	@Path("/webhook/")
 	public Response webhookRea(String webhookRetorno, @QueryParam("Token") String token) {
@@ -46,18 +46,18 @@ public class ReaWebhook {
 
 			ReaWebhookRetornoBloco proprietarioAtual = reaWebhookRetorno.getProprietarioAtual();
 			ReaWebhookRetornoBloco proprietarioAnterior = reaWebhookRetorno.getProprietarioAnterior();
-			
+
 			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 			DocumentoAnalise documentoAnalise = documentoAnaliseDao.findByFilter("idRemoto", reaWebhookRetorno.getId())
 					.stream().findFirst().orElse(null);
 			documentoAnalise.setRetorno(webhookRetorno);
 			documentoAnaliseDao.merge(documentoAnalise);
-
-			cadastrarPessoRetornoRea(proprietarioAtual, documentoAnaliseDao, documentoAnalise.getContratoCobranca(),
-					"Proprietario Atual");
-
-			cadastrarPessoRetornoRea(proprietarioAnterior, documentoAnaliseDao, documentoAnalise.getContratoCobranca(),
-					"Proprietario Anterior");
+			if (proprietarioAtual != null)
+				cadastrarPessoRetornoRea(proprietarioAtual, documentoAnaliseDao, documentoAnalise.getContratoCobranca(),
+						"Proprietario Atual");
+			if (proprietarioAnterior != null)
+				cadastrarPessoRetornoRea(proprietarioAnterior, documentoAnaliseDao,
+						documentoAnalise.getContratoCobranca(), "Proprietario Anterior");
 
 			return Response.status(200).entity("Processado").build();
 		} catch (io.jsonwebtoken.ExpiredJwtException eJwt) {
@@ -81,7 +81,7 @@ public class ReaWebhook {
 
 			documentoAnalise.setTipoPessoa(propietario.getFisicaJuridica());
 			documentoAnalise.setMotivoAnalise(motivo);
-			
+
 			if (documentoAnalise.getTipoPessoa() == "PJ") {
 				documentoAnalise.setCnpjcpf(propietario.getCnpj());
 				documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.RELATO);
