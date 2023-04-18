@@ -942,7 +942,8 @@
 										</p:commandButton>
 										
 										<p:commandButton value="Solicitar Serasa" ajax="false"
-											rendered="#{files.podeChamarSerasa }"											
+											rendered="#{files.podeChamarSerasa }"
+											action="#{serasaMB.requestSerasa(files)}"											
 											immediate="true" icon="ui-icon-search">
 										</p:commandButton>
 
@@ -964,9 +965,15 @@
 										<p:commandButton
 											action="#{contratoCobrancaMB.baixarEngineDocumento(files)}"
 											icon="ui-icon ui-icon-print" value="Download Engine"
-											rendered="#{files.podeChamarEngine and files.engineProcessado }"
+											rendered="#{!files.podeChamarEngine and files.engineProcessado }"
 											ajax="false" />
-											
+
+										<p:commandButton
+											action="#{serasaMB.baixarDocumento(files)}"
+											icon="ui-icon ui-icon-print" value="Download Serasa"
+											rendered="#{files.podeChamarSerasa and files.serasaProcessado }"
+											ajax="false" />
+
 									</p:column>
 
 									<p:column style="width:100px;" rendered="#{false}">

@@ -152,6 +152,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
+import com.webnowbr.siscoat.cobranca.service.SerasaService;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
@@ -19981,9 +19982,16 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 				setBpContratoCobrancaDetalhesCustom(boletosKokanaSelecionados.getParcela());
 				this.reciboGerado = false;
 				this.txZero = true;
-				this.vlrRecebido = this.vlrParcelaAtualizadaNew;
 				this.rowEditNewDate = boletosKokanaSelecionados.getPaidAt();
 				this.selectedRecebedor = this.objetoContratoCobranca.getRecebedor();
+				
+				if (boletosKokanaSelecionados.getPaidAmount().compareTo(boletosKokanaSelecionados.getVlrParcela()) >= 0) {
+					this.vlrParcelaAtualizadaNew = boletosKokanaSelecionados.getPaidAmount();	
+				} else {
+					this.vlrParcelaAtualizadaNew = boletosKokanaSelecionados.getVlrParcela();	
+				}
+				
+				this.vlrRecebido = boletosKokanaSelecionados.getPaidAmount();
 				
 				baixarParcelaParcial();
 			}
