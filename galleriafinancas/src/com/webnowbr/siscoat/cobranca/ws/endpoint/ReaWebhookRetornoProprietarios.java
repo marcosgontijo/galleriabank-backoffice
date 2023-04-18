@@ -1,5 +1,6 @@
 package com.webnowbr.siscoat.cobranca.ws.endpoint;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -9,36 +10,29 @@ public class ReaWebhookRetornoProprietarios {
 	public List<ReaWebhookRetornoDados> dados;
 	public boolean contemMenor;
 
-	
-	public String getNome() {		
-		String proprietarioAtual = dados.stream().filter( d -> CommonsUtil.mesmoValor( d.getConstante(), "NOME_PROPRIETARIO")).map(d -> d.getValor()).findFirst().orElse(null);
-		return proprietarioAtual;
+	public List<ReaWebhookRetornoProprietario> getDadosProprietarios() {
+
+		List<ReaWebhookRetornoProprietario> result = new ArrayList<>();
+		ReaWebhookRetornoProprietario reaWebhookRetornoProprietario = null;
+		for (ReaWebhookRetornoDados reaWebhookRetornoDados : dados) {
+			if (CommonsUtil.mesmoValor(reaWebhookRetornoDados.getConstante(), "NOME_PROPRIETARIO")) {
+				reaWebhookRetornoProprietario = new ReaWebhookRetornoProprietario();
+				reaWebhookRetornoProprietario.setNome(reaWebhookRetornoDados.getValor());
+				result.add(reaWebhookRetornoProprietario);
+			} else if (CommonsUtil.mesmoValor(reaWebhookRetornoDados.getConstante(), "RG")) {
+				reaWebhookRetornoProprietario.setRg(reaWebhookRetornoDados.getValor());
+			} else if (CommonsUtil.mesmoValor(reaWebhookRetornoDados.getConstante(), "CNPJ")) {
+				reaWebhookRetornoProprietario.setCnpj(reaWebhookRetornoDados.getValor());
+				reaWebhookRetornoProprietario.setFisicaJuridica("PJ");
+			} else if (CommonsUtil.mesmoValor(reaWebhookRetornoDados.getConstante(), "CPF")) {
+				reaWebhookRetornoProprietario.setCpf(reaWebhookRetornoDados.getValor());
+				reaWebhookRetornoProprietario.setFisicaJuridica("PF");
+			} else if (CommonsUtil.mesmoValor(reaWebhookRetornoDados.getConstante(), "ENDERECO_PROPRIETARIO")) {
+				reaWebhookRetornoProprietario.setEndereco(reaWebhookRetornoDados.getValor());
+			}
+		}
+		return result;
 	}
-	public String getRG() {		
-		String proprietarioAtual = dados.stream().filter( d -> CommonsUtil.mesmoValor( d.getConstante(), "RG")).map(d -> d.getValor()).findFirst().orElse(null);
-		return proprietarioAtual;
-	}
-	public String getCNPJ() {		
-		String proprietarioAtual = dados.stream().filter( d -> CommonsUtil.mesmoValor( d.getConstante(), "CNPJ")).map(d -> d.getValor()).findFirst().orElse(null);
-		return proprietarioAtual;
-	}
-	public String getCPF() {		
-		String proprietarioAtual = dados.stream().filter( d -> CommonsUtil.mesmoValor( d.getConstante(), "CPF")).map(d -> d.getValor()).findFirst().orElse(null);
-		return proprietarioAtual;
-	}
-	public String getEndereco() {		
-		String proprietarioAtual = dados.stream().filter( d -> CommonsUtil.mesmoValor( d.getConstante(), "ENDERECO_PROPRIETARIO")).map(d -> d.getValor()).findFirst().orElse(null);
-		return proprietarioAtual;
-	}
-	public String getFisicaJuridica() {
-		if (CommonsUtil.semValor( getCPF())) {
-			return "PF";
-		}else
-			return "PJ";
-	}
-	
-	
-	
 	
 	public List<ReaWebhookRetornoDados> getDados() {
 		return dados;

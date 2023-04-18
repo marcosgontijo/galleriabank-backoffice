@@ -50,6 +50,7 @@ import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentosDocketDao;
 import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
+import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.cobranca.ws.endpoint.ReaWebhookRetorno;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.EstadosEnum;
@@ -541,7 +542,24 @@ public class DocketMB {
 			e.printStackTrace();
 		}
 	}
+
+	public void requestEnginefromRea(DocumentoAnalise documentoAnalise) {
+		DocketService docketService = new DocketService();
+
+		PagadorRecebedor pagadorAdicionar = new PagadorRecebedor();
+		pagadorAdicionar.setId(0);
+		if (CommonsUtil.mesmoValor(documentoAnalise.getTipoPessoa(), "PF")) {
+			pagadorAdicionar.setCpf(documentoAnalise.getCnpjcpf());
+		} else {
+			pagadorAdicionar.setCnpj(documentoAnalise.getCnpjcpf());
+		}
+		pagadorAdicionar.setNome(documentoAnalise.getIdentificacao());
+
+		DataEngine engine = docketService.engineInserirPessoa(pagadorAdicionar, objetoContratoCobranca);
 		
+		docketService.engineCriarConsulta( documentoAnalise,  engine,  loginBean.getUsuarioLogado());
+		
+	}
 	public JSONObject getBodyREA() { //JSON p/ pedido	
 		JSONObject jsonDocketBodyREA = new JSONObject();	
 		jsonDocketBodyREA.put("arquivo","" /*arquivo_Da_Matricula*/);
