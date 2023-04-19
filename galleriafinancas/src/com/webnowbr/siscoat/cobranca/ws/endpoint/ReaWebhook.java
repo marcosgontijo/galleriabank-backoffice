@@ -2,8 +2,6 @@ package com.webnowbr.siscoat.cobranca.ws.endpoint;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -109,14 +107,20 @@ public class ReaWebhook {
 				documentoAnalise.setCnpjcpf(propietario.getCpf());
 				documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.CREDNET);
 			}
-			
+
 			PagadorRecebedor pagador = new PagadorRecebedor();
 			pagador.setId(0);
 			if (CommonsUtil.mesmoValor(documentoAnalise.getTipoPessoa(), "PF")) {
-				pagador.setCpf(propietario.getCpf());
+				if (CommonsUtil.somenteNumeros(propietario.getCpf()).length() == 11)
+					pagador.setCpf(CommonsUtil.formataCpf(CommonsUtil.somenteNumeros(propietario.getCpf())));
+				else
+					pagador.setCpf(CommonsUtil.somenteNumeros(propietario.getCpf()));
 				pagador.setRg(propietario.getRg());
 			} else {
-				pagador.setCnpj(propietario.getCnpj());
+				if (CommonsUtil.somenteNumeros(propietario.getCpf()).length() == 14)
+				pagador.setCnpj(CommonsUtil.formataCnpj(CommonsUtil.somenteNumeros(propietario.getCnpj())));
+				else
+					pagador.setCnpj(CommonsUtil.somenteNumeros(propietario.getCnpj()));
 			}
 			pagador.setNome(propietario.getNome());
 			

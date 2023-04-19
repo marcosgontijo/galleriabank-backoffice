@@ -7,7 +7,7 @@ import com.webnowbr.siscoat.common.CommonsUtil;
 public class PagadorRecebedorService {
 	
 	public PagadorRecebedor buscaOuInsere(PagadorRecebedor pagadorAdicionar) {
-		if(pagadorAdicionar.getId() <= 0) {
+		if ( CommonsUtil.semValor( pagadorAdicionar.getId() )) {
 			PagadorRecebedorDao pDao = new PagadorRecebedorDao();
 			if(!CommonsUtil.semValor(pagadorAdicionar.getCpf()) && pDao.findByFilter("cpf", pagadorAdicionar.getCpf()).size() > 0) {
 				pagadorAdicionar = pDao.findByFilter("cpf", pagadorAdicionar.getCpf()).get(0);

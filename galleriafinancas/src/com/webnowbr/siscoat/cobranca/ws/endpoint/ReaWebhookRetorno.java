@@ -1,5 +1,6 @@
 package com.webnowbr.siscoat.cobranca.ws.endpoint;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -19,18 +20,24 @@ public class ReaWebhookRetorno {
 	public ReaWebhookRetornoArquivo arquivo;
 	public List<ReaWebhookRetornoBloco> blocos;
 
-	
-	public ReaWebhookRetornoBloco getProprietarioAtual() {		
-		ReaWebhookRetornoBloco proprietarioAtual = blocos.stream().filter( b -> CommonsUtil.mesmoValor( b.getTipo(), "PROPRIETARIO") && CommonsUtil.mesmoValor( b.getNomeClassificacao(), "Compra e Venda") && b.isRelacionadoAoProprietarioAtual()).findFirst().orElse(null);
+	List<String> lstCompaVenda = Arrays.asList("Compromisso de Compra e Venda", "Compra e Venda") ;
+
+	public ReaWebhookRetornoBloco getProprietarioAtual() {
+		ReaWebhookRetornoBloco proprietarioAtual = blocos.stream()
+				.filter(b -> CommonsUtil.mesmoValor(b.getTipo(), "PROPRIETARIO")
+						&& lstCompaVenda.contains(b.getNomeClassificacao()) && b.isRelacionadoAoProprietarioAtual())
+				.findFirst().orElse(null);
 		return proprietarioAtual;
 	}
-	
+
 	public ReaWebhookRetornoBloco getProprietarioAnterior() {
 		ReaWebhookRetornoBloco proprietarioAtual = getProprietarioAtual();
 		ReaWebhookRetornoBloco proprietarioAnterior = blocos.stream()
-				.sorted(Comparator.comparingInt(ReaWebhookRetornoBloco::getNumeroSequencia).reversed())
-				.filter( b -> CommonsUtil.mesmoValor( b.getTipo(), "PROPRIETARIO") && CommonsUtil.mesmoValor( b.getNomeClassificacao(), "Compra e Venda")  &&  !b.isRelacionadoAoProprietarioAtual() &&
-				                                                              b.numeroSequencia < proprietarioAtual.getNumeroSequencia() ).findFirst().orElse(null);
+				.sorted(Comparator.comparingInt(ReaWebhookRetornoBloco::getNumeroSequencia))
+				.filter(b -> CommonsUtil.mesmoValor(b.getTipo(), "PROPRIETARIO")
+						&& lstCompaVenda.contains(b.getNomeClassificacao()) && !b.isRelacionadoAoProprietarioAtual()
+						&& b.numeroSequencia < proprietarioAtual.getNumeroSequencia())
+				.findFirst().orElse(null);
 		return proprietarioAnterior;
 	}
 	

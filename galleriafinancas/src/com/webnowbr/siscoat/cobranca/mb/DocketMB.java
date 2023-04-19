@@ -399,8 +399,8 @@ public class DocketMB {
 			return;
 		}
 		else {
-			//ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-			//cDao.merge(objetoContratoCobranca);
+			ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+			cDao.merge(objetoContratoCobranca);
 		}
 		if(docketDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca).size() > 0) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Pedido desse contrato já existe!!!!!!", ""));	

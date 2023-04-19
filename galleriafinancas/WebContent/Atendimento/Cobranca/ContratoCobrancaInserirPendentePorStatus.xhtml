@@ -885,7 +885,7 @@
 						style="margin-bottom:10px;text-align: center;">
 						<f:facet name="header">
 						   <h:outputText value="Analise Documentos" />
-							<p:commandButton value="Solicitar Serasa" ajax="false" update="ArquivosAnalisados" style="margin-left:10px;"
+							<p:commandButton value="Atualizar listagem" ajax="true" update="ArquivosAnalisados" style="margin-left:10px;"
 								action="#{contratoCobrancaMB.listaArquivosAnaliseDocumentos}" immediate="true"
 								icon="ui-icon-search">
 							</p:commandButton>
@@ -910,9 +910,8 @@
 							<h:panelGrid columns="1">
 								<p:dataTable id="dtFilesAnalise" var="files"
 									value="#{contratoCobrancaMB.listaDocumentoAnalise}"
-									rowKey="#{files.identificacao}"
-									selection="#{contratoCobrancaMB.deletefiles}" emptyMessage=""
-									sortBy="#{files.identificacao}">
+									rowKey="#{files.id}"
+									selection="#{contratoCobrancaMB.deletefiles}" emptyMessage="">
 									<p:column selectionMode="multiple"
 										style="width:16px;text-align:center" />
 									<!--<f:facet name="header">

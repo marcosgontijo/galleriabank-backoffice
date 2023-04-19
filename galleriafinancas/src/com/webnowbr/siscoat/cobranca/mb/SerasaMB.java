@@ -13,10 +13,10 @@ import org.primefaces.model.StreamedContent;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
+import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
+import com.webnowbr.siscoat.cobranca.service.PagadorRecebedorService;
 import com.webnowbr.siscoat.cobranca.service.SerasaService;
-import com.webnowbr.siscoat.cobranca.ws.endpoint.ReaWebhookRetornoBloco;
-import com.webnowbr.siscoat.cobranca.ws.endpoint.ReaWebhookRetornoProprietario;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
@@ -51,9 +51,11 @@ public class SerasaMB {
 
 				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 
+				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+				
 				for (PessoaParticipacao pessoaParticipacao : credNet.getParticipacoes()) {
 
-					cadastrarPessoRetornoCredNet(pessoaParticipacao, documentoAnaliseDao,
+					cadastrarPessoRetornoCredNet(pessoaParticipacao, documentoAnaliseDao,pagadorRecebedorService,
 							documentoAnalise.getContratoCobranca(),
 							"Empresa Vinculada ao " + documentoAnalise.getMotivoAnalise());
 				}
@@ -86,12 +88,20 @@ public class SerasaMB {
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 				FacesContext.getCurrentInstance());
 
+		String cnpjcpf = documentoAnalise.getCnpjcpf();
+		if (!CommonsUtil.semValor(documentoAnalise.getPagador())) {
+			if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa()))
+				cnpjcpf = documentoAnalise.getPagador().getCpf();
+			else
+				cnpjcpf = documentoAnalise.getPagador().getCnpj();
+		}
+		
 		if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa()))
 			gerador.open(String.format("Galleria Bank - CredNet %s.pdf",
-					CommonsUtil.somenteNumeros(documentoAnalise.getCnpjcpf())));
+					CommonsUtil.somenteNumeros(cnpjcpf)));
 		else
 			gerador.open(String.format("Galleria Bank - Relato %s.pdf",
-					CommonsUtil.somenteNumeros(documentoAnalise.getCnpjcpf())));
+					CommonsUtil.somenteNumeros(cnpjcpf)));
 
 		gerador.feed(in);
 		gerador.close();
@@ -99,7 +109,7 @@ public class SerasaMB {
 	}
 
 	private void cadastrarPessoRetornoCredNet(PessoaParticipacao pessoaParticipacao, DocumentoAnaliseDao documentoAnaliseDao,
-			ContratoCobranca contratoCobranca, String motivo) {
+			PagadorRecebedorService pagadorRecebedorService, ContratoCobranca contratoCobranca, String motivo) {
 
 	
 
@@ -117,6 +127,16 @@ public class SerasaMB {
 				documentoAnalise.setCnpjcpf(pessoaParticipacao.getCnpjcpf());
 				documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.CREDNET);
 			}
+			
+			PagadorRecebedor pagador = new PagadorRecebedor();
+			pagador.setId(0);
+			
+			pagador.setCnpj(pessoaParticipacao.getCnpjcpf());
+			pagador.setNome(pessoaParticipacao.getNomeRazaoSocial());
+			
+			pagador = pagadorRecebedorService.buscaOuInsere(pagador);			
+			documentoAnalise.setPagador(pagador);
+			
 			
 			documentoAnaliseDao.create(documentoAnalise);
 			
