@@ -3965,6 +3965,8 @@ public class ContratoCobrancaMB {
 					tkblpMb.sendWhatsAppMessageVistoria(rVistoria1,
 							this.objetoContratoCobranca.getDataPrevistaVistoria(), this.objetoContratoCobranca.getNomeVistoriador());
 					
+					this.objetoContratoCobranca.setEnviadoWhatsappVistoria(true);
+					
 					// Mariana
 					rVistoria2 = rDao.findById((long) 1126);
 					tkblpMb.sendWhatsAppMessageVistoria(rVistoria2,
