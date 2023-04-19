@@ -3946,7 +3946,7 @@ public class ContratoCobrancaMB {
 			
 			// Mensagem DATA VISTORIA
 			if (!CommonsUtil.semValor(this.objetoContratoCobranca.getDataPrevistaVistoria())) {
-				if (this.objetoContratoCobranca.isEnviadoWhatsappVistoria()) {
+				if (!this.objetoContratoCobranca.isEnviadoWhatsappVistoria()) {
 					TakeBlipMB tkblpMb = new TakeBlipMB();
 					PagadorRecebedor pagador;
 					pagador = this.objetoContratoCobranca.getPagador();
@@ -3961,6 +3961,8 @@ public class ContratoCobrancaMB {
 					rVistoria1 = rDao.findById((long) 643);
 					tkblpMb.sendWhatsAppMessageVistoria(rVistoria1,
 							this.objetoContratoCobranca.getDataPrevistaVistoria(), this.objetoContratoCobranca.getNomeVistoriador());
+					
+					this.objetoContratoCobranca.setEnviadoWhatsappVistoria(true);
 				}
 			}
 			
