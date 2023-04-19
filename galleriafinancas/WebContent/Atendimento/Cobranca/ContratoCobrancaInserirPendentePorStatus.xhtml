@@ -880,8 +880,17 @@
 
 				<shiro:hasAnyRoles
 					name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO">
-					<p:panel id="ArquivosAnalisados" header="Analise Documentos" rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
+					<p:panel id="ArquivosAnalisados" 
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
 						style="margin-bottom:10px;text-align: center;">
+						<f:facet name="header">
+						   <h:outputText value="Analise Documentos" />
+							<p:commandButton value="Solicitar Serasa" ajax="false" update="ArquivosAnalisados" style="margin-left:10px;"
+								action="#{contratoCobrancaMB.listaArquivosAnaliseDocumentos}" immediate="true"
+								icon="ui-icon-search">
+							</p:commandButton>
+						</f:facet>
+
 						<h:panelGrid columns="1">
 							<p:fileUpload label="Selecionar Arquivo"
 								uploadLabel="Salvar Arquivo" multiple="false"
@@ -893,9 +902,11 @@
 							</p:fileUpload>
 						</h:panelGrid>
 
-						<p:panel id="ArquivosSalvosAnalise" 
+						<p:panel id="ArquivosSalvosAnalise"
 							header="Arquivo(s) Salvo(s) na analise"
 							style="margin-bottom:10px;">
+
+
 							<h:panelGrid columns="1">
 								<p:dataTable id="dtFilesAnalise" var="files"
 									value="#{contratoCobrancaMB.listaDocumentoAnalise}"
@@ -921,8 +932,7 @@
 
 										<h:outputText value="#{files.identificacao}"
 											rendered="#{files.podeChamarRea}" />
-										<h:outputText
-											value="#{files.identificacao} #{files.cnpjcpf} "
+										<h:outputText value="#{files.identificacao} #{files.cnpjcpf} "
 											rendered="#{!files.podeChamarRea}" />
 										<p:spacer height="10" />
 
@@ -940,23 +950,23 @@
 												target="#{docketMB.objetoContratoCobranca}"
 												value="#{contratoCobrancaMB.objetoContratoCobranca}" />
 										</p:commandButton>
-										
+
 										<p:commandButton value="Solicitar Serasa" ajax="false"
 											rendered="#{files.podeChamarSerasa }"
-											action="#{serasaMB.requestSerasa(files)}"											
-											immediate="true" icon="ui-icon-search">
+											action="#{serasaMB.requestSerasa(files)}" immediate="true"
+											icon="ui-icon-search">
 										</p:commandButton>
 
 									</p:column>
 
 									<p:column style="text-align: center;" headerText="Motivo"
 										filterMatchMode="contains">
-										<h:outputText value="#{files.motivoAnalise}" />										
+										<h:outputText value="#{files.motivoAnalise}" />
 									</p:column>
 
 									<p:column style="text-align: center;" headerText="Situação"
 										filterMatchMode="contains">
-										
+
 										<h:outputText value="REA Enviado"
 											rendered="#{filespodeChamarRea and !files.reaNaoEnviado and !files.reaProcessado }" />
 										<h:outputText value="REA Processado"
@@ -968,8 +978,7 @@
 											rendered="#{!files.podeChamarEngine and files.engineProcessado }"
 											ajax="false" />
 
-										<p:commandButton
-											action="#{serasaMB.baixarDocumento(files)}"
+										<p:commandButton action="#{serasaMB.baixarDocumento(files)}"
 											icon="ui-icon ui-icon-print" value="Download Serasa"
 											rendered="#{files.podeChamarSerasa and files.serasaProcessado }"
 											ajax="false" />
@@ -984,7 +993,7 @@
 											<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
 										</p:commandButton>
 									</p:column>
-<!--
+									<!--
 									<f:facet name="footer">
 										 <p:commandButton value="Download Selecionado(s)" ajax="false"
 											icon="ui-icon-arrowthick-1-s">
@@ -997,14 +1006,14 @@
 									</f:facet>-->
 								</p:dataTable>
 							</h:panelGrid>
-							
+
 						</p:panel>
 
 					</p:panel>
 
 				</shiro:hasAnyRoles>
-				
-				
+
+
 				<h:panelGroup id="comentarioComitePanel" style="margin-bottom:20px;">
 					<p:panel header="Comentário Comitê" rendered="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite.size() > 0}">
 						<p:outputLabel id="comentarioComite"

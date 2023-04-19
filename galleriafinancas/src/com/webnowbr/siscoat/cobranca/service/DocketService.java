@@ -26,7 +26,6 @@ import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.DataEngineDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
-import com.webnowbr.siscoat.cobranca.ws.endpoint.ReaWebhookRetornoBloco;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.infra.db.model.User;
@@ -55,14 +54,15 @@ public class DocketService {
 
 	public FacesMessage engineCriarConsulta(DocumentoAnalise documentoAnalise, DataEngine engine, User usuarioLogado) { // POST para gerar consulta
 		DataEngineDao engineDao = new DataEngineDao();
-		if (engineDao.findByFilter("pagador", engine.getPagador()).size() > 0) {
-//			context.addMessage(null,);	
-			return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta já existente!", "");
-		}
+//		if (engineDao.findByFilter("pagador", engine.getPagador()).size() > 0) {
+////			context.addMessage(null,);	
+//			return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta já existente!", "");
+//		}
 		if (!CommonsUtil.semValor(engine.getIdCallManager())) {
 			if (documentoAnalise != null ) {
 				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 				documentoAnalise.setEngine(engine);
+				documentoAnalise.setRetornoEngine("consulta efetuada anteriormente Id: " + engine.getId() );
 				documentoAnaliseDao.merge(documentoAnalise);
 			}
 			
@@ -141,29 +141,28 @@ public class DocketService {
 	
 	}
 	
+	
 	public DataEngine engineInserirPessoa(PagadorRecebedor pagadorAdicionar, ContratoCobranca objetoContratoCobranca) {
 		DataEngineDao engineDao = new DataEngineDao();
 		DataEngine engine = null;
-		if(pagadorAdicionar.getId() <= 0) {
-			PagadorRecebedorDao pDao = new PagadorRecebedorDao();
-			if(!CommonsUtil.semValor(pagadorAdicionar.getCpf()) && pDao.findByFilter("cpf", pagadorAdicionar.getCpf()).size() > 0) {
-				pagadorAdicionar = pDao.findByFilter("cpf", pagadorAdicionar.getCpf()).get(0);
-			} else if(!CommonsUtil.semValor(pagadorAdicionar.getCnpj()) && pDao.findByFilter("cnpj", pagadorAdicionar.getCnpj()).size() > 0) {
-				pagadorAdicionar = pDao.findByFilter("cnpj", pagadorAdicionar.getCnpj()).get(0);
-			} else {
-				pDao.create(pagadorAdicionar);
-			}		
-		}
-		if (engineDao.findByFilter("pagador", pagadorAdicionar).size() > 0) {
-			List<DataEngine> engines = engineDao.findByFilter("pagador", pagadorAdicionar);
+		
+		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+		
+		pagadorAdicionar = pagadorRecebedorService.buscaOuInsere(pagadorAdicionar);
+		
+		List<DataEngine> engines = engineDao.findByFilter("pagador", pagadorAdicionar);
+		
+		if (engines.size() > 0) {
 			
-			engine = engines.stream().sorted(Comparator.comparing(DataEngine::getData).reversed()).findFirst().orElse(null);
+			engine = engines.stream()
+					.filter(e -> DateUtil.isAfterDate( DateUtil.adicionarDias(DateUtil.getDataHoje(), -30), e.getData()))
+					.sorted(Comparator.comparing(DataEngine::getData).reversed()).findFirst().orElse(null);
 		}
 		
 		if(CommonsUtil.semValor(engine)) {
 			engine = new DataEngine(pagadorAdicionar);
 		}	
-		if(!CommonsUtil.semValor(objetoContratoCobranca)) {
+		if(!CommonsUtil.semValor(objetoContratoCobranca) && CommonsUtil.semValor(engine.getContrato())) {
 			engine.setContrato(objetoContratoCobranca);
 		}
 		

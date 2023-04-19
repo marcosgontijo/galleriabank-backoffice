@@ -41,6 +41,12 @@ public class SerasaMB {
 		if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa())) {
 			CredNet credNet = GsonUtil.fromJson(documentoAnalise.getRetornoSerasa(), CredNet.class);
 
+			if (CommonsUtil.semValor(documentoAnalise.getPagador().getDtNascimento()))
+				documentoAnalise.getPagador().setDtNascimento(credNet.getPessoa().getDataNascimentoFundacao());
+
+			if (CommonsUtil.semValor(documentoAnalise.getPagador().getNomeMae()))
+				documentoAnalise.getPagador().setNomeMae(credNet.getPessoa().getNomeMae());
+			
 			if (!CommonsUtil.semValor(credNet.getParticipacoes())) {
 
 				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
