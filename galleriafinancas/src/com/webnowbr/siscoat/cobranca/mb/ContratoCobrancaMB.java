@@ -3945,7 +3945,6 @@ public class ContratoCobrancaMB {
 			}
 			
 			// Mensagem DATA VISTORIA
-			
 			if (!CommonsUtil.semValor(this.objetoContratoCobranca.getDataPrevistaVistoria())) {
 				if (!this.objetoContratoCobranca.isEnviadoWhatsappVistoria()) {
 					TakeBlipMB tkblpMb = new TakeBlipMB();
