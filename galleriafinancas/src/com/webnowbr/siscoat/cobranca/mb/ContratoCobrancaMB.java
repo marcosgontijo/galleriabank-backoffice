@@ -3956,10 +3956,28 @@ public class ContratoCobrancaMB {
 					
 					ResponsavelDao rDao = new ResponsavelDao();
 					Responsavel rVistoria1 = new Responsavel();
+					Responsavel rVistoria2 = new Responsavel();
+					Responsavel rVistoria3 = new Responsavel();
+					Responsavel rVistoria4 = new Responsavel();
 					
 					// Tatiane
 					rVistoria1 = rDao.findById((long) 643);
 					tkblpMb.sendWhatsAppMessageVistoria(rVistoria1,
+							this.objetoContratoCobranca.getDataPrevistaVistoria(), this.objetoContratoCobranca.getNomeVistoriador());
+					
+					// Mariana
+					rVistoria2 = rDao.findById((long) 1126);
+					tkblpMb.sendWhatsAppMessageVistoria(rVistoria2,
+							this.objetoContratoCobranca.getDataPrevistaVistoria(), this.objetoContratoCobranca.getNomeVistoriador());
+					
+					// Leticia
+					rVistoria3 = rDao.findById((long) 1127);
+					tkblpMb.sendWhatsAppMessageVistoria(rVistoria3,
+							this.objetoContratoCobranca.getDataPrevistaVistoria(), this.objetoContratoCobranca.getNomeVistoriador());
+					
+					// Alice
+					rVistoria4 = rDao.findById((long) 619);
+					tkblpMb.sendWhatsAppMessageVistoria(rVistoria4,
 							this.objetoContratoCobranca.getDataPrevistaVistoria(), this.objetoContratoCobranca.getNomeVistoriador());
 				}
 			}
