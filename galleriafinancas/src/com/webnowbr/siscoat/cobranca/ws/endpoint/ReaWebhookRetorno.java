@@ -20,12 +20,15 @@ public class ReaWebhookRetorno {
 	public ReaWebhookRetornoArquivo arquivo;
 	public List<ReaWebhookRetornoBloco> blocos;
 
-	List<String> lstCompaVenda = Arrays.asList("Compromisso de Compra e Venda", "Compra e Venda") ;
+	List<String> lstCompaVenda = Arrays.asList("compromisso de compra e venda", "compra e venda", "descritivo do imóvel") ;
 
 	public ReaWebhookRetornoBloco getProprietarioAtual() {
 		ReaWebhookRetornoBloco proprietarioAtual = blocos.stream()
-				.filter(b -> CommonsUtil.mesmoValor(b.getTipo(), "PROPRIETARIO")
-						&& lstCompaVenda.contains(b.getNomeClassificacao()) && b.isRelacionadoAoProprietarioAtual())
+				.filter(b -> ( CommonsUtil.mesmoValor(b.getTipo(), "PROPRIETARIO")
+						&& lstCompaVenda.contains(b.getNomeClassificacao().toLowerCase()) ||
+						CommonsUtil.mesmoValor(b.getTipo(), "IMOVEL")
+						&& lstCompaVenda.contains(b.getNomeClassificacao().toLowerCase())
+						) && b.isRelacionadoAoProprietarioAtual())
 				.findFirst().orElse(null);
 		return proprietarioAtual;
 	}
@@ -34,8 +37,11 @@ public class ReaWebhookRetorno {
 		ReaWebhookRetornoBloco proprietarioAtual = getProprietarioAtual();
 		ReaWebhookRetornoBloco proprietarioAnterior = blocos.stream()
 				.sorted(Comparator.comparingInt(ReaWebhookRetornoBloco::getNumeroSequencia))
-				.filter(b -> CommonsUtil.mesmoValor(b.getTipo(), "PROPRIETARIO")
-						&& lstCompaVenda.contains(b.getNomeClassificacao()) && !b.isRelacionadoAoProprietarioAtual()
+				.filter(b -> ( CommonsUtil.mesmoValor(b.getTipo(), "PROPRIETARIO")
+						&& lstCompaVenda.contains(b.getNomeClassificacao().toLowerCase()) ||
+						CommonsUtil.mesmoValor(b.getTipo(), "IMOVEL")
+						&& lstCompaVenda.contains(b.getNomeClassificacao().toLowerCase())
+						)  && !b.isRelacionadoAoProprietarioAtual()
 						&& b.numeroSequencia < proprietarioAtual.getNumeroSequencia())
 				.findFirst().orElse(null);
 		return proprietarioAnterior;

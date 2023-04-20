@@ -37,6 +37,8 @@ public class SerasaMB {
 
 	public void requestSerasa(DocumentoAnalise documentoAnalise) {
 		serasaService.serasaCriarConsulta(documentoAnalise);
+		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+		documentoAnalise = documentoAnaliseDao.findById(documentoAnalise.getId());
 
 		if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa())) {
 			CredNet credNet = GsonUtil.fromJson(documentoAnalise.getRetornoSerasa(), CredNet.class);
@@ -49,7 +51,6 @@ public class SerasaMB {
 			
 			if (!CommonsUtil.semValor(credNet.getParticipacoes())) {
 
-				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 
 				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
 				

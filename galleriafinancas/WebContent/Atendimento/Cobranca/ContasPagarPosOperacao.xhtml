@@ -34,8 +34,8 @@
 				</h:panelGrid>
 			</p:panel>
 			
-			<h:panelGroup id="ContasPagarPanel">
-				<p:panel header="Contas a Pagar" style="margin-bottom:10px;">
+			<h:panelGrid id="ContasPagarPanel">
+				<h:panelGrid header="Contas a Pagar" style="margin-bottom:10px;">
 					<f:facet name="header"> Contas a Pagar 
 						<p:outputLabel value="" />							
 						<p:selectBooleanButton
@@ -182,50 +182,40 @@
 							update=":form:ContasPagarPanel" icon="ui-icon ui-icon-check" />
 					</h:panelGroup>
 				
-					<p:dataView var="contas"
-						value="#{contasPagarMB.selectedContratoLov.listContasPagar}"
-						paginator="false" layout="list"
-						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
-						<p:dataViewListItem>
-							<p:outputLabel value="Descrição: " styleClass="labelBold" />
+					<p:dataTable var="contas" value="#{contasPagarMB.contasPagarPosOperacao}" id="tblContasPagarList" allowUnsorting="true" >
+						
+							<p:column style="text-align: center;" headerText="Descrição: " styleClass="labelBold" >
 							<p:outputLabel value="#{contas.descricao}"
-								styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
-							<p:spacer height="5" />
-							<p:outputLabel value="|" />
-							<p:spacer height="5" />
+								styleClass="labelBold" style="FONT-SIZE: 10pt;" />
+							</p:column>
 
-							<p:outputLabel value="Valor: " styleClass="labelBold" />
+							<p:column style="text-align: center;" headerText="Valor: " styleClass="labelBold" >
 							<p:outputLabel value="#{contas.valor}"
 								converter="bigDecimalConverter" styleClass="labelBold"
-								style="FONT-SIZE: 10pt;width:100px;" />
-							<p:spacer height="5" />
-							<p:outputLabel value="|" />
-							<p:spacer height="5" />
+								style="FONT-SIZE: 10pt;width:100px;white-space: nowrap;" />
+							</p:column>
 
-							<p:outputLabel value="Data Vencimento: " styleClass="labelBold" />
+							<p:column style="text-align: center;" headerText="Data Vencimento: " styleClass="labelBold" >
 							<h:outputText value="#{contas.dataVencimento}"
 								styleClass="labelBold">
 								<f:convertDateTime pattern="dd/MM/yyyy" />
 							</h:outputText>
+							</p:column>
 
-							<p:spacer height="5" />
-							<p:outputLabel value="|" />
-							<p:spacer height="5" />
-
-							<p:outputLabel value="Valor Pago: " styleClass="labelBold" />
+							<p:column style="text-align: center;" headerText="Valor Pago: " styleClass="labelBold" sortBy="#{contas.valorPagamento}"  >
 							<p:outputLabel value="#{contas.valorPagamento}"
 								converter="bigDecimalConverter" styleClass="labelBold"
-								style="FONT-SIZE: 10pt;width:100px;" />
-							<p:spacer height="5" />
-							<p:outputLabel value="|" />
-							<p:spacer height="5" />
+								style="FONT-SIZE: 10pt;width:100px;white-space: nowrap;" />
+							</p:column>
 
-							<p:outputLabel value="Data Pagamento: " styleClass="labelBold" />
-							<h:outputText value="#{contas.dataPagamento}"
+							<p:column style="text-align: center;" headerText="Data Pagamento: " styleClass="labelBold" sortBy="#{contas.dataPagamento}" >
+							<p:outputLabel value="#{contas.dataPagamento}"
 								styleClass="labelBold">
 								<f:convertDateTime pattern="dd/MM/yyyy" />
-							</h:outputText>
-							<p:spacer height="10" />
+							</p:outputLabel>
+							</p:column>
+							
+							<p:column styleClass="colunaResponsiva">
 							<p:commandButton value="Editar" icon="ui-icon-pencil"
 								action="#{contasPagarMB.editarContaPosOperacao(contas)}" ajax="true"
 								update=":form:ContasPagarPanel" />
@@ -237,11 +227,14 @@
 							<p:commandButton value="Arquivos" icon="ui-icon-print"
 								action="#{contasPagarMB.populateFilesContasPagar(contas)}"
 								ajax="true" update=":form:ContasPagarPanel contaArquivosForm" />
-						</p:dataViewListItem>
-					</p:dataView>
+							</p:column>
+					</p:dataTable>
 					
-				</p:panel>
-			</h:panelGroup>		
+				</h:panelGrid>
+			</h:panelGrid>		
+						
+						
+						
 						
 			<p:messages id="msgArquivo"/>
 			

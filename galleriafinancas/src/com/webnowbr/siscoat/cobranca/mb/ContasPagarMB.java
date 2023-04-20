@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 
@@ -73,6 +74,7 @@ public class ContasPagarMB {
 	private long idContrato;
 	// private String numeroContrato;
 	private ContratoCobranca selectedContratoLov;
+	private List<ContasPagar> contasPagarPosOperacao;
 
 	/** Lista dos Pagadores utilizada pela LOV. */
 	private List<PagadorRecebedor> listRecebedorPagador;
@@ -659,6 +661,9 @@ public class ContasPagarMB {
 		}
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 		this.setSelectedContratoLov(cDao.findById(this.getSelectedContratoLov().getId()));
+		Set<ContasPagar> setResult = this.getSelectedContratoLov().getListContasPagar();
+		this.contasPagarPosOperacao =  new ArrayList<>(setResult);
+		
 		filesPagar = listaArquivosPagar();
 	}
 	
@@ -773,6 +778,15 @@ public class ContasPagarMB {
 		return clearFields();
 	}
 	
+	
+	public void setContasPagarPosOperacao(List<ContasPagar> contasPagarPosOperacao) {
+		this.contasPagarPosOperacao = contasPagarPosOperacao;
+	}
+	public List<ContasPagar> getContasPagarPosOperacao() {				
+		return this.contasPagarPosOperacao;
+			
+		
+	}
 	public void settarDataPagamento() {
 		this.objetoContasPagar.setDataPagamento(this.objetoContasPagar.getDataVencimento());	
 	}

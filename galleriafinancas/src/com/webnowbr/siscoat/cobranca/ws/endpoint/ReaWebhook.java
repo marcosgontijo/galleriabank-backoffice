@@ -117,7 +117,7 @@ public class ReaWebhook {
 					pagador.setCpf(CommonsUtil.somenteNumeros(propietario.getCpf()));
 				pagador.setRg(propietario.getRg());
 			} else {
-				if (CommonsUtil.somenteNumeros(propietario.getCpf()).length() == 14)
+				if (CommonsUtil.somenteNumeros(propietario.getCnpj()).length() == 14)
 				pagador.setCnpj(CommonsUtil.formataCnpj(CommonsUtil.somenteNumeros(propietario.getCnpj())));
 				else
 					pagador.setCnpj(CommonsUtil.somenteNumeros(propietario.getCnpj()));
