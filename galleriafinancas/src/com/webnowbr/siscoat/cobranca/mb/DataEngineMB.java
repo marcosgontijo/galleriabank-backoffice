@@ -30,14 +30,13 @@ import org.primefaces.model.StreamedContent;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.DataEngine;
-import com.webnowbr.siscoat.cobranca.db.model.Docket;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.DataEngineDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
+import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
-import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
 import com.webnowbr.siscoat.security.LoginBean;
@@ -70,8 +69,12 @@ public class DataEngineMB {
 	private PagadorRecebedor pagadorAdicionar;
 	private ContratoCobranca objetoContratoCobranca;
 	
+	private DocketService docketService;
+	
 	public DataEngineMB() {
-		
+		if (docketService == null) {
+			docketService = new DocketService();
+		}
 	}
 	
 	public String clearFieldsDataEngine() {
@@ -105,140 +108,25 @@ public class DataEngineMB {
 	}
 	
 	public void baixarDocumento(DataEngine engine) {
-		FacesContext context = FacesContext.getCurrentInstance();
-		if(CommonsUtil.semValor(engine.getIdCallManager())) {
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, 
-					"Consulta sem IdCallManager", ""));	
-			return;
-		}
-		if(CommonsUtil.semValor(engine.getPdfBase64())) {
-			PegarPDFDataEngine(engine);
-		}
+		if (docketService ==null)
+			docketService = new DocketService();		
+		docketService.baixarDocumentoEngine(engine);
 		decodarBaixarArquivo(engine.getPdfBase64());
 	}
 	
 	public void criarConsulta(DataEngine engine) {	//POST para gerar consulta	
 		FacesContext context = FacesContext.getCurrentInstance();
-		DataEngineDao engineDao = new DataEngineDao();
-		if(engineDao.findByFilter("pagador", engine.getPagador()).size() > 0) {
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta já existente!", ""));	
-			return;
+		if (docketService == null) {
+			docketService = new DocketService();
 		}
-		if(!CommonsUtil.semValor(engine.getIdCallManager())) {
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, 
-					"Consulta já existente!" + engine.getIdCallManager(), ""));	
-			return;
-		}
-		try {
-			//loginDocket();
-			int HTTP_COD_SUCESSO = 200;
-			int HTTP_COD_SUCESSO2 = 201;
-			
-			URL myURL;		
-			myURL = new URL(url + "/api/callmanager");
-			
-			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();		
-			myURLConnection.setRequestMethod("POST");
-			myURLConnection.setUseCaches(false);
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json");
-			myURLConnection.setDoOutput(true);
-			myURLConnection.addRequestProperty("x-api-key",  this.chaveApi);
-			
-			JSONObject myResponse = null;
-			JSONObject jsonWhatsApp = getBodyJsonEngine(engine.getPagador());
-			
-			try (OutputStream os = myURLConnection.getOutputStream()) {
-				byte[] input = jsonWhatsApp.toString().getBytes("utf-8");
-				os.write(input, 0, input.length);
-			}
-								
-			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO && 
-					myURLConnection.getResponseCode() != HTTP_COD_SUCESSO2) {	
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-						"Engine: Falha  (Cod: " + myURLConnection.getResponseCode() + ")",""));
-				System.out.println(jsonWhatsApp.toString());
-			} else {
-				//docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" , cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", ""));	
-				myResponse = getJSONSucesso(myURLConnection.getInputStream());
-				engine.setIdCallManager(myResponse.get("idCallManager").toString());
-				engine.setData(gerarDataHoje());
-				engine.setUsuario(getNomeUsuarioLogado());
-				if(engine.getId() <= 0) {
-					engineDao.create(engine);
-				}
-			}
-			myURLConnection.disconnect();		
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public void PegarPDFDataEngine(DataEngine engine) {	//POST para pegar pdf	
-		FacesContext context = FacesContext.getCurrentInstance();
-		if(CommonsUtil.semValor(engine.getIdCallManager())) {
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Não Foi gerado ID da consulta!!!", ""));	
-			return;
-		}
-			
-		String idproviderFlow;
-		if(!CommonsUtil.semValor(engine.getPagador().getCpf())) {
-			idproviderFlow = IdproviderFlowPF;
-		} else {
-			idproviderFlow = IdproviderFlowPJ;
-		}
+		FacesMessage facesMessage = docketService.engineCriarConsulta(engine, loginBean.getUsuarioLogado());
 		
-		try {
-			//loginDocket();
-			int HTTP_COD_SUCESSO = 200;
-			
-			URL myURL;
-			myURL = new URL(url + "/dossie/"+ idproviderFlow + "/"+ engine.getIdCallManager() + "?base64=true");		
-	
-			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();		
-			myURLConnection.setRequestMethod("GET");
-			myURLConnection.setUseCaches(false);
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json");
-			myURLConnection.setDoOutput(true);
-			myURLConnection.addRequestProperty("x-api-key",  this.chaveApi);
-			
-			JSONObject myResponse = null;	
-								
-			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {	
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-						"Engine: Falha  (Cod: " + myURLConnection.getResponseCode() + ")",""));
-				System.out.println(myURL.toString());
-			} else {
-				//docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" , cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", ""));
-				BufferedReader in;
-				in = new BufferedReader(
-						new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
-				String inputLine;
-				StringBuffer response = new StringBuffer();
-				while ((inputLine = in.readLine()) != null) {
-					response.append(inputLine);
-				}
-				in.close();
-				engine.setPdfBase64(response.toString());
-			}
-			myURLConnection.disconnect();		
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
+		if ( facesMessage != null) {
+			context.addMessage(null, facesMessage);	
+			return;
 		}
 	}
+	
 
 	public JSONObject getBodyJsonEngine(PagadorRecebedor pagador) { 
 		JSONObject jsonDocketBodyPedido = new JSONObject();	
@@ -365,28 +253,12 @@ public class DataEngineMB {
 	}
 	
 	public void inserirPessoa() {
-		DataEngineDao engineDao = new DataEngineDao();
-		DataEngine engine = null;
-		if(pagadorAdicionar.getId() <= 0) {
-			PagadorRecebedorDao pDao = new PagadorRecebedorDao();
-			if(!CommonsUtil.semValor(pagadorAdicionar.getCpf()) && pDao.findByFilter("cpf", pagadorAdicionar.getCpf()).size() > 0) {
-				pagadorAdicionar = pDao.findByFilter("cpf", pagadorAdicionar.getCpf()).get(0);
-			} else if(!CommonsUtil.semValor(pagadorAdicionar.getCnpj()) && pDao.findByFilter("cnpj", pagadorAdicionar.getCnpj()).size() > 0) {
-				pagadorAdicionar = pDao.findByFilter("cnpj", pagadorAdicionar.getCnpj()).get(0);
-			} else {
-				pDao.create(pagadorAdicionar);
-			}		
-		} 
-		if (engineDao.findByFilter("pagador", pagadorAdicionar).size() > 0) {
-			engine = engineDao.findByFilter("pagador", pagadorAdicionar).get(0);
-		} 
-		if(CommonsUtil.semValor(engine)) {
-			engine = new DataEngine(pagadorAdicionar);
-		}	
-		if(!CommonsUtil.semValor(objetoContratoCobranca)) {
-			engine.setContrato(objetoContratoCobranca);
+		if (docketService == null) {
+			docketService = new DocketService();
 		}
+		DataEngine engine = docketService.engineInserirPessoa(pagadorAdicionar, objetoContratoCobranca);
 		
+
 		this.listEngine.add(engine);
 		
 		pagadorAdicionar = new PagadorRecebedor();

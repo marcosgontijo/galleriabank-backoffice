@@ -1123,6 +1123,14 @@
             <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.AnaliseComite" />
         </set>
         
+        <set name="listDatasVistoria" table="DataVistoria" cascade="all-delete-orphan"
+                 lazy="false" fetch="select">
+            <key>
+                <column name="contratoCobranca" not-null="true" />
+            </key>
+            <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.DataVistoria" />
+        </set>
+        
         <property name="tipoCalculoInvestidor1" type="java.lang.String">
 			<column name="tipoCalculoInvestidor1" />
 		</property>
@@ -2087,6 +2095,10 @@
 		<property name="carenciaComite" type="int">
 			<column name="carenciaComite"  default="1" />
 		</property>
+		
+		<property name="enviadoWhatsappVistoria" type="boolean">
+			<column name="enviadoWhatsappVistoria" not-null="true" default="false"/>
+		</property>	
 		
 	</class>
 </hibernate-mapping>

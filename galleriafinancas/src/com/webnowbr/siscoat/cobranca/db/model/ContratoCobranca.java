@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -11,7 +13,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections.ArrayStack;
+
 import com.webnowbr.siscoat.common.CommonsUtil;
+
+import javassist.expr.NewArray;
 
 public class ContratoCobranca implements Serializable {
 
@@ -158,6 +164,7 @@ public class ContratoCobranca implements Serializable {
 	private Set<PagadorRecebedorAdicionais> listaPagadores;
 	private Set<ContasPagar> listContasPagar;
 	private Set<AnaliseComite> listaAnaliseComite;
+	private Set<DataVistoria> listDatasVistoria;
 	
 	
 	// n�o persistida a lista abaixo
@@ -593,6 +600,7 @@ public class ContratoCobranca implements Serializable {
 	
 	private Date dataPrevistaVistoria;
 	private String nomeVistoriador;
+	private boolean enviadoWhatsappVistoria;
 	
 	private String motivoReprovacaoAnalise;
 	private String motivoReprovaSelectItem;
@@ -776,7 +784,7 @@ public class ContratoCobranca implements Serializable {
 	private Date contratoEmCartorioData;
 	private String contratoEmCartorioUsuario;
 	
-	private boolean corrigidoIPCAHibrido;	
+	private boolean corrigidoIPCAHibrido;
 
  //FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13	
 	public BigDecimal calcularValorTotalContasPagas() {
@@ -967,8 +975,11 @@ public class ContratoCobranca implements Serializable {
 	}
 
 	public boolean isEmAnalise() {
-		return CommonsUtil.semValor(this.cadastroAprovadoValor) && CommonsUtil.mesmoValor("Pendente", this.status);
+		List<String> lstEmAnalise =  Arrays.asList("Pendente");
+		return CommonsUtil.semValor(this.cadastroAprovadoValor) && lstEmAnalise.contains(this.status);
 	}
+	
+	
 
 	/**
 	 * @return the id
@@ -6224,5 +6235,22 @@ public class ContratoCobranca implements Serializable {
 	public void setCarenciaComite(int carenciaComite) {
 		this.carenciaComite = carenciaComite;
 	}
+
+	public Set<DataVistoria> getListDatasVistoria() {
+		return listDatasVistoria;
+	}
+
+	public void setListDatasVistoria(Set<DataVistoria> listDatasVistoria) {
+		this.listDatasVistoria = listDatasVistoria;
+	}
+
+	public boolean isEnviadoWhatsappVistoria() {
+		return enviadoWhatsappVistoria;
+	}
+
+	public void setEnviadoWhatsappVistoria(boolean enviadoWhatsappVistoria) {
+		this.enviadoWhatsappVistoria = enviadoWhatsappVistoria;
+	}
+	
 	
 }

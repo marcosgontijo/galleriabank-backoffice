@@ -50,6 +50,7 @@ import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentosDocketDao;
 import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
+import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.cobranca.ws.endpoint.ReaWebhookRetorno;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.EstadosEnum;
@@ -398,8 +399,8 @@ public class DocketMB {
 			return;
 		}
 		else {
-			//ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-			//cDao.merge(objetoContratoCobranca);
+			ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+			cDao.merge(objetoContratoCobranca);
 		}
 		if(docketDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca).size() > 0) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Pedido desse contrato já existe!!!!!!", ""));	
@@ -528,7 +529,7 @@ public class DocketMB {
 				documentoAnalise.setIdRemoto(reaWebhookRetorno.getId());
 				documentoAnaliseDao.merge(documentoAnalise);
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Matrícula enviada com sucesso", ""));	
-				myResponse = getJSONSucesso(myURLConnection.getInputStream());
+				//myResponse = getJSONSucesso(myURLConnection.getInputStream());
 			}
 			myURLConnection.disconnect();
 			
@@ -541,7 +542,15 @@ public class DocketMB {
 			e.printStackTrace();
 		}
 	}
+
+	public void requestEnginefromRea(DocumentoAnalise documentoAnalise) {
+		DocketService docketService = new DocketService();
+
+		DataEngine engine = docketService.engineInserirPessoa(documentoAnalise.getPagador(), objetoContratoCobranca);
 		
+		docketService.engineCriarConsulta( documentoAnalise,  engine,  loginBean.getUsuarioLogado());
+		
+	}
 	public JSONObject getBodyREA() { //JSON p/ pedido	
 		JSONObject jsonDocketBodyREA = new JSONObject();	
 		jsonDocketBodyREA.put("arquivo","" /*arquivo_Da_Matricula*/);

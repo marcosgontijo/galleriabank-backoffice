@@ -108,8 +108,7 @@
 							</p:steps>
 
 							<h:panelGroup>
-								<ui:fragment
-									rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 0}">
+								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 0}">
 									<h:panelGrid columns="2"
 										style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
@@ -123,8 +122,7 @@
 									</h:panelGrid>
 								</ui:fragment>
 
-								<ui:fragment
-									rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 1}">
+								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 1}">
 									<h:panelGrid columns="2"
 										style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
@@ -142,8 +140,7 @@
 									</h:panelGrid>
 								</ui:fragment>
 
-								<ui:fragment
-									rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 3 || contratoCobrancaMB.indexStepsStatusContrato == 2 }">
+								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 3 || contratoCobrancaMB.indexStepsStatusContrato == 2 }">
 									<h:panelGrid columns="2"
 										style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
@@ -173,29 +170,40 @@
 										</p:selectOneMenu>
 
 										<p:outputLabel styleClass="labelBold"
-											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial and contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudo eq 'Outro'}">Laudo Pedido: </p:outputLabel>											
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial 
+											and contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudo eq 'Outro'}">Laudo Pedido: </p:outputLabel>											
 										<p:selectBooleanButton id="pedirLaudoBtn"
 											value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudo}"
 											onLabel="Pedido" offLabel="Não Pedido"
 											onIcon="ui-icon-check" offIcon="ui-icon-close"
 											style="width:=80px"
-											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial and contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudo eq 'Outro'}" />
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial 
+											and contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudo eq 'Outro'}" />
+									</h:panelGrid>
+								</ui:fragment>
 								
+								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 3}">
+									<h:panelGrid columns="2"
+										style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
+										-moz-border-radius: 5px;
+										border-radius: 5px; padding: 10px;">
 
 										<p:outputLabel styleClass="labelBold"
 											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial 
-											and !contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}">PAJU Pedido: </p:outputLabel>				
+											and !contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel
+											and contratoCobrancaMB.objetoContratoCobranca.pedidoLaudo}">PAJU Pedido: </p:outputLabel>				
 										<p:selectBooleanButton id="pedirPajuBtn"
 											value="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada}"
 											onLabel="Pedido" offLabel="Não Pedido"
 											onIcon="ui-icon-check" offIcon="ui-icon-close"
 											style="width:=80px"
-											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial and !contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}">
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial 
+											and !contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel
+											and contratoCobrancaMB.objetoContratoCobranca.pedidoLaudo}">
 											<p:ajax event="valueChange" update=":form:Status"
 												listener="#{contratoCobrancaMB.changeGeracaoPAJU}" />
 										</p:selectBooleanButton>
 								
-
 										<p:outputLabel styleClass="labelBold"
 											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}">Pendenciar</p:outputLabel>
 										<p:selectBooleanCheckbox
@@ -205,33 +213,10 @@
 											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}" />
 
 									</h:panelGrid>
-									<h:panelGrid columns="2"
-										style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
-										-moz-border-radius: 5px;
-										border-radius: 5px; padding: 10px;"
-										rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudo}">
-										<p:outputLabel styleClass="labelBold">Laudo Recebido</p:outputLabel>			
-										<p:selectBooleanButton id="laudoRecebido"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido}"
-											onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-											offIcon="ui-icon-close" style="width:=60px">
-										</p:selectBooleanButton>		
-									</h:panelGrid>
-									<h:panelGrid columns="2"
-										style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
-										-moz-border-radius: 5px;
-										border-radius: 5px; padding: 10px;"
-										rendered="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada}">
-										<p:outputLabel styleClass="labelBold">Parecer Jurídico Recebido</p:outputLabel>
-										<p:selectBooleanButton id="pajurFavoravel"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}"
-											onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-											offIcon="ui-icon-close" style="width:=60px">
-										</p:selectBooleanButton>
-									</h:panelGrid>
 								</ui:fragment>
-								<ui:fragment
-									rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 4}">
+								
+								
+								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 4}">
 									<h:panelGrid columns="2"
 										style="background-color: #e4e4e4;width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
@@ -244,8 +229,7 @@
 											offIcon="ui-icon-close" style="width:=60px" />
 									</h:panelGrid>
 								</ui:fragment>
-								<ui:fragment
-									rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 5}">
+								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 5}">
 									<h:panelGrid columns="2"
 										style="background-color: #e4e4e4;width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
@@ -260,8 +244,7 @@
 											style="width:=60px" onclick="PF('acoesJuridico').show();" />
 									</h:panelGrid>
 								</ui:fragment>
-								<ui:fragment
-									rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 6}">
+								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 6}">
 									<h:panelGrid columns="2"
 										style="background-color: #e4e4e4;width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px; border-radius: 5px; padding: 10px;"
@@ -288,8 +271,7 @@
 										</p:selectBooleanButton>
 									</h:panelGrid>
 								</ui:fragment>
-								<ui:fragment
-									rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 7}">
+								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 7}">
 									<h:panelGrid columns="2"
 										style="background-color: #e4e4e4;width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
@@ -307,8 +289,7 @@
 											onclick="PF('reprovarContratoDialog').show();" />
 									</h:panelGrid>
 								</ui:fragment>
-								<ui:fragment
-									rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 8}">
+								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 8}">
 									<h:panelGrid columns="2"
 										style="background-color: #e4e4e4;width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px; border-radius: 5px; padding: 10px;"
@@ -375,8 +356,7 @@
 											offIcon="ui-icon-close" style="width:=60px" />
 									</h:panelGrid>
 								</ui:fragment>
-								<ui:fragment
-									rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 9}">
+								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 9}">
 									<h:panelGrid columns="2"
 										style="background-color: #e4e4e4;width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
@@ -390,8 +370,7 @@
 										</p:selectBooleanButton>
 									</h:panelGrid>
 								</ui:fragment>
-								<ui:fragment
-									rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 10}">
+								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 10}">
 									<h:panelGrid columns="2"
 										style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
@@ -408,8 +387,7 @@
 										</p:selectBooleanButton>
 									</h:panelGrid>
 								</ui:fragment>
-								<ui:fragment
-									rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 11}">
+								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 11}">
 									<h:panelGrid columns="2"
 										style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
@@ -426,8 +404,7 @@
 										</p:selectBooleanButton>
 									</h:panelGrid>
 								</ui:fragment>
-								<ui:fragment
-									rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 12}">
+								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 12}">
 									<h:panelGrid columns="2"
 										style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
@@ -443,8 +420,7 @@
 										</p:selectBooleanButton>
 									</h:panelGrid>
 								</ui:fragment>
-								<ui:fragment
-									rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 13}">
+								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 13}">
 									<h:panelGrid columns="2"
 										style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
@@ -476,7 +452,7 @@
 
 								<ui:fragment
 									rendered="#{!(contratoCobrancaMB.indexStepsStatusContrato == 0  
-								|| contratoCobrancaMB.indexStepsStatusContrato == 1 || contratoCobrancaMB.indexStepsStatusContrato == 5 || contratoCobrancaMB.indexStepsStatusContrato == 7
+								|| contratoCobrancaMB.indexStepsStatusContrato == 1 || contratoCobrancaMB.indexStepsStatusContrato == 2 || contratoCobrancaMB.indexStepsStatusContrato == 5 || contratoCobrancaMB.indexStepsStatusContrato == 7
 								|| contratoCobrancaMB.indexStepsStatusContrato == 8)}">
 									<h:panelGrid columns="2"
 										style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
@@ -903,9 +879,18 @@
 
 
 				<shiro:hasAnyRoles
-					name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO">
-					<p:panel id="ArquivosAnalisados" header="Analise Documentos" rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
+					name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO">
+					<p:panel id="ArquivosAnalisados" 
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
 						style="margin-bottom:10px;text-align: center;">
+						<f:facet name="header">
+						   <h:outputText value="Analise Documentos" />
+							<p:commandButton value="Atualizar listagem" ajax="true" update="ArquivosAnalisados" style="margin-left:10px;"
+								action="#{contratoCobrancaMB.listaArquivosAnaliseDocumentos}" immediate="true"
+								icon="ui-icon-search">
+							</p:commandButton>
+						</f:facet>
+
 						<h:panelGrid columns="1">
 							<p:fileUpload label="Selecionar Arquivo"
 								uploadLabel="Salvar Arquivo" multiple="false"
@@ -917,84 +902,100 @@
 							</p:fileUpload>
 						</h:panelGrid>
 
-						<p:panel id="ArquivosSalvosAnalise" 
+						<p:panel id="ArquivosSalvosAnalise"
 							header="Arquivo(s) Salvo(s) na analise"
 							style="margin-bottom:10px;">
+
+
 							<h:panelGrid columns="1">
-								<p:dataTable id="dtFilesAnalise" var="files"
+								<p:dataTable id="dtFilesAnalise" var="fileAnalise"
 									value="#{contratoCobrancaMB.listaDocumentoAnalise}"
-									rowKey="#{files.identificacao}"
-									selection="#{contratoCobrancaMB.deletefiles}" emptyMessage=""
-									sortBy="#{files.identificacao}">
+									rowKey="#{fileAnalise.id}" emptyMessage="">
 									<p:column selectionMode="multiple"
 										style="width:16px;text-align:center" />
-									<f:facet name="header">
-										<p:commandButton value="Download Selecionado(s)" ajax="false"
-											icon="ui-icon-arrowthick-1-s">
-											<p:fileDownload
-												value="#{contratoCobrancaMB.downloadAllFiles}" />
-										</p:commandButton>
-										<p:commandButton value="Excluir Selecionado(s)" ajax="false"
-											icon="ui-icon-trash"
-											action="#{contratoCobrancaMB.deleteFile}" />
-									</f:facet>
+								
 
 									<p:column style="text-align: center;"
-										headerText="Nome do Arquivo" filterBy="#{files.identificacao}"
-										filterMatchMode="contains" sortBy="#{files.identificacao}">
-										<h:outputText value="#{files.identificacao}" />
+										headerText="Identificação" filterBy="#{fileAnalise.identificacao}"
+										filterMatchMode="contains" sortBy="#{fileAnalise.identificacao}">
+
+										<h:outputText value="#{fileAnalise.identificacao}"
+											rendered="#{fileAnalise.podeChamarRea}" />
+										<h:outputText value="#{fileAnalise.identificacao} #{fileAnalise.cnpjcpf} "
+											rendered="#{!fileAnalise.podeChamarRea}" />
 										<p:spacer height="10" />
-										
+
 										<p:commandButton value="Solicitar Rea" ajax="false"
-											rendered="#{files.rea and files.reaNaoEnviado}"
-											action="#{docketMB.uploadREA(files)}" immediate="true"
+											rendered="#{fileAnalise.podeChamarRea and fileAnalise.reaNaoEnviado}"
+											action="#{docketMB.uploadREA(fileAnalise)}" immediate="true"
 											icon="ui-icon-search">
 										</p:commandButton>
-										
-										<h:outputText value="REA Enviado"
-										rendered="#{files.rea and !files.reaNaoEnviado and !files.reaProcessado }" />
-										<h:outputText value="REA Processado"
-										rendered="#{files.rea and files.reaProcessado }" />
+
+										<p:commandButton value="Solicitar Engine" ajax="false"
+											rendered="#{fileAnalise.podeChamarEngine }"
+											action="#{docketMB.requestEnginefromRea(fileAnalise)}"
+											immediate="true" icon="ui-icon-search">
+											<f:setPropertyActionListener
+												target="#{docketMB.objetoContratoCobranca}"
+												value="#{contratoCobrancaMB.objetoContratoCobranca}" />
+										</p:commandButton>
+
+										<p:commandButton value="Solicitar Serasa" ajax="false"
+											rendered="#{fileAnalise.podeChamarSerasa }"
+											action="#{serasaMB.requestSerasa(fileAnalise)}" immediate="true"
+											icon="ui-icon-search">
+										</p:commandButton>
+
+									</p:column>
+
+									<p:column style="text-align: center;" headerText="Motivo"
+										filterMatchMode="contains">
+										<h:outputText value="#{fileAnalise.motivoAnalise}" />
 									</p:column>
 
 									<p:column style="text-align: center;" headerText="Situação"
 										filterMatchMode="contains">
-										
+
 										<h:outputText value="REA Enviado"
-											rendered="#{files.rea and !files.reaNaoEnviado and !files.reaProcessado }" />
+											rendered="#{fileAnalise.podeChamarRea and !fileAnalise.reaNaoEnviado and !fileAnalise.reaProcessado }" />
 										<h:outputText value="REA Processado"
-											rendered="#{files.rea and files.reaProcessado }" />
+											rendered="#{fileAnalise.podeChamarRea and fileAnalise.reaProcessado }" />
+
+										<p:commandButton
+											action="#{contratoCobrancaMB.baixarEngineDocumento(fileAnalise)}"
+											icon="ui-icon ui-icon-print" value="Download Engine"
+											rendered="#{!fileAnalise.podeChamarEngine and fileAnalise.engineProcessado }"
+											ajax="false" />
+
+										<p:commandButton action="#{serasaMB.baixarDocumento(fileAnalise)}"
+											icon="ui-icon ui-icon-print" value="Download Serasa"
+											rendered="#{fileAnalise.podeChamarSerasa and fileAnalise.serasaProcessado }"
+											ajax="false" />
+
 									</p:column>
 
 									<p:column style="width:100px;" rendered="#{false}">
 										<p:commandButton value="Download" ajax="false"
 											icon="ui-icon-arrowthick-1-s">
 											<f:setPropertyActionListener
-												target="#{contratoCobrancaMB.selectedFile}" value="#{files}" />
+												target="#{contratoCobrancaMB.selectedFile}" value="#{fileAnalise}" />
 											<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
 										</p:commandButton>
 									</p:column>
-
-									<f:facet name="footer">
-										<p:commandButton value="Download Selecionado(s)" ajax="false"
-											icon="ui-icon-arrowthick-1-s">
-											<p:fileDownload
-												value="#{contratoCobrancaMB.downloadAllFiles}" />
-										</p:commandButton>
-										<p:commandButton value="Excluir Selecionado(s)" ajax="false"
-											icon="ui-icon-trash"
-											action="#{contratoCobrancaMB.deleteFile}" />
-									</f:facet>
 								</p:dataTable>
 							</h:panelGrid>
-							
-						</p:panel>
 
+						</p:panel>
+						<p:panel id="pnlCeridoesAnalise"
+							header="Certidões"
+							style="margin-bottom:10px;">
+							<p:commandButton value="Certidões Docket" action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.objetoContratoCobranca)}"/>	
+						</p:panel>
 					</p:panel>
 
 				</shiro:hasAnyRoles>
-				
-				
+
+
 				<h:panelGroup id="comentarioComitePanel" style="margin-bottom:20px;">
 					<p:panel header="Comentário Comitê" rendered="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite.size() > 0}">
 						<p:outputLabel id="comentarioComite"
@@ -1845,13 +1846,25 @@
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}">
 						<p:spacer height="10"></p:spacer>
 						<p:panel id="DataVistoriaPanel" style="border: none">						
-							<h:panelGrid columns="2">					
-								<p:outputLabel for="dataVistoria"
-									value="Data Vistoria Imóvel: " styleClass="labelBold" />				
-								<p:calendar id="dataVistoria" showOn="button"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria}"
-									label="Data Vistoria Imóvel" size="100" pattern="dd/MM/yyyy"
-									locale="pt" styleClass="dateTimeField" />									
+							<h:panelGrid columns="2">	
+							
+								<shiro:lacksRole name="ROOT">
+									<shiro:lacksRole name="PROFILE_GERENTE_ANALISE">
+										<p:outputLabel value="Data Vistoria Imóvel: " styleClass="labelBold" />
+										<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria}" styleClass="labelBold" size="100">
+											<f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+										</p:outputLabel>
+									</shiro:lacksRole>
+								</shiro:lacksRole>
+								
+								<shiro:hasAnyRoles name="ROOT, PROFILE_GERENTE_ANALISE">
+									<p:outputLabel for="dataVistoria"
+										value="Data Vistoria Imóvel: " styleClass="labelBold" />				
+									<p:calendar id="dataVistoria" showOn="button"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria}"
+										label="Data Vistoria Imóvel" size="100" pattern="dd/MM/yyyy HH:mm"
+										styleClass="dateTimeField" />		
+								</shiro:hasAnyRoles>							
 								
 								<p:outputLabel for="nomeVistoriador"
 									value="Nome Vistoriador: " styleClass="labelBold" />
@@ -1880,6 +1893,47 @@
 										<f:selectItem itemValue="Ruim" itemLabel="Ruim" />
 									</p:selectOneMenu>
 								</shiro:hasAnyRoles>				
+							
+								<p:dataView var="data" style="min-width: 150px;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.listDatasVistoria}"
+									paginator="false" layout="list">
+									<p:dataViewListItem>
+										<p:outputLabel value="#{data.dataVistoria}" styleClass="labelBold"
+											size="100">
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm"/>
+										</p:outputLabel>
+										<p:spacer width="10px"></p:spacer>
+										
+										<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,PRECOBRANCA, PROFILE_AVALIADOR_IMOVEL, PROFILE_LAUDO, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">
+											<p:commandButton icon="ui-icon-trash"
+												action="#{contratoCobrancaMB.removeDataVistoria(data)}"
+												update="form:CheckListInformacoesAdicionais" />
+										</shiro:hasAnyRoles>
+										
+										<shiro:hasAnyRoles name="ROOT, USER_GALACHE, AVALIADORIMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_AVALIADOR_IMOVEL_GALACHE, PROFILE_GERENTE_ANALISE">
+											<p:commandButton icon="ui-icon-check" 
+												rendered="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria == null 
+												|| contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria == ''}"
+												action="#{contratoCobrancaMB.selecionaDataVistoria(data)}"
+												update="form:CheckListInformacoesAdicionais" />
+										</shiro:hasAnyRoles>
+									</p:dataViewListItem>
+								</p:dataView>
+			
+								<h:panelGroup id="datasValor">
+									<h:panelGrid columns="2">
+										<p:outputLabel for="dataCalculo" value="Datas Vistoria" />
+										<p:calendar id="dataCalculo" showOn="button"
+											value="#{contratoCobrancaMB.dataVistoriaSelecionada.dataVistoria}" size="100"
+											pattern="dd/MM/yyyy HH:mm" styleClass="dateTimeField" />
+									</h:panelGrid>
+									<p:commandButton value="Inserir Data" 
+										icon="ui-icon-check"
+										action="#{contratoCobrancaMB.addDataVistoria}"
+										update="DataVistoriaPanel">
+									</p:commandButton>
+								</h:panelGroup>
+								
 							</h:panelGrid>
 						</p:panel>
 					</p:panel>

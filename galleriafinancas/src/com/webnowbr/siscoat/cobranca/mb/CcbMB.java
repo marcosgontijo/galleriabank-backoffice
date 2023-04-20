@@ -363,6 +363,7 @@ public class CcbMB {
 		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
 	}
 	
+	
 	public void enviarMoneyPlus() {
 		FacesContext context = FacesContext.getCurrentInstance();
 

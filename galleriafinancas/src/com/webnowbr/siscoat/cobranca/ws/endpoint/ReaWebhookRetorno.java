@@ -1,6 +1,10 @@
 package com.webnowbr.siscoat.cobranca.ws.endpoint;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+
+import com.webnowbr.siscoat.common.CommonsUtil;
 
 public class ReaWebhookRetorno {
 
@@ -16,6 +20,34 @@ public class ReaWebhookRetorno {
 	public ReaWebhookRetornoArquivo arquivo;
 	public List<ReaWebhookRetornoBloco> blocos;
 
+	List<String> lstCompaVenda = Arrays.asList("compromisso de compra e venda", "compra e venda", "descritivo do imóvel") ;
+
+	public ReaWebhookRetornoBloco getProprietarioAtual() {
+		ReaWebhookRetornoBloco proprietarioAtual = blocos.stream()
+				.filter(b -> ( CommonsUtil.mesmoValor(b.getTipo(), "PROPRIETARIO")
+						&& lstCompaVenda.contains(b.getNomeClassificacao().toLowerCase()) ||
+						CommonsUtil.mesmoValor(b.getTipo(), "IMOVEL")
+						&& lstCompaVenda.contains(b.getNomeClassificacao().toLowerCase())
+						) && b.isRelacionadoAoProprietarioAtual())
+				.findFirst().orElse(null);
+		return proprietarioAtual;
+	}
+
+	public ReaWebhookRetornoBloco getProprietarioAnterior() {
+		ReaWebhookRetornoBloco proprietarioAtual = getProprietarioAtual();
+		ReaWebhookRetornoBloco proprietarioAnterior = blocos.stream()
+				.sorted(Comparator.comparingInt(ReaWebhookRetornoBloco::getNumeroSequencia))
+				.filter(b -> ( CommonsUtil.mesmoValor(b.getTipo(), "PROPRIETARIO")
+						&& lstCompaVenda.contains(b.getNomeClassificacao().toLowerCase()) ||
+						CommonsUtil.mesmoValor(b.getTipo(), "IMOVEL")
+						&& lstCompaVenda.contains(b.getNomeClassificacao().toLowerCase())
+						)  && !b.isRelacionadoAoProprietarioAtual()
+						&& b.numeroSequencia < proprietarioAtual.getNumeroSequencia())
+				.findFirst().orElse(null);
+		return proprietarioAnterior;
+	}
+	
+	
 	public String getId() {
 		return id;
 	}
