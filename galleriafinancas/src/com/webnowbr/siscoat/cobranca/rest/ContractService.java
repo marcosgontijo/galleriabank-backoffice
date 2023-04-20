@@ -23,6 +23,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -405,10 +406,10 @@ public class ContractService {
 							this.objetoPagador.setId(contratoAPPPagador.has("id") 
 									? contratoAPPPagador.getLong("id") : this.objetoContratoCobranca.getPagador().getId());
 							
-							if (tipoPessoa.equals("PF")) {
+							if (StringUtils.isNotEmpty(tipoPessoa) && tipoPessoa.equals("PF")) {
 								this.objetoPagador.setCpf(contratoAPPPagador.has("cpfCnpj") 
 									? contratoAPPPagador.getString("cpfCnpj") : this.objetoContratoCobranca.getPagador().getCpf());
-							} else if(tipoPessoa.equals("PJ")) {
+							} else if(StringUtils.isNotEmpty(tipoPessoa) && tipoPessoa.equals("PJ")) {
 								this.objetoPagador.setCnpj(contratoAPPPagador.has("cpfCnpj") 
 									? contratoAPPPagador.getString("cpfCnpj") : this.objetoContratoCobranca.getPagador().getCnpj());
 							}
