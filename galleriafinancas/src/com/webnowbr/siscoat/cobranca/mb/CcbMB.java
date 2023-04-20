@@ -306,6 +306,8 @@ public class CcbMB {
     
     private ContasPagar despesaSelecionada;
     
+    private CcbProcessosJudiciais processoSelecionado;
+    
     private String carencia = "";
     
     private String aviso = " a ";
@@ -558,6 +560,7 @@ public class CcbMB {
 		criarPagadorRecebedorNoSistema(this.socioSelecionado.getPessoa());
 		CcbParticipantesDao ccbPartDao = new CcbParticipantesDao();
 		
+		//colcoar merge de pagRece
 		if(ccbPartDao.findByFilter("pessoa", this.socioSelecionado.getPessoa()).size() > 0){
 			this.socioSelecionado.setId(ccbPartDao.findByFilter("pessoa", this.socioSelecionado.getPessoa()).get(0).getId());
 			ccbDao.merge(this.socioSelecionado);
@@ -585,6 +588,54 @@ public class CcbMB {
 		this.socioSelecionado.setPessoa(new PagadorRecebedor());
 	}
 	
+	public void addDespesa() {
+		if(!CommonsUtil.semValor(objetoCcb.getObjetoContratoCobranca())) {
+			if(!this.objetoCcb.getObjetoContratoCobranca().getListContasPagar().contains(this.despesaSelecionada)) {	
+				despesaSelecionada.setContrato(objetoCcb.getObjetoContratoCobranca());
+				//objetoCcb.getObjetoContratoCobranca().getListContasPagar().add(despesaSelecionada);
+			}
+		}
+		this.objetoCcb.getDespesasAnexo2().add(despesaSelecionada);
+		this.objetoCcb.setValorDespesas(this.objetoCcb.getValorDespesas().add(despesaSelecionada.getValor()));
+		despesaSelecionada = new ContasPagar();
+	}
+	
+	public void removeDespesa(ContasPagar conta) {
+		this.objetoCcb.getDespesasAnexo2().remove(conta);
+		if(!CommonsUtil.semValor(objetoCcb.getObjetoContratoCobranca())) {
+			if(this.objetoCcb.getObjetoContratoCobranca().getListContasPagar().contains(conta)) {
+				objetoCcb.getObjetoContratoCobranca().getListContasPagar().remove(conta);
+			}
+		}
+		this.objetoCcb.setValorDespesas(this.objetoCcb.getValorDespesas().subtract(conta.getValor()));
+	}
+	
+	
+	public void addProcesso() {
+		processoSelecionado.getContaPagar().setValor(processoSelecionado.getValor());
+		processoSelecionado.getContaPagar().setDescricao("Processo N°: " + processoSelecionado.getNumero());
+		
+		if(!CommonsUtil.semValor(objetoCcb.getObjetoContratoCobranca())) {
+			if(!this.objetoCcb.getObjetoContratoCobranca().getListProcessos().contains(this.processoSelecionado)) {	
+				processoSelecionado.setContrato(objetoCcb.getObjetoContratoCobranca());
+				//objetoCcb.getObjetoContratoCobranca().getListContasPagar().add(despesaSelecionada);
+			}
+		}
+		this.objetoCcb.getProcessosJucidiais().add(processoSelecionado);
+		this.objetoCcb.setValorDespesas(this.objetoCcb.getValorDespesas().add(processoSelecionado.getValor()));
+		processoSelecionado = new CcbProcessosJudiciais();
+	}
+	
+	public void removeProcesso(CcbProcessosJudiciais processo) {
+		this.objetoCcb.getProcessosJucidiais().remove(processo);
+		if(!CommonsUtil.semValor(objetoCcb.getObjetoContratoCobranca())) {
+			if(this.objetoCcb.getObjetoContratoCobranca().getListProcessos().contains(processo)) {
+				objetoCcb.getObjetoContratoCobranca().getListProcessos().remove(processo);
+			}
+		}
+		this.objetoCcb.setValorDespesas(this.objetoCcb.getValorDespesas().subtract(processo.getValor()));
+	}
+		
 	public void pesquisaContratoCobranca() {
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 		this.listaContratosConsultar = cDao.consultaContratosCCBs();
@@ -6909,7 +6960,7 @@ public class CcbMB {
 					run.setFontSize(12);
 					run.setColor("000000");
 					run.setText(CommonsUtil.formataValorMonetario(processo.getValor()));
-					if(!processo.isProcessoInseridoContrato()) {
+					/*if(!processo.isProcessoInseridoContrato()) {
 						if(!CommonsUtil.semValor(objetoContratoCobranca)) {
 							ContasPagar contaProcesso = new ContasPagar();				
 							contaProcesso.setDescricao("Processo");
@@ -6924,7 +6975,7 @@ public class CcbMB {
 							this.objetoContratoCobranca.getListContasPagar().add(contaProcesso);
 							processo.setProcessoInseridoContrato(true);
 						}
-					}
+					}*/
 				}
 			}
 			
@@ -9992,6 +10043,7 @@ public class CcbMB {
 	
 	public void clearDespesas() {
 		despesaSelecionada = new ContasPagar();
+		processoSelecionado = new CcbProcessosJudiciais();
 		if(!CommonsUtil.semValor(this.objetoCcb.getCustasCartorariasValor())) {
 			setTemCustasCartorarias(true);
 		} else {
@@ -12109,6 +12161,16 @@ public class CcbMB {
 	public void setDespesaSelecionada(ContasPagar despesaSelecionada) {
 		this.despesaSelecionada = despesaSelecionada;
 	}
+
+	public CcbProcessosJudiciais getProcessoSelecionado() {
+		return processoSelecionado;
+	}
+
+	public void setProcessoSelecionado(CcbProcessosJudiciais processoSelecionado) {
+		this.processoSelecionado = processoSelecionado;
+	}
+	
+	
 	
 	
 }

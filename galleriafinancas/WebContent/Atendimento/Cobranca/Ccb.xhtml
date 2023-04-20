@@ -1917,63 +1917,95 @@
 								<p:spacer width="50px" rendered="#{!ccbMB.temItbi}"></p:spacer>
 							</h:panelGroup>
 
-							<h:panelGrid columns="1" id="processosJucidiaisValorView">
-								<p:outputLabel for="processosJucidiaisValor"
-									value="Processos Judíciais: " styleClass="labelBold"
+
+							<p:dataView var="despesas" id="ListaDespesas"
+								value="#{ccbMB.objetoCcb.despesasAnexo2}"
+								paginator="false" layout="list"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+								<p:dataViewListItem>
+									<p:outputLabel value="N°: " styleClass="labelBold" />
+									<p:outputLabel value="#{despesas.descricao}" styleClass="labelBold"
+										style="FONT-SIZE: 10pt;width:100px;" />
+									<p:outputLabel value=" Valor: " styleClass="labelBold" />
+									<p:outputLabel value="#{despesas.valor}" styleClass="labelBold"
+										style="FONT-SIZE: 10pt;width:100px;"
+										converter="bigDecimalConverter" />
+									<p:spacer width="10px"/>
+									<p:commandButton ajax="false" icon="ui-icon-trash"
+										action="#{ccbMB.removeDespesa(despesas)}"
+										update="ListaDespesas" />
+								</p:dataViewListItem>
+							</p:dataView>
+							
+							<h:panelGrid columns="2">
+								<p:outputLabel 
+									value="Valor: " styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
-								<p:selectOneRadio id="temProcessosJucidiais"
-									unselectable="true" value="#{ccbMB.temProcessosJucidiais}">
-									<f:selectItem itemLabel="Não" itemValue="false" />
-									<f:selectItem itemLabel="Sim" itemValue="true" />
-									<p:ajax update="processosJucidiaisValor" event="valueChange" listener="#{ccbMB.calcularValorDespesa()}"/>
-								</p:selectOneRadio>
-								<p:dataView var="processos"
-									value="#{ccbMB.objetoCcb.processosJucidiais}"
-									paginator="false" layout="list"
-									paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
-									<p:dataViewListItem>
-										<p:outputLabel value="N°: " styleClass="labelBold" />
-										<p:outputLabel value="#{processos.numero}" styleClass="labelBold"
-											style="FONT-SIZE: 10pt;width:100px;" />
-										<p:outputLabel value=" Valor: " styleClass="labelBold" />
-										<p:outputLabel value="#{processos.valor}" styleClass="labelBold"
-											style="FONT-SIZE: 10pt;width:100px;"
-											converter="bigDecimalConverter" />
-										<p:spacer width="10px"/>
-										<p:commandButton ajax="false" icon="ui-icon-trash"
-											action="#{ccbMB.removeValor(processos)}"
-											update="processosJucidiaisValorView valorDespesas" />
-									</p:dataViewListItem>
-								</p:dataView>
+								<p:inputText 
+									value="#{ccbMB.despesaSelecionada.valor}"
+									label="Contrato" onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);"
+									converter="bigDecimalConverter" /> 
+									
+								<p:outputLabel 
+									value="Numero: " styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:inputText
+									value="#{ccbMB.despesaSelecionada.descricao}"
+									label="Contrato" /> 
+									
+								<p:commandButton value="Inserir valor" ajax="false"
+									icon="ui-icon-check"
+									action="#{ccbMB.addDespesa}" 
+									update="despesasPanel ListaDespesas">
+								</p:commandButton>
+							</h:panelGrid>
+							
+							<p:dataView var="processos" id="ListaProcessos"
+								value="#{ccbMB.objetoCcb.processosJucidiais}"
+								paginator="false" layout="list"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+								<p:dataViewListItem>
+									<p:outputLabel value="N°: " styleClass="labelBold" />
+									<p:outputLabel value="#{processos.numero}" styleClass="labelBold"
+										style="FONT-SIZE: 10pt;width:100px;" />
+									<p:outputLabel value=" Valor: " styleClass="labelBold" />
+									<p:outputLabel value="#{processos.valor}" styleClass="labelBold"
+										style="FONT-SIZE: 10pt;width:100px;"
+										converter="bigDecimalConverter" />
+									<p:spacer width="10px"/>
+									<p:commandButton ajax="false" icon="ui-icon-trash"
+										action="#{ccbMB.removeProcesso(processos)}"
+										update="ListaProcessos" />
+								</p:dataViewListItem>
+							</p:dataView>
+							
+							<h:panelGrid columns="2">
+								<p:outputLabel
+									value="Valor: " styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:inputText 
+									value="#{ccbMB.processoSelecionado.valor}"
+									label="Contrato" onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);"
+									converter="bigDecimalConverter" /> 
+									
+								<p:outputLabel 
+									value="Numero: " styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:inputText
+									value="#{ccbMB.processoSelecionado.numero}"
+									label="Contrato" /> 
+									
+								<p:commandButton value="Inserir valor" ajax="false"
+									icon="ui-icon-check"
+									action="#{ccbMB.addProcesso}" 
+									update="despesasPanel ListaDespesas">
+								</p:commandButton>
 							</h:panelGrid>
 
-							<h:panelGroup id="processosJucidiaisValor">
-								<h:panelGrid columns="2">
-									<p:outputLabel rendered="#{ccbMB.temProcessosJucidiais}"
-										value="Valor: " styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText rendered="#{ccbMB.temProcessosJucidiais}"
-										value="#{ccbMB.valorProcesso}"
-										label="Contrato" onkeypress="return isNumberKey(event);"
-										onkeydown="FormataValor(this, 13, event, 2);"
-										converter="bigDecimalConverter" /> 
-										
-									<p:outputLabel rendered="#{ccbMB.temProcessosJucidiais}"
-										value="Numero: " styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText rendered="#{ccbMB.temProcessosJucidiais}"
-										value="#{ccbMB.numeroProcesso}"
-										label="Contrato" /> 
-										
-									<p:commandButton value="Inserir valor" ajax="false"
-										icon="ui-icon-check" rendered="#{ccbMB.temProcessosJucidiais}"
-										action="#{ccbMB.addValorProcesso}"
-										update="processosJucidiaisValorView, valorDespesas">
-									</p:commandButton>
-								</h:panelGrid>
-								<p:spacer width="50px"
-									rendered="#{!ccbMB.temProcessosJucidiais}"></p:spacer>
-							</h:panelGroup>
+
+							
 
 						</h:panelGrid>
 					</p:panel>

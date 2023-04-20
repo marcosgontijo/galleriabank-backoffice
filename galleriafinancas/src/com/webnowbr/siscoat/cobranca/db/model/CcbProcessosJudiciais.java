@@ -13,15 +13,18 @@ public class CcbProcessosJudiciais implements Serializable{
 	
 	private BigDecimal valor = BigDecimal.ZERO;
 	private String numero = "";
-	private boolean processoInseridoContrato;
+	private ContasPagar contaPagar;
+	private ContratoCobranca contrato;
+	private String quitar = "";
 	
 	public CcbProcessosJudiciais(BigDecimal valor, String numero) {
+		contaPagar = new ContasPagar();
 		this.valor = valor;
 		this.numero = numero;
 	}
 	
 	public CcbProcessosJudiciais() {
-		
+		contaPagar = new ContasPagar();
 	}
 	
 	public BigDecimal getValor() {
@@ -35,16 +38,9 @@ public class CcbProcessosJudiciais implements Serializable{
 	public long getId() {
 		return id;
 	}
+	
 	public void setId(long id) {
 		this.id = id;
-	}
-
-	public boolean isProcessoInseridoContrato() {
-		return processoInseridoContrato;
-	}
-
-	public void setProcessoInseridoContrato(boolean processoInseridoContrato) {
-		this.processoInseridoContrato = processoInseridoContrato;
 	}
 
 	public String getNumero() {
@@ -54,6 +50,29 @@ public class CcbProcessosJudiciais implements Serializable{
 	public void setNumero(String numero) {
 		this.numero = numero;
 	}
-	
+
+	public ContasPagar getContaPagar() {
+		return contaPagar;
+	}
+
+	public void setContaPagar(ContasPagar contaPagar) {
+		this.contaPagar = contaPagar;
+	}
+
+	public String getQuitar() {
+		return quitar;
+	}
+
+	public void setQuitar(String quitar) {
+		this.quitar = quitar;
+	}
+
+	public ContratoCobranca getContrato() {
+		return contrato;
+	}
+
+	public void setContrato(ContratoCobranca contrato) {
+		this.contrato = contrato;
+	}
 	
 }

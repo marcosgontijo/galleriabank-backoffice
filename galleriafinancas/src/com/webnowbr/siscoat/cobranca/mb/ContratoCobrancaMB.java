@@ -112,6 +112,7 @@ import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.AnaliseComite;
 import com.webnowbr.siscoat.cobranca.db.model.BoletoKobana;
 import com.webnowbr.siscoat.cobranca.db.model.CadastroStatus;
+import com.webnowbr.siscoat.cobranca.db.model.CcbContrato;
 import com.webnowbr.siscoat.cobranca.db.model.ContasPagar;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
@@ -138,6 +139,7 @@ import com.webnowbr.siscoat.cobranca.db.model.QuitacaoPDF;
 import com.webnowbr.siscoat.cobranca.db.model.QuitacaoParcelasPDF;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.db.model.Segurado;
+import com.webnowbr.siscoat.cobranca.db.op.CcbDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
@@ -645,6 +647,7 @@ public class ContratoCobrancaMB {
 	private ImovelCobranca objetoImovelCobranca;
 	private PagadorRecebedor objetoPagadorRecebedor;
 	private PagadorRecebedorSocio objetoSocio;
+	private CcbContrato objetoCcb;
 
 	private boolean geraBoletoInclusaoContrato;
 
@@ -3165,6 +3168,8 @@ public class ContratoCobrancaMB {
 				//System.out.println("editPreContrato");
 			}
 			contratoCobrancaCheckList = null;
+			
+			this.objetoCcb = null;
 
 			context.addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -3805,6 +3810,8 @@ public class ContratoCobrancaMB {
 				UserDao u = new UserDao();
 				usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
 				
+				this.objetoCcb = null;
+				
 				if(usuarioLogado.isComiteConsultar()) {
 					return "/Atendimento/Cobranca/ContratoCobrancaCRMConsultar.xhtml";
 				}
@@ -3946,7 +3953,7 @@ public class ContratoCobrancaMB {
 			
 			// Mensagem DATA VISTORIA
 			if (!CommonsUtil.semValor(this.objetoContratoCobranca.getDataPrevistaVistoria())) {
-				if (this.objetoContratoCobranca.isEnviadoWhatsappVistoria()) {
+				if (!this.objetoContratoCobranca.isEnviadoWhatsappVistoria()) {
 					TakeBlipMB tkblpMb = new TakeBlipMB();
 					PagadorRecebedor pagador;
 					pagador = this.objetoContratoCobranca.getPagador();
@@ -3979,6 +3986,8 @@ public class ContratoCobrancaMB {
 					rVistoria4 = rDao.findById((long) 619);
 					tkblpMb.sendWhatsAppMessageVistoria(rVistoria4,
 							this.objetoContratoCobranca.getDataPrevistaVistoria(), this.objetoContratoCobranca.getNomeVistoriador());
+					
+					this.objetoContratoCobranca.setEnviadoWhatsappVistoria(true);
 				}
 			}
 			
@@ -16551,6 +16560,11 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			this.nomePagador = this.objetoContratoCobranca.getPagador().getNome();
 			this.idPagador = this.objetoContratoCobranca.getPagador().getId();
 		}
+			
+		if(!CommonsUtil.semValor(this.objetoCcb)) {
+			CcbDao ccbDao = new CcbDao();
+			this.objetoCcb = ccbDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca).get(0);
+		}
 
 		if (this.objetoContratoCobranca.getResponsavel() != null) {
 			this.selectedResponsavel = this.objetoContratoCobranca.getResponsavel();
@@ -18754,7 +18768,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		this.addSocio = false;
 	}
 	
-	public void concluirConta() {
+	public void concluirConta() {	
 		this.contasPagarSelecionada.setContrato(this.objetoContratoCobranca);
 		this.contasPagarSelecionada.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
 		this.contasPagarSelecionada.setPagadorRecebedor(this.objetoPagadorRecebedor);
@@ -18781,6 +18795,12 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		}	
 		
 		this.objetoContratoCobranca.getListContasPagar().add(this.contasPagarSelecionada);
+		
+		if(!CommonsUtil.semValor(this.objetoCcb)) {
+			if(!this.objetoCcb.getDespesasAnexo2().contains(contasPagarSelecionada)) {
+				this.objetoCcb.getDespesasAnexo2().add(this.contasPagarSelecionada);
+			}
+		}
 		
 		BigDecimal valorDespesas = calcularValorTotalContasPagar();
 		this.objetoContratoCobranca.setContaPagarValorTotal(valorDespesas); 
@@ -18955,9 +18975,9 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 	
 	public void editarConta(ContasPagar conta) {
 		this.addContasPagar = true;
-		this.contasPagarSelecionada = new ContasPagar();
-		this.setContasPagarSelecionada(conta);
-		this.removerConta(conta);
+		//this.contasPagarSelecionada = new ContasPagar();
+		this.contasPagarSelecionada = conta;
+		//this.removerConta(conta);
 	}
 	
 	public void removerSegurado(Segurado segurado) {
@@ -18972,7 +18992,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		this.objetoContratoCobranca.getListSocios().remove(socio);
 	}
 	
-	public void removerConta(ContasPagar conta) {
+	public void removerConta(ContasPagar conta) {		
 		if(!CommonsUtil.semValor(this.contasPagarSelecionada.getValor())) {
 			this.objetoContratoCobranca.setContaPagarValorTotal(this.objetoContratoCobranca
 					.getContaPagarValorTotal().subtract(this.contasPagarSelecionada.getValor()));
@@ -18982,6 +19002,13 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 					.getContaPagarValorTotal().add(this.contasPagarSelecionada.getValorPagamento()));
 		}
 		this.objetoContratoCobranca.getListContasPagar().remove(conta);
+		
+		if(!CommonsUtil.semValor(this.objetoCcb)){
+			if(this.objetoCcb.getDespesasAnexo2().contains(conta)) {
+				this.objetoCcb.getDespesasAnexo2().remove(conta);
+			}
+		}
+		
 		BigDecimal valorDespesas = calcularValorTotalContasPagar();
 		this.objetoContratoCobranca.setContaPagarValorTotal(valorDespesas); 
 		this.objetoContratoCobranca.calcularValorTotalContasPagas();

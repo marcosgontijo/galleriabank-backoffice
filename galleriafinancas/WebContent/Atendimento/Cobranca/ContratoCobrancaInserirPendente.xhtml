@@ -3873,6 +3873,30 @@
 								</shiro:hasAnyRoles>
 							</p:dataViewListItem>
 						</p:dataView>
+						
+						<p:dataView var="processo"
+							value="#{contratoCobrancaMB.objetoContratoCobranca.listProcessos}"
+							paginator="false" layout="list"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+							<p:dataViewListItem>
+								<p:outputLabel value="numero: " styleClass="labelBold" />
+								<p:outputLabel value="#{processo.numero}"
+									styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+								<p:spacer height="5" />
+								<p:outputLabel value="|" />
+								<p:spacer height="5" />
+
+								<p:outputLabel value="Valor: " styleClass="labelBold" />
+								<p:outputLabel value="#{processo.valor}"
+									converter="bigDecimalConverter" styleClass="labelBold"
+									style="FONT-SIZE: 10pt;width:100px;" />
+								<p:spacer height="5" />
+								<p:outputLabel value="|" />
+								<p:spacer height="5" />
+
+							</p:dataViewListItem>
+						</p:dataView>
+						
 					</p:panel>
 				</h:panelGroup>
 				

@@ -14,13 +14,15 @@
 			<column name="valor" />
 		</property>
 		
-		<property name="processoInseridoContrato" type="boolean">
-			<column name="processoInseridoContrato" not-null="true" default="false" />
-		</property>	
-		
 		<property name="numero" type="java.lang.String">
 			<column name="numero" />
 		</property>
+		
+		<many-to-one name="contrato"
+			class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca"
+			lazy="false">
+			<column name="contrato" />
+		</many-to-one>
         
     </class>
 </hibernate-mapping>
