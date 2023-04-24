@@ -163,6 +163,7 @@ public class ContratoCobranca implements Serializable {
 	private Set<PagadorRecebedorSocio> listSocios;
 	private Set<PagadorRecebedorAdicionais> listaPagadores;
 	private Set<ContasPagar> listContasPagar;
+	private Set<CcbProcessosJudiciais> listProcessos;
 	private Set<AnaliseComite> listaAnaliseComite;
 	private Set<DataVistoria> listDatasVistoria;
 	
@@ -785,6 +786,7 @@ public class ContratoCobranca implements Serializable {
 	private String contratoEmCartorioUsuario;
 	
 	private boolean corrigidoIPCAHibrido;
+	
 
  //FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13	
 	public BigDecimal calcularValorTotalContasPagas() {
@@ -819,6 +821,7 @@ public class ContratoCobranca implements Serializable {
 		this.listContasPagar = new HashSet<>();
 		this.listaAnaliseComite = new HashSet<>();
 		this.listCadastroStatus = new ArrayList<CadastroStatus>();
+		this.listProcessos = new HashSet<>();
 		
 		limparPrimitivos();
 	}
@@ -6251,6 +6254,15 @@ public class ContratoCobranca implements Serializable {
 	public void setEnviadoWhatsappVistoria(boolean enviadoWhatsappVistoria) {
 		this.enviadoWhatsappVistoria = enviadoWhatsappVistoria;
 	}
+
+	public Set<CcbProcessosJudiciais> getListProcessos() {
+		return listProcessos;
+	}
+
+	public void setListProcessos(Set<CcbProcessosJudiciais> listProcessos) {
+		this.listProcessos = listProcessos;
+	}
+	
 	
 	
 }

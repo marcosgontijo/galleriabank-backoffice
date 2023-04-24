@@ -1811,31 +1811,92 @@
 							rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel == true}">
 							<p:outputLabel for="comentarioJuridico"
 								value="Comentario Juridico: " styleClass="labelBold" />
-							<p:inputTextarea id="comentarioJuridico" rows="10" cols="48" maxlength="3000"
-							 	onblur="" autoResize="false"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridico}" >
-								<p:ajax process="@this" partialSubmit="true" />
-							</p:inputTextarea>
+							<h:panelGroup>
+								<p:inputTextarea id="comentarioJuridico" rows="10" cols="48" maxlength="3000"
+								 	onblur="" autoResize="false" counter="display3"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridico}" >
+									<p:ajax process="@this" partialSubmit="true" />
+								</p:inputTextarea>
+								<p:outputLabel id="display3" />
+							</h:panelGroup>
 							
 							<p:outputLabel for="processosPajuInterno"
 								value="Processos para quitar (Interno):" styleClass="labelBold" />
-							<p:inputTextarea id="processosPajuInterno" rows="10" cols="48"
-								counter="display" maxlength="3000" onblur=""
-								counterTemplate="{0} characters remaining." autoResize="false"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.processosPajuInterno}" >
-								<p:ajax process="@this" partialSubmit="true" />
-							</p:inputTextarea>
-							<p:outputLabel id="display" />
-							<p:outputLabel id="espacoParaFormatacaoTexto" value=""/> 
+							<h:panelGroup>
+								<p:inputTextarea id="processosPajuInterno" rows="10" cols="48"
+									counter="display" maxlength="3000" onblur=""
+									counterTemplate="{0} characters remaining." autoResize="false"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.processosPajuInterno}" >
+									<p:ajax process="@this" partialSubmit="true" />
+								</p:inputTextarea>
+								<p:outputLabel id="display" />
+							</h:panelGroup>
+							
 							<p:outputLabel for="processosPajuExterno"
 								value="Processos para quitar (Externo):" styleClass="labelBold" />
-							<p:inputTextarea id="processosPajuExterno" rows="10" cols="48"
-								counter="display2" maxlength="3000" onblur=""
-								counterTemplate="{0} characters remaining." autoResize="false"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.processosPajuExterno}" >
-								<p:ajax process="@this" partialSubmit="true" />
-							</p:inputTextarea>
-							<p:outputLabel id="display2" />
+							<h:panelGroup>
+								<p:inputTextarea id="processosPajuExterno" rows="10" cols="48"
+									counter="display2" maxlength="3000" onblur=""
+									counterTemplate="{0} characters remaining." autoResize="false"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.processosPajuExterno}" >
+									<p:ajax process="@this" partialSubmit="true" />
+								</p:inputTextarea>
+								<p:outputLabel id="display2" />
+							</h:panelGroup>
+							
+							<p:dataView var="processos" id="ListaProcessos"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.listProcessos}"
+								paginator="false" layout="list"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+								<p:dataViewListItem>
+									<p:outputLabel value="N°: " styleClass="labelBold" />
+									<p:outputLabel value="#{processos.numero}" styleClass="labelBold"
+										style="FONT-SIZE: 10pt;width:100px;" />
+									<p:outputLabel value=" Valor: " styleClass="labelBold" />
+									<p:outputLabel value="#{processos.valor}" styleClass="labelBold"
+										style="FONT-SIZE: 10pt;width:100px;"
+										converter="bigDecimalConverter" />
+									<p:spacer width="10px"/>
+									<p:commandButton  icon="ui-icon-trash"
+										action="#{contratoCobrancaMB.removeProcesso(processos)}"
+										update="ListaProcessos" />
+								</p:dataViewListItem>
+							</p:dataView>
+							
+							<h:panelGrid columns="2">
+								<p:outputLabel
+									value="Valor: " styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:inputText 
+									value="#{contratoCobrancaMB.processoSelecionado.valor}"
+									label="Contrato" onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);"
+									converter="bigDecimalConverter" /> 
+									
+								<p:outputLabel 
+									value="Numero: " styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:inputText
+									value="#{contratoCobrancaMB.processoSelecionado.numero}"
+									label="Contrato" /> 
+									
+								<p:outputLabel
+									value="Quitar: " styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:selectOneMenu 
+									value="#{contratoCobrancaMB.processoSelecionado.quitar}">
+									<f:selectItem itemValue="" itemLabel="Selecione" />
+									<f:selectItem itemValue="Não" itemLabel="Não" />
+									<f:selectItem itemValue="Quitar" itemLabel="Quitar" />
+									<f:selectItem itemValue="Quitar ou indicar bens" itemLabel="Quitar ou indicar bens" />
+								</p:selectOneMenu>
+									
+								<p:commandButton value="Inserir Processo"
+									icon="ui-icon-check"
+									action="#{contratoCobrancaMB.addProcesso}" 
+									update="RecebidoPajulaudoPanel">
+								</p:commandButton>
+							</h:panelGrid>
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
