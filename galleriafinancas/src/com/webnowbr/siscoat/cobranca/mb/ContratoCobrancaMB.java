@@ -4323,13 +4323,13 @@ public class ContratoCobrancaMB {
 					this.objetoContratoCobranca.getNumeroContrato(),
 					"", "");
 					
-					// Mariana
-					rCcb3 = rDao.findById((long) 1126);
+					// Mariana TROCAR PARA Beatriz
+					/*rCcb3 = rDao.findById((long) 1126);
 					takeBlipMB.sendWhatsAppMessage(rCcb3,
 					"aprovado_comite_ag_ccb", 
 					this.objetoContratoCobranca.getPagador().getNome(),
 					this.objetoContratoCobranca.getNumeroContrato(),
-					"", "");
+					"", "");*/
 								
 								
 					if (this.objetoContratoCobranca.getResponsavel().getDonoResponsavel() != null) {

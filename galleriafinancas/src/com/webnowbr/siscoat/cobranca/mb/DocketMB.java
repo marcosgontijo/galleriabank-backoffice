@@ -399,8 +399,8 @@ public class DocketMB {
 			return;
 		}
 		else {
-			//ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-			//cDao.merge(objetoContratoCobranca);
+			ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+			cDao.merge(objetoContratoCobranca);
 		}
 		if(docketDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca).size() > 0) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Pedido desse contrato já existe!!!!!!", ""));	
@@ -546,16 +546,7 @@ public class DocketMB {
 	public void requestEnginefromRea(DocumentoAnalise documentoAnalise) {
 		DocketService docketService = new DocketService();
 
-		PagadorRecebedor pagadorAdicionar = new PagadorRecebedor();
-		pagadorAdicionar.setId(0);
-		if (CommonsUtil.mesmoValor(documentoAnalise.getTipoPessoa(), "PF")) {
-			pagadorAdicionar.setCpf(documentoAnalise.getCnpjcpf());
-		} else {
-			pagadorAdicionar.setCnpj(documentoAnalise.getCnpjcpf());
-		}
-		pagadorAdicionar.setNome(documentoAnalise.getIdentificacao());
-
-		DataEngine engine = docketService.engineInserirPessoa(pagadorAdicionar, objetoContratoCobranca);
+		DataEngine engine = docketService.engineInserirPessoa(documentoAnalise.getPagador(), objetoContratoCobranca);
 		
 		docketService.engineCriarConsulta( documentoAnalise,  engine,  loginBean.getUsuarioLogado());
 		

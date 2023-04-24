@@ -19,6 +19,8 @@ public class DocumentoAnalise implements Serializable {
 	
 	private ContratoCobranca contratoCobranca;
 
+	private PagadorRecebedor pagador; //titulares pra enviar pedido
+	
 	private String identificacao;
 	private String cnpjcpf;
 	private String tipoPessoa;
@@ -184,6 +186,14 @@ public class DocumentoAnalise implements Serializable {
 
 	public void setMotivoAnalise(String motivoAnalise) {
 		this.motivoAnalise = motivoAnalise;
+	}
+
+	public PagadorRecebedor getPagador() {
+		return pagador;
+	}
+
+	public void setPagador(PagadorRecebedor pagador) {
+		this.pagador = pagador;
 	}
 
 }

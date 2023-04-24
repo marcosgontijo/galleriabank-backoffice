@@ -10,6 +10,7 @@ import java.net.URL;
 
 import javax.faces.application.FacesMessage;
 
+import org.jasypt.commons.CommonUtils;
 import org.json.JSONObject;
 
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
@@ -25,12 +26,19 @@ public class SerasaService {
 			FacesMessage result = null;
 
 			URL myURL;
+			String cnpjcpf = documentoAnalise.getCnpjcpf();
+			if (!CommonsUtil.semValor(documentoAnalise.getPagador())) {
+				if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa()))
+					cnpjcpf = documentoAnalise.getPagador().getCpf();
+				else
+					cnpjcpf = documentoAnalise.getPagador().getCnpj();
+			}
 			if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa()))
 				myURL = new URL("https://servicos.galleriabank.com.br/crednet/api/v1/"
-						+ CommonsUtil.somenteNumeros(documentoAnalise.getCnpjcpf()));
+						+ CommonsUtil.somenteNumeros(cnpjcpf));
 			else
 				myURL = new URL("https://servicos.galleriabank.com.br/relato/api/v1/"
-						+ CommonsUtil.somenteNumeros(documentoAnalise.getCnpjcpf()));
+						+ CommonsUtil.somenteNumeros(cnpjcpf));
 
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
 			myURLConnection.setRequestMethod("GET");

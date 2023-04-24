@@ -253,32 +253,12 @@ public class DataEngineMB {
 	}
 	
 	public void inserirPessoa() {
-//		DataEngineDao engineDao = new DataEngineDao();
 		if (docketService == null) {
 			docketService = new DocketService();
 		}
 		DataEngine engine = docketService.engineInserirPessoa(pagadorAdicionar, objetoContratoCobranca);
 		
-//		if(pagadorAdicionar.getId() <= 0) {
-//			PagadorRecebedorDao pDao = new PagadorRecebedorDao();
-//			if(!CommonsUtil.semValor(pagadorAdicionar.getCpf()) && pDao.findByFilter("cpf", pagadorAdicionar.getCpf()).size() > 0) {
-//				pagadorAdicionar = pDao.findByFilter("cpf", pagadorAdicionar.getCpf()).get(0);
-//			} else if(!CommonsUtil.semValor(pagadorAdicionar.getCnpj()) && pDao.findByFilter("cnpj", pagadorAdicionar.getCnpj()).size() > 0) {
-//				pagadorAdicionar = pDao.findByFilter("cnpj", pagadorAdicionar.getCnpj()).get(0);
-//			} else {
-//				pDao.create(pagadorAdicionar);
-//			}		
-//		} 
-//		if (engineDao.findByFilter("pagador", pagadorAdicionar).size() > 0) {
-//			engine = engineDao.findByFilter("pagador", pagadorAdicionar).get(0);
-//		} 
-//		if(CommonsUtil.semValor(engine)) {
-//			engine = new DataEngine(pagadorAdicionar);
-//		}	
-//		if(!CommonsUtil.semValor(objetoContratoCobranca)) {
-//			engine.setContrato(objetoContratoCobranca);
-//		}
-		
+
 		this.listEngine.add(engine);
 		
 		pagadorAdicionar = new PagadorRecebedor();

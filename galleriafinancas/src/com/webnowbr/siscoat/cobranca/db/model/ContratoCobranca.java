@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -11,7 +13,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections.ArrayStack;
+
 import com.webnowbr.siscoat.common.CommonsUtil;
+
+import javassist.expr.NewArray;
 
 public class ContratoCobranca implements Serializable {
 
@@ -972,8 +978,11 @@ public class ContratoCobranca implements Serializable {
 	}
 
 	public boolean isEmAnalise() {
-		return CommonsUtil.semValor(this.cadastroAprovadoValor) && CommonsUtil.mesmoValor("Pendente", this.status);
+		List<String> lstEmAnalise =  Arrays.asList("Pendente");
+		return CommonsUtil.semValor(this.cadastroAprovadoValor) && lstEmAnalise.contains(this.status);
 	}
+	
+	
 
 	/**
 	 * @return the id

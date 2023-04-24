@@ -880,8 +880,17 @@
 
 				<shiro:hasAnyRoles
 					name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO">
-					<p:panel id="ArquivosAnalisados" header="Analise Documentos" rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
+					<p:panel id="ArquivosAnalisados" 
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
 						style="margin-bottom:10px;text-align: center;">
+						<f:facet name="header">
+						   <h:outputText value="Analise Documentos" />
+							<p:commandButton value="Atualizar listagem" ajax="true" update="ArquivosAnalisados" style="margin-left:10px;"
+								action="#{contratoCobrancaMB.listaArquivosAnaliseDocumentos}" immediate="true"
+								icon="ui-icon-search">
+							</p:commandButton>
+						</f:facet>
+
 						<h:panelGrid columns="1">
 							<p:fileUpload label="Selecionar Arquivo"
 								uploadLabel="Salvar Arquivo" multiple="false"
@@ -893,85 +902,74 @@
 							</p:fileUpload>
 						</h:panelGrid>
 
-						<p:panel id="ArquivosSalvosAnalise" 
+						<p:panel id="ArquivosSalvosAnalise"
 							header="Arquivo(s) Salvo(s) na analise"
 							style="margin-bottom:10px;">
+
+
 							<h:panelGrid columns="1">
-								<p:dataTable id="dtFilesAnalise" var="files"
+								<p:dataTable id="dtFilesAnalise" var="fileAnalise"
 									value="#{contratoCobrancaMB.listaDocumentoAnalise}"
-									rowKey="#{files.identificacao}"
-									selection="#{contratoCobrancaMB.deletefiles}" emptyMessage=""
-									sortBy="#{files.identificacao}">
+									rowKey="#{fileAnalise.id}" emptyMessage="">
 									<p:column selectionMode="multiple"
 										style="width:16px;text-align:center" />
-									<!--<f:facet name="header">
-										 <p:commandButton value="Download Selecionado(s)" ajax="false"
-											icon="ui-icon-arrowthick-1-s">
-											<p:fileDownload
-												value="#{contratoCobrancaMB.downloadAllFiles}" />
-										</p:commandButton>
-										<p:commandButton value="Excluir Selecionado(s)" ajax="false"
-											icon="ui-icon-trash"
-											action="#{contratoCobrancaMB.deleteFile}" /> 
-									</f:facet>-->
+								
 
 									<p:column style="text-align: center;"
-										headerText="Identificação" filterBy="#{files.identificacao}"
-										filterMatchMode="contains" sortBy="#{files.identificacao}">
+										headerText="Identificação" filterBy="#{fileAnalise.identificacao}"
+										filterMatchMode="contains" sortBy="#{fileAnalise.identificacao}">
 
-										<h:outputText value="#{files.identificacao}"
-											rendered="#{files.podeChamarRea}" />
-										<h:outputText
-											value="#{files.identificacao} #{files.cnpjcpf} "
-											rendered="#{!files.podeChamarRea}" />
+										<h:outputText value="#{fileAnalise.identificacao}"
+											rendered="#{fileAnalise.podeChamarRea}" />
+										<h:outputText value="#{fileAnalise.identificacao} #{fileAnalise.cnpjcpf} "
+											rendered="#{!fileAnalise.podeChamarRea}" />
 										<p:spacer height="10" />
 
 										<p:commandButton value="Solicitar Rea" ajax="false"
-											rendered="#{files.podeChamarRea and files.reaNaoEnviado}"
-											action="#{docketMB.uploadREA(files)}" immediate="true"
+											rendered="#{fileAnalise.podeChamarRea and fileAnalise.reaNaoEnviado}"
+											action="#{docketMB.uploadREA(fileAnalise)}" immediate="true"
 											icon="ui-icon-search">
 										</p:commandButton>
 
 										<p:commandButton value="Solicitar Engine" ajax="false"
-											rendered="#{files.podeChamarEngine }"
-											action="#{docketMB.requestEnginefromRea(files)}"
+											rendered="#{fileAnalise.podeChamarEngine }"
+											action="#{docketMB.requestEnginefromRea(fileAnalise)}"
 											immediate="true" icon="ui-icon-search">
 											<f:setPropertyActionListener
 												target="#{docketMB.objetoContratoCobranca}"
 												value="#{contratoCobrancaMB.objetoContratoCobranca}" />
 										</p:commandButton>
-										
+
 										<p:commandButton value="Solicitar Serasa" ajax="false"
-											rendered="#{files.podeChamarSerasa }"
-											action="#{serasaMB.requestSerasa(files)}"											
-											immediate="true" icon="ui-icon-search">
+											rendered="#{fileAnalise.podeChamarSerasa }"
+											action="#{serasaMB.requestSerasa(fileAnalise)}" immediate="true"
+											icon="ui-icon-search">
 										</p:commandButton>
 
 									</p:column>
 
 									<p:column style="text-align: center;" headerText="Motivo"
 										filterMatchMode="contains">
-										<h:outputText value="#{files.motivoAnalise}" />										
+										<h:outputText value="#{fileAnalise.motivoAnalise}" />
 									</p:column>
 
 									<p:column style="text-align: center;" headerText="Situação"
 										filterMatchMode="contains">
-										
+
 										<h:outputText value="REA Enviado"
-											rendered="#{filespodeChamarRea and !files.reaNaoEnviado and !files.reaProcessado }" />
+											rendered="#{fileAnalise.podeChamarRea and !fileAnalise.reaNaoEnviado and !fileAnalise.reaProcessado }" />
 										<h:outputText value="REA Processado"
-											rendered="#{files.podeChamarRea and files.reaProcessado }" />
+											rendered="#{fileAnalise.podeChamarRea and fileAnalise.reaProcessado }" />
 
 										<p:commandButton
-											action="#{contratoCobrancaMB.baixarEngineDocumento(files)}"
+											action="#{contratoCobrancaMB.baixarEngineDocumento(fileAnalise)}"
 											icon="ui-icon ui-icon-print" value="Download Engine"
-											rendered="#{!files.podeChamarEngine and files.engineProcessado }"
+											rendered="#{!fileAnalise.podeChamarEngine and fileAnalise.engineProcessado }"
 											ajax="false" />
 
-										<p:commandButton
-											action="#{serasaMB.baixarDocumento(files)}"
+										<p:commandButton action="#{serasaMB.baixarDocumento(fileAnalise)}"
 											icon="ui-icon ui-icon-print" value="Download Serasa"
-											rendered="#{files.podeChamarSerasa and files.serasaProcessado }"
+											rendered="#{fileAnalise.podeChamarSerasa and fileAnalise.serasaProcessado }"
 											ajax="false" />
 
 									</p:column>
@@ -980,31 +978,24 @@
 										<p:commandButton value="Download" ajax="false"
 											icon="ui-icon-arrowthick-1-s">
 											<f:setPropertyActionListener
-												target="#{contratoCobrancaMB.selectedFile}" value="#{files}" />
+												target="#{contratoCobrancaMB.selectedFile}" value="#{fileAnalise}" />
 											<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
 										</p:commandButton>
 									</p:column>
-<!--
-									<f:facet name="footer">
-										 <p:commandButton value="Download Selecionado(s)" ajax="false"
-											icon="ui-icon-arrowthick-1-s">
-											<p:fileDownload
-												value="#{contratoCobrancaMB.downloadAllFiles}" />
-										</p:commandButton>
-										<p:commandButton value="Excluir Selecionado(s)" ajax="false"
-											icon="ui-icon-trash"
-											action="#{contratoCobrancaMB.deleteFile}" /> 
-									</f:facet>-->
 								</p:dataTable>
 							</h:panelGrid>
-							
-						</p:panel>
 
+						</p:panel>
+						<p:panel id="pnlCeridoesAnalise"
+							header="Certidões"
+							style="margin-bottom:10px;">
+							<p:commandButton value="Certidões Docket" action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.objetoContratoCobranca)}"/>	
+						</p:panel>
 					</p:panel>
 
 				</shiro:hasAnyRoles>
-				
-				
+
+
 				<h:panelGroup id="comentarioComitePanel" style="margin-bottom:20px;">
 					<p:panel header="Comentário Comitê" rendered="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite.size() > 0}">
 						<p:outputLabel id="comentarioComite"

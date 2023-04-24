@@ -20,6 +20,7 @@ public class ReaWebhookRetornoProprietarios {
 				reaWebhookRetornoProprietario.setNome(reaWebhookRetornoDados.getValor());
 				result.add(reaWebhookRetornoProprietario);
 			} else if (CommonsUtil.mesmoValor(reaWebhookRetornoDados.getConstante(), "RG")) {
+				if ( CommonsUtil.semValor(reaWebhookRetornoProprietario.getRg()) )
 				reaWebhookRetornoProprietario.setRg(reaWebhookRetornoDados.getValor());
 			} else if (CommonsUtil.mesmoValor(reaWebhookRetornoDados.getConstante(), "CNPJ")) {
 				reaWebhookRetornoProprietario.setCnpj(reaWebhookRetornoDados.getValor());
