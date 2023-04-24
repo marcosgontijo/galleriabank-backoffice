@@ -34,8 +34,9 @@ public class ReaWebhook {
 	@Path("/token/")
 	public Response webhookReaToken(String webhookRetorno, @QueryParam("Token") String token) {
 		if (CommonsUtil.sistemaWindows())
-		return Response.status(200).entity(JwtUtil.generateJWTReaWebwook(false)).build();
-		else return Response.status(200).entity("").build();
+			return Response.status(200).entity(JwtUtil.generateJWTReaWebwook(false)).build();
+		else
+			return Response.status(200).entity("").build();
 	}
 
 	@POST
@@ -52,23 +53,22 @@ public class ReaWebhook {
 			System.out.println("---------------- webhookRetorno ---------------- ");
 			ReaWebhookRetorno reaWebhookRetorno = GsonUtil.fromJson(webhookRetorno, ReaWebhookRetorno.class);
 
-			ReaWebhookRetornoBloco proprietarioAtual = reaWebhookRetorno.getProprietarioAtual();
-			ReaWebhookRetornoBloco proprietarioAnterior = reaWebhookRetorno.getProprietarioAnterior();
-
 			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 			DocumentoAnalise documentoAnalise = documentoAnaliseDao.findByFilter("idRemoto", reaWebhookRetorno.getId())
 					.stream().findFirst().orElse(null);
 			documentoAnalise.setRetorno(webhookRetorno);
 			documentoAnaliseDao.merge(documentoAnalise);
-			if (proprietarioAtual != null)
-				cadastrarPessoRetornoRea(proprietarioAtual, documentoAnaliseDao, documentoAnalise.getContratoCobranca(),
-						"Proprietario Atual");
-			if (proprietarioAnterior != null) {
-				Date dataVenda = DateUtil.getDecodeDateExtenso(proprietarioAnterior.getConteudo().getTexto());
+			reaWebhookRetorno.buscaProprietarios();
+			if (reaWebhookRetorno.getProprietarioAtual() != null)
+				cadastrarPessoRetornoRea(reaWebhookRetorno.getProprietarioAtual(), documentoAnaliseDao,
+						documentoAnalise.getContratoCobranca(), "Proprietario Atual");
+			if (reaWebhookRetorno.getProprietarioAnterior() != null) {
+				Date dataVenda = DateUtil
+						.getDecodeDateExtenso(reaWebhookRetorno.getProprietarioAnterior().getConteudo().getTexto());
 
-				if (CommonsUtil.semValor(dataVenda) || DateUtil.isAfterDate(dataVenda,
-						DateUtil.adicionarPeriodo(DateUtil.getDataHoje(), -2, Calendar.YEAR))) {
-					cadastrarPessoRetornoRea(proprietarioAnterior, documentoAnaliseDao,
+				if (CommonsUtil.semValor(dataVenda) || DateUtil.isAfterDate(
+						DateUtil.adicionarPeriodo(DateUtil.getDataHoje(), -2, Calendar.YEAR),dataVenda)) {
+					cadastrarPessoRetornoRea(reaWebhookRetorno.getProprietarioAnterior(), documentoAnaliseDao,
 							documentoAnalise.getContratoCobranca(),
 							"Proprietario Anterior" + (CommonsUtil.semValor(dataVenda) ? " Data venda não localizada"
 									: " Data venda:" + CommonsUtil.formataData(dataVenda, "dd/MM/yyyy")));
@@ -89,7 +89,7 @@ public class ReaWebhook {
 			ContratoCobranca contratoCobranca, String motivo) {
 
 		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
-		
+
 		for (ReaWebhookRetornoProprietario propietario : bloco.getConteudo().getExtraido().getProprietarios()
 				.getDadosProprietarios()) {
 
@@ -118,15 +118,15 @@ public class ReaWebhook {
 				pagador.setRg(propietario.getRg());
 			} else {
 				if (CommonsUtil.somenteNumeros(propietario.getCnpj()).length() == 14)
-				pagador.setCnpj(CommonsUtil.formataCnpj(CommonsUtil.somenteNumeros(propietario.getCnpj())));
+					pagador.setCnpj(CommonsUtil.formataCnpj(CommonsUtil.somenteNumeros(propietario.getCnpj())));
 				else
 					pagador.setCnpj(CommonsUtil.somenteNumeros(propietario.getCnpj()));
 			}
 			pagador.setNome(propietario.getNome());
-			
-			pagador = pagadorRecebedorService.buscaOuInsere(pagador);			
+
+			pagador = pagadorRecebedorService.buscaOuInsere(pagador);
 			documentoAnalise.setPagador(pagador);
-			
+
 			documentoAnaliseDao.create(documentoAnalise);
 		}
 

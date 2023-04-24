@@ -3,6 +3,8 @@ package com.webnowbr.siscoat.cobranca.ws.endpoint;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.webnowbr.siscoat.common.CommonsUtil;
 
@@ -20,34 +22,57 @@ public class ReaWebhookRetorno {
 	public ReaWebhookRetornoArquivo arquivo;
 	public List<ReaWebhookRetornoBloco> blocos;
 
-	List<String> lstCompaVenda = Arrays.asList("compromisso de compra e venda", "compra e venda", "descritivo do imóvel") ;
+	List<String> lstCompaVenda = Arrays.asList("compromisso de compra e venda", "compra e venda",
+			"descritivo do imóvel");
 
-	public ReaWebhookRetornoBloco getProprietarioAtual() {
-		ReaWebhookRetornoBloco proprietarioAtual = blocos.stream()
-				.filter(b -> ( CommonsUtil.mesmoValor(b.getTipo(), "PROPRIETARIO")
-						&& lstCompaVenda.contains(b.getNomeClassificacao().toLowerCase()) ||
-						CommonsUtil.mesmoValor(b.getTipo(), "IMOVEL")
-						&& lstCompaVenda.contains(b.getNomeClassificacao().toLowerCase())
-						) && b.isRelacionadoAoProprietarioAtual())
-				.findFirst().orElse(null);
-		return proprietarioAtual;
+	ReaWebhookRetornoBloco proprietarioAtual = null;
+	ReaWebhookRetornoBloco proprietarioAnterior = null;
+
+	public void buscaProprietarios() {
+		List<ReaWebhookRetornoBloco> blocosComProprietarios = blocos.stream()
+				.filter(b ->  (!CommonsUtil.semValor(b.getConteudo())
+						&& !CommonsUtil.semValor(b.getConteudo().getExtraido())
+						&& !CommonsUtil.semValor(b.getConteudo().getExtraido().getProprietarios()))
+						)
+				.sorted(Comparator.comparingInt(ReaWebhookRetornoBloco::getNumeroSequencia).reversed())
+				.collect(Collectors.toList());
+
+		for (ReaWebhookRetornoBloco reaWebhookRetornoBloco : blocosComProprietarios) {
+			if (proprietarioAtual == null) {
+				proprietarioAtual = reaWebhookRetornoBloco;
+			} else if (proprietarioAnterior == null) {
+				proprietarioAnterior = reaWebhookRetornoBloco;
+				break;
+			}
+		}
 	}
 
-	public ReaWebhookRetornoBloco getProprietarioAnterior() {
-		ReaWebhookRetornoBloco proprietarioAtual = getProprietarioAtual();
-		ReaWebhookRetornoBloco proprietarioAnterior = blocos.stream()
-				.sorted(Comparator.comparingInt(ReaWebhookRetornoBloco::getNumeroSequencia))
-				.filter(b -> ( CommonsUtil.mesmoValor(b.getTipo(), "PROPRIETARIO")
-						&& lstCompaVenda.contains(b.getNomeClassificacao().toLowerCase()) ||
-						CommonsUtil.mesmoValor(b.getTipo(), "IMOVEL")
-						&& lstCompaVenda.contains(b.getNomeClassificacao().toLowerCase())
-						)  && !b.isRelacionadoAoProprietarioAtual()
-						&& b.numeroSequencia < proprietarioAtual.getNumeroSequencia())
-				.findFirst().orElse(null);
-		return proprietarioAnterior;
-	}
-	
-	
+//	private ReaWebhookRetornoBloco getProprietarioAtual() {
+//		ReaWebhookRetornoBloco proprietarioAtual = blocos.stream()
+//				.filter(b -> ( CommonsUtil.mesmoValor(b.getTipo(), "PROPRIETARIO")
+//						&& lstCompaVenda.contains(b.getNomeClassificacao().toLowerCase()) ||
+//						CommonsUtil.mesmoValor(b.getTipo(), "IMOVEL")
+//						&& lstCompaVenda.contains(b.getNomeClassificacao().toLowerCase())
+//						) && b.isRelacionadoAoProprietarioAtual())
+//				.findFirst().orElse(null);
+//		return proprietarioAtual;
+//	}
+//
+//	private ReaWebhookRetornoBloco getProprietarioAnterior() {
+//		ReaWebhookRetornoBloco proprietarioAtual = getProprietarioAtual();
+//		ReaWebhookRetornoBloco proprietarioAnterior = blocos.stream()
+//				.sorted(Comparator.comparingInt(ReaWebhookRetornoBloco::getNumeroSequencia))
+//				.filter(b -> ( CommonsUtil.mesmoValor(b.getTipo(), "PROPRIETARIO")
+//						&& lstCompaVenda.contains(b.getNomeClassificacao().toLowerCase()) ||
+//						CommonsUtil.mesmoValor(b.getTipo(), "IMOVEL")
+//						&& lstCompaVenda.contains(b.getNomeClassificacao().toLowerCase())
+//						)  && !b.isRelacionadoAoProprietarioAtual()
+//						&& b.numeroSequencia < proprietarioAtual.getNumeroSequencia())
+//				.findFirst().orElse(null);
+//		return proprietarioAnterior;
+//	}
+//	
+
 	public String getId() {
 		return id;
 	}
@@ -118,6 +143,22 @@ public class ReaWebhookRetorno {
 
 	public void setBlocos(List<ReaWebhookRetornoBloco> blocos) {
 		this.blocos = blocos;
+	}
+
+	public ReaWebhookRetornoBloco getProprietarioAtual() {
+		return proprietarioAtual;
+	}
+
+	public void setProprietarioAtual(ReaWebhookRetornoBloco proprietarioAtual) {
+		this.proprietarioAtual = proprietarioAtual;
+	}
+
+	public ReaWebhookRetornoBloco getProprietarioAnterior() {
+		return proprietarioAnterior;
+	}
+
+	public void setProprietarioAnterior(ReaWebhookRetornoBloco proprietarioAnterior) {
+		this.proprietarioAnterior = proprietarioAnterior;
 	}
 
 }
