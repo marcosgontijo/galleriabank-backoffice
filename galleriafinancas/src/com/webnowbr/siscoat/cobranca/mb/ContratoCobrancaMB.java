@@ -738,7 +738,7 @@ public class ContratoCobrancaMB {
 	private BigDecimal taxaPreAprovada;
 	private BigInteger prazoMaxPreAprovado;
 	private BigDecimal valorMercadoImovel;
-	private BigDecimal valorVendaForçadaImóvel;
+	private BigDecimal valorVendaForcadaImovel;
 	private String comentarioJuridico;
 	
 	private Date dataInicio;
@@ -32009,12 +32009,12 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		this.valorMercadoImovel = valorMercadoImovel;
 	}
 
-	public BigDecimal getValorVendaForçadaImóvel() {
-		return valorVendaForçadaImóvel;
+	public BigDecimal getValorVendaForcadaImovel() {
+		return valorVendaForcadaImovel;
 	}
 
-	public void setValorVendaForçadaImóvel(BigDecimal valorVendaForçadaImóvel) {
-		this.valorVendaForçadaImóvel = valorVendaForçadaImóvel;
+	public void setValorVendaForcadaImovel(BigDecimal valorVendaForcadaImovel) {
+		this.valorVendaForcadaImovel = valorVendaForcadaImovel;
 	}
 
 	public String getComentarioJuridico() {
