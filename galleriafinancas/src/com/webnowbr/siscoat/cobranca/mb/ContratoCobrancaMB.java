@@ -8650,7 +8650,9 @@ public class ContratoCobrancaMB {
 			this.objetoContratoCobranca.setTemSeguroDFI(true);
 			this.objetoContratoCobranca.setTemSeguroMIP(true);
 			this.objetoContratoCobranca.setValorImovel(this.objetoContratoCobranca.getValorMercadoImovel());
-			this.qtdeParcelas = this.objetoContratoCobranca.getPrazoMaxAprovado().toString();
+			if(!CommonsUtil.semValor(this.objetoContratoCobranca.getPrazoMaxAprovado())) {
+				this.qtdeParcelas = this.objetoContratoCobranca.getPrazoMaxAprovado().toString();
+			}
 			if(CommonsUtil.semValor(this.objetoContratoCobranca.getValorCCB())) {
 				this.objetoContratoCobranca.setValorCCB(this.objetoContratoCobranca.getValorAprovadoComite());
 			}
@@ -30130,7 +30132,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 	}
 	
 	public void viewFile(String fileName) {
-
+		String pathContrato = null;
 		try {
 			FacesContext facesContext = FacesContext.getCurrentInstance();
 			ExternalContext externalContext = facesContext.getExternalContext();
@@ -30139,7 +30141,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			BufferedOutputStream output = null;
 
 			ParametrosDao pDao = new ParametrosDao();
-			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+			pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
 			//String pathContrato = "C:/Users/Usuario/Desktop/"	
 					+ this.objetoContratoCobranca.getNumeroContrato() + "/" + fileName;
 
