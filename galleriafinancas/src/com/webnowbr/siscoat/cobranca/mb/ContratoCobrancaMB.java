@@ -20010,11 +20010,11 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 	
 			//if (this.observacao != null) {
 			//	contratoCobrancaDetalhesParcial.setObservacaoRecebedor(this.observacao);
-			//}
-			
-			ContratoCobrancaDetalhesParcial contratoCobrancaDetalhesParcial = new ContratoCobrancaDetalhesParcial();
+			//}			
 			
 			for (ContratoCobrancaDetalhes parcelasBoleto : this.selectedParcelas) {
+				ContratoCobrancaDetalhesParcial contratoCobrancaDetalhesParcial = new ContratoCobrancaDetalhesParcial();
+				
 				if (this.vlrRecebido != null && this.vlrRecebido.intValue() != 0 ) {
 					if (this.vlrRecebido.compareTo(parcelasBoleto.getVlrParcela()) >= 0) {					
 						contratoCobrancaDetalhesParcial.setNumeroParcela(parcelasBoleto.getNumeroParcela());
@@ -20061,24 +20061,26 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 				baixarMultiParcelaParcial();
 			} else {
 				// baixa normal
-				this.callMetodoPorDialogBaixaParcial = true;
-				this.objetoContratoCobranca = boletosKokanaSelecionados.getContrato();
-				setBpContratoCobrancaDetalhesCustom(boletosKokanaSelecionados.getParcela());
-				this.reciboGerado = false;
-				this.txZero = true;
-				this.rowEditNewDate = boletosKokanaSelecionados.getPaidAt();
-				this.selectedRecebedor = this.objetoContratoCobranca.getRecebedor();
-			
-				if (boletosKokanaSelecionados.getPaidAmount().compareTo(boletosKokanaSelecionados.getVlrParcela()) >= 0) {
-					this.vlrParcelaAtualizadaNew = boletosKokanaSelecionados.getPaidAmount();	
-				} else {
-					this.vlrParcelaAtualizadaNew = boletosKokanaSelecionados.getVlrParcela();	
+				if (boletosKokanaSelecionados.getParcela().isParcelaPaga()) {
+					this.callMetodoPorDialogBaixaParcial = true;
+					this.objetoContratoCobranca = boletosKokanaSelecionados.getContrato();
+					setBpContratoCobrancaDetalhesCustom(boletosKokanaSelecionados.getParcela());
+					this.reciboGerado = false;
+					this.txZero = true;
+					this.rowEditNewDate = boletosKokanaSelecionados.getPaidAt();
+					this.selectedRecebedor = this.objetoContratoCobranca.getRecebedor();
+				
+					if (boletosKokanaSelecionados.getPaidAmount().compareTo(boletosKokanaSelecionados.getVlrParcela()) >= 0) {
+						this.vlrParcelaAtualizadaNew = boletosKokanaSelecionados.getPaidAmount();	
+					} else {
+						this.vlrParcelaAtualizadaNew = boletosKokanaSelecionados.getVlrParcela();	
+					}
+					
+					this.vlrRecebido = boletosKokanaSelecionados.getPaidAmount();
+					
+					
+					baixarParcelaParcial();
 				}
-				
-				this.vlrRecebido = boletosKokanaSelecionados.getPaidAmount();
-				
-				
-				baixarParcelaParcial();
 			}
 		
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
