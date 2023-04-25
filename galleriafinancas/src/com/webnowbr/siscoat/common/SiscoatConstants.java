@@ -52,4 +52,3 @@ public class SiscoatConstants {
 			102l, 256l, 357l, 359l, 376l, 393l, 571l, 689l, 826l, 844l, 944l, 960l);
 	
 	public static final String  URL_SISCOAT_WEBHOOK = "https://backoffice.galleriabank.com.br/sistema/siscoat/rea/webhook?Token=";
-}
