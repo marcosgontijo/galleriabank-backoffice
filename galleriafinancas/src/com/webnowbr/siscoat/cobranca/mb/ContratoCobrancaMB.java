@@ -2196,6 +2196,9 @@ public class ContratoCobrancaMB {
 	 */
 	public void getEnderecoByViaNet() {
 		try {
+			if(CommonsUtil.semValor(this.objetoPagadorRecebedor.getCep())) {
+				return;
+			}
 			String inputCep = this.objetoPagadorRecebedor.getCep().replace("-", "");
 			FacesContext context = FacesContext.getCurrentInstance();
 
@@ -2335,7 +2338,10 @@ public class ContratoCobrancaMB {
 
 	public void getEnderecoByViaNetConjuge() {
 		try {
-			String inputCep = this.objetoPagadorRecebedor.getCep().replace("-", "");
+			if(CommonsUtil.semValor(this.objetoPagadorRecebedor.getCepConjuge())) {
+				return;
+			}
+			String inputCep = this.objetoPagadorRecebedor.getCepConjuge().replace("-", "");
 			FacesContext context = FacesContext.getCurrentInstance();
 
 			int HTTP_COD_SUCESSO = 200;
