@@ -30,11 +30,12 @@ public class ReaWebhookRetorno {
 
 	public void buscaProprietarios() {
 		List<ReaWebhookRetornoBloco> blocosComProprietarios = blocos.stream()
-				.filter(b ->  (!CommonsUtil.semValor(b.getConteudo())
+				.filter(b -> !CommonsUtil.semValor(b.getConteudo())
 						&& !CommonsUtil.semValor(b.getConteudo().getExtraido())
-						&& !CommonsUtil.semValor(b.getConteudo().getExtraido().getProprietarios()))
-						)
-				.sorted(Comparator.comparingInt(ReaWebhookRetornoBloco::getNumeroSequencia).reversed())
+						&& !CommonsUtil.semValor(b.getConteudo().getExtraido().getProprietarios())
+						&& !CommonsUtil.semValor(b.getConteudo().getExtraido().getProprietarios().getDadosProprietarios())
+
+				).sorted(Comparator.comparingInt(ReaWebhookRetornoBloco::getNumeroSequencia).reversed())
 				.collect(Collectors.toList());
 
 		for (ReaWebhookRetornoBloco reaWebhookRetornoBloco : blocosComProprietarios) {

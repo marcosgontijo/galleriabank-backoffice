@@ -1113,7 +1113,15 @@
                 <column name="contrato" />
             </key>
             <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.ContasPagar" />
-        </set>   
+        </set>  
+        
+        <set name="listProcessos" table="ccbprocessosjudiciais" cascade="all-delete-orphan"
+                 lazy="false" fetch="select">
+            <key>
+                <column name="contrato" />
+            </key>
+            <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.CcbProcessosJudiciais" />
+        </set> 
         
         <set name="listaAnaliseComite" table="AnaliseComite" cascade="all-delete-orphan"
                  lazy="false" fetch="select">
