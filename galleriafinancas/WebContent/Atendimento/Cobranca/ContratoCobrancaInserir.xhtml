@@ -31,7 +31,7 @@
 				<p:focus />
 				<p:messages />
 
-				<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA">
+				<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, ASSISTENTEFINANCEIRO">
 
 					<h:panelGrid columns="2">
 						<p:outputLabel for="numeroContrato" value="Número do Contrato: "
@@ -2293,7 +2293,7 @@
 					</h:panelGroup>
 
 				</shiro:hasAnyRoles>
-				<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA">
+				<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, ASSISTENTEFINANCEIRO">
 					<p:panel id="DetalheParcelas"
 						header="Detalhamento - Forma de Pagamento"
 						style="margin-bottom:10px;"

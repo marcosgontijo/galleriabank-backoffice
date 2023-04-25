@@ -23,6 +23,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -384,9 +385,15 @@ public class ContractService {
 							this.objetoContratoCobranca.setFormaDePagamentoLaudoPAJU(contratoAPP.has("formaPagamentoLaudoPaju")
 									? contratoAPP.getString("formaPagamentoLaudoPaju") 
 									: this.objetoContratoCobranca.getFormaDePagamentoLaudoPAJU());
+							this.objetoContratoCobranca.setNomeContatoAgendaLaudoAvaliacao(contratoAPP.has("nomeContatoAgendaLaudoAvaliacao")
+									? contratoAPP.getString("nomeContatoAgendaLaudoAvaliacao")
+									: this.objetoContratoCobranca.getNomeContatoAgendaLaudoAvaliacao());
 							this.objetoContratoCobranca.setContatoAgendamendoLaudoAvaliacao(contratoAPP.has("contatoAgendamentoLaudoAvaliacao")
 									? contratoAPP.getString("contatoAgendamentoLaudoAvaliacao")
 									: this.objetoContratoCobranca.getContatoAgendamendoLaudoAvaliacao());
+							this.objetoContratoCobranca.setObservacaoContatoAgendaLaudoAvaliacao(contratoAPP.has("observacaoContatoAgendaLaudoAvaliacao")
+									? contratoAPP.getString("observacaoContatoAgendaLaudoAvaliacao")
+									: this.objetoContratoCobranca.getObservacaoContatoAgendaLaudoAvaliacao());
 							
 							this.objetoContratoCobranca.setComentarioPreComite(contratoAPP.has("comentarioPreComite")
 									? contratoAPP.getString("comentarioPreComite") : this.objetoContratoCobranca.getComentarioPreComite());
@@ -399,10 +406,10 @@ public class ContractService {
 							this.objetoPagador.setId(contratoAPPPagador.has("id") 
 									? contratoAPPPagador.getLong("id") : this.objetoContratoCobranca.getPagador().getId());
 							
-							if (tipoPessoa.equals("PF")) {
+							if (StringUtils.isNotEmpty(tipoPessoa) && tipoPessoa.equals("PF")) {
 								this.objetoPagador.setCpf(contratoAPPPagador.has("cpfCnpj") 
 									? contratoAPPPagador.getString("cpfCnpj") : this.objetoContratoCobranca.getPagador().getCpf());
-							} else if(tipoPessoa.equals("PJ")) {
+							} else if(StringUtils.isNotEmpty(tipoPessoa) && tipoPessoa.equals("PJ")) {
 								this.objetoPagador.setCnpj(contratoAPPPagador.has("cpfCnpj") 
 									? contratoAPPPagador.getString("cpfCnpj") : this.objetoContratoCobranca.getPagador().getCnpj());
 							}
@@ -484,7 +491,11 @@ public class ContractService {
 					
 							// atualizar contrato
 							atualizarContratoBD();
-							contratoCobrancaDao.merge(this.objetoContratoCobranca);
+							try {
+								contratoCobrancaDao.merge(this.objetoContratoCobranca);
+							} catch (RuntimeException e) {
+								e.printStackTrace();
+							}
 							criarEditarPagadoresAdicionais(contratoAPP);
 							
 							String message = "{\"retorno\": \"[Galleria Bank] Operação editada com sucesso!!!\"}";
@@ -925,4 +936,5 @@ public class ContractService {
 		this.pagadorRecebedorAdicionais = pagadorRecebedorAdicionais;
 	}
 	
+
 }

@@ -55,56 +55,6 @@ public class StarkBankAPI{
         System.out.println("Verification status: " + verified);
     }
     */
-	
-    public static void main(String[] args){
-        
-    	getBalanceGalleriaBank();
-    	getBalanceGalleriaCoban();
-    }
-	
-    // galleriabank.starkbank.com
-    public static void getBalanceGalleriaBank() {
-    	String privateKeyContent = "-----BEGIN EC PRIVATE KEY-----\nMHQCAQEEICkEY8553LgXMJb6V0M14aIjTS3PD5uybPmky14jUXnYoAcGBSuBBAAKoUQDQgAEYZgMojBpGA7zunc5h/cvqvIv7rReFVS8YXMvPQI8JwBB16VnqfBlhAVNwqoSddJyy/p6F+qs4uBKGQO5txcdEw==\n-----END EC PRIVATE KEY-----";
-    			
-    	Settings.language = "pt-BR";
-    	
-    	Balance balance;
-		try {
-			Project project = new Project(
-				    "production",
-				    "6200575645450240",
-				    privateKeyContent
-				);
-			
-			balance = Balance.get(project);
-			System.out.println(balance);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    }
-    
-    // galleriabank.starkbank.com
-    public static void getBalanceGalleriaCoban() {
-    	String privateKeyContent = "-----BEGIN EC PRIVATE KEY-----\nMHQCAQEEIAKGZfO+lee7tdtcLGbCT++oGyUcmm/2Jdozg8D8mF4ioAcGBSuBBAAKoUQDQgAEUvi66NomZ1HeFqEwrXvnM/IjDQEJjVp6nYYojlOsTP1tYO34tW+bO1ypWln5lfkDNCcARQ710SmPPrLRHRbMAA==\n-----END EC PRIVATE KEY-----";
-    			
-    	Settings.language = "pt-BR";
-    	
-    	Balance balance;
-		try {
-			Project project = new Project(
-				    "production",
-				    "5092647223951360",
-				    privateKeyContent
-				);
-			
-			balance = Balance.get(project);
-			System.out.println(balance);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    }
     
     public void testeAutenticacaoManual() {
     	// Set your user Id
@@ -135,7 +85,7 @@ public class StarkBankAPI{
     	
     }
     
-	public void getBalanceXXX() {
+	public void getBalance() {
     	// Set your user Id
     	String accessId = "project/5465772415516672";
     	
@@ -259,5 +209,25 @@ public class StarkBankAPI{
 		}
 		return null;
 	}
-
+    
+    public void getBalanceSDK() {
+    	String privateKeyContent = "-----BEGIN EC PARAMETERS-----\nBgUrgQQACg==\n-----END EC PARAMETERS-----\n-----BEGIN EC PRIVATE KEY-----\nMHQCAQEEIAKGZfO+lee7tdtcLGbCT++oGyUcmm/2Jdozg8D8mF4ioAcGBSuBBAAKoUQDQgAEUvi66NomZ1HeFqEwrXvnM/IjDQEJjVp6nYYojlOsTP1tYO34tW+bO1ypWln5lfkDNCcARQ710SmPPrLRHRbMAA==\n-----END EC PRIVATE KEY-----";
+    	
+    	Settings.language = "pt-BR";
+    	
+    	Balance balance;
+		try {
+			Project project = new Project(
+				    "production",
+				    "5465772415516672",
+				    privateKeyContent
+				);
+			
+			balance = Balance.get(project);
+			System.out.println(balance);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
 }

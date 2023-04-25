@@ -859,8 +859,7 @@ public class IpcaJobCalcular {
 								List<ContratoCobrancaDetalhesParcial> detalhesParciais = detalheIpca
 										.getListContratoCobrancaDetalhesParcial();
 								
-								boolean estaNoCorte = false;
-								
+								/*								
 								if (detalheIpca.getDataVencimento().before(dataCorteParcelasBaixadas.getTime())) {
 									//detalheIpca.setVlrAmortizacaoParcela(detalheIpca.getVlrAmortizacaoParcela());
 									
@@ -883,6 +882,9 @@ public class IpcaJobCalcular {
 										vlrSaldoParcela = vlrSaldoParcela.subtract(diferencaPagto);
 									} 
 								} 
+								*/
+								
+								boolean estaNoCorte = false;
 								
 								if (detalheIpca.getDataVencimento().before(dataCorteParcelasMalucas.getTime()) && !estaNoCorte) {
 									//BigDecimal vlrParcela = parcela.getJuros().add(detalheIpca.getVlrAmortizacaoParcela())

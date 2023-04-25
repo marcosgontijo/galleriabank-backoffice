@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.webnowbr.siscoat.cobranca.mb.ContratoCobrancaMB.FileUploaded;
+import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.common.BancosEnum;
 
 public class ContasPagar implements Serializable {
@@ -56,6 +56,29 @@ public class ContasPagar implements Serializable {
 	    }
 	    return bancos.stream().filter(t -> t.toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());
 	 }
+	 
+	 
+	 public List<String> contaPagarDescricaoLista(String query){
+		String queryLowerCase = query.toLowerCase();
+		List<String> listaNome = new ArrayList<>();
+		listaNome.add("Cartório");
+		listaNome.add("Certidão");
+		listaNome.add("Condomínio");
+		listaNome.add("Crédito Cliente");
+		listaNome.add("Devolução");
+		listaNome.add("Honorário");
+		listaNome.add("IPTU");
+		listaNome.add("IQ");
+		listaNome.add("ITBI");
+		listaNome.add("Laudo");
+		listaNome.add("Processo");
+		listaNome.add("Transferência");
+		listaNome.add("Certidão de Casamento");
+		listaNome.add("Laudo De Avaliação");
+		listaNome.add("Crédito CCI");
+		
+		return listaNome.stream().filter(t -> t.toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());
+	}
 
 	/**
 	 * @return the id

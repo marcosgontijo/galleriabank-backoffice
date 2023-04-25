@@ -1113,7 +1113,15 @@
                 <column name="contrato" />
             </key>
             <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.ContasPagar" />
-        </set>   
+        </set>  
+        
+        <set name="listProcessos" table="ccbprocessosjudiciais" cascade="all-delete-orphan"
+                 lazy="false" fetch="select">
+            <key>
+                <column name="contrato" />
+            </key>
+            <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.CcbProcessosJudiciais" />
+        </set> 
         
         <set name="listaAnaliseComite" table="AnaliseComite" cascade="all-delete-orphan"
                  lazy="false" fetch="select">
@@ -1121,6 +1129,14 @@
                 <column name="contratoCobranca" />
             </key>
             <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.AnaliseComite" />
+        </set>
+        
+        <set name="listDatasVistoria" table="DataVistoria" cascade="all-delete-orphan"
+                 lazy="false" fetch="select">
+            <key>
+                <column name="contratoCobranca" not-null="true" />
+            </key>
+            <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.DataVistoria" />
         </set>
         
         <property name="tipoCalculoInvestidor1" type="java.lang.String">
@@ -1642,8 +1658,16 @@
 			<column name="temTxAdm" />
 		</property>	
 		
+		<property name="nomeContatoAgendaLaudoAvaliacao" type="java.lang.String">
+			<column name="nomeContatoAgendaLaudoAvaliacao" />
+		</property>	
+		
 		<property name="contatoAgendamendoLaudoAvaliacao" type="java.lang.String">
 			<column name="contatoAgendamendoLaudoAvaliacao" />
+		</property>	
+		
+		<property name="observacaoContatoAgendaLaudoAvaliacao" type="java.lang.String">
+			<column name="observacaoContatoAgendaLaudoAvaliacao" />
 		</property>	
 		
 		<property name="formaDePagamentoLaudoPAJU" type="java.lang.String">
@@ -2079,6 +2103,10 @@
 		<property name="carenciaComite" type="int">
 			<column name="carenciaComite"  default="1" />
 		</property>
+		
+		<property name="enviadoWhatsappVistoria" type="boolean">
+			<column name="enviadoWhatsappVistoria" not-null="true" default="false"/>
+		</property>	
 		
 	</class>
 </hibernate-mapping>

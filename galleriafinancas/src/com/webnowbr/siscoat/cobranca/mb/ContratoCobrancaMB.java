@@ -160,7 +160,7 @@ import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
-import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
+import com.webnowbr.siscoat.common.GeracaoBoletoMB;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.common.ReportUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
@@ -17876,6 +17876,8 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		
 		 GeracaoBoletoMB geracaoBoletoMB = new GeracaoBoletoMB();
 		  
+		  this.fileBoleto = null;
+		  
 		  if (this.objetoContratoCobranca.getStatusLead() != null) {
 			  if (this.objetoContratoCobranca.getStatusLead().equals("Completo")) {
 				if (!SiscoatConstants.PAGADOR_GALLERIA.contains(this.selectedPagador.getId())) {
@@ -17913,11 +17915,40 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		
 							this.objetoContratoCobranca.getListContratoCobrancaDetalhes().add(contratoCobrancaDetalhes);
 							saldoAnterior = contratoCobrancaDetalhes.getVlrSaldoParcela();
+		
+							// gera boleto 
+							
+							if(this.objetoContratoCobranca.getEmpresa() != null) {
+								if (this.isGeraBoletoInclusaoContrato()) {
+									geracaoBoletoMB.geraBoletosBradesco("Locação", this.objetoContratoCobranca.getNumeroContrato(),
+											this.objetoContratoCobranca.getPagador().getNome(),
+											this.objetoContratoCobranca.getPagador().getCpf(),
+											this.objetoContratoCobranca.getPagador().getCnpj(),
+											this.objetoContratoCobranca.getPagador().getEndereco()
+													+ this.objetoContratoCobranca.getPagador().getNumero(),
+											this.objetoContratoCobranca.getPagador().getBairro(),
+											this.objetoContratoCobranca.getPagador().getCep(),
+											this.objetoContratoCobranca.getPagador().getCidade(),
+											this.objetoContratoCobranca.getPagador().getEstado(),
+											contratoCobrancaDetalhes.getDataVencimento(),
+											this.objetoContratoCobranca.getVlrParcela(),
+											contratoCobrancaDetalhes.getNumeroParcela());
+								}
+							}
 						}
 					}
 				 }
 			  }
 		  }
+		 
+
+
+		if (this.isGeraBoletoInclusaoContrato()) {
+			geracaoBoletoMB.geraPDFBoletos(
+					"Boletos Bradesco - Contrato: " + this.objetoContratoCobranca.getNumeroContrato());
+
+			this.fileBoleto = geracaoBoletoMB.getFile();
+		}
 	}
 	
 
@@ -18772,78 +18803,6 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		this.contasPagarSelecionada = new ContasPagar();
 		this.addContasPagar = false;
 		this.objetoContratoCobranca.calcularValorTotalContasPagas();
-	}
-	
-	public void addProcesso() {
-		processoSelecionado.getContaPagar().setValor(processoSelecionado.getValor());
-		processoSelecionado.getContaPagar().setDescricao("Processo N°: " + processoSelecionado.getNumero());
-		
-		processoSelecionado.getContaPagar().setNumeroDocumento(objetoContratoCobranca.getNumeroContrato());
-		processoSelecionado.getContaPagar().setPagadorRecebedor(objetoContratoCobranca.getPagador());
-		processoSelecionado.getContaPagar().setResponsavel(objetoContratoCobranca.getResponsavel());
-		
-		processoSelecionado.setContrato(objetoContratoCobranca);
-		objetoContratoCobranca.getListProcessos().add(processoSelecionado);
-		
-		processoSelecionado = new CcbProcessosJudiciais();
-	}
-	
-	public void removeProcesso(CcbProcessosJudiciais processo) {
-		objetoContratoCobranca.getListProcessos().remove(processo);
-		
-		if(!CommonsUtil.semValor(this.objetoCcb)) {
-			if(this.objetoCcb.getDespesasAnexo2().contains(processo)) {
-				this.objetoCcb.getDespesasAnexo2().remove(processo);
-			}
-		}
-	}
-	
-	public void addProcesso() {
-		processoSelecionado.getContaPagar().setValor(processoSelecionado.getValor());
-		processoSelecionado.getContaPagar().setDescricao("Processo N°: " + processoSelecionado.getNumero());
-		
-		processoSelecionado.getContaPagar().setNumeroDocumento(objetoContratoCobranca.getNumeroContrato());
-		processoSelecionado.getContaPagar().setPagadorRecebedor(objetoContratoCobranca.getPagador());
-		processoSelecionado.getContaPagar().setResponsavel(objetoContratoCobranca.getResponsavel());
-		
-		processoSelecionado.setContrato(objetoContratoCobranca);
-		objetoContratoCobranca.getListProcessos().add(processoSelecionado);
-		
-		processoSelecionado = new CcbProcessosJudiciais();
-	}
-	
-	public void removeProcesso(CcbProcessosJudiciais processo) {
-		objetoContratoCobranca.getListProcessos().remove(processo);
-		
-		if(!CommonsUtil.semValor(this.objetoCcb)) {
-			if(this.objetoCcb.getDespesasAnexo2().contains(processo)) {
-				this.objetoCcb.getDespesasAnexo2().remove(processo);
-			}
-		}
-	}
-	
-	public void addProcesso() {
-		processoSelecionado.getContaPagar().setValor(processoSelecionado.getValor());
-		processoSelecionado.getContaPagar().setDescricao("Processo N°: " + processoSelecionado.getNumero());
-		
-		processoSelecionado.getContaPagar().setNumeroDocumento(objetoContratoCobranca.getNumeroContrato());
-		processoSelecionado.getContaPagar().setPagadorRecebedor(objetoContratoCobranca.getPagador());
-		processoSelecionado.getContaPagar().setResponsavel(objetoContratoCobranca.getResponsavel());
-		
-		processoSelecionado.setContrato(objetoContratoCobranca);
-		objetoContratoCobranca.getListProcessos().add(processoSelecionado);
-		
-		processoSelecionado = new CcbProcessosJudiciais();
-	}
-	
-	public void removeProcesso(CcbProcessosJudiciais processo) {
-		objetoContratoCobranca.getListProcessos().remove(processo);
-		
-		if(!CommonsUtil.semValor(this.objetoCcb)) {
-			if(this.objetoCcb.getDespesasAnexo2().contains(processo)) {
-				this.objetoCcb.getDespesasAnexo2().remove(processo);
-			}
-		}
 	}
 	
 	public void addProcesso() {
@@ -29591,254 +29550,6 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			
 			// atualiza lista de arquivos contidos no diretório
 			files = listaArquivos();
-		}
-	}
-	
-
-	/***
-	 * handler de upload do arquivo
-	 * 
-	 * @param event
-	 * @throws IOException
-	 */
-	public void handleAnaliseDocumentoFileUpload(FileUploadEvent event) throws IOException {
-		FacesContext context = FacesContext.getCurrentInstance();
-		// recupera local onde será gravado o arquivo
-		ParametrosDao pDao = new ParametrosDao();
-		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString();
-
-		File diretorio = new File(pathContrato);
-		if (!diretorio.isDirectory()) {
-			diretorio.mkdir();
-		}
-		pathContrato += this.objetoContratoCobranca.getNumeroContrato();
-		diretorio = new File(pathContrato);
-		if (!diretorio.isDirectory()) {
-			diretorio.mkdir();
-		}
-		pathContrato += "/analise/";
-		;
-
-		// cria o diretório, caso não exista
-		diretorio = new File(pathContrato);
-		if (!diretorio.isDirectory()) {
-			diretorio.mkdir();
-		}
-
-		// cria o arquivo
-		if (event.getFile().getFileName().endsWith(".zip")) {
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
-		} else {
-			byte[] conteudo = event.getFile().getContents();
-			FileOutputStream fos;
-			try {
-				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
-				fos.write(conteudo);
-				fos.close();
-
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				System.out.println(e);
-			}
-
-			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-			DocumentoAnalise documentoAnalise = new DocumentoAnalise();
-			documentoAnalise.setContratoCobranca(this.objetoContratoCobranca);
-			documentoAnalise.setMotivoAnalise("Matricula para consulta");
-			documentoAnalise.setIdentificacao(event.getFile().getFileName());
-			documentoAnalise.setPath(pathContrato + event.getFile().getFileName());
-			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.REA);
-			documentoAnaliseDao.create(documentoAnalise);
-			// atualiza lista de arquivos contidos no diretório
-			listaArquivosAnaliseDocumentos();
-
-		}
-	}
-	
-
-	/***
-	 * handler de upload do arquivo
-	 * 
-	 * @param event
-	 * @throws IOException
-	 */
-	public void handleAnaliseDocumentoFileUpload(FileUploadEvent event) throws IOException {
-		FacesContext context = FacesContext.getCurrentInstance();
-		// recupera local onde será gravado o arquivo
-		ParametrosDao pDao = new ParametrosDao();
-		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString();
-
-		File diretorio = new File(pathContrato);
-		if (!diretorio.isDirectory()) {
-			diretorio.mkdir();
-		}
-		pathContrato += this.objetoContratoCobranca.getNumeroContrato();
-		diretorio = new File(pathContrato);
-		if (!diretorio.isDirectory()) {
-			diretorio.mkdir();
-		}
-		pathContrato += "/analise/";
-		;
-
-		// cria o diretório, caso não exista
-		diretorio = new File(pathContrato);
-		if (!diretorio.isDirectory()) {
-			diretorio.mkdir();
-		}
-
-		// cria o arquivo
-		if (event.getFile().getFileName().endsWith(".zip")) {
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
-		} else {
-			byte[] conteudo = event.getFile().getContents();
-			FileOutputStream fos;
-			try {
-				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
-				fos.write(conteudo);
-				fos.close();
-
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				System.out.println(e);
-			}
-
-			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-			DocumentoAnalise documentoAnalise = new DocumentoAnalise();
-			documentoAnalise.setContratoCobranca(this.objetoContratoCobranca);
-			documentoAnalise.setMotivoAnalise("Matricula para consulta");
-			documentoAnalise.setIdentificacao(event.getFile().getFileName());
-			documentoAnalise.setPath(pathContrato + event.getFile().getFileName());
-			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.REA);
-			documentoAnaliseDao.create(documentoAnalise);
-			// atualiza lista de arquivos contidos no diretório
-			listaArquivosAnaliseDocumentos();
-
-		}
-	}
-	
-
-	/***
-	 * handler de upload do arquivo
-	 * 
-	 * @param event
-	 * @throws IOException
-	 */
-	public void handleAnaliseDocumentoFileUpload(FileUploadEvent event) throws IOException {
-		FacesContext context = FacesContext.getCurrentInstance();
-		// recupera local onde será gravado o arquivo
-		ParametrosDao pDao = new ParametrosDao();
-		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString();
-
-		File diretorio = new File(pathContrato);
-		if (!diretorio.isDirectory()) {
-			diretorio.mkdir();
-		}
-		pathContrato += this.objetoContratoCobranca.getNumeroContrato();
-		diretorio = new File(pathContrato);
-		if (!diretorio.isDirectory()) {
-			diretorio.mkdir();
-		}
-		pathContrato += "/analise/";
-		;
-
-		// cria o diretório, caso não exista
-		diretorio = new File(pathContrato);
-		if (!diretorio.isDirectory()) {
-			diretorio.mkdir();
-		}
-
-		// cria o arquivo
-		if (event.getFile().getFileName().endsWith(".zip")) {
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
-		} else {
-			byte[] conteudo = event.getFile().getContents();
-			FileOutputStream fos;
-			try {
-				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
-				fos.write(conteudo);
-				fos.close();
-
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				System.out.println(e);
-			}
-
-			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-			DocumentoAnalise documentoAnalise = new DocumentoAnalise();
-			documentoAnalise.setContratoCobranca(this.objetoContratoCobranca);
-			documentoAnalise.setMotivoAnalise("Matricula para consulta");
-			documentoAnalise.setIdentificacao(event.getFile().getFileName());
-			documentoAnalise.setPath(pathContrato + event.getFile().getFileName());
-			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.REA);
-			documentoAnaliseDao.create(documentoAnalise);
-			// atualiza lista de arquivos contidos no diretório
-			listaArquivosAnaliseDocumentos();
-
-		}
-	}
-	
-
-	/***
-	 * handler de upload do arquivo
-	 * 
-	 * @param event
-	 * @throws IOException
-	 */
-	public void handleAnaliseDocumentoFileUpload(FileUploadEvent event) throws IOException {
-		FacesContext context = FacesContext.getCurrentInstance();
-		// recupera local onde será gravado o arquivo
-		ParametrosDao pDao = new ParametrosDao();
-		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString();
-
-		File diretorio = new File(pathContrato);
-		if (!diretorio.isDirectory()) {
-			diretorio.mkdir();
-		}
-		pathContrato += this.objetoContratoCobranca.getNumeroContrato();
-		diretorio = new File(pathContrato);
-		if (!diretorio.isDirectory()) {
-			diretorio.mkdir();
-		}
-		pathContrato += "/analise/";
-		;
-
-		// cria o diretório, caso não exista
-		diretorio = new File(pathContrato);
-		if (!diretorio.isDirectory()) {
-			diretorio.mkdir();
-		}
-
-		// cria o arquivo
-		if (event.getFile().getFileName().endsWith(".zip")) {
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
-		} else {
-			byte[] conteudo = event.getFile().getContents();
-			FileOutputStream fos;
-			try {
-				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
-				fos.write(conteudo);
-				fos.close();
-
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				System.out.println(e);
-			}
-
-			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-			DocumentoAnalise documentoAnalise = new DocumentoAnalise();
-			documentoAnalise.setContratoCobranca(this.objetoContratoCobranca);
-			documentoAnalise.setMotivoAnalise("Matricula para consulta");
-			documentoAnalise.setIdentificacao(event.getFile().getFileName());
-			documentoAnalise.setPath(pathContrato + event.getFile().getFileName());
-			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.REA);
-			documentoAnaliseDao.create(documentoAnalise);
-			// atualiza lista de arquivos contidos no diretório
-			listaArquivosAnaliseDocumentos();
-
 		}
 	}
 	

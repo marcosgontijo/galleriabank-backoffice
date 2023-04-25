@@ -315,7 +315,9 @@ public class IPCAMB {
 			if (contrato.isCorrigidoIPCAHibrido()) {
 				atualizaIPCAPorContratoMaluco();
 			} else {
-				this.atualizaIPCAPorContrato(numeroContrato);
+				if (contrato.isCorrigidoIPCA()) {
+					this.atualizaIPCAPorContrato(numeroContrato);
+				}
 			}			
 		}
 	}
