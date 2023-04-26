@@ -20059,7 +20059,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 				baixarMultiParcelaParcial();
 			} else {
 				// baixa normal
-				if (boletosKokanaSelecionados.getParcela().isParcelaPaga()) {
+				if (!boletosKokanaSelecionados.getParcela().isParcelaPaga()) {
 					this.callMetodoPorDialogBaixaParcial = true;
 					this.objetoContratoCobranca = boletosKokanaSelecionados.getContrato();
 					setBpContratoCobrancaDetalhesCustom(boletosKokanaSelecionados.getParcela());
@@ -20068,11 +20068,11 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 					this.rowEditNewDate = boletosKokanaSelecionados.getPaidAt();
 					this.selectedRecebedor = this.objetoContratoCobranca.getRecebedor();
 				
-					if (boletosKokanaSelecionados.getPaidAmount().compareTo(boletosKokanaSelecionados.getVlrParcela()) >= 0) {
-						this.vlrParcelaAtualizadaNew = boletosKokanaSelecionados.getPaidAmount();	
-					} else {
-						this.vlrParcelaAtualizadaNew = boletosKokanaSelecionados.getVlrParcela();	
-					}
+					//if (boletosKokanaSelecionados.getPaidAmount().compareTo(boletosKokanaSelecionados.getVlrParcela()) >= 0) {
+					//	this.vlrParcelaAtualizadaNew = boletosKokanaSelecionados.getPaidAmount();	
+					//} else {
+					this.vlrParcelaAtualizadaNew = boletosKokanaSelecionados.getVlrParcela();	
+					//}
 					
 					this.vlrRecebido = boletosKokanaSelecionados.getPaidAmount();
 					
@@ -20137,15 +20137,8 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		boolean baixaTotal = false;
 		// se valor recebido é igual ao valor atualizado
 		if (this.vlrRecebido.intValue() != 0) {
-			// se valor recebido é igual ou maior
-			if (this.vlrRecebido.compareTo(bpContratoCobrancaDetalhes.getVlrParcelaAtualizada()) == 0
-					|| this.vlrRecebido.compareTo(bpContratoCobrancaDetalhes.getVlrParcelaAtualizada()) == 1) {
-
-				// atualiza data de vencimento para a data atual se a data de vencimento for
-				// menor que a data de hoje
-				// if
-				// (this.bpContratoCobrancaDetalhes.getDataVencimentoAtual().before(this.rowEditNewDate))
-				// {
+			// verifica se é antecipação
+			if (dataPagamento.before(bpContratoCobrancaDetalhes.getDataVencimento())) {
 				bpContratoCobrancaDetalhes.setDataVencimentoAtual(this.rowEditNewDate);
 				// }
 
@@ -20158,12 +20151,9 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 				contratoCobrancaDetalhesParcial
 						.setVlrParcela(this.bpContratoCobrancaDetalhes.getVlrParcelaAtualizada());
 
-				if (this.vlrRecebido.compareTo(bpContratoCobrancaDetalhes.getVlrParcelaAtualizada()) == 0) {
-					contratoCobrancaDetalhesParcial
-							.setVlrRecebido(this.bpContratoCobrancaDetalhes.getVlrParcelaAtualizada());
-				} else {
-					contratoCobrancaDetalhesParcial.setVlrRecebido(this.vlrRecebido);
-				}
+
+				contratoCobrancaDetalhesParcial.setVlrRecebido(this.vlrRecebido);
+				
 				contratoCobrancaDetalhesParcial
 						.setVlrParcelaAtualizado(this.bpContratoCobrancaDetalhes.getVlrParcelaAtualizada());
 
@@ -20187,63 +20177,122 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 				bpContratoCobrancaDetalhes.setVlrParcelaAtualizada(BigDecimal.ZERO);
 				
 				baixaTotal = true;
-				
-				// bpContratoCobrancaDetalhes.setVlrSaldoParcela(BigDecimal.ZERO);
-				
-				// verifica se pagamento é igual ao valor presente
-			} else if(this.vlrRecebido.compareTo(this.valorPresenteParcela) == 0){
-				
-				// atualiza data de vencimento para a data atual se a data de vencimento for
-				// menor que a data de hoje
-				// if
-				// (this.bpContratoCobrancaDetalhes.getDataVencimentoAtual().before(this.rowEditNewDate))
-				// {
-				bpContratoCobrancaDetalhes.setDataVencimentoAtual(this.rowEditNewDate);
-				// }
-				contratoCobrancaDetalhesParcial.setDataVencimento(this.bpContratoCobrancaDetalhes.getDataVencimento());
-				contratoCobrancaDetalhesParcial.setDataVencimentoAtual(this.bpContratoCobrancaDetalhes.getDataVencimentoAtual());
-				contratoCobrancaDetalhesParcial.setNumeroParcela(this.bpContratoCobrancaDetalhes.getNumeroParcela());
-				contratoCobrancaDetalhesParcial.setDataPagamento(dataPagamento.getTime());
-				contratoCobrancaDetalhesParcial.setVlrParcela(valorPresenteParcela);
-				contratoCobrancaDetalhesParcial.setVlrRecebido(valorPresenteParcela);
-				contratoCobrancaDetalhesParcial.setVlrParcelaAtualizado(valorPresenteParcela);
-				contratoCobrancaDetalhesParcial.setSaldoAPagar(BigDecimal.ZERO);
-				bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial().add(contratoCobrancaDetalhesParcial);
-				bpContratoCobrancaDetalhes.setParcelaPaga(true);
-				bpContratoCobrancaDetalhes.setOrigemBaixa("baixarParcelaParcial");
-				
-				baixaTotal = true;
-				
-				//valor da parcela continua o mesmo
-				
-				bpContratoCobrancaDetalhes.setVlrParcelaAtualizada(BigDecimal.ZERO);
 			} else {
-				// atualiza data de vencimento para a data atual se a data de vencimento for
-				// menor que a data de hoje
-				if (this.bpContratoCobrancaDetalhes.getDataVencimentoAtual().before(this.rowEditNewDate)) {
+				// se valor recebido é igual ou maior
+				if (this.vlrRecebido.compareTo(bpContratoCobrancaDetalhes.getVlrParcelaAtualizada()) == 0
+						|| this.vlrRecebido.compareTo(bpContratoCobrancaDetalhes.getVlrParcelaAtualizada()) == 1) {
+
+					// atualiza data de vencimento para a data atual se a data de vencimento for
+					// menor que a data de hoje
+					// if
+					// (this.bpContratoCobrancaDetalhes.getDataVencimentoAtual().before(this.rowEditNewDate))
+					// {
 					bpContratoCobrancaDetalhes.setDataVencimentoAtual(this.rowEditNewDate);
+					// }
+
+					contratoCobrancaDetalhesParcial.setDataVencimento(this.bpContratoCobrancaDetalhes.getDataVencimento());
+					contratoCobrancaDetalhesParcial
+							.setDataVencimentoAtual(this.bpContratoCobrancaDetalhes.getDataVencimentoAtual());
+
+					contratoCobrancaDetalhesParcial.setNumeroParcela(this.bpContratoCobrancaDetalhes.getNumeroParcela());
+					contratoCobrancaDetalhesParcial.setDataPagamento(dataPagamento.getTime());
+					contratoCobrancaDetalhesParcial
+							.setVlrParcela(this.bpContratoCobrancaDetalhes.getVlrParcelaAtualizada());
+
+					if (this.vlrRecebido.compareTo(bpContratoCobrancaDetalhes.getVlrParcelaAtualizada()) == 0) {
+						contratoCobrancaDetalhesParcial
+								.setVlrRecebido(this.bpContratoCobrancaDetalhes.getVlrParcelaAtualizada());
+					} else {
+						contratoCobrancaDetalhesParcial.setVlrRecebido(this.vlrRecebido);
+					}
+					contratoCobrancaDetalhesParcial
+							.setVlrParcelaAtualizado(this.bpContratoCobrancaDetalhes.getVlrParcelaAtualizada());
+
+					contratoCobrancaDetalhesParcial.setSaldoAPagar(BigDecimal.ZERO);
+
+					bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial()
+							.add(contratoCobrancaDetalhesParcial);
+
+					bpContratoCobrancaDetalhes.setParcelaPaga(true);
+					bpContratoCobrancaDetalhes.setOrigemBaixa("baixarParcelaParcial");
+
+					// compoem o valor da parcela de acordo com o historico de baixas
+					BigDecimal valorParcelaAtual = BigDecimal.ZERO;
+
+					// se tiver várias baixas parciais 
+					if (bpContratoCobrancaDetalhes
+							.getListContratoCobrancaDetalhesParcial().size() > 1) {
+						valorParcelaAtual = bpContratoCobrancaDetalhes
+								.getListContratoCobrancaDetalhesParcial().get(0).getVlrParcela();
+						//for (ContratoCobrancaDetalhesParcial ccdp : bpContratoCobrancaDetalhes
+						//		.getListContratoCobrancaDetalhesParcial()) {
+						//	valorParcelaAtual = valorParcelaAtual.add(ccdp.getVlrRecebido());
+						//}
+						
+						bpContratoCobrancaDetalhes.setVlrParcela(valorParcelaAtual);
+					} 
+					
+					bpContratoCobrancaDetalhes.setVlrParcelaAtualizada(BigDecimal.ZERO);
+					
+					baixaTotal = true;
+					
+					// bpContratoCobrancaDetalhes.setVlrSaldoParcela(BigDecimal.ZERO);
+					
+					// verifica se pagamento é igual ao valor presente
+				} else if(this.vlrRecebido.compareTo(this.valorPresenteParcela) == 0){
+					
+					// atualiza data de vencimento para a data atual se a data de vencimento for
+					// menor que a data de hoje
+					// if
+					// (this.bpContratoCobrancaDetalhes.getDataVencimentoAtual().before(this.rowEditNewDate))
+					// {
+					bpContratoCobrancaDetalhes.setDataVencimentoAtual(this.rowEditNewDate);
+					// }
+					contratoCobrancaDetalhesParcial.setDataVencimento(this.bpContratoCobrancaDetalhes.getDataVencimento());
+					contratoCobrancaDetalhesParcial.setDataVencimentoAtual(this.bpContratoCobrancaDetalhes.getDataVencimentoAtual());
+					contratoCobrancaDetalhesParcial.setNumeroParcela(this.bpContratoCobrancaDetalhes.getNumeroParcela());
+					contratoCobrancaDetalhesParcial.setDataPagamento(dataPagamento.getTime());
+					contratoCobrancaDetalhesParcial.setVlrParcela(valorPresenteParcela);
+					contratoCobrancaDetalhesParcial.setVlrRecebido(valorPresenteParcela);
+					contratoCobrancaDetalhesParcial.setVlrParcelaAtualizado(valorPresenteParcela);
+					contratoCobrancaDetalhesParcial.setSaldoAPagar(BigDecimal.ZERO);
+					bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial().add(contratoCobrancaDetalhesParcial);
+					bpContratoCobrancaDetalhes.setParcelaPaga(true);
+					bpContratoCobrancaDetalhes.setOrigemBaixa("baixarParcelaParcial");
+					
+					baixaTotal = true;
+					
+					//valor da parcela continua o mesmo
+					
+					bpContratoCobrancaDetalhes.setVlrParcelaAtualizada(BigDecimal.ZERO);
+				} else {
+					// atualiza data de vencimento para a data atual se a data de vencimento for
+					// menor que a data de hoje
+					if (this.bpContratoCobrancaDetalhes.getDataVencimentoAtual().before(this.rowEditNewDate)) {
+						bpContratoCobrancaDetalhes.setDataVencimentoAtual(this.rowEditNewDate);
+					}
+
+					contratoCobrancaDetalhesParcial.setDataVencimento(this.bpContratoCobrancaDetalhes.getDataVencimento());
+					contratoCobrancaDetalhesParcial
+							.setDataVencimentoAtual(this.bpContratoCobrancaDetalhes.getDataVencimentoAtual());
+
+					// historico de baixa parcial
+					contratoCobrancaDetalhesParcial.setNumeroParcela(this.bpContratoCobrancaDetalhes.getNumeroParcela());
+					contratoCobrancaDetalhesParcial.setDataPagamento(dataPagamento.getTime());
+					contratoCobrancaDetalhesParcial.setVlrParcela(bpContratoCobrancaDetalhes.getVlrParcelaAtualizada().subtract(this.vlrRecebido));
+					contratoCobrancaDetalhesParcial.setVlrRecebido(this.vlrRecebido);
+
+					contratoCobrancaDetalhesParcial.setVlrParcelaAtualizado(this.bpContratoCobrancaDetalhes.getVlrParcelaAtualizada());
+					contratoCobrancaDetalhesParcial.setSaldoAPagar(bpContratoCobrancaDetalhes.getVlrParcelaAtualizada().subtract(this.vlrRecebido));
+
+					bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial().add(contratoCobrancaDetalhesParcial);
+
+					// se o valor recebido for menor que o da parcela
+					bpContratoCobrancaDetalhes.setVlrParcela(bpContratoCobrancaDetalhes.getVlrParcelaAtualizada().subtract(this.vlrRecebido));
+					bpContratoCobrancaDetalhes.setVlrParcelaAtualizada(null);
 				}
-
-				contratoCobrancaDetalhesParcial.setDataVencimento(this.bpContratoCobrancaDetalhes.getDataVencimento());
-				contratoCobrancaDetalhesParcial
-						.setDataVencimentoAtual(this.bpContratoCobrancaDetalhes.getDataVencimentoAtual());
-
-				// historico de baixa parcial
-				contratoCobrancaDetalhesParcial.setNumeroParcela(this.bpContratoCobrancaDetalhes.getNumeroParcela());
-				contratoCobrancaDetalhesParcial.setDataPagamento(dataPagamento.getTime());
-				contratoCobrancaDetalhesParcial.setVlrParcela(bpContratoCobrancaDetalhes.getVlrParcelaAtualizada().subtract(this.vlrRecebido));
-				contratoCobrancaDetalhesParcial.setVlrRecebido(this.vlrRecebido);
-
-				contratoCobrancaDetalhesParcial.setVlrParcelaAtualizado(this.bpContratoCobrancaDetalhes.getVlrParcelaAtualizada());
-				contratoCobrancaDetalhesParcial.setSaldoAPagar(bpContratoCobrancaDetalhes.getVlrParcelaAtualizada().subtract(this.vlrRecebido));
-
-				bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial().add(contratoCobrancaDetalhesParcial);
-
-				// se o valor recebido for menor que o da parcela
-				bpContratoCobrancaDetalhes.setVlrParcela(bpContratoCobrancaDetalhes.getVlrParcelaAtualizada().subtract(this.vlrRecebido));
-				bpContratoCobrancaDetalhes.setVlrParcelaAtualizada(null);
+				this.vlrRecebido = BigDecimal.ZERO;
 			}
-			this.vlrRecebido = BigDecimal.ZERO;
 		} else {
 			// se o valor recebido é zero estorna todas as baixas parciais
 			// atualiza data de vencimento para a data atual se a data de vencimento for
