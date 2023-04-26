@@ -2196,6 +2196,9 @@ public class ContratoCobrancaMB {
 	 */
 	public void getEnderecoByViaNet() {
 		try {
+			if(CommonsUtil.semValor(this.objetoPagadorRecebedor.getCep())) {
+				return;
+			}
 			String inputCep = this.objetoPagadorRecebedor.getCep().replace("-", "");
 			FacesContext context = FacesContext.getCurrentInstance();
 
@@ -2335,7 +2338,10 @@ public class ContratoCobrancaMB {
 
 	public void getEnderecoByViaNetConjuge() {
 		try {
-			String inputCep = this.objetoPagadorRecebedor.getCep().replace("-", "");
+			if(CommonsUtil.semValor(this.objetoPagadorRecebedor.getCepConjuge())) {
+				return;
+			}
+			String inputCep = this.objetoPagadorRecebedor.getCepConjuge().replace("-", "");
 			FacesContext context = FacesContext.getCurrentInstance();
 
 			int HTTP_COD_SUCESSO = 200;
@@ -8650,7 +8656,9 @@ public class ContratoCobrancaMB {
 			this.objetoContratoCobranca.setTemSeguroDFI(true);
 			this.objetoContratoCobranca.setTemSeguroMIP(true);
 			this.objetoContratoCobranca.setValorImovel(this.objetoContratoCobranca.getValorMercadoImovel());
-			this.qtdeParcelas = this.objetoContratoCobranca.getPrazoMaxAprovado().toString();
+			if(!CommonsUtil.semValor(this.objetoContratoCobranca.getPrazoMaxAprovado())) {
+				this.qtdeParcelas = this.objetoContratoCobranca.getPrazoMaxAprovado().toString();
+			}
 			if(CommonsUtil.semValor(this.objetoContratoCobranca.getValorCCB())) {
 				this.objetoContratoCobranca.setValorCCB(this.objetoContratoCobranca.getValorAprovadoComite());
 			}
@@ -30181,7 +30189,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 	}
 	
 	public void viewFile(String fileName) {
-
+		String pathContrato = null;
 		try {
 			FacesContext facesContext = FacesContext.getCurrentInstance();
 			ExternalContext externalContext = facesContext.getExternalContext();
@@ -30190,7 +30198,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			BufferedOutputStream output = null;
 
 			ParametrosDao pDao = new ParametrosDao();
-			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+			pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
 			//String pathContrato = "C:/Users/Usuario/Desktop/"	
 					+ this.objetoContratoCobranca.getNumeroContrato() + "/" + fileName;
 

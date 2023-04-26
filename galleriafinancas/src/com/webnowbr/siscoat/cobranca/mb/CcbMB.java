@@ -461,6 +461,7 @@ public class CcbMB {
 
 		this.objetoCcb.getListaParticipantes().add(this.participanteSelecionado);
 		criarPagadorRecebedorNoSistema(this.participanteSelecionado.getPessoa());
+		this.participanteSelecionado.setPessoa(this.objetoPagadorRecebedor);
 		CcbParticipantesDao ccbPartDao = new CcbParticipantesDao();
 		if(ccbPartDao.findByFilter("pessoa", this.participanteSelecionado.getPessoa()).size() > 0){
 			this.participanteSelecionado.setId(ccbPartDao.findByFilter("pessoa", this.participanteSelecionado.getPessoa()).get(0).getId());
@@ -7436,8 +7437,11 @@ public class CcbMB {
 			        }
 			    }
 			}	
-						
-			BigDecimal taxaAdm = SiscoatConstants.TAXA_ADM.multiply(BigDecimal.valueOf( Long.parseLong(this.objetoCcb.getPrazo()) - Long.parseLong(this.objetoCcb.getNumeroParcelasPagamento()) + 1));
+			
+			BigDecimal taxaAdm = SiscoatConstants.TAXA_ADM;
+			if(!CommonsUtil.semValor(this.objetoCcb.getPrazo()) && !CommonsUtil.semValor(this.objetoCcb.getNumeroParcelasPagamento())) {
+				taxaAdm = taxaAdm.multiply(BigDecimal.valueOf( Long.parseLong(this.objetoCcb.getPrazo()) - Long.parseLong(this.objetoCcb.getNumeroParcelasPagamento()) + 1));
+			} 
 			BigDecimal totalPrimeiraParcela = BigDecimal.ZERO;
 			totalPrimeiraParcela = this.objetoCcb.getValorMipParcela();
 			totalPrimeiraParcela = totalPrimeiraParcela.add(this.objetoCcb.getValorDfiParcela());
