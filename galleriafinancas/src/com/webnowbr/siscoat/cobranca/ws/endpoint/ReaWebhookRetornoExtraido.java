@@ -6,7 +6,6 @@ public class ReaWebhookRetornoExtraido {
 
 	public ReaWebhookRetornoImovel imovel;
 
-
 	public ReaWebhookRetornoProprietarios getProprietarios() {
 		return proprietarios;
 	}

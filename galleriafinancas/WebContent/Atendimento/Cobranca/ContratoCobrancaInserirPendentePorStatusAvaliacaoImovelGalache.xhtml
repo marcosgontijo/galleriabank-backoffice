@@ -52,8 +52,46 @@
 					<h:outputText id="dataContrato" value="#{contratoCobrancaMB.objetoContratoCobranca.dataContrato}"  autocomplete="no" style="width:250px;font-weight: bold; font-size: 18px;">			            	
 				          <f:convertDateTime locale="pt_BR"  />
 				          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
-				    </h:outputText>																				
+				    </h:outputText>	
 				</h:panelGrid>
+				<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_AVALIADOR_IMOVEL, PROFILE_LAUDO, PROFILE_GERENTE_ANALISE">
+					<h:panelGrid columns="2">   						
+						<p:outputLabel value="Código do Responsável: " styleClass="labelBold" />
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.codigo}"  
+							label="Código do Responsável" style="width:150px;" />
+						<p:outputLabel for="NomeResp" value="Nome do Responsável: "
+							styleClass="labelBold" />
+						<h:panelGroup>
+							<h:outputText id="NomeResp" style="width:150px;"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.nome}"/>
+							<h:outputText value="(Lead)" styleClass="labelBold" style="width:150px;"
+								rendered="#{contratoCobrancaMB.objetoContratoCobranca.contratoLead}" />
+						</h:panelGroup>
+						
+						<p:outputLabel id="gerenteContaLabel" value="Gerente"
+							style="cursor:pointer" styleClass="labelBold"
+							rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.donoResponsavel != null}" />
+						<p:overlayPanel id="gerenteConta" for="gerenteContaLabel"
+							showEffect="blind" hideEffect="blind" showEvent="mouseover"
+							hideEvent="mousedown" dismissable="false" showCloseIcon="true">
+							<p:panel id="gerenteContaInfo" header="Gerente da Conta"
+								style="margin-bottom:10px;">
+								<h:panelGrid columns="2">
+									<p:outputLabel for="CodigoGerente" value="Código do Gerente: "
+										styleClass="labelBold" />
+									<h:outputText id="CodigoGerente"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.donoResponsavel.codigo}"
+										label="Código do Gerente" style="width:150px;" />
+									<p:outputLabel for="NomeGerente" value="Nome do Gerente: "
+										styleClass="labelBold" />
+									<h:outputText id="NomeGerente"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.donoResponsavel.nome}"
+										label="Nome do Gerente" style="width:150px;" />
+								</h:panelGrid>
+							</p:panel>
+						</p:overlayPanel>
+					</h:panelGrid>
+				</shiro:hasAnyRoles>
 
 				<h:panelGroup id="laudoPajuPanel" style="margin-bottom:20px;">
 					<p:panel header="Laudo + Paju"

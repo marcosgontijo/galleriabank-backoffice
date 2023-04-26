@@ -189,7 +189,7 @@
 				<textElement>
 					<font fontName="SansSerif" size="14" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["R$ " + com.webnowbr.siscoat.common.CommonsUtil.formataValorMonetario($F{valorParcela})]]></textFieldExpression>
+				<textFieldExpression><![CDATA["R$ " + com.webnowbr.siscoat.common.CommonsUtil.formataValorMonetario($F{valorParcela})  + " + IPCA"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="306" y="550" width="255" height="20" forecolor="#92D050" uuid="1e0342a9-402d-4dcb-b922-aa8ae22ca63d"/>

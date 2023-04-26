@@ -308,6 +308,14 @@
 				class="com.webnowbr.siscoat.cobranca.db.model.CcbProcessosJudiciais" />
 		</list>
 		
+		<list name="despesasAnexo2"
+			table="ccbcontrato_contasPagar_join" cascade="all" lazy="false">
+			<key column="idCcbContrato" />
+			<list-index></list-index>
+			<many-to-many column="idContasPagar"
+				class="com.webnowbr.siscoat.cobranca.db.model.ContasPagar" />
+		</list>
+		
 		<property name="iqValor" type="big_decimal">
 			<column name="iqValor" />
 		</property>
