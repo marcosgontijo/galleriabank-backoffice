@@ -664,6 +664,11 @@
 										cols="48" maxlength="3000" onblur="" style="width: 312px;"
 										counterTemplate="{0} characters remaining." autoResize="false"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.processosQuitarComite}" />
+										
+									<p:outputLabel for="operacaoFundo"
+										value="Operação vai pro Fundo? " styleClass="labelBold" />
+									<p:selectBooleanCheckbox id="operacaoFundo"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.operacaoFundo}" />
 								</shiro:hasAnyRoles>
 							</h:panelGrid>
 							
@@ -2126,6 +2131,13 @@
 							<h:panelGroup
 								rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO' or contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'UNIÃO ESTÁVEL'}">
 								<h:panelGrid columns="2">
+								
+									<p:outputLabel for="dataCasamento"
+										value="Data de Casamento: " />
+									<p:inputMask id="dataCasamento"
+										value="#{contratoCobrancaMB.objetoPagadorRecebedor.dataCasamento}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</p:inputMask>
 								
 									<p:outputLabel for="regimeCasamento"
 										value="Regime do Casamento: " styleClass="labelBold"

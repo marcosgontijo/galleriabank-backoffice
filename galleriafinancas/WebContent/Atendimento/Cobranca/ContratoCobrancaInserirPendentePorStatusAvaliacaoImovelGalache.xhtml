@@ -239,11 +239,24 @@
 												rendered="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria == null 
 												|| contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria == ''}"
 												action="#{contratoCobrancaMB.selecionaDataVistoria(data)}"
-												update="form:CheckListInformacoesAdicionais" />
+												update="form:CheckListInformacoesAdicionais " />
 										</shiro:hasAnyRoles>
 									</p:dataViewListItem>
-								</p:dataView>								
-								<p:spacer></p:spacer>	
+								</p:dataView>
+								
+								<h:panelGroup id="datasValor">
+									<h:panelGrid columns="2">
+										<p:outputLabel for="dataCalculo" value="Datas Vistoria" />
+										<p:calendar id="dataCalculo" showOn="button"
+											value="#{contratoCobrancaMB.dataVistoriaSelecionada.dataVistoria}" size="100"
+											pattern="dd/MM/yyyy HH:mm" styleClass="dateTimeField" />
+									</h:panelGrid>
+									<p:commandButton value="Inserir Data" 
+										icon="ui-icon-check"
+										action="#{contratoCobrancaMB.addDataVistoria}"
+										update="DataVistoriaPanel CheckListInformacoesAdicionais">
+									</p:commandButton>
+								</h:panelGroup>				
 								
 								<p:outputLabel for="dataVistoria"
 									value="Data Vistoria Imóvel: " styleClass="labelBold" />

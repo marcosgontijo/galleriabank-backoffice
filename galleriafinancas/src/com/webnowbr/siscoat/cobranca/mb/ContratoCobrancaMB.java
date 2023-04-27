@@ -2311,7 +2311,7 @@ public class ContratoCobrancaMB {
 			} else {
 				myResponse = getJsonSucesso(myURLConnection.getInputStream());
 				
-				if(!CommonsUtil.semValor(myResponse.get("logradouro").toString())) {
+				if(myResponse.has("logradouro")) {
 					this.objetoImovelCobranca.setEndereco(myResponse.get("logradouro").toString());
 				}			
 				this.objetoImovelCobranca.setBairro(myResponse.get("bairro").toString());
@@ -3964,43 +3964,45 @@ public class ContratoCobrancaMB {
 			
 			// Mensagem DATA VISTORIA
 			if (!CommonsUtil.semValor(this.objetoContratoCobranca.getDataPrevistaVistoria())) {
-				if (!this.objetoContratoCobranca.isEnviadoWhatsappVistoria()) {
-					TakeBlipMB tkblpMb = new TakeBlipMB();
-					PagadorRecebedor pagador;
-					pagador = this.objetoContratoCobranca.getPagador();
-					//pagador = new PagadorRecebedorDao().findById(32396);
-					tkblpMb.sendWhatsAppMessageVistoria(pagador,
-							this.objetoContratoCobranca.getDataPrevistaVistoria(), this.objetoContratoCobranca.getNomeVistoriador());
-					
-					ResponsavelDao rDao = new ResponsavelDao();
-					Responsavel rVistoria1 = new Responsavel();
-					Responsavel rVistoria2 = new Responsavel();
-					Responsavel rVistoria3 = new Responsavel();
-					Responsavel rVistoria4 = new Responsavel();
-					
-					// Tatiane
-					rVistoria1 = rDao.findById((long) 643);
-					tkblpMb.sendWhatsAppMessageVistoria(rVistoria1,
-							this.objetoContratoCobranca.getDataPrevistaVistoria(), this.objetoContratoCobranca.getNomeVistoriador());
-					
-					this.objetoContratoCobranca.setEnviadoWhatsappVistoria(true);
-					
-					// Mariana
-					rVistoria2 = rDao.findById((long) 1126);
-					tkblpMb.sendWhatsAppMessageVistoria(rVistoria2,
-							this.objetoContratoCobranca.getDataPrevistaVistoria(), this.objetoContratoCobranca.getNomeVistoriador());
-					
-					// Leticia
-					rVistoria3 = rDao.findById((long) 1127);
-					tkblpMb.sendWhatsAppMessageVistoria(rVistoria3,
-							this.objetoContratoCobranca.getDataPrevistaVistoria(), this.objetoContratoCobranca.getNomeVistoriador());
-					
-					// Alice
-					rVistoria4 = rDao.findById((long) 619);
-					tkblpMb.sendWhatsAppMessageVistoria(rVistoria4,
-							this.objetoContratoCobranca.getDataPrevistaVistoria(), this.objetoContratoCobranca.getNomeVistoriador());
-					
-					this.objetoContratoCobranca.setEnviadoWhatsappVistoria(true);
+				if (!CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoLaudo(), "Galache")) {
+					if (!this.objetoContratoCobranca.isEnviadoWhatsappVistoria()) {
+						TakeBlipMB tkblpMb = new TakeBlipMB();
+						PagadorRecebedor pagador;
+						pagador = this.objetoContratoCobranca.getPagador();
+						//pagador = new PagadorRecebedorDao().findById(32396);
+						tkblpMb.sendWhatsAppMessageVistoria(pagador,
+								this.objetoContratoCobranca.getDataPrevistaVistoria(), this.objetoContratoCobranca.getNomeVistoriador());
+						
+						ResponsavelDao rDao = new ResponsavelDao();
+						Responsavel rVistoria1 = new Responsavel();
+						Responsavel rVistoria2 = new Responsavel();
+						Responsavel rVistoria3 = new Responsavel();
+						Responsavel rVistoria4 = new Responsavel();
+						
+						// Tatiane
+						rVistoria1 = rDao.findById((long) 643);
+						tkblpMb.sendWhatsAppMessageVistoria(rVistoria1,
+								this.objetoContratoCobranca.getDataPrevistaVistoria(), this.objetoContratoCobranca.getNomeVistoriador());
+						
+						this.objetoContratoCobranca.setEnviadoWhatsappVistoria(true);
+						
+						// Mariana
+						rVistoria2 = rDao.findById((long) 1126);
+						tkblpMb.sendWhatsAppMessageVistoria(rVistoria2,
+								this.objetoContratoCobranca.getDataPrevistaVistoria(), this.objetoContratoCobranca.getNomeVistoriador());
+						
+						// Leticia
+						rVistoria3 = rDao.findById((long) 1127);
+						tkblpMb.sendWhatsAppMessageVistoria(rVistoria3,
+								this.objetoContratoCobranca.getDataPrevistaVistoria(), this.objetoContratoCobranca.getNomeVistoriador());
+						
+						// Alice
+						rVistoria4 = rDao.findById((long) 619);
+						tkblpMb.sendWhatsAppMessageVistoria(rVistoria4,
+								this.objetoContratoCobranca.getDataPrevistaVistoria(), this.objetoContratoCobranca.getNomeVistoriador());
+						
+						this.objetoContratoCobranca.setEnviadoWhatsappVistoria(true);
+					}
 				}
 			}
 			
@@ -8837,7 +8839,7 @@ public class ContratoCobrancaMB {
 			else if (this.objetoContratoCobranca.getCadastroAprovadoValor() != null) {
 				if (!this.objetoContratoCobranca.isAnaliseReprovada() && this.objetoContratoCobranca.isInicioAnalise() && 
 						this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
-						(!this.objetoContratoCobranca.isPedidoLaudo())){
+						(!this.objetoContratoCobranca.isPedidoLaudo() || !this.objetoContratoCobranca.isPagtoLaudoConfirmada())){
 					this.indexStepsStatusContrato = 2;
 				}
 				
@@ -8849,6 +8851,7 @@ public class ContratoCobrancaMB {
 						!this.objetoContratoCobranca.isAnaliseReprovada() && this.objetoContratoCobranca.isInicioAnalise() && 
 						this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
 						this.objetoContratoCobranca.isPedidoLaudo() && 
+						this.objetoContratoCobranca.isPagtoLaudoConfirmada() &&
 						(!this.objetoContratoCobranca.isPajurFavoravel() || !this.objetoContratoCobranca.isLaudoRecebido())) {
 					this.indexStepsStatusContrato = 3;
 				}
@@ -19161,6 +19164,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		}
 		
 		conjuge.setEstadocivil(pagador.getEstadocivil());
+		conjuge.setDataCasamento(pagador.getDataCasamento());
 		conjuge.setRegimeCasamento(pagador.getRegimeCasamento());
 		conjuge.setRegistroPactoAntenupcial(pagador.getRegistroPactoAntenupcial());
 		conjuge.setLivroPactoAntenupcial(pagador.getLivroPactoAntenupcial());

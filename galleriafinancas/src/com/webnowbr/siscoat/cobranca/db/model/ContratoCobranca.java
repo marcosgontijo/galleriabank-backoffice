@@ -644,6 +644,7 @@ public class ContratoCobranca implements Serializable {
 	private String processosQuitarComite;
 	private String obsValidacaoDocumentos;
 	private int carenciaComite;
+	private boolean operacaoFundo;
 	
 	private String empresaCertificado;
 	private Date dataSolicitacaoCertificado;
@@ -6262,7 +6263,13 @@ public class ContratoCobranca implements Serializable {
 	public void setListProcessos(Set<CcbProcessosJudiciais> listProcessos) {
 		this.listProcessos = listProcessos;
 	}
-	
-	
+
+	public boolean isOperacaoFundo() {
+		return operacaoFundo;
+	}
+
+	public void setOperacaoFundo(boolean operacaoFundo) {
+		this.operacaoFundo = operacaoFundo;
+	}
 	
 }

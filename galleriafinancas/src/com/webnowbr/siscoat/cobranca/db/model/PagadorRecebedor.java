@@ -48,6 +48,7 @@ public class PagadorRecebedor implements Serializable {
 	
 	private String estadocivil;
 	
+	private Date dataCasamento;
 	private String regimeCasamento; 
 	private String registroPactoAntenupcial;
 	private String livroPactoAntenupcial;
@@ -2071,5 +2072,13 @@ public class PagadorRecebedor implements Serializable {
 
 	public void setDocumentosDocket(List<DocumentosPagadorDocket> documentosDocket) {
 		this.documentosDocket = documentosDocket;
+	}
+
+	public Date getDataCasamento() {
+		return dataCasamento;
+	}
+
+	public void setDataCasamento(Date dataCasamento) {
+		this.dataCasamento = dataCasamento;
 	}
 }
