@@ -514,7 +514,8 @@ public class TakeBlipMB {
 					jsonWhatsAppParameter.put("text", nomeDoCliente);
 					jsonWhatsAppParameters.put(jsonWhatsAppParameter);
 				} else if(nomeTemplateMensagem.equals("aprovacao_credito_compass")
-						|| nomeTemplateMensagem.equals("aprovacao_credito_galache")) {
+						|| nomeTemplateMensagem.equals("aprovacao_credito_galache")
+						|| nomeTemplateMensagem.equals("aprovacao_credito_compass_v2")) {
 					
 					jsonWhatsAppParameters = new JSONArray();
 					

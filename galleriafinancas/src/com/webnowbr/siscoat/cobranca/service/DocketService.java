@@ -113,6 +113,7 @@ public class DocketService {
 				if (engine.getContrato() != null && engine.getContrato().getId() > 0 )
 				cDao.merge(engine.getContrato());
 				
+				System.out.println("NumeroContrato Erro EngineDocket:" + engine.getContrato().getNumeroContrato() + ", "  + engine.getContrato().getId());
 				if (engine.getId() <= 0) {
 					engineDao.create(engine);
 				}
