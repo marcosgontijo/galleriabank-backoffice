@@ -16,6 +16,7 @@ public class CcbProcessosJudiciais implements Serializable{
 	private ContasPagar contaPagar;
 	private ContratoCobranca contrato;
 	private String quitar = "";
+	private boolean selecionadoComite = false;
 	
 	public CcbProcessosJudiciais(BigDecimal valor, String numero) {
 		contaPagar = new ContasPagar();
@@ -74,5 +75,14 @@ public class CcbProcessosJudiciais implements Serializable{
 	public void setContrato(ContratoCobranca contrato) {
 		this.contrato = contrato;
 	}
+
+	public boolean isSelecionadoComite() {
+		return selecionadoComite;
+	}
+
+	public void setSelecionadoComite(boolean selecionadoComite) {
+		this.selecionadoComite = selecionadoComite;
+	}
+
 	
 }
