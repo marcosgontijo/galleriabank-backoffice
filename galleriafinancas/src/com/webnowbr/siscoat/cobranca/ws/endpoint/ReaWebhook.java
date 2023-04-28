@@ -62,16 +62,24 @@ public class ReaWebhook {
 			if (reaWebhookRetorno.getProprietarioAtual() != null)
 				cadastrarPessoRetornoRea(reaWebhookRetorno.getProprietarioAtual(), documentoAnaliseDao,
 						documentoAnalise.getContratoCobranca(), "Proprietario Atual");
-			if (reaWebhookRetorno.getProprietarioAnterior() != null) {
-				Date dataVenda = DateUtil
-						.getDecodeDateExtenso(reaWebhookRetorno.getProprietarioAnterior().getConteudo().getTexto());
+			if (!CommonsUtil.semValor( reaWebhookRetorno.getProprietariosAnterior() != null)) {
+				Date dataVendaAnterior = DateUtil.getDataHoje();
+				for (ReaWebhookRetornoBloco proprietarioAnterior : reaWebhookRetorno.getProprietariosAnterior()) {
+					Date dataVenda = DateUtil
+							.getDecodeDateExtenso(proprietarioAnterior.getConteudo().getTexto());
+					
+					
 
-				if (CommonsUtil.semValor(dataVenda) || DateUtil.isAfterDate(
-						DateUtil.adicionarPeriodo(DateUtil.getDataHoje(), -2, Calendar.YEAR),dataVenda)) {
-					cadastrarPessoRetornoRea(reaWebhookRetorno.getProprietarioAnterior(), documentoAnaliseDao,
-							documentoAnalise.getContratoCobranca(),
-							"Proprietario Anterior" + (CommonsUtil.semValor(dataVenda) ? " Data venda não localizada"
-									: " Data venda:" + CommonsUtil.formataData(dataVenda, "dd/MM/yyyy")));
+					if (!CommonsUtil.semValor(dataVendaAnterior) || CommonsUtil.semValor(dataVenda) || DateUtil.isAfterDate(
+							DateUtil.adicionarPeriodo(DateUtil.getFirstDayOfMonth( DateUtil.getDataHoje() ), -2, Calendar.YEAR), dataVenda)) {
+						dataVendaAnterior = dataVenda;
+						cadastrarPessoRetornoRea(proprietarioAnterior, documentoAnaliseDao,
+								documentoAnalise.getContratoCobranca(),
+								"Proprietario Anterior"
+										+ (CommonsUtil.semValor(dataVenda) ? " Data venda não localizada"
+												: " Data venda:" + CommonsUtil.formataData(dataVenda, "dd/MM/yyyy")));
+					}
+
 				}
 			}
 

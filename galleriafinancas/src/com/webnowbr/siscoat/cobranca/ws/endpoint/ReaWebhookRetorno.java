@@ -1,9 +1,9 @@
 package com.webnowbr.siscoat.cobranca.ws.endpoint;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -26,7 +26,7 @@ public class ReaWebhookRetorno {
 			"descritivo do imóvel");
 
 	ReaWebhookRetornoBloco proprietarioAtual = null;
-	ReaWebhookRetornoBloco proprietarioAnterior = null;
+	List<ReaWebhookRetornoBloco> proprietariosAnterior = new ArrayList<>();
 
 	public void buscaProprietarios() {
 		List<ReaWebhookRetornoBloco> blocosComProprietarios = blocos.stream()
@@ -39,11 +39,10 @@ public class ReaWebhookRetorno {
 				.collect(Collectors.toList());
 
 		for (ReaWebhookRetornoBloco reaWebhookRetornoBloco : blocosComProprietarios) {
-			if (proprietarioAtual == null) {
+			if (proprietarioAtual == null && reaWebhookRetornoBloco.relacionadoAoProprietarioAtual) {
 				proprietarioAtual = reaWebhookRetornoBloco;
-			} else if (proprietarioAnterior == null) {
-				proprietarioAnterior = reaWebhookRetornoBloco;
-				break;
+			} else if ( !reaWebhookRetornoBloco.relacionadoAoProprietarioAtual) {
+				proprietariosAnterior.add(reaWebhookRetornoBloco);
 			}
 		}
 	}
@@ -154,12 +153,13 @@ public class ReaWebhookRetorno {
 		this.proprietarioAtual = proprietarioAtual;
 	}
 
-	public ReaWebhookRetornoBloco getProprietarioAnterior() {
-		return proprietarioAnterior;
+	public List<ReaWebhookRetornoBloco> getProprietariosAnterior() {
+		return proprietariosAnterior;
 	}
 
-	public void setProprietarioAnterior(ReaWebhookRetornoBloco proprietarioAnterior) {
-		this.proprietarioAnterior = proprietarioAnterior;
+	public void setProprietariosAnterior(List<ReaWebhookRetornoBloco> proprietariosAnterior) {
+		this.proprietariosAnterior = proprietariosAnterior;
 	}
+
 
 }

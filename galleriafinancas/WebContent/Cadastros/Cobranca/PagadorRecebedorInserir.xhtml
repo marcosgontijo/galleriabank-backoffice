@@ -291,6 +291,17 @@
 								<f:selectItem itemValue="SEPARADO" itemLabel="SEPARADO" />
 								<p:ajax update="PanelCasado" event="valueChange" />
 							</p:selectOneMenu>
+							
+							<p:outputLabel for="dataCasamento"
+								value="Data de Casamento: "
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+							<p:inputMask id="dataCasamento"
+								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dataCasamento}"
+								mask="99/99/9999" label="Data de Casamento"
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</p:inputMask>
+							
 							<p:outputLabel for="regimeCasamentoEmitente" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"
 								value="Regime do Casamento: " styleClass="labelBold"
 								style="font-weight: bold; font-size: 18px;" />

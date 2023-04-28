@@ -331,6 +331,7 @@ public class PagadorRecebedorMB {
 		}
 		
 		conjuge.setEstadocivil(pagador.getEstadocivil());
+		conjuge.setDataCasamento(pagador.getDataCasamento());
 		conjuge.setRegimeCasamento(pagador.getRegimeCasamento());
 		conjuge.setRegistroPactoAntenupcial(pagador.getRegistroPactoAntenupcial());
 		conjuge.setLivroPactoAntenupcial(pagador.getLivroPactoAntenupcial());

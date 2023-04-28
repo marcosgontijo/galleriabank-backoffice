@@ -509,18 +509,27 @@ public class BRLTrustMB {
 		cell.setCellValue("IF (Termo Cessão)");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(18);
-		cell.setCellValue("Parcela");
+		cell.setCellValue("Matrícula");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(19);
-		cell.setCellValue("Data Vencimento");
+		cell.setCellValue("Cartório");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(20);
-		cell.setCellValue("Valor");
+		cell.setCellValue("Endereço");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(21);
-		cell.setCellValue("Data Pagto.");
+		cell.setCellValue("Parcela");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(22);
+		cell.setCellValue("Data Vencimento");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(23);
+		cell.setCellValue("Valor");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(24);
+		cell.setCellValue("Data Pagto.");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(25);
 		cell.setCellValue("Valor Pago");
 		cell.setCellStyle(cell_style);
 		
@@ -712,6 +721,31 @@ public class BRLTrustMB {
 				cell.setCellValue(record.getTermoCessao());
 			}
 
+			// Matricula
+			cell = row.createCell(18);
+			cell.setCellStyle(cell_style);
+			if (record.getImovel() != null && !record.getImovel().getNumeroMatricula().equals("")) {
+				cell.setCellValue(record.getImovel().getNumeroMatricula());
+			}
+			
+			// cartorio
+			cell = row.createCell(19);
+			cell.setCellStyle(cell_style);
+			if (record.getImovel() != null && !record.getImovel().getCartorio().equals("")) {
+				cell.setCellValue(record.getImovel().getCartorio());
+			}
+			
+			// endereço
+			cell = row.createCell(20);
+			cell.setCellStyle(cell_style);
+			if (record.getImovel() != null && !record.getImovel().getEndereco().equals("") && !record.getImovel().getComplemento().equals("")
+					 && !record.getImovel().getBairro().equals("") && !record.getImovel().getCidade().equals("") && !record.getImovel().getEstado().equals("")
+					 && !record.getImovel().getCep().equals("")) {
+				cell.setCellValue(record.getImovel().getEndereco() + " - " + record.getImovel().getComplemento() + 
+						record.getImovel().getBairro() + " - " + record.getImovel().getCidade() + "/" + record.getImovel().getEstado() + " - " + record.getImovel().getCep());
+			}
+			
+
 			int parcelaCount = 0;
 			for (ContratoCobrancaDetalhes parcelas : record.getListContratoCobrancaDetalhes()) {
 				if (parcelas.getDataVencimento().after(this.dataValorPresente) && !parcelas.isParcelaPaga()) {
@@ -833,7 +867,7 @@ public class BRLTrustMB {
 					}
 	
 					// Parcela
-					cell = row.createCell(18);
+					cell = row.createCell(21);
 					/*
 					 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_String); }
 					 * else { if (parcelas.isParcelaVencida()) {
@@ -844,7 +878,7 @@ public class BRLTrustMB {
 					cell.setCellValue(parcelas.getNumeroParcela());
 	
 					// Data Vencimento
-					cell = row.createCell(19);
+					cell = row.createCell(22);
 					/*
 					 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_Date); }
 					 * else { if (parcelas.isParcelaVencida()) {
@@ -855,7 +889,7 @@ public class BRLTrustMB {
 					cell.setCellValue(parcelas.getDataVencimento());
 	
 					// Valor Parcela
-					cell = row.createCell(20);
+					cell = row.createCell(23);
 					/*
 					 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_Number); }
 					 * else { if (parcelas.isParcelaVencida()) {
@@ -883,7 +917,7 @@ public class BRLTrustMB {
 					}
 	
 					// Data pagto
-					cell = row.createCell(21);
+					cell = row.createCell(24);
 					/*
 					 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_Date); }
 					 * else { if (parcelas.isParcelaVencida()) {
@@ -894,7 +928,7 @@ public class BRLTrustMB {
 					cell.setCellValue(parcelas.getDataUltimoPagamento());
 	
 					// Valor Pago
-					cell = row.createCell(22);
+					cell = row.createCell(25);
 					/*
 					 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_Number); }
 					 * else { if (parcelas.isParcelaVencida()) {
@@ -930,6 +964,9 @@ public class BRLTrustMB {
 				sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 15, 15));
 				sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 16, 16));
 				sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 17, 17));
+				sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 18, 18));
+				sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 19, 19));
+				sheet.addMergedRegion(new CellRangeAddress(linhaInicioContrato, countLine, 20, 20));
 			}
 
 			// pula 1 linha
@@ -981,6 +1018,12 @@ public class BRLTrustMB {
 			cell = row.createCell(21);
 			cell.setCellStyle(cell_style);
 			cell = row.createCell(22);
+			cell.setCellStyle(cell_style);
+			cell = row.createCell(23);
+			cell.setCellStyle(cell_style);
+			cell = row.createCell(24);
+			cell.setCellStyle(cell_style);
+			cell = row.createCell(25);
 			cell.setCellStyle(cell_style);
 			
 			// Style para cabeçalho

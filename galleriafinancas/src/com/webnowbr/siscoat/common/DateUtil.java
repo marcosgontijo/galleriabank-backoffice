@@ -826,31 +826,51 @@ public final class DateUtil {
 	 */
 	public static Date getDecodeDateExtenso(String texto) {
 		// 30 de outubro de 2014
-		Pattern pattern = Pattern.compile("\\d{1,2} de [a-z]+ de \\d{4}");
+		// Pattern pattern = Pattern.compile("\\d{[1,2} de [a-z]+ de \\d{4}");
+		String regex = "\\b\\d{2}\\s+de\\s+(janeiro|fevereiro|março|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro)\\s+de\\s+\\d{4}\\b";
+		Pattern pattern = Pattern.compile(regex);
 		Matcher matcher = pattern.matcher(texto);
 		Date dataVenda = null;
+		Date dataVendaOcorrencia = null;
 		String date = null;
 
-		if (matcher.find()) {
+		while (matcher.find()) {
 			date = matcher.group();
-		} else {
-			//
-			pattern = Pattern.compile("\\d{1,2} de [a-z]+ de [0-9].\\d{3}");
-			matcher = pattern.matcher(texto);
-			if (matcher.find()) {
-				date = matcher.group();
-				date = date.replace(".","");
-			} 
-
-		}
-		if (date != null) {
 			String[] splitDate = date.split(" de ");
-
 			String sDate = splitDate[0] + "/" + getDecodeMesExtenso(splitDate[1]) + "/" + splitDate[2];
+
 			dataVenda = CommonsUtil.dateValue(sDate, "dd/MM/yyyy");
+			if (dataVendaOcorrencia == null || DateUtil.isAfterDate( dataVendaOcorrencia, dataVenda)) {
+				dataVendaOcorrencia = dataVenda;
+			}
 		}
 
-		return dataVenda;
+		if (date == null) {
+			//
+			// pattern = Pattern.compile("\\d{1,2} de [a-z]+ de [0-9].\\d{3}");
+			String regex2 = "\\b\\d{2}\\s+de\\s+(janeiro|fevereiro|março|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro)\\s+de\\s+[0-9].\\\\d{3}\\b";
+			pattern = Pattern.compile(regex2);
+			matcher = pattern.matcher(texto);
+			while (matcher.find()) {
+				date = matcher.group();
+				String[] splitDate = date.split(" de ");
+				String sDate = splitDate[0] + "/" + getDecodeMesExtenso(splitDate[1]) + "/" + splitDate[2];
+
+				dataVenda = CommonsUtil.dateValue(sDate, "dd/MM/yyyy");
+				if (dataVendaOcorrencia != null && DateUtil.isAfterDate( dataVendaOcorrencia, dataVenda)) {
+					dataVendaOcorrencia = dataVenda;
+				}
+			}
+
+		}
+//		if (date != null) {
+//			String[] splitDate = date.split(" de ");
+//
+//			String sDate = splitDate[0] + "/" + getDecodeMesExtenso(splitDate[1]) + "/" + splitDate[2];
+//			dataVenda = CommonsUtil.dateValue(sDate, "dd/MM/yyyy");
+//		}
+
+		return dataVendaOcorrencia;
 
 	}
 	

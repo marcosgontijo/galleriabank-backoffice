@@ -1506,7 +1506,17 @@
 							<p:outputLabel id="processosQuitarComite" rows="10"
 								cols="48" maxlength="3000" onblur="" style="width: 312px; FONT-SIZE: 10pt; white-space: pre-wrap;"
 								counterTemplate="{0} characters remaining." autoResize="false"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.processosQuitarComite}" />
+								value="#{contratoCobrancaMB.objetoContratoCobranca.processosQuitarComite}" />						
+								
+							<p:outputLabel value="Operação vai pro Fundo? " 
+								styleClass="labelBold" />
+							<shiro:hasAnyRoles name="ROOT, COMITEEDITAR">
+								<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.operacaoFundo}" />
+							</shiro:lacksRole>
+							<shiro:lacksRole name="ROOT">
+								<p:outputLabel value="Sim" rendered="#{contratoCobrancaMB.objetoContratoCobranca.operacaoFundo}" styleClass="labelBold" />
+								<p:outputLabel value="Não" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.operacaoFundo}" styleClass="labelBold" />
+							</shiro:lacksRole>
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
@@ -1739,7 +1749,8 @@
 								<f:selectItem itemValue="Compass" itemLabel="Compass" />
 								<f:selectItem itemValue="Galache" itemLabel="Galache" />
 								<f:selectItem itemValue="Outro" itemLabel="Outro" />
-								<p:ajax event="valueChange" update=":form:Status" listener="#{contratoCobrancaMB.changeAvaliadorLaudo}"/> 											
+								<p:ajax event="valueChange" update=":form:Status" 
+								listener="#{contratoCobrancaMB.changeAvaliadorLaudo}"/> 											
 							</p:selectOneMenu>	
 						</h:panelGrid>
 					</p:panel>
@@ -2545,6 +2556,13 @@
 							<h:panelGroup
 								rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO' or contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'UNIÃO ESTÁVEL'}">
 								<h:panelGrid columns="2">
+								
+									<p:outputLabel for="dataCasamento"
+										value="Data de Casamento: " />
+									<p:inputMask id="dataCasamento"
+										value="#{contratoCobrancaMB.objetoPagadorRecebedor.dataCasamento}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</p:inputMask>
 								
 									<p:outputLabel for="regimeCasamento"
 										value="Regime do Casamento: " styleClass="labelBold"

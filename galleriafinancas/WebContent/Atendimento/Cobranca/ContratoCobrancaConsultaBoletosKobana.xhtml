@@ -252,6 +252,10 @@
 						</p:column>		
 						<p:column style="text-align: center;"
 							headerText="Valor da Parcela">
+							<h:outputText value="#{parcelasSelecionadas.vlrParcela}" converter="bigDecimalConverter" />
+						</p:column>	
+						<p:column style="text-align: center;"
+							headerText="Valor Pago">
 							<h:outputText value="#{parcelasSelecionadas.paidAmount}" converter="bigDecimalConverter" />
 						</p:column>	
 						<p:column style="text-align: center;"
