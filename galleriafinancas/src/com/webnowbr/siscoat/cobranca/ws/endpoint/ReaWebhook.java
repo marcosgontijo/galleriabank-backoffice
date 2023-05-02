@@ -62,13 +62,17 @@ public class ReaWebhook {
 			if (reaWebhookRetorno.getProprietarioAtual() != null)
 				cadastrarPessoRetornoRea(reaWebhookRetorno.getProprietarioAtual(), documentoAnaliseDao,
 						documentoAnalise.getContratoCobranca(), "Proprietario Atual");
+			Date dataVendaAtual = DateUtil
+					.getDecodeDateExtenso(reaWebhookRetorno.getProprietarioAtual().getConteudo().getTexto());
+			
+			if (!CommonsUtil.semValor(dataVendaAtual) && DateUtil.isAfterDate(
+					DateUtil.adicionarPeriodo(DateUtil.getFirstDayOfMonth( DateUtil.getDataHoje() ), -2, Calendar.YEAR), dataVendaAtual)) {
+				
 			if (!CommonsUtil.semValor( reaWebhookRetorno.getProprietariosAnterior() != null)) {
 				Date dataVendaAnterior = DateUtil.getDataHoje();
 				for (ReaWebhookRetornoBloco proprietarioAnterior : reaWebhookRetorno.getProprietariosAnterior()) {
 					Date dataVenda = DateUtil
 							.getDecodeDateExtenso(proprietarioAnterior.getConteudo().getTexto());
-					
-					
 
 					if (!CommonsUtil.semValor(dataVendaAnterior) || CommonsUtil.semValor(dataVenda) || DateUtil.isAfterDate(
 							DateUtil.adicionarPeriodo(DateUtil.getFirstDayOfMonth( DateUtil.getDataHoje() ), -2, Calendar.YEAR), dataVenda)) {
@@ -81,6 +85,8 @@ public class ReaWebhook {
 					}
 
 				}
+			}
+
 			}
 
 			return Response.status(200).entity("Processado").build();
