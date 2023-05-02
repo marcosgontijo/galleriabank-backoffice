@@ -78,9 +78,11 @@ public class BalancoPatrimonialMB {
 		//VALOR DEFAULT NO DAO - VALOR DO SISTEMA
 		this.objetoBalanco.setDireitosCreditorios(balancopatrimonialDao.consultaDireitosCreditorios());
 		// VALOR DEFAULT ÚLTIMO BALANÇO
-		this.objetoBalanco.setDepositosjudiciais(ultimoBalanco.getDepositosjudiciais());
-		this.objetoBalanco.setInvestOperantigas(ultimoBalanco.getInvestOperantigas());
-		this.objetoBalanco.setCapitalSocial(ultimoBalanco.getCapitalSocial());
+		if (!CommonsUtil.semValor(ultimoBalanco)) {
+			this.objetoBalanco.setDepositosjudiciais(ultimoBalanco.getDepositosjudiciais());
+			this.objetoBalanco.setInvestOperantigas(ultimoBalanco.getInvestOperantigas());
+			this.objetoBalanco.setCapitalSocial(ultimoBalanco.getCapitalSocial());
+		}
 		this.objetoBalanco.setProvisaoLiquidAntecipada(balancopatrimonialDao.consultaContasPagar());
 		this.objetoBalanco.setCustoPonderado(balancopatrimonialDao.somaParcelaX());
 		atualizaParcela();
