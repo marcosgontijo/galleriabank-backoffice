@@ -43,20 +43,21 @@ public class SerasaMB {
 		if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa())) {
 			CredNet credNet = GsonUtil.fromJson(documentoAnalise.getRetornoSerasa(), CredNet.class);
 
-			if (CommonsUtil.semValor(documentoAnalise.getPagador().getDtNascimento()))
-				documentoAnalise.getPagador().setDtNascimento(credNet.getPessoa().getDataNascimentoFundacao());
+			if (!CommonsUtil.semValor(documentoAnalise.getPagador())) {
+				if (CommonsUtil.semValor(documentoAnalise.getPagador().getDtNascimento()))
+					documentoAnalise.getPagador().setDtNascimento(credNet.getPessoa().getDataNascimentoFundacao());
 
-			if (CommonsUtil.semValor(documentoAnalise.getPagador().getNomeMae()))
-				documentoAnalise.getPagador().setNomeMae(credNet.getPessoa().getNomeMae());
-			
+				if (CommonsUtil.semValor(documentoAnalise.getPagador().getNomeMae()))
+					documentoAnalise.getPagador().setNomeMae(credNet.getPessoa().getNomeMae());
+			}
+
 			if (!CommonsUtil.semValor(credNet.getParticipacoes())) {
 
-
 				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
-				
+
 				for (PessoaParticipacao pessoaParticipacao : credNet.getParticipacoes()) {
 
-					cadastrarPessoRetornoCredNet(pessoaParticipacao, documentoAnaliseDao,pagadorRecebedorService,
+					cadastrarPessoRetornoCredNet(pessoaParticipacao, documentoAnaliseDao, pagadorRecebedorService,
 							documentoAnalise.getContratoCobranca(),
 							"Empresa Vinculada ao " + documentoAnalise.getMotivoAnalise());
 				}
