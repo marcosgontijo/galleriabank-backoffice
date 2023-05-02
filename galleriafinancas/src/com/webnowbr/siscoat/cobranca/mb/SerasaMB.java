@@ -36,7 +36,10 @@ public class SerasaMB {
 	}
 
 	public void requestSerasa(DocumentoAnalise documentoAnalise) {
-		serasaService.serasaCriarConsulta(documentoAnalise);
+
+		if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
+			serasaService.serasaCriarConsulta(documentoAnalise);
+		}
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 		documentoAnalise = documentoAnaliseDao.findById(documentoAnalise.getId());
 
