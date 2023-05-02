@@ -673,7 +673,7 @@ public class CcbMB {
 	public void populateSelectedContratoCobranca() {
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 		ContratoCobranca contrato = new ContratoCobranca();
-		contrato = cDao.findById(this.getObjetoContratoCobranca().getId());
+		contrato = cDao.findById(objetoContratoCobranca.getId());
 		if(CommonsUtil.semValor(this.objetoCcb.getObjetoContratoCobranca())){
 			this.objetoCcb.setObjetoContratoCobranca(contrato);
 			this.objetoCcb.setNumeroOperacao(contrato.getNumeroContrato());
@@ -1533,6 +1533,7 @@ public class CcbMB {
 		}
 		
 		conjuge.setEstadocivil(pagador.getEstadocivil());
+		conjuge.setDataCasamento(pagador.getDataCasamento());
 		conjuge.setRegimeCasamento(pagador.getRegimeCasamento());
 		conjuge.setRegistroPactoAntenupcial(pagador.getRegistroPactoAntenupcial());
 		conjuge.setLivroPactoAntenupcial(pagador.getLivroPactoAntenupcial());
@@ -7059,6 +7060,10 @@ public class CcbMB {
 			} else {
 				estadoCivilStr = "casado";
 			}		
+			if(!CommonsUtil.semValor(pessoa.getDataCasamento())) {
+				estadoCivilStr = estadoCivilStr + " em " + CommonsUtil.formataData(pessoa.getDataCasamento(), "dd/MM/yyyy");
+			}
+			
 			if(!CommonsUtil.mesmoValor(pessoa.getRegimeCasamento(), "parcial de bens")) {
 				conjugeStr = ", sob o regime " + pessoa.getRegimeCasamento() + ", na vigência da lei 6.515/77 (" + 
 					pessoa.getNomeConjuge() + " " + pessoa.getCpfConjuge() + "), conforme pacto antenupcial registrado no "+
@@ -9751,7 +9756,7 @@ public class CcbMB {
 		simulador.calcular();
 		
 		BigDecimal jurosAoAno = BigDecimal.ZERO;
-		jurosAoAno = BigDecimal.ONE.add((simulador.getTaxaJuros().divide(BigDecimal.valueOf(100), MathContext.DECIMAL128)));
+		jurosAoAno = BigDecimal.ONE.add((this.objetoCcb.getTaxaDeJurosMes().divide(BigDecimal.valueOf(100), MathContext.DECIMAL128)));
 		jurosAoAno = CommonsUtil.bigDecimalValue(Math.pow(CommonsUtil.doubleValue(jurosAoAno), 12));
 		jurosAoAno = jurosAoAno.subtract(BigDecimal.ONE);
 		jurosAoAno = jurosAoAno.multiply(BigDecimal.valueOf(100), MathContext.DECIMAL128);

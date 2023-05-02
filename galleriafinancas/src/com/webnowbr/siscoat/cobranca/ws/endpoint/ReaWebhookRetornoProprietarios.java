@@ -14,6 +14,9 @@ public class ReaWebhookRetornoProprietarios {
 
 		List<ReaWebhookRetornoProprietario> result = new ArrayList<>();
 		ReaWebhookRetornoProprietario reaWebhookRetornoProprietario = null;
+		if ( CommonsUtil.semValor(dados) || !CommonsUtil.mesmoValor( dados.get(0).getConstante(), "NOME_PROPRIETARIO"))
+			return result;
+		
 		for (ReaWebhookRetornoDados reaWebhookRetornoDados : dados) {
 			if (CommonsUtil.mesmoValor(reaWebhookRetornoDados.getConstante(), "NOME_PROPRIETARIO")) {
 				if (reaWebhookRetornoProprietario != null && reaWebhookRetornoProprietario.getCpf() == null

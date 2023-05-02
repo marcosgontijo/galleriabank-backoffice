@@ -289,6 +289,7 @@ public class ContratoCobrancaMB {
 	ContasPagar contasPagarSelecionada;
 	ContasPagar contasPagarArquivos;
 	CcbProcessosJudiciais processoSelecionado;
+	private boolean mostrarTodosProcessos;
 	
 	private boolean addSegurador;
 	private boolean addSocio;
@@ -867,6 +868,7 @@ public class ContratoCobrancaMB {
 		this.addSegurador = false;
 		this.addSocio = false;
 		this.addPagador = false;
+		this.mostrarTodosProcessos = false;
 		
 		this.contasPagarSelecionada = new ContasPagar();
 		this.contasPagarSelecionada.setPagadorRecebedor(new PagadorRecebedor());
@@ -1550,6 +1552,7 @@ public class ContratoCobrancaMB {
 		this.addSegurador = false;
 		this.addSocio = false;
 		this.addPagador = false;		
+		this.mostrarTodosProcessos = false;
 		
 		this.contasPagarSelecionada = new ContasPagar();
 		this.contasPagarSelecionada.setPagadorRecebedor(new PagadorRecebedor());
@@ -1644,6 +1647,7 @@ public class ContratoCobrancaMB {
 		this.addSegurador= false;
 		this.addSocio = false;
 		this.addPagador = false;
+		this.mostrarTodosProcessos = false;
 		
 		this.contasPagarSelecionada = new ContasPagar();
 		this.contasPagarSelecionada.setPagadorRecebedor(new PagadorRecebedor());
@@ -2196,6 +2200,9 @@ public class ContratoCobrancaMB {
 	 */
 	public void getEnderecoByViaNet() {
 		try {
+			if(CommonsUtil.semValor(this.objetoPagadorRecebedor.getCep())) {
+				return;
+			}
 			String inputCep = this.objetoPagadorRecebedor.getCep().replace("-", "");
 			FacesContext context = FacesContext.getCurrentInstance();
 
@@ -2308,7 +2315,7 @@ public class ContratoCobrancaMB {
 			} else {
 				myResponse = getJsonSucesso(myURLConnection.getInputStream());
 				
-				if(!CommonsUtil.semValor(myResponse.get("logradouro").toString())) {
+				if(myResponse.has("logradouro")) {
 					this.objetoImovelCobranca.setEndereco(myResponse.get("logradouro").toString());
 				}			
 				this.objetoImovelCobranca.setBairro(myResponse.get("bairro").toString());
@@ -2335,7 +2342,10 @@ public class ContratoCobrancaMB {
 
 	public void getEnderecoByViaNetConjuge() {
 		try {
-			String inputCep = this.objetoPagadorRecebedor.getCep().replace("-", "");
+			if(CommonsUtil.semValor(this.objetoPagadorRecebedor.getCepConjuge())) {
+				return;
+			}
+			String inputCep = this.objetoPagadorRecebedor.getCepConjuge().replace("-", "");
 			FacesContext context = FacesContext.getCurrentInstance();
 
 			int HTTP_COD_SUCESSO = 200;
@@ -3163,6 +3173,13 @@ public class ContratoCobrancaMB {
 			if (!this.objetoContratoCobranca.isAgEnvioCartorio() && this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() <= 0 && !CommonsUtil.semValor(this.objetoContratoCobranca.getValorCCB())) {				
 				geraContratoCobrancaDetalhes(contratoCobrancaDao);			
 			}
+			
+			ContasPagarDao cpDao = new ContasPagarDao();
+			for (CcbProcessosJudiciais processo : objetoContratoCobranca.getListProcessos()) {
+				if(processo.getContaPagar().getId() <= 0) {
+					cpDao.create(processo.getContaPagar());
+				}
+			}
 
 			contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
@@ -3794,6 +3811,13 @@ public class ContratoCobrancaMB {
 				}
 				*/
 				
+				ContasPagarDao cpDao = new ContasPagarDao();
+				for (CcbProcessosJudiciais processo : objetoContratoCobranca.getListProcessos()) {
+					if(processo.getContaPagar().getId() <= 0) {
+						cpDao.create(processo.getContaPagar());
+					}
+				}
+				
 				updateCheckList();
 
 				contratoCobrancaDao.merge(this.objetoContratoCobranca);
@@ -3958,43 +3982,45 @@ public class ContratoCobrancaMB {
 			
 			// Mensagem DATA VISTORIA
 			if (!CommonsUtil.semValor(this.objetoContratoCobranca.getDataPrevistaVistoria())) {
-				if (!this.objetoContratoCobranca.isEnviadoWhatsappVistoria()) {
-					TakeBlipMB tkblpMb = new TakeBlipMB();
-					PagadorRecebedor pagador;
-					pagador = this.objetoContratoCobranca.getPagador();
-					//pagador = new PagadorRecebedorDao().findById(32396);
-					tkblpMb.sendWhatsAppMessageVistoria(pagador,
-							this.objetoContratoCobranca.getDataPrevistaVistoria(), this.objetoContratoCobranca.getNomeVistoriador());
-					
-					ResponsavelDao rDao = new ResponsavelDao();
-					Responsavel rVistoria1 = new Responsavel();
-					Responsavel rVistoria2 = new Responsavel();
-					Responsavel rVistoria3 = new Responsavel();
-					Responsavel rVistoria4 = new Responsavel();
-					
-					// Tatiane
-					rVistoria1 = rDao.findById((long) 643);
-					tkblpMb.sendWhatsAppMessageVistoria(rVistoria1,
-							this.objetoContratoCobranca.getDataPrevistaVistoria(), this.objetoContratoCobranca.getNomeVistoriador());
-					
-					this.objetoContratoCobranca.setEnviadoWhatsappVistoria(true);
-					
-					// Mariana
-					rVistoria2 = rDao.findById((long) 1126);
-					tkblpMb.sendWhatsAppMessageVistoria(rVistoria2,
-							this.objetoContratoCobranca.getDataPrevistaVistoria(), this.objetoContratoCobranca.getNomeVistoriador());
-					
-					// Leticia
-					rVistoria3 = rDao.findById((long) 1127);
-					tkblpMb.sendWhatsAppMessageVistoria(rVistoria3,
-							this.objetoContratoCobranca.getDataPrevistaVistoria(), this.objetoContratoCobranca.getNomeVistoriador());
-					
-					// Alice
-					rVistoria4 = rDao.findById((long) 619);
-					tkblpMb.sendWhatsAppMessageVistoria(rVistoria4,
-							this.objetoContratoCobranca.getDataPrevistaVistoria(), this.objetoContratoCobranca.getNomeVistoriador());
-					
-					this.objetoContratoCobranca.setEnviadoWhatsappVistoria(true);
+				if (!CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoLaudo(), "Galache")) {
+					if (!this.objetoContratoCobranca.isEnviadoWhatsappVistoria()) {
+						TakeBlipMB tkblpMb = new TakeBlipMB();
+						PagadorRecebedor pagador;
+						pagador = this.objetoContratoCobranca.getPagador();
+						//pagador = new PagadorRecebedorDao().findById(32396);
+						tkblpMb.sendWhatsAppMessageVistoria(pagador,
+								this.objetoContratoCobranca.getDataPrevistaVistoria(), this.objetoContratoCobranca.getNomeVistoriador());
+						
+						ResponsavelDao rDao = new ResponsavelDao();
+						Responsavel rVistoria1 = new Responsavel();
+						Responsavel rVistoria2 = new Responsavel();
+						Responsavel rVistoria3 = new Responsavel();
+						Responsavel rVistoria4 = new Responsavel();
+						
+						// Tatiane
+						rVistoria1 = rDao.findById((long) 643);
+						tkblpMb.sendWhatsAppMessageVistoria(rVistoria1,
+								this.objetoContratoCobranca.getDataPrevistaVistoria(), this.objetoContratoCobranca.getNomeVistoriador());
+						
+						this.objetoContratoCobranca.setEnviadoWhatsappVistoria(true);
+						
+						// Mariana
+						rVistoria2 = rDao.findById((long) 1126);
+						tkblpMb.sendWhatsAppMessageVistoria(rVistoria2,
+								this.objetoContratoCobranca.getDataPrevistaVistoria(), this.objetoContratoCobranca.getNomeVistoriador());
+						
+						// Leticia
+						rVistoria3 = rDao.findById((long) 1127);
+						tkblpMb.sendWhatsAppMessageVistoria(rVistoria3,
+								this.objetoContratoCobranca.getDataPrevistaVistoria(), this.objetoContratoCobranca.getNomeVistoriador());
+						
+						// Alice
+						rVistoria4 = rDao.findById((long) 619);
+						tkblpMb.sendWhatsAppMessageVistoria(rVistoria4,
+								this.objetoContratoCobranca.getDataPrevistaVistoria(), this.objetoContratoCobranca.getNomeVistoriador());
+						
+						this.objetoContratoCobranca.setEnviadoWhatsappVistoria(true);
+					}
 				}
 			}
 			
@@ -6409,6 +6435,7 @@ public class ContratoCobrancaMB {
 		this.addSegurador= false;
 		this.addSocio= false;
 		this.addPagador = false;
+		this.mostrarTodosProcessos = false;
 		
 		this.contasPagarSelecionada = new ContasPagar();
 		this.contasPagarSelecionada.setPagadorRecebedor(new PagadorRecebedor());
@@ -6477,6 +6504,7 @@ public class ContratoCobrancaMB {
 		this.addSegurador= false;
 		this.addSocio = false;
 		this.addPagador = false;
+		this.mostrarTodosProcessos = false;
 		
 		this.contasPagarSelecionada = new ContasPagar();
 		this.contasPagarSelecionada.setPagadorRecebedor(new PagadorRecebedor());
@@ -8496,6 +8524,7 @@ public class ContratoCobrancaMB {
 		this.addSegurador = false;
 		this.addSocio = false;
 		this.addPagador = false;
+		this.mostrarTodosProcessos = false;
 		
 		this.objetoAnaliseComite = new AnaliseComite();
 		this.objetoContratoCobranca.setQtdeVotosAprovadosComite(BigInteger.ZERO);
@@ -8574,6 +8603,7 @@ public class ContratoCobrancaMB {
 		this.controleWhatsAlteracaoAvaliadorLaudo = false;
 		this.controleWhatsAlteracaoAvaliadorLaudoGalache = false;
 		this.controleWhatsAlteracaoGeracaoPAJU = false;
+		this.mostrarTodosProcessos = false;
 		
 		this.qtdeParcelas = String.valueOf(this.objetoContratoCobranca.getQtdeParcelas());
 
@@ -8831,7 +8861,7 @@ public class ContratoCobrancaMB {
 			else if (this.objetoContratoCobranca.getCadastroAprovadoValor() != null) {
 				if (!this.objetoContratoCobranca.isAnaliseReprovada() && this.objetoContratoCobranca.isInicioAnalise() && 
 						this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
-						(!this.objetoContratoCobranca.isPedidoLaudo())){
+						(!this.objetoContratoCobranca.isPedidoLaudo() || !this.objetoContratoCobranca.isPagtoLaudoConfirmada())){
 					this.indexStepsStatusContrato = 2;
 				}
 				
@@ -8843,6 +8873,7 @@ public class ContratoCobrancaMB {
 						!this.objetoContratoCobranca.isAnaliseReprovada() && this.objetoContratoCobranca.isInicioAnalise() && 
 						this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado") &&
 						this.objetoContratoCobranca.isPedidoLaudo() && 
+						this.objetoContratoCobranca.isPagtoLaudoConfirmada() &&
 						(!this.objetoContratoCobranca.isPajurFavoravel() || !this.objetoContratoCobranca.isLaudoRecebido())) {
 					this.indexStepsStatusContrato = 3;
 				}
@@ -9041,6 +9072,7 @@ public class ContratoCobrancaMB {
 		this.addSegurador = false;
 		this.addSocio = false;
 		this.addPagador = false;
+		this.mostrarTodosProcessos = false;
 
 		// this.qtdeParcelas =
 		// String.valueOf(this.objetoContratoCobranca.getQtdeParcelas());
@@ -9130,6 +9162,7 @@ public class ContratoCobrancaMB {
 		this.addSegurador = false;
 		this.addSocio = false;
 		this.addPagador = false;
+		this.mostrarTodosProcessos = false;
 
 		// this.qtdeParcelas =
 		// String.valueOf(this.objetoContratoCobranca.getQtdeParcelas());
@@ -16642,6 +16675,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		this.addSegurador = false;
 		this.addSocio = false;
 		this.addPagador = false;
+		this.mostrarTodosProcessos = false;
 	}
 
 	public void loadSelectedLovs() {
@@ -16655,6 +16689,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		this.addSegurador = false;
 		this.addSocio = false;
 		this.addPagador = false;
+		this.mostrarTodosProcessos = false;
 		
 		this.contasPagarSelecionada = new ContasPagar();
 		this.contasPagarSelecionada.setPagadorRecebedor(new PagadorRecebedor());
@@ -18815,7 +18850,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		
 		processoSelecionado.setContrato(objetoContratoCobranca);
 		objetoContratoCobranca.getListProcessos().add(processoSelecionado);
-		
+		calcularValorTotalProcessos();
 		processoSelecionado = new CcbProcessosJudiciais();
 	}
 	
@@ -18827,6 +18862,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 				this.objetoCcb.getDespesasAnexo2().remove(processo);
 			}
 		}
+		calcularValorTotalProcessos();
 	}
 
 	public void concluirComite(ContratoCobranca contrato) {
@@ -19155,6 +19191,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		}
 		
 		conjuge.setEstadocivil(pagador.getEstadocivil());
+		conjuge.setDataCasamento(pagador.getDataCasamento());
 		conjuge.setRegimeCasamento(pagador.getRegimeCasamento());
 		conjuge.setRegistroPactoAntenupcial(pagador.getRegistroPactoAntenupcial());
 		conjuge.setLivroPactoAntenupcial(pagador.getLivroPactoAntenupcial());
@@ -19282,6 +19319,17 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		return valorTotalContasPagarNovo;
 	}
 	
+	private BigDecimal calcularValorTotalProcessos() {
+		BigDecimal valorTotal = BigDecimal.ZERO;
+		for (CcbProcessosJudiciais processo : this.objetoContratoCobranca.getListProcessos()) {
+			if(!CommonsUtil.semValor(processo.getValor())) {
+				valorTotal = valorTotal.add(processo.getValor());
+			}
+		}		
+		this.objetoContratoCobranca.setValorTotalProcessos(valorTotal);
+		return valorTotal;
+	}
+	
 	public void clearPagadorRecebedor() {
 		if (CommonsUtil.mesmoValor("Segurado", tipoPesquisaPagadorRecebedor)) {
 			this.seguradoSelecionado.setPessoa(null);
@@ -19291,6 +19339,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			this.selectedPagador = new PagadorRecebedor();
 		}
 	}
+	
 //	public void mostrarParcela() {
 //		try {
 //			this.simuladorParcelas = calcularParcelas();
@@ -20061,7 +20110,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 				baixarMultiParcelaParcial();
 			} else {
 				// baixa normal
-				if (boletosKokanaSelecionados.getParcela().isParcelaPaga()) {
+				if (!boletosKokanaSelecionados.getParcela().isParcelaPaga()) {
 					this.callMetodoPorDialogBaixaParcial = true;
 					this.objetoContratoCobranca = boletosKokanaSelecionados.getContrato();
 					setBpContratoCobrancaDetalhesCustom(boletosKokanaSelecionados.getParcela());
@@ -20070,11 +20119,11 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 					this.rowEditNewDate = boletosKokanaSelecionados.getPaidAt();
 					this.selectedRecebedor = this.objetoContratoCobranca.getRecebedor();
 				
-					if (boletosKokanaSelecionados.getPaidAmount().compareTo(boletosKokanaSelecionados.getVlrParcela()) >= 0) {
-						this.vlrParcelaAtualizadaNew = boletosKokanaSelecionados.getPaidAmount();	
-					} else {
-						this.vlrParcelaAtualizadaNew = boletosKokanaSelecionados.getVlrParcela();	
-					}
+					//if (boletosKokanaSelecionados.getPaidAmount().compareTo(boletosKokanaSelecionados.getVlrParcela()) >= 0) {
+					//	this.vlrParcelaAtualizadaNew = boletosKokanaSelecionados.getPaidAmount();	
+					//} else {
+					this.vlrParcelaAtualizadaNew = boletosKokanaSelecionados.getVlrParcela();	
+					//}
 					
 					this.vlrRecebido = boletosKokanaSelecionados.getPaidAmount();
 					
@@ -20139,15 +20188,8 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		boolean baixaTotal = false;
 		// se valor recebido é igual ao valor atualizado
 		if (this.vlrRecebido.intValue() != 0) {
-			// se valor recebido é igual ou maior
-			if (this.vlrRecebido.compareTo(bpContratoCobrancaDetalhes.getVlrParcelaAtualizada()) == 0
-					|| this.vlrRecebido.compareTo(bpContratoCobrancaDetalhes.getVlrParcelaAtualizada()) == 1) {
-
-				// atualiza data de vencimento para a data atual se a data de vencimento for
-				// menor que a data de hoje
-				// if
-				// (this.bpContratoCobrancaDetalhes.getDataVencimentoAtual().before(this.rowEditNewDate))
-				// {
+			// verifica se é antecipação
+			if (dataPagamento.before(bpContratoCobrancaDetalhes.getDataVencimento())) {
 				bpContratoCobrancaDetalhes.setDataVencimentoAtual(this.rowEditNewDate);
 				// }
 
@@ -20160,12 +20202,9 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 				contratoCobrancaDetalhesParcial
 						.setVlrParcela(this.bpContratoCobrancaDetalhes.getVlrParcelaAtualizada());
 
-				if (this.vlrRecebido.compareTo(bpContratoCobrancaDetalhes.getVlrParcelaAtualizada()) == 0) {
-					contratoCobrancaDetalhesParcial
-							.setVlrRecebido(this.bpContratoCobrancaDetalhes.getVlrParcelaAtualizada());
-				} else {
-					contratoCobrancaDetalhesParcial.setVlrRecebido(this.vlrRecebido);
-				}
+
+				contratoCobrancaDetalhesParcial.setVlrRecebido(this.vlrRecebido);
+				
 				contratoCobrancaDetalhesParcial
 						.setVlrParcelaAtualizado(this.bpContratoCobrancaDetalhes.getVlrParcelaAtualizada());
 
@@ -20189,63 +20228,122 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 				bpContratoCobrancaDetalhes.setVlrParcelaAtualizada(BigDecimal.ZERO);
 				
 				baixaTotal = true;
-				
-				// bpContratoCobrancaDetalhes.setVlrSaldoParcela(BigDecimal.ZERO);
-				
-				// verifica se pagamento é igual ao valor presente
-			} else if(this.vlrRecebido.compareTo(this.valorPresenteParcela) == 0){
-				
-				// atualiza data de vencimento para a data atual se a data de vencimento for
-				// menor que a data de hoje
-				// if
-				// (this.bpContratoCobrancaDetalhes.getDataVencimentoAtual().before(this.rowEditNewDate))
-				// {
-				bpContratoCobrancaDetalhes.setDataVencimentoAtual(this.rowEditNewDate);
-				// }
-				contratoCobrancaDetalhesParcial.setDataVencimento(this.bpContratoCobrancaDetalhes.getDataVencimento());
-				contratoCobrancaDetalhesParcial.setDataVencimentoAtual(this.bpContratoCobrancaDetalhes.getDataVencimentoAtual());
-				contratoCobrancaDetalhesParcial.setNumeroParcela(this.bpContratoCobrancaDetalhes.getNumeroParcela());
-				contratoCobrancaDetalhesParcial.setDataPagamento(dataPagamento.getTime());
-				contratoCobrancaDetalhesParcial.setVlrParcela(valorPresenteParcela);
-				contratoCobrancaDetalhesParcial.setVlrRecebido(valorPresenteParcela);
-				contratoCobrancaDetalhesParcial.setVlrParcelaAtualizado(valorPresenteParcela);
-				contratoCobrancaDetalhesParcial.setSaldoAPagar(BigDecimal.ZERO);
-				bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial().add(contratoCobrancaDetalhesParcial);
-				bpContratoCobrancaDetalhes.setParcelaPaga(true);
-				bpContratoCobrancaDetalhes.setOrigemBaixa("baixarParcelaParcial");
-				
-				baixaTotal = true;
-				
-				//valor da parcela continua o mesmo
-				
-				bpContratoCobrancaDetalhes.setVlrParcelaAtualizada(BigDecimal.ZERO);
 			} else {
-				// atualiza data de vencimento para a data atual se a data de vencimento for
-				// menor que a data de hoje
-				if (this.bpContratoCobrancaDetalhes.getDataVencimentoAtual().before(this.rowEditNewDate)) {
+				// se valor recebido é igual ou maior
+				if (this.vlrRecebido.compareTo(bpContratoCobrancaDetalhes.getVlrParcelaAtualizada()) == 0
+						|| this.vlrRecebido.compareTo(bpContratoCobrancaDetalhes.getVlrParcelaAtualizada()) == 1) {
+
+					// atualiza data de vencimento para a data atual se a data de vencimento for
+					// menor que a data de hoje
+					// if
+					// (this.bpContratoCobrancaDetalhes.getDataVencimentoAtual().before(this.rowEditNewDate))
+					// {
 					bpContratoCobrancaDetalhes.setDataVencimentoAtual(this.rowEditNewDate);
+					// }
+
+					contratoCobrancaDetalhesParcial.setDataVencimento(this.bpContratoCobrancaDetalhes.getDataVencimento());
+					contratoCobrancaDetalhesParcial
+							.setDataVencimentoAtual(this.bpContratoCobrancaDetalhes.getDataVencimentoAtual());
+
+					contratoCobrancaDetalhesParcial.setNumeroParcela(this.bpContratoCobrancaDetalhes.getNumeroParcela());
+					contratoCobrancaDetalhesParcial.setDataPagamento(dataPagamento.getTime());
+					contratoCobrancaDetalhesParcial
+							.setVlrParcela(this.bpContratoCobrancaDetalhes.getVlrParcelaAtualizada());
+
+					if (this.vlrRecebido.compareTo(bpContratoCobrancaDetalhes.getVlrParcelaAtualizada()) == 0) {
+						contratoCobrancaDetalhesParcial
+								.setVlrRecebido(this.bpContratoCobrancaDetalhes.getVlrParcelaAtualizada());
+					} else {
+						contratoCobrancaDetalhesParcial.setVlrRecebido(this.vlrRecebido);
+					}
+					contratoCobrancaDetalhesParcial
+							.setVlrParcelaAtualizado(this.bpContratoCobrancaDetalhes.getVlrParcelaAtualizada());
+
+					contratoCobrancaDetalhesParcial.setSaldoAPagar(BigDecimal.ZERO);
+
+					bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial()
+							.add(contratoCobrancaDetalhesParcial);
+
+					bpContratoCobrancaDetalhes.setParcelaPaga(true);
+					bpContratoCobrancaDetalhes.setOrigemBaixa("baixarParcelaParcial");
+
+					// compoem o valor da parcela de acordo com o historico de baixas
+					BigDecimal valorParcelaAtual = BigDecimal.ZERO;
+
+					// se tiver várias baixas parciais 
+					if (bpContratoCobrancaDetalhes
+							.getListContratoCobrancaDetalhesParcial().size() > 1) {
+						valorParcelaAtual = bpContratoCobrancaDetalhes
+								.getListContratoCobrancaDetalhesParcial().get(0).getVlrParcela();
+						//for (ContratoCobrancaDetalhesParcial ccdp : bpContratoCobrancaDetalhes
+						//		.getListContratoCobrancaDetalhesParcial()) {
+						//	valorParcelaAtual = valorParcelaAtual.add(ccdp.getVlrRecebido());
+						//}
+						
+						bpContratoCobrancaDetalhes.setVlrParcela(valorParcelaAtual);
+					} 
+					
+					bpContratoCobrancaDetalhes.setVlrParcelaAtualizada(BigDecimal.ZERO);
+					
+					baixaTotal = true;
+					
+					// bpContratoCobrancaDetalhes.setVlrSaldoParcela(BigDecimal.ZERO);
+					
+					// verifica se pagamento é igual ao valor presente
+				} else if(this.vlrRecebido.compareTo(this.valorPresenteParcela) == 0){
+					
+					// atualiza data de vencimento para a data atual se a data de vencimento for
+					// menor que a data de hoje
+					// if
+					// (this.bpContratoCobrancaDetalhes.getDataVencimentoAtual().before(this.rowEditNewDate))
+					// {
+					bpContratoCobrancaDetalhes.setDataVencimentoAtual(this.rowEditNewDate);
+					// }
+					contratoCobrancaDetalhesParcial.setDataVencimento(this.bpContratoCobrancaDetalhes.getDataVencimento());
+					contratoCobrancaDetalhesParcial.setDataVencimentoAtual(this.bpContratoCobrancaDetalhes.getDataVencimentoAtual());
+					contratoCobrancaDetalhesParcial.setNumeroParcela(this.bpContratoCobrancaDetalhes.getNumeroParcela());
+					contratoCobrancaDetalhesParcial.setDataPagamento(dataPagamento.getTime());
+					contratoCobrancaDetalhesParcial.setVlrParcela(valorPresenteParcela);
+					contratoCobrancaDetalhesParcial.setVlrRecebido(valorPresenteParcela);
+					contratoCobrancaDetalhesParcial.setVlrParcelaAtualizado(valorPresenteParcela);
+					contratoCobrancaDetalhesParcial.setSaldoAPagar(BigDecimal.ZERO);
+					bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial().add(contratoCobrancaDetalhesParcial);
+					bpContratoCobrancaDetalhes.setParcelaPaga(true);
+					bpContratoCobrancaDetalhes.setOrigemBaixa("baixarParcelaParcial");
+					
+					baixaTotal = true;
+					
+					//valor da parcela continua o mesmo
+					
+					bpContratoCobrancaDetalhes.setVlrParcelaAtualizada(BigDecimal.ZERO);
+				} else {
+					// atualiza data de vencimento para a data atual se a data de vencimento for
+					// menor que a data de hoje
+					if (this.bpContratoCobrancaDetalhes.getDataVencimentoAtual().before(this.rowEditNewDate)) {
+						bpContratoCobrancaDetalhes.setDataVencimentoAtual(this.rowEditNewDate);
+					}
+
+					contratoCobrancaDetalhesParcial.setDataVencimento(this.bpContratoCobrancaDetalhes.getDataVencimento());
+					contratoCobrancaDetalhesParcial
+							.setDataVencimentoAtual(this.bpContratoCobrancaDetalhes.getDataVencimentoAtual());
+
+					// historico de baixa parcial
+					contratoCobrancaDetalhesParcial.setNumeroParcela(this.bpContratoCobrancaDetalhes.getNumeroParcela());
+					contratoCobrancaDetalhesParcial.setDataPagamento(dataPagamento.getTime());
+					contratoCobrancaDetalhesParcial.setVlrParcela(bpContratoCobrancaDetalhes.getVlrParcelaAtualizada().subtract(this.vlrRecebido));
+					contratoCobrancaDetalhesParcial.setVlrRecebido(this.vlrRecebido);
+
+					contratoCobrancaDetalhesParcial.setVlrParcelaAtualizado(this.bpContratoCobrancaDetalhes.getVlrParcelaAtualizada());
+					contratoCobrancaDetalhesParcial.setSaldoAPagar(bpContratoCobrancaDetalhes.getVlrParcelaAtualizada().subtract(this.vlrRecebido));
+
+					bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial().add(contratoCobrancaDetalhesParcial);
+
+					// se o valor recebido for menor que o da parcela
+					bpContratoCobrancaDetalhes.setVlrParcela(bpContratoCobrancaDetalhes.getVlrParcelaAtualizada().subtract(this.vlrRecebido));
+					bpContratoCobrancaDetalhes.setVlrParcelaAtualizada(null);
 				}
-
-				contratoCobrancaDetalhesParcial.setDataVencimento(this.bpContratoCobrancaDetalhes.getDataVencimento());
-				contratoCobrancaDetalhesParcial
-						.setDataVencimentoAtual(this.bpContratoCobrancaDetalhes.getDataVencimentoAtual());
-
-				// historico de baixa parcial
-				contratoCobrancaDetalhesParcial.setNumeroParcela(this.bpContratoCobrancaDetalhes.getNumeroParcela());
-				contratoCobrancaDetalhesParcial.setDataPagamento(dataPagamento.getTime());
-				contratoCobrancaDetalhesParcial.setVlrParcela(bpContratoCobrancaDetalhes.getVlrParcelaAtualizada().subtract(this.vlrRecebido));
-				contratoCobrancaDetalhesParcial.setVlrRecebido(this.vlrRecebido);
-
-				contratoCobrancaDetalhesParcial.setVlrParcelaAtualizado(this.bpContratoCobrancaDetalhes.getVlrParcelaAtualizada());
-				contratoCobrancaDetalhesParcial.setSaldoAPagar(bpContratoCobrancaDetalhes.getVlrParcelaAtualizada().subtract(this.vlrRecebido));
-
-				bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial().add(contratoCobrancaDetalhesParcial);
-
-				// se o valor recebido for menor que o da parcela
-				bpContratoCobrancaDetalhes.setVlrParcela(bpContratoCobrancaDetalhes.getVlrParcelaAtualizada().subtract(this.vlrRecebido));
-				bpContratoCobrancaDetalhes.setVlrParcelaAtualizada(null);
+				this.vlrRecebido = BigDecimal.ZERO;
 			}
-			this.vlrRecebido = BigDecimal.ZERO;
 		} else {
 			// se o valor recebido é zero estorna todas as baixas parciais
 			// atualiza data de vencimento para a data atual se a data de vencimento for
@@ -32626,6 +32724,14 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 
 	public void setProcessoSelecionado(CcbProcessosJudiciais processoSelecionado) {
 		this.processoSelecionado = processoSelecionado;
+	}
+
+	public boolean isMostrarTodosProcessos() {
+		return mostrarTodosProcessos;
+	}
+
+	public void setMostrarTodosProcessos(boolean mostrarTodosProcessos) {
+		this.mostrarTodosProcessos = mostrarTodosProcessos;
 	}
 	
 	
