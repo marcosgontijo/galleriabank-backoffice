@@ -342,12 +342,17 @@ public class BalancoPatrimonial implements Serializable {
 		return result;
 	}
 	
-	public void calcularPagarDebenturista(BigDecimal valor, BigDecimal custoPonderado, Date dataParcela, Date dataReferencia) { 
+	public void calcularPagarDebenturista(BigDecimal valor,  Date dataParcela) { 
 		BigDecimal juros = custoPonderado;
+		
+		 //balanco.getCustoPonderado(), rs.getDate(2), balanco.getAaaaMM()
+		 
+		// BigDecimal custoPonderado, Date dataParcela, Date dataReferencia;
+		
 		BigDecimal saldo = valor; //saldo = valor parcela
 		BigDecimal quantidadeDeMeses = BigDecimal.ONE;
 
-		quantidadeDeMeses = BigDecimal.valueOf(DateUtil.Days360(dataParcela, dataReferencia));	//quantidade de dias entre dataParcela e dataReferencia
+		quantidadeDeMeses = BigDecimal.valueOf(DateUtil.Days360(dataParcela, this.getAaaaMM()));	//quantidade de dias entre dataParcela e dataReferencia
 		quantidadeDeMeses = quantidadeDeMeses.divide(BigDecimal.valueOf(30), MathContext.DECIMAL128); //divide a quantidade acima por 30
 		Double quantidadeDeMesesDouble = CommonsUtil.doubleValue(quantidadeDeMeses); //armazena resultado na variável
 		
@@ -362,7 +367,6 @@ public class BalancoPatrimonial implements Serializable {
 			recursosDebentures = BigDecimal.ZERO;
 		}
 		recursosDebentures = recursosDebentures.add(pagarDebenturista);
-		
 	}
 
 				

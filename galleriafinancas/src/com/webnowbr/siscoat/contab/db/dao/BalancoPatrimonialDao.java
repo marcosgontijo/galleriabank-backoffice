@@ -417,10 +417,10 @@ public class BalancoPatrimonialDao extends HibernateDao <BalancoPatrimonial,Long
 					rs = ps.executeQuery();
 				
 				while (rs.next()) {	
-					balanco.calcularPagarDebenturista(rs.getBigDecimal(1), balanco.getCustoPonderado(), rs.getDate(2), balanco.getAaaaMM());
+					balanco.calcularPagarDebenturista(rs.getBigDecimal(1), rs.getDate(2), );
 					
 				}
-				balanco.setRecursosDebentures(valor);
+//				balanco.setRecursosDebentures(valor);
 				System.out.println("Parcela atualizada: " + valor);
 				} finally {
 					closeResources(connection, ps, rs);					
