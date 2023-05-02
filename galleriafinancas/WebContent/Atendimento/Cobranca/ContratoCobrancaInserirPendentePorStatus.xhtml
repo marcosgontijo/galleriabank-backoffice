@@ -1910,7 +1910,7 @@
 							<h:panelGrid columns="2">	
 							
 								<shiro:lacksRole name="ROOT">
-									<shiro:lacksRole name="PROFILE_AVALIADOR_IMOVEL">
+									<shiro:lacksRole name="PROFILE_GERENTE_ANALISE">
 										<p:outputLabel value="Data Vistoria Imóvel: " styleClass="labelBold" />
 										<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria}" styleClass="labelBold" size="100">
 											<f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
@@ -1918,7 +1918,7 @@
 									</shiro:lacksRole>
 								</shiro:lacksRole>
 								
-								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_AVALIADOR_IMOVEL, PROFILE_LAUDO, PROFILE_GERENTE_ANALISE">
+								<shiro:hasAnyRoles name="ROOT, PROFILE_GERENTE_ANALISE">
 									<p:outputLabel for="dataVistoria"
 										value="Data Vistoria Imóvel: " styleClass="labelBold" />				
 									<p:calendar id="dataVistoria" showOn="button"
@@ -1971,8 +1971,7 @@
 												update="form:CheckListInformacoesAdicionais" />
 										</shiro:hasAnyRoles>
 										
-										<shiro:hasAnyRoles name="ROOT, USER_GALACHE, AVALIADORIMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_AVALIADOR_IMOVEL_GALACHE, PROFILE_GERENTE_ANALISE
-										PRECOBRANCAANALISTA,PRECOBRANCA, PROFILE_AVALIADOR_IMOVEL, PROFILE_LAUDO, PROFILE_ANALISTA_COMITE">
+										<shiro:hasAnyRoles name="ROOT, USER_GALACHE, AVALIADORIMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_AVALIADOR_IMOVEL_GALACHE, PROFILE_GERENTE_ANALISE">
 											<p:commandButton icon="ui-icon-check" 
 												rendered="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria == null 
 												|| contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria == ''}"
