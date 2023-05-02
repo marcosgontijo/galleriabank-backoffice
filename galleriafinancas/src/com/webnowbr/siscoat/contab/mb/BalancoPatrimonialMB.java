@@ -72,6 +72,7 @@ public class BalancoPatrimonialMB {
 		if (!this.editar) {
 			objetoBalanco = new BalancoPatrimonial();
 			ultimoBalanco = balancopatrimonialDao.consultaUltimoBalanco();
+		this.objetoBalanco.setAaaamm(gerarDataHoje());
 		//VALOR DEFAULT NO CÓDIGO
 		this.objetoBalanco.setDepositoBacenScd(CommonsUtil.bigDecimalValue(1016095.04));
 		//VALOR DEFAULT NO DAO - VALOR DO SISTEMA
@@ -81,8 +82,16 @@ public class BalancoPatrimonialMB {
 		this.objetoBalanco.setInvestOperantigas(ultimoBalanco.getInvestOperantigas());
 		this.objetoBalanco.setCapitalSocial(ultimoBalanco.getCapitalSocial());
 		this.objetoBalanco.setProvisaoLiquidAntecipada(balancopatrimonialDao.consultaContasPagar());
+		this.objetoBalanco.setCustoPonderado(balancopatrimonialDao.somaParcelaX());
+		atualizaParcela();
+		
 		}
 		return "/Atendimento/Cobranca/Contabilidade/BalancoPatrimonialInserir.xhtml";
+	}
+	
+	public void atualizaParcela () {
+		BalancoPatrimonialDao balancopatrimonialDao = new BalancoPatrimonialDao();
+		balancopatrimonialDao.atualizaParcela(objetoBalanco);
 	}
 
 	public BalancoPatrimonial getUltimoBalanco() {
@@ -993,6 +1002,14 @@ public class BalancoPatrimonialMB {
 		fileOut.close();
 
 		this.balancoPatrimonialXLSGerado = true;
+	}
+	
+	public Date gerarDataHoje() {
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+
+		return dataHoje.getTime();
 	}
 
 	public BalancoPatrimonialMB() {

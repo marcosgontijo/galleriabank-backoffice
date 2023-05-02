@@ -2,9 +2,11 @@ package com.webnowbr.siscoat.contab.db.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.Date;
 
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DateUtil;
 
 public class BalancoPatrimonial implements Serializable {
 
@@ -50,6 +52,8 @@ public class BalancoPatrimonial implements Serializable {
 	private BigDecimal aumentoCapitalSocial;
 	private BigDecimal distribuicao1Pago2;
 	private BigDecimal lucroAnterior;
+	
+	private BigDecimal custoPonderado;
 
 	public BigDecimal getTotalAtivos(){
 		BigDecimal result = BigDecimal.ZERO;
@@ -338,6 +342,30 @@ public class BalancoPatrimonial implements Serializable {
 		return result;
 	}
 	
+	public void calcularPagarDebenturista(BigDecimal valor, BigDecimal custoPonderado, Date dataParcela, Date dataReferencia) { 
+		BigDecimal juros = custoPonderado;
+		BigDecimal saldo = valor; //saldo = valor parcela
+		BigDecimal quantidadeDeMeses = BigDecimal.ONE;
+
+		quantidadeDeMeses = BigDecimal.valueOf(DateUtil.Days360(dataParcela, dataReferencia));	//quantidade de dias entre dataParcela e dataReferencia
+		quantidadeDeMeses = quantidadeDeMeses.divide(BigDecimal.valueOf(30), MathContext.DECIMAL128); //divide a quantidade acima por 30
+		Double quantidadeDeMesesDouble = CommonsUtil.doubleValue(quantidadeDeMeses); //armazena resultado na variável
+		
+		juros = juros.divide(BigDecimal.valueOf(100)); //divide custoPonderado por 100
+		juros = juros.add(BigDecimal.ONE);	//soma 1
+		double divisor = Math.pow(CommonsUtil.doubleValue(juros), quantidadeDeMesesDouble); //Divisor = juros elevado a quantidade de meses
+		
+		BigDecimal pagarDebenturista; //declaração de variável
+		pagarDebenturista = (saldo).multiply(CommonsUtil.bigDecimalValue(divisor) , MathContext.DECIMAL128); //valor da parcela * divisor (acima)
+		pagarDebenturista = pagarDebenturista.setScale(2, BigDecimal.ROUND_HALF_UP);
+		if (recursosDebentures == null) {
+			recursosDebentures = BigDecimal.ZERO;
+		}
+		recursosDebentures = recursosDebentures.add(pagarDebenturista);
+		
+	}
+
+				
 	public Long getId() {
 		return id;
 	}
@@ -620,6 +648,12 @@ public class BalancoPatrimonial implements Serializable {
 	}
 	public void setLucroAnterior(BigDecimal lucroAnterior) {
 		this.lucroAnterior = lucroAnterior;
+	}
+	public BigDecimal getCustoPonderado() {
+		return custoPonderado;
+	}
+	public void setCustoPonderado(BigDecimal custoPonderado) {
+		this.custoPonderado = custoPonderado;
 	}
 
 }
