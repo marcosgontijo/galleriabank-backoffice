@@ -25,11 +25,13 @@
 						styleClass="labelBold" />
 
 					<p:calendar id="referencia"
-						value="#{balancoPatrimonialMB.objetoBalanco.aaaaMM}"
-						label="Data" size="100" pattern="dd/MM/yyyy"
-						styleClass="dateTimeField" onchange="#{balancoPatrimonialMB.atualizaParcela()}">
-						
-					</p:calendar>			
+						value="#{balancoPatrimonialMB.objetoBalanco.aaaaMM}" label="Data"
+						size="100" pattern="dd/MM/yyyy" styleClass="dateTimeField"
+						onchange="#{balancoPatrimonialMB.atualizaParcela()}">
+
+						<p:ajax event="dateSelect" listener="#{balancoPatrimonialMB.atualizaParcela()}"
+							update="balancoInserir" />
+					</p:calendar>
 					<p:outputLabel for="caixa" value="Caixa: "
 						styleClass="labelBold" />
 					<p:inputText id="caixa"
