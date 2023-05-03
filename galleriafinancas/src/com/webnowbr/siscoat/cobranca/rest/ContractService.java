@@ -182,11 +182,6 @@ public class ContractService {
 								}
 							}
 						
-							this.objetoPagador.setNome(contratoAPPPagador.has("nome") ? contratoAPPPagador.getString("nome") : null);
-							this.objetoPagador.setEmail(contratoAPPPagador.has("email") ? contratoAPPPagador.getString("email") : null);
-							this.objetoPagador.setTelCelular(contratoAPPPagador.has("telCelular") ? contratoAPPPagador.getString("telCelular") : null);
-							this.objetoPagador.setSexo(contratoAPPPagador.has("sexo") ? contratoAPPPagador.getString("sexo") : null);
-							
 							SimpleDateFormat dtNascimento = new SimpleDateFormat("yyyy-MM-dd");
 							Date dtNascimentoDate = null;
 							try {
@@ -199,12 +194,7 @@ public class ContractService {
 							} catch (ParseException e) {
 								e.printStackTrace();
 							}
-						
-							this.objetoPagador.setNomeMae(contratoAPPPagador.has("nomeMae") ? contratoAPPPagador.getString("nomeMae") : null);
-							this.objetoPagador.setEstadocivil(contratoAPPPagador.has("estadoCivil") ? contratoAPPPagador.getString("estadoCivil") : null);
-							this.objetoPagador.setCpfConjuge(contratoAPPPagador.has("cpfConjuge") ? contratoAPPPagador.getString("cpfConjuge") : null);
-							this.objetoPagador.setNomeConjuge(contratoAPPPagador.has("nomeConjuge") ? contratoAPPPagador.getString("nomeConjuge") : null); 
-							
+
 							this.objetoPagador.setRgDocumentosCheckList(contratoAPPPagador.has("rgDocumentosCheckList") ? contratoAPPPagador.getBoolean("rgDocumentosCheckList") : false);
 							this.objetoPagador.setComprovanteEnderecoDocumentosCheckList(contratoAPPPagador.has("comprovanteEnderecoDocumentosCheckList") ? contratoAPPPagador.getBoolean("comprovanteEnderecoDocumentosCheckList") : false);
 							this.objetoPagador.setCertidaoCasamentoNascimentoDocumentosCheckList(contratoAPPPagador.has("certidaoCasamentoNascimentoDocumentosCheckList") ? contratoAPPPagador.getBoolean("certidaoCasamentoNascimentoDocumentosCheckList") : false);
@@ -216,8 +206,15 @@ public class ContractService {
 							this.objetoPagador.setCargoOcupacaoCheckList(contratoAPPPagador.has("cargoOcupacaoCheckList") ? contratoAPPPagador.getBoolean("cargoOcupacaoCheckList") : false);
 							this.objetoPagador.setTaxaCheckList(contratoAPPPagador.has("taxaCheckList") ? contratoAPPPagador.getBoolean("taxaCheckList") : false);
 						}
-						
-						
+
+						this.objetoPagador.setNome(contratoAPPPagador.has("nome") ? contratoAPPPagador.getString("nome") : null);
+						this.objetoPagador.setEmail(contratoAPPPagador.has("email") ? contratoAPPPagador.getString("email") : null);
+						this.objetoPagador.setTelCelular(contratoAPPPagador.has("telCelular") ? contratoAPPPagador.getString("telCelular") : null);
+						this.objetoPagador.setSexo(contratoAPPPagador.has("sexo") ? contratoAPPPagador.getString("sexo") : null);
+						this.objetoPagador.setNomeMae(contratoAPPPagador.has("nomeMae") ? contratoAPPPagador.getString("nomeMae") : null);
+						this.objetoPagador.setEstadocivil(contratoAPPPagador.has("estadoCivil") ? contratoAPPPagador.getString("estadoCivil") : null);
+						this.objetoPagador.setCpfConjuge(contratoAPPPagador.has("cpfConjuge") ? contratoAPPPagador.getString("cpfConjuge") : null);
+						this.objetoPagador.setNomeConjuge(contratoAPPPagador.has("nomeConjuge") ? contratoAPPPagador.getString("nomeConjuge") : null); 
 						this.objetoContratoCobranca.setPagador(this.objetoPagador);
 						
 						/***
@@ -784,7 +781,11 @@ public class ContractService {
 				}
 			}
 
-			if (pagadorRecebedor == null) {
+			if(StringUtils.isNotEmpty(this.objetoPagador.getNome())) {
+				pagadorRecebedorBD = pagadorRecebedorDao.findByFilter("nome", this.objetoPagador.getNome());
+				pagadorRecebedor = this.objetoPagador;
+				registraPagador = true;
+			}else if (pagadorRecebedor == null) {
 				pagadorRecebedor = this.objetoPagador;
 			}
 

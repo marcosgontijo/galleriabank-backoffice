@@ -164,6 +164,12 @@
 										value="#{contratoCobrancaMB.objetoContratoCobranca.contatoAgendamendoLaudoAvaliacao}"
 										styleClass="labelBold" rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 2}"
 										style="width:250px;font-weight: bold; font-size: 18px !important;" />
+										
+									<p:outputLabel for="observacaoContatoAgendaLaudoAvaliacao" value="Observação do Contato: "
+										styleClass="labelBold"  rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 2}"/>
+									<p:outputLabel id="observacaoContatoAgendaLaudoAvaliacao"  rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 2}"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.observacaoContatoAgendaLaudoAvaliacao}"
+										style="FONT-SIZE: 10pt;width:100px;white-space: pre-wrap;" />
 								</h:panelGrid>
 							</shiro:hasAnyRoles>
 							<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 4}">

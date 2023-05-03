@@ -2108,5 +2108,13 @@
 			<column name="enviadoWhatsappVistoria" not-null="true" default="false"/>
 		</property>	
 		
+		<property name="operacaoFundo" type="boolean">
+			<column name="operacaoFundo" not-null="true" default="false"/>
+		</property>	
+		
+		<property name="valorTotalProcessos" type="big_decimal">
+			<column name="valorTotalProcessos" />
+		</property>
+		
 	</class>
 </hibernate-mapping>

@@ -1542,6 +1542,12 @@
 								value="#{contratoCobrancaMB.objetoContratoCobranca.contatoAgendamendoLaudoAvaliacao}"
 								styleClass="labelBold"
 								style="width:250px;font-weight: bold; font-size: 18px !important;" />
+								
+							<p:outputLabel for="observacaoContatoAgendaLaudoAvaliacao" value="Observação do Contato: "
+								styleClass="labelBold" />
+							<p:outputLabel id="observacaoContatoAgendaLaudoAvaliacao"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.observacaoContatoAgendaLaudoAvaliacao}"
+								style="FONT-SIZE: 10pt;width:100px;white-space: pre-wrap;" />
 							
 							<p:outputLabel for="avaliacaoLaudoObservacao"
 									value="Observação Avaliação: " styleClass="labelBold" />
@@ -2340,7 +2346,7 @@
 								
 									<p:outputLabel for="dataCasamento"
 										value="Data de Casamento: " />
-									<p:inputMask id="dataCasamento"
+									<p:inputMask id="dataCasamento" mask="99/99/9999"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.dataCasamento}">
 										<f:convertDateTime pattern="dd/MM/yyyy" />
 									</p:inputMask>

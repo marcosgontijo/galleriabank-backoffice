@@ -9756,7 +9756,7 @@ public class CcbMB {
 		simulador.calcular();
 		
 		BigDecimal jurosAoAno = BigDecimal.ZERO;
-		jurosAoAno = BigDecimal.ONE.add((simulador.getTaxaJuros().divide(BigDecimal.valueOf(100), MathContext.DECIMAL128)));
+		jurosAoAno = BigDecimal.ONE.add((this.objetoCcb.getTaxaDeJurosMes().divide(BigDecimal.valueOf(100), MathContext.DECIMAL128)));
 		jurosAoAno = CommonsUtil.bigDecimalValue(Math.pow(CommonsUtil.doubleValue(jurosAoAno), 12));
 		jurosAoAno = jurosAoAno.subtract(BigDecimal.ONE);
 		jurosAoAno = jurosAoAno.multiply(BigDecimal.valueOf(100), MathContext.DECIMAL128);

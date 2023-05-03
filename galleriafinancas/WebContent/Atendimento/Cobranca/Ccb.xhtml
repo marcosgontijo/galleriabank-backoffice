@@ -1267,7 +1267,7 @@
 											
 												<p:outputLabel for="dataCasamento"
 													value="Data de Casamento: " />
-												<p:inputMask id="dataCasamento"
+												<p:inputMask id="dataCasamento" mask="99/99/9999"
 													value="#{ccbMB.participanteSelecionado.pessoa.dataCasamento}">
 													<f:convertDateTime pattern="dd/MM/yyyy" />
 												</p:inputMask>

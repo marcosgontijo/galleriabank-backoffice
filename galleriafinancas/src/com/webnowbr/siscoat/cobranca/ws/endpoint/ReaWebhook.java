@@ -62,17 +62,31 @@ public class ReaWebhook {
 			if (reaWebhookRetorno.getProprietarioAtual() != null)
 				cadastrarPessoRetornoRea(reaWebhookRetorno.getProprietarioAtual(), documentoAnaliseDao,
 						documentoAnalise.getContratoCobranca(), "Proprietario Atual");
-			if (reaWebhookRetorno.getProprietarioAnterior() != null) {
-				Date dataVenda = DateUtil
-						.getDecodeDateExtenso(reaWebhookRetorno.getProprietarioAnterior().getConteudo().getTexto());
+			Date dataVendaAtual = DateUtil
+					.getDecodeDateExtenso(reaWebhookRetorno.getProprietarioAtual().getConteudo().getTexto());
+			
+			if (!CommonsUtil.semValor(dataVendaAtual) && DateUtil.isAfterDate(
+					DateUtil.adicionarPeriodo(DateUtil.getFirstDayOfMonth( DateUtil.getDataHoje() ), -2, Calendar.YEAR), dataVendaAtual)) {
+				
+			if (!CommonsUtil.semValor( reaWebhookRetorno.getProprietariosAnterior() != null)) {
+				Date dataVendaAnterior = DateUtil.getDataHoje();
+				for (ReaWebhookRetornoBloco proprietarioAnterior : reaWebhookRetorno.getProprietariosAnterior()) {
+					Date dataVenda = DateUtil
+							.getDecodeDateExtenso(proprietarioAnterior.getConteudo().getTexto());
 
-				if (CommonsUtil.semValor(dataVenda) || DateUtil.isAfterDate(
-						DateUtil.adicionarPeriodo(DateUtil.getDataHoje(), -2, Calendar.YEAR),dataVenda)) {
-					cadastrarPessoRetornoRea(reaWebhookRetorno.getProprietarioAnterior(), documentoAnaliseDao,
-							documentoAnalise.getContratoCobranca(),
-							"Proprietario Anterior" + (CommonsUtil.semValor(dataVenda) ? " Data venda não localizada"
-									: " Data venda:" + CommonsUtil.formataData(dataVenda, "dd/MM/yyyy")));
+					if (!CommonsUtil.semValor(dataVendaAnterior) || CommonsUtil.semValor(dataVenda) || DateUtil.isAfterDate(
+							DateUtil.adicionarPeriodo(DateUtil.getFirstDayOfMonth( DateUtil.getDataHoje() ), -2, Calendar.YEAR), dataVenda)) {
+						dataVendaAnterior = dataVenda;
+						cadastrarPessoRetornoRea(proprietarioAnterior, documentoAnaliseDao,
+								documentoAnalise.getContratoCobranca(),
+								"Proprietario Anterior"
+										+ (CommonsUtil.semValor(dataVenda) ? " Data venda não localizada"
+												: " Data venda:" + CommonsUtil.formataData(dataVenda, "dd/MM/yyyy")));
+					}
+
 				}
+			}
+
 			}
 
 			return Response.status(200).entity("Processado").build();

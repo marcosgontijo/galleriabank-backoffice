@@ -35,6 +35,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -289,6 +290,7 @@ public class ContratoCobrancaMB {
 	ContasPagar contasPagarSelecionada;
 	ContasPagar contasPagarArquivos;
 	CcbProcessosJudiciais processoSelecionado;
+	private boolean mostrarTodosProcessos;
 	
 	private boolean addSegurador;
 	private boolean addSocio;
@@ -867,6 +869,7 @@ public class ContratoCobrancaMB {
 		this.addSegurador = false;
 		this.addSocio = false;
 		this.addPagador = false;
+		this.mostrarTodosProcessos = false;
 		
 		this.contasPagarSelecionada = new ContasPagar();
 		this.contasPagarSelecionada.setPagadorRecebedor(new PagadorRecebedor());
@@ -1550,6 +1553,7 @@ public class ContratoCobrancaMB {
 		this.addSegurador = false;
 		this.addSocio = false;
 		this.addPagador = false;		
+		this.mostrarTodosProcessos = false;
 		
 		this.contasPagarSelecionada = new ContasPagar();
 		this.contasPagarSelecionada.setPagadorRecebedor(new PagadorRecebedor());
@@ -1644,6 +1648,7 @@ public class ContratoCobrancaMB {
 		this.addSegurador= false;
 		this.addSocio = false;
 		this.addPagador = false;
+		this.mostrarTodosProcessos = false;
 		
 		this.contasPagarSelecionada = new ContasPagar();
 		this.contasPagarSelecionada.setPagadorRecebedor(new PagadorRecebedor());
@@ -3169,6 +3174,15 @@ public class ContratoCobrancaMB {
 			if (!this.objetoContratoCobranca.isAgEnvioCartorio() && this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() <= 0 && !CommonsUtil.semValor(this.objetoContratoCobranca.getValorCCB())) {				
 				geraContratoCobrancaDetalhes(contratoCobrancaDao);			
 			}
+			
+			ContasPagarDao cpDao = new ContasPagarDao();
+			if(!CommonsUtil.semValor(objetoContratoCobranca.getListProcessos())) {
+				for (CcbProcessosJudiciais processo : objetoContratoCobranca.getListProcessos()) {
+					if(processo.getContaPagar().getId() <= 0) {
+						cpDao.create(processo.getContaPagar());
+					}
+				}
+			}
 
 			contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
@@ -3799,6 +3813,15 @@ public class ContratoCobrancaMB {
 					}
 				}
 				*/
+				
+				ContasPagarDao cpDao = new ContasPagarDao();
+				if(!CommonsUtil.semValor(objetoContratoCobranca.getListProcessos())) {
+					for (CcbProcessosJudiciais processo : objetoContratoCobranca.getListProcessos()) {
+						if(processo.getContaPagar().getId() <= 0) {
+							cpDao.create(processo.getContaPagar());
+						}
+					}
+				}
 				
 				updateCheckList();
 
@@ -6417,6 +6440,7 @@ public class ContratoCobrancaMB {
 		this.addSegurador= false;
 		this.addSocio= false;
 		this.addPagador = false;
+		this.mostrarTodosProcessos = false;
 		
 		this.contasPagarSelecionada = new ContasPagar();
 		this.contasPagarSelecionada.setPagadorRecebedor(new PagadorRecebedor());
@@ -6485,6 +6509,7 @@ public class ContratoCobrancaMB {
 		this.addSegurador= false;
 		this.addSocio = false;
 		this.addPagador = false;
+		this.mostrarTodosProcessos = false;
 		
 		this.contasPagarSelecionada = new ContasPagar();
 		this.contasPagarSelecionada.setPagadorRecebedor(new PagadorRecebedor());
@@ -8504,6 +8529,7 @@ public class ContratoCobrancaMB {
 		this.addSegurador = false;
 		this.addSocio = false;
 		this.addPagador = false;
+		this.mostrarTodosProcessos = false;
 		
 		this.objetoAnaliseComite = new AnaliseComite();
 		this.objetoContratoCobranca.setQtdeVotosAprovadosComite(BigInteger.ZERO);
@@ -8582,6 +8608,7 @@ public class ContratoCobrancaMB {
 		this.controleWhatsAlteracaoAvaliadorLaudo = false;
 		this.controleWhatsAlteracaoAvaliadorLaudoGalache = false;
 		this.controleWhatsAlteracaoGeracaoPAJU = false;
+		this.mostrarTodosProcessos = false;
 		
 		this.qtdeParcelas = String.valueOf(this.objetoContratoCobranca.getQtdeParcelas());
 
@@ -9050,6 +9077,7 @@ public class ContratoCobrancaMB {
 		this.addSegurador = false;
 		this.addSocio = false;
 		this.addPagador = false;
+		this.mostrarTodosProcessos = false;
 
 		// this.qtdeParcelas =
 		// String.valueOf(this.objetoContratoCobranca.getQtdeParcelas());
@@ -9139,6 +9167,7 @@ public class ContratoCobrancaMB {
 		this.addSegurador = false;
 		this.addSocio = false;
 		this.addPagador = false;
+		this.mostrarTodosProcessos = false;
 
 		// this.qtdeParcelas =
 		// String.valueOf(this.objetoContratoCobranca.getQtdeParcelas());
@@ -16651,6 +16680,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		this.addSegurador = false;
 		this.addSocio = false;
 		this.addPagador = false;
+		this.mostrarTodosProcessos = false;
 	}
 
 	public void loadSelectedLovs() {
@@ -16664,6 +16694,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		this.addSegurador = false;
 		this.addSocio = false;
 		this.addPagador = false;
+		this.mostrarTodosProcessos = false;
 		
 		this.contasPagarSelecionada = new ContasPagar();
 		this.contasPagarSelecionada.setPagadorRecebedor(new PagadorRecebedor());
@@ -18815,6 +18846,9 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 	}
 	
 	public void addProcesso() {
+		if(CommonsUtil.semValor(objetoContratoCobranca.getListProcessos())) {
+			objetoContratoCobranca.setListProcessos(new HashSet<>());
+		}
 		processoSelecionado.getContaPagar().setValor(processoSelecionado.getValor());
 		processoSelecionado.getContaPagar().setDescricao("Processo N°: " + processoSelecionado.getNumero());
 		
@@ -18824,7 +18858,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		
 		processoSelecionado.setContrato(objetoContratoCobranca);
 		objetoContratoCobranca.getListProcessos().add(processoSelecionado);
-		
+		calcularValorTotalProcessos();
 		processoSelecionado = new CcbProcessosJudiciais();
 	}
 	
@@ -18836,6 +18870,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 				this.objetoCcb.getDespesasAnexo2().remove(processo);
 			}
 		}
+		calcularValorTotalProcessos();
 	}
 
 	public void concluirComite(ContratoCobranca contrato) {
@@ -19292,6 +19327,19 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		return valorTotalContasPagarNovo;
 	}
 	
+	private BigDecimal calcularValorTotalProcessos() {
+		BigDecimal valorTotal = BigDecimal.ZERO;
+		if(!CommonsUtil.semValor(objetoContratoCobranca.getListProcessos())) {
+			for (CcbProcessosJudiciais processo : this.objetoContratoCobranca.getListProcessos()) {
+				if(!CommonsUtil.semValor(processo.getValor())) {
+					valorTotal = valorTotal.add(processo.getValor());
+				}
+			}
+		}		
+		this.objetoContratoCobranca.setValorTotalProcessos(valorTotal);
+		return valorTotal;
+	}
+	
 	public void clearPagadorRecebedor() {
 		if (CommonsUtil.mesmoValor("Segurado", tipoPesquisaPagadorRecebedor)) {
 			this.seguradoSelecionado.setPessoa(null);
@@ -19301,6 +19349,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			this.selectedPagador = new PagadorRecebedor();
 		}
 	}
+	
 //	public void mostrarParcela() {
 //		try {
 //			this.simuladorParcelas = calcularParcelas();
@@ -32685,6 +32734,14 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 
 	public void setProcessoSelecionado(CcbProcessosJudiciais processoSelecionado) {
 		this.processoSelecionado = processoSelecionado;
+	}
+
+	public boolean isMostrarTodosProcessos() {
+		return mostrarTodosProcessos;
+	}
+
+	public void setMostrarTodosProcessos(boolean mostrarTodosProcessos) {
+		this.mostrarTodosProcessos = mostrarTodosProcessos;
 	}
 	
 	
