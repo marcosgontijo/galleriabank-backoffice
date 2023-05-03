@@ -1512,7 +1512,7 @@
 								styleClass="labelBold" />
 							<shiro:hasAnyRoles name="ROOT, COMITEEDITAR">
 								<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.operacaoFundo}" />
-							</shiro:lacksRole>
+							</shiro:hasAnyRoles>
 							<shiro:lacksRole name="ROOT">
 								<p:outputLabel value="Sim" rendered="#{contratoCobrancaMB.objetoContratoCobranca.operacaoFundo}" styleClass="labelBold" />
 								<p:outputLabel value="Não" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.operacaoFundo}" styleClass="labelBold" />
