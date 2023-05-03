@@ -3178,8 +3178,10 @@ public class ContratoCobrancaMB {
 			ContasPagarDao cpDao = new ContasPagarDao();
 			if(!CommonsUtil.semValor(objetoContratoCobranca.getListProcessos())) {
 				for (CcbProcessosJudiciais processo : objetoContratoCobranca.getListProcessos()) {
-					if(processo.getContaPagar().getId() <= 0) {
-						cpDao.create(processo.getContaPagar());
+					if(!CommonsUtil.semValor(processo.getContaPagar())) {
+						if(processo.getContaPagar().getId() <= 0) {
+							cpDao.create(processo.getContaPagar());
+						}
 					}
 				}
 			}
@@ -3817,8 +3819,10 @@ public class ContratoCobrancaMB {
 				ContasPagarDao cpDao = new ContasPagarDao();
 				if(!CommonsUtil.semValor(objetoContratoCobranca.getListProcessos())) {
 					for (CcbProcessosJudiciais processo : objetoContratoCobranca.getListProcessos()) {
-						if(processo.getContaPagar().getId() <= 0) {
-							cpDao.create(processo.getContaPagar());
+						if(!CommonsUtil.semValor(processo.getContaPagar())) {
+							if(processo.getContaPagar().getId() <= 0) {
+								cpDao.create(processo.getContaPagar());
+							}
 						}
 					}
 				}
