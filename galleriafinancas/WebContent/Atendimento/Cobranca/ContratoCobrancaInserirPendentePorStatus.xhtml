@@ -1845,26 +1845,40 @@
 								</p:inputTextarea>
 								<p:outputLabel id="display2" />
 							</h:panelGroup>
-							
+						</h:panelGrid>
+						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel == true}">					
+							<p:outputLabel value="Valor Total Processos:" styleClass="labelBold" />
+							<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.valorTotalProcessos}" converter="bigDecimalConverter"  />
+						</h:panelGrid>
+						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel == true}">							
 							<p:dataView var="processos" id="ListaProcessos"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.listProcessos}"
 								paginator="false" layout="list"
 								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
 								<p:dataViewListItem>
-									<p:outputLabel value="N°: " styleClass="labelBold" />
-									<p:outputLabel value="#{processos.numero}" styleClass="labelBold"
-										style="FONT-SIZE: 10pt;width:100px;" />
-									<p:outputLabel value=" Valor: " styleClass="labelBold" />
-									<p:outputLabel value="#{processos.valor}" styleClass="labelBold"
-										style="FONT-SIZE: 10pt;width:100px;"
-										converter="bigDecimalConverter" />
-									<p:spacer width="10px"/>
-									<p:commandButton  icon="ui-icon-trash"
-										action="#{contratoCobrancaMB.removeProcesso(processos)}"
-										update="ListaProcessos" />
+									<h:panelGroup rendered="#{processos.pagador eq null}">
+										<p:outputLabel value="N°: " styleClass="labelBold" />
+										<p:outputLabel value="#{processos.numero}" styleClass="labelBold"
+											style="FONT-SIZE: 10pt;width:100px;" />
+										<p:outputLabel value=" Valor: " styleClass="labelBold" />
+										<p:outputLabel value="#{processos.valor}" styleClass="labelBold"
+											style="FONT-SIZE: 10pt;width:100px;"
+											converter="bigDecimalConverter" />
+										<p:outputLabel value=" #{processos.quitar}" 
+											styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+										<p:outputLabel value=" quitar" styleClass="labelBold" rendered="#{processos.quitar eq 'Não'}" />
+										<p:spacer width="10px"/>
+										<p:commandButton action="#{contratoCobrancaMB.clearPagadorProcesso(processos)}"
+											icon="ui-icon ui-icon-plus" ajax="true" value="Pessoa"
+											oncomplete="PF('pessoaDialog').show();" rendered="#{processos.pagador eq null}"
+											update="pessoaDialogdlg form:RecebidoPajulaudoPanel" />	
+										<p:commandButton  icon="ui-icon-trash"
+											action="#{contratoCobrancaMB.removeProcesso(processos)}"
+											update="form:RecebidoPajulaudoPanel form:ComitePanelView" />
+									</h:panelGroup>
 								</p:dataViewListItem>
 							</p:dataView>
-							
+														
 							<h:panelGrid columns="2">
 								<p:outputLabel
 									value="Valor: " styleClass="labelBold"
@@ -1892,13 +1906,59 @@
 									<f:selectItem itemValue="Quitar" itemLabel="Quitar" />
 									<f:selectItem itemValue="Quitar ou indicar bens" itemLabel="Quitar ou indicar bens" />
 								</p:selectOneMenu>
+								
+								<p:outputLabel value="Pessoa: " styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:outputLabel value="#{contratoCobrancaMB.processoSelecionado.pagador.nome} " styleClass="labelBold"
+									style="font-size: 18px;" />
+								
+								<p:outputLabel value="Inserir Pessoa: " styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:commandButton action="#{contratoCobrancaMB.clearPagadorProcesso(contratoCobrancaMB.processoSelecionado)}"
+									icon="ui-icon ui-icon-plus" ajax="true" rendered="#{contratoCobrancaMB.processoSelecionado.pagador eq null}"
+									oncomplete="PF('pessoaDialog').show();"
+									update="pessoaDialogdlg" />							
 									
 								<p:commandButton value="Inserir Processo"
 									icon="ui-icon-check"
 									action="#{contratoCobrancaMB.addProcesso}" 
-									update="RecebidoPajulaudoPanel">
+									update="form:RecebidoPajulaudoPanel form:ComitePanelView">
 								</p:commandButton>
 							</h:panelGrid>
+						
+							<p:dataView var="pessoasProcessos" id="pessoasProcessos"
+								value="#{contratoCobrancaMB.pessoasProcessos}"
+								paginator="false" layout="list" 
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+								<p:dataViewListItem>
+									<p:outputLabel value="#{pessoasProcessos.nome}" style="FONT-SIZE: 15pt;" 
+										styleClass="ui-panel-title labelBold"/>
+									<p:outputLabel value="R$ " style="FONT-SIZE: 15pt;" styleClass="labelBold"/>
+									<p:outputLabel value="#{pessoasProcessos.valorProcessos}" style="FONT-SIZE: 15pt;" 
+										styleClass="labelBold" converter="bigDecimalConverter" />
+									<p:dataView var="processosPessoas" id="processosPessoas"
+										value="#{pessoasProcessos.processos}"
+										paginator="false" layout="list" 
+										paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+										<p:dataViewListItem>
+											<p:outputLabel value="N°: " styleClass="labelBold" />
+											<p:outputLabel value="#{processosPessoas.numero}" styleClass="labelBold"
+												style="FONT-SIZE: 10pt;width:100px;" />
+											<p:outputLabel value=" Valor: " styleClass="labelBold" />
+											<p:outputLabel value="#{processosPessoas.valor}" styleClass="labelBold"
+												style="FONT-SIZE: 10pt;width:100px;"
+												converter="bigDecimalConverter" />
+											<p:outputLabel value=" #{processosPessoas.quitar}" 
+												styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+											<p:outputLabel value=" quitar" styleClass="labelBold" rendered="#{processosPessoas.quitar eq 'Não'}" />
+											<p:spacer width="10px"/>
+											<p:commandButton  icon="ui-icon-trash"
+												action="#{contratoCobrancaMB.removeProcesso(processosPessoas)}"
+												update="form:RecebidoPajulaudoPanel form:ComitePanelView" />
+										</p:dataViewListItem>
+									</p:dataView>
+								</p:dataViewListItem>
+							</p:dataView>
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
@@ -5018,6 +5078,15 @@
 						<p:outputLabel value="#{contratos.status}"
 							style="FONT-SIZE: 10pt;width:100px;" />
 					</p:column>
+					<p:column style="text-align: center">
+						<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar">
+		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
+		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="false" />
+		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" />
+		                </p:commandButton>			
+					</p:column>
 				</p:dataTable>
 			</h:form>
 		</p:dialog>
@@ -5066,6 +5135,53 @@
 		<ui:include src="../../Dialog/DialogRecebedorPagador.xhtml">
 				<ui:param name="mbean" value="#{contratoCobrancaMB}"></ui:param>
 				<ui:param name="titulo" value="#{contratoCobrancaMB.tituloPagadorRecebedorDialog}"></ui:param>
-		</ui:include>				 		
+		</ui:include>			
+		
+		<p:dialog header="Nova Pessoa" widgetVar="pessoaDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="400">
+			<h:form id="pessoaDialogdlg">			
+				<div align="center">		
+					<h:panelGrid columns="2">
+						<p:outputLabel for="Pessoa" value="Pessoa: "
+							styleClass="labelBold" />
+						<p:selectOneRadio id="Pessoa"
+							value="#{contratoCobrancaMB.tipoPagadorProcesso}" required="true">
+							<f:selectItem itemLabel="Física" itemValue="true" />
+							<f:selectItem itemLabel="Jurídica" itemValue="false" />
+							<p:ajax update="pessoaDialogdlg" event="valueChange"
+								listener="#{contratoCobrancaMB.selectedTipoPagadorProcesso}" />
+						</p:selectOneRadio>
+					</h:panelGrid>		
+					<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.tipoPagadorProcesso}">
+						<p:outputLabel value="CPF:"  styleClass="labelBold"/>			
+						<p:inputMask value="#{contratoCobrancaMB.pagadorProcesso.cpf}"
+							style=" width:100px" mask="999.999.999-99">
+							<p:ajax event="blur" update="pessoaDialogdlg"
+								listener="#{contratoCobrancaMB.procurarPFprocesso}" />
+						</p:inputMask>
+						<p:outputLabel value="Nome:" styleClass="labelBold"/>
+						<p:inputText value="#{contratoCobrancaMB.pagadorProcesso.nome}" />					
+						<p:outputLabel value="Data Nascimento:"  styleClass="labelBold"/>
+						<p:calendar value="#{contratoCobrancaMB.pagadorProcesso.dtNascimento}" size="50" 
+							styleClass="dateTimeField" pattern="dd/MM/yyyy" inputStyle="margin-right: 5px; width:70px"/>
+					</h:panelGrid>	
+					<h:panelGrid columns="2" rendered="#{!contratoCobrancaMB.tipoPagadorProcesso}">
+						<p:outputLabel value="CNPJ:"  styleClass="labelBold"/>
+						<p:inputMask value="#{contratoCobrancaMB.pagadorProcesso.cnpj}"
+							label="CNPJ" mask="99.999.999/9999-99" style=" width:100px">
+							<p:ajax event="blur" update="pessoaDialogdlg"
+								listener="#{contratoCobrancaMB.procurarPJprocesso}" />
+						</p:inputMask>
+						<p:outputLabel value="Razão Social:" styleClass="labelBold"/>
+						<p:inputText value="#{contratoCobrancaMB.pagadorProcesso.nome}"/>		
+					</h:panelGrid>
+					<p:commandButton  value="Adicionar" action="#{contratoCobrancaMB.inserirPessoaProcesso}"  ajax="true"
+						onclick="PF('pessoaDialog').close();" update="form:RecebidoPajulaudoPanel" 
+						style="margin-bottom:50px; margin-top:10px"/>	
+				</div>
+			</h:form>
+			<p:ajax event="close" listener="#{contratoCobrancaMB.closeDialogPagadorProcessos}"
+			 update="pessoaDialogdlg form:RecebidoPajulaudoPanel" />
+		</p:dialog>	 		
 	</ui:define>
 </ui:composition>
