@@ -35,6 +35,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -3175,9 +3176,11 @@ public class ContratoCobrancaMB {
 			}
 			
 			ContasPagarDao cpDao = new ContasPagarDao();
-			for (CcbProcessosJudiciais processo : objetoContratoCobranca.getListProcessos()) {
-				if(processo.getContaPagar().getId() <= 0) {
-					cpDao.create(processo.getContaPagar());
+			if(!CommonsUtil.semValor(objetoContratoCobranca.getListProcessos())) {
+				for (CcbProcessosJudiciais processo : objetoContratoCobranca.getListProcessos()) {
+					if(processo.getContaPagar().getId() <= 0) {
+						cpDao.create(processo.getContaPagar());
+					}
 				}
 			}
 
@@ -3812,9 +3815,11 @@ public class ContratoCobrancaMB {
 				*/
 				
 				ContasPagarDao cpDao = new ContasPagarDao();
-				for (CcbProcessosJudiciais processo : objetoContratoCobranca.getListProcessos()) {
-					if(processo.getContaPagar().getId() <= 0) {
-						cpDao.create(processo.getContaPagar());
+				if(!CommonsUtil.semValor(objetoContratoCobranca.getListProcessos())) {
+					for (CcbProcessosJudiciais processo : objetoContratoCobranca.getListProcessos()) {
+						if(processo.getContaPagar().getId() <= 0) {
+							cpDao.create(processo.getContaPagar());
+						}
 					}
 				}
 				
@@ -18841,6 +18846,9 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 	}
 	
 	public void addProcesso() {
+		if(CommonsUtil.semValor(objetoContratoCobranca.getListProcessos())) {
+			objetoContratoCobranca.setListProcessos(new HashSet<>());
+		}
 		processoSelecionado.getContaPagar().setValor(processoSelecionado.getValor());
 		processoSelecionado.getContaPagar().setDescricao("Processo N°: " + processoSelecionado.getNumero());
 		
@@ -19321,9 +19329,11 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 	
 	private BigDecimal calcularValorTotalProcessos() {
 		BigDecimal valorTotal = BigDecimal.ZERO;
-		for (CcbProcessosJudiciais processo : this.objetoContratoCobranca.getListProcessos()) {
-			if(!CommonsUtil.semValor(processo.getValor())) {
-				valorTotal = valorTotal.add(processo.getValor());
+		if(!CommonsUtil.semValor(objetoContratoCobranca.getListProcessos())) {
+			for (CcbProcessosJudiciais processo : this.objetoContratoCobranca.getListProcessos()) {
+				if(!CommonsUtil.semValor(processo.getValor())) {
+					valorTotal = valorTotal.add(processo.getValor());
+				}
 			}
 		}		
 		this.objetoContratoCobranca.setValorTotalProcessos(valorTotal);
