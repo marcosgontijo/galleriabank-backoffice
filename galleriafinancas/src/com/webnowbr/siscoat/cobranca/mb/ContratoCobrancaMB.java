@@ -30796,6 +30796,26 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		return this.downloadAllFiles;
 	}
 	
+	public BigDecimal calculaTotalVlrParcelaBaixaLoteSelecionadas() {
+		BigDecimal valorTotal = BigDecimal.ZERO;
+		
+		for (BoletoKobana boletos : this.selectedBoletosKobana) {
+			valorTotal = valorTotal.add(boletos.getVlrParcela());		
+		}
+		
+		return valorTotal;
+	}
+	
+	public BigDecimal calculaTotalVlrPagoBaixaLoteSelecionadas() {
+		BigDecimal valorTotal = BigDecimal.ZERO;
+		
+		for (BoletoKobana boletos : this.selectedBoletosKobana) {
+			valorTotal = valorTotal.add(boletos.getPaidAmount());	
+		}
+		
+		return valorTotal;
+	}
+	
 	public StreamedContent getDownloadAllFilesInterno() {
 		try {
 			// recupera path do contrato

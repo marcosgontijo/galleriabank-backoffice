@@ -31,6 +31,8 @@ public class BoletoKobana implements Serializable {
 	
 	private List<ContratoCobrancaDetalhes> multiParcelas;
 	
+	private long idFakeAgrupamentoSomatoria;	
+	
 	public long getId() {
 		return id;
 	}
@@ -132,5 +134,11 @@ public class BoletoKobana implements Serializable {
 	}
 	public void setVlrParcela(BigDecimal vlrParcela) {
 		this.vlrParcela = vlrParcela;
+	}
+	public long getIdFakeAgrupamentoSomatoria() {
+		return idFakeAgrupamentoSomatoria;
+	}
+	public void setIdFakeAgrupamentoSomatoria(long idFakeAgrupamentoSomatoria) {
+		this.idFakeAgrupamentoSomatoria = idFakeAgrupamentoSomatoria;
 	}
 }

@@ -38,6 +38,23 @@
 						<f:selectItem itemLabel="Pagamento" itemValue="Pagamento" />
 						<p:ajax update=":form:panelDatas" event="change" />
 					</p:selectOneRadio>
+					
+					<p:outputLabel for="empresa" value="Empresa: "
+						styleClass="labelBold" />
+					<p:selectOneMenu id="empresa"
+						value="#{kobanaMB.filtroEmpresa}"
+						label="Status" style="width:345px;">
+						<f:selectItem itemValue="" itemLabel="TODAS" />
+						<f:selectItem itemValue="GALLERIA FINANÇAS SECURITIZADORA S.A."
+							itemLabel="GALLERIA FINANÇAS SECURITIZADORA S.A." />
+						<f:selectItem
+							itemValue="GALLERIA CORRESPONDENTE BANCARIO EIRELI"
+							itemLabel="GALLERIA CORRESPONDENTE BANCARIO EIRELI" />
+						<f:selectItem itemValue="FIDC GALLERIA"
+							itemLabel="FIDC GALLERIA" />
+						<f:selectItem itemValue="CRI 1" itemLabel="CRI 1" />
+						<f:selectItem itemValue="CRI 2" itemLabel="CRI 2" />
+					</p:selectOneMenu>
 				</h:panelGrid>
 				
 				<h:panelGroup id="panelDatas">
@@ -245,19 +262,11 @@
 					<p:dataTable id="dtParcelasSelecionadas" var="parcelasSelecionadas"
 								value="#{contratoCobrancaMB.selectedBoletosKobana}"
 								rowStyleClass="#{parcelasSelecionadas.parcela.parcelaPaga eq true ? 'parcelaPaga' : 'parcelaVencendo'}"
-								emptyMessage="Nenhuma parcela selecionada!!!" style="margin-top: 20px;" sortBy="#{parcelasSelecionadas.id}">
+								emptyMessage="Nenhuma parcela selecionada!!!" style="margin-top: 20px;" sortBy="#{parcelasSelecionadas.idFakeAgrupamentoSomatoria}">
 						<p:column style="text-align: center;"
 							headerText="Parcela">
 							<h:outputText value="#{parcelasSelecionadas.parcela.numeroParcela}"/>
 						</p:column>		
-						<p:column style="text-align: center;"
-							headerText="Valor da Parcela">
-							<h:outputText value="#{parcelasSelecionadas.vlrParcela}" converter="bigDecimalConverter" />
-						</p:column>	
-						<p:column style="text-align: center;"
-							headerText="Valor Pago">
-							<h:outputText value="#{parcelasSelecionadas.paidAmount}" converter="bigDecimalConverter" />
-						</p:column>	
 						<p:column style="text-align: center;"
 							headerText="Baixada?">
 							<ui:fragment rendered="#{parcelasSelecionadas.parcela.parcelaPaga}">
@@ -266,7 +275,33 @@
 							<ui:fragment rendered="#{!parcelasSelecionadas.parcela.parcelaPaga}">
 								<h:outputText value="Não" />
 							</ui:fragment>
-						</p:column>			
+						</p:column>	
+						<p:column style="text-align: center;"
+							headerText="Valor da Parcela">
+							<h:outputText value="#{parcelasSelecionadas.vlrParcela}" converter="bigDecimalConverter" />
+						</p:column>	
+						<p:column style="text-align: center;"
+							headerText="Valor Pago">
+							<h:outputText value="#{parcelasSelecionadas.paidAmount}" converter="bigDecimalConverter" />
+						</p:column>	
+						<p:summaryRow>
+				            <p:column style="text-align:right;">
+				                <h:outputText value="# Títulos Selecionados:" />
+				            </p:column>
+				            <p:column style="text-align:center;">
+				                <h:outputText value="#{contratoCobrancaMB.selectedBoletosKobana.size()}" />
+				            </p:column>
+				            <p:column>
+				                <h:outputText value="#{contratoCobrancaMB.calculaTotalVlrParcelaBaixaLoteSelecionadas()}" converter="bigDecimalConverter">
+				                    <f:convertNumber type="currency" currencySymbol="R$" />
+				                </h:outputText>
+				            </p:column>
+				            <p:column>
+				                <h:outputText value="#{contratoCobrancaMB.calculaTotalVlrPagoBaixaLoteSelecionadas()}" converter="bigDecimalConverter">
+				                    <f:convertNumber type="currency" currencySymbol="R$" />
+				                </h:outputText>
+				            </p:column>
+				        </p:summaryRow>		
 					</p:dataTable>
 				</h:panelGrid>
 

@@ -624,6 +624,29 @@ public final class DateUtil {
 	    }
 	}
 	
+	public static Date getWorkingDayBeforeToday(Date startDate) {
+		Calendar dateFinal = Calendar.getInstance();
+		
+		dateFinal.setTime(getYesterday(startDate)); 
+	
+		boolean isWorkingDay = false;
+		
+		List<Calendar> listaferiados = new ArrayList<Calendar>();
+	    listaferiados = getFeriados();
+		
+		while (isWorkingDay) {
+		    if (dateFinal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY 
+	        		|| dateFinal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY
+	        		|| listaferiados.contains(dateFinal)) {
+		    	dateFinal.setTime(getYesterday(dateFinal.getTime()));
+		    } else {
+		    	isWorkingDay = true;
+		    }
+		}
+		
+		return dateFinal.getTime();		
+	}
+	
 	public static int getWorkingDaysBetweenTwoDates(Date startDate, Date endDate) {
 	    Calendar startCal = Calendar.getInstance();
 	    startCal.setTime(startDate);

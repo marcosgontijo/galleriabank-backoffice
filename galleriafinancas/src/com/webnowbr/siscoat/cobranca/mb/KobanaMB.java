@@ -39,6 +39,7 @@ import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
+import com.webnowbr.siscoat.common.DateUtil;
 
 @ManagedBean(name = "kobanaMB")
 @SessionScoped
@@ -122,6 +123,7 @@ public class KobanaMB {
 	
 	private String filtroStatus;
 	private String filtroData;
+	private String filtroEmpresa;
 	
 	private ContratoCobranca contrato;
 	private ContratoCobrancaDetalhes parcela;
@@ -135,11 +137,17 @@ public class KobanaMB {
 		
 		this.listBoletosKobana = new ArrayList<BoletoKobana>();
 		this.selectedParcelas = new ArrayList<ContratoCobrancaDetalhes>();
-		this.dtInicioConsulta = gerarDataHoje();
-		this.dtFimConsulta = gerarDataHoje();
+		//this.dtInicioConsulta = gerarDataHoje();
+		//this.dtFimConsulta = gerarDataHoje();
 		
-		this.filtroStatus = "Todos";
-		this.filtroData = "Todos";
+		this.filtroStatus = "paid";
+		this.filtroData = "Pagamento";
+		this.filtroEmpresa = "";
+		
+		Date dataWorokingDayBeforeToday = DateUtil.getWorkingDayBeforeToday(gerarDataHoje());
+		
+		this.dtInicioConsulta = dataWorokingDayBeforeToday;
+		this.dtFimConsulta = dataWorokingDayBeforeToday;
 		
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultaBoletosKobana.xhtml";
 	}
@@ -311,6 +319,10 @@ public class KobanaMB {
 			
 			for (int i = 0; i < myResponse.length(); i++) {
 				BoletoKobana boleto = new BoletoKobana();
+				
+				// atributo usado apenas para agrupamento de somatória na tela
+				boleto.setIdFakeAgrupamentoSomatoria(777);
+				
 				JSONObject objetoBoleto = myResponse.getJSONObject(i);
 			
 				boleto.setId(objetoBoleto.getLong("id"));
@@ -404,14 +416,22 @@ public class KobanaMB {
 				boleto.setPaidAmount(BigDecimal.valueOf(objetoBoleto.getDouble("paid_amount")));
 				boleto.setUrlBoleto(objetoBoleto.getString("url"));
 				boleto.setBeneficiaryName(objetoBoleto.getString("beneficiary_name"));
-				
-				
-				
+								
 				if (!objetoBoleto.isNull("description")) {
 					boleto.setDescription(objetoBoleto.getString("description"));
 				}
 				
-				this.listBoletosKobana.add(boleto);
+				if (this.filtroEmpresa.equals("")) {
+					this.listBoletosKobana.add(boleto);	
+				} else {
+					if (boleto.getContrato() != null) {
+						if (boleto.getContrato().getEmpresa().equals(this.filtroEmpresa)) {
+							this.listBoletosKobana.add(boleto);		
+						}
+					} else {
+						this.listBoletosKobana.add(boleto);		
+					}
+				}				
 			}
 		}
 	}
@@ -1454,5 +1474,13 @@ public class KobanaMB {
 
 	public void setCedente(PagadorRecebedor cedente) {
 		this.cedente = cedente;
+	}
+
+	public String getFiltroEmpresa() {
+		return filtroEmpresa;
+	}
+
+	public void setFiltroEmpresa(String filtroEmpresa) {
+		this.filtroEmpresa = filtroEmpresa;
 	}
 }
