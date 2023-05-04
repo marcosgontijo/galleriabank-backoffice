@@ -906,10 +906,15 @@
 							<h:panelGrid columns="1">
 								<p:dataTable id="dtFilesAnalise" var="fileAnalise"
 									value="#{contratoCobrancaMB.listaDocumentoAnalise}"
+									
 									rowKey="#{fileAnalise.id}" emptyMessage="">
-									<p:column selectionMode="multiple"
-										style="width:16px;text-align:center" />
-								
+									<p:column headerText="Liberado Análise">
+										<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"
+											onchange="" onLabel="Yes" offLabel="No" style="width:6rem" >
+										<p:ajax  event="change"
+											listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
+											</p:selectBooleanButton>
+									</p:column>
 
 									<p:column style="text-align: center;"
 										headerText="Identificação" filterBy="#{fileAnalise.identificacao}"
@@ -965,7 +970,7 @@
 
 										<p:commandButton action="#{serasaMB.baixarDocumento(fileAnalise)}"
 											icon="ui-icon ui-icon-print" value="Download Serasa"
-											rendered="#{fileAnalise.podeChamarSerasa and fileAnalise.serasaProcessado }"
+											rendered="#{fileAnalise.serasaProcessado }"
 											ajax="false" />
 
 									</p:column>
@@ -985,6 +990,8 @@
 						<p:panel id="pnlCeridoesAnalise"
 							header="Certidões"
 							style="margin-bottom:10px;">
+							
+							<p:commandButton value="Executar Consultas" action="#{contratoCobrancaMB.executarConsultasAnaliseDocumento()}"/>
 							<p:commandButton value="Certidões Docket" action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.objetoContratoCobranca)}"/>	
 						</p:panel>
 					</p:panel>

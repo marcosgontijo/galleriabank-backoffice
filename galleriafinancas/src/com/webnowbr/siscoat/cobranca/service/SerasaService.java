@@ -13,12 +13,58 @@ import javax.faces.application.FacesMessage;
 import org.jasypt.commons.CommonUtils;
 import org.json.JSONObject;
 
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.DataEngine;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
+import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
+import com.webnowbr.siscoat.infra.db.model.User;
+
+import br.com.galleriabank.serasacrednet.cliente.model.CredNet;
+import br.com.galleriabank.serasacrednet.cliente.model.PessoaParticipacao;
+import br.com.galleriabank.serasarelato.cliente.util.GsonUtil;
 
 public class SerasaService {
 
+	
+
+	public void requestSerasa(DocumentoAnalise documentoAnalise, User user) {
+
+		if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
+			serasaCriarConsulta(documentoAnalise);
+		}
+		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+		documentoAnalise = documentoAnaliseDao.findById(documentoAnalise.getId());
+
+		if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa())) {
+			CredNet credNet = GsonUtil.fromJson(documentoAnalise.getRetornoSerasa(), CredNet.class);
+
+			if (!CommonsUtil.semValor(documentoAnalise.getPagador())) {
+				if (CommonsUtil.semValor(documentoAnalise.getPagador().getDtNascimento()))
+					documentoAnalise.getPagador().setDtNascimento(credNet.getPessoa().getDataNascimentoFundacao());
+
+				if (CommonsUtil.semValor(documentoAnalise.getPagador().getNomeMae()))
+					documentoAnalise.getPagador().setNomeMae(credNet.getPessoa().getNomeMae());
+			}
+
+			if (!CommonsUtil.semValor(credNet.getParticipacoes())) {
+
+				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+
+				for (PessoaParticipacao pessoaParticipacao : credNet.getParticipacoes()) {
+
+					cadastrarPessoRetornoCredNet(pessoaParticipacao, user, documentoAnaliseDao, pagadorRecebedorService,
+							documentoAnalise.getContratoCobranca(),
+							"Empresa Vinculada ao " + documentoAnalise.getMotivoAnalise());
+				}
+			}
+
+		}
+
+	}
+	
 	public FacesMessage serasaCriarConsulta(DocumentoAnalise documentoAnalise) { // POST para gerar consulta
 		try {
 			// loginDocket();
@@ -151,4 +197,45 @@ public class SerasaService {
 
 		return null;
 	}
+
+	private void cadastrarPessoRetornoCredNet(PessoaParticipacao pessoaParticipacao, User user, DocumentoAnaliseDao documentoAnaliseDao,
+			PagadorRecebedorService pagadorRecebedorService, ContratoCobranca contratoCobranca, String motivo) {
+
+
+			DocketService docketService = new DocketService();
+
+			DocumentoAnalise documentoAnalise = new DocumentoAnalise();
+			documentoAnalise.setContratoCobranca(contratoCobranca);
+			documentoAnalise.setIdentificacao(pessoaParticipacao.getNomeRazaoSocial());
+
+			documentoAnalise.setTipoPessoa("PJ");
+			documentoAnalise.setMotivoAnalise(motivo);
+			
+			if (documentoAnalise.getTipoPessoa() == "PJ") {
+				documentoAnalise.setCnpjcpf(pessoaParticipacao.getCnpjcpf());
+				documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.RELATO);
+				documentoAnalise.setLiberadoAnalise(true);
+			} else {
+				documentoAnalise.setCnpjcpf(pessoaParticipacao.getCnpjcpf());
+				documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.CREDNET);
+			}
+			
+			PagadorRecebedor pagador = new PagadorRecebedor();
+			pagador.setId(0);
+			
+			pagador.setCnpj(pessoaParticipacao.getCnpjcpf());
+			pagador.setNome(pessoaParticipacao.getNomeRazaoSocial());
+			
+			pagador = pagadorRecebedorService.buscaOuInsere(pagador);			
+			documentoAnalise.setPagador(pagador);
+			
+			
+			documentoAnaliseDao.create(documentoAnalise);
+			
+			if (documentoAnalise.getTipoPessoa() == "PJ") {
+				DataEngine engine = docketService.engineInserirPessoa(documentoAnalise.getPagador(), contratoCobranca);				
+				docketService.engineCriarConsulta( documentoAnalise,  engine,  user);		
+			}
+			
+		}
 }

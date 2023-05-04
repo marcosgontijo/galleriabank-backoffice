@@ -6,6 +6,7 @@ import java.util.Base64;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 
@@ -20,6 +21,8 @@ import com.webnowbr.siscoat.cobranca.service.SerasaService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
+import com.webnowbr.siscoat.infra.db.model.User;
+import com.webnowbr.siscoat.security.LoginBean;
 
 import br.com.galleriabank.serasacrednet.cliente.model.CredNet;
 import br.com.galleriabank.serasacrednet.cliente.model.PessoaParticipacao;
@@ -28,6 +31,10 @@ import br.com.galleriabank.serasarelato.cliente.util.GsonUtil;
 @ManagedBean(name = "serasaMB")
 @SessionScoped
 public class SerasaMB {
+	
+	@ManagedProperty(value = "#{loginBean}")
+	protected LoginBean loginBean;
+	
 
 	private SerasaService serasaService;
 
@@ -37,37 +44,8 @@ public class SerasaMB {
 
 	public void requestSerasa(DocumentoAnalise documentoAnalise) {
 
-		if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
-			serasaService.serasaCriarConsulta(documentoAnalise);
-		}
-		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-		documentoAnalise = documentoAnaliseDao.findById(documentoAnalise.getId());
-
-		if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa())) {
-			CredNet credNet = GsonUtil.fromJson(documentoAnalise.getRetornoSerasa(), CredNet.class);
-
-			if (!CommonsUtil.semValor(documentoAnalise.getPagador())) {
-				if (CommonsUtil.semValor(documentoAnalise.getPagador().getDtNascimento()))
-					documentoAnalise.getPagador().setDtNascimento(credNet.getPessoa().getDataNascimentoFundacao());
-
-				if (CommonsUtil.semValor(documentoAnalise.getPagador().getNomeMae()))
-					documentoAnalise.getPagador().setNomeMae(credNet.getPessoa().getNomeMae());
-			}
-
-			if (!CommonsUtil.semValor(credNet.getParticipacoes())) {
-
-				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
-
-				for (PessoaParticipacao pessoaParticipacao : credNet.getParticipacoes()) {
-
-					cadastrarPessoRetornoCredNet(pessoaParticipacao, documentoAnaliseDao, pagadorRecebedorService,
-							documentoAnalise.getContratoCobranca(),
-							"Empresa Vinculada ao " + documentoAnalise.getMotivoAnalise());
-				}
-			}
-
-		}
-
+		serasaService.requestSerasa(documentoAnalise, loginBean.getUsuarioLogado());
+		
 	}
 
 	public void baixarDocumentoSerasa(DocumentoAnalise documentoAnalise) {
@@ -113,39 +91,16 @@ public class SerasaMB {
 		return null;
 	}
 
-	private void cadastrarPessoRetornoCredNet(PessoaParticipacao pessoaParticipacao, DocumentoAnaliseDao documentoAnaliseDao,
-			PagadorRecebedorService pagadorRecebedorService, ContratoCobranca contratoCobranca, String motivo) {
-
 	
 
-			DocumentoAnalise documentoAnalise = new DocumentoAnalise();
-			documentoAnalise.setContratoCobranca(contratoCobranca);
-			documentoAnalise.setIdentificacao(pessoaParticipacao.getNomeRazaoSocial());
 
-			documentoAnalise.setTipoPessoa("PJ");
-			documentoAnalise.setMotivoAnalise(motivo);
-			
-			if (documentoAnalise.getTipoPessoa() == "PJ") {
-				documentoAnalise.setCnpjcpf(pessoaParticipacao.getCnpjcpf());
-				documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.RELATO);
-			} else {
-				documentoAnalise.setCnpjcpf(pessoaParticipacao.getCnpjcpf());
-				documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.CREDNET);
-			}
-			
-			PagadorRecebedor pagador = new PagadorRecebedor();
-			pagador.setId(0);
-			
-			pagador.setCnpj(pessoaParticipacao.getCnpjcpf());
-			pagador.setNome(pessoaParticipacao.getNomeRazaoSocial());
-			
-			pagador = pagadorRecebedorService.buscaOuInsere(pagador);			
-			documentoAnalise.setPagador(pagador);
-			
-			
-			documentoAnaliseDao.create(documentoAnalise);
-			
-		}
+	public LoginBean getLoginBean() {
+		return loginBean;
+	}
+
+	public void setLoginBean(LoginBean loginBean) {
+		this.loginBean = loginBean;
+	}
 
 
 }
