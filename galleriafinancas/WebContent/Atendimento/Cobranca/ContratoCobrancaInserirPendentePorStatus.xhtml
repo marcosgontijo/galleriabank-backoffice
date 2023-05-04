@@ -910,7 +910,7 @@
 									rowKey="#{fileAnalise.id}" emptyMessage="">
 									<p:column headerText="Liberado Análise">
 										<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"
-											onchange="" onLabel="Yes" offLabel="No" style="width:6rem" >
+											 onLabel="Sim" offLabel="Não" style="width:6rem" >
 										<p:ajax  event="change"
 											listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
 											</p:selectBooleanButton>
