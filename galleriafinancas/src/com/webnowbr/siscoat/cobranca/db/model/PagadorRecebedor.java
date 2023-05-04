@@ -229,6 +229,8 @@ public class PagadorRecebedor implements Serializable {
 	/////////
 	
 	private List<DocumentosPagadorDocket> documentosDocket;
+	private List<CcbProcessosJudiciais> processos;
+	private BigDecimal valorProcessos;
 	
 	private User usuario;
 	
@@ -2080,5 +2082,21 @@ public class PagadorRecebedor implements Serializable {
 
 	public void setDataCasamento(Date dataCasamento) {
 		this.dataCasamento = dataCasamento;
+	}
+
+	public List<CcbProcessosJudiciais> getProcessos() {
+		return processos;
+	}
+
+	public void setProcessos(List<CcbProcessosJudiciais> processos) {
+		this.processos = processos;
+	}
+
+	public BigDecimal getValorProcessos() {
+		return valorProcessos;
+	}
+
+	public void setValorProcessos(BigDecimal valorProcessos) {
+		this.valorProcessos = valorProcessos;
 	}
 }
