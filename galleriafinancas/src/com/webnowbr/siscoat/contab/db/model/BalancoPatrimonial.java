@@ -343,6 +343,7 @@ public class BalancoPatrimonial implements Serializable {
 	}
 	
 	public void calcularPagarDebenturista(BigDecimal valor,  Date dataParcela) { 
+		custoPonderado = BigDecimal.ONE;
 		BigDecimal juros = custoPonderado;
 		
 		 //balanco.getCustoPonderado(), rs.getDate(2), balanco.getAaaaMM()
