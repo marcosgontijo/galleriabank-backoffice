@@ -29866,6 +29866,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			documentoAnalise.setIdentificacao(event.getFile().getFileName());
 			documentoAnalise.setPath(pathContrato + event.getFile().getFileName());
 			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.REA);
+			documentoAnalise.setLiberadoAnalise(true);
 			documentoAnaliseDao.create(documentoAnalise);
 			// atualiza lista de arquivos contidos no diretório
 			listaArquivosAnaliseDocumentos();
