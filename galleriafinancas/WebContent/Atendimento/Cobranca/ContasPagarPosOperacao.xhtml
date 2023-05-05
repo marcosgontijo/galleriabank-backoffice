@@ -34,8 +34,8 @@
 				</h:panelGrid>
 			</p:panel>
 			
-			<h:panelGroup id="ContasPagarPanel">
-				<p:panel header="Contas a Pagar" style="margin-bottom:10px;">
+			<h:panelGrid id="ContasPagarPanel">
+				<h:panelGrid header="Contas a Pagar" style="margin-bottom:10px;">
 					<f:facet name="header"> Contas a Pagar 
 						<p:outputLabel value="" />							
 						<p:selectBooleanButton
@@ -182,17 +182,17 @@
 							update=":form:ContasPagarPanel" icon="ui-icon ui-icon-check" />
 					</h:panelGroup>
 				
-					<p:dataTable var="contas" value="#{contasPagarMB.selectedContratoLov.listContasPagar}" sortBy="#{contas.dataPagamento}" sortOrder="descending">
+					<p:dataTable var="contas" value="#{contasPagarMB.contasPagarPosOperacao}" id="tblContasPagarList" allowUnsorting="true" >
 						
 							<p:column style="text-align: center;" headerText="Descrição: " styleClass="labelBold" >
 							<p:outputLabel value="#{contas.descricao}"
-								styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+								styleClass="labelBold" style="FONT-SIZE: 10pt;" />
 							</p:column>
 
 							<p:column style="text-align: center;" headerText="Valor: " styleClass="labelBold" >
 							<p:outputLabel value="#{contas.valor}"
 								converter="bigDecimalConverter" styleClass="labelBold"
-								style="FONT-SIZE: 10pt;width:100px;" />
+								style="FONT-SIZE: 10pt;width:100px;white-space: nowrap;" />
 							</p:column>
 
 							<p:column style="text-align: center;" headerText="Data Vencimento: " styleClass="labelBold" >
@@ -202,10 +202,10 @@
 							</h:outputText>
 							</p:column>
 
-							<p:column style="text-align: center;" headerText="Valor Pago: " styleClass="labelBold" >
+							<p:column style="text-align: center;" headerText="Valor Pago: " styleClass="labelBold" sortBy="#{contas.valorPagamento}"  >
 							<p:outputLabel value="#{contas.valorPagamento}"
 								converter="bigDecimalConverter" styleClass="labelBold"
-								style="FONT-SIZE: 10pt;width:100px;" />
+								style="FONT-SIZE: 10pt;width:100px;white-space: nowrap;" />
 							</p:column>
 
 							<p:column style="text-align: center;" headerText="Data Pagamento: " styleClass="labelBold" sortBy="#{contas.dataPagamento}" >
@@ -230,8 +230,11 @@
 							</p:column>
 					</p:dataTable>
 					
-				</p:panel>
-			</h:panelGroup>		
+				</h:panelGrid>
+			</h:panelGrid>		
+						
+						
+						
 						
 			<p:messages id="msgArquivo"/>
 			
