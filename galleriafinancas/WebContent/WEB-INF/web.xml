@@ -124,8 +124,11 @@
 	<servlet-mapping>
 		<servlet-name>resteasy-servlet</servlet-name>
 		<url-pattern>/siscoat/*</url-pattern>
-	</servlet-mapping>
-	
+	</servlet-mapping>	
 
 	
+	<context-param>
+	    <param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
+	    <param-value>true</param-value>
+	</context-param>
 </web-app>

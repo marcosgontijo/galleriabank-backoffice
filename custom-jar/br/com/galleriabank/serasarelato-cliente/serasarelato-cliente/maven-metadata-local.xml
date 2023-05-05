@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>br.com.galleriabank.serasarelato-cliente</groupId>
+  <artifactId>serasarelato-cliente</artifactId>
+  <versioning>
+    <versions>
+      <version>1.0-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20230425132510</lastUpdated>
+  </versioning>
+</metadata>
