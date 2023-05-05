@@ -356,7 +356,7 @@ public class KobanaMB {
 							JSONObject objetoDataBoleto = objetoBoleto.getJSONObject("custom_data");
 							ContratoCobranca contrato = new ContratoCobranca();
 							contrato = contratoDao.findById(Long.valueOf(objetoDataBoleto.getString("idContrato")));
-							boleto.setContrato(contrato);
+							boleto.setContrato(contrato); 
 							
 							boleto.setVlrParcela(BigDecimal.ZERO);
 							
@@ -421,6 +421,20 @@ public class KobanaMB {
 					boleto.setDescription(objetoBoleto.getString("description"));
 				}
 				
+				// soma valor das parcelas quando multiparcelas
+				/*
+				if (boleto.getMultiParcelas() != null) {
+					BigDecimal valorTotalParcelas = BigDecimal.ZERO;
+					
+					for (ContratoCobrancaDetalhes parcelas : boleto.getMultiParcelas()) {
+						valorTotalParcelas = valorTotalParcelas.add(parcelas.getVlrParcela());
+					}	
+					
+					boleto.setVlrParcela(valorTotalParcelas);
+				}
+				*/
+				
+				// Filtra Empresa
 				if (this.filtroEmpresa.equals("")) {
 					this.listBoletosKobana.add(boleto);	
 				} else {
@@ -435,7 +449,6 @@ public class KobanaMB {
 			}
 		}
 	}
-
 	
 	public Date processStringToDate(String dateStr) {
 		Date dataConvertida = null;
