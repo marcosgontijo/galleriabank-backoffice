@@ -28,8 +28,6 @@ import br.com.galleriabank.serasarelato.cliente.util.GsonUtil;
 
 public class SerasaService {
 
-	
-
 	public void requestSerasa(DocumentoAnalise documentoAnalise, User user) {
 
 		if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
@@ -50,13 +48,14 @@ public class SerasaService {
 			}
 
 			if (!CommonsUtil.semValor(credNet.getParticipacoes())) {
+				DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
 
 				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
 
 				for (PessoaParticipacao pessoaParticipacao : credNet.getParticipacoes()) {
 
-					cadastrarPessoRetornoCredNet(pessoaParticipacao, user, documentoAnaliseDao, pagadorRecebedorService,
-							documentoAnalise.getContratoCobranca(),
+					documentoAnaliseService.cadastrarPessoRetornoCredNet(pessoaParticipacao, user, documentoAnaliseDao,
+							pagadorRecebedorService, documentoAnalise.getContratoCobranca(),
 							"Empresa Vinculada ao " + documentoAnalise.getMotivoAnalise());
 				}
 			}
@@ -64,7 +63,7 @@ public class SerasaService {
 		}
 
 	}
-	
+
 	public FacesMessage serasaCriarConsulta(DocumentoAnalise documentoAnalise) { // POST para gerar consulta
 		try {
 			// loginDocket();
@@ -80,11 +79,11 @@ public class SerasaService {
 					cnpjcpf = documentoAnalise.getPagador().getCnpj();
 			}
 			if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa()))
-				myURL = new URL("https://servicos.galleriabank.com.br/crednet/api/v1/"
-						+ CommonsUtil.somenteNumeros(cnpjcpf));
+				myURL = new URL(
+						"https://servicos.galleriabank.com.br/crednet/api/v1/" + CommonsUtil.somenteNumeros(cnpjcpf));
 			else
-				myURL = new URL("https://servicos.galleriabank.com.br/relato/api/v1/"
-						+ CommonsUtil.somenteNumeros(cnpjcpf));
+				myURL = new URL(
+						"https://servicos.galleriabank.com.br/relato/api/v1/" + CommonsUtil.somenteNumeros(cnpjcpf));
 
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
 			myURLConnection.setRequestMethod("GET");
@@ -146,7 +145,6 @@ public class SerasaService {
 				myURL = new URL("https://servicos.galleriabank.com.br/crednet/api/v1/");
 			else
 				myURL = new URL("https://servicos.galleriabank.com.br/relato/api/v1/");
-			
 
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
 			myURLConnection.setRequestMethod("POST");
@@ -198,44 +196,4 @@ public class SerasaService {
 		return null;
 	}
 
-	private void cadastrarPessoRetornoCredNet(PessoaParticipacao pessoaParticipacao, User user, DocumentoAnaliseDao documentoAnaliseDao,
-			PagadorRecebedorService pagadorRecebedorService, ContratoCobranca contratoCobranca, String motivo) {
-
-
-			DocketService docketService = new DocketService();
-
-			DocumentoAnalise documentoAnalise = new DocumentoAnalise();
-			documentoAnalise.setContratoCobranca(contratoCobranca);
-			documentoAnalise.setIdentificacao(pessoaParticipacao.getNomeRazaoSocial());
-
-			documentoAnalise.setTipoPessoa("PJ");
-			documentoAnalise.setMotivoAnalise(motivo);
-			
-			if (documentoAnalise.getTipoPessoa() == "PJ") {
-				documentoAnalise.setCnpjcpf(pessoaParticipacao.getCnpjcpf());
-				documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.RELATO);
-				documentoAnalise.setLiberadoAnalise(true);
-			} else {
-				documentoAnalise.setCnpjcpf(pessoaParticipacao.getCnpjcpf());
-				documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.CREDNET);
-			}
-			
-			PagadorRecebedor pagador = new PagadorRecebedor();
-			pagador.setId(0);
-			
-			pagador.setCnpj(pessoaParticipacao.getCnpjcpf());
-			pagador.setNome(pessoaParticipacao.getNomeRazaoSocial());
-			
-			pagador = pagadorRecebedorService.buscaOuInsere(pagador);			
-			documentoAnalise.setPagador(pagador);
-			
-			
-			documentoAnaliseDao.create(documentoAnalise);
-			
-			if (documentoAnalise.getTipoPessoa() == "PJ") {
-				DataEngine engine = docketService.engineInserirPessoa(documentoAnalise.getPagador(), contratoCobranca);				
-				docketService.engineCriarConsulta( documentoAnalise,  engine,  user);		
-			}
-			
-		}
 }
