@@ -15,6 +15,7 @@ public class CcbProcessosJudiciais implements Serializable{
 	private String numero = "";
 	private ContasPagar contaPagar;
 	private ContratoCobranca contrato;
+	private PagadorRecebedor pagador;
 	private String quitar = "";
 	private boolean selecionadoComite = false;
 	
@@ -84,5 +85,11 @@ public class CcbProcessosJudiciais implements Serializable{
 		this.selecionadoComite = selecionadoComite;
 	}
 
-	
+	public PagadorRecebedor getPagador() {
+		return pagador;
+	}
+
+	public void setPagador(PagadorRecebedor pagador) {
+		this.pagador = pagador;
+	}
 }

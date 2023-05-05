@@ -468,79 +468,9 @@ public class DocketMB {
 		}
 	}
 	
-	public void uploadREA(DocumentoAnalise documentoAnalise) {	//POST para gerar pedido
-		FacesContext context = FacesContext.getCurrentInstance();
-		File file = new File(documentoAnalise.getPath());
-		String twoHyphens = "--";
-		String boundary =  "*****";
-		String crlf = "\r\n";
-		try {
-			loginDocket();
-			int HTTP_COD_SUCESSO = 201;
-			
-			URL myURL;
-			if(SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
-				myURL = new URL(urlHomologacao + "/api/v2/"+organizacao_url+"/rea/matriculas");
-			} else {
-				myURL = new URL(urlProducao + "/api/v2/"+organizacao_url+"/rea/matriculas");
-			}
-			
-			String webHookJWT = JwtUtil.generateJWTReaWebwook(true);
-			while (webHookJWT.length() > (256 - SiscoatConstants.URL_SISCOAT_WEBHOOK.length())){
-				webHookJWT = JwtUtil.generateJWTReaWebwook(false);
-			}
-			
-			String s = new String(webHookJWT.getBytes(), Charset.forName("UTF-8"));
-			
-			String urlWebhook = SiscoatConstants.URL_SISCOAT_WEBHOOK + webHookJWT;
-			String authorization = "Bearer " + this.tokenLogin;
-//			LZString.compress(webHookJWT);
-//			LZString.compressToBase64(webHookJWT);
-//			LZString.compressToUTF16(webHookJWT);
-			
-			MultipartUtility multipart = new MultipartUtility(myURL.toString(), "utf-8", authorization);
-			
-			multipart.addFormField("urlWebhook",urlWebhook);
-			
-			 multipart.addFilePart("arquivo",
-                     new File(file.getPath()));
-			
-			 HttpURLConnection myURLConnection = multipart.finish();
-			 
-			JSONObject myResponse = null;			
-			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {	
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-						"Docket: Falha  (Cod: " + myURLConnection.getResponseCode() + ")",""));
-				//System.out.println(jsonREA.toString());
-			} else {
-				BufferedReader  br = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream()));
-				StringBuffer response = new StringBuffer();
-				String inputLine;
-				while ((inputLine = br.readLine()) != null) {
-					response.append(inputLine);
-				}
-				br.close();
-				
-			
-				ReaWebhookRetorno reaWebhookRetorno = GsonUtil.fromJson(response.toString(), ReaWebhookRetorno.class);
-
-				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-				
-				documentoAnalise.setIdRemoto(reaWebhookRetorno.getId());
-				documentoAnaliseDao.merge(documentoAnalise);
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Matrícula enviada com sucesso", ""));	
-				//myResponse = getJSONSucesso(myURLConnection.getInputStream());
-			}
-			myURLConnection.disconnect();
-			
-			
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public void uploadREA(DocumentoAnalise documentoAnalise) {
+		DocketService docketService = new DocketService();
+		docketService.uploadREA(documentoAnalise, loginBean.getUsuarioLogado());
 	}
 
 	public void requestEnginefromRea(DocumentoAnalise documentoAnalise) {

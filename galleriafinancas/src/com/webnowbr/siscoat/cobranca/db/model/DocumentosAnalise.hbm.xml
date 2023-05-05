@@ -44,6 +44,10 @@
 			<column name="tipo" />
 		</property>
 		
+		<property name="liberadoAnalise" type="boolean">
+			<column name="liberadoAnalise" />
+		</property>		
+		
 		<property name="cnpjcpf" type="java.lang.String"  >
 			<column name="cnpjcpf" />
 		</property>

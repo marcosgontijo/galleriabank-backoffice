@@ -38,5 +38,11 @@
 			<column name="selecionadoComite" not-null="true" default="false"/>
 		</property>	
 		
+		<many-to-one name="pagador"
+			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
+			lazy="false">
+			<column name="pagador" />
+		</many-to-one>
+		
     </class>
 </hibernate-mapping>

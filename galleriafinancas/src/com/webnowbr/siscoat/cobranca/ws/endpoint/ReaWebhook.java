@@ -59,14 +59,16 @@ public class ReaWebhook {
 			documentoAnalise.setRetorno(webhookRetorno);
 			documentoAnaliseDao.merge(documentoAnalise);
 			reaWebhookRetorno.buscaProprietarios();
-			if (reaWebhookRetorno.getProprietarioAtual() != null)
+			Date dataVendaAtual = null;
+			
+			if (reaWebhookRetorno.getProprietarioAtual() != null) {
 				cadastrarPessoRetornoRea(reaWebhookRetorno.getProprietarioAtual(), documentoAnaliseDao,
 						documentoAnalise.getContratoCobranca(), "Proprietario Atual");
-			Date dataVendaAtual = DateUtil
-					.getDecodeDateExtenso(reaWebhookRetorno.getProprietarioAtual().getConteudo().getTexto());
-			
-			if (!CommonsUtil.semValor(dataVendaAtual) && DateUtil.isAfterDate(
-					DateUtil.adicionarPeriodo(DateUtil.getFirstDayOfMonth( DateUtil.getDataHoje() ), -2, Calendar.YEAR), dataVendaAtual)) {
+				dataVendaAtual = DateUtil
+						.getDecodeDateExtenso(reaWebhookRetorno.getProprietarioAtual().getConteudo().getTexto());
+			}
+			if ( CommonsUtil.semValor(dataVendaAtual) || (!CommonsUtil.semValor(dataVendaAtual) && DateUtil.isAfterDate(
+					DateUtil.adicionarPeriodo(DateUtil.getFirstDayOfMonth( DateUtil.getDataHoje() ), -2, Calendar.YEAR), dataVendaAtual))) {
 				
 			if (!CommonsUtil.semValor( reaWebhookRetorno.getProprietariosAnterior() != null)) {
 				Date dataVendaAnterior = DateUtil.getDataHoje();
@@ -74,15 +76,18 @@ public class ReaWebhook {
 					Date dataVenda = DateUtil
 							.getDecodeDateExtenso(proprietarioAnterior.getConteudo().getTexto());
 
-					if (!CommonsUtil.semValor(dataVendaAnterior) || CommonsUtil.semValor(dataVenda) || DateUtil.isAfterDate(
-							DateUtil.adicionarPeriodo(DateUtil.getFirstDayOfMonth( DateUtil.getDataHoje() ), -2, Calendar.YEAR), dataVenda)) {
-						dataVendaAnterior = dataVenda;
+//					if (!CommonsUtil.semValor(dataVendaAnterior) || CommonsUtil.semValor(dataVenda) || DateUtil.isAfterDate(
+//							DateUtil.adicionarPeriodo(DateUtil.getFirstDayOfMonth( DateUtil.getDataHoje() ), -2, Calendar.YEAR), dataVenda)) {
+//						dataVendaAnterior = dataVenda;
+//						if ( (!CommonsUtil.semValor(dataVenda) &&  DateUtil.isAfterDate(
+//							DateUtil.adicionarPeriodo(DateUtil.getFirstDayOfMonth( DateUtil.getDataHoje() ), -2, Calendar.YEAR), dataVenda))  || CommonsUtil.semValor(dataVenda))
+//							
 						cadastrarPessoRetornoRea(proprietarioAnterior, documentoAnaliseDao,
 								documentoAnalise.getContratoCobranca(),
 								"Proprietario Anterior"
 										+ (CommonsUtil.semValor(dataVenda) ? " Data venda não localizada"
 												: " Data venda:" + CommonsUtil.formataData(dataVenda, "dd/MM/yyyy")));
-					}
+//					}
 
 				}
 			}
@@ -106,6 +111,7 @@ public class ReaWebhook {
 
 		for (ReaWebhookRetornoProprietario propietario : bloco.getConteudo().getExtraido().getProprietarios()
 				.getDadosProprietarios()) {
+			
 
 			DocumentoAnalise documentoAnalise = new DocumentoAnalise();
 			documentoAnalise.setContratoCobranca(contratoCobranca);
@@ -121,21 +127,24 @@ public class ReaWebhook {
 				documentoAnalise.setCnpjcpf(propietario.getCpf());
 				documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.CREDNET);
 			}
+			
+			if (!documentoAnaliseDao.cadastradoAnalise(contratoCobranca, documentoAnalise.getCnpjcpf())) {
 
-			PagadorRecebedor pagador = new PagadorRecebedor();
-			pagador.setId(0);
-			if (CommonsUtil.mesmoValor(documentoAnalise.getTipoPessoa(), "PF")) {				
-				pagador.setCpf(propietario.getCpf());
-				pagador.setRg(propietario.getRg());
-			} else {
-				pagador.setCnpj(propietario.getCnpj());
+				PagadorRecebedor pagador = new PagadorRecebedor();
+				pagador.setId(0);
+				if (CommonsUtil.mesmoValor(documentoAnalise.getTipoPessoa(), "PF")) {
+					pagador.setCpf(propietario.getCpf());
+					pagador.setRg(propietario.getRg());
+				} else {
+					pagador.setCnpj(propietario.getCnpj());
+				}
+				pagador.setNome(propietario.getNome());
+
+				pagador = pagadorRecebedorService.buscaOuInsere(pagador);
+				documentoAnalise.setPagador(pagador);
+
+				documentoAnaliseDao.create(documentoAnalise);
 			}
-			pagador.setNome(propietario.getNome());
-
-			pagador = pagadorRecebedorService.buscaOuInsere(pagador);
-			documentoAnalise.setPagador(pagador);
-
-			documentoAnaliseDao.create(documentoAnalise);
 		}
 
 	}
