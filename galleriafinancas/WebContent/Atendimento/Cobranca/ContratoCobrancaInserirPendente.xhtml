@@ -1333,6 +1333,14 @@
 											<p:outputLabel value="#{comite.tipoValorComite}"
 												label="Status" style="width:100px;" />
 										</h:panelGroup>
+										
+										<p:outputLabel value="Carência: "
+											styleClass="labelBold" />					
+										<h:panelGroup>
+											<p:outputLabel value="#{comite.carenciaComite}" size="100"
+												style="width:60px;" />
+											<p:outputLabel value=" meses" />
+										</h:panelGroup>
 
 										<p:outputLabel value="Comentários comitê: "
 											styleClass="labelBold" />
@@ -1448,22 +1456,24 @@
 								<p:outputLabel value=" meses" />
 							</h:panelGroup>
 
-							<p:outputLabel for="valorAprovadoComiteView"
-								value="Valor Aprovado pelo Comitê: " styleClass="labelBold" />
-							<h:panelGroup>
-								<h:outputText value="R$ " />
-								<p:outputLabel id="valorAprovadoComiteView"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.valorAprovadoComite}"
-									converter="bigDecimalConverter"
-									style="FONT-SIZE: 10pt;width:100px;" />
-							</h:panelGroup>
+							<shiro:lacksRole name="ROOT">
+								<p:outputLabel for="valorAprovadoComiteView"
+									value="Valor Aprovado pelo Comitê: " styleClass="labelBold" />
+								<h:panelGroup>
+									<h:outputText value="R$ " />
+									<p:outputLabel id="valorAprovadoComiteView"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.valorAprovadoComite}"
+										converter="bigDecimalConverter"
+										style="FONT-SIZE: 10pt;width:100px;" />
+								</h:panelGroup>
+							</shiro:lacksRole>
 							
 							<shiro:hasAnyRoles name="ROOT">
 								<p:outputLabel for="valorAprovadoComite"
 									value="Valor Aprovado pelo Comitê: " styleClass="labelBold" />
 								<h:panelGroup>
 									<h:outputText value="R$ " />
-									<p:outputLabel id="valorAprovadoComite"
+									<p:inputText id="valorAprovadoComite"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.valorAprovadoComite}"
 										converter="bigDecimalConverter"
 										style="FONT-SIZE: 10pt;width:100px;" />
@@ -1475,6 +1485,14 @@
 							<p:outputLabel id="tipoValorComiteView"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.tipoValorComite}"
 								label="Status" style="width:100px;" />
+								
+							<p:outputLabel value="Carência: "
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.carenciaComite}" size="100"
+									style="width:60px;" />
+								<p:outputLabel value=" meses" />
+							</h:panelGroup>
 
 							<p:outputLabel for="comentarioComiteView"
 								value="Comentários comitê: " styleClass="labelBold" />
@@ -1488,8 +1506,55 @@
 							<p:outputLabel id="processosQuitarComite" rows="10"
 								cols="48" maxlength="3000" onblur="" style="width: 312px; FONT-SIZE: 10pt; white-space: pre-wrap;"
 								counterTemplate="{0} characters remaining." autoResize="false"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.processosQuitarComite}" />
+								value="#{contratoCobrancaMB.objetoContratoCobranca.processosQuitarComite}" />						
+								
+							<p:outputLabel value="Operação vai pro Fundo? " 
+								styleClass="labelBold" />
+							<shiro:hasAnyRoles name="ROOT, COMITEEDITAR">
+								<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.operacaoFundo}" />
+							</shiro:hasAnyRoles>
+							<shiro:lacksRole name="ROOT">
+								<p:outputLabel value="Sim" rendered="#{contratoCobrancaMB.objetoContratoCobranca.operacaoFundo}" styleClass="labelBold" />
+								<p:outputLabel value="Não" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.operacaoFundo}" styleClass="labelBold" /> 
+							</shiro:lacksRole>
+							
 						</h:panelGrid>
+						<h:panelGroup>
+							<h:panelGrid columns="2" >
+								<p:outputLabel
+									value="Mostrar Todos?" styleClass="labelBold" />
+								<p:selectBooleanCheckbox 
+									value="#{contratoCobrancaMB.mostrarTodosProcessos}" >
+									<p:ajax event="change" update="ComitePanelView" /> 
+								</p:selectBooleanCheckbox>
+							</h:panelGrid>
+							<p:dataView var="processos" id="ListaProcessosComite"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.listProcessos}"
+								paginator="false" layout="list"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+								<p:dataViewListItem>
+								 	<h:panelGroup rendered="#{processos.selecionadoComite || contratoCobrancaMB.mostrarTodosProcessos}">
+										<p:outputLabel value="N°: " styleClass="labelBold" />
+										<p:outputLabel value="#{processos.numero}" styleClass="labelBold"
+											style="FONT-SIZE: 10pt;width:100px;" />
+										<p:outputLabel value=" Valor: " styleClass="labelBold" />
+										<p:outputLabel value="#{processos.valor}" styleClass="labelBold"
+											style="FONT-SIZE: 10pt;width:100px;"
+											converter="bigDecimalConverter" />
+										<p:outputLabel value=" #{processos.quitar}" 
+											styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+										<p:outputLabel value=" quitar" styleClass="labelBold" rendered="#{processos.quitar eq 'Não'}" />
+										<p:spacer width="10px"/>
+										<shiro:hasAnyRoles name="ROOT, COMITEEDITAR">
+											<p:outputLabel value=" Quitar? " styleClass="labelBold" />
+											<p:selectBooleanCheckbox value="#{processos.selecionadoComite}" >		
+												<p:ajax event="change" update="ListaProcessosComite" /> 
+											</p:selectBooleanCheckbox>
+										</shiro:hasAnyRoles>								
+									</h:panelGroup>
+								</p:dataViewListItem>
+							</p:dataView>
+						</h:panelGroup>	
 					</p:panel>
 				</h:panelGroup>
 
@@ -1704,6 +1769,12 @@
 								styleClass="labelBold"
 								style="width:250px;font-weight: bold; font-size: 18px !important;" />
 								
+							<p:outputLabel for="observacaoContatoAgendaLaudoAvaliacao" value="Observação do Contato: "
+								styleClass="labelBold" />
+							<p:outputLabel id="observacaoContatoAgendaLaudoAvaliacao"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.observacaoContatoAgendaLaudoAvaliacao}"
+								style="FONT-SIZE: 10pt;width:100px;white-space: pre-wrap;" />
+								
 							<p:outputLabel for="formaDePagamentoLaudoPAJU" styleClass="labelBold" value="Forma de Pagamento"/>
 							<p:selectOneMenu id="formaDePagamentoLaudoPAJU"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.formaDePagamentoLaudoPAJU}"
@@ -1721,7 +1792,8 @@
 								<f:selectItem itemValue="Compass" itemLabel="Compass" />
 								<f:selectItem itemValue="Galache" itemLabel="Galache" />
 								<f:selectItem itemValue="Outro" itemLabel="Outro" />
-								<p:ajax event="valueChange" update=":form:Status" listener="#{contratoCobrancaMB.changeAvaliadorLaudo}"/> 											
+								<p:ajax event="valueChange" update=":form:Status" 
+								listener="#{contratoCobrancaMB.changeAvaliadorLaudo}"/> 											
 							</p:selectOneMenu>	
 						</h:panelGrid>
 					</p:panel>
@@ -1888,8 +1960,7 @@
 					<p:panel
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}"
 						header="Recebido PAJU e laudo">
-						<h:panelGrid columns="2">
-						
+						<h:panelGrid columns="2">				
 							<h:panelGrid columns="2">
 							
 								<p:outputLabel for="valorPreLaudo"
@@ -1976,31 +2047,152 @@
 							rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel == true}">
 							<p:outputLabel for="comentarioJuridico"
 								value="Comentario Juridico: " styleClass="labelBold" />
-							<p:inputTextarea id="comentarioJuridico" rows="10" cols="48" maxlength="3000"
-							 	onblur="" autoResize="false"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridico}" >
-								<p:ajax process="@this" partialSubmit="true" />
-							</p:inputTextarea>
+							<h:panelGroup>
+								<p:inputTextarea id="comentarioJuridico" rows="10" cols="48" maxlength="3000"
+								 	onblur="" autoResize="false" counter="display3"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridico}" >
+									<p:ajax process="@this" partialSubmit="true" />
+								</p:inputTextarea>
+								<p:outputLabel id="display3" />
+							</h:panelGroup>
 							
 							<p:outputLabel for="processosPajuInterno"
 								value="Processos para quitar (Interno):" styleClass="labelBold" />
-							<p:inputTextarea id="processosPajuInterno" rows="10" cols="48"
-								counter="display" maxlength="3000" onblur=""
-								counterTemplate="{0} characters remaining." autoResize="false"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.processosPajuInterno}" >
-								<p:ajax process="@this" partialSubmit="true" />
-							</p:inputTextarea>
-							<p:outputLabel id="display" />
-							<p:outputLabel id="espacoParaFormatacaoTexto" value=""/> 
+							<h:panelGroup>
+								<p:inputTextarea id="processosPajuInterno" rows="10" cols="48"
+									counter="display" maxlength="3000" onblur=""
+									counterTemplate="{0} characters remaining." autoResize="false"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.processosPajuInterno}" >
+									<p:ajax process="@this" partialSubmit="true" />
+								</p:inputTextarea>
+								<p:outputLabel id="display" />
+							</h:panelGroup>
+							
 							<p:outputLabel for="processosPajuExterno"
 								value="Processos para quitar (Externo):" styleClass="labelBold" />
-							<p:inputTextarea id="processosPajuExterno" rows="10" cols="48"
-								counter="display2" maxlength="3000" onblur=""
-								counterTemplate="{0} characters remaining." autoResize="false"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.processosPajuExterno}" >
-								<p:ajax process="@this" partialSubmit="true" />
-							</p:inputTextarea>
-							<p:outputLabel id="display2" />
+							<h:panelGroup>
+								<p:inputTextarea id="processosPajuExterno" rows="10" cols="48"
+									counter="display2" maxlength="3000" onblur=""
+									counterTemplate="{0} characters remaining." autoResize="false"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.processosPajuExterno}" >
+									<p:ajax process="@this" partialSubmit="true" />
+								</p:inputTextarea>
+								<p:outputLabel id="display2" />
+							</h:panelGroup>
+						</h:panelGrid>
+						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel == true}">					
+							<p:outputLabel value="Valor Total Processos:" styleClass="labelBold" />
+							<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.valorTotalProcessos}" converter="bigDecimalConverter"  />
+						</h:panelGrid>
+						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel == true}">							
+							<p:dataView var="processos" id="ListaProcessos"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.listProcessos}"
+								paginator="false" layout="list"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+								<p:dataViewListItem>
+									<h:panelGroup rendered="#{processos.pagador eq null}">
+										<p:outputLabel value="N°: " styleClass="labelBold" />
+										<p:outputLabel value="#{processos.numero}" styleClass="labelBold"
+											style="FONT-SIZE: 10pt;width:100px;" />
+										<p:outputLabel value=" Valor: " styleClass="labelBold" />
+										<p:outputLabel value="#{processos.valor}" styleClass="labelBold"
+											style="FONT-SIZE: 10pt;width:100px;"
+											converter="bigDecimalConverter" />
+										<p:outputLabel value=" #{processos.quitar}" 
+											styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+										<p:outputLabel value=" quitar" styleClass="labelBold" rendered="#{processos.quitar eq 'Não'}" />
+										<p:spacer width="10px"/>
+										<p:commandButton action="#{contratoCobrancaMB.clearPagadorProcesso(processos)}"
+											icon="ui-icon ui-icon-plus" ajax="true" value="Pessoa"
+											oncomplete="PF('pessoaDialog').show();" rendered="#{processos.pagador eq null}"
+											update="pessoaDialogdlg form:RecebidoPajulaudoPanel" />	
+										<p:commandButton  icon="ui-icon-trash"
+											action="#{contratoCobrancaMB.removeProcesso(processos)}"
+											update="form:RecebidoPajulaudoPanel form:ComitePanelView" />
+									</h:panelGroup>
+								</p:dataViewListItem>
+							</p:dataView>
+														
+							<h:panelGrid columns="2">
+								<p:outputLabel
+									value="Valor: " styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:inputText 
+									value="#{contratoCobrancaMB.processoSelecionado.valor}"
+									label="Contrato" onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);"
+									converter="bigDecimalConverter" /> 
+									
+								<p:outputLabel 
+									value="Numero: " styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:inputText
+									value="#{contratoCobrancaMB.processoSelecionado.numero}"
+									label="Contrato" /> 
+									
+								<p:outputLabel
+									value="Quitar: " styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:selectOneMenu 
+									value="#{contratoCobrancaMB.processoSelecionado.quitar}">
+									<f:selectItem itemValue="" itemLabel="Selecione" />
+									<f:selectItem itemValue="Não" itemLabel="Não" />
+									<f:selectItem itemValue="Quitar" itemLabel="Quitar" />
+									<f:selectItem itemValue="Quitar ou indicar bens" itemLabel="Quitar ou indicar bens" />
+								</p:selectOneMenu>
+								
+								<p:outputLabel value="Pessoa: " styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:outputLabel value="#{contratoCobrancaMB.processoSelecionado.pagador.nome} " styleClass="labelBold"
+									style="font-size: 18px;" />
+								
+								<p:outputLabel value="Inserir Pessoa: " styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:commandButton action="#{contratoCobrancaMB.clearPagadorProcesso(contratoCobrancaMB.processoSelecionado)}"
+									icon="ui-icon ui-icon-plus" ajax="true" rendered="#{contratoCobrancaMB.processoSelecionado.pagador eq null}"
+									oncomplete="PF('pessoaDialog').show();"
+									update="pessoaDialogdlg" />							
+									
+								<p:commandButton value="Inserir Processo"
+									icon="ui-icon-check"
+									action="#{contratoCobrancaMB.addProcesso}" 
+									update="form:RecebidoPajulaudoPanel form:ComitePanelView">
+								</p:commandButton>
+							</h:panelGrid>
+						
+							<p:dataView var="pessoasProcessos" id="pessoasProcessos"
+								value="#{contratoCobrancaMB.pessoasProcessos}"
+								paginator="false" layout="list" 
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+								<p:dataViewListItem>
+									<p:outputLabel value="#{pessoasProcessos.nome}" style="FONT-SIZE: 15pt;" 
+										styleClass="ui-panel-title labelBold"/>
+									<p:outputLabel value="R$ " style="FONT-SIZE: 15pt;" styleClass="labelBold"/>
+									<p:outputLabel value="#{pessoasProcessos.valorProcessos}" style="FONT-SIZE: 15pt;" 
+										styleClass="labelBold" converter="bigDecimalConverter" />
+									<p:dataView var="processosPessoas" id="processosPessoas"
+										value="#{pessoasProcessos.processos}"
+										paginator="false" layout="list" 
+										paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+										<p:dataViewListItem>
+											<p:outputLabel value="N°: " styleClass="labelBold" />
+											<p:outputLabel value="#{processosPessoas.numero}" styleClass="labelBold"
+												style="FONT-SIZE: 10pt;width:100px;" />
+											<p:outputLabel value=" Valor: " styleClass="labelBold" />
+											<p:outputLabel value="#{processosPessoas.valor}" styleClass="labelBold"
+												style="FONT-SIZE: 10pt;width:100px;"
+												converter="bigDecimalConverter" />
+											<p:outputLabel value=" #{processosPessoas.quitar}" 
+												styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+											<p:outputLabel value=" quitar" styleClass="labelBold" rendered="#{processosPessoas.quitar eq 'Não'}" />
+											<p:spacer width="10px"/>
+											<p:commandButton  icon="ui-icon-trash"
+												action="#{contratoCobrancaMB.removeProcesso(processosPessoas)}"
+												update="form:RecebidoPajulaudoPanel form:ComitePanelView" />
+										</p:dataViewListItem>
+									</p:dataView>
+								</p:dataViewListItem>
+							</p:dataView>
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
@@ -2011,13 +2203,25 @@
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}">
 						<p:spacer height="10"></p:spacer>
 						<p:panel id="DataVistoriaPanel" style="border: none">						
-							<h:panelGrid columns="2">					
-								<p:outputLabel for="dataVistoria"
-									value="Data Vistoria Imóvel: " styleClass="labelBold" />				
-								<p:calendar id="dataVistoria" showOn="button"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria}"
-									label="Data Vistoria Imóvel" size="100" pattern="dd/MM/yyyy"
-									locale="pt" styleClass="dateTimeField" />									
+							<h:panelGrid columns="2">	
+							
+								<shiro:lacksRole name="ROOT">
+									<shiro:lacksRole name="PROFILE_AVALIADOR_IMOVEL">
+										<p:outputLabel value="Data Vistoria Imóvel: " styleClass="labelBold" />
+										<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria}" styleClass="labelBold" size="100">
+											<f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+										</p:outputLabel>
+									</shiro:lacksRole>
+								</shiro:lacksRole>
+								
+								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_AVALIADOR_IMOVEL, PROFILE_LAUDO, PROFILE_GERENTE_ANALISE">
+									<p:outputLabel for="dataVistoria"
+										value="Data Vistoria Imóvel: " styleClass="labelBold" />				
+									<p:calendar id="dataVistoria" showOn="button"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria}"
+										label="Data Vistoria Imóvel" size="100" pattern="dd/MM/yyyy HH:mm"
+										styleClass="dateTimeField" />		
+								</shiro:hasAnyRoles>							
 								
 								<p:outputLabel for="nomeVistoriador"
 									value="Nome Vistoriador: " styleClass="labelBold" />
@@ -2026,7 +2230,7 @@
 									style="FONT-SIZE: 10pt;width:300px;"/>			
 									
 								<shiro:hasAnyRoles name="ROOT, USER_GALACHE, AVALIADORIMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_AVALIADOR_IMOVEL_GALACHE">				
-									<p:outputLabel for="avaliacaoEngenharia" 
+									<p:outputLabel for="avaliacaoEngenharia"
 										value="Avaliação Engenharia: " styleClass="labelBold" />
 									<p:selectOneMenu id="avaliacaoEngenharia" 
 										value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoEngenharia}" style="width:100px;">
@@ -2034,19 +2238,60 @@
 										<f:selectItem itemValue="Bom" itemLabel="Bom" />
 										<f:selectItem itemValue="Ruim" itemLabel="Ruim" />
 									</p:selectOneMenu>
-								</shiro:hasAnyRoles>			
-								
-								<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCAANALISTA, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE,  
-									PROFILE_LAUDO, PROFILE_AVALIADOR_IMOVEL">				
+								</shiro:hasAnyRoles>	
+									
+								<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,PRECOBRANCA, PROFILE_AVALIADOR_IMOVEL, PROFILE_LAUDO, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">				
 									<p:outputLabel for="avaliacaoEquipeLaudo" rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}"
 										value="Avaliação Equipe Laudo: " styleClass="labelBold" />
-									<p:selectOneMenu id="avaliacaoEquipeLaudo" rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}"
+									<p:selectOneMenu id="avaliacaoEquipeLaudo" required="true" rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoEquipeLaudo}" style="width:100px;" >
 										<f:selectItem itemValue="" itemLabel="" />
 										<f:selectItem itemValue="Bom" itemLabel="Bom" />
 										<f:selectItem itemValue="Ruim" itemLabel="Ruim" />
 									</p:selectOneMenu>
-								</shiro:hasAnyRoles>
+								</shiro:hasAnyRoles>				
+							
+								<p:dataView var="data" style="min-width: 150px;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.listDatasVistoria}"
+									paginator="false" layout="list">
+									<p:dataViewListItem>
+										<p:outputLabel value="#{data.dataVistoria}" styleClass="labelBold"
+											size="100">
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm"/>
+										</p:outputLabel>
+										<p:spacer width="10px"></p:spacer>
+										
+										<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,PRECOBRANCA, PROFILE_AVALIADOR_IMOVEL, PROFILE_LAUDO, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">
+											<p:commandButton icon="ui-icon-trash"
+												action="#{contratoCobrancaMB.removeDataVistoria(data)}"
+												update="form:CheckListInformacoesAdicionais" />
+										</shiro:hasAnyRoles>
+										
+										<shiro:hasAnyRoles name="ROOT, USER_GALACHE, AVALIADORIMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_AVALIADOR_IMOVEL_GALACHE, PROFILE_GERENTE_ANALISE,
+										PRECOBRANCAANALISTA,PRECOBRANCA, PROFILE_AVALIADOR_IMOVEL, PROFILE_LAUDO, PROFILE_ANALISTA_COMITE">
+											<p:commandButton icon="ui-icon-check" 
+												rendered="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria == null 
+												|| contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria == ''}"
+												action="#{contratoCobrancaMB.selecionaDataVistoria(data)}"
+												update="form:CheckListInformacoesAdicionais" />
+										</shiro:hasAnyRoles>
+									</p:dataViewListItem>
+								</p:dataView>
+			
+								<h:panelGroup id="datasValor">
+									<h:panelGrid columns="2">
+										<p:outputLabel for="dataCalculo" value="Datas Vistoria" />
+										<p:calendar id="dataCalculo" showOn="button"
+											value="#{contratoCobrancaMB.dataVistoriaSelecionada.dataVistoria}" size="100"
+											pattern="dd/MM/yyyy HH:mm" styleClass="dateTimeField" />
+									</h:panelGrid>
+									<p:commandButton value="Inserir Data" 
+										icon="ui-icon-check"
+										action="#{contratoCobrancaMB.addDataVistoria}"
+										update="DataVistoriaPanel">
+									</p:commandButton>
+								</h:panelGroup>
+								
 							</h:panelGrid>
 						</p:panel>
 					</p:panel>
@@ -2413,6 +2658,13 @@
 							<h:panelGroup
 								rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO' or contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'UNIÃO ESTÁVEL'}">
 								<h:panelGrid columns="2">
+								
+									<p:outputLabel for="dataCasamento"
+										value="Data de Casamento: " />
+									<p:inputMask id="dataCasamento" mask="99/99/9999"
+										value="#{contratoCobrancaMB.objetoPagadorRecebedor.dataCasamento}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</p:inputMask>
 								
 									<p:outputLabel for="regimeCasamento"
 										value="Regime do Casamento: " styleClass="labelBold"
@@ -3802,7 +4054,7 @@
 										ajax="true" update=":form:ContasPagarPanel contaArquivosForm" />
 								</shiro:hasAnyRoles>
 							</p:dataViewListItem>
-						</p:dataView>
+						</p:dataView>						
 					</p:panel>
 				</h:panelGroup>
 				
@@ -4951,6 +5203,53 @@
 				</p:panel>
 			</h:form>
 		</p:dialog>					 		
+		
+		<p:dialog header="Nova Pessoa" widgetVar="pessoaDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="400">
+			<h:form id="pessoaDialogdlg">			
+				<div align="center">		
+					<h:panelGrid columns="2">
+						<p:outputLabel for="Pessoa" value="Pessoa: "
+							styleClass="labelBold" />
+						<p:selectOneRadio id="Pessoa"
+							value="#{contratoCobrancaMB.tipoPagadorProcesso}" required="true">
+							<f:selectItem itemLabel="Física" itemValue="true" />
+							<f:selectItem itemLabel="Jurídica" itemValue="false" />
+							<p:ajax update="pessoaDialogdlg" event="valueChange"
+								listener="#{contratoCobrancaMB.selectedTipoPagadorProcesso}" />
+						</p:selectOneRadio>
+					</h:panelGrid>		
+					<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.tipoPagadorProcesso}">
+						<p:outputLabel value="CPF:"  styleClass="labelBold"/>			
+						<p:inputMask value="#{contratoCobrancaMB.pagadorProcesso.cpf}"
+							style=" width:100px" mask="999.999.999-99">
+							<p:ajax event="blur" update="pessoaDialogdlg"
+								listener="#{contratoCobrancaMB.procurarPFprocesso}" />
+						</p:inputMask>
+						<p:outputLabel value="Nome:" styleClass="labelBold"/>
+						<p:inputText value="#{contratoCobrancaMB.pagadorProcesso.nome}" />					
+						<p:outputLabel value="Data Nascimento:"  styleClass="labelBold"/>
+						<p:calendar value="#{contratoCobrancaMB.pagadorProcesso.dtNascimento}" size="50" 
+							styleClass="dateTimeField" pattern="dd/MM/yyyy" inputStyle="margin-right: 5px; width:70px"/>
+					</h:panelGrid>	
+					<h:panelGrid columns="2" rendered="#{!contratoCobrancaMB.tipoPagadorProcesso}">
+						<p:outputLabel value="CNPJ:"  styleClass="labelBold"/>
+						<p:inputMask value="#{contratoCobrancaMB.pagadorProcesso.cnpj}"
+							label="CNPJ" mask="99.999.999/9999-99" style=" width:100px">
+							<p:ajax event="blur" update="pessoaDialogdlg"
+								listener="#{contratoCobrancaMB.procurarPJprocesso}" />
+						</p:inputMask>
+						<p:outputLabel value="Razão Social:" styleClass="labelBold"/>
+						<p:inputText value="#{contratoCobrancaMB.pagadorProcesso.nome}"/>		
+					</h:panelGrid>
+					<p:commandButton  value="Adicionar" action="#{contratoCobrancaMB.inserirPessoaProcesso}"  ajax="true"
+						onclick="PF('pessoaDialog').close();" update="form:RecebidoPajulaudoPanel" 
+						style="margin-bottom:50px; margin-top:10px"/>	
+				</div>
+			</h:form>
+			<p:ajax event="close" listener="#{contratoCobrancaMB.closeDialogPagadorProcessos}"
+			 update="pessoaDialogdlg form:RecebidoPajulaudoPanel" />
+		</p:dialog>
 							 
 	</ui:define>
 </ui:composition>

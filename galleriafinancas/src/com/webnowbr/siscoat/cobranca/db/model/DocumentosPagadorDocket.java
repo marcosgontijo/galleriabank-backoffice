@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.webnowbr.siscoat.cobranca.db.op.DocketCidadesDao;
+import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.EstadosEnum;
 
 public class DocumentosPagadorDocket implements Serializable {
@@ -22,6 +23,7 @@ public class DocumentosPagadorDocket implements Serializable {
 	private String cidadeId;
 	private EstadosEnum estadoSelecionado;
 	private List<DocketCidades> listaCidades;
+	private boolean travado;
 	
 	public DocumentosPagadorDocket() {
 		
@@ -29,7 +31,9 @@ public class DocumentosPagadorDocket implements Serializable {
 	
 	public void getCidadeDocketId() {
 		DocketCidadesDao dcDao = new DocketCidadesDao();
-		cidadeId = dcDao.getCidadeId(cidade);
+		if(!CommonsUtil.semValor(cidade) && !CommonsUtil.semValor(estadoSelecionado)){
+			cidadeId = dcDao.getCidadeId(cidade, estadoSelecionado.getUf());
+		}
 	}
 	
 	public DocumentosPagadorDocket(DocumentosDocket doc) {
@@ -89,6 +93,14 @@ public class DocumentosPagadorDocket implements Serializable {
 
 	public void setListaCidades(List<DocketCidades> listaCidades) {
 		this.listaCidades = listaCidades;
+	}
+
+	public boolean isTravado() {
+		return travado;
+	}
+
+	public void setTravado(boolean travado) {
+		this.travado = travado;
 	}	
 	
 	

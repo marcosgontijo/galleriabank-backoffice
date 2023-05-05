@@ -49,11 +49,50 @@
 					<p:outputLabel for="numeroContrato" value="Número do Contrato: " styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px;"/>
 					<h:outputText id="numeroContrato" value="#{contratoCobrancaMB.objetoContratoCobranca.numeroContrato}"  autocomplete="no" label="Número do Contrato" style="font-weight: bold; font-size: 18px;"/>								
 					<p:outputLabel for="dataContrato" value="Data do Contrato: " styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px;"/>
+
 					<h:outputText id="dataContrato" value="#{contratoCobrancaMB.objetoContratoCobranca.dataContrato}"  autocomplete="no" style="width:250px;font-weight: bold; font-size: 18px;">			            	
 				          <f:convertDateTime locale="pt_BR"  />
 				          <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
-				    </h:outputText>																				
+				    </h:outputText>	
 				</h:panelGrid>
+				<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_AVALIADOR_IMOVEL, PROFILE_LAUDO, PROFILE_GERENTE_ANALISE">
+					<h:panelGrid columns="2">   						
+						<p:outputLabel value="Código do Responsável: " styleClass="labelBold" />
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.codigo}"  
+							label="Código do Responsável" style="width:150px;" />
+						<p:outputLabel for="NomeResp" value="Nome do Responsável: "
+							styleClass="labelBold" />
+						<h:panelGroup>
+							<h:outputText id="NomeResp" style="width:150px;"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.nome}"/>
+							<h:outputText value="(Lead)" styleClass="labelBold" style="width:150px;"
+								rendered="#{contratoCobrancaMB.objetoContratoCobranca.contratoLead}" />
+						</h:panelGroup>
+						
+						<p:outputLabel id="gerenteContaLabel" value="Gerente"
+							style="cursor:pointer" styleClass="labelBold"
+							rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.donoResponsavel != null}" />
+						<p:overlayPanel id="gerenteConta" for="gerenteContaLabel"
+							showEffect="blind" hideEffect="blind" showEvent="mouseover"
+							hideEvent="mousedown" dismissable="false" showCloseIcon="true">
+							<p:panel id="gerenteContaInfo" header="Gerente da Conta"
+								style="margin-bottom:10px;">
+								<h:panelGrid columns="2">
+									<p:outputLabel for="CodigoGerente" value="Código do Gerente: "
+										styleClass="labelBold" />
+									<h:outputText id="CodigoGerente"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.donoResponsavel.codigo}"
+										label="Código do Gerente" style="width:150px;" />
+									<p:outputLabel for="NomeGerente" value="Nome do Gerente: "
+										styleClass="labelBold" />
+									<h:outputText id="NomeGerente"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.donoResponsavel.nome}"
+										label="Nome do Gerente" style="width:150px;" />
+								</h:panelGrid>
+							</p:panel>
+						</p:overlayPanel>
+					</h:panelGrid>
+				</shiro:hasAnyRoles>
 
 				<h:panelGroup id="laudoPajuPanel" style="margin-bottom:20px;">
 					<p:panel header="Laudo + Paju"
@@ -66,6 +105,12 @@
 								value="#{contratoCobrancaMB.objetoContratoCobranca.contatoAgendamendoLaudoAvaliacao}"
 								styleClass="labelBold"
 								style="width:250px;font-weight: bold; font-size: 18px !important;" />
+								
+							<p:outputLabel for="observacaoContatoAgendaLaudoAvaliacao" value="Observação do Contato: "
+								styleClass="labelBold" />
+							<p:outputLabel id="observacaoContatoAgendaLaudoAvaliacao"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.observacaoContatoAgendaLaudoAvaliacao}"
+								style="FONT-SIZE: 10pt;width:100px;white-space: pre-wrap;" />
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
@@ -177,60 +222,84 @@
 					<p:panel header="Check-List - Informações Adicionais"
 						style="margin-bottom:20px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}">		
 						<p:spacer height="10"></p:spacer>
-						<p:panel id="DataVistoriaPanel" style="border: none">
-							<h:panelGroup>
-								<p:outputLabel for="dataVistoria"
-									value="Data Vistoria Imóvel: " styleClass="labelBold" />
-							</h:panelGroup>
-							<h:panelGroup>
-								<p:calendar id="dataVistoria" showOn="button"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria}"
-									label="Data Vistoria Imóvel" size="100" pattern="dd/MM/yyyy"
-									locale="pt" styleClass="dateTimeField" />
-								
-								<p:spacer height="10"></p:spacer>
-								<p:outputLabel for="nomeVistoriador"
-									value="Nome Vistoriador: " styleClass="labelBold" />
-								<p:inputText id="nomeVistoriador"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.nomeVistoriador}"
-									style="FONT-SIZE: 10pt;width:300px;"/>																															
-							</h:panelGroup>
-						</p:panel>
-						<p:panel id="StatusAvaliacaoImovel" style="border: none">
-							<h:panelGrid columns="2">
-								<p:outputLabel for="avaliacaoLaudoObservacao"
-									value="Observação Avaliação: " styleClass="labelBold" />
-								<p:inputTextarea id="avaliacaoLaudoObservacao" rows="5"
-									cols="84" maxlength="3000" onblur=""
-									counterTemplate="{0} characters remaining." autoResize="false"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudoObservacao}" />	
+						<h:panelGrid columns="1">
+							<p:panel id="DataVistoriaPanel" style="border: none">
+								<h:panelGrid columns="2">
 									
-								<shiro:hasAnyRoles name="ROOT, AVALIADORIMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS">				
-									<p:outputLabel for="avaliacaoEngenharia"
-										value="O Imovel é: " styleClass="labelBold" />
-									<p:selectOneMenu id="avaliacaoEngenharia"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoEngenharia}" style="width:100px;">
-										<f:selectItem itemValue="" itemLabel="" />
-										<f:selectItem itemValue="Bom" itemLabel="Bom" />
-										<f:selectItem itemValue="Ruim" itemLabel="Ruim" />
-										<p:ajax update="pedirLaudoBtn" event="valueChange" />
-									</p:selectOneMenu>
-								</shiro:hasAnyRoles>
+									<p:dataView var="data" style="min-width: 150px;"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.listDatasVistoria}"
+										paginator="false" layout="list">
+										<p:dataViewListItem>
+											<p:outputLabel value="#{data.dataVistoria}" styleClass="labelBold"
+												size="100">
+												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm"/>
+											</p:outputLabel>
+											<p:spacer width="10px"></p:spacer>
+											
+											<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,PRECOBRANCA, PROFILE_AVALIADOR_IMOVEL, PROFILE_LAUDO, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">
+												<p:commandButton icon="ui-icon-trash"
+													action="#{contratoCobrancaMB.removeDataVistoria(data)}"
+													update="form:CheckListInformacoesAdicionais" />
+											</shiro:hasAnyRoles>
+											
+											<shiro:hasAnyRoles name="ROOT, USER_GALACHE, AVALIADORIMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_AVALIADOR_IMOVEL_GALACHE, PROFILE_GERENTE_ANALISE">
+												<p:commandButton icon="ui-icon-check" 
+													rendered="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria == null 
+													|| contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria == ''}"
+													action="#{contratoCobrancaMB.selecionaDataVistoria(data)}"
+													update="form:CheckListInformacoesAdicionais" />
+											</shiro:hasAnyRoles>
+										</p:dataViewListItem>
+									</p:dataView>								
+									<p:spacer></p:spacer>	
+									
+									<p:outputLabel for="dataVistoria"
+										value="Data Vistoria Imóvel: " styleClass="labelBold" />
+									<p:outputLabel id="dataVistoria" value="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria}" styleClass="labelBold" size="100">
+										<f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+									</p:outputLabel>
+									
+									<p:outputLabel for="nomeVistoriador"
+										value="Nome Vistoriador: " styleClass="labelBold" />
+									<p:inputText id="nomeVistoriador"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.nomeVistoriador}"
+										style="FONT-SIZE: 10pt;width:300px;"/>	
+																																													
 								
-							</h:panelGrid>
-							<h:panelGrid columns="3">
-								<p:outputLabel styleClass="labelBold"
-									rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial and contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudo eq 'Compass'}">Laudo Pedido: </p:outputLabel>								
-								<p:selectBooleanButton id="pedirLaudoBtn" value="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido}" 
-									onLabel="Laudo Pronto" offLabel="Laudo Pendente" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px"
-									disabled="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoEngenharia eq null or contratoCobrancaMB.objetoContratoCobranca.avaliacaoEngenharia eq ''}"
-									rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudo
-									and contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudo eq 'Compass'}"/>			
-								<p:commandButton value="Atualizar Check-List" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.editPreContratoPorStatus()}" style="TEXT-DECORATION: bold; width: 170px; height: 55px;" rendered="#{contratoCobrancaMB.updateMode}">
-									<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="false" />			
-								</p:commandButton>
-							</h:panelGrid>	
-						</p:panel>
+									<p:outputLabel for="avaliacaoLaudoObservacao"
+										value="Observação Avaliação: " styleClass="labelBold" />
+									<p:inputTextarea id="avaliacaoLaudoObservacao" rows="5"
+										cols="84" maxlength="3000" onblur=""
+										counterTemplate="{0} characters remaining." autoResize="false"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudoObservacao}" />	
+										
+									<shiro:hasAnyRoles name="ROOT, AVALIADORIMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS">				
+										<p:outputLabel for="avaliacaoEngenharia"
+											value="O Imovel é: " styleClass="labelBold" />
+										<p:selectOneMenu id="avaliacaoEngenharia"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoEngenharia}" style="width:100px;">
+											<f:selectItem itemValue="" itemLabel="" />
+											<f:selectItem itemValue="Bom" itemLabel="Bom" />
+											<f:selectItem itemValue="Ruim" itemLabel="Ruim" />
+											<p:ajax update="pedirLaudoBtn" event="valueChange" />
+										</p:selectOneMenu>
+									</shiro:hasAnyRoles>
+								
+								</h:panelGrid>
+								<h:panelGrid columns="3">
+									<p:outputLabel styleClass="labelBold"
+										rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial and contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudo eq 'Compass'}">Laudo Pedido: </p:outputLabel>								
+									<p:selectBooleanButton id="pedirLaudoBtn" value="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido}" 
+										onLabel="Laudo Pronto" offLabel="Laudo Pendente" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px"
+										disabled="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoEngenharia eq null or contratoCobrancaMB.objetoContratoCobranca.avaliacaoEngenharia eq ''}"
+										rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudo
+										and contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudo eq 'Compass'}"/>			
+									<p:commandButton value="Atualizar Check-List" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.editPreContratoPorStatus()}" style="TEXT-DECORATION: bold; width: 170px; height: 55px;" rendered="#{contratoCobrancaMB.updateMode}">
+										<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="false" />			
+									</p:commandButton>
+								</h:panelGrid>	
+							</p:panel>
+						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
 													

@@ -38,6 +38,23 @@
 						<f:selectItem itemLabel="Pagamento" itemValue="Pagamento" />
 						<p:ajax update=":form:panelDatas" event="change" />
 					</p:selectOneRadio>
+					
+					<p:outputLabel for="empresa" value="Empresa: "
+						styleClass="labelBold" />
+					<p:selectOneMenu id="empresa"
+						value="#{kobanaMB.filtroEmpresa}"
+						label="Status" style="width:345px;">
+						<f:selectItem itemValue="" itemLabel="TODAS" />
+						<f:selectItem itemValue="GALLERIA FINANÇAS SECURITIZADORA S.A."
+							itemLabel="GALLERIA FINANÇAS SECURITIZADORA S.A." />
+						<f:selectItem
+							itemValue="GALLERIA CORRESPONDENTE BANCARIO EIRELI"
+							itemLabel="GALLERIA CORRESPONDENTE BANCARIO EIRELI" />
+						<f:selectItem itemValue="FIDC GALLERIA"
+							itemLabel="FIDC GALLERIA" />
+						<f:selectItem itemValue="CRI 1" itemLabel="CRI 1" />
+						<f:selectItem itemValue="CRI 2" itemLabel="CRI 2" />
+					</p:selectOneMenu>
 				</h:panelGrid>
 				
 				<h:panelGroup id="panelDatas">
@@ -72,8 +89,20 @@
 				<p:dataTable id="dtBoletosKobana" var="boleto" 
 					value="#{kobanaMB.listBoletosKobana}"
 					emptyMessage="" sortBy="#{boleto.createdAt}"
-					rowStyleClass="#{(boleto.status eq 'Pago' and boleto.parcela.parcelaPaga eq 'true') ? 'parcelaPaga' : (boleto.status eq 'Pago' and boleto.parcela.parcelaPaga eq 'false') ? 'parcelaBoletoPago' : null}"
-					sortOrder="descending">
+					rowStyleClass="#{(boleto.status eq 'Pago' and boleto.parcela.parcelaPaga eq true) ? 'parcelaPaga' : (boleto.status eq 'Pago' and boleto.parcela.parcelaPaga eq false) ? 'parcelaBoletoPago' : null}"
+					sortOrder="descending"
+					rowKey="#{boleto.id}"
+					selection="#{contratoCobrancaMB.selectedBoletosKobana}">
+
+					<f:facet name="header">
+						<p:commandButton onclick="PF('baixaParcelasLoteDialog').show();"
+							title="Baixar Parcela(s) Lote" value="Baixar Parcela(s) Lote" icon="ui-icon-transferthick-e-w"
+							update=":formBaixaParcelasLote" style="">
+						</p:commandButton>
+			        </f:facet>
+			        
+					<p:column selectionMode="multiple" style="width:16px;text-align:center" rendered="#{boleto.parcela.parcelaPaga ne true}"/>
+					<p:column  rendered="#{boleto.parcela.parcelaPaga eq true}"/>
 					
 					<p:column style="text-align: center;"
 						headerText="Registro" sortBy="#{boleto.createdAt}">
@@ -135,11 +164,11 @@
 					</p:column>
 					<p:column style="text-align: center;"
 						headerText="# Parcela / Baixada?">
-						<ui:fragment rendered="#{boleto.parcela.id gt 0} ">
-							<ui:fragment rendered="#{boleto.parcela.parcelaPaga}">
+						<ui:fragment rendered="#{boleto.parcela ne null}">
+							<ui:fragment rendered="#{boleto.parcela.parcelaPaga eq true}">
 								<h:outputText value="#{boleto.parcela.numeroParcela} / Sim" />
 							</ui:fragment>
-							<ui:fragment rendered="#{boleto.parcela.parcelaPaga}">
+							<ui:fragment rendered="#{boleto.parcela.parcelaPaga eq false}">
 								<h:outputText value="#{boleto.parcela.numeroParcela} / Não" />
 							</ui:fragment>
 						</ui:fragment>
@@ -149,7 +178,7 @@
 					</p:column>
 					<p:column style="text-align: center;width: 130px;"
 						headerText="Baixar Parcela" styleClass="colunaHiddenRelFinanceiro">
-						<p:commandButton onclick="PF('baixaParcialDialog').show();"
+						<p:commandButton action="#{contratoCobrancaMB.updateDialogBaixaKobana(boleto)}" oncomplete="PF('baixaParcialDialog').show();"
 							title="Baixar Parcela" icon="ui-icon-transferthick-e-w"
 							update=":formBaixaParcial" style="height: 25px;width: 30px;" rendered="#{boleto.status eq 'Pago' and boleto.parcela.id gt 0}">
 							<f:setPropertyActionListener
@@ -164,9 +193,9 @@
 								target="#{contratoCobrancaMB.reciboGerado}" value="false" />
 							<f:setPropertyActionListener
 								target="#{contratoCobrancaMB.txZero}" value="true" />
-							<f:setPropertyActionListener
-								target="#{contratoCobrancaMB.vlrRecebido}"
-								value="#{contratoCobrancaMB.vlrParcelaAtualizadaNew}" />
+							<f:setPropertyActionListener 
+								target="#{contratoCobrancaMB.rowEditNewDate}"
+								value="#{boleto.paidAt}" />
 						</p:commandButton>
 						<p:commandButton onclick="PF('baixaParcialMultiParcelasDialog').show();"
 							title="Baixar Parcela - MultiParcelas" icon="ui-icon-circle-plus"
@@ -215,10 +244,96 @@
 								target="#{kobanaMB.parcela}"
 								value="#{boleto.parcela}" />
 						</p:commandButton>
-					</p:column>											
+					</p:column>	
+					<f:facet name="footer">
+						<p:commandButton onclick="PF('baixaParcelasLoteDialog').show();"
+							title="Baixar Parcela(s) Lote" value="Baixar Parcela(s) Lote" icon="ui-icon-transferthick-e-w"
+							update=":formBaixaParcelasLote" style="">
+						</p:commandButton>
+			        </f:facet>										
 				</p:dataTable>
 			</p:panel>
 		</h:form>
+		<p:dialog header="Baixa Parcelas - Lote" widgetVar="baixaParcelasLoteDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" responsive="true"
+			height="650" width="500">
+			<h:form id="formBaixaParcelasLote">
+				<h:panelGrid columns="1">			
+					<p:dataTable id="dtParcelasSelecionadas" var="parcelasSelecionadas"
+								value="#{contratoCobrancaMB.selectedBoletosKobana}"
+								rowStyleClass="#{parcelasSelecionadas.parcela.parcelaPaga eq true ? 'parcelaPaga' : 'parcelaVencendo'}"
+								emptyMessage="Nenhuma parcela selecionada!!!" style="margin-top: 20px;" sortBy="#{parcelasSelecionadas.idFakeAgrupamentoSomatoria}">
+						<p:column style="text-align: center;"
+							headerText="Contrato">
+							<h:outputText value="#{parcelasSelecionadas.contrato.numeroContrato}"/>
+						</p:column>	
+						<p:column style="text-align: center;"
+							headerText="Parcela">
+							<h:outputText value="#{parcelasSelecionadas.parcela.numeroParcela}"/>
+						</p:column>		
+						<p:column style="text-align: center;"
+							headerText="Baixada?">
+							<ui:fragment rendered="#{parcelasSelecionadas.parcela.parcelaPaga}">
+								<h:outputText value="Sim" />
+							</ui:fragment>
+							<ui:fragment rendered="#{!parcelasSelecionadas.parcela.parcelaPaga}">
+								<h:outputText value="Não" />
+							</ui:fragment>
+						</p:column>	
+						<p:column style="text-align: center;"
+							headerText="Valor da Parcela">
+							<h:outputText value="#{parcelasSelecionadas.vlrParcela}" converter="bigDecimalConverter" />
+						</p:column>	
+						<p:column style="text-align: center;"
+							headerText="Valor Pago">
+							<h:outputText value="#{parcelasSelecionadas.paidAmount}" converter="bigDecimalConverter" />
+						</p:column>	
+						<p:summaryRow>
+				            <p:column colspan="2" style="text-align:right;">
+				                <h:outputText value="# Títulos Selecionados:" />
+				            </p:column>
+				            <p:column style="text-align:center;">
+				                <h:outputText value="#{contratoCobrancaMB.selectedBoletosKobana.size()}" />
+				            </p:column>
+				            <p:column>
+				                <h:outputText value="#{contratoCobrancaMB.calculaTotalVlrParcelaBaixaLoteSelecionadas()}" converter="bigDecimalConverter">
+				                    <f:convertNumber type="currency" currencySymbol="R$" />
+				                </h:outputText>
+				            </p:column>
+				            <p:column>
+				                <h:outputText value="#{contratoCobrancaMB.calculaTotalVlrPagoBaixaLoteSelecionadas()}" converter="bigDecimalConverter">
+				                    <f:convertNumber type="currency" currencySymbol="R$" />
+				                </h:outputText>
+				            </p:column>
+				        </p:summaryRow>		
+					</p:dataTable>
+				</h:panelGrid>
+
+				<p:panel id="ConsultaObservacores" header="Detalhes do Pagamento"
+					style="margin-bottom:10px;margin-top:10px;">
+					<h:panelGrid columns="2">
+						<p:outputLabel for="Observacao" value="Observação: " />
+						<p:inputTextarea rows="10" cols="50" id="Observacao"
+							value="#{contratoCobrancaMB.observacao}" label="Observação"
+							onblur="" style="width:300px;" />
+						<p:spacer width="10" />
+					</h:panelGrid>
+				</p:panel>
+
+				<div align="center" style="margin-top: 20px;">
+					<shiro:hasAnyRoles name="ROOT">
+						<p:commandButton
+							action="#{contratoCobrancaMB.baixarParcelasKobanaLote()}" ajax="false" 
+							icon="ui-icon-transferthick-e-w" value="Baixar"
+							update=":form:DetalheParcelas" />
+						<p:spacer width="10" />
+					</shiro:hasAnyRoles>
+					<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
+						oncomplete="PF('baixaParcelasLoteDialog').hide();" />
+				</div>
+			</h:form>
+		</p:dialog>
+	
 		<p:dialog header="Baixa Parcial - MultiParcelas" widgetVar="baixaParcialMultiParcelasDialog"
 			resizable="false" style="FONT-SIZE: 10pt;" responsive="true"
 			height="650" width="500">
@@ -319,22 +434,12 @@
 						value="#{contratoCobrancaMB.bpContratoCobrancaDetalhes.numeroParcela}"
 						label="Número da Parcela:"
 						style="font-weight: bold; font-size: 18px;" />
-					<p:outputLabel for="taxa" value="Método de Cálculo:" />
-					<p:selectOneRadio id="taxa" value="#{contratoCobrancaMB.txZero}">
-						<f:selectItem itemLabel="Cálculo normal" itemValue="true" />
-						<f:selectItem itemLabel="Taxa 0%" itemValue="false" />
-						<p:ajax update="dataPagamento valorAt" event="valueChange"
-							listener="#{contratoCobrancaMB.verificaTaxaZero}" />
-					</p:selectOneRadio>
 					<p:outputLabel for="dataPagamento" value="Data do Pagamento: "
 						styleClass="labelBold" style="margin-right: 59px;" />
-					<p:calendar id="dataPagamento"
-						value="#{contratoCobrancaMB.rowEditNewDate}" required="true"
-						label="Data do Pagamento" size="100" pattern="dd/MM/yyyy"
-						styleClass="dateTimeField">
-						<p:ajax event="dateSelect" update="ValoresAtualizados Pessoas"
-							listener="#{contratoCobrancaMB.atualizaValorBaixaParcelada}" />
-					</p:calendar>
+					<h:outputText id="dataPagamento" value="#{contratoCobrancaMB.rowEditNewDate}" style="font-weight: bold; font-size: 18px;">
+						<f:convertDateTime locale="pt_BR" />
+						<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"  />
+					</h:outputText>
 				</h:panelGrid>
 				<p:panel id="ValoresAtualizados" header="Valores Atualizados"
 					style="margin-top:20px;margin-bottom:20px;">
@@ -373,7 +478,7 @@
 						<p:outputLabel for="Recebedor" value="Favorecido: "
 							styleClass="labelBold" />
 						<p:inputText id="Recebedor"
-							value="#{contratoCobrancaMB.nomeRecebedor}" label="Recebedor"
+							value="#{contratoCobrancaMB.selectedRecebedor.nome}" label="Recebedor"
 							readonly="TRUE" required="true"
 							style="FONT-SIZE: 10pt;width:290px;" />
 						<p:commandButton id="botaoRecebedor" type="button"

@@ -37,206 +37,305 @@
 
 					<h:outputLabel for="Administrador" value="Administrador: "
 						class="labelBold" />
-					<p:selectBooleanButton id="Administrador"
-						value="#{usuarioMB.objetoUsuario.administrador}" onLabel="Sim"
-						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-						style="width:60px">
-
-					</p:selectBooleanButton>
+					<h:panelGroup>
+						<p:selectBooleanButton id="Administrador"
+							value="#{usuarioMB.objetoUsuario.administrador}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+						</p:selectBooleanButton>
+						<shiro:hasAnyRoles name="ROOT">
+							<h:outputLabel value="ROOT" />
+						</shiro:hasAnyRoles>
+					</h:panelGroup>
 
 					<h:outputLabel for="GerenciaPosto" value="Operador do Posto: "
 						class="labelBold" />
-					<p:selectBooleanButton id="GerenciaPosto"
-						value="#{usuarioMB.objetoUsuario.userPosto}" onLabel="Sim"
-						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-						style="width:60px">
-
-					</p:selectBooleanButton>
+					<h:panelGroup>
+						<p:selectBooleanButton id="GerenciaPosto"
+							value="#{usuarioMB.objetoUsuario.userPosto}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+						</p:selectBooleanButton>
+						<shiro:hasAnyRoles name="ROOT">
+							<h:outputLabel value="POSTO" />
+						</shiro:hasAnyRoles>
+					</h:panelGroup>
 
 					<h:outputLabel for="GerenciaLocacao"
 						value="Gerencia Locação de Imóveis: " class="labelBold" />
-					<p:selectBooleanButton id="GerenciaLocacao"
-						value="#{usuarioMB.objetoUsuario.userLocacao}" onLabel="Sim"
-						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-						style="width:60px">
-
-					</p:selectBooleanButton>
+					<h:panelGroup>
+						<p:selectBooleanButton id="GerenciaLocacao"
+							value="#{usuarioMB.objetoUsuario.userLocacao}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+						</p:selectBooleanButton>
+						<shiro:hasAnyRoles name="ROOT">
+							<h:outputLabel value="LOCACAO" />
+						</shiro:hasAnyRoles>
+					</h:panelGroup>
 
 					<h:outputLabel for="GerenciaCobrança"
 						value="Gerencia Sistema de Cobrança: " class="labelBold" />
-					<p:selectBooleanButton id="GerenciaCobrança"
-						value="#{usuarioMB.objetoUsuario.userCobranca}" onLabel="Sim"
-						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-						style="width:60px">
-						<p:ajax event="change"
-							update="GerenciaCobrançaEdita GerenciaCobrançaBaixa" />
-					</p:selectBooleanButton>
+					<h:panelGroup>
+						<p:selectBooleanButton id="GerenciaCobrança"
+							value="#{usuarioMB.objetoUsuario.userCobranca}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+							<p:ajax event="change"
+								update="GerenciaCobrançaEdita GerenciaCobrançaBaixa" />
+						</p:selectBooleanButton>
+						<shiro:hasAnyRoles name="ROOT">
+							<h:outputLabel value="COBRANCA" />
+						</shiro:hasAnyRoles>
+					</h:panelGroup>
 
 					<h:outputLabel for="GerenciaCobrançaEdita"
 						value="Sistema de Cobrança - Edita Contrato: " class="labelBold" />
-					<p:selectBooleanButton id="GerenciaCobrançaEdita"
-						disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
-						value="#{usuarioMB.objetoUsuario.userCobrancaEdita}" onLabel="Sim"
-						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-						style="width:60px">
-
-					</p:selectBooleanButton>
+					<h:panelGroup>
+						<p:selectBooleanButton id="GerenciaCobrançaEdita"
+							disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
+							value="#{usuarioMB.objetoUsuario.userCobrancaEdita}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+						</p:selectBooleanButton>
+						<shiro:hasAnyRoles name="ROOT">
+							<h:outputLabel value="COBRANCA_EDITA" />
+						</shiro:hasAnyRoles>
+					</h:panelGroup>
 
 					<h:outputLabel for="GerenciaCobrançaBaixa"
 						value="Sistema de Cobrança - Baixa Parcelas: " class="labelBold" />
-					<p:selectBooleanButton id="GerenciaCobrançaBaixa"
-						disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
-						value="#{usuarioMB.objetoUsuario.userCobrancaBaixa}" onLabel="Sim"
-						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-						style="width:60px">
-
-					</p:selectBooleanButton>
+					<h:panelGroup>
+						<p:selectBooleanButton id="GerenciaCobrançaBaixa"
+							disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
+							value="#{usuarioMB.objetoUsuario.userCobrancaBaixa}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+						</p:selectBooleanButton>
+						<shiro:hasAnyRoles name="ROOT">
+							<h:outputLabel value="COBRANCA_BAIXA" />
+						</shiro:hasAnyRoles>
+					</h:panelGroup>
 					
 					<h:outputLabel for="GerenciaCobrançaLead"
 						value="Sistema de Cobrança - Leads: " class="labelBold" />
-					<p:selectBooleanButton id="GerenciaCobrançaLead"
-						disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
-						value="#{usuarioMB.objetoUsuario.userCobrancaLead}" onLabel="Sim"
-						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-						style="width:60px">
-
-					</p:selectBooleanButton>
+					<h:panelGroup>
+						<p:selectBooleanButton id="GerenciaCobrançaLead"
+							disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
+							value="#{usuarioMB.objetoUsuario.userCobrancaLead}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+						</p:selectBooleanButton>
+						<shiro:hasAnyRoles name="ROOT">
+							<h:outputLabel value="COBRANCA_LEAD" />
+						</shiro:hasAnyRoles>
+					</h:panelGroup>
 
 					<h:outputLabel for="GerenciaPreContratos"
 						value="Sistema de Cobrança - Gerencia Pré-Contratos: "
 						class="labelBold" />
-					<p:selectBooleanButton id="GerenciaPreContratos"
-						disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
-						value="#{usuarioMB.objetoUsuario.userPreContrato}" onLabel="Sim"
-						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-						style="width:60px">
-						<p:ajax event="change" update="PanelResponsavel" />
-					</p:selectBooleanButton>
+					<h:panelGroup>
+						<p:selectBooleanButton id="GerenciaPreContratos"
+							disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
+							value="#{usuarioMB.objetoUsuario.userPreContrato}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+							<p:ajax event="change" update="PanelResponsavel" />
+						</p:selectBooleanButton>
+						<shiro:hasAnyRoles name="ROOT">
+							<h:outputLabel value="PRECOBRANCA" />
+						</shiro:hasAnyRoles>
+					</h:panelGroup>
 					
 					<h:outputLabel for="GerenciaPreContratosIUGU"
 						value="Sistema de Cobrança - Gerencia Pré-Contratos + IUGU: "
 						class="labelBold" />
-					<p:selectBooleanButton id="GerenciaPreContratosIUGU"
-						disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
-						value="#{usuarioMB.objetoUsuario.userPreContratoIUGU}" onLabel="Sim"
-						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-						style="width:60px">
-						<p:ajax event="change" update="PanelResponsavel" />
-					</p:selectBooleanButton>
+					<h:panelGroup>
+						<p:selectBooleanButton id="GerenciaPreContratosIUGU"
+							disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
+							value="#{usuarioMB.objetoUsuario.userPreContratoIUGU}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+							<p:ajax event="change" update="PanelResponsavel" />
+						</p:selectBooleanButton>
+						<shiro:hasAnyRoles name="ROOT">
+							<h:outputLabel value="PRECOBRANCAIUGU" />
+						</shiro:hasAnyRoles>
+					</h:panelGroup>
 
 					<h:outputLabel for="GerenciaPreContratosAnalista"
 						value="Sistema de Cobrança - Analista Pré-Contratos: "
 						class="labelBold" />
-					<p:selectBooleanButton id="GerenciaPreContratosAnalista"
-						disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
-						value="#{usuarioMB.objetoUsuario.userPreContratoAnalista}" onLabel="Sim"
-						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-						style="width:60px">
-						<p:ajax event="change" update="PanelResponsavel" />
-					</p:selectBooleanButton>
+					<h:panelGroup>
+						<p:selectBooleanButton id="GerenciaPreContratosAnalista"
+							disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
+							value="#{usuarioMB.objetoUsuario.userPreContratoAnalista}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+							<p:ajax event="change" update="PanelResponsavel" />
+						</p:selectBooleanButton>
+						<shiro:hasAnyRoles name="ROOT">
+							<h:outputLabel value="PRECOBRANCAANALISTA" />
+						</shiro:hasAnyRoles>
+					</h:panelGroup>
 					
 					<h:outputLabel for="GerenciaContratosFinanceiro"
 						value="Sistema de Cobrança - Gerencia Contratos Financeiro: "
 						class="labelBold" />
-					<p:selectBooleanButton id="GerenciaContratosFinanceiro"
-						disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
-						value="#{usuarioMB.objetoUsuario.userCobrancaFinanceiro}" onLabel="Sim"
-						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-						style="width:60px">
-						<p:ajax event="change" update="PanelResponsavel" />
-					</p:selectBooleanButton>
+					<h:panelGroup>
+						<p:selectBooleanButton id="GerenciaContratosFinanceiro"
+							disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
+							value="#{usuarioMB.objetoUsuario.userCobrancaFinanceiro}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+							<p:ajax event="change" update="PanelResponsavel" />
+						</p:selectBooleanButton>
+						<shiro:hasAnyRoles name="ROOT">
+							<h:outputLabel value="COBRANCA_FINANCEIRO" />
+						</shiro:hasAnyRoles>
+					</h:panelGroup>
 					
 					<h:outputLabel for="ComiteConsultar"
 						value="Sistema de Cobrança - Comitê Consultar: "
 						class="labelBold" />
-					<p:selectBooleanButton id="ComiteConsultar"
-						value="#{usuarioMB.objetoUsuario.comiteConsultar}" onLabel="Sim"
-						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-						style="width:60px">
-						<p:ajax event="change" update="PanelResponsavel" />
-					</p:selectBooleanButton>
+					<h:panelGroup>
+						<p:selectBooleanButton id="ComiteConsultar"
+							value="#{usuarioMB.objetoUsuario.comiteConsultar}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+							<p:ajax event="change" update="PanelResponsavel" />
+						</p:selectBooleanButton>
+						<shiro:hasAnyRoles name="ROOT">
+							<h:outputLabel value="COMITECONSULTAR" />
+						</shiro:hasAnyRoles>
+					</h:panelGroup>
 					
 					<h:outputLabel for="ComiteEditar"
 						value="Sistema de Cobrança - Comitê Editar: "
 						class="labelBold" />
-					<p:selectBooleanButton id="ComiteEditar"
-						value="#{usuarioMB.objetoUsuario.comiteEditar}" onLabel="Sim"
-						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-						style="width:60px">
-						<p:ajax event="change" update="PanelResponsavel" />
-					</p:selectBooleanButton>
+					<h:panelGroup>
+						<p:selectBooleanButton id="ComiteEditar"
+							value="#{usuarioMB.objetoUsuario.comiteEditar}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+							<p:ajax event="change" update="PanelResponsavel" />
+						</p:selectBooleanButton>
+						<shiro:hasAnyRoles name="ROOT">
+							<h:outputLabel value="COMITEEDITAR" />
+						</shiro:hasAnyRoles>
+					</h:panelGroup>
 					
 					<h:outputLabel for="GerenciaCobrançaIUGU"
 						value="Sistema de Cobrança - IUGU: " class="labelBold" />
-					<p:selectBooleanButton id="GerenciaCobrançaIUGU"
-						disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
-						value="#{usuarioMB.objetoUsuario.userCobrancaIugu}" onLabel="Sim"
-						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-						style="width:60px">
-					</p:selectBooleanButton>
+					<h:panelGroup>
+						<p:selectBooleanButton id="GerenciaCobrançaIUGU"
+							disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
+							value="#{usuarioMB.objetoUsuario.userCobrancaIugu}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+						</p:selectBooleanButton>
+						<shiro:hasAnyRoles name="ROOT">
+							<h:outputLabel value="COBRANCA_IUGU" />
+						</shiro:hasAnyRoles>					
+					</h:panelGroup>
 					
 					<h:outputLabel for="AssistenteFinanceiro"
 						value="Sistema de Cobrança - Assistente Financeiro:" class="labelBold" />
-					<p:selectBooleanButton id="AssistenteFinanceiro"
-						disabled="!#{usuarioMB.objetoUsuario.assistFinanceiro}"
-						value="#{usuarioMB.objetoUsuario.assistFinanceiro}" onLabel="Sim"
-						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-						style="width:60px">
-					</p:selectBooleanButton>
-					
+					<h:panelGroup>
+						<p:selectBooleanButton id="AssistenteFinanceiro"
+							disabled="!#{usuarioMB.objetoUsuario.assistFinanceiro}"
+							value="#{usuarioMB.objetoUsuario.assistFinanceiro}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+						</p:selectBooleanButton>
+						<shiro:hasAnyRoles name="ROOT">
+							<h:outputLabel value="ASSISTENTEFINANCEIRO" />
+						</shiro:hasAnyRoles>
+					</h:panelGroup>
+										
 					<h:outputLabel for="AvaliadorImovel"
 						value="Sistema de Cobrança - Avaliador de Imóvel:" class="labelBold" />
-					<p:selectBooleanButton id="AvaliadorImovel"
-						disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
-						value="#{usuarioMB.objetoUsuario.userAvaliadorImovel}" onLabel="Sim"
-						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-						style="width:60px">
-					</p:selectBooleanButton>
-					
+					<h:panelGroup>
+						<p:selectBooleanButton id="AvaliadorImovel"
+							disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
+							value="#{usuarioMB.objetoUsuario.userAvaliadorImovel}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+						</p:selectBooleanButton>
+						<shiro:hasAnyRoles name="ROOT">
+							<h:outputLabel value="AVALIADORIMOVEL" />
+						</shiro:hasAnyRoles>
+					</h:panelGroup>
+										
 					<h:outputLabel for="Galache"
 						value="Sistema de Cobrança - Avaliador Galache:" class="labelBold" />
-					<p:selectBooleanButton id="Galache"
-						disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
-						value="#{usuarioMB.objetoUsuario.userGalache}" onLabel="Sim"
-						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-						style="width:60px">
-					</p:selectBooleanButton>
-					
+					<h:panelGroup>
+						<p:selectBooleanButton id="Galache"
+							disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
+							value="#{usuarioMB.objetoUsuario.userGalache}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+						</p:selectBooleanButton>
+						<shiro:hasAnyRoles name="ROOT">
+							<h:outputLabel value="USER_GALACHE" />
+						</shiro:hasAnyRoles>
+					</h:panelGroup>
+										
 					<h:outputLabel for="AgenteEspelhamento"
 						value="Sistema de Cobrança - Agente Espelhamento:" class="labelBold" />
-					<p:selectBooleanButton id="AgenteEspelhamento"
-						disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
-						value="#{usuarioMB.objetoUsuario.userAgenteEspelhamento}" onLabel="Sim"
-						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-						style="width:60px">
-					</p:selectBooleanButton>
-					
+					<h:panelGroup>
+						<p:selectBooleanButton id="AgenteEspelhamento"
+							disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
+							value="#{usuarioMB.objetoUsuario.userAgenteEspelhamento}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+						</p:selectBooleanButton>
+						<shiro:hasAnyRoles name="ROOT">
+							<h:outputLabel value="AGENTE_ESPELHAMENTO" />
+						</shiro:hasAnyRoles>
+					</h:panelGroup>
+										
 					<h:outputLabel for="laudo"
 						value="Sistema de Cobrança - Gerencia PAJU:" class="labelBold" />
-					<p:selectBooleanButton id="laudo"
-						disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
-						value="#{usuarioMB.objetoUsuario.userLaudo}" onLabel="Sim"
-						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-						style="width:60px">
-					</p:selectBooleanButton>
-
+					<h:panelGroup>
+						<p:selectBooleanButton id="laudo"
+							disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
+							value="#{usuarioMB.objetoUsuario.userLaudo}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+						</p:selectBooleanButton>
+						<shiro:hasAnyRoles name="ROOT">
+							<h:outputLabel value="LAUDO" />
+						</shiro:hasAnyRoles>
+					</h:panelGroup>
+					
 					<h:outputLabel for="IuguPosto" value="Cobranças IUGU Postos "
 						class="labelBold" />
-					<p:selectBooleanButton id="IuguPosto"
-						disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
-						value="#{usuarioMB.objetoUsuario.userIuguPosto}" onLabel="Sim"
-						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-						style="width:60px">
-					</p:selectBooleanButton>
-					
+					<h:panelGroup>
+						<p:selectBooleanButton id="IuguPosto"
+							disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
+							value="#{usuarioMB.objetoUsuario.userIuguPosto}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+						</p:selectBooleanButton>
+						<shiro:hasAnyRoles name="ROOT">
+							<h:outputLabel value="IUGU_POSTO" />
+						</shiro:hasAnyRoles>
+					</h:panelGroup>
+										
 					<h:outputLabel for="PosOperacao" value="Financeiro Pós Operação "
 						class="labelBold" />
-					<p:selectBooleanButton id="PosOperacao"
-						disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
-						value="#{usuarioMB.objetoUsuario.userPosOperacao}" onLabel="Sim"
-						offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-						style="width:60px">
-					</p:selectBooleanButton>
+					<h:panelGroup>
+						<p:selectBooleanButton id="PosOperacao"
+							disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
+							value="#{usuarioMB.objetoUsuario.userPosOperacao}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+						</p:selectBooleanButton>
+						<shiro:hasAnyRoles name="ROOT">
+							<h:outputLabel value="POSOPERACAO" />
+						</shiro:hasAnyRoles>
+					</h:panelGroup>
 				</h:panelGrid>
 				
 				<p:panel id="PanelProfiles"
@@ -245,100 +344,160 @@
 					<h:panelGrid columns="2">
 						<h:outputLabel for="profileAnalistaCredito" value="Analista de Crédito"
 							class="labelBold" />
-						<p:selectBooleanButton id="profileAnalistaCredito"
-							value="#{usuarioMB.objetoUsuario.profileAnalistaCredito}" onLabel="Sim"
-							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-							style="width:60px">
-						</p:selectBooleanButton>
+						<h:panelGroup>
+							<p:selectBooleanButton id="profileAnalistaCredito"
+								value="#{usuarioMB.objetoUsuario.profileAnalistaCredito}" onLabel="Sim"
+								offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+								style="width:60px">
+							</p:selectBooleanButton>
+							<shiro:hasAnyRoles name="ROOT">
+								<h:outputLabel value="PROFILE_ANALISTA_CREDITO" />
+							</shiro:hasAnyRoles>	
+						</h:panelGroup>					
 						
 						<h:outputLabel for="profileAnalistaComite" value="Analista Comitê"
 							class="labelBold" />
-						<p:selectBooleanButton id="profileAnalistaComite"
-							value="#{usuarioMB.objetoUsuario.profileAnalistaComite}" onLabel="Sim"
-							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-							style="width:60px">
-						</p:selectBooleanButton>
+						<h:panelGroup>
+							<p:selectBooleanButton id="profileAnalistaComite"
+								value="#{usuarioMB.objetoUsuario.profileAnalistaComite}" onLabel="Sim"
+								offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+								style="width:60px">
+							</p:selectBooleanButton>
+							<shiro:hasAnyRoles name="ROOT">
+								<h:outputLabel value="PROFILE_ANALISTA_COMITE" />
+							</shiro:hasAnyRoles>
+						</h:panelGroup>
 						
 						<h:outputLabel for="profileAnalistaPosComite" value="Analista Pós Comitê"
 							class="labelBold" />
-						<p:selectBooleanButton id="profileAnalistaPosComite"
-							value="#{usuarioMB.objetoUsuario.profileAnalistaPosComite}" onLabel="Sim"
-							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-							style="width:60px">
-						</p:selectBooleanButton>
+						<h:panelGroup>
+							<p:selectBooleanButton id="profileAnalistaPosComite"
+								value="#{usuarioMB.objetoUsuario.profileAnalistaPosComite}" onLabel="Sim"
+								offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+								style="width:60px">
+							</p:selectBooleanButton>
+							<shiro:hasAnyRoles name="ROOT">
+								<h:outputLabel value="PROFILE_ANALISTA_POS_COMITE" />
+							</shiro:hasAnyRoles>
+						</h:panelGroup>
 						
 						<h:outputLabel for="profileGerenteAnalise" value="Gerente Análise"
 							class="labelBold" />
-						<p:selectBooleanButton id="profileGerenteAnalise"
-							value="#{usuarioMB.objetoUsuario.profileGerenteAnalise}" onLabel="Sim"
-							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-							style="width:60px">
-						</p:selectBooleanButton>
+						<h:panelGroup>
+							<p:selectBooleanButton id="profileGerenteAnalise"
+								value="#{usuarioMB.objetoUsuario.profileGerenteAnalise}" onLabel="Sim"
+								offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+								style="width:60px">
+							</p:selectBooleanButton>
+							<shiro:hasAnyRoles name="ROOT">
+								<h:outputLabel value="PROFILE_GERENTE_ANALISE" />
+							</shiro:hasAnyRoles>
+						</h:panelGroup>
 						
 						<h:outputLabel for="profileContrato" value="Contratos"
 							class="labelBold" />
-						<p:selectBooleanButton id="profileContrato"
-							value="#{usuarioMB.objetoUsuario.profileContrato}" onLabel="Sim"
-							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-							style="width:60px">
-						</p:selectBooleanButton>
+						<h:panelGroup>
+							<p:selectBooleanButton id="profileContrato"
+								value="#{usuarioMB.objetoUsuario.profileContrato}" onLabel="Sim"
+								offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+								style="width:60px">
+							</p:selectBooleanButton>
+							<shiro:hasAnyRoles name="ROOT">
+								<h:outputLabel value="PROFILE_CONTRATO" />
+							</shiro:hasAnyRoles>
+						</h:panelGroup>
 						
 						<h:outputLabel for="profileCobranca" value="Cobrança"
 							class="labelBold" />
-						<p:selectBooleanButton id="profileCobranca"
-							value="#{usuarioMB.objetoUsuario.profileCobranca}" onLabel="Sim"
-							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-							style="width:60px">
-						</p:selectBooleanButton>
+						<h:panelGroup>
+							<p:selectBooleanButton id="profileCobranca"
+								value="#{usuarioMB.objetoUsuario.profileCobranca}" onLabel="Sim"
+								offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+								style="width:60px">
+							</p:selectBooleanButton>
+							<shiro:hasAnyRoles name="ROOT">
+								<h:outputLabel value="PROFILE_COBRANCA" />
+							</shiro:hasAnyRoles>
+						</h:panelGroup>
 						
 						<h:outputLabel for="profileComentarioJuridico" value="Comentário Jurídico"
 							class="labelBold" />
-						<p:selectBooleanButton id="profileComentarioJuridico"
-							value="#{usuarioMB.objetoUsuario.profileComentarioJuridico}" onLabel="Sim"
-							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-							style="width:60px">
-						</p:selectBooleanButton>
+						<h:panelGroup>
+							<p:selectBooleanButton id="profileComentarioJuridico"
+								value="#{usuarioMB.objetoUsuario.profileComentarioJuridico}" onLabel="Sim"
+								offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+								style="width:60px">
+							</p:selectBooleanButton>
+							<shiro:hasAnyRoles name="ROOT">
+								<h:outputLabel value="PROFILE_COMENTARIO_JURIDICO" />
+							</shiro:hasAnyRoles>
+						</h:panelGroup>
 						
 						<h:outputLabel for="profileAvaliadorImovel" value="Avaliador Imóvel"
 							class="labelBold" />
-						<p:selectBooleanButton id="profileAvaliadorImovel"
-							value="#{usuarioMB.objetoUsuario.profileAvaliadorImovel}" onLabel="Sim"
-							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-							style="width:60px">
-						</p:selectBooleanButton>
+						<h:panelGroup>
+							<p:selectBooleanButton id="profileAvaliadorImovel"
+								value="#{usuarioMB.objetoUsuario.profileAvaliadorImovel}" onLabel="Sim"
+								offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+								style="width:60px">
+							</p:selectBooleanButton>
+							<shiro:hasAnyRoles name="ROOT">
+								<h:outputLabel value="PROFILE_AVALIADOR_IMOVEL" />
+							</shiro:hasAnyRoles>
+						</h:panelGroup>
 						
 						<h:outputLabel for="profileAvaliadorImovelCompass" value="Avaliador Imóvel Compass"
 							class="labelBold" />
-						<p:selectBooleanButton id="profileAvaliadorImovelCompass"
-							value="#{usuarioMB.objetoUsuario.profileAvaliadorImovelCompass}" onLabel="Sim"
-							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-							style="width:60px">
-						</p:selectBooleanButton>
+						<h:panelGroup>
+							<p:selectBooleanButton id="profileAvaliadorImovelCompass"
+								value="#{usuarioMB.objetoUsuario.profileAvaliadorImovelCompass}" onLabel="Sim"
+								offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+								style="width:60px">
+							</p:selectBooleanButton>
+							<shiro:hasAnyRoles name="ROOT">
+								<h:outputLabel value="PROFILE_AVALIADOR_IMOVEL_COMPASS" />
+							</shiro:hasAnyRoles>
+						</h:panelGroup>
 						
 						<h:outputLabel for="profileAvaliadorImovelGalache" value="Avaliador Imóvel Galache"
 							class="labelBold" />
-						<p:selectBooleanButton id="profileAvaliadorImovelGalache"
-							value="#{usuarioMB.objetoUsuario.profileAvaliadorImovelGalache}" onLabel="Sim"
-							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-							style="width:60px">
-						</p:selectBooleanButton>
+						<h:panelGroup>
+							<p:selectBooleanButton id="profileAvaliadorImovelGalache"
+								value="#{usuarioMB.objetoUsuario.profileAvaliadorImovelGalache}" onLabel="Sim"
+								offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+								style="width:60px">
+							</p:selectBooleanButton>
+							<shiro:hasAnyRoles name="ROOT">
+								<h:outputLabel value="PROFILE_AVALIADOR_IMOVEL_GALACHE" />
+							</shiro:hasAnyRoles>
+						</h:panelGroup>
 						
 						<h:outputLabel for="profileLaudo" value="Laudo"
 							class="labelBold" />
-						<p:selectBooleanButton id="profileLaudo"
-							value="#{usuarioMB.objetoUsuario.profileLaudo}" onLabel="Sim"
-							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-							style="width:60px">
-						</p:selectBooleanButton>
+						<h:panelGroup>
+							<p:selectBooleanButton id="profileLaudo"
+								value="#{usuarioMB.objetoUsuario.profileLaudo}" onLabel="Sim"
+								offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+								style="width:60px">
+							</p:selectBooleanButton>
+							<shiro:hasAnyRoles name="ROOT">
+								<h:outputLabel value="PROFILE_LAUDO" />
+							</shiro:hasAnyRoles>
+						</h:panelGroup>
 						
 						<h:outputLabel for="marketing"
 							value="Marketing:" class="labelBold" />
-						<p:selectBooleanButton id="marketing"
-							disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
-							value="#{usuarioMB.objetoUsuario.profileMarketing}" onLabel="Sim"
-							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-							style="width:60px">
-						</p:selectBooleanButton>
+						<h:panelGroup>
+							<p:selectBooleanButton id="marketing"
+								disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
+								value="#{usuarioMB.objetoUsuario.profileMarketing}" onLabel="Sim"
+								offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+								style="width:60px">
+							</p:selectBooleanButton>
+							<shiro:hasAnyRoles name="ROOT">
+								<h:outputLabel value="PROFILE_MARKETING" />
+							</shiro:hasAnyRoles>
+						</h:panelGroup>
 					</h:panelGrid>
 				</p:panel>
 				<p:panel id="PanelBlockBackoffice"

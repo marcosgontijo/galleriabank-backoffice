@@ -21,7 +21,7 @@
 					<p:commandButton action="#{docketMB.teste}"
 						update="msgs" value="teste"/>
 				</shiro:hasAnyRoles>
-				<h:panelGrid columns="2">		
+				<h:panelGrid columns="3">		
 					<h:panelGrid columns="2">							
 						<p:outputLabel for="contrato" value="Referente a Operação: "
 							styleClass="labelBold"
@@ -46,26 +46,14 @@
 							oncomplete="PF('pessoaDialog').show();"
 							update="pessoaDialogdlg" />
 					</h:panelGrid>
-					<h:panelGrid columns="2">	
-						<p:outputLabel value="Estado" style="FONT-SIZE: 10pt;" />
-						<h:selectOneMenu value="#{docketMB.estadoSelecionadoImovel}" >								
-							<f:selectItems value="#{docketMB.listaEstados}" var="estado"
-								itemValue="#{estado}" itemLabel="#{estado}" />		
-							<p:ajax update="cidadesImovel" event="change" listener="#{docketMB.pegarListaCidadesImovel}"/>										
-						</h:selectOneMenu>
-						<p:outputLabel value="Cidade" style="FONT-SIZE: 10pt;" />
-						<p:autoComplete id="cidadesImovel" value="#{docketMB.cidadeImovel}"
-							completeMethod="#{docketMB.completeCidadesImovel}" autocomplete="no" 
-							var="cidade" itemLabel="#{cidade}" itemValue="#{cidade}"  dropdown="true"
-							forceSelection="true"
-							scrollHeight="250" >
-							<p:ajax update="Dados" event="itemSelect" listener="#{docketMB.atualizaTodosDocumentos}" /> 
-						</p:autoComplete>
-					</h:panelGrid>
+				
+					
+					
+				
 				</h:panelGrid>	
 				
 				<h:panelGroup id="Dados">				
-					<ui:repeat var="pagador" value="#{docketMB.listaPagador}" style="width:50%;">
+					<p:dataList id="pagadorList" value="#{docketMB.listaPagador}" var="pagador" style="padding: 0;" type="definition">
 						<p:panel id="pagadorPanel" header="#{pagador.nome}" style="padding: none" 
 							toggleable="true" toggleableHeader="true">
 							<f:facet name="header" styleClass="ui-accordion-header">
@@ -99,16 +87,20 @@
 									<p:inputText value="#{pagador.cnpj}" style="FONT-SIZE: 5pt; margin-right: 5px; width:120px" />  						
 								</h:panelGroup> 						    
 							</h:panelGrid>	
-							<p:panel id="docsPanel" header="Documentos - #{pagador.documentosDocket.size()}" style="padding: 0" toggleable="true" toggleableHeader="true" >
+							<p:panel id="docsPanel" header="" style="padding: 0" toggleable="true" toggleableHeader="true" >
+								<f:facet name="header" styleClass="ui-accordion-header">
+									<p:outputLabel value="Documentos - #{pagador.documentosDocket.size()}" 
+									style="FONT-SIZE: 15pt;margin-left: 5px" styleClass="ui-panel-title"/>
+								</f:facet>
 								 <p:dataList id="docsList" value="#{pagador.documentosDocket}" var="docs" style="padding: 0" type="definition">
 								 	<p:panel id="PanelGridDocs" header="Documentos" style="padding: 0" toggleable="true" toggleableHeader="true" collapsed="true" >			
 										<f:facet name="header" styleClass="ui-accordion-header">
-											<p:commandButton icon="ui-icon ui-icon-trash"
+											<p:commandButton icon="ui-icon ui-icon-trash" ajax="true"
 												action="#{docketMB.removeDoc(pagador, docs)}"
-												 update=":form:DocketPanel" />
-											<p:outputLabel value="#{docs.documentoDocket.documentoNome}" style="FONT-SIZE: 15pt;margin-left: 5px" styleClass="ui-panel-title"/>
+												update="form:pagadorList" />
+											<p:outputLabel value="#{docs.estadoSelecionado.uf} - #{docs.documentoDocket.documentoNome}" style="FONT-SIZE: 15pt;margin-left: 5px" styleClass="ui-panel-title"/>
 										</f:facet>
-										<h:panelGrid columns="4">		
+										<h:panelGrid columns="5">		
 											<p:outputLabel value="Estado" style="FONT-SIZE: 10pt;" />
 	    									<h:selectOneMenu value="#{docs.estadoSelecionado}" >								
 												<f:selectItems value="#{docketMB.listaEstados}" var="estado"
@@ -120,11 +112,17 @@
 											<p:autoComplete value="#{docs.cidade}"
 												completeMethod="#{docketMB.completeCidades}" autocomplete="no" 
 												var="cidade" itemLabel="#{cidade}" itemValue="#{cidade}"
-												forceSelection="true" styleClass="labelBold" style="width:100px;"
+												forceSelection="true" styleClass="labelBold" style="width:100px;margin-right: 30px;"
 												scrollHeight="250" >
 												<p:ajax update="cidadeID" event="blur" listener="#{docs.getCidadeDocketId}" />
 												<f:attribute name="documentoAtual" value="#{docs}" />	
 											</p:autoComplete>
+											
+											<p:selectBooleanButton style="margin-left: 40px"
+												value="#{docs.travado}"
+												onLabel="" offLabel=""
+												onIcon="ui-icon-locked" offIcon="ui-icon-unlocked">
+											</p:selectBooleanButton>
 										</h:panelGrid>
 										<h:panelGrid columns="2">	
 											<p:outputLabel id="estadoID" value="#{docs.estadoId}" style="FONT-SIZE: 10pt;" />
@@ -134,7 +132,7 @@
 								 </p:dataList>
 							</p:panel>
 						</p:panel>
-					</ui:repeat>
+					</p:dataList>
 				</h:panelGroup>
 			
 				<h:panelGrid columns="3">	
@@ -142,14 +140,10 @@
 						icon="ui-icon ui-icon-print" value="Fazer Pedido"  update=":form  msgs" />			
 				</h:panelGrid>
 			</p:panel>
-			
+			<p:commandButton action="#{dataEngineMB.pedirEngineDocket(docketMB.listaPagador, docketMB.objetoContratoCobranca)}"
+				icon="ui-icon ui-icon-print" value="Pedir Engine"  update=":form  msgs" />			
 		</h:form>
 	
-		<ui:include src="../../Dialog/DialogRecebedorPagador.xhtml">
-			<ui:param name="mbean" value="#{docketMB}"></ui:param>
-			<ui:param name="titulo" value="Pagador"></ui:param>
-		</ui:include>
-		
 		<p:dialog header="Documentos" widgetVar="documentosDialog"
 		 style="FONT-SIZE: 10pt;" width="800" position="center center">
 			<h:form id="documentosform">
@@ -230,8 +224,9 @@
 		</p:dialog>
 		
 		<p:dialog header="Nova Pessoa" widgetVar="pessoaDialog"
-			resizable="false" style="FONT-SIZE: 10pt;" width="400">
-			<h:form id="pessoaDialogdlg">			
+			resizable="false" style="FONT-SIZE: 10pt;" width="800">
+			<h:form id="pessoaDialogdlg">
+				<p:messages id="msgsPessoa" />			
 				<div align="center">		
 					<h:panelGrid columns="2">
 						<p:outputLabel for="Pessoa" value="Pessoa: "
@@ -273,6 +268,46 @@
 						<p:outputLabel value="Razão Social:" styleClass="labelBold"/>
 						<p:inputText value="#{docketMB.pagadorAdicionar.nome}"/>				
 					</h:panelGrid>
+					
+					<h:panelGrid columns="2" id="grid2">
+						<p:dataView var="local" style="min-width: 150px;"
+							value="#{docketMB.listaLocalidades}"
+							paginator="false" layout="list">
+							<p:dataViewListItem>
+								<p:outputLabel value="#{local.estado} - #{local.cidade}" styleClass="labelBold" />
+								<p:spacer width="10px"></p:spacer>
+								<p:commandButton icon="ui-icon-trash"
+									action="#{docketMB.removerLocalidade(local)}"
+									update=":pessoaDialogdlg:grid2" />
+							</p:dataViewListItem>
+						</p:dataView>
+	
+						<h:panelGroup id="locaisValor">
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Estado" style="FONT-SIZE: 10pt;" />
+								<h:selectOneMenu value="#{docketMB.localidadesSelecionada.estadoSelecionado}" >								
+									<f:selectItems value="#{docketMB.listaEstados}" var="estado"
+										itemValue="#{estado}" itemLabel="#{estado}" />		
+									<p:ajax update="locaisValor" event="change" listener="#{docketMB.pegarListaCidadesImovel}"/>										
+								</h:selectOneMenu>
+								
+								<p:outputLabel value="Cidade" style="FONT-SIZE: 10pt;" />
+								<p:autoComplete id="cidadesImovel" value="#{docketMB.localidadesSelecionada.cidade}"
+									completeMethod="#{docketMB.completeCidadesImovel}" autocomplete="no" 
+									var="cidade" itemLabel="#{cidade}" itemValue="#{cidade}"  dropdown="true"
+									forceSelection="true"
+									scrollHeight="250">
+									<p:ajax update="pessoaDialogdlg:grid2" event="itemSelect" listener="#{docketMB.populateCidadeLocalidade}" /> 
+								</p:autoComplete>
+							</h:panelGrid>
+							<p:commandButton value="Inserir local" 
+								icon="ui-icon-check"
+								action="#{docketMB.inserirLocalidade}"
+								update="grid2">
+							</p:commandButton>
+						</h:panelGroup>
+					</h:panelGrid>
+					
 					<p:commandButton  value="Adicionar" 
 						action="#{docketMB.inserirPessoa}" 
 						onclick="PF('pessoaDialog').close();"
@@ -280,6 +315,7 @@
 						style="margin-bottom:50px; margin-top:10px"/>	
 				</div>
 			</h:form>
+			<p:ajax event="close" listener="#{docketMB.closeDialog}" update="pessoaDialogdlg" />
 		</p:dialog>
 		
 	</ui:define>

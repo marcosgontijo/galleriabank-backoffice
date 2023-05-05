@@ -283,6 +283,23 @@ public class LoginBean {
         }
     }
 
+    
+    public User getUsuarioLogado() {
+		User usuario = null;
+		if (getUsername() != null) {
+			List<User> usuarioLogado = new ArrayList<User>();
+			UserDao u = new UserDao();
+
+			usuarioLogado = u.findByFilter("login", getUsername());
+
+			if (usuarioLogado.size() > 0) {
+				usuario = usuarioLogado.get(0);
+			}
+		}
+
+		return usuario;
+	}
+    
 	/**
      * Executa a inicializacao do banco de dados.
      * @return null (sempre)

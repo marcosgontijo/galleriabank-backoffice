@@ -308,6 +308,14 @@
 				class="com.webnowbr.siscoat.cobranca.db.model.CcbProcessosJudiciais" />
 		</list>
 		
+		<list name="despesasAnexo2"
+			table="ccbcontrato_contasPagar_join" cascade="all" lazy="false">
+			<key column="idCcbContrato" />
+			<list-index></list-index>
+			<many-to-many column="idContasPagar"
+				class="com.webnowbr.siscoat.cobranca.db.model.ContasPagar" />
+		</list>
+		
 		<property name="iqValor" type="big_decimal">
 			<column name="iqValor" />
 		</property>
@@ -467,6 +475,18 @@
 		<property name="tipoContaBancoVendedor" type="java.lang.String">
 			<column name="tipoContaBancoVendedor" />
 		</property>
+		
+		<property name="bairroEmitente" type="java.lang.String">
+			<column name="bairroEmitente" />
+		</property>
+		
+		<property name="tipoCalculoFinal" type="char">
+		    <column name="tipoCalculoFinal" default="B"/>
+		</property>
+		
+		<property name="CCBDocumento" type="java.lang.String">
+			<column name="CCBDocumento" />
+		</property> 
 		        
     </class>
 </hibernate-mapping>

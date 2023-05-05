@@ -1,5 +1,6 @@
 package com.webnowbr.siscoat.job;
 
+import java.util.Calendar;
 import java.util.List;
 
 import javax.faces.application.FacesMessage;
@@ -109,12 +110,17 @@ public class IpcaJob implements Job {
 						contratoCobranca.setCorrigidoIPCA(true);
 						contratoCobranca.setCorrigidoNovoIPCA(false);
 						
+						Calendar dataCorteParcelasMalucas = Calendar.getInstance();
+						dataCorteParcelasMalucas.set(Calendar.YEAR, 2023);
+						dataCorteParcelasMalucas.set(Calendar.MONTH, 0);
+						dataCorteParcelasMalucas.set(Calendar.DAY_OF_MONTH, 1);
+						
 						for (int iDetalhe = 0; iDetalhe < contratoCobranca.getListContratoCobrancaDetalhes().size(); iDetalhe++) {
 							if (CommonsUtil.mesmoValor(contratoCobranca.getListContratoCobrancaDetalhes().get(iDetalhe).getNumeroParcela() , "0") )
 								continue;
 							
 							try {
-								if (!ipcaJobCalcular.calcularIPCACustomMaluco(ipcaDao, contratoCobrancaDetalhesDao, contratoCobrancaDao, contratoCobrancaDetalhesParcialDao, contratoCobranca.getListContratoCobrancaDetalhes().get(iDetalhe), contratoCobranca))
+								if (!ipcaJobCalcular.calcularIPCACustomMaluco(ipcaDao, contratoCobrancaDetalhesDao, contratoCobrancaDao, contratoCobrancaDetalhesParcialDao, contratoCobranca.getListContratoCobrancaDetalhes().get(iDetalhe), contratoCobranca, dataCorteParcelasMalucas.getTime()))
 									break;
 							} catch (Exception e) {
 								LOGGER.error("IpcaJobContrato.execute " + "atualizaIPCAInicioContrato: EXCEPTION", e);

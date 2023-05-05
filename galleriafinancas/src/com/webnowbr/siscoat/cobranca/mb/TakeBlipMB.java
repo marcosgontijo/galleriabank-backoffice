@@ -17,14 +17,12 @@ import javax.faces.context.FacesContext;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.primefaces.util.DateUtils;
 
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
-import com.webnowbr.siscoat.cobranca.db.model.TransferenciasObservacoesIUGU;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
-import com.webnowbr.siscoat.cobranca.db.op.TransferenciasObservacoesIUGUDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 
@@ -104,7 +102,7 @@ public class TakeBlipMB {
 		Agora é só aguardar o registro para fazermos o pagamento 🤑
 	*/
 	
-	// aprovacao_credito_compass
+	// aprovacao_credito_compass_v2
 	/* 
 		Olá {{1}}!!! 
 
@@ -112,7 +110,7 @@ public class TakeBlipMB {
 		
 		Nós, junto com o seu consultor financeiro, queremos fazer parte dos seus projetos.
 		
-		Logo mais, a empresa Compass estará entrando em contato com você para a agendar o Laudo de Avaliação do seu imóvel.
+		Logo mais entraremos em contato com você para a agendar o Laudo de Avaliação do seu imóvel.
 		
 		Conte sempre com a gente
 		
@@ -132,6 +130,14 @@ public class TakeBlipMB {
 		Conte sempre com a gente
 		
 		Até mais.
+	*/
+	
+	// confirmacao_vistoria
+	/* 
+		Olá {{1}}, aqui é da Galleria Bank.
+		Confirmando a vistoria do imóvel para {{2}} ({{3}}) às {{4}}.
+		A visita será feita por {{5}}.
+		Até logo
 	*/
 	
 	// operacao_baixada
@@ -508,7 +514,8 @@ public class TakeBlipMB {
 					jsonWhatsAppParameter.put("text", nomeDoCliente);
 					jsonWhatsAppParameters.put(jsonWhatsAppParameter);
 				} else if(nomeTemplateMensagem.equals("aprovacao_credito_compass")
-						|| nomeTemplateMensagem.equals("aprovacao_credito_galache")) {
+						|| nomeTemplateMensagem.equals("aprovacao_credito_galache")
+						|| nomeTemplateMensagem.equals("aprovacao_credito_compass_v2")) {
 					
 					jsonWhatsAppParameters = new JSONArray();
 					
@@ -562,6 +569,154 @@ public class TakeBlipMB {
 		JSONObject jsonWhatsAppTemplate = new JSONObject();
 		jsonWhatsAppTemplate.put("namespace", "37de7635_839c_4792_92a6_5d40dc299b2a");
 		jsonWhatsAppTemplate.put("name", nomeTemplateMensagem);		
+		jsonWhatsAppTemplate.put("components", jsonWhatsAppComponents);
+		jsonWhatsAppTemplate.put("language", jsonWhatsAppLanguage);	
+		
+		JSONObject jsonWhatsAppConteudo = new JSONObject();
+		jsonWhatsAppConteudo.put("type", "template");
+		
+		jsonWhatsAppConteudo.put("template", jsonWhatsAppTemplate);	
+		
+		jsonWhatsApp.put("content", jsonWhatsAppConteudo);
+		
+		senderWhatsAppMessage(jsonWhatsApp);
+	}
+	
+	public void sendWhatsAppMessageVistoria(PagadorRecebedor pessoa, Date dataVistoria, String nomevistoriador) {
+		JSONObject jsonWhatsApp = new JSONObject();
+		jsonWhatsApp.put("id", generateUUID());
+
+		jsonWhatsApp.put("to", getWhatsAppURLPagadorRecebedor(pessoa));
+		//jsonWhatsApp.put("to", "5519999933015@wa.gw.msging.net");
+				
+		jsonWhatsApp.put("type", "application/json"); 
+		
+		JSONArray jsonWhatsAppComponents = new JSONArray();
+		JSONObject jsonWhatsAppComponent = new JSONObject();
+		jsonWhatsAppComponent.put("type", "body");
+		
+		JSONArray jsonWhatsAppParameters = new JSONArray();
+		JSONObject jsonWhatsAppParameter = new JSONObject();
+		//contrato_pre_aprovado
+		
+		// Nome do notificado
+		jsonWhatsAppParameters = new JSONArray();
+		
+		jsonWhatsAppParameter = new JSONObject();
+		jsonWhatsAppParameter.put("type", "text");
+		jsonWhatsAppParameter.put("text", pessoa.getNome());
+		jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+		
+		// Data Vistoria (dd/MM)
+		jsonWhatsAppParameter = new JSONObject();
+		jsonWhatsAppParameter.put("type", "text");
+		jsonWhatsAppParameter.put("text", CommonsUtil.formataData(dataVistoria, "dd/MM"));
+		jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+		
+		// Data Vistoria (dia da semana)
+		jsonWhatsAppParameter = new JSONObject();
+		jsonWhatsAppParameter.put("type", "text");
+		jsonWhatsAppParameter.put("text", DateUtil.getDiaDaSemana(dataVistoria));
+		jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+		
+		// Data Vistoria (HH:mm)
+		jsonWhatsAppParameter = new JSONObject();
+		jsonWhatsAppParameter.put("type", "text");
+		jsonWhatsAppParameter.put("text", CommonsUtil.formataData(dataVistoria, "HH:mm"));
+		jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+		
+		// Nome Vistoriador
+		jsonWhatsAppParameter = new JSONObject();
+		jsonWhatsAppParameter.put("type", "text");
+		jsonWhatsAppParameter.put("text", nomevistoriador);
+		jsonWhatsAppParameters.put(jsonWhatsAppParameter);				
+	
+										
+		jsonWhatsAppComponent.put("parameters", jsonWhatsAppParameters);
+			
+		jsonWhatsAppComponents.put(jsonWhatsAppComponent);
+		
+		JSONObject jsonWhatsAppLanguage = new JSONObject();
+		jsonWhatsAppLanguage.put("code", "pt_BR");
+		jsonWhatsAppLanguage.put("policy", "deterministic");				
+			
+		JSONObject jsonWhatsAppTemplate = new JSONObject();
+		jsonWhatsAppTemplate.put("namespace", "37de7635_839c_4792_92a6_5d40dc299b2a");
+		jsonWhatsAppTemplate.put("name", "confirmacao_vistoria");		
+		jsonWhatsAppTemplate.put("components", jsonWhatsAppComponents);
+		jsonWhatsAppTemplate.put("language", jsonWhatsAppLanguage);	
+		
+		JSONObject jsonWhatsAppConteudo = new JSONObject();
+		jsonWhatsAppConteudo.put("type", "template");
+		
+		jsonWhatsAppConteudo.put("template", jsonWhatsAppTemplate);	
+		
+		jsonWhatsApp.put("content", jsonWhatsAppConteudo);
+		
+		senderWhatsAppMessage(jsonWhatsApp);
+	}
+	
+	public void sendWhatsAppMessageVistoria(Responsavel responsavel, Date dataVistoria, String nomevistoriador) {
+		JSONObject jsonWhatsApp = new JSONObject();
+		jsonWhatsApp.put("id", generateUUID());
+
+		jsonWhatsApp.put("to", getWhatsAppURL(responsavel));
+		//jsonWhatsApp.put("to", "5519999933015@wa.gw.msging.net");
+				
+		jsonWhatsApp.put("type", "application/json"); 
+		
+		JSONArray jsonWhatsAppComponents = new JSONArray();
+		JSONObject jsonWhatsAppComponent = new JSONObject();
+		jsonWhatsAppComponent.put("type", "body");
+		
+		JSONArray jsonWhatsAppParameters = new JSONArray();
+		JSONObject jsonWhatsAppParameter = new JSONObject();
+		//contrato_pre_aprovado
+		
+		// Nome do notificado
+		jsonWhatsAppParameters = new JSONArray();
+		
+		jsonWhatsAppParameter = new JSONObject();
+		jsonWhatsAppParameter.put("type", "text");
+		jsonWhatsAppParameter.put("text", responsavel.getNome());
+		jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+		
+		// Data Vistoria (dd/MM)
+		jsonWhatsAppParameter = new JSONObject();
+		jsonWhatsAppParameter.put("type", "text");
+		jsonWhatsAppParameter.put("text", CommonsUtil.formataData(dataVistoria, "dd/MM"));
+		jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+		
+		// Data Vistoria (dia da semana)
+		jsonWhatsAppParameter = new JSONObject();
+		jsonWhatsAppParameter.put("type", "text");
+		jsonWhatsAppParameter.put("text", DateUtil.getDiaDaSemana(dataVistoria));
+		jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+		
+		// Data Vistoria (HH:mm)
+		jsonWhatsAppParameter = new JSONObject();
+		jsonWhatsAppParameter.put("type", "text");
+		jsonWhatsAppParameter.put("text", CommonsUtil.formataData(dataVistoria, "HH:mm"));
+		jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+		
+		// Nome Vistoriador
+		jsonWhatsAppParameter = new JSONObject();
+		jsonWhatsAppParameter.put("type", "text");
+		jsonWhatsAppParameter.put("text", nomevistoriador);
+		jsonWhatsAppParameters.put(jsonWhatsAppParameter);				
+	
+										
+		jsonWhatsAppComponent.put("parameters", jsonWhatsAppParameters);
+			
+		jsonWhatsAppComponents.put(jsonWhatsAppComponent);
+		
+		JSONObject jsonWhatsAppLanguage = new JSONObject();
+		jsonWhatsAppLanguage.put("code", "pt_BR");
+		jsonWhatsAppLanguage.put("policy", "deterministic");				
+			
+		JSONObject jsonWhatsAppTemplate = new JSONObject();
+		jsonWhatsAppTemplate.put("namespace", "37de7635_839c_4792_92a6_5d40dc299b2a");
+		jsonWhatsAppTemplate.put("name", "confirmacao_vistoria");		
 		jsonWhatsAppTemplate.put("components", jsonWhatsAppComponents);
 		jsonWhatsAppTemplate.put("language", jsonWhatsAppLanguage);	
 		
@@ -853,6 +1008,87 @@ public class TakeBlipMB {
 		senderWhatsAppMessage(jsonWhatsApp);
 	}
 	
+	public void sendWhatsAppEmitirNota(ContratoCobranca contrato) {
+		String nomeTemplateMensagem = "solicitar_nota";
+		JSONObject jsonWhatsApp = new JSONObject();
+		jsonWhatsApp.put("id", generateUUID());
+
+		jsonWhatsApp.put("to", getWhatsAppURL(contrato.getResponsavel()));
+		//jsonWhatsApp.put("to", "5519999933015@wa.gw.msging.net");
+				
+		jsonWhatsApp.put("type", "application/json"); 
+		
+		JSONArray jsonWhatsAppComponents = new JSONArray();
+		JSONObject jsonWhatsAppComponent = new JSONObject();
+		jsonWhatsAppComponent.put("type", "body");
+		
+		JSONArray jsonWhatsAppParameters = new JSONArray();
+		JSONObject jsonWhatsAppParameter = new JSONObject();
+		
+		// Nome do notificado
+		jsonWhatsAppParameter = new JSONObject();
+		jsonWhatsAppParameter.put("type", "text");
+		jsonWhatsAppParameter.put("text", contrato.getResponsavel().getNome());
+		jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+		
+		// Número do pedido
+		jsonWhatsAppParameter = new JSONObject();
+		jsonWhatsAppParameter.put("type", "text");
+		jsonWhatsAppParameter.put("text", contrato.getNumeroContrato());
+		jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+		
+		// Nome do cliente
+		jsonWhatsAppParameter = new JSONObject();
+		jsonWhatsAppParameter.put("type", "text");
+		jsonWhatsAppParameter.put("text", contrato.getPagador().getNome());
+		jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+		
+		// Valor do pedido
+		jsonWhatsAppParameter = new JSONObject();
+		jsonWhatsAppParameter.put("type", "text");
+		jsonWhatsAppParameter.put("text", CommonsUtil.formataValorMonetario(contrato.getValorCCB(), "R$ "));
+		jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+		
+		// Valor da Nota
+		jsonWhatsAppParameter = new JSONObject();
+		jsonWhatsAppParameter.put("type", "text");
+		jsonWhatsAppParameter.put("text", CommonsUtil.formataValorMonetario(contrato.getValorNotaFiscal(), "R$ "));
+		jsonWhatsAppParameters.put(jsonWhatsAppParameter);
+		
+		// Nome Gerente
+		String nomeDono = "";
+		if(!CommonsUtil.semValor(contrato.getResponsavel().getDonoResponsavel().getNome())) {
+			nomeDono =  contrato.getResponsavel().getDonoResponsavel().getNome();
+		}
+		jsonWhatsAppParameter = new JSONObject();
+		jsonWhatsAppParameter.put("type", "text");
+		jsonWhatsAppParameter.put("text", nomeDono);
+		jsonWhatsAppParameters.put(jsonWhatsAppParameter);				
+	
+									
+		jsonWhatsAppComponent.put("parameters", jsonWhatsAppParameters);
+			
+		jsonWhatsAppComponents.put(jsonWhatsAppComponent);
+		
+		JSONObject jsonWhatsAppLanguage = new JSONObject();
+		jsonWhatsAppLanguage.put("code", "pt_BR");
+		jsonWhatsAppLanguage.put("policy", "deterministic");				
+			
+		JSONObject jsonWhatsAppTemplate = new JSONObject();
+		jsonWhatsAppTemplate.put("namespace", "37de7635_839c_4792_92a6_5d40dc299b2a");
+		jsonWhatsAppTemplate.put("name", nomeTemplateMensagem);		
+		jsonWhatsAppTemplate.put("components", jsonWhatsAppComponents);
+		jsonWhatsAppTemplate.put("language", jsonWhatsAppLanguage);	
+		
+		JSONObject jsonWhatsAppConteudo = new JSONObject();
+		jsonWhatsAppConteudo.put("type", "template");
+		
+		jsonWhatsAppConteudo.put("template", jsonWhatsAppTemplate);	
+		
+		jsonWhatsApp.put("content", jsonWhatsAppConteudo);
+		
+		senderWhatsAppMessage(jsonWhatsApp);
+	}
 	
 	/**
 	 * CRIA ENDEREÇO DA MENSAGEM DO WHATSAPP
@@ -913,9 +1149,10 @@ public class TakeBlipMB {
 	
 					retornoWhatsAPP = getJsonSucesso(myURLConnection.getInputStream());
 					
-					JSONObject resource = retornoWhatsAPP.getJSONObject("resource");
-					
-					whatsAppNumber = resource.getString("alternativeAccount");
+					if (retornoWhatsAPP.has("resource")) {
+						JSONObject resource = retornoWhatsAPP.getJSONObject("resource");
+						whatsAppNumber = resource.getString("alternativeAccount");
+					}
 					
 					responsavel.setWhatsAppNumero(whatsAppNumber);
 					
@@ -996,15 +1233,14 @@ public class TakeBlipMB {
 	
 					retornoWhatsAPP = getJsonSucesso(myURLConnection.getInputStream());
 					
-					JSONObject resource = retornoWhatsAPP.getJSONObject("resource");
+					if(retornoWhatsAPP.has("resource")){
+						JSONObject resource = retornoWhatsAPP.getJSONObject("resource");
+						whatsAppNumber = resource.getString("alternativeAccount");
+						pessoa.setWhatsAppNumero(whatsAppNumber);
+						pDao.merge(pessoa);
 					
-					whatsAppNumber = resource.getString("alternativeAccount");
-					
-					pessoa.setWhatsAppNumero(whatsAppNumber);
-					
-					pDao.merge(pessoa);
-					
-					System.out.println("Take Blip: URL do WhatsApp criada com sucesso para o Responsável " + pessoa.getNome());
+						System.out.println("Take Blip: URL do WhatsApp criada com sucesso para o Responsável " + pessoa.getNome());
+					}
 				}
 	
 				myURLConnection.disconnect();
@@ -1128,10 +1364,10 @@ public class TakeBlipMB {
 				JSONObject retornoWhatsAPP = null;
 
 				retornoWhatsAPP = getJsonSucesso(myURLConnection.getInputStream());
-				
-				JSONObject resource = retornoWhatsAPP.getJSONObject("resource");
-				
-				whatsAppNumber = resource.getString("alternativeAccount");
+				if(retornoWhatsAPP.has("resource")) {
+					JSONObject resource = retornoWhatsAPP.getJSONObject("resource");
+					whatsAppNumber = resource.getString("alternativeAccount");
+				}				
 				
 				System.out.println("Take Blip: URL do WhatsApp criada com sucesso para o Responsável " + pessoa.getNome());
 			}

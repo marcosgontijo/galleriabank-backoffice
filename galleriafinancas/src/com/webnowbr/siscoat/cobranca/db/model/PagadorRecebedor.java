@@ -5,10 +5,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -50,6 +48,7 @@ public class PagadorRecebedor implements Serializable {
 	
 	private String estadocivil;
 	
+	private Date dataCasamento;
 	private String regimeCasamento; 
 	private String registroPactoAntenupcial;
 	private String livroPactoAntenupcial;
@@ -230,6 +229,8 @@ public class PagadorRecebedor implements Serializable {
 	/////////
 	
 	private List<DocumentosPagadorDocket> documentosDocket;
+	private List<CcbProcessosJudiciais> processos;
+	private BigDecimal valorProcessos;
 	
 	private User usuario;
 	
@@ -2073,5 +2074,29 @@ public class PagadorRecebedor implements Serializable {
 
 	public void setDocumentosDocket(List<DocumentosPagadorDocket> documentosDocket) {
 		this.documentosDocket = documentosDocket;
+	}
+
+	public Date getDataCasamento() {
+		return dataCasamento;
+	}
+
+	public void setDataCasamento(Date dataCasamento) {
+		this.dataCasamento = dataCasamento;
+	}
+
+	public List<CcbProcessosJudiciais> getProcessos() {
+		return processos;
+	}
+
+	public void setProcessos(List<CcbProcessosJudiciais> processos) {
+		this.processos = processos;
+	}
+
+	public BigDecimal getValorProcessos() {
+		return valorProcessos;
+	}
+
+	public void setValorProcessos(BigDecimal valorProcessos) {
+		this.valorProcessos = valorProcessos;
 	}
 }

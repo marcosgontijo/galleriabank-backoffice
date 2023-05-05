@@ -575,8 +575,8 @@
 				<h:panelGroup id="ComitePanelNovo" style="margin-bottom:20px;">
 					<p:panel header="Comitê"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.documentosComite}">
-						<h:panelGrid columns="3">
-							<shiro:hasAnyRoles name="ROOT, COMITEEDITAR">
+						<shiro:hasAnyRoles name="ROOT, COMITEEDITAR">
+							<h:panelGrid columns="3">
 								<h:panelGroup id="botaoLinkImovelComite">
 									<a href="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}"
 										class="linkPDF" target="_blank"
@@ -627,6 +627,14 @@
 												<f:selectItem itemValue="liquido" itemLabel="Líquido" />
 											</p:selectOneMenu>
 										</h:panelGroup>
+										
+										<p:outputLabel value="Carência: "
+											styleClass="labelBold" />					
+										<h:panelGroup>
+											<p:inputText value="#{contratoCobrancaMB.objetoAnaliseComite.carenciaComite}" size="100"
+												style="width:60px;" />
+											<p:outputLabel value=" meses" />
+										</h:panelGroup>
 	
 										<p:outputLabel for="comentarioComiteComite"
 											value="Comentários comitê: " styleClass="labelBold" />
@@ -646,85 +654,155 @@
 										</p:selectOneRadio>
 									</h:panelGrid>
 								</h:panelGroup>
-							</shiro:hasAnyRoles>						
 							
-							<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 7}">
-								<shiro:hasAnyRoles name="ROOT, COMITEEDITAR">
-									<p:outputLabel for="processosQuitarComite"
-										value="Processos para Quitar: " styleClass="labelBold" />
-									<p:inputTextarea id="processosQuitarComite" rows="10"
-										cols="48" maxlength="3000" onblur="" style="width: 312px;"
-										counterTemplate="{0} characters remaining." autoResize="false"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.processosQuitarComite}" />
-								</shiro:hasAnyRoles>
+								<h:panelGroup rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 7}">
+									<h:panelGrid columns="2">
+										<p:outputLabel for="processosQuitarComite"
+											value="Processos para Quitar: " styleClass="labelBold" />
+										<p:inputTextarea id="processosQuitarComite" rows="10"
+											cols="48" maxlength="3000" onblur="" style="width: 150px;"
+											counterTemplate="{0} characters remaining."
+											autoResize="false"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.processosQuitarComite}" />
+											
+										<p:outputLabel for="operacaoFundo"
+											value="Operação vai pro Fundo? " styleClass="labelBold" />
+										<p:selectBooleanCheckbox id="operacaoFundo"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.operacaoFundo}" />								
+									</h:panelGrid>
+								</h:panelGroup>
+	
+								<h:panelGrid columns="1">
+									<p:outputLabel value="Quantidade de votos necessarios: #{contratoCobrancaMB.objetoContratoCobranca.qtdeVotosNecessariosComite}" 
+									styleClass="labelBold" />
+									<p:dataView var="comite"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite}"
+										paginator="false" layout="list"
+										paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+										<p:dataViewListItem>
+											<h:panelGrid columns="2">
+		
+												<p:outputLabel value="Usuario comitê: " styleClass="labelBold" />
+												<p:outputLabel value="#{comite.usuarioComite}"
+													styleClass="labelBold" />
+		
+												<p:outputLabel value="Data comitê: " styleClass="labelBold" />
+												<p:outputLabel value="#{comite.dataComite}"
+													styleClass="labelBold" >
+													<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+												</p:outputLabel>
+		
+												<p:outputLabel value="Voto do comitê: " styleClass="labelBold" />
+												<p:outputLabel value="#{comite.votoAnaliseComite}"
+													styleClass="labelBold" />
+		
+												<p:outputLabel value="Taxa Aprovada: " styleClass="labelBold" />
+												<h:panelGroup>
+													<p:outputLabel value="#{comite.taxaComite}"
+														converter="bigDecimalConverter" />
+													<p:outputLabel value="% + IPCA a.m." />
+												</h:panelGroup>
+		
+												<p:outputLabel value="Prazo Maximo Aprovado: "
+													styleClass="labelBold" />
+												<h:panelGroup>
+													<p:outputLabel value="#{comite.prazoMaxComite}" size="100"
+														style="width:60px;" />
+													<p:outputLabel value=" meses" />
+												</h:panelGroup>
+		
+												<p:outputLabel value="Valor Aprovado pelo Comitê: "
+													styleClass="labelBold" />
+		
+												<h:panelGroup>
+													<p:outputLabel value="#{comite.valorComite}"
+														converter="bigDecimalConverter"
+														style="FONT-SIZE: 10pt;width:100px;" />
+													<!-- -->
+													<p:outputLabel value="#{comite.tipoValorComite}"
+														label="Status" style="width:100px;" />
+												</h:panelGroup>
+		
+												<p:outputLabel value="Comentários comitê: "
+													styleClass="labelBold" />
+												<p:outputLabel value="#{comite.comentarioComite}" />
+		
+												<p:outputLabel value="_______________________________"
+													styleClass="labelBold" />
+												<p:outputLabel value="_______________________________"
+													styleClass="labelBold" />
+		
+		
+											</h:panelGrid>
+										</p:dataViewListItem>
+									</p:dataView>
+								</h:panelGrid>
 							</h:panelGrid>
+							<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel == true}">					
+								<p:outputLabel value="Valor Total Processos:" styleClass="labelBold" />
+								<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.valorTotalProcessos}" converter="bigDecimalConverter"  />
+							</h:panelGrid>
+							<p:dataView var="processos" id="ListaProcessos"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.listProcessos}"
+								paginator="false" layout="list"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+								<p:dataViewListItem>
+									<h:panelGroup rendered="#{processos.pagador eq null}">
+										<p:outputLabel value="N°: " styleClass="labelBold" />
+										<p:outputLabel value="#{processos.numero}"
+											styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+										<p:outputLabel value=" Valor: " styleClass="labelBold" />
+										<p:outputLabel value="#{processos.valor}"
+											styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;"
+											converter="bigDecimalConverter" />
+										<p:outputLabel value=" #{processos.quitar}" 
+											styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+										<p:outputLabel value=" quitar" styleClass="labelBold" rendered="#{processos.quitar eq 'Não'}" />
+										<p:spacer width="10px" />
+										<p:outputLabel value=" Selecionar? " styleClass="labelBold" />
+										<p:selectBooleanCheckbox
+											value="#{processos.selecionadoComite}">
+											<p:ajax event="change" update="ListaProcessos" />
+										</p:selectBooleanCheckbox>
+									</h:panelGroup>
+								</p:dataViewListItem>
+							</p:dataView>
 							
-							<h:panelGrid columns="1">
-								<p:outputLabel value="Quantidade de votos necessarios: #{contratoCobrancaMB.objetoContratoCobranca.qtdeVotosNecessariosComite}" 
-								styleClass="labelBold" />
-								<p:dataView var="comite"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite}"
-									paginator="false" layout="list"
-									paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
-									<p:dataViewListItem>
-										<h:panelGrid columns="2">
-	
-											<p:outputLabel value="Usuario comitê: " styleClass="labelBold" />
-											<p:outputLabel value="#{comite.usuarioComite}"
-												styleClass="labelBold" />
-	
-											<p:outputLabel value="Data comitê: " styleClass="labelBold" />
-											<p:outputLabel value="#{comite.dataComite}"
-												styleClass="labelBold" >
-												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
-											</p:outputLabel>
-	
-											<p:outputLabel value="Voto do comitê: " styleClass="labelBold" />
-											<p:outputLabel value="#{comite.votoAnaliseComite}"
-												styleClass="labelBold" />
-	
-											<p:outputLabel value="Taxa Aprovada: " styleClass="labelBold" />
-											<h:panelGroup>
-												<p:outputLabel value="#{comite.taxaComite}"
-													converter="bigDecimalConverter" />
-												<p:outputLabel value="% + IPCA a.m." />
-											</h:panelGroup>
-	
-											<p:outputLabel value="Prazo Maximo Aprovado: "
-												styleClass="labelBold" />
-											<h:panelGroup>
-												<p:outputLabel value="#{comite.prazoMaxComite}" size="100"
-													style="width:60px;" />
-												<p:outputLabel value=" meses" />
-											</h:panelGroup>
-	
-											<p:outputLabel value="Valor Aprovado pelo Comitê: "
-												styleClass="labelBold" />
-	
-											<h:panelGroup>
-												<p:outputLabel value="#{comite.valorComite}"
-													converter="bigDecimalConverter"
-													style="FONT-SIZE: 10pt;width:100px;" />
-												<!-- -->
-												<p:outputLabel value="#{comite.tipoValorComite}"
-													label="Status" style="width:100px;" />
-											</h:panelGroup>
-	
-											<p:outputLabel value="Comentários comitê: "
-												styleClass="labelBold" />
-											<p:outputLabel value="#{comite.comentarioComite}" />
-	
-											<p:outputLabel value="_______________________________"
-												styleClass="labelBold" />
-											<p:outputLabel value="_______________________________"
-												styleClass="labelBold" />
-	
-	
-										</h:panelGrid>
-									</p:dataViewListItem>
-								</p:dataView>
-							</h:panelGrid>
-						</h:panelGrid>
+							<p:dataView var="pessoasProcessos" id="pessoasProcessos"
+								value="#{contratoCobrancaMB.pessoasProcessos}"
+								paginator="false" layout="list" 
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+								<p:dataViewListItem>
+									<p:outputLabel value="#{pessoasProcessos.nome}" style="FONT-SIZE: 15pt;" 
+										styleClass="ui-panel-title labelBold"/>
+									<p:outputLabel value="R$ " style="FONT-SIZE: 15pt;" styleClass="labelBold"/>
+									<p:outputLabel value="#{pessoasProcessos.valorProcessos}" style="FONT-SIZE: 15pt;" 
+										styleClass="labelBold" converter="bigDecimalConverter" />
+									<p:dataView var="processosPessoas" id="processosPessoas"
+										value="#{pessoasProcessos.processos}"
+										paginator="false" layout="list" 
+										paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+										<p:dataViewListItem>
+											<p:outputLabel value="N°: " styleClass="labelBold" />
+											<p:outputLabel value="#{processosPessoas.numero}" styleClass="labelBold"
+												style="FONT-SIZE: 10pt;width:100px;" />
+											<p:outputLabel value=" Valor: " styleClass="labelBold" />
+											<p:outputLabel value="#{processosPessoas.valor}" styleClass="labelBold"
+												style="FONT-SIZE: 10pt;width:100px;"
+												converter="bigDecimalConverter" />
+											<p:outputLabel value=" #{processosPessoas.quitar}" 
+												styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+											<p:outputLabel value=" quitar" styleClass="labelBold" rendered="#{processosPessoas.quitar eq 'Não'}" />
+											<p:spacer width="10px"/>
+											<p:selectBooleanCheckbox
+												value="#{processosPessoas.selecionadoComite}">
+												<p:ajax event="change" update="form:pessoasProcessos" />
+											</p:selectBooleanCheckbox>
+										</p:dataViewListItem>
+									</p:dataView>
+								</p:dataViewListItem>
+							</p:dataView>
+						</shiro:hasAnyRoles>
 					</p:panel>
 				</h:panelGroup>
 
@@ -1422,6 +1500,14 @@
 									converter="bigDecimalConverter"
 									style="FONT-SIZE: 10pt;width:100px;" />
 							</h:panelGroup>
+							
+							<p:outputLabel value="Carência: "
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.carenciaComite}" size="100"
+									style="width:60px;" />
+								<p:outputLabel value=" meses" />
+							</h:panelGroup>
 
 							<p:outputLabel for="tipoValorComiteView" value="Tipo do Valor: "
 								styleClass="labelBold" />
@@ -2110,6 +2196,13 @@
 							<h:panelGroup
 								rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO' or contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'UNIÃO ESTÁVEL'}">
 								<h:panelGrid columns="2">
+								
+									<p:outputLabel for="dataCasamento"
+										value="Data de Casamento: " />
+									<p:inputMask id="dataCasamento" mask="99/99/9999"
+										value="#{contratoCobrancaMB.objetoPagadorRecebedor.dataCasamento}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</p:inputMask>
 								
 									<p:outputLabel for="regimeCasamento"
 										value="Regime do Casamento: " styleClass="labelBold"

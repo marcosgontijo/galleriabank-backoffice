@@ -14,13 +14,35 @@
 			<column name="valor" />
 		</property>
 		
-		<property name="processoInseridoContrato" type="boolean">
-			<column name="processoInseridoContrato" not-null="true" default="false" />
-		</property>	
-		
 		<property name="numero" type="java.lang.String">
 			<column name="numero" />
 		</property>
+		
+		<many-to-one name="contrato"
+			class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca"
+			lazy="false">
+			<column name="contrato" />
+		</many-to-one>
+		
+		<many-to-one name="contaPagar"
+			class="com.webnowbr.siscoat.cobranca.db.model.ContasPagar"
+			lazy="false">
+			<column name="contaPagar" />
+		</many-to-one>
+		
+		<property name="quitar" type="java.lang.String">
+			<column name="quitar" />
+		</property>
         
+        <property name="selecionadoComite" type="boolean">
+			<column name="selecionadoComite" not-null="true" default="false"/>
+		</property>	
+		
+		<many-to-one name="pagador"
+			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
+			lazy="false">
+			<column name="pagador" />
+		</many-to-one>
+		
     </class>
 </hibernate-mapping>

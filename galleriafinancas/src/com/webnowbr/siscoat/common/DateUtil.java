@@ -7,6 +7,8 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -622,6 +624,29 @@ public final class DateUtil {
 	    }
 	}
 	
+	public static Date getWorkingDayBeforeToday(Date startDate) {
+		Calendar dateFinal = Calendar.getInstance();
+		
+		dateFinal.setTime(getYesterday(startDate)); 
+	
+		boolean isWorkingDay = false;
+		
+		List<Calendar> listaferiados = new ArrayList<Calendar>();
+	    listaferiados = getFeriados();
+		
+		while (isWorkingDay) {
+		    if (dateFinal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY 
+	        		|| dateFinal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY
+	        		|| listaferiados.contains(dateFinal)) {
+		    	dateFinal.setTime(getYesterday(dateFinal.getTime()));
+		    } else {
+		    	isWorkingDay = true;
+		    }
+		}
+		
+		return dateFinal.getTime();		
+	}
+	
 	public static int getWorkingDaysBetweenTwoDates(Date startDate, Date endDate) {
 	    Calendar startCal = Calendar.getInstance();
 	    startCal.setTime(startDate);
@@ -793,6 +818,134 @@ public final class DateUtil {
 	    dates.add(natal);
 	    
 	    return dates;
+	}
+	
+	public static String getDiaDaSemana(Date date) {
+		switch (date.getDay()) {
+		case 0:
+			return "domingo";
+		case 1:
+			return "segunda-feira";
+		case 2:
+			return "terça-feira";
+		case 3:
+			return "quarta-feira";
+		case 4:
+			return "quinta-feira";
+		case 5:
+			return "sexta-feira";
+		case 6:
+			return "sábado";
+		}
+		return "";
+	}
+	
+	/**
+	 * Obtém o mes numeral pelo extenso
+	 * 
+	 * @param startDate
+	 * @param endDate
+	 * @return
+	 */
+	public static Date getDecodeDateExtenso(String texto) {
+		// 30 de outubro de 2014
+		// Pattern pattern = Pattern.compile("\\d{[1,2} de [a-z]+ de \\d{4}");
+		String regex = "\\b\\d{2}\\s+de\\s+(janeiro|fevereiro|março|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro)\\s+de\\s+\\d{4}\\b";
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(texto);
+		Date dataVenda = null;
+		Date dataVendaOcorrencia = null;
+		String date = null;
+
+		while (matcher.find()) {
+			date = matcher.group();
+			String[] splitDate = date.split(" de ");
+			String sDate = splitDate[0] + "/" + getDecodeMesExtenso(splitDate[1]) + "/" + splitDate[2];
+
+			dataVenda = CommonsUtil.dateValue(sDate, "dd/MM/yyyy");
+			if (dataVendaOcorrencia == null || DateUtil.isAfterDate( dataVendaOcorrencia, dataVenda)) {
+				dataVendaOcorrencia = dataVenda;
+			}
+		}
+
+		if (date == null) {
+			//
+			// pattern = Pattern.compile("\\d{1,2} de [a-z]+ de [0-9].\\d{3}");
+			String regex2 = "\\b\\d{2}\\s+de\\s+(janeiro|fevereiro|março|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro)\\s+de\\s+[0-9].\\\\d{3}\\b";
+			pattern = Pattern.compile(regex2);
+			matcher = pattern.matcher(texto);
+			while (matcher.find()) {
+				date = matcher.group();
+				String[] splitDate = date.split(" de ");
+				String sDate = splitDate[0] + "/" + getDecodeMesExtenso(splitDate[1]) + "/" + splitDate[2];
+
+				dataVenda = CommonsUtil.dateValue(sDate, "dd/MM/yyyy");
+				if (dataVendaOcorrencia != null && DateUtil.isAfterDate( dataVendaOcorrencia, dataVenda)) {
+					dataVendaOcorrencia = dataVenda;
+				}
+			}
+
+		}
+//		if (date != null) {
+//			String[] splitDate = date.split(" de ");
+//
+//			String sDate = splitDate[0] + "/" + getDecodeMesExtenso(splitDate[1]) + "/" + splitDate[2];
+//			dataVenda = CommonsUtil.dateValue(sDate, "dd/MM/yyyy");
+//		}
+
+		return dataVendaOcorrencia;
+
+	}
+	
+	/**
+	 * Obtém o mes numeral pelo extenso
+	 * 
+	 * @param startDate
+	 * @param endDate
+	 * @return
+	 */
+	public static int getDecodeMesExtenso(String mes) {
+		int result = 0;
+		switch (mes.toLowerCase()) {
+		case "janeiro":
+			result = 1;
+			break;
+		case "fevereiro":
+			result = 2;
+			break;
+		case "março":
+			result = 3;
+			break;
+		case "abril":
+			result = 4;
+			break;
+		case "maio":
+			result = 5;
+			break;
+		case "junho":
+			result = 6;
+			break;
+		case "julho":
+			result = 7;
+			break;
+		case "agosto":
+			result = 8;
+			break;
+		case "setembro":
+			result = 9;
+			break;
+		case "outubro":
+			result = 10;
+			break;
+		case "novembro":
+			result = 11;
+			break;
+		case "dezembro":
+			result = 12;
+			break;
+		}
+
+		return result;
 	}
 	
 	

@@ -30,8 +30,9 @@ public class ContratoCobrancaDetalhes implements Serializable {
 	private BigDecimal vlrSaldoInicial;
 	private BigDecimal vlrSaldoParcela;
 	private BigDecimal vlrParcelaOriginal;
-
 	
+	private String origemBaixa;
+
 	private BigDecimal valorJurosSemIPCA;
 	private BigDecimal valorAmortizacaoSemIPCA;
 	
@@ -610,5 +611,13 @@ public class ContratoCobrancaDetalhes implements Serializable {
 
 	public void setPagoParcial(boolean pagoParcial) {
 		this.pagoParcial = pagoParcial;
+	}
+
+	public String getOrigemBaixa() {
+		return origemBaixa;
+	}
+
+	public void setOrigemBaixa(String origemBaixa) {
+		this.origemBaixa = origemBaixa;
 	}	
 }

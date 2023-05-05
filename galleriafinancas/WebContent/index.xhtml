@@ -139,7 +139,7 @@
 						<shiro:hasAnyRoles name="ROOT, COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_CREDITO,
 						 PROFILE_GERENTE_ANALISE, PROFILE_AVALIADOR_IMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS,
 						 PROFILE_AVALIADOR_IMOVEL_GALACHE, PROFILE_LAUDO, LAUDO, PROFILE_COMENTARIO_JURIDICO, PROFILE_CONTRATO,
-						 COBRANCA_LEAD">
+						 COBRANCA_LEAD, PRECOBRANCA">
 							<p:submenu label="Análise" styleClass="titulosMenu">
 								<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA">
 									<p:menuitem value="Cadastrar Operação"
@@ -201,7 +201,11 @@
 									<p:menuitem value="Consulta SCR"
 										action="#{bmpDigitalMB.clearFields}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu"/>								
+										styleClass="itemMenu"/>				
+									<p:menuitem value="Data Engine"
+										action="#{dataEngineMB.clearFieldsDataEngine}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />				
 									<p:menuitem value="01 - Ag. Análise"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Aguardando Análise')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"

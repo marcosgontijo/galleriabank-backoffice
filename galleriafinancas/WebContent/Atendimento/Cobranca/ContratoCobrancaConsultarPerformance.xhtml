@@ -189,7 +189,7 @@
 						</shiro:hasAnyRoles>    
 					    <p:spacer width="10" height="10"/> 
 		                <shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA, PROFILE_COBRANCA">  
-			                <p:commandButton action="#{ipcaMB.atualizaIPCAPorContrato(contratos.numeroContrato)}" icon="ui-icon-calculator" value="Reprocessar IPCA" title="Reprocessar IPCA" update=":form:mensagens" rendered="#{contratos.corrigidoIPCA and !contratos.corrigidoNovoIPCA}">
+			                <p:commandButton action="#{ipcaMB.atualizaIPCAChamadaTela(contratos.numeroContrato)}" icon="ui-icon-calculator" value="Reprocessar IPCA" title="Reprocessar IPCA" update=":form:mensagens" rendered="#{contratos.corrigidoIPCA and !contratos.corrigidoNovoIPCA}">
 			                    <p:confirm header="Confirmação" message="Deseja realmente reprocessar este contrato pelo IPCA?" icon="ui-icon-alert" />		                	
 			                </p:commandButton> 
 			                <p:commandButton action="#{ipcaMB.atualizaNovoIPCAPorContrato(contratos.numeroContrato)}" icon="ui-icon-calculator" value="Reprocessar Novo IPCA" title="Reprocessar Novo IPCA" update=":form:mensagens" rendered="#{!contratos.corrigidoIPCA and contratos.corrigidoNovoIPCA}">

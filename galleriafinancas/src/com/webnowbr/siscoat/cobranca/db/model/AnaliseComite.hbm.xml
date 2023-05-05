@@ -41,10 +41,15 @@
 			<column name="votoAnaliseComite" />
 		</property>
 		
+		<property name="carenciaComite" type="int">
+			<column name="carenciaComite"  default="1" />
+		</property>
+		
 		<many-to-one name="contratoCobranca"
 			class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca"
 			lazy="false">
 			<column name="contratocobranca" />
 		</many-to-one>       
+		
     </class>
 </hibernate-mapping>

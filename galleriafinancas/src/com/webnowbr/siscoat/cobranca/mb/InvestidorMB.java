@@ -427,13 +427,16 @@ public class InvestidorMB {
 				IrpfContrato irpfContrato = BuscaDadosIRPF(contrato, utltimaParcela);
 
 				boolean parcelaFimContrato = false;
-				if (irpfContrato != null)
+				if (irpfContrato != null && irpfContrato.getQtdeParcelasInvestidor() != null
+						&& irpfContrato.getCarenciaInvestidor() != null)
 					parcelaFimContrato = (irpfContrato.getQtdeParcelasInvestidor()
 							- irpfContrato.getCarenciaInvestidor()) == 1;
 
 				irRetidoTotalContrato = parcelasContrato.stream().map(p -> CommonsUtil.bigDecimalValue(p.getIrRetido()))
 						.reduce(BigDecimal.ZERO, BigDecimal::add);
-				jurosTotalContrato = parcelasContrato.stream().map(p -> CommonsUtil.bigDecimalValue(p.getJuros()))
+				jurosTotalContrato = parcelasContrato.stream().map(p -> (
+						  BigDecimal.ZERO.compareTo(CommonsUtil.bigDecimalValue(p.getJuros()))== 0 &&
+						  BigDecimal.ZERO.compareTo(CommonsUtil.bigDecimalValue(p.getCapitalizacao())) == -1)?p.getCapitalizacao():p.getJuros()   )
 						.reduce(BigDecimal.ZERO, BigDecimal::add);
 
 				// pegar sempre o saldo da última parcela baixada
@@ -3222,6 +3225,7 @@ public class InvestidorMB {
 
 			// Finalize task.
 			output.flush();
+			output.close();
 			facesContext.responseComplete();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -5071,13 +5075,13 @@ public class InvestidorMB {
 				PDFCabecalhoRodapeInformeRendimentos event = new PDFCabecalhoRodapeInformeRendimentos();
 				writer.setPageEvent(event);
 
-				BufferedImage buff = ImageIO.read(getClass().getResourceAsStream("/resource/LogoFinancas.png"));
+				BufferedImage buff = ImageIO.read(getClass().getResourceAsStream("/resource/logo-galleria-ok.png"));
 				ByteArrayOutputStream bos = new ByteArrayOutputStream();
 				ImageIO.write(buff, "png", bos);
 				Image img = Image.getInstance(bos.toByteArray());
 
 				img.setAlignment(Element.ALIGN_CENTER);
-				img.scaleAbsolute(90, 65);
+				img.scaleAbsolute(190, 45);
 				cell1 = new PdfPCell(img);
 				cell1.setBorder(0);
 				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);

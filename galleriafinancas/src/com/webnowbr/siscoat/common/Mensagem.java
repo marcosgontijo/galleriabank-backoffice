@@ -3,7 +3,7 @@ package com.webnowbr.siscoat.common;
 public class Mensagem {
 
 	public static String MENSAGEM_FALE_CONOSCO = "Fale Conosco";
-	public static String MENSAGEM_DETALHES_IMOVEL = "E-mail com os detalhes do imóvel";
+	public static String MENSAGEM_DETALHES_IMOVEL = "E-mail com os detalhes do imï¿½vel";
 	public static String MENSAGEM_FALE_CONOSCO_I2_BRASIL = "Fale Conosco I2 Brasil";
 	public static String MENSAGEM_CADASTRE_SEU_IMOVEL = "Cadastre seu Imovel";
 	public static String MENSAGEM_REENVIO_SENHA = "Senha Site";
@@ -14,7 +14,7 @@ public class Mensagem {
 	private String email = "";
 	private String assunto = "";
 	private String conteudo = "";
-	private String tipoEmail = ""; // Indica se é "Fale Conosco" ou "Cadastre seu imovel" ou "Fale Conosco I2 Brasil"
+	private String tipoEmail = ""; // Indica se Ã©  "Fale Conosco" ou "Cadastre seu imovel" ou "Fale Conosco I2 Brasil"
 	
 	
 	public String getNome() {

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="./MenuManutencao.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="#{request.contextPath}/resources/js/functions.js"></script>
+			<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>
+			<p:messages id="mensagens" showDetail="true" />
+			<p:panel id="PanelJSON" header="Geração do JSON BRL"
+				style="margin-bottom:10px;" rendered="#{brlTrustMB.jsonGerado}">
+				<p:focus />
+				<p:messages />
+				<h:panelGrid columns="2">
+					<p:outputLabel value="Total Face: "
+						styleClass="labelBold" />
+					<h:outputText
+						value="#{brlTrustMB.valorTotalFaceCessao}"
+						styleClass="labelBold" converter="bigDecimalConverter" />
+					<p:outputLabel value="Total Aquisição:  "
+						styleClass="labelBold" />
+					<h:outputText
+						value="#{brlTrustMB.valorTotalAquisicaoCessao}"
+						styleClass="labelBold" converter="bigDecimalConverter" />
+				</h:panelGrid>
+				
+				<h:panelGrid columns="2">
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+						draggable="false" closable="false" resizable="false">
+						<p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+
+					<h:form>
+						<p:commandButton value="JSON BRL" ajax="false"
+							
+							icon="ui-icon-arrowthick-1-s">
+							<p:fileDownload value="#{brlTrustMB.file}" />
+						</p:commandButton>
+					</h:form>
+
+					<script type="text/javascript">
+						function start() {
+							PF('statusDialog').show();
+						}
+
+						function stop() {
+							PF('statusDialog').hide();
+						}
+					</script>
+
+				</h:panelGrid>
+			</p:panel>
+			<p:panel id="ConsultaContratos" header="Contratos - Consultar | Gerar JSON Cessão"
+				style="margin-bottom:10px;">		
+				<h:panelGrid columns="2">					
+					<p:outputLabel for="contrato" value="Contrato: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:inputText id="contrato"
+						value="#{brlTrustMB.numContrato}" label="Contrato"
+						style="width:150px;" />
+					<p:outputLabel for="cedente" value="Cedente: "
+						styleClass="labelBold" />
+					<p:selectOneMenu id="cedente"
+						value="#{brlTrustMB.cedenteCessao}"
+						label="Cedente" style="width:345px;">
+						<f:selectItem itemValue="" itemLabel="SELECIONE" />
+						<f:selectItem itemValue="BMP Money Plus SCD S.A." itemLabel="BMP Money Plus SCD S.A." />
+						<f:selectItem itemValue="Galleria Finanças Securitizadora S.A " itemLabel="Galleria Finanças Securitizadora S.A " />
+					</p:selectOneMenu>	
+					<p:outputLabel for="DataAquisicao" value="Data Aquisição: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="DataAquisicao"
+						value="#{brlTrustMB.dataAquisicao}"
+						required="true" label="Data Aquisição" size="100"
+						pattern="dd/MM/yyyy" styleClass="dateTimeField">
+					</p:calendar>						
+				</h:panelGrid>
+				<h:panelGrid columns="2" id="teste">
+					<p:outputLabel for="txJurosDiferenciada" value="Taxa de Juros Diferenciada? "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:selectOneRadio id="txJurosDiferenciada"
+						value="#{brlTrustMB.usaTaxaJurosDiferenciada}" required="true">
+						<f:selectItem itemLabel="Sim" itemValue="true" />
+						<f:selectItem itemLabel="Não" itemValue="false" />
+						<p:ajax update="teste" event="valueChange"/>
+					</p:selectOneRadio>
+					
+					<p:outputLabel for="txJuros" id="txJurosLabel" value="Taxa de Juros Cessão(%): "
+							styleClass="labelBold" rendered="#{brlTrustMB.usaTaxaJurosDiferenciada}"/>
+					<p:inputText id="txJuros"
+							value="#{brlTrustMB.txJurosCessao}" 
+							converter="bigDecimalConverter" rendered="#{brlTrustMB.usaTaxaJurosDiferenciada}"/>				
+				</h:panelGrid>
+				<h:panelGrid columns="3">
+				<p:commandButton value="Pesquisar Contrato"
+						ajax="false"
+						action="#{brlTrustMB.pesquisaContratosCessao()}"
+						update=":form:PanelJSON :form:ConsultaContratosResultados"
+						icon="ui-icon ui-icon-check"
+						style="TEXT-DECORATION: bold;" />
+						
+				<p:commandButton value="Pesquisar JSON Gerados"
+						ajax="false"
+						action="#{brlTrustMB.pesquisaContratosJSONCessao()}"
+						update=":form:PanelJSON :form:ConsultaContratosResultados"
+						icon="ui-icon ui-icon-check"
+						style="TEXT-DECORATION: bold;" />
+				</h:panelGrid>
+			</p:panel>
+			<p:panel id="ConsultaContratosResultados" header="Contratos - Consultar" style="margin-bottom:10px;">		    		    
+                 <p:dataTable id="dtContratos" var="contratos" value="#{brlTrustMB.contratos}" selection="" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending"
+   		         reflow="true"
+   		         rows="10"
+                 paginator="true"
+                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                 currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                 rowsPerPageTemplate="10,50,100">                
+                	<p:column style="text-align: center;width:105px;" headerText="Contrato" filterBy="#{contratos.numeroContrato}" filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
+			            <h:outputText value="#{contratos.numeroContrato}" />
+			        </p:column>
+			        <p:column style="text-align: center;" headerText="Data Contrato" sortBy="#{contratos.dataContrato}">
+			            <h:outputText value="#{contratos.dataContrato}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+			            </h:outputText>
+			        </p:column>		
+			        <p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.pagador.nome}" filterMatchMode="contains" >
+			            <h:outputText value="#{contratos.pagador.nome}" />
+			        </p:column>	        
+			         <p:column style="text-align: center;" headerText="Cedente Cessão" filterBy="#{contratos.cedenteBRLCessao}" filterMatchMode="contains" >
+			            <h:outputText value="#{contratos.cedenteBRLCessao}" />
+			        </p:column>	
+			        <p:column style="text-align: center;" headerText="Data Aquisição" sortBy="#{contratos.dataAquisicaoCessao}">
+			            <h:outputText value="#{contratos.dataAquisicaoCessao}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+			            </h:outputText>
+			        </p:column>		
+			        <p:column styleClass="colunaResponsiva">	 
+			            <p:commandButton action="#{brlTrustMB.geraJSONCessaoSemIPCA()}" ajax="false" icon="ui-icon-print" value="Gerar JSON Cessão Sem IPCA" title="Gerar JSON Cessão Sem IPCA">
+				        		<f:setPropertyActionListener target="#{brlTrustMB.objetoContratoCobranca}" value="#{contratos}" />  			        		
+			            </p:commandButton>
+			            <p:spacer width="10" height="10"/>		 
+		            </p:column>			        		               		        			        			           			 		
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

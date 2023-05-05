@@ -39,6 +39,7 @@ import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
+import com.webnowbr.siscoat.common.DateUtil;
 
 @ManagedBean(name = "kobanaMB")
 @SessionScoped
@@ -122,6 +123,7 @@ public class KobanaMB {
 	
 	private String filtroStatus;
 	private String filtroData;
+	private String filtroEmpresa;
 	
 	private ContratoCobranca contrato;
 	private ContratoCobrancaDetalhes parcela;
@@ -135,11 +137,17 @@ public class KobanaMB {
 		
 		this.listBoletosKobana = new ArrayList<BoletoKobana>();
 		this.selectedParcelas = new ArrayList<ContratoCobrancaDetalhes>();
-		this.dtInicioConsulta = gerarDataHoje();
-		this.dtFimConsulta = gerarDataHoje();
+		//this.dtInicioConsulta = gerarDataHoje();
+		//this.dtFimConsulta = gerarDataHoje();
 		
-		this.filtroStatus = "Todos";
-		this.filtroData = "Todos";
+		this.filtroStatus = "paid";
+		this.filtroData = "Pagamento";
+		this.filtroEmpresa = "";
+		
+		Date dataWorokingDayBeforeToday = DateUtil.getWorkingDayBeforeToday(gerarDataHoje());
+		
+		this.dtInicioConsulta = dataWorokingDayBeforeToday;
+		this.dtFimConsulta = dataWorokingDayBeforeToday;
 		
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultaBoletosKobana.xhtml";
 	}
@@ -200,196 +208,245 @@ public class KobanaMB {
 		}
 	}
 	
-	public void consultarBoletosKobana() {
-		try {		
-			FacesContext context = FacesContext.getCurrentInstance();
-			int HTTP_COD_SUCESSO = 200;
-			
-			String urlKobana = "https://api.kobana.com.br/v1/bank_billets";
-			boolean temFiltro = false;
-			
-			// filtro Status
-			if (!this.filtroStatus.equals("Todos")) {
-				urlKobana = urlKobana + "?status=" + this.filtroStatus;
+	public JSONArray processaAPIKobana(String page) {
+		JSONArray myResponse = new JSONArray();
+		FacesContext context = FacesContext.getCurrentInstance();
+		
+		try {
+				int HTTP_COD_SUCESSO = 200;
 				
-				temFiltro = true;
-			} 
-			
-			// filtro Data
-			if (temFiltro) {
-				urlKobana = urlKobana + "&";
-			} else {
-				urlKobana = urlKobana + "?";
-			}
-			
-			if (!this.filtroData.equals("Todos")) {
+				String urlKobana = "https://api.kobana.com.br/v1/bank_billets";
+				boolean temFiltro = false;
 				
-				Locale locale = new Locale("pt", "BR");
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", locale);
-				
-				String dataInicio = sdf.format(this.dtInicioConsulta.getTime());;
-				String dataFim = sdf.format(this.dtFimConsulta.getTime());;
-				
-				if (this.filtroData.equals("Vencimento")) {
-					urlKobana = urlKobana + "expire_from=" + dataInicio + "&expire_to=" + dataFim;
+				// filtro Status
+				if (!this.filtroStatus.equals("Todos")) {
+					urlKobana = urlKobana + "?status=" + this.filtroStatus;
+					
+					temFiltro = true;
 				} 
 				
-				if (this.filtroData.equals("Pagamento")) {
-					urlKobana = urlKobana + "paid_from=" + dataInicio + "&paid_to=" + dataFim;
+				// filtro Data
+				if (temFiltro) {
+					urlKobana = urlKobana + "&";
+				} else {
+					urlKobana = urlKobana + "?";
 				}
 				
-				if (this.filtroData.equals("Registro")) {
-					urlKobana = urlKobana + "created_from=" + dataInicio + "&created_to=" + dataFim;
+				if (!this.filtroData.equals("Todos")) {
+					
+					Locale locale = new Locale("pt", "BR");
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", locale);
+					
+					String dataInicio = sdf.format(this.dtInicioConsulta.getTime());;
+					String dataFim = sdf.format(this.dtFimConsulta.getTime());;
+					
+					if (this.filtroData.equals("Vencimento")) {
+						urlKobana = urlKobana + "expire_from=" + dataInicio + "&expire_to=" + dataFim;
+					} 
+					
+					if (this.filtroData.equals("Pagamento")) {
+						urlKobana = urlKobana + "paid_from=" + dataInicio + "&paid_to=" + dataFim;
+					}
+					
+					if (this.filtroData.equals("Registro")) {
+						urlKobana = urlKobana + "created_from=" + dataInicio + "&created_to=" + dataFim;
+					}
+				} 
+				
+				urlKobana = urlKobana + "&page=" + page + "&per_page=50";
+		
+				URL myURL = new URL(urlKobana);	
+		
+				HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+				myURLConnection.setUseCaches(false);
+				myURLConnection.setRequestMethod("GET");
+				myURLConnection.setRequestProperty("Accept", "application/json");
+				myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+				myURLConnection.setRequestProperty("Content-type", "Application/JSON");
+				myURLConnection.setRequestProperty("Authorization", "Bearer YFfBaw13zZ5CxOOwZIlmDevC2_O-MoVPQwzpz4ejrL8");
+		
+				int status = myURLConnection.getResponseCode();
+				
+				String result = IOUtils.toString(myURLConnection.getInputStream(), StandardCharsets.UTF_8.name());
+				
+				myResponse = new JSONArray(result);	
+				
+				if (status == 200) {
+					return myResponse;
+				} else {
+					if (status == 401) {
+						context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+								"[Kobana - Geração Boleto] Falha de autenticação. Token inválido!", ""));
+					}
+					if (status == 403) {
+						context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+								"[Kobana - Geração Boleto] Falha de permissão. Você não tem o Scope obrigatório para essa chamada.", ""));
+					}	
+					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"[Kobana - Consulta Boletos] Erro não conhecido!", ""));
 				}
-			} 
-
-			URL myURL = new URL(urlKobana);			
-
-			HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
-			myURLConnection.setUseCaches(false);
-			myURLConnection.setRequestMethod("GET");
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-type", "Application/JSON");
-			myURLConnection.setRequestProperty("Authorization", "Bearer YFfBaw13zZ5CxOOwZIlmDevC2_O-MoVPQwzpz4ejrL8");
+							
+				myURLConnection.disconnect();
+		
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		
+		return null;
+	}
 	
-			int status = myURLConnection.getResponseCode();
+	public void consultarBoletosKobana() {			
+		ContratoCobrancaDao contratoDao = new ContratoCobrancaDao();
+		ContratoCobrancaDetalhesDao parcelaDao = new ContratoCobrancaDetalhesDao();
+		
+		int countPagesKobana = 1;
+		boolean processaAPIKobana = true;
+		
+		this.listBoletosKobana = new ArrayList<BoletoKobana>();
+		
+		while (processaAPIKobana) {
+			JSONArray myResponse = processaAPIKobana(String.valueOf(countPagesKobana));		
 			
-			String result = IOUtils.toString(myURLConnection.getInputStream(), StandardCharsets.UTF_8.name());
+			if (myResponse.length() == 50) {
+				countPagesKobana = countPagesKobana + 1;
+			} else {
+				processaAPIKobana = false;
+			}
 			
-			JSONArray myResponse = new JSONArray(result);		
-			
-			ContratoCobrancaDao contratoDao = new ContratoCobrancaDao();
-			ContratoCobrancaDetalhesDao parcelaDao = new ContratoCobrancaDetalhesDao();
-			
-			if (status == 200) {
-				this.listBoletosKobana = new ArrayList<BoletoKobana>();
+			for (int i = 0; i < myResponse.length(); i++) {
+				BoletoKobana boleto = new BoletoKobana();
 				
-				for (int i = 0; i < myResponse.length(); i++) {
-					BoletoKobana boleto = new BoletoKobana();
-					JSONObject objetoBoleto = myResponse.getJSONObject(i);
+				// atributo usado apenas para agrupamento de somatória na tela
+				boleto.setIdFakeAgrupamentoSomatoria(777);
 				
-					boleto.setId(objetoBoleto.getLong("id"));
-					boleto.setExpireAt(processStringToDate(objetoBoleto.getString("expire_at")));
-										
-					if (!objetoBoleto.isNull("paid_at")) {
-						boleto.setPaidAt(processStringToDate(objetoBoleto.getString("paid_at")));
-					}
-					
-					boleto.setCreatedAt(processStringToDate(objetoBoleto.getString("created_at")));
-					
-					if (!objetoBoleto.isNull("document_number")) {
-						boleto.setDocumentNumber(objetoBoleto.getString("document_number"));
-					}
-					
-					if (objetoBoleto.getString("status").equals("paid")) {
-						boleto.setStatus("Pago");
-					} else if (objetoBoleto.getString("status").equals("opened")) {
-						boleto.setStatus("Registrado");
-					} else if (objetoBoleto.getString("status").equals("canceled")) {
-						boleto.setStatus("Cancelado");
-					} else if (objetoBoleto.getString("status").equals("overdue")) {
-						boleto.setStatus("Vencido");
-					} else {
-						boleto.setStatus(objetoBoleto.getString("status"));
-					}		
-					
-					//if (boleto.getStatus().equals("Pago")) {						
-						if (objetoBoleto.has("custom_data")) {
-							if (!objetoBoleto.isNull("custom_data")) {
-								JSONObject objetoDataBoleto = objetoBoleto.getJSONObject("custom_data");
-								ContratoCobranca contrato = new ContratoCobranca();
-								contrato = contratoDao.findById(Long.valueOf(objetoDataBoleto.getString("idContrato")));
-								boleto.setContrato(contrato);
-								
-								boleto.setVlrParcela(BigDecimal.ZERO);
-								
-								if (objetoDataBoleto.has("qtdeParcelas")) { 
-									if (objetoDataBoleto.getString("qtdeParcelas").equals("unica")) {
-										if (objetoDataBoleto.has("idParcela")) {
-											ContratoCobrancaDetalhes parcela = new ContratoCobrancaDetalhes();
-											parcela = parcelaDao.findById(Long.valueOf(objetoDataBoleto.getString("idParcela")));
-											boleto.setParcela(parcela);
-											boleto.setVlrParcela(parcela.getVlrParcela());
-										}
-									} else {
-										// se gerou para mais de parcela
-										// aqui esta como baixar as parcelas
-										if (objetoDataBoleto.getString("qtdeParcelas").equals("multiparcelas")
-												|| objetoDataBoleto.getString("qtdeParcelas").equals("varias")) {
-											List<ContratoCobrancaDetalhes> parcelasBoleto = new ArrayList<ContratoCobrancaDetalhes>();
-											ContratoCobrancaDetalhesDao cDao = new ContratoCobrancaDetalhesDao();
-											
-											Iterator<String> contratoParcelas = objetoDataBoleto.keys();
-
-											// Verifica se há mais alguma key
-											while (contratoParcelas.hasNext()) {
-												String nomeObjeto = contratoParcelas.next();
-												
-											    if (nomeObjeto.contains("idParcela")) {
-											    	String valorObjeto = objetoDataBoleto.get(nomeObjeto).toString();
-											    	parcelasBoleto.add(cDao.findById(Long.valueOf(valorObjeto)));
-											    }
-											}
-					
-											boleto.setMultiParcelas(parcelasBoleto);
-											
-											for (ContratoCobrancaDetalhes parcelas : boleto.getMultiParcelas()) {
-												if (parcelas.getVlrParcela() != null) {
-													// TODO VER COMO CAPTURAR O VALOR DAS PARCELAS DOS BOLETOS
-													//boleto.setVlrParcela(boleto.getVlrParcela().add(parcelas.getVlrParcela()));
-												}
-											}
-										}
-									}
-								} else {
+				JSONObject objetoBoleto = myResponse.getJSONObject(i);
+			
+				boleto.setId(objetoBoleto.getLong("id"));
+				boleto.setExpireAt(processStringToDate(objetoBoleto.getString("expire_at")));
+									
+				if (!objetoBoleto.isNull("paid_at")) {
+					boleto.setPaidAt(processStringToDate(objetoBoleto.getString("paid_at")));
+				}
+				
+				boleto.setCreatedAt(processStringToDate(objetoBoleto.getString("created_at")));
+				
+				if (!objetoBoleto.isNull("document_number")) {
+					boleto.setDocumentNumber(objetoBoleto.getString("document_number"));
+				}
+				
+				if (objetoBoleto.getString("status").equals("paid")) {
+					boleto.setStatus("Pago");
+				} else if (objetoBoleto.getString("status").equals("opened")) {
+					boleto.setStatus("Registrado");
+				} else if (objetoBoleto.getString("status").equals("canceled")) {
+					boleto.setStatus("Cancelado");
+				} else if (objetoBoleto.getString("status").equals("overdue")) {
+					boleto.setStatus("Vencido");
+				} else {
+					boleto.setStatus(objetoBoleto.getString("status"));
+				}		
+				
+				//if (boleto.getStatus().equals("Pago")) {						
+					if (objetoBoleto.has("custom_data")) {
+						if (!objetoBoleto.isNull("custom_data")) {
+							JSONObject objetoDataBoleto = objetoBoleto.getJSONObject("custom_data");
+							ContratoCobranca contrato = new ContratoCobranca();
+							contrato = contratoDao.findById(Long.valueOf(objetoDataBoleto.getString("idContrato")));
+							boleto.setContrato(contrato); 
+							
+							boleto.setVlrParcela(BigDecimal.ZERO);
+							
+							if (objetoDataBoleto.has("qtdeParcelas")) { 
+								if (objetoDataBoleto.getString("qtdeParcelas").equals("unica")) {
 									if (objetoDataBoleto.has("idParcela")) {
 										ContratoCobrancaDetalhes parcela = new ContratoCobrancaDetalhes();
 										parcela = parcelaDao.findById(Long.valueOf(objetoDataBoleto.getString("idParcela")));
 										boleto.setParcela(parcela);
 										boleto.setVlrParcela(parcela.getVlrParcela());
 									}
+								} else {
+									// se gerou para mais de parcela
+									// aqui esta como baixar as parcelas
+									if (objetoDataBoleto.getString("qtdeParcelas").equals("multiparcelas")
+											|| objetoDataBoleto.getString("qtdeParcelas").equals("varias")) {
+										List<ContratoCobrancaDetalhes> parcelasBoleto = new ArrayList<ContratoCobrancaDetalhes>();
+										ContratoCobrancaDetalhesDao cDao = new ContratoCobrancaDetalhesDao();
+										
+										Iterator<String> contratoParcelas = objetoDataBoleto.keys();
+
+										// Verifica se há mais alguma key
+										while (contratoParcelas.hasNext()) {
+											String nomeObjeto = contratoParcelas.next();
+											
+										    if (nomeObjeto.contains("idParcela")) {
+										    	String valorObjeto = objetoDataBoleto.get(nomeObjeto).toString();
+										    	parcelasBoleto.add(cDao.findById(Long.valueOf(valorObjeto)));
+										    }
+										}
+				
+										boleto.setMultiParcelas(parcelasBoleto);
+										
+										for (ContratoCobrancaDetalhes parcelas : boleto.getMultiParcelas()) {
+											if (parcelas.getVlrParcela() != null) {
+												// TODO VER COMO CAPTURAR O VALOR DAS PARCELAS DOS BOLETOS
+												//boleto.setVlrParcela(boleto.getVlrParcela().add(parcelas.getVlrParcela()));
+											}
+										}
+									}
+								}
+							} else {
+								if (objetoDataBoleto.has("idParcela")) {
+									ContratoCobrancaDetalhes parcela = new ContratoCobrancaDetalhes();
+									parcela = parcelaDao.findById(Long.valueOf(objetoDataBoleto.getString("idParcela")));
+									boleto.setParcela(parcela);
+									boleto.setVlrParcela(parcela.getVlrParcela());
 								}
 							}
 						}
-					//}
-					
-					boleto.setCustomerPersonName(objetoBoleto.getString("customer_person_name"));
-					boleto.setCustomerPersonCNPJCPF(objetoBoleto.getString("customer_cnpj_cpf"));
-					boleto.setCustomerEmail(objetoBoleto.getString("customer_email"));
-					boleto.setPaidAmount(BigDecimal.valueOf(objetoBoleto.getDouble("paid_amount")));
-					boleto.setUrlBoleto(objetoBoleto.getString("url"));
-					boleto.setBeneficiaryName(objetoBoleto.getString("beneficiary_name"));
-					
-					
-					
-					if (!objetoBoleto.isNull("description")) {
-						boleto.setDescription(objetoBoleto.getString("description"));
 					}
-					
-					this.listBoletosKobana.add(boleto);
-				}				
-			} else {
-				if (status == 401) {
-					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-							"[Kobana - Geração Boleto] Falha de autenticação. Token inválido!", ""));
+				//}
+				
+				boleto.setCustomerPersonName(objetoBoleto.getString("customer_person_name"));
+				boleto.setCustomerPersonCNPJCPF(objetoBoleto.getString("customer_cnpj_cpf"));
+				boleto.setCustomerEmail(objetoBoleto.getString("customer_email"));
+				boleto.setPaidAmount(BigDecimal.valueOf(objetoBoleto.getDouble("paid_amount")));
+				boleto.setUrlBoleto(objetoBoleto.getString("url"));
+				boleto.setBeneficiaryName(objetoBoleto.getString("beneficiary_name"));
+								
+				if (!objetoBoleto.isNull("description")) {
+					boleto.setDescription(objetoBoleto.getString("description"));
 				}
-				if (status == 403) {
-					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-							"[Kobana - Geração Boleto] Falha de permissão. Você não tem o Scope obrigatório para essa chamada.", ""));
-				}	
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-						"[Kobana - Consulta Boletos] Erro não conhecido!", ""));
+				
+				// soma valor das parcelas quando multiparcelas
+				/*
+				if (boleto.getMultiParcelas() != null) {
+					BigDecimal valorTotalParcelas = BigDecimal.ZERO;
+					
+					for (ContratoCobrancaDetalhes parcelas : boleto.getMultiParcelas()) {
+						valorTotalParcelas = valorTotalParcelas.add(parcelas.getVlrParcela());
+					}	
+					
+					boleto.setVlrParcela(valorTotalParcelas);
+				}
+				*/
+				
+				// Filtra Empresa
+				if (this.filtroEmpresa.equals("")) {
+					this.listBoletosKobana.add(boleto);	
+				} else {
+					if (boleto.getContrato() != null) {
+						if (boleto.getContrato().getEmpresa().equals(this.filtroEmpresa)) {
+							this.listBoletosKobana.add(boleto);		
+						}
+					} else {
+						this.listBoletosKobana.add(boleto);		
+					}
+				}				
 			}
-						
-			myURLConnection.disconnect();
-			
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 	
@@ -1430,5 +1487,13 @@ public class KobanaMB {
 
 	public void setCedente(PagadorRecebedor cedente) {
 		this.cedente = cedente;
+	}
+
+	public String getFiltroEmpresa() {
+		return filtroEmpresa;
+	}
+
+	public void setFiltroEmpresa(String filtroEmpresa) {
+		this.filtroEmpresa = filtroEmpresa;
 	}
 }

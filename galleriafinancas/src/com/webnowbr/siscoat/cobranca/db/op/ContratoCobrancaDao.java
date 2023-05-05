@@ -5872,12 +5872,12 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					}
 					
 					query = query + where;					
-					query = query + "  group by coco.id, numeroContrato, datacontrato, quantoPrecisa, res.nome, pare.nome, gerente.nome, res.superlogica,"
+					/*query = query + "  group by coco.id, numeroContrato, datacontrato, quantoPrecisa, res.nome, pare.nome, gerente.nome, res.superlogica,"
 							+ "	statuslead, inicioAnalise, cadastroAprovadoValor, matriculaAprovadaValor, pagtoLaudoConfirmada, "
 							+ "	laudoRecebido, pajurFavoravel,  documentosCompletos, ccbPronta, agAssinatura, "
 							+ "	agRegistro, preAprovadoComite, documentosComite, aprovadoComite, analiseReprovada, analiseComercial, comentarioJuridicoEsteira,"
 							+ " status, pedidoLaudo, pedidoLaudoPajuComercial, pedidoPreLaudo, pedidoPreLaudoComercial, pedidoPajuComercial, pendenciaLaudoPaju,"
-							+ " avaliacaoLaudo, contratoConferido, agEnvioCartorio, reanalise, reanalisePronta, reanaliseJuridico, certificadoEmitido ";
+							+ " avaliacaoLaudo, contratoConferido, agEnvioCartorio, reanalise, reanalisePronta, reanaliseJuridico, certificadoEmitido ";*/
 						
 					query = query + " order by id desc";
 					
@@ -5900,6 +5900,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setQuantoPrecisa(rs.getBigDecimal("quantoPrecisa"));
 						contratoCobranca.setStatusLead(rs.getString("statuslead"));
 						contratoCobranca.getPagador().setNome(rs.getString(6));
+						contratoCobranca.getPagador().setId(rs.getLong("idPagador")); 
 						contratoCobranca.setInicioAnalise(rs.getBoolean("inicioAnalise"));
 						contratoCobranca.setCadastroAprovadoValor(rs.getString("cadastroAprovadoValor"));
 						contratoCobranca.setMatriculaAprovadaValor(rs.getString("matriculaAprovadaValor"));
@@ -5951,7 +5952,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "	coco.laudoRecebido, coco.pajurFavoravel,  coco.documentosCompletos, coco.ccbPronta, coco.agAssinatura, "
 			+ "	coco.agRegistro, coco.preAprovadoComite, coco.documentosComite, coco.aprovadoComite, coco.analiseReprovada, coco.analiseComercial, coco.comentarioJuridicoEsteira, coco.status,"
 			+ " pedidoLaudo, pedidoLaudoPajuComercial, pedidoPreLaudo, pedidoPreLaudoComercial, pedidoPajuComercial, pendenciaLaudoPaju, avaliacaoLaudo , contratoConferido, agEnvioCartorio, "
-			+ " reanalise, reanalisePronta, reanaliseJuridico, certificadoEmitido "
+			+ " reanalise, reanalisePronta, reanaliseJuridico, certificadoEmitido, pare.id idPagador "
 			+ "	from cobranca.contratocobranca coco "
 			+ "	inner join cobranca.responsavel res on coco.responsavel = res.id "
 			+ "	inner join cobranca.pagadorrecebedor pare on pare.id = coco.pagador "
@@ -5986,12 +5987,12 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				
 					query = query + " where  " + queryResponsavel + " ";
 					
-					query = query + "  group by coco.id, numeroContrato, datacontrato, quantoPrecisa, res.nome, pare.nome, gerente.nome, res.superlogica,"
+					/*query = query + "  group by coco.id, numeroContrato, datacontrato, quantoPrecisa, res.nome, pare.nome, gerente.nome, res.superlogica,"
 							+ "	statuslead, inicioAnalise, cadastroAprovadoValor, matriculaAprovadaValor, pagtoLaudoConfirmada, "
 							+ "	laudoRecebido, pajurFavoravel,  documentosCompletos, ccbPronta, agAssinatura, "
 							+ "	agRegistro, preAprovadoComite, documentosComite, aprovadoComite, analiseReprovada, analiseComercial, comentarioJuridicoEsteira, status,"
 							+ " pedidoLaudo, pedidoLaudoPajuComercial, pedidoPreLaudo, pedidoPreLaudoComercial , pedidoPajuComercial, pendenciaLaudoPaju, avaliacaoLaudo, "
-							+ " contratoConferido, agEnvioCartorio, reanalise, reanalisePronta, reanaliseJuridico, certificadoEmitido ";
+							+ " contratoConferido, agEnvioCartorio, reanalise, reanalisePronta, reanaliseJuridico, certificadoEmitido ";*/
 						
 					query = query + " order by id desc";
 					
@@ -6014,6 +6015,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setQuantoPrecisa(rs.getBigDecimal("quantoPrecisa"));
 						contratoCobranca.setStatusLead(rs.getString("statuslead"));
 						contratoCobranca.getPagador().setNome(rs.getString(6));
+						contratoCobranca.getPagador().setId(rs.getLong("idPagador")); 
 						contratoCobranca.setInicioAnalise(rs.getBoolean("inicioAnalise"));
 						contratoCobranca.setCadastroAprovadoValor(rs.getString("cadastroAprovadoValor"));
 						contratoCobranca.setMatriculaAprovadaValor(rs.getString("matriculaAprovadaValor"));
@@ -6206,7 +6208,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			"c.pedidoLaudo, c.pedidoLaudoPajuComercial, c.pedidoPreLaudo, c.pedidoPreLaudoComercial, c.pedidoPajuComercial, c.pendenciaLaudoPaju, " +
 		    "c.avaliacaoLaudoObservacao, c.dataPrevistaVistoria, c.geracaoLaudoObservacao, c.iniciouGeracaoLaudo, c.analistaGeracaoPAJU , c.comentarioJuridicoPendente, " +
 			"c.valorAprovadoComite, c.contratoConferido, c.agEnvioCartorio, reanalise, reanalisePronta, reanaliseJuridico" +
-			" , gerente.nome nomeGerente, pr.id idPagador, res.superlogica " +
+			" , gerente.nome nomeGerente, pr.id idPagador, res.superlogica, observacaoRenda " +
 			"from cobranca.contratocobranca c " +		
 			"inner join cobranca.responsavel res on c.responsavel = res.id " +
 			"inner join cobranca.pagadorrecebedor pr on pr.id = c.pagador " +
@@ -6306,7 +6308,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true "
 								+ " and cadastroAprovadoValor = 'Aprovado' "
 								+ " and pendenciaLaudoPaju = false "
-								+ " and pedidoLaudoPajuComercial = true and pagtoLaudoConfirmada = false and pajurFavoravel = false ";
+								+ " and pedidoLaudoPajuComercial = true and pedidoLaudo = true and pagtoLaudoConfirmada = false and pajurFavoravel = false ";
 					}
 					
 					if (tipoConsulta.equals("Laudo Paju Pendente")) {
@@ -6551,6 +6553,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setReanalise(rs.getBoolean(44));						
 						contratoCobranca.setReanalisePronta(rs.getBoolean(45));					
 						contratoCobranca.setReanaliseJuridico(rs.getBoolean(46));
+						contratoCobranca.setObservacaoRenda(rs.getString("observacaoRenda"));
 
 						idsContratoCobranca.add( CommonsUtil.stringValue(contratoCobranca.getId()));
 						//contratoCobranca = findById(rs.getLong(1));
@@ -7527,9 +7530,9 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ " (select count(id) from cobranca.contratocobranca " 
 			+ " where statusLead = 'Novo Lead') novolead,  " 
 			+ " (select count(id) from cobranca.contratocobranca " 
-			+ " where statusLead = 'Em Tratamento') leademtratamento "
+			+ " where statusLead = 'Em Tratamento') leademtratamento, "
 			+ " (select count(id) from cobranca.contratocobranca " 
-			+ " where statusLead = 'Ag. Contato') leadagcontato "
+			+ " where statusLead = 'Ag. Contato') leadagcontato, "
 			+ " (select count(id) from cobranca.contratocobranca " 
 			+ " where statusLead = 'Ag. Doc.') leadagdoc ";
 

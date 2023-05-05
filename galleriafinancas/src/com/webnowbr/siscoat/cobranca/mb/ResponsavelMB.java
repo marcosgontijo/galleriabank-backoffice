@@ -40,6 +40,7 @@ import org.primefaces.model.SortOrder;
 
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.UUID;
 
 /** ManagedBean. */
 @ManagedBean(name = "responsavelMB")
@@ -321,7 +322,7 @@ public class ResponsavelMB {
 		return "ResponsavelConsultar.xhtml";
 	}
 	
-	public String desativar() {	
+	public String desativar() {
 		UserDao uDao = new UserDao();
 		ResponsavelDao responsavelDao = new ResponsavelDao();
 		User user;
@@ -331,7 +332,8 @@ public class ResponsavelMB {
 			userMb.setObjetoUsuario(user);		
 			userMb.clearFieldsUpdate();
 			userMb.getObjetoUsuario().setComiteConsultar(false);
-			userMb.setSelectedResponsaveis(new Responsavel[0]);
+			userMb.getObjetoUsuario().setPassword(gerarUUID());
+			//userMb.setSelectedResponsaveis(new Responsavel[0]);
 			userMb.getObjetoUsuario().setName("DESATIVADO - " + user.getName());
 			userMb.inserir();
 		}
@@ -342,6 +344,12 @@ public class ResponsavelMB {
 		responsavelDao.merge(objetoResponsavel);
 		
 		return "ResponsavelConsultar.xhtml";
+	}
+	
+	public String gerarUUID() {
+		UUID uuid = UUID.randomUUID();
+		String uuidAsString = uuid.toString();
+		return uuidAsString;
 	}
 	
 	public void pesquisaResponsavel() {	

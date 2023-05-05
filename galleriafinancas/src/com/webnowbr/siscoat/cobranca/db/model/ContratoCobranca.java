@@ -2,8 +2,10 @@ package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger; 
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -11,7 +13,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections.ArrayStack;
+
 import com.webnowbr.siscoat.common.CommonsUtil;
+
+import javassist.expr.NewArray;
 
 public class ContratoCobranca implements Serializable {
 
@@ -157,7 +163,9 @@ public class ContratoCobranca implements Serializable {
 	private Set<PagadorRecebedorSocio> listSocios;
 	private Set<PagadorRecebedorAdicionais> listaPagadores;
 	private Set<ContasPagar> listContasPagar;
+	private Set<CcbProcessosJudiciais> listProcessos;
 	private Set<AnaliseComite> listaAnaliseComite;
+	private Set<DataVistoria> listDatasVistoria;
 	
 	
 	// n�o persistida a lista abaixo
@@ -593,6 +601,7 @@ public class ContratoCobranca implements Serializable {
 	
 	private Date dataPrevistaVistoria;
 	private String nomeVistoriador;
+	private boolean enviadoWhatsappVistoria;
 	
 	private String motivoReprovacaoAnalise;
 	private String motivoReprovaSelectItem;
@@ -634,6 +643,9 @@ public class ContratoCobranca implements Serializable {
 	private String comentarioComite;
 	private String processosQuitarComite;
 	private String obsValidacaoDocumentos;
+	private int carenciaComite;
+	private boolean operacaoFundo;
+	private BigDecimal valorTotalProcessos;
 	
 	private String empresaCertificado;
 	private Date dataSolicitacaoCertificado;
@@ -708,6 +720,10 @@ public class ContratoCobranca implements Serializable {
 	
 	private String observacaoPagamento;
 	
+	private String solicitarNota;
+	private boolean notaSolicitadaWhatsapp;
+	private BigDecimal valorNotaFiscal;
+	
 	private boolean contratoResgatadoBaixar;
 	private Date contratoResgatadoData;
 	
@@ -747,8 +763,10 @@ public class ContratoCobranca implements Serializable {
 	private String chequeDevolvidoRessalva;
 	private String obsDocsPendentesRessalva;
 	
-	private String contatoAgendamendoLaudoAvaliacao;
 	private String formaDePagamentoLaudoPAJU;
+	private String nomeContatoAgendaLaudoAvaliacao;
+	private String contatoAgendamendoLaudoAvaliacao;
+	private String observacaoContatoAgendaLaudoAvaliacao;
 
 	private String avaliacaoLaudo;
 	private String avaliacaoLaudoObservacao;
@@ -769,7 +787,8 @@ public class ContratoCobranca implements Serializable {
 	private Date contratoEmCartorioData;
 	private String contratoEmCartorioUsuario;
 	
-	private boolean corrigidoIPCAHibrido;	
+	private boolean corrigidoIPCAHibrido;
+	
 
  //FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13	
 	public BigDecimal calcularValorTotalContasPagas() {
@@ -804,6 +823,7 @@ public class ContratoCobranca implements Serializable {
 		this.listContasPagar = new HashSet<>();
 		this.listaAnaliseComite = new HashSet<>();
 		this.listCadastroStatus = new ArrayList<CadastroStatus>();
+		this.listProcessos = new HashSet<>();
 		
 		limparPrimitivos();
 	}
@@ -958,6 +978,13 @@ public class ContratoCobranca implements Serializable {
 		});
 
 	}
+
+	public boolean isEmAnalise() {
+		List<String> lstEmAnalise =  Arrays.asList("Pendente");
+		return CommonsUtil.semValor(this.cadastroAprovadoValor) && lstEmAnalise.contains(this.status);
+	}
+	
+	
 
 	/**
 	 * @return the id
@@ -5173,23 +5200,45 @@ public class ContratoCobranca implements Serializable {
 	public void setPedidoLaudoPajuComercialUsuario(String pedidoLaudoPajuComercialUsuario) {
 		this.pedidoLaudoPajuComercialUsuario = pedidoLaudoPajuComercialUsuario;
 	}
+	
 	public boolean isTemTxAdm() {
 		return temTxAdm;
 	}
+	
 	public void setTemTxAdm(boolean temTxAdm) {
 		this.temTxAdm = temTxAdm;
 	}
-	public String getContatoAgendamendoLaudoAvaliacao() {
-		return contatoAgendamendoLaudoAvaliacao;
-	}
-	public void setContatoAgendamendoLaudoAvaliacao(String contatoAgendamendoLaudoAvaliacao) {
-		this.contatoAgendamendoLaudoAvaliacao = contatoAgendamendoLaudoAvaliacao;
-	}
+
 	public String getFormaDePagamentoLaudoPAJU() {
 		return formaDePagamentoLaudoPAJU;
 	}
+	
 	public void setFormaDePagamentoLaudoPAJU(String formaDePagamentoLaudoPAJU) {
 		this.formaDePagamentoLaudoPAJU = formaDePagamentoLaudoPAJU;
+	}
+	
+	public String getNomeContatoAgendaLaudoAvaliacao() {
+		return nomeContatoAgendaLaudoAvaliacao;
+	}
+
+	public void setNomeContatoAgendaLaudoAvaliacao(String nomeContatoAgendaLaudoAvaliacao) {
+		this.nomeContatoAgendaLaudoAvaliacao = nomeContatoAgendaLaudoAvaliacao;
+	}
+
+	public String getContatoAgendamendoLaudoAvaliacao() {
+		return contatoAgendamendoLaudoAvaliacao;
+	}
+
+	public void setContatoAgendamendoLaudoAvaliacao(String contatoAgendamendoLaudoAvaliacao) {
+		this.contatoAgendamendoLaudoAvaliacao = contatoAgendamendoLaudoAvaliacao;
+	}
+
+	public String getObservacaoContatoAgendaLaudoAvaliacao() {
+		return observacaoContatoAgendaLaudoAvaliacao;
+	}
+
+	public void setObservacaoContatoAgendaLaudoAvaliacao(String observacaoContatoAgendaLaudoAvaliacao) {
+		this.observacaoContatoAgendaLaudoAvaliacao = observacaoContatoAgendaLaudoAvaliacao;
 	}
 
 	public Date getPedidoLaudoData() {
@@ -6159,6 +6208,76 @@ public class ContratoCobranca implements Serializable {
 	public void setListCadastroStatus(List<CadastroStatus> listCadastroStatus) {
 		this.listCadastroStatus = listCadastroStatus;
 	}
-		
 	
+	public String getSolicitarNota() {
+		return solicitarNota;
+	}
+
+	public void setSolicitarNota(String solicitarNota) {
+		this.solicitarNota = solicitarNota;
+	}
+
+	public boolean isNotaSolicitadaWhatsapp() {
+		return notaSolicitadaWhatsapp;
+	}
+
+	public void setNotaSolicitadaWhatsapp(boolean notaSolicitadaWhatsapp) {
+		this.notaSolicitadaWhatsapp = notaSolicitadaWhatsapp;
+	}
+
+	public BigDecimal getValorNotaFiscal() {
+		return valorNotaFiscal;
+	}
+
+	public void setValorNotaFiscal(BigDecimal valorNotaFiscal) {
+		this.valorNotaFiscal = valorNotaFiscal;
+	}
+
+	public int getCarenciaComite() {
+		return carenciaComite;
+	}
+
+	public void setCarenciaComite(int carenciaComite) {
+		this.carenciaComite = carenciaComite;
+	}
+
+	public Set<DataVistoria> getListDatasVistoria() {
+		return listDatasVistoria;
+	}
+
+	public void setListDatasVistoria(Set<DataVistoria> listDatasVistoria) {
+		this.listDatasVistoria = listDatasVistoria;
+	}
+
+	public boolean isEnviadoWhatsappVistoria() {
+		return enviadoWhatsappVistoria;
+	}
+
+	public void setEnviadoWhatsappVistoria(boolean enviadoWhatsappVistoria) {
+		this.enviadoWhatsappVistoria = enviadoWhatsappVistoria;
+	}
+
+	public Set<CcbProcessosJudiciais> getListProcessos() {
+		return listProcessos;
+	}
+
+	public void setListProcessos(Set<CcbProcessosJudiciais> listProcessos) {
+		this.listProcessos = listProcessos;
+	}
+
+	public boolean isOperacaoFundo() {
+		return operacaoFundo;
+	}
+
+	public void setOperacaoFundo(boolean operacaoFundo) {
+		this.operacaoFundo = operacaoFundo;
+	}
+
+	public BigDecimal getValorTotalProcessos() {
+		return valorTotalProcessos;
+	}
+
+	public void setValorTotalProcessos(BigDecimal valorTotalProcessos) {
+		this.valorTotalProcessos = valorTotalProcessos;
+	}
 }

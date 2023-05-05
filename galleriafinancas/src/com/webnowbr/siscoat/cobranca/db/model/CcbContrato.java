@@ -77,6 +77,7 @@ public class CcbContrato implements Serializable{
 	private Date vencimentoUltimaParcelaPagamento;
 	private BigDecimal montantePagamento;
 	private BigDecimal valorParcela;
+	private char tipoCalculoFinal; 
 
 	private String numeroParcelasDFI;
 	private Date vencimentoPrimeiraParcelaDFI;
@@ -152,8 +153,8 @@ public class CcbContrato implements Serializable{
     private String CCBCNPJ; 
     private String CCBNome; 
     private String CCBPix;
-    
-    private List<CcbProcessosJudiciais> processosJucidiais; // (++)
+    private String CCBDocumento;
+        
     private BigDecimal iptuEmAtrasoValor = BigDecimal.ZERO;
     private boolean iptuInseridoContrato;
     private BigDecimal condominioEmAtrasoValor = BigDecimal.ZERO;
@@ -163,6 +164,9 @@ public class CcbContrato implements Serializable{
     private BigDecimal itbiValor = BigDecimal.ZERO;
     private boolean itbiInseridoContrato;
     
+    private List<CcbProcessosJudiciais> processosJucidiais; // (++)
+    private List<ContasPagar> despesasAnexo2;
+    
     private List<Segurado> listSegurados;
     
     private ArrayList<UploadedFile> filesList = new ArrayList<UploadedFile>();
@@ -170,6 +174,7 @@ public class CcbContrato implements Serializable{
     private ContratoCobranca objetoContratoCobranca;
     
     public CcbContrato() {
+    	this.despesasAnexo2 = new ArrayList<ContasPagar>();
     	this.listaParticipantes = new ArrayList<CcbParticipantes>(); 
     	this.processosJucidiais = new ArrayList<CcbProcessosJudiciais>(); 
     	this.listSegurados = new ArrayList<Segurado>(); 
@@ -1203,6 +1208,31 @@ public class CcbContrato implements Serializable{
 	public void setBairroEmitente(String bairroEmitente) {
 		this.bairroEmitente = bairroEmitente;
 	}
+
+	public char getTipoCalculoFinal() {
+		return tipoCalculoFinal;
+	}
+
+	public void setTipoCalculoFinal(char tipoCalculoFinal) {
+		this.tipoCalculoFinal = tipoCalculoFinal;
+	}
+
+	public String getCCBDocumento() {
+		return CCBDocumento;
+	}
+
+	public void setCCBDocumento(String cCBDocumento) {
+		CCBDocumento = cCBDocumento;
+	}
+
+	public List<ContasPagar> getDespesasAnexo2() {
+		return despesasAnexo2;
+	}
+
+	public void setDespesasAnexo2(List<ContasPagar> despesasAnexo2) {
+		this.despesasAnexo2 = despesasAnexo2;
+	}
+	
 	
 	
 }
