@@ -644,7 +644,7 @@ public class IpcaJobCalcular {
 	public boolean calcularIPCACustomMaluco(IPCADao ipcaDao, ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao,
 			ContratoCobrancaDao contratoCobrancaDao,
 			ContratoCobrancaDetalhesParcialDao contratoCobrancaDetalhesParcialDao,
-			ContratoCobrancaDetalhes contratoCobrancaDetalhes, ContratoCobranca contratoCobranca) {
+			ContratoCobrancaDetalhes contratoCobrancaDetalhes, ContratoCobranca contratoCobranca, Date dataCorteBaixa) {
 
 		Date dataIPCA = DateUtil.adicionarMes(contratoCobrancaDetalhes.getDataVencimento(), -2);
 		IPCA ultimoIpca = ipcaDao.getUltimoIPCA(dataIPCA);
@@ -677,9 +677,7 @@ public class IpcaJobCalcular {
 			dataCorteParcelasBaixadas.set(Calendar.DAY_OF_MONTH, 13);
 			
 			Calendar dataCorteParcelasMalucas = Calendar.getInstance();
-			dataCorteParcelasMalucas.set(Calendar.YEAR, 2022);
-			dataCorteParcelasMalucas.set(Calendar.MONTH, 11);
-			dataCorteParcelasMalucas.set(Calendar.DAY_OF_MONTH, 15);
+			dataCorteParcelasMalucas.setTime(dataCorteBaixa);
 
 			for (int iDetalhe = 0; iDetalhe < contratoCobranca.getListContratoCobrancaDetalhes().size(); iDetalhe++) {
 
@@ -861,8 +859,7 @@ public class IpcaJobCalcular {
 								List<ContratoCobrancaDetalhesParcial> detalhesParciais = detalheIpca
 										.getListContratoCobrancaDetalhesParcial();
 								
-								boolean estaNoCorte = false;
-								
+								/*								
 								if (detalheIpca.getDataVencimento().before(dataCorteParcelasBaixadas.getTime())) {
 									//detalheIpca.setVlrAmortizacaoParcela(detalheIpca.getVlrAmortizacaoParcela());
 									
@@ -883,8 +880,11 @@ public class IpcaJobCalcular {
 									if (diferencaPagto.compareTo(BigDecimal.ZERO) == 1) {
 										detalheIpca.setVlrAmortizacaoParcela(detalheIpca.getVlrAmortizacaoParcela().add(diferencaPagto));
 										vlrSaldoParcela = vlrSaldoParcela.subtract(diferencaPagto);
-									}
+									} 
 								} 
+								*/
+								
+								boolean estaNoCorte = false;
 								
 								if (detalheIpca.getDataVencimento().before(dataCorteParcelasMalucas.getTime()) && !estaNoCorte) {
 									//BigDecimal vlrParcela = parcela.getJuros().add(detalheIpca.getVlrAmortizacaoParcela())
@@ -900,7 +900,7 @@ public class IpcaJobCalcular {
 									
 									BigDecimal diferencaPagto = vlrPago.subtract(detalheIpca.getVlrParcela());
 									
-									if (diferencaPagto.compareTo(BigDecimal.ZERO) != 0) {
+									if (diferencaPagto.compareTo(BigDecimal.ZERO) == 1) {
 										detalheIpca.setVlrAmortizacaoParcela(detalheIpca.getVlrAmortizacaoParcela().add(diferencaPagto));
 										
 										//vlrParcela = parcela.getJuros().add(detalheIpca.getVlrAmortizacaoParcela())
