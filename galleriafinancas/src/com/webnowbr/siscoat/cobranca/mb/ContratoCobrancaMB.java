@@ -157,6 +157,7 @@ import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.cobranca.service.SerasaService;
+import com.webnowbr.siscoat.cobranca.vo.ExtratoVO;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
@@ -27948,6 +27949,46 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		}
 	}
 
+	
+	public void marcaParaDocumentoAnalise(DocumentoAnalise documentoAnalise) {
+		
+		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+		
+		documentoAnaliseDao.merge(documentoAnalise);
+		
+	}
+	
+	public void executarConsultasAnaliseDocumento() {
+
+
+
+		DocketService docketService = new DocketService();
+
+		SerasaService serasaService = new SerasaService();
+
+		for (DocumentoAnalise documentoAnalise : this.listaDocumentoAnalise.stream().filter(d -> d.isLiberadoAnalise())
+				.collect(Collectors.toList())) {
+			if (DocumentosAnaliseEnum.REA.equals(documentoAnalise.getTipoEnum())
+					&& documentoAnalise.isPodeChamarRea()) {
+				docketService.uploadREA(documentoAnalise, loginBean.getUsuarioLogado());				
+			}
+			
+			if (documentoAnalise.isPodeChamarEngine()) {				
+				DataEngine engine = docketService.engineInserirPessoa(documentoAnalise.getPagador(), objetoContratoCobranca);				
+				docketService.engineCriarConsulta( documentoAnalise,  engine,  loginBean.getUsuarioLogado());				
+			}
+			
+			if (documentoAnalise.isPodeChamarSerasa()) {	
+				if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
+					serasaService.serasaCriarConsulta(documentoAnalise);
+				}
+			}	
+
+		}
+
+	}
+	
+	
 	/**
 	 * @return the fileRecibo
 	 */
@@ -29825,6 +29866,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			documentoAnalise.setIdentificacao(event.getFile().getFileName());
 			documentoAnalise.setPath(pathContrato + event.getFile().getFileName());
 			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.REA);
+			documentoAnalise.setLiberadoAnalise(true);
 			documentoAnaliseDao.create(documentoAnalise);
 			// atualiza lista de arquivos contidos no diretório
 			listaArquivosAnaliseDocumentos();
@@ -30206,9 +30248,16 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 	 * @return
 	 */
 	
-	public void listaArquivosAnaliseDocumentos() {		
+	public void listaArquivosAnaliseDocumentos() {
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-		this.listaDocumentoAnalise =  documentoAnaliseDao.findByFilter("contratoCobranca", this.objetoContratoCobranca);
+		this.listaDocumentoAnalise = documentoAnaliseDao.findByFilter("contratoCobranca", this.objetoContratoCobranca);
+		Collections.sort(this.listaDocumentoAnalise, new Comparator<DocumentoAnalise>() {
+			@Override
+			public int compare(DocumentoAnalise one, DocumentoAnalise other) {
+				return CommonsUtil.castAsLong(one.getId()).compareTo(other.getId());
+			}
+		});
+
 	}
 			
 	

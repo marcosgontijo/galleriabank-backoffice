@@ -27,6 +27,7 @@ public class DocumentoAnalise implements Serializable {
 	private String motivoAnalise;
 	private String path;
 	private String tipo;
+	private boolean liberadoAnalise;
 
 	private DocumentosAnaliseEnum tipoEnum;
 
@@ -36,7 +37,7 @@ public class DocumentoAnalise implements Serializable {
 	
 
 	public boolean isPodeChamarRea() {
-		return CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
+		return isReaNaoEnviado() && CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
 	}
 
 	public boolean isReaNaoEnviado() {
@@ -56,7 +57,7 @@ public class DocumentoAnalise implements Serializable {
 	}	
 	
 	public boolean isPodeChamarSerasa() {
-		return isEngineProcessado() && (CommonsUtil.mesmoValor("PJ", tipoPessoa) || CommonsUtil.mesmoValor("PF", tipoPessoa));
+		return isEngineProcessado() && !isSerasaProcessado() && CommonsUtil.mesmoValor("PF", tipoPessoa); // (CommonsUtil.mesmoValor("PJ", tipoPessoa) ||
 	}
 
 	public boolean isSerasaProcessado() {
@@ -121,6 +122,14 @@ public class DocumentoAnalise implements Serializable {
 			this.tipoEnum = DocumentosAnaliseEnum.CREDNET;
 			break;
 		}
+	}
+
+	public boolean isLiberadoAnalise() {
+		return liberadoAnalise;
+	}
+
+	public void setLiberadoAnalise(boolean liberadoAnalise) {
+		this.liberadoAnalise = liberadoAnalise;
 	}
 
 	public DocumentosAnaliseEnum getTipoEnum() {
