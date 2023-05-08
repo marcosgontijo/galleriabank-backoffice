@@ -250,7 +250,7 @@
 		<dependency>
 		    <groupId>org.postgresql</groupId>
 		    <artifactId>postgresql</artifactId>
-    		<version>42.6.0</version>
+    		<version>9.4-1204-jdbc4</version>
 		</dependency>
 		<dependency>
 			<groupId>dom4j</groupId>
@@ -286,8 +286,19 @@
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
-			<version>6.12.2</version>			
+			<version>6.12.2</version>		
+			<exclusions>
+				<exclusion>
+					<groupId>com.lowagie</groupId>
+					<artifactId>itext</artifactId>
+				</exclusion>
+			</exclusions>	
 		</dependency>
+		<dependency>
+    <groupId>com.lowagie</groupId>
+    <artifactId>itext</artifactId>
+    <version>2.1.7</version>
+</dependency>
 		<!-- Dependencias locais -->
 		<dependency>
 			<groupId>br.com.galleriabank.serasacrednet-cliente</groupId>
@@ -297,6 +308,11 @@
 		<dependency>
 			<groupId>br.com.galleriabank.serasarelato-cliente</groupId>
 			<artifactId>serasarelato-cliente</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>br.com.galleriabank.dataengine-cliente</groupId>
+			<artifactId>dataengine-cliente</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
