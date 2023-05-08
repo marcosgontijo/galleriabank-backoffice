@@ -27980,7 +27980,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			
 			if (documentoAnalise.isPodeChamarSerasa()) {	
 				if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
-					serasaService.serasaCriarConsulta(documentoAnalise);
+					serasaService.requestSerasa(documentoAnalise,  loginBean.getUsuarioLogado());
 				}
 			}	
 
