@@ -4031,11 +4031,6 @@ public class ContratoCobrancaMB {
 						tkblpMb.sendWhatsAppMessageVistoria(rVistoria3,
 								this.objetoContratoCobranca.getDataPrevistaVistoria(), this.objetoContratoCobranca.getNomeVistoriador());
 						
-						// Alice
-						rVistoria4 = rDao.findById((long) 619);
-						tkblpMb.sendWhatsAppMessageVistoria(rVistoria4,
-								this.objetoContratoCobranca.getDataPrevistaVistoria(), this.objetoContratoCobranca.getNomeVistoriador());
-						
 						this.objetoContratoCobranca.setEnviadoWhatsappVistoria(true);
 					}
 				}
@@ -4082,14 +4077,6 @@ public class ContratoCobrancaMB {
 					//this.objetoContratoCobranca.getPagador().getNome(),
 					//this.objetoContratoCobranca.getNumeroContrato(), "", "");
 
-					// Valdir
-					rValidaDocs1 = rDao.findById((long) 619);	
-					
-					takeBlipMB.sendWhatsAppMessage(rValidaDocs1,
-					"contrato_recebido_paju", 
-					this.objetoContratoCobranca.getPagador().getNome(),
-					this.objetoContratoCobranca.getNumeroContrato(),
-					"", "");
 
 					// Iris
 					rValidaDocs3 = rDao.findById((long) 828);					
@@ -4159,16 +4146,6 @@ public class ContratoCobrancaMB {
 					//"chegada_laudo",
 					//this.objetoContratoCobranca.getPagador().getNome(),
 					//this.objetoContratoCobranca.getNumeroContrato(), "", "");
-
-					// Valdir
-					rValidaDocs1 = rDao.findById((long) 619);	
-					
-					takeBlipMB.sendWhatsAppMessage(rValidaDocs1,
-					"contrato_recebido_laudo", 
-					this.objetoContratoCobranca.getPagador().getNome(),
-					this.objetoContratoCobranca.getNumeroContrato(),
-					"", "");
-
 
 					// Iris
 					rValidaDocs3 = rDao.findById((long) 828);					
@@ -4373,6 +4350,14 @@ public class ContratoCobrancaMB {
 					this.objetoContratoCobranca.getPagador().getNome(),
 					this.objetoContratoCobranca.getNumeroContrato(),
 					"", "");*/
+					
+					// Alice
+					rCcb3 = rDao.findById((long) 619);
+					takeBlipMB.sendWhatsAppMessage(rCcb3,
+							"aprovado_comite_ag_ccb", 
+							this.objetoContratoCobranca.getPagador().getNome(),
+							this.objetoContratoCobranca.getNumeroContrato(),
+							"", "");
 								
 								
 					if (this.objetoContratoCobranca.getResponsavel().getDonoResponsavel() != null) {

@@ -1,8 +1,12 @@
 /build/
 /jasper/
+<<<<<<< HEAD
 
 /target/
 /bin/
 /.settings/
 /.classpath
 /.metadata/
+=======
+/target/
+>>>>>>> refs/heads/Desenvolvimento

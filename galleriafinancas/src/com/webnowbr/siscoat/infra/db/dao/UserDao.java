@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
+import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.db.dao.*;
 import com.webnowbr.siscoat.db.dao.HibernateDao.DBRunnable;
 import com.webnowbr.siscoat.infra.db.model.User;
@@ -17,10 +18,12 @@ import com.webnowbr.siscoat.infra.db.model.User;
  */
 public class UserDao extends HibernateDao<User, Long> {
 	
-	private final String QUERY_LISTA_RESPONSAVEL = "select u.id idusuario, u.\"name\",  r.id idresponsavel, r.nome, r.donoresponsavel, r2.nome  from cobranca.responsavel r "
-			+ "inner join cobranca.responsavel r2 on r2.id = r.donoresponsavel "
-			+ "inner join infra.users u on u.codigoresponsavel = r2.codigo "
-			+ "order by u.id "; 
+	private final String QUERY_LISTA_RESPONSAVEL = "select u.id, u.login , r.id  from infra.users u \r\n"
+			+ "inner join cobranca.responsavel r on r.codigo = u.codigoresponsavel \r\n"
+			+ "where u.id not in (\r\n"
+			+ "select u2.id from infra.users u2 \r\n"
+			+ "	inner join infra.usuario_responsavel_join urj on urj.idusuario = u2.id\r\n"
+			+ ")\r\n"; 
 	
 	public void popularListaResponsavel() {
 		executeDBOperation(new DBRunnable() {
@@ -39,10 +42,13 @@ public class UserDao extends HibernateDao<User, Long> {
 					ResponsavelDao rDao = new ResponsavelDao();
 					while (rs.next()) {
 						user = uDao.findById(rs.getLong(1));
+						if(CommonsUtil.semValor(user.getListResponsavel())) {
+							user.setListResponsavel(new ArrayList<>());
+						}
 						if(!user.getListResponsavel().contains(rDao.findById(rs.getLong(3)))) {
 							user.getListResponsavel().add(rDao.findById(rs.getLong(3)));
 							uDao.merge(user);
-							System.out.println("Responsacvel Adicionado");
+							System.out.print("User" + rs.getLong(1) + "att / ");
 						}
 					}
 					
