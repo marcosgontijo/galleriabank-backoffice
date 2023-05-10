@@ -69,9 +69,11 @@ public class BalancoPatrimonialMB {
 
 	public String clearBalancoPatrimonialEditar() {
 		BalancoPatrimonialDao balancopatrimonialDao = new BalancoPatrimonialDao();
+		
 		if (!this.editar) {
 			objetoBalanco = new BalancoPatrimonial();
 			ultimoBalanco = balancopatrimonialDao.consultaUltimoBalanco();
+		
 		this.objetoBalanco.setAaaamm(gerarDataHoje());
 		//VALOR DEFAULT NO CÓDIGO
 		this.objetoBalanco.setDepositoBacenScd(CommonsUtil.bigDecimalValue(1016095.04));
@@ -93,7 +95,8 @@ public class BalancoPatrimonialMB {
 	
 	public void atualizaParcela () {
 		BalancoPatrimonialDao balancopatrimonialDao = new BalancoPatrimonialDao();
-		balancopatrimonialDao.atualizaParcela(objetoBalanco);
+		this.objetoBalanco.setRecursosDebentures(CommonsUtil.bigDecimalValue(0)); //Zera o valor de Recursos Debentures
+		balancopatrimonialDao.atualizaParcela(objetoBalanco); //Recalcula o valor de Recursos Debentures
 	}
 
 	public BalancoPatrimonial getUltimoBalanco() {
@@ -124,6 +127,7 @@ public class BalancoPatrimonialMB {
 	public String editarBalanco() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		BalancoPatrimonialDao cDao = new BalancoPatrimonialDao();
+	
 
 		if (this.objetoBalanco.getId() > 0) {
 			cDao.merge(this.objetoBalanco);
