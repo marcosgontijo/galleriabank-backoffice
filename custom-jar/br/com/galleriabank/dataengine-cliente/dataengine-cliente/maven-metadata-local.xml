@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata>
-  <groupId>br.com.galleriabank.serasacrednet-cliente</groupId>
-  <artifactId>serasacrednet-cliente</artifactId>
+  <groupId>br.com.galleriabank.dataengine-cliente</groupId>
+  <artifactId>dataengine-cliente</artifactId>
   <versioning>
     <versions>
       <version>1.0-SNAPSHOT</version>
     </versions>
-    <lastUpdated>20230510122354</lastUpdated>
+    <lastUpdated>20230510122301</lastUpdated>
   </versioning>
 </metadata>

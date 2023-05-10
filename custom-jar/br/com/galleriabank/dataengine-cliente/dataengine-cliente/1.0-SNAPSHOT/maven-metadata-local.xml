@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata modelVersion="1.1.0">
-  <groupId>br.com.galleriabank.serasacrednet-cliente</groupId>
-  <artifactId>serasacrednet-cliente</artifactId>
+  <groupId>br.com.galleriabank.dataengine-cliente</groupId>
+  <artifactId>dataengine-cliente</artifactId>
   <version>1.0-SNAPSHOT</version>
   <versioning>
     <snapshot>
       <localCopy>true</localCopy>
     </snapshot>
-    <lastUpdated>20230510122354</lastUpdated>
+    <lastUpdated>20230510122301</lastUpdated>
     <snapshotVersions>
       <snapshotVersion>
         <extension>jar</extension>
         <value>1.0-SNAPSHOT</value>
-        <updated>20230510122354</updated>
+        <updated>20230510122301</updated>
       </snapshotVersion>
       <snapshotVersion>
         <extension>pom</extension>
         <value>1.0-SNAPSHOT</value>
-        <updated>20230510122354</updated>
+        <updated>20230510122301</updated>
       </snapshotVersion>
     </snapshotVersions>
   </versioning>
