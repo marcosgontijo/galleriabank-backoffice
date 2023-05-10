@@ -27963,7 +27963,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 				docketService.engineCriarConsulta( documentoAnalise,  engine,  loginBean.getUsuarioLogado());				
 			}
 			
-			if (documentoAnalise.isPodeChamarSerasa()) {	
+			if (documentoAnalise.isPodeChamarSerasa() || documentoAnalise.isLiberadoSerasa() ) {	
 				if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
 					serasaService.requestSerasa(documentoAnalise,  loginBean.getUsuarioLogado());
 				}

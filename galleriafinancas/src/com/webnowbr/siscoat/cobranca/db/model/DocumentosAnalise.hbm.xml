@@ -48,6 +48,10 @@
 			<column name="liberadoAnalise" />
 		</property>		
 		
+		<property name="liberadoSerasa" type="boolean">
+			<column name="liberadoSerasa" />
+		</property>	
+		
 		<property name="cnpjcpf" type="java.lang.String"  >
 			<column name="cnpjcpf" />
 		</property>
@@ -66,6 +70,9 @@
 		<property name="motivoAnalise" type="java.lang.String"  length="65000">
 			<column name="motivoAnalise" />
 		</property>
-		
+		<property name="observacao" type="java.lang.String"  length="65000">
+			<column name="observacao" />
+		</property>
+						
     </class>
 </hibernate-mapping>

@@ -69,8 +69,101 @@ public class DocketService {
 		return engineCriarConsulta(null, engine, usuarioLogado);
 	}
 	
+	
 
 	public FacesMessage engineCriarConsulta(DocumentoAnalise documentoAnalise, DataEngine engine, User usuarioLogado) { // POST para gerar consulta
+		DataEngineDao engineDao = new DataEngineDao();
+//		if (engineDao.findByFilter("pagador", engine.getPagador()).size() > 0) {
+////			context.addMessage(null,);	
+//			return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta já existente!", "");
+//		}
+		if (!CommonsUtil.semValor(engine.getIdCallManager())) {
+			if (documentoAnalise != null ) {
+				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+				documentoAnalise.setEngine(engine);
+				documentoAnalise.setRetornoEngine("consulta efetuada anteriormente Id: " + engine.getId() );
+				documentoAnaliseDao.merge(documentoAnalise);
+			}
+			
+			return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta já existente!" + engine.getIdCallManager(),
+					"");
+		}
+		try {
+			// loginDocket();
+			int HTTP_COD_SUCESSO = 200;
+			int HTTP_COD_SUCESSO2 = 201;
+
+			URL myURL;
+			myURL = new URL( "https://servicos.galleriabank.com.br/dataengine/api/v1/consultar");
+
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setRequestMethod("POST");
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			myURLConnection.setDoOutput(true);
+
+			JSONObject myResponse = null;
+			JSONObject jsonWhatsApp = engineBodyJsonEngine(engine.getPagador());
+
+			try (OutputStream os = myURLConnection.getOutputStream()) {
+				byte[] input = jsonWhatsApp.toString().getBytes("utf-8");
+				os.write(input, 0, input.length);
+			}
+
+			FacesMessage result = null;
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO
+					&& myURLConnection.getResponseCode() != HTTP_COD_SUCESSO2) {
+
+				System.out.println(jsonWhatsApp.toString());
+				result = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Engine: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", "");
+			} else {
+				// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
+				// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
+
+				myResponse = engineJSONSucesso(myURLConnection.getInputStream());
+				engine.setIdCallManager(myResponse.get("idCallManager").toString());
+				engine.setData(DateUtil.getDataHoje());
+				engine.setUsuario(usuarioLogado.getName());
+				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+				if (engine.getContrato() != null && engine.getContrato().getId() > 0 )
+				cDao.merge(engine.getContrato());
+				else
+				engine.setContrato(null);
+				
+				
+				//System.out.println("NumeroContrato Erro EngineDocket:" + engine.getContrato().getNumeroContrato() + ", "  + engine.getContrato().getId());
+				if (engine.getId() <= 0) {
+					engineDao.create(engine);
+				}
+				
+				if (documentoAnalise != null ) {
+					DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+					documentoAnalise.setEngine(engine);
+					documentoAnaliseDao.merge(documentoAnalise);
+				}
+				
+
+				result = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
+			}
+
+			myURLConnection.disconnect();
+			return result;
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	
+	
+	}
+
+	public FacesMessage engineCriarConsultaOld(DocumentoAnalise documentoAnalise, DataEngine engine, User usuarioLogado) { // POST para gerar consulta
 		DataEngineDao engineDao = new DataEngineDao();
 //		if (engineDao.findByFilter("pagador", engine.getPagador()).size() > 0) {
 ////			context.addMessage(null,);	
@@ -452,13 +545,13 @@ public class DocketService {
 			}
 			
 			String webHookJWT = JwtUtil.generateJWTReaWebwook(true);
-			while (webHookJWT.length() > (256 - SiscoatConstants.URL_SISCOAT_WEBHOOK.length())){
+			while (webHookJWT.length() > (256 - SiscoatConstants.URL_SISCOAT_REA_WEBHOOK.length())){
 				webHookJWT = JwtUtil.generateJWTReaWebwook(false);
 			}
 			
 			String s = new String(webHookJWT.getBytes(), Charset.forName("UTF-8"));
 			
-			String urlWebhook = SiscoatConstants.URL_SISCOAT_WEBHOOK + webHookJWT;
+			String urlWebhook = SiscoatConstants.URL_SISCOAT_REA_WEBHOOK + webHookJWT;
 			String authorization = "Bearer " + this.tokenLogin;
 //			LZString.compress(webHookJWT);
 //			LZString.compressToBase64(webHookJWT);
@@ -518,6 +611,9 @@ public class DocketService {
 			jsonDocketBodyPedido.put("idProviderFlow", engineIdproviderFlowPJ);
 			jsonDocketBodyPedido.put("fields", engineJsonPJ(pagador));
 		}
+		String webHookJWT = JwtUtil.generateJWTReaWebwook(true);
+		jsonDocketBodyPedido.put("urlWebhook", SiscoatConstants.URL_SISCOAT_ENGINE_WEBHOOK + webHookJWT);
+		
 		return jsonDocketBodyPedido;
 	}
 

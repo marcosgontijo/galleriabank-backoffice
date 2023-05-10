@@ -28,12 +28,14 @@ public class DocumentoAnalise implements Serializable {
 	private String path;
 	private String tipo;
 	private boolean liberadoAnalise;
+	private boolean liberadoSerasa;
 
 	private DocumentosAnaliseEnum tipoEnum;
 
 	private String retorno;
 	private String retornoEngine;
 	private String retornoSerasa;
+	private String observacao;
 	
 
 	public boolean isPodeChamarRea() {
@@ -63,6 +65,18 @@ public class DocumentoAnalise implements Serializable {
 	public boolean isSerasaProcessado() {
 		return !CommonsUtil.semValor(retornoSerasa);
 	}	
+	
+	public void addObservacao(String observacao) {
+		
+		if (this.observacao == null) {
+			this.observacao = "";
+		}else {
+			this.observacao = this.observacao + " - ";
+		}
+
+		this.observacao = observacao;
+	}
+
 			
 	public long getId() {
 		return id;
@@ -203,6 +217,22 @@ public class DocumentoAnalise implements Serializable {
 
 	public void setPagador(PagadorRecebedor pagador) {
 		this.pagador = pagador;
+	}
+
+	public boolean isLiberadoSerasa() {
+		return liberadoSerasa;
+	}
+
+	public void setLiberadoSerasa(boolean liberadoSerasa) {
+		this.liberadoSerasa = liberadoSerasa;
+	}
+
+	public String getObservacao() {
+		return observacao;
+	}
+
+	public void setObservacao(String observacao) {
+		this.observacao = observacao;
 	}
 
 }
