@@ -51,43 +51,45 @@ public class EngineWebhook {
 
 				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 
-				DocumentoAnalise documentoAnalise = documentoAnaliseDao.findByFilter("engine", dataEngine)
-						.stream().findFirst().orElse(null);
+				DocumentoAnalise documentoAnalise = documentoAnaliseDao.findByFilter("engine", dataEngine).stream()
+						.findFirst().orElse(null);
 
-				documentoAnalise.setRetornoEngine(webhookRetorno);
+				if (!CommonsUtil.semValor(documentoAnalise)) {
 
-				SerasaService serasaService = new SerasaService();
-				UserService userService = new UserService();
+					documentoAnalise.setRetornoEngine(webhookRetorno);
 
-				engineWebhookRetorno.getConsultaAntecedenteCriminais();
+					SerasaService serasaService = new SerasaService();
+					UserService userService = new UserService();
 
-				if ((CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais())
-						|| CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais().getResult()
-								.get(0).getOnlineCertificates()))
-						&&  (CommonsUtil.semValor(engineWebhookRetorno.getProcessos())
-						|| CommonsUtil
-								.intValue(engineWebhookRetorno.getProcessos().getTotal_acoes_judicias_reu()) == 0)) {
-					// libera a consulta do crednet da PF
-					if (documentoAnalise.isPodeChamarSerasa()) {
-						if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
-							documentoAnalise.setLiberadoSerasa(true);
-							serasaService.requestSerasa(documentoAnalise, userService.userSistema());
+					engineWebhookRetorno.getConsultaAntecedenteCriminais();
+
+					if ((CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais())
+							|| CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais().getResult()
+									.get(0).getOnlineCertificates()))
+							&& (CommonsUtil.semValor(engineWebhookRetorno.getProcessos()) || CommonsUtil.intValue(
+									engineWebhookRetorno.getProcessos().getTotal_acoes_judicias_reu()) == 0)) {
+						// libera a consulta do crednet da PF
+						if (documentoAnalise.isPodeChamarSerasa()) {
+							if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
+								documentoAnalise.setLiberadoSerasa(true);
+								serasaService.requestSerasa(documentoAnalise, userService.userSistema());
+							}
+						}
+					} else {
+						if (!CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais().getResult())
+								&& !CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais()
+										.getResult().get(0).getOnlineCertificates())) {
+							documentoAnalise.addObservacao("Possui antecedentes criminais");
+						}
+						if (CommonsUtil.mesmoValor(
+								CommonsUtil.intValue(engineWebhookRetorno.getProcessos().getTotal_acoes_judicias_reu()),
+								0)) {
+							documentoAnalise.addObservacao("Possui Processos");
 						}
 					}
-				} else {
-					if (!CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais().getResult())
-							&& !CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais().getResult()
-									.get(0).getOnlineCertificates())) {
-						documentoAnalise.addObservacao("Possui antecedentes criminais");
-					}
-					if ( CommonsUtil.mesmoValor(CommonsUtil
-							.intValue(engineWebhookRetorno.getProcessos().getTotal_acoes_judicias_reu()) , 0)) {
-						documentoAnalise.addObservacao("Possui Processos");
-					}
+
+					documentoAnaliseDao.merge(documentoAnalise);
 				}
-
-				documentoAnaliseDao.merge(documentoAnalise);
-
 			}
 
 			return Response.status(200).entity("Processado").build();
