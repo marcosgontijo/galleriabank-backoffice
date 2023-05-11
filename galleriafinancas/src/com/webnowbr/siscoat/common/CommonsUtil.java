@@ -62,9 +62,12 @@ public class CommonsUtil {
 	/** Logger instance. */
 	private static final Log LOGGER = LogFactory.getLog(CommonsUtil.class);
 
-	public final static SecretKey CHAVE = Keys
+	public final static SecretKey CHAVE_WEBHOOK = Keys
 			.hmacShaKeyFor("MukS3mqD2ooKCddDumCGTtiNBVotiMFB".getBytes(StandardCharsets.UTF_8));
 
+	public final static SecretKey CHAVE_JWT = Keys
+			.hmacShaKeyFor("WbHBZA1-hz_k0MUtW-vjJKISQEzckIOuPpteM-kfWrHgtHa3sT2rYTKwga_h4gzL".getBytes(StandardCharsets.UTF_8));
+	
 	public static Double castAsDouble(Object value) {
 		return value == null ? null : doubleValue(value);
 	}

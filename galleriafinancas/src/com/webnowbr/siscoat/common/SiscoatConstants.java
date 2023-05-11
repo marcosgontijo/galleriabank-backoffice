@@ -1,3 +1,4 @@
+
 package com.webnowbr.siscoat.common;
 
 import java.math.BigDecimal;

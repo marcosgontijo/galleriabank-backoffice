@@ -46,7 +46,7 @@ public class ReaWebhook {
 
 		try {
 
-			Jwts.parserBuilder().setSigningKey(CommonsUtil.CHAVE).build().parseClaimsJws(token);
+			Jwts.parserBuilder().setSigningKey(CommonsUtil.CHAVE_WEBHOOK).build().parseClaimsJws(token);
 
 			System.out.println("---------------- REA webhookRetorno ---------------- ");
 			System.out.println(webhookRetorno);

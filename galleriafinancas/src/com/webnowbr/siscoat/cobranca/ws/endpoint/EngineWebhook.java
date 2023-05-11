@@ -34,7 +34,7 @@ public class EngineWebhook {
 
 		try {
 
-			Jwts.parserBuilder().setSigningKey(CommonsUtil.CHAVE).build().parseClaimsJws(token);
+			Jwts.parserBuilder().setSigningKey(CommonsUtil.CHAVE_WEBHOOK).build().parseClaimsJws(token);
 
 			System.out.println("---------------- Data Engine webhookRetorno ---------------- ");
 			System.out.println(webhookRetorno);
