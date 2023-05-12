@@ -17,6 +17,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.faces.application.FacesMessage;
@@ -30,6 +31,7 @@ import org.json.JSONObject;
 import com.starkbank.Balance;
 import com.starkbank.Project;
 import com.starkbank.Settings;
+import com.starkbank.Transfer;
 import com.starkbank.ellipticcurve.Ecdsa;
 import com.starkbank.ellipticcurve.PrivateKey;
 
@@ -38,9 +40,12 @@ import com.starkbank.ellipticcurve.PrivateKey;
 public class StarkBankAPI{
     
 	/*
-	 * VALIDAÇÃO DAS CHAVES DE SEGURANÇA
+	 * VALIDAÇÃO DAS CHAVES DE SEGURANÇA*/
     public static void main(String[] args){
+    	//transfer();
+    	getBalanceSDK();
     
+    /*
         String publicKeyPem = File.read("src/resource/publicKey.pem");
         byte[] signatureBin = File.readBytes("src/resource/signatureBinary.txt");
         String message = File.read("src/resource/message.txt");
@@ -53,8 +58,9 @@ public class StarkBankAPI{
         // Get verification status:
         boolean verified = Ecdsa.verify(message, signature, publicKey);
         System.out.println("Verification status: " + verified);
+        */
     }
-    */
+
     
     public void testeAutenticacaoManual() {
     	// Set your user Id
@@ -210,7 +216,7 @@ public class StarkBankAPI{
 		return null;
 	}
     
-    public void getBalanceSDK() {
+    public static void getBalanceSDK() {
     	String privateKeyContent = "-----BEGIN EC PARAMETERS-----\nBgUrgQQACg==\n-----END EC PARAMETERS-----\n-----BEGIN EC PRIVATE KEY-----\nMHQCAQEEIAKGZfO+lee7tdtcLGbCT++oGyUcmm/2Jdozg8D8mF4ioAcGBSuBBAAKoUQDQgAEUvi66NomZ1HeFqEwrXvnM/IjDQEJjVp6nYYojlOsTP1tYO34tW+bO1ypWln5lfkDNCcARQ710SmPPrLRHRbMAA==\n-----END EC PRIVATE KEY-----";
     	
     	Settings.language = "pt-BR";
@@ -219,12 +225,65 @@ public class StarkBankAPI{
 		try {
 			Project project = new Project(
 				    "production",
-				    "5465772415516672",
+				    //"5465772415516672", // financas
+				    "5092647223951360", // coban
 				    privateKeyContent
 				);
 			
 			balance = Balance.get(project);
 			System.out.println(balance);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
+    public static void transfer() {
+    	List<Transfer> transfers = new ArrayList<>();
+
+    	List<Transfer.Rule> rules = new ArrayList<>();
+    	
+    	Settings.language = "pt-BR";
+    	
+    	String privateKeyContent = "-----BEGIN EC PARAMETERS-----\nBgUrgQQACg==\n-----END EC PARAMETERS-----\n-----BEGIN EC PRIVATE KEY-----\nMHQCAQEEIAKGZfO+lee7tdtcLGbCT++oGyUcmm/2Jdozg8D8mF4ioAcGBSuBBAAKoUQDQgAEUvi66NomZ1HeFqEwrXvnM/IjDQEJjVp6nYYojlOsTP1tYO34tW+bO1ypWln5lfkDNCcARQ710SmPPrLRHRbMAA==\n-----END EC PRIVATE KEY-----";
+    	
+    	Project project;
+		try {
+			project = new Project(
+				    "production",
+				    //"5465772415516672", // financas
+				    "5092647223951360", // coban
+				    privateKeyContent
+				);
+			
+	    	Settings.user = project;
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+    	
+    	try {
+	    	rules.add(new Transfer.Rule("resendingLimit", 5));
+	
+	    	HashMap<String, Object> data = new HashMap<>();
+	    	data.put("amount", 100);
+	    	data.put("bankCode", "00000000");
+	    	data.put("branchCode", "1515-6");
+	    	data.put("accountNumber", "131094-1");
+	    	data.put("taxId", "34.787.885/0001-32");
+	    	data.put("name", "GALLERIA BANK");
+	    	data.put("externalId", "transactionTest002");
+	    	//data.put("scheduled", "2020-08-14");
+	    	//data.put("tags", new String[]{"daenerys", "invoice/1234"});
+	    	//data.put("rules", rules);
+	    	
+			transfers.add(new Transfer(data));
+			
+			transfers = Transfer.create(transfers);
+
+	    	for (Transfer transfer : transfers){
+	    	    System.out.println(transfer);
+	    	}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
