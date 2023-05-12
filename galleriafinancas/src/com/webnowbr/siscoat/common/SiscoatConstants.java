@@ -1,3 +1,4 @@
+
 package com.webnowbr.siscoat.common;
 
 import java.math.BigDecimal;
@@ -51,5 +52,6 @@ public class SiscoatConstants {
 	public static final List<Long> COMERCIAL_INTERNO = Arrays.asList(5l, 6l, 14l, 18l, 27l, 34l, 35l, 60l, 71l, 87l,
 			102l, 256l, 357l, 359l, 376l, 393l, 571l, 689l, 826l, 844l, 944l, 960l);
 	
-	public static final String  URL_SISCOAT_WEBHOOK = "https://backoffice.galleriabank.com.br/sistema/siscoat/rea/webhook?Token=";
+	public static final String  URL_SISCOAT_REA_WEBHOOK = "https://backoffice.galleriabank.com.br/sistema/siscoat/rea/webhook?Token=";
+	public static final String  URL_SISCOAT_ENGINE_WEBHOOK = "https://backoffice.galleriabank.com.br/sistema/siscoat/engine/webhook?Token=";
 }

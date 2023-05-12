@@ -46,11 +46,11 @@ public class ReaWebhook {
 
 		try {
 
-			Jwts.parserBuilder().setSigningKey(CommonsUtil.CHAVE).build().parseClaimsJws(token);
+			Jwts.parserBuilder().setSigningKey(CommonsUtil.CHAVE_WEBHOOK).build().parseClaimsJws(token);
 
-			System.out.println("---------------- webhookRetorno ---------------- ");
+			System.out.println("---------------- REA webhookRetorno ---------------- ");
 			System.out.println(webhookRetorno);
-			System.out.println("---------------- webhookRetorno ---------------- ");
+			System.out.println("---------------- REA webhookRetorno ---------------- ");
 			ReaWebhookRetorno reaWebhookRetorno = GsonUtil.fromJson(webhookRetorno, ReaWebhookRetorno.class);
 
 			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();

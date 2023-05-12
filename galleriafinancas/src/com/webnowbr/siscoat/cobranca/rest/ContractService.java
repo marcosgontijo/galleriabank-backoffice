@@ -26,6 +26,8 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
@@ -46,6 +48,8 @@ import com.webnowbr.siscoat.security.LoginBean;
 
 @Path("/services")
 public class ContractService {
+	
+	private final Logger logger = LoggerFactory.getLogger(ContractService.class);
 	
 	private ContratoCobranca objetoContratoCobranca;
 	private List<ContratoCobranca> objetoContratoCobrancaList;
@@ -96,15 +100,17 @@ public class ContractService {
 	@Path("/CriarOperacao")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response criarOperacao(String operacaoData, @HeaderParam("Token") String token, @HeaderParam("Authorization") String authorization) { 
-		System.out.println("[Galleria Bank] Criar Operação - Authorization: " + authorization);
+		System.out.println("Contract Service - Criar Operacao - Authorization: {} "+ authorization);
 		
 		if(verificarAutenticacao(authorization)) {
 			try {
 				JSONObject contratoAPP = new JSONObject(operacaoData);
+				System.out.println("Inicio Contract Service - criarOperacao");
 
 				clearCriacaoContrato();	
 				
 				JSONObject contratoAPPResponsavel = contratoAPP.getJSONObject("responsavel");
+				System.out.println("Contract Service - Criar Operacao - Codigo do Responsavel: {} "+ contratoAPPResponsavel.getString("codigoResponsavel"));
 				
 				if (contratoAPPResponsavel.has("codigoResponsavel")) {
 					ResponsavelDao rDao = new ResponsavelDao();
@@ -117,9 +123,11 @@ public class ContractService {
 						this.objetoContratoCobranca.setResponsavel(responsaveis.get(0));
 						
 						if (contratoAPP.has("numeroContrato")) {
+							System.out.println("Contract Service - Criar Operacao - Numero do Contrato: {} "+ contratoAPP.getString("numeroContrato"));
 							this.objetoContratoCobranca.setNumeroContrato(contratoAPP.getString("numeroContrato"));	
 						} else {
 							this.objetoContratoCobranca.setNumeroContrato(geraNumeroContrato());
+							System.out.println("Contract Service - Criar Operacao - Numero do Contrato: {} "+ this.objetoContratoCobranca.getNumeroContrato());
 						}
 						
 						this.objetoContratoCobranca.setTipoOperacao(contratoAPP.has("tipoOperacao") ? contratoAPP.getString("tipoOperacao") : null);
@@ -132,6 +140,7 @@ public class ContractService {
 						this.objetoContratoCobranca.setBrutoLiquidoCobrarComissaoCliente(contratoAPP.getString("brutoLiquidoCobrarComissaoCliente"));
 						
 						this.objetoContratoCobranca.setQuantoPrecisa(new BigDecimal(contratoAPP.getDouble("quantoPrecisa")));
+						System.out.println("Contract Service - Criar Operacao - Imovel QuantoPrecisa: {} "+ contratoAPP.getDouble("quantoPrecisa"));
 						this.objetoContratoCobranca.setObservacao(contratoAPP.has("observacao") ? contratoAPP.getString("observacao") : null);
 						
 						this.objetoContratoCobranca.setPagadorDonoGarantia(contratoAPP.has("pagadorDonoGarantia") ? contratoAPP.getBoolean("pagadorDonoGarantia") : false);
@@ -170,14 +179,17 @@ public class ContractService {
 						PagadorRecebedorDao pagadorDao = new PagadorRecebedorDao();
 						
 						if (contratoAPPPagador.has("id")) {
+							System.out.println("Contract Service - Criar Operacao - Pagador ID: {} "+ contratoAPPPagador.getLong("id"));
 							this.objetoPagador = pagadorDao.findById(contratoAPPPagador.getLong("id"));
 						} else {
 							this.objetoPagador.setId(-1);
 							
 							if(contratoAPPPagador.has("cpfCnpj")) {
 								if(contratoAPPPagador.getString("cpfCnpj").length() <= 14) {
+									System.out.println("Contract Service - Criar Operacao - Novo Pagador CPF: {} "+ contratoAPPPagador.getString("cpfCnpj"));
 									this.objetoPagador.setCpf(contratoAPPPagador.getString("cpfCnpj"));
 								}else if(contratoAPPPagador.getString("cpfCnpj").length() >= 15) {
+									System.out.println("Contract Service - Criar Operacao - Novo Pagador CNPJ: {} "+ contratoAPPPagador.getString("cpfCnpj"));
 									this.objetoPagador.setCnpj(contratoAPPPagador.getString("cpfCnpj"));
 								}
 							}
@@ -229,11 +241,13 @@ public class ContractService {
 						} else {
 							this.objetoImovelCobranca.setId(-1);
 							this.objetoImovelCobranca.setCep(contratoAPPImovel.has("cep") ? contratoAPPImovel.getString("cep") : null);
+							System.out.println("Contract Service - Criar Operacao - Imovel CEP: {} "+ contratoAPPImovel.getString("cep"));
 							if(contratoAPPImovel.has("numero")) {
 								this.objetoImovelCobranca.setEndereco(contratoAPPImovel.getString("endereco") + ", " + contratoAPPImovel.getString("numero"));
 							}else {
 								this.objetoImovelCobranca.setEndereco(contratoAPPImovel.getString("endereco"));									
 							}
+							System.out.println("Contract Service - Criar Operacao - Imovel Endereço: {} "+ contratoAPPImovel.getString("endereco"));
 							this.objetoImovelCobranca.setComplemento(contratoAPPImovel.has("complemento") ? contratoAPPImovel.getString("complemento") : null);
 							this.objetoImovelCobranca.setCidade(contratoAPPImovel.has("cidade") ? contratoAPPImovel.getString("cidade") : null);
 							this.objetoImovelCobranca.setBairro(contratoAPPImovel.has("bairro") ? contratoAPPImovel.getString("bairro") : null);
@@ -248,7 +262,8 @@ public class ContractService {
 							this.objetoImovelCobranca.setComprovanteFotosImovelCheckList(contratoAPPImovel.has("comprovanteFotosImovelCheckList") ? contratoAPPImovel.getBoolean("comprovanteFotosImovelCheckList") : false);
 							this.objetoImovelCobranca.setComprovanteIptuImovelCheckList(contratoAPPImovel.has("comprovanteIptuImovelCheckList") ? contratoAPPImovel.getBoolean("comprovanteIptuImovelCheckList") : false);
 							
-							this.objetoImovelCobranca.setValoEstimado(new BigDecimal(contratoAPPImovel.has("valoEstimado") ? contratoAPPImovel.getDouble("valoEstimado") : null));								
+							this.objetoImovelCobranca.setValoEstimado(new BigDecimal(contratoAPPImovel.has("valoEstimado") ? contratoAPPImovel.getDouble("valoEstimado") : null));
+							System.out.println("Contract Service - Criar Operacao - Imovel ValoEstimado: {} "+ contratoAPPImovel.getDouble("valoEstimado"));
 						}
 						
 						this.objetoContratoCobranca.setImovel(this.objetoImovelCobranca);
@@ -258,15 +273,16 @@ public class ContractService {
 						this.objetoContratoCobranca.setId(idContratoCobranca);
 						criarEditarPagadoresAdicionais(contratoAPP);
 						
-						String message = "{\"retorno\": \"[Galleria Bank] Operação criada com sucesso!!!\"}";
-			
+						String message = "{\"retorno\": \"Contract Service - Criar Operação - Operação criada com sucesso !!!\"}";
+						System.out.println("Fim Contract Service - Criar Operacao - Operacao criada com sucesso !!!");
 					    return Response
 					      .status(Response.Status.OK)
 					      .entity(message)
 					      .type(MediaType.APPLICATION_JSON)
 					      .build();
 					} else {
-						String message = "{\"retorno\": \"[Galleria Bank] Código do Responsável não encontrato!!!\"}";
+						String message = "{\"retorno\": \"[Galleria Bank] Código do Responsável não encontrato !!!\"}";
+						logger.warn("Contract Service - Criar Operacao - Código do Responsável não encontrato !!!");
 						
 						return Response
 							      .status(Response.Status.FORBIDDEN)
@@ -276,6 +292,7 @@ public class ContractService {
 					}
 				} else {
 					String message = "{\"retorno\": \"R11 - O Código do Responsável não foi encontrado.\"}";
+					logger.warn("Contract Service - Criar Operacao - R11 - O Código do Responsável não foi encontrado.");
 					
 					return Response
 						      .status(Response.Status.FORBIDDEN)
@@ -284,15 +301,17 @@ public class ContractService {
 						      .build();		
 				}
 			} catch (org.json.JSONException exception) {
+				logger.warn("Contract Service - Criar Operacao - O campo " + exception.getMessage() + " não foi encontrado no payload recebido!!!");
 				return Response
 					      .status(Response.Status.BAD_REQUEST)
-					      .entity("O campo " + exception.getMessage() + " não foi encontrado no payload recebido!!!")
+					      .entity("O campo " + exception.getMessage() + " não foi encontrado no payload recebido !!!")
 					      .type(MediaType.APPLICATION_JSON)
 					      .build();
 			}
 			
 		}else {
-			String message = "{\"retorno\": \"[Galleria Bank] Authentication Failed!!!\"}";
+			String message = "{\"retorno\": \"[Galleria Bank] Authentication Failed !!!\"}";
+			logger.warn("Contract Service - Criar Operacao - Authentication Failed !!!");
 			
 			return Response
 				      .status(Response.Status.FORBIDDEN)
@@ -306,11 +325,12 @@ public class ContractService {
 	@Path("/EditarOperacao")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response editarOperacao(String operacaoData, @HeaderParam("Token") String token, @HeaderParam("Authorization") String authorization) { 
-		System.out.println("[Galleria Bank] Editar Operação - Authorization: " + authorization);
+		System.out.println("[Galleria Bank] Editar Operação - Authorization: "+ authorization);
 
 		if(verificarAutenticacao(authorization)) {
 			try {
 				JSONObject contratoAPP = new JSONObject(operacaoData);
+				System.out.println("Inicio Contract Service - Editar Operacao");
 				
 				clearEditarContrato();
 				
@@ -320,6 +340,7 @@ public class ContractService {
 					this.objetoContratoCobrancaList = contratoCobrancaDao.findByFilter("numeroContrato", contratoAPP.getString("numeroContrato"));
 					if(this.objetoContratoCobrancaList.isEmpty()) {
 						String message = "{\"retorno\": \"[Galleria Bank] Numero do Contrato não foi encontrato!!!\"}";
+						logger.warn("Contract Service - Criar Operacao - Numero do Contrato não foi encontrato !!!");
 						return Response
 							      .status(Response.Status.FORBIDDEN)
 							      .entity(message)
@@ -498,7 +519,7 @@ public class ContractService {
 							criarEditarPagadoresAdicionais(contratoAPP);
 							
 							String message = "{\"retorno\": \"[Galleria Bank] Operação editada com sucesso!!!\"}";
-							
+							System.out.println("Fim Contract Service - Editar Operacao - Operacao editada com sucesso !!!");
 							return Response
 									.status(Response.Status.OK)
 									.entity(message)
@@ -506,7 +527,7 @@ public class ContractService {
 									.build();
 						}else {
 							String message = "{\"retorno\": \"R11 - O Código do Responsável não foi encontrado.\"}";
-							
+							logger.warn("Contract Service - Criar Operacao - R11 - O Código do Responsável não foi encontrado.");
 							return Response
 								      .status(Response.Status.FORBIDDEN)
 								      .entity(message)
@@ -516,7 +537,8 @@ public class ContractService {
 							
 					}
 				} else {
-					String message = "{\"retorno\": \"[Galleria Bank] Numero do Contrato não foi encontrato!!!\"}";
+					String message = "{\"retorno\": \"[Galleria Bank] Numero do Contrato não foi encontrato !!!\"}";
+					logger.warn("Contract Service - Criar Operacao - Numero do Contrato não foi encontrato !!!");
 					return Response
 						      .status(Response.Status.FORBIDDEN)
 						      .entity(message)
@@ -525,6 +547,7 @@ public class ContractService {
 				}
 
 			} catch (Exception exception) {
+				logger.warn("Contract Service - Editar Operacao - O campo " + exception.getMessage() + " não foi encontrado no payload recebido!!!");
 				return Response
 					      .status(Response.Status.BAD_REQUEST)
 					      .entity("O campo " + exception.getMessage() + " não foi encontrado no payload recebido!!!")
@@ -534,6 +557,7 @@ public class ContractService {
 			
 		}else {
 			String message = "{\"retorno\": \"[Galleria Bank] Authentication Failed!!!\"}";
+			logger.warn("Contract Service - Editar Operacao - Authentication Failed !!!");
 			
 			return Response
 				      .status(Response.Status.FORBIDDEN)

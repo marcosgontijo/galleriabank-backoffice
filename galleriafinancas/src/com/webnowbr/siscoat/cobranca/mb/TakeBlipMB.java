@@ -82,6 +82,11 @@ public class TakeBlipMB {
 	 	Olá {{1}}, contrato {{2}} do cliente {{3}} está aguardando sua validação de documentos
 	 */
 	
+	// aprovado_comite_ag_doc
+	/*
+	 	Olá {{1}}, contrato {{2}} do cliente {{3}} foi aprovado pelo comitê e está pronto para fazer a análise dos documentos
+	 */
+	
 	// aprovado_comite_ag_ccb
 	/*
 	 	Olá {{1}}, contrato {{2}} do cliente {{3}} foi aprovado pelo comitê e está pronto para fazer a CCB

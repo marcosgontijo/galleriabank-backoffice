@@ -915,6 +915,13 @@
 											listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
 											</p:selectBooleanButton>
 									</p:column>
+									<p:column headerText="Liberar Serasa">
+										<p:selectBooleanButton value="#{fileAnalise.liberadoSerasa}"
+											 onLabel="Sim" offLabel="Não" style="width:6rem" >
+										<p:ajax  event="change"
+											listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
+											</p:selectBooleanButton>
+									</p:column>
 
 									<p:column style="text-align: center;"
 										headerText="Identificação" filterBy="#{fileAnalise.identificacao}"
