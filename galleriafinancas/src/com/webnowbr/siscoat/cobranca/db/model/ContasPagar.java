@@ -64,18 +64,18 @@ public class ContasPagar implements Serializable {
 		listaNome.add("Cartório");
 		listaNome.add("Certidão");
 		listaNome.add("Condomínio");
-		listaNome.add("Crédito Cliente");
-		listaNome.add("Devolução");
-		listaNome.add("Honorário");
+		listaNome.add("Crédito CCI");
+		listaNome.add("Transferência");
+		listaNome.add("Certidão de Casamento");
 		listaNome.add("IPTU");
 		listaNome.add("IQ");
 		listaNome.add("ITBI");
 		listaNome.add("Laudo");
 		listaNome.add("Processo");
-		listaNome.add("Transferência");
-		listaNome.add("Certidão de Casamento");
+		listaNome.add("Devolução");
+		listaNome.add("Honorário");
 		listaNome.add("Laudo De Avaliação");
-		listaNome.add("Crédito CCI");
+		listaNome.add("Crédito Cliente");
 		
 		return listaNome.stream().filter(t -> t.toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());
 	}

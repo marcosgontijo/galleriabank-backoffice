@@ -1690,8 +1690,7 @@
 										<f:selectItem itemValue="TED" itemLabel="TED" />
 										<f:selectItem itemValue="Pix" itemLabel="Pix" />
 										<f:selectItem itemValue="Boleto" itemLabel="Boleto" />
-										<p:ajax event="change" 
-											update="tedGrid" />
+										<p:ajax event="change"  update="tedGrid" />
 									</p:selectOneMenu>
 								</h:panelGrid>
 								<h:panelGroup id="tedGrid">
@@ -1706,7 +1705,7 @@
 											<p:outputLabel value="C/C: " styleClass="labelBold"
 												style="font-weight: bold; font-size: 18px;" />
 											<p:inputText value="#{ccbMB.objetoCcb.CCBCC}" />
-											<p:outputLabel value="CNPJ: " styleClass="labelBold"
+											<p:outputLabel value="CPF/CNPJ: " styleClass="labelBold"
 												style="font-weight: bold; font-size: 18px;" />
 											<p:inputText value="#{ccbMB.objetoCcb.CCBCNPJ}" />
 											<p:outputLabel value="Nome: " styleClass="labelBold"
@@ -1732,7 +1731,7 @@
 											<p:outputLabel value="C/C: " styleClass="labelBold"
 												style="font-weight: bold; font-size: 18px;" />
 											<p:inputText value="#{ccbMB.objetoCcb.intermediacaoCC}" />
-											<p:outputLabel value="CNPJ: " styleClass="labelBold"
+											<p:outputLabel value="CPF/CNPJ: " styleClass="labelBold"
 												style="font-weight: bold; font-size: 18px;" />
 											<p:inputText value="#{ccbMB.objetoCcb.intermediacaoCNPJ}" />
 											<p:outputLabel value="Nome: " styleClass="labelBold"

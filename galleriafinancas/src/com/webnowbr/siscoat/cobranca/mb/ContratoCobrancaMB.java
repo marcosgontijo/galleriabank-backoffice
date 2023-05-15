@@ -2327,7 +2327,9 @@ public class ContratoCobrancaMB {
 				if(myResponse.has("logradouro")) {
 					this.objetoImovelCobranca.setEndereco(myResponse.get("logradouro").toString());
 				}			
-				this.objetoImovelCobranca.setBairro(myResponse.get("bairro").toString());
+				if(myResponse.has("bairro")) {
+					this.objetoImovelCobranca.setBairro(myResponse.get("bairro").toString());
+				}
 				this.objetoImovelCobranca.setCidade(myResponse.get("localidade").toString());
 				this.objetoImovelCobranca.setEstado(myResponse.get("uf").toString());
 			}
@@ -8682,14 +8684,18 @@ public class ContratoCobrancaMB {
 			this.objetoContratoCobranca.setTemSeguro(true);
 			this.objetoContratoCobranca.setTemSeguroDFI(true);
 			this.objetoContratoCobranca.setTemSeguroMIP(true);
-			this.objetoContratoCobranca.setValorImovel(this.objetoContratoCobranca.getValorMercadoImovel());
+			if(CommonsUtil.semValor(this.objetoContratoCobranca.getValorImovel())) {
+				this.objetoContratoCobranca.setValorImovel(this.objetoContratoCobranca.getValorMercadoImovel());
+			}
 			if(!CommonsUtil.semValor(this.objetoContratoCobranca.getPrazoMaxAprovado())) {
 				this.qtdeParcelas = this.objetoContratoCobranca.getPrazoMaxAprovado().toString();
 			}
 			if(CommonsUtil.semValor(this.objetoContratoCobranca.getValorCCB())) {
 				this.objetoContratoCobranca.setValorCCB(this.objetoContratoCobranca.getValorAprovadoComite());
 			}
-			this.objetoContratoCobranca.setTxJurosParcelas(this.objetoContratoCobranca.getTaxaAprovada());
+			if(CommonsUtil.semValor(this.objetoContratoCobranca.getTxJurosParcelas())) {
+				this.objetoContratoCobranca.setTxJurosParcelas(this.objetoContratoCobranca.getTaxaAprovada());
+			}
 		}
 
 		
