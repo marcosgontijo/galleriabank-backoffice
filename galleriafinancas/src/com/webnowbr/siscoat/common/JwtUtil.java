@@ -34,8 +34,8 @@ public class JwtUtil {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
-		}
 
+		}
 		return jwtToken;
 	}
 }
