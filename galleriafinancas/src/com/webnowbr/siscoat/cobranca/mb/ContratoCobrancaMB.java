@@ -156,8 +156,8 @@ import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
+import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.cobranca.service.SerasaService;
-import com.webnowbr.siscoat.cobranca.vo.ExtratoVO;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
@@ -28013,12 +28013,12 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 	}
 	
 	public void executarConsultasAnaliseDocumento() {
-
-
-
+		
 		DocketService docketService = new DocketService();
 
 		SerasaService serasaService = new SerasaService();
+		
+		NetrinService netrinService = new NetrinService();
 
 		for (DocumentoAnalise documentoAnalise : this.listaDocumentoAnalise.stream().filter(d -> d.isLiberadoAnalise())
 				.collect(Collectors.toList())) {
@@ -28035,6 +28035,12 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			if (documentoAnalise.isPodeChamarSerasa() || documentoAnalise.isLiberadoSerasa() ) {	
 				if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
 					serasaService.requestSerasa(documentoAnalise,  loginBean.getUsuarioLogado());
+				}
+			}	
+			
+			if (documentoAnalise.isPodeChamarCenprot() || documentoAnalise.isLiberadoCenprot() ) {	
+				if (CommonsUtil.semValor(documentoAnalise.getRetornoCenprot())) {
+					netrinService.requestCenprot(documentoAnalise);
 				}
 			}	
 

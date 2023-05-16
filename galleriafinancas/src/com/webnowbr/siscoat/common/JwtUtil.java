@@ -26,7 +26,7 @@ public class JwtUtil {
 
 			jwtToken = Jwts.builder().setClaims(claims)
 					.setExpiration(
-							Date.from(LocalDateTime.now().plusDays(1L).atZone(ZoneId.systemDefault()).toInstant()))
+							Date.from(LocalDateTime.now().plusDays(5L).atZone(ZoneId.systemDefault()).toInstant()))
 					.signWith(CommonsUtil.CHAVE_WEBHOOK, SignatureAlgorithm.HS256).compact();
 			// .compact();
 
