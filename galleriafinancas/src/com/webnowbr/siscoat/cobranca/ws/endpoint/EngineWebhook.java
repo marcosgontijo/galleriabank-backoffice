@@ -36,9 +36,9 @@ public class EngineWebhook {
 
 			Jwts.parserBuilder().setSigningKey(CommonsUtil.CHAVE_WEBHOOK).build().parseClaimsJws(token);
 
-			System.out.println("---------------- Data Engine webhookRetorno ---------------- ");
+			/*System.out.println("---------------- Data Engine webhookRetorno ---------------- ");
 			System.out.println(webhookRetorno);
-			System.out.println("---------------- Data Engine webhookRetorno ---------------- ");
+			System.out.println("---------------- Data Engine webhookRetorno ---------------- ");*/
 			EngineRetorno engineWebhookRetorno = GsonUtil.fromJson(webhookRetorno, EngineRetorno.class);
 
 			DataEngineDao dataEngineDao = new DataEngineDao();
@@ -97,6 +97,9 @@ public class EngineWebhook {
 			eJwt.printStackTrace();
 			return Response.status(500).entity("Token Expirado").build();
 		} catch (Exception e) {
+			System.out.println("---------------- Data Engine webhookRetorno ---------------- ");
+			System.out.println(webhookRetorno);
+			System.out.println("---------------- Data Engine webhookRetorno ---------------- ");
 			e.printStackTrace();
 			return Response.status(500).entity("Erro interno").build();
 		}
