@@ -61,19 +61,22 @@ public class ContasPagar implements Serializable {
 	 public List<String> contaPagarDescricaoLista(String query){
 		String queryLowerCase = query.toLowerCase();
 		List<String> listaNome = new ArrayList<>();
-		listaNome.add("Cartório");
-		listaNome.add("Certidão");
-		listaNome.add("Condomínio");
 		listaNome.add("Crédito CCI");
 		listaNome.add("Transferência");
-		listaNome.add("Certidão de Casamento");
-		listaNome.add("IPTU");
-		listaNome.add("IQ");
 		listaNome.add("ITBI");
+		listaNome.add("Cartório");
+		listaNome.add("Certidão");
+		listaNome.add("Certidão de Casamento");
+		listaNome.add("Honorário");
+		listaNome.add("Devolução");	
+		listaNome.add("IPTU");
+		listaNome.add("Condomínio");
+		listaNome.add("IQ");
 		listaNome.add("Laudo");
 		listaNome.add("Processo");
-		listaNome.add("Devolução");
-		listaNome.add("Honorário");
+		listaNome.add("Averbação");
+		listaNome.add("Comissão");
+		listaNome.add("Registro");
 		listaNome.add("Laudo De Avaliação");
 		listaNome.add("Crédito Cliente");
 		

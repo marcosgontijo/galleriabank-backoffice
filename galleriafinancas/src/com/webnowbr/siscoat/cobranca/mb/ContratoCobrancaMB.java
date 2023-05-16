@@ -142,6 +142,7 @@ import com.webnowbr.siscoat.cobranca.db.model.QuitacaoParcelasPDF;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.db.model.Segurado;
 import com.webnowbr.siscoat.cobranca.db.op.CcbDao;
+import com.webnowbr.siscoat.cobranca.db.op.CcbProcessosJudiciaisDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
@@ -4328,6 +4329,7 @@ public class ContratoCobrancaMB {
 					Responsavel rCcb1 = new Responsavel();
 					Responsavel rCcb2 = new Responsavel();
 					Responsavel rCcb3 = new Responsavel();
+					Responsavel rCcb4 = new Responsavel();
 		
 					// Tati
 					rCcb1 = rDao.findById((long) 643);
@@ -4345,17 +4347,17 @@ public class ContratoCobrancaMB {
 					this.objetoContratoCobranca.getNumeroContrato(),
 					"", "");
 					
-					// Mariana TROCAR PARA Beatriz
-					/*rCcb3 = rDao.findById((long) 1126);
+					// Beatriz
+					rCcb3 = rDao.findById((long) 1477);
 					takeBlipMB.sendWhatsAppMessage(rCcb3,
-					"aprovado_comite_ag_ccb", 
-					this.objetoContratoCobranca.getPagador().getNome(),
-					this.objetoContratoCobranca.getNumeroContrato(),
-					"", "");*/
+							"aprovado_comite_ag_ccb", 
+							this.objetoContratoCobranca.getPagador().getNome(),
+							this.objetoContratoCobranca.getNumeroContrato(),
+							"", "");
 					
 					// Alice
-					rCcb3 = rDao.findById((long) 619);
-					takeBlipMB.sendWhatsAppMessage(rCcb3,
+					rCcb4 = rDao.findById((long) 619);
+					takeBlipMB.sendWhatsAppMessage(rCcb4,
 							"aprovado_comite_ag_ccb", 
 							this.objetoContratoCobranca.getPagador().getNome(),
 							this.objetoContratoCobranca.getNumeroContrato(),
@@ -18921,6 +18923,11 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		pagadorProcesso = new PagadorRecebedor();
 	}
 	
+	public void clearProcessodialog(PagadorRecebedor pessoa) {
+		processoSelecionado = new CcbProcessosJudiciais();
+		processoSelecionado.setPagador(pessoa);
+	}
+	
 	public void selectedTipoPagadorProcesso() {
 		this.pagadorProcesso = new PagadorRecebedor();
 	}
@@ -18958,15 +18965,16 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		} else {
 			pDao.create(pagadorProcesso);
 		}
-		processoSelecionado.setPagador(pagadorProcesso);
-		if(objetoContratoCobranca.getListProcessos().contains(processoSelecionado)) {
-			processoSelecionado = new CcbProcessosJudiciais();
+		
+		if(CommonsUtil.semValor(pessoasProcessos)) {
+			pessoasProcessos = new ArrayList<PagadorRecebedor>();
 		}
-		pagadorProcesso = new PagadorRecebedor();
-	}
-	
-	public void closeDialogPagadorProcessos() {
-		processoSelecionado = new CcbProcessosJudiciais();
+		pessoasProcessos.add(pagadorProcesso);
+		
+		//processoSelecionado.setPagador(pagadorProcesso);
+		//if(objetoContratoCobranca.getListProcessos().contains(processoSelecionado)) {
+		//	processoSelecionado = new CcbProcessosJudiciais();
+		//}
 		pagadorProcesso = new PagadorRecebedor();
 	}
 	
@@ -18984,7 +18992,13 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 				}
 			}
 		}
+		listarProcessos();
+		calcularValorTotalProcessos();
+	}
+	
+	public void listarProcessos() {
 		for (PagadorRecebedor pagador : pessoasProcessos) {
+			pagador.setProcessos(new ArrayList<CcbProcessosJudiciais>());
 			pagador.setValorProcessos(BigDecimal.ZERO);
 			for (CcbProcessosJudiciais processo : this.objetoContratoCobranca.getListProcessos()) {
 				if(CommonsUtil.semValor(processo.getPagador())) {
@@ -19015,14 +19029,25 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		processoSelecionado.getContaPagar().setResponsavel(objetoContratoCobranca.getResponsavel());
 		
 		processoSelecionado.setContrato(objetoContratoCobranca);
+		
+		if(!CommonsUtil.semValor(processoSelecionado.getContaPagar())) {
+			ContasPagarDao cpDao  = new ContasPagarDao();
+			if(processoSelecionado.getContaPagar().getId() <= 0) {
+				cpDao.create(processoSelecionado.getContaPagar());
+			}
+		}
+		CcbProcessosJudiciaisDao ccbProcessosJudiciaisDao = new CcbProcessosJudiciaisDao();
+		ccbProcessosJudiciaisDao.create(processoSelecionado);
 		objetoContratoCobranca.getListProcessos().add(processoSelecionado);
 		
-		listarPessoas();
+		listarProcessos();
 		calcularValorTotalProcessos();
 		processoSelecionado = new CcbProcessosJudiciais();
 	}
 	
 	public void removeProcesso(CcbProcessosJudiciais processo) {
+		PagadorRecebedor pessoa = processo.getPagador();
+		pessoa.getProcessos().remove(processo);
 		objetoContratoCobranca.getListProcessos().remove(processo);
 		
 		if(!CommonsUtil.semValor(this.objetoCcb)) {
@@ -19030,8 +19055,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 				this.objetoCcb.getDespesasAnexo2().remove(processo);
 			}
 		}
-		
-		listarPessoas();
+		listarProcessos();
 		calcularValorTotalProcessos();
 	}
 
@@ -30171,6 +30195,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			FileOutputStream fos;
 			try {
 				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
+				System.out.println(event.getFile().getFileName());
 				fos.write(conteudo);
 				fos.close();
 			} catch (FileNotFoundException e) {
