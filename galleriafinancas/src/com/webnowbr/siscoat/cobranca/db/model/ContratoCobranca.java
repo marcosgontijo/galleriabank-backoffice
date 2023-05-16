@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -13,11 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.collections.ArrayStack;
-
 import com.webnowbr.siscoat.common.CommonsUtil;
-
-import javassist.expr.NewArray;
 
 public class ContratoCobranca implements Serializable {
 
@@ -767,6 +762,7 @@ public class ContratoCobranca implements Serializable {
 	private String nomeContatoAgendaLaudoAvaliacao;
 	private String contatoAgendamendoLaudoAvaliacao;
 	private String observacaoContatoAgendaLaudoAvaliacao;
+	private String comentarioContatoAgendaLaudoAvaliacao;
 
 	private String avaliacaoLaudo;
 	private String avaliacaoLaudoObservacao;
@@ -5239,6 +5235,14 @@ public class ContratoCobranca implements Serializable {
 
 	public void setObservacaoContatoAgendaLaudoAvaliacao(String observacaoContatoAgendaLaudoAvaliacao) {
 		this.observacaoContatoAgendaLaudoAvaliacao = observacaoContatoAgendaLaudoAvaliacao;
+	}
+
+	public String getComentarioContatoAgendaLaudoAvaliacao() {
+		return comentarioContatoAgendaLaudoAvaliacao;
+	}
+
+	public void setComentarioContatoAgendaLaudoAvaliacao(String comentarioContatoAgendaLaudoAvaliacao) {
+		this.comentarioContatoAgendaLaudoAvaliacao = comentarioContatoAgendaLaudoAvaliacao;
 	}
 
 	public Date getPedidoLaudoData() {
