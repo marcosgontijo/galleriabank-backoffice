@@ -48,9 +48,9 @@ public class ReaWebhook {
 
 			Jwts.parserBuilder().setSigningKey(CommonsUtil.CHAVE_WEBHOOK).build().parseClaimsJws(token);
 
-			System.out.println("---------------- REA webhookRetorno ---------------- ");
+			/*System.out.println("---------------- REA webhookRetorno ---------------- ");
 			System.out.println(webhookRetorno);
-			System.out.println("---------------- REA webhookRetorno ---------------- ");
+			System.out.println("---------------- REA webhookRetorno ---------------- ");*/
 			ReaWebhookRetorno reaWebhookRetorno = GsonUtil.fromJson(webhookRetorno, ReaWebhookRetorno.class);
 
 			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
@@ -99,6 +99,9 @@ public class ReaWebhook {
 			eJwt.printStackTrace();
 			return Response.status(500).entity("Token Expirado").build();
 		} catch (Exception e) {
+			System.out.println("---------------- REA webhookRetorno ---------------- ");
+			System.out.println(webhookRetorno);
+			System.out.println("---------------- REA webhookRetorno ---------------- ");
 			e.printStackTrace();
 			return Response.status(500).entity("Erro interno").build();
 		}

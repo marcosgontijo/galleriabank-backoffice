@@ -786,6 +786,10 @@ public class KobanaMB {
 			jsonBoleto.put("bank_billet_account_id", 9251);
 		}
 
+		if (contrato.getEmpresa().equals("CRI 3")) {
+			jsonBoleto.put("bank_billet_account_id", 9614);
+		}
+
 	    /*
 	    Número do Contrato
 	     */
@@ -998,7 +1002,7 @@ public class KobanaMB {
 		}
 		
 		if (!contrato.getEmpresa().equals("GALLERIA FINANÇAS SECURITIZADORA S.A.") && !contrato.getEmpresa().equals("FIDC GALLERIA")
-				&& !contrato.getEmpresa().equals("CRI 1") && !contrato.getEmpresa().equals("CRI 2")) {
+				&& !contrato.getEmpresa().equals("CRI 1") && !contrato.getEmpresa().equals("CRI 2") && !contrato.getEmpresa().equals("CRI 3")) {
 			retorno = true;
 			
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
@@ -1170,6 +1174,9 @@ public class KobanaMB {
 			jsonBoleto.put("bank_billet_account_id", 9251);
 		}
 
+		if (contrato.getEmpresa().equals("CRI 3")) {
+			jsonBoleto.put("bank_billet_account_id", 9614);
+		}
 	    /*
 	    Número do Contrato
 	     */

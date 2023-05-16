@@ -66,7 +66,12 @@
 		</property>		
 		<property name="retornoSerasa" type="java.lang.String"  length="65000">
 			<column name="retornoSerasa" />
+		</property>	
+		<property name="retornoCenprot" type="java.lang.String"  length="65000">
+			<column name="retornoCenprot" />
 		</property>
+		
+		
 		<property name="motivoAnalise" type="java.lang.String"  length="65000">
 			<column name="motivoAnalise" />
 		</property>

@@ -1901,9 +1901,9 @@ public class BRLTrustMB {
 						}
 					}
 					
-					System.out.println("contrato: " + contrato.getNumeroContrato());
-					System.out.println("cessao: " + contrato.getTxJurosCessao());
-					System.out.println("juros parcela: " + contrato.getTxJurosParcelas());
+					//System.out.println("contrato: " + contrato.getNumeroContrato());
+					//System.out.println("cessao: " + contrato.getTxJurosCessao());
+					//System.out.println("juros parcela: " + contrato.getTxJurosParcelas());
 					
 					if (contrato != null) {
 						if (contrato.getTxJurosCessao() != null) {
@@ -2106,9 +2106,9 @@ public class BRLTrustMB {
 				}
 			}
 			
-			System.out.println("contrato: " + parcela.getContrato().getNumeroContrato());
-			System.out.println("cessao: " + parcela.getContrato().getTxJurosCessao());
-			System.out.println("juros parcela: " + parcela.getContrato().getTxJurosParcelas());
+			//System.out.println("contrato: " + parcela.getContrato().getNumeroContrato());
+			//System.out.println("cessao: " + parcela.getContrato().getTxJurosCessao());
+			//System.out.println("juros parcela: " + parcela.getContrato().getTxJurosParcelas());
 			
 			if (parcela.getContrato() != null) {
 				if (parcela.getContrato().getTxJurosCessao() != null) {

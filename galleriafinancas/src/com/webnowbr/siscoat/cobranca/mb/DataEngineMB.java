@@ -209,6 +209,11 @@ public class DataEngineMB {
 	}
 
 	public StreamedContent decodarBaixarArquivo(String base64) {
+		if(CommonsUtil.semValor(base64)) {
+			//System.out.println("Arquivo Base64 não existe");
+			return null;
+		}
+		
 		byte[] decoded = Base64.getDecoder().decode(base64);
 		
 		InputStream in = new ByteArrayInputStream(decoded);

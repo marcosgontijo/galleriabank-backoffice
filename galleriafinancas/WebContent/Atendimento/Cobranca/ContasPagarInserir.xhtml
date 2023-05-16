@@ -217,7 +217,7 @@
 						<p:dataTable id="dtFilesPagar" var="filesPagar" value="#{contasPagarMB.filesPagar}" rowKey="#{filesPagar.name}" selection="#{contasPagarMB.deleteFilesPagar}" emptyMessage="" sortBy="#{filesPagar.name}" >	
 							<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
 							<f:facet name="header">											 
-								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contasPagarMB.deleteFilesPagar}"/>
+								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contasPagarMB.deleteFile(contasPagarMB.deleteFilesPagar)}"/>
 					        </f:facet>	       
 					        <p:column style="text-align: center;"
 								headerText="Nome do Arquivo" filterBy="#{filesPagar.name}"
@@ -237,7 +237,7 @@
 				            </p:column>						        
 
 				            <f:facet name="footer">
-								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contasPagarMB.deleteFilesPagar}"/>								
+								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contasPagarMB.deleteFile(contasPagarMB.deleteFilesPagar)}"/>								
 					        </f:facet>             	        		               		        			        			           			 		
 						</p:dataTable>								
 					</h:panelGrid>  

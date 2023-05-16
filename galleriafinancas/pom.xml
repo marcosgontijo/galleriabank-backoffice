@@ -1,44 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-   <modelVersion>4.0.0</modelVersion>
-   <groupId>sistema</groupId>
-   <artifactId>sistema</artifactId>
-   <version>0.0.1-SNAPSHOT</version>
-   <packaging>war</packaging>
-   <build>
-      <sourceDirectory>src</sourceDirectory>
-      <resources>
-         <resource>
-            <directory>src</directory>
-            <excludes>
-               <exclude>**/*.java</exclude>
-            </excludes>
-         </resource>
-      </resources>
-      <plugins>
-         <plugin>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.8.1</version>
-            <configuration>
-               <source>1.8</source>
-               <target>1.8</target>
-        		<encoding>${project.build.sourceEncoding}</encoding>
-            </configuration>
-         </plugin>
-         <plugin>
-            <artifactId>maven-war-plugin</artifactId>
-            <version>3.2.3</version>
-            <configuration>
-               <warSourceDirectory>WebContent</warSourceDirectory>
-            </configuration>
-         </plugin>
-      </plugins>
-   </build>
-   <properties>
-    	<apache-shiro.version>1.2.3</apache-shiro.version>
-    	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>sistema</groupId>
+	<artifactId>sistema</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
+	<build>
+		<sourceDirectory>src</sourceDirectory>
+		<resources>
+			<resource>
+				<directory>src</directory>
+				<excludes>
+					<exclude>**/*.java</exclude>
+				</excludes>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.1</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+					<encoding>${project.build.sourceEncoding}</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>3.2.3</version>
+				<configuration>
+					<warSourceDirectory>WebContent</warSourceDirectory>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<properties>
+		<apache-shiro.version>1.2.3</apache-shiro.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-   
+
 
 	<!-- Repositories -->
 	<repositories>
@@ -59,11 +61,11 @@
 		<repository>
 			<id>org.primefaces</id>
 			<url>https://repository.primefaces.org//</url>
-		</repository>	
-		
+		</repository>
+
 	</repositories>
-	
-   
+
+
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.shiro</groupId>
@@ -71,206 +73,252 @@
 			<version>${apache-shiro.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.shiro</groupId>
+			<groupId>
+				org.apache.shiro</groupId>
 			<artifactId>shiro-web</artifactId>
-			<version>${apache-shiro.version}</version>
+			<version>
+				${apache-shiro.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.shiro</groupId>
+			<groupId>
+				org.apache.shiro</groupId>
 			<artifactId>shiro-ehcache</artifactId>
-			<version>${apache-shiro.version}</version>
+			<version>
+				${apache-shiro.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.shiro</groupId>
+			<groupId>
+				org.apache.shiro</groupId>
 			<artifactId>shiro-faces</artifactId>
 			<version>2.0</version>
 		</dependency>
 		<dependency>
-			<groupId>org.primefaces</groupId>
+			<groupId>
+				org.primefaces</groupId>
 			<artifactId>primefaces</artifactId>
 			<version>7.0</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.primefaces.themes</groupId>
-		    <artifactId>all-themes</artifactId>
-		    <version>1.0.10</version>
+			<groupId>
+				org.primefaces.themes</groupId>
+			<artifactId>all-themes</artifactId>
+			<version>1.0.10</version>
 		</dependency>
 		<dependency>
-			<groupId>javax.servlet</groupId>
+			<groupId>
+				javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
 			<version>3.0-alpha-1</version>
-			<scope>provided</scope>
+			<scope>
+				provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.sun.faces</groupId>
-			<artifactId>jsf-impl</artifactId>
+			<artifactId>
+				jsf-impl</artifactId>
 			<version>2.0.4-13</version>
 		</dependency>
 		<dependency>
-			<groupId>com.sun.faces</groupId>
+			<groupId>
+				com.sun.faces</groupId>
 			<artifactId>jsf-api</artifactId>
 			<version>2.0.4-13</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.poi</groupId>
+			<groupId>
+				org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
 			<version>3.17</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.poi</groupId>
+			<groupId>
+				org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
 			<version>3.17</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.poi</groupId>
+			<groupId>
+				org.apache.poi</groupId>
 			<artifactId>poi-ooxml-schemas</artifactId>
 			<version>3.17</version>
 		</dependency>
 		<dependency>
-			<groupId>log4j</groupId>
+			<groupId>
+				org.apache.poi</groupId>
+			<artifactId>ooxml-schemas</artifactId>
+			<version>1.3</version>
+		</dependency>
+		<dependency>
+			<groupId>
+				log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.17</version>
 		</dependency>
 		<dependency>
-			<groupId>org.hibernate</groupId>
+			<groupId>
+				org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
 			<version>3.5.3-Final</version>
 		</dependency>
 		<dependency>
-			<groupId>org.hibernate</groupId>
+			<groupId>
+				org.hibernate</groupId>
 			<artifactId>hibernate-tools</artifactId>
 			<version>3.4.0.Final</version>
 		</dependency>
 		<dependency>
-			<groupId>com.itextpdf</groupId>
+			<groupId>
+				com.itextpdf</groupId>
 			<artifactId>itextpdf</artifactId>
 			<version>5.0.6</version>
 		</dependency>
 		<dependency>
-			<groupId>org.json</groupId>
+			<groupId>
+				org.json</groupId>
 			<artifactId>json</artifactId>
 			<version>20230227</version>
 		</dependency>
 		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
+			<groupId>
+				org.jboss.resteasy</groupId>
 			<artifactId>resteasy-jaxrs</artifactId>
 			<version>2.2.1.GA</version>
 		</dependency>
 		<dependency>
-			<groupId>com.sun.mail</groupId>
+			<groupId>
+				com.sun.mail</groupId>
 			<artifactId>javax.mail</artifactId>
 			<version>1.4.7</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.commons</groupId>
+			<groupId>
+				org.apache.commons</groupId>
 			<artifactId>commons-email</artifactId>
 			<version>1.2</version>
 		</dependency>
 		<dependency>
-			<groupId>com.starkbank.ellipticcurve</groupId>
+			<groupId>
+				com.starkbank.ellipticcurve</groupId>
 			<artifactId>starkbank-ecdsa</artifactId>
-			<version>1.0.2</version>
+			<version>
+				1.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.starkbank</groupId>
 			<artifactId>sdk</artifactId>
-			<version>2.12.0</version>
+			<version>
+				2.12.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
-			<artifactId>quartz</artifactId>
+			<artifactId>
+				quartz</artifactId>
 			<version>2.3.2</version>
 		</dependency>
 		<dependency>
-			<groupId>org.quartz-scheduler</groupId>
+			<groupId>
+				org.quartz-scheduler</groupId>
 			<artifactId>quartz-jobs</artifactId>
 			<version>2.3.2</version>
 		</dependency>
 		<dependency>
-			<groupId>commons-logging</groupId>
+			<groupId>
+				commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
 			<version>1.2</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.commons</groupId>
+			<groupId>
+				org.apache.commons</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>1.3.2</version>
 		</dependency>
 		<dependency>
-			<groupId>joda-time</groupId>
+			<groupId>
+				joda-time</groupId>
 			<artifactId>joda-time</artifactId>
 			<version>2.9.5</version>
 		</dependency>
 		<dependency>
-			<groupId>javax.el</groupId>
+			<groupId>
+				javax.el</groupId>
 			<artifactId>el-api</artifactId>
 			<version>2.2.1-b04</version>
 		</dependency>
 		<dependency>
-			<groupId>javax.ws.rs</groupId>
+			<groupId>
+				javax.ws.rs</groupId>
 			<artifactId>javax.ws.rs-api</artifactId>
 			<version>2.0.1</version>
 		</dependency>
 		<dependency>
-			<groupId>org.javassist</groupId>
+			<groupId>
+				org.javassist</groupId>
 			<artifactId>javassist</artifactId>
 			<version>3.23.2-GA</version>
 		</dependency>
 		<dependency>
-			<groupId>org.slf4j</groupId>
+			<groupId>
+				org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.32</version>
 		</dependency>
 		<dependency>
-			<groupId>org.slf4j</groupId>
+			<groupId>
+				org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.7.32</version>
-			<scope>test</scope>
+			<scope>
+				test</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.annotation</groupId>
-			<artifactId>javax.annotation-api</artifactId>
+			<artifactId>
+				javax.annotation-api</artifactId>
 			<version>1.3.2</version>
 		</dependency>
 		<dependency>
-			<groupId>commons-fileupload</groupId>
+			<groupId>
+				commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
 			<version>1.3.2</version>
 		</dependency>
 		<dependency>
-			<groupId>org.jasypt</groupId>
+			<groupId>
+				org.jasypt</groupId>
 			<artifactId>jasypt</artifactId>
 			<version>1.9.3</version>
 		</dependency>
 		<dependency>
-			<groupId>org.jasypt</groupId>
+			<groupId>
+				org.jasypt</groupId>
 			<artifactId>jasypt-hibernate3</artifactId>
 			<version>1.9.3</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.postgresql</groupId>
-		    <artifactId>postgresql</artifactId>
-		    <version>42.6.0</version>
+			<groupId>
+				org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.6.0</version>
 		</dependency>
 		<dependency>
-			<groupId>dom4j</groupId>
+			<groupId>
+				dom4j</groupId>
 			<artifactId>dom4j</artifactId>
 			<version>1.6.1</version>
 		</dependency>
 		<dependency>
-			<groupId>commons-codec</groupId>
+			<groupId>
+				commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 			<version>1.14</version>
 		</dependency>
 		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt-api</artifactId>
-			<version>0.11.5</version>
-		</dependency>
-		<dependency>
-			<groupId>br.com.caelum.stella</groupId>
+			<groupId>
+				br.com.caelum.stella</groupId>
 			<artifactId>caelum-stella-boleto</artifactId>
-			<version>2.1.6</version>
+			<version>
+				2.1.6</version>
 			<exclusions>
 				<exclusion>
 					<groupId>com.lowagie</groupId>
@@ -279,62 +327,83 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>net.sf.jasperreports</groupId>
+			<groupId>
+				net.sf.jasperreports</groupId>
 			<artifactId>jasperreports-fonts</artifactId>
-			<version>6.12.2</version>
+			<version>
+				6.12.2</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
-			<artifactId>jasperreports</artifactId>
-			<version>6.12.2</version>		
+			<artifactId>
+				jasperreports</artifactId>
+			<version>6.12.2</version>
 			<exclusions>
 				<exclusion>
 					<groupId>com.lowagie</groupId>
-					<artifactId>itext</artifactId>
+					<artifactId>
+						itext</artifactId>
 				</exclusion>
-			</exclusions>	
+			</exclusions>
 		</dependency>
 		<dependency>
-		    <groupId>com.lowagie</groupId>
-		    <artifactId>itext</artifactId>
-		    <version>2.1.7</version>
+			<groupId>
+				com.lowagie</groupId>
+			<artifactId>itext</artifactId>
+			<version>2.1.7</version>
 		</dependency>
 		<dependency>
-		    <groupId>io.jsonwebtoken</groupId>
-		    <artifactId>jjwt-impl</artifactId>
-		    <version>0.11.5</version>
-		    <scope>runtime</scope>
+			<groupId>
+				io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>0.11.5</version>
+			<scope>
+				runtime</scope>
 		</dependency>
 		<dependency>
-		    <groupId>io.jsonwebtoken</groupId>
-		    <artifactId>jjwt-gson</artifactId>
-		    <version>0.11.5</version>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>
+				jjwt-gson</artifactId>
+			<version>0.11.5</version>
 		</dependency>
 		<dependency>
-		    <groupId>io.jsonwebtoken</groupId>
-		    <artifactId>jjwt-impl</artifactId>
-		    <version>0.11.5</version>
-		    <scope>runtime</scope>
-		</dependency>
-		<dependency>
-		    <groupId>io.jsonwebtoken</groupId>
-		    <artifactId>jjwt-api</artifactId>
-		    <version>0.11.5</version>
+			<groupId>
+				io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>0.11.5</version>
 		</dependency>
 		<!-- Dependencias locais -->
 		<dependency>
-			<groupId>br.com.galleriabank.serasacrednet-cliente</groupId>
-			<artifactId>serasacrednet-cliente</artifactId>
+			<groupId>
+				br.com.galleriabank.jwt</groupId>
+			<artifactId>security-common</artifactId>
+			<version>
+				1.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>
+				br.com.galleriabank.serasacrednet-cliente</groupId>
+			<artifactId>
+				serasacrednet-cliente</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>br.com.galleriabank.serasarelato-cliente</groupId>
-			<artifactId>serasarelato-cliente</artifactId>
+			<groupId>
+				br.com.galleriabank.serasarelato-cliente</groupId>
+			<artifactId>
+				serasarelato-cliente</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>br.com.galleriabank.dataengine-cliente</groupId>
-			<artifactId>dataengine-cliente</artifactId>
+			<groupId>
+				br.com.galleriabank.dataengine-cliente</groupId>
+			<artifactId>
+				dataengine-cliente</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>br.com.galleriabank.netrin-cliente</groupId>
+			<artifactId>netrin-cliente</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>

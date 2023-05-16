@@ -102,6 +102,7 @@ public class DocketService {
 			myURLConnection.setRequestProperty("Accept", "application/json");
 			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
 			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			myURLConnection.setRequestProperty("Authorization", "Bearer " +  br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos());
 			myURLConnection.setDoOutput(true);
 
 			JSONObject myResponse = null;
@@ -441,13 +442,14 @@ public class DocketService {
 	
 	
 	public void loginDocket(User user) {	//POST pra pegar token	
+		JSONObject jsonObj = new JSONObject();
 		try {		
 			FacesContext context = FacesContext.getCurrentInstance();
 			int HTTP_COD_SUCESSO = 200;
 
 			URL myURL;
 			
-			JSONObject jsonObj = new JSONObject();
+			//JSONObject jsonObj = new JSONObject();
 			String loginDocket;
 			String senhaDocket;
 			
@@ -521,6 +523,7 @@ public class DocketService {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
+			System.out.println(jsonObj.toString());
 			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();

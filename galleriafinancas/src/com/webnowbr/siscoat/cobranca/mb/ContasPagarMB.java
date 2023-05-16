@@ -91,7 +91,7 @@ public class ContasPagarMB {
 	private List<Responsavel> listResponsavel;
 	
 	Collection<FileUploaded> filesPagar = new ArrayList<FileUploaded>();
-	List<FileUploaded> DeleteFilesPagar = new ArrayList<FileUploaded>();
+	List<FileUploaded> deleteFilesPagar = new ArrayList<FileUploaded>();
 	List<FileUploaded> deleteFilesContas= new ArrayList<FileUploaded>();
 	
 	
@@ -458,13 +458,15 @@ public class ContasPagarMB {
 		}
 	}
 	
-	public void deleteFile() {
-		for (FileUploaded f : deleteFilesContas) {
+	public void deleteFile(List<FileUploaded> deleteFiles) {
+		for (FileUploaded f : deleteFiles) {
 			f.getFile().delete();
 		}
 		File here = new File(".");
 		System.out.println(here.getAbsolutePath());
-		deleteFilesContas = new ArrayList<FileUploaded>();
+		deleteFiles = new ArrayList<FileUploaded>();
+		filesPagar = listaArquivosPagar();
+		listaArquivosContasPagar(contasPagarArquivos);
 	}
 	
 	public void pesquisaContratoCobranca() {
@@ -1037,11 +1039,12 @@ public class ContasPagarMB {
 	public void setFilesPagar(Collection<FileUploaded> filesPagar) {
 		this.filesPagar = filesPagar;
 	}
+	
 	public List<FileUploaded> getDeleteFilesPagar() {
-		return DeleteFilesPagar;
+		return deleteFilesPagar;
 	}
-	public void setDeleteFilesPagar(List<FileUploaded> DeleteFilesPagar) {
-		this.DeleteFilesPagar = DeleteFilesPagar;
+	public void setDeleteFilesPagar(List<FileUploaded> deleteFilesPagar) {
+		this.deleteFilesPagar = deleteFilesPagar;
 	}
 	public void setDownloadFile(StreamedContent downloadFile) {
 		this.downloadFile = downloadFile;
