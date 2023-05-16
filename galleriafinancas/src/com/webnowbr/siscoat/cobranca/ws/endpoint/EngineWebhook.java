@@ -79,7 +79,7 @@ public class EngineWebhook {
 						}
 						if (documentoAnalise.isPodeChamarCenprot()) {
 							if (CommonsUtil.semValor(documentoAnalise.getRetornoCenprot())) {
-								documentoAnalise.setLiberadoCenprot(false)
+								documentoAnalise.setLiberadoCenprot(true);
 								netrinService.requestCenprot(documentoAnalise);
 							}
 						}
