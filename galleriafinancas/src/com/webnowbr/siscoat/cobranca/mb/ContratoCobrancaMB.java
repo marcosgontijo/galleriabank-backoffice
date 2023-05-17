@@ -2240,7 +2240,9 @@ public class ContratoCobrancaMB {
 				if(myResponse.has("logradouro")) {
 					this.objetoPagadorRecebedor.setEndereco(myResponse.get("logradouro").toString());					
 				}
-				this.objetoPagadorRecebedor.setBairro(myResponse.get("bairro").toString());
+				if(myResponse.has("bairro")) {
+					this.objetoPagadorRecebedor.setBairro(myResponse.get("bairro").toString());
+				}
 				this.objetoPagadorRecebedor.setCidade(myResponse.get("localidade").toString());
 				this.objetoPagadorRecebedor.setEstado(myResponse.get("uf").toString());
 			}
@@ -4669,6 +4671,10 @@ public class ContratoCobrancaMB {
 	}
 	
 	public StreamedContent decodarBaixarArquivo(String base64) {
+		if(CommonsUtil.semValor(base64)) {
+			//System.out.println("Arquivo Base64 não existe");
+			return null;
+		}
 		byte[] decoded = Base64.getDecoder().decode(base64);
 		
 		InputStream in = new ByteArrayInputStream(decoded);
@@ -8051,13 +8057,21 @@ public class ContratoCobrancaMB {
 			}
 			this.valorPresenteParcela = BigDecimal.ZERO;
 			if(CommonsUtil.intValue(parcelas.getNumeroParcela()) >= numeroParcelaQuitar) {
-				this.numeroPresenteParcela = CommonsUtil.intValue(parcelas.getNumeroParcela());
-				calcularValorPresenteParcelaData(this.dataQuitacao, parcelas);
-
-				valorPresenteTotal = valorPresenteTotal.add(this.valorPresenteParcela);
-				
 				BigDecimal valorParcelaPDF = parcelas.getVlrParcela();
-				BigDecimal desconto = valorParcelaPDF.subtract(valorPresenteParcela);
+				BigDecimal desconto = BigDecimal.ZERO;
+				if(this.dataQuitacao.after(parcelas.getDataVencimento())
+						|| this.dataQuitacao.after(DateUtil.adicionarDias(parcelas.getDataVencimento(), -30))) {
+					valorPresenteParcela = parcelas.getVlrParcela();
+				} else {
+					this.numeroPresenteParcela = CommonsUtil.intValue(parcelas.getNumeroParcela());
+					calcularValorPresenteParcelaData(this.dataQuitacao, parcelas);
+	
+					valorPresenteTotal = valorPresenteTotal.add(this.valorPresenteParcela);
+					
+					valorParcelaPDF = parcelas.getVlrParcela();
+					desconto = valorParcelaPDF.subtract(valorPresenteParcela);
+				}
+				
 				QuitacaoParcelasPDF parcelaPDF = new QuitacaoParcelasPDF(parcelas.getNumeroParcela(),
 						parcelas.getDataVencimento(),
 						valorParcelaPDF,
