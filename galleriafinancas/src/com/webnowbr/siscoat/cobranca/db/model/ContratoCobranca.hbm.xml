@@ -1670,6 +1670,10 @@
 			<column name="observacaoContatoAgendaLaudoAvaliacao" />
 		</property>	
 		
+		<property name="comentarioContatoAgendaLaudoAvaliacao" type="java.lang.String">
+			<column name="comentarioContatoAgendaLaudoAvaliacao" />
+		</property>
+		
 		<property name="formaDePagamentoLaudoPAJU" type="java.lang.String">
 			<column name="formaDePagamentoLaudoPAJU" />
 		</property>	
