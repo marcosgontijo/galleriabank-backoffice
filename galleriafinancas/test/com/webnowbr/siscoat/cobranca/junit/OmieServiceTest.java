@@ -6,7 +6,6 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import com.webnowbr.siscoat.cobranca.service.OmieService;
-import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.omie.request.IOmieParam;
 import com.webnowbr.siscoat.omie.request.ObterResumoFinRequest;
 import com.webnowbr.siscoat.omie.request.OmieRequestBase;
