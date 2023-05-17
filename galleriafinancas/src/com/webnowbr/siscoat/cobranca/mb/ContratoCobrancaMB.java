@@ -28044,25 +28044,31 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		
 		NetrinService netrinService = new NetrinService();
 
-		for (DocumentoAnalise documentoAnalise : this.listaDocumentoAnalise.stream().filter(d -> d.isLiberadoAnalise())
+		for (DocumentoAnalise documentoAnalise : this.listaDocumentoAnalise.stream().filter(d -> d.isLiberadoAnalise() || d.isLiberadoSerasa() || d.isLiberadoCenprot())
 				.collect(Collectors.toList())) {
-			if (DocumentosAnaliseEnum.REA.equals(documentoAnalise.getTipoEnum())
-					&& documentoAnalise.isPodeChamarRea()) {
-				docketService.uploadREA(documentoAnalise, loginBean.getUsuarioLogado());				
+			
+			if (documentoAnalise.isLiberadoAnalise()) {
+				if (DocumentosAnaliseEnum.REA.equals(documentoAnalise.getTipoEnum())
+						&& documentoAnalise.isPodeChamarRea()) {
+					docketService.uploadREA(documentoAnalise, loginBean.getUsuarioLogado());
+				}
+
+				if (documentoAnalise.isPodeChamarEngine()) {
+					DataEngine engine = docketService.engineInserirPessoa(documentoAnalise.getPagador(),
+							objetoContratoCobranca);
+					docketService.engineCriarConsulta(documentoAnalise, engine, loginBean.getUsuarioLogado());
+				}
 			}
 			
-			if (documentoAnalise.isPodeChamarEngine()) {				
-				DataEngine engine = docketService.engineInserirPessoa(documentoAnalise.getPagador(), objetoContratoCobranca);				
-				docketService.engineCriarConsulta( documentoAnalise,  engine,  loginBean.getUsuarioLogado());				
-			}
-			
-			if (documentoAnalise.isPodeChamarSerasa() || documentoAnalise.isLiberadoSerasa() ) {	
+//			if (documentoAnalise.isPodeChamarSerasa() || documentoAnalise.isLiberadoSerasa() ) {
+			if ( documentoAnalise.isLiberadoSerasa() ) {
 				if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
 					serasaService.requestSerasa(documentoAnalise,  loginBean.getUsuarioLogado());
 				}
 			}	
 			
-			if (documentoAnalise.isPodeChamarCenprot() || documentoAnalise.isLiberadoCenprot() ) {	
+//			if (documentoAnalise.isPodeChamarCenprot() || documentoAnalise.isLiberadoCenprot() ) {
+			if (documentoAnalise.isLiberadoCenprot() ) {
 				if (CommonsUtil.semValor(documentoAnalise.getRetornoCenprot())) {
 					netrinService.requestCenprot(documentoAnalise);
 				}

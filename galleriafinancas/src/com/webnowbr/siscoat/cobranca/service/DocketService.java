@@ -27,7 +27,6 @@ import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.DataEngineDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
-import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.ws.endpoint.ReaWebhookRetorno;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
@@ -36,6 +35,7 @@ import com.webnowbr.siscoat.common.MultipartUtility;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.infra.db.model.User;
 
+import br.com.galleriabank.dataengine.cliente.model.request.DataEngineIdSend;
 import br.com.galleriabank.serasarelato.cliente.util.GsonUtil;
 
 public class DocketService {
@@ -105,7 +105,7 @@ public class DocketService {
 			myURLConnection.setRequestProperty("Authorization", "Bearer " +  br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos());
 			myURLConnection.setDoOutput(true);
 
-			JSONObject myResponse = null;
+			DataEngineIdSend myResponse = null;
 			JSONObject jsonWhatsApp = engineBodyJsonEngine(engine.getPagador());
 
 			try (OutputStream os = myURLConnection.getOutputStream()) {
@@ -124,15 +124,20 @@ public class DocketService {
 				// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
 				// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
 
-				myResponse = engineJSONSucesso(myURLConnection.getInputStream());
-				engine.setIdCallManager(myResponse.get("idCallManager").toString());
+				myResponse = engineJSONRetorno(myURLConnection.getInputStream());
+				if (CommonsUtil.mesmoValor("401", myResponse.getCode())) {
+					result = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"Engine: Falha  (Cod: " + myResponse.getCode() + " Mensagem: " + myResponse.getMessage() + ")", "");
+				}
+				
+				engine.setIdCallManager(myResponse.getIdCallManager());
 				engine.setData(DateUtil.getDataHoje());
 				engine.setUsuario(usuarioLogado.getName());
 				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-				if (engine.getContrato() != null && engine.getContrato().getId() > 0 )
-				cDao.merge(engine.getContrato());
+				if (engine.getContrato() != null && engine.getContrato().getId() > 0)
+					cDao.merge(engine.getContrato());
 				else
-				engine.setContrato(null);
+					engine.setContrato(null);
 				
 				
 				//System.out.println("NumeroContrato Erro EngineDocket:" + engine.getContrato().getNumeroContrato() + ", "  + engine.getContrato().getId());
@@ -674,6 +679,35 @@ public class DocketService {
 
 			// READ JSON response and print
 			JSONObject myResponse = new JSONObject(response.toString());
+
+			return myResponse;
+
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+
+	private DataEngineIdSend engineJSONRetorno(InputStream inputStream) { // Pega resultado da API
+		BufferedReader in;
+		try {
+			in = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+
+			// READ JSON response and print
+			DataEngineIdSend myResponse = GsonUtil.fromJson(response.toString(), DataEngineIdSend.class);
 
 			return myResponse;
 

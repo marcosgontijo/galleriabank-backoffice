@@ -1,10 +1,10 @@
 #NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
-#Tue May 16 14:21:11 BRT 2023
+#Tue May 16 14:21:12 BRT 2023
 file\://C\:\\Galleria\\Branch\\siscoat_galleriafinancas\\galleriafinancas/../custom-jar/.error=
-file\://C\:\\Galleria\\Branch\\siscoat_galleriafinancas\\galleriafinancas/../custom-jar/.lastUpdated=1684257671977
+file\://C\:\\Galleria\\Branch\\siscoat_galleriafinancas\\galleriafinancas/../custom-jar/.lastUpdated=1684257672022
 file\://C\:\\Galleria\\siscoat\\siscoat_galleriafinancas\\galleriafinancas/../custom-jar/.error=
-file\://C\:\\Galleria\\siscoat\\siscoat_galleriafinancas\\galleriafinancas/../custom-jar/.lastUpdated=1683721599772
+file\://C\:\\Galleria\\siscoat\\siscoat_galleriafinancas\\galleriafinancas/../custom-jar/.lastUpdated=1684257320371
 https\://repo.dotcms.com/artifactory/list/jcenter/.error=
-https\://repo.dotcms.com/artifactory/list/jcenter/.lastUpdated=1683721600523
+https\://repo.dotcms.com/artifactory/list/jcenter/.lastUpdated=1684257321024
 https\://repository.primefaces.org//.error=
-https\://repository.primefaces.org//.lastUpdated=1683721601639
+https\://repository.primefaces.org//.lastUpdated=1684257322187

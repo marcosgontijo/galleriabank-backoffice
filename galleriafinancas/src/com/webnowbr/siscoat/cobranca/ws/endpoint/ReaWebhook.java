@@ -22,6 +22,8 @@ import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.common.JwtUtil;
+import com.webnowbr.siscoat.common.ValidaCNPJ;
+import com.webnowbr.siscoat.common.ValidaCPF;
 
 import io.jsonwebtoken.Jwts;
 
@@ -114,7 +116,6 @@ public class ReaWebhook {
 
 		for (ReaWebhookRetornoProprietario propietario : bloco.getConteudo().getExtraido().getProprietarios()
 				.getDadosProprietarios()) {
-			
 
 			DocumentoAnalise documentoAnalise = new DocumentoAnalise();
 			documentoAnalise.setContratoCobranca(contratoCobranca);
@@ -122,31 +123,42 @@ public class ReaWebhook {
 
 			documentoAnalise.setTipoPessoa(propietario.getFisicaJuridica());
 			documentoAnalise.setMotivoAnalise(motivo);
-
+			boolean cnpjCpfValido = false;
+			
 			if (documentoAnalise.getTipoPessoa() == "PJ") {
-				documentoAnalise.setCnpjcpf(propietario.getCnpj());
+				cnpjCpfValido = ValidaCNPJ.isCNPJ(propietario.getCpf());
+				if (cnpjCpfValido)
+					documentoAnalise.setCnpjcpf(propietario.getCnpj());
+				else
+					documentoAnalise.setCnpjcpf("CNPJ esta inválido");
 				documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.RELATO);
 			} else {
-				documentoAnalise.setCnpjcpf(propietario.getCpf());
+				cnpjCpfValido = ValidaCPF.isCPF(propietario.getCpf());
+				if (cnpjCpfValido)
+					documentoAnalise.setCnpjcpf(propietario.getCpf());
+				else
+					documentoAnalise.setCnpjcpf("CPF esta inválido");
 				documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.CREDNET);
 			}
-			
-			if (!documentoAnaliseDao.cadastradoAnalise(contratoCobranca, documentoAnalise.getCnpjcpf())) {
 
-				PagadorRecebedor pagador = new PagadorRecebedor();
-				pagador.setId(0);
-				if (CommonsUtil.mesmoValor(documentoAnalise.getTipoPessoa(), "PF")) {
-					pagador.setCpf(propietario.getCpf());
-					pagador.setRg(propietario.getRg());
-				} else {
-					pagador.setCnpj(propietario.getCnpj());
+			if (cnpjCpfValido) {
+				if (!documentoAnaliseDao.cadastradoAnalise(contratoCobranca, documentoAnalise.getCnpjcpf())) {
+
+					PagadorRecebedor pagador = new PagadorRecebedor();
+					pagador.setId(0);
+					if (CommonsUtil.mesmoValor(documentoAnalise.getTipoPessoa(), "PF")) {
+						pagador.setCpf(propietario.getCpf());
+						pagador.setRg(propietario.getRg());
+					} else {
+						pagador.setCnpj(propietario.getCnpj());
+					}
+					pagador.setNome(propietario.getNome());
+
+					pagador = pagadorRecebedorService.buscaOuInsere(pagador);
+					documentoAnalise.setPagador(pagador);
+
+					documentoAnaliseDao.create(documentoAnalise);
 				}
-				pagador.setNome(propietario.getNome());
-
-				pagador = pagadorRecebedorService.buscaOuInsere(pagador);
-				documentoAnalise.setPagador(pagador);
-
-				documentoAnaliseDao.create(documentoAnalise);
 			}
 		}
 

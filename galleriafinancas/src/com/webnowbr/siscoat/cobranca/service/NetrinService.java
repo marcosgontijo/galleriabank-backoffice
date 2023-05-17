@@ -25,7 +25,7 @@ public class NetrinService {
 
 	public void requestCenprot(DocumentoAnalise documentoAnalise) {
 
-		if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
+		if (CommonsUtil.semValor(documentoAnalise.getRetornoCenprot())) {
 			netrinCriarConsultaCenprot(documentoAnalise);
 		}
 	}

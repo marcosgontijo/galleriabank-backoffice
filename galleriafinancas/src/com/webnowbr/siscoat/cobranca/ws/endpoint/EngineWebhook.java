@@ -69,7 +69,7 @@ public class EngineWebhook {
 							|| CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais().getResult()
 									.get(0).getOnlineCertificates()))
 							&& (CommonsUtil.semValor(engineWebhookRetorno.getProcessos()) || CommonsUtil.intValue(
-									engineWebhookRetorno.getProcessos().getTotal_acoes_judicias_reu()) == 0)) {
+									engineWebhookRetorno.getProcessos().getTotal_acoes_judicias_reu()) == 0)) {						
 						// libera a consulta do crednet da PF
 						if (documentoAnalise.isPodeChamarSerasa()) {
 							if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {

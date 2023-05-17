@@ -939,28 +939,7 @@
 										<h:outputText value="#{fileAnalise.identificacao} #{fileAnalise.cnpjcpf} "
 											rendered="#{!fileAnalise.podeChamarRea}" />
 										<p:spacer height="10" />
-
-										<p:commandButton value="Solicitar Rea" ajax="false"
-											rendered="#{fileAnalise.podeChamarRea and fileAnalise.reaNaoEnviado}"
-											action="#{docketMB.uploadREA(fileAnalise)}" immediate="true"
-											icon="ui-icon-search">
-										</p:commandButton>
-
-										<p:commandButton value="Solicitar Engine" ajax="false"
-											rendered="#{fileAnalise.podeChamarEngine }"
-											action="#{docketMB.requestEnginefromRea(fileAnalise)}"
-											immediate="true" icon="ui-icon-search">
-											<f:setPropertyActionListener
-												target="#{docketMB.objetoContratoCobranca}"
-												value="#{contratoCobrancaMB.objetoContratoCobranca}" />
-										</p:commandButton>
-
-										<p:commandButton value="Solicitar Serasa" ajax="false"
-											rendered="#{fileAnalise.podeChamarSerasa }"
-											action="#{serasaMB.requestSerasa(fileAnalise)}" immediate="true"
-											icon="ui-icon-search">
-										</p:commandButton>
-
+										
 									</p:column>
 
 									<p:column style="text-align: center;" headerText="Motivo"
