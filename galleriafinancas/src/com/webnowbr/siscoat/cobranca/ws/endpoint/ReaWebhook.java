@@ -42,7 +42,7 @@ public class ReaWebhook {
 	@POST
 	@Path("/webhook/")
 	public Response webhookRea(String webhookRetorno, @QueryParam("Token") String token) {
-		LOGGER.debug(webhookRetorno);
+//		LOGGER.debug(webhookRetorno);
 
 		try {
 

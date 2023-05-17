@@ -978,8 +978,7 @@ public class ContratoCobranca implements Serializable {
 	public boolean isEmAnalise() {
 		List<String> lstEmAnalise =  Arrays.asList("Pendente");
 		return CommonsUtil.semValor(this.cadastroAprovadoValor) && lstEmAnalise.contains(this.status);
-	}
-	
+	}	
 
 	/**
 	 * @return the id
