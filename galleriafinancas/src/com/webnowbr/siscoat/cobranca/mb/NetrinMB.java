@@ -29,7 +29,7 @@ import br.com.galleriabank.serasacrednet.cliente.model.CredNet;
 import br.com.galleriabank.serasacrednet.cliente.model.PessoaParticipacao;
 import br.com.galleriabank.serasarelato.cliente.util.GsonUtil;
 
-@ManagedBean(name = "serasaMB")
+@ManagedBean(name = "netrinMB")
 @SessionScoped
 public class NetrinMB {
 

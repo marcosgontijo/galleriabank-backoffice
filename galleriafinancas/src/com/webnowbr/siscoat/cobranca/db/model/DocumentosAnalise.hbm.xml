@@ -52,6 +52,12 @@
 			<column name="liberadoSerasa" />
 		</property>	
 		
+		<property name="liberadoCenprot" type="boolean">
+			<column name="liberadoCenprot" />
+		</property>	
+		
+		
+		
 		<property name="cnpjcpf" type="java.lang.String"  >
 			<column name="cnpjcpf" />
 		</property>

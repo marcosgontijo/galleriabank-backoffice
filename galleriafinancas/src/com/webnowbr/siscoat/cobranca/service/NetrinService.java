@@ -59,6 +59,7 @@ public class NetrinService {
 			myURLConnection.setRequestProperty("Accept", "application/json");
 			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
 			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			myURLConnection.setRequestProperty("Authorization", "Bearer " +  br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos());
 			myURLConnection.setDoOutput(true);
 
 			JSONObject myResponse = null;
