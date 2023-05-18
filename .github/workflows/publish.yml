@@ -28,7 +28,7 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Run maven command
-      run: mvn -B package --file /siscoat_galleriafinanca/pom.xml
+      run: mvn -B package --file /siscoat_galleriafinanca/galleriafinancas/pom.xml
           
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Update dependency graph
