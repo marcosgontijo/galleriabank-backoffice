@@ -111,6 +111,7 @@ import com.webnowbr.siscoat.auxiliar.BigDecimalConverter;
 import com.webnowbr.siscoat.auxiliar.EnviaEmail;
 import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.AnaliseComite;
+import com.webnowbr.siscoat.cobranca.db.model.Averbacao;
 import com.webnowbr.siscoat.cobranca.db.model.BoletoKobana;
 import com.webnowbr.siscoat.cobranca.db.model.CadastroStatus;
 import com.webnowbr.siscoat.cobranca.db.model.CcbContrato;
@@ -288,6 +289,7 @@ public class ContratoCobrancaMB {
 	String tituloPagadorRecebedorDialog = "";
 	AnaliseComite objetoAnaliseComite;
 	DataVistoria dataVistoriaSelecionada = new DataVistoria();
+	Averbacao averbacaoSelecionada = new Averbacao();
 	
 	ContasPagar contasPagarSelecionada;
 	ContasPagar contasPagarArquivos;
@@ -2384,7 +2386,6 @@ public class ContratoCobrancaMB {
 				this.objetoPagadorRecebedor.setEstado("");
 			} else {
 				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-
 				this.objetoPagadorRecebedor.setEnderecoConjuge(myResponse.get("logradouro").toString());
 				this.objetoPagadorRecebedor.setBairroConjuge(myResponse.get("bairro").toString());
 				this.objetoPagadorRecebedor.setCidadeConjuge(myResponse.get("localidade").toString());
@@ -16700,6 +16701,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		}
 		
 		this.processoSelecionado = new CcbProcessosJudiciais();
+		this.averbacaoSelecionada = new Averbacao();
 		this.pagadorProcesso = new PagadorRecebedor();
 		listarPessoas();
 	}
@@ -19037,7 +19039,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		}
 		processoSelecionado.getContaPagar().setValor(processoSelecionado.getValor());
 		processoSelecionado.getContaPagar().setDescricao("Processo N°: " + processoSelecionado.getNumero());
-		
+		processoSelecionado.getContaPagar().setFormaTransferencia("Boleto");
 		processoSelecionado.getContaPagar().setNumeroDocumento(objetoContratoCobranca.getNumeroContrato());
 		processoSelecionado.getContaPagar().setPagadorRecebedor(objetoContratoCobranca.getPagador());
 		processoSelecionado.getContaPagar().setResponsavel(objetoContratoCobranca.getResponsavel());
@@ -19071,6 +19073,29 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		}
 		listarProcessos();
 		calcularValorTotalProcessos();
+	}
+	
+	public void clearAverbacao() {
+		averbacaoSelecionada = new Averbacao(BigDecimal.valueOf(600.00));
+	}
+	
+	public void addAverbacao() {
+		if(CommonsUtil.semValor(objetoContratoCobranca.getListAverbacao())) {
+			objetoContratoCobranca.setListAverbacao(new HashSet<>());
+		}
+		averbacaoSelecionada.setContratoCobranca(objetoContratoCobranca);
+		
+		//CcbProcessosJudiciaisDao ccbProcessosJudiciaisDao = new CcbProcessosJudiciaisDao();
+		//ccbProcessosJudiciaisDao.create(averbacaoSelecionada);
+		objetoContratoCobranca.getListAverbacao().add(averbacaoSelecionada);
+		
+		calcularValorTotalAverbacao();
+		averbacaoSelecionada = new Averbacao();
+	}
+	
+	public void removeAverbacao(Averbacao averbacao) {
+		objetoContratoCobranca.getListAverbacao().remove(averbacao);
+		calcularValorTotalAverbacao();
 	}
 
 	public void concluirComite(ContratoCobranca contrato) {
@@ -19537,6 +19562,19 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			}
 		}		
 		this.objetoContratoCobranca.setValorTotalProcessos(valorTotal);
+		return valorTotal;
+	}
+	
+	private BigDecimal calcularValorTotalAverbacao() {
+		BigDecimal valorTotal = BigDecimal.ZERO;
+		if(!CommonsUtil.semValor(objetoContratoCobranca.getListAverbacao())) {
+			for (Averbacao averbacao : this.objetoContratoCobranca.getListAverbacao()) {
+				if(!CommonsUtil.semValor(averbacao.getValor())) {
+					valorTotal = valorTotal.add(averbacao.getValor());
+				}
+			}
+		}		
+		this.objetoContratoCobranca.setValorTotalAverbacao(valorTotal);
 		return valorTotal;
 	}
 	
@@ -33043,6 +33081,14 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 
 	public void setPessoasProcessos(List<PagadorRecebedor> pessoasProcessos) {
 		this.pessoasProcessos = pessoasProcessos;
+	}
+
+	public Averbacao getAverbacaoSelecionada() {
+		return averbacaoSelecionada;
+	}
+
+	public void setAverbacaoSelecionada(Averbacao averbacaoSelecionada) {
+		this.averbacaoSelecionada = averbacaoSelecionada;
 	}
 	
 }

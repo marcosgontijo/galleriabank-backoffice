@@ -1892,7 +1892,7 @@
 										oncomplete="PF('processoDialog').show();"
 										update="processoDialogdlg" />
 										<p:dataTable var="processosPessoas" id="processosPessoas" value="#{pessoasProcessos.processos}"
-											style="width:600px;" size="small" sortBy="#{processosPessoas.id}" sortOrder="ascending" >
+											style="width:700px;" size="small" sortBy="#{processosPessoas.id}" sortOrder="ascending" >
 											
 											<p:column style="text-align: center;width:175px;" headerText="N°"  >
 												<p:outputLabel value="#{processosPessoas.numero}" 
@@ -1908,6 +1908,10 @@
 											<p:column style="text-align: center;width:150px;" headerText=" Quitar? "  >
 												<p:outputLabel value=" #{processosPessoas.quitar}" style="FONT-SIZE: 10pt;" />
 												<p:outputLabel value=" quitar" rendered="#{processosPessoas.quitar eq 'Não'}" />
+											</p:column>
+											
+											<p:column style="text-align: center;" headerText="Obs"  >
+												<p:outputLabel value="#{processosPessoas.observacao}" style="FONT-SIZE: 10pt;" />
 											</p:column>
 										
 											<p:column style="text-align: center;width:25px;" headerText="" >
@@ -1928,6 +1932,41 @@
 									oncomplete="PF('pessoaDialog').show();"
 									update="pessoaDialogdlg" />				
 							</h:panelGrid>
+						</h:panelGrid>
+				
+						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel == true}">					
+							<p:outputLabel value="Valor Total Averbação:" styleClass="labelBold" />
+							<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.valorTotalAverbacao}" converter="bigDecimalConverter"  />
+						</h:panelGrid>
+						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel == true}">	
+							<p:dataTable var="averbacao" id="averbacaoDataTable" value="#{contratoCobrancaMB.objetoContratoCobranca.listAverbacao}"
+								style="width:350px;" size="small" >
+								<f:facet name="header" >
+									<div align="left">	
+							           <p:outputLabel value="Averbações - " style="FONT-SIZE: 10pt;" />
+							           <p:commandButton action="#{contratoCobrancaMB.clearAverbacao}"
+										icon="ui-icon ui-icon-plus" ajax="true" 
+										oncomplete="PF('averbacaoDialog').show();"
+										update="averbacaoDialogdlg" />
+									</div>
+						        </f:facet>
+								<p:column style="text-align: center;width:175px;" headerText="descrição"  >
+									<p:outputLabel value="#{averbacao.descricao}" 
+										style="FONT-SIZE: 10pt;" />
+								</p:column>
+								
+								<p:column style="text-align: center;width:75px;" headerText=" Valor: "  >
+									<p:outputLabel value="#{averbacao.valor}" 
+										style="FONT-SIZE: 10pt;"
+										converter="bigDecimalConverter" />
+								</p:column> 
+								
+								<p:column style="text-align: center;width:25px;" headerText="" >
+									<p:commandButton  icon="ui-icon-trash" 
+										action="#{contratoCobrancaMB.removeAverbacao(averbacao)}"
+										update="form:RecebidoPajulaudoPanel" />
+								</p:column>
+							</p:dataTable>
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
@@ -3921,6 +3960,36 @@
 					</h:panelGroup>
 				</shiro:hasAnyRoles>
 
+				<h:panelGroup id="DividasPanel" style="margin-bottom:20px;">
+					<p:panel header="Dívidas" style="margin-bottom:10px;"
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.aprovadoComite}">
+						<h:panelGrid columns="2">
+						
+							<p:outputLabel for="dividaIPTU" value="Dívida de IPTU: "
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel value="R$ " />
+								<p:inputText id="dividaIPTU"  style="FONT-SIZE: 10pt;width:125px;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.dividaIPTU}"
+									size="100" onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);"
+									converter="bigDecimalConverter" />
+							</h:panelGroup>
+							
+							<p:outputLabel for="dividaCondominio" value="Dívida de Condomínio: "
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel value="R$ " />
+								<p:inputText id="dividaCondominio"  style="FONT-SIZE: 10pt;width:125px;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.dividaCondominio}"
+									size="100" onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);"
+									converter="bigDecimalConverter" />
+							</h:panelGroup>
+						</h:panelGrid>
+					</p:panel>
+				</h:panelGroup>
+
 				<p:panel id="Infos" header="Outras Informações"
 					style="margin-bottom:10px;">
 					<h:panelGrid columns="2">
@@ -5179,6 +5248,15 @@
 							<f:selectItem itemValue="Indicar bens" itemLabel="Indicar bens" />
 						</p:selectOneMenu>
 						
+						<p:outputLabel value="Obs: " styleClass="labelBold"
+							style="font-weight: bold; font-size: 18px;" />
+						<h:inputTextarea rows="10" cols="48"
+							maxlength="3000" onblur=""
+							counterTemplate="{0} characters remaining." autoResize="false"
+							value="#{contratoCobrancaMB.processoSelecionado.observacao}" >
+							<p:ajax process="@this" partialSubmit="true" />
+						</h:inputTextarea>
+				
 						<p:outputLabel value="Pessoa: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />
 						<p:outputLabel value="#{contratoCobrancaMB.processoSelecionado.pagador.nome} " styleClass="labelBold"
@@ -5188,6 +5266,32 @@
 						icon="ui-icon-check" style="margin-top: 5px; margin-bottom: 5px;"
 						action="#{contratoCobrancaMB.addProcesso}" 
 						onclick="PF('processoDialog').hide();"
+						update="form:RecebidoPajulaudoPanel" >
+					</p:commandButton>
+				</div>
+			</h:form>
+		</p:dialog>		
+		
+		<p:dialog header="Nova Averbação" widgetVar="averbacaoDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="400">
+			<h:form id="averbacaoDialogdlg">			
+				<div align="center">		
+					<h:panelGrid columns="2">
+						<p:outputLabel value="Descrição: " styleClass="labelBold" 
+							style="font-weight: bold; font-size: 18px;" />
+						<p:inputText value="#{contratoCobrancaMB.averbacaoSelecionada.descricao}"/> 
+					
+						<p:outputLabel value="Valor: " styleClass="labelBold"
+							style="font-weight: bold; font-size: 18px;" />
+						<p:inputText value="#{contratoCobrancaMB.averbacaoSelecionada.valor}"
+							label="Contrato" onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);"
+							converter="bigDecimalConverter" /> 
+					</h:panelGrid>
+					<p:commandButton value="Inserir Averbação" 
+						icon="ui-icon-check" style="margin-top: 5px; margin-bottom: 5px;"
+						action="#{contratoCobrancaMB.addAverbacao}" 
+						onclick="PF('averbacaoDialog').hide();"
 						update="form:RecebidoPajulaudoPanel" >
 					</p:commandButton>
 				</div>
