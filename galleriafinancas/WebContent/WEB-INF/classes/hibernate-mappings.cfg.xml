@@ -54,6 +54,7 @@
        	<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ComissaoResponsavel.hbm.xml"/>
        	
        	<mapping resource="com/webnowbr/siscoat/cobranca/db/model/DataVistoria.hbm.xml"/>
+       	<mapping resource="com/webnowbr/siscoat/cobranca/db/model/Averbacao.hbm.xml"/>
        	
  		<mapping resource="com/webnowbr/siscoat/common/db/model/BoletosRemessa.hbm.xml"/> 				 		
         <mapping resource="com/webnowbr/siscoat/infra/db/model/GroupAdm.hbm.xml"/> 

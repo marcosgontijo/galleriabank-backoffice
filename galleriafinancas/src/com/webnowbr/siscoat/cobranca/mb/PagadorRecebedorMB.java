@@ -537,9 +537,14 @@ public class PagadorRecebedorMB {
 				this.objetoPagadorRecebedor.setEstado("");
 			} else {
 				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-
-				this.objetoPagadorRecebedor.setEndereco(myResponse.get("logradouro").toString());
-				this.objetoPagadorRecebedor.setBairro(myResponse.get("bairro").toString());
+				
+				if(myResponse.has("logradouro")) {
+					this.objetoPagadorRecebedor.setEndereco(myResponse.get("logradouro").toString());
+				}
+				
+				if(myResponse.has("bairro")) {
+					this.objetoPagadorRecebedor.setBairro(myResponse.get("bairro").toString());
+				}				
 				this.objetoPagadorRecebedor.setCidade(myResponse.get("localidade").toString());
 				this.objetoPagadorRecebedor.setEstado(myResponse.get("uf").toString());
 			}
