@@ -15,7 +15,7 @@ class test {
 //		EngineRetorno engineRetorno = GsonUtil.fromJson(sEngineRetorno, EngineRetorno.class);
 //		EngineRetornoExecutionResultConsultaCompleta completa = engineRetorno.getConsultaCompleta();
 //
-//		assertAll("Not yet implemented");
+		assertAll("Not yet implemented");
 	}
 
 }
