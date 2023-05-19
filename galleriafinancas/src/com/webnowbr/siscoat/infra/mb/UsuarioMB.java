@@ -514,6 +514,8 @@ public class UsuarioMB {
 
 			return "";
 		}
+		
+		popularListaResponsavel();
 
 		return "UsuarioConsultar.xhtml";
 	}

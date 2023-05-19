@@ -92,6 +92,7 @@ import com.webnowbr.siscoat.cobranca.db.op.CcbProcessosJudiciaisDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
+import com.webnowbr.siscoat.cobranca.db.op.RegistroImovelTabelaDao;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.common.BancosEnum;
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -793,7 +794,7 @@ public class CcbMB {
 			this.objetoCcb.setLogradouroNumeroImovel(CommonsUtil.removeEspacos(endereco[1]));
 		}
 		this.objetoCcb.setBairroImovel(imovel.getBairro());
-		listaArquivos();
+		//listaArquivos();
 		////////////////////////////////////////////////////////////////////////////////////////
 		
 		objetoCcb.setValorCredito(objetoContratoCobranca.getValorAprovadoComite());
@@ -886,10 +887,18 @@ public class CcbMB {
 			}
 		}
 		
+		if(!CommonsUtil.semValor(objetoCcb.getValorCredito())) {
+			if(CommonsUtil.semValor(objetoCcb.getRegistroImovelValor())) {
+				RegistroImovelTabelaDao rDao = new RegistroImovelTabelaDao();
+				BigDecimal valorRegistro = rDao.getValorRegistro(objetoCcb.getValorCredito());
+				criarDespesa("Registro", valorRegistro);
+				objetoCcb.setRegistroImovelValor(valorRegistro);
+			}
+		}
+		
 		this.objetoContratoCobranca = new ContratoCobranca();
 		
 	}
-	
 	
 	public void clearContratoCobranca() {
 		this.objetoContratoCobranca = new ContratoCobranca();
@@ -1864,7 +1873,7 @@ public class CcbMB {
 		return text;
 	}
 
-	public void handleFileUpload(FileUploadEvent event) throws IOException {
+	/*public void handleFileUpload(FileUploadEvent event) throws IOException {
 		FacesContext context = FacesContext.getCurrentInstance();
 		// recupera local onde será gravado o arquivo
 		ParametrosDao pDao = new ParametrosDao();
@@ -1962,6 +1971,34 @@ public class CcbMB {
 		}
 	}
 
+	
+	public void populateFiles(int index) throws IOException {
+		uploadedFile = filesList.get(index);
+		fileName = uploadedFile.getFileName();
+	    fileType = uploadedFile.getContentType();
+	    if(fileType.contains("png")) {
+	    	fileTypeInt = 6;
+	    	fileType = "png";
+	    } else if(fileType.contains("jpeg")) {
+	    	fileTypeInt = 5;
+	    	fileType = "jpeg";
+	    }
+	    
+	    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	    if (uploadedFile != null) {
+			RenderedImage picture = ImageIO.read((uploadedFile.getInputstream()));
+			ImageIO.write(picture, "png", baos);
+			baos.flush();
+			// InputStream is = new ByteArrayInputStream(baos.toByteArray());
+			baos.close();
+			this.bis = new ByteArrayInputStream(baos.toByteArray());
+		}
+	}*/
+	
+	public void handleFileUpload(FileUploadEvent event) {
+		uploadedFile = event.getFile();
+	    filesList.add(uploadedFile);
+    }
 	
 	public void populateFiles(int index) throws IOException {
 		uploadedFile = filesList.get(index);
@@ -6905,8 +6942,10 @@ public class CcbMB {
 				run.setFontSize(12);
 				if(CommonsUtil.mesmoValor(despesa.getFormaTransferencia(), "TED")) {
 					run.setText("Ted no "+ despesa.getBancoTed() +" AG: "+ despesa.getAgenciaTed()
-					+" C/C: "+ despesa.getContaTed() +" Chave Pix: "+ despesa.getPix() + " "+ despesa.getNomeTed() 
-					+" CNPJ: "+ despesa.getCpfTed()); 
+					+" C/C: "+ despesa.getContaTed() + " " + despesa.getNomeTed() 
+					+" CPF/CNPJ: "+ despesa.getCpfTed()); 
+				} else if(CommonsUtil.mesmoValor(despesa.getFormaTransferencia(), "Pix")) {
+					run.setText("Chave Pix: "+ despesa.getPix()); 
 				} else {
 					run.setText(despesa.getFormaTransferencia());
 				}
@@ -7492,10 +7531,14 @@ public class CcbMB {
 			XWPFRun run2;
 			XWPFRun run3;
 			XWPFRun run4;
+			List<CcbParticipantes> segurados = new ArrayList<CcbParticipantes>();
 			for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {				
 				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "TERCEIRO GARANTIDOR")) {
 					this.objetoCcb.setTerceiroGarantidor(true);
 					participante.setTipoParticipante("DEVEDOR FIDUCIANTE");
+					segurados.add(participante);
+				} else if(CommonsUtil.mesmoValor(participante.getTipoParticipante(), "EMITENTE")){
+					segurados.add(participante);
 				}
 			}
 			if(this.objetoCcb.isTerceiroGarantidor()) {
@@ -7521,7 +7564,22 @@ public class CcbMB {
 			document.getStyles().setDefaultFonts(fonts);
 			document.getStyle().getDocDefaults().getRPrDefault().getRPr().setRFonts(fonts);
 			
-			
+			if(segurados.size() > 0) {
+				BigDecimal porcentagem =  BigDecimal.valueOf(100).divide(BigDecimal.valueOf(segurados.size()), MathContext.DECIMAL128).setScale(2, BigDecimal.ROUND_HALF_UP);
+				for(CcbParticipantes participante : segurados) {
+					Segurado segurado = new Segurado();
+					if(!CommonsUtil.semValor(this.objetoCcb.getObjetoContratoCobranca())) {
+						segurado.setPessoa(participante.getPessoa());
+						segurado.setPorcentagemSegurador(porcentagem);
+						segurado.setPosicao(this.objetoCcb.getListSegurados().size() + 1);
+						if(!this.objetoCcb.getObjetoContratoCobranca().getListSegurados().contains(this.seguradoSelecionado)) {		
+							segurado.setContratoCobranca(this.objetoContratoCobranca);
+							this.objetoCcb.getObjetoContratoCobranca().getListSegurados().add(segurado);
+						}
+					}
+					this.objetoCcb.getListSegurados().add(segurado);
+				}
+			}
 		
 			int indexSegurados = 40;
 			
@@ -10446,9 +10504,9 @@ public class CcbMB {
 		this.listPagadores = pagadorRecebedorDao.getPagadoresRecebedores();
 		
 		filesList = new ArrayList<UploadedFile>();
-		for(FileUploaded file : listaArquivos()) {
+		/*for(FileUploaded file : listaArquivos()) {
 			//filesList.add((UploadedFile) file.file);
-	    }
+	    }*/
 	}
 	
 	public void getEnderecoByViaNet() {
