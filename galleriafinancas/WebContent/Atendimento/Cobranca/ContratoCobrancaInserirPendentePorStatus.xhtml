@@ -877,8 +877,7 @@
 				<shiro:hasAnyRoles
 					name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO">
 					<p:panel id="ArquivosAnalisados" 
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
-						style="margin-bottom:10px;text-align: center;">
+						style="margin-bottom:10px;text-align: center;" >
 						<f:facet name="header">
 						   <h:outputText value="Analise Documentos" />
 							<p:commandButton value="Atualizar listagem" ajax="true" update="ArquivosAnalisados" style="margin-left:10px;"
@@ -887,12 +886,12 @@
 							</p:commandButton>
 						</f:facet>
 
-						<h:panelGrid columns="1">
-							<p:fileUpload label="Selecionar Arquivo"
+						<h:panelGrid columns="1" rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}">
+							<p:fileUpload label="Selecionar Arquivo" 
 								uploadLabel="Salvar Arquivo" multiple="false"
 								cancelLabel="Cancelar"
 								fileUploadListener="#{contratoCobrancaMB.handleAnaliseDocumentoFileUpload}"
-								mode="advanced" dragDropSupport="true" update="dtFilesAnalise">
+								mode="advanced" dragDropSupport="true" update="dtFilesAnalise" >
 								<f:attribute name="foo"
 									value="#{contratoCobrancaMB.contasPagarSelecionada}" />
 							</p:fileUpload>
@@ -908,21 +907,28 @@
 									value="#{contratoCobrancaMB.listaDocumentoAnalise}"
 									
 									rowKey="#{fileAnalise.id}" emptyMessage="">
-									<p:column headerText="Liberado Análise">
+									<p:column style="text-align: center; width:2rem;">
+								
+									<p:rowToggler/>
+									
+									</p:column>
+									
+									<p:column headerText="Liberado Análise" rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}">
+									
 										<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"
-											 onLabel="Sim" offLabel="Não" style="width:6rem" >
+											 onLabel="Sim" offLabel="Não" style="width:6rem">
 										<p:ajax  event="change"
 											listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
 											</p:selectBooleanButton>
 									</p:column>
-									<p:column headerText="Liberar Serasa">
+									<p:column headerText="Liberar Serasa" rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}">
 										<p:selectBooleanButton value="#{fileAnalise.liberadoSerasa}"
 											 onLabel="Sim" offLabel="Não" style="width:6rem" >
 										<p:ajax  event="change"
 											listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
 											</p:selectBooleanButton>
 									</p:column>
-									<p:column headerText="Liberar Cenprot">
+									<p:column headerText="Liberar Cenprot" rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}">
 										<p:selectBooleanButton value="#{fileAnalise.liberadoCenprot}"
 											 onLabel="Sim" offLabel="Não" style="width:6rem" >
 										<p:ajax  event="change"
@@ -981,13 +987,20 @@
 											<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
 										</p:commandButton>
 									</p:column>
+									<p:rowExpansion>
+									<div class="expandir seta">
+									<div class="teste">#{fileAnalise.observacao}
+									</div>
+									</div>
+									
+									</p:rowExpansion>
 								</p:dataTable>
 							</h:panelGrid>
 
 						</p:panel>
 						<p:panel id="pnlCeridoesAnalise"
 							header="Certidões"
-							style="margin-bottom:10px;">
+							style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}">
 							
 							<p:commandButton value="Executar Consultas" action="#{contratoCobrancaMB.executarConsultasAnaliseDocumento()}"/>
 							<p:commandButton value="Certidões Docket" action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.objetoContratoCobranca)}"/>	
