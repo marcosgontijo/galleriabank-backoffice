@@ -915,29 +915,9 @@
 								<p:dataTable id="dtFilesAnalise" var="fileAnalise"
 									value="#{contratoCobrancaMB.listaDocumentoAnalise}"
 									rowKey="#{fileAnalise.id}" emptyMessage="">
+									<p:column style="text-align: center; width:2rem;">
 								
-									
-									<p:column style="text-align: center; width:5rem;">
-								
-						
-								<p:commandButton value="ver Resumo"
-								onclick="PF('Engine').show()"
-								update=":form:resumocliente"
-								ajax= "true"
-								
-								 style="TEXT-DECORATION: bold;">
-								 <f:setPropertyActionListener value="#{fileAnalise}" target= "#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
-								
-								 
-								 </p:commandButton>
-								
-								
-							
-									
-									
-									
-								
-									
+									<p:rowToggler/>
 									
 									</p:column>
 									
@@ -1051,8 +1031,13 @@
 											<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
 										</p:commandButton>
 									</p:column>
-								
-								
+									<p:rowExpansion>
+									<div class="expandir seta">
+									<div class="teste">#{fileAnalise.observacao}
+									</div>
+									</div>
+									
+									</p:rowExpansion>
 								</p:dataTable>
 								
 								<p:dialog id="resumo1" header="Resumo" widgetVar="Engine"
