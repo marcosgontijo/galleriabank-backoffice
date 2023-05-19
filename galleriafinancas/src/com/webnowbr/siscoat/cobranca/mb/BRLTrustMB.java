@@ -1860,7 +1860,11 @@ public class BRLTrustMB {
 					JSONObject jsonEndereco = new JSONObject();
 					if (contrato.getPagador().getCep() != null && !contrato.getPagador().getCep().equals("")) {
 						jsonEndereco.put("cep", Long.valueOf(getStringSemCaracteres(contrato.getPagador().getCep())));
+					} else {
+						System.out.println(contrato.getPagador().getNome() + "Contrato: " + contrato.getNumeroContrato());
+						jsonEndereco.put("cep","");
 					}
+					
 					jsonEndereco.put("logradouro", contrato.getPagador().getEndereco());
 					jsonEndereco.put("numero", contrato.getPagador().getNumero());
 					jsonEndereco.put("complemento", contrato.getPagador().getComplemento());
@@ -1901,9 +1905,9 @@ public class BRLTrustMB {
 						}
 					}
 					
-					System.out.println("contrato: " + contrato.getNumeroContrato());
-					System.out.println("cessao: " + contrato.getTxJurosCessao());
-					System.out.println("juros parcela: " + contrato.getTxJurosParcelas());
+					//System.out.println("contrato: " + contrato.getNumeroContrato());
+					//System.out.println("cessao: " + contrato.getTxJurosCessao());
+					//System.out.println("juros parcela: " + contrato.getTxJurosParcelas());
 					
 					if (contrato != null) {
 						if (contrato.getTxJurosCessao() != null) {
