@@ -18,6 +18,7 @@ public class CcbProcessosJudiciais implements Serializable{
 	private PagadorRecebedor pagador;
 	private String quitar = "";
 	private boolean selecionadoComite = false;
+	private String observacao = "";
 	
 	public CcbProcessosJudiciais(BigDecimal valor, String numero) {
 		contaPagar = new ContasPagar();
@@ -92,4 +93,13 @@ public class CcbProcessosJudiciais implements Serializable{
 	public void setPagador(PagadorRecebedor pagador) {
 		this.pagador = pagador;
 	}
+
+	public String getObservacao() {
+		return observacao;
+	}
+
+	public void setObservacao(String observacao) {
+		this.observacao = observacao;
+	}
+	
 }

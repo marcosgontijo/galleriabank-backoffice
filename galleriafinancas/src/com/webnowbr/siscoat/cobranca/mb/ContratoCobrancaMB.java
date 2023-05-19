@@ -111,6 +111,7 @@ import com.webnowbr.siscoat.auxiliar.BigDecimalConverter;
 import com.webnowbr.siscoat.auxiliar.EnviaEmail;
 import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.AnaliseComite;
+import com.webnowbr.siscoat.cobranca.db.model.Averbacao;
 import com.webnowbr.siscoat.cobranca.db.model.BoletoKobana;
 import com.webnowbr.siscoat.cobranca.db.model.CadastroStatus;
 import com.webnowbr.siscoat.cobranca.db.model.CcbContrato;
@@ -288,6 +289,7 @@ public class ContratoCobrancaMB {
 	String tituloPagadorRecebedorDialog = "";
 	AnaliseComite objetoAnaliseComite;
 	DataVistoria dataVistoriaSelecionada = new DataVistoria();
+	Averbacao averbacaoSelecionada = new Averbacao();
 	
 	ContasPagar contasPagarSelecionada;
 	ContasPagar contasPagarArquivos;
@@ -2240,7 +2242,9 @@ public class ContratoCobrancaMB {
 				if(myResponse.has("logradouro")) {
 					this.objetoPagadorRecebedor.setEndereco(myResponse.get("logradouro").toString());					
 				}
-				this.objetoPagadorRecebedor.setBairro(myResponse.get("bairro").toString());
+				if(myResponse.has("bairro")) {
+					this.objetoPagadorRecebedor.setBairro(myResponse.get("bairro").toString());
+				}
 				this.objetoPagadorRecebedor.setCidade(myResponse.get("localidade").toString());
 				this.objetoPagadorRecebedor.setEstado(myResponse.get("uf").toString());
 			}
@@ -2382,7 +2386,6 @@ public class ContratoCobrancaMB {
 				this.objetoPagadorRecebedor.setEstado("");
 			} else {
 				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-
 				this.objetoPagadorRecebedor.setEnderecoConjuge(myResponse.get("logradouro").toString());
 				this.objetoPagadorRecebedor.setBairroConjuge(myResponse.get("bairro").toString());
 				this.objetoPagadorRecebedor.setCidadeConjuge(myResponse.get("localidade").toString());
@@ -4669,6 +4672,10 @@ public class ContratoCobrancaMB {
 	}
 	
 	public StreamedContent decodarBaixarArquivo(String base64) {
+		if(CommonsUtil.semValor(base64)) {
+			//System.out.println("Arquivo Base64 não existe");
+			return null;
+		}
 		byte[] decoded = Base64.getDecoder().decode(base64);
 		
 		InputStream in = new ByteArrayInputStream(decoded);
@@ -8051,13 +8058,21 @@ public class ContratoCobrancaMB {
 			}
 			this.valorPresenteParcela = BigDecimal.ZERO;
 			if(CommonsUtil.intValue(parcelas.getNumeroParcela()) >= numeroParcelaQuitar) {
-				this.numeroPresenteParcela = CommonsUtil.intValue(parcelas.getNumeroParcela());
-				calcularValorPresenteParcelaData(this.dataQuitacao, parcelas);
-
-				valorPresenteTotal = valorPresenteTotal.add(this.valorPresenteParcela);
-				
 				BigDecimal valorParcelaPDF = parcelas.getVlrParcela();
-				BigDecimal desconto = valorParcelaPDF.subtract(valorPresenteParcela);
+				BigDecimal desconto = BigDecimal.ZERO;
+				if(this.dataQuitacao.after(parcelas.getDataVencimento())
+						|| this.dataQuitacao.after(DateUtil.adicionarDias(parcelas.getDataVencimento(), -30))) {
+					valorPresenteParcela = parcelas.getVlrParcela();
+				} else {
+					this.numeroPresenteParcela = CommonsUtil.intValue(parcelas.getNumeroParcela());
+					calcularValorPresenteParcelaData(this.dataQuitacao, parcelas);
+	
+					valorPresenteTotal = valorPresenteTotal.add(this.valorPresenteParcela);
+					
+					valorParcelaPDF = parcelas.getVlrParcela();
+					desconto = valorParcelaPDF.subtract(valorPresenteParcela);
+				}
+				
 				QuitacaoParcelasPDF parcelaPDF = new QuitacaoParcelasPDF(parcelas.getNumeroParcela(),
 						parcelas.getDataVencimento(),
 						valorParcelaPDF,
@@ -16686,6 +16701,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		}
 		
 		this.processoSelecionado = new CcbProcessosJudiciais();
+		this.averbacaoSelecionada = new Averbacao();
 		this.pagadorProcesso = new PagadorRecebedor();
 		listarPessoas();
 	}
@@ -19023,7 +19039,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		}
 		processoSelecionado.getContaPagar().setValor(processoSelecionado.getValor());
 		processoSelecionado.getContaPagar().setDescricao("Processo N°: " + processoSelecionado.getNumero());
-		
+		processoSelecionado.getContaPagar().setFormaTransferencia("Boleto");
 		processoSelecionado.getContaPagar().setNumeroDocumento(objetoContratoCobranca.getNumeroContrato());
 		processoSelecionado.getContaPagar().setPagadorRecebedor(objetoContratoCobranca.getPagador());
 		processoSelecionado.getContaPagar().setResponsavel(objetoContratoCobranca.getResponsavel());
@@ -19057,6 +19073,29 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		}
 		listarProcessos();
 		calcularValorTotalProcessos();
+	}
+	
+	public void clearAverbacao() {
+		averbacaoSelecionada = new Averbacao(BigDecimal.valueOf(600.00));
+	}
+	
+	public void addAverbacao() {
+		if(CommonsUtil.semValor(objetoContratoCobranca.getListAverbacao())) {
+			objetoContratoCobranca.setListAverbacao(new HashSet<>());
+		}
+		averbacaoSelecionada.setContratoCobranca(objetoContratoCobranca);
+		
+		//CcbProcessosJudiciaisDao ccbProcessosJudiciaisDao = new CcbProcessosJudiciaisDao();
+		//ccbProcessosJudiciaisDao.create(averbacaoSelecionada);
+		objetoContratoCobranca.getListAverbacao().add(averbacaoSelecionada);
+		
+		calcularValorTotalAverbacao();
+		averbacaoSelecionada = new Averbacao();
+	}
+	
+	public void removeAverbacao(Averbacao averbacao) {
+		objetoContratoCobranca.getListAverbacao().remove(averbacao);
+		calcularValorTotalAverbacao();
 	}
 
 	public void concluirComite(ContratoCobranca contrato) {
@@ -19523,6 +19562,19 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			}
 		}		
 		this.objetoContratoCobranca.setValorTotalProcessos(valorTotal);
+		return valorTotal;
+	}
+	
+	private BigDecimal calcularValorTotalAverbacao() {
+		BigDecimal valorTotal = BigDecimal.ZERO;
+		if(!CommonsUtil.semValor(objetoContratoCobranca.getListAverbacao())) {
+			for (Averbacao averbacao : this.objetoContratoCobranca.getListAverbacao()) {
+				if(!CommonsUtil.semValor(averbacao.getValor())) {
+					valorTotal = valorTotal.add(averbacao.getValor());
+				}
+			}
+		}		
+		this.objetoContratoCobranca.setValorTotalAverbacao(valorTotal);
 		return valorTotal;
 	}
 	
@@ -33044,6 +33096,14 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 
 	public void setPessoasProcessos(List<PagadorRecebedor> pessoasProcessos) {
 		this.pessoasProcessos = pessoasProcessos;
+	}
+
+	public Averbacao getAverbacaoSelecionada() {
+		return averbacaoSelecionada;
+	}
+
+	public void setAverbacaoSelecionada(Averbacao averbacaoSelecionada) {
+		this.averbacaoSelecionada = averbacaoSelecionada;
 	}
 	
 }

@@ -301,7 +301,7 @@
 		</list>
 		
 		<list name="processosJucidiais"
-			table="ccbcontrato_processosjucidiais_join" cascade="all" lazy="false">
+			table="ccbcontrato_processosjucidiais_join" cascade="persist" lazy="false">
 			<key column="idccbcontrato" />
 			<list-index></list-index>
 			<many-to-many column="idprocesso"
@@ -309,7 +309,7 @@
 		</list>
 		
 		<list name="despesasAnexo2"
-			table="ccbcontrato_contasPagar_join" cascade="all" lazy="false">
+			table="ccbcontrato_contasPagar_join" cascade="persist" lazy="false">
 			<key column="idCcbContrato" />
 			<list-index></list-index>
 			<many-to-many column="idContasPagar"
@@ -487,6 +487,11 @@
 		<property name="CCBDocumento" type="java.lang.String">
 			<column name="CCBDocumento" />
 		</property> 
+		
+		<property name="averbacaoValor" type="big_decimal">
+			<column name="averbacaoValor" />
+		</property>
+		
 		        
     </class>
 </hibernate-mapping>
