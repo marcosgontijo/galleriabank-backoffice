@@ -876,8 +876,8 @@
 
 				<shiro:hasAnyRoles
 					name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO">
-					<p:panel id="ArquivosAnalisados"
-						style="margin-bottom:10px;text-align: center;">
+					<p:panel id="ArquivosAnalisados" 
+						style="margin-bottom:10px;text-align: center;" >
 						<f:facet name="header">
 							<h:outputText value="Analise Documentos" />
 							<p:commandButton value="Atualizar listagem" ajax="true" rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
@@ -888,11 +888,11 @@
 						</f:facet>
 
 						<h:panelGrid columns="1" rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}">
-							<p:fileUpload label="Selecionar Arquivo"
+							<p:fileUpload label="Selecionar Arquivo" 
 								uploadLabel="Salvar Arquivo" multiple="false"
 								cancelLabel="Cancelar"
 								fileUploadListener="#{contratoCobrancaMB.handleAnaliseDocumentoFileUpload}"
-								mode="advanced" dragDropSupport="true" update="dtFilesAnalise">
+								mode="advanced" dragDropSupport="true" update="dtFilesAnalise" >
 								<f:attribute name="foo"
 									value="#{contratoCobrancaMB.contasPagarSelecionada}" />
 							</p:fileUpload>
@@ -915,30 +915,21 @@
 								<p:dataTable id="dtFilesAnalise" var="fileAnalise"
 									value="#{contratoCobrancaMB.listaDocumentoAnalise}"
 									rowKey="#{fileAnalise.id}" emptyMessage="">
-
-									<p:column style="text-align: center; width:5rem;">
-
-										<p:commandButton value="ver Resumo"
-											onclick="PF('resumoConsutlasDialog').show()"
-											update="resumoConsutlasForm" ajax="true"
-											style="TEXT-DECORATION: bold;">
-											<f:setPropertyActionListener value="#{fileAnalise}"
-												target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
-										</p:commandButton>
-
+									<p:column style="text-align: center; width:2rem;">
+								
+									<p:rowToggler/>
+									
 									</p:column>
-
-									<p:column headerText="Liberado Análise">
+									
+									<p:column headerText="Liberado Análise" rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}">
+									
 										<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"
-											disabled="#{!contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
-											rendered="#{fileAnalise.podeChamarRea or fileAnalise.podeChamarEngine or fileAnalise.reaProcessado or fileAnalise.engineProcessado}"
-											onLabel="Sim" offLabel="Não" style="width:6rem">
-											<p:ajax event="change"
-												listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
-										</p:selectBooleanButton>
+											 onLabel="Sim" offLabel="Não" style="width:6rem">
+										<p:ajax  event="change"
+											listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
+											</p:selectBooleanButton>
 									</p:column>
-									<p:column headerText="Liberar Serasa">
-
+									<p:column headerText="Liberar Serasa" rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}">
 										<p:selectBooleanButton value="#{fileAnalise.liberadoSerasa}"
 											disabled="#{!contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
 											rendered="#{fileAnalise.podeChamarSerasa or fileAnalise.serasaProcessado}"
@@ -947,7 +938,7 @@
 												listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
 										</p:selectBooleanButton>
 									</p:column>
-									<p:column headerText="Liberar Cenprot">
+									<p:column headerText="Liberar Cenprot" rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}">
 										<p:selectBooleanButton value="#{fileAnalise.liberadoCenprot}"
 											disabled="#{!contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
 											onLabel="Sim" offLabel="Não" style="width:6rem">
@@ -1040,19 +1031,23 @@
 											<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
 										</p:commandButton>
 									</p:column>
-
+									<p:rowExpansion>
+									<div class="expandir seta">
+									<div class="teste">#{fileAnalise.observacao}
+									</div>
+									</div>
+									
+									</p:rowExpansion>
 								</p:dataTable>
 							</h:panelGrid>
 
 						</p:panel>
-						<p:panel id="pnlCeridoesAnalise" header="Certidões"
-							style="margin-bottom:10px;"
-							rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}">
-
-							<p:commandButton value="Executar Consultas"
-								action="#{contratoCobrancaMB.executarConsultasAnaliseDocumento}" />
-							<p:commandButton value="Certidões Docket"
-								action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.objetoContratoCobranca)}" />
+						<p:panel id="pnlCeridoesAnalise"
+							header="Certidões"
+							style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}">
+							
+							<p:commandButton value="Executar Consultas" action="#{contratoCobrancaMB.executarConsultasAnaliseDocumento()}"/>
+							<p:commandButton value="Certidões Docket" action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.objetoContratoCobranca)}"/>	
 						</p:panel>
 					</p:panel>
 				
