@@ -28043,6 +28043,8 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		SerasaService serasaService = new SerasaService();
 		
 		NetrinService netrinService = new NetrinService();
+		
+		ScrService scrService = new ScrService();
 
 		for (DocumentoAnalise documentoAnalise : this.listaDocumentoAnalise.stream().filter(d -> d.isLiberadoAnalise() || d.isLiberadoSerasa() || d.isLiberadoCenprot())
 				.collect(Collectors.toList())) {
@@ -28073,6 +28075,13 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 					netrinService.requestCenprot(documentoAnalise);
 				}
 			}	
+			
+			if ( documentoAnalise.isLiberadoScr() ) {
+				if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
+					scrService.requestScr(documentoAnalise);
+				}
+			}	
+			
 
 		}
 
