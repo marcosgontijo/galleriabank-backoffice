@@ -35,7 +35,7 @@
 		</property>
         
         <property name="selecionadoComite" type="boolean">
-			<column name="selecionadoComite" not-null="true" default="false"/>
+			<column name="selecionadoComite" not-null="true" default="true"/>
 		</property>	
 		
 		<many-to-one name="pagador"
@@ -43,6 +43,10 @@
 			lazy="false">
 			<column name="pagador" />
 		</many-to-one>
+		
+		<property name="observacao" type="java.lang.String">
+			<column name="observacao" />
+		</property>
 		
     </class>
 </hibernate-mapping>

@@ -52,6 +52,12 @@
 			<column name="liberadoSerasa" />
 		</property>	
 		
+		<property name="liberadoCenprot" type="boolean">
+			<column name="liberadoCenprot" />
+		</property>	
+		
+		
+		
 		<property name="cnpjcpf" type="java.lang.String"  >
 			<column name="cnpjcpf" />
 		</property>
@@ -66,7 +72,12 @@
 		</property>		
 		<property name="retornoSerasa" type="java.lang.String"  length="65000">
 			<column name="retornoSerasa" />
+		</property>	
+		<property name="retornoCenprot" type="java.lang.String"  length="65000">
+			<column name="retornoCenprot" />
 		</property>
+		
+		
 		<property name="motivoAnalise" type="java.lang.String"  length="65000">
 			<column name="motivoAnalise" />
 		</property>

@@ -1949,23 +1949,23 @@
 						
 						<p:outputLabel for="numeroPresenteParcela" value="Numero Presente Parcela" />
 						<p:inputText id="numeroPresenteParcela" value="#{contratoCobrancaMB.numeroPresenteParcela}" />
-						<!--  -->
+						<p:spacer width="0" />
 						
 						<p:outputLabel for="dataCalculoValorPresente" value="Data Calculo Valor Presente" />
 						<p:calendar id="dataCalculoValorPresente" showOn="button"
 							value="#{contratoCobrancaMB.dataCalculoValorPresente}"
 							size="100" pattern="dd/MM/yyyy" styleClass="dateTimeField" />
-						<!--  -->
+						<p:spacer width="0" />
 						
 						<p:outputLabel value="Calcular Valor Presente Parcela " />
 						<p:commandButton value="Calcular Valor Presente Parcela" action="#{contratoCobrancaMB.calcularValorPresenteParcela}" 
 							ajax="true" update="valorPresenteParcela" />
-							<!--  -->
+						<p:spacer width="0" />
 
 						<p:outputLabel for="valorPresenteParcela" value="Valor Presente Parcela" />
 						<p:outputLabel id="valorPresenteParcela" value="#{contratoCobrancaMB.valorPresenteParcela}"
 							converter="bigDecimalConverter" />
-						<!--  -->
+						<p:spacer width="0" />
 
 
 						<shiro:hasAnyRoles name="ROOT, COBRANCA_IUGU">

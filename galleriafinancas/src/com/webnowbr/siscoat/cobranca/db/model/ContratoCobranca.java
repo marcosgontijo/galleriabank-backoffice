@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -13,11 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.collections.ArrayStack;
-
 import com.webnowbr.siscoat.common.CommonsUtil;
-
-import javassist.expr.NewArray;
 
 public class ContratoCobranca implements Serializable {
 
@@ -166,6 +161,7 @@ public class ContratoCobranca implements Serializable {
 	private Set<CcbProcessosJudiciais> listProcessos;
 	private Set<AnaliseComite> listaAnaliseComite;
 	private Set<DataVistoria> listDatasVistoria;
+	private Set<Averbacao> listAverbacao;
 	
 	
 	// n�o persistida a lista abaixo
@@ -646,6 +642,7 @@ public class ContratoCobranca implements Serializable {
 	private int carenciaComite;
 	private boolean operacaoFundo;
 	private BigDecimal valorTotalProcessos;
+	private BigDecimal valorTotalAverbacao;
 	
 	private String empresaCertificado;
 	private Date dataSolicitacaoCertificado;
@@ -767,6 +764,7 @@ public class ContratoCobranca implements Serializable {
 	private String nomeContatoAgendaLaudoAvaliacao;
 	private String contatoAgendamendoLaudoAvaliacao;
 	private String observacaoContatoAgendaLaudoAvaliacao;
+	private String comentarioContatoAgendaLaudoAvaliacao;
 
 	private String avaliacaoLaudo;
 	private String avaliacaoLaudoObservacao;
@@ -789,6 +787,8 @@ public class ContratoCobranca implements Serializable {
 	
 	private boolean corrigidoIPCAHibrido;
 	
+	private BigDecimal dividaIPTU;
+	private BigDecimal dividaCondominio;
 
  //FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13	
 	public BigDecimal calcularValorTotalContasPagas() {
@@ -822,6 +822,7 @@ public class ContratoCobranca implements Serializable {
 		this.listaPagadores = new HashSet<>();
 		this.listContasPagar = new HashSet<>();
 		this.listaAnaliseComite = new HashSet<>();
+		this.listAverbacao = new HashSet<>();
 		this.listCadastroStatus = new ArrayList<CadastroStatus>();
 		this.listProcessos = new HashSet<>();
 		
@@ -5241,6 +5242,14 @@ public class ContratoCobranca implements Serializable {
 		this.observacaoContatoAgendaLaudoAvaliacao = observacaoContatoAgendaLaudoAvaliacao;
 	}
 
+	public String getComentarioContatoAgendaLaudoAvaliacao() {
+		return comentarioContatoAgendaLaudoAvaliacao;
+	}
+
+	public void setComentarioContatoAgendaLaudoAvaliacao(String comentarioContatoAgendaLaudoAvaliacao) {
+		this.comentarioContatoAgendaLaudoAvaliacao = comentarioContatoAgendaLaudoAvaliacao;
+	}
+
 	public Date getPedidoLaudoData() {
 		return pedidoLaudoData;
 	}
@@ -6280,4 +6289,37 @@ public class ContratoCobranca implements Serializable {
 	public void setValorTotalProcessos(BigDecimal valorTotalProcessos) {
 		this.valorTotalProcessos = valorTotalProcessos;
 	}
+
+	public BigDecimal getDividaIPTU() {
+		return dividaIPTU;
+	}
+
+	public void setDividaIPTU(BigDecimal dividaIPTU) {
+		this.dividaIPTU = dividaIPTU;
+	}
+
+	public BigDecimal getDividaCondominio() {
+		return dividaCondominio;
+	}
+
+	public void setDividaCondominio(BigDecimal dividaCondominio) {
+		this.dividaCondominio = dividaCondominio;
+	}
+
+	public Set<Averbacao> getListAverbacao() {
+		return listAverbacao;
+	}
+
+	public void setListAverbacao(Set<Averbacao> listAverbacao) {
+		this.listAverbacao = listAverbacao;
+	}
+
+	public BigDecimal getValorTotalAverbacao() {
+		return valorTotalAverbacao;
+	}
+
+	public void setValorTotalAverbacao(BigDecimal valorTotalAverbacao) {
+		this.valorTotalAverbacao = valorTotalAverbacao;
+	}	
+	
 }

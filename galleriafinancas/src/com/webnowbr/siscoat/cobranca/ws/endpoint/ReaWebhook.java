@@ -22,6 +22,8 @@ import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.common.JwtUtil;
+import com.webnowbr.siscoat.common.ValidaCNPJ;
+import com.webnowbr.siscoat.common.ValidaCPF;
 
 import io.jsonwebtoken.Jwts;
 
@@ -42,15 +44,17 @@ public class ReaWebhook {
 	@POST
 	@Path("/webhook/")
 	public Response webhookRea(String webhookRetorno, @QueryParam("Token") String token) {
-		LOGGER.debug(webhookRetorno);
+//		LOGGER.debug(webhookRetorno);
 
 		try {
 
 			Jwts.parserBuilder().setSigningKey(CommonsUtil.CHAVE_WEBHOOK).build().parseClaimsJws(token);
 
-			System.out.println("---------------- REA webhookRetorno ---------------- ");
-			System.out.println(webhookRetorno);
-			System.out.println("---------------- REA webhookRetorno ---------------- ");
+			/*
+			 * System.out.println("---------------- REA webhookRetorno ---------------- ");
+			 * System.out.println(webhookRetorno);
+			 * System.out.println("---------------- REA webhookRetorno ---------------- ");
+			 */
 			ReaWebhookRetorno reaWebhookRetorno = GsonUtil.fromJson(webhookRetorno, ReaWebhookRetorno.class);
 
 			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
@@ -60,21 +64,20 @@ public class ReaWebhook {
 			documentoAnaliseDao.merge(documentoAnalise);
 			reaWebhookRetorno.buscaProprietarios();
 			Date dataVendaAtual = null;
-			
+
 			if (reaWebhookRetorno.getProprietarioAtual() != null) {
 				cadastrarPessoRetornoRea(reaWebhookRetorno.getProprietarioAtual(), documentoAnaliseDao,
 						documentoAnalise.getContratoCobranca(), "Proprietario Atual");
 				dataVendaAtual = DateUtil
 						.getDecodeDateExtenso(reaWebhookRetorno.getProprietarioAtual().getConteudo().getTexto());
 			}
-			if ( CommonsUtil.semValor(dataVendaAtual) || (!CommonsUtil.semValor(dataVendaAtual) && DateUtil.isAfterDate(
-					DateUtil.adicionarPeriodo(DateUtil.getFirstDayOfMonth( DateUtil.getDataHoje() ), -2, Calendar.YEAR), dataVendaAtual))) {
-				
-			if (!CommonsUtil.semValor( reaWebhookRetorno.getProprietariosAnterior() != null)) {
+//			if ( CommonsUtil.semValor((!CommonsUtil.semValor(dataVendaAtual) ) || (!CommonsUtil.semValor(dataVendaAtual) && DateUtil.isAfterDate(
+//					DateUtil.adicionarPeriodo(DateUtil.getFirstDayOfMonth( DateUtil.getDataHoje() ), -2, Calendar.YEAR), dataVendaAtual))) {
+
+			if (!CommonsUtil.semValor(reaWebhookRetorno.getProprietariosAnterior() != null)) {
 				Date dataVendaAnterior = DateUtil.getDataHoje();
 				for (ReaWebhookRetornoBloco proprietarioAnterior : reaWebhookRetorno.getProprietariosAnterior()) {
-					Date dataVenda = DateUtil
-							.getDecodeDateExtenso(proprietarioAnterior.getConteudo().getTexto());
+					Date dataVenda = DateUtil.getDecodeDateExtenso(proprietarioAnterior.getConteudo().getTexto());
 
 //					if (!CommonsUtil.semValor(dataVendaAnterior) || CommonsUtil.semValor(dataVenda) || DateUtil.isAfterDate(
 //							DateUtil.adicionarPeriodo(DateUtil.getFirstDayOfMonth( DateUtil.getDataHoje() ), -2, Calendar.YEAR), dataVenda)) {
@@ -82,15 +85,14 @@ public class ReaWebhook {
 //						if ( (!CommonsUtil.semValor(dataVenda) &&  DateUtil.isAfterDate(
 //							DateUtil.adicionarPeriodo(DateUtil.getFirstDayOfMonth( DateUtil.getDataHoje() ), -2, Calendar.YEAR), dataVenda))  || CommonsUtil.semValor(dataVenda))
 //							
-						cadastrarPessoRetornoRea(proprietarioAnterior, documentoAnaliseDao,
-								documentoAnalise.getContratoCobranca(),
-								"Proprietario Anterior"
-										+ (CommonsUtil.semValor(dataVenda) ? " Data venda não localizada"
-												: " Data venda:" + CommonsUtil.formataData(dataVenda, "dd/MM/yyyy")));
+					cadastrarPessoRetornoRea(proprietarioAnterior, documentoAnaliseDao,
+							documentoAnalise.getContratoCobranca(),
+							"Proprietario Anterior" + (CommonsUtil.semValor(dataVenda) ? " Data venda não localizada"
+									: " Data venda:" + CommonsUtil.formataData(dataVenda, "dd/MM/yyyy")));
 //					}
 
 				}
-			}
+//			}
 
 			}
 
@@ -99,6 +101,9 @@ public class ReaWebhook {
 			eJwt.printStackTrace();
 			return Response.status(500).entity("Token Expirado").build();
 		} catch (Exception e) {
+			System.out.println("---------------- REA webhookRetorno ---------------- ");
+			System.out.println(webhookRetorno);
+			System.out.println("---------------- REA webhookRetorno ---------------- ");
 			e.printStackTrace();
 			return Response.status(500).entity("Erro interno").build();
 		}
@@ -111,7 +116,6 @@ public class ReaWebhook {
 
 		for (ReaWebhookRetornoProprietario propietario : bloco.getConteudo().getExtraido().getProprietarios()
 				.getDadosProprietarios()) {
-			
 
 			DocumentoAnalise documentoAnalise = new DocumentoAnalise();
 			documentoAnalise.setContratoCobranca(contratoCobranca);
@@ -119,31 +123,42 @@ public class ReaWebhook {
 
 			documentoAnalise.setTipoPessoa(propietario.getFisicaJuridica());
 			documentoAnalise.setMotivoAnalise(motivo);
+			boolean cnpjCpfValido = false;
 
 			if (documentoAnalise.getTipoPessoa() == "PJ") {
-				documentoAnalise.setCnpjcpf(propietario.getCnpj());
+				cnpjCpfValido = ValidaCNPJ.isCNPJ(propietario.getCpf());
+				if (cnpjCpfValido)
+					documentoAnalise.setCnpjcpf(propietario.getCnpj());
+				else
+					documentoAnalise.setCnpjcpf("CNPJ esta inválido");
 				documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.RELATO);
 			} else {
-				documentoAnalise.setCnpjcpf(propietario.getCpf());
+				cnpjCpfValido = ValidaCPF.isCPF(propietario.getCpf());
+				if (cnpjCpfValido)
+					documentoAnalise.setCnpjcpf(propietario.getCpf());
+				else
+					documentoAnalise.setCnpjcpf("CPF esta inválido");
 				documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.CREDNET);
 			}
-			
-			if (!documentoAnaliseDao.cadastradoAnalise(contratoCobranca, documentoAnalise.getCnpjcpf())) {
 
-				PagadorRecebedor pagador = new PagadorRecebedor();
-				pagador.setId(0);
-				if (CommonsUtil.mesmoValor(documentoAnalise.getTipoPessoa(), "PF")) {
-					pagador.setCpf(propietario.getCpf());
-					pagador.setRg(propietario.getRg());
-				} else {
-					pagador.setCnpj(propietario.getCnpj());
+			if (cnpjCpfValido) {
+				if (!documentoAnaliseDao.cadastradoAnalise(contratoCobranca, documentoAnalise.getCnpjcpf())) {
+
+					PagadorRecebedor pagador = new PagadorRecebedor();
+					pagador.setId(0);
+					if (CommonsUtil.mesmoValor(documentoAnalise.getTipoPessoa(), "PF")) {
+						pagador.setCpf(propietario.getCpf());
+						pagador.setRg(propietario.getRg());
+					} else {
+						pagador.setCnpj(propietario.getCnpj());
+					}
+					pagador.setNome(propietario.getNome());
+
+					pagador = pagadorRecebedorService.buscaOuInsere(pagador);
+					documentoAnalise.setPagador(pagador);
+
+					documentoAnaliseDao.create(documentoAnalise);
 				}
-				pagador.setNome(propietario.getNome());
-
-				pagador = pagadorRecebedorService.buscaOuInsere(pagador);
-				documentoAnalise.setPagador(pagador);
-
-				documentoAnaliseDao.create(documentoAnalise);
 			}
 		}
 

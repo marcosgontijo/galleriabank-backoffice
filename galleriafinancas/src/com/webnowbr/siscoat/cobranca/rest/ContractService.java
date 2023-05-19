@@ -414,6 +414,9 @@ public class ContractService {
 							this.objetoContratoCobranca.setObservacaoContatoAgendaLaudoAvaliacao(contratoAPP.has("observacaoContatoAgendaLaudoAvaliacao")
 									? contratoAPP.getString("observacaoContatoAgendaLaudoAvaliacao")
 									: this.objetoContratoCobranca.getObservacaoContatoAgendaLaudoAvaliacao());
+							this.objetoContratoCobranca.setComentarioContatoAgendaLaudoAvaliacao(contratoAPP.has("comentarioContatoAgendaLaudoAvaliacao")
+									? contratoAPP.getString("comentarioContatoAgendaLaudoAvaliacao")
+									: this.objetoContratoCobranca.getComentarioContatoAgendaLaudoAvaliacao());							
 							
 							this.objetoContratoCobranca.setComentarioPreComite(contratoAPP.has("comentarioPreComite")
 									? contratoAPP.getString("comentarioPreComite") : this.objetoContratoCobranca.getComentarioPreComite());

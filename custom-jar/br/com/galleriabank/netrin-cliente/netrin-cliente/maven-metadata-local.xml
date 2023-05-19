@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>br.com.galleriabank.netrin-cliente</groupId>
+  <artifactId>netrin-cliente</artifactId>
+  <versioning>
+    <versions>
+      <version>1.0-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20230517235606</lastUpdated>
+  </versioning>
+</metadata>

@@ -29,12 +29,14 @@ public class DocumentoAnalise implements Serializable {
 	private String tipo;
 	private boolean liberadoAnalise;
 	private boolean liberadoSerasa;
+	private boolean liberadoCenprot;
 
 	private DocumentosAnaliseEnum tipoEnum;
 
 	private String retorno;
 	private String retornoEngine;
 	private String retornoSerasa;
+	private String retornoCenprot;
 	private String observacao;
 	
 
@@ -65,6 +67,16 @@ public class DocumentoAnalise implements Serializable {
 	public boolean isSerasaProcessado() {
 		return !CommonsUtil.semValor(retornoSerasa);
 	}	
+	
+	public boolean isPodeChamarCenprot() {
+		return isEngineProcessado() && !isCenprotProcessado();
+	}
+	
+	public boolean isCenprotProcessado() {
+		return !CommonsUtil.semValor(retornoCenprot);
+	}
+	
+	
 	
 	public void addObservacao(String observacao) {
 		
@@ -171,6 +183,14 @@ public class DocumentoAnalise implements Serializable {
 		this.retornoEngine = retornoEngine;
 	}
 
+	public String getRetornoCenprot() {
+		return retornoCenprot;
+	}
+
+	public void setRetornoCenprot(String retornoCenprot) {
+		this.retornoCenprot = retornoCenprot;
+	}
+
 	public String getRetornoSerasa() {
 		return retornoSerasa;
 	}
@@ -225,6 +245,14 @@ public class DocumentoAnalise implements Serializable {
 
 	public void setLiberadoSerasa(boolean liberadoSerasa) {
 		this.liberadoSerasa = liberadoSerasa;
+	}
+
+	public boolean isLiberadoCenprot() {
+		return liberadoCenprot;
+	}
+
+	public void setLiberadoCenprot(boolean liberadoCenprot) {
+		this.liberadoCenprot = liberadoCenprot;
 	}
 
 	public String getObservacao() {

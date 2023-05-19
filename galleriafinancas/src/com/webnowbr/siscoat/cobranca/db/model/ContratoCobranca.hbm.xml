@@ -1139,6 +1139,14 @@
             <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.DataVistoria" />
         </set>
         
+        <set name="listAverbacao" table="Averbacao" cascade="all-delete-orphan"
+                 lazy="false" fetch="select">
+            <key>
+                <column name="contratoCobranca" not-null="true" />
+            </key>
+            <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.Averbacao" />
+        </set>
+        
         <property name="tipoCalculoInvestidor1" type="java.lang.String">
 			<column name="tipoCalculoInvestidor1" />
 		</property>
@@ -1670,6 +1678,10 @@
 			<column name="observacaoContatoAgendaLaudoAvaliacao" />
 		</property>	
 		
+		<property name="comentarioContatoAgendaLaudoAvaliacao" type="java.lang.String">
+			<column name="comentarioContatoAgendaLaudoAvaliacao" />
+		</property>
+		
 		<property name="formaDePagamentoLaudoPAJU" type="java.lang.String">
 			<column name="formaDePagamentoLaudoPAJU" />
 		</property>	
@@ -2115,6 +2127,20 @@
 		<property name="valorTotalProcessos" type="big_decimal">
 			<column name="valorTotalProcessos" />
 		</property>
+		
+		<property name="dividaIPTU" type="big_decimal">
+			<column name="dividaIPTU" />
+		</property>
+		
+		<property name="dividaCondominio" type="big_decimal">
+			<column name="dividaCondominio" />
+		</property>
+		
+		<property name="valorTotalAverbacao" type="big_decimal">
+			<column name="valorTotalAverbacao" />
+		</property>
+		
+		
 		
 	</class>
 </hibernate-mapping>
