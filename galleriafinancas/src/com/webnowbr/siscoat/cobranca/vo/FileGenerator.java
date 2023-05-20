@@ -2,19 +2,23 @@ package com.webnowbr.siscoat.cobranca.vo;
 
 import java.io.File;
 
-public class FileUploaded {
+public class FileGenerator {
 	private File file;
 	private String name;
 	private String path;
+	private String documento;
+	private boolean pdfGerado;
 
-	public FileUploaded() {
+	public FileGenerator() {
 	}
 
-	public FileUploaded(String name, File file, String path) {
-		this.name = name;
+	public FileGenerator(String name, File file, String path, String documento) {
 		this.file = file;
+		this.name = name;
 		this.path = path;
-	
+		this.documento  = documento;
+		this.pdfGerado =false;
+
 	}
 
 	/**
@@ -57,6 +61,22 @@ public class FileUploaded {
 	 */
 	public void setPath(String path) {
 		this.path = path;
+	}
+
+	public String getDocumento() {
+		return documento;
+	}
+
+	public void setDocumento(String documento) {
+		this.documento = documento;
+	}
+
+	public boolean isPdfGerado() {
+		return pdfGerado;
+	}
+
+	public void setPdfGerado(boolean pdfGerado) {
+		this.pdfGerado = pdfGerado;
 	}
 
 }

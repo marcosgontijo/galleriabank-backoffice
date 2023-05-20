@@ -56,6 +56,11 @@
 			<column name="liberadoCenprot" />
 		</property>	
 		
+		<property name="liberadoScr" type="boolean">
+			<column name="liberadoScr" />
+		</property>	
+		
+		
 		
 		
 		<property name="cnpjcpf" type="java.lang.String"  >
@@ -76,7 +81,9 @@
 		<property name="retornoCenprot" type="java.lang.String"  length="65000">
 			<column name="retornoCenprot" />
 		</property>
-		
+		<property name="retornoScr" type="java.lang.String"  length="65000">
+			<column name="retornoScr" />
+		</property>
 		
 		<property name="motivoAnalise" type="java.lang.String"  length="65000">
 			<column name="motivoAnalise" />

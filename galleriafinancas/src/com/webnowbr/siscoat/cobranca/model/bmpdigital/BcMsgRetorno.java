@@ -1,8 +1,12 @@
 package com.webnowbr.siscoat.cobranca.model.bmpdigital;
 
+import com.google.gson.annotations.SerializedName;
+
 public class BcMsgRetorno {
 
+	@SerializedName("Codigo")
 	private String codigo;
+	@SerializedName("Mensagem")
 	private String mensagem;
 	
 	public BcMsgRetorno() {

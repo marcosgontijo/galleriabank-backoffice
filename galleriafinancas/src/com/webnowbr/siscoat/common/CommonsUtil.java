@@ -1831,4 +1831,14 @@ public class CommonsUtil {
 
 		return outputStream;
 	}
+	
+	public static BigDecimal calcularPorcentagemValores(BigDecimal valorBase, BigDecimal valorCampo) {
+		BigDecimal porcentagem = BigDecimal.ZERO;
+		
+		if (valorBase.compareTo(BigDecimal.ZERO) > 0 && valorCampo.compareTo(BigDecimal.ZERO) > 0) {
+			porcentagem = valorCampo.divide(valorBase, 2, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(100));
+		}   
+		
+		return porcentagem;
+	}
 }

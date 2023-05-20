@@ -3,30 +3,80 @@ package com.webnowbr.siscoat.cobranca.model.bmpdigital;
 import java.math.BigDecimal;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlElement;
+
+import com.google.gson.annotations.SerializedName;
+import com.webnowbr.siscoat.common.CommonsUtil;
+
 public class ResumoDoCliente {
 
+	@SerializedName("CnpjDaIfSolicitante")
 	private String cnpjDaIfSolicitante;
+	
+	@SerializedName("CodigoDoCliente")
 	private String codigoDoCliente;
+	
+	@SerializedName("CoobrigacaoAssumida")
 	private BigDecimal coobrigacaoAssumida;
+	
+	@SerializedName("CoobrigacaoAssumidaSpecified")
 	private boolean coobrigacaoAssumidaSpecified;
+	
+	@SerializedName("CoobrigacaoRecebida")
 	private BigDecimal coobrigacaoRecebida;
+	
+	@SerializedName("CoobrigacaoRecebidaSpecified")
 	private boolean coobrigacaoRecebidaSpecified;
+	
+	@SerializedName("DataBaseConsultada")
 	private String dataBaseConsultada;
+	
+	@SerializedName("DataInicioRelacionamento")
 	private String dataInicioRelacionamento;
+	
+	@SerializedName("ListaDeMensagensDeValidacao")
 	private List<BcMsgRetorno> listaDeMensagensDeValidacao;
+	
+	@SerializedName("ListaDeResumoDasOperacoes")
 	private List<ResumoDaOperacao> listaDeResumoDasOperacoes;
+	
+	@SerializedName("PercentualDocumentosProcessados")
 	private String percentualDocumentosProcessados;
+	
+	@SerializedName("PercentualVolumeProcessado")
 	private String percentualVolumeProcessado;
+	
+	@SerializedName("QuantidadeDeInstituicoes")
 	private int quantidadeDeInstituicoes;
+	
+	@SerializedName("QuantidadeDeOperacoes")
 	private int quantidadeDeOperacoes;
-	private int quantidadeOperacoesDiscordancia;
+	
+//	@SerializedName("QuantidadeOperacoesSubJudice")
+//	private int quantidadeOperacoesDiscordancia;
+	
+	@SerializedName("QuantidadeOperacoesSubJudice")
 	private int quantidadeOperacoesSubJudice;
-	private BigDecimal responsabilidadeTotalDiscordancia;
+	
+//	@SerializedName("CoobrigacaoRecebida")
+//	private BigDecimal responsabilidadeTotalDiscordancia;
+	
+	@SerializedName("ResponsabilidadeTotalDiscordanciaSpecified")
 	private boolean responsabilidadeTotalDiscordanciaSpecified;
+	
+	@SerializedName("ResponsabilidadeTotalSubJudice")
 	private BigDecimal responsabilidadeTotalSubJudice;
+	
+	@SerializedName("ResponsabilidadeTotalSubJudiceSpecified")
 	private boolean responsabilidadeTotalSubJudiceSpecified;
+	
+	@SerializedName("RiscoIndiretoVendor")
 	private BigDecimal riscoIndiretoVendor;
+	
+	@SerializedName("RiscoIndiretoVendorSpecified")
 	private boolean riscoIndiretoVendorSpecified;
+	
+	@SerializedName("TipoDoCliente")
 	private String tipoDoCliente;
 	
 	public ResumoDoCliente() {
@@ -143,14 +193,17 @@ public class ResumoDoCliente {
 	public void setQuantidadeDeOperacoes(int quantidadeDeOperacoes) {
 		this.quantidadeDeOperacoes = quantidadeDeOperacoes;
 	}
-
-	public int getQuantidadeOperacoesDiscordancia() {
-		return quantidadeOperacoesDiscordancia;
-	}
-
-	public void setQuantidadeOperacoesDiscordancia(int quantidadeOperacoesDiscordancia) {
-		this.quantidadeOperacoesDiscordancia = quantidadeOperacoesDiscordancia;
-	}
+//
+//	public int getQuantidadeOperacoesDiscordancia() {
+//		if (CommonsUtil.semValor(quantidadeOperacoesDiscordancia)) {
+//			return quantidadeOperacoesSubJudice;
+//		}
+//		return quantidadeOperacoesDiscordancia;
+//	}
+//
+//	public void setQuantidadeOperacoesDiscordancia(int quantidadeOperacoesDiscordancia) {
+//		this.quantidadeOperacoesDiscordancia = quantidadeOperacoesDiscordancia;
+//	}
 
 	public int getQuantidadeOperacoesSubJudice() {
 		return quantidadeOperacoesSubJudice;
@@ -160,13 +213,13 @@ public class ResumoDoCliente {
 		this.quantidadeOperacoesSubJudice = quantidadeOperacoesSubJudice;
 	}
 
-	public BigDecimal getResponsabilidadeTotalDiscordancia() {
-		return responsabilidadeTotalDiscordancia;
-	}
-
-	public void setResponsabilidadeTotalDiscordancia(BigDecimal responsabilidadeTotalDiscordancia) {
-		this.responsabilidadeTotalDiscordancia = responsabilidadeTotalDiscordancia;
-	}
+//	public BigDecimal getResponsabilidadeTotalDiscordancia() {
+//		return responsabilidadeTotalDiscordancia;
+//	}
+//
+//	public void setResponsabilidadeTotalDiscordancia(BigDecimal responsabilidadeTotalDiscordancia) {
+//		this.responsabilidadeTotalDiscordancia = responsabilidadeTotalDiscordancia;
+//	}
 
 	public boolean isResponsabilidadeTotalDiscordanciaSpecified() {
 		return responsabilidadeTotalDiscordanciaSpecified;

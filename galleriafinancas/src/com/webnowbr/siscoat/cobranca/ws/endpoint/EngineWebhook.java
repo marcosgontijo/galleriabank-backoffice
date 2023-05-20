@@ -15,6 +15,7 @@ import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.op.DataEngineDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
+import com.webnowbr.siscoat.cobranca.service.ScrService;
 import com.webnowbr.siscoat.cobranca.service.SerasaService;
 import com.webnowbr.siscoat.cobranca.service.UserService;
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -62,6 +63,7 @@ public class EngineWebhook {
 					SerasaService serasaService = new SerasaService();
 					NetrinService netrinService = new NetrinService();
 					UserService userService = new UserService();
+					ScrService scrService = new ScrService(); 
 
 					engineWebhookRetorno.getConsultaAntecedenteCriminais();
 
@@ -81,6 +83,13 @@ public class EngineWebhook {
 							if (CommonsUtil.semValor(documentoAnalise.getRetornoCenprot())) {
 								documentoAnalise.setLiberadoCenprot(true);
 								netrinService.requestCenprot(documentoAnalise);
+							}
+						}
+						
+						if (documentoAnalise.isPodeChamarSCR()) {
+							if (CommonsUtil.semValor(documentoAnalise.getRetornoScr())) {
+								documentoAnalise.setLiberadoScr(true);
+								scrService.requestScr(documentoAnalise);
 							}
 						}
 						

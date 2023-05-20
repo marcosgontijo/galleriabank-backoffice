@@ -981,9 +981,9 @@
 											rendered="#{fileAnalise.cenprotProcessado }" ajax="false" />
 											
 										<p:commandButton
-											action="#{netrinMB.baixarDocumento(fileAnalise)}"
+											action="#{bmpDigitalMB.baixarDocumento(fileAnalise)}"
 											icon="ui-icon ui-icon-print" value="Download SCR"
-											rendered="#{fileAnalise.cenprotProcessado }" ajax="false" />
+											rendered="#{fileAnalise.scrProcessado }" ajax="false" />
 											
 
 									</p:column>
@@ -1004,7 +1004,7 @@
 							header="Certidões"
 							style="margin-bottom:10px;">
 							
-							<p:commandButton value="Executar Consultas" action="#{contratoCobrancaMB.executarConsultasAnaliseDocumento()}"/>
+							<p:commandButton value="Executar Consultas" action="#{contratoCobrancaMB.executarConsultasAnaliseDocumento}"/>
 							<p:commandButton value="Certidões Docket" action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.objetoContratoCobranca)}"/>	
 						</p:panel>
 					</p:panel>

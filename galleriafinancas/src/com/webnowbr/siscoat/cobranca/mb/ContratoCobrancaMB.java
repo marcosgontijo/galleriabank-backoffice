@@ -159,6 +159,7 @@ import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
+import com.webnowbr.siscoat.cobranca.service.ScrService;
 import com.webnowbr.siscoat.cobranca.service.SerasaService;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -28096,44 +28097,46 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		
 		NetrinService netrinService = new NetrinService();
 		
-//		ScrService scrService = new ScrService();
+		ScrService scrService = new ScrService();
 
-		for (DocumentoAnalise documentoAnalise : this.listaDocumentoAnalise.stream().filter(d -> d.isLiberadoAnalise() || d.isLiberadoSerasa() || d.isLiberadoCenprot())
+		for (DocumentoAnalise documentoAnalise : this.listaDocumentoAnalise.stream().filter(d -> d.isLiberadoAnalise() || d.isLiberadoSerasa() || d.isLiberadoCenprot()|| d.isLiberadoScr())
 				.collect(Collectors.toList())) {
 			
 			if (documentoAnalise.isLiberadoAnalise()) {
 				if (DocumentosAnaliseEnum.REA.equals(documentoAnalise.getTipoEnum())
 						&& documentoAnalise.isPodeChamarRea()) {
 					docketService.uploadREA(documentoAnalise, loginBean.getUsuarioLogado());
-				}
-
-				if (documentoAnalise.isPodeChamarEngine()) {
-					DataEngine engine = docketService.engineInserirPessoa(documentoAnalise.getPagador(),
-							objetoContratoCobranca);
-					docketService.engineCriarConsulta(documentoAnalise, engine, loginBean.getUsuarioLogado());
+				} else {
+					if (documentoAnalise.isPodeChamarEngine()  ) {
+						DataEngine engine = docketService.engineInserirPessoa(documentoAnalise.getPagador(),
+								objetoContratoCobranca);
+						docketService.engineCriarConsulta(documentoAnalise, engine, loginBean.getUsuarioLogado());
+					}
 				}
 			}
 			
+			if (!DocumentosAnaliseEnum.REA.equals(documentoAnalise.getTipoEnum())) {
+
 //			if (documentoAnalise.isPodeChamarSerasa() || documentoAnalise.isLiberadoSerasa() ) {
-			if ( documentoAnalise.isLiberadoSerasa() ) {
-				if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
-					serasaService.requestSerasa(documentoAnalise,  loginBean.getUsuarioLogado());
+				if (documentoAnalise.isLiberadoSerasa()) {
+					if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
+						serasaService.requestSerasa(documentoAnalise, loginBean.getUsuarioLogado());
+					}
 				}
-			}	
-			
+
 //			if (documentoAnalise.isPodeChamarCenprot() || documentoAnalise.isLiberadoCenprot() ) {
-			if (documentoAnalise.isLiberadoCenprot() ) {
-				if (CommonsUtil.semValor(documentoAnalise.getRetornoCenprot())) {
-					netrinService.requestCenprot(documentoAnalise);
+				if (documentoAnalise.isLiberadoCenprot()) {
+					if (CommonsUtil.semValor(documentoAnalise.getRetornoCenprot())) {
+						netrinService.requestCenprot(documentoAnalise);
+					}
 				}
-			}	
-			
-//			if ( documentoAnalise.isLiberadoScr() ) {
-//				if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
-//					scrService.requestScr(documentoAnalise);
-//				}
-//			}	
-			
+
+				if (documentoAnalise.isLiberadoScr()) {
+					if (CommonsUtil.semValor(documentoAnalise.getRetornoScr())) {
+						scrService.requestScr(documentoAnalise);
+					}
+				}
+			}
 
 		}
 
