@@ -63,7 +63,7 @@
 			<url>https://repository.primefaces.org//</url>
 		</repository>
 		<repository>
-		      <id>galleriabank</id>
+		      <id>repsy</id>
 		      <name>My Private Maven Repository on Repsy</name>
 		      <url>https://repo.repsy.io/mvn/amurta/galleriabank</url>
 		    </repository>
