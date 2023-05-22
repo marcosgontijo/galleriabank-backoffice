@@ -185,7 +185,6 @@ import com.webnowbr.siscoat.simulador.SimulacaoVO;
 import com.webnowbr.siscoat.simulador.SimuladorMB;
 
 import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
-import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetornoRequestFields;
 import br.com.galleriabank.serasacrednet.cliente.util.GsonUtil;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -31210,6 +31209,17 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 				addFileToZip(path + "/" + folder.getName(), srcFolder + "/" + fileName, zip);
 			}
 		}
+	}
+	
+	public List<DocumentoAnaliseResumo> getResumoEngine(DocumentoAnalise documentoAnalise) {
+		List<DocumentoAnaliseResumo> result = new ArrayList<>();  
+		EngineRetorno engine = GsonUtil.fromJson(documentoAnalise.getRetornoEngine(), EngineRetorno.class);
+		engine.getConsultaAntecedenteCriminais();
+		engine.getClassificationResult();
+		engine.getProcessos();
+		engine.getConsultaCompleta();
+		return result;
+		
 	}
 	
 	
