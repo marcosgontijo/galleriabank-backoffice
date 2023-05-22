@@ -63,11 +63,14 @@
 			<url>https://repository.primefaces.org//</url>
 		</repository>
 		<repository>
-			<id>galleriabank</id>
-			<name>galleriabank repo</name>
-			<url>https://amurta.bytesafe.dev/maven/galleriabank</url>			
-		</repository>
+		      <id>repsy</id>
+		      <name>My Private Maven Repository on Repsy</name>
+		      <url>https://repo.repsy.io/mvn/amurta/galleriabank</url>
+		    </repository>
 	</repositories>
+	
+
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.shiro</groupId>
