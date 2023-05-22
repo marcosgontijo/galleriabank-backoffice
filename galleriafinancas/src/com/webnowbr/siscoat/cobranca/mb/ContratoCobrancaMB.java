@@ -127,6 +127,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaStatus;
 import com.webnowbr.siscoat.cobranca.db.model.DataEngine;
 import com.webnowbr.siscoat.cobranca.db.model.DataVistoria;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
+import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnaliseResumo;
 import com.webnowbr.siscoat.cobranca.db.model.FilaInvestidores;
 import com.webnowbr.siscoat.cobranca.db.model.GruposFavorecidos;
 import com.webnowbr.siscoat.cobranca.db.model.GruposPagadores;
@@ -181,6 +182,8 @@ import com.webnowbr.siscoat.simulador.SimulacaoIPCADadosV2;
 import com.webnowbr.siscoat.simulador.SimulacaoVO;
 import com.webnowbr.siscoat.simulador.SimuladorMB;
 
+import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
+import br.com.galleriabank.serasacrednet.cliente.util.GsonUtil;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -31161,6 +31164,17 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 				addFileToZip(path + "/" + folder.getName(), srcFolder + "/" + fileName, zip);
 			}
 		}
+	}
+	
+	public List<DocumentoAnaliseResumo> getResumoEngine(DocumentoAnalise documentoAnalise) {
+		List<DocumentoAnaliseResumo> result = new ArrayList<>();  
+		EngineRetorno engine = GsonUtil.fromJson(documentoAnalise.getRetornoEngine(), EngineRetorno.class);
+		engine.getConsultaAntecedenteCriminais();
+		engine.getClassificationResult();
+		engine.getProcessos();
+		engine.getConsultaCompleta();
+		return result;
+		
 	}
 	
 	
