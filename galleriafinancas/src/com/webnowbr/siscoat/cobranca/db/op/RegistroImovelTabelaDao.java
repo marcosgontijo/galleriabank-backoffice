@@ -38,6 +38,7 @@ public class RegistroImovelTabelaDao extends HibernateDao <RegistroImovelTabela,
 							.prepareStatement(QUERY_REGISTRO_VALOR);		
 	
 					ps.setBigDecimal(1, valor);
+					ps.setBigDecimal(2, valor);
 	
 					rs = ps.executeQuery();
 										
