@@ -871,7 +871,7 @@ public class CcbMB {
 			}
 		}
 		
-		if(!CommonsUtil.semValor(objetoContratoCobranca.getValorTotalAverbacao())) {
+		if(CommonsUtil.semValor(objetoContratoCobranca.getValorTotalAverbacao())) {
 			 objetoContratoCobranca.setValorTotalAverbacao(BigDecimal.ZERO);
 		}
 		if(CommonsUtil.semValor(objetoCcb.getAverbacaoValor())) {
