@@ -86,12 +86,12 @@ public class EngineWebhook {
 							}
 						}
 						
-						if (documentoAnalise.isPodeChamarSCR()) {
-							if (CommonsUtil.semValor(documentoAnalise.getRetornoScr())) {
-								documentoAnalise.setLiberadoScr(true);
-								scrService.requestScr(documentoAnalise);
-							}
-						}
+//						if (documentoAnalise.isPodeChamarSCR()) {
+//							if (CommonsUtil.semValor(documentoAnalise.getRetornoScr())) {
+//								documentoAnalise.setLiberadoScr(true);
+//								scrService.requestScr(documentoAnalise);
+//							}
+//						}
 						
 					} else {
 						if (!CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais().getResult())
