@@ -8063,7 +8063,7 @@ public class ContratoCobrancaMB {
 				BigDecimal desconto = BigDecimal.ZERO;
 				if(this.dataQuitacao.after(parcelas.getDataVencimento())
 						|| this.dataQuitacao.after(DateUtil.adicionarDias(parcelas.getDataVencimento(), -30))) {
-					valorPresenteParcela = parcelas.getVlrParcela();
+					calcularValorPresenteParcelaDataValor(this.dataQuitacao, parcelas, parcelas.getVlrParcela());
 				} else {
 					this.numeroPresenteParcela = CommonsUtil.intValue(parcelas.getNumeroParcela());
 					calcularValorPresenteParcelaData(this.dataQuitacao, parcelas);
@@ -8071,8 +8071,8 @@ public class ContratoCobrancaMB {
 					valorPresenteTotal = valorPresenteTotal.add(this.valorPresenteParcela);
 					
 					valorParcelaPDF = parcelas.getVlrParcela();
-					desconto = valorParcelaPDF.subtract(valorPresenteParcela);
 				}
+				desconto = valorParcelaPDF.subtract(valorPresenteParcela);
 				
 				QuitacaoParcelasPDF parcelaPDF = new QuitacaoParcelasPDF(parcelas.getNumeroParcela(),
 						parcelas.getDataVencimento(),
@@ -8273,6 +8273,39 @@ public class ContratoCobrancaMB {
 			quantidadeDeMeses = quantidadeDeMeses.multiply(BigDecimal.valueOf(-1)); 
 		} 
 		*/
+
+		Double quantidadeDeMesesDouble = CommonsUtil.doubleValue(quantidadeDeMeses);
+		
+		juros = juros.divide(BigDecimal.valueOf(100));
+		juros = juros.add(BigDecimal.ONE);
+		
+		double divisor = Math.pow(CommonsUtil.doubleValue(juros), quantidadeDeMesesDouble);
+	
+		this.valorPresenteParcela = (saldo).divide(CommonsUtil.bigDecimalValue(divisor) , MathContext.DECIMAL128);
+		this.valorPresenteParcela = this.valorPresenteParcela.setScale(2, BigDecimal.ROUND_HALF_UP);	
+		
+		if(parcelas.getDataVencimento().before(data)) {	
+			if(!CommonsUtil.semValor(parcelas.getSeguroDFI())) {
+				valorPresenteParcela = valorPresenteParcela.add(parcelas.getSeguroDFI());
+			}
+			if(!CommonsUtil.semValor(parcelas.getSeguroMIP())) {
+				valorPresenteParcela = valorPresenteParcela.add(parcelas.getSeguroMIP());
+			}
+			if(!CommonsUtil.semValor(parcelas.getTaxaAdm())) {
+				valorPresenteParcela = valorPresenteParcela.add(parcelas.getTaxaAdm());
+			}		
+		}
+	}
+	
+	public void calcularValorPresenteParcelaDataValor(Date data, ContratoCobrancaDetalhes parcelas, BigDecimal valor){
+		BigDecimal juros = this.objetoContratoCobranca.getTxJurosParcelas();
+		
+		BigDecimal saldo = valor;		
+		BigDecimal quantidadeDeMeses = BigDecimal.ONE;
+
+		quantidadeDeMeses = BigDecimal.valueOf(DateUtil.Days360(data, parcelas.getDataVencimento()));
+		
+		quantidadeDeMeses = quantidadeDeMeses.divide(BigDecimal.valueOf(30), MathContext.DECIMAL128);
 
 		Double quantidadeDeMesesDouble = CommonsUtil.doubleValue(quantidadeDeMeses);
 		
@@ -8759,9 +8792,9 @@ public class ContratoCobrancaMB {
 		if(CommonsUtil.semValor(this.objetoAnaliseComite.getPrazoMaxComite()) && !CommonsUtil.semValor(this.objetoContratoCobranca.getPrazoMaxPreAprovado())) {
 			this.objetoAnaliseComite.setPrazoMaxComite(this.objetoContratoCobranca.getPrazoMaxPreAprovado());
 		}
-		if(CommonsUtil.semValor(this.objetoAnaliseComite.getComentarioComite()) && !CommonsUtil.semValor(this.objetoContratoCobranca.getComentarioJuridico())){
-			this.objetoAnaliseComite.setComentarioComite(this.objetoContratoCobranca.getComentarioJuridico());
-		}
+		//if(CommonsUtil.semValor(this.objetoAnaliseComite.getComentarioComite()) && !CommonsUtil.semValor(this.objetoContratoCobranca.getComentarioJuridico())){
+		//	this.objetoAnaliseComite.setComentarioComite(this.objetoContratoCobranca.getComentarioJuridico());
+		//}
 		if(CommonsUtil.semValor(this.objetoAnaliseComite.getValorComite())){
 			BigDecimal valorSugerido = BigDecimal.ZERO;
 			if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getImovel().getTipo(), "Apartamento") 

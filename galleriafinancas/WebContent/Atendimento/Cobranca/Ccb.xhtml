@@ -29,7 +29,6 @@
 			<p:panel id="PanelLocador" header="Contrato"
 				style="margin-bottom:10px;">
 				<p:focus />
-				<p:messages />
 				<p:messages id="msgs" />	
 				<p:commandButton ajax="false" action="#{ccbMB.readXWPFile}"
 						icon="ui-icon ui-icon-print" value="Fazer Download"  update=" :form  msgs" />			
@@ -50,6 +49,7 @@
 						<f:selectItem itemValue="Ficha PPE" itemLabel="Ficha PPE - PF" />	
 						<f:selectItem itemValue="Ficha PLD e FT" itemLabel="Ficha PLD e FT - PJ" />	
 						<f:selectItem itemValue="DeclaracaoNaoUniaoEstavel" itemLabel="DeclaracaoNaoUniaoEstavel" />
+						<f:selectItem itemValue="DeclaracaoDestinacaoRecursos" itemLabel="DeclaracaoDestinacaoRecursos" />
 						<f:selectItem itemValue="CCBnova" itemLabel="CCB" />
 						<f:selectItem itemValue="AFnova" itemLabel="AF" />	
 						
@@ -1812,80 +1812,6 @@
 					</p:panel>
 				</h:panelGroup>
 
-				<h:panelGroup id="SeguradoresPanel">
-					<p:panel header="Segurados" style="margin-bottom:10px;"
-						rendered="#{ccbMB.tipoDownload == 'CCI' || ccbMB.tipoDownload == 'AquisicaoCCI' || ccbMB.tipoDownload == 'FinanciamentoCCI' }">
-						<f:facet name="header"> Segurados 
-						<p:outputLabel value="" />
-							<p:selectBooleanButton
-								value="#{ccbMB.addSegurador}"
-								onLabel="Adicionar Segurado" offLabel="Adicionar Segurado">
-								<p:ajax update=":form:SeguradoresPanel" event="change" />
-							</p:selectBooleanButton>
-						</f:facet>
-
-						<p:dataView var="segurado"
-							value="#{ccbMB.objetoCcb.listSegurados}"
-							paginator="false" layout="list"
-							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
-							<p:dataViewListItem>
-								<p:outputLabel value="Nome: " styleClass="labelBold" />
-								<p:outputLabel value="#{segurado.pessoa.nome}"
-									styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
-								<p:spacer height="10" />
-								<p:outputLabel value="|" styleClass="labelBold" />
-								<p:spacer height="10" />
-								<p:outputLabel for="SeguradorPorcentagem"
-									value="Porcentagem do segurado: " styleClass="labelBold"
-									style="width:200px;" />
-								<p:inputText id="SeguradorPorcentagem"
-									value="#{segurado.porcentagemSegurador}" required="true"
-									style="FONT-SIZE: 10pt;width:200px;" />
-								<p:commandButton value="Remover"
-									action="#{ccbMB.removerSegurado(segurado)}"
-									ajax="true" update=":form:SeguradoresPanel" />
-							</p:dataViewListItem>
-						</p:dataView>
-
-						<h:panelGrid columns="2" id="addSegurado"
-							rendered="#{ccbMB.addSegurador}">
-
-							<p:spacer height="10" />
-							<p:spacer height="10" />
-							<p:outputLabel value="Adicionar Segurado" styleClass="labelBold" />
-							<p:spacer height="10" />
-							<p:outputLabel for="SeguradorNome" value="Nome do segurado: "
-								styleClass="labelBold" />
-							<h:panelGroup>
-								<p:outputLabel id="SeguradorNome"
-									value="#{ccbMB.seguradoSelecionado.pessoa.nome}"
-									required="false" style="FONT-SIZE: 10pt;width:300px;" />
-								<p:spacer height="10" />
-								<p:commandButton
-									action="#{ccbMB.pesquisaSegurado()}"
-									icon="ui-icon ui-icon-circle-zoomin"
-									oncomplete="PF('pagadorRecebedorDialog').show();"
-									update="formReceborPagador" />
-							</h:panelGroup>
-
-							<p:outputLabel for="SeguradorPorcentagem"
-								value="Porcentagem do segurado: " styleClass="labelBold" />
-							<p:inputText id="SeguradorPorcentagem"
-								value="#{ccbMB.seguradoSelecionado.porcentagemSegurador}"
-								style="FONT-SIZE: 10pt;width:300px;" 
-								onkeypress="return isNumberKey(event);"
-								onkeydown="FormataValor(this, 13, event, 2);" 
-								converter="bigDecimalConverter"/>
-							<p:spacer height="10" />
-
-							<p:commandButton value="Adicionar" ajax="true"
-								action="#{ccbMB.concluirSegurado()}"
-								update=":form:SeguradoresPanel" icon="ui-icon ui-icon-check" />
-
-						</h:panelGrid>
-					</p:panel>
-				</h:panelGroup>
-
 				<p:panel id="Dados" header="Dados" style="margin-bottom:10px;">
 					<h:panelGrid columns="2">
 						<p:panel header="Parcelas">
@@ -2539,6 +2465,80 @@
 									</h:panelGrid>
 								</p:panel>					
 							</h:panelGrid>
+							
+							<h:panelGroup id="SeguradoresPanel">
+								<p:panel header="Segurados" style="margin-bottom:10px;"
+									rendered="#{ccbMB.tipoDownload == 'CCI' || ccbMB.tipoDownload == 'AquisicaoCCI' || ccbMB.tipoDownload == 'FinanciamentoCCI' }">
+									<f:facet name="header"> Segurados 
+									<p:outputLabel value="" />
+										<p:selectBooleanButton
+											value="#{ccbMB.addSegurador}"
+											onLabel="Adicionar Segurado" offLabel="Adicionar Segurado">
+											<p:ajax update=":form:SeguradoresPanel" event="change" />
+										</p:selectBooleanButton>
+									</f:facet>
+			
+									<p:dataView var="segurado"
+										value="#{ccbMB.objetoCcb.listSegurados}"
+										paginator="false" layout="list"
+										paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+										<p:dataViewListItem>
+											<p:outputLabel value="Nome: " styleClass="labelBold" />
+											<p:outputLabel value="#{segurado.pessoa.nome}"
+												styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+											<p:spacer height="10" />
+											<p:outputLabel value="|" styleClass="labelBold" />
+											<p:spacer height="10" />
+											<p:outputLabel for="SeguradorPorcentagem"
+												value="Porcentagem do segurado: " styleClass="labelBold"
+												style="width:200px;" />
+											<p:inputText id="SeguradorPorcentagem"
+												value="#{segurado.porcentagemSegurador}" required="true"
+												style="FONT-SIZE: 10pt;width:200px;" />
+											<p:commandButton value="Remover"
+												action="#{ccbMB.removerSegurado(segurado)}"
+												ajax="true" update=":form:SeguradoresPanel" />
+										</p:dataViewListItem>
+									</p:dataView>
+			
+									<h:panelGrid columns="2" id="addSegurado"
+										rendered="#{ccbMB.addSegurador}">
+			
+										<p:spacer height="10" />
+										<p:spacer height="10" />
+										<p:outputLabel value="Adicionar Segurado" styleClass="labelBold" />
+										<p:spacer height="10" />
+										<p:outputLabel for="SeguradorNome" value="Nome do segurado: "
+											styleClass="labelBold" />
+										<h:panelGroup>
+											<p:outputLabel id="SeguradorNome"
+												value="#{ccbMB.seguradoSelecionado.pessoa.nome}"
+												required="false" style="FONT-SIZE: 10pt;width:300px;" />
+											<p:spacer height="10" />
+											<p:commandButton
+												action="#{ccbMB.pesquisaSegurado()}"
+												icon="ui-icon ui-icon-circle-zoomin"
+												oncomplete="PF('pagadorRecebedorDialog').show();"
+												update="formReceborPagador" />
+										</h:panelGroup>
+			
+										<p:outputLabel for="SeguradorPorcentagem"
+											value="Porcentagem do segurado: " styleClass="labelBold" />
+										<p:inputText id="SeguradorPorcentagem"
+											value="#{ccbMB.seguradoSelecionado.porcentagemSegurador}"
+											style="FONT-SIZE: 10pt;width:300px;" 
+											onkeypress="return isNumberKey(event);"
+											onkeydown="FormataValor(this, 13, event, 2);" 
+											converter="bigDecimalConverter"/>
+										<p:spacer height="10" />
+			
+										<p:commandButton value="Adicionar" ajax="true"
+											action="#{ccbMB.concluirSegurado()}"
+											update=":form:SeguradoresPanel" icon="ui-icon ui-icon-check" />
+			
+									</h:panelGrid>
+								</p:panel>
+							</h:panelGroup>					
 						</p:panel>
 					</h:panelGroup>
 
