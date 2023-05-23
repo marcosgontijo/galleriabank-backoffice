@@ -273,8 +273,10 @@ public class PagadorRecebedorMB {
 			
 			pagadorRecebedorDao.merge(objetoPagadorRecebedor);
 			
-			criarConjugeNoSistema(objetoPagadorRecebedor);
-
+			if(CommonsUtil.semValor(objetoPagadorRecebedor.getCpfConjuge())) {
+				criarConjugeNoSistema(objetoPagadorRecebedor);
+			}
+			
 			context.addMessage(null, new FacesMessage(
 					FacesMessage.SEVERITY_INFO, "PagadorRecebedor: Registro "
 							+ msgRetorno + " com sucesso! (PagadorRecebedor: "

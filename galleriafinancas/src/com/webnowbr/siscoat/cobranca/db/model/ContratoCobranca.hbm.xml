@@ -1107,7 +1107,7 @@
             <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorAdicionais" />
         </set>   
         
-        <set name="listContasPagar" table="CONTASPAGAR" cascade="all-delete-orphan"
+        <set name="listContasPagar" table="CONTASPAGAR" cascade="persist"
                  lazy="false" fetch="select">
             <key>
                 <column name="contrato" />
@@ -1115,7 +1115,7 @@
             <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.ContasPagar" />
         </set>  
         
-        <set name="listProcessos" table="ccbprocessosjudiciais" cascade="all-delete-orphan"
+        <set name="listProcessos" table="ccbprocessosjudiciais" cascade="persist"
                  lazy="false" fetch="select">
             <key>
                 <column name="contrato" />
