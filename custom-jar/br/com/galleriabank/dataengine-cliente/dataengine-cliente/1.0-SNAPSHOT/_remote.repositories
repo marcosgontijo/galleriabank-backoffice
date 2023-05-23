@@ -1,4 +1,6 @@
 #NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
-#Fri May 19 08:26:09 BRT 2023
+#Tue May 23 13:35:53 BRT 2023
 dataengine-cliente-1.0-SNAPSHOT.pom>=
+dataengine-cliente-1.0-SNAPSHOT.pom>local-maven-repository=
+dataengine-cliente-1.0-SNAPSHOT.jar>local-maven-repository=
 dataengine-cliente-1.0-SNAPSHOT.jar>=
