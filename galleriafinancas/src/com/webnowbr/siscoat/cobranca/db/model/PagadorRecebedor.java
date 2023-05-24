@@ -13,8 +13,10 @@ import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
 
+import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.common.BancosEnum;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.ValidaCPF;
 import com.webnowbr.siscoat.infra.db.model.User;
 
 public class PagadorRecebedor implements Serializable {
@@ -84,11 +86,13 @@ public class PagadorRecebedor implements Serializable {
 
 	
 	private Date dataEmissaoRGConjuge;
+	private String orgaoEmissorRGConjuge;
 	
 	private String rg;
 	private String cpf;
 	private String cnpj;
 	private Date dataEmissaoRG;
+	private String orgaoEmissorRG;
 	private String cep;
 	
 	private String bancoCompleto;
@@ -363,6 +367,110 @@ public class PagadorRecebedor implements Serializable {
 		    this.setIdadeConjuge(CommonsUtil.stringValue(idadeLong));
 		}
 	}
+	
+	public void criarConjugeNoSistema() {
+		PagadorRecebedor pagador = this;
+		if(CommonsUtil.semValor(pagador.getEstadocivil())){
+			return;
+		}
+		if(CommonsUtil.semValor(pagador.getCpfConjuge())){
+			return;
+		}
+		if(!CommonsUtil.mesmoValor(pagador.getEstadocivil(), "CASADO")){
+			return;
+		}
+		
+		PagadorRecebedor conjuge = null;
+		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
+
+		List<PagadorRecebedor> pagadorRecebedorBD = new ArrayList<PagadorRecebedor>();
+		boolean registraPagador = false;
+		Long idPagador = (long) 0;
+
+		if (!CommonsUtil.semValor(pagador.getCpfConjuge())) {
+			boolean validaCPF = ValidaCPF.isCPF(pagador.getCpfConjuge());
+			if(validaCPF) {
+				pagadorRecebedorBD = pagadorRecebedorDao.findByFilter("cpf", pagador.getCpfConjuge());
+				if (pagadorRecebedorBD.size() > 0) {
+					conjuge = pagadorRecebedorBD.get(0);
+				} else {
+					conjuge = new PagadorRecebedor();
+					registraPagador = true;
+				}
+			} else {
+				return;
+			}
+		} else {
+			return;
+		}
+		
+		conjuge.setEstadocivil(pagador.getEstadocivil());
+		conjuge.setDataCasamento(pagador.getDataCasamento());
+		conjuge.setRegimeCasamento(pagador.getRegimeCasamento());
+		conjuge.setRegistroPactoAntenupcial(pagador.getRegistroPactoAntenupcial());
+		conjuge.setLivroPactoAntenupcial(pagador.getLivroPactoAntenupcial());
+		conjuge.setFolhasPactoAntenupcial(pagador.getFolhasPactoAntenupcial());
+		conjuge.setDataPactoAntenupcial(pagador.getDataPactoAntenupcial());
+		
+		conjuge.setNome(pagador.getNomeConjuge());
+		conjuge.setCpf(pagador.getCpfConjuge());
+		conjuge.setAtividade(pagador.getCargoConjuge());
+		conjuge.setRg(pagador.getRgConjuge());
+		conjuge.setOrgaoEmissorRG(pagador.getOrgaoEmissorRGConjuge());
+		conjuge.setSexo(pagador.getSexoConjuge());
+		conjuge.setTelResidencial(pagador.getTelResidencialConjuge());
+		conjuge.setTelCelular(pagador.getTelCelularConjuge());
+		conjuge.setDtNascimento(pagador.getDtNascimentoConjuge());
+		conjuge.setIdade(pagador.getIdadeConjuge());
+		conjuge.setNomeMae(pagador.getNomeMaeConjuge());
+		conjuge.setNomePai(pagador.getNomePaiConjuge());
+		conjuge.setEndereco(pagador.getEnderecoConjuge());
+		conjuge.setBairro(pagador.getBairroConjuge());
+		conjuge.setComplemento(pagador.getComplementoConjuge());
+		conjuge.setCidade(pagador.getCidadeConjuge());
+		conjuge.setEstado(pagador.getEstadoConjuge());
+		conjuge.setCep(pagador.getCepConjuge());
+		conjuge.setEmail(pagador.getEmailConjuge());
+		conjuge.setBanco(pagador.getBancoConjuge());
+		conjuge.setAgencia(pagador.getAgenciaConjuge());
+		conjuge.setConta(pagador.getContaConjuge());
+		conjuge.setNomeCC(pagador.getNomeCCConjuge());
+		conjuge.setCpfCC(pagador.getCpfCCConjuge());
+		
+		conjuge.setNomeConjuge(pagador.getNome());
+		conjuge.setCpfConjuge(pagador.getCpf());
+		conjuge.setCargoConjuge(pagador.getAtividade());
+		conjuge.setRgConjuge(pagador.getRg());
+		conjuge.setOrgaoEmissorRGConjuge(pagador.getOrgaoEmissorRG());
+		conjuge.setSexoConjuge(pagador.getSexo());
+		conjuge.setTelResidencialConjuge(pagador.getTelResidencial());
+		conjuge.setTelCelularConjuge(pagador.getTelCelular());
+		conjuge.setDtNascimentoConjuge(pagador.getDtNascimento());
+		conjuge.setIdadeConjuge(pagador.getIdade());
+		conjuge.setNomeMaeConjuge(pagador.getNomeMae());
+		conjuge.setNomePaiConjuge(pagador.getNomePai());
+		conjuge.setEnderecoConjuge(pagador.getEndereco());
+		conjuge.setBairroConjuge(pagador.getBairro());
+		conjuge.setComplementoConjuge(pagador.getComplemento());
+		conjuge.setCidadeConjuge(pagador.getCidade());
+		conjuge.setEstadoConjuge(pagador.getEstado());
+		conjuge.setCepConjuge(pagador.getCep());
+		conjuge.setEmailConjuge(pagador.getEmail());
+		conjuge.setBancoConjuge(pagador.getBanco());
+		conjuge.setAgenciaConjuge(pagador.getAgencia());
+		conjuge.setContaConjuge(pagador.getConta());
+		conjuge.setNomeCCConjuge(pagador.getNomeCC());
+		conjuge.setCpfCCConjuge(pagador.getCpfCC());
+		
+		if (registraPagador) {
+			idPagador = pagadorRecebedorDao.create(conjuge);
+			conjuge = pagadorRecebedorDao.findById(idPagador);
+			System.out.println("ConjugeCriado");
+		} else {
+			pagadorRecebedorDao.merge(conjuge);
+		}
+	}
+
 	
 	/**
 	 * @return the id
@@ -2099,4 +2207,22 @@ public class PagadorRecebedor implements Serializable {
 	public void setValorProcessos(BigDecimal valorProcessos) {
 		this.valorProcessos = valorProcessos;
 	}
+
+	public String getOrgaoEmissorRGConjuge() {
+		return orgaoEmissorRGConjuge;
+	}
+
+	public void setOrgaoEmissorRGConjuge(String orgaoEmissorRGConjuge) {
+		this.orgaoEmissorRGConjuge = orgaoEmissorRGConjuge;
+	}
+
+	public String getOrgaoEmissorRG() {
+		return orgaoEmissorRG;
+	}
+
+	public void setOrgaoEmissorRG(String orgaoEmissorRG) {
+		this.orgaoEmissorRG = orgaoEmissorRG;
+	}
+	
+	
 }
