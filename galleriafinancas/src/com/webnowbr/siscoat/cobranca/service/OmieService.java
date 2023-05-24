@@ -10,15 +10,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.faces.application.FacesMessage;
-
-import org.json.JSONObject;
-
-import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
-import com.webnowbr.siscoat.cobranca.db.op.DataEngineDao;
-import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
-import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.omie.request.OmieRequestBase;
+import com.webnowbr.siscoat.omie.response.OmieListarExtratoResponse;
 import com.webnowbr.siscoat.omie.response.OmieObterResumoFinResponse;
 
 import br.com.galleriabank.serasarelato.cliente.util.GsonUtil;
@@ -80,7 +73,59 @@ public class OmieService {
 
 	}
 	
+	public OmieListarExtratoResponse listarExtratoResponse(OmieRequestBase request) {
+		
+		 // POST para gerar consulta
+		OmieListarExtratoResponse result = new OmieListarExtratoResponse();
+		
+		try {
+			// loginDocket();
+			int HTTP_COD_SUCESSO = 200;
+			int HTTP_COD_SUCESSO2 = 201;
 
+			URL myURL;
+			myURL = new URL(omieUrl + "/financas/resumo/");
+
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setRequestMethod("POST");
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			myURLConnection.setDoOutput(true);
+
+			String myResponse = null;
+
+			try (OutputStream os = myURLConnection.getOutputStream()) {
+				byte[] input = GsonUtil.toJson(request).toString().getBytes("utf-8");
+				os.write(input, 0, input.length);
+			}
+
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO
+					&& myURLConnection.getResponseCode() != HTTP_COD_SUCESSO2) {
+
+				System.out.println(GsonUtil.toJson(request).toString());
+			} else {
+
+				myResponse = getResposta(myURLConnection.getInputStream());
+				result = GsonUtil.fromJson(myResponse, OmieListarExtratoResponse.class);
+			}
+
+			myURLConnection.disconnect();
+			return result;
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+
+
+	}
+	
+	
 	private String getResposta(InputStream inputStream) { // Pega resultado da API
 		BufferedReader in;
 		try {

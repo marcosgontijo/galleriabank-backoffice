@@ -10,6 +10,7 @@ import com.webnowbr.siscoat.omie.request.IOmieParam;
 import com.webnowbr.siscoat.omie.request.ListarExtratoRequest;
 import com.webnowbr.siscoat.omie.request.ObterResumoFinRequest;
 import com.webnowbr.siscoat.omie.request.OmieRequestBase;
+import com.webnowbr.siscoat.omie.response.OmieListarExtratoResponse;
 import com.webnowbr.siscoat.omie.response.OmieObterResumoFinResponse;
 
 import br.com.galleriabank.serasarelato.cliente.util.GsonUtil;
@@ -57,7 +58,8 @@ class OmieServiceTest {
 		omieRequestBase.setParam(params);
 
 		OmieService omieService = new OmieService();
-		OmieListarExtratoResponse listarExtratoRequest = omieService.listarExtratoRequest(omieRequestBase);
-		System.out.print(GsonUtil.toJson(listarExtratoRequest));
+		OmieListarExtratoResponse omieListarExtratoResponse = omieService.listarExtratoResponse(omieRequestBase);
+		
+		System.out.print(GsonUtil.toJson(omieListarExtratoResponse));
 }
 	}
