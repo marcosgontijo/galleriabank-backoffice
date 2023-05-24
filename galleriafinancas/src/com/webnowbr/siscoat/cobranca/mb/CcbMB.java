@@ -6834,10 +6834,8 @@ public class CcbMB {
 				run.setFontSize(12);
 				if(CommonsUtil.mesmoValor(despesa.getFormaTransferencia(), "TED")) {
 					run.setText("Ted no "+ despesa.getBancoTed() +" AG: "+ despesa.getAgenciaTed()
-					+" C/C: "+ despesa.getContaTed() + " " + despesa.getNomeTed() 
+					+" C/C: "+ despesa.getContaTed() + " Chave Pix:" + despesa.getPix() + " " + despesa.getNomeTed() 
 					+" CPF/CNPJ: "+ despesa.getCpfTed()); 
-				} else if(CommonsUtil.mesmoValor(despesa.getFormaTransferencia(), "Pix")) {
-					run.setText("Chave Pix: "+ despesa.getPix()); 
 				} else {
 					run.setText(despesa.getFormaTransferencia());
 				}
