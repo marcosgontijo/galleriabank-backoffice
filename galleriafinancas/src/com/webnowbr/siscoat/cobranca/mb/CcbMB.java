@@ -10059,7 +10059,6 @@ public class CcbMB {
 		jurosAoAno = jurosAoAno.subtract(BigDecimal.ONE);
 		jurosAoAno = jurosAoAno.multiply(BigDecimal.valueOf(100), MathContext.DECIMAL128);
 		jurosAoAno = jurosAoAno.setScale(2, BigDecimal.ROUND_HALF_UP);
-		this.simulador.setTaxaJurosAoAno(jurosAoAno);
 		
 		simulador.setValorCreditoLiberado(simulador.getValorCredito());
 		
@@ -10085,6 +10084,7 @@ public class CcbMB {
 			simuladorLiquido.setSeguroDFI(SiscoatConstants.SEGURO_DFI);
 			simuladorLiquido.setTipoPessoa(this.objetoCcb.getTipoPessoaEmitente());
 			// valores
+			
 			simuladorLiquido.setValorCreditoLiberado(simulador.getValorCredito());
 			simuladorLiquido.setValorCredito(valorBruto);
 			simuladorLiquido.setTaxaJuros(this.objetoCcb.getTaxaDeJurosMes());
@@ -10112,6 +10112,8 @@ public class CcbMB {
 		} else {
 			this.simulador = simulador;
 		}
+		
+		this.simulador.setTaxaJurosAoAno(jurosAoAno);
 		
 		if (simulador.getParcelas().size() > 0 ) {
 			BigDecimal cet = BigDecimal.ZERO;

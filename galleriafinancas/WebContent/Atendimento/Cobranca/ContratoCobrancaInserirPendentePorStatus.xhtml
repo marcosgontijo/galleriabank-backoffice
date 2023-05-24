@@ -3732,64 +3732,46 @@
 								action="#{contratoCobrancaMB.concluirConta()}"
 								update=":form:ContasPagarPanel" icon="ui-icon ui-icon-check" />
 						</h:panelGroup>
-
-						<p:dataView var="contas"
-							value="#{contratoCobrancaMB.objetoContratoCobranca.listContasPagar}"
-							paginator="false" layout="list"
-							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
-							<p:dataViewListItem>
-								<p:outputLabel value="Descrição: " styleClass="labelBold" />
-								<p:outputLabel value="#{contas.descricao}"
-									styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
-								<p:spacer height="5" />
-								<p:outputLabel value="|" />
-								<p:spacer height="5" />
-
-								<p:outputLabel value="Valor: " styleClass="labelBold" />
-								<p:outputLabel value="#{contas.valor}"
-									converter="bigDecimalConverter" styleClass="labelBold"
-									style="FONT-SIZE: 10pt;width:100px;" />
-								<p:spacer height="5" />
-								<p:outputLabel value="|" />
-								<p:spacer height="5" />
-
-								<p:outputLabel value="Data Vencimento: " styleClass="labelBold" />
-								<h:outputText value="#{contas.dataVencimento}"
-									styleClass="labelBold">
+						
+						<p:dataTable var="contas" value="#{contratoCobrancaMB.objetoContratoCobranca.listContasPagar}" 
+							id="contasDT" style="width:1000px;" size="small"  >
+							
+							<p:column style="text-align: center;" headerText="Descrição"  >
+								<p:outputLabel value="#{contas.descricao}" 
+									style="FONT-SIZE: 10pt;" />
+							</p:column>
+							
+							<p:column style="text-align: center;" headerText="Valor "  >
+								<p:outputLabel value="#{contas.valor}" 
+									style="FONT-SIZE: 10pt;"
+									converter="bigDecimalConverter" />
+							</p:column> 
+							
+							<p:column style="text-align: center;" headerText="Data Vencimento"  >
+								<h:outputText value="#{contas.dataVencimento}">
 									<f:convertDateTime pattern="dd/MM/yyyy" />
 								</h:outputText>
-								
-								<p:spacer height="5" />
-								<p:outputLabel value="|" />
-								<p:spacer height="5" />
-
-								<p:outputLabel value="Valor Pago: " styleClass="labelBold" />
+							</p:column>
+							
+							<p:column style="text-align: center;" headerText="Valor Pago"  >
 								<p:outputLabel value="#{contas.valorPagamento}"
-									converter="bigDecimalConverter" styleClass="labelBold"
+									converter="bigDecimalConverter" 
 									style="FONT-SIZE: 10pt;width:100px;" />
-								<p:spacer height="5" />
-								<p:outputLabel value="|" />
-								<p:spacer height="5" />
-
-								<p:outputLabel value="Data Pagamento: " styleClass="labelBold" />
-								<h:outputText value="#{contas.dataPagamento}"
-									styleClass="labelBold">
-									<f:convertDateTime pattern="dd/MM/yyyy" />
-								</h:outputText>
-								<p:spacer height="10" />					
-									<p:commandButton value="Editar" icon="ui-icon-pencil"
-										action="#{contratoCobrancaMB.editarConta(contas)}" ajax="true"
-										update=":form:ContasPagarPanel" />
-									<p:spacer height="10" />
-									<p:commandButton value="Remover" icon="ui-icon-trash"
-										action="#{contratoCobrancaMB.removerConta(contas)}"
-										ajax="true" update=":form:ContasPagarPanel" />
-									<p:spacer height="10" />
-									<p:commandButton value="Arquivos" icon="ui-icon-print"
-										action="#{contratoCobrancaMB.populateFilesContasPagar(contas)}"
-										ajax="true" update=":form:ContasPagarPanel contaArquivosForm" />
-							</p:dataViewListItem>
-						</p:dataView>
+							</p:column>
+						
+							<p:column style="text-align: center;width:260px;" headerText="" >
+								<p:commandButton value="Editar" icon="ui-icon-pencil"
+									action="#{contratoCobrancaMB.editarConta(contas)}" ajax="true"
+									update=":form:ContasPagarPanel" />
+								<p:commandButton value="Remover" icon="ui-icon-trash"
+									action="#{contratoCobrancaMB.removerConta(contas)}"
+									ajax="true" update=":form:ContasPagarPanel" />
+								<p:commandButton value="Arquivos" icon="ui-icon-print"
+									action="#{contratoCobrancaMB.populateFilesContasPagar(contas)}"
+									ajax="true" update=":form:ContasPagarPanel contaArquivosForm" />
+							</p:column>
+						</p:dataTable>			
+						
 					</p:panel>
 				</h:panelGroup>
 				
