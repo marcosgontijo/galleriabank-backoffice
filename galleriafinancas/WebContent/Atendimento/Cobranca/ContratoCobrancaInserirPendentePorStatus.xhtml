@@ -2169,6 +2169,10 @@
 								mask="99/99/9999" label="Data de Nascimento">
 								<f:convertDateTime pattern="dd/MM/yyyy" />
 							</p:outputLabel>
+							
+							<p:outputLabel for="orgaoEmissorRG" value="Orgão Emissor" />
+							<p:outputLabel id="orgaoEmissorRG"
+								value="#{contratoCobrancaMB.objetoPagadorRecebedor.orgaoEmissorRG}" />
 
 							<p:outputLabel for="CNPJ" value="CNPJ: " styleClass="labelBold"
 								rendered="#{!contratoCobrancaMB.tipoPessoaIsFisica}" />
@@ -2429,6 +2433,9 @@
 										mask="99/99/9999" label="Data Emissão">
 										<f:convertDateTime pattern="dd/MM/yyyy" />
 									</p:outputLabel>
+									<p:outputLabel for="orgaoEmissorRGConjuge" value="Orgão Emissor" />
+									<p:outputLabel id="orgaoEmissorRGConjuge"
+										value="#{contratoCobrancaMB.objetoPagadorRecebedor.orgaoEmissorRGConjuge}" />
 
 									<p:outputLabel for="NomePaiConjuge" value="Nome do Pai: " />
 									<p:outputLabel id="NomePaiConjuge"
@@ -3282,7 +3289,8 @@
 						<p:inputText id="inscricaoMunicipal" value="#{contratoCobrancaMB.objetoImovelCobranca.inscricaoMunicipal}" />
 						
 						<p:outputLabel for="numeroCartorio" value="Numero Cartório: " />
-						<p:inputText id="numeroCartorio" value="#{contratoCobrancaMB.objetoImovelCobranca.numeroCartorio}" /> 
+						<p:inputText id="numeroCartorio" type="number"
+						value="#{contratoCobrancaMB.objetoImovelCobranca.numeroCartorio}" />  
 											
 						<p:outputLabel for="cartorioEstado" value="Estado Cartório: " />
 						<p:inputText id="cartorioEstado" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioEstado}" /> 

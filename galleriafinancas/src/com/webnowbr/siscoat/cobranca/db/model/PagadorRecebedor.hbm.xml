@@ -588,5 +588,13 @@
 				class="com.webnowbr.siscoat.cobranca.db.model.DocumentosPagadorDocket" />
 		</list>
 		
+		<property name="orgaoEmissorRG" type="java.lang.String">
+			<column name="orgaoEmissorRG" />
+		</property>
+		
+		<property name="orgaoEmissorRGConjuge" type="java.lang.String">
+			<column name="orgaoEmissorRGConjuge" />
+		</property>
+		
     </class>
 </hibernate-mapping>

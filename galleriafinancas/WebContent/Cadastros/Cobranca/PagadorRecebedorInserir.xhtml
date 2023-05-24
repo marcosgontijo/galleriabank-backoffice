@@ -71,6 +71,10 @@
 							mask="99/99/9999" label="Data de Nascimento">
 							<f:convertDateTime pattern="dd/MM/yyyy" />
 						</p:inputMask>
+						
+						<p:outputLabel for="orgaoEmissorRG" value="Orgão Emissor" />
+						<p:inputText id="orgaoEmissorRG"
+							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.orgaoEmissorRG}" />
 	
 						<p:outputLabel for="CNPJ" value="CNPJ: " styleClass="labelBold"
 							rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisica}" />
@@ -352,6 +356,10 @@
 								mask="99/99/9999" label="Data Emissão" >
 								<f:convertDateTime pattern="dd/MM/yyyy" />
 							</p:inputMask>
+							
+							<p:outputLabel for="orgaoEmissorRGConjuge" value="Orgão Emissor" />
+							<p:inputText id="orgaoEmissorRGConjuge"
+								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.orgaoEmissorRGConjuge}" />
 	
 							<p:outputLabel for="emailConjuge" value="E-Mail: "
 								styleClass="labelBold"  />
