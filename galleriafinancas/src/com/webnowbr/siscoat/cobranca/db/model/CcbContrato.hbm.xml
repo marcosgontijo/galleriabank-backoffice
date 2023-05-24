@@ -286,7 +286,7 @@
 			<column name="condominioEmAtrasoValor" />
 		</property>
 		
-		<many-to-one name="objetoContratoCobranca"
+		<many-to-one name="objetoContratoCobranca" cascade="persist"
 			class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca"
 			lazy="false">
 			<column name="objetoContratoCobranca" />
@@ -418,7 +418,7 @@
 		
 		<property name="vlrImovel" type="big_decimal">
 			<column name="vlrImovel" />
-		</property>
+		</property> 
 		
 		<property name="TipoPessoaEmitente" type="java.lang.String">
 			<column name="TipoPessoaEmitente" />

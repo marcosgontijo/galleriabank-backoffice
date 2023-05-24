@@ -18943,10 +18943,16 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		
 		BigDecimal valorDespesas = calcularValorTotalContasPagar();
 		this.objetoContratoCobranca.setContaPagarValorTotal(valorDespesas); 
-		
+		ContasPagarDao contasPagarDao = new ContasPagarDao();
+		if(contasPagarSelecionada.getId() <= 0) {
+			contasPagarDao.create(contasPagarSelecionada);
+		} else {
+			contasPagarDao.merge(contasPagarSelecionada);
+		}
 		this.contasPagarSelecionada = new ContasPagar();
 		this.addContasPagar = false;
 		this.objetoContratoCobranca.calcularValorTotalContasPagas();
+		
 	}
 	
 	public void clearPagadorProcesso(CcbProcessosJudiciais processo) {

@@ -19,12 +19,14 @@
 								<shiro:hasAnyRoles name="ROOT, COBRANCA">
 									<p:menuitem value="Responsável" action="/Cadastros/Cobranca/ResponsavelConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-person" styleClass="itemMenu"/>									
 								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT, COBRANCA, IUGU_POSTO, ASSISTENTEFINANCEIRO, PROFILE_ANALISTA_POS_COMITE, PROFILE_ANALISTA_COMITE, PROFILE_CONTRATO, PROFILE_ANALISTA_CREDITO">									
+								<shiro:hasAnyRoles name="ROOT, COBRANCA, IUGU_POSTO, ASSISTENTEFINANCEIRO, PROFILE_ANALISTA_POS_COMITE, PROFILE_ANALISTA_COMITE, PROFILE_CONTRATO, PROFILE_ANALISTA_CREDITO">													
 									<p:menuitem value="Pagador / Recebedor" action="/Cadastros/Cobranca/PagadorRecebedorConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-person" styleClass="itemMenu"/>
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, COBRANCA, IUGU_POSTO, ASSISTENTEFINANCEIRO, PROFILE_ANALISTA_POS_COMITE, PROFILE_ANALISTA_COMITE, PROFILE_CONTRATO">
+									<p:menuitem value="Imóveis" action="/Cadastros/Cobranca/ImovelCobrancaConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-home" styleClass="itemMenu"/>
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, COBRANCA">
 									<p:menuitem value="Contas Contábeis" action="/Cadastros/Cobranca/ContasContabeisConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-transferthick-e-w" styleClass="itemMenu"/>
-									<p:menuitem value="Imóveis" action="/Cadastros/Cobranca/ImovelCobrancaConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-home" styleClass="itemMenu"/>
 									<p:menuitem value="Grupos Favorecidos" action="/Cadastros/Cobranca/GruposFavorecidosConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-person" styleClass="itemMenu"/>
 									<p:menuitem value="Grupos Pagadores" action="/Cadastros/Cobranca/GruposPagadoresConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-person" styleClass="itemMenu"/>
 								</shiro:hasAnyRoles>	
