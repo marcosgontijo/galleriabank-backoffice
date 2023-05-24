@@ -147,18 +147,21 @@ public class DocumentoAnalise implements Serializable {
 
 	public void setTipo(String tipo) {
 		this.tipo = tipo;
-		switch (tipo) {
-		case "Rea":
-			this.tipoEnum = DocumentosAnaliseEnum.REA;
-			break;
-		case "Relato":
-			this.tipoEnum = DocumentosAnaliseEnum.RELATO;
 
-			break;
-		case "Crednet":
-			this.tipoEnum = DocumentosAnaliseEnum.CREDNET;
-			break;
-		}
+		this.tipoEnum = DocumentosAnaliseEnum.parse(tipo);
+//		
+//		switch (tipo) {
+//		case "Rea":
+//			this.tipoEnum = DocumentosAnaliseEnum.REA;
+//			break;
+//		case "Relato":
+//			this.tipoEnum = DocumentosAnaliseEnum.RELATO;
+//
+//			break;
+//		case "Crednet":
+//			this.tipoEnum = DocumentosAnaliseEnum.CREDNET;
+//			break;
+//		}
 	}
 
 	public boolean isLiberadoAnalise() {

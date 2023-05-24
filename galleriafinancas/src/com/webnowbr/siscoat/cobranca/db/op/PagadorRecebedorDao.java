@@ -7,7 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
+import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorConsulta;
+import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.db.dao.*;
+import com.webnowbr.siscoat.db.dao.HibernateDao.DBRunnable;
 
 /**
  * DAO access layer for the Tecnico entity
@@ -158,4 +161,41 @@ public class PagadorRecebedorDao extends HibernateDao <PagadorRecebedor,Long> {
 			}
 		});	
 	}	
+	
+
+	private static final String QUERY_PESQUISA_CPF_CNPJ = "select id from cobranca.pagadorrecebedor "
+			+ "where cpf = ? or  cnpj= ? ";
+
+	@SuppressWarnings("unchecked")
+	public PagadorRecebedor getConsultaByCpfCnpj(
+			final String cpfCnpj) {
+		return (PagadorRecebedor) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				PagadorRecebedor pagadorRecebedor = null;
+
+				Connection connection = null;	
+				PreparedStatement ps = null;			
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+
+					ps = connection.prepareStatement(QUERY_PESQUISA_CPF_CNPJ);
+					String sCpfCnpj = CommonsUtil.somenteNumeros(cpfCnpj);
+					sCpfCnpj  =CommonsUtil.formataCnpjCpf(sCpfCnpj, false);
+					ps.setString(1, sCpfCnpj);
+					ps.setString(2, sCpfCnpj);
+					rs = ps.executeQuery();
+
+					if (rs.next()) {
+						pagadorRecebedor = findById(rs.getLong(1));
+					}
+
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return pagadorRecebedor;
+			}
+		});
+	}
 }

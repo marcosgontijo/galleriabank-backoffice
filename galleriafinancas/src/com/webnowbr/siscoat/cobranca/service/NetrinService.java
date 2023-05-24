@@ -13,13 +13,10 @@ import javax.faces.application.FacesMessage;
 import org.json.JSONObject;
 
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
+import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
-import com.webnowbr.siscoat.infra.db.model.User;
-
-import br.com.galleriabank.serasacrednet.cliente.model.CredNet;
-import br.com.galleriabank.serasacrednet.cliente.model.PessoaParticipacao;
-import br.com.galleriabank.serasarelato.cliente.util.GsonUtil;
+import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 
 public class NetrinService {
 
@@ -83,6 +80,10 @@ public class NetrinService {
 				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 				documentoAnalise.setRetornoCenprot(response.toString());
 				documentoAnaliseDao.merge(documentoAnalise);
+				
+				DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
+				documentoAnaliseService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+						DocumentosAnaliseEnum.CENPROT, response.toString());
 
 				result = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
 

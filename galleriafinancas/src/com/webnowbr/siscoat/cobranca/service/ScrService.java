@@ -2,7 +2,6 @@ package com.webnowbr.siscoat.cobranca.service;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,23 +22,20 @@ import java.util.TimeZone;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
-import org.jasypt.commons.CommonUtils;
 import org.json.JSONObject;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Phrase;
-import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
+import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ResumoDoCliente;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ResumoDoClienteTraduzido;
@@ -47,10 +43,9 @@ import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
 import com.webnowbr.siscoat.cobranca.vo.FileGenerator;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
+import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
-
-import ch.qos.logback.core.util.FileUtil;
 
 public class ScrService {
 
@@ -70,10 +65,15 @@ public class ScrService {
 
 		if (CommonsUtil.semValor(documentoAnalise.getRetornoScr())) {
 			ScrResult scrResult = consultaSCR(documentoAnalise.getCnpjcpf(), null);			
-
+			if (!CommonsUtil.semValor(scrResult)) {
 			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 			documentoAnalise.setRetornoScr(GsonUtil.toJson(scrResult));
 			documentoAnaliseDao.merge(documentoAnalise);
+			
+			DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
+			documentoAnaliseService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+					DocumentosAnaliseEnum.SCR, documentoAnalise.getRetornoScr());
+			}
 			
 		}
 	}
@@ -117,184 +117,18 @@ public class ScrService {
 				
 				ScrResult scResult = GsonUtil.fromJson(stringResponse, ScrResult.class);
 				
-//				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-				
-//				ScrResult scResult = new ScrResult();
 				
 				if (!scResult.isErro()) {
-//					
-//					scResult.setErro(myResponse.getBoolean("Erro"));
-//					scResult.setMensagemOperador(myResponse.getString("MensagemOperador"));
-//					scResult.setPeriodo(myResponse.getString("Periodo"));
-//				
-//					if (getObjectJSON(myResponse, "ResumoDoCliente")) {
-//						
-//						JSONObject resumoDoClienteJSON = myResponse.getJSONObject("ResumoDoCliente");
-//						
-//						ResumoDoCliente resumoDoCliente = new ResumoDoCliente();				
-//				
-//						resumoDoCliente.setCnpjDaIfSolicitante(getStringJSON(resumoDoClienteJSON, "CnpjDaIfSolicitante"));
-//						resumoDoCliente.setCodigoDoCliente(getStringJSON(resumoDoClienteJSON, "CodigoDoCliente"));
-//						resumoDoCliente.setCoobrigacaoAssumida(BigDecimal.valueOf(resumoDoClienteJSON.getLong("CoobrigacaoAssumida")));
-//						resumoDoCliente.setCoobrigacaoAssumidaSpecified(resumoDoClienteJSON.getBoolean("CoobrigacaoAssumidaSpecified"));
-//						resumoDoCliente.setCoobrigacaoRecebida(BigDecimal.valueOf(resumoDoClienteJSON.getLong("CoobrigacaoRecebida")));
-//						resumoDoCliente.setCoobrigacaoRecebidaSpecified(resumoDoClienteJSON.getBoolean("CoobrigacaoRecebidaSpecified"));
-//						resumoDoCliente.setDataBaseConsultada(getStringJSON(resumoDoClienteJSON, "DataBaseConsultada"));
-//						resumoDoCliente.setDataInicioRelacionamento(getStringJSON(resumoDoClienteJSON, "DataInicioRelacionamento"));
-//						resumoDoCliente.setPercentualDocumentosProcessados(getStringJSON(resumoDoClienteJSON, "PercentualDocumentosProcessados"));
-//						resumoDoCliente.setPercentualVolumeProcessado(getStringJSON(resumoDoClienteJSON, "PercentualVolumeProcessado"));
-//						resumoDoCliente.setQuantidadeDeInstituicoes(resumoDoClienteJSON.getInt("QuantidadeDeInstituicoes"));
-//						resumoDoCliente.setQuantidadeDeOperacoes(resumoDoClienteJSON.getInt("QuantidadeDeOperacoes"));
-//						resumoDoCliente.setQuantidadeOperacoesDiscordancia(resumoDoClienteJSON.getInt("QuantidadeOperacoesSubJudice"));
-//						resumoDoCliente.setQuantidadeOperacoesSubJudice(resumoDoClienteJSON.getInt("QuantidadeOperacoesSubJudice"));
-//						resumoDoCliente.setResponsabilidadeTotalDiscordancia(BigDecimal.valueOf(resumoDoClienteJSON.getLong("CoobrigacaoRecebida")));
-//						resumoDoCliente.setResponsabilidadeTotalDiscordanciaSpecified(resumoDoClienteJSON.getBoolean("ResponsabilidadeTotalDiscordanciaSpecified"));
-//						resumoDoCliente.setResponsabilidadeTotalSubJudice(BigDecimal.valueOf(resumoDoClienteJSON.getLong("ResponsabilidadeTotalSubJudice")));
-//						resumoDoCliente.setResponsabilidadeTotalSubJudiceSpecified(resumoDoClienteJSON.getBoolean("ResponsabilidadeTotalSubJudiceSpecified"));
-//						resumoDoCliente.setRiscoIndiretoVendor(BigDecimal.valueOf(resumoDoClienteJSON.getLong("RiscoIndiretoVendor")));
-//						resumoDoCliente.setRiscoIndiretoVendorSpecified(resumoDoClienteJSON.getBoolean("RiscoIndiretoVendorSpecified"));
-//						resumoDoCliente.setTipoDoCliente(getStringJSON(resumoDoClienteJSON, "TipoDoCliente"));
-//		
-//						if (getObjectJSON(resumoDoClienteJSON, "ListaDeMensagensDeValidacao")) {
-//						
-//							JSONArray mensagensDeValidacao = resumoDoClienteJSON.getJSONArray("ListaDeMensagensDeValidacao");
-//		
-//							List<BcMsgRetorno> listBcMsgRetorno = new ArrayList<BcMsgRetorno>();
-//							
-//							for (int i = 0; i < mensagensDeValidacao.length(); i++) {
-//								BcMsgRetorno bcMsgRetorno = new BcMsgRetorno();
-//		
-//								JSONObject obj = mensagensDeValidacao.getJSONObject(i);
-//								
-//								bcMsgRetorno.setCodigo(getStringJSON(obj, "Codigo"));
-//								bcMsgRetorno.setMensagem(getStringJSON(obj, "Mensagem"));
-//								
-//								listBcMsgRetorno.add(bcMsgRetorno);
-//							}
-//							
-//							if (listBcMsgRetorno.size() > 0) {
-//								resumoDoCliente.setListaDeMensagensDeValidacao(listBcMsgRetorno);
-//							}
-//						}
-//						
-//						if (getObjectJSON(resumoDoClienteJSON, "ListaDeResumoDasOperacoes")) {
-//							
-//							JSONArray resumoDasOperacoes = resumoDoClienteJSON.getJSONArray("ListaDeResumoDasOperacoes");
-//		
-//							List<ResumoDaOperacao> listResumoDaOperacao = new ArrayList<ResumoDaOperacao>();
-//							
-//							for (int i = 0; i < resumoDasOperacoes.length(); i++) {
-//								ResumoDaOperacao resumoDaOperacao = new ResumoDaOperacao();
-//		
-//								JSONObject objResumoDasOperacoes = resumoDasOperacoes.getJSONObject(i);
-//														
-//								resumoDaOperacao.setModalidade(getStringJSON(objResumoDasOperacoes, "Modalidade"));
-//								resumoDaOperacao.setVariacaoCambial(getStringJSON(objResumoDasOperacoes, "VariacaoCambial"));
-//								
-//								if (getObjectJSON(objResumoDasOperacoes, "ListaDeVencimentos")) {
-//									
-//									JSONArray vencimentos = objResumoDasOperacoes.getJSONArray("ListaDeVencimentos");
-//									
-//									List<ResumoDoVencimento> listResumoDoVencimento = new ArrayList<ResumoDoVencimento>();
-//									
-//									for (int j = 0; j < vencimentos.length(); j++) {
-//										ResumoDoVencimento resumoDoVencimento = new ResumoDoVencimento();
-//				
-//										JSONObject objVencimentos = vencimentos.getJSONObject(j);
-//										
-//										resumoDoVencimento.setCodigoVencimento(getStringJSON(objVencimentos, "CodigoVencimento"));
-//										resumoDoVencimento.setValorVencimento(BigDecimal.valueOf(objVencimentos.getLong("ValorVencimento")));
-//										resumoDoVencimento.setValorVencimentoSpecified(objVencimentos.getBoolean("ValorVencimentoSpecified"));
-//										
-//										listResumoDoVencimento.add(resumoDoVencimento);
-//									}
-//									
-//									if (listResumoDoVencimento.size() > 0) {
-//										resumoDaOperacao.setListaDeVencimentos(listResumoDoVencimento);
-//									}
-//								}
-//								
-//								listResumoDaOperacao.add(resumoDaOperacao);
-//							}
-//							
-//							if (listResumoDaOperacao.size() > 0) {
-//								resumoDoCliente.setListaDeResumoDasOperacoes(listResumoDaOperacao);
-//							}
-//						}
-//	
-//						scResult.setResumoDoCliente(resumoDoCliente);
-//					}
-//					
-//					if (getObjectJSON(myResponse, "ResumoDoClienteTraduzido")) {
-//						
-//						JSONObject resumoDoClienteTraduzidoJSON = myResponse.getJSONObject("ResumoDoClienteTraduzido");
-//						
-//						ResumoDoClienteTraduzido resumoDoClienteTraduzido = new ResumoDoClienteTraduzido();
-//						
-//						resumoDoClienteTraduzido.setPercDocumentosProcessados(getStringJSON(resumoDoClienteTraduzidoJSON, "PercDocumentosProcessados"));
-//						resumoDoClienteTraduzido.setDtInicioRelacionamento(getStringJSON(resumoDoClienteTraduzidoJSON, "DtInicioRelacionamento"));
-//						resumoDoClienteTraduzido.setQtdeInstituicoes(resumoDoClienteTraduzidoJSON.getInt("QtdeInstituicoes"));
-//						resumoDoClienteTraduzido.setQtdeOperacoes(resumoDoClienteTraduzidoJSON.getInt("QtdeOperacoes"));
-//						resumoDoClienteTraduzido.setQtdeOperacoesDiscordancia(resumoDoClienteTraduzidoJSON.getInt("QtdeOperacoesDiscordancia"));
-//						resumoDoClienteTraduzido.setVlrOperacoesDiscordancia(BigDecimal.valueOf(resumoDoClienteTraduzidoJSON.getLong("VlrOperacoesDiscordancia")));
-//						resumoDoClienteTraduzido.setQtdeOperacoesSobJudice(resumoDoClienteTraduzidoJSON.getInt("QtdeOperacoesSobJudice"));
-//						resumoDoClienteTraduzido.setVlrOperacoesSobJudice(BigDecimal.valueOf(resumoDoClienteTraduzidoJSON.getLong("VlrOperacoesSobJudice")));
-//						resumoDoClienteTraduzido.setCarteiraVencer(BigDecimal.valueOf(resumoDoClienteTraduzidoJSON.getLong("CarteiraVencer")));
-//						resumoDoClienteTraduzido.setCarteiraVencerAte30diasVencidosAte14dias(BigDecimal.valueOf(resumoDoClienteTraduzidoJSON.getLong("CarteiraVencerAte30diasVencidosAte14dias")));
-//						resumoDoClienteTraduzido.setCarteiraVencer31a60dias(BigDecimal.valueOf(resumoDoClienteTraduzidoJSON.getLong("CarteiraVencer31a60dias")));
-//						resumoDoClienteTraduzido.setCarteiraVencer61a90dias(BigDecimal.valueOf(resumoDoClienteTraduzidoJSON.getLong("CarteiraVencer61a90dias")));
-//						resumoDoClienteTraduzido.setCarteiraVencer91a180dias(BigDecimal.valueOf(resumoDoClienteTraduzidoJSON.getLong("CarteiraVencer91a180dias")));
-//						resumoDoClienteTraduzido.setCarteiraVencer181a360dias(BigDecimal.valueOf(resumoDoClienteTraduzidoJSON.getLong("CarteiraVencer181a360dias")));
-//						resumoDoClienteTraduzido.setCarteiraVencerAcima360dias(BigDecimal.valueOf(resumoDoClienteTraduzidoJSON.getLong("CarteiraVencerAcima360dias")));
-//						resumoDoClienteTraduzido.setCarteiraVencerPrazoIndeterminado(BigDecimal.valueOf(resumoDoClienteTraduzidoJSON.getLong("CarteiraVencerPrazoIndeterminado")));
-//						resumoDoClienteTraduzido.setCarteiraVencido(BigDecimal.valueOf(resumoDoClienteTraduzidoJSON.getLong("CarteiraVencido")));
-//						resumoDoClienteTraduzido.setCarteiraVencido15a30dias(BigDecimal.valueOf(resumoDoClienteTraduzidoJSON.getLong("CarteiraVencido15a30dias")));
-//						resumoDoClienteTraduzido.setCarteiraVencido31a60dias(BigDecimal.valueOf(resumoDoClienteTraduzidoJSON.getLong("CarteiraVencido31a60dias")));
-//						resumoDoClienteTraduzido.setCarteiraVencido61a90dias(BigDecimal.valueOf(resumoDoClienteTraduzidoJSON.getLong("CarteiraVencido61a90dias")));
-//						resumoDoClienteTraduzido.setCarteiraVencido91a180dias(BigDecimal.valueOf(resumoDoClienteTraduzidoJSON.getLong("CarteiraVencido91a180dias")));
-//						resumoDoClienteTraduzido.setCarteiraVencido181a360dias(BigDecimal.valueOf(resumoDoClienteTraduzidoJSON.getLong("CarteiraVencido181a360dias")));
-//						resumoDoClienteTraduzido.setCarteiraVencidoAcima360dias(BigDecimal.valueOf(resumoDoClienteTraduzidoJSON.getLong("CarteiraVencidoAcima360dias")));
-//						resumoDoClienteTraduzido.setPrejuizo(BigDecimal.valueOf(resumoDoClienteTraduzidoJSON.getLong("Prejuizo")));
-//						resumoDoClienteTraduzido.setPrejuizoAte12meses(BigDecimal.valueOf(resumoDoClienteTraduzidoJSON.getLong("PrejuizoAte12meses")));
-//						resumoDoClienteTraduzido.setPrejuizoAcima12meses(BigDecimal.valueOf(resumoDoClienteTraduzidoJSON.getLong("PrejuizoAcima12meses")));
-//						resumoDoClienteTraduzido.setCarteiradeCredito(BigDecimal.valueOf(resumoDoClienteTraduzidoJSON.getLong("CarteiradeCredito")));
-//						resumoDoClienteTraduzido.setRepasses(BigDecimal.valueOf(resumoDoClienteTraduzidoJSON.getLong("Repasses")));
-//						resumoDoClienteTraduzido.setCoobrigacoes(BigDecimal.valueOf(resumoDoClienteTraduzidoJSON.getLong("Coobrigacoes")));
-//						resumoDoClienteTraduzido.setResponsabilidadeTotal(BigDecimal.valueOf(resumoDoClienteTraduzidoJSON.getLong("ResponsabilidadeTotal")));
-//						resumoDoClienteTraduzido.setCreditosaLiberar(BigDecimal.valueOf(resumoDoClienteTraduzidoJSON.getLong("CreditosaLiberar")));
-//						resumoDoClienteTraduzido.setLimitesdeCredito(BigDecimal.valueOf(resumoDoClienteTraduzidoJSON.getLong("LimitesdeCredito")));
-//						resumoDoClienteTraduzido.setLimitesdeCreditoAte360dias(BigDecimal.valueOf(resumoDoClienteTraduzidoJSON.getLong("LimitesdeCreditoAte360dias")));
-//						resumoDoClienteTraduzido.setLimitesdeCreditoAcima360dias(BigDecimal.valueOf(resumoDoClienteTraduzidoJSON.getLong("LimitesdeCreditoAcima360dias")));
-//						resumoDoClienteTraduzido.setRiscoIndiretoVendor(BigDecimal.valueOf(resumoDoClienteTraduzidoJSON.getLong("RiscoIndiretoVendor")));
-//						resumoDoClienteTraduzido.setRiscoTotal(BigDecimal.valueOf(resumoDoClienteTraduzidoJSON.getLong("RiscoTotal")));
-//						
-//						scResult.setResumoDoClienteTraduzido(resumoDoClienteTraduzido);				
-//					}
-//					
-//					if (getObjectJSON(myResponse, "ResumoModalidade")) {
-//						
-//						List<ResumoModalidade> listResumoModalidade = new ArrayList<ResumoModalidade>();
-//						
-//						JSONArray resumoModalidadeJSON = myResponse.getJSONArray("ResumoModalidade");
-//						
-//						for (int i = 0; i < resumoModalidadeJSON.length(); i++) {
-//							ResumoModalidade resumoModalidade = new ResumoModalidade();
-//	
-//							JSONObject objResumoModalidade = resumoModalidadeJSON.getJSONObject(i);
-//							
-//							resumoModalidade.setDominio(getStringJSON(objResumoModalidade, "dominio"));
-//							resumoModalidade.setModalidade(getStringJSON(objResumoModalidade, "modalidade"));
-//							resumoModalidade.setSubdominio(getStringJSON(objResumoModalidade, "subdominio"));
-//							resumoModalidade.setTipo(getStringJSON(objResumoModalidade, "tipo"));
-//							resumoModalidade.setValorVencimento(BigDecimal.valueOf(objResumoModalidade.getLong("valorVencimento")));
-//						}
-//						
-//						if (listResumoModalidade.size() > 0) {
-//							scResult.setResumoModalidade(listResumoModalidade);
-//						}
-//					}								
-//	
 					System.out.println("SUCESSO NA GERAÇÃO DO SCR" );
+					
+					DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
+					
+					PagadorRecebedorService  pagadorRecebedorService = new PagadorRecebedorService();
+					PagadorRecebedor pagadorRecebedor = pagadorRecebedorService.findByCpfCnpj(documento);
+							
+					documentoAnaliseService.adicionarConsultaNoPagadorRecebedor(pagadorRecebedor,
+							DocumentosAnaliseEnum.SCR, stringResponse);
+					
 					
 					return scResult;
 								

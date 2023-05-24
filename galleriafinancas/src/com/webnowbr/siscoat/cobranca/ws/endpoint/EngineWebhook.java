@@ -14,11 +14,13 @@ import com.webnowbr.siscoat.cobranca.db.model.DataEngine;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.op.DataEngineDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
+import com.webnowbr.siscoat.cobranca.service.DocumentoAnaliseService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.cobranca.service.ScrService;
 import com.webnowbr.siscoat.cobranca.service.SerasaService;
 import com.webnowbr.siscoat.cobranca.service.UserService;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.common.GsonUtil;
 
 import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
@@ -38,9 +40,12 @@ public class EngineWebhook {
 
 			Jwts.parserBuilder().setSigningKey(CommonsUtil.CHAVE_WEBHOOK).build().parseClaimsJws(token);
 
-			/*System.out.println("---------------- Data Engine webhookRetorno ---------------- ");
-			System.out.println(webhookRetorno);
-			System.out.println("---------------- Data Engine webhookRetorno ---------------- ");*/
+			/*
+			 * System.out.
+			 * println("---------------- Data Engine webhookRetorno ---------------- ");
+			 * System.out.println(webhookRetorno); System.out.
+			 * println("---------------- Data Engine webhookRetorno ---------------- ");
+			 */
 			EngineRetorno engineWebhookRetorno = GsonUtil.fromJson(webhookRetorno, EngineRetorno.class);
 
 			DataEngineDao dataEngineDao = new DataEngineDao();
@@ -55,15 +60,20 @@ public class EngineWebhook {
 
 				DocumentoAnalise documentoAnalise = documentoAnaliseDao.findByFilter("engine", dataEngine).stream()
 						.findFirst().orElse(null);
+				
+				DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
+				documentoAnaliseService.adicionarConsultaNoPagadorRecebedor(dataEngine.getPagador(),
+						DocumentosAnaliseEnum.ENGINE, webhookRetorno);
+				
 
 				if (!CommonsUtil.semValor(documentoAnalise)) {
 
 					documentoAnalise.setRetornoEngine(webhookRetorno);
-
+					
 					SerasaService serasaService = new SerasaService();
 					NetrinService netrinService = new NetrinService();
 					UserService userService = new UserService();
-					ScrService scrService = new ScrService(); 
+					ScrService scrService = new ScrService();
 
 					engineWebhookRetorno.getConsultaAntecedenteCriminais();
 
@@ -71,7 +81,7 @@ public class EngineWebhook {
 							|| CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais().getResult()
 									.get(0).getOnlineCertificates()))
 							&& (CommonsUtil.semValor(engineWebhookRetorno.getProcessos()) || CommonsUtil.intValue(
-									engineWebhookRetorno.getProcessos().getTotal_acoes_judicias_reu()) == 0)) {						
+									engineWebhookRetorno.getProcessos().getTotal_acoes_judicias_reu()) == 0)) {
 						// libera a consulta do crednet da PF
 						if (documentoAnalise.isPodeChamarSerasa()) {
 							if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
@@ -85,14 +95,18 @@ public class EngineWebhook {
 								netrinService.requestCenprot(documentoAnalise);
 							}
 						}
-						
+
 //						if (documentoAnalise.isPodeChamarSCR()) {
 //							if (CommonsUtil.semValor(documentoAnalise.getRetornoScr())) {
 //								documentoAnalise.setLiberadoScr(true);
 //								scrService.requestScr(documentoAnalise);
 //							}
 //						}
-						
+//
+//						DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
+//						documentoAnaliseService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+//								DocumentosAnaliseEnum.ENGINE, webhookRetorno);
+
 					} else {
 						if (!CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais().getResult())
 								&& !CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais()

@@ -10,13 +10,9 @@ import java.net.URL;
 
 import javax.faces.application.FacesMessage;
 
-import org.jasypt.commons.CommonUtils;
 import org.json.JSONObject;
 
-import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
-import com.webnowbr.siscoat.cobranca.db.model.DataEngine;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
-import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
@@ -115,7 +111,15 @@ public class SerasaService {
 				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 				documentoAnalise.setRetornoSerasa(response.toString());
 				documentoAnaliseDao.merge(documentoAnalise);
-
+				
+				DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
+				if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa()))
+				documentoAnaliseService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+						DocumentosAnaliseEnum.CREDNET, response.toString());
+				else
+					documentoAnaliseService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+							DocumentosAnaliseEnum.RELATO, response.toString());
+						
 				result = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
 
 			}
