@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="cobranca">
+	<class name="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorConsulta" table="PAGADORRECEBEDORCONSULTA">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="increment" />
+		</id>		 
+		
+		 <many-to-one name="pessoa"
+			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor">
+			<column name="pessoa" />
+		</many-to-one>
+		
+ 
+		<property name="tipo" type="java.lang.String">
+			<column name="tipo" />
+		</property>
+		
+		
+		<property name="dataConsulta" type="java.util.Date">
+			<column name="dataConsulta" />
+		</property>		
+	
+		<property name="retornConsulta" type="java.lang.String"  length="65000">
+			<column name="retornConsulta" />
+		</property>
+						 
+    </class>
+</hibernate-mapping>
