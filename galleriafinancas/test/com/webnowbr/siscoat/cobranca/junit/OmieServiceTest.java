@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import com.webnowbr.siscoat.cobranca.service.OmieService;
 import com.webnowbr.siscoat.omie.request.IOmieParam;
+import com.webnowbr.siscoat.omie.request.ListarExtratoRequest;
 import com.webnowbr.siscoat.omie.request.ObterResumoFinRequest;
 import com.webnowbr.siscoat.omie.request.OmieRequestBase;
 import com.webnowbr.siscoat.omie.response.OmieObterResumoFinResponse;
@@ -20,7 +21,7 @@ class OmieServiceTest {
 
 		OmieRequestBase omieRequestBase = new OmieRequestBase();
 		omieRequestBase.setApp_key("2935249398081");
-		omieRequestBase.setApp_secret("93ae368e030f73844558bfb4eaabf71b ");
+		omieRequestBase.setApp_secret("93ae368e030f73844558bfb4eaabf71b");
 		omieRequestBase.setCall("ObterResumoFinancas");
 		List<IOmieParam> params = new ArrayList<>();
 
@@ -38,4 +39,25 @@ class OmieServiceTest {
 		System.out.print(GsonUtil.toJson(omieObterResumoFinResponse));
 	}
 
+	void test2() {
+		OmieRequestBase omieRequestBase = new OmieRequestBase();
+		omieRequestBase.setApp_key("2935249398081");
+		omieRequestBase.setApp_secret("93ae368e030f73844558bfb4eaabf71b");
+		omieRequestBase.setCall("ObterExtrato");
+		List<IOmieParam> params = new ArrayList<>();
+		
+		ListarExtratoRequest listarExtratoRequest = new ListarExtratoRequest();
+		listarExtratoRequest.setcCodIntCC(null);
+		listarExtratoRequest.setnCodCC(null);
+		listarExtratoRequest.setdPeriodoInicial("01/03/2023");
+		listarExtratoRequest.setdPeriodoFinal("31/03/2023");
+		listarExtratoRequest.setcExibirApenasSaldo(null);
+		params.add(listarExtratoRequest);
+		
+		omieRequestBase.setParam(params);
+
+		OmieService omieService = new OmieService();
+		OmieListarExtratoResponse listarExtratoRequest = omieService.listarExtratoRequest(omieRequestBase);
+		System.out.print(GsonUtil.toJson(listarExtratoRequest));
 }
+	}

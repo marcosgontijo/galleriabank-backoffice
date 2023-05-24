@@ -9,7 +9,7 @@ public class OmieContaCorrente {
 	private String cIcone;
 	private String cCor;
 	
-	public BigDecimal getvTotal() {
+	public BigDecimal getvTotal() {		
 		return vTotal;
 	}
 	public void setvTotal(BigDecimal vTotal) {
