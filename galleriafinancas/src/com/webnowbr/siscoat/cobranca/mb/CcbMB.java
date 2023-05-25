@@ -56,6 +56,7 @@ import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.hibernate.JDBCException;
+import org.hibernate.TransientObjectException;
 import org.json.JSONObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTAbstractNum;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
@@ -101,6 +102,7 @@ import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.common.ValidaCNPJ;
 import com.webnowbr.siscoat.common.ValidaCPF;
+import com.webnowbr.siscoat.db.dao.DAOException;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.simulador.SimulacaoDetalheVO;
 import com.webnowbr.siscoat.simulador.SimulacaoVO;
@@ -1721,7 +1723,13 @@ public class CcbMB {
 					contrato.setNumeroContratoSeguro(objetoCcb.getNumeroCcb());
 				}
 				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-				cDao.merge(contrato);
+				try {
+					cDao.merge(contrato);
+				} catch (TransientObjectException e) {
+					e.printStackTrace();
+				} catch (DAOException e) {
+					e.printStackTrace();
+				} 
 			} 
 			//if(this.objetoCcb.getId() <= 0) {
 				//this.objetoCcb.setId(ccbDao.idCcb());
@@ -1729,11 +1737,11 @@ public class CcbMB {
 			if (this.objetoCcb.getId() > 0) {
 				ccbDao.merge(this.objetoCcb);
 				System.out.println("CCB Merge ID: " + objetoCcb.getId() + " / "  + objetoCcb.getNumeroCcb() + " / "
-						+ objetoCcb.getNumeroOperacao() + " / " + objetoCcb.getNomeEmitente());
+						+ objetoCcb.getNumeroOperacao() + " / " + objetoCcb.getNomeEmitente() + " / " + this.tipoDownload);
 			} else {
 				ccbDao.create(this.objetoCcb);
 				System.out.println("CCB Create ID: " + objetoCcb.getId() + " / "  + objetoCcb.getNumeroCcb() + " / "
-						+ objetoCcb.getNumeroOperacao() + " / " + objetoCcb.getNomeEmitente());
+						+ objetoCcb.getNumeroOperacao() + " / " + objetoCcb.getNomeEmitente() + " / " + this.tipoDownload);
 			}
 			
 			

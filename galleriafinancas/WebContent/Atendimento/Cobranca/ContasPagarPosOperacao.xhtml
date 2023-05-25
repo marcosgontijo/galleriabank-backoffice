@@ -182,40 +182,39 @@
 							update=":form:ContasPagarPanel" icon="ui-icon ui-icon-check" />
 					</h:panelGroup>
 				
-					<p:dataTable var="contas" value="#{contasPagarMB.selectedContratoLov.listContasPagar}" id="tblContasPagarList" allowUnsorting="true" >
-						
-							<p:column style="text-align: center;" headerText="Descrição: " styleClass="labelBold" >
+					<p:dataTable var="contas" value="#{contasPagarMB.contasPagarPosOperacao}" id="tblContasPagarList" allowUnsorting="true" > 
+						<p:column style="text-align: center;" headerText="Descrição: " styleClass="labelBold" >
 							<p:outputLabel value="#{contas.descricao}"
 								styleClass="labelBold" style="FONT-SIZE: 10pt;" />
-							</p:column>
+						</p:column>
 
-							<p:column style="text-align: center;" headerText="Valor: " styleClass="labelBold" >
+						<p:column style="text-align: center;" headerText="Valor: " styleClass="labelBold" >
 							<p:outputLabel value="#{contas.valor}"
 								converter="bigDecimalConverter" styleClass="labelBold"
 								style="FONT-SIZE: 10pt;width:100px;white-space: nowrap;" />
-							</p:column>
+						</p:column>
 
-							<p:column style="text-align: center;" headerText="Data Vencimento: " styleClass="labelBold" >
+						<p:column style="text-align: center;" headerText="Data Vencimento: " styleClass="labelBold" >
 							<h:outputText value="#{contas.dataVencimento}"
 								styleClass="labelBold">
 								<f:convertDateTime pattern="dd/MM/yyyy" />
 							</h:outputText>
-							</p:column>
+						</p:column>
 
-							<p:column style="text-align: center;" headerText="Valor Pago: " styleClass="labelBold" sortBy="#{contas.valorPagamento}"  >
+						<p:column style="text-align: center;" headerText="Valor Pago: " styleClass="labelBold" sortBy="#{contas.valorPagamento}"  >
 							<p:outputLabel value="#{contas.valorPagamento}"
 								converter="bigDecimalConverter" styleClass="labelBold"
 								style="FONT-SIZE: 10pt;width:100px;white-space: nowrap;" />
-							</p:column>
+						</p:column>
 
-							<p:column style="text-align: center;" headerText="Data Pagamento: " styleClass="labelBold" sortBy="#{contas.dataPagamento}" >
+						<p:column style="text-align: center;" headerText="Data Pagamento: " styleClass="labelBold" sortBy="#{contas.dataPagamento}" >
 							<p:outputLabel value="#{contas.dataPagamento}"
 								styleClass="labelBold">
 								<f:convertDateTime pattern="dd/MM/yyyy" />
 							</p:outputLabel>
-							</p:column>
-							
-							<p:column styleClass="colunaResponsiva">
+						</p:column>
+						
+						<p:column styleClass="colunaResponsiva">
 							<p:commandButton value="Editar" icon="ui-icon-pencil"
 								action="#{contasPagarMB.editarContaPosOperacao(contas)}" ajax="true"
 								update=":form:ContasPagarPanel" />
@@ -227,7 +226,7 @@
 							<p:commandButton value="Arquivos" icon="ui-icon-print"
 								action="#{contasPagarMB.populateFilesContasPagar(contas)}"
 								ajax="true" update=":form:ContasPagarPanel contaArquivosForm" />
-							</p:column>
+						</p:column>
 					</p:dataTable>
 					
 				</h:panelGrid>

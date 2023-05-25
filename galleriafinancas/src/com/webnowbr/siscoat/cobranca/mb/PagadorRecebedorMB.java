@@ -273,7 +273,7 @@ public class PagadorRecebedorMB {
 			
 			pagadorRecebedorDao.merge(objetoPagadorRecebedor);
 			
-			if(CommonsUtil.semValor(objetoPagadorRecebedor.getCpfConjuge())) {
+			if(!CommonsUtil.semValor(objetoPagadorRecebedor.getCpfConjuge())) {
 				objetoPagadorRecebedor.criarConjugeNoSistema();
 			}
 			

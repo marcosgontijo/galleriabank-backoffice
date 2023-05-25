@@ -18837,7 +18837,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		this.tituloPagadorRecebedorDialog = "Pessoas";
 		this.tipoPesquisaPagadorRecebedor = "Analise Documento";
 		this.documentoAnaliseAdicionar = new DocumentoAnalise();
-		this.updatePagadorRecebedor = ":adicionarPessoaAnaliseForm:dialogAdicionarPessoaAnalise";
+		this.updatePagadorRecebedor = "adicionarPessoaAnaliseForm";
 		this.documentoAnaliseAdicionar.setPagador(new PagadorRecebedor());
 	}
 	

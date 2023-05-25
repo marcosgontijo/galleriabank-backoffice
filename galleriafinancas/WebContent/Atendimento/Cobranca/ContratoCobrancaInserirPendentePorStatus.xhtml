@@ -905,7 +905,7 @@
 							<p:outputLabel value="" />
 								<p:commandButton value="Adicionar Pessoa" 
 									oncomplete="PF('adicionarPessoaAnaliseDlg').show();"
-									update=":adicionarPessoaAnaliseForm:dialogAdicionarPessoaAnalise">
+									update="adicionarPessoaAnaliseForm">
 								</p:commandButton>
 							</f:facet>
 
@@ -4680,52 +4680,48 @@
 			</div>			
 		</h:form>
 
-			<h:form id="adicionarPessoaAnaliseForm">
+		
 		<p:dialog header="Adicionar pessoa Analise" overflow="auto"
 			id="dialogAdicionarPessoaAnalise"
 			widgetVar="adicionarPessoaAnaliseDlg" resizable="true"
 			style="FONT-SIZE: 13pt;" width="800" minWidth="800">
-
-				
-
-				<h:panelGrid columns="2">
-
-					<p:outputLabel for="AnaliseDocumentoPessoaNome" value="Nome da pessoa "
-						styleClass="labelBold" />
-					<h:panelGroup>
-						<p:outputLabel id="AnaliseDocumentoPessoaNome"
-							value="#{contratoCobrancaMB.seguradoSelecionado.pessoa.nome}"
-							required="false" style="FONT-SIZE: 10pt;width:300px;" />
-						<p:spacer height="10" />
-						<p:commandButton
-							action="#{contratoCobrancaMB.pesquisaPessoaAnaliseDocumento}"
-							icon="ui-icon ui-icon-circle-zoomin"
-							oncomplete="PF('pagadorRecebedorDialog').show();"
-							update="formReceborPagador" />
-
-					</h:panelGroup>
-
-
-					<h:outputText value="CPF" />
-					<h:outputText value="#{contratoCobrancaMB.seguradoSelecionado.pessoa.cpf}" />
-
-					<h:outputText value="CNPJ" />
-					<h:outputText value="#{contratoCobrancaMB.seguradoSelecionado.pessoa.cnpj}" />
-
-					<h:outputText value="Motivo" />
-					<p:selectOneMenu
-						value="#{contratoCobrancaMB.objetoContratoCobranca.motivoReprovaSelectItem}"
-						label="Tipo" style="width:250px;">
-						<f:selectItem itemValue="" itemLabel="Selecione o motivo" />
-						<f:selectItem itemLabel="Proprietario Atual"
-							itemValue="Proprietario Atual" />
-						<f:selectItem itemLabel="Proprietario Anterior"
-							itemValue="Proprietario Anterior" />
-					</p:selectOneMenu>
-
-				</h:panelGrid>		
+			<h:form id="adicionarPessoaAnaliseForm">
+				<div align="center">	
+					<h:panelGrid columns="2">
+						<p:outputLabel for="AnaliseDocumentoPessoaNome" value="Nome da pessoa "
+						 style="margin-right:10px"/>
+						<h:panelGroup>
+							<p:outputLabel id="AnaliseDocumentoPessoaNome"
+								value="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.nome}"
+								required="false" style="FONT-SIZE: 10pt;width:300px;" styleClass="labelBold"/>
+							<p:spacer height="10" />
+							<p:commandButton
+								action="#{contratoCobrancaMB.pesquisaPessoaAnaliseDocumento}"
+								icon="ui-icon ui-icon-circle-zoomin"
+								oncomplete="PF('pagadorRecebedorDialog').show();"
+								update="formReceborPagador" />
+						</h:panelGroup>
+	
+	
+						<h:outputText value="CPF" />
+						<h:outputText value="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.cpf}" />
+	
+						<h:outputText value="CNPJ" />
+						<h:outputText value="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.cnpj}" />
+	
+						<h:outputText value="Motivo" />
+						<p:selectOneMenu
+							value="#{contratoCobrancaMB.documentoAnaliseAdicionar.motivoAnalise}"
+							label="Tipo" style="width:250px;">
+							<f:selectItem itemValue="" itemLabel="Selecione o motivo" />
+							<f:selectItem itemLabel="Proprietario Atual" itemValue="Proprietario Atual" />
+							<f:selectItem itemLabel="Proprietario Anterior" itemValue="Proprietario Anterior" />
+						</p:selectOneMenu>
+					</h:panelGrid>	
+				</div>
+			</h:form>	
 		</p:dialog>	
-		</h:form>
+		
 
 		<p:dialog header="Arquivos da Conta" overflow="auto" id="dialogArquivosConta"
 			widgetVar="contaArquivosdlg" resizable="true" style="FONT-SIZE: 13pt;"
@@ -5145,8 +5141,8 @@
 		</p:dialog>
 		
 		<ui:include src="../../Dialog/DialogRecebedorPagador.xhtml">
-				<ui:param name="mbean" value="#{contratoCobrancaMB}"></ui:param>
-				<ui:param name="titulo" value="#{contratoCobrancaMB.tituloPagadorRecebedorDialog}"></ui:param>
+			<ui:param name="mbean" value="#{contratoCobrancaMB}"></ui:param>
+			<ui:param name="titulo" value="#{contratoCobrancaMB.tituloPagadorRecebedorDialog}"></ui:param>
 		</ui:include>			
 		
 		<p:dialog header="Nova Pessoa" widgetVar="pessoaDialog"
