@@ -185,6 +185,7 @@ import com.webnowbr.siscoat.simulador.SimulacaoVO;
 import com.webnowbr.siscoat.simulador.SimuladorMB;
 
 import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
+import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetornoRequestFields;
 import br.com.galleriabank.serasacrednet.cliente.util.GsonUtil;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -309,7 +310,6 @@ public class ContratoCobrancaMB {
 	private boolean addPagador;
 	private boolean addContasPagar;
 	private boolean gerenciaStatus;
-	private boolean addPessoaAnalise;
 	private DocumentoAnalise documentoAnalisePopup;
 	
 	/** Lista dos Pagadores utilizada pela LOV. */
@@ -31212,16 +31212,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		}
 	}
 	
-	public List<DocumentoAnaliseResumo> getResumoEngine(DocumentoAnalise documentoAnalise) {
-		List<DocumentoAnaliseResumo> result = new ArrayList<>();  
-		EngineRetorno engine = GsonUtil.fromJson(documentoAnalise.getRetornoEngine(), EngineRetorno.class);
-		engine.getConsultaAntecedenteCriminais();
-		engine.getClassificationResult();
-		engine.getProcessos();
-		engine.getConsultaCompleta();
-		return result;
-		
-	}
+	
 	
 	
 	/**
@@ -33105,20 +33096,12 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		this.pessoasProcessos = pessoasProcessos;
 	}
 
-	public Averbacao getAverbacaoSelecionada() {
-		return averbacaoSelecionada;
+	public DocumentoAnalise getDocumentoAnalisePopup() {
+		return documentoAnalisePopup;
 	}
 
-	public void setAverbacaoSelecionada(Averbacao averbacaoSelecionada) {
-		this.averbacaoSelecionada = averbacaoSelecionada;
-	}
-
-	public DocumentoAnalise getDocumentoAnaliseAdicionar() {
-		return documentoAnaliseAdicionar;
-	}
-
-	public void setDocumentoAnaliseAdicionar(DocumentoAnalise documentoAnaliseAdicionar) {
-		this.documentoAnaliseAdicionar = documentoAnaliseAdicionar;
+	public void setDocumentoAnalisePopup(DocumentoAnalise documentoAnalisePopup) {
+		this.documentoAnalisePopup = documentoAnalisePopup;
 	}
 	
 	public DocumentoAnalise getDocumentoAnalisePopup() {

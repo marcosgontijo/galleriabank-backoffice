@@ -15,6 +15,10 @@ import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetor
 import br.com.galleriabank.dataengine.cliente.model.retorno.processos.EngineRetornoExecutionResultProcessos;
 
 
+import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
+import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetornoRequestFields;
+import br.com.galleriabank.serasacrednet.cliente.util.GsonUtil;
+
 public class DocumentoAnalise implements Serializable {
 
 	/**
@@ -52,53 +56,30 @@ public class DocumentoAnalise implements Serializable {
 	private String observacao;
 	
 	public List<DocumentoAnaliseResumo> getResumoEngine() {
-		List<DocumentoAnaliseResumo> result = new ArrayList<>();
+		List<DocumentoAnaliseResumo> result = new ArrayList<>();  
 		EngineRetorno engine = GsonUtil.fromJson(getRetornoEngine(), EngineRetorno.class);
-
-		EngineRetornoRequestFields nome = engine.getRequestFields().stream().filter(f -> f.getField().equals("nome"))
-				.findFirst().orElse(null);
-		if (nome != null)
-			result.add(new DocumentoAnaliseResumo("Nome:", nome.getValue()));
-
-		if (CommonsUtil.mesmoValor(tipoPessoa, "PF")) {
-
-			EngineRetornoRequestFields cpf = engine.getRequestFields().stream().filter(g -> g.getField().equals("cpf"))
-					.findFirst().orElse(null);
-			if (cpf != null)
-				result.add(new DocumentoAnaliseResumo("CPF:", cpf.getValue()));
-
-		} else if (CommonsUtil.mesmoValor(tipoPessoa, "PJ")) {
-			EngineRetornoRequestFields cnpj = engine.getRequestFields().stream()
-					.filter(s -> s.getField().equals("cnpj")).findFirst().orElse(null);
-			if (cnpj != null)
-				result.add(new DocumentoAnaliseResumo("CNPJ:", cnpj.getValue()));
-		}
-
-		if (engine.getConsultaCompleta() == null) {
-			result.add(new DocumentoAnaliseResumo("Score:", "Não disponivel"));
+		DocumentoAnaliseResumo documento =  new DocumentoAnaliseResumo();
+		DocumentoAnaliseResumo documento2 = new DocumentoAnaliseResumo();
+		DocumentoAnaliseResumo documento3 = new DocumentoAnaliseResumo(); 
+		
+		EngineRetornoRequestFields nome = engine.getRequestFields().stream().filter(f -> f.getField().equals("nome")).findFirst().orElse(null);
+		EngineRetornoRequestFields cpf = engine.getRequestFields().stream().filter(g-> g.getField().equals("cpf")).findFirst().orElse(null);
+		EngineRetornoRequestFields cnpj = engine.getRequestFields().stream().filter(s -> s.getField().equals("cnpj")).findFirst().orElse(null);
+		documento.setDescricao("nome:");
+		documento.setValor(nome.getValue());
+		if(cpf == null) {
+			documento2.setDescricao("cnpj:");
+			documento2.setValor(cnpj.getValue());
 		} else {
-			EngineRetornoExecutionResultConsultaQuodScore score = engine.getConsultaCompleta().getQuodScore();
-			result.add(new DocumentoAnaliseResumo("Score:", CommonsUtil.stringValue(score.getScore())));
+		documento2.setDescricao("cpf:");
+		documento2.setValor(cpf.getValue());
 		}
 
-		if (engine.getConsultaAntecedenteCriminais() == null) {
-			result.add(new DocumentoAnaliseResumo("Antecedentes criminais:", "não disponível"));
-		} else {
-			EngineRetornoExecutionResultAntecedenteCriminaisEvidences mensagem = engine
-					.getConsultaAntecedenteCriminais().getEvidences();
-			result.add(new DocumentoAnaliseResumo("Antecedentes criminais:", mensagem.getMessage()));
-		}
-
-		if (engine.getProcessos() == null) {
-			result.add(new DocumentoAnaliseResumo("Numero  de processos:", "não disponível"));
-
-		} else {
-			EngineRetornoExecutionResultProcessos processo = engine.getProcessos();
-			result.add(new DocumentoAnaliseResumo("Numero  de processos:",
-					CommonsUtil.stringValue(processo.getTotal_acoes_judiciais())));
-		}
-
+		
+		result.add(documento);
+		result.add(documento2);
 		return result;
+		
 	}
 	
 
