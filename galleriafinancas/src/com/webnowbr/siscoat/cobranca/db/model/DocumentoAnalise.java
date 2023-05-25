@@ -26,6 +26,10 @@ import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetor
 import br.com.galleriabank.dataengine.cliente.model.retorno.processos.EngineRetornoExecutionResultProcessos;
 import br.com.galleriabank.serasacrednet.cliente.util.GsonUtil;
 
+import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
+import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetornoRequestFields;
+import br.com.galleriabank.serasacrednet.cliente.util.GsonUtil;
+
 public class DocumentoAnalise implements Serializable {
 
 	/**
@@ -67,87 +71,24 @@ public class DocumentoAnalise implements Serializable {
 		EngineRetorno engine = GsonUtil.fromJson(getRetornoEngine(), EngineRetorno.class);
 		DocumentoAnaliseResumo documento =  new DocumentoAnaliseResumo();
 		DocumentoAnaliseResumo documento2 = new DocumentoAnaliseResumo();
-		DocumentoAnaliseResumo documento3 = new DocumentoAnaliseResumo();
-		DocumentoAnaliseResumo documento4 = new DocumentoAnaliseResumo();
-		DocumentoAnaliseResumo documento5 = new DocumentoAnaliseResumo();
-		if(CommonsUtil.mesmoValor( tipoPessoa , "PF")) {
+		DocumentoAnaliseResumo documento3 = new DocumentoAnaliseResumo(); 
 		
-			
-			
-		EngineRetornoExecutionResultConsultaQuodScore score = engine.getConsultaCompleta().getQuodScore();
 		EngineRetornoRequestFields nome = engine.getRequestFields().stream().filter(f -> f.getField().equals("nome")).findFirst().orElse(null);
 		EngineRetornoRequestFields cpf = engine.getRequestFields().stream().filter(g-> g.getField().equals("cpf")).findFirst().orElse(null);
+		EngineRetornoRequestFields cnpj = engine.getRequestFields().stream().filter(s -> s.getField().equals("cnpj")).findFirst().orElse(null);
 		documento.setDescricao("nome:");
 		documento.setValor(nome.getValue());
-		documento2.setDescricao("cpf:");
-		documento2.setValor(cpf.getValue());
-		documento3.setDescricao("Score serasa:");
-		documento3.setValor(CommonsUtil.stringValue(score.getScore()));
-		if(engine.getConsultaAntecedenteCriminais() == null) {
-			documento4.setDescricao("antecedentes criminais:");
-			documento4.setValor("não disponível");
-		}else {
-		EngineRetornoExecutionResultAntecedenteCriminaisEvidences mensagem = engine.getConsultaAntecedenteCriminais().getEvidences();
-		documento4.setDescricao("antecedentes criminais:");
-		documento4.setValor(mensagem.getMessage());
-		}
-		if(engine.getProcessos() == null) {
-			documento5.setDescricao("numero  de processos:");
-			documento5.setValor("Não disponível");
-			
-			
-		} else {
-		EngineRetornoExecutionResultProcessos processo = engine.getProcessos();
-		documento5.setDescricao("numero de processos:");
-		documento5.setValor(CommonsUtil.stringValue(processo.getTotal_acoes_judiciais()));
-		}
-		
-		
-		} else if(CommonsUtil.mesmoValor( tipoPessoa , "PJ")) {
-			EngineRetornoRequestFields nome = engine.getRequestFields().stream().filter(f -> f.getField().equals("nome")).findFirst().orElse(null);
-			EngineRetornoRequestFields cnpj = engine.getRequestFields().stream().filter(s -> s.getField().equals("cnpj")).findFirst().orElse(null);
-			documento.setDescricao("nome:");
-			documento.setValor(nome.getValue());
+		if(cpf == null) {
 			documento2.setDescricao("cnpj:");
 			documento2.setValor(cnpj.getValue());
-			if(engine.getConsultaCompleta() == null) {
-				documento3.setDescricao("score serasa:");
-				documento3.setValor("não disponivel");
-			} else {
-				EngineRetornoExecutionResultConsultaQuodScore score = engine.getConsultaCompleta().getQuodScore();
-				documento3.setDescricao("score serasa:");
-				documento3.setValor(CommonsUtil.stringValue(score.getScore()));
-			}
-			if(engine.getConsultaAntecedenteCriminais() == null) {
-				documento4.setDescricao("antecedentes criminais:");
-				documento4.setValor("não disponível");
-			}else {
-			EngineRetornoExecutionResultAntecedenteCriminaisEvidences mensagem = engine.getConsultaAntecedenteCriminais().getEvidences();
-			documento4.setDescricao("antecedentes criminais:");
-			documento4.setValor(mensagem.getMessage());
-			
-			if(engine.getProcessos() == null) {
-				documento5.setDescricao("numero  de processos:");
-				documento5.setValor("Não disponível");
-				
-				
-			} else {
-			EngineRetornoExecutionResultProcessos processo = engine.getProcessos();
-			documento5.setDescricao("numero de processos:");
-			documento5.setValor(CommonsUtil.stringValue(processo.getTotal_acoes_judiciais()));
-			
-			
-		} }
-		
-		
+		} else {
+		documento2.setDescricao("cpf:");
+		documento2.setValor(cpf.getValue());
 		}
 
 		
 		result.add(documento);
 		result.add(documento2);
-		result.add(documento3);
-		result.add(documento4);
-		result.add(documento5);
 		return result;
 		
 	}
