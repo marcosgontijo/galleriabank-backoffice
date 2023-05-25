@@ -6834,10 +6834,8 @@ public class CcbMB {
 				run.setFontSize(12);
 				if(CommonsUtil.mesmoValor(despesa.getFormaTransferencia(), "TED")) {
 					run.setText("Ted no "+ despesa.getBancoTed() +" AG: "+ despesa.getAgenciaTed()
-					+" C/C: "+ despesa.getContaTed() + " " + despesa.getNomeTed() 
+					+" C/C: "+ despesa.getContaTed() + " Chave Pix:" + despesa.getPix() + " " + despesa.getNomeTed() 
 					+" CPF/CNPJ: "+ despesa.getCpfTed()); 
-				} else if(CommonsUtil.mesmoValor(despesa.getFormaTransferencia(), "Pix")) {
-					run.setText("Chave Pix: "+ despesa.getPix()); 
 				} else {
 					run.setText(despesa.getFormaTransferencia());
 				}
@@ -10059,7 +10057,6 @@ public class CcbMB {
 		jurosAoAno = jurosAoAno.subtract(BigDecimal.ONE);
 		jurosAoAno = jurosAoAno.multiply(BigDecimal.valueOf(100), MathContext.DECIMAL128);
 		jurosAoAno = jurosAoAno.setScale(2, BigDecimal.ROUND_HALF_UP);
-		this.simulador.setTaxaJurosAoAno(jurosAoAno);
 		
 		simulador.setValorCreditoLiberado(simulador.getValorCredito());
 		
@@ -10085,6 +10082,7 @@ public class CcbMB {
 			simuladorLiquido.setSeguroDFI(SiscoatConstants.SEGURO_DFI);
 			simuladorLiquido.setTipoPessoa(this.objetoCcb.getTipoPessoaEmitente());
 			// valores
+			
 			simuladorLiquido.setValorCreditoLiberado(simulador.getValorCredito());
 			simuladorLiquido.setValorCredito(valorBruto);
 			simuladorLiquido.setTaxaJuros(this.objetoCcb.getTaxaDeJurosMes());
@@ -10112,6 +10110,8 @@ public class CcbMB {
 		} else {
 			this.simulador = simulador;
 		}
+		
+		this.simulador.setTaxaJurosAoAno(jurosAoAno);
 		
 		if (simulador.getParcelas().size() > 0 ) {
 			BigDecimal cet = BigDecimal.ZERO;

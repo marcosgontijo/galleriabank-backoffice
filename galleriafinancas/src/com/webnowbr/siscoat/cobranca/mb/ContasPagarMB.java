@@ -541,6 +541,14 @@ public class ContasPagarMB {
 			this.objetoContasPagar.setDataPagamento(gerarDataHoje());
 		}
 		this.selectedContratoLov.getListContasPagar().add(this.objetoContasPagar);
+		
+		ContasPagarDao contasPagarDao = new ContasPagarDao();
+		if(objetoContasPagar.getId() <= 0) {
+			contasPagarDao.create(objetoContasPagar);
+		} else {
+			contasPagarDao.merge(objetoContasPagar);
+		}
+		
 		this.objetoContasPagar = new ContasPagar();
 		this.addContasPagar = false;
 		
