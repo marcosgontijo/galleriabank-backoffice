@@ -16,6 +16,7 @@ public class DocumentoAnaliseResumo implements Serializable {
 	private String descricao;
 
 	private String valor;
+	private int numero;
 
 	public String getDescricao() {
 		return descricao;
@@ -32,5 +33,20 @@ public class DocumentoAnaliseResumo implements Serializable {
 	public void setValor(String valor) {
 		this.valor = valor;
 	}
+
+	public int getNumero() {
+		return numero;
+	}
+
+	public void setNumero(int numero) {
+		this.numero = numero;
+	}
+
+	public Object setValor(int score) {
+		// TODO Auto-generated method stub
+		return this.valor = valor;
+	}
+
+
 
 }
