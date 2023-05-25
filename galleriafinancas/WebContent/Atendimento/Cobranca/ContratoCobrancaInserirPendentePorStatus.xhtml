@@ -901,6 +901,14 @@
 						<p:panel id="ArquivosSalvosAnalise"
 							header="Arquivo(s) Salvo(s) na analise"
 							style="margin-bottom:10px;">
+							<f:facet name="header"> Arquivo(s) Salvo(s) na analise 
+							<p:outputLabel value="" />
+								<p:selectBooleanButton
+									value="#{contratoCobrancaMB.addPessoaAnalise}"
+									onLabel="Adicionar Segurado" offLabel="Adicionar Pessoa">
+									<p:ajax update=":form:ArquivosSalvosAnalise" event="change" />
+								</p:selectBooleanButton>
+							</f:facet>
 
 
 							<h:panelGrid columns="1">
@@ -908,19 +916,21 @@
 									value="#{contratoCobrancaMB.listaDocumentoAnalise}"
 									
 									rowKey="#{fileAnalise.id}" emptyMessage="">
-									<p:column headerText="Liberado Análise"  rendered="#{fileAnalise.podeChamarRea or fileAnalise.podeChamarEngine}" >
-										<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"
+									<p:column headerText="Liberado Análise" >
+										<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"   
+										rendered="#{fileAnalise.podeChamarRea or fileAnalise.podeChamarEngine}"
 											 onLabel="Sim" offLabel="Não" style="width:6rem" >
 										<p:ajax  event="change"
 											listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
 											</p:selectBooleanButton>
 									</p:column>
 									<p:column headerText="Liberar Serasa">
+
 										<p:selectBooleanButton value="#{fileAnalise.liberadoSerasa}"
-											 onLabel="Sim" offLabel="Não" style="width:6rem" >
-										<p:ajax  event="change" 
-											listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
-											</p:selectBooleanButton>
+											onLabel="Sim" offLabel="Não" style="width:6rem">
+											<p:ajax event="change"
+												listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
+										</p:selectBooleanButton>
 									</p:column>
 									<p:column headerText="Liberar Cenprot">
 										<p:selectBooleanButton value="#{fileAnalise.liberadoCenprot}"
@@ -3732,64 +3742,46 @@
 								action="#{contratoCobrancaMB.concluirConta()}"
 								update=":form:ContasPagarPanel" icon="ui-icon ui-icon-check" />
 						</h:panelGroup>
-
-						<p:dataView var="contas"
-							value="#{contratoCobrancaMB.objetoContratoCobranca.listContasPagar}"
-							paginator="false" layout="list"
-							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
-							<p:dataViewListItem>
-								<p:outputLabel value="Descrição: " styleClass="labelBold" />
-								<p:outputLabel value="#{contas.descricao}"
-									styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
-								<p:spacer height="5" />
-								<p:outputLabel value="|" />
-								<p:spacer height="5" />
-
-								<p:outputLabel value="Valor: " styleClass="labelBold" />
-								<p:outputLabel value="#{contas.valor}"
-									converter="bigDecimalConverter" styleClass="labelBold"
-									style="FONT-SIZE: 10pt;width:100px;" />
-								<p:spacer height="5" />
-								<p:outputLabel value="|" />
-								<p:spacer height="5" />
-
-								<p:outputLabel value="Data Vencimento: " styleClass="labelBold" />
-								<h:outputText value="#{contas.dataVencimento}"
-									styleClass="labelBold">
+						
+						<p:dataTable var="contas" value="#{contratoCobrancaMB.objetoContratoCobranca.listContasPagar}" 
+							id="contasDT" style="width:1000px;" size="small"  >
+							
+							<p:column style="text-align: center;" headerText="Descrição"  >
+								<p:outputLabel value="#{contas.descricao}" 
+									style="FONT-SIZE: 10pt;" />
+							</p:column>
+							
+							<p:column style="text-align: center;" headerText="Valor "  >
+								<p:outputLabel value="#{contas.valor}" 
+									style="FONT-SIZE: 10pt;"
+									converter="bigDecimalConverter" />
+							</p:column> 
+							
+							<p:column style="text-align: center;" headerText="Data Vencimento"  >
+								<h:outputText value="#{contas.dataVencimento}">
 									<f:convertDateTime pattern="dd/MM/yyyy" />
 								</h:outputText>
-								
-								<p:spacer height="5" />
-								<p:outputLabel value="|" />
-								<p:spacer height="5" />
-
-								<p:outputLabel value="Valor Pago: " styleClass="labelBold" />
+							</p:column>
+							
+							<p:column style="text-align: center;" headerText="Valor Pago"  >
 								<p:outputLabel value="#{contas.valorPagamento}"
-									converter="bigDecimalConverter" styleClass="labelBold"
+									converter="bigDecimalConverter" 
 									style="FONT-SIZE: 10pt;width:100px;" />
-								<p:spacer height="5" />
-								<p:outputLabel value="|" />
-								<p:spacer height="5" />
-
-								<p:outputLabel value="Data Pagamento: " styleClass="labelBold" />
-								<h:outputText value="#{contas.dataPagamento}"
-									styleClass="labelBold">
-									<f:convertDateTime pattern="dd/MM/yyyy" />
-								</h:outputText>
-								<p:spacer height="10" />					
-									<p:commandButton value="Editar" icon="ui-icon-pencil"
-										action="#{contratoCobrancaMB.editarConta(contas)}" ajax="true"
-										update=":form:ContasPagarPanel" />
-									<p:spacer height="10" />
-									<p:commandButton value="Remover" icon="ui-icon-trash"
-										action="#{contratoCobrancaMB.removerConta(contas)}"
-										ajax="true" update=":form:ContasPagarPanel" />
-									<p:spacer height="10" />
-									<p:commandButton value="Arquivos" icon="ui-icon-print"
-										action="#{contratoCobrancaMB.populateFilesContasPagar(contas)}"
-										ajax="true" update=":form:ContasPagarPanel contaArquivosForm" />
-							</p:dataViewListItem>
-						</p:dataView>
+							</p:column>
+						
+							<p:column style="text-align: center;width:260px;" headerText="" >
+								<p:commandButton value="Editar" icon="ui-icon-pencil"
+									action="#{contratoCobrancaMB.editarConta(contas)}" ajax="true"
+									update=":form:ContasPagarPanel" />
+								<p:commandButton value="Remover" icon="ui-icon-trash"
+									action="#{contratoCobrancaMB.removerConta(contas)}"
+									ajax="true" update=":form:ContasPagarPanel" />
+								<p:commandButton value="Arquivos" icon="ui-icon-print"
+									action="#{contratoCobrancaMB.populateFilesContasPagar(contas)}"
+									ajax="true" update=":form:ContasPagarPanel contaArquivosForm" />
+							</p:column>
+						</p:dataTable>			
+						
 					</p:panel>
 				</h:panelGroup>
 				
@@ -4688,7 +4680,47 @@
 				<p:commandButton value="Cancelar" immediate="true" icon="ui-icon-cancel" onclick="window.history.back();" style="TEXT-DECORATION: bold; "/>								
 			</div>			
 		</h:form>
-		
+
+		<p:dialog header="Adicionar pessoa Analise" overflow="auto"
+			id="dialogAdicionarPessoaAnalise"
+			widgetVar="adicionarPessoaAnaliseDlg" resizable="true"
+			style="FONT-SIZE: 13pt;" width="800" minWidth="800">
+			<h:form id="adicionarPessoaAnaliseForm">
+
+				<p:selectBooleanButton
+					value="#{contratoCobrancaMB.addPessoaAnalise}"
+					onLabel="Pesquisar Pessoa" offLabel="Adicionar Pessoa">
+					<p:ajax update=":form:ArquivosSalvosAnalise" event="change" />
+				</p:selectBooleanButton>
+
+				<h:panelGrid columns="2">
+					<h:outputText value="Nome" />
+					<h:outputText value="#{files.name}" />
+
+
+					<h:outputText value="CPF" />
+					<h:outputText value="#{files.name}" />
+
+					<h:outputText value="CNPJ" />
+					<h:outputText value="#{files.name}" />
+
+					<h:outputText value="Motivo" />
+					<p:selectOneMenu
+						value="#{contratoCobrancaMB.objetoContratoCobranca.motivoReprovaSelectItem}"
+						label="Tipo" style="width:250px;">
+						<f:selectItem itemValue="" itemLabel="Selecione o motivo" />
+						<f:selectItem itemLabel="Proprietario Atual"
+							itemValue="Proprietario Atual" />
+						<f:selectItem itemLabel="Proprietario Anterior"
+							itemValue="Proprietario Anterior" />
+					</p:selectOneMenu>
+
+				</h:panelGrid>
+
+
+			</h:form>
+		</p:dialog>
+
 		<p:dialog header="Arquivos da Conta" overflow="auto" id="dialogArquivosConta"
 			widgetVar="contaArquivosdlg" resizable="true" style="FONT-SIZE: 13pt;"
 			width="800" minWidth="800">

@@ -305,6 +305,7 @@ public class ContratoCobrancaMB {
 	private boolean addPagador;
 	private boolean addContasPagar;
 	private boolean gerenciaStatus;
+	private boolean addPessoaAnalise;
 	
 	/** Lista dos Pagadores utilizada pela LOV. */
 	private List<PagadorRecebedor> listPagadores;
@@ -18943,10 +18944,16 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		
 		BigDecimal valorDespesas = calcularValorTotalContasPagar();
 		this.objetoContratoCobranca.setContaPagarValorTotal(valorDespesas); 
-		
+		ContasPagarDao contasPagarDao = new ContasPagarDao();
+		if(contasPagarSelecionada.getId() <= 0) {
+			contasPagarDao.create(contasPagarSelecionada);
+		} else {
+			contasPagarDao.merge(contasPagarSelecionada);
+		}
 		this.contasPagarSelecionada = new ContasPagar();
 		this.addContasPagar = false;
 		this.objetoContratoCobranca.calcularValorTotalContasPagas();
+		
 	}
 	
 	public void clearPagadorProcesso(CcbProcessosJudiciais processo) {
@@ -32559,6 +32566,14 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 
 	public void setAddContasPagar(boolean addContasPagar) {
 		this.addContasPagar = addContasPagar;
+	} 
+
+	public boolean isAddPessoaAnalise() {
+		return addPessoaAnalise;
+	}
+
+	public void setAddPessoaAnalise(boolean addPessoaAnalise) {
+		this.addPessoaAnalise = addPessoaAnalise;
 	}
 
 	public AnaliseComite getObjetoAnaliseComite() {
