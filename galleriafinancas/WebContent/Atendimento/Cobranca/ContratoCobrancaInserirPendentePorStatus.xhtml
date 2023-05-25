@@ -903,11 +903,10 @@
 							style="margin-bottom:10px;">
 							<f:facet name="header"> Arquivo(s) Salvo(s) na analise 
 							<p:outputLabel value="" />
-								<p:selectBooleanButton
-									value="#{contratoCobrancaMB.addPessoaAnalise}"
-									onLabel="Adicionar Segurado" offLabel="Adicionar Pessoa">
-									<p:ajax update=":form:ArquivosSalvosAnalise" event="change" />
-								</p:selectBooleanButton>
+								<p:commandButton value="Adicionar Pessoa" 
+									oncomplete="PF('adicionarPessoaAnaliseDlg').show();"
+									update=":adicionarPessoaAnaliseForm:dialogAdicionarPessoaAnalise">
+								</p:commandButton>
 							</f:facet>
 
 
@@ -4681,28 +4680,37 @@
 			</div>			
 		</h:form>
 
+			<h:form id="adicionarPessoaAnaliseForm">
 		<p:dialog header="Adicionar pessoa Analise" overflow="auto"
 			id="dialogAdicionarPessoaAnalise"
 			widgetVar="adicionarPessoaAnaliseDlg" resizable="true"
 			style="FONT-SIZE: 13pt;" width="800" minWidth="800">
-			<h:form id="adicionarPessoaAnaliseForm">
 
-				<p:selectBooleanButton
-					value="#{contratoCobrancaMB.addPessoaAnalise}"
-					onLabel="Pesquisar Pessoa" offLabel="Adicionar Pessoa">
-					<p:ajax update=":form:ArquivosSalvosAnalise" event="change" />
-				</p:selectBooleanButton>
+				
 
 				<h:panelGrid columns="2">
-					<h:outputText value="Nome" />
-					<h:outputText value="#{files.name}" />
+
+					<p:outputLabel for="AnaliseDocumentoPessoaNome" value="Nome da pessoa "
+						styleClass="labelBold" />
+					<h:panelGroup>
+						<p:outputLabel id="AnaliseDocumentoPessoaNome"
+							value="#{contratoCobrancaMB.seguradoSelecionado.pessoa.nome}"
+							required="false" style="FONT-SIZE: 10pt;width:300px;" />
+						<p:spacer height="10" />
+						<p:commandButton
+							action="#{contratoCobrancaMB.pesquisaPessoaAnaliseDocumento}"
+							icon="ui-icon ui-icon-circle-zoomin"
+							oncomplete="PF('pagadorRecebedorDialog').show();"
+							update="formReceborPagador" />
+
+					</h:panelGroup>
 
 
 					<h:outputText value="CPF" />
-					<h:outputText value="#{files.name}" />
+					<h:outputText value="#{contratoCobrancaMB.seguradoSelecionado.pessoa.cpf}" />
 
 					<h:outputText value="CNPJ" />
-					<h:outputText value="#{files.name}" />
+					<h:outputText value="#{contratoCobrancaMB.seguradoSelecionado.pessoa.cnpj}" />
 
 					<h:outputText value="Motivo" />
 					<p:selectOneMenu
@@ -4715,11 +4723,9 @@
 							itemValue="Proprietario Anterior" />
 					</p:selectOneMenu>
 
-				</h:panelGrid>
-
-
-			</h:form>
-		</p:dialog>
+				</h:panelGrid>		
+		</p:dialog>	
+		</h:form>
 
 		<p:dialog header="Arquivos da Conta" overflow="auto" id="dialogArquivosConta"
 			widgetVar="contaArquivosdlg" resizable="true" style="FONT-SIZE: 13pt;"

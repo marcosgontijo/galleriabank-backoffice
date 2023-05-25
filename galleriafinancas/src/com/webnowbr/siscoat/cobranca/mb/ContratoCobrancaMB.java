@@ -283,6 +283,7 @@ public class ContratoCobrancaMB {
 	
 	String tipoPesquisaPagadorRecebedor = "";
 	Segurado seguradoSelecionado;
+	DocumentoAnalise documentoAnaliseAdicionar;
 	PagadorRecebedorSocio socioSelecionado;
 	PagadorRecebedorAdicionais pagadorSecundarioSelecionado;
 	String updatePagadorRecebedor = "";
@@ -18832,6 +18833,14 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
 	}
 	
+	public void pesquisaPessoaAnaliseDocumento() {
+		this.tituloPagadorRecebedorDialog = "Pessoas";
+		this.tipoPesquisaPagadorRecebedor = "Analise Documento";
+		this.documentoAnaliseAdicionar = new DocumentoAnalise();
+		this.updatePagadorRecebedor = ":adicionarPessoaAnaliseForm:dialogAdicionarPessoaAnalise";
+		this.documentoAnaliseAdicionar.setPagador(new PagadorRecebedor());
+	}
+	
 	public void pesquisaSeguradoConsulta() {
 		this.tituloPagadorRecebedorDialog = "Segurados";
 		this.tipoPesquisaPagadorRecebedor = "Segurado";
@@ -18864,6 +18873,8 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			this.socioSelecionado.setPessoa(this.selectedPagadorGenerico);
 		} else if ( CommonsUtil.mesmoValor("Pagador", tipoPesquisaPagadorRecebedor)) {
 			this.pagadorSecundarioSelecionado.setPessoa(this.selectedPagadorGenerico);
+		} else if ( CommonsUtil.mesmoValor("Analise Documento", tipoPesquisaPagadorRecebedor)) {
+			this.documentoAnaliseAdicionar.setPagador(this.selectedPagadorGenerico);
 		}
 	}
 	
@@ -33041,6 +33052,14 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 
 	public void setAverbacaoSelecionada(Averbacao averbacaoSelecionada) {
 		this.averbacaoSelecionada = averbacaoSelecionada;
+	}
+
+	public DocumentoAnalise getDocumentoAnaliseAdicionar() {
+		return documentoAnaliseAdicionar;
+	}
+
+	public void setDocumentoAnaliseAdicionar(DocumentoAnalise documentoAnaliseAdicionar) {
+		this.documentoAnaliseAdicionar = documentoAnaliseAdicionar;
 	}
 	
 }
