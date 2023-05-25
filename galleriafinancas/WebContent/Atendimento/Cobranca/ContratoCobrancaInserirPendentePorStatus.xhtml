@@ -908,19 +908,21 @@
 									value="#{contratoCobrancaMB.listaDocumentoAnalise}"
 									
 									rowKey="#{fileAnalise.id}" emptyMessage="">
-									<p:column headerText="Liberado Análise"  rendered="#{fileAnalise.podeChamarRea or fileAnalise.podeChamarEngine}" >
-										<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"
+									<p:column headerText="Liberado Análise" >
+										<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"   
+										rendered="#{fileAnalise.podeChamarRea or fileAnalise.podeChamarEngine}"
 											 onLabel="Sim" offLabel="Não" style="width:6rem" >
 										<p:ajax  event="change"
 											listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
 											</p:selectBooleanButton>
 									</p:column>
 									<p:column headerText="Liberar Serasa">
+
 										<p:selectBooleanButton value="#{fileAnalise.liberadoSerasa}"
-											 onLabel="Sim" offLabel="Não" style="width:6rem" >
-										<p:ajax  event="change" 
-											listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
-											</p:selectBooleanButton>
+											onLabel="Sim" offLabel="Não" style="width:6rem">
+											<p:ajax event="change"
+												listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
+										</p:selectBooleanButton>
 									</p:column>
 									<p:column headerText="Liberar Cenprot">
 										<p:selectBooleanButton value="#{fileAnalise.liberadoCenprot}"
