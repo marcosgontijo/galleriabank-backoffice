@@ -3,10 +3,7 @@ package com.webnowbr.siscoat.cobranca.model.bmpdigital;
 import java.math.BigDecimal;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlElement;
-
 import com.google.gson.annotations.SerializedName;
-import com.webnowbr.siscoat.common.CommonsUtil;
 
 public class ResumoDoCliente {
 

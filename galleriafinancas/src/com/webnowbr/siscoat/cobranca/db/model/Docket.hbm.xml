@@ -39,6 +39,10 @@
 			<column name="data" />
 		</property>
 				
+		<property name="retorno" type="java.lang.String">
+			<column name="retorno" />
+		</property>
+				
 		<list name="listaPagador"
 			table="Docket_PagadorRecebedor_Join" lazy="false">
 			<key column="idDocket" />

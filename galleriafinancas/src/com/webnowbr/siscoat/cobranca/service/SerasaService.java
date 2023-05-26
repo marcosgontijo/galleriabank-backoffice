@@ -10,10 +10,9 @@ import java.net.URL;
 
 import javax.faces.application.FacesMessage;
 
-import org.json.JSONObject;
-
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
+import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.infra.db.model.User;
@@ -33,21 +32,26 @@ public class SerasaService {
 		documentoAnalise = documentoAnaliseDao.findById(documentoAnalise.getId());
 
 		if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa())) {
+			
 			CredNet credNet = GsonUtil.fromJson(documentoAnalise.getRetornoSerasa(), CredNet.class);
 
 			if (!CommonsUtil.semValor(documentoAnalise.getPagador())) {
-				if (CommonsUtil.semValor(documentoAnalise.getPagador().getDtNascimento()))
+				PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
+				
+				//if (CommonsUtil.semValor(documentoAnalise.getPagador().getDtNascimento()))
 					documentoAnalise.getPagador().setDtNascimento(credNet.getPessoa().getDataNascimentoFundacao());
 
-				if (CommonsUtil.semValor(documentoAnalise.getPagador().getNomeMae()))
+				//if (CommonsUtil.semValor(documentoAnalise.getPagador().getNomeMae()))
 					documentoAnalise.getPagador().setNomeMae(credNet.getPessoa().getNomeMae());
+					
+					pagadorRecebedorDao.merge(documentoAnalise.getPagador());
 			}
 
 			if (!CommonsUtil.semValor(credNet.getParticipacoes())) {
 				DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
 
 				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
-
+				
 				for (PessoaParticipacao pessoaParticipacao : credNet.getParticipacoes()) {
 
 					documentoAnaliseService.cadastrarPessoRetornoCredNet(pessoaParticipacao, user, documentoAnaliseDao,
@@ -89,8 +93,6 @@ public class SerasaService {
 			myURLConnection.setRequestProperty("Content-Type", "application/json");
 			myURLConnection.setRequestProperty("Authorization", "Bearer " +  br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos());
 			myURLConnection.setDoOutput(true);
-
-			JSONObject myResponse = null;
 
 			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
 				result = new FacesMessage(FacesMessage.SEVERITY_ERROR,
@@ -160,7 +162,6 @@ public class SerasaService {
 			myURLConnection.setRequestProperty("Authorization", "Bearer " +  br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos());
 			myURLConnection.setDoOutput(true);
 
-			JSONObject myResponse = null;
 
 //			JSONObject jsonWhatsApp = engineBodyJsonEngine(engine.getPagador());
 

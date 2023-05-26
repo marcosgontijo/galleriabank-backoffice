@@ -18836,7 +18836,10 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 	public void pesquisaPessoaAnaliseDocumento() {
 		this.tituloPagadorRecebedorDialog = "Pessoas";
 		this.tipoPesquisaPagadorRecebedor = "Analise Documento";
-		this.documentoAnaliseAdicionar = new DocumentoAnalise();
+		
+		if ( CommonsUtil.semValor(this.documentoAnaliseAdicionar))
+			this.documentoAnaliseAdicionar = new DocumentoAnalise();
+			
 		this.updatePagadorRecebedor = "adicionarPessoaAnaliseForm";
 		this.documentoAnaliseAdicionar.setPagador(new PagadorRecebedor());
 	}
@@ -18867,14 +18870,22 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 	}
 	
 	public void populateSelectedPagadorRecebedor() {
-		if ( CommonsUtil.mesmoValor("Segurado", tipoPesquisaPagadorRecebedor)) {
+		if (CommonsUtil.mesmoValor("Segurado", tipoPesquisaPagadorRecebedor)) {
 			this.seguradoSelecionado.setPessoa(this.selectedPagadorGenerico);
-		} else if ( CommonsUtil.mesmoValor("Socio", tipoPesquisaPagadorRecebedor)) {
+		} else if (CommonsUtil.mesmoValor("Socio", tipoPesquisaPagadorRecebedor)) {
 			this.socioSelecionado.setPessoa(this.selectedPagadorGenerico);
-		} else if ( CommonsUtil.mesmoValor("Pagador", tipoPesquisaPagadorRecebedor)) {
+		} else if (CommonsUtil.mesmoValor("Pagador", tipoPesquisaPagadorRecebedor)) {
 			this.pagadorSecundarioSelecionado.setPessoa(this.selectedPagadorGenerico);
-		} else if ( CommonsUtil.mesmoValor("Analise Documento", tipoPesquisaPagadorRecebedor)) {
+		} else if (CommonsUtil.mesmoValor("Analise Documento", tipoPesquisaPagadorRecebedor)) {
 			this.documentoAnaliseAdicionar.setPagador(this.selectedPagadorGenerico);
+			this.documentoAnaliseAdicionar.setIdentificacao(this.documentoAnaliseAdicionar.getPagador().getNome());
+			if (!CommonsUtil.semValor(this.documentoAnaliseAdicionar.getPagador().getCpf())) {
+				this.documentoAnaliseAdicionar.setCnpjcpf(this.documentoAnaliseAdicionar.getPagador().getCpf());
+				this.documentoAnaliseAdicionar.setTipoPessoa("PF");
+			} else {
+				this.documentoAnaliseAdicionar.setCnpjcpf(this.documentoAnaliseAdicionar.getPagador().getCnpj());
+				this.documentoAnaliseAdicionar.setTipoPessoa("PJ");
+			}
 		}
 	}
 	
@@ -30350,6 +30361,18 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			}
 		});
 
+	}
+	
+	public void preparaAdicionarPessoaAnalise() {
+		this.documentoAnaliseAdicionar = new DocumentoAnalise();
+		documentoAnaliseAdicionar.setPagador(new PagadorRecebedor());
+		documentoAnaliseAdicionar.setContratoCobranca(this.objetoContratoCobranca);
+	}
+	
+	public void adicionarPessoaAnalise() {
+		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+		documentoAnaliseDao.merge(documentoAnaliseAdicionar);
+		listaArquivosAnaliseDocumentos();
 	}
 			
 	

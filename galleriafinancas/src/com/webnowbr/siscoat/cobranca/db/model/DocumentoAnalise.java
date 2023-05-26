@@ -56,8 +56,8 @@ public class DocumentoAnalise implements Serializable {
 	}
 	
 	public boolean isPodeChamarEngine() {
-		return  !isEngineProcessado() && (CommonsUtil.mesmoValor("PJ", tipoPessoa) || CommonsUtil.mesmoValor("PF", tipoPessoa) &&
-				CommonsUtil.mesmoValor( "Proprietario Atual",  this.motivoAnalise ));
+		return  !isEngineProcessado() && (CommonsUtil.mesmoValor("PF", tipoPessoa) || ( CommonsUtil.mesmoValor("PJ", tipoPessoa)  &&
+				!this.motivoAnalise.contains( "Empresa Vinculada")));
 	}
 
 	public boolean isEngineProcessado() {
@@ -65,7 +65,9 @@ public class DocumentoAnalise implements Serializable {
 	}	
 	
 	public boolean isPodeChamarSerasa() {
-		return isEngineProcessado() && !isSerasaProcessado() && CommonsUtil.mesmoValor("PF", tipoPessoa); // (CommonsUtil.mesmoValor("PJ", tipoPessoa) ||
+		return isEngineProcessado() && !isSerasaProcessado() && CommonsUtil.mesmoValor("PF", tipoPessoa)
+				&& CommonsUtil.mesmoValor(this.motivoAnalise, "Proprietario Atual"); // (CommonsUtil.mesmoValor("PJ",
+																						// tipoPessoa) ||
 	}
 
 	public boolean isSerasaProcessado() {
