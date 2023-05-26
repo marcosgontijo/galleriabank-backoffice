@@ -18,8 +18,11 @@ import br.com.galleriabank.dataengine.cliente.model.retorno.processos.EngineReto
 import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
 import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetornoExecutionResult;
 import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetornoRequestFields;
+import br.com.galleriabank.dataengine.cliente.model.retorno.AntecedentesCriminais.EngineRetornoExecutionResultAntecedenteCriminais;
+import br.com.galleriabank.dataengine.cliente.model.retorno.AntecedentesCriminais.EngineRetornoExecutionResultAntecedenteCriminaisEvidences;
 import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultConsultaCompleta;
 import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultConsultaQuodScore;
+import br.com.galleriabank.dataengine.cliente.model.retorno.processos.EngineRetornoExecutionResultProcessos;
 import br.com.galleriabank.serasacrednet.cliente.util.GsonUtil;
 
 public class DocumentoAnalise implements Serializable {
@@ -64,7 +67,12 @@ public class DocumentoAnalise implements Serializable {
 		DocumentoAnaliseResumo documento =  new DocumentoAnaliseResumo();
 		DocumentoAnaliseResumo documento2 = new DocumentoAnaliseResumo();
 		DocumentoAnaliseResumo documento3 = new DocumentoAnaliseResumo();
+		DocumentoAnaliseResumo documento4 = new DocumentoAnaliseResumo();
 		if(CommonsUtil.mesmoValor( tipoPessoa , "PF")) {
+		
+		
+			
+			
 		EngineRetornoExecutionResultConsultaQuodScore score = engine.getConsultaCompleta().getQuodScore();
 		EngineRetornoRequestFields nome = engine.getRequestFields().stream().filter(f -> f.getField().equals("nome")).findFirst().orElse(null);
 		EngineRetornoRequestFields cpf = engine.getRequestFields().stream().filter(g-> g.getField().equals("cpf")).findFirst().orElse(null);
@@ -74,6 +82,16 @@ public class DocumentoAnalise implements Serializable {
 		documento2.setValor(cpf.getValue());
 		documento3.setDescricao("Score serasa:");
 		documento3.setNumero(score.getScore());
+		if(engine.getConsultaAntecedenteCriminais() == null) {
+			documento4.setDescricao("antecedentes criminais:");
+			documento4.setValor("não disponível");
+		}else {
+		EngineRetornoExecutionResultAntecedenteCriminaisEvidences mensagem = engine.getConsultaAntecedenteCriminais().getEvidences();
+		documento4.setDescricao("antecedentes criminais:");
+		documento4.setValor(mensagem.getMessage());
+		}
+	
+		
 		
 		} else if(CommonsUtil.mesmoValor( tipoPessoa , "PJ")) {
 			EngineRetornoRequestFields nome = engine.getRequestFields().stream().filter(f -> f.getField().equals("nome")).findFirst().orElse(null);
@@ -82,7 +100,23 @@ public class DocumentoAnalise implements Serializable {
 			documento.setValor(nome.getValue());
 			documento2.setDescricao("cnpj:");
 			documento2.setValor(cnpj.getValue());
-		}
+			if(engine.getConsultaCompleta() == null) {
+				documento3.setDescricao("score serasa:");
+				documento3.setNumero(0);
+			} else {
+				EngineRetornoExecutionResultConsultaQuodScore score = engine.getConsultaCompleta().getQuodScore();
+				documento3.setDescricao("score serasa:");
+				documento3.setNumero(score.getScore());
+			}
+			if(engine.getConsultaAntecedenteCriminais() == null) {
+				documento4.setDescricao("antecedentes criminais:");
+				documento4.setValor("não disponível");
+			}else {
+			EngineRetornoExecutionResultAntecedenteCriminaisEvidences mensagem = engine.getConsultaAntecedenteCriminais().getEvidences();
+			documento4.setDescricao("antecedentes criminais:");
+			documento4.setValor(mensagem.getMessage());
+			
+		} }
 		
 		
 		
@@ -91,6 +125,7 @@ public class DocumentoAnalise implements Serializable {
 		result.add(documento);
 		result.add(documento2);
 		result.add(documento3);
+		result.add(documento4);
 		return result;
 		
 	}
