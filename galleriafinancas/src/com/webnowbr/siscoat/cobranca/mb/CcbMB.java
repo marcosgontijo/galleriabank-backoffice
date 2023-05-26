@@ -1714,22 +1714,23 @@ public class CcbMB {
 			
 			if(!CommonsUtil.semValor(objetoCcb.getObjetoContratoCobranca())) {
 				ContratoCobranca contrato = objetoCcb.getObjetoContratoCobranca();
-				
-				//if(!CommonsUtil.semValor(this.objetoCcb.getDespesasAnexo2())) {
-				//	contrato.setListContasPagar(new HashSet<ContasPagar>(this.objetoCcb.getDespesasAnexo2()));
-				//}
-				
-				if(CommonsUtil.semValor(objetoCcb.getNumeroCcb())) {
-					contrato.setNumeroContratoSeguro(objetoCcb.getNumeroCcb());
+				if(contrato.getId() > 0) {
+					//if(!CommonsUtil.semValor(this.objetoCcb.getDespesasAnexo2())) {
+					//	contrato.setListContasPagar(new HashSet<ContasPagar>(this.objetoCcb.getDespesasAnexo2()));
+					//}
+					
+					if(CommonsUtil.semValor(objetoCcb.getNumeroCcb())) {
+						contrato.setNumeroContratoSeguro(objetoCcb.getNumeroCcb());
+					}
+					ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+					try {
+						cDao.merge(contrato);
+					} catch (TransientObjectException e) {
+						e.printStackTrace();
+					} catch (DAOException e) {
+						e.printStackTrace();
+					} 
 				}
-				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-				try {
-					cDao.merge(contrato);
-				} catch (TransientObjectException e) {
-					e.printStackTrace();
-				} catch (DAOException e) {
-					e.printStackTrace();
-				} 
 			} 
 			//if(this.objetoCcb.getId() <= 0) {
 				//this.objetoCcb.setId(ccbDao.idCcb());
