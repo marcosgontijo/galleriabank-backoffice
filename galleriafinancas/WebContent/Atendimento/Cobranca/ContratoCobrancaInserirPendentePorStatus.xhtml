@@ -918,7 +918,7 @@
 									rowKey="#{fileAnalise.id}" emptyMessage="">
 									<p:column headerText="Liberado Análise" >
 										<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"   
-										rendered="#{fileAnalise.podeChamarRea or fileAnalise.podeChamarEngine}"
+										rendered="#{fileAnalise.podeChamarRea or fileAnalise.podeChamarEngine or fileAnalise.reaProcessado or fileAnalise.enginProcessado}"
 											 onLabel="Sim" offLabel="Não" style="width:6rem" >
 										<p:ajax  event="change"
 											listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
@@ -927,6 +927,7 @@
 									<p:column headerText="Liberar Serasa">
 
 										<p:selectBooleanButton value="#{fileAnalise.liberadoSerasa}"
+										rendered="#{fileAnalise.podeChamarSerasa or fileAnalise.serasaProcessado}"										
 											onLabel="Sim" offLabel="Não" style="width:6rem">
 											<p:ajax event="change"
 												listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
