@@ -31,6 +31,7 @@ import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetornoExecuti
 import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetornoRequestFields;
 import br.com.galleriabank.dataengine.cliente.model.retorno.AntecedentesCriminais.EngineRetornoExecutionResultAntecedenteCriminais;
 import br.com.galleriabank.dataengine.cliente.model.retorno.AntecedentesCriminais.EngineRetornoExecutionResultAntecedenteCriminaisEvidences;
+import br.com.galleriabank.dataengine.cliente.model.retorno.AntecedentesCriminais.EngineRetornoExecutionResultAntecedenteCriminaisResult;
 import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultConsultaCompleta;
 import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultConsultaQuodScore;
 import br.com.galleriabank.dataengine.cliente.model.retorno.processos.EngineRetornoExecutionResultProcessos;
@@ -79,8 +80,8 @@ public class DocumentoAnalise implements Serializable {
 		DocumentoAnaliseResumo documento2 = new DocumentoAnaliseResumo();
 		DocumentoAnaliseResumo documento3 = new DocumentoAnaliseResumo();
 		DocumentoAnaliseResumo documento4 = new DocumentoAnaliseResumo();
+		DocumentoAnaliseResumo documento5 = new DocumentoAnaliseResumo();
 		if(CommonsUtil.mesmoValor( tipoPessoa , "PF")) {
-		
 		
 			
 			
@@ -92,7 +93,7 @@ public class DocumentoAnalise implements Serializable {
 		documento2.setDescricao("cpf:");
 		documento2.setValor(cpf.getValue());
 		documento3.setDescricao("Score serasa:");
-		documento3.setNumero(score.getScore());
+		documento3.setValor(CommonsUtil.stringValue(score.getScore()));
 		if(engine.getConsultaAntecedenteCriminais() == null) {
 			documento4.setDescricao("antecedentes criminais:");
 			documento4.setValor("não disponível");
@@ -101,7 +102,16 @@ public class DocumentoAnalise implements Serializable {
 		documento4.setDescricao("antecedentes criminais:");
 		documento4.setValor(mensagem.getMessage());
 		}
-	
+		if(engine.getProcessos() == null) {
+			documento5.setDescricao("numero  de processos:");
+			documento5.setValor("Não disponível");
+			
+			
+		} else {
+		EngineRetornoExecutionResultProcessos processo = engine.getProcessos();
+		documento5.setDescricao("numero de processos:");
+		documento5.setValor(CommonsUtil.stringValue(processo.getTotal_acoes_judiciais()));
+		}
 		
 		
 		} else if(CommonsUtil.mesmoValor( tipoPessoa , "PJ")) {
@@ -113,11 +123,11 @@ public class DocumentoAnalise implements Serializable {
 			documento2.setValor(cnpj.getValue());
 			if(engine.getConsultaCompleta() == null) {
 				documento3.setDescricao("score serasa:");
-				documento3.setNumero(0);
+				documento3.setValor("não disponivel");
 			} else {
 				EngineRetornoExecutionResultConsultaQuodScore score = engine.getConsultaCompleta().getQuodScore();
 				documento3.setDescricao("score serasa:");
-				documento3.setNumero(score.getScore());
+				documento3.setValor(CommonsUtil.stringValue(score.getScore()));
 			}
 			if(engine.getConsultaAntecedenteCriminais() == null) {
 				documento4.setDescricao("antecedentes criminais:");
@@ -127,16 +137,28 @@ public class DocumentoAnalise implements Serializable {
 			documento4.setDescricao("antecedentes criminais:");
 			documento4.setValor(mensagem.getMessage());
 			
+			if(engine.getProcessos() == null) {
+				documento5.setDescricao("numero  de processos:");
+				documento5.setValor("Não disponível");
+				
+				
+			} else {
+			EngineRetornoExecutionResultProcessos processo = engine.getProcessos();
+			documento5.setDescricao("numero de processos:");
+			documento5.setValor(CommonsUtil.stringValue(processo.getTotal_acoes_judiciais()));
+			
+			
 		} }
 		
 		
-		
+		}
 
 		
 		result.add(documento);
 		result.add(documento2);
 		result.add(documento3);
 		result.add(documento4);
+		result.add(documento5);
 		return result;
 		
 	}
