@@ -75,7 +75,7 @@ public class DocumentoAnalise implements Serializable {
 	}	
 	
 	public boolean isPodeChamarCenprot() {
-		return isEngineProcessado() && !isCenprotProcessado();
+		return isEngineProcessado() && !isCenprotProcessado() && !CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
 	}
 	
 	public boolean isCenprotProcessado() {
@@ -87,7 +87,7 @@ public class DocumentoAnalise implements Serializable {
 	}
 	
 	public boolean isPodeChamarSCR() {
-		return isEngineProcessado() && !isScrProcessado();
+		return isEngineProcessado() && !isScrProcessado() && !CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
 	}
 	
 	
