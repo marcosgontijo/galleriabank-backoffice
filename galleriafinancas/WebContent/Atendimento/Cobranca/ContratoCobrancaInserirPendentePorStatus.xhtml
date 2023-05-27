@@ -4682,7 +4682,8 @@
 			</div>			
 		</h:form>
 
-
+<shiro:hasAnyRoles
+					name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO">
 		<p:dialog header="Adicionar pessoa Analise" overflow="auto"
 			id="dialogAdicionarPessoaAnalise"
 			widgetVar="adicionarPessoaAnaliseDlg" resizable="true"
@@ -4741,6 +4742,7 @@
 				</div>
 			</h:form>
 		</p:dialog>
+		</shiro:hasAnyRoles>
 
 
 		<p:dialog header="Arquivos da Conta" overflow="auto" id="dialogArquivosConta"
