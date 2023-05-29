@@ -8695,7 +8695,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 
 	@Override
 	public void merge(ContratoCobranca entity) {
-		System.out.println(entity.toString());  
+		//System.out.println(entity.toString());  
 		super.merge(entity);
 	}
 	

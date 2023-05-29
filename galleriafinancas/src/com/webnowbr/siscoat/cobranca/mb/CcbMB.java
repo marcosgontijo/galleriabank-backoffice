@@ -1719,8 +1719,10 @@ public class CcbMB {
 					try {
 						cDao.merge(contrato);
 					} catch (TransientObjectException e) {
+						contrato.toString();
 						e.printStackTrace();
 					} catch (DAOException e) {
+						contrato.toString();
 						e.printStackTrace();
 					} 
 				}
