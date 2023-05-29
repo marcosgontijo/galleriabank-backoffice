@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
-import com.webnowbr.siscoat.common.CommonsUtil;
 
 public class ResumoDoCliente {
 

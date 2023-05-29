@@ -3,7 +3,6 @@ package com.webnowbr.siscoat.cobranca.service;
 import java.util.Date;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
-import com.webnowbr.siscoat.cobranca.db.model.DataEngine;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorConsulta;
@@ -20,8 +19,6 @@ public class DocumentoAnaliseService {
 	public void cadastrarPessoRetornoCredNet(PessoaParticipacao pessoaParticipacao, User user,
 			DocumentoAnaliseDao documentoAnaliseDao, PagadorRecebedorService pagadorRecebedorService,
 			ContratoCobranca contratoCobranca, String motivo) {
-
-		DocketService docketService = new DocketService();
 
 		DocumentoAnalise documentoAnalise = new DocumentoAnalise();
 		documentoAnalise.setContratoCobranca(contratoCobranca);
@@ -49,11 +46,6 @@ public class DocumentoAnaliseService {
 		documentoAnalise.setPagador(pagador);
 
 		documentoAnaliseDao.create(documentoAnalise);
-
-//		if (documentoAnalise.getTipoPessoa() == "PJ") {
-//			DataEngine engine = docketService.engineInserirPessoa(documentoAnalise.getPagador(), contratoCobranca);
-//			docketService.engineCriarConsulta(documentoAnalise, engine, user);
-//		}
 
 	}
 

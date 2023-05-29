@@ -77,6 +77,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.TransferenciasObservacoesIUGUDao;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
+import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
@@ -5232,14 +5233,14 @@ public class IuguMB {
 			boolean dadosValidos = true;
 
 			// validações
-			if (this.selectedRecebedor.getCpf() == null && this.selectedRecebedor.getCnpj() == null) {
+			if (CommonsUtil.semValor(this.selectedRecebedor.getCpf()) && CommonsUtil.semValor(this.selectedRecebedor.getCnpj())) {
 				dadosValidos = false;
 
 				context.addMessage(null, new FacesMessage(
 						FacesMessage.SEVERITY_ERROR, "Cobrança Iugu: Dados do cliente incorretos (CPF ou CNPJ inválidos) !", ""));				
 			}
 
-			if (this.selectedRecebedor.getEndereco().equals("") || this.selectedRecebedor.getCep().equals("")) {
+			if (CommonsUtil.semValor(this.selectedRecebedor.getEndereco()) || CommonsUtil.semValor(this.selectedRecebedor.getCep())) {
 				dadosValidos = false;
 
 				context.addMessage(null, new FacesMessage(

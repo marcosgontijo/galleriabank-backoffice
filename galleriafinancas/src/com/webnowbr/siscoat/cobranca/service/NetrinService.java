@@ -13,7 +13,6 @@ import javax.faces.application.FacesMessage;
 import org.json.JSONObject;
 
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
-import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
@@ -59,7 +58,6 @@ public class NetrinService {
 			myURLConnection.setRequestProperty("Authorization", "Bearer " +  br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos());
 			myURLConnection.setDoOutput(true);
 
-			JSONObject myResponse = null;
 
 			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
 				result = new FacesMessage(FacesMessage.SEVERITY_ERROR,
@@ -79,7 +77,9 @@ public class NetrinService {
 
 				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 				documentoAnalise.setRetornoCenprot(response.toString());
+
 				documentoAnaliseDao.merge(documentoAnalise);
+								
 				
 				DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
 				documentoAnaliseService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
@@ -122,10 +122,6 @@ public class NetrinService {
 			myURLConnection.setRequestProperty("Authorization",
 					"Bearer " + br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos());
 			myURLConnection.setDoOutput(true);
-
-			JSONObject myResponse = null;
-
-//			JSONObject jsonWhatsApp = engineBodyJsonEngine(engine.getPagador());
 
 			try (OutputStream os = myURLConnection.getOutputStream()) {
 				byte[] input = documentoAnalise.getRetornoCenprot().getBytes("utf-8");

@@ -33,7 +33,6 @@ import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
@@ -51,12 +50,13 @@ public class ScrService {
 
 	SimpleDateFormat sdfDataArquivo = null;
 	
-	
+	TimeZone zone;
+	Locale locale;
 	
 	public ScrService() {
 		super();
-		TimeZone zone = TimeZone.getDefault();
-		Locale locale = new Locale("pt", "BR");
+		zone = TimeZone.getDefault();
+		locale = new Locale("pt", "BR");
 		this.sdfDataArquivo = new SimpleDateFormat("dd-MMM-yyyy", locale);
 
 	}
@@ -103,9 +103,7 @@ public class ScrService {
 			myURLConnection.setDoOutput(true);
 			myURLConnection.getOutputStream().write(postDataBytes);
 
-			String erro = "";
-			JSONObject myResponse = null;
-
+			
 			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {	
 				System.out.println("Erro ao Consultar o SCR BMP Digital - " + myURLConnection.getResponseCode());
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
@@ -135,7 +133,7 @@ public class ScrService {
 				} else {
 					// TODO Auto-generated catch block
 					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-							"SCR: Ocorreu um problema ao consultar o SCR! (Mensagem: " + myResponse.getString("MensagemOperador") + ")",
+							"SCR: Ocorreu um problema ao consultar o SCR! (Mensagem: " + scResult.getMensagemOperador()+ ")",
 							""));
 				}				
 			}
@@ -153,6 +151,7 @@ public class ScrService {
 	
 	
 
+	@SuppressWarnings("deprecation")
 	public String composeJSONPayload(String documento) {
 		String json = "";
 		
@@ -219,7 +218,6 @@ public class ScrService {
 		 * VGpT0_nF_h4
 		 */
 		
-		Document doc = null;
 		ByteArrayOutputStream baos = null;
 		
 		try {
@@ -306,55 +304,29 @@ public class ScrService {
 			 * Fonts Utilizadas no PDF
 			 */
 			Font header = new Font(FontFamily.HELVETICA, 14, Font.BOLD);
-			Font titulo = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
 			Font tituloBranco = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
 			tituloBranco.setColor(BaseColor.WHITE);
 			Font normal = new Font(FontFamily.HELVETICA, 10);
 			Font subtitulo = new Font(FontFamily.HELVETICA, 10, Font.BOLD);	    	
-			Font subtituloIdent = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
-			Font destaque = new Font(FontFamily.HELVETICA, 8, Font.BOLD);
-
-			TimeZone zone = TimeZone.getDefault();
-			Locale locale = new Locale("pt", "BR");
+			
+			
 
 			/*
 			 * Formatadores de Data/Hora
 			 */
-			SimpleDateFormat sdfDataContrato = new SimpleDateFormat("dd/MMM/yyyy hh:mm:ss", locale);
+//			SimpleDateFormat sdfDataContrato = new SimpleDateFormat("dd/MMM/yyyy hh:mm:ss", locale);
 			SimpleDateFormat sdfDataFormatada = new SimpleDateFormat("dd/MMM/yyyy", locale);
 			SimpleDateFormat sdfDataFormatadaMesAno = new SimpleDateFormat("MMM/yyyy", locale);
 			
 			
 			DecimalFormat df = new DecimalFormat("###,###,###,###,###.00");
 
-			/*
-			 * DAOs
-			 */
-			ParametrosDao pDao = new ParametrosDao();
-
-			/*
-			 * Instancia Calendário
-			 */
-			Calendar date = Calendar.getInstance(zone, locale);
-
+			
 			/*
 			 * Configuração inicial do PDF - Cria o documento tamanho A4, margens de 2,54cm
 			 */
 			doc = new Document(PageSize.A4, 10, 10, 10, 10);
-//			os = new ByteArrayOutputStream();
-
-			
-			
-			
-			PdfWriter writer = PdfWriter.getInstance(doc, baos);
-//			writer.open();
 			doc.open();
-			
-//			PdfWriter writer = new PdfWriter(new ByteArrayOutputStream()); 
-			
-//			PdfWriter.getInstance(doc,
-//                    os);
-//			
 		    
 	    
 			PdfPTable table = new PdfPTable(new float[] {0.16f, 0.16f, 0.16f});

@@ -4,9 +4,6 @@ import java.awt.image.RenderedImage;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -20,9 +17,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -94,7 +89,6 @@ import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.RegistroImovelTabelaDao;
-import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.common.BancosEnum;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
@@ -103,7 +97,6 @@ import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.common.ValidaCNPJ;
 import com.webnowbr.siscoat.common.ValidaCPF;
 import com.webnowbr.siscoat.db.dao.DAOException;
-import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.simulador.SimulacaoDetalheVO;
 import com.webnowbr.siscoat.simulador.SimulacaoVO;
 import com.webnowbr.siscoat.simulador.SimuladorMB;
@@ -1714,22 +1707,25 @@ public class CcbMB {
 			
 			if(!CommonsUtil.semValor(objetoCcb.getObjetoContratoCobranca())) {
 				ContratoCobranca contrato = objetoCcb.getObjetoContratoCobranca();
-				
-				//if(!CommonsUtil.semValor(this.objetoCcb.getDespesasAnexo2())) {
-				//	contrato.setListContasPagar(new HashSet<ContasPagar>(this.objetoCcb.getDespesasAnexo2()));
-				//}
-				
-				if(CommonsUtil.semValor(objetoCcb.getNumeroCcb())) {
-					contrato.setNumeroContratoSeguro(objetoCcb.getNumeroCcb());
+				if(contrato.getId() > 0) {
+					//if(!CommonsUtil.semValor(this.objetoCcb.getDespesasAnexo2())) {
+					//	contrato.setListContasPagar(new HashSet<ContasPagar>(this.objetoCcb.getDespesasAnexo2()));
+					//}
+					
+					if(CommonsUtil.semValor(objetoCcb.getNumeroCcb())) {
+						contrato.setNumeroContratoSeguro(objetoCcb.getNumeroCcb());
+					}
+					ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+					try {
+						cDao.merge(contrato);
+					} catch (TransientObjectException e) {
+						contrato.toString();
+						e.printStackTrace();
+					} catch (DAOException e) {
+						contrato.toString();
+						e.printStackTrace();
+					} 
 				}
-				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-				try {
-					cDao.merge(contrato);
-				} catch (TransientObjectException e) {
-					e.printStackTrace();
-				} catch (DAOException e) {
-					e.printStackTrace();
-				} 
 			} 
 			//if(this.objetoCcb.getId() <= 0) {
 				//this.objetoCcb.setId(ccbDao.idCcb());

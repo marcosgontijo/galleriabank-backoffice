@@ -2080,8 +2080,11 @@
 							</h:panelGroup>
 							
 							<p:outputLabel for="processosPajuInterno"
-								value="Processos para quitar (Interno):" styleClass="labelBold" />
-							<h:panelGroup>
+								value="Processos para quitar (Interno):" styleClass="labelBold" 
+								rendered="#{contratoCobrancaMB.objetoContratoCobranca.processosPajuInterno ne ''
+								and contratoCobrancaMB.objetoContratoCobranca.processosPajuInterno ne null}"/>
+							<h:panelGroup rendered="#{contratoCobrancaMB.objetoContratoCobranca.processosPajuInterno ne ''
+								and contratoCobrancaMB.objetoContratoCobranca.processosPajuInterno ne null}">
 								<p:inputTextarea id="processosPajuInterno" rows="10" cols="48"
 									counter="display" maxlength="3000" onblur=""
 									counterTemplate="{0} characters remaining." autoResize="false"
