@@ -789,6 +789,9 @@ public class ContratoCobranca implements Serializable {
 	
 	private BigDecimal dividaIPTU;
 	private BigDecimal dividaCondominio;
+	
+	private String emailPagador;
+	private String celularPagador;
 
  //FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13	
 	public BigDecimal calcularValorTotalContasPagas() {
@@ -6320,6 +6323,21 @@ public class ContratoCobranca implements Serializable {
 
 	public void setValorTotalAverbacao(BigDecimal valorTotalAverbacao) {
 		this.valorTotalAverbacao = valorTotalAverbacao;
+	}
+
+	public String getEmailPagador() {
+		return emailPagador;
+	}
+
+	public void setEmailPagador(String emailPagador) {
+		this.emailPagador = emailPagador;
+	}
+
+	public String getCelularPagador() {
+		return celularPagador;
+	}
+
+	public void setCelularPagador(String celularPagador) {
+		this.celularPagador = celularPagador;
 	}	
-	
 }

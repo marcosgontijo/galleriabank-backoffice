@@ -4309,7 +4309,9 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "	ic.cidade, ic.estado, "
 			+ "	cc.valorCCB, "
 			+ "	cc.txJurosParcelas, "
-			+ "	cc.valorImovel "
+			+ "	cc.valorImovel, "
+			+ "	pp.email, "
+			+ "	pp.telCelular "
 			+ "	from cobranca.contratocobranca cc "
 			+ "	inner join cobranca.pagadorrecebedor pp on pp.id = cc.pagador "
 			+ "	inner join cobranca.imovelcobranca ic on ic.id = cc.imovel "
@@ -4361,6 +4363,9 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setValorCCB(rs.getBigDecimal(13));
 						contratoCobranca.setTxJurosParcelas(rs.getBigDecimal(14));
 						contratoCobranca.setValorImovel(rs.getBigDecimal(15));
+						
+						contratoCobranca.setEmailPagador(rs.getString(16));
+						contratoCobranca.setCelularPagador(rs.getString(17));
 						
 						objects.add(contratoCobranca);		
 					}
