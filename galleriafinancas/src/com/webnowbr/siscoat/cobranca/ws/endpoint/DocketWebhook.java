@@ -75,9 +75,9 @@ public class DocketWebhook {
 			eJwt.printStackTrace();
 			return Response.status(500).entity("Token Expirado").build();
 		} catch (Exception e) {
-			System.out.println("---------------- REA webhookRetorno ---------------- ");
+			System.out.println("---------------- Docket webhookRetorno ---------------- ");
 			System.out.println(webhookRetorno);
-			System.out.println("---------------- REA webhookRetorno ---------------- ");
+			System.out.println("---------------- Docket webhookRetorno ---------------- ");
 			e.printStackTrace();
 			return Response.status(500).entity("Erro interno").build();
 		}
