@@ -364,8 +364,7 @@ public class CcbMB {
 		this.seguradoSelecionado = new Segurado();
 		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
 	}
-	
-	
+		
 	public void enviarMoneyPlus() {
 		FacesContext context = FacesContext.getCurrentInstance();
 
@@ -747,10 +746,10 @@ public class CcbMB {
 		//ContratoCobranca contrato = new ContratoCobranca();
 		//contrato = cDao.findById(objetoContratoCobranca.getId());
 		ContratoCobranca contrato = objetoContratoCobranca;
-		if(CommonsUtil.semValor(this.objetoCcb.getObjetoContratoCobranca())){
+		//if(CommonsUtil.semValor(this.objetoCcb.getObjetoContratoCobranca())){
 			this.objetoCcb.setObjetoContratoCobranca(contrato);
 			this.objetoCcb.setNumeroOperacao(contrato.getNumeroContrato());
-		}
+		//}
 		
 		if (CommonsUtil.mesmoValor(contrato.getAvaliacaoLaudo(), "Compass")) {
 			this.objetoCcb.setElaboradorNome("Compass Avaliações Imobiliárias");
@@ -878,6 +877,7 @@ public class CcbMB {
 		if(CommonsUtil.semValor(objetoContratoCobranca.getValorTotalAverbacao())) {
 			 objetoContratoCobranca.setValorTotalAverbacao(BigDecimal.ZERO);
 		}
+		
 		if(CommonsUtil.semValor(objetoCcb.getAverbacaoValor())) {
 			if(!CommonsUtil.mesmoValor(objetoCcb.getAverbacaoValor(), objetoContratoCobranca.getValorTotalAverbacao())) {
 				BigDecimal averbacaoTotal = BigDecimal.ZERO;
@@ -900,11 +900,11 @@ public class CcbMB {
 			}
 		}
 		
-		this.objetoContratoCobranca = new ContratoCobranca();
+		this.objetoContratoCobranca = null;
 	}
 	
 	public void clearContratoCobranca() {
-		this.objetoContratoCobranca = new ContratoCobranca();
+		this.objetoContratoCobranca = null;
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 		this.listaContratosConsultar = cDao.consultaContratosCCBs();
 	}
@@ -1132,7 +1132,7 @@ public class CcbMB {
 	}
 	
 	public ContratoCobranca getContratoById(long idContrato) {
-		ContratoCobranca contrato = new ContratoCobranca();
+		ContratoCobranca contrato; //= new ContratoCobranca();
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();				
 		contrato = cDao.findById(idContrato);	
 		return contrato;
