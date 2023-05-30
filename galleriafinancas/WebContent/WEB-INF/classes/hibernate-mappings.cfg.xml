@@ -5,7 +5,7 @@
 <session-factory name="">		
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/SaqueIUGU.hbm.xml"/>
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/EmpresaCobranca.hbm.xml"/>
-		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/PagadorRecebedor.hbm.xml"/>
+		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/PagadorRecebedor.hbm.xml"/>		
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/GruposPagadores.hbm.xml"/>
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/GruposFavorecidos.hbm.xml"/>
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/Responsavel.hbm.xml"/>
@@ -28,6 +28,7 @@
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ContaContabil.hbm.xml"/>
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/IPCA.hbm.xml"/>   
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/CDI.hbm.xml"/>   
+		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/RegistroImovelTabela.hbm.xml"/>   
 		
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/DocketCidades.hbm.xml"/>
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/DocketEstados.hbm.xml"/>
@@ -54,6 +55,8 @@
        	<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ComissaoResponsavel.hbm.xml"/>
        	
        	<mapping resource="com/webnowbr/siscoat/cobranca/db/model/DataVistoria.hbm.xml"/>
+       	<mapping resource="com/webnowbr/siscoat/cobranca/db/model/Averbacao.hbm.xml"/>
+		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/PagadorRecebedorConsulta.hbm.xml"/>
        	
  		<mapping resource="com/webnowbr/siscoat/common/db/model/BoletosRemessa.hbm.xml"/> 				 		
         <mapping resource="com/webnowbr/siscoat/infra/db/model/GroupAdm.hbm.xml"/> 

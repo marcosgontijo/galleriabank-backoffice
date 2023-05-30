@@ -1,0 +1,9 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Mon May 22 16:19:19 BRT 2023
+@default-galleriabank-https\://repo.repsy.io/mvn/amurta/galleriabank/.lastUpdated=1684778108429
+file\://C\:\\Galleria\\siscoat\\siscoat_galleriafinancas\\galleriafinancas/../custom-jar/.lastUpdated=1684783159641
+https\://repo.dotcms.com/artifactory/list/jcenter/.error=
+https\://repo.dotcms.com/artifactory/list/jcenter/.lastUpdated=1684778107790
+https\://repo.repsy.io/mvn/amurta/galleriabank/.error=Could not transfer artifact br.com.galleriabank.dataengine-cliente\:dataengine-cliente\:jar\:1.0-SNAPSHOT from/to galleriabank (https\://repo.repsy.io/mvn/amurta/galleriabank)\: Access denied to https\://repo.repsy.io/mvn/amurta/galleriabank/br/com/galleriabank/dataengine-cliente/dataengine-cliente/1.0-SNAPSHOT/dataengine-cliente-1.0-SNAPSHOT.jar. Error code 401, 
+https\://repository.primefaces.org//.error=
+https\://repository.primefaces.org//.lastUpdated=1684778108011

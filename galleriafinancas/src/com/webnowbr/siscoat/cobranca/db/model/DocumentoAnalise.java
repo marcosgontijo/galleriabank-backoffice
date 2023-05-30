@@ -30,6 +30,8 @@ public class DocumentoAnalise implements Serializable {
 	private boolean liberadoAnalise;
 	private boolean liberadoSerasa;
 	private boolean liberadoCenprot;
+	private boolean liberadoScr;
+	
 
 	private DocumentosAnaliseEnum tipoEnum;
 
@@ -37,6 +39,7 @@ public class DocumentoAnalise implements Serializable {
 	private String retornoEngine;
 	private String retornoSerasa;
 	private String retornoCenprot;
+	private String retornoScr;
 	private String observacao;
 	
 
@@ -53,7 +56,8 @@ public class DocumentoAnalise implements Serializable {
 	}
 	
 	public boolean isPodeChamarEngine() {
-		return  !isEngineProcessado() && (CommonsUtil.mesmoValor("PJ", tipoPessoa) || CommonsUtil.mesmoValor("PF", tipoPessoa));
+		return  !isEngineProcessado() && (CommonsUtil.mesmoValor("PF", tipoPessoa) || ( CommonsUtil.mesmoValor("PJ", tipoPessoa)  &&
+				!this.motivoAnalise.contains( "Empresa Vinculada")));
 	}
 
 	public boolean isEngineProcessado() {
@@ -61,7 +65,9 @@ public class DocumentoAnalise implements Serializable {
 	}	
 	
 	public boolean isPodeChamarSerasa() {
-		return isEngineProcessado() && !isSerasaProcessado() && CommonsUtil.mesmoValor("PF", tipoPessoa); // (CommonsUtil.mesmoValor("PJ", tipoPessoa) ||
+		return !isSerasaProcessado() && CommonsUtil.mesmoValor("PF", tipoPessoa)
+				&& CommonsUtil.mesmoValor(this.motivoAnalise, "Proprietario Atual"); // (CommonsUtil.mesmoValor("PJ",
+																						// tipoPessoa) ||
 	}
 
 	public boolean isSerasaProcessado() {
@@ -69,11 +75,19 @@ public class DocumentoAnalise implements Serializable {
 	}	
 	
 	public boolean isPodeChamarCenprot() {
-		return isEngineProcessado() && !isCenprotProcessado();
+		return isEngineProcessado() && !isCenprotProcessado() && !CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
 	}
 	
 	public boolean isCenprotProcessado() {
 		return !CommonsUtil.semValor(retornoCenprot);
+	}
+	
+	public boolean isScrProcessado() {
+		return !CommonsUtil.semValor(retornoScr);
+	}
+	
+	public boolean isPodeChamarSCR() {
+		return isEngineProcessado() && !isScrProcessado() && !CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
 	}
 	
 	
@@ -136,18 +150,21 @@ public class DocumentoAnalise implements Serializable {
 
 	public void setTipo(String tipo) {
 		this.tipo = tipo;
-		switch (tipo) {
-		case "Rea":
-			this.tipoEnum = DocumentosAnaliseEnum.REA;
-			break;
-		case "Relato":
-			this.tipoEnum = DocumentosAnaliseEnum.RELATO;
 
-			break;
-		case "Crednet":
-			this.tipoEnum = DocumentosAnaliseEnum.CREDNET;
-			break;
-		}
+		this.tipoEnum = DocumentosAnaliseEnum.parse(tipo);
+//		
+//		switch (tipo) {
+//		case "Rea":
+//			this.tipoEnum = DocumentosAnaliseEnum.REA;
+//			break;
+//		case "Relato":
+//			this.tipoEnum = DocumentosAnaliseEnum.RELATO;
+//
+//			break;
+//		case "Crednet":
+//			this.tipoEnum = DocumentosAnaliseEnum.CREDNET;
+//			break;
+//		}
 	}
 
 	public boolean isLiberadoAnalise() {
@@ -253,6 +270,22 @@ public class DocumentoAnalise implements Serializable {
 
 	public void setLiberadoCenprot(boolean liberadoCenprot) {
 		this.liberadoCenprot = liberadoCenprot;
+	}
+
+	public boolean isLiberadoScr() {
+		return liberadoScr;
+	}
+
+	public void setLiberadoScr(boolean liberadoScr) {
+		this.liberadoScr = liberadoScr;
+	}
+
+	public String getRetornoScr() {
+		return retornoScr;
+	}
+
+	public void setRetornoScr(String retornoScr) {
+		this.retornoScr = retornoScr;
 	}
 
 	public String getObservacao() {

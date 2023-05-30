@@ -286,7 +286,7 @@
 			<column name="condominioEmAtrasoValor" />
 		</property>
 		
-		<many-to-one name="objetoContratoCobranca"
+		<many-to-one name="objetoContratoCobranca" cascade="persist"
 			class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca"
 			lazy="false">
 			<column name="objetoContratoCobranca" />
@@ -301,7 +301,7 @@
 		</list>
 		
 		<list name="processosJucidiais"
-			table="ccbcontrato_processosjucidiais_join" cascade="all" lazy="false">
+			table="ccbcontrato_processosjucidiais_join" cascade="persist" lazy="false">
 			<key column="idccbcontrato" />
 			<list-index></list-index>
 			<many-to-many column="idprocesso"
@@ -309,7 +309,7 @@
 		</list>
 		
 		<list name="despesasAnexo2"
-			table="ccbcontrato_contasPagar_join" cascade="all" lazy="false">
+			table="ccbcontrato_contasPagar_join" cascade="persist" lazy="false">
 			<key column="idCcbContrato" />
 			<list-index></list-index>
 			<many-to-many column="idContasPagar"
@@ -418,7 +418,7 @@
 		
 		<property name="vlrImovel" type="big_decimal">
 			<column name="vlrImovel" />
-		</property>
+		</property> 
 		
 		<property name="TipoPessoaEmitente" type="java.lang.String">
 			<column name="TipoPessoaEmitente" />
@@ -487,6 +487,16 @@
 		<property name="CCBDocumento" type="java.lang.String">
 			<column name="CCBDocumento" />
 		</property> 
+		
+		<property name="averbacaoValor" type="big_decimal">
+			<column name="averbacaoValor" />
+		</property>
+		
+		<property name="registroImovelValor" type="big_decimal">
+			<column name="registroImovelValor" />
+		</property>
+		
+		
 		        
     </class>
 </hibernate-mapping>

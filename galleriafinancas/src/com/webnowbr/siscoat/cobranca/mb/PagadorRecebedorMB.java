@@ -273,8 +273,10 @@ public class PagadorRecebedorMB {
 			
 			pagadorRecebedorDao.merge(objetoPagadorRecebedor);
 			
-			criarConjugeNoSistema(objetoPagadorRecebedor);
-
+			if(!CommonsUtil.semValor(objetoPagadorRecebedor.getCpfConjuge())) {
+				objetoPagadorRecebedor.criarConjugeNoSistema();
+			}
+			
 			context.addMessage(null, new FacesMessage(
 					FacesMessage.SEVERITY_INFO, "PagadorRecebedor: Registro "
 							+ msgRetorno + " com sucesso! (PagadorRecebedor: "
@@ -296,103 +298,6 @@ public class PagadorRecebedorMB {
 		}
 
 		return "PagadorRecebedorConsultar.xhtml";
-	}
-	
-	public void criarConjugeNoSistema(PagadorRecebedor pagador) {
-		if(CommonsUtil.semValor(pagador.getEstadocivil())){
-			return;
-		}
-		if(!CommonsUtil.mesmoValor(pagador.getEstadocivil(), "CASADO")){
-			return;
-		}
-		
-		PagadorRecebedor conjuge = null;
-		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
-
-		List<PagadorRecebedor> pagadorRecebedorBD = new ArrayList<PagadorRecebedor>();
-		boolean registraPagador = false;
-		Long idPagador = (long) 0;
-
-		if (CommonsUtil.semValor(pagador.getCpfConjuge())) {
-			boolean validaCPF = ValidaCPF.isCPF(pagador.getCpfConjuge());
-			if(validaCPF) {
-				pagadorRecebedorBD = pagadorRecebedorDao.findByFilter("cpf", pagador.getCpfConjuge());
-				if (pagadorRecebedorBD.size() > 0) {
-					conjuge = pagadorRecebedorBD.get(0);
-				} else {
-					conjuge = new PagadorRecebedor();
-					registraPagador = true;
-				}
-			} else {
-				return;
-			}
-		} else {
-			return;
-		}
-		
-		conjuge.setEstadocivil(pagador.getEstadocivil());
-		conjuge.setDataCasamento(pagador.getDataCasamento());
-		conjuge.setRegimeCasamento(pagador.getRegimeCasamento());
-		conjuge.setRegistroPactoAntenupcial(pagador.getRegistroPactoAntenupcial());
-		conjuge.setLivroPactoAntenupcial(pagador.getLivroPactoAntenupcial());
-		conjuge.setFolhasPactoAntenupcial(pagador.getFolhasPactoAntenupcial());
-		conjuge.setDataPactoAntenupcial(pagador.getDataPactoAntenupcial());
-		
-		conjuge.setNome(pagador.getNomeConjuge());
-		conjuge.setCpf(pagador.getCpfConjuge());
-		conjuge.setAtividade(pagador.getCargoConjuge());
-		conjuge.setRg(pagador.getRgConjuge());
-		conjuge.setSexo(pagador.getSexoConjuge());
-		conjuge.setTelResidencial(pagador.getTelResidencialConjuge());
-		conjuge.setTelCelular(pagador.getTelCelularConjuge());
-		conjuge.setDtNascimento(pagador.getDtNascimentoConjuge());
-		conjuge.setIdade(pagador.getIdadeConjuge());
-		conjuge.setNomeMae(pagador.getNomeMaeConjuge());
-		conjuge.setNomePai(pagador.getNomePaiConjuge());
-		conjuge.setEndereco(pagador.getEnderecoConjuge());
-		conjuge.setBairro(pagador.getBairroConjuge());
-		conjuge.setComplemento(pagador.getComplementoConjuge());
-		conjuge.setCidade(pagador.getCidadeConjuge());
-		conjuge.setEstado(pagador.getEstadoConjuge());
-		conjuge.setCep(pagador.getCepConjuge());
-		conjuge.setEmail(pagador.getEmailConjuge());
-		conjuge.setBanco(pagador.getBancoConjuge());
-		conjuge.setAgencia(pagador.getAgenciaConjuge());
-		conjuge.setConta(pagador.getContaConjuge());
-		conjuge.setNomeCC(pagador.getNomeCCConjuge());
-		conjuge.setCpfCC(pagador.getCpfCCConjuge());
-		
-		conjuge.setNomeConjuge(pagador.getNome());
-		conjuge.setCpfConjuge(pagador.getCpf());
-		conjuge.setCargoConjuge(pagador.getAtividade());
-		conjuge.setRgConjuge(pagador.getRg());
-		conjuge.setSexoConjuge(pagador.getSexo());
-		conjuge.setTelResidencialConjuge(pagador.getTelResidencial());
-		conjuge.setTelCelularConjuge(pagador.getTelCelular());
-		conjuge.setDtNascimentoConjuge(pagador.getDtNascimento());
-		conjuge.setIdadeConjuge(pagador.getIdade());
-		conjuge.setNomeMaeConjuge(pagador.getNomeMae());
-		conjuge.setNomePaiConjuge(pagador.getNomePai());
-		conjuge.setEnderecoConjuge(pagador.getEndereco());
-		conjuge.setBairroConjuge(pagador.getBairro());
-		conjuge.setComplementoConjuge(pagador.getComplemento());
-		conjuge.setCidadeConjuge(pagador.getCidade());
-		conjuge.setEstadoConjuge(pagador.getEstado());
-		conjuge.setCepConjuge(pagador.getCep());
-		conjuge.setEmailConjuge(pagador.getEmail());
-		conjuge.setBancoConjuge(pagador.getBanco());
-		conjuge.setAgenciaConjuge(pagador.getAgencia());
-		conjuge.setContaConjuge(pagador.getConta());
-		conjuge.setNomeCCConjuge(pagador.getNomeCC());
-		conjuge.setCpfCCConjuge(pagador.getCpfCC());
-		
-		if (registraPagador) {
-			idPagador = pagadorRecebedorDao.create(conjuge);
-			conjuge = pagadorRecebedorDao.findById(idPagador);
-			System.out.println("ConjugeCriado");
-		} else {
-			pagadorRecebedorDao.merge(conjuge);
-		}
 	}
 	
 	public String atualizarIUGU() {
@@ -537,9 +442,14 @@ public class PagadorRecebedorMB {
 				this.objetoPagadorRecebedor.setEstado("");
 			} else {
 				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-
-				this.objetoPagadorRecebedor.setEndereco(myResponse.get("logradouro").toString());
-				this.objetoPagadorRecebedor.setBairro(myResponse.get("bairro").toString());
+				
+				if(myResponse.has("logradouro")) {
+					this.objetoPagadorRecebedor.setEndereco(myResponse.get("logradouro").toString());
+				}
+				
+				if(myResponse.has("bairro")) {
+					this.objetoPagadorRecebedor.setBairro(myResponse.get("bairro").toString());
+				}				
 				this.objetoPagadorRecebedor.setCidade(myResponse.get("localidade").toString());
 				this.objetoPagadorRecebedor.setEstado(myResponse.get("uf").toString());
 			}

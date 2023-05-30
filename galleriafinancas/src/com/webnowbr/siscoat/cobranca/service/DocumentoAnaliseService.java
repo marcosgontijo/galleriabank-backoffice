@@ -1,10 +1,14 @@
 package com.webnowbr.siscoat.cobranca.service;
 
+import java.util.Date;
+
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
-import com.webnowbr.siscoat.cobranca.db.model.DataEngine;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
+import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorConsulta;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
+import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorConsultaDao;
+import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.infra.db.model.User;
 
@@ -16,8 +20,6 @@ public class DocumentoAnaliseService {
 			DocumentoAnaliseDao documentoAnaliseDao, PagadorRecebedorService pagadorRecebedorService,
 			ContratoCobranca contratoCobranca, String motivo) {
 
-		DocketService docketService = new DocketService();
-
 		DocumentoAnalise documentoAnalise = new DocumentoAnalise();
 		documentoAnalise.setContratoCobranca(contratoCobranca);
 		documentoAnalise.setIdentificacao(pessoaParticipacao.getNomeRazaoSocial());
@@ -28,7 +30,7 @@ public class DocumentoAnaliseService {
 		if (documentoAnalise.getTipoPessoa() == "PJ") {
 			documentoAnalise.setCnpjcpf(pessoaParticipacao.getCnpjcpf());
 			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.RELATO);
-			documentoAnalise.setLiberadoAnalise(true);
+			documentoAnalise.setLiberadoAnalise(false);
 		} else {
 			documentoAnalise.setCnpjcpf(pessoaParticipacao.getCnpjcpf());
 			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.CREDNET);
@@ -45,10 +47,29 @@ public class DocumentoAnaliseService {
 
 		documentoAnaliseDao.create(documentoAnalise);
 
-		if (documentoAnalise.getTipoPessoa() == "PJ") {
-			DataEngine engine = docketService.engineInserirPessoa(documentoAnalise.getPagador(), contratoCobranca);
-			docketService.engineCriarConsulta(documentoAnalise, engine, user);
+	}
+
+	public void adicionarConsultaNoPagadorRecebedor(PagadorRecebedor pagador, DocumentosAnaliseEnum tipoConsulta,
+			String consulta) {
+
+		PagadorRecebedorConsultaDao PagadorRecebedorConsultaDao = new PagadorRecebedorConsultaDao();
+
+		// buscando ultima consutla do pagador
+		PagadorRecebedorConsulta PagadorRecebedorConsulta = PagadorRecebedorConsultaDao
+				.getConsultaByPagadorAndTipo(pagador, tipoConsulta);
+		if (PagadorRecebedorConsulta == null) {
+			PagadorRecebedorConsulta = new PagadorRecebedorConsulta();
 		}
+		PagadorRecebedorConsulta.setDataConsulta(new Date());
+		PagadorRecebedorConsulta.setRetornConsulta(consulta);
+		PagadorRecebedorConsulta.setPessoa(pagador);
+		PagadorRecebedorConsulta.setTipoEnum(tipoConsulta);
+
+		if (CommonsUtil.semValor(PagadorRecebedorConsulta.getId()))
+			PagadorRecebedorConsultaDao.create(PagadorRecebedorConsulta);
+		else
+			PagadorRecebedorConsultaDao.merge(PagadorRecebedorConsulta);
 
 	}
+
 }

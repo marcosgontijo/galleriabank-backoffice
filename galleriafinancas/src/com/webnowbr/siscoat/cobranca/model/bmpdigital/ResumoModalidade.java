@@ -2,12 +2,23 @@ package com.webnowbr.siscoat.cobranca.model.bmpdigital;
 
 import java.math.BigDecimal;
 
+import com.google.gson.annotations.SerializedName;
+
 public class ResumoModalidade {
 
+	@SerializedName("tipo")
 	private String tipo;
+
+	@SerializedName("modalidade")
 	private String modalidade;
+
+	@SerializedName("dominio")
 	private String dominio;
+
+	@SerializedName("subdominio")
 	private String subdominio;
+
+	@SerializedName("valorVencimento")
 	private BigDecimal valorVencimento;
 	
 	public ResumoModalidade() {

@@ -1005,6 +1005,24 @@ public class CommonsUtil {
 		}
 		return result;
 	}
+	
+	public static final String pessoaFisicaJuridicaCnpjCpf(String cnpjCpf) {
+		String result = "";
+		if (cnpjCpf != null) {
+			switch (cnpjCpf.length()) {
+			case 11:
+				result = "PF";
+				break;
+			case 14:
+				result = "PJ";
+				break;
+			default:
+				result = cnpjCpf;
+				break;
+			}
+		}
+		return result;
+	}
 
 	public static final Double soma(Double... valores) {
 		double result = 0d;
@@ -1830,5 +1848,15 @@ public class CommonsUtil {
 		 */
 
 		return outputStream;
+	}
+	
+	public static BigDecimal calcularPorcentagemValores(BigDecimal valorBase, BigDecimal valorCampo) {
+		BigDecimal porcentagem = BigDecimal.ZERO;
+		
+		if (valorBase.compareTo(BigDecimal.ZERO) > 0 && valorCampo.compareTo(BigDecimal.ZERO) > 0) {
+			porcentagem = valorCampo.divide(valorBase, 2, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(100));
+		}   
+		
+		return porcentagem;
 	}
 }

@@ -39,5 +39,29 @@ public class PagadorRecebedorService {
 		
 	}
 	
+	public PagadorRecebedor findById(Long id) {
+		PagadorRecebedor pagadorAdicionar = null;
+
+		if (!CommonsUtil.semValor(id)) {
+			PagadorRecebedorDao pDao = new PagadorRecebedorDao();
+			pagadorAdicionar = pDao.findById(id);
+
+		}
+		return pagadorAdicionar;
+
+	}
+	
+	public PagadorRecebedor findByCpfCnpj(String cpfCnpj) {
+		PagadorRecebedor pagadorAdicionar = null;
+
+		if (!CommonsUtil.semValor(cpfCnpj)) {
+			PagadorRecebedorDao pDao = new PagadorRecebedorDao();
+			pagadorAdicionar = pDao.getConsultaByCpfCnpj(cpfCnpj);
+
+		}
+		return pagadorAdicionar;
+
+	}
+	
 
 }

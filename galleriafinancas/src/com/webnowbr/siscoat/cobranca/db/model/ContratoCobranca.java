@@ -161,6 +161,7 @@ public class ContratoCobranca implements Serializable {
 	private Set<CcbProcessosJudiciais> listProcessos;
 	private Set<AnaliseComite> listaAnaliseComite;
 	private Set<DataVistoria> listDatasVistoria;
+	private Set<Averbacao> listAverbacao;
 	
 	
 	// n�o persistida a lista abaixo
@@ -641,6 +642,7 @@ public class ContratoCobranca implements Serializable {
 	private int carenciaComite;
 	private boolean operacaoFundo;
 	private BigDecimal valorTotalProcessos;
+	private BigDecimal valorTotalAverbacao;
 	
 	private String empresaCertificado;
 	private Date dataSolicitacaoCertificado;
@@ -785,6 +787,11 @@ public class ContratoCobranca implements Serializable {
 	
 	private boolean corrigidoIPCAHibrido;
 	
+	private BigDecimal dividaIPTU;
+	private BigDecimal dividaCondominio;
+	
+	private String emailPagador;
+	private String celularPagador;
 
  //FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13	
 	public BigDecimal calcularValorTotalContasPagas() {
@@ -818,6 +825,7 @@ public class ContratoCobranca implements Serializable {
 		this.listaPagadores = new HashSet<>();
 		this.listContasPagar = new HashSet<>();
 		this.listaAnaliseComite = new HashSet<>();
+		this.listAverbacao = new HashSet<>();
 		this.listCadastroStatus = new ArrayList<CadastroStatus>();
 		this.listProcessos = new HashSet<>();
 		
@@ -973,6 +981,11 @@ public class ContratoCobranca implements Serializable {
 			}
 		});
 
+	}
+
+	@Override
+	public String toString() {
+		return "ContratoCobranca [id=" + id + ", numeroContrato=" + numeroContrato + "]";
 	}
 
 	public boolean isEmAnalise() {
@@ -6284,4 +6297,52 @@ public class ContratoCobranca implements Serializable {
 	public void setValorTotalProcessos(BigDecimal valorTotalProcessos) {
 		this.valorTotalProcessos = valorTotalProcessos;
 	}
+
+	public BigDecimal getDividaIPTU() {
+		return dividaIPTU;
+	}
+
+	public void setDividaIPTU(BigDecimal dividaIPTU) {
+		this.dividaIPTU = dividaIPTU;
+	}
+
+	public BigDecimal getDividaCondominio() {
+		return dividaCondominio;
+	}
+
+	public void setDividaCondominio(BigDecimal dividaCondominio) {
+		this.dividaCondominio = dividaCondominio;
+	}
+
+	public Set<Averbacao> getListAverbacao() {
+		return listAverbacao;
+	}
+
+	public void setListAverbacao(Set<Averbacao> listAverbacao) {
+		this.listAverbacao = listAverbacao;
+	}
+
+	public BigDecimal getValorTotalAverbacao() {
+		return valorTotalAverbacao;
+	}
+
+	public void setValorTotalAverbacao(BigDecimal valorTotalAverbacao) {
+		this.valorTotalAverbacao = valorTotalAverbacao;
+	}
+
+	public String getEmailPagador() {
+		return emailPagador;
+	}
+
+	public void setEmailPagador(String emailPagador) {
+		this.emailPagador = emailPagador;
+	}
+
+	public String getCelularPagador() {
+		return celularPagador;
+	}
+
+	public void setCelularPagador(String celularPagador) {
+		this.celularPagador = celularPagador;
+	}	
 }

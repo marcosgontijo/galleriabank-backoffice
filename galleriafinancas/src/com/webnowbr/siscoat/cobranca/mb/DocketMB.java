@@ -1,7 +1,6 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -10,7 +9,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -46,22 +44,16 @@ import com.webnowbr.siscoat.cobranca.db.op.DataEngineDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocketCidadesDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocketDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocketEstadosDao;
-import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentosDocketDao;
 import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
-import com.webnowbr.siscoat.cobranca.ws.endpoint.ReaWebhookRetorno;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.EstadosEnum;
-import com.webnowbr.siscoat.common.JwtUtil;
-import com.webnowbr.siscoat.common.MultipartUtility;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
 import com.webnowbr.siscoat.security.LoginBean;
-
-import br.com.galleriabank.serasarelato.cliente.util.GsonUtil;
 
 @ManagedBean(name="docketMB")
 @SessionScoped
@@ -393,7 +385,8 @@ public class DocketMB {
 	
 	public void criarPedido() {	//POST para gerar pedido	
 		FacesContext context = FacesContext.getCurrentInstance();
-		DocketDao docketDao = new DocketDao();
+		
+		
 		if(CommonsUtil.semValor(objetoContratoCobranca)) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Contrato não vinculado!!!", ""));	
 			return;
@@ -402,70 +395,22 @@ public class DocketMB {
 			ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 			cDao.merge(objetoContratoCobranca);
 		}
+		
+		
+		DocketDao docketDao = new DocketDao();
+		
 		if(docketDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca).size() > 0) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Pedido desse contrato já existe!!!!!!", ""));	
 			return;
 		}
 		
-		try {
-			loginDocket();
-			int HTTP_COD_SUCESSO = 200;
-			
-			URL myURL;
-			if(SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
-				myURL = new URL(urlHomologacao + "/api/v2/"+organizacao_url+"/shopping-documentos/alpha/pedidos");
-			} else {
-				myURL = new URL(urlProducao + "/api/v2/"+organizacao_url+"/shopping-documentos/alpha/pedidos");
-			}
-			
-			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
-			
-			myURLConnection.setRequestMethod("POST");
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json");
-			myURLConnection.setRequestProperty("Authorization", "Bearer " + this.tokenLogin);
-			myURLConnection.setDoOutput(true);		
-			
-			JSONObject myResponse = null;
-			JSONObject jsonWhatsApp = getBodyJsonPedido(listaPagador);
-			
-			try (OutputStream os = myURLConnection.getOutputStream()) {
-				byte[] input = jsonWhatsApp.toString().getBytes("utf-8");
-				os.write(input, 0, input.length);
-			}
-						
-			/*try(BufferedReader br = new BufferedReader(
-			  new InputStreamReader(myURLConnection.getInputStream(), "utf-8"))) {
-			    StringBuilder response = new StringBuilder();
-			    String responseLine = null;
-			    while ((responseLine = br.readLine()) != null) {
-			        response.append(responseLine.trim());
-			    }
-			    System.out.println(response.toString());
-			}*/
-								
-			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {	
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-						"Docket: Falha  (Cod: " + myURLConnection.getResponseCode() + ")",""));
-				System.out.println(jsonWhatsApp.toString());
-			} else {
-				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-				cDao.merge(objetoContratoCobranca);
-				docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" , cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
-				//DocketDao docketDao = new DocketDao();
-				docketDao.create(docket);
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Pedido feito com sucesso", ""));	
-				myResponse = getJSONSucesso(myURLConnection.getInputStream());
-			}
-			myURLConnection.disconnect();		
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		DocketService docketService= new DocketService();
+		FacesMessage facesMessage = docketService.criaPedidoDocket(objetoContratoCobranca, listaPagador, estadoImovel, cidadeImovel, loginBean.getUsuarioLogado());
+		
+		if ( facesMessage != null) {
+			context.addMessage(null, facesMessage);	
+			return;
+		}				
 	}
 	
 	public void uploadREA(DocumentoAnalise documentoAnalise) {
@@ -481,6 +426,7 @@ public class DocketMB {
 		docketService.engineCriarConsulta( documentoAnalise,  engine,  loginBean.getUsuarioLogado());
 		
 	}
+	
 	public JSONObject getBodyREA() { //JSON p/ pedido	
 		JSONObject jsonDocketBodyREA = new JSONObject();	
 		jsonDocketBodyREA.put("arquivo","" /*arquivo_Da_Matricula*/);

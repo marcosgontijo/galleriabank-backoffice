@@ -8,6 +8,15 @@
 	<h:form id="formReceborPagador">
 		<p:dialog header="#{titulo}" widgetVar="pagadorRecebedorDialog"
 			resizable="false" style="FONT-SIZE: 10pt;" width="600">
+
+
+
+			<p:commandButton value="Cadastrar Pessoa"
+				action="#{pagadorRecebedorCadastroMB.clearFieldsNovoCadastro}"
+				oncomplete="PF('pagadorRecebedorCadastroSimplesDialog').show();"
+				update=":formReceborPagadorCadastro:panelPagadorRecebedorCadastro">
+			</p:commandButton>
+
 			<p:dataTable id="pagadorDialogdlg" var="pagadorDialogdlg"
 				value="#{mbean.listRecebedorPagador}" paginator="true" rows="10"
 				selectionMode="single"
@@ -45,7 +54,7 @@
 				</p:column>
 
 				<f:facet name="footer">
-					<p:commandButton value="Selecionar"
+					<p:commandButton value="Selecionar" id="selectedPagadorRecebedor"
 						action="#{mbean.populateSelectedPagadorRecebedor}"
 						icon="ui-icon ui-icon-check"
 						update="#{mbean.updatePagadorRecebedor}"
@@ -58,6 +67,64 @@
 						oncomplete="PF('pagadorRecebedorDialog').hide();" />
 				</f:facet>
 			</p:dataTable>
+		</p:dialog>
+		</h:form>
+
+<h:form id="formReceborPagadorCadastro">
+	<p:dialog header="Cadastro simplificado"
+		id="pagadorRecebedorCadastroSimples"
+		widgetVar="pagadorRecebedorCadastroSimplesDialog" resizable="false"
+		style="FONT-SIZE: 10pt;" width="600;z-order:1000">
+
+
+
+			<p:panel>
+				<h:panelGrid id="panelPagadorRecebedorCadastro" columns="2">
+					<p:outputLabel for="tipoPessoaEmitente" value="Tipo Pessoa: "
+						styleClass="labelBold" />
+					<p:selectOneMenu id="tipoPessoaEmitente"
+						value="#{pagadorRecebedorCadastroMB.tipoPessoa}"
+						style="width: 80px;">
+						<f:selectItem itemValue="" itemLabel="" />
+						<f:selectItem itemValue="PF" itemLabel="PF" />
+						<f:selectItem itemValue="PJ" itemLabel="PJ" />
+						<p:ajax event="valueChange" update="panelPagadorRecebedorCadastro" />
+					</p:selectOneMenu>
+
+					<h:outputText value="CPF"
+						rendered="#{pagadorRecebedorCadastroMB.tipoPessoaIsFisica()}" />
+
+					<p:inputMask id="Cpf" value="#{pagadorRecebedorCadastroMB.cpf}"
+						mask="999.999.999-99"
+						rendered="#{pagadorRecebedorCadastroMB.tipoPessoaIsFisica()}">
+					</p:inputMask>
+
+
+
+					<h:outputText value="CNPJ"
+						rendered="#{pagadorRecebedorCadastroMB.tipoPessoaIsJuridica()}" />
+
+					<p:inputMask id="CNPJ" value="#{pagadorRecebedorCadastroMB.cnpj}"
+						autoClear="false" label="CNPJ" mask="99.999.999/9999-99"
+						required="true"
+						validator="#{pagadorRecebedorCadastroMB.validaCNPJ}"
+						rendered="#{pagadorRecebedorCadastroMB.tipoPessoaIsJuridica()}">
+					</p:inputMask>
+
+				</h:panelGrid>
+				<p:commandButton value="Cadastrar"
+					action="#{pagadorRecebedorCadastroMB.cadastrarSimplificadoPagadorRecebedor}"
+					oncomplete="callSeleiconaNovoCadastro()"
+					update="#{mbean.updatePagadorRecebedor}"
+					icon="ui-icon ui-icon-check">
+					<f:setPropertyActionListener
+						value="#{pagadorRecebedorCadastroMB.pagadorRecebedor}" 
+						target="#{mbean.selectedPagadorGenerico}"></f:setPropertyActionListener>
+				</p:commandButton>
+				<p:remoteCommand name="callSeleiconaNovoCadastro" update="#{mbean.updatePagadorRecebedor}" oncomplete="PF('pagadorRecebedorCadastroSimplesDialog').hide();PF('pagadorRecebedorDialog').hide();"
+				 action="#{mbean.populateSelectedPagadorRecebedor}" />
+			</p:panel>
+
 		</p:dialog>
 	</h:form>
 </ui:composition>

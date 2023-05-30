@@ -163,6 +163,9 @@ public class CcbContrato implements Serializable{
     private boolean iqInseridoContrato;
     private BigDecimal itbiValor = BigDecimal.ZERO;
     private boolean itbiInseridoContrato;
+    private BigDecimal averbacaoValor = BigDecimal.ZERO;
+    private BigDecimal registroImovelValor = BigDecimal.ZERO;
+    
     
     private List<CcbProcessosJudiciais> processosJucidiais; // (++)
     private List<ContasPagar> despesasAnexo2;
@@ -1232,7 +1235,20 @@ public class CcbContrato implements Serializable{
 	public void setDespesasAnexo2(List<ContasPagar> despesasAnexo2) {
 		this.despesasAnexo2 = despesasAnexo2;
 	}
-	
-	
-	
+
+	public BigDecimal getAverbacaoValor() {
+		return averbacaoValor;
+	}
+
+	public void setAverbacaoValor(BigDecimal averbacaoValor) {
+		this.averbacaoValor = averbacaoValor;
+	}
+
+	public BigDecimal getRegistroImovelValor() {
+		return registroImovelValor;
+	}
+
+	public void setRegistroImovelValor(BigDecimal registroImovelValor) {
+		this.registroImovelValor = registroImovelValor;
+	} 
 }

@@ -404,7 +404,7 @@ public class InvestidorMB {
 
 			InvestidorInformeRendimentos informeRendimentos = new InvestidorInformeRendimentos();
 			String numeroContrato = null;
-			int numeroParcela = 0;
+			String numeroParcela = "0";
 			BigDecimal irRetidoTotalContrato = BigDecimal.ZERO;
 			BigDecimal jurosTotalContrato = BigDecimal.ZERO;
 			BigDecimal saldoTotalContrato = BigDecimal.ZERO;
@@ -464,7 +464,8 @@ public class InvestidorMB {
 
 				this.investidorInformeRendimentos.add(informeRendimentos);
 
-				numeroParcela = Integer.valueOf(utltimaParcela.getNumeroParcela());
+				numeroParcela = utltimaParcela.getNumeroParcela();
+				//numeroParcela = Integer.valueOf(utltimaParcela.getNumeroParcela());
 
 				// for (ContratoCobrancaParcelasInvestidor parcela : parcelasContrato) {
 				//

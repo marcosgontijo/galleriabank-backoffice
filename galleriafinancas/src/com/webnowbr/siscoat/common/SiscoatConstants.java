@@ -43,7 +43,7 @@ public class SiscoatConstants {
 	public static final BigDecimal TARIFA_IOF_PJ = BigDecimal.valueOf(0.00410958904109589);
 	public static final BigDecimal TARIFA_IOF_PF = BigDecimal.valueOf(0.00821917808219178);
 	
-	public static final boolean DEV = false;
+	public static final boolean DEV = true;
 
 	public static final BigDecimal TARIFA_IOF_ADICIONAL = BigDecimal.valueOf(0.38);
 
@@ -54,4 +54,6 @@ public class SiscoatConstants {
 	
 	public static final String  URL_SISCOAT_REA_WEBHOOK = "https://backoffice.galleriabank.com.br/sistema/siscoat/rea/webhook?Token=";
 	public static final String  URL_SISCOAT_ENGINE_WEBHOOK = "https://backoffice.galleriabank.com.br/sistema/siscoat/engine/webhook?Token=";
+	public static final String  URL_SISCOAT_DOCKET_WEBHOOK	 = "https://backoffice.galleriabank.com.br/sistema/siscoat/docket/webhook?Token=";
+	
 }

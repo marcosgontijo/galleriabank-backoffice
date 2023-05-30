@@ -3601,12 +3601,29 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+  " and cc.empresa != 'CRI 1' "
 			+  " and cc.empresa != 'CRI 2' "
 			+  " and cc.empresa != 'CRI 3' "
+			+  " and cc.empresa != 'CRI 3' "
 			+ " and "
 			+ "	( (cdp.dataPagamento >= ? ::timestamp "
 			+ "	and cdp.dataPagamento <= ? ::timestamp) "
 			+ "	or (cdp.baixagalleria "
 			+ "		and cdp.datapagamentogalleria >= ? ::timestamp "
 			+ "		and cdp.datapagamentogalleria <= ? ::timestamp))	";	
+	
+	private static final String QUERY_CONSULTA_BRL_CONTRATO_JSON_LIQUIDACAO =  	"select cc.id, cd.numeroParcela, cd.vlrJurosParcela, cd.vlrAmortizacaoParcela, cdp.dataVencimento , cdp.dataPagamento , cdp.vlrParcela , cdp.vlrRecebido, cd.id, cd.valorJurosSemIPCA, cd.valorAmortizacaoSemIPCA, "
+			+ " cdp.baixagalleria, cdp.datapagamentogalleria, cdp.vlrRecebidoGalleria  "
+			+ " from cobranca.contratocobrancadetalhes cd "
+			+ " inner join cobranca.cobranca_detalhes_parcial_join cdpj on cdpj.idcontratocobrancadetalhes = cd.id "
+			+ " inner join cobranca.contratocobrancadetalhesparcial cdp on cdp.id = cdpj.idcontratocobrancadetalhesparcial " 
+			+ " inner join cobranca.contratocobranca_detalhes_join cdj on cd.id = cdj.idcontratocobrancadetalhes "
+			+ " inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca  "
+			+ " where cc.cedenteBRLCessao = ? "
+			+ " and cc.empresa = 'FIDC GALLERIA' "
+			+ " and "
+			+ "	( (cdp.dataPagamento >= ? ::timestamp "
+			+ "	and cdp.dataPagamento <= ? ::timestamp) "
+			+ "	or (cdp.baixagalleria "
+			+ "		and cdp.datapagamentogalleria >= ? ::timestamp "
+			+ "		and cdp.datapagamentogalleria <= ? ::timestamp))	";
 
 	@SuppressWarnings("unchecked")
 	public List<ContratoCobrancaBRLLiquidacao> consultaContratosBRLLiquidacao(final Date dataBaixaInicial, final Date dataBaixaFinal, final String cedenteCessao) {
@@ -3622,7 +3639,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				try {
 					connection = getConnection();
 					
-					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_CONSULTA_BRL_CONTRATO;
+					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_CONSULTA_BRL_CONTRATO_JSON_LIQUIDACAO;
 					
 					java.sql.Date dtRelInicioSQL = new java.sql.Date(dataBaixaInicial.getTime());
 					java.sql.Date dtRelFimSQL = new java.sql.Date(dataBaixaFinal.getTime());
@@ -4292,7 +4309,9 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "	ic.cidade, ic.estado, "
 			+ "	cc.valorCCB, "
 			+ "	cc.txJurosParcelas, "
-			+ "	cc.valorImovel "
+			+ "	cc.valorImovel, "
+			+ "	pp.email, "
+			+ "	pp.telCelular "
 			+ "	from cobranca.contratocobranca cc "
 			+ "	inner join cobranca.pagadorrecebedor pp on pp.id = cc.pagador "
 			+ "	inner join cobranca.imovelcobranca ic on ic.id = cc.imovel "
@@ -4344,6 +4363,9 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setValorCCB(rs.getBigDecimal(13));
 						contratoCobranca.setTxJurosParcelas(rs.getBigDecimal(14));
 						contratoCobranca.setValorImovel(rs.getBigDecimal(15));
+						
+						contratoCobranca.setEmailPagador(rs.getString(16));
+						contratoCobranca.setCelularPagador(rs.getString(17));
 						
 						objects.add(contratoCobranca);		
 					}
@@ -8675,5 +8697,13 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			}
 		});	
 	}
+
+	@Override
+	public void merge(ContratoCobranca entity) {
+		//System.out.println(entity.toString());  
+		super.merge(entity);
+	}
+	
+	
 	
 }

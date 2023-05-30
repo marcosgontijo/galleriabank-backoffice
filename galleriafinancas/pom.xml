@@ -11,7 +11,7 @@
 		<sourceDirectory>src</sourceDirectory>
 		<resources>
 			<resource>
-				<directory>src</directory>
+				<directory>src</directory> 
 				<excludes>
 					<exclude>**/*.java</exclude>
 				</excludes>
@@ -32,7 +32,7 @@
 				<version>3.2.3</version>
 				<configuration>
 					<warSourceDirectory>WebContent</warSourceDirectory>
-				</configuration>
+				</configuration> 
 			</plugin>
 		</plugins>
 	</build>
@@ -44,7 +44,7 @@
 
 	<!-- Repositories -->
 	<repositories>
-		<repository>
+		<!--<repository>
 			<id>local-maven-repository</id>
 			<url>file://${basedir}/../custom-jar/</url>
 			<releases>
@@ -53,7 +53,7 @@
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
-		</repository>
+		</repository>-->
 		<repository>
 			<id>org.apache.shiro</id>
 			<url>https://repo.dotcms.com/artifactory/list/jcenter/</url>
@@ -62,11 +62,12 @@
 			<id>org.primefaces</id>
 			<url>https://repository.primefaces.org//</url>
 		</repository>
-
+		<repository>
+			<id>galleriabank</id>
+			<name>galleriabank repo</name>
+			<url>https://amurta.bytesafe.dev/maven/galleriabank</url>			
+		</repository>
 	</repositories>
-
-
-	
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.shiro</groupId>
@@ -318,31 +319,31 @@
 			<artifactId>jjwt-api</artifactId>
 			<version>0.11.5</version>
 		</dependency>
-		<!-- Dependencias locais -->
+		<!-- Dependencias Galleria Bank -->
 		<dependency>
 			<groupId>br.com.galleriabank.jwt</groupId>
 			<artifactId>security-common</artifactId>
-			<version>1.1-SNAPSHOT</version>
+			<version>1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>br.com.galleriabank.serasacrednet-cliente</groupId>
 			<artifactId>serasacrednet-cliente</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>br.com.galleriabank.serasarelato-cliente</groupId>
 			<artifactId>serasarelato-cliente</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>br.com.galleriabank.dataengine-cliente</groupId>
 			<artifactId>dataengine-cliente</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>br.com.galleriabank.netrin-cliente</groupId>
 			<artifactId>netrin-cliente</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>1.1</version>
 		</dependency>
 	</dependencies>
 </project>

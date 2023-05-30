@@ -1,6 +1,5 @@
 package com.webnowbr.siscoat.cobranca.ws.endpoint;
 
-import java.util.Calendar;
 import java.util.Date;
 
 import javax.ws.rs.GET;
@@ -21,10 +20,10 @@ import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.common.GsonUtil;
-import com.webnowbr.siscoat.common.JwtUtil;
 import com.webnowbr.siscoat.common.ValidaCNPJ;
 import com.webnowbr.siscoat.common.ValidaCPF;
 
+import br.com.galleriabank.jwt.common.JwtUtil;
 import io.jsonwebtoken.Jwts;
 
 @Path("/rea")
@@ -36,7 +35,7 @@ public class ReaWebhook {
 	@Path("/token/")
 	public Response webhookReaToken(String webhookRetorno, @QueryParam("Token") String token) {
 		if (CommonsUtil.sistemaWindows())
-			return Response.status(200).entity(JwtUtil.generateJWTReaWebwook(false)).build();
+			return Response.status(200).entity(JwtUtil.generateJWTWebhook(false)).build();
 		else
 			return Response.status(200).entity("").build();
 	}

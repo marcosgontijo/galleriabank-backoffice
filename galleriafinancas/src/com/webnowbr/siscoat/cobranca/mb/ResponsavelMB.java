@@ -253,12 +253,18 @@ public class ResponsavelMB {
 						userMb.getObjetoUsuario().setCodigoResponsavel(this.objetoResponsavel.getCodigo());
 						userMb.getObjetoUsuario().setName(this.objetoResponsavel.getNome());
 						userMb.getObjetoUsuario().setUserPreContrato(true);
+						if(CommonsUtil.semValor(userMb.getObjetoUsuario().getListResponsavel())) {
+							userMb.getObjetoUsuario().setListResponsavel(new ArrayList<>());
+						}
+						userMb.getObjetoUsuario().getListResponsavel().add(this.objetoResponsavel);
 						userMb.inserir();
+						
 						for (Responsavel responsavel : this.selectedResponsaveis) {
 							user = userDao.findByFilter("codigoResponsavel", responsavel.getCodigo()).get(0);
 							user.getListResponsavel().add(this.objetoResponsavel);
 							userDao.merge(user);
 						}	
+						
 					}
 					msgRetorno = "inserido";
 				} else {

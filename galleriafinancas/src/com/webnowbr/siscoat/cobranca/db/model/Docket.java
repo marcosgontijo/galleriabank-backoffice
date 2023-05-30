@@ -20,7 +20,7 @@ public class Docket implements Serializable {
 	private String cidadeDocketId;
 	private String usuario;
 	private Date data;
-	
+	private String retorno;
 	
 	public Docket(){
 
@@ -114,6 +114,14 @@ public class Docket implements Serializable {
 
 	public void setData(Date data) {
 		this.data = data;
+	}
+
+	public String getRetorno() {
+		return retorno;
+	}
+
+	public void setRetorno(String retorno) {
+		this.retorno = retorno;
 	}
 	
 }

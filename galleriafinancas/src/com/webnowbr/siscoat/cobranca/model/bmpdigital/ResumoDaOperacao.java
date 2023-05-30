@@ -2,10 +2,17 @@ package com.webnowbr.siscoat.cobranca.model.bmpdigital;
 
 import java.util.List;
 
+import com.google.gson.annotations.SerializedName;
+
 public class ResumoDaOperacao {
 
+	@SerializedName("ListaDeVencimentos")
 	private List<ResumoDoVencimento> listaDeVencimentos;
+	
+	@SerializedName("Modalidade")
 	private String modalidade;
+	
+	@SerializedName("VariacaoCambial")
 	private String variacaoCambial;
 	
 	public ResumoDaOperacao() {

@@ -44,5 +44,9 @@
 			<column name="pagador" />
 		</many-to-one>
 		
+		<property name="observacao" type="java.lang.String">
+			<column name="observacao" />
+		</property>
+		
     </class>
 </hibernate-mapping>
