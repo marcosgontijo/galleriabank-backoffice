@@ -34,6 +34,7 @@ import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.contab.db.dao.BalancoPatrimonialDao;
 import com.webnowbr.siscoat.contab.db.model.BalancoPatrimonial;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
+import com.webnowbr.siscoat.omie.response.OmieListarExtratoResponse;
 
 
 /** ManagedBean. */
@@ -53,6 +54,8 @@ public class BalancoPatrimonialMB {
 	private boolean balancoPatrimonialXLSGerado;
 	private String pathBalanco;
 	private String nomeBalanco;
+	
+	private List<OmieListarExtratoResponse> saldoContasOmie;
 	
 
 	public String clearFieldsBalancoPatrimonialConsulta() {
@@ -97,7 +100,9 @@ public class BalancoPatrimonialMB {
 		BalancoPatrimonialDao balancopatrimonialDao = new BalancoPatrimonialDao();
 		this.objetoBalanco.setRecursosDebentures(CommonsUtil.bigDecimalValue(0)); //Zera o valor de Recursos Debentures
 		balancopatrimonialDao.atualizaParcela(objetoBalanco); //Recalcula o valor de Recursos Debentures
+		objetoBalanco.saldoCaixaOmie(); //atualiza saldos contas
 	}
+	
 
 	public BalancoPatrimonial getUltimoBalanco() {
 		return ultimoBalanco;
@@ -199,6 +204,8 @@ public class BalancoPatrimonialMB {
 //		return clearFieldsBalancoPatrimonialConsulta();
 //	}
 	
+
+
 	public void geraXLSBalancoPatrimonial() throws IOException {
 		ParametrosDao pDao = new ParametrosDao();
 		this.pathBalanco = pDao.findByFilter("nome", "BALANCO_PATH").get(0).getValorString();

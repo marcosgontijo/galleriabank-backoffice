@@ -84,7 +84,7 @@ public class OmieService {
 			int HTTP_COD_SUCESSO2 = 201;
 
 			URL myURL;
-			myURL = new URL(omieUrl + "/financas/resumo/");
+			myURL = new URL(omieUrl + "/financas/extrato/");
 
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
 			myURLConnection.setRequestMethod("POST");

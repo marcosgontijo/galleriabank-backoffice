@@ -1,10 +1,11 @@
 package com.webnowbr.siscoat.omie.response;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
-public class OmieListarExtratoResponse {
-	private Integer nCodCC;
+public class OmieListarExtratoResponse { 
+	private BigInteger nCodCC;
 	private String cCodIntCC;
 	private String nCodAgencia;
 	private String nCodBanco;
@@ -25,11 +26,11 @@ public class OmieListarExtratoResponse {
 	
 	private List<OmieListaMovimentos> listaMovimentos;
 
-	public Integer getnCodCC() {
+	public BigInteger getnCodCC() {
 		return nCodCC;
 	}
 
-	public void setnCodCC(Integer nCodCC) {
+	public void setnCodCC(BigInteger nCodCC) {
 		this.nCodCC = nCodCC;
 	}
 

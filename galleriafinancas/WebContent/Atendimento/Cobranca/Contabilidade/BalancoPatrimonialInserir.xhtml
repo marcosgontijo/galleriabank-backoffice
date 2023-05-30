@@ -30,7 +30,7 @@
 						onchange="#{balancoPatrimonialMB.atualizaParcela()}">
 
 						<p:ajax event="dateSelect" listener="#{balancoPatrimonialMB.atualizaParcela()}"
-							update="recursosDebentures" />
+							update="recursosDebentures caixa saldoBancos saldoAplFin" />
 					</p:calendar>
 					<p:outputLabel for="caixa" value="Caixa: "
 						styleClass="labelBold" />

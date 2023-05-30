@@ -3,10 +3,19 @@ package com.webnowbr.siscoat.contab.db.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import com.webnowbr.siscoat.cobranca.service.OmieService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
+import com.webnowbr.siscoat.omie.request.IOmieParam;
+import com.webnowbr.siscoat.omie.request.ListarExtratoRequest;
+import com.webnowbr.siscoat.omie.request.OmieRequestBase;
+import com.webnowbr.siscoat.omie.response.OmieListarExtratoResponse;
+
+import br.com.galleriabank.serasarelato.cliente.util.GsonUtil;
 
 public class BalancoPatrimonial implements Serializable {
 
@@ -54,6 +63,10 @@ public class BalancoPatrimonial implements Serializable {
 	private BigDecimal lucroAnterior;
 	
 	private BigDecimal custoPonderado;
+	
+	private List<OmieListarExtratoResponse> extratoResponse;
+	private BigDecimal saldoCaixaOmie;
+	
 
 	public BigDecimal getTotalAtivos(){
 		BigDecimal result = BigDecimal.ZERO;
@@ -342,6 +355,8 @@ public class BalancoPatrimonial implements Serializable {
 		return result;
 	}
 	
+	
+	
 	public void calcularPagarDebenturista(BigDecimal valor,  Date dataParcela) { 
 		custoPonderado = BigDecimal.ONE;
 		BigDecimal juros = custoPonderado;
@@ -370,6 +385,59 @@ public class BalancoPatrimonial implements Serializable {
 		recursosDebentures = recursosDebentures.add(pagarDebenturista);
 	}
 
+public void saldoCaixaOmie() {
+		
+		long[] contas = new long[8];
+		
+		contas[0] = 3297923118l; //BB Sec
+		contas[1] = 3303125728l; //Inter Sec
+		contas[2] = 3303126311l; //Bradesco Sec
+		contas[3] = 3303154498l; //Itaú Sec
+
+		contas[4] = 3303977357l; //Caixinha Sorocaba
+		contas[5] = 3303977483l; //Caixinha Campinas
+		
+		contas[6] = 3361295394l; // Aplicação Sec
+		contas[7] = 3308481402l; // Crédito Bradesco Sec
+		
+		OmieRequestBase omieRequestBase = new OmieRequestBase();
+		omieRequestBase.setApp_key("2935241731422");
+		omieRequestBase.setApp_secret("88961e398f6eaa1df414837312d5bd71");
+		omieRequestBase.setCall("ListarExtrato");
+		List<IOmieParam> params = new ArrayList<>();
+		this.saldoBancos = BigDecimal.ZERO;
+		this.saldoCaixa = BigDecimal.ZERO;
+		this.saldoAplFin = BigDecimal.ZERO;
+	
+		for (int i=0; i< contas.length; i++) {
+		
+		ListarExtratoRequest listarExtratoRequest = new ListarExtratoRequest();
+		listarExtratoRequest.setcCodIntCC("");
+		listarExtratoRequest.setnCodCC(contas[i]);
+		listarExtratoRequest.setdPeriodoInicial(CommonsUtil.formataData(this.getAaaaMM(), "dd/MM/yyyy"));
+		listarExtratoRequest.setdPeriodoFinal(CommonsUtil.formataData(this.getAaaaMM(), "dd/MM/yyyy"));
+		listarExtratoRequest.setcExibirApenasSaldo("S");
+		
+		params = new ArrayList<>();
+		params.add(listarExtratoRequest);		
+		
+		omieRequestBase.setParam(params);
+
+		OmieService omieService = new OmieService();
+		OmieListarExtratoResponse omieListarExtratoResponse = omieService.listarExtratoResponse(omieRequestBase);
+		
+		if ( i <= 3) {
+		this.saldoBancos = this.saldoBancos.add(omieListarExtratoResponse.getnSaldoAtual());
+		}
+		else if (i <= 5){
+			this.saldoCaixa = this.saldoCaixa.add(omieListarExtratoResponse.getnSaldoAtual());
+		}
+		else {
+			this.saldoAplFin = this.saldoAplFin.add(omieListarExtratoResponse.getnSaldoAtual());
+		}
+		
+}
+	} 
 				
 	public Long getId() {
 		return id;
