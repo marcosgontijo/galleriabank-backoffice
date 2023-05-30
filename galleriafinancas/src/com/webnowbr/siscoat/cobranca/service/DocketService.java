@@ -621,7 +621,7 @@ public class DocketService {
 			jsonDocketBodyPedido.put("fields", engineJsonPJ(pagador));
 		}
 		String webHookJWT = JwtUtil.generateJWTWebhook(true);
-		jsonDocketBodyPedido.put("urlWebhook", SiscoatConstants.URL_SISCOAT_DOCKET_WEBHOOK + webHookJWT);
+		jsonDocketBodyPedido.put("urlWebhook", SiscoatConstants.URL_SISCOAT_ENGINE_WEBHOOK + webHookJWT);
 
 		return jsonDocketBodyPedido;
 	}
