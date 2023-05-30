@@ -570,6 +570,14 @@
 									styleClass="labelBold" label="Conta"
 									onblur="" style="width:100px;" />
 									
+								<p:outputLabel for="tipoConta"
+									value="Tipo Da Conta " styleClass="labelBold" />
+								<p:selectOneMenu id="tipoConta"
+									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.tipoConta}" >
+									<f:selectItem itemValue="Conta Corrente" itemLabel="Conta Corrente" />
+									<f:selectItem itemValue="Conta Poupança" itemLabel="Conta Poupança" />
+								</p:selectOneMenu>
+									
 								<p:outputLabel for="pix" value="Pix: " styleClass="labelBold" />
 								<p:inputText id="pix"
 									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.pix}"

@@ -496,7 +496,13 @@
 			<column name="registroImovelValor" />
 		</property>
 		
+		<property name="intermediacaoTipoConta" type="java.lang.String">
+			<column name="intermediacaoTipoConta" />
+		</property> 
 		
+		<property name="CCBTipoConta" type="java.lang.String">
+			<column name="CCBTipoConta" />
+		</property> 
 		        
     </class>
 </hibernate-mapping>

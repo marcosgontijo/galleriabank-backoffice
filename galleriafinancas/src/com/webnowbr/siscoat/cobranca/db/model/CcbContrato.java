@@ -144,6 +144,7 @@ public class CcbContrato implements Serializable{
     private String intermediacaoCNPJ; 
     private String intermediacaoNome; 
     private String intermediacaoPix; 
+    private String intermediacaoTipoConta; 
     
     private BigDecimal CCBValor = BigDecimal.ZERO; // - (Banco, Agência, C/C, CNPJ, nome completo e PIX)
     private boolean CCBInseridoContrato;
@@ -154,6 +155,7 @@ public class CcbContrato implements Serializable{
     private String CCBNome; 
     private String CCBPix;
     private String CCBDocumento;
+    private String CCBTipoConta;
         
     private BigDecimal iptuEmAtrasoValor = BigDecimal.ZERO;
     private boolean iptuInseridoContrato;
@@ -1250,5 +1252,22 @@ public class CcbContrato implements Serializable{
 
 	public void setRegistroImovelValor(BigDecimal registroImovelValor) {
 		this.registroImovelValor = registroImovelValor;
+	}
+
+	public String getIntermediacaoTipoConta() {
+		return intermediacaoTipoConta;
+	}
+
+	public void setIntermediacaoTipoConta(String intermediacaoTipoConta) {
+		this.intermediacaoTipoConta = intermediacaoTipoConta;
+	}
+
+	public String getCCBTipoConta() {
+		return CCBTipoConta;
+	}
+
+	public void setCCBTipoConta(String cCBTipoConta) {
+		CCBTipoConta = cCBTipoConta;
 	} 
+	
 }

@@ -104,6 +104,7 @@ public class PagadorRecebedor implements Serializable {
 	private String cpfCC;
 	private String cnpjCC;
 	private String pix;
+	private String tipoConta;
 	
 	private String idIugu;
 	
@@ -2223,6 +2224,13 @@ public class PagadorRecebedor implements Serializable {
 	public void setOrgaoEmissorRG(String orgaoEmissorRG) {
 		this.orgaoEmissorRG = orgaoEmissorRG;
 	}
-	
+
+	public String getTipoConta() {
+		return tipoConta;
+	}
+
+	public void setTipoConta(String tipoConta) {
+		this.tipoConta = tipoConta;
+	}	
 	
 }
