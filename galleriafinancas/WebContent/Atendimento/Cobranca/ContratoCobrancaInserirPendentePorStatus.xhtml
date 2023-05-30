@@ -1020,32 +1020,28 @@
 												target="#{contratoCobrancaMB.selectedFile}" value="#{fileAnalise}" />
 											<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
 										</p:commandButton>
-									</p:column>
-								
+									</p:column>							
 								
 								</p:dataTable>
-								
+
 								<p:dialog id="resumo1" header="Resumo" widgetVar="Engine"
-								 showEffect="fade" hideEffect="fade"
-								resizable="false" responsive="false" width="1000"
-								positionType="center center" closable="true">
-								<p:dataTable id="resumocliente" var="engine"
-									value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoEngine()}">
-									<p:column>
-									<h:outputText value="#{engine.descricao}"></h:outputText>
-									
-									
-									</p:column>
-									<p:column>
-									<h:outputText value="#{engine.valor}"></h:outputText>
-									</p:column>
-						
+									showEffect="fade" hideEffect="fade" resizable="false"
+									responsive="false" width="1000" positionType="center center"
+									closable="true">
+									<p:dataTable id="resumocliente" var="engine"
+										value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoEngine()}">
+										<p:column>
+											<h:outputText value="#{engine.descricao}"></h:outputText>
+
+
+										</p:column>
+										<p:column>
+											<h:outputText value="#{engine.valor}"></h:outputText>
+										</p:column>
+
 									</p:dataTable>
-									</p:dialog>
-								
-									
-									
-						
+								</p:dialog>
+
 							</h:panelGrid>
 
 						</p:panel>

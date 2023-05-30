@@ -128,7 +128,6 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaStatus;
 import com.webnowbr.siscoat.cobranca.db.model.DataEngine;
 import com.webnowbr.siscoat.cobranca.db.model.DataVistoria;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
-import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnaliseResumo;
 import com.webnowbr.siscoat.cobranca.db.model.FilaInvestidores;
 import com.webnowbr.siscoat.cobranca.db.model.GruposFavorecidos;
 import com.webnowbr.siscoat.cobranca.db.model.GruposPagadores;
@@ -184,9 +183,6 @@ import com.webnowbr.siscoat.simulador.SimulacaoIPCADadosV2;
 import com.webnowbr.siscoat.simulador.SimulacaoVO;
 import com.webnowbr.siscoat.simulador.SimuladorMB;
 
-import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
-import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetornoRequestFields;
-import br.com.galleriabank.serasacrednet.cliente.util.GsonUtil;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -2397,7 +2393,6 @@ public class ContratoCobrancaMB {
 				this.objetoPagadorRecebedor.setEstado("");
 			} else {
 				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-
 				this.objetoPagadorRecebedor.setEnderecoConjuge(myResponse.get("logradouro").toString());
 				this.objetoPagadorRecebedor.setBairroConjuge(myResponse.get("bairro").toString());
 				this.objetoPagadorRecebedor.setCidadeConjuge(myResponse.get("localidade").toString());

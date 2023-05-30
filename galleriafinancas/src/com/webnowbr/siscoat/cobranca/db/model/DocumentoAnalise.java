@@ -45,7 +45,6 @@ public class DocumentoAnalise implements Serializable {
 	private boolean liberadoCenprot;
 	private boolean liberadoScr;
 	
-
 	private DocumentosAnaliseEnum tipoEnum;
 
 	private String retorno;
