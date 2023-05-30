@@ -877,18 +877,17 @@
 				<shiro:hasAnyRoles
 					name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO">
 					<p:panel id="ArquivosAnalisados"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
 						style="margin-bottom:10px;text-align: center;">
 						<f:facet name="header">
 							<h:outputText value="Analise Documentos" />
-							<p:commandButton value="Atualizar listagem" ajax="true"
+							<p:commandButton value="Atualizar listagem" ajax="true" rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
 								update="ArquivosAnalisados" style="margin-left:10px;"
 								action="#{contratoCobrancaMB.listaArquivosAnaliseDocumentos}"
 								immediate="true" icon="ui-icon-search">
 							</p:commandButton>
 						</f:facet>
 
-						<h:panelGrid columns="1">
+						<h:panelGrid columns="1" rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}">
 							<p:fileUpload label="Selecionar Arquivo"
 								uploadLabel="Salvar Arquivo" multiple="false"
 								cancelLabel="Cancelar"
@@ -904,7 +903,7 @@
 							style="margin-bottom:10px;">
 							<f:facet name="header"> Arquivo(s) Salvo(s) na analise 
 							<p:outputLabel value="" />
-								<p:commandButton value="Adicionar Pessoa"
+								<p:commandButton value="Adicionar Pessoa"  rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
 									action="#{contratoCobrancaMB.preparaAdicionarPessoaAnalise}"
 									oncomplete="PF('adicionarPessoaAnaliseDlg').show();"
 									update="adicionarPessoaAnaliseForm">
@@ -921,7 +920,7 @@
 
 										<p:commandButton value="ver Resumo"
 											onclick="PF('resumoConsutlasDialog').show()"
-											update=":form:resumocliente" ajax="true"
+											update="resumoConsutlasForm" ajax="true"
 											style="TEXT-DECORATION: bold;">
 											<f:setPropertyActionListener value="#{fileAnalise}"
 												target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
@@ -931,6 +930,7 @@
 
 									<p:column headerText="Liberado Análise">
 										<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"
+											disabled="#{!contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
 											rendered="#{fileAnalise.podeChamarRea or fileAnalise.podeChamarEngine or fileAnalise.reaProcessado or fileAnalise.engineProcessado}"
 											onLabel="Sim" offLabel="Não" style="width:6rem">
 											<p:ajax event="change"
@@ -940,6 +940,7 @@
 									<p:column headerText="Liberar Serasa">
 
 										<p:selectBooleanButton value="#{fileAnalise.liberadoSerasa}"
+											disabled="#{!contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
 											rendered="#{fileAnalise.podeChamarSerasa or fileAnalise.serasaProcessado}"
 											onLabel="Sim" offLabel="Não" style="width:6rem">
 											<p:ajax event="change"
@@ -948,6 +949,7 @@
 									</p:column>
 									<p:column headerText="Liberar Cenprot">
 										<p:selectBooleanButton value="#{fileAnalise.liberadoCenprot}"
+											disabled="#{!contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
 											onLabel="Sim" offLabel="Não" style="width:6rem">
 											<p:ajax event="change"
 												listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
@@ -955,6 +957,7 @@
 									</p:column>
 									<p:column headerText="Liberar SCR">
 										<p:selectBooleanButton value="#{fileAnalise.liberadoScr}"
+											disabled="#{!contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
 											onLabel="Sim" offLabel="Não" style="width:6rem">
 											<p:ajax event="change"
 												listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
@@ -964,10 +967,23 @@
 
 
 									<p:column style="text-align: center;"
+										rendered ="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
 										headerText="Identificação"
 										filterBy="#{fileAnalise.identificacao}"
 										filterMatchMode="contains"
 										sortBy="#{fileAnalise.identificacao}">
+
+										<h:outputText value="#{fileAnalise.identificacao}"
+											rendered="#{fileAnalise.podeChamarRea}" />
+										<h:outputText
+											value="#{fileAnalise.identificacao} #{fileAnalise.cnpjcpf} "
+											rendered="#{!fileAnalise.podeChamarRea}" />
+										<p:spacer height="10" />
+
+									</p:column>
+									<p:column style="text-align: center;"
+										rendered ="#{!contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
+										headerText="Identificação">
 
 										<h:outputText value="#{fileAnalise.identificacao}"
 											rendered="#{fileAnalise.podeChamarRea}" />
@@ -1039,48 +1055,7 @@
 								action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.objetoContratoCobranca)}" />
 						</p:panel>
 					</p:panel>
-					<p:dialog id="resumoConsutlas" header="Resumo Consultas"
-						widgetVar="resumoConsutlasDialog" showEffect="fade"
-						hideEffect="fade" resizable="false" responsive="false"
-						width="1000" positionType="center center" closable="true">
-						<h:panelGrid columns="4">
-							<p:panel>
-								<f:facet name="header">
-									<h:outputText value="Engine" />
-								</f:facet>
-
-								<p:dataTable id="resumocliente" var="engine"
-									value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoEngine()}">
-									<p:column>
-										<h:outputText value="#{engine.descricao}"></h:outputText>
-									</p:column>
-									<p:column>
-										<h:outputText value="#{engine.valor}"></h:outputText>
-									</p:column>
-								</p:dataTable>
-							</p:panel>
-							
-							<p:panel>
-								<f:facet name="header">
-									<h:outputText value="Serasa" />
-								</f:facet>
-							</p:panel>
-							
-							<p:panel>
-								<f:facet name="header">
-									<h:outputText value="Cenprot" />
-								</f:facet>
-							</p:panel>
-							
-							<p:panel>
-								<f:facet name="header">
-									<h:outputText value="SCR" />
-								</f:facet>
-							</p:panel>
-							
-						</h:panelGrid>
-					</p:dialog>
-
+				
 				</shiro:hasAnyRoles>
 
 
@@ -5350,6 +5325,51 @@
 					</p:commandButton>
 				</div>
 			</h:form>
-		</p:dialog>		
+		</p:dialog>
+
+		<p:dialog header="Resumo Consultas"
+			widgetVar="resumoConsutlasDialog" showEffect="fade" hideEffect="fade"
+			resizable="false" responsive="false" width="1000"
+			positionType="center center" closable="true">
+			<h:form id="resumoConsutlasForm">
+				<h:panelGrid columns="4">
+					<p:panel>
+						<f:facet name="header">
+							<h:outputText value="Engine" />
+						</f:facet>
+
+						<p:dataTable id="resumocliente" var="engine" rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
+							value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoEngine()}">
+							<p:column>
+								<h:outputText value="#{engine.descricao}"></h:outputText>
+							</p:column>
+							<p:column>
+								<h:outputText value="#{engine.valor}"></h:outputText>
+							</p:column>
+						</p:dataTable>
+					</p:panel>
+
+					<p:panel>
+						<f:facet name="header">
+							<h:outputText value="Serasa" />
+						</f:facet>
+					</p:panel>
+
+					<p:panel>
+						<f:facet name="header">
+							<h:outputText value="Cenprot" />
+						</f:facet>
+					</p:panel>
+
+					<p:panel>
+						<f:facet name="header">
+							<h:outputText value="SCR" />
+						</f:facet>
+					</p:panel>
+
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
 	</ui:define>
 </ui:composition>

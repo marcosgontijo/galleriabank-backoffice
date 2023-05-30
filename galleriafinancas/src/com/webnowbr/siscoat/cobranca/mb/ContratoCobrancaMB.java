@@ -3870,6 +3870,7 @@ public class ContratoCobrancaMB {
 				usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
 				
 				this.objetoCcb = null;
+				this.documentoAnalisePopup = null;
 				
 				if(usuarioLogado.isComiteConsultar()) {
 					return "/Atendimento/Cobranca/ContratoCobrancaCRMConsultar.xhtml";
@@ -8673,6 +8674,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setQtdeVotosReprovadosComite(BigInteger.ZERO);
 		this.contratosPagadorAnalisado = new ArrayList<>();
 		this.contratosImovelAnalisado = new ArrayList<>();
+		this.documentoAnalisePopup =null;
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();	
 
 		if(CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Aguardando Análise")
