@@ -11,7 +11,7 @@
 		<sourceDirectory>src</sourceDirectory>
 		<resources>
 			<resource>
-				<directory>src</directory>
+				<directory>src</directory> 
 				<excludes>
 					<exclude>**/*.java</exclude>
 				</excludes>
@@ -32,7 +32,7 @@
 				<version>3.2.3</version>
 				<configuration>
 					<warSourceDirectory>WebContent</warSourceDirectory>
-				</configuration>
+				</configuration> 
 			</plugin>
 		</plugins>
 	</build>
@@ -67,11 +67,7 @@
 			<name>galleriabank repo</name>
 			<url>https://amurta.bytesafe.dev/maven/galleriabank</url>			
 		</repository>
-
 	</repositories>
-
-
-	
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.shiro</groupId>

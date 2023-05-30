@@ -787,7 +787,7 @@ public class KobanaMB {
 		}
 
 		if (contrato.getEmpresa().equals("CRI 3")) {
-			jsonBoleto.put("bank_billet_account_id", 9614);
+			jsonBoleto.put("bank_billet_account_id", 9657);
 		}
 
 	    /*
@@ -1175,7 +1175,7 @@ public class KobanaMB {
 		}
 
 		if (contrato.getEmpresa().equals("CRI 3")) {
-			jsonBoleto.put("bank_billet_account_id", 9614);
+			jsonBoleto.put("bank_billet_account_id", 9657);
 		}
 	    /*
 	    Número do Contrato

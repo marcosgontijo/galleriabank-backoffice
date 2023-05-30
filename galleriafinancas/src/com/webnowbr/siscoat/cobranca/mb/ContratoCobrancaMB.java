@@ -14022,27 +14022,33 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		cell.setCellValue("CPF/CNPJ");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(4);
-		cell.setCellValue("Parcelas");
+		cell.setCellValue("E-mail");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(5);
-		cell.setCellValue("Corrigido?");
+		cell.setCellValue("Telefone");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(6);
-		cell.setCellValue("Quitado?");
+		cell.setCellValue("Parcelas");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(7);
-		cell.setCellValue("Empresa");
+		cell.setCellValue("Corrigido?");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(8);
-		cell.setCellValue("Região Imóvel");
+		cell.setCellValue("Quitado?");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(9);
-		cell.setCellValue("Valor CCB");
+		cell.setCellValue("Empresa");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(10);
-		cell.setCellValue("Taxa de Juros (%)");
+		cell.setCellValue("Região Imóvel");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(11);
+		cell.setCellValue("Valor CCB");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(12);
+		cell.setCellValue("Taxa de Juros (%)");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(13);
 		cell.setCellValue("Valor Imóvel");
 		cell.setCellStyle(cell_style);
 		
@@ -14118,14 +14124,24 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			cell = row.createCell(3);
 			cell.setCellStyle(cell_style);
 			cell.setCellValue(record.getDocumentoPagador());
+			
+			// Email
+			cell = row.createCell(4);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getEmailPagador());
+						
+			// Telefone
+			cell = row.createCell(5);
+			cell.setCellStyle(cell_style);
+			cell.setCellValue(record.getCelularPagador());						
 						
 			// Parcelas
-			cell = row.createCell(4);
+			cell = row.createCell(6);
 			cell.setCellStyle(cell_style);
 			cell.setCellValue(record.getQtdeParcelas());
 						
 			// Corrigido
-			cell = row.createCell(5);
+			cell = row.createCell(7);
 			cell.setCellStyle(cell_style);
 			
 			if (record.isCorrigidoIPCA() || record.isCorrigidoNovoIPCA()) {
@@ -14135,7 +14151,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			}
 			
 			// Quitado
-			cell = row.createCell(6);
+			cell = row.createCell(8);
 			cell.setCellStyle(cell_style);
 			
 			if (record.isContratoQuitado()) {
@@ -14145,17 +14161,17 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			}
 			
 			// Empresa
-			cell = row.createCell(7);
+			cell = row.createCell(9);
 			cell.setCellStyle(cell_style);
 			cell.setCellValue(record.getEmpresa());
 			
 			// Região Imóvel
-			cell = row.createCell(8);
+			cell = row.createCell(10);
 			cell.setCellStyle(cell_style);					
 			cell.setCellValue(record.getNomeCidadeImovel());
 
 			// Valor CCB
-			cell = row.createCell(9);
+			cell = row.createCell(11);
 			cell.setCellStyle(numericStyle);
 			cell.setCellType(CellType.NUMERIC);
 			if (record.getValorCCB() != null) {
@@ -14165,7 +14181,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			}
 
 			// Taxa Juros
-			cell = row.createCell(10);
+			cell = row.createCell(12);
 			cell.setCellStyle(numberStyle);
 			if (record.getTxJurosParcelas() != null) {
 				cell.setCellValue(((BigDecimal) record.getTxJurosParcelas()).doubleValue());
@@ -14174,7 +14190,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			}
 			
 			// Valor Imóvel
-			cell = row.createCell(11);
+			cell = row.createCell(13);
 			cell.setCellStyle(numericStyle);
 			if (record.getValorImovel() != null) {
 				cell.setCellValue(((BigDecimal) record.getValorImovel()).doubleValue());
