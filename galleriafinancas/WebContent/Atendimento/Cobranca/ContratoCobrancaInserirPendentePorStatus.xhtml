@@ -916,6 +916,20 @@
 									value="#{contratoCobrancaMB.listaDocumentoAnalise}"
 									
 									rowKey="#{fileAnalise.id}" emptyMessage="">
+
+									<p:column style="text-align: center; width:5rem;">
+
+										<p:commandButton value="ver Resumo"
+											onclick="PF('Engine').show()" update=":form:resumocliente"
+											ajax="true" style="TEXT-DECORATION: bold;">
+											<f:setPropertyActionListener value="#{fileAnalise}"
+												target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
+
+
+										</p:commandButton>
+
+									</p:column>
+
 									<p:column headerText="Liberado Análise" >
 										<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"   
 										rendered="#{fileAnalise.podeChamarRea or fileAnalise.podeChamarEngine or fileAnalise.reaProcessado or fileAnalise.engineProcessado}"
@@ -1007,13 +1021,37 @@
 											<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
 										</p:commandButton>
 									</p:column>
+								
+								
 								</p:dataTable>
+								
+								<p:dialog id="resumo1" header="Resumo" widgetVar="Engine"
+								 showEffect="fade" hideEffect="fade"
+								resizable="false" responsive="false" width="1000"
+								positionType="center center" closable="true">
+								<p:dataTable id="resumocliente" var="engine"
+									value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoEngine()}">
+									<p:column>
+									<h:outputText value="#{engine.descricao}"></h:outputText>
+									
+									
+									</p:column>
+									<p:column>
+									<h:outputText value="#{engine.valor}"></h:outputText>
+									</p:column>
+						
+									</p:dataTable>
+									</p:dialog>
+								
+									
+									
+						
 							</h:panelGrid>
 
 						</p:panel>
 						<p:panel id="pnlCeridoesAnalise"
 							header="Certidões"
-							style="margin-bottom:10px;">
+							style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}">
 							
 							<p:commandButton value="Executar Consultas" action="#{contratoCobrancaMB.executarConsultasAnaliseDocumento}"/>
 							<p:commandButton value="Certidões Docket" action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.objetoContratoCobranca)}"/>	
