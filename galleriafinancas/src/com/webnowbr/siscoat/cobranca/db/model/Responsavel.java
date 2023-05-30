@@ -51,6 +51,7 @@ public class Responsavel implements Serializable {
 	private String agencia;
 	private String conta;
 	private String pix;
+	private String tipoConta;
 
 	
 	private String cep;
@@ -511,6 +512,14 @@ public class Responsavel implements Serializable {
 
 	public void setSuperlogica(boolean superlogica) {
 		this.superlogica = superlogica;
+	}
+
+	public String getTipoConta() {
+		return tipoConta;
+	}
+
+	public void setTipoConta(String tipoConta) {
+		this.tipoConta = tipoConta;
 	}
 	
 	
