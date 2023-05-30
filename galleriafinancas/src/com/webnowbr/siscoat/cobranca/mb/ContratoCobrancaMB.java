@@ -128,7 +128,6 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaStatus;
 import com.webnowbr.siscoat.cobranca.db.model.DataEngine;
 import com.webnowbr.siscoat.cobranca.db.model.DataVistoria;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
-import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnaliseResumo;
 import com.webnowbr.siscoat.cobranca.db.model.FilaInvestidores;
 import com.webnowbr.siscoat.cobranca.db.model.GruposFavorecidos;
 import com.webnowbr.siscoat.cobranca.db.model.GruposPagadores;
@@ -184,9 +183,6 @@ import com.webnowbr.siscoat.simulador.SimulacaoIPCADadosV2;
 import com.webnowbr.siscoat.simulador.SimulacaoVO;
 import com.webnowbr.siscoat.simulador.SimuladorMB;
 
-import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
-import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetornoRequestFields;
-import br.com.galleriabank.serasacrednet.cliente.util.GsonUtil;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -310,6 +306,7 @@ public class ContratoCobrancaMB {
 	private boolean addPagador;
 	private boolean addContasPagar;
 	private boolean gerenciaStatus;
+	private boolean addPessoaAnalise;
 	private DocumentoAnalise documentoAnalisePopup;
 	
 	/** Lista dos Pagadores utilizada pela LOV. */
@@ -31213,10 +31210,6 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 	}
 	
 	
-	
-	
-	
-	
 	/**
 	 * @return the files
 	 */
@@ -33098,12 +33091,20 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		this.pessoasProcessos = pessoasProcessos;
 	}
 
-	public DocumentoAnalise getDocumentoAnalisePopup() {
-		return documentoAnalisePopup;
+	public Averbacao getAverbacaoSelecionada() {
+		return averbacaoSelecionada;
 	}
 
-	public void setDocumentoAnalisePopup(DocumentoAnalise documentoAnalisePopup) {
-		this.documentoAnalisePopup = documentoAnalisePopup;
+	public void setAverbacaoSelecionada(Averbacao averbacaoSelecionada) {
+		this.averbacaoSelecionada = averbacaoSelecionada;
+	}
+
+	public DocumentoAnalise getDocumentoAnaliseAdicionar() {
+		return documentoAnaliseAdicionar;
+	}
+
+	public void setDocumentoAnaliseAdicionar(DocumentoAnalise documentoAnaliseAdicionar) {
+		this.documentoAnaliseAdicionar = documentoAnaliseAdicionar;
 	}
 	
 	public DocumentoAnalise getDocumentoAnalisePopup() {

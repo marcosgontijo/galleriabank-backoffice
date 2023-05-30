@@ -19,6 +19,13 @@ public class DocumentoAnaliseResumo implements Serializable {
 
 	private String valor;
 	
+	
+
+	public DocumentoAnaliseResumo(String descricao, String valor) {
+		super();
+		this.descricao = descricao;
+		this.valor = valor;
+	}
 
 	public String getDescricao() {
 		return descricao;
