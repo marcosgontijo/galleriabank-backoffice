@@ -876,14 +876,15 @@
 
 				<shiro:hasAnyRoles
 					name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO">
-					<p:panel id="ArquivosAnalisados" 
+					<p:panel id="ArquivosAnalisados"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
 						style="margin-bottom:10px;text-align: center;">
 						<f:facet name="header">
-						   <h:outputText value="Analise Documentos" />
-							<p:commandButton value="Atualizar listagem" ajax="true" update="ArquivosAnalisados" style="margin-left:10px;"
-								action="#{contratoCobrancaMB.listaArquivosAnaliseDocumentos}" immediate="true"
-								icon="ui-icon-search">
+							<h:outputText value="Analise Documentos" />
+							<p:commandButton value="Atualizar listagem" ajax="true"
+								update="ArquivosAnalisados" style="margin-left:10px;"
+								action="#{contratoCobrancaMB.listaArquivosAnaliseDocumentos}"
+								immediate="true" icon="ui-icon-search">
 							</p:commandButton>
 						</f:facet>
 
@@ -903,8 +904,8 @@
 							style="margin-bottom:10px;">
 							<f:facet name="header"> Arquivo(s) Salvo(s) na analise 
 							<p:outputLabel value="" />
-								<p:commandButton value="Adicionar Pessoa" 
-								  action="#{contratoCobrancaMB.preparaAdicionarPessoaAnalise}"
+								<p:commandButton value="Adicionar Pessoa"
+									action="#{contratoCobrancaMB.preparaAdicionarPessoaAnalise}"
 									oncomplete="PF('adicionarPessoaAnaliseDlg').show();"
 									update="adicionarPessoaAnaliseForm">
 								</p:commandButton>
@@ -914,34 +915,32 @@
 							<h:panelGrid columns="1">
 								<p:dataTable id="dtFilesAnalise" var="fileAnalise"
 									value="#{contratoCobrancaMB.listaDocumentoAnalise}"
-									
 									rowKey="#{fileAnalise.id}" emptyMessage="">
 
 									<p:column style="text-align: center; width:5rem;">
 
 										<p:commandButton value="ver Resumo"
-											onclick="PF('Engine').show()" update=":form:resumocliente"
-											ajax="true" style="TEXT-DECORATION: bold;">
+											onclick="PF('resumoConsutlasDialog').show()"
+											update=":form:resumocliente" ajax="true"
+											style="TEXT-DECORATION: bold;">
 											<f:setPropertyActionListener value="#{fileAnalise}"
 												target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
-
-
 										</p:commandButton>
 
 									</p:column>
 
-									<p:column headerText="Liberado Análise" >
-										<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"   
-										rendered="#{fileAnalise.podeChamarRea or fileAnalise.podeChamarEngine or fileAnalise.reaProcessado or fileAnalise.engineProcessado}"
-											 onLabel="Sim" offLabel="Não" style="width:6rem" >
-										<p:ajax  event="change"
-											listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
-											</p:selectBooleanButton>
+									<p:column headerText="Liberado Análise">
+										<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"
+											rendered="#{fileAnalise.podeChamarRea or fileAnalise.podeChamarEngine or fileAnalise.reaProcessado or fileAnalise.engineProcessado}"
+											onLabel="Sim" offLabel="Não" style="width:6rem">
+											<p:ajax event="change"
+												listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
+										</p:selectBooleanButton>
 									</p:column>
 									<p:column headerText="Liberar Serasa">
 
 										<p:selectBooleanButton value="#{fileAnalise.liberadoSerasa}"
-										rendered="#{fileAnalise.podeChamarSerasa or fileAnalise.serasaProcessado}"										
+											rendered="#{fileAnalise.podeChamarSerasa or fileAnalise.serasaProcessado}"
 											onLabel="Sim" offLabel="Não" style="width:6rem">
 											<p:ajax event="change"
 												listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
@@ -949,31 +948,34 @@
 									</p:column>
 									<p:column headerText="Liberar Cenprot">
 										<p:selectBooleanButton value="#{fileAnalise.liberadoCenprot}"
-											 onLabel="Sim" offLabel="Não" style="width:6rem" >
-										<p:ajax  event="change"
-											listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
-											</p:selectBooleanButton>
+											onLabel="Sim" offLabel="Não" style="width:6rem">
+											<p:ajax event="change"
+												listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
+										</p:selectBooleanButton>
 									</p:column>
 									<p:column headerText="Liberar SCR">
 										<p:selectBooleanButton value="#{fileAnalise.liberadoScr}"
-											 onLabel="Sim" offLabel="Não" style="width:6rem" >
-										<p:ajax  event="change"
-											listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
-											</p:selectBooleanButton>
+											onLabel="Sim" offLabel="Não" style="width:6rem">
+											<p:ajax event="change"
+												listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
+										</p:selectBooleanButton>
 									</p:column>
-									
-									
+
+
 
 									<p:column style="text-align: center;"
-										headerText="Identificação" filterBy="#{fileAnalise.identificacao}"
-										filterMatchMode="contains" sortBy="#{fileAnalise.identificacao}">
+										headerText="Identificação"
+										filterBy="#{fileAnalise.identificacao}"
+										filterMatchMode="contains"
+										sortBy="#{fileAnalise.identificacao}">
 
 										<h:outputText value="#{fileAnalise.identificacao}"
 											rendered="#{fileAnalise.podeChamarRea}" />
-										<h:outputText value="#{fileAnalise.identificacao} #{fileAnalise.cnpjcpf} "
+										<h:outputText
+											value="#{fileAnalise.identificacao} #{fileAnalise.cnpjcpf} "
 											rendered="#{!fileAnalise.podeChamarRea}" />
 										<p:spacer height="10" />
-										
+
 									</p:column>
 
 									<p:column style="text-align: center;" headerText="Motivo"
@@ -995,21 +997,21 @@
 											rendered="#{!fileAnalise.podeChamarEngine and fileAnalise.engineProcessado }"
 											ajax="false" />
 
-										<p:commandButton action="#{serasaMB.baixarDocumento(fileAnalise)}"
+										<p:commandButton
+											action="#{serasaMB.baixarDocumento(fileAnalise)}"
 											icon="ui-icon ui-icon-print" value="Download Serasa"
-											rendered="#{fileAnalise.serasaProcessado }"
-											ajax="false" />
+											rendered="#{fileAnalise.serasaProcessado }" ajax="false" />
 
 										<p:commandButton
 											action="#{netrinMB.baixarDocumento(fileAnalise)}"
 											icon="ui-icon ui-icon-print" value="Download Cenprot"
 											rendered="#{fileAnalise.cenprotProcessado }" ajax="false" />
-											
+
 										<p:commandButton
 											action="#{bmpDigitalMB.baixarDocumento(fileAnalise)}"
 											icon="ui-icon ui-icon-print" value="Download SCR"
 											rendered="#{fileAnalise.scrProcessado }" ajax="false" />
-											
+
 
 									</p:column>
 
@@ -1017,42 +1019,67 @@
 										<p:commandButton value="Download" ajax="false"
 											icon="ui-icon-arrowthick-1-s">
 											<f:setPropertyActionListener
-												target="#{contratoCobrancaMB.selectedFile}" value="#{fileAnalise}" />
+												target="#{contratoCobrancaMB.selectedFile}"
+												value="#{fileAnalise}" />
 											<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
 										</p:commandButton>
-									</p:column>							
-								
+									</p:column>
+
 								</p:dataTable>
-
-								<p:dialog id="resumo1" header="Resumo" widgetVar="Engine"
-									showEffect="fade" hideEffect="fade" resizable="false"
-									responsive="false" width="1000" positionType="center center"
-									closable="true">
-									<p:dataTable id="resumocliente" var="engine"
-										value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoEngine()}">
-										<p:column>
-											<h:outputText value="#{engine.descricao}"></h:outputText>
-
-
-										</p:column>
-										<p:column>
-											<h:outputText value="#{engine.valor}"></h:outputText>
-										</p:column>
-
-									</p:dataTable>
-								</p:dialog>
-
 							</h:panelGrid>
 
 						</p:panel>
-						<p:panel id="pnlCeridoesAnalise"
-							header="Certidões"
-							style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}">
-							
-							<p:commandButton value="Executar Consultas" action="#{contratoCobrancaMB.executarConsultasAnaliseDocumento}"/>
-							<p:commandButton value="Certidões Docket" action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.objetoContratoCobranca)}"/>	
+						<p:panel id="pnlCeridoesAnalise" header="Certidões"
+							style="margin-bottom:10px;"
+							rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}">
+
+							<p:commandButton value="Executar Consultas"
+								action="#{contratoCobrancaMB.executarConsultasAnaliseDocumento}" />
+							<p:commandButton value="Certidões Docket"
+								action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.objetoContratoCobranca)}" />
 						</p:panel>
 					</p:panel>
+					<p:dialog id="resumoConsutlas" header="Resumo Consultas"
+						widgetVar="resumoConsutlasDialog" showEffect="fade"
+						hideEffect="fade" resizable="false" responsive="false"
+						width="1000" positionType="center center" closable="true">
+						<h:panelGrid columns="4">
+							<p:panel>
+								<f:facet name="header">
+									<h:outputText value="Engine" />
+								</f:facet>
+
+								<p:dataTable id="resumocliente" var="engine"
+									value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoEngine()}">
+									<p:column>
+										<h:outputText value="#{engine.descricao}"></h:outputText>
+									</p:column>
+									<p:column>
+										<h:outputText value="#{engine.valor}"></h:outputText>
+									</p:column>
+								</p:dataTable>
+							</p:panel>
+							
+							<p:panel>
+								<f:facet name="header">
+									<h:outputText value="Serasa" />
+								</f:facet>
+							</p:panel>
+							
+							<p:panel>
+								<f:facet name="header">
+									<h:outputText value="Cenprot" />
+								</f:facet>
+							</p:panel>
+							
+							<p:panel>
+								<f:facet name="header">
+									<h:outputText value="SCR" />
+								</f:facet>
+							</p:panel>
+							
+						</h:panelGrid>
+					</p:dialog>
 
 				</shiro:hasAnyRoles>
 
