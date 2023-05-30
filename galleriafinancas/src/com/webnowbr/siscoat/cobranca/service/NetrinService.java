@@ -45,7 +45,7 @@ public class NetrinService {
 
 			URL myURL;
 			// if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa()))
-			myURL = new URL("https://servicos.galleriabank.com.br/netrin/api/v1/protestos/"
+			myURL = new URL("https://servicos.galleriabank.com.br/netrin/api/v1/protesto/"
 					+ CommonsUtil.somenteNumeros(cnpjcpf));
 			// else
 			// myURL = new
@@ -112,7 +112,7 @@ public class NetrinService {
 			int HTTP_COD_SUCESSO = 200;
 			int HTTP_COD_SUCESSO2 = 201;
 
-			URL myURL = new URL("https://servicos.galleriabank.com.br/netrin/api/v1/false");
+			URL myURL = new URL("https://servicos.galleriabank.com.br/netrin/api/v1/protesto/false");
 
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
 			myURLConnection.setRequestMethod("POST");
