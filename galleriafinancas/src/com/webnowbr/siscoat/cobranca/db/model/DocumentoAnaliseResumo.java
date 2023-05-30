@@ -1,12 +1,6 @@
 package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.io.Serializable;
-import java.util.List;
-
-import org.apache.xmlbeans.impl.xb.xsdschema.AnyDocument.Any;
-
-import com.webnowbr.siscoat.common.CommonsUtil;
-import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 
 public class DocumentoAnaliseResumo implements Serializable {
 
