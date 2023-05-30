@@ -10,12 +10,15 @@ import java.net.URL;
 
 import javax.faces.application.FacesMessage;
 
-import org.json.JSONObject;
-
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
+
+import br.com.galleriabank.netrin.cliente.model.receitafederal.IReceitaFederal;
+import br.com.galleriabank.netrin.cliente.model.receitafederal.ReceitaFederalPF;
+import br.com.galleriabank.netrin.cliente.model.receitafederal.ReceitaFederalPJ;
+import br.com.galleriabank.serasacrednet.cliente.util.GsonUtil;
 
 public class NetrinService {
 
@@ -55,9 +58,9 @@ public class NetrinService {
 			myURLConnection.setRequestProperty("Accept", "application/json");
 			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
 			myURLConnection.setRequestProperty("Content-Type", "application/json");
-			myURLConnection.setRequestProperty("Authorization", "Bearer " +  br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos());
+			myURLConnection.setRequestProperty("Authorization",
+					"Bearer " + br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos());
 			myURLConnection.setDoOutput(true);
-
 
 			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
 				result = new FacesMessage(FacesMessage.SEVERITY_ERROR,
@@ -79,8 +82,7 @@ public class NetrinService {
 				documentoAnalise.setRetornoCenprot(response.toString());
 
 				documentoAnaliseDao.merge(documentoAnalise);
-								
-				
+
 				DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
 				documentoAnaliseService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
 						DocumentosAnaliseEnum.CENPROT, response.toString());
@@ -111,8 +113,7 @@ public class NetrinService {
 			int HTTP_COD_SUCESSO2 = 201;
 
 			URL myURL = new URL("https://servicos.galleriabank.com.br/netrin/api/v1/false");
-			
-				
+
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
 			myURLConnection.setRequestMethod("POST");
 			myURLConnection.setUseCaches(false);
@@ -160,4 +161,144 @@ public class NetrinService {
 
 		return null;
 	}
+
+	public ReceitaFederalPF requestCadastroPF(String sCpfCnpj) {
+
+		FacesMessage facesMessage = new FacesMessage();
+		return netrinCriarConsultaCadastroPF(sCpfCnpj, facesMessage);
+	}
+
+	public ReceitaFederalPF netrinCriarConsultaCadastroPF(String sCpfCnpj, FacesMessage facesMessage) { // POST para
+																										// gerar
+																										// consulta
+		try {
+			// loginDocket();
+			int HTTP_COD_SUCESSO = 200;
+			ReceitaFederalPF resultPF = null;
+
+			String numeorsCpfCnpj = CommonsUtil.somenteNumeros(sCpfCnpj);
+
+			String tipoConsulta = CommonsUtil.pessoaFisicaJuridicaCnpjCpf(numeorsCpfCnpj);
+			URL myURL;
+
+			myURL = new URL("https://servicos.galleriabank.com.br/netrin/api/v1/cadastro/pf/"
+					+ CommonsUtil.somenteNumeros(sCpfCnpj));
+
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setRequestMethod("GET");
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			myURLConnection.setRequestProperty("Authorization",
+					"Bearer " + br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos());
+			myURLConnection.setDoOutput(true);
+
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
+				facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Serasa: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", "");
+			} else {
+				// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
+				// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
+
+				BufferedReader in;
+				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
+				String inputLine;
+				StringBuffer response = new StringBuffer();
+				while ((inputLine = in.readLine()) != null) {
+					response.append(inputLine);
+				}
+				in.close();
+				resultPF = GsonUtil.fromJson(response.toString(), ReceitaFederalPF.class);
+
+				facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
+
+			}
+			myURLConnection.disconnect();
+
+			return resultPF;
+
+		} catch (
+
+		MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	public ReceitaFederalPJ requestCadastroPJ(String sCpfCnpj) {
+
+		FacesMessage facesMessage = new FacesMessage();
+		return netrinCriarConsultaCadastroPJ(sCpfCnpj, facesMessage);
+	}
+
+	public ReceitaFederalPJ netrinCriarConsultaCadastroPJ(String sCpfCnpj, FacesMessage facesMessage) { // POST para
+																										// gerar
+																										// consulta
+		try {
+			// loginDocket();
+			int HTTP_COD_SUCESSO = 200;
+			ReceitaFederalPJ resultPJ = null;
+
+			String numeorsCpfCnpj = CommonsUtil.somenteNumeros(sCpfCnpj);
+
+			String tipoConsulta = CommonsUtil.pessoaFisicaJuridicaCnpjCpf(numeorsCpfCnpj);
+			URL myURL;
+
+			myURL = new URL("https://servicos.galleriabank.com.br/netrin/api/v1/cadastro/pj/"
+					+ CommonsUtil.somenteNumeros(sCpfCnpj));
+
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setRequestMethod("GET");
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			myURLConnection.setRequestProperty("Authorization",
+					"Bearer " + br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos());
+			myURLConnection.setDoOutput(true);
+
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
+				facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Serasa: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", "");
+			} else {
+				// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
+				// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
+
+				BufferedReader in;
+				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
+				String inputLine;
+				StringBuffer response = new StringBuffer();
+				while ((inputLine = in.readLine()) != null) {
+					response.append(inputLine);
+				}
+				in.close();
+
+				resultPJ = GsonUtil.fromJson(response.toString(), ReceitaFederalPJ.class);
+
+				facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
+
+			}
+			myURLConnection.disconnect();
+
+			return resultPJ;
+
+		} catch (
+
+		MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
 }
