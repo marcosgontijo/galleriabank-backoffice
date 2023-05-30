@@ -28280,8 +28280,11 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 	}
 
 	public void setSelectedPagadorGenerico(PagadorRecebedor selectedPagadorGenerico) {
-		this.selectedPagadorGenerico = getPagadorRecebedorObjeto(selectedPagadorGenerico.getId());
-	}
+		if ( selectedPagadorGenerico != null)
+			this.selectedPagadorGenerico = getPagadorRecebedorObjeto(selectedPagadorGenerico.getId());
+		else 
+			this.selectedPagadorGenerico = null;
+		}
 
 	/**
 	 * @return the listPagadores
