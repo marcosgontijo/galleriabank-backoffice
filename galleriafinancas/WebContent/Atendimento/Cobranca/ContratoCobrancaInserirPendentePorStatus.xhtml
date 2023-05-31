@@ -5352,12 +5352,33 @@
 					<p:panel>
 						<f:facet name="header">
 							<h:outputText value="Serasa" />
+							<p:dataTable id="resumoSerasa" var="Serasa" rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
+							value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoSerasa()}">
+								<p:column>
+									<h:outputText value="#{Serasa.descricao}"></h:outputText>
+								</p:column>
+								<p:column>
+									<h:outputText value="#{Serasa.valor}"></h:outputText>
+								</p:column>
+								</p:dataTable>
 						</f:facet>
+						
 					</p:panel>
 
 					<p:panel>
 						<f:facet name="header">
 							<h:outputText value="Cenprot" />
+							<p:dataTable id="resumoCenprot" var="cenprot" rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
+							value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoCenprot()}">
+								<p:column>
+									<h:outputText value="#{cenprot.descricao}" />
+								</p:column>
+								<p:column>
+									<h:outputText value="#{cenprot.valor}"/>
+								</p:column>
+							
+							
+							</p:dataTable>
 						</f:facet>
 					</p:panel>
 

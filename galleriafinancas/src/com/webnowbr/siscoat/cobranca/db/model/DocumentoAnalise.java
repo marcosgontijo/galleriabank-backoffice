@@ -1,6 +1,7 @@
 package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +14,11 @@ import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetornoRequest
 import br.com.galleriabank.dataengine.cliente.model.retorno.AntecedentesCriminais.EngineRetornoExecutionResultAntecedenteCriminaisEvidences;
 import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultConsultaQuodScore;
 import br.com.galleriabank.dataengine.cliente.model.retorno.processos.EngineRetornoExecutionResultProcessos;
+import br.com.galleriabank.netrin.cliente.model.cenprot.CenprotProtestos;
+import br.com.galleriabank.netrin.cliente.model.cenprot.CenprotResponse;
+import br.com.galleriabank.netrin.cliente.model.cenprot.ProtestosBrasilEstado;
+import br.com.galleriabank.serasacrednet.cliente.model.CredNet;
+import br.com.galleriabank.serasacrednet.cliente.model.PendenciasFinanceiras;
 
 
 public class DocumentoAnalise implements Serializable {
@@ -82,7 +88,7 @@ public class DocumentoAnalise implements Serializable {
 		}
 
 		if (engine.getConsultaAntecedenteCriminais() == null) {
-			result.add(new DocumentoAnaliseResumo("Antecedentes criminais:", "não disponível"));
+			result.add(new DocumentoAnaliseResumo("Antecedentes criminais:", "Não disponível"));
 		} else {
 			EngineRetornoExecutionResultAntecedenteCriminaisEvidences mensagem = engine
 					.getConsultaAntecedenteCriminais().getEvidences();
@@ -90,15 +96,92 @@ public class DocumentoAnalise implements Serializable {
 		}
 
 		if (engine.getProcessos() == null) {
-			result.add(new DocumentoAnaliseResumo("Numero  de processos:", "não disponível"));
+			result.add(new DocumentoAnaliseResumo("Numero  de processos:", "Não disponível"));
 
 		} else {
 			EngineRetornoExecutionResultProcessos processo = engine.getProcessos();
 			result.add(new DocumentoAnaliseResumo("Numero  de processos:",
 					CommonsUtil.stringValue(processo.getTotal_acoes_judiciais())));
 		}
+		
+		
+		
+		
 
 		return result;
+	}
+	public List<DocumentoAnaliseResumo> getResumoSerasa(){
+		List<DocumentoAnaliseResumo> Serasa = new ArrayList<>();
+		CredNet dados = GsonUtil.fromJson(getRetornoSerasa(), CredNet.class);
+		String cheque = CommonsUtil.stringValue(dados.getChequeSemFundo());
+		if(dados.getChequeSemFundo() == null) {
+		
+			Serasa.add(new DocumentoAnaliseResumo("Cheque Sem Fundo:","Não disponível" ));
+			} else {
+				Serasa.add(new DocumentoAnaliseResumo("Cheque Sem Fundo:", cheque));
+			}
+		String divida = CommonsUtil.stringValue(dados.getDividaVencidaResumo());
+		if(divida == null) {
+			Serasa.add(new DocumentoAnaliseResumo("Divida vencida:", "Não Disponível"));
+		} else {
+			Serasa.add(new DocumentoAnaliseResumo("Dívida vencida:", divida));
+		}
+		String pefin = CommonsUtil.stringValue(dados.getPefinResumo());
+		if(pefin == null) {
+			Serasa.add(new DocumentoAnaliseResumo("Pefin:", "Não Disponível"));
+		} else {
+			Serasa.add(new DocumentoAnaliseResumo("Pefin:", pefin));
+		}
+		String refin = CommonsUtil.stringValue(dados.getRefinResumo());
+		if(refin == null) {
+			Serasa.add(new DocumentoAnaliseResumo("Refin:", "Não Disponível"));
+		} else {
+			Serasa.add(new DocumentoAnaliseResumo("Refin:", refin));
+		}
+		String protesto = CommonsUtil.stringValue(dados.getProtesto());
+		if(protesto == null) {
+			Serasa.add(new DocumentoAnaliseResumo("Protesto:", "Não Disponível"));
+		} else {
+			Serasa.add(new DocumentoAnaliseResumo("Protesto:", protesto));
+		}
+		String acoes =  CommonsUtil.stringValue(dados.getAcoesCivil());
+		if(acoes == null) {
+			Serasa.add(new DocumentoAnaliseResumo("Ações Civis:", "Não Disponível"));
+		} else {
+			Serasa.add(new DocumentoAnaliseResumo("Ações Civis:", acoes));
+		}
+		String falencia = CommonsUtil.stringValue(dados.getFalencias());
+		if(falencia == null) {
+			Serasa.add(new DocumentoAnaliseResumo("Falências:", "Não Disponível"));
+		} else {
+			Serasa.add(new DocumentoAnaliseResumo("Falências:", falencia));
+		}
+		String falenciaInsuceso = CommonsUtil.stringValue(dados.getFalenciasInsucesso());
+		if(falenciaInsuceso == null) {
+			Serasa.add(new DocumentoAnaliseResumo("Falência Insucesso:", "Não Disponível"));
+		} else {
+			Serasa.add(new DocumentoAnaliseResumo("Falência Insucesso:", falenciaInsuceso));
+		}
+		
+		return Serasa;
+		
+	}
+	public List<DocumentoAnaliseResumo> getResumoCenprot(){
+		List<DocumentoAnaliseResumo> cenprot = new ArrayList<>();
+		CenprotResponse data = GsonUtil.fromJson(getRetornoCenprot(), CenprotResponse.class);
+		if(data.getCenprotProtestos().getProtestosBrasil() == null) {
+			cenprot.add(new DocumentoAnaliseResumo("Não Disponível","0"));
+		}else {
+			for (ProtestosBrasilEstado estado : data.getCenprotProtestos().getProtestosBrasil().getEstados()) {
+			
+				String valorEstado = CommonsUtil.stringValue(estado.getValorTotal()) + " (" + estado.getValorTotal() + ") "; 
+				cenprot.add(new DocumentoAnaliseResumo(estado.getEstado(), valorEstado)); 	
+			}
+		}
+		
+		
+		
+		return cenprot;
 	}
 	
 
