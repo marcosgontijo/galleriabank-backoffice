@@ -902,7 +902,7 @@ public class DocketService {
 				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 				cDao.merge(objetoContratoCobranca);
 				Docket docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "", cidadeImovel, "",
-						user.getName(), gerarDataHoje(), myResponse.getId(), myResponse.getIdExibicao());
+						user.getName(), gerarDataHoje(), myResponse.getPedido().getId(), myResponse.getPedido().getIdExibicao());
 				docketDao.create(docket);
 
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Pedido feito com sucesso", ""));
