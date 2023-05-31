@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 
 public class DocketRetornoPedido implements Serializable {
-
 	
 	/**
 	 * 
