@@ -19,6 +19,8 @@ public class Docket implements Serializable {
 	private String cidade;
 	private String cidadeDocketId;
 	private String usuario;
+	private String idCallManager;
+	private String idCallExibicao;
 	private Date data;
 	private String retorno;
 	
@@ -27,7 +29,7 @@ public class Docket implements Serializable {
 	}
 	
 	public Docket(ContratoCobranca objetoContratoCobranca, List<PagadorRecebedor> listaPagador, String estado,
-			String estadoDocketId, String cidade, String cidadeDocketId, String usuario, Date data) {
+			String estadoDocketId, String cidade, String cidadeDocketId, String usuario, Date data, String idCallManager, String idCallExibicao ) {
 		super();
 		this.objetoContratoCobranca = objetoContratoCobranca;
 		this.listaPagador = listaPagador;
@@ -37,6 +39,9 @@ public class Docket implements Serializable {
 		this.cidadeDocketId = cidadeDocketId;
 		this.usuario = usuario;
 		this.data = data;
+		this.idCallManager = idCallManager;
+		this.idCallExibicao = idCallExibicao;
+		
 	}
 
 

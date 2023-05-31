@@ -35,9 +35,18 @@
 			<column name="usuario" />
 		</property>
 		
+		<property name="idCallManager" type="java.lang.String">
+			<column name="idCallManager" />
+		</property>
+		
+		<property name="idCallExibicao" type="java.lang.String">
+			<column name="idCallExibicao" />
+		</property>
+		
 		<property name="data" type="java.util.Date">
 			<column name="data" />
 		</property>
+		
 				
 		<property name="retorno" type="java.lang.String">
 			<column name="retorno" />
