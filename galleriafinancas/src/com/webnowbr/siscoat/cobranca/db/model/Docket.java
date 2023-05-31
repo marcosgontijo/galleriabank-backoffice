@@ -128,5 +128,21 @@ public class Docket implements Serializable {
 	public void setRetorno(String retorno) {
 		this.retorno = retorno;
 	}
+
+	public String getIdCallManager() {
+		return idCallManager;
+	}
+
+	public void setIdCallManager(String idCallManager) {
+		this.idCallManager = idCallManager;
+	}
+
+	public String getIdCallExibicao() {
+		return idCallExibicao;
+	}
+
+	public void setIdCallExibicao(String idCallExibicao) {
+		this.idCallExibicao = idCallExibicao;
+	}
 	
 }
