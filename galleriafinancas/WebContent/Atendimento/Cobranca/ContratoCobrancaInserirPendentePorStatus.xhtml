@@ -39,6 +39,10 @@
 			.ValorSeguros{
 				width: 100px;
 			}
+			.painelResumo{
+				vertical-align: top;
+				
+			}
 			</h:outputStylesheet>
 				
 			<p:panel id="PanelLocador" header="Contrato - #{contratoCobrancaMB.tituloPainel}" style="margin-bottom:10px;">
@@ -5332,12 +5336,13 @@
 			resizable="false" responsive="false" width="1000"
 			positionType="center center" closable="true">
 			<h:form id="resumoConsutlasForm">
-				<h:panelGrid columns="4">
-					<p:panel>
+				<h:panelGrid columns="4" columnClasses="painelResumo,painelResumo,painelResumo,painelResumo">
+				
+					<p:panel >
 						<f:facet name="header">
 							<h:outputText value="Engine" />
 						</f:facet>
-
+						
 						<p:dataTable id="resumocliente" var="engine" rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
 							value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoEngine()}">
 							<p:column>
@@ -5349,7 +5354,7 @@
 						</p:dataTable>
 					</p:panel>
 
-					<p:panel>
+					<p:panel style="justify-content:start;">
 						<f:facet name="header">
 							<h:outputText value="Serasa" />
 							<p:dataTable id="resumoSerasa" var="Serasa" rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
@@ -5365,7 +5370,7 @@
 						
 					</p:panel>
 
-					<p:panel>
+					<p:panel style="justify-content:start;">
 						<f:facet name="header">
 							<h:outputText value="Cenprot" />
 							<p:dataTable id="resumoCenprot" var="cenprot" rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
@@ -5385,10 +5390,22 @@
 					<p:panel>
 						<f:facet name="header">
 							<h:outputText value="SCR" />
+							<p:dataTable id="resumoScr" var="scr" rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
+							value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoScr()}">
+							<p:column>
+								<h:outputText value="#{scr.descricao}"/>
+							</p:column>l
+							<p:column>
+								<h:outputText value="#{scr.valor}"/>
+							</p:column>
+							</p:dataTable>
 						</f:facet>
+						
 					</p:panel>
-
+					
+					
 				</h:panelGrid>
+				
 			</h:form>
 		</p:dialog>
 

@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
+import com.webnowbr.siscoat.cobranca.service.ScrService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.common.GsonUtil;
@@ -113,6 +115,9 @@ public class DocumentoAnalise implements Serializable {
 	public List<DocumentoAnaliseResumo> getResumoSerasa(){
 		List<DocumentoAnaliseResumo> Serasa = new ArrayList<>();
 		CredNet dados = GsonUtil.fromJson(getRetornoSerasa(), CredNet.class);
+		if(CommonsUtil.mesmoValor(tipoPessoa, "PF")) {
+			
+		
 		String cheque = CommonsUtil.stringValue(dados.getChequeSemFundo());
 		if(dados.getChequeSemFundo() == null) {
 		
@@ -162,7 +167,9 @@ public class DocumentoAnalise implements Serializable {
 		} else {
 			Serasa.add(new DocumentoAnaliseResumo("Falência Insucesso:", falenciaInsuceso));
 		}
-		
+		} else {
+			Serasa.add(new DocumentoAnaliseResumo("Menu não disponível para PJ", null));
+		}
 		return Serasa;
 		
 	}
@@ -182,6 +189,45 @@ public class DocumentoAnalise implements Serializable {
 		
 		
 		return cenprot;
+	}
+	public List<DocumentoAnaliseResumo> getResumoScr(){
+		List<DocumentoAnaliseResumo> scr = new ArrayList<>();
+		ScrResult dado = GsonUtil.fromJson(getRetornoScr(), ScrResult.class);
+		if(dado == null) {
+			scr.add(new DocumentoAnaliseResumo("Dados não disponíveis", "0"));
+		} else {
+		 String carteira = CommonsUtil.stringValue( dado.getResumoDoClienteTraduzido().getCarteiraVencer());
+		 if(carteira == null) {
+			 scr.add(new DocumentoAnaliseResumo("Carteira a vencer:", "Não Disponível" ));
+			 
+		 } else {
+			 scr.add(new DocumentoAnaliseResumo("Carteira a vencer:", carteira));
+		 }
+	String carteiraVencido = CommonsUtil.stringValue(dado.getResumoDoClienteTraduzido().getCarteiraVencido());
+	if(carteiraVencido == null) {
+		scr.add(new DocumentoAnaliseResumo("Carteira vencido:", "Não Disponível" ));
+		 
+	 } else {
+		 scr.add(new DocumentoAnaliseResumo("Carteira vencido:", carteiraVencido));
+	 }
+	String prejuizo = CommonsUtil.stringValue(dado.getResumoDoClienteTraduzido().getPrejuizo());
+	if(prejuizo == null) {
+		scr.add(new DocumentoAnaliseResumo("Prejuizo:", "Não Disponível" ));
+		 
+	 } else {
+		 scr.add(new DocumentoAnaliseResumo("Prejuizo:", prejuizo));
+	 }
+	String creditoTomado = CommonsUtil.stringValue(dado.getResumoDoClienteTraduzido().getCarteiradeCredito());
+	if(creditoTomado == null) {
+		scr.add(new DocumentoAnaliseResumo("Carteira de Crédito Tomado:", "Não Disponível" ));
+		 
+	 } else {
+		 scr.add(new DocumentoAnaliseResumo("Carteira de Crédito Tomado:", creditoTomado));
+	 }
+	
+		}
+		
+		return scr;
 	}
 	
 
