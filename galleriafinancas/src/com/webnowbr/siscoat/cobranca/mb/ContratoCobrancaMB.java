@@ -30389,6 +30389,9 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 	}
 	
 	public void adicionarPessoaAnalise() {
+		this.tituloPagadorRecebedorDialog = "";
+		this.tipoPesquisaPagadorRecebedor = "";
+		this.updatePagadorRecebedor = "";
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 		documentoAnaliseDao.merge(documentoAnaliseAdicionar);
 		listaArquivosAnaliseDocumentos();

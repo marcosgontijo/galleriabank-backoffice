@@ -127,7 +127,7 @@
 								<h:outputText id="userCadastro"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.userCadastro}"
 									style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-								<h:outputText id="dataCadastro"
+								<h:outputText id="dataCadastro" 
 									value="#{contratoCobrancaMB.objetoContratoCobranca.dataCadastro}"
 									style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
 									<f:convertDateTime locale="pt_BR" />
@@ -147,7 +147,7 @@
 										offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
 								</shiro:lacksRole>
 								<shiro:hasAnyRoles name="ROOT,COBRANCA,PROFILE_GERENTE_ANALISE">
-									<p:selectBooleanButton id="inicioAnalise"
+									<p:selectBooleanButton id="inicioAnalise" 
 										value="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 										offIcon="ui-icon-cancel" style="width:60px" disabled="#{!contratoCobrancaMB.gerenciaStatus}" />

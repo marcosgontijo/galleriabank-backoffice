@@ -349,6 +349,10 @@ public class ContratoCobranca implements Serializable {
 	private Date leadCompletoData;
 	private String leadCompletoUsuario;
 	
+	private Date liberarAnaliseData;
+	private boolean liberarAnalise;
+	private String liberarAnaliseUsuario;
+	
 	private Date inicioAnaliseData;
 	private boolean inicioAnalise;
 	private String inicioAnaliseUsuario;
@@ -6344,5 +6348,31 @@ public class ContratoCobranca implements Serializable {
 
 	public void setCelularPagador(String celularPagador) {
 		this.celularPagador = celularPagador;
+	}
+
+	public Date getLiberarAnaliseData() {
+		return liberarAnaliseData;
+	}
+
+	public void setLiberarAnaliseData(Date liberarAnaliseData) {
+		this.liberarAnaliseData = liberarAnaliseData;
+	}
+
+	public boolean isLiberarAnalise() {
+		return liberarAnalise;
+	}
+
+	public void setLiberarAnalise(boolean liberarAnalise) {
+		this.liberarAnalise = liberarAnalise;
+	}
+
+	public String getLiberarAnaliseUsuario() {
+		return liberarAnaliseUsuario;
+	}
+
+	public void setLiberarAnaliseUsuario(String liberarAnaliseUsuario) {
+		this.liberarAnaliseUsuario = liberarAnaliseUsuario;
 	}	
+	
+	
 }
