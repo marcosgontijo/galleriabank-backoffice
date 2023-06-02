@@ -2152,5 +2152,9 @@
 			<column name="liberarAnaliseData" />
 		</property>
 		
+		<property name="apenasPagamentoAntecipado" type="boolean">
+			<column name="apenasPagamentoAntecipado" not-null="true" default="false"/>
+		</property>	
+		
 	</class>
 </hibernate-mapping>

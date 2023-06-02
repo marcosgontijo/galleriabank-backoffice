@@ -3946,6 +3946,10 @@
 								<f:selectItem itemLabel="Financiamento com aquisição imóvel" itemValue="Emprestimo" />
 								<p:ajax update="compraVenda" event="change"/>
 							</p:selectOneRadio>
+							
+							<p:outputLabel for="apenasPagamentoAntecipado" value="Apenas Pagamento Antecipado?" styleClass="labelBold" />
+							<p:selectBooleanCheckbox id="apenasPagamentoAntecipado"  
+								value="#{contratoCobrancaMB.objetoContratoCobranca.apenasPagamentoAntecipado}"/>
 						</h:panelGrid>
 						
 						<h:panelGroup id="compraVenda">
@@ -4846,9 +4850,9 @@
 						<p:commandButton value=" - Pendenciar"
 							onclick="PF('voltarAnaliseComercialDialog').show();" />
 						<p:spacer width="20" />
-						<p:commandButton value=" X Reprovar"
+						<!-- <p:commandButton value=" X Reprovar"
 							onclick="PF('reprovarContratoDialog').show();" />
-						<p:spacer width="20" />
+						<p:spacer width="20" /> -->
 						<p:commandButton value=" ✓ Avançar"
 							onclick="PF('enviarPreComiteJuridico').show();" />
 					</h:panelGrid>

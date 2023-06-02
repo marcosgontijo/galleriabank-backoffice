@@ -3327,6 +3327,22 @@ public class ContratoCobrancaMB {
 		}
 	}
 	
+	public void verificaPagementoAntecipado(){
+		if(!objetoContratoCobranca.isApenasPagamentoAntecipado()) {
+			return;
+		}
+		
+		if(CommonsUtil.mesmoValor(objetoContratoCobranca.getTipoOperacao(), "Emprestimo")) {
+			objetoContratoCobranca.setApenasPagamentoAntecipado(true);
+		} else if(CommonsUtil.mesmoValor(objetoImovelCobranca.getTipo(), "Terreno")
+				||CommonsUtil.mesmoValor(objetoImovelCobranca.getTipo(), "Rural")
+				||CommonsUtil.mesmoValor(objetoImovelCobranca.getTipo(), "Casa em construção")
+				||CommonsUtil.mesmoValor(objetoImovelCobranca.getTipo(), "Galpão")) {
+			objetoContratoCobranca.setApenasPagamentoAntecipado(true);
+		}
+		
+	}
+	
 	public void changeAvaliadorLaudo() {
 		if(!CommonsUtil.semValor(this.objetoContratoCobranca.getAvaliacaoLaudo())) {
 			if (this.objetoContratoCobranca.getAvaliacaoLaudo().equals("Galache")) {
@@ -8666,6 +8682,8 @@ public class ContratoCobrancaMB {
 		
 		//monta listagem de Arquivo para analise 
 		listaArquivosAnaliseDocumentos();
+		
+		verificaPagementoAntecipado();
 		
 		this.objetoAnaliseComite = new AnaliseComite();
 		this.objetoContratoCobranca.setQtdeVotosAprovadosComite(BigInteger.ZERO);
