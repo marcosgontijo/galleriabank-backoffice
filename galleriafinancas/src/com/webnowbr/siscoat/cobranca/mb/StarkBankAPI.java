@@ -1,15 +1,23 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
 import com.starkbank.ellipticcurve.Signature;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
+import com.webnowbr.siscoat.cobranca.db.model.StarkBankBoleto;
 import com.webnowbr.siscoat.cobranca.db.model.TransferenciasIUGU;
 import com.webnowbr.siscoat.cobranca.db.model.TransferenciasObservacoesIUGU;
+import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
+import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
+import com.webnowbr.siscoat.cobranca.db.op.StarkBankBoletoDAO;
 import com.webnowbr.siscoat.cobranca.db.op.TransferenciasObservacoesIUGUDao;
+import com.webnowbr.siscoat.common.DateUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -29,6 +37,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.starkbank.Balance;
+import com.starkbank.BoletoPayment;
 import com.starkbank.Project;
 import com.starkbank.Settings;
 import com.starkbank.Transfer;
@@ -238,11 +247,108 @@ public class StarkBankAPI{
 		}
     }
     
-    public static void transfer() {
-    	List<Transfer> transfers = new ArrayList<>();
-
-    	List<Transfer.Rule> rules = new ArrayList<>();
+    String linhaDigitavel = "";
+    String descricao = "";
+    
+    public void chamaBoletoStarkTela() {
     	
+		FacesContext context = FacesContext.getCurrentInstance();
+		
+    	PagadorRecebedor pagador = new PagadorRecebedor();
+    	PagadorRecebedorDao pDao = new PagadorRecebedorDao();
+    	pagador = pDao.findById((long) 7);
+    	
+    	
+    	paymentBoleto(linhaDigitavel, null, pagador, descricao);
+    	
+    	context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Boleto Stark Bank - Pago", ""));
+    	
+    }
+    
+ 
+    public String getLinhaDigitavel() {
+		return linhaDigitavel;
+	}
+
+
+	public void setLinhaDigitavel(String linhaDigitavel) {
+		this.linhaDigitavel = linhaDigitavel;
+	}
+
+
+	public String getDescricao() {
+		return descricao;
+	}
+
+
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
+
+
+	public void paymentBoleto(String boleto, ContratoCobranca contrato, PagadorRecebedor pessoa, String descricao) {
+    	
+    	String[] tags = null;
+    	
+    	loginStarkBank();
+
+    	try {
+	    	List<BoletoPayment> payments = new ArrayList<>();
+	    	HashMap<String, Object> data = new HashMap<>();
+	    	data.put("line", boleto);
+	    	
+	    	if (pessoa.getCpf() != null && !pessoa.getCpf().equals("")) {
+	    		data.put("taxId", pessoa.getCpf());	
+	    	} else {
+	    		data.put("taxId", pessoa.getCnpj());	
+	    	}
+
+	    	data.put("scheduled", DateUtil.getDataHojeAmericano());
+	    	data.put("description", descricao);
+	    	
+	    	if (contrato != null) {
+	    		tags[0] = contrato.getNumeroContrato();
+	    	}
+	    	
+	    	if (tags != null) {
+	    		data.put("tags", tags);
+	    	}
+	
+			payments.add(new BoletoPayment(data));
+	
+	    	payments = BoletoPayment.create(payments);
+	
+	    	for (BoletoPayment payment : payments){
+	    		String tagsStr = "";
+	    		if (payment.tags.length > 0) {
+	    			for (String tag : tags) {
+	    				if (tag.equals("")) {
+	    					tagsStr = tag;
+	    				} else {
+	    					tagsStr = tagsStr + " | " + tag;
+	    				}
+	    			}
+	    		}
+	    		
+	    		/*
+	    		 * TODO REVER PARSE DA DATA 
+	    		 */
+	    		StarkBankBoleto boletoTransacao = new StarkBankBoleto(Long.valueOf(payment.id), BigDecimal.valueOf(payment.amount), payment.taxId, tagsStr, payment.description, payment.scheduled,
+	    				payment.line, payment.barCode, payment.fee, payment.status, new Date(payment.created));
+	    		
+	    		StarkBankBoletoDAO starkBankBoletoDAO = new StarkBankBoletoDAO();
+	    		starkBankBoletoDAO.create(boletoTransacao);
+	    		
+	    	    System.out.println(payment);
+	    	}
+    	
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+	
+	public static void loginStarkBank() {
     	Settings.language = "pt-BR";
     	
     	String privateKeyContent = "-----BEGIN EC PARAMETERS-----\nBgUrgQQACg==\n-----END EC PARAMETERS-----\n-----BEGIN EC PRIVATE KEY-----\nMHQCAQEEIAKGZfO+lee7tdtcLGbCT++oGyUcmm/2Jdozg8D8mF4ioAcGBSuBBAAKoUQDQgAEUvi66NomZ1HeFqEwrXvnM/IjDQEJjVp6nYYojlOsTP1tYO34tW+bO1ypWln5lfkDNCcARQ710SmPPrLRHRbMAA==\n-----END EC PRIVATE KEY-----";
@@ -261,6 +367,14 @@ public class StarkBankAPI{
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+	}
+    
+    public static void transfer() {
+    	List<Transfer> transfers = new ArrayList<>();
+
+    	List<Transfer.Rule> rules = new ArrayList<>();
+    
+    	loginStarkBank(); 
     	
     	try {
 	    	rules.add(new Transfer.Rule("resendingLimit", 5));

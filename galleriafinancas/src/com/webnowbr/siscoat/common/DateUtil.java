@@ -1,5 +1,6 @@
 package com.webnowbr.siscoat.common;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -377,6 +378,13 @@ public final class DateUtil {
 			LOGGER.debug("getDataHoje: " + cal.getTime());
 		}
 		return cal.getTime();
+	}
+	
+	public static String getDataHojeAmericano() {
+		String pattern = "yyyy-MM-dd";
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+		
+		return simpleDateFormat.format(getDataHoje());
 	}
 
 	/**

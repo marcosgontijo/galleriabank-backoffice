@@ -40,16 +40,19 @@
 										<p:menuitem value="BRL Json Cessão Sem IPCA"
 										action="#{brlTrustMB.clearFieldsBRLJsonSemIPCA()}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
-										<p:menuitem value="Teste Stark Bank"
-										action="#{starkBankAPI.getBalanceSDK()}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
-										
+										styleClass="itemMenu" />			
 										<p:menuitem value="aaaaaaaaaa"
 										action="#{usuarioMB.popularListaResponsavel }"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />	
+										<p:menuitem value="STARK - Ver Saldo "
+										action="#{starkBankAPI.getBalanceSDK()}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+										<p:menuitem value="STARK - Pagar Boleto"
+										action="BoletoStarkBank.xhtml} }"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
 									</shiro:hasRole>																							
 								</p:submenu>																																		
 							</p:menu>  	
