@@ -44,6 +44,7 @@ import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
@@ -137,18 +138,19 @@ public class ContasPagarMB {
 		if (!diretorio.isDirectory()) {
 			diretorio.mkdir();
 		}
-		
-		if(event.getFile().getFileName().contains("Pag ")
-				|| event.getFile().getFileName().contains("PAG ")) {
-			TakeBlipMB takeBlipMB = new TakeBlipMB();
-			ResponsavelDao rDao = new ResponsavelDao();
-			Responsavel rGerente = new Responsavel();
-			rGerente = rDao.findById((long) 1175); //camilo
-			takeBlipMB.sendWhatsAppMessageComprovante(rGerente,
-					"comprovante_anexado", 
-					getNomeUsuarioLogado(),
-					this.selectedContratoLov.getNumeroContrato(),
-					event.getFile().getFileName());
+		if(!SiscoatConstants.DEV && !CommonsUtil.sistemaWindows()) {
+			if(event.getFile().getFileName().contains("Pag ")
+					|| event.getFile().getFileName().contains("PAG ")) {
+				TakeBlipMB takeBlipMB = new TakeBlipMB();
+				ResponsavelDao rDao = new ResponsavelDao();
+				Responsavel rGerente = new Responsavel();
+				rGerente = rDao.findById((long) 1175); //camilo
+				takeBlipMB.sendWhatsAppMessageComprovante(rGerente,
+						"comprovante_anexado", 
+						getNomeUsuarioLogado(),
+						this.selectedContratoLov.getNumeroContrato(),
+						event.getFile().getFileName());
+			}
 		}
 
 		if(event.getFile().getFileName().endsWith(".zip")) {
@@ -197,18 +199,19 @@ public class ContasPagarMB {
 		if (!diretorio.isDirectory()) {
 			diretorio.mkdir();
 		}		
-
-		if(event.getFile().getFileName().contains("Pag ")
-				|| event.getFile().getFileName().contains("PAG ")) {
-			TakeBlipMB takeBlipMB = new TakeBlipMB();
-			ResponsavelDao rDao = new ResponsavelDao();
-			Responsavel rGerente = new Responsavel();
-			rGerente = rDao.findById((long) 1175); //camilo
-			takeBlipMB.sendWhatsAppMessageComprovante(rGerente,
-					"comprovante_anexado", 
-					getNomeUsuarioLogado(),
-					this.selectedContratoLov.getNumeroContrato(),
-					event.getFile().getFileName());
+		if(!SiscoatConstants.DEV && !CommonsUtil.sistemaWindows()) {			
+			if(event.getFile().getFileName().contains("Pag ")
+					|| event.getFile().getFileName().contains("PAG ")) {
+				TakeBlipMB takeBlipMB = new TakeBlipMB();
+				ResponsavelDao rDao = new ResponsavelDao();
+				Responsavel rGerente = new Responsavel();
+				rGerente = rDao.findById((long) 1175); //camilo
+				takeBlipMB.sendWhatsAppMessageComprovante(rGerente,
+						"comprovante_anexado", 
+						getNomeUsuarioLogado(),
+						this.selectedContratoLov.getNumeroContrato(),
+						event.getFile().getFileName());
+			}
 		}
 		
 		if(event.getFile().getFileName().endsWith(".zip")) {
@@ -580,8 +583,10 @@ public class ContasPagarMB {
 		try {				
 			contratoCobrancaDao.merge(this.selectedContratoLov);
 			
-			TakeBlipMB takeBlipMB = new TakeBlipMB (); 
-			takeBlipMB.sendWhatsAppMessageNovaConta (this.selectedContratoLov.getNumeroContrato());
+			if(!SiscoatConstants.DEV && !CommonsUtil.sistemaWindows()) {
+				TakeBlipMB takeBlipMB = new TakeBlipMB (); 
+				takeBlipMB.sendWhatsAppMessageNovaConta (this.selectedContratoLov.getNumeroContrato());
+			}
 			
 			context.addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO,
