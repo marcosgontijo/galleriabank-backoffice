@@ -2145,7 +2145,7 @@
 		</property>
 		
 		<property name="liberarAnalise" type="boolean">
-			<column name="liberarAnalise" not-null="true" default="false"/>
+			<column name="liberarAnalise" not-null="true" default="true"/>
 		</property>	
 		
 		<property name="liberarAnaliseData" type="java.util.Date">
