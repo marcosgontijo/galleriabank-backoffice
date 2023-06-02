@@ -139,5 +139,9 @@
         <property name="superlogica" type="boolean">
 			<column name="superlogica" not-null="true" default="false"/>
 		</property>
+		
+		<property name="tipoConta" type="java.lang.String">
+	    	<column name="tipoConta"/>
+	    </property> 	
     </class>
 </hibernate-mapping>

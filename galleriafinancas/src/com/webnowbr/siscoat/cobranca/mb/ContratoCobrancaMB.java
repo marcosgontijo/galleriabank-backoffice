@@ -3210,7 +3210,7 @@ public class ContratoCobrancaMB {
 
 			// verifica se o contrato for aprovado, manda um tipo de email..
 			// senao valida se houve alteração no checklist para envio de email.
-			if(!SiscoatConstants.DEV) {
+			if(!SiscoatConstants.DEV && !CommonsUtil.sistemaWindows()) {
 				enviaEmailAtualizacaoPreContratoNovo();
 				//System.out.println("editPreContrato");
 			}
@@ -28280,8 +28280,11 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 	}
 
 	public void setSelectedPagadorGenerico(PagadorRecebedor selectedPagadorGenerico) {
-		this.selectedPagadorGenerico = getPagadorRecebedorObjeto(selectedPagadorGenerico.getId());
-	}
+		if ( selectedPagadorGenerico != null)
+			this.selectedPagadorGenerico = getPagadorRecebedorObjeto(selectedPagadorGenerico.getId());
+		else 
+			this.selectedPagadorGenerico = null;
+		}
 
 	/**
 	 * @return the listPagadores
@@ -30386,6 +30389,9 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 	}
 	
 	public void adicionarPessoaAnalise() {
+		this.tituloPagadorRecebedorDialog = "";
+		this.tipoPesquisaPagadorRecebedor = "";
+		this.updatePagadorRecebedor = "";
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 		documentoAnaliseDao.merge(documentoAnaliseAdicionar);
 		listaArquivosAnaliseDocumentos();

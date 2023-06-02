@@ -364,8 +364,7 @@ public class CcbMB {
 		this.seguradoSelecionado = new Segurado();
 		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
 	}
-	
-	
+		
 	public void enviarMoneyPlus() {
 		FacesContext context = FacesContext.getCurrentInstance();
 
@@ -478,6 +477,13 @@ public class CcbMB {
 				}
 			}
 			
+			if(CommonsUtil.semValor(this.objetoCcb.getTipoContaBanco())) {
+				if(!CommonsUtil.semValor(participanteSelecionado.getPessoa().getTipoConta())) {
+					this.objetoCcb.setTipoContaBanco(participanteSelecionado.getPessoa().getTipoConta());
+					this.objetoCcb.setCCBTipoConta(participanteSelecionado.getPessoa().getTipoConta());
+				}
+			}
+			
 			if(CommonsUtil.semValor(this.objetoCcb.getAgencia())) {
 				if(!CommonsUtil.semValor(participanteSelecionado.getPessoa().getAgencia())) {
 					this.objetoCcb.setAgencia(participanteSelecionado.getPessoa().getAgencia());
@@ -524,7 +530,6 @@ public class CcbMB {
 				}
 			}
 			
-			//fazer pix
 		}
 		this.participanteSelecionado = new CcbParticipantes();
 		this.participanteSelecionado.setPessoa(new PagadorRecebedor());
@@ -747,10 +752,10 @@ public class CcbMB {
 		//ContratoCobranca contrato = new ContratoCobranca();
 		//contrato = cDao.findById(objetoContratoCobranca.getId());
 		ContratoCobranca contrato = objetoContratoCobranca;
-		if(CommonsUtil.semValor(this.objetoCcb.getObjetoContratoCobranca())){
+		//if(CommonsUtil.semValor(this.objetoCcb.getObjetoContratoCobranca())){
 			this.objetoCcb.setObjetoContratoCobranca(contrato);
 			this.objetoCcb.setNumeroOperacao(contrato.getNumeroContrato());
-		}
+		//}
 		
 		if (CommonsUtil.mesmoValor(contrato.getAvaliacaoLaudo(), "Compass")) {
 			this.objetoCcb.setElaboradorNome("Compass Avaliações Imobiliárias");
@@ -846,6 +851,7 @@ public class CcbMB {
 				objetoCcb.setIntermediacaoCNPJ(objetoContratoCobranca.getResponsavel().getCpfCnpjCC());
 				objetoCcb.setIntermediacaoNome(objetoContratoCobranca.getResponsavel().getNomeCC());
 				objetoCcb.setIntermediacaoPix(objetoContratoCobranca.getResponsavel().getPix());
+				objetoCcb.setIntermediacaoTipoConta(objetoContratoCobranca.getResponsavel().getTipoConta());
 				
 				criarDespesa("Transferência", valorTranferencia, "TED");
 			}
@@ -858,7 +864,7 @@ public class CcbMB {
 				objetoCcb.setIqValor(objetoContratoCobranca.getDividaValor());
 			}
 		}
-		/*	*/
+		
 		if(!CommonsUtil.semValor(objetoContratoCobranca.getDividaIPTU())) {
 			if(CommonsUtil.semValor(objetoCcb.getIptuEmAtrasoValor())) {
 				criarDespesa("IPTU", objetoContratoCobranca.getDividaIPTU());
@@ -878,6 +884,7 @@ public class CcbMB {
 		if(CommonsUtil.semValor(objetoContratoCobranca.getValorTotalAverbacao())) {
 			 objetoContratoCobranca.setValorTotalAverbacao(BigDecimal.ZERO);
 		}
+		
 		if(CommonsUtil.semValor(objetoCcb.getAverbacaoValor())) {
 			if(!CommonsUtil.mesmoValor(objetoCcb.getAverbacaoValor(), objetoContratoCobranca.getValorTotalAverbacao())) {
 				BigDecimal averbacaoTotal = BigDecimal.ZERO;
@@ -900,11 +907,11 @@ public class CcbMB {
 			}
 		}
 		
-		this.objetoContratoCobranca = new ContratoCobranca();
+		this.objetoContratoCobranca = null;
 	}
 	
 	public void clearContratoCobranca() {
-		this.objetoContratoCobranca = new ContratoCobranca();
+		this.objetoContratoCobranca = null;
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 		this.listaContratosConsultar = cDao.consultaContratosCCBs();
 	}
@@ -1132,7 +1139,7 @@ public class CcbMB {
 	}
 	
 	public ContratoCobranca getContratoById(long idContrato) {
-		ContratoCobranca contrato = new ContratoCobranca();
+		ContratoCobranca contrato; //= new ContratoCobranca();
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();				
 		contrato = cDao.findById(idContrato);	
 		return contrato;
@@ -7642,7 +7649,7 @@ public class CcbMB {
 			
 			BigDecimal taxaAdm = SiscoatConstants.TAXA_ADM;
 			if(!CommonsUtil.semValor(this.objetoCcb.getPrazo()) && !CommonsUtil.semValor(this.objetoCcb.getNumeroParcelasPagamento())) {
-				taxaAdm = taxaAdm.multiply(BigDecimal.valueOf( Long.parseLong(this.objetoCcb.getPrazo()) - Long.parseLong(this.objetoCcb.getNumeroParcelasPagamento()) + 1));
+				taxaAdm = taxaAdm.multiply(BigDecimal.valueOf( Long.parseLong(CommonsUtil.somenteNumeros(this.objetoCcb.getPrazo())) - Long.parseLong(CommonsUtil.somenteNumeros(this.objetoCcb.getNumeroParcelasPagamento())) + 1));
 			} 
 			BigDecimal totalPrimeiraParcela = BigDecimal.ZERO;
 			totalPrimeiraParcela = this.objetoCcb.getValorMipParcela();
@@ -7672,7 +7679,7 @@ public class CcbMB {
 								text = trocaValoresXWPF(text, r, "agencia", this.objetoCcb.getAgencia());
 								text = trocaValoresXWPF(text, r, "contaCorrente", this.objetoCcb.getContaCorrente());					
 								text = trocaValoresXWPF(text, r, "nomeBanco", this.objetoCcb.getNomeBanco());		
-				
+								
 								text = trocaValoresXWPF(text, r, "prazoContrato", this.objetoCcb.getPrazo());
 								text = trocaValoresXWPF(text, r, "numeroParcelasPagamento", this.objetoCcb.getNumeroParcelasPagamento());
 								text = trocaValoresXWPF(text, r, "vencimentoPrimeiraParcelaPagamento", this.objetoCcb.getVencimentoPrimeiraParcelaPagamento());
@@ -7736,7 +7743,7 @@ public class CcbMB {
 								
 								if (text != null && text.contains("ImagemImovel") && filesList.size() > 0) {
 									int iImagem = 0;
-									for(UploadedFile imagem :  filesList) {
+									for(UploadedFile imagem : filesList) {
 										r.addBreak();
 										this.populateFiles(iImagem);
 										r.addPicture(this.getBis(), fileTypeInt, fileName.toLowerCase(), Units.toEMU(400), Units.toEMU(300));
@@ -8536,8 +8543,7 @@ public class CcbMB {
 			fonts.setCs("Times New Roman");
 			document.getStyles().setDefaultFonts(fonts);
 			document.getStyle().getDocDefaults().getRPrDefault().getRPr().setRFonts(fonts);
-			
-			
+					
 			XWPFParagraph paragraph;
 			
 			XWPFTable table = document.getTables().get(0);

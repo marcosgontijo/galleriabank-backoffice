@@ -27,6 +27,7 @@ import org.json.JSONObject;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.DataEngine;
 import com.webnowbr.siscoat.cobranca.db.model.Docket;
+import com.webnowbr.siscoat.cobranca.db.model.DocketRetorno;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentosDocket;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentosPagadorDocket;
@@ -621,7 +622,7 @@ public class DocketService {
 			jsonDocketBodyPedido.put("fields", engineJsonPJ(pagador));
 		}
 		String webHookJWT = JwtUtil.generateJWTWebhook(true);
-		jsonDocketBodyPedido.put("urlWebhook", SiscoatConstants.URL_SISCOAT_DOCKET_WEBHOOK + webHookJWT);
+		jsonDocketBodyPedido.put("urlWebhook", SiscoatConstants.URL_SISCOAT_ENGINE_WEBHOOK + webHookJWT);
 
 		return jsonDocketBodyPedido;
 	}
@@ -708,6 +709,34 @@ public class DocketService {
 
 			// READ JSON response and print
 			DataEngineIdSend myResponse = GsonUtil.fromJson(response.toString(), DataEngineIdSend.class);
+
+			return myResponse;
+
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private DocketRetorno docketJSONRetorno(InputStream inputStream) { // Pega resultado da API
+		BufferedReader in;
+		try {
+			in = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+
+			// READ JSON response and print
+			DocketRetorno myResponse = GsonUtil.fromJson(response.toString(), DocketRetorno.class);
 
 			return myResponse;
 
@@ -867,15 +896,16 @@ public class DocketService {
 						"Docket: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", ""));
 				System.out.println(jsonWhatsApp.toString());
 			} else {
+				
+				DocketRetorno myResponse = docketJSONRetorno(myURLConnection.getInputStream());
+				
 				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 				cDao.merge(objetoContratoCobranca);
 				Docket docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "", cidadeImovel, "",
-						// DocketDao docketDao = new DocketDao();
-						user.getName(), gerarDataHoje());
+						user.getName(), gerarDataHoje(), myResponse.getPedido().getId(), myResponse.getPedido().getIdExibicao());
 				docketDao.create(docket);
 
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Pedido feito com sucesso", ""));
-//				myResponse = getJSONSucesso(myURLConnection.getInputStream());
 			}
 
 			myURLConnection.disconnect();

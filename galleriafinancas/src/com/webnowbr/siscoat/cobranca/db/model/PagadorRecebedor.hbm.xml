@@ -596,5 +596,9 @@
 			<column name="orgaoEmissorRGConjuge" />
 		</property>
 		
+		<property name="tipoConta" type="java.lang.String">
+			<column name="tipoConta" />
+		</property>
+		
     </class>
 </hibernate-mapping>
