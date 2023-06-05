@@ -2195,7 +2195,7 @@ public class CcbMB {
 				run = paragraph.createRun();
 				run.setFontSize(12);
 				run.setText(RomanNumerals(iParticipante) + " – " + participante.getTipoParticipante() + ":");
-				run.setText(" " + participante.getPessoa().getNome() + ", ");
+				run.setText(" " + participante.getPessoa().getNome().toUpperCase() + ", ");
 				run.setBold(true);
 
 				run2 = paragraph.createRun();
@@ -2229,7 +2229,7 @@ public class CcbMB {
 					for (CcbParticipantes sociosParticipante : participante.getSocios()) {
 						XWPFRun runSocios = paragraph.createRun();
 						runSocios.setFontSize(12);
-						runSocios.setText(" " + sociosParticipante.getPessoa().getNome() + ", ");
+						runSocios.setText(" " + sociosParticipante.getPessoa().getNome().toUpperCase() + ", ");
 						runSocios.setBold(true);
 						XWPFRun runSociosNome = paragraph.createRun();
 						geraParagrafoPF(runSociosNome, sociosParticipante);
@@ -3724,7 +3724,7 @@ public class CcbMB {
 				run.setFontSize(12);
 				run.setText(iParticipante + ")");
 				run.addTab();
-				run.setText(" " + participante.getPessoa().getNome() + ", ");
+				run.setText(" " + participante.getPessoa().getNome().toUpperCase() + ", ");
 				run.setBold(true);
 
 				run2 = paragraph.createRun();
@@ -3756,7 +3756,7 @@ public class CcbMB {
 					for (CcbParticipantes sociosParticipante : participante.getSocios()) {
 						XWPFRun runSocios = paragraph.createRun();
 						runSocios.setFontSize(12);
-						runSocios.setText(" " + sociosParticipante.getPessoa().getNome() + ", ");
+						runSocios.setText(" " + sociosParticipante.getPessoa().getNome().toUpperCase() + ", ");
 						runSocios.setBold(true);
 						XWPFRun runSociosNome = paragraph.createRun();
 						geraParagrafoPF(runSociosNome, sociosParticipante);
@@ -3851,7 +3851,7 @@ public class CcbMB {
 				run.setFontSize(12);
 				run.setText(iParticipante + ")");
 				run.addTab();
-				run.setText("DEVEDOR: " + participante.getPessoa().getNome() + ", ");
+				run.setText("DEVEDOR: " + participante.getPessoa().getNome().toUpperCase() + ", ");
 				run.setBold(true);
 
 				run2 = paragraph.createRun();
@@ -3883,7 +3883,7 @@ public class CcbMB {
 					for (CcbParticipantes sociosParticipante : participante.getSocios()) {
 						XWPFRun runSocios = paragraph.createRun();
 						runSocios.setFontSize(12);
-						runSocios.setText(" " + sociosParticipante.getPessoa().getNome() + ", ");
+						runSocios.setText(" " + sociosParticipante.getPessoa().getNome().toUpperCase() + ", ");
 						runSocios.setBold(true);
 						XWPFRun runSociosNome = paragraph.createRun();
 						geraParagrafoPF(runSociosNome, sociosParticipante);
@@ -7566,7 +7566,7 @@ public class CcbMB {
 				run.setText(alphabet[iParticipante] + ") ");
 				run.setBold(true);
 				run2 = tableRow1.getCell(0).getParagraphArray(0).createRun();
-				run.setText(" " + participante.getPessoa().getNome() + ", ");
+				run.setText(" " + participante.getPessoa().getNome().toUpperCase() + ", ");
 				//run2.setFontFamily("Calibri");
 				if (!participante.isEmpresa()) {
 					geraParagrafoPF(run2, participante);
@@ -7594,7 +7594,7 @@ public class CcbMB {
 					for (CcbParticipantes sociosParticipante : participante.getSocios()) {
 						XWPFRun runSocios = tableRow1.getCell(0).getParagraphArray(0).createRun();
 						runSocios.setFontSize(12);
-						runSocios.setText(" " + sociosParticipante.getPessoa().getNome() + ", ");
+						runSocios.setText(" " + sociosParticipante.getPessoa().getNome().toUpperCase() + ", ");
 						runSocios.setBold(true);
 						XWPFRun runSociosNome = tableRow1.getCell(0).getParagraphArray(0).createRun();
 						geraParagrafoPF(runSociosNome, sociosParticipante);
@@ -8017,7 +8017,7 @@ public class CcbMB {
 					run.setText(participante.getTipoParticipante() + " " + (iParticipante + 1));
 					run.setBold(true);
 					run2 = tableRowAux.getCell(0).getParagraphArray(0).createRun();
-					run2.setText(" " + participante.getPessoa().getNome() + ", ");
+					run2.setText(" " + participante.getPessoa().getNome().toUpperCase() + ", ");
 					//run2.setFontFamily("Times New Roman");
 					if (!participante.isEmpresa()) {
 						geraParagrafoPF(run2, participante);
@@ -8045,7 +8045,7 @@ public class CcbMB {
 						for (CcbParticipantes sociosParticipante : participante.getSocios()) {
 							XWPFRun runSocios = tableRowAux.getCell(0).getParagraphArray(0).createRun();
 							runSocios.setFontSize(12);
-							runSocios.setText(" " + sociosParticipante.getPessoa().getNome() + ", ");
+							runSocios.setText(" " + sociosParticipante.getPessoa().getNome().toUpperCase() + ", ");
 							runSocios.setBold(true);
 							XWPFRun runSociosNome = tableRowAux.getCell(0).getParagraphArray(0).createRun();
 							geraParagrafoPF(runSociosNome, sociosParticipante);
@@ -8079,7 +8079,7 @@ public class CcbMB {
 					run.setText(participante.getTipoParticipante() + " " + (iParticipante + 1));
 					run.setBold(true);
 					run2 = tableRowAux.getCell(0).getParagraphArray(0).createRun();
-					run2.setText(" " + participante.getPessoa().getNome() + ", ");
+					run2.setText(" " + participante.getPessoa().getNome().toUpperCase() + ", ");
 					//run2.setFontFamily("Times New Roman");
 					if (!participante.isEmpresa()) {
 						geraParagrafoPF(run2, participante);
@@ -8107,7 +8107,7 @@ public class CcbMB {
 						for (CcbParticipantes sociosParticipante : participante.getSocios()) {
 							XWPFRun runSocios = tableRowAux.getCell(0).getParagraphArray(0).createRun();
 							runSocios.setFontSize(12);
-							runSocios.setText(" " + sociosParticipante.getPessoa().getNome() + ", ");
+							runSocios.setText(" " + sociosParticipante.getPessoa().getNome().toUpperCase() + ", ");
 							runSocios.setBold(true);
 							XWPFRun runSociosNome = tableRowAux.getCell(0).getParagraphArray(0).createRun();
 							geraParagrafoPF(runSociosNome, sociosParticipante);
@@ -8566,7 +8566,7 @@ public class CcbMB {
 					run.setText(participante.getTipoParticipante() + " - " + (iParticipante + 1));
 					run.setBold(true);
 					run2 = tableRowAux.getCell(0).getParagraphArray(0).createRun();
-					run2.setText(" " + participante.getPessoa().getNome() + ", ");
+					run2.setText(" " + participante.getPessoa().getNome().toUpperCase() + ", ");
 					//run2.setFontFamily("Times New Roman");
 					if (!participante.isEmpresa()) {
 						geraParagrafoPF(run2, participante);
@@ -8594,7 +8594,7 @@ public class CcbMB {
 						for (CcbParticipantes sociosParticipante : participante.getSocios()) {
 							XWPFRun runSocios = tableRowAux.getCell(0).getParagraphArray(0).createRun();
 							runSocios.setFontSize(12);
-							runSocios.setText(" " + sociosParticipante.getPessoa().getNome() + ", ");
+							runSocios.setText(" " + sociosParticipante.getPessoa().getNome().toUpperCase() + ", ");
 							runSocios.setBold(true);
 							XWPFRun runSociosNome = tableRowAux.getCell(0).getParagraphArray(0).createRun();
 							geraParagrafoPF(runSociosNome, sociosParticipante);
@@ -8628,7 +8628,7 @@ public class CcbMB {
 					run.setText(participante.getTipoParticipante() + " " + (iParticipante + 1));
 					run.setBold(true);
 					run2 = tableRowAux.getCell(0).getParagraphArray(0).createRun();
-					run2.setText(" " + participante.getPessoa().getNome() + ", ");
+					run2.setText(" " + participante.getPessoa().getNome().toUpperCase() + ", ");
 					//run2.setFontFamily("Times New Roman");
 					if (!participante.isEmpresa()) {
 						geraParagrafoPF(run2, participante);
@@ -8656,7 +8656,7 @@ public class CcbMB {
 						for (CcbParticipantes sociosParticipante : participante.getSocios()) {
 							XWPFRun runSocios = tableRowAux.getCell(0).getParagraphArray(0).createRun();
 							runSocios.setFontSize(12);
-							runSocios.setText(" " + sociosParticipante.getPessoa().getNome() + ", ");
+							runSocios.setText(" " + sociosParticipante.getPessoa().getNome().toUpperCase() + ", ");
 							runSocios.setBold(true);
 							XWPFRun runSociosNome = tableRowAux.getCell(0).getParagraphArray(0).createRun();
 							geraParagrafoPF(runSociosNome, sociosParticipante);
@@ -9478,7 +9478,7 @@ public class CcbMB {
 			run = document.getParagraphs().get(1).getRuns().get(1);
 			document.getParagraphs().get(1).setAlignment(ParagraphAlignment.BOTH);
 			//run.setFontSize(12);
-			run.setText(participante.getPessoa().getNome() + ", ");
+			run.setText(participante.getPessoa().getNome().toUpperCase() + ", ");
 			run.setBold(true);
 			run.setCharacterSpacing(1*10);
 			run2 = document.getParagraphs().get(1).insertNewRun(2);
@@ -9566,7 +9566,7 @@ public class CcbMB {
 			run = document.getParagraphs().get(5).insertNewRun(0);
 			document.getParagraphs().get(5).setAlignment(ParagraphAlignment.BOTH);
 			//run.setFontSize(12);
-			run.setText(participante.getPessoa().getNome().trim() + ", ");
+			run.setText(participante.getPessoa().getNome().trim().toUpperCase() + ", ");
 			run.setBold(true);
 			run.setUnderline(UnderlinePatterns.NONE);
 			run.setCharacterSpacing(1*10);
