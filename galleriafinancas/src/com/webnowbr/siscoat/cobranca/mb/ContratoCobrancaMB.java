@@ -3327,20 +3327,17 @@ public class ContratoCobrancaMB {
 		}
 	}
 	
-	public void verificaPagementoAntecipado(){
-		if(!objetoContratoCobranca.isApenasPagamentoAntecipado()) {
-			return;
-		}
-		
+	public void verificaPagementoAntecipado(){	
 		if(CommonsUtil.mesmoValor(objetoContratoCobranca.getTipoOperacao(), "Emprestimo")) {
 			objetoContratoCobranca.setApenasPagamentoAntecipado(true);
-		} else if(CommonsUtil.mesmoValor(objetoImovelCobranca.getTipo(), "Terreno")
-				||CommonsUtil.mesmoValor(objetoImovelCobranca.getTipo(), "Rural")
-				||CommonsUtil.mesmoValor(objetoImovelCobranca.getTipo(), "Casa em construção")
-				||CommonsUtil.mesmoValor(objetoImovelCobranca.getTipo(), "Galpão")) {
+		} else if(CommonsUtil.mesmoValor(objetoImovelCobranca.getTipo(), "Apartamento")
+				||CommonsUtil.mesmoValor(objetoImovelCobranca.getTipo(), "Casa")
+				||CommonsUtil.mesmoValor(objetoImovelCobranca.getTipo(), "Casa de Condomínio")
+				||CommonsUtil.mesmoValor(objetoImovelCobranca.getTipo(), "Casa de Condomínio acima1000")) {
+			objetoContratoCobranca.setApenasPagamentoAntecipado(false);
+		} else {
 			objetoContratoCobranca.setApenasPagamentoAntecipado(true);
 		}
-		
 	}
 	
 	public void changeAvaliadorLaudo() {
@@ -19135,9 +19132,12 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		ccbProcessosJudiciaisDao.create(processoSelecionado);
 		objetoContratoCobranca.getListProcessos().add(processoSelecionado);
 		
+		PagadorRecebedor pessoa = processoSelecionado.getPagador();
+		
 		listarProcessos();
 		calcularValorTotalProcessos();
 		processoSelecionado = new CcbProcessosJudiciais();
+		processoSelecionado.setPagador(pessoa);
 	}
 	
 	public void removeProcesso(CcbProcessosJudiciais processo) {

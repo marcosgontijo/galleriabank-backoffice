@@ -5235,7 +5235,7 @@
 						<p:outputLabel  value="Numero: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />
 						<p:inputText value="#{contratoCobrancaMB.processoSelecionado.numero}"
-							label="Contrato" /> 
+							label="Contrato" />
 							
 						<p:outputLabel value="Quitar: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />
@@ -5248,7 +5248,7 @@
 						
 						<p:outputLabel value="Obs: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />
-						<h:inputTextarea rows="10" cols="48"
+						<h:inputTextarea rows="5" cols="25"
 							maxlength="3000" onblur=""
 							counterTemplate="{0} characters remaining." autoResize="false"
 							value="#{contratoCobrancaMB.processoSelecionado.observacao}" >
@@ -5263,12 +5263,11 @@
 					<p:commandButton value="Inserir Processo" 
 						icon="ui-icon-check" style="margin-top: 5px; margin-bottom: 5px;"
 						action="#{contratoCobrancaMB.addProcesso}" 
-						onclick="PF('processoDialog').hide();"
-						update="form:RecebidoPajulaudoPanel" >
+						update="form:RecebidoPajulaudoPanel processoDialogdlg" >
 					</p:commandButton>
 				</div>
 			</h:form>
-		</p:dialog>		
+		</p:dialog>
 		
 		<p:dialog header="Nova Averbação" widgetVar="averbacaoDialog"
 			resizable="false" style="FONT-SIZE: 10pt;" width="400">
