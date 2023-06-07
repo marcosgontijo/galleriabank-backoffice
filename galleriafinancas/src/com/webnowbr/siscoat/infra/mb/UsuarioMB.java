@@ -592,7 +592,7 @@ public class UsuarioMB {
 	public void atualizaListagem() {
 		UserDao userDao = new UserDao();
 		userDao.carregarListaResponsavel(objetoUsuario);
-		selectedResponsaveis = (Responsavel[]) objetoUsuario.getListResponsavel().toArray();
+		//selectedResponsaveis = (Responsavel[]) objetoUsuario.getListResponsavel().toArray();
 	}
 
 	/**
