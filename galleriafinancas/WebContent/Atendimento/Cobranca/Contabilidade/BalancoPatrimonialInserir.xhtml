@@ -11,8 +11,10 @@
 			<script src="#{request.contextPath}/resources/js/functions.js"></script>
 			<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>
 			<p:messages id="mensagens" showDetail="true" />
-			<p:panel id="balancoInserir" header="Balanço Patrimonial - Ativos"
+			
+			<p:panel id="variaveis" header="Variáveis a preencher"
 				style="margin-bottom:20px;">
+
 				<h:panelGrid columns="2">
 					
 					<p:outputLabel  value="id "
@@ -32,6 +34,76 @@
 						<p:ajax event="dateSelect" listener="#{balancoPatrimonialMB.atualizaParcela()}"
 							update="recursosDebentures caixa saldoBancos saldoAplFin" />
 					</p:calendar>
+					
+					<p:outputLabel for="cdi" value="Informe CDI: "
+						styleClass="labelBold" />
+					<p:inputText id="cdi"
+						value="#{balancoPatrimonialMB.objetoBalanco.cdi}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter">
+					</p:inputText>
+					
+					<p:outputLabel for="ipca" value="Informe IPCA: "
+						styleClass="labelBold" />
+					<p:inputText id="ipca"
+						value="#{balancoPatrimonialMB.objetoBalanco.ipca}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter">
+					</p:inputText>
+					
+					<p:outputLabel for="taxaFidc" value="Informe Taxa FIDC: "
+						styleClass="labelBold" />
+					<p:inputText id="taxaFidc"
+						value="#{balancoPatrimonialMB.objetoBalanco.taxaFidc}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter">
+					</p:inputText>
+					
+					<p:outputLabel for="taxaCri1" value="Informe Taxa Cri 1: "
+						styleClass="labelBold" />
+					<p:inputText id="taxaCri1"
+						value="#{balancoPatrimonialMB.objetoBalanco.taxaCri1}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter">
+					</p:inputText>
+					
+					<p:outputLabel for="taxaCri2" value="Informe Taxa Cri 2: "
+						styleClass="labelBold" />
+					<p:inputText id="taxaCri2"
+						value="#{balancoPatrimonialMB.objetoBalanco.taxaCri2}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter">
+					</p:inputText>
+					
+					<p:outputLabel for="taxaCri3" value="Informe Taxa Cri 3: "
+						styleClass="labelBold" />
+					<p:inputText id="taxaCri3"
+						value="#{balancoPatrimonialMB.objetoBalanco.taxaCri3}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter">
+					</p:inputText>
+					</h:panelGrid>
+					
+					<p:commandButton value="Gerar Balanço" icon="ui-icon-plus" 
+						action="#{balancoPatrimonialMB.geraBalanco}" update=" mensagens :form:visaoBalanco">
+					</p:commandButton>
+					
+				</p:panel>
+					
+					
+						
+				<h:panelGrid columns="2" styleClass="row" id="visaoBalanco">
+				
+					<p:panel id="balancoInserir" header="Balanço Patrimonial - Ativos"
+				style="margin-bottom:20px;">
+				
+					<h:panelGrid columns="2">
 					<p:outputLabel for="caixa" value="Caixa: "
 						styleClass="labelBold" />
 					<p:inputText id="caixa"
@@ -171,7 +243,9 @@
 					</h:panelGrid>
 			</p:panel>
 					
-					<p:panel id="balancoInserirPassivo" header="Novo Balanço Patrimonial - Passivo"	style="margin-bottom:20px;">
+					
+					
+					<p:panel id="balancoInserirPassivo" header="Novo Balanço Patrimonial - Passivos"	style="margin-bottom:20px;">
 					<h:panelGrid columns="2">
 					
 					<p:outputLabel for="contaCorrenteClientes" value="Conta Corrente Clientes "
@@ -304,6 +378,7 @@
 					</p:inputText>
 					</h:panelGrid>
 			</p:panel>
+		</h:panelGrid>
 			<p:commandButton value="Salvar" ajax="false"
 				icon="ui-icon-print" action="#{balancoPatrimonialMB.salvarBalanco}" />
 			<p:spacer height="10"/>

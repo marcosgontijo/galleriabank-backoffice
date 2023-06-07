@@ -23,7 +23,7 @@
 		<p:panel id="ConsultaBalanco" header="Balanço Patrimonial #{balancoPatrimonialMB.tituloPagina}" style="margin-bottom:10px;">		    		    
    		         <p:dataTable id="dtBalancoPat" var="balanco" value="#{balancoPatrimonialMB.todosBalancos}" selection="" emptyMessage="" sortBy="#{balanco.aaaaMM}" sortOrder="descending">                 
    		         	<f:facet name="header">						
-						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{balancoPatrimonialMB.clearBalancoPatrimonialEditar}">
+						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{balancoPatrimonialMB.clearBalancoPatrimonialNew()}">
 						<f:setPropertyActionListener target="#{balancoPatrimonialMB.editar}"
 								value="false" />
 							<f:setPropertyActionListener target="#{balancoPatrimonialMB.excluir}"
@@ -55,7 +55,7 @@
 						</h:outputText>
 					</p:column>
 					<f:facet name="footer">
-					<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{balancoPatrimonialMB.clearBalancoPatrimonialEditar}">	
+					<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{balancoPatrimonialMB.clearBalancoPatrimonialNew()}">	
 					<f:setPropertyActionListener target="#{balancoPatrimonialMB.editar}"
 								value="false" />
 					<f:setPropertyActionListener target="#{balancoPatrimonialMB.excluir}"

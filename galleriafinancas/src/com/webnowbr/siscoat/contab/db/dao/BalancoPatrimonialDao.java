@@ -48,12 +48,17 @@ public class BalancoPatrimonialDao extends HibernateDao <BalancoPatrimonial,Long
 		});	
 	}
 	
-	private static final String QUERY_DIREITOS_CREDITORIOS =  " select sum(ccd.vlrParcela)" 
-			+ " from cobranca.contratocobranca coco"
-			+ " left join cobranca.contratocobranca_detalhes_join ccdj on ccdj.idcontratocobranca = coco.id"
-			+ " inner join cobranca.contratocobrancadetalhes ccd on	ccd.id = ccdj.idcontratocobrancadetalhes and ccd.parcelapaga = false"
-			+ " inner join cobranca.pagadorrecebedor pare on pare.id = coco.pagador"
-			+ " where status = 'Aprovado' and ccd.id is not null and pagador not in (15, 34, 14, 182, 417, 803)";
+	private static final String QUERY_DIREITOS_CREDITORIOS =  " SELECT coco.id, numerocontrato, txJurosParcelas, empresa, ccd.dataVencimento, ccd.vlrParcela, pare.nome, corrigidoIPCA, corrigidonovoipca,\r\n"
+			+ "    CASE\r\n"
+			+ "        WHEN corrigidoIPCA = true OR corrigidonovoipca = true THEN true\r\n"
+			+ "        ELSE false\r\n"
+			+ "    END AS indice\r\n"
+			+ "FROM cobranca.contratocobranca coco\r\n"
+			+ "LEFT JOIN cobranca.contratocobranca_detalhes_join ccdj ON ccdj.idcontratocobranca = coco.id\r\n"
+			+ "INNER JOIN cobranca.contratocobrancadetalhes ccd ON ccd.id = ccdj.idcontratocobrancadetalhes AND ccd.parcelapaga = false\r\n"
+			+ "INNER JOIN cobranca.pagadorrecebedor pare ON pare.id = coco.pagador\r\n"
+			+ "WHERE status = 'Aprovado' AND ccd.id IS NOT NULL AND pagador NOT IN (15, 34, 14, 182, 417, 803)\r\n"
+			+ "ORDER BY numerocontrato ASC, datavencimento ASC;";
 	
 	@SuppressWarnings("unchecked")
 	public BigDecimal consultaDireitosCreditorios() {
@@ -68,9 +73,9 @@ public class BalancoPatrimonialDao extends HibernateDao <BalancoPatrimonial,Long
 				try {
 					connection = getConnection();
 																	
-					ps = connection
-							.prepareStatement(QUERY_DIREITOS_CREDITORIOS);
+					ps = connection.prepareStatement(QUERY_DIREITOS_CREDITORIOS);
 					rs = ps.executeQuery();
+					
 					rs.next();
 					
 					objects = rs.getBigDecimal(1);
@@ -214,7 +219,8 @@ public class BalancoPatrimonialDao extends HibernateDao <BalancoPatrimonial,Long
 		});
 	}
 	
-	private static final String QUERY_SOMA_PARCELA_X =  "select sum(parcelaMensal) as somaParcela, sum(taxaremuneracaoinvestidor1 * parcelaMensal) as fatorX  from (select	coco.id,\r\n"
+	private static final String QUERY_SOMA_PARCELA_X =  "select sum(parcelaMensal) as somaParcela, sum(taxaremuneracaoinvestidor1 * parcelaMensal) as fatorX  "
+			+ "from (select	coco.id,\r\n"
 			+ "coco.numerocontrato,	coco.txJurosParcelas,	coco.taxaremuneracaoinvestidor1,\r\n"
 			+ "coco.empresa, ccpi.dataVencimento, ccpi.amortizacao,\r\n"
 			+ "ccpi.capitalizacao, ccpi.parcelaMensal, pare.nome, coco.pagador,\r\n"

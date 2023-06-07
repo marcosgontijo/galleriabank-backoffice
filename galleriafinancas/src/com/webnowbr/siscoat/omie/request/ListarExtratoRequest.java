@@ -1,15 +1,18 @@
 package com.webnowbr.siscoat.omie.request;
 
 public class ListarExtratoRequest implements IOmieParam {
-	private Integer nCodCC;
+	private Long nCodCC;
 	private String cCodIntCC;
 	private String dPeriodoInicial;
 	private String dPeriodoFinal;
 	private String cExibirApenasSaldo;
-	public Integer getnCodCC() {
+	
+	
+	
+	public Long getnCodCC() {
 		return nCodCC;
 	}
-	public void setnCodCC(Integer nCodCC) {
+	public void setnCodCC(Long nCodCC) {
 		this.nCodCC = nCodCC;
 	}
 	public String getcCodIntCC() {

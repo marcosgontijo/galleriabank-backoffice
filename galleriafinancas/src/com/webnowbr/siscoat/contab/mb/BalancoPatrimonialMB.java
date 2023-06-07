@@ -55,8 +55,6 @@ public class BalancoPatrimonialMB {
 	private String pathBalanco;
 	private String nomeBalanco;
 	
-	private List<OmieListarExtratoResponse> saldoContasOmie;
-	
 
 	public String clearFieldsBalancoPatrimonialConsulta() {
 
@@ -69,7 +67,23 @@ public class BalancoPatrimonialMB {
 		this.todosBalancos = balancopatrimonialDao.consultaBalancoPatrimonial();
 		return "/Atendimento/Cobranca/Contabilidade/BalancoPatrimonialConsulta.xhtml";
 	}
-
+	public String clearBalancoPatrimonialNew() {
+		objetoBalanco = new BalancoPatrimonial();
+		this.objetoBalanco.setAaaamm(gerarDataHoje());
+		this.objetoBalanco.setSaldoCaixaOmie(CommonsUtil.bigDecimalValue(0));
+		this.objetoBalanco.setSaldoBancos(CommonsUtil.bigDecimalValue(0));
+		this.objetoBalanco.setSaldoAplFin(CommonsUtil.bigDecimalValue(0));
+		this.objetoBalanco.setDepositoBacenScd(CommonsUtil.bigDecimalValue(0));
+		this.objetoBalanco.setDireitosCreditorios(CommonsUtil.bigDecimalValue(0));
+		this.objetoBalanco.setProvisaoLiquidAntecipada(CommonsUtil.bigDecimalValue(0));
+		this.objetoBalanco.setDepositosjudiciais(CommonsUtil.bigDecimalValue(0));
+		this.objetoBalanco.setInvestOperantigas(CommonsUtil.bigDecimalValue(0));
+		this.objetoBalanco.setCapitalSocial(CommonsUtil.bigDecimalValue(0));
+		this.objetoBalanco.setRecursosDebentures(CommonsUtil.bigDecimalValue(0));
+		
+		return "/Atendimento/Cobranca/Contabilidade/BalancoPatrimonialInserir.xhtml";
+	}
+	
 	public String clearBalancoPatrimonialEditar() {
 		BalancoPatrimonialDao balancopatrimonialDao = new BalancoPatrimonialDao();
 		
@@ -78,22 +92,55 @@ public class BalancoPatrimonialMB {
 			ultimoBalanco = balancopatrimonialDao.consultaUltimoBalanco();
 		
 		this.objetoBalanco.setAaaamm(gerarDataHoje());
+		
 		//VALOR DEFAULT NO CÓDIGO
 		this.objetoBalanco.setDepositoBacenScd(CommonsUtil.bigDecimalValue(1016095.04));
+		
 		//VALOR DEFAULT NO DAO - VALOR DO SISTEMA
 		this.objetoBalanco.setDireitosCreditorios(balancopatrimonialDao.consultaDireitosCreditorios());
+		this.objetoBalanco.setProvisaoLiquidAntecipada(balancopatrimonialDao.consultaContasPagar());
+		this.objetoBalanco.setCustoPonderado(balancopatrimonialDao.somaParcelaX());
+		
 		// VALOR DEFAULT ÚLTIMO BALANÇO
 		if (!CommonsUtil.semValor(ultimoBalanco)) {
 			this.objetoBalanco.setDepositosjudiciais(ultimoBalanco.getDepositosjudiciais());
 			this.objetoBalanco.setInvestOperantigas(ultimoBalanco.getInvestOperantigas());
 			this.objetoBalanco.setCapitalSocial(ultimoBalanco.getCapitalSocial());
 		}
-		this.objetoBalanco.setProvisaoLiquidAntecipada(balancopatrimonialDao.consultaContasPagar());
-		this.objetoBalanco.setCustoPonderado(balancopatrimonialDao.somaParcelaX());
+		
 		atualizaParcela();
 		
 		}
 		return "/Atendimento/Cobranca/Contabilidade/BalancoPatrimonialInserir.xhtml";
+	}
+	
+	
+	public void geraBalanco () {
+		BalancoPatrimonialDao balancopatrimonialDao = new BalancoPatrimonialDao();
+		if (!this.editar) {
+			objetoBalanco = new BalancoPatrimonial();
+			ultimoBalanco = balancopatrimonialDao.consultaUltimoBalanco();
+		
+		this.objetoBalanco.setAaaamm(gerarDataHoje());
+		
+		//VALOR DEFAULT NO CÓDIGO
+		this.objetoBalanco.setDepositoBacenScd(CommonsUtil.bigDecimalValue(1016095.04));
+		
+		//VALOR DEFAULT NO DAO - VALOR DO SISTEMA
+		this.objetoBalanco.setDireitosCreditorios(balancopatrimonialDao.consultaDireitosCreditorios());
+		this.objetoBalanco.setProvisaoLiquidAntecipada(balancopatrimonialDao.consultaContasPagar());
+		this.objetoBalanco.setCustoPonderado(balancopatrimonialDao.somaParcelaX());
+		
+		// VALOR DEFAULT ÚLTIMO BALANÇO
+		if (!CommonsUtil.semValor(ultimoBalanco)) {
+			this.objetoBalanco.setDepositosjudiciais(ultimoBalanco.getDepositosjudiciais());
+			this.objetoBalanco.setInvestOperantigas(ultimoBalanco.getInvestOperantigas());
+			this.objetoBalanco.setCapitalSocial(ultimoBalanco.getCapitalSocial());
+		}
+		// VALOR RECURSOS DEBENTURES e CAIXAS
+		atualizaParcela();
+		
+		}
 	}
 	
 	public void atualizaParcela () {
