@@ -50,7 +50,15 @@
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
 										<p:menuitem value="STARK - Pagar Boleto"
-										action="BoletoStarkBank.xhtml} }"
+										action="BoletoStarkBank.xhtml"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+										<p:menuitem value="STARK - Listar Pagto Boleto"
+										action="#{starkBankAPI.listPaymentBoleto}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+										<p:menuitem value="STARK - Log Pagto Boleto"
+										action="#{starkBankAPI.paymentBoletoLog}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
 									</shiro:hasRole>																							

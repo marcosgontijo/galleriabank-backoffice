@@ -509,6 +509,9 @@
 		<property name="dataInclusaoRecebedor10" type="java.util.Date">
 			<column name="dataInclusaoRecebedor10" />
 		</property>	
+		<property name="dataCorteBaixaIPCAHibrido" type="java.util.Date">
+			<column name="dataCorteBaixaIPCAHibrido" />
+		</property>	
 		<property name="reprovadoData" type="java.util.Date">
 			<column name="reprovadoData" />
 		</property>

@@ -26,6 +26,8 @@ public class ContratoCobranca implements Serializable {
 	
 	private String cedenteBRLCessao;
 	private Date dataAquisicaoCessao;
+	
+	private Date dataCorteBaixaIPCAHibrido;
 
 	private String tipoCalculoInvestidor1;
 	private BigDecimal vlrInvestidor1;
@@ -6372,7 +6374,13 @@ public class ContratoCobranca implements Serializable {
 
 	public void setLiberarAnaliseUsuario(String liberarAnaliseUsuario) {
 		this.liberarAnaliseUsuario = liberarAnaliseUsuario;
+	}
+
+	public Date getDataCorteBaixaIPCAHibrido() {
+		return dataCorteBaixaIPCAHibrido;
+	}
+
+	public void setDataCorteBaixaIPCAHibrido(Date dataCorteBaixaIPCAHibrido) {
+		this.dataCorteBaixaIPCAHibrido = dataCorteBaixaIPCAHibrido;
 	}	
-	
-	
 }

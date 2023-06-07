@@ -1,5 +1,6 @@
 package com.webnowbr.siscoat.common;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -716,6 +717,18 @@ public final class DateUtil {
 		}
 		
 		return listaferiados;
+	}
+	
+	public static Date convertDateTimeToDate(String dateTime) {
+    	 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    	 try {
+			return sdf.parse(dateTime);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	 
+    	return null;
 	}
 	
 	public static List<Calendar> getFeriadosMoveis(int year) {

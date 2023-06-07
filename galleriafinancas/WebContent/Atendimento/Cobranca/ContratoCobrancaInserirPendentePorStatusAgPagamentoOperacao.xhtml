@@ -345,8 +345,7 @@
 								converter="bigDecimalConverter" />
 						</h:panelGrid>
 					</p:panel>
-				</h:panelGroup>
-
+				</h:panelGroup>				
 				<h:panelGroup id="ContasPagarPanel">
 					<p:panel header="Dispesas" style="margin-bottom:10px;">
 						<f:facet name="header"> Despesas 
@@ -466,11 +465,23 @@
 									<f:selectItem itemValue="TED" itemLabel="TED" />
 									<f:selectItem itemValue="Pix" itemLabel="Pix" />
 									<f:selectItem itemValue="Boleto" itemLabel="Boleto" />
+									<f:selectItem itemValue="StarkBank" itemLabel="StarkBank" />
 									<p:ajax event="change" 
-										update="tedGrid pixGrid" />
+										update="tedGrid pixGrid starkBankGrid" />
 								</p:selectOneMenu>
-
+							
 							</h:panelGrid>
+							
+							<h:panelGroup id="starkBankGrid">
+								<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.contasPagarSelecionada.formaTransferencia eq 'StarkBank'}">
+									<p:outputLabel for="linhaDigitavel" styleClass="labelBold" value="Linha Digitável: " />
+									<p:inputText id="linhaDigitavel" value="#{contratoCobrancaMB.contasPagarSelecionada.linhaDigitavelStarkBank}" />
+									<p:outputLabel for="descricao" styleClass="labelBold" value="Descrição: " />
+									<p:inputText id="descricao" value="#{contratoCobrancaMB.contasPagarSelecionada.descricaoStarkBank}" />
+									<p:outputLabel for="cpfcnpjStark" styleClass="labelBold" value="CPF/CNPJ (Opcional): " />
+									<p:inputText id="cpfcnpjStark" value="#{contratoCobrancaMB.contasPagarSelecionada.numeroDocumentoPagadorStarkBank}" />
+								</h:panelGrid>
+							</h:panelGroup>
 							<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA, ASSISTENTEFINANCEIRO, COBRANCA_FINANCEIRO">  						
 					<p:panel id="ArquivosPagar" header="Selecionar conta a pagar" style="margin-bottom:10px;text-align: center;">							
 						<h:panelGrid columns="1">		
@@ -547,8 +558,10 @@
 							
 							<p:commandButton value="Concluir" ajax="true"
 								action="#{contratoCobrancaMB.concluirConta()}"
-								update=":form:ContasPagarPanel" icon="ui-icon ui-icon-check" />
+								update=":form:ContasPagarPanel :form:messageContasPagar" icon="ui-icon ui-icon-check" />
 						</h:panelGroup>
+						
+						<p:messages id="messageContasPagar"/>
 						
 						<p:dataTable var="contas" value="#{contratoCobrancaMB.objetoContratoCobranca.listContasPagar}" 
 							id="contasDT" style="width:1000px;" size="small"  >
@@ -575,9 +588,20 @@
 									converter="bigDecimalConverter" 
 									style="FONT-SIZE: 10pt;width:100px;" />
 							</p:column>
+							
+							<p:column style="text-align: center;" headerText="StarkBank"  >
+								<p:outputLabel value="#{contas.comprovantePagamentoStarkBank.line}" 
+									style="FONT-SIZE: 10pt;" />
+							</p:column>
 						
 							<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR, COBRANCA_FINANCEIRO">
 								<p:column style="text-align: center;width:260px;" headerText="" >
+									<p:commandButton value="Comprovante StarkBank" ajax="false"  icon="ui-icon-arrowthick-1-s" rendered="#{contas.comprovantePagamentoStarkBank != null}">						       	 	
+							       	 	<f:setPropertyActionListener target="#{starkBankAPI.pathPDF}" value="#{contas.comprovantePagamentoStarkBank.pathComprovante}" />
+							       	 	<f:setPropertyActionListener target="#{starkBankAPI.nomePDF}" value="#{contas.comprovantePagamentoStarkBank.nomeComprovante}" />
+							       	 	<p:fileDownload value="#{starkBankAPI.downloadFile}" />
+							    	</p:commandButton>	
+							    	
 									<p:commandButton value="Editar" icon="ui-icon-pencil"
 										action="#{contratoCobrancaMB.editarConta(contas)}" ajax="true"
 										update=":form:ContasPagarPanel" />

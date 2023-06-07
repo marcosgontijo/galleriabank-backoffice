@@ -37,6 +37,12 @@
        	</property>  
        	<property name="tags" type="java.lang.String">
             <column name="tags"/>
-        </property>	                    
+        </property>	
+       	<property name="pathComprovante" type="java.lang.String">
+            <column name="pathComprovante"/>
+        </property>	 
+        <property name="nomeComprovante" type="java.lang.String">
+            <column name="nomeComprovante"/>
+        </property>	                  
     </class>
 </hibernate-mapping>
