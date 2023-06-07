@@ -384,7 +384,6 @@ public class StarkBankAPI{
 	
 			payments.add(new BoletoPayment(data));
 	
-			geraReciboPagamentoBoleto("34191.09107 05447.947309", BigDecimal.valueOf(Long.valueOf("333")), "34191.09107 05447.947309 71544.640008 8 84660000011631", DateUtil.convertDateTimeToDate("2020-04-24T00:57:48+00:00"), "38.435.677/0001-25", pessoa.getNome());
 	    	payments = BoletoPayment.create(payments);
 
 	    	for (BoletoPayment payment : payments){
@@ -402,13 +401,14 @@ public class StarkBankAPI{
 	    		/*
 	    		 * TODO REVER PARSE DA DATA 
 	    		 */
+	    		
+	    		geraReciboPagamentoBoleto(payment.id, BigDecimal.valueOf(payment.amount), payment.line, DateUtil.convertDateTimeToDate(payment.created), payment.taxId, pessoa.getNome());
+	    		
 	    		boletoTransacao = new StarkBankBoleto(Long.valueOf(payment.id), BigDecimal.valueOf(payment.amount), payment.taxId, tagsStr, payment.description, payment.scheduled,
 	    				payment.line, payment.barCode, payment.fee, payment.status, DateUtil.convertDateTimeToDate(payment.created), this.pathPDF, this.nomePDF);
 	    		
 	    		StarkBankBoletoDAO starkBankBoletoDAO = new StarkBankBoletoDAO();
 	    		starkBankBoletoDAO.create(boletoTransacao);
-	    		
-	    		geraReciboPagamentoBoleto(payment.id, BigDecimal.valueOf(payment.amount), payment.line, DateUtil.convertDateTimeToDate(payment.created), payment.taxId, pessoa.getNome());
 	    		
 	    		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
 						"[StarkBank - Pagamento Boleto] Boleto Pago com Sucesso! Transação: " + payment.id, ""));
