@@ -600,5 +600,10 @@
 			<column name="tipoConta" />
 		</property>
 		
+		<property name="dataCasamento" type="java.util.Date">
+			<column name="dataCasamento" />
+		</property>
+		
+		
     </class>
 </hibernate-mapping>

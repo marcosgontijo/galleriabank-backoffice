@@ -49,8 +49,10 @@
 						<f:selectItem itemValue="AquisicaoCCI" itemLabel="Aquisicao/Emprestimo" />		
 						<f:selectItem itemValue="Ficha PPE" itemLabel="Ficha PPE - PF" />	
 						<f:selectItem itemValue="Ficha PLD e FT" itemLabel="Ficha PLD e FT - PJ" />	
-						<f:selectItem itemValue="DeclaracaoNaoUniaoEstavel" itemLabel="DeclaracaoNaoUniaoEstavel" />
-						<f:selectItem itemValue="DeclaracaoDestinacaoRecursos" itemLabel="DeclaracaoDestinacaoRecursos" />
+						<f:selectItem itemValue="DeclaracaoNaoUniaoEstavel" itemLabel="Declaração Não União Estavel" />
+						<f:selectItem itemValue="DeclaracaoUniaoEstavel" itemLabel="Declaração de União Estavel" />
+						<f:selectItem itemValue="DeclaracaoDestinacaoRecursos" itemLabel="Declaração Destinação Recursos" />
+						<f:selectItem itemValue="TermoPaju" itemLabel="Termo Responsabilidade Paju" />
 						<f:selectItem itemValue="CCBnova" itemLabel="CCB" />
 						<f:selectItem itemValue="AFnova" itemLabel="AF" />	
 												
@@ -1151,6 +1153,8 @@
 											<f:selectItem itemValue="VIÚVO" itemLabel="Viúvo" />											
 											<f:selectItem itemValue="DIVORCIADO" itemLabel="Divorciado" />
 											<f:selectItem itemValue="SEPARADO" itemLabel="Separado" />
+											<f:selectItem itemValue="SEPARADO JUDICIALMENTE" 
+												itemLabel="Separado Judicialmente" />
 											<p:ajax update=":form:conjugueParticipante" event="change" />
 										</p:selectOneMenu>
 

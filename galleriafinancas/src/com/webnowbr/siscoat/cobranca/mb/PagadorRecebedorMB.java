@@ -463,6 +463,54 @@ public class PagadorRecebedorMB {
 		}
 	}
 	
+	public void getEnderecoByViaNetConjuge() {
+		try {			
+			String inputCep = this.objetoPagadorRecebedor.getCepConjuge().replace("-", "");
+			FacesContext context = FacesContext.getCurrentInstance();
+			
+			int HTTP_COD_SUCESSO = 200;
+			
+			URL myURL = new URL("http://viacep.com.br/ws/" + inputCep + "/json/");
+
+			HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestMethod("GET");
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+			myURLConnection.setDoOutput(true);
+			
+			String erro = "";
+			JSONObject myResponse = null;
+
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {	
+				this.objetoPagadorRecebedor.setEnderecoConjuge("");
+				this.objetoPagadorRecebedor.setBairroConjuge("");
+				this.objetoPagadorRecebedor.setCidadeConjuge("");
+				this.objetoPagadorRecebedor.setEstadoConjuge("");
+			} else {
+				myResponse = getJsonSucesso(myURLConnection.getInputStream());
+				
+				if(myResponse.has("logradouro")) {
+					this.objetoPagadorRecebedor.setEnderecoConjuge(myResponse.get("logradouro").toString());
+				}
+				
+				if(myResponse.has("bairro")) {
+					this.objetoPagadorRecebedor.setBairroConjuge(myResponse.get("bairro").toString());
+				}				
+				this.objetoPagadorRecebedor.setCidadeConjuge(myResponse.get("localidade").toString());
+				this.objetoPagadorRecebedor.setEstadoConjuge(myResponse.get("uf").toString());
+			}
+			myURLConnection.disconnect();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	/***
 	 * 
 	 * PARSE DO RETORNO SUCESSO

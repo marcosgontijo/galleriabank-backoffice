@@ -417,6 +417,7 @@ public class PagadorRecebedor implements Serializable {
 		conjuge.setCpf(pagador.getCpfConjuge());
 		conjuge.setAtividade(pagador.getCargoConjuge());
 		conjuge.setRg(pagador.getRgConjuge());
+		conjuge.setDataEmissaoRG(pagador.getDataEmissaoRGConjuge());
 		conjuge.setOrgaoEmissorRG(pagador.getOrgaoEmissorRGConjuge());
 		conjuge.setSexo(pagador.getSexoConjuge());
 		conjuge.setTelResidencial(pagador.getTelResidencialConjuge());
@@ -442,6 +443,7 @@ public class PagadorRecebedor implements Serializable {
 		conjuge.setCpfConjuge(pagador.getCpf());
 		conjuge.setCargoConjuge(pagador.getAtividade());
 		conjuge.setRgConjuge(pagador.getRg());
+		conjuge.setDataEmissaoRGConjuge(pagador.getDataEmissaoRG());
 		conjuge.setOrgaoEmissorRGConjuge(pagador.getOrgaoEmissorRG());
 		conjuge.setSexoConjuge(pagador.getSexo());
 		conjuge.setTelResidencialConjuge(pagador.getTelResidencial());
