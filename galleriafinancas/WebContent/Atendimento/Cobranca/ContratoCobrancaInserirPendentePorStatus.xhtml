@@ -918,6 +918,11 @@
 									value="#{contratoCobrancaMB.listaDocumentoAnalise}"
 									
 									rowKey="#{fileAnalise.id}" emptyMessage="">
+									<p:commandButton value="Atualizar listagem" ajax="true" update="ArquivosAnalisados" style="margin-left:10px;"
+								        action="#{contratoCobrancaMB.listaArquivosAnaliseDocumentos}" immediate="true"
+								       icon="ui-icon-search">
+							        </p:commandButton>
+									
 									<p:column headerText="Liberado Análise" >
 										<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"   
 										rendered="#{fileAnalise.podeChamarRea or fileAnalise.podeChamarEngine or fileAnalise.reaProcessado or fileAnalise.engineProcessado}"
