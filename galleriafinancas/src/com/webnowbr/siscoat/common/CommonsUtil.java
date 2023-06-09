@@ -1390,6 +1390,7 @@ public class CommonsUtil {
 
 	}
 
+	
 	/**
 	 * Retorna o sistema operacional que o sistema está rodando Util para definir os
 	 * locais de arquivos em ambiente Windows e Linux Bonatte: 06/03/2015 retorna

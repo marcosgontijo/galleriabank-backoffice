@@ -71,8 +71,8 @@ public class ScrService {
 			documentoAnalise.setRetornoScr(GsonUtil.toJson(scrResult));
 			documentoAnaliseDao.merge(documentoAnalise);
 			
-			DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
-			documentoAnaliseService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+			PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+			pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
 					DocumentosAnaliseEnum.SCR, documentoAnalise.getRetornoScr());
 			}
 			
@@ -120,12 +120,11 @@ public class ScrService {
 				if (!scResult.isErro()) {
 					System.out.println("SUCESSO NA GERAÇÃO DO SCR" );
 					
-					DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
-					
+			
 					PagadorRecebedorService  pagadorRecebedorService = new PagadorRecebedorService();
 					PagadorRecebedor pagadorRecebedor = pagadorRecebedorService.findByCpfCnpj(documento);
 							
-					documentoAnaliseService.adicionarConsultaNoPagadorRecebedor(pagadorRecebedor,
+					pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagadorRecebedor,
 							DocumentosAnaliseEnum.SCR, stringResponse);
 					
 					

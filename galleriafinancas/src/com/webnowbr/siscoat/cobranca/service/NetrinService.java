@@ -11,11 +11,11 @@ import java.net.URL;
 import javax.faces.application.FacesMessage;
 
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
+import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 
-import br.com.galleriabank.netrin.cliente.model.receitafederal.IReceitaFederal;
 import br.com.galleriabank.netrin.cliente.model.receitafederal.ReceitaFederalPF;
 import br.com.galleriabank.netrin.cliente.model.receitafederal.ReceitaFederalPJ;
 import br.com.galleriabank.serasacrednet.cliente.util.GsonUtil;
@@ -82,9 +82,9 @@ public class NetrinService {
 				documentoAnalise.setRetornoCenprot(response.toString());
 
 				documentoAnaliseDao.merge(documentoAnalise);
-
-				DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
-				documentoAnaliseService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+				
+				PagadorRecebedorService PagadorRecebedorService = new PagadorRecebedorService();
+				PagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
 						DocumentosAnaliseEnum.CENPROT, response.toString());
 
 				result = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
@@ -163,11 +163,25 @@ public class NetrinService {
 	}
 
 	public ReceitaFederalPF requestCadastroPF(String sCpfCnpj) {
-
-		FacesMessage facesMessage = new FacesMessage();
+		FacesMessage facesMessage = new FacesMessage();		
 		return netrinCriarConsultaCadastroPF(sCpfCnpj, facesMessage);
 	}
-
+	
+	public ReceitaFederalPF requestCadastroPF(PagadorRecebedor pagadorRecebedor) {
+		FacesMessage facesMessage = new FacesMessage();		
+		
+		ReceitaFederalPF receitaFederalPF  = netrinCriarConsultaCadastroPF(pagadorRecebedor.getCpf(), facesMessage);
+		
+		pagadorRecebedor.setNome(receitaFederalPF.getCpfBirthdate().getNome());
+		pagadorRecebedor.setDataCasamento(
+				CommonsUtil.dateValue(receitaFederalPF.getCpfBirthdate().getDataNascimento(), "dd/MM/YYYY"));
+		pagadorRecebedor.setSexo(receitaFederalPF.getCpfBirthdate().getGenero());
+		pagadorRecebedor.setNomeMae(receitaFederalPF.getCpfBirthdate().getNomeMae());
+		
+	
+		return receitaFederalPF;
+	}
+	
 	public ReceitaFederalPF netrinCriarConsultaCadastroPF(String sCpfCnpj, FacesMessage facesMessage) { // POST para
 																										// gerar
 																										// consulta
@@ -235,6 +249,25 @@ public class NetrinService {
 
 		FacesMessage facesMessage = new FacesMessage();
 		return netrinCriarConsultaCadastroPJ(sCpfCnpj, facesMessage);
+	}
+	
+	public ReceitaFederalPJ requestCadastroPJ(PagadorRecebedor pagadorRecebedor) {
+
+		FacesMessage facesMessage = new FacesMessage();
+		ReceitaFederalPJ receitaFederalPJ  = netrinCriarConsultaCadastroPJ(pagadorRecebedor.getCnpj(), facesMessage);
+
+		pagadorRecebedor.setNome(receitaFederalPJ.getReceitaFederal().getRazaoSocial());
+		pagadorRecebedor.setEndereco(receitaFederalPJ.getReceitaFederal().getLogradouro());
+		pagadorRecebedor.setNumero(receitaFederalPJ.getReceitaFederal().getNumero());
+		pagadorRecebedor.setComplemento(receitaFederalPJ.getReceitaFederal().getComplemento());
+		pagadorRecebedor.setBairro(receitaFederalPJ.getReceitaFederal().getBairro());
+		pagadorRecebedor.setCidade(receitaFederalPJ.getReceitaFederal().getMunicipio());
+		pagadorRecebedor.setCep(receitaFederalPJ.getReceitaFederal().getCep());
+		pagadorRecebedor.setEstado(receitaFederalPJ.getReceitaFederal().getUf());
+		pagadorRecebedor.setEmail(receitaFederalPJ.getReceitaFederal().getEmail());
+//			pagadorRecebedor.sett(receitaFederalPJ.getReceitaFederal().getTelefone());
+		
+		return receitaFederalPJ;
 	}
 
 	public ReceitaFederalPJ netrinCriarConsultaCadastroPJ(String sCpfCnpj, FacesMessage facesMessage) { // POST para
