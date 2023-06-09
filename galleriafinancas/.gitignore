@@ -1,7 +1,5 @@
 /build/
 /jasper/
-/target/
 /bin/
-/.settings/
-/.classpath
-/.metadata/
+/target/
+/.gitignore
