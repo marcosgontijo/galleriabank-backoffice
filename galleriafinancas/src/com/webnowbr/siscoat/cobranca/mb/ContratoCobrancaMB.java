@@ -3329,6 +3329,10 @@ public class ContratoCobrancaMB {
 	}
 	
 	public void verificaPagementoAntecipado(){	
+		if(objetoContratoCobranca.isApenasPagamentoAntecipado()) {
+			return;
+		}
+		
 		if(CommonsUtil.mesmoValor(objetoContratoCobranca.getTipoOperacao(), "Emprestimo")) {
 			objetoContratoCobranca.setApenasPagamentoAntecipado(true);
 		} else if(CommonsUtil.mesmoValor(objetoImovelCobranca.getTipo(), "Apartamento")
