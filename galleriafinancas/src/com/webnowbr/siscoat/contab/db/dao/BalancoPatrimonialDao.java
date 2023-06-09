@@ -61,7 +61,7 @@ public class BalancoPatrimonialDao extends HibernateDao <BalancoPatrimonial,Long
 			+ "ORDER BY numerocontrato ASC, datavencimento ASC;";
 	
 	@SuppressWarnings("unchecked")
-	public BigDecimal consultaDireitosCreditorios() {
+	public BigDecimal consultaDireitosCreditorios(BalancoPatrimonial balanco) {
 		return (BigDecimal) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -76,7 +76,10 @@ public class BalancoPatrimonialDao extends HibernateDao <BalancoPatrimonial,Long
 					ps = connection.prepareStatement(QUERY_DIREITOS_CREDITORIOS);
 					rs = ps.executeQuery();
 					
-					rs.next();
+					while (rs.next()) {	
+						balanco.calcularVariaveis(rs.getBigDecimal("vlrParcela"),rs.getDate("dataVencimento"), rs.getBoolean("indice"), rs.getString("empresa"));
+								
+					}
 					
 					objects = rs.getBigDecimal(1);
 	

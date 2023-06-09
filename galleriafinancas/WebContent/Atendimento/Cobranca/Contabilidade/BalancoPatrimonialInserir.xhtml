@@ -28,11 +28,7 @@
 
 					<p:calendar id="referencia"
 						value="#{balancoPatrimonialMB.objetoBalanco.aaaaMM}" label="Data"
-						size="100" pattern="dd/MM/yyyy" styleClass="dateTimeField"
-						onchange="#{balancoPatrimonialMB.atualizaParcela()}">
-
-						<p:ajax event="dateSelect" listener="#{balancoPatrimonialMB.atualizaParcela()}"
-							update="recursosDebentures caixa saldoBancos saldoAplFin" />
+						size="100" pattern="dd/MM/yyyy" styleClass="dateTimeField">
 					</p:calendar>
 					
 					<p:outputLabel for="cdi" value="Informe CDI: "
@@ -90,8 +86,8 @@
 					</p:inputText>
 					</h:panelGrid>
 					
-					<p:commandButton value="Gerar Balanço" icon="ui-icon-plus" 
-						action="#{balancoPatrimonialMB.geraBalanco}" update=" mensagens :form:visaoBalanco">
+					<p:commandButton value="Gerar Balanço" icon="ui-icon-plus" ajax="false"
+						action="#{balancoPatrimonialMB.geraBalanco}" update="visaoBalanco">
 					</p:commandButton>
 					
 				</p:panel>

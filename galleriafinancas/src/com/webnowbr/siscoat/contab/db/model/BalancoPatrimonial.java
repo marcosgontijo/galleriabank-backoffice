@@ -389,7 +389,7 @@ public class BalancoPatrimonial implements Serializable {
 		recursosDebentures = recursosDebentures.add(pagarDebenturista);
 	}
 	
-	public void calcularVariaveis(BigDecimal valor,  Date dataParcela, Boolean indice) {
+	public void calcularVariaveis(BigDecimal valor,  Date dataParcela, Boolean indice, String empresa) {
 		//calculo de QUANTIDADE MESES e VALOR FACE
 		custoPonderado = BigDecimal.ONE;
 		BigDecimal juros = custoPonderado;		
@@ -422,7 +422,7 @@ public class BalancoPatrimonial implements Serializable {
 				
 				valorFace = saldo.multiply(ipcaMeses);//parcela * ipcaMeses
 			}
-			
+			calculaDireitosCreditorios (valor, quantidadeDeMeses, valorFace, empresa);
 		}
 
 	public void calculaDireitosCreditorios (BigDecimal valor, BigDecimal quantidadeDeMeses, BigDecimal valorFace, String empresa) {

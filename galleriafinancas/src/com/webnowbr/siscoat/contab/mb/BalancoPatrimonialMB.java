@@ -69,7 +69,7 @@ public class BalancoPatrimonialMB {
 	}
 	public String clearBalancoPatrimonialNew() {
 		objetoBalanco = new BalancoPatrimonial();
-		this.objetoBalanco.setAaaamm(gerarDataHoje());
+		this.objetoBalanco.setAaaamm(null);
 		this.objetoBalanco.setSaldoCaixaOmie(CommonsUtil.bigDecimalValue(0));
 		this.objetoBalanco.setSaldoBancos(CommonsUtil.bigDecimalValue(0));
 		this.objetoBalanco.setSaldoAplFin(CommonsUtil.bigDecimalValue(0));
@@ -97,7 +97,7 @@ public class BalancoPatrimonialMB {
 		this.objetoBalanco.setDepositoBacenScd(CommonsUtil.bigDecimalValue(1016095.04));
 		
 		//VALOR DEFAULT NO DAO - VALOR DO SISTEMA
-		this.objetoBalanco.setDireitosCreditorios(balancopatrimonialDao.consultaDireitosCreditorios());
+		this.objetoBalanco.setDireitosCreditorios(balancopatrimonialDao.consultaDireitosCreditorios(objetoBalanco));
 		this.objetoBalanco.setProvisaoLiquidAntecipada(balancopatrimonialDao.consultaContasPagar());
 		this.objetoBalanco.setCustoPonderado(balancopatrimonialDao.somaParcelaX());
 		
@@ -127,7 +127,7 @@ public class BalancoPatrimonialMB {
 		this.objetoBalanco.setDepositoBacenScd(CommonsUtil.bigDecimalValue(1016095.04));
 		
 		//VALOR DEFAULT NO DAO - VALOR DO SISTEMA
-		this.objetoBalanco.setDireitosCreditorios(balancopatrimonialDao.consultaDireitosCreditorios());
+		this.objetoBalanco.setDireitosCreditorios(balancopatrimonialDao.consultaDireitosCreditorios(objetoBalanco));
 		this.objetoBalanco.setProvisaoLiquidAntecipada(balancopatrimonialDao.consultaContasPagar());
 		this.objetoBalanco.setCustoPonderado(balancopatrimonialDao.somaParcelaX());
 		
@@ -145,6 +145,11 @@ public class BalancoPatrimonialMB {
 	
 	public void atualizaParcela () {
 		BalancoPatrimonialDao balancopatrimonialDao = new BalancoPatrimonialDao();
+		
+		if (objetoBalanco.getAaaaMM() == null) {
+			return;
+			
+		}
 		this.objetoBalanco.setRecursosDebentures(CommonsUtil.bigDecimalValue(0)); //Zera o valor de Recursos Debentures
 		balancopatrimonialDao.atualizaParcela(objetoBalanco); //Recalcula o valor de Recursos Debentures
 		objetoBalanco.saldoCaixaOmie(); //atualiza saldos contas

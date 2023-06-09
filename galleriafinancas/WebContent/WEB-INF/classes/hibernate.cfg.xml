@@ -9,15 +9,22 @@
     
     <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
     <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>	
-    
- 	<property name="hibernate.connection.url">jdbc:postgresql://postgresql:5432/webnowbr_galleriafinancas</property>
-	<property name="hibernate.connection.username">postgres</property>
-	<property name="hibernate.connection.password">postgres</property>
+
 	<!--
+ 	<property name="hibernate.connection.url">jdbc:postgresql://postgresql:5432/webnowbr_galleriafinancas</property>
+	<property name="hibernate.connection.username">webnowbr</property>
+	<property name="hibernate.connection.password">hvj#283@bR83</property>
+	-->
+	
+	<!--  
 	<property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/galleriafinancas</property>
 	<property name="hibernate.connection.username">postgres</property>
-	<property name="hibernate.connection.password">Hvj28383**</property>
-	-->
+	<property name="hibernate.connection.password">@Kajugui</property>-->
+	
+	<property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/20230106</property>
+	<property name="hibernate.connection.username">postgres</property>
+	<property name="hibernate.connection.password">@Kajugui</property>
+	
 	<!--
 	<property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/galleriafinancas</property>
 	<property name="hibernate.connection.username">postgres</property>
@@ -27,8 +34,9 @@
 	<property name="hibernate.connection.username">hermesjr</property>
 	<property name="hibernate.connection.password">hvj28383</property>
  	-->
+ 	
     <property name="hibernate.hbm2ddl.auto">update</property> 
     <property name="current_session_context_class">thread</property>    
-    <property name="hibernate.show_sql">false</property>
+    <property name="hibernate.show_sql">true</property>
    </session-factory>
 </hibernate-configuration>
