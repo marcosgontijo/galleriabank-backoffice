@@ -940,6 +940,13 @@
 											listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
 											</p:selectBooleanButton>
 									</p:column>
+									<p:column headerText="Liberar Processos">
+										<p:selectBooleanButton value="#{fileAnalise.liberadoProcesso}"
+											 onLabel="Sim" offLabel="Não" style="width:6rem" >
+										<p:ajax  event="change"
+											listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
+											</p:selectBooleanButton>
+									</p:column>
 									<p:column headerText="Liberar SCR">
 										<p:selectBooleanButton value="#{fileAnalise.liberadoScr}"
 											 onLabel="Sim" offLabel="Não" style="width:6rem" >
@@ -991,6 +998,11 @@
 											icon="ui-icon ui-icon-print" value="Download Cenprot"
 											rendered="#{fileAnalise.cenprotProcessado }" ajax="false" />
 											
+											<p:commandButton
+											action="#{netrinMB.baixarDocumentoProcesso(fileAnalise)}"
+											icon="ui-icon ui-icon-print" value="Download Processos"
+											rendered="#{fileAnalise.processoProcessado }" ajax="false" />
+																						
 										<p:commandButton
 											action="#{bmpDigitalMB.baixarDocumento(fileAnalise)}"
 											icon="ui-icon ui-icon-print" value="Download SCR"
