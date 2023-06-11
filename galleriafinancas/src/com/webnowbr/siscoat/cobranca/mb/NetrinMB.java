@@ -60,6 +60,12 @@ public class NetrinMB {
 		String documentoBase64 = netrinService.baixarDocumento(documentoAnalise);
 		decodarBaixarArquivo(documentoAnalise, documentoBase64);
 	}
+	
+	public void baixarDocumentoProcesso(DocumentoAnalise documentoAnalise) {
+
+		String documentoBase64 = netrinService.baixarDocumentoProcesso(documentoAnalise);
+		decodarBaixarArquivo(documentoAnalise, documentoBase64);
+	}
 
 	public StreamedContent decodarBaixarArquivo(DocumentoAnalise documentoAnalise, String base64) {
 		if (CommonsUtil.semValor(base64)) {

@@ -114,12 +114,13 @@ public class SerasaService {
 				documentoAnalise.setRetornoSerasa(response.toString());
 				documentoAnaliseDao.merge(documentoAnalise);
 				
-				DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
+				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+				
 				if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa()))
-				documentoAnaliseService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+					pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
 						DocumentosAnaliseEnum.CREDNET, response.toString());
 				else
-					documentoAnaliseService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+					pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
 							DocumentosAnaliseEnum.RELATO, response.toString());
 						
 				result = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");

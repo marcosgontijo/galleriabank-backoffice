@@ -28,7 +28,7 @@ public class PagadorRecebedorConsultaDao extends HibernateDao<PagadorRecebedorCo
 		return (PagadorRecebedorConsulta) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
-				PagadorRecebedorConsulta pagadorRecebedor = new PagadorRecebedorConsulta();
+				PagadorRecebedorConsulta pagadorRecebedor = null;
 
 				Connection connection = null;
 				PreparedStatement ps = null;

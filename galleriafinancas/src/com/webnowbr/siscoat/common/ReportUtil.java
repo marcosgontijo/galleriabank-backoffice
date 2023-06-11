@@ -29,7 +29,7 @@ public class ReportUtil {
 	 * 
 	 * @param nomeRelatorio
 	 * @return
-	 * @throws BusinessException
+	 * @throws SiscoatException
 	 */
 	public JasperReport getRelatorio(String nomeRelatorio) throws JRException {
 		JasperReport jasperReport = null;

@@ -28122,7 +28122,8 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		
 		ScrService scrService = new ScrService();
 
-		for (DocumentoAnalise documentoAnalise : this.listaDocumentoAnalise.stream().filter(d -> d.isLiberadoAnalise() || d.isLiberadoSerasa() || d.isLiberadoCenprot()|| d.isLiberadoScr())
+		for (DocumentoAnalise documentoAnalise : this.listaDocumentoAnalise.stream().filter(d -> d.isLiberadoAnalise() || d.isLiberadoSerasa() ||
+				d.isLiberadoCenprot()|| d.isLiberadoScr()|| d.isLiberadoProcesso())
 				.collect(Collectors.toList())) {
 			
 			if (documentoAnalise.isLiberadoAnalise()) {
@@ -28151,6 +28152,11 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 				if (documentoAnalise.isLiberadoCenprot()) {
 					if (CommonsUtil.semValor(documentoAnalise.getRetornoCenprot())) {
 						netrinService.requestCenprot(documentoAnalise);
+					}
+				}
+				if (documentoAnalise.isLiberadoProcesso()) {
+					if (CommonsUtil.semValor(documentoAnalise.getRetornoProcesso())) {
+						netrinService.requestProcesso(documentoAnalise);
 					}
 				}
 

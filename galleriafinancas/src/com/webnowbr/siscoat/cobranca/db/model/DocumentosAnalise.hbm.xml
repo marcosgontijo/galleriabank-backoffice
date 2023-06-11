@@ -45,19 +45,23 @@
 		</property>
 		
 		<property name="liberadoAnalise" type="boolean">
-			<column name="liberadoAnalise" />
+			<column name="liberadoAnalise" not-null="true" default ="false" />
 		</property>		
 		
 		<property name="liberadoSerasa" type="boolean">
-			<column name="liberadoSerasa" />
+			<column name="liberadoSerasa" not-null="true" default ="false" />
 		</property>	
 		
 		<property name="liberadoCenprot" type="boolean">
-			<column name="liberadoCenprot" />
+			<column name="liberadoCenprot" not-null="true" default ="false" />
+		</property>	
+		
+		<property name="liberadoProcesso" type="boolean">
+			<column name="liberadoProcesso" not-null="true" default ="false" />
 		</property>	
 		
 		<property name="liberadoScr" type="boolean">
-			<column name="liberadoScr" />
+			<column name="liberadoScr" not-null="true" default ="false" />
 		</property>	
 		
 		
@@ -83,6 +87,10 @@
 		</property>
 		<property name="retornoScr" type="java.lang.String"  length="65000">
 			<column name="retornoScr" />
+		</property>
+		
+			<property name="retornoProcesso" type="java.lang.String"  length="65000">
+			<column name="retornoProcesso" />
 		</property>
 		
 		<property name="motivoAnalise" type="java.lang.String"  length="65000">
