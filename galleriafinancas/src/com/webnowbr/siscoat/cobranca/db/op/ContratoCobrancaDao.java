@@ -4290,7 +4290,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						
 						objects.add(contratoCobranca);		
 						
-						System.out.println("id: " + contratoCobranca.getId());
+						//System.out.println("id: " + contratoCobranca.getId());
 					}
 	
 				} finally {
