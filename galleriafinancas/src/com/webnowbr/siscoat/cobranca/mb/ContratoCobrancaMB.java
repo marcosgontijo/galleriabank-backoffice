@@ -13783,6 +13783,9 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 					simuladorMB.simular();
 				}
 			}
+			
+			// calcula coluna valor atualizado
+			ContratoCobrancaUtilsMB contratoCobrancaUtilsMB;
 
 			for (ContratoCobrancaDetalhes ccd : contratos.getListContratoCobrancaDetalhes()) {
 				
@@ -13812,9 +13815,6 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 
 				if (auxDataVencimento.before(auxDataPagamento) && !ccd.isParcelaPaga()) {
 					ccd.setParcelaVencida(true);
-
-					// calcula coluna valor atualizado
-					ContratoCobrancaUtilsMB contratoCobrancaUtilsMB;
 					/*
 					 * if (ccd.getVlrJuros().compareTo(BigDecimal.ZERO) == 0) {
 					 * contratoCobrancaUtilsMB = new ContratoCobrancaUtilsMB( auxDataVencimento,
