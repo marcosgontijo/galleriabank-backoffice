@@ -2143,18 +2143,6 @@
 			<column name="valorTotalAverbacao" />
 		</property>
 		
-		<property name="liberarAnaliseUsuario" type="java.lang.String">
-			<column name="liberarAnaliseUsuario" />
-		</property>
-		
-		<property name="liberarAnalise" type="boolean">
-			<column name="liberarAnalise" not-null="true" default="true"/>
-		</property>	
-		
-		<property name="liberarAnaliseData" type="java.util.Date">
-			<column name="liberarAnaliseData" />
-		</property>
-		
 		<property name="apenasPagamentoAntecipado" type="boolean">
 			<column name="apenasPagamentoAntecipado" not-null="true" default="false"/>
 		</property>	

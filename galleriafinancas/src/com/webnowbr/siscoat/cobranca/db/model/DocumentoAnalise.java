@@ -30,6 +30,7 @@ public class DocumentoAnalise implements Serializable {
 	private boolean liberadoAnalise;
 	private boolean liberadoSerasa;
 	private boolean liberadoCenprot;
+	private boolean liberadoProcesso;
 	private boolean liberadoScr;
 	
 
@@ -39,6 +40,8 @@ public class DocumentoAnalise implements Serializable {
 	private String retornoEngine;
 	private String retornoSerasa;
 	private String retornoCenprot;
+	private String retornoProcesso;
+	
 	private String retornoScr;
 	private String observacao;
 	
@@ -81,6 +84,11 @@ public class DocumentoAnalise implements Serializable {
 	public boolean isCenprotProcessado() {
 		return !CommonsUtil.semValor(retornoCenprot);
 	}
+	
+	public boolean isProcessoProcessado() {
+		return !CommonsUtil.semValor(retornoProcesso);
+	}
+	
 	
 	public boolean isScrProcessado() {
 		return !CommonsUtil.semValor(retornoScr);
@@ -208,6 +216,14 @@ public class DocumentoAnalise implements Serializable {
 		this.retornoCenprot = retornoCenprot;
 	}
 
+	public String getRetornoProcesso() {
+		return retornoProcesso;
+	}
+
+	public void setRetornoProcesso(String retornoProcesso) {
+		this.retornoProcesso = retornoProcesso;
+	}
+
 	public String getRetornoSerasa() {
 		return retornoSerasa;
 	}
@@ -286,6 +302,15 @@ public class DocumentoAnalise implements Serializable {
 
 	public void setRetornoScr(String retornoScr) {
 		this.retornoScr = retornoScr;
+	}
+	
+
+	public boolean isLiberadoProcesso() {
+		return liberadoProcesso;
+	}
+
+	public void setLiberadoProcesso(boolean liberadoProcesso) {
+		this.liberadoProcesso = liberadoProcesso;
 	}
 
 	public String getObservacao() {

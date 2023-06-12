@@ -115,12 +115,10 @@
 										border-radius: 5px; padding: 10px;">
 										<p:outputLabel styleClass="labelBold">Inicio Análise</p:outputLabel>
 										<p:spacer></p:spacer>
-										<p:selectBooleanButton id="inicioAnaliseView" disabled="#{!contratoCobrancaMB.objetoContratoCobranca.liberarAnalise}"
+										<p:selectBooleanButton id="inicioAnaliseView" 
 											value="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise}"
 											onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 											offIcon="ui-icon-cancel" style="width:60px" />
-										<h:outputText value="Contrato não liberado para analise pelo comercial" style="font-weight: bold;"
-											rendered="#{!contratoCobrancaMB.objetoContratoCobranca.liberarAnalise}"/>
 									</h:panelGrid>
 								</ui:fragment>
 
@@ -942,6 +940,13 @@
 											listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
 											</p:selectBooleanButton>
 									</p:column>
+									<p:column headerText="Liberar Processos">
+										<p:selectBooleanButton value="#{fileAnalise.liberadoProcesso}"
+											 onLabel="Sim" offLabel="Não" style="width:6rem" >
+										<p:ajax  event="change"
+											listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
+											</p:selectBooleanButton>
+									</p:column>
 									<p:column headerText="Liberar SCR">
 										<p:selectBooleanButton value="#{fileAnalise.liberadoScr}"
 											 onLabel="Sim" offLabel="Não" style="width:6rem" >
@@ -993,6 +998,11 @@
 											icon="ui-icon ui-icon-print" value="Download Cenprot"
 											rendered="#{fileAnalise.cenprotProcessado }" ajax="false" />
 											
+											<p:commandButton
+											action="#{netrinMB.baixarDocumentoProcesso(fileAnalise)}"
+											icon="ui-icon ui-icon-print" value="Download Processos"
+											rendered="#{fileAnalise.processoProcessado }" ajax="false" />
+																						
 										<p:commandButton
 											action="#{bmpDigitalMB.baixarDocumento(fileAnalise)}"
 											icon="ui-icon ui-icon-print" value="Download SCR"

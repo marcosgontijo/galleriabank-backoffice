@@ -1,8 +1,13 @@
 package com.webnowbr.siscoat.cobranca.service;
 
+import java.util.Date;
+
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
+import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorConsulta;
+import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorConsultaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 
 public class PagadorRecebedorService {
 	
@@ -63,5 +68,38 @@ public class PagadorRecebedorService {
 
 	}
 	
+	public void adicionarConsultaNoPagadorRecebedor(PagadorRecebedor pagador, DocumentosAnaliseEnum tipoConsulta,
+			String consulta) {
 
+		PagadorRecebedorConsultaDao PagadorRecebedorConsultaDao = new PagadorRecebedorConsultaDao();
+
+		// buscando ultima consutla do pagador
+		PagadorRecebedorConsulta pagadorRecebedorConsulta = PagadorRecebedorConsultaDao
+				.getConsultaByPagadorAndTipo(pagador, tipoConsulta);
+		if (pagadorRecebedorConsulta == null) {
+			pagadorRecebedorConsulta = new PagadorRecebedorConsulta();
+		}
+		pagadorRecebedorConsulta.setDataConsulta(new Date());
+		pagadorRecebedorConsulta.setRetornConsulta(consulta);
+		pagadorRecebedorConsulta.setPessoa(pagador);
+		pagadorRecebedorConsulta.setTipoEnum(tipoConsulta);
+
+		if (CommonsUtil.semValor(pagadorRecebedorConsulta.getId()))
+			PagadorRecebedorConsultaDao.create(pagadorRecebedorConsulta);
+		else
+			PagadorRecebedorConsultaDao.merge(pagadorRecebedorConsulta);
+
+	}
+	
+	public PagadorRecebedorConsulta buscaConsultaNoPagadorRecebedor(PagadorRecebedor pagador, DocumentosAnaliseEnum tipoConsulta) {
+
+		PagadorRecebedorConsultaDao PagadorRecebedorConsultaDao = new PagadorRecebedorConsultaDao();
+
+		// buscando ultima consutla do pagador
+		PagadorRecebedorConsulta pagadorRecebedorConsulta = PagadorRecebedorConsultaDao
+				.getConsultaByPagadorAndTipo(pagador, tipoConsulta);
+		return pagadorRecebedorConsulta;
+
+	}
+	
 }

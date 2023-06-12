@@ -7267,6 +7267,8 @@ public class CcbMB {
 					estadoCivilStr = "divorciada";
 				} else if (CommonsUtil.mesmoValor(pessoa.getEstadocivil(), "SEPARADO")) {
 					estadoCivilStr = "separada";
+				} else if (CommonsUtil.mesmoValor(pessoa.getEstadocivil(), "SEPARADO JUDICIALMENTE")) {
+					estadoCivilStr = "separada judicialmente";
 				} 
 			} else {
 				estadoCivilStr = pessoa.getEstadocivil().toLowerCase();
@@ -9634,6 +9636,281 @@ public class CcbMB {
 		return null;
 	}
 	
+	public StreamedContent geraDeclaracaoUniaoEstavel(CcbParticipantes participante) throws IOException{
+		try {
+			//PagadorRecebedor pagador
+			XWPFDocument document;
+			XWPFRun run;
+			XWPFRun run2;
+			
+			document = new XWPFDocument(getClass().getResourceAsStream("/resource/DeclaracaoUniaoEstavel.docx"));			
+			CTFonts fonts = CTFonts.Factory.newInstance();
+			fonts.setHAnsi("Calibri");
+			fonts.setAscii("Calibri");
+			fonts.setEastAsia("Calibri");
+			fonts.setCs("Calibri");
+			document.getStyles().setDefaultFonts(fonts);
+			document.getStyle().getDocDefaults().getRPrDefault().getRPr().setRFonts(fonts);
+			
+			int paragraph = 4;
+			run = document.getParagraphs().get(paragraph).insertNewRun(1);
+			document.getParagraphs().get(paragraph).setAlignment(ParagraphAlignment.BOTH);
+			//run.setFontSize(12);
+			run.setText(participante.getPessoa().getNome().toUpperCase() + ", ");
+			run.setBold(true);
+			run.setCharacterSpacing(1*10);
+			run2 = document.getParagraphs().get(paragraph).insertNewRun(2);
+			run2.setFontSize(11);
+			String filho;
+			String nacionalidade = participante.getNacionalidade();
+			String estadoCivilStr = "";
+			PagadorRecebedor pessoa = participante.getPessoa();
+
+			if (participante.isFeminino()) {
+				if (CommonsUtil.mesmoValor(participante.getNacionalidade(), "brasileiro")) {
+					nacionalidade = "brasileira";
+				}
+				filho = "filha";
+				if (CommonsUtil.mesmoValor(pessoa.getEstadocivil(), "SOLTEIRO")) {
+					estadoCivilStr = "solteira";
+				} else if (CommonsUtil.mesmoValor(pessoa.getEstadocivil(), "VIÚVO")) {
+					estadoCivilStr = "viúva";
+				} else if (CommonsUtil.mesmoValor(pessoa.getEstadocivil(), "DIVORCIADO")) {
+					estadoCivilStr = "divorciada";
+				} else if (CommonsUtil.mesmoValor(pessoa.getEstadocivil(), "SEPARADO")) {
+					estadoCivilStr = "separada";
+				} else if (CommonsUtil.mesmoValor(pessoa.getEstadocivil(), "SEPARADO JUDICIALMENTE")) {
+					estadoCivilStr = "separada judicialmente";
+				} 
+			} else {
+				estadoCivilStr = pessoa.getEstadocivil().toLowerCase();
+				filho = "filho";
+			}
+			estadoCivilStr = estadoCivilStr + " convivente em união estável";
+			
+			PagadorRecebedorDao pagadorDao = new PagadorRecebedorDao();
+			PagadorRecebedor conjuge = pagadorDao.findByFilter("cpf", participante.getPessoa().getCpfConjuge()).get(0);
+			CcbParticipantesDao partDao = new CcbParticipantesDao();
+			CcbParticipantes participanteConjuge = partDao.findByFilter("pessoa", conjuge).get(0);
+			String filhoConjuge;
+			String nacionalidadeConjuge = participanteConjuge.getNacionalidade();
+			String estadoCivilStrConjuge = "";
+			if (participanteConjuge.isFeminino()) {
+				if (CommonsUtil.mesmoValor(participanteConjuge.getNacionalidade(), "brasileiro")) {
+					nacionalidadeConjuge = "brasileira";
+				}
+				filhoConjuge = "filha";
+				if (CommonsUtil.mesmoValor(conjuge.getEstadocivil(), "SOLTEIRO")) {
+					estadoCivilStrConjuge = "solteira";
+				} else if (CommonsUtil.mesmoValor(conjuge.getEstadocivil(), "VIÚVO")) {
+					estadoCivilStrConjuge = "viúva";
+				} else if (CommonsUtil.mesmoValor(conjuge.getEstadocivil(), "DIVORCIADO")) {
+					estadoCivilStrConjuge = "divorciada";
+				} else if (CommonsUtil.mesmoValor(conjuge.getEstadocivil(), "SEPARADO")) {
+					estadoCivilStrConjuge = "separada";
+				} else if (CommonsUtil.mesmoValor(pessoa.getEstadocivil(), "SEPARADO JUDICIALMENTE")) {
+					estadoCivilStrConjuge = "separada judicialmente";
+				} 
+			} else {
+				estadoCivilStrConjuge = conjuge.getEstadocivil().toLowerCase();
+				filhoConjuge = "filho";
+			}
+			estadoCivilStrConjuge = estadoCivilStrConjuge + " convivente em união estável";
+			
+			
+			run2.setText( filho + " de " + pessoa.getNomeMae() + " e " + pessoa.getNomePai() + ", "
+					+ nacionalidade + ", "+ pessoa.getAtividade() + ", "+ estadoCivilStr + ","
+					+ " portador(a) da Cédula de Identidade RG nº "+ pessoa.getRg() + ","
+					+ " inscrito(a) no CPF/MF sob o nº "+ pessoa.getCpf() +", endereço eletrônico: "+ pessoa.getEmail() +" e ");	
+			
+			run = document.getParagraphs().get(paragraph).insertNewRun(3);
+			run.setFontSize(11);
+			run.setText(conjuge.getNome().toUpperCase() + ", ");
+			run.setBold(true);
+			run.setCharacterSpacing(1*10);
+			
+			run2 = document.getParagraphs().get(paragraph).insertNewRun(4);
+			run2.setFontSize(11);
+			run2.setText( filhoConjuge + " de " + conjuge.getNomeMae() + " e " + conjuge.getNomePai() + ", "
+					+ nacionalidadeConjuge + ", "+ conjuge.getAtividade() + ", "+ estadoCivilStrConjuge + ","
+					+ " portador(a) da Cédula de Identidade RG nº "+ conjuge.getRg() + ","
+					+ " inscrito(a) no CPF/MF sob o nº "+ conjuge.getCpf() +", endereço eletrônico: "+ conjuge.getEmail() 
+					+ ", residentes e domiciliados à "+ pessoa.getEndereco() +", nº "+ pessoa.getNumero() +", "
+					+ pessoa.getComplemento() + ", "+ pessoa.getBairro() + ", " 
+					+ pessoa.getCidade()+"/"+pessoa.getEstado()+", CEP "+ pessoa.getCep()+"; ");
+			
+			////
+		
+
+		    for (XWPFParagraph p : document.getParagraphs()) {
+				List<XWPFRun> runs = p.getRuns();
+			    if (runs != null) {  	
+			    	for (XWPFRun r : runs) {
+			            String text = r.getText(0);		            
+			            if(CommonsUtil.semValor(text)) {
+			            	continue;
+			            }			            	            
+			            
+			            text = trocaValoresXWPF(text, r, "nomeEmitente", (participante.getPessoa().getNome()));    
+						text = trocaValoresXWPF(text, r, "nomeConjuge", (participante.getPessoa().getNomeConjuge()));
+						text = trocaValoresXWPF(text, r, "cpfEmitente", (participante.getPessoa().getCpf()));    
+						text = trocaValoresXWPF(text, r, "cpfConjuge", (participante.getPessoa().getCpfConjuge()));
+							            
+			            text = trocaValoresXWPF(text, r, "emissaoDia", this.objetoCcb.getDataDeEmissao().getDate());
+						text = trocaValoresXWPF(text, r, "emissaoMes", CommonsUtil.formataMesExtenso(this.objetoCcb.getDataDeEmissao()).toLowerCase());
+						text = trocaValoresXWPF(text, r, "emissaoAno", (this.objetoCcb.getDataDeEmissao().getYear() + 1900));						
+			         
+			            text = trocaValoresXWPF(text, r, "nomeTestemunha1", this.objetoCcb.getNomeTestemunha1());
+						text = trocaValoresXWPF(text, r, "cpfTestemunha1", this.objetoCcb.getCpfTestemunha1());
+						text = trocaValoresXWPF(text, r, "rgTestemunha1", this.objetoCcb.getRgTestemunha1());						
+						text = trocaValoresXWPF(text, r, "nomeTestemunha2", this.objetoCcb.getNomeTestemunha2());
+						text = trocaValoresXWPF(text, r, "cpfTestemunha2", this.objetoCcb.getCpfTestemunha2());		
+						text = trocaValoresXWPF(text, r, "rgTestemunha2", this.objetoCcb.getRgTestemunha2());
+					}
+			    }
+			}
+		    
+		    for (XWPFTable tbl : document.getTables()) {
+				for (XWPFTableRow row : tbl.getRows()) {
+					for (XWPFTableCell cell : row.getTableCells()) {
+						for (XWPFParagraph p : cell.getParagraphs()) {
+							for (XWPFRun r : p.getRuns()) {
+					            String text = r.getText(0);					            
+					            if(CommonsUtil.semValor(text)) {
+					            	continue;
+					            }				         
+								text = trocaValoresXWPF(text, r, "nomeTestemunha1", this.objetoCcb.getNomeTestemunha1());
+								text = trocaValoresXWPF(text, r, "cpfTestemunha1", this.objetoCcb.getCpfTestemunha1());
+								text = trocaValoresXWPF(text, r, "rgTestemunha1", this.objetoCcb.getRgTestemunha1());						
+								text = trocaValoresXWPF(text, r, "nomeTestemunha2", this.objetoCcb.getNomeTestemunha2());
+								text = trocaValoresXWPF(text, r, "cpfTestemunha2", this.objetoCcb.getCpfTestemunha2());		
+								text = trocaValoresXWPF(text, r, "rgTestemunha2", this.objetoCcb.getRgTestemunha2());
+							}
+						}
+					}
+				}
+			}
+		   
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			document.write(out);
+			document.close();
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(FacesContext.getCurrentInstance());
+			String nomeSemvirgula = this.objetoCcb.getNomeEmitente();
+			if(nomeSemvirgula.contains(",")) {
+				nomeSemvirgula = nomeSemvirgula.replace(",", "");
+		    }
+			gerador.open(String.format("Galleria Bank - Declaracao Nao Uniao Estavel%s.docx", ""));
+			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
+			gerador.close();
+			criarCcbNosistema();	
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public StreamedContent geraTermoResponsabilidadeAnuenciaPaju(CcbParticipantes participante) throws IOException{
+		try {
+			//PagadorRecebedor pagador
+			XWPFDocument document;
+			XWPFRun run;
+			XWPFRun run2;
+			
+			document = new XWPFDocument(getClass().getResourceAsStream("/resource/TermoDeResponsabilidadeAnuenciaPaju.docx"));			
+			CTFonts fonts = CTFonts.Factory.newInstance();
+			fonts.setHAnsi("Calibri");
+			fonts.setAscii("Calibri");
+			fonts.setEastAsia("Calibri");
+			fonts.setCs("Calibri");
+			document.getStyles().setDefaultFonts(fonts);
+			document.getStyle().getDocDefaults().getRPrDefault().getRPr().setRFonts(fonts);
+			
+			int paragraph = 2;
+			run = document.getParagraphs().get(paragraph).insertNewRun(0);
+			document.getParagraphs().get(paragraph).setAlignment(ParagraphAlignment.BOTH);
+			//run.setFontSize(12);
+			run.setText(participante.getPessoa().getNome().trim().toUpperCase() + ", ");
+			run.setBold(true);
+			run.setUnderline(UnderlinePatterns.NONE);
+			run.setCharacterSpacing(1*10);
+			run.setFontSize(10);
+			run2 = document.getParagraphs().get(paragraph).insertNewRun(1);
+			run = document.getParagraphs().get(paragraph).insertNewRun(2);
+			//run2.setFontFamily("Calibri");
+			geraParagrafoPF(run2, participante);
+			run2.setUnderline(UnderlinePatterns.NONE);
+			run2.setFontSize(10);
+			run2.setText(run2.getText(0).replace(';', ','));
+			//run2.addCarriageReturn();
+
+		    for (XWPFParagraph p : document.getParagraphs()) {
+				List<XWPFRun> runs = p.getRuns();
+			    if (runs != null) {  	
+			    	for (XWPFRun r : runs) {
+			            String text = r.getText(0);		            
+			            if(CommonsUtil.semValor(text)) {
+			            	continue;
+			            }			           
+			            
+			            text = trocaValoresXWPF(text, r, "emissaoDia", this.objetoCcb.getDataDeEmissao().getDate());
+						text = trocaValoresXWPF(text, r, "emissaoMes", CommonsUtil.formataMesExtenso(this.objetoCcb.getDataDeEmissao()).toLowerCase());
+						text = trocaValoresXWPF(text, r, "emissaoAno", (this.objetoCcb.getDataDeEmissao().getYear() + 1900));						
+						text = trocaValoresXWPF(text, r, "nomeEmitente", (participante.getPessoa().getNome()));    
+			            text = trocaValoresXWPF(text, r, "numeroCCI", this.objetoCcb.getNumeroCcb());		          
+			            text = trocaValoresXWPF(text, r, "cartorioImovel", this.objetoCcb.getCartorioImovel());
+						text = trocaValoresXWPF(text, r, "cidadeImovel", this.objetoCcb.getCidadeImovel());
+						text = trocaValoresXWPF(text, r, "ufImovel", this.objetoCcb.getUfImovel());
+						text = trocaValoresXWPF(text, r, "numeroMatricula", this.objetoCcb.getNumeroRegistroMatricula());
+						
+						text = trocaValoresXWPF(text, r, "nomeTestemunha1", this.objetoCcb.getNomeTestemunha1());
+						text = trocaValoresXWPF(text, r, "cpfTestemunha1", this.objetoCcb.getCpfTestemunha1());
+						text = trocaValoresXWPF(text, r, "rgTestemunha1", this.objetoCcb.getRgTestemunha1());						
+						text = trocaValoresXWPF(text, r, "nomeTestemunha2", this.objetoCcb.getNomeTestemunha2());
+						text = trocaValoresXWPF(text, r, "cpfTestemunha2", this.objetoCcb.getCpfTestemunha2());		
+						text = trocaValoresXWPF(text, r, "rgTestemunha2", this.objetoCcb.getRgTestemunha2());
+						
+						Date pajuGerado = this.objetoCcb.getObjetoContratoCobranca().getPajurFavoravelData();
+						
+						text = trocaValoresXWPF(text, r, "pajuDia", pajuGerado.getDate());
+						text = trocaValoresXWPF(text, r, "pajuMes", CommonsUtil.formataMesExtenso(pajuGerado).toLowerCase());
+						text = trocaValoresXWPF(text, r, "pajuAno", (pajuGerado.getYear() + 1900));
+					}
+			    }
+			}
+		    
+		    for (XWPFTable tbl : document.getTables()) {
+				for (XWPFTableRow row : tbl.getRows()) {
+					for (XWPFTableCell cell : row.getTableCells()) {
+						for (XWPFParagraph p : cell.getParagraphs()) {
+							for (XWPFRun r : p.getRuns()) {
+					            String text = r.getText(0);					            
+					            if(CommonsUtil.semValor(text)) {
+					            	continue;
+					            }				         
+							}
+						}
+					}
+				}
+			}
+		   
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			document.write(out);
+			document.close();
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(FacesContext.getCurrentInstance());
+			String nomeSemvirgula = this.objetoCcb.getNomeEmitente();
+			if(nomeSemvirgula.contains(",")) {
+				nomeSemvirgula = nomeSemvirgula.replace(",", "");
+		    }
+			gerador.open(String.format("Galleria Bank - Declaracao Destinacao Recursos%s.docx", ""));
+			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
+			gerador.close();
+			criarCcbNosistema();	
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public StreamedContent geraFichaPPE() throws IOException{
 		try {
 			InputStream in = getClass().getResourceAsStream("/resource/Ficha PPE.pdf");
@@ -9744,6 +10021,16 @@ public class CcbMB {
 		    			return geraDeclaracaoDestinacaoRecursos(participante);
 		    		}
 		    	}
+		    } else if(CommonsUtil.mesmoValor(tipoDownload,"DeclaracaoUniaoEstavel")) {
+		    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
+		    		if(!participante.isEmpresa() && participante.isUniaoEstavel()) {
+		    			return geraDeclaracaoUniaoEstavel(participante);
+		    		}
+		    	}		    	
+		    } else if(CommonsUtil.mesmoValor(tipoDownload,"TermoPaju")) {
+		    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
+		    		return geraTermoResponsabilidadeAnuenciaPaju(participante);
+		    	}		    	
 		    } else {
 	    		
 	    	}

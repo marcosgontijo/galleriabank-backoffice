@@ -16,6 +16,7 @@ import com.webnowbr.siscoat.cobranca.db.op.DataEngineDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.service.DocumentoAnaliseService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
+import com.webnowbr.siscoat.cobranca.service.PagadorRecebedorService;
 import com.webnowbr.siscoat.cobranca.service.ScrService;
 import com.webnowbr.siscoat.cobranca.service.SerasaService;
 import com.webnowbr.siscoat.cobranca.service.UserService;
@@ -61,8 +62,8 @@ public class EngineWebhook {
 				DocumentoAnalise documentoAnalise = documentoAnaliseDao.findByFilter("engine", dataEngine).stream()
 						.findFirst().orElse(null);
 				
-				DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
-				documentoAnaliseService.adicionarConsultaNoPagadorRecebedor(dataEngine.getPagador(),
+				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+				pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(dataEngine.getPagador(),
 						DocumentosAnaliseEnum.ENGINE, webhookRetorno);
 				
 
