@@ -948,7 +948,7 @@ public class KobanaMB {
 	    }
 		
 		jsonBoleto.put("description", "Crédito com Imóvel em Garantia - Contrato: " + contrato.getNumeroContrato() + " / Parcela(s): " + parcelas);
-		jsonBoleto.put("instructions", "Não receber após 30 dias do vencimento");
+		jsonBoleto.put("instructions", "");
 		
 		JSONObject jsonCustomData = new JSONObject();
 		
