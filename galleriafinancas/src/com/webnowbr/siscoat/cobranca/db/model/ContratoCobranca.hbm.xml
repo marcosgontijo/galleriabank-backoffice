@@ -1086,7 +1086,7 @@
 			<column name="motivoReprovaLead" />
 		</property>
 		
-		<set name="listSegurados" table="segurado"  cascade="all-delete-orphan"
+		<set name="listSegurados" table="segurado"  cascade="persist"
                  lazy="false" fetch="select">
             <key>
                 <column name="contratoCobranca" not-null="true" />

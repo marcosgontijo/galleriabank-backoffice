@@ -89,6 +89,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.RegistroImovelTabelaDao;
+import com.webnowbr.siscoat.cobranca.db.op.SeguradoDAO;
 import com.webnowbr.siscoat.common.BancosEnum;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
@@ -350,8 +351,8 @@ public class CcbMB {
 			}
 		}
 		this.objetoCcb.getListSegurados().add(this.seguradoSelecionado);
-		this.seguradoSelecionado = new Segurado();
-		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
+		//this.seguradoSelecionado = new Segurado();
+		//this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
 		this.addSegurador= false;
 	}
 	
@@ -7469,21 +7470,28 @@ public class CcbMB {
 			
 			if(segurados.size() > 0) {
 				BigDecimal porcentagem =  BigDecimal.valueOf(100).divide(BigDecimal.valueOf(segurados.size()), MathContext.DECIMAL128).setScale(2, BigDecimal.ROUND_HALF_UP);
-				this.objetoCcb.getListSegurados().clear();
-				this.objetoCcb.getObjetoContratoCobranca().getListSegurados().clear();
-				for(CcbParticipantes participante : segurados) {
-					Segurado segurado = new Segurado();
-					if(!CommonsUtil.semValor(this.objetoCcb.getObjetoContratoCobranca())) {
-						segurado.setPessoa(participante.getPessoa());
-						segurado.setPorcentagemSegurador(porcentagem);
-						segurado.setPosicao(this.objetoCcb.getListSegurados().size() + 1);
-						if(!this.objetoCcb.getObjetoContratoCobranca().getListSegurados().contains(this.seguradoSelecionado)) {		
-							segurado.setContratoCobranca(this.objetoContratoCobranca);
-							this.objetoCcb.getObjetoContratoCobranca().getListSegurados().add(segurado);
+				if(this.objetoCcb.getListSegurados().size() != segurados.size()) {
+					this.objetoCcb.getListSegurados().clear();
+					this.objetoCcb.getObjetoContratoCobranca().getListSegurados().clear();
+					
+					for(CcbParticipantes participante : segurados) {
+						Segurado segurado = new Segurado();
+						if(!CommonsUtil.semValor(this.objetoCcb.getObjetoContratoCobranca())) {
+							segurado.setPessoa(participante.getPessoa());
+							segurado.setPorcentagemSegurador(porcentagem);
+							segurado.setPosicao(this.objetoCcb.getListSegurados().size() + 1);
+							if(!this.objetoCcb.getObjetoContratoCobranca().getListSegurados().contains(segurado)) {		
+								segurado.setContratoCobranca(this.objetoCcb.getObjetoContratoCobranca());
+								this.objetoCcb.getObjetoContratoCobranca().getListSegurados().add(segurado);
+							}
+							if(!this.objetoCcb.getListSegurados().contains(segurado)) {	
+								SeguradoDAO seguradoDAO = new SeguradoDAO();
+								seguradoDAO.create(segurado);
+								this.objetoCcb.getListSegurados().add(segurado);
+							}
 						}
 					}
-					this.objetoCcb.getListSegurados().add(segurado);
-				}
+				} 
 			}
 		
 			int indexSegurados = 40;
@@ -10543,8 +10551,8 @@ public class CcbMB {
 		clearPagadorRecebedor();
 		clearDespesas();
 		this.simulador = new SimulacaoVO();
-		this.seguradoSelecionado = new Segurado();
-		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
+		//this.seguradoSelecionado = new Segurado();
+		//this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
 		this.addSegurador = false;
 		CcbDao ccbDao = new CcbDao();
 		this.objetoCcb = ccbDao.findById(objetoCcb.getId());
@@ -10611,7 +10619,7 @@ public class CcbMB {
 		ContratoCobrancaDao ccDao = new ContratoCobrancaDao();
 		loadLovs();	
 		clearDespesas();
-		this.seguradoSelecionado = new Segurado();
+		//this.seguradoSelecionado = new Segurado();
 		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
 		this.addSegurador = false;
 		this.objetoCcb = new CcbContrato();
@@ -12384,9 +12392,5 @@ public class CcbMB {
 
 	public void setProcessoSelecionado(CcbProcessosJudiciais processoSelecionado) {
 		this.processoSelecionado = processoSelecionado;
-	}
-	
-	
-	
-	
+	}	
 }
