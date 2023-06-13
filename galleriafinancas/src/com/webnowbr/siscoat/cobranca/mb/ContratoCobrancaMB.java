@@ -28135,7 +28135,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 						DataEngine engine = docketService.engineInserirPessoa(documentoAnalise.getPagador(),
 								objetoContratoCobranca);
 						docketService.engineCriarConsulta(documentoAnalise, engine, loginBean.getUsuarioLogado());
-					}
+					}										
 				}
 			}
 			
