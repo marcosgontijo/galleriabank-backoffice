@@ -383,7 +383,7 @@ public class NetrinService {
 
 			URL myURL;
 			String sUrl= "https://servicos.galleriabank.com.br/netrin/api/v1/processo/"
-					+ CommonsUtil.somenteNumeros(cnpjcpf) + "/" + nomeConsultado ;
+					+ CommonsUtil.somenteNumeros(cnpjcpf) + "/" + nomeConsultado.replace(" ","%20") ;
 			// if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa()))
 			myURL = new URL(sUrl) ;
 			// else
@@ -397,8 +397,9 @@ public class NetrinService {
 			myURLConnection.setRequestProperty("Accept", "application/json");
 			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
 			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			String sBearer  = br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos();
 			myURLConnection.setRequestProperty("Authorization",
-					"Bearer " + br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos());
+					"Bearer " + sBearer );
 			myURLConnection.setDoOutput(true);
 
 			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
