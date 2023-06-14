@@ -62,7 +62,7 @@
 							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
 						<p:inputText id="Rg"
 							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.rg}"
-							label="RG  / CNH"
+							label="RG / CNH"
 							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
 	
 						<p:outputLabel for="DtEmissaoRG" value="Data Emissão: " />
@@ -430,7 +430,7 @@
 							<p:inputMask id="CepConjuge" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cepConjuge}"
 								mask="99999-999" label="Cep" >
 								<p:ajax event="blur" update="EnderecoConjuge BairroConjuge CidadeConjuge EstadoConjuge" 
-									listener="#{pagadorRecebedorMB.getEnderecoByViaNet()}" />
+									listener="#{pagadorRecebedorMB.getEnderecoByViaNetConjuge}" />
 							</p:inputMask>
 	
 							<p:outputLabel for="EstadoConjuge" value="Estado: "  />

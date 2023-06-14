@@ -442,16 +442,18 @@ public class PagadorRecebedorMB {
 				this.objetoPagadorRecebedor.setEstado("");
 			} else {
 				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-				
 				if(myResponse.has("logradouro")) {
 					this.objetoPagadorRecebedor.setEndereco(myResponse.get("logradouro").toString());
 				}
-				
 				if(myResponse.has("bairro")) {
 					this.objetoPagadorRecebedor.setBairro(myResponse.get("bairro").toString());
-				}				
-				this.objetoPagadorRecebedor.setCidade(myResponse.get("localidade").toString());
-				this.objetoPagadorRecebedor.setEstado(myResponse.get("uf").toString());
+				}		
+				if(myResponse.has("localidade")) {
+					this.objetoPagadorRecebedor.setCidade(myResponse.get("localidade").toString());
+				}
+				if(myResponse.has("uf")) {
+					this.objetoPagadorRecebedor.setEstado(myResponse.get("uf").toString());
+				}
 			}
 			myURLConnection.disconnect();
 		} catch (MalformedURLException e) {
@@ -490,16 +492,18 @@ public class PagadorRecebedorMB {
 				this.objetoPagadorRecebedor.setEstadoConjuge("");
 			} else {
 				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-				
 				if(myResponse.has("logradouro")) {
 					this.objetoPagadorRecebedor.setEnderecoConjuge(myResponse.get("logradouro").toString());
 				}
-				
 				if(myResponse.has("bairro")) {
 					this.objetoPagadorRecebedor.setBairroConjuge(myResponse.get("bairro").toString());
-				}				
-				this.objetoPagadorRecebedor.setCidadeConjuge(myResponse.get("localidade").toString());
-				this.objetoPagadorRecebedor.setEstadoConjuge(myResponse.get("uf").toString());
+				}			
+				if(myResponse.has("localidade")) {
+					this.objetoPagadorRecebedor.setCidadeConjuge(myResponse.get("localidade").toString());
+				}
+				if(myResponse.has("uf")) {
+					this.objetoPagadorRecebedor.setEstadoConjuge(myResponse.get("uf").toString());
+				}	
 			}
 			myURLConnection.disconnect();
 		} catch (MalformedURLException e) {

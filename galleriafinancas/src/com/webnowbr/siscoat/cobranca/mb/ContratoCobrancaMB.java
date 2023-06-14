@@ -158,6 +158,7 @@ import com.webnowbr.siscoat.cobranca.db.op.IPCADao;
 import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
+import com.webnowbr.siscoat.cobranca.db.op.SeguradoDAO;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.cobranca.service.ScrService;
@@ -2248,9 +2249,13 @@ public class ContratoCobrancaMB {
 				}
 				if(myResponse.has("bairro")) {
 					this.objetoPagadorRecebedor.setBairro(myResponse.get("bairro").toString());
+				}				
+				if(myResponse.has("localidade")) {
+					this.objetoPagadorRecebedor.setCidade(myResponse.get("localidade").toString());
+				}				
+				if(myResponse.has("uf")) {
+					this.objetoPagadorRecebedor.setEstado(myResponse.get("uf").toString());
 				}
-				this.objetoPagadorRecebedor.setCidade(myResponse.get("localidade").toString());
-				this.objetoPagadorRecebedor.setEstado(myResponse.get("uf").toString());
 			}
 			myURLConnection.disconnect();
 		} catch (MalformedURLException e) {
@@ -2289,11 +2294,18 @@ public class ContratoCobrancaMB {
 				pagador.setEstado("");
 			} else {
 				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-
-				pagador.setEndereco(myResponse.get("logradouro").toString());
-				pagador.setBairro(myResponse.get("bairro").toString());
-				pagador.setCidade(myResponse.get("localidade").toString());
-				pagador.setEstado(myResponse.get("uf").toString());
+				if(myResponse.has("logradouro")) {
+					pagador.setEndereco(myResponse.get("logradouro").toString());
+				}
+				if(myResponse.has("bairro")) {
+					pagador.setBairro(myResponse.get("bairro").toString());
+				}				
+				if(myResponse.has("localidade")) {
+					pagador.setCidade(myResponse.get("localidade").toString());
+				}			
+				if(myResponse.has("uf")) {
+					pagador.setEstado(myResponse.get("uf").toString());
+				}
 			}
 			myURLConnection.disconnect();
 		} catch (MalformedURLException e) {
@@ -2332,15 +2344,18 @@ public class ContratoCobrancaMB {
 				this.objetoImovelCobranca.setEstado("");
 			} else {
 				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-				
 				if(myResponse.has("logradouro")) {
 					this.objetoImovelCobranca.setEndereco(myResponse.get("logradouro").toString());
-				}			
+				}
 				if(myResponse.has("bairro")) {
 					this.objetoImovelCobranca.setBairro(myResponse.get("bairro").toString());
+				}				
+				if(myResponse.has("localidade")) {
+					this.objetoImovelCobranca.setCidade(myResponse.get("localidade").toString());
+				}				
+				if(myResponse.has("uf")) {
+					this.objetoImovelCobranca.setEstado(myResponse.get("uf").toString());
 				}
-				this.objetoImovelCobranca.setCidade(myResponse.get("localidade").toString());
-				this.objetoImovelCobranca.setEstado(myResponse.get("uf").toString());
 			}
 			myURLConnection.disconnect();
 		} catch (MalformedURLException e) {
@@ -2393,10 +2408,18 @@ public class ContratoCobrancaMB {
 				this.objetoPagadorRecebedor.setEstado("");
 			} else {
 				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-				this.objetoPagadorRecebedor.setEnderecoConjuge(myResponse.get("logradouro").toString());
-				this.objetoPagadorRecebedor.setBairroConjuge(myResponse.get("bairro").toString());
-				this.objetoPagadorRecebedor.setCidadeConjuge(myResponse.get("localidade").toString());
-				this.objetoPagadorRecebedor.setEstadoConjuge(myResponse.get("uf").toString());
+				if(myResponse.has("logradouro")) {
+					this.objetoPagadorRecebedor.setEnderecoConjuge(myResponse.get("logradouro").toString());
+				}
+				if(myResponse.has("bairro")) {
+					this.objetoPagadorRecebedor.setBairroConjuge(myResponse.get("bairro").toString());
+				}				
+				if(myResponse.has("localidade")) {
+					this.objetoPagadorRecebedor.setCidadeConjuge(myResponse.get("localidade").toString());
+				}			
+				if(myResponse.has("uf")) {
+					this.objetoPagadorRecebedor.setEstadoConjuge(myResponse.get("uf").toString());
+				}
 			}
 			myURLConnection.disconnect();
 		} catch (MalformedURLException e) {
@@ -2435,11 +2458,18 @@ public class ContratoCobrancaMB {
 				this.objetoPagadorRecebedor.setEstado("");
 			} else {
 				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-
-				this.objetoPagadorRecebedor.setEnderecoCoobrigado(myResponse.get("logradouro").toString());
-				this.objetoPagadorRecebedor.setBairroCoobrigado(myResponse.get("bairro").toString());
-				this.objetoPagadorRecebedor.setCidadeCoobrigado(myResponse.get("localidade").toString());
-				this.objetoPagadorRecebedor.setEstadoCoobrigado(myResponse.get("uf").toString());
+				if(myResponse.has("logradouro")) {
+					this.objetoPagadorRecebedor.setEnderecoCoobrigado(myResponse.get("logradouro").toString());
+				}
+				if(myResponse.has("bairro")) {
+					this.objetoPagadorRecebedor.setBairroCoobrigado(myResponse.get("bairro").toString());
+				}			
+				if(myResponse.has("localidade")) {
+					this.objetoPagadorRecebedor.setCidadeCoobrigado(myResponse.get("localidade").toString());
+				}			
+				if(myResponse.has("uf")) {
+					this.objetoPagadorRecebedor.setEstadoCoobrigado(myResponse.get("uf").toString());
+				}
 			}
 			myURLConnection.disconnect();
 		} catch (MalformedURLException e) {
@@ -2478,11 +2508,18 @@ public class ContratoCobrancaMB {
 				this.objetoPagadorRecebedor.setEstado("");
 			} else {
 				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-
-				this.objetoPagadorRecebedor.setEnderecoCoobrigadoCasado(myResponse.get("logradouro").toString());
-				this.objetoPagadorRecebedor.setBairroCoobrigadoCasado(myResponse.get("bairro").toString());
-				this.objetoPagadorRecebedor.setCidadeCoobrigadoCasado(myResponse.get("localidade").toString());
-				this.objetoPagadorRecebedor.setEstadoCoobrigadoCasado(myResponse.get("uf").toString());
+				if(myResponse.has("logradouro")) {
+					this.objetoPagadorRecebedor.setEnderecoCoobrigadoCasado(myResponse.get("logradouro").toString());
+				}
+				if(myResponse.has("bairro")) {
+					this.objetoPagadorRecebedor.setBairroCoobrigadoCasado(myResponse.get("bairro").toString());
+				}				
+				if(myResponse.has("localidade")) {
+					this.objetoPagadorRecebedor.setCidadeCoobrigadoCasado(myResponse.get("localidade").toString());
+				}				
+				if(myResponse.has("uf")) {
+					this.objetoPagadorRecebedor.setEstadoCoobrigadoCasado(myResponse.get("uf").toString());
+				}
 			}
 			myURLConnection.disconnect();
 		} catch (MalformedURLException e) {
@@ -4587,7 +4624,7 @@ public class ContratoCobrancaMB {
 			
 			// Bia (assistente Gislaine)
 			Responsavel rAssistente = new Responsavel();
-			rAssistente = rDao.findById((long) 359);
+			rAssistente = rDao.findById((long) 1556);
 			takeBlipMB.sendWhatsAppMessage(rAssistente,
 			template, 
 			nomeCliente,
@@ -18952,6 +18989,8 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		this.seguradoSelecionado.setContratoCobranca(this.objetoContratoCobranca);
 		this.seguradoSelecionado.setPosicao(this.objetoContratoCobranca.getListSegurados().size() + 1);
 		this.objetoContratoCobranca.getListSegurados().add(this.seguradoSelecionado);
+		SeguradoDAO seguradoDAO = new SeguradoDAO();
+		seguradoDAO.create(seguradoSelecionado);
 		this.seguradoSelecionado = new Segurado();
 		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
 		this.addSegurador= false;
