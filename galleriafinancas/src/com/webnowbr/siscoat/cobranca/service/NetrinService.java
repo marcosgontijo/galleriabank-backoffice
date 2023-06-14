@@ -174,9 +174,13 @@ public class NetrinService {
 		ReceitaFederalPF receitaFederalPF  = netrinCriarConsultaCadastroPF(pagadorRecebedor.getCpf(), facesMessage);
 		
 		pagadorRecebedor.setNome(receitaFederalPF.getCpfBirthdate().getNome());
-		pagadorRecebedor.setDataCasamento(
-				CommonsUtil.dateValue(receitaFederalPF.getCpfBirthdate().getDataNascimento(), "dd/MM/YYYY"));
-		pagadorRecebedor.setSexo(receitaFederalPF.getCpfBirthdate().getGenero());
+		pagadorRecebedor.setDtNascimento(
+				CommonsUtil.dateValue(receitaFederalPF.getCpfBirthdate().getDataNascimento(), "dd/MM/yyyy"));
+		if (CommonsUtil.mesmoValor("M", receitaFederalPF.getCpfBirthdate().getGenero()))
+			pagadorRecebedor.setSexo("MASCULINO");
+		else if (CommonsUtil.mesmoValor("F", receitaFederalPF.getCpfBirthdate().getGenero()))
+			pagadorRecebedor.setSexo("FEMININO");
+		
 		pagadorRecebedor.setNomeMae(receitaFederalPF.getCpfBirthdate().getNomeMae());
 		
 	
@@ -383,7 +387,7 @@ public class NetrinService {
 
 			URL myURL;
 			String sUrl= "https://servicos.galleriabank.com.br/netrin/api/v1/processo/"
-					+ CommonsUtil.somenteNumeros(cnpjcpf) + "/" + nomeConsultado ;
+					+ CommonsUtil.somenteNumeros(cnpjcpf) + "/" + nomeConsultado.replace(" ","%20") ;
 			// if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa()))
 			myURL = new URL(sUrl) ;
 			// else
@@ -397,8 +401,9 @@ public class NetrinService {
 			myURLConnection.setRequestProperty("Accept", "application/json");
 			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
 			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			String sBearer  = br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos();
 			myURLConnection.setRequestProperty("Authorization",
-					"Bearer " + br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos());
+					"Bearer " + sBearer );
 			myURLConnection.setDoOutput(true);
 
 			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {

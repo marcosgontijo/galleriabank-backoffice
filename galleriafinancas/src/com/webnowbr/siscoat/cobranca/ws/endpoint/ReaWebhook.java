@@ -125,7 +125,7 @@ public class ReaWebhook {
 			boolean cnpjCpfValido = false;
 
 			if (documentoAnalise.getTipoPessoa() == "PJ") {
-				cnpjCpfValido = ValidaCNPJ.isCNPJ(propietario.getCpf());
+				cnpjCpfValido = ValidaCNPJ.isCNPJ(propietario.getCnpj());
 				if (cnpjCpfValido)
 					documentoAnalise.setCnpjcpf(propietario.getCnpj());
 				else
