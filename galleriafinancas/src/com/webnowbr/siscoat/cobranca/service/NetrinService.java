@@ -174,9 +174,13 @@ public class NetrinService {
 		ReceitaFederalPF receitaFederalPF  = netrinCriarConsultaCadastroPF(pagadorRecebedor.getCpf(), facesMessage);
 		
 		pagadorRecebedor.setNome(receitaFederalPF.getCpfBirthdate().getNome());
-		pagadorRecebedor.setDataCasamento(
-				CommonsUtil.dateValue(receitaFederalPF.getCpfBirthdate().getDataNascimento(), "dd/MM/YYYY"));
-		pagadorRecebedor.setSexo(receitaFederalPF.getCpfBirthdate().getGenero());
+		pagadorRecebedor.setDtNascimento(
+				CommonsUtil.dateValue(receitaFederalPF.getCpfBirthdate().getDataNascimento(), "dd/MM/yyyy"));
+		if (CommonsUtil.mesmoValor("M", receitaFederalPF.getCpfBirthdate().getGenero()))
+			pagadorRecebedor.setSexo("MASCULINO");
+		else if (CommonsUtil.mesmoValor("F", receitaFederalPF.getCpfBirthdate().getGenero()))
+			pagadorRecebedor.setSexo("FEMININO");
+		
 		pagadorRecebedor.setNomeMae(receitaFederalPF.getCpfBirthdate().getNomeMae());
 		
 	

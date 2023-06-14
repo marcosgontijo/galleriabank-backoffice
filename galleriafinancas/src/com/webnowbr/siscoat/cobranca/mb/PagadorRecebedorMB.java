@@ -25,6 +25,7 @@ import org.primefaces.model.LazyDataModel;
 
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
+import com.webnowbr.siscoat.cobranca.service.PagadorRecebedorService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.ValidaCNPJ;
 import com.webnowbr.siscoat.common.ValidaCPF;
@@ -166,11 +167,17 @@ public class PagadorRecebedorMB {
 	}
 	
 	public void selectedCPF() {
-		this.objetoPagadorRecebedor.setCpfCC(this.objetoPagadorRecebedor.getCpf());		
+		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+		pagadorRecebedorService.preecheDadosReceita(objetoPagadorRecebedor);
+		this.objetoPagadorRecebedor.setCpfCC(this.objetoPagadorRecebedor.getCpf());
+		this.objetoPagadorRecebedor.setNomeCC(objetoPagadorRecebedor.getNome());
 	}
 	
-	public void selectedCNPJ() {
-		this.objetoPagadorRecebedor.setCnpjCC(this.objetoPagadorRecebedor.getCnpj());		
+	public void selectedCNPJ() {		
+		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+		pagadorRecebedorService.preecheDadosReceita(objetoPagadorRecebedor);
+		this.objetoPagadorRecebedor.setCnpjCC(this.objetoPagadorRecebedor.getCnpj());
+		this.objetoPagadorRecebedor.setNomeCC(objetoPagadorRecebedor.getNome());				
 	}
 
 	public String inserir() {
