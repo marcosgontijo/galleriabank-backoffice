@@ -54,7 +54,7 @@
 							label="CPF" mask="999.999.999-99" required="true"
 							validator="#{pagadorRecebedorMB.validaCPF}"
 							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}">
-							<p:ajax update="CpfCC" event="valueChange"
+							<p:ajax update="CpfCC Nome DtNascimento Sexo mae NomeCC " event="valueChange"
 								listener="#{pagadorRecebedorMB.selectedCPF}" />
 						</p:inputMask>
 	
@@ -62,7 +62,7 @@
 							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
 						<p:inputText id="Rg"
 							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.rg}"
-							label="RG  / CNH"
+							label="RG / CNH"
 							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
 	
 						<p:outputLabel for="DtEmissaoRG" value="Data Emissão: " />
@@ -83,7 +83,7 @@
 							label="CNPJ" mask="99.999.999/9999-99" required="true"
 							validator="#{pagadorRecebedorMB.validaCNPJ}"
 							rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisica}">
-							<p:ajax update="CNPJCC" event="valueChange"
+							<p:ajax update="CNPJCC NomeCC Nome Endereco Numero Bairro Cidade Cep Estado EMail" event="valueChange"
 								listener="#{pagadorRecebedorMB.selectedCNPJ}" />
 						</p:inputMask>
 	
@@ -412,7 +412,7 @@
 							<p:inputMask id="CepConjuge" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cepConjuge}"
 								mask="99999-999" label="Cep" >
 								<p:ajax event="blur" update="EnderecoConjuge BairroConjuge CidadeConjuge EstadoConjuge" 
-									listener="#{pagadorRecebedorMB.getEnderecoByViaNet()}" />
+									listener="#{pagadorRecebedorMB.getEnderecoByViaNetConjuge}" />
 							</p:inputMask>
 	
 							<p:outputLabel for="EstadoConjuge" value="Estado: "  />

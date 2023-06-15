@@ -25,6 +25,7 @@ import org.primefaces.model.LazyDataModel;
 
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
+import com.webnowbr.siscoat.cobranca.service.PagadorRecebedorService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.ValidaCNPJ;
 import com.webnowbr.siscoat.common.ValidaCPF;
@@ -170,11 +171,17 @@ public class PagadorRecebedorMB {
 	}
 	
 	public void selectedCPF() {
-		this.objetoPagadorRecebedor.setCpfCC(this.objetoPagadorRecebedor.getCpf());		
+		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+		pagadorRecebedorService.preecheDadosReceita(objetoPagadorRecebedor);
+		this.objetoPagadorRecebedor.setCpfCC(this.objetoPagadorRecebedor.getCpf());
+		this.objetoPagadorRecebedor.setNomeCC(objetoPagadorRecebedor.getNome());
 	}
 	
-	public void selectedCNPJ() {
-		this.objetoPagadorRecebedor.setCnpjCC(this.objetoPagadorRecebedor.getCnpj());		
+	public void selectedCNPJ() {		
+		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+		pagadorRecebedorService.preecheDadosReceita(objetoPagadorRecebedor);
+		this.objetoPagadorRecebedor.setCnpjCC(this.objetoPagadorRecebedor.getCnpj());
+		this.objetoPagadorRecebedor.setNomeCC(objetoPagadorRecebedor.getNome());				
 	}
 
 	public String inserir() {
@@ -451,16 +458,18 @@ public class PagadorRecebedorMB {
 				this.objetoPagadorRecebedor.setEstado("");
 			} else {
 				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-				
 				if(myResponse.has("logradouro")) {
 					this.objetoPagadorRecebedor.setEndereco(myResponse.get("logradouro").toString());
 				}
-				
 				if(myResponse.has("bairro")) {
 					this.objetoPagadorRecebedor.setBairro(myResponse.get("bairro").toString());
-				}				
-				this.objetoPagadorRecebedor.setCidade(myResponse.get("localidade").toString());
-				this.objetoPagadorRecebedor.setEstado(myResponse.get("uf").toString());
+				}		
+				if(myResponse.has("localidade")) {
+					this.objetoPagadorRecebedor.setCidade(myResponse.get("localidade").toString());
+				}
+				if(myResponse.has("uf")) {
+					this.objetoPagadorRecebedor.setEstado(myResponse.get("uf").toString());
+				}
 			}
 			myURLConnection.disconnect();
 		} catch (MalformedURLException e) {
@@ -499,16 +508,18 @@ public class PagadorRecebedorMB {
 				this.objetoPagadorRecebedor.setEstadoConjuge("");
 			} else {
 				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-				
 				if(myResponse.has("logradouro")) {
 					this.objetoPagadorRecebedor.setEnderecoConjuge(myResponse.get("logradouro").toString());
 				}
-				
 				if(myResponse.has("bairro")) {
 					this.objetoPagadorRecebedor.setBairroConjuge(myResponse.get("bairro").toString());
-				}				
-				this.objetoPagadorRecebedor.setCidadeConjuge(myResponse.get("localidade").toString());
-				this.objetoPagadorRecebedor.setEstadoConjuge(myResponse.get("uf").toString());
+				}			
+				if(myResponse.has("localidade")) {
+					this.objetoPagadorRecebedor.setCidadeConjuge(myResponse.get("localidade").toString());
+				}
+				if(myResponse.has("uf")) {
+					this.objetoPagadorRecebedor.setEstadoConjuge(myResponse.get("uf").toString());
+				}	
 			}
 			myURLConnection.disconnect();
 		} catch (MalformedURLException e) {

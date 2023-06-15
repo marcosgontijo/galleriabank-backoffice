@@ -59,7 +59,8 @@ public class DocumentoAnalise implements Serializable {
 	}
 	
 	public boolean isPodeChamarEngine() {
-		return  !isEngineProcessado() && (CommonsUtil.mesmoValor("PF", tipoPessoa) || ( CommonsUtil.mesmoValor("PJ", tipoPessoa)  &&
+		return  !CommonsUtil.mesmoValor(motivoAnalise.toUpperCase(),"PROPRIETARIO ATUAL") && 
+				!isEngineProcessado() && (CommonsUtil.mesmoValor("PF", tipoPessoa) || ( CommonsUtil.mesmoValor("PJ", tipoPessoa)  &&
 				!this.motivoAnalise.contains( "Empresa Vinculada")));
 	}
 
@@ -69,8 +70,7 @@ public class DocumentoAnalise implements Serializable {
 	
 	public boolean isPodeChamarSerasa() {
 		return !isSerasaProcessado() && CommonsUtil.mesmoValor("PF", tipoPessoa)
-				&& CommonsUtil.mesmoValor(this.motivoAnalise, "Proprietario Atual"); // (CommonsUtil.mesmoValor("PJ",
-																						// tipoPessoa) ||
+				&& CommonsUtil.mesmoValor(this.motivoAnalise.toUpperCase(), "PROPRIETARIO ATUAL"); // (CommonsUtil.mesmoValor("PJ",																			// tipoPessoa) ||
 	}
 
 	public boolean isSerasaProcessado() {
@@ -85,6 +85,12 @@ public class DocumentoAnalise implements Serializable {
 		return !CommonsUtil.semValor(retornoCenprot);
 	}
 	
+	public boolean isPodeChamarProcesso() {
+		return !isProcessoProcessado() 	&& CommonsUtil.mesmoValor(this.motivoAnalise.toUpperCase(), "PROPRIETARIO ATUAL")
+				&& !CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
+	}
+
+
 	public boolean isProcessoProcessado() {
 		return !CommonsUtil.semValor(retornoProcesso);
 	}
