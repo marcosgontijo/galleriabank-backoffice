@@ -140,12 +140,6 @@
 							<f:selectItem itemLabel="FEMININO" itemValue="FEMININO" />
 						</p:selectOneRadio>
 	
-						<p:outputLabel for="Contato" value="Contato: " />
-						<p:inputText id="Contato"
-							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.contato}"
-							label="Contato" onblur=""
-							style="width:400px;" />
-	
 						<p:outputLabel for="EMail" value="E-Mail: " styleClass="labelBold" />
 						<p:inputText id="EMail"
 							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.email}"
@@ -160,12 +154,7 @@
 							mask="99/99/9999" label="Data de Nascimento">
 							<f:convertDateTime pattern="dd/MM/yyyy" />
 						</p:inputMask>
-	
-						<p:outputLabel for="TelResidencial" value="Telefone Residencial: " />
-						<p:inputMask id="TelResidencial"
-							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.telResidencial}"
-							mask="(99) 9999-9999" label="Telefone Residencial" />
-	
+						
 						<p:outputLabel for="TelCelular" value="Telefone Celular: " />
 						<p:inputText id="TelCelular"
 							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.telCelular}"
@@ -251,13 +240,6 @@
 							onblur=""
 							counterTemplate="{0} characters remaining." autoResize="false"
 							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.observacao1}" />
-						<p:outputLabel for="Observacao2" value=" " />
-						<p:inputTextarea id="Observacao2" rows="10" cols="48"
-							counter="display" maxlength="3000"
-							onblur=""
-							counterTemplate="{0} characters remaining." autoResize="false"
-							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.observacao2}" />
-						<p:outputLabel id="display" />
 					</h:panelGrid>
 					
 					<!--  <h:panelGrid columns="1">

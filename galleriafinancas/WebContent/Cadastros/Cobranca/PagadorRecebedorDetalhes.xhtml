@@ -49,9 +49,6 @@
 						<f:selectItem itemLabel="FEMININO" itemValue="FEMININO" />
 			        </p:selectOneRadio>		
 			        
-					<p:outputLabel styleClass="labelBold" for="Contato" value="Contato: " />
-					<h:outputText id="Contato" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.contato}" label="Contato"/>
-						
  					<p:outputLabel styleClass="labelBold" for="EMail" value="E-Mail: " />	
 					<h:outputText id="EMail" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.email}" label="E-Mail"/> 				
 								
@@ -60,9 +57,6 @@
 						<f:convertDateTime pattern="dd/MM/yyyy" />
 					</h:outputText>	
 					
-					<p:outputLabel styleClass="labelBold" for="TelResidencial" value="Telefone Residencial: " />
-					<h:outputText id="TelResidencial" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.telResidencial}" label="Telefone Residencial"/>																								
-
 					<p:outputLabel styleClass="labelBold" for="TelCelular" value="Telefone Celular: " />
 					<h:outputText id="TelCelular" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.telCelular}" label="Telefone Celular"/>	
 					
@@ -86,10 +80,6 @@
 					
 					<p:outputLabel styleClass="labelBold" for="Observacao1" value="Observação: " />
 					<h:outputText id="Observacao1" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.observacao1}" label="Observação"/>	
-					
-					<p:outputLabel styleClass="labelBold" for="Observacao2" value="" />
-					<h:outputText id="Observacao2" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.observacao2}" label="Observação"/>				
-					
 				</h:panelGrid>																
 			</p:panel>
 			

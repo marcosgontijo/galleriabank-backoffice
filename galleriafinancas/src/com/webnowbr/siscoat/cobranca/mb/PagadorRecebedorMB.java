@@ -55,6 +55,8 @@ public class PagadorRecebedorMB {
 	private boolean tipoPessoaIsFisicaCC = false;
 	private List<PagadorRecebedor> listaPagadorRecebedor;
 	private List<PagadorRecebedor> filteredPagadorRecebedor;
+	
+	private String telefoneAnterior;
 	/**
 	 * Construtor.
 	 */
@@ -126,6 +128,8 @@ public class PagadorRecebedorMB {
 		if (this.objetoPagadorRecebedor.getCpfCC() != null && !this.objetoPagadorRecebedor.getCpfCC().equals("")) {
 			this.tipoPessoaIsFisicaCC = true;
 		}
+		
+		this.telefoneAnterior = this.objetoPagadorRecebedor.getTelCelular();
 
 		return "PagadorRecebedorInserir.xhtml";
 	}	
@@ -182,8 +186,13 @@ public class PagadorRecebedorMB {
 				this.objetoPagadorRecebedor.setSite("http://" + this.objetoPagadorRecebedor.getSite().toLowerCase());
 			}
 			
-			if (this.objetoPagadorRecebedor.getWhatsAppNumero() == null || this.objetoPagadorRecebedor.getWhatsAppNumero().equals("")) {
-				TakeBlipMB takeBlipMB = new TakeBlipMB();
+			TakeBlipMB takeBlipMB = new TakeBlipMB();
+			
+			if (!this.telefoneAnterior.equals(this.objetoPagadorRecebedor.getTelCelular())) {
+				this.objetoPagadorRecebedor.setWhatsAppNumero(takeBlipMB.getWhatsAppURLNovoPagadorRecebedor(this.objetoPagadorRecebedor));
+			}
+			
+			if (this.objetoPagadorRecebedor.getWhatsAppNumero() == null || this.objetoPagadorRecebedor.getWhatsAppNumero().equals("")) {				
 				this.objetoPagadorRecebedor.setWhatsAppNumero(takeBlipMB.getWhatsAppURLNovoPagadorRecebedor(this.objetoPagadorRecebedor));
 			}
 			/*			
