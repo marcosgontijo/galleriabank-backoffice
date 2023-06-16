@@ -89,8 +89,12 @@
 			<column name="retornoScr" />
 		</property>
 		
-			<property name="retornoProcesso" type="java.lang.String"  length="65000">
+		<property name="retornoProcesso" type="java.lang.String"  length="65000">
 			<column name="retornoProcesso" />
+		</property>
+		
+		<property name="retornoPpe" type="java.lang.String"  length="65000">
+			<column name="retornoPpe" />
 		</property>
 		
 		<property name="motivoAnalise" type="java.lang.String"  length="65000">

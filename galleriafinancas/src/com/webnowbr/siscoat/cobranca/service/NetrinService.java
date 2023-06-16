@@ -17,6 +17,7 @@ import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 
+import br.com.galleriabank.netrin.cliente.model.PPE.PpeResponse;
 import br.com.galleriabank.netrin.cliente.model.receitafederal.ReceitaFederalPF;
 import br.com.galleriabank.netrin.cliente.model.receitafederal.ReceitaFederalPJ;
 import br.com.galleriabank.serasacrednet.cliente.util.GsonUtil;
@@ -162,7 +163,13 @@ public class NetrinService {
 
 		return null;
 	}
-
+	
+	public FacesMessage requestCadastroPepPF(DocumentoAnalise documentoAnalise) {
+		FacesMessage result = new FacesMessage();
+		result =  netrinCriarConsultaCadastroPpePF(documentoAnalise);
+		return result;
+	}
+	
 	public ReceitaFederalPF requestCadastroPF(String sCpfCnpj) {
 		FacesMessage facesMessage = new FacesMessage();		
 		return netrinCriarConsultaCadastroPF(sCpfCnpj, facesMessage);
@@ -250,6 +257,77 @@ public class NetrinService {
 		return null;
 	}
 
+	public FacesMessage netrinCriarConsultaCadastroPpePF(DocumentoAnalise documentoAnalise) { // POST para
+																										// gerar
+																										// consulta
+		try {
+			// loginDocket();
+			int HTTP_COD_SUCESSO = 200;
+			FacesMessage result = null;
+
+
+			atualizaDadosPagadoRecebedorComReceitaFederal(documentoAnalise.getPagador());
+			String nomeConsultado = documentoAnalise.getPagador().getNome();
+			String numeorsCpfCnpj = CommonsUtil.somenteNumeros(documentoAnalise.getCnpjcpf());
+
+			URL myURL;
+			myURL = new URL("https://servicos.galleriabank.com.br/netrin/api/v1/ppe/"
+					+ numeorsCpfCnpj + "/" + nomeConsultado.replace(" ","%20") );
+
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setRequestMethod("GET");
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			myURLConnection.setRequestProperty("Authorization",
+					"Bearer " + br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos());
+			myURLConnection.setDoOutput(true);
+
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
+				result = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"PPE: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", "");
+			} else {
+				BufferedReader in;
+				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
+				String inputLine;
+				StringBuffer response = new StringBuffer();
+				while ((inputLine = in.readLine()) != null) {
+					response.append(inputLine);
+				}
+				in.close();
+				PpeResponse resultPEP = GsonUtil.fromJson(response.toString(), PpeResponse.class);
+				
+				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+				documentoAnalise.setRetornoPpe(response.toString());
+
+				documentoAnaliseDao.merge(documentoAnalise);
+				
+				PagadorRecebedorService PagadorRecebedorService = new PagadorRecebedorService();
+				PagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+						DocumentosAnaliseEnum.PPE , response.toString());
+				
+
+				result = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
+
+			}
+			myURLConnection.disconnect();
+
+			return result;
+
+		} catch (
+
+		MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+	
 	public ReceitaFederalPJ requestCadastroPJ(String sCpfCnpj) {
 
 		FacesMessage facesMessage = new FacesMessage();
@@ -353,30 +431,9 @@ public class NetrinService {
 			FacesMessage result = null;
 			
 			//busca dados da receita se nao tiver ainda
-	
-			String nomeConsultado = "";
-			if (!CommonsUtil.semValor(documentoAnalise.getPagador().getCpf())) {
-				PagadorRecebedorService ppagaPagadorRecebedorService = new PagadorRecebedorService();
-				PagadorRecebedorConsulta pagadorRecebedorConsulta = ppagaPagadorRecebedorService
-						.buscaConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
-								DocumentosAnaliseEnum.RECEITA_FEDERAL);
-				ReceitaFederalPF receitaFederalPF = null;
-				if (!CommonsUtil.semValor(pagadorRecebedorConsulta)) {
-					receitaFederalPF = GsonUtil.fromJson(pagadorRecebedorConsulta.getRetornConsulta(),
-							ReceitaFederalPF.class);
-				}else {
-					receitaFederalPF = requestCadastroPF(documentoAnalise.getPagador().getCpf());
-				}
-
-				if (!CommonsUtil.semValor(receitaFederalPF)
-						&& !CommonsUtil.semValor(documentoAnalise.getPagador().getId())) {
-					ppagaPagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
-							DocumentosAnaliseEnum.RECEITA_FEDERAL, GsonUtil.toJson(receitaFederalPF));
-				}
-
-				nomeConsultado = receitaFederalPF.getCpfBirthdate().getNome();
-			}
-
+			atualizaDadosPagadoRecebedorComReceitaFederal(documentoAnalise.getPagador());
+			String nomeConsultado = documentoAnalise.getPagador().getNome();
+					
 			String cnpjcpf = documentoAnalise.getCnpjcpf();
 			if (!CommonsUtil.semValor(documentoAnalise.getPagador())) {
 				if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa()))
@@ -449,6 +506,32 @@ public class NetrinService {
 		return null;
 	}
 
+	private String atualizaDadosPagadoRecebedorComReceitaFederal(PagadorRecebedor pagadorRecebedor) {
+		String nomeConsultado = "";
+		if (!CommonsUtil.semValor(pagadorRecebedor.getCpf())) {
+			PagadorRecebedorService ppagaPagadorRecebedorService = new PagadorRecebedorService();
+			PagadorRecebedorConsulta pagadorRecebedorConsulta = ppagaPagadorRecebedorService
+					.buscaConsultaNoPagadorRecebedor(pagadorRecebedor,
+							DocumentosAnaliseEnum.RECEITA_FEDERAL);
+			ReceitaFederalPF receitaFederalPF = null;
+			if (!CommonsUtil.semValor(pagadorRecebedorConsulta)) {
+				receitaFederalPF = GsonUtil.fromJson(pagadorRecebedorConsulta.getRetornConsulta(),
+						ReceitaFederalPF.class);
+			}else {
+				receitaFederalPF = requestCadastroPF(pagadorRecebedor.getCpf());
+			}
+
+			if (!CommonsUtil.semValor(receitaFederalPF)
+					&& !CommonsUtil.semValor(pagadorRecebedor.getId())) {
+				ppagaPagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagadorRecebedor,
+						DocumentosAnaliseEnum.RECEITA_FEDERAL, GsonUtil.toJson(receitaFederalPF));
+			}
+
+			nomeConsultado = receitaFederalPF.getCpfBirthdate().getNome();
+		}
+		return nomeConsultado;
+	}
+
 	public String baixarDocumentoProcesso(DocumentoAnalise documentoAnalise) { // POST para gerar consulta
 		try {
 			String base64 = null;
@@ -506,6 +589,126 @@ public class NetrinService {
 		return null;
 	}
 
+	public String baixarDocumentoPpe(DocumentoAnalise documentoAnalise) { // POST para gerar consulta
+		try {
+			String base64 = null;
+			// loginDocket();
+			int HTTP_COD_SUCESSO = 200;
+			int HTTP_COD_SUCESSO2 = 201;
+
+			URL myURL = new URL("https://servicos.galleriabank.com.br/netrin/api/v1/ppe");
+
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setRequestMethod("POST");
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			myURLConnection.setRequestProperty("Authorization",
+					"Bearer " + br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos());
+			myURLConnection.setDoOutput(true);
+
+			try (OutputStream os = myURLConnection.getOutputStream()) {
+				byte[] input = documentoAnalise.getRetornoPpe().getBytes("utf-8");
+				os.write(input, 0, input.length);
+			}
+
+			FacesMessage result = null;
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO
+					&& myURLConnection.getResponseCode() != HTTP_COD_SUCESSO2) {
+				result = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"PPE: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", "");
+			} else {
+				// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
+				// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
+				result = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
+				BufferedReader in;
+				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
+				String inputLine;
+				StringBuffer response = new StringBuffer();
+				while ((inputLine = in.readLine()) != null) {
+					response.append(inputLine);
+				}
+				base64 = response.toString();
+				in.close();
+			}
+
+			myURLConnection.disconnect();
+			return base64;
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	public String baixarDocumentoDossie(DocumentoAnalise documentoAnalise) { // POST para gerar consulta
+		try {
+			String base64 = null;
+			// loginDocket();
+			int HTTP_COD_SUCESSO = 200;
+			int HTTP_COD_SUCESSO2 = 201;
+
+			boolean detalhadoProtesto  =false;
+			boolean detalhadoProcesso = true;
+
+			URL myURL = new URL("https://servicos.galleriabank.com.br/netrin/api/v1/dossie/" + detalhadoProtesto + "/"
+					+ detalhadoProcesso);
+
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setRequestMethod("POST");
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			myURLConnection.setRequestProperty("Authorization",
+					"Bearer " + br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos());
+			myURLConnection.setDoOutput(true);
+			
+
+			try (OutputStream os = myURLConnection.getOutputStream()) {
+				byte[] input = documentoAnalise.getDossieRequest().getBytes("utf-8");
+				os.write(input, 0, input.length);
+			}
+
+			FacesMessage result = null;
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO
+					&& myURLConnection.getResponseCode() != HTTP_COD_SUCESSO2) {
+				result = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Dossie: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", "");
+			} else {
+				// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
+				// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
+				result = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
+				BufferedReader in;
+				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
+				String inputLine;
+				StringBuffer response = new StringBuffer();
+				while ((inputLine = in.readLine()) != null) {
+					response.append(inputLine);
+				}
+				base64 = response.toString();
+				in.close();
+			}
+
+			myURLConnection.disconnect();
+			return base64;
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	
 	
 	
 }

@@ -5,6 +5,12 @@ import java.io.Serializable;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 
+import br.com.galleriabank.netrin.cliente.model.PPE.PpeResponse;
+import br.com.galleriabank.netrin.cliente.model.cenprot.CenprotResponse;
+import br.com.galleriabank.netrin.cliente.model.dossie.DossieRequest;
+import br.com.galleriabank.netrin.cliente.model.processos.ProcessoResponse;
+import br.com.galleriabank.serasacrednet.cliente.util.GsonUtil;
+
 public class DocumentoAnalise implements Serializable {
 
 	/**
@@ -16,11 +22,11 @@ public class DocumentoAnalise implements Serializable {
 	private String idRemoto;
 
 	private DataEngine engine;
-	
+
 	private ContratoCobranca contratoCobranca;
 
-	private PagadorRecebedor pagador; //titulares pra enviar pedido
-	
+	private PagadorRecebedor pagador; // titulares pra enviar pedido
+
 	private String identificacao;
 	private String cnpjcpf;
 	private String tipoPessoa;
@@ -32,7 +38,6 @@ public class DocumentoAnalise implements Serializable {
 	private boolean liberadoCenprot;
 	private boolean liberadoProcesso;
 	private boolean liberadoScr;
-	
 
 	private DocumentosAnaliseEnum tipoEnum;
 
@@ -41,10 +46,10 @@ public class DocumentoAnalise implements Serializable {
 	private String retornoSerasa;
 	private String retornoCenprot;
 	private String retornoProcesso;
-	
+	private String retornoPpe;
+
 	private String retornoScr;
 	private String observacao;
-	
 
 	public boolean isPodeChamarRea() {
 		return isReaNaoEnviado() && CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
@@ -57,67 +62,93 @@ public class DocumentoAnalise implements Serializable {
 	public boolean isReaProcessado() {
 		return !CommonsUtil.semValor(retorno);
 	}
-	
+
 	public boolean isPodeChamarEngine() {
-		return  !CommonsUtil.mesmoValor(motivoAnalise.toUpperCase(),"PROPRIETARIO ATUAL") && 
-				!isEngineProcessado() && (CommonsUtil.mesmoValor("PF", tipoPessoa) || ( CommonsUtil.mesmoValor("PJ", tipoPessoa)  &&
-				!this.motivoAnalise.contains( "Empresa Vinculada")));
+		return !CommonsUtil.mesmoValor(motivoAnalise.toUpperCase(), "PROPRIETARIO ATUAL") && !isEngineProcessado()
+				&& (CommonsUtil.mesmoValor("PF", tipoPessoa) || (CommonsUtil.mesmoValor("PJ", tipoPessoa)
+						&& !this.motivoAnalise.contains("Empresa Vinculada")));
 	}
 
 	public boolean isEngineProcessado() {
 		return !CommonsUtil.semValor(engine) && !CommonsUtil.semValor(engine.getIdCallManager());
-	}	
-	
+	}
+
 	public boolean isPodeChamarSerasa() {
 		return !isSerasaProcessado() && CommonsUtil.mesmoValor("PF", tipoPessoa)
-				&& CommonsUtil.mesmoValor(this.motivoAnalise.toUpperCase(), "PROPRIETARIO ATUAL"); // (CommonsUtil.mesmoValor("PJ",																			// tipoPessoa) ||
+				&& CommonsUtil.mesmoValor(this.motivoAnalise.toUpperCase(), "PROPRIETARIO ATUAL"); // (CommonsUtil.mesmoValor("PJ",
+																									// // tipoPessoa) ||
 	}
 
 	public boolean isSerasaProcessado() {
 		return !CommonsUtil.semValor(retornoSerasa);
-	}	
-	
+	}
+
 	public boolean isPodeChamarCenprot() {
-		return isEngineProcessado() && !isCenprotProcessado() && !CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
-	}
-	
-	public boolean isCenprotProcessado() {
-		return !CommonsUtil.semValor(retornoCenprot);
-	}
-	
-	public boolean isPodeChamarProcesso() {
-		return !isProcessoProcessado() 	&& CommonsUtil.mesmoValor(this.motivoAnalise.toUpperCase(), "PROPRIETARIO ATUAL")
+		return isEngineProcessado() && !isCenprotProcessado()
 				&& !CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
 	}
 
+	public boolean isCenprotProcessado() {
+		return !CommonsUtil.semValor(retornoCenprot);
+	}
+
+	public boolean isPodeChamarProcesso() {
+		return !isProcessoProcessado() && CommonsUtil.mesmoValor(this.motivoAnalise.toUpperCase(), "PROPRIETARIO ATUAL")
+				&& !CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
+	}
+
+	public boolean isPodeChamarPpe() {
+		return !isPpeProcessado() && CommonsUtil.mesmoValor(this.motivoAnalise.toUpperCase(), "PROPRIETARIO ATUAL")
+				&& !CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
+	}
 
 	public boolean isProcessoProcessado() {
 		return !CommonsUtil.semValor(retornoProcesso);
 	}
-	
-	
+
 	public boolean isScrProcessado() {
 		return !CommonsUtil.semValor(retornoScr);
 	}
-	
+
 	public boolean isPodeChamarSCR() {
-		return isEngineProcessado() && !isScrProcessado() && !CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
+		return isEngineProcessado() && !isScrProcessado()
+				&& !CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
+	}
+
+	public boolean isPpeProcessado() {
+		return !CommonsUtil.semValor(retornoPpe);
+	}
+
+	
+	public boolean isPodeDownlaodDossie() {
+		return isPpeProcessado() && isCenprotProcessado() && isProcessoProcessado()
+				&& !CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
 	}
 	
-	
-	
 	public void addObservacao(String observacao) {
-		
+
 		if (this.observacao == null) {
 			this.observacao = "";
-		}else {
+		} else {
 			this.observacao = this.observacao + " - ";
 		}
 
 		this.observacao = observacao;
 	}
+	
+	public String getDossieRequest() {
 
-			
+		DossieRequest dossieRequest = new DossieRequest();
+		dossieRequest.setCpf(pagador.getCpf());
+		dossieRequest.setNome(pagador.getNome());
+		dossieRequest.setCenprot(GsonUtil.fromJson(retornoCenprot, CenprotResponse.class));
+		dossieRequest.setPpe(GsonUtil.fromJson(retornoPpe, PpeResponse.class));
+		dossieRequest.setProcesso(GsonUtil.fromJson(retornoProcesso, ProcessoResponse.class));
+
+		return GsonUtil.toJson(dossieRequest);
+		
+	}
+
 	public long getId() {
 		return id;
 	}
@@ -230,6 +261,14 @@ public class DocumentoAnalise implements Serializable {
 		this.retornoProcesso = retornoProcesso;
 	}
 
+	public String getRetornoPpe() {
+		return retornoPpe;
+	}
+
+	public void setRetornoPpe(String retornoPpe) {
+		this.retornoPpe = retornoPpe;
+	}
+
 	public String getRetornoSerasa() {
 		return retornoSerasa;
 	}
@@ -309,7 +348,6 @@ public class DocumentoAnalise implements Serializable {
 	public void setRetornoScr(String retornoScr) {
 		this.retornoScr = retornoScr;
 	}
-	
 
 	public boolean isLiberadoProcesso() {
 		return liberadoProcesso;
