@@ -3,6 +3,8 @@ package com.webnowbr.siscoat.contab.mb;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -31,10 +33,11 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.contab.db.dao.BalancoPatrimonialDao;
 import com.webnowbr.siscoat.contab.db.model.BalancoPatrimonial;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
-import com.webnowbr.siscoat.omie.response.OmieListarExtratoResponse;
+import com.webnowbr.siscoat.relatorio.vo.RelatorioBalanco;
 
 
 /** ManagedBean. */
@@ -54,6 +57,10 @@ public class BalancoPatrimonialMB {
 	private boolean balancoPatrimonialXLSGerado;
 	private String pathBalanco;
 	private String nomeBalanco;
+	
+	private List<RelatorioBalanco> relatorioBalancoPagar = new ArrayList<RelatorioBalanco>();
+	private List<RelatorioBalanco> relatorioBalancoReceber = new ArrayList<RelatorioBalanco>();
+
 	
 
 	public String clearFieldsBalancoPatrimonialConsulta() {
@@ -97,7 +104,6 @@ public class BalancoPatrimonialMB {
 		this.objetoBalanco.setDepositoBacenScd(CommonsUtil.bigDecimalValue(1016095.04));
 		
 		//VALOR DEFAULT NO DAO - VALOR DO SISTEMA
-		this.objetoBalanco.setDireitosCreditorios(balancopatrimonialDao.consultaDireitosCreditorios(objetoBalanco));
 		this.objetoBalanco.setProvisaoLiquidAntecipada(balancopatrimonialDao.consultaContasPagar());
 		this.objetoBalanco.setCustoPonderado(balancopatrimonialDao.somaParcelaX());
 		
@@ -106,11 +112,8 @@ public class BalancoPatrimonialMB {
 			this.objetoBalanco.setDepositosjudiciais(ultimoBalanco.getDepositosjudiciais());
 			this.objetoBalanco.setInvestOperantigas(ultimoBalanco.getInvestOperantigas());
 			this.objetoBalanco.setCapitalSocial(ultimoBalanco.getCapitalSocial());
-		}
-		
-		atualizaParcela();
-		
-		}
+		}	
+	}
 		return "/Atendimento/Cobranca/Contabilidade/BalancoPatrimonialInserir.xhtml";
 	}
 	
@@ -127,9 +130,10 @@ public class BalancoPatrimonialMB {
 		this.objetoBalanco.setDepositoBacenScd(CommonsUtil.bigDecimalValue(1016095.04));
 		
 		//VALOR DEFAULT NO DAO - VALOR DO SISTEMA
-		this.objetoBalanco.setDireitosCreditorios(balancopatrimonialDao.consultaDireitosCreditorios(objetoBalanco));
+
 		this.objetoBalanco.setProvisaoLiquidAntecipada(balancopatrimonialDao.consultaContasPagar());
 		this.objetoBalanco.setCustoPonderado(balancopatrimonialDao.somaParcelaX());
+		this.relatorioBalancoPagar = balancopatrimonialDao.listaRelatorioPagarBalanco();
 		
 		// VALOR DEFAULT ÚLTIMO BALANÇO
 		if (!CommonsUtil.semValor(ultimoBalanco)) {
@@ -137,24 +141,14 @@ public class BalancoPatrimonialMB {
 			this.objetoBalanco.setInvestOperantigas(ultimoBalanco.getInvestOperantigas());
 			this.objetoBalanco.setCapitalSocial(ultimoBalanco.getCapitalSocial());
 		}
-		// VALOR RECURSOS DEBENTURES e CAIXAS
-		atualizaParcela();
+		
+		this.objetoBalanco.saldoCaixaOmie(); // VALOR CAIXAS
+		this.objetoBalanco.calcularVariaveisReceber(null, relatorioBalancoReceber); //VALO DIREITOS CREDITORIOS
+		this.objetoBalanco.calcularCustoPonderado(relatorioBalancoPagar); //VALOR RECURSOS DEBENTURES
+		
 		
 		}
 	}
-	
-	public void atualizaParcela () {
-		BalancoPatrimonialDao balancopatrimonialDao = new BalancoPatrimonialDao();
-		
-		if (objetoBalanco.getAaaaMM() == null) {
-			return;
-			
-		}
-		this.objetoBalanco.setRecursosDebentures(CommonsUtil.bigDecimalValue(0)); //Zera o valor de Recursos Debentures
-		balancopatrimonialDao.atualizaParcela(objetoBalanco); //Recalcula o valor de Recursos Debentures
-		objetoBalanco.saldoCaixaOmie(); //atualiza saldos contas
-	}
-	
 
 	public BalancoPatrimonial getUltimoBalanco() {
 		return ultimoBalanco;
@@ -210,53 +204,6 @@ public class BalancoPatrimonialMB {
 		clearFieldsBalancoPatrimonialConsulta();
 	}
 	
-//	public String carregaDadosBalanco() {
-//		FacesContext facesContext = FacesContext.getCurrentInstance();
-//		BalancoPatrimonialDao cDao = new BalancoPatrimonialDao();
-//		ATIVO
-//		saldoCaixa = api Omie
-//		saldoBancos = api Omie
-//		saldoAplFin = api Omie
-//		opPagasReceberFidc = comparação do relatório lucas e operações fora do sistema
-//		apItauSoberano = manual
-//		provisaoDevedoresDuvidosos = excel Fabricio
-//		saldoCobrancaFidc = manual
-//		depositoBacenScd = 1016095,04 default
-//		direitosCreditorios = relatório Lucas contas a receber
-//		tributosCompensar = manual/contador
-//		adiantamentos = comparação do relatório lucas e operações fora do sistema
-//		outrosCreditos = manual
-//		estoque = manual
-//		depositosJudiciais = default ultimo valor
-//		investOperAntigas = default ultimo valor
-//		investimentos = manual
-//		bensImobilizados = manual
-//		
-//		PASSIVO
-//		contaCorrenteClientes = manual/contador
-//		fornecedoresConsorcio = manual
-//		obrigacoesTributarias = manual/contador
-//		obrigacoesSociaisEstatutarias = manual/contador
-//		recursosDebentures = siscoat relatorio a pagar
-//		recursosFidc = siscoat relatorio a pagar
-//		recursosCri = siscoat relatorio a pagar
-//		provisaoLiquidAntecipada = excel Fabricio
-//		valorExigivelLongoPrazo = manual
-//		capitalSocial = manual default anterior
-//		lucrosAcumuladosAnoAnterior = MUTAÇÕES PL - EXCEL
-//		distribuicao2Pago1 = MUTAÇÕES PL - EXCEL
-//		lucroSemestreAnterior = MUTAÇÕES PL - EXCEL
-//		aumentoCapitalSocial = manual
-//		distribuicao1Pago2 = MUTAÇÕES PL - EXCEL
-//		lucroAnterior = TOTAL DO ATIVO - TOTAL DO PASSIVO CIRCULANTE - TOTAL PASSIVO EXIGÍVEL A LONGO PRAZO - TOTAL PATRIMÔNIO LÍQUIDO
-
-//		facesContext.addMessage(null,
-//				new FacesMessage(FacesMessage.SEVERITY_INFO, "Dados carregados com sucesso!", ""));
-//		
-//		return clearFieldsBalancoPatrimonialConsulta();
-//	}
-	
-
 
 	public void geraXLSBalancoPatrimonial() throws IOException {
 		ParametrosDao pDao = new ParametrosDao();

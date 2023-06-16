@@ -6,10 +6,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.contab.db.model.BalancoPatrimonial;
 import com.webnowbr.siscoat.db.dao.HibernateDao;
+import com.webnowbr.siscoat.relatorio.vo.RelatorioBalanco;
+import com.webnowbr.siscoat.relatorio.vo.RelatorioSemestre;
 
 public class BalancoPatrimonialDao extends HibernateDao <BalancoPatrimonial,Long> {
 	
@@ -46,49 +50,6 @@ public class BalancoPatrimonialDao extends HibernateDao <BalancoPatrimonial,Long
 				return objects;
 			}
 		});	
-	}
-	
-	private static final String QUERY_DIREITOS_CREDITORIOS =  " SELECT coco.id, numerocontrato, txJurosParcelas, empresa, ccd.dataVencimento, ccd.vlrParcela, pare.nome, corrigidoIPCA, corrigidonovoipca,\r\n"
-			+ "    CASE\r\n"
-			+ "        WHEN corrigidoIPCA = true OR corrigidonovoipca = true THEN true\r\n"
-			+ "        ELSE false\r\n"
-			+ "    END AS indice\r\n"
-			+ "FROM cobranca.contratocobranca coco\r\n"
-			+ "LEFT JOIN cobranca.contratocobranca_detalhes_join ccdj ON ccdj.idcontratocobranca = coco.id\r\n"
-			+ "INNER JOIN cobranca.contratocobrancadetalhes ccd ON ccd.id = ccdj.idcontratocobrancadetalhes AND ccd.parcelapaga = false\r\n"
-			+ "INNER JOIN cobranca.pagadorrecebedor pare ON pare.id = coco.pagador\r\n"
-			+ "WHERE status = 'Aprovado' AND ccd.id IS NOT NULL AND pagador NOT IN (15, 34, 14, 182, 417, 803)\r\n"
-			+ "ORDER BY numerocontrato ASC, datavencimento ASC;";
-	
-	@SuppressWarnings("unchecked")
-	public BigDecimal consultaDireitosCreditorios(BalancoPatrimonial balanco) {
-		return (BigDecimal) executeDBOperation(new DBRunnable() {
-			@Override
-			public Object run() throws Exception {
-				BigDecimal objects = null;
-	
-				Connection connection = null;
-				PreparedStatement ps = null;
-				ResultSet rs = null;
-				try {
-					connection = getConnection();
-																	
-					ps = connection.prepareStatement(QUERY_DIREITOS_CREDITORIOS);
-					rs = ps.executeQuery();
-					
-					while (rs.next()) {	
-						balanco.calcularVariaveis(rs.getBigDecimal("vlrParcela"),rs.getDate("dataVencimento"), rs.getBoolean("indice"), rs.getString("empresa"));
-								
-					}
-					
-					objects = rs.getBigDecimal(1);
-	
-				} finally {
-					closeResources(connection, ps, rs);					
-				}
-				return objects;
-			}
-		});
 	}
 	
 	private static final String QUERY_ULTIMO_BALANCO =  " select max(id)\r\n"
@@ -330,113 +291,226 @@ public class BalancoPatrimonialDao extends HibernateDao <BalancoPatrimonial,Long
 		});
 	}
 	
-	private static final String QUERY_ATUALIZA_PARCELA = "select parcelaMensal, datavencimento\r\n"
-	+ "from (select	coco.id,\r\n"
-	+ "coco.numerocontrato,	coco.txJurosParcelas,	coco.taxaremuneracaoinvestidor1,\r\n"
-	+ "coco.empresa, ccpi.dataVencimento, ccpi.amortizacao,\r\n"
-	+ "ccpi.capitalizacao, ccpi.parcelaMensal, pare.nome, coco.pagador,\r\n"
-	+ "coco.corrigidoIPCA, ccpi.id ccpiid \r\n"
-	+ "from cobranca.contratocobrancaparcelasinvestidor ccpi\r\n"
-	+ "inner join cobranca.contratocobranca_parcelas_investidor_join_1 parcelaJoin on\r\n"
-	+ "ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor\r\n"
-	+ "inner join cobranca.contratocobranca coco on\r\n"
-	+ "parcelaJoin.idcontratocobrancaparcelasinvestidor1 = coco.id\r\n"
-	+ "inner join cobranca.pagadorrecebedor pare on	pare.id = ccpi.investidor\r\n"
-	+ "where status = 'Aprovado'	and ccpi.id is not null	and ccpi.baixado = 'false' \r\n"
-	+ "and ccpi.investidor not in (15, 34, 14, 182, 417, 803)\r\n"
-	+ "union all select	coco.id, coco.numerocontrato, coco.txJurosParcelas, coco.taxaremuneracaoinvestidor2,	coco.empresa,\r\n"
-	+ "ccpi.dataVencimento,	ccpi.amortizacao,	ccpi.capitalizacao, ccpi.parcelaMensal,	pare.nome, coco.pagador, coco.corrigidoIPCA, ccpi.id ccpiid\r\n"
-	+ "from	cobranca.contratocobrancaparcelasinvestidor ccpi\r\n"
-	+ "inner join cobranca.contratocobranca_parcelas_investidor_join_2 parcelaJoin on ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor\r\n"
-	+ "inner join cobranca.contratocobranca coco on	parcelaJoin.idcontratocobrancaparcelasinvestidor2 = coco.id\r\n"
-	+ "inner join cobranca.pagadorrecebedor pare on	pare.id = ccpi.investidor\r\n"
-	+ "where status = 'Aprovado' and ccpi.id is not null	and ccpi.baixado = 'false'\r\n"
-	+ "and ccpi.investidor not in (15, 34, 14, 182, 417, 803)\r\n"
-	+ "union all select	coco.id, coco.numerocontrato, coco.txJurosParcelas, coco.taxaremuneracaoinvestidor3,	coco.empresa,\r\n"
-	+ "ccpi.dataVencimento,	ccpi.amortizacao,	ccpi.capitalizacao, ccpi.parcelaMensal,	pare.nome,	coco.pagador,	coco.corrigidoIPCA,\r\n"
-	+ "ccpi.id ccpiid from	cobranca.contratocobrancaparcelasinvestidor ccpi\r\n"
-	+ "inner join cobranca.contratocobranca_parcelas_investidor_join_3 parcelaJoin on ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor\r\n"
-	+ "inner join cobranca.contratocobranca coco on	parcelaJoin.idcontratocobrancaparcelasinvestidor3 = coco.id\r\n"
-	+ "inner join cobranca.pagadorrecebedor pare on	pare.id = ccpi.investidor\r\n"
-	+ "where status = 'Aprovado' and ccpi.id is not null	and ccpi.baixado = 'false' and ccpi.investidor not in (15, 34, 14, 182, 417, 803)\r\n"
-	+ "union all select	coco.id, coco.numerocontrato, coco.txJurosParcelas, coco.taxaremuneracaoinvestidor4,	coco.empresa,\r\n"
-	+ "ccpi.dataVencimento,	ccpi.amortizacao,	ccpi.capitalizacao,	ccpi.parcelaMensal,	pare.nome,	coco.pagador,	coco.corrigidoIPCA,\r\n"
-	+ "ccpi.id ccpiid from	cobranca.contratocobrancaparcelasinvestidor ccpi\r\n"
-	+ "inner join cobranca.contratocobranca_parcelas_investidor_join_4 parcelaJoin on ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor\r\n"
-	+ "inner join cobranca.contratocobranca coco on	parcelaJoin.idcontratocobrancaparcelasinvestidor4 = coco.id\r\n"
-	+ "inner join cobranca.pagadorrecebedor pare on	pare.id = ccpi.investidor\r\n"
-	+ "where status = 'Aprovado' and ccpi.id is not null	and ccpi.baixado = 'false' and ccpi.investidor not in (15, 34, 14, 182, 417, 803)\r\n"
-	+ "union all select	coco.id, coco.numerocontrato, coco.txJurosParcelas,	coco.taxaremuneracaoinvestidor5,	coco.empresa,\r\n"
-	+ "ccpi.dataVencimento,	ccpi.amortizacao, ccpi.capitalizacao, ccpi.parcelaMensal, pare.nome, coco.pagador, coco.corrigidoIPCA, ccpi.id ccpiid\r\n"
-	+ "from	cobranca.contratocobrancaparcelasinvestidor ccpi\r\n"
-	+ "inner join cobranca.contratocobranca_parcelas_investidor_join_5 parcelaJoin on ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor\r\n"
-	+ "inner join cobranca.contratocobranca coco on	parcelaJoin.idcontratocobrancaparcelasinvestidor5 = coco.id\r\n"
-	+ "inner join cobranca.pagadorrecebedor pare on	pare.id = ccpi.investidor\r\n"
-	+ "where status = 'Aprovado' and ccpi.id is not null and ccpi.baixado = 'false' and ccpi.investidor not in (15, 34, 14, 182, 417, 803)\r\n"
-	+ "union all select	coco.id, coco.numerocontrato, coco.txJurosParcelas,	coco.taxaremuneracaoinvestidor6, coco.empresa,\r\n"
-	+ "ccpi.dataVencimento,	ccpi.amortizacao, ccpi.capitalizacao, ccpi.parcelaMensal, pare.nome, coco.pagador, coco.corrigidoIPCA, ccpi.id ccpiid\r\n"
-	+ "from	cobranca.contratocobrancaparcelasinvestidor ccpi\r\n"
-	+ "inner join cobranca.contratocobranca_parcelas_investidor_join_6 parcelaJoin on ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor\r\n"
-	+ "inner join cobranca.contratocobranca coco on	parcelaJoin.idcontratocobrancaparcelasinvestidor6 = coco.id\r\n"
-	+ "inner join cobranca.pagadorrecebedor pare on	pare.id = ccpi.investidor\r\n"
-	+ "where status = 'Aprovado' and ccpi.id is not null	and ccpi.baixado = 'false' and ccpi.investidor not in (15, 34, 14, 182, 417, 803)\r\n"
-	+ "union all select	coco.id, coco.numerocontrato, coco.txJurosParcelas, coco.taxaremuneracaoinvestidor7, coco.empresa, ccpi.dataVencimento,\r\n"
-	+ "ccpi.amortizacao, ccpi.capitalizacao, ccpi.parcelaMensal, pare.nome, coco.pagador,	coco.corrigidoIPCA,\r\n"
-	+ "ccpi.id ccpiid from	cobranca.contratocobrancaparcelasinvestidor ccpi\r\n"
-	+ "inner join cobranca.contratocobranca_parcelas_investidor_join_7 parcelaJoin on ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor\r\n"
-	+ "inner join cobranca.contratocobranca coco on	parcelaJoin.idcontratocobrancaparcelasinvestidor7 = coco.id\r\n"
-	+ "inner join cobranca.pagadorrecebedor pare on	pare.id = ccpi.investidor\r\n"
-	+ "where status = 'Aprovado' and ccpi.id is not null	and ccpi.baixado = 'false' and ccpi.investidor not in (15, 34, 14, 182, 417, 803)\r\n"
-	+ "union all select	coco.id, coco.numerocontrato, coco.txJurosParcelas, coco.taxaremuneracaoinvestidor8, coco.empresa, ccpi.dataVencimento,\r\n"
-	+ "ccpi.amortizacao,	ccpi.capitalizacao,	ccpi.parcelaMensal,	pare.nome, coco.pagador, coco.corrigidoIPCA, ccpi.id ccpiid\r\n"
-	+ "from	cobranca.contratocobrancaparcelasinvestidor ccpi\r\n"
-	+ "inner join cobranca.contratocobranca_parcelas_investidor_join_8 parcelaJoin on ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor\r\n"
-	+ "inner join cobranca.contratocobranca coco on	parcelaJoin.idcontratocobrancaparcelasinvestidor8 = coco.id\r\n"
-	+ "inner join cobranca.pagadorrecebedor pare on	pare.id = ccpi.investidor\r\n"
-	+ "where status = 'Aprovado'	and ccpi.id is not null	and ccpi.baixado = 'false' and ccpi.investidor not in (15, 34, 14, 182, 417, 803)\r\n"
-	+ "union all select	coco.id,	coco.numerocontrato, coco.txJurosParcelas,	coco.taxaremuneracaoinvestidor9,	coco.empresa,\r\n"
-	+ "ccpi.dataVencimento,	ccpi.amortizacao,	ccpi.capitalizacao,	ccpi.parcelaMensal,	pare.nome,	coco.pagador,	coco.corrigidoIPCA,ccpi.id ccpiid\r\n"
-	+ "from	cobranca.contratocobrancaparcelasinvestidor ccpi\r\n"
-	+ "inner join cobranca.contratocobranca_parcelas_investidor_join_9 parcelaJoin on ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor\r\n"
-	+ "inner join cobranca.contratocobranca coco on	parcelaJoin.idcontratocobrancaparcelasinvestidor9 = coco.id\r\n"
-	+ "inner join cobranca.pagadorrecebedor pare on	pare.id = ccpi.investidor where	status = 'Aprovado'	and ccpi.id is not null	and ccpi.baixado = 'false' and ccpi.investidor not in (15, 34, 14, 182, 417, 803)\r\n"
-	+ "union all select	coco.id,	coco.numerocontrato,coco.txJurosParcelas,	coco.taxaremuneracaoinvestidor10,	coco.empresa,\r\n"
-	+ "ccpi.dataVencimento,	ccpi.amortizacao, ccpi.capitalizacao, ccpi.parcelaMensal, pare.nome, coco.pagador, coco.corrigidoIPCA, ccpi.id ccpiid\r\n"
-	+ "from	cobranca.contratocobrancaparcelasinvestidor ccpi\r\n"
-	+ "inner join cobranca.contratocobranca_parcelas_investidor_join_10 parcelaJoin on ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor\r\n"
-	+ "inner join cobranca.contratocobranca coco on	parcelaJoin.idcontratocobrancaparcelasinvestidor10 = coco.id\r\n"
-	+ "inner join cobranca.pagadorrecebedor pare on	pare.id = ccpi.investidor\r\n"
-	+ "where status = 'Aprovado' and ccpi.id is not null and ccpi.baixado = 'false' and ccpi.investidor not in (15, 34, 14, 182, 417, 803)) total\r\n"
-	+ "where parcelamensal is not null";
+	private static final String QUERY_CONTRATOS_RECEBER_BALANCO = " select coco.id, numerocontrato, txJurosParcelas, empresa, ccd.dataVencimento, "
+			+ "ccd.vlrParcela, pare.nome, corrigidoIPCA, corrigidonovoipca "
+			+ " from cobranca.contratocobranca coco "
+			+ " left join cobranca.contratocobranca_detalhes_join ccdj ON ccdj.idcontratocobranca = coco.id "
+			+ " inner join cobranca.contratocobrancadetalhes ccd ON ccd.id = ccdj.idcontratocobrancadetalhes and ccd.parcelapaga = false "
+			+ " inner join cobranca.pagadorrecebedor pare ON pare.id = coco.pagador "
+			+ " where status = 'Aprovado' and ccd.id is not null " + " and pagador not in (15, 34,14, 182, 417, 803) "
+			+ " ORDER BY numerocontrato asc, datavencimento asc ";
+
+	private static final String QUERY_CONTRATOS_PAGAR_FAVORECIDO_BALANCO = "select\r\n" + "	coco.id,\r\n"
+			+ "	coco.numerocontrato,\r\n" + "	coco.txJurosParcelas,\r\n" + "	coco.taxaremuneracaoinvestidor1,\r\n"
+			+ "	coco.empresa,\r\n" + "	ccpi.dataVencimento,\r\n" + "	ccpi.amortizacao,\r\n"
+			+ "	ccpi.capitalizacao,\r\n" + "	ccpi.parcelaMensal,\r\n" + "	pare.nome,\r\n" + "	coco.pagador,\r\n"
+			+ "	coco.corrigidoIPCA,\r\n" + "	ccpi.id ccpiid\r\n" + "from\r\n"
+			+ "	cobranca.contratocobrancaparcelasinvestidor ccpi\r\n"
+			+ "inner join cobranca.contratocobranca_parcelas_investidor_join_1 parcelaJoin on\r\n"
+			+ "	ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor\r\n"
+			+ "inner join cobranca.contratocobranca coco on\r\n"
+			+ "	parcelaJoin.idcontratocobrancaparcelasinvestidor1 = coco.id\r\n"
+			+ "inner join cobranca.pagadorrecebedor pare on\r\n" + "	pare.id = ccpi.investidor\r\n" + "where\r\n"
+			+ "	status = 'Aprovado'\r\n" + "	and ccpi.id is not null\r\n" + "	and ccpi.baixado = 'false'\r\n"
+			+ "union all\r\n" + "select\r\n" + "	coco.id,\r\n" + "	coco.numerocontrato,\r\n"
+			+ "	coco.txJurosParcelas,\r\n" + "	coco.taxaremuneracaoinvestidor2,\r\n" + "	coco.empresa,\r\n"
+			+ "	ccpi.dataVencimento,\r\n" + "	ccpi.amortizacao,\r\n" + "	ccpi.capitalizacao,\r\n"
+			+ "	ccpi.parcelaMensal,\r\n" + "	pare.nome,\r\n" + "	coco.pagador,\r\n" + "	coco.corrigidoIPCA,\r\n"
+			+ "	ccpi.id ccpiid\r\n" + "from\r\n" + "	cobranca.contratocobrancaparcelasinvestidor ccpi\r\n"
+			+ "inner join cobranca.contratocobranca_parcelas_investidor_join_2 parcelaJoin on\r\n"
+			+ "	ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor\r\n"
+			+ "inner join cobranca.contratocobranca coco on\r\n"
+			+ "	parcelaJoin.idcontratocobrancaparcelasinvestidor2 = coco.id\r\n"
+			+ "inner join cobranca.pagadorrecebedor pare on\r\n" + "	pare.id = ccpi.investidor\r\n" + "where\r\n"
+			+ "	status = 'Aprovado'\r\n" + "	and ccpi.id is not null\r\n" + "	and ccpi.baixado = 'false'\r\n"
+			+ "union all\r\n" + "select\r\n" + "	coco.id,\r\n" + "	coco.numerocontrato,\r\n"
+			+ "	coco.txJurosParcelas,\r\n" + "	coco.taxaremuneracaoinvestidor3,\r\n" + "	coco.empresa,\r\n"
+			+ "	ccpi.dataVencimento,\r\n" + "	ccpi.amortizacao,\r\n" + "	ccpi.capitalizacao,\r\n"
+			+ "	ccpi.parcelaMensal,\r\n" + "	pare.nome,\r\n" + "	coco.pagador,\r\n" + "	coco.corrigidoIPCA,\r\n"
+			+ "	ccpi.id ccpiid\r\n" + "from\r\n" + "	cobranca.contratocobrancaparcelasinvestidor ccpi\r\n"
+			+ "inner join cobranca.contratocobranca_parcelas_investidor_join_3 parcelaJoin on\r\n"
+			+ "	ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor\r\n"
+			+ "inner join cobranca.contratocobranca coco on\r\n"
+			+ "	parcelaJoin.idcontratocobrancaparcelasinvestidor3 = coco.id\r\n"
+			+ "inner join cobranca.pagadorrecebedor pare on\r\n" + "	pare.id = ccpi.investidor\r\n" + "where\r\n"
+			+ "	status = 'Aprovado'\r\n" + "	and ccpi.id is not null\r\n" + "	and ccpi.baixado = 'false'\r\n"
+			+ "union all\r\n" + "select\r\n" + "	coco.id,\r\n" + "	coco.numerocontrato,\r\n"
+			+ "	coco.txJurosParcelas,\r\n" + "	coco.taxaremuneracaoinvestidor4,\r\n" + "	coco.empresa,\r\n"
+			+ "	ccpi.dataVencimento,\r\n" + "	ccpi.amortizacao,\r\n" + "	ccpi.capitalizacao,\r\n"
+			+ "	ccpi.parcelaMensal,\r\n" + "	pare.nome,\r\n" + "	coco.pagador,\r\n" + "	coco.corrigidoIPCA,\r\n"
+			+ "	ccpi.id ccpiid\r\n" + "from\r\n" + "	cobranca.contratocobrancaparcelasinvestidor ccpi\r\n"
+			+ "inner join cobranca.contratocobranca_parcelas_investidor_join_4 parcelaJoin on\r\n"
+			+ "	ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor\r\n"
+			+ "inner join cobranca.contratocobranca coco on\r\n"
+			+ "	parcelaJoin.idcontratocobrancaparcelasinvestidor4 = coco.id\r\n"
+			+ "inner join cobranca.pagadorrecebedor pare on\r\n" + "	pare.id = ccpi.investidor\r\n" + "where\r\n"
+			+ "	status = 'Aprovado'\r\n" + "	and ccpi.id is not null\r\n" + "	and ccpi.baixado = 'false'\r\n"
+			+ "union all\r\n" + "select\r\n" + "	coco.id,\r\n" + "	coco.numerocontrato,\r\n"
+			+ "	coco.txJurosParcelas,\r\n" + "	coco.taxaremuneracaoinvestidor5,\r\n" + "	coco.empresa,\r\n"
+			+ "	ccpi.dataVencimento,\r\n" + "	ccpi.amortizacao,\r\n" + "	ccpi.capitalizacao,\r\n"
+			+ "	ccpi.parcelaMensal,\r\n" + "	pare.nome,\r\n" + "	coco.pagador,\r\n" + "	coco.corrigidoIPCA,\r\n"
+			+ "	ccpi.id ccpiid\r\n" + "from\r\n" + "	cobranca.contratocobrancaparcelasinvestidor ccpi\r\n"
+			+ "inner join cobranca.contratocobranca_parcelas_investidor_join_5 parcelaJoin on\r\n"
+			+ "	ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor\r\n"
+			+ "inner join cobranca.contratocobranca coco on\r\n"
+			+ "	parcelaJoin.idcontratocobrancaparcelasinvestidor5 = coco.id\r\n"
+			+ "inner join cobranca.pagadorrecebedor pare on\r\n" + "	pare.id = ccpi.investidor\r\n" + "where\r\n"
+			+ "	status = 'Aprovado'\r\n" + "	and ccpi.id is not null\r\n" + "	and ccpi.baixado = 'false'\r\n"
+			+ "union all\r\n" + "select\r\n" + "	coco.id,\r\n" + "	coco.numerocontrato,\r\n"
+			+ "	coco.txJurosParcelas,\r\n" + "	coco.taxaremuneracaoinvestidor6,\r\n" + "	coco.empresa,\r\n"
+			+ "	ccpi.dataVencimento,\r\n" + "	ccpi.amortizacao,\r\n" + "	ccpi.capitalizacao,\r\n"
+			+ "	ccpi.parcelaMensal,\r\n" + "	pare.nome,\r\n" + "	coco.pagador,\r\n" + "	coco.corrigidoIPCA,\r\n"
+			+ "	ccpi.id ccpiid\r\n" + "from\r\n" + "	cobranca.contratocobrancaparcelasinvestidor ccpi\r\n"
+			+ "inner join cobranca.contratocobranca_parcelas_investidor_join_6 parcelaJoin on\r\n"
+			+ "	ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor\r\n"
+			+ "inner join cobranca.contratocobranca coco on\r\n"
+			+ "	parcelaJoin.idcontratocobrancaparcelasinvestidor6 = coco.id\r\n"
+			+ "inner join cobranca.pagadorrecebedor pare on\r\n" + "	pare.id = ccpi.investidor\r\n" + "where\r\n"
+			+ "	status = 'Aprovado'\r\n" + "	and ccpi.id is not null\r\n" + "	and ccpi.baixado = 'false'\r\n"
+			+ "union all\r\n" + "select\r\n" + "	coco.id,\r\n" + "	coco.numerocontrato,\r\n"
+			+ "	coco.txJurosParcelas,\r\n" + "	coco.taxaremuneracaoinvestidor7,\r\n" + "	coco.empresa,\r\n"
+			+ "	ccpi.dataVencimento,\r\n" + "	ccpi.amortizacao,\r\n" + "	ccpi.capitalizacao,\r\n"
+			+ "	ccpi.parcelaMensal,\r\n" + "	pare.nome,\r\n" + "	coco.pagador,\r\n" + "	coco.corrigidoIPCA,\r\n"
+			+ "	ccpi.id ccpiid\r\n" + "from\r\n" + "	cobranca.contratocobrancaparcelasinvestidor ccpi\r\n"
+			+ "inner join cobranca.contratocobranca_parcelas_investidor_join_7 parcelaJoin on\r\n"
+			+ "	ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor\r\n"
+			+ "inner join cobranca.contratocobranca coco on\r\n"
+			+ "	parcelaJoin.idcontratocobrancaparcelasinvestidor7 = coco.id\r\n"
+			+ "inner join cobranca.pagadorrecebedor pare on\r\n" + "	pare.id = ccpi.investidor\r\n" + "where\r\n"
+			+ "	status = 'Aprovado'\r\n" + "	and ccpi.id is not null\r\n" + "	and ccpi.baixado = 'false'\r\n"
+			+ "union all\r\n" + "select\r\n" + "	coco.id,\r\n" + "	coco.numerocontrato,\r\n"
+			+ "	coco.txJurosParcelas,\r\n" + "	coco.taxaremuneracaoinvestidor8,\r\n" + "	coco.empresa,\r\n"
+			+ "	ccpi.dataVencimento,\r\n" + "	ccpi.amortizacao,\r\n" + "	ccpi.capitalizacao,\r\n"
+			+ "	ccpi.parcelaMensal,\r\n" + "	pare.nome,\r\n" + "	coco.pagador,\r\n" + "	coco.corrigidoIPCA,\r\n"
+			+ "	ccpi.id ccpiid\r\n" + "from\r\n" + "	cobranca.contratocobrancaparcelasinvestidor ccpi\r\n"
+			+ "inner join cobranca.contratocobranca_parcelas_investidor_join_8 parcelaJoin on\r\n"
+			+ "	ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor\r\n"
+			+ "inner join cobranca.contratocobranca coco on\r\n"
+			+ "	parcelaJoin.idcontratocobrancaparcelasinvestidor8 = coco.id\r\n"
+			+ "inner join cobranca.pagadorrecebedor pare on\r\n" + "	pare.id = ccpi.investidor\r\n" + "where\r\n"
+			+ "	status = 'Aprovado'\r\n" + "	and ccpi.id is not null\r\n" + "	and ccpi.baixado = 'false'\r\n"
+			+ "union all\r\n" + "select\r\n" + "	coco.id,\r\n" + "	coco.numerocontrato,\r\n"
+			+ "	coco.txJurosParcelas,\r\n" + "	coco.taxaremuneracaoinvestidor9,\r\n" + "	coco.empresa,\r\n"
+			+ "	ccpi.dataVencimento,\r\n" + "	ccpi.amortizacao,\r\n" + "	ccpi.capitalizacao,\r\n"
+			+ "	ccpi.parcelaMensal,\r\n" + "	pare.nome,\r\n" + "	coco.pagador,\r\n" + "	coco.corrigidoIPCA,\r\n"
+			+ "	ccpi.id ccpiid\r\n" + "from\r\n" + "	cobranca.contratocobrancaparcelasinvestidor ccpi\r\n"
+			+ "inner join cobranca.contratocobranca_parcelas_investidor_join_9 parcelaJoin on\r\n"
+			+ "	ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor\r\n"
+			+ "inner join cobranca.contratocobranca coco on\r\n"
+			+ "	parcelaJoin.idcontratocobrancaparcelasinvestidor9 = coco.id\r\n"
+			+ "inner join cobranca.pagadorrecebedor pare on\r\n" + "	pare.id = ccpi.investidor\r\n" + "where\r\n"
+			+ "	status = 'Aprovado'\r\n" + "	and ccpi.id is not null\r\n" + "	and ccpi.baixado = 'false'\r\n"
+			+ "union all\r\n" + "select\r\n" + "	coco.id,\r\n" + "	coco.numerocontrato,\r\n"
+			+ "	coco.txJurosParcelas,\r\n" + "	coco.taxaremuneracaoinvestidor10,\r\n" + "	coco.empresa,\r\n"
+			+ "	ccpi.dataVencimento,\r\n" + "	ccpi.amortizacao,\r\n" + "	ccpi.capitalizacao,\r\n"
+			+ "	ccpi.parcelaMensal,\r\n" + "	pare.nome,\r\n" + "	coco.pagador,\r\n" + "	coco.corrigidoIPCA,\r\n"
+			+ "	ccpi.id ccpiid\r\n" + "from\r\n" + "	cobranca.contratocobrancaparcelasinvestidor ccpi\r\n"
+			+ "inner join cobranca.contratocobranca_parcelas_investidor_join_10 parcelaJoin on\r\n"
+			+ "	ccpi.id = parcelaJoin.idcontratocobrancaparcelasinvestidor\r\n"
+			+ "inner join cobranca.contratocobranca coco on\r\n"
+			+ "	parcelaJoin.idcontratocobrancaparcelasinvestidor10 = coco.id\r\n"
+			+ "inner join cobranca.pagadorrecebedor pare on\r\n" + "	pare.id = ccpi.investidor\r\n" + "where\r\n"
+			+ "	status = 'Aprovado'\r\n" + "	and ccpi.id is not null\r\n" + "	and ccpi.baixado = 'false'\r\n"
+			+ "order by\r\n" + "	numerocontrato asc,\r\n" + "	nome asc,\r\n" + "	datavencimento asc";
 	
-	public void atualizaParcela(BalancoPatrimonial balanco) {
-		executeDBOperation(new DBRunnable() {
+	@SuppressWarnings("unchecked")
+	public List<RelatorioBalanco> listaRelatorioReceberBalanco() {
+		return (List<RelatorioBalanco>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
-				BigDecimal objects = null;
-				BigDecimal valor = BigDecimal.ZERO;
-				
+				Collection<RelatorioBalanco> objects = new ArrayList<RelatorioBalanco>();
 				Connection connection = null;
 				PreparedStatement ps = null;
 				ResultSet rs = null;
 				try {
 					connection = getConnection();
-																	
-					ps = connection.prepareStatement(QUERY_ATUALIZA_PARCELA);
+					ps = connection.prepareStatement(QUERY_CONTRATOS_RECEBER_BALANCO);
+
+					// ps.setString(1, sdf.format(dataDesagio));
+
 					rs = ps.executeQuery();
-				
-				while (rs.next()) {	
-					balanco.calcularPagarDebenturista(rs.getBigDecimal(1), rs.getDate(2));
-					
-				}
-//				balanco.setRecursosDebentures(valor);
-				System.out.println("Parcela atualizada: " + valor);
+					RelatorioBalanco relatorio = null;
+
+					while (rs.next()) {
+						relatorio = new RelatorioBalanco();
+						relatorio.setNumeroContratoRelatorio(rs.getString("numerocontrato"));
+						relatorio.setNomePagadorRelatorio(rs.getString("nome"));
+						relatorio.setDataVencimentoRelatorio(rs.getDate("dataVencimento"));
+						relatorio.setValorContratoRelatorio(rs.getBigDecimal("vlrParcela"));
+						relatorio.setTaxaContratoRelatorio(rs.getBigDecimal("txJurosParcelas"));
+						relatorio.setEmpresaContratoRelatorio(rs.getString("empresa"));
+						if (rs.getBoolean("corrigidoIPCA")) {
+							relatorio.setIndiceContratoRelatorio("Sim");
+						} else {
+							if (rs.getBoolean("corrigidonovoipca")) {
+								relatorio.setIndiceContratoRelatorio("Sim");
+							} else {
+								relatorio.setIndiceContratoRelatorio("Não");
+							}
+						}
+						
+						objects.add(relatorio);
+					}
+
 				} finally {
-					closeResources(connection, ps, rs);					
+					closeResources(connection, ps, rs);
 				}
 				return objects;
+
 			}
 		});
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	public List<RelatorioBalanco> listaRelatorioPagarBalanco() {
+		return (List<RelatorioBalanco>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				Collection<RelatorioBalanco> objects = new ArrayList<RelatorioBalanco>();
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+					ps = connection.prepareStatement(QUERY_CONTRATOS_PAGAR_FAVORECIDO_BALANCO);
+
+					// ps.setString(1, sdf.format(dataDesagio));
+
+					rs = ps.executeQuery();
+					RelatorioBalanco relatorio = null;
+
+					while (rs.next()) {
+						relatorio = new RelatorioBalanco();
+						relatorio.setNumeroContratoRelatorio(rs.getString("numerocontrato"));
+						relatorio.setNomePagadorRelatorio(rs.getString("nome"));
+						relatorio.setDataVencimentoRelatorio(rs.getDate("dataVencimento"));
+						relatorio.setValorContratoRelatorio(rs.getBigDecimal("parcelaMensal"));
+						relatorio.setValorAmortizacao(rs.getBigDecimal("amortizacao"));
+						relatorio.setValorCapitalizacao(rs.getBigDecimal("capitalizacao"));
+						relatorio.setTaxaContratoRelatorio(rs.getBigDecimal("txJurosParcelas"));
+						relatorio.setTaxaInvestidor(rs.getBigDecimal(4));
+						relatorio.setEmpresaContratoRelatorio(rs.getString("empresa"));
+						if (rs.getBoolean("corrigidoIPCA")) {
+							relatorio.setIndiceContratoRelatorio("Sim");
+						} else {
+							relatorio.setIndiceContratoRelatorio("Não");
+						}	
+
+						if (SiscoatConstants.PAGADOR_GALLERIA.contains(rs.getBigDecimal("pagador").longValue())) {
+							relatorio.setTipoPagadorRelatorio("Debênture");
+						} else {
+							relatorio.setTipoPagadorRelatorio("Favorecido");
+						}
+						objects.add(relatorio);
+					}
+
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return objects;
+
+			}
+		});
+	}
+
 	}
