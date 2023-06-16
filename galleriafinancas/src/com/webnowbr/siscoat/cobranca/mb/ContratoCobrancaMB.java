@@ -28183,24 +28183,28 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			
 			if (!DocumentosAnaliseEnum.REA.equals(documentoAnalise.getTipoEnum())) {
 
-//			if (documentoAnalise.isPodeChamarSerasa() || documentoAnalise.isLiberadoSerasa() ) {
 				if (documentoAnalise.isLiberadoSerasa()) {
 					if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
 						serasaService.requestSerasa(documentoAnalise, loginBean.getUsuarioLogado());
 					}
 				}
 
-//			if (documentoAnalise.isPodeChamarCenprot() || documentoAnalise.isLiberadoCenprot() ) {
 				if (documentoAnalise.isLiberadoCenprot()) {
 					if (CommonsUtil.semValor(documentoAnalise.getRetornoCenprot())) {
 						netrinService.requestCenprot(documentoAnalise);
 					}
 				}
+				
 				if (documentoAnalise.isLiberadoProcesso()) {
-					if (CommonsUtil.semValor(documentoAnalise.getRetornoProcesso())) {
+					if (!documentoAnalise.isProcessoProcessado()) {
 						netrinService.requestProcesso(documentoAnalise);
 					}
+
+					if (!documentoAnalise.isPpeProcessado()) {
+						netrinService.requestCadastroPepPF(documentoAnalise);
+					}
 				}
+
 
 				if (documentoAnalise.isLiberadoScr()) {
 					if (CommonsUtil.semValor(documentoAnalise.getRetornoScr())) {

@@ -7,7 +7,10 @@ import java.util.List;
 import java.util.Optional;
 
 public enum DocumentosAnaliseEnum {
-	REA("Rea"), RELATO("Relato"), CREDNET("Crednet"), ENGINE("Engine"), CENPROT("Cenprot"), SCR("SCR"), DOCKET("Docket"), RECEITA_FEDERAL("Receita Federal"), PROCESSO("Processos");
+	REA("Rea"), RELATO("Relato"), CREDNET("Crednet"), ENGINE("Engine"), CENPROT("Cenprot"), SCR("SCR"), DOCKET("Docket"), 
+	RECEITA_FEDERAL("Receita Federal"),
+	PROCESSO("Processos"),
+	PPE("Pessoa Exposta");
 
 	private String nome;
 
