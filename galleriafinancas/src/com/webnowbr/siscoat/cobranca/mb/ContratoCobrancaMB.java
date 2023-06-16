@@ -4607,7 +4607,9 @@ public class ContratoCobrancaMB {
 	}
 	
 	public void enviarWhatsappGislaine(String template, String nomeCliente, String numeroContrato, String taxaAprovada, String prazoAprovado) {
-		if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 5)) {			
+		if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 5) //gislaine
+				 //|| CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 60)//Ana Cecilia
+				 ) {			
 			TakeBlipMB takeBlipMB = new TakeBlipMB();
 			ResponsavelDao rDao = new ResponsavelDao();
 			/*if(!CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(), (long) 5)) {
@@ -4622,7 +4624,7 @@ public class ContratoCobrancaMB {
 			}*/ 
 			//comentado pois dono responsavel já envia mensagem e gislaine não tem mais pessoas na equipe
 			
-			// Bia (assistente Gislaine)
+			// Isa (assistente Gislaine)
 			Responsavel rAssistente = new Responsavel();
 			rAssistente = rDao.findById((long) 1556);
 			takeBlipMB.sendWhatsAppMessage(rAssistente,
@@ -4635,11 +4637,12 @@ public class ContratoCobrancaMB {
 	}
 	
 	public void enviarWhatsappLuis(String template, String nomeCliente, String numeroContrato, String taxaAprovada, String prazoAprovado) {
-		if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6)
+		if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 6) //luis
 				   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 81)
 				   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 458)
 				   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 249)
-				   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 506)) {			
+				   || CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long) 506)
+				   ) {			
 			TakeBlipMB takeBlipMB = new TakeBlipMB();
 			ResponsavelDao rDao = new ResponsavelDao();
 			if(!CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(), (long) 6)

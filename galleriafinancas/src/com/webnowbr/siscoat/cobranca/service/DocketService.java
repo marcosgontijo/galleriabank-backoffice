@@ -777,8 +777,17 @@ public class DocketService {
 		}
 
 		JSONObject jsonDocketPedido = new JSONObject();
-		String nomePedido = objetoContratoCobranca.getNumeroContrato() + " - "
-				+ objetoContratoCobranca.getPagador().getNome();
+		String nomePedido = "";
+		if(CommonsUtil.semValor(objetoContratoCobranca.getId())){
+			if(listaPagador.size() > 0) {				
+				nomePedido = "00000 - " + listaPagador.get(0).getNome();
+			} else {
+				nomePedido = "00000 - nome";
+			}
+		} else {
+			nomePedido = objetoContratoCobranca.getNumeroContrato() + " - "
+					+ objetoContratoCobranca.getPagador().getNome();
+		}
 		// jsonDocketPedido = new JSONObject();
 		jsonDocketPedido.put("lead", nomePedido);
 		jsonDocketPedido.put("documentos", jsonDocumentosArray);
@@ -841,17 +850,13 @@ public class DocketService {
 		// POST para gerar pedido
 		FacesContext context = FacesContext.getCurrentInstance();
 		DocketDao docketDao = new DocketDao();
-		if (CommonsUtil.semValor(objetoContratoCobranca)) {
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Contrato não vinculado!!!", ""));
-			return null;
-		} else {
+		if(!CommonsUtil.semValor(objetoContratoCobranca.getId())) {
 			ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 			cDao.merge(objetoContratoCobranca);
-		}
-		if (docketDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca).size() > 0) {
-			context.addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_FATAL, "Pedido desse contrato já existe!!!!!!", ""));
-			return null;
+			if(docketDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca).size() > 0) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Pedido desse contrato já existe!!!!!!", ""));	
+				return null;
+			}
 		}
 
 		try {
@@ -898,9 +903,12 @@ public class DocketService {
 			} else {
 				
 				DocketRetorno myResponse = docketJSONRetorno(myURLConnection.getInputStream());
-				
-				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-				cDao.merge(objetoContratoCobranca);
+				if(!CommonsUtil.semValor(objetoContratoCobranca.getId())) {
+					ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+					cDao.merge(objetoContratoCobranca);					
+				} else {
+					objetoContratoCobranca = null;
+				}
 				Docket docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "", cidadeImovel, "",
 						user.getName(), gerarDataHoje(), myResponse.getPedido().getId(), myResponse.getPedido().getIdExibicao());
 				docketDao.create(docket);

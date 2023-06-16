@@ -386,24 +386,16 @@ public class DocketMB {
 	public void criarPedido() {	//POST para gerar pedido	
 		FacesContext context = FacesContext.getCurrentInstance();
 		
-		
-		if(CommonsUtil.semValor(objetoContratoCobranca)) {
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Contrato não vinculado!!!", ""));	
-			return;
-		}
-		else {
+		if(!CommonsUtil.semValor(objetoContratoCobranca.getId())) {
 			ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 			cDao.merge(objetoContratoCobranca);
+			DocketDao docketDao = new DocketDao();
+			if(docketDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca).size() > 0) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Pedido desse contrato já existe!!!!!!", ""));	
+				return;
+			}
 		}
-		
-		
-		DocketDao docketDao = new DocketDao();
-		
-		if(docketDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca).size() > 0) {
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Pedido desse contrato já existe!!!!!!", ""));	
-			return;
-		}
-		
+			
 		DocketService docketService= new DocketService();
 		FacesMessage facesMessage = docketService.criaPedidoDocket(objetoContratoCobranca, listaPagador, estadoImovel, cidadeImovel, loginBean.getUsuarioLogado());
 		
