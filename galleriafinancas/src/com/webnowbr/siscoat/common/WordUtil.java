@@ -59,7 +59,7 @@ public class WordUtil {
 		return WordprocessingMLPackage.load(new FileInputStream(arq));
 	}
 
-	private List<Object> getAllElementFromObject(Object obj, Class<?> toSearch) {
+	public List<Object> getAllElementFromObject(Object obj, Class<?> toSearch) {
 		List<Object> result = new ArrayList<Object>();
 		if (obj instanceof JAXBElement)
 			obj = ((JAXBElement<?>) obj).getValue();

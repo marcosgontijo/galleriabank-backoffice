@@ -41,10 +41,17 @@
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/CcbParticipantes.hbm.xml"/>  
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/CcbProcessosJudiciais.hbm.xml"/>  
 		
-		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/CadastroStatus.hbm.xml"/>   
+		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/CadastroStatus.hbm.xml"/>  
+		 
 		 
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/DataEngine.hbm.xml"/>
        	<mapping resource="com/webnowbr/siscoat/cobranca/db/model/DocumentosAnalise.hbm.xml"/>
+       	
+		
+		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ContratoTipoTemplateCampo.hbm.xml"/>
+		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ContratoTipoTemplateBloco.hbm.xml"/>
+		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ContratoTipoTemplate.hbm.xml"/>
+	 	 
 	
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/DocumentosDocket.hbm.xml"/>    
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/DocumentosPagadorDocket.hbm.xml"/> 
@@ -56,8 +63,7 @@
        	
        	<mapping resource="com/webnowbr/siscoat/cobranca/db/model/DataVistoria.hbm.xml"/>
        	<mapping resource="com/webnowbr/siscoat/cobranca/db/model/Averbacao.hbm.xml"/>
-		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/PagadorRecebedorConsulta.hbm.xml"/>
-       	
+		
  		<mapping resource="com/webnowbr/siscoat/common/db/model/BoletosRemessa.hbm.xml"/> 				 		
         <mapping resource="com/webnowbr/siscoat/infra/db/model/GroupAdm.hbm.xml"/> 
         <mapping resource="com/webnowbr/siscoat/infra/db/model/User.hbm.xml"/>

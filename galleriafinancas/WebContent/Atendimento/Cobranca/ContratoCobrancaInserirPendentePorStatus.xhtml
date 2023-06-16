@@ -961,6 +961,12 @@
 										headerText="Identificação" filterBy="#{fileAnalise.identificacao}"
 										filterMatchMode="contains" sortBy="#{fileAnalise.identificacao}">
 
+										<p:commandButton class="ui-button-text ui-c"
+										  action="#{contratoCobrancaMB.preparaEditarPessoaAnalise(fileAnalise)}"
+											oncomplete="PF('adicionarPessoaAnaliseDlg').show();"
+											update="adicionarPessoaAnaliseForm">
+										</p:commandButton>
+
 										<h:outputText value="#{fileAnalise.identificacao}"
 											rendered="#{fileAnalise.podeChamarRea}" />
 										<h:outputText value="#{fileAnalise.identificacao} #{fileAnalise.cnpjcpf} "
