@@ -27,6 +27,12 @@
 										action="#{contasAPagarMB.clearFields}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
+									<shiro:hasAnyRoles name="ROOT">
+										<p:menuitem value="Combate a Fraude"
+											action="#{combateAFraudeMB.clearFields}"
+											ajax="false" icon="ui-icon ui-icon-newwin"
+											styleClass="itemMenu" />
+									</shiro:hasAnyRoles>
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT">
 									<p:menuitem value="Contas Pagas"
