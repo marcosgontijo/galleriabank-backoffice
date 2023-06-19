@@ -1118,7 +1118,7 @@
             <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.ContasPagar" />
         </set>  
         
-        <set name="listProcessos" table="ccbprocessosjudiciais" cascade="persist"
+        <set name="listProcessos" table="ccbprocessosjudiciais" cascade="save-update"
                  lazy="false" fetch="select">
             <key>
                 <column name="contrato" />
