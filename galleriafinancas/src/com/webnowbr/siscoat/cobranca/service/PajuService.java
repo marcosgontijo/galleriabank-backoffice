@@ -6,6 +6,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.List;
 
+import org.docx4j.XmlUtils;
+import org.docx4j.jaxb.Context;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.HeaderPart;
@@ -13,6 +15,9 @@ import org.docx4j.openpackaging.parts.relationships.Namespaces;
 import org.docx4j.openpackaging.parts.relationships.RelationshipsPart;
 import org.docx4j.relationships.Relationship;
 import org.docx4j.wml.ContentAccessor;
+import org.docx4j.wml.ObjectFactory;
+import org.docx4j.wml.P;
+import org.docx4j.wml.Tbl;
 import org.docx4j.wml.Text;
 import org.springframework.expression.EvaluationException;
 import org.springframework.expression.Expression;
@@ -29,10 +34,13 @@ import com.webnowbr.siscoat.cobranca.db.template.ContratoTipoTemplateDao;
 import com.webnowbr.siscoat.common.WordUtil;
 import com.webnowbr.siscoat.exception.SiscoatException;
 
+import br.com.galleriabank.serasacrednet.cliente.model.PessoaParticipacao;
+
 public class PajuService {
 
 	private static final String BLOCO_DOCUMENTO = "D";
 	private static final String BLOCO_CABECALHO = "C";
+	private static final String BLOCO_PESSOA_CONSULTA = "PC";	
 	private static final String BLOCO_DEBITOS_IPTU = "DB_IPTU";
 	private static final String BLOCO_DEBITOS_CONDOMNIO = "DB_COND";
 
@@ -87,6 +95,7 @@ public class PajuService {
 					replacePlaceholder(docTemplate.getMainDocumentPart(), campo.getTag(), (String) valor);
 				}
 				break;
+				
 
 			case BLOCO_CABECALHO:
 
@@ -96,6 +105,11 @@ public class PajuService {
 
 					replacePlaceholderAtHeader(docTemplate, campo.getTag(), (String) valor);
 				}
+				break;
+				
+			case BLOCO_PESSOA_CONSULTA:
+
+				populaParagrafoPessoaConsulta(docTemplate, bloco);
 				break;
 
 			/*
@@ -127,7 +141,80 @@ public class PajuService {
 		return baos.toByteArray();
 
 	}
+	
+	
+	private void populaParagrafoPessoaConsulta(WordprocessingMLPackage docTemplate, ContratoTipoTemplateBloco bloco) throws SiscoatException {
 
+		P paragrafoTemplate = getParagrafoTemplate(docTemplate, bloco.getTagIdentificacao());
+
+		if (paragrafoTemplate == null) {
+			return;
+		}
+
+		for (PessoaParticipacao participante : participantes) {
+			PessoaFisica pf = participante.getParticipante().getPessoaFisica().get(0);
+			adicionaParagrafo(docTemplate, paragrafoTemplate, bloco, pf);
+
+		}
+
+		if (paragrafoTemplate != null) {
+			removeParagrafo(docTemplate, paragrafoTemplate);
+		}
+
+	}
+
+	private P getParagrafoTemplate(WordprocessingMLPackage template, String tagBusca) {
+
+		List<Object> tables = getAllElementFromObject(template.getMainDocumentPart(), Tbl.class);
+
+		for (Object tbl : tables) {
+
+			// 1. get the paragraph
+			List<Object> paragraphs = getAllElementFromObject(tbl, P.class);
+
+			for (Object p : paragraphs) {
+				List<Object> texts = getAllElementFromObject(p, Text.class);
+				for (Object t : texts) {
+					Text content = (Text) t;
+					if (content.getValue() != null && ((String) content.getValue()).contains(tagBusca)) {
+						return (P) p;
+					}
+				}
+			}
+		}
+
+		return null;
+	}
+
+	private void adicionaParagrafo(WordprocessingMLPackage template, P paragrafoTemplate,
+			ContratoTipoTemplateBloco bloco, Object dataSource) throws BusinessException {
+
+		// 3. copy the found paragraph to keep styling correct
+		P copy = (P) XmlUtils.deepCopy(paragrafoTemplate);
+
+		for (ContratoTipoTemplateCampo campo : bloco.getCampos()) {
+
+			Object valor = getValor(campo.getExpressao(), dataSource);
+
+			if (valor != null) {
+				replacePlaceholder(copy, campo.getTag(), (String) valor);
+			}
+		}
+
+		// add the paragraph to the document
+		((ContentAccessor) paragrafoTemplate.getParent()).getContent().add(copy);
+
+		addParagrafoVazio((ContentAccessor) paragrafoTemplate.getParent());
+	}
+
+	private void addParagrafoVazio(ContentAccessor place2Add) {
+		ObjectFactory factory = Context.getWmlObjectFactory();
+
+		P spc = factory.createP();
+
+		place2Add.getContent().add(spc);
+	}
+	
 	// ************************************************************************
 	// *** Rotinas para calculo de expressão
 
@@ -174,6 +261,7 @@ public class PajuService {
 		}
 
 	}
+	
 
 	private void replacePlaceholderAtHeader(WordprocessingMLPackage template, String placeholder, String valor) {
 

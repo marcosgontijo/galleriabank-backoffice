@@ -74,9 +74,13 @@ public class WordUtil {
 
 		}
 		return result;
-	}
+	} 
+	
 
+    
 	private void replacePlaceholder(ContentAccessor place2Replace, String placeholder, String valor) {
+		
+		
 		List<Object> texts = getAllElementFromObject(place2Replace, Text.class);
 
 		for (Object text : texts) {
