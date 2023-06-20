@@ -4753,64 +4753,66 @@
 			</div>			
 		</h:form>
 
-		<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO">
-			<p:dialog header="Adicionar pessoa Analise" overflow="auto"
-				id="dialogAdicionarPessoaAnalise"
-				widgetVar="adicionarPessoaAnaliseDlg" resizable="true"
-				style="FONT-SIZE: 13pt;" width="800" minWidth="800">
-				<h:form id="adicionarPessoaAnaliseForm">
-					<div align="center">
-						<h:panelGrid columns="2">
-							<p:outputLabel for="AnaliseDocumentoPessoaNome"
-								value="Nome da pessoa " style="margin-right:10px" />
-							<h:panelGroup>
-								<p:outputLabel id="AnaliseDocumentoPessoaNome"
-									value="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.nome}"
-									required="false" style="FONT-SIZE: 10pt;width:300px;"
-									styleClass="labelBold" />
-								<p:spacer height="10" />
-								<p:commandButton
-									action="#{contratoCobrancaMB.pesquisaPessoaAnaliseDocumento}"
-									icon="ui-icon ui-icon-circle-zoomin"
-									oncomplete="PF('pagadorRecebedorDialog').show();"
-									update="formReceborPagador" />
-							</h:panelGroup>
-		
-							<h:outputText value="CPF"
-								rendered="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.cpf!= null}" />
-							<h:outputText
-								value="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.cpf}"
-								rendered="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.cpf!= null}" />
-	
-							<h:outputText value="CNPJ"
-								rendered="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.cnpj != null}" />
-							<h:outputText
-								value="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.cnpj}"
-								rendered="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.cnpj != null}" />
-	
-							<h:outputText value="Motivo" />
-							<p:selectOneMenu
-								value="#{contratoCobrancaMB.documentoAnaliseAdicionar.motivoAnalise}"
-								label="Tipo" style="width:250px;">
-								<f:selectItem itemValue="" itemLabel="Selecione o motivo" />
-								<f:selectItem itemLabel="Proprietario Atual"
-									itemValue="Proprietario Atual" />
-								<f:selectItem itemLabel="Proprietario Anterior"
-									itemValue="Proprietario Anterior" />
-							</p:selectOneMenu>
-						</h:panelGrid>
-						<h:panelGrid columns="2" style="text-align:center">
-							<p:commandButton value="Salvar" icon="ui-icon ui-icon-cancel"
-								action="#{contratoCobrancaMB.adicionarPessoaAnalise}"
-								update=":form:dtFilesAnalise"
-								oncomplete="PF('adicionarPessoaAnaliseDlg').hide();" />
-	
-							<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
-								oncomplete="PF('adicionarPessoaAnaliseDlg').hide();" />
-						</h:panelGrid>
-					</div>
-				</h:form>
-			</p:dialog>
+<shiro:hasAnyRoles
+					name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO">
+		<p:dialog header="Adicionar pessoa Analise" overflow="auto"
+			id="dialogAdicionarPessoaAnalise"
+			widgetVar="adicionarPessoaAnaliseDlg" resizable="true"
+			style="FONT-SIZE: 13pt;" width="800" minWidth="800">
+			<h:form id="adicionarPessoaAnaliseForm">
+				<div align="center">
+					<h:panelGrid columns="2">
+						<p:outputLabel for="AnaliseDocumentoPessoaNome"
+							value="Nome da pessoa " style="margin-right:10px" />
+						<h:panelGroup>
+							<p:outputLabel id="AnaliseDocumentoPessoaNome"
+								value="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.nome}"
+								required="false" style="FONT-SIZE: 10pt;width:300px;"
+								styleClass="labelBold" />
+							<p:spacer height="10" />
+							<p:commandButton
+								action="#{contratoCobrancaMB.pesquisaPessoaAnaliseDocumento}"
+								icon="ui-icon ui-icon-circle-zoomin"
+								oncomplete="PF('pagadorRecebedorDialog').show();"
+								update="formReceborPagador" />
+						</h:panelGroup>
+
+
+						<h:outputText value="CPF"
+							rendered="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.cpf!= null}" />
+						<h:outputText
+							value="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.cpf}"
+							rendered="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.cpf!= null}" />
+
+						<h:outputText value="CNPJ"
+							rendered="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.cnpj != null}" />
+						<h:outputText
+							value="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.cnpj}"
+							rendered="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.cnpj != null}" />
+
+						<h:outputText value="Motivo" />
+						<p:selectOneMenu
+							value="#{contratoCobrancaMB.documentoAnaliseAdicionar.motivoAnalise}"
+							label="Tipo" style="width:250px;">
+							<f:selectItem itemValue="" itemLabel="Selecione o motivo" />
+							<f:selectItem itemLabel="Proprietario Atual"
+								itemValue="Proprietario Atual" />
+							<f:selectItem itemLabel="Proprietario Anterior"
+								itemValue="Proprietario Anterior" />
+						</p:selectOneMenu>
+					</h:panelGrid>
+					<h:panelGrid columns="2" style="text-align:center">
+						<p:commandButton value="Salvar" icon="ui-icon ui-icon-cancel"
+							action="#{contratoCobrancaMB.adicionarPessoaAnalise}"
+							update=":form:dtFilesAnalise"
+							oncomplete="PF('adicionarPessoaAnaliseDlg').hide();" />
+
+						<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
+							oncomplete="PF('adicionarPessoaAnaliseDlg').hide();" />
+					</h:panelGrid>
+				</div>
+			</h:form>
+		</p:dialog>
 		</shiro:hasAnyRoles>
 
 		<p:dialog header="Arquivos da Conta" overflow="auto" id="dialogArquivosConta"
