@@ -67,12 +67,7 @@
 			<name>galleriabank repo</name>
 			<url>https://amurta.bytesafe.dev/maven/galleriabank</url>			
 		</repository>
-
-
 	</repositories>
-	
-
-	
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.shiro</groupId>
