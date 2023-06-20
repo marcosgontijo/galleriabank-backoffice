@@ -64,7 +64,9 @@ public class DocumentoAnalise implements Serializable {
 	public List<DocumentoAnaliseResumo> getResumoEngine() {
 		List<DocumentoAnaliseResumo> result = new ArrayList<>();
 		EngineRetorno engine = GsonUtil.fromJson(getRetornoEngine(), EngineRetorno.class);
-
+		if(engine == null) {
+			result.add(new DocumentoAnaliseResumo("nâo disponível", null));
+		} else {
 		EngineRetornoRequestFields nome = engine.getRequestFields().stream().filter(f -> f.getField().equals("nome"))
 				.findFirst().orElse(null);
 		if (nome != null)
@@ -107,7 +109,7 @@ public class DocumentoAnalise implements Serializable {
 			result.add(new DocumentoAnaliseResumo("Numero  de processos:",
 					CommonsUtil.stringValue(processo.getTotal_acoes_judiciais())));
 		}
-		
+			}	
 		
 		
 		
@@ -177,6 +179,9 @@ public class DocumentoAnalise implements Serializable {
 	}
 	public List<DocumentoAnaliseResumo> getResumoCenprot(){
 		List<DocumentoAnaliseResumo> cenprot = new ArrayList<>();
+		if(getRetornoCenprot() == null) {
+			cenprot.add(new DocumentoAnaliseResumo("não disponivel", null));
+		} else {
 		CenprotResponse data = GsonUtil.fromJson(getRetornoCenprot(), CenprotResponse.class);
 		if(data.getCenprotProtestos().getProtestosBrasil() == null) {
 			cenprot.add(new DocumentoAnaliseResumo("Não Disponível","0"));
@@ -185,10 +190,11 @@ public class DocumentoAnalise implements Serializable {
 			
 				String valorEstado = CommonsUtil.stringValue(estado.getValorTotal()) + " (" + estado.getValorTotal() + ") "; 
 				cenprot.add(new DocumentoAnaliseResumo(estado.getEstado(), valorEstado)); 	
-			}
+			
+		}
 		}
 		
-		
+		}
 		
 		return cenprot;
 	}

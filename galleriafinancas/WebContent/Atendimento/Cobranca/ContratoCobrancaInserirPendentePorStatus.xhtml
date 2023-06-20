@@ -5357,14 +5357,14 @@
 			</h:form>
 		</p:dialog>
 
-		<p:dialog header="Resumo Consultas"
+		<p:dialog header="Resumo Consultas" 
 			widgetVar="resumoConsutlasDialog" showEffect="fade" hideEffect="fade"
 			resizable="false" responsive="false" width="1000"
 			positionType="center center" closable="true">
 			<h:form id="resumoConsutlasForm">
 				<h:panelGrid columns="4" columnClasses="painelResumo,painelResumo,painelResumo,painelResumo">
 				
-					<p:panel >
+					<p:panel>
 						<f:facet name="header">
 							<h:outputText value="Engine" />
 						</f:facet>
@@ -5399,13 +5399,13 @@
 					<p:panel style="justify-content:start;">
 						<f:facet name="header">
 							<h:outputText value="Cenprot" />
-							<p:dataTable id="resumoCenprot" var="cenprot" rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
+							<p:dataTable id="resumoCenprot" var="Cenprot" rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
 							value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoCenprot()}">
 								<p:column>
-									<h:outputText value="#{cenprot.descricao}" />
+									<h:outputText value="#{Cenprot.descricao}" />
 								</p:column>
 								<p:column>
-									<h:outputText value="#{cenprot.valor}"/>
+									<h:outputText value="#{Cenprot.valor}"/>
 								</p:column>
 							
 							
