@@ -257,7 +257,7 @@
 											ajax="false" icon="ui-icon ui-icon-newwin"
 											styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_GERENTE_ANALISE">
+								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, LAUDO, PROFILE_LAUDO, PROFILE_GERENTE_ANALISE">
 									<p:menuitem value="04.1 - Ag. Laudo"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Laudo')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
@@ -377,7 +377,11 @@
 									<p:menuitem value="Contratos Geral"
 										action="#{contratoCobrancaMB.clearFieldsContratosPerformance()}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />										
+										styleClass="itemMenu" />				
+									<p:menuitem value="Dados Empresa"
+										action="#{dadosEmpresaMB.clearFieldsDadosEmpresa}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />						
 									<p:menuitem value="Contratos Securitizadora"
 										action="#{contratoCobrancaMB.clearFieldsContratos('Securitizadora')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
@@ -750,7 +754,7 @@
                 </ui:insert>
 		    </p:layoutUnit>
 		    <p:layoutUnit position="south" size="35" resizable="false" closable="true" style="BORDER:none;" spacingOpen="0">
-				<p:outputLabel value="Copyright © 2022 Todos os direitos reservados. " styleClass="labelBold"/>
+				<p:outputLabel value="Copyright © 2023 Todos os direitos reservados. " styleClass="labelBold"/>
 		    </p:layoutUnit>			    
 		</p:layout>											
 	</h:body>

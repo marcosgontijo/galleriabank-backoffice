@@ -26,6 +26,8 @@ public class ContratoCobranca implements Serializable {
 	
 	private String cedenteBRLCessao;
 	private Date dataAquisicaoCessao;
+	
+	private Date dataCorteBaixaIPCAHibrido;
 
 	private String tipoCalculoInvestidor1;
 	private BigDecimal vlrInvestidor1;
@@ -348,6 +350,10 @@ public class ContratoCobranca implements Serializable {
 	private boolean leadCompleto;
 	private Date leadCompletoData;
 	private String leadCompletoUsuario;
+	
+	/*private Date liberarAnaliseData;
+	private boolean liberarAnalise;
+	private String liberarAnaliseUsuario;*/
 	
 	private Date inicioAnaliseData;
 	private boolean inicioAnalise;
@@ -765,6 +771,7 @@ public class ContratoCobranca implements Serializable {
 	private String contatoAgendamendoLaudoAvaliacao;
 	private String observacaoContatoAgendaLaudoAvaliacao;
 	private String comentarioContatoAgendaLaudoAvaliacao;
+	private boolean apenasPagamentoAntecipado;
 
 	private String avaliacaoLaudo;
 	private String avaliacaoLaudoObservacao;
@@ -992,8 +999,6 @@ public class ContratoCobranca implements Serializable {
 		List<String> lstEmAnalise =  Arrays.asList("Pendente");
 		return CommonsUtil.semValor(this.cadastroAprovadoValor) && lstEmAnalise.contains(this.status);
 	}
-	
-	
 
 	/**
 	 * @return the id
@@ -6344,5 +6349,20 @@ public class ContratoCobranca implements Serializable {
 
 	public void setCelularPagador(String celularPagador) {
 		this.celularPagador = celularPagador;
+	}
+
+	public Date getDataCorteBaixaIPCAHibrido() {
+		return dataCorteBaixaIPCAHibrido;
+	}
+
+	public void setDataCorteBaixaIPCAHibrido(Date dataCorteBaixaIPCAHibrido) {
+		this.dataCorteBaixaIPCAHibrido = dataCorteBaixaIPCAHibrido;
+	}	
+	public boolean isApenasPagamentoAntecipado() {
+		return apenasPagamentoAntecipado;
+	}
+
+	public void setApenasPagamentoAntecipado(boolean apenasPagamentoAntecipado) {
+		this.apenasPagamentoAntecipado = apenasPagamentoAntecipado;
 	}	
 }

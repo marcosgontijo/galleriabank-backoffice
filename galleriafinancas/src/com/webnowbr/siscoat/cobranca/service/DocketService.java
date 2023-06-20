@@ -27,6 +27,7 @@ import org.json.JSONObject;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.DataEngine;
 import com.webnowbr.siscoat.cobranca.db.model.Docket;
+import com.webnowbr.siscoat.cobranca.db.model.DocketRetorno;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentosDocket;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentosPagadorDocket;
@@ -621,7 +622,7 @@ public class DocketService {
 			jsonDocketBodyPedido.put("fields", engineJsonPJ(pagador));
 		}
 		String webHookJWT = JwtUtil.generateJWTWebhook(true);
-		jsonDocketBodyPedido.put("urlWebhook", SiscoatConstants.URL_SISCOAT_DOCKET_WEBHOOK + webHookJWT);
+		jsonDocketBodyPedido.put("urlWebhook", SiscoatConstants.URL_SISCOAT_ENGINE_WEBHOOK + webHookJWT);
 
 		return jsonDocketBodyPedido;
 	}
@@ -720,6 +721,34 @@ public class DocketService {
 		}
 		return null;
 	}
+	
+	private DocketRetorno docketJSONRetorno(InputStream inputStream) { // Pega resultado da API
+		BufferedReader in;
+		try {
+			in = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+
+			// READ JSON response and print
+			DocketRetorno myResponse = GsonUtil.fromJson(response.toString(), DocketRetorno.class);
+
+			return myResponse;
+
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	private Date gerarDataHoje() {
 		TimeZone zone = TimeZone.getDefault();
@@ -748,8 +777,17 @@ public class DocketService {
 		}
 
 		JSONObject jsonDocketPedido = new JSONObject();
-		String nomePedido = objetoContratoCobranca.getNumeroContrato() + " - "
-				+ objetoContratoCobranca.getPagador().getNome();
+		String nomePedido = "";
+		if(CommonsUtil.semValor(objetoContratoCobranca.getId())){
+			if(listaPagador.size() > 0) {				
+				nomePedido = "00000 - " + listaPagador.get(0).getNome();
+			} else {
+				nomePedido = "00000 - nome";
+			}
+		} else {
+			nomePedido = objetoContratoCobranca.getNumeroContrato() + " - "
+					+ objetoContratoCobranca.getPagador().getNome();
+		}
 		// jsonDocketPedido = new JSONObject();
 		jsonDocketPedido.put("lead", nomePedido);
 		jsonDocketPedido.put("documentos", jsonDocumentosArray);
@@ -812,17 +850,13 @@ public class DocketService {
 		// POST para gerar pedido
 		FacesContext context = FacesContext.getCurrentInstance();
 		DocketDao docketDao = new DocketDao();
-		if (CommonsUtil.semValor(objetoContratoCobranca)) {
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Contrato não vinculado!!!", ""));
-			return null;
-		} else {
+		if(!CommonsUtil.semValor(objetoContratoCobranca.getId())) {
 			ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 			cDao.merge(objetoContratoCobranca);
-		}
-		if (docketDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca).size() > 0) {
-			context.addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_FATAL, "Pedido desse contrato já existe!!!!!!", ""));
-			return null;
+			if(docketDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca).size() > 0) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Pedido desse contrato já existe!!!!!!", ""));	
+				return null;
+			}
 		}
 
 		try {
@@ -867,15 +901,19 @@ public class DocketService {
 						"Docket: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", ""));
 				System.out.println(jsonWhatsApp.toString());
 			} else {
-				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-				cDao.merge(objetoContratoCobranca);
+				
+				DocketRetorno myResponse = docketJSONRetorno(myURLConnection.getInputStream());
+				if(!CommonsUtil.semValor(objetoContratoCobranca.getId())) {
+					ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+					cDao.merge(objetoContratoCobranca);					
+				} else {
+					objetoContratoCobranca = null;
+				}
 				Docket docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "", cidadeImovel, "",
-						// DocketDao docketDao = new DocketDao();
-						user.getName(), gerarDataHoje());
+						user.getName(), gerarDataHoje(), myResponse.getPedido().getId(), myResponse.getPedido().getIdExibicao());
 				docketDao.create(docket);
 
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Pedido feito com sucesso", ""));
-//				myResponse = getJSONSucesso(myURLConnection.getInputStream());
 			}
 
 			myURLConnection.disconnect();

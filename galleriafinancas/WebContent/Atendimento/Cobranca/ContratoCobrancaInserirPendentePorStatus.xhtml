@@ -119,7 +119,7 @@
 										border-radius: 5px; padding: 10px;">
 										<p:outputLabel styleClass="labelBold">Inicio Análise</p:outputLabel>
 										<p:spacer></p:spacer>
-										<p:selectBooleanButton id="inicioAnaliseView"
+										<p:selectBooleanButton id="inicioAnaliseView" 
 											value="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise}"
 											onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 											offIcon="ui-icon-cancel" style="width:60px" />
@@ -959,6 +959,13 @@
 												listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
 										</p:selectBooleanButton>
 									</p:column>
+									<p:column headerText="Liberar Processos">
+										<p:selectBooleanButton value="#{fileAnalise.liberadoProcesso}"
+											 onLabel="Sim" offLabel="Não" style="width:6rem" >
+										<p:ajax  event="change"
+											listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
+											</p:selectBooleanButton>
+									</p:column>
 									<p:column headerText="Liberar SCR">
 										<p:selectBooleanButton value="#{fileAnalise.liberadoScr}"
 											disabled="#{!contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
@@ -1027,6 +1034,21 @@
 											icon="ui-icon ui-icon-print" value="Download Cenprot"
 											rendered="#{fileAnalise.cenprotProcessado }" ajax="false" />
 
+										<p:commandButton
+											action="#{netrinMB.baixarDocumentoPpe(fileAnalise)}"
+											icon="ui-icon ui-icon-print" value="Download PPE"
+											rendered="#{fileAnalise.ppeProcessado }" ajax="false" />
+
+										<p:commandButton
+											action="#{netrinMB.baixarDocumentoDossie(fileAnalise)}"
+											icon="ui-icon ui-icon-print" value="Download Dossiê"
+											rendered="#{fileAnalise.podeDownlaodDossie }" ajax="false" />
+
+										<p:commandButton
+											action="#{netrinMB.baixarDocumentoProcesso(fileAnalise)}"
+											icon="ui-icon ui-icon-print" value="Download Processos"
+											rendered="#{fileAnalise.processoProcessado }" ajax="false" />
+											
 										<p:commandButton
 											action="#{bmpDigitalMB.baixarDocumento(fileAnalise)}"
 											icon="ui-icon ui-icon-print" value="Download SCR"
@@ -1557,8 +1579,8 @@
 							<p:selectOneMenu id="valorBoletoPre"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.valorBoletoPreContratoStr}" ajax="true" 
 								style="font-weight: bold;">
-								<f:selectItem itemValue="900,00" itemLabel="50% - R$900,00" />
-								<f:selectItem itemValue="1.800,00" itemLabel="100% - R$1.800,00" />
+								<f:selectItem itemValue="925,00" itemLabel="50% - R$900,00" />
+								<f:selectItem itemValue="1.850,00" itemLabel="100% - R$1.850,00" />
 							</p:selectOneMenu>
 							
 							<p:outputLabel value="Exibir Fatura: "
@@ -2163,6 +2185,9 @@
 				       	</p:panel>		
 				    </p:overlayPanel> 
 				</p:panel>	
+				
+				<!--  -->
+				
 				<p:panel id="PanelPagadorRecebedor" header="Pagador" style="margin-bottom:10px;">		
 					<h:panelGrid columns="1">
 						<p:outputLabel
@@ -3980,6 +4005,10 @@
 								<f:selectItem itemLabel="Financiamento com aquisição imóvel" itemValue="Emprestimo" />
 								<p:ajax update="compraVenda" event="change"/>
 							</p:selectOneRadio>
+							
+							<p:outputLabel for="apenasPagamentoAntecipado" value="Apenas Pagamento Antecipado?" styleClass="labelBold" />
+							<p:selectBooleanCheckbox id="apenasPagamentoAntecipado"  
+								value="#{contratoCobrancaMB.objetoContratoCobranca.apenasPagamentoAntecipado}"/>
 						</h:panelGrid>
 						
 						<h:panelGroup id="compraVenda">
@@ -4419,8 +4448,7 @@
 				</p:dataView>
 			</p:panel>
 			
-			<p:messages id="msgArquivo"/>
-			
+			<p:messages id="msgArquivo"/>			
 			 	
 			<p:panel id="UploadArquivosComite" header="Upload de Arquivo Comite(s)" style="margin-bottom:10px;" >						
 				<p:panel id="ArquivosComite" header="Selecionar Arquivo Comite(s)" style="margin-bottom:10px;text-align: center;">							
@@ -4725,68 +4753,65 @@
 			</div>			
 		</h:form>
 
-<shiro:hasAnyRoles
-					name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO">
-		<p:dialog header="Adicionar pessoa Analise" overflow="auto"
-			id="dialogAdicionarPessoaAnalise"
-			widgetVar="adicionarPessoaAnaliseDlg" resizable="true"
-			style="FONT-SIZE: 13pt;" width="800" minWidth="800">
-			<h:form id="adicionarPessoaAnaliseForm">
-				<div align="center">
-					<h:panelGrid columns="2">
-						<p:outputLabel for="AnaliseDocumentoPessoaNome"
-							value="Nome da pessoa " style="margin-right:10px" />
-						<h:panelGroup>
-							<p:outputLabel id="AnaliseDocumentoPessoaNome"
-								value="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.nome}"
-								required="false" style="FONT-SIZE: 10pt;width:300px;"
-								styleClass="labelBold" />
-							<p:spacer height="10" />
-							<p:commandButton
-								action="#{contratoCobrancaMB.pesquisaPessoaAnaliseDocumento}"
-								icon="ui-icon ui-icon-circle-zoomin"
-								oncomplete="PF('pagadorRecebedorDialog').show();"
-								update="formReceborPagador" />
-						</h:panelGroup>
-
-
-						<h:outputText value="CPF"
-							rendered="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.cpf!= null}" />
-						<h:outputText
-							value="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.cpf}"
-							rendered="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.cpf!= null}" />
-
-						<h:outputText value="CNPJ"
-							rendered="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.cnpj != null}" />
-						<h:outputText
-							value="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.cnpj}"
-							rendered="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.cnpj != null}" />
-
-						<h:outputText value="Motivo" />
-						<p:selectOneMenu
-							value="#{contratoCobrancaMB.documentoAnaliseAdicionar.motivoAnalise}"
-							label="Tipo" style="width:250px;">
-							<f:selectItem itemValue="" itemLabel="Selecione o motivo" />
-							<f:selectItem itemLabel="Proprietario Atual"
-								itemValue="Proprietario Atual" />
-							<f:selectItem itemLabel="Proprietario Anterior"
-								itemValue="Proprietario Anterior" />
-						</p:selectOneMenu>
-					</h:panelGrid>
-					<h:panelGrid columns="2" style="text-align:center">
-						<p:commandButton value="Salvar" icon="ui-icon ui-icon-cancel"
-							action="#{contratoCobrancaMB.adicionarPessoaAnalise}"
-							update=":form:dtFilesAnalise"
-							oncomplete="PF('adicionarPessoaAnaliseDlg').hide();" />
-
-						<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
-							oncomplete="PF('adicionarPessoaAnaliseDlg').hide();" />
-					</h:panelGrid>
-				</div>
-			</h:form>
-		</p:dialog>
+		<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO">
+			<p:dialog header="Adicionar pessoa Analise" overflow="auto"
+				id="dialogAdicionarPessoaAnalise"
+				widgetVar="adicionarPessoaAnaliseDlg" resizable="true"
+				style="FONT-SIZE: 13pt;" width="800" minWidth="800">
+				<h:form id="adicionarPessoaAnaliseForm">
+					<div align="center">
+						<h:panelGrid columns="2">
+							<p:outputLabel for="AnaliseDocumentoPessoaNome"
+								value="Nome da pessoa " style="margin-right:10px" />
+							<h:panelGroup>
+								<p:outputLabel id="AnaliseDocumentoPessoaNome"
+									value="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.nome}"
+									required="false" style="FONT-SIZE: 10pt;width:300px;"
+									styleClass="labelBold" />
+								<p:spacer height="10" />
+								<p:commandButton
+									action="#{contratoCobrancaMB.pesquisaPessoaAnaliseDocumento}"
+									icon="ui-icon ui-icon-circle-zoomin"
+									oncomplete="PF('pagadorRecebedorDialog').show();"
+									update="formReceborPagador" />
+							</h:panelGroup>
+		
+							<h:outputText value="CPF"
+								rendered="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.cpf!= null}" />
+							<h:outputText
+								value="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.cpf}"
+								rendered="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.cpf!= null}" />
+	
+							<h:outputText value="CNPJ"
+								rendered="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.cnpj != null}" />
+							<h:outputText
+								value="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.cnpj}"
+								rendered="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.cnpj != null}" />
+	
+							<h:outputText value="Motivo" />
+							<p:selectOneMenu
+								value="#{contratoCobrancaMB.documentoAnaliseAdicionar.motivoAnalise}"
+								label="Tipo" style="width:250px;">
+								<f:selectItem itemValue="" itemLabel="Selecione o motivo" />
+								<f:selectItem itemLabel="Proprietario Atual"
+									itemValue="Proprietario Atual" />
+								<f:selectItem itemLabel="Proprietario Anterior"
+									itemValue="Proprietario Anterior" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+						<h:panelGrid columns="2" style="text-align:center">
+							<p:commandButton value="Salvar" icon="ui-icon ui-icon-cancel"
+								action="#{contratoCobrancaMB.adicionarPessoaAnalise}"
+								update=":form:dtFilesAnalise"
+								oncomplete="PF('adicionarPessoaAnaliseDlg').hide();" />
+	
+							<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
+								oncomplete="PF('adicionarPessoaAnaliseDlg').hide();" />
+						</h:panelGrid>
+					</div>
+				</h:form>
+			</p:dialog>
 		</shiro:hasAnyRoles>
-
 
 		<p:dialog header="Arquivos da Conta" overflow="auto" id="dialogArquivosConta"
 			widgetVar="contaArquivosdlg" resizable="true" style="FONT-SIZE: 13pt;"
@@ -4883,9 +4908,9 @@
 						<p:commandButton value=" - Pendenciar"
 							onclick="PF('voltarAnaliseComercialDialog').show();" />
 						<p:spacer width="20" />
-						<p:commandButton value=" X Reprovar"
+						<!-- <p:commandButton value=" X Reprovar"
 							onclick="PF('reprovarContratoDialog').show();" />
-						<p:spacer width="20" />
+						<p:spacer width="20" /> -->
 						<p:commandButton value=" ✓ Avançar"
 							onclick="PF('enviarPreComiteJuridico').show();" />
 					</h:panelGrid>
@@ -5270,7 +5295,7 @@
 						<p:outputLabel  value="Numero: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />
 						<p:inputText value="#{contratoCobrancaMB.processoSelecionado.numero}"
-							label="Contrato" /> 
+							label="Contrato" />
 							
 						<p:outputLabel value="Quitar: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />
@@ -5283,7 +5308,7 @@
 						
 						<p:outputLabel value="Obs: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />
-						<h:inputTextarea rows="10" cols="48"
+						<h:inputTextarea rows="5" cols="25"
 							maxlength="3000" onblur=""
 							counterTemplate="{0} characters remaining." autoResize="false"
 							value="#{contratoCobrancaMB.processoSelecionado.observacao}" >
@@ -5298,12 +5323,11 @@
 					<p:commandButton value="Inserir Processo" 
 						icon="ui-icon-check" style="margin-top: 5px; margin-bottom: 5px;"
 						action="#{contratoCobrancaMB.addProcesso}" 
-						onclick="PF('processoDialog').hide();"
-						update="form:RecebidoPajulaudoPanel" >
+						update="form:RecebidoPajulaudoPanel processoDialogdlg" >
 					</p:commandButton>
 				</div>
 			</h:form>
-		</p:dialog>		
+		</p:dialog>
 		
 		<p:dialog header="Nova Averbação" widgetVar="averbacaoDialog"
 			resizable="false" style="FONT-SIZE: 10pt;" width="400">

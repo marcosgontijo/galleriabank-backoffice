@@ -110,14 +110,14 @@ public class ContractService {
 				clearCriacaoContrato();	
 				
 				JSONObject contratoAPPResponsavel = contratoAPP.getJSONObject("responsavel");
-				System.out.println("Contract Service - Criar Operacao - Codigo do Responsavel: {} "+ contratoAPPResponsavel.getString("codigoResponsavel"));
+				System.out.println("Contract Service - Criar Operacao - Codigo do Responsavel: {} "+ contratoAPPResponsavel.getString("codigo"));
 				
-				if (contratoAPPResponsavel.has("codigoResponsavel")) {
+				if (contratoAPPResponsavel.has("codigo")) {
 					ResponsavelDao rDao = new ResponsavelDao();
-					String codigoResponsavel = contratoAPPResponsavel.getString("codigoResponsavel");
+					String codigo = contratoAPPResponsavel.getString("codigo");
 					
 					List<Responsavel> responsaveis = new ArrayList<Responsavel>();
-					responsaveis = rDao.findByFilter("codigo", codigoResponsavel);
+					responsaveis = rDao.findByFilter("codigo", codigo);
 					
 					if (responsaveis.size() > 0) {
 						this.objetoContratoCobranca.setResponsavel(responsaveis.get(0));
@@ -353,13 +353,13 @@ public class ContractService {
 						 */
 						this.objetoContratoCobranca = this.objetoContratoCobrancaList.get(0);
 						JSONObject contratoAPPResponsavel = contratoAPP.getJSONObject("responsavel");
-						if (contratoAPPResponsavel.has("codigoResponsavel")) {
+						if (contratoAPPResponsavel.has("codigo")) {
 						
 							ResponsavelDao rDao = new ResponsavelDao();
-							String codigoResponsavel = contratoAPPResponsavel.getString("codigoResponsavel");
+							String codigo = contratoAPPResponsavel.getString("codigo");
 							
 							List<Responsavel> responsaveis = new ArrayList<Responsavel>();
-							responsaveis = rDao.findByFilter("codigo", codigoResponsavel);
+							responsaveis = rDao.findByFilter("codigo", codigo);
 							
 							if(!responsaveis.isEmpty()) {
 								this.objetoContratoCobranca.setResponsavel(responsaveis.get(0));
@@ -586,61 +586,63 @@ public class ContractService {
 					JSONObject pagadores = pagadoresAdicionaisAPP.getJSONObject(i);
 					List<PagadorRecebedor> pessoas = new ArrayList<PagadorRecebedor>();
 					
-					String pagadoresCpfCnpj = pagadores.getString("cpfCnpj");
-					if(pagadores.has("cpfCnpj") && pagadoresCpfCnpj.length() <= 14) { 
-						pessoas = pagadorDao.findByFilter("cpf", pagadoresCpfCnpj);
-					}else if(pagadores.has("cpfCnpj") && pagadoresCpfCnpj.length() >= 15) {
-						pessoas = pagadorDao.findByFilter("cnpj", pagadoresCpfCnpj);
-					}
-					
-					if(pessoas.isEmpty()) {
-						PagadorRecebedor pessoa = new PagadorRecebedor();
-						pessoa.setNome(pagadoresAdicionaisAPP.getJSONObject(i).getString("nome"));
-						
-						String pagadoresAdicionaisCpfCnpj = pagadoresAdicionaisAPP.getJSONObject(i).getString("cpfCnpj");
-						if(pagadoresAdicionaisCpfCnpj.length() <= 14) {
-							pessoa.setCpf(pagadoresAdicionaisCpfCnpj);
-						}else if(pagadoresAdicionaisCpfCnpj.length() >= 15) {
-							pessoa.setCnpj(pagadoresAdicionaisCpfCnpj);
-						}
-						pessoa.setNomeParticipanteCheckList(pagadoresAdicionaisAPP.getJSONObject(i).getString("nome"));
-						
-						Long idPagador = pagadorDao.create(pessoa);
-						PagadorRecebedor novoPagador = pagadorDao.findById(idPagador);
-						
-						pagadorRecebedorAdicionais = new PagadorRecebedorAdicionais();
-						pagadorRecebedorAdicionais.setId(-1);
-						pagadorRecebedorAdicionais.setPessoa(novoPagador);
-						pagadorRecebedorAdicionais.setContratoCobranca(this.objetoContratoCobranca);
-						pagadorRecebedorAdicionais.setNomeParticipanteCheckList(pessoa.getNome());
-						
-						Long idPagadorAdicionais = pagadorAdicionaisDao.create(pagadorRecebedorAdicionais);
-						System.out.println("Novo Pagador e Pagador Adicional ID: "+idPagadorAdicionais);
-					}else {
-						List<PagadorRecebedor> pagadorCadastrado = new ArrayList<PagadorRecebedor>();
-						
-						if(pagadoresCpfCnpj.length() <= 14) {
-							pagadorCadastrado = pagadorDao.findByFilter("cpf", pagadoresCpfCnpj);
-						}else if(pagadoresCpfCnpj.length() >= 15) {
-							pagadorCadastrado = pagadorDao.findByFilter("cnpj", pagadoresCpfCnpj);
+					if(pagadores.has("cpfCnpj")) {
+						String pagadoresCpfCnpj = pagadores.getString("cpfCnpj");
+						if(pagadores.has("cpfCnpj") && pagadoresCpfCnpj.length() <= 14) { 
+							pessoas = pagadorDao.findByFilter("cpf", pagadoresCpfCnpj);
+						}else if(pagadores.has("cpfCnpj") && pagadoresCpfCnpj.length() >= 15) {
+							pessoas = pagadorDao.findByFilter("cnpj", pagadoresCpfCnpj);
 						}
 						
-						System.out.println("Pagador Adicional pessoa: "+pagadorCadastrado.get(0).getId());
-						
-						List<PagadorRecebedorAdicionais> pagadorAdicionaisCadastrado = 
-								pagadorAdicionaisDao.getPagadorAdicionaisPessoa(pagadorCadastrado.get(0).getId());
-						
-						if(pagadorAdicionaisCadastrado.isEmpty()) {
+						if(pessoas.isEmpty()) {
+							PagadorRecebedor pessoa = new PagadorRecebedor();
+							pessoa.setNome(pagadoresAdicionaisAPP.getJSONObject(i).getString("nome"));
+							
+							String pagadoresAdicionaisCpfCnpj = pagadoresAdicionaisAPP.getJSONObject(i).getString("cpfCnpj");
+							if(pagadoresAdicionaisCpfCnpj.length() <= 14) {
+								pessoa.setCpf(pagadoresAdicionaisCpfCnpj);
+							}else if(pagadoresAdicionaisCpfCnpj.length() >= 15) {
+								pessoa.setCnpj(pagadoresAdicionaisCpfCnpj);
+							}
+							pessoa.setNomeParticipanteCheckList(pagadoresAdicionaisAPP.getJSONObject(i).getString("nome"));
+							
+							Long idPagador = pagadorDao.create(pessoa);
+							PagadorRecebedor novoPagador = pagadorDao.findById(idPagador);
+							
 							pagadorRecebedorAdicionais = new PagadorRecebedorAdicionais();
 							pagadorRecebedorAdicionais.setId(-1);
-							pagadorRecebedorAdicionais.setPessoa(pagadorCadastrado.get(0));
+							pagadorRecebedorAdicionais.setPessoa(novoPagador);
 							pagadorRecebedorAdicionais.setContratoCobranca(this.objetoContratoCobranca);
-							pagadorRecebedorAdicionais.setNomeParticipanteCheckList(pessoas.get(0).getNome());
+							pagadorRecebedorAdicionais.setNomeParticipanteCheckList(pessoa.getNome());
 							
 							Long idPagadorAdicionais = pagadorAdicionaisDao.create(pagadorRecebedorAdicionais);
+							System.out.println("Novo Pagador e Pagador Adicional ID: "+idPagadorAdicionais);
+						}else {
+							List<PagadorRecebedor> pagadorCadastrado = new ArrayList<PagadorRecebedor>();
 							
-							System.out.println("Pagador Cadastrado e Pagador Adicional ID: "+idPagadorAdicionais);
-						
+							if(pagadoresCpfCnpj.length() <= 14) {
+								pagadorCadastrado = pagadorDao.findByFilter("cpf", pagadoresCpfCnpj);
+							}else if(pagadoresCpfCnpj.length() >= 15) {
+								pagadorCadastrado = pagadorDao.findByFilter("cnpj", pagadoresCpfCnpj);
+							}
+							
+							System.out.println("Pagador Adicional pessoa: "+pagadorCadastrado.get(0).getId());
+							
+							List<PagadorRecebedorAdicionais> pagadorAdicionaisCadastrado = 
+									pagadorAdicionaisDao.getPagadorAdicionaisPessoa(pagadorCadastrado.get(0).getId());
+							
+							if(pagadorAdicionaisCadastrado.isEmpty()) {
+								pagadorRecebedorAdicionais = new PagadorRecebedorAdicionais();
+								pagadorRecebedorAdicionais.setId(-1);
+								pagadorRecebedorAdicionais.setPessoa(pagadorCadastrado.get(0));
+								pagadorRecebedorAdicionais.setContratoCobranca(this.objetoContratoCobranca);
+								pagadorRecebedorAdicionais.setNomeParticipanteCheckList(pessoas.get(0).getNome());
+								
+								Long idPagadorAdicionais = pagadorAdicionaisDao.create(pagadorRecebedorAdicionais);
+								
+								System.out.println("Pagador Cadastrado e Pagador Adicional ID: "+idPagadorAdicionais);
+							
+							}
 						}
 					}
 				}

@@ -27,6 +27,12 @@
 										action="#{contasAPagarMB.clearFields}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
+									<shiro:hasAnyRoles name="ROOT">
+										<p:menuitem value="Combate a Fraude"
+											action="#{combateAFraudeMB.clearFields}"
+											ajax="false" icon="ui-icon ui-icon-newwin"
+											styleClass="itemMenu" />
+									</shiro:hasAnyRoles>
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT">
 									<p:menuitem value="Contas Pagas"
@@ -208,7 +214,7 @@
 											ajax="false" icon="ui-icon ui-icon-newwin"
 											styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_GERENTE_ANALISE">
+								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, LAUDO, PROFILE_LAUDO, PROFILE_GERENTE_ANALISE">
 									<p:menuitem value="04.1 - Ag. Laudo"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Laudo')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
@@ -328,7 +334,11 @@
 									<p:menuitem value="Contratos Geral"
 										action="#{contratoCobrancaMB.clearFieldsContratosPerformance()}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />										
+										styleClass="itemMenu" />
+									<p:menuitem value="Dados Empresa"
+										action="#{dadosEmpresaMB.clearFieldsDadosEmpresa}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />									
 									<p:menuitem value="Contratos Securitizadora"
 										action="#{contratoCobrancaMB.clearFieldsContratos('Securitizadora')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"

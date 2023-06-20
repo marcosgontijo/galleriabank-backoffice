@@ -313,6 +313,10 @@ public class IPCAMB {
 			ContratoCobranca contrato = contratosCobranca.get(0);
 			
 			if (contrato.isCorrigidoIPCAHibrido()) {
+				// atualiza data corte da baixa no contrato e banco				
+				contrato.setDataCorteBaixaIPCAHibrido(this.dataCorteBaixa);				
+				contratoCobrancaDao.merge(contrato);
+				
 				atualizaIPCAPorContratoMaluco();
 			} else {
 				if (contrato.isCorrigidoIPCA()) {

@@ -853,7 +853,11 @@ public class KobanaMB {
 	    	jsonBoleto.put("customer_address", cliente.getEndereco());
 	    }
 	
-		jsonBoleto.put("customer_address_complement", cliente.getComplemento());
+	    if (cliente.getComplemento() != null && cliente.getComplemento().length() > 60) {
+	    	jsonBoleto.put("customer_address_complement", cliente.getComplemento().substring(0, 59));
+	    } else {
+	    	jsonBoleto.put("customer_address_complement", cliente.getComplemento());
+	    }
 
 		jsonBoleto.put("customer_address_number", cliente.getNumero());
 		
@@ -944,7 +948,7 @@ public class KobanaMB {
 	    }
 		
 		jsonBoleto.put("description", "Crédito com Imóvel em Garantia - Contrato: " + contrato.getNumeroContrato() + " / Parcela(s): " + parcelas);
-		jsonBoleto.put("instructions", "Não receber após 30 dias do vencimento");
+		jsonBoleto.put("instructions", "");
 		
 		JSONObject jsonCustomData = new JSONObject();
 		

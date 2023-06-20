@@ -36,14 +36,12 @@
 		
 							<div class="wrap-input100">
 								<p:password id="password" styleClass="input100" value="#{loginBean.password}" required="true" inline="false" feedback= "false" alt="Senha" requiredMessage="Informe a senha!" onkeypress="if (event.keyCode == 13) { document.getElementById('form:aa').click(); return false; }" placeholder="Senha"/>								
-								<span class="focus-input100" data-placeholder="&#xF023;"/>
+								<span class="focus-input100" data-placeholder="&#xF023;"/>								
 							</div>
-							<!-- 
 							<div class="wrap-input100">						
 								<p:inputText styleClass="input100" name="key" value="#{loginBean.key}" id="key" label="Código" alt="Código Google Authenticator" placeholder="Cógido Google" onblur=""/>
 								<span class="focus-input100" data-placeholder="&#xF023;"/>
-							</div>
-							 -->
+							</div>							
 							<div class="container-login100-form-btn m-t-32">
 								<p:commandLink id="aa" styleClass="login100-form-btn" actionListener="#{loginBean.loginNow}" update="messages" ajax="true">
 									LOGIN
@@ -51,6 +49,13 @@
 								<p:defaultCommand target="aa" />	
 							</div>		
 						</h:form>
+						<div class="wrap-input100">		
+							<h:outputStylesheet name="primeicons/primeicons.css" library="primefaces" />
+							<h:panelGrid columns="2">	
+								<i class="pi pi-exclamation-triangle" style="font-size: 3em; color: #b1a92c;"></i>
+							<h:outputText value="Se ainda não possui o Código Google, utilize apenas Usuário e Senha para logar!!!" style="font-weight: bold; font-size: 15px;text-align: center;"/>
+							</h:panelGrid>																			
+						</div>
 					</div>
 				</div>
 			</div>					

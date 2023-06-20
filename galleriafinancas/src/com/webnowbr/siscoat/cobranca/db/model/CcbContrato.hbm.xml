@@ -349,7 +349,7 @@
 		</property> 
 		
 		<list name="listSegurados"
-			table="ccbcontrato_segurados_join" cascade="all" lazy="false">
+			table="ccbcontrato_segurados_join" cascade="persist" lazy="false">
 			<key column="idccbcontrato" />
 			<list-index></list-index>
 			<many-to-many column="idsegurado"
@@ -496,7 +496,13 @@
 			<column name="registroImovelValor" />
 		</property>
 		
+		<property name="intermediacaoTipoConta" type="java.lang.String">
+			<column name="intermediacaoTipoConta" />
+		</property> 
 		
+		<property name="CCBTipoConta" type="java.lang.String">
+			<column name="CCBTipoConta" />
+		</property> 
 		        
     </class>
 </hibernate-mapping>

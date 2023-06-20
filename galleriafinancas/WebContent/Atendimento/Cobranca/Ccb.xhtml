@@ -49,8 +49,10 @@
 						<f:selectItem itemValue="AquisicaoCCI" itemLabel="Aquisicao/Emprestimo" />		
 						<f:selectItem itemValue="Ficha PPE" itemLabel="Ficha PPE - PF" />	
 						<f:selectItem itemValue="Ficha PLD e FT" itemLabel="Ficha PLD e FT - PJ" />	
-						<f:selectItem itemValue="DeclaracaoNaoUniaoEstavel" itemLabel="DeclaracaoNaoUniaoEstavel" />
-						<f:selectItem itemValue="DeclaracaoDestinacaoRecursos" itemLabel="DeclaracaoDestinacaoRecursos" />
+						<f:selectItem itemValue="DeclaracaoNaoUniaoEstavel" itemLabel="Declaração Não União Estavel" />
+						<f:selectItem itemValue="DeclaracaoUniaoEstavel" itemLabel="Declaração de União Estavel" />
+						<f:selectItem itemValue="DeclaracaoDestinacaoRecursos" itemLabel="Declaração Destinação Recursos" />
+						<f:selectItem itemValue="TermoPaju" itemLabel="Termo Responsabilidade Paju" />
 						<f:selectItem itemValue="CCBnova" itemLabel="CCB" />
 						<f:selectItem itemValue="AFnova" itemLabel="AF" />	
 												
@@ -1151,6 +1153,8 @@
 											<f:selectItem itemValue="VIÚVO" itemLabel="Viúvo" />											
 											<f:selectItem itemValue="DIVORCIADO" itemLabel="Divorciado" />
 											<f:selectItem itemValue="SEPARADO" itemLabel="Separado" />
+											<f:selectItem itemValue="SEPARADO JUDICIALMENTE" 
+												itemLabel="Separado Judicialmente" />
 											<p:ajax update=":form:conjugueParticipante" event="change" />
 										</p:selectOneMenu>
 
@@ -1705,6 +1709,11 @@
 											<p:outputLabel value="C/C: " styleClass="labelBold"
 												style="font-weight: bold; font-size: 18px;" />
 											<p:inputText value="#{ccbMB.objetoCcb.CCBCC}" />
+											<p:outputLabel value="Tipo Da Conta " styleClass="labelBold" />
+											<p:selectOneMenu value="#{ccbMB.objetoCcb.CCBTipoConta}" >
+												<f:selectItem itemValue="Conta Corrente" itemLabel="Conta Corrente" />
+												<f:selectItem itemValue="Conta Poupança" itemLabel="Conta Poupança" />
+											</p:selectOneMenu>
 											<p:outputLabel value="CPF/CNPJ: " styleClass="labelBold"
 												style="font-weight: bold; font-size: 18px;" />
 											<p:inputText value="#{ccbMB.objetoCcb.CCBCNPJ}" />
@@ -1734,6 +1743,11 @@
 											<p:outputLabel value="C/C: " styleClass="labelBold"
 												style="font-weight: bold; font-size: 18px;" />
 											<p:inputText value="#{ccbMB.objetoCcb.intermediacaoCC}" />
+											<p:outputLabel value="Tipo Da Conta: " styleClass="labelBold" />
+											<p:selectOneMenu value="#{ccbMB.objetoCcb.intermediacaoTipoConta}" >
+												<f:selectItem itemValue="Conta Corrente" itemLabel="Conta Corrente" />
+												<f:selectItem itemValue="Conta Poupança" itemLabel="Conta Poupança" />
+											</p:selectOneMenu>
 											<p:outputLabel value="CPF/CNPJ: " styleClass="labelBold"
 												style="font-weight: bold; font-size: 18px;" />
 											<p:inputText value="#{ccbMB.objetoCcb.intermediacaoCNPJ}" />
@@ -1922,11 +1936,19 @@
 									onkeydown="FormataValor(this,13, event, 2);"
 									converter="bigDecimalConverter" />
 									
-								<p:outputLabel for="contaCorrente" value="Nº Conta Corrente: "
+								<p:outputLabel for="contaCorrente" value="Nº Conta: "
 									styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
 								<p:inputText id="contaCorrente" value="#{ccbMB.objetoCcb.contaCorrente}"
 									label="Contrato" />
+										
+								<p:outputLabel for="tipoContaBanco"
+									value="Tipo Da Conta " styleClass="labelBold" />
+								<p:selectOneMenu id="tipoContaBanco"
+									value="#{ccbMB.objetoCcb.tipoContaBanco}" >
+									<f:selectItem itemValue="Conta Corrente" itemLabel="Conta Corrente" />
+									<f:selectItem itemValue="Conta Poupança" itemLabel="Conta Poupança" />
+								</p:selectOneMenu>
 
 								<p:outputLabel for="agencia" value="Nº Agência: "
 									styleClass="labelBold"
@@ -1969,22 +1991,14 @@
 									style="font-weight: bold; font-size: 18px;" />
 								<p:inputText id="PixBanco" value="#{ccbMB.objetoCcb.pixBanco}"
 									label="Contrato" />							
-							</h:panelGrid>
-							<h:panelGrid columns="2" rendered="#{ccbMB.tipoDownload == 'FinanciamentoCCI'}">
+							
 								<p:outputLabel for="digitoBanco" value="Digito: "
 									styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
 								<p:inputText id="digitoBanco" value="#{ccbMB.objetoCcb.digitoBanco}"
 									label="Contrato" />		
 									
-								<p:outputLabel for="tipoContaBanco"
-									value="Tipo Da Conta " styleClass="labelBold" />
-								<p:selectOneMenu id="tipoContaBanco" required="true"
-									value="#{ccbMB.objetoCcb.tipoContaBanco}" >
-									<f:selectItem itemValue="" itemLabel="Selecione" />
-									<f:selectItem itemValue="Conta Corrente" itemLabel="Conta Corrente" />
-									<f:selectItem itemValue="Conta Poupança" itemLabel="Conta Poupança" />
-								</p:selectOneMenu>
+								
 							</h:panelGrid>							
 						</p:panel>
 						<p:panel header="Imóvel">
@@ -2116,11 +2130,19 @@
 										onkeydown="FormataValor(this, 13, event, 2);"
 										converter="bigDecimalConverter" />
 										
-									<p:outputLabel for="contaCorrenteVendedor" value="Nº Conta Corrente: "
+									<p:outputLabel for="contaCorrenteVendedor" value="Nº Conta: "
 										styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
 									<p:inputText id="contaCorrenteVendedor" value="#{ccbMB.objetoCcb.contaCorrenteVendedor}"
 										label="Contrato" />
+										
+									<p:outputLabel for="tipoContaBancoVendedor"
+										value="Tipo Da Conta: " styleClass="labelBold" />
+									<p:selectOneMenu id="tipoContaBancoVendedor" 
+										value="#{ccbMB.objetoCcb.tipoContaBancoVendedor}" >
+										<f:selectItem itemValue="Conta Corrente" itemLabel="Conta Corrente" />
+										<f:selectItem itemValue="Conta Poupança" itemLabel="Conta Poupança" />			
+									</p:selectOneMenu>
 
 									<p:outputLabel for="agenciaVendedor" value="Nº Agência: "
 										styleClass="labelBold"
@@ -2170,15 +2192,6 @@
 									<p:inputText id="digitoBancoVendedor" value="#{ccbMB.objetoCcb.digitoBancoVendedor}"
 										label="Contrato" />		
 										
-									<p:outputLabel for="tipoContaBancoVendedor"
-										value="Tipo Da Conta: " styleClass="labelBold" />
-									<p:selectOneMenu id="tipoContaBancoVendedor" 
-										value="#{ccbMB.objetoCcb.tipoContaBancoVendedor}" >
-										<f:selectItem itemValue="" itemLabel="Selecione" />
-										<f:selectItem itemValue="Conta Corrente" itemLabel="Conta Corrente" />
-										<f:selectItem itemValue="Conta Poupança" itemLabel="Conta Poupança" />			
-									</p:selectOneMenu>
-											
 								</h:panelGrid>		
 							</p:panel>
 						</h:panelGroup>

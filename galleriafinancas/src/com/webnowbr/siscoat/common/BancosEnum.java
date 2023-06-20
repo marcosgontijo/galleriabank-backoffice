@@ -103,6 +103,7 @@ public enum BancosEnum {
 	JPMORGAN_CHASE_BANK("488", "JPMorgan Chase Bank"),
 	ING_BANK_N_V("492", "ING Bank N.V."),
 	BANCO_CREDIT_SUISSE_Brasil_S_A("505", "Banco Credit Suisse (Brasil) S.A."),	
+	BANCO_NEON("536", "Banco Neon"),//AZUL NEON
 	BANCO_LUSO_BRASILEIRO_S_A("600", "Banco Luso Brasileiro S.A."),
 	BANCO_INDUSTRIAL_DO_BRASIL_S_A("604", "Banco Industrial do Brasil S.A."),
 	BANCO_VR_S_A("610", "Banco VR S.A."),

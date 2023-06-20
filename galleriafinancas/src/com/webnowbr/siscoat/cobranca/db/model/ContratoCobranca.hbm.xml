@@ -509,6 +509,9 @@
 		<property name="dataInclusaoRecebedor10" type="java.util.Date">
 			<column name="dataInclusaoRecebedor10" />
 		</property>	
+		<property name="dataCorteBaixaIPCAHibrido" type="java.util.Date">
+			<column name="dataCorteBaixaIPCAHibrido" />
+		</property>	
 		<property name="reprovadoData" type="java.util.Date">
 			<column name="reprovadoData" />
 		</property>
@@ -1083,7 +1086,7 @@
 			<column name="motivoReprovaLead" />
 		</property>
 		
-		<set name="listSegurados" table="segurado"  cascade="all-delete-orphan"
+		<set name="listSegurados" table="segurado"  cascade="save-update"
                  lazy="false" fetch="select">
             <key>
                 <column name="contratoCobranca" not-null="true" />
@@ -1115,7 +1118,7 @@
             <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.ContasPagar" />
         </set>  
         
-        <set name="listProcessos" table="ccbprocessosjudiciais" cascade="persist"
+        <set name="listProcessos" table="ccbprocessosjudiciais" cascade="save-update"
                  lazy="false" fetch="select">
             <key>
                 <column name="contrato" />
@@ -2140,7 +2143,9 @@
 			<column name="valorTotalAverbacao" />
 		</property>
 		
-		
+		<property name="apenasPagamentoAntecipado" type="boolean">
+			<column name="apenasPagamentoAntecipado" not-null="true" default="false"/>
+		</property>	
 		
 	</class>
 </hibernate-mapping>

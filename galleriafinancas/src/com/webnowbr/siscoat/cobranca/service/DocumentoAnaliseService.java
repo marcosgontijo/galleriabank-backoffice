@@ -49,27 +49,6 @@ public class DocumentoAnaliseService {
 
 	}
 
-	public void adicionarConsultaNoPagadorRecebedor(PagadorRecebedor pagador, DocumentosAnaliseEnum tipoConsulta,
-			String consulta) {
 
-		PagadorRecebedorConsultaDao PagadorRecebedorConsultaDao = new PagadorRecebedorConsultaDao();
-
-		// buscando ultima consutla do pagador
-		PagadorRecebedorConsulta PagadorRecebedorConsulta = PagadorRecebedorConsultaDao
-				.getConsultaByPagadorAndTipo(pagador, tipoConsulta);
-		if (PagadorRecebedorConsulta == null) {
-			PagadorRecebedorConsulta = new PagadorRecebedorConsulta();
-		}
-		PagadorRecebedorConsulta.setDataConsulta(new Date());
-		PagadorRecebedorConsulta.setRetornConsulta(consulta);
-		PagadorRecebedorConsulta.setPessoa(pagador);
-		PagadorRecebedorConsulta.setTipoEnum(tipoConsulta);
-
-		if (CommonsUtil.semValor(PagadorRecebedorConsulta.getId()))
-			PagadorRecebedorConsultaDao.create(PagadorRecebedorConsulta);
-		else
-			PagadorRecebedorConsultaDao.merge(PagadorRecebedorConsulta);
-
-	}
 
 }

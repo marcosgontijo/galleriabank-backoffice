@@ -9,6 +9,8 @@ import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.cobranca.service.PagadorRecebedorService;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
+import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.common.ValidaCNPJ;
 import com.webnowbr.siscoat.common.ValidaCPF;
 
@@ -30,39 +32,36 @@ public class PagadorRecebedorCadastroMB {
 		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
 		pagadorRecebedor = new PagadorRecebedor();
 
+//		String stringResponse = null;
 		if (CommonsUtil.mesmoValor("PF", tipoPessoa) && !CommonsUtil.semValor(cpf)) {
 
 			pagadorRecebedor.setCpf(cpf);
+			
+			pagadorRecebedorService.preecheDadosReceita(pagadorRecebedor);
 
-			ReceitaFederalPF receitaFederalPF = netrinService.requestCadastroPF(cpf);
-
-			pagadorRecebedor.setNome(receitaFederalPF.getCpfBirthdate().getNome());
-			pagadorRecebedor.setDataCasamento(
-					CommonsUtil.dateValue(receitaFederalPF.getCpfBirthdate().getDataNascimento(), "dd/MM/YYYY"));
-			pagadorRecebedor.setSexo(receitaFederalPF.getCpfBirthdate().getGenero());
-			pagadorRecebedor.setNomeMae(receitaFederalPF.getCpfBirthdate().getNomeMae());
+//			ReceitaFederalPF receitaFederalPF = netrinService.requestCadastroPF(pagadorRecebedor);
+//
+//			stringResponse = GsonUtil.toJson(receitaFederalPF);
 
 		} else if (CommonsUtil.mesmoValor("PJ", tipoPessoa) && !CommonsUtil.semValor(cnpj)) {
 
 			pagadorRecebedor.setCnpj(cnpj);
 
-			ReceitaFederalPJ receitaFederalPJ = netrinService.requestCadastroPJ(cnpj);
+			pagadorRecebedorService.preecheDadosReceita(pagadorRecebedor);
 
-			pagadorRecebedor.setNome(receitaFederalPJ.getReceitaFederal().getRazaoSocial());
-			pagadorRecebedor.setEndereco(receitaFederalPJ.getReceitaFederal().getLogradouro());
-			pagadorRecebedor.setNumero(receitaFederalPJ.getReceitaFederal().getNumero());
-			pagadorRecebedor.setComplemento(receitaFederalPJ.getReceitaFederal().getComplemento());
-			pagadorRecebedor.setBairro(receitaFederalPJ.getReceitaFederal().getBairro());
-			pagadorRecebedor.setCidade(receitaFederalPJ.getReceitaFederal().getMunicipio());
-			pagadorRecebedor.setCep(receitaFederalPJ.getReceitaFederal().getCep());
-			pagadorRecebedor.setEstado(receitaFederalPJ.getReceitaFederal().getUf());
-			pagadorRecebedor.setEmail(receitaFederalPJ.getReceitaFederal().getEmail());
-//				pagadorRecebedor.sett(receitaFederalPJ.getReceitaFederal().getTelefone());
+//			ReceitaFederalPJ receitaFederalPJ = netrinService.requestCadastroPJ(pagadorRecebedor);
+//
+//			stringResponse = GsonUtil.toJson(receitaFederalPJ);
+
 
 		}
-		if (!CommonsUtil.semValor(cpf) || !CommonsUtil.semValor(cnpj))
-			pagadorRecebedor = pagadorRecebedorService.buscaOuInsere(pagadorRecebedor);
-
+//		if (!CommonsUtil.semValor(cpf) || !CommonsUtil.semValor(cnpj))
+//			pagadorRecebedor = pagadorRecebedorService.buscaOuInsere(pagadorRecebedor);
+//
+//		if (!CommonsUtil.semValor(stringResponse) && !CommonsUtil.semValor(pagadorRecebedor.getId())  ) {
+//			pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagadorRecebedor,
+//					DocumentosAnaliseEnum.RECEITA_FEDERAL, stringResponse);
+//		}
 	}
 
 	public void clearFieldsNovoCadastro() {

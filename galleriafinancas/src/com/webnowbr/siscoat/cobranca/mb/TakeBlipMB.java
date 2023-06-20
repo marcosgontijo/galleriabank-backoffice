@@ -230,7 +230,7 @@ public class TakeBlipMB {
 								"Take Blip: Falha ao enviar a mensagem WhatsApp (Cod: " + myURLConnection.getResponseCode() + ")",
 				""));
 			} else {				
-				System.out.println("Take Blip: Informativo WhatsApp enviado com sucesso!");
+				//System.out.println("Take Blip: Informativo WhatsApp enviado com sucesso!");
 			}
 
 			myURLConnection.disconnect();

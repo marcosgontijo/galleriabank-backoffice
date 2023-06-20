@@ -127,7 +127,7 @@
 								<h:outputText id="userCadastro"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.userCadastro}"
 									style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-								<h:outputText id="dataCadastro"
+								<h:outputText id="dataCadastro" 
 									value="#{contratoCobrancaMB.objetoContratoCobranca.dataCadastro}"
 									style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
 									<f:convertDateTime locale="pt_BR" />
@@ -147,7 +147,7 @@
 										offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
 								</shiro:lacksRole>
 								<shiro:hasAnyRoles name="ROOT,COBRANCA,PROFILE_GERENTE_ANALISE">
-									<p:selectBooleanButton id="inicioAnalise"
+									<p:selectBooleanButton id="inicioAnalise" 
 										value="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise}"
 										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 										offIcon="ui-icon-cancel" style="width:60px" disabled="#{!contratoCobrancaMB.gerenciaStatus}" />
@@ -1726,8 +1726,8 @@
 							<p:selectOneMenu id="valorBoletoPre"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.valorBoletoPreContratoStr}"
 								ajax="true" style="font-weight: bold;">
-								<f:selectItem itemValue="900,00" itemLabel="50% - R$900,00" />
-								<f:selectItem itemValue="1.800,00" itemLabel="100% - R$1.800,00" />
+								<f:selectItem itemValue="925,00" itemLabel="50% - R$925,00" />
+								<f:selectItem itemValue="1.850,00" itemLabel="100% - R$1.850,00" />
 							</p:selectOneMenu>
 
 							<p:outputLabel value="Exibir Fatura: " styleClass="labelBold" />
@@ -4126,6 +4126,9 @@
 								<f:selectItem itemLabel="Financiamento com aquisição imóvel" itemValue="Emprestimo" />
 								<p:ajax update="compraVenda" event="change"/>
 							</p:selectOneRadio>
+							<p:outputLabel for="apenasPagamentoAntecipado" value="Apenas Pagamento Antecipado?" styleClass="labelBold" />
+							<p:selectBooleanCheckbox id="apenasPagamentoAntecipado"  
+								value="#{contratoCobrancaMB.objetoContratoCobranca.apenasPagamentoAntecipado}"/>
 						</h:panelGrid>
 						
 						<h:panelGroup id="compraVenda">
@@ -5230,8 +5233,7 @@
 					<p:commandButton value="Inserir Processo" 
 						icon="ui-icon-check" style="margin-top: 5px; margin-bottom: 5px;"
 						action="#{contratoCobrancaMB.addProcesso}" 
-						onclick="PF('processoDialog').hide();"
-						update="form:RecebidoPajulaudoPanel" >
+						update="form:RecebidoPajulaudoPanel processoDialogdlg" >
 					</p:commandButton>
 				</div>
 			</h:form>

@@ -56,12 +56,26 @@ public class NetrinMB {
 	}
 
 	public void baixarDocumento(DocumentoAnalise documentoAnalise) {
-
 		String documentoBase64 = netrinService.baixarDocumento(documentoAnalise);
-		decodarBaixarArquivo(documentoAnalise, documentoBase64);
+		decodarBaixarArquivo(documentoAnalise, documentoBase64, "Cenprot");
+	}
+	
+	public void baixarDocumentoPpe(DocumentoAnalise documentoAnalise) {
+		String documentoBase64 = netrinService.baixarDocumentoPpe(documentoAnalise);
+		decodarBaixarArquivo(documentoAnalise, documentoBase64, "PPE");
+	}
+	
+	public void baixarDocumentoDossie(DocumentoAnalise documentoAnalise) {
+		String documentoBase64 = netrinService.baixarDocumentoDossie(documentoAnalise);
+		decodarBaixarArquivo(documentoAnalise, documentoBase64, "Dossie");
+	}
+	
+	public void baixarDocumentoProcesso(DocumentoAnalise documentoAnalise) {
+		String documentoBase64 = netrinService.baixarDocumentoProcesso(documentoAnalise);
+		decodarBaixarArquivo(documentoAnalise, documentoBase64, "Processo");
 	}
 
-	public StreamedContent decodarBaixarArquivo(DocumentoAnalise documentoAnalise, String base64) {
+	public StreamedContent decodarBaixarArquivo(DocumentoAnalise documentoAnalise, String base64, String Relatorio) {
 		if (CommonsUtil.semValor(base64)) {
 			// System.out.println("Arquivo Base64 não existe");
 			return null;
@@ -80,7 +94,7 @@ public class NetrinMB {
 				cnpjcpf = documentoAnalise.getPagador().getCnpj();
 		}
 
-		gerador.open(String.format("Galleria Bank - Cenprot %s.pdf", CommonsUtil.somenteNumeros(cnpjcpf)));
+		gerador.open(String.format("Galleria Bank - " + Relatorio + " %s.pdf", CommonsUtil.somenteNumeros(cnpjcpf)));
 
 		gerador.feed(in);
 		gerador.close();
