@@ -195,7 +195,7 @@ public class PagadorRecebedorMB {
 			
 			TakeBlipMB takeBlipMB = new TakeBlipMB();
 			
-			if (!this.telefoneAnterior.equals(this.objetoPagadorRecebedor.getTelCelular())) {
+			if (!CommonsUtil.mesmoValor(this.telefoneAnterior, this.objetoPagadorRecebedor.getTelCelular())) {
 				this.objetoPagadorRecebedor.setWhatsAppNumero(takeBlipMB.getWhatsAppURLNovoPagadorRecebedor(this.objetoPagadorRecebedor));
 			}
 			

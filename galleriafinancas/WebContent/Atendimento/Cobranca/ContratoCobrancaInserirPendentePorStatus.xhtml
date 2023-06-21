@@ -1608,6 +1608,11 @@
 							<p:outputLabel id="observacaoContatoAgendaLaudoAvaliacao"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.observacaoContatoAgendaLaudoAvaliacao}"
 								style="FONT-SIZE: 10pt;width:100px;white-space: pre-wrap;" />
+								
+							<p:outputLabel for="contatoDiferenteProprietario" value="Contato é diferente do Proprietário? "
+								styleClass="labelBold" />
+							<p:selectBooleanCheckbox id="contatoDiferenteProprietario"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.contatoDiferenteProprietario}" />
 							
 							<p:outputLabel for="avaliacaoLaudoObservacao"
 									value="Observação Avaliação: " styleClass="labelBold" />
@@ -3154,10 +3159,15 @@
 							label="NumeroMatricula" onblur="" style="width:400px;" />
 
 						<p:outputLabel for="Cartorio" value="Cartório de Registro: " />
-						<p:inputText id="Cartorio"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.cartorio}"
+						<p:inputText id="Cartorio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorio}"
 							label="Cartório" onblur="" style="width:400px;" />
 
+						<p:outputLabel for="cartorioEstado" value="Estado Cartório: " />
+						<p:inputText id="cartorioEstado" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioEstado}" /> 
+											
+						<p:outputLabel for="cartorioMunicipio" value="Município Cartório: " />
+						<p:inputText id="cartorioMunicipio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioMunicipio}" />
+						
 						<p:outputLabel for="CepImovel" value="Cep: "/>
 						<p:inputMask id="CepImovel"
 							value="#{contratoCobrancaMB.objetoImovelCobranca.cep}"
@@ -3317,8 +3327,7 @@
 							label="Ocupação" style="width:410px;">
 							<f:selectItem itemValue="" itemLabel="Selecione" />
 							<f:selectItem itemValue="Ocupado" itemLabel="Ocupado" />
-							<f:selectItem itemValue="Ocupado por mim"
-								itemLabel="Ocupado por mim" />
+							<f:selectItem itemValue="Ocupado por mim" itemLabel="Ocupado por mim" />
 							<f:selectItem itemValue="Alugado" itemLabel="Alugado" />
 							<f:selectItem itemValue="Vazio" itemLabel="Vazio" />
 							<f:selectItem itemValue="Não sei" itemLabel="Não sei" />
@@ -3327,15 +3336,6 @@
 						<p:outputLabel for="inscricaoMunicipal" value="Inscrição Municipal: " />
 						<p:inputText id="inscricaoMunicipal" value="#{contratoCobrancaMB.objetoImovelCobranca.inscricaoMunicipal}" />
 						
-						<p:outputLabel for="numeroCartorio" value="Numero Cartório: " />
-						<p:inputText id="numeroCartorio" type="number"
-						value="#{contratoCobrancaMB.objetoImovelCobranca.numeroCartorio}" />  
-											
-						<p:outputLabel for="cartorioEstado" value="Estado Cartório: " />
-						<p:inputText id="cartorioEstado" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioEstado}" /> 
-											
-						<p:outputLabel for="cartorioMunicipio" value="Município Cartório: " />
-						<p:inputText id="cartorioMunicipio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioMunicipio}" />
 
 					</h:panelGrid>
 				</p:panel>
@@ -3673,10 +3673,10 @@
 									styleClass="dateTimeField" />
 								
 								<p:outputLabel for="ContaPagarObservacao" value="Observação: "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
 								<p:inputTextarea id="ContaPagarObservacao"  rows="6" cols="33"
-								value="#{contratoCobrancaMB.contasPagarSelecionada.observacao}"/>
+									value="#{contratoCobrancaMB.contasPagarSelecionada.observacao}"/>
 								
 								<p:outputLabel for="formaTransferencia" value="Forma de Tranferência: "
 									styleClass="labelBold"

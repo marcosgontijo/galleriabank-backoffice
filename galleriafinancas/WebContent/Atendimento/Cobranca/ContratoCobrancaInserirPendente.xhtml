@@ -3367,6 +3367,12 @@
 						<p:inputText id="Cartorio"
 							value="#{contratoCobrancaMB.objetoImovelCobranca.cartorio}"
 							label="Cartório" onblur="" style="width:400px;" />
+							
+						<p:outputLabel for="cartorioEstado" value="Estado Cartório: " />
+						<p:inputText id="cartorioEstado" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioEstado}" /> 
+											
+						<p:outputLabel for="cartorioMunicipio" value="Município Cartório: " />
+						<p:inputText id="cartorioMunicipio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioMunicipio}" />
 
 						<p:outputLabel for="CepImovel" value="Cep: " />
 						<p:inputMask id="CepImovel" required="true"
@@ -3537,16 +3543,6 @@
 						
 						<p:outputLabel for="inscricaoMunicipal" value="Inscrição Municipal: " />
 						<p:inputText id="inscricaoMunicipal" value="#{contratoCobrancaMB.objetoImovelCobranca.inscricaoMunicipal}" />
-
-						<p:outputLabel for="numeroCartorio" value="Numero Cartório: " />
-						<p:inputText id="numeroCartorio" type="number"
-						value="#{contratoCobrancaMB.objetoImovelCobranca.numeroCartorio}" /> 
-											
-						<p:outputLabel for="cartorioEstado" value="Estado Cartório: " />
-						<p:inputText id="cartorioEstado" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioEstado}" /> 
-											
-						<p:outputLabel for="cartorioMunicipio" value="Município Cartório: " />
-						<p:inputText id="cartorioMunicipio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioMunicipio}" />
 
 					</h:panelGrid>
 				</p:panel>

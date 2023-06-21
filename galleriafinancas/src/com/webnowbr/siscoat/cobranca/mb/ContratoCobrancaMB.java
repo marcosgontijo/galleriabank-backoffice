@@ -19862,13 +19862,20 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		Date dateSelected = (Date) event.getObject();
 		this.rowEditNewDate = dateSelected;
 		calculaNovaData(dateSelected);
-		if(dateSelected.before(this.bpContratoCobrancaDetalhes.getDataVencimento())) {
-			calcularValorPresenteParcelaData(this.rowEditNewDate, this.bpContratoCobrancaDetalhes);
-			this.setVlrRecebido(this.valorPresenteParcela);
-			this.setVlrParcelaAtualizadaNew(this.getVlrRecebido());
+		
+		if(dateSelected.before(this.bpContratoCobrancaDetalhes.getDataVencimento())){
+			if(dateSelected.after(DateUtil.adicionarDias(this.bpContratoCobrancaDetalhes.getDataVencimento(), -30))) {
+				calcularValorPresenteParcelaDataValor(rowEditNewDate, bpContratoCobrancaDetalhes, bpContratoCobrancaDetalhes.getVlrParcela());
+				this.setVlrRecebido(this.valorPresenteParcela);
+				this.setVlrParcelaAtualizadaNew(this.getVlrRecebido());
+			} else {
+				calcularValorPresenteParcelaData(rowEditNewDate, bpContratoCobrancaDetalhes);
+				this.setVlrRecebido(this.valorPresenteParcela);
+				this.setVlrParcelaAtualizadaNew(this.getVlrRecebido());
+			}
 		} else {
 			this.setVlrRecebido(this.vlrParcelaAtualizadaNew);
-		}		
+		}	
 	}
 	
 	public void atualizaValorBaixaPresente() {

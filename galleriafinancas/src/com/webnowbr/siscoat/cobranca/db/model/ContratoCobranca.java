@@ -778,6 +778,9 @@ public class ContratoCobranca implements Serializable {
 	private String geracaoLaudoObservacao;
 	private boolean iniciouGeracaoLaudo;
 	
+	private boolean contatoDiferenteProprietario;
+	//private String geracaoLaudoObservacao;
+	
 	private String documentoPagador;
 	private boolean contratoQuitado;
 	
@@ -800,7 +803,7 @@ public class ContratoCobranca implements Serializable {
 	private String emailPagador;
 	private String celularPagador;
 
- //FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13	
+	//FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13	
 	public BigDecimal calcularValorTotalContasPagas() {
 		somaValorPago = BigDecimal.ZERO;
 		for (ContasPagar conta : this.getListContasPagar()) {
@@ -6364,5 +6367,15 @@ public class ContratoCobranca implements Serializable {
 
 	public void setApenasPagamentoAntecipado(boolean apenasPagamentoAntecipado) {
 		this.apenasPagamentoAntecipado = apenasPagamentoAntecipado;
+	}
+
+	public boolean isContatoDiferenteProprietario() {
+		return contatoDiferenteProprietario;
+	}
+
+	public void setContatoDiferenteProprietario(boolean contatoDiferenteProprietario) {
+		this.contatoDiferenteProprietario = contatoDiferenteProprietario;
 	}	
+	
+	
 }

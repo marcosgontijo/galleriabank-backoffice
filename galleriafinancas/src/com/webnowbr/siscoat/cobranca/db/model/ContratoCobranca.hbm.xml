@@ -2147,5 +2147,9 @@
 			<column name="apenasPagamentoAntecipado" not-null="true" default="false"/>
 		</property>	
 		
+		<property name="contatoDiferenteProprietario" type="boolean">
+			<column name="contatoDiferenteProprietario" not-null="true" default="false"/>
+		</property>	
+		
 	</class>
 </hibernate-mapping>
