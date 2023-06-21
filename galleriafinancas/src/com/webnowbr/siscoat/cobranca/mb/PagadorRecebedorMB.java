@@ -11,17 +11,17 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import javax.faces.event.AjaxBehaviorEvent;
-import javax.faces.event.ValueChangeEvent;
 
 import org.json.JSONObject;
 import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
 
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
@@ -35,10 +35,6 @@ import com.webnowbr.siscoat.infra.db.dao.GroupDao;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.GroupAdm;
 import com.webnowbr.siscoat.infra.db.model.User;
-
-import org.primefaces.model.SortOrder;
-
-import java.util.Map;
 
 /** ManagedBean. */
 @ManagedBean(name = "pagadorRecebedorMB")
@@ -326,6 +322,20 @@ public class PagadorRecebedorMB {
 		inserir();
 		
 		return "PagadorRecebedorConsultar.xhtml";
+	}
+	
+	public String validaPix() {
+
+		FacesContext context = FacesContext.getCurrentInstance();
+
+		return null;
+	}
+	
+	public String validaContaBancaria() {
+
+		FacesContext context = FacesContext.getCurrentInstance();
+
+		return null;
 	}
 
 	public String excluir() {

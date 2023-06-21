@@ -6,28 +6,15 @@ import java.util.Base64;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 
 import org.primefaces.model.StreamedContent;
 
-import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
-import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
-import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
-import com.webnowbr.siscoat.cobranca.service.PagadorRecebedorService;
-import com.webnowbr.siscoat.cobranca.service.SerasaService;
 import com.webnowbr.siscoat.common.CommonsUtil;
-import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
-import com.webnowbr.siscoat.infra.db.model.User;
-import com.webnowbr.siscoat.security.LoginBean;
-
-import br.com.galleriabank.serasacrednet.cliente.model.CredNet;
-import br.com.galleriabank.serasacrednet.cliente.model.PessoaParticipacao;
-import br.com.galleriabank.serasarelato.cliente.util.GsonUtil;
 
 @ManagedBean(name = "netrinMB")
 @SessionScoped
@@ -99,6 +86,7 @@ public class NetrinMB {
 		gerador.feed(in);
 		gerador.close();
 		return null;
+
 	}
 
 
