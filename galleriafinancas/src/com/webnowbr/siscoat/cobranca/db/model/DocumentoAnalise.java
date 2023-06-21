@@ -14,6 +14,7 @@ import br.com.galleriabank.dataengine.cliente.model.retorno.AntecedentesCriminai
 import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultConsultaQuodScore;
 import br.com.galleriabank.dataengine.cliente.model.retorno.processos.EngineRetornoExecutionResultProcessos;
 import br.com.galleriabank.netrin.cliente.model.PPE.PpeResponse;
+import br.com.galleriabank.netrin.cliente.model.cenprot.CenprotProtestos;
 import br.com.galleriabank.netrin.cliente.model.cenprot.CenprotResponse;
 import br.com.galleriabank.netrin.cliente.model.cenprot.ProtestosBrasilEstado;
 import br.com.galleriabank.netrin.cliente.model.dossie.DossieRequest;
@@ -179,14 +180,13 @@ public class DocumentoAnalise implements Serializable {
 	}
 	public List<DocumentoAnaliseResumo> getResumoCenprot(){
 		List<DocumentoAnaliseResumo> cenprot = new ArrayList<>();
-		if(getRetornoCenprot() == null) {
-			cenprot.add(new DocumentoAnaliseResumo("não disponivel", null));
-		} else {
-		CenprotResponse data = GsonUtil.fromJson(getRetornoCenprot(), CenprotResponse.class);
-		if(data.getCenprotProtestos().getProtestosBrasil() == null) {
-			cenprot.add(new DocumentoAnaliseResumo("Não Disponível","0"));
+			
+		CenprotProtestos data = GsonUtil.fromJson(getRetornoCenprot(), CenprotProtestos.class);
+		
+		if(CommonsUtil.semValor(data.getProtestosBrasil().getEstados())) {
+			cenprot.add(new DocumentoAnaliseResumo("Não Disponível",null));
 		}else {
-			for (ProtestosBrasilEstado estado : data.getCenprotProtestos().getProtestosBrasil().getEstados()) {
+			for (ProtestosBrasilEstado estado : data.getProtestosBrasil().getEstados()) {
 			
 				String valorEstado = CommonsUtil.stringValue(estado.getValorTotal()) + " (" + estado.getValorTotal() + ") "; 
 				cenprot.add(new DocumentoAnaliseResumo(estado.getEstado(), valorEstado)); 	
@@ -194,7 +194,7 @@ public class DocumentoAnalise implements Serializable {
 		}
 		}
 		
-		}
+		
 		
 		return cenprot;
 	}
