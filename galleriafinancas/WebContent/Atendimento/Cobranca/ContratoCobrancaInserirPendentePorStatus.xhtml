@@ -961,6 +961,7 @@
 									</p:column>
 									<p:column headerText="Liberar Processos">
 										<p:selectBooleanButton value="#{fileAnalise.liberadoProcesso}"
+											disabled="#{!contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
 											 onLabel="Sim" offLabel="Não" style="width:6rem" >
 										<p:ajax  event="change"
 											listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
