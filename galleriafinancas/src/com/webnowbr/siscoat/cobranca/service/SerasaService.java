@@ -4,8 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 
 import javax.faces.application.FacesMessage;
@@ -32,26 +34,26 @@ public class SerasaService {
 		documentoAnalise = documentoAnaliseDao.findById(documentoAnalise.getId());
 
 		if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa())) {
-			
+
 			CredNet credNet = GsonUtil.fromJson(documentoAnalise.getRetornoSerasa(), CredNet.class);
 
 			if (!CommonsUtil.semValor(documentoAnalise.getPagador())) {
 				PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
-				
-				//if (CommonsUtil.semValor(documentoAnalise.getPagador().getDtNascimento()))
-					documentoAnalise.getPagador().setDtNascimento(credNet.getPessoa().getDataNascimentoFundacao());
 
-				//if (CommonsUtil.semValor(documentoAnalise.getPagador().getNomeMae()))
-					documentoAnalise.getPagador().setNomeMae(credNet.getPessoa().getNomeMae());
-					
-					pagadorRecebedorDao.merge(documentoAnalise.getPagador());
+				// if (CommonsUtil.semValor(documentoAnalise.getPagador().getDtNascimento()))
+				documentoAnalise.getPagador().setDtNascimento(credNet.getPessoa().getDataNascimentoFundacao());
+
+				// if (CommonsUtil.semValor(documentoAnalise.getPagador().getNomeMae()))
+				documentoAnalise.getPagador().setNomeMae(credNet.getPessoa().getNomeMae());
+
+				pagadorRecebedorDao.merge(documentoAnalise.getPagador());
 			}
 
 			if (!CommonsUtil.semValor(credNet.getParticipacoes())) {
 				DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
 
 				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
-				
+
 				for (PessoaParticipacao pessoaParticipacao : credNet.getParticipacoes()) {
 
 					documentoAnaliseService.cadastrarPessoRetornoCredNet(pessoaParticipacao, user, documentoAnaliseDao,
@@ -63,15 +65,12 @@ public class SerasaService {
 		}
 
 	}
-	
 
 	public FacesMessage serasaCriarConsulta(DocumentoAnalise documentoAnalise) { // POST para gerar consulta
 		try {
 			// loginDocket();
-			int HTTP_COD_SUCESSO = 200;
-			FacesMessage result = null;
+			String retornoConsulta = null;
 
-			URL myURL;
 			String cnpjcpf = documentoAnalise.getCnpjcpf();
 			if (!CommonsUtil.semValor(documentoAnalise.getPagador())) {
 				if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa()))
@@ -79,58 +78,32 @@ public class SerasaService {
 				else
 					cnpjcpf = documentoAnalise.getPagador().getCnpj();
 			}
-			if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa()))
-				myURL = new URL(
-						"https://servicos.galleriabank.com.br/crednet/api/v1/" + CommonsUtil.somenteNumeros(cnpjcpf));
-			else
-				myURL = new URL(
-						"https://servicos.galleriabank.com.br/relato/api/v1/" + CommonsUtil.somenteNumeros(cnpjcpf));
 
-			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
-			myURLConnection.setRequestMethod("GET");
-			myURLConnection.setUseCaches(false);
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json");
-			myURLConnection.setRequestProperty("Authorization", "Bearer " +  br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos());
-			myURLConnection.setDoOutput(true);
-
-			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
-				result = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-						"Serasa: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", "");
+			retornoConsulta = executaConsultaSerasa(documentoAnalise.getTipoPessoa(), cnpjcpf);
+			if (CommonsUtil.semValor(retornoConsulta)) {
+				return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Serasa: Falha na consulta", "");
 			} else {
 				// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
 				// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
 
-				BufferedReader in;
-				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
-				String inputLine;
-				StringBuffer response = new StringBuffer();
-				while ((inputLine = in.readLine()) != null) {
-					response.append(inputLine);
-				}
-				in.close();
-
 				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-				documentoAnalise.setRetornoSerasa(response.toString());
+				documentoAnalise.setRetornoSerasa(retornoConsulta);
 				documentoAnaliseDao.merge(documentoAnalise);
-				
+
 				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
-				
+
 				if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa()))
 					pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
-						DocumentosAnaliseEnum.CREDNET, response.toString());
+							DocumentosAnaliseEnum.CREDNET, retornoConsulta);
 				else
 					pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
-							DocumentosAnaliseEnum.RELATO, response.toString());
-						
-				result = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
+							DocumentosAnaliseEnum.RELATO, retornoConsulta);
+
+				return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
 
 			}
-			myURLConnection.disconnect();
-			return result;
-		} catch (
 
+		} catch (
 		MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -139,6 +112,66 @@ public class SerasaService {
 			e.printStackTrace();
 		}
 
+		return null;
+	}
+
+	private String executaConsultaSerasa(String tipoPessoa, String cnpjcpf)
+			throws MalformedURLException, IOException, ProtocolException, UnsupportedEncodingException {
+
+		int HTTP_COD_SUCESSO = 200;
+
+		String retornoConsulta;
+		URL myURL;
+		if (CommonsUtil.mesmoValor("PF", tipoPessoa))
+			myURL = new URL(
+					"https://servicos.galleriabank.com.br/crednet/api/v1/" + CommonsUtil.somenteNumeros(cnpjcpf));
+		else
+			myURL = new URL(
+					"https://servicos.galleriabank.com.br/relato/api/v1/" + CommonsUtil.somenteNumeros(cnpjcpf));
+
+		HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+		myURLConnection.setRequestMethod("GET");
+		myURLConnection.setUseCaches(false);
+		myURLConnection.setRequestProperty("Accept", "application/json");
+		myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+		myURLConnection.setRequestProperty("Content-Type", "application/json");
+		myURLConnection.setRequestProperty("Authorization",
+				"Bearer " + br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos());
+		myURLConnection.setDoOutput(true);
+
+		if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
+			retornoConsulta = null;
+		} else {
+			// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
+			// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
+
+			BufferedReader in;
+			in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+
+			retornoConsulta = response.toString();
+
+		}
+		myURLConnection.disconnect();
+		return retornoConsulta;
+	}
+
+	public String serasaCriarConsulta(String scnpjCpf) {
+		try {
+			return executaConsultaSerasa(CommonsUtil.pessoaFisicaJuridicaCnpjCpf(scnpjCpf), scnpjCpf);
+		} catch (
+		MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 
@@ -161,9 +194,9 @@ public class SerasaService {
 			myURLConnection.setRequestProperty("Accept", "application/json");
 			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
 			myURLConnection.setRequestProperty("Content-Type", "application/json");
-			myURLConnection.setRequestProperty("Authorization", "Bearer " +  br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos());
+			myURLConnection.setRequestProperty("Authorization",
+					"Bearer " + br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos());
 			myURLConnection.setDoOutput(true);
-
 
 //			JSONObject jsonWhatsApp = engineBodyJsonEngine(engine.getPagador());
 
