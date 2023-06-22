@@ -63,6 +63,7 @@ public class SerasaService {
 		}
 
 	}
+	
 
 	public FacesMessage serasaCriarConsulta(DocumentoAnalise documentoAnalise) { // POST para gerar consulta
 		try {

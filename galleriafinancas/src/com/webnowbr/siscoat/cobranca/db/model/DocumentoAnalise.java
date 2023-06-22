@@ -182,6 +182,11 @@ public class DocumentoAnalise implements Serializable {
 		List<DocumentoAnaliseResumo> cenprot = new ArrayList<>();
 			
 		CenprotProtestos data = GsonUtil.fromJson(getRetornoCenprot(), CenprotProtestos.class);
+		if(data == null) {
+			cenprot.add(new DocumentoAnaliseResumo("não disponível", null));
+		} else {
+			
+		
 		
 		if(CommonsUtil.semValor(data.getProtestosBrasil().getEstados())) {
 			cenprot.add(new DocumentoAnaliseResumo("Não Disponível",null));
@@ -193,7 +198,7 @@ public class DocumentoAnalise implements Serializable {
 			
 		}
 		}
-		
+		}
 		
 		
 		return cenprot;
