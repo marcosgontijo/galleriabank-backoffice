@@ -365,8 +365,11 @@ public class KobanaMB {
 									if (objetoDataBoleto.has("idParcela")) {
 										ContratoCobrancaDetalhes parcela = new ContratoCobrancaDetalhes();
 										parcela = parcelaDao.findById(Long.valueOf(objetoDataBoleto.getString("idParcela")));
-										boleto.setParcela(parcela);
-										boleto.setVlrParcela(parcela.getVlrParcela());
+										
+										if (parcela != null) {
+											boleto.setParcela(parcela);
+											boleto.setVlrParcela(parcela.getVlrParcela());
+										}
 									}
 								} else {
 									// se gerou para mais de parcela
@@ -965,6 +968,8 @@ public class KobanaMB {
 				
 				for (int i = 0; i < parcelasSelecionadas.size(); i++) {
 					jsonCustomData.put("idParcela/" + i, String.valueOf(parcelasSelecionadas.get(i).getId()));
+					jsonCustomData.put("valorParcelaOriginal/" + String.valueOf(parcelasSelecionadas.get(i).getId()), String.valueOf(parcelasSelecionadas.get(i).getVlrParcela()));
+					jsonCustomData.put("valorParcelaKobana/" + String.valueOf(parcelasSelecionadas.get(i).getId()), String.valueOf(parcelasSelecionadas.get(i).getVlrBoletoKobana()));
 		    	}
 			}
 		}

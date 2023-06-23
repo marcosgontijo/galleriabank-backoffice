@@ -25,6 +25,9 @@
 		<property name="vlrParcela" type="big_decimal">
 			<column name="VLRPARCELA" />
 		</property>
+		<property name="vlrBoletoKobana" type="big_decimal">
+			<column name="vlrBoletoKobana" />
+		</property>
 		<property name="vlrParcelaOriginal" type="big_decimal">
 			<column name="vlrParcelaOriginal" />
 		</property>

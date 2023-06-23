@@ -2128,7 +2128,7 @@
 						rowKey="#{parcelas.id}">
 
 						<f:facet name="header">
-							<p:commandButton onclick="PF('bpGerarBoletoKobanaPARCELASDialog').show();"
+							<p:commandButton actionListener="#{contratoCobrancaMB.populaVlrBoletoKobana()}" oncomplete="PF('bpGerarBoletoKobanaPARCELASDialog').show();"
 								icon="ui-icon-video" title="Boleto Kobana PARCELAS" value="Boleto Kobana PARCELAS"
 								update=":formBpGerarBoletoKobanaPARCELAS">
 							</p:commandButton>
@@ -2307,7 +2307,7 @@
 						</p:column>
 						
 						<f:facet name="footer">
-							<p:commandButton onclick="PF('bpGerarBoletoKobanaPARCELASDialog').show();"
+							<p:commandButton actionListener="#{contratoCobrancaMB.populaVlrBoletoKobana()}" oncomplete="PF('bpGerarBoletoKobanaPARCELASDialog').show();"
 								icon="ui-icon-video" title="Boleto Kobana PARCELAS" value="Boleto Kobana PARCELAS"
 								update=":formBpGerarBoletoKobanaPARCELAS">
 							</p:commandButton>
@@ -2830,15 +2830,32 @@
 					<h:panelGrid columns="1">			
 						<p:dataTable id="dtParcelasSelecionadas" var="parcelasSelecionadas"
 									value="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
-									emptyMessage="Nenhuma parcela selecionada!!!">
+									emptyMessage="Nenhuma parcela selecionada!!!" editable="true" >
+									
+							<p:ajax event="rowEdit" listener="#{contratoCobrancaMB.calculaValorTotalBoletoKobana}" update=":formBpGerarBoletoKobanaPARCELAS:valorBoleto" />
+       						<p:ajax event="rowEditCancel" listener="#{contratoCobrancaMB.onRowCancel}" update=":form:msgs" />
+        		
 							<p:column style="text-align: center;"
 								headerText="Parcela">
 								<h:outputText value="#{parcelasSelecionadas.numeroParcela}"/>
 							</p:column>		
 							<p:column style="text-align: center;"
 								headerText="Valor">
-								<h:outputText value="#{parcelasSelecionadas.vlrParcela}" converter="bigDecimalConverter" />
-							</p:column>		
+								 <p:cellEditor>
+					                <f:facet name="output"><h:outputText value="#{parcelasSelecionadas.vlrBoletoKobana}" converter="bigDecimalConverter"/></f:facet>
+					                <f:facet name="input">
+					                    <p:inputText 
+											id="valorBoletoKobana" value="#{parcelasSelecionadas.vlrBoletoKobana}"
+											onkeypress="return isNumberKey(event);"
+											onkeydown="FormataValor(this, 13, event, 2);" required="true"
+											converter="bigDecimalConverter"/>
+					                </f:facet>
+					            </p:cellEditor> 
+							</p:column>	
+							
+							<p:column style="width:35px">
+					            <p:rowEditor />
+					        </p:column>	
 						</p:dataTable>
 					</h:panelGrid>
 					
