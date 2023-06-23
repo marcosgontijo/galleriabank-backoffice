@@ -29,6 +29,7 @@ public class ConsultaSerasaMB {
 	
 	
 	public String clear() {
+		cpfCnpj = "";
 		return "/Atendimento/ConsultasDirectd/consultaSerasa.xhtml";
 		
 	}
