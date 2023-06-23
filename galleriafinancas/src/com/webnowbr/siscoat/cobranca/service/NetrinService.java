@@ -315,9 +315,7 @@ public class NetrinService {
 
 			return result;
 
-		} catch (
-
-		MalformedURLException e) {
+		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -528,6 +526,31 @@ public class NetrinService {
 			}
 
 			nomeConsultado = receitaFederalPF.getCpfBirthdate().getNome();
+		}
+		else {
+			
+			if (!CommonsUtil.semValor(pagadorRecebedor.getCnpj())) {
+				PagadorRecebedorService ppagaPagadorRecebedorService = new PagadorRecebedorService();
+				PagadorRecebedorConsulta pagadorRecebedorConsulta = ppagaPagadorRecebedorService
+						.buscaConsultaNoPagadorRecebedor(pagadorRecebedor,
+								DocumentosAnaliseEnum.RECEITA_FEDERAL);
+				ReceitaFederalPJ receitaFederalPJ = null;
+				if (!CommonsUtil.semValor(pagadorRecebedorConsulta)) {
+					receitaFederalPJ = GsonUtil.fromJson(pagadorRecebedorConsulta.getRetornConsulta(),
+							ReceitaFederalPJ.class);
+				}else {
+					receitaFederalPJ = requestCadastroPJ(pagadorRecebedor.getCpf());
+				}
+
+				if (!CommonsUtil.semValor(receitaFederalPJ)
+						&& !CommonsUtil.semValor(pagadorRecebedor.getId())) {
+					ppagaPagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagadorRecebedor,
+							DocumentosAnaliseEnum.RECEITA_FEDERAL, GsonUtil.toJson(receitaFederalPJ));
+				}
+
+				nomeConsultado = receitaFederalPJ.getReceitaFederal().getRazaoSocial();
+			}
+			
 		}
 		return nomeConsultado;
 	}
