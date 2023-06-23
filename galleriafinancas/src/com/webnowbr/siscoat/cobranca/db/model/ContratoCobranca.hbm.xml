@@ -1999,6 +1999,9 @@
 		<property name="baixadoUsuario" type="java.lang.String">
 			<column name="baixadoUsuario" />
 		</property>
+		<property name="baixaMotivoCancelamento" type="java.lang.String">
+			<column name="baixaMotivoCancelamento" />
+		</property>		
 		
 		<property name="valorEmprestimo" type="big_decimal">
 			<column name="valorEmprestimo"/>

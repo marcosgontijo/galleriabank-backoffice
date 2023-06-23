@@ -524,6 +524,7 @@ public class ContratoCobranca implements Serializable {
 
 	private Date baixadoData;
 	private String baixadoUsuario;
+	private String baixaMotivoCancelamento;
 
 	private Date semFotoImovelData;
 	private boolean semFotoImovel;
@@ -6016,6 +6017,14 @@ public class ContratoCobranca implements Serializable {
 
 	public void setBaixadoUsuario(String baixadoUsuario) {
 		this.baixadoUsuario = baixadoUsuario;
+	}
+	
+	public String getBaixaMotivoCancelamento() {
+		return baixaMotivoCancelamento;
+	}
+
+	public void setBaixaMotivoCancelamento(String baixaMotivoCancelamento) {
+		this.baixaMotivoCancelamento = baixaMotivoCancelamento;
 	}
 
 	public String getAvaliacaoEngenharia() {

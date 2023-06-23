@@ -588,7 +588,7 @@
 										styleClass="labelBold" label="Conta"
 										onblur="" style="width:100px;margin-right: 10px;" />
 									<p:commandButton value="Verificar" ajax="false" icon="ui-icon-check" 
-									  	action="#{pagadorRecebedorMB.inserir()}"
+									  	action="#{pagadorRecebedorMB.validaContaBancaria}"
 									  	rendered="false"
 											style="TEXT-DECORATION: bold" />
 								</h:panelGroup>
@@ -609,7 +609,7 @@
 										value="#{pagadorRecebedorMB.objetoPagadorRecebedor.pix}"
 										styleClass="labelBold" label="pix" style="width:100px;margin-right: 10px;" />
 									<p:commandButton value="Verificar" ajax="false" icon="ui-icon-check" 
-									  	action="#{pagadorRecebedorMB.inserir()}"
+									  	action="#{pagadorRecebedorMB.validaPix}"
 									  	rendered="false"
 											style="TEXT-DECORATION: bold" />
 								</h:panelGroup>

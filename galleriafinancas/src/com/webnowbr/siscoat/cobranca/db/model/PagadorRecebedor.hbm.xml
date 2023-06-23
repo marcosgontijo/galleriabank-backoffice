@@ -98,7 +98,15 @@
         </property> 
         <property name="conta" type="java.lang.String">
             <column name="CONTA"/>
+        </property>         
+        <property name="contaDigito" type="java.lang.String">
+            <column name="CONTADIGITO"/>
         </property> 
+        
+		<property name="contaBancariaValidada" type="boolean">
+			<column name="CONTABANCARIAVALIDADA" not-null="true" default="false" />
+		</property>
+				
         <property name="nomeCC" type="java.lang.String">
             <column name="NOMECC"/>
         </property>   
@@ -579,6 +587,16 @@
 		<property name="pix" type="java.lang.String">
 			<column name="pix" />
 		</property>	  
+		
+		<property name="tipoPix" type="java.lang.String">
+			<column name="tipoPix" />
+		</property>
+		
+		
+		<property name="pixValidado" type="boolean">
+			<column name="PIXVALIDADO" not-null="true" default="false" />
+		</property>
+		
 		
 		<list name="documentosDocket"
 			table="PagadorRecebedor_DocumentosPagadorDocket_Join" cascade="all" lazy="false">
