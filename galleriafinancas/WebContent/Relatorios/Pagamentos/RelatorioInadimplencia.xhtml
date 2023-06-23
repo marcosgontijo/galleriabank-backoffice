@@ -59,6 +59,13 @@
 						</h:outputText>
 					</p:column>
 					<p:column style="text-align: center;width: 100px;"
+						headerText="Parcelas em Atraso" 
+						filterBy="#{relatorio.qtdParcelasAtraso}" 
+						filterMatchMode="contains" 
+						sortBy="#{relatorio.qtdParcelasAtraso}">
+						<h:outputText value="#{relatorio.qtdParcelasAtraso}"/>
+					</p:column>
+					<p:column style="text-align: center;width: 100px;"
 						headerText="Valor da Ccb" 
 						sortBy="#{relatorio.valorCcb}">
 						<h:outputText value="#{relatorio.valorCcb}"
@@ -69,7 +76,7 @@
 						sortBy="#{relatorio.valorGarantia}">
 						<h:outputText value="#{relatorio.valorGarantia}"
 							converter="bigDecimalConverter" />
-					</p:column>							
+					</p:column>
 					<p:column style="text-align: center;width: 100px;"
 						headerText="Parcelas Pagas" 
 						filterBy="#{relatorio.qtdParcelasPagas}" 

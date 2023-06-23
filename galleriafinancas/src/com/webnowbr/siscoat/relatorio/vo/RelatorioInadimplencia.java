@@ -20,6 +20,7 @@ public class RelatorioInadimplencia {
 	
 	public Date primeiroAtraso;
 	public ContratoCobrancaDetalhes primeiraParcelaAtraso;
+	public int qtdParcelasAtraso;
 	public List<ContratoCobrancaDetalhes> parcelasAtraso;
 	
 	public int qtdParcelasPagas;
@@ -32,6 +33,7 @@ public class RelatorioInadimplencia {
 	}
 	
 	public void populateCampos(){
+		qtdParcelasAtraso = parcelasAtraso.size();
 		if(parcelasAtraso.size() > 0) {
 			primeiraParcelaAtraso = parcelasAtraso.get(0);
 			primeiroAtraso = primeiraParcelaAtraso.getDataVencimento();
@@ -143,5 +145,13 @@ public class RelatorioInadimplencia {
 
 	public void setParcelasPagas(List<ContratoCobrancaDetalhes> parcelasPagas) {
 		this.parcelasPagas = parcelasPagas;
+	}
+
+	public int getQtdParcelasAtraso() {
+		return qtdParcelasAtraso;
+	}
+
+	public void setQtdParcelasAtraso(int qtdParcelasAtraso) {
+		this.qtdParcelasAtraso = qtdParcelasAtraso;
 	}
 }	

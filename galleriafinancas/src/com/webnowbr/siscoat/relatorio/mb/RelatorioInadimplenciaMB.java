@@ -72,13 +72,12 @@ public class RelatorioInadimplenciaMB {
 		
 		for(ContratoCobranca contrato : listContratos) {
 			int qtdDeparcelasVencidas = 0;
-			RelatorioInadimplencia relIna = new RelatorioInadimplencia();
-			if(CommonsUtil.mesmoValor(contrato.getNumeroContrato(), "09017")){
-				String oi;
-				oi = "asda";
-				oi = oi + "asdsa";
-			}
+			RelatorioInadimplencia relIna = new RelatorioInadimplencia();			
 			for (ContratoCobrancaDetalhes ccd : contrato.getListContratoCobrancaDetalhes()) {
+				if(CommonsUtil.semValor(ccd.getNumeroParcela())
+						|| CommonsUtil.semValor(CommonsUtil.somenteNumeros(ccd.getNumeroParcela()))) {
+					continue;
+				}
 				if(CommonsUtil.intValue(CommonsUtil.somenteNumeros(ccd.getNumeroParcela())) <= contrato.getMesesCarencia()) {
 					continue;
 				}
@@ -113,15 +112,30 @@ public class RelatorioInadimplenciaMB {
 			sheet.createRow(iLinha);
 			linha = sheet.getRow(iLinha);
 		}
+		String[] colunas = new String[] {
+				"N° Contrato",
+				"Pagador",
+				"1° Atraso",
+				"Parcelas em Atraso",
+				"Valor da Ccb", 
+				"Valor da Garantia", 
+				"Parcelas Pagas", 
+				"Está em Cartório?", 
+				"Empresa"};
 		
-		gravaCelula(0, "N° Contrato", linha);
+		/*gravaCelula(0, "N° Contrato", linha);
 		gravaCelula(1, "Pagador", linha);
 		gravaCelula(2, "1° Atraso", linha);
-		gravaCelula(3, "Valor da Ccb", linha);
-		gravaCelula(4, "Valor da Garantia", linha);
-		gravaCelula(5, "Parcelas Pagas", linha);
-		gravaCelula(6, "Está em Cartório?", linha);
-		gravaCelula(7, "Empresa", linha);
+		gravaCelula(3, "Parcelas em Atraso", linha);
+		gravaCelula(4, "Valor da Ccb", linha);
+		gravaCelula(5, "Valor da Garantia", linha);
+		gravaCelula(6, "Parcelas Pagas", linha);
+		gravaCelula(7, "Está em Cartório?", linha);
+		gravaCelula(8, "Empresa", linha);*/
+		
+		for(int i = 0; i < colunas.length; i++) {
+			gravaCelula(i, colunas[i], linha);
+		}
 		
 		iLinha = 1;
 		for(RelatorioInadimplencia relIna : listRelatorioInadimplencia) {
@@ -130,15 +144,30 @@ public class RelatorioInadimplenciaMB {
 				sheet.createRow(iLinha);
 				linha = sheet.getRow(iLinha);
 			}
+			String[] valores = new String[] {
+					relIna.numeroContrato,
+					relIna.nomePagador,
+					CommonsUtil.formataData(relIna.primeiroAtraso, "dd/MM/yyyy"),
+					relIna.qtdParcelasAtraso + "",
+					BigDecimalToString(relIna.valorCcb), 
+					BigDecimalToString(relIna.valorGarantia), 
+					relIna.qtdParcelasPagas + "",
+					booleanToString(relIna.estaEmCartorio), 
+					relIna.empresa};
 			
-			gravaCelula(0, relIna.numeroContrato, linha);
+			for(int i = 0; i < colunas.length; i++) {
+				gravaCelula(i, valores[i], linha);
+			}
+			
+			/*gravaCelula(0, relIna.numeroContrato, linha);
 			gravaCelula(1, relIna.nomePagador, linha);
 			gravaCelula(2, relIna.primeiroAtraso, linha);
-			gravaCelula(3, relIna.valorCcb, linha);
-			gravaCelula(4, relIna.valorGarantia, linha);
-			gravaCelula(5, relIna.qtdParcelasPagas, linha);
-			gravaCelula(6, relIna.estaEmCartorio, linha);
-			gravaCelula(7, relIna.empresa, linha);
+			gravaCelula(3, relIna.qtdParcelasAtraso, linha);
+			gravaCelula(4, relIna.valorCcb, linha);
+			gravaCelula(5, relIna.valorGarantia, linha);
+			gravaCelula(6, relIna.qtdParcelasPagas, linha);
+			gravaCelula(7, relIna.estaEmCartorio, linha);
+			gravaCelula(8, relIna.empresa, linha);*/
 			iLinha++;
 		}
 		
@@ -159,7 +188,13 @@ public class RelatorioInadimplenciaMB {
 		return null;
 	}
 	
-	private void gravaCelula(Integer celula, BigDecimal value, XSSFRow linha) {
+	private void gravaCelula(Integer celula, String value, XSSFRow linha) {
+		if (linha.getCell(celula) == null)
+			linha.createCell(celula);
+		linha.getCell(celula).setCellValue(value);
+	}
+	
+	/*private void gravaCelula(Integer celula, BigDecimal value, XSSFRow linha) {
 		if (linha.getCell(celula) == null)
 			linha.createCell(celula);
 		if(CommonsUtil.semValor(value))
@@ -168,11 +203,6 @@ public class RelatorioInadimplenciaMB {
 			linha.getCell(celula).setCellValue(value.doubleValue());
 	}
    
-	private void gravaCelula(Integer celula, String value, XSSFRow linha) {
-		if (linha.getCell(celula) == null)
-			linha.createCell(celula);
-		linha.getCell(celula).setCellValue(value);
-	}
 	
 	private void gravaCelula(Integer celula, Date value, XSSFRow linha) {
 		if (linha.getCell(celula) == null)
@@ -193,6 +223,24 @@ public class RelatorioInadimplenciaMB {
 			linha.getCell(celula).setCellValue("Sim");
 		else
 			linha.getCell(celula).setCellValue("Não");
+	}*/
+	
+	private String BigDecimalToString(BigDecimal value) {
+		String retorno;
+		if(CommonsUtil.semValor(value))
+			retorno = "0";
+		else
+			retorno = CommonsUtil.formataValorMonetario(value.doubleValue());
+		return retorno;
+	}
+	
+	private String booleanToString(boolean value) {
+		String retorno;
+		if(value)
+			retorno = "Sim";
+		else
+			retorno = "Não";
+		return retorno;
 	}
 
 	public List<RelatorioInadimplencia> getListRelatorioInadimplencia() {
