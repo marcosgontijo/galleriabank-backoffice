@@ -191,7 +191,7 @@ public class SerasaService {
 		return null;
 	}
 	
-	public String baixarDocumento(String scnpjCpf, String retornoSerasa) {
+	public  String baixarDocumento(String scnpjCpf) {
 		try {
 			return baixarDocumentoConsulta(CommonsUtil.pessoaFisicaJuridicaCnpjCpf(scnpjCpf), scnpjCpf);
 		} catch (MalformedURLException e) {
@@ -204,7 +204,7 @@ public class SerasaService {
 		return null;
 	}
 
-	private String baixarDocumentoConsulta(String retornoSerasa, String tipoPessoa)
+	public String baixarDocumentoConsulta(String retornoSerasa, String tipoPessoa)
 			throws MalformedURLException, IOException, ProtocolException, UnsupportedEncodingException {
 		String base64 = null;
 		// loginDocket();
