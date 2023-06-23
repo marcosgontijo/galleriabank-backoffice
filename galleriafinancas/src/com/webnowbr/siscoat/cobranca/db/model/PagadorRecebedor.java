@@ -100,11 +100,19 @@ public class PagadorRecebedor implements Serializable {
 	private String banco;
 	private String agencia;
 	private String conta;
+	private String contaDigito;
 	private String nomeCC;
 	private String cpfCC;
 	private String cnpjCC;
-	private String pix;
 	private String tipoConta;
+
+	private boolean contaBancariaValidada;
+
+	private String tipoPix;
+	private String pix;
+	
+	private boolean pixValidado;
+	
 	
 	private String idIugu;
 	
@@ -756,6 +764,14 @@ public class PagadorRecebedor implements Serializable {
 	 */
 	public void setConta(String conta) {
 		this.conta = conta;
+	}
+	
+	public String getContaDigito() {
+		return contaDigito;
+	}
+
+	public void setContaDigito(String contaDigito) {
+		this.contaDigito = contaDigito;
 	}
 
 	/**
@@ -2179,6 +2195,22 @@ public class PagadorRecebedor implements Serializable {
 		this.pix = pix;
 	}
 
+	public boolean isPixValidado() {
+		return pixValidado;
+	}
+
+	public void setPixValidado(boolean pixValidado) {
+		this.pixValidado = pixValidado;
+	}
+
+	public String getTipoPix() {
+		return tipoPix;
+	}
+
+	public void setTipoPix(String tipoPix) {
+		this.tipoPix = tipoPix;
+	}
+
 	public List<DocumentosPagadorDocket> getDocumentosDocket() {
 		return documentosDocket;
 	}
@@ -2233,6 +2265,14 @@ public class PagadorRecebedor implements Serializable {
 
 	public void setTipoConta(String tipoConta) {
 		this.tipoConta = tipoConta;
+	}
+
+	public boolean isContaBancariaValidada() {
+		return contaBancariaValidada;
+	}
+
+	public void setContaBancariaValidada(boolean contaBancariaValidada) {
+		this.contaBancariaValidada = contaBancariaValidada;
 	}	
 	
 }

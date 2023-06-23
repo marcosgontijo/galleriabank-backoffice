@@ -74,7 +74,7 @@ public class DocumentoAnalise implements Serializable {
 	}
 
 	public boolean isPodeChamarSerasa() {
-		return !isSerasaProcessado() && CommonsUtil.mesmoValor("PF", tipoPessoa)
+		return !isSerasaProcessado() 
 				&& CommonsUtil.mesmoValor(this.motivoAnalise.toUpperCase(), "PROPRIETARIO ATUAL"); // (CommonsUtil.mesmoValor("PJ",
 																									// // tipoPessoa) ||
 	}

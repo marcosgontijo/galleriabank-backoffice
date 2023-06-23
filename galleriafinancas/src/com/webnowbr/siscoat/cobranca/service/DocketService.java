@@ -36,6 +36,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.DataEngineDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocketDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
+import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.ws.endpoint.ReaWebhookRetorno;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
@@ -44,6 +45,8 @@ import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.infra.db.model.User;
 
 import br.com.galleriabank.dataengine.cliente.model.request.DataEngineIdSend;
+import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
+import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoRequestEnterprisePartnership;
 import br.com.galleriabank.jwt.common.JwtUtil;
 import br.com.galleriabank.serasarelato.cliente.util.GsonUtil;
 
@@ -299,6 +302,50 @@ public class DocketService {
 
 	}
 
+	public void requestEngine(DocumentoAnalise documentoAnalise, DataEngine engine, User usuarioLogado) {
+
+		if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
+			engineCriarConsulta(documentoAnalise, engine, usuarioLogado);
+		}
+		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+		documentoAnalise = documentoAnaliseDao.findById(documentoAnalise.getId());
+
+		if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa())) {
+
+			EngineRetorno engineRetorno = GsonUtil.fromJson(documentoAnalise.getRetornoEngine(), EngineRetorno.class);
+
+			if (!CommonsUtil.semValor(documentoAnalise.getPagador())) {
+				PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
+
+				if (CommonsUtil.semValor(documentoAnalise.getPagador().getDtNascimento()))
+					documentoAnalise.getPagador().setDtNascimento(CommonsUtil.dateValue(
+							engineRetorno.getEngineRetornoExecutionResultConsultaSerproCPF().getNascimento()));
+
+				if (CommonsUtil.semValor(documentoAnalise.getPagador().getNomeMae()))
+					documentoAnalise.getPagador()
+							.setNomeMae(engineRetorno.getConsultaCompleta().getBestInfo().getMotherName().getFull());
+
+				pagadorRecebedorDao.merge(documentoAnalise.getPagador());
+			}
+
+			if (!CommonsUtil.semValor(engineRetorno.getConsultaCompleta().getEnterpriseData())) {
+				DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
+
+				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+
+				for (EngineRetornoRequestEnterprisePartnership partnership : engineRetorno.getConsultaCompleta()
+						.getEnterpriseData().getPartnerships()) {
+
+					documentoAnaliseService.cadastrarPessoRetornoEngine(partnership, usuarioLogado, documentoAnaliseDao,
+							pagadorRecebedorService, documentoAnalise.getContratoCobranca(),
+							( ( CommonsUtil.mesmoValor("INAPTO",  partnership.getCNPJStatus()))?"INAPTO":"" )+  "Empresa Vinculada ao " + documentoAnalise.getMotivoAnalise());
+				}
+			}
+
+		}
+
+	}
+	
 	public void baixarDocumentoEngine(DataEngine engine) {
 		FacesContext context = FacesContext.getCurrentInstance();
 		if (CommonsUtil.semValor(engine.getIdCallManager())) {
