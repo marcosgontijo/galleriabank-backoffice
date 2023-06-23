@@ -533,9 +533,10 @@ public class IpcaJobCalcular {
 										CommonsUtil.bigDecimalValue(contratoCobranca.getMesesCarencia() + 1)));
 								detalheIpca.setTaxaAdm(valorTxAdm.multiply(
 										CommonsUtil.bigDecimalValue(contratoCobranca.getMesesCarencia() + 1)));
-								detalheIpca.setVlrParcela(detalheIpca.getVlrParcela().add(valorSeguroMIPCarencia)
-										.add(valorSeguroDFI.multiply(
-												CommonsUtil.bigDecimalValue(contratoCobranca.getMesesCarencia()))).add(valorTxAdm));
+								detalheIpca.setVlrParcela(detalheIpca.getVlrParcela()
+										.add(valorSeguroMIPCarencia)
+										.add(valorSeguroDFI.multiply(CommonsUtil.bigDecimalValue(contratoCobranca.getMesesCarencia())))
+										.add(valorTxAdm.multiply(CommonsUtil.bigDecimalValue(contratoCobranca.getMesesCarencia()))));
 							} else {
 								detalheIpca.setSeguroMIP(parcela.getSeguroMIP());
 								detalheIpca.setSeguroDFI(parcela.getSeguroDFI());
