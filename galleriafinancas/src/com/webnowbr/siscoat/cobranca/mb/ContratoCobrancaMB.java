@@ -10124,11 +10124,30 @@ public class ContratoCobrancaMB {
 	
 	public void calculaValorTotalBoleto() {
 		// calcula o valor do boleto quando a geração é de mais de 1 parcela
-		if (this.selectedListContratoCobrancaDetalhes.size() > 0) {
+		if (this.selectedListContratoCobrancaDetalhes.size() > 0) { 
 			this.valorBoleto = BigDecimal.ZERO;
 			
 			for (ContratoCobrancaDetalhes parcelasSelecionadas : this.selectedListContratoCobrancaDetalhes) {
 				this.valorBoleto = this.valorBoleto.add(parcelasSelecionadas.getVlrParcela());				
+			}
+		}
+	}
+	
+	public void calculaValorTotalBoletoKobana() {
+		// calcula o valor do boleto quando a geração é de mais de 1 parcela
+		if (this.selectedListContratoCobrancaDetalhes.size() > 0) {
+			this.valorBoleto = BigDecimal.ZERO;
+			
+			for (ContratoCobrancaDetalhes parcelasSelecionadas : this.selectedListContratoCobrancaDetalhes) {
+				this.valorBoleto = this.valorBoleto.add(parcelasSelecionadas.getVlrBoletoKobana());				
+			}
+		}
+	}
+	
+	public void populaVlrBoletoKobana() {
+		if (this.selectedListContratoCobrancaDetalhes.size() > 0) {
+			for (ContratoCobrancaDetalhes parcelasSelecionadas : this.selectedListContratoCobrancaDetalhes) {
+				parcelasSelecionadas.setVlrBoletoKobana(parcelasSelecionadas.getVlrParcela());			
 			}
 		}
 	}

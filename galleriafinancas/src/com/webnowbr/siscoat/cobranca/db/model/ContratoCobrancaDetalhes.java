@@ -21,6 +21,7 @@ public class ContratoCobrancaDetalhes implements Serializable {
 	private Date dataPagamento;
 	private Date promessaPagamento;
 	private BigDecimal vlrParcela;
+	private BigDecimal vlrBoletoKobana;
 	private BigDecimal vlrJuros;
 	private BigDecimal txMulta;
 	private BigDecimal vlrParcelaAtualizada;
@@ -619,5 +620,13 @@ public class ContratoCobrancaDetalhes implements Serializable {
 
 	public void setOrigemBaixa(String origemBaixa) {
 		this.origemBaixa = origemBaixa;
+	}
+
+	public BigDecimal getVlrBoletoKobana() {
+		return vlrBoletoKobana;
+	}
+
+	public void setVlrBoletoKobana(BigDecimal vlrBoletoKobana) {
+		this.vlrBoletoKobana = vlrBoletoKobana;
 	}	
 }
