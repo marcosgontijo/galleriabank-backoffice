@@ -28183,7 +28183,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 	}
 	
 	public void executarConsultasAnaliseDocumento() {
-		
+
 		DocketService docketService = new DocketService();
 
 		SerasaService serasaService = new SerasaService();
@@ -28192,46 +28192,41 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 
 		ScrService scrService = new ScrService();
 
+		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+
 		for (DocumentoAnalise documentoAnalise : this.listaDocumentoAnalise.stream().filter(d -> d.isLiberadoAnalise()
 				|| d.isLiberadoSerasa() || d.isLiberadoCenprot() || d.isLiberadoScr() || d.isLiberadoProcesso())
 				.collect(Collectors.toList())) {
 
 			if (documentoAnalise.isLiberadoAnalise()) {
-				if (DocumentosAnaliseEnum.REA.equals(documentoAnalise.getTipoEnum())
-						&& documentoAnalise.isPodeChamarRea()) {
-					documentoAnalise.addObservacao("Processando REA");
-					PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
-					docketService.uploadREA(documentoAnalise, loginBean.getUsuarioLogado());
-				}
-//				else {
-//					if (documentoAnalise.isPodeChamarEngine()  ) {
-//						DataEngine engine = docketService.engineInserirPessoa(documentoAnalise.getPagador(),
-//								objetoContratoCobranca);
-//						docketService.engineCriarConsulta(documentoAnalise, engine, loginBean.getUsuarioLogado());
-//					}										
-//				}
-			}
 
-			if (!DocumentosAnaliseEnum.REA.equals(documentoAnalise.getTipoEnum())) {
-
-				if (CommonsUtil.mesmoValor(documentoAnalise.getTipoPessoa(), "PF")) {
-					if (!documentoAnalise.isPpeProcessado()) {
-						netrinService.requestCadastroPepPF(documentoAnalise);
-						if (documentoAnalise.isPpeProcessado()) 
-							documentoAnalise.addObservacao("Processando PEP");
-						PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");{
-							PpeResponse resultPEP = GsonUtil.fromJson(documentoAnalise.getRetornoPpe(),
-									PpeResponse.class);
-							if (CommonsUtil.mesmoValorIgnoreCase("Não", resultPEP.getPepKyc().getCurrentlyPEP())) {
-								documentoAnalise.addObservacao("Verfiicar PEP");
-								PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
-								continue;
-							}
-						}
+				PpeResponse resultPEP = null;
+				if (DocumentosAnaliseEnum.REA.equals(documentoAnalise.getTipoEnum())) {
+					if (documentoAnalise.isPodeChamarRea()) {
+						documentoAnalise.addObservacao("Processando REA");
+						PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
+						docketService.uploadREA(documentoAnalise, loginBean.getUsuarioLogado());
 					}
-
+					continue;
+				} else {
+					if (documentoAnalise.isPodeChamarPpe() && !documentoAnalise.isPpeProcessado()) {
+						netrinService.requestCadastroPepPF(documentoAnalise);
+						resultPEP = GsonUtil.fromJson(documentoAnalise.getRetornoPpe(), PpeResponse.class);
+					} else if (!documentoAnalise.isPodeChamarPpe() && documentoAnalise.isPpeProcessado()) {
+						resultPEP = GsonUtil.fromJson(documentoAnalise.getRetornoPpe(), PpeResponse.class);
+					}
 				}
 				
+				
+
+				if (documentoAnalise.isPodeChamarPpe())
+					if (CommonsUtil.mesmoValorIgnoreCase("Sim", resultPEP.getPepKyc().getCurrentlyPEP())) {
+						documentoAnalise.addObservacao("Verfiicar PEP");
+						documentoAnaliseDao.merge(documentoAnalise);
+						PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
+						continue;
+					}
+
 				if (!documentoAnalise.isProcessoProcessado()) {
 					documentoAnalise.addObservacao("Processando Processos");
 					PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
@@ -28266,13 +28261,11 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 					PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
 					scrService.requestScr(documentoAnalise);
 				}
-				
-				documentoAnalise.addObservacao("Peqauisas finalizadas");
-				PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
-
+				documentoAnalise.addObservacao("Pesquisas finalizadas");
+				documentoAnaliseDao.merge(documentoAnalise);
+				PrimeFaces.current().ajax().update("form:ArquivosAnalisados");
 			}
-
-		}
+		}		
 
 	}
 	

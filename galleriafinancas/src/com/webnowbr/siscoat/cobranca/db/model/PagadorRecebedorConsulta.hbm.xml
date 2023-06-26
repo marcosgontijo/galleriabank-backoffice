@@ -24,8 +24,8 @@
 			<column name="dataConsulta" />
 		</property>		
 	
-		<property name="retornConsulta" type="java.lang.String"  length="65000">
-			<column name="retornConsulta" />
+		<property name="retornoConsulta" type="java.lang.String"  length="65000">
+			<column name="retornoConsulta" />
 		</property>
 						 
     </class>

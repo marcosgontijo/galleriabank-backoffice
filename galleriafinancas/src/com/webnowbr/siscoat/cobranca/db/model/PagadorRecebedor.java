@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
@@ -482,6 +483,14 @@ public class PagadorRecebedor implements Serializable {
 		}
 	}
 
+	
+	public String getCodigoBanco() {
+		String[] banco = getBanco().split(Pattern.quote("|"));
+		if (banco.length > 0) {
+			return CommonsUtil.trimNull(banco[0]);
+
+		} else
+			return null;}
 	
 	/**
 	 * @return the id
