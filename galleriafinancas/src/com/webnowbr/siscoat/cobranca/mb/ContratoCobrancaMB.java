@@ -8133,6 +8133,7 @@ public class ContratoCobrancaMB {
 				} else {
 					this.numeroPresenteParcela = CommonsUtil.intValue(parcelas.getNumeroParcela());
 					calcularValorPresenteParcelaData(this.dataQuitacao, parcelas);
+					valorPresenteParcela = valorPresenteParcela.add(SiscoatConstants.TAXA_ADM);
 				}
 				
 				valorPresenteTotal = valorPresenteTotal.add(this.valorPresenteParcela);
@@ -28213,13 +28214,13 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 						netrinService.requestCadastroPepPF(documentoAnalise);
 						resultPEP = GsonUtil.fromJson(documentoAnalise.getRetornoPpe(), PpeResponse.class);
 					} else if (!documentoAnalise.isPodeChamarPpe() && documentoAnalise.isPpeProcessado()) {
-						resultPEP = GsonUtil.fromJson(documentoAnalise.getRetornoPpe(), PpeResponse.class);
+						resultPEP = GsonUtil.fromJson(documentoAnalise.getRetornoPpe().replace("\"details\":\"\"", "\"details\":{}"), PpeResponse.class);
 					}
 				}
 				
 				
 
-				if (documentoAnalise.isPodeChamarPpe())
+				if (!CommonsUtil.semValor(resultPEP))
 					if (CommonsUtil.mesmoValorIgnoreCase("Sim", resultPEP.getPepKyc().getCurrentlyPEP())
 							&& (resultPEP.getPepKyc().getHistoryPEP().stream()
 									.filter(p -> CommonsUtil.mesmoValor(p.getLevel(), "1")).findAny().isPresent())) {
