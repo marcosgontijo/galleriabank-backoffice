@@ -110,7 +110,7 @@ public class PagadorRecebedorService {
 			pagadorRecebedorConsulta = new PagadorRecebedorConsulta();
 		}
 		pagadorRecebedorConsulta.setDataConsulta(new Date());
-		pagadorRecebedorConsulta.setRetornConsulta(consulta);
+		pagadorRecebedorConsulta.setRetornoConsulta(consulta);
 		pagadorRecebedorConsulta.setPessoa(pagador);
 		pagadorRecebedorConsulta.setTipoEnum(tipoConsulta);
 
