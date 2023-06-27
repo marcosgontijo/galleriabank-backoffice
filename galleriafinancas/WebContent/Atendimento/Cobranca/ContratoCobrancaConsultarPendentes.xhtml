@@ -77,13 +77,16 @@
 						<p:ajax event="change" update="panelParametros, ConsultaContratos" 
 							listener="#{contratoCobrancaMB.changeStatusConsultaPreContratos}" />
 					</p:selectOneListbox>
+					
 					<p:inputText id="parametroConsultaContrato"
 						value="#{contratoCobrancaMB.parametroConsultaContrato}"
 						label="Contrato" style="width:150px;" required="true"
 						rendered="#{contratoCobrancaMB.tipoParametroConsultaContrato eq 'Matricula'}" >
-						<p:ajax event="blur" update="ConsultaContratos"
-							listener="#{contratoCobrancaMB.geraConsultaContratosPendentes}" />
 					</p:inputText>
+					
+					<p:commandButton  icon="ui-icon-search" 
+						action="#{contratoCobrancaMB.geraConsultaContratosPendentes}"
+						update="ConsultaContratos" />
 				</h:panelGrid>
 			</p:panel>
 
@@ -119,7 +122,7 @@
 			        <p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.pagador.nome}" filterMatchMode="contains" sortBy="#{contratos.pagador.nome}">
 			            <h:outputText value="#{contratos.pagador.nome}" />
 			        </p:column>	
-			         <p:column style="text-align: center;" headerText="Responsável" filterBy="#{contratos.responsavel.nome}" filterMatchMode="contains" sortBy="#{contratos.responsavel.nome}">
+			        <p:column style="text-align: center;" headerText="Responsável" filterBy="#{contratos.responsavel.nome}" filterMatchMode="contains" sortBy="#{contratos.responsavel.nome}">
 			            <h:outputText value="#{contratos.responsavel.nome}" />
 			        </p:column>	
 			        <shiro:hasAnyRoles name="ROOT">  	

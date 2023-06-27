@@ -50,6 +50,12 @@ public class IpcaJobCalcular {
 			BigDecimal valorSeguroDFI = BigDecimal.ZERO;
 			BigDecimal valorTxAdm = SiscoatConstants.TAXA_ADM;
 			BigDecimal saldoDevedorAnterior = BigDecimal.ZERO;
+			
+			if(contratoCobranca.isTemTxAdm()) {
+				valorTxAdm = SiscoatConstants.TAXA_ADM;
+			} else {
+				valorTxAdm = BigDecimal.ZERO;
+			}
 
 			if ((contratoCobranca.isTemSeguroMIP() && contratoCobranca.isTemSeguro())) {
 				valorSeguroDFI = contratoCobranca.getValorImovel()
@@ -382,6 +388,12 @@ public class IpcaJobCalcular {
 			BigDecimal valorTxAdm = SiscoatConstants.TAXA_ADM;
 			BigDecimal saldoDevedorAnterior = BigDecimal.ZERO;
 
+			if(contratoCobranca.isTemTxAdm()) {
+				valorTxAdm = SiscoatConstants.TAXA_ADM;
+			} else {
+				valorTxAdm = BigDecimal.ZERO;
+			}
+			
 			if ((contratoCobranca.isTemSeguroMIP() && contratoCobranca.isTemSeguro())) {
 				valorSeguroDFI = contratoCobranca.getValorImovel()
 						.multiply(SiscoatConstants.SEGURO_DFI.divide(BigDecimal.valueOf(100)));
@@ -666,6 +678,12 @@ public class IpcaJobCalcular {
 			BigDecimal valorSeguroDFI = BigDecimal.ZERO;
 			BigDecimal valorTxAdm = SiscoatConstants.TAXA_ADM;
 			BigDecimal saldoDevedorAnterior = BigDecimal.ZERO;
+			
+			if(contratoCobranca.isTemTxAdm()) {
+				valorTxAdm = SiscoatConstants.TAXA_ADM;
+			} else {
+				valorTxAdm = BigDecimal.ZERO;
+			}
 
 			if ((contratoCobranca.isTemSeguroMIP() && contratoCobranca.isTemSeguro())) {
 				valorSeguroDFI = contratoCobranca.getValorImovel()
