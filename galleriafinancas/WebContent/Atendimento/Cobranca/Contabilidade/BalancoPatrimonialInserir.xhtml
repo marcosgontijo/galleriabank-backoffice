@@ -96,7 +96,8 @@
 				
 					<h:panelGrid columns="2">
 					<p:outputLabel for="caixa" value="Caixa: "
-						styleClass="labelBold" />
+						styleClass="labelBold"  title="#{balancoPatrimonialMB.objetoBalanco.saldoCaixaNaoConciliado}"/>
+					
 					<p:inputText id="caixa"
 						value="#{balancoPatrimonialMB.objetoBalanco.saldoCaixa}"
 						onkeypress="return isNumberKey(event);"
@@ -112,7 +113,7 @@
 						converter="bigDecimalConverter">
 					</p:inputText>
 					<p:outputLabel for="saldoAplFin" value="Aplicação Financeira: "
-						styleClass="labelBold" />
+						styleClass="labelBold" title="#{balancoPatrimonialMB.objetoBalanco.saldoAplFinNaoConciliado}" />
 					<p:inputText id="saldoAplFin"
 						value="#{balancoPatrimonialMB.objetoBalanco.saldoAplFin}"
 						onkeypress="return isNumberKey(event);"

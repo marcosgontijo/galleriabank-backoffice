@@ -28,8 +28,10 @@ public class BalancoPatrimonial implements Serializable {
 	private BigDecimal saldoTotalApi;
 	private Date aaaaMM;
 	private BigDecimal saldoCaixa;
+	private BigDecimal saldoCaixaNaoConciliado;
 	private BigDecimal saldoBancos;
 	private BigDecimal saldoAplFin;
+	private BigDecimal saldoAplFinNaoConciliado;
 	private BigDecimal opPagasReceberFidc;
 	private BigDecimal apItauSoberano;
 	private BigDecimal provisaoDevedoresDuvidosos;
@@ -125,46 +127,47 @@ public class BalancoPatrimonial implements Serializable {
 		BigDecimal valorFace = BigDecimal.ONE; //valor calculado
 		BigDecimal ipcaMeses = BigDecimal.ONE; // ipca ^ meses a ser calculado
 		
-		for(RelatorioBalanco receberParcela: relatorioBalancoReceber) {
-			BigDecimal vlrParcela = receberParcela.getValorContratoRelatorio(); //vlrParcela = valor parcela
-			
-			String indice = receberParcela.getEmpresaContratoRelatorio();			
-			quantidadeMeses = BigDecimal.valueOf(DateUtil.Days360(receberParcela.getDataVencimentoRelatorio(), this.getAaaaMM())); //quantidade de dias entre dataParcela e dataReferencia
-			quantidadeMeses = quantidadeMeses.divide(BigDecimal.valueOf(30), MathContext.DECIMAL128); //divide a quantidade acima por 30
-			Double quantidadeMesesDouble = CommonsUtil.doubleValue(quantidadeMeses); //armazena resultado na variável
-			
-			//valor face
-			
-			if (quantidadeMeses.compareTo(BigDecimal.ZERO)>=0 ) {
+		for (RelatorioBalanco receberParcela : relatorioBalancoReceber) {
+			BigDecimal vlrParcela = receberParcela.getValorContratoRelatorio(); // vlrParcela = valor parcela
+
+			String indice = receberParcela.getEmpresaContratoRelatorio();
+			quantidadeMeses = BigDecimal
+					.valueOf(DateUtil.Days360(receberParcela.getDataVencimentoRelatorio(), this.getAaaaMM())); // quantidade de dias entre dataParcela e dataReferencia
+			quantidadeMeses = quantidadeMeses.divide(BigDecimal.valueOf(30), MathContext.DECIMAL128); // divide a quantidade acima por 30
+			Double quantidadeMesesDouble = CommonsUtil.doubleValue(quantidadeMeses); // armazena resultado na variável
+
+			// valor face
+
+			if (quantidadeMeses.compareTo(BigDecimal.ZERO) >= 0) {
 				valorFace = vlrParcela;
+			} else if (indice == "Não") {
+				valorFace = vlrParcela;
+			} else {
+//				this.setIpca(); // ipca soma 1
+				ipcaMeses = CommonsUtil
+						.bigDecimalValue(Math.pow(CommonsUtil.doubleValue(this.getIpca().add(BigDecimal.ONE)), quantidadeMesesDouble * -1)); // (ipca + 1)^quantidade meses -1
+
+				valorFace = vlrParcela.multiply(ipcaMeses);// parcela * ipcaMeses
+			}
+			calculaDireitosCreditorios(quantidadeMeses, valorFace, receberParcela);
+		}			
 	}
-			else if (indice == "Não") {
-				valorFace = vlrParcela;	
-		}
-			
-			else {
-				this.setIpca(this.getIpca().add(BigDecimal.ONE)); //ipca soma 1
-				ipcaMeses = CommonsUtil.bigDecimalValue( Math.pow(CommonsUtil.doubleValue(this.getIpca()), quantidadeMesesDouble *-1)); //(ipca + 1)^quantidade meses -1
-			
-				valorFace = vlrParcela.multiply(ipcaMeses);//parcela * ipcaMeses
-		}
-		calculaDireitosCreditorios (quantidadeMeses, valorFace, relatorioBalancoReceber);
-	}
-			
-		}
 	
-	public void calculaDireitosCreditorios (BigDecimal quantidadeDeMeses, BigDecimal valorFace,List<RelatorioBalanco> relatorioBalancoReceber) {
+	public void calculaDireitosCreditorios (BigDecimal quantidadeDeMeses, BigDecimal valorFace,RelatorioBalanco receberParcela ) {
 		this.setRecursosDebentures(BigDecimal.ZERO);	
 		BigDecimal saldoAtualizado = BigDecimal.ONE;
-		BigDecimal juros = new BigDecimal(1.01); //juros 1%
-		BigDecimal multa = new BigDecimal(1.1);  //multa 10%
-		BigDecimal jurosFidc = BigDecimal.ONE;
-		BigDecimal jurosCri1 = BigDecimal.ONE;
-		BigDecimal jurosCri2 = BigDecimal.ONE;
-		BigDecimal jurosCri3 = BigDecimal.ONE;
-		BigDecimal jurosPonderado = BigDecimal.ONE;
 		
-		for(RelatorioBalanco receberParcela : relatorioBalancoReceber) {
+		
+		
+//		for(RelatorioBalanco receberParcela : relatorioBalancoReceber) {
+			BigDecimal jurosFidc = BigDecimal.ONE;
+			BigDecimal jurosCri1 = BigDecimal.ONE;
+			BigDecimal jurosCri2 = BigDecimal.ONE;
+			BigDecimal jurosCri3 = BigDecimal.ONE;
+			BigDecimal jurosPonderado = BigDecimal.ONE;
+			BigDecimal juros = new BigDecimal(1.01); //juros 1%
+			BigDecimal multa = new BigDecimal(1.1);  //multa 10%
+			
 		
 			BigDecimal vlrParcela = receberParcela.getValorContratoRelatorio(); //vlrParcela = valor parcela
 			String empresa = receberParcela.getEmpresaContratoRelatorio(); //vlrParcela = valor parcela
@@ -198,7 +201,7 @@ public class BalancoPatrimonial implements Serializable {
 			jurosCri3 = valorFace.multiply(jurosCri3);
 			
 			//(1 + CUSTO PONDERADO)
-			jurosPonderado = jurosPonderado.add(custoPonderado);
+			jurosPonderado = BigDecimal.ONE.add(custoPonderado);
 			jurosPonderado = CommonsUtil.bigDecimalValue(Math.pow(CommonsUtil.doubleValue(jurosPonderado), CommonsUtil.doubleValue(quantidadeDeMeses)));
 			jurosPonderado = valorFace.multiply(jurosPonderado);
 			
@@ -252,7 +255,7 @@ public class BalancoPatrimonial implements Serializable {
 				direitosCreditorios = BigDecimal.ZERO;
 			}
 			this.setDireitosCreditorios(this.getDireitosCreditorios().add(saldoAtualizado));
-		}
+//		}
 	}
 	public void saldoCaixaOmie() {
 		
@@ -276,7 +279,9 @@ public class BalancoPatrimonial implements Serializable {
 		List<IOmieParam> params = new ArrayList<>();
 		this.saldoBancos = BigDecimal.ZERO;
 		this.saldoCaixa = BigDecimal.ZERO;
+		this.saldoCaixaNaoConciliado = BigDecimal.ZERO;
 		this.saldoAplFin = BigDecimal.ZERO;
+		this.saldoAplFinNaoConciliado = BigDecimal.ZERO;
 	
 		for (int i=0; i< contas.length; i++) {
 		
@@ -301,10 +306,12 @@ public class BalancoPatrimonial implements Serializable {
 		}
 		else if (i <= 5){
 			this.saldoCaixa = this.saldoCaixa.add(omieListarExtratoResponse.getnSaldoConciliado());
+			this.saldoCaixaNaoConciliado = this.saldoCaixaNaoConciliado.add(omieListarExtratoResponse.getnSaldoAtual().subtract((omieListarExtratoResponse.getnSaldoConciliado())));
 			this.setSaldoCaixa(saldoCaixa);
 		}
 		else {
 			this.saldoAplFin = this.saldoAplFin.add(omieListarExtratoResponse.getnSaldoConciliado());
+			this.saldoAplFinNaoConciliado = this.saldoAplFinNaoConciliado.add(omieListarExtratoResponse.getnSaldoAtual().subtract((omieListarExtratoResponse.getnSaldoConciliado())));
 			this.setSaldoAplFin(saldoAplFin);
 		}
 		
@@ -630,6 +637,12 @@ public class BalancoPatrimonial implements Serializable {
 		this.saldoCaixa = saldoCaixa;
 	}
 
+	public BigDecimal getSaldoCaixaNaoConciliado() {
+		return saldoCaixaNaoConciliado;
+	}
+	public void setSaldoCaixaNaoConciliado(BigDecimal saldoCaixaNaoConciliado) {
+		this.saldoCaixaNaoConciliado = saldoCaixaNaoConciliado;
+	}
 	public BigDecimal getSaldoBancos() {
 		return saldoBancos;
 	}
@@ -646,6 +659,12 @@ public class BalancoPatrimonial implements Serializable {
 		this.saldoAplFin = saldoAplFin;
 	}
 
+	public BigDecimal getSaldoAplFinNaoConciliado() {
+		return saldoAplFinNaoConciliado;
+	}
+	public void setSaldoAplFinNaoConciliado(BigDecimal saldoAplFinNaoConciliado) {
+		this.saldoAplFinNaoConciliado = saldoAplFinNaoConciliado;
+	}
 	public BigDecimal getOpPagasReceberFidc() {
 		return opPagasReceberFidc;
 	}
