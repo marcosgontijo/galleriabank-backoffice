@@ -350,6 +350,11 @@ public class PagadorRecebedorMB {
 				|| !CommonsUtil.mesmoValor(this.objetoPagadorRecebedor.getTipoPix(),
 						pagadorReceborDadosBancariosOriginal.getTipoPix())) {
 			this.objetoPagadorRecebedor.setPixValidado(false);
+
+			this.objetoPagadorRecebedor.setBancoPix(null);
+			this.objetoPagadorRecebedor.setAgenciaPix(null);
+			this.objetoPagadorRecebedor.setContaPix(null);
+			this.objetoPagadorRecebedor.setContaDigitoPix(null);
 			PrimeFaces.current().ajax().update("form:PanelDadosBancarios");
 
 		}
@@ -383,8 +388,13 @@ public class PagadorRecebedorMB {
 		ValidaPixRequest validaPixRequest = new ValidaPixRequest(this.objetoPagadorRecebedor.getPix(), this.objetoPagadorRecebedor.getTipoPix(), documento);
 		ValidaPixResponse result = netrinService.requestValidaPix(validaPixRequest, context);
 		
-		if ( !CommonsUtil.semValor(result) && !CommonsUtil.semValor(result.getValidaPix()) && CommonsUtil.mesmoValorIgnoreCase("Sim", result.getValidaPix().getValidacaoConta() )) {
+		if (!CommonsUtil.semValor(result) && !CommonsUtil.semValor(result.getValidaPix())
+				&& CommonsUtil.mesmoValorIgnoreCase("Sim", result.getValidaPix().getValidacaoConta())) {
 			this.objetoPagadorRecebedor.setPixValidado(true);
+			this.objetoPagadorRecebedor.setBancoPix(result.getValidaPix().getConta().getCodigoBanco());
+			this.objetoPagadorRecebedor.setAgenciaPix(result.getValidaPix().getConta().getAgencia());
+			this.objetoPagadorRecebedor.setContaPix(result.getValidaPix().getConta().getConta());
+			this.objetoPagadorRecebedor.setContaDigitoPix(result.getValidaPix().getConta().getContaDigito());
 			PrimeFaces.current().ajax().update("form:PanelDadosBancarios");	
 		}
 		

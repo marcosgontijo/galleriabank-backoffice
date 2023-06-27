@@ -111,6 +111,10 @@ public class PagadorRecebedor implements Serializable {
 
 	private String tipoPix;
 	private String pix;
+	private String bancoPix;
+	private String agenciaPix;
+	private String contaPix;
+	private String contaDigitoPix;
 	
 	private boolean pixValidado;
 	
@@ -2218,6 +2222,39 @@ public class PagadorRecebedor implements Serializable {
 
 	public void setTipoPix(String tipoPix) {
 		this.tipoPix = tipoPix;
+	}	
+	
+
+	public String getBancoPix() {
+		return bancoPix;
+	}
+
+	public void setBancoPix(String bancoPix) {
+		this.bancoPix = bancoPix;
+	}
+
+	public String getAgenciaPix() {
+		return agenciaPix;
+	}
+
+	public void setAgenciaPix(String agenciaPix) {
+		this.agenciaPix = agenciaPix;
+	}
+
+	public String getContaPix() {
+		return contaPix;
+	}
+
+	public void setContaPix(String contaPix) {
+		this.contaPix = contaPix;
+	}
+
+	public String getContaDigitoPix() {
+		return contaDigitoPix;
+	}
+
+	public void setContaDigitoPix(String contaDigitoPix) {
+		this.contaDigitoPix = contaDigitoPix;
 	}
 
 	public List<DocumentosPagadorDocket> getDocumentosDocket() {

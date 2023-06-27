@@ -28220,7 +28220,9 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 				
 
 				if (documentoAnalise.isPodeChamarPpe())
-					if (CommonsUtil.mesmoValorIgnoreCase("Sim", resultPEP.getPepKyc().getCurrentlyPEP())) {
+					if (CommonsUtil.mesmoValorIgnoreCase("Sim", resultPEP.getPepKyc().getCurrentlyPEP())
+							&& (resultPEP.getPepKyc().getHistoryPEP().stream()
+									.filter(p -> CommonsUtil.mesmoValor(p.getLevel(), "1")).findAny().isPresent())) {
 						documentoAnalise.addObservacao("Verfiicar PEP");
 						documentoAnaliseDao.merge(documentoAnalise);
 						PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");

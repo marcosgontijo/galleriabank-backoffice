@@ -651,7 +651,7 @@
 								<p:outputLabel for="tipoPix" value="Tipo Do Pix "
 									styleClass="labelBold" />
 
-								<p:selectOneMenu id="tipoPix"									
+								<p:selectOneMenu id="tipoPix"
 									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.tipoPix}">
 									<f:selectItem itemValue="CPF" itemLabel="CPF" />
 									<f:selectItem itemValue="CNPJ" itemLabel="CNPJ" />
@@ -662,6 +662,36 @@
 									<p:ajax event="valueChange"
 										listener="#{pagadorRecebedorMB.verificaAlteracaoPix}" />
 								</p:selectOneMenu>
+
+
+								<p:outputLabel value="Banco: " for="Banco"  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+									styleClass="labelBold" />
+								<p:outputLabel  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.bancoPix}"
+									styleClass="labelBold" />
+
+								<p:outputLabel for="Agencia" value="Agência: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+									styleClass="labelBold" />
+								<p:outputLabel  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.agenciaPix}"
+									styleClass="labelBold" />
+
+
+								<p:outputLabel for="Conta" value="Conta: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+									styleClass="labelBold">
+								</p:outputLabel>
+								<p:outputLabel  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.contaPix}"
+									styleClass="labelBold" />
+
+
+								<p:outputLabel for="ContaDigito" value="Conta Digito: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+									styleClass="labelBold">
+								</p:outputLabel>
+								<p:outputLabel  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.contaDigitoPix}"
+									styleClass="labelBold" />
+									
 
 							</h:panelGrid>
 						</div>
