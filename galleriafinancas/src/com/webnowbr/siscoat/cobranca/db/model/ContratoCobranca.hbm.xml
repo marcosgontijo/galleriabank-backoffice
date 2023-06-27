@@ -1086,7 +1086,7 @@
 			<column name="motivoReprovaLead" />
 		</property>
 		
-		<set name="listSegurados" table="segurado"  cascade="save-update"
+		<set name="listSegurados" table="segurado"  cascade="merge"
                  lazy="false" fetch="select">
             <key>
                 <column name="contratoCobranca" not-null="true" />
@@ -1118,7 +1118,7 @@
             <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.ContasPagar" />
         </set>  
         
-        <set name="listProcessos" table="ccbprocessosjudiciais" cascade="save-update"
+        <set name="listProcessos" table="ccbprocessosjudiciais" cascade="merge"
                  lazy="false" fetch="select">
             <key>
                 <column name="contrato" />
