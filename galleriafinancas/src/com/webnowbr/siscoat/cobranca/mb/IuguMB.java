@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.TimeZone;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -34,33 +33,28 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
-import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.LazyDataModel;
-import org.primefaces.model.SortOrder;
 import org.primefaces.model.StreamedContent;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.Image;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhesObservacoes;
@@ -76,7 +70,6 @@ import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.TransferenciasObservacoesIUGUDao;
-import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
@@ -892,6 +885,34 @@ public class IuguMB {
 		}
 
 		consultarFaturasSubContaFaturaSimplesParam(liveToken);
+	}
+	
+	/**
+	 * CHAMADO PELO MENU DE GERAÇÃO DE COBRANÇA SIMPLES IUGU API
+	 * @param contratoCobranca 
+	 * @return 
+	 * @return
+	 */
+	public String geraCobrancaSimplesIuguApi(ContratoCobranca contratoCobranca) {
+		
+		String liveToken = "bd88479c57011124c25638b26572e453";
+		long idCedente = 0;
+		this.selectedRecebedor = new PagadorRecebedor();
+		this.selectedRecebedor = contratoCobranca.getPagador();
+		this.selectedRecebedor.setEndereco(contratoCobranca.getImovel().getEndereco());
+		this.selectedRecebedor.setCep(contratoCobranca.getImovel().getCep());
+		this.selectedRecebedor.setCidade(contratoCobranca.getImovel().getCidade());
+		this.selectedRecebedor.setEstado(contratoCobranca.getImovel().getEstado());
+		if(StringUtils.isNotBlank(contratoCobranca.getImovel().getEndereco())) {
+			if(contratoCobranca.getImovel().getEndereco().contains(",")) {
+				String[] enderecoNumero = contratoCobranca.getImovel().getEndereco().split(",");
+				this.selectedRecebedor.setNumero(enderecoNumero[1]);
+			}
+		}
+		
+		this.selectedRecebedor.setBairro(contratoCobranca.getImovel().getBairro());
+		
+		return geraCobrancaSimplesIuguApi(liveToken, idCedente);
 	}
 
 	/****
@@ -5311,6 +5332,79 @@ public class IuguMB {
 		}
 	}
 	
+	/****
+	 * 
+	 * GERAÇÃO DA COBRANÇA SIMPLES IUGU API
+	 * @return 
+	 * 
+	 * @return
+	 */
+	public String geraCobrancaSimplesIuguApi(String idLiveTokenIugu, long idCedente) {
+		int HTTP_COD_SUCESSO = 200;
+
+		if (this.selectedRecebedor != null) {
+			boolean dadosValidos = true;
+
+			// validações
+			if (CommonsUtil.semValor(this.selectedRecebedor.getCpf()) && CommonsUtil.semValor(this.selectedRecebedor.getCnpj())) {
+				dadosValidos = false;
+				return "Cobrança Iugu: Dados do cliente incorretos (CPF ou CNPJ inválidos) !";
+			}
+
+			if (CommonsUtil.semValor(this.selectedRecebedor.getEndereco()) || CommonsUtil.semValor(this.selectedRecebedor.getCep())) {
+				dadosValidos = false;
+				return "Cobrança Iugu: Dados do cliente incorretos (Endereço ou CEP inválidos) !";
+			}
+
+
+			if (dadosValidos) {
+				try {							
+					URL myURL = new URL("https://api.iugu.com/v1/invoices?api_token=" + idLiveTokenIugu);
+
+					String dados = composeJSONCobrancaContratoIuguApi(); 
+					//JSONObject jsonObj = new JSONObject("{\"email\":\"webnowbr@gmail.com\",\"due_date\":\"20181212\",\"items\":[{\"description\":\"Cobrança\",\"quantity\":1,\"price_cents\":1486}],\"payer\":{\"cpf_cnpj\":\"31255904852\",\"name\":\"HERMES VIEIRA JUNIOR\",\"address\":{\"zip_code\":\"13073035\",\"street\":\"ENDEREÇO COMPLETO\",\"number\":\"1111\"}}}");
+					JSONObject jsonObj = new JSONObject(dados);
+					byte[] postDataBytes = jsonObj.toString().getBytes();
+
+					HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
+					myURLConnection.setUseCaches(false);
+					myURLConnection.setRequestMethod("POST");
+					myURLConnection.setRequestProperty("Accept", "application/json");
+					myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+					myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+					myURLConnection.setDoOutput(true);
+					myURLConnection.getOutputStream().write(postDataBytes);
+
+					// LEITURA DOS DADOS EM STRING
+					Thread.sleep(500);
+					if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {	
+						return "Cobrança Iugu: Ocorreu um erro na geração da Cobrança!";
+					} else {
+						// Seta o ID da fatura na Parcela do Siscoat
+						JSONObject myResponse = null;
+
+						myResponse = getJsonSucessoIugu(myURLConnection.getInputStream());
+
+						this.urlFatura = myResponse.getString("secure_url").trim();
+
+						myURLConnection.disconnect();
+						return this.urlFatura;
+					}
+
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		} else {
+			return "Cobrança Iugu: Favor selecionar um favorecido!";
+		}
+		return "Cobrança Iugu: Ocorreu um erro na geração da Cobrança!";
+	}
+	
 	public String composeJSONCobrancaContrato() {
 		String jsonFavorecido = "";
 		String jsonItens = "";
@@ -5384,6 +5478,87 @@ public class IuguMB {
 
 		jsonFavorecido = "{\"email\":\"" + emailFalso + "\", \"due_date\":\"" + 
 				dataHoje.get(Calendar.YEAR) + mes + dia + "\",\"items\":[" + jsonItens + "],\"custom_variables\":[" + jsonCustomVariables + "]," +  jsonPayer + ",\"payable_with\":[\"all\"]}";
+
+		return jsonFavorecido;
+	}
+	
+	
+	public String composeJSONCobrancaContratoIuguApi() {
+		String jsonFavorecido = "";
+		String jsonItens = "";
+		String jsonPayer = "";
+		String jsonCustomVariables = "";
+
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");  
+		Calendar dataHojeMaisSeteDias = Calendar.getInstance(zone, locale);
+		dataHojeMaisSeteDias.add(Calendar.DAY_OF_MONTH, +7);
+		dataHojeMaisSeteDias.set(Calendar.HOUR_OF_DAY, 0);  
+		dataHojeMaisSeteDias.set(Calendar.MINUTE, 0);  
+		dataHojeMaisSeteDias.set(Calendar.SECOND, 0);  
+		dataHojeMaisSeteDias.set(Calendar.MILLISECOND, 0);
+		
+		this.dataVencimento = dataHojeMaisSeteDias.getTime();
+		dataHojeMaisSeteDias.setTime(this.dataVencimento);
+
+		String mes = String.valueOf(dataHojeMaisSeteDias.get(Calendar.MONTH) + 1);
+		if (mes.length() == 1) {
+			mes = "0" + mes;
+		}
+
+		String dia = String.valueOf(dataHojeMaisSeteDias.get(Calendar.DAY_OF_MONTH));
+		if (dia.length() == 1) {
+			dia = "0" + dia;
+		}		
+
+		String documento = "";
+		if (this.selectedRecebedor.getCpf() == null) {
+			documento = this.selectedRecebedor.getCnpj().replace(".", "").replace("-", "").replace("/", "");
+		} else {
+			documento = this.selectedRecebedor.getCpf().replace(".", "").replace("-", "");
+		}
+
+		String descricaoCompleta = this.contratoCobranca.getNumeroContrato() + " - Laudo + Parecer Jurídico";
+
+		jsonItens = "{\"description\":\"" + descricaoCompleta + "\",\"quantity\":1,\"price_cents\":" + this.valorItem.toString().replace(".", "").replace(",", "") + "}";
+
+		String bairro = "";
+
+		if (this.selectedRecebedor.getBairro() != null) {
+			if (this.selectedRecebedor.getBairro().length() > 0) {
+				bairro = this.selectedRecebedor.getBairro();
+			} else {
+				bairro = "Bairro";
+			}
+		} else {
+			bairro = "Bairro";
+		}
+		
+		String endereco = ""; 
+		if (this.selectedRecebedor.getNumero() != null) {
+			if (!this.selectedRecebedor.getEndereco().contains(",")) {
+				endereco = this.selectedRecebedor.getEndereco() + ", " + this.selectedRecebedor.getNumero();
+			}
+		} else {
+			endereco = this.selectedRecebedor.getEndereco();
+		}       		
+		
+		String emailFalso = "cobrancaiugu@galleriabank.com.br";
+		            		
+		jsonPayer = "\"payer\":{\"cpf_cnpj\":\"" + documento + "\",\"name\":\"" + this.selectedRecebedor.getNome() + "\",\"email\":\"" + emailFalso
+		+ "\",\"address\":{\"zip_code\":\"" + this.selectedRecebedor.getCep().replace(".", "").replace("-", "") + "\",\"street\":\"" + endereco 
+		+ "\",\"district\":\"" + bairro
+		+ "\",\"number\":\"" + this.selectedRecebedor.getNumero() + "\"}}";
+
+
+		jsonCustomVariables = "{\"value\":\"" + this.idContrato + "\",\"name\":\"idContrato\"},"
+				+ 			  "{\"value\":\"" + this.idParcela +   "\",\"name\":\"idParcela\"}";
+
+		jsonFavorecido = "{\\\"email\\\":\\\"" + emailFalso + "\\\",\\\"due_date\\\":\\\"" + 
+				dataHojeMaisSeteDias.get(Calendar.YEAR) + mes + dia + "\\\", \\\"items\\\":[" + jsonItens + "]," + jsonPayer + ",\"payable_with\":[\"all\"]}";
+
+		jsonFavorecido = "{\"email\":\"" + emailFalso + "\", \"due_date\":\"" + 
+				dataHojeMaisSeteDias.get(Calendar.YEAR) + mes + dia + "\",\"items\":[" + jsonItens + "],\"custom_variables\":[" + jsonCustomVariables + "]," +  jsonPayer + ",\"payable_with\":[\"all\"]}";
 
 		return jsonFavorecido;
 	}
