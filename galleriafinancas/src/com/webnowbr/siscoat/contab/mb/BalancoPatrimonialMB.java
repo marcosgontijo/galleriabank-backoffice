@@ -65,11 +65,6 @@ public class BalancoPatrimonialMB {
 
 	public String clearFieldsBalancoPatrimonialConsulta() {
 
-		TimeZone zone = TimeZone.getDefault();
-		Locale locale = new Locale("pt", "BR");
-		Calendar dataInicio = Calendar.getInstance(zone, locale);
-		this.relDataContratoInicio = dataInicio.getTime();
-		this.relDataContratoFim = dataInicio.getTime();
 		BalancoPatrimonialDao balancopatrimonialDao = new BalancoPatrimonialDao();
 		this.todosBalancos = balancopatrimonialDao.consultaBalancoPatrimonial();
 		return "/Atendimento/Cobranca/Contabilidade/BalancoPatrimonialConsulta.xhtml";
@@ -93,6 +88,7 @@ public class BalancoPatrimonialMB {
 	
 	public String clearBalancoPatrimonialEditar() {
 		BalancoPatrimonialDao balancopatrimonialDao = new BalancoPatrimonialDao();
+		
 		
 		if (!this.editar) {
 			objetoBalanco = new BalancoPatrimonial();
@@ -120,20 +116,18 @@ public class BalancoPatrimonialMB {
 	
 	public void geraBalanco () {
 		BalancoPatrimonialDao balancopatrimonialDao = new BalancoPatrimonialDao();
+		
 		if (!this.editar) {
-			objetoBalanco = new BalancoPatrimonial();
 			ultimoBalanco = balancopatrimonialDao.consultaUltimoBalanco();
-		
-		this.objetoBalanco.setAaaamm(gerarDataHoje());
-		
+			
 		//VALOR DEFAULT NO CÓDIGO
 		this.objetoBalanco.setDepositoBacenScd(CommonsUtil.bigDecimalValue(1016095.04));
 		
 		//VALOR DEFAULT NO DAO - VALOR DO SISTEMA
 
-		this.objetoBalanco.setProvisaoLiquidAntecipada(balancopatrimonialDao.consultaContasPagar());
-		this.objetoBalanco.setCustoPonderado(balancopatrimonialDao.somaParcelaX());
+		// this.objetoBalanco.setProvisaoLiquidAntecipada(balancopatrimonialDao.consultaContasPagar()); conferir excel
 		this.relatorioBalancoPagar = balancopatrimonialDao.listaRelatorioPagarBalanco();
+		this.relatorioBalancoReceber = balancopatrimonialDao.listaRelatorioReceberBalanco();
 		
 		// VALOR DEFAULT ÚLTIMO BALANÇO
 		if (!CommonsUtil.semValor(ultimoBalanco)) {
@@ -143,10 +137,10 @@ public class BalancoPatrimonialMB {
 		}
 		
 		this.objetoBalanco.saldoCaixaOmie(); // VALOR CAIXAS
-		this.objetoBalanco.calcularVariaveisReceber(null, relatorioBalancoReceber); //VALO DIREITOS CREDITORIOS
 		this.objetoBalanco.calcularCustoPonderado(relatorioBalancoPagar); //VALOR RECURSOS DEBENTURES
+		this.objetoBalanco.calcularVariaveisReceber(relatorioBalancoReceber); //VALOR DIREITOS CREDITORIOS
 		
-		
+
 		}
 	}
 

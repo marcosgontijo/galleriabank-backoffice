@@ -41,7 +41,7 @@
 			            </p:outputLabel>
 			        </p:column>
 			       
-			       <p:column style="text-align: center;width:105px;" headerText="Total do Ativo" sortBy="#{balanco.totalAtivos}">
+			        <p:column style="text-align: center;width:105px;" headerText="Total do Ativo" sortBy="#{balanco.totalAtivos}">
 			            <h:outputText value="#{balanco.totalAtivos}" 
 			            converter="bigDecimalConverter" style="margin-left:10px;" >
 						<f:convertNumber pattern="#,##0.00"/>
@@ -54,6 +54,7 @@
 						<f:convertNumber pattern="#,##0.00"/>
 						</h:outputText>
 					</p:column>
+			       
 					<f:facet name="footer">
 					<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{balancoPatrimonialMB.clearBalancoPatrimonialNew()}">	
 					<f:setPropertyActionListener target="#{balancoPatrimonialMB.editar}"
