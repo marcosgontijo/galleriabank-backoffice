@@ -5495,22 +5495,22 @@ public class IuguMB {
 
 		TimeZone zone = TimeZone.getDefault();
 		Locale locale = new Locale("pt", "BR");  
-		Calendar dataHojeMaisSeteDias = Calendar.getInstance(zone, locale);
-		dataHojeMaisSeteDias.add(Calendar.DAY_OF_MONTH, +7);
-		dataHojeMaisSeteDias.set(Calendar.HOUR_OF_DAY, 0);  
-		dataHojeMaisSeteDias.set(Calendar.MINUTE, 0);  
-		dataHojeMaisSeteDias.set(Calendar.SECOND, 0);  
-		dataHojeMaisSeteDias.set(Calendar.MILLISECOND, 0);
+		Calendar dataHojeMaisQuinzeDias = Calendar.getInstance(zone, locale);
+		dataHojeMaisQuinzeDias.add(Calendar.DAY_OF_MONTH, +15);
+		dataHojeMaisQuinzeDias.set(Calendar.HOUR_OF_DAY, 0);  
+		dataHojeMaisQuinzeDias.set(Calendar.MINUTE, 0);  
+		dataHojeMaisQuinzeDias.set(Calendar.SECOND, 0);  
+		dataHojeMaisQuinzeDias.set(Calendar.MILLISECOND, 0);
 		
-		this.dataVencimento = dataHojeMaisSeteDias.getTime();
-		dataHojeMaisSeteDias.setTime(this.dataVencimento);
+		this.dataVencimento = dataHojeMaisQuinzeDias.getTime();
+		dataHojeMaisQuinzeDias.setTime(this.dataVencimento);
 
-		String mes = String.valueOf(dataHojeMaisSeteDias.get(Calendar.MONTH) + 1);
+		String mes = String.valueOf(dataHojeMaisQuinzeDias.get(Calendar.MONTH) + 1);
 		if (mes.length() == 1) {
 			mes = "0" + mes;
 		}
 
-		String dia = String.valueOf(dataHojeMaisSeteDias.get(Calendar.DAY_OF_MONTH));
+		String dia = String.valueOf(dataHojeMaisQuinzeDias.get(Calendar.DAY_OF_MONTH));
 		if (dia.length() == 1) {
 			dia = "0" + dia;
 		}		
@@ -5559,10 +5559,10 @@ public class IuguMB {
 				+ 			  "{\"value\":\"" + this.idParcela +   "\",\"name\":\"idParcela\"}";
 
 		jsonFavorecido = "{\\\"email\\\":\\\"" + emailFalso + "\\\",\\\"due_date\\\":\\\"" + 
-				dataHojeMaisSeteDias.get(Calendar.YEAR) + mes + dia + "\\\", \\\"items\\\":[" + jsonItens + "]," + jsonPayer + ",\"payable_with\":[\"all\"]}";
+				dataHojeMaisQuinzeDias.get(Calendar.YEAR) + mes + dia + "\\\", \\\"items\\\":[" + jsonItens + "]," + jsonPayer + ",\"payable_with\":[\"all\"]}";
 
 		jsonFavorecido = "{\"email\":\"" + emailFalso + "\", \"due_date\":\"" + 
-				dataHojeMaisSeteDias.get(Calendar.YEAR) + mes + dia + "\",\"items\":[" + jsonItens + "],\"custom_variables\":[" + jsonCustomVariables + "]," +  jsonPayer + ",\"payable_with\":[\"all\"]}";
+				dataHojeMaisQuinzeDias.get(Calendar.YEAR) + mes + dia + "\",\"items\":[" + jsonItens + "],\"custom_variables\":[" + jsonCustomVariables + "]," +  jsonPayer + ",\"payable_with\":[\"all\"]}";
 
 		return jsonFavorecido;
 	}

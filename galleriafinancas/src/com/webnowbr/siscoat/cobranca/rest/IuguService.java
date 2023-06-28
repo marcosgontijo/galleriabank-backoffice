@@ -3,6 +3,7 @@ package com.webnowbr.siscoat.cobranca.rest;
 import java.math.BigDecimal;
 import java.util.List;
 
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -25,7 +26,7 @@ public class IuguService {
 	private List<ContratoCobranca> objetoContratoCobrancaList;
 	private IuguMB iuguMB = new IuguMB();
 	
-	@POST
+	@GET
 	@Path("/CriarFatura")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response criarFatura(@QueryParam("numeroContrato") String numeroContrato, @QueryParam("valorFatura") BigDecimal valorFatura) { 
