@@ -8133,7 +8133,9 @@ public class ContratoCobrancaMB {
 				} else {
 					this.numeroPresenteParcela = CommonsUtil.intValue(parcelas.getNumeroParcela());
 					calcularValorPresenteParcelaData(this.dataQuitacao, parcelas);
-					valorPresenteParcela = valorPresenteParcela.add(SiscoatConstants.TAXA_ADM);
+					if(this.objetoContratoCobranca.isTemTxAdm()) {						
+						valorPresenteParcela = valorPresenteParcela.add(SiscoatConstants.TAXA_ADM);
+					}
 				}
 				
 				valorPresenteTotal = valorPresenteTotal.add(this.valorPresenteParcela);
@@ -19307,6 +19309,16 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 				}
 			}
 			comentarioComiteFinal += comite.getUsuarioComite() + ": " + comite.getComentarioComite() + "  //  ";
+		}
+		
+		for(CcbProcessosJudiciais processo : contrato.getListProcessos()) {
+			if(!processo.isSelecionadoComite()) {
+				continue;
+			}
+			contrato.setProcessosQuitarComite(
+					contrato.getProcessosQuitarComite() 
+					+ processo.getNumero() + " - " + CommonsUtil.formataValorMonetario(processo.getValor(), "R$ ")
+					+ "\n");
 		}
 		contrato.setTaxaAprovada(maiorTaxaAprovada);
 		contrato.setTipoValorComite(menorValorAprovadoTipo);

@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -160,15 +161,26 @@ public class SimuladorMB {
 		simulador.setQtdParcelas(this.parcelas);
 		simulador.setValorImovel(this.valorImovel);
 		simulador.setCustoEmissaoValor(custoEmissaoValor);
+		simulador.setCustoEmissaoPercentual(custoEmissaoPercentual);
 		simulador.setTipoCalculo(tipoCalculo);
 		simulador.setNaoCalcularDFI(this.naoCalcularDFI);
 		simulador.setNaoCalcularMIP(this.isNaoCalcularMIP());
 		simulador.setNaoCalcularTxAdm(this.naoCalcularTxAdm);
 		simulador.setSimularComIPCA(this.simularComIPCA);
 		simulador.setIpcaSimulado(this.ipcaSimulado);
-		simulador.calcular();
+		if (CommonsUtil.mesmoValor('L', tipoCalculoFinal)) {
+			GoalSeek goalSeek = new GoalSeek(CommonsUtil.doubleValue(valorCredito), 
+					CommonsUtil.doubleValue(valorCredito.divide(BigDecimal.valueOf(1.5), MathContext.DECIMAL128)),
+					CommonsUtil.doubleValue(valorCredito.multiply(BigDecimal.valueOf(1.5), MathContext.DECIMAL128)));		
+			GoalSeekFunction gsFunfction = new GoalSeekFunction();
+			BigDecimal valorBruto = CommonsUtil.bigDecimalValue(gsFunfction.getGoalSeek(goalSeek, simulador));
+			simulador.setValorCredito(valorBruto.setScale(2, RoundingMode.HALF_UP));
+		} else {			
+			simulador.calcular();
+		}
 		
-		simulador.setValorCreditoLiberado(simulador.getValorCredito());
+		
+		/*simulador.setValorCreditoLiberado(simulador.getValorCredito());
 				
 		if (simulador.getCustoEmissaoValor() != null) {
 			simulador.setValorCreditoLiberado(simulador.getValorCreditoLiberado().subtract(simulador.getCustoEmissaoValor()));
@@ -216,9 +228,9 @@ public class SimuladorMB {
 			}
 
 			this.simulacao = simuladorLiquido;
-		} else {
+		} else {*/
 			this.simulacao = simulador;
-		}
+		//}
 		this.simulacao.setMostrarIPCA(mostrarIPCA);
 		this.simulacao.setTipoCalculo(tipoCalculo);
 		this.simulacao.setTipoPessoa(tipoPessoa);

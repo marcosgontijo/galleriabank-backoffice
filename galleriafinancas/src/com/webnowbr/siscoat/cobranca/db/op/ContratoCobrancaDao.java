@@ -6145,7 +6145,9 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					
 					if(!CommonsUtil.semValor(tipoParametro)) {
 						if(CommonsUtil.mesmoValor(tipoParametro, "Matricula")) {
-							where = where + " and imv.numeromatricula like '%" + valorParametrto + "%' ";
+							//where = where + " and imv.numeromatricula like '%" + valorParametrto + "%' ";
+							where = where + " and udf_GetNumeric(numeromatricula) like '%"
+							+ CommonsUtil.somenteNumeros(valorParametrto) + "%' ";
 						}
 					}
 					
