@@ -561,73 +561,137 @@
 								<p:inputText id="NomeCC"
 									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.nomeCC}"
 									label="Nome" onblur=""
-									style="width:400px;" />	
-								
-								<p:outputLabel value="Banco: " for="Banco"  styleClass="labelBold" />
-								<p:autoComplete id="Banco" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.banco}"
+									style="width:400px;" />
+
+								<p:outputLabel value="Banco: " for="Banco"
+									styleClass="labelBold" />
+								<p:autoComplete id="Banco"
+									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.banco}"
 									completeMethod="#{pagadorRecebedorMB.objetoPagadorRecebedor.completeBancos}"
 									var="banco" itemLabel="#{banco}" itemValue="#{banco}"
-									forceSelection="true" styleClass="labelBold" label="Conta" 
-									style="width:100px; "
-									scrollHeight="250" />
-								
+									forceSelection="true" styleClass="labelBold" label="Conta"
+									style="width:100px; " scrollHeight="250">
+									<p:ajax event="valueChange"
+										listener="#{pagadorRecebedorMB.verificaAlteracaoContaCobranca}" />
+								</p:autoComplete>
+
 								<p:outputLabel for="Agencia" value="Agência: "
 									styleClass="labelBold" />
 								<p:inputText id="Agencia"
 									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.agencia}"
-									label="Agência" onblur=""
-									style="width:100px;" />
+									label="Agência" onblur="" style="width:100px;">
+									<p:ajax event="valueChange"
+										listener="#{pagadorRecebedorMB.verificaAlteracaoContaCobranca}" />
+								</p:inputText>
 								<p:outputLabel for="Conta" value="Conta: "
 									styleClass="labelBold">
-									<i class="fa font-solid #{pagadorRecebedorMB.objetoPagadorRecebedor.contaBancariaValidada?'fa-check green':'fa-ban red'}"  />
+									<i class="fa font-solid #{pagadorRecebedorMB.objetoPagadorRecebedor.contaBancariaValidada?'fa-check green':'fa-ban red'}"
+										id="contaValidacao" />
 								</p:outputLabel>
-								
+
 								<h:panelGroup>
-										<p:inputText id="Conta"
+									<p:inputText id="Conta"
 										value="#{pagadorRecebedorMB.objetoPagadorRecebedor.conta}"
-										styleClass="labelBold" label="Conta"
-										onblur="" style="width:100px;margin-right: 10px;" />
-									<p:commandButton value="Verificar" ajax="false" icon="ui-icon-check" 
-									  	action="#{pagadorRecebedorMB.validaContaBancaria}"
-									  	rendered="false"
-											style="TEXT-DECORATION: bold" />
+										styleClass="labelBold" label="Conta" onblur=""
+										style="width:100px;margin-right: 10px;">
+										<p:ajax event="valueChange"
+											listener="#{pagadorRecebedorMB.verificaAlteracaoContaCobranca}" />
+									</p:inputText>
+									<p:commandButton value="Verificar"  ajax="true" 
+										icon="ui-icon-check" rendered="#{!pagadorRecebedorMB.objetoPagadorRecebedor.contaBancariaValidada}"
+										action="#{pagadorRecebedorMB.validaContaBancaria}"
+										style="TEXT-DECORATION: bold" />
 								</h:panelGroup>
 								
-								<p:outputLabel for="tipoConta"
-									value="Tipo Da Conta " styleClass="labelBold" />
+									<p:outputLabel for="ContaDigito" value="Conta Digito: "
+									styleClass="labelBold">									
+								</p:outputLabel>
+									<p:inputText id="ContaDigito"
+										value="#{pagadorRecebedorMB.objetoPagadorRecebedor.contaDigito}"
+										styleClass="labelBold" label="contaDigito" onblur="" maxlength="1"
+										style="width:100px;margin-right: 10px;">
+										<p:ajax event="valueChange"
+											listener="#{pagadorRecebedorMB.verificaAlteracaoContaCobranca}" />
+									</p:inputText>
+								
+
+								<p:outputLabel for="tipoConta" value="Tipo Da Conta "
+									styleClass="labelBold" />
 								<p:selectOneMenu id="tipoConta"
-									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.tipoConta}" >
-									<f:selectItem itemValue="Conta Corrente" itemLabel="Conta Corrente" />
-									<f:selectItem itemValue="Conta Poupança" itemLabel="Conta Poupança" />
+									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.tipoConta}">
+									<f:selectItem itemValue="CONTA_CORRENTE"
+										itemLabel="Conta Corrente" />
+									<f:selectItem itemValue="CONTA_POUPANCA"
+										itemLabel="Conta Poupança" />
+
+									<p:ajax event="valueChange"
+										listener="#{pagadorRecebedorMB.verificaAlteracaoContaCobranca}" />
 								</p:selectOneMenu>
 
 								<p:outputLabel for="pix" value="Pix: " styleClass="labelBold">
-								<i class="fa font-solid #{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado?'fa-check green':'fa-ban red'}"  />
+									<i class="fa font-solid #{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado?'fa-check green':'fa-ban red'}"
+										id="pixValidacao" />
 								</p:outputLabel>
-								<h:panelGroup >
+								
+								<h:panelGroup>
 									<p:inputText id="pix"
 										value="#{pagadorRecebedorMB.objetoPagadorRecebedor.pix}"
-										styleClass="labelBold" label="pix" style="width:100px;margin-right: 10px;" />
-									<p:commandButton value="Verificar" ajax="false" icon="ui-icon-check" 
-									  	action="#{pagadorRecebedorMB.validaPix}"
-									  	rendered="false"
-											style="TEXT-DECORATION: bold" />
+										styleClass="labelBold" label="pix"
+										style="width:100px;margin-right: 10px;">
+										<p:ajax event="valueChange"
+											listener="#{pagadorRecebedorMB.verificaAlteracaoPix}" />
+									</p:inputText>
+									<p:commandButton value="Verificar" ajax="true"  rendered="#{!pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+										icon="ui-icon-check" action="#{pagadorRecebedorMB.validaPix}"
+										style="TEXT-DECORATION: bold" />
 								</h:panelGroup>
 
-								
-								
+
+
 								<p:outputLabel for="tipoPix" value="Tipo Do Pix "
 									styleClass="labelBold" />
 
 								<p:selectOneMenu id="tipoPix"
 									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.tipoPix}">
 									<f:selectItem itemValue="CPF" itemLabel="CPF" />
-									<f:selectItem itemValue="CPF" itemLabel="CPF" />
-									<f:selectItem itemValue="Telefone" itemLabel="Telefone" />
-									<f:selectItem itemValue="E-mail" itemLabel="E-mail" />
-									<f:selectItem itemValue="Chave Aleatória"
+									<f:selectItem itemValue="CNPJ" itemLabel="CNPJ" />
+									<f:selectItem itemValue="TELEFONE" itemLabel="Telefone" />
+									<f:selectItem itemValue="EMAIL" itemLabel="E-mail" />
+									<f:selectItem itemValue="CHAVE_ALEATORIA"
 										itemLabel="Chave Aleatória" />
+									<p:ajax event="valueChange"
+										listener="#{pagadorRecebedorMB.verificaAlteracaoPix}" />
 								</p:selectOneMenu>
+
+
+								<p:outputLabel value="Banco: " for="Banco"  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+									styleClass="labelBold" />
+								<p:outputLabel  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.bancoPix}"
+									styleClass="labelBold" />
+
+								<p:outputLabel for="Agencia" value="Agência: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+									styleClass="labelBold" />
+								<p:outputLabel  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.agenciaPix}"
+									styleClass="labelBold" />
+
+
+								<p:outputLabel for="Conta" value="Conta: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+									styleClass="labelBold">
+								</p:outputLabel>
+								<p:outputLabel  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.contaPix}"
+									styleClass="labelBold" />
+
+
+								<p:outputLabel for="ContaDigito" value="Conta Digito: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+									styleClass="labelBold">
+								</p:outputLabel>
+								<p:outputLabel  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.contaDigitoPix}"
+									styleClass="labelBold" />
+									
 
 							</h:panelGrid>
 						</div>

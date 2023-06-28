@@ -8709,6 +8709,48 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		super.merge(entity);
 	}
 	
+	private static final String QUERY_RELATORIO_INADIMPLENCIA =  	"select cc.id "
+			+ "from cobranca.contratocobranca cc "
+			+ "where cc.status = 'Aprovado' "
+			+ "and cc.pagador not in (15, 34,14, 182, 417, 803) ";
 	
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobranca> consultaInadimplencia() {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				String query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_INADIMPLENCIA;	
+				try {
+					
+					query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM 
+					+ " order by cc.datacontrato desc ";
+					
+					connection = getConnection();
+
+					ps = connection
+							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);
+	
+					rs = ps.executeQuery();
+					
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					
+					while (rs.next()) {
+						contratoCobranca = findById(rs.getLong(1));
+						
+						objects.add(contratoCobranca);												
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}
 	
 }

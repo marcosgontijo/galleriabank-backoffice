@@ -917,45 +917,13 @@
 									
 									rowKey="#{fileAnalise.id}" emptyMessage="">
 									<p:column headerText="Liberado Análise" >
-										<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"   
-										rendered="#{fileAnalise.podeChamarRea or fileAnalise.podeChamarEngine or fileAnalise.reaProcessado or fileAnalise.engineProcessado}"
+										<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"
 											 onLabel="Sim" offLabel="Não" style="width:6rem" >
 										<p:ajax  event="change"
 											listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
 											</p:selectBooleanButton>
 									</p:column>
-									<p:column headerText="Liberar Serasa">
-
-										<p:selectBooleanButton value="#{fileAnalise.liberadoSerasa}"
-										rendered="#{fileAnalise.podeChamarSerasa or fileAnalise.serasaProcessado}"										
-											onLabel="Sim" offLabel="Não" style="width:6rem">
-											<p:ajax event="change"
-												listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
-										</p:selectBooleanButton>
-									</p:column>
-									<p:column headerText="Liberar Cenprot">
-										<p:selectBooleanButton value="#{fileAnalise.liberadoCenprot}"
-											 onLabel="Sim" offLabel="Não" style="width:6rem" >
-										<p:ajax  event="change"
-											listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
-											</p:selectBooleanButton>
-									</p:column>
-									<p:column headerText="Liberar Processos">
-										<p:selectBooleanButton value="#{fileAnalise.liberadoProcesso}"
-											 onLabel="Sim" offLabel="Não" style="width:6rem" >
-										<p:ajax  event="change"
-											listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
-											</p:selectBooleanButton>
-									</p:column>
-									<p:column headerText="Liberar SCR">
-										<p:selectBooleanButton value="#{fileAnalise.liberadoScr}"
-											 onLabel="Sim" offLabel="Não" style="width:6rem" >
-										<p:ajax  event="change"
-											listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
-											</p:selectBooleanButton>
-									</p:column>
-									
-									
+																	
 
 									<p:column style="text-align: center;"
 										headerText="Identificação" filterBy="#{fileAnalise.identificacao}"
@@ -966,12 +934,16 @@
 										<h:outputText value="#{fileAnalise.identificacao} #{fileAnalise.cnpjcpf} "
 											rendered="#{!fileAnalise.podeChamarRea}" />
 										<p:spacer height="10" />
-										
 									</p:column>
 
 									<p:column style="text-align: center;" headerText="Motivo"
 										filterMatchMode="contains">
 										<h:outputText value="#{fileAnalise.motivoAnalise}" />
+									</p:column>
+									
+									<p:column style="text-align: center;" headerText="Observação"
+										filterMatchMode="contains">
+										<h:outputText value="#{fileAnalise.observacao}" />
 									</p:column>
 
 									<p:column style="text-align: center;" headerText="Situação"
@@ -1037,7 +1009,7 @@
 							header="Certidões"
 							style="margin-bottom:10px;">
 							
-							<p:commandButton value="Executar Consultas" action="#{contratoCobrancaMB.executarConsultasAnaliseDocumento}"/>
+							<p:commandButton value="Executar Consultas" action="#{contratoCobrancaMB.executarConsultasAnaliseDocumento}"  ajax="true" />
 							<p:commandButton value="Certidões Docket" action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.objetoContratoCobranca)}"/>	
 						</p:panel>
 					</p:panel>

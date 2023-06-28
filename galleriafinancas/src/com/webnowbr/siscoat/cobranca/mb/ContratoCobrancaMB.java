@@ -169,6 +169,7 @@ import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.common.GeracaoBoletoMB;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
+import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.common.ReportUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.common.ValidaCNPJ;
@@ -185,6 +186,7 @@ import com.webnowbr.siscoat.simulador.SimulacaoIPCADadosV2;
 import com.webnowbr.siscoat.simulador.SimulacaoVO;
 import com.webnowbr.siscoat.simulador.SimuladorMB;
 
+import br.com.galleriabank.netrin.cliente.model.PPE.PpeResponse;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -8131,6 +8133,7 @@ public class ContratoCobrancaMB {
 				} else {
 					this.numeroPresenteParcela = CommonsUtil.intValue(parcelas.getNumeroParcela());
 					calcularValorPresenteParcelaData(this.dataQuitacao, parcelas);
+					valorPresenteParcela = valorPresenteParcela.add(SiscoatConstants.TAXA_ADM);
 				}
 				
 				valorPresenteTotal = valorPresenteTotal.add(this.valorPresenteParcela);
@@ -28220,65 +28223,91 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 	}
 	
 	public void executarConsultasAnaliseDocumento() {
-		
+
 		DocketService docketService = new DocketService();
 
 		SerasaService serasaService = new SerasaService();
-		
+
 		NetrinService netrinService = new NetrinService();
-		
+
 		ScrService scrService = new ScrService();
 
-		for (DocumentoAnalise documentoAnalise : this.listaDocumentoAnalise.stream().filter(d -> d.isLiberadoAnalise() || d.isLiberadoSerasa() ||
-				d.isLiberadoCenprot()|| d.isLiberadoScr()|| d.isLiberadoProcesso())
+		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+
+		for (DocumentoAnalise documentoAnalise : this.listaDocumentoAnalise.stream().filter(d -> d.isLiberadoAnalise()
+				|| d.isLiberadoSerasa() || d.isLiberadoCenprot() || d.isLiberadoScr() || d.isLiberadoProcesso())
 				.collect(Collectors.toList())) {
-			
+
 			if (documentoAnalise.isLiberadoAnalise()) {
-				if (DocumentosAnaliseEnum.REA.equals(documentoAnalise.getTipoEnum())
-						&& documentoAnalise.isPodeChamarRea()) {
-					docketService.uploadREA(documentoAnalise, loginBean.getUsuarioLogado());
-				} else {
-					if (documentoAnalise.isPodeChamarEngine()  ) {
-						DataEngine engine = docketService.engineInserirPessoa(documentoAnalise.getPagador(),
-								objetoContratoCobranca);
-						docketService.engineCriarConsulta(documentoAnalise, engine, loginBean.getUsuarioLogado());
-					}										
-				}
-			}
-			
-			if (!DocumentosAnaliseEnum.REA.equals(documentoAnalise.getTipoEnum())) {
 
-				if (documentoAnalise.isLiberadoSerasa()) {
-					if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
-						serasaService.requestSerasa(documentoAnalise, loginBean.getUsuarioLogado());
+				PpeResponse resultPEP = null;
+				if (DocumentosAnaliseEnum.REA.equals(documentoAnalise.getTipoEnum())) {
+					if (documentoAnalise.isPodeChamarRea()) {
+						documentoAnalise.addObservacao("Processando REA");
+						PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
+						docketService.uploadREA(documentoAnalise, loginBean.getUsuarioLogado());
 					}
-				}
-
-				if (documentoAnalise.isLiberadoCenprot()) {
-					if (CommonsUtil.semValor(documentoAnalise.getRetornoCenprot())) {
-						netrinService.requestCenprot(documentoAnalise);
+					continue;
+				} else {
+					if (documentoAnalise.isPodeChamarPpe() && !documentoAnalise.isPpeProcessado()) {
+						netrinService.requestCadastroPepPF(documentoAnalise);
+						resultPEP = GsonUtil.fromJson(documentoAnalise.getRetornoPpe(), PpeResponse.class);
+					} else if (!documentoAnalise.isPodeChamarPpe() && documentoAnalise.isPpeProcessado()) {
+						resultPEP = GsonUtil.fromJson(documentoAnalise.getRetornoPpe().replace("\"details\":\"\"", "\"details\":{}"), PpeResponse.class);
 					}
 				}
 				
-				if (documentoAnalise.isLiberadoProcesso()) {
-					if (!documentoAnalise.isProcessoProcessado()) {
-						netrinService.requestProcesso(documentoAnalise);
+				
+
+				if (!CommonsUtil.semValor(resultPEP))
+					if (CommonsUtil.mesmoValorIgnoreCase("Sim", resultPEP.getPepKyc().getCurrentlyPEP())
+							&& (resultPEP.getPepKyc().getHistoryPEP().stream()
+									.filter(p -> CommonsUtil.mesmoValor(p.getLevel(), "1")).findAny().isPresent())) {
+						documentoAnalise.addObservacao("Verfiicar PEP");
+						documentoAnaliseDao.merge(documentoAnalise);
+						PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
+						continue;
 					}
 
-					if (!documentoAnalise.isPpeProcessado()) {
-						netrinService.requestCadastroPepPF(documentoAnalise);
-					}
+				if (!documentoAnalise.isProcessoProcessado()) {
+					documentoAnalise.addObservacao("Processando Processos");
+					PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
+					netrinService.requestProcesso(documentoAnalise);
 				}
 
-
-				if (documentoAnalise.isLiberadoScr()) {
-					if (CommonsUtil.semValor(documentoAnalise.getRetornoScr())) {
-						scrService.requestScr(documentoAnalise);
-					}
+				if (CommonsUtil.semValor(documentoAnalise.getRetornoCenprot())) {
+					documentoAnalise.addObservacao("Processando Protestos");
+					PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
+					netrinService.requestCenprot(documentoAnalise);
 				}
+
+				if (documentoAnalise.isPodeChamarSerasa()
+						&& CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
+					documentoAnalise.addObservacao("Processando SERASA");
+					PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
+					serasaService.requestSerasa(documentoAnalise, loginBean.getUsuarioLogado());
+				}
+
+				if (documentoAnalise.isPodeChamarEngine()
+						&& CommonsUtil.semValor(documentoAnalise.getRetornoEngine())) {
+
+					documentoAnalise.addObservacao("Processando Engine");
+					PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
+					DataEngine engine = docketService.engineInserirPessoa(documentoAnalise.getPagador(),
+							objetoContratoCobranca);
+					docketService.engineCriarConsulta(documentoAnalise, engine, loginBean.getUsuarioLogado());
+				}
+
+				if (CommonsUtil.semValor(documentoAnalise.getRetornoScr())) {
+					documentoAnalise.addObservacao("Processando SCR");
+					PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
+					scrService.requestScr(documentoAnalise);
+				}
+				documentoAnalise.addObservacao("Pesquisas finalizadas");
+				documentoAnaliseDao.merge(documentoAnalise);
+				PrimeFaces.current().ajax().update("form:ArquivosAnalisados");
 			}
-
-		}
+		}		
 
 	}
 	

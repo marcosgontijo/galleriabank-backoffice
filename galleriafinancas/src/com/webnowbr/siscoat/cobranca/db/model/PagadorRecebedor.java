@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
@@ -110,6 +111,10 @@ public class PagadorRecebedor implements Serializable {
 
 	private String tipoPix;
 	private String pix;
+	private String bancoPix;
+	private String agenciaPix;
+	private String contaPix;
+	private String contaDigitoPix;
 	
 	private boolean pixValidado;
 	
@@ -482,6 +487,14 @@ public class PagadorRecebedor implements Serializable {
 		}
 	}
 
+	
+	public String getCodigoBanco() {
+		String[] banco = getBanco().split(Pattern.quote("|"));
+		if (banco.length > 0) {
+			return CommonsUtil.trimNull(banco[0]);
+
+		} else
+			return null;}
 	
 	/**
 	 * @return the id
@@ -2209,6 +2222,39 @@ public class PagadorRecebedor implements Serializable {
 
 	public void setTipoPix(String tipoPix) {
 		this.tipoPix = tipoPix;
+	}	
+	
+
+	public String getBancoPix() {
+		return bancoPix;
+	}
+
+	public void setBancoPix(String bancoPix) {
+		this.bancoPix = bancoPix;
+	}
+
+	public String getAgenciaPix() {
+		return agenciaPix;
+	}
+
+	public void setAgenciaPix(String agenciaPix) {
+		this.agenciaPix = agenciaPix;
+	}
+
+	public String getContaPix() {
+		return contaPix;
+	}
+
+	public void setContaPix(String contaPix) {
+		this.contaPix = contaPix;
+	}
+
+	public String getContaDigitoPix() {
+		return contaDigitoPix;
+	}
+
+	public void setContaDigitoPix(String contaDigitoPix) {
+		this.contaDigitoPix = contaDigitoPix;
 	}
 
 	public List<DocumentosPagadorDocket> getDocumentosDocket() {
