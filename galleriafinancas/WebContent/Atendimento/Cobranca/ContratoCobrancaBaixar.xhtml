@@ -2816,17 +2816,23 @@
 							value="#{contratoCobrancaMB.objetoContratoCobranca.numeroContrato}"
 							label="Número do Contrato"
 							style="font-weight: bold; font-size: 18px;" />
+						<p:outputLabel for="taxa" value="Método de Cálculo:" styleClass="labelBold" style="margin-right: 59px;"/>
+						<p:selectOneRadio id="taxa" value="#{contratoCobrancaMB.txZero}">
+							<f:selectItem itemLabel="Cálculo normal" itemValue="true" />
+							<f:selectItem itemLabel="Taxa 0%" itemValue="false" />
+							<p:ajax update=":formBpGerarBoletoKobanaPARCELAS:dtParcelasSelecionadas :formBpGerarBoletoKobanaPARCELAS:valorBoleto" event="valueChange"
+								listener="#{contratoCobrancaMB.verificaTaxaZeroBoletoKobana}" />
+						</p:selectOneRadio>
 						<p:outputLabel for="dataVencimento" value="Data do Vencimento: "
-							styleClass="labelBold" style="margin-right: 59px;" />
+								styleClass="labelBold" style="margin-right: 59px;" />
 						<p:calendar id="dataVencimento"
-							value="#{contratoCobrancaMB.dataVencimentoBoleto}"
-							required="true" label="Data do Vencimento" size="100"
-							pattern="dd/MM/yyyy" styleClass="dateTimeField">
-							<p:ajax event="dateSelect" update="formBpGerarBoletoKobana"
-								listener="#{contratoCobrancaMB.atualizaValorBaixaParceladaBoleto}" />
+							value="#{contratoCobrancaMB.dataVencimentoBoleto}" required="true"
+							label="Data do Pagamento" size="100" pattern="dd/MM/yyyy"
+							styleClass="dateTimeField">
+							<p:ajax event="dateSelect" update=":formBpGerarBoletoKobanaPARCELAS:dtParcelasSelecionadas :formBpGerarBoletoKobanaPARCELAS:valorBoleto"
+								listener="#{contratoCobrancaMB.atualizaValorBaixaParceladaBoletosKobana}" />
 						</p:calendar>
 					</h:panelGrid>
-
 					<h:panelGrid columns="1">			
 						<p:dataTable id="dtParcelasSelecionadas" var="parcelasSelecionadas"
 									value="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"

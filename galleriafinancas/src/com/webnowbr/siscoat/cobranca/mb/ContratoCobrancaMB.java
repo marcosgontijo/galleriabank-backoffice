@@ -19912,6 +19912,45 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		}	
 	}
 	
+	public void verificaTaxaZeroBoletoKobana() {
+		for (ContratoCobrancaDetalhes parcelasSelecionada : this.selectedListContratoCobrancaDetalhes) {
+			this.bpContratoCobrancaDetalhes = parcelasSelecionada;
+			
+			if (!this.txZero) {
+				this.vlrParcelaAtualizadaNew = this.bpContratoCobrancaDetalhes.getVlrParcela();
+			} else {
+				calculaNovaData(this.rowEditNewDate);
+			}
+			
+			parcelasSelecionada.setVlrBoletoKobana(this.vlrParcelaAtualizadaNew);
+		}
+		
+		calculaValorTotalBoletoKobana();
+	}
+	
+	public void atualizaValorBaixaParceladaBoletosKobana(SelectEvent event) {
+		Date dateSelected = (Date) event.getObject();
+		this.rowEditNewDate = dateSelected;
+		calculaNovaData(dateSelected);
+		
+		for (ContratoCobrancaDetalhes parcelasSelecionada : this.selectedListContratoCobrancaDetalhes) {
+			
+			this.bpContratoCobrancaDetalhes = parcelasSelecionada;
+			
+			if(dateSelected.before(this.bpContratoCobrancaDetalhes.getDataVencimento())){
+				if(dateSelected.after(DateUtil.adicionarDias(this.bpContratoCobrancaDetalhes.getDataVencimento(), -30))) {
+					calcularValorPresenteParcelaDataValor(rowEditNewDate, bpContratoCobrancaDetalhes, bpContratoCobrancaDetalhes.getVlrParcela());
+				} else {
+					calcularValorPresenteParcelaData(rowEditNewDate, bpContratoCobrancaDetalhes);
+				}
+			} 
+			
+			parcelasSelecionada.setVlrBoletoKobana(this.valorPresenteParcela);
+		}
+		
+		calculaValorTotalBoletoKobana();
+	}
+	
 	public void atualizaValorBaixaPresente() {
 		calculaNovaData(rowEditNewDate);
 		calcularValorPresenteParcelaData(this.rowEditNewDate, this.bpContratoCobrancaDetalhes);
@@ -28226,13 +28265,13 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 						netrinService.requestCadastroPepPF(documentoAnalise);
 						resultPEP = GsonUtil.fromJson(documentoAnalise.getRetornoPpe(), PpeResponse.class);
 					} else if (!documentoAnalise.isPodeChamarPpe() && documentoAnalise.isPpeProcessado()) {
-						resultPEP = GsonUtil.fromJson(documentoAnalise.getRetornoPpe(), PpeResponse.class);
+						resultPEP = GsonUtil.fromJson(documentoAnalise.getRetornoPpe().replace("\"details\":\"\"", "\"details\":{}"), PpeResponse.class);
 					}
 				}
 				
 				
 
-				if (documentoAnalise.isPodeChamarPpe())
+				if (!CommonsUtil.semValor(resultPEP))
 					if (CommonsUtil.mesmoValorIgnoreCase("Sim", resultPEP.getPepKyc().getCurrentlyPEP())
 							&& (resultPEP.getPepKyc().getHistoryPEP().stream()
 									.filter(p -> CommonsUtil.mesmoValor(p.getLevel(), "1")).findAny().isPresent())) {
