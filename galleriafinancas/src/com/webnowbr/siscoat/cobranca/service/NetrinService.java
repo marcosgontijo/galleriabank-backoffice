@@ -35,7 +35,7 @@ public class NetrinService {
 		if (CommonsUtil.semValor(documentoAnalise.getRetornoCenprot())) {
 			PagadorRecebedorService pagaPagadorRecebedorService = new PagadorRecebedorService();
 			PagadorRecebedorConsulta pagadorRecebedorConsulta = pagaPagadorRecebedorService
-					.buscaConsultaNoPagadorRecebedor(documentoAnalise.getPagador(), DocumentosAnaliseEnum.SCR);
+					.buscaConsultaNoPagadorRecebedor(documentoAnalise.getPagador(), DocumentosAnaliseEnum.CENPROT);
 
 			if (!CommonsUtil.semValor(pagadorRecebedorConsulta)
 					&& !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta())

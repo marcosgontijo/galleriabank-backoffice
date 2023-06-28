@@ -98,7 +98,7 @@ public class DocumentoAnalise implements Serializable {
 	}
 
 	public boolean isPodeChamarPpe() {
-		return !isPpeProcessado() && CommonsUtil.mesmoValor(this.motivoAnalise.toUpperCase(), "PROPRIETARIO ATUAL")
+		return !isPpeProcessado() && CommonsUtil.mesmoValor("PF", tipoPessoa) &&  CommonsUtil.mesmoValor(this.motivoAnalise.toUpperCase(), "PROPRIETARIO ATUAL")
 				&& !CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
 	}
 
