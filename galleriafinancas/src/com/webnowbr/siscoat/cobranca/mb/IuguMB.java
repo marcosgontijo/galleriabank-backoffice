@@ -5385,10 +5385,14 @@ public class IuguMB {
 
 						myResponse = getJsonSucessoIugu(myURLConnection.getInputStream());
 
-						this.urlFatura = myResponse.getString("secure_url").trim();
+						this.urlFatura = myResponse.getString("secure_url");
+						
+						if (myResponse != null ) {
+							setContratoFaturaIugu(this.urlFatura.trim());
+						}							
 
 						myURLConnection.disconnect();
-						return this.urlFatura;
+						return this.urlFatura.trim();
 					}
 
 				} catch (MalformedURLException e) {
