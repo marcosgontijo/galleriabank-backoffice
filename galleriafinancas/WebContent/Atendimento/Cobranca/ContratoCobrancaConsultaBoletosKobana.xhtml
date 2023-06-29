@@ -368,6 +368,10 @@
 							<h:outputText value="#{parcelasSelecionadas.vlrParcela}" converter="bigDecimalConverter" />
 						</p:column>	
 						<p:column style="text-align: center;"
+							headerText="Valor Boleto Kobana">
+							<h:outputText value="#{parcelasSelecionadas.vlrBoletoKobana}" converter="bigDecimalConverter" />
+						</p:column>
+						<p:column style="text-align: center;"
 							headerText="Baixada?">
 							<ui:fragment rendered="#{parcelasSelecionadas.parcelaPaga}">
 								<h:outputText value="Sim" />

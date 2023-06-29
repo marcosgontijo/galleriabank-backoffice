@@ -102,6 +102,9 @@ public class BRLTrustMB {
 	
 	private Date dataValorPresente;
 	
+	private BigDecimal valorTotalLiquidacao;
+	private int qtdeLiquidados;
+	
 	List<ContratoCobrancaBRLLiquidacao> parcelasLiquidacao = new ArrayList<ContratoCobrancaBRLLiquidacao>();
 	ContratoCobrancaBRLLiquidacao parcelaLiquidacao = new ContratoCobrancaBRLLiquidacao();
 
@@ -1993,6 +1996,9 @@ public class BRLTrustMB {
 		
 		FacesContext context = FacesContext.getCurrentInstance();
 		
+		this.valorTotalLiquidacao = BigDecimal.ZERO;
+		this.qtdeLiquidados = 0;
+		
 		this.jsonGerado = true;
 		String contratosErros = null;
 		
@@ -2006,7 +2012,6 @@ public class BRLTrustMB {
 		
 		ParametrosDao pDao = new ParametrosDao();
 		this.pathJSON = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
-		this.nomeJSON = "JSON_BRL_Trust_Liquidacao_" + identificadorCessao + ".json";
 		
 		JSONObject jsonSchema = new JSONObject();
 		jsonSchema.put("$schema", "https://schemas.brltrust.com.br/json/fidc/v1.2/cessao.schema.json");
@@ -2129,9 +2134,15 @@ public class BRLTrustMB {
 			if (parcela.getDataPagamento().before(parcela.getDataVencimento()) &&
 					parcela.getVlrRecebido().compareTo(valorParcelaOriginal) < 0) {
 				jsonValores.put("liquidacao", parcela.getVlrRecebido());
+				
+				this.valorTotalLiquidacao = this.valorTotalLiquidacao.add(parcela.getVlrRecebido());
 			} else {	
 				jsonValores.put("liquidacao", valorParcelaOriginal); 
-			}
+				
+				this.valorTotalLiquidacao = this.valorTotalLiquidacao.add(valorParcelaOriginal);
+			} 
+			
+			this.qtdeLiquidados = this.qtdeLiquidados + 1;
 			
 			jsonRecebivel.put("valores", jsonValores);
 			
@@ -2145,6 +2156,8 @@ public class BRLTrustMB {
 		jsonCessao.put("recebiveis", jsonRecebiveis);
 		
 		jsonSchema.put("cessao", jsonCessao);
+		
+		this.nomeJSON = "JSON_BRL_Trust_Liquidacao_" + identificadorCessao + "_QtdeLiquidados_" + this.qtdeLiquidados + "_ValorTotal_" + this.valorTotalLiquidacao + ".json";
 
 		FileOutputStream fileStream;
 		try {
@@ -2866,6 +2879,20 @@ public class BRLTrustMB {
 	public void setSelectedJsonLiquidacao(List<ContratoCobrancaBRLLiquidacao> selectedJsonLiquidacao) {
 		this.selectedJsonLiquidacao = selectedJsonLiquidacao;
 	}
-	
-	
+
+	public BigDecimal getValorTotalLiquidacao() {
+		return valorTotalLiquidacao;
+	}
+
+	public void setValorTotalLiquidacao(BigDecimal valorTotalLiquidacao) {
+		this.valorTotalLiquidacao = valorTotalLiquidacao;
+	}
+
+	public int getQtdeLiquidados() {
+		return qtdeLiquidados;
+	}
+
+	public void setQtdeLiquidados(int qtdeLiquidados) {
+		this.qtdeLiquidados = qtdeLiquidados;
+	}
 }
