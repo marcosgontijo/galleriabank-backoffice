@@ -16,6 +16,7 @@ import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorConsulta;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 
 import br.com.galleriabank.netrin.cliente.model.PPE.PpeResponse;
@@ -32,7 +33,17 @@ public class NetrinService {
 	public void requestCenprot(DocumentoAnalise documentoAnalise) {
 
 		if (CommonsUtil.semValor(documentoAnalise.getRetornoCenprot())) {
-			netrinCriarConsultaCenprot(documentoAnalise);
+			PagadorRecebedorService pagaPagadorRecebedorService = new PagadorRecebedorService();
+			PagadorRecebedorConsulta pagadorRecebedorConsulta = pagaPagadorRecebedorService
+					.buscaConsultaNoPagadorRecebedor(documentoAnalise.getPagador(), DocumentosAnaliseEnum.CENPROT);
+
+			if (!CommonsUtil.semValor(pagadorRecebedorConsulta)
+					&& !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta())
+					&& DateUtil.getDaysBetweenDates(pagadorRecebedorConsulta.getDataConsulta(),
+							DateUtil.getDataHoje()) <= 30) {
+				documentoAnalise.setRetornoCenprot(pagadorRecebedorConsulta.getRetornoConsulta());
+			} else
+				netrinCriarConsultaCenprot(documentoAnalise);
 		}
 	}
 
@@ -171,7 +182,22 @@ public class NetrinService {
 
 	public FacesMessage requestCadastroPepPF(DocumentoAnalise documentoAnalise) {
 		FacesMessage result = new FacesMessage();
-		result = netrinCriarConsultaCadastroPpePF(documentoAnalise);
+		
+		PagadorRecebedorService pagaPagadorRecebedorService = new PagadorRecebedorService();
+		PagadorRecebedorConsulta pagadorRecebedorConsulta = pagaPagadorRecebedorService
+				.buscaConsultaNoPagadorRecebedor(documentoAnalise.getPagador(), DocumentosAnaliseEnum.PPE);
+
+		if (!CommonsUtil.semValor(pagadorRecebedorConsulta)
+				&& !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta())
+				&& DateUtil.getDaysBetweenDates(pagadorRecebedorConsulta.getDataConsulta(),
+						DateUtil.getDataHoje()) <= 30) {			
+			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+			documentoAnalise.setRetornoPpe(pagadorRecebedorConsulta.getRetornoConsulta());
+
+			documentoAnaliseDao.merge(documentoAnalise);
+
+		} else			
+			result = netrinCriarConsultaCadastroPpePF(documentoAnalise);
 		return result;
 	}
 
@@ -183,7 +209,19 @@ public class NetrinService {
 	public ReceitaFederalPF requestCadastroPF(PagadorRecebedor pagadorRecebedor) {
 		FacesMessage facesMessage = new FacesMessage();
 
-		ReceitaFederalPF receitaFederalPF = netrinCriarConsultaCadastroPF(pagadorRecebedor.getCpf(), facesMessage);
+		ReceitaFederalPF receitaFederalPF;
+		PagadorRecebedorService pagaPagadorRecebedorService = new PagadorRecebedorService();
+		PagadorRecebedorConsulta pagadorRecebedorConsulta = pagaPagadorRecebedorService
+				.buscaConsultaNoPagadorRecebedor(pagadorRecebedor, DocumentosAnaliseEnum.RECEITA_FEDERAL);
+
+		if (!CommonsUtil.semValor(pagadorRecebedorConsulta)
+				&& !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta())
+				&& DateUtil.getDaysBetweenDates(pagadorRecebedorConsulta.getDataConsulta(),
+						DateUtil.getDataHoje()) <= 30) {
+			receitaFederalPF = GsonUtil.fromJson(pagadorRecebedorConsulta.getRetornoConsulta(),
+					ReceitaFederalPF.class);
+		} else
+			receitaFederalPF = netrinCriarConsultaCadastroPF(pagadorRecebedor.getCpf(), facesMessage);
 
 		pagadorRecebedor.setNome(receitaFederalPF.getCpfBirthdate().getNome());
 		pagadorRecebedor.setDtNascimento(
@@ -337,7 +375,20 @@ public class NetrinService {
 	public ReceitaFederalPJ requestCadastroPJ(PagadorRecebedor pagadorRecebedor) {
 
 		FacesMessage facesMessage = new FacesMessage();
-		ReceitaFederalPJ receitaFederalPJ = netrinCriarConsultaCadastroPJ(pagadorRecebedor.getCnpj(), facesMessage);
+		ReceitaFederalPJ receitaFederalPJ;
+
+		PagadorRecebedorService pagaPagadorRecebedorService = new PagadorRecebedorService();
+		PagadorRecebedorConsulta pagadorRecebedorConsulta = pagaPagadorRecebedorService
+				.buscaConsultaNoPagadorRecebedor(pagadorRecebedor, DocumentosAnaliseEnum.RECEITA_FEDERAL);
+
+		if (!CommonsUtil.semValor(pagadorRecebedorConsulta)
+				&& !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta())
+				&& DateUtil.getDaysBetweenDates(pagadorRecebedorConsulta.getDataConsulta(),
+						DateUtil.getDataHoje()) <= 30) {
+			receitaFederalPJ = GsonUtil.fromJson(pagadorRecebedorConsulta.getRetornoConsulta(), ReceitaFederalPJ.class);
+
+		} else
+			receitaFederalPJ = netrinCriarConsultaCadastroPJ(pagadorRecebedor.getCnpj(), facesMessage);
 
 		pagadorRecebedor.setNome(receitaFederalPJ.getReceitaFederal().getRazaoSocial());
 		pagadorRecebedor.setEndereco(receitaFederalPJ.getReceitaFederal().getLogradouro());
@@ -420,11 +471,24 @@ public class NetrinService {
 	public void requestProcesso(DocumentoAnalise documentoAnalise) {
 
 		if (CommonsUtil.semValor(documentoAnalise.getRetornoProcesso())) {
-			netrinCriarConsultatProcesso(documentoAnalise);
+			
+			PagadorRecebedorService pagaPagadorRecebedorService = new PagadorRecebedorService();
+			PagadorRecebedorConsulta pagadorRecebedorConsulta = pagaPagadorRecebedorService
+					.buscaConsultaNoPagadorRecebedor(documentoAnalise.getPagador(), DocumentosAnaliseEnum.PROCESSO);
+
+			if (!CommonsUtil.semValor(pagadorRecebedorConsulta)
+					&& !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta())
+					&& DateUtil.getDaysBetweenDates(pagadorRecebedorConsulta.getDataConsulta(),
+							DateUtil.getDataHoje()) <= 30) {			
+				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+				documentoAnalise.setRetornoProcesso(pagadorRecebedorConsulta.getRetornoConsulta());   
+				documentoAnaliseDao.merge(documentoAnalise);
+			} else
+				netrinCriarConsultaProcesso(documentoAnalise);
 		}
 	}
 
-	public FacesMessage netrinCriarConsultatProcesso(DocumentoAnalise documentoAnalise) { // POST para gerar consulta
+	public FacesMessage netrinCriarConsultaProcesso(DocumentoAnalise documentoAnalise) { // POST para gerar consulta
 		try {
 			// loginDocket();
 			int HTTP_COD_SUCESSO = 200;
@@ -507,9 +571,11 @@ public class NetrinService {
 
 	private String atualizaDadosPagadoRecebedorComReceitaFederal(PagadorRecebedor pagadorRecebedor) {
 		String nomeConsultado = "";
+
+		PagadorRecebedorService pagaPagadorRecebedorService = new PagadorRecebedorService();
+		
 		if (!CommonsUtil.semValor(pagadorRecebedor.getCpf())) {
-			PagadorRecebedorService ppagaPagadorRecebedorService = new PagadorRecebedorService();
-			PagadorRecebedorConsulta pagadorRecebedorConsulta = ppagaPagadorRecebedorService
+			PagadorRecebedorConsulta pagadorRecebedorConsulta = pagaPagadorRecebedorService
 					.buscaConsultaNoPagadorRecebedor(pagadorRecebedor, DocumentosAnaliseEnum.RECEITA_FEDERAL);
 			ReceitaFederalPF receitaFederalPF = null;
 			if (!CommonsUtil.semValor(pagadorRecebedorConsulta) && !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta()) && !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta().replace("{}", ""))) {
@@ -520,7 +586,7 @@ public class NetrinService {
 			}
 
 			if (!CommonsUtil.semValor(receitaFederalPF) && !CommonsUtil.semValor(pagadorRecebedor.getId())) {
-				ppagaPagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagadorRecebedor,
+				pagaPagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagadorRecebedor,
 						DocumentosAnaliseEnum.RECEITA_FEDERAL, GsonUtil.toJson(receitaFederalPF));
 			}
 
@@ -528,8 +594,8 @@ public class NetrinService {
 		} else {
 
 			if (!CommonsUtil.semValor(pagadorRecebedor.getCnpj())) {
-				PagadorRecebedorService ppagaPagadorRecebedorService = new PagadorRecebedorService();
-				PagadorRecebedorConsulta pagadorRecebedorConsulta = ppagaPagadorRecebedorService
+				
+				PagadorRecebedorConsulta pagadorRecebedorConsulta = pagaPagadorRecebedorService
 						.buscaConsultaNoPagadorRecebedor(pagadorRecebedor, DocumentosAnaliseEnum.RECEITA_FEDERAL);
 				ReceitaFederalPJ receitaFederalPJ = null;
 				if (!CommonsUtil.semValor(pagadorRecebedorConsulta) && !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta()) && !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta().replace("{}", ""))) {
@@ -540,7 +606,7 @@ public class NetrinService {
 				}
 
 				if (!CommonsUtil.semValor(receitaFederalPJ) && !CommonsUtil.semValor(pagadorRecebedor.getId())) {
-					ppagaPagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagadorRecebedor,
+					pagaPagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagadorRecebedor,
 							DocumentosAnaliseEnum.RECEITA_FEDERAL, GsonUtil.toJson(receitaFederalPJ));
 				}
 
