@@ -61,6 +61,7 @@
        	
  		<mapping resource="com/webnowbr/siscoat/common/db/model/BoletosRemessa.hbm.xml"/> 				 		
         <mapping resource="com/webnowbr/siscoat/infra/db/model/GroupAdm.hbm.xml"/> 
+        <mapping resource="com/webnowbr/siscoat/infra/db/model/UserPerfil.hbm.xml"/>
         <mapping resource="com/webnowbr/siscoat/infra/db/model/User.hbm.xml"/>
         <mapping resource="com/webnowbr/siscoat/infra/db/model/Parametros.hbm.xml"/>
         

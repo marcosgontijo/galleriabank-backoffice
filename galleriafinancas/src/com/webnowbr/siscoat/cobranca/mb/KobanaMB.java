@@ -446,7 +446,9 @@ public class KobanaMB {
 				boleto.setCustomerPersonName(objetoBoleto.getString("customer_person_name"));
 				boleto.setCustomerPersonCNPJCPF(objetoBoleto.getString("customer_cnpj_cpf"));
 				boleto.setCustomerEmail(objetoBoleto.getString("customer_email"));
-				boleto.setPaidAmount(BigDecimal.valueOf(objetoBoleto.getDouble("paid_amount")));
+				if (!objetoBoleto.isNull("paid_amount")) { 
+					boleto.setPaidAmount(BigDecimal.valueOf(objetoBoleto.getDouble("paid_amount")));
+				}
 				boleto.setUrlBoleto(objetoBoleto.getString("url"));
 				boleto.setBeneficiaryName(objetoBoleto.getString("beneficiary_name"));
 								
