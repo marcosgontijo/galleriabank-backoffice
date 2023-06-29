@@ -499,15 +499,11 @@ public class BalancoPatrimonialDao extends HibernateDao <BalancoPatrimonial,Long
 						relatorio.setValorContratoRelatorio(rs.getBigDecimal("vlrParcela"));
 						relatorio.setTaxaContratoRelatorio(rs.getBigDecimal("txJurosParcelas"));
 						relatorio.setEmpresaContratoRelatorio(rs.getString("empresa"));
-						if (rs.getBoolean("corrigidoIPCA")) {
+						if (rs.getBoolean("corrigidoIPCA") || rs.getBoolean("corrigidonovoipca")) {
 							relatorio.setIndiceContratoRelatorio("Sim");
 						} else {
-							if (rs.getBoolean("corrigidonovoipca")) {
-								relatorio.setIndiceContratoRelatorio("Sim");
-							} else {
-								relatorio.setIndiceContratoRelatorio("Não");
+							relatorio.setIndiceContratoRelatorio("Não");
 							}
-						}
 						
 						objects.add(relatorio);
 					}

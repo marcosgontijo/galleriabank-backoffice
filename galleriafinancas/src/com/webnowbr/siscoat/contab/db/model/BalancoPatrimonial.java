@@ -81,7 +81,7 @@ public class BalancoPatrimonial implements Serializable {
 		for(RelatorioBalanco pagarDebenture : relatorioBalancoPagar) {
 
 			BigDecimal valorParcela = pagarDebenture.getValorContratoRelatorio();
-			BigDecimal taxaInvestidor = pagarDebenture.getTaxaInvestidor();
+			BigDecimal taxaInvestidor = pagarDebenture.getTaxaInvestidor().divide(new BigDecimal (100),MathContext.DECIMAL128);
 			BigDecimal fatorX = valorParcela.multiply(taxaInvestidor);
 	
 			somaParcela = somaParcela.add(valorParcela);
@@ -105,21 +105,14 @@ public class BalancoPatrimonial implements Serializable {
 			quantidadeMeses = quantidadeMeses.divide(BigDecimal.valueOf(30), MathContext.DECIMAL128); //divide a quantidade acima por 30
 			Double quantidadeMesesDouble = CommonsUtil.doubleValue(quantidadeMeses); //armazena resultado na variável
 			
-			double potencia = Math.pow(CommonsUtil.doubleValue(custoPonderado), quantidadeMesesDouble); //potencia = custoponderado elevado a quantidade de meses
-			
-			
-			
+			double potencia = Math.pow(CommonsUtil.doubleValue(custoPonderado.add(BigDecimal.ONE)), quantidadeMesesDouble); //potencia = (custoponderado +1) elevado a quantidade de meses
+
 			BigDecimal pagarDebenturista; //declaração de variável
 			pagarDebenturista = (vlrParcela).multiply(CommonsUtil.bigDecimalValue(potencia) , MathContext.DECIMAL128); //valor da parcela * potencia (acima)
 			pagarDebenturista = pagarDebenturista.setScale(2, BigDecimal.ROUND_HALF_UP);
-			
-			if (recursosDebentures == null) {
-				recursosDebentures = BigDecimal.ZERO;
-			}
+
 			this.setRecursosDebentures(this.getRecursosDebentures().add(pagarDebenturista));
-			}			
-		
-		
+			}
 	}
 	
 	public void calcularVariaveisReceber ( List<RelatorioBalanco> relatorioBalancoReceber) {
@@ -130,7 +123,7 @@ public class BalancoPatrimonial implements Serializable {
 		for (RelatorioBalanco receberParcela : relatorioBalancoReceber) {
 			BigDecimal vlrParcela = receberParcela.getValorContratoRelatorio(); // vlrParcela = valor parcela
 
-			String indice = receberParcela.getEmpresaContratoRelatorio();
+			String indice = receberParcela.getIndiceContratoRelatorio();
 			quantidadeMeses = BigDecimal
 					.valueOf(DateUtil.Days360(receberParcela.getDataVencimentoRelatorio(), this.getAaaaMM())); // quantidade de dias entre dataParcela e dataReferencia
 			quantidadeMeses = quantidadeMeses.divide(BigDecimal.valueOf(30), MathContext.DECIMAL128); // divide a quantidade acima por 30
@@ -154,19 +147,14 @@ public class BalancoPatrimonial implements Serializable {
 	}
 	
 	public void calculaDireitosCreditorios (BigDecimal quantidadeDeMeses, BigDecimal valorFace,RelatorioBalanco receberParcela ) {
-		this.setRecursosDebentures(BigDecimal.ZERO);	
+			
 		BigDecimal saldoAtualizado = BigDecimal.ONE;
-		
-		
 		
 //		for(RelatorioBalanco receberParcela : relatorioBalancoReceber) {
 			BigDecimal jurosFidc = BigDecimal.ONE;
-			BigDecimal jurosCri1 = BigDecimal.ONE;
-			BigDecimal jurosCri2 = BigDecimal.ONE;
-			BigDecimal jurosCri3 = BigDecimal.ONE;
 			BigDecimal jurosPonderado = BigDecimal.ONE;
-			BigDecimal juros = new BigDecimal(1.01); //juros 1%
-			BigDecimal multa = new BigDecimal(1.1);  //multa 10%
+			BigDecimal juros = new BigDecimal(0.01); //juros 1%
+			BigDecimal multa = new BigDecimal(0.1);  //multa 10%
 			
 		
 			BigDecimal vlrParcela = receberParcela.getValorContratoRelatorio(); //vlrParcela = valor parcela
@@ -174,80 +162,96 @@ public class BalancoPatrimonial implements Serializable {
 			
 			
 			//juros = 1% ^ quantidadeMeses
+			juros = juros.add(new BigDecimal (1));
 			juros = CommonsUtil.bigDecimalValue (Math.pow(CommonsUtil.doubleValue(juros), CommonsUtil.doubleValue(quantidadeDeMeses)));
-			
-			//(1 + CDI + TAXA FIDC)
-			jurosFidc = jurosFidc.add(cdi);
-			jurosFidc = jurosFidc.add(taxaFidc);
-			jurosFidc = CommonsUtil.bigDecimalValue(Math.pow(CommonsUtil.doubleValue(jurosFidc), CommonsUtil.doubleValue(quantidadeDeMeses)));
-			jurosFidc = valorFace.multiply(jurosFidc);
-					
-			//(1 + IPCA + TAXA CRI1)
-			jurosCri1 = jurosCri1.add(ipca);
-			jurosCri1 = jurosCri1.add(taxaCri1);
-			jurosCri1 = CommonsUtil.bigDecimalValue(Math.pow(CommonsUtil.doubleValue(jurosCri1), CommonsUtil.doubleValue(quantidadeDeMeses)));
-			jurosCri1 = valorFace.multiply(jurosCri1);
-			
-			//(1 + IPCA + TAXA CRI2)
-			jurosCri2 = jurosCri2.add(ipca);
-			jurosCri2 = jurosCri2.add(taxaCri2);
-			jurosCri2 = CommonsUtil.bigDecimalValue(Math.pow(CommonsUtil.doubleValue(jurosCri2), CommonsUtil.doubleValue(quantidadeDeMeses)));
-			jurosCri2 = valorFace.multiply(jurosCri2);
-			
-			//(1 + IPCA + TAXA CRI3)
-			jurosCri3 = jurosCri3.add(ipca);
-			jurosCri3 = jurosCri3.add(taxaCri3);
-			jurosCri3 = CommonsUtil.bigDecimalValue(Math.pow(CommonsUtil.doubleValue(jurosCri3), CommonsUtil.doubleValue(quantidadeDeMeses)));
-			jurosCri3 = valorFace.multiply(jurosCri3);
-			
-			//(1 + CUSTO PONDERADO)
-			jurosPonderado = BigDecimal.ONE.add(custoPonderado);
-			jurosPonderado = CommonsUtil.bigDecimalValue(Math.pow(CommonsUtil.doubleValue(jurosPonderado), CommonsUtil.doubleValue(quantidadeDeMeses)));
-			jurosPonderado = valorFace.multiply(jurosPonderado);
-			
+
 			if (CommonsUtil.mesmoValor(empresa, "FIDC GALLERIA")) {
 				if (quantidadeDeMeses.compareTo(BigDecimal.ZERO)>=0 ) {
-					saldoAtualizado = vlrParcela.multiply(jurosFidc); //parcela * juros
-					saldoAtualizado = saldoAtualizado.multiply(multa); // parcela * juros * multa
+					saldoAtualizado = vlrParcela.multiply(juros); //parcela * juros
+					saldoAtualizado = saldoAtualizado.multiply(multa.add(new BigDecimal (1))); // parcela * juros * multa
 				}
-				else {
-					saldoAtualizado = jurosFidc;			
-				}	
+					
+					
+				else {	
+				
+				//(1 + CDI + TAXA FIDC)
+				cdi = cdi.divide(new BigDecimal (100));	
+				taxaFidc = taxaFidc.divide(new BigDecimal (100));
+				jurosFidc = jurosFidc.add(cdi);
+				jurosFidc = jurosFidc.add(taxaFidc);
+				// juros ^ meses
+				jurosFidc = CommonsUtil.bigDecimalValue(Math.pow(CommonsUtil.doubleValue(jurosFidc), CommonsUtil.doubleValue(quantidadeDeMeses)));
+				saldoAtualizado = valorFace.multiply(jurosFidc);
+				}
 			}
 			else if (CommonsUtil.mesmoValor(empresa, "CRI 1")) {
 				if (quantidadeDeMeses.compareTo(BigDecimal.ZERO)>=0 ) {
-					saldoAtualizado = vlrParcela.multiply(jurosCri1); //parcela * juros
-					saldoAtualizado = saldoAtualizado.multiply(multa); // parcela * juros * multa
+					saldoAtualizado = vlrParcela.multiply(juros); //parcela * juros
+					saldoAtualizado = saldoAtualizado.multiply(multa.add(new BigDecimal (1))); // parcela * juros * multa
 				}
-				else {
-					saldoAtualizado = jurosCri1;			
-				}	
+					
+					
+				else {	
+				
+				//(1 + CDI + TAXA CRI1)
+				ipca = ipca.divide(new BigDecimal (100));
+				taxaCri1 = taxaCri1.divide(new BigDecimal (100));	
+				jurosFidc = jurosFidc.add(ipca);
+				jurosFidc = jurosFidc.add(taxaCri1);
+				// juros ^ meses
+				jurosFidc = CommonsUtil.bigDecimalValue(Math.pow(CommonsUtil.doubleValue(jurosFidc), CommonsUtil.doubleValue(quantidadeDeMeses)));
+				saldoAtualizado = valorFace.multiply(jurosFidc);
+				}
 			}
 			else if (CommonsUtil.mesmoValor(empresa, "CRI 2")) {
 				if (quantidadeDeMeses.compareTo(BigDecimal.ZERO)>=0 ) {
-					saldoAtualizado = vlrParcela.multiply(jurosCri2); //parcela * juros
-					saldoAtualizado = saldoAtualizado.multiply(multa); // parcela * juros * multa
+					saldoAtualizado = vlrParcela.multiply(juros); //parcela * juros
+					saldoAtualizado = saldoAtualizado.multiply(multa.add(new BigDecimal (1))); // parcela * juros * multa
 				}
-				else {
-					saldoAtualizado = jurosCri2;			
-				}	
+					
+					
+				else {	
+				
+				//(1 + CDI + TAXA CRI2)
+				ipca = ipca.divide(new BigDecimal (100));
+				taxaCri2 = taxaCri2.divide(new BigDecimal (100));	
+				jurosFidc = jurosFidc.add(ipca);
+				jurosFidc = jurosFidc.add(taxaCri2);
+				// juros ^ meses
+				jurosFidc = CommonsUtil.bigDecimalValue(Math.pow(CommonsUtil.doubleValue(jurosFidc), CommonsUtil.doubleValue(quantidadeDeMeses)));
+				saldoAtualizado = valorFace.multiply(jurosFidc);
+				}
 			}
 			else if (CommonsUtil.mesmoValor(empresa, "CRI 3")) {
 				if (quantidadeDeMeses.compareTo(BigDecimal.ZERO)>=0 ) {
-					saldoAtualizado = vlrParcela.multiply(jurosCri3); //parcela * juros
-					saldoAtualizado = saldoAtualizado.multiply(multa); // parcela * juros * multa
+					saldoAtualizado = vlrParcela.multiply(juros); //parcela * juros
+					saldoAtualizado = saldoAtualizado.multiply(multa.add(BigDecimal.ONE)); // parcela * juros * multa
 				}
-				else {
-					saldoAtualizado = jurosCri3;			
-				}	
+					
+					
+				else {	
+				
+				//(1 + CDI + TAXA CRI3)
+				ipca = ipca.divide(new BigDecimal (100));
+				taxaCri3 = taxaCri3.divide(new BigDecimal (100));
+				jurosFidc = jurosFidc.add(ipca);
+				jurosFidc = jurosFidc.add(taxaCri3);
+				// juros ^ meses
+				jurosFidc = CommonsUtil.bigDecimalValue(Math.pow(CommonsUtil.doubleValue(jurosFidc), CommonsUtil.doubleValue(quantidadeDeMeses)));
+				saldoAtualizado = valorFace.multiply(jurosFidc);
+				}
 			}
 			else {
+
 				if (quantidadeDeMeses.compareTo(BigDecimal.ZERO)>=0 ) {
-					saldoAtualizado = vlrParcela.multiply(juros).multiply(multa); //parcela * juros * multa
+					saldoAtualizado = vlrParcela.multiply(juros).multiply(multa.add(BigDecimal.ONE)); //parcela * juros * multa
 
 					}
 					else {
-						saldoAtualizado = jurosPonderado;			
+						//(1 + CUSTO PONDERADO)
+						jurosPonderado = BigDecimal.ONE.add(custoPonderado);
+						jurosPonderado = CommonsUtil.bigDecimalValue(Math.pow(CommonsUtil.doubleValue(jurosPonderado), CommonsUtil.doubleValue(quantidadeDeMeses)));
+						saldoAtualizado = valorFace.multiply(jurosPonderado);		
 					}	
 				}
 			
