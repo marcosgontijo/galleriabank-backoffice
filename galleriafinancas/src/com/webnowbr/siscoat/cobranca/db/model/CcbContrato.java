@@ -78,6 +78,7 @@ public class CcbContrato implements Serializable{
 	private BigDecimal montantePagamento;
 	private BigDecimal valorParcela;
 	private char tipoCalculoFinal; 
+	private boolean usarNovoCustoEmissao; 
 
 	private String numeroParcelasDFI;
 	private Date vencimentoPrimeiraParcelaDFI;
@@ -183,6 +184,14 @@ public class CcbContrato implements Serializable{
     	this.listaParticipantes = new ArrayList<CcbParticipantes>(); 
     	this.processosJucidiais = new ArrayList<CcbProcessosJudiciais>(); 
     	this.listSegurados = new ArrayList<Segurado>(); 
+    }
+    
+    public void pegarTaxa() {
+    	if(usarNovoCustoEmissao) {
+    		taxaDeJurosMes = objetoContratoCobranca.getTaxaAprovada().subtract(BigDecimal.valueOf(0.02));
+    	} else {
+    		taxaDeJurosMes = objetoContratoCobranca.getTaxaAprovada();
+    	}
     }
 
 	public String getNomeEmitente() {
@@ -1268,6 +1277,14 @@ public class CcbContrato implements Serializable{
 
 	public void setCCBTipoConta(String cCBTipoConta) {
 		CCBTipoConta = cCBTipoConta;
-	} 
+	}
+
+	public boolean isUsarNovoCustoEmissao() {
+		return usarNovoCustoEmissao;
+	}
+
+	public void setUsarNovoCustoEmissao(boolean usarNovoCustoEmissao) {
+		this.usarNovoCustoEmissao = usarNovoCustoEmissao;
+	}
 	
 }

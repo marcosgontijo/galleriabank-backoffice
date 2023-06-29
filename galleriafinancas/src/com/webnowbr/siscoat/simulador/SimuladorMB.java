@@ -115,8 +115,7 @@ public class SimuladorMB {
 			}
 			if (!CommonsUtil.semValor(validacao)) {
 				for (Map.Entry<String, String> mensagem : validacao.entrySet()) {
-					facesContext.addMessage(null,
-							new FacesMessage(FacesMessage.SEVERITY_ERROR, mensagem.getKey(), mensagem.getValue()));
+					facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, mensagem.getKey(), mensagem.getValue()));
 				}
 				return null;
 			}
@@ -125,11 +124,9 @@ public class SimuladorMB {
 		BigDecimal custoEmissaoValor = SiscoatConstants.CUSTO_EMISSAO_MINIMO;
 		
 		final BigDecimal custoEmissaoPercentual;
-		if (CommonsUtil.mesmoValor('L', tipoCalculoFinal)) {
-			custoEmissaoPercentual = SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL_LIQUIDO;
-		} else {
-			custoEmissaoPercentual = SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL_BRUTO;
-		}
+		
+		custoEmissaoPercentual = SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL_BRUTO;
+		
 		if (this.valorCredito.multiply(custoEmissaoPercentual.divide(BigDecimal.valueOf(100)))
 				.compareTo(SiscoatConstants.CUSTO_EMISSAO_MINIMO) > 0) {
 			custoEmissaoValor = this.valorCredito.multiply(custoEmissaoPercentual.divide(BigDecimal.valueOf(100)));

@@ -6145,10 +6145,19 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					
 					if(!CommonsUtil.semValor(tipoParametro)) {
 						if(CommonsUtil.mesmoValor(tipoParametro, "Matricula")) {
-							//where = where + " and imv.numeromatricula like '%" + valorParametrto + "%' ";
 							where = where + " and udf_GetNumeric(numeromatricula) like '%"
 							+ CommonsUtil.somenteNumeros(valorParametrto) + "%' ";
-						}
+						} else if (tipoParametro.equals("nomePagador")) {
+		            		where = where + " and unaccent(p.nome) ilike unaccent('%" + valorParametrto + "%')";
+		            	} else if (tipoParametro.equals("cpfPagador")) {
+		            		where = where + " and p.cpf = '" + valorParametrto + "'";
+		            	} else if (tipoParametro.equals("cnpjPagador")) {
+		            		where = where + " and p.cnpj = '" + valorParametrto + "'";
+		            	} else if (tipoParametro.equals("numeroContrato")) {
+		            		where = where + " and cc.numerocontrato = '" + valorParametrto + "'";
+		            	} else if (tipoParametro.equals("numeroCCB")) {
+		            		where = where + " and cc.numeroContratoSeguro = '" + valorParametrto + "'";
+		            	}
 					}
 					
 					query = query + where;					
@@ -6161,8 +6170,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						
 					query = query + " order by id desc";
 					
-					ps = connection
-							.prepareStatement(query);
+					ps = connection.prepareStatement(query);
 					
 					rs = ps.executeQuery();
 					

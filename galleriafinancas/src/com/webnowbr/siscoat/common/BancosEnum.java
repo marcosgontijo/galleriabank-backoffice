@@ -83,6 +83,7 @@ public enum BancosEnum {
 	BANCO_INDUSTRIAL_E_COMERCIAL_S_A("320", "Banco Industrial e Comercial S.A."),
 	BANCO_C6_S_A("336", "Banco C6 S.A."),
 	ITAU_UNIBANCO_S_A("341", "Itaú Unibanco S.A."),
+	BANCO_XP_S_A("348", "Banco XP S.A."), //
 	BANCO_REAL_S_A("356", "Banco Real S.A."),
 	BANCO_SOCIETE_GENERALE_BRASIL_S_A("366", "Banco Société Générale Brasil S.A."),
 	BANCO_MIZUHO_DO_BRASIL_S_A("370", "Banco Mizuho do Brasil S.A."),

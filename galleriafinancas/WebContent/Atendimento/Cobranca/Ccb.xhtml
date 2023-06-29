@@ -29,9 +29,9 @@
 			<p:panel id="PanelLocador" header="Contrato"
 				style="margin-bottom:10px;">
 				<p:focus />
-				<p:messages id="msgs" />	
+				<p:messages id="msgs" />
 				<p:commandButton ajax="false" action="#{ccbMB.readXWPFile}"
-						icon="ui-icon ui-icon-print" value="Fazer Download"  update=" :form  msgs" />			
+					icon="ui-icon ui-icon-print" value="Fazer Download"  update=" :form  msgs" />			
 
 				<h:panelGrid columns="2">							
 					<p:outputLabel for="tipoDownload"
@@ -1877,6 +1877,12 @@
 									<f:selectItem itemValue="B" itemLabel="Bruto" />
 									<f:selectItem itemValue="L" itemLabel="Liquido" />						
 								</p:selectOneMenu>
+								
+								<p:outputLabel value="Usar Novo Custo Emissão: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+								<p:selectBooleanCheckbox id="objetoCcb" value="#{ccbMB.objetoCcb.usarNovoCustoEmissao}" >
+									<p:ajax update="taxaDeJurosMes" event="change" listener="#{ccbMB.objetoCcb.pegarTaxa}" />
+								</p:selectBooleanCheckbox>
 								
 								<p:outputLabel for="prazo"
 									value="Prazo:  " styleClass="labelBold"

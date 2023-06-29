@@ -12363,6 +12363,12 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		//} else {
 			ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 			this.contratosPendentes = new ArrayList<ContratoCobranca>();
+			
+			if (this.tipoParametroConsultaContrato.equals("numeroContrato")) {
+				if (this.parametroConsultaContrato.length() == 4) {
+					this.parametroConsultaContrato = "0" + this.parametroConsultaContrato;
+				}
+			}
 
 			if (loginBean != null) {
 				User usuarioLogado = new User();
@@ -28325,8 +28331,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 				documentoAnaliseDao.merge(documentoAnalise);
 				PrimeFaces.current().ajax().update("form:ArquivosAnalisados");
 			}
-		}		
-
+		}
 	}
 	
 	

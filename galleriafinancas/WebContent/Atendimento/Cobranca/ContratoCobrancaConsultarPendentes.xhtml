@@ -74,6 +74,10 @@
 						value="#{contratoCobrancaMB.tipoParametroConsultaContrato}">
 						<f:selectItem itemLabel="Todos" itemValue="todos" />
 						<f:selectItem itemLabel="Matrícula" itemValue="Matricula" />	
+						<f:selectItem itemLabel="Nome Pagador" itemValue="nomePagador" />
+			            <f:selectItem itemLabel="CPF Pagador" itemValue="cpfPagador" />
+			            <f:selectItem itemLabel="CNPJ Pagador" itemValue="cnpjPagador" />
+			            <f:selectItem itemLabel="CCB" itemValue="numeroCCB" />
 						<p:ajax event="change" update="panelParametros, ConsultaContratos" 
 							listener="#{contratoCobrancaMB.changeStatusConsultaPreContratos}" />
 					</p:selectOneListbox>
@@ -81,8 +85,19 @@
 					<p:inputText id="parametroConsultaContrato"
 						value="#{contratoCobrancaMB.parametroConsultaContrato}"
 						label="Contrato" style="width:150px;" required="true"
-						rendered="#{contratoCobrancaMB.tipoParametroConsultaContrato eq 'Matricula'}" >
+						rendered="#{contratoCobrancaMB.tipoParametroConsultaContrato eq 'numeroContrato' || 
+									contratoCobrancaMB.tipoParametroConsultaContrato eq 'nomePagador' || 
+									contratoCobrancaMB.tipoParametroConsultaContrato eq 'numeroCCB' ||
+									contratoCobrancaMB.tipoParametroConsultaContrato eq 'Matricula'}" >
 					</p:inputText>
+					<p:inputMask id="Cpf"
+						value="#{contratoCobrancaMB.parametroConsultaContrato}"
+						label="CPF" mask="999.999.999-99" required="true"
+						rendered="#{contratoCobrancaMB.tipoParametroConsultaContrato eq 'cpfPagador'}"/>
+					<p:inputMask id="CNPJ"
+						value="#{contratoCobrancaMB.parametroConsultaContrato}"
+						label="CNPJ" mask="99.999.999/9999-99" required="true"
+						rendered="#{contratoCobrancaMB.tipoParametroConsultaContrato eq 'cnpjPagador'}"/>
 					
 					<p:commandButton  icon="ui-icon-search" 
 						action="#{contratoCobrancaMB.geraConsultaContratosPendentes}"
