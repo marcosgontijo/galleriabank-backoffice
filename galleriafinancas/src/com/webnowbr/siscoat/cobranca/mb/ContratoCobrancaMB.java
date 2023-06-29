@@ -20423,10 +20423,11 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			} else {
 				this.selectedRecebedor = prDao.findById((long) 803);
 			}
-	
+			/*
 			if (this.selectedParcelas.size() > 0) {
 				this.vlrRecebido = this.vlrRecebido.divide(BigDecimal.valueOf(this.selectedParcelas.size()), MathContext.DECIMAL128);
 			}
+			*/
 			
 			ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
 			TimeZone zone = TimeZone.getDefault();
@@ -20448,7 +20449,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			for (ContratoCobrancaDetalhes parcelasBoleto : this.selectedParcelas) {
 				ContratoCobrancaDetalhesParcial contratoCobrancaDetalhesParcial = new ContratoCobrancaDetalhesParcial();
 				
-				if (this.vlrRecebido != null && this.vlrRecebido.intValue() != 0 ) {
+				if (parcelasBoleto.getVlrBoletoKobana() != null && parcelasBoleto.getVlrBoletoKobana().intValue() != 0 ) {
 					//if (this.vlrRecebido.compareTo(parcelasBoleto.getVlrParcela()) >= 0) {					
 						contratoCobrancaDetalhesParcial.setNumeroParcela(parcelasBoleto.getNumeroParcela());
 						
@@ -20457,10 +20458,15 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 						contratoCobrancaDetalhesParcial.setDataVencimento(parcelasBoleto.getDataVencimento());
 						contratoCobrancaDetalhesParcial.setVlrParcela(parcelasBoleto.getVlrParcelaAtualizada());
 						contratoCobrancaDetalhesParcial.setDataPagamentoGalleria(dataPagamento.getTime());
-						contratoCobrancaDetalhesParcial.setVlrRecebido(this.vlrRecebido);
+						contratoCobrancaDetalhesParcial.setVlrRecebido(parcelasBoleto.getVlrBoletoKobana());
+						
+						if (parcelasBoleto.getVlrBoletoKobana().compareTo(parcelasBoleto.getVlrParcela()) >= 0) {
+							parcelasBoleto.setParcelaPaga(true);
+						} else {
+							parcelasBoleto.setParcelaPaga(false);
+						}
 			
-						parcelasBoleto.setVlrParcelaAtualizada(null);
-						parcelasBoleto.setParcelaPaga(true);
+						parcelasBoleto.setVlrParcelaAtualizada(null);					
 						parcelasBoleto.setOrigemBaixa("baixarMultiParcelaParcial");
 						parcelasBoleto.getListContratoCobrancaDetalhesParcial().add(contratoCobrancaDetalhesParcial);
 						
@@ -28252,7 +28258,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 					if (documentoAnalise.isPodeChamarPpe() && !documentoAnalise.isPpeProcessado()) {
 						netrinService.requestCadastroPepPF(documentoAnalise);
 						resultPEP = GsonUtil.fromJson(documentoAnalise.getRetornoPpe(), PpeResponse.class);
-					} else if (!documentoAnalise.isPodeChamarPpe() && documentoAnalise.isPpeProcessado()) {
+					} else if (documentoAnalise.isPpeProcessado()) {
 						resultPEP = GsonUtil.fromJson(documentoAnalise.getRetornoPpe().replace("\"details\":\"\"", "\"details\":{}"), PpeResponse.class);
 					}
 				}
