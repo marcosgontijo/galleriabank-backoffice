@@ -190,7 +190,13 @@
         </property>
         <property name="senhaDocket" type="encryptedString">
             <column name="senhaDocket" />
-        </property>         		      
+        </property>    
+        
+        <many-to-one name="UserPerfil" class="com.webnowbr.siscoat.infra.db.model.UserPerfil" lazy="false" >
+        	<column name="idUserPerfil" />
+   		</many-to-one>
+         		      
+         	
 
     </class>
 </hibernate-mapping>
