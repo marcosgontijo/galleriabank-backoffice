@@ -387,19 +387,49 @@ public class KobanaMB {
 											
 										    if (nomeObjeto.contains("idParcela")) {
 										    	String valorObjeto = objetoDataBoleto.get(nomeObjeto).toString();
-										    	parcelasBoleto.add(cDao.findById(Long.valueOf(valorObjeto)));
+										    	ContratoCobrancaDetalhes objeto = null;
+										    	objeto = cDao.findById(Long.valueOf(valorObjeto));
+										    	
+										    	if (objeto != null) {
+										    		parcelasBoleto.add(objeto);
+										    	}
 										    }
 										}
+										
+										// se está no novo formato de baixa, onde tem valor customizado por parcela
+										if (parcelasBoleto.size() == 0) {
+											// percorre para pegar os ID's e converter em objeto
+											contratoParcelas = objetoDataBoleto.keys();
+											while (contratoParcelas.hasNext()) {
+												String nomeObjeto = contratoParcelas.next();
+												
+												if (nomeObjeto.contains("idParcela")) {
+													String valorObjeto = objetoDataBoleto.get(nomeObjeto).toString();
+													ContratoCobrancaDetalhes objeto = null;
+											    	objeto = cDao.findById(Long.valueOf(valorObjeto));
+											    	
+											    	if (objeto != null) {
+											    		parcelasBoleto.add(objeto);
+											    	}
+												}
+												// percorre parcelas e pega valor dos boletos
+												for (ContratoCobrancaDetalhes parcela : parcelasBoleto) {
+													if (parcela != null) {
+														parcela.setVlrBoletoKobana(objetoDataBoleto.getBigDecimal("valorParcelaKobana/" + parcela.getId()));
+													}
+												}
+											}											
+										} /*else {
+											// preenche o novo campo com o valor da parcela para ser usado na tela
+											for (ContratoCobrancaDetalhes parcela : parcelasBoleto) {
+												if (parcela != null) {
+													parcela.setVlrBoletoKobana(parcela.getVlrParcela());
+												}
+											}
+										}*/
 				
 										boleto.setMultiParcelas(parcelasBoleto);
-										
-										for (ContratoCobrancaDetalhes parcelas : boleto.getMultiParcelas()) {
-											if (parcelas.getVlrParcela() != null) {
-												// TODO VER COMO CAPTURAR O VALOR DAS PARCELAS DOS BOLETOS
-												//boleto.setVlrParcela(boleto.getVlrParcela().add(parcelas.getVlrParcela()));
-											}
-										}
-									}
+									} 
 								}
 							} else {
 								if (objetoDataBoleto.has("idParcela")) {

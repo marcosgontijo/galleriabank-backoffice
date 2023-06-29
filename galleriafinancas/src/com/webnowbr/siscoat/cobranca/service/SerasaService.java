@@ -27,7 +27,11 @@ public class SerasaService {
 
 	public void requestSerasa(DocumentoAnalise documentoAnalise, User user) {
 
+
+		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+		
 		if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
+			
 			PagadorRecebedorService pagaPagadorRecebedorService = new PagadorRecebedorService();
 			PagadorRecebedorConsulta pagadorRecebedorConsulta;
 
@@ -44,11 +48,12 @@ public class SerasaService {
 					&& DateUtil.getDaysBetweenDates(pagadorRecebedorConsulta.getDataConsulta(),
 							DateUtil.getDataHoje()) <= 30) {
 				documentoAnalise.setRetornoSerasa(pagadorRecebedorConsulta.getRetornoConsulta());
+
+				documentoAnaliseDao.merge(documentoAnalise);
 			} else
 				serasaCriarConsulta(documentoAnalise);
 		}
-		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-		documentoAnalise = documentoAnaliseDao.findById(documentoAnalise.getId());
+		
 
 		if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa())) {
 
