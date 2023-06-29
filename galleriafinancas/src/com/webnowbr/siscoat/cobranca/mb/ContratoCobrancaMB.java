@@ -8508,6 +8508,10 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
 		this.objetoPagadorRecebedor = this.objetoContratoCobranca.getPagador();
+		this.documentoAnalisePopup = null;
+		
+	
+		
 		
 		this.tituloPainel = "Editar";
 		
@@ -8540,6 +8544,7 @@ public class ContratoCobrancaMB {
 				this.tipoPessoaIsFisica = true;
 			}
 		}
+		listaArquivosAnaliseDocumentos();
 		
 		//permissao para editar inicio analise
 		if (loginBean != null) {
@@ -8579,6 +8584,7 @@ public class ContratoCobrancaMB {
 		} else {
 			return "/Atendimento/Cobranca/ContratoCobrancaInserirPendente.xhtml";
 		}	
+		
 	}
 	
 	public String clearFieldsDetalhesPendentes() {
