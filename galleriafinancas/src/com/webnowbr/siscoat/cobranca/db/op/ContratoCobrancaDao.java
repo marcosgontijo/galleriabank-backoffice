@@ -6143,20 +6143,20 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						where = where + " and res.codigo = '" + codResponsavel + "' ";			
 					} 	
 					
-					if(!CommonsUtil.semValor(tipoParametro)) {
+					if(!CommonsUtil.semValor(tipoParametro) && !CommonsUtil.semValor(valorParametrto)) {
 						if(CommonsUtil.mesmoValor(tipoParametro, "Matricula")) {
 							where = where + " and udf_GetNumeric(numeromatricula) like '%"
 							+ CommonsUtil.somenteNumeros(valorParametrto) + "%' ";
 						} else if (tipoParametro.equals("nomePagador")) {
-		            		where = where + " and unaccent(p.nome) ilike unaccent('%" + valorParametrto + "%')";
+		            		where = where + " and unaccent(pare.nome) ilike unaccent('%" + valorParametrto + "%')";
 		            	} else if (tipoParametro.equals("cpfPagador")) {
-		            		where = where + " and p.cpf = '" + valorParametrto + "'";
+		            		where = where + " and pare.cpf = '" + valorParametrto + "'";
 		            	} else if (tipoParametro.equals("cnpjPagador")) {
-		            		where = where + " and p.cnpj = '" + valorParametrto + "'";
+		            		where = where + " and pare.cnpj = '" + valorParametrto + "'";
 		            	} else if (tipoParametro.equals("numeroContrato")) {
-		            		where = where + " and cc.numerocontrato = '" + valorParametrto + "'";
+		            		where = where + " and coco.numerocontrato = '" + valorParametrto + "'";
 		            	} else if (tipoParametro.equals("numeroCCB")) {
-		            		where = where + " and cc.numeroContratoSeguro = '" + valorParametrto + "'";
+		            		where = where + " and coco.numeroContratoSeguro = '" + valorParametrto + "'";
 		            	}
 					}
 					

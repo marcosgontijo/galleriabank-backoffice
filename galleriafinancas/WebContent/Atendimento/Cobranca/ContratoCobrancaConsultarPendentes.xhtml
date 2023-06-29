@@ -82,19 +82,18 @@
 							listener="#{contratoCobrancaMB.changeStatusConsultaPreContratos}" />
 					</p:selectOneListbox>
 					
-					<p:inputText id="parametroConsultaContrato"
+					<p:inputText 
 						value="#{contratoCobrancaMB.parametroConsultaContrato}"
 						label="Contrato" style="width:150px;" required="true"
-						rendered="#{contratoCobrancaMB.tipoParametroConsultaContrato eq 'numeroContrato' || 
-									contratoCobrancaMB.tipoParametroConsultaContrato eq 'nomePagador' || 
+						rendered="#{contratoCobrancaMB.tipoParametroConsultaContrato eq 'nomePagador' || 
 									contratoCobrancaMB.tipoParametroConsultaContrato eq 'numeroCCB' ||
 									contratoCobrancaMB.tipoParametroConsultaContrato eq 'Matricula'}" >
 					</p:inputText>
-					<p:inputMask id="Cpf"
+					<p:inputMask 
 						value="#{contratoCobrancaMB.parametroConsultaContrato}"
 						label="CPF" mask="999.999.999-99" required="true"
 						rendered="#{contratoCobrancaMB.tipoParametroConsultaContrato eq 'cpfPagador'}"/>
-					<p:inputMask id="CNPJ"
+					<p:inputMask 
 						value="#{contratoCobrancaMB.parametroConsultaContrato}"
 						label="CNPJ" mask="99.999.999/9999-99" required="true"
 						rendered="#{contratoCobrancaMB.tipoParametroConsultaContrato eq 'cnpjPagador'}"/>
