@@ -10368,6 +10368,7 @@ public class CcbMB {
 		} else {
 			simulador.calcular();
 		}
+		simulador.calcularValorLiberado();
 		
 		BigDecimal jurosAoAno = BigDecimal.ZERO;
 		jurosAoAno = BigDecimal.ONE.add((this.objetoCcb.getTaxaDeJurosMes().divide(BigDecimal.valueOf(100), MathContext.DECIMAL128)));
