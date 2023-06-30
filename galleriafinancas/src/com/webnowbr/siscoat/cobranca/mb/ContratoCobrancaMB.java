@@ -13656,7 +13656,6 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 					simuladorMB.setSimularComIPCA(false);
 					simuladorMB.setIpcaSimulado(BigDecimal.ZERO);
 					simuladorMB.simular();
-					simuladorMB.getSimulacao().calcularValorLiberado();
 				}
 			}
 
@@ -13850,7 +13849,6 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 					simuladorMB.setSimularComIPCA(false);
 					simuladorMB.setIpcaSimulado(BigDecimal.ZERO);
 					simuladorMB.simular();
-					simuladorMB.getSimulacao().calcularValorLiberado();
 				}
 			}
 			
