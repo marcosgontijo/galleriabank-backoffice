@@ -211,9 +211,11 @@ public class SimulacaoVO implements ComputeInterface{
 		}
 		
 		this.custoEmissaoValor = SiscoatConstants.CUSTO_EMISSAO_MINIMO;
-		if (this.valorCredito.multiply(this.custoEmissaoPercentual.divide(BigDecimal.valueOf(100)))
-				.compareTo(SiscoatConstants.CUSTO_EMISSAO_MINIMO) > 0) {
-			this.custoEmissaoValor = this.valorCredito.multiply(custoEmissaoPercentual.divide(BigDecimal.valueOf(100)));
+		if(!CommonsUtil.semValor(custoEmissaoPercentual)) {			
+			if (this.valorCredito.multiply(this.custoEmissaoPercentual.divide(BigDecimal.valueOf(100)))
+					.compareTo(SiscoatConstants.CUSTO_EMISSAO_MINIMO) > 0) {
+				this.custoEmissaoValor = this.valorCredito.multiply(custoEmissaoPercentual.divide(BigDecimal.valueOf(100)));
+			}
 		}
 		
 		this.valorCreditoLiberado = this.valorCredito;
