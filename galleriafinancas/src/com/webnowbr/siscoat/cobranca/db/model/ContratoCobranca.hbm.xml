@@ -247,6 +247,9 @@
 		<property name="acao" type="java.lang.String">
 			<column name="ACAO" />
 		</property>
+		<property name="ispbPixContaPagar" type="java.lang.String">
+			<column name="ispbPixContaPagar" />
+		</property>
 		<property name="observacao" type="text">
 			<column name="OBSERVACAO" />
 		</property>

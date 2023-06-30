@@ -24,6 +24,8 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal valorAgilCessao;
 	private BigDecimal valorCessao;
 	
+	private String ispbPixContaPagar;
+	
 	private String cedenteBRLCessao;
 	private Date dataAquisicaoCessao;
 	
@@ -6384,7 +6386,13 @@ public class ContratoCobranca implements Serializable {
 
 	public void setContatoDiferenteProprietario(boolean contatoDiferenteProprietario) {
 		this.contatoDiferenteProprietario = contatoDiferenteProprietario;
+	}
+
+	public String getIspbPixContaPagar() {
+		return ispbPixContaPagar;
+	}
+
+	public void setIspbPixContaPagar(String ispbPixContaPagar) {
+		this.ispbPixContaPagar = ispbPixContaPagar;
 	}	
-	
-	
 }
