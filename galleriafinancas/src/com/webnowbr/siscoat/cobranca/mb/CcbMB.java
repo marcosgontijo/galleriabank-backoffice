@@ -476,8 +476,8 @@ public class CcbMB {
 		if(CommonsUtil.mesmoValor(participanteSelecionado.getTipoParticipante(), "EMITENTE")) {
 			if(CommonsUtil.semValor(this.objetoCcb.getContaCorrente())) {
 				if(!CommonsUtil.semValor(participanteSelecionado.getPessoa().getConta())) {
-					this.objetoCcb.setContaCorrente(participanteSelecionado.getPessoa().getConta());
-					this.objetoCcb.setCCBCC(participanteSelecionado.getPessoa().getConta());
+					this.objetoCcb.setContaCorrente(participanteSelecionado.getPessoa().getConta() + "-" + participanteSelecionado.getPessoa().getContaDigito());
+					this.objetoCcb.setCCBCC(participanteSelecionado.getPessoa().getConta() + "-" + participanteSelecionado.getPessoa().getContaDigito());
 				}
 			}
 			
@@ -498,16 +498,16 @@ public class CcbMB {
 			if(!CommonsUtil.semValor(participanteSelecionado.getPessoa().getBanco())) {		
 				this.objetoCcb.setCCBBanco(participanteSelecionado.getPessoa().getBanco());
 				String[] banco = participanteSelecionado.getPessoa().getBanco().split(Pattern.quote("|"));
-					if (banco.length > 0) {
-						if (CommonsUtil.semValor(this.objetoCcb.getNomeBanco())) {
+				if (CommonsUtil.semValor(this.objetoCcb.getNomeBanco())) {
+					if (!CommonsUtil.semValor(banco) || banco.length > 1) {
 						this.objetoCcb.setNomeBanco(CommonsUtil.trimNull(banco[1]));
 					}
 				}
 				if (CommonsUtil.semValor(this.objetoCcb.getNumeroBanco())) {
-					if (banco.length > 1) {
+					if (!CommonsUtil.semValor(banco) || banco.length > 1) {
 						this.objetoCcb.setNumeroBanco(CommonsUtil.trimNull(banco[0]));
 					}
-				}	
+				}
 			}
 			
 			if(CommonsUtil.semValor(this.objetoCcb.getTitularConta())) {
@@ -10322,7 +10322,7 @@ public class CcbMB {
 		BigDecimal custoEmissaoValor = SiscoatConstants.CUSTO_EMISSAO_MINIMO;
 		
 		final BigDecimal custoEmissaoPercentual;
-		if (false) {
+		if (objetoCcb.isUsarNovoCustoEmissao()) {
 			custoEmissaoPercentual = SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL_BRUTO_NOVO;
 		} else {
 			custoEmissaoPercentual = SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL_BRUTO;
@@ -10353,6 +10353,7 @@ public class CcbMB {
 		simulador.setQtdParcelas(BigInteger.valueOf(Long.parseLong(this.objetoCcb.getPrazo())));
 		simulador.setValorImovel(this.objetoCcb.getVlrImovel());
 		simulador.setCustoEmissaoValor(custoEmissaoValor);
+		simulador.setCustoEmissaoPercentual(custoEmissaoPercentual);
 		simulador.setTipoCalculo(this.objetoCcb.getSistemaAmortizacao());
 		simulador.setNaoCalcularDFI(false);
 		simulador.setNaoCalcularMIP(false);
@@ -10367,6 +10368,7 @@ public class CcbMB {
 		} else {
 			simulador.calcular();
 		}
+		simulador.calcularValorLiberado();
 		
 		BigDecimal jurosAoAno = BigDecimal.ZERO;
 		jurosAoAno = BigDecimal.ONE.add((this.objetoCcb.getTaxaDeJurosMes().divide(BigDecimal.valueOf(100), MathContext.DECIMAL128)));

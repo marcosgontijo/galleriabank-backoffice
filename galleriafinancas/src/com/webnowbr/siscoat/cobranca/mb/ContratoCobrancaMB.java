@@ -28414,8 +28414,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 				documentoAnaliseDao.merge(documentoAnalise);
 				PrimeFaces.current().ajax().update("form:ArquivosAnalisados");
 			}
-		}		
-
+		}
 	}
 	
 	

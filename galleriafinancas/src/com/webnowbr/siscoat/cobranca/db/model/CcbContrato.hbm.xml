@@ -503,6 +503,10 @@
 		<property name="CCBTipoConta" type="java.lang.String">
 			<column name="CCBTipoConta" />
 		</property> 
+		
+		<property name="usarNovoCustoEmissao" type="boolean">
+			<column name="usarNovoCustoEmissao" not-null="true" default="false" />
+		</property>	
 		        
     </class>
 </hibernate-mapping>

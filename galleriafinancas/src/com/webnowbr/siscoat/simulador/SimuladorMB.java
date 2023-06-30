@@ -115,8 +115,7 @@ public class SimuladorMB {
 			}
 			if (!CommonsUtil.semValor(validacao)) {
 				for (Map.Entry<String, String> mensagem : validacao.entrySet()) {
-					facesContext.addMessage(null,
-							new FacesMessage(FacesMessage.SEVERITY_ERROR, mensagem.getKey(), mensagem.getValue()));
+					facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, mensagem.getKey(), mensagem.getValue()));
 				}
 				return null;
 			}
@@ -125,11 +124,9 @@ public class SimuladorMB {
 		BigDecimal custoEmissaoValor = SiscoatConstants.CUSTO_EMISSAO_MINIMO;
 		
 		final BigDecimal custoEmissaoPercentual;
-		if (CommonsUtil.mesmoValor('L', tipoCalculoFinal)) {
-			custoEmissaoPercentual = SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL_LIQUIDO;
-		} else {
-			custoEmissaoPercentual = SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL_BRUTO;
-		}
+		
+		custoEmissaoPercentual = SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL_BRUTO;
+		
 		if (this.valorCredito.multiply(custoEmissaoPercentual.divide(BigDecimal.valueOf(100)))
 				.compareTo(SiscoatConstants.CUSTO_EMISSAO_MINIMO) > 0) {
 			custoEmissaoValor = this.valorCredito.multiply(custoEmissaoPercentual.divide(BigDecimal.valueOf(100)));
@@ -175,62 +172,12 @@ public class SimuladorMB {
 			GoalSeekFunction gsFunfction = new GoalSeekFunction();
 			BigDecimal valorBruto = CommonsUtil.bigDecimalValue(gsFunfction.getGoalSeek(goalSeek, simulador));
 			simulador.setValorCredito(valorBruto.setScale(2, RoundingMode.HALF_UP));
-		} else {			
+		} else {
 			simulador.calcular();
 		}
+		simulador.calcularValorLiberado();
 		
-		
-		/*simulador.setValorCreditoLiberado(simulador.getValorCredito());
-				
-		if (simulador.getCustoEmissaoValor() != null) {
-			simulador.setValorCreditoLiberado(simulador.getValorCreditoLiberado().subtract(simulador.getCustoEmissaoValor()));
-		} 
-		
-		if (simulador.getIOFTotal() != null) {
-			simulador.setValorCreditoLiberado(simulador.getValorCreditoLiberado().subtract(simulador.getIOFTotal()));
-		}
-
-		if (CommonsUtil.mesmoValor('L', tipoCalculoFinal)) {
-			BigDecimal fator = simulador.getIOFTotal().divide(simulador.getValorCredito(), MathContext.DECIMAL128);
-			fator = BigDecimal.ONE.subtract(fator);
-			BigDecimal valorBruto = (simulador.getValorCredito().add(custoEmissaoValor)).divide(fator,
-					MathContext.DECIMAL128);
-
-			SimulacaoVO simuladorLiquido = new SimulacaoVO();
-			simuladorLiquido.setDataSimulacao(DateUtil.getDataHoje());
-			simuladorLiquido.setTarifaIOFDiario(tarifaIOFDiario);
-			simuladorLiquido.setTarifaIOFAdicional(tarifaIOFAdicional);
-			simuladorLiquido.setSeguroMIP(SiscoatConstants.SEGURO_MIP);
-			simuladorLiquido.setSeguroDFI(SiscoatConstants.SEGURO_DFI);
-			simuladorLiquido.setTipoPessoa(tipoPessoa);
-			// valores
-			simuladorLiquido.setValorCreditoLiberado(simulador.getValorCredito());
-			simuladorLiquido.setValorCredito(valorBruto);
-			simuladorLiquido.setTaxaJuros(this.taxaJuros);
-			simuladorLiquido.setCarencia(this.carencia);
-			simuladorLiquido.setQtdParcelas(this.parcelas);
-			simuladorLiquido.setValorImovel(this.valorImovel);
-			simuladorLiquido.setCustoEmissaoValor(custoEmissaoValor);
-			simuladorLiquido.setTipoCalculo(tipoCalculo);
-			simuladorLiquido.setNaoCalcularDFI(this.naoCalcularDFI);
-			simuladorLiquido.setNaoCalcularMIP(this.naoCalcularMIP);
-			simuladorLiquido.setNaoCalcularTxAdm(this.naoCalcularTxAdm);
-			simuladorLiquido.setSimularComIPCA(this.simularComIPCA);
-			simuladorLiquido.setIpcaSimulado(this.ipcaSimulado);
-			simuladorLiquido.calcular();
-
-			if (this.valorCredito.add(simuladorLiquido.getIOFTotal())
-					.add(simuladorLiquido.getCustoEmissaoValor()) != valorBruto) {
-				valorBruto = this.valorCredito.add(simuladorLiquido.getIOFTotal())
-						.add(simuladorLiquido.getCustoEmissaoValor());
-				simuladorLiquido.setValorCredito(valorBruto);
-				simuladorLiquido.calcular();
-			}
-
-			this.simulacao = simuladorLiquido;
-		} else {*/
-			this.simulacao = simulador;
-		//}
+		this.simulacao = simulador;
 		this.simulacao.setMostrarIPCA(mostrarIPCA);
 		this.simulacao.setTipoCalculo(tipoCalculo);
 		this.simulacao.setTipoPessoa(tipoPessoa);
