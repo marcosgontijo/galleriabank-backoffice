@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
@@ -100,11 +101,23 @@ public class PagadorRecebedor implements Serializable {
 	private String banco;
 	private String agencia;
 	private String conta;
+	private String contaDigito;
 	private String nomeCC;
 	private String cpfCC;
 	private String cnpjCC;
-	private String pix;
 	private String tipoConta;
+
+	private boolean contaBancariaValidada;
+
+	private String tipoPix;
+	private String pix;
+	private String bancoPix;
+	private String agenciaPix;
+	private String contaPix;
+	private String contaDigitoPix;
+	
+	private boolean pixValidado;
+	
 	
 	private String idIugu;
 	
@@ -475,6 +488,14 @@ public class PagadorRecebedor implements Serializable {
 	}
 
 	
+	public String getCodigoBanco() {
+		String[] banco = getBanco().split(Pattern.quote("|"));
+		if (banco.length > 0) {
+			return CommonsUtil.trimNull(banco[0]);
+
+		} else
+			return null;}
+	
 	/**
 	 * @return the id
 	 */
@@ -756,6 +777,14 @@ public class PagadorRecebedor implements Serializable {
 	 */
 	public void setConta(String conta) {
 		this.conta = conta;
+	}
+	
+	public String getContaDigito() {
+		return contaDigito;
+	}
+
+	public void setContaDigito(String contaDigito) {
+		this.contaDigito = contaDigito;
 	}
 
 	/**
@@ -2179,6 +2208,55 @@ public class PagadorRecebedor implements Serializable {
 		this.pix = pix;
 	}
 
+	public boolean isPixValidado() {
+		return pixValidado;
+	}
+
+	public void setPixValidado(boolean pixValidado) {
+		this.pixValidado = pixValidado;
+	}
+
+	public String getTipoPix() {
+		return tipoPix;
+	}
+
+	public void setTipoPix(String tipoPix) {
+		this.tipoPix = tipoPix;
+	}	
+	
+
+	public String getBancoPix() {
+		return bancoPix;
+	}
+
+	public void setBancoPix(String bancoPix) {
+		this.bancoPix = bancoPix;
+	}
+
+	public String getAgenciaPix() {
+		return agenciaPix;
+	}
+
+	public void setAgenciaPix(String agenciaPix) {
+		this.agenciaPix = agenciaPix;
+	}
+
+	public String getContaPix() {
+		return contaPix;
+	}
+
+	public void setContaPix(String contaPix) {
+		this.contaPix = contaPix;
+	}
+
+	public String getContaDigitoPix() {
+		return contaDigitoPix;
+	}
+
+	public void setContaDigitoPix(String contaDigitoPix) {
+		this.contaDigitoPix = contaDigitoPix;
+	}
+
 	public List<DocumentosPagadorDocket> getDocumentosDocket() {
 		return documentosDocket;
 	}
@@ -2233,6 +2311,14 @@ public class PagadorRecebedor implements Serializable {
 
 	public void setTipoConta(String tipoConta) {
 		this.tipoConta = tipoConta;
+	}
+
+	public boolean isContaBancariaValidada() {
+		return contaBancariaValidada;
+	}
+
+	public void setContaBancariaValidada(boolean contaBancariaValidada) {
+		this.contaBancariaValidada = contaBancariaValidada;
 	}	
 	
 }

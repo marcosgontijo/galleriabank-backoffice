@@ -13,9 +13,11 @@ import java.net.URL;
 import javax.faces.application.FacesMessage;
 
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
+import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorConsulta;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.infra.db.model.User;
 
@@ -27,11 +29,33 @@ public class SerasaService {
 
 	public void requestSerasa(DocumentoAnalise documentoAnalise, User user) {
 
-		if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
-			serasaCriarConsulta(documentoAnalise);
-		}
+
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-		documentoAnalise = documentoAnaliseDao.findById(documentoAnalise.getId());
+		
+		if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
+			
+			PagadorRecebedorService pagaPagadorRecebedorService = new PagadorRecebedorService();
+			PagadorRecebedorConsulta pagadorRecebedorConsulta;
+
+			if (documentoAnalise.getTipoPessoa() == "PJ")
+				pagadorRecebedorConsulta = pagaPagadorRecebedorService
+						.buscaConsultaNoPagadorRecebedor(documentoAnalise.getPagador(), DocumentosAnaliseEnum.RELATO);
+			else {
+				pagadorRecebedorConsulta = pagaPagadorRecebedorService
+						.buscaConsultaNoPagadorRecebedor(documentoAnalise.getPagador(), DocumentosAnaliseEnum.CREDNET);
+			}
+
+			if (!CommonsUtil.semValor(pagadorRecebedorConsulta)
+					&& !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta())
+					&& DateUtil.getDaysBetweenDates(pagadorRecebedorConsulta.getDataConsulta(),
+							DateUtil.getDataHoje()) <= 30) {
+				documentoAnalise.setRetornoSerasa(pagadorRecebedorConsulta.getRetornoConsulta());
+
+				documentoAnaliseDao.merge(documentoAnalise);
+			} else
+				serasaCriarConsulta(documentoAnalise);
+		}
+		
 
 		if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa())) {
 
@@ -39,13 +63,8 @@ public class SerasaService {
 
 			if (!CommonsUtil.semValor(documentoAnalise.getPagador())) {
 				PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
-
-				// if (CommonsUtil.semValor(documentoAnalise.getPagador().getDtNascimento()))
 				documentoAnalise.getPagador().setDtNascimento(credNet.getPessoa().getDataNascimentoFundacao());
-
-				// if (CommonsUtil.semValor(documentoAnalise.getPagador().getNomeMae()))
 				documentoAnalise.getPagador().setNomeMae(credNet.getPessoa().getNomeMae());
-
 				pagadorRecebedorDao.merge(documentoAnalise.getPagador());
 			}
 

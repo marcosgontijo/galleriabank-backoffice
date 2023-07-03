@@ -932,83 +932,49 @@
 
 									</p:column>
 
-									<p:column headerText="Liberado Análise">
+									<p:column headerText="Liberado Análise" >
 										<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"
-											disabled="#{!contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
-											rendered="#{fileAnalise.podeChamarRea or fileAnalise.podeChamarEngine or fileAnalise.reaProcessado or fileAnalise.engineProcessado}"
-											onLabel="Sim" offLabel="Não" style="width:6rem">
-											<p:ajax event="change"
-												listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
-										</p:selectBooleanButton>
-									</p:column>
-									<p:column headerText="Liberar Serasa">
-
-										<p:selectBooleanButton value="#{fileAnalise.liberadoSerasa}"
-											disabled="#{!contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
-											rendered="#{fileAnalise.podeChamarSerasa or fileAnalise.serasaProcessado}"
-											onLabel="Sim" offLabel="Não" style="width:6rem">
-											<p:ajax event="change"
-												listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
-										</p:selectBooleanButton>
-									</p:column>
-									<p:column headerText="Liberar Cenprot">
-										<p:selectBooleanButton value="#{fileAnalise.liberadoCenprot}"
-											disabled="#{!contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
-											onLabel="Sim" offLabel="Não" style="width:6rem">
-											<p:ajax event="change"
-												listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
-										</p:selectBooleanButton>
-									</p:column>
-									<p:column headerText="Liberar Processos">
-										<p:selectBooleanButton value="#{fileAnalise.liberadoProcesso}"
-											disabled="#{!contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
 											 onLabel="Sim" offLabel="Não" style="width:6rem" >
 										<p:ajax  event="change"
 											listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
 											</p:selectBooleanButton>
 									</p:column>
-									<p:column headerText="Liberar SCR">
-										<p:selectBooleanButton value="#{fileAnalise.liberadoScr}"
-											disabled="#{!contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
-											onLabel="Sim" offLabel="Não" style="width:6rem">
-											<p:ajax event="change"
-												listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
-										</p:selectBooleanButton>
-									</p:column>
+									
+									<p:column style="text-align: center; width:5rem;">
 
+										<p:commandButton value="ver Resumo"
+											onclick="PF('resumoConsutlasDialog').show()"
+											update="resumoConsutlasForm" ajax="true"
+											style="TEXT-DECORATION: bold;">
+											<f:setPropertyActionListener value="#{fileAnalise}"
+												target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
+										</p:commandButton>
+
+
+									</p:column>
 
 
 									<p:column style="text-align: center;"
-										rendered ="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
-										headerText="Identificação"
-										filterBy="#{fileAnalise.identificacao}"
-										filterMatchMode="contains"
-										sortBy="#{fileAnalise.identificacao}">
+										headerText="Identificação" filterBy="#{fileAnalise.identificacao}"
+										filterMatchMode="contains" sortBy="#{fileAnalise.identificacao}">
 
 										<h:outputText value="#{fileAnalise.identificacao}"
 											rendered="#{fileAnalise.podeChamarRea}" />
-										<h:outputText
-											value="#{fileAnalise.identificacao} #{fileAnalise.cnpjcpf} "
+										<h:outputText value="#{fileAnalise.identificacao} #{fileAnalise.cnpjcpf} "
 											rendered="#{!fileAnalise.podeChamarRea}" />
 										<p:spacer height="10" />
-
 									</p:column>
-									<p:column style="text-align: center;"
-										rendered ="#{!contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
-										headerText="Identificação">
-
-										<h:outputText value="#{fileAnalise.identificacao}"
-											rendered="#{fileAnalise.podeChamarRea}" />
-										<h:outputText
-											value="#{fileAnalise.identificacao} #{fileAnalise.cnpjcpf} "
-											rendered="#{!fileAnalise.podeChamarRea}" />
-										<p:spacer height="10" />
-
-									</p:column>
+										
+									
 
 									<p:column style="text-align: center;" headerText="Motivo"
 										filterMatchMode="contains">
 										<h:outputText value="#{fileAnalise.motivoAnalise}" />
+									</p:column>
+									
+									<p:column style="text-align: center;" headerText="Observação"
+										filterMatchMode="contains">
+										<h:outputText value="#{fileAnalise.observacao}" />
 									</p:column>
 
 									<p:column style="text-align: center;" headerText="Situação"
@@ -1072,6 +1038,7 @@
 							</h:panelGrid>
 
 						</p:panel>
+<<<<<<< HEAD
 						<p:panel id="pnlCeridoesAnalise" header="Certidões"
 							style="margin-bottom:10px;"
 							rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}">
@@ -1080,6 +1047,14 @@
 								action="#{contratoCobrancaMB.executarConsultasAnaliseDocumento}" />
 							<p:commandButton value="Certidões Docket"
 								action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.objetoContratoCobranca)}" />
+=======
+						<p:panel id="pnlCeridoesAnalise"
+							header="Certidões"
+							style="margin-bottom:10px;">
+							
+							<p:commandButton value="Executar Consultas" action="#{contratoCobrancaMB.executarConsultasAnaliseDocumento}"  ajax="true" />
+							<p:commandButton value="Certidões Docket" action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.objetoContratoCobranca)}"/>	
+>>>>>>> refs/remotes/origin/homolog
 						</p:panel>
 					</p:panel>
 				
@@ -1580,7 +1555,7 @@
 							<p:selectOneMenu id="valorBoletoPre"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.valorBoletoPreContratoStr}" ajax="true" 
 								style="font-weight: bold;">
-								<f:selectItem itemValue="925,00" itemLabel="50% - R$900,00" />
+								<f:selectItem itemValue="925,00" itemLabel="50% - R$925,00" />
 								<f:selectItem itemValue="1.850,00" itemLabel="100% - R$1.850,00" />
 							</p:selectOneMenu>
 							
@@ -1649,6 +1624,11 @@
 							<p:outputLabel id="observacaoContatoAgendaLaudoAvaliacao"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.observacaoContatoAgendaLaudoAvaliacao}"
 								style="FONT-SIZE: 10pt;width:100px;white-space: pre-wrap;" />
+								
+							<p:outputLabel for="contatoDiferenteProprietario" value="Contato é diferente do Proprietário? "
+								styleClass="labelBold" />
+							<p:selectBooleanCheckbox id="contatoDiferenteProprietario"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.contatoDiferenteProprietario}" />
 							
 							<p:outputLabel for="avaliacaoLaudoObservacao"
 									value="Observação Avaliação: " styleClass="labelBold" />
@@ -3195,10 +3175,15 @@
 							label="NumeroMatricula" onblur="" style="width:400px;" />
 
 						<p:outputLabel for="Cartorio" value="Cartório de Registro: " />
-						<p:inputText id="Cartorio"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.cartorio}"
+						<p:inputText id="Cartorio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorio}"
 							label="Cartório" onblur="" style="width:400px;" />
 
+						<p:outputLabel for="cartorioEstado" value="Estado Cartório: " />
+						<p:inputText id="cartorioEstado" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioEstado}" /> 
+											
+						<p:outputLabel for="cartorioMunicipio" value="Município Cartório: " />
+						<p:inputText id="cartorioMunicipio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioMunicipio}" />
+						
 						<p:outputLabel for="CepImovel" value="Cep: "/>
 						<p:inputMask id="CepImovel"
 							value="#{contratoCobrancaMB.objetoImovelCobranca.cep}"
@@ -3358,8 +3343,7 @@
 							label="Ocupação" style="width:410px;">
 							<f:selectItem itemValue="" itemLabel="Selecione" />
 							<f:selectItem itemValue="Ocupado" itemLabel="Ocupado" />
-							<f:selectItem itemValue="Ocupado por mim"
-								itemLabel="Ocupado por mim" />
+							<f:selectItem itemValue="Ocupado por mim" itemLabel="Ocupado por mim" />
 							<f:selectItem itemValue="Alugado" itemLabel="Alugado" />
 							<f:selectItem itemValue="Vazio" itemLabel="Vazio" />
 							<f:selectItem itemValue="Não sei" itemLabel="Não sei" />
@@ -3368,15 +3352,6 @@
 						<p:outputLabel for="inscricaoMunicipal" value="Inscrição Municipal: " />
 						<p:inputText id="inscricaoMunicipal" value="#{contratoCobrancaMB.objetoImovelCobranca.inscricaoMunicipal}" />
 						
-						<p:outputLabel for="numeroCartorio" value="Numero Cartório: " />
-						<p:inputText id="numeroCartorio" type="number"
-						value="#{contratoCobrancaMB.objetoImovelCobranca.numeroCartorio}" />  
-											
-						<p:outputLabel for="cartorioEstado" value="Estado Cartório: " />
-						<p:inputText id="cartorioEstado" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioEstado}" /> 
-											
-						<p:outputLabel for="cartorioMunicipio" value="Município Cartório: " />
-						<p:inputText id="cartorioMunicipio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioMunicipio}" />
 
 					</h:panelGrid>
 				</p:panel>
@@ -3714,10 +3689,10 @@
 									styleClass="dateTimeField" />
 								
 								<p:outputLabel for="ContaPagarObservacao" value="Observação: "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
 								<p:inputTextarea id="ContaPagarObservacao"  rows="6" cols="33"
-								value="#{contratoCobrancaMB.contasPagarSelecionada.observacao}"/>
+									value="#{contratoCobrancaMB.contasPagarSelecionada.observacao}"/>
 								
 								<p:outputLabel for="formaTransferencia" value="Forma de Tranferência: "
 									styleClass="labelBold"
