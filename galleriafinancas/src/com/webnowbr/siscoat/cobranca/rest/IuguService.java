@@ -3,14 +3,13 @@ package com.webnowbr.siscoat.cobranca.rest;
 import java.math.BigDecimal;
 import java.util.List;
 
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,21 +25,22 @@ public class IuguService {
 	private List<ContratoCobranca> objetoContratoCobrancaList;
 	private IuguMB iuguMB = new IuguMB();
 	
-	@GET
+	@POST
 	@Path("/CriarFatura")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response criarFatura(@QueryParam("numeroContrato") String numeroContrato, @QueryParam("valorFatura") BigDecimal valorFatura) { 
+	public Response criarFatura(String dadosEntrada) { 
 		logger.info("Inicio Contract Service - Criar Fatura ");
 		
+		JSONObject dadosEntradaAPP = new JSONObject(dadosEntrada);
+		
 		iuguMB.setContratoCobranca(new ContratoCobranca());
-		iuguMB.getContratoCobranca().setNumeroContrato(numeroContrato);	
-		iuguMB.setValorItem(valorFatura);
+		iuguMB.getContratoCobranca().setNumeroContrato(dadosEntradaAPP.has("numeroContrato") ? dadosEntradaAPP.getString("numeroContrato") : null);	
+		iuguMB.setValorItem(dadosEntradaAPP.has("valorFatura") ? new BigDecimal(dadosEntradaAPP.getString("valorFatura")) : null);	
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		this.objetoContratoCobrancaList = contratoCobrancaDao.findByFilter("numeroContrato", numeroContrato);
+		this.objetoContratoCobrancaList = contratoCobrancaDao.findByFilter("numeroContrato", iuguMB.getContratoCobranca().getNumeroContrato());
 		if(this.objetoContratoCobrancaList.isEmpty()) {
 			String message = "{\"retorno\": \"[Galleria Bank] Numero do Contrato não foi encontrato!!!\"}";
 			logger.warn("Fatura Service - Criar Fatura - Numero do Contrato não foi encontrato !!!");
-			return Response
 				      .status(Response.Status.FORBIDDEN)
 				      .entity(message)
 				      .type(MediaType.APPLICATION_JSON)
