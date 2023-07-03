@@ -90,7 +90,24 @@
 								<p:menuitem value="Processos UniProof"
 									action="#{uniproofMB.clearFieldsProcessos}"
 									ajax="false" icon="ui-icon ui-icon-newwin"
-									styleClass="itemMenu" />							
+									styleClass="itemMenu" />	
+									<p:menuitem value="Consulta Serasa"
+									action="#{consultaSerasaMB.clear}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />
+									<p:menuitem value="Consulta Cenprot"
+									action="#{consultaCenprotMB.clear}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />
+									<p:menuitem value="Consulta Protestos"
+									action="#{consultaProtestosMB.clear}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />
+									<p:menuitem value="Consulta PEP Novo"
+									action="#{consultaPEPMB.clear}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />
+															
 							</p:submenu>					
 						</shiro:hasAnyRoles>						
 						<shiro:hasAnyRoles name="ROOT, COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_CREDITO,

@@ -39,6 +39,10 @@
 			.ValorSeguros{
 				width: 100px;
 			}
+			.painelResumo{
+				vertical-align: top;
+				
+			}
 			</h:outputStylesheet>
 				
 			<p:panel id="PanelLocador" header="Contrato - #{contratoCobrancaMB.tituloPainel}" style="margin-bottom:10px;">
@@ -876,18 +880,18 @@
 
 				<shiro:hasAnyRoles
 					name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO">
-					<p:panel id="ArquivosAnalisados" 
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
+					<p:panel id="ArquivosAnalisados"
 						style="margin-bottom:10px;text-align: center;">
 						<f:facet name="header">
-						   <h:outputText value="Analise Documentos" />
-							<p:commandButton value="Atualizar listagem" ajax="true" update="ArquivosAnalisados" style="margin-left:10px;"
-								action="#{contratoCobrancaMB.listaArquivosAnaliseDocumentos}" immediate="true"
-								icon="ui-icon-search">
+							<h:outputText value="Analise Documentos" />
+							<p:commandButton value="Atualizar listagem" ajax="true" rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
+								update="ArquivosAnalisados" style="margin-left:10px;"
+								action="#{contratoCobrancaMB.listaArquivosAnaliseDocumentos}"
+								immediate="true" icon="ui-icon-search">
 							</p:commandButton>
 						</f:facet>
 
-						<h:panelGrid columns="1">
+						<h:panelGrid columns="1" rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}">
 							<p:fileUpload label="Selecionar Arquivo"
 								uploadLabel="Salvar Arquivo" multiple="false"
 								cancelLabel="Cancelar"
@@ -903,8 +907,8 @@
 							style="margin-bottom:10px;">
 							<f:facet name="header"> Arquivo(s) Salvo(s) na analise 
 							<p:outputLabel value="" />
-								<p:commandButton value="Adicionar Pessoa" 
-								  action="#{contratoCobrancaMB.preparaAdicionarPessoaAnalise}"
+								<p:commandButton value="Adicionar Pessoa"  rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
+									action="#{contratoCobrancaMB.preparaAdicionarPessoaAnalise}"
 									oncomplete="PF('adicionarPessoaAnaliseDlg').show();"
 									update="adicionarPessoaAnaliseForm">
 								</p:commandButton>
@@ -914,9 +918,21 @@
 							<h:panelGrid columns="1">
 								<p:dataTable id="dtFilesAnalise" var="fileAnalise"
 									value="#{contratoCobrancaMB.listaDocumentoAnalise}"
-									
 									rowKey="#{fileAnalise.id}" emptyMessage="">
-									<p:column headerText="Liberado Análise" >
+
+									<p:column style="text-align: center; width:5rem;">
+
+										<p:commandButton value="ver Resumo"
+											onclick="PF('resumoConsutlasDialog').show()"
+											update="resumoConsutlasForm" ajax="true"
+											style="TEXT-DECORATION: bold;">
+											<f:setPropertyActionListener value="#{fileAnalise}"
+												target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
+										</p:commandButton>
+
+									</p:column>
+
+									<p:column headerText="Liberado Análise">
 										<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"
 											 onLabel="Sim" offLabel="Não" style="width:6rem" >
 										<p:ajax  event="change"
@@ -960,16 +976,16 @@
 											rendered="#{!fileAnalise.podeChamarEngine and fileAnalise.engineProcessado }"
 											ajax="false" />
 
-										<p:commandButton action="#{serasaMB.baixarDocumento(fileAnalise)}"
+										<p:commandButton
+											action="#{serasaMB.baixarDocumento(fileAnalise)}"
 											icon="ui-icon ui-icon-print" value="Download Serasa"
-											rendered="#{fileAnalise.serasaProcessado }"
-											ajax="false" />
+											rendered="#{fileAnalise.serasaProcessado }" ajax="false" />
 
 										<p:commandButton
 											action="#{netrinMB.baixarDocumento(fileAnalise)}"
 											icon="ui-icon ui-icon-print" value="Download Cenprot"
 											rendered="#{fileAnalise.cenprotProcessado }" ajax="false" />
-											
+
 										<p:commandButton
 											action="#{netrinMB.baixarDocumentoPpe(fileAnalise)}"
 											icon="ui-icon ui-icon-print" value="Download PPE"
@@ -989,7 +1005,7 @@
 											action="#{bmpDigitalMB.baixarDocumento(fileAnalise)}"
 											icon="ui-icon ui-icon-print" value="Download SCR"
 											rendered="#{fileAnalise.scrProcessado }" ajax="false" />
-											
+
 
 									</p:column>
 
@@ -997,10 +1013,12 @@
 										<p:commandButton value="Download" ajax="false"
 											icon="ui-icon-arrowthick-1-s">
 											<f:setPropertyActionListener
-												target="#{contratoCobrancaMB.selectedFile}" value="#{fileAnalise}" />
+												target="#{contratoCobrancaMB.selectedFile}"
+												value="#{fileAnalise}" />
 											<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
 										</p:commandButton>
 									</p:column>
+
 								</p:dataTable>
 							</h:panelGrid>
 
@@ -1013,7 +1031,7 @@
 							<p:commandButton value="Certidões Docket" action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.objetoContratoCobranca)}"/>	
 						</p:panel>
 					</p:panel>
-
+				
 				</shiro:hasAnyRoles>
 
 
@@ -5285,6 +5303,85 @@
 					</p:commandButton>
 				</div>
 			</h:form>
-		</p:dialog>		
+		</p:dialog>
+
+		<p:dialog header="Resumo Consultas" 
+			widgetVar="resumoConsutlasDialog" showEffect="fade" hideEffect="fade"
+			resizable="false" responsive="false" width="1000"
+			positionType="center center" closable="true">
+			<h:form id="resumoConsutlasForm">
+				<h:panelGrid columns="4" columnClasses="painelResumo,painelResumo,painelResumo,painelResumo">
+				
+					<p:panel>
+						<f:facet name="header">
+							<h:outputText value="Engine" />
+						</f:facet>
+						
+						<p:dataTable id="resumocliente" var="engine" rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
+							value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoEngine()}">
+							<p:column>
+								<h:outputText value="#{engine.descricao}"></h:outputText>
+							</p:column>
+							<p:column>
+								<h:outputText value="#{engine.valor}"></h:outputText>
+							</p:column>
+						</p:dataTable>
+					</p:panel>
+
+					<p:panel style="justify-content:start;">
+						<f:facet name="header">
+							<h:outputText value="Serasa" />
+							<p:dataTable id="resumoSerasa" var="Serasa" rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
+							value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoSerasa()}">
+								<p:column>
+									<h:outputText value="#{Serasa.descricao}"></h:outputText>
+								</p:column>
+								<p:column>
+									<h:outputText value="#{Serasa.valor}"></h:outputText>
+								</p:column>
+								</p:dataTable>
+						</f:facet>
+						
+					</p:panel>
+
+					<p:panel style="justify-content:start;">
+						<f:facet name="header">
+							<h:outputText value="Cenprot" />
+							<p:dataTable id="resumoCenprot" var="Cenprot" rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
+							value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoCenprot()}">
+								<p:column>
+									<h:outputText value="#{Cenprot.descricao}" />
+								</p:column>
+								<p:column>
+									<h:outputText value="#{Cenprot.valor}"/>
+								</p:column>
+							
+							
+							</p:dataTable>
+						</f:facet>
+					</p:panel>
+
+					<p:panel>
+						<f:facet name="header">
+							<h:outputText value="SCR" />
+							<p:dataTable id="resumoScr" var="scr" rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
+							value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoScr()}">
+							<p:column>
+								<h:outputText value="#{scr.descricao}"/>
+							</p:column>l
+							<p:column>
+								<h:outputText value="#{scr.valor}"/>
+							</p:column>
+							</p:dataTable>
+						</f:facet>
+						
+					</p:panel>
+					
+					
+				</h:panelGrid>
+				
+			</h:form>
+		</p:dialog>
+
 	</ui:define>
 </ui:composition>
