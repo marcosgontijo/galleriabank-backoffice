@@ -5,11 +5,13 @@ import com.starkbank.utils.Generator;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankBoleto;
+import com.webnowbr.siscoat.cobranca.db.model.StarkBankPix;
 import com.webnowbr.siscoat.cobranca.db.model.TransferenciasIUGU;
 import com.webnowbr.siscoat.cobranca.db.model.TransferenciasObservacoesIUGU;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.StarkBankBoletoDAO;
+import com.webnowbr.siscoat.cobranca.db.op.StarkBankPixDAO;
 import com.webnowbr.siscoat.cobranca.db.op.TransferenciasObservacoesIUGUDao;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
@@ -708,6 +710,239 @@ public class StarkBankAPI{
 		}
 	}
 	
+	public void geraReciboPagamentoPix(String idTransacao, BigDecimal valor, Date dataPagamento, String taxID, String nomePagador) {
+		/*
+		this.transferenciasObservacoesIUGU = new TransferenciasObservacoesIUGU();
+		this.transferenciasObservacoesIUGU.setId(1);
+		this.transferenciasObservacoesIUGU.setIdTransferencia("jdsfhdsfhjskfhjhslafdshf");
+		this.transferenciasObservacoesIUGU.setObservacao("asdklfhjksdhfjd dsjfhjhdsfjashgdfj ");
+
+		this.valorItem = new BigDecimal("30000.00");
+		 */
+		DecimalFormat df = new DecimalFormat("###,###,###,###,###.00");
+
+		FacesContext context = FacesContext.getCurrentInstance();
+		/*
+		 * Referência iText - Gerador PDF
+		 * http://www.dicas-l.com.br/arquivo/gerando_pdf_utilizando_java.php#.VGpT0_nF_h4
+		 */ 		
+
+		Document doc = null;
+		OutputStream os = null;
+
+		try {
+			/*
+			 *  Fonts Utilizadas no PDF
+			 */
+			Font header = new Font(FontFamily.HELVETICA, 12, Font.BOLD);
+
+			Font titulo = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
+			Font tituloBranco = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
+			tituloBranco.setColor(BaseColor.WHITE);
+			Font normal = new Font(FontFamily.HELVETICA, 10);
+			Font subtitulo = new Font(FontFamily.HELVETICA, 10, Font.BOLD);	    	
+			Font subtituloIdent = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
+			Font destaque = new Font(FontFamily.HELVETICA, 8, Font.BOLD);
+
+			TimeZone zone = TimeZone.getDefault();  
+			Locale locale = new Locale("pt", "BR"); 
+			Calendar date = Calendar.getInstance(zone, locale);  
+			SimpleDateFormat sdfDataRel = new SimpleDateFormat("dd/MMM/yyyy", locale);
+			SimpleDateFormat sdfDataRelComHoras = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", locale);
+
+			ParametrosDao pDao = new ParametrosDao(); 
+			/*
+			 * Configuração inicial do PDF - Cria o documento tamanho A4, margens de 2,54cm
+			 */
+
+
+			doc = new Document(PageSize.A4.rotate(), 10, 80, 10, 80);
+			this.nomePDF = "Recibo - Pagamento Pix/TED - " + nomePagador + ".pdf";
+			this.pathPDF = pDao.findByFilter("nome", "RECIBOS_IUGU").get(0).getValorString();
+
+			os = new FileOutputStream(this.pathPDF + this.nomePDF);  	
+
+			// Associa a stream de saída ao 
+			PdfWriter.getInstance(doc, os);
+
+			// Abre o documento
+			doc.open();     			
+			/*
+			Paragraph p1 = new Paragraph("RECIBO DE PAGAMENTO - " + favorecido, titulo);
+			p1.setAlignment(Element.ALIGN_CENTER);
+			p1.setSpacingAfter(10);
+			doc.add(p1);  	
+			 */
+			PdfPTable table = new PdfPTable(new float[] { 0.8f, 0.8f});
+			table.setWidthPercentage(50.0f); 
+			
+			BufferedImage buff = ImageIO.read(getClass().getResourceAsStream("/resource/logoStarkBank.jpg"));
+	        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+	        ImageIO.write(buff, "jpg", bos);
+	        Image img = Image.getInstance(bos.toByteArray());
+	        
+			img.setAlignment(Element.ALIGN_CENTER);
+
+			PdfPCell cell1 = new PdfPCell(img);
+			cell1.setBorder(0);
+			cell1.setPaddingLeft(8f);
+			cell1.setBorderWidthTop(1);
+			cell1.setBorderColorTop(BaseColor.BLACK);
+			cell1.setBorderWidthLeft(1);
+			cell1.setBorderColorLeft(BaseColor.BLACK);
+			cell1.setBorderWidthRight(1);
+			cell1.setBorderColorRight(BaseColor.BLACK);			
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(10f);
+			cell1.setPaddingBottom(10f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase("StarkBank - Sistema de Pagamento online", header));
+			cell1.setBorder(0);
+			cell1.setBorderWidthLeft(1);
+			cell1.setBorderColorLeft(BaseColor.BLACK);
+			cell1.setBorderWidthRight(1);
+			cell1.setBorderColorRight(BaseColor.BLACK);	
+			cell1.setPaddingLeft(8f);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(5f);
+			cell1.setPaddingBottom(15f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+
+			cell1 = new PdfPCell(new Phrase("Comprovante de Pagamento - Pix/TED", tituloBranco));
+			cell1.setBorder(0);
+			cell1.setBorderWidthLeft(1);
+			cell1.setBorderColorLeft(BaseColor.BLACK);
+			cell1.setBorderWidthRight(1);
+			cell1.setBorderColorRight(BaseColor.BLACK);	
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(new BaseColor(92, 156, 204));
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(5f);
+			cell1.setPaddingBottom(5f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+
+			cell1 = new PdfPCell(new Phrase("ID da Transação: " + idTransacao, titulo));
+			cell1.setBorder(0);
+			cell1.setBorderWidthLeft(1);
+			cell1.setBorderColorLeft(BaseColor.BLACK);
+			cell1.setBorderWidthRight(1);
+			cell1.setBorderColorRight(BaseColor.BLACK);	
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(10f);
+			cell1.setPaddingBottom(2f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+
+			cell1 = new PdfPCell(new Phrase("Data: " + sdfDataRelComHoras.format(dataPagamento), titulo));
+			cell1.setBorder(0);
+			cell1.setBorderWidthLeft(1);
+			cell1.setBorderColorLeft(BaseColor.BLACK);
+			cell1.setBorderWidthRight(1);
+			cell1.setBorderColorRight(BaseColor.BLACK);	
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(2f);
+			cell1.setPaddingBottom(10f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+
+			cell1 = new PdfPCell(new Phrase("Valor R$ " + df.format(valor), titulo));
+			cell1.setBorder(0);
+			cell1.setBorderWidthLeft(1);
+			cell1.setBorderColorLeft(BaseColor.BLACK);
+			cell1.setBorderWidthRight(1);
+			cell1.setBorderColorRight(BaseColor.BLACK);	
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(10f);
+			cell1.setPaddingBottom(10f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase("CPF/CNPJ: " + taxID, titulo));
+			cell1.setBorder(0);
+			cell1.setBorderWidthLeft(1);
+			cell1.setBorderColorLeft(BaseColor.BLACK);
+			cell1.setBorderWidthRight(1);
+			cell1.setBorderColorRight(BaseColor.BLACK);	
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(10f);
+			cell1.setPaddingBottom(2f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase("Nome: " + nomePagador, titulo));
+			cell1.setBorder(0);
+			cell1.setBorderWidthBottom(1);
+			cell1.setBorderColorBottom(BaseColor.BLACK);
+			cell1.setBorderWidthLeft(1);
+			cell1.setBorderColorLeft(BaseColor.BLACK);
+			cell1.setBorderWidthRight(1);
+			cell1.setBorderColorRight(BaseColor.BLACK);	
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(20f);
+			cell1.setPaddingBottom(10f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+			
+			doc.add(table);
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			context.addMessage(null, new FacesMessage(
+					FacesMessage.SEVERITY_ERROR, "Recibo de Pagamento: Este contrato está aberto por algum outro programa, por favor, feche-o e tente novamente!" + e, ""));
+		} catch (Exception e) {
+			context.addMessage(null, new FacesMessage(
+					FacesMessage.SEVERITY_ERROR, "Recibo de Pagamento: Ocorreu um problema ao gerar o PDF!" + e, ""));
+		} finally {
+			this.comprovanteGerado = true;
+
+			if (doc != null) {
+				//fechamento do documento
+				doc.close();
+			}
+			if (os != null) {
+				//fechamento da stream de saída
+				try {
+					os.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
 	StreamedContent downloadFile;
 	
 	public StreamedContent getDownloadFile() {
@@ -799,6 +1034,89 @@ public class StarkBankAPI{
 			e.printStackTrace();
 		}
     }
+    
+    public StarkBankPix paymentPix(String codigoPixBanco, String agencia, String numeroConta, String documento, String nomeBeneficiario, BigDecimal valor) {
+    	List<Transfer> transfers = new ArrayList<>();
+
+    	List<Transfer.Rule> rules = new ArrayList<>();
+    
+    	loginStarkBank(); 
+    	
+    	try {
+	    	rules.add(new Transfer.Rule("resendingLimit", 5));
+	
+	    	HashMap<String, Object> data = new HashMap<>();
+	    	data.put("amount", valor);
+	    	data.put("bankCode", codigoPixBanco);
+	    	data.put("branchCode", agencia);
+	    	data.put("accountNumber", numeroConta);
+	    	data.put("taxId", documento);
+	    	data.put("name", nomeBeneficiario);
+	    	data.put("externalId", "PagamentoPix/" + nomeBeneficiario);
+	    	//data.put("scheduled", "2020-08-14");
+	    	//data.put("tags", new String[]{"daenerys", "invoice/1234"});
+	    	//data.put("rules", rules);
+	    	
+			transfers.add(new Transfer(data));
+			
+			transfers = Transfer.create(transfers);
+			
+			if (transfers.size() > 0) {
+	    		geraReciboPagamentoPix(String.valueOf(transfers.get(0).id), valor, DateUtil.convertDateTimeToDate(transfers.get(0).created), documento, nomeBeneficiario);
+	    	}
+
+			StarkBankPix pixTransacao = new StarkBankPix();
+	    	for (Transfer transfer : transfers){
+				 pixTransacao.setId(Long.valueOf(transfer.id));
+				 pixTransacao.setCreated(DateUtil.convertDateTimeToDate(transfer.created));
+				 pixTransacao.setScheduled(transfer.scheduled);
+				 pixTransacao.setNomeComprovante(nomeBeneficiario);
+				 pixTransacao.setAmount(valor);
+				 pixTransacao.setTaxId(documento);
+				 pixTransacao.setPathComprovante(this.pathPDF);
+				 pixTransacao.setNomeComprovante(this.nomePDF);
+	    	}
+	    	
+	    	StarkBankPixDAO starkBankPixDAO = new StarkBankPixDAO();
+	    	starkBankPixDAO.create(pixTransacao);
+	    	
+	    	return pixTransacao;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	return null;
+    }
+    
+    public StarkBankPix paymentPixTest(String codigoPixBanco, String agencia, String numeroConta, String documento, String nomeBeneficiario, BigDecimal valor) {
+    	
+    	geraReciboPagamentoPix("999", valor, gerarDataHoje(), documento, nomeBeneficiario);
+    	
+    	StarkBankPix starkBankPix = new StarkBankPix();
+    	
+    	starkBankPix.setId(212);
+    	starkBankPix.setCreated(gerarDataHoje());
+    	starkBankPix.setScheduled("sadsad");
+    	starkBankPix.setNomeComprovante("nome");
+    	starkBankPix.setAmount(BigDecimal.TEN);
+    	starkBankPix.setTaxId("docu");
+    	starkBankPix.setPathComprovante(this.pathPDF);
+    	 starkBankPix.setNomeComprovante(this.nomePDF);
+    	 
+    	 StarkBankPixDAO starkBankPixDAO = new StarkBankPixDAO();
+	    	starkBankPixDAO.create(starkBankPix);
+	    	
+    	 return starkBankPix;
+    }
+    
+	public Date gerarDataHoje() {
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+
+		return dataHoje.getTime();
+	}
 
 
 	public String getNomePDF() {

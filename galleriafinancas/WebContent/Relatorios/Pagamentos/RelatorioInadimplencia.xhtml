@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuRelatorio.xhtml">
+
+	<ui:define name="conteudo">
+		<script type="text/javascript">
+			function start() {
+			    PF('statusDialog').show();
+			}
+			 
+			function stop() {
+			    PF('statusDialog').hide();
+			}
+		</script>
+		<h:form id="form" style="margin-bottom:10px;">
+			<p:panel id="RelatorioPanel" header="Relatorio Inadimplencia">
+				<h:panelGrid columns="2">
+					<p:outputLabel value="Consultar " styleClass="labelBold" />
+					<p:commandButton action="#{relatorioInadimplenciaMB.consultarInadimplencia}"
+						icon="ui-icon ui-icon-circle-zoomin" update="form"
+						onclick="start();" oncomplete="stop();" />
+				</h:panelGrid>
+				<p:commandButton value="Gerar Arquivo XLS" icon="ui-icon-print"
+						action="#{relatorioInadimplenciaMB.geraRelatorio}"
+						ajax="false" />			
+				<p:dataTable var="relatorio" rows="20" paginator="true"
+					rowsPerPageTemplate="20,100,160,5000"
+					value="#{relatorioInadimplenciaMB.listRelatorioInadimplencia}" emptyMessage="">
+					<f:facet name="header"> 
+						<p:outputLabel value="" />
+						<p:commandButton value="Gerar Arquivo" icon="ui-icon-print"
+							action="#{relatorioInadimplenciaMB.geraRelatorio}"
+							ajax="false" />
+					</f:facet>
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Nº Contrato" 
+						filterBy="#{relatorio.numeroContrato}" 
+						filterMatchMode="contains" 
+						sortBy="#{relatorio.numeroContrato}">
+						<h:outputText value="#{relatorio.numeroContrato}" />
+					</p:column>
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Pagador" 
+						filterBy="#{relatorio.nomePagador}" 
+						filterMatchMode="contains" 
+						sortBy="#{relatorio.nomePagador}">
+						<h:outputText value="#{relatorio.nomePagador}" />
+					</p:column>
+					<p:column style="text-align: center;width: 100px;"
+						headerText="1° Atraso" 
+						sortBy="#{relatorio.primeiroAtraso}">
+						<h:outputText value="#{relatorio.primeiroAtraso}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Parcelas em Atraso" 
+						filterBy="#{relatorio.qtdParcelasAtraso}" 
+						filterMatchMode="contains" 
+						sortBy="#{relatorio.qtdParcelasAtraso}">
+						<h:outputText value="#{relatorio.qtdParcelasAtraso}"/>
+					</p:column>
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Valor da Ccb" 
+						sortBy="#{relatorio.valorCcb}">
+						<h:outputText value="#{relatorio.valorCcb}"
+							converter="bigDecimalConverter" />
+					</p:column>
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Valor da Garantia" 
+						sortBy="#{relatorio.valorGarantia}">
+						<h:outputText value="#{relatorio.valorGarantia}"
+							converter="bigDecimalConverter" />
+					</p:column>
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Parcelas Pagas" 
+						filterBy="#{relatorio.qtdParcelasPagas}" 
+						filterMatchMode="contains" 
+						sortBy="#{relatorio.qtdParcelasPagas}">
+						<h:outputText value="#{relatorio.qtdParcelasPagas}"/>
+					</p:column>
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Está em Cartório?" 
+						sortBy="#{relatorio.estaEmCartorio}">
+						<h:outputText rendered="#{relatorio.estaEmCartorio}" value="Sim"/>
+						<h:outputText rendered="#{!relatorio.estaEmCartorio}" value="Não"/>
+					</p:column>
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Empresa" 
+						filterBy="#{relatorio.empresa}" 
+						filterMatchMode="contains" 
+						sortBy="#{relatorio.empresa}">
+						<h:outputText value="#{relatorio.empresa}" />
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+		<p:dialog modal="true" widgetVar="statusDialog" header="Status Downloading" draggable="false" closable="false" resizable="false">
+		    <p:graphicImage name="image/ajaxloadingbar.gif" />
+		</p:dialog>
+	</ui:define>
+</ui:composition>

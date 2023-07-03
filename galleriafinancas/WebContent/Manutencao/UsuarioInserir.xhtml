@@ -35,6 +35,16 @@
 						<f:validateLength maximum="10" minimum="1" />
 					</p:password>
 
+					<h:outputLabel for="userPerfil" value="Perfil: "
+						class="campoRequerido" />
+					<p:selectOneMenu id="userPerfil"
+						value="#{usuarioMB.objetoUsuario.userPerfil.id}">
+						<f:selectItems value="#{usuarioMB.perfil}" var="perfil"
+							itemLabel="#{perfil.perfil}" itemValue="#{perfil.id}" />
+
+					</p:selectOneMenu>
+
+
 					<h:outputLabel for="Administrador" value="Administrador: "
 						class="labelBold" />
 					<h:panelGroup>

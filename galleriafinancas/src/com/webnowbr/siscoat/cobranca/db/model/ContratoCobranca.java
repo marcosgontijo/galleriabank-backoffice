@@ -24,6 +24,8 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal valorAgilCessao;
 	private BigDecimal valorCessao;
 	
+	private String ispbPixContaPagar;
+	
 	private String cedenteBRLCessao;
 	private Date dataAquisicaoCessao;
 	
@@ -524,6 +526,7 @@ public class ContratoCobranca implements Serializable {
 
 	private Date baixadoData;
 	private String baixadoUsuario;
+	private String baixaMotivoCancelamento;
 
 	private Date semFotoImovelData;
 	private boolean semFotoImovel;
@@ -778,6 +781,9 @@ public class ContratoCobranca implements Serializable {
 	private String geracaoLaudoObservacao;
 	private boolean iniciouGeracaoLaudo;
 	
+	private boolean contatoDiferenteProprietario;
+	//private String geracaoLaudoObservacao;
+	
 	private String documentoPagador;
 	private boolean contratoQuitado;
 	
@@ -800,7 +806,7 @@ public class ContratoCobranca implements Serializable {
 	private String emailPagador;
 	private String celularPagador;
 
- //FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13	
+	//FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13	
 	public BigDecimal calcularValorTotalContasPagas() {
 		somaValorPago = BigDecimal.ZERO;
 		for (ContasPagar conta : this.getListContasPagar()) {
@@ -6014,6 +6020,14 @@ public class ContratoCobranca implements Serializable {
 	public void setBaixadoUsuario(String baixadoUsuario) {
 		this.baixadoUsuario = baixadoUsuario;
 	}
+	
+	public String getBaixaMotivoCancelamento() {
+		return baixaMotivoCancelamento;
+	}
+
+	public void setBaixaMotivoCancelamento(String baixaMotivoCancelamento) {
+		this.baixaMotivoCancelamento = baixaMotivoCancelamento;
+	}
 
 	public String getAvaliacaoEngenharia() {
 		return avaliacaoEngenharia;
@@ -6364,5 +6378,21 @@ public class ContratoCobranca implements Serializable {
 
 	public void setApenasPagamentoAntecipado(boolean apenasPagamentoAntecipado) {
 		this.apenasPagamentoAntecipado = apenasPagamentoAntecipado;
+	}
+
+	public boolean isContatoDiferenteProprietario() {
+		return contatoDiferenteProprietario;
+	}
+
+	public void setContatoDiferenteProprietario(boolean contatoDiferenteProprietario) {
+		this.contatoDiferenteProprietario = contatoDiferenteProprietario;
+	}
+
+	public String getIspbPixContaPagar() {
+		return ispbPixContaPagar;
+	}
+
+	public void setIspbPixContaPagar(String ispbPixContaPagar) {
+		this.ispbPixContaPagar = ispbPixContaPagar;
 	}	
 }

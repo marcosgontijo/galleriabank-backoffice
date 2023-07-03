@@ -247,6 +247,9 @@
 		<property name="acao" type="java.lang.String">
 			<column name="ACAO" />
 		</property>
+		<property name="ispbPixContaPagar" type="java.lang.String">
+			<column name="ispbPixContaPagar" />
+		</property>
 		<property name="observacao" type="text">
 			<column name="OBSERVACAO" />
 		</property>
@@ -1086,7 +1089,7 @@
 			<column name="motivoReprovaLead" />
 		</property>
 		
-		<set name="listSegurados" table="segurado"  cascade="save-update"
+		<set name="listSegurados" table="segurado"  cascade="merge"
                  lazy="false" fetch="select">
             <key>
                 <column name="contratoCobranca" not-null="true" />
@@ -1118,7 +1121,7 @@
             <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.ContasPagar" />
         </set>  
         
-        <set name="listProcessos" table="ccbprocessosjudiciais" cascade="save-update"
+        <set name="listProcessos" table="ccbprocessosjudiciais" cascade="merge"
                  lazy="false" fetch="select">
             <key>
                 <column name="contrato" />
@@ -1999,6 +2002,9 @@
 		<property name="baixadoUsuario" type="java.lang.String">
 			<column name="baixadoUsuario" />
 		</property>
+		<property name="baixaMotivoCancelamento" type="java.lang.String">
+			<column name="baixaMotivoCancelamento" />
+		</property>		
 		
 		<property name="valorEmprestimo" type="big_decimal">
 			<column name="valorEmprestimo"/>
@@ -2145,6 +2151,10 @@
 		
 		<property name="apenasPagamentoAntecipado" type="boolean">
 			<column name="apenasPagamentoAntecipado" not-null="true" default="false"/>
+		</property>	
+		
+		<property name="contatoDiferenteProprietario" type="boolean">
+			<column name="contatoDiferenteProprietario" not-null="true" default="false"/>
 		</property>	
 		
 	</class>

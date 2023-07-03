@@ -2126,35 +2126,35 @@
 										action="#{contratoCobrancaMB.clearProcessodialog(pessoasProcessos)}"
 										oncomplete="PF('processoDialog').show();"
 										update="processoDialogdlg" />
-										<p:dataTable var="processosPessoas" id="processosPessoas" value="#{pessoasProcessos.processos}"
-											style="width:700px;" size="small" sortBy="#{processosPessoas.id}" sortOrder="ascending" >
-											
-											<p:column style="text-align: center;width:175px;" headerText="N°"  >
-												<p:outputLabel value="#{processosPessoas.numero}" 
-													style="FONT-SIZE: 10pt;" />
-											</p:column>
-											
-											<p:column style="text-align: center;width:75px;" headerText=" Valor: "  >
-												<p:outputLabel value="#{processosPessoas.valor}" 
-													style="FONT-SIZE: 10pt;"
-													converter="bigDecimalConverter" />
-											</p:column> 
-											
-											<p:column style="text-align: center;width:150px;" headerText=" Quitar? "  >
-												<p:outputLabel value=" #{processosPessoas.quitar}" style="FONT-SIZE: 10pt;" />
-											</p:column>
-											
-											<p:column style="text-align: center;" headerText="Obs"  >
-												<p:outputLabel value="#{processosPessoas.observacao}" style="FONT-SIZE: 10pt;" />
-											</p:column>
+									<p:dataTable var="processosPessoas" id="processosPessoas" value="#{pessoasProcessos.processos}"
+										style="width:700px;" size="small" sortBy="#{processosPessoas.id}" sortOrder="ascending" >
 										
-											<p:column style="text-align: center;width:25px;" headerText="" >
-												<p:commandButton  icon="ui-icon-trash" 
-													action="#{contratoCobrancaMB.removeProcesso(processosPessoas)}"
-													update="form:RecebidoPajulaudoPanel form:ComitePanelView form:pessoasProcessos
-													processosPessoas " />
-											</p:column>
-										</p:dataTable>
+										<p:column style="text-align: center;width:175px;" headerText="N°"  >
+											<p:outputLabel value="#{processosPessoas.numero}" 
+												style="FONT-SIZE: 10pt;" />
+										</p:column>
+										
+										<p:column style="text-align: center;width:75px;" headerText=" Valor: "  >
+											<p:outputLabel value="#{processosPessoas.valor}" 
+												style="FONT-SIZE: 10pt;"
+												converter="bigDecimalConverter" />
+										</p:column> 
+										
+										<p:column style="text-align: center;width:150px;" headerText=" Quitar? "  >
+											<p:outputLabel value=" #{processosPessoas.quitar}" style="FONT-SIZE: 10pt;" />
+										</p:column>
+										
+										<p:column style="text-align: center;" headerText="Obs"  >
+											<p:outputLabel value="#{processosPessoas.observacao}" style="FONT-SIZE: 10pt;" />
+										</p:column>
+									
+										<p:column style="text-align: center;width:25px;" headerText="" >
+											<p:commandButton  icon="ui-icon-trash" 
+												action="#{contratoCobrancaMB.removeProcesso(processosPessoas)}"
+												update="form:RecebidoPajulaudoPanel form:ComitePanelView form:pessoasProcessos
+												processosPessoas " />
+										</p:column>
+									</p:dataTable>
 								</p:dataViewListItem>
 							</p:dataView>
 							
@@ -3368,6 +3368,12 @@
 						<p:inputText id="Cartorio"
 							value="#{contratoCobrancaMB.objetoImovelCobranca.cartorio}"
 							label="Cartório" onblur="" style="width:400px;" />
+							
+						<p:outputLabel for="cartorioEstado" value="Estado Cartório: " />
+						<p:inputText id="cartorioEstado" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioEstado}" /> 
+											
+						<p:outputLabel for="cartorioMunicipio" value="Município Cartório: " />
+						<p:inputText id="cartorioMunicipio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioMunicipio}" />
 
 						<p:outputLabel for="CepImovel" value="Cep: " />
 						<p:inputMask id="CepImovel" required="true"
@@ -3538,16 +3544,6 @@
 						
 						<p:outputLabel for="inscricaoMunicipal" value="Inscrição Municipal: " />
 						<p:inputText id="inscricaoMunicipal" value="#{contratoCobrancaMB.objetoImovelCobranca.inscricaoMunicipal}" />
-
-						<p:outputLabel for="numeroCartorio" value="Numero Cartório: " />
-						<p:inputText id="numeroCartorio" type="number"
-						value="#{contratoCobrancaMB.objetoImovelCobranca.numeroCartorio}" /> 
-											
-						<p:outputLabel for="cartorioEstado" value="Estado Cartório: " />
-						<p:inputText id="cartorioEstado" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioEstado}" /> 
-											
-						<p:outputLabel for="cartorioMunicipio" value="Município Cartório: " />
-						<p:inputText id="cartorioMunicipio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioMunicipio}" />
 
 					</h:panelGrid>
 				</p:panel>
