@@ -209,24 +209,6 @@ public class SimulacaoVO implements ComputeInterface{
 
 			parcelas.add(parcelaCalculo);
 		}
-		
-		this.custoEmissaoValor = SiscoatConstants.CUSTO_EMISSAO_MINIMO;
-		if(!CommonsUtil.semValor(custoEmissaoPercentual)) {			
-			if (this.valorCredito.multiply(this.custoEmissaoPercentual.divide(BigDecimal.valueOf(100)))
-					.compareTo(SiscoatConstants.CUSTO_EMISSAO_MINIMO) > 0) {
-				this.custoEmissaoValor = this.valorCredito.multiply(custoEmissaoPercentual.divide(BigDecimal.valueOf(100)));
-			}
-		}
-		
-		this.valorCreditoLiberado = this.valorCredito;
-		
-		if (this.custoEmissaoValor != null) {
-			this.valorCreditoLiberado = this.valorCreditoLiberado.subtract(this.custoEmissaoValor);
-		} 
-		
-		if (this.getIOFTotal() != null) {
-			this.valorCreditoLiberado = this.valorCreditoLiberado.subtract(this.getIOFTotal());
-		}
 	}
 
 	private void calcularIOF(SimulacaoDetalheVO parcelaCalculo, int i) {
@@ -275,6 +257,26 @@ public class SimulacaoVO implements ComputeInterface{
 		// .divide(BigDecimal.valueOf(qtdParcelas.subtract(carencia).doubleValue()),
 		// MathContext.DECIMAL128);
 		return valorIOFAdicional;
+	}
+	
+	public void calcularValorLiberado() {
+		this.custoEmissaoValor = SiscoatConstants.CUSTO_EMISSAO_MINIMO;
+		if(!CommonsUtil.semValor(custoEmissaoPercentual)) {			
+			if (this.valorCredito.multiply(this.custoEmissaoPercentual.divide(BigDecimal.valueOf(100)))
+					.compareTo(SiscoatConstants.CUSTO_EMISSAO_MINIMO) > 0) {
+				this.custoEmissaoValor = this.valorCredito.multiply(custoEmissaoPercentual.divide(BigDecimal.valueOf(100)));
+			}
+		}
+		
+		this.valorCreditoLiberado = this.valorCredito;
+		
+		if (this.custoEmissaoValor != null) {
+			this.valorCreditoLiberado = this.valorCreditoLiberado.subtract(this.custoEmissaoValor);
+		} 
+		
+		if (this.getIOFTotal() != null) {
+			this.valorCreditoLiberado = this.valorCreditoLiberado.subtract(this.getIOFTotal());
+		}
 	}
 
 	public void calcularSac() {
@@ -639,6 +641,7 @@ public class SimulacaoVO implements ComputeInterface{
 	public double compute(double valorBruto) {
 		this.valorCredito = CommonsUtil.bigDecimalValue(valorBruto);
 		calcular();
+		calcularValorLiberado();
 		return CommonsUtil.doubleValue(valorCreditoLiberado);
 	}
 	

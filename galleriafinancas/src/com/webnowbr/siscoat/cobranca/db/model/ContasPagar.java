@@ -47,6 +47,7 @@ public class ContasPagar implements Serializable {
 	private String numeroDocumentoPagadorStarkBank;
 	
 	private StarkBankBoleto comprovantePagamentoStarkBank;
+	private StarkBankPix comprovantePagamentoPixStarkBank;
 	
 	private Collection<FileUploaded> filesContas = new ArrayList<FileUploaded>();
 
@@ -319,5 +320,13 @@ public class ContasPagar implements Serializable {
 
 	public void setComprovantePagamentoStarkBank(StarkBankBoleto comprovantePagamentoStarkBank) {
 		this.comprovantePagamentoStarkBank = comprovantePagamentoStarkBank;
+	}
+
+	public StarkBankPix getComprovantePagamentoPixStarkBank() {
+		return comprovantePagamentoPixStarkBank;
+	}
+
+	public void setComprovantePagamentoPixStarkBank(StarkBankPix comprovantePagamentoPixStarkBank) {
+		this.comprovantePagamentoPixStarkBank = comprovantePagamentoPixStarkBank;
 	}
 }
