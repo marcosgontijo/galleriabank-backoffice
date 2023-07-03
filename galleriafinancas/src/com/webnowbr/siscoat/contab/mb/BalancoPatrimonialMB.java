@@ -3,7 +3,6 @@ package com.webnowbr.siscoat.contab.mb;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -33,12 +32,11 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.webnowbr.siscoat.common.CommonsUtil;
-import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.contab.db.dao.BalancoPatrimonialDao;
 import com.webnowbr.siscoat.contab.db.model.BalancoPatrimonial;
+import com.webnowbr.siscoat.contab.db.model.TaskCalcularVariaveisReceber;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.relatorio.vo.RelatorioBalanco;
-
 
 /** ManagedBean. */
 @ManagedBean(name = "balancoPatrimonialMB")
@@ -57,11 +55,9 @@ public class BalancoPatrimonialMB {
 	private boolean balancoPatrimonialXLSGerado;
 	private String pathBalanco;
 	private String nomeBalanco;
-	
+
 	private List<RelatorioBalanco> relatorioBalancoPagar = new ArrayList<RelatorioBalanco>();
 	private List<RelatorioBalanco> relatorioBalancoReceber = new ArrayList<RelatorioBalanco>();
-
-	
 
 	public String clearFieldsBalancoPatrimonialConsulta() {
 
@@ -69,6 +65,7 @@ public class BalancoPatrimonialMB {
 		this.todosBalancos = balancopatrimonialDao.consultaBalancoPatrimonial();
 		return "/Atendimento/Cobranca/Contabilidade/BalancoPatrimonialConsulta.xhtml";
 	}
+
 	public String clearBalancoPatrimonialNew() {
 		objetoBalanco = new BalancoPatrimonial();
 		this.objetoBalanco.setAaaamm(null);
@@ -82,64 +79,127 @@ public class BalancoPatrimonialMB {
 		this.objetoBalanco.setInvestOperantigas(CommonsUtil.bigDecimalValue(0));
 		this.objetoBalanco.setCapitalSocial(CommonsUtil.bigDecimalValue(0));
 		this.objetoBalanco.setRecursosDebentures(CommonsUtil.bigDecimalValue(0));
-		
+
 		return "/Atendimento/Cobranca/Contabilidade/BalancoPatrimonialInserir.xhtml";
 	}
-	
+
 	public String clearBalancoPatrimonialEditar() {
 		BalancoPatrimonialDao balancopatrimonialDao = new BalancoPatrimonialDao();
-		
-		
+
 		if (!this.editar) {
 			objetoBalanco = new BalancoPatrimonial();
 			ultimoBalanco = balancopatrimonialDao.consultaUltimoBalanco();
-		
-		this.objetoBalanco.setAaaamm(gerarDataHoje());
-		
-		//VALOR DEFAULT NO CÓDIGO
-		this.objetoBalanco.setDepositoBacenScd(CommonsUtil.bigDecimalValue(1016095.04));
-		
-		//VALOR DEFAULT NO DAO - VALOR DO SISTEMA
-		this.objetoBalanco.setProvisaoLiquidAntecipada(balancopatrimonialDao.consultaContasPagar());
-		this.objetoBalanco.setCustoPonderado(balancopatrimonialDao.somaParcelaX());
-		
-		// VALOR DEFAULT ÚLTIMO BALANÇO
-		if (!CommonsUtil.semValor(ultimoBalanco)) {
-			this.objetoBalanco.setDepositosjudiciais(ultimoBalanco.getDepositosjudiciais());
-			this.objetoBalanco.setInvestOperantigas(ultimoBalanco.getInvestOperantigas());
-			this.objetoBalanco.setCapitalSocial(ultimoBalanco.getCapitalSocial());
-		}	
-	}
+
+			this.objetoBalanco.setAaaamm(gerarDataHoje());
+
+			// VALOR DEFAULT NO CÓDIGO
+			this.objetoBalanco.setDepositoBacenScd(CommonsUtil.bigDecimalValue(1016095.04));
+
+			// VALOR DEFAULT NO DAO - VALOR DO SISTEMA
+			this.objetoBalanco.setProvisaoLiquidAntecipada(balancopatrimonialDao.consultaContasPagar());
+			this.objetoBalanco.setCustoPonderado(balancopatrimonialDao.somaParcelaX());
+
+			// VALOR DEFAULT ÚLTIMO BALANÇO
+			if (!CommonsUtil.semValor(ultimoBalanco)) {
+				this.objetoBalanco.setDepositosjudiciais(ultimoBalanco.getDepositosjudiciais());
+				this.objetoBalanco.setInvestOperantigas(ultimoBalanco.getInvestOperantigas());
+				this.objetoBalanco.setCapitalSocial(ultimoBalanco.getCapitalSocial());
+			}
+		}
 		return "/Atendimento/Cobranca/Contabilidade/BalancoPatrimonialInserir.xhtml";
 	}
-	
-	
-	public void geraBalanco () {
+
+	public void geraBalanco() {
 		BalancoPatrimonialDao balancopatrimonialDao = new BalancoPatrimonialDao();
-		
+
 		if (!this.editar) {
 			ultimoBalanco = balancopatrimonialDao.consultaUltimoBalanco();
-			
-		//VALOR DEFAULT NO CÓDIGO
-		this.objetoBalanco.setDepositoBacenScd(CommonsUtil.bigDecimalValue(1016095.04));
-		
-		//VALOR DEFAULT NO DAO - VALOR DO SISTEMA
 
-		// this.objetoBalanco.setProvisaoLiquidAntecipada(balancopatrimonialDao.consultaContasPagar()); conferir excel
-		this.relatorioBalancoPagar = balancopatrimonialDao.listaRelatorioPagarBalanco();
-		this.relatorioBalancoReceber = balancopatrimonialDao.listaRelatorioReceberBalanco();
-		
-		// VALOR DEFAULT ÚLTIMO BALANÇO
-		if (!CommonsUtil.semValor(ultimoBalanco)) {
-			this.objetoBalanco.setDepositosjudiciais(ultimoBalanco.getDepositosjudiciais());
-			this.objetoBalanco.setInvestOperantigas(ultimoBalanco.getInvestOperantigas());
-			this.objetoBalanco.setCapitalSocial(ultimoBalanco.getCapitalSocial());
-		}
-		
-		this.objetoBalanco.saldoCaixaOmie(); // VALOR CAIXAS
-		this.objetoBalanco.calcularCustoPonderado(relatorioBalancoPagar); //VALOR RECURSOS DEBENTURES
-		this.objetoBalanco.calcularVariaveisReceber(relatorioBalancoReceber); //VALOR DIREITOS CREDITORIOS
-		
+			// VALOR DEFAULT NO CÓDIGO
+			this.objetoBalanco.setDepositoBacenScd(CommonsUtil.bigDecimalValue(1016095.04));
+
+			// VALOR DEFAULT NO DAO - VALOR DO SISTEMA
+
+			// this.objetoBalanco.setProvisaoLiquidAntecipada(balancopatrimonialDao.consultaContasPagar());
+			// conferir excel
+			this.relatorioBalancoPagar = balancopatrimonialDao.listaRelatorioPagarBalanco();
+			this.relatorioBalancoReceber = balancopatrimonialDao.listaRelatorioReceberBalanco();
+
+			// VALOR DEFAULT ÚLTIMO BALANÇO
+			if (!CommonsUtil.semValor(ultimoBalanco)) {
+				this.objetoBalanco.setDepositosjudiciais(ultimoBalanco.getDepositosjudiciais());
+				this.objetoBalanco.setInvestOperantigas(ultimoBalanco.getInvestOperantigas());
+				this.objetoBalanco.setCapitalSocial(ultimoBalanco.getCapitalSocial());
+			}
+
+			this.objetoBalanco.saldoCaixaOmie(); // VALOR CAIXAS
+			this.objetoBalanco.calcularCustoPonderado(relatorioBalancoPagar); // VALOR RECURSOS DEBENTURES
+
+			int totalRegistros = relatorioBalancoReceber.size();
+			int qtdPorTask = totalRegistros / 10;
+			List<Thread> threads = new ArrayList<>();
+			List<BalancoPatrimonial> balancos = new ArrayList<>();
+			int qtdPorTaskProcessada = 0;
+			int itask = 0;
+			int inicio = 0;
+			int fim = 0;
+			while (qtdPorTaskProcessada < totalRegistros - 1) {
+				BalancoPatrimonial balancoPatrimonial = new BalancoPatrimonial();
+				balancoPatrimonial.setCustoPonderado(this.objetoBalanco.getCustoPonderado());
+				balancoPatrimonial.setAaaamm(this.objetoBalanco.getAaaaMM());
+				balancoPatrimonial.setCdi(this.objetoBalanco.getCdi());
+				balancoPatrimonial.setIpca(this.objetoBalanco.getIpca());
+				balancoPatrimonial.setTaxaFidc(this.objetoBalanco.getTaxaFidc());
+				balancoPatrimonial.setTaxaCri1(this.objetoBalanco.getTaxaCri1());
+				balancoPatrimonial.setTaxaCri2(this.objetoBalanco.getTaxaCri2());
+				balancoPatrimonial.setTaxaCri3(this.objetoBalanco.getTaxaCri3());
+				balancos.add(balancoPatrimonial);
+				inicio = fim;
+				fim = inicio + qtdPorTask;
+
+				if (fim > totalRegistros)
+					fim = totalRegistros;
+				List<RelatorioBalanco> relatorioBalancoReceberSublist = new ArrayList<>();
+				if (!CommonsUtil.mesmoValor(inicio, fim)) {
+					relatorioBalancoReceberSublist = relatorioBalancoReceber.subList(inicio, fim);
+				} else {
+					relatorioBalancoReceberSublist.add(relatorioBalancoReceber.get(inicio));
+				}
+				qtdPorTaskProcessada = qtdPorTaskProcessada + relatorioBalancoReceberSublist.size();
+
+//			System.out.println("relatorioBalancoReceber inicio: " + inicio + " fim: " + fim+ " qtde: " + qtdPorTaskProcessada);
+
+				Runnable runnable = new TaskCalcularVariaveisReceber(relatorioBalancoReceberSublist, balancoPatrimonial,
+						inicio, fim);
+				Thread thread = new Thread(runnable);
+				thread.start();
+				threads.add(thread);
+				itask = itask + 1;
+			}
+
+			boolean processando = true;
+			while (processando) {
+				processando = false;
+				for (Thread thread : threads) {
+					if (thread.isAlive()) {
+						processando = true;
+						break;
+					}
+				}
+			}
+			this.objetoBalanco.setDireitosCreditorios(BigDecimal.ZERO);
+			for (BalancoPatrimonial balancoPatrimonial : balancos) {
+				this.objetoBalanco.setDireitosCreditorios(
+						this.objetoBalanco.getDireitosCreditorios().add(balancoPatrimonial.getDireitosCreditorios()));
+			}
+			this.objetoBalanco.setDireitosCreditorios(
+					this.objetoBalanco.getDireitosCreditorios().setScale(2, BigDecimal.ROUND_HALF_UP));
+			
+			this.objetoBalanco.calcularProvisaoLiquidacaoAntecipada(relatorioBalancoReceber);
+			
+			
+
+//		this.objetoBalanco.calcularVariaveisReceber(relatorioBalancoReceber); //VALOR DIREITOS CREDITORIOS
 
 		}
 	}
@@ -172,7 +232,6 @@ public class BalancoPatrimonialMB {
 	public String editarBalanco() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		BalancoPatrimonialDao cDao = new BalancoPatrimonialDao();
-	
 
 		if (this.objetoBalanco.getId() > 0) {
 			cDao.merge(this.objetoBalanco);
@@ -197,7 +256,6 @@ public class BalancoPatrimonialMB {
 
 		clearFieldsBalancoPatrimonialConsulta();
 	}
-	
 
 	public void geraXLSBalancoPatrimonial() throws IOException {
 		ParametrosDao pDao = new ParametrosDao();
@@ -227,12 +285,11 @@ public class BalancoPatrimonialMB {
 		sheet.setColumnWidth((short) (2), (short) (10 * 1600));
 		sheet.setColumnWidth((short) (3), (short) (10 * 500));
 
-		
 		// Style para cabeçalho
 		XSSFCellStyle cell_style = wb.createCellStyle();
 		cell_style.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
 		cell_style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		
+
 		XSSFFont font = wb.createFont();
 		font.setBold(true);
 		cell_style.setFont(font);
@@ -252,28 +309,28 @@ public class BalancoPatrimonialMB {
 
 		// cria estilo especifico para coluna type numérico título
 		CellStyle numericStyle = wb.createCellStyle();
-		
+
 		numericStyle.setAlignment(HorizontalAlignment.CENTER);
 		numericStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 		numericStyle.setWrapText(true);
-		
+
 		// cria estilo especifico para coluna type numérico normal
 		CellStyle numericNormalStyle = wb.createCellStyle();
 		numericNormalStyle.setAlignment(HorizontalAlignment.CENTER);
 		numericNormalStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 
 		numericStyle.setWrapText(true);
-		
+
 		// formatação dados geral
 		XSSFCellStyle normal_style = wb.createCellStyle();
 //		normal_style.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
 //		normal_style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		
+
 		CellStyle normalStyle = wb.createCellStyle();
 		normalStyle.setAlignment(HorizontalAlignment.LEFT);
 		normalStyle.setVerticalAlignment(VerticalAlignment.TOP);
 		normalStyle.setWrapText(true);
-				
+
 		// cria a formatação para moeda
 		CreationHelper ch = wb.getCreationHelper();
 		numericStyle.setDataFormat(
@@ -293,10 +350,9 @@ public class BalancoPatrimonialMB {
 		dateStyle.setBorderRight(BorderStyle.THIN);
 		dateStyle.setBorderLeft(BorderStyle.THIN);
 		dateStyle.setWrapText(true);
-				
+
 		// cria a formatação para Date
 		dateStyle.setDataFormat((short) BuiltinFormats.getBuiltinFormat("m/d/yy"));
-
 
 		// Montar excel
 
@@ -308,17 +364,17 @@ public class BalancoPatrimonialMB {
 		cell = row1.createCell(0);
 		cell.setCellValue("BALANÇO PATRIMONIAL");
 		cell.setCellStyle(cell_style);
-		
+
 		cell = row1.createCell(1);
 		cell.setCellStyle(dateStyle);
 		cell.setCellValue(record.getAaaaMM());
-		
+
 		countLine++;
 		XSSFRow row2 = sheet.createRow(countLine);
 		cell = row2.createCell(0);
 		cell.setCellValue("TOTAL ATIVO CIRCULANTE");
 		cell.setCellStyle(cell_style);
-		
+
 		cell = row2.createCell(1);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -327,13 +383,13 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
+
 		countLine++;
 		XSSFRow row3 = sheet.createRow(countLine);
 		cell = row3.createCell(0);
 		cell.setCellValue("     CAIXA E EQUIVALENTES DE CAIXA");
 		cell.setCellStyle(cell_style);
-		
+
 		cell = row3.createCell(1);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -342,13 +398,13 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
+
 		countLine++;
 		XSSFRow row4 = sheet.createRow(countLine);
 		cell = row4.createCell(0);
 		cell.setCellValue("          CAIXA");
 		cell.setCellStyle(normal_style);
-		
+
 		cell = row4.createCell(1);
 		cell.setCellStyle(numericNormalStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -357,13 +413,13 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
+
 		countLine++;
 		XSSFRow row5 = sheet.createRow(countLine);
 		cell = row5.createCell(0);
 		cell.setCellValue("          BANCOS");
 		cell.setCellStyle(normal_style);
-		
+
 		cell = row5.createCell(1);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -372,13 +428,13 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
+
 		countLine++;
 		XSSFRow row6 = sheet.createRow(countLine);
 		cell = row6.createCell(0);
 		cell.setCellValue("          APLICAÇÃO FINANCEIRA");
 		cell.setCellStyle(normal_style);
-		
+
 		cell = row6.createCell(1);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -387,13 +443,13 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
+
 		countLine++;
 		XSSFRow row7 = sheet.createRow(countLine);
 		cell = row7.createCell(0);
 		cell.setCellValue("          OPERAÇÕES PAGAS E A RECEBER DO FIDC");
 		cell.setCellStyle(normal_style);
-		
+
 		cell = row7.createCell(1);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -402,13 +458,13 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
+
 		countLine++;
 		XSSFRow row8 = sheet.createRow(countLine);
 		cell = row8.createCell(0);
 		cell.setCellValue("          APLICAÇÃO FUNDO ITAÚ SOBERANO");
 		cell.setCellStyle(normal_style);
-		
+
 		cell = row8.createCell(1);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -417,13 +473,13 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
+
 		countLine++;
 		XSSFRow row9 = sheet.createRow(countLine);
 		cell = row9.createCell(0);
 		cell.setCellValue("          PROVISÃO DEVEDORES DUVIDOSOS");
 		cell.setCellStyle(normal_style);
-		
+
 		cell = row9.createCell(1);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -432,13 +488,13 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
+
 		countLine++;
 		XSSFRow row10 = sheet.createRow(countLine);
 		cell = row10.createCell(0);
 		cell.setCellValue("          SALDO CONTA COBRANÇA FIDC");
 		cell.setCellStyle(normal_style);
-		
+
 		cell = row10.createCell(1);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -447,13 +503,13 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
+
 		countLine++;
 		XSSFRow row11 = sheet.createRow(countLine);
 		cell = row11.createCell(0);
 		cell.setCellValue("          DEPÓSITO BACEN PARA SCD");
 		cell.setCellStyle(normal_style);
-		
+
 		cell = row11.createCell(1);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -462,18 +518,18 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
-		countLine++; XSSFRow row12 = sheet.createRow(countLine); cell =
-		row12.createCell(0); cell.setCellValue("	");
-		 
-		
-		
+
+		countLine++;
+		XSSFRow row12 = sheet.createRow(countLine);
+		cell = row12.createCell(0);
+		cell.setCellValue("	");
+
 		countLine++;
 		XSSFRow row13 = sheet.createRow(countLine);
 		cell = row13.createCell(0);
 		cell.setCellValue("     VALORES REALIZÁVEIS A CURTO PRAZO");
 		cell.setCellStyle(cell_style);
-		
+
 		cell = row13.createCell(1);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -482,13 +538,13 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
+
 		countLine++;
 		XSSFRow row14 = sheet.createRow(countLine);
 		cell = row14.createCell(0);
 		cell.setCellValue("          DIREITOS CREDITORIOS");
 		cell.setCellStyle(normal_style);
-		
+
 		cell = row14.createCell(1);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -497,13 +553,13 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
+
 		countLine++;
 		XSSFRow row15 = sheet.createRow(countLine);
 		cell = row15.createCell(0);
 		cell.setCellValue("          TRIBUTOS A COMPENSAR");
 		cell.setCellStyle(normal_style);
-		
+
 		cell = row15.createCell(1);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -512,13 +568,13 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
+
 		countLine++;
 		XSSFRow row16 = sheet.createRow(countLine);
 		cell = row16.createCell(0);
 		cell.setCellValue("          ADIANTAMENTOS");
 		cell.setCellStyle(normal_style);
-		
+
 		cell = row16.createCell(1);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -527,13 +583,13 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
+
 		countLine++;
 		XSSFRow row17 = sheet.createRow(countLine);
 		cell = row17.createCell(0);
 		cell.setCellValue("          OUTROS CRÉDITOS A IDENTIFICAR");
 		cell.setCellStyle(normal_style);
-		
+
 		cell = row17.createCell(1);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -542,13 +598,13 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
+
 		countLine++;
 		XSSFRow row18 = sheet.createRow(countLine);
 		cell = row18.createCell(0);
 		cell.setCellValue("          ESTOQUE (Imóveis)");
 		cell.setCellStyle(normal_style);
-		
+
 		cell = row18.createCell(1);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -557,16 +613,18 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
-		countLine++; XSSFRow row19 = sheet.createRow(countLine); 
-		cell = row19.createCell(0); cell.setCellValue("	");
-				
+
+		countLine++;
+		XSSFRow row19 = sheet.createRow(countLine);
+		cell = row19.createCell(0);
+		cell.setCellValue("	");
+
 		countLine++;
 		XSSFRow row20 = sheet.createRow(countLine);
 		cell = row20.createCell(0);
 		cell.setCellValue("VALORES REALIZÁVEIS A LONGO PRAZO");
 		cell.setCellStyle(cell_style);
-		
+
 		cell = row20.createCell(1);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -575,13 +633,13 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
+
 		countLine++;
 		XSSFRow row21 = sheet.createRow(countLine);
 		cell = row21.createCell(0);
 		cell.setCellValue("          DEPÓSITOS JUDICIAIS");
 		cell.setCellStyle(normal_style);
-		
+
 		cell = row21.createCell(1);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -590,13 +648,13 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
+
 		countLine++;
 		XSSFRow row22 = sheet.createRow(countLine);
 		cell = row22.createCell(0);
 		cell.setCellValue("          INVEST. OPER. ANTIGAS");
 		cell.setCellStyle(normal_style);
-		
+
 		cell = row22.createCell(1);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -605,16 +663,18 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
-		countLine++; XSSFRow row23 = sheet.createRow(countLine); 
-		cell = row23.createCell(0); cell.setCellValue("	");
-		
+
+		countLine++;
+		XSSFRow row23 = sheet.createRow(countLine);
+		cell = row23.createCell(0);
+		cell.setCellValue("	");
+
 		countLine++;
 		XSSFRow row24 = sheet.createRow(countLine);
 		cell = row24.createCell(0);
 		cell.setCellValue("ATIVO NÃO CIRCULANTE");
 		cell.setCellStyle(cell_style);
-		
+
 		cell = row24.createCell(1);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -623,13 +683,13 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
+
 		countLine++;
 		XSSFRow row25 = sheet.createRow(countLine);
 		cell = row25.createCell(0);
 		cell.setCellValue("     INVESTIMENTOS");
 		cell.setCellStyle(cell_style);
-		
+
 		cell = row25.createCell(1);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -638,13 +698,13 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
+
 		countLine++;
 		XSSFRow row26 = sheet.createRow(countLine);
 		cell = row26.createCell(0);
 		cell.setCellValue("          INVESTIMENTOS");
 		cell.setCellStyle(normal_style);
-		
+
 		cell = row26.createCell(1);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -653,13 +713,13 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
+
 		countLine++;
 		XSSFRow row27 = sheet.createRow(countLine);
 		cell = row27.createCell(0);
 		cell.setCellValue("     IMOBILIZADO");
 		cell.setCellStyle(cell_style);
-		
+
 		cell = row27.createCell(1);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -668,13 +728,13 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
+
 		countLine++;
 		XSSFRow row28 = sheet.createRow(countLine);
 		cell = row28.createCell(0);
 		cell.setCellValue("          BENS (Imóveis e Informática)");
 		cell.setCellStyle(normal_style);
-		
+
 		cell = row28.createCell(1);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -683,13 +743,13 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
+
 		countLine++;
 		XSSFRow row29 = sheet.createRow(countLine);
 		cell = row29.createCell(0);
 		cell.setCellValue("TOTAL DO ATIVO");
 		cell.setCellStyle(cell_style);
-		
+
 		cell = row29.createCell(1);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -698,13 +758,13 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
-		//PASSIVO
-		
+
+		// PASSIVO
+
 		cell = row2.createCell(2);
 		cell.setCellValue("TOTAL DO PASSIVO CIRCULANTE");
 		cell.setCellStyle(cell_style);
-		
+
 		cell = row2.createCell(3);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -713,11 +773,11 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
+
 		cell = row3.createCell(2);
 		cell.setCellValue("     VALORES EXIGÍVEIS A CURTO PRAZO");
 		cell.setCellStyle(cell_style);
-		
+
 		cell = row3.createCell(3);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -726,11 +786,11 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
+
 		cell = row4.createCell(2);
 		cell.setCellValue("          CONTA CORRENTE CLIENTES");
 		cell.setCellStyle(normal_style);
-		
+
 		cell = row4.createCell(3);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -739,11 +799,11 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
+
 		cell = row5.createCell(2);
 		cell.setCellValue("          FORNECEDORES-CONSÓRCIO");
 		cell.setCellStyle(normal_style);
-		
+
 		cell = row5.createCell(3);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -756,7 +816,7 @@ public class BalancoPatrimonialMB {
 		cell = row6.createCell(2);
 		cell.setCellValue("          OBRIGAÇÕES TRIBUTÁRIAS");
 		cell.setCellStyle(normal_style);
-		
+
 		cell = row6.createCell(3);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -769,7 +829,7 @@ public class BalancoPatrimonialMB {
 		cell = row7.createCell(2);
 		cell.setCellValue("          OBRIGAÇÕES SOCIAIS ESTATUTÁRIAS");
 		cell.setCellStyle(normal_style);
-		
+
 		cell = row7.createCell(3);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -778,11 +838,11 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
+
 		cell = row8.createCell(2);
 		cell.setCellValue("          RECURSOS DE DEBENTURES");
 		cell.setCellStyle(normal_style);
-		
+
 		cell = row8.createCell(3);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -795,7 +855,7 @@ public class BalancoPatrimonialMB {
 		cell = row9.createCell(2);
 		cell.setCellValue("          RECURSOS DO FIDC");
 		cell.setCellStyle(normal_style);
-		
+
 		cell = row9.createCell(3);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -808,7 +868,7 @@ public class BalancoPatrimonialMB {
 		cell = row10.createCell(2);
 		cell.setCellValue("          RECURSOS DO CRI");
 		cell.setCellStyle(normal_style);
-		
+
 		cell = row10.createCell(3);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -821,7 +881,7 @@ public class BalancoPatrimonialMB {
 		cell = row12.createCell(2);
 		cell.setCellValue("     PROVISÃO PARA LIQUIDAÇÃO ANTECIPADA");
 		cell.setCellStyle(cell_style);
-		
+
 		cell = row12.createCell(3);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -830,11 +890,11 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
+
 		cell = row13.createCell(2);
 		cell.setCellValue("TOTAL PASSIVO EXIGÍVEL A LONGO PRAZO");
 		cell.setCellStyle(cell_style);
-		
+
 		cell = row13.createCell(3);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -847,7 +907,7 @@ public class BalancoPatrimonialMB {
 		cell = row14.createCell(2);
 		cell.setCellValue("VALORES EXIGÍVEIS A LONGO PRAZO");
 		cell.setCellStyle(normal_style);
-		
+
 		cell = row14.createCell(3);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -860,7 +920,7 @@ public class BalancoPatrimonialMB {
 		cell = row16.createCell(2);
 		cell.setCellValue("TOTAL PATRIMÔNIO LÍQUIDO");
 		cell.setCellStyle(cell_style);
-		
+
 		cell = row16.createCell(3);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -869,11 +929,11 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
+
 		cell = row17.createCell(2);
 		cell.setCellValue("     TOTAL CAPITAL SOCIAL");
 		cell.setCellStyle(cell_style);
-		
+
 		cell = row17.createCell(3);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -882,11 +942,11 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
+
 		cell = row18.createCell(2);
 		cell.setCellValue("          CAPITAL SOCIAL");
 		cell.setCellStyle(normal_style);
-		
+
 		cell = row18.createCell(3);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -899,7 +959,7 @@ public class BalancoPatrimonialMB {
 		cell = row20.createCell(2);
 		cell.setCellValue("     TOTAL LUCROS ACUMULADOS ATÉ SEMESTRE ANTERIOR");
 		cell.setCellStyle(cell_style);
-		
+
 		cell = row20.createCell(3);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -912,7 +972,7 @@ public class BalancoPatrimonialMB {
 		cell = row21.createCell(2);
 		cell.setCellValue("          LUCROS ACUMULADOS ATÉ ANO ANTERIOR");
 		cell.setCellStyle(normal_style);
-		
+
 		cell = row21.createCell(3);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -925,7 +985,7 @@ public class BalancoPatrimonialMB {
 		cell = row22.createCell(2);
 		cell.setCellValue("          (-)DISTRIBUIÇÃO LUCROS DO 2º SEMESTRE PAGO NO 1º SEMESTRE");
 		cell.setCellStyle(normal_style);
-		
+
 		cell = row22.createCell(3);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -938,7 +998,7 @@ public class BalancoPatrimonialMB {
 		cell = row23.createCell(2);
 		cell.setCellValue("          LUCRO 1º SEMESTRE DO ANO ANTERIOR");
 		cell.setCellStyle(normal_style);
-		
+
 		cell = row23.createCell(3);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -951,7 +1011,7 @@ public class BalancoPatrimonialMB {
 		cell = row24.createCell(2);
 		cell.setCellValue("          (-)AUMENTO DE CAPITAL SOCIAL");
 		cell.setCellStyle(normal_style);
-		
+
 		cell = row24.createCell(3);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -960,11 +1020,11 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
+
 		cell = row25.createCell(2);
 		cell.setCellValue("          (-)DISTRIBUIÇÃO LUCROS DO 1º SEMESTRE PAGO NO 2º SEMESTRE");
 		cell.setCellStyle(normal_style);
-		
+
 		cell = row25.createCell(3);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -977,7 +1037,7 @@ public class BalancoPatrimonialMB {
 		cell = row26.createCell(2);
 		cell.setCellValue("	          ÚLTIMO LUCRO");
 		cell.setCellStyle(normal_style);
-		
+
 		cell = row26.createCell(3);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -986,11 +1046,11 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
-		
+
 		cell = row29.createCell(2);
 		cell.setCellValue("TOTAL DO PASSIVO");
 		cell.setCellStyle(cell_style);
-		
+
 		cell = row29.createCell(3);
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
@@ -1009,7 +1069,7 @@ public class BalancoPatrimonialMB {
 
 		this.balancoPatrimonialXLSGerado = true;
 	}
-	
+
 	public Date gerarDataHoje() {
 		TimeZone zone = TimeZone.getDefault();
 		Locale locale = new Locale("pt", "BR");
