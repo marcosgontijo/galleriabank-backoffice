@@ -41,6 +41,7 @@ public class IuguService {
 		if(this.objetoContratoCobrancaList.isEmpty()) {
 			String message = "{\"retorno\": \"[Galleria Bank] Numero do Contrato não foi encontrato!!!\"}";
 			logger.warn("Fatura Service - Criar Fatura - Numero do Contrato não foi encontrato !!!");
+			return Response
 				      .status(Response.Status.FORBIDDEN)
 				      .entity(message)
 				      .type(MediaType.APPLICATION_JSON)
