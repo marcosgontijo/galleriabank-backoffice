@@ -120,8 +120,6 @@ public class BalancoPatrimonialMB {
 
 			// VALOR DEFAULT NO DAO - VALOR DO SISTEMA
 
-			// this.objetoBalanco.setProvisaoLiquidAntecipada(balancopatrimonialDao.consultaContasPagar());
-			// conferir excel
 			this.relatorioBalancoPagar = balancopatrimonialDao.listaRelatorioPagarBalanco();
 			this.relatorioBalancoReceber = balancopatrimonialDao.listaRelatorioReceberBalanco();
 
@@ -131,9 +129,10 @@ public class BalancoPatrimonialMB {
 				this.objetoBalanco.setInvestOperantigas(ultimoBalanco.getInvestOperantigas());
 				this.objetoBalanco.setCapitalSocial(ultimoBalanco.getCapitalSocial());
 			}
-
+			
 			this.objetoBalanco.saldoCaixaOmie(); // VALOR CAIXAS
 			this.objetoBalanco.calcularCustoPonderado(relatorioBalancoPagar); // VALOR RECURSOS DEBENTURES
+			
 
 			int totalRegistros = relatorioBalancoReceber.size();
 			int qtdPorTask = totalRegistros / 10;
@@ -195,14 +194,12 @@ public class BalancoPatrimonialMB {
 			this.objetoBalanco.setDireitosCreditorios(
 					this.objetoBalanco.getDireitosCreditorios().setScale(2, BigDecimal.ROUND_HALF_UP));
 			
-			this.objetoBalanco.calcularProvisaoLiquidacaoAntecipada(relatorioBalancoReceber);
-			
-			
-
-//		this.objetoBalanco.calcularVariaveisReceber(relatorioBalancoReceber); //VALOR DIREITOS CREDITORIOS
-
 		}
+		
+			this.objetoBalanco.calcularProvisaoLiquidacaoAntecipada(relatorioBalancoReceber); //VALOR PROVISÃO LIQUIDAÇÃO ANTECIPADA
 	}
+	
+	
 
 	public BalancoPatrimonial getUltimoBalanco() {
 		return ultimoBalanco;

@@ -6,9 +6,12 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import org.apache.poi.ss.formula.functions.FinanceLib;
 
 import com.webnowbr.siscoat.cobranca.service.OmieService;
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -196,7 +199,7 @@ public class BalancoPatrimonial implements Serializable {
 						saldoAtualizado = vlrParcela.multiply(juros); // parcela * juros
 						saldoAtualizado = saldoAtualizado.multiply(multa.add(new BigDecimal(1))); // parcela * juros * multa
 					} else {
-						// (1 + CDI + TAXA CRI1)
+						// (1 + IPCA + TAXA CRI1)
 						
 						BigDecimal ipcaCalculo = ipca.divide(new BigDecimal(100));
 						BigDecimal taxaCriCalculo = taxaCri1.divide(new BigDecimal(100));
@@ -214,7 +217,7 @@ public class BalancoPatrimonial implements Serializable {
 						saldoAtualizado = vlrParcela.multiply(juros); // parcela * juros
 						saldoAtualizado = saldoAtualizado.multiply(multa.add(new BigDecimal(1))); // parcela * juros * multa
 					} else {
-						// (1 + CDI + TAXA CRI2)
+						// (1 + IPCA + TAXA CRI2)
 						BigDecimal ipcaCalculo = ipca.divide(new BigDecimal(100));
 						BigDecimal taxaCriCalculo = taxaCri2.divide(new BigDecimal(100));
 						
@@ -232,7 +235,7 @@ public class BalancoPatrimonial implements Serializable {
 						saldoAtualizado = vlrParcela.multiply(juros); // parcela * juros
 						saldoAtualizado = saldoAtualizado.multiply(multa.add(BigDecimal.ONE)); // parcela * juros * multa
 					} else {
-						// (1 + CDI + TAXA CRI3)					
+						// (1 + IPCA + TAXA CRI3)					
 						BigDecimal ipcaCalculo = ipca.divide(new BigDecimal(100));
 						BigDecimal taxaCriCalculo = taxaCri3.divide(new BigDecimal(100));
 						
@@ -310,14 +313,64 @@ public class BalancoPatrimonial implements Serializable {
 	}
 	
 	public void calcularProvisaoLiquidacaoAntecipada(List<RelatorioBalanco> relatorioBalancoReceber) {
-
+		// A CADA EMPRESTIMO
 		long icount = 0l;
-		BigDecimal mediaTaxa = new BigDecimal(relatorioBalancoReceber.stream()
+		BigDecimal mediaTaxaReceber = new BigDecimal(relatorioBalancoReceber.stream()
 				.mapToDouble(balanco -> CommonsUtil.doubleValue(balanco.getTaxaContratoRelatorio().doubleValue()))
 				.average().orElse(0.0));
-		System.out.println(mediaTaxa);
+		BigDecimal mediaTaxaCalculo = mediaTaxaReceber.divide(new BigDecimal(100));
+		System.out.println("Taxa média Receber %: " +mediaTaxaReceber);
+		BigDecimal emprestimo = new BigDecimal (100000000);
+		BigDecimal prazoReceber = new BigDecimal (180);
+		BigDecimal ipcaCalculo = ipca.divide(new BigDecimal(100));
+		System.out.println("IPCA %: " +ipcaCalculo);
+		BigDecimal taxaCalculo = mediaTaxaCalculo.add(ipcaCalculo);
+		System.out.println("Taxa Calculo:" +taxaCalculo);
 		
-
+		BigDecimal parcelaPGTO = BigDecimal
+				.valueOf(FinanceLib.pmt(taxaCalculo.divide(BigDecimal.valueOf(1)).doubleValue(), // taxa
+						prazoReceber.intValue(), // prazo
+						emprestimo.negate().doubleValue(), // valor credito - VP
+						Double.valueOf("0"), // VF
+						false // pagamento no inico
+				));
+		System.out.println("Parcela: " +parcelaPGTO);
+		
+		
+		//TRAZENDO A VALOR PRESENTE
+		BigDecimal taxaFidcCalculo = taxaFidc.divide(new BigDecimal(100));
+		BigDecimal cdiCalculo = cdi.divide(new BigDecimal(100));
+		BigDecimal prazoPresente = prazoReceber;
+		BigDecimal taxaCalculoPresente = taxaFidcCalculo.add(cdiCalculo);
+		
+		BigDecimal valorPresente = BigDecimal
+				.valueOf(FinanceLib.pv(taxaCalculoPresente.divide(BigDecimal.valueOf(1)).doubleValue(), //taxa
+						prazoPresente.intValue(), //prazo
+						parcelaPGTO.negate().doubleValue(), //parcela calculada acima
+						Double.valueOf("0"), //valor futuro
+						true // pagamento no fim
+						));
+		System.out.println("valorPresente: " +valorPresente);
+		
+		//VALOR PRESENTE CARTEIRA
+		BigDecimal valorPresenteCarteira = this.getDireitosCreditorios();
+		System.out.println("valorPresente Carteira: " +valorPresenteCarteira);
+		
+		//VALOR PRESENTE EMPRESTIMOS
+		BigDecimal valorPresenteEmprestimos = emprestimo.multiply(valorPresenteCarteira).divide(valorPresente,MathContext.DECIMAL128);
+		System.out.println("valorPresenteEmprestimos: " +valorPresenteEmprestimos);
+		
+		//PERDA POR LIQUIDAÇÃO ANTECIPADA
+		BigDecimal perdaLiquidacaoAntecipada = valorPresenteCarteira.subtract(valorPresenteEmprestimos);
+		System.out.println("perdaLiquidacaoAntecipada: " +perdaLiquidacaoAntecipada);
+		
+		//Percentual de Liquidação Antecipada da Carteira acima de 30 dias
+		BigDecimal liquidacaoAntecipadaKPMG = new BigDecimal (0.0699);
+		System.out.println("liquidacaoAntecipadaKPMG: " +liquidacaoAntecipadaKPMG);
+		
+		//Provisão para Liquidações Antecipadas
+		this.provisaoLiquidAntecipada = perdaLiquidacaoAntecipada.multiply(liquidacaoAntecipadaKPMG).setScale(2, BigDecimal.ROUND_HALF_UP);
+		System.out.println("provisaoLiquidAntecipada: " +provisaoLiquidAntecipada);
 	}
 
 	public void saldoCaixaOmie() {
