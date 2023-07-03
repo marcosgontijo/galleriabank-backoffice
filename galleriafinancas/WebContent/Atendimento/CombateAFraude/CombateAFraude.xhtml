@@ -22,10 +22,7 @@
 						<p:ajax event="blur" />
 					</p:inputMask>
 					
-					<p:outputLabel for="temSelfie"
-						value="Tem selfie? " styleClass="labelBold" />
-					<p:selectBooleanCheckbox id="temSelfie" 
-						value="#{combateAFraudeMB.temSelfie}" />
+					
 					
 				</h:panelGrid>
 			</p:panel>
@@ -74,7 +71,14 @@
 						        
 						        <p:column style="width:150px;">
 									<p:commandButton ajax="false" action="#{combateAFraudeMB.downloadDoc(files)}"
-										icon="ui-icon ui-icon-print" value="Fazer Download"  update=" :form  msgs" />	
+										icon="ui-icon ui-icon-print" value="Download"  update=" :form  msgs" />	
+										
+									<p:commandButton ajax="false" action="#{combateAFraudeMB.viewFileCaF(files)}" 
+										value="Abrir" immediate="true" icon="ui-icon-search" onclick="target='_blank'" 
+										onblur="target='_self'" />	
+										
+									<p:commandButton ajax="true" action="#{combateAFraudeMB.deleteFile(files)}"
+										icon="ui-icon-trash" value="Excluir"  update="dtFiles" />	
 					            </p:column>			  		               		        			        			           			 		
 							</p:dataTable>								
 						</h:panelGrid>  

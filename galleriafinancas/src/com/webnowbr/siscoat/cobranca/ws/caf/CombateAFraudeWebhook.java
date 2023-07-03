@@ -1,7 +1,11 @@
 package com.webnowbr.siscoat.cobranca.ws.caf;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -11,6 +15,8 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
+
+import org.json.JSONObject;
 
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GsonUtil;
@@ -52,6 +58,15 @@ public class CombateAFraudeWebhook {
 				
 				result = new FacesMessage(FacesMessage.SEVERITY_ERROR, "CaF: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", "");
 			} else {
+				JSONObject retorno = null;
+				retorno = getJsonSucesso(myURLConnection.getInputStream());
+				if (retorno.has("requestId")) {
+					combateAFraudeTransaction.setRequestId(retorno.getString("requestId"));
+				}
+				if (retorno.has("id")) {
+					combateAFraudeTransaction.setId(retorno.getString("id"));
+				}
+				
 				result = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
 			}
 
@@ -88,5 +103,33 @@ public class CombateAFraudeWebhook {
 			return Response.status(500).entity("Erro interno").build();
 		}
 	}
-	
+
+	public JSONObject getJsonSucesso(InputStream inputStream) {
+		BufferedReader in;
+		try {
+			in = new BufferedReader(
+					new InputStreamReader(inputStream, "UTF-8"));
+
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+
+			//READ JSON response and print
+			JSONObject myResponse = new JSONObject(response.toString());
+
+			return myResponse;
+
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

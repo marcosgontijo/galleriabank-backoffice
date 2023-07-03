@@ -803,6 +803,9 @@ public class ContratoCobranca implements Serializable {
 	
 	private String emailPagador;
 	private String celularPagador;
+	
+	private int totalCertidoesDocket;
+	private int certidoesProntas;
 
 	//FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13	
 	public BigDecimal calcularValorTotalContasPagas() {
@@ -6384,6 +6387,22 @@ public class ContratoCobranca implements Serializable {
 
 	public void setContatoDiferenteProprietario(boolean contatoDiferenteProprietario) {
 		this.contatoDiferenteProprietario = contatoDiferenteProprietario;
+	}
+
+	public int getTotalCertidoesDocket() {
+		return totalCertidoesDocket;
+	}
+
+	public void setTotalCertidoesDocket(int totalCertidoesDocket) {
+		this.totalCertidoesDocket = totalCertidoesDocket;
+	}
+
+	public int getCertidoesProntas() {
+		return certidoesProntas;
+	}
+
+	public void setCertidoesProntas(int certidoesProntas) {
+		this.certidoesProntas = certidoesProntas;
 	}	
 	
 	
