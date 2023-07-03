@@ -117,5 +117,10 @@
 			lazy="false">
 			<column name="comprovantePagamentoStarkBank" />
 		</many-to-one>
+		<many-to-one name="comprovantePagamentoPixStarkBank"
+			class="com.webnowbr.siscoat.cobranca.db.model.StarkBankPix"
+			lazy="false">
+			<column name="comprovantePagamentoPixStarkBank" />
+		</many-to-one>
 	</class>
 </hibernate-mapping>
