@@ -138,7 +138,11 @@
 								<p:menuitem value="Processos UniProof"
 									action="#{uniproofMB.clearFieldsProcessos}"
 									ajax="false" icon="ui-icon ui-icon-newwin"
-									styleClass="itemMenu" />							
+									styleClass="itemMenu" />					
+									<p:menuitem value="Consultas"
+									action="#{consultasMB.clear}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />						
 							</p:submenu>					
 						</shiro:hasAnyRoles>						
 						<shiro:hasAnyRoles name="ROOT, COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_CREDITO,
