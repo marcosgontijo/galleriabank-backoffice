@@ -27,17 +27,11 @@ import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.common.ReportUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 
-import javassist.expr.NewArray;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-
-
-import org.apache.poi.ss.formula.eval.*;
-import org.apache.poi.ss.formula.functions.AggregateFunction;
-import org.apache.poi.ss.formula.functions.NumericFunction;
 
 /** ManagedBean. */
 @ManagedBean(name = "simuladorMB")
