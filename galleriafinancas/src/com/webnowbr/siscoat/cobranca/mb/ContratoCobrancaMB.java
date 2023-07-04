@@ -11943,6 +11943,23 @@ public class ContratoCobrancaMB {
 		return "/Atendimento/Cobranca/ContratoCobrancaFinanceiroAtrasoCRI2.xhtml";
 	}
 	
+	public String clearFieldsRelFinanceiroAtrasoCRI3() {
+		
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataInicio = Calendar.getInstance(zone, locale);
+		this.relDataContratoInicio = dataInicio.getTime();
+		this.relDataContratoFim = dataInicio.getTime();
+		
+		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
+		this.selectedContratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
+		relatorioFinanceiroCobrancaResumo = new RelatorioFinanceiroCobrancaResumo();
+		
+		this.contratoGerado = false;
+
+		return "/Atendimento/Cobranca/ContratoCobrancaFinanceiroAtrasoCRI3.xhtml";
+	}
+	
 	public String clearFieldsRelFinanceiroAtrasoSecuritizadora() {
 		
 		TimeZone zone = TimeZone.getDefault();
