@@ -65,6 +65,8 @@
 				<p:commandButton value="Consultar" action="#{contratoCobrancaMB.geraRelFinanceiroBaixadoCRI3}" icon="ui-icon ui-icon-check" update=":form:dtContratos :form:ConsultaFinanceiroResultados" style="TEXT-DECORATION: bold;"  onclick="start();" oncomplete="stop();"/>					
 			</p:panel>
 			<p:panel id="ConsultaFinanceiroResultados" header="Financeiro Baixado CRI 3 - Resultados" style="margin-bottom:10px;">	    		    
+   		       <ui:include src="ContratoCobrancaFinanceiroBaixadoResumo.xhtml"></ui:include>
+   		       
    		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.relObjetoContratoCobranca}"  selection="#{contratoCobrancaMB.relSelectedObjetoContratoCobranca}" emptyMessage="" sortBy="#{contratos.dataVencimento}">
                  	<f:facet name="header">   
                  		<p:commandButton value="Gerar XLS" ajax="false"
@@ -110,7 +112,8 @@
 			        </p:column>			        		        			        			        	               			        	        
 			        <p:column style="width:30px;" exportable="false">
 			        	<p:commandButton action="#{contratoCobrancaMB.clearFieldsBaixar}" ajax="false" icon="ui-icon-search" title="Detalhes">
-			        		<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos.contratoCobranca}" />  			        		
+			        		<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos.contratoCobranca}" />  	
+			        		<f:setPropertyActionListener target="#{contratoCobrancaMB.numeroContratoObjetoContratoCobranca}" value="#{contratos.numeroContrato}" />  		        		
 			        		<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="false" />
 			        		<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
 			        		<f:setPropertyActionListener target="#{contratoCobrancaMB.origemTelaBaixar}" value="CobrancaFinanceiroBaixado" />

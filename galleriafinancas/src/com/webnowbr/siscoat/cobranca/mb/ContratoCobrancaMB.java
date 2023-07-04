@@ -110,6 +110,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.webnowbr.siscoat.auxiliar.BigDecimalConverter;
 import com.webnowbr.siscoat.auxiliar.EnviaEmail;
 import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobranca;
+import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobrancaResumo;
 import com.webnowbr.siscoat.cobranca.db.model.AnaliseComite;
 import com.webnowbr.siscoat.cobranca.db.model.Averbacao;
 import com.webnowbr.siscoat.cobranca.db.model.BoletoKobana;
@@ -203,6 +204,8 @@ public class ContratoCobrancaMB {
 	private LazyDataModel<Responsavel> responsaveisLazy;
 	/** Variavel. */
 	private ContratoCobranca objetoContratoCobranca;
+	private String numeroContratoObjetoContratoCobranca;
+	
 	private boolean updateMode = false;
 	private boolean deleteMode = false;
 	private boolean crmMode = false;
@@ -557,9 +560,10 @@ public class ContratoCobrancaMB {
 	
 	private Date relDataContratoInicio;
 	private Date relDataContratoFim;
-	private List<RelatorioFinanceiroCobranca> relObjetoContratoCobranca;
 	private RelatorioFinanceiroCobranca relSelectedObjetoContratoCobranca;
+	private List<RelatorioFinanceiroCobranca> relObjetoContratoCobranca;
 	private ContratoCobrancaDetalhes selectedContratoCobrancaDetalhes;
+	private RelatorioFinanceiroCobrancaResumo relatorioFinanceiroCobrancaResumo;
 
 	private boolean relIsRelAtraso = false;
 	private boolean relIsCompleto = true;
@@ -6770,6 +6774,12 @@ public class ContratoCobrancaMB {
 
 	public String clearFieldsBaixar() {
 		this.tituloPainel = "Baixar Parcela";
+		
+		if ( CommonsUtil.semValor(this.objetoContratoCobranca ) && !CommonsUtil.semValor(this.numeroContratoObjetoContratoCobranca) ){
+			ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+			ContratoCobranca contratoCobranca =  contratoCobrancaDao.getContratoPorNumeroContrato(this.numeroContratoObjetoContratoCobranca);
+			this.setObjetoContratoCobranca(contratoCobranca);
+		}
 
 		// loadLovs();
 
@@ -9919,6 +9929,7 @@ public class ContratoCobrancaMB {
 
 		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
 		this.selectedContratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
+		relatorioFinanceiroCobrancaResumo = new RelatorioFinanceiroCobrancaResumo();
 		this.contratoGerado = false;
 
 		return "/Atendimento/Cobranca/ContratoCobrancaFinanceiroBaixadoFIDC.xhtml";
@@ -9930,6 +9941,7 @@ public class ContratoCobrancaMB {
 
 		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
 		this.selectedContratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
+		relatorioFinanceiroCobrancaResumo = new RelatorioFinanceiroCobrancaResumo();
 		this.contratoGerado = false;
 
 		return "/Atendimento/Cobranca/ContratoCobrancaFinanceiroBaixadoCRI1.xhtml";
@@ -9941,6 +9953,7 @@ public class ContratoCobrancaMB {
 
 		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
 		this.selectedContratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
+		relatorioFinanceiroCobrancaResumo = new RelatorioFinanceiroCobrancaResumo();
 		this.contratoGerado = false;
 
 		return "/Atendimento/Cobranca/ContratoCobrancaFinanceiroBaixadoCRI2.xhtml";
@@ -9952,6 +9965,7 @@ public class ContratoCobrancaMB {
 
 		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
 		this.selectedContratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
+		relatorioFinanceiroCobrancaResumo = new RelatorioFinanceiroCobrancaResumo();
 		this.contratoGerado = false;
 
 		return "/Atendimento/Cobranca/ContratoCobrancaFinanceiroBaixadoCRI3.xhtml";
@@ -11896,7 +11910,8 @@ public class ContratoCobrancaMB {
 		
 		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
 		this.selectedContratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
-
+		relatorioFinanceiroCobrancaResumo = new RelatorioFinanceiroCobrancaResumo();
+		
 		this.contratoGerado = false;
 
 		return "/Atendimento/Cobranca/ContratoCobrancaFinanceiroAtrasoFIDC.xhtml";
@@ -11912,7 +11927,8 @@ public class ContratoCobrancaMB {
 		
 		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
 		this.selectedContratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
-
+		relatorioFinanceiroCobrancaResumo = new RelatorioFinanceiroCobrancaResumo();
+		
 		this.contratoGerado = false;
 
 		return "/Atendimento/Cobranca/ContratoCobrancaFinanceiroAtrasoCRI1.xhtml";
@@ -11928,7 +11944,8 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		
 		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
 		this.selectedContratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
-
+		relatorioFinanceiroCobrancaResumo = new RelatorioFinanceiroCobrancaResumo();
+		
 		this.contratoGerado = false;
 
 		return "/Atendimento/Cobranca/ContratoCobrancaFinanceiroAtrasoCRI2.xhtml";
@@ -12207,7 +12224,33 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 
 		this.contratoGerado = false;
 	}
+	
+	private void geraResumo() {
+		
+		if (CommonsUtil.semValor(relObjetoContratoCobranca)) {
+			relatorioFinanceiroCobrancaResumo = new RelatorioFinanceiroCobrancaResumo();
+		}
+		
+		BigInteger qtdContratos = CommonsUtil.bigIntegerValue(this.relObjetoContratoCobranca.stream()
+				.map(RelatorioFinanceiroCobranca::getNumeroContrato).distinct().collect(Collectors.toList()).size());
 
+		BigDecimal valorParcela = this.relObjetoContratoCobranca.stream().map(x -> CommonsUtil.bigDecimalValue( x.getValorCCB()))
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+
+		BigDecimal vlrTotalPago = this.relObjetoContratoCobranca.stream().map(x -> CommonsUtil.bigDecimalValue( x.getVlrTotalPago()))
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+
+//		Pair<Double, Double> result = this.relObjetoContratoCobranca
+//                .stream()
+//                .map(rel -> Pair.of(rel.getValor(), rel.getVlrTotalPago()))
+//                .reduce(Pair.of(0d, 0d), (pair1, pair2) -> Pair.of(pair1.getFirst() + pair2.getFirst(), pair1.getSecond() + pair2.getSecond()));
+//		
+		relatorioFinanceiroCobrancaResumo = new RelatorioFinanceiroCobrancaResumo(
+				qtdContratos, valorParcela, vlrTotalPago);		
+	}
+
+	
+	
 	public void geraRelFinanceiroBaixadoFIDC() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 			
@@ -12225,6 +12268,8 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
 		}
 
+		geraResumo();
+		
 		this.contratoGerado = false;
 	}
 	
@@ -12244,6 +12289,9 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		if (this.relObjetoContratoCobranca.size() == 0) {
 			this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
 		}
+
+
+		geraResumo();
 
 		this.contratoGerado = false;
 	}
@@ -12265,6 +12313,8 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
 		}
 
+		geraResumo();
+
 		this.contratoGerado = false;
 	}
 	
@@ -12285,6 +12335,9 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
 		}
 
+
+		geraResumo();
+		
 		this.contratoGerado = false;
 	}
 
@@ -13415,7 +13468,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		if (this.relObjetoContratoCobranca.size() == 0) {
 			this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
 		}
-
+	
 		this.contratoGerado = false;
 	}
 	
@@ -28496,6 +28549,15 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		this.objetoContratoCobranca = objetoContratoCobranca;
 	}
 
+	
+	public String getNumeroContratoObjetoContratoCobranca() {
+		return numeroContratoObjetoContratoCobranca;
+	}
+
+	public void setNumeroContratoObjetoContratoCobranca(String numeroContratoObjetoContratoCobranca) {
+		this.numeroContratoObjetoContratoCobranca = numeroContratoObjetoContratoCobranca;
+	}
+
 	/**
 	 * @return the updateMode
 	 */
@@ -28892,6 +28954,8 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 	public void setRelObjetoContratoCobranca(List<RelatorioFinanceiroCobranca> relObjetoContratoCobranca) {
 		this.relObjetoContratoCobranca = relObjetoContratoCobranca;
 	}
+	
+	
 
 	/**
 	 * @return the relSelectedObjetoContratoCobranca
@@ -28907,6 +28971,14 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 	 */
 	public void setRelSelectedObjetoContratoCobranca(RelatorioFinanceiroCobranca relSelectedObjetoContratoCobranca) {
 		this.relSelectedObjetoContratoCobranca = relSelectedObjetoContratoCobranca;
+	}
+
+	public RelatorioFinanceiroCobrancaResumo getRelatorioFinanceiroCobrancaResumo() {
+		return relatorioFinanceiroCobrancaResumo;
+	}
+
+	public void setRelatorioFinanceiroCobrancaResumo(RelatorioFinanceiroCobrancaResumo relatorioFinanceiroCobrancaResumo) {
+		this.relatorioFinanceiroCobrancaResumo = relatorioFinanceiroCobrancaResumo;
 	}
 
 	/**
