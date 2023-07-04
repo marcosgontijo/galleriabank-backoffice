@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui">
+	
+		<h:outputStylesheet >
+			.resumoRight{
+				text-align:right;
+				width: 115px;
+			}
+			.resumoLeft{
+				text-align:left;
+			}
+			</h:outputStylesheet>
+			
+		<h:panelGrid columns="2" styleClass="row" id="ConsultaFinanceiroResumo"
+		 rendered="#{contratoCobrancaMB.relatorioFinanceiroCobrancaResumo.qtdeNumeroContrato > 0}" 
+		columnClasses="resumoLeft,  resumoRight"
+			header="Financeiro Baixado Resumo" style="margin-bottom:10px;">
+			
+				<h:outputText value="Quantidade Contratos"></h:outputText>
+				<h:outputText value="#{contratoCobrancaMB.relatorioFinanceiroCobrancaResumo.qtdeNumeroContrato}" ></h:outputText>
+				
+				
+				<h:outputText value="Valor Parcelas"></h:outputText>
+				<h:outputText value="#{contratoCobrancaMB.relatorioFinanceiroCobrancaResumo.valorParcela}" converter="bigDecimalConverter"></h:outputText>
+				
+				<h:outputText value="Valor Pago"></h:outputText>
+				<h:outputText value="#{contratoCobrancaMB.relatorioFinanceiroCobrancaResumo.vlrTotalPago}" converter="bigDecimalConverter"></h:outputText>
+				
+		</h:panelGrid>
+
+</ui:composition>
