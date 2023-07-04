@@ -151,6 +151,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaParcelasInvestidorDao;
 import com.webnowbr.siscoat.cobranca.db.op.DashboardDao;
+import com.webnowbr.siscoat.cobranca.db.op.DocketDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.db.op.FilaInvestidoresDao;
 import com.webnowbr.siscoat.cobranca.db.op.GruposFavorecidosDao;
@@ -13035,6 +13036,15 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 						}
 					}
 				}
+			}
+		}
+		
+		if(status.equals("Pedir PAJU")) {
+			for(ContratoCobranca contrato : contratosPendentes) {
+				DocketDao docketDao = new DocketDao();
+				String idCallManager = docketDao.consultaContratosPendentesResponsaveis(contrato);
+				DocketService docketService = new DocketService();
+				docketService.verificarCertidoesContrato(contrato, idCallManager);
 			}
 		}
 
