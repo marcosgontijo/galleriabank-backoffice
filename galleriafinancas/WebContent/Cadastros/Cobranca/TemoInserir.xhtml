@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" template="../MenuCadastros.xhtml">
+	<ui:define name="conteudo">
+		<h:form id="form">
+
+			<p:panel id="PanelContaContabil"
+				header="Conta Contabil - #{contasContabeisMB.tituloPainel}"
+				style="margin-bottom:10px;">
+				<p:focus />
+				<p:messages />
+				<h:panelGrid columns="2">
+
+
+					<p:outputLabel for="Identificacao" value="Identificacao" styleClass="labelBold" />
+					<p:inputText id="Identificacao"
+						value="#{termoMB.objetoTermo.identificacao}"
+						label="Nome" required="true" onblur="" style="width:400px;">
+					</p:inputText>
+
+					<p:outputLabel for="DataInicio" value="Data Inicio" styleClass="labelBold" />
+				    <p:datePicker id="DataInicio" view="month" value="#{termoMB.objetoTermo.inicioValidade" pattern="MM/yyyy" yearNavigator="true" yearRange="2000:2030" locale="pt" required="true"/>
+	
+				    <p:outputLabel for="DataFim" value="Data Fim" styleClass="labelBold" />
+				    <p:datePicker id="DataFim" view="month" value="#{termoMB.objetoTermo.fimValidade" pattern="MM/yyyy" yearNavigator="true" yearRange="2000:2030" locale="pt" required="true"/>
+	
+	
+	
+					<h:outputLabel for="userPerfil" value="Perfil: " />
+					<p:selectOneMenu id="userPerfil"
+						value="#{termoMB.objetoTermo.userPerfil.id}">
+						<f:selectItems value="#{termoMB.perfil}" var="perfil"
+							itemLabel="#{perfil.perfil}" itemValue="#{perfil.id}" />
+
+					</p:selectOneMenu>
+					
+
+					<p:outputLabel for="ContaContabilPai" value="Conta Contábil Pai: " />
+					<p:selectOneMenu id="ContaContabilPai"
+						value="#{contasContabeisMB.contaContabil.contaContabilPai.id}"
+						label="ContaContabilPai" style="width:410px;">
+						<f:selectItem itemValue="" itemLabel="Raiz" />
+						<f:selectItems value="#{contasContabeisMB.lstContaContabilPai}"
+						var="item"
+						 itemValue="#{item.id}"
+						 itemLabel="#{item.nome}" 
+						/>
+						
+					</p:selectOneMenu>
+
+				</h:panelGrid>
+			</p:panel>
+
+
+			<div align="center">
+				<p:commandButton value="Salvar" ajax="false" icon="ui-icon-check"
+					action="#{contasContabeisMB.inserir()}"
+					style="TEXT-DECORATION: bold;" />
+				<p:spacer height="10" />
+				<p:commandButton value="Cancelar" ajax="false" immediate="true"
+					icon="ui-icon-cancel" action="ContasContabeisConsultar.xhtml"
+					style="TEXT-DECORATION: bold; " />
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>
