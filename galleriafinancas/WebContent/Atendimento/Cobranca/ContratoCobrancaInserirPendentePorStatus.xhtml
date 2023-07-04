@@ -1931,11 +1931,16 @@
 												<p:outputLabel value=" #{processosPessoas.quitar}" style="FONT-SIZE: 10pt;" />
 											</p:column>
 											
-											<p:column style="text-align: center;" headerText="Obs"  >
+											<p:column style="text-align: center;" headerText="Obs" >
 												<p:outputLabel value="#{processosPessoas.observacao}" style="FONT-SIZE: 10pt;" />
 											</p:column>
 										
-											<p:column style="text-align: center;width:25px;" headerText="" >
+											<p:column style="text-align: center;width:75px;" headerText="" >
+												<p:commandButton icon="ui-icon-pencil"
+													action="#{contratoCobrancaMB.editProcesso(processosPessoas)}"
+													oncomplete="PF('processoDialog').show();"
+													update="processoDialogdlg" />
+
 												<p:commandButton  icon="ui-icon-trash" 
 													action="#{contratoCobrancaMB.removeProcesso(processosPessoas)}"
 													update="form:RecebidoPajulaudoPanel form:ComitePanelView form:pessoasProcessos
@@ -1945,7 +1950,7 @@
 								</p:dataViewListItem>
 							</p:dataView>
 							
-							<h:panelGrid columns="2">			
+							<h:panelGrid columns="2">
 								<p:outputLabel value="Inserir Pessoa: " styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
 								<p:commandButton action="#{contratoCobrancaMB.clearPagadorProcesso(contratoCobrancaMB.processoSelecionado)}"

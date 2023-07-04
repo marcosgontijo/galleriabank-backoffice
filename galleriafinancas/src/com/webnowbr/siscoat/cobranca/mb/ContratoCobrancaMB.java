@@ -19335,15 +19335,25 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 			}
 		}
 		CcbProcessosJudiciaisDao ccbProcessosJudiciaisDao = new CcbProcessosJudiciaisDao();
-		ccbProcessosJudiciaisDao.create(processoSelecionado);
-		objetoContratoCobranca.getListProcessos().add(processoSelecionado);
-		
+		if(processoSelecionado.getId() <= 0) {
+			ccbProcessosJudiciaisDao.create(processoSelecionado);
+			objetoContratoCobranca.getListProcessos().add(processoSelecionado);
+		} else {
+			ccbProcessosJudiciaisDao.merge(processoSelecionado);
+			PrimeFaces current = PrimeFaces.current();
+			current.executeScript("PF('processoDialog').hide();");
+		}
+				
 		PagadorRecebedor pessoa = processoSelecionado.getPagador();
 		
 		listarProcessos();
 		calcularValorTotalProcessos();
 		processoSelecionado = new CcbProcessosJudiciais();
 		processoSelecionado.setPagador(pessoa);
+	}
+	
+	public void editProcesso(CcbProcessosJudiciais processo) {
+		processoSelecionado = processo;
 	}
 	
 	public void removeProcesso(CcbProcessosJudiciais processo) {
