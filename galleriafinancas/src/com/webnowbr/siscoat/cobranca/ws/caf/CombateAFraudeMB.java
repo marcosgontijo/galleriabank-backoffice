@@ -26,6 +26,9 @@ import org.primefaces.model.UploadedFile;
 
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
+import com.webnowbr.siscoat.common.SiscoatConstants;
+
+import br.com.galleriabank.jwt.common.JwtUtil;
 
 @ManagedBean(name = "combateAFraudeMB")
 @SessionScoped
@@ -74,10 +77,10 @@ public class CombateAFraudeMB {
 	}
 		
 	public void combateAFraudeTransaction() {
-		CombateAFraudeWebhook combateAFraudeWebhook = new CombateAFraudeWebhook();
+		CombateAFraudeService combateAFraudeService = new CombateAFraudeService();
 		CombateAFraudeTransaction transaction = comporObjeto();
 		if(!CommonsUtil.semValor(transaction)) {
-			combateAFraudeWebhook.ChamarCombateAFraude(transaction, null);
+			combateAFraudeService.ChamarCombateAFraude(transaction, null);
 		}
 	}
 	
@@ -104,6 +107,10 @@ public class CombateAFraudeMB {
 		transaction.files = files;
 		transaction.templateId = templateId;
 		transaction.attributes = attributes;
+		
+		String webHookJWT = JwtUtil.generateJWTWebhook(true);
+		transaction._callbackUrl = SiscoatConstants.URL_SISCOAT_CAF_WEBHOOK + webHookJWT;
+		
 		return transaction;
 	}
 	
@@ -160,35 +167,18 @@ public class CombateAFraudeMB {
 		return dataHoje.getTime();
 	}
 	
-	/*public static File uploadedFileToFileConverter(UploadedFile uf) {
-	    InputStream inputStream = null;
-	    OutputStream outputStream = null;
-	    //Add you expected file encoding here:
-	    System.setProperty("file.encoding", "UTF-8");
-	    File newFile = new File(uf.getFileName());
-	    try {
-	        inputStream = uf.getInputstream();
-	        outputStream = new FileOutputStream(newFile);
-	        int read = 0;
-	        byte[] bytes = new byte[1024];
-	        while ((read = inputStream.read(bytes)) != -1) {
-	            outputStream.write(bytes, 0, read);
-	        }
-	    } catch (IOException e) {
-	       //Do something with the Exception (logging, etc.)
-	    }
-	    return newFile;
-	}*/
-	
 	public String getFileType() {
 		return fileType;
 	}
+	
 	public void setFileType(String fileType) {
 		this.fileType = fileType;
 	}
+	
 	public List<CombateAFraudeFiles> getFiles() {
 		return files;
 	}
+	
 	public void setFiles(List<CombateAFraudeFiles> files) {
 		this.files = files;
 	}
@@ -201,7 +191,6 @@ public class CombateAFraudeMB {
 		this.deleteFiles = deleteFiles;
 	}
 
-	
 	public String getCpf() {
 		return cpf;
 	}
@@ -209,4 +198,5 @@ public class CombateAFraudeMB {
 	public void setCpf(String cpf) {
 		this.cpf = cpf;
 	}	
+
 }

@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="cobranca">
+	<class name="com.webnowbr.siscoat.cobranca.ws.caf.CombateAFraude"
+		table="CombateAFraude">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="increment" />
+		</id>
+
+		<property name="templateId" type="java.lang.String">
+			<column name="templateId" />
+		</property>
+
+		<property name="cpf" type="java.lang.String">
+			<column name="cpf" />
+		</property>
+
+		<property name="type" type="java.lang.String">
+			<column name="type" />
+		</property>
+
+		<property name="report" type="java.lang.String">
+			<column name="report" />
+		</property>
+
+		<property name="uuid" type="java.lang.String">
+			<column name="uuid" />
+		</property>
+
+		<property name="status" type="java.lang.String">
+			<column name="status" />
+		</property>
+
+		<property name="date" type="java.lang.String">
+			<column name="date" />
+		</property>
+	</class>
+</hibernate-mapping>
