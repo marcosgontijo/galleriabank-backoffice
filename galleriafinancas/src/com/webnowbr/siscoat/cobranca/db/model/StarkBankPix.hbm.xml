@@ -3,22 +3,16 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping schema="cobranca">
-    <class name="com.webnowbr.siscoat.cobranca.db.model.StarkBankPix" table="StarkBankPix2">
+    <class name="com.webnowbr.siscoat.cobranca.db.model.StarkBankPix" table="StarkBankPix">
         <id name="id" type="long">
             <column name="ID" />
             <generator class="increment" />
-        </id>
+        </id> 
    		<property name="taxId" type="java.lang.String">
             <column name="taxId"/>
         </property>   
                 <property name="description" type="java.lang.String">
             <column name="description"/>
-        </property>
-        <property name="line" type="java.lang.String">
-            <column name="line"/>
-        </property>
-        <property name="barCode" type="java.lang.String">
-            <column name="barCode"/>
         </property>
         <property name="scheduled" type="java.lang.String">
             <column name="scheduled"/>
