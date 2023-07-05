@@ -83,6 +83,7 @@ public class BalancoPatrimonial implements Serializable {
 	public void calcularCustoPonderado(List<RelatorioBalanco> relatorioBalancoPagar) {
 		BigDecimal somaParcela = BigDecimal.ZERO;
 		BigDecimal somaFatorX = BigDecimal.ZERO;
+		int quantidadeItens = 0;
 		
 		for(RelatorioBalanco pagarDebenture : relatorioBalancoPagar) {
 
@@ -92,20 +93,27 @@ public class BalancoPatrimonial implements Serializable {
 	
 			somaParcela = somaParcela.add(valorParcela);
 			somaFatorX = somaFatorX.add(fatorX);
-			
+			quantidadeItens = quantidadeItens+1;
 		}
+		
+		System.out.println("Quantidade de itens: " + quantidadeItens);
+		System.out.println("somaParcela: " +somaParcela);
+		System.out.println("somaFatorX: " +somaFatorX);
 		custoPonderado = (somaFatorX.divide(somaParcela,MathContext.DECIMAL128));
 		System.out.println("Custo ponderado: " +custoPonderado);
 		calcularDebenturistaPagar(relatorioBalancoPagar);
 	}
 	public void calcularDebenturistaPagar (List<RelatorioBalanco> relatorioBalancoPagar) {
 		this.setRecursosDebentures(BigDecimal.ZERO);
+		BigDecimal pagarSec = BigDecimal.ZERO;
+		BigDecimal pagarCoban = BigDecimal.ZERO;
+		
 		
 		BigDecimal quantidadeMeses = BigDecimal.ONE;
 		for(RelatorioBalanco pagarDebenture : relatorioBalancoPagar) {
 			
 			BigDecimal vlrParcela = pagarDebenture.getValorContratoRelatorio(); //vlrParcela = valor parcela
-			
+			String recebedor = pagarDebenture.getNomePagadorRelatorio(); //empresa = empresa 
 			
 			quantidadeMeses = BigDecimal.valueOf(DateUtil.Days360(pagarDebenture.getDataVencimentoRelatorio(), this.getAaaaMM())); //quantidade de dias entre dataParcela e dataReferencia
 			quantidadeMeses = quantidadeMeses.divide(BigDecimal.valueOf(30), MathContext.DECIMAL128); //divide a quantidade acima por 30
@@ -117,8 +125,19 @@ public class BalancoPatrimonial implements Serializable {
 			pagarDebenturista = (vlrParcela).multiply(CommonsUtil.bigDecimalValue(potencia) , MathContext.DECIMAL128); //valor da parcela * potencia (acima)
 			pagarDebenturista = pagarDebenturista.setScale(2, BigDecimal.ROUND_HALF_UP);
 
-			this.setRecursosDebentures(this.getRecursosDebentures().add(pagarDebenturista));
+			if (CommonsUtil.mesmoValor(recebedor,"Galleria Finanças Securitizadora S.A.")) {
+				pagarSec = pagarSec.add(pagarDebenturista);
 			}
+			else if (CommonsUtil.mesmoValor(recebedor, "Galleria Correspondente Bancario Eireli")) {
+				pagarCoban = pagarCoban.add(pagarDebenturista);
+			}
+			else {
+				this.setRecursosDebentures(this.getRecursosDebentures().add(pagarDebenturista));
+				}
+			}
+		System.out.println("pagarSec: " +pagarSec);
+		System.out.println("pagarCoban: " +pagarCoban);
+		
 	}
 	
 	public void calcularVariaveisReceber ( List<RelatorioBalanco> relatorioBalancoReceber,int inicio) {
@@ -330,7 +349,7 @@ public class BalancoPatrimonial implements Serializable {
 		BigDecimal parcelaPGTO = BigDecimal
 				.valueOf(FinanceLib.pmt(taxaCalculo.divide(BigDecimal.valueOf(1)).doubleValue(), // taxa
 						prazoReceber.intValue(), // prazo
-						emprestimo.negate().doubleValue(), // valor credito - VP
+						emprestimo.doubleValue(), // valor credito - VP
 						Double.valueOf("0"), // VF
 						false // pagamento no inico
 				));
@@ -344,11 +363,11 @@ public class BalancoPatrimonial implements Serializable {
 		BigDecimal taxaCalculoPresente = taxaFidcCalculo.add(cdiCalculo);
 		
 		BigDecimal valorPresente = BigDecimal
-				.valueOf(FinanceLib.pv(taxaCalculoPresente.divide(BigDecimal.valueOf(1)).doubleValue(), //taxa
+				.valueOf(FinanceLib.pv(taxaCalculoPresente.doubleValue(), //taxa
 						prazoPresente.intValue(), //prazo
-						parcelaPGTO.negate().doubleValue(), //parcela calculada acima
+						parcelaPGTO.doubleValue(), //parcela calculada acima
 						Double.valueOf("0"), //valor futuro
-						true // pagamento no fim
+						false // pagamento no fim
 						));
 		System.out.println("valorPresente: " +valorPresente);
 		
