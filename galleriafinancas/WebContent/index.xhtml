@@ -5,7 +5,8 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:p="http://primefaces.org/ui"
       xmlns:shiro="http://shiro.apache.org/tags"
-      xmlns:f="http://java.sun.com/jsf/core">
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:pe="http://primefaces.org/ui/extensions">
 
     <h:head>
         <title>Galleria Bank</title>          
@@ -19,6 +20,14 @@
 		<script src="#{request.contextPath}/resources/js/functions.js"></script>
         <script src="#{request.contextPath}/resources/js/locale-primefaces.js"></script>
         
+        <h:outputStylesheet >
+			.ui-dataview .ui-dataview-header {
+			    border-bottom: 0 none;
+			    display: none;
+			}
+						
+		</h:outputStylesheet>
+			
     </h:head>
 	<h:body onload="register_tab_GUID()">    
 		<p:layout fullPage="true" > 		    
@@ -754,13 +763,29 @@
 		    	</ui:insert>          			
 		    </p:layoutUnit>   	    			    		
 		    <p:layoutUnit position="center" id="conteudo" spacingOpen="0">
-				<ui:insert name="conteudo">						
-								    	        		           
+				<ui:insert name="conteudo">						    	        		           
                 </ui:insert>
 		    </p:layoutUnit>
 		    <p:layoutUnit position="south" size="35" resizable="false" closable="true" style="BORDER:none;" spacingOpen="0">
 				<p:outputLabel value="Copyright © 2023 Todos os direitos reservados. " styleClass="labelBold"/>
-		    </p:layoutUnit>			    
-		</p:layout>											
-	</h:body>
+		    </p:layoutUnit>	
+		    <p:outputLabel value="#{termoMB.verificaTermosNaoAssinadoso()}"/>
+		    			    
+		</p:layout>
+
+	<p:dialog widgetVar="dlgTermos" showEffect="fade" modal="true"
+		width="1000" height="570" minWidth="800">
+		<h:form id="termoForm">
+			<iframe scrolling="no" id="termoPdf"
+			style="overflow: hidden; height: 540; width: 100%" height="540"
+			width="100%" src="#{termoMB.carregaPdfTermo()}"> </iframe>
+	
+			<div align="center">
+				<p:commandButton value="Aceitar" ajax="true" icon="ui-icon-check" update=":termoForm"
+					action="#{termoMB.aceitar()}" style="TEXT-DECORATION: bold;" />
+			</div>
+		</h:form>
+
+	</p:dialog>
+</h:body>
 </html>

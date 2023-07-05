@@ -17,7 +17,12 @@
    		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
                  rowsPerPageTemplate="20,40,60,80" selection="" emptyMessage="" sortBy="#{termoConsulta.identificacao}">
 			        <f:facet name="header">
-						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{termoMB.clearFieldsEditar}"/>
+						<p:commandButton value="Adicionar" ajax="false"
+							icon="ui-icon-plus" action="#{termoMB.clearFieldsEditar}">
+							<f:setPropertyActionListener
+								target="#{termoMB.objetoTermo}"
+								value="#{null}" />
+						</p:commandButton>
 			        </f:facet>			        
 			        <p:column style="text-align: center;" headerText="Identificacao" filterBy="#{termoConsulta.identificacao}" filterMatchMode="contains" sortBy="#{termoConsulta.identificacao}">
 			            <h:outputText value="#{termoConsulta.identificacao}" />
@@ -42,21 +47,26 @@
 			        
 			        
 			        <p:column style="width:120px;">
-			        	<p:commandButton action="termoConsultaInserir.xhtml" ajax="false" icon="ui-icon-pencil" title="Editar">
-		                	<f:setPropertyActionListener target="#{termoConsultaMB.objetotermoConsulta}" value="#{termoConsulta}" />
-		                	<f:setPropertyActionListener target="#{termoConsultaMB.updateMode}" value="true" />
-		                	<f:setPropertyActionListener target="#{termoConsultaMB.deleteMode}" value="false" />
+			        	<p:commandButton action="#{termoMB.clearFieldsEditar}" ajax="false" icon="ui-icon-pencil" title="Editar">
+		                	<f:setPropertyActionListener target="#{termoMB.objetoTermo}" value="#{termoConsulta}" />
+		                	<f:setPropertyActionListener target="#{termoMB.updateMode}" value="true" />
+		                	<f:setPropertyActionListener target="#{termoMB.deleteMode}" value="false" />
 		                </p:commandButton>
 		                <p:spacer width="10" height="10"/>
-		                <p:commandButton action="termoConsultaDetalhes.xhtml" ajax="false" icon="ui-icon-trash" title="Excluir">
-		                	<f:setPropertyActionListener target="#{termoConsultaMB.objetotermoConsulta}" value="#{termoConsulta}" />
-		                	<f:setPropertyActionListener target="#{termoConsultaMB.updateMode}" value="false" />
-		                	<f:setPropertyActionListener target="#{termoConsultaMB.deleteMode}" value="true" />
+		                <p:commandButton action="#{termoMB.clearFieldsEditar}" ajax="false" icon="ui-icon-trash" title="Excluir">
+		                	<f:setPropertyActionListener target="#{termoMB.objetoTermo}" value="#{termoConsulta}" />
+		                	<f:setPropertyActionListener target="#{termoMB.updateMode}" value="false" />
+		                	<f:setPropertyActionListener target="#{termoMB.deleteMode}" value="true" />
 		                </p:commandButton> 
-		            </p:column>			        		               		        			        			           			 		
-			        <f:facet name="footer">
-						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{termoMB.clearFieldsEditar}"/>
-			        </f:facet>
+		            </p:column>
+					<f:facet name="footer">
+						<p:commandButton value="Adicionar" ajax="false"
+							icon="ui-icon-plus" action="#{termoMB.clearFieldsEditar}">
+							<f:setPropertyActionListener
+								target="#{termoMB.objetoTermo}"
+								value="#{null}" />
+						</p:commandButton>
+					</f:facet>
 				</p:dataTable>
 			</p:panel>
 			<div align="center">	

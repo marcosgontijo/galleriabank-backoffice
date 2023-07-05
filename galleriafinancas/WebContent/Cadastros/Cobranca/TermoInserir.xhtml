@@ -5,10 +5,10 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:p="http://primefaces.org/ui" template="../MenuCadastros.xhtml">
 	<ui:define name="conteudo">
-		<h:form id="form">
+		<h:form id="form" enctype="multipart/form-data">
 
 			<p:panel id="PanelContaContabil"
-				header="Conta Contabil - #{contasContabeisMB.tituloPainel}"
+				header="Termo - #{termoMB.tituloPainel}"
 				style="margin-bottom:10px;">
 				<p:focus />
 				<p:messages />
@@ -22,10 +22,10 @@
 					</p:inputText>
 
 					<p:outputLabel for="DataInicio" value="Data Inicio" styleClass="labelBold" />
-				    <p:datePicker id="DataInicio" view="month" value="#{termoMB.objetoTermo.inicioValidade" pattern="MM/yyyy" yearNavigator="true" yearRange="2000:2030" locale="pt" required="true"/>
+				    <p:datePicker id="DataInicio"  value="#{termoMB.objetoTermo.inicioValidade}" pattern="dd/MM/yyyy"  locale="pt" required="true"/>
 	
 				    <p:outputLabel for="DataFim" value="Data Fim" styleClass="labelBold" />
-				    <p:datePicker id="DataFim" view="month" value="#{termoMB.objetoTermo.fimValidade" pattern="MM/yyyy" yearNavigator="true" yearRange="2000:2030" locale="pt" required="true"/>
+				    <p:datePicker id="DataFim"  value="#{termoMB.objetoTermo.fimValidade}" pattern="dd/MM/yyyy"  locale="pt" />
 	
 	
 	
@@ -36,20 +36,22 @@
 							itemLabel="#{perfil.perfil}" itemValue="#{perfil.id}" />
 
 					</p:selectOneMenu>
-					
 
-					<p:outputLabel for="ContaContabilPai" value="Conta Contábil Pai: " />
-					<p:selectOneMenu id="ContaContabilPai"
-						value="#{contasContabeisMB.contaContabil.contaContabilPai.id}"
-						label="ContaContabilPai" style="width:410px;">
-						<f:selectItem itemValue="" itemLabel="Raiz" />
-						<f:selectItems value="#{contasContabeisMB.lstContaContabilPai}"
-						var="item"
-						 itemValue="#{item.id}"
-						 itemLabel="#{item.nome}" 
-						/>
+					<h:outputLabel value="Arquivo: " />
+					<h:panelGrid columns="1" id="dtFileTermo">
+						<p:fileUpload label="Selecionar Arquivo" 
+							multiple="false" skinSimple="true"
+							rendered="#{termoMB.objetoTermo.arquivo == null}"
+							value="#{termoMB.file}"
+							mode="simple" dragDropSupport="true" update="dtFileTermo">
+						</p:fileUpload>
+						<h:outputLabel value="#{termoMB.objetoTermo.arquivo}"  rendered="#{termoMB.objetoTermo.arquivo != null}" />
+						<p:commandButton value="Trocar arquivo" ajax="true" icon="ui-icon-check"  rendered="#{termoMB.objetoTermo.arquivo != null}"
+							action="#{termoMB.trocarArquivo()}"  update="dtFileTermo"
+							style="TEXT-DECORATION: bold;" />
+					
+					</h:panelGrid>
 						
-					</p:selectOneMenu>
 
 				</h:panelGrid>
 			</p:panel>
@@ -57,11 +59,11 @@
 
 			<div align="center">
 				<p:commandButton value="Salvar" ajax="false" icon="ui-icon-check"
-					action="#{contasContabeisMB.inserir()}"
+					action="#{termoMB.salvar()}"
 					style="TEXT-DECORATION: bold;" />
 				<p:spacer height="10" />
 				<p:commandButton value="Cancelar" ajax="false" immediate="true"
-					icon="ui-icon-cancel" action="ContasContabeisConsultar.xhtml"
+					icon="ui-icon-cancel" action="TermoConsultar.xhtml"
 					style="TEXT-DECORATION: bold; " />
 			</div>
 		</h:form>
