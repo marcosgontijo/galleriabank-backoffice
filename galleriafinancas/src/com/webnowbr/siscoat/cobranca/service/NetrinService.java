@@ -590,6 +590,7 @@ public class NetrinService {
 						DocumentosAnaliseEnum.RECEITA_FEDERAL, GsonUtil.toJson(receitaFederalPF));
 			}
 
+			if ( !CommonsUtil.semValor(receitaFederalPF))				
 			nomeConsultado = receitaFederalPF.getCpfBirthdate().getNome();
 		} else {
 
@@ -609,7 +610,8 @@ public class NetrinService {
 					pagaPagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagadorRecebedor,
 							DocumentosAnaliseEnum.RECEITA_FEDERAL, GsonUtil.toJson(receitaFederalPJ));
 				}
-
+				
+				if ( !CommonsUtil.semValor(receitaFederalPJ))
 				nomeConsultado = receitaFederalPJ.getReceitaFederal().getRazaoSocial();
 			}
 

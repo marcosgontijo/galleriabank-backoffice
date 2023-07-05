@@ -355,5 +355,12 @@
 		     <artifactId>font-awesome</artifactId>
 		     <version>5.8.2</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.primefaces.extensions/primefaces-extensions -->
+		<dependency>
+		    <groupId>org.primefaces.extensions</groupId>
+		    <artifactId>primefaces-extensions</artifactId>
+		    <version>7.0.3</version>
+		</dependency>
+
 	</dependencies>
 </project>

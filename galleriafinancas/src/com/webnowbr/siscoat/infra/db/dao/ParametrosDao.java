@@ -4,12 +4,9 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
-import com.webnowbr.siscoat.db.dao.*;
-import com.webnowbr.siscoat.db.dao.HibernateDao.DBRunnable;
+import com.webnowbr.siscoat.db.dao.HibernateDao;
 import com.webnowbr.siscoat.infra.db.model.Parametros;
 
 /**
