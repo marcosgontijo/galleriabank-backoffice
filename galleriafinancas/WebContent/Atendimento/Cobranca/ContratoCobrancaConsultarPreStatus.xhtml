@@ -154,8 +154,14 @@
 
 					<p:column style="text-align: center;" headerText="Cidade"
 						filterBy="#{contratos.nomeCidadeImovel}"
-						filterMatchMode="contains" sortBy="#{contratos.nomeCidadeImovel}">
+						filterMatchMode="contains" sortBy="#{contratos.nomeCidadeImovel}"
+						rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pedir PAJU'}">
 						<h:outputText value="#{contratos.nomeCidadeImovel}" />
+					</p:column>
+					
+					<p:column style="text-align: center;" headerText="Andamento Docket"
+						rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Pedir PAJU'}">
+						<h:outputText value="#{contratos.certidoesProntas} / #{contratos.totalCertidoesDocket}" />
 					</p:column>
 					
 					<p:column style="text-align: center;width: 100px" headerText="Data Vistoria Imóvel" 

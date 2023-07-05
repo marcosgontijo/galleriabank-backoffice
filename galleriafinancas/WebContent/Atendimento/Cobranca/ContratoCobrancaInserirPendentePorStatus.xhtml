@@ -1975,11 +1975,16 @@
 												<p:outputLabel value=" #{processosPessoas.quitar}" style="FONT-SIZE: 10pt;" />
 											</p:column>
 											
-											<p:column style="text-align: center;" headerText="Obs"  >
+											<p:column style="text-align: center;" headerText="Obs" >
 												<p:outputLabel value="#{processosPessoas.observacao}" style="FONT-SIZE: 10pt;" />
 											</p:column>
 										
-											<p:column style="text-align: center;width:25px;" headerText="" >
+											<p:column style="text-align: center;width:75px;" headerText="" >
+												<p:commandButton icon="ui-icon-pencil"
+													action="#{contratoCobrancaMB.editProcesso(processosPessoas)}"
+													oncomplete="PF('processoDialog').show();"
+													update="processoDialogdlg" />
+
 												<p:commandButton  icon="ui-icon-trash" 
 													action="#{contratoCobrancaMB.removeProcesso(processosPessoas)}"
 													update="form:RecebidoPajulaudoPanel form:ComitePanelView form:pessoasProcessos
@@ -1989,7 +1994,7 @@
 								</p:dataViewListItem>
 							</p:dataView>
 							
-							<h:panelGrid columns="2">			
+							<h:panelGrid columns="2">
 								<p:outputLabel value="Inserir Pessoa: " styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
 								<p:commandButton action="#{contratoCobrancaMB.clearPagadorProcesso(contratoCobrancaMB.processoSelecionado)}"
@@ -4648,8 +4653,7 @@
 						
 			<p:messages/>
 		
-			<p:panel id="UploadArquivos" header="Upload de Arquivo(s)" style="margin-bottom:10px;" 
-			rendered="#{!contratoCobrancaMB.objetoContratoCobranca.aprovadoComite or contratoCobrancaMB.objetoContratoCobranca.documentosCompletos}" >						
+			<p:panel id="UploadArquivos" header="Upload de Arquivo(s)" style="margin-bottom:10px;" >						
 				<p:panel id="Arquivos" header="Selecionar Arquivo(s)" style="margin-bottom:10px;text-align: center;">							
 					<h:panelGrid columns="1">		
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileUpload}" mode="advanced" dragDropSupport="true"
