@@ -8,13 +8,11 @@ import java.util.List;
 public class StarkBankPix implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
-	private long id;
+	private long id; 
 	
     public BigDecimal amount;
     public String taxId;
     public String description;
-    public String line;
-    public String barCode;
     public String scheduled;
     public String tags;
     public String status;
@@ -28,12 +26,10 @@ public class StarkBankPix implements Serializable {
 	}
 	
     public StarkBankPix(long id, BigDecimal amount, String taxId, String tags, String description, String scheduled,
-            String line, String barCode, Integer fee, String status, Date created, String pathComprovante, String nomeComprovante) {
+           Integer fee, String status, Date created, String pathComprovante, String nomeComprovante) {
 		this.id = id;
 		this.taxId = taxId;
 		this.description = description;
-		this.line = line;
-		this.barCode = barCode;
 		this.scheduled = scheduled;
 		this.tags = tags;
 		this.amount = amount;
@@ -74,22 +70,6 @@ public class StarkBankPix implements Serializable {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public String getLine() {
-		return line;
-	}
-
-	public void setLine(String line) {
-		this.line = line;
-	}
-
-	public String getBarCode() {
-		return barCode;
-	}
-
-	public void setBarCode(String barCode) {
-		this.barCode = barCode;
 	}
 
 	public String getScheduled() {

@@ -156,6 +156,12 @@
 								</p:inputText>
 								<p:outputLabel value="%" rendered="#{simuladorMB.simularComIPCA}"  styleClass="labelBold" />
 							</h:panelGrid>					
+						
+							<p:outputLabel for="usarNovoCustoEmissao" value="Usar Novo Custo Emissão: "
+								styleClass="labelBold" />
+							<p:selectBooleanCheckbox id="usarNovoCustoEmissao" 
+								value="#{simuladorMB.usarNovoCustoEmissao}"  style="margin-left: 12px;">
+							</p:selectBooleanCheckbox>
 						</shiro:hasAnyRoles>
 						
 					</h:panelGrid>

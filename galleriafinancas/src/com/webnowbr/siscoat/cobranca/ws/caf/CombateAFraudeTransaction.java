@@ -9,5 +9,19 @@ public class CombateAFraudeTransaction{
 	public String _callbackUrl;
 	public CombateAFraudeAttributes attributes;	
 	
+	private String requestId;
+	private String id;
 	
+	public String getRequestId() {
+		return requestId;
+	}
+	public void setRequestId(String requestId) {
+		this.requestId = requestId;
+	}
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}	
 }

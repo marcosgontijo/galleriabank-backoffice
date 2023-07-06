@@ -328,13 +328,15 @@ public class DocketService {
 				pagadorRecebedorDao.merge(documentoAnalise.getPagador());
 			}
 
-			if (!CommonsUtil.semValor(engineRetorno.getConsultaCompleta().getEnterpriseData())) {
+			if (!CommonsUtil.semValor(engineRetorno.getConsultaCompleta().getEnterpriseData()) &&
+					!CommonsUtil.semValor(engineRetorno.getConsultaCompleta().getEnterpriseData().getPartnership()) &&
+					!CommonsUtil.semValor(engineRetorno.getConsultaCompleta().getEnterpriseData().getPartnership().getPartnerships())) {
 				DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
 
 				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
 
 				for (EngineRetornoRequestEnterprisePartnership partnership : engineRetorno.getConsultaCompleta()
-						.getEnterpriseData().getPartnerships()) {
+						.getEnterpriseData().getPartnership().getPartnerships()) {
 
 					documentoAnaliseService.cadastrarPessoRetornoEngine(partnership, usuarioLogado, documentoAnaliseDao,
 							pagadorRecebedorService, documentoAnalise.getContratoCobranca(),
@@ -969,6 +971,98 @@ public class DocketService {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+		
+	public void verificarCertidoesContrato(ContratoCobranca contrato, String idCallManager) {
+		try {	
+			
+			loginDocket(null);
+			int HTTP_COD_SUCESSO = 200;
+			URL myURL;
+			if (SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
+				myURL = new URL(urlHomologacao + "/api/v2/" + organizacao_url + "/shopping-documentos/alpha/pedidos/" + idCallManager);
+			} else {
+				myURL = new URL(urlProducao + "/api/v2/" + organizacao_url + "/shopping-documentos/alpha/pedidos/" + idCallManager);
+			}
+
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setRequestMethod("GET");
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			myURLConnection.setRequestProperty("Authorization", tokenLogin);
+			myURLConnection.setDoOutput(true);
+
+			int certidoesProntas = 0;
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
+				System.out.println("Não foi possivle consultar docket. IdCallManager: " + idCallManager + " contrato: " + contrato.toString());
+			} else {
+				JSONObject retornoConsulta = null;
+				retornoConsulta = getJsonSucesso(myURLConnection.getInputStream());
+				if(!retornoConsulta.has("pedido")) {
+					return;
+				}
+				
+				JSONObject pedido = retornoConsulta.getJSONObject("pedido");
+				
+				if(!pedido.has("documentos")) {
+					return;
+				}
+				
+				JSONArray documentos = pedido.getJSONArray("documentos");
+				for(int i = 0 ; i < documentos.length(); i++) {
+					JSONObject doc = documentos.getJSONObject(i);
+					if(!doc.has("status")) {
+						continue;
+					}			
+					if(CommonsUtil.mesmoValor(doc.get("status"), "ENTREGUE")) {
+						certidoesProntas++;
+					}
+				}
+				contrato.setCertidoesProntas(certidoesProntas);
+				contrato.setTotalCertidoesDocket(documentos.length());
+			}
+
+			myURLConnection.disconnect();
+			return;
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return;
+	}
+	
+	public JSONObject getJsonSucesso(InputStream inputStream) {
+		BufferedReader in;
+		try {
+			in = new BufferedReader(
+					new InputStreamReader(inputStream, "UTF-8"));
+
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+
+			//READ JSON response and print
+			JSONObject myResponse = new JSONObject(response.toString());
+
+			return myResponse;
+
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;

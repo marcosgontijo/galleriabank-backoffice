@@ -37,6 +37,11 @@
 									<p:menuitem value="Registro de Imóveis" action="#{registroImovelTabelaMB.clearFieldsRegistros}" ajax="false" icon="ui-icon ui-icon-transferthick-e-w" styleClass="itemMenu"/>
 								</shiro:hasAnyRoles>
 							</p:submenu>
+							<shiro:hasAnyRoles name="ROOT">		
+								<p:submenu label="Termos" styleClass="titulosMenu">																			
+									<p:menuitem value="Termos" action="#{termoMB.clearFields}" ajax="false" icon="ui-icon ui-icon-link" styleClass="itemMenu"/>										
+								</p:submenu>
+							</shiro:hasAnyRoles>	
 							<shiro:hasAnyRoles name="ROOT, COBRANCA">		
 								<p:submenu label="Processamento em Lote" styleClass="titulosMenu">																			
 									<p:menuitem value="Calcula Contrato" action="#{processamentoEmLoteMB.clearFieldsvaloresParcelasContratos}" ajax="false" icon="ui-icon ui-icon-link" styleClass="itemMenu"/>										

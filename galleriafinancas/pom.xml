@@ -333,7 +333,7 @@
 		<dependency>
 			<groupId>br.com.galleriabank.serasacrednet-cliente</groupId>
 			<artifactId>serasacrednet-cliente</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>br.com.galleriabank.serasarelato-cliente</groupId>

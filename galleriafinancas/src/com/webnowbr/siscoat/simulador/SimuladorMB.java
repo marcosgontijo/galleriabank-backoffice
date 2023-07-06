@@ -27,17 +27,11 @@ import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.common.ReportUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 
-import javassist.expr.NewArray;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-
-
-import org.apache.poi.ss.formula.eval.*;
-import org.apache.poi.ss.formula.functions.AggregateFunction;
-import org.apache.poi.ss.formula.functions.NumericFunction;
 
 /** ManagedBean. */
 @ManagedBean(name = "simuladorMB")
@@ -60,6 +54,7 @@ public class SimuladorMB {
     private boolean mostrarIPCA;
     private boolean validar;
     private boolean simularComIPCA = false;
+    private boolean usarNovoCustoEmissao = false;
 
 	private SimulacaoVO simulacao;
 
@@ -78,6 +73,7 @@ public class SimuladorMB {
 		mostrarIPCA = true;
 		validar = true;
 		simularComIPCA = false;
+		usarNovoCustoEmissao = false;
 		
 		return "/Atendimento/Cobranca/Simulador/SimuladorOperacao.xhtml";
 	}
@@ -123,9 +119,12 @@ public class SimuladorMB {
 
 		BigDecimal custoEmissaoValor = SiscoatConstants.CUSTO_EMISSAO_MINIMO;
 		
-		final BigDecimal custoEmissaoPercentual;
-		
-		custoEmissaoPercentual = SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL_BRUTO;
+		BigDecimal custoEmissaoPercentual = BigDecimal.ZERO;
+		if(usarNovoCustoEmissao) {
+			custoEmissaoPercentual = SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL_BRUTO_NOVO;
+		} else {
+			custoEmissaoPercentual = SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL_BRUTO;
+		}
 		
 		if (this.valorCredito.multiply(custoEmissaoPercentual.divide(BigDecimal.valueOf(100)))
 				.compareTo(SiscoatConstants.CUSTO_EMISSAO_MINIMO) > 0) {
@@ -500,6 +499,14 @@ public class SimuladorMB {
 
 	public void setSimularComIPCA(boolean simularComIPCA) {
 		this.simularComIPCA = simularComIPCA;
+	}
+
+	public boolean isUsarNovoCustoEmissao() {
+		return usarNovoCustoEmissao;
+	}
+
+	public void setUsarNovoCustoEmissao(boolean usarNovoCustoEmissao) {
+		this.usarNovoCustoEmissao = usarNovoCustoEmissao;
 	}
 }
 
