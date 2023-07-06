@@ -98,6 +98,11 @@ public class UsuarioMB {
 
 	public String clearFields() {
 		objetoUsuario = new User();
+		
+		if (userPerfilPublico == null)
+			carregaListaPerfil();
+		objetoUsuario.setUserPerfil(userPerfilPublico.get());
+		
 		this.tituloPainel = "Adicionar";
 
 		this.diasSemana = new ArrayList<String>();

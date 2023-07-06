@@ -39,6 +39,7 @@
 				width: 100px;
 			}
 			</h:outputStylesheet>
+			
 			<p:panel id="PanelLocador"
 				header="Contrato - #{contratoCobrancaMB.tituloPainel}"
 				style="margin-bottom:10px;">
@@ -2147,7 +2148,12 @@
 											<p:outputLabel value="#{processosPessoas.observacao}" style="FONT-SIZE: 10pt;" />
 										</p:column>
 									
-										<p:column style="text-align: center;width:25px;" headerText="" >
+										<p:column style="text-align: center;width:75px;" headerText="" >
+											<p:commandButton icon="ui-icon-pencil"
+												action="#{contratoCobrancaMB.editProcesso(processosPessoas)}"
+												oncomplete="PF('processoDialog').show();"
+												update="processoDialogdlg" />
+												
 											<p:commandButton  icon="ui-icon-trash" 
 												action="#{contratoCobrancaMB.removeProcesso(processosPessoas)}"
 												update="form:RecebidoPajulaudoPanel form:ComitePanelView form:pessoasProcessos
@@ -4172,7 +4178,11 @@
 					</h:panelGrid>
 				</p:panel>
 			</p:panel>
+			
+			<!-- painel de analise de documento -->
+			<ui:include src="ContratoCobrancaAnaliseDocumento.xhtml"></ui:include>
 
+					
 			<p:panel id="CheckListDocumentos" header="Documentos Prontos"
 				style="margin-bottom:10px;">
 				<h:panelGrid columns="4">
@@ -5260,5 +5270,10 @@
 				</div>
 			</h:form>
 		</p:dialog>	
+		<!-- popup de analise de documento -->
+		<ui:include src="ContratoCobrancaAnaliseDocumentoResumoPopup.xhtml"></ui:include>
+		
+		
+		
 	</ui:define>
 </ui:composition>

@@ -1,96 +1,47 @@
 package com.webnowbr.siscoat.cobranca.ws.caf;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-import javax.faces.application.FacesMessage;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
-import org.json.JSONObject;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
+import com.webnowbr.siscoat.cobranca.ws.endpoint.EngineWebhook;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GsonUtil;
-import com.webnowbr.siscoat.infra.db.model.User;
 
-import br.com.galleriabank.dataengine.cliente.model.request.DataEngineIdSend;
 import io.jsonwebtoken.Jwts;
 
+@Path("/caf")
 public class CombateAFraudeWebhook {
 
-	String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzA0ZTI3YzcxZmY4NTAwMDliZjVmYTYiLCJpYXQiOjE2NjEyNjQ1MDl9.NNco5L0Izoj5yM_heMxQAAdSAl9YjFUz-uyV4wqMwEo";
+	private static final Log LOGGER = LogFactory.getLog(EngineWebhook.class);
 	
-	public FacesMessage ChamarCombateAFraude(CombateAFraudeTransaction combateAFraudeTransaction, User usuarioLogado) { 
-		String cafJson = GsonUtil.toJson(combateAFraudeTransaction);
-		System.out.println(cafJson);
-		try {		
-			int HTTP_COD_SUCESSO = 200;
-			URL myURL;
-			myURL = new URL("https://api.combateafraude.com/v1/transactions?origin=TRUST");
-
-			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
-			myURLConnection.setRequestMethod("POST");
-			myURLConnection.setUseCaches(false);
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json");
-			myURLConnection.setRequestProperty("Authorization", token);
-			myURLConnection.setDoOutput(true);
-
-			DataEngineIdSend myResponse = null;
-			
-			try (OutputStream os = myURLConnection.getOutputStream()) {
-				byte[] input = cafJson.getBytes("utf-8");
-				os.write(input, 0, input.length);
-			}
-			System.out.println(cafJson);
-			FacesMessage result = null;
-			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
-				
-				result = new FacesMessage(FacesMessage.SEVERITY_ERROR, "CaF: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", "");
-			} else {
-				JSONObject retorno = null;
-				retorno = getJsonSucesso(myURLConnection.getInputStream());
-				if (retorno.has("requestId")) {
-					combateAFraudeTransaction.setRequestId(retorno.getString("requestId"));
-				}
-				if (retorno.has("id")) {
-					combateAFraudeTransaction.setId(retorno.getString("id"));
-				}
-				
-				result = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
-			}
-
-			myURLConnection.disconnect();
-			return result;
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-
 	@POST
 	@Path("/webhook/")
 	public Response webhookCaF(String webhookRetorno, @QueryParam("Token") String token) {
 		try {
 			Jwts.parserBuilder().setSigningKey(CommonsUtil.CHAVE_WEBHOOK).build().parseClaimsJws(token);
-
 			CombateAFraudeWebhookRetorno cafWebhookRetorno = GsonUtil.fromJson(webhookRetorno, CombateAFraudeWebhookRetorno.class);
-
+			CombateAFraudeDao cafDao = new CombateAFraudeDao();
+			CombateAFraude caf = cafDao.findByFilter("uuid", cafWebhookRetorno.uuid).get(0);
+			if(!CommonsUtil.mesmoValor(cafWebhookRetorno.status, "PROCESSING")){
+				caf.setType(cafWebhookRetorno.type);
+				caf.setStatus(cafWebhookRetorno.status);
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+				Date d = sdf.parse("2023-07-05T12:21:16.834Z");
+				caf.setDate(d);
+				for(CombateAFraudeStatusReasons reason : cafWebhookRetorno.statusReasons) {
+					caf.setObs(caf.getObs() + reason.description  + "\n");
+				}
+				cafDao.merge(caf);				
+			}
+			//System.out.println(webhookRetorno);		
 			return Response.status(200).entity("Processado").build();
 		} catch (io.jsonwebtoken.ExpiredJwtException eJwt) {
 			eJwt.printStackTrace();
@@ -104,32 +55,5 @@ public class CombateAFraudeWebhook {
 		}
 	}
 
-	public JSONObject getJsonSucesso(InputStream inputStream) {
-		BufferedReader in;
-		try {
-			in = new BufferedReader(
-					new InputStreamReader(inputStream, "UTF-8"));
-
-			String inputLine;
-			StringBuffer response = new StringBuffer();
-
-			while ((inputLine = in.readLine()) != null) {
-				response.append(inputLine);
-			}
-			in.close();
-
-			//READ JSON response and print
-			JSONObject myResponse = new JSONObject(response.toString());
-
-			return myResponse;
-
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
+	
 }

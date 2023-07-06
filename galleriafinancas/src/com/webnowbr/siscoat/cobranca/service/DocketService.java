@@ -328,13 +328,15 @@ public class DocketService {
 				pagadorRecebedorDao.merge(documentoAnalise.getPagador());
 			}
 
-			if (!CommonsUtil.semValor(engineRetorno.getConsultaCompleta().getEnterpriseData())) {
+			if (!CommonsUtil.semValor(engineRetorno.getConsultaCompleta().getEnterpriseData()) &&
+					!CommonsUtil.semValor(engineRetorno.getConsultaCompleta().getEnterpriseData().getPartnership()) &&
+					!CommonsUtil.semValor(engineRetorno.getConsultaCompleta().getEnterpriseData().getPartnership().getPartnerships())) {
 				DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
 
 				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
 
 				for (EngineRetornoRequestEnterprisePartnership partnership : engineRetorno.getConsultaCompleta()
-						.getEnterpriseData().getPartnerships()) {
+						.getEnterpriseData().getPartnership().getPartnerships()) {
 
 					documentoAnaliseService.cadastrarPessoRetornoEngine(partnership, usuarioLogado, documentoAnaliseDao,
 							pagadorRecebedorService, documentoAnalise.getContratoCobranca(),

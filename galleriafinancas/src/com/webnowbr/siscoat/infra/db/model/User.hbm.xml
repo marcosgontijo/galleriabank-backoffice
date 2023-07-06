@@ -196,7 +196,14 @@
         	<column name="idUserPerfil" />
    		</many-to-one>
          		      
-         	
+        <list name="listTermos"
+			table="termoUsuario" cascade="all" lazy="false">
+			<key column="idUsuario" />
+			<list-index></list-index>
+			<many-to-many column="idTermo"
+				class="com.webnowbr.siscoat.infra.db.model.Termo" />
+		</list> 
+		
 
     </class>
 </hibernate-mapping>

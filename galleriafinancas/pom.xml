@@ -67,7 +67,12 @@
 			<name>galleriabank repo</name>
 			<url>https://amurta.bytesafe.dev/maven/galleriabank</url>			
 		</repository>
+
+
 	</repositories>
+	
+
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.shiro</groupId>
@@ -328,7 +333,7 @@
 		<dependency>
 			<groupId>br.com.galleriabank.serasacrednet-cliente</groupId>
 			<artifactId>serasacrednet-cliente</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>br.com.galleriabank.serasarelato-cliente</groupId>
@@ -350,5 +355,12 @@
 		     <artifactId>font-awesome</artifactId>
 		     <version>5.8.2</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.primefaces.extensions/primefaces-extensions -->
+		<dependency>
+		    <groupId>org.primefaces.extensions</groupId>
+		    <artifactId>primefaces-extensions</artifactId>
+		    <version>7.0.3</version>
+		</dependency>
+
 	</dependencies>
 </project>

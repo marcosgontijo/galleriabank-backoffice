@@ -219,12 +219,12 @@
 						action="#{contratoCobrancaMB.downloadAprovadoComitePDF(contratos.id)}" >
 						</p:commandButton>			                
 		               <shiro:hasAnyRoles name="ROOT, PRECOBRANCA, PROFILE_CONTRATO">
-		                	<p:commandButton value="Emitir CCB" action="#{ccbMB.EmitirCcbPreContrato}">
-			                	<f:setPropertyActionListener target="#{ccbMB.objetoContratoCobranca}" value="#{contratos}" />
+		                	<p:commandButton rendered ="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. CCB'}"  value="Emitir CCB" action="#{ccbMB.EmitirCcbPreContrato}">
+			                	<f:setPropertyActionListener  target="#{ccbMB.objetoContratoCobranca}" value="#{contratos}" />
 			                </p:commandButton>	
 			            </shiro:hasAnyRoles>		            
-						<p:commandButton value="Certidões Docket" action="#{docketMB.clearFieldsContratoCobranca(contratos)}"/>		
-						<p:commandButton value="Data Engine" action="#{dataEngineMB.clearFieldsContratoCobranca(contratos)}"/>		            
+						<p:commandButton rendered ="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Aguardando Análise' or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Em Análise'}" value="Certidões Docket" action="#{docketMB.clearFieldsContratoCobranca(contratos)}"/>		
+						<p:commandButton rendered ="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Aguardando Análise' or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Em Análise'}" value="Data Engine" action="#{dataEngineMB.clearFieldsContratoCobranca(contratos)}"/>		            
 		                <shiro:hasAnyRoles name="ROOT, PROFILE_GERENTE_ANALISE"> 
 		                	<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-arrowthick-1-s" value="Baixar" title="Baixar">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
