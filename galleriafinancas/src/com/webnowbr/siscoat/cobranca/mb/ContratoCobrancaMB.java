@@ -315,7 +315,8 @@ public class ContratoCobrancaMB {
 	private boolean addContasPagar;
 	private boolean gerenciaStatus;
 	private boolean addPessoaAnalise;
-
+	private DocumentoAnalise documentoAnalisePopup;
+	
 	/** Lista dos Pagadores utilizada pela LOV. */
 	private List<PagadorRecebedor> listPagadores;
 
@@ -33535,5 +33536,12 @@ public class ContratoCobrancaMB {
 	public void setDocumentoAnaliseAdicionar(DocumentoAnalise documentoAnaliseAdicionar) {
 		this.documentoAnaliseAdicionar = documentoAnaliseAdicionar;
 	}
+	
+	public DocumentoAnalise getDocumentoAnalisePopup() {
+		return documentoAnalisePopup;
+	}
 
+	public void setDocumentoAnalisePopup(DocumentoAnalise documentoAnalisePopup) {
+		this.documentoAnalisePopup = documentoAnalisePopup;
+	}
 }
