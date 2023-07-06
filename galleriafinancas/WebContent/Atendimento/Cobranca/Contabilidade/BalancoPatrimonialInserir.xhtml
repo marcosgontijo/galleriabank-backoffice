@@ -33,6 +33,7 @@
 						onkeypress="return isNumberKey(event);"
 						onkeydown="FormataValor(this, 13, event, 2);" required="true"
 						converter="bigDecimalConverter">
+						<f:converter converterId="bigDecimalConverter" maxFractionDigits="4" />
 					</p:inputText>
 					
 					<p:outputLabel for="ipca" value="Informe IPCA: "
@@ -42,6 +43,7 @@
 						onkeypress="return isNumberKey(event);"
 						onkeydown="FormataValor(this, 13, event, 2);" required="true"
 						converter="bigDecimalConverter">
+						<f:converter converterId="bigDecimalConverter" maxFractionDigits="4" />
 					</p:inputText>
 					
 					<p:outputLabel for="taxaFidc" value="Informe Taxa FIDC: "
@@ -75,6 +77,15 @@
 						styleClass="labelBold" />
 					<p:inputText id="taxaCri3"
 						value="#{balancoPatrimonialMB.objetoBalanco.taxaCri3}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter">
+					</p:inputText>
+					
+					<p:outputLabel for="kpmg" value="Informe Taxa KPMG: "
+						styleClass="labelBold" />
+					<p:inputText id="kpmg"
+						value="#{balancoPatrimonialMB.objetoBalanco.kpmg}"
 						onkeypress="return isNumberKey(event);"
 						onkeydown="FormataValor(this, 13, event, 2);" required="true"
 						converter="bigDecimalConverter">

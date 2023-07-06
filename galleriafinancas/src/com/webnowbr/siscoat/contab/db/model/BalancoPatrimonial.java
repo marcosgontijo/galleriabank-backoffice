@@ -74,6 +74,7 @@ public class BalancoPatrimonial implements Serializable {
 	private BigDecimal taxaCri1;
 	private BigDecimal taxaCri2;
 	private BigDecimal taxaCri3;
+	private BigDecimal kpmg;
 	
 	private BigDecimal custoPonderado;
 	
@@ -384,11 +385,12 @@ public class BalancoPatrimonial implements Serializable {
 		System.out.println("perdaLiquidacaoAntecipada: " +perdaLiquidacaoAntecipada);
 		
 		//Percentual de Liquidação Antecipada da Carteira acima de 30 dias
-		BigDecimal liquidacaoAntecipadaKPMG = new BigDecimal (0.0699);
-		System.out.println("liquidacaoAntecipadaKPMG: " +liquidacaoAntecipadaKPMG);
+		//BigDecimal liquidacaoAntecipadaKPMG = new BigDecimal (0.0699);
+		kpmg = kpmg.divide(new BigDecimal(100));
+		System.out.println("liquidacaoAntecipadaKPMG: " +kpmg);
 		
 		//Provisão para Liquidações Antecipadas
-		this.provisaoLiquidAntecipada = perdaLiquidacaoAntecipada.multiply(liquidacaoAntecipadaKPMG).setScale(2, BigDecimal.ROUND_HALF_UP);
+		this.provisaoLiquidAntecipada = perdaLiquidacaoAntecipada.multiply(kpmg).setScale(2, BigDecimal.ROUND_HALF_UP);
 		System.out.println("provisaoLiquidAntecipada: " +provisaoLiquidAntecipada);
 	}
 
@@ -1088,6 +1090,12 @@ public class BalancoPatrimonial implements Serializable {
 	}
 	public void setTaxaCri3(BigDecimal taxaCri3) {
 		this.taxaCri3 = taxaCri3;
+	}
+	public BigDecimal getKpmg() {
+		return kpmg;
+	}
+	public void setKpmg(BigDecimal kpmg) {
+		this.kpmg = kpmg;
 	}
 
 }
