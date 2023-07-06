@@ -40,6 +40,7 @@
 				width: 100px;
 			}
 			</h:outputStylesheet>
+			<ui:include src="ContratoCobrancaAnaliseDocumento.xhtml"></ui:include>
 				
 			<p:panel id="PanelLocador" header="Contrato - #{contratoCobrancaMB.tituloPainel}" style="margin-bottom:10px;">
 				<p:focus /> 
@@ -654,5 +655,6 @@
 				<p:commandButton value="Cancelar" immediate="true" icon="ui-icon-cancel" onclick="window.history.back();" style="TEXT-DECORATION: bold; "/>								
 			</div>			
 		</h:form>	
+		<ui:include src="ContratoCobrancaAnaliseDocumentoResumoPopup.xhtml"></ui:include>
 	</ui:define>
 </ui:composition>

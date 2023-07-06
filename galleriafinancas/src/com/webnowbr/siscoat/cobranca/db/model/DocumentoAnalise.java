@@ -63,6 +63,7 @@ public class DocumentoAnalise implements Serializable {
 	private String observacao;
 
 	public List<DocumentoAnaliseResumo> getResumoEngine() {
+		
 		List<DocumentoAnaliseResumo> result = new ArrayList<>();
 		EngineRetorno engine = GsonUtil.fromJson(getRetornoEngine(), EngineRetorno.class);
 		if (engine == null) {
