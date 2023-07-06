@@ -1001,6 +1001,8 @@ public class StarkBankAPI{
 	}
     
     public static void transfer() {
+    	FacesContext context = FacesContext.getCurrentInstance();
+    	
     	List<Transfer> transfers = new ArrayList<>();
 
     	List<Transfer.Rule> rules = new ArrayList<>();
@@ -1030,12 +1032,16 @@ public class StarkBankAPI{
 	    	    System.out.println(transfer);
 	    	}
 		} catch (Exception e) {
+			context.addMessage(null, new FacesMessage(
+					FacesMessage.SEVERITY_ERROR, "StarkBank PIX: Ocorreu um problema ao fazer PIX/TED! Erro: " + e, ""));
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }
     
-    public StarkBankPix paymentPix(String codigoPixBanco, String agencia, String numeroConta, String documento, String nomeBeneficiario, BigDecimal valor) {
+    public StarkBankPix paymentPix(String codigoPixBanco, String agencia, String numeroConta, String documento, String nomeBeneficiario, BigDecimal valor, String tipoOperacao) {
+    	FacesContext context = FacesContext.getCurrentInstance();
+    	
     	List<Transfer> transfers = new ArrayList<>();
 
     	List<Transfer.Rule> rules = new ArrayList<>();
@@ -1052,7 +1058,7 @@ public class StarkBankAPI{
 	    	data.put("accountNumber", numeroConta);
 	    	data.put("taxId", documento);
 	    	data.put("name", nomeBeneficiario);
-	    	data.put("externalId", "PagamentoPix/" + nomeBeneficiario);
+	    	data.put("externalId", "PagamentoPix " + nomeBeneficiario);
 	    	//data.put("scheduled", "2020-08-14");
 	    	//data.put("tags", new String[]{"daenerys", "invoice/1234"});
 	    	//data.put("rules", rules);
@@ -1080,8 +1086,14 @@ public class StarkBankAPI{
 	    	StarkBankPixDAO starkBankPixDAO = new StarkBankPixDAO();
 	    	starkBankPixDAO.create(pixTransacao);
 	    	
+	    	context.addMessage(null, new FacesMessage(
+					FacesMessage.SEVERITY_ERROR, "StarkBank PIX: Pagamento efetuado com sucesso!", ""));
+	    	
 	    	return pixTransacao;
 		} catch (Exception e) {
+			context.addMessage(null, new FacesMessage(
+					FacesMessage.SEVERITY_ERROR, "StarkBank PIX: Ocorreu um problema ao fazer PIX/TED! Erro: " + e, ""));
+			
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

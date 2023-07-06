@@ -19151,7 +19151,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 				
 				if (this.contasPagarSelecionada.getFormaTransferencia().equals("Pix")) {
 					StarkBankPix starkBankPix = starkBankAPI.paymentPix(this.objetoContratoCobranca.getIspbPixContaPagar(), this.objetoContratoCobranca.getAgenciaBancarioContaPagar(), objetoContratoCobranca.getContaBancarioContaPagar(), 
-							this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar(), this.objetoContratoCobranca.getNomeBancarioContaPagar(), this.contasPagarSelecionada.getValorPagamento());
+							this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar(), this.objetoContratoCobranca.getNomeBancarioContaPagar(), this.contasPagarSelecionada.getValorPagamento(), this.contasPagarSelecionada.getFormaTransferencia());
 					
 					if (starkBankPix != null) {
 						this.contasPagarSelecionada.setComprovantePagamentoPixStarkBank(starkBankPix);
@@ -19169,7 +19169,7 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 				
 				if (this.contasPagarSelecionada.getFormaTransferencia().equals("TED")) {
 					StarkBankPix starkBankPix = starkBankAPI.paymentPix(this.objetoContratoCobranca.getBancoBancarioContaPagar(), this.objetoContratoCobranca.getAgenciaBancarioContaPagar(), objetoContratoCobranca.getContaBancarioContaPagar(), 
-							this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar(), this.objetoContratoCobranca.getNomeBancarioContaPagar(), this.contasPagarSelecionada.getValorPagamento());
+							this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar(), this.objetoContratoCobranca.getNomeBancarioContaPagar(), this.contasPagarSelecionada.getValorPagamento(), this.contasPagarSelecionada.getFormaTransferencia());
 					
 					if (starkBankPix != null) {
 						this.contasPagarSelecionada.setComprovantePagamentoPixStarkBank(starkBankPix);

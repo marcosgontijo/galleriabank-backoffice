@@ -381,6 +381,9 @@ public class KobanaMB {
 										
 										Iterator<String> contratoParcelas = objetoDataBoleto.keys();
 
+										if (contrato.getNumeroContrato().equals("09572")) {
+											System.out.println("asdsadsd");
+										}
 										// Verifica se há mais alguma key
 										while (contratoParcelas.hasNext()) {
 											String nomeObjeto = contratoParcelas.next();
@@ -396,6 +399,9 @@ public class KobanaMB {
 										    }
 										}
 										
+										if (contrato.getNumeroContrato().equals("09572")) {
+											System.out.println("asdsadsd");
+										}
 										// se está no novo formato de baixa, onde tem valor customizado por parcela
 										if (parcelasBoleto.size() == 0) {
 											// percorre para pegar os ID's e converter em objeto
