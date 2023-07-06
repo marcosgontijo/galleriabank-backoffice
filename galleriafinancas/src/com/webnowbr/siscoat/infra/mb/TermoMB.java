@@ -1,7 +1,11 @@
 package com.webnowbr.siscoat.infra.mb;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -19,8 +23,11 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.imageio.ImageIO;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.rendering.PDFRenderer;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.LazyDataModel;
@@ -62,7 +69,7 @@ public class TermoMB {
 	private String arquivoAnteriorSalvo = null;
 	private StreamedContent pdfContent;
 	List<Termo> termos = new ArrayList<>();
-	int itermo = 0;
+	int itermo = -1;
 
 	private UploadedFile file;
 
@@ -241,7 +248,7 @@ public class TermoMB {
 
 	public List<Termo> termosNaoAssinadosUsuario(User usuario) {
 		TermoDao termoDao = new TermoDao();
-		return termoDao.findAll();
+		return termoDao.termosNaoAssinadosUsuario(usuario);
 	}
 	
 
@@ -255,19 +262,24 @@ public class TermoMB {
 				PrimeFaces.current().executeScript("PF('dlgTermos').show();");
 			}
 		}
+		
+		if (!CommonsUtil.semValor(termos)) {
+			PrimeFaces.current().executeScript("PF('dlgTermos').show();");
+		}
+		
 		return null;
 	}
 
 
 	public String carregaPdfTermo() throws IOException {
 
-		if (CommonsUtil.semValor(termos)) {
-			termos = termosNaoAssinadosUsuario(loginBean.getUsuarioLogado());
-			itermo = 0;
-			if (!CommonsUtil.semValor( termos )) {
-				PrimeFaces.current().executeScript("PF('dlgTermos').show();");
-			}
-		}
+//		if (CommonsUtil.semValor(termos)) {
+//			termos = termosNaoAssinadosUsuario(loginBean.getUsuarioLogado());
+//			itermo = 0;
+//			if (!CommonsUtil.semValor( termos )) {
+//				PrimeFaces.current().executeScript("PF('dlgTermos').show();");
+//			}
+//		}
 
 		if (itermo > termos.size() - 1) {
 			PrimeFaces.current().executeScript("PF('dlgTermos').hide();");
@@ -275,17 +287,55 @@ public class TermoMB {
 		}
 
 		InputStream fis = null;
+		byte[] bytes = null;
 		try {
-			fis = new FileInputStream(new File(termos.get(itermo).getPath()));
+//			fis = new FileInputStream(new File(termos.get(itermo).getPath()));
 
-			pdfContent = new DefaultStreamedContent(fis, "application/pdf", termos.get(itermo).getArquivo());
+			PDDocument doc = PDDocument.load(new File(termos.get(itermo).getPath()));
+			PDFRenderer pdfRenderer = new PDFRenderer(doc);
+
+			BufferedImage joinBufferedImage = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
+
+			for (int x = 0; x < doc.getNumberOfPages(); x++) {
+				BufferedImage bImage = pdfRenderer.renderImageWithDPI(x, 100, org.apache.pdfbox.rendering.ImageType.RGB);
+				joinBufferedImage = joinBufferedImage(joinBufferedImage, bImage);
+			}
+
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ImageIO.write(joinBufferedImage, "png", baos);
+			bytes = baos.toByteArray();
+
+//			InputStream is = new ByteArrayInputStream(bytes);
+//
+//			pdfContent = new DefaultStreamedContent(is, "image/png", termos.get(itermo).getArquivo());
 
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return "data:application/pdf;base64, " + Base64.getEncoder().encodeToString(IOUtils.toByteArray(fis));
+		return "data:image/png;base64, " + Base64.getEncoder().encodeToString(bytes);
 	}
+	
+	private BufferedImage joinBufferedImage(BufferedImage img1, BufferedImage img2) {
+
+        //do some calculate first
+        int offset = 5;
+        int wid = Math.max(img1.getWidth(), img2.getWidth()) + offset;
+        int height = img1.getHeight()+ img2.getHeight() + offset;
+        //create a new buffer and draw two image into the new image
+        BufferedImage newImage = new BufferedImage(wid, height, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2 = newImage.createGraphics();
+        Color oldColor = g2.getColor();
+        //fill background
+        g2.setPaint(Color.WHITE);
+        g2.fillRect(0, 0, wid, height);
+        //draw image
+        g2.setColor(oldColor);
+        g2.drawImage(img1, null, 0, 0);
+        g2.drawImage(img2, null, 0 , img1.getHeight() + offset);
+        g2.dispose();
+        return newImage;
+    }
 
 	public String aceitar() throws IOException {
 
@@ -296,8 +346,7 @@ public class TermoMB {
 		termoUsuario.setIdUsuario(loginBean.getUsuarioLogado().getId());
 		termoUsuario.setIdx(0);
 		termoUsuarioDao.create(termoUsuario);
-		
-		itermo++;
+		termos.remove(itermo);
 		
 		return null;
 	}

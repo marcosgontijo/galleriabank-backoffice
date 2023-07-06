@@ -18,8 +18,8 @@ public class TermoDao extends HibernateDao<Termo, Long> {
 
 	
 	
-	private static final String QUERY_TERMOS_NAO_ASSINADOS_USUARIO = " select id from infra.termo t left join infra.termoUsuario tu on t.id = tu.idtermo and tu.idusuario = ? "
-			+ "where and t.iduserPerfil <= ? tu.idtermo is null ";
+	private static final String QUERY_TERMOS_NAO_ASSINADOS_USUARIO = " select t.id from infra.termo t left join infra.termoUsuario tu on t.id = tu.idtermo and tu.idusuario = ? "
+			+ "where t.iduserPerfil <= ? and  tu.idtermo is null ";
 
 	@SuppressWarnings("unchecked")
 	public List<Termo> termosNaoAssinadosUsuario(User usuario) {
@@ -38,15 +38,15 @@ public class TermoDao extends HibernateDao<Termo, Long> {
 					ps = connection.prepareStatement(QUERY_TERMOS_NAO_ASSINADOS_USUARIO);
 
 					ps.setLong(1, usuario.getId());
-					//se nao tiver perfil no usuario usa o publico
+					// se nao tiver perfil no usuario usa o publico
 					if (!CommonsUtil.semValor(usuario.getUserPerfil()))
 						ps.setLong(2, usuario.getUserPerfil().getId());
 					else
 						ps.setLong(2, 1000);
 
-					rs = ps.executeQuery();				
+					rs = ps.executeQuery();
 
-					if (rs.next()) {
+					while (rs.next()) {
 
 						retorno.add(findById(rs.getLong(1)));
 					}

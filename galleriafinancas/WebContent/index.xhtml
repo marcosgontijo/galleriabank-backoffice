@@ -27,7 +27,7 @@
 			}
 						
 		</h:outputStylesheet>
-			
+		<meta http-equiv="Access-Control-Allow-Origin" content="*"/>
     </h:head>
 	<h:body onload="register_tab_GUID()">    
 		<p:layout fullPage="true" > 		    
@@ -769,23 +769,28 @@
 		    <p:layoutUnit position="south" size="35" resizable="false" closable="true" style="BORDER:none;" spacingOpen="0">
 				<p:outputLabel value="Copyright © 2023 Todos os direitos reservados. " styleClass="labelBold"/>
 		    </p:layoutUnit>	
-		    <p:outputLabel value="#{termoMB.verificaTermosNaoAssinadoso()}"/>
-		    			    
+		    <p:outputLabel value="#{termoMB.verificaTermosNaoAssinadoso()}"/>		    			   
+			
 		</p:layout>
 
+			
 	<p:dialog widgetVar="dlgTermos" showEffect="fade" modal="true"
 		width="1000" height="570" minWidth="800">
+		
 		<h:form id="termoForm">
-			<iframe scrolling="no" id="termoPdf"
-			style="overflow: hidden; height: 540; width: 100%" height="540"
-			width="100%" src="#{termoMB.carregaPdfTermo()}"> </iframe>
-	
+			<iframe scrolling="yes" id="termoPdf"
+				style="height: 540; width: 100%" height="540" width="100%"
+				src="#{termoMB.carregaPdfTermo()}">
+				 
+			</iframe>
 			<div align="center">
-				<p:commandButton value="Aceitar" ajax="true" icon="ui-icon-check" update=":termoForm"
-					action="#{termoMB.aceitar()}" style="TEXT-DECORATION: bold;" />
+				<p:commandButton value="Aceitar" ajax="true" icon="ui-icon-check" id="btnAceite"
+					update=":termoForm" action="#{termoMB.aceitar()}"
+					style="TEXT-DECORATION: bold;" />
 			</div>
 		</h:form>
 
 	</p:dialog>
+	
 </h:body>
 </html>
