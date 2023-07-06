@@ -167,12 +167,20 @@
 							<p:ajax event="blur" update=":form:PanelInvestidor" />
 						</p:inputText>
 	
-						<p:outputLabel for="DtNascimento" value="Data de Nascimento: " />
-						<p:inputMask id="DtNascimento"
-							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dtNascimento}"
-							mask="99/99/9999" label="Data de Nascimento">
-							<f:convertDateTime pattern="dd/MM/yyyy" />
-						</p:inputMask>
+						<p:outputLabel for="DtNascimento" value="Data de Nascimento: " rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
+						<h:panelGroup rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}">
+							<p:inputMask id="DtNascimento"
+								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dtNascimento}"
+								mask="99/99/9999" label="Data de Nascimento">
+								<p:ajax event="blur" update="idade"
+									listener="#{pagadorRecebedorMB.objetoPagadorRecebedor.calcularIdade()}" />
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</p:inputMask>					
+							<p:spacer width="10px"/>
+							
+							<p:outputLabel for="idade" value="Idade: " />
+							<p:inputText id="idade" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.idade}" />
+						</h:panelGroup>
 						
 						<p:outputLabel for="TelCelular" value="Telefone Celular: " />
 						<p:inputText id="TelCelular"
