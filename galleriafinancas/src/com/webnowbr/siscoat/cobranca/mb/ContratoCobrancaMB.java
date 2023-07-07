@@ -19190,14 +19190,9 @@ public class ContratoCobrancaMB {
 				}
 
 				if (this.contasPagarSelecionada.getFormaTransferencia().equals("Pix")) {
-					StarkBankPix starkBankPix = starkBankAPI.paymentPix(
-							this.objetoContratoCobranca.getIspbPixContaPagar(),
-							this.objetoContratoCobranca.getAgenciaBancarioContaPagar(),
-							objetoContratoCobranca.getContaBancarioContaPagar(),
-							this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar(),
-							this.objetoContratoCobranca.getNomeBancarioContaPagar(),
-							this.contasPagarSelecionada.getValorPagamento());
-
+					StarkBankPix starkBankPix = starkBankAPI.paymentPix(this.objetoContratoCobranca.getIspbPixContaPagar(), this.objetoContratoCobranca.getAgenciaBancarioContaPagar(), objetoContratoCobranca.getContaBancarioContaPagar(), 
+							this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar(), this.objetoContratoCobranca.getNomeBancarioContaPagar(), this.contasPagarSelecionada.getValorPagamento(), this.contasPagarSelecionada.getFormaTransferencia());
+					
 					if (starkBankPix != null) {
 						this.contasPagarSelecionada.setComprovantePagamentoPixStarkBank(starkBankPix);
 
@@ -19208,19 +19203,14 @@ public class ContratoCobrancaMB {
 						this.objetoContratoCobranca.setContaPagarValorTotal(this.objetoContratoCobranca
 								.getContaPagarValorTotal().subtract(this.contasPagarSelecionada.getValorPagamento()));
 
-						context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+						context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, 
 								"Pagamento StarkBank: Boleto pago sucesso!", ""));
 					}
 				}
 
 				if (this.contasPagarSelecionada.getFormaTransferencia().equals("TED")) {
-					StarkBankPix starkBankPix = starkBankAPI.paymentPix(
-							this.objetoContratoCobranca.getBancoBancarioContaPagar(),
-							this.objetoContratoCobranca.getAgenciaBancarioContaPagar(),
-							objetoContratoCobranca.getContaBancarioContaPagar(),
-							this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar(),
-							this.objetoContratoCobranca.getNomeBancarioContaPagar(),
-							this.contasPagarSelecionada.getValorPagamento());
+					StarkBankPix starkBankPix = starkBankAPI.paymentPix(this.objetoContratoCobranca.getBancoBancarioContaPagar(), this.objetoContratoCobranca.getAgenciaBancarioContaPagar(), objetoContratoCobranca.getContaBancarioContaPagar(), 
+							this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar(), this.objetoContratoCobranca.getNomeBancarioContaPagar(), this.contasPagarSelecionada.getValorPagamento(), this.contasPagarSelecionada.getFormaTransferencia());
 
 					if (starkBankPix != null) {
 						this.contasPagarSelecionada.setComprovantePagamentoPixStarkBank(starkBankPix);

@@ -326,6 +326,30 @@ public class IPCAMB {
 		}
 	}
 	
+	public void atualizaIPCAHibridoChamadaTela(String numeroContrato) {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		
+		this.numeroContrato = numeroContrato;
+		
+		List<ContratoCobranca> contratosCobranca = contratoCobrancaDao.findByFilter("numeroContrato", numeroContrato);
+
+		LOGGER.info("incio atualizaIPCAPorContrato");
+		
+		if (contratosCobranca.size() > 0) {	
+			ContratoCobranca contrato = contratosCobranca.get(0);
+			
+			contrato.setCorrigidoIPCAHibrido(true);
+			
+			if (contrato.isCorrigidoIPCAHibrido()) {
+				// atualiza data corte da baixa no contrato e banco				
+				contrato.setDataCorteBaixaIPCAHibrido(this.dataCorteBaixa);				
+				contratoCobrancaDao.merge(contrato);
+				
+				atualizaIPCAPorContratoMaluco();
+			}
+		}
+	}
+	
 	public void atualizaIPCAPorContratoMaluco() {
 		try {
 			FacesContext context = FacesContext.getCurrentInstance();
