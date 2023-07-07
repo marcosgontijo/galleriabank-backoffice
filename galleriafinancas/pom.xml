@@ -360,7 +360,7 @@
 		<dependency>
 			<groupId>br.com.galleriabank.dataengine-cliente</groupId>
 			<artifactId>dataengine-cliente</artifactId>
-			<version>1.1</version>
+			<version>1.2</version>
 		</dependency>
 		<dependency>
 			<groupId>br.com.galleriabank.netrin-cliente</groupId>
