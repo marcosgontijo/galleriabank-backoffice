@@ -339,8 +339,8 @@
 		<dependency>
 		     <groupId>org.webjars</groupId>
 		     <artifactId>font-awesome</artifactId>
-		     <version>5.8.2</version>
-		
+		     <version>5.8.2</version>		
+		</dependency>
 		<!-- Dependencias Galleria Bank -->
 		<dependency>
 			<groupId>br.com.galleriabank.jwt</groupId>
