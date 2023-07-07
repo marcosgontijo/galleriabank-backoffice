@@ -366,8 +366,7 @@
 			<groupId>br.com.galleriabank.netrin-cliente</groupId>
 			<artifactId>netrin-cliente</artifactId>
 			<version>1.1.5</version>
-		</dependency></dependency>
-		
+		</dependency>		
 
 	</dependencies>
 </project>
