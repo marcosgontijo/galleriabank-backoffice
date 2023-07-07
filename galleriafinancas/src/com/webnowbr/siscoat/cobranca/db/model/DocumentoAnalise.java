@@ -65,7 +65,13 @@ public class DocumentoAnalise implements Serializable {
 	public List<DocumentoAnaliseResumo> getResumoEngine() {
 		
 		List<DocumentoAnaliseResumo> result = new ArrayList<>();
-		EngineRetorno engine = GsonUtil.fromJson(getRetornoEngine(), EngineRetorno.class);
+		EngineRetorno engine;
+		try {
+		engine = GsonUtil.fromJson(getRetornoEngine(), EngineRetorno.class);
+		} catch(Exception e) {
+			result.add(new DocumentoAnaliseResumo(getRetornoEngine(), null));
+			return result;
+		}
 		if (engine == null) {
 			result.add(new DocumentoAnaliseResumo("nâo disponível", null));
 		} else {
@@ -127,7 +133,7 @@ public class DocumentoAnalise implements Serializable {
 			if (dados.getChequeSemFundo() == null) {
 				serasa.add(new DocumentoAnaliseResumo("Cheque Sem Fundo:", "Não disponível"));
 			} else {
-				String cheque = CommonsUtil.stringValue(dados.getChequeSemFundo());
+				String cheque = CommonsUtil.stringValue(dados.getChequeSemFundo().getPcsfQtCheques());
 				serasa.add(new DocumentoAnaliseResumo("Cheque Sem Fundo:", cheque));
 			}
 
