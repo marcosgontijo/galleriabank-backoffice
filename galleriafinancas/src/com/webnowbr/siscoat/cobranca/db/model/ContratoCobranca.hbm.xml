@@ -2161,6 +2161,9 @@
 			<column name="apenasPagamentoIntegral" not-null="true" default="false"/>
 		</property>	
 		
+		<property name="statusEsteira" type="java.lang.String">
+			<column name="statusEsteira" />
+		</property>
 		
 	</class>
 </hibernate-mapping>

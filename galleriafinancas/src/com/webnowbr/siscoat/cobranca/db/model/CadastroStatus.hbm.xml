@@ -27,9 +27,9 @@
 			<column name="usuario" />
 		</many-to-one> 
 		
-		<property name="detalhes" type="java.lang.String">
-			<column name="detalhes" />
-		</property>  
+		<property name="statusAnteriror" type="java.lang.String">
+			<column name="statusAnteriror" />
+		</property>
 		
 		<many-to-one name="contratoCobranca"
 			class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca"
