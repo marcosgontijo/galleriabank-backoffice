@@ -623,17 +623,17 @@ public class BalancoPatrimonial implements Serializable {
 		if (!CommonsUtil.semValor(valorExigivelLongoPrazo))
 			result=result.add(valorExigivelLongoPrazo);
 		if (!CommonsUtil.semValor(capitalSocial))
-			result=result.add(capitalSocial);
+			result=result.add(capitalSocial); 
 		if (!CommonsUtil.semValor(lucrosAcumuladosAnoAnterior))
 			result=result.add(lucrosAcumuladosAnoAnterior);
 		if (!CommonsUtil.semValor(distribuicao2Pago1))
-			result=result.add(distribuicao2Pago1);
+			result=result.add(distribuicao2Pago1.multiply(new BigDecimal (-1)));
 		if (!CommonsUtil.semValor(lucroSemestreAnterior))
 			result=result.add(lucroSemestreAnterior);
 		if (!CommonsUtil.semValor(aumentoCapitalSocial))
-			result=result.add(aumentoCapitalSocial);
+			result=result.add(aumentoCapitalSocial.multiply(new BigDecimal (-1)));
 		if (!CommonsUtil.semValor(distribuicao1Pago2))
-			result=result.add(distribuicao1Pago2);
+			result=result.add(distribuicao1Pago2.multiply(new BigDecimal (-1)));
 		if (!CommonsUtil.semValor(lucroAnterior))
 			result=result.add(lucroAnterior);
 
@@ -679,6 +679,8 @@ public class BalancoPatrimonial implements Serializable {
 			result=result.add(recursosFidc);
 		if (!CommonsUtil.semValor(recursosCri))
 			result=result.add(recursosCri);
+		if (!CommonsUtil.semValor(provisaoLiquidAntecipada))
+			result=result.add(provisaoLiquidAntecipada);
 		
 		return result;
 	}
@@ -701,13 +703,13 @@ public class BalancoPatrimonial implements Serializable {
 		if (!CommonsUtil.semValor(lucrosAcumuladosAnoAnterior))
 			result=result.add(lucrosAcumuladosAnoAnterior);
 		if (!CommonsUtil.semValor(distribuicao2Pago1))
-			result=result.add(distribuicao2Pago1);
+			result=result.add(distribuicao2Pago1.multiply(new BigDecimal (-1)));
 		if (!CommonsUtil.semValor(lucroSemestreAnterior))
 			result=result.add(lucroSemestreAnterior);
 		if (!CommonsUtil.semValor(aumentoCapitalSocial))
-			result=result.add(aumentoCapitalSocial);
+			result=result.add(aumentoCapitalSocial.multiply(new BigDecimal (-1)));
 		if (!CommonsUtil.semValor(distribuicao1Pago2))
-			result=result.add(distribuicao1Pago2);
+			result=result.add(distribuicao1Pago2.multiply(new BigDecimal (-1)));
 		if (!CommonsUtil.semValor(lucroAnterior))
 			result=result.add(lucroAnterior);
 		
@@ -729,13 +731,13 @@ public class BalancoPatrimonial implements Serializable {
 		if (!CommonsUtil.semValor(lucrosAcumuladosAnoAnterior))
 			result=result.add(lucrosAcumuladosAnoAnterior);
 		if (!CommonsUtil.semValor(distribuicao2Pago1))
-			result=result.subtract(distribuicao2Pago1);
+			result=result.subtract(distribuicao2Pago1.multiply(new BigDecimal (-1)));
 		if (!CommonsUtil.semValor(lucroSemestreAnterior))
 			result=result.add(lucroSemestreAnterior);
 		if (!CommonsUtil.semValor(aumentoCapitalSocial))
-			result=result.subtract(aumentoCapitalSocial);
+			result=result.subtract(aumentoCapitalSocial.multiply(new BigDecimal (-1)));
 		if (!CommonsUtil.semValor(distribuicao1Pago2))
-			result=result.subtract(distribuicao1Pago2);
+			result=result.subtract(distribuicao1Pago2.multiply(new BigDecimal (-1)));
 		if (!CommonsUtil.semValor(lucroAnterior))
 			result=result.add(lucroAnterior);
 		

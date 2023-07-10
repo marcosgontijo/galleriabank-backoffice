@@ -120,8 +120,8 @@ public class BalancoPatrimonialMB {
 
 			// VALOR DEFAULT NO DAO - VALOR DO SISTEMA
 
-			this.relatorioBalancoPagar = balancopatrimonialDao.listaRelatorioPagarBalanco();
-			this.relatorioBalancoReceber = balancopatrimonialDao.listaRelatorioReceberBalanco();
+			this.relatorioBalancoPagar = balancopatrimonialDao.listaRelatorioPagarBalanco(objetoBalanco.getAaaaMM());
+			this.relatorioBalancoReceber = balancopatrimonialDao.listaRelatorioReceberBalanco(objetoBalanco.getAaaaMM());
 
 			// VALOR DEFAULT ÚLTIMO BALANÇO
 			if (!CommonsUtil.semValor(ultimoBalanco)) {
@@ -257,7 +257,7 @@ public class BalancoPatrimonialMB {
 	public void geraXLSBalancoPatrimonial() throws IOException {
 		ParametrosDao pDao = new ParametrosDao();
 		this.pathBalanco = pDao.findByFilter("nome", "BALANCO_PATH").get(0).getValorString();
-		this.nomeBalanco = "Balanço Patrimonial.xlsx";
+		this.nomeBalanco = "Balanço Patrimonial Teste.xlsx";
 
 		TimeZone zone = TimeZone.getDefault();
 		Locale locale = new Locale("pt", "BR");
@@ -987,7 +987,7 @@ public class BalancoPatrimonialMB {
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
 		if (record.getDistribuicao2Pago1() != null) {
-			cell.setCellValue(((BigDecimal) record.getDistribuicao2Pago1()).doubleValue());
+			cell.setCellValue(((BigDecimal) record.getDistribuicao2Pago1().multiply(new BigDecimal (-1))).doubleValue());
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
@@ -1013,7 +1013,7 @@ public class BalancoPatrimonialMB {
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
 		if (record.getAumentoCapitalSocial() != null) {
-			cell.setCellValue(((BigDecimal) record.getAumentoCapitalSocial()).doubleValue());
+			cell.setCellValue(((BigDecimal) record.getAumentoCapitalSocial().multiply(new BigDecimal (-1))).doubleValue());
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
@@ -1026,7 +1026,7 @@ public class BalancoPatrimonialMB {
 		cell.setCellStyle(numericStyle);
 		cell.setCellType(CellType.NUMERIC);
 		if (record.getDistribuicao1Pago2() != null) {
-			cell.setCellValue(((BigDecimal) record.getDistribuicao1Pago2()).doubleValue());
+			cell.setCellValue(((BigDecimal) record.getDistribuicao1Pago2().multiply(new BigDecimal(-1))).doubleValue());
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}

@@ -7,13 +7,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.contab.db.model.BalancoPatrimonial;
 import com.webnowbr.siscoat.db.dao.HibernateDao;
 import com.webnowbr.siscoat.relatorio.vo.RelatorioBalanco;
-import com.webnowbr.siscoat.relatorio.vo.RelatorioSemestre;
 
 public class BalancoPatrimonialDao extends HibernateDao <BalancoPatrimonial,Long> {
 	
@@ -297,6 +297,7 @@ public class BalancoPatrimonialDao extends HibernateDao <BalancoPatrimonial,Long
 			+ "			inner join cobranca.contratocobrancadetalhes ccd ON ccd.id = ccdj.idcontratocobrancadetalhes and ccd.parcelapaga = false\r\n"
 			+ "			inner join cobranca.pagadorrecebedor pare ON pare.id = coco.pagador\r\n"
 			+ "			where status = 'Aprovado' and ccd.id is not null and pagador not in (15, 34,14, 182, 417, 803) and ccd.vlrparcela is not null\r\n"
+			+ "			and coco.datacadastro < ? ::timestamp "
 			+ "			ORDER BY numerocontrato asc, datavencimento asc";
 
 	private static final String QUERY_CONTRATOS_PAGAR_FAVORECIDO_BALANCO = "select\r\n"
@@ -312,6 +313,7 @@ public class BalancoPatrimonialDao extends HibernateDao <BalancoPatrimonial,Long
 			+ "	pare.id = ccpi.investidor\r\n"
 			+ "where\r\n"
 			+ "	status = 'Aprovado'\r\n"
+			+ "	and coco.datacadastro < ? ::timestamp "
 			+ "	and ccpi.id is not null\r\n"
 			+ "	and ccpi.baixado = 'false'\r\n"
 			+ "	and ccpi.parcelaMensal is not null\r\n"
@@ -329,6 +331,7 @@ public class BalancoPatrimonialDao extends HibernateDao <BalancoPatrimonial,Long
 			+ "	pare.id = ccpi.investidor\r\n"
 			+ "where\r\n"
 			+ "	status = 'Aprovado'\r\n"
+			+ "	and coco.datacadastro < ? ::timestamp "
 			+ "	and ccpi.id is not null\r\n"
 			+ "	and ccpi.baixado = 'false'\r\n"
 			+ "	and ccpi.parcelaMensal is not null\r\n"
@@ -346,6 +349,7 @@ public class BalancoPatrimonialDao extends HibernateDao <BalancoPatrimonial,Long
 			+ "	pare.id = ccpi.investidor\r\n"
 			+ "where\r\n"
 			+ "	status = 'Aprovado'\r\n"
+			+ "	and coco.datacadastro < ? ::timestamp "
 			+ "	and ccpi.id is not null\r\n"
 			+ "	and ccpi.baixado = 'false'\r\n"
 			+ "	and ccpi.parcelaMensal is not null\r\n"
@@ -363,6 +367,7 @@ public class BalancoPatrimonialDao extends HibernateDao <BalancoPatrimonial,Long
 			+ "	pare.id = ccpi.investidor\r\n"
 			+ "where\r\n"
 			+ "	status = 'Aprovado'\r\n"
+			+ "	and coco.datacadastro < ? ::timestamp "
 			+ "	and ccpi.id is not null\r\n"
 			+ "	and ccpi.baixado = 'false'\r\n"
 			+ "	and ccpi.parcelaMensal is not null\r\n"
@@ -380,6 +385,7 @@ public class BalancoPatrimonialDao extends HibernateDao <BalancoPatrimonial,Long
 			+ "	pare.id = ccpi.investidor\r\n"
 			+ "where\r\n"
 			+ "	status = 'Aprovado'\r\n"
+			+ "	and coco.datacadastro < ? ::timestamp "
 			+ "	and ccpi.id is not null\r\n"
 			+ "	and ccpi.baixado = 'false'\r\n"
 			+ "	and ccpi.parcelaMensal is not null\r\n"
@@ -397,6 +403,7 @@ public class BalancoPatrimonialDao extends HibernateDao <BalancoPatrimonial,Long
 			+ "	pare.id = ccpi.investidor\r\n"
 			+ "where\r\n"
 			+ "	status = 'Aprovado'\r\n"
+			+ "	and coco.datacadastro < ? ::timestamp "
 			+ "	and ccpi.id is not null\r\n"
 			+ "	and ccpi.baixado = 'false'\r\n"
 			+ "	and ccpi.parcelaMensal is not null\r\n"
@@ -414,6 +421,7 @@ public class BalancoPatrimonialDao extends HibernateDao <BalancoPatrimonial,Long
 			+ "	pare.id = ccpi.investidor\r\n"
 			+ "where\r\n"
 			+ "	status = 'Aprovado'\r\n"
+			+ "	and coco.datacadastro < ? ::timestamp "
 			+ "	and ccpi.id is not null\r\n"
 			+ "	and ccpi.baixado = 'false'\r\n"
 			+ "	and ccpi.parcelaMensal is not null\r\n"
@@ -431,6 +439,7 @@ public class BalancoPatrimonialDao extends HibernateDao <BalancoPatrimonial,Long
 			+ "	pare.id = ccpi.investidor\r\n"
 			+ "where\r\n"
 			+ "	status = 'Aprovado'\r\n"
+			+ "	and coco.datacadastro < ? ::timestamp "
 			+ "	and ccpi.id is not null\r\n"
 			+ "	and ccpi.baixado = 'false'\r\n"
 			+ "	and ccpi.parcelaMensal is not null\r\n"
@@ -448,6 +457,7 @@ public class BalancoPatrimonialDao extends HibernateDao <BalancoPatrimonial,Long
 			+ "	pare.id = ccpi.investidor\r\n"
 			+ "where\r\n"
 			+ "	status = 'Aprovado'\r\n"
+			+ "	and coco.datacadastro < ? ::timestamp "
 			+ "	and ccpi.id is not null\r\n"
 			+ "	and ccpi.baixado = 'false'\r\n"
 			+ "	and ccpi.parcelaMensal is not null\r\n"
@@ -465,6 +475,7 @@ public class BalancoPatrimonialDao extends HibernateDao <BalancoPatrimonial,Long
 			+ "	pare.id = ccpi.investidor\r\n"
 			+ "where\r\n"
 			+ "	status = 'Aprovado'\r\n"
+			+ "	and coco.datacadastro < ? ::timestamp "
 			+ "	and ccpi.id is not null\r\n"
 			+ "	and ccpi.baixado = 'false'\r\n"
 			+ "	and ccpi.parcelaMensal is not null\r\n"
@@ -474,7 +485,7 @@ public class BalancoPatrimonialDao extends HibernateDao <BalancoPatrimonial,Long
 			+ "	datavencimento asc";
 	
 	@SuppressWarnings("unchecked")
-	public List<RelatorioBalanco> listaRelatorioReceberBalanco() {
+	public List<RelatorioBalanco> listaRelatorioReceberBalanco(final Date aaaaMM) {
 		return (List<RelatorioBalanco>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -486,7 +497,9 @@ public class BalancoPatrimonialDao extends HibernateDao <BalancoPatrimonial,Long
 					connection = getConnection();
 					ps = connection.prepareStatement(QUERY_CONTRATOS_RECEBER_BALANCO);
 
-					// ps.setString(1, sdf.format(dataDesagio));
+					java.sql.Date aaaaMMSQL = new java.sql.Date(aaaaMM.getTime());
+					
+					ps.setDate(1, aaaaMMSQL);
 
 					rs = ps.executeQuery();
 					RelatorioBalanco relatorio = null;
@@ -518,7 +531,7 @@ public class BalancoPatrimonialDao extends HibernateDao <BalancoPatrimonial,Long
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<RelatorioBalanco> listaRelatorioPagarBalanco() {
+	public List<RelatorioBalanco> listaRelatorioPagarBalanco(final Date aaaaMM) {
 		return (List<RelatorioBalanco>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -530,7 +543,18 @@ public class BalancoPatrimonialDao extends HibernateDao <BalancoPatrimonial,Long
 					connection = getConnection();
 					ps = connection.prepareStatement(QUERY_CONTRATOS_PAGAR_FAVORECIDO_BALANCO);
 
-					// ps.setString(1, sdf.format(dataDesagio));
+					java.sql.Date aaaaMMSQL = new java.sql.Date(aaaaMM.getTime());
+					
+					ps.setDate(1, aaaaMMSQL);
+					ps.setDate(2, aaaaMMSQL);
+					ps.setDate(3, aaaaMMSQL);
+					ps.setDate(4, aaaaMMSQL);
+					ps.setDate(5, aaaaMMSQL);
+					ps.setDate(6, aaaaMMSQL);
+					ps.setDate(7, aaaaMMSQL);
+					ps.setDate(8, aaaaMMSQL);
+					ps.setDate(9, aaaaMMSQL);
+					ps.setDate(10, aaaaMMSQL);
 
 					rs = ps.executeQuery();
 					RelatorioBalanco relatorio = null;
