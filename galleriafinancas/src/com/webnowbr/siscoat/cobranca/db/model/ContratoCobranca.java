@@ -97,7 +97,6 @@ public class ContratoCobranca implements Serializable {
 	private long id;
 	private Date dataInicio; // data de inicio das parcelas
 	private Date dataContrato; // data do contrato mas muda na aprovacao
-	
 	private Date dataCadastro; //data que operacao foi inserida no sistema
 	private String userCadastro;
 	
@@ -775,6 +774,7 @@ public class ContratoCobranca implements Serializable {
 	private String observacaoContatoAgendaLaudoAvaliacao;
 	private String comentarioContatoAgendaLaudoAvaliacao;
 	private boolean apenasPagamentoAntecipado;
+	private boolean apenasPagamentoIntegral;
 
 	private String avaliacaoLaudo;
 	private String avaliacaoLaudoObservacao;
@@ -6413,5 +6413,13 @@ public class ContratoCobranca implements Serializable {
 
 	public void setIspbPixContaPagar(String ispbPixContaPagar) {
 		this.ispbPixContaPagar = ispbPixContaPagar;
-	}	
+	}
+
+	public boolean isApenasPagamentoIntegral() {
+		return apenasPagamentoIntegral;
+	}
+
+	public void setApenasPagamentoIntegral(boolean apenasPagamentoIntegral) {
+		this.apenasPagamentoIntegral = apenasPagamentoIntegral;
+	}		
 }

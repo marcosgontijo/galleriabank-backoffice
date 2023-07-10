@@ -695,7 +695,7 @@ public class CcbMB {
 		if(CommonsUtil.semValor(this.objetoCcb.getValorDespesas())) {
 			this.objetoCcb.setValorDespesas(BigDecimal.ZERO);
 		}
-		this.objetoCcb.setValorDespesas(this.objetoCcb.getValorDespesas().add(despesaSelecionada.getValor()));
+		calcularValorDespesa();
 		ContasPagarDao contasPagarDao = new ContasPagarDao();
 		contasPagarDao.create(despesaSelecionada);
 		despesaSelecionada = new ContasPagar();
@@ -708,7 +708,7 @@ public class CcbMB {
 				objetoCcb.getObjetoContratoCobranca().getListContasPagar().remove(conta);
 			}
 		}
-		this.objetoCcb.setValorDespesas(this.objetoCcb.getValorDespesas().subtract(conta.getValor()));
+		calcularValorDespesa();
 	}
 	
 	public void addProcesso() {
@@ -728,7 +728,7 @@ public class CcbMB {
 			}
 		}
 		this.objetoCcb.getProcessosJucidiais().add(processoSelecionado);
-		this.objetoCcb.setValorDespesas(this.objetoCcb.getValorDespesas().add(processoSelecionado.getValor()));
+		calcularValorDespesa();
 		ContasPagarDao contasPagarDao = new ContasPagarDao();
 		contasPagarDao.create(processoSelecionado.getContaPagar());
 		CcbProcessosJudiciaisDao processoDao = new CcbProcessosJudiciaisDao();
@@ -743,7 +743,7 @@ public class CcbMB {
 				objetoCcb.getObjetoContratoCobranca().getListProcessos().remove(processo);
 			}
 		}
-		this.objetoCcb.setValorDespesas(this.objetoCcb.getValorDespesas().subtract(processo.getValor()));
+		calcularValorDespesa();
 	}
 		
 	public void pesquisaContratoCobranca() {
@@ -910,6 +910,8 @@ public class CcbMB {
 				objetoCcb.setRegistroImovelValor(valorRegistro);
 			}
 		}
+		
+		calcularValorDespesa();
 		
 		this.objetoContratoCobranca = null;
 	}
@@ -1723,9 +1725,28 @@ public class CcbMB {
 					//	contrato.setListContasPagar(new HashSet<ContasPagar>(this.objetoCcb.getDespesasAnexo2()));
 					//}
 					
-					if(CommonsUtil.semValor(objetoCcb.getNumeroCcb())) {
+					if(!CommonsUtil.semValor(objetoCcb.getNumeroCcb())) {
 						contrato.setNumeroContratoSeguro(objetoCcb.getNumeroCcb());
 					}
+					if(!CommonsUtil.semValor(objetoCcb.getDataDeEmissao())) {
+						contrato.setDataInicio(objetoCcb.getDataDeEmissao());
+					}
+					if(!CommonsUtil.semValor(objetoCcb.getSistemaAmortizacao())) {
+						contrato.setTipoCalculo(objetoCcb.getSistemaAmortizacao());
+					}
+					if(!CommonsUtil.semValor(objetoCcb.getPrazo())) {
+						contrato.setQtdeParcelas(CommonsUtil.intValue(objetoCcb.getPrazo()));
+					}
+					if(!CommonsUtil.semValor(objetoCcb.getValorCredito())) {
+						contrato.setValorCCB(objetoCcb.getValorCredito());
+					}
+					if(!CommonsUtil.semValor(objetoCcb.getTaxaDeJurosMes())) {
+						contrato.setTxJurosParcelas(objetoCcb.getTaxaDeJurosMes());
+					}
+					if(!CommonsUtil.semValor(this.carencia)) {
+						contrato.setMesesCarencia(CommonsUtil.intValue(this.carencia));
+					}
+					
 					ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 					try {
 						cDao.merge(contrato);
@@ -1753,7 +1774,7 @@ public class CcbMB {
 			
 			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "CCB: " + e.getCause(), ""));
 		} finally {
@@ -1805,7 +1826,7 @@ public class CcbMB {
 				fos.write(conteudo);
 				fos.close();
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
+				
 				System.out.println(e);
 			}
 		}
@@ -10930,10 +10951,10 @@ public class CcbMB {
 			return myResponse;
 
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		return null;
