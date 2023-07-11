@@ -32,31 +32,36 @@ public class PagadorRecebedorCadastroMB {
 		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
 		pagadorRecebedor = new PagadorRecebedor();
 
-		String stringResponse = null;
+//		String stringResponse = null;
 		if (CommonsUtil.mesmoValor("PF", tipoPessoa) && !CommonsUtil.semValor(cpf)) {
 
 			pagadorRecebedor.setCpf(cpf);
+			
+			pagadorRecebedorService.preecheDadosReceita(pagadorRecebedor);
 
-			ReceitaFederalPF receitaFederalPF = netrinService.requestCadastroPF(pagadorRecebedor);
-
-			stringResponse = GsonUtil.toJson(receitaFederalPF);
+//			ReceitaFederalPF receitaFederalPF = netrinService.requestCadastroPF(pagadorRecebedor);
+//
+//			stringResponse = GsonUtil.toJson(receitaFederalPF);
 
 		} else if (CommonsUtil.mesmoValor("PJ", tipoPessoa) && !CommonsUtil.semValor(cnpj)) {
 
 			pagadorRecebedor.setCnpj(cnpj);
 
-			ReceitaFederalPJ receitaFederalPJ = netrinService.requestCadastroPJ(pagadorRecebedor);
+			pagadorRecebedorService.preecheDadosReceita(pagadorRecebedor);
 
-			stringResponse = GsonUtil.toJson(receitaFederalPJ);
+//			ReceitaFederalPJ receitaFederalPJ = netrinService.requestCadastroPJ(pagadorRecebedor);
+//
+//			stringResponse = GsonUtil.toJson(receitaFederalPJ);
+
 
 		}
-		if (!CommonsUtil.semValor(cpf) || !CommonsUtil.semValor(cnpj))
-			pagadorRecebedor = pagadorRecebedorService.buscaOuInsere(pagadorRecebedor);
-
-		if (!CommonsUtil.semValor(stringResponse) && !CommonsUtil.semValor(pagadorRecebedor.getId())  ) {
-			pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagadorRecebedor,
-					DocumentosAnaliseEnum.RECEITA_FEDERAL, stringResponse);
-		}
+//		if (!CommonsUtil.semValor(cpf) || !CommonsUtil.semValor(cnpj))
+//			pagadorRecebedor = pagadorRecebedorService.buscaOuInsere(pagadorRecebedor);
+//
+//		if (!CommonsUtil.semValor(stringResponse) && !CommonsUtil.semValor(pagadorRecebedor.getId())  ) {
+//			pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagadorRecebedor,
+//					DocumentosAnaliseEnum.RECEITA_FEDERAL, stringResponse);
+//		}
 	}
 
 	public void clearFieldsNovoCadastro() {
