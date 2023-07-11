@@ -74,16 +74,33 @@
 						value="#{contratoCobrancaMB.tipoParametroConsultaContrato}">
 						<f:selectItem itemLabel="Todos" itemValue="todos" />
 						<f:selectItem itemLabel="Matrícula" itemValue="Matricula" />	
+						<f:selectItem itemLabel="Nome Pagador" itemValue="nomePagador" />
+			            <f:selectItem itemLabel="CPF Pagador" itemValue="cpfPagador" />
+			            <f:selectItem itemLabel="CNPJ Pagador" itemValue="cnpjPagador" />
+			            <f:selectItem itemLabel="CCB" itemValue="numeroCCB" />
 						<p:ajax event="change" update="panelParametros, ConsultaContratos" 
 							listener="#{contratoCobrancaMB.changeStatusConsultaPreContratos}" />
 					</p:selectOneListbox>
-					<p:inputText id="parametroConsultaContrato"
+					
+					<p:inputText 
 						value="#{contratoCobrancaMB.parametroConsultaContrato}"
 						label="Contrato" style="width:150px;" required="true"
-						rendered="#{contratoCobrancaMB.tipoParametroConsultaContrato eq 'Matricula'}" >
-						<p:ajax event="blur" update="ConsultaContratos"
-							listener="#{contratoCobrancaMB.geraConsultaContratosPendentes}" />
+						rendered="#{contratoCobrancaMB.tipoParametroConsultaContrato eq 'nomePagador' || 
+									contratoCobrancaMB.tipoParametroConsultaContrato eq 'numeroCCB' ||
+									contratoCobrancaMB.tipoParametroConsultaContrato eq 'Matricula'}" >
 					</p:inputText>
+					<p:inputMask 
+						value="#{contratoCobrancaMB.parametroConsultaContrato}"
+						label="CPF" mask="999.999.999-99" required="true"
+						rendered="#{contratoCobrancaMB.tipoParametroConsultaContrato eq 'cpfPagador'}"/>
+					<p:inputMask 
+						value="#{contratoCobrancaMB.parametroConsultaContrato}"
+						label="CNPJ" mask="99.999.999/9999-99" required="true"
+						rendered="#{contratoCobrancaMB.tipoParametroConsultaContrato eq 'cnpjPagador'}"/>
+					
+					<p:commandButton  icon="ui-icon-search" 
+						action="#{contratoCobrancaMB.geraConsultaContratosPendentes}"
+						update="ConsultaContratos" />
 				</h:panelGrid>
 			</p:panel>
 
@@ -119,7 +136,7 @@
 			        <p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.pagador.nome}" filterMatchMode="contains" sortBy="#{contratos.pagador.nome}">
 			            <h:outputText value="#{contratos.pagador.nome}" />
 			        </p:column>	
-			         <p:column style="text-align: center;" headerText="Responsável" filterBy="#{contratos.responsavel.nome}" filterMatchMode="contains" sortBy="#{contratos.responsavel.nome}">
+			        <p:column style="text-align: center;" headerText="Responsável" filterBy="#{contratos.responsavel.nome}" filterMatchMode="contains" sortBy="#{contratos.responsavel.nome}">
 			            <h:outputText value="#{contratos.responsavel.nome}" />
 			        </p:column>	
 			        <shiro:hasAnyRoles name="ROOT">  	
@@ -144,7 +161,7 @@
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
 		                </p:commandButton>
 
-	                	<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar">
+	                	<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar" >
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="false" />

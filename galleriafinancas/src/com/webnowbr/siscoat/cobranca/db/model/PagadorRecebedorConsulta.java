@@ -19,7 +19,7 @@ public class PagadorRecebedorConsulta implements Serializable {
 	private DocumentosAnaliseEnum tipoEnum;
 	private Date dataConsulta;
 
-	private String retornConsulta;
+	private String retornoConsulta;
 
 	public long getId() {
 		return id;
@@ -45,12 +45,12 @@ public class PagadorRecebedorConsulta implements Serializable {
 		this.dataConsulta = dataConsulta;
 	}
 
-	public String getRetornConsulta() {
-		return retornConsulta;
+	public String getRetornoConsulta() {
+		return retornoConsulta;
 	}
 
-	public void setRetornConsulta(String retornConsulta) {
-		this.retornConsulta = retornConsulta;
+	public void setRetornoConsulta(String retornoConsulta) {
+		this.retornoConsulta = retornoConsulta;
 	}
 
 	public DocumentosAnaliseEnum getTipoEnum() {

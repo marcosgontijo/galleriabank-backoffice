@@ -129,7 +129,6 @@ public class LoginBean {
         		
                 try {
                 	// Google Authenticator
-                	/*
                 	if (userTmp.get(0).isTwoFactorAuth()) {
 	                	if (twoFactorAuth.getCurrentCode(userTmp.get(0).getKey()).equals(key)) {
 		                    currentUser.login(token);
@@ -154,7 +153,6 @@ public class LoginBean {
 		                    LOG.info("Código do Google Authenticator Inválido!");
 	                	}
                 	} else {
-                	*/
                 		currentUser.login(token);
                 		
 	                    loggedIn = true;
@@ -171,7 +169,7 @@ public class LoginBean {
 	                		
 	                    	userTmp.get(0).setUltimoAcesso(dataHoje.getTime());
 	                    }
-                	//}
+                	}
                 } catch (UnknownAccountException uae) {
                     LOG.info("There is no user with username of "
                             + token.getPrincipal());

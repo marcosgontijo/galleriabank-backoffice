@@ -42,6 +42,13 @@ public class ContasPagar implements Serializable {
 	
 	private Responsavel responsavel;
 	
+	private String linhaDigitavelStarkBank;
+	private String descricaoStarkBank;
+	private String numeroDocumentoPagadorStarkBank;
+	
+	private StarkBankBoleto comprovantePagamentoStarkBank;
+	private StarkBankPix comprovantePagamentoPixStarkBank;
+	
 	private Collection<FileUploaded> filesContas = new ArrayList<FileUploaded>();
 
 	public ContasPagar() {
@@ -282,7 +289,44 @@ public class ContasPagar implements Serializable {
 	public void setFilesContas(Collection<FileUploaded> filesContas) {
 		this.filesContas = filesContas;
 	}
-	
-	
-	
+
+	public String getLinhaDigitavelStarkBank() {
+		return linhaDigitavelStarkBank;
+	}
+
+	public void setLinhaDigitavelStarkBank(String linhaDigitavelStarkBank) {
+		this.linhaDigitavelStarkBank = linhaDigitavelStarkBank;
+	}
+
+	public String getDescricaoStarkBank() {
+		return descricaoStarkBank;
+	}
+
+	public void setDescricaoStarkBank(String descricaoStarkBank) {
+		this.descricaoStarkBank = descricaoStarkBank;
+	}
+
+	public String getNumeroDocumentoPagadorStarkBank() {
+		return numeroDocumentoPagadorStarkBank;
+	}
+
+	public void setNumeroDocumentoPagadorStarkBank(String numeroDocumentoPagadorStarkBank) {
+		this.numeroDocumentoPagadorStarkBank = numeroDocumentoPagadorStarkBank;
+	}
+
+	public StarkBankBoleto getComprovantePagamentoStarkBank() {
+		return comprovantePagamentoStarkBank;
+	}
+
+	public void setComprovantePagamentoStarkBank(StarkBankBoleto comprovantePagamentoStarkBank) {
+		this.comprovantePagamentoStarkBank = comprovantePagamentoStarkBank;
+	}
+
+	public StarkBankPix getComprovantePagamentoPixStarkBank() {
+		return comprovantePagamentoPixStarkBank;
+	}
+
+	public void setComprovantePagamentoPixStarkBank(StarkBankPix comprovantePagamentoPixStarkBank) {
+		this.comprovantePagamentoPixStarkBank = comprovantePagamentoPixStarkBank;
+	}
 }

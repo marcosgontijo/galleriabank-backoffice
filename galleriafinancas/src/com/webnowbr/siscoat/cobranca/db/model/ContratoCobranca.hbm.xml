@@ -247,6 +247,9 @@
 		<property name="acao" type="java.lang.String">
 			<column name="ACAO" />
 		</property>
+		<property name="ispbPixContaPagar" type="java.lang.String">
+			<column name="ispbPixContaPagar" />
+		</property>
 		<property name="observacao" type="text">
 			<column name="OBSERVACAO" />
 		</property>
@@ -508,6 +511,9 @@
 		</property>
 		<property name="dataInclusaoRecebedor10" type="java.util.Date">
 			<column name="dataInclusaoRecebedor10" />
+		</property>	
+		<property name="dataCorteBaixaIPCAHibrido" type="java.util.Date">
+			<column name="dataCorteBaixaIPCAHibrido" />
 		</property>	
 		<property name="reprovadoData" type="java.util.Date">
 			<column name="reprovadoData" />
@@ -1083,7 +1089,7 @@
 			<column name="motivoReprovaLead" />
 		</property>
 		
-		<set name="listSegurados" table="segurado"  cascade="all-delete-orphan"
+		<set name="listSegurados" table="segurado"  cascade="merge"
                  lazy="false" fetch="select">
             <key>
                 <column name="contratoCobranca" not-null="true" />
@@ -1115,7 +1121,7 @@
             <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.ContasPagar" />
         </set>  
         
-        <set name="listProcessos" table="ccbprocessosjudiciais" cascade="persist"
+        <set name="listProcessos" table="ccbprocessosjudiciais" cascade="merge"
                  lazy="false" fetch="select">
             <key>
                 <column name="contrato" />
@@ -1996,6 +2002,9 @@
 		<property name="baixadoUsuario" type="java.lang.String">
 			<column name="baixadoUsuario" />
 		</property>
+		<property name="baixaMotivoCancelamento" type="java.lang.String">
+			<column name="baixaMotivoCancelamento" />
+		</property>		
 		
 		<property name="valorEmprestimo" type="big_decimal">
 			<column name="valorEmprestimo"/>
@@ -2096,13 +2105,13 @@
 			<column name="dispositivoCertificado" />
 		</property>
 		
-		<list name="listCadastroStatus"
-			table="ContratoCobranca_CadastroStatus_Join" cascade="all" lazy="false">
-			<key column="idContratoCobranca" />
-			<list-index></list-index>
-			<many-to-many column="idCadastroStatus"
-				class="com.webnowbr.siscoat.cobranca.db.model.CadastroStatus" />
-		</list>	
+		<set name="listCadastroStatus" table="CadastroStatus" cascade="all"
+                 lazy="false" fetch="select">
+            <key>
+                <column name="contratoCobranca" not-null="true" />
+            </key>
+            <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.CadastroStatus" />
+        </set>
 		
 		<property name="solicitarNota" type="java.lang.String">
 			<column name="solicitarNota" />
@@ -2140,16 +2149,20 @@
 			<column name="valorTotalAverbacao" />
 		</property>
 		
-		<property name="liberarAnaliseUsuario" type="java.lang.String">
-			<column name="liberarAnaliseUsuario" />
-		</property>
-		
-		<property name="liberarAnalise" type="boolean">
-			<column name="liberarAnalise" not-null="true" default="false"/>
+		<property name="apenasPagamentoAntecipado" type="boolean">
+			<column name="apenasPagamentoAntecipado" not-null="true" default="false"/>
 		</property>	
 		
-		<property name="liberarAnaliseData" type="java.util.Date">
-			<column name="liberarAnaliseData" />
+		<property name="contatoDiferenteProprietario" type="boolean">
+			<column name="contatoDiferenteProprietario" not-null="true" default="false"/>
+		</property>	
+		
+		<property name="apenasPagamentoIntegral" type="boolean">
+			<column name="apenasPagamentoIntegral" not-null="true" default="false"/>
+		</property>	
+		
+		<property name="statusEsteira" type="java.lang.String">
+			<column name="statusEsteira" />
 		</property>
 		
 	</class>

@@ -5,6 +5,25 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:p="http://primefaces.org/ui" template="../MenuCadastros.xhtml">
 	<ui:define name="conteudo">
+	
+			<h:outputStylesheet>
+			.red{
+				width: 128px;
+				display:inline-table;
+				color: red;
+				font-size: 12pt;
+				font-weight: bold;
+			}
+ 
+			.green{
+				width: 128px;
+				color: green;
+				font-size: 12pt;
+				display:inline-table;
+				font-weight: bold;
+			}
+			</h:outputStylesheet>
+			
 		<h:form id="form">
 			<script src="#{request.contextPath}/resources/js/functions.js"></script>
 			<script src="#{request.contextPath}/resources/js/jquery.mask.min.js"></script>
@@ -54,7 +73,7 @@
 							label="CPF" mask="999.999.999-99" required="true"
 							validator="#{pagadorRecebedorMB.validaCPF}"
 							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}">
-							<p:ajax update="CpfCC" event="valueChange"
+							<p:ajax update="CpfCC Nome DtNascimento Sexo mae NomeCC " event="valueChange"
 								listener="#{pagadorRecebedorMB.selectedCPF}" />
 						</p:inputMask>
 	
@@ -62,7 +81,7 @@
 							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
 						<p:inputText id="Rg"
 							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.rg}"
-							label="RG  / CNH"
+							label="RG / CNH"
 							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
 	
 						<p:outputLabel for="DtEmissaoRG" value="Data Emissão: " />
@@ -83,7 +102,7 @@
 							label="CNPJ" mask="99.999.999/9999-99" required="true"
 							validator="#{pagadorRecebedorMB.validaCNPJ}"
 							rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisica}">
-							<p:ajax update="CNPJCC" event="valueChange"
+							<p:ajax update="CNPJCC NomeCC Nome Endereco Numero Bairro Cidade Cep Estado EMail" event="valueChange"
 								listener="#{pagadorRecebedorMB.selectedCNPJ}" />
 						</p:inputMask>
 	
@@ -140,12 +159,6 @@
 							<f:selectItem itemLabel="FEMININO" itemValue="FEMININO" />
 						</p:selectOneRadio>
 	
-						<p:outputLabel for="Contato" value="Contato: " />
-						<p:inputText id="Contato"
-							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.contato}"
-							label="Contato" onblur=""
-							style="width:400px;" />
-	
 						<p:outputLabel for="EMail" value="E-Mail: " styleClass="labelBold" />
 						<p:inputText id="EMail"
 							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.email}"
@@ -154,18 +167,21 @@
 							<p:ajax event="blur" update=":form:PanelInvestidor" />
 						</p:inputText>
 	
-						<p:outputLabel for="DtNascimento" value="Data de Nascimento: " />
-						<p:inputMask id="DtNascimento"
-							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dtNascimento}"
-							mask="99/99/9999" label="Data de Nascimento">
-							<f:convertDateTime pattern="dd/MM/yyyy" />
-						</p:inputMask>
-	
-						<p:outputLabel for="TelResidencial" value="Telefone Residencial: " />
-						<p:inputMask id="TelResidencial"
-							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.telResidencial}"
-							mask="(99) 9999-9999" label="Telefone Residencial" />
-	
+						<p:outputLabel for="DtNascimento" value="Data de Nascimento: " rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
+						<h:panelGroup rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}">
+							<p:inputMask id="DtNascimento"
+								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dtNascimento}"
+								mask="99/99/9999" label="Data de Nascimento">
+								<p:ajax event="blur" update="idade"
+									listener="#{pagadorRecebedorMB.objetoPagadorRecebedor.calcularIdade()}" />
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</p:inputMask>					
+							<p:spacer width="10px"/>
+							
+							<p:outputLabel for="idade" value="Idade: " />
+							<p:inputText id="idade" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.idade}" />
+						</h:panelGroup>
+						
 						<p:outputLabel for="TelCelular" value="Telefone Celular: " />
 						<p:inputText id="TelCelular"
 							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.telCelular}"
@@ -247,17 +263,11 @@
 	
 						<p:outputLabel for="Observacao1" value="Observação: " />
 						<p:inputTextarea id="Observacao1" rows="10" cols="48"
-							counter="display" maxlength="3000"
+							maxlength="3000"
 							onblur=""
 							counterTemplate="{0} characters remaining." autoResize="false"
 							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.observacao1}" />
-						<p:outputLabel for="Observacao2" value=" " />
-						<p:inputTextarea id="Observacao2" rows="10" cols="48"
-							counter="display" maxlength="3000"
-							onblur=""
-							counterTemplate="{0} characters remaining." autoResize="false"
-							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.observacao2}" />
-						<p:outputLabel id="display" />
+							<p:outputLabel id="display" />		
 					</h:panelGrid>
 					
 					<!--  <h:panelGrid columns="1">
@@ -292,6 +302,7 @@
 							<f:selectItem itemValue="UNIÃO ESTÁVEL" itemLabel="UNIÃO ESTÁVEL" />
 							<f:selectItem itemValue="DIVORCIADO" itemLabel="DIVORCIADO" />
 							<f:selectItem itemValue="SEPARADO" itemLabel="SEPARADO" />
+							<f:selectItem itemValue="SEPARADO JUDICIALMENTE" itemLabel="SEPARADO JUDICIALMENTE" />
 							<p:ajax update="form:PanelCasado" event="valueChange" />
 						</p:selectOneMenu>
 					</h:panelGrid>
@@ -361,6 +372,15 @@
 							<p:inputText id="orgaoEmissorRGConjuge"
 								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.orgaoEmissorRGConjuge}" />
 	
+							<p:outputLabel for="paiConjuge" value="Nome do pai: "
+								styleClass="labelBold"
+								style=" font-size: 18px;" />
+							<p:inputText id="paiConjuge" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.nomePaiConjuge}" />
+								
+							<p:outputLabel for="maeConjuge" value="Nome da mãe: "
+								styleClass="labelBold" style=" font-size: 18px;" />
+							<p:inputText id="maeConjuge" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.nomeMaeConjuge}"/>
+							
 							<p:outputLabel for="emailConjuge" value="E-Mail: "
 								styleClass="labelBold"  />
 							<p:inputText id="emailConjuge"
@@ -375,14 +395,8 @@
 								mask="99/99/9999" label="Data de Nascimento" >
 								<f:convertDateTime pattern="dd/MM/yyyy" />
 							</p:inputMask>
-	
-							<p:outputLabel for="TelResidencialConjuge"
-								value="Telefone Residencial: "  />
-							<p:inputMask id="TelResidencialConjuge"
-								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.telResidencialConjuge}"
-								mask="(99) 9999-9999" label="Telefone Residencial" />
-	
-							<p:outputLabel for="TelCelularConjuge" value="Telefone Celular: "  />
+									
+							<p:outputLabel for="TelCelularConjuge" value="Telefone Celular: " />
 							<p:inputText id="TelCelularConjuge"
 								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.telCelularConjuge}"
 								styleClass="phone" label="Telefone Celular" />
@@ -417,9 +431,11 @@
 								style="width:400px;"  />
 	
 							<p:outputLabel for="CepConjuge" value="Cep: "  />
-							<p:inputMask id="CepConjuge"
-								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cepConjuge}"
-								mask="99999-999" label="Cep" />
+							<p:inputMask id="CepConjuge" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cepConjuge}"
+								mask="99999-999" label="Cep" >
+								<p:ajax event="blur" update="EnderecoConjuge BairroConjuge CidadeConjuge EstadoConjuge" 
+									listener="#{pagadorRecebedorMB.getEnderecoByViaNetConjuge}" />
+							</p:inputMask>
 	
 							<p:outputLabel for="EstadoConjuge" value="Estado: "  />
 							<p:selectOneMenu id="EstadoConjuge"
@@ -547,42 +563,138 @@
 								<p:inputText id="NomeCC"
 									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.nomeCC}"
 									label="Nome" onblur=""
-									style="width:400px;" />	
-								
-								<p:outputLabel value="Banco: " for="Banco"  styleClass="labelBold" />
-								<p:autoComplete id="Banco" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.banco}"
+									style="width:400px;" />
+
+								<p:outputLabel value="Banco: " for="Banco"
+									styleClass="labelBold" />
+								<p:autoComplete id="Banco"
+									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.banco}"
 									completeMethod="#{pagadorRecebedorMB.objetoPagadorRecebedor.completeBancos}"
 									var="banco" itemLabel="#{banco}" itemValue="#{banco}"
-									forceSelection="true" styleClass="labelBold" label="Conta" 
-									style="width:100px; "
-									scrollHeight="250" />
-								
+									forceSelection="true" styleClass="labelBold" label="Conta"
+									style="width:100px; " scrollHeight="250">
+									<p:ajax event="valueChange"
+										listener="#{pagadorRecebedorMB.verificaAlteracaoContaCobranca}" />
+								</p:autoComplete>
+
 								<p:outputLabel for="Agencia" value="Agência: "
 									styleClass="labelBold" />
 								<p:inputText id="Agencia"
 									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.agencia}"
-									label="Agência" onblur=""
-									style="width:100px;" />
+									label="Agência" onblur="" style="width:100px;">
+									<p:ajax event="valueChange"
+										listener="#{pagadorRecebedorMB.verificaAlteracaoContaCobranca}" />
+								</p:inputText>
 								<p:outputLabel for="Conta" value="Conta: "
+									styleClass="labelBold">
+									<i class="fa font-solid #{pagadorRecebedorMB.objetoPagadorRecebedor.contaBancariaValidada?'fa-check green':'fa-ban red'}"
+										id="contaValidacao" />
+								</p:outputLabel>
+
+								<h:panelGroup>
+									<p:inputText id="Conta"
+										value="#{pagadorRecebedorMB.objetoPagadorRecebedor.conta}"
+										styleClass="labelBold" label="Conta" onblur=""
+										style="width:100px;margin-right: 10px;">
+										<p:ajax event="valueChange"
+											listener="#{pagadorRecebedorMB.verificaAlteracaoContaCobranca}" />
+									</p:inputText>
+									<p:commandButton value="Verificar"  ajax="true" 
+										icon="ui-icon-check" rendered="#{!pagadorRecebedorMB.objetoPagadorRecebedor.contaBancariaValidada}"
+										action="#{pagadorRecebedorMB.validaContaBancaria}"
+										style="TEXT-DECORATION: bold" />
+								</h:panelGroup>
+								
+									<p:outputLabel for="ContaDigito" value="Conta Digito: "
+									styleClass="labelBold">									
+								</p:outputLabel>
+									<p:inputText id="ContaDigito"
+										value="#{pagadorRecebedorMB.objetoPagadorRecebedor.contaDigito}"
+										styleClass="labelBold" label="contaDigito" onblur="" maxlength="1"
+										style="width:100px;margin-right: 10px;">
+										<p:ajax event="valueChange"
+											listener="#{pagadorRecebedorMB.verificaAlteracaoContaCobranca}" />
+									</p:inputText>
+								
+
+								<p:outputLabel for="tipoConta" value="Tipo Da Conta "
 									styleClass="labelBold" />
-								<p:inputText id="Conta"
-									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.conta}"
-									styleClass="labelBold" label="Conta"
-									onblur="" style="width:100px;" />
-									
-								<p:outputLabel for="tipoConta"
-									value="Tipo Da Conta " styleClass="labelBold" />
 								<p:selectOneMenu id="tipoConta"
-									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.tipoConta}" >
-									<f:selectItem itemValue="Conta Corrente" itemLabel="Conta Corrente" />
-									<f:selectItem itemValue="Conta Poupança" itemLabel="Conta Poupança" />
+									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.tipoConta}">
+									<f:selectItem itemValue="CONTA_CORRENTE"
+										itemLabel="Conta Corrente" />
+									<f:selectItem itemValue="CONTA_POUPANCA"
+										itemLabel="Conta Poupança" />
+
+									<p:ajax event="valueChange"
+										listener="#{pagadorRecebedorMB.verificaAlteracaoContaCobranca}" />
 								</p:selectOneMenu>
+
+								<p:outputLabel for="pix" value="Pix: " styleClass="labelBold">
+									<i class="fa font-solid #{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado?'fa-check green':'fa-ban red'}"
+										id="pixValidacao" />
+								</p:outputLabel>
+								
+								<h:panelGroup>
+									<p:inputText id="pix"
+										value="#{pagadorRecebedorMB.objetoPagadorRecebedor.pix}"
+										styleClass="labelBold" label="pix"
+										style="width:100px;margin-right: 10px;">
+										<p:ajax event="valueChange"
+											listener="#{pagadorRecebedorMB.verificaAlteracaoPix}" />
+									</p:inputText>
+									<p:commandButton value="Verificar" ajax="true"  rendered="#{!pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+										icon="ui-icon-check" action="#{pagadorRecebedorMB.validaPix}"
+										style="TEXT-DECORATION: bold" />
+								</h:panelGroup>
+
+
+
+								<p:outputLabel for="tipoPix" value="Tipo Do Pix "
+									styleClass="labelBold" />
+
+								<p:selectOneMenu id="tipoPix"
+									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.tipoPix}">
+									<f:selectItem itemValue="CPF" itemLabel="CPF" />
+									<f:selectItem itemValue="CNPJ" itemLabel="CNPJ" />
+									<f:selectItem itemValue="TELEFONE" itemLabel="Telefone" />
+									<f:selectItem itemValue="EMAIL" itemLabel="E-mail" />
+									<f:selectItem itemValue="CHAVE_ALEATORIA"
+										itemLabel="Chave Aleatória" />
+									<p:ajax event="valueChange"
+										listener="#{pagadorRecebedorMB.verificaAlteracaoPix}" />
+								</p:selectOneMenu>
+
+
+								<p:outputLabel value="Banco: " for="Banco"  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+									styleClass="labelBold" />
+								<p:outputLabel  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.bancoPix}"
+									styleClass="labelBold" />
+
+								<p:outputLabel for="Agencia" value="Agência: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+									styleClass="labelBold" />
+								<p:outputLabel  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.agenciaPix}"
+									styleClass="labelBold" />
+
+
+								<p:outputLabel for="Conta" value="Conta: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+									styleClass="labelBold">
+								</p:outputLabel>
+								<p:outputLabel  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.contaPix}"
+									styleClass="labelBold" />
+
+
+								<p:outputLabel for="ContaDigito" value="Conta Digito: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+									styleClass="labelBold">
+								</p:outputLabel>
+								<p:outputLabel  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.contaDigitoPix}"
+									styleClass="labelBold" />
 									
-								<p:outputLabel for="pix" value="Pix: " styleClass="labelBold" />
-								<p:inputText id="pix"
-									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.pix}"
-									styleClass="labelBold" label="pix"
-									style="width:100px;" />
+
 							</h:panelGrid>
 						</div>
 						<div class="ui-g-12 ui-md-6 ui-lg-6">

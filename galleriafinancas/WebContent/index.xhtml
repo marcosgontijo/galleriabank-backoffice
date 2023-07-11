@@ -5,15 +5,29 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:p="http://primefaces.org/ui"
       xmlns:shiro="http://shiro.apache.org/tags"
-      xmlns:f="http://java.sun.com/jsf/core">
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:pe="http://primefaces.org/ui/extensions">
 
     <h:head>
         <title>Galleria Bank</title>          
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <link rel="shortcut icon" type="image/x-icon" href="#{resource['image/Commons/icon.ico']}"></link>  
-        <link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/css/Style.css" title="" media="all" />
-        <script src="#{request.contextPath}/resources/js/functions.js"></script>
+	        <link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/css/Style.css" title="" media="all" />
+		<h:outputStylesheet library="webjars"
+			name="font-awesome/5.8.2/css/all.min-jsf.css" />
+		<h:outputStylesheet library="webjars"
+			name="font-awesome/5.8.2/css/v4-shims.min-jsf.css" />
+		<script src="#{request.contextPath}/resources/js/functions.js"></script>
         <script src="#{request.contextPath}/resources/js/locale-primefaces.js"></script>
+        
+        <h:outputStylesheet >
+			.ui-dataview .ui-dataview-header {
+			    border-bottom: 0 none;
+			    display: none;
+			}
+						
+		</h:outputStylesheet>
+		<meta http-equiv="Access-Control-Allow-Origin" content="*"/>
     </h:head>
 	<h:body onload="register_tab_GUID()">    
 		<p:layout fullPage="true" > 		    
@@ -257,7 +271,7 @@
 											ajax="false" icon="ui-icon ui-icon-newwin"
 											styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_GERENTE_ANALISE">
+								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_LAUDO, PROFILE_GERENTE_ANALISE">
 									<p:menuitem value="04.1 - Ag. Laudo"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Laudo')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
@@ -377,7 +391,11 @@
 									<p:menuitem value="Contratos Geral"
 										action="#{contratoCobrancaMB.clearFieldsContratosPerformance()}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />										
+										styleClass="itemMenu" />				
+									<p:menuitem value="Dados Empresa"
+										action="#{dadosEmpresaMB.clearFieldsDadosEmpresa}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />						
 									<p:menuitem value="Contratos Securitizadora"
 										action="#{contratoCobrancaMB.clearFieldsContratos('Securitizadora')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
@@ -745,13 +763,34 @@
 		    	</ui:insert>          			
 		    </p:layoutUnit>   	    			    		
 		    <p:layoutUnit position="center" id="conteudo" spacingOpen="0">
-				<ui:insert name="conteudo">						
-								    	        		           
+				<ui:insert name="conteudo">						    	        		           
                 </ui:insert>
 		    </p:layoutUnit>
 		    <p:layoutUnit position="south" size="35" resizable="false" closable="true" style="BORDER:none;" spacingOpen="0">
-				<p:outputLabel value="Copyright © 2022 Todos os direitos reservados. " styleClass="labelBold"/>
-		    </p:layoutUnit>			    
-		</p:layout>											
-	</h:body>
+				<p:outputLabel value="Copyright © 2023 Todos os direitos reservados. " styleClass="labelBold"/>
+		    </p:layoutUnit>	
+		    <p:outputLabel value="#{termoMB.verificaTermosNaoAssinadoso()}"/>		    			   
+			
+		</p:layout>
+
+			
+	<p:dialog widgetVar="dlgTermos" showEffect="fade" modal="true"
+		width="1000" height="570" minWidth="800">
+		
+		<h:form id="termoForm">
+			<iframe scrolling="yes" id="termoPdf"
+				style="height: 540; width: 100%" height="540" width="100%"
+				src="#{termoMB.carregaPdfTermo()}">
+				 
+			</iframe>
+			<div align="center">
+				<p:commandButton value="Aceitar" ajax="true" icon="ui-icon-check" id="btnAceite"
+					update=":termoForm" action="#{termoMB.aceitar()}"
+					style="TEXT-DECORATION: bold;" />
+			</div>
+		</h:form>
+
+	</p:dialog>
+	
+</h:body>
 </html>

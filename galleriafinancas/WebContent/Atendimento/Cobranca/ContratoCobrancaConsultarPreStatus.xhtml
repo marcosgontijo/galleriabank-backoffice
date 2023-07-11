@@ -68,10 +68,9 @@
 			</p:panel>									
 			<p:panel id="ConsultaContratos" header="Pré-Contratos #{contratoCobrancaMB.tituloTelaConsultaPreStatus} - Consultar" style="margin-bottom:10px;">					    		    
    		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratosPendentes}" selection="" emptyMessage="" sortBy="#{contratos.dataUltimaAtualizacao}" sortOrder="ascending"
-   		         rowStyleClass="#{(contratos.pendenciaPagamento eq true) ? 'parcelaVencendo' : '' } #{(contratos.laudoRecebido eq true and contratos.pajurFavoravel eq true) ? 'parcelaPaga' : '' } #{(contratos.cadastroAprovadoValor eq 'Pendente') ? 'linhaRoxa' : '' }
+   		         rowStyleClass="#{(contratos.pendenciaPagamento eq true or contratos.contatoDiferenteProprietario eq true) ? 'parcelaVencendo' : '' } #{(contratos.laudoRecebido eq true and contratos.pajurFavoravel eq true) ? 'parcelaPaga' : '' } #{(contratos.cadastroAprovadoValor eq 'Pendente') ? 'linhaRoxa' : '' }
    		         #{(contratos.pendenciaLaudoPaju eq true) ? 'parcelaparcial' : '' }  #{(contratos.responsavel.superlogica) ? 'superlogica' : '' } "
-   		         rows="50"
-                 paginator="true"
+   		         rows="50" paginator="true"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                  currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
                  rowsPerPageTemplate="50,100,150">  
@@ -97,7 +96,7 @@
 			        <p:column style="text-align: center;width: 90px"
 						headerText="Comercial" 
 						rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Comite'}">
-						<h:outputText value="#{contratos.preAprovadoComiteUsuario}"  escape="false" />
+						<h:outputText value="#{contratos.preAprovadoComiteUsuario}"  escape="false"/>
 					</p:column>
 			        
 			    	<p:column style="text-align: center;" headerText="Responsável" filterBy="#{contratos.nomeResponsavel}" filterMatchMode="contains" sortBy="#{contratos.nomeResponsavel}">
@@ -155,8 +154,14 @@
 
 					<p:column style="text-align: center;" headerText="Cidade"
 						filterBy="#{contratos.nomeCidadeImovel}"
-						filterMatchMode="contains" sortBy="#{contratos.nomeCidadeImovel}">
+						filterMatchMode="contains" sortBy="#{contratos.nomeCidadeImovel}"
+						rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pedir PAJU'}">
 						<h:outputText value="#{contratos.nomeCidadeImovel}" />
+					</p:column>
+					
+					<p:column style="text-align: center;" headerText="Andamento Docket"
+						rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Pedir PAJU'}">
+						<h:outputText value="#{contratos.certidoesProntas} / #{contratos.totalCertidoesDocket}" />
 					</p:column>
 					
 					<p:column style="text-align: center;width: 100px" headerText="Data Vistoria Imóvel" 
@@ -214,12 +219,12 @@
 						action="#{contratoCobrancaMB.downloadAprovadoComitePDF(contratos.id)}" >
 						</p:commandButton>			                
 		               <shiro:hasAnyRoles name="ROOT, PRECOBRANCA, PROFILE_CONTRATO">
-		                	<p:commandButton value="Emitir CCB" action="#{ccbMB.EmitirCcbPreContrato}">
-			                	<f:setPropertyActionListener target="#{ccbMB.objetoContratoCobranca}" value="#{contratos}" />
+		                	<p:commandButton rendered ="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. CCB'}"  value="Emitir CCB" action="#{ccbMB.EmitirCcbPreContrato}">
+			                	<f:setPropertyActionListener  target="#{ccbMB.objetoContratoCobranca}" value="#{contratos}" />
 			                </p:commandButton>	
 			            </shiro:hasAnyRoles>		            
-						<p:commandButton value="Certidões Docket" action="#{docketMB.clearFieldsContratoCobranca(contratos)}"/>		
-						<p:commandButton value="Data Engine" action="#{dataEngineMB.clearFieldsContratoCobranca(contratos)}"/>		            
+						<p:commandButton rendered ="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Aguardando Análise' or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Em Análise'}" value="Certidões Docket" action="#{docketMB.clearFieldsContratoCobranca(contratos)}"/>		
+						<p:commandButton rendered ="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Aguardando Análise' or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Em Análise'}" value="Data Engine" action="#{dataEngineMB.clearFieldsContratoCobranca(contratos)}"/>		            
 		                <shiro:hasAnyRoles name="ROOT, PROFILE_GERENTE_ANALISE"> 
 		                	<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-arrowthick-1-s" value="Baixar" title="Baixar">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />

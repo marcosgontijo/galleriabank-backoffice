@@ -36,6 +36,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.DataEngineDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocketDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
+import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.ws.endpoint.ReaWebhookRetorno;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
@@ -44,6 +45,8 @@ import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.infra.db.model.User;
 
 import br.com.galleriabank.dataengine.cliente.model.request.DataEngineIdSend;
+import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
+import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoRequestEnterprisePartnership;
 import br.com.galleriabank.jwt.common.JwtUtil;
 import br.com.galleriabank.serasarelato.cliente.util.GsonUtil;
 
@@ -299,6 +302,52 @@ public class DocketService {
 
 	}
 
+	public void requestEngine(DocumentoAnalise documentoAnalise, DataEngine engine, User usuarioLogado) {
+
+		if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
+			engineCriarConsulta(documentoAnalise, engine, usuarioLogado);
+		}
+		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+		documentoAnalise = documentoAnaliseDao.findById(documentoAnalise.getId());
+
+		if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa())) {
+
+			EngineRetorno engineRetorno = GsonUtil.fromJson(documentoAnalise.getRetornoEngine(), EngineRetorno.class);
+
+			if (!CommonsUtil.semValor(documentoAnalise.getPagador())) {
+				PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
+
+				if (CommonsUtil.semValor(documentoAnalise.getPagador().getDtNascimento()))
+					documentoAnalise.getPagador().setDtNascimento(CommonsUtil.dateValue(
+							engineRetorno.getEngineRetornoExecutionResultConsultaSerproCPF().getNascimento()));
+
+				if (CommonsUtil.semValor(documentoAnalise.getPagador().getNomeMae()))
+					documentoAnalise.getPagador()
+							.setNomeMae(engineRetorno.getConsultaCompleta().getBestInfo().getMotherName().getFull());
+
+				pagadorRecebedorDao.merge(documentoAnalise.getPagador());
+			}
+
+			if (!CommonsUtil.semValor(engineRetorno.getConsultaCompleta().getEnterpriseData()) &&
+					!CommonsUtil.semValor(engineRetorno.getConsultaCompleta().getEnterpriseData().getPartnership()) &&
+					!CommonsUtil.semValor(engineRetorno.getConsultaCompleta().getEnterpriseData().getPartnership().getPartnerships())) {
+				DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
+
+				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+
+				for (EngineRetornoRequestEnterprisePartnership partnership : engineRetorno.getConsultaCompleta()
+						.getEnterpriseData().getPartnership().getPartnerships()) {
+
+					documentoAnaliseService.cadastrarPessoRetornoEngine(partnership, usuarioLogado, documentoAnaliseDao,
+							pagadorRecebedorService, documentoAnalise.getContratoCobranca(),
+							( ( CommonsUtil.mesmoValor("INAPTO",  partnership.getCNPJStatus()))?"INAPTO":"" )+  "Empresa Vinculada ao " + documentoAnalise.getMotivoAnalise());
+				}
+			}
+
+		}
+
+	}
+	
 	public void baixarDocumentoEngine(DataEngine engine) {
 		FacesContext context = FacesContext.getCurrentInstance();
 		if (CommonsUtil.semValor(engine.getIdCallManager())) {
@@ -777,8 +826,17 @@ public class DocketService {
 		}
 
 		JSONObject jsonDocketPedido = new JSONObject();
-		String nomePedido = objetoContratoCobranca.getNumeroContrato() + " - "
-				+ objetoContratoCobranca.getPagador().getNome();
+		String nomePedido = "";
+		if(CommonsUtil.semValor(objetoContratoCobranca.getId())){
+			if(listaPagador.size() > 0) {				
+				nomePedido = "00000 - " + listaPagador.get(0).getNome();
+			} else {
+				nomePedido = "00000 - nome";
+			}
+		} else {
+			nomePedido = objetoContratoCobranca.getNumeroContrato() + " - "
+					+ objetoContratoCobranca.getPagador().getNome();
+		}
 		// jsonDocketPedido = new JSONObject();
 		jsonDocketPedido.put("lead", nomePedido);
 		jsonDocketPedido.put("documentos", jsonDocumentosArray);
@@ -841,17 +899,13 @@ public class DocketService {
 		// POST para gerar pedido
 		FacesContext context = FacesContext.getCurrentInstance();
 		DocketDao docketDao = new DocketDao();
-		if (CommonsUtil.semValor(objetoContratoCobranca)) {
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Contrato não vinculado!!!", ""));
-			return null;
-		} else {
+		if(!CommonsUtil.semValor(objetoContratoCobranca.getId())) {
 			ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 			cDao.merge(objetoContratoCobranca);
-		}
-		if (docketDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca).size() > 0) {
-			context.addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_FATAL, "Pedido desse contrato já existe!!!!!!", ""));
-			return null;
+			if(docketDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca).size() > 0) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Pedido desse contrato já existe!!!!!!", ""));	
+				return null;
+			}
 		}
 
 		try {
@@ -898,9 +952,12 @@ public class DocketService {
 			} else {
 				
 				DocketRetorno myResponse = docketJSONRetorno(myURLConnection.getInputStream());
-				
-				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-				cDao.merge(objetoContratoCobranca);
+				if(!CommonsUtil.semValor(objetoContratoCobranca.getId())) {
+					ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+					cDao.merge(objetoContratoCobranca);					
+				} else {
+					objetoContratoCobranca = null;
+				}
 				Docket docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "", cidadeImovel, "",
 						user.getName(), gerarDataHoje(), myResponse.getPedido().getId(), myResponse.getPedido().getIdExibicao());
 				docketDao.create(docket);
@@ -914,6 +971,98 @@ public class DocketService {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+		
+	public void verificarCertidoesContrato(ContratoCobranca contrato, String idCallManager) {
+		try {	
+			
+			loginDocket(null);
+			int HTTP_COD_SUCESSO = 200;
+			URL myURL;
+			if (SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
+				myURL = new URL(urlHomologacao + "/api/v2/" + organizacao_url + "/shopping-documentos/alpha/pedidos/" + idCallManager);
+			} else {
+				myURL = new URL(urlProducao + "/api/v2/" + organizacao_url + "/shopping-documentos/alpha/pedidos/" + idCallManager);
+			}
+
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setRequestMethod("GET");
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			myURLConnection.setRequestProperty("Authorization", tokenLogin);
+			myURLConnection.setDoOutput(true);
+
+			int certidoesProntas = 0;
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
+				System.out.println("Não foi possivle consultar docket. IdCallManager: " + idCallManager + " contrato: " + contrato.toString());
+			} else {
+				JSONObject retornoConsulta = null;
+				retornoConsulta = getJsonSucesso(myURLConnection.getInputStream());
+				if(!retornoConsulta.has("pedido")) {
+					return;
+				}
+				
+				JSONObject pedido = retornoConsulta.getJSONObject("pedido");
+				
+				if(!pedido.has("documentos")) {
+					return;
+				}
+				
+				JSONArray documentos = pedido.getJSONArray("documentos");
+				for(int i = 0 ; i < documentos.length(); i++) {
+					JSONObject doc = documentos.getJSONObject(i);
+					if(!doc.has("status")) {
+						continue;
+					}			
+					if(CommonsUtil.mesmoValor(doc.get("status"), "ENTREGUE")) {
+						certidoesProntas++;
+					}
+				}
+				contrato.setCertidoesProntas(certidoesProntas);
+				contrato.setTotalCertidoesDocket(documentos.length());
+			}
+
+			myURLConnection.disconnect();
+			return;
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return;
+	}
+	
+	public JSONObject getJsonSucesso(InputStream inputStream) {
+		BufferedReader in;
+		try {
+			in = new BufferedReader(
+					new InputStreamReader(inputStream, "UTF-8"));
+
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+
+			//READ JSON response and print
+			JSONObject myResponse = new JSONObject(response.toString());
+
+			return myResponse;
+
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;

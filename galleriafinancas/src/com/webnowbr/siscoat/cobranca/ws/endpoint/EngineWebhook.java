@@ -111,7 +111,9 @@ public class EngineWebhook {
 					} else {
 						if (!CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais().getResult())
 								&& !CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais()
-										.getResult().get(0).getOnlineCertificates())) {
+										.getResult().get(0).getOnlineCertificates()) && 
+									!CommonsUtil.mesmoValorIgnoreCase("NADA CONSTA", engineWebhookRetorno.getConsultaAntecedenteCriminais()
+										.getResult().get(0).getOnlineCertificates().get(0).getBaseStatus())) {
 							documentoAnalise.addObservacao("Possui antecedentes criminais");
 						}
 						if (CommonsUtil.mesmoValor(

@@ -240,7 +240,7 @@
 												update="form:CheckListInformacoesAdicionais" />
 										</shiro:hasAnyRoles>
 										
-										<shiro:hasAnyRoles name="ROOT, USER_GALACHE, AVALIADORIMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_AVALIADOR_IMOVEL_GALACHE, PROFILE_GERENTE_ANALISE">
+										<shiro:hasAnyRoles name="ROOT, USER_GALACHE, AVALIADORIMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_AVALIADOR_IMOVEL_GALACHE, PROFILE_GERENTE_ANALISE, PROFILE_LAUDO">
 											<p:commandButton icon="ui-icon-check" 
 												rendered="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria == null 
 												|| contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria == ''}"
@@ -323,6 +323,12 @@
 						<p:inputText id="Cartorio"
 							value="#{contratoCobrancaMB.objetoImovelCobranca.cartorio}"
 							label="Cartório" onblur="" style="width:400px;"  disabled="true"/>
+							
+						<p:outputLabel for="cartorioEstado" value="Estado Cartório: " />
+						<p:inputText id="cartorioEstado" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioEstado}" disabled="true" /> 
+											
+						<p:outputLabel for="cartorioMunicipio" value="Município Cartório: " />
+						<p:inputText id="cartorioMunicipio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioMunicipio}" disabled="true" />
 
 						<p:outputLabel for="CepImovel" value="Cep: "/>
 						<p:inputMask id="CepImovel"
@@ -491,16 +497,7 @@
 						</p:selectOneMenu>
 						
 						<p:outputLabel for="inscricaoMunicipal" value="Inscrição Municipal: " />
-						<p:inputText id="inscricaoMunicipal" value="#{contratoCobrancaMB.objetoImovelCobranca.inscricaoMunicipal}" />
-						
-						<p:outputLabel for="numeroCartorio" value="Numero Cartório: " />
-						<p:inputText id="numeroCartorio" value="#{contratoCobrancaMB.objetoImovelCobranca.numeroCartorio}" disabled="true" /> 
-											
-						<p:outputLabel for="cartorioEstado" value="Estado Cartório: " />
-						<p:inputText id="cartorioEstado" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioEstado}" disabled="true" /> 
-											
-						<p:outputLabel for="cartorioMunicipio" value="Município Cartório: " />
-						<p:inputText id="cartorioMunicipio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioMunicipio}" disabled="true" />
+						<p:inputText id="inscricaoMunicipal" value="#{contratoCobrancaMB.objetoImovelCobranca.inscricaoMunicipal}" />					
 
 					</h:panelGrid>
 				</p:panel>

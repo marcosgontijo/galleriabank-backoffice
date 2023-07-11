@@ -48,7 +48,7 @@
 		                	<f:setPropertyActionListener target="#{pagadorRecebedorMB.deleteMode}" value="false" />
 		                </p:commandButton>
 		                <p:spacer width="10" height="10"/>
-			            <shiro:hasAnyRoles name="ROOT, COBRANCA">
+			            <shiro:hasAnyRoles name="ROOT, COBRANCA, PROFILE_GERENTE_ANALISE">
 			                <p:commandButton action="#{pagadorRecebedorMB.clearFieldsView}" ajax="false" icon="ui-icon-trash" title="Excluir">
 			                	<f:setPropertyActionListener target="#{pagadorRecebedorMB.objetoPagadorRecebedor}" value="#{PagadorRecebedor}" />
 			                	<f:setPropertyActionListener target="#{pagadorRecebedorMB.updateMode}" value="false" />

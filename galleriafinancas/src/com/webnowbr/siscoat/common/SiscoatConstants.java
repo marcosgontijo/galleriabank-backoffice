@@ -18,6 +18,7 @@ public class SiscoatConstants {
 	public static final BigDecimal SEGURO_MIP_5_DIGITOS = BigDecimal.valueOf(0.00021); // seguro MIP: 0,021% sobre saldo devedor parcela anterior;
 	
 	public static final BigDecimal CUSTO_EMISSAO_PERCENTUAL_LIQUIDO = BigDecimal.valueOf(4.3);
+	public static final BigDecimal CUSTO_EMISSAO_PERCENTUAL_BRUTO_NOVO = BigDecimal.valueOf(5);
 	public static final BigDecimal CUSTO_EMISSAO_PERCENTUAL_BRUTO = BigDecimal.valueOf(4);
 	public static final BigDecimal CUSTO_EMISSAO_MINIMO = BigDecimal.valueOf(3500);
 	
@@ -54,5 +55,5 @@ public class SiscoatConstants {
 	public static final String  URL_SISCOAT_REA_WEBHOOK = "https://backoffice.galleriabank.com.br/sistema/siscoat/rea/webhook?Token=";
 	public static final String  URL_SISCOAT_ENGINE_WEBHOOK = "https://backoffice.galleriabank.com.br/sistema/siscoat/engine/webhook?Token=";
 	public static final String  URL_SISCOAT_DOCKET_WEBHOOK	 = "https://backoffice.galleriabank.com.br/sistema/siscoat/docket/webhook?Token=";
-	
+	public static final String  URL_SISCOAT_CAF_WEBHOOK	 = "https://backoffice.galleriabank.com.br/sistema/siscoat/caf/webhook?Token=";
 }

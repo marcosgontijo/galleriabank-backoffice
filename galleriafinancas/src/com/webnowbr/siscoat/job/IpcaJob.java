@@ -111,10 +111,15 @@ public class IpcaJob implements Job {
 						contratoCobranca.setCorrigidoNovoIPCA(false);
 						
 						Calendar dataCorteParcelasMalucas = Calendar.getInstance();
-						dataCorteParcelasMalucas.set(Calendar.YEAR, 2023);
-						dataCorteParcelasMalucas.set(Calendar.MONTH, 0);
-						dataCorteParcelasMalucas.set(Calendar.DAY_OF_MONTH, 1);
 						
+						if (contratoCobranca.getDataCorteBaixaIPCAHibrido() != null) {
+							dataCorteParcelasMalucas.setTime(contratoCobranca.getDataCorteBaixaIPCAHibrido());
+						} else {
+							dataCorteParcelasMalucas.set(Calendar.YEAR, 2023);
+							dataCorteParcelasMalucas.set(Calendar.MONTH, 0);
+							dataCorteParcelasMalucas.set(Calendar.DAY_OF_MONTH, 1);
+						}
+							
 						for (int iDetalhe = 0; iDetalhe < contratoCobranca.getListContratoCobrancaDetalhes().size(); iDetalhe++) {
 							if (CommonsUtil.mesmoValor(contratoCobranca.getListContratoCobrancaDetalhes().get(iDetalhe).getNumeroParcela() , "0") )
 								continue;

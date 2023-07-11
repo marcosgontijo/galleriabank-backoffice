@@ -365,8 +365,11 @@ public class KobanaMB {
 									if (objetoDataBoleto.has("idParcela")) {
 										ContratoCobrancaDetalhes parcela = new ContratoCobrancaDetalhes();
 										parcela = parcelaDao.findById(Long.valueOf(objetoDataBoleto.getString("idParcela")));
-										boleto.setParcela(parcela);
-										boleto.setVlrParcela(parcela.getVlrParcela());
+										
+										if (parcela != null) {
+											boleto.setParcela(parcela);
+											boleto.setVlrParcela(parcela.getVlrParcela());
+										}
 									}
 								} else {
 									// se gerou para mais de parcela
@@ -378,25 +381,61 @@ public class KobanaMB {
 										
 										Iterator<String> contratoParcelas = objetoDataBoleto.keys();
 
+										if (contrato.getNumeroContrato().equals("09572")) {
+											System.out.println("asdsadsd");
+										}
 										// Verifica se há mais alguma key
 										while (contratoParcelas.hasNext()) {
 											String nomeObjeto = contratoParcelas.next();
 											
 										    if (nomeObjeto.contains("idParcela")) {
 										    	String valorObjeto = objetoDataBoleto.get(nomeObjeto).toString();
-										    	parcelasBoleto.add(cDao.findById(Long.valueOf(valorObjeto)));
+										    	ContratoCobrancaDetalhes objeto = null;
+										    	objeto = cDao.findById(Long.valueOf(valorObjeto));
+										    	
+										    	if (objeto != null) {
+										    		parcelasBoleto.add(objeto);
+										    	}
 										    }
 										}
+										
+										if (contrato.getNumeroContrato().equals("09572")) {
+											System.out.println("asdsadsd");
+										}
+										// se está no novo formato de baixa, onde tem valor customizado por parcela
+										if (parcelasBoleto.size() == 0) {
+											// percorre para pegar os ID's e converter em objeto
+											contratoParcelas = objetoDataBoleto.keys();
+											while (contratoParcelas.hasNext()) {
+												String nomeObjeto = contratoParcelas.next();
+												
+												if (nomeObjeto.contains("idParcela")) {
+													String valorObjeto = objetoDataBoleto.get(nomeObjeto).toString();
+													ContratoCobrancaDetalhes objeto = null;
+											    	objeto = cDao.findById(Long.valueOf(valorObjeto));
+											    	
+											    	if (objeto != null) {
+											    		parcelasBoleto.add(objeto);
+											    	}
+												}
+												// percorre parcelas e pega valor dos boletos
+												for (ContratoCobrancaDetalhes parcela : parcelasBoleto) {
+													if (parcela != null) {
+														parcela.setVlrBoletoKobana(objetoDataBoleto.getBigDecimal("valorParcelaKobana/" + parcela.getId()));
+													}
+												}
+											}											
+										} /*else {
+											// preenche o novo campo com o valor da parcela para ser usado na tela
+											for (ContratoCobrancaDetalhes parcela : parcelasBoleto) {
+												if (parcela != null) {
+													parcela.setVlrBoletoKobana(parcela.getVlrParcela());
+												}
+											}
+										}*/
 				
 										boleto.setMultiParcelas(parcelasBoleto);
-										
-										for (ContratoCobrancaDetalhes parcelas : boleto.getMultiParcelas()) {
-											if (parcelas.getVlrParcela() != null) {
-												// TODO VER COMO CAPTURAR O VALOR DAS PARCELAS DOS BOLETOS
-												//boleto.setVlrParcela(boleto.getVlrParcela().add(parcelas.getVlrParcela()));
-											}
-										}
-									}
+									} 
 								}
 							} else {
 								if (objetoDataBoleto.has("idParcela")) {
@@ -413,7 +452,9 @@ public class KobanaMB {
 				boleto.setCustomerPersonName(objetoBoleto.getString("customer_person_name"));
 				boleto.setCustomerPersonCNPJCPF(objetoBoleto.getString("customer_cnpj_cpf"));
 				boleto.setCustomerEmail(objetoBoleto.getString("customer_email"));
-				boleto.setPaidAmount(BigDecimal.valueOf(objetoBoleto.getDouble("paid_amount")));
+				if (!objetoBoleto.isNull("paid_amount")) { 
+					boleto.setPaidAmount(BigDecimal.valueOf(objetoBoleto.getDouble("paid_amount")));
+				}
 				boleto.setUrlBoleto(objetoBoleto.getString("url"));
 				boleto.setBeneficiaryName(objetoBoleto.getString("beneficiary_name"));
 								
@@ -853,7 +894,11 @@ public class KobanaMB {
 	    	jsonBoleto.put("customer_address", cliente.getEndereco());
 	    }
 	
-		jsonBoleto.put("customer_address_complement", cliente.getComplemento());
+	    if (cliente.getComplemento() != null && cliente.getComplemento().length() > 60) {
+	    	jsonBoleto.put("customer_address_complement", cliente.getComplemento().substring(0, 59));
+	    } else {
+	    	jsonBoleto.put("customer_address_complement", cliente.getComplemento());
+	    }
 
 		jsonBoleto.put("customer_address_number", cliente.getNumero());
 		
@@ -944,7 +989,7 @@ public class KobanaMB {
 	    }
 		
 		jsonBoleto.put("description", "Crédito com Imóvel em Garantia - Contrato: " + contrato.getNumeroContrato() + " / Parcela(s): " + parcelas);
-		jsonBoleto.put("instructions", "Não receber após 30 dias do vencimento");
+		jsonBoleto.put("instructions", "");
 		
 		JSONObject jsonCustomData = new JSONObject();
 		
@@ -961,6 +1006,8 @@ public class KobanaMB {
 				
 				for (int i = 0; i < parcelasSelecionadas.size(); i++) {
 					jsonCustomData.put("idParcela/" + i, String.valueOf(parcelasSelecionadas.get(i).getId()));
+					jsonCustomData.put("valorParcelaOriginal/" + String.valueOf(parcelasSelecionadas.get(i).getId()), String.valueOf(parcelasSelecionadas.get(i).getVlrParcela()));
+					jsonCustomData.put("valorParcelaKobana/" + String.valueOf(parcelasSelecionadas.get(i).getId()), String.valueOf(parcelasSelecionadas.get(i).getVlrBoletoKobana()));
 		    	}
 			}
 		}

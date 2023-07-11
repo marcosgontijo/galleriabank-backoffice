@@ -193,6 +193,21 @@ public class CommonsUtil {
 		}
 		return BigDecimal.valueOf(doubleValue(object));
 	}
+	
+	public static BigInteger bigIntegerValue(Object object) {
+		if (object == null) {
+			return BigInteger.ZERO;
+		}
+		return BigInteger.valueOf(intValue(object));
+	}
+	
+	public static BigInteger bigIntegerValue(Long object) {
+		if (object == null) {
+			return BigInteger.ZERO;
+		}
+		return BigInteger.valueOf(intValue(object));
+	}
+
 
 	public static Date dateValue(Object object) {
 		if (object == null) {
@@ -409,6 +424,11 @@ public class CommonsUtil {
 	public static final boolean mesmoValor(String a, String b) {
 		return a == null ? b == null : a.equals(b);
 	}
+	
+	public static final boolean mesmoValorIgnoreCase(String a, String b) {
+		return a == null ? b == null : a.equalsIgnoreCase(b);
+	}
+	
 
 	public static final boolean mesmoValor(Character a, Character b) {
 		return a == null ? b == null : a.equals(b);

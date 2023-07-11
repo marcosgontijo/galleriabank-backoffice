@@ -467,6 +467,46 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}
 	
+	private static final String QUERY_CONSULTA_CONTRATOS_POR_NUMERO =  	"select cc.id "
+			+ "from cobranca.contratocobranca cc "
+			+ "where cc.numerocontrato = ? ";
+	
+	@SuppressWarnings("unchecked")
+	public ContratoCobranca getContratoPorNumeroContrato(final String numeroContrato) {
+		return (ContratoCobranca) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				ContratoCobranca contratoCobranca = null;
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				String query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_CONSULTA_CONTRATOS_POR_NUMERO;	
+				try {
+					connection = getConnection();
+
+					ps = connection
+							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);
+				
+					ps.setString(1, numeroContrato);
+	
+					rs = ps.executeQuery();
+					
+					
+					
+					while (rs.next()) {
+						contratoCobranca = findById(rs.getLong(1));						
+						break;												
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return contratoCobranca;
+			}
+		});	
+	}		
+	
 	private static final String QUERY_GET_CONTRATOS_POR_INVESTIDOR =  	"select cc.id "
 			+ "from cobranca.contratocobranca cc "
 			+ "where 1=1 ";
@@ -3002,7 +3042,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						relatorioFinanceiroCobrancaAux.setDataVencimento(rs.getDate(10));
 						relatorioFinanceiroCobrancaAux.setDataPagamento(rs.getDate(11));
 						
-						if (!rs.getString(8).equals("")) {
+						if (!CommonsUtil.semValor(rs.getString(8))) {
 							relatorioFinanceiroCobrancaAux.setParcelaCCB(rs.getString(8) + "-" + rs.getString(9));
 						} else {
 							relatorioFinanceiroCobrancaAux.setParcelaCCB("");
@@ -3816,7 +3856,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}	
 	
-	private static final String QUERY_CONSULTA_CONTRATOS_POR_NUMERO =  	"select cc.id "
+	private static final String QUERY_CONSULTA_CONTRATOS_POR_NUMERO_NAO_GALLERIA =  	"select cc.id "
 			+ "from cobranca.contratocobranca cc "
 			+ "where cc.status = 'Aprovado' "
 			+ "and cc.pagador not in (15, 34,14, 182, 417, 803) "
@@ -3832,7 +3872,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				Connection connection = null;
 				PreparedStatement ps = null;
 				ResultSet rs = null;
-				String query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_CONSULTA_CONTRATOS_POR_NUMERO;	
+				String query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_CONSULTA_CONTRATOS_POR_NUMERO_NAO_GALLERIA;	
 				try {
 					connection = getConnection();
 
@@ -4272,6 +4312,10 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_DIA_CRI_2;		
 				}
 				
+				if (tipoContratoCobrancaFinanceiroDia.equals("EspelhamentoCRI3")) {
+					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_DIA_CRI_3;		
+				}
+				
 				try {
 					connection = getConnection();
 					
@@ -4290,7 +4334,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				} finally {
 					closeResources(connection, ps, rs);					
 				}
-				return objects;
+				return objects; 
 			}
 		});	
 	}	
@@ -6139,10 +6183,21 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						where = where + " and res.codigo = '" + codResponsavel + "' ";			
 					} 	
 					
-					if(!CommonsUtil.semValor(tipoParametro)) {
+					if(!CommonsUtil.semValor(tipoParametro) && !CommonsUtil.semValor(valorParametrto)) {
 						if(CommonsUtil.mesmoValor(tipoParametro, "Matricula")) {
-							where = where + " and imv.numeromatricula like '%" + valorParametrto + "%' ";
-						}
+							where = where + " and udf_GetNumeric(numeromatricula) like '%"
+							+ CommonsUtil.somenteNumeros(valorParametrto) + "%' ";
+						} else if (tipoParametro.equals("nomePagador")) {
+		            		where = where + " and unaccent(pare.nome) ilike unaccent('%" + valorParametrto + "%')";
+		            	} else if (tipoParametro.equals("cpfPagador")) {
+		            		where = where + " and pare.cpf = '" + valorParametrto + "'";
+		            	} else if (tipoParametro.equals("cnpjPagador")) {
+		            		where = where + " and pare.cnpj = '" + valorParametrto + "'";
+		            	} else if (tipoParametro.equals("numeroContrato")) {
+		            		where = where + " and coco.numerocontrato = '" + valorParametrto + "'";
+		            	} else if (tipoParametro.equals("numeroCCB")) {
+		            		where = where + " and coco.numeroContratoSeguro = '" + valorParametrto + "'";
+		            	}
 					}
 					
 					query = query + where;					
@@ -6155,8 +6210,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						
 					query = query + " order by id desc";
 					
-					ps = connection
-							.prepareStatement(query);
+					ps = connection.prepareStatement(query);
 					
 					rs = ps.executeQuery();
 					
@@ -6482,7 +6536,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			"c.pedidoLaudo, c.pedidoLaudoPajuComercial, c.pedidoPreLaudo, c.pedidoPreLaudoComercial, c.pedidoPajuComercial, c.pendenciaLaudoPaju, " +
 		    "c.avaliacaoLaudoObservacao, c.dataPrevistaVistoria, c.geracaoLaudoObservacao, c.iniciouGeracaoLaudo, c.analistaGeracaoPAJU , c.comentarioJuridicoPendente, " +
 			"c.valorAprovadoComite, c.contratoConferido, c.agEnvioCartorio, reanalise, reanalisePronta, reanaliseJuridico" +
-			" , gerente.nome nomeGerente, pr.id idPagador, res.superlogica, observacaoRenda, pagtoLaudoConfirmadaData " +
+			" , gerente.nome nomeGerente, pr.id idPagador, res.superlogica, observacaoRenda, pagtoLaudoConfirmadaData, contatoDiferenteProprietario " +
 			"from cobranca.contratocobranca c " +		
 			"inner join cobranca.responsavel res on c.responsavel = res.id " +
 			"inner join cobranca.pagadorrecebedor pr on pr.id = c.pagador " +
@@ -6829,6 +6883,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setReanaliseJuridico(rs.getBoolean(46));
 						contratoCobranca.setObservacaoRenda(rs.getString("observacaoRenda"));
 						contratoCobranca.setPagtoLaudoConfirmadaData(rs.getTimestamp("pagtoLaudoConfirmadaData"));
+						contratoCobranca.setContatoDiferenteProprietario(rs.getBoolean("contatoDiferenteProprietario"));
 
 						idsContratoCobranca.add( CommonsUtil.stringValue(contratoCobranca.getId()));
 						//contratoCobranca = findById(rs.getLong(1));
@@ -8704,6 +8759,48 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		super.merge(entity);
 	}
 	
+	private static final String QUERY_RELATORIO_INADIMPLENCIA =  	"select cc.id "
+			+ "from cobranca.contratocobranca cc "
+			+ "where cc.status = 'Aprovado' "
+			+ "and cc.pagador not in (15, 34,14, 182, 417, 803) ";
 	
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobranca> consultaInadimplencia() {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				String query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_INADIMPLENCIA;	
+				try {
+					
+					query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM 
+					+ " order by cc.datacontrato desc ";
+					
+					connection = getConnection();
+
+					ps = connection
+							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);
+	
+					rs = ps.executeQuery();
+					
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					
+					while (rs.next()) {
+						contratoCobranca = findById(rs.getLong(1));
+						
+						objects.add(contratoCobranca);												
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}
 	
 }

@@ -2,7 +2,9 @@ package com.webnowbr.siscoat.infra.mb;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -16,16 +18,18 @@ import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.db.dao.DAOException;
 import com.webnowbr.siscoat.db.dao.DBConnectionException;
-
 import com.webnowbr.siscoat.infra.db.dao.GroupDao;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
+import com.webnowbr.siscoat.infra.db.dao.UserPerfilDao;
 import com.webnowbr.siscoat.infra.db.model.GroupAdm;
 import com.webnowbr.siscoat.infra.db.model.User;
+import com.webnowbr.siscoat.infra.db.model.UserPerfil;
 import com.webnowbr.siscoat.security.TwoFactorAuth;
 
 import org.primefaces.model.SortOrder;
 
 import java.util.Map;
+import java.util.Optional;
 
 /** ManagedBean. */
 @ManagedBean(name = "usuarioMB")
@@ -47,6 +51,8 @@ public class UsuarioMB {
 
 	private Responsavel selectedResponsaveis[];
 	private List<Responsavel> responsaveis;
+	private List<UserPerfil> perfil;
+	Optional<UserPerfil> userPerfilPublico;
 
 	/**
 	 * Construtor.
@@ -54,7 +60,8 @@ public class UsuarioMB {
 	public UsuarioMB() {
 
 		objetoUsuario = new User();
-
+		
+		
 		lazyModel = new LazyDataModel<User>() {
 
 			/** Serial. */
@@ -79,9 +86,23 @@ public class UsuarioMB {
 		ResponsavelDao rDao = new ResponsavelDao();
 		this.responsaveis = rDao.findAll();
 	}
+	
+	private void carregaListaPerfil() {
+		if (perfil == null) {
+			UserPerfilDao userPerfilDao = new UserPerfilDao();
+			perfil = userPerfilDao.findAll().stream().sorted(Comparator.comparing(UserPerfil::getId))
+					.collect(Collectors.toList());
+			userPerfilPublico = perfil.stream().filter(p -> p.getId() == 1000l).findFirst();
+		}
+	}
 
 	public String clearFields() {
 		objetoUsuario = new User();
+		
+		if (userPerfilPublico == null)
+			carregaListaPerfil();
+		objetoUsuario.setUserPerfil(userPerfilPublico.get());
+		
 		this.tituloPainel = "Adicionar";
 
 		this.diasSemana = new ArrayList<String>();
@@ -95,7 +116,7 @@ public class UsuarioMB {
 
 		this.selectedDiasSemana = new String[0];
 		this.selectedResponsaveis = new Responsavel[0];
-
+		carregaListaPerfil();
 		loadResponsavel();
 
 		return "UsuarioInserir.xhtml";
@@ -122,7 +143,7 @@ public class UsuarioMB {
 				}
 			}
 		}
-
+		carregaListaPerfil();
 		loadResponsavel();
 		this.selectedResponsaveis = new Responsavel[this.objetoUsuario.getListResponsavel().size()];
 
@@ -592,7 +613,7 @@ public class UsuarioMB {
 	public void atualizaListagem() {
 		UserDao userDao = new UserDao();
 		userDao.carregarListaResponsavel(objetoUsuario);
-		selectedResponsaveis = (Responsavel[]) objetoUsuario.getListResponsavel().toArray();
+		//selectedResponsaveis = (Responsavel[]) objetoUsuario.getListResponsavel().toArray();
 	}
 
 	/**
@@ -620,6 +641,11 @@ public class UsuarioMB {
 	 * @param objetoUsuario the objetoUsuario to set
 	 */
 	public void setObjetoUsuario(User objetoUsuario) {
+		if (CommonsUtil.semValor(objetoUsuario.getUserPerfil())) {
+			if (userPerfilPublico == null)
+				carregaListaPerfil();
+			objetoUsuario.setUserPerfil(userPerfilPublico.get());
+		}
 		this.objetoUsuario = objetoUsuario;
 	}
 
@@ -723,5 +749,13 @@ public class UsuarioMB {
 
 	public void setResponsaveis(List<Responsavel> responsaveis) {
 		this.responsaveis = responsaveis;
+	}
+
+	public List<UserPerfil> getPerfil() {
+		return perfil;
+	}
+
+	public void setPerfil(List<UserPerfil> perfil) {
+		this.perfil = perfil;
 	}
 }

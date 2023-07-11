@@ -99,6 +99,28 @@
 		<property name="fileListId" type="java.lang.String">
 			<column name="fileListId" />
 		</property>	
-
+		
+		<property name="linhaDigitavelStarkBank" type="java.lang.String">
+			<column name="linhaDigitavelStarkBank" />
+		</property>	
+		
+		<property name="descricaoStarkBank" type="java.lang.String">
+			<column name="descricaoStarkBank" />
+		</property>	
+		
+		<property name="numeroDocumentoPagadorStarkBank" type="java.lang.String">
+			<column name="numeroDocumentoPagadorStarkBank" />
+		</property>	
+		
+		<many-to-one name="comprovantePagamentoStarkBank"
+			class="com.webnowbr.siscoat.cobranca.db.model.StarkBankBoleto"
+			lazy="false">
+			<column name="comprovantePagamentoStarkBank" />
+		</many-to-one>
+		<many-to-one name="comprovantePagamentoPixStarkBank"
+			class="com.webnowbr.siscoat.cobranca.db.model.StarkBankPix"
+			lazy="false">
+			<column name="comprovantePagamentoPixStarkBank" />
+		</many-to-one>
 	</class>
 </hibernate-mapping>

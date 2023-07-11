@@ -1697,8 +1697,8 @@
 							<p:selectOneMenu id="valorBoletoPre"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.valorBoletoPreContratoStr}" ajax="true" 
 								style="font-weight: bold;">
-								<f:selectItem itemValue="900,00" itemLabel="50% - R$900,00" />
-								<f:selectItem itemValue="1.800,00" itemLabel="100% - R$1.800,00" />
+								<f:selectItem itemValue="925,00" itemLabel="50% - R$925,00" />
+								<f:selectItem itemValue="1.850,00" itemLabel="100% - R$1.850,00" />
 							</p:selectOneMenu>
 							
 							<p:outputLabel value="Exibir Fatura: "
@@ -2946,6 +2946,12 @@
 						<p:inputText id="Cartorio"
 							value="#{contratoCobrancaMB.objetoImovelCobranca.cartorio}"
 							label="Cartório" onblur="" style="width:400px;" />
+						
+						<p:outputLabel for="cartorioEstado" value="Estado Cartório: " />
+						<p:inputText id="cartorioEstado" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioEstado}" /> 
+											
+						<p:outputLabel for="cartorioMunicipio" value="Município Cartório: " />
+						<p:inputText id="cartorioMunicipio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioMunicipio}" />
 
 						<p:outputLabel for="CepImovel" value="Cep: "/>
 						<p:inputMask id="CepImovel"
@@ -3116,16 +3122,7 @@
 						
 						<p:outputLabel for="inscricaoMunicipal" value="Inscrição Municipal: " />
 						<p:inputText id="inscricaoMunicipal" value="#{contratoCobrancaMB.objetoImovelCobranca.inscricaoMunicipal}" />
-						
-						<p:outputLabel for="numeroCartorio" value="Numero Cartório: " />
-						<p:inputText id="numeroCartorio" value="#{contratoCobrancaMB.objetoImovelCobranca.numeroCartorio}" /> 
-											
-						<p:outputLabel for="cartorioEstado" value="Estado Cartório: " />
-						<p:inputText id="cartorioEstado" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioEstado}" /> 
-											
-						<p:outputLabel for="cartorioMunicipio" value="Município Cartório: " />
-						<p:inputText id="cartorioMunicipio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioMunicipio}" />
-
+							
 					</h:panelGrid>
 				</p:panel>
 

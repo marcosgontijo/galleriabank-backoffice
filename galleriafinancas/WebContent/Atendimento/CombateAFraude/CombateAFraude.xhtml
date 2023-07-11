@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="#{request.contextPath}/resources/js/functions.js"></script>
+			<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>
+			<p:messages id="mensagens" showDetail="true" />
+			<p:panel id="contasPagar" header="Contas a Pagar"
+				style="margin-bottom:20px;">
+				<h:panelGrid columns="2">
+				
+					<p:outputLabel for="cpf"
+						value="cpf: " styleClass="labelBold" />
+					<p:inputMask id="cpf" value="#{combateAFraudeMB.cpf}"
+						style=" width:100px" mask="999.999.999-99">
+						<p:ajax event="blur" />
+					</p:inputMask>
+					
+					
+					
+				</h:panelGrid>
+			</p:panel>
+					
+					
+			<p:panel id="ArquivosSalvos" header="Arquivo(s)" style="margin-bottom:10px;">											
+				<p:messages id="msgArquivo"/>	
+				<shiro:hasAnyRoles name="ROOT">  						
+					<h:panelGrid columns="2">		
+						<h:panelGrid columns="1">		
+		                    <h:panelGrid columns="2">		
+			                    <p:outputLabel for="fileType"
+									value="Tipo do Arquivo " styleClass="labelBold" />
+								<p:selectOneMenu id="fileType" 
+									value="#{combateAFraudeMB.fileType}">
+									<f:selectItem itemValue="" itemLabel="Selecione" />		
+									<f:selectItem itemValue="RG_FRONT" itemLabel="RG_FRONT" />				
+									<f:selectItem itemValue="RG_BACK" itemLabel="RG_BACK" />
+									<f:selectItem itemValue="CNH_FRONT" itemLabel="CNH_FRONT" />
+									<f:selectItem itemValue="CNH_BACK" itemLabel="CNH_BACK" />			
+									<f:selectItem itemValue="CRLV" itemLabel="CRLV" />
+									<f:selectItem itemValue="SELFIE" itemLabel="SELFIE" />	
+									<p:ajax update="ArquivosSalvos" event="valueChange"/>
+								</p:selectOneMenu>   
+							</h:panelGrid>
+							<p:fileUpload label="Selecionar Arquivo"
+								uploadLabel="Salvar Arquivo" multiple="false"
+								fileUploadListener="#{combateAFraudeMB.handleFileUpload}"
+								mode="advanced" dragDropSupport="true"
+								update="ArquivosSalvos fileType"
+								disabled="#{combateAFraudeMB.fileType eq '' or combateAFraudeMB.fileType eq null}" />
+						</h:panelGrid>  
+									
+						<h:panelGrid columns="1">			                      								
+							<p:dataTable id="dtFiles" var="files" value="#{combateAFraudeMB.files}" style="width:600px;" emptyMessage="" >							
+								<f:facet name="header">											 
+									
+						        </f:facet>	 
+						              
+						        <p:column style="text-align: center;"
+									headerText="Nome do Arquivo" filterBy="#{files.type}"
+									filterMatchMode="contains" sortBy="#{files.type}">
+									<h:outputText value="#{files.type}" />
+									<p:spacer height="10" />
+								</p:column>
+						        
+						        <p:column style="width:150px;">
+									<p:commandButton ajax="false" action="#{combateAFraudeMB.downloadDoc(files)}"
+										icon="ui-icon ui-icon-print" value="Download"  update=" :form  msgs" />	
+										
+									<p:commandButton ajax="false" action="#{combateAFraudeMB.viewFileCaF(files)}" 
+										value="Abrir" immediate="true" icon="ui-icon-search" onclick="target='_blank'" 
+										onblur="target='_self'" />	
+										
+									<p:commandButton ajax="true" action="#{combateAFraudeMB.deleteFile(files)}"
+										icon="ui-icon-trash" value="Excluir"  update="dtFiles" />	
+					            </p:column>			  		               		        			        			           			 		
+							</p:dataTable>								
+						</h:panelGrid>  
+					</h:panelGrid>
+					
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status Downloading" draggable="false" closable="false" resizable="false">
+					    <p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+					
+				</shiro:hasAnyRoles>	
+			</p:panel>
+			<p:commandButton action="#{combateAFraudeMB.combateAFraudeTransaction}"
+				icon="ui-icon ui-icon-print" value="Chamar API" update="form" />	
+		</h:form>
+		
+	</ui:define>
+</ui:composition>

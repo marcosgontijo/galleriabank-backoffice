@@ -24,6 +24,9 @@ public final class User implements Serializable {
     private String login;
     /** Senha. */
     private String password;
+    /** Perfil do usuario. */
+    private UserPerfil userPerfil;
+    
     /** Informacoes adicionais. */
     private String addInfo;
     
@@ -98,6 +101,8 @@ public final class User implements Serializable {
     private boolean profileAvaliadorImovelCompass;
     private boolean profileAvaliadorImovelGalache;
     private boolean profileLaudo; 
+    
+    private List<Termo> listTermos;
     
     /**
      * Construtor.
@@ -201,7 +206,16 @@ public final class User implements Serializable {
         this.password = value;
     }
 
-    /**
+
+	public UserPerfil getUserPerfil() {
+		return userPerfil;
+	}
+
+	public void setUserPerfil(UserPerfil userPerfil) {
+		this.userPerfil = userPerfil;
+	}
+
+	/**
      * Get.
      * @return addInfo.
      */
@@ -665,6 +679,14 @@ public final class User implements Serializable {
 
 	public void setSenhaDocket(String senhaDocket) {
 		this.senhaDocket = senhaDocket;
+	}
+
+	public List<Termo> getListTermos() {
+		return listTermos;
+	}
+
+	public void setListTermos(List<Termo> listTermos) {
+		this.listTermos = listTermos;
 	}
 	
 }

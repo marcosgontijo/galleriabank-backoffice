@@ -29,9 +29,9 @@
 			<p:panel id="PanelLocador" header="Contrato"
 				style="margin-bottom:10px;">
 				<p:focus />
-				<p:messages id="msgs" />	
+				<p:messages id="msgs" />
 				<p:commandButton ajax="false" action="#{ccbMB.readXWPFile}"
-						icon="ui-icon ui-icon-print" value="Fazer Download"  update=" :form  msgs" />			
+					icon="ui-icon ui-icon-print" value="Fazer Download"  update=" :form  msgs" />			
 
 				<h:panelGrid columns="2">							
 					<p:outputLabel for="tipoDownload"
@@ -49,8 +49,10 @@
 						<f:selectItem itemValue="AquisicaoCCI" itemLabel="Aquisicao/Emprestimo" />		
 						<f:selectItem itemValue="Ficha PPE" itemLabel="Ficha PPE - PF" />	
 						<f:selectItem itemValue="Ficha PLD e FT" itemLabel="Ficha PLD e FT - PJ" />	
-						<f:selectItem itemValue="DeclaracaoNaoUniaoEstavel" itemLabel="DeclaracaoNaoUniaoEstavel" />
-						<f:selectItem itemValue="DeclaracaoDestinacaoRecursos" itemLabel="DeclaracaoDestinacaoRecursos" />
+						<f:selectItem itemValue="DeclaracaoNaoUniaoEstavel" itemLabel="Declaração Não União Estavel" />
+						<f:selectItem itemValue="DeclaracaoUniaoEstavel" itemLabel="Declaração de União Estavel" />
+						<f:selectItem itemValue="DeclaracaoDestinacaoRecursos" itemLabel="Declaração Destinação Recursos" />
+						<f:selectItem itemValue="TermoPaju" itemLabel="Termo Responsabilidade Paju" />
 						<f:selectItem itemValue="CCBnova" itemLabel="CCB" />
 						<f:selectItem itemValue="AFnova" itemLabel="AF" />	
 												
@@ -1151,6 +1153,8 @@
 											<f:selectItem itemValue="VIÚVO" itemLabel="Viúvo" />											
 											<f:selectItem itemValue="DIVORCIADO" itemLabel="Divorciado" />
 											<f:selectItem itemValue="SEPARADO" itemLabel="Separado" />
+											<f:selectItem itemValue="SEPARADO JUDICIALMENTE" 
+												itemLabel="Separado Judicialmente" />
 											<p:ajax update=":form:conjugueParticipante" event="change" />
 										</p:selectOneMenu>
 
@@ -1656,9 +1660,9 @@
 										style="FONT-SIZE: 10pt;width:100px;"
 										converter="bigDecimalConverter" />
 									<p:spacer width="10px"/>
-									<p:commandButton ajax="false" icon="ui-icon-trash"
+									<p:commandButton icon="ui-icon-trash"
 										action="#{ccbMB.removeDespesa(despesas)}"
-										update="ListaDespesas" />
+										update="form:despesasPanel form:valorDespesas" />
 								</p:dataViewListItem>
 							</p:dataView>				
 							<h:panelGroup>
@@ -1763,10 +1767,10 @@
 									</h:panelGroup>
 								</h:panelGroup>
 																		
-								<p:commandButton value="Inserir Despesa" ajax="false"
+								<p:commandButton value="Inserir Despesa" 
 									icon="ui-icon-check"
 									action="#{ccbMB.addDespesa}" 
-									update="despesasPanel ListaDespesas">
+									update="form:despesasPanel form:valorDespesas">
 								</p:commandButton>				
 							</h:panelGroup>
 							
@@ -1785,10 +1789,9 @@
 									<p:spacer width="10px"/>
 									<p:commandButton icon="ui-icon-trash"
 										action="#{ccbMB.removeProcesso(processos)}"
-										update="ListaProcessos" />
+										update="form:despesasPanel form:valorDespesas" />
 								</p:dataViewListItem>
-							</p:dataView>
-							
+							</p:dataView>			
 							<h:panelGrid columns="2">
 								<p:outputLabel
 									value="Valor: " styleClass="labelBold"
@@ -1820,7 +1823,7 @@
 								<p:commandButton value="Inserir Processo"
 									icon="ui-icon-check"
 									action="#{ccbMB.addProcesso}" 
-									update="despesasPanel ListaProcessos">
+									update="form:despesasPanel form:valorDespesas">
 								</p:commandButton>
 							</h:panelGrid>							
 
@@ -1873,6 +1876,12 @@
 									<f:selectItem itemValue="B" itemLabel="Bruto" />
 									<f:selectItem itemValue="L" itemLabel="Liquido" />						
 								</p:selectOneMenu>
+								
+								<p:outputLabel value="Usar Novo Custo Emissão: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+								<p:selectBooleanCheckbox id="objetoCcb" value="#{ccbMB.objetoCcb.usarNovoCustoEmissao}" >
+									<p:ajax update="taxaDeJurosMes" event="change" listener="#{ccbMB.objetoCcb.pegarTaxa}" />
+								</p:selectBooleanCheckbox>
 								
 								<p:outputLabel for="prazo"
 									value="Prazo:  " styleClass="labelBold"
