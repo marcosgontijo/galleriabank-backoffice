@@ -29,6 +29,7 @@ public enum DocumentosAnaliseEnum {
 				return documentoAnalise.get();
 		}
 
+		
 		return null;
 
 	}

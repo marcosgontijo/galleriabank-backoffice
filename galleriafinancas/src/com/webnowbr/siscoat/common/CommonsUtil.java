@@ -209,6 +209,7 @@ public class CommonsUtil {
 			return null;
 		}
 	}
+	
 
 	public static Date dateValue(Object object, String formatoData) {
 		if (object == null) {

@@ -49,7 +49,6 @@ public class PagadorRecebedorCadastroMB {
 
 			stringResponse = GsonUtil.toJson(receitaFederalPJ);
 
-
 		}
 		if (!CommonsUtil.semValor(cpf) || !CommonsUtil.semValor(cnpj))
 			pagadorRecebedor = pagadorRecebedorService.buscaOuInsere(pagadorRecebedor);

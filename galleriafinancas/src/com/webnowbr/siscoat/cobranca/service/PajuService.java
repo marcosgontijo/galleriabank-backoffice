@@ -158,22 +158,22 @@ public class PajuService {
 		}
 
 		if (paragrafoTemplate != null) {
-			removeParagrafo(docTemplate, paragrafoTemplate);
+			wordUtil.removeParagrafo(docTemplate, paragrafoTemplate);
 		}
 
 	}
 
 	private P getParagrafoTemplate(WordprocessingMLPackage template, String tagBusca) {
 
-		List<Object> tables = getAllElementFromObject(template.getMainDocumentPart(), Tbl.class);
+		List<Object> tables = wordUtil.getAllElementFromObject(template.getMainDocumentPart(), Tbl.class);
 
 		for (Object tbl : tables) {
 
 			// 1. get the paragraph
-			List<Object> paragraphs = getAllElementFromObject(tbl, P.class);
+			List<Object> paragraphs = wordUtil.getAllElementFromObject(tbl, P.class);
 
 			for (Object p : paragraphs) {
-				List<Object> texts = getAllElementFromObject(p, Text.class);
+				List<Object> texts = wordUtil.getAllElementFromObject(p, Text.class);
 				for (Object t : texts) {
 					Text content = (Text) t;
 					if (content.getValue() != null && ((String) content.getValue()).contains(tagBusca)) {
@@ -187,7 +187,7 @@ public class PajuService {
 	}
 
 	private void adicionaParagrafo(WordprocessingMLPackage template, P paragrafoTemplate,
-			ContratoTipoTemplateBloco bloco, Object dataSource) throws BusinessException {
+			ContratoTipoTemplateBloco bloco, Object dataSource) throws SiscoatException {
 
 		// 3. copy the found paragraph to keep styling correct
 		P copy = (P) XmlUtils.deepCopy(paragrafoTemplate);

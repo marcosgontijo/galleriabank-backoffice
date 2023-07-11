@@ -350,7 +350,7 @@ public class WordUtil {
 		return tblResult;
 	}
 
-	private void removeParagrafo(WordprocessingMLPackage template, P paragrafo) {
+	public void removeParagrafo(WordprocessingMLPackage template, P paragrafo) {
 		((ContentAccessor) paragrafo.getParent()).getContent().remove(paragrafo);
 	}
 

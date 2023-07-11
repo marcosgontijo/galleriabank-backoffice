@@ -1,7 +1,6 @@
 package com.webnowbr.siscoat.cobranca.service;
 
 import java.util.Date;
-
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;

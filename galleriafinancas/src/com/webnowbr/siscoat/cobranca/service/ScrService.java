@@ -51,6 +51,7 @@ public class ScrService {
 
 	SimpleDateFormat sdfDataArquivo = null;
 	
+	
 	TimeZone zone;
 	Locale locale;
 	

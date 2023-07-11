@@ -9,7 +9,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.faces.application.FacesMessage;
-
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;

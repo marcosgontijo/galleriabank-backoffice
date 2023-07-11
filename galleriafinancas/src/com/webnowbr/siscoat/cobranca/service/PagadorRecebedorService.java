@@ -11,6 +11,7 @@ import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 
 public class PagadorRecebedorService {
 	
+	
 	public PagadorRecebedor buscaOuInsere(PagadorRecebedor pagadorAdicionar) {
 		if (CommonsUtil.semValor(pagadorAdicionar.getId())) {
 			PagadorRecebedorDao pDao = new PagadorRecebedorDao();

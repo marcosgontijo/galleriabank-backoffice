@@ -10,6 +10,7 @@ import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 public class ReportUtil {
+	
 
 	// For PDF files:
 	public static final String PDF_MIMETYPE = "application/pdf";
