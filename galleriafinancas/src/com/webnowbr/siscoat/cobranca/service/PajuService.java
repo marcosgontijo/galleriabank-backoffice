@@ -40,7 +40,8 @@ public class PajuService {
 
 	private static final String BLOCO_DOCUMENTO = "D";
 	private static final String BLOCO_CABECALHO = "C";
-	private static final String BLOCO_PESSOA_CONSULTA = "PC";	
+	private static final String BLOCO_PESSOA_CONSULTA = "PC";
+	private static final String BLOCO_PESSOA_FISICA_CONSULTA = "PFC";	
 	private static final String BLOCO_DEBITOS_IPTU = "DB_IPTU";
 	private static final String BLOCO_DEBITOS_CONDOMNIO = "DB_COND";
 
@@ -151,11 +152,11 @@ public class PajuService {
 			return;
 		}
 
-		for (PessoaParticipacao participante : participantes) {
-			PessoaFisica pf = participante.getParticipante().getPessoaFisica().get(0);
-			adicionaParagrafo(docTemplate, paragrafoTemplate, bloco, pf);
-
-		}
+//		for (PessoaParticipacao participante : participantes) {
+//			PessoaFisica pf = participante.getParticipante().getPessoaFisica().get(0);
+//			adicionaParagrafo(docTemplate, paragrafoTemplate, bloco, pf);
+//
+//		}
 
 		if (paragrafoTemplate != null) {
 			wordUtil.removeParagrafo(docTemplate, paragrafoTemplate);

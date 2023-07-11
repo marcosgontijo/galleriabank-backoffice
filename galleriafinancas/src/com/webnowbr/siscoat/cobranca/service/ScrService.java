@@ -36,6 +36,7 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
+import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorConsulta;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ResumoDoCliente;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ResumoDoClienteTraduzido;
@@ -51,7 +52,6 @@ public class ScrService {
 
 	SimpleDateFormat sdfDataArquivo = null;
 	
-	
 	TimeZone zone;
 	Locale locale;
 	
@@ -66,17 +66,30 @@ public class ScrService {
 	public void requestScr(DocumentoAnalise documentoAnalise) {
 
 		if (CommonsUtil.semValor(documentoAnalise.getRetornoScr())) {
-			ScrResult scrResult = consultaSCR(documentoAnalise.getCnpjcpf(), null);			
+			ScrResult scrResult = null;
+
+			PagadorRecebedorService pagaPagadorRecebedorService = new PagadorRecebedorService();
+			PagadorRecebedorConsulta pagadorRecebedorConsulta = pagaPagadorRecebedorService
+					.buscaConsultaNoPagadorRecebedor(documentoAnalise.getPagador(), DocumentosAnaliseEnum.SCR);
+
+			if (!CommonsUtil.semValor(pagadorRecebedorConsulta)
+					&& !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta())
+					&& DateUtil.getDaysBetweenDates(pagadorRecebedorConsulta.getDataConsulta(),
+							DateUtil.getDataHoje()) <= 30) {
+				scrResult  = GsonUtil.fromJson(pagadorRecebedorConsulta.getRetornoConsulta(), ScrResult.class);
+			} else
+				scrResult = consultaSCR(documentoAnalise.getCnpjcpf(), null);
+
 			if (!CommonsUtil.semValor(scrResult)) {
-			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-			documentoAnalise.setRetornoScr(GsonUtil.toJson(scrResult));
-			documentoAnaliseDao.merge(documentoAnalise);
-			
-			PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
-			pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
-					DocumentosAnaliseEnum.SCR, documentoAnalise.getRetornoScr());
+				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+				documentoAnalise.setRetornoScr(GsonUtil.toJson(scrResult));
+				documentoAnaliseDao.merge(documentoAnalise);
+
+				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+				pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+						DocumentosAnaliseEnum.SCR, documentoAnalise.getRetornoScr());
 			}
-			
+
 		}
 	}
 	

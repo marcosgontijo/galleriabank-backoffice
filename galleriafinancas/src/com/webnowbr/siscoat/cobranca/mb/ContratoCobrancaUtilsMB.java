@@ -1217,8 +1217,11 @@ public class ContratoCobrancaUtilsMB {
 	 */
 	public void loadParametros() {
 		ParametrosDao pDao = new ParametrosDao(); 
-		this.txJuros = pDao.findByFilter("nome","COBRANCA_REC_TX_JUROS").get(0).getValorBigDecimal();
-		this.multa = pDao.findByFilter("nome","COBRANCA_REC_MULTA").get(0).getValorBigDecimal();
+		
+		this.txJuros = pDao.getParamBigDecimal("COBRANCA_REC_TX_JUROS");
+		this.multa = pDao.getParamBigDecimal("COBRANCA_REC_MULTA");
+		//this.txJuros = pDao.findByFilter("nome","COBRANCA_REC_TX_JUROS").get(0).getValorBigDecimal();
+		//this.multa = pDao.findByFilter("nome","COBRANCA_REC_MULTA").get(0).getValorBigDecimal();
 	}
 
 	/*

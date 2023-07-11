@@ -39,12 +39,8 @@
 			.ValorSeguros{
 				width: 100px;
 			}
-			.painelResumo{
-				vertical-align: top;
-				
-			}
 			</h:outputStylesheet>
-			
+				
 			<p:panel id="PanelLocador" header="Contrato - #{contratoCobrancaMB.tituloPainel}" style="margin-bottom:10px;">
 				<p:focus /> 
 				<p:messages/>
@@ -877,12 +873,152 @@
 					</p:tooltip>
 				</p:panel>
 
-				<!-- painel de analise de documento -->
-				<ui:include src="ContratoCobrancaAnaliseDocumento.xhtml"></ui:include>
+
+				<shiro:hasAnyRoles
+					name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO">
+					<p:panel id="ArquivosAnalisados" 
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
+						style="margin-bottom:10px;text-align: center;">
+						<f:facet name="header">
+						   <h:outputText value="Analise Documentos" />
+							<p:commandButton value="Atualizar listagem" ajax="true" update="ArquivosAnalisados" style="margin-left:10px;"
+								action="#{contratoCobrancaMB.listaArquivosAnaliseDocumentos}" immediate="true"
+								icon="ui-icon-search">
+							</p:commandButton>
+						</f:facet>
+
+						<h:panelGrid columns="1">
+							<p:fileUpload label="Selecionar Arquivo"
+								uploadLabel="Salvar Arquivo" multiple="false"
+								cancelLabel="Cancelar"
+								fileUploadListener="#{contratoCobrancaMB.handleAnaliseDocumentoFileUpload}"
+								mode="advanced" dragDropSupport="true" update="dtFilesAnalise">
+								<f:attribute name="foo"
+									value="#{contratoCobrancaMB.contasPagarSelecionada}" />
+							</p:fileUpload>
+						</h:panelGrid>
+
+						<p:panel id="ArquivosSalvosAnalise"
+							header="Arquivo(s) Salvo(s) na analise"
+							style="margin-bottom:10px;">
+							<f:facet name="header"> Arquivo(s) Salvo(s) na analise 
+							<p:outputLabel value="" />
+								<p:commandButton value="Adicionar Pessoa" 
+								  action="#{contratoCobrancaMB.preparaAdicionarPessoaAnalise}"
+									oncomplete="PF('adicionarPessoaAnaliseDlg').show();"
+									update="adicionarPessoaAnaliseForm">
+								</p:commandButton>
+							</f:facet>
+
+
+							<h:panelGrid columns="1">
+								<p:dataTable id="dtFilesAnalise" var="fileAnalise"
+									value="#{contratoCobrancaMB.listaDocumentoAnalise}"
+									
+									rowKey="#{fileAnalise.id}" emptyMessage="">
+									<p:column headerText="Liberado Análise" >
+										<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"
+											 onLabel="Sim" offLabel="Não" style="width:6rem" >
+										<p:ajax  event="change"
+											listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
+											</p:selectBooleanButton>
+									</p:column>
+																	
+
+									<p:column style="text-align: center;"
+										headerText="Identificação" filterBy="#{fileAnalise.identificacao}"
+										filterMatchMode="contains" sortBy="#{fileAnalise.identificacao}">
+
+										<h:outputText value="#{fileAnalise.identificacao}"
+											rendered="#{fileAnalise.podeChamarRea}" />
+										<h:outputText value="#{fileAnalise.identificacao} #{fileAnalise.cnpjcpf} "
+											rendered="#{!fileAnalise.podeChamarRea}" />
+										<p:spacer height="10" />
+									</p:column>
+
+									<p:column style="text-align: center;" headerText="Motivo"
+										filterMatchMode="contains">
+										<h:outputText value="#{fileAnalise.motivoAnalise}" />
+									</p:column>
+									
+									<p:column style="text-align: center;" headerText="Observação"
+										filterMatchMode="contains">
+										<h:outputText value="#{fileAnalise.observacao}" />
+									</p:column>
+
+									<p:column style="text-align: center;" headerText="Situação"
+										filterMatchMode="contains">
+
+										<h:outputText value="REA Enviado"
+											rendered="#{fileAnalise.podeChamarRea and !fileAnalise.reaNaoEnviado and !fileAnalise.reaProcessado }" />
+										<h:outputText value="REA Processado"
+											rendered="#{fileAnalise.podeChamarRea and fileAnalise.reaProcessado }" />
+
+										<p:commandButton
+											action="#{contratoCobrancaMB.baixarEngineDocumento(fileAnalise)}"
+											icon="ui-icon ui-icon-print" value="Download Engine"
+											rendered="#{!fileAnalise.podeChamarEngine and fileAnalise.engineProcessado }"
+											ajax="false" />
+
+										<p:commandButton action="#{serasaMB.baixarDocumento(fileAnalise)}"
+											icon="ui-icon ui-icon-print" value="Download Serasa"
+											rendered="#{fileAnalise.serasaProcessado }"
+											ajax="false" />
+
+										<p:commandButton
+											action="#{netrinMB.baixarDocumento(fileAnalise)}"
+											icon="ui-icon ui-icon-print" value="Download Cenprot"
+											rendered="#{fileAnalise.cenprotProcessado }" ajax="false" />
+											
+										<p:commandButton
+											action="#{netrinMB.baixarDocumentoPpe(fileAnalise)}"
+											icon="ui-icon ui-icon-print" value="Download PPE"
+											rendered="#{fileAnalise.ppeProcessado }" ajax="false" />
+
+										<p:commandButton
+											action="#{netrinMB.baixarDocumentoDossie(fileAnalise)}"
+											icon="ui-icon ui-icon-print" value="Download Dossiê"
+											rendered="#{fileAnalise.podeDownlaodDossie }" ajax="false" />
+
+										<p:commandButton
+											action="#{netrinMB.baixarDocumentoProcesso(fileAnalise)}"
+											icon="ui-icon ui-icon-print" value="Download Processos"
+											rendered="#{fileAnalise.processoProcessado }" ajax="false" />
+											
+										<p:commandButton
+											action="#{bmpDigitalMB.baixarDocumento(fileAnalise)}"
+											icon="ui-icon ui-icon-print" value="Download SCR"
+											rendered="#{fileAnalise.scrProcessado }" ajax="false" />
+											
+
+									</p:column>
+
+									<p:column style="width:100px;" rendered="#{false}">
+										<p:commandButton value="Download" ajax="false"
+											icon="ui-icon-arrowthick-1-s">
+											<f:setPropertyActionListener
+												target="#{contratoCobrancaMB.selectedFile}" value="#{fileAnalise}" />
+											<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
+										</p:commandButton>
+									</p:column>
+								</p:dataTable>
+							</h:panelGrid>
+
+						</p:panel>
+						<p:panel id="pnlCeridoesAnalise"
+							header="Certidões"
+							style="margin-bottom:10px;">
+							
+							<p:commandButton value="Executar Consultas" action="#{contratoCobrancaMB.executarConsultasAnaliseDocumento}"  ajax="true" />
+							<p:commandButton value="Certidões Docket" action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.objetoContratoCobranca)}"/>	
+						</p:panel>
+					</p:panel>
+
+				</shiro:hasAnyRoles>
 
 
 				<h:panelGroup id="comentarioComitePanel" style="margin-bottom:20px;">
-					<p:panel header="Comentário Comitê" rendered="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite.size() > 0 and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' }">
+					<p:panel header="Comentário Comitê" rendered="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite.size() > 0}">
 						<p:outputLabel id="comentarioComite"
 							value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioComite}"
 							styleClass="labelBold" />
@@ -1121,7 +1257,7 @@
 							
 				<h:panelGroup id="comentarioPreComitePanel"
 					style="margin-bottom:20px;">
-					<p:panel header="Comentário Pré-Comitê" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">
+					<p:panel header="Comentário Pré-Comitê">
 						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoEsteira}">
 							<p:outputLabel for="comentarioPreComite"
 								value="Comentário Pré-Comitê: " styleClass="labelBold" />
@@ -1315,7 +1451,7 @@
 
 				<h:panelGroup id="CertificadoPanel" >
 					<p:panel header="Certificado"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.documentosCompletos and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}" >
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.documentosCompletos}" >
 						<h:panelGrid columns="2"> 					
 							<p:outputLabel for="empresaCertificado"
 								value="Empresa Certificado: " styleClass="labelBold" />
@@ -1359,7 +1495,7 @@
 				
 				<h:panelGroup id="BoletoPanel" >
 					<p:panel id="BoletoPAJULaudo" header="Gerar Boleto PAJU e Laudo"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' }" >
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}" >
 						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoImovelCobranca.tipo == 'Apartamento' 
 							|| contratoCobrancaMB.objetoImovelCobranca.tipo == 'Casa' 
 							|| contratoCobrancaMB.objetoImovelCobranca.tipo == 'Casa de Condomínio' }"> 
@@ -1397,7 +1533,7 @@
 
 				<h:panelGroup id="laudoPajuPanel" style="margin-bottom:20px;">
 					<p:panel header="Laudo + Paju"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}">
 						<h:panelGrid columns="2">
 							<p:outputLabel for="valorLaudoPajuTotal"
 								value="Valor Laudo + PAJU: " styleClass="labelBold" />
@@ -1478,7 +1614,7 @@
 
 				<h:panelGroup id="PreAprovadoPanel" style="margin-bottom:20px;">
 					<p:panel header="Pré-Aprovado"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise}">
 						<h:panelGrid columns="2">
 							<h:panelGroup>
 								<h:panelGrid columns="2">
@@ -1634,7 +1770,7 @@
 
 				<h:panelGroup id="RecebidoPajulaudoPanel"
 					style="margin-bottom:20px;">
-					<p:panel rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}" header="Recebido PAJU e laudo">
+					<p:panel rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}" header="Recebido PAJU e laudo">
 						<h:panelGrid columns="2">				
 							<h:panelGrid columns="2">							
 								<p:outputLabel for="valorPreLaudo"
@@ -1795,16 +1931,11 @@
 												<p:outputLabel value=" #{processosPessoas.quitar}" style="FONT-SIZE: 10pt;" />
 											</p:column>
 											
-											<p:column style="text-align: center;" headerText="Obs" >
+											<p:column style="text-align: center;" headerText="Obs"  >
 												<p:outputLabel value="#{processosPessoas.observacao}" style="FONT-SIZE: 10pt;" />
 											</p:column>
 										
-											<p:column style="text-align: center;width:75px;" headerText="" >
-												<p:commandButton icon="ui-icon-pencil"
-													action="#{contratoCobrancaMB.editProcesso(processosPessoas)}"
-													oncomplete="PF('processoDialog').show();"
-													update="processoDialogdlg" />
-
+											<p:column style="text-align: center;width:25px;" headerText="" >
 												<p:commandButton  icon="ui-icon-trash" 
 													action="#{contratoCobrancaMB.removeProcesso(processosPessoas)}"
 													update="form:RecebidoPajulaudoPanel form:ComitePanelView form:pessoasProcessos
@@ -1814,7 +1945,7 @@
 								</p:dataViewListItem>
 							</p:dataView>
 							
-							<h:panelGrid columns="2">
+							<h:panelGrid columns="2">			
 								<p:outputLabel value="Inserir Pessoa: " styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
 								<p:commandButton action="#{contratoCobrancaMB.clearPagadorProcesso(contratoCobrancaMB.processoSelecionado)}"
@@ -1864,7 +1995,7 @@
 				<h:panelGroup id="CheckListInformacoesAdicionais">
 					<p:panel header="Check-List - Informações Adicionais"
 						style="margin-bottom:20px;"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}">
 						<p:spacer height="10"></p:spacer>
 						<p:panel id="DataVistoriaPanel" style="border: none">						
 							<h:panelGrid columns="2">	
@@ -1961,7 +2092,7 @@
 					</p:panel>
 				</h:panelGroup>
 						
-				<p:panel id="Pessoas" header="Responsável" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">		
+				<p:panel id="Pessoas" header="Responsável" style="margin-bottom:10px;">		
 					<h:panelGrid columns="2">
 						<p:outputLabel for="Codigo1" value="Código do Responsável: " styleClass="labelBold" rendered="#{!contratoCobrancaMB.updateMode}"/>
 						<p:inputText id="Codigo1" value="#{contratoCobrancaMB.codigoResponsavel}" label="Código do Responsável" required="true" onblur=""  style="width:150px;" rendered="#{!contratoCobrancaMB.updateMode}"/>
@@ -1994,7 +2125,7 @@
 				
 				<!--  -->
 				
-				<p:panel id="PanelPagadorRecebedor" header="Pagador" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">		
+				<p:panel id="PanelPagadorRecebedor" header="Pagador" style="margin-bottom:10px;">		
 					<h:panelGrid columns="1">
 						<p:outputLabel
 							value="NOVO Pagador: preencha os dados do painel Dados Pagador"
@@ -2992,7 +3123,7 @@
 
 				</p:panel>	
 													
-				<p:panel id="Imovel" header="Imóvel Ofertado Como Garantia" style="margin-bottom:10px;" rendered="contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'">
+				<p:panel id="Imovel" header="Imóvel Ofertado Como Garantia" style="margin-bottom:10px;">
 					<h:panelGrid columns="2">
 						<p:outputLabel for="NumeroMatricula" value="Numero Matrícula: " />
 						<p:inputText id="NumeroMatricula"
@@ -3447,7 +3578,7 @@
 
 				<h:panelGroup id="ContasPagarPanel">
 					<p:panel header="Contas a Pagar" style="margin-bottom:10px;"
-						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">
+						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio}">
 
 						<f:facet name="header"> Contas a Pagar 
 							<p:outputLabel value="" />							
@@ -3657,7 +3788,7 @@
 				
 				<shiro:hasAnyRoles name="ROOT, PROFILE_CONTRATO, PROFILE_ANALISTA_POS_COMITE">				
 					<h:panelGroup id="comissaoCliente" style="margin-bottom:20px;">
-						<p:panel header="Comissão Cliente" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">
+						<p:panel header="Comissão Cliente" style="margin-bottom:10px;">
 							<h:panelGrid columns="2" >					
 								<h:panelGroup>
 									<h:panelGrid columns="2">
@@ -3759,7 +3890,7 @@
 
 				<h:panelGroup id="DividasPanel" style="margin-bottom:20px;">
 					<p:panel header="Dívidas" style="margin-bottom:10px;"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.aprovadoComite and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.aprovadoComite}">
 						<h:panelGrid columns="2">
 						
 							<p:outputLabel for="dividaIPTU" value="Dívida de IPTU: "
@@ -3788,7 +3919,7 @@
 				</h:panelGroup>
 
 				<p:panel id="Infos" header="Outras Informações"
-					style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">
+					style="margin-bottom:10px;">
 					<h:panelGrid columns="2">
 						<h:panelGrid columns="2">
 							<p:outputLabel for="quantoPrecisa" value="Qual valor precisa? "
@@ -3834,7 +3965,7 @@
 					</h:panelGrid>
 				</p:panel>
 
-				<p:panel id="AcaoObservacao" header="Motivo e Observação" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">							
+				<p:panel id="AcaoObservacao" header="Motivo e Observação" style="margin-bottom:10px;">							
 					<h:panelGrid columns="3">					
 						<p:outputLabel for="Acao" value="Ação: " />
 						<p:inputText id="Acao" value="#{contratoCobrancaMB.objetoContratoCobranca.acao}" label="Ação" onblur=""  style="width:300px;"/>
@@ -3852,7 +3983,7 @@
 			</p:panel>
 
 			<p:panel id="CheckListDocumentos" header="Documentos Prontos"
-				style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">
+				style="margin-bottom:10px;">
 				<h:panelGrid columns="4">
 					<h:panelGroup>
 						<h:panelGrid columns="2">
@@ -4251,7 +4382,7 @@
 			
 			<p:messages id="msgArquivo"/>			
 			 	
-			<p:panel id="UploadArquivosComite" header="Upload de Arquivo Comite(s)" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}" >						
+			<p:panel id="UploadArquivosComite" header="Upload de Arquivo Comite(s)" style="margin-bottom:10px;" >						
 				<p:panel id="ArquivosComite" header="Selecionar Arquivo Comite(s)" style="margin-bottom:10px;text-align: center;">							
 					<h:panelGrid columns="1">		
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileComiteUpload}" mode="advanced" dragDropSupport="true"
@@ -4304,7 +4435,7 @@
 				</script>
 			</p:panel>	
 						  	
-			<p:panel id="UploadArquivosInternos" header="Upload de Arquivo Interno(s)" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">						
+			<p:panel id="UploadArquivosInternos" header="Upload de Arquivo Interno(s)" style="margin-bottom:10px;">						
 				<p:panel id="ArquivosInternos" header="Selecionar Arquivo Interno(s)" style="margin-bottom:10px;text-align: center;">							
 					<h:panelGrid columns="1">		
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileInternoUpload}" mode="advanced" dragDropSupport="true"
@@ -4363,7 +4494,7 @@
 				</script>
 			</p:panel>	
 		
-			<p:panel id="UploadArquivosFaltantes" header="Upload de Arquivo Faltante(s)" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">						
+			<p:panel id="UploadArquivosFaltantes" header="Upload de Arquivo Faltante(s)" style="margin-bottom:10px;" >						
 				<p:panel id="ArquivosFaltantes" header="Selecionar Arquivo Faltante(s)" style="margin-bottom:10px;text-align: center;">							
 					<h:panelGrid columns="1">		
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileFaltanteUpload}" mode="advanced" dragDropSupport="true"
@@ -4416,7 +4547,7 @@
 				</script>
 			</p:panel>	
 					
-			<p:panel id="UploadArquivosJuridico" header="Upload de Arquivo Juridico(s)" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC'}"  >						
+			<p:panel id="UploadArquivosJuridico" header="Upload de Arquivo Juridico(s)" style="margin-bottom:10px;"  >						
 				<p:panel id="ArquivosJuridico" header="Selecionar Arquivo Juridico(s)" style="margin-bottom:10px;text-align: center;">							
 					<h:panelGrid columns="1">		
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileJuridicoUpload}" mode="advanced" dragDropSupport="true"
@@ -4473,7 +4604,8 @@
 						
 			<p:messages/>
 		
-			<p:panel id="UploadArquivos" header="Upload de Arquivo(s)" style="margin-bottom:10px;" >						
+			<p:panel id="UploadArquivos" header="Upload de Arquivo(s)" style="margin-bottom:10px;" 
+			rendered="#{!contratoCobrancaMB.objetoContratoCobranca.aprovadoComite or contratoCobrancaMB.objetoContratoCobranca.documentosCompletos}" >						
 				<p:panel id="Arquivos" header="Selecionar Arquivo(s)" style="margin-bottom:10px;text-align: center;">							
 					<h:panelGrid columns="1">		
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileUpload}" mode="advanced" dragDropSupport="true"
@@ -4485,7 +4617,7 @@
 				    <p:graphicImage name="image/ajaxloadingbar.gif" />
 				</p:dialog>
 
-				<p:panel id="ArquivosSalvos" header="Arquivo(s) Salvo(s) no Contrato" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. DOC'}" >							
+				<p:panel id="ArquivosSalvos" header="Arquivo(s) Salvo(s) no Contrato" style="margin-bottom:10px;" >							
 					<h:panelGrid columns="1">			                      								
 						<p:dataTable id="dtFiles" var="files" value="#{contratoCobrancaMB.files}" rowKey="#{files.name}" selection="#{contratoCobrancaMB.deletefiles}" emptyMessage="" sortBy="#{files.name}" >	
 							<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
@@ -4553,7 +4685,65 @@
 			</div>			
 		</h:form>
 
+		<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO">
+			<p:dialog header="Adicionar pessoa Analise" overflow="auto"
+				id="dialogAdicionarPessoaAnalise"
+				widgetVar="adicionarPessoaAnaliseDlg" resizable="true"
+				style="FONT-SIZE: 13pt;" width="800" minWidth="800">
+				<h:form id="adicionarPessoaAnaliseForm">
+					<div align="center">
+						<h:panelGrid columns="2">
+							<p:outputLabel for="AnaliseDocumentoPessoaNome"
+								value="Nome da pessoa " style="margin-right:10px" />
+							<h:panelGroup>
+								<p:outputLabel id="AnaliseDocumentoPessoaNome"
+									value="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.nome}"
+									required="false" style="FONT-SIZE: 10pt;width:300px;"
+									styleClass="labelBold" />
+								<p:spacer height="10" />
+								<p:commandButton
+									action="#{contratoCobrancaMB.pesquisaPessoaAnaliseDocumento}"
+									icon="ui-icon ui-icon-circle-zoomin"
+									oncomplete="PF('pagadorRecebedorDialog').show();"
+									update="formReceborPagador" />
+							</h:panelGroup>
 		
+							<h:outputText value="CPF"
+								rendered="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.cpf!= null}" />
+							<h:outputText
+								value="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.cpf}"
+								rendered="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.cpf!= null}" />
+	
+							<h:outputText value="CNPJ"
+								rendered="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.cnpj != null}" />
+							<h:outputText
+								value="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.cnpj}"
+								rendered="#{contratoCobrancaMB.documentoAnaliseAdicionar.pagador.cnpj != null}" />
+	
+							<h:outputText value="Motivo" />
+							<p:selectOneMenu
+								value="#{contratoCobrancaMB.documentoAnaliseAdicionar.motivoAnalise}"
+								label="Tipo" style="width:250px;">
+								<f:selectItem itemValue="" itemLabel="Selecione o motivo" />
+								<f:selectItem itemLabel="Proprietario Atual"
+									itemValue="Proprietario Atual" />
+								<f:selectItem itemLabel="Proprietario Anterior"
+									itemValue="Proprietario Anterior" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+						<h:panelGrid columns="2" style="text-align:center">
+							<p:commandButton value="Salvar" icon="ui-icon ui-icon-cancel"
+								action="#{contratoCobrancaMB.adicionarPessoaAnalise}"
+								update=":form:dtFilesAnalise"
+								oncomplete="PF('adicionarPessoaAnaliseDlg').hide();" />
+	
+							<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
+								oncomplete="PF('adicionarPessoaAnaliseDlg').hide();" />
+						</h:panelGrid>
+					</div>
+				</h:form>
+			</p:dialog>
+		</shiro:hasAnyRoles>
 
 		<p:dialog header="Arquivos da Conta" overflow="auto" id="dialogArquivosConta"
 			widgetVar="contaArquivosdlg" resizable="true" style="FONT-SIZE: 13pt;"
@@ -5095,11 +5285,6 @@
 					</p:commandButton>
 				</div>
 			</h:form>
-		</p:dialog>
-
-		<!-- popup de analise de documento -->
-		<ui:include src="ContratoCobrancaAnaliseDocumentoResumoPopup.xhtml"></ui:include>
-		
-
+		</p:dialog>		
 	</ui:define>
 </ui:composition>

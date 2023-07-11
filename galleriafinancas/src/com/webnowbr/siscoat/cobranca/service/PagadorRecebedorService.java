@@ -8,10 +8,13 @@ import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorConsultaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
+import com.webnowbr.siscoat.common.GsonUtil;
+
+import br.com.galleriabank.netrin.cliente.model.receitafederal.ReceitaFederalPF;
+import br.com.galleriabank.netrin.cliente.model.receitafederal.ReceitaFederalPJ;
 
 public class PagadorRecebedorService {
-	
-	
+
 	public PagadorRecebedor buscaOuInsere(PagadorRecebedor pagadorAdicionar) {
 		if (CommonsUtil.semValor(pagadorAdicionar.getId())) {
 			PagadorRecebedorDao pDao = new PagadorRecebedorDao();
@@ -41,10 +44,36 @@ public class PagadorRecebedorService {
 				pagadorAdicionar = pDao.findById(idIncluido);
 			}
 		}
-		return pagadorAdicionar;			
-		
+		return pagadorAdicionar;
+
 	}
-	
+
+	public void preecheDadosReceita(PagadorRecebedor pagadorAdicionar) {
+		String stringResponse = null;
+		NetrinService netrinService = new NetrinService();
+		
+		if (!CommonsUtil.semValor(pagadorAdicionar.getCpf())) {
+
+			ReceitaFederalPF receitaFederalPF = netrinService.requestCadastroPF(pagadorAdicionar);
+
+			stringResponse = GsonUtil.toJson(receitaFederalPF);
+
+		} else if (!CommonsUtil.semValor(pagadorAdicionar.getCnpj())) {
+
+			ReceitaFederalPJ receitaFederalPJ = netrinService.requestCadastroPJ(pagadorAdicionar);
+
+			stringResponse = GsonUtil.toJson(receitaFederalPJ);
+
+		}
+		if (!CommonsUtil.semValor(pagadorAdicionar.getCpf()) || !CommonsUtil.semValor(pagadorAdicionar.getCnpj()))
+			pagadorAdicionar = buscaOuInsere(pagadorAdicionar);
+
+		if (!CommonsUtil.semValor(stringResponse) && !CommonsUtil.semValor(pagadorAdicionar.getId())) {
+			adicionarConsultaNoPagadorRecebedor(pagadorAdicionar, DocumentosAnaliseEnum.RECEITA_FEDERAL,
+					stringResponse);
+		}
+	}
+
 	public PagadorRecebedor findById(Long id) {
 		PagadorRecebedor pagadorAdicionar = null;
 
@@ -56,7 +85,7 @@ public class PagadorRecebedorService {
 		return pagadorAdicionar;
 
 	}
-	
+
 	public PagadorRecebedor findByCpfCnpj(String cpfCnpj) {
 		PagadorRecebedor pagadorAdicionar = null;
 
@@ -68,28 +97,40 @@ public class PagadorRecebedorService {
 		return pagadorAdicionar;
 
 	}
-	
+
 	public void adicionarConsultaNoPagadorRecebedor(PagadorRecebedor pagador, DocumentosAnaliseEnum tipoConsulta,
 			String consulta) {
 
 		PagadorRecebedorConsultaDao PagadorRecebedorConsultaDao = new PagadorRecebedorConsultaDao();
 
 		// buscando ultima consutla do pagador
-		PagadorRecebedorConsulta PagadorRecebedorConsulta = PagadorRecebedorConsultaDao
+		PagadorRecebedorConsulta pagadorRecebedorConsulta = PagadorRecebedorConsultaDao
 				.getConsultaByPagadorAndTipo(pagador, tipoConsulta);
-		if (PagadorRecebedorConsulta == null) {
-			PagadorRecebedorConsulta = new PagadorRecebedorConsulta();
+		if (pagadorRecebedorConsulta == null) {
+			pagadorRecebedorConsulta = new PagadorRecebedorConsulta();
 		}
-		PagadorRecebedorConsulta.setDataConsulta(new Date());
-		PagadorRecebedorConsulta.setRetornConsulta(consulta);
-		PagadorRecebedorConsulta.setPessoa(pagador);
-		PagadorRecebedorConsulta.setTipoEnum(tipoConsulta);
+		pagadorRecebedorConsulta.setDataConsulta(new Date());
+		pagadorRecebedorConsulta.setRetornoConsulta(consulta);
+		pagadorRecebedorConsulta.setPessoa(pagador);
+		pagadorRecebedorConsulta.setTipoEnum(tipoConsulta);
 
-		if (CommonsUtil.semValor(PagadorRecebedorConsulta.getId()))
-			PagadorRecebedorConsultaDao.create(PagadorRecebedorConsulta);
+		if (CommonsUtil.semValor(pagadorRecebedorConsulta.getId()))
+			PagadorRecebedorConsultaDao.create(pagadorRecebedorConsulta);
 		else
-			PagadorRecebedorConsultaDao.merge(PagadorRecebedorConsulta);
+			PagadorRecebedorConsultaDao.merge(pagadorRecebedorConsulta);
 
 	}
-	
+
+	public PagadorRecebedorConsulta buscaConsultaNoPagadorRecebedor(PagadorRecebedor pagador,
+			DocumentosAnaliseEnum tipoConsulta) {
+
+		PagadorRecebedorConsultaDao PagadorRecebedorConsultaDao = new PagadorRecebedorConsultaDao();
+
+		// buscando ultima consutla do pagador
+		PagadorRecebedorConsulta pagadorRecebedorConsulta = PagadorRecebedorConsultaDao
+				.getConsultaByPagadorAndTipo(pagador, tipoConsulta);
+		return pagadorRecebedorConsulta;
+
+	}
+
 }

@@ -11,20 +11,24 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import javax.faces.event.AjaxBehaviorEvent;
-import javax.faces.event.ValueChangeEvent;
 
 import org.json.JSONObject;
+import org.primefaces.PrimeFaces;
 import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
 
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
+import com.webnowbr.siscoat.cobranca.db.model.PagadorReceborDadosBancarios;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
+import com.webnowbr.siscoat.cobranca.service.NetrinService;
+import com.webnowbr.siscoat.cobranca.service.PagadorRecebedorService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.ValidaCNPJ;
 import com.webnowbr.siscoat.common.ValidaCPF;
@@ -35,9 +39,10 @@ import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.GroupAdm;
 import com.webnowbr.siscoat.infra.db.model.User;
 
-import org.primefaces.model.SortOrder;
-
-import java.util.Map;
+import br.com.galleriabank.netrin.cliente.model.contabancaria.ValidaContaBancariaRequest;
+import br.com.galleriabank.netrin.cliente.model.contabancaria.ValidaContaBancariaResponse;
+import br.com.galleriabank.netrin.cliente.model.contabancaria.ValidaPixRequest;
+import br.com.galleriabank.netrin.cliente.model.contabancaria.ValidaPixResponse;
 
 /** ManagedBean. */
 @ManagedBean(name = "pagadorRecebedorMB")
@@ -55,6 +60,10 @@ public class PagadorRecebedorMB {
 	private boolean tipoPessoaIsFisicaCC = false;
 	private List<PagadorRecebedor> listaPagadorRecebedor;
 	private List<PagadorRecebedor> filteredPagadorRecebedor;
+	
+	private String telefoneAnterior;
+	
+	private PagadorReceborDadosBancarios pagadorReceborDadosBancariosOriginal;
 	/**
 	 * Construtor.
 	 */
@@ -126,6 +135,11 @@ public class PagadorRecebedorMB {
 		if (this.objetoPagadorRecebedor.getCpfCC() != null && !this.objetoPagadorRecebedor.getCpfCC().equals("")) {
 			this.tipoPessoaIsFisicaCC = true;
 		}
+		
+		this.telefoneAnterior = this.objetoPagadorRecebedor.getTelCelular();
+		
+		pagadorReceborDadosBancariosOriginal = new PagadorReceborDadosBancarios(objetoPagadorRecebedor);
+		
 
 		return "PagadorRecebedorInserir.xhtml";
 	}	
@@ -166,11 +180,17 @@ public class PagadorRecebedorMB {
 	}
 	
 	public void selectedCPF() {
-		this.objetoPagadorRecebedor.setCpfCC(this.objetoPagadorRecebedor.getCpf());		
+		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+		pagadorRecebedorService.preecheDadosReceita(objetoPagadorRecebedor);
+		this.objetoPagadorRecebedor.setCpfCC(this.objetoPagadorRecebedor.getCpf());
+		this.objetoPagadorRecebedor.setNomeCC(objetoPagadorRecebedor.getNome());
 	}
 	
-	public void selectedCNPJ() {
-		this.objetoPagadorRecebedor.setCnpjCC(this.objetoPagadorRecebedor.getCnpj());		
+	public void selectedCNPJ() {		
+		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+		pagadorRecebedorService.preecheDadosReceita(objetoPagadorRecebedor);
+		this.objetoPagadorRecebedor.setCnpjCC(this.objetoPagadorRecebedor.getCnpj());
+		this.objetoPagadorRecebedor.setNomeCC(objetoPagadorRecebedor.getNome());				
 	}
 
 	public String inserir() {
@@ -182,8 +202,13 @@ public class PagadorRecebedorMB {
 				this.objetoPagadorRecebedor.setSite("http://" + this.objetoPagadorRecebedor.getSite().toLowerCase());
 			}
 			
-			if (this.objetoPagadorRecebedor.getWhatsAppNumero() == null || this.objetoPagadorRecebedor.getWhatsAppNumero().equals("")) {
-				TakeBlipMB takeBlipMB = new TakeBlipMB();
+			TakeBlipMB takeBlipMB = new TakeBlipMB();
+			
+			if (!CommonsUtil.mesmoValor(this.telefoneAnterior, this.objetoPagadorRecebedor.getTelCelular())) {
+				this.objetoPagadorRecebedor.setWhatsAppNumero(takeBlipMB.getWhatsAppURLNovoPagadorRecebedor(this.objetoPagadorRecebedor));
+			}
+			
+			if (this.objetoPagadorRecebedor.getWhatsAppNumero() == null || this.objetoPagadorRecebedor.getWhatsAppNumero().equals("")) {				
 				this.objetoPagadorRecebedor.setWhatsAppNumero(takeBlipMB.getWhatsAppURLNovoPagadorRecebedor(this.objetoPagadorRecebedor));
 			}
 			/*			
@@ -300,6 +325,43 @@ public class PagadorRecebedorMB {
 		return "PagadorRecebedorConsultar.xhtml";
 	}
 	
+	public String verificaAlteracaoContaCobranca() {
+
+		if (!CommonsUtil.mesmoValor(this.objetoPagadorRecebedor.getBanco(),
+				pagadorReceborDadosBancariosOriginal.getBanco())
+				|| !CommonsUtil.mesmoValor(this.objetoPagadorRecebedor.getAgencia(),
+						pagadorReceborDadosBancariosOriginal.getAgencia())
+				|| !CommonsUtil.mesmoValor(this.objetoPagadorRecebedor.getConta(),
+						pagadorReceborDadosBancariosOriginal.getConta())
+				|| !CommonsUtil.mesmoValor(this.objetoPagadorRecebedor.getContaDigito(),
+						pagadorReceborDadosBancariosOriginal.getContaDigito())
+				|| !CommonsUtil.mesmoValor(this.objetoPagadorRecebedor.getTipoConta(),
+						pagadorReceborDadosBancariosOriginal.getTipoConta())) {
+			this.objetoPagadorRecebedor.setContaBancariaValidada(false);
+			PrimeFaces.current().ajax().update("form:PanelDadosBancarios");
+		}		
+		return null;
+		
+	}
+	
+	public String verificaAlteracaoPix() {
+
+		if (!CommonsUtil.mesmoValor(this.objetoPagadorRecebedor.getPix(), pagadorReceborDadosBancariosOriginal.getPix())
+				|| !CommonsUtil.mesmoValor(this.objetoPagadorRecebedor.getTipoPix(),
+						pagadorReceborDadosBancariosOriginal.getTipoPix())) {
+			this.objetoPagadorRecebedor.setPixValidado(false);
+
+			this.objetoPagadorRecebedor.setBancoPix(null);
+			this.objetoPagadorRecebedor.setAgenciaPix(null);
+			this.objetoPagadorRecebedor.setContaPix(null);
+			this.objetoPagadorRecebedor.setContaDigitoPix(null);
+			PrimeFaces.current().ajax().update("form:PanelDadosBancarios");
+
+		}
+		return null;
+
+	}
+	
 	public String atualizarIUGU() {
 	
 		// atualiza IUGU
@@ -310,6 +372,58 @@ public class PagadorRecebedorMB {
 		inserir();
 		
 		return "PagadorRecebedorConsultar.xhtml";
+	}
+	
+	public String validaPix() {
+
+		FacesContext context = FacesContext.getCurrentInstance();
+		NetrinService netrinService = new NetrinService();
+		
+		
+		String documento = CommonsUtil.somenteNumeros( this.objetoPagadorRecebedor.getCpf());
+		if (!CommonsUtil.semValor( this.objetoPagadorRecebedor.getCnpj())) {
+			documento= CommonsUtil.somenteNumeros( this.objetoPagadorRecebedor.getCnpj());
+		}
+		
+		ValidaPixRequest validaPixRequest = new ValidaPixRequest(this.objetoPagadorRecebedor.getPix(), this.objetoPagadorRecebedor.getTipoPix(), documento);
+		ValidaPixResponse result = netrinService.requestValidaPix(validaPixRequest, context);
+		
+		if (!CommonsUtil.semValor(result) && !CommonsUtil.semValor(result.getValidaPix())
+				&& CommonsUtil.mesmoValorIgnoreCase("Sim", result.getValidaPix().getValidacaoConta())) {
+			this.objetoPagadorRecebedor.setPixValidado(true);
+			this.objetoPagadorRecebedor.setBancoPix(result.getValidaPix().getConta().getCodigoBanco());
+			this.objetoPagadorRecebedor.setAgenciaPix(result.getValidaPix().getConta().getAgencia());
+			this.objetoPagadorRecebedor.setContaPix(result.getValidaPix().getConta().getConta());
+			this.objetoPagadorRecebedor.setContaDigitoPix(result.getValidaPix().getConta().getContaDigito());
+			PrimeFaces.current().ajax().update("form:PanelDadosBancarios");	
+		}
+		
+		return null;
+	}
+	
+	public String validaContaBancaria() {
+
+		FacesContext context = FacesContext.getCurrentInstance();
+		NetrinService netrinService = new NetrinService();
+		
+		
+		String documento = CommonsUtil.somenteNumeros( this.objetoPagadorRecebedor.getCpf());
+		if (!CommonsUtil.semValor( this.objetoPagadorRecebedor.getCnpj())) {
+			documento= CommonsUtil.somenteNumeros( this.objetoPagadorRecebedor.getCnpj());
+		}
+		
+		ValidaContaBancariaRequest validaContaBancariaRequest = new ValidaContaBancariaRequest(documento, this.objetoPagadorRecebedor.getCodigoBanco(), 
+				this.objetoPagadorRecebedor.getAgencia(), this.objetoPagadorRecebedor.getConta(), this.objetoPagadorRecebedor.getContaDigito(), 
+				this.objetoPagadorRecebedor.getTipoConta());
+		ValidaContaBancariaResponse result = netrinService.requestValidaContaBancaria(validaContaBancariaRequest, context);
+
+		if (!CommonsUtil.semValor(result)
+				&& CommonsUtil.mesmoValorIgnoreCase("Sim", result.getValidaContaBancaria().getValidacaoConta())) {
+			this.objetoPagadorRecebedor.setContaBancariaValidada(true);
+			PrimeFaces.current().ajax().update("form:PanelDadosBancarios");
+		}
+		
+		return null;
 	}
 
 	public String excluir() {
@@ -442,16 +556,68 @@ public class PagadorRecebedorMB {
 				this.objetoPagadorRecebedor.setEstado("");
 			} else {
 				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-				
 				if(myResponse.has("logradouro")) {
 					this.objetoPagadorRecebedor.setEndereco(myResponse.get("logradouro").toString());
 				}
-				
 				if(myResponse.has("bairro")) {
 					this.objetoPagadorRecebedor.setBairro(myResponse.get("bairro").toString());
-				}				
-				this.objetoPagadorRecebedor.setCidade(myResponse.get("localidade").toString());
-				this.objetoPagadorRecebedor.setEstado(myResponse.get("uf").toString());
+				}		
+				if(myResponse.has("localidade")) {
+					this.objetoPagadorRecebedor.setCidade(myResponse.get("localidade").toString());
+				}
+				if(myResponse.has("uf")) {
+					this.objetoPagadorRecebedor.setEstado(myResponse.get("uf").toString());
+				}
+			}
+			myURLConnection.disconnect();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void getEnderecoByViaNetConjuge() {
+		try {			
+			String inputCep = this.objetoPagadorRecebedor.getCepConjuge().replace("-", "");
+			FacesContext context = FacesContext.getCurrentInstance();
+			
+			int HTTP_COD_SUCESSO = 200;
+			
+			URL myURL = new URL("http://viacep.com.br/ws/" + inputCep + "/json/");
+
+			HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestMethod("GET");
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+			myURLConnection.setDoOutput(true);
+			
+			String erro = "";
+			JSONObject myResponse = null;
+
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {	
+				this.objetoPagadorRecebedor.setEnderecoConjuge("");
+				this.objetoPagadorRecebedor.setBairroConjuge("");
+				this.objetoPagadorRecebedor.setCidadeConjuge("");
+				this.objetoPagadorRecebedor.setEstadoConjuge("");
+			} else {
+				myResponse = getJsonSucesso(myURLConnection.getInputStream());
+				if(myResponse.has("logradouro")) {
+					this.objetoPagadorRecebedor.setEnderecoConjuge(myResponse.get("logradouro").toString());
+				}
+				if(myResponse.has("bairro")) {
+					this.objetoPagadorRecebedor.setBairroConjuge(myResponse.get("bairro").toString());
+				}			
+				if(myResponse.has("localidade")) {
+					this.objetoPagadorRecebedor.setCidadeConjuge(myResponse.get("localidade").toString());
+				}
+				if(myResponse.has("uf")) {
+					this.objetoPagadorRecebedor.setEstadoConjuge(myResponse.get("uf").toString());
+				}	
 			}
 			myURLConnection.disconnect();
 		} catch (MalformedURLException e) {

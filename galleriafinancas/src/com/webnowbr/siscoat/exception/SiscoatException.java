@@ -34,7 +34,6 @@ public class SiscoatException extends Exception {
 
 	private void enviaEmail(String message, Throwable cause) {
 //
-		
 //		if (CommonsUtil.sistemaWindows() || (CommonsUtil.semValor(message) && CommonsUtil.semValor(cause))) {
 //			return;
 //		}
