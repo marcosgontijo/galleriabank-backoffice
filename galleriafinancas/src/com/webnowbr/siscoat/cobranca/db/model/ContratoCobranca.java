@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Set;
 
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.infra.db.model.User;
+import com.webnowbr.siscoat.security.LoginBean;
 
 public class ContratoCobranca implements Serializable {
 
@@ -327,7 +329,7 @@ public class ContratoCobranca implements Serializable {
 
 	private boolean contratoRestritoAdm;
 
-	private List<CadastroStatus> listCadastroStatus;
+	private Set<CadastroStatus> listCadastroStatus;
 	private String status;
 	private String statusEsteira;
 
@@ -843,7 +845,7 @@ public class ContratoCobranca implements Serializable {
 		this.listContasPagar = new HashSet<>();
 		this.listaAnaliseComite = new HashSet<>();
 		this.listAverbacao = new HashSet<>();
-		this.listCadastroStatus = new ArrayList<CadastroStatus>();
+		this.listCadastroStatus = new HashSet<>();
 		this.listProcessos = new HashSet<>();
 		
 		limparPrimitivos();
@@ -1000,7 +1002,7 @@ public class ContratoCobranca implements Serializable {
 
 	}
 
-	public ContratoCobranca populaStatusEsteira() {
+	public ContratoCobranca populaStatusEsteira(User user) {
 		// POPULA STATUS
 		String statusAnterior = statusEsteira;
 		ContratoCobranca c = this;
@@ -1251,7 +1253,7 @@ public class ContratoCobranca implements Serializable {
 		}
 		
 		if(!CommonsUtil.mesmoValor(statusEsteira, statusAnterior)) {
-			CadastroStatus cadastroStatus = new CadastroStatus(statusEsteira, statusAnterior, this);
+			CadastroStatus cadastroStatus = new CadastroStatus(statusEsteira, statusAnterior, this, user);
 			this.getListCadastroStatus().add(cadastroStatus);
 		}
 		
@@ -6498,15 +6500,15 @@ public class ContratoCobranca implements Serializable {
 	public void setDispositivoCertificado(String dispositivoCertificado) {
 		this.dispositivoCertificado = dispositivoCertificado;
 	}
-
-	public List<CadastroStatus> getListCadastroStatus() {
+	
+	public Set<CadastroStatus> getListCadastroStatus() {
 		return listCadastroStatus;
 	}
 
-	public void setListCadastroStatus(List<CadastroStatus> listCadastroStatus) {
+	public void setListCadastroStatus(Set<CadastroStatus> listCadastroStatus) {
 		this.listCadastroStatus = listCadastroStatus;
 	}
-	
+
 	public String getSolicitarNota() {
 		return solicitarNota;
 	}

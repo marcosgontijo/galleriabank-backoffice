@@ -9,6 +9,7 @@ import java.util.TimeZone;
 import javax.faces.bean.ManagedProperty;
 
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
 import com.webnowbr.siscoat.security.LoginBean;
 
@@ -19,9 +20,6 @@ public class CadastroStatus implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	@ManagedProperty(value = "#{loginBean}")
-	protected LoginBean loginBean;
-	
 	private long id;
 	private String status;
 	private String statusAnteriror;
@@ -29,26 +27,33 @@ public class CadastroStatus implements Serializable {
 	private String usuarioLogin;
 	private User usuario;
 	private ContratoCobranca contratoCobranca;
+	private String numeroContrato;
+	private int ordemStatus;
 	
 
-	public CadastroStatus(String status, String statusAnterior, ContratoCobranca contratoCobranca) {
+	public CadastroStatus(String status, String statusAnterior, ContratoCobranca contratoCobranca, User user) {
 		super();
 		this.status = status;
 		this.statusAnteriror = statusAnterior;
 		this.data = gerarDataHoje();
 		
-		usuario = loginBean.getUsuarioLogado();
-		if(!CommonsUtil.semValor(loginBean.getUsuarioLogado())) {
-			this.usuarioLogin = usuario.getLogin();
-		}	
-		
 		if(CommonsUtil.mesmoValor(status, "Baixado")) {
 			if(CommonsUtil.mesmoValor(contratoCobranca.getBaixadoUsuario(), "Sistema")) {
-				usuario = null;
-				this.usuarioLogin = "Sistema";
+				UserDao userDao = new UserDao();
+				user = userDao.findById((long) -1);
 			}
 		}
+		
+		if(!CommonsUtil.semValor(user)) {
+			usuario = user;
+			if(!CommonsUtil.semValor(user.getLogin())) {
+				this.usuarioLogin = usuario.getLogin();
+			}	
+		}
+		
 		this.contratoCobranca = contratoCobranca;
+		numeroContrato = this.contratoCobranca.getNumeroContrato();
+		ordemStatus = this.contratoCobranca.getListCadastroStatus().size();
 	}
 	
 	public Date gerarDataHoje() {
@@ -117,7 +122,21 @@ public class CadastroStatus implements Serializable {
 
 	public void setStatusAnteriror(String statusAnteriror) {
 		this.statusAnteriror = statusAnteriror;
+	}
+
+	public String getNumeroContrato() {
+		return numeroContrato;
+	}
+
+	public void setNumeroContrato(String numeroContrato) {
+		this.numeroContrato = numeroContrato;
+	}
+
+	public int getOrdemStatus() {
+		return ordemStatus;
+	}
+
+	public void setOrdemStatus(int ordemStatus) {
+		this.ordemStatus = ordemStatus;
 	}	
-	
-	
 }

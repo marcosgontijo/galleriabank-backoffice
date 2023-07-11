@@ -2753,7 +2753,7 @@ public class ContratoCobrancaMB {
 			updateCheckList();
 
 			this.objetoContratoCobranca.setStatusLead("Novo Lead");
-			this.objetoContratoCobranca.populaStatusEsteira();
+			this.objetoContratoCobranca.populaStatusEsteira(loginBean.getUsuarioLogado());
 			contratoCobrancaDao.create(this.objetoContratoCobranca);
 
 			enviaEmailCriacaoPreContratoNovo();
@@ -2914,7 +2914,7 @@ public class ContratoCobrancaMB {
 
 					this.objetoContratoCobranca.setStatusLead("Completo");
 					this.objetoContratoCobranca.setInicioAnalise(false);
-					this.objetoContratoCobranca.populaStatusEsteira();
+					this.objetoContratoCobranca.populaStatusEsteira(loginBean.getUsuarioLogado());
 					contratoCobrancaDao.create(this.objetoContratoCobranca);
 
 					if (!this.objetoContratoCobranca.isAgRegistro()) {
@@ -3143,7 +3143,7 @@ public class ContratoCobrancaMB {
 					&& !CommonsUtil.semValor(this.objetoContratoCobranca.getValorCCB())) {
 				geraContratoCobrancaDetalhes(contratoCobrancaDao);
 			}
-			this.objetoContratoCobranca.populaStatusEsteira();
+			this.objetoContratoCobranca.populaStatusEsteira(loginBean.getUsuarioLogado());
 			contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
 			// verifica se o contrato for aprovado, manda um tipo de email..
@@ -3258,7 +3258,7 @@ public class ContratoCobrancaMB {
 				}
 			}
 			
-			this.objetoContratoCobranca.populaStatusEsteira();
+			this.objetoContratoCobranca.populaStatusEsteira(loginBean.getUsuarioLogado());
 			contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
 			// verifica se o contrato for aprovado, manda um tipo de email..
@@ -3312,7 +3312,7 @@ public class ContratoCobrancaMB {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 
 		try {
-			this.objetoContratoCobranca.populaStatusEsteira();
+			this.objetoContratoCobranca.populaStatusEsteira(loginBean.getUsuarioLogado());
 			contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
 			context.addMessage(null,
@@ -3335,7 +3335,7 @@ public class ContratoCobrancaMB {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 
 		try {
-			this.objetoContratoCobranca.populaStatusEsteira();
+			this.objetoContratoCobranca.populaStatusEsteira(loginBean.getUsuarioLogado());
 			contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
 			context.addMessage(null,
@@ -3359,7 +3359,7 @@ public class ContratoCobrancaMB {
 
 		try {
 			updateCheckList();
-			this.objetoContratoCobranca.populaStatusEsteira();
+			this.objetoContratoCobranca.populaStatusEsteira(loginBean.getUsuarioLogado());
 			contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
 			context.addMessage(null,
@@ -3818,7 +3818,7 @@ public class ContratoCobrancaMB {
 				}
 
 				updateCheckList();
-				this.objetoContratoCobranca.populaStatusEsteira();
+				this.objetoContratoCobranca.populaStatusEsteira(loginBean.getUsuarioLogado());
 				contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
 				// verifica se o contrato for aprovado, manda um tipo de email..
@@ -5241,7 +5241,7 @@ public class ContratoCobrancaMB {
 			}
 		}
 		updateCheckList();
-		this.objetoContratoCobranca.populaStatusEsteira();
+		this.objetoContratoCobranca.populaStatusEsteira(loginBean.getUsuarioLogado());
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -5257,7 +5257,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setAnaliseComercial(false);
 		this.objetoContratoCobranca.setComentarioJuridicoPendente(true);
 		updateCheckList();
-		this.objetoContratoCobranca.populaStatusEsteira();
+		this.objetoContratoCobranca.populaStatusEsteira(loginBean.getUsuarioLogado());
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -5282,7 +5282,7 @@ public class ContratoCobrancaMB {
 		this.objetoAnaliseComite = new AnaliseComite();
 		concluirComentarioComite(objetoContratoCobranca);
 		updateCheckList();
-		this.objetoContratoCobranca.populaStatusEsteira();
+		this.objetoContratoCobranca.populaStatusEsteira(loginBean.getUsuarioLogado());
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -5298,7 +5298,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setPreAprovadoComite(false);
 		concluirComentarioComite(objetoContratoCobranca);
 		updateCheckList();
-		this.objetoContratoCobranca.populaStatusEsteira();
+		this.objetoContratoCobranca.populaStatusEsteira(loginBean.getUsuarioLogado());
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -5318,7 +5318,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setPedidoLaudo(false);
 		this.objetoContratoCobranca.setPagtoLaudoConfirmada(false);
 		updateCheckList();
-		this.objetoContratoCobranca.populaStatusEsteira();
+		this.objetoContratoCobranca.populaStatusEsteira(loginBean.getUsuarioLogado());
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -5338,7 +5338,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setPagtoLaudoConfirmada(false);
 		this.objetoContratoCobranca.setFormaDePagamentoLaudoPAJU("No final");
 		updateCheckList();
-		this.objetoContratoCobranca.populaStatusEsteira();
+		this.objetoContratoCobranca.populaStatusEsteira(loginBean.getUsuarioLogado());
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -5358,7 +5358,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setPagtoLaudoConfirmada(false);
 		this.objetoContratoCobranca.setFormaDePagamentoLaudoPAJU("Antecipado");
 		updateCheckList();
-		this.objetoContratoCobranca.populaStatusEsteira();
+		this.objetoContratoCobranca.populaStatusEsteira(loginBean.getUsuarioLogado());
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -5395,7 +5395,7 @@ public class ContratoCobrancaMB {
 			return null;
 		}
 		this.objetoContratoCobranca.setResponsavel(resp);
-		this.objetoContratoCobranca.populaStatusEsteira();
+		this.objetoContratoCobranca.populaStatusEsteira(loginBean.getUsuarioLogado());
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 		clearResponsavel();
 		this.updateResponsavel = "";
@@ -7441,7 +7441,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setReprovadoUsuario(getNomeUsuarioLogado());
 		this.objetoContratoCobranca.setStatus("Reprovado");
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		this.objetoContratoCobranca.populaStatusEsteira();
+		this.objetoContratoCobranca.populaStatusEsteira(loginBean.getUsuarioLogado());
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
 		context.addMessage(null,
@@ -7470,7 +7470,7 @@ public class ContratoCobrancaMB {
 		updateCheckList();
 
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		this.objetoContratoCobranca.populaStatusEsteira();
+		this.objetoContratoCobranca.populaStatusEsteira(loginBean.getUsuarioLogado());
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
 		context.addMessage(null,
@@ -7498,7 +7498,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setBaixadoData(gerarDataHoje());
 		this.objetoContratoCobranca.setBaixadoUsuario(getNomeUsuarioLogado());
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		this.objetoContratoCobranca.populaStatusEsteira();
+		this.objetoContratoCobranca.populaStatusEsteira(loginBean.getUsuarioLogado());
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
 		TakeBlipMB takeBlipMB = new TakeBlipMB();
@@ -7532,7 +7532,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setBaixadoData(gerarDataHoje());
 		this.objetoContratoCobranca.setBaixadoUsuario("Sistema");
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		this.objetoContratoCobranca.populaStatusEsteira();
+		this.objetoContratoCobranca.populaStatusEsteira(loginBean.getUsuarioLogado());
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 	}
 
@@ -7556,7 +7556,7 @@ public class ContratoCobrancaMB {
 
 				if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getStatusLead(), "Ag. Contato")) {
 					this.objetoContratoCobranca.setStatusLead("Arquivado");
-					this.objetoContratoCobranca.populaStatusEsteira();
+					this.objetoContratoCobranca.populaStatusEsteira(loginBean.getUsuarioLogado());
 					contratoCobrancaDao.merge(this.objetoContratoCobranca);
 				}
 
@@ -7733,7 +7733,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setContratoResgatadoData(gerarDataHoje());
 
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		this.objetoContratoCobranca.populaStatusEsteira();
+		this.objetoContratoCobranca.populaStatusEsteira(loginBean.getUsuarioLogado());
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
 		context.addMessage(null,
@@ -7753,7 +7753,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setContratoResgatadoData(gerarDataHoje());
 
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		this.objetoContratoCobranca.populaStatusEsteira();
+		this.objetoContratoCobranca.populaStatusEsteira(loginBean.getUsuarioLogado());
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
 		context.addMessage(null,
@@ -7769,7 +7769,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setCadastroAprovadoValor("");
 		updateCheckList();
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		this.objetoContratoCobranca.populaStatusEsteira();
+		this.objetoContratoCobranca.populaStatusEsteira(loginBean.getUsuarioLogado());
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
 		context.addMessage(null,
@@ -18112,7 +18112,7 @@ public class ContratoCobrancaMB {
 				}
 			}
 		}
-		this.objetoContratoCobranca.populaStatusEsteira();
+		this.objetoContratoCobranca.populaStatusEsteira(loginBean.getUsuarioLogado());
 		try {
 			if (objetoContratoCobranca.getId() <= 0) {
 				contratoCobrancaDao.create(objetoContratoCobranca);
