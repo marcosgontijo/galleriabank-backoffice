@@ -45,11 +45,15 @@ public class CadastroStatus implements Serializable {
 			}
 		}
 		
-		if(!CommonsUtil.semValor(user)) {
+		if(!CommonsUtil.semValor(user)
+				|| user.getId() > 0) {
 			usuario = user;
 			if(!CommonsUtil.semValor(user.getLogin())) {
 				this.usuarioLogin = usuario.getLogin();
 			}	
+		} else {
+			usuario = null;
+			usuarioLogin = null;
 		}
 		
 		this.contratoCobranca = contratoCobranca;

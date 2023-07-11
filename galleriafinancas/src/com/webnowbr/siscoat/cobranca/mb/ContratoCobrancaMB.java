@@ -12710,7 +12710,15 @@ public class ContratoCobrancaMB {
 						if (!CommonsUtil.semValor(status)) {
 							status = status + " | ";
 						}
-						status = status + "Ag. PAJU";
+						if(!CommonsUtil.semValor(c.getAvaliacaoPaju())
+								&& CommonsUtil.mesmoValor(c.getAvaliacaoPaju(), "Neves")) {
+							status = status + "Ag. PAJU Neves";
+						} else if (!CommonsUtil.semValor(c.getAvaliacaoPaju())
+								&& CommonsUtil.mesmoValor(c.getAvaliacaoPaju(), "FBC")) {
+							status = status + "Ag. PAJU FBC";
+						} else {
+							status = status + "Ag. PAJU";
+						}
 					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
