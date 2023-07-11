@@ -1,10 +1,17 @@
 package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+
+import javax.faces.bean.ManagedProperty;
 
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
+import com.webnowbr.siscoat.security.LoginBean;
 
 public class CadastroStatus implements Serializable {
 
@@ -15,23 +22,46 @@ public class CadastroStatus implements Serializable {
 	
 	private long id;
 	private String status;
+	private String statusAnteriror;
 	private Date data;
 	private String usuarioLogin;
 	private User usuario;
-	private String detalhes;
 	private ContratoCobranca contratoCobranca;
+	private String numeroContrato;
+	private int ordemStatus;
 	
 
-	public CadastroStatus(String status, Date data, User usuario,
-			ContratoCobranca contratoCobranca) {
+	public CadastroStatus(String status, String statusAnterior, ContratoCobranca contratoCobranca, User user) {
 		super();
 		this.status = status;
-		this.data = data;
-		if(!CommonsUtil.semValor(usuario)) {
-			this.usuarioLogin = usuario.getLogin();
-		}	
-		this.usuario = usuario;
+		this.statusAnteriror = statusAnterior;
+		this.data = gerarDataHoje();
+		
+		if(CommonsUtil.mesmoValor(status, "Baixado")) {
+			if(CommonsUtil.mesmoValor(contratoCobranca.getBaixadoUsuario(), "Sistema")) {
+				UserDao userDao = new UserDao();
+				user = userDao.findById((long) -1);
+			}
+		}
+		
+		if(!CommonsUtil.semValor(user)) {
+			usuario = user;
+			if(!CommonsUtil.semValor(user.getLogin())) {
+				this.usuarioLogin = usuario.getLogin();
+			}	
+		}
+		
 		this.contratoCobranca = contratoCobranca;
+		numeroContrato = this.contratoCobranca.getNumeroContrato();
+		ordemStatus = this.contratoCobranca.getListCadastroStatus().size();
+	}
+	
+	public Date gerarDataHoje() {
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+
+		return dataHoje.getTime();
 	}
 
 	public CadastroStatus() {
@@ -78,19 +108,35 @@ public class CadastroStatus implements Serializable {
 		this.usuario = usuario;
 	}
 
-	public String getDetalhes() {
-		return detalhes;
-	}
-
-	public void setDetalhes(String detalhes) {
-		this.detalhes = detalhes;
-	}
-
 	public ContratoCobranca getContratoCobranca() {
 		return contratoCobranca;
 	}
 
 	public void setContratoCobranca(ContratoCobranca contratoCobranca) {
 		this.contratoCobranca = contratoCobranca;
+	}
+
+	public String getStatusAnteriror() {
+		return statusAnteriror;
+	}
+
+	public void setStatusAnteriror(String statusAnteriror) {
+		this.statusAnteriror = statusAnteriror;
+	}
+
+	public String getNumeroContrato() {
+		return numeroContrato;
+	}
+
+	public void setNumeroContrato(String numeroContrato) {
+		this.numeroContrato = numeroContrato;
+	}
+
+	public int getOrdemStatus() {
+		return ordemStatus;
+	}
+
+	public void setOrdemStatus(int ordemStatus) {
+		this.ordemStatus = ordemStatus;
 	}	
 }

@@ -2105,13 +2105,13 @@
 			<column name="dispositivoCertificado" />
 		</property>
 		
-		<list name="listCadastroStatus"
-			table="ContratoCobranca_CadastroStatus_Join" cascade="all" lazy="false">
-			<key column="idContratoCobranca" />
-			<list-index></list-index>
-			<many-to-many column="idCadastroStatus"
-				class="com.webnowbr.siscoat.cobranca.db.model.CadastroStatus" />
-		</list>	
+		<set name="listCadastroStatus" table="CadastroStatus" cascade="all"
+                 lazy="false" fetch="select">
+            <key>
+                <column name="contratoCobranca" not-null="true" />
+            </key>
+            <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.CadastroStatus" />
+        </set>
 		
 		<property name="solicitarNota" type="java.lang.String">
 			<column name="solicitarNota" />
@@ -2165,6 +2165,9 @@
 			<column name="apenasPagamentoIntegral" not-null="true" default="false"/>
 		</property>	
 		
+		<property name="statusEsteira" type="java.lang.String">
+			<column name="statusEsteira" />
+		</property>
 		
 	</class>
 </hibernate-mapping>

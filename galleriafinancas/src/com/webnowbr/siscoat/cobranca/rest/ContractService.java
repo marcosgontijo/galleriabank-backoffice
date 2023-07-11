@@ -267,7 +267,7 @@ public class ContractService {
 						}
 						
 						this.objetoContratoCobranca.setImovel(this.objetoImovelCobranca);
-
+						this.objetoContratoCobranca.populaStatusEsteira(loginBean.getUsuarioLogado());
 						// salva contrato
 						Long idContratoCobranca = criaContratoBD();
 						this.objetoContratoCobranca.setId(idContratoCobranca);
@@ -514,6 +514,9 @@ public class ContractService {
 					
 							// atualizar contrato
 							atualizarContratoBD();
+							
+							this.objetoContratoCobranca.populaStatusEsteira(loginBean.getUsuarioLogado());
+							
 							try {
 								contratoCobrancaDao.merge(this.objetoContratoCobranca);
 							} catch (RuntimeException e) {
