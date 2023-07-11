@@ -5541,7 +5541,6 @@ public class ContratoCobrancaMB {
 		return null;
 	}
 
-
 	public JasperPrint geraPDFPreAprovacao(long idContrato) throws JRException, IOException {
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 		final ReportUtil ReportUtil = new ReportUtil();
