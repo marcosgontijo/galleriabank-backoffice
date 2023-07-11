@@ -1,6 +1,7 @@
 package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -28,7 +29,7 @@ public class CadastroStatus implements Serializable {
 	private User usuario;
 	private ContratoCobranca contratoCobranca;
 	private String numeroContrato;
-	private int ordemStatus;
+	private BigInteger ordemStatus;
 	
 
 	public CadastroStatus(String status, String statusAnterior, ContratoCobranca contratoCobranca, User user) {
@@ -53,7 +54,7 @@ public class CadastroStatus implements Serializable {
 		
 		this.contratoCobranca = contratoCobranca;
 		numeroContrato = this.contratoCobranca.getNumeroContrato();
-		ordemStatus = this.contratoCobranca.getListCadastroStatus().size();
+		ordemStatus = CommonsUtil.bigIntegerValue(this.contratoCobranca.getListCadastroStatus().size());
 	}
 	
 	public Date gerarDataHoje() {
@@ -132,11 +133,11 @@ public class CadastroStatus implements Serializable {
 		this.numeroContrato = numeroContrato;
 	}
 
-	public int getOrdemStatus() {
+	public BigInteger getOrdemStatus() {
 		return ordemStatus;
 	}
 
-	public void setOrdemStatus(int ordemStatus) {
+	public void setOrdemStatus(BigInteger ordemStatus) {
 		this.ordemStatus = ordemStatus;
 	}	
 }
