@@ -1,5 +1,8 @@
 /build/
 /jasper/
-/bin/
 /target/
-/.gitignore
+/bin/
+/.settings/
+/.classpath
+/.metadata/
+/hibernate.cfg.xml/
