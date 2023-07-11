@@ -3454,7 +3454,20 @@ public class ContratoCobrancaMB {
 					"");
 			
 		} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoPaju(), "FBC")) {
+			//Gustavo Ribeiro Sobral
+			responsavel = rDao.findById((long) 1635);
+			takeBlipMB = new TakeBlipMB();
+			takeBlipMB.sendWhatsAppMessage(responsavel, "geracao_paju", "FBC",
+					this.objetoContratoCobranca.getNumeroContrato(), this.objetoContratoCobranca.getPagador().getNome(),
+					"");
 			
+			Responsavel responsavel2 = new Responsavel();
+			//Priscila Luz
+			responsavel2 = rDao.findById((long) 1636);
+			takeBlipMB = new TakeBlipMB();
+			takeBlipMB.sendWhatsAppMessage(responsavel2, "geracao_paju", "FBC",
+					this.objetoContratoCobranca.getNumeroContrato(), this.objetoContratoCobranca.getPagador().getNome(),
+					"");
 		}
 	}
 
@@ -3584,7 +3597,14 @@ public class ContratoCobrancaMB {
 								+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
 								mensagemHtmlTeste);
 			} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoPaju(), "FBC")) {
-				
+				eec.enviarEmailHtmlResponsavelAdms(
+						"gustavo.sobral@fbcadvogados.com", "[siscoat] Operação "
+								+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
+								mensagemHtmlTeste);
+				eec.enviarEmailHtmlResponsavelAdms(
+						"p.nogueira@fbcadvogados.com", "[siscoat] Operação "
+								+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
+								mensagemHtmlTeste);
 			}
 
 		} catch (Exception ex) {
