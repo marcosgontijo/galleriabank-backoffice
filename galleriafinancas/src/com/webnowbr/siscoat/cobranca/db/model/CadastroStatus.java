@@ -45,8 +45,7 @@ public class CadastroStatus implements Serializable {
 			}
 		}
 		
-		if(!CommonsUtil.semValor(user)
-				|| user.getId() > 0) {
+		if(!CommonsUtil.semValor(user) && user.getId() > 0) {
 			usuario = user;
 			if(!CommonsUtil.semValor(user.getLogin())) {
 				this.usuarioLogin = usuario.getLogin();
