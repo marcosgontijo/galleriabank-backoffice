@@ -41,7 +41,7 @@
 			<column name="numeroContrato" />
 		</property>
 		
-		<property name="ordemStatus" type="int">
+		<property name="ordemStatus" type="big_integer">
 			<column name="ordemStatus" />
 		</property>
 		
