@@ -67,7 +67,12 @@
 			<name>galleriabank repo</name>
 			<url>https://amurta.bytesafe.dev/maven/galleriabank</url>			
 		</repository>
+
+
 	</repositories>
+	
+
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.shiro</groupId>
@@ -319,6 +324,23 @@
 			<artifactId>jjwt-api</artifactId>
 			<version>0.11.5</version>
 		</dependency>
+				<!-- https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox -->
+		<dependency>
+		    <groupId>org.apache.pdfbox</groupId>
+		    <artifactId>pdfbox</artifactId>
+		    <version>2.0.29</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox-tools -->
+		<dependency>
+		    <groupId>org.apache.pdfbox</groupId>
+		    <artifactId>pdfbox-tools</artifactId>
+		    <version>2.0.29</version>
+		</dependency>
+		<dependency>
+		     <groupId>org.webjars</groupId>
+		     <artifactId>font-awesome</artifactId>
+		     <version>5.8.2</version>		
+		</dependency>
 		<!-- Dependencias Galleria Bank -->
 		<dependency>
 			<groupId>br.com.galleriabank.jwt</groupId>
@@ -328,7 +350,7 @@
 		<dependency>
 			<groupId>br.com.galleriabank.serasacrednet-cliente</groupId>
 			<artifactId>serasacrednet-cliente</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>br.com.galleriabank.serasarelato-cliente</groupId>
@@ -338,17 +360,13 @@
 		<dependency>
 			<groupId>br.com.galleriabank.dataengine-cliente</groupId>
 			<artifactId>dataengine-cliente</artifactId>
-			<version>1.1</version>
+			<version>1.2</version>
 		</dependency>
 		<dependency>
 			<groupId>br.com.galleriabank.netrin-cliente</groupId>
 			<artifactId>netrin-cliente</artifactId>
 			<version>1.1.5</version>
-		</dependency>
-		<dependency>
-		     <groupId>org.webjars</groupId>
-		     <artifactId>font-awesome</artifactId>
-		     <version>5.8.2</version>
-		</dependency>
+		</dependency>		
+
 	</dependencies>
 </project>
