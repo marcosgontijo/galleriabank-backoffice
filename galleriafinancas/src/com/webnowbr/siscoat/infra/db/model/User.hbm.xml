@@ -204,6 +204,13 @@
 				class="com.webnowbr.siscoat.infra.db.model.Termo" />
 		</list> 
 		
+		<property name="profilePajuNeves" type="boolean">
+			<column name="profilePajuNeves" not-null="true" default="false" />
+		</property>	
+		
+		<property name="profilePajuFBC" type="boolean">
+			<column name="profilePajuFBC" not-null="true" default="false" />
+		</property>
 
     </class>
 </hibernate-mapping>

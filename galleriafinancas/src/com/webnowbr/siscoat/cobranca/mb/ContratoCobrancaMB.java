@@ -3365,7 +3365,7 @@ public class ContratoCobrancaMB {
 									+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
 							""));
 
-			return clearFieldsGeracaoPAJU();
+			return clearFieldsGeracaoPAJU(objetoContratoCobranca.getAvaliacaoPaju());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -3410,7 +3410,13 @@ public class ContratoCobrancaMB {
 	}
 
 	public void changeGeracaoPAJU() {
-		this.controleWhatsAlteracaoGeracaoPAJU = this.objetoContratoCobranca.isPagtoLaudoConfirmada();
+		if (!CommonsUtil.semValor(this.objetoContratoCobranca.getAvaliacaoPaju())) {
+			this.objetoContratoCobranca.setPagtoLaudoConfirmada(true);
+			this.controleWhatsAlteracaoGeracaoPAJU = this.objetoContratoCobranca.isPagtoLaudoConfirmada();
+		} else {
+			this.objetoContratoCobranca.setPagtoLaudoConfirmada(false);
+		}
+		
 	}
 
 	public void changeLaudoRecebido() {
@@ -3434,69 +3440,19 @@ public class ContratoCobrancaMB {
 	public void notificaPAJUWhatsApp() {
 		Responsavel responsavel = new Responsavel();
 		ResponsavelDao rDao = new ResponsavelDao();
-
-		// "Adelaide Cristina Grilo Fornari"
-		/*
-		 * responsavel = rDao.findById((long) 793);
-		 * 
-		 * TakeBlipMB takeBlipMB = new TakeBlipMB();
-		 * takeBlipMB.sendWhatsAppMessage(responsavel, "geracao_paju",
-		 * "Neves e Maggioni", this.objetoContratoCobranca.getNumeroContrato(),
-		 * this.objetoContratoCobranca.getPagador().getNome(), "");
-		 */
-
-		// "Pâmela Montesanti Demuci"
 		TakeBlipMB takeBlipMB = new TakeBlipMB();
-		/*
-		 * responsavel = rDao.findById((long) 795);
-		 * 
-		 * 
-		 * takeBlipMB.sendWhatsAppMessage(responsavel, "geracao_paju",
-		 * "Neves e Maggioni", this.objetoContratoCobranca.getNumeroContrato(),
-		 * this.objetoContratoCobranca.getPagador().getNome(), "");
-		 */
-
-		// "Luciana Melara Alves Sant'Ana"
-		/*
-		 * responsavel = rDao.findById((long) 796);
-		 * 
-		 * takeBlipMB = new TakeBlipMB(); takeBlipMB.sendWhatsAppMessage(responsavel,
-		 * "geracao_paju", "Neves e Maggioni",
-		 * this.objetoContratoCobranca.getNumeroContrato(),
-		 * this.objetoContratoCobranca.getPagador().getNome(), "");
-		 */
-
-		// "João Paulo Gomes Massaro"
-
-		responsavel = rDao.findById((long) 797);
-
-		takeBlipMB = new TakeBlipMB();
-		takeBlipMB.sendWhatsAppMessage(responsavel, "geracao_paju", "Neves e Maggioni",
-				this.objetoContratoCobranca.getNumeroContrato(), this.objetoContratoCobranca.getPagador().getNome(),
-				"");
-		/*
-		 * responsavel = rDao.findById((long) 793);
-		 * 
-		 * takeBlipMB = new TakeBlipMB(); takeBlipMB.sendWhatsAppMessage(responsavel,
-		 * "geracao_paju", "Adelaide Cristina Grilo Fornari",
-		 * this.objetoContratoCobranca.getNumeroContrato(),
-		 * this.objetoContratoCobranca.getPagador().getNome(), "");
-		 * 
-		 * responsavel = rDao.findById((long) 796);
-		 * 
-		 * takeBlipMB.sendWhatsAppMessage(responsavel, "geracao_paju",
-		 * "Luciana Melara Alves Sant'Ana",
-		 * this.objetoContratoCobranca.getNumeroContrato(),
-		 * this.objetoContratoCobranca.getPagador().getNome(), "");
-		 * 
-		 * 
-		 * // "Maria Clara Pazin Costa" responsavel = rDao.findById((long) 798);
-		 * 
-		 * takeBlipMB = new TakeBlipMB(); takeBlipMB.sendWhatsAppMessage(responsavel,
-		 * "geracao_paju", "Neves e Maggioni",
-		 * this.objetoContratoCobranca.getNumeroContrato(),
-		 * this.objetoContratoCobranca.getPagador().getNome(), "");
-		 */
+		
+		if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoPaju(), "Neves")) {
+			// "João Paulo Gomes Massaro" (Neves)
+			responsavel = rDao.findById((long) 797);
+			takeBlipMB = new TakeBlipMB();
+			takeBlipMB.sendWhatsAppMessage(responsavel, "geracao_paju", "Neves e Maggioni",
+					this.objetoContratoCobranca.getNumeroContrato(), this.objetoContratoCobranca.getPagador().getNome(),
+					"");
+			
+		} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoPaju(), "FBC")) {
+			
+		}
 	}
 
 	public void notificaGalacheWhatsApp() {
@@ -3603,26 +3559,30 @@ public class ContratoCobrancaMB {
 		try {
 			ResponsavelDao rDao = new ResponsavelDao();
 			EnviaEmail eec = new EnviaEmail();
-			eec.enviarEmailHtmlResponsavelAdms(
-					"a.fornari@nevesemaggioni.com.br", "[siscoat] Operação "
-							+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
-					mensagemHtmlTeste);
-			eec.enviarEmailHtmlResponsavelAdms(
-					"m.pazin@nevesemaggioni.com.br", "[siscoat] Operação "
-							+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
-					mensagemHtmlTeste);
-			eec.enviarEmailHtmlResponsavelAdms(
-					"p.demuci@nevesemaggioni.com.br", "[siscoat] Operação "
-							+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
-					mensagemHtmlTeste);
-			eec.enviarEmailHtmlResponsavelAdms(
-					"l.melara@nevesemaggioni.com.br", "[siscoat] Operação "
-							+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
-					mensagemHtmlTeste);
-			eec.enviarEmailHtmlResponsavelAdms(
-					"j.massaro@nevesemaggioni.com.br", "[siscoat] Operação "
-							+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
-					mensagemHtmlTeste);
+			if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoPaju(), "Neves")) {
+				eec.enviarEmailHtmlResponsavelAdms(
+						"a.fornari@nevesemaggioni.com.br", "[siscoat] Operação "
+								+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
+								mensagemHtmlTeste);
+				eec.enviarEmailHtmlResponsavelAdms(
+						"m.pazin@nevesemaggioni.com.br", "[siscoat] Operação "
+								+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
+								mensagemHtmlTeste);
+				eec.enviarEmailHtmlResponsavelAdms(
+						"p.demuci@nevesemaggioni.com.br", "[siscoat] Operação "
+								+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
+								mensagemHtmlTeste);
+				eec.enviarEmailHtmlResponsavelAdms(
+						"l.melara@nevesemaggioni.com.br", "[siscoat] Operação "
+								+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
+								mensagemHtmlTeste);
+				eec.enviarEmailHtmlResponsavelAdms(
+						"j.massaro@nevesemaggioni.com.br", "[siscoat] Operação "
+								+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
+								mensagemHtmlTeste);
+			} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoPaju(), "FBC")) {
+				
+			}
 
 		} catch (Exception ex) {
 			System.out.println(ex.getMessage());
@@ -3703,7 +3663,11 @@ public class ContratoCobrancaMB {
 
 				// notifica a Compass caso for setado contrato para eles
 				if (this.controleWhatsAlteracaoGeracaoPAJU) {
-					this.objetoContratoCobranca.setAnalistaGeracaoPAJU(responsavelDao.findById((long) 797));
+					if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoPaju(), "Neves")) {
+						this.objetoContratoCobranca.setAnalistaGeracaoPAJU(responsavelDao.findById((long) 797));
+					} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoPaju(), "FBC")) {
+						//this.objetoContratoCobranca.setAnalistaGeracaoPAJU(responsavelDao.findById((long) 797));			
+					}
 					notificaPAJUWhatsApp();
 					notificaPAJUEmail();
 				} else {
@@ -3842,7 +3806,7 @@ public class ContratoCobrancaMB {
 				}
 
 				if (this.tituloTelaConsultaPreStatus.equals("Geração de PAJU")) {
-					return clearFieldsGeracaoPAJU();
+					return clearFieldsGeracaoPAJU(objetoContratoCobranca.getAvaliacaoPaju());
 				}
 				if (this.tituloTelaConsultaPreStatus.equals("Aguardando Análise")) {
 					return geraConsultaContratosPorStatus("Aguardando Análise");
@@ -13106,7 +13070,7 @@ public class ContratoCobrancaMB {
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatusAvaliacaoImovelGalache.xhtml";
 	}
 
-	public String clearFieldsGeracaoPAJU() {
+	public String clearFieldsGeracaoPAJU(String empresaPaju) {
 
 		clearMensagensWhatsApp();
 
@@ -13114,8 +13078,14 @@ public class ContratoCobrancaMB {
 
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.contratosPendentes = new ArrayList<ContratoCobranca>();
-
-		this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Geração do PAJU");
+		if(CommonsUtil.mesmoValor(empresaPaju, "Neves")) {
+			this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Geração do PAJU - Neves");
+		} else if(CommonsUtil.mesmoValor(empresaPaju, "FBC")){
+			this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Geração do PAJU - FBC");
+		} else {
+			this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Geração do PAJU");
+		}
+		
 
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatusGeracaoPAJU.xhtml";
 	}

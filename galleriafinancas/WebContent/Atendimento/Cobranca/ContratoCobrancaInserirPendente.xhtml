@@ -1819,6 +1819,18 @@
 								<p:ajax event="valueChange" update=":form:Status" 
 								listener="#{contratoCobrancaMB.changeAvaliadorLaudo}"/> 											
 							</p:selectOneMenu>	
+							
+							<p:outputLabel styleClass="labelBold">Avaliação PAJU: </p:outputLabel>
+							<p:selectOneMenu id="avaliacaoLaudo"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoPaju}"
+								label="Tipo">
+								<f:selectItem itemValue="" itemLabel="" />
+								<f:selectItem itemValue="Neves" itemLabel="Neves" />
+								<f:selectItem itemValue="FBC" itemLabel="FBC" />
+								<f:selectItem itemValue="Outro" itemLabel="Outro" />
+								<p:ajax event="valueChange" update=":form:Status"
+									listener="#{contratoCobrancaMB.changeGeracaoPAJU}" />											
+							</p:selectOneMenu>	
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>

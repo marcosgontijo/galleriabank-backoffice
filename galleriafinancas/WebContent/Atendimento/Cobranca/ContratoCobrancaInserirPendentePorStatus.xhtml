@@ -189,21 +189,24 @@
 										style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
 										border-radius: 5px; padding: 10px;">
-
+										
 										<p:outputLabel styleClass="labelBold"
 											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial 
-											and !contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}">PAJU Pedido: </p:outputLabel>				
-										<p:selectBooleanButton id="pedirPajuBtn"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada}"
-											onLabel="Pedido" offLabel="Não Pedido"
-											onIcon="ui-icon-check" offIcon="ui-icon-close"
-											style="width:=80px"
+											and !contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}"> Avaliação PAJU: 
+											</p:outputLabel>
+										<p:selectOneMenu id="avaliacaoLaudo"
 											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial 
-											and !contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}">
+											and !contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoPaju}"
+											label="Tipo">
+											<f:selectItem itemValue="" itemLabel="" />
+											<f:selectItem itemValue="Neves" itemLabel="Neves" />
+											<f:selectItem itemValue="FBC" itemLabel="FBC" />
+											<f:selectItem itemValue="Outro" itemLabel="Outro" />
 											<p:ajax event="valueChange" update=":form:Status"
 												listener="#{contratoCobrancaMB.changeGeracaoPAJU}" />
-										</p:selectBooleanButton>
-								
+										</p:selectOneMenu>
+
 										<p:outputLabel styleClass="labelBold"
 											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}">Pendenciar</p:outputLabel>
 										<p:selectBooleanCheckbox

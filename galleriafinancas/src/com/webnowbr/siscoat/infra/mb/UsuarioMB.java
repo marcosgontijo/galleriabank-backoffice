@@ -469,6 +469,24 @@ public class UsuarioMB {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
+			
+			gAdm = gDao.findByFilter("acronym", "PROFILE_PAJU_NEVES");
+			if (objetoUsuario.isProfilePajuNeves()) {
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}
+			}
+			
+			gAdm = gDao.findByFilter("acronym", "PROFILE_PAJU_FBC");
+			if (objetoUsuario.isProfilePajuFBC()) {
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}
+			}
 
 			gAdm = gDao.findByFilter("acronym", "PROFILE_MARKETING");
 			if (objetoUsuario.isProfileMarketing()) {

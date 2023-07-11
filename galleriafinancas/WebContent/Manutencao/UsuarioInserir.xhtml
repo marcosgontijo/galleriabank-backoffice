@@ -495,6 +495,32 @@
 							</shiro:hasAnyRoles>
 						</h:panelGroup>
 						
+						<h:outputLabel for="profilePajuNeves" value="PAJU - NEVES"
+							class="labelBold" />
+						<h:panelGroup>
+							<p:selectBooleanButton id="profilePajuNeves"
+								value="#{usuarioMB.objetoUsuario.profilePajuNeves}" onLabel="Sim"
+								offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+								style="width:60px">
+							</p:selectBooleanButton>
+							<shiro:hasAnyRoles name="ROOT">
+								<h:outputLabel value="PROFILE_PAJU_NEVES" />
+							</shiro:hasAnyRoles>
+						</h:panelGroup>
+						
+						<h:outputLabel for="profilePajuFBC" value="PAJU - FBC"
+							class="labelBold" />
+						<h:panelGroup>
+							<p:selectBooleanButton id="profilePajuFBC"
+								value="#{usuarioMB.objetoUsuario.profilePajuFBC}" onLabel="Sim"
+								offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+								style="width:60px">
+							</p:selectBooleanButton>
+							<shiro:hasAnyRoles name="ROOT">
+								<h:outputLabel value="PROFILE_PAJU_FBC" />
+							</shiro:hasAnyRoles>
+						</h:panelGroup>
+						
 						<h:outputLabel for="marketing"
 							value="Marketing:" class="labelBold" />
 						<h:panelGroup>

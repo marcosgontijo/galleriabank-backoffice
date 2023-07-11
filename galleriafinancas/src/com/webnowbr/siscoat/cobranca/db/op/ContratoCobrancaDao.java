@@ -6632,6 +6632,22 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 								+ " and pedidoLaudoPajuComercial = true and pagtoLaudoConfirmada = true and pajurFavoravel = false";
 					}
 					
+					if (tipoConsulta.equals("Geração do PAJU - Neves")) {
+						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
+								+ " and cadastroAprovadoValor = 'Aprovado' "
+								+ " and pendenciaLaudoPaju = false "
+								+ " and pedidoLaudoPajuComercial = true and pagtoLaudoConfirmada = true and pajurFavoravel = false"
+								+ " and avaliacaoPaju = 'Neves' ";
+					}
+					
+					if (tipoConsulta.equals("Geração do PAJU - FBC")) {
+						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
+								+ " and cadastroAprovadoValor = 'Aprovado' "
+								+ " and pendenciaLaudoPaju = false "
+								+ " and pedidoLaudoPajuComercial = true and pagtoLaudoConfirmada = true and pajurFavoravel = false"
+								+ " and avaliacaoPaju = 'FBC' ";
+					}
+					
 					if (tipoConsulta.equals("Pedir PAJU")) {
 						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true "
 								+ " and cadastroAprovadoValor = 'Aprovado' "

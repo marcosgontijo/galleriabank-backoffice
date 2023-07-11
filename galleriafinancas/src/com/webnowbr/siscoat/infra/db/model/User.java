@@ -101,6 +101,8 @@ public final class User implements Serializable {
     private boolean profileAvaliadorImovelCompass;
     private boolean profileAvaliadorImovelGalache;
     private boolean profileLaudo; 
+    private boolean profilePajuNeves; 
+    private boolean profilePajuFBC;
     
     private List<Termo> listTermos;
     
@@ -688,5 +690,20 @@ public final class User implements Serializable {
 	public void setListTermos(List<Termo> listTermos) {
 		this.listTermos = listTermos;
 	}
-	
+
+	public boolean isProfilePajuNeves() {
+		return profilePajuNeves;
+	}
+
+	public void setProfilePajuNeves(boolean profilePajuNeves) {
+		this.profilePajuNeves = profilePajuNeves;
+	}
+
+	public boolean isProfilePajuFBC() {
+		return profilePajuFBC;
+	}
+
+	public void setProfilePajuFBC(boolean profilePajuFBC) {
+		this.profilePajuFBC = profilePajuFBC;
+	}	
 }
