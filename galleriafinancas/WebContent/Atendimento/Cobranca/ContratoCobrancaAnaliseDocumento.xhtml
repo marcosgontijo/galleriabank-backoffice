@@ -16,7 +16,9 @@
 	<shiro:hasAnyRoles
 		name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO">
 		<p:panel id="ArquivosAnalisados"
-			style="margin-bottom:10px;text-align: center;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite' }">
+			style="margin-bottom:10px;text-align: center;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' 
+			and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' 
+			and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite' }">
 			<f:facet name="header">
 				<h:outputText value="Analise Documentos" />
 				<p:commandButton value="Atualizar listagem" ajax="true"
