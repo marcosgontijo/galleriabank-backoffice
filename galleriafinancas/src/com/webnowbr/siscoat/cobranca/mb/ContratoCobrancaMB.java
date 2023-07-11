@@ -5541,22 +5541,7 @@ public class ContratoCobrancaMB {
 		return null;
 	}
 
-	public StreamedContent downloadModeloPaju() throws SiscoatException {	
-		PajuService pajuService = new PajuService();
-		String arquivoWord = "C:\\Galleria\\siscoat\\exemplos\\Modelo Parecer.docx";
-		byte[] modeloPaju = pajuService.generateModeloPaju(this.objetoContratoCobranca, arquivoWord);
-		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
-				FacesContext.getCurrentInstance());
-		String identificacao = objetoContratoCobranca.getNumeroContrato();
-		if (CommonsUtil.semValor(identificacao))
-			gerador.open("Galleria Bank - ModeloPAJU.docx");
-		else
-			gerador.open(String.format("Galleria Bank - ModeloPAJU %s.docx", identificacao));
-		gerador.feed(modeloPaju);
-		gerador.close();
-		
-		return null;
-	}
+
 	public JasperPrint geraPDFPreAprovacao(long idContrato) throws JRException, IOException {
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 		final ReportUtil ReportUtil = new ReportUtil();
