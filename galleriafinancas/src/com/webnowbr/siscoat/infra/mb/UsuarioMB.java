@@ -479,7 +479,7 @@ public class UsuarioMB {
 				}
 			}
 			
-			gAdm = gDao.findByFilter("acronym", "PROFILE_PAJU_Luvison");
+			gAdm = gDao.findByFilter("acronym", "PROFILE_PAJU_LUVISON");
 			if (objetoUsuario.isProfilePajuLuvison()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
