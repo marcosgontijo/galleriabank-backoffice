@@ -63,6 +63,8 @@
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/PagadorRecebedorConsulta.hbm.xml"/>
        	
  		<mapping resource="com/webnowbr/siscoat/common/db/model/BoletosRemessa.hbm.xml"/> 
+ 		
+ 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/RelacionamentoPagadorRecebedor.hbm.xml"/> 
        	
        	<mapping resource="com/webnowbr/siscoat/infra/db/model/Termo.hbm.xml"/>
        	<mapping resource="com/webnowbr/siscoat/infra/db/model/TermoUsuario.hbm.xml"/>       					 		

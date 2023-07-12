@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -11,6 +12,7 @@ import java.net.URL;
 import javax.faces.application.FacesMessage;
 
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
+import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorConsulta;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
@@ -21,6 +23,11 @@ import com.webnowbr.siscoat.infra.db.model.User;
 
 import br.com.galleriabank.serasacrednet.cliente.model.CredNet;
 import br.com.galleriabank.serasacrednet.cliente.model.PessoaParticipacao;
+import br.com.galleriabank.serasarelato.cliente.model.Administrador;
+import br.com.galleriabank.serasarelato.cliente.model.Participada;
+import br.com.galleriabank.serasarelato.cliente.model.Participante;
+import br.com.galleriabank.serasarelato.cliente.model.Relato;
+import br.com.galleriabank.serasarelato.cliente.model.Socio;
 import br.com.galleriabank.serasarelato.cliente.util.GsonUtil;
 
 public class SerasaService {
@@ -54,7 +61,9 @@ public class SerasaService {
 				serasaCriarConsulta(documentoAnalise);
 		}
 		
-
+		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+		DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
+		
 		if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa())) {
 
 			CredNet credNet = GsonUtil.fromJson(documentoAnalise.getRetornoSerasa(), CredNet.class);
@@ -67,20 +76,58 @@ public class SerasaService {
 			}
 
 			if (!CommonsUtil.semValor(credNet.getParticipacoes())) {
-				DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
-
-				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
-
 				for (PessoaParticipacao pessoaParticipacao : credNet.getParticipacoes()) {
-
-					documentoAnaliseService.cadastrarPessoRetornoCredNet(pessoaParticipacao, user, documentoAnaliseDao,
+					PagadorRecebedor empresa = documentoAnaliseService.cadastrarPessoRetornoCredNet(pessoaParticipacao, user, documentoAnaliseDao,
 							pagadorRecebedorService, documentoAnalise.getContratoCobranca(),
 							"Empresa Vinculada ao " + documentoAnalise.getMotivoAnalise());
+					BigDecimal porcentagem = CommonsUtil.bigDecimalValue(pessoaParticipacao.getParticipacao());
+					pagadorRecebedorService.geraRelacionamento(empresa, "Socio", documentoAnalise.getPagador(),
+							porcentagem);
+					//TODO RELACIONAMENTO CREDNET AQUI
 				}
 			}
-
+		} else if (CommonsUtil.mesmoValor("PJ", documentoAnalise.getTipoPessoa())) {
+			
+			Relato relato = GsonUtil.fromJson(documentoAnalise.getRetornoSerasa(), Relato.class);
+			PagadorRecebedor pagador = null;
+			if(!CommonsUtil.semValor(relato.getDadosCadastrais())) {
+				pagador = documentoAnaliseService.cadastrarPagadorRetornoRelato(relato.getDadosCadastrais(), pagadorRecebedorService);
+			}
+			
+			if(!CommonsUtil.semValor(relato.getParticipacoes())
+					&& !CommonsUtil.semValor(relato.getParticipacoes().getParticipadas())) {
+				for (Participada participada : relato.getParticipacoes().getParticipadas()) {
+					PagadorRecebedor pagadorParticipada = documentoAnaliseService
+							.cadastrarParticipadaRetornoRelato(participada, pagadorRecebedorService);
+					for (Participante participantes : participada.getParticipantes()) {
+						BigDecimal porcentagem = CommonsUtil.bigDecimalValue(participantes.getParticipacao() / 100);
+						PagadorRecebedor pagadorParticipante = documentoAnaliseService
+								.cadastrarParticipanteRetornoRelato(participantes, pagadorRecebedorService);
+						pagadorRecebedorService.geraRelacionamento(pagadorParticipada, "Socio", pagadorParticipante,
+								porcentagem);
+					}
+					pagadorRecebedorService.geraRelacionamento(pagador, "Participada", pagadorParticipada,
+							BigDecimal.ZERO);
+				}
+			}
+			
+			if(!CommonsUtil.semValor(relato.getQuadroAdminsitrativo())) {
+				for (Administrador administrador : relato.getQuadroAdminsitrativo().getAdministradores()) {
+					PagadorRecebedor administradorPagador =
+							documentoAnaliseService.cadastrarAdministradorRetornoRelato(administrador, pagadorRecebedorService);					
+					pagadorRecebedorService.geraRelacionamento(pagador, "Administrador", administradorPagador,
+							BigDecimal.ZERO);
+				}
+				
+				for (Socio socio : relato.getQuadroAdminsitrativo().getSocios()) {
+					PagadorRecebedor socioPagador =
+							documentoAnaliseService.cadastrarSocioRetornoRelato(socio, pagadorRecebedorService);					
+					BigDecimal porcentagem = CommonsUtil.bigDecimalValue(socio.getParticipacao());
+					pagadorRecebedorService.geraRelacionamento(pagador, "Socio", socioPagador,
+							porcentagem);
+				}
+			}
 		}
-
 	}
 
 	public FacesMessage serasaCriarConsulta(DocumentoAnalise documentoAnalise) { // POST para gerar consulta
