@@ -1123,8 +1123,8 @@ public class ContratoCobranca implements Serializable {
 							&& CommonsUtil.mesmoValor(c.getAvaliacaoPaju(), "Neves")) {
 						status = status + "Ag. PAJU Neves";
 					} else if (!CommonsUtil.semValor(c.getAvaliacaoPaju())
-							&& CommonsUtil.mesmoValor(c.getAvaliacaoPaju(), "FBC")) {
-						status = status + "Ag. PAJU FBC";
+							&& CommonsUtil.mesmoValor(c.getAvaliacaoPaju(), "Luvison")) {
+						status = status + "Ag. PAJU Luvison";
 					} else {
 						status = status + "Ag. PAJU";
 					}

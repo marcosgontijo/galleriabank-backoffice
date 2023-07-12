@@ -3453,11 +3453,13 @@ public class ContratoCobrancaMB {
 					this.objetoContratoCobranca.getNumeroContrato(), this.objetoContratoCobranca.getPagador().getNome(),
 					"");
 			
-		} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoPaju(), "FBC")) {
+		} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoPaju(), "Luvison")) {
+			//TODO adicionar resps Luvison Whats
+			/*
 			//Gustavo Ribeiro Sobral
 			responsavel = rDao.findById((long) 1635);
 			takeBlipMB = new TakeBlipMB();
-			takeBlipMB.sendWhatsAppMessage(responsavel, "geracao_paju", "FBC",
+			takeBlipMB.sendWhatsAppMessage(responsavel, "geracao_paju", "Luvison",
 					this.objetoContratoCobranca.getNumeroContrato(), this.objetoContratoCobranca.getPagador().getNome(),
 					"");
 			
@@ -3465,9 +3467,9 @@ public class ContratoCobrancaMB {
 			//Priscila Luz
 			responsavel2 = rDao.findById((long) 1636);
 			takeBlipMB = new TakeBlipMB();
-			takeBlipMB.sendWhatsAppMessage(responsavel2, "geracao_paju", "FBC",
+			takeBlipMB.sendWhatsAppMessage(responsavel2, "geracao_paju", "Luvison",
 					this.objetoContratoCobranca.getNumeroContrato(), this.objetoContratoCobranca.getPagador().getNome(),
-					"");
+					"");*/
 		}
 	}
 
@@ -3596,7 +3598,9 @@ public class ContratoCobrancaMB {
 						"j.massaro@nevesemaggioni.com.br", "[siscoat] Operação "
 								+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
 								mensagemHtmlTeste);
-			} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoPaju(), "FBC")) {
+			} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoPaju(), "Luvison")) {
+				//TODO Luvison Emal
+				/*
 				eec.enviarEmailHtmlResponsavelAdms(
 						"gustavo.sobral@fbcadvogados.com", "[siscoat] Operação "
 								+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
@@ -3604,7 +3608,7 @@ public class ContratoCobrancaMB {
 				eec.enviarEmailHtmlResponsavelAdms(
 						"p.nogueira@fbcadvogados.com", "[siscoat] Operação "
 								+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
-								mensagemHtmlTeste);
+								mensagemHtmlTeste);*/
 			}
 
 		} catch (Exception ex) {
@@ -3688,7 +3692,7 @@ public class ContratoCobrancaMB {
 				if (this.controleWhatsAlteracaoGeracaoPAJU) {
 					if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoPaju(), "Neves")) {
 						this.objetoContratoCobranca.setAnalistaGeracaoPAJU(responsavelDao.findById((long) 797));
-					} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoPaju(), "FBC")) {
+					} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoPaju(), "Luvison")) {
 						//this.objetoContratoCobranca.setAnalistaGeracaoPAJU(responsavelDao.findById((long) 797));			
 					}
 					notificaPAJUWhatsApp();
@@ -12742,8 +12746,8 @@ public class ContratoCobrancaMB {
 								&& CommonsUtil.mesmoValor(c.getAvaliacaoPaju(), "Neves")) {
 							status = status + "Ag. PAJU Neves";
 						} else if (!CommonsUtil.semValor(c.getAvaliacaoPaju())
-								&& CommonsUtil.mesmoValor(c.getAvaliacaoPaju(), "FBC")) {
-							status = status + "Ag. PAJU FBC";
+								&& CommonsUtil.mesmoValor(c.getAvaliacaoPaju(), "Luvison")) {
+							status = status + "Ag. PAJU Luvison";
 						} else {
 							status = status + "Ag. PAJU";
 						}
@@ -13136,8 +13140,8 @@ public class ContratoCobrancaMB {
 		this.contratosPendentes = new ArrayList<ContratoCobranca>();
 		if(CommonsUtil.mesmoValor(empresaPaju, "Neves")) {
 			this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Geração do PAJU - Neves");
-		} else if(CommonsUtil.mesmoValor(empresaPaju, "FBC")){
-			this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Geração do PAJU - FBC");
+		} else if(CommonsUtil.mesmoValor(empresaPaju, "Luvison")){
+			this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Geração do PAJU - Luvison");
 		} else {
 			this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Geração do PAJU");
 		}
