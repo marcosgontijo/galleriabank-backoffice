@@ -38,8 +38,12 @@ public class CadastroStatus implements Serializable {
 		this.statusAnteriror = statusAnterior;
 		this.data = gerarDataHoje();
 		
-		if(CommonsUtil.mesmoValor(status, "Baixado")) {
-			if(CommonsUtil.mesmoValor(contratoCobranca.getBaixadoUsuario(), "Sistema")) {
+		if(CommonsUtil.mesmoValor(status, "Baixado") || CommonsUtil.mesmoValor(status, "Lead Arquivado")) {
+			if(CommonsUtil.mesmoValor(status, "Baixado") &&
+					CommonsUtil.mesmoValor(contratoCobranca.getBaixadoUsuario(), "Sistema")) {
+				UserDao userDao = new UserDao();
+				user = userDao.findById((long) -1);
+			} else if (CommonsUtil.mesmoValor(status, "Lead Arquivado")) { 
 				UserDao userDao = new UserDao();
 				user = userDao.findById((long) -1);
 			}
