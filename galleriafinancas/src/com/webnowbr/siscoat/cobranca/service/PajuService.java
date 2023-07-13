@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -79,10 +80,13 @@ public class PajuService {
 		this.arquivoWord = arquivoWord;
 		WordprocessingMLPackage docTemplate;
 	
+		InputStream resourceAsStream = getClass().getResourceAsStream("/resource/" + arquivoWord);
+		
 
-		File arquivoTemplate = new File(arquivoWord);
+//		File arquivoTemplate = new File(resourceAsStream);
 		try {
-			docTemplate = carregaTemplate(arquivoTemplate);
+//			docTemplate = carregaTemplate(resourceAsStream);
+			docTemplate = WordprocessingMLPackage.load(resourceAsStream);
 		} catch (Exception e) {
 			throw new SiscoatException("Erro ao gerar documento", e);
 		}

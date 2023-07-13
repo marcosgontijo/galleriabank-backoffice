@@ -5510,7 +5510,7 @@ public class ContratoCobrancaMB {
 
 	public StreamedContent downloadModeloPaju() throws SiscoatException {	
 		PajuService pajuService = new PajuService();
-		String arquivoWord = "C:\\Galleria\\siscoat\\exemplos\\Modelo Parecer.docx";
+		String arquivoWord = "Modelo Parecer.docx";
 		byte[] modeloPaju = pajuService.generateModeloPaju(this.objetoContratoCobranca, arquivoWord);
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 				FacesContext.getCurrentInstance());
