@@ -114,7 +114,6 @@ import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobrancaResumo;
 import com.webnowbr.siscoat.cobranca.db.model.AnaliseComite;
 import com.webnowbr.siscoat.cobranca.db.model.Averbacao;
 import com.webnowbr.siscoat.cobranca.db.model.BoletoKobana;
-import com.webnowbr.siscoat.cobranca.db.model.CadastroStatus;
 import com.webnowbr.siscoat.cobranca.db.model.CcbContrato;
 import com.webnowbr.siscoat.cobranca.db.model.CcbProcessosJudiciais;
 import com.webnowbr.siscoat.cobranca.db.model.ContasPagar;
@@ -164,6 +163,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.cobranca.db.op.SeguradoDAO;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
+import com.webnowbr.siscoat.cobranca.service.PajuService;
 import com.webnowbr.siscoat.cobranca.service.ScrService;
 import com.webnowbr.siscoat.cobranca.service.SerasaService;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
@@ -179,6 +179,7 @@ import com.webnowbr.siscoat.common.ValidaCNPJ;
 import com.webnowbr.siscoat.common.ValidaCPF;
 import com.webnowbr.siscoat.db.dao.DAOException;
 import com.webnowbr.siscoat.db.dao.DBConnectionException;
+import com.webnowbr.siscoat.exception.SiscoatException;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
@@ -5504,6 +5505,24 @@ public class ContratoCobrancaMB {
 			}
 		}
 
+	}
+	
+
+	public StreamedContent downloadModeloPaju() throws SiscoatException {	
+		PajuService pajuService = new PajuService();
+		String arquivoWord = "C:\\Galleria\\siscoat\\exemplos\\Modelo Parecer.docx";
+		byte[] modeloPaju = pajuService.generateModeloPaju(this.objetoContratoCobranca, arquivoWord);
+		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+				FacesContext.getCurrentInstance());
+		String identificacao = objetoContratoCobranca.getNumeroContrato();
+		if (CommonsUtil.semValor(identificacao))
+			gerador.open("Galleria Bank - ModeloPAJU.docx");
+		else
+			gerador.open(String.format("Galleria Bank - ModeloPAJU %s.docx", identificacao));
+		gerador.feed(modeloPaju);
+		gerador.close();
+		
+		return null;
 	}
 
 	public StreamedContent downloadPreAprovadoPDF(long idContrato) throws JRException, IOException {

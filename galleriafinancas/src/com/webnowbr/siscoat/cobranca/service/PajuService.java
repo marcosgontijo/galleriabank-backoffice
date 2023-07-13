@@ -4,8 +4,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.docx4j.Docx4J;
 import org.docx4j.XmlUtils;
 import org.docx4j.jaxb.Context;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
@@ -18,6 +23,7 @@ import org.docx4j.wml.ContentAccessor;
 import org.docx4j.wml.ObjectFactory;
 import org.docx4j.wml.P;
 import org.docx4j.wml.Tbl;
+import org.docx4j.wml.Tc;
 import org.docx4j.wml.Text;
 import org.springframework.expression.EvaluationException;
 import org.springframework.expression.Expression;
@@ -30,21 +36,30 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoTipoTemplate;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoTipoTemplateBloco;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoTipoTemplateCampo;
+import com.webnowbr.siscoat.cobranca.db.model.DocketEstados;
+import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
+import com.webnowbr.siscoat.cobranca.db.op.DocketDao;
+import com.webnowbr.siscoat.cobranca.db.op.DocketEstadosDao;
+import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.db.template.ContratoTipoTemplateDao;
+import com.webnowbr.siscoat.cobranca.model.docket.DocketDocumento;
+import com.webnowbr.siscoat.cobranca.model.docket.DocketRetornoConsulta;
+import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.WordUtil;
 import com.webnowbr.siscoat.exception.SiscoatException;
-
-import br.com.galleriabank.serasacrednet.cliente.model.PessoaParticipacao;
 
 public class PajuService {
 
 	private static final String BLOCO_DOCUMENTO = "D";
 	private static final String BLOCO_CABECALHO = "C";
-	private static final String BLOCO_PESSOA_CONSULTA = "PC";
 	private static final String BLOCO_PESSOA_FISICA_CONSULTA = "PFC";	
-	private static final String BLOCO_DEBITOS_IPTU = "DB_IPTU";
-	private static final String BLOCO_DEBITOS_CONDOMNIO = "DB_COND";
-
+	private static final String BLOCO_PESSOA_FISICA_CERTIDOES = "PFCERT";
+	private static final String BLOCO_PESSOA_FISICA_DOCUMENTOS = "PFDOCS";	
+	
+	private static final String BLOCO_PESSOA_JURIDICA_CONSULTA = "PJC";	
+	private static final String BLOCO_PESSOA_JURIDICA_CERTIDOES = "PJCERT";
+	private static final String BLOCO_PESSOA_JURIDICA_DOCUMENTOS = "PJDOCS";
+	
 	private ExpressionParser parser;
 
 	private StandardEvaluationContext context;
@@ -54,13 +69,16 @@ public class PajuService {
 	private ContratoCobranca contrato;
 	
 	private WordUtil wordUtil;
+	private List<DocumentoAnalise> listaDocumentoAnalise;
 
 //	retorna  o doc em base64
 	public byte[] generateModeloPaju(ContratoCobranca contrato, String arquivoWord) throws SiscoatException {
 
-		this.contrato = contrato;
+		setContrato(contrato);
+//		this.contrato = contrato;
 		this.arquivoWord = arquivoWord;
 		WordprocessingMLPackage docTemplate;
+	
 
 		File arquivoTemplate = new File(arquivoWord);
 		try {
@@ -77,6 +95,27 @@ public class PajuService {
 		ContratoTipoTemplate ContratoTipoTemplate = contratoTipoTemplateDao.getTemplate("PJ");
 		List<ContratoTipoTemplateBloco> lstBlocos = ContratoTipoTemplate.getBlocos();
 
+		Set<DocumentoAnalise> pessoasPF = this.listaDocumentoAnalise.stream()
+				.filter(p -> p.isLiberadoAnalise() && CommonsUtil.mesmoValor("PF", p.getTipoPessoa()))
+				.collect(Collectors.toSet());
+		
+		Set<DocumentoAnalise> pessoasPJ = this.listaDocumentoAnalise.stream()
+				.filter(p -> p.isLiberadoAnalise() && CommonsUtil.mesmoValor("PJ", p.getTipoPessoa()))
+				.collect(Collectors.toSet());
+		
+		DocketDao docketDao = new DocketDao();
+		String idCallManager = docketDao.consultaContratosPendentesResponsaveis(contrato);
+		DocketService docketService = new DocketService();
+		DocketRetornoConsulta docketRetornoConsulta = docketService.verificarCertidoesContrato(contrato, idCallManager);
+		
+		DocketEstadosDao docketEstadosDao = new DocketEstadosDao();
+		List<DocketEstados> docketEstados = docketEstadosDao.findAll();
+		
+		for (DocketDocumento docketDocumento : docketRetornoConsulta.getPedido().getDocumentos()) {
+			Optional<String> estadoNome = docketEstados.stream().filter(e -> CommonsUtil.mesmoValor(e.getIdDocket(), docketDocumento.getCampos().getEstado())).map(e -> e.getNome()).findFirst();
+			docketDocumento.getCampos().setEstadoNome(estadoNome.get());
+		}
+		
 		for (ContratoTipoTemplateBloco bloco : lstBlocos) {
 
 			if (bloco.getFlagInativo()) {
@@ -108,10 +147,22 @@ public class PajuService {
 				}
 				break;
 				
-			case BLOCO_PESSOA_CONSULTA:
-
-				populaParagrafoPessoaConsulta(docTemplate, bloco);
+			case BLOCO_PESSOA_FISICA_CONSULTA:				
+				populaParagrafoParticipantes(docTemplate, bloco, pessoasPF);
 				break;
+				
+			case BLOCO_PESSOA_JURIDICA_CONSULTA:				
+				populaParagrafoParticipantes(docTemplate, bloco, pessoasPJ);
+				break;
+				
+			case BLOCO_PESSOA_FISICA_CERTIDOES:
+				populaParagrafoCertidoesPF(docTemplate, bloco, pessoasPF, docketRetornoConsulta);
+				break;	
+				
+			case BLOCO_PESSOA_JURIDICA_CERTIDOES:
+				populaParagrafoCertidoesPJ(docTemplate, bloco, pessoasPJ, docketRetornoConsulta);
+				break;	
+				
 
 			/*
 			 * case BLOCO_DEBITOS_IPTU:
@@ -144,6 +195,168 @@ public class PajuService {
 	}
 	
 	
+	private void populaParagrafoParticipantes(WordprocessingMLPackage docTemplate, ContratoTipoTemplateBloco bloco,
+			Set<DocumentoAnalise> participantes) throws SiscoatException {
+
+		List<P> paragrafoTemplate = getParagrafoBlocoTemplate(docTemplate, bloco.getTagIdentificacao());
+
+		if (paragrafoTemplate == null) {
+			return;
+		}
+
+		for (DocumentoAnalise participante : participantes) {			
+			adicionaParagrafo(docTemplate, paragrafoTemplate, bloco, participante);
+		}
+
+		if (paragrafoTemplate != null) {
+			removeParagrafo(docTemplate, paragrafoTemplate);
+		}
+
+	}
+	
+	
+	private void populaParagrafoCertidoesPF(WordprocessingMLPackage docTemplate, ContratoTipoTemplateBloco bloco,
+			Set<DocumentoAnalise> participantes, DocketRetornoConsulta docketRetornoConsulta) throws SiscoatException {
+
+		List<P> paragrafoTemplate = getParagrafoBlocoTemplate(docTemplate, bloco.getTagIdentificacao());
+		List<P> paragrafoDocumentoTemplate=  new ArrayList<>();
+		String startPlaceholder =  "#{" + bloco.getBlocosFilho().get(0).getTagIdentificacao() + "}";
+		String endPlaceholder =  "#{/" + bloco.getBlocosFilho().get(0).getTagIdentificacao() + "}";
+		
+		boolean  bfilho = false;
+		for (P p : paragrafoTemplate) {
+			if (CommonsUtil.mesmoValor(startPlaceholder, p.toString()))
+				bfilho = true;
+			else if (CommonsUtil.mesmoValor(endPlaceholder, p.toString())) {
+				bfilho = false;
+				paragrafoDocumentoTemplate.add(p);
+			}
+
+			if (bfilho) {
+				paragrafoDocumentoTemplate.add(p);
+			}
+		}
+		if ( !CommonsUtil.semValor(paragrafoDocumentoTemplate)) {
+
+
+			paragrafoTemplate.removeAll(paragrafoDocumentoTemplate);
+			
+			removeParagrafo(docTemplate, paragrafoDocumentoTemplate.get(0));
+			paragrafoDocumentoTemplate.remove(0);
+			removeParagrafo(docTemplate, paragrafoDocumentoTemplate.get(paragrafoDocumentoTemplate.size()-1));
+			paragrafoDocumentoTemplate.remove(paragrafoDocumentoTemplate.size()-1);
+	
+			removeParagrafo(docTemplate, paragrafoTemplate.get(0));
+			paragrafoTemplate.remove(0);
+			removeParagrafo(docTemplate, paragrafoTemplate.get(paragrafoTemplate.size()-1));
+			paragrafoTemplate.remove(paragrafoTemplate.size()-1);
+		}
+
+//		List<P> paragrafoDocumentoTemplate = getParagrafoBlocoTemplate(docTemplate, bloco.getBlocosFilho().get(0).getTagIdentificacao());
+		
+		if (paragrafoTemplate == null) {
+			return;
+		}
+
+		for (DocumentoAnalise participante : participantes) {
+			
+			adicionaParagrafo(docTemplate, paragrafoTemplate, bloco, participante);
+			List<DocketDocumento> documentosParticipante = docketRetornoConsulta.getPedido().getDocumentos();
+			List<DocketDocumento> documentosParticipanteFiltro = documentosParticipante.stream().filter(d -> CommonsUtil
+					.mesmoValor(d.getCampos().getCpf(), CommonsUtil.somenteNumeros(participante.getCnpjcpf())))
+					.collect(Collectors.toList());
+			for (DocketDocumento docketDocumento : documentosParticipanteFiltro) {
+				adicionaParagrafo(docTemplate, paragrafoDocumentoTemplate, bloco.getBlocosFilho().get(0), docketDocumento);
+			}
+
+//			adicionaParagrafo(docTemplate, paragrafoDocumentoTemplate, bloco, documentosParticipanteFiltro);
+
+		}
+
+		if (paragrafoTemplate != null) {
+
+			removeParagrafo(docTemplate, paragrafoDocumentoTemplate);
+			removeParagrafo(docTemplate, paragrafoTemplate);
+		}
+
+	}
+	
+
+	
+	private void populaParagrafoCertidoesPJ(WordprocessingMLPackage docTemplate, ContratoTipoTemplateBloco bloco,
+			Set<DocumentoAnalise> participantes, DocketRetornoConsulta docketRetornoConsulta) throws SiscoatException {
+		
+		List<P> paragrafoTemplate = getParagrafoBlocoTemplate(docTemplate, bloco.getTagIdentificacao());
+		List<P> paragrafoDocumentoTemplate=  new ArrayList<>();
+		String startPlaceholder =  "#{" + bloco.getBlocosFilho().get(0).getTagIdentificacao() + "}";
+		String endPlaceholder =  "#{/" + bloco.getBlocosFilho().get(0).getTagIdentificacao() + "}";
+		
+		boolean  bfilho = false;
+		for (P p : paragrafoTemplate) {
+			if (CommonsUtil.mesmoValor(startPlaceholder, p.toString()))
+				bfilho = true;
+			else if (CommonsUtil.mesmoValor(endPlaceholder, p.toString())) {
+				bfilho = false;
+				paragrafoDocumentoTemplate.add(p);
+			}
+
+			if (bfilho) {
+				paragrafoDocumentoTemplate.add(p);
+			}
+		}
+		if ( !CommonsUtil.semValor(paragrafoDocumentoTemplate)) {
+
+
+			paragrafoTemplate.removeAll(paragrafoDocumentoTemplate);
+			
+			removeParagrafo(docTemplate, paragrafoDocumentoTemplate.get(0));
+			paragrafoDocumentoTemplate.remove(0);
+			removeParagrafo(docTemplate, paragrafoDocumentoTemplate.get(paragrafoDocumentoTemplate.size()-1));
+			paragrafoDocumentoTemplate.remove(paragrafoDocumentoTemplate.size()-1);
+	
+			removeParagrafo(docTemplate, paragrafoTemplate.get(0));
+			paragrafoTemplate.remove(0);
+			removeParagrafo(docTemplate, paragrafoTemplate.get(paragrafoTemplate.size()-1));
+			paragrafoTemplate.remove(paragrafoTemplate.size()-1);
+		}
+
+//		List<P> paragrafoDocumentoTemplate = getParagrafoBlocoTemplate(docTemplate, bloco.getBlocosFilho().get(0).getTagIdentificacao());
+		
+		if (paragrafoTemplate == null) {
+			return;
+		}
+
+		for (DocumentoAnalise participante : participantes) {
+			
+			adicionaParagrafo(docTemplate, paragrafoTemplate, bloco, participante);
+			List<DocketDocumento> documentosParticipante = docketRetornoConsulta.getPedido().getDocumentos();
+			List<DocketDocumento> documentosParticipanteFiltro = documentosParticipante.stream().filter(d -> CommonsUtil
+					.mesmoValor(d.getCampos().getCnpj(), CommonsUtil.somenteNumeros(participante.getCnpjcpf())))
+					.collect(Collectors.toList());
+			for (DocketDocumento docketDocumento : documentosParticipanteFiltro) {
+				adicionaParagrafo(docTemplate, paragrafoDocumentoTemplate, bloco.getBlocosFilho().get(0), docketDocumento);
+			}
+
+		}
+
+		if (paragrafoTemplate != null) {
+			removeParagrafo(docTemplate, paragrafoDocumentoTemplate);
+			removeParagrafo(docTemplate, paragrafoTemplate);			
+		}
+
+	}
+
+	private void removeParagrafo(WordprocessingMLPackage template, List<P> paragrafos) {
+		for (P paragrafo : paragrafos) {
+			((ContentAccessor) paragrafo.getParent()).getContent().removeAll(paragrafos);
+		}
+	}
+
+	private void removeParagrafo(WordprocessingMLPackage template, P paragrafo) {
+		((ContentAccessor) paragrafo.getParent()).getContent().remove(paragrafo);
+	}
+
+	
 	private void populaParagrafoPessoaConsulta(WordprocessingMLPackage docTemplate, ContratoTipoTemplateBloco bloco) throws SiscoatException {
 
 		P paragrafoTemplate = getParagrafoTemplate(docTemplate, bloco.getTagIdentificacao());
@@ -164,6 +377,7 @@ public class PajuService {
 
 	}
 
+	
 	private P getParagrafoTemplate(WordprocessingMLPackage template, String tagBusca) {
 
 		List<Object> tables = wordUtil.getAllElementFromObject(template.getMainDocumentPart(), Tbl.class);
@@ -186,26 +400,71 @@ public class PajuService {
 
 		return null;
 	}
+	
+	private List<P> getParagrafoBlocoTemplate(WordprocessingMLPackage template, String tagBusca) {
 
-	private void adicionaParagrafo(WordprocessingMLPackage template, P paragrafoTemplate,
+		List<Object> tables = wordUtil.getAllElementFromObject(template.getMainDocumentPart(), Tbl.class);
+		List<P> retorno = new ArrayList<>();
+		for (Object tbl : tables) {
+
+			// 1. get the paragraph
+			List<Object> paragraphs = wordUtil.getAllElementFromObject(tbl, P.class);
+			boolean achou = false;
+			for (Object p : paragraphs) {
+				List<Object> texts = wordUtil.getAllElementFromObject(p, Text.class);
+				for (Object t : texts) {
+					Text content = (Text) t;
+					if (content.getValue() != null && ((String) content.getValue()).contains(tagBusca)) {
+						achou  =true ; //return (P) p;
+					}
+					//fim do bloco
+					if (content.getValue() != null && ((String) content.getValue()).contains("/"+tagBusca)) {
+						achou  =false ; 
+						retorno.add((P) p);
+						return retorno;
+					}
+				}
+				if ( achou ) {
+					retorno.add((P) p);
+				}
+			}
+		}
+
+		return null;
+	}
+
+	private void adicionaParagrafo(WordprocessingMLPackage template, List<P> paragrafoTemplate,
 			ContratoTipoTemplateBloco bloco, Object dataSource) throws SiscoatException {
 
+		List<P> copy =  new ArrayList<>();
 		// 3. copy the found paragraph to keep styling correct
-		P copy = (P) XmlUtils.deepCopy(paragrafoTemplate);
+		for (P p : paragrafoTemplate) {			
+			if (!p.toString().contains(bloco.getTagIdentificacao()))
+				copy.add((P) XmlUtils.deepCopy(p));
+		}
+//		List<P> copy =  XmlUtils.deepCopy(paragrafoTemplate);
 
 		for (ContratoTipoTemplateCampo campo : bloco.getCampos()) {
+			if ( CommonsUtil.semValor(campo))
+				continue;
 
 			Object valor = getValor(campo.getExpressao(), dataSource);
+			
+			if ( CommonsUtil.semValor((String)valor) && CommonsUtil.mesmoValorIgnoreCase("situacao", campo.getExpressao())  ) {
+				valor = "VERIFICAR CERTIDÃO";
+			}
 
 			if (valor != null) {
-				replacePlaceholder(copy, campo.getTag(), (String) valor);
+				for (P p : copy) {
+				replacePlaceholder(p, campo.getTag(), (String) valor);
+				}
 			}
 		}
 
 		// add the paragraph to the document
-		((ContentAccessor) paragrafoTemplate.getParent()).getContent().add(copy);
+		((ContentAccessor) paragrafoTemplate.get(0).getParent()).getContent().addAll(copy);
 
-		addParagrafoVazio((ContentAccessor) paragrafoTemplate.getParent());
+		addParagrafoVazio((ContentAccessor) paragrafoTemplate.get(0).getParent());
 	}
 
 	private void addParagrafoVazio(ContentAccessor place2Add) {
@@ -252,8 +511,9 @@ public class PajuService {
 
 		for (Object text : texts) {
 			Text textElement = (Text) text;
-			if (textElement.getValue() != null) {
-				String novoTexto = textElement.getValue().replaceAll("#\\{" + placeholder + "\\}",
+			if (textElement.getValue() != null && textElement.getValue().contains("#{"+placeholder+"}")) {
+				String novoPlaceholder =  "#\\{" + placeholder + "\\}";
+				String novoTexto = textElement.getValue().replaceAll(novoPlaceholder,
 						valor == null ? "" : valor.trim());
 				if (!textElement.getValue().equals(novoTexto)) {
 					textElement.setValue(novoTexto);
@@ -298,7 +558,11 @@ public class PajuService {
 	}
 
 	public void setContrato(ContratoCobranca contrato) {
-		this.contrato = contrato;
+		this.contrato = contrato;	
+
+		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+		this.listaDocumentoAnalise = documentoAnaliseDao.findByFilter("contratoCobranca", this.contrato );
+		
 	}
 
 }
