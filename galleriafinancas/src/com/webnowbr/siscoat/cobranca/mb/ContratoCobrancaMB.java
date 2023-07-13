@@ -5496,7 +5496,7 @@ public class ContratoCobrancaMB {
 	}
 	
 
-	public StreamedContent downloadModeloPaju() throws SiscoatException {	
+	public String downloadModeloPaju() throws SiscoatException {	
 		PajuService pajuService = new PajuService();
 		String arquivoWord = "Modelo Parecer.docx";
 		byte[] modeloPaju = pajuService.generateModeloPaju(this.objetoContratoCobranca, arquivoWord);
@@ -5510,7 +5510,7 @@ public class ContratoCobrancaMB {
 		gerador.feed(modeloPaju);
 		gerador.close();
 		
-		return null;
+		return "";
 	}
 
 	public StreamedContent downloadPreAprovadoPDF(long idContrato) throws JRException, IOException {

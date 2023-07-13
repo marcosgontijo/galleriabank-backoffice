@@ -1008,7 +1008,7 @@ public class DocketService {
 				JSONObject retornoConsulta = null;
 				retornoConsulta = getJsonSucesso(myURLConnection.getInputStream());
 
-				System.out.println(retornoConsulta.toString());
+//				System.out.println(retornoConsulta.toString());
 				docketRetorno =  GsonUtil.fromJson(retornoConsulta.toString(), DocketRetornoConsulta.class);
 				
 				if(CommonsUtil.semValor(docketRetorno)) {
