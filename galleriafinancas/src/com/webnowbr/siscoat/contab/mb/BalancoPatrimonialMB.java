@@ -120,8 +120,8 @@ public class BalancoPatrimonialMB {
 
 			// VALOR DEFAULT NO DAO - VALOR DO SISTEMA
 
-			this.relatorioBalancoPagar = balancopatrimonialDao.listaRelatorioPagarBalanco(objetoBalanco.getAaaaMM());
-			this.relatorioBalancoReceber = balancopatrimonialDao.listaRelatorioReceberBalanco(objetoBalanco.getAaaaMM());
+			this.relatorioBalancoPagar = balancopatrimonialDao.listaRelatorioPagarBalanco();
+			this.relatorioBalancoReceber = balancopatrimonialDao.listaRelatorioReceberBalanco();
 
 			// VALOR DEFAULT ÚLTIMO BALANÇO
 			if (!CommonsUtil.semValor(ultimoBalanco)) {
