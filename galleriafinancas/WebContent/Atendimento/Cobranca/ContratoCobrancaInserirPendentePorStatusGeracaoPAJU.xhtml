@@ -40,6 +40,7 @@
 				width: 100px;
 			}
 			</h:outputStylesheet>
+			<ui:include src="ContratoCobrancaAnaliseDocumento.xhtml"></ui:include>
 				
 			<p:panel id="PanelLocador" header="Contrato - #{contratoCobrancaMB.tituloPainel}" style="margin-bottom:10px;">
 				<p:focus /> 
@@ -76,10 +77,19 @@
 						style="margin-bottom:20px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}">		
 						<p:spacer height="10"></p:spacer>
 						<p:panel id="StatusGeracaoLaudo" style="border: none">
-							<h:panelGrid columns="3">
+							<h:panelGrid columns="4">
 								<p:outputLabel styleClass="labelBold">Geração PAJU Iniciada? </p:outputLabel>									
 								<p:selectBooleanButton id="statusPAJU" value="#{contratoCobrancaMB.objetoContratoCobranca.iniciouGeracaoLaudo}" 
 											onLabel="Iniciado" offLabel="Não Iniciado" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px"/>
+											
+
+								<p:commandButton value="Download Modelo PAJU" ajax="false"
+									icon="ui-icon-check"
+									action="#{contratoCobrancaMB.downloadModeloPaju}"
+									style="TEXT-DECORATION: bold; width: 170px; height: 55px;">
+
+								</p:commandButton>
+								
 								<p:commandButton value="Atualizar Status" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.editPreContratoPorStatus()}" style="TEXT-DECORATION: bold; width: 170px; height: 55px;" rendered="#{contratoCobrancaMB.updateMode}">
 									<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="false" />	
 								</p:commandButton>
@@ -477,6 +487,7 @@
 				</p:commandButton>		 						
 				<p:commandButton value="Cancelar" immediate="true" icon="ui-icon-cancel" onclick="window.history.back();" style="TEXT-DECORATION: bold; "/>								
 			</div>			
-		</h:form>	
+		</h:form>
+			<ui:include src="ContratoCobrancaAnaliseDocumentoResumoPopup.xhtml"></ui:include>
 	</ui:define>
 </ui:composition>

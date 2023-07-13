@@ -8,6 +8,10 @@ public class ContratoCobrancaStatus implements Serializable {
 	/**
 	 * 
 	 */
+	private static final long serialVersionUID = -4858733789805448599L;
+	/**\
+	 * 
+	 */
 	private ContratoCobranca contrato;
 	private boolean ccbPronta;
 	private boolean agAssinatura;

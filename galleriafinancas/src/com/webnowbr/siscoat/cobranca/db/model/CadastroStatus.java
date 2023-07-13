@@ -7,12 +7,9 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import javax.faces.bean.ManagedProperty;
-
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
-import com.webnowbr.siscoat.security.LoginBean;
 
 public class CadastroStatus implements Serializable {
 

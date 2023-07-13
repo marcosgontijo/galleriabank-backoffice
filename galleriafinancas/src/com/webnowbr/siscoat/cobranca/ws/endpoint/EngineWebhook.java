@@ -126,7 +126,6 @@ public class EngineWebhook {
 					documentoAnaliseDao.merge(documentoAnalise);
 				}
 			}
-
 			return Response.status(200).entity("Processado").build();
 		} catch (io.jsonwebtoken.ExpiredJwtException eJwt) {
 			eJwt.printStackTrace();

@@ -37,6 +37,7 @@ import com.webnowbr.siscoat.cobranca.db.op.DataEngineDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocketDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
+import com.webnowbr.siscoat.cobranca.model.docket.DocketRetornoConsulta;
 import com.webnowbr.siscoat.cobranca.ws.endpoint.ReaWebhookRetorno;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
@@ -976,7 +977,8 @@ public class DocketService {
 		return null;
 	}
 		
-	public void verificarCertidoesContrato(ContratoCobranca contrato, String idCallManager) {
+	public DocketRetornoConsulta verificarCertidoesContrato(ContratoCobranca contrato, String idCallManager) {
+	
 		try {	
 			
 			loginDocket(null);
@@ -998,37 +1000,46 @@ public class DocketService {
 			myURLConnection.setDoOutput(true);
 
 			int certidoesProntas = 0;
+			DocketRetornoConsulta docketRetorno =null;
+			
 			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
 				System.out.println("Não foi possivle consultar docket. IdCallManager: " + idCallManager + " contrato: " + contrato.toString());
 			} else {
 				JSONObject retornoConsulta = null;
 				retornoConsulta = getJsonSucesso(myURLConnection.getInputStream());
-				if(!retornoConsulta.has("pedido")) {
-					return;
+
+				System.out.println(retornoConsulta.toString());
+				docketRetorno =  GsonUtil.fromJson(retornoConsulta.toString(), DocketRetornoConsulta.class);
+				
+				if(CommonsUtil.semValor(docketRetorno)) {
+					return null;
+				}				
+				
+				if( CommonsUtil.semValor(docketRetorno.getPedido())) {
+					return null;
 				}
 				
-				JSONObject pedido = retornoConsulta.getJSONObject("pedido");
-				
-				if(!pedido.has("documentos")) {
-					return;
+				if( CommonsUtil.semValor(docketRetorno.getPedido().getDocumentos())) {
+					return null;
 				}
+				certidoesProntas = CommonsUtil.intValue( docketRetorno.getPedido().getDocumentos().stream().filter(d -> CommonsUtil.mesmoValor(d.getStatus(), "ENTREGUE")).count());
 				
-				JSONArray documentos = pedido.getJSONArray("documentos");
-				for(int i = 0 ; i < documentos.length(); i++) {
-					JSONObject doc = documentos.getJSONObject(i);
-					if(!doc.has("status")) {
-						continue;
-					}			
-					if(CommonsUtil.mesmoValor(doc.get("status"), "ENTREGUE")) {
-						certidoesProntas++;
-					}
-				}
+//				JSONArray documentos = pedido.getJSONArray("documentos");
+//				for(int i = 0 ; i < documentos.length(); i++) {
+//					JSONObject doc = documentos.getJSONObject(i);
+//					if(!doc.has("status")) {
+//						continue;
+//					}			
+//					if(CommonsUtil.mesmoValor(doc.get("status"), "ENTREGUE")) {
+//						certidoesProntas++;
+//					}
+//				}
 				contrato.setCertidoesProntas(certidoesProntas);
-				contrato.setTotalCertidoesDocket(documentos.length());
+				contrato.setTotalCertidoesDocket(docketRetorno.getPedido().getDocumentos().size());
 			}
 
 			myURLConnection.disconnect();
-			return;
+			return docketRetorno;
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -1036,7 +1047,7 @@ public class DocketService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return;
+		return null;
 	}
 	
 	public JSONObject getJsonSucesso(InputStream inputStream) {
