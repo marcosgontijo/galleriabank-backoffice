@@ -24,6 +24,7 @@ import br.com.galleriabank.serasacrednet.cliente.model.PessoaParticipacao;
 import br.com.galleriabank.serasarelato.cliente.util.GsonUtil;
 
 public class SerasaService {
+	
 
 	public void requestSerasa(DocumentoAnalise documentoAnalise, User user) {
 
