@@ -77,7 +77,7 @@
 						style="margin-bottom:20px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}">		
 						<p:spacer height="10"></p:spacer>
 						<p:panel id="StatusGeracaoLaudo" style="border: none">
-							<h:panelGrid columns="3">
+							<h:panelGrid columns="4">
 								<p:outputLabel styleClass="labelBold">Geração PAJU Iniciada? </p:outputLabel>									
 								<p:selectBooleanButton id="statusPAJU" value="#{contratoCobrancaMB.objetoContratoCobranca.iniciouGeracaoLaudo}" 
 											onLabel="Iniciado" offLabel="Não Iniciado" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px"/>
