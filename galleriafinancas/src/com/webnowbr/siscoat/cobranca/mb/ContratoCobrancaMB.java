@@ -3454,22 +3454,44 @@ public class ContratoCobrancaMB {
 					"");
 			
 		} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoPaju(), "Luvison")) {
-			//TODO adicionar resps Luvison Whats
-			/*
-			//Gustavo Ribeiro Sobral
-			responsavel = rDao.findById((long) 1635);
+			//Paola de Góes Carvalho Spinola
+			responsavel = rDao.findById((long) 1639);
 			takeBlipMB = new TakeBlipMB();
 			takeBlipMB.sendWhatsAppMessage(responsavel, "geracao_paju", "Luvison",
 					this.objetoContratoCobranca.getNumeroContrato(), this.objetoContratoCobranca.getPagador().getNome(),
 					"");
 			
 			Responsavel responsavel2 = new Responsavel();
-			//Priscila Luz
-			responsavel2 = rDao.findById((long) 1636);
+			//Fábio Augusto Emílio
+			responsavel2 = rDao.findById((long) 1640);
 			takeBlipMB = new TakeBlipMB();
 			takeBlipMB.sendWhatsAppMessage(responsavel2, "geracao_paju", "Luvison",
 					this.objetoContratoCobranca.getNumeroContrato(), this.objetoContratoCobranca.getPagador().getNome(),
-					"");*/
+					"");
+			
+			Responsavel responsavel3 = new Responsavel();
+			//Angélica Cintra Isquierdo 
+			responsavel3 = rDao.findById((long) 1641);
+			takeBlipMB = new TakeBlipMB();
+			takeBlipMB.sendWhatsAppMessage(responsavel3, "geracao_paju", "Luvison",
+					this.objetoContratoCobranca.getNumeroContrato(), this.objetoContratoCobranca.getPagador().getNome(),
+					"");
+			
+			Responsavel responsavel4 = new Responsavel();
+			//Rafael Borges de Oliveira Soalheiro Gonzalez 
+			responsavel4 = rDao.findById((long) 1642);
+			takeBlipMB = new TakeBlipMB();
+			takeBlipMB.sendWhatsAppMessage(responsavel4, "geracao_paju", "Luvison",
+					this.objetoContratoCobranca.getNumeroContrato(), this.objetoContratoCobranca.getPagador().getNome(),
+					"");
+			
+			Responsavel responsavel5 = new Responsavel();
+			//Vivian Vargas Godinho 
+			responsavel5 = rDao.findById((long) 1643);
+			takeBlipMB = new TakeBlipMB();
+			takeBlipMB.sendWhatsAppMessage(responsavel5, "geracao_paju", "Luvison",
+					this.objetoContratoCobranca.getNumeroContrato(), this.objetoContratoCobranca.getPagador().getNome(),
+					"");
 		}
 	}
 
@@ -3599,16 +3621,26 @@ public class ContratoCobrancaMB {
 								+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
 								mensagemHtmlTeste);
 			} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoPaju(), "Luvison")) {
-				//TODO Luvison Emal
-				/*
 				eec.enviarEmailHtmlResponsavelAdms(
-						"gustavo.sobral@fbcadvogados.com", "[siscoat] Operação "
+						"paola@luvisoncarvalho.com.br", "[siscoat] Operação "
 								+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
 								mensagemHtmlTeste);
 				eec.enviarEmailHtmlResponsavelAdms(
-						"p.nogueira@fbcadvogados.com", "[siscoat] Operação "
+						"fabio@luvisoncarvalho.com.br", "[siscoat] Operação "
 								+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
-								mensagemHtmlTeste);*/
+								mensagemHtmlTeste);
+				eec.enviarEmailHtmlResponsavelAdms(
+						"angelica@luvisoncarvalho.com.br", "[siscoat] Operação "
+								+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
+								mensagemHtmlTeste);
+				eec.enviarEmailHtmlResponsavelAdms(
+						"rafael@luvisoncarvalho.com.br", "[siscoat] Operação "
+								+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
+								mensagemHtmlTeste);
+				eec.enviarEmailHtmlResponsavelAdms(
+						"vivian@luvisoncarvalho.com.br", "[siscoat] Operação "
+								+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
+								mensagemHtmlTeste);
 			}
 
 		} catch (Exception ex) {
@@ -3693,7 +3725,7 @@ public class ContratoCobrancaMB {
 					if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoPaju(), "Neves")) {
 						this.objetoContratoCobranca.setAnalistaGeracaoPAJU(responsavelDao.findById((long) 797));
 					} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoPaju(), "Luvison")) {
-						//this.objetoContratoCobranca.setAnalistaGeracaoPAJU(responsavelDao.findById((long) 797));			
+						this.objetoContratoCobranca.setAnalistaGeracaoPAJU(responsavelDao.findById((long) 1639));			
 					}
 					notificaPAJUWhatsApp();
 					notificaPAJUEmail();
