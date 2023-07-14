@@ -534,6 +534,20 @@
 								<h:outputLabel value="PROFILE_MARKETING" />
 							</shiro:hasAnyRoles>
 						</h:panelGroup>
+						
+						<h:outputLabel for="cadastraResponsavel"
+							value="Cadastra Responsavel:" class="labelBold" />
+						<h:panelGroup>
+							<p:selectBooleanButton id="cadastraResponsavel"
+								value="#{usuarioMB.objetoUsuario.cadastraResponsavel}" onLabel="Sim"
+								offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+								style="width:60px">
+							</p:selectBooleanButton>
+							<shiro:hasAnyRoles name="ROOT">
+								<h:outputLabel value="CADASTRA_RESPONSAVEL" />
+							</shiro:hasAnyRoles>
+						</h:panelGroup>
+						
 					</h:panelGrid>
 				</p:panel>
 				<p:panel id="PanelBlockBackoffice"

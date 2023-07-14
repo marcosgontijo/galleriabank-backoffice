@@ -104,6 +104,8 @@ public final class User implements Serializable {
     private boolean profilePajuNeves; 
     private boolean profilePajuLuvison;
     
+    private boolean cadastraResponsavel;
+    
     private List<Termo> listTermos;
     
     /**
@@ -705,5 +707,13 @@ public final class User implements Serializable {
 
 	public void setProfilePajuLuvison(boolean profilePajuLuvison) {
 		this.profilePajuLuvison = profilePajuLuvison;
+	}
+
+	public boolean isCadastraResponsavel() {
+		return cadastraResponsavel;
+	}
+
+	public void setCadastraResponsavel(boolean cadastraResponsavel) {
+		this.cadastraResponsavel = cadastraResponsavel;
 	}	
 }
