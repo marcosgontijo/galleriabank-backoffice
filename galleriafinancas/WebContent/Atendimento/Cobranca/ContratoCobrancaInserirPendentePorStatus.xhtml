@@ -45,7 +45,7 @@
 			}
 			</h:outputStylesheet>
 				
-			<p:panel id="PanelLocador" header="Contrato - #{contratoCobrancaMB.tituloPainel}" style="margin-bottom:10px;">
+			<p:panel id="PanelLocador" header="Contrato - #{contratoCobrancaMB.tituloPainel} - #{contratoCobrancaMB.tituloTelaConsultaPreStatus}" style="margin-bottom:10px;">
 				<p:focus /> 
 				<p:messages/>
 				
@@ -148,7 +148,8 @@
 									<h:panelGrid columns="2"
 										style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
-										border-radius: 5px; padding: 10px;">
+										border-radius: 5px; padding: 10px;"
+										rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Pedir Laudo'}">
 
 										<p:outputLabel styleClass="labelBold">Forma de Pagamento: </p:outputLabel>
 										<p:selectOneMenu id="formaDePagamentoLaudoPAJU"
@@ -183,12 +184,21 @@
 											style="width:=80px"
 											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial 
 											and contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudo eq 'Outro'}" />
+									
+										<p:outputLabel styleClass="labelBold"
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}">Pendenciar</p:outputLabel>
+										<p:selectBooleanCheckbox
+											value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaLaudoPaju}"
+											onIcon="ui-icon-check" offIcon="ui-icon-close"
+											style="width:=80px"
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}" />
 									</h:panelGrid>
 								
 									<h:panelGrid columns="2"
 										style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
-										border-radius: 5px; padding: 10px;">
+										border-radius: 5px; padding: 10px;"
+										rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Pedir PAJU'}">
 										
 										<p:outputLabel styleClass="labelBold"
 											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial 
@@ -3011,6 +3021,9 @@
 											
 						<p:outputLabel for="cartorioMunicipio" value="Município Cartório: " />
 						<p:inputText id="cartorioMunicipio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioMunicipio}" />
+						
+						<p:outputLabel for="numeroCartorio" value="Numero Cartório: " />
+						<p:inputText id="numeroCartorio" type="number" value="#{contratoCobrancaMB.objetoImovelCobranca.numeroCartorio}" />
 						
 						<p:outputLabel for="CepImovel" value="Cep: "/>
 						<p:inputMask id="CepImovel"
