@@ -527,12 +527,15 @@ public class BRLTrustMB {
 		cell.setCellValue("Data Vencimento");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(23);
-		cell.setCellValue("Valor");
+		cell.setCellValue("Taxa Adm");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(24);
-		cell.setCellValue("Data Pagto.");
+		cell.setCellValue("Valor");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(25);
+		cell.setCellValue("Data Pagto.");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(26);
 		cell.setCellValue("Valor Pago");
 		cell.setCellStyle(cell_style);
 		
@@ -891,8 +894,18 @@ public class BRLTrustMB {
 					cell.setCellStyle(dateStyle);
 					cell.setCellValue(parcelas.getDataVencimento());
 	
-					// Valor Parcela
+					// Taxa Adm
 					cell = row.createCell(23);
+					cell.setCellStyle(numericStyle);
+					cell.setCellType(CellType.NUMERIC);
+					if (parcelas.getTaxaAdm() != null) {
+						cell.setCellValue(((BigDecimal) parcelas.getTaxaAdm()).doubleValue());					
+					} else {
+						cell.setCellValue(Double.valueOf("0"));
+					}
+					
+					// Valor Parcela
+					cell = row.createCell(24);
 					/*
 					 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_Number); }
 					 * else { if (parcelas.isParcelaVencida()) {
@@ -920,7 +933,7 @@ public class BRLTrustMB {
 					}
 	
 					// Data pagto
-					cell = row.createCell(24);
+					cell = row.createCell(25);
 					/*
 					 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_Date); }
 					 * else { if (parcelas.isParcelaVencida()) {
@@ -931,7 +944,7 @@ public class BRLTrustMB {
 					cell.setCellValue(parcelas.getDataUltimoPagamento());
 	
 					// Valor Pago
-					cell = row.createCell(25);
+					cell = row.createCell(26);
 					/*
 					 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_Number); }
 					 * else { if (parcelas.isParcelaVencida()) {
@@ -1027,6 +1040,8 @@ public class BRLTrustMB {
 			cell = row.createCell(24);
 			cell.setCellStyle(cell_style);
 			cell = row.createCell(25);
+			cell.setCellStyle(cell_style);
+			cell = row.createCell(26);
 			cell.setCellStyle(cell_style);
 			
 			// Style para cabeçalho
