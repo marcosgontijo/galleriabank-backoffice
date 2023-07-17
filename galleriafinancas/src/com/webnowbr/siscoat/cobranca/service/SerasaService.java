@@ -33,8 +33,7 @@ import br.com.galleriabank.serasarelato.cliente.util.GsonUtil;
 public class SerasaService {
 
 	public void requestSerasa(DocumentoAnalise documentoAnalise, User user) {
-
-
+		
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 		
 		if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
@@ -83,7 +82,6 @@ public class SerasaService {
 					BigDecimal porcentagem = CommonsUtil.bigDecimalValue(pessoaParticipacao.getParticipacao());
 					pagadorRecebedorService.geraRelacionamento(empresa, "Socio", documentoAnalise.getPagador(),
 							porcentagem);
-					//TODO RELACIONAMENTO CREDNET AQUI
 				}
 			}
 		} else if (CommonsUtil.mesmoValor("PJ", documentoAnalise.getTipoPessoa())) {

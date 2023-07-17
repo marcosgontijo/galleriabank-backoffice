@@ -8,6 +8,7 @@ import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorConsulta;
 import com.webnowbr.siscoat.cobranca.db.model.RelacionamentoPagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorConsultaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
+import com.webnowbr.siscoat.cobranca.db.op.RelacionamentoPagadorRecebedorDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.common.GsonUtil;
@@ -140,6 +141,8 @@ public class PagadorRecebedorService {
 		RelacionamentoPagadorRecebedor relacioanameto = 
 				new RelacionamentoPagadorRecebedor(pessoaRoot, relacao, pessoaChild, porcentagem);
 		
+		RelacionamentoPagadorRecebedorDao rDao = new RelacionamentoPagadorRecebedorDao();
+		rDao.create(relacioanameto);
 		
 	}
 }
