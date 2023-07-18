@@ -143,6 +143,5 @@ public class PagadorRecebedorService {
 		
 		RelacionamentoPagadorRecebedorDao rDao = new RelacionamentoPagadorRecebedorDao();
 		rDao.create(relacioanameto);
-		
 	}
 }

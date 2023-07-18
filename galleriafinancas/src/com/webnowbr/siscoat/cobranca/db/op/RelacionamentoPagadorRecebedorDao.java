@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.RelacionamentoPagadorRecebedor;
+import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.db.dao.HibernateDao;
 
 /**
@@ -23,41 +24,46 @@ public class RelacionamentoPagadorRecebedorDao extends HibernateDao <Relacioname
 			+ " or pessoaChild = ? ";
 	
 	@SuppressWarnings("unchecked")
-	public BigDecimal getValorRegistro(final BigDecimal valor) {
-		return (BigDecimal) executeDBOperation(new DBRunnable() {
+	public List<RelacionamentoPagadorRecebedor> getRelacionamentos(final PagadorRecebedor pagador,
+			List<RelacionamentoPagadorRecebedor> listRelacoes) {
+		return (List<RelacionamentoPagadorRecebedor>) executeDBOperation(new DBRunnable() {
 			@Override
-			public Object run() throws Exception {
-				BigDecimal valorRetorno = BigDecimal.ZERO;
-				List<RelacionamentoPagadorRecebedor> listRelacoes = new ArrayList<RelacionamentoPagadorRecebedor>();;
-	
+			public List<RelacionamentoPagadorRecebedor> run() throws Exception {
 				Connection connection = null;
 				PreparedStatement ps = null;
 				ResultSet rs = null;
 				try {
 					connection = getConnection();
 
-					ps = connection
-							.prepareStatement(QUERY_RELACIONAMENTOS);		
-	
-					ps.setBigDecimal(1, valor);
-					ps.setBigDecimal(2, valor);
-	
+					ps = connection.prepareStatement(QUERY_RELACIONAMENTOS);
+
+					ps.setLong(1, pagador.getId());
+					ps.setLong(2, pagador.getId());
+
 					rs = ps.executeQuery();
-										
+					RelacionamentoPagadorRecebedorDao rprDao = new RelacionamentoPagadorRecebedorDao();
+
 					while (rs.next()) {
-						PagadorRecebedorDao pDao = new PagadorRecebedorDao();
-						RelacionamentoPagadorRecebedor relacao = 
-								new RelacionamentoPagadorRecebedor(pDao.findById(rs.getLong("pessoaRoot")),
-										rs.getString("relacao"), pDao.findById(rs.getLong("pessoaChild")), 
-										rs.getBigDecimal("porcentagem"));
-						valorRetorno = rs.getBigDecimal(1);
+						RelacionamentoPagadorRecebedor relacao = rprDao.findById(rs.getLong("id"));
+
+						if (listRelacoes.contains(relacao)) {
+							continue;
+						} else {
+							listRelacoes.add(relacao);
+						}
 						
-						listRelacoes.add(relacao);
+						if(rs.getFetchSize() > 1 || listRelacoes.size() == 1) {
+							if(CommonsUtil.mesmoValor(relacao.getPessoaRoot(), pagador)) {
+								rprDao.getRelacionamentos(relacao.getPessoaChild(), listRelacoes);
+							} else {
+								rprDao.getRelacionamentos(relacao.getPessoaRoot(), listRelacoes);
+							}	
+						}
 					}
 				} finally {
 					closeResources(connection, ps, rs);					
 				}
-				return valorRetorno;
+				return listRelacoes;
 			}
 		});	
 	}
