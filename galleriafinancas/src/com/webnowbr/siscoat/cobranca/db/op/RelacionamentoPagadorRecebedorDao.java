@@ -68,7 +68,42 @@ public class RelacionamentoPagadorRecebedorDao extends HibernateDao <Relacioname
 		});	
 	}
 	
-	private static final String QUERY_RELACIONAMENTOS_ROOT = "select * from cobranca.RelacionamentoPagadorRecebedor " 
+	@SuppressWarnings("unchecked")
+	public List<RelacionamentoPagadorRecebedor> verificaRelacaoExistente(final PagadorRecebedor pagadorRoot,
+			final PagadorRecebedor pagadorChild) {
+		return (List<RelacionamentoPagadorRecebedor>) executeDBOperation(new DBRunnable() {
+			@Override
+			public List<RelacionamentoPagadorRecebedor> run() throws Exception {
+				
+				List<RelacionamentoPagadorRecebedor> listRelacoes = new ArrayList<RelacionamentoPagadorRecebedor>();
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+					ps = connection.prepareStatement(QUERY_RELACIONAMENTOS);
+					ps.setLong(1, pagadorRoot.getId());
+					ps.setLong(2, pagadorChild.getId());
+					rs = ps.executeQuery();
+					RelacionamentoPagadorRecebedorDao rprDao = new RelacionamentoPagadorRecebedorDao();
+					while (rs.next()) {
+						RelacionamentoPagadorRecebedor relacao = rprDao.findById(rs.getLong("id"));
+
+						if (listRelacoes.contains(relacao)) {
+							continue;
+						} else {
+							listRelacoes.add(relacao);
+						}				
+					}
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return listRelacoes;
+			}
+		});	
+	}
+	
+	/*private static final String QUERY_RELACIONAMENTOS_ROOT = "select * from cobranca.RelacionamentoPagadorRecebedor " 
 			+ " where pessoaChild = ? ";
 	
 	@SuppressWarnings("unchecked")
@@ -111,5 +146,5 @@ public class RelacionamentoPagadorRecebedorDao extends HibernateDao <Relacioname
 				return listRelacoes;
 			}
 		});	
-	}
+	}*/
 }
