@@ -90,7 +90,7 @@
 				<p:dataTable id="dtBoletosKobana" var="boleto" 
 					value="#{kobanaMB.listBoletosKobana}"
 					emptyMessage="" sortBy="#{boleto.createdAt}"
-					rowStyleClass="#{(boleto.status eq 'Pago' and boleto.parcela.parcelaPaga eq true) ? 'parcelaPaga' : (boleto.status eq 'Pago' and boleto.parcela.parcelaPaga eq false) ? 'parcelaBoletoPago' : null}"
+					rowStyleClass="#{boleto.parcelasBaixadas eq true ? 'parcelaPaga' : 'parcelaBoletoPago'}"
 					sortOrder="descending"
 					rowKey="#{boleto.id}"
 					selection="#{contratoCobrancaMB.selectedBoletosKobana}">
@@ -414,7 +414,7 @@
 						<p:commandButton
 							action="#{contratoCobrancaMB.baixarMultiParcelaParcial()}" ajax="false" 
 							icon="ui-icon-transferthick-e-w" value="Baixar"
-							update=":form:DetalheParcelas" />
+							update=":form:DetalheParcelas :form:ConsultaBoletosKobanaResultado"/>
 						<p:spacer width="10" />
 					</shiro:hasAnyRoles>
 					<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"

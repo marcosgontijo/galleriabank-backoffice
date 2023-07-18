@@ -29,6 +29,8 @@ public class BoletoKobana implements Serializable {
 	private ContratoCobranca contrato;
 	private ContratoCobrancaDetalhes parcela;
 	
+	private boolean parcelasBaixadas;
+	
 	private List<ContratoCobrancaDetalhes> multiParcelas;
 	
 	private long idFakeAgrupamentoSomatoria;	
@@ -141,4 +143,10 @@ public class BoletoKobana implements Serializable {
 	public void setIdFakeAgrupamentoSomatoria(long idFakeAgrupamentoSomatoria) {
 		this.idFakeAgrupamentoSomatoria = idFakeAgrupamentoSomatoria;
 	}
+	public boolean isParcelasBaixadas() {
+		return parcelasBaixadas;
+	}
+	public void setParcelasBaixadas(boolean parcelasBaixadas) {
+		this.parcelasBaixadas = parcelasBaixadas;
+	}	
 }
