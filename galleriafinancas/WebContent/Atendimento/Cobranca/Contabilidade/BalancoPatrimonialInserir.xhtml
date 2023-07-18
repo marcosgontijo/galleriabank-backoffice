@@ -28,77 +28,51 @@
 					
 					<p:outputLabel for="cdi" value="Informe CDI: "
 						styleClass="labelBold" />
-					<p:inputText id="cdi"
+					<p:inputNumber id="cdi"
 						value="#{balancoPatrimonialMB.objetoBalanco.cdi}"
-						onkeypress="return isNumberKey(event);"
-						onkeydown="FormataValor(this, 13, event, 2);" required="true"
-						converter="bigDecimalConverter">
-						<f:converter converterId="bigDecimalConverter" maxFractionDigits="4" />
-					</p:inputText>
+						decimalPlaces="4" />
 					
 					<p:outputLabel for="ipca" value="Informe IPCA: "
 						styleClass="labelBold" />
-					<p:inputText id="ipca"
+					<p:inputNumber id="ipca"
 						value="#{balancoPatrimonialMB.objetoBalanco.ipca}"
-						onkeypress="return isNumberKey(event);"
-						onkeydown="FormataValor(this, 13, event, 2);" required="true"
-						converter="bigDecimalConverter">
-						<f:converter converterId="bigDecimalConverter" maxFractionDigits="4" />
-					</p:inputText>
+						decimalPlaces="4" />
 					
 					<p:outputLabel for="taxaFidc" value="Informe Taxa FIDC: "
 						styleClass="labelBold" />
-					<p:inputText id="taxaFidc"
+					<p:inputNumber id="taxaFidc"
 						value="#{balancoPatrimonialMB.objetoBalanco.taxaFidc}"
-						onkeypress="return isNumberKey(event);"
-						onkeydown="FormataValor(this, 13, event, 2);" required="true"
-						converter="bigDecimalConverter">
-					</p:inputText>
+						decimalPlaces="4" />
 					
 					<p:outputLabel for="taxaCri1" value="Informe Taxa Cri 1: "
 						styleClass="labelBold" />
-					<p:inputText id="taxaCri1"
+					<p:inputNumber id="taxaCri1"
 						value="#{balancoPatrimonialMB.objetoBalanco.taxaCri1}"
-						onkeypress="return isNumberKey(event);"
-						onkeydown="FormataValor(this, 13, event, 2);" required="true"
-						converter="bigDecimalConverter">
-					</p:inputText>
+						decimalPlaces="4" />
 					
 					<p:outputLabel for="taxaCri2" value="Informe Taxa Cri 2: "
 						styleClass="labelBold" />
-					<p:inputText id="taxaCri2"
+					<p:inputNumber id="taxaCri2"
 						value="#{balancoPatrimonialMB.objetoBalanco.taxaCri2}"
-						onkeypress="return isNumberKey(event);"
-						onkeydown="FormataValor(this, 13, event, 2);" required="true"
-						converter="bigDecimalConverter">
-					</p:inputText>
+						decimalPlaces="4" />
 					
 					<p:outputLabel for="taxaCri3" value="Informe Taxa Cri 3: "
 						styleClass="labelBold" />
-					<p:inputText id="taxaCri3"
+					<p:inputNumber id="taxaCri3"
 						value="#{balancoPatrimonialMB.objetoBalanco.taxaCri3}"
-						onkeypress="return isNumberKey(event);"
-						onkeydown="FormataValor(this, 13, event, 2);" required="true"
-						converter="bigDecimalConverter">
-					</p:inputText>
+						decimalPlaces="4" />
 					
-					<p:outputLabel for="taxaCri3" value="Informe Taxa Cri 4: "
+					<p:outputLabel for="taxaCri4" value="Informe Taxa Cri 4: "
 						styleClass="labelBold" />
-					<p:inputText id="taxaCri4"
+					<p:inputNumber id="taxaCri4"
 						value="#{balancoPatrimonialMB.objetoBalanco.taxaCri4}"
-						onkeypress="return isNumberKey(event);"
-						onkeydown="FormataValor(this, 13, event, 2);" required="true"
-						converter="bigDecimalConverter">
-					</p:inputText>
+						decimalPlaces="4" />
 					
 					<p:outputLabel for="kpmg" value="Informe Taxa KPMG: "
 						styleClass="labelBold" />
-					<p:inputText id="kpmg"
+					<p:inputNumber id="kpmg"
 						value="#{balancoPatrimonialMB.objetoBalanco.kpmg}"
-						onkeypress="return isNumberKey(event);"
-						onkeydown="FormataValor(this, 13, event, 2);" required="true"
-						converter="bigDecimalConverter">
-					</p:inputText>
+						decimalPlaces="4" />
 					</h:panelGrid>
 					
 					<p:commandButton value="Gerar Balanço" icon="ui-icon-plus" ajax="false"
@@ -238,8 +212,7 @@
 						value="#{balancoPatrimonialMB.objetoBalanco.depositosJudiciais}"
 						onkeypress="return isNumberKey(event);"
 						onkeydown="FormataValor(this, 13, event, 2);" required="true"
-						converter="bigDecimalConverter"
-						style="background-color: yellow">	
+						converter="bigDecimalConverter">	
 					</p:inputText>
 					<p:outputLabel for="investOperAntigas" value="Invest. Oper. Antigas: "
 						styleClass="labelBold" />
@@ -247,8 +220,7 @@
 						value="#{balancoPatrimonialMB.objetoBalanco.investOperAntigas}"
 						onkeypress="return isNumberKey(event);"
 						onkeydown="FormataValor(this, 13, event, 2);" required="true"
-						converter="bigDecimalConverter"
-						style="background-color: yellow">	
+						converter="bigDecimalConverter">	
 					</p:inputText>
 					<p:outputLabel for="investimentos" value="Investimentos: "
 						styleClass="labelBold" />
