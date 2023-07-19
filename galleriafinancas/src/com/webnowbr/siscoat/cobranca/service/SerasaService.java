@@ -199,60 +199,53 @@ public class SerasaService {
 		return null;
 	}
 
-
-	private String executaConsultaSerasa(String tipoPessoa, String cnpjcpf)
-			throws MalformedURLException, IOException, ProtocolException, UnsupportedEncodingException {
+	private String executaConsultaSerasa(String tipoPessoa, String cnpjcpf) {
 
 		if (  SiscoatConstants.DEV)
 			return "{\"consDtCadastro\":null,\"consCdCnpjcpf\":null,\"consDtConsulta\":\"2023-06-12T17:49:10.000-03:00\",\"consResultadoConsulta\":null,\"pessoa\":{\"pessTpFisicaJuridica\":\"F\",\"cnpjcpf\":\"02481669053\",\"nomeRazaoSocial\":\"YORK MOREIRA ANGELO\",\"dataNascimentoFundacao\":\"1930-05-12T00:00:00.000-03:00\",\"pessCdSituacao\":\"7\",\"descricaoSituacao\":\"TITULAR FALECIDO\",\"dataSituacaoDocumento\":\"2022-09-30T00:00:00.000-03:00\",\"nomeMae\":\"CELINA MOREIRA ANGELO\"},\"codigoServicoConsultaCredito\":null,\"codigoServicoConsultaCreditoSituacao\":null,\"htmlRelatorioBoaVistaPF\":null,\"relatorioHtml\":null,\"cmc7\":null,\"dataEmissaoCheque\":null,\"valorCheque\":null,\"qtdeCheque\":null,\"telefoneCheque\":null,\"cepCheque\":null,\"tipoConsultaCheque\":null,\"codigoDocumentoBanisys\":null,\"flagInformacaoEleitoral\":null,\"flagExtraAcao\":null,\"flagExtraPendencia\":null,\"flagExtraProtesto\":null,\"cepPesquisado\":null,\"featuresAdicionais\":null,\"flagFeaturesAdicionais\":null,\"tipoTratamentoTelefone\":\"S\",\"consultas\":[{\"codigoPessoaConsultaCrednet\":null,\"tipoRegistro\":null,\"subtipoRegistro\":null,\"mensagem\":null,\"qtdeConsultaUltimo15dias\":null,\"qtdeConsultaUltimo30dias\":null,\"qtdeConsultaUltimo31e60dias\":null,\"qtdeConsultaUltimo61e90dias\":null}],\"rendaEstimada\":{\"subTipo\":null,\"mensagem\":null,\"renda\":1450},\"capacidadePagamento\":{\"subTipo\":null,\"mensagem\":null,\"valor\":450},\"comprometimentoRenda\":{\"subTipo\":null,\"mensagem\":null,\"percentualComprometimento\":70},\"scorePostivo\":{\"tipo\":null,\"score\":497,\"range\":\"F\",\"taxa\":28,\"mensagem\":\"ESPACO RESERVADO PARA MENSAGEM DA INSTITUICAO\",\"codigoMensagem\":\"\"},\"participacoes\":[],\"alertasDocumento\":{\"subTipoAlerta\":null,\"codigoMensagem\":null,\"totalMensagem\":null,\"tipoDocumento\":null,\"numeroDocumento\":null,\"codigoMotivoOcorrencia\":null,\"dataOcorrencia\":null,\"codigoDDDTelefone1\":null,\"numeroTelefone1\":null,\"codigoDDDTelefone2\":null,\"numeroTelefone2\":null,\"codigoDDDTelefone3\":null,\"numeroTelefone3\":null,\"mensagem\":null,\"listaAlertaDocumentoDetalhes\":[]},\"pendenciasFinanceiras\":[],\"protesto\":null,\"chequeSemFundo\":null,\"acaoJudicial\":null,\"habitoPagamentos\":[{\"sequenciaEnviada\":1,\"feature\":\"REIV\",\"subTipo\":\"99\",\"faixaDias\":\"NAO HA\",\"nota\":\"HI\",\"faixaPgto\":\"STORICO\"}],\"indiceRelacionamentos\":[{\"sequenciaEnviada\":null,\"faixa\":\"SR\",\"calculado\":\"S\",\"mensagem\":\"SEM RELACIONAMENTO\",\"setor\":\"01\",\"relacionamento\":\"Sem relacionamento\",\"tendencia\":\"Sem relacionamento\"},{\"sequenciaEnviada\":null,\"faixa\":\"B2\",\"calculado\":\"S\",\"mensagem\":\"BAIXO RELACIONAMENTO COM O MERCADO COM TENDENCIA ESTAVEL\",\"setor\":\"02\",\"relacionamento\":\"Baixo relacionamento\",\"tendencia\":\"Tendência estável\"},{\"sequenciaEnviada\":null,\"faixa\":\"SR\",\"calculado\":\"S\",\"mensagem\":\"SEM RELACIONAMENTO\",\"setor\":\"03\",\"relacionamento\":\"Sem relacionamento\",\"tendencia\":\"Sem relacionamento\"},{\"sequenciaEnviada\":null,\"faixa\":\"B2\",\"calculado\":\"S\",\"mensagem\":\"BAIXO RELACIONAMENTO COM O MERCADO COM TENDENCIA ESTAVEL\",\"setor\":\"99\",\"relacionamento\":\"Baixo relacionamento\",\"tendencia\":\"Tendência estável\"}],\"obitos\":[{\"mensagem\":\"ULTIMA ATUALIZACAO DAS INFORMACOES EM 02/05/2021\"},{\"mensagem\":\"NOME DO TITULAR: YORK MOREIRA ANGELO\"},{\"mensagem\":\"DATA DE NASCIMENTO: 12/05/1930\"},{\"mensagem\":\"ANO DO OBITO: 2015\"},{\"mensagem\":\"NOME DA MAE: CELINA MOREIRA ANGELO\"}],\"relatorioPdf\":null,\"pefin\":[],\"refin\":[],\"dividaVencida\":[],\"pefinResumo\":null,\"refinResumo\":null,\"dividaVencidaResumo\":null,\"chequeSemFundoLista\":[],\"protestoLista\":[],\"alertasDocumentoLista\":[],\"acoesCivil\":null,\"falencias\":null,\"falenciasInsucesso\":null,\"relacionamentoMercado\":{\"sequenciaEnviada\":null,\"faixa\":\"B2\",\"calculado\":\"S\",\"mensagem\":\"BAIXO RELACIONAMENTO COM O MERCADO COM TENDENCIA ESTAVEL\",\"setor\":\"99\",\"relacionamento\":\"Baixo relacionamento\",\"tendencia\":\"Tendência estável\"},\"relacionamentoBanco\":{\"sequenciaEnviada\":null,\"faixa\":\"SR\",\"calculado\":\"S\",\"mensagem\":\"SEM RELACIONAMENTO\",\"setor\":\"01\",\"relacionamento\":\"Sem relacionamento\",\"tendencia\":\"Sem relacionamento\"},\"relacionamentoTelecomunicacoes\":{\"sequenciaEnviada\":null,\"faixa\":\"B2\",\"calculado\":\"S\",\"mensagem\":\"BAIXO RELACIONAMENTO COM O MERCADO COM TENDENCIA ESTAVEL\",\"setor\":\"02\",\"relacionamento\":\"Baixo relacionamento\",\"tendencia\":\"Tendência estável\"},\"relacionamentoOutrosSetores\":{\"sequenciaEnviada\":null,\"faixa\":\"SR\",\"calculado\":\"S\",\"mensagem\":\"SEM RELACIONAMENTO\",\"setor\":\"03\",\"relacionamento\":\"Sem relacionamento\",\"tendencia\":\"Sem relacionamento\"},\"possuiHabitoPagamentos\":false,\"habitoPagamentosPontual\":null,\"habitoPagamentos001_007\":null,\"habitoPagamentos008_014\":null,\"habitoPagamentos015_020\":null,\"habitoPagamentos021_030\":null,\"habitoPagamentosMais30\":null,\"habitoPagamentosMais60\":null}";
 		
-		
-		int HTTP_COD_SUCESSO = 200;
-
-		String retornoConsulta;
-		URL myURL;
-		if (CommonsUtil.mesmoValor("PF", tipoPessoa))
-			myURL = new URL(
-					"https://servicos.galleriabank.com.br/crednet/api/v1/" + CommonsUtil.somenteNumeros(cnpjcpf));
-		else
-			myURL = new URL(
-					"https://servicos.galleriabank.com.br/relato/api/v1/" + CommonsUtil.somenteNumeros(cnpjcpf));
-
-		HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
-		myURLConnection.setRequestMethod("GET");
-		myURLConnection.setUseCaches(false);
-		myURLConnection.setRequestProperty("Accept", "application/json");
-		myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-		myURLConnection.setRequestProperty("Content-Type", "application/json");
-		myURLConnection.setRequestProperty("Authorization",
-				"Bearer " + br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos());
-		myURLConnection.setDoOutput(true);
-
-		if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
-			retornoConsulta = null;
-		} else {
-			// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
-			// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
-
-			BufferedReader in;
-			in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
-			String inputLine;
-			StringBuffer response = new StringBuffer();
-			while ((inputLine = in.readLine()) != null) {
-				response.append(inputLine);
-			}
-			in.close();
-
-			retornoConsulta = response.toString();
-
-		}
-		myURLConnection.disconnect();
-		return retornoConsulta;
-	}
-
-	public String serasaCriarConsulta(String scnpjCpf) {
 		try {
-			return executaConsultaSerasa(CommonsUtil.pessoaFisicaJuridicaCnpjCpf(scnpjCpf), scnpjCpf);
+			int HTTP_COD_SUCESSO = 200;
+
+			String retornoConsulta;
+			URL myURL;
+			if (CommonsUtil.mesmoValor("PF", tipoPessoa))
+				myURL = new URL(
+						"https://servicos.galleriabank.com.br/crednet/api/v1/" + CommonsUtil.somenteNumeros(cnpjcpf));
+			else
+				myURL = new URL(
+						"https://servicos.galleriabank.com.br/relato/api/v1/" + CommonsUtil.somenteNumeros(cnpjcpf));
+
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setRequestMethod("GET");
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			myURLConnection.setRequestProperty("Authorization",
+					"Bearer " + br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos());
+			myURLConnection.setDoOutput(true);
+
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
+				retornoConsulta = null;
+			} else {
+				// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
+				// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
+
+				BufferedReader in;
+				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
+				String inputLine;
+				StringBuffer response = new StringBuffer();
+				while ((inputLine = in.readLine()) != null) {
+					response.append(inputLine);
+				}
+				in.close();
+
+				retornoConsulta = response.toString();
+
+			}
+			myURLConnection.disconnect();
+			return retornoConsulta;
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -261,6 +254,12 @@ public class SerasaService {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public String serasaCriarConsulta(String scnpjCpf) {
+		
+		return executaConsultaSerasa(CommonsUtil.pessoaFisicaJuridicaCnpjCpf(scnpjCpf), scnpjCpf);
+
 	}
 	
 	public String baixarDocumentoConsulta(String retornoSerasa, String tipoPessoa)
