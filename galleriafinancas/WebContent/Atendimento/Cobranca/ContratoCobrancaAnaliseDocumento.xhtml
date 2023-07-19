@@ -64,7 +64,7 @@
 							<p:commandButton value="ver Resumo"
 								onclick="PF('resumoConsutlasDialog').show()"
 								update="resumoConsutlasForm" ajax="true"
-								style="TEXT-DECORATION: bold;" rendered="#{fileAnalise.engineProcessado}">
+								style="TEXT-DECORATION: bold;" rendered="#{fileAnalise.tipo != 'Rea'}">
 
 								<f:setPropertyActionListener value="#{fileAnalise}"
 									target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
