@@ -1,5 +1,8 @@
 package com.webnowbr.siscoat.cobranca.ws.caf;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -24,18 +27,21 @@ public class CombateAFraudeWebhook {
 	public Response webhookCaF(String webhookRetorno, @QueryParam("Token") String token) {
 		try {
 			Jwts.parserBuilder().setSigningKey(CommonsUtil.CHAVE_WEBHOOK).build().parseClaimsJws(token);
-
 			CombateAFraudeWebhookRetorno cafWebhookRetorno = GsonUtil.fromJson(webhookRetorno, CombateAFraudeWebhookRetorno.class);
 			CombateAFraudeDao cafDao = new CombateAFraudeDao();
-			CombateAFraude caf = cafDao.findByFilter("templateId", cafWebhookRetorno.templateId).get(0);			
-			caf.setType(cafWebhookRetorno.type);
-			caf.setReport(cafWebhookRetorno.report);
-			caf.setUuid(cafWebhookRetorno.uuid);
-			caf.setStatus(cafWebhookRetorno.status);
-			caf.setDate(cafWebhookRetorno.status);
-			cafDao.merge(caf);
-			System.out.println(webhookRetorno);
-			
+			CombateAFraude caf = cafDao.findByFilter("uuid", cafWebhookRetorno.uuid).get(0);
+			if(!CommonsUtil.mesmoValor(cafWebhookRetorno.status, "PROCESSING")){
+				caf.setType(cafWebhookRetorno.type);
+				caf.setStatus(cafWebhookRetorno.status);
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+				Date d = sdf.parse("2023-07-05T12:21:16.834Z");
+				caf.setDate(d);
+				for(CombateAFraudeStatusReasons reason : cafWebhookRetorno.statusReasons) {
+					caf.setObs(caf.getObs() + reason.description  + "\n");
+				}
+				cafDao.merge(caf);				
+			}
+			//System.out.println(webhookRetorno);		
 			return Response.status(200).entity("Processado").build();
 		} catch (io.jsonwebtoken.ExpiredJwtException eJwt) {
 			eJwt.printStackTrace();

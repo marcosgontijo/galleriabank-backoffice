@@ -1,17 +1,18 @@
 package com.webnowbr.siscoat.cobranca.ws.caf;
 
+import java.util.Date;
+
 public class CombateAFraude {
 	
 	private long id;
 	private String templateId;	
 	private String cpf;
-	
 	private String type;
-	private String report;
 	private String uuid;
+	private String requestId;
 	private String status;
-	private String date; //2022-08-24T18:01:38.413Z
-	
+	private String obs;
+	private Date date;
 	
 	public long getId() {
 		return id;
@@ -37,12 +38,6 @@ public class CombateAFraude {
 	public void setType(String type) {
 		this.type = type;
 	}
-	public String getReport() {
-		return report;
-	}
-	public void setReport(String report) {
-		this.report = report;
-	}
 	public String getUuid() {
 		return uuid;
 	}
@@ -55,14 +50,23 @@ public class CombateAFraude {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	public String getDate() {
+	public Date getDate() {
 		return date;
 	}
-	public void setDate(String date) {
+	public void setDate(Date date) {
 		this.date = date;
 	}
-	
-	
-	
+	public String getRequestId() {
+		return requestId;
+	}
+	public void setRequestId(String requestId) {
+		this.requestId = requestId;
+	}
+	public String getObs() {
+		return obs;
+	}
+	public void setObs(String obs) {
+		this.obs = obs;
+	}
 	
 }

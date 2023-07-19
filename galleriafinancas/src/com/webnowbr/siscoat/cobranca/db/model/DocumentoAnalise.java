@@ -63,15 +63,8 @@ public class DocumentoAnalise implements Serializable {
 	private String observacao;
 
 	public List<DocumentoAnaliseResumo> getResumoEngine() {
-		
 		List<DocumentoAnaliseResumo> result = new ArrayList<>();
-		EngineRetorno engine;
-		try {
-		engine = GsonUtil.fromJson(getRetornoEngine(), EngineRetorno.class);
-		} catch(Exception e) {
-			result.add(new DocumentoAnaliseResumo(getRetornoEngine(), null));
-			return result;
-		}
+		EngineRetorno engine = GsonUtil.fromJson(getRetornoEngine(), EngineRetorno.class);
 		if (engine == null) {
 			result.add(new DocumentoAnaliseResumo("nâo disponível", null));
 		} else {

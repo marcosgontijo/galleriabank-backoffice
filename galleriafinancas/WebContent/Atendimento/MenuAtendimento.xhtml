@@ -101,7 +101,7 @@
 						<shiro:hasAnyRoles name="ROOT, COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_CREDITO,
 						 PROFILE_GERENTE_ANALISE, PROFILE_AVALIADOR_IMOVEL,PROFILE_AVALIADOR_IMOVEL_COMPASS,
 						 PROFILE_AVALIADOR_IMOVEL_GALACHE, PROFILE_LAUDO, LAUDO, PROFILE_COMENTARIO_JURIDICO, PROFILE_CONTRATO,
-						 COBRANCA_LEAD, PRECOBRANCA">
+						 COBRANCA_LEAD, PRECOBRANCA, PROFILE_PAJU_NEVES, PROFILE_PAJU_LUVISON">
 							<p:submenu label="Análise" styleClass="titulosMenu">
 								<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA">
 									<p:menuitem value="Cadastrar Operação"
@@ -214,12 +214,21 @@
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, LAUDO, PROFILE_LAUDO, PROFILE_GERENTE_ANALISE">
-										<p:menuitem value="04 - Ag. PAJU"
-											action="#{contratoCobrancaMB.clearFieldsGeracaoPAJU}"
-											ajax="false" icon="ui-icon ui-icon-newwin"
-											styleClass="itemMenu" />
+									<p:menuitem value="04 - Ag. PAJU"
+										action="#{contratoCobrancaMB.clearFieldsGeracaoPAJU('')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, LAUDO, PROFILE_LAUDO, PROFILE_GERENTE_ANALISE">
+								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, LAUDO, PROFILE_LAUDO, PROFILE_GERENTE_ANALISE, PROFILE_PAJU_NEVES">
+									<p:menuitem value="04 - Ag. PAJU - Neves"
+											action="#{contratoCobrancaMB.clearFieldsGeracaoPAJU('Neves')}" ajax="false" icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />	
+								</shiro:hasAnyRoles>	
+								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, LAUDO, PROFILE_LAUDO, PROFILE_GERENTE_ANALISE, PROFILE_PAJU_LUVISON">
+									<p:menuitem value="04 - Ag. PAJU - Luvison"
+										action="#{contratoCobrancaMB.clearFieldsGeracaoPAJU('Luvison')}" ajax="false" icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								
+								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_LAUDO, PROFILE_GERENTE_ANALISE">
 									<p:menuitem value="04.1 - Ag. Laudo"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Laudo')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"

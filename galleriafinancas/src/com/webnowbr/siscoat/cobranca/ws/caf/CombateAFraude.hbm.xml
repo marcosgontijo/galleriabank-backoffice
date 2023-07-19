@@ -21,11 +21,7 @@
 		<property name="type" type="java.lang.String">
 			<column name="type" />
 		</property>
-
-		<property name="report" type="java.lang.String">
-			<column name="report" />
-		</property>
-
+		
 		<property name="uuid" type="java.lang.String">
 			<column name="uuid" />
 		</property>
@@ -34,8 +30,17 @@
 			<column name="status" />
 		</property>
 
-		<property name="date" type="java.lang.String">
+		<property name="date" type="java.util.Date">
 			<column name="date" />
 		</property>
+		
+		<property name="requestId" type="java.lang.String">
+			<column name="requestId" />
+		</property>
+		
+		<property name="obs" type="text">
+			<column name="obs" />
+		</property>
+		
 	</class>
 </hibernate-mapping>

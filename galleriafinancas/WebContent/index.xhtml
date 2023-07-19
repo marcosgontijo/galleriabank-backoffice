@@ -5,7 +5,8 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:p="http://primefaces.org/ui"
       xmlns:shiro="http://shiro.apache.org/tags"
-      xmlns:f="http://java.sun.com/jsf/core">
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:pe="http://primefaces.org/ui/extensions">
 
     <h:head>
         <title>Galleria Bank</title>          
@@ -19,6 +20,14 @@
 		<script src="#{request.contextPath}/resources/js/functions.js"></script>
         <script src="#{request.contextPath}/resources/js/locale-primefaces.js"></script>
         
+        <h:outputStylesheet >
+			.ui-dataview .ui-dataview-header {
+			    border-bottom: 0 none;
+			    display: none;
+			}
+						
+		</h:outputStylesheet>
+		<meta http-equiv="Access-Control-Allow-Origin" content="*"/>
     </h:head>
 	<h:body onload="register_tab_GUID()">    
 		<p:layout fullPage="true" > 		    
@@ -28,7 +37,7 @@
 					  <tr>
 					    <td width="30%" valign="top"><img src="#{resource['image/LogoSiscoatSmall.png']}" alt=""/></td>
 					    <td>
-					    	<shiro:hasAnyRoles name="ROOT, COBRANCA, IUGU_POSTO, ASSISTENTEFINANCEIRO, PROFILE_ANALISTA_POS_COMITE, PROFILE_ANALISTA_COMITE, PROFILE_CONTRATO, PROFILE_ANALISTA_CREDITO">
+					    	<shiro:hasAnyRoles name="ROOT, COBRANCA, IUGU_POSTO, ASSISTENTEFINANCEIRO, PROFILE_ANALISTA_POS_COMITE, PROFILE_ANALISTA_COMITE, PROFILE_CONTRATO, PROFILE_ANALISTA_CREDITO, CADASTRA_RESPONSAVEL">
 					    		<p:commandLink title="Cadastros" action="/Cadastros/MenuCadastros.xhtml" ajax="false"><img src="#{resource['image/Commons/logoCadastros.png']}" alt=""/></p:commandLink>
 					    	</shiro:hasAnyRoles>
 					    </td>
@@ -148,7 +157,7 @@
 						<shiro:hasAnyRoles name="ROOT, COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_CREDITO,
 						 PROFILE_GERENTE_ANALISE, PROFILE_AVALIADOR_IMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS,
 						 PROFILE_AVALIADOR_IMOVEL_GALACHE, PROFILE_LAUDO, LAUDO, PROFILE_COMENTARIO_JURIDICO, PROFILE_CONTRATO,
-						 COBRANCA_LEAD, PRECOBRANCA">
+						 COBRANCA_LEAD, PRECOBRANCA, PROFILE_PAJU_NEVES, PROFILE_PAJU_LUVISON">
 							<p:submenu label="Análise" styleClass="titulosMenu">
 								<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA">
 									<p:menuitem value="Cadastrar Operação"
@@ -261,12 +270,20 @@
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, LAUDO, PROFILE_LAUDO, PROFILE_GERENTE_ANALISE">
-										<p:menuitem value="04 - Ag. PAJU"
-											action="#{contratoCobrancaMB.clearFieldsGeracaoPAJU}"
-											ajax="false" icon="ui-icon ui-icon-newwin"
-											styleClass="itemMenu" />
+									<p:menuitem value="04 - Ag. PAJU"
+										action="#{contratoCobrancaMB.clearFieldsGeracaoPAJU('')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, LAUDO, PROFILE_LAUDO, PROFILE_GERENTE_ANALISE">
+								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, LAUDO, PROFILE_LAUDO, PROFILE_GERENTE_ANALISE, PROFILE_PAJU_NEVES">
+									<p:menuitem value="04 - Ag. PAJU - Neves"
+											action="#{contratoCobrancaMB.clearFieldsGeracaoPAJU('Neves')}" ajax="false" icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />	
+								</shiro:hasAnyRoles>	
+								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, LAUDO, PROFILE_LAUDO, PROFILE_GERENTE_ANALISE, PROFILE_PAJU_LUVISON">
+									<p:menuitem value="04 - Ag. PAJU - Luvison"
+										action="#{contratoCobrancaMB.clearFieldsGeracaoPAJU('Luvison')}" ajax="false" icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_LAUDO, PROFILE_GERENTE_ANALISE">
 									<p:menuitem value="04.1 - Ag. Laudo"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Laudo')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
@@ -758,13 +775,34 @@
 		    	</ui:insert>          			
 		    </p:layoutUnit>   	    			    		
 		    <p:layoutUnit position="center" id="conteudo" spacingOpen="0">
-				<ui:insert name="conteudo">						
-								    	        		           
+				<ui:insert name="conteudo">						    	        		           
                 </ui:insert>
 		    </p:layoutUnit>
 		    <p:layoutUnit position="south" size="35" resizable="false" closable="true" style="BORDER:none;" spacingOpen="0">
 				<p:outputLabel value="Copyright © 2023 Todos os direitos reservados. " styleClass="labelBold"/>
-		    </p:layoutUnit>			    
-		</p:layout>											
-	</h:body>
+		    </p:layoutUnit>	
+		    <p:outputLabel value="#{termoMB.verificaTermosNaoAssinadoso()}"/>		    			   
+			
+		</p:layout>
+
+			
+	<p:dialog widgetVar="dlgTermos" showEffect="fade" modal="true"
+		width="1000" height="570" minWidth="800">
+		
+		<h:form id="termoForm">
+			<iframe scrolling="yes" id="termoPdf"
+				style="height: 540; width: 100%" height="540" width="100%"
+				src="#{termoMB.carregaPdfTermo()}">
+				 
+			</iframe>
+			<div align="center">
+				<p:commandButton value="Aceitar" ajax="true" icon="ui-icon-check" id="btnAceite"
+					update=":termoForm" action="#{termoMB.aceitar()}"
+					style="TEXT-DECORATION: bold;" />
+			</div>
+		</h:form>
+
+	</p:dialog>
+	
+</h:body>
 </html>

@@ -44,8 +44,8 @@
 				
 			}
 			</h:outputStylesheet>
-			
-			<p:panel id="PanelLocador" header="Contrato - #{contratoCobrancaMB.tituloPainel}" style="margin-bottom:10px;">
+				
+			<p:panel id="PanelLocador" header="Contrato - #{contratoCobrancaMB.tituloPainel} - #{contratoCobrancaMB.tituloTelaConsultaPreStatus}" style="margin-bottom:10px;">
 				<p:focus /> 
 				<p:messages/>
 				
@@ -148,7 +148,8 @@
 									<h:panelGrid columns="2"
 										style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
-										border-radius: 5px; padding: 10px;">
+										border-radius: 5px; padding: 10px;"
+										rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Pedir Laudo'}">
 
 										<p:outputLabel styleClass="labelBold">Forma de Pagamento: </p:outputLabel>
 										<p:selectOneMenu id="formaDePagamentoLaudoPAJU"
@@ -183,27 +184,39 @@
 											style="width:=80px"
 											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial 
 											and contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudo eq 'Outro'}" />
+									
+										<p:outputLabel styleClass="labelBold"
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}">Pendenciar</p:outputLabel>
+										<p:selectBooleanCheckbox
+											value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaLaudoPaju}"
+											onIcon="ui-icon-check" offIcon="ui-icon-close"
+											style="width:=80px"
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}" />
 									</h:panelGrid>
 								
 									<h:panelGrid columns="2"
 										style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
-										border-radius: 5px; padding: 10px;">
-
+										border-radius: 5px; padding: 10px;"
+										rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Pedir PAJU'}">
+										
 										<p:outputLabel styleClass="labelBold"
 											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial 
-											and !contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}">PAJU Pedido: </p:outputLabel>				
-										<p:selectBooleanButton id="pedirPajuBtn"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada}"
-											onLabel="Pedido" offLabel="Não Pedido"
-											onIcon="ui-icon-check" offIcon="ui-icon-close"
-											style="width:=80px"
+											and !contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}"> Avaliação PAJU: 
+											</p:outputLabel>
+										<p:selectOneMenu id="avaliacaoPaju"
 											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial 
-											and !contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}">
+											and !contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoPaju}"
+											label="Tipo">
+											<f:selectItem itemValue="" itemLabel="" />
+											<f:selectItem itemValue="Neves" itemLabel="Neves" />
+											<f:selectItem itemValue="Luvison" itemLabel="Luvison" />
+											<f:selectItem itemValue="Outro" itemLabel="Outro" />
 											<p:ajax event="valueChange" update=":form:Status"
 												listener="#{contratoCobrancaMB.changeGeracaoPAJU}" />
-										</p:selectBooleanButton>
-								
+										</p:selectOneMenu>
+
 										<p:outputLabel styleClass="labelBold"
 											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}">Pendenciar</p:outputLabel>
 										<p:selectBooleanCheckbox
@@ -882,7 +895,7 @@
 
 
 				<h:panelGroup id="comentarioComitePanel" style="margin-bottom:20px;">
-					<p:panel header="Comentário Comitê" rendered="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite.size() > 0 and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' }">
+					<p:panel header="Comentário Comitê" rendered="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite.size() > 0}">
 						<p:outputLabel id="comentarioComite"
 							value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioComite}"
 							styleClass="labelBold" />
@@ -1121,7 +1134,7 @@
 							
 				<h:panelGroup id="comentarioPreComitePanel"
 					style="margin-bottom:20px;">
-					<p:panel header="Comentário Pré-Comitê" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">
+					<p:panel header="Comentário Pré-Comitê">
 						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoEsteira}">
 							<p:outputLabel for="comentarioPreComite"
 								value="Comentário Pré-Comitê: " styleClass="labelBold" />
@@ -1315,7 +1328,7 @@
 
 				<h:panelGroup id="CertificadoPanel" >
 					<p:panel header="Certificado"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.documentosCompletos and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}" >
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.documentosCompletos}" >
 						<h:panelGrid columns="2"> 					
 							<p:outputLabel for="empresaCertificado"
 								value="Empresa Certificado: " styleClass="labelBold" />
@@ -1359,10 +1372,8 @@
 				
 				<h:panelGroup id="BoletoPanel" >
 					<p:panel id="BoletoPAJULaudo" header="Gerar Boleto PAJU e Laudo"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite' }" >
-						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoImovelCobranca.tipo == 'Apartamento' 
-							|| contratoCobrancaMB.objetoImovelCobranca.tipo == 'Casa' 
-							|| contratoCobrancaMB.objetoImovelCobranca.tipo == 'Casa de Condomínio' }"> 
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}" >
+						<h:panelGrid columns="2"> 
 							<p:outputLabel for="vencimentoBoleto"
 								value="Data Vencimeto Boleto: " styleClass="labelBold" />
 							<p:calendar id="vencimentoBoleto" showOn="button"
@@ -1397,7 +1408,7 @@
 
 				<h:panelGroup id="laudoPajuPanel" style="margin-bottom:20px;">
 					<p:panel header="Laudo + Paju"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}">
 						<h:panelGrid columns="2">
 							<p:outputLabel for="valorLaudoPajuTotal"
 								value="Valor Laudo + PAJU: " styleClass="labelBold" />
@@ -1478,7 +1489,7 @@
 
 				<h:panelGroup id="PreAprovadoPanel" style="margin-bottom:20px;">
 					<p:panel header="Pré-Aprovado"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'}">
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise}">
 						<h:panelGrid columns="2">
 							<h:panelGroup>
 								<h:panelGrid columns="2">
@@ -1634,7 +1645,7 @@
 
 				<h:panelGroup id="RecebidoPajulaudoPanel"
 					style="margin-bottom:20px;">
-					<p:panel rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}" header="Recebido PAJU e laudo">
+					<p:panel rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}" header="Recebido PAJU e laudo">
 						<h:panelGrid columns="2">				
 							<h:panelGrid columns="2">							
 								<p:outputLabel for="valorPreLaudo"
@@ -1864,7 +1875,7 @@
 				<h:panelGroup id="CheckListInformacoesAdicionais">
 					<p:panel header="Check-List - Informações Adicionais"
 						style="margin-bottom:20px;"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'}">
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}">
 						<p:spacer height="10"></p:spacer>
 						<p:panel id="DataVistoriaPanel" style="border: none">						
 							<h:panelGrid columns="2">	
@@ -1961,7 +1972,7 @@
 					</p:panel>
 				</h:panelGroup>
 						
-				<p:panel id="Pessoas" header="Responsável" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">		
+				<p:panel id="Pessoas" header="Responsável" style="margin-bottom:10px;">		
 					<h:panelGrid columns="2">
 						<p:outputLabel for="Codigo1" value="Código do Responsável: " styleClass="labelBold" rendered="#{!contratoCobrancaMB.updateMode}"/>
 						<p:inputText id="Codigo1" value="#{contratoCobrancaMB.codigoResponsavel}" label="Código do Responsável" required="true" onblur=""  style="width:150px;" rendered="#{!contratoCobrancaMB.updateMode}"/>
@@ -1994,7 +2005,7 @@
 				
 				<!--  -->
 				
-				<p:panel id="PanelPagadorRecebedor" header="Pagador" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">		
+				<p:panel id="PanelPagadorRecebedor" header="Pagador" style="margin-bottom:10px;">		
 					<h:panelGrid columns="1">
 						<p:outputLabel
 							value="NOVO Pagador: preencha os dados do painel Dados Pagador"
@@ -2992,7 +3003,7 @@
 
 				</p:panel>	
 													
-				<p:panel id="Imovel" header="Imóvel Ofertado Como Garantia" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">
+				<p:panel id="Imovel" header="Imóvel Ofertado Como Garantia" style="margin-bottom:10px;">
 					<h:panelGrid columns="2">
 						<p:outputLabel for="NumeroMatricula" value="Numero Matrícula: " />
 						<p:inputText id="NumeroMatricula"
@@ -3004,10 +3015,14 @@
 							label="Cartório" onblur="" style="width:400px;" />
 
 						<p:outputLabel for="cartorioEstado" value="Estado Cartório: " />
-						<p:inputText id="cartorioEstado" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioEstado}" /> 
-											
-						<p:outputLabel for="cartorioMunicipio" value="Município Cartório: " />
-						<p:inputText id="cartorioMunicipio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioMunicipio}" />
+						<h:panelGroup>
+							<p:inputText id="cartorioEstado" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioEstado}" /> 												
+							<p:outputLabel for="cartorioMunicipio" value="Município Cartório: " />
+							<p:inputText id="cartorioMunicipio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioMunicipio}" />
+						</h:panelGroup>
+						
+						<p:outputLabel for="numeroCartorio" value="Numero Cartório: " />
+						<p:inputText id="numeroCartorio" value="#{contratoCobrancaMB.objetoImovelCobranca.numeroCartorio}" />
 						
 						<p:outputLabel for="CepImovel" value="Cep: "/>
 						<p:inputMask id="CepImovel"
@@ -3447,7 +3462,7 @@
 
 				<h:panelGroup id="ContasPagarPanel">
 					<p:panel header="Contas a Pagar" style="margin-bottom:10px;"
-						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">
+						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio}">
 
 						<f:facet name="header"> Contas a Pagar 
 							<p:outputLabel value="" />							
@@ -3657,7 +3672,7 @@
 				
 				<shiro:hasAnyRoles name="ROOT, PROFILE_CONTRATO, PROFILE_ANALISTA_POS_COMITE">				
 					<h:panelGroup id="comissaoCliente" style="margin-bottom:20px;">
-						<p:panel header="Comissão Cliente" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'}">
+						<p:panel header="Comissão Cliente" style="margin-bottom:10px;">
 							<h:panelGrid columns="2" >					
 								<h:panelGroup>
 									<h:panelGrid columns="2">
@@ -3759,7 +3774,7 @@
 
 				<h:panelGroup id="DividasPanel" style="margin-bottom:20px;">
 					<p:panel header="Dívidas" style="margin-bottom:10px;"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.aprovadoComite and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.aprovadoComite}">
 						<h:panelGrid columns="2">
 						
 							<p:outputLabel for="dividaIPTU" value="Dívida de IPTU: "
@@ -3788,7 +3803,7 @@
 				</h:panelGroup>
 
 				<p:panel id="Infos" header="Outras Informações"
-					style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">
+					style="margin-bottom:10px;">
 					<h:panelGrid columns="2">
 						<h:panelGrid columns="2">
 							<p:outputLabel for="quantoPrecisa" value="Qual valor precisa? "
@@ -3810,6 +3825,11 @@
 							<p:outputLabel for="apenasPagamentoAntecipado" value="Apenas Pagamento Antecipado?" styleClass="labelBold" />
 							<p:selectBooleanCheckbox id="apenasPagamentoAntecipado"  
 								value="#{contratoCobrancaMB.objetoContratoCobranca.apenasPagamentoAntecipado}"/>
+						
+							<p:outputLabel for="apenasPagamentoIntegral" value="Apenas Pagamento Integral?" styleClass="labelBold" />
+							<p:selectBooleanCheckbox id="apenasPagamentoIntegral"  
+								value="#{contratoCobrancaMB.objetoContratoCobranca.apenasPagamentoIntegral}"/>						
+						
 						</h:panelGrid>
 						
 						<h:panelGroup id="compraVenda">
@@ -3834,7 +3854,7 @@
 					</h:panelGrid>
 				</p:panel>
 
-				<p:panel id="AcaoObservacao" header="Motivo e Observação" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">							
+				<p:panel id="AcaoObservacao" header="Motivo e Observação" style="margin-bottom:10px;">							
 					<h:panelGrid columns="3">					
 						<p:outputLabel for="Acao" value="Ação: " />
 						<p:inputText id="Acao" value="#{contratoCobrancaMB.objetoContratoCobranca.acao}" label="Ação" onblur=""  style="width:300px;"/>
@@ -3852,7 +3872,7 @@
 			</p:panel>
 
 			<p:panel id="CheckListDocumentos" header="Documentos Prontos"
-				style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'}">
+				style="margin-bottom:10px;">
 				<h:panelGrid columns="4">
 					<h:panelGroup>
 						<h:panelGrid columns="2">
@@ -4428,7 +4448,7 @@
 				    <p:graphicImage name="image/ajaxloadingbar.gif" />
 				</p:dialog>
 
-				<p:panel id="ArquivosJuridicoSalvos" header="Arquivo(s) Juridico Salvo(s) no Contrato" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Registro'}">							
+				<p:panel id="ArquivosJuridicoSalvos" header="Arquivo(s) Juridico Salvo(s) no Contrato" style="margin-bottom:10px;">							
 					<h:panelGrid columns="1">			                      								
 						<p:dataTable id="dtFilesJuridico" var="filesJuridico" value="#{contratoCobrancaMB.filesJuridico}" rowKey="#{filesJuridico.name}" selection="#{contratoCobrancaMB.deletefilesJuridico}" emptyMessage="" sortBy="#{filesJuridico.name}" >	
 							<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
@@ -4485,7 +4505,7 @@
 				    <p:graphicImage name="image/ajaxloadingbar.gif" />
 				</p:dialog>
 
-				<p:panel id="ArquivosSalvos" header="Arquivo(s) Salvo(s) no Contrato" style="margin-bottom:10px;"  >							
+				<p:panel id="ArquivosSalvos" header="Arquivo(s) Salvo(s) no Contrato" style="margin-bottom:10px;" >							
 					<h:panelGrid columns="1">			                      								
 						<p:dataTable id="dtFiles" var="files" value="#{contratoCobrancaMB.files}" rowKey="#{files.name}" selection="#{contratoCobrancaMB.deletefiles}" emptyMessage="" sortBy="#{files.name}" >	
 							<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
