@@ -101,8 +101,12 @@ public final class User implements Serializable {
     private boolean profileAvaliadorImovelCompass;
     private boolean profileAvaliadorImovelGalache;
     private boolean profileLaudo; 
+    private boolean profilePajuNeves; 
+    private boolean profilePajuLuvison;
     
+    private boolean cadastraResponsavel;
     
+    private List<Termo> listTermos;
     
     /**
      * Construtor.
@@ -680,5 +684,36 @@ public final class User implements Serializable {
 	public void setSenhaDocket(String senhaDocket) {
 		this.senhaDocket = senhaDocket;
 	}
-	
+
+	public List<Termo> getListTermos() {
+		return listTermos;
+	}
+
+	public void setListTermos(List<Termo> listTermos) {
+		this.listTermos = listTermos;
+	}
+
+	public boolean isProfilePajuNeves() {
+		return profilePajuNeves;
+	}
+
+	public void setProfilePajuNeves(boolean profilePajuNeves) {
+		this.profilePajuNeves = profilePajuNeves;
+	}
+
+	public boolean isProfilePajuLuvison() {
+		return profilePajuLuvison;
+	}
+
+	public void setProfilePajuLuvison(boolean profilePajuLuvison) {
+		this.profilePajuLuvison = profilePajuLuvison;
+	}
+
+	public boolean isCadastraResponsavel() {
+		return cadastraResponsavel;
+	}
+
+	public void setCadastraResponsavel(boolean cadastraResponsavel) {
+		this.cadastraResponsavel = cadastraResponsavel;
+	}	
 }

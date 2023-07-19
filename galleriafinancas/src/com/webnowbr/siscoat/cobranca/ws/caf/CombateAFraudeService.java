@@ -61,9 +61,8 @@ public class CombateAFraudeService {
 				CombateAFraude caf = new CombateAFraude();
 				caf.setCpf(combateAFraudeTransaction.attributes.cpf);
 				caf.setTemplateId(combateAFraudeTransaction.templateId);
-				
-				System.out.println("Request id = " + combateAFraudeTransaction.getRequestId());
-				System.out.println("Id = " + combateAFraudeTransaction.getId());
+				caf.setUuid(combateAFraudeTransaction.getId());
+				caf.setRequestId(combateAFraudeTransaction.getRequestId());
 				
 				CombateAFraudeDao cafDao = new CombateAFraudeDao(); 
 				cafDao.create(caf);

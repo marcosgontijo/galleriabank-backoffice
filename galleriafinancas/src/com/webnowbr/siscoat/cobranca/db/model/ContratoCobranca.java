@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Set;
 
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.infra.db.model.User;
+import com.webnowbr.siscoat.security.LoginBean;
 
 public class ContratoCobranca implements Serializable {
 
@@ -97,7 +99,6 @@ public class ContratoCobranca implements Serializable {
 	private long id;
 	private Date dataInicio; // data de inicio das parcelas
 	private Date dataContrato; // data do contrato mas muda na aprovacao
-	
 	private Date dataCadastro; //data que operacao foi inserida no sistema
 	private String userCadastro;
 	
@@ -328,8 +329,9 @@ public class ContratoCobranca implements Serializable {
 
 	private boolean contratoRestritoAdm;
 
-	private List<CadastroStatus> listCadastroStatus;
+	private Set<CadastroStatus> listCadastroStatus;
 	private String status;
+	private String statusEsteira;
 
 	private String vlrParcelaStr;
 
@@ -775,11 +777,14 @@ public class ContratoCobranca implements Serializable {
 	private String observacaoContatoAgendaLaudoAvaliacao;
 	private String comentarioContatoAgendaLaudoAvaliacao;
 	private boolean apenasPagamentoAntecipado;
+	private boolean apenasPagamentoIntegral;
 
 	private String avaliacaoLaudo;
 	private String avaliacaoLaudoObservacao;
 	private String geracaoLaudoObservacao;
 	private boolean iniciouGeracaoLaudo;
+	private String avaliacaoPaju;
+	private boolean iniciouGeracaoPaju;
 	
 	private boolean contatoDiferenteProprietario;
 	//private String geracaoLaudoObservacao;
@@ -842,7 +847,7 @@ public class ContratoCobranca implements Serializable {
 		this.listContasPagar = new HashSet<>();
 		this.listaAnaliseComite = new HashSet<>();
 		this.listAverbacao = new HashSet<>();
-		this.listCadastroStatus = new ArrayList<CadastroStatus>();
+		this.listCadastroStatus = new HashSet<>();
 		this.listProcessos = new HashSet<>();
 		
 		limparPrimitivos();
@@ -999,6 +1004,272 @@ public class ContratoCobranca implements Serializable {
 
 	}
 
+	public ContratoCobranca populaStatusEsteira(User user) {
+		// POPULA STATUS
+		String statusAnterior = statusEsteira;
+		ContratoCobranca c = this;
+		if (CommonsUtil.mesmoValor(c.getStatus(), "Aprovado")) {
+			c.setStatusEsteira("Aprovado");
+		} else if (CommonsUtil.mesmoValor(c.getStatus(), "Reprovado")) {
+			c.setStatusEsteira("Reprovado");
+		} else if (CommonsUtil.mesmoValor(c.getStatus(), "Baixado")) {
+			c.setStatusEsteira("Baixado");
+		} else if (CommonsUtil.mesmoValor(c.getStatus(), "Desistência Cliente")) {
+			c.setStatusEsteira("Reprovado");
+		} else {
+			if (!CommonsUtil.semValor(c.getStatusLead())) {
+				if (c.getStatusLead().equals("Novo Lead")) {
+					c.setStatusEsteira("Novo Lead");
+				}
+
+				if (c.getStatusLead().equals("Em Tratamento")) {
+					c.setStatusEsteira("Lead em Tratamento");
+				}
+
+				if (c.getStatusLead().equals("Ag. Contato")) {
+					c.setStatusEsteira("Lead Ag. Contato");
+				}
+
+				if (c.getStatusLead().equals("Ag. Doc.")) {
+					c.setStatusEsteira("Lead Ag. Doc.");
+				}
+
+				if (c.getStatusLead().equals("Reprovado")) {
+					c.setStatusEsteira("Lead Reprovado");
+				}
+
+				if (c.getStatusLead().equals("Completo") && !c.isInicioAnalise()) {
+					c.setStatusEsteira("Ag. Análise");
+				}
+
+				if (c.getStatusLead().equals("Arquivado")) {
+					c.setStatusEsteira("Lead Arquivado");
+				}
+
+			} else {
+				c.setStatusEsteira("Não Definido");
+			}
+
+			if (c.isInicioAnalise()) {
+				c.setStatusEsteira("Em Análise");
+			}
+
+			if (c.getCadastroAprovadoValor() != null) {
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")) {
+					c.setStatusEsteira("Em Análise");
+				}
+
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Pendente")) {
+					c.setStatusEsteira("Análise Pendente");
+				}
+
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")) {
+					c.setStatusEsteira("Análise Pré-Aprovada");
+				}
+
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+						&& c.isPedidoPreLaudoComercial()) {
+					c.setStatusEsteira("Pedir Pré-Laudo");
+				}
+
+				String status = "";
+
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+						&& c.isPedidoLaudoPajuComercial() && !c.isPedidoLaudo()) {
+					c.setStatusEsteira("Pedir Laudo");
+					status = status + "Pedir Laudo";
+				}
+
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado") && c.isPedidoLaudo()
+						&& !c.isLaudoRecebido()) {
+					if (!CommonsUtil.semValor(c.getAvaliacaoLaudo())
+							&& CommonsUtil.mesmoValor(c.getAvaliacaoLaudo(), "Compass")) {
+						c.setStatusEsteira("Pedir Laudo Compass");
+						if (!CommonsUtil.semValor(status)) {
+							status = status + " | ";
+						}
+						status = status + "Pedir Laudo Compass";
+					} else if (!CommonsUtil.semValor(c.getAvaliacaoLaudo())
+							&& CommonsUtil.mesmoValor(c.getAvaliacaoLaudo(), "Galache")) {
+						c.setStatusEsteira("Pedir Laudo Galache");
+						if (!CommonsUtil.semValor(status)) {
+							status = status + " | ";
+						}
+						status = status + "Pedir Laudo Galache";
+					} else {
+						c.setStatusEsteira("Ag. Laudo");
+						if (!CommonsUtil.semValor(status)) {
+							status = status + " | ";
+						}
+						status = status + "Ag. Laudo";
+					}
+				}
+
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+						&& c.isPedidoLaudoPajuComercial() && !c.isPagtoLaudoConfirmada()) {
+					c.setStatusEsteira("Pedir PAJU");
+					if (!CommonsUtil.semValor(status)) {
+						status = status + " | ";
+					}
+					status = status + "Pedir PAJU";
+				}
+
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+						&& c.isPagtoLaudoConfirmada() && !c.isPajurFavoravel()) {
+					c.setStatusEsteira("Ag. PAJU");
+					if (!CommonsUtil.semValor(status)) {
+						status = status + " | ";
+					}
+					if(!CommonsUtil.semValor(c.getAvaliacaoPaju())
+							&& CommonsUtil.mesmoValor(c.getAvaliacaoPaju(), "Neves")) {
+						status = status + "Ag. PAJU Neves";
+					} else if (!CommonsUtil.semValor(c.getAvaliacaoPaju())
+							&& CommonsUtil.mesmoValor(c.getAvaliacaoPaju(), "Luvison")) {
+						status = status + "Ag. PAJU Luvison";
+					} else {
+						status = status + "Ag. PAJU";
+					}
+				}
+
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+						&& c.isPendenciaLaudoPaju() && (!c.isLaudoRecebido() || !c.isPajurFavoravel())) {
+					if (!CommonsUtil.semValor(status)) {
+						status = status + " | ";
+					}
+					status = status + "Laudo + Paju Pendente";
+				}
+
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+						&& c.isPagtoLaudoConfirmada() && c.isPajurFavoravel() && !c.isAnaliseComercial()) {
+					if (!CommonsUtil.semValor(status)) {
+						status = status + " | ";
+					}
+					status = status + "Análise Comercial";
+				}
+
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+						&& c.isPagtoLaudoConfirmada() && c.isPajurFavoravel() && c.isAnaliseComercial()
+						&& !c.isComentarioJuridicoEsteira()) {
+					if (!CommonsUtil.semValor(status)) {
+						status = status + " | ";
+					}
+					status = status + "Comentário Jurídico";
+				}
+
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+						&& c.isPagtoLaudoConfirmada() && c.isPajurFavoravel() && c.isAnaliseComercial()
+						&& c.isComentarioJuridicoEsteira() && !c.isPreAprovadoComite()) {
+					if (!CommonsUtil.semValor(status)) {
+						status = status + " | ";
+					}
+					status = status + "Pré-Comite";
+				}
+
+				if (!CommonsUtil.semValor(status)) {
+					c.setStatusEsteira(status);
+				}
+
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+						&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
+						&& c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+						&& !c.isDocumentosComite()) {
+					c.setStatusEsteira("Ag. Validação DOCs");
+				}
+
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+						&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
+						&& c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+						&& c.isDocumentosComite() && !c.isAprovadoComite()) {
+					c.setStatusEsteira("Ag. Comite");
+				}
+
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+						&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
+						&& c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+						&& c.isDocumentosComite() && c.isAprovadoComite() && !c.isDocumentosCompletos()) {
+					c.setStatusEsteira("Ag. DOC");
+				}
+
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+						&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
+						&& c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+						&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+						&& c.isReanalise() && !c.isReanalisePronta()) {
+					c.setStatusEsteira("Ag. Reanalise");
+				}
+
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+						&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
+						&& c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+						&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+						&& c.isReanalise() && c.isReanalisePronta() && !c.isReanaliseJuridico()) {
+					c.setStatusEsteira("Ag. Reanalise Juridico");
+				}
+
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+						&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
+						&& c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+						&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+						&& !c.isReanalise() && !c.isCertificadoEmitido()) {
+					c.setStatusEsteira("Ag. Certificado");
+				}
+
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+						&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
+						&& c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+						&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+						&& !c.isReanalise() && c.isCertificadoEmitido() && !c.isCcbPronta()) {
+					c.setStatusEsteira("Ag. CCB");
+				}
+
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+						&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
+						&& c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+						&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+						&& c.isCertificadoEmitido() && c.isCcbPronta() && !c.isContratoConferido()) {
+					c.setStatusEsteira("Ag. Conferência");
+				}
+
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+						&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
+						&& c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+						&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+						&& c.isCertificadoEmitido() && c.isCcbPronta() && c.isContratoConferido()
+						&& c.isAgAssinatura()) {
+					c.setStatusEsteira("Ag. Assinatura");
+				}
+
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+						&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
+						&& c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+						&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+						&& c.isCertificadoEmitido() && c.isCcbPronta() && c.isContratoConferido()
+						&& !c.isAgAssinatura() && c.isAgEnvioCartorio()) {
+					c.setStatusEsteira("Ag. Envio Cartório");
+				}
+
+				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+						&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
+						&& c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+						&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+						&& c.isCertificadoEmitido() && c.isCcbPronta() && c.isContratoConferido()
+						&& !c.isAgAssinatura() && !c.isAgEnvioCartorio() && c.isAgRegistro()) {
+					c.setStatusEsteira("Ag. Registro");
+				}
+			}
+			if (c.isAnaliseReprovada()) {
+				c.setStatusEsteira("Análise Reprovada");
+			}
+		}
+		
+		if(!CommonsUtil.mesmoValor(statusEsteira, statusAnterior)) {
+			CadastroStatus cadastroStatus = new CadastroStatus(statusEsteira, statusAnterior, this, user);
+			this.getListCadastroStatus().add(cadastroStatus);
+		}
+		
+		return c;
+	}
+	
 	@Override
 	public String toString() {
 		return "ContratoCobranca [id=" + id + ", numeroContrato=" + numeroContrato + "]";
@@ -6239,15 +6510,15 @@ public class ContratoCobranca implements Serializable {
 	public void setDispositivoCertificado(String dispositivoCertificado) {
 		this.dispositivoCertificado = dispositivoCertificado;
 	}
-
-	public List<CadastroStatus> getListCadastroStatus() {
+	
+	public Set<CadastroStatus> getListCadastroStatus() {
 		return listCadastroStatus;
 	}
 
-	public void setListCadastroStatus(List<CadastroStatus> listCadastroStatus) {
+	public void setListCadastroStatus(Set<CadastroStatus> listCadastroStatus) {
 		this.listCadastroStatus = listCadastroStatus;
 	}
-	
+
 	public String getSolicitarNota() {
 		return solicitarNota;
 	}
@@ -6413,5 +6684,37 @@ public class ContratoCobranca implements Serializable {
 
 	public void setIspbPixContaPagar(String ispbPixContaPagar) {
 		this.ispbPixContaPagar = ispbPixContaPagar;
+	}
+
+	public boolean isApenasPagamentoIntegral() {
+		return apenasPagamentoIntegral;
+	}
+
+	public void setApenasPagamentoIntegral(boolean apenasPagamentoIntegral) {
+		this.apenasPagamentoIntegral = apenasPagamentoIntegral;
+	}
+
+	public String getAvaliacaoPaju() {
+		return avaliacaoPaju;
+	}
+
+	public void setAvaliacaoPaju(String avaliacaoPaju) {
+		this.avaliacaoPaju = avaliacaoPaju;
+	}
+		
+	public String getStatusEsteira() {
+		return statusEsteira;
+	}
+
+	public void setStatusEsteira(String statusEsteira) {
+		this.statusEsteira = statusEsteira;
+	}
+
+	public boolean isIniciouGeracaoPaju() {
+		return iniciouGeracaoPaju;
+	}
+
+	public void setIniciouGeracaoPaju(boolean iniciouGeracaoPaju) {
+		this.iniciouGeracaoPaju = iniciouGeracaoPaju;
 	}	
 }

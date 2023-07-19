@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="cobranca">
+	<class
+		name="com.webnowbr.siscoat.cobranca.db.model.ContratoTipoTemplate"
+		table="contrato_tipo_template">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="increment" />
+			
+		</id>
+				
+		<property name="codigoTipoTemplate" type="java.lang.String">
+			<column name="codigoTipoTemplate" />
+		</property>
+
+		<property name="descricao" type="java.lang.String">
+			<column name="descricao" />
+		</property>
+
+		<property name="prefixoNomeArquivo" type="java.lang.String">
+			<column name="prefixoNomeArquivo" />
+		</property>
+
+		<property name="ordem" type="java.lang.Integer">
+			<column name="ordem" />
+		</property>
+
+		<list name="blocos" table="contrato_tipo_template_bloco_Join"
+			cascade="all" lazy="false">
+			<key column="idTipoTemplate" />
+			<list-index></list-index>
+			<many-to-many column="idTipoTemplateBloco"
+				class="com.webnowbr.siscoat.cobranca.db.model.ContratoTipoTemplateBloco" />
+		</list>
+
+	</class>
+</hibernate-mapping>

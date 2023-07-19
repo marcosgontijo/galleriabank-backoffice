@@ -45,20 +45,16 @@ public class GoalSeekFunction {
             if (!Double.isInfinite(currentValue) && !Double.isNaN(currentValue)) {
                 // evaluate function at midpoint & determine next interval bound
                 goalSeek.checkCurrentValue(currentValue);
-
-                if(iterator == 24) {
-                	 System.out.println(goalSeek.getDifference(currentValue));
-                }
                 if (goalSeek.getDifference(currentValue) == 0d) {
-                	System.out.println("it:" + iterator);
+                	/*System.out.println("it:" + iterator);
                 	System.out.println("VL:" + currentValue);
-                	System.out.println("VB:" + midvalue);
+                	System.out.println("VB:" + midvalue);*/
                 	return midvalue;
                 }
             }
-            System.out.println("it:" + iterator);
+            /*System.out.println("it:" + iterator);
             System.out.println("VL:" + currentValue);
-            System.out.println("VB:" + midvalue);
+            System.out.println("VB:" + midvalue);*/
             iterator++; // increment iteration
         } while (Math.abs(goalSeek.getMinimumBoundaryValue() - goalSeek.getMaximumBoundaryValue()) / 2 >= THRESHOLD 
         		&& Math.abs(goalSeek.getDifference(currentValue)) > THRESHOLD && iterator <= ITERATOR_LIMIT);

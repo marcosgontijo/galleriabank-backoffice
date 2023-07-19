@@ -1,5 +1,21 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
+import com.starkbank.ellipticcurve.Signature;
+import com.starkbank.utils.Generator;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
+import com.webnowbr.siscoat.cobranca.db.model.StarkBankBoleto;
+import com.webnowbr.siscoat.cobranca.db.model.StarkBankPix;
+import com.webnowbr.siscoat.cobranca.db.model.TransferenciasIUGU;
+import com.webnowbr.siscoat.cobranca.db.model.TransferenciasObservacoesIUGU;
+import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
+import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
+import com.webnowbr.siscoat.cobranca.db.op.StarkBankBoletoDAO;
+import com.webnowbr.siscoat.cobranca.db.op.StarkBankPixDAO;
+import com.webnowbr.siscoat.cobranca.db.op.TransferenciasObservacoesIUGUDao;
+import com.webnowbr.siscoat.common.DateUtil;
+import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
+
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -15,6 +31,7 @@ import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,10 +57,10 @@ import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
-import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -54,17 +71,6 @@ import com.starkbank.Settings;
 import com.starkbank.Transfer;
 import com.starkbank.ellipticcurve.Ecdsa;
 import com.starkbank.ellipticcurve.PrivateKey;
-import com.starkbank.ellipticcurve.Signature;
-import com.starkbank.utils.Generator;
-import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
-import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
-import com.webnowbr.siscoat.cobranca.db.model.StarkBankBoleto;
-import com.webnowbr.siscoat.cobranca.db.model.StarkBankPix;
-import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
-import com.webnowbr.siscoat.cobranca.db.op.StarkBankBoletoDAO;
-import com.webnowbr.siscoat.cobranca.db.op.StarkBankPixDAO;
-import com.webnowbr.siscoat.common.DateUtil;
-import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 
 @ManagedBean(name = "starkBankAPI")
 @SessionScoped
@@ -995,6 +1001,8 @@ public class StarkBankAPI{
 	}
     
     public static void transfer() {
+    	FacesContext context = FacesContext.getCurrentInstance();
+    	
     	List<Transfer> transfers = new ArrayList<>();
 
     	List<Transfer.Rule> rules = new ArrayList<>();
@@ -1024,12 +1032,16 @@ public class StarkBankAPI{
 	    	    System.out.println(transfer);
 	    	}
 		} catch (Exception e) {
+			context.addMessage(null, new FacesMessage(
+					FacesMessage.SEVERITY_ERROR, "StarkBank PIX: Ocorreu um problema ao fazer PIX/TED! Erro: " + e, ""));
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }
     
-    public StarkBankPix paymentPix(String codigoPixBanco, String agencia, String numeroConta, String documento, String nomeBeneficiario, BigDecimal valor) {
+    public StarkBankPix paymentPix(String codigoPixBanco, String agencia, String numeroConta, String documento, String nomeBeneficiario, BigDecimal valor, String tipoOperacao) {
+    	FacesContext context = FacesContext.getCurrentInstance();
+    	
     	List<Transfer> transfers = new ArrayList<>();
 
     	List<Transfer.Rule> rules = new ArrayList<>();
@@ -1046,7 +1058,7 @@ public class StarkBankAPI{
 	    	data.put("accountNumber", numeroConta);
 	    	data.put("taxId", documento);
 	    	data.put("name", nomeBeneficiario);
-	    	data.put("externalId", "PagamentoPix/" + nomeBeneficiario);
+	    	data.put("externalId", "PagamentoPix " + nomeBeneficiario);
 	    	//data.put("scheduled", "2020-08-14");
 	    	//data.put("tags", new String[]{"daenerys", "invoice/1234"});
 	    	//data.put("rules", rules);
@@ -1074,8 +1086,14 @@ public class StarkBankAPI{
 	    	StarkBankPixDAO starkBankPixDAO = new StarkBankPixDAO();
 	    	starkBankPixDAO.create(pixTransacao);
 	    	
+	    	context.addMessage(null, new FacesMessage(
+					FacesMessage.SEVERITY_ERROR, "StarkBank PIX: Pagamento efetuado com sucesso!", ""));
+	    	
 	    	return pixTransacao;
 		} catch (Exception e) {
+			context.addMessage(null, new FacesMessage(
+					FacesMessage.SEVERITY_ERROR, "StarkBank PIX: Ocorreu um problema ao fazer PIX/TED! Erro: " + e, ""));
+			
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

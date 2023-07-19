@@ -1751,6 +1751,11 @@
 		<property name="iniciouGeracaoLaudo" type="boolean">
 			<column name="iniciouGeracaoLaudo" not-null="true" default="false" />
 		</property>	
+		
+		<property name="iniciouGeracaoPaju" type="boolean">
+			<column name="iniciouGeracaoPaju" not-null="true" default="false" />
+		</property>	
+		
 		<many-to-one name="analistaGeracaoPAJU"
 			class="com.webnowbr.siscoat.cobranca.db.model.Responsavel"
 			lazy="false">
@@ -2105,13 +2110,13 @@
 			<column name="dispositivoCertificado" />
 		</property>
 		
-		<list name="listCadastroStatus"
-			table="ContratoCobranca_CadastroStatus_Join" cascade="all" lazy="false">
-			<key column="idContratoCobranca" />
-			<list-index></list-index>
-			<many-to-many column="idCadastroStatus"
-				class="com.webnowbr.siscoat.cobranca.db.model.CadastroStatus" />
-		</list>	
+		<set name="listCadastroStatus" table="CadastroStatus" cascade="all"
+                 lazy="false" fetch="select">
+            <key>
+                <column name="contratoCobranca" not-null="true" />
+            </key>
+            <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.CadastroStatus" />
+        </set>
 		
 		<property name="solicitarNota" type="java.lang.String">
 			<column name="solicitarNota" />
@@ -2156,6 +2161,18 @@
 		<property name="contatoDiferenteProprietario" type="boolean">
 			<column name="contatoDiferenteProprietario" not-null="true" default="false"/>
 		</property>	
+		
+		<property name="avaliacaoPaju" type="java.lang.String">
+			<column name="avaliacaoPaju" />
+		</property>
+		
+		<property name="apenasPagamentoIntegral" type="boolean">
+			<column name="apenasPagamentoIntegral" not-null="true" default="false"/>
+		</property>	
+		
+		<property name="statusEsteira" type="java.lang.String">
+			<column name="statusEsteira" />
+		</property>
 		
 	</class>
 </hibernate-mapping>

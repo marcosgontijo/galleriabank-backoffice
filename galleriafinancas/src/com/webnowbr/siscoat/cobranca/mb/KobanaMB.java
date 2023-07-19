@@ -391,42 +391,19 @@ public class KobanaMB {
 										    	objeto = cDao.findById(Long.valueOf(valorObjeto));
 										    	
 										    	if (objeto != null) {
+										    		if (objetoDataBoleto.has("valorParcelaKobana/" + objeto.getId())) {
+										    			objeto.setVlrBoletoKobana(objetoDataBoleto.getBigDecimal("valorParcelaKobana/" + objeto.getId()));
+										    		} else {
+										    			objeto.setVlrBoletoKobana(objetoDataBoleto.getBigDecimal("valorParcelaOriginal/" + objeto.getId()));
+										    		}
+										    		
 										    		parcelasBoleto.add(objeto);
 										    	}
 										    }
 										}
 										
-										// se está no novo formato de baixa, onde tem valor customizado por parcela
-										if (parcelasBoleto.size() == 0) {
-											// percorre para pegar os ID's e converter em objeto
-											contratoParcelas = objetoDataBoleto.keys();
-											while (contratoParcelas.hasNext()) {
-												String nomeObjeto = contratoParcelas.next();
-												
-												if (nomeObjeto.contains("idParcela")) {
-													String valorObjeto = objetoDataBoleto.get(nomeObjeto).toString();
-													ContratoCobrancaDetalhes objeto = null;
-											    	objeto = cDao.findById(Long.valueOf(valorObjeto));
-											    	
-											    	if (objeto != null) {
-											    		parcelasBoleto.add(objeto);
-											    	}
-												}
-												// percorre parcelas e pega valor dos boletos
-												for (ContratoCobrancaDetalhes parcela : parcelasBoleto) {
-													if (parcela != null) {
-														parcela.setVlrBoletoKobana(objetoDataBoleto.getBigDecimal("valorParcelaKobana/" + parcela.getId()));
-													}
-												}
-											}											
-										} /*else {
-											// preenche o novo campo com o valor da parcela para ser usado na tela
-											for (ContratoCobrancaDetalhes parcela : parcelasBoleto) {
-												if (parcela != null) {
-													parcela.setVlrBoletoKobana(parcela.getVlrParcela());
-												}
-											}
-										}*/
+										
+										// verifica se as parcelas est
 				
 										boleto.setMultiParcelas(parcelasBoleto);
 									} 
@@ -435,6 +412,11 @@ public class KobanaMB {
 								if (objetoDataBoleto.has("idParcela")) {
 									ContratoCobrancaDetalhes parcela = new ContratoCobrancaDetalhes();
 									parcela = parcelaDao.findById(Long.valueOf(objetoDataBoleto.getString("idParcela")));
+									
+									if (parcela.isParcelaPaga()) {
+										boleto.setParcelasBaixadas(true);
+									}
+									
 									boleto.setParcela(parcela);
 									boleto.setVlrParcela(parcela.getVlrParcela());
 								}
@@ -469,6 +451,9 @@ public class KobanaMB {
 				}
 				*/
 				
+				// Verifica status das parcelas contidas no boleto
+				verificaSeParcelasBaixadasPeloKobana(boleto);
+				
 				// Filtra Empresa
 				if (this.filtroEmpresa.equals("")) {
 					this.listBoletosKobana.add(boleto);	
@@ -483,6 +468,31 @@ public class KobanaMB {
 				}				
 			}
 		}
+	}
+	
+	public boolean verificaSeParcelasBaixadasPeloKobana(BoletoKobana boletosKobana) {
+		boolean retorno = false;
+		
+		// Verifica status multiparcela
+		if (boletosKobana.getMultiParcelas() != null && boletosKobana.getMultiParcelas().size() > 0) {
+			boletosKobana.setParcelasBaixadas(true);
+			
+			for (ContratoCobrancaDetalhes parcelas : boletosKobana.getMultiParcelas()) {
+				if (!parcelas.isParcelaPaga()) {
+					boletosKobana.setParcelasBaixadas(false);
+				}
+			}
+		} else {
+			if (boletosKobana.getParcela() != null) {
+				if (boletosKobana.getParcela().isParcelaPaga()) {
+					boletosKobana.setParcelasBaixadas(true);
+				} else {
+					boletosKobana.setParcelasBaixadas(false);
+				}
+			}
+		}
+		
+		return retorno;
 	}
 	
 	public Date processStringToDate(String dateStr) {

@@ -27,14 +27,23 @@
 			<column name="usuario" />
 		</many-to-one> 
 		
-		<property name="detalhes" type="java.lang.String">
-			<column name="detalhes" />
-		</property>  
+		<property name="statusAnteriror" type="java.lang.String">
+			<column name="statusAnteriror" />
+		</property>
 		
 		<many-to-one name="contratoCobranca"
 			class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca"
 			lazy="false">
 			<column name="contratocobranca" />
-		</many-to-one>       
+		</many-to-one>    
+  
+		<property name="numeroContrato" type="java.lang.String">
+			<column name="numeroContrato" />
+		</property>
+		
+		<property name="ordemStatus" type="big_integer">
+			<column name="ordemStatus" />
+		</property>
+		
     </class>
 </hibernate-mapping>

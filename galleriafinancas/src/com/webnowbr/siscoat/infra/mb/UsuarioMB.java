@@ -469,6 +469,24 @@ public class UsuarioMB {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
+			
+			gAdm = gDao.findByFilter("acronym", "PROFILE_PAJU_NEVES");
+			if (objetoUsuario.isProfilePajuNeves()) {
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}
+			}
+			
+			gAdm = gDao.findByFilter("acronym", "PROFILE_PAJU_LUVISON");
+			if (objetoUsuario.isProfilePajuLuvison()) {
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}
+			}
 
 			gAdm = gDao.findByFilter("acronym", "PROFILE_MARKETING");
 			if (objetoUsuario.isProfileMarketing()) {
@@ -478,6 +496,16 @@ public class UsuarioMB {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
+			
+			gAdm = gDao.findByFilter("acronym", "CADASTRA_RESPONSAVEL");
+			if (objetoUsuario.isCadastraResponsavel()) {
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}
+			}
+
 
 			if (!objetoUsuario.isUserInvestidor() && !objetoUsuario.isUserPreContrato()) {
 				objetoUsuario.setCodigoResponsavel(null);
