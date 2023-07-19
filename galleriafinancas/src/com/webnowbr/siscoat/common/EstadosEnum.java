@@ -25,7 +25,7 @@ public enum EstadosEnum {
 	PARANÁ("Paraná", "PR", "e0992d76-53fb-4933-cec1-eb51b79d63bb"),
 	PERNAMBUCO("Pernambuco", "PE", "360d9f3c-3eab-b482-5b0f-6e5a0a09944e"),
 	PIAUÍ("Piauí", "PI","eb6564fc-4232-0ca7-e5ee-ba2c328746a2"),
-	RIO_DE_JANEIRO("Rio de Janeiro", "RJ","074c0821-bf46-c6b6-5f7c-e39f5df39f98"),
+	//RIO_DE_JANEIRO("Rio de Janeiro", "RJ","074c0821-bf46-c6b6-5f7c-e39f5df39f98"),
 	RIO_GRANDE_DO_NORTE("Rio Grande do Norte", "RN", "f4e7b2e6-2e75-b146-2826-67f9072e8d2d"),
 	RIO_GRANDE_DO_SUL("Rio Grande do Sul", "RS", "76925d4c-a65f-4936-f876-bc753fcfbb38"),
 	RONDÔNIA("Rondônia", "RO", "93164dfb-3ef9-467f-26f0-5b52e8bad2e3"),

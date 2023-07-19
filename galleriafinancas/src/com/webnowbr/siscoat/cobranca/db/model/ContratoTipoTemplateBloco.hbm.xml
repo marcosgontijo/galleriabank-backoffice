@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="cobranca">
+	<class
+		name="com.webnowbr.siscoat.cobranca.db.model.ContratoTipoTemplateBloco"
+		table="contrato_tipo_template_bloco">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="increment" />
+		</id>
+
+		<property name="codigoTipoTemplate" type="java.lang.String">
+			<column name="codigoTipoTemplate" />
+		</property>
+		
+		<property name="codigoTipoTemplateBloco" type="java.lang.String">
+			<column name="codigoTipoTemplateBloco" />
+		</property>
+		
+
+		<many-to-one name="template"
+			class="com.webnowbr.siscoat.cobranca.db.model.ContratoTipoTemplate"
+			lazy="false">
+			<column name="template" />
+		</many-to-one>
+
+		<property name="tagIdentificacao" type="java.lang.String">
+			<column name="tagIdentificacao" />
+		</property>
+
+		<property name="descricao" type="java.lang.String">
+			<column name="descricao" />
+		</property>
+
+
+		<list name="campos"
+			table="contrato_tipo_template_bloco_campo_Join" cascade="all"
+			lazy="false">
+			<key column="idTipoTemplateBloco" />
+			<list-index></list-index>
+			<many-to-many column="idTipoTemplateBlocoCampo"
+				class="com.webnowbr.siscoat.cobranca.db.model.ContratoTipoTemplateCampo" />
+		</list>
+
+
+		<many-to-one name="contratoTipoTemplateBlocoPai"
+			class="com.webnowbr.siscoat.cobranca.db.model.ContratoTipoTemplateBloco"
+			lazy="false">
+			<column name="contratoTipoTemplateBlocoPai" />
+		</many-to-one>
+
+		<list name="blocosFilho"
+			table="contrato_tipo_template_bloco_filho_Join" cascade="all"
+			lazy="false">
+			<key column="idTipoTemplateBloco" />
+			<list-index></list-index>
+			<many-to-many column="idTipoTemplateBlocoFilho"
+				class="com.webnowbr.siscoat.cobranca.db.model.ContratoTipoTemplateBloco" />
+		</list>
+
+		<property name="flagInativo" type="boolean"> 
+			<column name="flagInativo"  not-null="true" default="false" />
+		</property>	
+
+
+	</class>
+</hibernate-mapping>

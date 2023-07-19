@@ -1,13 +1,24 @@
 package com.webnowbr.siscoat.cobranca.db.model;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+
+import org.json.JSONObject;
 
 import com.webnowbr.siscoat.common.BancosEnum;
 
@@ -97,6 +108,81 @@ public class Responsavel implements Serializable {
 			bancos.add(bancoStr);
 		}
 		return bancos.stream().filter(t -> t.toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());
+	}
+	
+	public void getEnderecoByViaNet() {
+		try {
+			String inputCep = this.cep.replace("-", "");
+			FacesContext context = FacesContext.getCurrentInstance();
+
+			int HTTP_COD_SUCESSO = 200;
+
+			URL myURL = new URL("http://viacep.com.br/ws/" + inputCep + "/json/");
+
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestMethod("GET");
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+			myURLConnection.setDoOutput(true);
+
+			String erro = "";
+			JSONObject myResponse = null;
+
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
+				
+			} else {
+				myResponse = getJsonSucesso(myURLConnection.getInputStream());
+				if(myResponse.has("logradouro")) {
+					this.setEndereco(myResponse.get("logradouro").toString());
+				}
+				if(myResponse.has("bairro")) {
+					this.setBairro(myResponse.get("bairro").toString());
+				}				
+				if(myResponse.has("localidade")) {
+					this.setCidade(myResponse.get("localidade").toString());
+				}			
+				if(myResponse.has("uf")) {
+					this.setEstado(myResponse.get("uf").toString());
+				}				
+			}
+			myURLConnection.disconnect();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public JSONObject getJsonSucesso(InputStream inputStream) {
+		BufferedReader in;
+		try {
+			in = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+
+			// READ JSON response and print
+			JSONObject myResponse = new JSONObject(response.toString());
+
+			return myResponse;
+
+		} catch (UnsupportedEncodingException e) {
+			
+			e.printStackTrace();
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	/**

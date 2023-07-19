@@ -264,15 +264,18 @@
 										value="Nome Vistoriador: " styleClass="labelBold" />
 									<p:inputText id="nomeVistoriador"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.nomeVistoriador}"
-										style="FONT-SIZE: 10pt;width:300px;"/>	
-																																													
-								
+										style="FONT-SIZE: 10pt;width:300px;"/>																							
+																																															
 									<p:outputLabel for="avaliacaoLaudoObservacao"
 										value="Observação Avaliação: " styleClass="labelBold" />
 									<p:inputTextarea id="avaliacaoLaudoObservacao" rows="5"
 										cols="84" maxlength="3000" onblur=""
 										counterTemplate="{0} characters remaining." autoResize="false"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudoObservacao}" />	
+										
+									<p:outputLabel styleClass="labelBold">Geração Laudo Iniciada? </p:outputLabel>									
+									<p:selectBooleanButton value="#{contratoCobrancaMB.objetoContratoCobranca.iniciouGeracaoLaudo}" 
+											onLabel="Iniciado" offLabel="Não Iniciado" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px"/>													
 										
 									<shiro:hasAnyRoles name="ROOT, AVALIADORIMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS">				
 										<p:outputLabel for="avaliacaoEngenharia"
@@ -317,10 +320,14 @@
 							label="Cartório" onblur="" style="width:400px;"  disabled="true"/>
 
 						<p:outputLabel for="cartorioEstado" value="Estado Cartório: " />
-						<p:inputText id="cartorioEstado" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioEstado}" disabled="true" /> 
-											
-						<p:outputLabel for="cartorioMunicipio" value="Município Cartório: " />
-						<p:inputText id="cartorioMunicipio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioMunicipio}" disabled="true" />
+						<h:panelGroup>
+							<p:inputText id="cartorioEstado" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioEstado}" disabled="true" /> 												
+							<p:outputLabel for="cartorioMunicipio" value=" Município Cartório: " />
+							<p:inputText id="cartorioMunicipio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioMunicipio}" disabled="true" />
+						</h:panelGroup>
+																	
+						<p:outputLabel for="numeroCartorio" value="Numero Cartório: " />
+						<p:inputText id="numeroCartorio" value="#{contratoCobrancaMB.objetoImovelCobranca.numeroCartorio}" disabled="true" /> 					
 						
 						<p:outputLabel for="CepImovel" value="Cep: "/>
 						<p:inputMask id="CepImovel"

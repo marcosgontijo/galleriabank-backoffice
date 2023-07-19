@@ -1660,9 +1660,9 @@
 										style="FONT-SIZE: 10pt;width:100px;"
 										converter="bigDecimalConverter" />
 									<p:spacer width="10px"/>
-									<p:commandButton ajax="false" icon="ui-icon-trash"
+									<p:commandButton icon="ui-icon-trash"
 										action="#{ccbMB.removeDespesa(despesas)}"
-										update="ListaDespesas" />
+										update="form:despesasPanel form:valorDespesas" />
 								</p:dataViewListItem>
 							</p:dataView>				
 							<h:panelGroup>
@@ -1767,10 +1767,10 @@
 									</h:panelGroup>
 								</h:panelGroup>
 																		
-								<p:commandButton value="Inserir Despesa" ajax="false"
+								<p:commandButton value="Inserir Despesa" 
 									icon="ui-icon-check"
 									action="#{ccbMB.addDespesa}" 
-									update="despesasPanel ListaDespesas">
+									update="form:despesasPanel form:valorDespesas">
 								</p:commandButton>				
 							</h:panelGroup>
 							
@@ -1789,10 +1789,9 @@
 									<p:spacer width="10px"/>
 									<p:commandButton icon="ui-icon-trash"
 										action="#{ccbMB.removeProcesso(processos)}"
-										update="ListaProcessos" />
+										update="form:despesasPanel form:valorDespesas" />
 								</p:dataViewListItem>
-							</p:dataView>
-							
+							</p:dataView>			
 							<h:panelGrid columns="2">
 								<p:outputLabel
 									value="Valor: " styleClass="labelBold"
@@ -1824,7 +1823,7 @@
 								<p:commandButton value="Inserir Processo"
 									icon="ui-icon-check"
 									action="#{ccbMB.addProcesso}" 
-									update="despesasPanel ListaProcessos">
+									update="form:despesasPanel form:valorDespesas">
 								</p:commandButton>
 							</h:panelGrid>							
 

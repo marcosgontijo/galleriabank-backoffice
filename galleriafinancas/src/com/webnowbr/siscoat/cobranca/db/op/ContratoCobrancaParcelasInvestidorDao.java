@@ -90,7 +90,7 @@ public class ContratoCobrancaParcelasInvestidorDao extends HibernateDao <Contrat
 			" and cp.datavencimento < ? ::timestamp " + 
 			" and c.ocultarecebedor10 = false " + 
 			" ) investidores" + 
-			" where recebedor not in (14,15,34) " + 
+			" where recebedor not in (14,15) " + 
 			" order by recebedor, numerocontrato"; 
 
 	@SuppressWarnings("unchecked")
