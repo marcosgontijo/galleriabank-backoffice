@@ -12,11 +12,14 @@
 				vertical-align: top;
 				
 			}
+			
 	</h:outputStylesheet>
 	<shiro:hasAnyRoles
 		name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO">
 		<p:panel id="ArquivosAnalisados"
-			style="margin-bottom:10px;text-align: center;">
+			style="margin-bottom:10px;text-align: center;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' 
+			and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' 
+			and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite' }">
 			<f:facet name="header">
 				<h:outputText value="Analise Documentos" />
 				<p:commandButton value="Atualizar listagem" ajax="true"
@@ -61,7 +64,8 @@
 							<p:commandButton value="ver Resumo"
 								onclick="PF('resumoConsutlasDialog').show()"
 								update="resumoConsutlasForm" ajax="true"
-								style="TEXT-DECORATION: bold;">
+								style="TEXT-DECORATION: bold;" rendered="#{fileAnalise.tipo != 'Rea'}">
+
 								<f:setPropertyActionListener value="#{fileAnalise}"
 									target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
 							</p:commandButton>

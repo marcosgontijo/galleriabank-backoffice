@@ -126,7 +126,7 @@ public class DocumentoAnalise implements Serializable {
 			if (dados.getChequeSemFundo() == null) {
 				serasa.add(new DocumentoAnaliseResumo("Cheque Sem Fundo:", "Não disponível"));
 			} else {
-				String cheque = CommonsUtil.stringValue(dados.getChequeSemFundo());
+				String cheque = CommonsUtil.stringValue(dados.getChequeSemFundo().getPcsfQtCheques());
 				serasa.add(new DocumentoAnaliseResumo("Cheque Sem Fundo:", cheque));
 			}
 

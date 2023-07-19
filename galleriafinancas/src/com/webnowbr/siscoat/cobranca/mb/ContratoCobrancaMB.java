@@ -8467,6 +8467,7 @@ public class ContratoCobrancaMB {
 	}
 
 	public String clearFieldsEditarPendentes() {
+		listaArquivosAnaliseDocumentos();
 
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
@@ -8857,6 +8858,7 @@ public class ContratoCobrancaMB {
 
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
+		listaArquivosAnaliseDocumentos();
 
 		return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusAvaliacaoImovel.xhtml";
 	}
@@ -8872,6 +8874,7 @@ public class ContratoCobrancaMB {
 		if (this.objetoContratoCobranca.getResponsavel() != null) {
 			this.codigoResponsavel = this.objetoContratoCobranca.getResponsavel().getCodigo();
 		}
+		listaArquivosAnaliseDocumentos();
 
 		filesInterno = new ArrayList<FileUploaded>();
 		filesInterno = listaArquivosInterno();
@@ -8897,6 +8900,7 @@ public class ContratoCobrancaMB {
 		} else {
 			this.idAnalistaGeracaoPAJU = 0;
 		}
+		listaArquivosAnaliseDocumentos();
 
 		this.tituloPainel = "Editar";
 
