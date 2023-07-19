@@ -21,6 +21,10 @@ public class RelacionamentoPagadorRecebedor implements Serializable {
 		this.pessoaChild = pessoaChild;
 		this.porcentagem = porcentagem;
 	}
+	
+	public RelacionamentoPagadorRecebedor() {
+		super();
+	}
 
 	public long getId() {
 		return id;
