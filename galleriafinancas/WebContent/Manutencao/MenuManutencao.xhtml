@@ -16,8 +16,11 @@
 					<h:form style="margin-bottom:10px;">	
 							<p:menu style="width: 250px;">						
 								<p:submenu label="Manutenção" styleClass="titulosMenu">
-									<shiro:hasRole name="ROOT">	
+									<shiro:hasAnyRoles name="ROOT, PROFILE_COMPLIANCE">
 										<p:menuitem value="Usuário" action="UsuarioConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-person" styleClass="itemMenu"/>
+									</shiro:hasAnyRoles>	
+								
+									<shiro:hasRole name="ROOT">											
 										<p:menuitem value="Parâmetros" action="ParametroConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-link" styleClass="itemMenu"/>
 										<p:menuitem value="Limpeza Servidor" action="LimpezaServidor.xhtml" ajax="false" icon="ui-icon ui-icon-link" styleClass="itemMenu"/>
 										<p:menuitem value="Money Plus Testes"

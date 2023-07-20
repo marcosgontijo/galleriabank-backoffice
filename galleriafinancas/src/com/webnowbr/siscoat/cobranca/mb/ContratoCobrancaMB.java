@@ -10136,9 +10136,17 @@ public class ContratoCobrancaMB {
 	}
 
 	public void populaVlrBoletoKobana() {
+		this.dataQuitacao = this.dataVencimentoBoleto;
+		simularQuitacaoContrato();
+		
 		if (this.selectedListContratoCobrancaDetalhes.size() > 0) {
-			for (ContratoCobrancaDetalhes parcelasSelecionadas : this.selectedListContratoCobrancaDetalhes) {
-				parcelasSelecionadas.setVlrBoletoKobana(parcelasSelecionadas.getVlrParcela());
+			for (ContratoCobrancaDetalhes parcelasSelecionadas : this.selectedListContratoCobrancaDetalhes) {				
+				for (QuitacaoParcelasPDF parcelaPresente : this.quitacaoPDF.getParcelas()) {
+					if (parcelaPresente.getNumeroParcela().equals(parcelasSelecionadas.getNumeroParcela())) {
+						parcelasSelecionadas.setVlrBoletoKobana(parcelaPresente.getValorPresenteParcela());		
+					}
+				}
+				//parcelasSelecionadas.setVlrBoletoKobana(parcelasSelecionadas.getVlrParcela());
 			}
 		}
 	}
@@ -20167,6 +20175,11 @@ public class ContratoCobrancaMB {
 
 	public void atualizaValorBaixaParceladaBoletosKobana(SelectEvent event) {
 		Date dateSelected = (Date) event.getObject();
+		
+		this.dataVencimentoBoleto = dateSelected;
+		
+		populaVlrBoletoKobana();
+		/*
 		this.rowEditNewDate = dateSelected;
 		calculaNovaData(dateSelected);
 
@@ -20186,6 +20199,7 @@ public class ContratoCobrancaMB {
 
 			parcelasSelecionada.setVlrBoletoKobana(this.valorPresenteParcela);
 		}
+		*/
 
 		calculaValorTotalBoletoKobana();
 	}
@@ -28564,12 +28578,12 @@ public class ContratoCobrancaMB {
 					netrinService.requestCenprot(documentoAnalise);
 				}
 
-				if (documentoAnalise.isPodeChamarSerasa()
-						&& CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
-					documentoAnalise.addObservacao("Processando SERASA");
-					PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
-					serasaService.requestSerasa(documentoAnalise, loginBean.getUsuarioLogado());
-				}
+//				if (documentoAnalise.isPodeChamarSerasa()
+//						&& CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
+//					documentoAnalise.addObservacao("Processando SERASA");
+//					PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
+//					serasaService.requestSerasa(documentoAnalise, loginBean.getUsuarioLogado());
+//				}
 
 				if (documentoAnalise.isPodeChamarEngine()
 						&& CommonsUtil.semValor(documentoAnalise.getRetornoEngine())) {

@@ -84,12 +84,12 @@ public class EngineWebhook {
 							&& (CommonsUtil.semValor(engineWebhookRetorno.getProcessos()) || CommonsUtil.intValue(
 									engineWebhookRetorno.getProcessos().getTotal_acoes_judicias_reu()) == 0)) {
 						// libera a consulta do crednet da PF
-						if (documentoAnalise.isPodeChamarSerasa()) {
-							if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
-								documentoAnalise.setLiberadoSerasa(true);
-								serasaService.requestSerasa(documentoAnalise, userService.userSistema());
-							}
-						}
+//						if (documentoAnalise.isPodeChamarSerasa()) {
+//							if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
+//								documentoAnalise.setLiberadoSerasa(true);
+//								serasaService.requestSerasa(documentoAnalise, userService.userSistema());
+//							}
+//						}
 						if (documentoAnalise.isPodeChamarCenprot()) {
 							if (CommonsUtil.semValor(documentoAnalise.getRetornoCenprot())) {
 								documentoAnalise.setLiberadoCenprot(true);

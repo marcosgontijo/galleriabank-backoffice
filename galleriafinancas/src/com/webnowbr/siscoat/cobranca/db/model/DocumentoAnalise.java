@@ -267,9 +267,11 @@ public class DocumentoAnalise implements Serializable {
 	}
 
 	public boolean isPodeChamarEngine() {
-		return !CommonsUtil.mesmoValor(motivoAnalise.toUpperCase(), "PROPRIETARIO ATUAL") && !isEngineProcessado()
-				&& (CommonsUtil.mesmoValor("PF", tipoPessoa) || (CommonsUtil.mesmoValor("PJ", tipoPessoa)
-						&& !this.motivoAnalise.contains("Empresa Vinculada")));
+		return !isEngineProcessado();				
+				
+//		return !CommonsUtil.mesmoValor(motivoAnalise.toUpperCase(), "PROPRIETARIO ATUAL") && !isEngineProcessado()
+//				&& (CommonsUtil.mesmoValor("PF", tipoPessoa) || (CommonsUtil.mesmoValor("PJ", tipoPessoa)
+//						&& !this.motivoAnalise.contains("Empresa Vinculada")));
 	}
 
 	public boolean isEngineProcessado() {

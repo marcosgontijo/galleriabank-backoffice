@@ -352,6 +352,19 @@
 					header="Novo Sistema de Permissionamento"
 					style="margin-bottom:10px;margin-top:20px;">
 					<h:panelGrid columns="2">
+					<h:outputLabel for="profileCompliance" value="Compliance"
+							class="labelBold" />
+						<h:panelGroup>
+							<p:selectBooleanButton id="profileCompliance"
+								value="#{usuarioMB.objetoUsuario.profileCompliance}" onLabel="Sim"
+								offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+								style="width:60px">
+							</p:selectBooleanButton>
+							<shiro:hasAnyRoles name="ROOT">
+								<h:outputLabel value="COMPLIANCE" />
+							</shiro:hasAnyRoles>	
+						</h:panelGroup>				
+						
 						<h:outputLabel for="profileAnalistaCredito" value="Analista de Crédito"
 							class="labelBold" />
 						<h:panelGroup>
