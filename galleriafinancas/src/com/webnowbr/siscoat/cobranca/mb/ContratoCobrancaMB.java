@@ -250,6 +250,7 @@ public class ContratoCobrancaMB {
 
 	private List<BoletoKobana> selectedBoletosKobana = new ArrayList<BoletoKobana>();
 	private List<DocumentoAnalise> listaDocumentoAnalise;
+	private List<DocumentoAnalise> listaDeleteAnalise = new ArrayList<DocumentoAnalise>();
 
 	/************************************************************
 	 * Objetos para antecipacao de parcela
@@ -30791,6 +30792,20 @@ public class ContratoCobrancaMB {
 		deletefiles = new ArrayList<FileUploaded>();
 		files = listaArquivos();
 	}
+	public void deleteArquivosAnalisados() {
+		DocumentoAnaliseDao dao = new DocumentoAnaliseDao();
+				
+		for (DocumentoAnalise d : listaDeleteAnalise) {
+			d.setExcluido(true);
+			
+			dao.merge(d);
+			
+			
+			
+		}
+		listaArquivosAnaliseDocumentos();
+		
+	}
 
 	public void deleteFileInterno() {
 		for (FileUploaded f : deletefilesInterno) {
@@ -30893,7 +30908,7 @@ public class ContratoCobrancaMB {
 
 	public void listaArquivosAnaliseDocumentos() {
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-		this.listaDocumentoAnalise = documentoAnaliseDao.findByFilter("contratoCobranca", this.objetoContratoCobranca);
+		this.listaDocumentoAnalise = documentoAnaliseDao.listagemDocumentoAnalise(this.objetoContratoCobranca);
 		Collections.sort(this.listaDocumentoAnalise, new Comparator<DocumentoAnalise>() {
 			@Override
 			public int compare(DocumentoAnalise one, DocumentoAnalise other) {
@@ -33632,5 +33647,12 @@ public class ContratoCobrancaMB {
 
 	public void setDocumentoAnalisePopup(DocumentoAnalise documentoAnalisePopup) {
 		this.documentoAnalisePopup = documentoAnalisePopup;
+	}
+	public List<DocumentoAnalise> getListaDeleteAnalise(){
+		return listaDeleteAnalise;
+	}
+	public void setListaDeleteAnalise(List<DocumentoAnalise> listaDeleteAnalise) {
+		
+		this.listaDeleteAnalise = listaDeleteAnalise;
 	}
 }

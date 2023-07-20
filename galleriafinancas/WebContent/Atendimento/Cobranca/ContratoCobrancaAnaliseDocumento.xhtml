@@ -57,9 +57,16 @@
 				<h:panelGrid columns="1">
 					<p:dataTable id="dtFilesAnalise" var="fileAnalise"
 						value="#{contratoCobrancaMB.listaDocumentoAnalise}"
-						rowKey="#{fileAnalise.id}" emptyMessage="">
+						rowKey="#{fileAnalise}" selection="#{contratoCobrancaMB.listaDeleteAnalise}" emptyMessage="">
+						<p:column  selectionMode="multiple" style="width:16px;text-align:center"/>
+						<f:facet name="header">								 
+								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteArquivosAnalisados}"/>
+					        </f:facet>	        
+					       
+						
 
 						<p:column style="text-align: center; width:5rem;">
+						
 
 							<p:commandButton value="ver Resumo"
 								onclick="PF('resumoConsutlasDialog').show()"
@@ -164,6 +171,9 @@
 								<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
 							</p:commandButton>
 						</p:column>
+					
+						
+						
 					</p:dataTable>
 				</h:panelGrid>
 
