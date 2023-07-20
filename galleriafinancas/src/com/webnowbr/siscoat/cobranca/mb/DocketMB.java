@@ -551,8 +551,8 @@ public class DocketMB {
 		contrato = cDao.findById(this.objetoContratoCobranca.getId());	
 		ImovelCobranca imovel = new ImovelCobranca();
 		imovel = iDao.findById(contrato.getImovel().getId());
-		//if(CommonsUtil.semValor(this.objetoContratoCobranca)){
-			this.objetoContratoCobranca = contrato;
+		this.objetoContratoCobranca = contrato;
+		if(!CommonsUtil.mesmoValor(imovel.getEstado(), "RJ")) {
 			if(!CommonsUtil.semValor(imovel.getEstado())) {
 				localidadesSelecionada.setEstadoSelecionado(EstadosEnum.getByUf(imovel.getEstado()));
 			}
@@ -561,30 +561,30 @@ public class DocketMB {
 				localidadesSelecionada.getCidadeDocketId();
 			}
 			pegarListaCidadesImovel();
-			
-			if(!CommonsUtil.semValor(localidadesSelecionada.getCidadeId())) {
-				inserirLocalidade();
+		}
+		if(!CommonsUtil.semValor(localidadesSelecionada.getCidadeId())) {
+			inserirLocalidade();
+		}
+		List<DataEngine> listEngine;
+		DataEngineDao engineDao = new DataEngineDao();
+		PagadorRecebedorDao pDao = new PagadorRecebedorDao();
+		PagadorRecebedor pagador;
+		listEngine = engineDao.findByFilter("contrato", objetoContratoCobranca);
+		if(listEngine.size() > 0) {
+			for(DataEngine engine : listEngine) {
+				pagador = pDao.findById(engine.getPagador().getId());	
+				listaEsperaPagador.add(pagador);
+				adicionarPagadorOpendialog(listaEsperaPagador.get(0));
 			}
-			List<DataEngine> listEngine;
-			DataEngineDao engineDao = new DataEngineDao();
-			PagadorRecebedorDao pDao = new PagadorRecebedorDao();
-			PagadorRecebedor pagador;
-			listEngine = engineDao.findByFilter("contrato", objetoContratoCobranca);
-			if(listEngine.size() > 0) {
-				for(DataEngine engine : listEngine) {
-					pagador = pDao.findById(engine.getPagador().getId());	
-					listaEsperaPagador.add(pagador);
-					adicionarPagadorOpendialog(listaEsperaPagador.get(0));
-				}
-			} else {
-				pagador = pDao.findById(contrato.getPagador().getId());	
-				adicionarPagadorOpendialog(pagador);
-			}
-						
-			if(docketDao.findByFilter("objetoContratoCobranca", contrato).size() > 0) {
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Pedido desse contrato já existe!", ""));	
-			}
-		//}
+		} else {
+			pagador = pDao.findById(contrato.getPagador().getId());	
+			adicionarPagadorOpendialog(pagador);
+		}
+					
+		if(docketDao.findByFilter("objetoContratoCobranca", contrato).size() > 0) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Pedido desse contrato já existe!", ""));	
+		}
+	
 	}
 		
 	public void removeDoc(PagadorRecebedor pagador, DocumentosPagadorDocket doc) {
@@ -603,67 +603,57 @@ public class DocketMB {
 	public void adiconarDocumentospagador(PagadorRecebedor pagador, EstadosEnum estado,  String cidadeImovel) {
 		DocumentosDocketDao docDao = new DocumentosDocketDao();
 		List<DocumentosDocket> listaDocs = docDao.findAll();
-		//if(CommonsUtil.semValor(pagador.getDocumentosDocket())) {
-			for(DocumentosDocket doc : listaDocs) {
-				boolean addDoc = true;
-				DocumentosPagadorDocket docPagador = new DocumentosPagadorDocket(doc);
-				if(!CommonsUtil.semValor(estado)) {
-					docPagador.setEstadoSelecionado(estado);
-					/*if(CommonsUtil.mesmoValor(estado.getUf(), "RJ")
-						||CommonsUtil.mesmoValor(estado.getUf(), "PR")) {
-						if(CommonsUtil.mesmoValor(doc.getDocumentoNome(), 
-								"Certidão de Distribuição de Ações Criminais - Justiça Estadual (1° instância)")
-							|| CommonsUtil.mesmoValor(doc.getDocumentoNome(),
-									"Certidão de Distribuição de Ações Criminais - Justiça Estadual (1° instância) - Processos Judiciais Eletrônicos")
-							|| CommonsUtil.mesmoValor(doc.getDocumentoNome(), 
-									"Certidão de Distribuição de Ações Cíveis - Justiça Estadual (1° instância)")
-							|| CommonsUtil.mesmoValor(doc.getDocumentoNome(), 
-									"Certidão de Distribuição de Ações Cíveis - Justiça Estadual (1° instância) - Processos Judiciais Eletrônicos")){						
-							continue;
-						}	
-					}*/
-				}
+		
+		if(CommonsUtil.mesmoValor(estado.getUf(), "RJ")) {
+			return;
+		}
 				
-				if(CommonsUtil.mesmoValor(doc.getDocumentoNome(), 
-						"Certidão Conjunta de Débitos Relativos a Tributos Federais e a Dívida Ativa da União - Receita Federal")) {
-					for(DocumentosPagadorDocket docsSalvos : pagador.getDocumentosDocket()) {
-						if(CommonsUtil.mesmoValor(docsSalvos.getDocumentoDocket().getDocumentoNome(), doc.getDocumentoNome())) {
-							addDoc = false;
-							break;
-						}
+		for(DocumentosDocket doc : listaDocs) {
+			boolean addDoc = true;
+			DocumentosPagadorDocket docPagador = new DocumentosPagadorDocket(doc);
+			if(!CommonsUtil.semValor(estado)) {
+				docPagador.setEstadoSelecionado(estado);
+			}
+			
+			if(CommonsUtil.mesmoValor(doc.getDocumentoNome(), 
+					"Certidão Conjunta de Débitos Relativos a Tributos Federais e a Dívida Ativa da União - Receita Federal")) {
+				for(DocumentosPagadorDocket docsSalvos : pagador.getDocumentosDocket()) {
+					if(CommonsUtil.mesmoValor(docsSalvos.getDocumentoDocket().getDocumentoNome(), doc.getDocumentoNome())) {
+						addDoc = false;
+						break;
 					}
-				}
-				
-				if(CommonsUtil.mesmoValor(doc.getDocumentoNome(),
-						"Certidão Negativa de Débitos Trabalhistas - CNDT")) {
-					for(DocumentosPagadorDocket docsSalvos : pagador.getDocumentosDocket()) {
-						if(CommonsUtil.mesmoValor(docsSalvos.getDocumentoDocket().getDocumentoNome(), doc.getDocumentoNome())) {
-							addDoc = false;
-							break;
-						}
-					}
-				}
-				
-				if(CommonsUtil.mesmoValor(doc.getDocumentoNome(), "Certidão de Distribuição de Ações Trabalhistas - Tribunal Regional do Trabalho (1° instância)")
-					&& CommonsUtil.mesmoValor(estado.getUf(), "SP")) {
-					docPagador.setCidade("São Paulo");
-					docPagador.getCidadeDocketId();
-					docPagador.setTravado(true);
-					DocumentosPagadorDocket trtCampinas = new DocumentosPagadorDocket(doc);
-					trtCampinas.setEstadoSelecionado(estado);
-					trtCampinas.setCidade("Campinas");
-					trtCampinas.getCidadeDocketId();
-					trtCampinas.setTravado(true);
-					pagador.getDocumentosDocket().add(trtCampinas);
-				} else if(!CommonsUtil.semValor(cidadeImovel)) {
-					docPagador.setCidade(cidadeImovel);
-					docPagador.getCidadeDocketId();
-				} 
-				if(addDoc) {
-					pagador.getDocumentosDocket().add(docPagador);
 				}
 			}
-		//}		
+			
+			if(CommonsUtil.mesmoValor(doc.getDocumentoNome(),
+					"Certidão Negativa de Débitos Trabalhistas - CNDT")) {
+				for(DocumentosPagadorDocket docsSalvos : pagador.getDocumentosDocket()) {
+					if(CommonsUtil.mesmoValor(docsSalvos.getDocumentoDocket().getDocumentoNome(), doc.getDocumentoNome())) {
+						addDoc = false;
+						break;
+					}
+				}
+			}
+			
+			if(CommonsUtil.mesmoValor(doc.getDocumentoNome(), "Certidão de Distribuição de Ações Trabalhistas - Tribunal Regional do Trabalho (1° instância)")
+				&& CommonsUtil.mesmoValor(estado.getUf(), "SP")) {
+				docPagador.setCidade("São Paulo");
+				docPagador.getCidadeDocketId();
+				docPagador.setTravado(true);
+				DocumentosPagadorDocket trtCampinas = new DocumentosPagadorDocket(doc);
+				trtCampinas.setEstadoSelecionado(estado);
+				trtCampinas.setCidade("Campinas");
+				trtCampinas.getCidadeDocketId();
+				trtCampinas.setTravado(true);
+				pagador.getDocumentosDocket().add(trtCampinas);
+			} else if(!CommonsUtil.semValor(cidadeImovel)) {
+				docPagador.setCidade(cidadeImovel);
+				docPagador.getCidadeDocketId();
+			} 
+			if(addDoc) {
+				pagador.getDocumentosDocket().add(docPagador);
+			}
+		}
 	}
 
 	public List<SelectItem> pesquisaEstadosListaNome() {
