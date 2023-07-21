@@ -12,6 +12,7 @@
 				vertical-align: top;
 				
 			}
+			
 	</h:outputStylesheet>
 	<shiro:hasAnyRoles
 		name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO">
@@ -54,14 +55,23 @@
 				<h:panelGrid columns="1">
 					<p:dataTable id="dtFilesAnalise" var="fileAnalise"
 						value="#{contratoCobrancaMB.listaDocumentoAnalise}"
-						rowKey="#{fileAnalise.id}" emptyMessage="">
+						rowKey="#{fileAnalise}" selection="#{contratoCobrancaMB.listaDeleteAnalise}" emptyMessage="">
+						<p:column  selectionMode="multiple" style="width:16px;text-align:center"/>
+						<f:facet name="header">								 
+								<p:commandButton value="Excluir Selecionado(s)" ajax="true" icon="ui-icon-trash" update="dtFilesAnalise" action="#{contratoCobrancaMB.deleteArquivosAnalisados}">
+									<p:confirm header="Confirmação" message="Deseja Excluir os itens selecionados?"/>
+								</p:commandButton>
+					        </f:facet>	        
+					       
+						
 
 						<p:column style="text-align: center; width:5rem;">
 
 							<p:commandButton value="ver Resumo"
 								onclick="PF('resumoConsutlasDialog').show()"
 								update="resumoConsutlasForm" ajax="true"
-								style="TEXT-DECORATION: bold;">
+								style="TEXT-DECORATION: bold;" rendered="#{fileAnalise.tipo != 'Rea'}">
+
 								<f:setPropertyActionListener value="#{fileAnalise}"
 									target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
 							</p:commandButton>
@@ -160,6 +170,9 @@
 								<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
 							</p:commandButton>
 						</p:column>
+					
+						
+						
 					</p:dataTable>
 				</h:panelGrid>
 
@@ -175,6 +188,7 @@
 					action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.objetoContratoCobranca)}" />
 			</p:panel>
 		</p:panel>
+	
 
 	</shiro:hasAnyRoles>
 </ui:composition>
