@@ -47,8 +47,8 @@ import com.webnowbr.siscoat.infra.db.model.User;
 
 import br.com.galleriabank.dataengine.cliente.model.request.DataEngineIdSend;
 import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
-import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultRelacionamento;
 import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultRelacionamentosPessoaisPJ;
+import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultRelacionamentosPessoaisPJPartnership;
 import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoRequestEnterprisePartnership;
 import br.com.galleriabank.jwt.common.JwtUtil;
 import br.com.galleriabank.serasarelato.cliente.util.GsonUtil;
@@ -397,13 +397,13 @@ public class DocketService {
 			}
 			for (EngineRetornoExecutionResultRelacionamentosPessoaisPJ ererrppj : engineRetorno
 					.getRelacionamentosPessoaisPJ().getResult()) {
-				if (CommonsUtil.semValor(ererrppj.getRelationships()) || ererrppj.getRelationships().size() <= 0) {
+				if (CommonsUtil.semValor(ererrppj.getRelationships()) || ererrppj.getRelationships().getRelationships().size() <= 0) {
 					return;
 				}
 
-				for (EngineRetornoExecutionResultRelacionamento ererr : ererrppj.getRelationships()) {
+				for (EngineRetornoExecutionResultRelacionamentosPessoaisPJPartnership ererr : ererrppj.getRelationships().getRelationships()) {
 					String relacao = "";
-					if (CommonsUtil.mesmoValor(ererr.getRelationshipName(), "OWNER")) {
+					if (CommonsUtil.mesmoValor(ererr..getRelationshipName(), "OWNER")) {
 						relacao = "Dono";
 					} else if ((CommonsUtil.mesmoValor(ererr.getRelationshipName(), "SOCIO-ADMINISTRADOR"))) {
 						relacao = "Socio/Administrador";
