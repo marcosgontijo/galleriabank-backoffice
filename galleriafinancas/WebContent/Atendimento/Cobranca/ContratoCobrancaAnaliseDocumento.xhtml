@@ -60,7 +60,9 @@
 						rowKey="#{fileAnalise}" selection="#{contratoCobrancaMB.listaDeleteAnalise}" emptyMessage="">
 						<p:column  selectionMode="multiple" style="width:16px;text-align:center"/>
 						<f:facet name="header">								 
-								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteArquivosAnalisados}"/>
+								<p:commandButton value="Excluir Selecionado(s)" ajax="true" icon="ui-icon-trash" update="dtFilesAnalise" action="#{contratoCobrancaMB.deleteArquivosAnalisados}">
+									<p:confirm header="Confirmação" message="Deseja Excluir os itens selecionados?"/>
+								</p:commandButton>
 					        </f:facet>	        
 					       
 						
@@ -189,6 +191,7 @@
 					action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.objetoContratoCobranca)}" />
 			</p:panel>
 		</p:panel>
+	
 
 	</shiro:hasAnyRoles>
 </ui:composition>

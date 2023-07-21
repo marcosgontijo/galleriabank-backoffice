@@ -19,7 +19,8 @@ public class DocumentoAnaliseDao extends HibernateDao<DocumentoAnalise, Long> {
 	private static final String QUERY_VERIFICA_PESSOA_ANALISE = " select id "
 			+ "from cobranca.documentosanalise "
 			+ "where contratocobranca  = ? and cnpjcpf = ? ";
-	private static final String Verifica_Excluido = "select id"
+	
+	private static final String QUERY_VERIFICA_EXCLUIDO = "select id"
 			+ " from cobranca.documentosanalise "
 			+ "where contratocobranca  = ? and excluido = false "; 
 	
@@ -65,7 +66,7 @@ public class DocumentoAnaliseDao extends HibernateDao<DocumentoAnalise, Long> {
 					ResultSet rs = null;
 					try {
 						connection = getConnection();
-						ps = connection.prepareStatement(Verifica_Excluido);
+						ps = connection.prepareStatement(QUERY_VERIFICA_EXCLUIDO);
 						ps.setLong(1, contrato.getId());
 						  rs = ps.executeQuery();
 						while(rs.next()) {

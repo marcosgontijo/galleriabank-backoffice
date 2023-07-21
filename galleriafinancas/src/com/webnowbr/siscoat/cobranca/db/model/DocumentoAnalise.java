@@ -25,8 +25,7 @@ import br.com.galleriabank.netrin.cliente.model.dossie.DossieRequest;
 import br.com.galleriabank.netrin.cliente.model.processos.ProcessoResponse;
 import br.com.galleriabank.serasacrednet.cliente.model.CredNet;
 import br.com.galleriabank.serasacrednet.cliente.util.GsonUtil;
-@ManagedBean(name ="documentoAnalise")
-@SessionScoped
+
 public class DocumentoAnalise implements Serializable {
 
 	/**
