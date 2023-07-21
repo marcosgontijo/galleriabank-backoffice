@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -46,6 +47,8 @@ import com.webnowbr.siscoat.infra.db.model.User;
 
 import br.com.galleriabank.dataengine.cliente.model.request.DataEngineIdSend;
 import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
+import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultRelacionamento;
+import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultRelacionamentosPessoaisPJ;
 import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoRequestEnterprisePartnership;
 import br.com.galleriabank.jwt.common.JwtUtil;
 import br.com.galleriabank.serasarelato.cliente.util.GsonUtil;
@@ -328,9 +331,10 @@ public class DocketService {
 				pagadorRecebedorDao.merge(documentoAnalise.getPagador());
 			}
 
-			if (!CommonsUtil.semValor(engineRetorno.getConsultaCompleta().getEnterpriseData()) &&
-					!CommonsUtil.semValor(engineRetorno.getConsultaCompleta().getEnterpriseData().getPartnership()) &&
-					!CommonsUtil.semValor(engineRetorno.getConsultaCompleta().getEnterpriseData().getPartnership().getPartnerships())) {
+			if (!CommonsUtil.semValor(engineRetorno.getConsultaCompleta().getEnterpriseData())
+					&& !CommonsUtil.semValor(engineRetorno.getConsultaCompleta().getEnterpriseData().getPartnership())
+					&& !CommonsUtil.semValor(engineRetorno.getConsultaCompleta().getEnterpriseData().getPartnership()
+							.getPartnerships())) {
 				DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
 
 				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
@@ -340,14 +344,83 @@ public class DocketService {
 
 					documentoAnaliseService.cadastrarPessoRetornoEngine(partnership, usuarioLogado, documentoAnaliseDao,
 							pagadorRecebedorService, documentoAnalise.getContratoCobranca(),
-							( ( CommonsUtil.mesmoValor("INAPTO",  partnership.getCNPJStatus()))?"INAPTO":"" )+  "Empresa Vinculada ao " + documentoAnalise.getMotivoAnalise());
+							((CommonsUtil.mesmoValor("INAPTO", partnership.getCNPJStatus())) ? "INAPTO" : "")
+									+ "Empresa Vinculada ao " + documentoAnalise.getMotivoAnalise());
 				}
 			}
 
 		}
 
 	}
-	
+
+	public void gerarRelacoesEngine(DocumentoAnalise documentoAnalise) {
+		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+		documentoAnalise = documentoAnaliseDao.findById(documentoAnalise.getId());
+		EngineRetorno engineRetorno = null;// = GsonUtil.fromJson(documentoAnalise.getRetornoEngine(), EngineRetorno.class);
+		try {
+			engineRetorno = GsonUtil.fromJson(documentoAnalise.getRetornoEngine(), EngineRetorno.class);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+		}
+		DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
+		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+		
+		if (CommonsUtil.semValor(engineRetorno)) {
+			return;
+		}
+		if (CommonsUtil.semValor(documentoAnalise.getPagador())) {
+			return;
+		}
+		if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa())) {
+			if (CommonsUtil.semValor(engineRetorno.getConsultaCompleta())
+					|| CommonsUtil.semValor(engineRetorno.getConsultaCompleta().getEnterpriseData())
+					|| CommonsUtil.semValor(engineRetorno.getConsultaCompleta().getEnterpriseData().getPartnership())
+					|| CommonsUtil.semValor(engineRetorno.getConsultaCompleta().getEnterpriseData().getPartnership()
+							.getPartnerships())) {
+				return;
+			}
+			for (EngineRetornoRequestEnterprisePartnership partnership : engineRetorno.getConsultaCompleta()
+					.getEnterpriseData().getPartnership().getPartnerships()) {
+
+				PagadorRecebedor empresa = documentoAnaliseService.cadastrarPartnershipRetornoEngine(partnership,
+						pagadorRecebedorService);
+				pagadorRecebedorService.geraRelacionamento(empresa, partnership.getRelationshipDescription(),
+						documentoAnalise.getPagador(),
+						CommonsUtil.bigDecimalValue(partnership.getPercentParticipation()));
+			}
+		} else if (CommonsUtil.mesmoValor("PJ", documentoAnalise.getTipoPessoa())) {
+			if (CommonsUtil.semValor(engineRetorno.getRelacionamentosPessoaisPJ())
+					|| CommonsUtil.semValor(engineRetorno.getRelacionamentosPessoaisPJ().getResult())
+					|| engineRetorno.getRelacionamentosPessoaisPJ().getResult().size() <= 0) {
+				return;
+			}
+			for (EngineRetornoExecutionResultRelacionamentosPessoaisPJ ererrppj : engineRetorno
+					.getRelacionamentosPessoaisPJ().getResult()) {
+				if (CommonsUtil.semValor(ererrppj.getRelationships()) || ererrppj.getRelationships().size() <= 0) {
+					return;
+				}
+
+				for (EngineRetornoExecutionResultRelacionamento ererr : ererrppj.getRelationships()) {
+					String relacao = "";
+					if (CommonsUtil.mesmoValor(ererr.getRelationshipName(), "OWNER")) {
+						relacao = "Dono";
+					} else if ((CommonsUtil.mesmoValor(ererr.getRelationshipName(), "SOCIO-ADMINISTRADOR"))) {
+						relacao = "Socio/Administrador";
+					} else if ((CommonsUtil.mesmoValor(ererr.getRelationshipName(), "SOCIO"))) {
+						relacao = "Socio";
+					} else {
+						relacao = ererr.getRelationshipName();
+					}
+					PagadorRecebedor pagadorParticipante = documentoAnaliseService
+							.cadastrarPartnershipRetornoEnginePJ(ererr, pagadorRecebedorService);
+					pagadorRecebedorService.geraRelacionamento(documentoAnalise.getPagador(), relacao,
+							pagadorParticipante, BigDecimal.ZERO);
+				}
+			}
+		}
+	}
+
 	public void baixarDocumentoEngine(DataEngine engine) {
 		FacesContext context = FacesContext.getCurrentInstance();
 		if (CommonsUtil.semValor(engine.getIdCallManager())) {
@@ -770,7 +843,7 @@ public class DocketService {
 		}
 		return null;
 	}
-	
+
 	private DocketRetorno docketJSONRetorno(InputStream inputStream) { // Pega resultado da API
 		BufferedReader in;
 		try {
@@ -827,8 +900,8 @@ public class DocketService {
 
 		JSONObject jsonDocketPedido = new JSONObject();
 		String nomePedido = "";
-		if(CommonsUtil.semValor(objetoContratoCobranca.getId())){
-			if(listaPagador.size() > 0) {				
+		if (CommonsUtil.semValor(objetoContratoCobranca.getId())) {
+			if (listaPagador.size() > 0) {
 				nomePedido = "00000 - " + listaPagador.get(0).getNome();
 			} else {
 				nomePedido = "00000 - nome";
@@ -899,11 +972,12 @@ public class DocketService {
 		// POST para gerar pedido
 		FacesContext context = FacesContext.getCurrentInstance();
 		DocketDao docketDao = new DocketDao();
-		if(!CommonsUtil.semValor(objetoContratoCobranca.getId())) {
+		if (!CommonsUtil.semValor(objetoContratoCobranca.getId())) {
 			ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 			cDao.merge(objetoContratoCobranca);
-			if(docketDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca).size() > 0) {
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Pedido desse contrato já existe!!!!!!", ""));	
+			if (docketDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca).size() > 0) {
+				context.addMessage(null,
+						new FacesMessage(FacesMessage.SEVERITY_FATAL, "Pedido desse contrato já existe!!!!!!", ""));
 				return null;
 			}
 		}
@@ -950,16 +1024,17 @@ public class DocketService {
 						"Docket: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", ""));
 				System.out.println(jsonWhatsApp.toString());
 			} else {
-				
+
 				DocketRetorno myResponse = docketJSONRetorno(myURLConnection.getInputStream());
-				if(!CommonsUtil.semValor(objetoContratoCobranca.getId())) {
+				if (!CommonsUtil.semValor(objetoContratoCobranca.getId())) {
 					ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-					cDao.merge(objetoContratoCobranca);					
+					cDao.merge(objetoContratoCobranca);
 				} else {
 					objetoContratoCobranca = null;
 				}
 				Docket docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "", cidadeImovel, "",
-						user.getName(), gerarDataHoje(), myResponse.getPedido().getId(), myResponse.getPedido().getIdExibicao());
+						user.getName(), gerarDataHoje(), myResponse.getPedido().getId(),
+						myResponse.getPedido().getIdExibicao());
 				docketDao.create(docket);
 
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Pedido feito com sucesso", ""));
@@ -975,17 +1050,19 @@ public class DocketService {
 		}
 		return null;
 	}
-		
+
 	public void verificarCertidoesContrato(ContratoCobranca contrato, String idCallManager) {
-		try {	
-			
+		try {
+
 			loginDocket(null);
 			int HTTP_COD_SUCESSO = 200;
 			URL myURL;
 			if (SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
-				myURL = new URL(urlHomologacao + "/api/v2/" + organizacao_url + "/shopping-documentos/alpha/pedidos/" + idCallManager);
+				myURL = new URL(urlHomologacao + "/api/v2/" + organizacao_url + "/shopping-documentos/alpha/pedidos/"
+						+ idCallManager);
 			} else {
-				myURL = new URL(urlProducao + "/api/v2/" + organizacao_url + "/shopping-documentos/alpha/pedidos/" + idCallManager);
+				myURL = new URL(urlProducao + "/api/v2/" + organizacao_url + "/shopping-documentos/alpha/pedidos/"
+						+ idCallManager);
 			}
 
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
@@ -999,27 +1076,28 @@ public class DocketService {
 
 			int certidoesProntas = 0;
 			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
-				System.out.println("Não foi possivle consultar docket. IdCallManager: " + idCallManager + " contrato: " + contrato.toString());
+				System.out.println("Não foi possivle consultar docket. IdCallManager: " + idCallManager + " contrato: "
+						+ contrato.toString());
 			} else {
 				JSONObject retornoConsulta = null;
 				retornoConsulta = getJsonSucesso(myURLConnection.getInputStream());
-				if(!retornoConsulta.has("pedido")) {
+				if (!retornoConsulta.has("pedido")) {
 					return;
 				}
-				
+
 				JSONObject pedido = retornoConsulta.getJSONObject("pedido");
-				
-				if(!pedido.has("documentos")) {
+
+				if (!pedido.has("documentos")) {
 					return;
 				}
-				
+
 				JSONArray documentos = pedido.getJSONArray("documentos");
-				for(int i = 0 ; i < documentos.length(); i++) {
+				for (int i = 0; i < documentos.length(); i++) {
 					JSONObject doc = documentos.getJSONObject(i);
-					if(!doc.has("status")) {
+					if (!doc.has("status")) {
 						continue;
-					}			
-					if(CommonsUtil.mesmoValor(doc.get("status"), "ENTREGUE")) {
+					}
+					if (CommonsUtil.mesmoValor(doc.get("status"), "ENTREGUE")) {
 						certidoesProntas++;
 					}
 				}
@@ -1038,12 +1116,11 @@ public class DocketService {
 		}
 		return;
 	}
-	
+
 	public JSONObject getJsonSucesso(InputStream inputStream) {
 		BufferedReader in;
 		try {
-			in = new BufferedReader(
-					new InputStreamReader(inputStream, "UTF-8"));
+			in = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
 
 			String inputLine;
 			StringBuffer response = new StringBuffer();
@@ -1053,7 +1130,7 @@ public class DocketService {
 			}
 			in.close();
 
-			//READ JSON response and print
+			// READ JSON response and print
 			JSONObject myResponse = new JSONObject(response.toString());
 
 			return myResponse;

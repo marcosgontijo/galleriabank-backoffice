@@ -14,6 +14,7 @@ import com.webnowbr.siscoat.cobranca.db.model.DataEngine;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.op.DataEngineDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
+import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.cobranca.service.DocumentoAnaliseService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.cobranca.service.PagadorRecebedorService;
@@ -34,19 +35,13 @@ public class EngineWebhook {
 
 	@POST
 	@Path("/webhook/")
-	public Response webhookRea(String webhookRetorno, @QueryParam("Token") String token) {
+	public Response webhookEngine(String webhookRetorno, @QueryParam("Token") String token) {
 //		LOGGER.debug(webhookRetorno);
 
 		try {
 
 			Jwts.parserBuilder().setSigningKey(CommonsUtil.CHAVE_WEBHOOK).build().parseClaimsJws(token);
 
-			/*
-			 * System.out.
-			 * println("---------------- Data Engine webhookRetorno ---------------- ");
-			 * System.out.println(webhookRetorno); System.out.
-			 * println("---------------- Data Engine webhookRetorno ---------------- ");
-			 */
 			EngineRetorno engineWebhookRetorno = GsonUtil.fromJson(webhookRetorno, EngineRetorno.class);
 
 			DataEngineDao dataEngineDao = new DataEngineDao();
@@ -75,6 +70,7 @@ public class EngineWebhook {
 					NetrinService netrinService = new NetrinService();
 					UserService userService = new UserService();
 					ScrService scrService = new ScrService();
+					DocketService docketService = new DocketService();
 
 					engineWebhookRetorno.getConsultaAntecedenteCriminais();
 
@@ -116,14 +112,18 @@ public class EngineWebhook {
 										.getResult().get(0).getOnlineCertificates().get(0).getBaseStatus())) {
 							documentoAnalise.addObservacao("Possui antecedentes criminais");
 						}
-						if (CommonsUtil.mesmoValor(
-								CommonsUtil.intValue(engineWebhookRetorno.getProcessos().getTotal_acoes_judicias_reu()),
-								0)) {
+						if (!CommonsUtil.semValor(engineWebhookRetorno.getProcessos())
+							&& !CommonsUtil.semValor(engineWebhookRetorno.getProcessos().getTotal_acoes_judicias_reu())
+							&& CommonsUtil.mesmoValor(CommonsUtil.intValue(
+									engineWebhookRetorno.getProcessos().getTotal_acoes_judicias_reu()),0)) {
 							documentoAnalise.addObservacao("Possui Processos");
 						}
 					}
+					
+					docketService.gerarRelacoesEngine(documentoAnalise);
 
 					documentoAnaliseDao.merge(documentoAnalise);
+					
 				}
 			}
 

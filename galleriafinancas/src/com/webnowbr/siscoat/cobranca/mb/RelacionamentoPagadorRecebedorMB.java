@@ -85,6 +85,16 @@ public class RelacionamentoPagadorRecebedorMB implements Serializable {
 	}
 
 	public void populaGeral() {
+		populaGeralEngine();
+		//populaGeralSeresa();
+	}
+	
+	public void populaGeralEngine() {
+		RelacionamentoPagadorRecebedorDao rprDao = new RelacionamentoPagadorRecebedorDao();
+		rprDao.populaGeralDBEngine();
+	}
+	
+	public void populaGeralSeresa() {
 		RelacionamentoPagadorRecebedorDao rprDao = new RelacionamentoPagadorRecebedorDao();
 		rprDao.populaGeralDB();
 	}

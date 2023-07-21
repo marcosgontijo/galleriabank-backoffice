@@ -9,6 +9,7 @@ import java.util.List;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.RelacionamentoPagadorRecebedor;
+import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.cobranca.service.SerasaService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.db.dao.HibernateDao;
@@ -143,42 +144,32 @@ public class RelacionamentoPagadorRecebedorDao extends HibernateDao <Relacioname
 		});	
 	}
 	
-	/*private static final String QUERY_RELACIONAMENTOS_ROOT = "select * from cobranca.RelacionamentoPagadorRecebedor " 
-			+ " where pessoaChild = ? ";
+	private static final String QUERY_populaGeralDB_engine = " select id, identificacao, tipo, tipopessoa, retornoengine  "
+			+ " from cobranca.documentosanalise d "
+			+ " where retornoengine is not null "
+			+ " and retornoengine != '' "
+			+ " and pagador is not null " ;
 	
 	@SuppressWarnings("unchecked")
-	public List<RelacionamentoPagadorRecebedor> getRelacoesRoot(final PagadorRecebedor pessoa) {
+	public List<RelacionamentoPagadorRecebedor> populaGeralDBEngine() {
 		return (List<RelacionamentoPagadorRecebedor>) executeDBOperation(new DBRunnable() {
 			@Override
 			public List<RelacionamentoPagadorRecebedor> run() throws Exception {
-				List<RelacionamentoPagadorRecebedor> listRelacoes = new ArrayList<RelacionamentoPagadorRecebedor>();;
-	
+				
+				List<RelacionamentoPagadorRecebedor> listRelacoes = new ArrayList<RelacionamentoPagadorRecebedor>();
 				Connection connection = null;
 				PreparedStatement ps = null;
 				ResultSet rs = null;
 				try {
 					connection = getConnection();
-
-					ps = connection.prepareStatement(QUERY_RELACIONAMENTOS_ROOT);		
-	
-					ps.setLong(1, pessoa.getId());
-	
+					ps = connection.prepareStatement(QUERY_populaGeralDB_engine);
+					
 					rs = ps.executeQuery();
-										
-					RelacionamentoPagadorRecebedorDao rprDao = new RelacionamentoPagadorRecebedorDao();
+					DocumentoAnaliseDao docDao = new DocumentoAnaliseDao();
 					while (rs.next()) {
-						PagadorRecebedorDao pDao = new PagadorRecebedorDao();
-						
-						RelacionamentoPagadorRecebedor relacao = rprDao.findById(rs.getLong("id"));
-						listRelacoes.add(relacao);
-						List<RelacionamentoPagadorRecebedor> relacoes =
-								rprDao.getRelacoesRoot(pDao.findById(rs.getLong("pessoaRoot")));
-						for(RelacionamentoPagadorRecebedor relacionamento : relacoes) {
-							if(listRelacoes.contains(relacionamento)) {
-								continue;
-							}
-							listRelacoes.add(relacionamento);
-						}
+						DocumentoAnalise docAnalise = docDao.findById(rs.getLong("id"));
+						DocketService service = new DocketService();
+						service.gerarRelacoesEngine(docAnalise);
 					}
 				} finally {
 					closeResources(connection, ps, rs);					
@@ -186,5 +177,6 @@ public class RelacionamentoPagadorRecebedorDao extends HibernateDao <Relacioname
 				return listRelacoes;
 			}
 		});	
-	}*/
+	}
+	
 }

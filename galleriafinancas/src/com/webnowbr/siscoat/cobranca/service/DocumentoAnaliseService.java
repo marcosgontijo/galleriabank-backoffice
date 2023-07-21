@@ -8,6 +8,7 @@ import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.infra.db.model.User;
 
+import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultRelacionamento;
 import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoRequestEnterprisePartnership;
 import br.com.galleriabank.serasacrednet.cliente.model.PessoaParticipacao;
 import br.com.galleriabank.serasarelato.cliente.model.Administrador;
@@ -173,7 +174,7 @@ public class DocumentoAnaliseService {
 		documentoAnalise.setMotivoAnalise(motivo);
 
 		if (documentoAnalise.getTipoPessoa() == "PJ") {
-			documentoAnalise.setCnpjcpf(partnership.getCNPJ());
+			documentoAnalise.setCnpjcpf(CommonsUtil.formataCnpjCpf(partnership.getCNPJ(), false));
 			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.RELATO);
 			documentoAnalise.setLiberadoAnalise(false);
 		} else {
@@ -191,6 +192,36 @@ public class DocumentoAnaliseService {
 
 		documentoAnaliseDao.create(documentoAnalise);
 
+	}
+	
+	public PagadorRecebedor cadastrarPartnershipRetornoEngine(EngineRetornoRequestEnterprisePartnership partnership, 
+			PagadorRecebedorService pagadorRecebedorService) {
+		if (!CommonsUtil.mesmoValor(partnership.getEntityType(), "J")) {
+			return null;
+		} 
+		PagadorRecebedor pagador = new PagadorRecebedor();
+		pagador.setId(0);
+		pagador.setCnpj(CommonsUtil.formataCnpjCpf(partnership.getCNPJ(), false));
+		pagador.setNome(partnership.getCompanyName());
+		pagador = pagadorRecebedorService.buscaOuInsere(pagador);
+		return pagador;
+	}
+	
+	public PagadorRecebedor cadastrarPartnershipRetornoEnginePJ(EngineRetornoExecutionResultRelacionamento partnership, 
+			PagadorRecebedorService pagadorRecebedorService) {
+		PagadorRecebedor pagador = new PagadorRecebedor();
+		pagador.setId(0);
+		String cnpjCpf;
+		cnpjCpf = partnership.getRelatedEntityTaxIdNumber();
+		cnpjCpf = CommonsUtil.formataCnpjCpf(cnpjCpf, false);
+		if (CommonsUtil.mesmoValor(partnership.getRelatedEntityTaxIdType(), "CPF")) {
+			pagador.setCpf(cnpjCpf);
+		} else {
+			pagador.setCnpj(cnpjCpf);	
+		}
+		pagador.setNome(partnership.getRelatedEntityName());
+		pagador = pagadorRecebedorService.buscaOuInsere(pagador);
+		return pagador;
 	}
 
 }
