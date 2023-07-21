@@ -30792,16 +30792,16 @@ public class ContratoCobrancaMB {
 		deletefiles = new ArrayList<FileUploaded>();
 		files = listaArquivos();
 	}
-
 	public void deleteArquivosAnalisados() {
-		DocumentoAnaliseDao dao = new DocumentoAnaliseDao();
-
+		DocumentoAnaliseDao daoDocumentoAnalise = new DocumentoAnaliseDao();
+				
 		for (DocumentoAnalise d : listaDeleteAnalise) {
 			d.setExcluido(true);
-			dao.merge(d);
-		}
+			daoDocumentoAnalise.merge(d);
+			}
+		
 		listaArquivosAnaliseDocumentos();
-
+		
 	}
 
 	public void deleteFileInterno() {
