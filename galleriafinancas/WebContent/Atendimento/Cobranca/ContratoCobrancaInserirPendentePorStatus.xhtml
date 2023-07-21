@@ -172,6 +172,10 @@
 											<p:ajax event="valueChange" update=":form:Status"
 												listener="#{contratoCobrancaMB.changeAvaliadorLaudo}" />
 										</p:selectOneMenu>
+										
+										<p:outputLabel value="#{contratoCobrancaMB.contratosLaudo}"
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}"/>
+										<p:spacer></p:spacer>
 
 										<p:outputLabel styleClass="labelBold"
 											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial 

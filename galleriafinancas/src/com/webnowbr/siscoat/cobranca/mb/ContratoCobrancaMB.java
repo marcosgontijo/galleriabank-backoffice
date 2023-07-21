@@ -649,6 +649,7 @@ public class ContratoCobrancaMB {
 	private Collection<ContratoCobranca> contratos;
 	private Collection<ContratoCobranca> contratosPagadorAnalisado;
 	private Collection<ContratoCobranca> contratosImovelAnalisado;
+	private String contratosLaudo;
 
 	private Date rowEditNewDate;
 	private boolean grupoFavorecidos = true;
@@ -8649,7 +8650,15 @@ public class ContratoCobrancaMB {
 				|| CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Comite")
 				|| CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. DOC")) {
 			this.contratosPagadorAnalisado = cDao.getContratosDoPagador(this.objetoContratoCobranca);
-			this.contratosImovelAnalisado = cDao.getContratosDoImovel(this.objetoContratoCobranca);
+			this.contratosImovelAnalisado = cDao.getContratosDoImovel(this.objetoContratoCobranca);	
+			contratosLaudo = "";
+			if(CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Pedir Laudo")) {
+				for (ContratoCobranca contratoImovel : contratosImovelAnalisado) {
+					if(contratoImovel.isLaudoRecebido()) {
+						contratosLaudo = contratosLaudo + contratoImovel.getNumeroContrato()  + "; ";
+					}
+				}
+			}
 
 			if (contratosPagadorAnalisado.size() > 0) {
 				this.contratosPagadorAnalisado = populaStatus(contratosPagadorAnalisado);
@@ -33560,4 +33569,14 @@ public class ContratoCobrancaMB {
 	public void setDocumentoAnalisePopup(DocumentoAnalise documentoAnalisePopup) {
 		this.documentoAnalisePopup = documentoAnalisePopup;
 	}
+
+	public String getContratosLaudo() {
+		return contratosLaudo;
+	}
+
+	public void setContratosLaudo(String contratosLaudo) {
+		this.contratosLaudo = contratosLaudo;
+	}
+	
+	
 }
