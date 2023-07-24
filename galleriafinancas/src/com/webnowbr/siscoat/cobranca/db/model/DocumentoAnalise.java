@@ -61,10 +61,17 @@ public class DocumentoAnalise implements Serializable {
 
 	private String retornoScr;
 	private String observacao;
+	private boolean excluido;
 
 	public List<DocumentoAnaliseResumo> getResumoEngine() {
 		List<DocumentoAnaliseResumo> result = new ArrayList<>();
-		EngineRetorno engine = GsonUtil.fromJson(getRetornoEngine(), EngineRetorno.class);
+		EngineRetorno engine = null;
+		try {
+			engine = GsonUtil.fromJson(getRetornoEngine(), EngineRetorno.class);
+		} catch(Exception erro) {
+			result.add(new DocumentoAnaliseResumo(null, null));
+		}
+		
 		if (engine == null) {
 			result.add(new DocumentoAnaliseResumo("nâo disponível", null));
 		} else {
@@ -119,14 +126,15 @@ public class DocumentoAnalise implements Serializable {
 		List<DocumentoAnaliseResumo> serasa = new ArrayList<>();
 		CredNet dados = GsonUtil.fromJson(getRetornoSerasa(), CredNet.class);
 		if (dados == null) {
+			serasa.add( new DocumentoAnaliseResumo("não disponível",null));
 			return serasa;
-		}
+		} else {
 		if (CommonsUtil.mesmoValor(tipoPessoa, "PF")) {
 
 			if (dados.getChequeSemFundo() == null) {
 				serasa.add(new DocumentoAnaliseResumo("Cheque Sem Fundo:", "Não disponível"));
 			} else {
-				String cheque = CommonsUtil.stringValue(dados.getChequeSemFundo());
+				String cheque = CommonsUtil.stringValue(dados.getChequeSemFundo().getPcsfQtCheques());
 				serasa.add(new DocumentoAnaliseResumo("Cheque Sem Fundo:", cheque));
 			}
 
@@ -183,7 +191,7 @@ public class DocumentoAnalise implements Serializable {
 			}
 		} else {
 			serasa.add(new DocumentoAnaliseResumo("Menu não disponível para PJ", null));
-		}
+		}}
 		return serasa;
 
 	}
@@ -267,9 +275,11 @@ public class DocumentoAnalise implements Serializable {
 	}
 
 	public boolean isPodeChamarEngine() {
-		return !CommonsUtil.mesmoValor(motivoAnalise.toUpperCase(), "PROPRIETARIO ATUAL") && !isEngineProcessado()
-				&& (CommonsUtil.mesmoValor("PF", tipoPessoa) || (CommonsUtil.mesmoValor("PJ", tipoPessoa)
-						&& !this.motivoAnalise.contains("Empresa Vinculada")));
+		return !isEngineProcessado();				
+				
+//		return !CommonsUtil.mesmoValor(motivoAnalise.toUpperCase(), "PROPRIETARIO ATUAL") && !isEngineProcessado()
+//				&& (CommonsUtil.mesmoValor("PF", tipoPessoa) || (CommonsUtil.mesmoValor("PJ", tipoPessoa)
+//						&& !this.motivoAnalise.contains("Empresa Vinculada")));
 	}
 
 	public boolean isEngineProcessado() {
@@ -567,6 +577,14 @@ public class DocumentoAnalise implements Serializable {
 
 	public void setObservacao(String observacao) {
 		this.observacao = observacao;
+	}
+
+	public boolean getExcluido() {
+		return excluido;
+	}
+
+	public void setExcluido(boolean excluido) {
+		this.excluido = excluido;
 	}
 
 }

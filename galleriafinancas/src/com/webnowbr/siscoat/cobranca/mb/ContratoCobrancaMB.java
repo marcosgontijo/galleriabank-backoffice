@@ -252,6 +252,7 @@ public class ContratoCobrancaMB {
 
 	private List<BoletoKobana> selectedBoletosKobana = new ArrayList<BoletoKobana>();
 	private List<DocumentoAnalise> listaDocumentoAnalise;
+	private List<DocumentoAnalise> listaDeleteAnalise = new ArrayList<DocumentoAnalise>();
 
 	/************************************************************
 	 * Objetos para antecipacao de parcela
@@ -8469,6 +8470,7 @@ public class ContratoCobrancaMB {
 	}
 
 	public String clearFieldsEditarPendentes() {
+		listaArquivosAnaliseDocumentos();
 
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
@@ -8859,6 +8861,7 @@ public class ContratoCobrancaMB {
 
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
+		listaArquivosAnaliseDocumentos();
 
 		return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusAvaliacaoImovel.xhtml";
 	}
@@ -8874,6 +8877,7 @@ public class ContratoCobrancaMB {
 		if (this.objetoContratoCobranca.getResponsavel() != null) {
 			this.codigoResponsavel = this.objetoContratoCobranca.getResponsavel().getCodigo();
 		}
+		listaArquivosAnaliseDocumentos();
 
 		filesInterno = new ArrayList<FileUploaded>();
 		filesInterno = listaArquivosInterno();
@@ -8899,6 +8903,7 @@ public class ContratoCobrancaMB {
 		} else {
 			this.idAnalistaGeracaoPAJU = 0;
 		}
+		listaArquivosAnaliseDocumentos();
 
 		this.tituloPainel = "Editar";
 
@@ -28599,7 +28604,7 @@ public class ContratoCobrancaMB {
 					}
 				}
 
-				if (!CommonsUtil.semValor(resultPEP))
+				if (!CommonsUtil.semValor(resultPEP) && !CommonsUtil.semValor(resultPEP.getPepKyc()))
 					if (CommonsUtil.mesmoValorIgnoreCase("Sim", resultPEP.getPepKyc().getCurrentlyPEP())
 							&& (resultPEP.getPepKyc().getHistoryPEP().stream()
 									.filter(p -> CommonsUtil.mesmoValor(p.getLevel(), "1")).findAny().isPresent())) {
@@ -28621,12 +28626,12 @@ public class ContratoCobrancaMB {
 					netrinService.requestCenprot(documentoAnalise);
 				}
 
-				if (documentoAnalise.isPodeChamarSerasa()
-						&& CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
-					documentoAnalise.addObservacao("Processando SERASA");
-					PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
-					serasaService.requestSerasa(documentoAnalise, loginBean.getUsuarioLogado());
-				}
+//				if (documentoAnalise.isPodeChamarSerasa()
+//						&& CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
+//					documentoAnalise.addObservacao("Processando SERASA");
+//					PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
+//					serasaService.requestSerasa(documentoAnalise, loginBean.getUsuarioLogado());
+//				}
 
 				if (documentoAnalise.isPodeChamarEngine()
 						&& CommonsUtil.semValor(documentoAnalise.getRetornoEngine())) {
@@ -30830,6 +30835,17 @@ public class ContratoCobrancaMB {
 		deletefiles = new ArrayList<FileUploaded>();
 		files = listaArquivos();
 	}
+	public void deleteArquivosAnalisados() {
+		DocumentoAnaliseDao daoDocumentoAnalise = new DocumentoAnaliseDao();
+				
+		for (DocumentoAnalise d : listaDeleteAnalise) {
+			d.setExcluido(true);
+			daoDocumentoAnalise.merge(d);
+			}
+		
+		listaArquivosAnaliseDocumentos();
+		
+	}
 
 	public void deleteFileInterno() {
 		for (FileUploaded f : deletefilesInterno) {
@@ -30932,7 +30948,7 @@ public class ContratoCobrancaMB {
 
 	public void listaArquivosAnaliseDocumentos() {
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-		this.listaDocumentoAnalise = documentoAnaliseDao.findByFilter("contratoCobranca", this.objetoContratoCobranca);
+		this.listaDocumentoAnalise = documentoAnaliseDao.listagemDocumentoAnalise(this.objetoContratoCobranca);
 		Collections.sort(this.listaDocumentoAnalise, new Comparator<DocumentoAnalise>() {
 			@Override
 			public int compare(DocumentoAnalise one, DocumentoAnalise other) {
@@ -33680,4 +33696,12 @@ public class ContratoCobrancaMB {
 	public void setBaixaMultiParcelasComTxADM(boolean baixaMultiParcelasComTxADM) {
 		this.baixaMultiParcelasComTxADM = baixaMultiParcelasComTxADM;
 	}	
+
+	public List<DocumentoAnalise> getListaDeleteAnalise(){
+		return listaDeleteAnalise;
+	}
+	public void setListaDeleteAnalise(List<DocumentoAnalise> listaDeleteAnalise) {
+		
+		this.listaDeleteAnalise = listaDeleteAnalise;
+	}
 }
