@@ -6,6 +6,7 @@ public class FileUploaded {
 	private File file;
 	private String name;
 	private String path;
+	private int pages;
 
 	public FileUploaded() {
 	}
@@ -58,5 +59,15 @@ public class FileUploaded {
 	public void setPath(String path) {
 		this.path = path;
 	}
+
+	public int getPages() {
+		return pages;
+	}
+
+	public void setPages(int pages) {
+		this.pages = pages;
+	}
+	
+	
 
 }

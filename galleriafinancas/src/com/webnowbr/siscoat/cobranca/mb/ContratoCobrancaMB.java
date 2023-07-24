@@ -36,6 +36,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -56,6 +57,8 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.tools.PDFBox;
 import org.apache.poi.ss.formula.functions.FinanceLib;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
@@ -8655,6 +8658,9 @@ public class ContratoCobrancaMB {
 			if(CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Pedir Laudo")) {
 				for (ContratoCobranca contratoImovel : contratosImovelAnalisado) {
 					if(contratoImovel.isLaudoRecebido()) {
+						if(CommonsUtil.semValor(contratosLaudo)) {
+							contratosLaudo = "Operações com pedido de laudo: ";
+						}
 						contratosLaudo = contratosLaudo + contratoImovel.getNumeroContrato()  + "; ";
 					}
 				}
@@ -30344,6 +30350,8 @@ public class ContratoCobrancaMB {
 	List<FileUploaded> deletefilesJuridico = new ArrayList<FileUploaded>();
 	List<FileUploaded> deletefilesComite = new ArrayList<FileUploaded>();
 	List<FileUploaded> deletefilesPagar = new ArrayList<FileUploaded>();
+	
+	String contratoDocumentos = "";
 
 	StreamedContent downloadAllFilesInterno;
 
@@ -31506,6 +31514,30 @@ public class ContratoCobrancaMB {
 			e.printStackTrace();
 		}
 	}
+	
+	public void consultaDocsJuridico(ContratoCobranca contrato) throws IOException {
+		filesJuridico = new ArrayList<FileUploaded>();
+		objetoContratoCobranca = contrato;
+		filesJuridico = listaArquivosJuridico();
+		contratoDocumentos = contrato.getNumeroContrato();
+		PrimeFaces current = PrimeFaces.current();
+		current.executeScript("PF('bui').show();");
+		for (FileUploaded file : filesJuridico) {
+			if(file.getName().toLowerCase().endsWith(".pdf")) {
+				PDDocument doc = PDDocument.load(file.getFile());
+				file.setPages(doc.getNumberOfPages());
+			}
+		}
+		
+	}
+	
+	public void closeDialogDocs() {
+		objetoContratoCobranca = null;
+		filesJuridico = new ArrayList<FileUploaded>();
+		PrimeFaces current = PrimeFaces.current();
+		current.executeScript("PF('bui').hide();");
+	}
+	
 	// removido zippar arquivos (ou não)
 
 	public StreamedContent getDownloadAllFiles() {
@@ -33576,6 +33608,14 @@ public class ContratoCobrancaMB {
 
 	public void setContratosLaudo(String contratosLaudo) {
 		this.contratosLaudo = contratosLaudo;
+	}
+
+	public String getContratoDocumentos() {
+		return contratoDocumentos;
+	}
+
+	public void setContratoDocumentos(String contratoDocumentos) {
+		this.contratoDocumentos = contratoDocumentos;
 	}
 	
 	

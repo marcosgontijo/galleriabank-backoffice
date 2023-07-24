@@ -9,7 +9,7 @@
 	  template="../MenuAtendimento.xhtml">
 
 	<ui:define name="conteudo">  
-		<h:form id="form" style="margin-bottom:10px;">	
+		<h:form id="form" style="margin-bottom:10px;" >	
 			<script src="#{request.contextPath}/resources/js/jquery.mask.min.js"></script>	
 			<script>
 		        function validatePhone() {
@@ -193,6 +193,17 @@
 						<h:outputText value="#{contratos.inicioAnaliseUsuario}"  escape="false" />
 					</p:column>
 					
+					<p:column style="text-align: center;width: 100px" headerText="Documentos" >
+						<p:commandButton value="Documentos"
+							icon="ui-icon-arrowthick-1-s"
+							rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico'}"
+							oncomplete="PF('docsJuridico').show();"
+							action="#{contratoCobrancaMB.consultaDocsJuridico(contratos)}"
+							update=":ArquivosForm">
+						</p:commandButton>
+					</p:column>
+					
+					
 					<p:column style="width:180px;">
 		                <p:commandButton value="Editar" action="#{contratoCobrancaMB.clearFieldsEditarPendentesAnalistas}" ajax="false" icon="ui-icon-pencil" title="Editar">
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
@@ -296,5 +307,53 @@
 				</p:panel>
 			</p:dialog> 
 		</h:form>	
+		
+		<h:form id="ArquivosForm" style="margin-bottom:10px;" >			
+			<p:blockUI block="menuAtendimentoForm form" widgetVar="bui"/>			
+			<p:dialog id="ArquivosJuridicoSalvos" header="Docs - #{contratoCobrancaMB.contratoDocumentos}" 
+				widgetVar="docsJuridico" height="420" width="1000" closable="true"   >	
+				<p:ajax event="close" listener="#{contratoCobrancaMB.closeDialogDocs}" />
+						
+				<p:panel header="Arquivo(s) Juridico Salvo(s) no Contrato"
+					style="margin-bottom:10px;">
+					<h:panelGrid columns="1">
+						<p:dataTable id="dtFilesJuridico" var="filesJuridico"
+							value="#{contratoCobrancaMB.filesJuridico}"
+							rowKey="#{filesJuridico.name}" 
+							selection="#{contratoCobrancaMB.deletefilesJuridico}"
+							emptyMessage="" sortBy="#{filesJuridico.name}">
+								
+							<p:column style="text-align: center;"
+								headerText="Nome do Arquivo" filterBy="#{filesJuridico.name}"
+								filterMatchMode="contains" sortBy="#{filesJuridico.name}">
+								<h:outputText value="#{filesJuridico.name}" />
+							</p:column>
+							
+							<p:column style="text-align: center;" 
+								headerText="Qtd de Paginas" filterBy="#{filesJuridico.pages}"
+								filterMatchMode="contains" sortBy="#{filesJuridico.pages}">
+								<h:outputText value="#{filesJuridico.pages}" />
+								<p:spacer width="10px"/>
+								<p:commandButton value="Abrir"  ajax="false"
+									action="#{contratoCobrancaMB.viewFileJuridico(filesJuridico.name)}"
+									immediate="true" icon="ui-icon-search"
+									onclick="target='_blank'" onblur="target='_self'">
+								</p:commandButton>
+							</p:column>							
+
+							<p:column style="width:100px;">
+								<p:commandButton value="Download" ajax="false"
+									icon="ui-icon-arrowthick-1-s">
+									<f:setPropertyActionListener
+										target="#{contratoCobrancaMB.selectedFile}"
+										value="#{filesJuridico}" />
+									<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+					</h:panelGrid>
+				</p:panel>
+			</p:dialog>
+		</h:form>
 	</ui:define>
 </ui:composition>	        
