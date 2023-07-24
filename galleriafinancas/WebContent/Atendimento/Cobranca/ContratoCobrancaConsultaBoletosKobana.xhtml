@@ -208,7 +208,10 @@
 								value="#{boleto.contrato}" />	
 							<f:setPropertyActionListener
 								target="#{contratoCobrancaMB.rowEditNewDate}"
-								value="#{boleto.paidAt}" />		
+								value="#{boleto.paidAt}" />	
+							<f:setPropertyActionListener
+								target="#{contratoCobrancaMB.dataQuitacao}"
+								value="#{boleto.expireAt}" />		
 							<f:setPropertyActionListener
 								target="#{contratoCobrancaMB.selectedParcelas}"
 								value="#{boleto.multiParcelas}" />			
@@ -219,6 +222,9 @@
 							<f:setPropertyActionListener
 								target="#{contratoCobrancaMB.vlrRecebido}"
 								value="#{boleto.paidAmount}" />
+							<f:setPropertyActionListener
+								target="#{contratoCobrancaMB.baixaMultiParcelasComTxADM}"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.temTxAdm}" />	
 						</p:commandButton>
 					</p:column>
 					<p:column style="text-align: center;width: 130px;"
@@ -349,10 +355,16 @@
 					<p:outputLabel for="dataPagamento" value="Data do Pagamento: "
 						styleClass="labelBold" style="margin-right: 59px;" />
 					<p:calendar id="dataPagamento"
-						value="#{contratoCobrancaMB.rowEditNewDate}" required="true"
+						value="#{contratoCobrancaMB.rowEditNewDate}" required="true" disabled="true"
 						label="Data do Pagamento" size="100" pattern="dd/MM/yyyy"
 						styleClass="dateTimeField">
 					</p:calendar>
+					<p:outputLabel for="quitacaComTaxaAdm" value="Com taxa ADM na Quitação: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					  <p:selectOneRadio id="quitacaComTaxaAdm" value="#{contratoCobrancaMB.baixaMultiParcelasComTxADM}">
+						<f:selectItem itemLabel="Sim" itemValue="true" />
+						<f:selectItem itemLabel="Não" itemValue="false" />
+					</p:selectOneRadio>
 				</h:panelGrid>
 				<h:panelGrid columns="1">			
 					<p:dataTable id="dtParcelasSelecionadas" var="parcelasSelecionadas"

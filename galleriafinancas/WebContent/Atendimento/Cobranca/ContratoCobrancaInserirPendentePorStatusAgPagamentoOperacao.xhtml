@@ -435,7 +435,7 @@
 									label="Data" size="100" pattern="dd/MM/yyyy"
 									styleClass="dateTimeField" />
 									
-								<p:outputLabel for="ContaPagarValorPago" value="Valor Pago: "
+								<p:outputLabel for="ContaPagarValorPago" value="Valor Pago:  "
 									styleClass="labelBold" />
 								<p:inputText id="ContaPagarValorPago"
 									value="#{contratoCobrancaMB.contasPagarSelecionada.valorPagamento}"
@@ -928,10 +928,10 @@
 								style="width:250px;"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.ispbPixContaPagar}" required="true" />
 							
-							<p:outputLabel for="ContaPagarValorPagoPixStarkBank" value="Valor Pago: "
+							<p:outputLabel for="ContaPagarValorPagoPixStarkBank" value="Valor a Pagar: "
 									styleClass="labelBold" />
 							<p:inputText id="ContaPagarValorPagoPixStarkBank"
-									value="#{contratoCobrancaMB.contasPagarSelecionada.valorPagamento}"
+									value="#{contratoCobrancaMB.contasPagarSelecionada.valor}"
 									onkeypress="return isNumberKey(event);"
 									onkeydown="FormataValor(this, 13, event, 2);" required="true"
 									converter="bigDecimalConverter" />							
@@ -1018,10 +1018,10 @@
 								style="width:250px;"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.contaBancarioContaPagar}" required="true" />
 							
-							<p:outputLabel for="ContaPagarValorPagoTEDStarkBank" value="Valor Pago: "
+							<p:outputLabel for="ContaPagarValorPagoTEDStarkBank" value="Valor a Pagar: "
 									styleClass="labelBold" />
 							<p:inputText id="ContaPagarValorPagoTEDStarkBank"
-									value="#{contratoCobrancaMB.contasPagarSelecionada.valorPagamento}"
+									value="#{contratoCobrancaMB.contasPagarSelecionada.valor}"
 									onkeypress="return isNumberKey(event);"
 									onkeydown="FormataValor(this, 13, event, 2);" required="true"
 									converter="bigDecimalConverter" />
