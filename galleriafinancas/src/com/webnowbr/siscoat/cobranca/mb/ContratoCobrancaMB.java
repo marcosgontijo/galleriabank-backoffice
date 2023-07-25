@@ -3219,6 +3219,7 @@ public class ContratoCobrancaMB {
 			pagadorRecebedorDao.merge(this.objetoPagadorRecebedor);
 			this.objetoPagadorRecebedor.criarConjugeNoSistema();
 			ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
+			objetoImovelCobranca.popularObjetoCidade();
 			imovelCobrancaDao.merge(this.objetoImovelCobranca);
 
 			this.objetoContratoCobranca.setPagador(this.objetoPagadorRecebedor);
@@ -3729,6 +3730,7 @@ public class ContratoCobrancaMB {
 				pagadorRecebedorDao.merge(this.objetoPagadorRecebedor);
 				this.objetoPagadorRecebedor.criarConjugeNoSistema();
 				ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
+				objetoImovelCobranca.popularObjetoCidade();
 				imovelCobrancaDao.merge(this.objetoImovelCobranca);
 
 				// teste para ver se para de sobrescrever pagador

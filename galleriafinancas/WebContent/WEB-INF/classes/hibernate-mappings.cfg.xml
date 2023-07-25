@@ -30,8 +30,10 @@
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/CDI.hbm.xml"/>   
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/RegistroImovelTabela.hbm.xml"/>
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/StarkBankBoleto.hbm.xml"/>   
-		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/StarkBankPix.hbm.xml"/>   
-
+		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/StarkBankPix.hbm.xml"/>
+		   
+		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/Cidade.hbm.xml"/>
+		
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/DocketCidades.hbm.xml"/>
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/DocketEstados.hbm.xml"/>
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/Docket.hbm.xml"/>
