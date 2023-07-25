@@ -496,6 +496,13 @@ public class PagadorRecebedor implements Serializable {
 		} else
 			return null;}
 	
+	
+	
+	@Override
+	public String toString() {
+		return "PagadorRecebedor [id=" + id + ", nome=" + nome + "]";
+	}
+
 	/**
 	 * @return the id
 	 */

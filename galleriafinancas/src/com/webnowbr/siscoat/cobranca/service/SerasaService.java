@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -11,6 +12,7 @@ import java.net.URL;
 import javax.faces.application.FacesMessage;
 
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
+import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorConsulta;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
@@ -22,14 +24,18 @@ import com.webnowbr.siscoat.infra.db.model.User;
 
 import br.com.galleriabank.serasacrednet.cliente.model.CredNet;
 import br.com.galleriabank.serasacrednet.cliente.model.PessoaParticipacao;
+import br.com.galleriabank.serasarelato.cliente.model.Administrador;
+import br.com.galleriabank.serasarelato.cliente.model.Participada;
+import br.com.galleriabank.serasarelato.cliente.model.Participante;
+import br.com.galleriabank.serasarelato.cliente.model.Relato;
+import br.com.galleriabank.serasarelato.cliente.model.Socio;
 import br.com.galleriabank.serasarelato.cliente.util.GsonUtil;
 
 public class SerasaService {
 	
 
 	public void requestSerasa(DocumentoAnalise documentoAnalise, User user) {
-
-
+		
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 		
 		if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
@@ -56,7 +62,9 @@ public class SerasaService {
 				serasaCriarConsulta(documentoAnalise);
 		}
 		
-
+		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+		DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
+		
 		if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa())) {
 
 			CredNet credNet = GsonUtil.fromJson(documentoAnalise.getRetornoSerasa(), CredNet.class);
@@ -69,20 +77,57 @@ public class SerasaService {
 			}
 
 			if (!CommonsUtil.semValor(credNet.getParticipacoes())) {
-				DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
-
-				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
-
 				for (PessoaParticipacao pessoaParticipacao : credNet.getParticipacoes()) {
-
-					documentoAnaliseService.cadastrarPessoRetornoCredNet(pessoaParticipacao, user, documentoAnaliseDao,
+					PagadorRecebedor empresa = documentoAnaliseService.cadastrarPessoRetornoCredNet(pessoaParticipacao, user, documentoAnaliseDao,
 							pagadorRecebedorService, documentoAnalise.getContratoCobranca(),
 							"Empresa Vinculada ao " + documentoAnalise.getMotivoAnalise());
+					BigDecimal porcentagem = CommonsUtil.bigDecimalValue(pessoaParticipacao.getParticipacao());
+					pagadorRecebedorService.geraRelacionamento(empresa, "Socio", documentoAnalise.getPagador(),
+							porcentagem);
 				}
 			}
-
+		} else if (CommonsUtil.mesmoValor("PJ", documentoAnalise.getTipoPessoa())) {
+			
+			Relato relato = GsonUtil.fromJson(documentoAnalise.getRetornoSerasa(), Relato.class);
+			PagadorRecebedor pagador = null;
+			if(!CommonsUtil.semValor(relato.getDadosCadastrais())) {
+				pagador = documentoAnaliseService.cadastrarPagadorRetornoRelato(relato.getDadosCadastrais(), pagadorRecebedorService);
+			}
+			
+			if(!CommonsUtil.semValor(relato.getParticipacoes())
+					&& !CommonsUtil.semValor(relato.getParticipacoes().getParticipadas())) {
+				for (Participada participada : relato.getParticipacoes().getParticipadas()) {
+					PagadorRecebedor pagadorParticipada = documentoAnaliseService
+							.cadastrarParticipadaRetornoRelato(participada, pagadorRecebedorService);
+					for (Participante participantes : participada.getParticipantes()) {
+						BigDecimal porcentagem = CommonsUtil.bigDecimalValue(participantes.getParticipacao() / 100);
+						PagadorRecebedor pagadorParticipante = documentoAnaliseService
+								.cadastrarParticipanteRetornoRelato(participantes, pagadorRecebedorService);
+						pagadorRecebedorService.geraRelacionamento(pagadorParticipada, "Socio", pagadorParticipante,
+								porcentagem);
+					}
+					pagadorRecebedorService.geraRelacionamento(pagador, "Participada", pagadorParticipada,
+							BigDecimal.ZERO);
+				}
+			}
+			
+			if(!CommonsUtil.semValor(relato.getQuadroAdminsitrativo())) {
+				for (Administrador administrador : relato.getQuadroAdminsitrativo().getAdministradores()) {
+					PagadorRecebedor administradorPagador =
+							documentoAnaliseService.cadastrarAdministradorRetornoRelato(administrador, pagadorRecebedorService);					
+					pagadorRecebedorService.geraRelacionamento(pagador, "Administrador", administradorPagador,
+							BigDecimal.ZERO);
+				}
+				
+				for (Socio socio : relato.getQuadroAdminsitrativo().getSocios()) {
+					PagadorRecebedor socioPagador =
+							documentoAnaliseService.cadastrarSocioRetornoRelato(socio, pagadorRecebedorService);					
+					BigDecimal porcentagem = CommonsUtil.bigDecimalValue(socio.getParticipacao());
+					pagadorRecebedorService.geraRelacionamento(pagador, "Socio", socioPagador,
+							porcentagem);
+				}
+			}
 		}
-
 	}
 
 	public FacesMessage serasaCriarConsulta(DocumentoAnalise documentoAnalise) { // POST para gerar consulta
@@ -195,7 +240,7 @@ public class SerasaService {
 
 	private String executaConsultaSerasa(String tipoPessoa, String cnpjcpf) {
 
-		if (  SiscoatConstants.DEV)
+		if ( SiscoatConstants.DEV)
 			return "{\"consDtCadastro\":null,\"consCdCnpjcpf\":null,\"consDtConsulta\":\"2023-06-12T17:49:10.000-03:00\",\"consResultadoConsulta\":null,\"pessoa\":{\"pessTpFisicaJuridica\":\"F\",\"cnpjcpf\":\"02481669053\",\"nomeRazaoSocial\":\"YORK MOREIRA ANGELO\",\"dataNascimentoFundacao\":\"1930-05-12T00:00:00.000-03:00\",\"pessCdSituacao\":\"7\",\"descricaoSituacao\":\"TITULAR FALECIDO\",\"dataSituacaoDocumento\":\"2022-09-30T00:00:00.000-03:00\",\"nomeMae\":\"CELINA MOREIRA ANGELO\"},\"codigoServicoConsultaCredito\":null,\"codigoServicoConsultaCreditoSituacao\":null,\"htmlRelatorioBoaVistaPF\":null,\"relatorioHtml\":null,\"cmc7\":null,\"dataEmissaoCheque\":null,\"valorCheque\":null,\"qtdeCheque\":null,\"telefoneCheque\":null,\"cepCheque\":null,\"tipoConsultaCheque\":null,\"codigoDocumentoBanisys\":null,\"flagInformacaoEleitoral\":null,\"flagExtraAcao\":null,\"flagExtraPendencia\":null,\"flagExtraProtesto\":null,\"cepPesquisado\":null,\"featuresAdicionais\":null,\"flagFeaturesAdicionais\":null,\"tipoTratamentoTelefone\":\"S\",\"consultas\":[{\"codigoPessoaConsultaCrednet\":null,\"tipoRegistro\":null,\"subtipoRegistro\":null,\"mensagem\":null,\"qtdeConsultaUltimo15dias\":null,\"qtdeConsultaUltimo30dias\":null,\"qtdeConsultaUltimo31e60dias\":null,\"qtdeConsultaUltimo61e90dias\":null}],\"rendaEstimada\":{\"subTipo\":null,\"mensagem\":null,\"renda\":1450},\"capacidadePagamento\":{\"subTipo\":null,\"mensagem\":null,\"valor\":450},\"comprometimentoRenda\":{\"subTipo\":null,\"mensagem\":null,\"percentualComprometimento\":70},\"scorePostivo\":{\"tipo\":null,\"score\":497,\"range\":\"F\",\"taxa\":28,\"mensagem\":\"ESPACO RESERVADO PARA MENSAGEM DA INSTITUICAO\",\"codigoMensagem\":\"\"},\"participacoes\":[],\"alertasDocumento\":{\"subTipoAlerta\":null,\"codigoMensagem\":null,\"totalMensagem\":null,\"tipoDocumento\":null,\"numeroDocumento\":null,\"codigoMotivoOcorrencia\":null,\"dataOcorrencia\":null,\"codigoDDDTelefone1\":null,\"numeroTelefone1\":null,\"codigoDDDTelefone2\":null,\"numeroTelefone2\":null,\"codigoDDDTelefone3\":null,\"numeroTelefone3\":null,\"mensagem\":null,\"listaAlertaDocumentoDetalhes\":[]},\"pendenciasFinanceiras\":[],\"protesto\":null,\"chequeSemFundo\":null,\"acaoJudicial\":null,\"habitoPagamentos\":[{\"sequenciaEnviada\":1,\"feature\":\"REIV\",\"subTipo\":\"99\",\"faixaDias\":\"NAO HA\",\"nota\":\"HI\",\"faixaPgto\":\"STORICO\"}],\"indiceRelacionamentos\":[{\"sequenciaEnviada\":null,\"faixa\":\"SR\",\"calculado\":\"S\",\"mensagem\":\"SEM RELACIONAMENTO\",\"setor\":\"01\",\"relacionamento\":\"Sem relacionamento\",\"tendencia\":\"Sem relacionamento\"},{\"sequenciaEnviada\":null,\"faixa\":\"B2\",\"calculado\":\"S\",\"mensagem\":\"BAIXO RELACIONAMENTO COM O MERCADO COM TENDENCIA ESTAVEL\",\"setor\":\"02\",\"relacionamento\":\"Baixo relacionamento\",\"tendencia\":\"Tendência estável\"},{\"sequenciaEnviada\":null,\"faixa\":\"SR\",\"calculado\":\"S\",\"mensagem\":\"SEM RELACIONAMENTO\",\"setor\":\"03\",\"relacionamento\":\"Sem relacionamento\",\"tendencia\":\"Sem relacionamento\"},{\"sequenciaEnviada\":null,\"faixa\":\"B2\",\"calculado\":\"S\",\"mensagem\":\"BAIXO RELACIONAMENTO COM O MERCADO COM TENDENCIA ESTAVEL\",\"setor\":\"99\",\"relacionamento\":\"Baixo relacionamento\",\"tendencia\":\"Tendência estável\"}],\"obitos\":[{\"mensagem\":\"ULTIMA ATUALIZACAO DAS INFORMACOES EM 02/05/2021\"},{\"mensagem\":\"NOME DO TITULAR: YORK MOREIRA ANGELO\"},{\"mensagem\":\"DATA DE NASCIMENTO: 12/05/1930\"},{\"mensagem\":\"ANO DO OBITO: 2015\"},{\"mensagem\":\"NOME DA MAE: CELINA MOREIRA ANGELO\"}],\"relatorioPdf\":null,\"pefin\":[],\"refin\":[],\"dividaVencida\":[],\"pefinResumo\":null,\"refinResumo\":null,\"dividaVencidaResumo\":null,\"chequeSemFundoLista\":[],\"protestoLista\":[],\"alertasDocumentoLista\":[],\"acoesCivil\":null,\"falencias\":null,\"falenciasInsucesso\":null,\"relacionamentoMercado\":{\"sequenciaEnviada\":null,\"faixa\":\"B2\",\"calculado\":\"S\",\"mensagem\":\"BAIXO RELACIONAMENTO COM O MERCADO COM TENDENCIA ESTAVEL\",\"setor\":\"99\",\"relacionamento\":\"Baixo relacionamento\",\"tendencia\":\"Tendência estável\"},\"relacionamentoBanco\":{\"sequenciaEnviada\":null,\"faixa\":\"SR\",\"calculado\":\"S\",\"mensagem\":\"SEM RELACIONAMENTO\",\"setor\":\"01\",\"relacionamento\":\"Sem relacionamento\",\"tendencia\":\"Sem relacionamento\"},\"relacionamentoTelecomunicacoes\":{\"sequenciaEnviada\":null,\"faixa\":\"B2\",\"calculado\":\"S\",\"mensagem\":\"BAIXO RELACIONAMENTO COM O MERCADO COM TENDENCIA ESTAVEL\",\"setor\":\"02\",\"relacionamento\":\"Baixo relacionamento\",\"tendencia\":\"Tendência estável\"},\"relacionamentoOutrosSetores\":{\"sequenciaEnviada\":null,\"faixa\":\"SR\",\"calculado\":\"S\",\"mensagem\":\"SEM RELACIONAMENTO\",\"setor\":\"03\",\"relacionamento\":\"Sem relacionamento\",\"tendencia\":\"Sem relacionamento\"},\"possuiHabitoPagamentos\":false,\"habitoPagamentosPontual\":null,\"habitoPagamentos001_007\":null,\"habitoPagamentos008_014\":null,\"habitoPagamentos015_020\":null,\"habitoPagamentos021_030\":null,\"habitoPagamentosMais30\":null,\"habitoPagamentosMais60\":null}";
 		
 		try {

@@ -1,11 +1,14 @@
 package com.webnowbr.siscoat.cobranca.service;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorConsulta;
+import com.webnowbr.siscoat.cobranca.db.model.RelacionamentoPagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorConsultaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
+import com.webnowbr.siscoat.cobranca.db.op.RelacionamentoPagadorRecebedorDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.common.GsonUtil;
@@ -137,4 +140,14 @@ public class PagadorRecebedorService {
 
 	}
 
+	public void geraRelacionamento(PagadorRecebedor pessoaRoot, String relacao, PagadorRecebedor pessoaChild,
+			BigDecimal porcentagem) {
+		RelacionamentoPagadorRecebedor relacioanameto = 
+				new RelacionamentoPagadorRecebedor(pessoaRoot, relacao, pessoaChild, porcentagem);
+		
+		RelacionamentoPagadorRecebedorDao rDao = new RelacionamentoPagadorRecebedorDao();
+		if(rDao.verificaRelacaoExistente(pessoaRoot, pessoaChild).size() <= 0) {
+			rDao.create(relacioanameto);
+		}
+	}
 }

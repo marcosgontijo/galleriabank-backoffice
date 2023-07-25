@@ -25,7 +25,11 @@
                  rowsPerPageTemplate="20,40,60,80" selection="" emptyMessage="" sortBy="#{PagadorRecebedor.nome}">
 			        <f:facet name="header">
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{pagadorRecebedorMB.clearFields}"/>
-			        </f:facet>			        
+
+						<p:commandButton value="popular Geral" ajax="false"
+							icon="ui-icon-plus"
+							action="#{relacionamentoPagadorRecebedorMB.populaGeral}" />
+					</f:facet>			        
 			        <p:column style="text-align: center;" headerText="Nome" filterBy="#{PagadorRecebedor.nome}" filterMatchMode="contains" sortBy="#{PagadorRecebedor.nome}">
 			            <h:outputText value="#{PagadorRecebedor.nome}" />
 			        </p:column>
@@ -36,7 +40,8 @@
 			            <h:outputText value="#{PagadorRecebedor.cnpj}" />
 			        </p:column>
 			        <p:column style="width:120px;">
-			        	<p:commandButton action="#{pagadorRecebedorMB.clearFieldsView}" ajax="false" icon="ui-icon-search" title="Detalhes">
+						
+						<p:commandButton action="#{pagadorRecebedorMB.clearFieldsView}" ajax="false" icon="ui-icon-search" title="Detalhes">
 			        		<f:setPropertyActionListener target="#{pagadorRecebedorMB.objetoPagadorRecebedor}" value="#{PagadorRecebedor}" />  			        		
 			        		<f:setPropertyActionListener target="#{pagadorRecebedorMB.updateMode}" value="false" />
 			        		<f:setPropertyActionListener target="#{pagadorRecebedorMB.deleteMode}" value="false" />
@@ -54,7 +59,12 @@
 			                	<f:setPropertyActionListener target="#{pagadorRecebedorMB.updateMode}" value="false" />
 			                	<f:setPropertyActionListener target="#{pagadorRecebedorMB.deleteMode}" value="true" />
 			                </p:commandButton> 
+			                
+			                <p:spacer width="10" height="10"/>
 		               	</shiro:hasAnyRoles>
+		               	<p:commandButton action="#{relacionamentoPagadorRecebedorMB.clearFieldsMindMap(PagadorRecebedor)}"
+							ajax="false" icon="ui-icon-search" value="MindMap" />
+						
 		            </p:column>			        		               		        			        			           			 		
 			        <f:facet name="footer">
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{pagadorRecebedorMB.clearFields}">

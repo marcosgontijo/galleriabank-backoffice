@@ -1277,8 +1277,8 @@ public class ContratoCobranca implements Serializable {
 	}
 
 	public boolean isEmAnalise() {
-		List<String> lstEmAnalise =  Arrays.asList("Pendente");
-		return CommonsUtil.semValor(this.cadastroAprovadoValor) && lstEmAnalise.contains(this.status);
+		List<String> lstEmAnalise =  Arrays.asList("Aprovado", "Reprovado", "Baixado", "Desistência Cliente");
+		return CommonsUtil.semValor(this.cadastroAprovadoValor) && !lstEmAnalise.contains(this.status) && leadCompleto && inicioAnalise;
 	}
 
 	/**
