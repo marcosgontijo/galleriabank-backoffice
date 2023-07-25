@@ -9,6 +9,7 @@ import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.infra.db.model.User;
 
 import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultRelacionamento;
+import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultRelacionamentosPessoaisPJPartnership;
 import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoRequestEnterprisePartnership;
 import br.com.galleriabank.serasacrednet.cliente.model.PessoaParticipacao;
 import br.com.galleriabank.serasarelato.cliente.model.Administrador;
@@ -207,7 +208,7 @@ public class DocumentoAnaliseService {
 		return pagador;
 	}
 	
-	public PagadorRecebedor cadastrarPartnershipRetornoEnginePJ(EngineRetornoExecutionResultRelacionamento partnership, 
+	public PagadorRecebedor cadastrarPartnershipRetornoEnginePJ(EngineRetornoExecutionResultRelacionamentosPessoaisPJPartnership partnership, 
 			PagadorRecebedorService pagadorRecebedorService) {
 		PagadorRecebedor pagador = new PagadorRecebedor();
 		pagador.setId(0);
