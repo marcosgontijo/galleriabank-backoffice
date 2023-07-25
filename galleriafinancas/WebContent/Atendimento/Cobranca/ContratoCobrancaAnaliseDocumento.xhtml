@@ -80,7 +80,7 @@
 
 						<p:column headerText="Liberado Análise">
 							<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"
-								rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
+								rendered="#{!fileAnalise.isAnaliseBloqueada() and contratoCobrancaMB.objetoContratoCobranca.emAnalise  }"
 								onLabel="Sim" offLabel="Não" style="width:6rem">
 								<p:ajax event="change"
 									listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
