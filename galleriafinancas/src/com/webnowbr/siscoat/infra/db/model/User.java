@@ -102,7 +102,10 @@ public final class User implements Serializable {
     private boolean profileAvaliadorImovelGalache;
     private boolean profileLaudo; 
     private boolean profilePajuNeves; 
-    private boolean profilePajuFBC;
+    private boolean profilePajuLuvison;    
+    private boolean profileCompliance;    
+    
+    private boolean cadastraResponsavel;
     
     private List<Termo> listTermos;
     
@@ -699,11 +702,27 @@ public final class User implements Serializable {
 		this.profilePajuNeves = profilePajuNeves;
 	}
 
-	public boolean isProfilePajuFBC() {
-		return profilePajuFBC;
+	public boolean isProfilePajuLuvison() {
+		return profilePajuLuvison;
 	}
 
-	public void setProfilePajuFBC(boolean profilePajuFBC) {
-		this.profilePajuFBC = profilePajuFBC;
+	public void setProfilePajuLuvison(boolean profilePajuLuvison) {
+		this.profilePajuLuvison = profilePajuLuvison;
+	}
+
+	public boolean isProfileCompliance() {
+		return profileCompliance;
+	}
+
+	public void setProfileCompliance(boolean profileCompliance) {
+		this.profileCompliance = profileCompliance;
+	}
+
+	public boolean isCadastraResponsavel() {
+		return cadastraResponsavel;
+	}
+
+	public void setCadastraResponsavel(boolean cadastraResponsavel) {
+		this.cadastraResponsavel = cadastraResponsavel;
 	}	
 }

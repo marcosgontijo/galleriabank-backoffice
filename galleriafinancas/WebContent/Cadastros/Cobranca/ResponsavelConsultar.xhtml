@@ -19,7 +19,9 @@
 			        <f:facet name="header">
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{responsavelMB.clearFields}"/>
 						<p:spacer width="10px"/>
-						<p:commandButton value="Atualizar Todos" action="#{responsavelMB.clearComissaoTodos}" oncomplete="PF('ComissaoResponsaveis').show();"/>
+						<shiro:hasAnyRoles name="ROOT, COBRANCA, IUGU_POSTO, ASSISTENTEFINANCEIRO, PROFILE_ANALISTA_POS_COMITE, PROFILE_ANALISTA_COMITE, PROFILE_CONTRATO, PROFILE_ANALISTA_CREDITO">
+							<p:commandButton value="Atualizar Todos" action="#{responsavelMB.clearComissaoTodos}" oncomplete="PF('ComissaoResponsaveis').show();"/>
+			        	</shiro:hasAnyRoles>
 			        </f:facet>
 			         <p:column style="text-align: center;" headerText="Código" filterBy="#{Responsavel.codigo}" filterMatchMode="contains" sortBy="#{Responsavel.codigo}">
 			            <h:outputText value="#{Responsavel.codigo}" />

@@ -44,9 +44,18 @@
 			<column name="tipo" />
 		</property>
 		
+		<property name="excluido" type="boolean">
+			<column name="excluido" not-null="true" default ="false"/>
+		</property>
+		
 		<property name="liberadoAnalise" type="boolean">
 			<column name="liberadoAnalise" not-null="true" default ="false" />
 		</property>		
+		
+		<property name="liberadoContinuarAnalise" type="boolean">
+			<column name="liberadoContinuarAnalise" not-null="true" default ="false" />
+		</property>		
+		
 		
 		<property name="liberadoSerasa" type="boolean">
 			<column name="liberadoSerasa" not-null="true" default ="false" />

@@ -1751,6 +1751,11 @@
 		<property name="iniciouGeracaoLaudo" type="boolean">
 			<column name="iniciouGeracaoLaudo" not-null="true" default="false" />
 		</property>	
+		
+		<property name="iniciouGeracaoPaju" type="boolean">
+			<column name="iniciouGeracaoPaju" not-null="true" default="false" />
+		</property>	
+		
 		<many-to-one name="analistaGeracaoPAJU"
 			class="com.webnowbr.siscoat.cobranca.db.model.Responsavel"
 			lazy="false">
@@ -2168,6 +2173,10 @@
 		<property name="statusEsteira" type="java.lang.String">
 			<column name="statusEsteira" />
 		</property>
+		
+		<property name="contratoPrioridadeAlta" type="boolean">
+			<column name="contratoPrioridadeAlta" not-null="true" default="false"/>
+		</property>	
 		
 	</class>
 </hibernate-mapping>

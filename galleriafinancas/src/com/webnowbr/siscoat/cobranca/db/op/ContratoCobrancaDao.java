@@ -6911,7 +6911,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setPagtoLaudoConfirmadaData(rs.getTimestamp("pagtoLaudoConfirmadaData"));
 						contratoCobranca.setContatoDiferenteProprietario(rs.getBoolean("contatoDiferenteProprietario"));
 						contratoCobranca.setIniciouGeracaoPaju(rs.getBoolean("iniciouGeracaoPaju"));
-						
+					
 						ImovelCobranca imovel = new ImovelCobranca();
 						imovel.setCidade(rs.getString("cidade"));
 						imovel.setEstado(rs.getString("estado"));

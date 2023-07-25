@@ -49,6 +49,12 @@ public class EngineWebhook {
 			DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
 
 			
+			/*
+			 * System.out.
+			 * println("---------------- Data Engine webhookRetorno ---------------- ");
+			 * System.out.println(webhookRetorno); System.out.
+			 * println("---------------- Data Engine webhookRetorno ---------------- ");
+			 */
 			EngineRetorno engineWebhookRetorno = GsonUtil.fromJson(webhookRetorno, EngineRetorno.class);
 
 			DataEngineDao dataEngineDao = new DataEngineDao();
@@ -63,16 +69,15 @@ public class EngineWebhook {
 
 				DocumentoAnalise documentoAnalise = documentoAnaliseDao.findByFilter("engine", dataEngine).stream()
 						.findFirst().orElse(null);
-				
+
 				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
 				pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(dataEngine.getPagador(),
 						DocumentosAnaliseEnum.ENGINE, webhookRetorno);
-				
 
 				if (!CommonsUtil.semValor(documentoAnalise)) {
 
 					documentoAnalise.setRetornoEngine(webhookRetorno);
-					
+
 					SerasaService serasaService = new SerasaService();
 					NetrinService netrinService = new NetrinService();
 					UserService userService = new UserService();
@@ -132,7 +137,10 @@ public class EngineWebhook {
 					}
 
 					documentoAnaliseDao.merge(documentoAnalise);
+<<<<<<< HEAD
 					
+=======
+>>>>>>> refs/remotes/origin/master
 
 					String motivo = "Empresa Vinculada ao Proprietario Atual";
 					if (!CommonsUtil.mesmoValor(documentoAnalise.getMotivoAnalise().toUpperCase(),
@@ -201,6 +209,7 @@ public class EngineWebhook {
 				}
 			}
 			return Response.status(200).entity("Processado").build();
+			
 		} catch (io.jsonwebtoken.ExpiredJwtException eJwt) {
 			eJwt.printStackTrace();
 			return Response.status(500).entity("Token Expirado").build();
