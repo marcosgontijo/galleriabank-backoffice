@@ -1117,7 +1117,7 @@
 				</h:panelGroup>
 				
 				<h:panelGroup id="comentarioPendenciaPanel" style="margin-bottom:20px;">
-					<p:panel header="Comentário de Pendencia" rendered="#{contratoCobrancaMB.objetoContratoCobranca.comentarioPendencia != null and contratoCobrancaMB.objetoContratoCobranca.comentarioPendencia != '' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC'}">
+					<p:panel header="Comentário de Pendencia" rendered="#{contratoCobrancaMB.objetoContratoCobranca.comentarioPendencia != null and contratoCobrancaMB.objetoContratoCobranca.comentarioPendencia != '' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">
 						<h:panelGrid columns="2">
 							<p:outputLabel for="comentarioPendencia" value="Comentário da Pendência: "
 								styleClass="labelBold" />
