@@ -403,7 +403,7 @@ public class DocketService {
 
 				for (EngineRetornoExecutionResultRelacionamentosPessoaisPJPartnership ererr : ererrppj.getRelationships().getRelationships()) {
 					String relacao = "";
-					if (CommonsUtil.mesmoValor(ererr..getRelationshipName(), "OWNER")) {
+					if (CommonsUtil.mesmoValor(ererr.getRelationshipName(), "OWNER")) {
 						relacao = "Dono";
 					} else if ((CommonsUtil.mesmoValor(ererr.getRelationshipName(), "SOCIO-ADMINISTRADOR"))) {
 						relacao = "Socio/Administrador";
