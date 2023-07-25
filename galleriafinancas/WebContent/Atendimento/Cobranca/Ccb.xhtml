@@ -2618,7 +2618,8 @@
 	
 		<ui:include src="../../Dialog/DialogRecebedorPagador.xhtml">
 			<ui:param name="mbean" value="#{ccbMB}"></ui:param>
-			<ui:param name="titulo" value="#{ccbMB.tituloPagadorRecebedorDialog}"></ui:param>
+			<ui:param name="titulo" value="#{ccbMB.tituloPagadorRecebedorDialog}"></ui:param>			
+			<ui:param name="permiteAdicionarPessoa" value="false"></ui:param>			
 		</ui:include>
 
 		<p:dialog header="Contratos" widgetVar="contratoCobrancaDialog"
