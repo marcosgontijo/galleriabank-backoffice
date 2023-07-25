@@ -11,7 +11,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.docx4j.Docx4J;
 import org.docx4j.XmlUtils;
 import org.docx4j.jaxb.Context;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
@@ -39,6 +38,8 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoTipoTemplateBloco;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoTipoTemplateCampo;
 import com.webnowbr.siscoat.cobranca.db.model.DocketEstados;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
+import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.DocketDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocketEstadosDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
@@ -46,6 +47,7 @@ import com.webnowbr.siscoat.cobranca.db.template.ContratoTipoTemplateDao;
 import com.webnowbr.siscoat.cobranca.model.docket.DocketDocumento;
 import com.webnowbr.siscoat.cobranca.model.docket.DocketRetornoConsulta;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.WordUtil;
 import com.webnowbr.siscoat.exception.SiscoatException;
 
@@ -81,19 +83,29 @@ public class PajuService {
 		WordprocessingMLPackage docTemplate;
 	
 		InputStream resourceAsStream = getClass().getResourceAsStream("/resource/" + arquivoWord);
-		
-
-//		File arquivoTemplate = new File(resourceAsStream);
-		try {
-//			docTemplate = carregaTemplate(resourceAsStream);
-			docTemplate = WordprocessingMLPackage.load(resourceAsStream);
-		} catch (Exception e) {
-			throw new SiscoatException("Erro ao gerar documento", e);
-		}
+	
 
 		parser = new SpelExpressionParser();
 		context = new StandardEvaluationContext();
 		wordUtil = new WordUtil();
+		
+		try {
+			docTemplate = WordprocessingMLPackage.load(resourceAsStream);
+
+			context.registerFunction("getEnderecoImovel",
+					PajuService.class.getMethod("getEnderecoImovel", new Class[] { ImovelCobranca.class }));
+			context.registerFunction("getCidadeImovel",
+					PajuService.class.getMethod("getCidadeImovel", new Class[] { ImovelCobranca.class }));
+			context.registerFunction("getUfImovel",
+					PajuService.class.getMethod("getUfImovel", new Class[] { ImovelCobranca.class }));
+
+		} catch (SecurityException e) {
+			throw new SiscoatException("Erro gerar documento ao instanciar classe", e);
+		} catch (NoSuchMethodException e) {
+			throw new SiscoatException("Erro gerar documento ao instanciar classe", e);
+		} catch (Docx4JException e) {
+			throw new SiscoatException("Erro gerar documento ao ler docx " + arquivoWord, e);
+		}
 
 		ContratoTipoTemplateDao contratoTipoTemplateDao = new ContratoTipoTemplateDao();
 		ContratoTipoTemplate ContratoTipoTemplate = contratoTipoTemplateDao.getTemplate("PJ");
@@ -107,6 +119,22 @@ public class PajuService {
 				.filter(p -> p.isLiberadoAnalise() && CommonsUtil.mesmoValor("PJ", p.getTipoPessoa()))
 				.collect(Collectors.toSet());
 		
+		if (CommonsUtil.semValor(pessoasPF) && CommonsUtil.semValor(pessoasPJ)) {
+			DocumentoAnalise documentoAnalise = new DocumentoAnalise();
+			documentoAnalise.setPagador(contrato.getPagador());
+
+			if (CommonsUtil.semValor(contrato.getPagador().getCnpj())) {
+				documentoAnalise.setCnpjcpf(contrato.getPagador().getCpf());;
+				documentoAnalise.setTipoPessoa("PF");
+				pessoasPF.add(documentoAnalise);
+			} else {
+				documentoAnalise.setCnpjcpf(contrato.getPagador().getCnpj());
+				documentoAnalise.setTipoPessoa("PJ");	
+				pessoasPJ.add(documentoAnalise);
+			}
+		}
+		
+		
 		DocketDao docketDao = new DocketDao();
 		String idCallManager = docketDao.consultaContratosPendentesResponsaveis(contrato);
 		DocketService docketService = new DocketService();
@@ -115,11 +143,56 @@ public class PajuService {
 		DocketEstadosDao docketEstadosDao = new DocketEstadosDao();
 		List<DocketEstados> docketEstados = docketEstadosDao.findAll();
 		
-		for (DocketDocumento docketDocumento : docketRetornoConsulta.getPedido().getDocumentos()) {
-			Optional<String> estadoNome = docketEstados.stream().filter(e -> CommonsUtil.mesmoValor(e.getIdDocket(), docketDocumento.getCampos().getEstado())).map(e -> e.getNome()).findFirst();
-			docketDocumento.getCampos().setEstadoNome(estadoNome.get());
-		}
-		
+		if (!CommonsUtil.semValor(docketRetornoConsulta))
+			for (DocketDocumento docketDocumento : docketRetornoConsulta.getPedido().getDocumentos()) {
+				Optional<String> estadoNome = docketEstados.stream()
+						.filter(e -> CommonsUtil.mesmoValor(e.getIdDocket(), docketDocumento.getCampos().getEstado()))
+						.map(e -> e.getNome()).findFirst();
+				docketDocumento.getCampos().setEstadoNome(estadoNome.get());
+				
+				if (CommonsUtil.semValor(docketDocumento.getCampos().getCnpj())) {
+					if (!pessoasPF.stream()
+							.filter(p -> CommonsUtil.mesmoValor(docketDocumento.getCampos().getCpf(), p.getCnpjcpf()))
+							.findAny().isPresent()) {
+						PagadorRecebedorService pagagadorRecebedorService = new PagadorRecebedorService();
+
+						PagadorRecebedor pessoaConsultaDocket = new PagadorRecebedor();
+						pessoaConsultaDocket.setCpf(docketDocumento.getCampos().getCpf());
+						pessoaConsultaDocket.setNome(docketDocumento.getCampos().getNomeCompleto());
+						pessoaConsultaDocket.setNomeMae(docketDocumento.getCampos().getNomeMae());
+						pessoaConsultaDocket.setRg(docketDocumento.getCampos().getRg());
+						pessoaConsultaDocket.setDtNascimento(docketDocumento.getCampos().getDataNascimento());
+
+						pessoaConsultaDocket = pagagadorRecebedorService.buscaOuInsere(pessoaConsultaDocket);
+						DocumentoAnalise documentoAnalise = new DocumentoAnalise();
+						documentoAnalise.setPagador(pessoaConsultaDocket);
+						documentoAnalise.setCnpjcpf(pessoaConsultaDocket.getCpf());
+						;
+						documentoAnalise.setTipoPessoa("PF");
+						pessoasPF.add(documentoAnalise);
+					}
+				}else {
+					if (!pessoasPJ.stream()
+							.filter(p -> CommonsUtil.mesmoValor(docketDocumento.getCampos().getCnpj(), p.getCnpjcpf()))
+							.findAny().isPresent()) {
+						PagadorRecebedorService pagagadorRecebedorService = new PagadorRecebedorService();
+
+						PagadorRecebedor pessoaConsultaDocket = new PagadorRecebedor();
+						pessoaConsultaDocket.setCnpj(docketDocumento.getCampos().getCnpj());
+						pessoaConsultaDocket.setNome(docketDocumento.getCampos().getRazaoSocial());
+
+						pessoaConsultaDocket = pagagadorRecebedorService.buscaOuInsere(pessoaConsultaDocket);
+						DocumentoAnalise documentoAnalise = new DocumentoAnalise();
+						documentoAnalise.setPagador(pessoaConsultaDocket);
+						documentoAnalise.setCnpjcpf(pessoaConsultaDocket.getCpf());
+						;
+						documentoAnalise.setTipoPessoa("PF");
+						pessoasPF.add(documentoAnalise);
+					}
+				}
+				
+			}
+
 		for (ContratoTipoTemplateBloco bloco : lstBlocos) {
 
 			if (bloco.getFlagInativo()) {
@@ -131,7 +204,9 @@ public class PajuService {
 			switch (tipo) {
 
 			case BLOCO_DOCUMENTO:
-
+				
+				replacePlaceholder(docTemplate.getMainDocumentPart(), "dataGeracao", (String) CommonsUtil.formataData( DateUtil.getDataHoje() , "dd 'de' MMMM 'de' yyyy"));
+				
 				for (ContratoTipoTemplateCampo campo : bloco.getCampos()) {
 
 					Object valor = getValor(campo.getExpressao());
@@ -187,7 +262,7 @@ public class PajuService {
 			}
 
 		}
-
+		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
 			docTemplate.save(baos);
@@ -217,8 +292,7 @@ public class PajuService {
 		}
 
 	}
-	
-	
+		
 	private void populaParagrafoCertidoesPF(WordprocessingMLPackage docTemplate, ContratoTipoTemplateBloco bloco,
 			Set<DocumentoAnalise> participantes, DocketRetornoConsulta docketRetornoConsulta) throws SiscoatException {
 
@@ -265,12 +339,16 @@ public class PajuService {
 		for (DocumentoAnalise participante : participantes) {
 			
 			adicionaParagrafo(docTemplate, paragrafoTemplate, bloco, participante);
-			List<DocketDocumento> documentosParticipante = docketRetornoConsulta.getPedido().getDocumentos();
-			List<DocketDocumento> documentosParticipanteFiltro = documentosParticipante.stream().filter(d -> CommonsUtil
-					.mesmoValor(d.getCampos().getCpf(), CommonsUtil.somenteNumeros(participante.getCnpjcpf())))
-					.collect(Collectors.toList());
-			for (DocketDocumento docketDocumento : documentosParticipanteFiltro) {
-				adicionaParagrafo(docTemplate, paragrafoDocumentoTemplate, bloco.getBlocosFilho().get(0), docketDocumento);
+			if (!CommonsUtil.semValor(docketRetornoConsulta)) {
+				List<DocketDocumento> documentosParticipante = docketRetornoConsulta.getPedido().getDocumentos();
+				List<DocketDocumento> documentosParticipanteFiltro = documentosParticipante.stream()
+						.filter(d -> CommonsUtil.mesmoValor(d.getCampos().getCpf(),
+								CommonsUtil.somenteNumeros(participante.getCnpjcpf())))
+						.collect(Collectors.toList());
+				for (DocketDocumento docketDocumento : documentosParticipanteFiltro) {
+					adicionaParagrafo(docTemplate, paragrafoDocumentoTemplate, bloco.getBlocosFilho().get(0),
+							docketDocumento);
+				}
 			}
 
 //			adicionaParagrafo(docTemplate, paragrafoDocumentoTemplate, bloco, documentosParticipanteFiltro);
@@ -284,7 +362,6 @@ public class PajuService {
 		}
 
 	}
-	
 
 	
 	private void populaParagrafoCertidoesPJ(WordprocessingMLPackage docTemplate, ContratoTipoTemplateBloco bloco,
@@ -343,9 +420,9 @@ public class PajuService {
 
 		}
 
-		if (paragrafoTemplate != null) {
+		if (paragrafoTemplate != null) {						
 			removeParagrafo(docTemplate, paragrafoDocumentoTemplate);
-			removeParagrafo(docTemplate, paragrafoTemplate);			
+			removeParagrafo(docTemplate, paragrafoTemplate);
 		}
 
 	}
@@ -359,7 +436,6 @@ public class PajuService {
 	private void removeParagrafo(WordprocessingMLPackage template, P paragrafo) {
 		((ContentAccessor) paragrafo.getParent()).getContent().remove(paragrafo);
 	}
-
 	
 	private void populaParagrafoPessoaConsulta(WordprocessingMLPackage docTemplate, ContratoTipoTemplateBloco bloco) throws SiscoatException {
 
@@ -380,7 +456,6 @@ public class PajuService {
 		}
 
 	}
-
 	
 	private P getParagrafoTemplate(WordprocessingMLPackage template, String tagBusca) {
 
@@ -458,11 +533,14 @@ public class PajuService {
 				valor = "VERIFICAR CERTIDÃO";
 			}
 
-			if (valor != null) {
+			//if (valor != null) {
 				for (P p : copy) {
-				replacePlaceholder(p, campo.getTag(), (String) valor);
+					if (!CommonsUtil.semValor((String) valor))
+						replacePlaceholder(p, campo.getTag(), (String) valor);
+					else
+						replacePlaceholder(p, campo.getTag(), "");
 				}
-			}
+			//}
 		}
 
 		// add the paragraph to the document
@@ -482,6 +560,42 @@ public class PajuService {
 	// ************************************************************************
 	// *** Rotinas para calculo de expressão
 
+	public static String getEnderecoImovel(ImovelCobranca imovel) throws SiscoatException {
+
+		if (imovel != null) {
+			String endereco = imovel.getEndereco().trim()
+					+ (CommonsUtil.semValor(imovel.getComplemento()) ? ""
+							: " " + imovel.getComplemento().trim())
+					+ (CommonsUtil.semValor(imovel.getBairro()) ? ""
+							: " - " + imovel.getBairro().trim() + " -")
+					+ " " + imovel.getCidade().trim() + " - " + imovel.getEstado().trim() + " - Cep: "
+					+ CommonsUtil.formataCEP(imovel.getCep());
+
+			return endereco;
+		}
+
+		return "";
+
+	}
+
+	public static String getCidadeImovel(ImovelCobranca imovel) throws SiscoatException {
+//		PessoaEnderecoVO ender = getPessoaEndereco(pessoa);
+
+		if (imovel != null) {
+			return imovel.getCidade();
+		}
+
+		return "";
+	}
+
+	public static String getUfImovel(ImovelCobranca imovel) throws SiscoatException {
+		if (imovel != null) {
+			return imovel.getEstado();
+		}
+
+		return "";
+	}
+	
 	private WordprocessingMLPackage carregaTemplate(File arq) throws Docx4JException, FileNotFoundException {
 		return WordprocessingMLPackage.load(new FileInputStream(arq));
 	}

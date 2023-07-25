@@ -375,7 +375,7 @@
 		<dependency>
 			<groupId>br.com.galleriabank.dataengine-cliente</groupId>
 			<artifactId>dataengine-cliente</artifactId>
-			<version>1.2</version>
+			<version>1.2.2</version>
 		</dependency>
 		<dependency>
 			<groupId>br.com.galleriabank.netrin-cliente</groupId>
@@ -402,11 +402,6 @@
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>
 			<version>2.3.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.glassfish.jaxb</groupId>
-			<artifactId>jaxb-runtime</artifactId>
-			<version>4.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>

@@ -527,15 +527,21 @@ public class BRLTrustMB {
 		cell.setCellValue("Data Vencimento");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(23);
-		cell.setCellValue("Taxa Adm");
+		cell.setCellValue("Amortização");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(24);
-		cell.setCellValue("Valor");
+		cell.setCellValue("Juros");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(25);
-		cell.setCellValue("Data Pagto.");
+		cell.setCellValue("Taxa Adm");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(26);
+		cell.setCellValue("Valor");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(27);
+		cell.setCellValue("Data Pagto.");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(28);
 		cell.setCellValue("Valor Pago");
 		cell.setCellStyle(cell_style);
 		
@@ -894,8 +900,28 @@ public class BRLTrustMB {
 					cell.setCellStyle(dateStyle);
 					cell.setCellValue(parcelas.getDataVencimento());
 	
-					// Taxa Adm
+					// Amortização
 					cell = row.createCell(23);
+					cell.setCellStyle(numericStyle);
+					cell.setCellType(CellType.NUMERIC);
+					if (parcelas.getVlrAmortizacaoParcela() != null) {
+						cell.setCellValue(((BigDecimal) parcelas.getVlrAmortizacaoParcela()).doubleValue());					
+					} else {
+						cell.setCellValue(Double.valueOf("0"));
+					}
+					
+					// Taxa Juros
+					cell = row.createCell(24);
+					cell.setCellStyle(numericStyle);
+					cell.setCellType(CellType.NUMERIC);
+					if (parcelas.getVlrJurosParcela() != null) {
+						cell.setCellValue(((BigDecimal) parcelas.getVlrJurosParcela()).doubleValue());					
+					} else {
+						cell.setCellValue(Double.valueOf("0"));
+					}
+					
+					// Taxa Adm
+					cell = row.createCell(25);
 					cell.setCellStyle(numericStyle);
 					cell.setCellType(CellType.NUMERIC);
 					if (parcelas.getTaxaAdm() != null) {
@@ -905,7 +931,7 @@ public class BRLTrustMB {
 					}
 					
 					// Valor Parcela
-					cell = row.createCell(24);
+					cell = row.createCell(26);
 					/*
 					 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_Number); }
 					 * else { if (parcelas.isParcelaVencida()) {
@@ -933,7 +959,7 @@ public class BRLTrustMB {
 					}
 	
 					// Data pagto
-					cell = row.createCell(25);
+					cell = row.createCell(27);
 					/*
 					 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_Date); }
 					 * else { if (parcelas.isParcelaVencida()) {
@@ -944,7 +970,7 @@ public class BRLTrustMB {
 					cell.setCellValue(parcelas.getDataUltimoPagamento());
 	
 					// Valor Pago
-					cell = row.createCell(26);
+					cell = row.createCell(28);
 					/*
 					 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_Number); }
 					 * else { if (parcelas.isParcelaVencida()) {
@@ -1042,6 +1068,10 @@ public class BRLTrustMB {
 			cell = row.createCell(25);
 			cell.setCellStyle(cell_style);
 			cell = row.createCell(26);
+			cell.setCellStyle(cell_style);
+			cell = row.createCell(27);
+			cell.setCellStyle(cell_style);
+			cell = row.createCell(28);
 			cell.setCellStyle(cell_style);
 			
 			// Style para cabeçalho

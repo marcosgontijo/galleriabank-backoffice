@@ -355,23 +355,34 @@ public class WordUtil {
 	}
 
 	// Remove tabela que contém parágrafos que não devem ser apresentados
-	private void removeTodoContainer(WordprocessingMLPackage template, Tbl tabela) {
+	public void removeTodoContainer(WordprocessingMLPackage template, Tbl tabela) {
 
-		org.docx4j.wml.Document wmlDocumentEl = (org.docx4j.wml.Document) template.getMainDocumentPart()
-				.getJaxbElement();
-		Body body = wmlDocumentEl.getBody();
+		Body body;
+		try {
+			body = template.getMainDocumentPart().getContents().getBody();
 
-		TableFinder tf = new TableFinder();
-		new TraversalUtil(body, tf);
-
-		for (Child tableElement : tf.getTableElements()) {
-			if (tableElement.equals(tabela)) {
-				Object parent = tableElement.getParent();
-				List<Object> theList = ((ContentAccessor) parent).getContent();
-				remove(theList, tableElement);
-				break;
-			}
+			body.getContent().remove(tabela.getParent());
+		} catch (Docx4JException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+//			        
+
+//		org.docx4j.wml.Document wmlDocumentEl = (org.docx4j.wml.Document) template.getMainDocumentPart()
+//				.getJaxbElement();
+//		Body body = wmlDocumentEl.getBody();
+//
+//		TableFinder tf = new TableFinder();
+//		new TraversalUtil(body, tf);
+//
+//		for (Child tableElement : tf.getTableElements()) {
+//			if (tableElement.equals(tabela)) {
+//				Object parent = tableElement.getParent();
+//				List<Object> theList = ((ContentAccessor) parent).getContent();
+//				remove(theList, tableElement);
+//				break;
+//			}
+//		}
 	}
 
 	private boolean remove(List<Object> theList, Object bm) {

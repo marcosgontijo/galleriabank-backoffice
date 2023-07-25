@@ -52,7 +52,7 @@
 					    	</shiro:hasAnyRoles>
 					    </td>					   
 					    <td>
-					     	<shiro:hasAnyRoles name="ROOT">
+					     	<shiro:hasAnyRoles name="ROOT, PROFILE_COMPLIANCE">
 					    		<p:commandLink title="Manutenção" action="/Manutencao/MenuManutencao.xhtml" ajax="false"><img src="#{resource['image/Commons/logoManutencao.png']}" alt=""/></p:commandLink>
 					    	</shiro:hasAnyRoles>
 					    </td>
@@ -786,7 +786,7 @@
 		</p:layout>
 
 			
-	<p:dialog widgetVar="dlgTermos" showEffect="fade" modal="true"
+	<p:dialog widgetVar="dlgTermos" showEffect="fade" modal="true" closable="false"
 		width="1000" height="570" minWidth="800">
 		
 		<h:form id="termoForm">

@@ -259,7 +259,8 @@ public class SerasaService {
 	}
 	
 	public String baixarDocumentoConsulta(String retornoSerasa, String tipoPessoa)
-			throws MalformedURLException, IOException, ProtocolException, UnsupportedEncodingException {
+		throws MalformedURLException, IOException {
+
 		String base64 = null;
 		// loginDocket();
 		int HTTP_COD_SUCESSO = 200;

@@ -4,10 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
 
-import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
+import org.primefaces.PrimeFaces;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
@@ -48,7 +46,9 @@ public class DocumentoAnalise implements Serializable {
 	private String motivoAnalise;
 	private String path;
 	private String tipo;
-	private boolean liberadoAnalise;
+	private boolean liberadoAnalise;	
+	private boolean liberadoContinuarAnalise;
+	
 	private boolean liberadoSerasa;
 	private boolean liberadoCenprot;
 	private boolean liberadoProcesso;
@@ -279,9 +279,11 @@ public class DocumentoAnalise implements Serializable {
 	}
 
 	public boolean isPodeChamarEngine() {
-		return !CommonsUtil.mesmoValor(motivoAnalise.toUpperCase(), "PROPRIETARIO ATUAL") && !isEngineProcessado()
-				&& (CommonsUtil.mesmoValor("PF", tipoPessoa) || (CommonsUtil.mesmoValor("PJ", tipoPessoa)
-						&& !this.motivoAnalise.contains("Empresa Vinculada")));
+		return !isEngineProcessado();				
+				
+//		return !CommonsUtil.mesmoValor(motivoAnalise.toUpperCase(), "PROPRIETARIO ATUAL") && !isEngineProcessado()
+//				&& (CommonsUtil.mesmoValor("PF", tipoPessoa) || (CommonsUtil.mesmoValor("PJ", tipoPessoa)
+//						&& !this.motivoAnalise.contains("Empresa Vinculada")));
 	}
 
 	public boolean isEngineProcessado() {
@@ -341,6 +343,25 @@ public class DocumentoAnalise implements Serializable {
 				&& !CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
 	}
 
+	public boolean isAnaliseBloqueada() {
+		PpeResponse resultPEP = null;
+		if (isPpeProcessado()) {
+			resultPEP = GsonUtil.fromJson(getRetornoPpe().replace("\"details\":\"\"", "\"details\":{}"),
+					PpeResponse.class);
+		}
+
+		if (!CommonsUtil.semValor(resultPEP) && !CommonsUtil.semValor(resultPEP.getPepKyc()))
+			if (!CommonsUtil.booleanValue(isLiberadoContinuarAnalise())
+					&& CommonsUtil.mesmoValorIgnoreCase("Sim", resultPEP.getPepKyc().getCurrentlyPEP())
+					&& (resultPEP.getPepKyc().getHistoryPEP().stream()
+							.filter(p -> CommonsUtil.mesmoValor(p.getLevel(), "1")).findAny().isPresent())) {
+				return true;
+			}
+
+		return false;
+	}
+
+	
 	public void addObservacao(String observacao) {
 
 		if (this.observacao == null) {
@@ -434,6 +455,14 @@ public class DocumentoAnalise implements Serializable {
 
 	public void setLiberadoAnalise(boolean liberadoAnalise) {
 		this.liberadoAnalise = liberadoAnalise;
+	}
+
+	public boolean isLiberadoContinuarAnalise() {
+		return liberadoContinuarAnalise;
+	}
+
+	public void setLiberadoContinuarAnalise(boolean liberadoContinuarAnalise) {
+		this.liberadoContinuarAnalise = liberadoContinuarAnalise;
 	}
 
 	public DocumentosAnaliseEnum getTipoEnum() {
