@@ -48,9 +48,12 @@ public class PagadorRecebedorService {
 
 	}
 
-	public void preecheDadosReceita(PagadorRecebedor pagadorAdicionar) {
+	public PagadorRecebedor  preecheDadosReceita(PagadorRecebedor pagadorAdicionar) {
 		String stringResponse = null;
 		NetrinService netrinService = new NetrinService();
+		
+		if (!CommonsUtil.semValor(pagadorAdicionar.getCpf()) || !CommonsUtil.semValor(pagadorAdicionar.getCnpj()))
+			pagadorAdicionar = buscaOuInsere(pagadorAdicionar);
 		
 		if (!CommonsUtil.semValor(pagadorAdicionar.getCpf())) {
 
@@ -72,6 +75,7 @@ public class PagadorRecebedorService {
 			adicionarConsultaNoPagadorRecebedor(pagadorAdicionar, DocumentosAnaliseEnum.RECEITA_FEDERAL,
 					stringResponse);
 		}
+		return pagadorAdicionar;
 	}
 
 	public PagadorRecebedor findById(Long id) {

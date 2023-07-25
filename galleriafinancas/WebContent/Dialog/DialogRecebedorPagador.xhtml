@@ -4,14 +4,12 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:shiro="http://shiro.apache.org/tags"
 	xmlns:p="http://primefaces.org/ui">
-	
+
 	<h:form id="formReceborPagador">
 		<p:dialog header="#{titulo}" widgetVar="pagadorRecebedorDialog"
 			resizable="false" style="FONT-SIZE: 10pt;" width="600">
 
-
-
-			<p:commandButton value="Cadastrar Pessoa"
+			<p:commandButton value="Cadastrar Pessoa" rendered="#{permiteAdicionarPessoa}"
 				action="#{pagadorRecebedorCadastroMB.clearFieldsNovoCadastro}"
 				oncomplete="PF('pagadorRecebedorCadastroSimplesDialog').show();"
 				update=":formReceborPagadorCadastro:panelPagadorRecebedorCadastro">
@@ -68,13 +66,13 @@
 				</f:facet>
 			</p:dataTable>
 		</p:dialog>
-		</h:form>
-
-<h:form id="formReceborPagadorCadastro">
-	<p:dialog header="Cadastro simplificado"
-		id="pagadorRecebedorCadastroSimples"
-		widgetVar="pagadorRecebedorCadastroSimplesDialog" resizable="false"
-		style="FONT-SIZE: 10pt;" width="600;z-order:1000">
+	</h:form>
+	
+	<h:form id="formReceborPagadorCadastro" >
+		<p:dialog header="Cadastro simplificado"  rendered="#{permiteAdicionarPessoa}"
+			id="pagadorRecebedorCadastroSimples"
+			widgetVar="pagadorRecebedorCadastroSimplesDialog" resizable="false"
+			style="FONT-SIZE: 10pt;" width="600;z-order:1000">
 
 
 
@@ -117,12 +115,17 @@
 					oncomplete="callSeleiconaNovoCadastro()"
 					update="#{mbean.updatePagadorRecebedor}"
 					icon="ui-icon ui-icon-check">
-					<f:setPropertyActionListener
-						value="#{pagadorRecebedorCadastroMB.pagadorRecebedor}" 
-						target="#{mbean.selectedPagadorGenerico}"></f:setPropertyActionListener>
+
 				</p:commandButton>
-				<p:remoteCommand name="callSeleiconaNovoCadastro" update="#{mbean.updatePagadorRecebedor}" oncomplete="PF('pagadorRecebedorCadastroSimplesDialog').hide();PF('pagadorRecebedorDialog').hide();"
-				 action="#{mbean.populateSelectedPagadorRecebedor}" />
+				<p:remoteCommand name="callSeleiconaNovoCadastro"	 				
+						update="#{mbean.updatePagadorRecebedor} adicionarPessoaAnaliseForm"
+					oncomplete="PF('pagadorRecebedorCadastroSimplesDialog').hide();PF('pagadorRecebedorDialog').hide();"
+					action="#{mbean.populateSelectedPagadorRecebedor}">
+					<f:setPropertyActionListener
+						value="#{pagadorRecebedorCadastroMB.pagadorRecebedor}"
+						target="#{mbean.selectedPagadorGenerico}">
+					</f:setPropertyActionListener>
+				</p:remoteCommand>
 			</p:panel>
 
 		</p:dialog>

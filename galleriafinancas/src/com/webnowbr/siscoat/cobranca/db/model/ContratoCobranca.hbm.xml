@@ -1751,6 +1751,11 @@
 		<property name="iniciouGeracaoLaudo" type="boolean">
 			<column name="iniciouGeracaoLaudo" not-null="true" default="false" />
 		</property>	
+		
+		<property name="iniciouGeracaoPaju" type="boolean">
+			<column name="iniciouGeracaoPaju" not-null="true" default="false" />
+		</property>	
+		
 		<many-to-one name="analistaGeracaoPAJU"
 			class="com.webnowbr.siscoat.cobranca.db.model.Responsavel"
 			lazy="false">
@@ -2156,6 +2161,10 @@
 		<property name="contatoDiferenteProprietario" type="boolean">
 			<column name="contatoDiferenteProprietario" not-null="true" default="false"/>
 		</property>	
+		
+		<property name="avaliacaoPaju" type="java.lang.String">
+			<column name="avaliacaoPaju" />
+		</property>
 		
 		<property name="apenasPagamentoIntegral" type="boolean">
 			<column name="apenasPagamentoIntegral" not-null="true" default="false"/>

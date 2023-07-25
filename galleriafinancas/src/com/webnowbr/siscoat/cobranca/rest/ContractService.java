@@ -267,7 +267,11 @@ public class ContractService {
 						}
 						
 						this.objetoContratoCobranca.setImovel(this.objetoImovelCobranca);
-						this.objetoContratoCobranca.populaStatusEsteira(loginBean.getUsuarioLogado());
+						User user = getUsuarioLogado();
+						if(user.getId() <= 0) {
+							user = null;
+						}
+						this.objetoContratoCobranca.populaStatusEsteira(user);
 						// salva contrato
 						Long idContratoCobranca = criaContratoBD();
 						this.objetoContratoCobranca.setId(idContratoCobranca);
@@ -515,7 +519,11 @@ public class ContractService {
 							// atualizar contrato
 							atualizarContratoBD();
 							
-							this.objetoContratoCobranca.populaStatusEsteira(loginBean.getUsuarioLogado());
+							User user = getUsuarioLogado();
+							if(user.getId() <= 0) {
+								user = null;
+							}
+							this.objetoContratoCobranca.populaStatusEsteira(user);
 							
 							try {
 								contratoCobrancaDao.merge(this.objetoContratoCobranca);

@@ -23,8 +23,12 @@ import com.webnowbr.siscoat.cobranca.service.UserService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.common.GsonUtil;
+import com.webnowbr.siscoat.infra.db.model.User;
 
 import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
+import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultRelacionamentosPessoaisPJ;
+import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultRelacionamentosPessoaisPJPartnership;
+import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoRequestEnterprisePartnership;
 import io.jsonwebtoken.Jwts;
 
 @Path("/engine")
@@ -41,6 +45,9 @@ public class EngineWebhook {
 
 			Jwts.parserBuilder().setSigningKey(CommonsUtil.CHAVE_WEBHOOK).build().parseClaimsJws(token);
 
+			DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
+
+			
 			/*
 			 * System.out.
 			 * println("---------------- Data Engine webhookRetorno ---------------- ");
@@ -61,21 +68,23 @@ public class EngineWebhook {
 
 				DocumentoAnalise documentoAnalise = documentoAnaliseDao.findByFilter("engine", dataEngine).stream()
 						.findFirst().orElse(null);
-				
+
 				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
 				pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(dataEngine.getPagador(),
 						DocumentosAnaliseEnum.ENGINE, webhookRetorno);
-				
 
 				if (!CommonsUtil.semValor(documentoAnalise)) {
 
 					documentoAnalise.setRetornoEngine(webhookRetorno);
-					
+
 					SerasaService serasaService = new SerasaService();
 					NetrinService netrinService = new NetrinService();
 					UserService userService = new UserService();
 					ScrService scrService = new ScrService();
 
+					
+					User userSistema = userService.userSistema();
+					
 					engineWebhookRetorno.getConsultaAntecedenteCriminais();
 
 					if ((CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais())
@@ -84,12 +93,12 @@ public class EngineWebhook {
 							&& (CommonsUtil.semValor(engineWebhookRetorno.getProcessos()) || CommonsUtil.intValue(
 									engineWebhookRetorno.getProcessos().getTotal_acoes_judicias_reu()) == 0)) {
 						// libera a consulta do crednet da PF
-						if (documentoAnalise.isPodeChamarSerasa()) {
-							if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
-								documentoAnalise.setLiberadoSerasa(true);
-								serasaService.requestSerasa(documentoAnalise, userService.userSistema());
-							}
-						}
+//						if (documentoAnalise.isPodeChamarSerasa()) {
+//							if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
+//								documentoAnalise.setLiberadoSerasa(true);
+//								serasaService.requestSerasa(documentoAnalise, userService.userSistema());
+//							}
+//						}
 						if (documentoAnalise.isPodeChamarCenprot()) {
 							if (CommonsUtil.semValor(documentoAnalise.getRetornoCenprot())) {
 								documentoAnalise.setLiberadoCenprot(true);
@@ -111,9 +120,10 @@ public class EngineWebhook {
 					} else {
 						if (!CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais().getResult())
 								&& !CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais()
-										.getResult().get(0).getOnlineCertificates()) && 
-									!CommonsUtil.mesmoValorIgnoreCase("NADA CONSTA", engineWebhookRetorno.getConsultaAntecedenteCriminais()
-										.getResult().get(0).getOnlineCertificates().get(0).getBaseStatus())) {
+										.getResult().get(0).getOnlineCertificates())
+								&& !CommonsUtil.mesmoValorIgnoreCase("NADA CONSTA",
+										engineWebhookRetorno.getConsultaAntecedenteCriminais().getResult().get(0)
+												.getOnlineCertificates().get(0).getBaseStatus())) {
 							documentoAnalise.addObservacao("Possui antecedentes criminais");
 						}
 						if (CommonsUtil.mesmoValor(
@@ -124,9 +134,75 @@ public class EngineWebhook {
 					}
 
 					documentoAnaliseDao.merge(documentoAnalise);
+
+					String motivo = "Empresa Vinculada ao Proprietario Atual";
+					if (!CommonsUtil.mesmoValor(documentoAnalise.getMotivoAnalise().toUpperCase(),
+							"PROPRIETARIO ATUAL"))
+						motivo = "Empresa Vinculada ao Proprietario Anterior";
+					
+					if (!CommonsUtil
+							.semValor(engineWebhookRetorno.getConsultaCompleta().getEnterpriseData().getPartnership())
+							&& !CommonsUtil.semValor(engineWebhookRetorno.getConsultaCompleta().getEnterpriseData()
+									.getPartnership().getPartnerships())) {
+
+						for (EngineRetornoRequestEnterprisePartnership partnership : engineWebhookRetorno
+								.getConsultaCompleta().getEnterpriseData().getPartnership().getPartnerships()) {
+
+							documentoAnaliseService.cadastrarPessoRetornoEngine(partnership, userSistema,
+									documentoAnaliseDao, pagadorRecebedorService,
+									documentoAnalise.getContratoCobranca(), motivo);
+
+						}
+					}
+
+					if (!CommonsUtil.semValor(engineWebhookRetorno.getRelacionamentosPessoaisPJ())
+							&& !CommonsUtil.semValor(engineWebhookRetorno.getRelacionamentosPessoaisPJ().getResult())) {
+
+						for (EngineRetornoExecutionResultRelacionamentosPessoaisPJ engineRetornoExecutionResultRelacionamentosPessoaisPJ : engineWebhookRetorno
+								.getRelacionamentosPessoaisPJ().getResult()) {
+
+							if (!CommonsUtil.semValor(
+									engineRetornoExecutionResultRelacionamentosPessoaisPJ.getRelationships())) {
+
+								if (!CommonsUtil.semValor(engineRetornoExecutionResultRelacionamentosPessoaisPJ
+										.getRelationships().getRelationships()))
+									for (EngineRetornoExecutionResultRelacionamentosPessoaisPJPartnership engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership : engineRetornoExecutionResultRelacionamentosPessoaisPJ
+											.getRelationships().getRelationships()) {
+										documentoAnaliseService.cadastrarPessoRetornoEngine(
+												engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership,
+												userSistema, documentoAnaliseDao, pagadorRecebedorService,
+												documentoAnalise.getContratoCobranca(), motivo);
+									}
+
+								if (!CommonsUtil.semValor(engineRetornoExecutionResultRelacionamentosPessoaisPJ
+										.getRelationships().getCurrentRelationships()))
+									for (EngineRetornoExecutionResultRelacionamentosPessoaisPJPartnership engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership : engineRetornoExecutionResultRelacionamentosPessoaisPJ
+											.getRelationships().getCurrentRelationships()) {
+										documentoAnaliseService.cadastrarPessoRetornoEngine(
+												engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership,
+												userSistema, documentoAnaliseDao, pagadorRecebedorService,
+												documentoAnalise.getContratoCobranca(), motivo);
+									}
+
+								if (!CommonsUtil.semValor(engineRetornoExecutionResultRelacionamentosPessoaisPJ
+										.getRelationships().getHistoricalRelationships()))
+									for (EngineRetornoExecutionResultRelacionamentosPessoaisPJPartnership engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership : engineRetornoExecutionResultRelacionamentosPessoaisPJ
+											.getRelationships().getHistoricalRelationships()) {
+										documentoAnaliseService.cadastrarPessoRetornoEngine(
+												engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership,
+												userSistema, documentoAnaliseDao, pagadorRecebedorService,
+												documentoAnalise.getContratoCobranca(), motivo);
+									}
+
+							}
+						}
+
+					}
+					
 				}
 			}
 			return Response.status(200).entity("Processado").build();
+			
 		} catch (io.jsonwebtoken.ExpiredJwtException eJwt) {
 			eJwt.printStackTrace();
 			return Response.status(500).entity("Token Expirado").build();

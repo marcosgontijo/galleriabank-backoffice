@@ -79,7 +79,7 @@
 						<p:panel id="StatusGeracaoLaudo" style="border: none">
 							<h:panelGrid columns="4">
 								<p:outputLabel styleClass="labelBold">Geração PAJU Iniciada? </p:outputLabel>									
-								<p:selectBooleanButton id="statusPAJU" value="#{contratoCobrancaMB.objetoContratoCobranca.iniciouGeracaoLaudo}" 
+								<p:selectBooleanButton id="statusPAJU" value="#{contratoCobrancaMB.objetoContratoCobranca.iniciouGeracaoPaju}" 
 											onLabel="Iniciado" offLabel="Não Iniciado" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px"/>
 											
 
@@ -87,7 +87,6 @@
 									icon="ui-icon-check"
 									action="#{contratoCobrancaMB.downloadModeloPaju}"
 									style="TEXT-DECORATION: bold; width: 170px; height: 55px;">
-
 								</p:commandButton>
 								
 								<p:commandButton value="Atualizar Status" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.editPreContratoPorStatus()}" style="TEXT-DECORATION: bold; width: 170px; height: 55px;" rendered="#{contratoCobrancaMB.updateMode}">
@@ -95,20 +94,6 @@
 								</p:commandButton>
 							</h:panelGrid>	
 							<h:panelGrid columns="2">
-								<!--
-								<p:outputLabel for="AnalistaGeracaoPAJU" value="Analista: " styleClass="labelBold"/>
-								<p:selectOneMenu id="AnalistaGeracaoPAJU"
-									value="#{contratoCobrancaMB.idAnalistaGeracaoPAJU}"
-									label="Estado" style="width:550px;" >
-									<f:selectItem itemValue="" itemLabel="Escolha o Analista" />
-									<f:selectItem itemValue="797" itemLabel="João Paulo Gomes Massaro" />
-									<f:selectItem itemValue="798" itemLabel="Maria Clara Pazin Costa" />
-									<f:selectItem itemValue="796" itemLabel="Luciana Melara Alves Sant'Ana" />
-									<f:selectItem itemValue="795" itemLabel="Pâmela Montesanti Demuci" />
-									<f:selectItem itemValue="793" itemLabel="Adelaide Cristina Grilo Fornari" />
-								</p:selectOneMenu>
-								 -->				
-								<p:outputLabel id="espacoParaFormatacaoTexto" value=""/> 
 								<p:outputLabel for="geracaoLaudo"
 									value="Observação PAJU: " styleClass="labelBold" />
 								<p:inputTextarea id="geracaoLaudo" rows="5"
@@ -151,11 +136,15 @@
 							label="Cartório" onblur="" style="width:400px;"  disabled="true"/>
 							
 						<p:outputLabel for="cartorioEstado" value="Estado Cartório: " />
-						<p:inputText id="cartorioEstado" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioEstado}" disabled="true" /> 
-											
-						<p:outputLabel for="cartorioMunicipio" value="Município Cartório: " />
-						<p:inputText id="cartorioMunicipio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioMunicipio}" disabled="true" />s
-
+						<h:panelGroup>
+							<p:inputText id="cartorioEstado" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioEstado}" disabled="true" /> 										
+							<p:outputLabel for="cartorioMunicipio" value=" Município Cartório: " />
+							<p:inputText id="cartorioMunicipio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioMunicipio}" disabled="true" />s
+						</h:panelGroup>
+						
+						<p:outputLabel for="numeroCartorio" value="Numero Cartório: " />
+						<p:inputText id="numeroCartorio" value="#{contratoCobrancaMB.objetoImovelCobranca.numeroCartorio}"  disabled="true" /> 
+						
 						<p:outputLabel for="CepImovel" value="Cep: "/>
 						<p:inputMask id="CepImovel"
 							value="#{contratoCobrancaMB.objetoImovelCobranca.cep}"

@@ -352,6 +352,19 @@
 					header="Novo Sistema de Permissionamento"
 					style="margin-bottom:10px;margin-top:20px;">
 					<h:panelGrid columns="2">
+					<h:outputLabel for="profileCompliance" value="Compliance"
+							class="labelBold" />
+						<h:panelGroup>
+							<p:selectBooleanButton id="profileCompliance"
+								value="#{usuarioMB.objetoUsuario.profileCompliance}" onLabel="Sim"
+								offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+								style="width:60px">
+							</p:selectBooleanButton>
+							<shiro:hasAnyRoles name="ROOT">
+								<h:outputLabel value="COMPLIANCE" />
+							</shiro:hasAnyRoles>	
+						</h:panelGroup>				
+						
 						<h:outputLabel for="profileAnalistaCredito" value="Analista de Crédito"
 							class="labelBold" />
 						<h:panelGroup>
@@ -495,6 +508,32 @@
 							</shiro:hasAnyRoles>
 						</h:panelGroup>
 						
+						<h:outputLabel for="profilePajuNeves" value="PAJU - NEVES"
+							class="labelBold" />
+						<h:panelGroup>
+							<p:selectBooleanButton id="profilePajuNeves"
+								value="#{usuarioMB.objetoUsuario.profilePajuNeves}" onLabel="Sim"
+								offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+								style="width:60px">
+							</p:selectBooleanButton>
+							<shiro:hasAnyRoles name="ROOT">
+								<h:outputLabel value="PROFILE_PAJU_NEVES" />
+							</shiro:hasAnyRoles>
+						</h:panelGroup>
+						
+						<h:outputLabel for="profilePajuLuvison" value="PAJU - Luvison"
+							class="labelBold" />
+						<h:panelGroup>
+							<p:selectBooleanButton id="profilePajuLuvison"
+								value="#{usuarioMB.objetoUsuario.profilePajuLuvison}" onLabel="Sim"
+								offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+								style="width:60px">
+							</p:selectBooleanButton>
+							<shiro:hasAnyRoles name="ROOT">
+								<h:outputLabel value="PROFILE_PAJU_LUVISON" />
+							</shiro:hasAnyRoles>
+						</h:panelGroup>
+						
 						<h:outputLabel for="marketing"
 							value="Marketing:" class="labelBold" />
 						<h:panelGroup>
@@ -508,6 +547,20 @@
 								<h:outputLabel value="PROFILE_MARKETING" />
 							</shiro:hasAnyRoles>
 						</h:panelGroup>
+						
+						<h:outputLabel for="cadastraResponsavel"
+							value="Cadastra Responsavel:" class="labelBold" />
+						<h:panelGroup>
+							<p:selectBooleanButton id="cadastraResponsavel"
+								value="#{usuarioMB.objetoUsuario.cadastraResponsavel}" onLabel="Sim"
+								offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+								style="width:60px">
+							</p:selectBooleanButton>
+							<shiro:hasAnyRoles name="ROOT">
+								<h:outputLabel value="CADASTRA_RESPONSAVEL" />
+							</shiro:hasAnyRoles>
+						</h:panelGroup>
+						
 					</h:panelGrid>
 				</p:panel>
 				<p:panel id="PanelBlockBackoffice"

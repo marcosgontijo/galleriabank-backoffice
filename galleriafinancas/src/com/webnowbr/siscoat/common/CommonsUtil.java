@@ -207,7 +207,13 @@ public class CommonsUtil {
 		}
 		return BigInteger.valueOf(intValue(object));
 	}
-
+	
+	public static BigInteger bigIntegerValue(int object) {
+		if (object == 0) {
+			return BigInteger.ZERO;
+		}
+		return BigInteger.valueOf(object);
+	}
 
 	public static Date dateValue(Object object) {
 		if (object == null) {

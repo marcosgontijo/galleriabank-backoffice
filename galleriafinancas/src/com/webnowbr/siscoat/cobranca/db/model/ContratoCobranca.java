@@ -783,6 +783,8 @@ public class ContratoCobranca implements Serializable {
 	private String avaliacaoLaudoObservacao;
 	private String geracaoLaudoObservacao;
 	private boolean iniciouGeracaoLaudo;
+	private String avaliacaoPaju;
+	private boolean iniciouGeracaoPaju;
 	
 	private boolean contatoDiferenteProprietario;
 	//private String geracaoLaudoObservacao;
@@ -1118,7 +1120,15 @@ public class ContratoCobranca implements Serializable {
 					if (!CommonsUtil.semValor(status)) {
 						status = status + " | ";
 					}
-					status = status + "Ag. PAJU";
+					if(!CommonsUtil.semValor(c.getAvaliacaoPaju())
+							&& CommonsUtil.mesmoValor(c.getAvaliacaoPaju(), "Neves")) {
+						status = status + "Ag. PAJU Neves";
+					} else if (!CommonsUtil.semValor(c.getAvaliacaoPaju())
+							&& CommonsUtil.mesmoValor(c.getAvaliacaoPaju(), "Luvison")) {
+						status = status + "Ag. PAJU Luvison";
+					} else {
+						status = status + "Ag. PAJU";
+					}
 				}
 
 				if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
@@ -6684,11 +6694,27 @@ public class ContratoCobranca implements Serializable {
 		this.apenasPagamentoIntegral = apenasPagamentoIntegral;
 	}
 
+	public String getAvaliacaoPaju() {
+		return avaliacaoPaju;
+	}
+
+	public void setAvaliacaoPaju(String avaliacaoPaju) {
+		this.avaliacaoPaju = avaliacaoPaju;
+	}
+		
 	public String getStatusEsteira() {
 		return statusEsteira;
 	}
 
 	public void setStatusEsteira(String statusEsteira) {
 		this.statusEsteira = statusEsteira;
+	}
+
+	public boolean isIniciouGeracaoPaju() {
+		return iniciouGeracaoPaju;
+	}
+
+	public void setIniciouGeracaoPaju(boolean iniciouGeracaoPaju) {
+		this.iniciouGeracaoPaju = iniciouGeracaoPaju;
 	}	
 }
