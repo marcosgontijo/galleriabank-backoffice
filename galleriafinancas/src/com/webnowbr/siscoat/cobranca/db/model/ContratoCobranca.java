@@ -784,6 +784,7 @@ public class ContratoCobranca implements Serializable {
 	private String geracaoLaudoObservacao;
 	private boolean iniciouGeracaoLaudo;
 	private String avaliacaoPaju;
+	private boolean iniciouGeracaoPaju;
 	
 	private boolean contatoDiferenteProprietario;
 	//private String geracaoLaudoObservacao;
@@ -812,6 +813,7 @@ public class ContratoCobranca implements Serializable {
 	
 	private int totalCertidoesDocket;
 	private int certidoesProntas;
+	private boolean contratoPrioridadeAlta;
 
 	//FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13	
 	public BigDecimal calcularValorTotalContasPagas() {
@@ -1123,8 +1125,8 @@ public class ContratoCobranca implements Serializable {
 							&& CommonsUtil.mesmoValor(c.getAvaliacaoPaju(), "Neves")) {
 						status = status + "Ag. PAJU Neves";
 					} else if (!CommonsUtil.semValor(c.getAvaliacaoPaju())
-							&& CommonsUtil.mesmoValor(c.getAvaliacaoPaju(), "FBC")) {
-						status = status + "Ag. PAJU FBC";
+							&& CommonsUtil.mesmoValor(c.getAvaliacaoPaju(), "Luvison")) {
+						status = status + "Ag. PAJU Luvison";
 					} else {
 						status = status + "Ag. PAJU";
 					}
@@ -6677,6 +6679,14 @@ public class ContratoCobranca implements Serializable {
 		this.certidoesProntas = certidoesProntas;
 	}
 	
+	public boolean isContratoPrioridadeAlta() {
+		return contratoPrioridadeAlta;
+	}
+
+	public void setContratoPrioridadeAlta(boolean contratoPrioridadeAlta) {
+		this.contratoPrioridadeAlta = contratoPrioridadeAlta;
+	}
+
 	public String getIspbPixContaPagar() {
 		return ispbPixContaPagar;
 	}
@@ -6707,5 +6717,13 @@ public class ContratoCobranca implements Serializable {
 
 	public void setStatusEsteira(String statusEsteira) {
 		this.statusEsteira = statusEsteira;
+	}
+
+	public boolean isIniciouGeracaoPaju() {
+		return iniciouGeracaoPaju;
+	}
+
+	public void setIniciouGeracaoPaju(boolean iniciouGeracaoPaju) {
+		this.iniciouGeracaoPaju = iniciouGeracaoPaju;
 	}	
 }

@@ -194,6 +194,47 @@ public class DocumentoAnaliseService {
 		documentoAnaliseDao.create(documentoAnalise);
 
 	}
+	public void cadastrarPessoRetornoEngine(EngineRetornoExecutionResultRelacionamentosPessoaisPJPartnership pJPartnership, User user,
+			DocumentoAnaliseDao documentoAnaliseDao, PagadorRecebedorService pagadorRecebedorService,
+			ContratoCobranca contratoCobranca, String motivo) {
+		
+		
+
+		PagadorRecebedor pagador = new PagadorRecebedor();
+		pagador.setId(0);
+
+		
+		DocumentoAnalise documentoAnalise = new DocumentoAnalise();
+		documentoAnalise.setContratoCobranca(contratoCobranca);
+		documentoAnalise.setIdentificacao(pJPartnership.getRelatedEntityName());
+
+		if( CommonsUtil.mesmoValor( pJPartnership.getRelatedEntityTaxIdType(), "CPF" )) {
+			documentoAnalise.setTipoPessoa("PF");
+			documentoAnalise.setCnpjcpf( CommonsUtil.formataCpf(pJPartnership.getRelatedEntityTaxIdNumber()));
+			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.CREDNET);
+			pagador.setCpf(documentoAnalise.getCnpjcpf());
+		} else {
+			documentoAnalise.setTipoPessoa("PJ");
+			documentoAnalise.setCnpjcpf( CommonsUtil.formataCnpj(pJPartnership.getRelatedEntityTaxIdNumber()));
+			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.RELATO);
+			pagador.setCnpj(documentoAnalise.getCnpjcpf());
+		}
+		
+		if ( documentoAnaliseDao.cadastradoAnalise(contratoCobranca, documentoAnalise.getCnpjcpf()))
+			return;
+		
+		documentoAnalise.setMotivoAnalise(motivo);
+		documentoAnalise.setLiberadoAnalise(false);
+
+		pagador.setNome(documentoAnalise.getIdentificacao());
+		pagador = pagadorRecebedorService.buscaOuInsere(pagador);
+		documentoAnalise.setPagador(pagador);
+		
+
+		documentoAnaliseDao.create(documentoAnalise);
+		
+
+	}
 	
 	public PagadorRecebedor cadastrarPartnershipRetornoEngine(EngineRetornoRequestEnterprisePartnership partnership, 
 			PagadorRecebedorService pagadorRecebedorService) {

@@ -6549,7 +6549,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			"c.pedidoLaudo, c.pedidoLaudoPajuComercial, c.pedidoPreLaudo, c.pedidoPreLaudoComercial, c.pedidoPajuComercial, c.pendenciaLaudoPaju, " +
 		    "c.avaliacaoLaudoObservacao, c.dataPrevistaVistoria, c.geracaoLaudoObservacao, c.iniciouGeracaoLaudo, c.analistaGeracaoPAJU , c.comentarioJuridicoPendente, " +
 			"c.valorAprovadoComite, c.contratoConferido, c.agEnvioCartorio, reanalise, reanalisePronta, reanaliseJuridico" +
-			" , gerente.nome nomeGerente, pr.id idPagador, res.superlogica, observacaoRenda, pagtoLaudoConfirmadaData, contatoDiferenteProprietario, "
+			" , gerente.nome nomeGerente, pr.id idPagador, res.superlogica, observacaoRenda, pagtoLaudoConfirmadaData, contatoDiferenteProprietario, c.iniciouGeracaoPaju, "
 			+ " im.estado " +
 			"from cobranca.contratocobranca c " +		
 			"inner join cobranca.responsavel res on c.responsavel = res.id " +
@@ -6654,12 +6654,12 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 								+ " and avaliacaoPaju = 'Neves' ";
 					}
 					
-					if (tipoConsulta.equals("Geração do PAJU - FBC")) {
+					if (tipoConsulta.equals("Geração do PAJU - Luvison")) {
 						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' "
 								+ " and pendenciaLaudoPaju = false "
 								+ " and pedidoLaudoPajuComercial = true and pagtoLaudoConfirmada = true and pajurFavoravel = false"
-								+ " and avaliacaoPaju = 'FBC' ";
+								+ " and avaliacaoPaju = 'Luvison' ";
 					}
 					
 					if (tipoConsulta.equals("Pedir PAJU")) {
@@ -6914,6 +6914,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setObservacaoRenda(rs.getString("observacaoRenda"));
 						contratoCobranca.setPagtoLaudoConfirmadaData(rs.getTimestamp("pagtoLaudoConfirmadaData"));
 						contratoCobranca.setContatoDiferenteProprietario(rs.getBoolean("contatoDiferenteProprietario"));
+						contratoCobranca.setIniciouGeracaoPaju(rs.getBoolean("iniciouGeracaoPaju"));
 						
 						ImovelCobranca imovel = new ImovelCobranca();
 						imovel.setCidade(rs.getString("cidade"));

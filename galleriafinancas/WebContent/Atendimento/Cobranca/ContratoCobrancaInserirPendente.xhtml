@@ -1712,9 +1712,7 @@
 				<h:panelGroup id="BoletoPanel" >
 					<p:panel id="BoletoPAJULaudo" header="Gerar Boleto PAJU e Laudo"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}">
-						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoImovelCobranca.tipo == 'Apartamento' 
-							|| contratoCobrancaMB.objetoImovelCobranca.tipo == 'Casa' 
-							|| contratoCobrancaMB.objetoImovelCobranca.tipo == 'Casa de Condomínio' }"> 
+						<h:panelGrid columns="2" > 
 							<p:outputLabel for="vencimentoBoleto"
 								value="Data Vencimeto Boleto: " styleClass="labelBold" />
 							<p:calendar id="vencimentoBoleto" showOn="button"
@@ -1826,7 +1824,7 @@
 								label="Tipo">
 								<f:selectItem itemValue="" itemLabel="" />
 								<f:selectItem itemValue="Neves" itemLabel="Neves" />
-								<f:selectItem itemValue="FBC" itemLabel="FBC" />
+								<f:selectItem itemValue="Luvison" itemLabel="Luvison" />
 								<f:selectItem itemValue="Outro" itemLabel="Outro" />
 								<p:ajax event="valueChange" update=":form:Status"
 									listener="#{contratoCobrancaMB.changeGeracaoPAJU}" />											
@@ -3387,10 +3385,14 @@
 							label="Cartório" onblur="" style="width:400px;" />
 							
 						<p:outputLabel for="cartorioEstado" value="Estado Cartório: " />
-						<p:inputText id="cartorioEstado" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioEstado}" /> 
-											
-						<p:outputLabel for="cartorioMunicipio" value="Município Cartório: " />
-						<p:inputText id="cartorioMunicipio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioMunicipio}" />
+						<h:panelGroup>
+							<p:inputText id="cartorioEstado" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioEstado}" /> 
+							<p:outputLabel for="cartorioMunicipio" value=" Município Cartório: " />
+							<p:inputText id="cartorioMunicipio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioMunicipio}" />
+						</h:panelGroup>
+						
+						<p:outputLabel for="numeroCartorio" value="Numero Cartório: " />
+						<p:inputText id="numeroCartorio" value="#{contratoCobrancaMB.objetoImovelCobranca.numeroCartorio}" />
 
 						<p:outputLabel for="CepImovel" value="Cep: " />
 						<p:inputMask id="CepImovel" required="true"
@@ -5050,6 +5052,7 @@
 		<ui:include src="../../Dialog/DialogRecebedorPagador.xhtml">
 				<ui:param name="mbean" value="#{contratoCobrancaMB}"></ui:param>
 				<ui:param name="titulo" value="#{contratoCobrancaMB.tituloPagadorRecebedorDialog}"></ui:param>
+				<ui:param name="permiteAdicionarPessoa" value="false"></ui:param>			
 			</ui:include>
 
 		<p:dialog header="Imóveis" widgetVar="imovelDialog" resizable="false"

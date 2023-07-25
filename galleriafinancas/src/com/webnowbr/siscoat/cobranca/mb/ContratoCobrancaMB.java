@@ -167,6 +167,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.cobranca.db.op.SeguradoDAO;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
+import com.webnowbr.siscoat.cobranca.service.PajuService;
 import com.webnowbr.siscoat.cobranca.service.ScrService;
 import com.webnowbr.siscoat.cobranca.service.SerasaService;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
@@ -182,6 +183,7 @@ import com.webnowbr.siscoat.common.ValidaCNPJ;
 import com.webnowbr.siscoat.common.ValidaCPF;
 import com.webnowbr.siscoat.db.dao.DAOException;
 import com.webnowbr.siscoat.db.dao.DBConnectionException;
+import com.webnowbr.siscoat.exception.SiscoatException;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
@@ -240,6 +242,8 @@ public class ContratoCobrancaMB {
 	private boolean controleWhatsAppPreAprovado = false;
 	private boolean controleWhatsAppComite = false;
 
+	private boolean baixaMultiParcelasComTxADM = true;
+	
 	private boolean controleWhatsAlteracaoAvaliadorLaudo = false;
 	private boolean controleWhatsAlteracaoAvaliadorLaudoGalache = false;
 	private boolean controleWhatsAlteracaoGeracaoPAJU = false;
@@ -252,6 +256,7 @@ public class ContratoCobrancaMB {
 
 	private List<BoletoKobana> selectedBoletosKobana = new ArrayList<BoletoKobana>();
 	private List<DocumentoAnalise> listaDocumentoAnalise;
+	private List<DocumentoAnalise> listaDeleteAnalise = new ArrayList<DocumentoAnalise>();
 
 	/************************************************************
 	 * Objetos para antecipacao de parcela
@@ -3458,19 +3463,43 @@ public class ContratoCobrancaMB {
 					this.objetoContratoCobranca.getNumeroContrato(), this.objetoContratoCobranca.getPagador().getNome(),
 					"");
 			
-		} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoPaju(), "FBC")) {
-			//Gustavo Ribeiro Sobral
-			responsavel = rDao.findById((long) 1635);
+		} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoPaju(), "Luvison")) {
+			//Paola de Góes Carvalho Spinola
+			responsavel = rDao.findById((long) 1639);
 			takeBlipMB = new TakeBlipMB();
-			takeBlipMB.sendWhatsAppMessage(responsavel, "geracao_paju", "FBC",
+			takeBlipMB.sendWhatsAppMessage(responsavel, "geracao_paju", "Luvison",
 					this.objetoContratoCobranca.getNumeroContrato(), this.objetoContratoCobranca.getPagador().getNome(),
 					"");
 			
 			Responsavel responsavel2 = new Responsavel();
-			//Priscila Luz
-			responsavel2 = rDao.findById((long) 1636);
+			//Fábio Augusto Emílio
+			responsavel2 = rDao.findById((long) 1640);
 			takeBlipMB = new TakeBlipMB();
-			takeBlipMB.sendWhatsAppMessage(responsavel2, "geracao_paju", "FBC",
+			takeBlipMB.sendWhatsAppMessage(responsavel2, "geracao_paju", "Luvison",
+					this.objetoContratoCobranca.getNumeroContrato(), this.objetoContratoCobranca.getPagador().getNome(),
+					"");
+			
+			Responsavel responsavel3 = new Responsavel();
+			//Angélica Cintra Isquierdo 
+			responsavel3 = rDao.findById((long) 1641);
+			takeBlipMB = new TakeBlipMB();
+			takeBlipMB.sendWhatsAppMessage(responsavel3, "geracao_paju", "Luvison",
+					this.objetoContratoCobranca.getNumeroContrato(), this.objetoContratoCobranca.getPagador().getNome(),
+					"");
+			
+			Responsavel responsavel4 = new Responsavel();
+			//Rafael Borges de Oliveira Soalheiro Gonzalez 
+			responsavel4 = rDao.findById((long) 1642);
+			takeBlipMB = new TakeBlipMB();
+			takeBlipMB.sendWhatsAppMessage(responsavel4, "geracao_paju", "Luvison",
+					this.objetoContratoCobranca.getNumeroContrato(), this.objetoContratoCobranca.getPagador().getNome(),
+					"");
+			
+			Responsavel responsavel5 = new Responsavel();
+			//Vivian Vargas Godinho 
+			responsavel5 = rDao.findById((long) 1643);
+			takeBlipMB = new TakeBlipMB();
+			takeBlipMB.sendWhatsAppMessage(responsavel5, "geracao_paju", "Luvison",
 					this.objetoContratoCobranca.getNumeroContrato(), this.objetoContratoCobranca.getPagador().getNome(),
 					"");
 		}
@@ -3601,13 +3630,25 @@ public class ContratoCobrancaMB {
 						"j.massaro@nevesemaggioni.com.br", "[siscoat] Operação "
 								+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
 								mensagemHtmlTeste);
-			} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoPaju(), "FBC")) {
+			} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoPaju(), "Luvison")) {
 				eec.enviarEmailHtmlResponsavelAdms(
-						"gustavo.sobral@fbcadvogados.com", "[siscoat] Operação "
+						"paola@luvisoncarvalho.com.br", "[siscoat] Operação "
 								+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
 								mensagemHtmlTeste);
 				eec.enviarEmailHtmlResponsavelAdms(
-						"p.nogueira@fbcadvogados.com", "[siscoat] Operação "
+						"fabio@luvisoncarvalho.com.br", "[siscoat] Operação "
+								+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
+								mensagemHtmlTeste);
+				eec.enviarEmailHtmlResponsavelAdms(
+						"angelica@luvisoncarvalho.com.br", "[siscoat] Operação "
+								+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
+								mensagemHtmlTeste);
+				eec.enviarEmailHtmlResponsavelAdms(
+						"rafael@luvisoncarvalho.com.br", "[siscoat] Operação "
+								+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
+								mensagemHtmlTeste);
+				eec.enviarEmailHtmlResponsavelAdms(
+						"vivian@luvisoncarvalho.com.br", "[siscoat] Operação "
 								+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
 								mensagemHtmlTeste);
 			}
@@ -3693,8 +3734,8 @@ public class ContratoCobrancaMB {
 				if (this.controleWhatsAlteracaoGeracaoPAJU) {
 					if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoPaju(), "Neves")) {
 						this.objetoContratoCobranca.setAnalistaGeracaoPAJU(responsavelDao.findById((long) 797));
-					} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoPaju(), "FBC")) {
-						//this.objetoContratoCobranca.setAnalistaGeracaoPAJU(responsavelDao.findById((long) 797));			
+					} else if(CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoPaju(), "Luvison")) {
+						this.objetoContratoCobranca.setAnalistaGeracaoPAJU(responsavelDao.findById((long) 1639));			
 					}
 					notificaPAJUWhatsApp();
 					notificaPAJUEmail();
@@ -5494,6 +5535,23 @@ public class ContratoCobrancaMB {
 			}
 		}
 
+	}
+
+	public String downloadModeloPaju() throws SiscoatException {	
+		PajuService pajuService = new PajuService();
+		String arquivoWord = "ModeloParecerJuridico.docx";
+		byte[] modeloPaju = pajuService.generateModeloPaju(this.objetoContratoCobranca, arquivoWord);
+		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+				FacesContext.getCurrentInstance());
+		String identificacao = objetoContratoCobranca.getNumeroContrato();
+		if (CommonsUtil.semValor(identificacao))
+			gerador.open("Galleria Bank - ModeloPAJU.docx");
+		else
+			gerador.open(String.format("Galleria Bank - ModeloPAJU %s.docx", identificacao));
+		gerador.feed(modeloPaju);
+		gerador.close();
+		
+		return "";
 	}
 
 	public StreamedContent downloadPreAprovadoPDF(long idContrato) throws JRException, IOException {
@@ -8418,6 +8476,7 @@ public class ContratoCobrancaMB {
 	}
 
 	public String clearFieldsEditarPendentes() {
+		listaArquivosAnaliseDocumentos();
 
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
@@ -8819,6 +8878,7 @@ public class ContratoCobrancaMB {
 
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
+		listaArquivosAnaliseDocumentos();
 
 		return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusAvaliacaoImovel.xhtml";
 	}
@@ -8834,6 +8894,7 @@ public class ContratoCobrancaMB {
 		if (this.objetoContratoCobranca.getResponsavel() != null) {
 			this.codigoResponsavel = this.objetoContratoCobranca.getResponsavel().getCodigo();
 		}
+		listaArquivosAnaliseDocumentos();
 
 		filesInterno = new ArrayList<FileUploaded>();
 		filesInterno = listaArquivosInterno();
@@ -8859,6 +8920,7 @@ public class ContratoCobrancaMB {
 		} else {
 			this.idAnalistaGeracaoPAJU = 0;
 		}
+		listaArquivosAnaliseDocumentos();
 
 		this.tituloPainel = "Editar";
 
@@ -10098,9 +10160,17 @@ public class ContratoCobrancaMB {
 	}
 
 	public void populaVlrBoletoKobana() {
+		this.dataQuitacao = this.dataVencimentoBoleto;
+		simularQuitacaoContrato();
+		
 		if (this.selectedListContratoCobrancaDetalhes.size() > 0) {
-			for (ContratoCobrancaDetalhes parcelasSelecionadas : this.selectedListContratoCobrancaDetalhes) {
-				parcelasSelecionadas.setVlrBoletoKobana(parcelasSelecionadas.getVlrParcela());
+			for (ContratoCobrancaDetalhes parcelasSelecionadas : this.selectedListContratoCobrancaDetalhes) {				
+				for (QuitacaoParcelasPDF parcelaPresente : this.quitacaoPDF.getParcelas()) {
+					if (parcelaPresente.getNumeroParcela().equals(parcelasSelecionadas.getNumeroParcela())) {
+						parcelasSelecionadas.setVlrBoletoKobana(parcelaPresente.getValorPresenteParcela());		
+					}
+				}
+				//parcelasSelecionadas.setVlrBoletoKobana(parcelasSelecionadas.getVlrParcela());
 			}
 		}
 	}
@@ -12759,8 +12829,8 @@ public class ContratoCobrancaMB {
 								&& CommonsUtil.mesmoValor(c.getAvaliacaoPaju(), "Neves")) {
 							status = status + "Ag. PAJU Neves";
 						} else if (!CommonsUtil.semValor(c.getAvaliacaoPaju())
-								&& CommonsUtil.mesmoValor(c.getAvaliacaoPaju(), "FBC")) {
-							status = status + "Ag. PAJU FBC";
+								&& CommonsUtil.mesmoValor(c.getAvaliacaoPaju(), "Luvison")) {
+							status = status + "Ag. PAJU Luvison";
 						} else {
 							status = status + "Ag. PAJU";
 						}
@@ -13153,8 +13223,8 @@ public class ContratoCobrancaMB {
 		this.contratosPendentes = new ArrayList<ContratoCobranca>();
 		if(CommonsUtil.mesmoValor(empresaPaju, "Neves")) {
 			this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Geração do PAJU - Neves");
-		} else if(CommonsUtil.mesmoValor(empresaPaju, "FBC")){
-			this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Geração do PAJU - FBC");
+		} else if(CommonsUtil.mesmoValor(empresaPaju, "Luvison")){
+			this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Geração do PAJU - Luvison");
 		} else {
 			this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Geração do PAJU");
 		}
@@ -19084,14 +19154,19 @@ public class ContratoCobrancaMB {
 		} else if (CommonsUtil.mesmoValor("Pagador", tipoPesquisaPagadorRecebedor)) {
 			this.pagadorSecundarioSelecionado.setPessoa(this.selectedPagadorGenerico);
 		} else if (CommonsUtil.mesmoValor("Analise Documento", tipoPesquisaPagadorRecebedor)) {
-			this.documentoAnaliseAdicionar.setPagador(this.selectedPagadorGenerico);
-			this.documentoAnaliseAdicionar.setIdentificacao(this.documentoAnaliseAdicionar.getPagador().getNome());
-			if (!CommonsUtil.semValor(this.documentoAnaliseAdicionar.getPagador().getCpf())) {
-				this.documentoAnaliseAdicionar.setCnpjcpf(this.documentoAnaliseAdicionar.getPagador().getCpf());
-				this.documentoAnaliseAdicionar.setTipoPessoa("PF");
-			} else {
-				this.documentoAnaliseAdicionar.setCnpjcpf(this.documentoAnaliseAdicionar.getPagador().getCnpj());
-				this.documentoAnaliseAdicionar.setTipoPessoa("PJ");
+
+			if (!CommonsUtil.semValor(selectedPagadorGenerico.getNome())
+					&& (!CommonsUtil.semValor(selectedPagadorGenerico.getCpf())
+							|| !CommonsUtil.semValor(selectedPagadorGenerico.getCnpj()))) {
+				this.documentoAnaliseAdicionar.setPagador(this.selectedPagadorGenerico);
+				this.documentoAnaliseAdicionar.setIdentificacao(this.documentoAnaliseAdicionar.getPagador().getNome());
+				if (!CommonsUtil.semValor(this.documentoAnaliseAdicionar.getPagador().getCpf())) {
+					this.documentoAnaliseAdicionar.setCnpjcpf(this.documentoAnaliseAdicionar.getPagador().getCpf());
+					this.documentoAnaliseAdicionar.setTipoPessoa("PF");
+				} else {
+					this.documentoAnaliseAdicionar.setCnpjcpf(this.documentoAnaliseAdicionar.getPagador().getCnpj());
+					this.documentoAnaliseAdicionar.setTipoPessoa("PJ");
+				}
 			}
 		}
 	}
@@ -19239,12 +19314,14 @@ public class ContratoCobrancaMB {
 					if (starkBankPix != null) {
 						this.contasPagarSelecionada.setComprovantePagamentoPixStarkBank(starkBankPix);
 
-						if (CommonsUtil.mesmoValor(this.contasPagarSelecionada.getValorPagamento(),
-								this.contasPagarSelecionada.getValor())) {
+						//if (CommonsUtil.mesmoValor(this.contasPagarSelecionada.getValorPagamento(),
+						//		this.contasPagarSelecionada.getValor())) {
 							this.contasPagarSelecionada.setContaPaga(true);
-						}
+						//}
 						this.objetoContratoCobranca.setContaPagarValorTotal(this.objetoContratoCobranca
 								.getContaPagarValorTotal().subtract(this.contasPagarSelecionada.getValorPagamento()));
+						
+						this.contasPagarSelecionada.setValorPagamento(this.contasPagarSelecionada.getValor());
 
 						context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, 
 								"Pagamento StarkBank: Boleto pago sucesso!", ""));
@@ -19258,13 +19335,15 @@ public class ContratoCobrancaMB {
 					if (starkBankPix != null) {
 						this.contasPagarSelecionada.setComprovantePagamentoPixStarkBank(starkBankPix);
 
-						if (CommonsUtil.mesmoValor(this.contasPagarSelecionada.getValorPagamento(),
-								this.contasPagarSelecionada.getValor())) {
+						//if (CommonsUtil.mesmoValor(this.contasPagarSelecionada.getValorPagamento(),
+						//		this.contasPagarSelecionada.getValor())) {
 							this.contasPagarSelecionada.setContaPaga(true);
-						}
+						//}
 						this.objetoContratoCobranca.setContaPagarValorTotal(this.objetoContratoCobranca
 								.getContaPagarValorTotal().subtract(this.contasPagarSelecionada.getValorPagamento()));
-
+						
+						this.contasPagarSelecionada.setValorPagamento(this.contasPagarSelecionada.getValor());
+						
 						context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
 								"Pagamento StarkBank: Boleto pago sucesso!", ""));
 					}
@@ -20129,6 +20208,11 @@ public class ContratoCobrancaMB {
 
 	public void atualizaValorBaixaParceladaBoletosKobana(SelectEvent event) {
 		Date dateSelected = (Date) event.getObject();
+		
+		this.dataVencimentoBoleto = dateSelected;
+		
+		populaVlrBoletoKobana();
+		/*
 		this.rowEditNewDate = dateSelected;
 		calculaNovaData(dateSelected);
 
@@ -20148,6 +20232,7 @@ public class ContratoCobrancaMB {
 
 			parcelasSelecionada.setVlrBoletoKobana(this.valorPresenteParcela);
 		}
+		*/
 
 		calculaValorTotalBoletoKobana();
 	}
@@ -20668,6 +20753,7 @@ public class ContratoCobrancaMB {
 			// if (this.observacao != null) {
 			// contratoCobrancaDetalhesParcial.setObservacaoRecebedor(this.observacao);
 			// }
+			simularQuitacaoContrato();
 
 			for (ContratoCobrancaDetalhes parcelasBoleto : this.selectedParcelas) {
 				ContratoCobrancaDetalhesParcial contratoCobrancaDetalhesParcial = new ContratoCobrancaDetalhesParcial();
@@ -20683,11 +20769,33 @@ public class ContratoCobrancaMB {
 					contratoCobrancaDetalhesParcial.setVlrParcela(parcelasBoleto.getVlrParcelaAtualizada());
 					contratoCobrancaDetalhesParcial.setDataPagamentoGalleria(dataPagamento.getTime());
 					contratoCobrancaDetalhesParcial.setVlrRecebido(parcelasBoleto.getVlrBoletoKobana());
-
-					if (parcelasBoleto.getVlrBoletoKobana().compareTo(parcelasBoleto.getVlrParcela()) >= 0) {
-						parcelasBoleto.setParcelaPaga(true);
-					} else {
-						parcelasBoleto.setParcelaPaga(false);
+								
+					// TODO SOMAR BAIXAS PARCIAIS
+					for (QuitacaoParcelasPDF parcelaPresente : this.quitacaoPDF.getParcelas()) {
+						if (parcelaPresente.getNumeroParcela().equals(parcelasBoleto.getNumeroParcela())) {
+							// Soma baixas parciais já existentes
+							BigDecimal totalBaixas = getTotalParcelasBaixadas(parcelasBoleto.getListContratoCobrancaDetalhesParcial());
+							// adiciona valor baixado do boleto
+							totalBaixas = totalBaixas.add(parcelasBoleto.getVlrBoletoKobana());
+							// se não considerar Tx Adm descontar valor
+							BigDecimal valorParcelaPresente = BigDecimal.ZERO;
+							valorParcelaPresente = parcelaPresente.getValorPresenteParcela();
+							
+							if (!this.baixaMultiParcelasComTxADM) {
+								if (this.dataQuitacao.before(parcelasBoleto.getDataVencimento()))
+								{
+									valorParcelaPresente = valorParcelaPresente.subtract(SiscoatConstants.TAXA_ADM);
+								}
+							}
+							
+							if (totalBaixas.compareTo(valorParcelaPresente) >= 0) {
+								parcelasBoleto.setParcelaPaga(true);
+							} else {
+								parcelasBoleto.setParcelaPaga(false);
+							}
+							
+							break;
+						}
 					}
 
 					parcelasBoleto.setVlrParcelaAtualizada(null);
@@ -20705,6 +20813,20 @@ public class ContratoCobrancaMB {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Baixa - Boletos Kobana: Existem parcelas já baixada dentre as selecionadas!", ""));
 		}
+	}
+	
+	public BigDecimal getTotalParcelasBaixadas(List<ContratoCobrancaDetalhesParcial> baixasParciais) {
+		BigDecimal totalBaixas = BigDecimal.ZERO;
+		
+		for (ContratoCobrancaDetalhesParcial bx : baixasParciais) {
+			if (bx.isBaixaGalleria()) {
+				totalBaixas = totalBaixas.add(bx.getVlrRecebidoGalleria());
+			} else {
+				totalBaixas = totalBaixas.add(bx.getVlrRecebido());
+			}			
+		}
+		
+		return totalBaixas;
 	}
 
 	public void baixarParcelasKobanaLote() {
@@ -28504,8 +28626,9 @@ public class ContratoCobrancaMB {
 					}
 				}
 
-				if (!CommonsUtil.semValor(resultPEP))
-					if (CommonsUtil.mesmoValorIgnoreCase("Sim", resultPEP.getPepKyc().getCurrentlyPEP())
+				if (!CommonsUtil.semValor(resultPEP) && !CommonsUtil.semValor(resultPEP.getPepKyc()))
+					if ( !CommonsUtil.booleanValue(documentoAnalise.isLiberadoContinuarAnalise()) &&
+							CommonsUtil.mesmoValorIgnoreCase("Sim", resultPEP.getPepKyc().getCurrentlyPEP())
 							&& (resultPEP.getPepKyc().getHistoryPEP().stream()
 									.filter(p -> CommonsUtil.mesmoValor(p.getLevel(), "1")).findAny().isPresent())) {
 						documentoAnalise.addObservacao("Verfiicar PEP");
@@ -28526,12 +28649,12 @@ public class ContratoCobrancaMB {
 					netrinService.requestCenprot(documentoAnalise);
 				}
 
-				if (documentoAnalise.isPodeChamarSerasa()
-						&& CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
-					documentoAnalise.addObservacao("Processando SERASA");
-					PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
-					serasaService.requestSerasa(documentoAnalise, loginBean.getUsuarioLogado());
-				}
+//				if (documentoAnalise.isPodeChamarSerasa()
+//						&& CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
+//					documentoAnalise.addObservacao("Processando SERASA");
+//					PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
+//					serasaService.requestSerasa(documentoAnalise, loginBean.getUsuarioLogado());
+//				}
 
 				if (documentoAnalise.isPodeChamarEngine()
 						&& CommonsUtil.semValor(documentoAnalise.getRetornoEngine())) {
@@ -28735,7 +28858,7 @@ public class ContratoCobrancaMB {
 	}
 
 	public void setSelectedPagadorGenerico(PagadorRecebedor selectedPagadorGenerico) {
-		if (selectedPagadorGenerico != null)
+		if (!CommonsUtil.semValor(selectedPagadorGenerico) && !CommonsUtil.semValor(selectedPagadorGenerico.getId()))
 			this.selectedPagadorGenerico = getPagadorRecebedorObjeto(selectedPagadorGenerico.getId());
 		else
 			this.selectedPagadorGenerico = null;
@@ -30737,6 +30860,17 @@ public class ContratoCobrancaMB {
 		deletefiles = new ArrayList<FileUploaded>();
 		files = listaArquivos();
 	}
+	public void deleteArquivosAnalisados() {
+		DocumentoAnaliseDao daoDocumentoAnalise = new DocumentoAnaliseDao();
+				
+		for (DocumentoAnalise d : listaDeleteAnalise) {
+			d.setExcluido(true);
+			daoDocumentoAnalise.merge(d);
+			}
+		
+		listaArquivosAnaliseDocumentos();
+		
+	}
 
 	public void deleteFileInterno() {
 		for (FileUploaded f : deletefilesInterno) {
@@ -30839,7 +30973,7 @@ public class ContratoCobrancaMB {
 
 	public void listaArquivosAnaliseDocumentos() {
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-		this.listaDocumentoAnalise = documentoAnaliseDao.findByFilter("contratoCobranca", this.objetoContratoCobranca);
+		this.listaDocumentoAnalise = documentoAnaliseDao.listagemDocumentoAnalise(this.objetoContratoCobranca);
 		Collections.sort(this.listaDocumentoAnalise, new Comparator<DocumentoAnalise>() {
 			@Override
 			public int compare(DocumentoAnalise one, DocumentoAnalise other) {
@@ -33604,6 +33738,23 @@ public class ContratoCobrancaMB {
 		this.documentoAnalisePopup = documentoAnalisePopup;
 	}
 
+	public boolean isBaixaMultiParcelasComTxADM() {
+		return baixaMultiParcelasComTxADM;
+	}
+
+	public void setBaixaMultiParcelasComTxADM(boolean baixaMultiParcelasComTxADM) {
+		this.baixaMultiParcelasComTxADM = baixaMultiParcelasComTxADM;
+	}	
+
+	public List<DocumentoAnalise> getListaDeleteAnalise(){
+		return listaDeleteAnalise;
+	}
+	
+	public void setListaDeleteAnalise(List<DocumentoAnalise> listaDeleteAnalise) {
+		
+		this.listaDeleteAnalise = listaDeleteAnalise;
+	}
+	
 	public String getContratosLaudo() {
 		return contratosLaudo;
 	}
@@ -33618,7 +33769,5 @@ public class ContratoCobrancaMB {
 
 	public void setContratoDocumentos(String contratoDocumentos) {
 		this.contratoDocumentos = contratoDocumentos;
-	}
-	
-	
+	}	
 }
