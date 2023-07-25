@@ -19135,14 +19135,19 @@ public class ContratoCobrancaMB {
 		} else if (CommonsUtil.mesmoValor("Pagador", tipoPesquisaPagadorRecebedor)) {
 			this.pagadorSecundarioSelecionado.setPessoa(this.selectedPagadorGenerico);
 		} else if (CommonsUtil.mesmoValor("Analise Documento", tipoPesquisaPagadorRecebedor)) {
-			this.documentoAnaliseAdicionar.setPagador(this.selectedPagadorGenerico);
-			this.documentoAnaliseAdicionar.setIdentificacao(this.documentoAnaliseAdicionar.getPagador().getNome());
-			if (!CommonsUtil.semValor(this.documentoAnaliseAdicionar.getPagador().getCpf())) {
-				this.documentoAnaliseAdicionar.setCnpjcpf(this.documentoAnaliseAdicionar.getPagador().getCpf());
-				this.documentoAnaliseAdicionar.setTipoPessoa("PF");
-			} else {
-				this.documentoAnaliseAdicionar.setCnpjcpf(this.documentoAnaliseAdicionar.getPagador().getCnpj());
-				this.documentoAnaliseAdicionar.setTipoPessoa("PJ");
+
+			if (!CommonsUtil.semValor(selectedPagadorGenerico.getNome())
+					&& (!CommonsUtil.semValor(selectedPagadorGenerico.getCpf())
+							|| !CommonsUtil.semValor(selectedPagadorGenerico.getCnpj()))) {
+				this.documentoAnaliseAdicionar.setPagador(this.selectedPagadorGenerico);
+				this.documentoAnaliseAdicionar.setIdentificacao(this.documentoAnaliseAdicionar.getPagador().getNome());
+				if (!CommonsUtil.semValor(this.documentoAnaliseAdicionar.getPagador().getCpf())) {
+					this.documentoAnaliseAdicionar.setCnpjcpf(this.documentoAnaliseAdicionar.getPagador().getCpf());
+					this.documentoAnaliseAdicionar.setTipoPessoa("PF");
+				} else {
+					this.documentoAnaliseAdicionar.setCnpjcpf(this.documentoAnaliseAdicionar.getPagador().getCnpj());
+					this.documentoAnaliseAdicionar.setTipoPessoa("PJ");
+				}
 			}
 		}
 	}
@@ -28562,7 +28567,8 @@ public class ContratoCobrancaMB {
 				}
 
 				if (!CommonsUtil.semValor(resultPEP) && !CommonsUtil.semValor(resultPEP.getPepKyc()))
-					if (CommonsUtil.mesmoValorIgnoreCase("Sim", resultPEP.getPepKyc().getCurrentlyPEP())
+					if ( !CommonsUtil.booleanValue(documentoAnalise.isLiberadoContinuarAnalise()) &&
+							CommonsUtil.mesmoValorIgnoreCase("Sim", resultPEP.getPepKyc().getCurrentlyPEP())
 							&& (resultPEP.getPepKyc().getHistoryPEP().stream()
 									.filter(p -> CommonsUtil.mesmoValor(p.getLevel(), "1")).findAny().isPresent())) {
 						documentoAnalise.addObservacao("Verfiicar PEP");
@@ -28792,7 +28798,7 @@ public class ContratoCobrancaMB {
 	}
 
 	public void setSelectedPagadorGenerico(PagadorRecebedor selectedPagadorGenerico) {
-		if (selectedPagadorGenerico != null)
+		if (!CommonsUtil.semValor(selectedPagadorGenerico.getId()))
 			this.selectedPagadorGenerico = getPagadorRecebedorObjeto(selectedPagadorGenerico.getId());
 		else
 			this.selectedPagadorGenerico = null;

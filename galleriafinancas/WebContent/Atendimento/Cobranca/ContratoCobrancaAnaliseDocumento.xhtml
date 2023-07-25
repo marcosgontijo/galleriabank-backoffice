@@ -89,6 +89,12 @@
 								rendered="#{!contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
 								disabled="true" onLabel="Sim" offLabel="Não" style="width:6rem">
 							</p:selectBooleanButton>
+							<p:selectBooleanButton value="#{fileAnalise.liberadoContinuarAnalise}"
+								rendered="#{fileAnalise.isAnaliseBloqueada() and contratoCobrancaMB.objetoContratoCobranca.emAnalise  }"
+								onLabel="Continuar Analise" offLabel="Analise Bloqueada" style="width:6rem">
+								<p:ajax event="change"
+									listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
+							</p:selectBooleanButton>
 						</p:column>
 
 

@@ -1,26 +1,22 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
-import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.cobranca.service.PagadorRecebedorService;
 import com.webnowbr.siscoat.common.CommonsUtil;
-import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
-import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.common.ValidaCNPJ;
 import com.webnowbr.siscoat.common.ValidaCPF;
-
-import br.com.galleriabank.netrin.cliente.model.receitafederal.ReceitaFederalPF;
-import br.com.galleriabank.netrin.cliente.model.receitafederal.ReceitaFederalPJ;
 
 /** ManagedBean. */
 @ManagedBean(name = "pagadorRecebedorCadastroMB")
 @SessionScoped
 public class PagadorRecebedorCadastroMB {
+	
 
 	private String cpf;
 	private String cnpj;
@@ -28,7 +24,7 @@ public class PagadorRecebedorCadastroMB {
 	private PagadorRecebedor pagadorRecebedor;
 
 	public void cadastrarSimplificadoPagadorRecebedor() {
-		NetrinService netrinService = new NetrinService();
+		
 		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
 		pagadorRecebedor = new PagadorRecebedor();
 
@@ -37,7 +33,7 @@ public class PagadorRecebedorCadastroMB {
 
 			pagadorRecebedor.setCpf(cpf);
 			
-			pagadorRecebedorService.preecheDadosReceita(pagadorRecebedor);
+			pagadorRecebedor = pagadorRecebedorService.preecheDadosReceita(pagadorRecebedor);
 
 //			ReceitaFederalPF receitaFederalPF = netrinService.requestCadastroPF(pagadorRecebedor);
 //
@@ -47,7 +43,7 @@ public class PagadorRecebedorCadastroMB {
 
 			pagadorRecebedor.setCnpj(cnpj);
 
-			pagadorRecebedorService.preecheDadosReceita(pagadorRecebedor);
+			pagadorRecebedor = pagadorRecebedorService.preecheDadosReceita(pagadorRecebedor);
 
 //			ReceitaFederalPJ receitaFederalPJ = netrinService.requestCadastroPJ(pagadorRecebedor);
 //
@@ -55,6 +51,8 @@ public class PagadorRecebedorCadastroMB {
 
 
 		}
+			
+		
 //		if (!CommonsUtil.semValor(cpf) || !CommonsUtil.semValor(cnpj))
 //			pagadorRecebedor = pagadorRecebedorService.buscaOuInsere(pagadorRecebedor);
 //
@@ -117,6 +115,7 @@ public class PagadorRecebedorCadastroMB {
 	public void setPagadorRecebedor(PagadorRecebedor pagadorRecebedor) {
 		this.pagadorRecebedor = pagadorRecebedor;
 	}
-	
+
+
 	
 }
