@@ -822,7 +822,7 @@
 				</h:panelGroup>
 				
 				<h:panelGroup id="comentarioPendenciaPanel" style="margin-bottom:20px;">
-					<p:panel header="Comentário de Pendencia" rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Pendente'}">
+					<p:panel header="Comentário de Pendencia" rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Pendente' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC'}">
 						<h:panelGrid columns="2">
 							<p:outputLabel for="comentarioPendencia" value="Comentário da Pendência: "
 								styleClass="labelBold" />
