@@ -5064,6 +5064,7 @@
 		<ui:include src="../../Dialog/DialogRecebedorPagador.xhtml">
 			<ui:param name="mbean" value="#{contratoCobrancaMB}"></ui:param>
 			<ui:param name="titulo" value="#{contratoCobrancaMB.tituloPagadorRecebedorDialog}"></ui:param>
+			<ui:param name="permiteAdicionarPessoa" value="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"></ui:param>			
 		</ui:include>			
 		
 		<p:dialog header="Nova Pessoa" widgetVar="pessoaDialog"

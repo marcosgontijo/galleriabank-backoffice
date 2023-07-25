@@ -9,9 +9,7 @@
 		<p:dialog header="#{titulo}" widgetVar="pagadorRecebedorDialog"
 			resizable="false" style="FONT-SIZE: 10pt;" width="600">
 
-
-
-			<p:commandButton value="Cadastrar Pessoa"
+			<p:commandButton value="Cadastrar Pessoa" rendered="#{permiteAdicionarPessoa}"
 				action="#{pagadorRecebedorCadastroMB.clearFieldsNovoCadastro}"
 				oncomplete="PF('pagadorRecebedorCadastroSimplesDialog').show();"
 				update=":formReceborPagadorCadastro:panelPagadorRecebedorCadastro">
@@ -70,8 +68,8 @@
 		</p:dialog>
 	</h:form>
 	
-	<h:form id="formReceborPagadorCadastro">
-		<p:dialog header="Cadastro simplificado"
+	<h:form id="formReceborPagadorCadastro" >
+		<p:dialog header="Cadastro simplificado"  rendered="#{permiteAdicionarPessoa}"
 			id="pagadorRecebedorCadastroSimples"
 			widgetVar="pagadorRecebedorCadastroSimplesDialog" resizable="false"
 			style="FONT-SIZE: 10pt;" width="600;z-order:1000">
@@ -119,7 +117,7 @@
 					icon="ui-icon ui-icon-check">
 
 				</p:commandButton>
-				<p:remoteCommand name="callSeleiconaNovoCadastro"					
+				<p:remoteCommand name="callSeleiconaNovoCadastro"	 				
 						update="#{mbean.updatePagadorRecebedor} adicionarPessoaAnaliseForm"
 					oncomplete="PF('pagadorRecebedorCadastroSimplesDialog').hide();PF('pagadorRecebedorDialog').hide();"
 					action="#{mbean.populateSelectedPagadorRecebedor}">
