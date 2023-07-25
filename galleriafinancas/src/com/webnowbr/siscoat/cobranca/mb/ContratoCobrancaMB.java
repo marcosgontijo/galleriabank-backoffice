@@ -28841,7 +28841,7 @@ public class ContratoCobrancaMB {
 	}
 
 	public void setSelectedPagadorGenerico(PagadorRecebedor selectedPagadorGenerico) {
-		if (!CommonsUtil.semValor(selectedPagadorGenerico.getId()))
+		if (!CommonsUtil.semValor(selectedPagadorGenerico) && !CommonsUtil.semValor(selectedPagadorGenerico.getId()))
 			this.selectedPagadorGenerico = getPagadorRecebedorObjeto(selectedPagadorGenerico.getId());
 		else
 			this.selectedPagadorGenerico = null;
