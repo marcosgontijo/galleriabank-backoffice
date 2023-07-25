@@ -57,8 +57,6 @@
 				<h:panelGrid columns="1">
 					<p:dataTable id="dtFilesAnalise" var="fileAnalise"
 						value="#{contratoCobrancaMB.listaDocumentoAnalise}"
-						
-						
 						rowKey="#{fileAnalise}" selection="#{contratoCobrancaMB.listaDeleteAnalise}" emptyMessage="">
 						<p:column  selectionMode="multiple" style="width:16px;text-align:center"/>
 						<f:facet name="header">								 
@@ -85,7 +83,7 @@
 
 						<p:column headerText="Liberado Análise">
 							<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"
-								rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
+								rendered="#{!fileAnalise.isAnaliseBloqueada() and contratoCobrancaMB.objetoContratoCobranca.emAnalise  }"
 								onLabel="Sim" offLabel="Não" style="width:6rem">
 								<p:ajax event="change"
 									listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
@@ -93,6 +91,12 @@
 							<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"
 								rendered="#{!contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
 								disabled="true" onLabel="Sim" offLabel="Não" style="width:6rem">
+							</p:selectBooleanButton>
+							<p:selectBooleanButton value="#{fileAnalise.liberadoContinuarAnalise}"
+								rendered="#{fileAnalise.isAnaliseBloqueada() and contratoCobrancaMB.objetoContratoCobranca.emAnalise  }"
+								onLabel="Continuar Analise" offLabel="Analise Bloqueada" style="width:6rem">
+								<p:ajax event="change"
+									listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
 							</p:selectBooleanButton>
 						</p:column>
 
