@@ -524,6 +524,7 @@ public class ContractService {
 								user = null;
 							}
 							this.objetoContratoCobranca.populaStatusEsteira(user);
+							this.objetoContratoCobranca.setContratoPrioridadeAlta(contratoAPP.has("contratoPrioridadeAlta") ? contratoAPP.getBoolean("contratoPrioridadeAlta") : false);
 							
 							try {
 								contratoCobrancaDao.merge(this.objetoContratoCobranca);

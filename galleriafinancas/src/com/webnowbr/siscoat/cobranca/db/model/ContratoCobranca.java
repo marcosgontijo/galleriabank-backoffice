@@ -813,6 +813,7 @@ public class ContratoCobranca implements Serializable {
 	
 	private int totalCertidoesDocket;
 	private int certidoesProntas;
+	private boolean contratoPrioridadeAlta;
 
 	//FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13	
 	public BigDecimal calcularValorTotalContasPagas() {
@@ -1276,8 +1277,8 @@ public class ContratoCobranca implements Serializable {
 	}
 
 	public boolean isEmAnalise() {
-		List<String> lstEmAnalise =  Arrays.asList("Pendente");
-		return CommonsUtil.semValor(this.cadastroAprovadoValor) && lstEmAnalise.contains(this.status);
+		List<String> lstEmAnalise =  Arrays.asList("Aprovado", "Reprovado", "Baixado", "Desistência Cliente");
+		return CommonsUtil.semValor(this.cadastroAprovadoValor) && !lstEmAnalise.contains(this.status) && leadCompleto && inicioAnalise;
 	}
 
 	/**
@@ -6678,6 +6679,14 @@ public class ContratoCobranca implements Serializable {
 		this.certidoesProntas = certidoesProntas;
 	}
 	
+	public boolean isContratoPrioridadeAlta() {
+		return contratoPrioridadeAlta;
+	}
+
+	public void setContratoPrioridadeAlta(boolean contratoPrioridadeAlta) {
+		this.contratoPrioridadeAlta = contratoPrioridadeAlta;
+	}
+
 	public String getIspbPixContaPagar() {
 		return ispbPixContaPagar;
 	}

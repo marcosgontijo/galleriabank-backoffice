@@ -18,8 +18,8 @@ import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
+import com.webnowbr.siscoat.common.SiscoatConstants;
 
-import br.com.galleriabank.netrin.cliente.model.PPE.PpeResponse;
 import br.com.galleriabank.netrin.cliente.model.contabancaria.ValidaContaBancariaRequest;
 import br.com.galleriabank.netrin.cliente.model.contabancaria.ValidaContaBancariaResponse;
 import br.com.galleriabank.netrin.cliente.model.contabancaria.ValidaPixRequest;
@@ -47,28 +47,72 @@ public class NetrinService {
 		}
 	}
 
+	public String netrinCriarConsultaCenprot(String cnpjCpf) {
+
+		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+		PagadorRecebedor pagadorRecebedor = pagadorRecebedorService.buscaOuInsere(cnpjCpf);
+
+		PagadorRecebedorService pagaPagadorRecebedorService = new PagadorRecebedorService();
+		PagadorRecebedorConsulta pagadorRecebedorConsulta = pagaPagadorRecebedorService
+				.buscaConsultaNoPagadorRecebedor(pagadorRecebedor, DocumentosAnaliseEnum.CENPROT);
+
+		if (!CommonsUtil.semValor(pagadorRecebedorConsulta)
+				&& !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta()))
+			return pagadorRecebedorConsulta.getRetornoConsulta();
+		else {
+			String consultaRetorno = netrinCriarExecutaConsultaCenprot(cnpjCpf);
+			pagaPagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagadorRecebedor, DocumentosAnaliseEnum.CENPROT,
+					GsonUtil.toJson(consultaRetorno));
+			return consultaRetorno;
+		}
+	}
+
 	public FacesMessage netrinCriarConsultaCenprot(DocumentoAnalise documentoAnalise) { // POST para gerar consulta
+
+		FacesMessage result = null;
+
+		String cnpjcpf = documentoAnalise.getCnpjcpf();
+		if (!CommonsUtil.semValor(documentoAnalise.getPagador())) {
+			if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa()))
+				cnpjcpf = documentoAnalise.getPagador().getCpf();
+			else
+				cnpjcpf = documentoAnalise.getPagador().getCnpj();
+		}
+
+		try {
+			String response = netrinCriarExecutaConsultaCenprot(cnpjcpf);
+			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+			documentoAnalise.setRetornoCenprot(response);
+
+			documentoAnaliseDao.merge(documentoAnalise);
+
+			PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+			pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+					DocumentosAnaliseEnum.CENPROT, response);
+			result = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
+
+		} catch (Exception e) {
+			result = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"netrinCriarConsultaCenprot: Falha  (Cod: " + e.getMessage() + ")", "");
+		}
+
+		return result;
+	}
+
+	public String netrinCriarExecutaConsultaCenprot(String cnpjcpf) { // POST para gerar consulta
+
+		if (SiscoatConstants.DEV)
+			return "{\"cpfCnpj\":\"02167765975\",\"data\":\"2023-06-26T15:35:25.732-03:00\",\"cenprotProtestos\":{\"code\":606,\"message\":\"Não encontrado\",\"ac\":null,\"al\":null,\"ap\":null,\"am\":null,\"ba\":null,\"ce\":null,\"df\":null,\"es\":null,\"go\":null,\"ma\":null,\"mt\":null,\"ms\":null,\"mg\":null,\"pa\":null,\"pb\":null,\"pr\":null,\"pe\":null,\"pi\":null,\"rj\":null,\"rn\":null,\"rs\":null,\"ro\":null,\"rr\":null,\"sc\":null,\"sp\":null,\"se\":null,\"to\":null,\"cartorios\":null,\"protestosBrasil\":{\"estados\":[]}}}";
+
 		try {
 			// loginDocket();
+			String retornoConsulta;
 			int HTTP_COD_SUCESSO = 200;
-			FacesMessage result = null;
-
-			String cnpjcpf = documentoAnalise.getCnpjcpf();
-			if (!CommonsUtil.semValor(documentoAnalise.getPagador())) {
-				if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa()))
-					cnpjcpf = documentoAnalise.getPagador().getCpf();
-				else
-					cnpjcpf = documentoAnalise.getPagador().getCnpj();
-			}
 
 			URL myURL;
-			// if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa()))
+
 			myURL = new URL("https://servicos.galleriabank.com.br/netrin/api/v1/protesto/"
 					+ CommonsUtil.somenteNumeros(cnpjcpf));
-			// else
-			// myURL = new
-			// URL("https://api.netrin.com.br/v1/consulta-composta?s=protestos-cenprot&cnpj="
-			// + CommonsUtil.somenteNumeros(cnpjcpf));
 
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
 			myURLConnection.setRequestMethod("GET");
@@ -81,12 +125,8 @@ public class NetrinService {
 			myURLConnection.setDoOutput(true);
 
 			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
-				result = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-						"Serasa: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", "");
+				retornoConsulta = null;
 			} else {
-				// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
-				// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
-
 				BufferedReader in;
 				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
 				String inputLine;
@@ -96,20 +136,10 @@ public class NetrinService {
 				}
 				in.close();
 
-				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-				documentoAnalise.setRetornoCenprot(response.toString());
-
-				documentoAnaliseDao.merge(documentoAnalise);
-
-				PagadorRecebedorService PagadorRecebedorService = new PagadorRecebedorService();
-				PagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
-						DocumentosAnaliseEnum.CENPROT, response.toString());
-
-				result = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
-
+				retornoConsulta = response.toString();
 			}
 			myURLConnection.disconnect();
-			return result;
+			return retornoConsulta;
 		} catch (
 
 		MalformedURLException e) {
@@ -182,7 +212,7 @@ public class NetrinService {
 
 	public FacesMessage requestCadastroPepPF(DocumentoAnalise documentoAnalise) {
 		FacesMessage result = new FacesMessage();
-		
+
 		PagadorRecebedorService pagaPagadorRecebedorService = new PagadorRecebedorService();
 		PagadorRecebedorConsulta pagadorRecebedorConsulta = pagaPagadorRecebedorService
 				.buscaConsultaNoPagadorRecebedor(documentoAnalise.getPagador(), DocumentosAnaliseEnum.PPE);
@@ -190,13 +220,13 @@ public class NetrinService {
 		if (!CommonsUtil.semValor(pagadorRecebedorConsulta)
 				&& !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta())
 				&& DateUtil.getDaysBetweenDates(pagadorRecebedorConsulta.getDataConsulta(),
-						DateUtil.getDataHoje()) <= 30) {			
+						DateUtil.getDataHoje()) <= 30) {
 			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 			documentoAnalise.setRetornoPpe(pagadorRecebedorConsulta.getRetornoConsulta());
 
 			documentoAnaliseDao.merge(documentoAnalise);
 
-		} else			
+		} else
 			result = netrinCriarConsultaCadastroPpePF(documentoAnalise);
 		return result;
 	}
@@ -218,8 +248,7 @@ public class NetrinService {
 				&& !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta())
 				&& DateUtil.getDaysBetweenDates(pagadorRecebedorConsulta.getDataConsulta(),
 						DateUtil.getDataHoje()) <= 30) {
-			receitaFederalPF = GsonUtil.fromJson(pagadorRecebedorConsulta.getRetornoConsulta(),
-					ReceitaFederalPF.class);
+			receitaFederalPF = GsonUtil.fromJson(pagadorRecebedorConsulta.getRetornoConsulta(), ReceitaFederalPF.class);
 		} else
 			receitaFederalPF = netrinCriarConsultaCadastroPF(pagadorRecebedor.getCpf(), facesMessage);
 
@@ -299,17 +328,74 @@ public class NetrinService {
 		return null;
 	}
 
-	public FacesMessage netrinCriarConsultaCadastroPpePF(DocumentoAnalise documentoAnalise) { // POST para
-																								// gerar
-																								// consulta
+	public FacesMessage netrinCriarConsultaCadastroPpePF(DocumentoAnalise documentoAnalise) {
 		try {
 			// loginDocket();
-			int HTTP_COD_SUCESSO = 200;
 			FacesMessage result = null;
+
+			String retornoConsulta = null;
 
 			atualizaDadosPagadoRecebedorComReceitaFederal(documentoAnalise.getPagador());
 			String nomeConsultado = documentoAnalise.getPagador().getNome();
 			String numeorsCpfCnpj = CommonsUtil.somenteNumeros(documentoAnalise.getCnpjcpf());
+
+			retornoConsulta = netrinCriarExecutaConsultaCadastroPpePF(numeorsCpfCnpj, nomeConsultado);
+
+			if (CommonsUtil.semValor(retornoConsulta)) {
+				return new FacesMessage(FacesMessage.SEVERITY_ERROR, "PPE: Falha: Falha na consulta", "");
+			} else {
+
+				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+				documentoAnalise.setRetornoPpe(retornoConsulta);
+
+				documentoAnaliseDao.merge(documentoAnalise);
+
+				PagadorRecebedorService PagadorRecebedorService = new PagadorRecebedorService();
+				PagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+						DocumentosAnaliseEnum.PPE, retornoConsulta);
+
+				result = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
+			}
+			return result;
+
+		} catch (Exception e) {
+			return new FacesMessage(FacesMessage.SEVERITY_ERROR, "PPE: Falha  (Cod: " + e.getMessage() + ")", "");
+		}
+	}
+
+	public String netrinCriarConsultaCadastroPpePF(String cnpjCpf) {
+
+		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+		PagadorRecebedor pagadorRecebedor = pagadorRecebedorService.buscaOuInsere(cnpjCpf);
+
+		PagadorRecebedorService pagaPagadorRecebedorService = new PagadorRecebedorService();
+		PagadorRecebedorConsulta pagadorRecebedorConsulta = pagaPagadorRecebedorService
+				.buscaConsultaNoPagadorRecebedor(pagadorRecebedor, DocumentosAnaliseEnum.PPE);
+
+		if (!CommonsUtil.semValor(pagadorRecebedorConsulta)
+				&& !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta()))
+			return pagadorRecebedorConsulta.getRetornoConsulta();
+		else {
+			String consultaRetorno = netrinCriarExecutaConsultaCadastroPpePF(CommonsUtil.pessoaFisicaJuridicaCnpjCpf(cnpjCpf),
+					pagadorRecebedor.getNome());
+			pagaPagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagadorRecebedor,
+					DocumentosAnaliseEnum.PPE, GsonUtil.toJson(consultaRetorno));
+			return consultaRetorno;
+		}
+	}
+
+	public String netrinCriarExecutaConsultaCadastroPpePF(String cnpjcpf, String nomeConsultado) {
+
+		if (SiscoatConstants.DEV)
+			return "{\"cpf\":\"02167765975\",\"nome\":\"Adriana Florencio Dos Santos Borges \",\"data\":\"2023-06-26T15:35:20.724-03:00\",\"pepKyc\":{\"currentlySanctioned\":\"Não\",\"last30DaysSanctions\":0,\"last90DaysSanctions\":0,\"last180DaysSanctions\":0,\"last365DaysSanctions\":0,\"currentlyPEP\":\"Não\",\"lastYearOccurencePEP\":0,\"last3YearsOccurencePEP\":0,\"last5YearsOccurencePEP\":0,\"last5PlusYearsOccurencePEP\":0,\"historyPEP\":[{\"currentlySanctioned\":null,\"level\":\"\",\"jobTitle\":\"\",\"department\":\"\",\"motive\":\"\",\"startDate\":\"\",\"endDate\":\"\"}],\"sanctionsHistory\":[{\"source\":\"interpol\",\"type\":\"Law Enforcement\",\"standardizedSanctionType\":\"ARREST WARRANTS\",\"matchRate\":\"48\",\"nameUniquenessScore\":\"1\",\"startDate\":\"0001-01-01T00:00:00\",\"endDate\":\"9999-12-31T23:59:59.9999999\",\"details\":{\"originalName\":\"ADRIANA FLORENCIO DOS SANTOS BORGES\",\"sanctionName\":\"ADRIANA HERLINDA ARANGO JARAMILLO\",\"sanctionAliases\":null,\"remarks\":null}}]}}";
+
+		try {
+			int HTTP_COD_SUCESSO = 200;
+			String retornoConsulta;
+
+//			atualizaDadosPagadoRecebedorComReceitaFederal(documentoAnalise.getPagador());
+			// String nomeConsultado = documentoAnalise.getPagador().getNome();
+			String numeorsCpfCnpj = CommonsUtil.somenteNumeros(cnpjcpf);
 
 			URL myURL;
 			myURL = new URL("https://servicos.galleriabank.com.br/netrin/api/v1/ppe/" + numeorsCpfCnpj + "/"
@@ -326,8 +412,7 @@ public class NetrinService {
 			myURLConnection.setDoOutput(true);
 
 			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
-				result = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-						"PPE: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", "");
+				retornoConsulta = null;
 			} else {
 				BufferedReader in;
 				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
@@ -337,23 +422,11 @@ public class NetrinService {
 					response.append(inputLine);
 				}
 				in.close();
-				PpeResponse resultPEP = GsonUtil.fromJson(response.toString(), PpeResponse.class);
-
-				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-				documentoAnalise.setRetornoPpe(response.toString());
-
-				documentoAnaliseDao.merge(documentoAnalise);
-
-				PagadorRecebedorService PagadorRecebedorService = new PagadorRecebedorService();
-				PagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
-						DocumentosAnaliseEnum.PPE, response.toString());
-
-				result = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
-
+				retornoConsulta = response.toString();
 			}
-			myURLConnection.disconnect();
 
-			return result;
+			myURLConnection.disconnect();
+			return retornoConsulta;
 
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
@@ -471,7 +544,7 @@ public class NetrinService {
 	public void requestProcesso(DocumentoAnalise documentoAnalise) {
 
 		if (CommonsUtil.semValor(documentoAnalise.getRetornoProcesso())) {
-			
+
 			PagadorRecebedorService pagaPagadorRecebedorService = new PagadorRecebedorService();
 			PagadorRecebedorConsulta pagadorRecebedorConsulta = pagaPagadorRecebedorService
 					.buscaConsultaNoPagadorRecebedor(documentoAnalise.getPagador(), DocumentosAnaliseEnum.PROCESSO);
@@ -479,9 +552,9 @@ public class NetrinService {
 			if (!CommonsUtil.semValor(pagadorRecebedorConsulta)
 					&& !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta())
 					&& DateUtil.getDaysBetweenDates(pagadorRecebedorConsulta.getDataConsulta(),
-							DateUtil.getDataHoje()) <= 30) {			
+							DateUtil.getDataHoje()) <= 30) {
 				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-				documentoAnalise.setRetornoProcesso(pagadorRecebedorConsulta.getRetornoConsulta());   
+				documentoAnalise.setRetornoProcesso(pagadorRecebedorConsulta.getRetornoConsulta());
 				documentoAnaliseDao.merge(documentoAnalise);
 			} else
 				netrinCriarConsultaProcesso(documentoAnalise);
@@ -490,9 +563,8 @@ public class NetrinService {
 
 	public FacesMessage netrinCriarConsultaProcesso(DocumentoAnalise documentoAnalise) { // POST para gerar consulta
 		try {
-			// loginDocket();
-			int HTTP_COD_SUCESSO = 200;
-			FacesMessage result = null;
+
+			String retornoConsulta;
 
 			// busca dados da receita se nao tiver ainda
 			atualizaDadosPagadoRecebedorComReceitaFederal(documentoAnalise.getPagador());
@@ -506,15 +578,72 @@ public class NetrinService {
 					cnpjcpf = documentoAnalise.getPagador().getCnpj();
 			}
 
+			retornoConsulta = netrinCriarExecutaConsultaProcesso(documentoAnalise.getTipoPessoa(), cnpjcpf,
+					nomeConsultado);
+
+			if (CommonsUtil.semValor(retornoConsulta)) {
+				return new FacesMessage(FacesMessage.SEVERITY_ERROR, "netrinCriarConsultaProcesso: Falha na consulta",
+						"");
+			} else {
+
+				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+				documentoAnalise.setRetornoProcesso(retornoConsulta);
+
+				documentoAnaliseDao.merge(documentoAnalise);
+
+				PagadorRecebedorService PagadorRecebedorService = new PagadorRecebedorService();
+				PagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+						DocumentosAnaliseEnum.PROCESSO, retornoConsulta);
+
+				return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
+
+			}
+
+		} catch (Exception e) {
+			return new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"netrinCriarConsultaProcesso: Falha  (Cod: " + e.getMessage() + ")", "");
+		}
+	}
+
+	public String netrinCriarConsultaProcesso(String cnpjCpf) {
+
+		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+		PagadorRecebedor pagadorRecebedor = pagadorRecebedorService.buscaOuInsere(cnpjCpf);
+
+		PagadorRecebedorService pagaPagadorRecebedorService = new PagadorRecebedorService();
+		PagadorRecebedorConsulta pagadorRecebedorConsulta = pagaPagadorRecebedorService
+				.buscaConsultaNoPagadorRecebedor(pagadorRecebedor, DocumentosAnaliseEnum.PROCESSO);
+
+		if (!CommonsUtil.semValor(pagadorRecebedorConsulta)
+				&& !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta()))
+			return pagadorRecebedorConsulta.getRetornoConsulta();
+		else {
+			String consultaRetorno = netrinCriarExecutaConsultaProcesso(
+					CommonsUtil.pessoaFisicaJuridicaCnpjCpf(cnpjCpf), cnpjCpf, pagadorRecebedor.getNome());
+			pagaPagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagadorRecebedor,
+					DocumentosAnaliseEnum.PROCESSO, GsonUtil.toJson(consultaRetorno));
+			return consultaRetorno;
+		}
+
+	}
+
+	public String netrinCriarExecutaConsultaProcesso(String tipoPessoa, String cnpjcpf, String nomeConsultado) { 
+
+		if (SiscoatConstants.DEV)
+			return "{\"cpf\":\"021.677.659-75\",\"nome\":\"Adriana Florencio Dos Santos Borges \",\"data\":\"2023-06-26T15:35:22.271-03:00\",\"processosCPF\":{\"totalProcessos\":1,\"totalProcessosAutor\":1,\"totalProcessosReu\":0,\"processosUltimos180dias\":0,\"processos\":[{\"numero\":\"50105873120214047204\",\"dataNotificacao\":\"2021-08-18T11:50:05\",\"tipo\":\"CUMPRIMENTO DE SENTENCA CONTRA A FAZENDA PUBLICA\",\"assuntoPrincipal\":\"APOSENTADORIA POR TEMPO DE CONTRIBUICAO (ART. 55/6), BENEFICIOS EM ESPECIE, DIREITO PREVIDENCIARIO\",\"status\":\"MOVIMENTO\",\"varaJulgadora\":\"JUIZO SUBSTITUTO DA 1 VF DE CONCORDIA\",\"tribunal\":\"JFSC\",\"tribunalLevel\":\"1\",\"tribunalTipo\":\"FAZENDA\",\"tribunalCidade\":\"CONCORDIA\",\"estado\":\"SC\",\"partes\":[{\"nome\":\"JOAO PAULO MORRETTI DE SOUZA\",\"posicao\":\"NEUTRAL\",\"tipo\":\"JUIZ\"},{\"nome\":\"ADRIANA FLORENCIO DOS SANTOS BORGES\",\"posicao\":\"ACTIVE\",\"tipo\":\"REQUERENTE\"},{\"nome\":\"INSTITUTO NACIONAL DO SEGURO SOCIAL INSS\",\"posicao\":\"PASSIVE\",\"tipo\":\"REQUERIDO\"},{\"nome\":\"CEAB DJ INSS SR3\",\"posicao\":\"NEUTRAL\",\"tipo\":\"AGENCIA DA PREVIDENCIA SOCIAL\"},{\"nome\":\"NUCLEO REGIONAL DE CUMPRIMENTO JEF DA 4 REGIAO\",\"posicao\":\"NEUTRAL\",\"tipo\":\"PROCURADOR\"},{\"nome\":\"MARTA WEIMER\",\"posicao\":\"NEUTRAL\",\"tipo\":\"JUIZ\"},{\"nome\":\"FLAVIO GHISLANDI CUNICO\",\"posicao\":\"NEUTRAL\",\"tipo\":\"ADVOGADO (REQUERENTE)\"},{\"nome\":\"IDESIA MAIS DA SILVA\",\"posicao\":\"NEUTRAL\",\"tipo\":\"PROCURADOR\"}],\"dataNotificacaoDate\":\"2021-08-18T00:00:00.000-03:00\"}]},\"processoResumo\":{\"criminal\":null,\"trabalhista\":null,\"tituloExtraJudicial\":null,\"tituloExecucaoFiscal\":null,\"outros\":null,\"criminalProtesto\":null,\"trabalhistaProtesto\":null,\"outrosProtesto\":null,\"extraJudicialProtesto\":null,\"execucaoFiscalProtesto\":null,\"processos\":false}}";
+
+		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+		PagadorRecebedor pagadorRecebedor = pagadorRecebedorService.buscaOuInsere(cnpjcpf);
+		// TODO: Verifcar consultas anteriores
+		try {
+			// loginDocket();
+			int HTTP_COD_SUCESSO = 200;
+			String retornoConsulta;
+
 			URL myURL;
 			String sUrl = "https://servicos.galleriabank.com.br/netrin/api/v1/processo/"
-					+ CommonsUtil.somenteNumeros(cnpjcpf) + "/" + nomeConsultado.replace(" ", "%20");
-			// if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa()))
+					+ CommonsUtil.somenteNumeros(cnpjcpf) + "/" + pagadorRecebedor.getNome().replace(" ", "%20");
 			myURL = new URL(sUrl);
-			// else
-			// myURL = new
-			// URL("https://api.netrin.com.br/v1/consulta-composta?s=protestos-cenprot&cnpj="
-			// + CommonsUtil.somenteNumeros(cnpjcpf));
 
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
 			myURLConnection.setRequestMethod("GET");
@@ -527,8 +656,7 @@ public class NetrinService {
 			myURLConnection.setDoOutput(true);
 
 			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
-				result = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-						"Serasa: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", "");
+				retornoConsulta = null;
 			} else {
 				// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
 				// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
@@ -542,20 +670,11 @@ public class NetrinService {
 				}
 				in.close();
 
-				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-				documentoAnalise.setRetornoProcesso(response.toString());
-
-				documentoAnaliseDao.merge(documentoAnalise);
-
-				PagadorRecebedorService PagadorRecebedorService = new PagadorRecebedorService();
-				PagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
-						DocumentosAnaliseEnum.PROCESSO, response.toString());
-
-				result = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
+				retornoConsulta = response.toString();
 
 			}
 			myURLConnection.disconnect();
-			return result;
+			return retornoConsulta;
 		} catch (
 
 		MalformedURLException e) {
@@ -573,12 +692,14 @@ public class NetrinService {
 		String nomeConsultado = "";
 
 		PagadorRecebedorService pagaPagadorRecebedorService = new PagadorRecebedorService();
-		
+
 		if (!CommonsUtil.semValor(pagadorRecebedor.getCpf())) {
 			PagadorRecebedorConsulta pagadorRecebedorConsulta = pagaPagadorRecebedorService
 					.buscaConsultaNoPagadorRecebedor(pagadorRecebedor, DocumentosAnaliseEnum.RECEITA_FEDERAL);
 			ReceitaFederalPF receitaFederalPF = null;
-			if (!CommonsUtil.semValor(pagadorRecebedorConsulta) && !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta()) && !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta().replace("{}", ""))) {
+			if (!CommonsUtil.semValor(pagadorRecebedorConsulta)
+					&& !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta())
+					&& !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta().replace("{}", ""))) {
 				receitaFederalPF = GsonUtil.fromJson(pagadorRecebedorConsulta.getRetornoConsulta(),
 						ReceitaFederalPF.class);
 			} else {
@@ -590,16 +711,18 @@ public class NetrinService {
 						DocumentosAnaliseEnum.RECEITA_FEDERAL, GsonUtil.toJson(receitaFederalPF));
 			}
 
-			if ( !CommonsUtil.semValor(receitaFederalPF))				
-			nomeConsultado = receitaFederalPF.getCpfBirthdate().getNome();
+			if (!CommonsUtil.semValor(receitaFederalPF))
+				nomeConsultado = receitaFederalPF.getCpfBirthdate().getNome();
 		} else {
 
 			if (!CommonsUtil.semValor(pagadorRecebedor.getCnpj())) {
-				
+
 				PagadorRecebedorConsulta pagadorRecebedorConsulta = pagaPagadorRecebedorService
 						.buscaConsultaNoPagadorRecebedor(pagadorRecebedor, DocumentosAnaliseEnum.RECEITA_FEDERAL);
 				ReceitaFederalPJ receitaFederalPJ = null;
-				if (!CommonsUtil.semValor(pagadorRecebedorConsulta) && !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta()) && !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta().replace("{}", ""))) {
+				if (!CommonsUtil.semValor(pagadorRecebedorConsulta)
+						&& !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta())
+						&& !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta().replace("{}", ""))) {
 					receitaFederalPJ = GsonUtil.fromJson(pagadorRecebedorConsulta.getRetornoConsulta(),
 							ReceitaFederalPJ.class);
 				} else {
@@ -610,9 +733,9 @@ public class NetrinService {
 					pagaPagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagadorRecebedor,
 							DocumentosAnaliseEnum.RECEITA_FEDERAL, GsonUtil.toJson(receitaFederalPJ));
 				}
-				
-				if ( !CommonsUtil.semValor(receitaFederalPJ))
-				nomeConsultado = receitaFederalPJ.getReceitaFederal().getRazaoSocial();
+
+				if (!CommonsUtil.semValor(receitaFederalPJ))
+					nomeConsultado = receitaFederalPJ.getReceitaFederal().getRazaoSocial();
 			}
 
 		}
@@ -830,7 +953,8 @@ public class NetrinService {
 			}
 
 			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
-					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Valida Conta Bancaria: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", ""));
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Valida Conta Bancaria: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", ""));
 			} else {
 				// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
 				// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
@@ -845,7 +969,8 @@ public class NetrinService {
 				in.close();
 				resultContaBancaria = GsonUtil.fromJson(response.toString(), ValidaContaBancariaResponse.class);
 
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", ""));
+				context.addMessage(null,
+						new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", ""));
 
 			}
 			myURLConnection.disconnect();
@@ -871,8 +996,8 @@ public class NetrinService {
 		return result;
 	}
 
-	public ValidaPixResponse netrinCriarConsultaPix(ValidaPixRequest validaPixRequest,
-			FacesContext context) { // POST para
+	public ValidaPixResponse netrinCriarConsultaPix(ValidaPixRequest validaPixRequest, FacesContext context) { // POST
+																												// para
 		// gerar
 		// consulta
 		try {
@@ -900,7 +1025,8 @@ public class NetrinService {
 			}
 
 			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Valida Pix: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", ""));
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Valida Pix: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", ""));
 			} else {
 				// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
 				// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
@@ -915,7 +1041,8 @@ public class NetrinService {
 				in.close();
 				resultPix = GsonUtil.fromJson(response.toString(), ValidaPixResponse.class);
 
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", ""));
+				context.addMessage(null,
+						new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", ""));
 
 			}
 			myURLConnection.disconnect();

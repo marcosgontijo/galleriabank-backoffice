@@ -1075,3 +1075,34 @@
 .ui-steps-item .ui-state-default  {
 	background: #61c954 !important;
 }
+
+.ui-diagram-element {
+	width: 15em;
+	height: auto;
+	text-align: center;
+	border-radius: 4px;
+	border: 2px solid #646D7E;
+	background-color: #646D7E;
+	color: #ffffff;
+	overflow-wrap: break-word;
+	word-wrap: break-word;
+	min-height: 4em;
+	vertical-align: middle;
+}
+
+.ui-diagram-element:hover {
+	background-color: #828B9C;
+}
+
+.start-node {
+	width: 4em;
+	border-radius: 6px;
+	background-color: #464F60 !important;
+}
+
+.flow-label {
+	color: #000000;
+	background-color: lightgrey;
+	font-size: 18px;
+	font-weight: bold;
+}

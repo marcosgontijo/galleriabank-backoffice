@@ -2174,5 +2174,9 @@
 			<column name="statusEsteira" />
 		</property>
 		
+		<property name="contratoPrioridadeAlta" type="boolean">
+			<column name="contratoPrioridadeAlta" not-null="true" default="false"/>
+		</property>	
+		
 	</class>
 </hibernate-mapping>
