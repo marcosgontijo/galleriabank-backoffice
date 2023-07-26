@@ -14,6 +14,7 @@ import javax.faces.context.FacesContext;
 
 import org.primefaces.model.StreamedContent;
 
+import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.cobranca.service.SerasaService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
@@ -40,6 +41,10 @@ public class ConsultasMB {
 			decodarBaixarArquivo(cpfCnpj, docBase64);
 			
 			
+		}
+		public void consultaCenprot() throws Exception{
+			NetrinService cenprot = new NetrinService();
+			retornoCenprot = cenprot.netrinCriarConsultaCenprot(cpfCnpj);
 		}
 		public StreamedContent decodarBaixarArquivo(String cpfCnpj, String base64 ) {
 
