@@ -45,6 +45,9 @@ public class ConsultasMB {
 		public void consultaCenprot() throws Exception{
 			NetrinService cenprot = new NetrinService();
 			retornoCenprot = cenprot.netrinCriarConsultaCenprot(cpfCnpj);
+			String doc = cenprot.baixarDocumentoCenprot(retornoCenprot);
+			decodarBaixarArquivo(cpfCnpj, doc);
+		
 		}
 		public StreamedContent decodarBaixarArquivo(String cpfCnpj, String base64 ) {
 

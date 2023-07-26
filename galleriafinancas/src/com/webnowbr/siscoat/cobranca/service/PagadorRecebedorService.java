@@ -60,7 +60,6 @@ public class PagadorRecebedorService {
 		PagadorRecebedor pagadorRecebedor = new PagadorRecebedor();
 
 		String tipoPessoa = CommonsUtil.pessoaFisicaJuridicaCnpjCpf(cnpjCpf);
-		if (CommonsUtil.semValor(pagadorRecebedor))
 			if (CommonsUtil.mesmoValor("PF", tipoPessoa))
 				pagadorRecebedor.setCpf(CommonsUtil.formataCpf(cnpjCpf));
 			else
@@ -147,9 +146,9 @@ public class PagadorRecebedorService {
 		pagadorRecebedorConsulta.setPessoa(pagador);
 		pagadorRecebedorConsulta.setTipoEnum(tipoConsulta);
 
-		if (CommonsUtil.semValor(pagadorRecebedorConsulta.getId()))
-			PagadorRecebedorConsultaDao.create(pagadorRecebedorConsulta);
-		else
+//		if (CommonsUtil.semValor(pagadorRecebedorConsulta.getId()))
+//			PagadorRecebedorConsultaDao.create(pagadorRecebedorConsulta);
+//		else
 			PagadorRecebedorConsultaDao.merge(pagadorRecebedorConsulta);
 
 	}
