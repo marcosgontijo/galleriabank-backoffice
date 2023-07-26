@@ -14,7 +14,7 @@
 	<h:body onload="register_tab_GUID()">
 		<ui:composition template="../index.xhtml">			
 			<ui:define name="menu">  
-				<h:form style="margin-bottom:10px;">
+				<h:form style="margin-bottom:10px;" id="menuAtendimentoForm" >
 					<p:menu style="width: 250px; ">	
 						<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA, ASSISTENTEFINANCEIRO, PRECOBRANCAANALISTA, PROFILE_MARKETING, ASSISTENTEFINANCEIRO">					
 							<p:submenu label="Gerenciamento" styleClass="titulosMenu">

@@ -2,12 +2,18 @@ package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
+import com.webnowbr.siscoat.cobranca.db.op.CidadeDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 
 public class ImovelCobranca implements Serializable {
@@ -52,6 +58,8 @@ public class ImovelCobranca implements Serializable {
 	private boolean matriculaGaragemCheckList;//
 	private boolean simuladorCheckList;//
 	
+	private Cidade objetoCidade;
+	
 	public ImovelCobranca(){
 		resetarBololean();
 	}
@@ -91,6 +99,74 @@ public class ImovelCobranca implements Serializable {
 		this.comprovanteFotosImovelCheckList = false;
 		this.comprovanteIptuImovelCheckList = false;
 	}
+	
+	private static final Map<String, String> siglasEstados = new HashMap<>();
+    static {
+        siglasEstados.put("AC", "Acre");
+        siglasEstados.put("AL", "Alagoas");
+        siglasEstados.put("AP", "Amapá");
+        siglasEstados.put("AM", "Amazonas");
+        siglasEstados.put("BA", "Bahia");
+        siglasEstados.put("CE", "Ceará");
+        siglasEstados.put("DF", "Distrito Federal");
+        siglasEstados.put("ES", "Espírito Santo");
+        siglasEstados.put("GO", "Goiás");
+        siglasEstados.put("MA", "Maranhão");
+        siglasEstados.put("MT", "Mato Grosso");
+        siglasEstados.put("MS", "Mato Grosso do Sul");
+        siglasEstados.put("MG", "Minas Gerais");
+        siglasEstados.put("PA", "Pará");
+        siglasEstados.put("PB", "Paraíba");
+        siglasEstados.put("PR", "Paraná");
+        siglasEstados.put("PE", "Pernambuco");
+        siglasEstados.put("PI", "Piauí");
+        siglasEstados.put("RJ", "Rio de Janeiro");
+        siglasEstados.put("RN", "Rio Grande do Norte");
+        siglasEstados.put("RS", "Rio Grande do Sul");
+        siglasEstados.put("RO", "Rondônia");
+        siglasEstados.put("RR", "Roraima");
+        siglasEstados.put("SC", "Santa Catarina");
+        siglasEstados.put("SP", "São Paulo");
+        siglasEstados.put("SE", "Sergipe");
+        siglasEstados.put("TO", "Tocantins");
+    }
+    public static String getEstadoPorSigla(String sigla) {
+        return siglasEstados.getOrDefault(sigla, "UF de estado inválido");
+    }
+	
+	public List<String> pegarListaCidades() {
+		List<String> cidades = new ArrayList<>();
+		String estadoStr = getEstadoPorSigla(estado);
+		CidadeDao cidadeDao = new CidadeDao();
+		cidades = cidadeDao.pegarCidadesPeloEstado(estadoStr);
+		return cidades;
+	}
+	
+	public List<String> completeCidadesImovel(String query) {
+		String queryLowerCase = query.toLowerCase();
+		List<String> cidades = new ArrayList<>();
+		List<String> listaCidades = pegarListaCidades();
+		if(!CommonsUtil.semValor(listaCidades)) {
+			for (String cidade : listaCidades) {
+				cidades.add(cidade);
+			}
+		}
+		return cidades.stream().filter(t -> t.toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());
+	 }
+	
+	
+	public void consultarObjetoCidade() {
+		String estadoStr = getEstadoPorSigla(estado);
+		CidadeDao cidadeDao = new CidadeDao();
+		objetoCidade = cidadeDao.busccaCidadeConculta(cidade, estadoStr, false);
+	}
+	
+	public void popularObjetoCidade() {
+		String estadoStr = getEstadoPorSigla(estado);
+		CidadeDao cidadeDao = new CidadeDao();
+		objetoCidade = cidadeDao.buscaCidade(cidade, estadoStr);
+	}
+	
 	
 	/**
 	 * @return the id
@@ -483,5 +559,14 @@ public class ImovelCobranca implements Serializable {
 
 	public void setInscricaoMunicipal(String inscricaoMunicipal) {
 		this.inscricaoMunicipal = inscricaoMunicipal;
+	}
+
+	public Cidade getObjetoCidade() {
+		return objetoCidade;
+	}
+
+	public void setObjetoCidade(Cidade objetoCidade) {
+		this.objetoCidade = objetoCidade;
 	}	
+	
 }
