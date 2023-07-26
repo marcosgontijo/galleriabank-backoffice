@@ -3422,11 +3422,6 @@
 							value="#{contratoCobrancaMB.objetoImovelCobranca.bairro}"
 							label="Bairro" onblur="" style="width:400px;" />
 
-						<p:outputLabel for="CidadeImovel" value="Cidade: " />
-						<p:inputText id="CidadeImovel"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.cidade}"
-							label="Cidade" onblur="" style="width:400px;" />
-
 						<p:outputLabel for="EstadoImovel" value="Estado: " />
 						<p:selectOneMenu id="EstadoImovel"
 							value="#{contratoCobrancaMB.objetoImovelCobranca.estado}"
@@ -3459,7 +3454,22 @@
 							<f:selectItem itemValue="SP" itemLabel="São Paulo" />
 							<f:selectItem itemValue="SE" itemLabel="Sergipe" />
 							<f:selectItem itemValue="TO" itemLabel="Tocantins" />
-						</p:selectOneMenu>
+							<p:ajax event="valueChange" update="CidadeImovel" 
+								listener="#{contratoCobrancaMB.objetoImovelCobranca.completeCidadesImovel('')}" />
+						</p:selectOneMenu>				
+						
+						<p:outputLabel for="CidadeImovel" value="Cidade" style="FONT-SIZE: 10pt;" />
+						<p:autoComplete id="CidadeImovel" value="#{contratoCobrancaMB.objetoImovelCobranca.cidade}"
+							completeMethod="#{contratoCobrancaMB.objetoImovelCobranca.completeCidadesImovel}" autocomplete="no" 
+							var="cidade" itemLabel="#{cidade}" itemValue="#{cidade}"  dropdown="true"
+							forceSelection="false"
+							scrollHeight="250">
+						</p:autoComplete>
+						
+						<!-- <p:outputLabel for="CidadeImovel" value="Cidade: " />
+						<p:inputText id="CidadeImovel"
+							value="#{contratoCobrancaMB.objetoImovelCobranca.cidade}"
+							label="Cidade" onblur="" style="width:400px;" /> -->
 
 						<p:outputLabel for="linkGMapsImovel" value="Link Google Maps: " />
 						<p:inputText id="linkGMapsImovel"
@@ -5042,7 +5052,7 @@
 		<ui:include src="../../Dialog/DialogRecebedorPagador.xhtml">
 				<ui:param name="mbean" value="#{contratoCobrancaMB}"></ui:param>
 				<ui:param name="titulo" value="#{contratoCobrancaMB.tituloPagadorRecebedorDialog}"></ui:param>
-			<ui:param name="permiteAdicionarPessoa" value="false"></ui:param>			
+				<ui:param name="permiteAdicionarPessoa" value="false"></ui:param>			
 			</ui:include>
 
 		<p:dialog header="Imóveis" widgetVar="imovelDialog" resizable="false"

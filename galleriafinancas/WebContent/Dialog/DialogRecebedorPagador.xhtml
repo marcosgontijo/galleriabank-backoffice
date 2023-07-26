@@ -4,7 +4,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:shiro="http://shiro.apache.org/tags"
 	xmlns:p="http://primefaces.org/ui">
-	
+
 	<h:form id="formReceborPagador">
 		<p:dialog header="#{titulo}" widgetVar="pagadorRecebedorDialog"
 			resizable="false" style="FONT-SIZE: 10pt;" width="600">
@@ -114,7 +114,6 @@
 					oncomplete="callSeleiconaNovoCadastro()"
 					update="#{mbean.updatePagadorRecebedor}"
 					icon="ui-icon ui-icon-check">
-					
 				</p:commandButton>
 				<p:remoteCommand name="callSeleiconaNovoCadastro"	 				
 						update="#{mbean.updatePagadorRecebedor} adicionarPessoaAnaliseForm"

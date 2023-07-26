@@ -106,8 +106,11 @@
 
 			<p:panel id="ConsultaContratos" header="Pré-Contratos Pendentes - Consultar" style="margin-bottom:10px;">		    		    
    		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratosPendentes}" selection="" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending"
-   		         rowStyleClass="#{(contratos.laudoRecebido eq true and contratos.pajurFavoravel eq true) ? 'parcelaPaga' : '' } #{(contratos.cadastroAprovadoValor eq 'Pendente') ? 'linhaRoxa' : '' }
-   		         #{(contratos.pendenciaLaudoPaju eq true) ? 'parcelaparcial' : '' } #{(contratos.responsavel.superlogica) ? 'superlogica' : '' }" 
+   		         rowStyleClass=" #{(contratos.laudoRecebido eq true and contratos.pajurFavoravel eq true) ? 'parcelaPaga' : '' }
+	   		         #{(contratos.cadastroAprovadoValor eq 'Pendente') ? 'linhaRoxa' : '' }
+	   		         #{(contratos.pendenciaLaudoPaju eq true) ? 'parcelaparcial' : '' } 
+	   		         #{(contratos.responsavel.superlogica) ? 'superlogica' : '' }
+	   		         #{(contratos.imovel.objetoCidade.pintarLinha eq true) ? 'parcelaBoletoPago' : '' }" 
    		         rows="50"
                  paginator="true"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
@@ -182,8 +185,8 @@
 							and contratos.cadastroAprovadoValor == 'Aprovado'
 							and contratos.aprovadoComite == true}"
 						action="#{contratoCobrancaMB.downloadAprovadoComitePDF(contratos.id)}" />
-						<p:commandButton value="Certidões Docket" action="#{docketMB.clearFieldsContratoCobranca(contratos)}"/>	
-						<p:commandButton value="Data Engine" action="#{dataEngineMB.clearFieldsContratoCobranca(contratos)}"/>
+							
+						
 						<shiro:hasAnyRoles name="ROOT, PROFILE_GERENTE_ANALISE"> 
 							<p:commandButton value="Baixar" action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-arrowthick-1-s" title="Baixar">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
@@ -206,9 +209,8 @@
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="true" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" />
 			                </p:commandButton>
-			                <p:commandButton value="Emitir CCB" action="#{ccbMB.EmitirCcbPreContrato}">
-			                	<f:setPropertyActionListener target="#{ccbMB.objetoContratoCobranca}" value="#{contratos}" />
-			                </p:commandButton>		                	
+			                	
+			                		                	
 		                </shiro:hasAnyRoles>
 		            </p:column>	
 					<f:facet name="footer">

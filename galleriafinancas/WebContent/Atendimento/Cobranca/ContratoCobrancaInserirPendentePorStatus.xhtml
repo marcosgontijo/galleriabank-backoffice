@@ -173,6 +173,10 @@
 											<p:ajax event="valueChange" update=":form:Status"
 												listener="#{contratoCobrancaMB.changeAvaliadorLaudo}" />
 										</p:selectOneMenu>
+										
+										<p:outputLabel value="#{contratoCobrancaMB.contratosLaudo}"
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}"/>
+										<p:spacer></p:spacer>
 
 										<p:outputLabel styleClass="labelBold"
 											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial 
@@ -1116,8 +1120,8 @@
 					</p:panel>
 				</h:panelGroup>
 				
-				<h:panelGroup id="comentarioPendenciaPanel" style="margin-bottom:20px;">
-					<p:panel header="Comentário de Pendencia" rendered="#{contratoCobrancaMB.objetoContratoCobranca.comentarioPendencia != null and contratoCobrancaMB.objetoContratoCobranca.comentarioPendencia != '' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC'}">
+				<h:panelGroup id="comentarioPendenciaPanel" style="margin-bottom:20px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">
+					<p:panel header="Comentário de Pendencia" rendered="#{contratoCobrancaMB.objetoContratoCobranca.comentarioPendencia != null and contratoCobrancaMB.objetoContratoCobranca.comentarioPendencia != '' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">
 						<h:panelGrid columns="2">
 							<p:outputLabel for="comentarioPendencia" value="Comentário da Pendência: "
 								styleClass="labelBold" />
@@ -3052,11 +3056,6 @@
 							value="#{contratoCobrancaMB.objetoImovelCobranca.bairro}"
 							label="Bairro" onblur="" style="width:400px;" />
 
-						<p:outputLabel for="CidadeImovel" value="Cidade: " />
-						<p:inputText id="CidadeImovel"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.cidade}"
-							label="Cidade" onblur="" style="width:400px;" />
-
 						<p:outputLabel for="EstadoImovel" value="Estado: " />
 						<p:selectOneMenu id="EstadoImovel"
 							value="#{contratoCobrancaMB.objetoImovelCobranca.estado}"
@@ -3089,7 +3088,22 @@
 							<f:selectItem itemValue="SP" itemLabel="São Paulo" />
 							<f:selectItem itemValue="SE" itemLabel="Sergipe" />
 							<f:selectItem itemValue="TO" itemLabel="Tocantins" />
+							<p:ajax event="valueChange" update="CidadeImovel" 
+								listener="#{contratoCobrancaMB.objetoImovelCobranca.completeCidadesImovel}" />
 						</p:selectOneMenu>
+						
+						<p:outputLabel for="CidadeImovel" value="Cidade" style="FONT-SIZE: 10pt;" />
+						<p:autoComplete id="CidadeImovel" value="#{contratoCobrancaMB.objetoImovelCobranca.cidade}"
+							completeMethod="#{contratoCobrancaMB.objetoImovelCobranca.completeCidadesImovel('')}" autocomplete="no" 
+							var="cidade" itemLabel="#{cidade}" itemValue="#{cidade}"  dropdown="true"
+							forceSelection="false"
+							scrollHeight="250">
+						</p:autoComplete>
+						
+						<!-- <p:outputLabel for="CidadeImovel" value="Cidade: " />
+						<p:inputText id="CidadeImovel"
+							value="#{contratoCobrancaMB.objetoImovelCobranca.cidade}"
+							label="Cidade" onblur="" style="width:400px;" /> -->
 
 						<p:outputLabel for="linkGMapsImovel" value="Link Google Maps: " />
 						<p:inputText id="linkGMapsImovel"

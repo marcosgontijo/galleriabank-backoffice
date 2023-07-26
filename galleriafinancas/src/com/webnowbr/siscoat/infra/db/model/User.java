@@ -102,7 +102,8 @@ public final class User implements Serializable {
     private boolean profileAvaliadorImovelGalache;
     private boolean profileLaudo; 
     private boolean profilePajuNeves; 
-    private boolean profilePajuLuvison;
+    private boolean profilePajuLuvison;    
+    private boolean profileCompliance;    
     
     private boolean cadastraResponsavel;
     
@@ -707,6 +708,14 @@ public final class User implements Serializable {
 
 	public void setProfilePajuLuvison(boolean profilePajuLuvison) {
 		this.profilePajuLuvison = profilePajuLuvison;
+	}
+
+	public boolean isProfileCompliance() {
+		return profileCompliance;
+	}
+
+	public void setProfileCompliance(boolean profileCompliance) {
+		this.profileCompliance = profileCompliance;
 	}
 
 	public boolean isCadastraResponsavel() {

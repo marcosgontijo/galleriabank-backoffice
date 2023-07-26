@@ -1,11 +1,14 @@
 package com.webnowbr.siscoat.cobranca.service;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorConsulta;
+import com.webnowbr.siscoat.cobranca.db.model.RelacionamentoPagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorConsultaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
+import com.webnowbr.siscoat.cobranca.db.op.RelacionamentoPagadorRecebedorDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.common.GsonUtil;
@@ -47,10 +50,39 @@ public class PagadorRecebedorService {
 		return pagadorAdicionar;
 
 	}
+	
+	public PagadorRecebedor buscaOuInsere(String cnpjCpf) {
 
-	public void preecheDadosReceita(PagadorRecebedor pagadorAdicionar) {
+		cnpjCpf = CommonsUtil.somenteNumeros(cnpjCpf); 
+
+		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
+		
+		PagadorRecebedor pagadorRecebedor = new PagadorRecebedor();
+
+		String tipoPessoa = CommonsUtil.pessoaFisicaJuridicaCnpjCpf(cnpjCpf);
+		if (CommonsUtil.semValor(pagadorRecebedor))
+			if (CommonsUtil.mesmoValor("PF", tipoPessoa))
+				pagadorRecebedor.setCpf(CommonsUtil.formataCpf(cnpjCpf));
+			else
+				pagadorRecebedor.setCnpj(CommonsUtil.formataCnpj(cnpjCpf) );
+		
+		buscaOuInsere(pagadorRecebedor);
+		
+
+		preecheDadosReceita(pagadorRecebedor);
+		
+		pagadorRecebedorDao.merge(pagadorRecebedor);
+		
+		return pagadorRecebedor;
+
+	}
+
+	public PagadorRecebedor  preecheDadosReceita(PagadorRecebedor pagadorAdicionar) {
 		String stringResponse = null;
 		NetrinService netrinService = new NetrinService();
+		
+//		if (!CommonsUtil.semValor(pagadorAdicionar.getCpf()) || !CommonsUtil.semValor(pagadorAdicionar.getCnpj()))
+//			pagadorAdicionar = buscaOuInsere(pagadorAdicionar);
 		
 		if (!CommonsUtil.semValor(pagadorAdicionar.getCpf())) {
 
@@ -72,6 +104,7 @@ public class PagadorRecebedorService {
 			adicionarConsultaNoPagadorRecebedor(pagadorAdicionar, DocumentosAnaliseEnum.RECEITA_FEDERAL,
 					stringResponse);
 		}
+		return pagadorAdicionar;
 	}
 
 	public PagadorRecebedor findById(Long id) {
@@ -133,4 +166,14 @@ public class PagadorRecebedorService {
 
 	}
 
+	public void geraRelacionamento(PagadorRecebedor pessoaRoot, String relacao, PagadorRecebedor pessoaChild,
+			BigDecimal porcentagem) {
+		RelacionamentoPagadorRecebedor relacioanameto = 
+				new RelacionamentoPagadorRecebedor(pessoaRoot, relacao, pessoaChild, porcentagem);
+		
+		RelacionamentoPagadorRecebedorDao rDao = new RelacionamentoPagadorRecebedorDao();
+		if(rDao.verificaRelacaoExistente(pessoaRoot, pessoaChild).size() <= 0) {
+			rDao.create(relacioanameto);
+		}
+	}
 }
