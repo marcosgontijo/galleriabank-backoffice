@@ -6257,6 +6257,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setReanalisePronta(rs.getBoolean("reanalisePronta"));
 						contratoCobranca.setReanaliseJuridico(rs.getBoolean("reanaliseJuridico"));
 						contratoCobranca.setCertificadoEmitido(rs.getBoolean("certificadoEmitido"));
+						contratoCobranca.setContratoPrioridadeAlta(rs.getBoolean("contratoPrioridadeAlta"));
 						//contratoCobranca = findById(rs.getLong(1));
 						
 						ImovelCobranca imovel = new ImovelCobranca();
@@ -6287,7 +6288,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "	coco.agRegistro, coco.preAprovadoComite, coco.documentosComite, coco.aprovadoComite, coco.analiseReprovada, coco.analiseComercial, coco.comentarioJuridicoEsteira, coco.status,"
 			+ " pedidoLaudo, pedidoLaudoPajuComercial, pedidoPreLaudo, pedidoPreLaudoComercial, pedidoPajuComercial, pendenciaLaudoPaju, avaliacaoLaudo , contratoConferido, agEnvioCartorio, "
 			+ " reanalise, reanalisePronta, reanaliseJuridico, certificadoEmitido, pare.id idPagador,"
-			+ " imv.cidade, imv.estado, c2.pintarLinha"
+			+ " imv.cidade, imv.estado, c2.pintarLinha, coco.contratoPrioridadeAlta"
 			+ "	from cobranca.contratocobranca coco "
 			+ "	inner join cobranca.responsavel res on coco.responsavel = res.id "
 			+ "	inner join cobranca.pagadorrecebedor pare on pare.id = coco.pagador "
@@ -6546,7 +6547,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		    "c.avaliacaoLaudoObservacao, c.dataPrevistaVistoria, c.geracaoLaudoObservacao, c.iniciouGeracaoLaudo, c.analistaGeracaoPAJU , c.comentarioJuridicoPendente, " +
 			"c.valorAprovadoComite, c.contratoConferido, c.agEnvioCartorio, reanalise, reanalisePronta, reanaliseJuridico" +
 			" , gerente.nome nomeGerente, pr.id idPagador, res.superlogica, observacaoRenda, pagtoLaudoConfirmadaData, contatoDiferenteProprietario, c.iniciouGeracaoPaju, "
-			+ " im.estado " +
+			+ " im.estado, contratoPrioridadeAlta " +
 			"from cobranca.contratocobranca c " +		
 			"inner join cobranca.responsavel res on c.responsavel = res.id " +
 			"inner join cobranca.pagadorrecebedor pr on pr.id = c.pagador " +
@@ -6911,6 +6912,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setPagtoLaudoConfirmadaData(rs.getTimestamp("pagtoLaudoConfirmadaData"));
 						contratoCobranca.setContatoDiferenteProprietario(rs.getBoolean("contatoDiferenteProprietario"));
 						contratoCobranca.setIniciouGeracaoPaju(rs.getBoolean("iniciouGeracaoPaju"));
+						contratoCobranca.setContratoPrioridadeAlta(rs.getBoolean("contratoPrioridadeAlta"));
 					
 						ImovelCobranca imovel = new ImovelCobranca();
 						imovel.setCidade(rs.getString("cidade"));

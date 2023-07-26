@@ -87,6 +87,10 @@
 		    background-color: #5bcfd8;  
 		}
 		
+		.ui-datatable .ui-datatable-data .linhaRosa td{
+		    background-color: #ff80ff;  
+		}
+		
 
 		.campoRequerido {
 			color: #cd0a0a;

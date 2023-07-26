@@ -33,8 +33,11 @@
 			<p:messages id="mensagens" showDetail="true"/>									
 			<p:panel id="ConsultaContratos" header="Pré-Contratos #{contratoCobrancaMB.tituloTelaConsultaPreStatus} - Consultar" style="margin-bottom:10px;">					    		    
    		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratosPendentes}" selection="" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending"
-   		         rowStyleClass="#{contratos.iniciouGeracaoLaudo eq true ? 'parcelaPaga' : '' } #{(contratos.cadastroAprovadoValor eq 'Pendente') ? 'linhaRoxa' : '' }
-   		         #{(contratos.pendenciaLaudoPaju eq true) ? 'parcelaparcial' : '' } #{(contratos.responsavel.superlogica) ? 'superlogica' : '' }"
+   		         rowStyleClass="#{contratos.iniciouGeracaoLaudo eq true ? 'parcelaPaga' : '' }
+   		          	#{(contratos.cadastroAprovadoValor eq 'Pendente') ? 'linhaRoxa' : '' }
+   		         	#{(contratos.pendenciaLaudoPaju eq true) ? 'parcelaparcial' : '' } 
+   		         	#{(contratos.responsavel.superlogica) ? 'superlogica' : '' }
+   		         	#{(contratos.contratoPrioridadeAlta eq true) ? 'linhaRosa' : '' }"
    		         rows="50"
                  paginator="true"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"

@@ -1649,7 +1649,7 @@
 
 				<h:panelGroup id="RecebidoPajulaudoPanel"
 					style="margin-bottom:20px;">
-					<p:panel rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}" header="Recebido PAJU e laudo">
+					<p:panel header="Recebido PAJU e laudo">
 						<h:panelGrid columns="2">				
 							<h:panelGrid columns="2">							
 								<p:outputLabel for="valorPreLaudo"
@@ -1733,8 +1733,7 @@
 							</h:panelGrid>					
 						</h:panelGrid>
 						
-						<h:panelGrid columns="2"
-							rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel == true}">
+						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel == true}">
 							<p:outputLabel for="comentarioJuridico"
 								value="Comentario Juridico: " styleClass="labelBold" />
 							<h:panelGroup>
