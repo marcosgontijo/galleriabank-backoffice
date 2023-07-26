@@ -23,10 +23,10 @@ import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 
 public class ConsultasMB {
 		private String cpfCnpj;
-		private String retornoSerasa;
-		private String retornoCenprot;
-		private String retornoProtestos;
-		private String retornoPEP;
+//		private String retornoSerasa;
+//		private String retornoCenprot;
+//		private String retornoProtestos;
+//		private String retornoPEP;
 		
 		
 		public String clear() {
@@ -36,18 +36,18 @@ public class ConsultasMB {
 		}
 		public void consultaSerasa() throws MalformedURLException, ProtocolException, UnsupportedEncodingException, IOException  {
 			SerasaService serasa = new SerasaService();
-			retornoSerasa =	serasa.serasaCriarConsulta(cpfCnpj);
+			String retornoSerasa =	serasa.serasaCriarConsulta(cpfCnpj);
 			String docBase64 = serasa.baixarDocumentoConsulta(retornoSerasa, "PF");
-			decodarBaixarArquivo(cpfCnpj, docBase64);
+			decodarBaixarArquivo(retornoSerasa, docBase64);
 			
 			
 		}
 		public void consultaCenprot() throws Exception{
 			NetrinService cenprot = new NetrinService();
-			retornoCenprot = cenprot.netrinCriarConsultaCenprot(cpfCnpj);
+			String retornoCenprot = cenprot.netrinCriarConsultaCenprot(cpfCnpj);
 			String doc = cenprot.baixarDocumentoCenprot(retornoCenprot);
 			decodarBaixarArquivo(cpfCnpj, doc);
-		
+
 		}
 		public StreamedContent decodarBaixarArquivo(String cpfCnpj, String base64 ) {
 
@@ -65,34 +65,14 @@ public class ConsultasMB {
 			gerador.close();
 			return null;
 		}
-
-
+		
 		public String getCpfCnpj() {
 			return cpfCnpj;
 		}
+
 		public void setCpfCnpj(String cpfCnpj) {
 			this.cpfCnpj = cpfCnpj;
 		}
-		public String getRetornoProtestos() {
-			return retornoProtestos;
-		}
-		public void setRetornoProtestos(String retornoProtestos) {
-			this.retornoProtestos = retornoProtestos;
-		}
-		public String getRetornoCenprot() {
-			return retornoCenprot;
-		}
-		public void setRetornoCenprot(String retornoCenprot) {
-			this.retornoCenprot = retornoCenprot;
-		}
-		public String getRetornoPEP() {
-			return retornoPEP;
-		}
-		public void setRetornoPEP(String retornoPEP) {
-			this.retornoPEP = retornoPEP;
-		}
-		
-		
 
 	}
 	
