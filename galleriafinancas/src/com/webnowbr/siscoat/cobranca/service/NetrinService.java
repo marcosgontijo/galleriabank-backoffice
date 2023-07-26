@@ -153,7 +153,11 @@ public class NetrinService {
 		return null;
 	}
 
-	public String baixarDocumento(DocumentoAnalise documentoAnalise) { // POST para gerar consulta
+	public String baixarDocumento(DocumentoAnalise documentoAnalise) {
+		return baixarDocumentoCenprot(documentoAnalise.getRetornoCenprot());
+	}
+	
+	public String baixarDocumentoCenprot(String retornoCenprot) {
 		try {
 			String base64 = null;
 			// loginDocket();
@@ -173,7 +177,7 @@ public class NetrinService {
 			myURLConnection.setDoOutput(true);
 
 			try (OutputStream os = myURLConnection.getOutputStream()) {
-				byte[] input = documentoAnalise.getRetornoCenprot().getBytes("utf-8");
+				byte[] input = retornoCenprot.getBytes("utf-8");
 				os.write(input, 0, input.length);
 			}
 
@@ -742,7 +746,11 @@ public class NetrinService {
 		return nomeConsultado;
 	}
 
-	public String baixarDocumentoProcesso(DocumentoAnalise documentoAnalise) { // POST para gerar consulta
+	public String baixarDocumentoProcesso(DocumentoAnalise documentoAnalise) {
+		return baixarDocumentoProcesso(documentoAnalise.getRetornoProcesso());
+	}
+	
+	public String baixarDocumentoProcesso(String retornoProcesso) {
 		try {
 			String base64 = null;
 			// loginDocket();
@@ -762,7 +770,7 @@ public class NetrinService {
 			myURLConnection.setDoOutput(true);
 
 			try (OutputStream os = myURLConnection.getOutputStream()) {
-				byte[] input = documentoAnalise.getRetornoProcesso().getBytes("utf-8");
+				byte[] input = retornoProcesso.getBytes("utf-8");
 				os.write(input, 0, input.length);
 			}
 
@@ -799,7 +807,11 @@ public class NetrinService {
 		return null;
 	}
 
-	public String baixarDocumentoPpe(DocumentoAnalise documentoAnalise) { // POST para gerar consulta
+	public String baixarDocumentoPpe(DocumentoAnalise documentoAnalise) {
+		return baixarDocumentoPpe(documentoAnalise.getRetornoPpe());
+	}
+	
+	public String baixarDocumentoPpe(String retornoPpe) {
 		try {
 			String base64 = null;
 			// loginDocket();
@@ -819,7 +831,7 @@ public class NetrinService {
 			myURLConnection.setDoOutput(true);
 
 			try (OutputStream os = myURLConnection.getOutputStream()) {
-				byte[] input = documentoAnalise.getRetornoPpe().getBytes("utf-8");
+				byte[] input = retornoPpe.getBytes("utf-8");
 				os.write(input, 0, input.length);
 			}
 
