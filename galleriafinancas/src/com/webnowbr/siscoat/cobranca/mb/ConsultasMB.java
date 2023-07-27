@@ -12,9 +12,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.view.facelets.FaceletContext;
 
-import org.apache.commons.logging.Log;
 import org.primefaces.model.StreamedContent;
 
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
@@ -26,10 +24,6 @@ import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 
 public class ConsultasMB {
 		private String cpfCnpj;
-//		private String retornoSerasa;
-//		private String retornoCenprot;
-//		private String retornoProtestos;
-//		private String retornoPEP;
 		
 		
 		public String clear() {
