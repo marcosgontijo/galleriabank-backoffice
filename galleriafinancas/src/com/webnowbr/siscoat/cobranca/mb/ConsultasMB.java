@@ -14,6 +14,7 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.view.facelets.FaceletContext;
 
+import org.apache.commons.logging.Log;
 import org.primefaces.model.StreamedContent;
 
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
@@ -36,40 +37,58 @@ public class ConsultasMB {
 			return "/Atendimento/ConsultasDirectd/Consultas.xhtml";
 			
 		}
-		public void consultaSerasa() throws MalformedURLException, ProtocolException, UnsupportedEncodingException, IOException  {
+
+		public void consultaSerasa()
+				throws MalformedURLException, ProtocolException, UnsupportedEncodingException, IOException {
 			FacesContext context = FacesContext.getCurrentInstance();
 			try {
 				SerasaService serasa = new SerasaService();
 				String retornoSerasa = serasa.serasaCriarConsulta(cpfCnpj);
-				String Base64 = serasa.baixarDocumentoConsulta(retornoSerasa, "PF");
-				decodarBaixarArquivo(cpfCnpj, Base64);
-			} catch (NullPointerException e ) {
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta",""));
+				if (retornoSerasa != null) {
+					String Base64 = serasa.baixarDocumentoConsulta(retornoSerasa, "PF");
+					decodarBaixarArquivo(cpfCnpj, Base64);
+				} else {
+					context.addMessage(null,
+							new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta", ""));
+				}
+			} catch (Exception e) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta", ""));
 
 			}
 
 		}
-		public void consultaCenprot() throws Exception{
+
+		public void consultaCenprot() throws Exception {
 			FacesContext context = FacesContext.getCurrentInstance();
 			try {
-			NetrinService cenprot = new NetrinService();
-			String retornoCenprot = cenprot.netrinCriarConsultaCenprot(cpfCnpj);
-			String base64 = cenprot.baixarDocumentoCenprot(retornoCenprot);
-			decodarBaixarArquivo(cpfCnpj, base64);
-			} catch(NullPointerException e) {
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta",""));
-				
+				NetrinService cenprot = new NetrinService();
+				String retornoCenprot = cenprot.netrinCriarConsultaCenprot(cpfCnpj);
+				if (retornoCenprot != null) {
+					String base64 = cenprot.baixarDocumentoCenprot(retornoCenprot);
+					decodarBaixarArquivo(cpfCnpj, base64);
+				} else {
+
+					context.addMessage(null,
+							new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta", ""));
+				}
+			} catch (Exception e) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta", ""));
 			}
 
 		}
+
 		public void consultarProcessos() {
 			FacesContext context = FacesContext.getCurrentInstance();
 			try {
 			NetrinService processos = new NetrinService();
 			String retornoProcessos = processos.netrinCriarConsultaProcesso(cpfCnpj);
+			if(retornoProcessos != null) {
 			String base64 = processos.baixarDocumentoProcesso(retornoProcessos);
 			decodarBaixarArquivo(cpfCnpj, base64);
-			} catch(NullPointerException e) {
+			} else {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta",""));
+			}
+			} catch(Exception e) {
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta",""));
 				
 			}
@@ -79,9 +98,13 @@ public class ConsultasMB {
 			try {
 			NetrinService pep = new NetrinService();
 			String retornoPEP = pep.netrinCriarConsultaCadastroPpePF(cpfCnpj);
+			if(retornoPEP != null) {
 			String base64 = pep.baixarDocumentoPpe(retornoPEP);
 			decodarBaixarArquivo(cpfCnpj, base64);
-			} catch(NullPointerException e) {
+			} else {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta",""));
+			}
+			} catch(Exception e) {
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta",""));
 				
 			}
