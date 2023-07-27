@@ -2178,5 +2178,13 @@
 			<column name="contratoPrioridadeAlta" not-null="true" default="false"/>
 		</property>	
 		
+		<property name="contratoPrioridadeAltaData" type="java.util.Date">
+			<column name="contratoPrioridadeAltaData" />
+		</property>
+		
+		<property name="contratoPrioridadeAltaUser" type="java.lang.String">
+			<column name="contratoPrioridadeAltaUser" />
+		</property>
+		
 	</class>
 </hibernate-mapping>
