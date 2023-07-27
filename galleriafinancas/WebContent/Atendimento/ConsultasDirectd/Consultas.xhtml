@@ -13,7 +13,8 @@
 	  <p:focus /> 
 	  <p:messages/>			
 			<h:panelGrid columns="2">
-			<h:form>					
+			<h:form>	
+			<p:growl id="messages" showDetail="true" sticky="true" />			
 				<p:outputLabel  value="CPF " styleClass="labelBold" style="margin-right: 20px;" />
 				<p:inputMask id="CPF" value="#{consultasMB.cpfCnpj}" label="CNPJ" mask="999.999.999-99" required="true"/>
 													
@@ -28,5 +29,6 @@
 					</h:form>					
 </h:panelGrid>
 	  </p:panel>
+	  
 	  </ui:define>
 	  </ui:composition>

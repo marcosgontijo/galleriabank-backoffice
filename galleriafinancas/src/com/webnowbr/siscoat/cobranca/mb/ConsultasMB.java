@@ -8,9 +8,11 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.util.Base64;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.view.facelets.FaceletContext;
 
 import org.primefaces.model.StreamedContent;
 
@@ -35,31 +37,54 @@ public class ConsultasMB {
 			
 		}
 		public void consultaSerasa() throws MalformedURLException, ProtocolException, UnsupportedEncodingException, IOException  {
-			SerasaService serasa = new SerasaService();
-			String retornoSerasa =	serasa.serasaCriarConsulta(cpfCnpj);
-			String Base64 = serasa.baixarDocumentoConsulta(retornoSerasa, "PF");
-			decodarBaixarArquivo(cpfCnpj, Base64);
-			
-			
+			FacesContext context = FacesContext.getCurrentInstance();
+			try {
+				SerasaService serasa = new SerasaService();
+				String retornoSerasa = serasa.serasaCriarConsulta(cpfCnpj);
+				String Base64 = serasa.baixarDocumentoConsulta(retornoSerasa, "PF");
+				decodarBaixarArquivo(cpfCnpj, Base64);
+			} catch (NullPointerException e ) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta",""));
+
+			}
+
 		}
 		public void consultaCenprot() throws Exception{
+			FacesContext context = FacesContext.getCurrentInstance();
+			try {
 			NetrinService cenprot = new NetrinService();
 			String retornoCenprot = cenprot.netrinCriarConsultaCenprot(cpfCnpj);
 			String base64 = cenprot.baixarDocumentoCenprot(retornoCenprot);
 			decodarBaixarArquivo(cpfCnpj, base64);
+			} catch(NullPointerException e) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta",""));
+				
+			}
 
 		}
 		public void consultarProcessos() {
+			FacesContext context = FacesContext.getCurrentInstance();
+			try {
 			NetrinService processos = new NetrinService();
 			String retornoProcessos = processos.netrinCriarConsultaProcesso(cpfCnpj);
 			String base64 = processos.baixarDocumentoProcesso(retornoProcessos);
 			decodarBaixarArquivo(cpfCnpj, base64);
+			} catch(NullPointerException e) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta",""));
+				
+			}
 		}
 		public void consultaPEP() {
+			FacesContext context = FacesContext.getCurrentInstance();
+			try {
 			NetrinService pep = new NetrinService();
 			String retornoPEP = pep.netrinCriarConsultaCadastroPpePF(cpfCnpj);
 			String base64 = pep.baixarDocumentoPpe(retornoPEP);
 			decodarBaixarArquivo(cpfCnpj, base64);
+			} catch(NullPointerException e) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta",""));
+				
+			}
 			
 		}
 		public StreamedContent decodarBaixarArquivo(String cpfCnpj, String base64 ) {
