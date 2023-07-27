@@ -70,10 +70,10 @@ public class DocumentoAnalise implements Serializable {
 		EngineRetorno engine = null;
 		try {
 			engine = GsonUtil.fromJson(getRetornoEngine(), EngineRetorno.class);
-		} catch(Exception erro) {
+		} catch (Exception erro) {
 			result.add(new DocumentoAnaliseResumo(null, null));
 		}
-		
+
 		if (engine == null) {
 			result.add(new DocumentoAnaliseResumo("nâo disponível", null));
 		} else {
@@ -192,6 +192,7 @@ public class DocumentoAnalise implements Serializable {
 					serasa.add(new DocumentoAnaliseResumo("Falência Insucesso:", falenciaInsuceso));
 				}
 			} else {
+
 				if (CommonsUtil.mesmoValor(tipoPessoa, "PF")) {
 
 					if (dados.getChequeSemFundo() == null) {
@@ -308,14 +309,14 @@ public class DocumentoAnalise implements Serializable {
 						.formataValorMonetario(dado.getResumoDoClienteTraduzido().getCarteiraVencido());
 				scr.add(new DocumentoAnaliseResumo("Carteira vencido:", carteiraVencido));
 			}
-			
+
 			if (dado.getResumoDoClienteTraduzido().getPrejuizo() == null) {
 				scr.add(new DocumentoAnaliseResumo("Prejuizo:", "Não Disponível"));
 			} else {
 				String prejuizo = CommonsUtil.formataValorMonetario(dado.getResumoDoClienteTraduzido().getPrejuizo());
 				scr.add(new DocumentoAnaliseResumo("Prejuizo:", prejuizo));
 			}
-			
+
 			if (dado.getResumoDoClienteTraduzido().getCarteiradeCredito() == null) {
 				scr.add(new DocumentoAnaliseResumo("Carteira de Crédito Tomado:", "Não Disponível"));
 			} else {
