@@ -37,17 +37,30 @@ public class ConsultasMB {
 		public void consultaSerasa() throws MalformedURLException, ProtocolException, UnsupportedEncodingException, IOException  {
 			SerasaService serasa = new SerasaService();
 			String retornoSerasa =	serasa.serasaCriarConsulta(cpfCnpj);
-			String docBase64 = serasa.baixarDocumentoConsulta(retornoSerasa, "PF");
-			decodarBaixarArquivo(retornoSerasa, docBase64);
+			String Base64 = serasa.baixarDocumentoConsulta(retornoSerasa, "PF");
+			decodarBaixarArquivo(cpfCnpj, Base64);
 			
 			
 		}
 		public void consultaCenprot() throws Exception{
 			NetrinService cenprot = new NetrinService();
 			String retornoCenprot = cenprot.netrinCriarConsultaCenprot(cpfCnpj);
-			String doc = cenprot.baixarDocumentoCenprot(retornoCenprot);
-			decodarBaixarArquivo(cpfCnpj, doc);
+			String base64 = cenprot.baixarDocumentoCenprot(retornoCenprot);
+			decodarBaixarArquivo(cpfCnpj, base64);
 
+		}
+		public void consultarProcessos() {
+			NetrinService processos = new NetrinService();
+			String retornoProcessos = processos.netrinCriarConsultaProcesso(cpfCnpj);
+			String base64 = processos.baixarDocumentoProcesso(retornoProcessos);
+			decodarBaixarArquivo(cpfCnpj, base64);
+		}
+		public void consultaPEP() {
+			NetrinService pep = new NetrinService();
+			String retornoPEP = pep.netrinCriarConsultaCadastroPpePF(cpfCnpj);
+			String base64 = pep.baixarDocumentoPpe(retornoPEP);
+			decodarBaixarArquivo(cpfCnpj, base64);
+			
 		}
 		public StreamedContent decodarBaixarArquivo(String cpfCnpj, String base64 ) {
 
