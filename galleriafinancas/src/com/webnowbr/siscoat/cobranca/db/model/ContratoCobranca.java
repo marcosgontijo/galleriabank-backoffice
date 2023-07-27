@@ -14,7 +14,6 @@ import java.util.Set;
 
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.infra.db.model.User;
-import com.webnowbr.siscoat.security.LoginBean;
 
 public class ContratoCobranca implements Serializable {
 
@@ -814,6 +813,8 @@ public class ContratoCobranca implements Serializable {
 	private int totalCertidoesDocket;
 	private int certidoesProntas;
 	private boolean contratoPrioridadeAlta;
+	private Date contratoPrioridadeAltaData;
+	private String contratoPrioridadeAltaUser;
 
 	//FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13	
 	public BigDecimal calcularValorTotalContasPagas() {
@@ -6685,6 +6686,22 @@ public class ContratoCobranca implements Serializable {
 
 	public void setContratoPrioridadeAlta(boolean contratoPrioridadeAlta) {
 		this.contratoPrioridadeAlta = contratoPrioridadeAlta;
+	}
+	
+	public Date getContratoPrioridadeAltaData() {
+		return contratoPrioridadeAltaData;
+	}
+
+	public void setContratoPrioridadeAltaData(Date contratoPrioridadeAltaData) {
+		this.contratoPrioridadeAltaData = contratoPrioridadeAltaData;
+	}
+	
+	public String getContratoPrioridadeAltaUser() {
+		return contratoPrioridadeAltaUser;
+	}
+
+	public void setContratoPrioridadeAltaUser(String contratoPrioridadeAltaUser) {
+		this.contratoPrioridadeAltaUser = contratoPrioridadeAltaUser;
 	}
 
 	public String getIspbPixContaPagar() {
