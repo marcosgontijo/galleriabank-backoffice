@@ -499,12 +499,12 @@ public class CcbMB {
 				this.objetoCcb.setCCBBanco(participanteSelecionado.getPessoa().getBanco());
 				String[] banco = participanteSelecionado.getPessoa().getBanco().split(Pattern.quote("|"));
 				if (CommonsUtil.semValor(this.objetoCcb.getNomeBanco())) {
-					if (!CommonsUtil.semValor(banco) || banco.length > 1) {
+					if (!CommonsUtil.semValor(banco) && banco.length > 1) {
 						this.objetoCcb.setNomeBanco(CommonsUtil.trimNull(banco[1]));
 					}
 				}
 				if (CommonsUtil.semValor(this.objetoCcb.getNumeroBanco())) {
-					if (!CommonsUtil.semValor(banco) || banco.length > 1) {
+					if (!CommonsUtil.semValor(banco) && banco.length > 0) {
 						this.objetoCcb.setNumeroBanco(CommonsUtil.trimNull(banco[0]));
 					}
 				}

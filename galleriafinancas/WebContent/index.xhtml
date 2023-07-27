@@ -19,14 +19,7 @@
 			name="font-awesome/5.8.2/css/v4-shims.min-jsf.css" />
 		<script src="#{request.contextPath}/resources/js/functions.js"></script>
         <script src="#{request.contextPath}/resources/js/locale-primefaces.js"></script>
-        
-        <h:outputStylesheet >
-			.ui-dataview .ui-dataview-header {
-			    border-bottom: 0 none;
-			    display: none;
-			}
-						
-		</h:outputStylesheet>
+ 
 		<meta http-equiv="Access-Control-Allow-Origin" content="*"/>
     </h:head>
 	<h:body onload="register_tab_GUID()">    
@@ -785,15 +778,31 @@
 	<p:dialog widgetVar="dlgTermos" showEffect="fade" modal="true" closable="false"
 		width="1000" height="570" minWidth="800">
 		
-		<h:form id="termoForm">
-			<iframe scrolling="yes" id="termoPdf"
+		<h:form id="termoForm" onsubmit="handleResponse(xhr, status, args)">
+		
+			<p:dialog modal="true" widgetVar="statusDialog" header="Carregando próximo termo" draggable="false" closable="false" resizable="false">
+				<p:graphicImage name="image/ajaxloadingbar.gif" />
+			</p:dialog>
+		
+			<div id="top"/>
+		
+			<div align="center">
+				<img src="#{termoMB.carregaPdfTermo()}" alt="Red dot"  />
+			</div>
+			
+			<!--  
+			<iframe scrolling="yes" id="termoPdf" name="termoPdf"
 				style="height: 540; width: 100%" height="540" width="100%"
 				src="#{termoMB.carregaPdfTermo()}">
-				 
 			</iframe>
+			-->
+			
 			<div align="center">
 				<p:commandButton value="Aceitar" ajax="true" icon="ui-icon-check" id="btnAceite"
 					update=":termoForm" action="#{termoMB.aceitar()}"
+					widgetVar="btnAceite" 
+					onclick="PF('btnAceite').disable(); PF('statusDialog').show()"
+					oncomplete="javascript:window.location='#top' ; PF('statusDialog').hide()"
 					style="TEXT-DECORATION: bold;" />
 			</div>
 		</h:form>
