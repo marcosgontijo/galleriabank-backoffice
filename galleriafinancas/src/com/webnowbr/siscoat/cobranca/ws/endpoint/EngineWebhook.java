@@ -137,10 +137,6 @@ public class EngineWebhook {
 					}
 
 					documentoAnaliseDao.merge(documentoAnalise);
-<<<<<<< HEAD
-					
-=======
->>>>>>> refs/remotes/origin/master
 
 					String motivo = "Empresa Vinculada ao Proprietario Atual";
 					if (!CommonsUtil.mesmoValor(documentoAnalise.getMotivoAnalise().toUpperCase(),

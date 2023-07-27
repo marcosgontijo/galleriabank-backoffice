@@ -11,6 +11,8 @@ import java.net.URL;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
+import org.json.JSONObject;
+
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorConsulta;
@@ -18,6 +20,7 @@ import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
+import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 
 import br.com.galleriabank.netrin.cliente.model.contabancaria.ValidaContaBancariaRequest;
@@ -26,7 +29,6 @@ import br.com.galleriabank.netrin.cliente.model.contabancaria.ValidaPixRequest;
 import br.com.galleriabank.netrin.cliente.model.contabancaria.ValidaPixResponse;
 import br.com.galleriabank.netrin.cliente.model.receitafederal.ReceitaFederalPF;
 import br.com.galleriabank.netrin.cliente.model.receitafederal.ReceitaFederalPJ;
-import br.com.galleriabank.serasacrednet.cliente.util.GsonUtil;
 
 public class NetrinService {
 
@@ -62,7 +64,7 @@ public class NetrinService {
 		else {
 			String consultaRetorno = netrinCriarExecutaConsultaCenprot(cnpjCpf);
 			pagaPagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagadorRecebedor, DocumentosAnaliseEnum.CENPROT,
-					GsonUtil.toJson(consultaRetorno));
+					consultaRetorno);
 			return consultaRetorno;
 		}
 	}
@@ -100,13 +102,14 @@ public class NetrinService {
 	}
 
 	public String netrinCriarExecutaConsultaCenprot(String cnpjcpf) { // POST para gerar consulta
-
-		if (SiscoatConstants.DEV)
-			return "{\"cpfCnpj\":\"02167765975\",\"data\":\"2023-06-26T15:35:25.732-03:00\",\"cenprotProtestos\":{\"code\":606,\"message\":\"Não encontrado\",\"ac\":null,\"al\":null,\"ap\":null,\"am\":null,\"ba\":null,\"ce\":null,\"df\":null,\"es\":null,\"go\":null,\"ma\":null,\"mt\":null,\"ms\":null,\"mg\":null,\"pa\":null,\"pb\":null,\"pr\":null,\"pe\":null,\"pi\":null,\"rj\":null,\"rn\":null,\"rs\":null,\"ro\":null,\"rr\":null,\"sc\":null,\"sp\":null,\"se\":null,\"to\":null,\"cartorios\":null,\"protestosBrasil\":{\"estados\":[]}}}";
-
+		String retornoConsulta;
+		if (SiscoatConstants.DEV) {
+			retornoConsulta = "{\"cpfCnpj\":\"43180429879\",\"data\":\"2023-07-11T15:53:59.070-03:00\",\"cenprotProtestos\":{\"code\":606,\"message\":\"Não encontrado\",\"ac\":null,\"al\":null,\"ap\":null,\"am\":null,\"ba\":null,\"ce\":null,\"df\":null,\"es\":null,\"go\":null,\"ma\":null,\"mt\":null,\"ms\":null,\"mg\":null,\"pa\":null,\"pb\":null,\"pr\":null,\"pe\":null,\"pi\":null,\"rj\":null,\"rn\":null,\"rs\":null,\"ro\":null,\"rr\":null,\"sc\":null,\"sp\":null,\"se\":null,\"to\":null,\"cartorios\":null,\"protestosBrasil\":{\"estados\":[]}}}";
+			return retornoConsulta;
+		}
 		try {
 			// loginDocket();
-			String retornoConsulta;
+			
 			int HTTP_COD_SUCESSO = 200;
 
 			URL myURL;
@@ -169,7 +172,7 @@ public class NetrinService {
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
 			myURLConnection.setRequestMethod("POST");
 			myURLConnection.setUseCaches(false);
-			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept", "text/html");
 			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
 			myURLConnection.setRequestProperty("Content-Type", "application/json");
 			myURLConnection.setRequestProperty("Authorization",
@@ -383,7 +386,7 @@ public class NetrinService {
 			String consultaRetorno = netrinCriarExecutaConsultaCadastroPpePF(CommonsUtil.pessoaFisicaJuridicaCnpjCpf(cnpjCpf),
 					pagadorRecebedor.getNome());
 			pagaPagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagadorRecebedor,
-					DocumentosAnaliseEnum.PPE, GsonUtil.toJson(consultaRetorno));
+					DocumentosAnaliseEnum.PPE, consultaRetorno);
 			return consultaRetorno;
 		}
 	}
@@ -391,7 +394,7 @@ public class NetrinService {
 	public String netrinCriarExecutaConsultaCadastroPpePF(String cnpjcpf, String nomeConsultado) {
 
 		if (SiscoatConstants.DEV)
-			return "{\"cpf\":\"02167765975\",\"nome\":\"Adriana Florencio Dos Santos Borges \",\"data\":\"2023-06-26T15:35:20.724-03:00\",\"pepKyc\":{\"currentlySanctioned\":\"Não\",\"last30DaysSanctions\":0,\"last90DaysSanctions\":0,\"last180DaysSanctions\":0,\"last365DaysSanctions\":0,\"currentlyPEP\":\"Não\",\"lastYearOccurencePEP\":0,\"last3YearsOccurencePEP\":0,\"last5YearsOccurencePEP\":0,\"last5PlusYearsOccurencePEP\":0,\"historyPEP\":[{\"currentlySanctioned\":null,\"level\":\"\",\"jobTitle\":\"\",\"department\":\"\",\"motive\":\"\",\"startDate\":\"\",\"endDate\":\"\"}],\"sanctionsHistory\":[{\"source\":\"interpol\",\"type\":\"Law Enforcement\",\"standardizedSanctionType\":\"ARREST WARRANTS\",\"matchRate\":\"48\",\"nameUniquenessScore\":\"1\",\"startDate\":\"0001-01-01T00:00:00\",\"endDate\":\"9999-12-31T23:59:59.9999999\",\"details\":{\"originalName\":\"ADRIANA FLORENCIO DOS SANTOS BORGES\",\"sanctionName\":\"ADRIANA HERLINDA ARANGO JARAMILLO\",\"sanctionAliases\":null,\"remarks\":null}}]}}";
+			return "{\"cpf\":\"43180429879\",\"nome\":\"Edielma Candido da Silva\",\"data\":\"2023-07-11T15:53:53.771-03:00\",\"pepKyc\":{\"currentlySanctioned\":\"Não\",\"last30DaysSanctions\":0,\"last90DaysSanctions\":0,\"last180DaysSanctions\":0,\"last365DaysSanctions\":0,\"currentlyPEP\":\"Não\",\"lastYearOccurencePEP\":0,\"last3YearsOccurencePEP\":0,\"last5YearsOccurencePEP\":0,\"last5PlusYearsOccurencePEP\":0,\"historyPEP\":[{\"currentlySanctioned\":null,\"level\":\"\",\"jobTitle\":\"\",\"department\":\"\",\"motive\":\"\",\"startDate\":\"\",\"endDate\":\"\"}],\"sanctionsHistory\":[{\"source\":\"\",\"type\":\"\",\"standardizedSanctionType\":\"\",\"matchRate\":\"\",\"nameUniquenessScore\":\"\",\"startDate\":\"\",\"endDate\":\"\",\"details\":{},\"detailsTratado\":[]}],\"code\":null,\"message\":null}}";
 
 		try {
 			int HTTP_COD_SUCESSO = 200;
@@ -625,7 +628,7 @@ public class NetrinService {
 			String consultaRetorno = netrinCriarExecutaConsultaProcesso(
 					CommonsUtil.pessoaFisicaJuridicaCnpjCpf(cnpjCpf), cnpjCpf, pagadorRecebedor.getNome());
 			pagaPagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagadorRecebedor,
-					DocumentosAnaliseEnum.PROCESSO, GsonUtil.toJson(consultaRetorno));
+					DocumentosAnaliseEnum.PROCESSO, consultaRetorno);
 			return consultaRetorno;
 		}
 
@@ -634,7 +637,7 @@ public class NetrinService {
 	public String netrinCriarExecutaConsultaProcesso(String tipoPessoa, String cnpjcpf, String nomeConsultado) { 
 
 		if (SiscoatConstants.DEV)
-			return "{\"cpf\":\"021.677.659-75\",\"nome\":\"Adriana Florencio Dos Santos Borges \",\"data\":\"2023-06-26T15:35:22.271-03:00\",\"processosCPF\":{\"totalProcessos\":1,\"totalProcessosAutor\":1,\"totalProcessosReu\":0,\"processosUltimos180dias\":0,\"processos\":[{\"numero\":\"50105873120214047204\",\"dataNotificacao\":\"2021-08-18T11:50:05\",\"tipo\":\"CUMPRIMENTO DE SENTENCA CONTRA A FAZENDA PUBLICA\",\"assuntoPrincipal\":\"APOSENTADORIA POR TEMPO DE CONTRIBUICAO (ART. 55/6), BENEFICIOS EM ESPECIE, DIREITO PREVIDENCIARIO\",\"status\":\"MOVIMENTO\",\"varaJulgadora\":\"JUIZO SUBSTITUTO DA 1 VF DE CONCORDIA\",\"tribunal\":\"JFSC\",\"tribunalLevel\":\"1\",\"tribunalTipo\":\"FAZENDA\",\"tribunalCidade\":\"CONCORDIA\",\"estado\":\"SC\",\"partes\":[{\"nome\":\"JOAO PAULO MORRETTI DE SOUZA\",\"posicao\":\"NEUTRAL\",\"tipo\":\"JUIZ\"},{\"nome\":\"ADRIANA FLORENCIO DOS SANTOS BORGES\",\"posicao\":\"ACTIVE\",\"tipo\":\"REQUERENTE\"},{\"nome\":\"INSTITUTO NACIONAL DO SEGURO SOCIAL INSS\",\"posicao\":\"PASSIVE\",\"tipo\":\"REQUERIDO\"},{\"nome\":\"CEAB DJ INSS SR3\",\"posicao\":\"NEUTRAL\",\"tipo\":\"AGENCIA DA PREVIDENCIA SOCIAL\"},{\"nome\":\"NUCLEO REGIONAL DE CUMPRIMENTO JEF DA 4 REGIAO\",\"posicao\":\"NEUTRAL\",\"tipo\":\"PROCURADOR\"},{\"nome\":\"MARTA WEIMER\",\"posicao\":\"NEUTRAL\",\"tipo\":\"JUIZ\"},{\"nome\":\"FLAVIO GHISLANDI CUNICO\",\"posicao\":\"NEUTRAL\",\"tipo\":\"ADVOGADO (REQUERENTE)\"},{\"nome\":\"IDESIA MAIS DA SILVA\",\"posicao\":\"NEUTRAL\",\"tipo\":\"PROCURADOR\"}],\"dataNotificacaoDate\":\"2021-08-18T00:00:00.000-03:00\"}]},\"processoResumo\":{\"criminal\":null,\"trabalhista\":null,\"tituloExtraJudicial\":null,\"tituloExecucaoFiscal\":null,\"outros\":null,\"criminalProtesto\":null,\"trabalhistaProtesto\":null,\"outrosProtesto\":null,\"extraJudicialProtesto\":null,\"execucaoFiscalProtesto\":null,\"processos\":false}}";
+			return "{\"cpf\":\"431.804.298-79\",\"nome\":\"Edielma Candido da Silva\",\"data\":\"2023-07-11T15:53:55.096-03:00\",\"processosCPF\":{\"totalProcessos\":0,\"totalProcessosAutor\":0,\"totalProcessosReu\":0,\"processosUltimos180dias\":0,\"processos\":[{\"numero\":\"\",\"dataNotificacao\":\"\",\"tipo\":\"\",\"assuntoPrincipal\":\"\",\"status\":\"\",\"varaJulgadora\":\"\",\"tribunal\":\"\",\"tribunalLevel\":\"\",\"tribunalTipo\":\"\",\"tribunalCidade\":\"\",\"estado\":\"\",\"partes\":null,\"dataNotificacaoDate\":null}],\"code\":null,\"message\":null},\"processoResumo\":{\"criminal\":null,\"trabalhista\":null,\"tituloExtraJudicial\":null,\"tituloExecucaoFiscal\":null,\"outros\":null,\"processos\":false,\"extraJudicialProtesto\":null,\"execucaoFiscalProtesto\":null,\"criminalProtesto\":null,\"trabalhistaProtesto\":null,\"outrosProtesto\":null}}";
 
 		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
 		PagadorRecebedor pagadorRecebedor = pagadorRecebedorService.buscaOuInsere(cnpjcpf);

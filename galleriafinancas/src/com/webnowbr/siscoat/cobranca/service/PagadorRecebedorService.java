@@ -60,13 +60,12 @@ public class PagadorRecebedorService {
 		PagadorRecebedor pagadorRecebedor = new PagadorRecebedor();
 
 		String tipoPessoa = CommonsUtil.pessoaFisicaJuridicaCnpjCpf(cnpjCpf);
-		if (CommonsUtil.semValor(pagadorRecebedor))
 			if (CommonsUtil.mesmoValor("PF", tipoPessoa))
 				pagadorRecebedor.setCpf(CommonsUtil.formataCpf(cnpjCpf));
 			else
 				pagadorRecebedor.setCnpj(CommonsUtil.formataCnpj(cnpjCpf) );
 		
-		buscaOuInsere(pagadorRecebedor);
+			pagadorRecebedor = buscaOuInsere(pagadorRecebedor);
 		
 
 		preecheDadosReceita(pagadorRecebedor);
@@ -134,10 +133,10 @@ public class PagadorRecebedorService {
 	public void adicionarConsultaNoPagadorRecebedor(PagadorRecebedor pagador, DocumentosAnaliseEnum tipoConsulta,
 			String consulta) {
 
-		PagadorRecebedorConsultaDao PagadorRecebedorConsultaDao = new PagadorRecebedorConsultaDao();
+		PagadorRecebedorConsultaDao pagadorRecebedorConsultaDao = new PagadorRecebedorConsultaDao();
 
 		// buscando ultima consutla do pagador
-		PagadorRecebedorConsulta pagadorRecebedorConsulta = PagadorRecebedorConsultaDao
+		PagadorRecebedorConsulta pagadorRecebedorConsulta = pagadorRecebedorConsultaDao
 				.getConsultaByPagadorAndTipo(pagador, tipoConsulta);
 		if (pagadorRecebedorConsulta == null) {
 			pagadorRecebedorConsulta = new PagadorRecebedorConsulta();
@@ -147,10 +146,10 @@ public class PagadorRecebedorService {
 		pagadorRecebedorConsulta.setPessoa(pagador);
 		pagadorRecebedorConsulta.setTipoEnum(tipoConsulta);
 
-		if (CommonsUtil.semValor(pagadorRecebedorConsulta.getId()))
-			PagadorRecebedorConsultaDao.create(pagadorRecebedorConsulta);
-		else
-			PagadorRecebedorConsultaDao.merge(pagadorRecebedorConsulta);
+//		if (CommonsUtil.semValor(pagadorRecebedorConsulta.getId()))
+//			PagadorRecebedorConsultaDao.create(pagadorRecebedorConsulta);
+//		else
+		pagadorRecebedorConsultaDao.merge(pagadorRecebedorConsulta);
 
 	}
 

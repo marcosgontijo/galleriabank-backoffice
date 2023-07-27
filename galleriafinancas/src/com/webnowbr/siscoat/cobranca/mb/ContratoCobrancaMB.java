@@ -5555,7 +5555,7 @@ public class ContratoCobrancaMB {
 		return "";
 	}
 
-	public String downloadModeloPaju() throws SiscoatException {	
+	public String downloadModeloPaju1() throws SiscoatException {	
 		PajuService pajuService = new PajuService();
 		String arquivoWord = "ModeloParecerJuridico.docx";
 		byte[] modeloPaju = pajuService.generateModeloPaju(this.objetoContratoCobranca, arquivoWord);
