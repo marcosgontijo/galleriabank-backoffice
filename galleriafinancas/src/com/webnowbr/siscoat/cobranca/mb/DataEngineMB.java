@@ -218,7 +218,8 @@ public class DataEngineMB {
 		
 		InputStream in = new ByteArrayInputStream(decoded);
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(FacesContext.getCurrentInstance());
-		gerador.open(String.format("Galleria Bank - Data Engine %s.pdf", ""));
+		String nomeArquivoDownload = String.format("Galleria Bank - Data Engine %s.pdf", "");
+		gerador.open(nomeArquivoDownload);
 		gerador.feed(in);
 		gerador.close();
 		return null;

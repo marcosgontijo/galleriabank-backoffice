@@ -82,14 +82,15 @@ public class SerasaMB {
 			else
 				cnpjcpf = documentoAnalise.getPagador().getCnpj();
 		}
-		
+		String nomeArquivoDownload ="";
 		if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa()))
-			gerador.open(String.format("Galleria Bank - CredNet %s.pdf",
-					CommonsUtil.somenteNumeros(cnpjcpf)));
+			nomeArquivoDownload =String.format("Galleria Bank - CredNet %s.pdf",
+					CommonsUtil.somenteNumeros(cnpjcpf));
 		else
-			gerador.open(String.format("Galleria Bank - Relato %s.pdf",
-					CommonsUtil.somenteNumeros(cnpjcpf)));
-
+			nomeArquivoDownload = String.format("Galleria Bank - Relato %s.pdf",
+					CommonsUtil.somenteNumeros(cnpjcpf));
+		gerador.open(nomeArquivoDownload);
+		
 		gerador.feed(in);
 		gerador.close();
 		return null;

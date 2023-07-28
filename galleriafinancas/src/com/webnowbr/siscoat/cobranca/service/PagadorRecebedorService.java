@@ -42,6 +42,9 @@ public class PagadorRecebedorService {
 			} else if (!CommonsUtil.semValor(pagadorAdicionar.getCnpj())
 					&& pDao.findByFilter("cnpj", pagadorAdicionar.getCnpj()).size() > 0) {
 				pagadorAdicionar = pDao.findByFilter("cnpj", pagadorAdicionar.getCnpj()).get(0);
+			} else if (!CommonsUtil.semValor(pagadorAdicionar.getCpf())
+					&& pDao.findByFilter("cpf", pagadorAdicionar.getCpf()).size() > 0) {
+				pagadorAdicionar = pDao.findByFilter("cpf", pagadorAdicionar.getCpf()).get(0);
 			} else {
 				long idIncluido = pDao.create(pagadorAdicionar);
 				pagadorAdicionar = pDao.findById(idIncluido);

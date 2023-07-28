@@ -585,6 +585,7 @@ public class NetrinService {
 					cnpjcpf = documentoAnalise.getPagador().getCnpj();
 			}
 
+			
 			retornoConsulta = netrinCriarExecutaConsultaProcesso(documentoAnalise.getTipoPessoa(), cnpjcpf,
 					nomeConsultado);
 
