@@ -198,7 +198,8 @@
 						<h:outputText value="#{contratos.inicioAnaliseUsuario}"  escape="false" />
 					</p:column>
 					
-					<p:column style="text-align: center;width: 100px" headerText="Documentos" >
+					<p:column style="text-align: center;width: 100px" headerText="Documentos" 
+						rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico'}">
 						<p:commandButton value="Documentos"
 							icon="ui-icon-arrowthick-1-s"
 							rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico'}"

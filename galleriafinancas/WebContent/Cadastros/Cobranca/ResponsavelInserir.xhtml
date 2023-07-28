@@ -229,6 +229,15 @@
 						<p:inputText id="Complemento"
 							value="#{responsavelMB.objetoResponsavel.complemento}"
 							label="Complemento" onblur="" style="width:400px;" />
+							
+						<p:outputLabel for="cidadeFilial" value="Filial (Apenas para Comerciais internos): " />
+						<p:selectOneMenu id="cidadeFilial"
+							value="#{responsavelMB.objetoResponsavel.cidadeFilial}" label="Estado"
+							style="width:350px;">
+							<f:selectItem itemValue="" itemLabel="Escolha a Filial" />
+							<f:selectItem itemValue="Campinas" itemLabel="Campinas" />
+							<f:selectItem itemValue="Sorocaba" itemLabel="Sorocaba" />
+						</p:selectOneMenu>
 			
 						
 						<p:outputLabel value="Adicionar Usuario: " styleClass="labelBold" />

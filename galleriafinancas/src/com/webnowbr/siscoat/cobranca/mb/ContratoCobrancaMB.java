@@ -8738,6 +8738,16 @@ public class ContratoCobrancaMB {
 				PrimeFaces current = PrimeFaces.current();
 				current.executeScript("PF('listaContratosImovel').show();");
 			}
+			
+			if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Pedir PAJU")) {
+				Responsavel resp = objetoContratoCobranca.getResponsavel();
+				if (CommonsUtil.mesmoValor(resp.getCidadeFilial(), "Sorocaba")
+					|| (!CommonsUtil.semValor(resp.getDonoResponsavel()) 
+						&& CommonsUtil.mesmoValor(resp.getDonoResponsavel().getCidadeFilial(), "Sorocaba"))) {
+					objetoContratoCobranca.setAvaliacaoPaju("Luvison");
+					objetoContratoCobranca.setPagtoLaudoConfirmada(true);
+				}
+			}
 		}
 
 		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Comite")) {
@@ -13122,29 +13132,17 @@ public class ContratoCobrancaMB {
 		Locale locale = new Locale("pt", "BR");
 		Calendar dataHoje = Calendar.getInstance(zone, locale);
 		Date auxDataHoje = dataHoje.getTime();
+		
+		User user = getUsuarioLogado();
 
-		if (!status.equals("Pré-Comite")) {
+		if (CommonsUtil.mesmoValor(status, "Comentario Jurídico")
+				&& !CommonsUtil.semValor(user)
+				&& user.getId() > 0
+				&& user.isProfilePajuLuvison()) {
+			status = "Comentario Luvison";
 			this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, status);
 		} else {
-			if (loginBean != null) {
-				User usuarioLogado = new User();
-				UserDao u = new UserDao();
-				usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
-
-				if (usuarioLogado != null) {
-					if (usuarioLogado.isAdministrador() || usuarioLogado.isUserPreContratoAnalista()) {
-						this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, status);
-					} else {
-						if (usuarioLogado.getListResponsavel().size() > 0) {
-							this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(
-									usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel(), status);
-						} else {
-							this.contratosPendentes = contratoCobrancaDao
-									.geraConsultaContratosCRM(usuarioLogado.getCodigoResponsavel(), null, status);
-						}
-					}
-				}
-			}
+			this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, status);
 		}
 
 		if (status.equals("Análise Reprovada")) {

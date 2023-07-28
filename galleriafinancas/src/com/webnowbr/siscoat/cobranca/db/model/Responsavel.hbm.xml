@@ -143,5 +143,10 @@
 		<property name="tipoConta" type="java.lang.String">
 	    	<column name="tipoConta"/>
 	    </property> 	
+	    
+	    <property name="cidadeFilial" type="java.lang.String">
+	    	<column name="cidadeFilial"/>
+	    </property>
+	    
     </class>
 </hibernate-mapping>

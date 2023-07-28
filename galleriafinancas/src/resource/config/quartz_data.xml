@@ -56,5 +56,19 @@
 			</cron>
 		</trigger>
 	</schedule>
+	
+	<schedule>
+		<job>
+			<name>PajuLuvisonJob</name>
+			<job-class>com.webnowbr.siscoat.job.PajuLuvisonJob</job-class>
+		</job>
+		<trigger>
+			<cron>
+				<name>PajuLuvisonJobTrigger</name>
+				<job-name>PajuLuvisonJob</job-name>
+				<cron-expression>0 0 * ? * *</cron-expression>
+			</cron>
+		</trigger>
+	</schedule>
 
 </job-scheduling-data>

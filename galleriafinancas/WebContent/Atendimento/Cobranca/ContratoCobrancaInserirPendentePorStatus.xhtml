@@ -162,17 +162,27 @@
 
 										<p:outputLabel styleClass="labelBold"
 											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}">Avaliação Laudo: </p:outputLabel>
-										<p:selectOneMenu id="avaliacaoLaudo"
-											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudo}"
-											label="Tipo">
-											<f:selectItem itemValue="" itemLabel="" />
-											<f:selectItem itemValue="Compass" itemLabel="Compass" />
-											<f:selectItem itemValue="Galache" itemLabel="Galache" />
-											<f:selectItem itemValue="Outro" itemLabel="Outro" />
-											<p:ajax event="valueChange" update=":form:Status"
-												listener="#{contratoCobrancaMB.changeAvaliadorLaudo}" />
-										</p:selectOneMenu>
+										<h:panelGroup>
+											<h:panelGrid columns="2">
+												<p:selectOneMenu id="avaliacaoLaudo"
+													rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudo}"
+													label="Tipo">
+													<f:selectItem itemValue="" itemLabel="" />
+													<f:selectItem itemValue="Compass" itemLabel="Compass" />
+													<f:selectItem itemValue="Galache" itemLabel="Galache" />
+													<f:selectItem itemValue="Outro" itemLabel="Outro" />
+													<p:ajax event="valueChange" update=":form:Status pedirLaudoChkbox"
+														listener="#{contratoCobrancaMB.changeAvaliadorLaudo}" />
+												</p:selectOneMenu>
+	
+												<p:selectBooleanCheckbox id="pedirLaudoChkbox"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudo}"
+													onIcon="ui-icon-check" offIcon="ui-icon-close" disabled="true"
+													rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial 
+													and contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudo ne 'Outro'}" />
+											</h:panelGrid>
+										</h:panelGroup>
 										
 										<p:outputLabel value="#{contratoCobrancaMB.contratosLaudo}"
 											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}"/>
@@ -208,18 +218,28 @@
 											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial 
 											and !contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}"> Avaliação PAJU: 
 											</p:outputLabel>
-										<p:selectOneMenu id="avaliacaoPaju"
-											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial 
-											and !contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoPaju}"
-											label="Tipo">
-											<f:selectItem itemValue="" itemLabel="" />
-											<f:selectItem itemValue="Neves" itemLabel="Neves" />
-											<f:selectItem itemValue="Luvison" itemLabel="Luvison" />
-											<f:selectItem itemValue="Outro" itemLabel="Outro" />
-											<p:ajax event="valueChange" update=":form:Status"
-												listener="#{contratoCobrancaMB.changeGeracaoPAJU}" />
-										</p:selectOneMenu>
+										<h:panelGroup>
+											<h:panelGrid columns="2">
+												<p:selectOneMenu id="avaliacaoPaju"
+													rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial 
+													and !contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoPaju}"
+													label="Tipo">
+													<f:selectItem itemValue="" itemLabel="" />
+													<f:selectItem itemValue="Neves" itemLabel="Neves" />
+													<f:selectItem itemValue="Luvison" itemLabel="Luvison" />
+													<f:selectItem itemValue="Outro" itemLabel="Outro" />
+													<p:ajax event="valueChange" update=":form:Status pedirPajuChkbox"
+														listener="#{contratoCobrancaMB.changeGeracaoPAJU}" />
+												</p:selectOneMenu>
+												
+												<p:selectBooleanCheckbox id="pedirPajuChkbox"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada}"
+													onIcon="ui-icon-check" offIcon="ui-icon-close"
+													style="width:=80px" disabled="true"
+													rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}" />
+											</h:panelGrid>
+										</h:panelGroup>
 
 										<p:outputLabel styleClass="labelBold"
 											rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}">Pendenciar</p:outputLabel>
