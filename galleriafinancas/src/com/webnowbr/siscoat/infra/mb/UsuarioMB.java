@@ -514,6 +514,17 @@ public class UsuarioMB {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
+			
+			gAdm = gDao.findByFilter("acronym", "CONSULTA_INDIVIDUAL");
+			if (objetoUsuario.isConsultaIndividual()) {
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}
+			}
+			
+			
 
 
 			if (!objetoUsuario.isUserInvestidor() && !objetoUsuario.isUserPreContrato()) {

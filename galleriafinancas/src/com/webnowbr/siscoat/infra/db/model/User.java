@@ -105,7 +105,8 @@ public final class User implements Serializable {
     private boolean profilePajuLuvison;    
     private boolean profileCompliance;    
     
-    private boolean cadastraResponsavel;
+	private boolean cadastraResponsavel;
+    private boolean consultaIndividual;
     
     private List<Termo> listTermos;
     
@@ -724,5 +725,14 @@ public final class User implements Serializable {
 
 	public void setCadastraResponsavel(boolean cadastraResponsavel) {
 		this.cadastraResponsavel = cadastraResponsavel;
+	}
+
+	public boolean isConsultaIndividual() {
+		return consultaIndividual;
+	}
+
+	public void setConsultaIndividual(boolean consultaIndividual) {
+		this.consultaIndividual = consultaIndividual;
 	}	
+	
 }
