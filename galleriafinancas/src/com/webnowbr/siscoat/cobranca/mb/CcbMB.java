@@ -9420,7 +9420,8 @@ public class CcbMB {
 			if(nomeSemvirgula.contains(",")) {
 				nomeSemvirgula = nomeSemvirgula.replace(",", "");
 		    }
-			gerador.open(String.format("Galleria Bank - Instrumento Emissão CCI BMP %s.docx", ""));
+			String nomeArquivoDownload = String.format("Galleria Bank - Instrumento Emissão CCI BMP %s.docx", "");
+			gerador.open(nomeArquivoDownload);
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
 			criarCcbNosistema();	
