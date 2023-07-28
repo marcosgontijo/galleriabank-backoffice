@@ -15,8 +15,10 @@ public class DocumentoAnaliseDao extends HibernateDao<DocumentoAnalise, Long> {
 	private static final String QUERY_VERIFICA_PESSOA_ANALISE = " select id " + "from cobranca.documentosanalise "
 			+ "where contratocobranca  = ? and cnpjcpf = ? ";
 
+
 	private static final String QUERY_VERIFICA_EXCLUIDO = "select id" + " from cobranca.documentosanalise "
 			+ "where contratocobranca  = ? and excluido = false ";
+
 
 	public boolean cadastradoAnalise(ContratoCobranca contratoCobranca, String cnpjCpf) {
 		return (Boolean) executeDBOperation(new DBRunnable() {
