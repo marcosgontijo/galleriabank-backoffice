@@ -9437,9 +9437,13 @@ public class CcbMB {
 			if(nomeSemvirgula.contains(",")) {
 				nomeSemvirgula = nomeSemvirgula.replace(",", "");
 		    }
+<<<<<<< HEAD
 
 			String nomeArquivoDownload = String.format("Galleria Bank - Instrumento Emissão CCI BMP %s.docx", "");
 			gerador.open(nomeArquivoDownload);
+=======
+			gerador.open(String.format("Galleria Bank - Instrumento Emissao CCI BMP %s.docx", ""));
+>>>>>>> branch 'master' of https://github.com/webnowbr/backoffice.git
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
 			criarCcbNosistema();	
