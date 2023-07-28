@@ -292,7 +292,7 @@ public class TermoMB {
 			PDDocument doc = PDDocument.load(new File(termos.get(itermo).getPath()));
 			PDFRenderer pdfRenderer = new PDFRenderer(doc);
 
-			BufferedImage joinBufferedImage = new BufferedImage(10, 10, BufferedImage.TYPE_INT_RGB);
+			BufferedImage joinBufferedImage = new BufferedImage(1,1, BufferedImage.TYPE_INT_ARGB);
 
 			for (int x = 0; x < doc.getNumberOfPages(); x++) {
 				BufferedImage bImage = pdfRenderer.renderImageWithDPI(x, 115, org.apache.pdfbox.rendering.ImageType.RGB);
