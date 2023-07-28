@@ -791,6 +791,7 @@ public class CcbMB {
 		//listaArquivos();
 		
 		//Popular Campos para Simulação
+		this.objetoCcb.setUsarNovoCustoEmissao(true);
 		this.objetoCcb.setVlrImovel(contrato.getValorMercadoImovel());
 		this.objetoCcb.setVendaLeilao(contrato.getValorVendaForcadaImovel());
 		objetoCcb.setValorCredito(objetoContratoCobranca.getValorAprovadoComite());
@@ -9527,10 +9528,7 @@ public class CcbMB {
 			            String text = r.getText(0);		            
 			            if(CommonsUtil.semValor(text)) {
 			            	continue;
-			            }			            
-			            if(text.contains("LUCCA")) {
-			            	String aa="";
-			            }			            
+			            }				            
 			            text = trocaValoresXWPF(text, r, "cidadeEmitente", (participante.getPessoa().getCidade()));    
 			            text = trocaValoresXWPF(text, r, "ufEmitente", (participante.getPessoa().getEstado()));			            
 			            text = trocaValoresXWPF(text, r, "emissaoDia", this.objetoCcb.getDataDeEmissao().getDate());
