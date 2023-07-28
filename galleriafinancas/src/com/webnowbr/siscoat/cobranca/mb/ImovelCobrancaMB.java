@@ -63,14 +63,14 @@ public class ImovelCobrancaMB {
 		objetoImovelCobranca = new ImovelCobranca();
 		this.tituloPainel = "Adicionar";
 
-		return "ImovelCobrancaInserir.xhtml";
+		return "/Atendimento/Cobranca/ImovelCobrancaInserir.xhtml";
 	}
 	
 	public String clearFieldsEstoqueImoveis() {
 		objetoContratoCobranca = new ContratoCobranca();
 		objetoImovelCobranca = new ImovelCobranca();
 		
-		return "ImovelEstoqueConsulta.xhtml";
+		return "/Atendimento/Cobranca/ImovelEstoqueConsulta.xhtml";
 	}
 	
 	public String inserir() {
