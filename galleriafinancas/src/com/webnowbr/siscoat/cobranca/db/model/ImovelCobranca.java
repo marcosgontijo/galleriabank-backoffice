@@ -52,6 +52,8 @@ public class ImovelCobranca implements Serializable {
 	private boolean matriculaGaragemCheckList;//
 	private boolean simuladorCheckList;//
 	
+	private ImovelEstoque imovelEstoque;
+	
 	public ImovelCobranca(){
 		resetarBololean();
 	}
@@ -483,5 +485,15 @@ public class ImovelCobranca implements Serializable {
 
 	public void setInscricaoMunicipal(String inscricaoMunicipal) {
 		this.inscricaoMunicipal = inscricaoMunicipal;
-	}	
+	}
+
+	public ImovelEstoque getImovelEstoque() {
+		return imovelEstoque;
+	}
+
+	public void setImovelEstoque(ImovelEstoque imovelEstoque) {
+		this.imovelEstoque = imovelEstoque;
+	}
+
+	
 }

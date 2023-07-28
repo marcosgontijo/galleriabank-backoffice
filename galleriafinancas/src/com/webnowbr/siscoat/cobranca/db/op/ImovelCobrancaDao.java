@@ -1,16 +1,14 @@
 package com.webnowbr.siscoat.cobranca.db.op;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
-import com.webnowbr.siscoat.db.dao.*;
+import com.webnowbr.siscoat.cobranca.db.model.ImovelEstoque;
+import com.webnowbr.siscoat.db.dao.HibernateDao;
 
 /**
  * DAO access layer for the Tecnico entity
@@ -50,5 +48,7 @@ public class ImovelCobrancaDao extends HibernateDao <ImovelCobranca,Long> {
 				return objects;
 			}
 		});
-	}	
+	}
+    
+    
 }

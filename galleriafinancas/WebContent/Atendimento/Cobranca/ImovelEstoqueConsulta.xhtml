@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
+
+		<ui:define name="conteudo">  
+		<h:form style="margin-bottom:10px;">				
+			<p:messages id="mensagens" showDetail="true"/>							
+			<p:panel id="ConsultaContratos" header="Pré-Contratos - #{crmMB.tituloPagina}" style="margin-bottom:10px;">		    		    
+   		         <p:dataTable id="dtContratos" var="contratos" value="#{crmMB.todosContratos}" selection="" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending"
+   		         
+   		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+   		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
+                 rowsPerPageTemplate="20,40,60,80" selection="" emptyMessage="" sortBy="#{}">
+			       
+			        <p:column style="text-align: center;width:105px;" headerText="Contrato" filterBy="#{contratos.numeroContrato}" filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
+			            <h:outputText value="#{contratos.numeroContrato}" />
+			        </p:column>		        
+			        <<p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.nomePagador}" filterMatchMode="contains" sortBy="#{contratos.nomePagador}">
+			            <h:outputText value="#{contratos.nomePagador}" />
+			        </p:column>
+			        <p:column style="text-align: center;" headerText="Cidade" filterBy="#{contratos.nomeCidadeImovel}" filterMatchMode="contains" sortBy="#{contratos.nomeCidadeImovel}">
+			            <h:outputText value="#{contratos.nomeCidadeImovel}" />
+			        </p:column>
+				</p:dataTable>
+			</p:panel>
+		</h:form>	
+	</ui:define>
+</ui:composition>	  
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="#{request.contextPath}/resources/js/functions.js"></script>
+			<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>
+			<p:messages id="mensagens" showDetail="true" />
+			
+			<p:panel id="imovelEstoque" header="Estoque de imóveis"
+				style="margin-bottom:20px;">
+				
+				<p:dataTable id="dtCcb" var="ccb" value="#{ccbMB.listaCcbs}" paginator="true" rows="20" 
+   		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+   		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
+                 rowsPerPageTemplate="20,40,60,80" selection="" emptyMessage="" sortBy="#{ccb.numeroOperacao}">
+			        <p:column style="text-align: center;" headerText="Numero CCB" filterBy="#{ccb.numeroCcb}" filterMatchMode="contains" sortBy="#{ccb.numeroCcb}">
+			            <h:outputText value="#{ccb.numeroCcb}" />
+			        </p:column>			        
+			        <p:column style="text-align: center;" headerText="Numero Contrato" filterBy="#{ccb.numeroOperacao}" filterMatchMode="contains" sortBy="#{ccb.numeroOperacao}">
+			            <h:outputText value="#{ccb.numeroOperacao}" />
+			        </p:column>
+			        <p:column style="text-align: center;" headerText="Nome Emitente" filterBy="#{ccb.nomeEmitente}" filterMatchMode="contains" sortBy="#{ccb.nomeEmitente}">
+			            <h:outputText value="#{ccb.nomeEmitente}" />
+			        </p:column>
+			        <p:column style="width:120px;">
+		                <p:commandButton action="#{ccbMB.clearFieldsEditarCcb}" ajax="false" icon="ui-icon-pencil" title="Editar">
+		               		<f:setPropertyActionListener target="#{ccbMB.objetoCcb}" value="#{ccb}" />  			        		
+			        		<f:setPropertyActionListener target="#{ccbMB.objetoContratoCobranca}" value="#{ccb.objetoContratoCobranca}" />
+		                </p:commandButton>
+		            </p:column>			        		               		        			        			           			 		
+			        <f:facet name="footer">
+						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{ccbMB.clearFieldsInserirCcb}"/>
+			        </f:facet>
+				</p:dataTable>
+				
+				
+				
+				
+				<h:panelGrid columns="2">
+					<p:outputLabel for="contrato" value="N° Operação: "
+						styleClass="labelBold" style="font-weight: bold; font-size: 18px;" />
+					<h:panelGroup>
+						<p:outputLabel id="contrato" disabled="true"
+							value="#{contasPagarMB.selectedContratoLov.numeroContrato}"
+							required="false" style="FONT-SIZE: 10pt;" />
+						<p:spacer height="10" />
+						<p:commandButton icon="ui-icon ui-icon-circle-zoomin" ajax="true"
+							action="#{contasPagarMB.pesquisaContratoCobranca}"
+							oncomplete="PF('contratoDialog').show();"
+							update="formContratos:contratoDialogdlg" />
+					</h:panelGroup>
+					
+					<p:outputLabel for="nomePagador" value="Cliente : "
+						styleClass="labelBold" style="font-weight: bold; font-size: 18px;" />
+					<p:outputLabel id="nomePagador" value="#{contasPagarMB.selectedContratoLov.pagador.nome}"
+						 style="font-size: 18px;" />
+				</h:panelGrid>
+			</p:panel>
+			
+			<h:panelGrid id="EstoqueImoveisPanel">
+				<h:panelGrid header="Matrículas" style="margin-bottom:10px;">
+							
+							<p:accordionPanel multiple="true"
+						style="margin-bottom: 15px;margin-top: 15px;">
+						<p:tab
+							title="Matricula 1 - #{imovelCobrancaMB.objetoImovelCobranca.nome}"/>
+							<h:panelGrid columns="2">
+							
+								<p:outputLabel value="Numero Matrícula: " styleClass="labelBold"/>
+								<p:outputLabel value="#{imovelCobrancaMB.objetoImovelCobranca.nome}"/>  
+												
+								<p:outputLabel value="Cartório de Registro: " styleClass="labelBold"/>
+								<p:outputLabel value="#{imovelCobrancaMB.objetoImovelCobranca.cartorio}"/>    
+																															
+								<p:outputLabel value="Descrição: " styleClass="labelBold"/>
+								<p:outputLabel value="#{imovelCobrancaMB.objetoImovelCobranca.nome}"/> 
+								
+								<p:outputLabel value="Endereço: " styleClass="labelBold"/>
+								<p:outputLabel value="#{imovelCobrancaMB.objetoImovelCobranca.endereco}"/>	
+								
+								<p:outputLabel value="Complemento: " styleClass="labelBold"/>
+								<p:outputLabel value="#{imovelCobrancaMB.objetoImovelCobranca.complemento}"/>
+								
+								<p:outputLabel value="Bairro: " styleClass="labelBold"/>
+								<p:outputLabel value="#{imovelCobrancaMB.objetoImovelCobranca.bairro}"/>
+								
+								<p:outputLabel value="Cep: " styleClass="labelBold"/>
+								<p:outputLabel value="#{imovelCobrancaMB.objetoImovelCobranca.cep}"/>																																						
+										
+								<p:outputLabel value="Cidade: " styleClass="labelBold"/>
+								<p:outputLabel value="#{imovelCobrancaMB.objetoImovelCobranca.cidade} - #{imovelCobrancaMB.objetoImovelCobranca.estado}"/>																											
+			
+								<p:outputLabel value="Telefone Residencial: " styleClass="labelBold"/>
+								<p:outputLabel value="#{imovelCobrancaMB.objetoImovelCobranca.telResidencial}"/>																								
+								
+								<p:outputLabel value="Tipo: " styleClass="labelBold"/>
+								<p:outputLabel value="#{imovelCobrancaMB.objetoImovelCobranca.tipo}"/>	
+										
+								<p:outputLabel value="Área Total / Terreno (metros):  " styleClass="labelBold"/>
+								<p:outputLabel value="#{imovelCobrancaMB.objetoImovelCobranca.areaTotal}"/>   							
+										
+								<p:outputLabel value="Área Útil / Construída (metros): " styleClass="labelBold"/>
+								<p:outputLabel value="#{imovelCobrancaMB.objetoImovelCobranca.areaConstruida}"/>  
+								
+								<p:outputLabel value="Link Google Maps: " styleClass="labelBold"/>
+								<p:outputLabel value="#{imovelCobrancaMB.objetoImovelCobranca.linkGMaps}"/>  
+																															
+								<p:outputLabel value="Observação: " styleClass="labelBold"/>
+								<p:outputLabel value="#{imovelCobrancaMB.objetoImovelCobranca.observacao}"/>
+								
+								<p:outputLabel value="Possui Dívida: " styleClass="labelBold"/>
+								<p:outputLabel value="#{imovelCobrancaMB.objetoImovelCobranca.possuiDivida}"/>					
+								
+								<h:panelGroup>
+								<p:outputLabel for="parcelaParouPagar" value="Parcela que parou de pagar "
+									styleClass="labelBold" />
+								<p:inputText id="parcelaParouPagar"
+									value="#{imovelCobrancaMB.objetoImovelEstoque.parcelaParouPagar}" 
+									required = "true"/>
+									
+								<p:outputLabel for="variacaoCusto" value="Variação de custo até leilão "
+									styleClass="labelBold" />
+								<p:inputText id="variacaoCusto"
+									value="#{imovelCobrancaMB.objetoImovelEstoque.variacaoCusto}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);"
+									converter="bigDecimalConverter" 
+									required = "true"/>	
+								
+								<p:outputLabel for="ltvLeilao" value="LTV do leilão "
+									styleClass="labelBold" />
+								<p:inputText id="ltvLeilao"
+									value="#{imovelCobrancaMB.objetoImovelEstoque.ltvLeilao}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);"
+									converter="bigDecimalConverter" 
+									required = "true"/>	
+									
+								<p:outputLabel for="valorEmprestimo" value="Valor do empréstimo "
+									styleClass="labelBold" />
+								<p:inputText id="valorEmprestimo"
+									value="#{imovelCobrancaMB.objetoImovelEstoque.valorEmprestimo}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);"
+									converter="bigDecimalConverter" 
+									required = "true"/>	
+									
+								<p:outputLabel for="vendaForcada" value="Valor de venda forçada "
+									styleClass="labelBold" />
+								<p:inputText id="vendaForcada"
+									value="#{imovelCobrancaMB.objetoImovelEstoque.vendaForcada}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);"
+									converter="bigDecimalConverter" 
+									required = "true"/>	
+									
+								<p:outputLabel for="valorMercado" value="Valor de mercado "
+									styleClass="labelBold" />
+								<p:inputText id="valorMercado"
+									value="#{imovelCobrancaMB.objetoImovelEstoque.valorMercado}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);"
+									converter="bigDecimalConverter" 
+									required = "true"/>		
+	
+								<p:outputLabel for="dataConsolidado"
+									value="Consolidado em: " styleClass="labelBold" />
+								<p:calendar id="dataConsolidado"
+									value="#{imovelCobrancaMB.objetoImovelEstoque.dataConsolidado}"
+									label="Data" size="100" pattern="dd/MM/yyyy"
+									styleClass="dateTimeField"
+									required = "true" />
+								
+								<p:outputLabel for="dataLeilao1"
+									value="Data 1º Leilão: " styleClass="labelBold" />
+								<p:calendar id="dataLeilao1"
+									value="#{imovelCobrancaMB.objetoImovelEstoque.dataLeilao1}"
+									label="Data" size="100" pattern="dd/MM/yyyy"
+									styleClass="dateTimeField"
+									required = "true" />
+									
+								<p:outputLabel for="dataLeilao2"
+									value="Data 2º Leilão: " styleClass="labelBold" />
+								<p:calendar id="dataLeilao2"
+									value="#{imovelCobrancaMB.objetoImovelEstoque.dataLeilao2}"
+									label="Data" size="100" pattern="dd/MM/yyyy"
+									styleClass="dateTimeField"
+									required = "true" />
+								
+								<p:outputLabel for="dataLeilao3"
+									value="Data Leilão de estoque: " styleClass="labelBold" />
+								<p:calendar id="dataLeilao2"
+									value="#{imovelCobrancaMB.objetoImovelEstoque.dataLeilao3}"
+									label="Data" size="100" pattern="dd/MM/yyyy"
+									styleClass="dateTimeField"/>		
+								
+								<p:outputLabel for="statusLeilao" value="Satus do Leilão: "
+										styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:selectOneMenu id="statusLeilao"
+										value="#{imovelCobrancaMB.objetoImovelEstoque.statusLeilao}"
+										required = "true">
+										<f:selectItem itemValue="" itemLabel="Selecione" />
+										<f:selectItem itemValue="Estoque" itemLabel="Estoque" />
+										<f:selectItem itemValue="Negativo" itemLabel="Negativo" />
+										<f:selectItem itemValue="Suspenso por decisão judicial" itemLabel="Suspenso por decisão judicial" />
+										<p:ajax event="change"/>
+									</p:selectOneMenu>
+									
+								<p:outputLabel for="statusAtual" value="Satus Atual: "
+										styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:selectOneMenu id="statusAtual"
+										value="#{imovelCobrancaMB.objetoImovelEstoque.statusAtual}"
+										required = "true">
+										<f:selectItem itemValue="" itemLabel="Selecione" />
+										<f:selectItem itemValue="Alugado" itemLabel="Alugado" />
+										<f:selectItem itemValue="Cancelado por acordo" itemLabel="Cancelado por acordo" />
+										<f:selectItem itemValue="Estoque" itemLabel="Estoque" />
+										<f:selectItem itemValue="Online" itemLabel="Online" />
+										<f:selectItem itemValue="Pendência por decisão judicial" itemLabel="Pendência por decisão judicial" />
+										<f:selectItem itemValue="Reintegração posse" itemLabel="Reintegração posse" />
+										<f:selectItem itemValue="Vendido" itemLabel="Vendido" />
+										<p:ajax event="change"/>
+									</p:selectOneMenu>	
+									
+								<p:outputLabel for="valorLeilao2" value="Valor 2º Leilão "
+									styleClass="labelBold" />
+								<p:inputText id="valorLeilao2"
+									value="#{imovelCobrancaMB.objetoImovelEstoque.valorLeilao2}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);"
+									converter="bigDecimalConverter"/>	
+								
+								<p:outputLabel for="valorVenda" value="Valor da venda "
+									styleClass="labelBold" />
+								<p:inputText id="valorVenda"
+									value="#{imovelCobrancaMB.objetoImovelEstoque.valorVenda}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);"
+									converter="bigDecimalConverter"/>
+									
+								<p:outputLabel for="dataVenda"
+									value="Data da venda: " styleClass="labelBold" />
+								<p:calendar id="dataVenda"
+									value="#{imovelCobrancaMB.objetoImovelEstoque.dataVenda}"
+									label="Data" size="100" pattern="dd/MM/yyyy"
+									styleClass="dateTimeField"/>
+									
+								<p:outputLabel for="tipoVenda" value="Tipo de venda: "
+										styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:selectOneMenu id="tipoVenda"
+										value="#{imovelCobrancaMB.objetoImovelEstoque.tipoVenda}"
+										required = "true">
+										<f:selectItem itemValue="" itemLabel="Selecione" />
+										<f:selectItem itemValue="Direta" itemLabel="Direta" />
+										<f:selectItem itemValue="Leilão AF" itemLabel="Leilão AF" />
+										<f:selectItem itemValue="Leilão Estoque" itemLabel="Leilão Estoque" />
+										<f:selectItem itemValue="Preferência" itemLabel="Preferência" />
+										<p:ajax event="change"/>
+									</p:selectOneMenu>
+								<p:outputLabel value="Estoque: "
+										styleClass="labelBold" style="margin-left: 20px;" />
+									<p:selectBooleanCheckbox
+										value="#{imovelCobrancaMB.objetoImovelEstoque.estoque}">
+										<p:ajax event="change"/>
+									</p:selectBooleanCheckbox>	
+							</h:panelGrid>
+					
+						</h:panelGrid>
+						
+						<p:commandButton value="Concluir" ajax="true"
+							action="#{contasPagarMB.concluirContaPosOperacao()}"
+							update=":form:ContasPagarPanel" icon="ui-icon ui-icon-check" />
+					</h:panelGroup>
+
+			</h:panelGrid>		
+				
+			
+			<div align="center">
+				<p:commandButton value="Atualizar" ajax="false" icon="ui-icon-check" action="#{contasPagarMB.salvarContasPosOperacao}" style="TEXT-DECORATION: bold;" />		
+			</div>				
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,6 +1,7 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -8,16 +9,14 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 
 import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
 
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
-import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.ImovelEstoque;
 import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 import com.webnowbr.siscoat.db.dao.DAOException;
 import com.webnowbr.siscoat.db.dao.DBConnectionException;
-
-import org.primefaces.model.SortOrder;
-
-import java.util.Map;
 
 /** ManagedBean. */
 @ManagedBean(name = "imovelCobrancaMB")
@@ -28,6 +27,8 @@ public class ImovelCobrancaMB {
 	private LazyDataModel<ImovelCobranca> lazyModel;
 	/** Variavel. */
 	private ImovelCobranca objetoImovelCobranca;
+	private ImovelEstoque objetoImovelEstoque;
+	private ContratoCobranca objetoContratoCobranca;
 	private boolean updateMode = false;
 	private boolean deleteMode = false;
 	private String tituloPainel = null;
@@ -37,6 +38,7 @@ public class ImovelCobrancaMB {
 	public ImovelCobrancaMB() {
 
 		objetoImovelCobranca = new ImovelCobranca();
+		objetoImovelEstoque = new ImovelEstoque();
 
 		lazyModel = new LazyDataModel<ImovelCobranca>() {
 
@@ -63,7 +65,14 @@ public class ImovelCobrancaMB {
 
 		return "ImovelCobrancaInserir.xhtml";
 	}
-
+	
+	public String clearFieldsEstoqueImoveis() {
+		objetoContratoCobranca = new ContratoCobranca();
+		objetoImovelCobranca = new ImovelCobranca();
+		
+		return "ImovelEstoqueConsulta.xhtml";
+	}
+	
 	public String inserir() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
@@ -83,6 +92,7 @@ public class ImovelCobrancaMB {
 							+ objetoImovelCobranca.getNome() + ")", ""));
 			
 			objetoImovelCobranca = new ImovelCobranca();
+			
 
 		} catch (DAOException e) {
 
@@ -175,8 +185,17 @@ public class ImovelCobrancaMB {
 	/**
 	 * @return the updateMode
 	 */
+	
 	public boolean isUpdateMode() {
 		return updateMode;
+	}
+
+	public ImovelEstoque getObjetoImovelEstoque() {
+		return objetoImovelEstoque;
+	}
+
+	public void setObjetoImovelEstoque(ImovelEstoque objetoImovelEstoque) {
+		this.objetoImovelEstoque = objetoImovelEstoque;
 	}
 
 	/**
