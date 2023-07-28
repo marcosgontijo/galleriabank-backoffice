@@ -4634,7 +4634,8 @@ public class ContratoCobrancaMB {
 		InputStream in = new ByteArrayInputStream(decoded);
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 				FacesContext.getCurrentInstance());
-		gerador.open(String.format("Galleria Bank - Data Engine %s.pdf", ""));
+		String nomeArquivoDownload = String.format("Galleria Bank - Data Engine %s.pdf", "");
+		gerador.open(nomeArquivoDownload);
 		gerador.feed(in);
 		gerador.close();
 		return null;
@@ -5537,7 +5538,6 @@ public class ContratoCobrancaMB {
 
 	}
 	
-
 	public String downloadModeloPaju() throws SiscoatException {	
 		PajuService pajuService = new PajuService();
 		String arquivoWord = "ModeloParecerJuridico.docx";
@@ -5547,13 +5547,15 @@ public class ContratoCobrancaMB {
 		String identificacao = objetoContratoCobranca.getNumeroContrato();
 		if (CommonsUtil.semValor(identificacao))
 			gerador.open("Galleria Bank - ModeloPAJU.docx");
-		else
-			gerador.open(String.format("Galleria Bank - ModeloPAJU %s.docx", identificacao));
+		else {
+			String nomeArquivoDownload = String.format("Galleria Bank - ModeloPAJU %s.docx", "");
+			gerador.open(nomeArquivoDownload);
+		}
 		gerador.feed(modeloPaju);
 		gerador.close();
 		
 		return "";
-	}
+	}	
 
 	public String downloadModeloPaju1() throws SiscoatException {	
 		PajuService pajuService = new PajuService();
@@ -7244,8 +7246,8 @@ public class ContratoCobrancaMB {
 
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 				FacesContext.getCurrentInstance());
-
-		gerador.open(String.format("Galleria Bank - Parcelas Investidor - " + nome + "%s.xlsx", ""));
+		String nomeArquivoDownload = String.format("Galleria Bank - Parcelas Investidor - " + nome + "%s.xlsx", "");
+		gerador.open(nomeArquivoDownload);
 		gerador.feed(new ByteArrayInputStream(fileOut.toByteArray()));
 		gerador.close();
 
@@ -8380,8 +8382,10 @@ public class ContratoCobrancaMB {
 			String identificacao = quitacaoPDF.getNome();
 			if (CommonsUtil.semValor(identificacao))
 				gerador.open("Galleria Bank - Quitação.pdf");
-			else
-				gerador.open(String.format("Galleria Bank - Quitação %s.pdf", identificacao));
+			else {
+				String nomeArquivoDownload = String.format("Galleria Bank - Quitação %s.pdf", identificacao);
+				gerador.open(nomeArquivoDownload);
+			}
 			gerador.feed(jp);
 			gerador.close();
 		}
@@ -11192,8 +11196,8 @@ public class ContratoCobrancaMB {
 
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 				FacesContext.getCurrentInstance());
-
-		gerador.open(String.format("Galleria Bank - Relatorio " + relatorioTipo + " %s.xlsx", ""));
+		String nomeArquivoDownload = String.format("Galleria Bank - Relatorio " + relatorioTipo + " %s.xlsx", "");
+		gerador.open(nomeArquivoDownload);
 		gerador.feed(new ByteArrayInputStream(fileOut.toByteArray()));
 		gerador.close();
 
@@ -11340,8 +11344,8 @@ public class ContratoCobrancaMB {
 
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 				FacesContext.getCurrentInstance());
-
-		gerador.open(String.format("Galleria Bank - Relatorio Securitizadora %s.xlsx", ""));
+		String nomeArquivoDownload = String.format("Galleria Bank - Relatorio Securitizadora %s.xlsx", "");
+		gerador.open(nomeArquivoDownload);
 		gerador.feed(new ByteArrayInputStream(fileOut.toByteArray()));
 		gerador.close();
 
@@ -11488,8 +11492,8 @@ public class ContratoCobrancaMB {
 
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 				FacesContext.getCurrentInstance());
-
-		gerador.open(String.format("Galleria Bank - Relatorio FIDC %s.xlsx", ""));
+		String nomeArquivoDownload = String.format("Galleria Bank - Relatorio FIDC %s.xlsx", "");
+		gerador.open(nomeArquivoDownload);
 		gerador.feed(new ByteArrayInputStream(fileOut.toByteArray()));
 		gerador.close();
 
