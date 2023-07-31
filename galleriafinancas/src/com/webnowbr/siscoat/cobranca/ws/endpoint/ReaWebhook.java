@@ -60,6 +60,7 @@ public class ReaWebhook {
 			DocumentoAnalise documentoAnalise = documentoAnaliseDao.findByFilter("idRemoto", reaWebhookRetorno.getId())
 					.stream().findFirst().orElse(null);
 			documentoAnalise.setRetorno(webhookRetorno);
+			documentoAnalise.setObservacao("Retorno REA recebido");
 			documentoAnaliseDao.merge(documentoAnalise);
 			reaWebhookRetorno.buscaProprietarios();
 			Date dataVendaAtual = null;
@@ -94,6 +95,9 @@ public class ReaWebhook {
 //			}
 
 			}
+			
+			documentoAnalise.setObservacao("REA processado");
+			documentoAnaliseDao.merge(documentoAnalise);
 
 			return Response.status(200).entity("Processado").build();
 		} catch (io.jsonwebtoken.ExpiredJwtException eJwt) {
