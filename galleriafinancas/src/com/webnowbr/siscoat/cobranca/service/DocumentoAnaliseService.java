@@ -215,7 +215,7 @@ public class DocumentoAnaliseService {
 			pagador.setCpf(documentoAnalise.getCnpjcpf());
 		} else {
 			documentoAnalise.setTipoPessoa("PJ");
-			documentoAnalise.setCnpjcpf( CommonsUtil.formataCnpj(pJPartnership.getRelatedEntityTaxIdNumber()));
+			documentoAnalise.setCnpjcpf( CommonsUtil.formataCnpjCpf(pJPartnership.getRelatedEntityTaxIdNumber(),false));
 			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.RELATO);
 			pagador.setCnpj(documentoAnalise.getCnpjcpf());
 		}
