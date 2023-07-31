@@ -149,7 +149,9 @@ public class ReaWebhook {
 			}
 
 			if (cnpjCpfValido) {
-				if (!documentoAnaliseDao.cadastradoAnalise(contratoCobranca, documentoAnalise.getCnpjcpf())) {
+				
+				DocumentoAnalise documentoAnaliseCadastrado = documentoAnaliseDao.cadastradoAnalise(contratoCobranca, documentoAnalise.getCnpjcpf());
+				if (CommonsUtil.semValor(documentoAnaliseCadastrado)) {
 
 					PagadorRecebedor pagador = new PagadorRecebedor();
 					pagador.setId(0);
@@ -165,6 +167,9 @@ public class ReaWebhook {
 					documentoAnalise.setPagador(pagador);
 
 					documentoAnaliseDao.create(documentoAnalise);
+				}else {
+					documentoAnaliseCadastrado.setExcluido(false);
+					documentoAnaliseDao.merge(documentoAnaliseCadastrado);					
 				}
 			}
 		}

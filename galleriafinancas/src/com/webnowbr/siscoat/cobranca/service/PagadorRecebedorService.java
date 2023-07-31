@@ -2,6 +2,7 @@ package com.webnowbr.siscoat.cobranca.service;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorConsulta;
@@ -23,31 +24,35 @@ public class PagadorRecebedorService {
 			PagadorRecebedorDao pDao = new PagadorRecebedorDao();
 			if (!CommonsUtil.semValor(pagadorAdicionar.getCpf())
 					&& pDao.findByFilter("cpf", pagadorAdicionar.getCpf()).size() > 0) {
-				pagadorAdicionar = pDao.findByFilter("cpf", pagadorAdicionar.getCpf()).get(0);
+				List<PagadorRecebedor> cadastrados = pDao.findByFilter("cpf", pagadorAdicionar.getCpf());
+				PagadorRecebedor pagadorCadastrado = new PagadorRecebedor();
+						
+				if ( cadastrados.size() > 0)
+						pagadorCadastrado = pDao.findByFilter("cpf", pagadorAdicionar.getCpf()).get(0);
 
-				if (CommonsUtil.semValor(pagadorAdicionar.getNomeMae())
+				if (CommonsUtil.semValor(pagadorCadastrado.getNomeMae())
 						&& !CommonsUtil.semValor(pagadorAdicionar.getNomeMae())) {
-					pagadorAdicionar.setNomeMae(pagadorAdicionar.getNomeMae());
+					pagadorCadastrado.setNomeMae(pagadorAdicionar.getNomeMae());
 				}
-				if (CommonsUtil.semValor(pagadorAdicionar.getRg()) && !CommonsUtil.semValor(pagadorAdicionar.getRg())) {
-					pagadorAdicionar.setRg(pagadorAdicionar.getRg());
+				if (CommonsUtil.semValor(pagadorCadastrado.getRg())
+						&& !CommonsUtil.semValor(pagadorAdicionar.getRg())) {
+					pagadorCadastrado.setRg(pagadorAdicionar.getRg());
 				}
 
-				if (CommonsUtil.semValor(pagadorAdicionar.getDtNascimento())
+				if (CommonsUtil.semValor(pagadorCadastrado.getDtNascimento())
 						&& !CommonsUtil.semValor(pagadorAdicionar.getDtNascimento())) {
-					pagadorAdicionar.setDtNascimento(pagadorAdicionar.getDtNascimento());
+					pagadorCadastrado.setDtNascimento(pagadorAdicionar.getDtNascimento());
 				}
-				pDao.merge(pagadorAdicionar);
+				pDao.merge(pagadorCadastrado);
+				pagadorAdicionar = pagadorCadastrado;
 
 			} else if (!CommonsUtil.semValor(pagadorAdicionar.getCnpj())
 					&& pDao.findByFilter("cnpj", pagadorAdicionar.getCnpj()).size() > 0) {
 				pagadorAdicionar = pDao.findByFilter("cnpj", pagadorAdicionar.getCnpj()).get(0);
-			} else if (!CommonsUtil.semValor(pagadorAdicionar.getCpf())
-					&& pDao.findByFilter("cpf", pagadorAdicionar.getCpf()).size() > 0) {
-				pagadorAdicionar = pDao.findByFilter("cpf", pagadorAdicionar.getCpf()).get(0);
 			} else {
 				long idIncluido = pDao.create(pagadorAdicionar);
 				pagadorAdicionar = pDao.findById(idIncluido);
+				pDao.merge(pagadorAdicionar);
 			}
 		}
 		return pagadorAdicionar;
