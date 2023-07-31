@@ -35,9 +35,8 @@ public class DocumentoAnaliseDao extends HibernateDao<DocumentoAnalise, Long> {
 					ps.setString(2, cnpjCpf);
 
 					ResultSet rs = ps.executeQuery();
-
-					
-					documentoAnalise = findById(rs.getLong("id"));
+					if (rs.next())
+						documentoAnalise = findById(rs.getLong("id"));
 
 				} finally {
 					closeResources(connection, ps);

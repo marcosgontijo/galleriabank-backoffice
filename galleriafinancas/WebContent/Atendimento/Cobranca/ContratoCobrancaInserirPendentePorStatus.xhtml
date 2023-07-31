@@ -45,7 +45,7 @@
 			}
 			</h:outputStylesheet>
 				
-			<p:panel id="PanelLocador" header="Contrato - #{contratoCobrancaMB.tituloPainel} - #{contratoCobrancaMB.tituloTelaConsultaPreStatus}" style="margin-bottom:10px;">
+			<p:panel id="PanelLocador" header="Contrato - #{contratoCobrancaMB.tituloPainel}" style="margin-bottom:10px;">
 				<p:focus /> 
 				<p:messages/>
 				
@@ -899,7 +899,7 @@
 
 
 				<h:panelGroup id="comentarioComitePanel" style="margin-bottom:20px;">
-					<p:panel header="Comentário Comitê" rendered="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite.size() > 0 and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">
+					<p:panel header="Comentário Comitê" rendered="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite.size() > 0 and ( usuarioMB.objetoUsuario.administrador or ( contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'))}">
 						<p:outputLabel id="comentarioComite"
 							value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioComite}"
 							styleClass="labelBold" />
@@ -965,7 +965,7 @@
 
 				<h:panelGroup id="ComitePanelNovo" style="margin-bottom:20px;">
 					<p:panel header="Comitê"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.documentosComite and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC'}">
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.documentosComite}">
 						<h:panelGrid columns="2">
 							<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 7}">
 								<shiro:hasAnyRoles name="ROOT, COMITEEDITAR">
@@ -1120,8 +1120,8 @@
 					</p:panel>
 				</h:panelGroup>
 				
-				<h:panelGroup id="comentarioPendenciaPanel" style="margin-bottom:20px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">
-					<p:panel header="Comentário de Pendencia" rendered="#{contratoCobrancaMB.objetoContratoCobranca.comentarioPendencia != null and contratoCobrancaMB.objetoContratoCobranca.comentarioPendencia != '' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">
+				<h:panelGroup id="comentarioPendenciaPanel" style="margin-bottom:20px;">
+					<p:panel header="Comentário de Pendencia" rendered="#{contratoCobrancaMB.objetoContratoCobranca.comentarioPendencia != null and contratoCobrancaMB.objetoContratoCobranca.comentarioPendencia != ''}">
 						<h:panelGrid columns="2">
 							<p:outputLabel for="comentarioPendencia" value="Comentário da Pendência: "
 								styleClass="labelBold" />
@@ -1138,7 +1138,7 @@
 							
 				<h:panelGroup id="comentarioPreComitePanel"
 					style="margin-bottom:20px;">
-					<p:panel header="Comentário Pré-Comitê" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">
+					<p:panel header="Comentário Pré-Comitê" rendered="#{( usuarioMB.objetoUsuario.administrador or ( contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'))}">
 						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoEsteira}">
 							<p:outputLabel for="comentarioPreComite"
 								value="Comentário Pré-Comitê: " styleClass="labelBold" />
@@ -1332,7 +1332,7 @@
 
 				<h:panelGroup id="CertificadoPanel" >
 					<p:panel header="Certificado"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.documentosCompletos and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}" >
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.documentosCompletos and ( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'))}" >
 						<h:panelGrid columns="2"> 					
 							<p:outputLabel for="empresaCertificado"
 								value="Empresa Certificado: " styleClass="labelBold" />
@@ -1376,7 +1376,7 @@
 				
 				<h:panelGroup id="BoletoPanel" >
 					<p:panel id="BoletoPAJULaudo" header="Gerar Boleto PAJU e Laudo"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'}" >
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado' and ( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'))}" >
 						<h:panelGrid columns="2"> 
 							<p:outputLabel for="vencimentoBoleto"
 								value="Data Vencimeto Boleto: " styleClass="labelBold" />
@@ -1412,7 +1412,7 @@
 
 				<h:panelGroup id="laudoPajuPanel" style="margin-bottom:20px;">
 					<p:panel header="Laudo + Paju"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado' and ( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'))}">
 						<h:panelGrid columns="2">
 							<p:outputLabel for="valorLaudoPajuTotal"
 								value="Valor Laudo + PAJU: " styleClass="labelBold" />
@@ -1493,7 +1493,7 @@
 
 				<h:panelGroup id="PreAprovadoPanel" style="margin-bottom:20px;">
 					<p:panel header="Pré-Aprovado"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus !='Pré-Comite'}">
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise and ( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus !='Pré-Comite'))}">
 						<h:panelGrid columns="2">
 							<h:panelGroup>
 								<h:panelGrid columns="2">
@@ -1649,7 +1649,7 @@
 
 				<h:panelGroup id="RecebidoPajulaudoPanel"
 					style="margin-bottom:20px;">
-					<p:panel rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}" header="Recebido PAJU e laudo">
+					<p:panel rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado' and ( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'))}" header="Recebido PAJU e laudo">
 						<h:panelGrid columns="2">				
 							<h:panelGrid columns="2">							
 								<p:outputLabel for="valorPreLaudo"
@@ -1878,7 +1878,7 @@
 				<h:panelGroup id="CheckListInformacoesAdicionais">
 					<p:panel header="Check-List - Informações Adicionais"
 						style="margin-bottom:20px;"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'}">
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado' and ( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'))}">
 						<p:spacer height="10"></p:spacer>
 						<p:panel id="DataVistoriaPanel" style="border: none">						
 							<h:panelGrid columns="2">	
@@ -1975,7 +1975,7 @@
 					</p:panel>
 				</h:panelGroup>
 						
-				<p:panel id="Pessoas" header="Responsável" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">		
+				<p:panel id="Pessoas" header="Responsável" style="margin-bottom:10px;" rendered="#{( usuarioMB.objetoUsuario.administrador or contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro')}">		
 					<h:panelGrid columns="2">
 						<p:outputLabel for="Codigo1" value="Código do Responsável: " styleClass="labelBold" rendered="#{!contratoCobrancaMB.updateMode}"/>
 						<p:inputText id="Codigo1" value="#{contratoCobrancaMB.codigoResponsavel}" label="Código do Responsável" required="true" onblur=""  style="width:150px;" rendered="#{!contratoCobrancaMB.updateMode}"/>
@@ -2008,7 +2008,7 @@
 				
 				<!--  -->
 				
-				<p:panel id="PanelPagadorRecebedor" header="Pagador" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">		
+				<p:panel id="PanelPagadorRecebedor" header="Pagador" style="margin-bottom:10px;" rendered="#{( usuarioMB.objetoUsuario.administrador or contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro')}">		
 					<h:panelGrid columns="1">
 						<p:outputLabel
 							value="NOVO Pagador: preencha os dados do painel Dados Pagador"
@@ -3006,7 +3006,7 @@
 
 				</p:panel>	
 													
-				<p:panel id="Imovel" header="Imóvel Ofertado Como Garantia" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">
+				<p:panel id="Imovel" header="Imóvel Ofertado Como Garantia" style="margin-bottom:10px;" rendered="#{( usuarioMB.objetoUsuario.administrador or contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro')}">
 					<h:panelGrid columns="2">
 						<p:outputLabel for="NumeroMatricula" value="Numero Matrícula: " />
 						<p:inputText id="NumeroMatricula"
@@ -3475,7 +3475,7 @@
 
 				<h:panelGroup id="ContasPagarPanel">
 					<p:panel header="Contas a Pagar" style="margin-bottom:10px;"
-						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">
+						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio and ( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'))}">
 
 						<f:facet name="header"> Contas a Pagar 
 							<p:outputLabel value="" />							
@@ -3685,7 +3685,7 @@
 				
 				<shiro:hasAnyRoles name="ROOT, PROFILE_CONTRATO, PROFILE_ANALISTA_POS_COMITE">				
 					<h:panelGroup id="comissaoCliente" style="margin-bottom:20px;">
-						<p:panel header="Comissão Cliente" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'}">
+						<p:panel header="Comissão Cliente" style="margin-bottom:10px;" rendered="#{( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'))}">
 							<h:panelGrid columns="2" >					
 								<h:panelGroup>
 									<h:panelGrid columns="2">
@@ -3787,7 +3787,7 @@
 
 				<h:panelGroup id="DividasPanel" style="margin-bottom:20px;">
 					<p:panel header="Dívidas" style="margin-bottom:10px;"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.aprovadoComite and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.aprovadoComite and( usuarioMB.objetoUsuario.administrador or ( contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'))}">
 						<h:panelGrid columns="2">
 						
 							<p:outputLabel for="dividaIPTU" value="Dívida de IPTU: "
@@ -3816,7 +3816,7 @@
 				</h:panelGroup>
 
 				<p:panel id="Infos" header="Outras Informações"
-					style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">
+					style="margin-bottom:10px;" rendered="#{( usuarioMB.objetoUsuario.administrador or contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro')}">
 					<h:panelGrid columns="2">
 						<h:panelGrid columns="2">
 							<p:outputLabel for="quantoPrecisa" value="Qual valor precisa? "
@@ -3867,7 +3867,7 @@
 					</h:panelGrid>
 				</p:panel>
 
-				<p:panel id="AcaoObservacao" header="Motivo e Observação" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">							
+				<p:panel id="AcaoObservacao" header="Motivo e Observação" style="margin-bottom:10px;" rendered="#{( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'))}">							
 					<h:panelGrid columns="3">					
 						<p:outputLabel for="Acao" value="Ação: " />
 						<p:inputText id="Acao" value="#{contratoCobrancaMB.objetoContratoCobranca.acao}" label="Ação" onblur=""  style="width:300px;"/>
@@ -3885,7 +3885,7 @@
 			</p:panel>
 
 			<p:panel id="CheckListDocumentos" header="Documentos Prontos"
-				style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'}">
+				style="margin-bottom:10px;" rendered="#{( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'))}">
 				<h:panelGrid columns="4">
 					<h:panelGroup>
 						<h:panelGrid columns="2">
@@ -4284,7 +4284,7 @@
 			
 			<p:messages id="msgArquivo"/>			
 			 	
-			<p:panel id="UploadArquivosComite" header="Arquivo Comite(s)" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}" >						
+			<p:panel id="UploadArquivosComite" header="Arquivo Comite(s)" style="margin-bottom:10px;" rendered="#{( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'))}" >						
 				<p:panel id="ArquivosComite" header="Selecionar Arquivo Para Upload" style="margin-bottom:10px;text-align: center;">							
 					<h:panelGrid columns="1">		
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileComiteUpload}" mode="advanced" dragDropSupport="true"
@@ -4337,7 +4337,7 @@
 				</script>
 			</p:panel>	
 						  	
-			<p:panel id="UploadArquivosInternos" header="Arquivo Interno(s)" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'}">						
+			<p:panel id="UploadArquivosInternos" header="Arquivo Interno(s)" style="margin-bottom:10px;" rendered="#{( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'))}">						
 				<p:panel id="ArquivosInternos" header="Selecionar Arquivo  Para Upload" style="margin-bottom:10px;text-align: center;">							
 					<h:panelGrid columns="1">		
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileInternoUpload}" mode="advanced" dragDropSupport="true"
@@ -4396,7 +4396,7 @@
 				</script>
 			</p:panel>
 			<h:panelGroup id="votosComitePanel">
-				<p:panel header="Votos do Comite" rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'}">
+				<p:panel header="Votos do Comite" rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite and ( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'))}">
 					<p:dataView var="comite"
 						value="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite}"
 						paginator="false" layout="list"
@@ -4465,7 +4465,7 @@
 				</p:panel>
 			</h:panelGroup>
 		
-			<p:panel id="UploadArquivosFaltantes" header="Arquivo Faltante(s)" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'}">						
+			<p:panel id="UploadArquivosFaltantes" header="Arquivo Faltante(s)" style="margin-bottom:10px;" rendered="#{( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'))}">						
 				<p:panel id="ArquivosFaltantes" header="Selecionar Arquivo Para Upload" style="margin-bottom:10px;text-align: center;">							
 					<h:panelGrid columns="1">		
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileFaltanteUpload}" mode="advanced" dragDropSupport="true"
@@ -4519,7 +4519,7 @@
 			</p:panel>	
 					
 			<p:panel id="UploadArquivosJuridico" header="Arquivo Juridico(s)" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'}"  >						
-				<p:panel id="ArquivosJuridico" header="Selecionar Arquivo Para Upload" style="margin-bottom:10px;text-align: center;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">							
+				<p:panel id="ArquivosJuridico" header="Selecionar Arquivo Para Upload" style="margin-bottom:10px;text-align: center;" rendered="#{( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'))}">							
 					<h:panelGrid columns="1">		
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileJuridicoUpload}" mode="advanced" dragDropSupport="true"
                           update="ArquivosJuridicoSalvos msgArquivo" />								
@@ -4576,7 +4576,7 @@
 			<p:messages/>
 		
 			<p:panel id="UploadArquivos" header="Arquivo(s)" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'}" >						
-				<p:panel id="Arquivos" header="Selecionar Arquivo Para Upload" style="margin-bottom:10px;text-align: center;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC'}">							
+				<p:panel id="Arquivos" header="Selecionar Arquivo Para Upload" style="margin-bottom:10px;text-align: center;" rendered="#{( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC'))}">							
 					<h:panelGrid columns="1">		
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileUpload}" mode="advanced" dragDropSupport="true"
                           update="ArquivosSalvos msgArquivo" />								
