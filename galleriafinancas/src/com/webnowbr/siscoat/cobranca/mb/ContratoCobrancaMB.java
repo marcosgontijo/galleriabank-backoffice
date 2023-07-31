@@ -758,6 +758,8 @@ public class ContratoCobrancaMB {
 	
 	private List<ContratoCobrancaDetalhes> selectedParcelas = new ArrayList<ContratoCobrancaDetalhes>();
 	
+	private List<ContratoCobranca> listaConsultaEstoque = new ArrayList<ContratoCobranca>();
+	
 	public void saveContratoEmCartorio() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		
@@ -6623,6 +6625,7 @@ public class ContratoCobrancaMB {
 		clearRecebedorFinal9();
 		clearRecebedorFinal10();
 	}
+
 
 	public String geraNumeroContrato() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
@@ -31072,6 +31075,10 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 		}
 	}
 	
+	public void consultaEstoque() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		listaConsultaEstoque = contratoCobrancaDao.consultaImovelEstoque();
+	}
 	
 	/**
 	 * @return the files
@@ -32944,6 +32951,14 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 
 	public void setPessoasProcessos(List<PagadorRecebedor> pessoasProcessos) {
 		this.pessoasProcessos = pessoasProcessos;
+	}
+
+	public List<ContratoCobranca> getListaConsultaEstoque() {
+		return listaConsultaEstoque;
+	}
+
+	public void setListaConsultaEstoque(List<ContratoCobranca> listaConsultaEstoque) {
+		this.listaConsultaEstoque = listaConsultaEstoque;
 	}
 	
 }
