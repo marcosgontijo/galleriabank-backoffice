@@ -6697,14 +6697,15 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					if (tipoConsulta.equals("Comentario Jurídico")) {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and pajurFavoravel = true and analiseComercial = true"
-								+ " and comentarioJuridicoEsteira = false ";
+								+ " and comentarioJuridicoEsteira = false "
+								+ " and esteriaComentarioLuvison = false ";
 					} 
 					
 					if (tipoConsulta.equals("Comentario Luvison")) {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and pajurFavoravel = true and analiseComercial = true"
 								+ " and comentarioJuridicoEsteira = false "
-								+ " and avaliacaoPaju = 'Luvison' ";
+								+ " and esteriaComentarioLuvison = true ";
 					}
 					
 					if (tipoConsulta.equals("Pré-Comite")) {

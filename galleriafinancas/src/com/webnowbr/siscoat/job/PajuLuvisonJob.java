@@ -42,7 +42,7 @@ public class PajuLuvisonJob implements Job {
 		}
 
 		try {
-			consultarPajus();
+			//consultarPajus();
 		} catch (Exception e) {
 			System.out.println("LuvisonJob.execute (jobKey=" + jobKey + "): EXCEPTION" + e);
 		}

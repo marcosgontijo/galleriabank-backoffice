@@ -784,6 +784,7 @@ public class ContratoCobranca implements Serializable {
 	private boolean iniciouGeracaoLaudo;
 	private String avaliacaoPaju;
 	private boolean iniciouGeracaoPaju;
+	private boolean esteriaComentarioLuvison;
 	
 	private boolean contatoDiferenteProprietario;
 	//private String geracaoLaudoObservacao;
@@ -6742,5 +6743,15 @@ public class ContratoCobranca implements Serializable {
 
 	public void setIniciouGeracaoPaju(boolean iniciouGeracaoPaju) {
 		this.iniciouGeracaoPaju = iniciouGeracaoPaju;
+	}
+
+	public boolean isEsteriaComentarioLuvison() {
+		return esteriaComentarioLuvison;
+	}
+
+	public void setEsteriaComentarioLuvison(boolean esteriaComentarioLuvison) {
+		this.esteriaComentarioLuvison = esteriaComentarioLuvison;
 	}	
+	
+	
 }
