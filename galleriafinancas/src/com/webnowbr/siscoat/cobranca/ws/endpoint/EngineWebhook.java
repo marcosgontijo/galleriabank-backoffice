@@ -120,7 +120,8 @@ public class EngineWebhook {
 //								DocumentosAnaliseEnum.ENGINE, webhookRetorno);
 
 					} else {
-						if (!CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais().getResult())
+						if (!CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais()) 
+								&& !CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais().getResult())
 								&& !CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais()
 										.getResult().get(0).getOnlineCertificates())
 								&& !CommonsUtil.mesmoValorIgnoreCase("NADA CONSTA",

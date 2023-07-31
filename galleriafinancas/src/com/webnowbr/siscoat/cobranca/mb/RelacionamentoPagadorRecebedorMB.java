@@ -86,7 +86,7 @@ public class RelacionamentoPagadorRecebedorMB implements Serializable {
 
 	public void populaGeral() {
 		populaGeralEngine();
-		//populaGeralSeresa();
+		populaGeralSeresa();
 	}
 	
 	public void populaGeralEngine() {

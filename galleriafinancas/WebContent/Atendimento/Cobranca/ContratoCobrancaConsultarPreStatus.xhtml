@@ -223,7 +223,8 @@
 			                and contratos.statusLead == 'Completo' 
 			                and contratos.inicioAnalise == true
 							and contratos.cadastroAprovadoValor == 'Aprovado'
-							and contratos.aprovadoComite == false}"
+							and contratos.aprovadoComite == false
+							and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Comentario Jurídico'}"
 						action="#{contratoCobrancaMB.downloadPreAprovadoPDF(contratos.id)}" >
 						</p:commandButton>			
 						<p:commandButton value="PDF Aprovado" ajax="false" icon="ui-icon-print" rendered="#{contratos.analiseReprovada == false 

@@ -4284,7 +4284,11 @@
 			
 			<p:messages id="msgArquivo"/>			
 			 	
+<<<<<<< HEAD
 			<p:panel id="UploadArquivosComite" header="Arquivo Comite(s)" style="margin-bottom:10px;" rendered="#{( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'))}" >						
+=======
+			<p:panel id="UploadArquivosComite" header="Arquivo Comite(s)" style="margin-bottom:10px;" rendered="#{ contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}" >						
+>>>>>>> branch 'master' of https://github.com/webnowbr/backoffice.git
 				<p:panel id="ArquivosComite" header="Selecionar Arquivo Para Upload" style="margin-bottom:10px;text-align: center;">							
 					<h:panelGrid columns="1">		
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileComiteUpload}" mode="advanced" dragDropSupport="true"
@@ -4465,7 +4469,11 @@
 				</p:panel>
 			</h:panelGroup>
 		
+<<<<<<< HEAD
 			<p:panel id="UploadArquivosFaltantes" header="Arquivo Faltante(s)" style="margin-bottom:10px;" rendered="#{( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'))}">						
+=======
+			<p:panel id="UploadArquivosFaltantes" header="Arquivo Faltante(s)" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'}">						
+>>>>>>> branch 'master' of https://github.com/webnowbr/backoffice.git
 				<p:panel id="ArquivosFaltantes" header="Selecionar Arquivo Para Upload" style="margin-bottom:10px;text-align: center;">							
 					<h:panelGrid columns="1">		
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileFaltanteUpload}" mode="advanced" dragDropSupport="true"
@@ -4518,8 +4526,13 @@
 				</script>
 			</p:panel>	
 					
+<<<<<<< HEAD
 			<p:panel id="UploadArquivosJuridico" header="Arquivo Juridico(s)" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'}"  >						
 				<p:panel id="ArquivosJuridico" header="Selecionar Arquivo Para Upload" style="margin-bottom:10px;text-align: center;" rendered="#{( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'))}">							
+=======
+			<p:panel id="UploadArquivosJuridico" header="Arquivo Juridico(s)" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'}"  >						
+				<p:panel id="ArquivosJuridico" header="Selecionar Arquivo Para Upload" style="margin-bottom:10px;text-align: center;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'}">							
+>>>>>>> branch 'master' of https://github.com/webnowbr/backoffice.git
 					<h:panelGrid columns="1">		
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileJuridicoUpload}" mode="advanced" dragDropSupport="true"
                           update="ArquivosJuridicoSalvos msgArquivo" />								
