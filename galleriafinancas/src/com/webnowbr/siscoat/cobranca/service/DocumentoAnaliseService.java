@@ -220,7 +220,7 @@ public class DocumentoAnaliseService {
 			pagador.setCnpj(documentoAnalise.getCnpjcpf());
 		}
 		
-		if ( documentoAnaliseDao.cadastradoAnalise(contratoCobranca, documentoAnalise.getCnpjcpf()))
+		if ( !CommonsUtil.semValor( documentoAnaliseDao.cadastradoAnalise(contratoCobranca, documentoAnalise.getCnpjcpf())))
 			return;
 		
 		documentoAnalise.setMotivoAnalise(motivo);
