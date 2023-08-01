@@ -144,10 +144,11 @@ public class EngineWebhook {
 							"PROPRIETARIO ATUAL"))
 						motivo = "Empresa Vinculada ao Proprietario Anterior";
 					
-					if (!CommonsUtil
-							.semValor(engineWebhookRetorno.getConsultaCompleta().getEnterpriseData().getPartnership())
-							&& !CommonsUtil.semValor(engineWebhookRetorno.getConsultaCompleta().getEnterpriseData()
-									.getPartnership().getPartnerships())) {
+					if (!CommonsUtil.semValor(engineWebhookRetorno.getConsultaCompleta())
+							&& !CommonsUtil.semValor(engineWebhookRetorno.getConsultaCompleta().getEnterpriseData())
+							&& !CommonsUtil.semValor(engineWebhookRetorno.getConsultaCompleta().getEnterpriseData().getPartnership())
+							&& !CommonsUtil.semValor(engineWebhookRetorno.getConsultaCompleta().getEnterpriseData().getPartnership()
+									.getPartnerships())) {
 
 						for (EngineRetornoRequestEnterprisePartnership partnership : engineWebhookRetorno
 								.getConsultaCompleta().getEnterpriseData().getPartnership().getPartnerships()) {

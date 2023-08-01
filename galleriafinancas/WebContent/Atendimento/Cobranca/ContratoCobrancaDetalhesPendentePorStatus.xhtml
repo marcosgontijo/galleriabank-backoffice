@@ -2868,7 +2868,7 @@
 				</p:panel>	
 			</shiro:hasAnyRoles>
 		 	
-			<p:panel id="UploadArquivosFaltantes" header="Upload de Arquivo Faltante(s)" style="margin-bottom:10px;"  rendered="#{( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite')}">						
+			<p:panel id="UploadArquivosFaltantes" header="Upload de Arquivo Faltante(s)" style="margin-bottom:10px;"  rendered="#{( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'))}">						
 				<p:panel id="ArquivosFaltantes" header="Selecionar Arquivo Faltante(s)" style="margin-bottom:10px;text-align: center;">							
 					<h:panelGrid columns="1">		
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileFaltanteUpload}" mode="advanced" dragDropSupport="true"
