@@ -239,9 +239,15 @@
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_COMENTARIO_JURIDICO, PROFILE_PAJU_LUVISON">
+								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_COMENTARIO_JURIDICO">
 									<p:menuitem value="06 - Comentario Jurídico"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Comentario Jurídico')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_COMENTARIO_JURIDICO">
+									<p:menuitem value="Comentario Jurídico - Luvison"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Comentario Luvison')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>

@@ -5400,10 +5400,13 @@ public class ContratoCobrancaMB {
 		return geraConsultaContratosPorStatus("Análise Aprovada");
 	}
 	
-	public String enviarContratoEsteiraLuvison() {
-		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
+	public String enviarContratoEsteiraLuvison(ContratoCobranca contrato) {
+		this.objetoContratoCobranca = getContratoById(contrato.getId());
 		this.objetoContratoCobranca.setEsteriaComentarioLuvison(true);
-		return geraConsultaContratosPorStatus("Comentario Jurídico");
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		contratoCobrancaDao.merge(objetoContratoCobranca);
+		return
+		geraConsultaContratosPorStatus("Comentario Jurídico");
 	}
 
 	public void clearEnviarLeadParaComercial() {
@@ -8842,6 +8845,8 @@ public class ContratoCobrancaMB {
 			} else { 
 				return "/Atendimento/Cobranca/ContratoCobrancaDetalhesPendentePorStatus.xhtml";
 			}
+		} else if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Comentario Jurídico - Luvison")) {
+			return "/Atendimento/Cobranca/ContratoCobrancaComentarioJuridicoExterno.xhtml";
 		} else if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Comite")) {
 			return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusComite.xhtml";
 		} else if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Pagamento Op.")) {
@@ -13118,6 +13123,9 @@ public class ContratoCobrancaMB {
 		if (status.equals("Comentario Jurídico")) {
 			this.tituloTelaConsultaPreStatus = "Comentario Jurídico";
 		}
+		if (status.equals("Comentario Luvison")) {
+			this.tituloTelaConsultaPreStatus = "Comentario Jurídico - Luvison";
+		}
 		if (status.equals("Pré-Comite")) {
 			this.tituloTelaConsultaPreStatus = "Pré-Comite";
 		}
@@ -13165,15 +13173,15 @@ public class ContratoCobrancaMB {
 		
 		User user = getUsuarioLogado();
 
-		if (CommonsUtil.mesmoValor(status, "Comentario Jurídico")
+		/*if (CommonsUtil.mesmoValor(status, "Comentario Jurídico")
 				&& !CommonsUtil.semValor(user)
 				&& user.getId() > 0
 				&& user.isProfilePajuLuvison()) {
 			status = "Comentario Luvison";
 			this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, status);
-		} else {
-			this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, status);
-		}
+		} else {*/
+		this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, status);
+		//}
 
 		if (status.equals("Análise Reprovada")) {
 			for (ContratoCobranca contratos : this.contratosPendentes) {

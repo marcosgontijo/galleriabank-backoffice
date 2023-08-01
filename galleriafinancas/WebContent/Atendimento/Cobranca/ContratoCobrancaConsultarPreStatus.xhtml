@@ -222,10 +222,8 @@
 		                </p:commandButton>
 		                
 		                <shiro:hasAnyRoles name="ROOT, PROFILE_COMENTARIO_JURIDICO">
-			                <p:commandButton value="LUVISON" ajax="false" icon="ui-icon-arrowreturnthick-1-e"
-			                	action="#{contratoCobrancaMB.enviarContratoEsteiraLuvison}" >
-			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
-								<p:confirm header="Enviar p/ LUVISON ?" message="Deseja Enviar contrato p/ Luvison?"/>
+			                <p:commandButton value="LUVISON" ajax="false" icon="ui-icon-arrowreturnthick-1-e" 
+			                	action="#{contratoCobrancaMB.enviarContratoEsteiraLuvison(contratos)}" >
 							</p:commandButton>
 						</shiro:hasAnyRoles>
 		                
