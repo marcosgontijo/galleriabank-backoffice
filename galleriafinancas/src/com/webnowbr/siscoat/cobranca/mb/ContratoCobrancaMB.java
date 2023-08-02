@@ -3496,10 +3496,18 @@ public class ContratoCobrancaMB {
 					"");
 			
 			Responsavel responsavel5 = new Responsavel();
-			//Vivian Vargas Godinho 
+			//Gabriel Fortunato Mancio de Camargo 
 			responsavel5 = rDao.findById((long) 1643);
 			takeBlipMB = new TakeBlipMB();
 			takeBlipMB.sendWhatsAppMessage(responsavel5, "geracao_paju", "Luvison",
+					this.objetoContratoCobranca.getNumeroContrato(), this.objetoContratoCobranca.getPagador().getNome(),
+					"");
+			
+			Responsavel responsavel6 = new Responsavel();
+			//Raí Vitor Sudário
+			responsavel6 = rDao.findById((long) 1709);
+			takeBlipMB = new TakeBlipMB();
+			takeBlipMB.sendWhatsAppMessage(responsavel6, "geracao_paju", "Luvison",
 					this.objetoContratoCobranca.getNumeroContrato(), this.objetoContratoCobranca.getPagador().getNome(),
 					"");
 		}
@@ -3648,7 +3656,11 @@ public class ContratoCobrancaMB {
 								+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
 								mensagemHtmlTeste);
 				eec.enviarEmailHtmlResponsavelAdms(
-						"vivian@luvisoncarvalho.com.br", "[siscoat] Operação "
+						"gabriel@luvisoncarvalho.com.br", "[siscoat] Operação "
+								+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
+								mensagemHtmlTeste);
+				eec.enviarEmailHtmlResponsavelAdms(
+						"raisudario@luvisoncarvalho.com.br", "[siscoat] Operação "
 								+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
 								mensagemHtmlTeste);
 			}
@@ -5401,7 +5413,8 @@ public class ContratoCobrancaMB {
 	}
 	
 	public String enviarContratoEsteiraLuvison(ContratoCobranca contrato) {
-		this.objetoContratoCobranca = getContratoById(contrato.getId());
+		
+		this.objetoContratoCobranca = getContratoById(objetoContratoCobranca.getId());
 		this.objetoContratoCobranca.setEsteriaComentarioLuvison(true);
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		contratoCobrancaDao.merge(objetoContratoCobranca);

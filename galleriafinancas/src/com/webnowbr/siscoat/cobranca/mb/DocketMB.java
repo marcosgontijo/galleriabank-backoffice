@@ -637,8 +637,11 @@ public class DocketMB {
 				}
 			}
 			
-			if(CommonsUtil.mesmoValor(doc.getDocumentoNome(), "Certidão de Distribuição de Ações Trabalhistas - Tribunal Regional do Trabalho (1° instância)")
-				&& CommonsUtil.mesmoValor(estado.getUf(), "SP")) {
+			if(CommonsUtil.mesmoValor(estado.getUf(), "SP") &&
+				(CommonsUtil.mesmoValor(doc.getDocumentoNome(),
+						"Certidão de Distribuição de Ações Trabalhistas - Tribunal Regional do Trabalho (1° instância)")
+				||CommonsUtil.mesmoValor(doc.getDocumentoNome(),
+						"Certidão de Distribuição de Ações Trabalhistas - Tribunal Regional do Trabalho (1° instância) - Processos Judiciais Eletrônicos"))) {
 				docPagador.setCidade("São Paulo");
 				docPagador.getCidadeDocketId();
 				docPagador.setTravado(true);

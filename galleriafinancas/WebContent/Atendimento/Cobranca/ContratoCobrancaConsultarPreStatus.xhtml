@@ -10,6 +10,9 @@
 
 	<ui:define name="conteudo">  
 		<h:form id="form" style="margin-bottom:10px;" >	
+			<script src="#{request.contextPath}/resources/js/functions.js"></script>
+		 	<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>			
+		 	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/css/Style.css" title="" media="all" /> 
 			<script src="#{request.contextPath}/resources/js/jquery.mask.min.js"></script>	
 			<script>
 		        function validatePhone() {
@@ -221,9 +224,11 @@
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" />
 		                </p:commandButton>
 		                
-		                <shiro:hasAnyRoles name="ROOT, PROFILE_COMENTARIO_JURIDICO">
-			                <p:commandButton value="LUVISON" ajax="false" icon="ui-icon-arrowreturnthick-1-e" 
-			                	action="#{contratoCobrancaMB.enviarContratoEsteiraLuvison(contratos)}" >
+		                <shiro:hasAnyRoles name="ROOT, PROFILE_COMENTARIO_JURIDICO">  
+			                <p:commandButton value="LUVISON" ajax="true" icon="ui-icon-arrowreturnthick-1-e"
+			               		onclick="PF('enviarLuvison').show();" 
+			               		rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico'}">
+			               		<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 							</p:commandButton>
 						</shiro:hasAnyRoles>
 		                
@@ -241,7 +246,7 @@
 							and contratos.aprovadoComite == true}"
 						action="#{contratoCobrancaMB.downloadAprovadoComitePDF(contratos.id)}" >
 						</p:commandButton>			                
-		               <shiro:hasAnyRoles name="ROOT, PRECOBRANCA, PROFILE_CONTRATO">
+		               	<shiro:hasAnyRoles name="ROOT, PRECOBRANCA, PROFILE_CONTRATO">
 		                	<p:commandButton rendered ="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. CCB'}"  value="Emitir CCB" action="#{ccbMB.EmitirCcbPreContrato}">
 			                	<f:setPropertyActionListener  target="#{ccbMB.objetoContratoCobranca}" value="#{contratos}" />
 			                </p:commandButton>	
@@ -368,5 +373,26 @@
 				</p:panel>
 			</p:dialog>
 		</h:form>
+	
+		<p:dialog header="Enviar p/ LUVISON ?" widgetVar="enviarLuvison"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600" closable="false">
+			<h:form>
+				<div align="center">
+					<h:outputText value="Deseja Enviar contrato p/ Luvison?" styleClass="labelBold"  
+						style="width:250px;font-weight:bold;font-size: 18px;" />
+					<h:panelGrid columns="3" style="margin-top:50px">
+						<p:commandButton value="Não" onclick="PF('enviarLuvison').hide();" icon="ui-icon-closethick" >
+							<f:setPropertyActionListener 
+							target="#{contratoCobrancaMB.objetoContratoCobranca}"
+							value="#{null}" />
+						</p:commandButton>
+						<p:spacer width="20" />
+						<p:commandButton value="Sim" ajax="false" icon="ui-icon-check" 
+							action="#{contratoCobrancaMB.enviarContratoEsteiraLuvison(contratos)}">
+						</p:commandButton>
+					</h:panelGrid>
+				</div>
+			</h:form>
+		</p:dialog> 
 	</ui:define>
 </ui:composition>	        

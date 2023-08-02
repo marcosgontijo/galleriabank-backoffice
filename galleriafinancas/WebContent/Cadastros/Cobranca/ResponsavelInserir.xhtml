@@ -250,11 +250,13 @@
 						
 	
 						<p:outputLabel for="Observacao" value="Observação: " />
-						<p:inputTextarea id="Observacao" rows="10" cols="48"
-							counter="display" maxlength="3000" onblur=""
-							counterTemplate="{0} characters remaining." autoResize="false"
-							value="#{responsavelMB.objetoResponsavel.observacao}" />
-						<p:outputLabel id="display" styleClass="labelBold" />
+						<h:panelGroup>
+							<p:inputTextarea id="Observacao" rows="10" cols="48"
+								counter="display" maxlength="3000" onblur=""
+								counterTemplate="{0} characters remaining." autoResize="false"
+								value="#{responsavelMB.objetoResponsavel.observacao}" />
+							<p:outputLabel id="display" styleClass="labelBold" />
+						</h:panelGroup>
 						
 						<shiro:hasAnyRoles name="ROOT">
 							<p:outputLabel for="WhatsApp" value="Contato WhatsApp: " />
