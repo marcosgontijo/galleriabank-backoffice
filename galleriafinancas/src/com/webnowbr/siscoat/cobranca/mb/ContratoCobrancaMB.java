@@ -132,6 +132,7 @@ import com.webnowbr.siscoat.cobranca.db.model.GruposFavorecidos;
 import com.webnowbr.siscoat.cobranca.db.model.GruposPagadores;
 import com.webnowbr.siscoat.cobranca.db.model.IPCA;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.ImovelEstoque;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorAdicionais;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorSocio;
@@ -653,6 +654,7 @@ public class ContratoCobrancaMB {
 	protected InvestidorMB investidorMB;
 
 	private ImovelCobranca objetoImovelCobranca;
+	private ImovelEstoque objetoImovelEstoque;
 	private PagadorRecebedor objetoPagadorRecebedor;
 	private PagadorRecebedorSocio objetoSocio;
 	private CcbContrato objetoCcb;
@@ -29421,6 +29423,15 @@ public String clearFieldsRelFinanceiroAtrasoCRI2() {
 	 */
 	public void setObjetoImovelCobranca(ImovelCobranca objetoImovelCobranca) {
 		this.objetoImovelCobranca = objetoImovelCobranca;
+	}
+	
+
+	public ImovelEstoque getObjetoImovelEstoque() {
+		return objetoImovelEstoque;
+	}
+
+	public void setObjetoImovelEstoque(ImovelEstoque objetoImovelEstoque) {
+		this.objetoImovelEstoque = objetoImovelEstoque;
 	}
 
 	/**

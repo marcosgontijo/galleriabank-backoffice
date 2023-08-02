@@ -16,6 +16,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelEstoque;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
+import com.webnowbr.siscoat.contab.db.dao.BalancoPatrimonialDao;
 import com.webnowbr.siscoat.db.dao.DAOException;
 import com.webnowbr.siscoat.db.dao.DBConnectionException;
 
@@ -33,6 +34,7 @@ public class ImovelCobrancaMB {
 	private boolean updateMode = false;
 	private boolean deleteMode = false;
 	private String tituloPainel = null;
+	private boolean editarEstoque;
 	/**
 	 * Construtor.
 	 */
@@ -73,6 +75,37 @@ public class ImovelCobrancaMB {
 
 		
 		return "/Atendimento/Cobranca/ImovelEstoqueConsulta.xhtml";
+	}
+	
+	public String salvarEstoque() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
+		try {
+			imovelCobrancaDao.merge(this.objetoImovelCobranca);
+
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO, "Estoque Inserido com sucesso!!", ""));
+			clearFieldsEstoqueImoveis();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro: " + e, ""));
+		}
+		return clearFieldsEstoqueImoveis();
+	}
+
+	public String editarEstoque() {
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
+
+		if (this.objetoImovelEstoque.getId() > 0) {
+			imovelCobrancaDao.merge(this.objetoImovelCobranca);
+		}
+
+		facesContext.addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO, "Estoque alterado com sucesso!", ""));
+
+		return "/Atendimento/Cobranca/ImovelEstoqueEditar.xhtml";
 	}
 	
 	public String inserir() {
@@ -251,4 +284,21 @@ public class ImovelCobrancaMB {
 	public void setTituloPainel(String tituloPainel) {
 		this.tituloPainel = tituloPainel;
 	}
+
+	public ContratoCobranca getObjetoContratoCobranca() {
+		return objetoContratoCobranca;
+	}
+
+	public void setObjetoContratoCobranca(ContratoCobranca objetoContratoCobranca) {
+		this.objetoContratoCobranca = objetoContratoCobranca;
+	}
+
+	public boolean isEditarEstoque() {
+		return editarEstoque;
+	}
+
+	public void setEditarEstoque(boolean editarEstoque) {
+		this.editarEstoque = editarEstoque;
+	}
+	
 }

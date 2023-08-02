@@ -12,10 +12,10 @@
 		<h:form style="margin-bottom:10px;">				
 			<p:messages id="mensagens" showDetail="true"/>							
 			<p:panel id="ConsultaEstoque" header="Estoque - Consultar" style="margin-bottom:10px;">		    		    
-   		         <p:dataTable id="dtEstoque" var="estoque" value="#{contratoCobranca.listaConsultaEstoque}" paginator="true" rows="20" 
+   		         <p:dataTable id="dtEstoque" var="estoque" value="#{contratoCobrancaMB.listaConsultaEstoque}" paginator="true" rows="20" 
    		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
    		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
-                 rowsPerPageTemplate="20,40,60,80" selection="" emptyMessage="" sortBy="#{ccb.numeroOperacao}">
+                 rowsPerPageTemplate="20,40,60,80" selection="" emptyMessage="" sortBy="#{estoque.numerocontrato}">
 			        <p:column style="text-align: center;" headerText="Numero Contrato" filterBy="#{estoque.numerocontrato}" filterMatchMode="contains" sortBy="#{estoque.numerocontratoo}">
 			            <h:outputText value="#{estoque.numerocontrato}" />
 			        </p:column>
@@ -32,9 +32,8 @@
 			            <h:outputText value="#{estoque.statusAtual}" />
 			        </p:column>
 			        <p:column style="width:120px;">
-		                <p:commandButton action="#{ccbMB.clearFieldsEditarCcb}" ajax="false" icon="ui-icon-pencil" title="Editar">
-		               		<f:setPropertyActionListener target="#{ccbMB.objetoCcb}" value="#{ccb}" />  			        		
-			        		<f:setPropertyActionListener target="#{ccbMB.objetoContratoCobranca}" value="#{ccb.objetoContratoCobranca}" />
+		                <p:commandButton action="#{ccbMB.clearFieldsEditarCcb}" ajax="false" icon="ui-icon-pencil" title="Editar">			        		
+			        		<f:setPropertyActionListener target="#{contratoCobranca.objetoImovelEstoque}" value="#{contratoCobranca.objetoImovelEstoque}" />
 		                </p:commandButton>
 		            </p:column>			        		               		        			        			           			 		
 			        <f:facet name="footer">

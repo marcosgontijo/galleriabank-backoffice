@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	template="../MenuAtendimento.xhtml">
+	
+	<ui:define name="conteudo">
+		<h:form id="form">
+			<script
+				src="#{request.contextPath}/resources/resources/js/functions.js"></script>
+			<script
+				src="#{request.contextPath}/resources/js/locale-primefaces.js"
+				library="javascript"></script>
+			<link rel="stylesheet" type="text/css"
+				href="#{request.contextPath}/resources/resources/css/Style.css"
+				title="" media="all" />
+
+			<h:outputStylesheet>
+			.labelSeguros{
+				width: 128px;
+			}
+			.ValorSeguros{
+				width: 100px;
+			}
+			</h:outputStylesheet>
+			<p:panel id="PanelLocador" header="Contrato"
+				style="margin-bottom:10px;">
+				<p:focus />
+				<p:messages />
+				<p:messages id="msgs" />	
+				<h:panelGrid columns="2">							
+					
+					<p:outputLabel for="contrato" value="Referente a Operação: "
+						styleClass="labelBold"
+						style="font-weight: bold; font-size: 18px;" />
+					<h:panelGroup>
+						<p:outputLabel id="contrato" disabled="true"
+							value="#{contratoCobrancaMB.numeroContrato}"
+							required="false" style="FONT-SIZE: 10pt;" />
+						<p:spacer height="10" />
+						<p:commandButton icon="ui-icon ui-icon-circle-zoomin" ajax="true"
+							action="#{ccbMB.pesquisaContratoCobranca}"
+							oncomplete="PF('contratoCobrancaDialog').show();"
+							update="contrato contratoDialogdlg" />
+					</h:panelGroup>
+				</h:panelGrid>
+
+				<p:panel id="Estoque" header="Estoque" style="margin-bottom:10px;">
+					<h:panelGrid columns="2">
+						<p:panel header="Parcelas">
+							<h:panelGrid columns="2">
+								<p:outputLabel for="parcelaParouPagar" value="Parcela que parou de pagar: "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:inputText id="parcelaParouPagar" value="#{contratoCobrancaMB.objetoImovelEstoque.parcelaParouPagar}"/>
+									
+								<p:outputLabel for="variacaoCusto" value="Variação custos até leilão: "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:inputText id="variacaoCusto" value="#{contratoCobrancaMB.objetoImovelEstoque.variacaoCusto}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this,13, event, 2);"
+									converter="bigDecimalConverter"/>
+								
+								<p:outputLabel for="ltvLeilao" value="LTV do leilão: "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:inputText id="ltvLeilao" value="#{contratoCobrancaMB.objetoImovelEstoque.ltvLeilao}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this,13, event, 2);"
+									converter="bigDecimalConverter"/>
+								
+								<p:outputLabel for="valorEmprestimo" value="LTV do leilão: "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:inputText id="valorEmprestimo" value="#{contratoCobrancaMB.objetoImovelEstoque.valorEmprestimo}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this,13, event, 2);"
+									converter="bigDecimalConverter"/>
+									
+								<p:outputLabel for="vendaForcada" value="Venda Forçada: "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:inputText id="vendaForcada" value="#{contratoCobrancaMB.objetoImovelEstoque.vendaForcada}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this,13, event, 2);"
+									converter="bigDecimalConverter"/>	
+								
+								<p:outputLabel for="valorMercado" value="Valor Mercado: "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:inputText id="valorMercado" value="#{contratoCobrancaMB.objetoImovelEstoque.valorMercado}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this,13, event, 2);"
+									converter="bigDecimalConverter"/>
+									
+								<p:outputLabel for="dataConsolidado" value="Data de Consolidação: "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:calendar id="dataConsolidado" showOn="button"
+									value="#{contratoCobrancaMB.objetoImovelEstoque.dataConsolidado}"
+									size="100" pattern="dd/MM/yyyy" locale="pt"
+									styleClass="dateTimeField" />	
+									
+								<p:outputLabel for="dataLeilao1" value="Data 1º leilão: "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:calendar id="dataLeilao1" showOn="button"
+									value="#{contratoCobrancaMB.objetoImovelEstoque.dataLeilao1}"
+									size="100" pattern="dd/MM/yyyy" locale="pt"
+									styleClass="dateTimeField" />
+										
+								<p:outputLabel for="dataLeilao1" value="Data 2º leilão: "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:calendar id="dataLeilao2" showOn="button"
+									value="#{contratoCobrancaMB.objetoImovelEstoque.dataLeilao2}"
+									size="100" pattern="dd/MM/yyyy" locale="pt"
+									styleClass="dateTimeField" />	
+									
+									
+								<p:outputLabel for="dataLeilao3" value="Data 3º leilão: "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:calendar id="dataLeilao3" showOn="button"
+									value="#{contratoCobrancaMB.objetoImovelEstoque.dataLeilao3}"
+									size="100" pattern="dd/MM/yyyy" locale="pt"
+									styleClass="dateTimeField" />	
+								
+								<p:outputLabel for="statusLeilao" value="Status do leilão: "
+									styleClass="labelBold" />
+								<p:selectOneMenu id="statusLeilao"
+									value="#{contratoCobrancaMB.objetoImovelEstoque.statusLeilao}" 
+									style="width: 80px;">
+									<f:selectItem itemValue="" itemLabel="" />
+									<f:selectItem itemValue="Estoque" itemLabel="PF" />	
+									<f:selectItem itemValue="Negativo" itemLabel="PJ" />
+									<f:selectItem itemValue="Suspenso por decisão judicial"/>
+								</p:selectOneMenu>
+								
+								<p:outputLabel for="statusAtual" value="Status Atual: "
+									styleClass="labelBold" />
+								<p:selectOneMenu id="statusAtual"
+									value="#{contratoCobrancaMB.objetoImovelEstoque.statusAtual}" 
+									style="width: 80px;">
+									<f:selectItem itemValue="" itemLabel=""/>
+									<f:selectItem itemValue="Alugado"/>	
+									<f:selectItem itemValue="Cancelado por acordo"/>
+									<f:selectItem itemValue="Estoque"/>
+									<f:selectItem itemValue="Online"/>
+									<f:selectItem itemValue="Pendente por decisão judicial"/>
+									<f:selectItem itemValue="Reintegração de posse"/>
+									<f:selectItem itemValue="Vendido"/>
+								</p:selectOneMenu>
+								
+								<p:outputLabel for="valorLeilao2" value="Valor 2º leilão: "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:inputText id="valorLeilao2" value="#{contratoCobrancaMB.objetoImovelEstoque.valorLeilao2}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this,13, event, 2);"
+									converter="bigDecimalConverter"/>
+								
+								<p:outputLabel for="valorVenda" value="Valor da venda: "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:inputText id="valorVenda" value="#{contratoCobrancaMB.objetoImovelEstoque.valorVenda}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this,13, event, 2);"
+									converter="bigDecimalConverter"/>
+									
+								<p:outputLabel for="dataVenda" value="Data da venda: "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:calendar id="dataVenda" showOn="button"
+									value="#{contratoCobrancaMB.objetoImovelEstoque.dataVenda}"
+									size="100" pattern="dd/MM/yyyy" locale="pt"
+									styleClass="dateTimeField" />	
+									
+								<p:outputLabel for="tipoVenda" value="Tipo venda: "
+									styleClass="labelBold" />
+								<p:selectOneMenu id="tipoVenda"
+									value="#{contratoCobrancaMB.objetoImovelEstoque.tipoVenda}" 
+									style="width: 80px;">
+									<f:selectItem itemValue="" itemLabel=""/>
+									<f:selectItem itemValue="Direta"/>	
+									<f:selectItem itemValue="Leilão AF"/>
+									<f:selectItem itemValue="Leilão ESTQ"/>
+									<f:selectItem itemValue="Preferência"/>
+								</p:selectOneMenu>	
+									
+								<p:outputLabel value="Estoque atual?: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+							<p:selectBooleanCheckbox id="estoque" value="#{contratoCobrancaMB.objetoImovelEstoque.estoque}" >
+								<p:ajax event="change" />
+							</p:selectBooleanCheckbox>	
+									
+
+					<f:facet name="footer">
+						<p:commandButton value="Salvar" ajax="false"
+							icon="ui-icon-print" action="#{imovelCobrancaMB.salvarEstoque}" />
+						<p:spacer height="10"/>
+						<p:commandButton value="Cancelar" ajax="false" immediate="true"
+							icon="ui-icon-cancel" action="#{imovelCobrancaMB.clearFieldsEstoqueImoveis}"
+							style="TEXT-DECORATION: bold; "/>
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+		
+	</ui:define>
+</ui:composition>
