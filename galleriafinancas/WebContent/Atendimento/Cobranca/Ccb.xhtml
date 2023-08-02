@@ -1880,7 +1880,6 @@
 								<p:outputLabel value="Usar Novo Custo Emissão: " styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
 								<p:selectBooleanCheckbox id="objetoCcb" value="#{ccbMB.objetoCcb.usarNovoCustoEmissao}" >
-									<p:ajax update="taxaDeJurosMes" event="change" listener="#{ccbMB.objetoCcb.pegarTaxa}" />
 								</p:selectBooleanCheckbox>
 								
 								<p:outputLabel for="prazo"
@@ -2608,6 +2607,7 @@
 					<p:commandButton ajax="false" action="#{ccbMB.enviarMoneyPlus}"
 						icon="ui-icon ui-icon-print" value="Integrar Money Plus" />					
 				</h:panelGrid>
+			
 				<h:panelGrid columns="2">	
 					<p:outputLabel id="aviso" value="#{ccbMB.aviso} " styleClass="labelBold" />
 					<p:commandButton ajax="true"

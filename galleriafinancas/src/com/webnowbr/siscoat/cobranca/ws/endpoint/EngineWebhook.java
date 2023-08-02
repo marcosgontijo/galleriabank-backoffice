@@ -120,7 +120,8 @@ public class EngineWebhook {
 //								DocumentosAnaliseEnum.ENGINE, webhookRetorno);
 
 					} else {
-						if (!CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais().getResult())
+						if (!CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais()) 
+								&& !CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais().getResult())
 								&& !CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais()
 										.getResult().get(0).getOnlineCertificates())
 								&& !CommonsUtil.mesmoValorIgnoreCase("NADA CONSTA",
@@ -143,10 +144,11 @@ public class EngineWebhook {
 							"PROPRIETARIO ATUAL"))
 						motivo = "Empresa Vinculada ao Proprietario Anterior";
 					
-					if (!CommonsUtil
-							.semValor(engineWebhookRetorno.getConsultaCompleta().getEnterpriseData().getPartnership())
-							&& !CommonsUtil.semValor(engineWebhookRetorno.getConsultaCompleta().getEnterpriseData()
-									.getPartnership().getPartnerships())) {
+					if (!CommonsUtil.semValor(engineWebhookRetorno.getConsultaCompleta())
+							&& !CommonsUtil.semValor(engineWebhookRetorno.getConsultaCompleta().getEnterpriseData())
+							&& !CommonsUtil.semValor(engineWebhookRetorno.getConsultaCompleta().getEnterpriseData().getPartnership())
+							&& !CommonsUtil.semValor(engineWebhookRetorno.getConsultaCompleta().getEnterpriseData().getPartnership()
+									.getPartnerships())) {
 
 						for (EngineRetornoRequestEnterprisePartnership partnership : engineWebhookRetorno
 								.getConsultaCompleta().getEnterpriseData().getPartnership().getPartnerships()) {

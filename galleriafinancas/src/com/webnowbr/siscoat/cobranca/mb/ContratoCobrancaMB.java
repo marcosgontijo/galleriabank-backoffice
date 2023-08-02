@@ -17050,11 +17050,11 @@ public class ContratoCobrancaMB {
 		if (!CommonsUtil.semValor(cpfCnpjCCResp)) {
 			if (cpfCnpjCCResp.length() == 11) {
 				// transforma em cpf
-				cpfCnpjCCResp = CommonsUtil.formataCpf(cpfCnpjCCResp);
+				cpfCnpjCCResp = CommonsUtil.formataCnpjCpf(cpfCnpjCCResp, false);
 			} else if (cpfCnpjCCResp.length() == 13) {
 				// transforma em cnpj
 				if (!(cpfCnpjCCResp.contains(".") && cpfCnpjCCResp.contains("-"))) {
-					cpfCnpjCCResp = CommonsUtil.formataCnpj(cpfCnpjCCResp);
+					cpfCnpjCCResp = CommonsUtil.formataCnpjCpf(cpfCnpjCCResp, false);
 				}
 			}
 

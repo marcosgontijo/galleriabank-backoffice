@@ -833,7 +833,8 @@ public class ImpressoesPDFMB {
 			doc.close();
 			
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(FacesContext.getCurrentInstance());
-			gerador.open(String.format(nomePDF, ""));
+			String nomeArquivoDownload = String.format(nomePDF, "");
+			gerador.open(nomeArquivoDownload);
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
 

@@ -32,7 +32,7 @@ public class ReaWebhookRetornoProprietarios {
 
 				if (CommonsUtil.somenteNumeros(reaWebhookRetornoDados.getValor()).length() == 14)
 					reaWebhookRetornoProprietario.setCnpj(
-							CommonsUtil.formataCnpj(CommonsUtil.somenteNumeros(reaWebhookRetornoDados.getValor())));
+							CommonsUtil.formataCnpjCpf(CommonsUtil.somenteNumeros(reaWebhookRetornoDados.getValor()),false));
 				else
 					reaWebhookRetornoProprietario.setCpf(CommonsUtil.somenteNumeros(reaWebhookRetornoDados.getValor()));
 				reaWebhookRetornoProprietario.setFisicaJuridica("PF");

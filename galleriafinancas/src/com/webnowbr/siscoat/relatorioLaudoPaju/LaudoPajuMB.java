@@ -100,7 +100,8 @@ public class LaudoPajuMB {
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 				FacesContext.getCurrentInstance());
 
-		gerador.open(String.format("Galleria Bank - Laudo Paju %s.xlsx", ""));
+		String nomeArquivoDownload = String.format("Galleria Bank - Laudo Paju %s.xlsx", "");
+		gerador.open(nomeArquivoDownload);
 		gerador.feed(new ByteArrayInputStream(fileOut.toByteArray()));
 		gerador.close();
 

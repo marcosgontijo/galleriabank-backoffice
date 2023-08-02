@@ -2,6 +2,7 @@ package com.webnowbr.siscoat.cobranca.service;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorConsulta;
@@ -21,30 +22,58 @@ public class PagadorRecebedorService {
 	public PagadorRecebedor buscaOuInsere(PagadorRecebedor pagadorAdicionar) {
 		if (CommonsUtil.semValor(pagadorAdicionar.getId())) {
 			PagadorRecebedorDao pDao = new PagadorRecebedorDao();
-			if (!CommonsUtil.semValor(pagadorAdicionar.getCpf())
-					&& pDao.findByFilter("cpf", pagadorAdicionar.getCpf()).size() > 0) {
-				pagadorAdicionar = pDao.findByFilter("cpf", pagadorAdicionar.getCpf()).get(0);
+			if (!CommonsUtil.semValor(pagadorAdicionar.getCpf())) {
+				List<PagadorRecebedor> cadastrados = pDao.findByFilter("cpf", pagadorAdicionar.getCpf());
+				PagadorRecebedor pagadorCadastrado = new PagadorRecebedor();
+						
+				if (cadastrados.size() > 0)
+					pagadorCadastrado = cadastrados.get(0);
+				else
+					pagadorCadastrado = pagadorAdicionar;
 
-				if (CommonsUtil.semValor(pagadorAdicionar.getNomeMae())
+				if (CommonsUtil.semValor(pagadorCadastrado.getNomeMae())
 						&& !CommonsUtil.semValor(pagadorAdicionar.getNomeMae())) {
-					pagadorAdicionar.setNomeMae(pagadorAdicionar.getNomeMae());
+					pagadorCadastrado.setNomeMae(pagadorAdicionar.getNomeMae());
 				}
-				if (CommonsUtil.semValor(pagadorAdicionar.getRg()) && !CommonsUtil.semValor(pagadorAdicionar.getRg())) {
-					pagadorAdicionar.setRg(pagadorAdicionar.getRg());
+				if (CommonsUtil.semValor(pagadorCadastrado.getRg())
+						&& !CommonsUtil.semValor(pagadorAdicionar.getRg())) {
+					pagadorCadastrado.setRg(pagadorAdicionar.getRg());
 				}
 
-				if (CommonsUtil.semValor(pagadorAdicionar.getDtNascimento())
+				if (CommonsUtil.semValor(pagadorCadastrado.getDtNascimento())
 						&& !CommonsUtil.semValor(pagadorAdicionar.getDtNascimento())) {
-					pagadorAdicionar.setDtNascimento(pagadorAdicionar.getDtNascimento());
+					pagadorCadastrado.setDtNascimento(pagadorAdicionar.getDtNascimento());
 				}
-				pDao.merge(pagadorAdicionar);
+				if (pagadorCadastrado.getId() > 0)
+					pDao.merge(pagadorCadastrado);
+				else
+					pDao.create(pagadorAdicionar);
+				pagadorAdicionar = pagadorCadastrado;
 
-			} else if (!CommonsUtil.semValor(pagadorAdicionar.getCnpj())
-					&& pDao.findByFilter("cnpj", pagadorAdicionar.getCnpj()).size() > 0) {
-				pagadorAdicionar = pDao.findByFilter("cnpj", pagadorAdicionar.getCnpj()).get(0);
+			} else if (!CommonsUtil.semValor(pagadorAdicionar.getCnpj())) {
+				List<PagadorRecebedor> cadastrados = pDao.findByFilter("cnpj", pagadorAdicionar.getCnpj());
+				PagadorRecebedor pagadorCadastrado = new PagadorRecebedor();
+						
+				if (cadastrados.size() > 0)
+					pagadorCadastrado = cadastrados.get(0);
+				else
+					pagadorCadastrado = pagadorAdicionar;
+
+				if (CommonsUtil.semValor(pagadorCadastrado.getCnpj())
+						&& !CommonsUtil.semValor(pagadorAdicionar.getCnpj())) {
+					pagadorCadastrado.setCnpj(pagadorAdicionar.getCnpj());
+				}
+
+				if (pagadorCadastrado.getId() > 0)
+					pDao.merge(pagadorCadastrado);
+				else
+					pDao.create(pagadorAdicionar);
+				pagadorAdicionar = pagadorCadastrado;
+				
 			} else {
 				long idIncluido = pDao.create(pagadorAdicionar);
 				pagadorAdicionar = pDao.findById(idIncluido);
+				pDao.merge(pagadorAdicionar);
 			}
 		}
 		return pagadorAdicionar;
@@ -60,13 +89,12 @@ public class PagadorRecebedorService {
 		PagadorRecebedor pagadorRecebedor = new PagadorRecebedor();
 
 		String tipoPessoa = CommonsUtil.pessoaFisicaJuridicaCnpjCpf(cnpjCpf);
-			if (CommonsUtil.mesmoValor("PF", tipoPessoa))
-				pagadorRecebedor.setCpf(CommonsUtil.formataCpf(cnpjCpf));
-			else
-				pagadorRecebedor.setCnpj(CommonsUtil.formataCnpj(cnpjCpf) );
-		
-			pagadorRecebedor = buscaOuInsere(pagadorRecebedor);
-		
+		if (CommonsUtil.mesmoValor("PF", tipoPessoa))
+			pagadorRecebedor.setCpf(CommonsUtil.formataCpf(cnpjCpf));
+		else
+			pagadorRecebedor.setCnpj(CommonsUtil.formataCnpjCpf(cnpjCpf, false));
+
+		pagadorRecebedor = buscaOuInsere(pagadorRecebedor);
 
 		preecheDadosReceita(pagadorRecebedor);
 		

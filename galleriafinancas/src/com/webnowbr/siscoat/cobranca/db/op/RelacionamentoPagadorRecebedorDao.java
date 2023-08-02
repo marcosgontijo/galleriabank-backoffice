@@ -108,15 +108,19 @@ public class RelacionamentoPagadorRecebedorDao extends HibernateDao <Relacioname
 	}
 	
 	
-	private static final String QUERY_populaGeralDB = " select id, identificacao, tipo, tipopessoa, retornoserasa  "
-			+ " from cobranca.documentosanalise d "
-			+ " where retornoserasa is not null "
-			+ " and retornoserasa != '' "
-			+ " and (tipo is null or tipo != 'Rea') "
-			+ " and pagador is not null " ;
+	private static final String QUERY_populaGeralDB = " select id, identificacao, tipo, tipopessoa, retornoserasa\r\n"
+			+ "from cobranca.documentosanalise d\r\n"
+			+ "where retornoserasa is not null\r\n"
+			+ "	and retornoserasa != ''\r\n"
+			+ "	and (tipo is null\r\n"
+			+ "		or tipo != 'Rea')\r\n"
+			+ "	and pagador is not null\r\n"
+			+ "	and id > ? \r\n"
+			+ "	and id < ? \r\n"
+			+ "	order by id " ;
 	
 	@SuppressWarnings("unchecked")
-	public List<RelacionamentoPagadorRecebedor> populaGeralDB() {
+	public List<RelacionamentoPagadorRecebedor> populaGeralDB(int param1, int param2) {
 		return (List<RelacionamentoPagadorRecebedor>) executeDBOperation(new DBRunnable() {
 			@Override
 			public List<RelacionamentoPagadorRecebedor> run() throws Exception {
@@ -128,6 +132,8 @@ public class RelacionamentoPagadorRecebedorDao extends HibernateDao <Relacioname
 				try {
 					connection = getConnection();
 					ps = connection.prepareStatement(QUERY_populaGeralDB);
+					ps.setLong(1, param1);
+					ps.setLong(2, param2);
 					
 					rs = ps.executeQuery();
 					DocumentoAnaliseDao docDao = new DocumentoAnaliseDao();

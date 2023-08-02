@@ -133,7 +133,8 @@ public class SeguroTabelaMB {
 
 		SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
 		
-		gerador.open(String.format("Galleria Bank - SeguradoTabelaDFI %s.xlsx", ""));
+		String nomeArquivoDownload = String.format("Galleria Bank - SeguradoTabelaDFI %s.xlsx", "");
+		gerador.open(nomeArquivoDownload);
 		gerador.feed( new ByteArrayInputStream(fileOut.toByteArray()));
 		gerador.close();
 
@@ -242,7 +243,8 @@ public class SeguroTabelaMB {
 
 		SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
 		
-		gerador.open(String.format("Galleria Bank - SeguradoTabelaMIP %s.xlsx", ""));
+		String nomeArquivoDownload = String.format("Galleria Bank - SeguradoTabelaMIP %s.xlsx", "");
+		gerador.open(nomeArquivoDownload);
 		gerador.feed( new ByteArrayInputStream(fileOut.toByteArray()));
 		gerador.close();
 
