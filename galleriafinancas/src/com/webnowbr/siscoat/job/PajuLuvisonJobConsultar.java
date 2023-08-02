@@ -26,7 +26,7 @@ public class PajuLuvisonJobConsultar {
 		tkblpMb.sendWhatsAppMessageLuvisonJob(responsavel, size);
 		
 		//Fernanda
-		responsavel2 = rDao.findById((long) 1699);
-		tkblpMb.sendWhatsAppMessageLuvisonJob(responsavel2, size);
+		//responsavel2 = rDao.findById((long) 1699);
+		//tkblpMb.sendWhatsAppMessageLuvisonJob(responsavel2, size);
 	}
 }
