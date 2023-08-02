@@ -11,6 +11,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.webnowbr.siscoat.cobranca.db.op.CidadeDao;
@@ -154,7 +155,57 @@ public class ImovelCobranca implements Serializable {
 		return cidades.stream().filter(t -> t.toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());
 	 }
 	
+	public List<String> completeTipoImovel(String query) {
+		String queryLowerCase = query.toLowerCase();
+		List<String> listaTipos = new ArrayList<>();
+		for(String tipo : listaTipoImovel()) {
+			listaTipos.add(tipo//.split(Pattern.quote(","))[0]
+					);
+		}
+		return listaTipos.stream().filter(t -> t.toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());
+	}
 	
+	public List<String> listaTipoImovel() {
+		List<String> tipos = new ArrayList<>();
+		tipos.add("Apartamento,Apartamento");
+		tipos.add("Casa,Casa");
+		tipos.add("Galpão,Galpão");
+		tipos.add("Sala Comercial,Sala Comercial");
+		tipos.add("Prédio Comercial,Prédio Comercial");
+		tipos.add("Prédio Misto,Prédio Misto");
+		tipos.add("Casa de Condomínio,Casa de condomínio");
+		//tipos.add("Casa de Condomínio acima1000,Casa de condomínio (acima 1000m²)");
+		tipos.add("Terreno,Terreno");
+		tipos.add("Chácara,Chácara");
+		tipos.add("Rural,Rural");
+		tipos.add("Casa em construção,Casa em construção");
+		return tipos;
+	}
+	
+	public String separarTipoVirgula(String value, int i) {
+		if(CommonsUtil.semValor(value)) {
+			return "";
+		}
+				
+		if(value.contains(",")) {
+			return value.split(Pattern.quote(","))[i];
+		} else {
+			List<String> tipos = listaTipoImovel();
+			List<String> lista = tipos.stream().filter(t -> t.toLowerCase().contains(value.toLowerCase())).collect(Collectors.toList());
+			String retorno = lista.get(0);
+			return retorno.split(Pattern.quote(","))[i];
+		}
+	}
+	
+	public String getValue(String value) {
+		return separarTipoVirgula(value, 0);
+	}
+	
+	public String getLabel(String value) {
+		return separarTipoVirgula(value, 1);
+	}
+	
+
 	public void consultarObjetoCidade() {
 		String estadoStr = getEstadoPorSigla(estado);
 		CidadeDao cidadeDao = new CidadeDao();

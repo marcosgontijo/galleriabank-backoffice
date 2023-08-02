@@ -1263,16 +1263,13 @@
 						<p:inputMask id="TelResidencialImovel" value="#{contratoCobrancaMB.objetoImovelCobranca.telResidencial}" mask="(99) 9999-9999" label="Telefone Residencial"/>																																	
 						
 						<p:outputLabel for="Tipo" value="Tipo: " styleClass="labelBold"/>
-						<p:selectOneMenu id="Tipo" value="#{contratoCobrancaMB.objetoImovelCobranca.tipo}" label="Tipo" required="true" style="width:410px;">
-							<f:selectItem itemValue="" itemLabel="Escolha o Tipo do Imóvel" />
-							<f:selectItem itemValue="Apartamento" itemLabel="Apartamento" />		
-							<f:selectItem itemValue="Casa" itemLabel="Casa" />		
-							<f:selectItem itemValue="Galpão" itemLabel="Galpão" />		
-							<f:selectItem itemValue="Sala Comercial" itemLabel="Sala Comercial" />
-							<f:selectItem itemValue="Prédio Comercial" itemLabel="Prédio Comercial" />	
-							<f:selectItem itemValue="Prédio Misto" itemLabel="Prédio Misto" />	
-							<f:selectItem itemValue="Terreno" itemLabel="Terreno" />						    
-						</p:selectOneMenu>		
+						<p:autoComplete id="Tipo" value="#{contratoCobrancaMB.objetoImovelCobranca.tipo}"
+							completeMethod="#{contratoCobrancaMB.objetoImovelCobranca.completeTipoImovel}" 
+							autocomplete="no" dropdown="true" forceSelection="true" var="tipo" 
+							itemValue="#{contratoCobrancaMB.objetoImovelCobranca.getValue(tipo)}" 
+							itemLabel="#{contratoCobrancaMB.objetoImovelCobranca.getLabel(tipo)}" 
+							scrollHeight="250">
+						</p:autoComplete>	
 						
 						<p:outputLabel for="AreaTotal" value="Área Total / Terreno (metros):  " styleClass="labelBold"/>
 						<p:inputText id="AreaTotal" value="#{contratoCobrancaMB.objetoImovelCobranca.areaTotal}" label="Área Total / Terreno (metros)" required="true" onblur="" style="width:150px;"/>  							
