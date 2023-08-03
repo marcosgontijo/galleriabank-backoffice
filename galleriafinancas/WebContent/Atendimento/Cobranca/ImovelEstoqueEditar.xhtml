@@ -26,7 +26,7 @@
 				width: 100px;
 			}
 			</h:outputStylesheet>
-			<p:panel id="PanelLocador" header="Contrato"
+			<p:panel id="EditarEstoque" header="Estoque"
 				style="margin-bottom:10px;">
 				<p:focus />
 				<p:messages />
@@ -38,19 +38,17 @@
 						style="font-weight: bold; font-size: 18px;" />
 					<h:panelGroup>
 						<p:outputLabel id="contrato" disabled="true"
-							value="#{contratoCobrancaMB.numeroContrato}"
+							value="#{contratoCobrancaMB.numContrato}"
 							required="false" style="FONT-SIZE: 10pt;" />
 						<p:spacer height="10" />
 						<p:commandButton icon="ui-icon ui-icon-circle-zoomin" ajax="true"
 							action="#{ccbMB.pesquisaContratoCobranca}"
-							oncomplete="PF('contratoCobrancaDialog').show();"
-							update="contrato contratoDialogdlg" />
+							oncomplete="PF('contratoCobrancaDialog').show();"/>
 					</h:panelGroup>
 				</h:panelGrid>
 
 				<p:panel id="Estoque" header="Estoque" style="margin-bottom:10px;">
 					<h:panelGrid columns="2">
-						<p:panel header="Parcelas">
 							<h:panelGrid columns="2">
 								<p:outputLabel for="parcelaParouPagar" value="Parcela que parou de pagar: "
 									styleClass="labelBold"
@@ -73,7 +71,7 @@
 									onkeydown="FormataValor(this,13, event, 2);"
 									converter="bigDecimalConverter"/>
 								
-								<p:outputLabel for="valorEmprestimo" value="LTV do leilão: "
+								<p:outputLabel for="valorEmprestimo" value="Valor do empréstimo: "
 									styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
 								<p:inputText id="valorEmprestimo" value="#{contratoCobrancaMB.objetoImovelEstoque.valorEmprestimo}"
@@ -134,26 +132,26 @@
 									styleClass="labelBold" />
 								<p:selectOneMenu id="statusLeilao"
 									value="#{contratoCobrancaMB.objetoImovelEstoque.statusLeilao}" 
-									style="width: 80px;">
+									style="width: 180px;">
 									<f:selectItem itemValue="" itemLabel="" />
-									<f:selectItem itemValue="Estoque" itemLabel="PF" />	
-									<f:selectItem itemValue="Negativo" itemLabel="PJ" />
-									<f:selectItem itemValue="Suspenso por decisão judicial"/>
+									<f:selectItem itemValue="Estoque" itemLabel="Estoque" />	
+									<f:selectItem itemValue="Negativo" itemLabel="Negativo" />
+									<f:selectItem itemValue="Suspenso por decisão judicial" itemLabel="Suspenso por decisão judicial"/>
 								</p:selectOneMenu>
 								
 								<p:outputLabel for="statusAtual" value="Status Atual: "
 									styleClass="labelBold" />
 								<p:selectOneMenu id="statusAtual"
 									value="#{contratoCobrancaMB.objetoImovelEstoque.statusAtual}" 
-									style="width: 80px;">
+									style="width: 180px;">
 									<f:selectItem itemValue="" itemLabel=""/>
-									<f:selectItem itemValue="Alugado"/>	
-									<f:selectItem itemValue="Cancelado por acordo"/>
-									<f:selectItem itemValue="Estoque"/>
-									<f:selectItem itemValue="Online"/>
-									<f:selectItem itemValue="Pendente por decisão judicial"/>
-									<f:selectItem itemValue="Reintegração de posse"/>
-									<f:selectItem itemValue="Vendido"/>
+									<f:selectItem itemValue="Alugado" itemLabel="Alugado"/>	
+									<f:selectItem itemValue="Cancelado por acordo" itemLabel="Cancelado por acordo"/>
+									<f:selectItem itemValue="Estoque" itemLabel="Estoque"/>
+									<f:selectItem itemValue="Online" itemLabel="Online"/>
+									<f:selectItem itemValue="Pendente por decisão judicial" itemLabel="Pendente por decisão judicial"/>
+									<f:selectItem itemValue="Reintegração de posse" itemLabel="Reintegração de posse"/>
+									<f:selectItem itemValue="Vendido" itemLabel="Vendido"/>
 								</p:selectOneMenu>
 								
 								<p:outputLabel for="valorLeilao2" value="Valor 2º leilão: "
@@ -184,12 +182,12 @@
 									styleClass="labelBold" />
 								<p:selectOneMenu id="tipoVenda"
 									value="#{contratoCobrancaMB.objetoImovelEstoque.tipoVenda}" 
-									style="width: 80px;">
+									style="width: 180px;">
 									<f:selectItem itemValue="" itemLabel=""/>
-									<f:selectItem itemValue="Direta"/>	
-									<f:selectItem itemValue="Leilão AF"/>
-									<f:selectItem itemValue="Leilão ESTQ"/>
-									<f:selectItem itemValue="Preferência"/>
+									<f:selectItem itemValue="Direta" itemLabel="Direta"/>	
+									<f:selectItem itemValue="Leilão AF" itemLabel="Leilão AF"/>
+									<f:selectItem itemValue="Leilão ESTQ" itemLabel="Leilão ESTQ"/>
+									<f:selectItem itemValue="Preferência" itemLabel="Preferência"/>
 								</p:selectOneMenu>	
 									
 								<p:outputLabel value="Estoque atual?: " styleClass="labelBold"
@@ -197,8 +195,7 @@
 							<p:selectBooleanCheckbox id="estoque" value="#{contratoCobrancaMB.objetoImovelEstoque.estoque}" >
 								<p:ajax event="change" />
 							</p:selectBooleanCheckbox>	
-									
-
+							</h:panelGrid>
 					<f:facet name="footer">
 						<p:commandButton value="Salvar" ajax="false"
 							icon="ui-icon-print" action="#{imovelCobrancaMB.salvarEstoque}" />
@@ -207,9 +204,9 @@
 							icon="ui-icon-cancel" action="#{imovelCobrancaMB.clearFieldsEstoqueImoveis}"
 							style="TEXT-DECORATION: bold; "/>
 					</f:facet>
-				</p:dataTable>
-			</h:form>
-		</p:dialog>
-		
+					</h:panelGrid>			
+				</p:panel>
+			</p:panel>	
+		</h:form>
 	</ui:define>
 </ui:composition>
