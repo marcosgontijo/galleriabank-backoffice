@@ -192,6 +192,9 @@ public class ImovelCobranca implements Serializable {
 		} else {
 			List<String> tipos = listaTipoImovel();
 			List<String> lista = tipos.stream().filter(t -> t.toLowerCase().contains(value.toLowerCase())).collect(Collectors.toList());
+			if(lista.size() <= 0) {
+				return "";
+			}
 			String retorno = lista.get(0);
 			return retorno.split(Pattern.quote(","))[i];
 		}

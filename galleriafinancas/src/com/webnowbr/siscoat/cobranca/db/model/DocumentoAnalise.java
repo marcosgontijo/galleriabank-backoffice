@@ -386,6 +386,11 @@ public class DocumentoAnalise implements Serializable {
 		return GsonUtil.toJson(dossieRequest);
 
 	}
+	
+	@Override
+	public String toString() {
+		return "DocumentoAnalise [id=" + id + ", tipo=" + tipo + "]";
+	}
 
 	public long getId() {
 		return id;
