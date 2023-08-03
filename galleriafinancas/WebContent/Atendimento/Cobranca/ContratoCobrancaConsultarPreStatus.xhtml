@@ -111,11 +111,14 @@
 			            <h:outputText value="#{contratos.nomeResponsavel}" />
 			        </p:column>
 			        
-			        <p:column style="text-align: center;" headerText="Gerente" filterBy="#{contratos.nomeGerente}" 
-			        	filterMatchMode="contains" sortBy="#{contratos.nomeGerente}"
-			        	rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico'}" >
-				    	<h:outputText value="#{contratos.nomeGerente}" />
-				    </p:column>	
+			        <shiro:hasAnyRoles name="ROOT, PROFILE_COMENTARIO_JURIDICO">
+				        <p:column style="text-align: center;" headerText="Gerente" filterBy="#{contratos.nomeGerente}" 
+				        	filterMatchMode="contains" sortBy="#{contratos.nomeGerente}"
+				        	rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico'
+				        				or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico - Luvison'}" >
+					    	<h:outputText value="#{contratos.nomeGerente}" />
+					    </p:column>	
+				    </shiro:hasAnyRoles>
 				        	  
 			        <p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.nomePagador}" filterMatchMode="contains" sortBy="#{contratos.nomePagador}">
 			            <h:outputText value="#{contratos.nomePagador}" />
@@ -200,17 +203,19 @@
 						rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Em Análise' or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Análise Pendente'}">
 						<h:outputText value="#{contratos.inicioAnaliseUsuario}"  escape="false" />
 					</p:column>
-					
-					<p:column style="text-align: center;width: 100px" headerText="Documentos" 
-						rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico'}">
-						<p:commandButton value="Documentos"
-							icon="ui-icon-arrowthick-1-s"
-							rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico'}"
-							oncomplete="PF('docsJuridico').show();"
-							action="#{contratoCobrancaMB.consultaDocsJuridico(contratos)}"
-							update=":ArquivosForm">
-						</p:commandButton>
-					</p:column>
+						
+					<shiro:hasAnyRoles name="ROOT, PROFILE_COMENTARIO_JURIDICO">
+						<p:column style="text-align: center;width: 100px" headerText="Documentos" 
+							rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico'
+					        			or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico - Luvison'}">
+							<p:commandButton value="Documentos"
+								icon="ui-icon-arrowthick-1-s"
+								oncomplete="PF('docsJuridico').show();"
+								action="#{contratoCobrancaMB.consultaDocsJuridico(contratos)}"
+								update=":ArquivosForm">
+							</p:commandButton>
+						</p:column>
+					</shiro:hasAnyRoles>
 					
 					
 					<p:column style="width:180px;">

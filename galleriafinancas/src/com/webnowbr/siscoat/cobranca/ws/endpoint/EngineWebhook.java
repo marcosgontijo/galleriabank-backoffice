@@ -203,7 +203,7 @@ public class EngineWebhook {
 						}
 
 					}
-					
+					docketService.gerarRelacoesEngine(documentoAnalise);
 				}
 			}
 			return Response.status(200).entity("Processado").build();
