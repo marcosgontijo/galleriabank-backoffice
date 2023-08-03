@@ -130,4 +130,12 @@ public class DocumentoAnaliseJobConsultar {
 			}
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "DocumentoAnaliseJobConsultar [listaDocumentoAnalise=" + listaDocumentoAnalise + ", user=" + user
+				+ ", objetoContratoCobranca=" + objetoContratoCobranca + "]";
+	}
+	
+	
 }

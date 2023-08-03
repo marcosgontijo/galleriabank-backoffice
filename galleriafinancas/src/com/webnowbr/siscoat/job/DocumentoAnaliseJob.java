@@ -41,9 +41,9 @@ public class DocumentoAnaliseJob implements Job {
 			List<DocumentoAnalise> listaDocumentoAnalise = (List<DocumentoAnalise>) dataMap.get("listaDocumentoAnalise");
 	        User user = (User) dataMap.get("user");
 	        ContratoCobranca objetoContratoCobranca = (ContratoCobranca) dataMap.get("objetoContratoCobranca");
-	        System.out.println("First parameter value : " + listaDocumentoAnalise);
-	        System.out.println("Second parameter value : " + user);
-	        System.out.println("Second parameter value : " + objetoContratoCobranca);
+	        System.out.println("1 parameter value : " + listaDocumentoAnalise);
+	        System.out.println("2 parameter value : " + user);
+	        System.out.println("3 parameter value : " + objetoContratoCobranca);
 	        documentoAnaliseJobConsultar.listaDocumentoAnalise = listaDocumentoAnalise;
 	        documentoAnaliseJobConsultar.user = user;
 	        documentoAnaliseJobConsultar.objetoContratoCobranca = objetoContratoCobranca;
@@ -57,17 +57,17 @@ public class DocumentoAnaliseJob implements Job {
 		try {
 			consultarPesquisas();
 		} catch (Exception e) {
-			System.out.println("DocumentoAnaliseJob.execute (jobKey=" + jobKey + "): EXCEPTION" + e);
+			System.out.println("DocumentoAnaliseJob.execute (jobKey=" + jobKey + "): EXCEPTION" + e + " - " + documentoAnaliseJobConsultar);
 		}
 	}
 
 	public void consultarPesquisas() {
 		try {
-			System.out.println("incio DocumentoAnaliseJob");
+			System.out.println("incio DocumentoAnaliseJob" + documentoAnaliseJobConsultar.objetoContratoCobranca.getNumeroContrato());
 			documentoAnaliseJobConsultar.executarConsultasAnaliseDocumento();
-			System.out.println("Fim DocumentoAnaliseJob");
+			System.out.println("Fim DocumentoAnaliseJob - " + documentoAnaliseJobConsultar.objetoContratoCobranca.getNumeroContrato());
 		} catch (Exception e) {
-			System.out.println("DocumentoAnaliseJob.execute " + "DocumentoAnaliseJob: EXCEPTION" +  e.toString());
+			System.out.println("DocumentoAnaliseJob.execute " + "DocumentoAnaliseJob: EXCEPTION" +  e.toString() + " - " + documentoAnaliseJobConsultar);
 		}
 	}
 }
