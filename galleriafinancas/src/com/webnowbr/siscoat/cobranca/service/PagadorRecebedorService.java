@@ -25,7 +25,7 @@ public class PagadorRecebedorService {
 			if (!CommonsUtil.semValor(pagadorAdicionar.getCpf())) {
 				List<PagadorRecebedor> cadastrados = pDao.findByFilter("cpf", pagadorAdicionar.getCpf());
 				PagadorRecebedor pagadorCadastrado = new PagadorRecebedor();
-						
+
 				if (cadastrados.size() > 0)
 					pagadorCadastrado = cadastrados.get(0);
 				else
@@ -53,7 +53,7 @@ public class PagadorRecebedorService {
 			} else if (!CommonsUtil.semValor(pagadorAdicionar.getCnpj())) {
 				List<PagadorRecebedor> cadastrados = pDao.findByFilter("cnpj", pagadorAdicionar.getCnpj());
 				PagadorRecebedor pagadorCadastrado = new PagadorRecebedor();
-						
+
 				if (cadastrados.size() > 0)
 					pagadorCadastrado = cadastrados.get(0);
 				else
@@ -69,7 +69,7 @@ public class PagadorRecebedorService {
 				else
 					pDao.create(pagadorAdicionar);
 				pagadorAdicionar = pagadorCadastrado;
-				
+
 			} else {
 				long idIncluido = pDao.create(pagadorAdicionar);
 				pagadorAdicionar = pDao.findById(idIncluido);
@@ -79,13 +79,13 @@ public class PagadorRecebedorService {
 		return pagadorAdicionar;
 
 	}
-	
+
 	public PagadorRecebedor buscaOuInsere(String cnpjCpf) {
 
-		cnpjCpf = CommonsUtil.somenteNumeros(cnpjCpf); 
+		cnpjCpf = CommonsUtil.somenteNumeros(cnpjCpf);
 
 		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
-		
+
 		PagadorRecebedor pagadorRecebedor = new PagadorRecebedor();
 
 		String tipoPessoa = CommonsUtil.pessoaFisicaJuridicaCnpjCpf(cnpjCpf);
@@ -97,20 +97,20 @@ public class PagadorRecebedorService {
 		pagadorRecebedor = buscaOuInsere(pagadorRecebedor);
 
 		preecheDadosReceita(pagadorRecebedor);
-		
+
 		pagadorRecebedorDao.merge(pagadorRecebedor);
-		
+
 		return pagadorRecebedor;
 
 	}
 
-	public PagadorRecebedor  preecheDadosReceita(PagadorRecebedor pagadorAdicionar) {
+	public PagadorRecebedor preecheDadosReceita(PagadorRecebedor pagadorAdicionar) {
 		String stringResponse = null;
 		NetrinService netrinService = new NetrinService();
-		
+
 //		if (!CommonsUtil.semValor(pagadorAdicionar.getCpf()) || !CommonsUtil.semValor(pagadorAdicionar.getCnpj()))
 //			pagadorAdicionar = buscaOuInsere(pagadorAdicionar);
-		
+
 		if (!CommonsUtil.semValor(pagadorAdicionar.getCpf())) {
 
 			ReceitaFederalPF receitaFederalPF = netrinService.requestCadastroPF(pagadorAdicionar);
@@ -195,11 +195,11 @@ public class PagadorRecebedorService {
 
 	public void geraRelacionamento(PagadorRecebedor pessoaRoot, String relacao, PagadorRecebedor pessoaChild,
 			BigDecimal porcentagem) {
-		RelacionamentoPagadorRecebedor relacioanameto = 
-				new RelacionamentoPagadorRecebedor(pessoaRoot, relacao, pessoaChild, porcentagem);
-		
+		RelacionamentoPagadorRecebedor relacioanameto = new RelacionamentoPagadorRecebedor(pessoaRoot, relacao,
+				pessoaChild, porcentagem);
+
 		RelacionamentoPagadorRecebedorDao rDao = new RelacionamentoPagadorRecebedorDao();
-		if(rDao.verificaRelacaoExistente(pessoaRoot, pessoaChild).size() <= 0) {
+		if (rDao.verificaRelacaoExistente(pessoaRoot, pessoaChild).size() <= 0) {
 			rDao.create(relacioanameto);
 		}
 	}

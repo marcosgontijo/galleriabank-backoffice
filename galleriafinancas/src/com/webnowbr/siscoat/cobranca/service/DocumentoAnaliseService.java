@@ -188,7 +188,8 @@ public class DocumentoAnaliseService {
 		pagador.setCnpj(partnership.getCNPJ());
 		pagador.setNome(partnership.getCompanyName());
 
-		pagador = pagadorRecebedorService.buscaOuInsere(pagador);
+		pagador = pagadorRecebedorService.preecheDadosReceita(pagador);
+		
 		documentoAnalise.setPagador(pagador);
 
 		documentoAnaliseDao.create(documentoAnalise);
