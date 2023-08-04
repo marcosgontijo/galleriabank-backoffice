@@ -41,9 +41,7 @@ public class DocumentoAnaliseJob implements Job {
 			List<DocumentoAnalise> listaDocumentoAnalise = (List<DocumentoAnalise>) dataMap.get("listaDocumentoAnalise");
 	        User user = (User) dataMap.get("user");
 	        ContratoCobranca objetoContratoCobranca = (ContratoCobranca) dataMap.get("objetoContratoCobranca");
-	        System.out.println("1 parameter value : " + listaDocumentoAnalise);
-	        System.out.println("2 parameter value : " + user);
-	        System.out.println("3 parameter value : " + objetoContratoCobranca);
+	        
 	        documentoAnaliseJobConsultar.listaDocumentoAnalise = listaDocumentoAnalise;
 	        documentoAnaliseJobConsultar.user = user;
 	        documentoAnaliseJobConsultar.objetoContratoCobranca = objetoContratoCobranca;
@@ -57,6 +55,9 @@ public class DocumentoAnaliseJob implements Job {
 		try {
 			consultarPesquisas();
 		} catch (Exception e) {
+			System.out.println("1 parameter value : " + documentoAnaliseJobConsultar.listaDocumentoAnalise);
+	        System.out.println("2 parameter value : " + documentoAnaliseJobConsultar.user);
+	        System.out.println("3 parameter value : " + documentoAnaliseJobConsultar.objetoContratoCobranca);
 			System.out.println("DocumentoAnaliseJob.execute (jobKey=" + jobKey + "): EXCEPTION" + e + " - " + documentoAnaliseJobConsultar);
 			e.printStackTrace();
 		}
