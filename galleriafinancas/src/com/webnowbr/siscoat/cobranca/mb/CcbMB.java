@@ -636,6 +636,13 @@ public class CcbMB {
 					if(!CommonsUtil.semValor(objetoCcb.getCCBCC())) {
 						despesaSelecionada.setContaTed(objetoCcb.getCCBCC());
 					}
+					if(!CommonsUtil.semValor(objetoCcb.getCCBCC())) {
+						despesaSelecionada.setContaTed(objetoCcb.getCCBCC());
+					}
+					
+					if(!CommonsUtil.semValor(objetoCcb.getCCBDigito())) {
+						despesaSelecionada.setDigitoContaTed(objetoCcb.getCCBDigito());
+					}
 					
 					if(!CommonsUtil.semValor(despesaSelecionada.getNomeTed())) {
 						objetoCcb.getObjetoContratoCobranca().setNomeBancarioContaPagar(despesaSelecionada.getNomeTed());
@@ -652,13 +659,16 @@ public class CcbMB {
 					if(!CommonsUtil.semValor(despesaSelecionada.getContaTed())) {
 						objetoCcb.getObjetoContratoCobranca().setContaBancarioContaPagar(despesaSelecionada.getContaTed());
 					}
+					if(!CommonsUtil.semValor(despesaSelecionada.getDigitoContaTed())) {
+						objetoCcb.getObjetoContratoCobranca().setDigitoContaBancarioContaPagar(despesaSelecionada.getDigitoContaTed());
+					}
 				} else if(CommonsUtil.mesmoValor(despesaSelecionada.getFormaTransferencia(), "Pix")) {
 					if(!CommonsUtil.semValor(objetoCcb.getCCBPix())) {
 						despesaSelecionada.setPix(objetoCcb.getCCBPix());
 					}
 					
 					if(!CommonsUtil.semValor(despesaSelecionada.getPix())) {
-						//objetoCcb.getObjetoContratoCobranca().se(despesaSelecionada.getPix());
+						objetoCcb.getObjetoContratoCobranca().setChavePIXBancarioContaPagar(despesaSelecionada.getPix());
 					}
 				}
 			} else if(CommonsUtil.mesmoValor(despesaSelecionada.getDescricao(), "Transferência")) {

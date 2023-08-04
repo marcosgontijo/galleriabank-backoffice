@@ -36,6 +36,7 @@ public class ContasPagar implements Serializable {
 	private String cpfTed;
 	private String bancoTed;
 	private String contaTed;
+	private String digitoContaTed;
 	private String agenciaTed;
 	
 	private String fileListId;
@@ -328,5 +329,13 @@ public class ContasPagar implements Serializable {
 
 	public void setComprovantePagamentoPixStarkBank(StarkBankPix comprovantePagamentoPixStarkBank) {
 		this.comprovantePagamentoPixStarkBank = comprovantePagamentoPixStarkBank;
+	}
+
+	public String getDigitoContaTed() {
+		return digitoContaTed;
+	}
+
+	public void setDigitoContaTed(String digitoContaTed) {
+		this.digitoContaTed = digitoContaTed;
 	}
 }

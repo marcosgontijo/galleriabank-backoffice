@@ -92,6 +92,10 @@
 			<column name="contaTed" />
 		</property>	
 		
+		<property name="digitoContaTed" type="java.lang.String">
+			<column name="digitoContaTed" />
+		</property>
+		
 		<property name="agenciaTed" type="java.lang.String">
 			<column name="agenciaTed" />
 		</property>	
