@@ -9280,12 +9280,14 @@ public class CcbMB {
 				nomeSemvirgula = nomeSemvirgula.replace(",", "");
 		    }
 		
-			String nomeArquivoDownload = String.format("Galleria Bank - CESSAO %s.pdf", "");
+			String nomeArquivoDownload;
 			
 			if(SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
+				nomeArquivoDownload = String.format("Galleria Bank - CESSAO %s.pdf", "");
 				gerador.open(nomeArquivoDownload);
 				gerador.feed(new ByteArrayInputStream(CommonsUtil.wordToPdf(in).toByteArray()));
 			} else {
+				nomeArquivoDownload = String.format("Galleria Bank - CESSAO %s.docx", "");
 				gerador.open(nomeArquivoDownload);
 				gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			}
