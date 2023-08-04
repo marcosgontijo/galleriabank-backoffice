@@ -170,12 +170,18 @@ public class DocumentoAnaliseService {
 		DocumentoAnalise documentoAnalise = new DocumentoAnalise();
 		documentoAnalise.setContratoCobranca(contratoCobranca);
 		documentoAnalise.setIdentificacao(partnership.getCompanyName());
-
+		String sCPFCNPJ ="";
+		
+		if (CommonsUtil.mesmoValor( partnership.getEntityType() , "J" ))
+		sCPFCNPJ =  CommonsUtil.formataCnpjCpf(CommonsUtil.strZero(partnership.getCNPJ(),14), false);
+//		else
+//			sCPFCNPJ =  CommonsUtil.formataCnpjCpf(CommonsUtil.strZero(partnership.getCNPJ(),9), false);
+		
 		documentoAnalise.setTipoPessoa("PJ");
 		documentoAnalise.setMotivoAnalise(motivo);
 
 		if (documentoAnalise.getTipoPessoa() == "PJ") {
-			documentoAnalise.setCnpjcpf(CommonsUtil.formataCnpjCpf(partnership.getCNPJ(), false));
+			documentoAnalise.setCnpjcpf(sCPFCNPJ);
 			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.RELATO);
 			documentoAnalise.setLiberadoAnalise(false);
 		} else {
@@ -185,7 +191,7 @@ public class DocumentoAnaliseService {
 		PagadorRecebedor pagador = new PagadorRecebedor();
 		pagador.setId(0);
 
-		pagador.setCnpj(partnership.getCNPJ());
+		pagador.setCnpj(sCPFCNPJ);
 		pagador.setNome(partnership.getCompanyName());
 
 		pagador = pagadorRecebedorService.preecheDadosReceita(pagador);

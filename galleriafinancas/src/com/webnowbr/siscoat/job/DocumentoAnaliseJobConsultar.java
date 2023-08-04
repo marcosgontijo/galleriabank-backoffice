@@ -75,14 +75,20 @@ public class DocumentoAnaliseJobConsultar {
 								objetoContratoCobranca);
 						docketService.engineCriarConsulta(documentoAnalise, engine, user);
 						
-						
-						if (documentoAnalise.getRetornoEngine().startsWith("consulta efetuada anteriormente Id: ") ) {
-							docketService.salvarDetalheDocumentoEngine(documentoAnalise);
+						if(!CommonsUtil.semValor(documentoAnalise.getRetornoEngine())) {
+							if (documentoAnalise.getRetornoEngine().startsWith("consulta efetuada anteriormente Id: ") ) {
+								docketService.salvarDetalheDocumentoEngine(documentoAnalise);
+							}
 						}
 						
 						engineRetorno = GsonUtil.fromJson(documentoAnalise.getRetornoEngine(), EngineRetorno.class);
 						
 					} else if (documentoAnalise.isEngineProcessado()) {
+						if(!CommonsUtil.semValor(documentoAnalise.getRetornoEngine())) {
+							if (documentoAnalise.getRetornoEngine().startsWith("consulta efetuada anteriormente Id: ") ) {
+								docketService.salvarDetalheDocumentoEngine(documentoAnalise);
+							}
+						}
 						engineRetorno = GsonUtil.fromJson(documentoAnalise.getRetornoEngine(), EngineRetorno.class);
 					}
 				}
