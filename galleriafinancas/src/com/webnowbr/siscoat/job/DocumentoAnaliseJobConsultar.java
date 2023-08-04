@@ -51,7 +51,7 @@ public class DocumentoAnaliseJobConsultar {
 				if (DocumentosAnaliseEnum.REA.equals(documentoAnalise.getTipoEnum())) {
 					if (documentoAnalise.isPodeChamarRea()) {
 						documentoAnalise.addObservacao("Processando REA");
-						PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
+						//PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
 						docketService.uploadREA(documentoAnalise, user);
 					}
 					continue;
@@ -100,13 +100,13 @@ public class DocumentoAnaliseJobConsultar {
 
 						documentoAnalise.addObservacao("Verificar Engine");
 						documentoAnaliseDao.merge(documentoAnalise);
-						PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
+						//PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
 						continue;
 					}
 				} else {
 					documentoAnalise.addObservacao("Aguardando retorno Engine");
 					documentoAnaliseDao.merge(documentoAnalise);
-					PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
+					//PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
 					continue;
 				}
 
@@ -123,7 +123,7 @@ public class DocumentoAnaliseJobConsultar {
 
 				if (CommonsUtil.semValor(documentoAnalise.getRetornoCenprot())) {
 					documentoAnalise.addObservacao("Processando Protestos");
-					PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
+					//PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
 					netrinService.requestCenprot(documentoAnalise);
 					
 					PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
@@ -148,12 +148,12 @@ public class DocumentoAnaliseJobConsultar {
 
 				if (CommonsUtil.semValor(documentoAnalise.getRetornoScr())) {
 					documentoAnalise.addObservacao("Processando SCR");
-					PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
+					//PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
 					scrService.requestScr(documentoAnalise);
 				}
 				documentoAnalise.addObservacao("Pesquisas finalizadas");
 				documentoAnaliseDao.merge(documentoAnalise);
-				PrimeFaces.current().ajax().update("form:ArquivosAnalisados");
+				//PrimeFaces.current().ajax().update("form:ArquivosAnalisados");
 			}
 		}
 	}

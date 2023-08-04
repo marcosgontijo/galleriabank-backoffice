@@ -58,6 +58,7 @@ public class DocumentoAnaliseJob implements Job {
 			consultarPesquisas();
 		} catch (Exception e) {
 			System.out.println("DocumentoAnaliseJob.execute (jobKey=" + jobKey + "): EXCEPTION" + e + " - " + documentoAnaliseJobConsultar);
+			e.printStackTrace();
 		}
 	}
 
@@ -68,6 +69,7 @@ public class DocumentoAnaliseJob implements Job {
 			System.out.println("Fim DocumentoAnaliseJob - " + documentoAnaliseJobConsultar.objetoContratoCobranca.getNumeroContrato());
 		} catch (Exception e) {
 			System.out.println("DocumentoAnaliseJob.execute " + "DocumentoAnaliseJob: EXCEPTION" +  e.toString() + " - " + documentoAnaliseJobConsultar);
+			e.printStackTrace();
 		}
 	}
 }
