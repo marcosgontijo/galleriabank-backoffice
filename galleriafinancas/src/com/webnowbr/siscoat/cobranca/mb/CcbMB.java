@@ -713,6 +713,9 @@ public class CcbMB {
 	
 	public void removeDespesa(ContasPagar conta) {
 		this.objetoCcb.getDespesasAnexo2().remove(conta);
+		if(!CommonsUtil.semValor(conta.getContrato())) {
+			conta.setContrato(null);
+		}
 		if(!CommonsUtil.semValor(objetoCcb.getObjetoContratoCobranca())) {
 			if(this.objetoCcb.getObjetoContratoCobranca().getListContasPagar().contains(conta)) {
 				objetoCcb.getObjetoContratoCobranca().getListContasPagar().remove(conta);

@@ -97,6 +97,7 @@ import org.primefaces.model.charts.optionconfig.title.Title;
 import org.primefaces.model.charts.optionconfig.tooltip.Tooltip;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
@@ -28647,18 +28648,31 @@ public class ContratoCobrancaMB {
 
 	public void executarConsultasAnaliseDocumento() throws SchedulerException {
 		SchedulerFactory shedFact = new StdSchedulerFactory();
-		Scheduler scheduler = shedFact.getScheduler();;
+		Scheduler scheduler = shedFact.getScheduler();
 		try {
 			scheduler.start();
-			JobDetail jobDetail = JobBuilder.newJob(DocumentoAnaliseJob.class).withIdentity("documentoAnaliseJOB", "grupo01").build();
+			JobDetail jobDetail = JobBuilder.newJob(DocumentoAnaliseJob.class).withIdentity("documentoAnaliseJOB",
+					objetoContratoCobranca.getNumeroContrato()).build();
 			User user = loginBean.getUsuarioLogado();
 			jobDetail.getJobDataMap().put("listaDocumentoAnalise", listaDocumentoAnalise);
 			jobDetail.getJobDataMap().put("user", user);
 			jobDetail.getJobDataMap().put("objetoContratoCobranca", objetoContratoCobranca);
-			Trigger trigger = TriggerBuilder.newTrigger().withIdentity("documentoAnaliseJOB", "grupo01").startNow().build();		
+			Trigger trigger = TriggerBuilder.newTrigger().withIdentity("documentoAnaliseJOB",
+					objetoContratoCobranca.getNumeroContrato()).startNow().build();		
 			scheduler.scheduleJob(jobDetail, trigger);
 		} catch (SchedulerException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public boolean checkConsultasAnaliseDocumento() throws SchedulerException {
+		try {
+			SchedulerFactory shedFact = new StdSchedulerFactory();
+			Scheduler scheduler = shedFact.getScheduler();
+			return scheduler.checkExists(JobKey.jobKey("documentoAnaliseJOB", objetoContratoCobranca.getNumeroContrato()));
+		} catch (SchedulerException e) {
+			e.printStackTrace();
+			return false;
 		}
 	}
 

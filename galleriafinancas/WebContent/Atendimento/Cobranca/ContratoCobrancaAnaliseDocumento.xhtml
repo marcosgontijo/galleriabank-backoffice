@@ -193,9 +193,10 @@
 				rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
 				style="margin-bottom:10px;">
 
-				<p:commandButton value="Executar Consultas"
+				<p:commandButton value="Executar Consultas" ajax="true"
 					action="#{contratoCobrancaMB.executarConsultasAnaliseDocumento}"
-					ajax="true" />
+					widgetVar="executeBtn" onclick="saveButton.disable()" 
+					disabled="#{contratoCobrancaMB.checkConsultasAnaliseDocumento()}" />
 				<p:commandButton value="Certidões Docket"
 					action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.objetoContratoCobranca)}" />
 			</p:panel>
