@@ -1015,6 +1015,7 @@ public class CommonsUtil {
 
 	public static final String formataCnpjCpf(String cnpjCpf, boolean isUsarPrefixos) {
 		String result = "";
+		cnpjCpf = somenteNumeros(cnpjCpf);
 		if (cnpjCpf != null) {
 			switch (cnpjCpf.length()) {
 			case 11:

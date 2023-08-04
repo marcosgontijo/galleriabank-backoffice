@@ -14,7 +14,7 @@
 	<h:body onload="register_tab_GUID()">
 		<ui:composition template="../index.xhtml">			
 			<ui:define name="menu">  
-				<h:form style="margin-bottom:10px;">
+				<h:form style="margin-bottom:10px;" id="menuAtendimentoForm" >
 					<p:menu style="width: 250px; ">	
 						<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA, ASSISTENTEFINANCEIRO, PRECOBRANCAANALISTA, PROFILE_MARKETING, ASSISTENTEFINANCEIRO">					
 							<p:submenu label="Gerenciamento" styleClass="titulosMenu">
@@ -81,7 +81,7 @@
 							</p:submenu>	
 						</shiro:hasAnyRoles>
 						
-						<shiro:hasAnyRoles name="ROOT">	
+						<shiro:hasAnyRoles name="ROOT, CONSULTA_INDIVIDUAL">	
 							<p:submenu label="Consultas" styleClass="titulosMenu">													
 								<p:menuitem value="Consulta PF por CPF"
 									action="#{consultaPF.clearConsultaPF}"
@@ -90,7 +90,11 @@
 								<p:menuitem value="Processos UniProof"
 									action="#{uniproofMB.clearFieldsProcessos}"
 									ajax="false" icon="ui-icon ui-icon-newwin"
-									styleClass="itemMenu" />							
+									styleClass="itemMenu" />	
+									<p:menuitem value="Consultas"
+									action="#{consultasMB.clear}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />
 							</p:submenu>					
 						</shiro:hasAnyRoles>						
 						<shiro:hasAnyRoles name="ROOT, COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_CREDITO,

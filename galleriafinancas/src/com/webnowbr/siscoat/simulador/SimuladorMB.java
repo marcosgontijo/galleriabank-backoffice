@@ -250,10 +250,13 @@ public class SimuladorMB {
 					FacesContext.getCurrentInstance());
 
 			SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
+			String nomeArquivoDownload = "";
 			if (CommonsUtil.semValor(identificacao))
-				gerador.open("Galleria Bank - simulação.pdf");
-			else
-				gerador.open(String.format("Galleria Bank - simulação %s.pdf", this.identificacao));
+				nomeArquivoDownload = "Galleria Bank - simulação.pdf";
+			else {
+				nomeArquivoDownload = String.format("Galleria Bank - simulação %s.pdf", this.identificacao);
+			}
+			gerador.open(nomeArquivoDownload);
 			gerador.feed(jp);
 			gerador.close();
 

@@ -499,12 +499,12 @@ public class CcbMB {
 				this.objetoCcb.setCCBBanco(participanteSelecionado.getPessoa().getBanco());
 				String[] banco = participanteSelecionado.getPessoa().getBanco().split(Pattern.quote("|"));
 				if (CommonsUtil.semValor(this.objetoCcb.getNomeBanco())) {
-					if (!CommonsUtil.semValor(banco) || banco.length > 1) {
+					if (!CommonsUtil.semValor(banco) && banco.length > 1) {
 						this.objetoCcb.setNomeBanco(CommonsUtil.trimNull(banco[1]));
 					}
 				}
 				if (CommonsUtil.semValor(this.objetoCcb.getNumeroBanco())) {
-					if (!CommonsUtil.semValor(banco) || banco.length > 1) {
+					if (!CommonsUtil.semValor(banco) && banco.length > 0) {
 						this.objetoCcb.setNumeroBanco(CommonsUtil.trimNull(banco[0]));
 					}
 				}
@@ -801,6 +801,7 @@ public class CcbMB {
 		//listaArquivos();
 		
 		//Popular Campos para Simulação
+		this.objetoCcb.setUsarNovoCustoEmissao(true);
 		this.objetoCcb.setVlrImovel(contrato.getValorMercadoImovel());
 		this.objetoCcb.setVendaLeilao(contrato.getValorVendaForcadaImovel());
 		objetoCcb.setValorCredito(objetoContratoCobranca.getValorAprovadoComite());
@@ -3679,7 +3680,8 @@ public class CcbMB {
 			if(nomeSemvirgula.contains(",")) {
 				nomeSemvirgula = nomeSemvirgula.replace(",", "");
 		    }
-			gerador.open(String.format("Galleria Bank - Modelo_CCB %s.docx", ""));
+			String nomeArquivoDownload = String.format("Galleria Bank - Modelo_CCB %s.docx", "");
+			gerador.open(nomeArquivoDownload);
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
 
@@ -6066,7 +6068,8 @@ public class CcbMB {
 			if(nomeSemvirgula.contains(",")) {
 				nomeSemvirgula = nomeSemvirgula.replace(",", "");
 		    }
-			gerador.open(String.format("Galleria Bank - Modelo_AF %s.docx", ""));
+			String nomeArquivoDownload = String.format("Galleria Bank - Modelo_AF %s.docx", "");
+			gerador.open(nomeArquivoDownload);
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
 			
@@ -6431,7 +6434,8 @@ public class CcbMB {
 				if(nomeSemvirgula.contains(",")) {
 					nomeSemvirgula = nomeSemvirgula.replace(",", "");
 			    }
-				gerador.open(String.format("Galleria Bank - Modelo_NC %s.docx", ""));
+				String nomeArquivoDownload = String.format("Galleria Bank - Modelo_NC %s.docx", "");
+				gerador.open(nomeArquivoDownload);
 				gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 				gerador.close();
 				
@@ -6684,7 +6688,8 @@ public class CcbMB {
 			if(nomeSemvirgula.contains(",")) {
 				nomeSemvirgula = nomeSemvirgula.replace(",", "");
 		    }
-			gerador.open(String.format("Galleria Bank - Carta Split %s.docx", ""));
+			String nomeArquivoDownload = String.format("Galleria Bank - Carta Split %s.docx", "");
+			gerador.open(nomeArquivoDownload);
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
 			
@@ -7015,7 +7020,8 @@ public class CcbMB {
 			if(nomeSemvirgula.contains(",")) {
 				nomeSemvirgula = nomeSemvirgula.replace(",", "");
 		    }
-			gerador.open(String.format("Galleria Bank - AnexoII %s.docx", ""));
+			String nomeArquivoDownload = String.format("Galleria Bank - AnexoII %s.docx", "");
+			gerador.open(nomeArquivoDownload);
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
 
@@ -7183,7 +7189,9 @@ public class CcbMB {
 			if(nomeSemvirgula.contains(",")) {
 				nomeSemvirgula = nomeSemvirgula.replace(",", "");
 		    }
-			gerador.open(String.format("Galleria Bank - AnexoII %s.docx", ""));
+			String nomeArquivoDownload = String.format("Galleria Bank - AnexoII %s.docx", "");
+			gerador.open(nomeArquivoDownload);
+
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
 			criarCcbNosistema();
@@ -7993,7 +8001,9 @@ public class CcbMB {
 			if(nomeSemvirgula.contains(",")) {
 				nomeSemvirgula = nomeSemvirgula.replace(",", "");
 		    }
-			gerador.open(String.format(nomeSemvirgula +  " - CCI - " + this.objetoCcb.getNumeroCcb() +"%s.docx", ""));
+			String nomeArquivoDownload = String
+					.format(nomeSemvirgula + " - CCI - " + this.objetoCcb.getNumeroCcb() + "%s.docx", "");
+			gerador.open(nomeArquivoDownload);
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
 			criarCcbNosistema();	
@@ -8553,11 +8563,12 @@ public class CcbMB {
 			String nomeSemvirgula = this.objetoCcb.getNomeEmitente();
 			if(nomeSemvirgula.contains(",")) {
 				nomeSemvirgula = nomeSemvirgula.replace(",", "");
-		    }
-			gerador.open(String.format("Galleria Bank - CCI %s.docx", ""));
+			}
+			String nomeArquivoDownload = String.format("Galleria Bank - CCI %s.docx", "");
+			gerador.open(nomeArquivoDownload);
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
-			criarCcbNosistema();	
+			criarCcbNosistema();
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -9159,7 +9170,10 @@ public class CcbMB {
 			if(nomeSemvirgula.contains(",")) {
 				nomeSemvirgula = nomeSemvirgula.replace(",", "");
 		    }
-			gerador.open(String.format("Galleria Bank - CCI %s.docx", ""));
+
+			String nomeArquivoDownload = String.format("Galleria Bank - CCI %s.docx", "");
+			gerador.open(nomeArquivoDownload);
+
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
 			criarCcbNosistema();	
@@ -9275,11 +9289,14 @@ public class CcbMB {
 			if(nomeSemvirgula.contains(",")) {
 				nomeSemvirgula = nomeSemvirgula.replace(",", "");
 		    }
+		
+			String nomeArquivoDownload = String.format("Galleria Bank - CESSAO %s.pdf", "");
+			
 			if(SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
-				gerador.open(String.format("Galleria Bank - CESSAO %s.pdf", ""));
+				gerador.open(nomeArquivoDownload);
 				gerador.feed(new ByteArrayInputStream(CommonsUtil.wordToPdf(in).toByteArray()));
 			} else {
-				gerador.open(String.format("Galleria Bank - CESSAO %s.docx", ""));
+				gerador.open(nomeArquivoDownload);
 				gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			}
 			gerador.close();
@@ -9430,7 +9447,9 @@ public class CcbMB {
 			if(nomeSemvirgula.contains(",")) {
 				nomeSemvirgula = nomeSemvirgula.replace(",", "");
 		    }
-			gerador.open(String.format("Galleria Bank - Instrumento Emissão CCI BMP %s.docx", ""));
+
+			String nomeArquivoDownload = String.format("Galleria Bank - Instrumento Emissão CCI BMP %s.docx", "");
+			gerador.open(nomeArquivoDownload);
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
 			criarCcbNosistema();	
@@ -9493,7 +9512,8 @@ public class CcbMB {
 			if(nomeSemvirgula.contains(",")) {
 				nomeSemvirgula = nomeSemvirgula.replace(",", "");
 		    }
-			gerador.open(String.format("Galleria Bank - Endossos Em Preto %s.docx", ""));
+			String nomeArquivoDownload = String.format("Galleria Bank - Endossos Em Preto %s.docx", "");
+			gerador.open(nomeArquivoDownload);
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
 			criarCcbNosistema();	
@@ -9537,10 +9557,7 @@ public class CcbMB {
 			            String text = r.getText(0);		            
 			            if(CommonsUtil.semValor(text)) {
 			            	continue;
-			            }			            
-			            if(text.contains("LUCCA")) {
-			            	String aa="";
-			            }			            
+			            }				            
 			            text = trocaValoresXWPF(text, r, "cidadeEmitente", (participante.getPessoa().getCidade()));    
 			            text = trocaValoresXWPF(text, r, "ufEmitente", (participante.getPessoa().getEstado()));			            
 			            text = trocaValoresXWPF(text, r, "emissaoDia", this.objetoCcb.getDataDeEmissao().getDate());
@@ -9581,7 +9598,9 @@ public class CcbMB {
 			if(nomeSemvirgula.contains(",")) {
 				nomeSemvirgula = nomeSemvirgula.replace(",", "");
 		    }
-			gerador.open(String.format("Galleria Bank - Declaracao Nao Uniao Estavel%s.docx", ""));
+			
+			String nomeArquivoDownload = String.format("Galleria Bank - Declaracao Nao Uniao Estavel%s.docx", "");
+			gerador.open(nomeArquivoDownload);
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
 			criarCcbNosistema();	
@@ -9668,7 +9687,9 @@ public class CcbMB {
 			if(nomeSemvirgula.contains(",")) {
 				nomeSemvirgula = nomeSemvirgula.replace(",", "");
 		    }
-			gerador.open(String.format("Galleria Bank - Declaracao Destinacao Recursos%s.docx", ""));
+			
+			String nomeArquivoDownload = String.format("Galleria Bank - Declaracao Destinacao Recursos%s.docx", "");
+			gerador.open(nomeArquivoDownload);
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
 			criarCcbNosistema();	
@@ -9841,7 +9862,8 @@ public class CcbMB {
 			if(nomeSemvirgula.contains(",")) {
 				nomeSemvirgula = nomeSemvirgula.replace(",", "");
 		    }
-			gerador.open(String.format("Galleria Bank - Declaracao Nao Uniao Estavel%s.docx", ""));
+			String nomeArquivoDownload = String.format("Galleria Bank - Declaracao Nao Uniao Estavel%s.docx", "");
+			gerador.open(nomeArquivoDownload);			
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
 			criarCcbNosistema();	
@@ -9943,7 +9965,8 @@ public class CcbMB {
 			if(nomeSemvirgula.contains(",")) {
 				nomeSemvirgula = nomeSemvirgula.replace(",", "");
 		    }
-			gerador.open(String.format("Galleria Bank - Termo De Responsabilidade Anuencia Paju%s.docx", ""));
+			String nomeArquivoDownload = String.format("Galleria Bank - Termo De Responsabilidade Anuencia Paju%s.docx", "");
+			gerador.open(nomeArquivoDownload);
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
 			criarCcbNosistema();	
@@ -9957,7 +9980,8 @@ public class CcbMB {
 		try {
 			InputStream in = getClass().getResourceAsStream("/resource/Ficha PPE.pdf");
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(FacesContext.getCurrentInstance());
-			gerador.open(String.format("Galleria Bank - Ficha PPE %s.pdf", ""));
+			String nomeArquivoDownload = String.format("Galleria Bank - Ficha PPE %s.pdf", "");
+			gerador.open(nomeArquivoDownload);
 			gerador.feed(in);
 			gerador.close();
 		} catch (Throwable e) {
@@ -9970,7 +9994,8 @@ public class CcbMB {
 		try {
 			InputStream in = getClass().getResourceAsStream("/resource/Ficha PLD e FT.pdf");
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(FacesContext.getCurrentInstance());
-			gerador.open(String.format("Galleria Bank - Ficha PPE %s.pdf", ""));
+			String nomeArquivoDownload = String.format("Galleria Bank - Ficha PPE %s.pdf", "");
+			gerador.open(nomeArquivoDownload);
 			gerador.feed(in);
 			gerador.close();
 		} catch (Throwable e) {
@@ -10112,17 +10137,19 @@ public class CcbMB {
 			document.close();
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(FacesContext.getCurrentInstance());
 			
-			if (CommonsUtil.mesmoValor(tipoDownload,"CCB")) {
-				gerador.open(String.format("Galleria Bank - Modelo_CCB %s.docx", ""));
-	    	} else if(CommonsUtil.mesmoValor(tipoDownload,"AF")) {
-	    		gerador.open(String.format("Galleria Bank - Modelo_AF %s.docx", ""));
-	    	} else if(CommonsUtil.mesmoValor(tipoDownload,"NC")) {
-	    		gerador.open(String.format("Galleria Bank - Modelo_NC %s.docx", ""));
-	    	} else {
-	    		gerador.open(String.format("teste %s.docx", ""));	    	
-	    	}
-
 			
+			String nomeArquivoDownload = "";
+			if (CommonsUtil.mesmoValor(tipoDownload, "CCB")) {
+				nomeArquivoDownload = String.format("Galleria Bank - Modelo_CCB %s.docx", "");
+			} else if (CommonsUtil.mesmoValor(tipoDownload, "AF")) {
+				nomeArquivoDownload = String.format("Galleria Bank - Modelo_AF %s.docx", "");
+			} else if (CommonsUtil.mesmoValor(tipoDownload, "NC")) {
+				nomeArquivoDownload = String.format("Galleria Bank - Modelo_NC %s.docx", "");
+			} else {
+				nomeArquivoDownload = String.format("teste %s.docx", "");
+			}
+			gerador.open(nomeArquivoDownload);
+
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
 			
@@ -10267,8 +10294,8 @@ public class CcbMB {
 				FacesContext.getCurrentInstance());
 
 		SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
-
-		gerador.open(String.format("Galleria Bank - SeguradoTabelaMIP %s.xlsx", ""));
+		String nomeArquivoDownload = String.format("Galleria Bank - SeguradoTabelaMIP %s.xlsx", "");
+		gerador.open(nomeArquivoDownload);
 		gerador.feed(new ByteArrayInputStream(fileOut.toByteArray()));
 		gerador.close();
 

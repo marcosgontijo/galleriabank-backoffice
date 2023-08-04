@@ -12,8 +12,10 @@ import org.apache.commons.logging.LogFactory;
 
 import com.webnowbr.siscoat.cobranca.db.model.DataEngine;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
+import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.DataEngineDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
+import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.cobranca.service.DocumentoAnaliseService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.cobranca.service.PagadorRecebedorService;
@@ -23,8 +25,12 @@ import com.webnowbr.siscoat.cobranca.service.UserService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.common.GsonUtil;
+import com.webnowbr.siscoat.infra.db.model.User;
 
 import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
+import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultRelacionamentosPessoaisPJ;
+import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultRelacionamentosPessoaisPJPartnership;
+import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoRequestEnterprisePartnership;
 import io.jsonwebtoken.Jwts;
 
 @Path("/engine")
@@ -34,13 +40,16 @@ public class EngineWebhook {
 
 	@POST
 	@Path("/webhook/")
-	public Response webhookRea(String webhookRetorno, @QueryParam("Token") String token) {
+	public Response webhookEngine(String webhookRetorno, @QueryParam("Token") String token) {
 //		LOGGER.debug(webhookRetorno);
 
 		try {
 
 			Jwts.parserBuilder().setSigningKey(CommonsUtil.CHAVE_WEBHOOK).build().parseClaimsJws(token);
 
+			DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
+
+			
 			/*
 			 * System.out.
 			 * println("---------------- Data Engine webhookRetorno ---------------- ");
@@ -56,26 +65,35 @@ public class EngineWebhook {
 			DataEngine dataEngine = null;
 			if (engines.size() > 0) {
 				dataEngine = engines.get(0);
+				
+				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+				
+				PagadorRecebedor pagaRecebedor = dataEngine.getPagador();
+				
+				pagadorRecebedorService.preecheDadosReceita(pagaRecebedor);
 
 				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 
 				DocumentoAnalise documentoAnalise = documentoAnaliseDao.findByFilter("engine", dataEngine).stream()
 						.findFirst().orElse(null);
+
 				
-				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
-				pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(dataEngine.getPagador(),
+				pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagaRecebedor,
 						DocumentosAnaliseEnum.ENGINE, webhookRetorno);
-				
 
 				if (!CommonsUtil.semValor(documentoAnalise)) {
 
 					documentoAnalise.setRetornoEngine(webhookRetorno);
-					
+
 					SerasaService serasaService = new SerasaService();
 					NetrinService netrinService = new NetrinService();
 					UserService userService = new UserService();
 					ScrService scrService = new ScrService();
+					DocketService docketService = new DocketService();
 
+					
+					User userSistema = userService.userSistema();
+					
 					engineWebhookRetorno.getConsultaAntecedenteCriminais();
 
 					if ((CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais())
@@ -93,40 +111,112 @@ public class EngineWebhook {
 						if (documentoAnalise.isPodeChamarCenprot()) {
 							if (CommonsUtil.semValor(documentoAnalise.getRetornoCenprot())) {
 								documentoAnalise.setLiberadoCenprot(true);
+								documentoAnaliseDao.merge(documentoAnalise);
 								netrinService.requestCenprot(documentoAnalise);
 							}
 						}
 
-//						if (documentoAnalise.isPodeChamarSCR()) {
-//							if (CommonsUtil.semValor(documentoAnalise.getRetornoScr())) {
-//								documentoAnalise.setLiberadoScr(true);
-//								scrService.requestScr(documentoAnalise);
-//							}
-//						}
+						if (documentoAnalise.isPodeChamarSCR()) {
+							if (CommonsUtil.semValor(documentoAnalise.getRetornoScr())) {
+								documentoAnalise.setLiberadoScr(true);
+								documentoAnaliseDao.merge(documentoAnalise);
+								scrService.requestScr(documentoAnalise);
+							}
+						}
 //
 //						DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
 //						documentoAnaliseService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
 //								DocumentosAnaliseEnum.ENGINE, webhookRetorno);
 
 					} else {
-						if (!CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais().getResult())
+						if (!CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais()) 
+								&& !CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais().getResult())
 								&& !CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais()
-										.getResult().get(0).getOnlineCertificates()) && 
-									!CommonsUtil.mesmoValorIgnoreCase("NADA CONSTA", engineWebhookRetorno.getConsultaAntecedenteCriminais()
-										.getResult().get(0).getOnlineCertificates().get(0).getBaseStatus())) {
+										.getResult().get(0).getOnlineCertificates())
+								&& !CommonsUtil.mesmoValorIgnoreCase("NADA CONSTA",
+										engineWebhookRetorno.getConsultaAntecedenteCriminais().getResult().get(0)
+												.getOnlineCertificates().get(0).getBaseStatus())) {
 							documentoAnalise.addObservacao("Possui antecedentes criminais");
 						}
-						if (CommonsUtil.mesmoValor(
-								CommonsUtil.intValue(engineWebhookRetorno.getProcessos().getTotal_acoes_judicias_reu()),
-								0)) {
+						if (!CommonsUtil.semValor(engineWebhookRetorno.getProcessos())
+							&& !CommonsUtil.semValor(engineWebhookRetorno.getProcessos().getTotal_acoes_judicias_reu())
+							&& CommonsUtil.mesmoValor(CommonsUtil.intValue(
+									engineWebhookRetorno.getProcessos().getTotal_acoes_judicias_reu()),0)) {
 							documentoAnalise.addObservacao("Possui Processos");
 						}
 					}
 
 					documentoAnaliseDao.merge(documentoAnalise);
+
+					String motivo = "Empresa Vinculada ao Proprietario Atual";
+					if (!CommonsUtil.mesmoValor(documentoAnalise.getMotivoAnalise().toUpperCase(),
+							"PROPRIETARIO ATUAL"))
+						motivo = "Empresa Vinculada ao Proprietario Anterior";
+					
+					if (!CommonsUtil.semValor(engineWebhookRetorno.getConsultaCompleta())
+							&& !CommonsUtil.semValor(engineWebhookRetorno.getConsultaCompleta().getEnterpriseData())
+							&& !CommonsUtil.semValor(engineWebhookRetorno.getConsultaCompleta().getEnterpriseData().getPartnership())
+							&& !CommonsUtil.semValor(engineWebhookRetorno.getConsultaCompleta().getEnterpriseData().getPartnership()
+									.getPartnerships())) {
+
+						for (EngineRetornoRequestEnterprisePartnership partnership : engineWebhookRetorno
+								.getConsultaCompleta().getEnterpriseData().getPartnership().getPartnerships()) {
+
+							documentoAnaliseService.cadastrarPessoRetornoEngine(partnership, userSistema,
+									documentoAnaliseDao, pagadorRecebedorService,
+									documentoAnalise.getContratoCobranca(), motivo);
+
+						}
+					}
+
+					if (!CommonsUtil.semValor(engineWebhookRetorno.getRelacionamentosPessoaisPJ())
+							&& !CommonsUtil.semValor(engineWebhookRetorno.getRelacionamentosPessoaisPJ().getResult())) {
+
+						for (EngineRetornoExecutionResultRelacionamentosPessoaisPJ engineRetornoExecutionResultRelacionamentosPessoaisPJ : engineWebhookRetorno
+								.getRelacionamentosPessoaisPJ().getResult()) {
+
+							if (!CommonsUtil.semValor(
+									engineRetornoExecutionResultRelacionamentosPessoaisPJ.getRelationships())) {
+
+								if (!CommonsUtil.semValor(engineRetornoExecutionResultRelacionamentosPessoaisPJ
+										.getRelationships().getRelationships()))
+									for (EngineRetornoExecutionResultRelacionamentosPessoaisPJPartnership engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership : engineRetornoExecutionResultRelacionamentosPessoaisPJ
+											.getRelationships().getRelationships()) {
+										documentoAnaliseService.cadastrarPessoRetornoEngine(
+												engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership,
+												userSistema, documentoAnaliseDao, pagadorRecebedorService,
+												documentoAnalise.getContratoCobranca(), motivo);
+									}
+
+								if (!CommonsUtil.semValor(engineRetornoExecutionResultRelacionamentosPessoaisPJ
+										.getRelationships().getCurrentRelationships()))
+									for (EngineRetornoExecutionResultRelacionamentosPessoaisPJPartnership engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership : engineRetornoExecutionResultRelacionamentosPessoaisPJ
+											.getRelationships().getCurrentRelationships()) {
+										documentoAnaliseService.cadastrarPessoRetornoEngine(
+												engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership,
+												userSistema, documentoAnaliseDao, pagadorRecebedorService,
+												documentoAnalise.getContratoCobranca(), motivo);
+									}
+
+								if (!CommonsUtil.semValor(engineRetornoExecutionResultRelacionamentosPessoaisPJ
+										.getRelationships().getHistoricalRelationships()))
+									for (EngineRetornoExecutionResultRelacionamentosPessoaisPJPartnership engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership : engineRetornoExecutionResultRelacionamentosPessoaisPJ
+											.getRelationships().getHistoricalRelationships()) {
+										documentoAnaliseService.cadastrarPessoRetornoEngine(
+												engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership,
+												userSistema, documentoAnaliseDao, pagadorRecebedorService,
+												documentoAnalise.getContratoCobranca(), motivo);
+									}
+
+							}
+						}
+
+					}
+					
 				}
 			}
 			return Response.status(200).entity("Processado").build();
+			
 		} catch (io.jsonwebtoken.ExpiredJwtException eJwt) {
 			eJwt.printStackTrace();
 			return Response.status(500).entity("Token Expirado").build();

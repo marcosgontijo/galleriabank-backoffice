@@ -70,7 +70,8 @@ public class CombateAFraudeMB {
 		InputStream in = file.getInputStream();
 		
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(FacesContext.getCurrentInstance());
-		gerador.open(String.format("Galleria Bank - " + file.type + " %s."+ file.getFileExtension(), ""));
+		String nomeArquivoDownload = String.format("Galleria Bank - " + file.type + " %s."+ file.getFileExtension(), "");
+		gerador.open(nomeArquivoDownload);
 		gerador.feed(in);
 		gerador.close();
 		return null;

@@ -52,6 +52,10 @@
 			<column name="liberadoAnalise" not-null="true" default ="false" />
 		</property>		
 		
+		<property name="liberadoContinuarAnalise" type="boolean">
+			<column name="liberadoContinuarAnalise" not-null="true" default ="false" />
+		</property>		
+		
 		<property name="liberadoSerasa" type="boolean">
 			<column name="liberadoSerasa" not-null="true" default ="false" />
 		</property>	
@@ -67,9 +71,6 @@
 		<property name="liberadoScr" type="boolean">
 			<column name="liberadoScr" not-null="true" default ="false" />
 		</property>	
-		
-		
-		
 		
 		<property name="cnpjcpf" type="java.lang.String"  >
 			<column name="cnpjcpf" />

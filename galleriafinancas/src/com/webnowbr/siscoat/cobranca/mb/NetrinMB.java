@@ -80,9 +80,8 @@ public class NetrinMB {
 			else
 				cnpjcpf = documentoAnalise.getPagador().getCnpj();
 		}
-
-		gerador.open(String.format("Galleria Bank - " + Relatorio + " %s.pdf", CommonsUtil.somenteNumeros(cnpjcpf)));
-
+		String nomeArquivoDownload = String.format("Galleria Bank - " + Relatorio + " %s.pdf", CommonsUtil.somenteNumeros(cnpjcpf));
+		gerador.open(nomeArquivoDownload);
 		gerador.feed(in);
 		gerador.close();
 		return null;

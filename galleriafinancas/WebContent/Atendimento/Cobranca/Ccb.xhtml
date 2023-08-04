@@ -1883,7 +1883,6 @@
 								<p:outputLabel value="Usar Novo Custo Emissão: " styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
 								<p:selectBooleanCheckbox id="objetoCcb" value="#{ccbMB.objetoCcb.usarNovoCustoEmissao}" >
-									<p:ajax update="taxaDeJurosMes" event="change" listener="#{ccbMB.objetoCcb.pegarTaxa}" />
 								</p:selectBooleanCheckbox>
 								
 								<p:outputLabel for="prazo"
@@ -2611,6 +2610,7 @@
 					<p:commandButton ajax="false" action="#{ccbMB.enviarMoneyPlus}"
 						icon="ui-icon ui-icon-print" value="Integrar Money Plus" />					
 				</h:panelGrid>
+			
 				<h:panelGrid columns="2">	
 					<p:outputLabel id="aviso" value="#{ccbMB.aviso} " styleClass="labelBold" />
 					<p:commandButton ajax="true"
@@ -2621,7 +2621,8 @@
 	
 		<ui:include src="../../Dialog/DialogRecebedorPagador.xhtml">
 			<ui:param name="mbean" value="#{ccbMB}"></ui:param>
-			<ui:param name="titulo" value="#{ccbMB.tituloPagadorRecebedorDialog}"></ui:param>
+			<ui:param name="titulo" value="#{ccbMB.tituloPagadorRecebedorDialog}"></ui:param>			
+			<ui:param name="permiteAdicionarPessoa" value="false"></ui:param>			
 		</ui:include>
 
 		<p:dialog header="Contratos" widgetVar="contratoCobrancaDialog"

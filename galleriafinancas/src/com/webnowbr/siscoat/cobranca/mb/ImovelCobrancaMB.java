@@ -1,23 +1,33 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
+import org.primefaces.model.UploadedFile;
 
+import com.webnowbr.siscoat.cobranca.db.model.Cidade;
+import com.webnowbr.siscoat.cobranca.db.model.DocketCidades;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
-import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
+import com.webnowbr.siscoat.cobranca.db.op.CidadeDao;
 import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
+import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.db.dao.DAOException;
 import com.webnowbr.siscoat.db.dao.DBConnectionException;
-
-import org.primefaces.model.SortOrder;
-
-import java.util.Map;
 
 /** ManagedBean. */
 @ManagedBean(name = "imovelCobrancaMB")
@@ -31,9 +41,11 @@ public class ImovelCobrancaMB {
 	private boolean updateMode = false;
 	private boolean deleteMode = false;
 	private String tituloPainel = null;
-	/**
-	 * Construtor.
-	 */
+	
+	
+	public UploadedFile uploadedFile;
+	
+	/*Construtor.*/
 	public ImovelCobrancaMB() {
 
 		objetoImovelCobranca = new ImovelCobranca();
@@ -142,6 +154,98 @@ public class ImovelCobrancaMB {
 		return "ImovelCobrancaConsultar.xhtml";
 	}
 
+	
+	public void handleFileUpload(FileUploadEvent event) {
+		uploadedFile = event.getFile();
+	}
+	
+	public void popularCidades() throws IOException {
+		XSSFWorkbook wb = new XSSFWorkbook((uploadedFile.getInputstream()));
+		XSSFSheet sheet = wb.getSheetAt(0);
+
+		int iLinha = 0;
+		XSSFRow linha = sheet.getRow(iLinha);
+		
+		iLinha++;
+		while (!CommonsUtil.semValor(linha)) {
+			
+			linha = sheet.getRow(iLinha);
+			if(CommonsUtil.semValor(linha) 
+				||  CommonsUtil.semValor(linha.getCell(0)) 
+				||  CommonsUtil.semValor(linha.getCell(0).getNumericCellValue())
+				||  CommonsUtil.semValor(linha.getCell(1)) 
+				||  CommonsUtil.semValor(linha.getCell(1).getStringCellValue())
+				||  CommonsUtil.semValor(linha.getCell(2)) 
+				||  CommonsUtil.semValor(linha.getCell(2).getStringCellValue())
+				||  CommonsUtil.semValor(linha.getCell(3)) 
+				||  CommonsUtil.semValor(linha.getCell(3).getStringCellValue())
+				||  CommonsUtil.semValor(linha.getCell(6)) 
+				||  CommonsUtil.semValor(linha.getCell(6).getStringCellValue())
+				||  CommonsUtil.semValor(linha.getCell(7)) 
+				||  CommonsUtil.semValor(linha.getCell(7).getNumericCellValue())
+				||  CommonsUtil.semValor(linha.getCell(9)) 
+				||  CommonsUtil.semValor(linha.getCell(9).getStringCellValue())) {
+				break;
+			}
+			
+			int rankingNacional = CommonsUtil.intValue(linha.getCell(0).getNumericCellValue());
+			String nome = (linha.getCell(1).getStringCellValue());
+			String estado = (linha.getCell(2).getStringCellValue());
+			estado = estado.trim();
+			int populacao = CommonsUtil.intValue(CommonsUtil.removeEspacos(linha.getCell(3).getStringCellValue()));		
+			String praiaStr = (linha.getCell(6).getStringCellValue());
+			int rankingEstadual = CommonsUtil.intValue(linha.getCell(7).getNumericCellValue());		
+			String pintarStr = (linha.getCell(9).getStringCellValue());
+			
+			while(estado.startsWith(" ")
+					|| estado.startsWith(Character.toString((char) 160))) {
+				estado = estado.substring(1);
+			}
+			
+			while(estado.endsWith(" ")
+					|| estado.endsWith(Character.toString((char) 160))) {
+				estado = estado.trim();
+			}
+			
+			CidadeDao cDao = new CidadeDao();
+			Cidade cidade = cDao.buscaCidade(nome, estado);			
+			if(CommonsUtil.semValor(cidade)) {
+				cidade = new Cidade();
+			}
+			
+			cidade.setNome(nome);
+			cidade.setEstado(estado);
+			cidade.setRankingNacional(rankingNacional);
+			cidade.setPopulacao(populacao);
+			if(CommonsUtil.mesmoValor(praiaStr.trim(), "não")) {
+				cidade.setPraia(false);
+			} else if(CommonsUtil.mesmoValor(praiaStr.trim(), "sim")) {
+				cidade.setPraia(true);
+			}
+			cidade.setRankingEstadual(rankingEstadual);
+			if(CommonsUtil.mesmoValor(pintarStr.trim(), "não")) {
+				cidade.setPintarLinha(false);
+			} else if(CommonsUtil.mesmoValor(pintarStr.trim(), "sim")) {
+				cidade.setPintarLinha(true);
+			}
+			if(cidade.getId() > 0) {
+				cDao.merge(cidade);
+			} else {
+				cDao.create(cidade);
+			}
+			
+			iLinha++;
+		}
+	}
+	
+	public void clearDialog() {
+		this.uploadedFile = null;
+	}
+		
+	
+    
+	
+	
 	/**
 	 * @return the lazyModel
 	 */
@@ -230,4 +334,14 @@ public class ImovelCobrancaMB {
 	public void setTituloPainel(String tituloPainel) {
 		this.tituloPainel = tituloPainel;
 	}
+
+	public UploadedFile getUploadedFile() {
+		return uploadedFile;
+	}
+
+	public void setUploadedFile(UploadedFile uploadedFile) {
+		this.uploadedFile = uploadedFile;
+	}
+	
+	
 }

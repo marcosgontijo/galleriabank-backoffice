@@ -15,15 +15,18 @@ public class DocumentoAnaliseDao extends HibernateDao<DocumentoAnalise, Long> {
 	private static final String QUERY_VERIFICA_PESSOA_ANALISE = " select id " + "from cobranca.documentosanalise "
 			+ "where contratocobranca  = ? and cnpjcpf = ? ";
 
+
 	private static final String QUERY_VERIFICA_EXCLUIDO = "select id" + " from cobranca.documentosanalise "
 			+ "where contratocobranca  = ? and excluido = false ";
 
-	public boolean cadastradoAnalise(ContratoCobranca contratoCobranca, String cnpjCpf) {
-		return (Boolean) executeDBOperation(new DBRunnable() {
+
+	public DocumentoAnalise cadastradoAnalise(ContratoCobranca contratoCobranca, String cnpjCpf) {
+		return (DocumentoAnalise) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
 				Connection connection = null;
 				PreparedStatement ps = null;
+				DocumentoAnalise documentoAnalise = null;
 				try {
 					connection = getConnection();
 					ps = connection.prepareStatement(QUERY_VERIFICA_PESSOA_ANALISE);
@@ -32,12 +35,14 @@ public class DocumentoAnaliseDao extends HibernateDao<DocumentoAnalise, Long> {
 					ps.setString(2, cnpjCpf);
 
 					ResultSet rs = ps.executeQuery();
-
-					return rs.next();
+					if (rs.next())
+						documentoAnalise = findById(rs.getLong("id"));
 
 				} finally {
 					closeResources(connection, ps);
 				}
+				
+				return documentoAnalise;
 			}
 		});
 

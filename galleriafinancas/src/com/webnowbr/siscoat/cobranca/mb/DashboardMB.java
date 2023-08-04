@@ -660,8 +660,8 @@ public class DashboardMB {
 		
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 				FacesContext.getCurrentInstance());
-		
-		gerador.open(String.format("Galleria Bank - DashBoardTabela %s.xlsx", ""));
+		String nomeArquivoDownload = String.format("Galleria Bank - DashBoardTabela %s.xlsx", "");
+		gerador.open(nomeArquivoDownload);
 		gerador.feed( new ByteArrayInputStream(fileOut.toByteArray()));
 		gerador.close();
 
@@ -958,7 +958,8 @@ public class DashboardMB {
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 				FacesContext.getCurrentInstance());
 		
-		gerador.open(String.format("Galleria Bank - DashBoardTabela %s.xlsx", ""));
+		String nomeArquivoDownload = String.format("Galleria Bank - DashBoardTabela %s.xlsx", "");
+		gerador.open(nomeArquivoDownload);
 		gerador.feed( new ByteArrayInputStream(fileOut.toByteArray()));
 		gerador.close();
 
@@ -1038,7 +1039,8 @@ public class DashboardMB {
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 				FacesContext.getCurrentInstance());
 		
-		gerador.open(String.format("Galleria Bank - DashBoardTabela %s.xlsx", ""));
+		String nomeArquivoDownload = String.format("Galleria Bank - DashBoardTabela %s.xlsx", "");
+		gerador.open(nomeArquivoDownload);
 		gerador.feed( new ByteArrayInputStream(fileOut.toByteArray()));
 		gerador.close();
 

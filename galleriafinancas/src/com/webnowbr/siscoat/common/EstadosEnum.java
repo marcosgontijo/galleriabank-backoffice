@@ -22,7 +22,7 @@ public enum EstadosEnum {
 	MINAS_GERIAS("Minas Gerais", "MG","b374cd92-4a27-f25f-c1e0-9aa6aed81d32"),
 	PARÁ("Pará", "PA", "2ac26f93-c3aa-e04d-1add-87562c187e9b"),
 	PARAÍBA("Paraíba", "PB", "684f0ccf-6729-776f-4012-2a74fb31bd91"),
-	PARANÁ("Paraná", "PR", "e0992d76-53fb-4933-cec1-eb51b79d63bb"),
+	//PARANÁ("Paraná", "PR", "e0992d76-53fb-4933-cec1-eb51b79d63bb"),
 	PERNAMBUCO("Pernambuco", "PE", "360d9f3c-3eab-b482-5b0f-6e5a0a09944e"),
 	PIAUÍ("Piauí", "PI","eb6564fc-4232-0ca7-e5ee-ba2c328746a2"),
 	//RIO_DE_JANEIRO("Rio de Janeiro", "RJ","074c0821-bf46-c6b6-5f7c-e39f5df39f98"),

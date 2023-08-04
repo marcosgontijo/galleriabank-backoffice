@@ -61,6 +61,7 @@ public class ContractService {
 	private PagadorRecebedorAdicionais pagadorRecebedorAdicionais;
 	private static final String PENDENTE = "Pendente";
 	private static final String COMPLETO = "Completo";
+	SimpleDateFormat dataPadraoSql = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	@ManagedProperty(value = "#{loginBean}")
 	protected LoginBean loginBean;
@@ -524,6 +525,12 @@ public class ContractService {
 								user = null;
 							}
 							this.objetoContratoCobranca.populaStatusEsteira(user);
+							this.objetoContratoCobranca.setContratoPrioridadeAlta(contratoAPP.has("contratoPrioridadeAlta") 
+									? contratoAPP.getBoolean("contratoPrioridadeAlta") : false);
+							this.objetoContratoCobranca.setContratoPrioridadeAltaData(contratoAPP.has("contratoPrioridadeAltaData")
+									? dataPadraoSql.parse(contratoAPP.getString("contratoPrioridadeAltaData")) : null);
+							this.objetoContratoCobranca.setContratoPrioridadeAltaUser(contratoAPP.has("contratoPrioridadeAltaUser")
+									? contratoAPP.getString("contratoPrioridadeAltaUser") : null);
 							
 							try {
 								contratoCobrancaDao.merge(this.objetoContratoCobranca);

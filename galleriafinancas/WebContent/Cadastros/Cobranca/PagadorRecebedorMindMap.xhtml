@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" template="../MenuCadastros.xhtml">
+	<ui:define name="conteudo">
+		<h:form id="form">
+			<script src="#{request.contextPath}/resources/js/functions.js"></script>
+			<script src="#{request.contextPath}/resources/js/jquery.mask.min.js"></script>
+
+			<p:panel id="PanelPagadorRecebedor"
+				header="Pagador / Recebedor - #{pagadorRecebedorMB.tituloPainel}"
+				style="margin-bottom:10px;">
+				<p:focus />
+				<p:messages />
+				<div class="card">
+					<p:diagram value="#{relacionamentoPagadorRecebedorMB.model}"
+						style="height:700px" styleClass="ui-widget-content" />
+				</div>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

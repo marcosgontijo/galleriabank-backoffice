@@ -17,7 +17,9 @@
 	<shiro:hasAnyRoles
 		name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO">
 		<p:panel id="ArquivosAnalisados"
-			style="margin-bottom:10px;text-align: center;">
+			style="margin-bottom:10px;text-align: center;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' 
+			and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' 
+			and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite' }">
 			<f:facet name="header">
 				<h:outputText value="Analise Documentos" />
 				<p:commandButton value="Atualizar listagem" ajax="true"
@@ -66,6 +68,7 @@
 						
 
 						<p:column style="text-align: center; width:5rem;">
+						
 
 							<p:commandButton value="ver Resumo"
 								onclick="PF('resumoConsutlasDialog').show()"
@@ -80,7 +83,7 @@
 
 						<p:column headerText="Liberado Análise">
 							<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"
-								rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
+								rendered="#{!fileAnalise.isAnaliseBloqueada() and contratoCobrancaMB.objetoContratoCobranca.emAnalise  }"
 								onLabel="Sim" offLabel="Não" style="width:6rem">
 								<p:ajax event="change"
 									listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
@@ -88,6 +91,12 @@
 							<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"
 								rendered="#{!contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
 								disabled="true" onLabel="Sim" offLabel="Não" style="width:6rem">
+							</p:selectBooleanButton>
+							<p:selectBooleanButton value="#{fileAnalise.liberadoContinuarAnalise}"
+								rendered="#{fileAnalise.isAnaliseBloqueada() and contratoCobrancaMB.objetoContratoCobranca.emAnalise  }"
+								onLabel="Continuar Analise" offLabel="Analise Bloqueada" style="width:6rem">
+								<p:ajax event="change"
+									listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
 							</p:selectBooleanButton>
 						</p:column>
 
@@ -101,6 +110,9 @@
 							<h:outputText
 								value="#{fileAnalise.identificacao} #{fileAnalise.cnpjcpf} "
 								rendered="#{!fileAnalise.podeChamarRea}" />
+							<p:spacer height="10" />
+							<h:outputText
+								value="#{fileAnalise.pagador.estado}" />
 							<p:spacer height="10" />
 						</p:column>
 

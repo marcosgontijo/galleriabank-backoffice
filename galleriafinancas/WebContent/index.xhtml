@@ -19,14 +19,7 @@
 			name="font-awesome/5.8.2/css/v4-shims.min-jsf.css" />
 		<script src="#{request.contextPath}/resources/js/functions.js"></script>
         <script src="#{request.contextPath}/resources/js/locale-primefaces.js"></script>
-        
-        <h:outputStylesheet >
-			.ui-dataview .ui-dataview-header {
-			    border-bottom: 0 none;
-			    display: none;
-			}
-						
-		</h:outputStylesheet>
+ 
 		<meta http-equiv="Access-Control-Allow-Origin" content="*"/>
     </h:head>
 	<h:body onload="register_tab_GUID()">    
@@ -138,7 +131,7 @@
 							</p:submenu>	
 						</shiro:hasAnyRoles>
 						
-						<shiro:hasAnyRoles name="ROOT">	
+						<shiro:hasAnyRoles name="ROOT, CONSULTA_INDIVIDUAL">	
 							<p:submenu label="Consultas" styleClass="titulosMenu">													
 								<p:menuitem value="Consulta PF por CPF"
 									action="#{consultaPF.clearConsultaPF}"
@@ -147,7 +140,11 @@
 								<p:menuitem value="Processos UniProof"
 									action="#{uniproofMB.clearFieldsProcessos}"
 									ajax="false" icon="ui-icon ui-icon-newwin"
-									styleClass="itemMenu" />							
+									styleClass="itemMenu" />					
+									<p:menuitem value="Consultas"
+									action="#{consultasMB.clear}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />						
 							</p:submenu>					
 						</shiro:hasAnyRoles>						
 						<shiro:hasAnyRoles name="ROOT, COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_CREDITO,
@@ -785,15 +782,25 @@
 	<p:dialog widgetVar="dlgTermos" showEffect="fade" modal="true" closable="false"
 		width="1000" height="570" minWidth="800">
 		
-		<h:form id="termoForm">
-			<iframe scrolling="yes" id="termoPdf"
-				style="height: 540; width: 100%" height="540" width="100%"
-				src="#{termoMB.carregaPdfTermo()}">
-				 
-			</iframe>
+		<h:form id="termoForm" onsubmit="handleResponse(xhr, status, args)">
+		
+			<p:dialog modal="true" widgetVar="statusDialogTermo" header="Carregando próximo termo" draggable="false" closable="false" resizable="false">
+				<p:graphicImage name="image/ajaxloadingbar.gif" />
+			</p:dialog>
+		
+			<div id="top"/>
+		
+			<div align="center">
+				<img src="#{termoMB.carregaPdfTermo()}" width="100%"  />
+			</div>
+		
+			
 			<div align="center">
 				<p:commandButton value="Aceitar" ajax="true" icon="ui-icon-check" id="btnAceite"
 					update=":termoForm" action="#{termoMB.aceitar()}"
+					widgetVar="btnAceite" 
+					onclick="PF('btnAceite').disable(); PF('statusDialogTermo').show()"
+					oncomplete="javascript:window.location='#top' ; PF('statusDialogTermo').hide()"
 					style="TEXT-DECORATION: bold;" />
 			</div>
 		</h:form>
