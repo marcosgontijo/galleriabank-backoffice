@@ -401,6 +401,12 @@
 							<p:inputText id="contaBancarioContaPagar"
 								style="width:250px;font-weight: bold; font-size: 18px !important;"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.contaBancarioContaPagar}" />
+								
+							<p:outputLabel for="digitoContaBancarioContaPagar" value="Dígito C/C: " 
+								style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+							<p:inputText id="digitoContaBancarioContaPagar"
+								style="width:250px;font-weight: bold; font-size: 18px !important;"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.digitoContaBancarioContaPagar}" />	
 						</h:panelGrid>
 
 						<h:panelGroup id="adicionarContasPagar"
@@ -609,7 +615,7 @@
 										ajax="true" update=":form:ContasPagarPanel contaArquivosForm" />
 									<p:commandButton oncomplete="PF('pagamentoStarkBankdlg').show();"
 										icon="ui-icon-video" title="Pagamento - StarkBank" value="Pagamento - StarkBank"
-										update=":starkBankForm">
+										update=":starkBankForm" disabled="#{contas.contaPaga}">
 										<f:setPropertyActionListener target="#{contratoCobrancaMB.contasPagarSelecionada}" value="#{contas}" />									
 									</p:commandButton>
 								</p:column>
@@ -923,11 +929,11 @@
 								style="width:250px;"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.contaBancarioContaPagar}" required="true" />
 								
-							<p:outputLabel for="codigoPIXContaPagarPixStarkBank" value="ISPB Pix: " 
+							<p:outputLabel for="chavePIXBancarioContaPagar" value="Chave Pix: " 
 								style="width:250px;" styleClass="labelBold"/>
-							<p:inputText id="codigoPIXContaPagarPixStarkBank"
+							<p:inputText id="chavePIXBancarioContaPagar"
 								style="width:250px;"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.ispbPixContaPagar}" required="true" />
+								value="#{contratoCobrancaMB.objetoContratoCobranca.chavePIXBancarioContaPagar}" required="true" />
 							
 							<p:outputLabel for="ContaPagarValorPagoPixStarkBank" value="Valor a Pagar: "
 									styleClass="labelBold" />
@@ -936,54 +942,7 @@
 									onkeypress="return isNumberKey(event);"
 									onkeydown="FormataValor(this, 13, event, 2);" required="true"
 									converter="bigDecimalConverter" />							
-						</h:panelGrid> 
-						<h:panelGrid columns="1">
-							<div class="ui-g-12 ui-md-6 ui-lg-6">
-								<p:panelGrid columns="3">
-									<f:facet name="header" style="font-size: 18px !important;">ISPB (Princi[ais Bancos):</f:facet>
-	
-									<p:outputLabel value="Banco" styleClass="labelBold"
-										style="font-size: 14px !important;" />
-									<p:outputLabel value="Código" styleClass="labelBold"
-										style="font-size: 14px !important;" />
-									<p:outputLabel value="ISPB" styleClass="labelBold"
-										style="font-size: 14px !important;" />
-	
-									<p:outputLabel value="Banco do Brasil" styleClass="labelBold" />
-									<p:outputLabel value="1" styleClass="labelBold" />
-									<p:outputLabel value="0" styleClass="labelBold" />
-	
-									<p:outputLabel value="Santander" styleClass="labelBold" />
-									<p:outputLabel value="33" styleClass="labelBold" />
-									<p:outputLabel value="90400888" styleClass="labelBold" />
-	
-									<p:outputLabel value="Caixa Econômica" styleClass="labelBold" />
-									<p:outputLabel value="104" styleClass="labelBold" />
-									<p:outputLabel value="360305"
-										styleClass="labelBold" />
-	
-									<p:outputLabel value="Bradesco" styleClass="labelBold" />
-									<p:outputLabel value="237" styleClass="labelBold" />
-									<p:outputLabel value="60746948" styleClass="labelBold" />
-	
-									<p:outputLabel value="Itaú" styleClass="labelBold" />
-									<p:outputLabel value="341" styleClass="labelBold" />
-									<p:outputLabel value="60701190" styleClass="labelBold" />
-	
-									<p:outputLabel value="Banrisul" styleClass="labelBold" />
-									<p:outputLabel value="41" styleClass="labelBold" />
-									<p:outputLabel value="92702067" styleClass="labelBold" />
-	
-									<p:outputLabel value="Sicredi" styleClass="labelBold" />
-									<p:outputLabel value="748" styleClass="labelBold" />
-									<p:outputLabel value="1181521" styleClass="labelBold" />
-	
-									<p:outputLabel value="BRB" styleClass="labelBold" />
-									<p:outputLabel value="70" styleClass="labelBold" />
-									<p:outputLabel value="208" styleClass="labelBold" />
-								</p:panelGrid>
-							</div>
-						</h:panelGrid>												
+						</h:panelGrid> 											
 				</p:panel>
 				
 				<p:panel id="TEDStarkBank" header="TED"

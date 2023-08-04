@@ -57,6 +57,11 @@ public final class DateUtil {
 		Calendar cal = getZeroHourCal(new Date());
 		return cal.getTime();
 	}
+	
+	public static long todayInMilli() {
+		Date dataHoje = new Date();
+		return dataHoje.getTime();
+	}
 
 	/**
 	 * 
@@ -555,9 +560,7 @@ public final class DateUtil {
 		Date result = calendar.getTime();
 		return result;
 	}
-	
-	
-	
+
 	@SuppressWarnings("deprecation")
 	public static Integer getDaysBetweenDates360(Date FechaIni, Date FechaFin, Boolean MetodoEuro) {
 
