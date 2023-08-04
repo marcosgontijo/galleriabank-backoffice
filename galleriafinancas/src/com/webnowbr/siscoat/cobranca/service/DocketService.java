@@ -433,9 +433,9 @@ public class DocketService {
 	}
 
 	public void salvarDetalheDocumentoEngine(DocumentoAnalise documentoAnalise) {
-		FacesContext context = FacesContext.getCurrentInstance();
+		//FacesContext context = FacesContext.getCurrentInstance();
 		if (CommonsUtil.semValor(documentoAnalise.getEngine().getIdCallManager())) {
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Consulta sem IdCallManager", ""));
+			//context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Consulta sem IdCallManager", ""));
 			return;
 		}
 		documentoAnalise.setRetornoEngine(PegarDetalheDataEngine(documentoAnalise.getEngine()));
@@ -507,10 +507,10 @@ public class DocketService {
 	}
 
 	private String PegarDetalheDataEngine(DataEngine engine) { // POST para pegar pdf
-		FacesContext context = FacesContext.getCurrentInstance();
+		//FacesContext context = FacesContext.getCurrentInstance();
 		if (CommonsUtil.semValor(engine.getIdCallManager())) {
-			context.addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_FATAL, "Não Foi gerado ID da consulta!!!", ""));
+			//context.addMessage(null,
+			//		new FacesMessage(FacesMessage.SEVERITY_FATAL, "Não Foi gerado ID da consulta!!!", ""));
 			return null;
 		}
 
@@ -540,14 +540,14 @@ public class DocketService {
 //			JSONObject myResponse = null;
 			String result = null;
 			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-						"Engine: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", ""));
+				//context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+				//		"Engine: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", ""));
 				System.out.println(myURL.toString());
 			} else {
 				// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
 				// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
-				context.addMessage(null,
-						new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", ""));
+//				context.addMessage(null,
+//						new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", ""));
 				BufferedReader in;
 				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
 				String inputLine;
