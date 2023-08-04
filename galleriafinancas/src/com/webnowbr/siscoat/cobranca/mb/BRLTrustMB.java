@@ -872,7 +872,7 @@ public class BRLTrustMB {
 					// CET
 					cell = row.createCell(14);
 					cell.setCellStyle(numberStyle);
-					if (CommonsUtil.semValor(record.getCetMes())) {
+					if (!CommonsUtil.semValor(record.getCetMes())) {
 						cell.setCellValue(((BigDecimal) record.getCetMes()).doubleValue());
 					} else {
 						cell.setCellValue(Double.valueOf("0"));

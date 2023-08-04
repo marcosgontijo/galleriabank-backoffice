@@ -19548,7 +19548,12 @@ public class ContratoCobrancaMB {
 		processoSelecionado.getContaPagar().setResponsavel(objetoContratoCobranca.getResponsavel());
 
 		processoSelecionado.setContrato(objetoContratoCobranca);
-
+		
+		if(CommonsUtil.mesmoValor(processoSelecionado.getQuitar(), "Quitar")
+			|| CommonsUtil.mesmoValor(processoSelecionado.getQuitar(), "Quitar ou indicar bens")) {
+			processoSelecionado.setSelecionadoComite(true);
+		}
+		
 		if (!CommonsUtil.semValor(processoSelecionado.getContaPagar())) {
 			ContasPagarDao cpDao = new ContasPagarDao();
 			if (processoSelecionado.getContaPagar().getId() <= 0) {
