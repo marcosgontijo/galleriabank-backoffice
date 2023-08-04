@@ -700,7 +700,9 @@ public class ContratoCobranca implements Serializable {
 	private String bancoBancarioContaPagar;
 	private String agenciaBancarioContaPagar;
 	private String contaBancarioContaPagar;
-	
+	private String digitoContaBancarioContaPagar;
+	private String chavePIXBancarioContaPagar;
+			
 	private BigDecimal valorCartaSplit;
 	private String nomeBancarioCartaSplit;
 	private String cpfCnpjBancarioCartaSplit;
@@ -6745,13 +6747,27 @@ public class ContratoCobranca implements Serializable {
 		this.iniciouGeracaoPaju = iniciouGeracaoPaju;
 	}
 
+	public String getDigitoContaBancarioContaPagar() {
+		return digitoContaBancarioContaPagar;
+	}
+
+	public void setDigitoContaBancarioContaPagar(String digitoContaBancarioContaPagar) {
+		this.digitoContaBancarioContaPagar = digitoContaBancarioContaPagar;
+	}
+
+	public String getChavePIXBancarioContaPagar() {
+		return chavePIXBancarioContaPagar;
+	}
+
+	public void setChavePIXBancarioContaPagar(String chavePIXBancarioContaPagar) {
+		this.chavePIXBancarioContaPagar = chavePIXBancarioContaPagar;
+	}
+
 	public boolean isEsteriaComentarioLuvison() {
 		return esteriaComentarioLuvison;
 	}
 
 	public void setEsteriaComentarioLuvison(boolean esteriaComentarioLuvison) {
 		this.esteriaComentarioLuvison = esteriaComentarioLuvison;
-	}	
-	
-	
+	}
 }

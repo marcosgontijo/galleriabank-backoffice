@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.webnowbr.siscoat.cobranca.db.model.DataEngine;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
+import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.DataEngineDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
@@ -64,14 +65,20 @@ public class EngineWebhook {
 			DataEngine dataEngine = null;
 			if (engines.size() > 0) {
 				dataEngine = engines.get(0);
+				
+				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+				
+				PagadorRecebedor pagaRecebedor = dataEngine.getPagador();
+				
+				pagadorRecebedorService.preecheDadosReceita(pagaRecebedor);
 
 				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 
 				DocumentoAnalise documentoAnalise = documentoAnaliseDao.findByFilter("engine", dataEngine).stream()
 						.findFirst().orElse(null);
 
-				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
-				pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(dataEngine.getPagador(),
+				
+				pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagaRecebedor,
 						DocumentosAnaliseEnum.ENGINE, webhookRetorno);
 
 				if (!CommonsUtil.semValor(documentoAnalise)) {
@@ -104,16 +111,18 @@ public class EngineWebhook {
 						if (documentoAnalise.isPodeChamarCenprot()) {
 							if (CommonsUtil.semValor(documentoAnalise.getRetornoCenprot())) {
 								documentoAnalise.setLiberadoCenprot(true);
+								documentoAnaliseDao.merge(documentoAnalise);
 								netrinService.requestCenprot(documentoAnalise);
 							}
 						}
 
-//						if (documentoAnalise.isPodeChamarSCR()) {
-//							if (CommonsUtil.semValor(documentoAnalise.getRetornoScr())) {
-//								documentoAnalise.setLiberadoScr(true);
-//								scrService.requestScr(documentoAnalise);
-//							}
-//						}
+						if (documentoAnalise.isPodeChamarSCR()) {
+							if (CommonsUtil.semValor(documentoAnalise.getRetornoScr())) {
+								documentoAnalise.setLiberadoScr(true);
+								documentoAnaliseDao.merge(documentoAnalise);
+								scrService.requestScr(documentoAnalise);
+							}
+						}
 //
 //						DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
 //						documentoAnaliseService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),

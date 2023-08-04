@@ -1892,6 +1892,14 @@
 			<column name="contaBancarioContaPagar" />
 		</property>	
 		
+		<property name="digitoContaBancarioContaPagar" type="java.lang.String">
+			<column name="digitoContaBancarioContaPagar" />
+		</property>	
+		
+		<property name="chavePIXBancarioContaPagar" type="java.lang.String">
+			<column name="chavePIXBancarioContaPagar" />
+		</property>	
+		
 		<property name="observacaoPagamento" type="text">
 			<column name="observacaoPagamento" />
 		</property>

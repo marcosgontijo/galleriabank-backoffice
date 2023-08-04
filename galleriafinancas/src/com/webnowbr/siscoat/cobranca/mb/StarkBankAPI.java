@@ -66,6 +66,7 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.starkbank.Balance;
 import com.starkbank.BoletoPayment;
+import com.starkbank.DictKey;
 import com.starkbank.Project;
 import com.starkbank.Settings;
 import com.starkbank.Transfer;
@@ -719,7 +720,7 @@ public class StarkBankAPI{
 
 		this.valorItem = new BigDecimal("30000.00");
 		 */
-		DecimalFormat df = new DecimalFormat("###,###,###,###,###.00");
+		DecimalFormat df = new DecimalFormat("###,###,###,###,###.00"); 
 
 		FacesContext context = FacesContext.getCurrentInstance();
 		/*
@@ -757,7 +758,7 @@ public class StarkBankAPI{
 
 
 			doc = new Document(PageSize.A4.rotate(), 10, 80, 10, 80);
-			this.nomePDF = "Recibo - Pagamento Pix/TED - " + nomePagador + ".pdf";
+			this.nomePDF = "Recibo Pagamento -  " + nomePagador + ".pdf";
 			this.pathPDF = pDao.findByFilter("nome", "RECIBOS_IUGU").get(0).getValorString();
 
 			os = new FileOutputStream(this.pathPDF + this.nomePDF);  	
@@ -1048,17 +1049,95 @@ public class StarkBankAPI{
     
     	loginStarkBank(); 
     	
+    	Date dataHoje = gerarDataHoje();
+    	
+    	try {
+	    	rules.add(new Transfer.Rule("resendingLimit", 5));
+	    	
+	    	// get dados chave PIX
+			DictKey dictKey = DictKey.get(codigoPixBanco);
+			
+			if (dictKey != null && !dictKey.ispb.equals("")) {
+		    	HashMap<String, Object> data = new HashMap<>();
+		    	String valorStr = valor.toString();
+		    	data.put("amount", Long.valueOf(valorStr.replace(".", "").replace(",", "")));		    	 
+		    	data.put("bankCode", dictKey.ispb);
+		    	data.put("branchCode", dictKey.branchCode);
+		    	data.put("accountNumber", dictKey.accountNumber);
+		    	data.put("taxId", documento);
+		    	data.put("name", dictKey.name);
+		    	data.put("externalId", "PagamentoPix-" + dictKey.name.replace(" ", "-") + "-" + DateUtil.todayInMilli());
+		    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		    	data.put("scheduled", sdf.format(gerarDataHoje()));
+		    	//data.put("tags", new String[]{"daenerys", "invoice/1234"});
+		    	//data.put("rules", rules);
+		    	
+				transfers.add(new Transfer(data));
+				
+				transfers = Transfer.create(transfers);
+				
+				if (transfers.size() > 0) {
+		    		geraReciboPagamentoPix(String.valueOf(transfers.get(0).id), valor, DateUtil.convertDateTimeToDate(transfers.get(0).created), documento, nomeBeneficiario);
+		    	}
+	
+				StarkBankPix pixTransacao = new StarkBankPix();
+		    	for (Transfer transfer : transfers){
+					 pixTransacao.setId(Long.valueOf(transfer.id));
+					 pixTransacao.setCreated(DateUtil.convertDateTimeToDate(transfer.created));
+					 pixTransacao.setScheduled(transfer.scheduled);
+					 pixTransacao.setNomeComprovante(nomeBeneficiario);
+					 pixTransacao.setAmount(valor);
+					 pixTransacao.setTaxId(documento);
+					 pixTransacao.setPathComprovante(this.pathPDF);
+					 pixTransacao.setNomeComprovante(this.nomePDF);
+		    	}
+		    	
+		    	StarkBankPixDAO starkBankPixDAO = new StarkBankPixDAO();
+		    	starkBankPixDAO.create(pixTransacao);
+		    	
+		    	context.addMessage(null, new FacesMessage(
+						FacesMessage.SEVERITY_INFO, "StarkBank PIX: Pagamento efetuado com sucesso!", ""));
+		    	
+		    	return pixTransacao;
+			} else {
+				context.addMessage(null, new FacesMessage(
+						FacesMessage.SEVERITY_ERROR, "StarkBank PIX: Ocorreu um problema ao fazer PIX com a chave: " + codigoPixBanco + "!", ""));
+				
+				return null;
+			}
+		} catch (Exception e) {
+			context.addMessage(null, new FacesMessage(
+					FacesMessage.SEVERITY_ERROR, "StarkBank PIX: Ocorreu um problema ao fazer PIX! Erro: " + e.getMessage(), "")); 
+			
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	return null;
+    }
+    
+    public StarkBankPix paymentTED(String codigoBanco, String agencia, String numeroConta, String documento, String nomeBeneficiario, BigDecimal valor, String tipoOperacao) {
+    	FacesContext context = FacesContext.getCurrentInstance();
+    	
+    	List<Transfer> transfers = new ArrayList<>();
+
+    	List<Transfer.Rule> rules = new ArrayList<>();
+    
+    	loginStarkBank(); 
+    	
+    	Date dataHoje = gerarDataHoje();
+    	
     	try {
 	    	rules.add(new Transfer.Rule("resendingLimit", 5));
 	
 	    	HashMap<String, Object> data = new HashMap<>();
 	    	data.put("amount", valor);
-	    	data.put("bankCode", codigoPixBanco);
+	    	data.put("bankCode", codigoBanco);
 	    	data.put("branchCode", agencia);
 	    	data.put("accountNumber", numeroConta);
 	    	data.put("taxId", documento);
 	    	data.put("name", nomeBeneficiario);
-	    	data.put("externalId", "PagamentoPix " + nomeBeneficiario);
+	    	data.put("externalId", "PagamentoPix-" + nomeBeneficiario.replace(" ", "") + DateUtil.todayInMilli());
 	    	//data.put("scheduled", "2020-08-14");
 	    	//data.put("tags", new String[]{"daenerys", "invoice/1234"});
 	    	//data.put("rules", rules);

@@ -288,7 +288,7 @@ public class DocumentoAnalise implements Serializable {
 	}
 
 	public boolean isEngineProcessado() {
-		return !CommonsUtil.semValor(engine) && !CommonsUtil.semValor(engine.getIdCallManager());
+		return !CommonsUtil.semValor(engine) && !CommonsUtil.semValor(engine.getIdCallManager())  ;
 	}
 
 	public boolean isPodeChamarSerasa() {
