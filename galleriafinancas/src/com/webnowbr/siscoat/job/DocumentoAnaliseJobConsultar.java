@@ -76,6 +76,10 @@ public class DocumentoAnaliseJobConsultar {
 						docketService.engineCriarConsulta(documentoAnalise, engine, user);
 						
 						
+						if (documentoAnalise.getRetornoEngine().startsWith("consulta efetuada anteriormente Id: ") ) {
+							docketService.salvarDetalheDocumentoEngine(documentoAnalise);
+						}
+						
 						engineRetorno = GsonUtil.fromJson(documentoAnalise.getRetornoEngine(), EngineRetorno.class);
 						
 					} else if (documentoAnalise.isEngineProcessado()) {

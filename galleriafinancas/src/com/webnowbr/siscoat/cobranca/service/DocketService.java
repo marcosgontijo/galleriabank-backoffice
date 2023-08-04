@@ -99,6 +99,7 @@ public class DocketService {
 				documentoAnalise.setEngine(engine);
 				documentoAnalise.setRetornoEngine("consulta efetuada anteriormente Id: " + engine.getId());
 				documentoAnaliseDao.merge(documentoAnalise);
+				salvarDetalheDocumentoEngine(documentoAnalise);
 			}
 
 			return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta já existente!" + engine.getIdCallManager(),
@@ -661,7 +662,7 @@ public class DocketService {
 
 	@SuppressWarnings("unused")
 	public void uploadREA(DocumentoAnalise documentoAnalise, User user) { // POST para gerar pedido
-		FacesContext context = FacesContext.getCurrentInstance();
+		//FacesContext context = FacesContext.getCurrentInstance();
 		File file = new File(documentoAnalise.getPath());
 		String twoHyphens = "--";
 		String boundary = "*****";
@@ -700,9 +701,9 @@ public class DocketService {
 
 			JSONObject myResponse = null;
 			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-						"Docket: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", ""));
-				// System.out.println(jsonREA.toString());
+				//context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						//"Docket: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", ""));
+				//System.out.println(jsonREA.toString());
 			} else {
 				BufferedReader br = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream()));
 				StringBuffer response = new StringBuffer();
@@ -718,8 +719,7 @@ public class DocketService {
 
 				documentoAnalise.setIdRemoto(reaWebhookRetorno.getId());
 				documentoAnaliseDao.merge(documentoAnalise);
-				context.addMessage(null,
-						new FacesMessage(FacesMessage.SEVERITY_INFO, "Matrícula enviada com sucesso", ""));
+				//context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Matrícula enviada com sucesso", ""));
 				// myResponse = getJSONSucesso(myURLConnection.getInputStream());
 			}
 			myURLConnection.disconnect();
