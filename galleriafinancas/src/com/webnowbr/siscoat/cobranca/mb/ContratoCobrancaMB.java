@@ -28665,7 +28665,7 @@ public class ContratoCobrancaMB {
 						
 						engineRetorno = GsonUtil.fromJson(documentoAnalise.getRetornoEngine(), EngineRetorno.class);
 						
-					} else if (documentoAnalise.isPpeProcessado()) {
+					} else if (documentoAnalise.isEngineProcessado()) {
 						engineRetorno = GsonUtil.fromJson(documentoAnalise.getRetornoEngine(), EngineRetorno.class);
 					}
 				}
@@ -28726,6 +28726,11 @@ public class ContratoCobrancaMB {
 //					serasaService.requestSerasa(documentoAnalise, loginBean.getUsuarioLogado());
 //				}
 
+//				if (documentoAnalise.isPodeChamarPpe() && CommonsUtil.semValor(documentoAnalise.getRetornoPpe())) {
+//					documentoAnalise.addObservacao("Processando PEP");
+//					PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
+//					netrinService.requestCadastroPepPF(documentoAnalise);
+//				}
 				
 
 				if (CommonsUtil.semValor(documentoAnalise.getRetornoScr())) {
