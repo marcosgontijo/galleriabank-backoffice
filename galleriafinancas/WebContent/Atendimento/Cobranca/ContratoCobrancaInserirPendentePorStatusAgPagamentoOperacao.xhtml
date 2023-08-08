@@ -613,11 +613,14 @@
 									<p:commandButton value="Arquivos" icon="ui-icon-print"
 										action="#{contratoCobrancaMB.populateFilesContasPagar(contas)}"
 										ajax="true" update=":form:ContasPagarPanel contaArquivosForm" />
-									<p:commandButton oncomplete="PF('pagamentoStarkBankdlg').show();"
-										icon="ui-icon-video" title="Pagamento - StarkBank" value="Pagamento - StarkBank"
-										update=":starkBankForm" disabled="#{contas.contaPaga}">
-										<f:setPropertyActionListener target="#{contratoCobrancaMB.contasPagarSelecionada}" value="#{contas}" />									
-									</p:commandButton>
+										
+									<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR">
+										<p:commandButton oncomplete="PF('pagamentoStarkBankdlg').show();"
+											icon="ui-icon-video" title="Pagamento - StarkBank" value="Pagamento - StarkBank"
+											update=":starkBankForm" disabled="#{contas.contaPaga}">
+											<f:setPropertyActionListener target="#{contratoCobrancaMB.contasPagarSelecionada}" value="#{contas}" />									
+										</p:commandButton>
+									</shiro:hasAnyRoles>
 								</p:column>
 							</shiro:hasAnyRoles>
 						</p:dataTable>			
