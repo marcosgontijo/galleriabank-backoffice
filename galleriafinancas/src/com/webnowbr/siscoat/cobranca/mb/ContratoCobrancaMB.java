@@ -12968,22 +12968,6 @@ public class ContratoCobrancaMB {
 							&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
 							&& c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
 							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
-							&& c.isReanalise() && !c.isReanalisePronta()) {
-						c.setStatus("Ag. Reanalise");
-					}
-
-					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
-							&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
-							&& c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
-							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
-							&& c.isReanalise() && c.isReanalisePronta() && !c.isReanaliseJuridico()) {
-						c.setStatus("Ag. Reanalise Juridico");
-					}
-
-					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
-							&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
-							&& c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
-							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
 							&& !c.isReanalise() && !c.isCertificadoEmitido()) {
 						c.setStatus("Ag. Certificado");
 					}
@@ -13011,6 +12995,24 @@ public class ContratoCobrancaMB {
 							&& c.isCertificadoEmitido() && c.isCcbPronta() && c.isContratoConferido()
 							&& c.isAgAssinatura()) {
 						c.setStatus("Ag. Assinatura");
+					}
+					
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+							&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
+							&& c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+							&& c.isCertificadoEmitido() && c.isCcbPronta() && c.isContratoConferido()
+							&& c.isReanalise() && !c.isReanalisePronta()) {
+						c.setStatus("Ag. Reanalise");
+					}
+
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+							&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
+							&& c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+							&& c.isCertificadoEmitido() && c.isCcbPronta() && c.isContratoConferido()
+							&& c.isReanalise() && c.isReanalisePronta() && !c.isReanaliseJuridico()) {
+						c.setStatus("Ag. Reanalise Juridico");
 					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")

@@ -324,18 +324,6 @@
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_POS_COMITE, PROFILE_GERENTE_ANALISE">
-									<p:menuitem value="09.1 - Ag. Reanalise"
-										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Reanalise')}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
-								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_COMENTARIO_JURIDICO, PROFILE_ANALISTA_POS_COMITE, PROFILE_GERENTE_ANALISE">
-									<p:menuitem value="09.2 - Ag. Reanalise Juridico"
-										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Reanalise Juridico')}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
-								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_CONTRATO">
 									<p:menuitem value="9.5 - Ag. Certificado"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Certificado')}"
@@ -353,6 +341,20 @@
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Assinatura')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_POS_COMITE, PROFILE_GERENTE_ANALISE">
+									<p:menuitem value="12.1 - Ag. Reanalise"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Reanalise')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>							
+								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_COMENTARIO_JURIDICO, PROFILE_ANALISTA_POS_COMITE, PROFILE_GERENTE_ANALISE">
+									<p:menuitem value="12.2 - Ag. Reanalise Juridico"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Reanalise Juridico')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_CONTRATO">
 									<p:menuitem value="13 - Ag. Envio Cartorio"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Envio Cartorio')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"

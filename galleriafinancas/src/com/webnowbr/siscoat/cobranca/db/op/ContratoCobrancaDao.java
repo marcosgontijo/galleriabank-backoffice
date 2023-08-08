@@ -6734,22 +6734,6 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 								+ " and aprovadoComite = true and  documentosCompletos = false";
 					}
 					
-					if (tipoConsulta.equals("Ag. Reanalise")) {
-						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
-								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true"
-								+ " and analiseComercial = true and comentarioJuridicoEsteira = true and preAprovadoComite = true and documentosComite = true"
-								+ " and aprovadoComite = true and documentosCompletos = true "
-								+ " and reanalise = true and (reanalisePronta = false or pajuAtualizado = false)";
-					}
-					
-					if (tipoConsulta.equals("Ag. Reanalise Juridico")) {
-						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
-								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true"
-								+ " and analiseComercial = true and comentarioJuridicoEsteira = true and preAprovadoComite = true and documentosComite = true"
-								+ " and aprovadoComite = true and documentosCompletos = true "
-								+ " and reanalise = true and reanalisePronta = true and pajuAtualizado = true and reanaliseJuridico = false";
-					}
-					
 					if (tipoConsulta.equals("Ag. Certificado")) {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true"
@@ -6780,6 +6764,24 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 								+ " and analiseComercial = true and comentarioJuridicoEsteira = true and documentosCompletos = true and preAprovadoComite = true"
 								+ " and documentosComite = true and aprovadoComite = true and documentosCompletos = true and reanalise = false and certificadoEmitido = true"
 								+ " and ccbPronta = true and contratoConferido = true and agAssinatura = true";
+					}
+					
+					if (tipoConsulta.equals("Ag. Reanalise")) {
+						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
+								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true"
+								+ " and analiseComercial = true and comentarioJuridicoEsteira = true and documentosCompletos = true and preAprovadoComite = true"
+								+ " and documentosComite = true and aprovadoComite = true and documentosCompletos = true and certificadoEmitido = true"
+								+ " and ccbPronta = true and contratoConferido = true"
+								+ " and reanalise = true and (reanalisePronta = false or pajuAtualizado = false)";
+					}
+					
+					if (tipoConsulta.equals("Ag. Reanalise Juridico")) {
+						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
+								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true"
+								+ " and analiseComercial = true and comentarioJuridicoEsteira = true and documentosCompletos = true and preAprovadoComite = true"
+								+ " and documentosComite = true and aprovadoComite = true and documentosCompletos = true and certificadoEmitido = true"
+								+ " and ccbPronta = true and contratoConferido = true"
+								+ " and reanalise = true and reanalisePronta = true and pajuAtualizado = true and reanaliseJuridico = false";
 					}
 
 					if (tipoConsulta.equals("Ag. Envio Cartorio")) {
