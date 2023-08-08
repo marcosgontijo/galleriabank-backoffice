@@ -28678,7 +28678,10 @@ public class ContratoCobrancaMB {
 		try {
 			SchedulerFactory shedFact = new StdSchedulerFactory();
 			Scheduler scheduler = shedFact.getScheduler();
-			return scheduler.checkExists(JobKey.jobKey("documentoAnaliseJOB", objetoContratoCobranca.getNumeroContrato()));
+			JobKey key = JobKey.jobKey("documentoAnaliseJOB", objetoContratoCobranca.getNumeroContrato());
+			boolean jobExist = scheduler.checkExists(key);
+
+			return jobExist;
 		} catch (SchedulerException e) {
 			e.printStackTrace();
 			return false;

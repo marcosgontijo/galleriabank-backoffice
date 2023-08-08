@@ -3,13 +3,12 @@ package com.webnowbr.siscoat.job;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.primefaces.PrimeFaces;
-
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.DataEngine;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
+import com.webnowbr.siscoat.cobranca.service.DocumentoAnaliseService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.cobranca.service.PagadorRecebedorService;
 import com.webnowbr.siscoat.cobranca.service.ScrService;
@@ -20,13 +19,16 @@ import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.infra.db.model.User;
 
 import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
-import br.com.galleriabank.netrin.cliente.model.PPE.PpeResponse;
 
 public class DocumentoAnaliseJobConsultar {
 	
 	public List<DocumentoAnalise> listaDocumentoAnalise;
 	public User user;
 	public ContratoCobranca objetoContratoCobranca;
+	
+	private int stepTotal;	
+	private int step;
+	private String stepDescricao;
 
 	@SuppressWarnings("deprecation")
 	public void executarConsultasAnaliseDocumento() {
@@ -38,9 +40,12 @@ public class DocumentoAnaliseJobConsultar {
 		NetrinService netrinService = new NetrinService();
 
 		ScrService scrService = new ScrService();
+		
+		DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
+		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
 
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-
+		step = 0 ;
 		for (DocumentoAnalise documentoAnalise : this.listaDocumentoAnalise.stream().filter(d -> d.isLiberadoAnalise()
 				|| d.isLiberadoSerasa() || d.isLiberadoCenprot() || d.isLiberadoScr() || d.isLiberadoProcesso())
 				.collect(Collectors.toList())) {
@@ -49,14 +54,17 @@ public class DocumentoAnaliseJobConsultar {
 
 				EngineRetorno engineRetorno = null;
 				if (DocumentosAnaliseEnum.REA.equals(documentoAnalise.getTipoEnum())) {
+					stepTotal= 1;
 					if (documentoAnalise.isPodeChamarRea()) {
 						documentoAnalise.addObservacao("Processando REA");
 						//PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
 						docketService.uploadREA(documentoAnalise, user);
+						step ++;
 					}
 					continue;
 				} else {
 					
+					stepTotal= 3;
 					
 //					if (documentoAnalise.isPodeChamarEngine()
 //							&& CommonsUtil.semValor(documentoAnalise.getRetornoEngine())) {
@@ -73,11 +81,21 @@ public class DocumentoAnaliseJobConsultar {
 						
 						DataEngine engine = docketService.engineInserirPessoa(documentoAnalise.getPagador(),
 								objetoContratoCobranca);
+						step ++;
+						stepDescricao= "";
 						docketService.engineCriarConsulta(documentoAnalise, engine, user);
+						
 						
 						if(!CommonsUtil.semValor(documentoAnalise.getRetornoEngine())) {
 							if (documentoAnalise.getRetornoEngine().startsWith("consulta efetuada anteriormente Id: ") ) {
 								docketService.salvarDetalheDocumentoEngine(documentoAnalise);
+								
+								engineRetorno = GsonUtil.fromJson(documentoAnalise.getRetornoEngine(), EngineRetorno.class);
+								if (CommonsUtil.semValor(engineRetorno.getIdCallManager())) {
+									engineRetorno.setIdCallManager(engineRetorno.getIdCallManager());
+								}
+								docketService.processaWebHookEngine( documentoAnaliseService, engineRetorno,
+										pagadorRecebedorService, documentoAnaliseDao, documentoAnalise);
 							}
 						}
 						
@@ -87,6 +105,13 @@ public class DocumentoAnaliseJobConsultar {
 						if(!CommonsUtil.semValor(documentoAnalise.getRetornoEngine())) {
 							if (documentoAnalise.getRetornoEngine().startsWith("consulta efetuada anteriormente Id: ") ) {
 								docketService.salvarDetalheDocumentoEngine(documentoAnalise);
+								
+								engineRetorno = GsonUtil.fromJson(documentoAnalise.getRetornoEngine(), EngineRetorno.class);
+								if (CommonsUtil.semValor(engineRetorno.getIdCallManager())) {
+									engineRetorno.setIdCallManager(engineRetorno.getIdCallManager());
+								}
+								docketService.processaWebHookEngine( documentoAnaliseService, engineRetorno,
+										pagadorRecebedorService, documentoAnaliseDao, documentoAnalise);
 							}
 						}
 						engineRetorno = GsonUtil.fromJson(documentoAnalise.getRetornoEngine(), EngineRetorno.class);
@@ -134,9 +159,11 @@ public class DocumentoAnaliseJobConsultar {
 				if (CommonsUtil.semValor(documentoAnalise.getRetornoCenprot())) {
 					documentoAnalise.addObservacao("Processando Protestos");
 					//PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
+					step ++;
+					stepDescricao= "Processando Protestos";
 					netrinService.requestCenprot(documentoAnalise);
 					
-					PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+//					PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
 					pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
 							DocumentosAnaliseEnum.CENPROT, documentoAnalise.getRetornoCenprot());
 					
@@ -159,8 +186,11 @@ public class DocumentoAnaliseJobConsultar {
 				if (CommonsUtil.semValor(documentoAnalise.getRetornoScr())) {
 					documentoAnalise.addObservacao("Processando SCR");
 					//PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
+					step ++;
+					stepDescricao= "Processando SCR";
 					scrService.requestScr(documentoAnalise);
 				}
+				
 				documentoAnalise.addObservacao("Pesquisas finalizadas");
 				documentoAnaliseDao.merge(documentoAnalise);
 				//PrimeFaces.current().ajax().update("form:ArquivosAnalisados");
@@ -173,6 +203,32 @@ public class DocumentoAnaliseJobConsultar {
 		return "DocumentoAnaliseJobConsultar [listaDocumentoAnalise=" + listaDocumentoAnalise + ", user=" + user
 				+ ", objetoContratoCobranca=" + objetoContratoCobranca + "]";
 	}
+
+	public int getStepTotal() {
+		return stepTotal;
+	}
+
+	public void setStepTotal(int stepTotal) {
+		this.stepTotal = stepTotal;
+	}
+
+	public int getStep() {
+		return step;
+	}
+
+	public void setStep(int step) {
+		this.step = step;
+	}
+
+	public String getStepDescricao() {
+		return stepDescricao;
+	}
+
+	public void setStepDescricao(String stepDescricao) {
+		this.stepDescricao = stepDescricao;
+	}
+	
+	
 	
 	
 }
