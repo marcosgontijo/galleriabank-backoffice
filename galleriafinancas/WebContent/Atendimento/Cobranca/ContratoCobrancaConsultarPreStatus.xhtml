@@ -85,6 +85,13 @@
    		         	<f:facet name="header">										
 						<p:commandButton value="Ficha Individual" icon="ui-icon-arrowthick-1-s" oncomplete="PF('fichaIndividual').show();" action="#{impressoesPDFMB.clearFieldsFichaIndividual}" update=":form:PanelPDF :form:dados">
 						</p:commandButton>
+						
+						<p:commandButton value="Atualizar Certidoes" 
+							icon="ui-icon-arrowthick-1-s" update="dtContratos"
+							widgetVar="btnUpdateCertidoes" onclick="PF('btnUpdateCertidoes').disable();"
+							action="#{contratoCobrancaMB.consultaListagemCertidoes()}"
+							rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus ==  'Pedir PAJU'}" />
+							
 			        </f:facet>                 
                 	<p:column style="text-align: center;width:100px;" headerText="Contrato" filterBy="#{contratos.numeroContrato}" filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
 			            <h:outputText value="#{contratos.numeroContrato}" />

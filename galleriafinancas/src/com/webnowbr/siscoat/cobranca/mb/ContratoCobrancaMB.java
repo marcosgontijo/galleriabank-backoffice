@@ -13217,14 +13217,7 @@ public class ContratoCobrancaMB {
 			}
 		}
 
-		if (status.equals("Pedir PAJU")) {
-			for (ContratoCobranca contrato : contratosPendentes) {
-				DocketDao docketDao = new DocketDao();
-				String idCallManager = docketDao.consultaContratosPendentesResponsaveis(contrato);
-				DocketService docketService = new DocketService();
-				docketService.verificarCertidoesContrato(contrato, idCallManager);
-			}
-		}
+		/*consultaListagemCertidoes()*/
 
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
 	}
@@ -13287,6 +13280,15 @@ public class ContratoCobrancaMB {
 		
 
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatusGeracaoPAJU.xhtml";
+	}
+	
+	public void consultaListagemCertidoes() {
+		for (ContratoCobranca contrato : contratosPendentes) {
+			DocketDao docketDao = new DocketDao();
+			String idCallManager = docketDao.consultaContratosPendentesResponsaveis(contrato);
+			DocketService docketService = new DocketService();
+			docketService.verificarCertidoesContrato(contrato, idCallManager);
+		}
 	}
 
 	public void processaResponsaveisGeraNumeroWhatsApp() {

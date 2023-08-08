@@ -3,14 +3,18 @@ package com.webnowbr.siscoat.cobranca.db.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
+import java.util.TimeZone;
 
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.infra.db.model.User;
@@ -764,13 +768,27 @@ public class ContratoCobranca implements Serializable {
 	
 	private String proprietarioAnterior;
 	private String terciroGarantidorRessalva;
+	
 	private String matriculaRessalva;
 	private String pefinRefinRessalva;
 	private String protestoRessalva;
 	private String processosRessalva;
 	private String trabalhistaRessalva;
 	private String chequeDevolvidoRessalva;
+	
 	private String obsDocsPendentesRessalva;
+	
+	private boolean protestoTaxa;
+	private boolean chequeDevolvidoTaxa;
+	private boolean pefinTaxa;
+	private boolean refinTaxa;
+	private boolean scoreBaixoTaxa;
+	private boolean terceiroGrantidorTaxa; 
+	private boolean relacionamentoBacenRecenteTaxa; 
+	private boolean dividaVencidaTaxa; 
+	private boolean prejuizoBacenTaxa; 
+	private boolean riscoTotalBaixoTaxa; 
+	private boolean terrenoOuBarracaoTaxa; 
 	
 	private String formaDePagamentoLaudoPAJU;
 	private String nomeContatoAgendaLaudoAvaliacao;
@@ -1285,7 +1303,76 @@ public class ContratoCobranca implements Serializable {
 		return CommonsUtil.semValor(this.cadastroAprovadoValor) && !lstEmAnalise.contains(this.status) && leadCompleto && inicioAnalise;
 	}
 
-	/**
+	
+	public void calcularTaxaPreAprovada() {
+		int potuacao = 1000;
+		
+		if (protestoTaxa)
+			potuacao -= 100;
+		if (chequeDevolvidoTaxa)
+			potuacao -= 100;
+		if (pefinTaxa)
+			potuacao -= 100;
+		if (refinTaxa)
+			potuacao -= 100;
+		if (scoreBaixoTaxa)
+			potuacao -= 100;
+		if (terceiroGrantidorTaxa)
+			potuacao -= 150;
+		if (relacionamentoBacenRecenteTaxa)
+			potuacao -= 100;
+		if (dividaVencidaTaxa)
+			potuacao -= 100;
+		if (prejuizoBacenTaxa)
+			potuacao -= 100;
+		if (riscoTotalBaixoTaxa)
+			potuacao -= 100;
+		if (terrenoOuBarracaoTaxa)
+			potuacao -= 400;
+
+		if (potuacao < 400) {
+			taxaPreAprovada = BigDecimal.valueOf(1.89);
+		} else if (potuacao >= 400 && potuacao < 499) {
+			taxaPreAprovada = BigDecimal.valueOf(1.89);
+		} else if (potuacao >= 500 && potuacao < 599) {
+			taxaPreAprovada = BigDecimal.valueOf(1.79);
+		} else if (potuacao >= 600 && potuacao < 699) {
+			taxaPreAprovada = BigDecimal.valueOf(1.79);
+		} else if (potuacao >= 700 && potuacao < 799) {
+			taxaPreAprovada = BigDecimal.valueOf(1.69);
+		} else if (potuacao >= 800 && potuacao < 899) {
+			taxaPreAprovada = BigDecimal.valueOf(1.59);
+		} else if (potuacao >= 900 && potuacao < 999) {
+			taxaPreAprovada = BigDecimal.valueOf(1.49);
+		} else {
+			taxaPreAprovada = BigDecimal.valueOf(1.39);
+		}
+		
+		if(CommonsUtil.semValor(prazoMaxAprovado)) {
+			calcularPrazoPreAprovado();
+		}
+	}	
+	
+	public void calcularPrazoPreAprovado(){
+		long idade = 0;
+		if(!CommonsUtil.semValor(pagador)) {
+			idade = pagador.calcularIdadeLong();
+		}
+		if(idade == 0) {
+			prazoMaxAprovado = BigInteger.valueOf(0);
+		} else if(idade < 65) {
+			prazoMaxAprovado = BigInteger.valueOf(180);
+		} else if(idade >= 77) {
+			prazoMaxAprovado = BigInteger.valueOf(0); //Múmia n fazer
+		} else {
+			prazoMaxAprovado = BigInteger.valueOf(new BigDecimal(((80 - idade) * 12)).setScale(0, RoundingMode.HALF_DOWN).intValue());
+		}
+	}
+		
+		
+		
+		/**
+	}
 	 * @return the id
 	 */
 	public long getId() {
@@ -6770,4 +6857,93 @@ public class ContratoCobranca implements Serializable {
 	public void setEsteriaComentarioLuvison(boolean esteriaComentarioLuvison) {
 		this.esteriaComentarioLuvison = esteriaComentarioLuvison;
 	}
+
+	public boolean isProtestoTaxa() {
+		return protestoTaxa;
+	}
+
+	public void setProtestoTaxa(boolean protestoTaxa) {
+		this.protestoTaxa = protestoTaxa;
+	}
+
+	public boolean isChequeDevolvidoTaxa() {
+		return chequeDevolvidoTaxa;
+	}
+
+	public void setChequeDevolvidoTaxa(boolean chequeDevolvidoTaxa) {
+		this.chequeDevolvidoTaxa = chequeDevolvidoTaxa;
+	}
+
+	public boolean isPefinTaxa() {
+		return pefinTaxa;
+	}
+
+	public void setPefinTaxa(boolean pefinTaxa) {
+		this.pefinTaxa = pefinTaxa;
+	}
+
+	public boolean isRefinTaxa() {
+		return refinTaxa;
+	}
+
+	public void setRefinTaxa(boolean refinTaxa) {
+		this.refinTaxa = refinTaxa;
+	}
+
+	public boolean isScoreBaixoTaxa() {
+		return scoreBaixoTaxa;
+	}
+
+	public void setScoreBaixoTaxa(boolean scoreBaixoTaxa) {
+		this.scoreBaixoTaxa = scoreBaixoTaxa;
+	}
+
+	public boolean isTerceiroGrantidorTaxa() {
+		return terceiroGrantidorTaxa;
+	}
+
+	public void setTerceiroGrantidorTaxa(boolean terceiroGrantidorTaxa) {
+		this.terceiroGrantidorTaxa = terceiroGrantidorTaxa;
+	}
+
+	public boolean isRelacionamentoBacenRecenteTaxa() {
+		return relacionamentoBacenRecenteTaxa;
+	}
+
+	public void setRelacionamentoBacenRecenteTaxa(boolean relacionamentoBacenRecenteTaxa) {
+		this.relacionamentoBacenRecenteTaxa = relacionamentoBacenRecenteTaxa;
+	}
+
+	public boolean isDividaVencidaTaxa() {
+		return dividaVencidaTaxa;
+	}
+
+	public void setDividaVencidaTaxa(boolean dividaVencidaTaxa) {
+		this.dividaVencidaTaxa = dividaVencidaTaxa;
+	}
+
+	public boolean isPrejuizoBacenTaxa() {
+		return prejuizoBacenTaxa;
+	}
+
+	public void setPrejuizoBacenTaxa(boolean prejuizoBacenTaxa) {
+		this.prejuizoBacenTaxa = prejuizoBacenTaxa;
+	}
+
+	public boolean isRiscoTotalBaixoTaxa() {
+		return riscoTotalBaixoTaxa;
+	}
+
+	public void setRiscoTotalBaixoTaxa(boolean riscoTotalBaixoTaxa) {
+		this.riscoTotalBaixoTaxa = riscoTotalBaixoTaxa;
+	}
+
+	public boolean isTerrenoOuBarracaoTaxa() {
+		return terrenoOuBarracaoTaxa;
+	}
+
+	public void setTerrenoOuBarracaoTaxa(boolean terrenoOuBarracaoTaxa) {
+		this.terrenoOuBarracaoTaxa = terrenoOuBarracaoTaxa;
+	}
+	
 }
