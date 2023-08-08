@@ -251,7 +251,7 @@ public class TermoMB {
 	
 
 
-	public String verificaTermosNaoAssinadoso() throws IOException {
+	public String verificaTermosNaoAssinados() throws IOException {
 
 		if (CommonsUtil.semValor(termos)) {
 			termos = termosNaoAssinadosUsuario(loginBean.getUsuarioLogado());
