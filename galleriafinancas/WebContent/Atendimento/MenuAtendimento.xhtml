@@ -27,12 +27,9 @@
 										action="#{contasAPagarMB.clearFields}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
-									<shiro:hasAnyRoles name="ROOT">
-										<p:menuitem value="Combate a Fraude"
-											action="#{combateAFraudeMB.clearFields}"
-											ajax="false" icon="ui-icon ui-icon-newwin"
-											styleClass="itemMenu" />
-									</shiro:hasAnyRoles>
+									
+										
+								
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT">
 									<p:menuitem value="Contas Pagas"
@@ -91,8 +88,12 @@
 									action="#{uniproofMB.clearFieldsProcessos}"
 									ajax="false" icon="ui-icon ui-icon-newwin"
 									styleClass="itemMenu" />	
-									<p:menuitem value="Consultas"
+								<p:menuitem value="Consultas"
 									action="#{consultasMB.clear}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />
+								<p:menuitem value="Combate a Fraude"
+									action="#{combateAFraudeMB.clearFieldsConsulta}"
 									ajax="false" icon="ui-icon ui-icon-newwin"
 									styleClass="itemMenu" />
 							</p:submenu>					

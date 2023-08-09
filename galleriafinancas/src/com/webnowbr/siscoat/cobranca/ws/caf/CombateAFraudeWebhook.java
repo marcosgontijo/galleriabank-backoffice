@@ -34,7 +34,7 @@ public class CombateAFraudeWebhook {
 				caf.setType(cafWebhookRetorno.type);
 				caf.setStatus(cafWebhookRetorno.status);
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-				Date d = sdf.parse("2023-07-05T12:21:16.834Z");
+				Date d = sdf.parse(cafWebhookRetorno.date);
 				caf.setDate(d);
 				for(CombateAFraudeStatusReasons reason : cafWebhookRetorno.statusReasons) {
 					caf.setObs(caf.getObs() + reason.description  + "\n");

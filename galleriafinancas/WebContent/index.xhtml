@@ -141,10 +141,14 @@
 									action="#{uniproofMB.clearFieldsProcessos}"
 									ajax="false" icon="ui-icon ui-icon-newwin"
 									styleClass="itemMenu" />					
-									<p:menuitem value="Consultas"
+								<p:menuitem value="Consultas"
 									action="#{consultasMB.clear}"
 									ajax="false" icon="ui-icon ui-icon-newwin"
-									styleClass="itemMenu" />						
+									styleClass="itemMenu" />	
+								<p:menuitem value="Combate a Fraude"
+									action="#{combateAFraudeMB.clearFieldsConsulta}"
+									ajax="false" icon="ui-icon ui-icon-newwin"
+									styleClass="itemMenu" />					
 							</p:submenu>					
 						</shiro:hasAnyRoles>						
 						<shiro:hasAnyRoles name="ROOT, COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_CREDITO,
