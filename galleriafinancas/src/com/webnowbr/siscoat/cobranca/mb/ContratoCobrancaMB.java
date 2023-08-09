@@ -3862,6 +3862,11 @@ public class ContratoCobrancaMB {
 						}
 					}
 				}
+				
+				if(this.objetoContratoCobranca.isEsteriaComentarioLuvison()
+						&& this.objetoContratoCobranca.isComentarioJuridicoInterno()) {
+					this.objetoContratoCobranca.setEsteriaComentarioLuvison(false);
+				}
 
 				updateCheckList();
 				this.objetoContratoCobranca.populaStatusEsteira(getUsuarioLogadoNull());
