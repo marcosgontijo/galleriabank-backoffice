@@ -128,9 +128,9 @@ public class DocumentoAnaliseJobConsultar {
 				if (!CommonsUtil.semValor(engineRetorno)) {
 					if (!CommonsUtil.booleanValue(documentoAnalise.isLiberadoContinuarAnalise())
 							&& (!(CommonsUtil.semValor(engineRetorno.getConsultaAntecedenteCriminais())
-									|| !CommonsUtil.semValor(engineRetorno.getConsultaAntecedenteCriminais().getResult()
-											.get(0).getOnlineCertificates()))
-									&& (!CommonsUtil.semValor(engineRetorno.getProcessos()) || CommonsUtil.intValue(
+									|| ( !CommonsUtil.semValor(engineRetorno.getConsultaAntecedenteCriminais().getResult())  && !CommonsUtil.semValor(engineRetorno.getConsultaAntecedenteCriminais().getResult()
+											.get(0).getOnlineCertificates())))
+									&& (!CommonsUtil.semValor(engineRetorno.getProcessos()) && CommonsUtil.intValue(
 											engineRetorno.getProcessos().getTotal_acoes_judicias_reu()) == 0))) {
 
 						documentoAnalise.addObservacao("Verificar Engine");
