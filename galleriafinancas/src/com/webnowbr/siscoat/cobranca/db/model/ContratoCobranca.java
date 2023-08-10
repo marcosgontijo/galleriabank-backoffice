@@ -1350,7 +1350,7 @@ public class ContratoCobranca implements Serializable {
 			taxaPreAprovada = BigDecimal.valueOf(1.39);
 		}
 		
-		if(CommonsUtil.semValor(prazoMaxAprovado)) {
+		if(CommonsUtil.semValor(prazoMaxPreAprovado)) {
 			calcularPrazoPreAprovado();
 		}
 	}	
@@ -1361,13 +1361,13 @@ public class ContratoCobranca implements Serializable {
 			idade = pagador.calcularIdadeLong();
 		}
 		if(idade == 0) {
-			prazoMaxAprovado = BigInteger.valueOf(0);
+			prazoMaxPreAprovado = BigInteger.valueOf(0);
 		} else if(idade < 65) {
-			prazoMaxAprovado = BigInteger.valueOf(180);
+			prazoMaxPreAprovado = BigInteger.valueOf(180);
 		} else if(idade >= 77) {
-			prazoMaxAprovado = BigInteger.valueOf(0); //Múmia n fazer
+			prazoMaxPreAprovado = BigInteger.valueOf(0); //Múmia n fazer
 		} else {
-			prazoMaxAprovado = BigInteger.valueOf(new BigDecimal(((80 - idade) * 12)).setScale(0, RoundingMode.HALF_DOWN).intValue());
+			prazoMaxPreAprovado = BigInteger.valueOf(new BigDecimal(((80 - idade) * 12)).setScale(0, RoundingMode.HALF_DOWN).intValue());
 		}
 	}
 		

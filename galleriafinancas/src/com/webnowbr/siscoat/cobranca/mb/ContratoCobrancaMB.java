@@ -8745,6 +8745,9 @@ public class ContratoCobrancaMB {
 			this.codigoResponsavel = this.objetoContratoCobranca.getResponsavel().getCodigo();
 		}
 		// this.objetoContratoCobranca.setDataInicio(this.objetoContratoCobranca.getDataContrato());
+		if(CommonsUtil.semValor(objetoContratoCobranca.getTaxaPreAprovada())) {
+			this.objetoContratoCobranca.calcularTaxaPreAprovada();
+		}			
 
 		saveEstadoCheckListAtual();
 
