@@ -1,0 +1,276 @@
+package com.webnowbr.siscoat.cobranca.ws.plexi;
+
+import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
+import com.webnowbr.siscoat.common.CommonsUtil;
+
+public class PlexiConsulta {
+
+	private long id;
+	private String requestId;
+	private String cpfCnpj;
+	private String status;
+	private String pdf;
+	private String webhookRetorno;
+	private PlexiDocumentos plexiDocumentos;
+	private String uf;// fazenda MG
+	private String cep;// fazenda MG
+	private String cpfSolicitante; // fazenda SC PJ
+	private String cpf="";// PGE SP DIvida Ativa PF
+	private String cnpj="";// PGE SP DIvida Ativa PJ
+	private String foro;// TJBA
+	private String tipoCertidao;//TJDFT Certidão de Distribuição {criminal, civel, falencia_concordata, especial}
+	private String nomeMae;// (TJDFT Certidão de Distribuição PF + criminal ou especial) (TJRS + PF) (TJSP + PF)
+	private int instancia;// TJMG
+	private String comarca;// (TJMG + instancia 1) (TJRJ + primeiraInstancia)
+	private String tipoPessoa; // TJMG {natural_juridica, natural, juridica}
+	private String naturezaProcesso;// TJMG {civel_crime, civel, crime}
+	private String situacaoParte;// TJMG {ativas_baixadas, ativas, baixadas}
+	private String origem;//TJRJ {primeiraInstancia, segundaInstancia}
+	private String competencia;//TJRJ
+	private String tipo;// (TJRS {3, 9}) (TRFX {civel, criminal, eleitoral})
+	private String nome;//TJRS TJSP TRF3 TRT2
+	private String endereco;//TJRS
+	private String rg;// (TJRS + PF) (TJSP + PF)
+	private String orgaoExpedidorRg;//TJRS + PF
+	private String ufRg;//TJRS + PF
+	private String dataNascimento;// (TJRS + PF) (TJSP + PF)
+	private String sexo;// TJSP + PF {m,f}
+	private String[] orgaos; // (TRF1) (TRF6)
+	private String abrangencia;// TRF3
+	private boolean arquivado;// TRT15
+	
+	public void populatePagadorRecebedor(PagadorRecebedor pagador) {
+		if(!CommonsUtil.semValor(pagador.getCpf())) {
+			cpf = pagador.getCpf();
+		}
+		if(!CommonsUtil.semValor(pagador.getCnpj())) {
+			cnpj = pagador.getCnpj();
+		}
+		cpfCnpj = cpf + cnpj;
+		
+		if(!CommonsUtil.semValor(pagador.getNome())) {
+			nome = pagador.getNome();
+		}
+		if(!CommonsUtil.semValor(pagador.getDtNascimento())) {
+			dataNascimento = CommonsUtil.formataData(pagador.getDtNascimento(), "dd/MM/yyyy");
+		}
+		if(!CommonsUtil.semValor(pagador.getRg())) {
+			rg = pagador.getRg();
+		}
+		if(!CommonsUtil.semValor(pagador.getOrgaoEmissorRG())) {
+			orgaoExpedidorRg = pagador.getOrgaoEmissorRG();
+		}
+		if(!CommonsUtil.semValor(pagador.getEstado())) {
+			ufRg = pagador.getEstado();
+		}
+		if(!CommonsUtil.semValor(pagador.getEndereco())) {
+			endereco = pagador.getEndereco();
+		}
+		if(!CommonsUtil.semValor(pagador.getSexo())) {
+			sexo = CommonsUtil.stringValue(pagador.getSexo().toCharArray()[0]);
+		}
+		if(!CommonsUtil.semValor(pagador.getNomeMae())) {
+			nomeMae = pagador.getNomeMae();
+		}
+	}
+	
+	public long getId() {
+		return id;
+	}
+	public void setId(long id) {
+		this.id = id;
+	}
+	public String getRequestId() {
+		return requestId;
+	}
+	public void setRequestId(String requestId) {
+		this.requestId = requestId;
+	}
+	public String getCpfCnpj() {
+		return cpfCnpj;
+	}
+	public void setCpfCnpj(String cpfCnpj) {
+		this.cpfCnpj = cpfCnpj;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	public String getPdf() {
+		return pdf;
+	}
+	public void setPdf(String pdf) {
+		this.pdf = pdf;
+	}
+	public String getWebhookRetorno() {
+		return webhookRetorno;
+	}
+	public void setWebhookRetorno(String webhookRetornos) {
+		this.webhookRetorno = webhookRetornos;
+	}
+	public PlexiDocumentos getPlexiDocumentos() {
+		return plexiDocumentos;
+	}
+	public void setPlexiDocumentos(PlexiDocumentos plexiDocumentos) {
+		this.plexiDocumentos = plexiDocumentos;
+	}
+	public String getUf() {
+		return uf;
+	}
+	public void setUf(String uf) {
+		this.uf = uf;
+	}
+	public String getCep() {
+		return cep;
+	}
+	public void setCep(String cep) {
+		this.cep = cep;
+	}
+	public String getCpfSolicitante() {
+		return cpfSolicitante;
+	}
+	public void setCpfSolicitante(String cpfSolicitante) {
+		this.cpfSolicitante = cpfSolicitante;
+	}
+	public String getCpf() {
+		return cpf;
+	}
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
+	}
+	public String getCnpj() {
+		return cnpj;
+	}
+	public void setCnpj(String cnpj) {
+		this.cnpj = cnpj;
+	}
+	public String getForo() {
+		return foro;
+	}
+	public void setForo(String foro) {
+		this.foro = foro;
+	}
+	public String getTipoCertidao() {
+		return tipoCertidao;
+	}
+	public void setTipoCertidao(String tipoCertidao) {
+		this.tipoCertidao = tipoCertidao;
+	}
+	public String getNomeMae() {
+		return nomeMae;
+	}
+	public void setNomeMae(String nomeMae) {
+		this.nomeMae = nomeMae;
+	}
+	public int getInstancia() {
+		return instancia;
+	}
+	public void setInstancia(int instancia) {
+		this.instancia = instancia;
+	}
+	public String getComarca() {
+		return comarca;
+	}
+	public void setComarca(String comarca) {
+		this.comarca = comarca;
+	}
+	public String getTipoPessoa() {
+		return tipoPessoa;
+	}
+	public void setTipoPessoa(String tipoPessoa) {
+		this.tipoPessoa = tipoPessoa;
+	}
+	public String getNaturezaProcesso() {
+		return naturezaProcesso;
+	}
+	public void setNaturezaProcesso(String naturezaProcesso) {
+		this.naturezaProcesso = naturezaProcesso;
+	}
+	public String getSituacaoParte() {
+		return situacaoParte;
+	}
+	public void setSituacaoParte(String situacaoParte) {
+		this.situacaoParte = situacaoParte;
+	}
+	public String getOrigem() {
+		return origem;
+	}
+	public void setOrigem(String origem) {
+		this.origem = origem;
+	}
+	public String getCompetencia() {
+		return competencia;
+	}
+	public void setCompetencia(String competencia) {
+		this.competencia = competencia;
+	}
+	public String getTipo() {
+		return tipo;
+	}
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
+	public String getNome() {
+		return nome;
+	}
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+	public String getEndereco() {
+		return endereco;
+	}
+	public void setEndereco(String endereco) {
+		this.endereco = endereco;
+	}
+	public String getRg() {
+		return rg;
+	}
+	public void setRg(String rg) {
+		this.rg = rg;
+	}
+	public String getOrgaoExpedidorRg() {
+		return orgaoExpedidorRg;
+	}
+	public void setOrgaoExpedidorRg(String orgaoExpedidorRg) {
+		this.orgaoExpedidorRg = orgaoExpedidorRg;
+	}
+	public String getUfRg() {
+		return ufRg;
+	}
+	public void setUfRg(String ufRg) {
+		this.ufRg = ufRg;
+	}
+	public String getDataNascimento() {
+		return dataNascimento;
+	}
+	public void setDataNascimento(String dataNascimento) {
+		this.dataNascimento = dataNascimento;
+	}
+	public String getSexo() {
+		return sexo;
+	}
+	public void setSexo(String sexo) {
+		this.sexo = sexo;
+	}
+	public String[] getOrgaos() {
+		return orgaos;
+	}
+	public void setOrgaos(String[] orgaos) {
+		this.orgaos = orgaos;
+	}
+	public String getAbrangencia() {
+		return abrangencia;
+	}
+	public void setAbrangencia(String abrangencia) {
+		this.abrangencia = abrangencia;
+	}
+	public boolean isArquivado() {
+		return arquivado;
+	}
+	public void setArquivado(boolean arquivado) {
+		this.arquivado = arquivado;
+	}
+ 		
+}
