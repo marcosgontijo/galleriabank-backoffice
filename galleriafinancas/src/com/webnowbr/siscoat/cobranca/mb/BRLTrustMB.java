@@ -102,6 +102,10 @@ public class BRLTrustMB {
 	
 	private Date dataValorPresente;
 	
+	private BigDecimal valorTotalRecebidoLiquidacao;
+	private BigDecimal valorTotalJurosAmortizacaoLiquidacao;
+	private int qtdSelecionadoLiquidacao;
+	
 	private BigDecimal valorTotalLiquidacao;
 	private int qtdeLiquidados;
 	
@@ -190,6 +194,10 @@ public class BRLTrustMB {
 		
 		this.jsonGerado = false;
 		
+		valorTotalRecebidoLiquidacao = BigDecimal.ZERO;
+		valorTotalJurosAmortizacaoLiquidacao = BigDecimal.ZERO;
+		qtdSelecionadoLiquidacao = 0;
+		
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarBRLJsonLiquidacao.xhtml";
 	}
 	
@@ -233,7 +241,20 @@ public class BRLTrustMB {
     	
     	return total;
     }
-	
+    
+	public void calculaValorTotalLiquidacao() {
+    	BigDecimal totalRecebido = BigDecimal.ZERO;
+    	BigDecimal totalJurosAmortizacao = BigDecimal.ZERO;
+    	for (ContratoCobrancaBRLLiquidacao contrato : selectedJsonLiquidacao) {
+    		totalRecebido = totalRecebido.add(contrato.getVlrRecebido());
+    		totalJurosAmortizacao = totalJurosAmortizacao.add(contrato.getVlrJurosParcela());
+    		totalJurosAmortizacao = totalJurosAmortizacao.add(contrato.getVlrAmortizacaoParcela());
+    	}
+    	valorTotalRecebidoLiquidacao = totalRecebido;
+    	valorTotalJurosAmortizacaoLiquidacao = totalJurosAmortizacao;
+    	qtdSelecionadoLiquidacao = selectedJsonLiquidacao.size();
+    }
+    
 	public void pesquisaContratosLiquidacao() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		
@@ -2940,4 +2961,29 @@ public class BRLTrustMB {
 	public void setQtdeLiquidados(int qtdeLiquidados) {
 		this.qtdeLiquidados = qtdeLiquidados;
 	}
+
+	public BigDecimal getValorTotalRecebidoLiquidacao() {
+		return valorTotalRecebidoLiquidacao;
+	}
+
+	public void setValorTotalRecebidoLiquidacao(BigDecimal valorTotalRecebidoLiquidacao) {
+		this.valorTotalRecebidoLiquidacao = valorTotalRecebidoLiquidacao;
+	}
+
+	public BigDecimal getValorTotalJurosAmortizacaoLiquidacao() {
+		return valorTotalJurosAmortizacaoLiquidacao;
+	}
+
+	public void setValorTotalJurosAmortizacaoLiquidacao(BigDecimal valorTotalJurosAmortizacaoLiquidacao) {
+		this.valorTotalJurosAmortizacaoLiquidacao = valorTotalJurosAmortizacaoLiquidacao;
+	}
+
+	public int getQtdSelecionadoLiquidacao() {
+		return qtdSelecionadoLiquidacao;
+	}
+
+	public void setQtdSelecionadoLiquidacao(int qtdSelecionadoLiquidacao) {
+		this.qtdSelecionadoLiquidacao = qtdSelecionadoLiquidacao;
+	}
+
 }

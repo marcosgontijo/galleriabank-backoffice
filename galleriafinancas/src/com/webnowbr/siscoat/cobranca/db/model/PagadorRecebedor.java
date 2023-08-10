@@ -368,6 +368,21 @@ public class PagadorRecebedor implements Serializable {
 		}
 	}
 	
+	public long calcularIdadeLong() {
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+		Date dateHoje = dataHoje.getTime();
+		if(!CommonsUtil.semValor(this.getDtNascimento())) {
+			long idadeLong = dateHoje.getTime() - this.getDtNascimento().getTime();
+			idadeLong = TimeUnit.DAYS.convert(idadeLong, TimeUnit.MILLISECONDS);
+			idadeLong = idadeLong / 30;
+			idadeLong = idadeLong / 12;
+			return idadeLong;
+		}
+		return 0;
+	}
+	
 	public void calcularIdadeConjuge() {
 		TimeZone zone = TimeZone.getDefault();
 		Locale locale = new Locale("pt", "BR");

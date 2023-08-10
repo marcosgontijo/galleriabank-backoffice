@@ -215,6 +215,10 @@
 		<property name="cadastraResponsavel" type="boolean">
 			<column name="cadastraResponsavel" not-null="true" default="false" />
 		</property>
+		
+		<property name="consultaIndividual" type="boolean">
+			<column name="consultaIndividual" not-null="true" default="false" />
+		</property>
 
     </class>
 </hibernate-mapping>

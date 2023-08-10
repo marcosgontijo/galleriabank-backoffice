@@ -3862,6 +3862,11 @@ public class ContratoCobrancaMB {
 						}
 					}
 				}
+				
+				if(this.objetoContratoCobranca.isEsteriaComentarioLuvison()
+						&& this.objetoContratoCobranca.isComentarioJuridicoInterno()) {
+					this.objetoContratoCobranca.setEsteriaComentarioLuvison(false);
+				}
 
 				updateCheckList();
 				this.objetoContratoCobranca.populaStatusEsteira(getUsuarioLogadoNull());
@@ -13041,22 +13046,6 @@ public class ContratoCobrancaMB {
 							&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
 							&& c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
 							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
-							&& c.isReanalise() && !c.isReanalisePronta()) {
-						c.setStatus("Ag. Reanalise");
-					}
-
-					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
-							&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
-							&& c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
-							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
-							&& c.isReanalise() && c.isReanalisePronta() && !c.isReanaliseJuridico()) {
-						c.setStatus("Ag. Reanalise Juridico");
-					}
-
-					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
-							&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
-							&& c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
-							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
 							&& !c.isReanalise() && !c.isCertificadoEmitido()) {
 						c.setStatus("Ag. Certificado");
 					}
@@ -13084,6 +13073,24 @@ public class ContratoCobrancaMB {
 							&& c.isCertificadoEmitido() && c.isCcbPronta() && c.isContratoConferido()
 							&& c.isAgAssinatura()) {
 						c.setStatus("Ag. Assinatura");
+					}
+					
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+							&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
+							&& c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+							&& c.isCertificadoEmitido() && c.isCcbPronta() && c.isContratoConferido()
+							&& c.isReanalise() && !c.isReanalisePronta()) {
+						c.setStatus("Ag. Reanalise");
+					}
+
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+							&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
+							&& c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
+							&& c.isCertificadoEmitido() && c.isCcbPronta() && c.isContratoConferido()
+							&& c.isReanalise() && c.isReanalisePronta() && !c.isReanaliseJuridico()) {
+						c.setStatus("Ag. Reanalise Juridico");
 					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
@@ -13290,14 +13297,7 @@ public class ContratoCobrancaMB {
 			}
 		}
 
-		if (status.equals("Pedir PAJU")) {
-			for (ContratoCobranca contrato : contratosPendentes) {
-				DocketDao docketDao = new DocketDao();
-				String idCallManager = docketDao.consultaContratosPendentesResponsaveis(contrato);
-				DocketService docketService = new DocketService();
-				docketService.verificarCertidoesContrato(contrato, idCallManager);
-			}
-		}
+		/*consultaListagemCertidoes()*/
 
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
 	}
@@ -13360,6 +13360,15 @@ public class ContratoCobrancaMB {
 		
 
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatusGeracaoPAJU.xhtml";
+	}
+	
+	public void consultaListagemCertidoes() {
+		for (ContratoCobranca contrato : contratosPendentes) {
+			DocketDao docketDao = new DocketDao();
+			String idCallManager = docketDao.consultaContratosPendentesResponsaveis(contrato);
+			DocketService docketService = new DocketService();
+			docketService.verificarCertidoesContrato(contrato, idCallManager);
+		}
 	}
 
 	public void processaResponsaveisGeraNumeroWhatsApp() {
