@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	template="../MenuAtendimento.xhtml">
+	
+	<ui:define name="conteudo">
+		<h:form id="form">
+			<script src="#{request.contextPath}/resources/resources/js/functions.js"></script>
+			<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>
+			<link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/resources/css/Style.css" title="" media="all" />
+			
+			<p:panel id="PlexiPanel" header="Plexi"
+				style="margin-bottom:10px;">
+				<p:focus />
+				<p:messages id="msgs" />	
+				<shiro:hasAnyRoles name="ROOT">
+					<!--  <p:commandButton action="#{plexiMB.teste}"
+						update="msgs" value="teste"/> -->
+				</shiro:hasAnyRoles>
+				
+				<h:panelGroup id="Dados">
+					<p:dataList id="pagadorList" value="#{plexiMB.listPagador}" var="DocAnalise" style="padding: 0;" type="definition">
+						<p:panel id="pagadorPanel" header="#{DocAnalise.pagador.nome}" style="padding: none" 
+							toggleable="true" toggleableHeader="true">
+							<f:facet name="header" styleClass="ui-accordion-header">
+								<p:commandButton icon="ui-icon ui-icon-trash"
+									action="#{plexiMB.removerPessoa(DocAnalise)}"
+									ajax="true" update=":form:PlexiPanel" />
+								<p:outputLabel value="#{DocAnalise.pagador.nome}" style="FONT-SIZE: 15pt;margin-left: 5px" styleClass="ui-panel-title"/>
+							</f:facet>
+							<h:panelGrid columns="2">
+								<h:panelGroup rendered="#{DocAnalise.pagador.cpf != null and DocAnalise.pagador.cpf != ''}">
+									<p:outputLabel value="Nome:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
+									<p:outputLabel value="#{DocAnalise.pagador.nome}" style="FONT-SIZE: 5pt; margin-right: 5px"  />  
+									<p:outputLabel value=" | " styleClass="labelBold"/>							
+									<p:outputLabel value="CPF:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
+									<p:inputMask value="#{DocAnalise.pagador.cpf}" style="FONT-SIZE: 5pt; margin-right: 5px; width:100px" mask="999.999.999-99" />  
+									<p:outputLabel value=" | " styleClass="labelBold"/>									
+									<p:outputLabel value="Mãe:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
+									<p:inputText value="#{DocAnalise.pagador.nomeMae}" style="FONT-SIZE: 5pt; margin-right: 5px; width:100px" /> 	
+									<p:outputLabel value=" | " styleClass="labelBold"/>							 
+									<p:outputLabel value="RG:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
+									<p:inputText value="#{DocAnalise.pagador.rg}" style="FONT-SIZE: 5pt; margin-right: 5px; width:100px" /> 	
+									<p:outputLabel value=" | " styleClass="labelBold"/>								
+									<p:outputLabel value="Data Nascimento:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
+									<p:calendar value="#{DocAnalise.pagador.dtNascimento}" size="50" styleClass="dateTimeField" pattern="dd/MM/yyyy" 
+										inputStyle="margin-right: 5px; width:70px"/>
+									<p:outputLabel value=" | " styleClass="labelBold"/>	
+									<p:outputLabel value="Cep:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
+									<p:inputMask value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cep}" mask="99999-999" label="Cep" />
+									<p:outputLabel value=" | " styleClass="labelBold"/>	
+									<p:outputLabel value="Endereço:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
+									<p:inputText value="#{DocAnalise.pagador.endereco}" style="FONT-SIZE: 5pt; margin-right: 5px; width:100px" />
+									<p:outputLabel value=" | " styleClass="labelBold"/>	
+									<p:outputLabel value="Orgão Emissor RG:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
+									<p:inputText value="#{DocAnalise.pagador.orgaoEmissorRG}" style="FONT-SIZE: 5pt; margin-right: 5px; width:100px" />
+									<p:outputLabel value=" | " styleClass="labelBold"/>	
+									<p:outputLabel value="Estado RG (uf):" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold" />
+									<p:inputText value="#{DocAnalise.pagador.estado}" style="FONT-SIZE: 5pt; margin-right: 5px; width:100px" />
+								</h:panelGroup> 						
+								<h:panelGroup rendered="#{DocAnalise.pagador.cpf eq null or DocAnalise.pagador.cpf eq ''}">
+									<p:outputLabel value="Razão Social:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
+									<p:outputLabel value="#{DocAnalise.pagador.nome}" style="FONT-SIZE: 5pt; margin-right: 5px" />  							
+									<p:outputLabel value="| CNPJ:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
+									<p:inputText value="#{DocAnalise.pagador.cnpj}" style="FONT-SIZE: 5pt; margin-right: 5px; width:120px" />  						
+								</h:panelGroup> 						    
+							</h:panelGrid>	
+							<p:panel id="docsPanel" header="" style="padding: 0" toggleable="true" toggleableHeader="true" >
+								<f:facet name="header" styleClass="ui-accordion-header">
+									<p:outputLabel value="Documentos - #{DocAnalise.plexiConsultas.size()}" 
+									style="FONT-SIZE: 15pt;margin-left: 5px" styleClass="ui-panel-title"/>
+								</f:facet>
+								 <p:dataList id="docsList" value="#{DocAnalise.plexiConsultas}" var="docs" style="padding: 0" type="definition">
+								 	<p:panel id="PanelGridDocs" header="Documentos" style="padding: 0" toggleable="true" toggleableHeader="true" collapsed="true" >			
+										<f:facet name="header" styleClass="ui-accordion-header">
+											<p:commandButton icon="ui-icon ui-icon-trash" ajax="true"
+												action="#{plexiMB.removeDoc(DocAnalise, docs)}"
+												update="form:pagadorList" />
+											<p:outputLabel value="#{docs.plexiDocumentos.nome} - #{docs.plexiDocumentos.obs}" style="FONT-SIZE: 15pt;margin-left: 5px" styleClass="ui-panel-title"/>
+										</f:facet>
+										
+										<h:panelGrid columns="2">
+											<p:outputLabel value="Nome:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
+											<p:outputLabel value="#{DocAnalise.pagador.nome}" style="FONT-SIZE: 5pt; margin-right: 5px"  />
+										</h:panelGrid>
+										
+									</p:panel>	
+								 </p:dataList>
+							</p:panel>
+						</p:panel>
+					</p:dataList>
+				</h:panelGroup>
+			
+				<h:panelGrid columns="3">	
+					<p:commandButton action="#{plexiMB.criarPedido}"
+						icon="ui-icon ui-icon-print" value="Fazer Pedido"  update=":form  msgs" />			
+				</h:panelGrid>
+			</p:panel>
+		</h:form>
+		
+	</ui:define>
+</ui:composition>

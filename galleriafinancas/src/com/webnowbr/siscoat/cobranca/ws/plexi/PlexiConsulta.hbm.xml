@@ -37,6 +37,19 @@
 			<column name="plexiDocumentos" />
 		</many-to-one>
 		
+		<many-to-one name="usuario"
+			class="com.webnowbr.siscoat.infra.db.model.User"
+			lazy="false">
+			<column name="usuario" />
+		</many-to-one> 
+		
+		<property name="dataConsulta" type="java.util.Date">
+			<column name="dataConsulta" />
+		</property>
+		
+		<property name="expirado" type="boolean">
+			<column name="expirado" not-null="true" default="false"/>
+		</property>	
 		
 	</class>
 </hibernate-mapping>

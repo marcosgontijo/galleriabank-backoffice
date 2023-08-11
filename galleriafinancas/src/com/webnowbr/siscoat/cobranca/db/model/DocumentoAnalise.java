@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.xmlgraphics.util.uri.CommonURIResolver;
 import org.primefaces.PrimeFaces;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
+import com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 
@@ -66,6 +67,8 @@ public class DocumentoAnalise implements Serializable {
 	private String retornoScr;
 	private String observacao;
 	private boolean excluido;
+	
+	private List<PlexiConsulta> plexiConsultas = new ArrayList<PlexiConsulta>();
 
 	public List<DocumentoAnaliseResumo> getResumoEngine() {
 		List<DocumentoAnaliseResumo> result = new ArrayList<>();
@@ -624,4 +627,11 @@ public class DocumentoAnalise implements Serializable {
 		this.excluido = excluido;
 	}
 
+	public List<PlexiConsulta> getPlexiConsultas() {
+		return plexiConsultas;
+	}
+
+	public void setPlexiConsultas(List<PlexiConsulta> plexiConsultas) {
+		this.plexiConsultas = plexiConsultas;
+	}
 }

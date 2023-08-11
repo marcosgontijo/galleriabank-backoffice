@@ -8,6 +8,11 @@ public class PlexiDocumentos {
 	private boolean pj;
 	private String obs;
 	
+	@Override
+	public String toString() {
+		return "PlexiDocumentos [id=" + id + ", url=" + url + ", nome=" + nome + "]";
+	}
+	
 	public long getId() {
 		return id;
 	}

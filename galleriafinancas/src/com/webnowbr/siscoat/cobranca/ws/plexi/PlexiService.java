@@ -14,10 +14,14 @@ import javax.faces.application.FacesMessage;
 
 import org.json.JSONObject;
 
+import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.GsonUtil;
+import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.infra.db.model.User;
 
 import br.com.galleriabank.dataengine.cliente.model.request.DataEngineIdSend;
+import br.com.galleriabank.jwt.common.JwtUtil;
 
 public class PlexiService {
 
@@ -34,7 +38,16 @@ public class PlexiService {
 			int HTTP_COD_SUCESSO2 = 202;
 			int HTTP_COD_SUCESSO3 = 409;
 			URL myURL;
-			myURL = new URL(urlHomologacao + plexiCosulta.getPlexiDocumentos().getUrl());
+			
+			if (SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
+				myURL = new URL(urlHomologacao + plexiCosulta.getPlexiDocumentos().getUrl());
+			} else {
+				myURL = new URL(urlProducao + plexiCosulta.getPlexiDocumentos().getUrl());
+			}
+			
+			String webHookJWT = JwtUtil.generateJWTWebhook(true);
+			String webhook = SiscoatConstants.URL_SISCOAT_ENGINE_WEBHOOK + webHookJWT;
+			
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
 			myURLConnection.setRequestMethod("POST");
 			myURLConnection.setUseCaches(false);
@@ -42,6 +55,8 @@ public class PlexiService {
 			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
 			myURLConnection.setRequestProperty("Content-Type", "application/json");
 			myURLConnection.setRequestProperty("Authorization", token);
+			myURLConnection.addRequestProperty("Callback", webhook);
+			
 			myURLConnection.setDoOutput(true);
 			
 			try (OutputStream os = myURLConnection.getOutputStream()) {
@@ -62,6 +77,8 @@ public class PlexiService {
 				}
 				
 				PlexiConsultaDao plexiDao = new PlexiConsultaDao();
+				plexiCosulta.setUsuario(usuarioLogado);
+				plexiCosulta.setDataConsulta(DateUtil.gerarDataHoje());
 				plexiDao.create(plexiCosulta);
 				
 				result = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
