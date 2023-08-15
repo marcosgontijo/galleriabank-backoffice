@@ -15,6 +15,7 @@ import javax.faces.context.FacesContext;
 
 import org.primefaces.model.StreamedContent;
 
+import com.webnowbr.siscoat.cobranca.service.BigDataService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.cobranca.service.SerasaService;
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -74,14 +75,19 @@ public class ConsultasMB {
 		public void consultarProcessos() {
 			FacesContext context = FacesContext.getCurrentInstance();
 			try {
-			NetrinService processos = new NetrinService();
-			String retornoProcessos = processos.netrinCriarConsultaProcesso(cpfCnpj);
-			if(retornoProcessos != null) {
-			String base64 = processos.baixarDocumentoProcesso(retornoProcessos);
-			decodarBaixarArquivo(cpfCnpj, base64);
-			} else {
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta",""));
-			}
+//			NetrinService processos = new NetrinService();
+//			String retornoProcessos = processos.netrinCriarConsultaProcesso(cpfCnpj);
+
+				BigDataService processos = new BigDataService();
+				String retornoProcessos = processos.criarConsultaProcesso(cpfCnpj);
+
+				if (retornoProcessos != null) {
+					String base64 = processos.baixarDocumentoProcesso(retornoProcessos);
+					decodarBaixarArquivo(cpfCnpj, base64);
+				} else {
+					context.addMessage(null,
+							new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta", ""));
+				}
 			} catch(Exception e) {
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta",""));
 				

@@ -60,6 +60,7 @@ public class DocumentoAnalise implements Serializable {
 	private String retornoEngine;
 	private String retornoSerasa;
 	private String retornoCenprot;
+	private String tipoProcesso;
 	private String retornoProcesso;
 	private String retornoPpe;
 
@@ -510,6 +511,14 @@ public class DocumentoAnalise implements Serializable {
 
 	public void setRetornoProcesso(String retornoProcesso) {
 		this.retornoProcesso = retornoProcesso;
+	}
+
+	public String getTipoProcesso() {
+		return tipoProcesso;
+	}
+
+	public void setTipoProcesso(String tipoProcesso) {
+		this.tipoProcesso = tipoProcesso;
 	}
 
 	public String getRetornoPpe() {
