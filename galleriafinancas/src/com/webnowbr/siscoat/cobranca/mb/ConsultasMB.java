@@ -88,27 +88,29 @@ public class ConsultasMB {
 					context.addMessage(null,
 							new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta", ""));
 				}
-			} catch(Exception e) {
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta",""));
-				
+			} catch (Exception e) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta", ""));
+
 			}
 		}
+
 		public void consultaPEP() {
 			FacesContext context = FacesContext.getCurrentInstance();
 			try {
-			NetrinService pep = new NetrinService();
-			String retornoPEP = pep.netrinCriarConsultaCadastroPpePF(cpfCnpj);
-			if(retornoPEP != null) {
-			String base64 = pep.baixarDocumentoPpe(retornoPEP);
-			decodarBaixarArquivo(cpfCnpj, base64);
-			} else {
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta",""));
+				NetrinService pep = new NetrinService();
+				String retornoPEP = pep.netrinCriarConsultaCadastroPpePF(cpfCnpj);
+				if (retornoPEP != null) {
+					String base64 = pep.baixarDocumentoPpe(retornoPEP);
+					decodarBaixarArquivo(cpfCnpj, base64);
+				} else {
+					context.addMessage(null,
+							new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta", ""));
+				}
+			} catch (Exception e) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta", ""));
+
 			}
-			} catch(Exception e) {
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta",""));
-				
-			}
-			
+
 		}
 		public StreamedContent decodarBaixarArquivo(String cpfCnpj, String base64 ) {
 

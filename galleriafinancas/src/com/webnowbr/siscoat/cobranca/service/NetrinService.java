@@ -379,7 +379,7 @@ public class NetrinService {
 				&& !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta()))
 			return pagadorRecebedorConsulta.getRetornoConsulta();
 		else {
-			String consultaRetorno = netrinCriarExecutaConsultaCadastroPpePF(CommonsUtil.pessoaFisicaJuridicaCnpjCpf(cnpjCpf),
+			String consultaRetorno = netrinCriarExecutaConsultaCadastroPpePF(cnpjCpf,
 					pagadorRecebedor.getNome());
 			pagaPagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagadorRecebedor,
 					DocumentosAnaliseEnum.PPE, consultaRetorno);
@@ -490,7 +490,7 @@ public class NetrinService {
 
 			String numeorsCpfCnpj = CommonsUtil.somenteNumeros(sCpfCnpj);
 
-			String tipoConsulta = CommonsUtil.pessoaFisicaJuridicaCnpjCpf(numeorsCpfCnpj);
+//			String tipoConsulta = CommonsUtil.pessoaFisicaJuridicaCnpjCpf(numeorsCpfCnpj);
 			URL myURL;
 
 			myURL = new URL("https://servicos.galleriabank.com.br/netrin/api/v1/cadastro/pj/"
