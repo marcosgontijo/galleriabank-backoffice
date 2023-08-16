@@ -19686,6 +19686,8 @@ public class ContratoCobrancaMB {
 		if (finalizaOperacao) {
 			BigDecimal saldoConta = getSaldoContaPagar(this.contasPagarSelecionada);
 			
+			this.contasPagarSelecionada.setValorPagamento(saldoConta);
+			
 			if (saldoConta.compareTo(this.contasPagarSelecionada.getValor()) >= 0) {
 				this.contasPagarSelecionada.setContaPaga(true);
 			}
@@ -19994,6 +19996,30 @@ public class ContratoCobrancaMB {
 		}
 			
 		return saldo;
+	}
+	
+	public BigDecimal getTotalBaixasStarkBank(ContasPagar contaPagar) {
+		BigDecimal saldo = BigDecimal.ZERO;
+		
+		if (contaPagar.getListContasPagarBaixas().size() > 0) {
+			for (StarkBankBaixa baixas : contaPagar.getListContasPagarBaixas()) {
+				saldo = saldo.add(baixas.getValor());
+			}
+		} else {
+			saldo = contaPagar.getValorPagamento();
+		}
+			
+		return saldo;
+	}
+	
+	public Date getDataUltimaBaixaStarkBank(ContasPagar contaPagar) {
+		Date dataUltimoPagamento = null;
+		
+		if (contaPagar.getListContasPagarBaixas().size() > 0) {
+			return contaPagar.getListContasPagarBaixas().get(contaPagar.getListContasPagarBaixas().size() - 1).getDataPagamento();
+		} else {
+			return contaPagar.getDataPagamento();
+		}
 	}
 	
 	public StarkBankBaixa registraBaixaStarkBank(Date dataPagamento, String documento, String idTransacao, String linhaBoleto, String nomePagador, 
