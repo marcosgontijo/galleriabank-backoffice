@@ -1,5 +1,6 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +17,6 @@ import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelEstoque;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
-import com.webnowbr.siscoat.contab.db.dao.BalancoPatrimonialDao;
 import com.webnowbr.siscoat.db.dao.DAOException;
 import com.webnowbr.siscoat.db.dao.DBConnectionException;
 
@@ -35,6 +35,7 @@ public class ImovelCobrancaMB {
 	private boolean deleteMode = false;
 	private String tituloPainel = null;
 	private boolean editarEstoque;
+	private List<ContratoCobranca> listaConsultaEstoque = new ArrayList<ContratoCobranca>();
 	/**
 	 * Construtor.
 	 */
@@ -72,41 +73,13 @@ public class ImovelCobrancaMB {
 	public String clearFieldsEstoqueImoveis() {
 		objetoContratoCobranca = new ContratoCobranca();
 		objetoImovelCobranca = new ImovelCobranca();
+		this.consultaEstoque();
 
 		
 		return "/Atendimento/Cobranca/ImovelEstoqueConsulta.xhtml";
 	}
 	
-	public String salvarEstoque() {
-		FacesContext context = FacesContext.getCurrentInstance();
-		ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
-		try {
-			imovelCobrancaDao.merge(this.objetoImovelCobranca);
-
-			context.addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_INFO, "Estoque Inserido com sucesso!!", ""));
-			clearFieldsEstoqueImoveis();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro: " + e, ""));
-		}
-		return clearFieldsEstoqueImoveis();
-	}
-
-	public String editarEstoque() {
-		FacesContext facesContext = FacesContext.getCurrentInstance();
-		ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
-
-		if (this.objetoImovelEstoque.getId() > 0) {
-			imovelCobrancaDao.merge(this.objetoImovelCobranca);
-		}
-
-		facesContext.addMessage(null,
-				new FacesMessage(FacesMessage.SEVERITY_INFO, "Estoque alterado com sucesso!", ""));
-
-		return "/Atendimento/Cobranca/ImovelEstoqueEditar.xhtml";
-	}
+	
 	
 	public String inserir() {
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -185,6 +158,11 @@ public class ImovelCobrancaMB {
 		}
 
 		return "ImovelCobrancaConsultar.xhtml";
+	}
+	
+	public void consultaEstoque() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		listaConsultaEstoque = contratoCobrancaDao.consultaImovelEstoque();
 	}
 
 	/**
@@ -299,6 +277,14 @@ public class ImovelCobrancaMB {
 
 	public void setEditarEstoque(boolean editarEstoque) {
 		this.editarEstoque = editarEstoque;
+	}
+
+	public List<ContratoCobranca> getListaConsultaEstoque() {
+		return listaConsultaEstoque;
+	}
+
+	public void setListaConsultaEstoque(List<ContratoCobranca> listaConsultaEstoque) {
+		this.listaConsultaEstoque = listaConsultaEstoque;
 	}
 	
 }

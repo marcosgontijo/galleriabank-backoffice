@@ -29,22 +29,10 @@
 			<p:panel id="EditarEstoque" header="Estoque"
 				style="margin-bottom:10px;">
 				<p:focus />
-				<p:messages />
 				<p:messages id="msgs" />	
 				<h:panelGrid columns="2">							
-					
-					<p:outputLabel for="contrato" value="Referente a Operação: "
-						styleClass="labelBold"
-						style="font-weight: bold; font-size: 18px;" />
-					<h:panelGroup>
-						<p:outputLabel id="contrato" disabled="true"
-							value="#{contratoCobrancaMB.numContrato}"
-							required="false" style="FONT-SIZE: 10pt;" />
-						<p:spacer height="10" />
-						<p:commandButton icon="ui-icon ui-icon-circle-zoomin" ajax="true"
-							action="#{ccbMB.pesquisaContratoCobranca}"
-							oncomplete="PF('contratoCobrancaDialog').show();"/>
-					</h:panelGroup>
+					<p:outputLabel for="numeroContrato" value="Número do Contrato: " styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px;"/>
+					<h:outputText id="numeroContrato" value="#{imovelEstoqueMB.objetoContratoCobranca.numeroContrato}" label="Número do Contrato" style="font-weight: bold; font-size: 18px;"/>			
 				</h:panelGrid>
 
 				<p:panel id="Estoque" header="Estoque" style="margin-bottom:10px;">
@@ -53,12 +41,12 @@
 								<p:outputLabel for="parcelaParouPagar" value="Parcela que parou de pagar: "
 									styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
-								<p:inputText id="parcelaParouPagar" value="#{contratoCobrancaMB.objetoImovelEstoque.parcelaParouPagar}"/>
+								<p:inputText id="parcelaParouPagar" value="#{imovelEstoqueMB.objetoImovelEstoque.parcelaParouPagar}"/>
 									
 								<p:outputLabel for="variacaoCusto" value="Variação custos até leilão: "
 									styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
-								<p:inputText id="variacaoCusto" value="#{contratoCobrancaMB.objetoImovelEstoque.variacaoCusto}"
+								<p:inputText id="variacaoCusto" value="#{imovelEstoqueMB.objetoImovelEstoque.variacaoCusto}"
 									onkeypress="return isNumberKey(event);"
 									onkeydown="FormataValor(this,13, event, 2);"
 									converter="bigDecimalConverter"/>
@@ -66,7 +54,7 @@
 								<p:outputLabel for="ltvLeilao" value="LTV do leilão: "
 									styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
-								<p:inputText id="ltvLeilao" value="#{contratoCobrancaMB.objetoImovelEstoque.ltvLeilao}"
+								<p:inputText id="ltvLeilao" value="#{imovelEstoqueMB.objetoImovelEstoque.ltvLeilao}"
 									onkeypress="return isNumberKey(event);"
 									onkeydown="FormataValor(this,13, event, 2);"
 									converter="bigDecimalConverter"/>
@@ -74,7 +62,7 @@
 								<p:outputLabel for="valorEmprestimo" value="Valor do empréstimo: "
 									styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
-								<p:inputText id="valorEmprestimo" value="#{contratoCobrancaMB.objetoImovelEstoque.valorEmprestimo}"
+								<p:inputText id="valorEmprestimo" value="#{imovelEstoqueMB.objetoImovelEstoque.valorEmprestimo}"
 									onkeypress="return isNumberKey(event);"
 									onkeydown="FormataValor(this,13, event, 2);"
 									converter="bigDecimalConverter"/>
@@ -82,7 +70,7 @@
 								<p:outputLabel for="vendaForcada" value="Venda Forçada: "
 									styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
-								<p:inputText id="vendaForcada" value="#{contratoCobrancaMB.objetoImovelEstoque.vendaForcada}"
+								<p:inputText id="vendaForcada" value="#{imovelEstoqueMB.objetoImovelEstoque.vendaForcada}"
 									onkeypress="return isNumberKey(event);"
 									onkeydown="FormataValor(this,13, event, 2);"
 									converter="bigDecimalConverter"/>	
@@ -90,7 +78,7 @@
 								<p:outputLabel for="valorMercado" value="Valor Mercado: "
 									styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
-								<p:inputText id="valorMercado" value="#{contratoCobrancaMB.objetoImovelEstoque.valorMercado}"
+								<p:inputText id="valorMercado" value="#{imovelEstoqueMB.objetoImovelEstoque.valorMercado}"
 									onkeypress="return isNumberKey(event);"
 									onkeydown="FormataValor(this,13, event, 2);"
 									converter="bigDecimalConverter"/>
@@ -99,7 +87,7 @@
 									styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
 								<p:calendar id="dataConsolidado" showOn="button"
-									value="#{contratoCobrancaMB.objetoImovelEstoque.dataConsolidado}"
+									value="#{imovelEstoqueMB.objetoImovelEstoque.dataConsolidado}"
 									size="100" pattern="dd/MM/yyyy" locale="pt"
 									styleClass="dateTimeField" />	
 									
@@ -107,7 +95,7 @@
 									styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
 								<p:calendar id="dataLeilao1" showOn="button"
-									value="#{contratoCobrancaMB.objetoImovelEstoque.dataLeilao1}"
+									value="#{imovelEstoqueMB.objetoImovelEstoque.dataLeilao1}"
 									size="100" pattern="dd/MM/yyyy" locale="pt"
 									styleClass="dateTimeField" />
 										
@@ -115,23 +103,23 @@
 									styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
 								<p:calendar id="dataLeilao2" showOn="button"
-									value="#{contratoCobrancaMB.objetoImovelEstoque.dataLeilao2}"
+									value="#{imovelEstoqueMB.objetoImovelEstoque.dataLeilao2}"
 									size="100" pattern="dd/MM/yyyy" locale="pt"
 									styleClass="dateTimeField" />	
 									
 									
-								<p:outputLabel for="dataLeilao3" value="Data 3º leilão: "
+								<p:outputLabel for="dataLeilao3" value="Data leilão de estoque: "
 									styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
 								<p:calendar id="dataLeilao3" showOn="button"
-									value="#{contratoCobrancaMB.objetoImovelEstoque.dataLeilao3}"
+									value="#{imovelEstoqueMB.objetoImovelEstoque.dataLeilao3}"
 									size="100" pattern="dd/MM/yyyy" locale="pt"
 									styleClass="dateTimeField" />	
 								
 								<p:outputLabel for="statusLeilao" value="Status do leilão: "
 									styleClass="labelBold" />
 								<p:selectOneMenu id="statusLeilao"
-									value="#{contratoCobrancaMB.objetoImovelEstoque.statusLeilao}" 
+									value="#{imovelEstoqueMB.objetoImovelEstoque.statusLeilao}" 
 									style="width: 180px;">
 									<f:selectItem itemValue="" itemLabel="" />
 									<f:selectItem itemValue="Estoque" itemLabel="Estoque" />	
@@ -142,7 +130,7 @@
 								<p:outputLabel for="statusAtual" value="Status Atual: "
 									styleClass="labelBold" />
 								<p:selectOneMenu id="statusAtual"
-									value="#{contratoCobrancaMB.objetoImovelEstoque.statusAtual}" 
+									value="#{imovelEstoqueMB.objetoImovelEstoque.statusAtual}" 
 									style="width: 180px;">
 									<f:selectItem itemValue="" itemLabel=""/>
 									<f:selectItem itemValue="Alugado" itemLabel="Alugado"/>	
@@ -157,7 +145,7 @@
 								<p:outputLabel for="valorLeilao2" value="Valor 2º leilão: "
 									styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
-								<p:inputText id="valorLeilao2" value="#{contratoCobrancaMB.objetoImovelEstoque.valorLeilao2}"
+								<p:inputText id="valorLeilao2" value="#{imovelEstoqueMB.objetoImovelEstoque.valorLeilao2}"
 									onkeypress="return isNumberKey(event);"
 									onkeydown="FormataValor(this,13, event, 2);"
 									converter="bigDecimalConverter"/>
@@ -165,7 +153,7 @@
 								<p:outputLabel for="valorVenda" value="Valor da venda: "
 									styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
-								<p:inputText id="valorVenda" value="#{contratoCobrancaMB.objetoImovelEstoque.valorVenda}"
+								<p:inputText id="valorVenda" value="#{imovelEstoqueMB.objetoImovelEstoque.valorVenda}"
 									onkeypress="return isNumberKey(event);"
 									onkeydown="FormataValor(this,13, event, 2);"
 									converter="bigDecimalConverter"/>
@@ -174,14 +162,14 @@
 									styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
 								<p:calendar id="dataVenda" showOn="button"
-									value="#{contratoCobrancaMB.objetoImovelEstoque.dataVenda}"
+									value="#{imovelEstoqueMB.objetoImovelEstoque.dataVenda}"
 									size="100" pattern="dd/MM/yyyy" locale="pt"
 									styleClass="dateTimeField" />	
 									
 								<p:outputLabel for="tipoVenda" value="Tipo venda: "
 									styleClass="labelBold" />
 								<p:selectOneMenu id="tipoVenda"
-									value="#{contratoCobrancaMB.objetoImovelEstoque.tipoVenda}" 
+									value="#{imovelEstoqueMB.objetoImovelEstoque.tipoVenda}" 
 									style="width: 180px;">
 									<f:selectItem itemValue="" itemLabel=""/>
 									<f:selectItem itemValue="Direta" itemLabel="Direta"/>	
@@ -192,13 +180,13 @@
 									
 								<p:outputLabel value="Estoque atual?: " styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
-							<p:selectBooleanCheckbox id="estoque" value="#{contratoCobrancaMB.objetoImovelEstoque.estoque}" >
+							<p:selectBooleanCheckbox id="estoque" value="#{imovelEstoqueMB.objetoImovelEstoque.estoque}" >
 								<p:ajax event="change" />
 							</p:selectBooleanCheckbox>	
 							</h:panelGrid>
 					<f:facet name="footer">
 						<p:commandButton value="Salvar" ajax="false"
-							icon="ui-icon-print" action="#{imovelCobrancaMB.salvarEstoque}" />
+							icon="ui-icon-print" action="#{imovelEstoqueMB.salvarEstoque}" />
 						<p:spacer height="10"/>
 						<p:commandButton value="Cancelar" ajax="false" immediate="true"
 							icon="ui-icon-cancel" action="#{imovelCobrancaMB.clearFieldsEstoqueImoveis}"

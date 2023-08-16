@@ -94,6 +94,17 @@ public class ImovelCobranca implements Serializable {
 		this.comprovanteIptuImovelCheckList = false;
 	}
 	
+	public String getEnderecoCompleto() {
+		String enderecoCompleto =   (!CommonsUtil.semValor(endereco)? endereco:"") +
+									(!CommonsUtil.semValor(bairro)? ", " + bairro:"") +
+									(!CommonsUtil.semValor(complemento)? ", " + complemento:"") +
+									(!CommonsUtil.semValor(cidade)? ", " + cidade:"") +
+									(!CommonsUtil.semValor(estado)? ", " + estado:"") +
+									(!CommonsUtil.semValor(cep)? ", " + cep:"");
+									
+		return enderecoCompleto;
+	}
+	
 	/**
 	 * @return the id
 	 */

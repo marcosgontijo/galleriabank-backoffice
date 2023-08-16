@@ -378,6 +378,12 @@
 										ajax="false" icon="ui-icon ui-icon-calculator"
 										styleClass="itemMenu" />
 									</shiro:hasAnyRoles>
+									<shiro:hasAnyRoles name="ROOT, POSOPERACAO">
+									<p:menuitem value="Estoque Imóveis"
+										action="#{imovelCobrancaMB.clearFieldsEstoqueImoveis}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" />
+									</shiro:hasAnyRoles>
 									<shiro:hasAnyRoles name="ROOT, COBRANCA">
 									<p:menuitem value="Boletos Kobana"
 										action="#{kobanaMB.clearFieldsParcelasBoleto}"

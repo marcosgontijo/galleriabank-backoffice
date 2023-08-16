@@ -12,33 +12,32 @@
 		<h:form style="margin-bottom:10px;">				
 			<p:messages id="mensagens" showDetail="true"/>							
 			<p:panel id="ConsultaEstoque" header="Estoque - Consultar" style="margin-bottom:10px;">		    		    
-   		         <p:dataTable id="dtEstoque" var="estoque" value="#{contratoCobrancaMB.listaConsultaEstoque}" paginator="true" rows="20" 
+   		         <p:dataTable id="dtEstoque" var="estoque" value="#{imovelCobrancaMB.listaConsultaEstoque}" paginator="true" rows="20" 
    		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
    		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
-                 rowsPerPageTemplate="20,40,60,80" selection="" emptyMessage="" sortBy="#{estoque.numerocontrato}">
-			        <p:column style="text-align: center;" headerText="Numero Contrato" filterBy="#{estoque.numerocontrato}" filterMatchMode="contains" sortBy="#{estoque.numerocontratoo}">
-			            <h:outputText value="#{estoque.numerocontrato}" />
+                 rowsPerPageTemplate="20,40,60,80" selection="" emptyMessage="" sortBy="#{estoque.numeroContrato}">
+			        <p:column style="text-align: center;" headerText="Numero Contrato" filterBy="#{estoque.numeroContrato}" filterMatchMode="contains" sortBy="#{estoque.numeroContrato}">
+			            <h:outputText value="#{estoque.numeroContrato}" />
 			        </p:column>
-			        <p:column style="text-align: center;" headerText="Nome Emitente" filterBy="#{estoque.nomeEmitente}" filterMatchMode="contains" sortBy="#{estoque.nomeEmitente}">
-			            <h:outputText value="#{estoque.nomeEmitente}" />
+			        <p:column style="text-align: center;" headerText="Nome Emitente" filterBy="#{estoque.pagador.nome}" filterMatchMode="contains" sortBy="#{estoque.pagador.nome}">
+			            <h:outputText value="#{estoque.pagador.nome}" />
 			        </p:column>
-			        <p:column style="text-align: center;" headerText="Endereço" filterBy="#{estoque.endereco}" filterMatchMode="contains" sortBy="#{estoque.endereco}">
-			            <h:outputText value="#{estoque.endereco}" />
+			        <p:column style="text-align: center;" headerText="Endereço Completo" filterBy="#{estoque.imovel.enderecoCompleto}" filterMatchMode="contains" sortBy="#{estoque.imovel.enderecoCompleto}">
+			            <h:outputText value="#{estoque.imovel.enderecoCompleto}" />
 			        </p:column>
-			        <p:column style="text-align: center;" headerText="Consolidado em" filterBy="#{estoque.dataConsolidado}" filterMatchMode="contains" sortBy="#{estoque.dataConsolidado}">
-			            <h:outputText value="#{estoque.dataConsolidado}" />
+			        <p:column style="text-align: center;" headerText="Consolidado em" filterBy="#{estoque.imovel.imovelEstoque.dataConsolidado}" filterMatchMode="contains" sortBy="#{estoque.imovel.imovelEstoque.dataConsolidado}">
+			            <h:outputText value="#{estoque.imovel.imovelEstoque.dataConsolidado}" />
 			        </p:column>
-			        <p:column style="text-align: center;" headerText="Status atual" filterBy="#{estoque.statusAtual}" filterMatchMode="contains" sortBy="#{estoque.statusAtual}">
-			            <h:outputText value="#{estoque.statusAtual}" />
+			        <p:column style="text-align: center;" headerText="Status atual" filterBy="#{estoque.imovel.imovelEstoque.statusAtual}" filterMatchMode="contains" sortBy="#{estoque.imovel.imovelEstoque.statusAtual}">
+			            <h:outputText value="#{estoque.imovel.imovelEstoque.statusAtual}" />
 			        </p:column>
 			        <p:column style="width:120px;">
-		                <p:commandButton action="#{ccbMB.clearFieldsEditarCcb}" ajax="false" icon="ui-icon-pencil" title="Editar">			        		
-			        		<f:setPropertyActionListener target="#{contratoCobranca.objetoImovelEstoque}" value="#{contratoCobranca.objetoImovelEstoque}" />
+		                <p:commandButton action="#{imovelEstoqueMB.editarEstoque}" ajax="false" icon="ui-icon-pencil" title="Editar">			        		
+			        		<f:setPropertyActionListener target="#{imovelEstoqueMB.objetoImovelEstoque}" value="#{estoque.imovel.imovelEstoque}" />
+			        		<f:setPropertyActionListener target="#{imovelEstoqueMB.objetoImovelCobranca}" value="#{estoque.imovel}" />
 		                </p:commandButton>
 		            </p:column>			        		               		        			        			           			 		
-			        <f:facet name="footer">
-						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{ccbMB.clearFieldsInserirCcb}"/>
-			        </f:facet>
+			        
 				</p:dataTable>
 			</p:panel>
 		</h:form>	
