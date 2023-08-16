@@ -1,5 +1,6 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -24,6 +25,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -53,6 +55,7 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
@@ -109,6 +112,7 @@ import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
 import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
@@ -151,6 +155,7 @@ import com.webnowbr.siscoat.cobranca.db.model.QuitacaoPDF;
 import com.webnowbr.siscoat.cobranca.db.model.QuitacaoParcelasPDF;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.db.model.Segurado;
+import com.webnowbr.siscoat.cobranca.db.model.StarkBankBaixa;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankBoleto;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankPix;
 import com.webnowbr.siscoat.cobranca.db.op.CcbDao;
@@ -170,6 +175,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.cobranca.db.op.SeguradoDAO;
+import com.webnowbr.siscoat.cobranca.db.op.StarkBankBaixaDAO;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.cobranca.service.PajuService;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
@@ -19691,7 +19697,7 @@ public class ContratoCobrancaMB {
 		this.contasPagarSelecionada.setPagadorRecebedor(this.objetoPagadorRecebedor);
 		this.contasPagarSelecionada.setTipoDespesa("C");
 		this.contasPagarSelecionada.setResponsavel(this.objetoContratoCobranca.getResponsavel());
-		
+
 		boolean finalizaOperacao = false;
 		
 		if (!CommonsUtil.semValor(this.contasPagarSelecionada.getValor())) {
@@ -19701,8 +19707,6 @@ public class ContratoCobrancaMB {
 			} else {
 				this.objetoContratoCobranca.setContaPagarValorTotal(this.contasPagarSelecionada.getValor());
 			}
-			
-			this.contasPagarSelecionada.setValorPagamento(this.contasPagarSelecionada.getValor());
 			
 			if (!CommonsUtil.semValor(this.contasPagarSelecionada.getValorPagamento())) {
 				StarkBankAPI starkBankAPI = new StarkBankAPI();
@@ -19839,6 +19843,309 @@ public class ContratoCobrancaMB {
 		this.comprovanteStarkBankGerado = false;
 		
 		DecimalFormat df = new DecimalFormat("###,###,###,###,###.00"); 
+<<<<<<< HEAD
+=======
+
+		FacesContext context = FacesContext.getCurrentInstance();
+		/*
+		 * Referência iText - Gerador PDF
+		 * http://www.dicas-l.com.br/arquivo/gerando_pdf_utilizando_java.php#.VGpT0_nF_h4
+		 */ 		
+
+		Document doc = null;
+		OutputStream os = null;
+
+		try {
+			/*
+			 *  Fonts Utilizadas no PDF
+			 */
+			Font header = new Font(FontFamily.HELVETICA, 12, Font.BOLD);
+
+			Font titulo = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
+			Font tituloBranco = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
+			tituloBranco.setColor(BaseColor.WHITE);
+			Font normal = new Font(FontFamily.HELVETICA, 10);
+			Font subtitulo = new Font(FontFamily.HELVETICA, 10, Font.BOLD);	    	
+			Font subtituloIdent = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
+			Font destaque = new Font(FontFamily.HELVETICA, 8, Font.BOLD);
+
+			TimeZone zone = TimeZone.getDefault();  
+			Locale locale = new Locale("pt", "BR"); 
+			Calendar date = Calendar.getInstance(zone, locale);  
+			SimpleDateFormat sdfDataRel = new SimpleDateFormat("dd/MMM/yyyy", locale);
+			SimpleDateFormat sdfDataRelComHoras = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", locale);
+
+			ParametrosDao pDao = new ParametrosDao(); 
+			/*
+			 * Configuração inicial do PDF - Cria o documento tamanho A4, margens de 2,54cm
+			 */
+
+
+			doc = new Document(PageSize.A4.rotate(), 10, 80, 10, 80);
+			this.nomeComprovanteStarkBank = "Recibo Pagamento -  " + nomePagador + ".pdf";
+			this.pathComprovanteStarkBank = pDao.findByFilter("nome", "RECIBOS_IUGU").get(0).getValorString();
+
+			os = new FileOutputStream(this.pathComprovanteStarkBank + this.nomeComprovanteStarkBank);  	
+
+			// Associa a stream de saída ao 
+			PdfWriter.getInstance(doc, os);
+
+			// Abre o documento
+			doc.open();     			
+			/*
+			Paragraph p1 = new Paragraph("RECIBO DE PAGAMENTO - " + favorecido, titulo);
+			p1.setAlignment(Element.ALIGN_CENTER);
+			p1.setSpacingAfter(10);
+			doc.add(p1);  	
+			 */
+			PdfPTable table = new PdfPTable(new float[] { 0.8f, 0.8f});
+			table.setWidthPercentage(50.0f); 
+			
+			BufferedImage buff = ImageIO.read(getClass().getResourceAsStream("/resource/logoStarkBank.jpg"));
+	        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+	        ImageIO.write(buff, "jpg", bos);
+	        Image img = Image.getInstance(bos.toByteArray());
+	        
+			img.setAlignment(Element.ALIGN_CENTER);
+
+			PdfPCell cell1 = new PdfPCell(img);
+			cell1.setBorder(0);
+			cell1.setPaddingLeft(8f);
+			cell1.setBorderWidthTop(1);
+			cell1.setBorderColorTop(BaseColor.BLACK);
+			cell1.setBorderWidthLeft(1);
+			cell1.setBorderColorLeft(BaseColor.BLACK);
+			cell1.setBorderWidthRight(1);
+			cell1.setBorderColorRight(BaseColor.BLACK);			
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(10f);
+			cell1.setPaddingBottom(10f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase("StarkBank - Sistema de Pagamento online", header));
+			cell1.setBorder(0);
+			cell1.setBorderWidthLeft(1);
+			cell1.setBorderColorLeft(BaseColor.BLACK);
+			cell1.setBorderWidthRight(1);
+			cell1.setBorderColorRight(BaseColor.BLACK);	
+			cell1.setPaddingLeft(8f);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(5f);
+			cell1.setPaddingBottom(15f);
+			cell1.setColspan(2);
+			table.addCell(cell1);			
+			
+			if (baixaStarkBank.getFormaPagamento().equals("Boleto")) {
+				cell1 = new PdfPCell(new Phrase("Comprovante de Pagamento - Boleto", tituloBranco));
+			}
+			if (baixaStarkBank.getFormaPagamento().equals("PIX")) {
+				cell1 = new PdfPCell(new Phrase("Comprovante de Pagamento - PIX", tituloBranco));		
+			}
+			if (baixaStarkBank.getFormaPagamento().equals("TED")) {
+				cell1 = new PdfPCell(new Phrase("Comprovante de Pagamento - TED", tituloBranco));
+			}
+			
+			cell1.setBorder(0);
+			cell1.setBorderWidthLeft(1);
+			cell1.setBorderColorLeft(BaseColor.BLACK);
+			cell1.setBorderWidthRight(1);
+			cell1.setBorderColorRight(BaseColor.BLACK);	
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(new BaseColor(92, 156, 204));
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(5f);
+			cell1.setPaddingBottom(5f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+
+			cell1 = new PdfPCell(new Phrase("ID da Transação: " + baixaStarkBank.getIdTransacao(), titulo));
+			cell1.setBorder(0);
+			cell1.setBorderWidthLeft(1);
+			cell1.setBorderColorLeft(BaseColor.BLACK);
+			cell1.setBorderWidthRight(1);
+			cell1.setBorderColorRight(BaseColor.BLACK);	
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(10f);
+			cell1.setPaddingBottom(2f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+
+			cell1 = new PdfPCell(new Phrase("Data: " + sdfDataRelComHoras.format(baixaStarkBank.getDataPagamento()), titulo));
+			cell1.setBorder(0);
+			cell1.setBorderWidthLeft(1);
+			cell1.setBorderColorLeft(BaseColor.BLACK);
+			cell1.setBorderWidthRight(1);
+			cell1.setBorderColorRight(BaseColor.BLACK);	
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(2f);
+			cell1.setPaddingBottom(10f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+
+			cell1 = new PdfPCell(new Phrase("Valor R$ " + df.format(baixaStarkBank.getValor()), titulo));
+			cell1.setBorder(0);
+			cell1.setBorderWidthLeft(1);
+			cell1.setBorderColorLeft(BaseColor.BLACK);
+			cell1.setBorderWidthRight(1);
+			cell1.setBorderColorRight(BaseColor.BLACK);	
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(10f);
+			cell1.setPaddingBottom(10f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase("CPF/CNPJ: " + baixaStarkBank.getDocumento(), titulo));
+			cell1.setBorder(0);
+			cell1.setBorderWidthLeft(1);
+			cell1.setBorderColorLeft(BaseColor.BLACK);
+			cell1.setBorderWidthRight(1);
+			cell1.setBorderColorRight(BaseColor.BLACK);	
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(10f);
+			cell1.setPaddingBottom(2f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase("Nome: " + baixaStarkBank.getNomePagador(), titulo));
+			cell1.setBorder(0);
+			cell1.setBorderWidthBottom(1);
+			cell1.setBorderColorBottom(BaseColor.BLACK);
+			cell1.setBorderWidthLeft(1);
+			cell1.setBorderColorLeft(BaseColor.BLACK);
+			cell1.setBorderWidthRight(1);
+			cell1.setBorderColorRight(BaseColor.BLACK);	
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(20f);
+			cell1.setPaddingBottom(10f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+			
+			if (baixaStarkBank.getFormaPagamento().equals("Boleto")) {
+				cell1 = new PdfPCell(new Phrase("Obs.: Compensação no próximo dia útil.", titulo));
+				cell1.setBorder(0);
+				cell1.setBorderWidthBottom(1);
+				cell1.setBorderColorBottom(BaseColor.BLACK);
+				cell1.setBorderWidthLeft(1);
+				cell1.setBorderColorLeft(BaseColor.BLACK);
+				cell1.setBorderWidthRight(1);
+				cell1.setBorderColorRight(BaseColor.BLACK);	
+				cell1.setPaddingLeft(8f);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingTop(20f);
+				cell1.setPaddingBottom(10f);
+				cell1.setColspan(2);
+				table.addCell(cell1);
+			}
+			
+			doc.add(table);
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			context.addMessage(null, new FacesMessage(
+					FacesMessage.SEVERITY_ERROR, "[Stark Bank - Recibo de Pagamento] Este contrato está aberto por algum outro programa, por favor, feche-o e tente novamente!" + e, ""));
+		} catch (Exception e) {
+			context.addMessage(null, new FacesMessage(
+					FacesMessage.SEVERITY_ERROR, "[Stark Bank - Recibo de Pagamento] Ocorreu um problema ao gerar o PDF!" + e, ""));
+		} finally {
+			this.comprovanteStarkBankGerado = true;
+
+			if (doc != null) {
+				//fechamento do documento
+				doc.close();
+			}
+			if (os != null) {
+				//fechamento da stream de saída
+				try {
+					os.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	public BigDecimal getSaldoContaPagar(ContasPagar contaPagar) {
+		BigDecimal saldo = BigDecimal.ZERO;
+		
+		for (StarkBankBaixa baixas : contaPagar.getListContasPagarBaixas()) {
+			saldo = saldo.add(baixas.getValor());
+		}
+			
+		return saldo;
+	}
+	
+	public StarkBankBaixa registraBaixaStarkBank(Date dataPagamento, String documento, String idTransacao, String linhaBoleto, String nomePagador, 
+			BigDecimal valorPago, ContasPagar contaPagar, String formaPagamento) {
+		StarkBankBaixaDAO sbDAO = new StarkBankBaixaDAO();
+		
+		StarkBankBaixa starkBankBaixa = new StarkBankBaixa();
+		starkBankBaixa.setDataPagamento(dataPagamento);
+		starkBankBaixa.setDocumento(documento);
+		starkBankBaixa.setIdTransacao(idTransacao);
+		starkBankBaixa.setLinhaBoleto(linhaBoleto);
+		starkBankBaixa.setNomePagador(nomePagador);
+		starkBankBaixa.setValor(valorPago);	
+		starkBankBaixa.setFormaPagamento(formaPagamento);
+	
+		sbDAO.create(starkBankBaixa);
+		
+		return starkBankBaixa;
+	}
+	
+	public void estornaBaixaStarkBank(ContasPagar contaPagar, StarkBankBaixa starkBankBaixa) {
+		StarkBankBaixaDAO sbDAO = new StarkBankBaixaDAO();
+		sbDAO.delete(starkBankBaixa);
+		
+		BigDecimal saldoConta = getSaldoContaPagar(this.contasPagarSelecionada);
+		
+		if (CommonsUtil.mesmoValor(saldoConta,
+				contaPagar.getValor())) {
+			contaPagar.setContaPaga(true);
+		} else {
+			contaPagar.setContaPaga(false);
+		}
+	
+		ContasPagarDao contasPagarDao = new ContasPagarDao();
+		if (contaPagar.getId() <= 0) {
+			contasPagarDao.create(contaPagar);
+		} else {
+			contasPagarDao.merge(contaPagar);
+		}
+	}
+>>>>>>> branch 'master' of https://github.com/webnowbr/backoffice.git
 
 	public void clearPagadorProcesso(CcbProcessosJudiciais processo) {
 		processoSelecionado = processo;

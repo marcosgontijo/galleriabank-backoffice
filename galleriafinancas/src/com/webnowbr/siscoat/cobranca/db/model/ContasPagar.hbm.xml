@@ -126,5 +126,13 @@
 			lazy="false">
 			<column name="comprovantePagamentoPixStarkBank" />
 		</many-to-one>
+
+        <list name="listContasPagarBaixas"
+			table="ContasPagarStarkBankBaixa" cascade="all" lazy="false">
+			<key column="idContasPagar" />
+			<list-index></list-index>
+			<many-to-many column="idBaixaStarkBank"
+				class="com.webnowbr.siscoat.cobranca.db.model.StarkBankBaixa" />
+		</list>	
 	</class>
 </hibernate-mapping>
