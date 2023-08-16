@@ -7,6 +7,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.DataEngine;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
+import com.webnowbr.siscoat.cobranca.service.BigDataService;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.cobranca.service.DocumentoAnaliseService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
@@ -38,6 +39,7 @@ public class DocumentoAnaliseJobConsultar {
 		SerasaService serasaService = new SerasaService();
 
 		NetrinService netrinService = new NetrinService();
+		BigDataService bigDataService = new BigDataService();
 
 		ScrService scrService = new ScrService();
 		
@@ -145,16 +147,16 @@ public class DocumentoAnaliseJobConsultar {
 					continue;
 				}
 
-//				if (!documentoAnalise.isProcessoProcessado()) {
-//					documentoAnalise.addObservacao("Processando Processos");
+				if (!documentoAnalise.isProcessoProcessado()) {
+					documentoAnalise.addObservacao("Processando Processos");
 //					PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
-//					netrinService.requestProcesso(documentoAnalise);
-//
+					bigDataService.requestProcesso(documentoAnalise);
+
 //					PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
-//					pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
-//							DocumentosAnaliseEnum.PROCESSO, documentoAnalise.getRetornoProcesso());
-//					
-//				}
+					pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+							DocumentosAnaliseEnum.PROCESSOB, documentoAnalise.getRetornoProcesso());
+					
+				}
 
 				if (CommonsUtil.semValor(documentoAnalise.getRetornoCenprot())) {
 					documentoAnalise.addObservacao("Processando Protestos");

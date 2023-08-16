@@ -1335,22 +1335,22 @@ public class ContratoCobranca implements Serializable {
 		if (potuacao < 400) {
 			taxaPreAprovada = BigDecimal.valueOf(1.89);
 		} else if (potuacao >= 400 && potuacao < 499) {
-			taxaPreAprovada = BigDecimal.valueOf(1.89);
+			taxaPreAprovada = BigDecimal.valueOf(1.79);
 		} else if (potuacao >= 500 && potuacao < 599) {
-			taxaPreAprovada = BigDecimal.valueOf(1.79);
-		} else if (potuacao >= 600 && potuacao < 699) {
-			taxaPreAprovada = BigDecimal.valueOf(1.79);
-		} else if (potuacao >= 700 && potuacao < 799) {
 			taxaPreAprovada = BigDecimal.valueOf(1.69);
-		} else if (potuacao >= 800 && potuacao < 899) {
+		} else if (potuacao >= 600 && potuacao < 699) {
 			taxaPreAprovada = BigDecimal.valueOf(1.59);
-		} else if (potuacao >= 900 && potuacao < 999) {
+		} else if (potuacao >= 700 && potuacao < 799) {
 			taxaPreAprovada = BigDecimal.valueOf(1.49);
-		} else {
+		} else if (potuacao >= 800 && potuacao < 899) {
 			taxaPreAprovada = BigDecimal.valueOf(1.39);
+		} else if (potuacao >= 900 && potuacao < 999) {
+			taxaPreAprovada = BigDecimal.valueOf(1.29);
+		} else {
+			taxaPreAprovada = BigDecimal.valueOf(1.19);
 		}
 		
-		if(CommonsUtil.semValor(prazoMaxAprovado)) {
+		if(CommonsUtil.semValor(prazoMaxPreAprovado)) {
 			calcularPrazoPreAprovado();
 		}
 	}	
@@ -1361,13 +1361,13 @@ public class ContratoCobranca implements Serializable {
 			idade = pagador.calcularIdadeLong();
 		}
 		if(idade == 0) {
-			prazoMaxAprovado = BigInteger.valueOf(0);
+			prazoMaxPreAprovado = BigInteger.valueOf(0);
 		} else if(idade < 65) {
-			prazoMaxAprovado = BigInteger.valueOf(180);
+			prazoMaxPreAprovado = BigInteger.valueOf(180);
 		} else if(idade >= 77) {
-			prazoMaxAprovado = BigInteger.valueOf(0); //Múmia n fazer
+			prazoMaxPreAprovado = BigInteger.valueOf(0); //Múmia n fazer
 		} else {
-			prazoMaxAprovado = BigInteger.valueOf(new BigDecimal(((80 - idade) * 12)).setScale(0, RoundingMode.HALF_DOWN).intValue());
+			prazoMaxPreAprovado = BigInteger.valueOf(new BigDecimal(((80 - idade) * 12)).setScale(0, RoundingMode.HALF_DOWN).intValue());
 		}
 	}
 		

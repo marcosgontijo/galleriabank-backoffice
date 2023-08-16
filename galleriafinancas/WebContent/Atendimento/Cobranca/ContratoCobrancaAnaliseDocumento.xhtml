@@ -163,7 +163,13 @@
 							<p:commandButton
 								action="#{netrinMB.baixarDocumentoProcesso(fileAnalise)}"
 								icon="ui-icon ui-icon-print" value="Download Processos"
-								rendered="#{fileAnalise.processoProcessado }" ajax="false" />
+								rendered="#{fileAnalise.processoProcessado and fileAnalise.tipoProcesso != 'B'  }" ajax="false" />
+								
+								
+							<p:commandButton
+								action="#{bigDataMB.baixarDocumentoProcesso(fileAnalise)}"
+								icon="ui-icon ui-icon-print" value="Download Processos"
+								rendered="#{fileAnalise.processoProcessado and fileAnalise.tipoProcesso == 'B'  }" ajax="false" />
 
 							<p:commandButton
 								action="#{bmpDigitalMB.baixarDocumento(fileAnalise)}"

@@ -4019,6 +4019,23 @@ public class ContratoCobrancaMB {
 									this.objetoContratoCobranca.getNumeroContrato(),
 									this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
 									this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+							
+							enviarWhatsappJoaoAntonio("contrato_pre_aprovado",
+									this.objetoContratoCobranca.getPagador().getNome(),
+									this.objetoContratoCobranca.getNumeroContrato(),
+									this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+									this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+							enviarWhatsappAline("contrato_pre_aprovado",
+									this.objetoContratoCobranca.getPagador().getNome(),
+									this.objetoContratoCobranca.getNumeroContrato(),
+									this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+									this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+							enviarWhatsaPaula("contrato_pre_aprovado",
+									this.objetoContratoCobranca.getPagador().getNome(),
+									this.objetoContratoCobranca.getNumeroContrato(),
+									this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+									this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+							
 						}
 					}
 				}
@@ -4554,7 +4571,7 @@ public class ContratoCobrancaMB {
 
 			// Isa (assistente Gislaine)
 			Responsavel rAssistente = new Responsavel();
-			rAssistente = rDao.findById((long) 1556);
+			rAssistente = rDao.findById((long) 359);
 			takeBlipMB.sendWhatsAppMessage(rAssistente, template, nomeCliente, numeroContrato, taxaAprovada,
 					prazoAprovado);
 		}
@@ -4632,6 +4649,85 @@ public class ContratoCobrancaMB {
 					prazoAprovado);
 		}
 	}
+	public void enviarWhatsappJoaoAntonio(String template, String nomeCliente, String numeroContrato, String taxaAprovada,
+			String prazoAprovado) {
+		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(), (long) 1695)) {
+			TakeBlipMB takeBlipMB = new TakeBlipMB();
+			ResponsavelDao rDao = new ResponsavelDao();
+//			if (!CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),
+//					(long) 35)
+//					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 34)
+//					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 71)
+//					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 376)
+//					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 18)) {
+				Responsavel rGerente = new Responsavel();
+				rGerente = rDao.findById((long) 1695);
+				takeBlipMB.sendWhatsAppMessage(rGerente, template, nomeCliente, numeroContrato, taxaAprovada,
+						prazoAprovado);
+//			}
+
+			// Lennara (assistente Eric e Fabio Moron)
+			Responsavel rAssistente = new Responsavel();
+			rAssistente = rDao.findById((long) 359);
+
+			takeBlipMB.sendWhatsAppMessage(rAssistente, template, nomeCliente, numeroContrato, taxaAprovada,
+					prazoAprovado);
+		}
+	}
+	
+	public void enviarWhatsappAline(String template, String nomeCliente, String numeroContrato, String taxaAprovada,
+			String prazoAprovado) {
+		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(), (long) 1191)) {
+			TakeBlipMB takeBlipMB = new TakeBlipMB();
+			ResponsavelDao rDao = new ResponsavelDao();
+//			if (!CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),
+//					(long) 35)
+//					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 34)
+//					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 71)
+//					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 376)
+//					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 18)) {
+				Responsavel rGerente = new Responsavel();
+				rGerente = rDao.findById((long) 1191);
+				takeBlipMB.sendWhatsAppMessage(rGerente, template, nomeCliente, numeroContrato, taxaAprovada,
+						prazoAprovado);
+//			}
+
+			// Lennara (assistente Eric e Fabio Moron)
+			Responsavel rAssistente = new Responsavel();
+			rAssistente = rDao.findById((long) 359);
+
+			takeBlipMB.sendWhatsAppMessage(rAssistente, template, nomeCliente, numeroContrato, taxaAprovada,
+					prazoAprovado);
+		}
+	}
+	
+	public void enviarWhatsaPaula(String template, String nomeCliente, String numeroContrato, String taxaAprovada,
+			String prazoAprovado) {
+		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(), (long) 826)) {
+			TakeBlipMB takeBlipMB = new TakeBlipMB();
+			ResponsavelDao rDao = new ResponsavelDao();
+//			if (!CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),
+//					(long) 35)
+//					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 34)
+//					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 71)
+//					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 376)
+//					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 18)) {
+				Responsavel rGerente = new Responsavel();
+				rGerente = rDao.findById((long) 826);
+				takeBlipMB.sendWhatsAppMessage(rGerente, template, nomeCliente, numeroContrato, taxaAprovada,
+						prazoAprovado);
+//			}
+
+			// Lennara (assistente Eric e Fabio Moron)
+			Responsavel rAssistente = new Responsavel();
+			rAssistente = rDao.findById((long) 359);
+
+			takeBlipMB.sendWhatsAppMessage(rAssistente, template, nomeCliente, numeroContrato, taxaAprovada,
+					prazoAprovado);
+		}
+	}
+
+	
 
 	/*******
 	 * Chamadas do docket
@@ -5434,6 +5530,16 @@ public class ContratoCobrancaMB {
 		contratoCobrancaDao.merge(objetoContratoCobranca);
 		return
 		geraConsultaContratosPorStatus("Comentario Jurídico");
+	}
+	
+	public String enviarContratoEsteiraInterna(ContratoCobranca contrato) {
+		
+		this.objetoContratoCobranca = getContratoById(objetoContratoCobranca.getId());
+		this.objetoContratoCobranca.setEsteriaComentarioLuvison(false);
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		contratoCobrancaDao.merge(objetoContratoCobranca);
+		return
+		geraConsultaContratosPorStatus("Comentario Luvison");
 	}
 
 	public void clearEnviarLeadParaComercial() {
@@ -8751,6 +8857,9 @@ public class ContratoCobrancaMB {
 			this.codigoResponsavel = this.objetoContratoCobranca.getResponsavel().getCodigo();
 		}
 		// this.objetoContratoCobranca.setDataInicio(this.objetoContratoCobranca.getDataContrato());
+		if(CommonsUtil.semValor(objetoContratoCobranca.getTaxaPreAprovada())) {
+			this.objetoContratoCobranca.calcularTaxaPreAprovada();
+		}			
 
 		saveEstadoCheckListAtual();
 
