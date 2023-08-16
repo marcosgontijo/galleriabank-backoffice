@@ -4124,6 +4124,24 @@ public class ContratoCobrancaMB {
 								this.objetoContratoCobranca.getNumeroContrato(), "", "");
 						enviarWhatsappEric("contrato_recebido_paju", this.objetoContratoCobranca.getPagador().getNome(),
 								this.objetoContratoCobranca.getNumeroContrato(), "", "");
+						
+
+						enviarWhatsappJoaoAntonio("contrato_recebido_paju",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						enviarWhatsappAline("contrato_recebido_paju",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						enviarWhatsaPaula("contrato_recebido_paju",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						
 					}
 
 					ResponsavelDao rDao = new ResponsavelDao();
@@ -4186,6 +4204,23 @@ public class ContratoCobrancaMB {
 						enviarWhatsappEric("contrato_recebido_laudo",
 								this.objetoContratoCobranca.getPagador().getNome(),
 								this.objetoContratoCobranca.getNumeroContrato(), "", "");
+						
+						enviarWhatsappJoaoAntonio("contrato_recebido_laudo",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						enviarWhatsappAline("contrato_recebido_laudo",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						enviarWhatsaPaula("contrato_recebido_laudo",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						
 					}
 
 					ResponsavelDao rDao = new ResponsavelDao();
@@ -4270,6 +4305,24 @@ public class ContratoCobrancaMB {
 						enviarWhatsappEric("comentado_juridico_interno",
 								this.objetoContratoCobranca.getPagador().getNome(),
 								this.objetoContratoCobranca.getNumeroContrato(), "", "");
+						
+
+						enviarWhatsappJoaoAntonio("comentado_juridico_interno",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						enviarWhatsappAline("comentado_juridico_interno",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						enviarWhatsaPaula("comentado_juridico_interno",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						
 					} else {
 						takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
 								"comentado_juridico_interno", this.objetoContratoCobranca.getPagador().getNome(),
@@ -4400,6 +4453,25 @@ public class ContratoCobrancaMB {
 								this.objetoContratoCobranca.getNumeroContrato(), "", "");
 						enviarWhatsappEric("aprovado_comite_ag_ccb", this.objetoContratoCobranca.getPagador().getNome(),
 								this.objetoContratoCobranca.getNumeroContrato(), "", "");
+						
+
+
+						enviarWhatsappJoaoAntonio("aprovado_comite_ag_ccb",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						enviarWhatsappAline("aprovado_comite_ag_ccb",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						enviarWhatsaPaula("aprovado_comite_ag_ccb",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						
 					} else {
 						takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
 								"aprovado_comite_ag_ccb", this.objetoContratoCobranca.getPagador().getNome(),
@@ -4508,6 +4580,25 @@ public class ContratoCobrancaMB {
 						enviarWhatsappEric("contrato_pronto_para_assinatura_operacao",
 								this.objetoContratoCobranca.getPagador().getNome(),
 								this.objetoContratoCobranca.getNumeroContrato(), "", "");
+						
+
+
+						enviarWhatsappJoaoAntonio("contrato_pronto_para_assinatura_operacao",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						enviarWhatsappAline("contrato_pronto_para_assinatura_operacao",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						enviarWhatsaPaula("contrato_pronto_para_assinatura_operacao",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						
 					}
 				}
 			}
@@ -4539,6 +4630,23 @@ public class ContratoCobrancaMB {
 							enviarWhatsappEric("contrato_dado_entrada_cartorio",
 									this.objetoContratoCobranca.getPagador().getNome(),
 									this.objetoContratoCobranca.getNumeroContrato(), "", "");
+							
+
+							enviarWhatsappJoaoAntonio("contrato_dado_entrada_cartorio",
+									this.objetoContratoCobranca.getPagador().getNome(),
+									this.objetoContratoCobranca.getNumeroContrato(),
+									this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+									this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+							enviarWhatsappAline("contrato_dado_entrada_cartorio",
+									this.objetoContratoCobranca.getPagador().getNome(),
+									this.objetoContratoCobranca.getNumeroContrato(),
+									this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+									this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+							enviarWhatsaPaula("contrato_dado_entrada_cartorio",
+									this.objetoContratoCobranca.getPagador().getNome(),
+									this.objetoContratoCobranca.getNumeroContrato(),
+									this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+									this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 						}
 					}
 				}
@@ -4552,7 +4660,7 @@ public class ContratoCobrancaMB {
 
 	public void enviarWhatsappGislaine(String template, String nomeCliente, String numeroContrato, String taxaAprovada,
 			String prazoAprovado) {
-		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(), (long) 5) // gislaine
+		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(), SiscoatConstants.COMMERCIAL_GIS) // gislaine
 		// ||
 		// CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long)
 		// 60)//Ana Cecilia
@@ -4562,7 +4670,7 @@ public class ContratoCobrancaMB {
 			/*
 			 * if(!CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().
 			 * getDonoResponsavel().getId(), (long) 5)) { Responsavel rGerente = new
-			 * Responsavel(); rGerente = rDao.findById((long) 5);
+			 * Responsavel(); rGerente = rDao.findById(SiscoatConstants.COMMERCIAL_GIS);
 			 * takeBlipMB.sendWhatsAppMessage(rGerente, template, nomeCliente,
 			 * numeroContrato, taxaAprovada, prazoAprovado); }
 			 */
@@ -4571,7 +4679,7 @@ public class ContratoCobrancaMB {
 
 			// Isa (assistente Gislaine)
 			Responsavel rAssistente = new Responsavel();
-			rAssistente = rDao.findById((long) 359);
+			rAssistente = rDao.findById(SiscoatConstants.ASSISTENTE_ISA);
 			takeBlipMB.sendWhatsAppMessage(rAssistente, template, nomeCliente, numeroContrato, taxaAprovada,
 					prazoAprovado);
 		}
@@ -4579,7 +4687,7 @@ public class ContratoCobrancaMB {
 
 	public void enviarWhatsappLuis(String template, String nomeCliente, String numeroContrato, String taxaAprovada,
 			String prazoAprovado) {
-		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(), (long) 6) // luis
+		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),  SiscoatConstants.COMMERCIAL_LUIS ) // luis
 				|| CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),
 						(long) 81)
 				|| CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),
@@ -4597,7 +4705,7 @@ public class ContratoCobrancaMB {
 					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 249)
 					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 506)) {
 				Responsavel rGerente = new Responsavel();
-				rGerente = rDao.findById((long) 6);
+				rGerente = rDao.findById(SiscoatConstants.COMMERCIAL_LUIS);
 				takeBlipMB.sendWhatsAppMessage(rGerente, template, nomeCliente, numeroContrato, taxaAprovada,
 						prazoAprovado);
 			}
@@ -4618,7 +4726,7 @@ public class ContratoCobrancaMB {
 
 	public void enviarWhatsappEric(String template, String nomeCliente, String numeroContrato, String taxaAprovada,
 			String prazoAprovado) {
-		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(), (long) 35)
+		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(), SiscoatConstants.COMMERCIAL_ERIK)
 				|| CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),
 						(long) 34)
 				|| CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),
@@ -4630,7 +4738,7 @@ public class ContratoCobrancaMB {
 			TakeBlipMB takeBlipMB = new TakeBlipMB();
 			ResponsavelDao rDao = new ResponsavelDao();
 			if (!CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),
-					(long) 35)
+					 SiscoatConstants.COMMERCIAL_ERIK)
 					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 34)
 					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 71)
 					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 376)
@@ -4651,7 +4759,8 @@ public class ContratoCobrancaMB {
 	}
 	public void enviarWhatsappJoaoAntonio(String template, String nomeCliente, String numeroContrato, String taxaAprovada,
 			String prazoAprovado) {
-		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(), (long) 1695)) {
+		
+		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(), SiscoatConstants.COMMERCIAL_JOAO_ANTONIO)) {
 			TakeBlipMB takeBlipMB = new TakeBlipMB();
 			ResponsavelDao rDao = new ResponsavelDao();
 //			if (!CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),
@@ -4661,14 +4770,14 @@ public class ContratoCobrancaMB {
 //					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 376)
 //					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 18)) {
 				Responsavel rGerente = new Responsavel();
-				rGerente = rDao.findById((long) 1695);
+				rGerente = rDao.findById(SiscoatConstants.COMMERCIAL_JOAO_ANTONIO);
 				takeBlipMB.sendWhatsAppMessage(rGerente, template, nomeCliente, numeroContrato, taxaAprovada,
 						prazoAprovado);
 //			}
 
 			// Lennara (assistente Eric e Fabio Moron)
 			Responsavel rAssistente = new Responsavel();
-			rAssistente = rDao.findById((long) 359);
+			rAssistente = rDao.findById((long) SiscoatConstants.ASSISTENTE_BIA);
 
 			takeBlipMB.sendWhatsAppMessage(rAssistente, template, nomeCliente, numeroContrato, taxaAprovada,
 					prazoAprovado);
@@ -4677,7 +4786,7 @@ public class ContratoCobrancaMB {
 	
 	public void enviarWhatsappAline(String template, String nomeCliente, String numeroContrato, String taxaAprovada,
 			String prazoAprovado) {
-		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(), (long) 1191)) {
+		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(), SiscoatConstants.COMMERCIAL_ALINE)) {
 			TakeBlipMB takeBlipMB = new TakeBlipMB();
 			ResponsavelDao rDao = new ResponsavelDao();
 //			if (!CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),
@@ -4694,7 +4803,7 @@ public class ContratoCobrancaMB {
 
 			// Lennara (assistente Eric e Fabio Moron)
 			Responsavel rAssistente = new Responsavel();
-			rAssistente = rDao.findById((long) 359);
+			rAssistente = rDao.findById((long) SiscoatConstants.ASSISTENTE_BIA);
 
 			takeBlipMB.sendWhatsAppMessage(rAssistente, template, nomeCliente, numeroContrato, taxaAprovada,
 					prazoAprovado);
@@ -4703,7 +4812,7 @@ public class ContratoCobrancaMB {
 	
 	public void enviarWhatsaPaula(String template, String nomeCliente, String numeroContrato, String taxaAprovada,
 			String prazoAprovado) {
-		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(), (long) 826)) {
+		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),  SiscoatConstants.COMMERCIAL_PAULA)) {
 			TakeBlipMB takeBlipMB = new TakeBlipMB();
 			ResponsavelDao rDao = new ResponsavelDao();
 //			if (!CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),
@@ -4720,7 +4829,7 @@ public class ContratoCobrancaMB {
 
 			// Lennara (assistente Eric e Fabio Moron)
 			Responsavel rAssistente = new Responsavel();
-			rAssistente = rDao.findById((long) 359);
+			rAssistente = rDao.findById((long) SiscoatConstants.ASSISTENTE_BIA);
 
 			takeBlipMB.sendWhatsAppMessage(rAssistente, template, nomeCliente, numeroContrato, taxaAprovada,
 					prazoAprovado);
@@ -19736,6 +19845,8 @@ public class ContratoCobrancaMB {
 		this.comprovanteStarkBankGerado = false;
 		
 		DecimalFormat df = new DecimalFormat("###,###,###,###,###.00"); 
+<<<<<<< HEAD
+=======
 
 		FacesContext context = FacesContext.getCurrentInstance();
 		/*
@@ -20060,6 +20171,7 @@ public class ContratoCobrancaMB {
 			contasPagarDao.merge(contaPagar);
 		}
 	}
+>>>>>>> branch 'master' of https://github.com/webnowbr/backoffice.git
 
 	public void clearPagadorProcesso(CcbProcessosJudiciais processo) {
 		processoSelecionado = processo;
