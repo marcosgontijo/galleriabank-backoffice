@@ -58,17 +58,13 @@ public class DocumentoAnalise implements Serializable {
 	private String retornoEngine;
 	private String retornoSerasa;
 	private String retornoCenprot;
+	private String tipoProcesso;
 	private String retornoProcesso;
 	private String retornoPpe;
 
 	private String retornoScr;
 	private String observacao;
 	private boolean excluido;
-	
-//	public List<DocumentoAnaliseResumo> getResumoEnginePj() {
-//		CredNet dados = GsonUtil.fromJson(getRetornoSerasa(), CredNet.class);
-//		EngineRetorno enginePj = null;
-//	}
 
 	public List<DocumentoAnaliseResumo> getResumoEngine() {
 		List<DocumentoAnaliseResumo> result = new ArrayList<>();
@@ -586,6 +582,14 @@ public class DocumentoAnalise implements Serializable {
 
 	public void setRetornoProcesso(String retornoProcesso) {
 		this.retornoProcesso = retornoProcesso;
+	}
+
+	public String getTipoProcesso() {
+		return tipoProcesso;
+	}
+
+	public void setTipoProcesso(String tipoProcesso) {
+		this.tipoProcesso = tipoProcesso;
 	}
 
 	public String getRetornoPpe() {

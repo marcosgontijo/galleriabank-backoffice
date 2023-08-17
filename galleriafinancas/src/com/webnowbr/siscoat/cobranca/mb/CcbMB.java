@@ -6445,7 +6445,7 @@ public class CcbMB {
 			paragraph.setSpacingBefore(0);
 			paragraph.setSpacingAfter(100);
 			run = paragraph.createRun();
-			run.setText("São Paulo/SP, " + this.objetoCcb.getDataDeEmissao().getDate() + " de "
+			run.setText("Votorantim/SP, " + this.objetoCcb.getDataDeEmissao().getDate() + " de "
 							+ CommonsUtil.formataMesExtenso(this.objetoCcb.getDataDeEmissao()).toLowerCase() + " de "
 							+ (this.objetoCcb.getDataDeEmissao().getYear() + 1900) + ".");
 			run.setFontSize(11);
@@ -6487,7 +6487,7 @@ public class CcbMB {
 			paragraph.setSpacingBefore(0);
 			paragraph.setSpacingAfter(0);
 			run = paragraph.createRun();
-			run.setText("BMP Sociedade de Crédito Direto S.A.");
+			run.setText("Galleria Sociedade de Crédito Direto S.A.");
 			run.setFontSize(11);
 			run.setBold(true);
 			run.addCarriageReturn();
@@ -6498,7 +6498,7 @@ public class CcbMB {
 			paragraph.setSpacingBefore(0);
 			paragraph.setSpacingAfter(0);
 			run = paragraph.createRun();
-			run.setText("Autorizamos a efetivação de transferência, através da TED, no valor de ");
+			run.setText("Autorizamos a efetivação de transferência no valor de ");
 			run.setFontSize(11);
 			run.setBold(false);
 			BigDecimal valorCartaSplit =   this.objetoCcb.getValorLiquidoCredito().add(this.objetoCcb.getValorDespesas());
@@ -6786,7 +6786,7 @@ public class CcbMB {
 			run = paragraph.createRun();
 			run.setText("por meio do crédito oriundo da CCI. O montante total necessário para o pagamento"
 					+ " das despesas acessórias e dos compromissos diversos será transferido para a conta"
-					+ " da Galleria Correspondente Bancário Eireli, CNPJ 34.787.885/0001-32, Banco do Brasil"
+					+ " da Galleria Correspondente Bancário Sociedade Unipessoal Ltda, CNPJ 34.787.885/0001-32, Banco do Brasil"
 					+ " – Ag: 1515-6 C/C: 131094-1, que, na condição de Correspondente Bancário da BMP,"
 					+ " será a responsável por efetuar todos os pagamentos devidamente especificados na"
 					+ " tabela abaixo:");
