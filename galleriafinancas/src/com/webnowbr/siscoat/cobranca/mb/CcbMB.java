@@ -105,7 +105,6 @@ import com.webnowbr.siscoat.simulador.SimulacaoDetalheVO;
 import com.webnowbr.siscoat.simulador.SimulacaoVO;
 import com.webnowbr.siscoat.simulador.SimuladorMB;
 
-
 /** ManagedBean. */
 @ManagedBean(name = "ccbMB")
 @SessionScoped
