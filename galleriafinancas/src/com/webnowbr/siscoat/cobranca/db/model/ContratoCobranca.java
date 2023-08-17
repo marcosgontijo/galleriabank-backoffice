@@ -14,7 +14,6 @@ import java.util.Set;
 
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.infra.db.model.User;
-import com.webnowbr.siscoat.security.LoginBean;
 
 public class ContratoCobranca implements Serializable {
 
@@ -701,7 +700,9 @@ public class ContratoCobranca implements Serializable {
 	private String bancoBancarioContaPagar;
 	private String agenciaBancarioContaPagar;
 	private String contaBancarioContaPagar;
-	
+	private String digitoContaBancarioContaPagar;
+	private String chavePIXBancarioContaPagar;
+			
 	private BigDecimal valorCartaSplit;
 	private String nomeBancarioCartaSplit;
 	private String cpfCnpjBancarioCartaSplit;
@@ -785,6 +786,7 @@ public class ContratoCobranca implements Serializable {
 	private boolean iniciouGeracaoLaudo;
 	private String avaliacaoPaju;
 	private boolean iniciouGeracaoPaju;
+	private boolean esteriaComentarioLuvison;
 	
 	private boolean contatoDiferenteProprietario;
 	//private String geracaoLaudoObservacao;
@@ -814,6 +816,8 @@ public class ContratoCobranca implements Serializable {
 	private int totalCertidoesDocket;
 	private int certidoesProntas;
 	private boolean contratoPrioridadeAlta;
+	private Date contratoPrioridadeAltaData;
+	private String contratoPrioridadeAltaUser;
 
 	//FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13	
 	public BigDecimal calcularValorTotalContasPagas() {
@@ -6686,6 +6690,22 @@ public class ContratoCobranca implements Serializable {
 	public void setContratoPrioridadeAlta(boolean contratoPrioridadeAlta) {
 		this.contratoPrioridadeAlta = contratoPrioridadeAlta;
 	}
+	
+	public Date getContratoPrioridadeAltaData() {
+		return contratoPrioridadeAltaData;
+	}
+
+	public void setContratoPrioridadeAltaData(Date contratoPrioridadeAltaData) {
+		this.contratoPrioridadeAltaData = contratoPrioridadeAltaData;
+	}
+	
+	public String getContratoPrioridadeAltaUser() {
+		return contratoPrioridadeAltaUser;
+	}
+
+	public void setContratoPrioridadeAltaUser(String contratoPrioridadeAltaUser) {
+		this.contratoPrioridadeAltaUser = contratoPrioridadeAltaUser;
+	}
 
 	public String getIspbPixContaPagar() {
 		return ispbPixContaPagar;
@@ -6725,5 +6745,29 @@ public class ContratoCobranca implements Serializable {
 
 	public void setIniciouGeracaoPaju(boolean iniciouGeracaoPaju) {
 		this.iniciouGeracaoPaju = iniciouGeracaoPaju;
-	}	
+	}
+
+	public String getDigitoContaBancarioContaPagar() {
+		return digitoContaBancarioContaPagar;
+	}
+
+	public void setDigitoContaBancarioContaPagar(String digitoContaBancarioContaPagar) {
+		this.digitoContaBancarioContaPagar = digitoContaBancarioContaPagar;
+	}
+
+	public String getChavePIXBancarioContaPagar() {
+		return chavePIXBancarioContaPagar;
+	}
+
+	public void setChavePIXBancarioContaPagar(String chavePIXBancarioContaPagar) {
+		this.chavePIXBancarioContaPagar = chavePIXBancarioContaPagar;
+	}
+
+	public boolean isEsteriaComentarioLuvison() {
+		return esteriaComentarioLuvison;
+	}
+
+	public void setEsteriaComentarioLuvison(boolean esteriaComentarioLuvison) {
+		this.esteriaComentarioLuvison = esteriaComentarioLuvison;
+	}
 }

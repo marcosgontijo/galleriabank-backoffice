@@ -50,7 +50,7 @@ public class RelacionamentoPagadorRecebedorMB implements Serializable {
 		listRelacoes = rprDao.getRelacionamentos(pagador, listRelacoes);
 		listRelacoesFaltantes = listRelacoes;
 		
-		Element root = new Element(pagador.getNome(), "45em", "5em");
+		Element root = new Element(pagador.getNome(), "45em", "15em");
 		root.addEndPoint(new BlankEndPoint(EndPointAnchor.BOTTOM));
 		root.addEndPoint(new BlankEndPoint(EndPointAnchor.TOP));
         model.addElement(root);
@@ -85,8 +85,8 @@ public class RelacionamentoPagadorRecebedorMB implements Serializable {
 	}
 
 	public void populaGeral() {
-		populaGeralEngine();
-		//populaGeralSeresa();
+		//populaGeralEngine();
+		populaGeralSeresa();
 	}
 	
 	public void populaGeralEngine() {
@@ -96,7 +96,9 @@ public class RelacionamentoPagadorRecebedorMB implements Serializable {
 	
 	public void populaGeralSeresa() {
 		RelacionamentoPagadorRecebedorDao rprDao = new RelacionamentoPagadorRecebedorDao();
-		rprDao.populaGeralDB();
+		rprDao.populaGeralDB(0, 4000);
+		rprDao.populaGeralDB(3999, 10000);
+		rprDao.populaGeralDB(9999, 1000000000);
 	}
 
     public void init() {

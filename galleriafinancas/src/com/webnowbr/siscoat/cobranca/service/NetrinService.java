@@ -143,9 +143,7 @@ public class NetrinService {
 			}
 			myURLConnection.disconnect();
 			return retornoConsulta;
-		} catch (
-
-		MalformedURLException e) {
+		} catch ( MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -585,6 +583,7 @@ public class NetrinService {
 					cnpjcpf = documentoAnalise.getPagador().getCnpj();
 			}
 
+			
 			retornoConsulta = netrinCriarExecutaConsultaProcesso(documentoAnalise.getTipoPessoa(), cnpjcpf,
 					nomeConsultado);
 

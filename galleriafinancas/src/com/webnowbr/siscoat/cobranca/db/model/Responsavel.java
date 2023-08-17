@@ -75,6 +75,7 @@ public class Responsavel implements Serializable {
 	private String whatsAppNumero;
 	
 	private boolean superlogica;
+	private String cidadeFilial;
 	
 	
 	public Responsavel(){
@@ -607,7 +608,12 @@ public class Responsavel implements Serializable {
 	public void setTipoConta(String tipoConta) {
 		this.tipoConta = tipoConta;
 	}
-	
-	
 
+	public String getCidadeFilial() {
+		return cidadeFilial;
+	}
+
+	public void setCidadeFilial(String cidadeFilial) {
+		this.cidadeFilial = cidadeFilial;
+	}
 }

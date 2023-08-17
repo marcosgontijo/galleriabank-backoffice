@@ -552,7 +552,8 @@ public class DocketMB {
 		ImovelCobranca imovel = new ImovelCobranca();
 		imovel = iDao.findById(contrato.getImovel().getId());
 		this.objetoContratoCobranca = contrato;
-		if(!CommonsUtil.mesmoValor(imovel.getEstado(), "RJ")) {
+		if(!CommonsUtil.mesmoValor(imovel.getEstado(), "RJ") 
+				&& !CommonsUtil.mesmoValor(imovel.getEstado(), "PR")) {
 			if(!CommonsUtil.semValor(imovel.getEstado())) {
 				localidadesSelecionada.setEstadoSelecionado(EstadosEnum.getByUf(imovel.getEstado()));
 			}
@@ -604,7 +605,8 @@ public class DocketMB {
 		DocumentosDocketDao docDao = new DocumentosDocketDao();
 		List<DocumentosDocket> listaDocs = docDao.findAll();
 		
-		if(CommonsUtil.mesmoValor(estado.getUf(), "RJ")) {
+		if(CommonsUtil.mesmoValor(estado.getUf(), "RJ")
+				|| CommonsUtil.mesmoValor(estado.getUf(), "PR")) {
 			return;
 		}
 				
@@ -635,8 +637,11 @@ public class DocketMB {
 				}
 			}
 			
-			if(CommonsUtil.mesmoValor(doc.getDocumentoNome(), "Certidão de Distribuição de Ações Trabalhistas - Tribunal Regional do Trabalho (1° instância)")
-				&& CommonsUtil.mesmoValor(estado.getUf(), "SP")) {
+			if(CommonsUtil.mesmoValor(estado.getUf(), "SP") &&
+				(CommonsUtil.mesmoValor(doc.getDocumentoNome(),
+						"Certidão de Distribuição de Ações Trabalhistas - Tribunal Regional do Trabalho (1° instância)")
+				||CommonsUtil.mesmoValor(doc.getDocumentoNome(),
+						"Certidão de Distribuição de Ações Trabalhistas - Tribunal Regional do Trabalho (1° instância) - Processos Judiciais Eletrônicos"))) {
 				docPagador.setCidade("São Paulo");
 				docPagador.getCidadeDocketId();
 				docPagador.setTravado(true);

@@ -116,7 +116,12 @@ public final class User implements Serializable {
     public User() {
     }
 
-    /**
+    @Override
+	public String toString() {
+		return "User [id=" + id + ", name=" + name + ", login=" + login + "]";
+	}
+    
+	/**
      * @see id.
      * @return the id
      */

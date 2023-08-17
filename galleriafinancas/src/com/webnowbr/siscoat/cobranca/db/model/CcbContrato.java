@@ -152,6 +152,7 @@ public class CcbContrato implements Serializable{
     private String CCBBanco; 
     private String CCBAgencia; 
     private String CCBCC; 
+    private String CCBDigito; 
     private String CCBCNPJ; 
     private String CCBNome; 
     private String CCBPix;
@@ -1286,5 +1287,12 @@ public class CcbContrato implements Serializable{
 	public void setUsarNovoCustoEmissao(boolean usarNovoCustoEmissao) {
 		this.usarNovoCustoEmissao = usarNovoCustoEmissao;
 	}
-	
+
+	public String getCCBDigito() {
+		return CCBDigito;
+	}
+
+	public void setCCBDigito(String cCBDigito) {
+		CCBDigito = cCBDigito;
+	} 
 }

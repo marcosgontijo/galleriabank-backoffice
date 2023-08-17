@@ -27,7 +27,7 @@
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{pagadorRecebedorMB.clearFields}"/>
 
 						<p:commandButton value="popular Geral" ajax="false"
-							icon="ui-icon-plus"
+							icon="ui-icon-plus" disabled="true"
 							action="#{relacionamentoPagadorRecebedorMB.populaGeral}" />
 					</f:facet>			        
 			        <p:column style="text-align: center;" headerText="Nome" filterBy="#{PagadorRecebedor.nome}" filterMatchMode="contains" sortBy="#{PagadorRecebedor.nome}">

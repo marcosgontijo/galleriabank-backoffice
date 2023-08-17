@@ -181,7 +181,8 @@ public class RelatorioInadimplenciaMB {
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 				FacesContext.getCurrentInstance());
 		
-		gerador.open(String.format("Galleria Bank - Relatorio FIDC %s.xlsx", ""));
+		String nomeArquivoDownload = String.format("Galleria Bank - Relatorio FIDC %s.xlsx", "");
+		gerador.open(nomeArquivoDownload);		
 		gerador.feed( new ByteArrayInputStream(fileOut.toByteArray()));
 		gerador.close();
 		

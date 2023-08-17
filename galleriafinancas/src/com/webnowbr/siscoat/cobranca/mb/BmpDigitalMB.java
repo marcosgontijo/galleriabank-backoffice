@@ -236,8 +236,10 @@ public class BmpDigitalMB {
 		byte[] decoded = Base64.getDecoder().decode(base64);
 		
 		InputStream in = new ByteArrayInputStream(decoded);
-		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(FacesContext.getCurrentInstance());
-		gerador.open(String.format("Galleria Bank - Data Engine %s.pdf", ""));
+		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+				FacesContext.getCurrentInstance());
+		String nomeArquivoDownload = String.format("Galleria Bank - Data Engine %s.pdf", "");
+		gerador.open(nomeArquivoDownload);
 		gerador.feed(in);
 		gerador.close();
 		return null;

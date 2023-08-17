@@ -229,6 +229,15 @@
 						<p:inputText id="Complemento"
 							value="#{responsavelMB.objetoResponsavel.complemento}"
 							label="Complemento" onblur="" style="width:400px;" />
+							
+						<p:outputLabel for="cidadeFilial" value="Filial (Apenas para Comerciais internos): " />
+						<p:selectOneMenu id="cidadeFilial"
+							value="#{responsavelMB.objetoResponsavel.cidadeFilial}" label="Estado"
+							style="width:350px;">
+							<f:selectItem itemValue="" itemLabel="Escolha a Filial" />
+							<f:selectItem itemValue="Campinas" itemLabel="Campinas" />
+							<f:selectItem itemValue="Sorocaba" itemLabel="Sorocaba" />
+						</p:selectOneMenu>
 			
 						
 						<p:outputLabel value="Adicionar Usuario: " styleClass="labelBold" />
@@ -241,11 +250,13 @@
 						
 	
 						<p:outputLabel for="Observacao" value="Observação: " />
-						<p:inputTextarea id="Observacao" rows="10" cols="48"
-							counter="display" maxlength="3000" onblur=""
-							counterTemplate="{0} characters remaining." autoResize="false"
-							value="#{responsavelMB.objetoResponsavel.observacao}" />
-						<p:outputLabel id="display" styleClass="labelBold" />
+						<h:panelGroup>
+							<p:inputTextarea id="Observacao" rows="10" cols="48"
+								counter="display" maxlength="3000" onblur=""
+								counterTemplate="{0} characters remaining." autoResize="false"
+								value="#{responsavelMB.objetoResponsavel.observacao}" />
+							<p:outputLabel id="display" styleClass="labelBold" />
+						</h:panelGroup>
 						
 						<shiro:hasAnyRoles name="ROOT">
 							<p:outputLabel for="WhatsApp" value="Contato WhatsApp: " />

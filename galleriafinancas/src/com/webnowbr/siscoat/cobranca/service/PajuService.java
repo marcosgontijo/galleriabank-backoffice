@@ -111,14 +111,17 @@ public class PajuService {
 		ContratoTipoTemplate ContratoTipoTemplate = contratoTipoTemplateDao.getTemplate("PJ");
 		List<ContratoTipoTemplateBloco> lstBlocos = ContratoTipoTemplate.getBlocos();
 
-		Set<DocumentoAnalise> pessoasPF = this.listaDocumentoAnalise.stream()
+		
+		List<DocumentoAnalise> listaDocumentoAnaliseAnalisados =  this.listaDocumentoAnalise.stream().filter(p -> p.isLiberadoAnalise()).collect(Collectors.toList());
+		
+		Set<DocumentoAnalise> pessoasPF = listaDocumentoAnaliseAnalisados.stream()
 				.filter(p -> p.isLiberadoAnalise() && CommonsUtil.mesmoValor("PF", p.getTipoPessoa()))
 				.collect(Collectors.toSet());
-		
-		Set<DocumentoAnalise> pessoasPJ = this.listaDocumentoAnalise.stream()
+
+		Set<DocumentoAnalise> pessoasPJ = listaDocumentoAnaliseAnalisados.stream()
 				.filter(p -> p.isLiberadoAnalise() && CommonsUtil.mesmoValor("PJ", p.getTipoPessoa()))
 				.collect(Collectors.toSet());
-		
+
 		if (CommonsUtil.semValor(pessoasPF) && CommonsUtil.semValor(pessoasPJ)) {
 			DocumentoAnalise documentoAnalise = new DocumentoAnalise();
 			documentoAnalise.setPagador(contrato.getPagador());
@@ -149,15 +152,16 @@ public class PajuService {
 						.filter(e -> CommonsUtil.mesmoValor(e.getIdDocket(), docketDocumento.getCampos().getEstado()))
 						.map(e -> e.getNome()).findFirst();
 				docketDocumento.getCampos().setEstadoNome(estadoNome.get());
-				
 				if (CommonsUtil.semValor(docketDocumento.getCampos().getCnpj())) {
 					if (!pessoasPF.stream()
-							.filter(p -> CommonsUtil.mesmoValor(docketDocumento.getCampos().getCpf(), p.getCnpjcpf()))
+							.filter(p -> CommonsUtil.mesmoValor(
+									CommonsUtil.formataCnpjCpf(docketDocumento.getCampos().getCpf(), false),
+									CommonsUtil.formataCnpjCpf(p.getCnpjcpf(), false)))
 							.findAny().isPresent()) {
 						PagadorRecebedorService pagagadorRecebedorService = new PagadorRecebedorService();
-
+						
 						PagadorRecebedor pessoaConsultaDocket = new PagadorRecebedor();
-						pessoaConsultaDocket.setCpf(docketDocumento.getCampos().getCpf());
+						pessoaConsultaDocket.setCpf(CommonsUtil.formataCnpjCpf(docketDocumento.getCampos().getCpf(), false));
 						pessoaConsultaDocket.setNome(docketDocumento.getCampos().getNomeCompleto());
 						pessoaConsultaDocket.setNomeMae(docketDocumento.getCampos().getNomeMae());
 						pessoaConsultaDocket.setRg(docketDocumento.getCampos().getRg());
@@ -167,27 +171,29 @@ public class PajuService {
 						DocumentoAnalise documentoAnalise = new DocumentoAnalise();
 						documentoAnalise.setPagador(pessoaConsultaDocket);
 						documentoAnalise.setCnpjcpf(pessoaConsultaDocket.getCpf());
-						;
+						
 						documentoAnalise.setTipoPessoa("PF");
 						pessoasPF.add(documentoAnalise);
 					}
-				}else {
+				} else {
 					if (!pessoasPJ.stream()
-							.filter(p -> CommonsUtil.mesmoValor(docketDocumento.getCampos().getCnpj(), p.getCnpjcpf()))
+							.filter(p -> CommonsUtil.mesmoValor(
+									CommonsUtil.formataCnpjCpf(docketDocumento.getCampos().getCnpj(), false),
+									CommonsUtil.formataCnpjCpf(p.getCnpjcpf(), false)))
 							.findAny().isPresent()) {
 						PagadorRecebedorService pagagadorRecebedorService = new PagadorRecebedorService();
 
 						PagadorRecebedor pessoaConsultaDocket = new PagadorRecebedor();
-						pessoaConsultaDocket.setCnpj(docketDocumento.getCampos().getCnpj());
+						pessoaConsultaDocket.setCnpj(CommonsUtil.formataCnpjCpf(docketDocumento.getCampos().getCnpj(),false));
 						pessoaConsultaDocket.setNome(docketDocumento.getCampos().getRazaoSocial());
 
 						pessoaConsultaDocket = pagagadorRecebedorService.buscaOuInsere(pessoaConsultaDocket);
 						DocumentoAnalise documentoAnalise = new DocumentoAnalise();
 						documentoAnalise.setPagador(pessoaConsultaDocket);
-						documentoAnalise.setCnpjcpf(pessoaConsultaDocket.getCpf());
-						;
-						documentoAnalise.setTipoPessoa("PF");
-						pessoasPF.add(documentoAnalise);
+						documentoAnalise.setCnpjcpf(pessoaConsultaDocket.getCnpj());
+						
+						documentoAnalise.setTipoPessoa("PJ");
+						pessoasPJ.add(documentoAnalise);
 					}
 				}
 				
@@ -676,11 +682,11 @@ public class PajuService {
 	}
 
 	public void setContrato(ContratoCobranca contrato) {
-		this.contrato = contrato;	
+		this.contrato = contrato;
 
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-		this.listaDocumentoAnalise = documentoAnaliseDao.findByFilter("contratoCobranca", this.contrato );
-		
+		this.listaDocumentoAnalise = documentoAnaliseDao.listagemDocumentoAnalise(this.contrato);
+
 	}
 
 }

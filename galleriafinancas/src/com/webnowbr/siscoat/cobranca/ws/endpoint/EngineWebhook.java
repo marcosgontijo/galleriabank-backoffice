@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.webnowbr.siscoat.cobranca.db.model.DataEngine;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
+import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.DataEngineDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
@@ -64,144 +65,29 @@ public class EngineWebhook {
 			DataEngine dataEngine = null;
 			if (engines.size() > 0) {
 				dataEngine = engines.get(0);
+				
+				DocketService docketService = new DocketService();
+				
+				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+				
+				PagadorRecebedor pagaRecebedor = dataEngine.getPagador();
+				
+				pagadorRecebedorService.preecheDadosReceita(pagaRecebedor);
 
 				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 
 				DocumentoAnalise documentoAnalise = documentoAnaliseDao.findByFilter("engine", dataEngine).stream()
 						.findFirst().orElse(null);
 
-				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
-				pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(dataEngine.getPagador(),
+				
+				pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagaRecebedor,
 						DocumentosAnaliseEnum.ENGINE, webhookRetorno);
 
 				if (!CommonsUtil.semValor(documentoAnalise)) {
 
-					documentoAnalise.setRetornoEngine(webhookRetorno);
-
-					SerasaService serasaService = new SerasaService();
-					NetrinService netrinService = new NetrinService();
-					UserService userService = new UserService();
-					ScrService scrService = new ScrService();
-					DocketService docketService = new DocketService();
-
 					
-					User userSistema = userService.userSistema();
-					
-					engineWebhookRetorno.getConsultaAntecedenteCriminais();
-
-					if ((CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais())
-							|| CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais().getResult()
-									.get(0).getOnlineCertificates()))
-							&& (CommonsUtil.semValor(engineWebhookRetorno.getProcessos()) || CommonsUtil.intValue(
-									engineWebhookRetorno.getProcessos().getTotal_acoes_judicias_reu()) == 0)) {
-						// libera a consulta do crednet da PF
-//						if (documentoAnalise.isPodeChamarSerasa()) {
-//							if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
-//								documentoAnalise.setLiberadoSerasa(true);
-//								serasaService.requestSerasa(documentoAnalise, userService.userSistema());
-//							}
-//						}
-						if (documentoAnalise.isPodeChamarCenprot()) {
-							if (CommonsUtil.semValor(documentoAnalise.getRetornoCenprot())) {
-								documentoAnalise.setLiberadoCenprot(true);
-								netrinService.requestCenprot(documentoAnalise);
-							}
-						}
-
-//						if (documentoAnalise.isPodeChamarSCR()) {
-//							if (CommonsUtil.semValor(documentoAnalise.getRetornoScr())) {
-//								documentoAnalise.setLiberadoScr(true);
-//								scrService.requestScr(documentoAnalise);
-//							}
-//						}
-//
-//						DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
-//						documentoAnaliseService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
-//								DocumentosAnaliseEnum.ENGINE, webhookRetorno);
-
-					} else {
-						if (!CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais().getResult())
-								&& !CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais()
-										.getResult().get(0).getOnlineCertificates())
-								&& !CommonsUtil.mesmoValorIgnoreCase("NADA CONSTA",
-										engineWebhookRetorno.getConsultaAntecedenteCriminais().getResult().get(0)
-												.getOnlineCertificates().get(0).getBaseStatus())) {
-							documentoAnalise.addObservacao("Possui antecedentes criminais");
-						}
-						if (!CommonsUtil.semValor(engineWebhookRetorno.getProcessos())
-							&& !CommonsUtil.semValor(engineWebhookRetorno.getProcessos().getTotal_acoes_judicias_reu())
-							&& CommonsUtil.mesmoValor(CommonsUtil.intValue(
-									engineWebhookRetorno.getProcessos().getTotal_acoes_judicias_reu()),0)) {
-							documentoAnalise.addObservacao("Possui Processos");
-						}
-					}
-
-					documentoAnaliseDao.merge(documentoAnalise);
-
-					String motivo = "Empresa Vinculada ao Proprietario Atual";
-					if (!CommonsUtil.mesmoValor(documentoAnalise.getMotivoAnalise().toUpperCase(),
-							"PROPRIETARIO ATUAL"))
-						motivo = "Empresa Vinculada ao Proprietario Anterior";
-					
-					if (!CommonsUtil
-							.semValor(engineWebhookRetorno.getConsultaCompleta().getEnterpriseData().getPartnership())
-							&& !CommonsUtil.semValor(engineWebhookRetorno.getConsultaCompleta().getEnterpriseData()
-									.getPartnership().getPartnerships())) {
-
-						for (EngineRetornoRequestEnterprisePartnership partnership : engineWebhookRetorno
-								.getConsultaCompleta().getEnterpriseData().getPartnership().getPartnerships()) {
-
-							documentoAnaliseService.cadastrarPessoRetornoEngine(partnership, userSistema,
-									documentoAnaliseDao, pagadorRecebedorService,
-									documentoAnalise.getContratoCobranca(), motivo);
-
-						}
-					}
-
-					if (!CommonsUtil.semValor(engineWebhookRetorno.getRelacionamentosPessoaisPJ())
-							&& !CommonsUtil.semValor(engineWebhookRetorno.getRelacionamentosPessoaisPJ().getResult())) {
-
-						for (EngineRetornoExecutionResultRelacionamentosPessoaisPJ engineRetornoExecutionResultRelacionamentosPessoaisPJ : engineWebhookRetorno
-								.getRelacionamentosPessoaisPJ().getResult()) {
-
-							if (!CommonsUtil.semValor(
-									engineRetornoExecutionResultRelacionamentosPessoaisPJ.getRelationships())) {
-
-								if (!CommonsUtil.semValor(engineRetornoExecutionResultRelacionamentosPessoaisPJ
-										.getRelationships().getRelationships()))
-									for (EngineRetornoExecutionResultRelacionamentosPessoaisPJPartnership engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership : engineRetornoExecutionResultRelacionamentosPessoaisPJ
-											.getRelationships().getRelationships()) {
-										documentoAnaliseService.cadastrarPessoRetornoEngine(
-												engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership,
-												userSistema, documentoAnaliseDao, pagadorRecebedorService,
-												documentoAnalise.getContratoCobranca(), motivo);
-									}
-
-								if (!CommonsUtil.semValor(engineRetornoExecutionResultRelacionamentosPessoaisPJ
-										.getRelationships().getCurrentRelationships()))
-									for (EngineRetornoExecutionResultRelacionamentosPessoaisPJPartnership engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership : engineRetornoExecutionResultRelacionamentosPessoaisPJ
-											.getRelationships().getCurrentRelationships()) {
-										documentoAnaliseService.cadastrarPessoRetornoEngine(
-												engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership,
-												userSistema, documentoAnaliseDao, pagadorRecebedorService,
-												documentoAnalise.getContratoCobranca(), motivo);
-									}
-
-								if (!CommonsUtil.semValor(engineRetornoExecutionResultRelacionamentosPessoaisPJ
-										.getRelationships().getHistoricalRelationships()))
-									for (EngineRetornoExecutionResultRelacionamentosPessoaisPJPartnership engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership : engineRetornoExecutionResultRelacionamentosPessoaisPJ
-											.getRelationships().getHistoricalRelationships()) {
-										documentoAnaliseService.cadastrarPessoRetornoEngine(
-												engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership,
-												userSistema, documentoAnaliseDao, pagadorRecebedorService,
-												documentoAnalise.getContratoCobranca(), motivo);
-									}
-
-							}
-						}
-
-					}
-					
+					docketService.processaWebHookEngine( documentoAnaliseService, engineWebhookRetorno,
+							pagadorRecebedorService, documentoAnaliseDao, documentoAnalise);
 				}
 			}
 			return Response.status(200).entity("Processado").build();

@@ -170,12 +170,18 @@ public class DocumentoAnaliseService {
 		DocumentoAnalise documentoAnalise = new DocumentoAnalise();
 		documentoAnalise.setContratoCobranca(contratoCobranca);
 		documentoAnalise.setIdentificacao(partnership.getCompanyName());
-
+		String sCPFCNPJ ="";
+		
+		if (CommonsUtil.mesmoValor( partnership.getEntityType() , "J" ))
+		sCPFCNPJ =  CommonsUtil.formataCnpjCpf(CommonsUtil.strZero(partnership.getCNPJ(),14), false);
+//		else
+//			sCPFCNPJ =  CommonsUtil.formataCnpjCpf(CommonsUtil.strZero(partnership.getCNPJ(),9), false);
+		
 		documentoAnalise.setTipoPessoa("PJ");
 		documentoAnalise.setMotivoAnalise(motivo);
 
 		if (documentoAnalise.getTipoPessoa() == "PJ") {
-			documentoAnalise.setCnpjcpf(CommonsUtil.formataCnpjCpf(partnership.getCNPJ(), false));
+			documentoAnalise.setCnpjcpf(sCPFCNPJ);
 			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.RELATO);
 			documentoAnalise.setLiberadoAnalise(false);
 		} else {
@@ -185,10 +191,11 @@ public class DocumentoAnaliseService {
 		PagadorRecebedor pagador = new PagadorRecebedor();
 		pagador.setId(0);
 
-		pagador.setCnpj(partnership.getCNPJ());
+		pagador.setCnpj(sCPFCNPJ);
 		pagador.setNome(partnership.getCompanyName());
 
-		pagador = pagadorRecebedorService.buscaOuInsere(pagador);
+		pagador = pagadorRecebedorService.preecheDadosReceita(pagador);
+		
 		documentoAnalise.setPagador(pagador);
 
 		documentoAnaliseDao.create(documentoAnalise);
@@ -215,12 +222,12 @@ public class DocumentoAnaliseService {
 			pagador.setCpf(documentoAnalise.getCnpjcpf());
 		} else {
 			documentoAnalise.setTipoPessoa("PJ");
-			documentoAnalise.setCnpjcpf( CommonsUtil.formataCnpj(pJPartnership.getRelatedEntityTaxIdNumber()));
+			documentoAnalise.setCnpjcpf( CommonsUtil.formataCnpjCpf(pJPartnership.getRelatedEntityTaxIdNumber(),false));
 			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.RELATO);
 			pagador.setCnpj(documentoAnalise.getCnpjcpf());
 		}
 		
-		if ( documentoAnaliseDao.cadastradoAnalise(contratoCobranca, documentoAnalise.getCnpjcpf()))
+		if ( !CommonsUtil.semValor( documentoAnaliseDao.cadastradoAnalise(contratoCobranca, documentoAnalise.getCnpjcpf())))
 			return;
 		
 		documentoAnalise.setMotivoAnalise(motivo);

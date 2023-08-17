@@ -36,7 +36,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -58,7 +57,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.tools.PDFBox;
 import org.apache.poi.ss.formula.functions.FinanceLib;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
@@ -97,6 +95,15 @@ import org.primefaces.model.charts.bar.BarChartModel;
 import org.primefaces.model.charts.bar.BarChartOptions;
 import org.primefaces.model.charts.optionconfig.title.Title;
 import org.primefaces.model.charts.optionconfig.tooltip.Tooltip;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.JobKey;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.SchedulerFactory;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.quartz.impl.StdSchedulerFactory;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
@@ -128,7 +135,6 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFavorecidos;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaParcelasInvestidor;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaStatus;
-import com.webnowbr.siscoat.cobranca.db.model.DataEngine;
 import com.webnowbr.siscoat.cobranca.db.model.DataVistoria;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.FilaInvestidores;
@@ -165,18 +171,13 @@ import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.cobranca.db.op.SeguradoDAO;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
-import com.webnowbr.siscoat.cobranca.service.NetrinService;
-import com.webnowbr.siscoat.cobranca.service.PagadorRecebedorService;
 import com.webnowbr.siscoat.cobranca.service.PajuService;
-import com.webnowbr.siscoat.cobranca.service.ScrService;
-import com.webnowbr.siscoat.cobranca.service.SerasaService;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.common.GeracaoBoletoMB;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
-import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.common.ReportUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.common.ValidaCNPJ;
@@ -187,6 +188,7 @@ import com.webnowbr.siscoat.exception.SiscoatException;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
+import com.webnowbr.siscoat.job.DocumentoAnaliseJob;
 import com.webnowbr.siscoat.security.LoginBean;
 import com.webnowbr.siscoat.simulador.SimulacaoDetalheVO;
 import com.webnowbr.siscoat.simulador.SimulacaoIPCACalculoV2;
@@ -194,6 +196,7 @@ import com.webnowbr.siscoat.simulador.SimulacaoIPCADadosV2;
 import com.webnowbr.siscoat.simulador.SimulacaoVO;
 import com.webnowbr.siscoat.simulador.SimuladorMB;
 
+import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
 import br.com.galleriabank.netrin.cliente.model.PPE.PpeResponse;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -3496,10 +3499,18 @@ public class ContratoCobrancaMB {
 					"");
 			
 			Responsavel responsavel5 = new Responsavel();
-			//Vivian Vargas Godinho 
+			//Gabriel Fortunato Mancio de Camargo 
 			responsavel5 = rDao.findById((long) 1643);
 			takeBlipMB = new TakeBlipMB();
 			takeBlipMB.sendWhatsAppMessage(responsavel5, "geracao_paju", "Luvison",
+					this.objetoContratoCobranca.getNumeroContrato(), this.objetoContratoCobranca.getPagador().getNome(),
+					"");
+			
+			Responsavel responsavel6 = new Responsavel();
+			//Raí Vitor Sudário
+			responsavel6 = rDao.findById((long) 1709);
+			takeBlipMB = new TakeBlipMB();
+			takeBlipMB.sendWhatsAppMessage(responsavel6, "geracao_paju", "Luvison",
 					this.objetoContratoCobranca.getNumeroContrato(), this.objetoContratoCobranca.getPagador().getNome(),
 					"");
 		}
@@ -3648,7 +3659,11 @@ public class ContratoCobrancaMB {
 								+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
 								mensagemHtmlTeste);
 				eec.enviarEmailHtmlResponsavelAdms(
-						"vivian@luvisoncarvalho.com.br", "[siscoat] Operação "
+						"gabriel@luvisoncarvalho.com.br", "[siscoat] Operação "
+								+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
+								mensagemHtmlTeste);
+				eec.enviarEmailHtmlResponsavelAdms(
+						"raisudario@luvisoncarvalho.com.br", "[siscoat] Operação "
 								+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
 								mensagemHtmlTeste);
 			}
@@ -4634,7 +4649,8 @@ public class ContratoCobrancaMB {
 		InputStream in = new ByteArrayInputStream(decoded);
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 				FacesContext.getCurrentInstance());
-		gerador.open(String.format("Galleria Bank - Data Engine %s.pdf", ""));
+		String nomeArquivoDownload = String.format("Galleria Bank - Data Engine %s.pdf", "");
+		gerador.open(nomeArquivoDownload);
 		gerador.feed(in);
 		gerador.close();
 		return null;
@@ -5398,6 +5414,16 @@ public class ContratoCobrancaMB {
 						""));
 		return geraConsultaContratosPorStatus("Análise Aprovada");
 	}
+	
+	public String enviarContratoEsteiraLuvison(ContratoCobranca contrato) {
+		
+		this.objetoContratoCobranca = getContratoById(objetoContratoCobranca.getId());
+		this.objetoContratoCobranca.setEsteriaComentarioLuvison(true);
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		contratoCobrancaDao.merge(objetoContratoCobranca);
+		return
+		geraConsultaContratosPorStatus("Comentario Jurídico");
+	}
 
 	public void clearEnviarLeadParaComercial() {
 		ResponsavelDao rdao = new ResponsavelDao();
@@ -5537,7 +5563,6 @@ public class ContratoCobrancaMB {
 
 	}
 	
-
 	public String downloadModeloPaju() throws SiscoatException {	
 		PajuService pajuService = new PajuService();
 		String arquivoWord = "ModeloParecerJuridico.docx";
@@ -5547,13 +5572,15 @@ public class ContratoCobrancaMB {
 		String identificacao = objetoContratoCobranca.getNumeroContrato();
 		if (CommonsUtil.semValor(identificacao))
 			gerador.open("Galleria Bank - ModeloPAJU.docx");
-		else
-			gerador.open(String.format("Galleria Bank - ModeloPAJU %s.docx", identificacao));
+		else {
+			String nomeArquivoDownload = String.format("Galleria Bank - ModeloPAJU %s.docx", "");
+			gerador.open(nomeArquivoDownload);
+		}
 		gerador.feed(modeloPaju);
 		gerador.close();
 		
 		return "";
-	}
+	}	
 
 	public String downloadModeloPaju1() throws SiscoatException {	
 		PajuService pajuService = new PajuService();
@@ -5568,7 +5595,7 @@ public class ContratoCobrancaMB {
 			gerador.open(String.format("Galleria Bank - ModeloPAJU %s.docx", identificacao));
 		gerador.feed(modeloPaju);
 		gerador.close();
-		
+
 		return "";
 	}
 
@@ -7166,8 +7193,12 @@ public class ContratoCobrancaMB {
 
 			gravaCelula(0, dataStr, linha, dateStyle);
 
-			gravaCelula(1, CommonsUtil.bigDecimalValue(parcela.getNumeroParcela()), linha, numberStyle);
-
+			try {
+				gravaCelula(1, CommonsUtil.bigDecimalValue(parcela.getNumeroParcela()), linha, numberStyle);
+			} catch (NumberFormatException e) {
+				gravaCelula(1, parcela.getNumeroParcela(), linha, numberStyle);
+			}
+			
 			if (!CommonsUtil.semValor(parcela.getParcelaMensalBaixa())) {
 				gravaCelula(2, ((BigDecimal) parcela.getParcelaMensalBaixa()).doubleValue(), linha, numericStyle);
 				totalParcelaMensal = totalParcelaMensal.add(parcela.getParcelaMensalBaixa());
@@ -7244,8 +7275,8 @@ public class ContratoCobrancaMB {
 
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 				FacesContext.getCurrentInstance());
-
-		gerador.open(String.format("Galleria Bank - Parcelas Investidor - " + nome + "%s.xlsx", ""));
+		String nomeArquivoDownload = String.format("Galleria Bank - Parcelas Investidor - " + nome + "%s.xlsx", "");
+		gerador.open(nomeArquivoDownload);
 		gerador.feed(new ByteArrayInputStream(fileOut.toByteArray()));
 		gerador.close();
 
@@ -8380,8 +8411,10 @@ public class ContratoCobrancaMB {
 			String identificacao = quitacaoPDF.getNome();
 			if (CommonsUtil.semValor(identificacao))
 				gerador.open("Galleria Bank - Quitação.pdf");
-			else
-				gerador.open(String.format("Galleria Bank - Quitação %s.pdf", identificacao));
+			else {
+				String nomeArquivoDownload = String.format("Galleria Bank - Quitação %s.pdf", identificacao);
+				gerador.open(nomeArquivoDownload);
+			}
 			gerador.feed(jp);
 			gerador.close();
 		}
@@ -8756,6 +8789,16 @@ public class ContratoCobrancaMB {
 				PrimeFaces current = PrimeFaces.current();
 				current.executeScript("PF('listaContratosImovel').show();");
 			}
+			
+			if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Pedir PAJU")) {
+				Responsavel resp = objetoContratoCobranca.getResponsavel();
+				if (CommonsUtil.mesmoValor(resp.getCidadeFilial(), "Sorocaba")
+					|| (!CommonsUtil.semValor(resp.getDonoResponsavel()) 
+						&& CommonsUtil.mesmoValor(resp.getDonoResponsavel().getCidadeFilial(), "Sorocaba"))) {
+					objetoContratoCobranca.setAvaliacaoPaju("Luvison");
+					objetoContratoCobranca.setPagtoLaudoConfirmada(true);
+				}
+			}
 		}
 
 		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Comite")) {
@@ -8817,9 +8860,13 @@ public class ContratoCobrancaMB {
 		} else if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Comentario Jurídico")) {
 			if (usuarioLogado.isProfileComentarioJuridico() || usuarioLogado.isAdministrador()) {
 				return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatus.xhtml";
-			} else {
+			} else if(usuarioLogado.isProfilePajuLuvison()){
+				return "/Atendimento/Cobranca/ContratoCobrancaComentarioJuridicoExterno.xhtml";
+			} else { 
 				return "/Atendimento/Cobranca/ContratoCobrancaDetalhesPendentePorStatus.xhtml";
 			}
+		} else if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Comentario Jurídico - Luvison")) {
+			return "/Atendimento/Cobranca/ContratoCobrancaComentarioJuridicoExterno.xhtml";
 		} else if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Comite")) {
 			return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusComite.xhtml";
 		} else if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Pagamento Op.")) {
@@ -11192,8 +11239,8 @@ public class ContratoCobrancaMB {
 
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 				FacesContext.getCurrentInstance());
-
-		gerador.open(String.format("Galleria Bank - Relatorio " + relatorioTipo + " %s.xlsx", ""));
+		String nomeArquivoDownload = String.format("Galleria Bank - Relatorio " + relatorioTipo + " %s.xlsx", "");
+		gerador.open(nomeArquivoDownload);
 		gerador.feed(new ByteArrayInputStream(fileOut.toByteArray()));
 		gerador.close();
 
@@ -11340,8 +11387,8 @@ public class ContratoCobrancaMB {
 
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 				FacesContext.getCurrentInstance());
-
-		gerador.open(String.format("Galleria Bank - Relatorio Securitizadora %s.xlsx", ""));
+		String nomeArquivoDownload = String.format("Galleria Bank - Relatorio Securitizadora %s.xlsx", "");
+		gerador.open(nomeArquivoDownload);
 		gerador.feed(new ByteArrayInputStream(fileOut.toByteArray()));
 		gerador.close();
 
@@ -11488,8 +11535,8 @@ public class ContratoCobrancaMB {
 
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 				FacesContext.getCurrentInstance());
-
-		gerador.open(String.format("Galleria Bank - Relatorio FIDC %s.xlsx", ""));
+		String nomeArquivoDownload = String.format("Galleria Bank - Relatorio FIDC %s.xlsx", "");
+		gerador.open(nomeArquivoDownload);
 		gerador.feed(new ByteArrayInputStream(fileOut.toByteArray()));
 		gerador.close();
 
@@ -13096,6 +13143,9 @@ public class ContratoCobrancaMB {
 		if (status.equals("Comentario Jurídico")) {
 			this.tituloTelaConsultaPreStatus = "Comentario Jurídico";
 		}
+		if (status.equals("Comentario Luvison")) {
+			this.tituloTelaConsultaPreStatus = "Comentario Jurídico - Luvison";
+		}
 		if (status.equals("Pré-Comite")) {
 			this.tituloTelaConsultaPreStatus = "Pré-Comite";
 		}
@@ -13140,30 +13190,18 @@ public class ContratoCobrancaMB {
 		Locale locale = new Locale("pt", "BR");
 		Calendar dataHoje = Calendar.getInstance(zone, locale);
 		Date auxDataHoje = dataHoje.getTime();
+		
+		User user = getUsuarioLogado();
 
-		if (!status.equals("Pré-Comite")) {
+		/*if (CommonsUtil.mesmoValor(status, "Comentario Jurídico")
+				&& !CommonsUtil.semValor(user)
+				&& user.getId() > 0
+				&& user.isProfilePajuLuvison()) {
+			status = "Comentario Luvison";
 			this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, status);
-		} else {
-			if (loginBean != null) {
-				User usuarioLogado = new User();
-				UserDao u = new UserDao();
-				usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
-
-				if (usuarioLogado != null) {
-					if (usuarioLogado.isAdministrador() || usuarioLogado.isUserPreContratoAnalista()) {
-						this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, status);
-					} else {
-						if (usuarioLogado.getListResponsavel().size() > 0) {
-							this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(
-									usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel(), status);
-						} else {
-							this.contratosPendentes = contratoCobrancaDao
-									.geraConsultaContratosCRM(usuarioLogado.getCodigoResponsavel(), null, status);
-						}
-					}
-				}
-			}
-		}
+		} else {*/
+		this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, status);
+		//}
 
 		if (status.equals("Análise Reprovada")) {
 			for (ContratoCobranca contratos : this.contratosPendentes) {
@@ -17019,11 +17057,11 @@ public class ContratoCobrancaMB {
 		if (!CommonsUtil.semValor(cpfCnpjCCResp)) {
 			if (cpfCnpjCCResp.length() == 11) {
 				// transforma em cpf
-				cpfCnpjCCResp = CommonsUtil.formataCpf(cpfCnpjCCResp);
+				cpfCnpjCCResp = CommonsUtil.formataCnpjCpf(cpfCnpjCCResp, false);
 			} else if (cpfCnpjCCResp.length() == 13) {
 				// transforma em cnpj
 				if (!(cpfCnpjCCResp.contains(".") && cpfCnpjCCResp.contains("-"))) {
-					cpfCnpjCCResp = CommonsUtil.formataCnpj(cpfCnpjCCResp);
+					cpfCnpjCCResp = CommonsUtil.formataCnpjCpf(cpfCnpjCCResp, false);
 				}
 			}
 
@@ -19300,6 +19338,9 @@ public class ContratoCobrancaMB {
 			} else {
 				this.objetoContratoCobranca.setContaPagarValorTotal(this.contasPagarSelecionada.getValor());
 			}
+			
+			this.contasPagarSelecionada.setValorPagamento(this.contasPagarSelecionada.getValor());
+			
 			if (!CommonsUtil.semValor(this.contasPagarSelecionada.getValorPagamento())) {
 				StarkBankAPI starkBankAPI = new StarkBankAPI();
 
@@ -19326,7 +19367,7 @@ public class ContratoCobrancaMB {
 				}
 
 				if (this.contasPagarSelecionada.getFormaTransferencia().equals("Pix")) {
-					StarkBankPix starkBankPix = starkBankAPI.paymentPix(this.objetoContratoCobranca.getIspbPixContaPagar(), this.objetoContratoCobranca.getAgenciaBancarioContaPagar(), objetoContratoCobranca.getContaBancarioContaPagar(), 
+					StarkBankPix starkBankPix = starkBankAPI.paymentPix(this.objetoContratoCobranca.getChavePIXBancarioContaPagar(), this.objetoContratoCobranca.getAgenciaBancarioContaPagar(), objetoContratoCobranca.getContaBancarioContaPagar(), 
 							this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar(), this.objetoContratoCobranca.getNomeBancarioContaPagar(), this.contasPagarSelecionada.getValorPagamento(), this.contasPagarSelecionada.getFormaTransferencia());
 					
 					if (starkBankPix != null) {
@@ -19340,14 +19381,11 @@ public class ContratoCobrancaMB {
 								.getContaPagarValorTotal().subtract(this.contasPagarSelecionada.getValorPagamento()));
 						
 						this.contasPagarSelecionada.setValorPagamento(this.contasPagarSelecionada.getValor());
-
-						context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, 
-								"Pagamento StarkBank: Boleto pago sucesso!", ""));
 					}
 				}
 
 				if (this.contasPagarSelecionada.getFormaTransferencia().equals("TED")) {
-					StarkBankPix starkBankPix = starkBankAPI.paymentPix(this.objetoContratoCobranca.getBancoBancarioContaPagar(), this.objetoContratoCobranca.getAgenciaBancarioContaPagar(), objetoContratoCobranca.getContaBancarioContaPagar(), 
+					StarkBankPix starkBankPix = starkBankAPI.paymentTED(this.objetoContratoCobranca.getBancoBancarioContaPagar(), this.objetoContratoCobranca.getAgenciaBancarioContaPagar(), objetoContratoCobranca.getContaBancarioContaPagar(), 
 							this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar(), this.objetoContratoCobranca.getNomeBancarioContaPagar(), this.contasPagarSelecionada.getValorPagamento(), this.contasPagarSelecionada.getFormaTransferencia());
 
 					if (starkBankPix != null) {
@@ -19510,7 +19548,12 @@ public class ContratoCobrancaMB {
 		processoSelecionado.getContaPagar().setResponsavel(objetoContratoCobranca.getResponsavel());
 
 		processoSelecionado.setContrato(objetoContratoCobranca);
-
+		
+		if(CommonsUtil.mesmoValor(processoSelecionado.getQuitar(), "Quitar")
+			|| CommonsUtil.mesmoValor(processoSelecionado.getQuitar(), "Quitar ou indicar bens")) {
+			processoSelecionado.setSelecionadoComite(true);
+		}
+		
 		if (!CommonsUtil.semValor(processoSelecionado.getContaPagar())) {
 			ContasPagarDao cpDao = new ContasPagarDao();
 			if (processoSelecionado.getContaPagar().getId() <= 0) {
@@ -28607,107 +28650,37 @@ public class ContratoCobrancaMB {
 
 	}
 
-	public void executarConsultasAnaliseDocumento() {
 
-		DocketService docketService = new DocketService();
+	public void executarConsultasAnaliseDocumento() throws SchedulerException {
+		SchedulerFactory shedFact = new StdSchedulerFactory();
+		Scheduler scheduler = shedFact.getScheduler();
+		try {
+			scheduler.start();
+			JobDetail jobDetail = JobBuilder.newJob(DocumentoAnaliseJob.class).withIdentity("documentoAnaliseJOB",
+					objetoContratoCobranca.getNumeroContrato()).build();
+			User user = loginBean.getUsuarioLogado();
+			jobDetail.getJobDataMap().put("listaDocumentoAnalise", listaDocumentoAnalise);
+			jobDetail.getJobDataMap().put("user", user);
+			jobDetail.getJobDataMap().put("objetoContratoCobranca", objetoContratoCobranca);
+			Trigger trigger = TriggerBuilder.newTrigger().withIdentity("documentoAnaliseJOB",
+					objetoContratoCobranca.getNumeroContrato()).startNow().build();		
+			scheduler.scheduleJob(jobDetail, trigger);
+		} catch (SchedulerException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public boolean checkConsultasAnaliseDocumento() throws SchedulerException {
+		try {
+			SchedulerFactory shedFact = new StdSchedulerFactory();
+			Scheduler scheduler = shedFact.getScheduler();
+			JobKey key = JobKey.jobKey("documentoAnaliseJOB", objetoContratoCobranca.getNumeroContrato());
+			boolean jobExist = scheduler.checkExists(key);
 
-		SerasaService serasaService = new SerasaService();
-
-		NetrinService netrinService = new NetrinService();
-
-		ScrService scrService = new ScrService();
-
-		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-
-		for (DocumentoAnalise documentoAnalise : this.listaDocumentoAnalise.stream().filter(d -> d.isLiberadoAnalise()
-				|| d.isLiberadoSerasa() || d.isLiberadoCenprot() || d.isLiberadoScr() || d.isLiberadoProcesso())
-				.collect(Collectors.toList())) {
-
-			if (documentoAnalise.isLiberadoAnalise()) {
-
-				PpeResponse resultPEP = null;
-				if (DocumentosAnaliseEnum.REA.equals(documentoAnalise.getTipoEnum())) {
-					if (documentoAnalise.isPodeChamarRea()) {
-						documentoAnalise.addObservacao("Processando REA");
-						PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
-						docketService.uploadREA(documentoAnalise, loginBean.getUsuarioLogado());
-					}
-					continue;
-				} else {
-					if (documentoAnalise.isPodeChamarPpe() && !documentoAnalise.isPpeProcessado()) {
-						netrinService.requestCadastroPepPF(documentoAnalise);
-						resultPEP = GsonUtil.fromJson(documentoAnalise.getRetornoPpe(), PpeResponse.class);
-						
-						PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
-						pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
-								DocumentosAnaliseEnum.PPE, documentoAnalise.getRetornoPpe());
-						
-					} else if (documentoAnalise.isPpeProcessado()) {
-						resultPEP = GsonUtil.fromJson(
-								documentoAnalise.getRetornoPpe().replace("\"details\":\"\"", "\"details\":{}"),
-								PpeResponse.class);
-					}
-				}
-
-				if (!CommonsUtil.semValor(resultPEP) && !CommonsUtil.semValor(resultPEP.getPepKyc()))
-					if ( !CommonsUtil.booleanValue(documentoAnalise.isLiberadoContinuarAnalise()) &&
-							CommonsUtil.mesmoValorIgnoreCase("Sim", resultPEP.getPepKyc().getCurrentlyPEP())
-							&& (resultPEP.getPepKyc().getHistoryPEP().stream()
-									.filter(p -> CommonsUtil.mesmoValor(p.getLevel(), "1")).findAny().isPresent())) {
-						documentoAnalise.addObservacao("Verfiicar PEP");
-						documentoAnaliseDao.merge(documentoAnalise);
-						PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
-						continue;
-					}
-
-				if (!documentoAnalise.isProcessoProcessado()) {
-					documentoAnalise.addObservacao("Processando Processos");
-					PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
-					netrinService.requestProcesso(documentoAnalise);
-
-					PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
-					pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
-							DocumentosAnaliseEnum.PROCESSO, documentoAnalise.getRetornoProcesso());
-					
-				}
-
-				if (CommonsUtil.semValor(documentoAnalise.getRetornoCenprot())) {
-					documentoAnalise.addObservacao("Processando Protestos");
-					PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
-					netrinService.requestCenprot(documentoAnalise);
-					
-					PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
-					pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
-							DocumentosAnaliseEnum.CENPROT, documentoAnalise.getRetornoCenprot());
-					
-				}
-
-//				if (documentoAnalise.isPodeChamarSerasa()
-//						&& CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
-//					documentoAnalise.addObservacao("Processando SERASA");
-//					PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
-//					serasaService.requestSerasa(documentoAnalise, loginBean.getUsuarioLogado());
-//				}
-
-				if (documentoAnalise.isPodeChamarEngine()
-						&& CommonsUtil.semValor(documentoAnalise.getRetornoEngine())) {
-
-					documentoAnalise.addObservacao("Processando Engine");
-					PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
-					DataEngine engine = docketService.engineInserirPessoa(documentoAnalise.getPagador(),
-							objetoContratoCobranca);
-					docketService.engineCriarConsulta(documentoAnalise, engine, loginBean.getUsuarioLogado());
-				}
-
-				if (CommonsUtil.semValor(documentoAnalise.getRetornoScr())) {
-					documentoAnalise.addObservacao("Processando SCR");
-					PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
-					scrService.requestScr(documentoAnalise);
-				}
-				documentoAnalise.addObservacao("Pesquisas finalizadas");
-				documentoAnaliseDao.merge(documentoAnalise);
-				PrimeFaces.current().ajax().update("form:ArquivosAnalisados");
-			}
+			return jobExist;
+		} catch (SchedulerException e) {
+			e.printStackTrace();
+			return false;
 		}
 	}
 

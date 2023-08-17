@@ -18,6 +18,19 @@ public class Cidade implements Serializable {
 	public Cidade(){
 
 	}
+	
+	public String cidadeString() {
+		String praiaStr = "";
+		if(praia) {
+			praiaStr = "Sim";
+		} else {
+			praiaStr = "Não";
+		}
+		return "Cidade - "+ nome +", " + estado + "\nRanking Nacional = " + rankingNacional
+				+ "\nRanking Estadual = " + rankingEstadual + "\nPopulação = " + populacao + "\nPraia = " + praiaStr + "";
+	}
+
+
 
 	public long getId() {
 		return id;

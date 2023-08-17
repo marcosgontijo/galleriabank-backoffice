@@ -110,7 +110,8 @@
 	   		         #{(contratos.cadastroAprovadoValor eq 'Pendente') ? 'linhaRoxa' : '' }
 	   		         #{(contratos.pendenciaLaudoPaju eq true) ? 'parcelaparcial' : '' } 
 	   		         #{(contratos.responsavel.superlogica) ? 'superlogica' : '' }
-	   		         #{(contratos.imovel.objetoCidade.pintarLinha eq true) ? 'parcelaBoletoPago' : '' }" 
+	   		         #{(contratos.imovel.objetoCidade.pintarLinha eq true) ? 'parcelaBoletoPago' : '' }
+	   		         #{(contratos.contratoPrioridadeAlta eq true) ? 'linhaRosa' : '' }" 
    		         rows="50"
                  paginator="true"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"

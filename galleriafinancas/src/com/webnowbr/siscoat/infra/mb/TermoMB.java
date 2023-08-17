@@ -3,7 +3,6 @@ package com.webnowbr.siscoat.infra.mb;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -25,11 +24,9 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.imageio.ImageIO;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.primefaces.PrimeFaces;
-import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 import org.primefaces.model.StreamedContent;
@@ -64,6 +61,7 @@ public class TermoMB {
 	private Termo objetoTermo;
 	private boolean updateMode = false;
 	private boolean deleteMode = false;
+	private boolean btnAceiteDesativado = false;
 	private String tituloPainel = null;
 	private String pathArquivoAnteriorSalvo = null;
 	private String arquivoAnteriorSalvo = null;
@@ -253,7 +251,7 @@ public class TermoMB {
 	
 
 
-	public String verificaTermosNaoAssinadoso() throws IOException {
+	public String verificaTermosNaoAssinados() throws IOException {
 
 		if (CommonsUtil.semValor(termos)) {
 			termos = termosNaoAssinadosUsuario(loginBean.getUsuarioLogado());
@@ -294,10 +292,10 @@ public class TermoMB {
 			PDDocument doc = PDDocument.load(new File(termos.get(itermo).getPath()));
 			PDFRenderer pdfRenderer = new PDFRenderer(doc);
 
-			BufferedImage joinBufferedImage = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
+			BufferedImage joinBufferedImage = new BufferedImage(1,1, BufferedImage.TYPE_INT_ARGB);
 
 			for (int x = 0; x < doc.getNumberOfPages(); x++) {
-				BufferedImage bImage = pdfRenderer.renderImageWithDPI(x, 100, org.apache.pdfbox.rendering.ImageType.RGB);
+				BufferedImage bImage = pdfRenderer.renderImageWithDPI(x, 115, org.apache.pdfbox.rendering.ImageType.RGB);
 				joinBufferedImage = joinBufferedImage(joinBufferedImage, bImage);
 			}
 
@@ -311,9 +309,12 @@ public class TermoMB {
 
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
+			System.out.println(termos.get(itermo).getPath());
 			e.printStackTrace();
 		}
-		return "data:image/png;base64, " + Base64.getEncoder().encodeToString(bytes);
+		String base64 = Base64.getEncoder().encodeToString(bytes);
+		btnAceiteDesativado = false;
+		return "data:image/png;base64," + base64;	
 	}
 	
 	private BufferedImage joinBufferedImage(BufferedImage img1, BufferedImage img2) {
@@ -424,5 +425,15 @@ public class TermoMB {
 	public void setDeleteMode(boolean deleteMode) {
 		this.deleteMode = deleteMode;
 	}
+
+	public boolean isBtnAceiteDesativado() {
+		return btnAceiteDesativado;
+	}
+
+	public void setBtnAceiteDesativado(boolean btnAceiteDesativado) {
+		this.btnAceiteDesativado = btnAceiteDesativado;
+	}
+	
+	
 
 }
