@@ -112,8 +112,8 @@ import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
-import com.itextpdf.text.Image;
 import com.itextpdf.text.Font.FontFamily;
+import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
@@ -202,8 +202,6 @@ import com.webnowbr.siscoat.simulador.SimulacaoIPCADadosV2;
 import com.webnowbr.siscoat.simulador.SimulacaoVO;
 import com.webnowbr.siscoat.simulador.SimuladorMB;
 
-import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
-import br.com.galleriabank.netrin.cliente.model.PPE.PpeResponse;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -2593,6 +2591,7 @@ public class ContratoCobrancaMB {
 		}
 		return null;
 	}
+
 
 	public void populaReferenciaBancariaCPF() {
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -19843,8 +19842,6 @@ public class ContratoCobrancaMB {
 		this.comprovanteStarkBankGerado = false;
 		
 		DecimalFormat df = new DecimalFormat("###,###,###,###,###.00"); 
-<<<<<<< HEAD
-=======
 
 		FacesContext context = FacesContext.getCurrentInstance();
 		/*
@@ -20107,6 +20104,30 @@ public class ContratoCobrancaMB {
 		return saldo;
 	}
 	
+	public BigDecimal getTotalBaixasStarkBank(ContasPagar contaPagar) {
+		BigDecimal saldo = BigDecimal.ZERO;
+		
+		if (contaPagar.getListContasPagarBaixas().size() > 0) {
+			for (StarkBankBaixa baixas : contaPagar.getListContasPagarBaixas()) {
+				saldo = saldo.add(baixas.getValor());
+			}
+		} else {
+			saldo = contaPagar.getValorPagamento();
+		}
+			
+		return saldo;
+	}
+	
+	public Date getDataUltimaBaixaStarkBank(ContasPagar contaPagar) {
+		Date dataUltimoPagamento = null;
+		
+		if (contaPagar.getListContasPagarBaixas().size() > 0) {
+			return contaPagar.getListContasPagarBaixas().get(contaPagar.getListContasPagarBaixas().size() - 1).getDataPagamento();
+		} else {
+			return contaPagar.getDataPagamento();
+		}
+	}
+	
 	public StarkBankBaixa registraBaixaStarkBank(Date dataPagamento, String documento, String idTransacao, String linhaBoleto, String nomePagador, 
 			BigDecimal valorPago, ContasPagar contaPagar, String formaPagamento) {
 		StarkBankBaixaDAO sbDAO = new StarkBankBaixaDAO();
@@ -20145,7 +20166,6 @@ public class ContratoCobrancaMB {
 			contasPagarDao.merge(contaPagar);
 		}
 	}
->>>>>>> branch 'master' of https://github.com/webnowbr/backoffice.git
 
 	public void clearPagadorProcesso(CcbProcessosJudiciais processo) {
 		processoSelecionado = processo;
