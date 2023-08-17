@@ -19794,6 +19794,8 @@ public class ContratoCobrancaMB {
 		if (finalizaOperacao) {
 			BigDecimal saldoConta = getSaldoContaPagar(this.contasPagarSelecionada);
 			
+			this.contasPagarSelecionada.setValorPagamento(saldoConta);
+			
 			if (saldoConta.compareTo(this.contasPagarSelecionada.getValor()) >= 0) {
 				this.contasPagarSelecionada.setContaPaga(true);
 			}

@@ -578,6 +578,18 @@
 								<p:outputLabel value="#{contas.formaTransferencia}"
 									style="FONT-SIZE: 10pt;width:100px;" />
 							</p:column>
+							
+							<p:column style="text-align: center;" headerText="Data Último Pagamento"  >
+								<h:outputText value="#{contratoCobrancaMB.getDataUltimaBaixaStarkBank(contas)}"> 
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+							
+							<p:column style="text-align: center;" headerText="Valor Total Pago (R$)"  >
+								<p:outputLabel value="#{contratoCobrancaMB.getTotalBaixasStarkBank(contas)}" 
+									style="FONT-SIZE: 10pt;"
+									converter="bigDecimalConverter" />
+							</p:column> 
 						
 							<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR, COBRANCA_FINANCEIRO">								
 								<p:column style="text-align: center;width:260px;" headerText="" >
