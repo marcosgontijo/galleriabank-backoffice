@@ -2198,5 +2198,39 @@
 			<column name="esteriaComentarioLuvison" not-null="true" default="false"/>
 		</property>	
 		
+		<property name="protestoTaxa" type="boolean">
+			<column name="protestoTaxa" not-null="true" default="false"/>
+		</property>	
+		<property name="chequeDevolvidoTaxa" type="boolean">
+			<column name="chequeDevolvidoTaxa" not-null="true" default="false"/>
+		</property>	
+		<property name="pefinTaxa" type="boolean">
+			<column name="pefinTaxa" not-null="true" default="false"/>
+		</property>	
+		<property name="refinTaxa" type="boolean">
+			<column name="refinTaxa" not-null="true" default="false"/>
+		</property>	
+		<property name="scoreBaixoTaxa" type="boolean">
+			<column name="scoreBaixoTaxa" not-null="true" default="false"/>
+		</property>	
+		<property name="terceiroGrantidorTaxa" type="boolean">
+			<column name="terceiroGrantidorTaxa" not-null="true" default="false"/>
+		</property>	
+		<property name="relacionamentoBacenRecenteTaxa" type="boolean">
+			<column name="relacionamentoBacenRecenteTaxa" not-null="true" default="false"/>
+		</property>	
+		<property name="dividaVencidaTaxa" type="boolean">
+			<column name="dividaVencidaTaxa" not-null="true" default="false"/>
+		</property>	
+		<property name="prejuizoBacenTaxa" type="boolean">
+			<column name="prejuizoBacenTaxa" not-null="true" default="false"/>
+		</property>	
+		<property name="riscoTotalBaixoTaxa" type="boolean">
+			<column name="riscoTotalBaixoTaxa" not-null="true" default="false"/>
+		</property>	
+		<property name="terrenoOuBarracaoTaxa" type="boolean">
+			<column name="terrenoOuBarracaoTaxa" not-null="true" default="false"/>
+		</property>	
+		
 	</class>
 </hibernate-mapping>

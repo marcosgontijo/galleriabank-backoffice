@@ -68,7 +68,7 @@ public class DocumentoAnaliseJob implements Job {
 			System.out.println("incio DocumentoAnaliseJob" + documentoAnaliseJobConsultar.objetoContratoCobranca.getNumeroContrato());
 			documentoAnaliseJobConsultar.executarConsultasAnaliseDocumento();
 			System.out.println("Fim DocumentoAnaliseJob - " + documentoAnaliseJobConsultar.objetoContratoCobranca.getNumeroContrato());
-		} catch (Exception e) {
+ 		} catch (Exception e) {
 			System.out.println("DocumentoAnaliseJob.execute " + "DocumentoAnaliseJob: EXCEPTION" +  e.toString() + " - " + documentoAnaliseJobConsultar);
 			e.printStackTrace();
 		}

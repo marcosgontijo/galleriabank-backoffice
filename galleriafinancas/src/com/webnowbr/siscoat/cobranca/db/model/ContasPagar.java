@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
@@ -49,6 +50,8 @@ public class ContasPagar implements Serializable {
 	
 	private StarkBankBoleto comprovantePagamentoStarkBank;
 	private StarkBankPix comprovantePagamentoPixStarkBank;
+	
+	private List<StarkBankBaixa> listContasPagarBaixas = new ArrayList<StarkBankBaixa>();
 	
 	private Collection<FileUploaded> filesContas = new ArrayList<FileUploaded>();
 
@@ -337,5 +340,13 @@ public class ContasPagar implements Serializable {
 
 	public void setDigitoContaTed(String digitoContaTed) {
 		this.digitoContaTed = digitoContaTed;
+	}
+
+	public List<StarkBankBaixa> getListContasPagarBaixas() {
+		return listContasPagarBaixas;
+	}
+
+	public void setListContasPagarBaixas(List<StarkBankBaixa> listContasPagarBaixas) {
+		this.listContasPagarBaixas = listContasPagarBaixas;
 	}
 }

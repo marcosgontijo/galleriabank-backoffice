@@ -8,6 +8,15 @@ import java.util.List;
 
 public class SiscoatConstants {
 	public static final int GALLERIA_FINANCAS_ID = 14;
+	
+	public static final Long ASSISTENTE_ISA = 1556L;
+	public static final Long ASSISTENTE_BIA = 359L;
+	public static final Long COMMERCIAL_GIS  = 5L;
+	public static final Long COMMERCIAL_LUIS = 6L;
+	public static final Long COMMERCIAL_ERIK = 35L;
+	public static final Long COMMERCIAL_JOAO_ANTONIO = 1695L;
+	public static final Long COMMERCIAL_ALINE = 1191L;
+	public static final Long COMMERCIAL_PAULA = 826L;
 
 	public static final String CONTRATO_QUITADO = "Quitado";
 	public static final String CONTRATO_ATIVO = "Ativo";

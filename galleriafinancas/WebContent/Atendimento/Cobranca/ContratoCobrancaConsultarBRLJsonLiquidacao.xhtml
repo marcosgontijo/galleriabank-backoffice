@@ -77,7 +77,31 @@
 						style="TEXT-DECORATION: bold;" />
 				</h:panelGrid>
 			</p:panel>
-			<p:panel id="ConsultaContratosResultados" header="Contratos - Consultar" style="margin-bottom:10px;">		    		    
+			<p:panel id="ConsultaContratosResultados" header="Contratos - Consultar" style="margin-bottom:10px;">	
+				<h:panelGrid columns="3">
+					<h:panelGrid columns="2" style="margin-top: 30px !importante; margin-bottom: 30px !importante; ">
+						<p:outputLabel value="Quantidade Contratos:"
+							styleClass="labelBold" />
+						<h:outputText value="#{brlTrustMB.qtdSelecionadoLiquidacao}"
+							styleClass="labelBold" style="font-weight: bold; font-size: 18px;" />
+					</h:panelGrid>	  
+				
+					<h:panelGrid columns="3" style="margin-top: 30px !importante; margin-bottom: 30px !importante; ">
+						<p:outputLabel value="Valor Total Recebido:  "
+							styleClass="labelBold" />
+						<h:outputText value="R$ " styleClass="labelBold" style="font-weight: bold; font-size: 18px;" />
+						<h:outputText value="#{brlTrustMB.valorTotalRecebidoLiquidacao}"
+								converter="bigDecimalConverter" styleClass="labelBold" style="font-weight: bold; font-size: 18px;" />
+					</h:panelGrid>	
+					
+					<h:panelGrid columns="3" style="margin-top: 30px !importante; margin-bottom: 30px !importante; ">
+						<p:outputLabel value="Valor Total Juros  + Amortização:  "
+							styleClass="labelBold" />
+						<h:outputText value="R$ " styleClass="labelBold" style="font-weight: bold; font-size: 18px;" />
+						<h:outputText value="#{brlTrustMB.valorTotalJurosAmortizacaoLiquidacao}"
+								converter="bigDecimalConverter" styleClass="labelBold" style="font-weight: bold; font-size: 18px;" />
+					</h:panelGrid>	  
+				</h:panelGrid>		    
 				<p:dataTable id="dtContratos" var="parcelaBaixa"
 					value="#{brlTrustMB.parcelasLiquidacao}"
 					selection="#{brlTrustMB.selectedJsonLiquidacao}" rowKey="#{parcelaBaixa.id}"
@@ -146,7 +170,9 @@
 		            <f:facet name="footer">
 						<p:commandButton action="#{brlTrustMB.geraJSONLiquidacao()}" ajax="false" icon="ui-icon-print" value="Gerar JSON Liquidação Geral" title="Gerar JSON Liquidação Geral"/>  			        		
 					</f:facet>	   
-					        	
+					<p:ajax event="rowSelectCheckbox" update=":form:ConsultaContratosResultados" process="@this" listener="#{brlTrustMB.calculaValorTotalLiquidacao()}"/>
+					<p:ajax event="rowUnselectCheckbox" update=":form:ConsultaContratosResultados" process="@this" listener="#{brlTrustMB.calculaValorTotalLiquidacao()}"/>
+					<p:ajax event="toggleSelect" update=":form:ConsultaContratosResultados" process="@this" listener="#{brlTrustMB.calculaValorTotalLiquidacao()}"/>	        		               		        			        			           			 						      	
 				</p:dataTable>
 			</p:panel>
 		</h:form>
