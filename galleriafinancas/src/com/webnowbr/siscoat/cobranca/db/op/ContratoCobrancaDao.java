@@ -7858,13 +7858,16 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 
 	private Integer contarTotalParcelas(List<ContratoCobrancaDetalhes> listContratoCobrancaDetalhes) {
 		int totalParcelas = 0;
+		
+		totalParcelas = CommonsUtil.intValue(listContratoCobrancaDetalhes.stream()
+				.filter(d -> !CommonsUtil.mesmoValor(d.getNumeroParcela(), "0") || d.isAmortizacao()).count());
 
-		for (ContratoCobrancaDetalhes contratoCobrancaDetalhes : listContratoCobrancaDetalhes) {
-			if (CommonsUtil.mesmoValor(contratoCobrancaDetalhes.getNumeroParcela(), "0")
-					|| contratoCobrancaDetalhes.isAmortizacao() )
-				continue;
-			totalParcelas++;
-		}
+//		for (ContratoCobrancaDetalhes contratoCobrancaDetalhes : listContratoCobrancaDetalhes) {
+//			if (CommonsUtil.mesmoValor(contratoCobrancaDetalhes.getNumeroParcela(), "0")
+//					|| contratoCobrancaDetalhes.isAmortizacao() )
+//				continue;
+//			totalParcelas++;
+//		}
 
 		return totalParcelas;
 	}
