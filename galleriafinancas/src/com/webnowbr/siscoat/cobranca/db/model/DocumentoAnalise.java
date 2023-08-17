@@ -66,6 +66,11 @@ public class DocumentoAnalise implements Serializable {
 	private String retornoScr;
 	private String observacao;
 	private boolean excluido;
+	
+//	public List<DocumentoAnaliseResumo> getResumoEnginePj() {
+//		CredNet dados = GsonUtil.fromJson(getRetornoSerasa(), CredNet.class);
+//		EngineRetorno enginePj = null;
+//	}
 
 	public List<DocumentoAnaliseResumo> getResumoEngine() {
 		List<DocumentoAnaliseResumo> result = new ArrayList<>();
@@ -493,6 +498,14 @@ public class DocumentoAnalise implements Serializable {
 	}
 
 	public void setRetornoEngine(String retornoEngine) {
+		this.retornoEngine = retornoEngine;
+	}
+	
+	public String getRetornoEnginePj() {
+		return retornoEngine;
+	}
+	
+	public void setRetornoEnginePj(String retornoEngine) {
 		this.retornoEngine = retornoEngine;
 	}
 
