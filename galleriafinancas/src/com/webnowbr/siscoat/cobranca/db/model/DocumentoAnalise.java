@@ -352,7 +352,7 @@ public class DocumentoAnalise implements Serializable {
 	}
 
 	public boolean isEngineProcessado() {
-		return !CommonsUtil.semValor(engine) && !CommonsUtil.semValor(engine.getIdCallManager())  ;
+		return !CommonsUtil.semValor(engine) && !CommonsUtil.semValor(engine.getIdCallManager());
 	}
 
 	public boolean isPodeChamarSerasa() {
@@ -449,11 +449,6 @@ public class DocumentoAnalise implements Serializable {
 
 		return GsonUtil.toJson(dossieRequest);
 
-	}
-	
-	@Override
-	public String toString() {
-		return "DocumentoAnalise [id=" + id + ", tipo=" + tipo + "]";
 	}
 
 	public long getId() {
