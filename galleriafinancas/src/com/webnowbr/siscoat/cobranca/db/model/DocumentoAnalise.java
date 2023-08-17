@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+
+import org.apache.xmlgraphics.util.uri.CommonURIResolver;
+import org.primefaces.PrimeFaces;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
@@ -352,7 +355,7 @@ public class DocumentoAnalise implements Serializable {
 	}
 
 	public boolean isEngineProcessado() {
-		return !CommonsUtil.semValor(engine) && !CommonsUtil.semValor(engine.getIdCallManager());
+		return !CommonsUtil.semValor(engine) && !CommonsUtil.semValor(engine.getIdCallManager())  ;
 	}
 
 	public boolean isPodeChamarSerasa() {
@@ -423,7 +426,7 @@ public class DocumentoAnalise implements Serializable {
 				return true;
 			}
 
-		return false;
+		return  CommonsUtil.mesmoValor(observacao, "Verificar Engine");
 	}
 
 	

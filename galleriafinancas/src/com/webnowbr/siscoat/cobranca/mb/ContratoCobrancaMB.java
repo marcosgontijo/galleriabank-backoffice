@@ -34486,7 +34486,6 @@ public class ContratoCobrancaMB {
 		this.documentoAnalisePopup = documentoAnalisePopup;
 	}
 
-
 	public boolean isBaixaMultiParcelasComTxADM() {
 		return baixaMultiParcelasComTxADM;
 	}
