@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-
-import org.apache.xmlgraphics.util.uri.CommonURIResolver;
 import org.primefaces.PrimeFaces;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -22,8 +20,10 @@ import br.com.galleriabank.netrin.cliente.model.cenprot.CenprotResponse;
 import br.com.galleriabank.netrin.cliente.model.cenprot.ProtestosBrasilEstado;
 import br.com.galleriabank.netrin.cliente.model.dossie.DossieRequest;
 import br.com.galleriabank.netrin.cliente.model.processos.ProcessoResponse;
+import br.com.galleriabank.serasacrednet.cliente.model.AcaoJudicial;
 import br.com.galleriabank.serasacrednet.cliente.model.CredNet;
 import br.com.galleriabank.serasacrednet.cliente.util.GsonUtil;
+import br.com.galleriabank.netrin.cliente.model.processos.ProcessoResumoTipo;
 
 public class DocumentoAnalise implements Serializable {
 
@@ -68,6 +68,32 @@ public class DocumentoAnalise implements Serializable {
 	private String retornoScr;
 	private String observacao;
 	private boolean excluido;
+
+//	public List<DocumentoAnaliseResumo> getResumoEnginePj() {
+//		CredNet dados = GsonUtil.fromJson(getRetornoSerasa(), CredNet.class);
+//		EngineRetorno enginePj = null;
+//	}
+	
+	public List<DocumentoAnaliseResumo> getResumoProcesso() {
+		List<DocumentoAnaliseResumo> vProcesso = new ArrayList<>();
+		EngineRetornoExecutionResultProcessos processo = null;
+		try {
+			processo = GsonUtil.fromJson(getRetornoProcesso(), EngineRetornoExecutionResultProcessos.class);
+		} catch (Exception erro) {
+			vProcesso.add(new DocumentoAnaliseResumo(null, null));
+		}
+		if (processo == null) {
+			vProcesso.add(new DocumentoAnaliseResumo("não disponível", null));
+		} else {
+				if (processo.getProcessos()== null) {
+					vProcesso.add(new DocumentoAnaliseResumo("Processos", "Não disponível"));
+				} else {
+					String processos = CommonsUtil.stringValue(processo.getProcessos());
+					vProcesso.add(new DocumentoAnaliseResumo("Processos:", processos));
+						}
+				}
+		return vProcesso;
+	}
 
 	public List<DocumentoAnaliseResumo> getResumoEngine() {
 		List<DocumentoAnaliseResumo> result = new ArrayList<>();
@@ -702,4 +728,4 @@ public class DocumentoAnalise implements Serializable {
 		this.excluido = excluido;
 	}
 
-}
+}	
