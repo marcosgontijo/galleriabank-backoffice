@@ -4,6 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
+import org.apache.xmlgraphics.util.uri.CommonURIResolver;
+import org.primefaces.PrimeFaces;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
@@ -58,6 +62,7 @@ public class DocumentoAnalise implements Serializable {
 	private String retornoEngine;
 	private String retornoSerasa;
 	private String retornoCenprot;
+	private String tipoProcesso;
 	private String retornoProcesso;
 	private String retornoPpe;
 
@@ -213,7 +218,72 @@ public class DocumentoAnalise implements Serializable {
 					serasa.add(new DocumentoAnaliseResumo("Falência Insucesso:", falenciaInsuceso));
 				}
 			} else {
-				serasa.add(new DocumentoAnaliseResumo("Menu não disponível para PJ", null));
+
+				if (CommonsUtil.mesmoValor(tipoPessoa, "PF")) {
+
+					if (dados.getChequeSemFundo() == null) {
+						serasa.add(new DocumentoAnaliseResumo("Cheque Sem Fundo:", "Não disponível"));
+					} else {
+						String cheque = CommonsUtil.stringValue(dados.getChequeSemFundo().getPcsfQtCheques());
+						serasa.add(new DocumentoAnaliseResumo("Cheque Sem Fundo:", cheque));
+					}
+
+					if (dados.getDividaVencidaResumo() == null
+							|| dados.getDividaVencidaResumo().getPpfiVlTotalPendencia() == null) {
+						serasa.add(new DocumentoAnaliseResumo("Divida vencida:", "Não Disponível"));
+					} else {
+						String divida = CommonsUtil
+								.formataValorMonetario(dados.getDividaVencidaResumo().getPpfiVlTotalPendencia());
+						serasa.add(new DocumentoAnaliseResumo("Dívida vencida:", divida));
+					}
+
+					if (dados.getPefinResumo() == null || dados.getPefinResumo().getPpfiVlTotalPendencia() == null) {
+						serasa.add(new DocumentoAnaliseResumo("Pefin:", "Não Disponível"));
+					} else {
+						String pefin = CommonsUtil
+								.formataValorMonetario(dados.getPefinResumo().getPpfiVlTotalPendencia());
+						serasa.add(new DocumentoAnaliseResumo("Pefin:", pefin));
+					}
+
+					if (dados.getRefinResumo() == null || dados.getRefinResumo().getPpfiVlTotalPendencia() == null) {
+						serasa.add(new DocumentoAnaliseResumo("Refin:", "Não Disponível"));
+					} else {
+						String refin = CommonsUtil
+								.formataValorMonetario(dados.getRefinResumo().getPpfiVlTotalPendencia());
+						serasa.add(new DocumentoAnaliseResumo("Refin:", refin));
+					}
+
+					if (dados.getProtesto() == null) {
+						serasa.add(new DocumentoAnaliseResumo("Protesto:", "Não Disponível"));
+					} else {
+						String protesto = CommonsUtil.formataValorMonetario(dados.getProtesto().getPeptVlTotal());
+						serasa.add(new DocumentoAnaliseResumo("Protesto:", protesto));
+					}
+
+					if (dados.getAcoesCivil() == null) {
+						serasa.add(new DocumentoAnaliseResumo("Ações Civis:", "Não Disponível"));
+					} else {
+						String acoes = CommonsUtil.formataValorMonetario(dados.getAcoesCivil().getPeajVlTotalAcao());
+						serasa.add(new DocumentoAnaliseResumo("Ações Civis:", acoes));
+					}
+
+					if (dados.getFalencias() == null) {
+						serasa.add(new DocumentoAnaliseResumo("Falências:", "Não Disponível"));
+					} else {
+						String falencia = CommonsUtil.formataValorMonetario(dados.getFalencias().getPeajVlTotalAcao());
+						serasa.add(new DocumentoAnaliseResumo("Falências:", falencia));
+					}
+
+					if (dados.getFalenciasInsucesso() == null) {
+						serasa.add(new DocumentoAnaliseResumo("Falência Insucesso:", "Não Disponível"));
+					} else {
+						String falenciaInsuceso = CommonsUtil
+								.formataValorMonetario(dados.getFalenciasInsucesso().getPeajVlTotalAcao());
+						serasa.add(new DocumentoAnaliseResumo("Falência Insucesso:", falenciaInsuceso));
+					}
+				} else {
+					serasa.add(new DocumentoAnaliseResumo("Menu não disponível para PJ", null));
+				}
 			}
 		}
 		return serasa;
@@ -539,6 +609,14 @@ public class DocumentoAnalise implements Serializable {
 		this.retornoProcesso = retornoProcesso;
 	}
 	
+	public String getTipoProcesso() {
+		return tipoProcesso;
+	}
+
+	public void setTipoProcesso(String tipoProcesso) {
+		this.tipoProcesso = tipoProcesso;
+	}
+
 	public String getRetornoPpe() {
 		return retornoPpe;
 	}
@@ -651,4 +729,4 @@ public class DocumentoAnalise implements Serializable {
 		this.excluido = excluido;
 	}
 
-}	
+}
