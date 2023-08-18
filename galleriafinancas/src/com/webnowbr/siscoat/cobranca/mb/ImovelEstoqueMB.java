@@ -31,7 +31,6 @@ import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ImovelEstoqueDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
-import com.webnowbr.siscoat.db.dao.HibernateDao;
 
 /** ManagedBean. */
 @ManagedBean(name = "imovelEstoqueMB")
@@ -50,6 +49,10 @@ public class ImovelEstoqueMB {
 	private boolean editarEstoque;
 	private List<ContratoCobranca> listaConsultaEstoque = new ArrayList<ContratoCobranca>();
 	private List<ImovelEstoque> listImovelEstoque;
+	private List<RelatorioEstoque> listRelatorioEstoque;
+	
+	
+	
 	/**
 	 * Construtor.
 	 */
@@ -150,7 +153,6 @@ public class ImovelEstoqueMB {
 		}
 
 		gravaCelula(0, "N° CONTRATO", linha);
-		gravaCelula(1, "PARCELA QUE PAROU PAGAR", linha);
 		gravaCelula(2, "VARIAÇÃO CUSTOS ATÉ LEILÃO", linha);
 		gravaCelula(3, "LTV DO LEILÃO", linha);
 		gravaCelula(4, "VALOR DO EMPRESTIMO", linha);
@@ -170,10 +172,11 @@ public class ImovelEstoqueMB {
 		gravaCelula(18, "DATA VENDA", linha);
 		gravaCelula(19, "TIPO VENDA", linha);
 
+
 		iLinha++;
 
-		for (int iRelatorio = 0; iRelatorio < this.listImovelEstoque.size(); iRelatorio++) {
-			ImovelEstoque relatorio = this.listImovelEstoque.get(iRelatorio);
+		for (int iRelatorio = 0; iRelatorio < this.listRelatorioEstoque.size(); iRelatorio++) {
+			RelatorioEstoque relatorio = this.listRelatorioEstoque.get(iRelatorio);
 
 			linha = sheet.getRow(iLinha);
 			if (linha == null) {
@@ -182,30 +185,28 @@ public class ImovelEstoqueMB {
 			}
 
 			gravaCelula(0, relatorio.getNumeroContratoRelatorio(), linha);
-			gravaCelula(1, relatorio.getNomePagadorRelatorio(), linha);
-			gravaCelula(2, relatorio.getDataVencimentoRelatorio(), linha);
-			gravaCelula(3, relatorio.getValorContratoRelatorio(), linha);
-			gravaCelula(4, relatorio.getValorAmortizacao(), linha);
-			gravaCelula(5, relatorio.getValorCapitalizacao(), linha);
-			gravaCelula(6, relatorio.getTaxaContratoRelatorio(), linha);
-			gravaCelula(7, relatorio.getTaxaInvestidor(), linha);
-			gravaCelula(8, relatorio.getIndiceContratoRelatorio(), linha);
-			gravaCelula(9, relatorio.getEmpresaContratoRelatorio(), linha);
-			gravaCelula(10, relatorio.getTipoPagadorRelatorio(), linha);
-			gravaCelula(11, relatorio.getTipoPagadorRelatorio(), linha);
-			gravaCelula(12, relatorio.getTipoPagadorRelatorio(), linha);
-			gravaCelula(13, relatorio.getTipoPagadorRelatorio(), linha);
-			gravaCelula(14, relatorio.getTipoPagadorRelatorio(), linha);
-			gravaCelula(15, relatorio.getTipoPagadorRelatorio(), linha);
-			gravaCelula(16, relatorio.getTipoPagadorRelatorio(), linha);
-			gravaCelula(17, relatorio.getTipoPagadorRelatorio(), linha);
-			gravaCelula(18, relatorio.getTipoPagadorRelatorio(), linha);
-			gravaCelula(19, relatorio.getTipoPagadorRelatorio(), linha);
+			gravaCelula(2, relatorio.getVariacaoCustoRelatorio(), linha);
+			gravaCelula(3, relatorio.getLtvLeilaoRelatorio(), linha);
+			gravaCelula(4, relatorio.getValorEmprestimoRelatorio(), linha);
+			gravaCelula(5, relatorio.getVendaForcadaRelatorio(), linha);
+			gravaCelula(6, relatorio.getValorMercadoRelatorio(), linha);
+			gravaCelula(7, relatorio.getNomePagadorRelatorio(), linha);
+			gravaCelula(8, relatorio.getNumeroMatriculaRelatorio(), linha);
+			gravaCelula(9, relatorio.getEnderecoCompletoRelatorio(), linha);
+			gravaCelula(10, relatorio.getDataConsolidadoRelatorio(), linha);
+			gravaCelula(11, relatorio.getDataLeilao1Relatorio(), linha);
+			gravaCelula(12, relatorio.getDataLeilao2Relatorio(), linha);
+			gravaCelula(13, relatorio.getDataLeilao3Relatorio(), linha);
+			gravaCelula(14, relatorio.getStatusLeilaoRelatorio(), linha);
+			gravaCelula(15, relatorio.getStatusAtualRelatorio(), linha);
+			gravaCelula(16, relatorio.getValorLeilao2Relatorio(), linha);
+			gravaCelula(17, relatorio.getValorVendaRelatorio(), linha);
+			gravaCelula(18, relatorio.getDataVendaRelatorio(), linha);
+			gravaCelula(19, relatorio.getTipoVendaRelatorio(), linha);
+
 
 			iLinha++;
 		}
-
-		// FileOutputStream fileOut = new FileOutputStream("c:\\TabelaSeguroDFI.xlsx");
 
 		ByteArrayOutputStream fileOut = new ByteArrayOutputStream();
 		// escrever tudo o que foi feito no arquivo
@@ -217,7 +218,7 @@ public class ImovelEstoqueMB {
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 				FacesContext.getCurrentInstance());
 
-		gerador.open(String.format("Galleria Bank - ParcelasPagar %s.xlsx", ""));
+		gerador.open(String.format("Galleria Bank - REstoque %s.xlsx", ""));
 		gerador.feed(new ByteArrayInputStream(fileOut.toByteArray()));
 		gerador.close();
 
@@ -375,6 +376,14 @@ public class ImovelEstoqueMB {
 
 	public void setListaConsultaEstoque(List<ContratoCobranca> listaConsultaEstoque) {
 		this.listaConsultaEstoque = listaConsultaEstoque;
+	}
+
+	public List<RelatorioEstoque> getListRelatorioEstoque() {
+		return listRelatorioEstoque;
+	}
+
+	public void setListRelatorioEstoque(List<RelatorioEstoque> listRelatorioEstoque) {
+		this.listRelatorioEstoque = listRelatorioEstoque;
 	}
 	
 }

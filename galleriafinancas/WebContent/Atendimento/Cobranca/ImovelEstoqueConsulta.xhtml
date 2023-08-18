@@ -26,7 +26,10 @@
 			            <h:outputText value="#{estoque.imovel.enderecoCompleto}" />
 			        </p:column>
 			        <p:column style="text-align: center;" headerText="Consolidado em" filterBy="#{estoque.imovel.imovelEstoque.dataConsolidado}" filterMatchMode="contains" sortBy="#{estoque.imovel.imovelEstoque.dataConsolidado}">
-			            <h:outputText value="#{estoque.imovel.imovelEstoque.dataConsolidado}" />
+			            <h:outputText value="#{estoque.imovel.imovelEstoque.dataConsolidado}" >
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+			            </h:outputText>	
 			        </p:column>
 			        <p:column style="text-align: center;" headerText="Status atual" filterBy="#{estoque.imovel.imovelEstoque.statusAtual}" filterMatchMode="contains" sortBy="#{estoque.imovel.imovelEstoque.statusAtual}">
 			            <h:outputText value="#{estoque.imovel.imovelEstoque.statusAtual}" />

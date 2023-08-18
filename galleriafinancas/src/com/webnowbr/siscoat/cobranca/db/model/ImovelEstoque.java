@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.webnowbr.siscoat.common.CommonsUtil;
+
 public class ImovelEstoque implements Serializable {
 
 	/**
@@ -28,6 +30,8 @@ public class ImovelEstoque implements Serializable {
 	private Date dataVenda;
 	private String tipoVenda;
 	private Boolean estoque;
+	private ContratoCobranca objetoContratoCobranca;
+	private ImovelCobranca objetoImovelCobranca;
 	
 	
 	public long getId() {
