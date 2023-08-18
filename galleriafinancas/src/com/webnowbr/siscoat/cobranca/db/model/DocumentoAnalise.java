@@ -4,6 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
+import org.apache.xmlgraphics.util.uri.CommonURIResolver;
+import org.primefaces.PrimeFaces;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
@@ -57,6 +61,7 @@ public class DocumentoAnalise implements Serializable {
 	private String retornoEngine;
 	private String retornoSerasa;
 	private String retornoCenprot;
+	private String tipoProcesso;
 	private String retornoProcesso;
 	private String retornoPpe;
 
@@ -143,7 +148,9 @@ public class DocumentoAnalise implements Serializable {
 
 		return result;
 	}
-	
+
+	}
+
 	public List<DocumentoAnaliseResumo> getResumoCenprot() {
 		List<DocumentoAnaliseResumo> cenprot = new ArrayList<>();
 
@@ -463,6 +470,14 @@ public class DocumentoAnalise implements Serializable {
 		this.retornoProcesso = retornoProcesso;
 	}
 	
+	public String getTipoProcesso() {
+		return tipoProcesso;
+	}
+
+	public void setTipoProcesso(String tipoProcesso) {
+		this.tipoProcesso = tipoProcesso;
+	}
+
 	public String getRetornoPpe() {
 		return retornoPpe;
 	}
@@ -574,5 +589,4 @@ public class DocumentoAnalise implements Serializable {
 	public void setExcluido(boolean excluido) {
 		this.excluido = excluido;
 	}
-
-}	
+}
