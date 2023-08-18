@@ -5,9 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
-import org.apache.xmlgraphics.util.uri.CommonURIResolver;
-import org.primefaces.PrimeFaces;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
@@ -149,7 +146,6 @@ public class DocumentoAnalise implements Serializable {
 		return result;
 	}
 
-	}
 
 	public List<DocumentoAnaliseResumo> getResumoCenprot() {
 		List<DocumentoAnaliseResumo> cenprot = new ArrayList<>();
