@@ -69,6 +69,28 @@ public class DocumentoAnalise implements Serializable {
 	private String observacao;
 	private boolean excluido;
 
+	
+	public List<DocumentoAnaliseResumo> getResumoProcesso() {
+		List<DocumentoAnaliseResumo> vProcesso = new ArrayList<>();
+		EngineRetornoExecutionResultProcessos processo = null;
+		try {
+			processo = GsonUtil.fromJson(getRetornoProcesso(), EngineRetornoExecutionResultProcessos.class);
+		} catch (Exception erro) {
+			vProcesso.add(new DocumentoAnaliseResumo(null, null));
+		}
+		if (processo == null) {
+			vProcesso.add(new DocumentoAnaliseResumo("não disponível", null));
+		} else {
+				if (processo.getProcessos()== null) {
+					vProcesso.add(new DocumentoAnaliseResumo("Processos", "Não disponível"));
+				} else {
+					String processos = CommonsUtil.stringValue(processo.getProcessos());
+					vProcesso.add(new DocumentoAnaliseResumo("Processos:", processos));
+						}
+				}
+		return vProcesso;
+	}
+
 	public List<DocumentoAnaliseResumo> getResumoEngine() {
 		List<DocumentoAnaliseResumo> result = new ArrayList<>();
 		EngineRetorno engine = null;
@@ -426,7 +448,7 @@ public class DocumentoAnalise implements Serializable {
 				return true;
 			}
 
-		return  CommonsUtil.mesmoValor(observacao, "Verificar Engine");
+		return false;
 	}
 
 	
@@ -452,6 +474,11 @@ public class DocumentoAnalise implements Serializable {
 
 		return GsonUtil.toJson(dossieRequest);
 
+	}
+	
+	@Override
+	public String toString() {
+		return "DocumentoAnalise [id=" + id + ", tipo=" + tipo + "]";
 	}
 
 	public long getId() {
@@ -581,7 +608,7 @@ public class DocumentoAnalise implements Serializable {
 	public void setRetornoProcesso(String retornoProcesso) {
 		this.retornoProcesso = retornoProcesso;
 	}
-
+	
 	public String getTipoProcesso() {
 		return tipoProcesso;
 	}
