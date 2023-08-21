@@ -9,7 +9,6 @@ public class RelatorioEstoque implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private String numeroContratoRelatorio;
-	private long parcelaParouPagarRelatorio;
 	private BigDecimal variacaoCustoRelatorio;
 	private BigDecimal ltvLeilaoRelatorio;
 	private BigDecimal valorEmprestimoRelatorio;
@@ -36,12 +35,6 @@ public class RelatorioEstoque implements Serializable {
 	}
 	public void setNumeroContratoRelatorio(String numeroContratoRelatorio) {
 		this.numeroContratoRelatorio = numeroContratoRelatorio;
-	}
-	public long getParcelaParouPagarRelatorio() {
-		return parcelaParouPagarRelatorio;
-	}
-	public void setParcelaParouPagarRelatorio(long parcelaParouPagarRelatorio) {
-		this.parcelaParouPagarRelatorio = parcelaParouPagarRelatorio;
 	}
 	public BigDecimal getVariacaoCustoRelatorio() {
 		return variacaoCustoRelatorio;

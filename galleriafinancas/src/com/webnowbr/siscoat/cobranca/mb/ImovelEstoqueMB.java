@@ -153,24 +153,24 @@ public class ImovelEstoqueMB {
 		}
 
 		gravaCelula(0, "N° CONTRATO", linha);
-		gravaCelula(2, "VARIAÇÃO CUSTOS ATÉ LEILÃO", linha);
-		gravaCelula(3, "LTV DO LEILÃO", linha);
-		gravaCelula(4, "VALOR DO EMPRESTIMO", linha);
-		gravaCelula(5, "VENDA FORÇADA", linha);
-		gravaCelula(6, "VALOR MERCADO", linha);
-		gravaCelula(7, "CLIENTE", linha);
-		gravaCelula(8, "MATRÍCULA", linha);
-		gravaCelula(9, "IMÓVEL", linha);
-		gravaCelula(10, "CONSOLIDADO EM", linha);
-		gravaCelula(11, "1º LEILÃO", linha);
-		gravaCelula(12, "2º LEILÃO", linha);
-		gravaCelula(13, "LEILÃO ESTOQUE", linha);
-		gravaCelula(14, "STATUS LEILÃO", linha);
-		gravaCelula(15, "STATUS ATUAL", linha);
-		gravaCelula(16, "VALOR 2º LEILÃO", linha);
-		gravaCelula(17, "VALOR VENDA", linha);
-		gravaCelula(18, "DATA VENDA", linha);
-		gravaCelula(19, "TIPO VENDA", linha);
+		gravaCelula(1, "VARIAÇÃO CUSTOS ATÉ LEILÃO", linha);
+		gravaCelula(2, "LTV DO LEILÃO", linha);
+		gravaCelula(3, "VALOR DO EMPRESTIMO", linha);
+		gravaCelula(4, "VENDA FORÇADA", linha);
+		gravaCelula(5, "VALOR MERCADO", linha);
+		gravaCelula(6, "CLIENTE", linha);
+		gravaCelula(7, "MATRÍCULA", linha);
+		gravaCelula(8, "IMÓVEL", linha);
+		gravaCelula(9, "CONSOLIDADO EM", linha);
+		gravaCelula(10, "1º LEILÃO", linha);
+		gravaCelula(11, "2º LEILÃO", linha);
+		gravaCelula(12, "LEILÃO ESTOQUE", linha);
+		gravaCelula(13, "STATUS LEILÃO", linha);
+		gravaCelula(14, "STATUS ATUAL", linha);
+		gravaCelula(15, "VALOR 2º LEILÃO", linha);
+		gravaCelula(16, "VALOR VENDA", linha);
+		gravaCelula(17, "DATA VENDA", linha);
+		gravaCelula(18, "TIPO VENDA", linha);
 
 
 		iLinha++;
@@ -218,7 +218,7 @@ public class ImovelEstoqueMB {
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 				FacesContext.getCurrentInstance());
 
-		gerador.open(String.format("Galleria Bank - REstoque %s.xlsx", ""));
+		gerador.open(String.format("Galleria Bank - Estoque %s.xlsx", ""));
 		gerador.feed(new ByteArrayInputStream(fileOut.toByteArray()));
 		gerador.close();
 

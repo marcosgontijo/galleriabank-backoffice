@@ -16,6 +16,11 @@
    		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
    		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
                  rowsPerPageTemplate="20,40,60,80" selection="" emptyMessage="" sortBy="#{estoque.numeroContrato}">
+                 	<f:facet name="header">
+	                 	<p:commandButton value="Gerar Arquivo Estoque" icon="ui-icon-print"
+							action="#{imovelEstoqueMB.readXLSXFileRelatorioEstoque}"
+							ajax="false" />
+					</f:facet>		
 			        <p:column style="text-align: center;" headerText="Numero Contrato" filterBy="#{estoque.numeroContrato}" filterMatchMode="contains" sortBy="#{estoque.numeroContrato}">
 			            <h:outputText value="#{estoque.numeroContrato}" />
 			        </p:column>
