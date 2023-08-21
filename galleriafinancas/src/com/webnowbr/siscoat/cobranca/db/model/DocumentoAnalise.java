@@ -77,19 +77,18 @@ public class DocumentoAnalise implements Serializable {
 			vProcesso.add(new DocumentoAnaliseResumo(null, null));
 		}
 		if (processo == null) {
-			vProcesso.add(new DocumentoAnaliseResumo("não disponível", null));
+			vProcesso.add(new DocumentoAnaliseResumo("Não disponível", null));
 		} else {
 				if (processo.getProcessos()== null) {
-					vProcesso.add(new DocumentoAnaliseResumo("Processos", "Não disponível"));
+					vProcesso.add(new DocumentoAnaliseResumo("Processos:", "Não disponível"));
 				} else {
 					String processos = CommonsUtil.stringValue(processo.getProcessos());
 					vProcesso.add(new DocumentoAnaliseResumo("Processos:", processos));
 						}
 				
-//				if(processo.getProcessos() == null) {
+//				if(processo.getClass() == null) {
 //					vProcesso.add(new DocumentoAnaliseResumo("Criminal:", "Não disponível"));
 //				} else {
-//					String processos = CommonsUtil.stringValue(processo.getProcessos());
 //					vProcesso.add(new DocumentoAnaliseResumo("Criminal:", "Não disponível"));
 //				}
 //				
@@ -131,7 +130,7 @@ public class DocumentoAnalise implements Serializable {
 		}
 
 		if (engine == null) {
-			result.add(new DocumentoAnaliseResumo("nâo disponível", null));
+			result.add(new DocumentoAnaliseResumo("Não disponível", null));
 		} else {
 			EngineRetornoRequestFields nome = engine.getRequestFields().stream()
 					.filter(f -> f.getField().equals("nome")).findFirst().orElse(null);
@@ -228,11 +227,11 @@ public class DocumentoAnalise implements Serializable {
 
 		CenprotProtestos data = GsonUtil.fromJson(getRetornoCenprot(), CenprotProtestos.class);
 		if (data == null) {
-			cenprot.add(new DocumentoAnaliseResumo("não disponível", null));
+			cenprot.add(new DocumentoAnaliseResumo("Não disponível", null));
 		} else {
 
 			if (CommonsUtil.semValor(data.getProtestosBrasil().getEstados())) {
-				cenprot.add(new DocumentoAnaliseResumo("Não Disponível", null));
+				cenprot.add(new DocumentoAnaliseResumo("Não disponível", null));
 			} else {
 				for (ProtestosBrasilEstado estado : data.getProtestosBrasil().getEstados()) {
 
@@ -274,14 +273,22 @@ public class DocumentoAnalise implements Serializable {
 			} else {
 				String prejuizo = CommonsUtil.formataValorMonetario(dado.getResumoDoClienteTraduzido().getPrejuizo());
 				scr.add(new DocumentoAnaliseResumo("Prejuizo:", prejuizo));
-			}
-
+			}			
+			
 			if (dado.getResumoDoClienteTraduzido().getCarteiradeCredito() == null) {
-				scr.add(new DocumentoAnaliseResumo("Carteira de Crédito Tomado:", "Não Disponível"));
+			    scr.add(new DocumentoAnaliseResumo("Carteira de Crédito Tomado:", "Não Disponível"));
 			} else {
-				String creditoTomado = CommonsUtil
-						.formataValorMonetario(dado.getResumoDoClienteTraduzido().getCarteiradeCredito());
-				scr.add(new DocumentoAnaliseResumo("Carteira de Crédito Tomado:", creditoTomado));
+			    String creditoTomado = CommonsUtil.formataValorMonetario(dado.getResumoDoClienteTraduzido().getCarteiradeCredito());
+			    double valorCreditoTomado = Double.parseDouble(creditoTomado.replace(",", "").replace("R$", "").trim());
+
+			    if (dado.getResumoDoClienteTraduzido().getLimitesdeCredito() == null) {
+			        scr.add(new DocumentoAnaliseResumo("Limites:", "Não Disponível"));
+			    } else {
+			        String limiteCredito = CommonsUtil.formataValorMonetario(dado.getResumoDoClienteTraduzido().getLimitesdeCredito());
+			        double valorLimiteCredito = Double.parseDouble(limiteCredito.replace(",", "").replace("R$", "").trim());
+			        double soma = valorCreditoTomado + valorLimiteCredito;
+			        scr.add(new DocumentoAnaliseResumo("Carteira de Crédito Tomado:", String.valueOf(soma)));
+			    }
 			}
 
 		}
