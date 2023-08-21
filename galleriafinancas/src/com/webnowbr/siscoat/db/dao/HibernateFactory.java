@@ -61,6 +61,8 @@ public final class HibernateFactory {
 			sSessionFactory = configuration.buildSessionFactory();
         } catch (Exception e) {
             LOG.fatal("Exception configuring sessionFactory", e);
+            System.out.println(e);
+            e.printStackTrace();
         }
     }
 

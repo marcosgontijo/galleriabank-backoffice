@@ -6,6 +6,7 @@ import java.util.List;
 
 
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
+import com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 
@@ -67,6 +68,8 @@ public class DocumentoAnalise implements Serializable {
 	private String retornoScr;
 	private String observacao;
 	private boolean excluido;
+	
+	private List<PlexiConsulta> plexiConsultas = new ArrayList<PlexiConsulta>();
 
 	
 	public List<DocumentoAnaliseResumo> getResumoProcesso() {
@@ -662,4 +665,3 @@ public class DocumentoAnalise implements Serializable {
 	public void setExcluido(boolean excluido) {
 		this.excluido = excluido;
 	}
-}
