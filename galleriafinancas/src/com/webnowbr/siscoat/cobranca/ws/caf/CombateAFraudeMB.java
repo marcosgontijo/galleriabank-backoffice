@@ -40,9 +40,22 @@ public class CombateAFraudeMB {
 	String templateIdSelfie = "6304e61854dcba000929036b";
 	String templateIdSemSelfie = "6359735b29768d000849aa5d";
 	String cpf;
+	
+	List<CombateAFraude> cafList = new ArrayList<CombateAFraude>();
 
 	public String clearFields() {
+		fileType = "";
+		files = new ArrayList<CombateAFraudeFiles>();
+		deleteFiles = new ArrayList<CombateAFraudeFiles>();
+		cpf = "";
+		
 		return "/Atendimento/CombateAFraude/CombateAFraude.xhtml";
+	}
+	
+	public String clearFieldsConsulta() {
+		CombateAFraudeDao cafDao = new CombateAFraudeDao();
+		cafList = cafDao.getCombateAFraudeListDB();
+		return "/Atendimento/CombateAFraude/CombateAFraudeConsultar.xhtml";
 	}
 	
 	public void handleFileUpload(FileUploadEvent event) {
@@ -198,6 +211,16 @@ public class CombateAFraudeMB {
 
 	public void setCpf(String cpf) {
 		this.cpf = cpf;
+	}
+
+	public List<CombateAFraude> getCafList() {
+		return cafList;
+	}
+
+	public void setCafList(List<CombateAFraude> cafList) {
+		this.cafList = cafList;
 	}	
+	
+	
 
 }

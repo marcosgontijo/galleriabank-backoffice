@@ -98,6 +98,11 @@
 			<column name="retornoProcesso" />
 		</property>
 		
+		<property name="tipoProcesso" type="java.lang.String"  length="1">
+			<column name="tipoProcesso" />
+		</property>
+		
+		
 		<property name="retornoPpe" type="java.lang.String"  length="65000">
 			<column name="retornoPpe" />
 		</property>
@@ -108,6 +113,14 @@
 		<property name="observacao" type="java.lang.String"  length="65000">
 			<column name="observacao" />
 		</property>
+		
+		<list name="plexiConsultas"
+			table="DocumentoAnalise_PlexiConsultas_Join" cascade="delete" lazy="false">
+			<key column="idDocumentoAnalise" />
+			<list-index></list-index>
+			<many-to-many column="idPlexiConsulta"
+				class="com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta" />
+		</list>		
 						
     </class>
 </hibernate-mapping>

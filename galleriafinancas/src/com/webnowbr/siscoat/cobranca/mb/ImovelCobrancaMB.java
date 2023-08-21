@@ -178,7 +178,6 @@ public class ImovelCobrancaMB {
 				||  CommonsUtil.semValor(linha.getCell(2)) 
 				||  CommonsUtil.semValor(linha.getCell(2).getStringCellValue())
 				||  CommonsUtil.semValor(linha.getCell(3)) 
-				||  CommonsUtil.semValor(linha.getCell(3).getStringCellValue())
 				||  CommonsUtil.semValor(linha.getCell(6)) 
 				||  CommonsUtil.semValor(linha.getCell(6).getStringCellValue())
 				||  CommonsUtil.semValor(linha.getCell(7)) 
@@ -192,7 +191,21 @@ public class ImovelCobrancaMB {
 			String nome = (linha.getCell(1).getStringCellValue());
 			String estado = (linha.getCell(2).getStringCellValue());
 			estado = estado.trim();
-			int populacao = CommonsUtil.intValue(CommonsUtil.removeEspacos(linha.getCell(3).getStringCellValue()));		
+			int populacao = 0;
+			try {
+				if(!CommonsUtil.semValor(linha.getCell(3).getNumericCellValue())) {
+					populacao =  CommonsUtil.intValue(linha.getCell(3).getNumericCellValue());
+				} else if (!CommonsUtil.semValor(linha.getCell(3).getStringCellValue()))  {
+					populacao = CommonsUtil.intValue(CommonsUtil.removeEspacos(linha.getCell(3).getStringCellValue()));		
+				}
+			} catch (Exception e) {
+				if (!CommonsUtil.semValor(linha.getCell(3).getStringCellValue()))  {
+					populacao = CommonsUtil.intValue(CommonsUtil.removeEspacos(linha.getCell(3).getStringCellValue()));		
+				}
+			} 
+			
+			
+			
 			String praiaStr = (linha.getCell(6).getStringCellValue());
 			int rankingEstadual = CommonsUtil.intValue(linha.getCell(7).getNumericCellValue());		
 			String pintarStr = (linha.getCell(9).getStringCellValue());
@@ -231,6 +244,7 @@ public class ImovelCobrancaMB {
 			if(cidade.getId() > 0) {
 				cDao.merge(cidade);
 			} else {
+				System.out.println("nova Cidade" + cidade.cidadeString());
 				cDao.create(cidade);
 			}
 			

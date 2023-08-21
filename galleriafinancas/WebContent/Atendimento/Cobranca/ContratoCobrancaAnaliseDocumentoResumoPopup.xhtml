@@ -162,4 +162,43 @@
 			</p:dialog>
 		</shiro:hasAnyRoles>
 		
+		
+		<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO">
+			<p:dialog header="Consultas Plexi" overflow="auto"
+				id="dialogConsultasPlexi"
+				widgetVar="consultasPlexiDlg" resizable="true"
+				style="FONT-SIZE: 13pt;" width="800" minWidth="800">
+				<h:form id="ConsultasPlexiForm">
+					<div align="center">
+					<p:dataTable id="dtConsultasPlexi" var="plexiConsulta"
+						value="#{contratoCobrancaMB.documentoAnalisePopup.plexiConsultas}"
+						emptyMessage="" rows="20" paginator="true"
+		                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+		                currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+		                rowsPerPageTemplate="20,40,100,140">
+						
+						<p:column style="text-align: center;" headerText="Identificação"
+							filterBy="#{plexiConsulta.plexiDocumentos.nome}"
+							filterMatchMode="contains" sortBy="#{plexiConsulta.plexiDocumentos.nome}">
+							<h:outputText value="#{plexiConsulta.plexiDocumentos.nome}"/>
+						</p:column>
+						
+						<p:column style="text-align: center;" headerText="Identificação"
+							filterBy="#{plexiConsulta.plexiDocumentos.nome}"
+							filterMatchMode="contains" sortBy="#{plexiConsulta.plexiDocumentos.nome}">
+							<p:commandButton
+								action="#{plexiMB.decodarBaixarArquivo(plexiConsulta)}"
+								icon="ui-icon ui-icon-print" value="Download PDF"
+								rendered="#{plexiConsulta.pdf != null}"
+								ajax="false" />
+						</p:column>
+												
+						
+					</p:dataTable>
+
+				</div>
+				</h:form>
+			</p:dialog>
+		</shiro:hasAnyRoles>
+		
 </ui:composition>

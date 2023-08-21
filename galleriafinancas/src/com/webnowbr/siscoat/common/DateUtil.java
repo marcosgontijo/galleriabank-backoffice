@@ -972,5 +972,11 @@ public final class DateUtil {
 		return result;
 	}
 	
-	
+	public static Date gerarDataHoje() {
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+
+		return dataHoje.getTime();
+	}
 }

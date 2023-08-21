@@ -8,6 +8,15 @@ import java.util.List;
 
 public class SiscoatConstants {
 	public static final int GALLERIA_FINANCAS_ID = 14;
+	
+	public static final Long ASSISTENTE_ISA = 1556L;
+	public static final Long ASSISTENTE_BIA = 359L;
+	public static final Long COMMERCIAL_GIS  = 5L;
+	public static final Long COMMERCIAL_LUIS = 6L;
+	public static final Long COMMERCIAL_ERIK = 35L;
+	public static final Long COMMERCIAL_JOAO_ANTONIO = 1695L;
+	public static final Long COMMERCIAL_ALINE = 1191L;
+	public static final Long COMMERCIAL_PAULA = 826L;
 
 	public static final String CONTRATO_QUITADO = "Quitado";
 	public static final String CONTRATO_ATIVO = "Ativo";
@@ -56,4 +65,5 @@ public class SiscoatConstants {
 	public static final String  URL_SISCOAT_ENGINE_WEBHOOK = "https://backoffice.galleriabank.com.br/sistema/siscoat/engine/webhook?Token=";
 	public static final String  URL_SISCOAT_DOCKET_WEBHOOK	 = "https://backoffice.galleriabank.com.br/sistema/siscoat/docket/webhook?Token=";
 	public static final String  URL_SISCOAT_CAF_WEBHOOK	 = "https://backoffice.galleriabank.com.br/sistema/siscoat/caf/webhook?Token=";
+	public static final String  URL_SISCOAT_PLEXI_WEBHOOK	 = "https://backoffice.galleriabank.com.br/sistema/siscoat/plexi/webhook?Token=";
 }
