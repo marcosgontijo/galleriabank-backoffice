@@ -1335,19 +1335,19 @@ public class ContratoCobranca implements Serializable {
 		if (potuacao < 400) {
 			taxaPreAprovada = BigDecimal.valueOf(1.89);
 		} else if (potuacao >= 400 && potuacao < 499) {
-			taxaPreAprovada = BigDecimal.valueOf(1.89);
+			taxaPreAprovada = BigDecimal.valueOf(1.79);
 		} else if (potuacao >= 500 && potuacao < 599) {
-			taxaPreAprovada = BigDecimal.valueOf(1.79);
-		} else if (potuacao >= 600 && potuacao < 699) {
-			taxaPreAprovada = BigDecimal.valueOf(1.79);
-		} else if (potuacao >= 700 && potuacao < 799) {
 			taxaPreAprovada = BigDecimal.valueOf(1.69);
-		} else if (potuacao >= 800 && potuacao < 899) {
+		} else if (potuacao >= 600 && potuacao < 699) {
 			taxaPreAprovada = BigDecimal.valueOf(1.59);
-		} else if (potuacao >= 900 && potuacao < 999) {
+		} else if (potuacao >= 700 && potuacao < 799) {
 			taxaPreAprovada = BigDecimal.valueOf(1.49);
-		} else {
+		} else if (potuacao >= 800 && potuacao < 899) {
 			taxaPreAprovada = BigDecimal.valueOf(1.39);
+		} else if (potuacao >= 900 && potuacao < 999) {
+			taxaPreAprovada = BigDecimal.valueOf(1.29);
+		} else {
+			taxaPreAprovada = BigDecimal.valueOf(1.19);
 		}
 		
 		if(CommonsUtil.semValor(prazoMaxPreAprovado)) {

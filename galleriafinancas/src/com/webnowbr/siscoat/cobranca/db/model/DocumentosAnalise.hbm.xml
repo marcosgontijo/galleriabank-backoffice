@@ -98,6 +98,11 @@
 			<column name="retornoProcesso" />
 		</property>
 		
+		<property name="tipoProcesso" type="java.lang.String"  length="1">
+			<column name="tipoProcesso" />
+		</property>
+		
+		
 		<property name="retornoPpe" type="java.lang.String"  length="65000">
 			<column name="retornoPpe" />
 		</property>

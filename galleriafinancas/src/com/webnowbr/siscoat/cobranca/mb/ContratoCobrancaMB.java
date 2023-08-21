@@ -1,5 +1,6 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -24,6 +25,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -53,6 +55,7 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
@@ -110,6 +113,7 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Font.FontFamily;
+import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
@@ -151,6 +155,7 @@ import com.webnowbr.siscoat.cobranca.db.model.QuitacaoPDF;
 import com.webnowbr.siscoat.cobranca.db.model.QuitacaoParcelasPDF;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.db.model.Segurado;
+import com.webnowbr.siscoat.cobranca.db.model.StarkBankBaixa;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankBoleto;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankPix;
 import com.webnowbr.siscoat.cobranca.db.op.CcbDao;
@@ -170,6 +175,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.cobranca.db.op.SeguradoDAO;
+import com.webnowbr.siscoat.cobranca.db.op.StarkBankBaixaDAO;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.cobranca.service.PajuService;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
@@ -196,13 +202,12 @@ import com.webnowbr.siscoat.simulador.SimulacaoIPCADadosV2;
 import com.webnowbr.siscoat.simulador.SimulacaoVO;
 import com.webnowbr.siscoat.simulador.SimuladorMB;
 
-import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
-import br.com.galleriabank.netrin.cliente.model.PPE.PpeResponse;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+
 
 /** ManagedBean. */
 @ManagedBean(name = "contratoCobrancaMB")
@@ -2588,6 +2593,7 @@ public class ContratoCobrancaMB {
 		return null;
 	}
 
+
 	public void populaReferenciaBancariaCPF() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		boolean validaCPF = ValidaCPF.isCPFOnly(this.objetoPagadorRecebedor.getCpf());
@@ -4013,6 +4019,23 @@ public class ContratoCobrancaMB {
 									this.objetoContratoCobranca.getNumeroContrato(),
 									this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
 									this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+							
+							enviarWhatsappJoaoAntonio("contrato_pre_aprovado",
+									this.objetoContratoCobranca.getPagador().getNome(),
+									this.objetoContratoCobranca.getNumeroContrato(),
+									this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+									this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+							enviarWhatsappAline("contrato_pre_aprovado",
+									this.objetoContratoCobranca.getPagador().getNome(),
+									this.objetoContratoCobranca.getNumeroContrato(),
+									this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+									this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+							enviarWhatsaPaula("contrato_pre_aprovado",
+									this.objetoContratoCobranca.getPagador().getNome(),
+									this.objetoContratoCobranca.getNumeroContrato(),
+									this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+									this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+							
 						}
 					}
 				}
@@ -4101,6 +4124,24 @@ public class ContratoCobrancaMB {
 								this.objetoContratoCobranca.getNumeroContrato(), "", "");
 						enviarWhatsappEric("contrato_recebido_paju", this.objetoContratoCobranca.getPagador().getNome(),
 								this.objetoContratoCobranca.getNumeroContrato(), "", "");
+						
+
+						enviarWhatsappJoaoAntonio("contrato_recebido_paju",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						enviarWhatsappAline("contrato_recebido_paju",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						enviarWhatsaPaula("contrato_recebido_paju",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						
 					}
 
 					ResponsavelDao rDao = new ResponsavelDao();
@@ -4163,6 +4204,23 @@ public class ContratoCobrancaMB {
 						enviarWhatsappEric("contrato_recebido_laudo",
 								this.objetoContratoCobranca.getPagador().getNome(),
 								this.objetoContratoCobranca.getNumeroContrato(), "", "");
+						
+						enviarWhatsappJoaoAntonio("contrato_recebido_laudo",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						enviarWhatsappAline("contrato_recebido_laudo",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						enviarWhatsaPaula("contrato_recebido_laudo",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						
 					}
 
 					ResponsavelDao rDao = new ResponsavelDao();
@@ -4247,6 +4305,24 @@ public class ContratoCobrancaMB {
 						enviarWhatsappEric("comentado_juridico_interno",
 								this.objetoContratoCobranca.getPagador().getNome(),
 								this.objetoContratoCobranca.getNumeroContrato(), "", "");
+						
+
+						enviarWhatsappJoaoAntonio("comentado_juridico_interno",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						enviarWhatsappAline("comentado_juridico_interno",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						enviarWhatsaPaula("comentado_juridico_interno",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						
 					} else {
 						takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
 								"comentado_juridico_interno", this.objetoContratoCobranca.getPagador().getNome(),
@@ -4377,6 +4453,25 @@ public class ContratoCobrancaMB {
 								this.objetoContratoCobranca.getNumeroContrato(), "", "");
 						enviarWhatsappEric("aprovado_comite_ag_ccb", this.objetoContratoCobranca.getPagador().getNome(),
 								this.objetoContratoCobranca.getNumeroContrato(), "", "");
+						
+
+
+						enviarWhatsappJoaoAntonio("aprovado_comite_ag_ccb",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						enviarWhatsappAline("aprovado_comite_ag_ccb",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						enviarWhatsaPaula("aprovado_comite_ag_ccb",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						
 					} else {
 						takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
 								"aprovado_comite_ag_ccb", this.objetoContratoCobranca.getPagador().getNome(),
@@ -4485,6 +4580,25 @@ public class ContratoCobrancaMB {
 						enviarWhatsappEric("contrato_pronto_para_assinatura_operacao",
 								this.objetoContratoCobranca.getPagador().getNome(),
 								this.objetoContratoCobranca.getNumeroContrato(), "", "");
+						
+
+
+						enviarWhatsappJoaoAntonio("contrato_pronto_para_assinatura_operacao",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						enviarWhatsappAline("contrato_pronto_para_assinatura_operacao",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						enviarWhatsaPaula("contrato_pronto_para_assinatura_operacao",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(),
+								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						
 					}
 				}
 			}
@@ -4516,6 +4630,23 @@ public class ContratoCobrancaMB {
 							enviarWhatsappEric("contrato_dado_entrada_cartorio",
 									this.objetoContratoCobranca.getPagador().getNome(),
 									this.objetoContratoCobranca.getNumeroContrato(), "", "");
+							
+
+							enviarWhatsappJoaoAntonio("contrato_dado_entrada_cartorio",
+									this.objetoContratoCobranca.getPagador().getNome(),
+									this.objetoContratoCobranca.getNumeroContrato(),
+									this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+									this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+							enviarWhatsappAline("contrato_dado_entrada_cartorio",
+									this.objetoContratoCobranca.getPagador().getNome(),
+									this.objetoContratoCobranca.getNumeroContrato(),
+									this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+									this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+							enviarWhatsaPaula("contrato_dado_entrada_cartorio",
+									this.objetoContratoCobranca.getPagador().getNome(),
+									this.objetoContratoCobranca.getNumeroContrato(),
+									this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+									this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 						}
 					}
 				}
@@ -4529,7 +4660,7 @@ public class ContratoCobrancaMB {
 
 	public void enviarWhatsappGislaine(String template, String nomeCliente, String numeroContrato, String taxaAprovada,
 			String prazoAprovado) {
-		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(), (long) 5) // gislaine
+		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(), SiscoatConstants.COMMERCIAL_GIS) // gislaine
 		// ||
 		// CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long)
 		// 60)//Ana Cecilia
@@ -4539,7 +4670,7 @@ public class ContratoCobrancaMB {
 			/*
 			 * if(!CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().
 			 * getDonoResponsavel().getId(), (long) 5)) { Responsavel rGerente = new
-			 * Responsavel(); rGerente = rDao.findById((long) 5);
+			 * Responsavel(); rGerente = rDao.findById(SiscoatConstants.COMMERCIAL_GIS);
 			 * takeBlipMB.sendWhatsAppMessage(rGerente, template, nomeCliente,
 			 * numeroContrato, taxaAprovada, prazoAprovado); }
 			 */
@@ -4548,7 +4679,7 @@ public class ContratoCobrancaMB {
 
 			// Isa (assistente Gislaine)
 			Responsavel rAssistente = new Responsavel();
-			rAssistente = rDao.findById((long) 1556);
+			rAssistente = rDao.findById(SiscoatConstants.ASSISTENTE_ISA);
 			takeBlipMB.sendWhatsAppMessage(rAssistente, template, nomeCliente, numeroContrato, taxaAprovada,
 					prazoAprovado);
 		}
@@ -4556,7 +4687,7 @@ public class ContratoCobrancaMB {
 
 	public void enviarWhatsappLuis(String template, String nomeCliente, String numeroContrato, String taxaAprovada,
 			String prazoAprovado) {
-		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(), (long) 6) // luis
+		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),  SiscoatConstants.COMMERCIAL_LUIS ) // luis
 				|| CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),
 						(long) 81)
 				|| CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),
@@ -4574,7 +4705,7 @@ public class ContratoCobrancaMB {
 					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 249)
 					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 506)) {
 				Responsavel rGerente = new Responsavel();
-				rGerente = rDao.findById((long) 6);
+				rGerente = rDao.findById(SiscoatConstants.COMMERCIAL_LUIS);
 				takeBlipMB.sendWhatsAppMessage(rGerente, template, nomeCliente, numeroContrato, taxaAprovada,
 						prazoAprovado);
 			}
@@ -4595,7 +4726,7 @@ public class ContratoCobrancaMB {
 
 	public void enviarWhatsappEric(String template, String nomeCliente, String numeroContrato, String taxaAprovada,
 			String prazoAprovado) {
-		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(), (long) 35)
+		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(), SiscoatConstants.COMMERCIAL_ERIK)
 				|| CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),
 						(long) 34)
 				|| CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),
@@ -4607,7 +4738,7 @@ public class ContratoCobrancaMB {
 			TakeBlipMB takeBlipMB = new TakeBlipMB();
 			ResponsavelDao rDao = new ResponsavelDao();
 			if (!CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),
-					(long) 35)
+					 SiscoatConstants.COMMERCIAL_ERIK)
 					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 34)
 					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 71)
 					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 376)
@@ -4626,6 +4757,86 @@ public class ContratoCobrancaMB {
 					prazoAprovado);
 		}
 	}
+	public void enviarWhatsappJoaoAntonio(String template, String nomeCliente, String numeroContrato, String taxaAprovada,
+			String prazoAprovado) {
+		
+		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(), SiscoatConstants.COMMERCIAL_JOAO_ANTONIO)) {
+			TakeBlipMB takeBlipMB = new TakeBlipMB();
+			ResponsavelDao rDao = new ResponsavelDao();
+//			if (!CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),
+//					(long) 35)
+//					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 34)
+//					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 71)
+//					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 376)
+//					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 18)) {
+				Responsavel rGerente = new Responsavel();
+				rGerente = rDao.findById(SiscoatConstants.COMMERCIAL_JOAO_ANTONIO);
+				takeBlipMB.sendWhatsAppMessage(rGerente, template, nomeCliente, numeroContrato, taxaAprovada,
+						prazoAprovado);
+//			}
+
+			// Lennara (assistente Eric e Fabio Moron)
+			Responsavel rAssistente = new Responsavel();
+			rAssistente = rDao.findById((long) SiscoatConstants.ASSISTENTE_BIA);
+
+			takeBlipMB.sendWhatsAppMessage(rAssistente, template, nomeCliente, numeroContrato, taxaAprovada,
+					prazoAprovado);
+		}
+	}
+	
+	public void enviarWhatsappAline(String template, String nomeCliente, String numeroContrato, String taxaAprovada,
+			String prazoAprovado) {
+		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(), SiscoatConstants.COMMERCIAL_ALINE)) {
+			TakeBlipMB takeBlipMB = new TakeBlipMB();
+			ResponsavelDao rDao = new ResponsavelDao();
+//			if (!CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),
+//					(long) 35)
+//					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 34)
+//					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 71)
+//					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 376)
+//					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 18)) {
+				Responsavel rGerente = new Responsavel();
+				rGerente = rDao.findById((long) 1191);
+				takeBlipMB.sendWhatsAppMessage(rGerente, template, nomeCliente, numeroContrato, taxaAprovada,
+						prazoAprovado);
+//			}
+
+			// Lennara (assistente Eric e Fabio Moron)
+			Responsavel rAssistente = new Responsavel();
+			rAssistente = rDao.findById((long) SiscoatConstants.ASSISTENTE_BIA);
+
+			takeBlipMB.sendWhatsAppMessage(rAssistente, template, nomeCliente, numeroContrato, taxaAprovada,
+					prazoAprovado);
+		}
+	}
+	
+	public void enviarWhatsaPaula(String template, String nomeCliente, String numeroContrato, String taxaAprovada,
+			String prazoAprovado) {
+		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),  SiscoatConstants.COMMERCIAL_PAULA)) {
+			TakeBlipMB takeBlipMB = new TakeBlipMB();
+			ResponsavelDao rDao = new ResponsavelDao();
+//			if (!CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),
+//					(long) 35)
+//					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 34)
+//					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 71)
+//					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 376)
+//					&& !CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getId(), (long) 18)) {
+				Responsavel rGerente = new Responsavel();
+				rGerente = rDao.findById((long) 826);
+				takeBlipMB.sendWhatsAppMessage(rGerente, template, nomeCliente, numeroContrato, taxaAprovada,
+						prazoAprovado);
+//			}
+
+			// Lennara (assistente Eric e Fabio Moron)
+			Responsavel rAssistente = new Responsavel();
+			rAssistente = rDao.findById((long) SiscoatConstants.ASSISTENTE_BIA);
+
+			takeBlipMB.sendWhatsAppMessage(rAssistente, template, nomeCliente, numeroContrato, taxaAprovada,
+					prazoAprovado);
+		}
+	}
+
+	
 
 	/*******
 	 * Chamadas do docket
@@ -5428,6 +5639,16 @@ public class ContratoCobrancaMB {
 		contratoCobrancaDao.merge(objetoContratoCobranca);
 		return
 		geraConsultaContratosPorStatus("Comentario Jurídico");
+	}
+	
+	public String enviarContratoEsteiraInterna(ContratoCobranca contrato) {
+		
+		this.objetoContratoCobranca = getContratoById(objetoContratoCobranca.getId());
+		this.objetoContratoCobranca.setEsteriaComentarioLuvison(false);
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		contratoCobrancaDao.merge(objetoContratoCobranca);
+		return
+		geraConsultaContratosPorStatus("Comentario Luvison");
 	}
 
 	public void clearEnviarLeadParaComercial() {
@@ -19476,7 +19697,7 @@ public class ContratoCobrancaMB {
 		this.contasPagarSelecionada.setPagadorRecebedor(this.objetoPagadorRecebedor);
 		this.contasPagarSelecionada.setTipoDespesa("C");
 		this.contasPagarSelecionada.setResponsavel(this.objetoContratoCobranca.getResponsavel());
-		
+
 		boolean finalizaOperacao = false;
 		
 		if (!CommonsUtil.semValor(this.contasPagarSelecionada.getValor())) {
@@ -19486,8 +19707,6 @@ public class ContratoCobrancaMB {
 			} else {
 				this.objetoContratoCobranca.setContaPagarValorTotal(this.contasPagarSelecionada.getValor());
 			}
-			
-			this.contasPagarSelecionada.setValorPagamento(this.contasPagarSelecionada.getValor());
 			
 			if (!CommonsUtil.semValor(this.contasPagarSelecionada.getValorPagamento())) {
 				StarkBankAPI starkBankAPI = new StarkBankAPI();
@@ -19501,14 +19720,13 @@ public class ContratoCobrancaMB {
 							this.objetoPagadorRecebedor, this.contasPagarSelecionada.getDescricaoStarkBank(),
 							this.contasPagarSelecionada.getNumeroDocumentoPagadorStarkBank());
 
-					if (starkBankBoleto != null) {						
+					if (starkBankBoleto != null) {												
+						//this.contasPagarSelecionada.setComprovantePagamentoStarkBank(starkBankBoleto);
+						StarkBankBaixa baixa = registraBaixaStarkBank(starkBankBoleto.getCreated(), starkBankBoleto.getTaxId(), String.valueOf(starkBankBoleto.getId()), starkBankBoleto.getLine(),
+								this.objetoPagadorRecebedor.getNome(), starkBankBoleto.getAmount(), this.contasPagarSelecionada, "Boleto");
 						
-						this.contasPagarSelecionada.setComprovantePagamentoStarkBank(starkBankBoleto);
+						this.contasPagarSelecionada.getListContasPagarBaixas().add(baixa);
 
-						if (CommonsUtil.mesmoValor(this.contasPagarSelecionada.getValorPagamento(),
-								this.contasPagarSelecionada.getValor())) {
-							this.contasPagarSelecionada.setContaPaga(true);
-						}
 						this.objetoContratoCobranca.setContaPagarValorTotal(this.objetoContratoCobranca
 								.getContaPagarValorTotal().subtract(this.contasPagarSelecionada.getValorPagamento()));
 
@@ -19522,18 +19740,29 @@ public class ContratoCobrancaMB {
 				if (this.contasPagarSelecionada.getFormaTransferencia().equals("Pix")) {
 					StarkBankPix starkBankPix = starkBankAPI.paymentPix(this.objetoContratoCobranca.getChavePIXBancarioContaPagar(), this.objetoContratoCobranca.getAgenciaBancarioContaPagar(), objetoContratoCobranca.getContaBancarioContaPagar(), 
 							this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar(), this.objetoContratoCobranca.getNomeBancarioContaPagar(), this.contasPagarSelecionada.getValorPagamento(), this.contasPagarSelecionada.getFormaTransferencia());
-					
+						
+					/*	estrutura de teste offline
+						StarkBankPix starkBankPix = new StarkBankPix();
+						long id = 12121212;
+						starkBankPix.setId(id);
+						starkBankPix.setCreated(gerarDataHoje());
+						starkBankPix.setScheduled("scheduled");
+						starkBankPix.setNomeComprovante("NOME PESSOA");
+						starkBankPix.setAmount(new BigDecimal(1250.00));
+					 	starkBankPix.setTaxId("312.559.048-52");
+					 */
 					if (starkBankPix != null) {
-						this.contasPagarSelecionada.setComprovantePagamentoPixStarkBank(starkBankPix);
+						//this.contasPagarSelecionada.setComprovantePagamentoPixStarkBank(starkBankPix);
+						StarkBankBaixa baixa = registraBaixaStarkBank(starkBankPix.getCreated(), starkBankPix.getTaxId(), String.valueOf(starkBankPix.getId()), null,
+								this.objetoPagadorRecebedor.getNome(), starkBankPix.getAmount(), this.contasPagarSelecionada, "PIX");
+						
+						this.contasPagarSelecionada.getListContasPagarBaixas().add(baixa);						
 
-						//if (CommonsUtil.mesmoValor(this.contasPagarSelecionada.getValorPagamento(),
-						//		this.contasPagarSelecionada.getValor())) {
-							this.contasPagarSelecionada.setContaPaga(true);
-						//}
 						this.objetoContratoCobranca.setContaPagarValorTotal(this.objetoContratoCobranca
 								.getContaPagarValorTotal().subtract(this.contasPagarSelecionada.getValorPagamento()));
 						
-						this.contasPagarSelecionada.setValorPagamento(this.contasPagarSelecionada.getValor());
+						context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+								"Pagamento StarkBank: PIX efetuado com sucesso!", ""));
 						
 						finalizaOperacao = true;
 					}
@@ -19544,19 +19773,18 @@ public class ContratoCobrancaMB {
 							this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar(), this.objetoContratoCobranca.getNomeBancarioContaPagar(), this.contasPagarSelecionada.getValorPagamento(), this.contasPagarSelecionada.getFormaTransferencia());
 
 					if (starkBankPix != null) {
-						this.contasPagarSelecionada.setComprovantePagamentoPixStarkBank(starkBankPix);
+						//this.contasPagarSelecionada.setComprovantePagamentoPixStarkBank(starkBankPix);
+						
+						StarkBankBaixa baixa = registraBaixaStarkBank(starkBankPix.getCreated(), starkBankPix.getTaxId(), String.valueOf(starkBankPix.getId()), null,
+								this.objetoPagadorRecebedor.getNome(), starkBankPix.getAmount(), this.contasPagarSelecionada, "TED");
+						
+						this.contasPagarSelecionada.getListContasPagarBaixas().add(baixa);
 
-						//if (CommonsUtil.mesmoValor(this.contasPagarSelecionada.getValorPagamento(),
-						//		this.contasPagarSelecionada.getValor())) {
-							this.contasPagarSelecionada.setContaPaga(true);
-						//}
 						this.objetoContratoCobranca.setContaPagarValorTotal(this.objetoContratoCobranca
 								.getContaPagarValorTotal().subtract(this.contasPagarSelecionada.getValorPagamento()));
 						
-						this.contasPagarSelecionada.setValorPagamento(this.contasPagarSelecionada.getValor());
-						
 						context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-								"Pagamento StarkBank: Boleto pago sucesso!", ""));
+								"Pagamento StarkBank: TED efetuado com sucesso!", ""));
 						
 						finalizaOperacao = true;
 					}
@@ -19565,6 +19793,14 @@ public class ContratoCobrancaMB {
 		}
 		
 		if (finalizaOperacao) {
+			BigDecimal saldoConta = getSaldoContaPagar(this.contasPagarSelecionada);
+			
+			this.contasPagarSelecionada.setValorPagamento(saldoConta);
+			
+			if (saldoConta.compareTo(this.contasPagarSelecionada.getValor()) >= 0) {
+				this.contasPagarSelecionada.setContaPaga(true);
+			}
+			
 			if (this.contasPagarSelecionada.isContaPaga()
 					&& CommonsUtil.semValor(this.contasPagarSelecionada.getDataPagamento())) {
 				this.contasPagarSelecionada.setDataPagamento(gerarDataHoje());
@@ -19592,6 +19828,345 @@ public class ContratoCobrancaMB {
 	
 			ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 			cDao.merge(this.objetoContratoCobranca);
+		}
+	}
+	
+	
+	public void geraReciboPagamentoStarkBank(StarkBankBaixa baixaStarkBank) {
+		/*
+		this.transferenciasObservacoesIUGU = new TransferenciasObservacoesIUGU();
+		this.transferenciasObservacoesIUGU.setId(1);
+		this.transferenciasObservacoesIUGU.setIdTransferencia("jdsfhdsfhjskfhjhslafdshf");
+		this.transferenciasObservacoesIUGU.setObservacao("asdklfhjksdhfjd dsjfhjhdsfjashgdfj ");
+
+		this.valorItem = new BigDecimal("30000.00");
+		 */
+		
+		this.comprovanteStarkBankGerado = false;
+		
+		DecimalFormat df = new DecimalFormat("###,###,###,###,###.00"); 
+
+		FacesContext context = FacesContext.getCurrentInstance();
+		/*
+		 * Referência iText - Gerador PDF
+		 * http://www.dicas-l.com.br/arquivo/gerando_pdf_utilizando_java.php#.VGpT0_nF_h4
+		 */ 		
+
+		Document doc = null;
+		OutputStream os = null;
+
+		try {
+			/*
+			 *  Fonts Utilizadas no PDF
+			 */
+			Font header = new Font(FontFamily.HELVETICA, 12, Font.BOLD);
+
+			Font titulo = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
+			Font tituloBranco = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
+			tituloBranco.setColor(BaseColor.WHITE);
+			Font normal = new Font(FontFamily.HELVETICA, 10);
+			Font subtitulo = new Font(FontFamily.HELVETICA, 10, Font.BOLD);	    	
+			Font subtituloIdent = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
+			Font destaque = new Font(FontFamily.HELVETICA, 8, Font.BOLD);
+
+			TimeZone zone = TimeZone.getDefault();  
+			Locale locale = new Locale("pt", "BR"); 
+			Calendar date = Calendar.getInstance(zone, locale);  
+			SimpleDateFormat sdfDataRel = new SimpleDateFormat("dd/MMM/yyyy", locale);
+			SimpleDateFormat sdfDataRelComHoras = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", locale);
+
+			ParametrosDao pDao = new ParametrosDao(); 
+			/*
+			 * Configuração inicial do PDF - Cria o documento tamanho A4, margens de 2,54cm
+			 */
+
+
+			doc = new Document(PageSize.A4.rotate(), 10, 80, 10, 80);
+			this.nomeComprovanteStarkBank = "Recibo Pagamento -  " + nomePagador + ".pdf";
+			this.pathComprovanteStarkBank = pDao.findByFilter("nome", "RECIBOS_IUGU").get(0).getValorString();
+
+			os = new FileOutputStream(this.pathComprovanteStarkBank + this.nomeComprovanteStarkBank);  	
+
+			// Associa a stream de saída ao 
+			PdfWriter.getInstance(doc, os);
+
+			// Abre o documento
+			doc.open();     			
+			/*
+			Paragraph p1 = new Paragraph("RECIBO DE PAGAMENTO - " + favorecido, titulo);
+			p1.setAlignment(Element.ALIGN_CENTER);
+			p1.setSpacingAfter(10);
+			doc.add(p1);  	
+			 */
+			PdfPTable table = new PdfPTable(new float[] { 0.8f, 0.8f});
+			table.setWidthPercentage(50.0f); 
+			
+			BufferedImage buff = ImageIO.read(getClass().getResourceAsStream("/resource/logoStarkBank.jpg"));
+	        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+	        ImageIO.write(buff, "jpg", bos);
+	        Image img = Image.getInstance(bos.toByteArray());
+	        
+			img.setAlignment(Element.ALIGN_CENTER);
+
+			PdfPCell cell1 = new PdfPCell(img);
+			cell1.setBorder(0);
+			cell1.setPaddingLeft(8f);
+			cell1.setBorderWidthTop(1);
+			cell1.setBorderColorTop(BaseColor.BLACK);
+			cell1.setBorderWidthLeft(1);
+			cell1.setBorderColorLeft(BaseColor.BLACK);
+			cell1.setBorderWidthRight(1);
+			cell1.setBorderColorRight(BaseColor.BLACK);			
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(10f);
+			cell1.setPaddingBottom(10f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase("StarkBank - Sistema de Pagamento online", header));
+			cell1.setBorder(0);
+			cell1.setBorderWidthLeft(1);
+			cell1.setBorderColorLeft(BaseColor.BLACK);
+			cell1.setBorderWidthRight(1);
+			cell1.setBorderColorRight(BaseColor.BLACK);	
+			cell1.setPaddingLeft(8f);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(5f);
+			cell1.setPaddingBottom(15f);
+			cell1.setColspan(2);
+			table.addCell(cell1);			
+			
+			if (baixaStarkBank.getFormaPagamento().equals("Boleto")) {
+				cell1 = new PdfPCell(new Phrase("Comprovante de Pagamento - Boleto", tituloBranco));
+			}
+			if (baixaStarkBank.getFormaPagamento().equals("PIX")) {
+				cell1 = new PdfPCell(new Phrase("Comprovante de Pagamento - PIX", tituloBranco));		
+			}
+			if (baixaStarkBank.getFormaPagamento().equals("TED")) {
+				cell1 = new PdfPCell(new Phrase("Comprovante de Pagamento - TED", tituloBranco));
+			}
+			
+			cell1.setBorder(0);
+			cell1.setBorderWidthLeft(1);
+			cell1.setBorderColorLeft(BaseColor.BLACK);
+			cell1.setBorderWidthRight(1);
+			cell1.setBorderColorRight(BaseColor.BLACK);	
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(new BaseColor(92, 156, 204));
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(5f);
+			cell1.setPaddingBottom(5f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+
+			cell1 = new PdfPCell(new Phrase("ID da Transação: " + baixaStarkBank.getIdTransacao(), titulo));
+			cell1.setBorder(0);
+			cell1.setBorderWidthLeft(1);
+			cell1.setBorderColorLeft(BaseColor.BLACK);
+			cell1.setBorderWidthRight(1);
+			cell1.setBorderColorRight(BaseColor.BLACK);	
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(10f);
+			cell1.setPaddingBottom(2f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+
+			cell1 = new PdfPCell(new Phrase("Data: " + sdfDataRelComHoras.format(baixaStarkBank.getDataPagamento()), titulo));
+			cell1.setBorder(0);
+			cell1.setBorderWidthLeft(1);
+			cell1.setBorderColorLeft(BaseColor.BLACK);
+			cell1.setBorderWidthRight(1);
+			cell1.setBorderColorRight(BaseColor.BLACK);	
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(2f);
+			cell1.setPaddingBottom(10f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+
+			cell1 = new PdfPCell(new Phrase("Valor R$ " + df.format(baixaStarkBank.getValor()), titulo));
+			cell1.setBorder(0);
+			cell1.setBorderWidthLeft(1);
+			cell1.setBorderColorLeft(BaseColor.BLACK);
+			cell1.setBorderWidthRight(1);
+			cell1.setBorderColorRight(BaseColor.BLACK);	
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(10f);
+			cell1.setPaddingBottom(10f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase("CPF/CNPJ: " + baixaStarkBank.getDocumento(), titulo));
+			cell1.setBorder(0);
+			cell1.setBorderWidthLeft(1);
+			cell1.setBorderColorLeft(BaseColor.BLACK);
+			cell1.setBorderWidthRight(1);
+			cell1.setBorderColorRight(BaseColor.BLACK);	
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(10f);
+			cell1.setPaddingBottom(2f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase("Nome: " + baixaStarkBank.getNomePagador(), titulo));
+			cell1.setBorder(0);
+			cell1.setBorderWidthBottom(1);
+			cell1.setBorderColorBottom(BaseColor.BLACK);
+			cell1.setBorderWidthLeft(1);
+			cell1.setBorderColorLeft(BaseColor.BLACK);
+			cell1.setBorderWidthRight(1);
+			cell1.setBorderColorRight(BaseColor.BLACK);	
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(20f);
+			cell1.setPaddingBottom(10f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+			
+			if (baixaStarkBank.getFormaPagamento().equals("Boleto")) {
+				cell1 = new PdfPCell(new Phrase("Obs.: Compensação no próximo dia útil.", titulo));
+				cell1.setBorder(0);
+				cell1.setBorderWidthBottom(1);
+				cell1.setBorderColorBottom(BaseColor.BLACK);
+				cell1.setBorderWidthLeft(1);
+				cell1.setBorderColorLeft(BaseColor.BLACK);
+				cell1.setBorderWidthRight(1);
+				cell1.setBorderColorRight(BaseColor.BLACK);	
+				cell1.setPaddingLeft(8f);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingTop(20f);
+				cell1.setPaddingBottom(10f);
+				cell1.setColspan(2);
+				table.addCell(cell1);
+			}
+			
+			doc.add(table);
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			context.addMessage(null, new FacesMessage(
+					FacesMessage.SEVERITY_ERROR, "[Stark Bank - Recibo de Pagamento] Este contrato está aberto por algum outro programa, por favor, feche-o e tente novamente!" + e, ""));
+		} catch (Exception e) {
+			context.addMessage(null, new FacesMessage(
+					FacesMessage.SEVERITY_ERROR, "[Stark Bank - Recibo de Pagamento] Ocorreu um problema ao gerar o PDF!" + e, ""));
+		} finally {
+			this.comprovanteStarkBankGerado = true;
+
+			if (doc != null) {
+				//fechamento do documento
+				doc.close();
+			}
+			if (os != null) {
+				//fechamento da stream de saída
+				try {
+					os.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	public BigDecimal getSaldoContaPagar(ContasPagar contaPagar) {
+		BigDecimal saldo = BigDecimal.ZERO;
+		
+		for (StarkBankBaixa baixas : contaPagar.getListContasPagarBaixas()) {
+			saldo = saldo.add(baixas.getValor());
+		}
+			
+		return saldo;
+	}
+	
+	public BigDecimal getTotalBaixasStarkBank(ContasPagar contaPagar) {
+		BigDecimal saldo = BigDecimal.ZERO;
+		
+		if (contaPagar.getListContasPagarBaixas().size() > 0) {
+			for (StarkBankBaixa baixas : contaPagar.getListContasPagarBaixas()) {
+				saldo = saldo.add(baixas.getValor());
+			}
+		} else {
+			saldo = contaPagar.getValorPagamento();
+		}
+			
+		return saldo;
+	}
+	
+	public Date getDataUltimaBaixaStarkBank(ContasPagar contaPagar) {
+		Date dataUltimoPagamento = null;
+		
+		if (contaPagar.getListContasPagarBaixas().size() > 0) {
+			return contaPagar.getListContasPagarBaixas().get(contaPagar.getListContasPagarBaixas().size() - 1).getDataPagamento();
+		} else {
+			return contaPagar.getDataPagamento();
+		}
+	}
+	
+	public StarkBankBaixa registraBaixaStarkBank(Date dataPagamento, String documento, String idTransacao, String linhaBoleto, String nomePagador, 
+			BigDecimal valorPago, ContasPagar contaPagar, String formaPagamento) {
+		StarkBankBaixaDAO sbDAO = new StarkBankBaixaDAO();
+		
+		StarkBankBaixa starkBankBaixa = new StarkBankBaixa();
+		starkBankBaixa.setDataPagamento(dataPagamento);
+		starkBankBaixa.setDocumento(documento);
+		starkBankBaixa.setIdTransacao(idTransacao);
+		starkBankBaixa.setLinhaBoleto(linhaBoleto);
+		starkBankBaixa.setNomePagador(nomePagador);
+		starkBankBaixa.setValor(valorPago);	
+		starkBankBaixa.setFormaPagamento(formaPagamento);
+	
+		sbDAO.create(starkBankBaixa);
+		
+		return starkBankBaixa;
+	}
+	
+	public void estornaBaixaStarkBank(ContasPagar contaPagar, StarkBankBaixa starkBankBaixa) {
+		StarkBankBaixaDAO sbDAO = new StarkBankBaixaDAO();
+		sbDAO.delete(starkBankBaixa);
+		
+		BigDecimal saldoConta = getSaldoContaPagar(this.contasPagarSelecionada);
+		
+		if (CommonsUtil.mesmoValor(saldoConta,
+				contaPagar.getValor())) {
+			contaPagar.setContaPaga(true);
+		} else {
+			contaPagar.setContaPaga(false);
+		}
+	
+		ContasPagarDao contasPagarDao = new ContasPagarDao();
+		if (contaPagar.getId() <= 0) {
+			contasPagarDao.create(contaPagar);
+		} else {
+			contasPagarDao.merge(contaPagar);
 		}
 	}
 
@@ -30633,6 +31208,9 @@ public class ContratoCobrancaMB {
 	List<FileUploaded> deletefiles = new ArrayList<FileUploaded>();
 	StreamedContent downloadFile;
 	StreamedContent downloadAllFiles;
+	
+	StreamedContent downloadComprovanteStarkBank;
+	public boolean comprovanteStarkBankGerado;
 
 	Collection<FileUploaded> filesInterno = new ArrayList<FileUploaded>();
 	Collection<FileUploaded> filesFaltante = new ArrayList<FileUploaded>();
@@ -33939,5 +34517,60 @@ public class ContratoCobrancaMB {
 
 	public void setContratoDocumentos(String contratoDocumentos) {
 		this.contratoDocumentos = contratoDocumentos;
-	}	
+	}
+	
+	public String pathComprovanteStarkBank;
+	public String nomeComprovanteStarkBank;
+	
+	public StreamedContent getDownloadComprovanteStarkBank(StarkBankBaixa baixaStarkBank) {
+		FacesContext context = FacesContext.getCurrentInstance();
+		
+		geraReciboPagamentoStarkBank(baixaStarkBank);			
+		
+		String caminho =  this.pathComprovanteStarkBank + this.nomeComprovanteStarkBank;        
+		String arquivo = this.nomeComprovanteStarkBank;
+		FileInputStream stream = null;
+		
+		try {
+			stream = new FileInputStream(caminho);
+			downloadComprovanteStarkBank = new DefaultStreamedContent(stream, this.pathComprovanteStarkBank,
+					this.nomeComprovanteStarkBank);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			System.out.println("StarkBank - Comprovante não encontrado!");
+		}
+		
+		context.addMessage(null, new FacesMessage(
+				FacesMessage.SEVERITY_INFO, "[Stark Bank - Recibo de Pagamento] Recibo de pagamento gerado com sucesso!", ""));
+		
+		return this.downloadComprovanteStarkBank;
+	}
+
+	public void setDownloadComprovanteStarkBank(StreamedContent downloadComprovanteStarkBank) {
+		this.downloadComprovanteStarkBank = downloadComprovanteStarkBank;
+	}
+
+	public boolean isComprovanteStarkBankGerado() {
+		return comprovanteStarkBankGerado;
+	}
+
+	public void setComprovanteStarkBankGerado(boolean comprovanteStarkBankGerado) {
+		this.comprovanteStarkBankGerado = comprovanteStarkBankGerado;
+	}
+
+	public String getPathComprovanteStarkBank() {
+		return pathComprovanteStarkBank;
+	}
+
+	public void setPathComprovanteStarkBank(String pathComprovanteStarkBank) {
+		this.pathComprovanteStarkBank = pathComprovanteStarkBank;
+	}
+
+	public String getNomeComprovanteStarkBank() {
+		return nomeComprovanteStarkBank;
+	}
+
+	public void setNomeComprovanteStarkBank(String nomeComprovanteStarkBank) {
+		this.nomeComprovanteStarkBank = nomeComprovanteStarkBank;
+	}
 }

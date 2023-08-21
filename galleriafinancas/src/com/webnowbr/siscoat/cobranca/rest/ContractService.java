@@ -137,8 +137,8 @@ public class ContractService {
 								?  new BigDecimal(contratoAPP.getDouble("comissaoClienteValorFixo")) : null);
 						this.objetoContratoCobranca.setComissaoClientePorcentagem(contratoAPP.has("comissaoClientePorcentagem")
 								? new BigDecimal(contratoAPP.getDouble("comissaoClientePorcentagem")) : null);
-						this.objetoContratoCobranca.setTipoCobrarComissaoCliente(contratoAPP.getString("tipoCobrarComissaoCliente"));
-						this.objetoContratoCobranca.setBrutoLiquidoCobrarComissaoCliente(contratoAPP.getString("brutoLiquidoCobrarComissaoCliente"));
+						this.objetoContratoCobranca.setTipoCobrarComissaoCliente(contratoAPP.has("tipoCobrarComissaoCliente") ? contratoAPP.getString("tipoCobrarComissaoCliente"):null);
+						this.objetoContratoCobranca.setBrutoLiquidoCobrarComissaoCliente(contratoAPP.has("brutoLiquidoCobrarComissaoCliente") ? contratoAPP.getString("brutoLiquidoCobrarComissaoCliente"):null);
 						
 						this.objetoContratoCobranca.setQuantoPrecisa(new BigDecimal(contratoAPP.getDouble("quantoPrecisa")));
 						System.out.println("Contract Service - Criar Operacao - Imovel QuantoPrecisa: {} "+ contratoAPP.getDouble("quantoPrecisa"));

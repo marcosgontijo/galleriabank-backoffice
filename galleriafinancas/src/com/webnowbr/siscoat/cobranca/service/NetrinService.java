@@ -11,8 +11,6 @@ import java.net.URL;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
-import org.json.JSONObject;
-
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorConsulta;
@@ -381,7 +379,7 @@ public class NetrinService {
 				&& !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta()))
 			return pagadorRecebedorConsulta.getRetornoConsulta();
 		else {
-			String consultaRetorno = netrinCriarExecutaConsultaCadastroPpePF(CommonsUtil.pessoaFisicaJuridicaCnpjCpf(cnpjCpf),
+			String consultaRetorno = netrinCriarExecutaConsultaCadastroPpePF(cnpjCpf,
 					pagadorRecebedor.getNome());
 			pagaPagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagadorRecebedor,
 					DocumentosAnaliseEnum.PPE, consultaRetorno);
@@ -492,7 +490,7 @@ public class NetrinService {
 
 			String numeorsCpfCnpj = CommonsUtil.somenteNumeros(sCpfCnpj);
 
-			String tipoConsulta = CommonsUtil.pessoaFisicaJuridicaCnpjCpf(numeorsCpfCnpj);
+//			String tipoConsulta = CommonsUtil.pessoaFisicaJuridicaCnpjCpf(numeorsCpfCnpj);
 			URL myURL;
 
 			myURL = new URL("https://servicos.galleriabank.com.br/netrin/api/v1/cadastro/pj/"
@@ -560,6 +558,7 @@ public class NetrinService {
 							DateUtil.getDataHoje()) <= 30) {
 				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 				documentoAnalise.setRetornoProcesso(pagadorRecebedorConsulta.getRetornoConsulta());
+				documentoAnalise.setTipoProcesso("N");
 				documentoAnaliseDao.merge(documentoAnalise);
 			} else
 				netrinCriarConsultaProcesso(documentoAnalise);
@@ -594,6 +593,7 @@ public class NetrinService {
 
 				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 				documentoAnalise.setRetornoProcesso(retornoConsulta);
+				documentoAnalise.setTipoProcesso("N");
 
 				documentoAnaliseDao.merge(documentoAnalise);
 
@@ -694,7 +694,7 @@ public class NetrinService {
 		return null;
 	}
 
-	private String atualizaDadosPagadoRecebedorComReceitaFederal(PagadorRecebedor pagadorRecebedor) {
+	public String atualizaDadosPagadoRecebedorComReceitaFederal(PagadorRecebedor pagadorRecebedor) {
 		String nomeConsultado = "";
 
 		PagadorRecebedorService pagaPagadorRecebedorService = new PagadorRecebedorService();

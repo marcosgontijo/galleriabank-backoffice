@@ -75,7 +75,6 @@
 			style="FONT-SIZE: 10pt;" width="600;z-order:1000">
 
 
-
 			<p:panel>
 				<h:panelGrid id="panelPagadorRecebedorCadastro" columns="2">
 					<p:outputLabel for="tipoPessoaEmitente" value="Tipo Pessoa: "
@@ -115,7 +114,6 @@
 					oncomplete="callSeleiconaNovoCadastro()"
 					update="#{mbean.updatePagadorRecebedor}"
 					icon="ui-icon ui-icon-check">
-
 				</p:commandButton>
 				<p:remoteCommand name="callSeleiconaNovoCadastro"	 				
 						update="#{mbean.updatePagadorRecebedor} adicionarPessoaAnaliseForm"

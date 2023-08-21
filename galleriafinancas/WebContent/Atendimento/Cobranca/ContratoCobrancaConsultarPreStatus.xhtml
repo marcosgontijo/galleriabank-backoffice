@@ -118,14 +118,7 @@
 			            <h:outputText value="#{contratos.nomeResponsavel}" />
 			        </p:column>
 			        
-			        <shiro:hasAnyRoles name="ROOT">
-				        <p:column style="text-align: center;" headerText="Gerente" filterBy="#{contratos.nomeGerente}" 
-				        	filterMatchMode="contains" sortBy="#{contratos.nomeGerente}"
-				        	rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico'
-				        				or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico - Luvison'}" >
-					    	<h:outputText value="#{contratos.nomeGerente}" />
-					    </p:column>	
-				    </shiro:hasAnyRoles>
+
 				        	  
 			        <p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.nomePagador}" filterMatchMode="contains" sortBy="#{contratos.nomePagador}">
 			            <h:outputText value="#{contratos.nomePagador}" />
@@ -237,9 +230,17 @@
 		                </p:commandButton>
 		                
 		                <shiro:hasAnyRoles name="ROOT, PROFILE_COMENTARIO_JURIDICO">  
-			                <p:commandButton value="LUVISON" ajax="true" icon="ui-icon-arrowreturnthick-1-e"
+			                <p:commandButton value="Enviar..." ajax="true" icon="ui-icon-arrowreturnthick-1-e"
 			               		onclick="PF('enviarLuvison').show();" 
 			               		rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico'}">
+			               		<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+							</p:commandButton>
+						</shiro:hasAnyRoles>
+						
+						<shiro:hasAnyRoles name="ROOT, PROFILE_COMENTARIO_JURIDICO">  
+			                <p:commandButton value="Enviar Esteira Interna" ajax="true" icon="ui-icon-arrowreturnthick-1-e"
+			               		onclick="PF('enviarEsteiraInterna').show();" 
+			               		rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico - Luvison'}">
 			               		<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 							</p:commandButton>
 						</shiro:hasAnyRoles>
@@ -409,5 +410,26 @@
 				</div>
 			</h:form>
 		</p:dialog> 
+		
+		<p:dialog header="Enviar p/ Esteira Interna ?" widgetVar="enviarEsteiraInterna"
+			resizable="false" style="FONT-SIZE: 10pt;" width="600" closable="false">
+			<h:form>
+				<div align="center">
+					<h:outputText value="Deseja Enviar contrato p/ Esteira Interna?" styleClass="labelBold"  
+						style="width:250px;font-weight:bold;font-size: 18px;" />
+					<h:panelGrid columns="3" style="margin-top:50px">
+						<p:commandButton value="Não" onclick="PF('enviarEsteiraInterna').hide();" icon="ui-icon-closethick" >
+							<f:setPropertyActionListener 
+							target="#{contratoCobrancaMB.objetoContratoCobranca}"
+							value="#{null}" />
+						</p:commandButton>
+						<p:spacer width="20" />
+						<p:commandButton value="Sim" ajax="false" icon="ui-icon-check" 
+							action="#{contratoCobrancaMB.enviarContratoEsteiraInterna(contratos)}">
+						</p:commandButton>
+					</h:panelGrid>
+				</div>
+			</h:form>
+		</p:dialog>
 	</ui:define>
 </ui:composition>	        
