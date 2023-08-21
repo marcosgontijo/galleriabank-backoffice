@@ -12,8 +12,10 @@ import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
 import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetornoRequestFields;
 import br.com.galleriabank.dataengine.cliente.model.retorno.AntecedentesCriminais.EngineRetornoExecutionResultAntecedenteCriminaisEvidences;
+import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultConsultaCompleta;
 import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultConsultaQuodScore;
 import br.com.galleriabank.dataengine.cliente.model.retorno.processos.EngineRetornoExecutionResultProcessos;
+import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetornoExecutionResult;
 import br.com.galleriabank.netrin.cliente.model.PPE.PpeResponse;
 import br.com.galleriabank.netrin.cliente.model.cenprot.CenprotProtestos;
 import br.com.galleriabank.netrin.cliente.model.cenprot.CenprotResponse;
@@ -83,7 +85,39 @@ public class DocumentoAnalise implements Serializable {
 					String processos = CommonsUtil.stringValue(processo.getProcessos());
 					vProcesso.add(new DocumentoAnaliseResumo("Processos:", processos));
 						}
-				}
+				
+//				if(processo.getProcessos() == null) {
+//					vProcesso.add(new DocumentoAnaliseResumo("Criminal:", "Não disponível"));
+//				} else {
+//					String processos = CommonsUtil.stringValue(processo.getProcessos());
+//					vProcesso.add(new DocumentoAnaliseResumo("Criminal:", "Não disponível"));
+//				}
+//				
+//				if(processo.getProcessos() == null) {
+//					vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:", "Não disponível"));
+//				} else {
+//					vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:", "Não disponível"));
+//				}
+//				
+//				if(processo.getProcessos() == null) {
+//					vProcesso.add(new DocumentoAnaliseResumo("Execução de título:", "Não disponível"));
+//				} else {
+//					vProcesso.add(new DocumentoAnaliseResumo("Execução de título:", "Não disponível"));
+//				}
+//				
+//				if(processo.getProcessos() == null) {
+//					vProcesso.add(new DocumentoAnaliseResumo("Execução fiscal:", "Não disponível"));
+//				} else {
+//					vProcesso.add(new DocumentoAnaliseResumo("Execução fiscal:", "Não disponível"));
+//				}
+//				
+//				if(processo.getProcessos() == null) {
+//					vProcesso.add(new DocumentoAnaliseResumo("Outros:", "Não disponível"));
+//				} else {
+//					vProcesso.add(new DocumentoAnaliseResumo("Outros:", "Não disponível"));
+//				}
+				
+			}
 		return vProcesso;
 	}
 
@@ -140,6 +174,48 @@ public class DocumentoAnalise implements Serializable {
 				EngineRetornoExecutionResultProcessos processo = engine.getProcessos();
 				result.add(new DocumentoAnaliseResumo("Numero  de processos:",
 						CommonsUtil.stringValue(processo.getTotal_acoes_judiciais())));
+			}
+			
+			if(engine.getConsultaCompleta() == null) {
+				result.add(new DocumentoAnaliseResumo("Pessoa Políticamente exposta:", "Não disponível"));
+			} else {
+				result.add(new DocumentoAnaliseResumo("Pessoa Políticamente exposta:", "Não disponível"));
+			}
+			
+			if(engine.getConsultaCompleta() == null) {
+				result.add(new DocumentoAnaliseResumo("Processos:", "Não disponível"));
+			} else {
+				result.add(new DocumentoAnaliseResumo("Processos:", "Não disponível"));
+			}
+			
+			if(engine.getConsultaCompleta() == null) {
+				result.add(new DocumentoAnaliseResumo("Valor processos:", "Não disponível"));
+			} else {
+				result.add(new DocumentoAnaliseResumo("Valor processos:", "Não disponível"));
+			}
+			
+			if(engine.getConsultaCompleta() == null) {
+				result.add(new DocumentoAnaliseResumo("Pendências financeiras:", "Não disponível"));
+			} else {
+				result.add(new DocumentoAnaliseResumo("Pendências financeiras:", "Não disponível"));
+			}
+			
+			if(engine.getConsultaCompleta() == null) {
+				result.add(new DocumentoAnaliseResumo("Cheque sem fundo:", "Não disponível"));
+			} else {
+				result.add(new DocumentoAnaliseResumo("Cheque sem fundo:", "Não disponível"));
+			}
+			
+			if(engine.getConsultaCompleta() == null) {
+				result.add(new DocumentoAnaliseResumo("Inadimplências Comunicadas:", "Não disponível"));
+			} else {
+				result.add(new DocumentoAnaliseResumo("Inadimplências Comunicadas:", "Não disponível"));
+			}
+			
+			if(engine.getConsultaCompleta() == null) {
+				result.add(new DocumentoAnaliseResumo("Protesto:", "Não disponível"));
+			} else {
+				result.add(new DocumentoAnaliseResumo("Protesto:", "Não disponível"));
 			}
 		}
 
