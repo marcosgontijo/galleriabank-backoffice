@@ -39,6 +39,9 @@
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/DocketEstados.hbm.xml"/>
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/Docket.hbm.xml"/>
 		
+		<mapping resource="com/webnowbr/siscoat/cobranca/ws/plexi/PlexiDocumentos.hbm.xml"/>
+		<mapping resource="com/webnowbr/siscoat/cobranca/ws/plexi/PlexiConsulta.hbm.xml"/>
+		
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/UniProofDocuments.hbm.xml"/>
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/UniProof.hbm.xml"/>    
 		
