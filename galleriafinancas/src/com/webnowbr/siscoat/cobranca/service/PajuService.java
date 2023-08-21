@@ -416,14 +416,18 @@ public class PajuService {
 		for (DocumentoAnalise participante : participantes) {
 			
 			adicionaParagrafo(docTemplate, paragrafoTemplate, bloco, participante);
-			List<DocketDocumento> documentosParticipante = docketRetornoConsulta.getPedido().getDocumentos();
-			List<DocketDocumento> documentosParticipanteFiltro = documentosParticipante.stream().filter(d -> CommonsUtil
-					.mesmoValor(d.getCampos().getCnpj(), CommonsUtil.somenteNumeros(participante.getCnpjcpf())))
-					.collect(Collectors.toList());
-			for (DocketDocumento docketDocumento : documentosParticipanteFiltro) {
-				adicionaParagrafo(docTemplate, paragrafoDocumentoTemplate, bloco.getBlocosFilho().get(0), docketDocumento);
+			if(!CommonsUtil.semValor(docketRetornoConsulta)
+				&& !CommonsUtil.semValor(docketRetornoConsulta.getPedido())
+				&& !CommonsUtil.semValor(docketRetornoConsulta.getPedido().getDocumentos())) {
+				
+				List<DocketDocumento> documentosParticipante = docketRetornoConsulta.getPedido().getDocumentos();
+				List<DocketDocumento> documentosParticipanteFiltro = documentosParticipante.stream().filter(d -> CommonsUtil
+						.mesmoValor(d.getCampos().getCnpj(), CommonsUtil.somenteNumeros(participante.getCnpjcpf())))
+						.collect(Collectors.toList());
+				for (DocketDocumento docketDocumento : documentosParticipanteFiltro) {
+					adicionaParagrafo(docTemplate, paragrafoDocumentoTemplate, bloco.getBlocosFilho().get(0), docketDocumento);
+				}
 			}
-
 		}
 
 		if (paragrafoTemplate != null) {						

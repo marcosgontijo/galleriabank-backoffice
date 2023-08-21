@@ -2,6 +2,8 @@ package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.io.Serializable;
 
+import com.webnowbr.siscoat.common.CommonsUtil;
+
 public class Cidade implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
@@ -27,7 +29,7 @@ public class Cidade implements Serializable {
 			praiaStr = "Não";
 		}
 		return "Cidade - "+ nome +", " + estado + "\nRanking Nacional = " + rankingNacional
-				+ "\nRanking Estadual = " + rankingEstadual + "\nPopulação = " + populacao + "\nPraia = " + praiaStr + "";
+				+ "\nRanking Estadual = " + rankingEstadual + "\nPopulação = " + CommonsUtil.formataValorInteiro(populacao)  + "\nPraia = " + praiaStr + "";
 	}
 
 

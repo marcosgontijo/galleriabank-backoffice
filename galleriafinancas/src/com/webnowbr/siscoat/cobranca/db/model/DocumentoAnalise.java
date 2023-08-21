@@ -67,6 +67,7 @@ public class DocumentoAnalise implements Serializable {
 	private String retornoScr;
 	private String observacao;
 	private boolean excluido;
+
 	
 	public List<DocumentoAnaliseResumo> getResumoProcesso() {
 		List<DocumentoAnaliseResumo> vProcesso = new ArrayList<>();

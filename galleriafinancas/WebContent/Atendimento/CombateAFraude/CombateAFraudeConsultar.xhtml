@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition 
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  xmlns:p="http://primefaces.org/ui"
+	  template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">  
+		<h:form id="form" style="margin-bottom:10px;" >	
+			<script src="#{request.contextPath}/resources/js/functions.js"></script>
+		 	<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>			
+		 	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/css/Style.css" title="" media="all" /> 
+			<script src="#{request.contextPath}/resources/js/jquery.mask.min.js"></script>	
+		
+			<p:messages id="mensagens" showDetail="true"/>	
+												
+			<p:panel id="Consultaconsultas" header="Combate A Fraude - Consultar" style="margin-bottom:10px;">					    		    
+   		         <p:dataTable id="dtConsultas" var="consultas" value="#{combateAFraudeMB.cafList}" selection="" 
+   		         emptyMessage="" sortBy="#{consultas.id}" sortOrder="ascending"
+   		         rows="50" paginator="true" rowsPerPageTemplate="50,100,150"
+                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                 currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records" >  
+   		         	<f:facet name="header">
+						<p:commandButton value="Adicionar Consulta" 
+							icon="ui-icon-plus" ajax="false"
+							action="#{combateAFraudeMB.clearFields()}" />
+			        </f:facet>   
+			                      
+                	<p:column style="text-align: center;" headerText="CPF" 
+                		filterBy="#{consultas.cpf}" filterMatchMode="contains" sortBy="#{consultas.cpf}">
+			            <h:outputText value="#{consultas.cpf}" />
+			        </p:column>
+			        
+			        <p:column style="text-align: center;" headerText="Status" 
+			       		filterBy="#{consultas.status}" filterMatchMode="contains" sortBy="#{consultas.status}">
+			            <h:outputText value="#{consultas.status}" />
+			        </p:column>
+			        
+			        <p:column style="text-align: center;" headerText="Data Retorno" sortBy="#{consultas.date}">
+						<p:outputLabel value="#{consultas.date}" >
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+						</p:outputLabel>
+			        </p:column>
+			        
+			        <p:column style="text-align: center;width:100px;" headerText="Obs" 
+			       		filterBy="#{consultas.obs}" filterMatchMode="contains" sortBy="#{consultas.obs}">
+			            <h:outputText value="#{consultas.obs}" />
+			        </p:column>
+							            		        		               		        			        			           			 		
+				</p:dataTable>
+			</p:panel>			
+		</h:form>	
+		
+	</ui:define>
+</ui:composition>	        
