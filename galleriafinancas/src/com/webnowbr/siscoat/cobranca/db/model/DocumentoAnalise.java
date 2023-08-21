@@ -5,9 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
-import org.apache.xmlgraphics.util.uri.CommonURIResolver;
-import org.primefaces.PrimeFaces;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
@@ -15,15 +12,16 @@ import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
 import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetornoRequestFields;
 import br.com.galleriabank.dataengine.cliente.model.retorno.AntecedentesCriminais.EngineRetornoExecutionResultAntecedenteCriminaisEvidences;
+import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultConsultaCompleta;
 import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultConsultaQuodScore;
 import br.com.galleriabank.dataengine.cliente.model.retorno.processos.EngineRetornoExecutionResultProcessos;
+import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetornoExecutionResult;
 import br.com.galleriabank.netrin.cliente.model.PPE.PpeResponse;
 import br.com.galleriabank.netrin.cliente.model.cenprot.CenprotProtestos;
 import br.com.galleriabank.netrin.cliente.model.cenprot.CenprotResponse;
 import br.com.galleriabank.netrin.cliente.model.cenprot.ProtestosBrasilEstado;
 import br.com.galleriabank.netrin.cliente.model.dossie.DossieRequest;
 import br.com.galleriabank.netrin.cliente.model.processos.ProcessoResponse;
-import br.com.galleriabank.serasacrednet.cliente.model.CredNet;
 import br.com.galleriabank.serasacrednet.cliente.util.GsonUtil;
 
 public class DocumentoAnalise implements Serializable {
@@ -88,7 +86,39 @@ public class DocumentoAnalise implements Serializable {
 					String processos = CommonsUtil.stringValue(processo.getProcessos());
 					vProcesso.add(new DocumentoAnaliseResumo("Processos:", processos));
 						}
-				}
+				
+//				if(processo.getProcessos() == null) {
+//					vProcesso.add(new DocumentoAnaliseResumo("Criminal:", "Não disponível"));
+//				} else {
+//					String processos = CommonsUtil.stringValue(processo.getProcessos());
+//					vProcesso.add(new DocumentoAnaliseResumo("Criminal:", "Não disponível"));
+//				}
+//				
+//				if(processo.getProcessos() == null) {
+//					vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:", "Não disponível"));
+//				} else {
+//					vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:", "Não disponível"));
+//				}
+//				
+//				if(processo.getProcessos() == null) {
+//					vProcesso.add(new DocumentoAnaliseResumo("Execução de título:", "Não disponível"));
+//				} else {
+//					vProcesso.add(new DocumentoAnaliseResumo("Execução de título:", "Não disponível"));
+//				}
+//				
+//				if(processo.getProcessos() == null) {
+//					vProcesso.add(new DocumentoAnaliseResumo("Execução fiscal:", "Não disponível"));
+//				} else {
+//					vProcesso.add(new DocumentoAnaliseResumo("Execução fiscal:", "Não disponível"));
+//				}
+//				
+//				if(processo.getProcessos() == null) {
+//					vProcesso.add(new DocumentoAnaliseResumo("Outros:", "Não disponível"));
+//				} else {
+//					vProcesso.add(new DocumentoAnaliseResumo("Outros:", "Não disponível"));
+//				}
+				
+			}
 		return vProcesso;
 	}
 
@@ -146,150 +176,53 @@ public class DocumentoAnalise implements Serializable {
 				result.add(new DocumentoAnaliseResumo("Numero  de processos:",
 						CommonsUtil.stringValue(processo.getTotal_acoes_judiciais())));
 			}
+			
+			if(engine.getConsultaCompleta() == null) {
+				result.add(new DocumentoAnaliseResumo("Pessoa Políticamente exposta:", "Não disponível"));
+			} else {
+				result.add(new DocumentoAnaliseResumo("Pessoa Políticamente exposta:", "Não disponível"));
+			}
+			
+			if(engine.getConsultaCompleta() == null) {
+				result.add(new DocumentoAnaliseResumo("Processos:", "Não disponível"));
+			} else {
+				result.add(new DocumentoAnaliseResumo("Processos:", "Não disponível"));
+			}
+			
+			if(engine.getConsultaCompleta() == null) {
+				result.add(new DocumentoAnaliseResumo("Valor processos:", "Não disponível"));
+			} else {
+				result.add(new DocumentoAnaliseResumo("Valor processos:", "Não disponível"));
+			}
+			
+			if(engine.getConsultaCompleta() == null) {
+				result.add(new DocumentoAnaliseResumo("Pendências financeiras:", "Não disponível"));
+			} else {
+				result.add(new DocumentoAnaliseResumo("Pendências financeiras:", "Não disponível"));
+			}
+			
+			if(engine.getConsultaCompleta() == null) {
+				result.add(new DocumentoAnaliseResumo("Cheque sem fundo:", "Não disponível"));
+			} else {
+				result.add(new DocumentoAnaliseResumo("Cheque sem fundo:", "Não disponível"));
+			}
+			
+			if(engine.getConsultaCompleta() == null) {
+				result.add(new DocumentoAnaliseResumo("Inadimplências Comunicadas:", "Não disponível"));
+			} else {
+				result.add(new DocumentoAnaliseResumo("Inadimplências Comunicadas:", "Não disponível"));
+			}
+			
+			if(engine.getConsultaCompleta() == null) {
+				result.add(new DocumentoAnaliseResumo("Protesto:", "Não disponível"));
+			} else {
+				result.add(new DocumentoAnaliseResumo("Protesto:", "Não disponível"));
+			}
 		}
 
 		return result;
 	}
 
-	public List<DocumentoAnaliseResumo> getResumoSerasa() {
-		List<DocumentoAnaliseResumo> serasa = new ArrayList<>();
-		CredNet dados = GsonUtil.fromJson(getRetornoSerasa(), CredNet.class);
-		if (dados == null) {
-			serasa.add(new DocumentoAnaliseResumo("não disponível", null));
-			return serasa;
-		} else {
-			if (CommonsUtil.mesmoValor(tipoPessoa, "PF")) {
-
-				if (dados.getChequeSemFundo() == null) {
-					serasa.add(new DocumentoAnaliseResumo("Cheque Sem Fundo:", "Não disponível"));
-				} else {
-					String cheque = CommonsUtil.stringValue(dados.getChequeSemFundo().getPcsfQtCheques());
-					serasa.add(new DocumentoAnaliseResumo("Cheque Sem Fundo:", cheque));
-				}
-
-				if (dados.getDividaVencidaResumo() == null
-						|| dados.getDividaVencidaResumo().getPpfiVlTotalPendencia() == null) {
-					serasa.add(new DocumentoAnaliseResumo("Divida vencida:", "Não Disponível"));
-				} else {
-					String divida = CommonsUtil
-							.formataValorMonetario(dados.getDividaVencidaResumo().getPpfiVlTotalPendencia());
-					serasa.add(new DocumentoAnaliseResumo("Dívida vencida:", divida));
-				}
-
-				if (dados.getPefinResumo() == null || dados.getPefinResumo().getPpfiVlTotalPendencia() == null) {
-					serasa.add(new DocumentoAnaliseResumo("Pefin:", "Não Disponível"));
-				} else {
-					String pefin = CommonsUtil.formataValorMonetario(dados.getPefinResumo().getPpfiVlTotalPendencia());
-					serasa.add(new DocumentoAnaliseResumo("Pefin:", pefin));
-				}
-
-				if (dados.getRefinResumo() == null || dados.getRefinResumo().getPpfiVlTotalPendencia() == null) {
-					serasa.add(new DocumentoAnaliseResumo("Refin:", "Não Disponível"));
-				} else {
-					String refin = CommonsUtil.formataValorMonetario(dados.getRefinResumo().getPpfiVlTotalPendencia());
-					serasa.add(new DocumentoAnaliseResumo("Refin:", refin));
-				}
-
-				if (dados.getProtesto() == null) {
-					serasa.add(new DocumentoAnaliseResumo("Protesto:", "Não Disponível"));
-				} else {
-					String protesto = CommonsUtil.formataValorMonetario(dados.getProtesto().getPeptVlTotal());
-					serasa.add(new DocumentoAnaliseResumo("Protesto:", protesto));
-				}
-
-				if (dados.getAcoesCivil() == null) {
-					serasa.add(new DocumentoAnaliseResumo("Ações Civis:", "Não Disponível"));
-				} else {
-					String acoes = CommonsUtil.formataValorMonetario(dados.getAcoesCivil().getPeajVlTotalAcao());
-					serasa.add(new DocumentoAnaliseResumo("Ações Civis:", acoes));
-				}
-
-				if (dados.getFalencias() == null) {
-					serasa.add(new DocumentoAnaliseResumo("Falências:", "Não Disponível"));
-				} else {
-					String falencia = CommonsUtil.formataValorMonetario(dados.getFalencias().getPeajVlTotalAcao());
-					serasa.add(new DocumentoAnaliseResumo("Falências:", falencia));
-				}
-
-				if (dados.getFalenciasInsucesso() == null) {
-					serasa.add(new DocumentoAnaliseResumo("Falência Insucesso:", "Não Disponível"));
-				} else {
-					String falenciaInsuceso = CommonsUtil
-							.formataValorMonetario(dados.getFalenciasInsucesso().getPeajVlTotalAcao());
-					serasa.add(new DocumentoAnaliseResumo("Falência Insucesso:", falenciaInsuceso));
-				}
-			} else {
-
-				if (CommonsUtil.mesmoValor(tipoPessoa, "PF")) {
-
-					if (dados.getChequeSemFundo() == null) {
-						serasa.add(new DocumentoAnaliseResumo("Cheque Sem Fundo:", "Não disponível"));
-					} else {
-						String cheque = CommonsUtil.stringValue(dados.getChequeSemFundo().getPcsfQtCheques());
-						serasa.add(new DocumentoAnaliseResumo("Cheque Sem Fundo:", cheque));
-					}
-
-					if (dados.getDividaVencidaResumo() == null
-							|| dados.getDividaVencidaResumo().getPpfiVlTotalPendencia() == null) {
-						serasa.add(new DocumentoAnaliseResumo("Divida vencida:", "Não Disponível"));
-					} else {
-						String divida = CommonsUtil
-								.formataValorMonetario(dados.getDividaVencidaResumo().getPpfiVlTotalPendencia());
-						serasa.add(new DocumentoAnaliseResumo("Dívida vencida:", divida));
-					}
-
-					if (dados.getPefinResumo() == null || dados.getPefinResumo().getPpfiVlTotalPendencia() == null) {
-						serasa.add(new DocumentoAnaliseResumo("Pefin:", "Não Disponível"));
-					} else {
-						String pefin = CommonsUtil
-								.formataValorMonetario(dados.getPefinResumo().getPpfiVlTotalPendencia());
-						serasa.add(new DocumentoAnaliseResumo("Pefin:", pefin));
-					}
-
-					if (dados.getRefinResumo() == null || dados.getRefinResumo().getPpfiVlTotalPendencia() == null) {
-						serasa.add(new DocumentoAnaliseResumo("Refin:", "Não Disponível"));
-					} else {
-						String refin = CommonsUtil
-								.formataValorMonetario(dados.getRefinResumo().getPpfiVlTotalPendencia());
-						serasa.add(new DocumentoAnaliseResumo("Refin:", refin));
-					}
-
-					if (dados.getProtesto() == null) {
-						serasa.add(new DocumentoAnaliseResumo("Protesto:", "Não Disponível"));
-					} else {
-						String protesto = CommonsUtil.formataValorMonetario(dados.getProtesto().getPeptVlTotal());
-						serasa.add(new DocumentoAnaliseResumo("Protesto:", protesto));
-					}
-
-					if (dados.getAcoesCivil() == null) {
-						serasa.add(new DocumentoAnaliseResumo("Ações Civis:", "Não Disponível"));
-					} else {
-						String acoes = CommonsUtil.formataValorMonetario(dados.getAcoesCivil().getPeajVlTotalAcao());
-						serasa.add(new DocumentoAnaliseResumo("Ações Civis:", acoes));
-					}
-
-					if (dados.getFalencias() == null) {
-						serasa.add(new DocumentoAnaliseResumo("Falências:", "Não Disponível"));
-					} else {
-						String falencia = CommonsUtil.formataValorMonetario(dados.getFalencias().getPeajVlTotalAcao());
-						serasa.add(new DocumentoAnaliseResumo("Falências:", falencia));
-					}
-
-					if (dados.getFalenciasInsucesso() == null) {
-						serasa.add(new DocumentoAnaliseResumo("Falência Insucesso:", "Não Disponível"));
-					} else {
-						String falenciaInsuceso = CommonsUtil
-								.formataValorMonetario(dados.getFalenciasInsucesso().getPeajVlTotalAcao());
-						serasa.add(new DocumentoAnaliseResumo("Falência Insucesso:", falenciaInsuceso));
-					}
-				} else {
-					serasa.add(new DocumentoAnaliseResumo("Menu não disponível para PJ", null));
-				}
-			}
-		}
-		return serasa;
-
-	}
 
 	public List<DocumentoAnaliseResumo> getResumoCenprot() {
 		List<DocumentoAnaliseResumo> cenprot = new ArrayList<>();
@@ -724,5 +657,4 @@ public class DocumentoAnalise implements Serializable {
 	public void setExcluido(boolean excluido) {
 		this.excluido = excluido;
 	}
-
 }
