@@ -499,12 +499,12 @@ public class CcbMB {
 				this.objetoCcb.setCCBBanco(participanteSelecionado.getPessoa().getBanco());
 				String[] banco = participanteSelecionado.getPessoa().getBanco().split(Pattern.quote("|"));
 				if (CommonsUtil.semValor(this.objetoCcb.getNomeBanco())) {
-					if (!CommonsUtil.semValor(banco) || banco.length > 1) {
+					if (!CommonsUtil.semValor(banco) && banco.length > 1) {
 						this.objetoCcb.setNomeBanco(CommonsUtil.trimNull(banco[1]));
 					}
 				}
 				if (CommonsUtil.semValor(this.objetoCcb.getNumeroBanco())) {
-					if (!CommonsUtil.semValor(banco) || banco.length > 1) {
+					if (!CommonsUtil.semValor(banco) && banco.length > 0) {
 						this.objetoCcb.setNumeroBanco(CommonsUtil.trimNull(banco[0]));
 					}
 				}
@@ -636,6 +636,13 @@ public class CcbMB {
 					if(!CommonsUtil.semValor(objetoCcb.getCCBCC())) {
 						despesaSelecionada.setContaTed(objetoCcb.getCCBCC());
 					}
+					if(!CommonsUtil.semValor(objetoCcb.getCCBCC())) {
+						despesaSelecionada.setContaTed(objetoCcb.getCCBCC());
+					}
+					
+					if(!CommonsUtil.semValor(objetoCcb.getCCBDigito())) {
+						despesaSelecionada.setDigitoContaTed(objetoCcb.getCCBDigito());
+					}
 					
 					if(!CommonsUtil.semValor(despesaSelecionada.getNomeTed())) {
 						objetoCcb.getObjetoContratoCobranca().setNomeBancarioContaPagar(despesaSelecionada.getNomeTed());
@@ -651,6 +658,9 @@ public class CcbMB {
 					}
 					if(!CommonsUtil.semValor(despesaSelecionada.getContaTed())) {
 						objetoCcb.getObjetoContratoCobranca().setContaBancarioContaPagar(despesaSelecionada.getContaTed());
+					}
+					if(!CommonsUtil.semValor(despesaSelecionada.getDigitoContaTed())) {
+						objetoCcb.getObjetoContratoCobranca().setDigitoContaBancarioContaPagar(despesaSelecionada.getDigitoContaTed());
 					}
 				} else if(CommonsUtil.mesmoValor(despesaSelecionada.getFormaTransferencia(), "Pix")) {
 					if(!CommonsUtil.semValor(objetoCcb.getCCBPix())) {
@@ -703,6 +713,9 @@ public class CcbMB {
 	
 	public void removeDespesa(ContasPagar conta) {
 		this.objetoCcb.getDespesasAnexo2().remove(conta);
+		if(!CommonsUtil.semValor(conta.getContrato())) {
+			conta.setContrato(null);
+		}
 		if(!CommonsUtil.semValor(objetoCcb.getObjetoContratoCobranca())) {
 			if(this.objetoCcb.getObjetoContratoCobranca().getListContasPagar().contains(conta)) {
 				objetoCcb.getObjetoContratoCobranca().getListContasPagar().remove(conta);
@@ -791,6 +804,7 @@ public class CcbMB {
 		//listaArquivos();
 		
 		//Popular Campos para Simulação
+		this.objetoCcb.setUsarNovoCustoEmissao(true);
 		this.objetoCcb.setVlrImovel(contrato.getValorMercadoImovel());
 		this.objetoCcb.setVendaLeilao(contrato.getValorVendaForcadaImovel());
 		objetoCcb.setValorCredito(objetoContratoCobranca.getValorAprovadoComite());
@@ -3669,7 +3683,8 @@ public class CcbMB {
 			if(nomeSemvirgula.contains(",")) {
 				nomeSemvirgula = nomeSemvirgula.replace(",", "");
 		    }
-			gerador.open(String.format("Galleria Bank - Modelo_CCB %s.docx", ""));
+			String nomeArquivoDownload = String.format("Galleria Bank - Modelo_CCB %s.docx", "");
+			gerador.open(nomeArquivoDownload);
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
 
@@ -6056,7 +6071,8 @@ public class CcbMB {
 			if(nomeSemvirgula.contains(",")) {
 				nomeSemvirgula = nomeSemvirgula.replace(",", "");
 		    }
-			gerador.open(String.format("Galleria Bank - Modelo_AF %s.docx", ""));
+			String nomeArquivoDownload = String.format("Galleria Bank - Modelo_AF %s.docx", "");
+			gerador.open(nomeArquivoDownload);
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
 			
@@ -6421,7 +6437,8 @@ public class CcbMB {
 				if(nomeSemvirgula.contains(",")) {
 					nomeSemvirgula = nomeSemvirgula.replace(",", "");
 			    }
-				gerador.open(String.format("Galleria Bank - Modelo_NC %s.docx", ""));
+				String nomeArquivoDownload = String.format("Galleria Bank - Modelo_NC %s.docx", "");
+				gerador.open(nomeArquivoDownload);
 				gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 				gerador.close();
 				
@@ -9540,10 +9557,7 @@ public class CcbMB {
 			            String text = r.getText(0);		            
 			            if(CommonsUtil.semValor(text)) {
 			            	continue;
-			            }			            
-			            if(text.contains("LUCCA")) {
-			            	String aa="";
-			            }			            
+			            }				            
 			            text = trocaValoresXWPF(text, r, "cidadeEmitente", (participante.getPessoa().getCidade()));    
 			            text = trocaValoresXWPF(text, r, "ufEmitente", (participante.getPessoa().getEstado()));			            
 			            text = trocaValoresXWPF(text, r, "emissaoDia", this.objetoCcb.getDataDeEmissao().getDate());
