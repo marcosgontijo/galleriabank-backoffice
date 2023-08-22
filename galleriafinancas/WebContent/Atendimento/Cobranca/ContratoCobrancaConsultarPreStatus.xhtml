@@ -118,7 +118,7 @@
 			            <h:outputText value="#{contratos.nomeResponsavel}" />
 			        </p:column>
 			        
-			        <shiro:hasAnyRoles name="ROOT">
+			        <shiro:hasAnyRoles name="ROOT, PROFILE_COMENTARIO_JURIDICO">
 				        <p:column style="text-align: center;" headerText="Gerente" filterBy="#{contratos.nomeGerente}" 
 				        	filterMatchMode="contains" sortBy="#{contratos.nomeGerente}"
 				        	rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico'
