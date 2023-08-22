@@ -665,3 +665,12 @@ public class DocumentoAnalise implements Serializable {
 	public void setExcluido(boolean excluido) {
 		this.excluido = excluido;
 	}
+
+	public List<PlexiConsulta> getPlexiConsultas() {
+		return plexiConsultas;
+	}
+
+	public void setPlexiConsultas(List<PlexiConsulta> plexiConsultas) {
+		this.plexiConsultas = plexiConsultas;
+	}
+}

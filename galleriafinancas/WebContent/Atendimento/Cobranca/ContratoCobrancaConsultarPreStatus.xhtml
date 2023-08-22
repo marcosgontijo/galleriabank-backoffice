@@ -118,7 +118,14 @@
 			            <h:outputText value="#{contratos.nomeResponsavel}" />
 			        </p:column>
 			        
-
+			        <shiro:hasAnyRoles name="ROOT">
+				        <p:column style="text-align: center;" headerText="Gerente" filterBy="#{contratos.nomeGerente}" 
+				        	filterMatchMode="contains" sortBy="#{contratos.nomeGerente}"
+				        	rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico'
+				        				or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico - Luvison'}" >
+					    	<h:outputText value="#{contratos.nomeGerente}" />
+					    </p:column>	
+				    </shiro:hasAnyRoles>
 				        	  
 			        <p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.nomePagador}" filterMatchMode="contains" sortBy="#{contratos.nomePagador}">
 			            <h:outputText value="#{contratos.nomePagador}" />
