@@ -136,6 +136,9 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhesObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhesParcial;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFavorecidos;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFinanceiroDiaConsultaDetalhesParcialVO;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFinanceiroDiaConsultaDetalhesVO;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFinancerioDiaConsultaVO;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaParcelasInvestidor;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaStatus;
@@ -177,6 +180,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.cobranca.db.op.SeguradoDAO;
 import com.webnowbr.siscoat.cobranca.db.op.StarkBankBaixaDAO;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
+import com.webnowbr.siscoat.cobranca.service.FileService;
 import com.webnowbr.siscoat.cobranca.service.PajuService;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -219,6 +223,7 @@ public class ContratoCobrancaMB {
 	/** Variavel. */
 	private ContratoCobranca objetoContratoCobranca;
 	private String numeroContratoObjetoContratoCobranca;
+	private List<FileUploaded>  documentoConsultarTodos;
 
 	private boolean updateMode = false;
 	private boolean deleteMode = false;
@@ -763,9 +768,9 @@ public class ContratoCobrancaMB {
 	List<ContratoCobrancaParcelasInvestidor> selectedParcelasInvestidorSA;
 	List<ContratoCobrancaParcelasInvestidor> selectedParcelasInvestidorEnvelope;
 
-	List<ContratoCobranca> contratoCobrancaFinanceiroDia;
+	List<ContratoCobrancaFinancerioDiaConsultaVO> contratoCobrancaFinanceiroDia;
 
-	private List<ContratoCobranca> selectedContratoCobrancaFinanceiroDia;
+	private List<ContratoCobrancaFinancerioDiaConsultaVO> selectedContratoCobrancaFinanceiroDia;
 
 	ContratoCobrancaParcelasInvestidor antecipacao;
 	ContratoCobrancaDetalhes amortizacao;
@@ -9429,7 +9434,7 @@ public class ContratoCobrancaMB {
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 
 		contrato = cDao.findById(idContrato);
-
+		this.documentoConsultarTodos = new ArrayList<FileUploaded>();
 		return contrato;
 	}
 
@@ -12359,12 +12364,12 @@ public class ContratoCobrancaMB {
 		this.consideraDataCorteRelatorioDia = false;
 
 		this.contratoGerado = false;
-		this.contratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
+		this.contratoCobrancaFinanceiroDia = new ArrayList<>();
 
 		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
 		this.selectedContratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
 
-		this.selectedContratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
+		this.selectedContratoCobrancaFinanceiroDia = new ArrayList<>();
 
 		this.tipoContratoCobrancaFinanceiroDia = tipoContratoCobrancaFinanceiroDia;
 
@@ -12374,12 +12379,12 @@ public class ContratoCobrancaMB {
 	public String clearFieldsRelFinanceiroDiaCompleto() {
 		this.relDataContratoInicio = gerarDataHoje();
 		this.contratoGerado = false;
-		this.contratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
+		this.contratoCobrancaFinanceiroDia = new ArrayList<>();
 
 		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
 		this.selectedContratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
 
-		this.selectedContratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
+		this.selectedContratoCobrancaFinanceiroDia = new ArrayList<>();
 
 		this.tipoContratoCobrancaFinanceiroDia = tipoContratoCobrancaFinanceiroDia;
 
@@ -12389,12 +12394,12 @@ public class ContratoCobrancaMB {
 	public String clearFieldsRelFinanceiroDiaEspelhamento(String tipoContratoCobrancaFinanceiroDia) {
 		this.relDataContratoInicio = gerarDataHoje();
 		this.contratoGerado = false;
-		this.contratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
+		this.contratoCobrancaFinanceiroDia = new ArrayList<>();
 
 		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
 		this.selectedContratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
 
-		this.selectedContratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
+		this.selectedContratoCobrancaFinanceiroDia = new ArrayList<>();
 
 		this.tipoContratoCobrancaFinanceiroDia = tipoContratoCobrancaFinanceiroDia;
 
@@ -12404,12 +12409,12 @@ public class ContratoCobrancaMB {
 	public String clearFieldsRelFinanceiroFIDCMigracao() {
 		this.relDataContratoInicio = gerarDataHoje();
 		this.contratoGerado = false;
-		this.contratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
+		this.contratoCobrancaFinanceiroDia = new ArrayList<>();
 
 		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
 		this.selectedContratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
 
-		this.selectedContratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
+		this.selectedContratoCobrancaFinanceiroDia = new ArrayList<>();
 
 		return "/Atendimento/Cobranca/ContratoCobrancaFinanceiroFIDCMigracao.xhtml";
 	}
@@ -14147,7 +14152,7 @@ public class ContratoCobrancaMB {
 
 	public void geraRelFinanceiroDiaEspelhamento() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		this.contratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
+		this.contratoCobrancaFinanceiroDia = new ArrayList<>();
 
 		this.contratoCobrancaFinanceiroDia = contratoCobrancaDao
 				.relatorioFinanceiroDia(this.tipoContratoCobrancaFinanceiroDia);
@@ -14170,9 +14175,9 @@ public class ContratoCobrancaMB {
 		// onRowEdit - nova data
 		rowEditNewDate = auxDataPagamento;
 
-		List<ContratoCobranca> listContratos = new ArrayList<ContratoCobranca>();
+		List<ContratoCobrancaFinancerioDiaConsultaVO> listContratos = new ArrayList<ContratoCobrancaFinancerioDiaConsultaVO>();
 
-		for (ContratoCobranca contratos : this.contratoCobrancaFinanceiroDia) {
+		for (ContratoCobrancaFinancerioDiaConsultaVO contratos : this.contratoCobrancaFinanceiroDia) {
 
 			int countParcelas = 0;
 			BigDecimal somaAmortizacoes = BigDecimal.ZERO;
@@ -14181,7 +14186,7 @@ public class ContratoCobrancaMB {
 
 			if (!CommonsUtil.semValor(contratos.getValorCCB())) {
 				if (contratos.getListContratoCobrancaDetalhes().size() > 0) {
-					if (contratos.getPagador().getCpf() != null) {
+					if (contratos.getPagador_cpf() != null) {
 						simuladorMB.setTipoPessoa("PF");
 					} else {
 						simuladorMB.setTipoPessoa("PJ");
@@ -14208,7 +14213,7 @@ public class ContratoCobrancaMB {
 				}
 			}
 
-			for (ContratoCobrancaDetalhes ccd : contratos.getListContratoCobrancaDetalhes()) {
+			for (ContratoCobrancaFinanceiroDiaConsultaDetalhesVO ccd : contratos.getListContratoCobrancaDetalhes()) {
 
 				if (ccd.isAmortizacao()) {
 					somaAmortizacoes.add(ccd.getVlrParcela());
@@ -14275,7 +14280,7 @@ public class ContratoCobrancaMB {
 
 				BigDecimal somaBaixas = BigDecimal.ZERO;
 
-				for (ContratoCobrancaDetalhesParcial cBaixas : ccd.getListContratoCobrancaDetalhesParcial()) {
+				for (ContratoCobrancaFinanceiroDiaConsultaDetalhesParcialVO cBaixas : ccd.getListContratoCobrancaDetalhesParcial()) {
 					ccd.setDataUltimoPagamento(cBaixas.getDataPagamento());
 
 					if (cBaixas.getVlrRecebido() != null) {
@@ -14319,7 +14324,7 @@ public class ContratoCobrancaMB {
 		this.contratoCobrancaFinanceiroDia = listContratos;
 
 		if (this.contratoCobrancaFinanceiroDia.size() == 0) {
-			this.contratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
+			this.contratoCobrancaFinanceiroDia = new ArrayList<>();
 		}
 
 		this.contratoGerado = false;
@@ -14327,12 +14332,12 @@ public class ContratoCobrancaMB {
 
 	public void geraRelFinanceiroDiaCompleto() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		this.contratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
+		this.contratoCobrancaFinanceiroDia = new ArrayList<>();
 
 		this.contratoCobrancaFinanceiroDia = contratoCobrancaDao.relatorioFinanceiroDiaCompleto();
 
 		if (this.contratoCobrancaFinanceiroDia.size() == 0) {
-			this.contratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
+			this.contratoCobrancaFinanceiroDia = new ArrayList<>();
 		}
 
 		this.contratoGerado = false;
@@ -14340,7 +14345,7 @@ public class ContratoCobrancaMB {
 
 	public void geraRelFinanceiroDia() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		this.contratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
+		this.contratoCobrancaFinanceiroDia = new ArrayList<>();
 
 		this.contratoCobrancaFinanceiroDia = contratoCobrancaDao
 				.relatorioFinanceiroDia(this.tipoContratoCobrancaFinanceiroDia);
@@ -14363,9 +14368,9 @@ public class ContratoCobrancaMB {
 		// onRowEdit - nova data
 		rowEditNewDate = auxDataPagamento;
 
-		List<ContratoCobranca> listContratos = new ArrayList<ContratoCobranca>();
+		List<ContratoCobrancaFinancerioDiaConsultaVO> listContratos = new ArrayList<>();
 
-		for (ContratoCobranca contratos : this.contratoCobrancaFinanceiroDia) {
+		for (ContratoCobrancaFinancerioDiaConsultaVO contratos : this.contratoCobrancaFinanceiroDia) {
 
 			int countParcelas = 0;
 			BigDecimal somaAmortizacoes = BigDecimal.ZERO;
@@ -14374,7 +14379,7 @@ public class ContratoCobrancaMB {
 
 			if (!CommonsUtil.semValor(contratos.getValorCCB())) {
 				if (contratos.getListContratoCobrancaDetalhes().size() > 0) {
-					if (contratos.getPagador().getCpf() != null) {
+					if (contratos.getPagador_cpf() != null) {
 						simuladorMB.setTipoPessoa("PF");
 					} else {
 						simuladorMB.setTipoPessoa("PJ");
@@ -14404,7 +14409,7 @@ public class ContratoCobrancaMB {
 			// calcula coluna valor atualizado
 			ContratoCobrancaUtilsMB contratoCobrancaUtilsMB;
 
-			for (ContratoCobrancaDetalhes ccd : contratos.getListContratoCobrancaDetalhes()) {
+			for (ContratoCobrancaFinanceiroDiaConsultaDetalhesVO ccd : contratos.getListContratoCobrancaDetalhes()) {
 
 				if (ccd.isAmortizacao()) {
 					somaAmortizacoes.add(ccd.getVlrParcela());
@@ -14468,7 +14473,7 @@ public class ContratoCobrancaMB {
 
 				BigDecimal somaBaixas = BigDecimal.ZERO;
 
-				for (ContratoCobrancaDetalhesParcial cBaixas : ccd.getListContratoCobrancaDetalhesParcial()) {
+				for (ContratoCobrancaFinanceiroDiaConsultaDetalhesParcialVO cBaixas : ccd.getListContratoCobrancaDetalhesParcial()) {
 					if (this.consideraDataCorteRelatorioDia) {
 						if (cBaixas.getDataPagamento().before(this.filtroDataCorteRelatorioDia)) {
 							ccd.setDataUltimoPagamento(cBaixas.getDataPagamento());
@@ -14522,7 +14527,7 @@ public class ContratoCobrancaMB {
 		this.contratoCobrancaFinanceiroDia = listContratos;
 
 		if (this.contratoCobrancaFinanceiroDia.size() == 0) {
-			this.contratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
+			this.contratoCobrancaFinanceiroDia = new ArrayList<>();
 		}
 
 		this.contratoGerado = false;
@@ -14751,7 +14756,7 @@ public class ContratoCobrancaMB {
 
 		int linhaInicioContrato = 0;
 
-		for (ContratoCobranca record : this.contratoCobrancaFinanceiroDia) {
+		for (ContratoCobrancaFinancerioDiaConsultaVO record : this.contratoCobrancaFinanceiroDia) {
 			countLine++;
 			linhaInicioContrato = countLine;
 			row = sheet.createRow(countLine);
@@ -15159,7 +15164,7 @@ public class ContratoCobrancaMB {
 			this.selectedContratoCobrancaFinanceiroDia = this.contratoCobrancaFinanceiroDia;
 		}
 
-		for (ContratoCobranca record : this.selectedContratoCobrancaFinanceiroDia) {
+		for (ContratoCobrancaFinancerioDiaConsultaVO record : this.selectedContratoCobrancaFinanceiroDia) {
 			countLine++;
 			linhaInicioContrato = countLine;
 			row = sheet.createRow(countLine);
@@ -15181,50 +15186,50 @@ public class ContratoCobrancaMB {
 			// Pagador
 			cell = row.createCell(2);
 			cell.setCellStyle(cell_style);
-			cell.setCellValue(record.getPagador().getNome());
+			cell.setCellValue(record.getPagador_nome());
 
 			// CPF CNPJ
 			cell = row.createCell(3);
 			cell.setCellStyle(cell_style);
-			if (record.getPagador().getCpf() != null && !record.getPagador().getCpf().equals("")) {
-				cell.setCellValue(record.getPagador().getCpf());
+			if (record.getPagador_cpf() != null && !record.getPagador_cpf().equals("")) {
+				cell.setCellValue(record.getPagador_cpf());
 			} else {
-				cell.setCellValue(record.getPagador().getCnpj());
+				cell.setCellValue(record.getPagador_cpf());
 			}
 
 			// Data NAscimento Pagador
 			cell = row.createCell(4);
 			cell.setCellStyle(dateStyle);
-			if (record.getPagador().getDtNascimento() != null) {
-				cell.setCellValue(record.getPagador().getDtNascimento());
+			if (record.getPagador_dtNascimento() != null) {
+				cell.setCellValue(record.getPagador_dtNascimento());
 			}
 
 			// Endereço pagador
 			cell = row.createCell(5);
 			cell.setCellStyle(cell_style);
-			cell.setCellValue(record.getPagador().getEndereco() + ", " + record.getPagador().getNumero() + " - "
-					+ record.getPagador().getCidade() + " / " + record.getPagador().getEstado() + " (CEP: "
-					+ record.getPagador().getCep() + ")");
+			cell.setCellValue(record.getPagador_endereco() + ", " + record.getPagador_numero() + " - "
+					+ record.getPagador_cidade() + " / " + record.getPagador_estado() + " (CEP: "
+					+ record.getPagador_cep() + ")");
 
 			// Nome Conjuge
 			cell = row.createCell(6);
 			cell.setCellStyle(cell_style);
-			if (record.getPagador().getNomeConjuge() != null) {
-				cell.setCellValue(record.getPagador().getNomeConjuge());
+			if (record.getPagador_nomeConjuge() != null) {
+				cell.setCellValue(record.getPagador_nomeConjuge());
 			}
 
 			// CPF Conjuge
 			cell = row.createCell(7);
 			cell.setCellStyle(cell_style);
-			if (record.getPagador().getCpfConjuge() != null) {
-				cell.setCellValue(record.getPagador().getCpfConjuge());
+			if (record.getPagador_cpfConjuge() != null) {
+				cell.setCellValue(record.getPagador_cpfConjuge());
 			}
 
 			// Região Imóvel
 			cell = row.createCell(8);
 			cell.setCellStyle(cell_style);
-			if (record.getImovel().getCidade() != null && record.getImovel().getEstado() != null) {
-				cell.setCellValue(record.getImovel().getCidade() + "/" + record.getImovel().getEstado());
+			if (record.getImovel_cidade() != null && record.getImovel_estado() != null) {
+				cell.setCellValue(record.getImovel_cidade() + "/" + record.getImovel_estado());
 			}
 
 			// Tipo Imovel
@@ -15282,7 +15287,7 @@ public class ContratoCobrancaMB {
 			}
 
 			int parcelaCount = 0;
-			for (ContratoCobrancaDetalhes parcelas : record.getListContratoCobrancaDetalhes()) {
+			for (ContratoCobrancaFinanceiroDiaConsultaDetalhesVO parcelas : record.getListContratoCobrancaDetalhes()) {
 				if (parcelaCount > 0) {
 					countLine++;
 					row = sheet.createRow(countLine);
@@ -15306,50 +15311,50 @@ public class ContratoCobrancaMB {
 				// Pagador
 				cell = row.createCell(2);
 				cell.setCellStyle(cell_style);
-				cell.setCellValue(record.getPagador().getNome());
+				cell.setCellValue(record.getPagador_nome());
 
 				// CPF CNPJ
 				cell = row.createCell(3);
 				cell.setCellStyle(cell_style);
-				if (record.getPagador().getCpf() != null && !record.getPagador().getCpf().equals("")) {
-					cell.setCellValue(record.getPagador().getCpf());
+				if (record.getPagador_cpf() != null && !record.getPagador_cpf().equals("")) {
+					cell.setCellValue(record.getPagador_cpf());
 				} else {
-					cell.setCellValue(record.getPagador().getCnpj());
+					cell.setCellValue(record.getPagador_cnpj());
 				}
 
 				// Data NAscimento Pagador
 				cell = row.createCell(4);
 				cell.setCellStyle(dateStyle);
-				if (record.getPagador().getDtNascimento() != null) {
-					cell.setCellValue(record.getPagador().getDtNascimento());
+				if (record.getPagador_dtNascimento() != null) {
+					cell.setCellValue(record.getPagador_dtNascimento());
 				}
 
 				// Endereço pagador
 				cell = row.createCell(5);
 				cell.setCellStyle(cell_style);
-				cell.setCellValue(record.getPagador().getEndereco() + ", " + record.getPagador().getNumero() + " - "
-						+ record.getPagador().getCidade() + " / " + record.getPagador().getEstado() + " (CEP: "
-						+ record.getPagador().getCep() + ")");
+				cell.setCellValue(record.getPagador_endereco() + ", " + record.getPagador_numero() + " - "
+						+ record.getPagador_cidade() + " / " + record.getPagador_estado() + " (CEP: "
+						+ record.getPagador_cep() + ")");
 
 				// Nome Conjuge
 				cell = row.createCell(6);
 				cell.setCellStyle(cell_style);
-				if (record.getPagador().getNomeConjuge() != null) {
-					cell.setCellValue(record.getPagador().getNomeConjuge());
+				if (record.getPagador_nomeConjuge() != null) {
+					cell.setCellValue(record.getPagador_nomeConjuge());
 				}
 
 				// CPF Conjuge
 				cell = row.createCell(7);
 				cell.setCellStyle(cell_style);
-				if (record.getPagador().getCpfConjuge() != null) {
-					cell.setCellValue(record.getPagador().getCpfConjuge());
+				if (record.getPagador_cpfConjuge() != null) {
+					cell.setCellValue(record.getPagador_cpfConjuge());
 				}
 
 				// Região Imóvel
 				cell = row.createCell(8);
 				cell.setCellStyle(cell_style);
-				if (record.getImovel().getCidade() != null && record.getImovel().getEstado() != null) {
-					cell.setCellValue(record.getImovel().getCidade() + "/" + record.getImovel().getEstado());
+				if (record.getImovel_cidade() != null && record.getImovel_estado() != null) {
+					cell.setCellValue(record.getImovel_cidade() + "/" + record.getImovel_estado());
 				}
 
 				// Tipo Imovel
@@ -15885,7 +15890,7 @@ public class ContratoCobrancaMB {
 			this.selectedContratoCobrancaFinanceiroDia = this.contratoCobrancaFinanceiroDia;
 		}
 
-		for (ContratoCobranca record : this.selectedContratoCobrancaFinanceiroDia) {
+		for (ContratoCobrancaFinancerioDiaConsultaVO record : this.selectedContratoCobrancaFinanceiroDia) {
 			countLine++;
 			linhaInicioContrato = countLine;
 			row = sheet.createRow(countLine);
@@ -15907,50 +15912,50 @@ public class ContratoCobrancaMB {
 			// Pagador
 			cell = row.createCell(2);
 			cell.setCellStyle(cell_style);
-			cell.setCellValue(record.getPagador().getNome());
+			cell.setCellValue(record.getNomePagador());
 
 			// CPF CNPJ
 			cell = row.createCell(3);
 			cell.setCellStyle(cell_style);
-			if (record.getPagador().getCpf() != null && !record.getPagador().getCpf().equals("")) {
-				cell.setCellValue(record.getPagador().getCpf());
+			if (record.getPagador_cpf() != null && !record.getPagador_cpf().equals("")) {
+				cell.setCellValue(record.getPagador_cpf());
 			} else {
-				cell.setCellValue(record.getPagador().getCnpj());
+				cell.setCellValue(record.getPagador_cnpj());
 			}
 
 			// Data NAscimento Pagador
 			cell = row.createCell(4);
 			cell.setCellStyle(dateStyle);
-			if (record.getPagador().getDtNascimento() != null) {
-				cell.setCellValue(record.getPagador().getDtNascimento());
+			if (record.getPagador_dtNascimento() != null) {
+				cell.setCellValue(record.getPagador_dtNascimento());
 			}
 
 			// Endereço pagador
 			cell = row.createCell(5);
 			cell.setCellStyle(cell_style);
-			cell.setCellValue(record.getPagador().getEndereco() + ", " + record.getPagador().getNumero() + " - "
-					+ record.getPagador().getCidade() + " / " + record.getPagador().getEstado() + " (CEP: "
-					+ record.getPagador().getCep() + ")");
+			cell.setCellValue(record.getPagador_endereco() + ", " + record.getPagador_numero() + " - "
+					+ record.getPagador_cidade() + " / " + record.getPagador_estado() + " (CEP: "
+					+ record.getPagador_cep() + ")");
 
 			// Nome Conjuge
 			cell = row.createCell(6);
 			cell.setCellStyle(cell_style);
-			if (record.getPagador().getNomeConjuge() != null) {
-				cell.setCellValue(record.getPagador().getNomeConjuge());
+			if (record.getPagador_nomeConjuge() != null) {
+				cell.setCellValue(record.getPagador_nomeConjuge());
 			}
 
 			// CPF Conjuge
 			cell = row.createCell(7);
 			cell.setCellStyle(cell_style);
-			if (record.getPagador().getCpfConjuge() != null) {
-				cell.setCellValue(record.getPagador().getCpfConjuge());
+			if (record.getPagador_cpfConjuge() != null) {
+				cell.setCellValue(record.getPagador_cpfConjuge());
 			}
 
 			// Região Imóvel
 			cell = row.createCell(8);
 			cell.setCellStyle(cell_style);
-			if (record.getImovel().getCidade() != null && record.getImovel().getEstado() != null) {
-				cell.setCellValue(record.getImovel().getCidade() + "/" + record.getImovel().getEstado());
+			if (record.getImovel_cidade() != null && record.getImovel_estado() != null) {
+				cell.setCellValue(record.getImovel_cidade() + "/" + record.getImovel_estado());
 			}
 
 			// Tipo Imovel
@@ -16011,7 +16016,7 @@ public class ContratoCobrancaMB {
 
 			int baixaLinhaInicio = 0;
 
-			for (ContratoCobrancaDetalhes parcelas : record.getListContratoCobrancaDetalhes()) {
+			for (ContratoCobrancaFinanceiroDiaConsultaDetalhesVO parcelas : record.getListContratoCobrancaDetalhes()) {
 				if (parcelaCount > 0) {
 					countLine++;
 					row = sheet.createRow(countLine);
@@ -16035,50 +16040,50 @@ public class ContratoCobrancaMB {
 				// Pagador
 				cell = row.createCell(2);
 				cell.setCellStyle(cell_style);
-				cell.setCellValue(record.getPagador().getNome());
+				cell.setCellValue(record.getPagador_nome());
 
 				// CPF CNPJ
 				cell = row.createCell(3);
 				cell.setCellStyle(cell_style);
-				if (record.getPagador().getCpf() != null && !record.getPagador().getCpf().equals("")) {
-					cell.setCellValue(record.getPagador().getCpf());
+				if (record.getPagador_cpf() != null && !record.getPagador_cpf().equals("")) {
+					cell.setCellValue(record.getPagador_cpf());
 				} else {
-					cell.setCellValue(record.getPagador().getCnpj());
+					cell.setCellValue(record.getPagador_cnpj());
 				}
 
 				// Data NAscimento Pagador
 				cell = row.createCell(4);
 				cell.setCellStyle(dateStyle);
-				if (record.getPagador().getDtNascimento() != null) {
-					cell.setCellValue(record.getPagador().getDtNascimento());
+				if (record.getPagador_dtNascimento() != null) {
+					cell.setCellValue(record.getPagador_dtNascimento());
 				}
 
 				// Endereço pagador
 				cell = row.createCell(5);
 				cell.setCellStyle(cell_style);
-				cell.setCellValue(record.getPagador().getEndereco() + ", " + record.getPagador().getNumero() + " - "
-						+ record.getPagador().getCidade() + " / " + record.getPagador().getEstado() + " (CEP: "
-						+ record.getPagador().getCep() + ")");
+				cell.setCellValue(record.getPagador_endereco() + ", " + record.getPagador_numero() + " - "
+						+ record.getPagador_cidade() + " / " + record.getPagador_estado() + " (CEP: "
+						+ record.getPagador_cep() + ")");
 
 				// Nome Conjuge
 				cell = row.createCell(6);
 				cell.setCellStyle(cell_style);
-				if (record.getPagador().getNomeConjuge() != null) {
-					cell.setCellValue(record.getPagador().getNomeConjuge());
+				if (record.getPagador_nomeConjuge() != null) {
+					cell.setCellValue(record.getPagador_nomeConjuge());
 				}
 
 				// CPF Conjuge
 				cell = row.createCell(7);
 				cell.setCellStyle(cell_style);
-				if (record.getPagador().getCpfConjuge() != null) {
-					cell.setCellValue(record.getPagador().getCpfConjuge());
+				if (record.getPagador_cpfConjuge() != null) {
+					cell.setCellValue(record.getPagador_cpfConjuge());
 				}
 
 				// Região Imóvel
 				cell = row.createCell(8);
 				cell.setCellStyle(cell_style);
-				if (record.getImovel().getCidade() != null && record.getImovel().getEstado() != null) {
-					cell.setCellValue(record.getImovel().getCidade() + "/" + record.getImovel().getEstado());
+				if (record.getImovel_cidade() != null && record.getImovel_estado() != null) {
+					cell.setCellValue(record.getImovel_cidade() + "/" + record.getImovel_estado());
 				}
 
 				// Tipo Imovel
@@ -16193,7 +16198,7 @@ public class ContratoCobrancaMB {
 				int baixaCount = 0;
 
 				if (parcelas.getListContratoCobrancaDetalhesParcial().size() > 0) {
-					for (ContratoCobrancaDetalhesParcial baixa : parcelas.getListContratoCobrancaDetalhesParcial()) {
+					for (ContratoCobrancaFinanceiroDiaConsultaDetalhesParcialVO baixa : parcelas.getListContratoCobrancaDetalhesParcial()) {
 						if (baixaCount > 0) {
 							countLine++;
 							row = sheet.createRow(countLine);
@@ -16217,50 +16222,50 @@ public class ContratoCobrancaMB {
 						// Pagador
 						cell = row.createCell(2);
 						cell.setCellStyle(cell_style);
-						cell.setCellValue(record.getPagador().getNome());
+						cell.setCellValue(record.getPagador_nome());
 
 						// CPF CNPJ
 						cell = row.createCell(3);
 						cell.setCellStyle(cell_style);
-						if (record.getPagador().getCpf() != null && !record.getPagador().getCpf().equals("")) {
-							cell.setCellValue(record.getPagador().getCpf());
+						if (record.getPagador_cpf() != null && !record.getPagador_cpf().equals("")) {
+							cell.setCellValue(record.getPagador_cpf());
 						} else {
-							cell.setCellValue(record.getPagador().getCnpj());
+							cell.setCellValue(record.getPagador_cnpj());
 						}
 
 						// Data NAscimento Pagador
 						cell = row.createCell(4);
 						cell.setCellStyle(dateStyle);
-						if (record.getPagador().getDtNascimento() != null) {
-							cell.setCellValue(record.getPagador().getDtNascimento());
+						if (record.getPagador_dtNascimento() != null) {
+							cell.setCellValue(record.getPagador_dtNascimento());
 						}
 
 						// Endereço pagador
 						cell = row.createCell(5);
 						cell.setCellStyle(cell_style);
-						cell.setCellValue(record.getPagador().getEndereco() + ", " + record.getPagador().getNumero()
-								+ " - " + record.getPagador().getCidade() + " / " + record.getPagador().getEstado()
-								+ " (CEP: " + record.getPagador().getCep() + ")");
+						cell.setCellValue(record.getPagador_endereco() + ", " + record.getPagador_numero()
+								+ " - " + record.getPagador_cidade() + " / " + record.getPagador_estado()
+								+ " (CEP: " + record.getPagador_cep() + ")");
 
 						// Nome Conjuge
 						cell = row.createCell(6);
 						cell.setCellStyle(cell_style);
-						if (record.getPagador().getNomeConjuge() != null) {
-							cell.setCellValue(record.getPagador().getNomeConjuge());
+						if (record.getPagador_nomeConjuge() != null) {
+							cell.setCellValue(record.getPagador_nomeConjuge());
 						}
 
 						// CPF Conjuge
 						cell = row.createCell(7);
 						cell.setCellStyle(cell_style);
-						if (record.getPagador().getCpfConjuge() != null) {
-							cell.setCellValue(record.getPagador().getCpfConjuge());
+						if (record.getPagador_cpfConjuge() != null) {
+							cell.setCellValue(record.getPagador_cpfConjuge());
 						}
 
 						// Região Imóvel
 						cell = row.createCell(8);
 						cell.setCellStyle(cell_style);
-						if (record.getImovel().getCidade() != null && record.getImovel().getEstado() != null) {
-							cell.setCellValue(record.getImovel().getCidade() + "/" + record.getImovel().getEstado());
+						if (record.getImovel_cidade() != null && record.getImovel_estado() != null) {
+							cell.setCellValue(record.getImovel_cidade() + "/" + record.getImovel_estado());
 						}
 
 						// Tipo Imovel
@@ -16434,50 +16439,50 @@ public class ContratoCobrancaMB {
 					// Pagador
 					cell = row.createCell(2);
 					cell.setCellStyle(cell_style);
-					cell.setCellValue(record.getPagador().getNome());
+					cell.setCellValue(record.getPagador_nome());
 
 					// CPF CNPJ
 					cell = row.createCell(3);
 					cell.setCellStyle(cell_style);
-					if (record.getPagador().getCpf() != null && !record.getPagador().getCpf().equals("")) {
-						cell.setCellValue(record.getPagador().getCpf());
+					if (record.getPagador_cpf() != null && !record.getPagador_cpf().equals("")) {
+						cell.setCellValue(record.getPagador_cpf());
 					} else {
-						cell.setCellValue(record.getPagador().getCnpj());
+						cell.setCellValue(record.getPagador_cnpj());
 					}
 
 					// Data NAscimento Pagador
 					cell = row.createCell(4);
 					cell.setCellStyle(dateStyle);
-					if (record.getPagador().getDtNascimento() != null) {
-						cell.setCellValue(record.getPagador().getDtNascimento());
+					if (record.getPagador_dtNascimento() != null) {
+						cell.setCellValue(record.getPagador_dtNascimento());
 					}
 
 					// Endereço pagador
 					cell = row.createCell(5);
 					cell.setCellStyle(cell_style);
-					cell.setCellValue(record.getPagador().getEndereco() + ", " + record.getPagador().getNumero() + " - "
-							+ record.getPagador().getCidade() + " / " + record.getPagador().getEstado() + " (CEP: "
-							+ record.getPagador().getCep() + ")");
+					cell.setCellValue(record.getPagador_endereco() + ", " + record.getPagador_numero() + " - "
+							+ record.getPagador_cidade() + " / " + record.getPagador_estado() + " (CEP: "
+							+ record.getPagador_cep() + ")");
 
 					// Nome Conjuge
 					cell = row.createCell(6);
 					cell.setCellStyle(cell_style);
-					if (record.getPagador().getNomeConjuge() != null) {
-						cell.setCellValue(record.getPagador().getNomeConjuge());
+					if (record.getPagador_nomeConjuge() != null) {
+						cell.setCellValue(record.getPagador_nomeConjuge());
 					}
 
 					// CPF Conjuge
 					cell = row.createCell(7);
 					cell.setCellStyle(cell_style);
-					if (record.getPagador().getCpfConjuge() != null) {
-						cell.setCellValue(record.getPagador().getCpfConjuge());
+					if (record.getPagador_cpfConjuge() != null) {
+						cell.setCellValue(record.getPagador_cpfConjuge());
 					}
 
 					// Região Imóvel
 					cell = row.createCell(8);
 					cell.setCellStyle(cell_style);
-					if (record.getImovel().getCidade() != null && record.getImovel().getEstado() != null) {
-						cell.setCellValue(record.getImovel().getCidade() + "/" + record.getImovel().getEstado());
+					if (record.getImovel_cidade() != null && record.getImovel_estado() != null) {
+						cell.setCellValue(record.getImovel_cidade() + "/" + record.getImovel_estado());
 					}
 
 					// Tipo Imovel
@@ -31757,84 +31762,105 @@ public class ContratoCobrancaMB {
 		this.listaDocumentoAnalise = listaDocumentoAnalise;
 	}
 
-	public Collection<FileUploaded> listaArquivosInterno() {
-		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
-		ParametrosDao pDao = new ParametrosDao();
-		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-				+ this.objetoContratoCobranca.getNumeroContrato() + "//interno/";
-		File diretorio = new File(pathContrato);
-		File arqs[] = diretorio.listFiles();
-		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
-		if (arqs != null) {
-			for (int i = 0; i < arqs.length; i++) {
-				File arquivo = arqs[i];
-
-				// String nome = arquivo.getName();
-				// String dt_ateracao = formatData.format(new Date(arquivo.lastModified()));
-				lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
-			}
-		}
-		return lista;
+	public List<FileUploaded> listaArquivosInterno() {
+		carregaDocumentos();
+		return this.documentoConsultarTodos.stream().filter(f ->  CommonsUtil.mesmoValorIgnoreCase( f.getPathOrigin(), "numContrato")).collect(Collectors.toList());
+		
+//		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
+//		ParametrosDao pDao = new ParametrosDao();
+//		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+//				+ this.objetoContratoCobranca.getNumeroContrato() + "//interno/";
+//		File diretorio = new File(pathContrato);
+//		File arqs[] = diretorio.listFiles();
+//		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
+//		if (arqs != null) {
+//			for (int i = 0; i < arqs.length; i++) {
+//				File arquivo = arqs[i];
+//
+//				// String nome = arquivo.getName();
+//				// String dt_ateracao = formatData.format(new Date(arquivo.lastModified()));
+//				lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
+//			}
+//		}
+//		return lista;
 	}
 
-	public Collection<FileUploaded> listaArquivosFaltante() {
-		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
-		ParametrosDao pDao = new ParametrosDao();
-		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-				+ this.objetoContratoCobranca.getNumeroContrato() + "//faltante/";
-		File diretorio = new File(pathContrato);
-		File arqs[] = diretorio.listFiles();
-		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
-		if (arqs != null) {
-			for (int i = 0; i < arqs.length; i++) {
-				File arquivo = arqs[i];
+	public List<FileUploaded> listaArquivosFaltante() {
+		carregaDocumentos();
 
-				// String nome = arquivo.getName();
-				// String dt_ateracao = formatData.format(new Date(arquivo.lastModified()));
-				lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
-			}
-		}
-		return lista;
+		return this.documentoConsultarTodos.stream().filter(f ->  CommonsUtil.mesmoValorIgnoreCase( f.getPathOrigin(), "faltante")).collect(Collectors.toList());
+		
+//		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
+//		ParametrosDao pDao = new ParametrosDao();
+//		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+//				+ this.objetoContratoCobranca.getNumeroContrato() + "//faltante/";
+//		File diretorio = new File(pathContrato);
+//		File arqs[] = diretorio.listFiles();
+//		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
+//		if (arqs != null) {
+//			for (int i = 0; i < arqs.length; i++) {
+//				File arquivo = arqs[i];
+//
+//				// String nome = arquivo.getName();
+//				// String dt_ateracao = formatData.format(new Date(arquivo.lastModified()));
+//				lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
+//			}
+//		}
+//		return lista;
 	}
 
-	public Collection<FileUploaded> listaArquivosJuridico() {
-		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
-		ParametrosDao pDao = new ParametrosDao();
-		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-				+ this.objetoContratoCobranca.getNumeroContrato() + "//juridico/";
-		File diretorio = new File(pathContrato);
-		File arqs[] = diretorio.listFiles();
-		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
-		if (arqs != null) {
-			for (int i = 0; i < arqs.length; i++) {
-				File arquivo = arqs[i];
-
-				// String nome = arquivo.getName();
-				// String dt_ateracao = formatData.format(new Date(arquivo.lastModified()));
-				lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
-			}
+	private void carregaDocumentos() {
+		if (CommonsUtil.semValor(this.documentoConsultarTodos)) {
+			FileService fileService = new FileService();
+			this.documentoConsultarTodos = fileService
+					.documentoConsultarTodos(this.objetoContratoCobranca.getNumeroContrato(), getUsuarioLogado());
 		}
-		return lista;
 	}
 
-	public Collection<FileUploaded> listaArquivosComite() {
-		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
-		ParametrosDao pDao = new ParametrosDao();
-		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-				+ this.objetoContratoCobranca.getNumeroContrato() + "//comite/";
-		File diretorio = new File(pathContrato);
-		File arqs[] = diretorio.listFiles();
-		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
-		if (arqs != null) {
-			for (int i = 0; i < arqs.length; i++) {
-				File arquivo = arqs[i];
+	public List<FileUploaded> listaArquivosJuridico() {
+		carregaDocumentos();
+		return this.documentoConsultarTodos.stream().filter(f ->  CommonsUtil.mesmoValorIgnoreCase( f.getPathOrigin(), "juridico")).collect(Collectors.toList());
+//		
+//		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
+//		ParametrosDao pDao = new ParametrosDao();
+//		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+//				+ this.objetoContratoCobranca.getNumeroContrato() + "//juridico/";
+//		File diretorio = new File(pathContrato);
+//		File arqs[] = diretorio.listFiles();
+//		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
+//		if (arqs != null) {
+//			for (int i = 0; i < arqs.length; i++) {
+//				File arquivo = arqs[i];
+//
+//				// String nome = arquivo.getName();
+//				// String dt_ateracao = formatData.format(new Date(arquivo.lastModified()));
+//				lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
+//			}
+//		}
+//		return lista;
+	}
 
-				// String nome = arquivo.getName();
-				// String dt_ateracao = formatData.format(new Date(arquivo.lastModified()));
-				lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
-			}
-		}
-		return lista;
+	public List<FileUploaded> listaArquivosComite() {
+		carregaDocumentos();
+		return this.documentoConsultarTodos.stream().filter(f ->  CommonsUtil.mesmoValorIgnoreCase( f.getPathOrigin(), "comite")).collect( Collectors.toList());
+		
+//		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
+//		ParametrosDao pDao = new ParametrosDao();
+//		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+//				+ this.objetoContratoCobranca.getNumeroContrato() + "//comite/";
+//		File diretorio = new File(pathContrato);
+//		File arqs[] = diretorio.listFiles();
+//		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
+//		if (arqs != null) {
+//			for (int i = 0; i < arqs.length; i++) {
+//				File arquivo = arqs[i];
+//
+//				// String nome = arquivo.getName();
+//				// String dt_ateracao = formatData.format(new Date(arquivo.lastModified()));
+//				lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
+//			}
+//		}
+//		return lista;
 	}
 
 	public Collection<FileUploaded> listaArquivosPagar() {
@@ -32525,15 +32551,11 @@ public class ContratoCobrancaMB {
 	 */
 	public StreamedContent getDownloadFile() {
 		if (this.selectedFile != null) {
-			FileInputStream stream;
-			try {
-				stream = new FileInputStream(this.selectedFile.getFile().getAbsolutePath());
-				downloadFile = new DefaultStreamedContent(stream, this.selectedFile.getPath(),
-						this.selectedFile.getFile().getName());
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				System.out.println("Cobrança - Download de Arquivos - Arquivo Não Encontrado");
-			}
+			InputStream  stream;
+			FileService fileService = new FileService();
+			stream = new ByteArrayInputStream( fileService.abrirDocumentos(this.selectedFile,this.objetoContratoCobranca.getNumeroContrato(), getUsuarioLogado()));
+			downloadFile = new DefaultStreamedContent(stream, this.selectedFile.getPath(),
+					this.selectedFile.getName());
 		}
 		return this.downloadFile;
 	}
@@ -33594,11 +33616,11 @@ public class ContratoCobrancaMB {
 		this.selectedParcelasInvestidorEnvelope = selectedParcelasInvestidorEnvelope;
 	}
 
-	public List<ContratoCobranca> getContratoCobrancaFinanceiroDia() {
+	public List<ContratoCobrancaFinancerioDiaConsultaVO> getContratoCobrancaFinanceiroDia() {
 		return contratoCobrancaFinanceiroDia;
 	}
 
-	public void setContratoCobrancaFinanceiroDia(List<ContratoCobranca> contratoCobrancaFinanceiroDia) {
+	public void setContratoCobrancaFinanceiroDia(List<ContratoCobrancaFinancerioDiaConsultaVO> contratoCobrancaFinanceiroDia) {
 		this.contratoCobrancaFinanceiroDia = contratoCobrancaFinanceiroDia;
 	}
 
@@ -33850,11 +33872,11 @@ public class ContratoCobrancaMB {
 		this.tituloPagadorRecebedorDialog = tituloPagadorRecebedorDialog;
 	}
 
-	public List<ContratoCobranca> getSelectedContratoCobrancaFinanceiroDia() {
+	public List<ContratoCobrancaFinancerioDiaConsultaVO> getSelectedContratoCobrancaFinanceiroDia() {
 		return selectedContratoCobrancaFinanceiroDia;
 	}
 
-	public void setSelectedContratoCobrancaFinanceiroDia(List<ContratoCobranca> selectedContratoCobrancaFinanceiroDia) {
+	public void setSelectedContratoCobrancaFinanceiroDia(List<ContratoCobrancaFinancerioDiaConsultaVO> selectedContratoCobrancaFinanceiroDia) {
 		this.selectedContratoCobrancaFinanceiroDia = selectedContratoCobrancaFinanceiroDia;
 	}
 
@@ -34573,4 +34595,13 @@ public class ContratoCobrancaMB {
 	public void setNomeComprovanteStarkBank(String nomeComprovanteStarkBank) {
 		this.nomeComprovanteStarkBank = nomeComprovanteStarkBank;
 	}
+
+	public List<FileUploaded> getDocumentoConsultarTodos() {
+		return documentoConsultarTodos;
+	}
+
+	public void setDocumentoConsultarTodos(List<FileUploaded> documentoConsultarTodos) {
+		this.documentoConsultarTodos = documentoConsultarTodos;
+	}
+	
 }

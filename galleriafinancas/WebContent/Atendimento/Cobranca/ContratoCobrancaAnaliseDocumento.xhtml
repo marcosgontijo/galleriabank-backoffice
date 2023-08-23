@@ -16,6 +16,16 @@
 	</h:outputStylesheet>
 	<shiro:hasAnyRoles
 		name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO">
+		<p:panel id="ImovelAnalisado" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Em Análise' or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Análise' }">
+			<f:facet name="header">
+				<h:outputText value="Cidade imovel" />				
+			</f:facet>
+			<p:outputLabel
+				value="#{contratoCobrancaMB.objetoImovelCobranca.objetoCidade.cidadeString()}"
+				styleClass="labelBold" style="white-space: pre-wrap;" />
+
+		</p:panel>
+		
 		<p:panel id="ArquivosAnalisados"
 			style="margin-bottom:10px;text-align: center;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' 
 			and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' 
