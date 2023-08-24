@@ -31,6 +31,8 @@ public class TermoDao extends HibernateDao<Termo, Long> {
 				ResultSet rs = null;
 
 				List<Termo> retorno = new ArrayList<>();
+				if( CommonsUtil.semValor(usuario))
+					return new ArrayList<>();
 
 				try {
 					connection = getConnection();
