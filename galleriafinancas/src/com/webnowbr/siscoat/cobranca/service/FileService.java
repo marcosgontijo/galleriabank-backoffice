@@ -103,6 +103,7 @@ public class FileService {
 			
 			byte[] postDataBytes = GsonUtil.toJson(documentoSelecionado).getBytes();
 			
+			String token = "Bearer " + JwtUtil.generateJWTSite(usuario.getId(), usuario.getLogin(), "BACKOFFICE");
 			
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
 			myURLConnection.setUseCaches(false);
@@ -110,8 +111,7 @@ public class FileService {
 			myURLConnection.setRequestProperty("Accept", "application/json");
 			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
 			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-			myURLConnection.setRequestProperty("Authorization",
-					"Bearer " + JwtUtil.generateJWTSite(usuario.getId(), usuario.getLogin(), "BACKOFFICE"));
+			myURLConnection.setRequestProperty("Authorization", token);
 			myURLConnection.setDoOutput(true);
 			myURLConnection.getOutputStream().write(postDataBytes);
 
