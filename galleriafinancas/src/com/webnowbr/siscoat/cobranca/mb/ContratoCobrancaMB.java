@@ -31823,8 +31823,8 @@ public class ContratoCobrancaMB {
 		documentoConsultarTodos= new ArrayList<FileUploaded>();
 		if (CommonsUtil.semValor(this.documentoConsultarTodos)) {
 			FileService fileService = new FileService();
-			//this.documentoConsultarTodos = fileService
-			//		.documentoConsultarTodos(this.objetoContratoCobranca.getNumeroContrato(), getUsuarioLogado());
+			this.documentoConsultarTodos = fileService
+					.documentoConsultarTodos(this.objetoContratoCobranca.getNumeroContrato(), getUsuarioLogado());
 		}
 	}
 
