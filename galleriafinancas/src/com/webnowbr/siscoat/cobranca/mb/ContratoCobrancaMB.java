@@ -31706,17 +31706,7 @@ public class ContratoCobrancaMB {
 	 * @return
 	 */
 
-	public Collection<FileUploaded> listaArquivos() {
-		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
-		ParametrosDao pDao = new ParametrosDao();
-		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-				// String pathContrato = "C:/Users/Usuario/Desktop/"
-				+ this.objetoContratoCobranca.getNumeroContrato() + "/";
-		File diretorio = new File(pathContrato);
-		File arqs[] = diretorio.listFiles();
-		Collection<FileUploaded> lista = CommonsUtil.listFilesileUploaded(diretorio);
-		return lista;
-	}
+	
 
 	/***
 	 * Lista ois arquivos contidos no diretório
@@ -31761,10 +31751,25 @@ public class ContratoCobrancaMB {
 	public void setListaDocumentoAnalise(List<DocumentoAnalise> listaDocumentoAnalise) {
 		this.listaDocumentoAnalise = listaDocumentoAnalise;
 	}
+	
+	public Collection<FileUploaded> listaArquivos() {
+		carregaDocumentos();
+		return this.documentoConsultarTodos.stream().filter(f ->  CommonsUtil.mesmoValorIgnoreCase( f.getPathOrigin(), "numContrato")).collect(Collectors.toList());
+	
+		/*
+		 * // DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy"); ParametrosDao
+		 * pDao = new ParametrosDao(); String pathContrato = pDao.findByFilter("nome",
+		 * "COBRANCA_DOCUMENTOS").get(0).getValorString() // String pathContrato =
+		 * "C:/Users/Usuario/Desktop/" + this.objetoContratoCobranca.getNumeroContrato()
+		 * + "/"; File diretorio = new File(pathContrato); File arqs[] =
+		 * diretorio.listFiles(); Collection<FileUploaded> lista =
+		 * CommonsUtil.listFilesileUploaded(diretorio); return lista;
+		 */
+	}
 
 	public List<FileUploaded> listaArquivosInterno() {
 		carregaDocumentos();
-		return this.documentoConsultarTodos.stream().filter(f ->  CommonsUtil.mesmoValorIgnoreCase( f.getPathOrigin(), "numContrato")).collect(Collectors.toList());
+		return this.documentoConsultarTodos.stream().filter(f ->  CommonsUtil.mesmoValorIgnoreCase( f.getPathOrigin(), "interno")).collect(Collectors.toList());
 		
 //		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
 //		ParametrosDao pDao = new ParametrosDao();
