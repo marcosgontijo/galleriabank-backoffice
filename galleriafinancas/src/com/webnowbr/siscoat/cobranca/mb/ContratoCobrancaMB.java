@@ -31966,7 +31966,7 @@ public class ContratoCobrancaMB {
 			FileService fileService = new FileService();
 			FileUploaded documentoSelecionado = new FileUploaded(fileName, null, pathContratoCobranca);
 			byte[] arquivob = fileService.abrirDocumentos(documentoSelecionado,this.objetoContratoCobranca.getNumeroContrato(), getUsuarioLogado());
-			FileInputStream arquivo = new ByteArrayInputStream( arquivob );
+			InputStream arquivo = new ByteArrayInputStream( arquivob );
 			
 			input = new BufferedInputStream(arquivo, 10240);
 
@@ -31976,7 +31976,7 @@ public class ContratoCobrancaMB {
 
 			response.setContentLength(arquivob.length);
 
-			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
+			response.setHeader("Content-disposition", "inline; filename=" + fileName);
 			output = new BufferedOutputStream(response.getOutputStream(), 10240);
 
 			// Write file contents to response.
