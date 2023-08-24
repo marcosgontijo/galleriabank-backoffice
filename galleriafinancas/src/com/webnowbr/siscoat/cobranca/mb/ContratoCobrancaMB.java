@@ -31932,9 +31932,10 @@ public class ContratoCobrancaMB {
 			BufferedOutputStream output = null;
 
 			ParametrosDao pDao = new ParametrosDao();
-			pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-					// String pathContrato = "C:/Users/Usuario/Desktop/"
-					+ this.objetoContratoCobranca.getNumeroContrato() + "/" + fileName;
+			String pathContratoCobranca =  pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+					+ this.objetoContratoCobranca.getNumeroContrato(); 
+			
+			pathContrato = pathContratoCobranca + "/" + fileName;
 
 			/*
 			 * 'docx' =>
@@ -31962,15 +31963,18 @@ public class ContratoCobrancaMB {
 				mineFile = "application/pdf";
 			}
 
-			File arquivo = new File(pathContrato);
-
-			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
+			FileService fileService = new FileService();
+			FileUploaded documentoSelecionado = new FileUploaded(fileName, null, pathContratoCobranca);
+			byte[] arquivob = fileService.abrirDocumentos(documentoSelecionado,this.objetoContratoCobranca.getNumeroContrato(), getUsuarioLogado());
+			FileInputStream arquivo = new ByteArrayInputStream( arquivob );
+			
+			input = new BufferedInputStream(arquivo, 10240);
 
 			response.reset();
 			// lire un fichier pdf
 			response.setHeader("Content-type", mineFile);
 
-			response.setContentLength((int) arquivo.length());
+			response.setContentLength(arquivob.length);
 
 			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
 			output = new BufferedOutputStream(response.getOutputStream(), 10240);
@@ -32560,8 +32564,8 @@ public class ContratoCobrancaMB {
 	 * 
 	 * @return
 	 */
-	public StreamedContent getDownloadFile() {
 		if (this.selectedFile != null) {
+			public StreamedContent getDownloadFile() {
 			InputStream  stream;
 			FileService fileService = new FileService();
 			stream = new ByteArrayInputStream( fileService.abrirDocumentos(this.selectedFile,this.objetoContratoCobranca.getNumeroContrato(), getUsuarioLogado()));
