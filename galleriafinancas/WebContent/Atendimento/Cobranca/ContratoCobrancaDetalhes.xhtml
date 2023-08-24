@@ -13,7 +13,8 @@
 		 	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/css/Style.css" title="" media="all" /> 	
 			<p:panel id="PanelLocador" header="Contrato - #{contratoCobrancaMB.tituloPainel}" style="margin-bottom:10px;">
 				<p:focus /> 
-				<p:messages/>									
+				<p:messages/>		
+				<p:growl id="growl" showDetail="true" sticky="true" />  							
 				<h:panelGrid columns="2">	
 					<p:outputLabel for="numeroContrato" value="Número do Contrato: " styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px;"/>
 					<h:outputText id="numeroContrato" value="#{contratoCobrancaMB.objetoContratoCobranca.numeroContrato}" label="Número do Contrato" style="font-weight: bold; font-size: 18px;"/>					
@@ -600,10 +601,22 @@
 					</p:panel>	
 						
 				<p:panel id="DetalheParcelas" header="Detalhamento - Forma de Pagamento" style="margin-bottom:10px;">		    		    
-	   		         <p:dataTable id="dtParcelas" var="parcelas" value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes}" paginator="true" rows="100"
-	   		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-	   		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
-	                 rowsPerPageTemplate="100,200,300" selection="" style="width: 95%;" emptyMessage="" sortBy="#{contratos.numeroParcela}" sortOrder="ascending" rowStyleClass="#{parcelas.parcelaPaga eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : parcelas.parcelaVencendo eq true ? 'parcelaVencendo' : null}" > 	
+	   		         <p:dataTable id="dtParcelas" var="parcelas" 
+	   		         value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes}" 
+	   		         selection="#{kobanaMB.selectedParcelas}" 
+	                 rowKey="#{parcelas.id}" style="width: 100%;" emptyMessage="" 
+	                 sortBy="#{contratos.numeroParcela}" sortOrder="ascending" 
+	                 rowStyleClass="#{parcelas.parcelaPaga eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : parcelas.parcelaVencendo eq true ? 'parcelaVencendo' : null}" > 	
+				        <f:facet name="header">
+							<p:commandButton value="Gerar Boleto(s) Selecionado(s)" ajax="false"
+								icon="ui-icon ui-icon-calculator" action="#{kobanaMB.gerarBoletosLote}"
+								update=":form:dtContratos :form:mensagens" 
+								disabled="#{kobanaMB.selectedParcelas.size() eq 0}"/>	
+						</f:facet>
+						<p:ajax event="rowSelectCheckbox" update=":form:DetalheParcelas :form:growl" process="@this" listener="#{kobanaMB.validateParcelaSelected}"/>
+						<p:ajax event="rowUnselectCheckbox" update=":form:DetalheParcelas :form:growl" process="@this"/>
+						<p:ajax event="toggleSelect" update=":form:DetalheParcelas :form:growl" process="@this" listener="#{kobanaMB.validateTodasParcelasSelected}"/>
+						<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
 				        <p:column style="text-align: center;width: 45px;" headerText="Parcela" filterMatchMode="contains" sortBy="#{parcelas.numeroParcela}">
 				            <h:outputText value="#{parcelas.numeroParcela}" />
 				        </p:column>
@@ -647,7 +660,37 @@
 				         <p:column style="text-align: center;width: 110px;" headerText="Saldo (R$)">
 				            <h:outputText value="#{parcelas.vlrSaldoParcela}" converter="bigDecimalConverter">
 				            </h:outputText>
-				        </p:column>						        					        				        			        			              		        		               		        			        			           			 		
+				        </p:column>
+				        <p:column style="text-align: center;width: 130px;"
+							headerText="Link Boleto" styleClass="colunaHiddenRelFinanceiro">
+							<ui:fragment rendered="#{parcelas.urlBoletoKonana ne null}">
+								<h:outputLink value="#{parcelas.urlBoletoKonana}" target="_blank" styleClass="botaoBoletoKobana">#{parcelas.urlBoletoKonana}</h:outputLink>
+							</ui:fragment>
+						</p:column>
+				        <p:column style="text-align: center;width: 30px;">
+							<p:commandButton
+								onclick="PF('gerarBoletoDlg').show();"
+								title="Gerar Boleto"
+								icon="ui-icon ui-icon-calculator"
+								update=":formGerarBoleto"
+								style="height: 25px;width: 30px;">
+								<f:setPropertyActionListener
+									target="#{kobanaMB.contrato}"
+									value="#{parcelas.contrato}" />
+								<f:setPropertyActionListener
+									target="#{kobanaMB.parcela}"
+									value="#{parcelas}" />
+								<f:setPropertyActionListener
+									target="#{kobanaMB.valorBoleto}"
+									value="#{parcelas.vlrParcela}" />	
+							</p:commandButton>
+						</p:column>	
+						<f:facet name="footer">
+							<p:commandButton value="Gerar Boleto(s) Selecionado(s)" ajax="false"
+								icon="ui-icon ui-icon-calculator" action="#{kobanaMB.gerarBoletosLote}"
+								update="mensagens" 
+								disabled="#{kobanaMB.selectedParcelas.size() eq 0}"/>
+						</f:facet>					        					        				        			        			              		        		               		        			        			           			 		
 					</p:dataTable>
 				</p:panel>																																														
 			</p:panel>
@@ -690,6 +733,28 @@
 				<p:commandButton value="Cancelar" ajax="false" immediate="true" icon="ui-icon-cancel" action="/Atendimento/Cobranca/ContratoCobrancaConsultar.xhtml" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold; " rendered="#{contratoCobrancaMB.deleteMode}"/>											
 				<p:commandButton value="Voltar" ajax="false" immediate="true" icon="ui-icon-arrowreturnthick-1-w" action="/Atendimento/Cobranca/ContratoCobrancaConsultar.xhtml" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold; " rendered="#{!contratoCobrancaMB.deleteMode}"/>																		
 			</div>			
-		</h:form>			 		
+		</h:form>	
+		
+		<p:dialog header="Gerar Boleto Kobana"
+			widgetVar="gerarBoletoDlg" resizable="false"
+			style="FONT-SIZE: 10pt;" responsive="true" height="300" width="300">
+			<h:form id="formGerarBoleto">
+				<h:panelGrid columns="2">
+					<p:outputLabel for="valorBaixa" value="Valor: "
+						styleClass="labelBold" />
+					<p:inputText id="valorBaixa"
+						value="#{kobanaMB.valorBoleto}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter" />
+				</h:panelGrid>
+
+				<div align="center" style="margin-top: 20px;">
+					<p:commandButton ajax="false"
+						icon="ui-icon ui-icon-calculator" value="Gerar Boleto" action="#{kobanaMB.gerarBoletoSimplesCustom(kobanaMB.contrato, kobanaMB.parcela, kobanaMB.valorBoleto)}"
+						update="mensagens" title="Gerar Boleto" oncomplete="PF('gerarBoletoDlg').hide();"/>
+				</div>
+			</h:form>
+		</p:dialog>		 		
 	</ui:define>
 </ui:composition>

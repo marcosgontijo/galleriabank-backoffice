@@ -658,6 +658,9 @@ public class ContratoCobrancaMB {
 
 	@ManagedProperty(value = "#{loginBean}")
 	protected LoginBean loginBean;
+	
+	@ManagedProperty(value = "#{kobanaMB}")
+	protected KobanaMB kobanaMB;
 
 	@ManagedProperty(value = "#{crmmb}")
 	protected CRMMB crmmb;
@@ -745,7 +748,7 @@ public class ContratoCobrancaMB {
 
 	public IuguMB iuguMb = new IuguMB();
 
-	public KobanaMB kobanaMB = new KobanaMB();
+	//public KobanaMB kobanaMB = new KobanaMB();
 
 	private List<FilaInvestidores> listFilaInvestidores;
 	private FilaInvestidores selectedInvestidor;
@@ -6972,6 +6975,8 @@ public class ContratoCobrancaMB {
 		filesJuridico = listaArquivosJuridico();
 		filesComite = listaArquivosComite();
 		filesPagar = listaArquivosPagar();
+		
+		kobanaMB.clearFieldsParcelasBoleto();
 
 		return "/Atendimento/Cobranca/ContratoCobrancaDetalhes.xhtml";
 	}
@@ -31815,10 +31820,11 @@ public class ContratoCobrancaMB {
 	}
 
 	private void carregaDocumentos() {
+		documentoConsultarTodos= new ArrayList<FileUploaded>();
 		if (CommonsUtil.semValor(this.documentoConsultarTodos)) {
 			FileService fileService = new FileService();
-			this.documentoConsultarTodos = fileService
-					.documentoConsultarTodos(this.objetoContratoCobranca.getNumeroContrato(), getUsuarioLogado());
+			//this.documentoConsultarTodos = fileService
+			//		.documentoConsultarTodos(this.objetoContratoCobranca.getNumeroContrato(), getUsuarioLogado());
 		}
 	}
 
@@ -34608,5 +34614,15 @@ public class ContratoCobrancaMB {
 	public void setDocumentoConsultarTodos(List<FileUploaded> documentoConsultarTodos) {
 		this.documentoConsultarTodos = documentoConsultarTodos;
 	}
+
+	public KobanaMB getKobanaMB() {
+		return kobanaMB;
+	}
+
+	public void setKobanaMB(KobanaMB kobanaMB) {
+		this.kobanaMB = kobanaMB;
+	}
+	
+	
 	
 }
