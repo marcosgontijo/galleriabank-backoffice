@@ -27,9 +27,6 @@
 										action="#{contasAPagarMB.clearFields}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
-									
-										
-								
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT">
 									<p:menuitem value="Contas Pagas"
@@ -391,13 +388,13 @@
 						</shiro:hasAnyRoles>
 						<shiro:hasAnyRoles name="ROOT, COBRANCA, ASSISTENTEFINANCEIRO, AGENTE_ESPELHAMENTO, POSOPERACAO">
 							<p:submenu label="Financeiro" styleClass="titulosMenu">
-									<shiro:hasAnyRoles name="ROOT, POSOPERACAO">
+								<shiro:hasAnyRoles name="ROOT, POSOPERACAO">
 									<p:menuitem value="Pagar Pós Operação"
 										action="#{contasPagarMB.clearFieldsPosOperacao}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
 										styleClass="itemMenu" />
-									</shiro:hasAnyRoles>
-									<shiro:hasAnyRoles name="ROOT, COBRANCA">
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, COBRANCA">
 									<p:menuitem value="Boletos Kobana"
 										action="#{kobanaMB.clearFieldsParcelasBoleto}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
@@ -406,6 +403,7 @@
 										action="#{kobanaMB.clearFieldsConsultarBoleto}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
 										styleClass="itemMenu" />
+									<!--  
 									<p:menuitem value="Financeiro"
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiro}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
@@ -469,8 +467,9 @@
 									<p:menuitem value="Financeiro Dia Pré Aprovado"
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroDia('PreAprovado')}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
-										styleClass="itemMenu" />
+										styleClass="itemMenu" />-->
 								</shiro:hasAnyRoles>
+								<!--
 								<shiro:hasAnyRoles name="ROOT, COBRANCA, AGENTE_ESPELHAMENTO">
 									<p:menuitem value="Financeiro Dia Espelhamento FIDC"
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroDiaEspelhamento('EspelhamentoFIDC')}"
@@ -573,6 +572,7 @@
 											<f:setPropertyActionListener value="true" target="#{contratoCobrancaMB.financeiroGalleria}"/>
 									</p:menuitem>
 								</shiro:hasAnyRoles>
+								-->
 								<shiro:hasAnyRoles name="ROOT, COBRANCA, ASSISTENTEFINANCEIRO">
 									<p:menuitem value="Pagto. Valor Líquido"
 										action="#{investidorMB.clearFieldsValorLiquido}" ajax="false"

@@ -505,7 +505,7 @@
 									filterMatchMode="contains" sortBy="#{filesPagar.name}">
 									<h:outputText value="#{filesPagar.name}" />
 									<p:spacer height="10" />
-									<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFileContaPagar(filesPagar.name, contratoCobrancaMB.contasPagarSelecionada)}"
+									<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFile(filesPagar)}"
 										immediate="true" icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
 									</p:commandButton>
 								</p:column>  

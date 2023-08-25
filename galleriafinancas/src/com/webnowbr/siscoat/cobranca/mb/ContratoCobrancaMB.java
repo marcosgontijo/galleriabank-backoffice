@@ -6951,6 +6951,7 @@ public class ContratoCobrancaMB {
 			dataHoje.set(Calendar.MINUTE, 0);
 			dataHoje.set(Calendar.SECOND, 0);
 			dataHoje.set(Calendar.MILLISECOND, 0);
+			ccd.setContrato(objetoContratoCobranca);
 
 			if (dataVencimentoParcela.getTime().before(dataHoje.getTime()) && !ccd.isParcelaPaga()) {
 				ccd.setParcelaVencida(true);

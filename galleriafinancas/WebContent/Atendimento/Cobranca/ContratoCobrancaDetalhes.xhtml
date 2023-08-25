@@ -584,21 +584,24 @@
 						</p:panel>						        										
 					</p:panel>
 																																
-					<p:panel id="AcaoObservacao" header="Motivo e Observação" style="margin-bottom:10px;">							
-						<h:panelGrid columns="3">					
-							<p:outputLabel value="Ação: " />							
-							<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.acao}" />
-							<p:spacer width="10"/>  					
-							
-							<p:outputLabel value="Observação: " />
-							<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.observacao}" />
-							<p:spacer width="10"/>
-							
-							<p:outputLabel value="" />
-							<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.observacao2}" />
-							<p:spacer width="10"/>							
-						</h:panelGrid>  
-					</p:panel>	
+				<p:panel id="AcaoObservacao" header="Motivo e Observação" style="margin-bottom:10px;">							
+					<h:panelGrid columns="3">					
+						<p:outputLabel value="Ação: " />							
+						<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.acao}" />
+						<p:spacer width="10"/>  					
+						
+						<p:outputLabel value="Observação: " />
+						<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.observacao}" />
+						<p:spacer width="10"/>
+						
+						<p:outputLabel value="" />
+						<h:outputText value="#{contratoCobrancaMB.objetoContratoCobranca.observacao2}" />
+						<p:spacer width="10"/>	
+						
+						<p:commandButton id="quitarContrato" oncomplete="PF('quitarContratoDialog').show();" value="Quitar Contrato" 
+							update="quitarContratoForm" action="#{contratoCobrancaMB.clearQuitarContratoDialog}"/>						
+					</h:panelGrid>  
+				</p:panel>	
 						
 				<p:panel id="DetalheParcelas" header="Detalhamento - Forma de Pagamento" style="margin-bottom:10px;">		    		    
 	   		         <p:dataTable id="dtParcelas" var="parcelas" 
@@ -755,6 +758,114 @@
 						update="mensagens" title="Gerar Boleto" oncomplete="PF('gerarBoletoDlg').hide();"/>
 				</div>
 			</h:form>
-		</p:dialog>		 		
+		</p:dialog>	
+		
+		<p:dialog header="Quitar Contrato"
+			widgetVar="quitarContratoDialog" resizable="true"
+			style="FONT-SIZE: 10pt;" responsive="true" height="480px" width="770px">
+			<h:form id="quitarContratoForm">
+				<h:panelGrid columns="2">
+					<p:outputLabel for="numeroParcelaQuitar"
+						value="Numero Parcela para Quitação" />
+					<p:inputText id="numeroParcelaQuitar"
+						value="#{contratoCobrancaMB.numeroParcelaQuitar}" >
+						<p:ajax event="blur" update="valorPresenteTotal"
+							listener="#{contratoCobrancaMB.simularQuitacaoContrato}" />
+					</p:inputText>
+
+					<p:outputLabel for="dataQuitacao" value="Data da Quitacao" />
+					<p:calendar id="dataQuitacao" showOn="button"
+						value="#{contratoCobrancaMB.dataQuitacao}" size="100"
+						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" >
+						<p:ajax event="dateSelect" listener="#{contratoCobrancaMB.simularQuitacaoContrato}"
+                			update="@form" />
+                	</p:calendar>	
+                	
+                	<shiro:hasAnyRoles name="ROOT">                		
+						<p:outputLabel for="quitarContrato" value="Valor Presente Parcela" />
+						<p:commandButton id="quitarContrato" value="Quitar Contrato"
+							update=":form:DetalheParcelas valorPresenteTotal dtParcelasQuitar"
+							action="#{contratoCobrancaMB.quitarContrato(contratoCobrancaMB.listContratoCobrancaDetalhesQuitar)}" />
+					</shiro:hasAnyRoles>	
+					
+					<p:outputLabel for="valorPresenteTotal" value="valorPresenteTotal" />
+					<p:outputLabel id="valorPresenteTotal"
+						value="#{contratoCobrancaMB.valorPresenteTotal}"
+						converter="bigDecimalConverter" />
+				</h:panelGrid>
+				
+				<div align="center">					
+					<p:commandButton value="Gerar PDF" ajax="false" icon="ui-icon-print" action="#{contratoCobrancaMB.downloadPDFQuitacao}" 
+					style="margin-bottom:10px;"/>
+					
+				</div>
+					
+					<p:dataTable id="dtParcelasQuitar" var="parcelas2"
+						value="#{contratoCobrancaMB.listContratoCobrancaDetalhesQuitar}"
+						emptyMessage="" sortBy="#{contratos.numeroParcela}"
+						sortOrder="ascending"
+						rowStyleClass="#{(parcelas2.parcelaPaga eq false and parcelas2.listContratoCobrancaDetalhesParcial.size() gt 0) ? 'parcelaparcial' : parcelas2.numeroParcela eq 'Amortização' ? 'parcelaPaga': parcelas2.parcelaPaga eq true ? 'parcelaPaga' : parcelas2.parcelaVencida eq true ? 'parcelaAtraso' : parcelas2.parcelaVencendo eq true ? 'parcelaVencendo' : null}"
+						rowKey="#{parcelas2.id}">
+
+						<p:column style="text-align: center;width: 45px;"
+							headerText="Parcela" filterMatchMode="contains"
+							sortBy="#{parcelas2.numeroParcela}">
+							<h:outputText value="#{parcelas2.numeroParcela}" />
+						</p:column>
+						<p:column style="text-align: center;width: 110px;"
+							headerText="Saldo Inicial (R$)">
+							<h:outputText value="#{parcelas2.vlrSaldoInicial}"
+								converter="bigDecimalConverter">
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;width: 70px;"
+							headerText="Vencimento" sortBy="#{contratos.dataVencimento}">
+							<h:outputText value="#{parcelas2.dataVencimento}">
+								<f:convertDateTime locale="pt_BR" />
+								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;width: 70px;"
+							headerText="Dt. Último Pagto."
+							sortBy="#{parcelas2.dataUltimoPagamento}">
+							<h:outputText value="#{parcelas2.dataUltimoPagamento}">
+								<f:convertDateTime locale="pt_BR" />
+								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;width: 110px;"
+							headerText="Valor Total Pago (R$)">
+							<h:outputText value="#{parcelas2.valorTotalPagamento}"
+								converter="bigDecimalConverter">
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;width: 110px;"
+							headerText="Valor (R$)">
+							<h:outputText value="#{parcelas2.vlrParcela}"
+								converter="bigDecimalConverter">
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;width: 110px;"
+							headerText="Juros (R$)">
+							<h:outputText value="#{parcelas2.vlrJurosParcela}"
+								converter="bigDecimalConverter">
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align: center;width: 110px;"
+							headerText="Amortização (R$)">
+							<h:outputText value="#{parcelas2.vlrAmortizacaoParcela}"
+								converter="bigDecimalConverter">
+							</h:outputText>
+						</p:column>						
+						<p:column style="text-align: center;width: 110px;"
+							headerText="Saldo (R$)">
+							<h:outputText value="#{parcelas2.vlrSaldoParcela}"
+								converter="bigDecimalConverter">
+							</h:outputText>
+						</p:column>
+					</p:dataTable>
+				
+			</h:form>
+		</p:dialog>	 		
 	</ui:define>
 </ui:composition>
