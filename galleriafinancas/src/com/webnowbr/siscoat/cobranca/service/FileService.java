@@ -7,7 +7,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
@@ -88,7 +90,6 @@ public class FileService {
 		return new ArrayList<FileUploaded>();
 	}
 	
-	
 	public byte[] abrirDocumentos(FileUploaded documentoSelecionado, String numeroContrato, User usuario) {
 		
 		String serverPrincipalUrl = PropertyLoader
@@ -146,4 +147,68 @@ public class FileService {
 
 		return null;
 	}
+
+
+	public String salvarDocumento(byte[] documentoSelecionado, String numeroContrato,String arquivo ,String subpasta, User usuario) {
+		
+		String serverPrincipalUrl = PropertyLoader
+				.getString("client.galleria.financas.upload.rest.url");
+		logger.info("INFO file server {} POST: ".concat(serverPrincipalUrl.replace("{numeroContrato}", numeroContrato)
+  				.replace("{subpasta}", subpasta)
+  				.replace("{nomeArquivo}", arquivo)));
+
+		URL myURL;
+		try {
+			myURL = new URL(serverPrincipalUrl.replace("{numeroContrato}", numeroContrato)
+					.replace("{subpasta}", subpasta).replace("{nomeArquivo}", arquivo));
+
+			byte[] postDataBytes = GsonUtil.toJson(documentoSelecionado).getBytes();
+
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestMethod("POST");
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+			myURLConnection.setRequestProperty("Authorization",
+					"Bearer " + JwtUtil.generateJWTSite(usuario.getId(), usuario.getLogin(), "BACKOFFICE"));
+			myURLConnection.setDoOutput(true);
+
+			myURLConnection.getOutputStream().write(postDataBytes);
+
+
+			String retornoConsulta = null;
+			if (myURLConnection.getResponseCode() == SiscoatConstants.HTTP_COD_SUCESSO) {
+				BufferedReader in;
+				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
+				String inputLine;
+				StringBuffer response = new StringBuffer();
+				while ((inputLine = in.readLine()) != null) {
+					response.append(inputLine);
+				}
+				in.close();
+
+				retornoConsulta = response.toString();
+			}
+
+			if (!CommonsUtil.semValor(retornoConsulta)) {
+				ResponseApi teste = GsonUtil.fromJson(retornoConsulta, ResponseApi.class);
+//				FileSiscoat result = null;
+//				Gson gson = new Gson();
+				return teste.getMensagem();
+//				result = gson.fromJson(teste.getClasse(), FileSiscoat.class);
+//				return result.getFile();
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+
+	
 }
