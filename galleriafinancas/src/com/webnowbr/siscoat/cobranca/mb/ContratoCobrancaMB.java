@@ -32350,11 +32350,11 @@ public class ContratoCobrancaMB {
 		current.executeScript("PF('bui').show();");
 		for (FileUploaded file : filesJuridico) {
 			if(file.getName().toLowerCase().endsWith(".pdf")) {
-				PDDocument doc = PDDocument.load(file.getFile());
+				PDDocument doc = PDDocument.load(fileService.abrirDocumentos(file,
+						this.objetoContratoCobranca.getNumeroContrato(), getUsuarioLogado()));
 				file.setPages(doc.getNumberOfPages());
 			}
 		}
-		
 	}
 	
 	public void closeDialogDocs() {
