@@ -9,14 +9,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.JSONObject;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -101,8 +98,6 @@ public class FileService {
 		URL myURL;
 		try {
 			myURL = new URL(serverPrincipalUrl.replace("{numeroContrato}", numeroContrato));
-
-
 			
 			byte[] postDataBytes = GsonUtil.toJson(documentoSelecionado).getBytes();
 			
@@ -149,8 +144,7 @@ public class FileService {
 
 		return null;
 	}
-
-
+	
 	public String salvarDocumento(byte[] documentoSelecionado, String numeroContrato,String arquivo ,String subpasta, User usuario) {
 		
 		String serverPrincipalUrl = PropertyLoader
