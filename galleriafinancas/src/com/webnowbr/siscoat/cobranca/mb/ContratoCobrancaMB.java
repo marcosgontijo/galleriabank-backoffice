@@ -291,6 +291,10 @@ public class ContratoCobrancaMB {
 	/************************************************************
 	 * Objetos utilizados pelas LoVs
 	 ***********************************************************/
+	/************************************************************
+	 * Objetos utilizados pelas fileService
+	 ***********************************************************/
+	FileService fileService = new FileService();
 
 	/** Objeto selecionado na LoV - Pagador. */
 	private GruposFavorecidos selectedGrupoFavorecido;
@@ -31264,17 +31268,11 @@ public class ContratoCobrancaMB {
 					"Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
 		} else {
 			byte[] conteudo = event.getFile().getContents();
-			FileOutputStream fos;
-			try {
-				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
-				fos.write(conteudo);
-				fos.close();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				System.out.println(e);
-			}
+			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(), 
+					 event.getFile().getFileName(), "//pagar/", getUsuarioLogado());
 
 			// atualiza lista de arquivos contidos no diretório
+			documentoConsultarTodos= new ArrayList<FileUploaded>();
 			files = listaArquivos();
 		}
 	}
@@ -31315,16 +31313,9 @@ public class ContratoCobrancaMB {
 					"Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
 		} else {
 			byte[] conteudo = event.getFile().getContents();
-			FileOutputStream fos;
-			try {
-				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
-				fos.write(conteudo);
-				fos.close();
+			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(), 
+					 event.getFile().getFileName(), "//analise/", getUsuarioLogado());
 
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				System.out.println(e);
-			}
 
 			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 			DocumentoAnalise documentoAnalise = new DocumentoAnalise();
@@ -31336,6 +31327,8 @@ public class ContratoCobrancaMB {
 			documentoAnalise.setLiberadoAnalise(true);
 			documentoAnaliseDao.create(documentoAnalise);
 			// atualiza lista de arquivos contidos no diretório
+
+			documentoConsultarTodos= new ArrayList<FileUploaded>();
 			listaArquivosAnaliseDocumentos();
 
 		}
@@ -31343,12 +31336,14 @@ public class ContratoCobrancaMB {
 
 	public void handleFileInternoUpload(FileUploadEvent event) throws IOException {
 		FacesContext context = FacesContext.getCurrentInstance();
+					
 		// recupera local onde será gravado o arquivo
 		ParametrosDao pDao = new ParametrosDao();
 		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
 				// String pathContrato = "C:/Users/Usuario/Desktop/"
 				+ this.objetoContratoCobranca.getNumeroContrato() + "//interno/";
-
+	
+		
 		// cria o diretório, caso não exista
 		File diretorio = new File(pathContrato);
 		if (!diretorio.isDirectory()) {
@@ -31359,19 +31354,25 @@ public class ContratoCobrancaMB {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
 		} else {
-			// cria o arquivo
+//			FileUploaded documentoSelecionado = new FileUploaded(fileName, null, filePath);
 			byte[] conteudo = event.getFile().getContents();
-			FileOutputStream fos;
-			try {
-				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
-				fos.write(conteudo);
-				fos.close();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				System.out.println(e);
-			}
+			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(), 
+					 event.getFile().getFileName(), "//interno/", getUsuarioLogado());
+//			
+//			// cria o arquivo
+//			byte[] conteudo = event.getFile().getContents();
+//			FileOutputStream fos;
+//			try {
+//				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
+//				fos.write(conteudo);
+//				fos.close();
+//			} catch (FileNotFoundException e) {
+//				// TODO Auto-generated catch block
+//				System.out.println(e);
+//			}
 
 			// atualiza lista de arquivos contidos no diretório
+			documentoConsultarTodos= new ArrayList<FileUploaded>();
 			filesInterno = listaArquivosInterno();
 		}
 	}
@@ -31393,19 +31394,14 @@ public class ContratoCobrancaMB {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
 		} else {
-			// cria o arquivo
+
 			byte[] conteudo = event.getFile().getContents();
-			FileOutputStream fos;
-			try {
-				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
-				fos.write(conteudo);
-				fos.close();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				System.out.println(e);
-			}
+			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(), 
+					 event.getFile().getFileName(), "//faltante/", getUsuarioLogado());
 
 			// atualiza lista de arquivos contidos no diretório
+
+			documentoConsultarTodos= new ArrayList<FileUploaded>();
 			filesFaltante = listaArquivosFaltante();
 		}
 	}
@@ -31427,19 +31423,14 @@ public class ContratoCobrancaMB {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
 		} else {
-			// cria o arquivo
-			byte[] conteudo = event.getFile().getContents();
-			FileOutputStream fos;
-			try {
-				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
-				fos.write(conteudo);
-				fos.close();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				System.out.println(e);
-			}
 
+			byte[] conteudo = event.getFile().getContents();
+			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(), 
+					 event.getFile().getFileName(), "//interno/", getUsuarioLogado());
+			
 			// atualiza lista de arquivos contidos no diretório
+
+			documentoConsultarTodos= new ArrayList<FileUploaded>();
 			filesJuridico = listaArquivosJuridico();
 		}
 	}
@@ -31461,19 +31452,13 @@ public class ContratoCobrancaMB {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
 		} else {
-			// cria o arquivo
 			byte[] conteudo = event.getFile().getContents();
-			FileOutputStream fos;
-			try {
-				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
-				fos.write(conteudo);
-				fos.close();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				System.out.println(e);
-			}
+			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(), 
+					 event.getFile().getFileName(), "//comite/", getUsuarioLogado());
 
 			// atualiza lista de arquivos contidos no diretório
+
+			documentoConsultarTodos= new ArrayList<FileUploaded>();
 			filesComite = listaArquivosComite();
 		}
 	}
@@ -31508,23 +31493,19 @@ public class ContratoCobrancaMB {
 		} else {
 			// cria o arquivo
 			// event.getFile().getFileName();
-			byte[] conteudo = event.getFile().getContents();
+//			byte[] conteudo = event.getFile().getContents();
 			// String oldFileName = new String(event.getFile().getFileName());
 			// String[] strs =
 			// oldFileName.substring(FilenameUtils.getPrefixLength(oldFileName)).split(Pattern.quote("."));
 			// String fileName = strs[0] + "_CntPgr" + generateFileID() + "." + strs[1];
-
-			FileOutputStream fos;
-			try {
-				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
-				fos.write(conteudo);
-				fos.close();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				System.out.println(e);
-			}
+			byte[] conteudo = event.getFile().getContents();
+			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(), 
+					 event.getFile().getFileName(), "//pagar/", getUsuarioLogado());
+			
 
 			// atualiza lista de arquivos contidos no diretório
+
+			documentoConsultarTodos= new ArrayList<FileUploaded>();
 			filesPagar = listaArquivosPagar();
 		}
 	}
@@ -31572,22 +31553,12 @@ public class ContratoCobrancaMB {
 			// cria o arquivo
 			// event.getFile().getFileName();
 			byte[] conteudo = event.getFile().getContents();
-			// String oldFileName = new String(event.getFile().getFileName());
-			// String[] strs =
-			// oldFileName.substring(FilenameUtils.getPrefixLength(oldFileName)).split(Pattern.quote("."));
-			// String fileName = strs[0] + "_CntPgr" + generateFileID() + "." + strs[1];
-			FileOutputStream fos;
-			try {
-				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
-				System.out.println(event.getFile().getFileName());
-				fos.write(conteudo);
-				fos.close();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				System.out.println(e);
-			}
-
+			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(), 
+					 event.getFile().getFileName(), "//pagar/", getUsuarioLogado());
+			
 			// atualiza lista de arquivos contidos no diretório
+
+			documentoConsultarTodos= new ArrayList<FileUploaded>();
 			conta.setFilesContas(listaArquivosContasPagar(conta));
 		}
 	}

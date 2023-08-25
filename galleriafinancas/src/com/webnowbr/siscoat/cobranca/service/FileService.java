@@ -149,23 +149,21 @@ public class FileService {
 	}
 
 
-	public byte[] salvarDocumento(byte[] documentoSelecionado, String numeroContrato,String arquivo ,String subpasta, User usuario) {
+	public String salvarDocumento(byte[] documentoSelecionado, String numeroContrato,String arquivo ,String subpasta, User usuario) {
 		
 		String serverPrincipalUrl = PropertyLoader
-				.getString("client.galleria.financas.upload.abrir.doc.rest.url");
+				.getString("client.galleria.financas.upload.rest.url");
 		logger.info("INFO file server {} POST: ".concat(serverPrincipalUrl.replace("{numeroContrato}", numeroContrato)
   				.replace("{subpasta}", subpasta)
   				.replace("{nomeArquivo}", arquivo)));
 
 		URL myURL;
 		try {
-			myURL = new URL(serverPrincipalUrl.replace("{numeroContrato}", numeroContrato));
+			myURL = new URL(serverPrincipalUrl.replace("{numeroContrato}", numeroContrato)
+					.replace("{subpasta}", subpasta).replace("{nomeArquivo}", arquivo));
 
-//			,numeroContrato,subpasta, arquivo
-			
 			byte[] postDataBytes = GsonUtil.toJson(documentoSelecionado).getBytes();
-			
-			
+
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
 			myURLConnection.setUseCaches(false);
 			myURLConnection.setRequestMethod("POST");
@@ -176,14 +174,9 @@ public class FileService {
 					"Bearer " + JwtUtil.generateJWTSite(usuario.getId(), usuario.getLogin(), "BACKOFFICE"));
 			myURLConnection.setDoOutput(true);
 
-  			myURLConnection.getOutputStream().write(postDataBytes);
-  			
-			Map<String, String> parametros = new HashMap<>();
-			parametros.put("numeroContrato", numeroContrato);
-			parametros.put("subpasta", subpasta);
-			parametros.put("nomeArquivo", arquivo);
-     		  
-  			
+			myURLConnection.getOutputStream().write(postDataBytes);
+
+
 			String retornoConsulta = null;
 			if (myURLConnection.getResponseCode() == SiscoatConstants.HTTP_COD_SUCESSO) {
 				BufferedReader in;
@@ -199,12 +192,12 @@ public class FileService {
 			}
 
 			if (!CommonsUtil.semValor(retornoConsulta)) {
-				ResponseApi teste  = GsonUtil.fromJson(retornoConsulta, ResponseApi.class);
-				FileSiscoat result = null;
-				Gson gson = new Gson();
-				
-				result = gson.fromJson(teste.getClasse(), FileSiscoat.class);
-				return result.getFile();
+				ResponseApi teste = GsonUtil.fromJson(retornoConsulta, ResponseApi.class);
+//				FileSiscoat result = null;
+//				Gson gson = new Gson();
+				return teste.getMensagem();
+//				result = gson.fromJson(teste.getClasse(), FileSiscoat.class);
+//				return result.getFile();
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
