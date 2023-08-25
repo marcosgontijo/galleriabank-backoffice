@@ -31342,7 +31342,7 @@ public class ContratoCobrancaMB {
 		ParametrosDao pDao = new ParametrosDao();
 		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
 				// String pathContrato = "C:/Users/Usuario/Desktop/"
-				+ this.objetoContratoCobranca.getNumeroContrato() + "//interno/";
+				+ this.objetoContratoCobranca.getNumeroContrato() + "interno";
 	
 		
 		// cria o diretório, caso não exista
@@ -31358,7 +31358,7 @@ public class ContratoCobrancaMB {
 //			FileUploaded documentoSelecionado = new FileUploaded(fileName, null, filePath);
 			byte[] conteudo = event.getFile().getContents();
 			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(), 
-					 event.getFile().getFileName(), "//interno/", getUsuarioLogado());
+					 event.getFile().getFileName(), "interno", getUsuarioLogado());
 //			
 //			// cria o arquivo
 //			byte[] conteudo = event.getFile().getContents();
@@ -32350,11 +32350,11 @@ public class ContratoCobrancaMB {
 		current.executeScript("PF('bui').show();");
 		for (FileUploaded file : filesJuridico) {
 			if(file.getName().toLowerCase().endsWith(".pdf")) {
-				PDDocument doc = PDDocument.load(file.getFile());
+				PDDocument doc = PDDocument.load(fileService.abrirDocumentos(file,
+						this.objetoContratoCobranca.getNumeroContrato(), getUsuarioLogado()));
 				file.setPages(doc.getNumberOfPages());
 			}
 		}
-		
 	}
 	
 	public void closeDialogDocs() {

@@ -3,9 +3,11 @@ package com.webnowbr.siscoat.cobranca.service;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -159,23 +161,27 @@ public class FileService {
 
 		URL myURL;
 		try {
-			myURL = new URL(serverPrincipalUrl.replace("{numeroContrato}", numeroContrato)
-					.replace("{subpasta}", subpasta).replace("{nomeArquivo}", arquivo));
+			arquivo  = CommonsUtil.removeAcentos(arquivo);
+			//arquivo = "teste";
+			String surl = serverPrincipalUrl.replace("{numeroContrato}", numeroContrato)
+					.replace("{subpasta}", subpasta).replace("{nomeArquivo}", arquivo).replace(" ", "%20");;
+			myURL = new URL(surl);
 
 			byte[] postDataBytes = GsonUtil.toJson(documentoSelecionado).getBytes();
-
+ 
+			String token = "Bearer " + JwtUtil.generateJWTSite(usuario.getId(), usuario.getLogin(), "BACKOFFICE");
+			
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
 			myURLConnection.setUseCaches(false);
 			myURLConnection.setRequestMethod("POST");
 			myURLConnection.setRequestProperty("Accept", "application/json");
 			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
 			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-			myURLConnection.setRequestProperty("Authorization",
-					"Bearer " + JwtUtil.generateJWTSite(usuario.getId(), usuario.getLogin(), "BACKOFFICE"));
+			myURLConnection.setRequestProperty("Authorization", token);
 			myURLConnection.setDoOutput(true);
-
-			myURLConnection.getOutputStream().write(postDataBytes);
-
+			myURLConnection.setDoInput(true);
+			myURLConnection.getOutputStream().write(documentoSelecionado);
+//			myURLConnection.getOutputStream().write(Base64.getEncoder().encodeToString(documentoSelecionado).getBytes());
 
 			String retornoConsulta = null;
 			if (myURLConnection.getResponseCode() == SiscoatConstants.HTTP_COD_SUCESSO) {
