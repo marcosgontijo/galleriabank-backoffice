@@ -16,7 +16,6 @@ public class FileUploaded {
 		this.name = name;
 		this.file = file;
 		this.path = path;
-	
 	}
 
 	/**

@@ -31922,7 +31922,7 @@ public class ContratoCobrancaMB {
 		return lista;
 	}
 
-	public void viewFile(String fileName) {
+	public void viewFile(FileUploaded file) {
 		String pathContrato = null;
 		try {
 			FacesContext facesContext = FacesContext.getCurrentInstance();
@@ -31930,21 +31930,10 @@ public class ContratoCobrancaMB {
 			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
 			BufferedInputStream input = null;
 			BufferedOutputStream output = null;
-
-			ParametrosDao pDao = new ParametrosDao();
-			String pathContratoCobranca =  pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-					+ this.objetoContratoCobranca.getNumeroContrato(); 
+			String fileName = file.getName();
+			String filePath = file.getPath();
 			
-			pathContrato = pathContratoCobranca + "/" + fileName;
-
-			/*
-			 * 'docx' =>
-			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-			 * 'xlsx' =>
-			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
-			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
-			 * 'application/pdf' 'psd' => 'application/x-photoshop'
-			 */
+			pathContrato = file.getPath() + "/" + fileName;
 			String mineFile = "";
 
 			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
@@ -31964,7 +31953,7 @@ public class ContratoCobrancaMB {
 			}
 
 			FileService fileService = new FileService();
-			FileUploaded documentoSelecionado = new FileUploaded(fileName, null, pathContratoCobranca);
+			FileUploaded documentoSelecionado = new FileUploaded(fileName, null, filePath);
 			byte[] arquivob = fileService.abrirDocumentos(documentoSelecionado,this.objetoContratoCobranca.getNumeroContrato(), getUsuarioLogado());
 			InputStream arquivo = new ByteArrayInputStream( arquivob );
 			
@@ -32002,155 +31991,130 @@ public class ContratoCobrancaMB {
 	}
 
 	public void viewFileInterno(String fileName) {
-
-		try {
-			FacesContext facesContext = FacesContext.getCurrentInstance();
-			ExternalContext externalContext = facesContext.getExternalContext();
-			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-			BufferedInputStream input = null;
-			BufferedOutputStream output = null;
-
-			ParametrosDao pDao = new ParametrosDao();
-			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-					// String pathContrato = "C:/Users/Usuario/Desktop/"
-					+ this.objetoContratoCobranca.getNumeroContrato() + "/interno/" + fileName;
-
-			/*
-			 * 'docx' =>
-			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-			 * 'xlsx' =>
-			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
-			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
-			 * 'application/pdf' 'psd' => 'application/x-photoshop'
-			 */
-			String mineFile = "";
-
-			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
-				mineFile = "image-jpg";
-			}
-
-			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
-				mineFile = "image-jpeg";
-			}
-
-			if (fileName.contains(".png") || fileName.contains(".PNG")) {
-				mineFile = "image-png";
-			}
-
-			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
-				mineFile = "application/pdf";
-			}
-
-			File arquivo = new File(pathContrato);
-
-			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
-
-			response.reset();
-			// lire un fichier pdf
-			response.setHeader("Content-type", mineFile);
-
-			response.setContentLength((int) arquivo.length());
-
-			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
-			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-
-			// Write file contents to response.
-			byte[] buffer = new byte[10240];
-			int length;
-			while ((length = input.read(buffer)) > 0) {
-				output.write(buffer, 0, length);
-			}
-
-			// Finalize task.
-			output.flush();
-			output.close();
-			facesContext.responseComplete();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+		//viewFile(fileName);
+		/*
+		 * 
+		 * try { FacesContext facesContext = FacesContext.getCurrentInstance();
+		 * ExternalContext externalContext = facesContext.getExternalContext();
+		 * HttpServletResponse response = (HttpServletResponse)
+		 * externalContext.getResponse(); BufferedInputStream input = null;
+		 * BufferedOutputStream output = null;
+		 * 
+		 * ParametrosDao pDao = new ParametrosDao(); String pathContrato =
+		 * pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString() //
+		 * String pathContrato = "C:/Users/Usuario/Desktop/" +
+		 * this.objetoContratoCobranca.getNumeroContrato() + "/interno/" + fileName;
+		 * 
+		 * 
+		 * 'docx' =>
+		 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+		 * 'xlsx' =>
+		 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
+		 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
+		 * 'application/pdf' 'psd' => 'application/x-photoshop'
+		 * 
+		 * String mineFile = "";
+		 * 
+		 * if (fileName.contains(".jpg") || fileName.contains(".JPG")) { mineFile =
+		 * "image-jpg"; }
+		 * 
+		 * if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) { mineFile =
+		 * "image-jpeg"; }
+		 * 
+		 * if (fileName.contains(".png") || fileName.contains(".PNG")) { mineFile =
+		 * "image-png"; }
+		 * 
+		 * if (fileName.contains(".pdf") || fileName.contains(".PDF")) { mineFile =
+		 * "application/pdf"; }
+		 * 
+		 * File arquivo = new File(pathContrato);
+		 * 
+		 * input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
+		 * 
+		 * response.reset(); // lire un fichier pdf response.setHeader("Content-type",
+		 * mineFile);
+		 * 
+		 * response.setContentLength((int) arquivo.length());
+		 * 
+		 * response.setHeader("Content-disposition", "inline; filename=" +
+		 * arquivo.getName()); output = new
+		 * BufferedOutputStream(response.getOutputStream(), 10240);
+		 * 
+		 * // Write file contents to response. byte[] buffer = new byte[10240]; int
+		 * length; while ((length = input.read(buffer)) > 0) { output.write(buffer, 0,
+		 * length); }
+		 * 
+		 * // Finalize task. output.flush(); output.close();
+		 * facesContext.responseComplete(); } catch (FileNotFoundException e) { // TODO
+		 * Auto-generated catch block e.printStackTrace(); } catch (IOException e) { //
+		 * TODO Auto-generated catch block e.printStackTrace(); }
+		 */}
 
 	public void viewFileFaltante(String fileName) {
-
-		try {
-			FacesContext facesContext = FacesContext.getCurrentInstance();
-			ExternalContext externalContext = facesContext.getExternalContext();
-			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-			BufferedInputStream input = null;
-			BufferedOutputStream output = null;
-
-			ParametrosDao pDao = new ParametrosDao();
-			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-					// String pathContrato = "C:/Users/Usuario/Desktop/"
-					+ this.objetoContratoCobranca.getNumeroContrato() + "/faltante/" + fileName;
-
-			/*
-			 * 'docx' =>
-			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-			 * 'xlsx' =>
-			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
-			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
-			 * 'application/pdf' 'psd' => 'application/x-photoshop'
-			 */
-			String mineFile = "";
-
-			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
-				mineFile = "image-jpg";
-			}
-
-			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
-				mineFile = "image-jpeg";
-			}
-
-			if (fileName.contains(".png") || fileName.contains(".PNG")) {
-				mineFile = "image-png";
-			}
-
-			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
-				mineFile = "application/pdf";
-			}
-
-			File arquivo = new File(pathContrato);
-
-			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
-
-			response.reset();
-			// lire un fichier pdf
-			response.setHeader("Content-type", mineFile);
-
-			response.setContentLength((int) arquivo.length());
-
-			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
-			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-
-			// Write file contents to response.
-			byte[] buffer = new byte[10240];
-			int length;
-			while ((length = input.read(buffer)) > 0) {
-				output.write(buffer, 0, length);
-			}
-
-			// Finalize task.
-			output.flush();
-			output.close();
-			facesContext.responseComplete();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		//viewFile(fileName);
+		/*
+		 * 
+		 * try { FacesContext facesContext = FacesContext.getCurrentInstance();
+		 * ExternalContext externalContext = facesContext.getExternalContext();
+		 * HttpServletResponse response = (HttpServletResponse)
+		 * externalContext.getResponse(); BufferedInputStream input = null;
+		 * BufferedOutputStream output = null;
+		 * 
+		 * ParametrosDao pDao = new ParametrosDao(); String pathContrato =
+		 * pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString() //
+		 * String pathContrato = "C:/Users/Usuario/Desktop/" +
+		 * this.objetoContratoCobranca.getNumeroContrato() + "/faltante/" + fileName;
+		 * 
+		 * 
+		 * 'docx' =>
+		 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+		 * 'xlsx' =>
+		 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
+		 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
+		 * 'application/pdf' 'psd' => 'application/x-photoshop'
+		 * 
+		 * String mineFile = "";
+		 * 
+		 * if (fileName.contains(".jpg") || fileName.contains(".JPG")) { mineFile =
+		 * "image-jpg"; }
+		 * 
+		 * if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) { mineFile =
+		 * "image-jpeg"; }
+		 * 
+		 * if (fileName.contains(".png") || fileName.contains(".PNG")) { mineFile =
+		 * "image-png"; }
+		 * 
+		 * if (fileName.contains(".pdf") || fileName.contains(".PDF")) { mineFile =
+		 * "application/pdf"; }
+		 * 
+		 * File arquivo = new File(pathContrato);
+		 * 
+		 * input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
+		 * 
+		 * response.reset(); // lire un fichier pdf response.setHeader("Content-type",
+		 * mineFile);
+		 * 
+		 * response.setContentLength((int) arquivo.length());
+		 * 
+		 * response.setHeader("Content-disposition", "inline; filename=" +
+		 * arquivo.getName()); output = new
+		 * BufferedOutputStream(response.getOutputStream(), 10240);
+		 * 
+		 * // Write file contents to response. byte[] buffer = new byte[10240]; int
+		 * length; while ((length = input.read(buffer)) > 0) { output.write(buffer, 0,
+		 * length); }
+		 * 
+		 * // Finalize task. output.flush(); output.close();
+		 * facesContext.responseComplete(); } catch (FileNotFoundException e) { // TODO
+		 * Auto-generated catch block e.printStackTrace(); } catch (IOException e) { //
+		 * TODO Auto-generated catch block e.printStackTrace(); }
+		 */
 	}
 
 	public void viewFileJuridico(String fileName) {
 
-		viewFile( fileName);
-		
+		//viewFile(fileName);
+
 //		try {
 //			FacesContext facesContext = FacesContext.getCurrentInstance();
 //			ExternalContext externalContext = facesContext.getExternalContext();
@@ -32222,225 +32186,189 @@ public class ContratoCobrancaMB {
 	}
 
 	public void viewFileComite(String fileName) {
-
-		try {
-			FacesContext facesContext = FacesContext.getCurrentInstance();
-			ExternalContext externalContext = facesContext.getExternalContext();
-			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-			BufferedInputStream input = null;
-			BufferedOutputStream output = null;
-
-			ParametrosDao pDao = new ParametrosDao();
-			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-					// String pathContrato = "C:/Users/Usuario/Desktop/"
-					+ this.objetoContratoCobranca.getNumeroContrato() + "/comite/" + fileName;
-
-			/*
-			 * 'docx' =>
-			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-			 * 'xlsx' =>
-			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
-			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
-			 * 'application/pdf' 'psd' => 'application/x-photoshop'
-			 */
-			String mineFile = "";
-
-			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
-				mineFile = "image-jpg";
-			}
-
-			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
-				mineFile = "image-jpeg";
-			}
-
-			if (fileName.contains(".png") || fileName.contains(".PNG")) {
-				mineFile = "image-png";
-			}
-
-			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
-				mineFile = "application/pdf";
-			}
-
-			File arquivo = new File(pathContrato);
-
-			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
-
-			response.reset();
-			// lire un fichier pdf
-			response.setHeader("Content-type", mineFile);
-
-			response.setContentLength((int) arquivo.length());
-
-			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
-			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-
-			// Write file contents to response.
-			byte[] buffer = new byte[10240];
-			int length;
-			while ((length = input.read(buffer)) > 0) {
-				output.write(buffer, 0, length);
-			}
-
-			// Finalize task.
-			output.flush();
-			output.close();
-			facesContext.responseComplete();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		//viewFile(fileName);
+		/*
+		 * 
+		 * try { FacesContext facesContext = FacesContext.getCurrentInstance();
+		 * ExternalContext externalContext = facesContext.getExternalContext();
+		 * HttpServletResponse response = (HttpServletResponse)
+		 * externalContext.getResponse(); BufferedInputStream input = null;
+		 * BufferedOutputStream output = null;
+		 * 
+		 * ParametrosDao pDao = new ParametrosDao(); String pathContrato =
+		 * pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString() //
+		 * String pathContrato = "C:/Users/Usuario/Desktop/" +
+		 * this.objetoContratoCobranca.getNumeroContrato() + "/comite/" + fileName;
+		 * 
+		 * 
+		 * 'docx' =>
+		 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+		 * 'xlsx' =>
+		 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
+		 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
+		 * 'application/pdf' 'psd' => 'application/x-photoshop'
+		 * 
+		 * String mineFile = "";
+		 * 
+		 * if (fileName.contains(".jpg") || fileName.contains(".JPG")) { mineFile =
+		 * "image-jpg"; }
+		 * 
+		 * if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) { mineFile =
+		 * "image-jpeg"; }
+		 * 
+		 * if (fileName.contains(".png") || fileName.contains(".PNG")) { mineFile =
+		 * "image-png"; }
+		 * 
+		 * if (fileName.contains(".pdf") || fileName.contains(".PDF")) { mineFile =
+		 * "application/pdf"; }
+		 * 
+		 * File arquivo = new File(pathContrato);
+		 * 
+		 * input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
+		 * 
+		 * response.reset(); // lire un fichier pdf response.setHeader("Content-type",
+		 * mineFile);
+		 * 
+		 * response.setContentLength((int) arquivo.length());
+		 * 
+		 * response.setHeader("Content-disposition", "inline; filename=" +
+		 * arquivo.getName()); output = new
+		 * BufferedOutputStream(response.getOutputStream(), 10240);
+		 * 
+		 * // Write file contents to response. byte[] buffer = new byte[10240]; int
+		 * length; while ((length = input.read(buffer)) > 0) { output.write(buffer, 0,
+		 * length); }
+		 * 
+		 * // Finalize task. output.flush(); output.close();
+		 * facesContext.responseComplete(); } catch (FileNotFoundException e) { // TODO
+		 * Auto-generated catch block e.printStackTrace(); } catch (IOException e) { //
+		 * TODO Auto-generated catch block e.printStackTrace(); }
+		 */
 	}
 
 	public void viewFilePagar(String fileName) {
-
-		try {
-			FacesContext facesContext = FacesContext.getCurrentInstance();
-			ExternalContext externalContext = facesContext.getExternalContext();
-			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-			BufferedInputStream input = null;
-			BufferedOutputStream output = null;
-
-			ParametrosDao pDao = new ParametrosDao();
-			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-					// String pathContrato = "C:/Users/Usuario/Desktop/"
-					+ this.objetoContratoCobranca.getNumeroContrato() + "/pagar/" + fileName;
-
-			/*
-			 * 'docx' =>
-			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-			 * 'xlsx' =>
-			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
-			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
-			 * 'application/pdf' 'psd' => 'application/x-photoshop'
-			 */
-			String mineFile = "";
-
-			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
-				mineFile = "image-jpg";
-			}
-
-			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
-				mineFile = "image-jpeg";
-			}
-
-			if (fileName.contains(".png") || fileName.contains(".PNG")) {
-				mineFile = "image-png";
-			}
-
-			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
-				mineFile = "application/pdf";
-			}
-
-			File arquivo = new File(pathContrato);
-
-			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
-
-			response.reset();
-			// lire un fichier pdf
-			response.setHeader("Content-type", mineFile);
-
-			response.setContentLength((int) arquivo.length());
-
-			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
-			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-
-			// Write file contents to response.
-			byte[] buffer = new byte[10240];
-			int length;
-			while ((length = input.read(buffer)) > 0) {
-				output.write(buffer, 0, length);
-			}
-
-			// Finalize task.
-			output.flush();
-			output.close();
-			facesContext.responseComplete();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		//viewFile(fileName);
+		/*
+		 * 
+		 * try { FacesContext facesContext = FacesContext.getCurrentInstance();
+		 * ExternalContext externalContext = facesContext.getExternalContext();
+		 * HttpServletResponse response = (HttpServletResponse)
+		 * externalContext.getResponse(); BufferedInputStream input = null;
+		 * BufferedOutputStream output = null;
+		 * 
+		 * ParametrosDao pDao = new ParametrosDao(); String pathContrato =
+		 * pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString() //
+		 * String pathContrato = "C:/Users/Usuario/Desktop/" +
+		 * this.objetoContratoCobranca.getNumeroContrato() + "/pagar/" + fileName;
+		 * 
+		 * 
+		 * 'docx' =>
+		 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+		 * 'xlsx' =>
+		 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
+		 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
+		 * 'application/pdf' 'psd' => 'application/x-photoshop'
+		 * 
+		 * String mineFile = "";
+		 * 
+		 * if (fileName.contains(".jpg") || fileName.contains(".JPG")) { mineFile =
+		 * "image-jpg"; }
+		 * 
+		 * if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) { mineFile =
+		 * "image-jpeg"; }
+		 * 
+		 * if (fileName.contains(".png") || fileName.contains(".PNG")) { mineFile =
+		 * "image-png"; }
+		 * 
+		 * if (fileName.contains(".pdf") || fileName.contains(".PDF")) { mineFile =
+		 * "application/pdf"; }
+		 * 
+		 * File arquivo = new File(pathContrato);
+		 * 
+		 * input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
+		 * 
+		 * response.reset(); // lire un fichier pdf response.setHeader("Content-type",
+		 * mineFile);
+		 * 
+		 * response.setContentLength((int) arquivo.length());
+		 * 
+		 * response.setHeader("Content-disposition", "inline; filename=" +
+		 * arquivo.getName()); output = new
+		 * BufferedOutputStream(response.getOutputStream(), 10240);
+		 * 
+		 * // Write file contents to response. byte[] buffer = new byte[10240]; int
+		 * length; while ((length = input.read(buffer)) > 0) { output.write(buffer, 0,
+		 * length); }
+		 * 
+		 * // Finalize task. output.flush(); output.close();
+		 * facesContext.responseComplete(); } catch (FileNotFoundException e) { // TODO
+		 * Auto-generated catch block e.printStackTrace(); } catch (IOException e) { //
+		 * TODO Auto-generated catch block e.printStackTrace(); }
+		 */
 	}
 
 	public void viewFileContaPagar(String fileName, ContasPagar conta) {
-
-		try {
-			FacesContext facesContext = FacesContext.getCurrentInstance();
-			ExternalContext externalContext = facesContext.getExternalContext();
-			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-			BufferedInputStream input = null;
-			BufferedOutputStream output = null;
-
-			ParametrosDao pDao = new ParametrosDao();
-			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-					// String pathContrato = "C:/Users/Usuario/Desktop/"
-					+ this.objetoContratoCobranca.getNumeroContrato() + "/pagar/" + conta.getFileListId() + "/"
-					+ fileName;
-
-			/*
-			 * 'docx' =>
-			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-			 * 'xlsx' =>
-			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
-			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
-			 * 'application/pdf' 'psd' => 'application/x-photoshop'
-			 */
-			String mineFile = "";
-
-			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
-				mineFile = "image-jpg";
-			}
-
-			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
-				mineFile = "image-jpeg";
-			}
-
-			if (fileName.contains(".png") || fileName.contains(".PNG")) {
-				mineFile = "image-png";
-			}
-
-			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
-				mineFile = "application/pdf";
-			}
-
-			File arquivo = new File(pathContrato);
-
-			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
-
-			response.reset();
-			// lire un fichier pdf
-			response.setHeader("Content-type", mineFile);
-
-			response.setContentLength((int) arquivo.length());
-
-			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
-			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-
-			// Write file contents to response.
-			byte[] buffer = new byte[10240];
-			int length;
-			while ((length = input.read(buffer)) > 0) {
-				output.write(buffer, 0, length);
-			}
-
-			// Finalize task.
-			output.flush();
-			output.close();
-			facesContext.responseComplete();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		//viewFile(fileName);
+		/*
+		 * 
+		 * try { FacesContext facesContext = FacesContext.getCurrentInstance();
+		 * ExternalContext externalContext = facesContext.getExternalContext();
+		 * HttpServletResponse response = (HttpServletResponse)
+		 * externalContext.getResponse(); BufferedInputStream input = null;
+		 * BufferedOutputStream output = null;
+		 * 
+		 * ParametrosDao pDao = new ParametrosDao(); String pathContrato =
+		 * pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString() //
+		 * String pathContrato = "C:/Users/Usuario/Desktop/" +
+		 * this.objetoContratoCobranca.getNumeroContrato() + "/pagar/" +
+		 * conta.getFileListId() + "/" + fileName;
+		 * 
+		 * 
+		 * 'docx' =>
+		 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+		 * 'xlsx' =>
+		 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
+		 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
+		 * 'application/pdf' 'psd' => 'application/x-photoshop'
+		 * 
+		 * String mineFile = "";
+		 * 
+		 * if (fileName.contains(".jpg") || fileName.contains(".JPG")) { mineFile =
+		 * "image-jpg"; }
+		 * 
+		 * if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) { mineFile =
+		 * "image-jpeg"; }
+		 * 
+		 * if (fileName.contains(".png") || fileName.contains(".PNG")) { mineFile =
+		 * "image-png"; }
+		 * 
+		 * if (fileName.contains(".pdf") || fileName.contains(".PDF")) { mineFile =
+		 * "application/pdf"; }
+		 * 
+		 * File arquivo = new File(pathContrato);
+		 * 
+		 * input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
+		 * 
+		 * response.reset(); // lire un fichier pdf response.setHeader("Content-type",
+		 * mineFile);
+		 * 
+		 * response.setContentLength((int) arquivo.length());
+		 * 
+		 * response.setHeader("Content-disposition", "inline; filename=" +
+		 * arquivo.getName()); output = new
+		 * BufferedOutputStream(response.getOutputStream(), 10240);
+		 * 
+		 * // Write file contents to response. byte[] buffer = new byte[10240]; int
+		 * length; while ((length = input.read(buffer)) > 0) { output.write(buffer, 0,
+		 * length); }
+		 * 
+		 * // Finalize task. output.flush(); output.close();
+		 * facesContext.responseComplete(); } catch (FileNotFoundException e) { // TODO
+		 * Auto-generated catch block e.printStackTrace(); } catch (IOException e) { //
+		 * TODO Auto-generated catch block e.printStackTrace(); }
+		 */
 		}
-	}
-	
+
 	public void consultaDocsJuridico(ContratoCobranca contrato) throws IOException {
 		filesJuridico = new ArrayList<FileUploaded>();
 		objetoContratoCobranca = contrato;
