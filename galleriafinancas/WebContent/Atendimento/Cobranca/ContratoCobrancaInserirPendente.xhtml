@@ -5305,6 +5305,15 @@
 							<f:selectItem itemValue="Indicar bens" itemLabel="Indicar bens" />
 						</p:selectOneMenu>
 						
+						<p:outputLabel value="Obs: " styleClass="labelBold"
+							style="font-weight: bold; font-size: 18px;" />
+						<h:inputTextarea rows="5" cols="25"
+							maxlength="3000" onblur=""
+							counterTemplate="{0} characters remaining." autoResize="false"
+							value="#{contratoCobrancaMB.processoSelecionado.observacao}" >
+							<p:ajax process="@this" partialSubmit="true" />
+						</h:inputTextarea>
+						
 						<p:outputLabel value="Pessoa: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />
 						<p:outputLabel value="#{contratoCobrancaMB.processoSelecionado.pagador.nome} " styleClass="labelBold"
