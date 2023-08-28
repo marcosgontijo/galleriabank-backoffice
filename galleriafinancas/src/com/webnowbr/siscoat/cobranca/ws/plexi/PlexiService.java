@@ -14,6 +14,8 @@ import javax.faces.application.FacesMessage;
 
 import org.json.JSONObject;
 
+import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
+import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.GsonUtil;
@@ -30,7 +32,7 @@ public class PlexiService {
 	private String urlProducao = "https://sandbox.plexi.com.br";//https://api.plexi.com.br
 	
 	
-	public FacesMessage PedirConsulta(PlexiConsulta plexiCosulta, User usuarioLogado) {
+	public FacesMessage PedirConsulta(PlexiConsulta plexiCosulta, User usuarioLogado, DocumentoAnalise docAnalise) {
 		String plexiJson = GsonUtil.toJson(plexiCosulta);
 		
 		try {

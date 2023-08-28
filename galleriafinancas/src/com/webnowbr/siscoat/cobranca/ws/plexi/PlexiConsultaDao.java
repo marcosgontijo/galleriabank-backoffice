@@ -45,7 +45,7 @@ public class PlexiConsultaDao extends HibernateDao<PlexiConsulta, Long> {
 					while (rs.next()) {
 						PlexiConsulta consulta = plexiConsultaDao.findById(rs.getLong(1));
 						Date dataConsulta = consulta.getDataConsulta();
-						if(CommonsUtil.semValor(dataConsulta)) {
+						if(!CommonsUtil.semValor(dataConsulta)) {
 							if(DateUtil.getDaysBetweenDates(dataConsulta, dataHj) > 30) {
 								consulta.setExpirado(true);
 								plexiConsultaDao.merge(consulta);

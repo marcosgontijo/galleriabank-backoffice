@@ -115,7 +115,7 @@
 		</property>
 		
 		<list name="plexiConsultas"
-			table="DocumentoAnalise_PlexiConsultas_Join" cascade="delete" lazy="false">
+			table="DocumentoAnalise_PlexiConsultas_Join" cascade="all" lazy="false">
 			<key column="idDocumentoAnalise" />
 			<list-index></list-index>
 			<many-to-many column="idPlexiConsulta"

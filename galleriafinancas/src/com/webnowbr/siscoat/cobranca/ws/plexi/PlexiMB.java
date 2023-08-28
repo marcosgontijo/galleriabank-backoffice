@@ -56,11 +56,10 @@ public class PlexiMB {
 		}
 		
 		return "/Atendimento/Cobranca/Plexi.xhtml";
-	}
+	}	
 	
-	
-	
-	public void criarPedido() {	//POST para gerar pedido	
+	public void criarPedido() {	//POST para gerar pedido
+		
 		PlexiService plexiService = new PlexiService();
 		PlexiConsultaDao plexiConsultaDao = new PlexiConsultaDao();
 		User user = null;
@@ -69,27 +68,42 @@ public class PlexiMB {
 		}
 		
 		for(DocumentoAnalise docAnalise : listPagador) {
-			List<PlexiConsulta> consultasErradas = new ArrayList<PlexiConsulta>();
 			List<PlexiConsulta> consultasExistentes = new ArrayList<PlexiConsulta>();
+			boolean podeChamar = true;
+			atualizarDocumentos(docAnalise);
 			for(PlexiConsulta plexiConsulta : docAnalise.getPlexiConsultas()) {
 				consultasExistentes = plexiConsultaDao.getConsultasExistentes(plexiConsulta);
 				if(consultasExistentes.size() > 0) {
+					FacesContext.getCurrentInstance().addMessage(null,
+							new FacesMessage(FacesMessage.SEVERITY_ERROR, plexiConsulta.getPlexiDocumentos().getNome() + " - já Existente" ,""));
 					System.out.println("Consulta Ja Existente");
+					consultasExistentes.add(plexiConsulta);
 					continue;
 				}
-				if(verificaCamposDoc(plexiConsulta)) {
-					plexiService.PedirConsulta(plexiConsulta, user);
-				} else {
-					consultasErradas.add(plexiConsulta);
+				podeChamar = verificaCamposDoc(plexiConsulta);
+				if(!podeChamar) {
+					break;
 				}
 			}
-			docAnalise.getPlexiConsultas().removeAll(consultasErradas);
+			
 			docAnalise.getPlexiConsultas().removeAll(consultasExistentes);
-			DocumentoAnaliseDao docAnaliseDao = new DocumentoAnaliseDao();
-			docAnaliseDao.merge(docAnalise);
+			if(podeChamar) {
+				for(PlexiConsulta plexiConsulta : docAnalise.getPlexiConsultas()) {
+					plexiService.PedirConsulta(plexiConsulta, user, docAnalise);
+				}
+				
+				DocumentoAnaliseDao docAnaliseDao = new DocumentoAnaliseDao(); 
+				docAnaliseDao.merge(docAnalise);
+			}
 		}
 		
 		System.out.println("Finalizado");
+	}
+	
+	public void atualizarDocumentos(DocumentoAnalise docAnalise) {
+		for(PlexiConsulta plexiConsulta : docAnalise.getPlexiConsultas()) {
+			plexiConsulta.populatePagadorRecebedor(docAnalise.getPagador());
+		}
 	}
 
 	public void handleFileUpload(FileUploadEvent event) {
