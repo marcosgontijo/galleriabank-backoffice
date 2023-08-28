@@ -36,8 +36,13 @@ public class CombateAFraudeWebhook {
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 				Date d = sdf.parse(cafWebhookRetorno.date);
 				caf.setDate(d);
-				caf.setObs("");
 				for(CombateAFraudeStatusReasons reason : cafWebhookRetorno.statusReasons) {
+					if(CommonsUtil.semValor(reason.description)) {
+						continue;
+					}
+					if(CommonsUtil.semValor(caf.getObs())) {
+						caf.setObs("");
+					}
 					caf.setObs(caf.getObs() + reason.description  + "\n");
 				}
 				caf.setRetorno(webhookRetorno);

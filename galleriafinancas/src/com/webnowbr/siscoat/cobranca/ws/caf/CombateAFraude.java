@@ -1,5 +1,6 @@
 package com.webnowbr.siscoat.cobranca.ws.caf;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class CombateAFraude {
 	private String obs;
 	private String retorno;
 	private Date date;
-	private List<CombateAFraudeFiles> cafFiles;
+	private List<CombateAFraudeFiles> cafFiles = new ArrayList<CombateAFraudeFiles>();
 	
 	public long getId() {
 		return id;
