@@ -31427,7 +31427,7 @@ public class ContratoCobrancaMB {
 
 			byte[] conteudo = event.getFile().getContents();
 			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(), 
-					 event.getFile().getFileName(), "//interno/", getUsuarioLogado());
+					 event.getFile().getFileName(), "//juridico/", getUsuarioLogado());
 			
 			// atualiza lista de arquivos contidos no diretório
 
