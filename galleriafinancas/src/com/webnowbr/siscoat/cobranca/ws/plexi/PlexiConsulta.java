@@ -77,6 +77,9 @@ public class PlexiConsulta {
 		if(!CommonsUtil.semValor(pagador.getOrgaoEmissorRG())) {
 			orgaoExpedidorRg = pagador.getOrgaoEmissorRG();
 		}
+		if(!CommonsUtil.semValor(pagador.getCep())) {
+			cep = pagador.getCep();
+		}
 		if(!CommonsUtil.semValor(pagador.getEstado())) {
 			ufRg = pagador.getEstado();
 		}

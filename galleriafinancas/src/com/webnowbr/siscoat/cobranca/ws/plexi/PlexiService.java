@@ -34,11 +34,10 @@ public class PlexiService {
 	
 	public FacesMessage PedirConsulta(PlexiConsulta plexiCosulta, User usuarioLogado, DocumentoAnalise docAnalise) {
 		String plexiJson = GsonUtil.toJson(plexiCosulta);
-		
+		FacesMessage result = null;
 		try {
 			int HTTP_COD_SUCESSO = 201;
 			int HTTP_COD_SUCESSO2 = 202;
-			int HTTP_COD_SUCESSO3 = 409;
 			URL myURL;
 			
 			if (SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
@@ -65,11 +64,13 @@ public class PlexiService {
 				byte[] input = plexiJson.getBytes("utf-8");
 				os.write(input, 0, input.length);
 			}
-			FacesMessage result = null;
+			
 			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO 
-					&& myURLConnection.getResponseCode() != HTTP_COD_SUCESSO2
-					&& myURLConnection.getResponseCode() != HTTP_COD_SUCESSO3) {
+					&& myURLConnection.getResponseCode() != HTTP_COD_SUCESSO2) {
 				System.out.println(plexiJson);
+				result = new FacesMessage(FacesMessage.SEVERITY_ERROR, 
+						"Erro: " +  plexiCosulta.getPlexiDocumentos().getNome() 
+						+ " / HTTP:" + myURLConnection.getResponseCode(), "");
 				System.out.println(getJsonSucesso(myURLConnection.getInputStream()).toString());
 			} else {
 				JSONObject retorno = null;
@@ -95,7 +96,7 @@ public class PlexiService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		return result;
 	}
 
 	public JSONObject getJsonSucesso(InputStream inputStream) {

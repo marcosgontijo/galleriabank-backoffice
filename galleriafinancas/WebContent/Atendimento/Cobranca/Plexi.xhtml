@@ -61,12 +61,26 @@
 									<p:outputLabel value=" | " styleClass="labelBold"/>	
 									<p:outputLabel value="Estado RG (uf):" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold" />
 									<p:inputText value="#{DocAnalise.pagador.estado}" style="FONT-SIZE: 5pt; margin-right: 5px; width:100px" />
+																		
+									<p:outputLabel value=" Sexo: " style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold" />
+									<p:selectOneRadio value="#{DocAnalise.pagador.sexo}">
+										<f:selectItem itemLabel="MASCULINO" itemValue="MASCULINO" />
+										<f:selectItem itemLabel="FEMININO" itemValue="FEMININO" />
+									</p:selectOneRadio>
 								</h:panelGroup> 						
 								<h:panelGroup rendered="#{DocAnalise.pagador.cpf eq null or DocAnalise.pagador.cpf eq ''}">
 									<p:outputLabel value="Razão Social:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
-									<p:outputLabel value="#{DocAnalise.pagador.nome}" style="FONT-SIZE: 5pt; margin-right: 5px" />  							
-									<p:outputLabel value="| CNPJ:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
-									<p:inputText value="#{DocAnalise.pagador.cnpj}" style="FONT-SIZE: 5pt; margin-right: 5px; width:120px" />  						
+									<p:outputLabel value="#{DocAnalise.pagador.nome}" style="FONT-SIZE: 5pt; margin-right: 5px" />  
+									<p:outputLabel value=" | " styleClass="labelBold"/>								
+									<p:outputLabel value="CNPJ:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
+									<p:inputText value="#{DocAnalise.pagador.cnpj}" style="FONT-SIZE: 5pt; margin-right: 5px; width:120px" />
+									<p:outputLabel value=" | " styleClass="labelBold"/>	
+									<p:outputLabel value="Cep:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
+									<p:inputMask value="#{DocAnalise.pagador.cep}" mask="99999-999" label="Cep" />
+									<p:outputLabel value=" | " styleClass="labelBold"/>	
+									<p:outputLabel value="Endereço:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
+									<p:inputText value="#{DocAnalise.pagador.endereco}" style="FONT-SIZE: 5pt; margin-right: 5px; width:100px" />
+									  						
 								</h:panelGroup> 						    
 							</h:panelGrid>	
 							<p:panel id="docsPanel" header="" style="padding: 0" toggleable="true" toggleableHeader="true" >

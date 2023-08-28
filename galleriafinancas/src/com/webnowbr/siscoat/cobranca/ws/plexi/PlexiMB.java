@@ -12,6 +12,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.print.attribute.standard.Severity;
 
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -59,7 +60,7 @@ public class PlexiMB {
 	}	
 	
 	public void criarPedido() {	//POST para gerar pedido
-		
+		FacesContext context = FacesContext.getCurrentInstance();
 		PlexiService plexiService = new PlexiService();
 		PlexiConsultaDao plexiConsultaDao = new PlexiConsultaDao();
 		User user = null;
@@ -72,11 +73,11 @@ public class PlexiMB {
 			boolean podeChamar = true;
 			atualizarDocumentos(docAnalise);
 			for(PlexiConsulta plexiConsulta : docAnalise.getPlexiConsultas()) {
-				consultasExistentes = plexiConsultaDao.getConsultasExistentes(plexiConsulta);
-				if(consultasExistentes.size() > 0) {
+				if(plexiConsultaDao.getConsultasExistentes(plexiConsulta).size() > 0) {
 					FacesContext.getCurrentInstance().addMessage(null,
 							new FacesMessage(FacesMessage.SEVERITY_ERROR, plexiConsulta.getPlexiDocumentos().getNome() + " - já Existente" ,""));
-					System.out.println("Consulta Ja Existente");
+					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
+							plexiConsulta.getPlexiDocumentos().getNome() + " - " + plexiConsulta.getNome() + ": Já existente", ""));
 					consultasExistentes.add(plexiConsulta);
 					continue;
 				}
@@ -87,17 +88,25 @@ public class PlexiMB {
 			}
 			
 			docAnalise.getPlexiConsultas().removeAll(consultasExistentes);
-			if(podeChamar) {
+			if(podeChamar && docAnalise.getPlexiConsultas().size() > 0) {
+				List<PlexiConsulta> consultasFalhadas = new ArrayList<PlexiConsulta>();
 				for(PlexiConsulta plexiConsulta : docAnalise.getPlexiConsultas()) {
-					plexiService.PedirConsulta(plexiConsulta, user, docAnalise);
+					FacesMessage facesMessage = plexiService.PedirConsulta(plexiConsulta, user, docAnalise);
+					if(CommonsUtil.semValor(facesMessage) || CommonsUtil.mesmoValor(facesMessage.getSeverity(), 
+							FacesMessage.SEVERITY_ERROR)) {
+						consultasFalhadas.add(plexiConsulta);
+						if(!CommonsUtil.semValor(facesMessage)) {
+							context.addMessage(null, facesMessage);
+						}	
+					}
 				}
-				
+				docAnalise.getPlexiConsultas().removeAll(consultasFalhadas);
+				docAnalise.getPlexiConsultas().addAll(consultasExistentes);
 				DocumentoAnaliseDao docAnaliseDao = new DocumentoAnaliseDao(); 
 				docAnaliseDao.merge(docAnalise);
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", ""));
 			}
 		}
-		
-		System.out.println("Finalizado");
 	}
 	
 	public void atualizarDocumentos(DocumentoAnalise docAnalise) {
@@ -253,31 +262,68 @@ public class PlexiMB {
 				new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Endereço", ""));
 			}
 			
-			if(CommonsUtil.semValor(plexiConsulta.getRg())){
-				retorno = false;
-				FacesContext.getCurrentInstance().addMessage(null,
-				new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Rg", ""));
-			}
-			
-			if(CommonsUtil.semValor(plexiConsulta.getOrgaoExpedidorRg())){
-				retorno = false;
-				FacesContext.getCurrentInstance().addMessage(null,
-				new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Orgao Rg", ""));
-			}
-			
-			if(CommonsUtil.semValor(plexiConsulta.getUfRg())){
-				retorno = false;
-				FacesContext.getCurrentInstance().addMessage(null,
-				new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta UF Rg", ""));
+			if(!CommonsUtil.semValor(plexiConsulta.getCpf())) {
+				if(CommonsUtil.semValor(plexiConsulta.getRg())){
+					retorno = false;
+					FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Rg", ""));
+				}
+				
+				if(CommonsUtil.semValor(plexiConsulta.getOrgaoExpedidorRg())){
+					retorno = false;
+					FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Orgao Rg", ""));
+				}
+				
+				if(CommonsUtil.semValor(plexiConsulta.getUfRg())){
+					retorno = false;
+					FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta UF Rg", ""));
+				} else if(plexiConsulta.getUfRg().toCharArray().length > 2) {
+					retorno = false;
+					FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - UF Rg Inválido", ""));
+				}
+				
+				if(CommonsUtil.semValor(plexiConsulta.getNomeMae())){
+					retorno = false;
+					FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Nome da Mãe", ""));
+				}
+				
+				if(CommonsUtil.semValor(plexiConsulta.getDataNascimento())){
+					retorno = false;
+					FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Data Nascimento", ""));
+				}
 			}
 		}
 		
 		if(CommonsUtil.mesmoValor(doc.getUrl(), 
 				"/api/maestro/tjsp/certidao-negativa")) {
-			if(CommonsUtil.semValor(plexiConsulta.getRg())){
-				retorno = false;
-				FacesContext.getCurrentInstance().addMessage(null,
-				new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Rg", ""));
+			if(!CommonsUtil.semValor(plexiConsulta.getCpf())) {			
+				if(CommonsUtil.semValor(plexiConsulta.getRg())){
+					retorno = false;
+					FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Rg", ""));
+				}
+				
+				if(CommonsUtil.semValor(plexiConsulta.getSexo())){
+					retorno = false;
+					FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Sexo", ""));
+				}
+			}
+		}
+		
+		if(CommonsUtil.mesmoValor(doc.getUrl(), 
+				"/api/maestro/fazenda-sc/certidao-negativa-debitos")) {
+			if(!CommonsUtil.semValor(plexiConsulta.getCnpj())) {			
+				if(CommonsUtil.semValor(plexiConsulta.getCpfSolicitante())){
+					retorno = false;
+					FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta CPF Solicitante", ""));
+				}
 			}
 		}
 		
@@ -294,7 +340,7 @@ public class PlexiMB {
 			String[] tipoCertidaoArray = {"criminal", "civel"};
 			for(String tipoCertidao : tipoCertidaoArray) {
 				PlexiConsulta plexiConsultaAux = new PlexiConsulta(docAnalise.getPagador(), doc);
-				plexiConsulta.setTipoCertidao(tipoCertidao);
+				plexiConsultaAux.setTipoCertidao(tipoCertidao);
 				docAnalise.getPlexiConsultas().add(plexiConsultaAux);
 			}
 			return false;
@@ -323,7 +369,7 @@ public class PlexiMB {
 			String[] tipoArray = {"3", "9"};
 			for(String tipo : tipoArray) {
 				PlexiConsulta plexiConsultaAux = new PlexiConsulta(docAnalise.getPagador(), doc);
-				plexiConsulta.setTipo(tipo);
+				plexiConsultaAux.setTipo(tipo);
 				docAnalise.getPlexiConsultas().add(plexiConsultaAux);
 			}
 			return false;
@@ -334,7 +380,7 @@ public class PlexiMB {
 			String[] modeloArray = {"6", "52"};
 			for(String modelo : modeloArray) {
 				PlexiConsulta plexiConsultaAux = new PlexiConsulta(docAnalise.getPagador(), doc);
-				plexiConsulta.setModelo(modelo);
+				plexiConsultaAux.setModelo(modelo);
 				docAnalise.getPlexiConsultas().add(plexiConsultaAux);
 			}
 			return false;
@@ -386,7 +432,7 @@ public class PlexiMB {
 		
 		if(CommonsUtil.mesmoValor(doc.getUrl(), 
 				"/api/maestro/trf4/certidao-regional")) {
-			String[] tipoArray = {"civel", "criminal"};
+			String[] tipoArray = {"civil", "criminal"};
 			for(String tipo : tipoArray) {
 				PlexiConsulta plexiConsultaAux = new PlexiConsulta(docAnalise.getPagador(), doc);
 				plexiConsultaAux.setTipo(tipo);
@@ -438,18 +484,11 @@ public class PlexiMB {
 		this.listPagador = listPagador;
 	}
 
-
-
 	public LoginBean getLoginBean() {
 		return loginBean;
 	}
-
-
-
+	
 	public void setLoginBean(LoginBean loginBean) {
 		this.loginBean = loginBean;
 	}
-	
-	
-
 }
