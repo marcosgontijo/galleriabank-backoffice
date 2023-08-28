@@ -2,7 +2,6 @@ package com.webnowbr.siscoat.cobranca.ws.caf;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -91,10 +90,13 @@ public class CombateAFraudeMB {
 	}
 		
 	public void combateAFraudeTransaction() {
+		FacesContext context = FacesContext.getCurrentInstance();
 		CombateAFraudeService combateAFraudeService = new CombateAFraudeService();
 		CombateAFraudeTransaction transaction = comporObjeto();
+		
 		if(!CommonsUtil.semValor(transaction)) {
-			combateAFraudeService.ChamarCombateAFraude(transaction, null);
+			context.addMessage(null, 
+					combateAFraudeService.ChamarCombateAFraude(transaction, null));
 		}
 	}
 	
