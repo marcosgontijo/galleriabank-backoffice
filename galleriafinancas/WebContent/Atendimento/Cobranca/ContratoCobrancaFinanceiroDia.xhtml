@@ -96,7 +96,11 @@
 				<p:dataTable id="dtContratos" var="contratos"
 					value="#{contratoCobrancaMB.contratoCobrancaFinanceiroDia}"
 					emptyMessage="" sortBy="#{contratos.numeroContrato}" scrollable="true" 
-					selection="#{contratoCobrancaMB.selectedContratoCobrancaFinanceiroDia}" rowKey="#{contratos.id}">
+					selection="#{contratoCobrancaMB.selectedContratoCobrancaFinanceiroDia}" rowKey="#{contratos.id}"
+	                 paginator="true" rows="50"
+	                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+	                 currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+	                 rowsPerPageTemplate="50,100,150,50000">
 					
 					<f:facet name="header">
 						<p:commandButton value="Gerar XLS" ajax="false"

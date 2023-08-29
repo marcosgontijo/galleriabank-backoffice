@@ -4411,7 +4411,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	
 	private static final String QUERY_BASE_RELATORIO_FINANCEIRO_DIA_DETALHE = 
 			" select  c.id, cdj.idcontratocobranca  contratoCobranca,  numeroParcela, c.parcelaPaga, dataVencimento, c.datapagamento ,"
-			+ "         c.vlrparcela , vlrParcelaOriginal, vlrJurosParcela, vlrAmortizacaoParcela, vlrSaldoParcela, vlrjuros, txMulta"
+			+ "         c.vlrparcela , vlrParcelaOriginal, vlrJurosParcela, vlrAmortizacaoParcela, seguroMip, "
+			+ "	 seguroDfi, taxaAdm,  vlrSaldoParcela, vlrjuros, txMulta"
 			+ "  from cobranca.contratocobranca_detalhes_join cdj "
 			+ "  inner join cobranca.contratocobrancadetalhes c on cdj.idcontratocobrancadetalhes  = c.id "
 			+ "  where cdj.idcontratocobranca  = ? ";
@@ -4589,6 +4590,9 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 											rs_det.getBigDecimal("vlrParcelaOriginal"),
 											rs_det.getBigDecimal("vlrJurosParcela"),
 											rs_det.getBigDecimal("vlrAmortizacaoParcela"),
+											rs_det.getBigDecimal("seguroDfi"),
+											rs_det.getBigDecimal("seguroMip"),
+											rs_det.getBigDecimal("taxaAdm"),
 											rs_det.getBigDecimal("vlrSaldoParcela"),
 											rs_det.getBigDecimal("vlrjuros"),
 											rs_det.getBigDecimal("txMulta"),

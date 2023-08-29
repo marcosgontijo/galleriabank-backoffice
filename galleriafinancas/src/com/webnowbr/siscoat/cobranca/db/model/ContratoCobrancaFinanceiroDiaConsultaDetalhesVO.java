@@ -30,6 +30,9 @@ public class ContratoCobrancaFinanceiroDiaConsultaDetalhesVO implements Serializ
 	private BigDecimal vlrParcelaOriginal;
 	private BigDecimal vlrJurosParcela;
 	private BigDecimal vlrAmortizacaoParcela;
+	private BigDecimal vlrSeguroDFI;
+	private BigDecimal vlrSeguroMIP;
+	private BigDecimal vlrTaxaADM;
 	private BigDecimal vlrSaldoParcela;
 	private BigDecimal vlrJuros;
 	private BigDecimal txMulta;
@@ -47,7 +50,8 @@ public class ContratoCobrancaFinanceiroDiaConsultaDetalhesVO implements Serializ
 	public ContratoCobrancaFinanceiroDiaConsultaDetalhesVO(long id, long contratoCobranca, String numeroParcela,
 			boolean parcelaPaga, Date dataVencimento, Date dataPagamento, BigDecimal valorTotalPagamento,
 			BigDecimal vlrParcela, BigDecimal vlrParcelaOriginal, BigDecimal vlrJurosParcela,
-			BigDecimal vlrAmortizacaoParcela, BigDecimal vlrSaldoParcela,
+			BigDecimal vlrAmortizacaoParcela, BigDecimal vlrSeguroDFI,BigDecimal vlrSeguroMIP,
+			BigDecimal vlrTaxaADM, BigDecimal vlrSaldoParcela,
 			BigDecimal vlrJuros,
 			BigDecimal txMulta, List<ContratoCobrancaFinanceiroDiaConsultaDetalhesParcialVO> listContratoCobrancaDetalhesParcial) {
 		super();
@@ -62,6 +66,9 @@ public class ContratoCobrancaFinanceiroDiaConsultaDetalhesVO implements Serializ
 		this.vlrParcelaOriginal = vlrParcelaOriginal;
 		this.vlrJurosParcela = vlrJurosParcela;
 		this.vlrAmortizacaoParcela = vlrAmortizacaoParcela;
+		this.vlrSeguroDFI = vlrSeguroDFI;
+		this.vlrSeguroMIP = vlrSeguroMIP;
+		this.vlrTaxaADM = vlrTaxaADM;
 		this.vlrSaldoParcela = vlrSaldoParcela;
 		this.vlrJuros = vlrJuros;
 		this.txMulta = txMulta;
@@ -233,4 +240,27 @@ public class ContratoCobrancaFinanceiroDiaConsultaDetalhesVO implements Serializ
 		this.listContratoCobrancaDetalhesParcial = listContratoCobrancaDetalhesParcial;
 	}
 
+	public BigDecimal getVlrSeguroDFI() {
+		return vlrSeguroDFI;
+	}
+
+	public void setVlrSeguroDFI(BigDecimal vlrSeguroDFI) {
+		this.vlrSeguroDFI = vlrSeguroDFI;
+	}
+
+	public BigDecimal getVlrSeguroMIP() {
+		return vlrSeguroMIP;
+	}
+
+	public void setVlrSeguroMIP(BigDecimal vlrSeguroMIP) {
+		this.vlrSeguroMIP = vlrSeguroMIP;
+	}
+
+	public BigDecimal getVlrTaxaADM() {
+		return vlrTaxaADM;
+	}
+
+	public void setVlrTaxaADM(BigDecimal vlrTaxaADM) {
+		this.vlrTaxaADM = vlrTaxaADM;
+	}
 }
