@@ -50,10 +50,14 @@ public class PlexiConsultaDao extends HibernateDao<PlexiConsulta, Long> {
 								consulta.setExpirado(true);
 								plexiConsultaDao.merge(consulta);
 							} else {
-								consultas.add(consulta);
+								if(compararDocumentos(plexiConsulta, consulta)) {
+									consultas.add(consulta);
+								}
 							}
 						} else {
-							consultas.add(consulta);
+							if(compararDocumentos(plexiConsulta, consulta)) {
+								consultas.add(consulta);
+							}
 						}
 						
 					}
@@ -63,5 +67,60 @@ public class PlexiConsultaDao extends HibernateDao<PlexiConsulta, Long> {
 				return consultas;
 			}
 		});
+	}
+	
+	public boolean compararDocumentos(PlexiConsulta plexiConsulta, PlexiConsulta consultaDB) {
+		// retorna true se os documentos de nova consulta e ja existente no banco são iguais
+		PlexiDocumentos doc = plexiConsulta.getPlexiDocumentos();
+		if(CommonsUtil.mesmoValor(doc.getUrl(), 
+				"/api/maestro/tjdft/certidao-distribuicao")) {
+			return (CommonsUtil.mesmoValor(plexiConsulta.getTipoCertidao(), consultaDB.getTipoCertidao())); 
+		}
+		
+		if(CommonsUtil.mesmoValor(doc.getUrl(), 
+				"/api/maestro/tjrj/consulta-processual")) {
+			return (CommonsUtil.mesmoValor(plexiConsulta.getOrigem(), consultaDB.getOrigem())
+				&& CommonsUtil.mesmoValor(plexiConsulta.getComarca(), consultaDB.getComarca())
+				&& CommonsUtil.mesmoValor(plexiConsulta.getCompetencia(), consultaDB.getCompetencia()));
+		}
+		
+		if(CommonsUtil.mesmoValor(doc.getUrl(), 
+				"/api/maestro/tjrs/certidao-negativa")) {
+			return (CommonsUtil.mesmoValor(plexiConsulta.getTipo(), consultaDB.getTipo()));
+		}
+		
+		if(CommonsUtil.mesmoValor(doc.getUrl(), 
+				"/api/maestro/tjsp/certidao-negativa")) {
+			return (CommonsUtil.mesmoValor(plexiConsulta.getModelo(), consultaDB.getModelo()));			
+		}
+		
+		if(CommonsUtil.mesmoValor(doc.getUrl(), 
+				"/api/maestro/trf1/certidao-distribuicao")) {
+			return (CommonsUtil.mesmoValor(plexiConsulta.getTipo(), consultaDB.getTipo())
+					&& CommonsUtil.mesmoValor(plexiConsulta.getOrgaos(), consultaDB.getOrgaos()));
+		}
+		
+		if(CommonsUtil.mesmoValor(doc.getUrl(), 
+				"/api/maestro/trf2/certidao-distribuicao")) {
+			return (CommonsUtil.mesmoValor(plexiConsulta.getTipo(), consultaDB.getTipo()));
+		}
+		
+		if(CommonsUtil.mesmoValor(doc.getUrl(), 
+				"/api/maestro/trf3/certidao-distribuicao")) {
+			return (CommonsUtil.mesmoValor(plexiConsulta.getTipo(), consultaDB.getTipo())
+					&& CommonsUtil.mesmoValor(plexiConsulta.getAbrangencia(), consultaDB.getAbrangencia()));
+		}
+		
+		if(CommonsUtil.mesmoValor(doc.getUrl(), 
+				"/api/maestro/trf4/certidao-regional")) {
+			return (CommonsUtil.mesmoValor(plexiConsulta.getTipo(), consultaDB.getTipo()));
+		}
+		
+		if(CommonsUtil.mesmoValor(doc.getUrl(), 
+				"/api/maestro/trf6/certidao-distribuicao")) {
+			return (CommonsUtil.mesmoValor(plexiConsulta.getTipo(), consultaDB.getTipo())
+					&& CommonsUtil.mesmoValor(plexiConsulta.getOrgaos(), consultaDB.getOrgaos()));
+		}
+		return true;
 	}
 }

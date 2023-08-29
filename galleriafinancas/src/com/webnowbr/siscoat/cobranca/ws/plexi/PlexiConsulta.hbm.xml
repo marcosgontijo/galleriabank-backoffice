@@ -46,10 +46,73 @@
 		<property name="dataConsulta" type="java.util.Date">
 			<column name="dataConsulta" />
 		</property>
-		
 		<property name="expirado" type="boolean">
 			<column name="expirado" not-null="true" default="false"/>
-		</property>	
+		</property>
+		
+		<property name="uf" type="java.lang.String">
+			<column name="uf" />
+		</property>
+		<property name="cep" type="java.lang.String">
+			<column name="cep" />
+		</property>
+		<property name="cpfSolicitante" type="java.lang.String">
+			<column name="cpfSolicitante" />
+		</property>
+		<property name="cpf" type="java.lang.String">
+			<column name="cpf" />
+		</property>
+		<property name="cnpj" type="java.lang.String">
+			<column name="cnpj" />
+		</property>
+		<property name="tipoCertidao" type="java.lang.String">
+			<column name="tipoCertidao" />
+		</property>
+		<property name="nomeMae" type="java.lang.String">
+			<column name="nomeMae" />
+		</property>
+		<property name="comarca" type="java.lang.String">
+			<column name="comarca" />
+		</property>
+		<property name="origem" type="java.lang.String">
+			<column name="origem" />
+		</property>
+		<property name="competencia" type="java.lang.String">
+			<column name="competencia" />
+		</property>
+		<property name="tipo" type="java.lang.String">
+			<column name="tipo" />
+		</property>
+		<property name="modelo" type="java.lang.String">
+			<column name="modelo" />
+		</property>
+		<property name="nome" type="java.lang.String">
+			<column name="nome" />
+		</property>
+		<property name="endereco" type="java.lang.String">
+			<column name="endereco" />
+		</property>
+		<property name="rg" type="java.lang.String">
+			<column name="rg" />
+		</property>
+		<property name="orgaoExpedidorRg" type="java.lang.String">
+			<column name="orgaoExpedidorRg" />
+		</property>
+		<property name="ufRg" type="java.lang.String">
+			<column name="ufRg" />
+		</property>
+		<property name="dataNascimento" type="java.lang.String">
+			<column name="dataNascimento" />
+		</property>
+		<property name="sexo" type="java.lang.String">
+			<column name="sexo" />
+		</property>
+		<property name="orgaosStr" type="java.lang.String">
+			<column name="orgaosStr" />
+		</property>
+		<property name="abrangencia" type="java.lang.String">
+			<column name="abrangencia" />
+		</property>
 		
 	</class>
 </hibernate-mapping>

@@ -50,7 +50,10 @@ public class PlexiMB {
 			}
 			if(docAnalise.isLiberadoAnalise()) {
 				listPagador.add(docAnalise);
-				adiconarDocumentospagador(docAnalise);
+				
+				if(CommonsUtil.semValor(docAnalise.getPlexiConsultas()) || docAnalise.getPlexiConsultas().size() == 0) {
+					adiconarDocumentospagador(docAnalise);
+				}
 			} else {
 				continue;
 			}
@@ -70,15 +73,16 @@ public class PlexiMB {
 		
 		for(DocumentoAnalise docAnalise : listPagador) {
 			List<PlexiConsulta> consultasExistentes = new ArrayList<PlexiConsulta>();
+			List<PlexiConsulta> consultasExistentesDB = new ArrayList<PlexiConsulta>();
 			boolean podeChamar = true;
 			atualizarDocumentos(docAnalise);
 			for(PlexiConsulta plexiConsulta : docAnalise.getPlexiConsultas()) {
-				if(plexiConsultaDao.getConsultasExistentes(plexiConsulta).size() > 0) {
-					FacesContext.getCurrentInstance().addMessage(null,
-							new FacesMessage(FacesMessage.SEVERITY_ERROR, plexiConsulta.getPlexiDocumentos().getNome() + " - já Existente" ,""));
+				List<PlexiConsulta> consultasExistentesRetorno = plexiConsultaDao.getConsultasExistentes(plexiConsulta);
+				if(consultasExistentesRetorno.size() > 0) {
 					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
 							plexiConsulta.getPlexiDocumentos().getNome() + " - " + plexiConsulta.getNome() + ": Já existente", ""));
 					consultasExistentes.add(plexiConsulta);
+					consultasExistentesDB.add(consultasExistentesRetorno.get(0));
 					continue;
 				}
 				podeChamar = verificaCamposDoc(plexiConsulta);
@@ -88,9 +92,12 @@ public class PlexiMB {
 			}
 			
 			docAnalise.getPlexiConsultas().removeAll(consultasExistentes);
-			if(podeChamar && docAnalise.getPlexiConsultas().size() > 0) {
+			if(podeChamar) {
 				List<PlexiConsulta> consultasFalhadas = new ArrayList<PlexiConsulta>();
 				for(PlexiConsulta plexiConsulta : docAnalise.getPlexiConsultas()) {
+					if(!CommonsUtil.semValor(plexiConsulta.getRequestId())) {
+						continue;
+					}
 					FacesMessage facesMessage = plexiService.PedirConsulta(plexiConsulta, user, docAnalise);
 					if(CommonsUtil.semValor(facesMessage) || CommonsUtil.mesmoValor(facesMessage.getSeverity(), 
 							FacesMessage.SEVERITY_ERROR)) {
@@ -101,7 +108,7 @@ public class PlexiMB {
 					}
 				}
 				docAnalise.getPlexiConsultas().removeAll(consultasFalhadas);
-				docAnalise.getPlexiConsultas().addAll(consultasExistentes);
+				docAnalise.getPlexiConsultas().addAll(consultasExistentesDB);
 				DocumentoAnaliseDao docAnaliseDao = new DocumentoAnaliseDao(); 
 				docAnaliseDao.merge(docAnalise);
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", ""));
@@ -217,17 +224,26 @@ public class PlexiMB {
 	public void adiconarDocumentospagador(DocumentoAnalise docAnalise) {
 		List<PlexiDocumentos> plexiDocumentos = new ArrayList<PlexiDocumentos>();
 		PlexiDocumentosDao plexiDocsDao = new PlexiDocumentosDao();
-		docAnalise.setPlexiConsultas(new ArrayList<PlexiConsulta>());
+		if(CommonsUtil.semValor(docAnalise.getPlexiConsultas())) {
+			docAnalise.setPlexiConsultas(new ArrayList<PlexiConsulta>());
+		}
 		if(!CommonsUtil.semValor(docAnalise.getPagador().getCpf())) {
 			plexiDocumentos = plexiDocsDao.getDocumentosPF();
 		} else {
 			plexiDocumentos = plexiDocsDao.getDocumentosPJ();
 		}
 		
+		PlexiConsultaDao plexiConsultaDao = new PlexiConsultaDao();
+		
 		for(PlexiDocumentos doc : plexiDocumentos) {
 			PlexiConsulta plexiConsulta = new PlexiConsulta(docAnalise.getPagador(), doc);
 			if(adicionaCamposDoc(docAnalise, plexiConsulta)) {
-				docAnalise.getPlexiConsultas().add(plexiConsulta);
+				List<PlexiConsulta> consultasExistentesRetorno = plexiConsultaDao.getConsultasExistentes(plexiConsulta);
+				if(consultasExistentesRetorno.size() <= 0) {
+					docAnalise.getPlexiConsultas().add(plexiConsulta);
+				} else {
+					docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+				}
 			}
 		}
 	}
@@ -334,14 +350,20 @@ public class PlexiMB {
 	//retorna false caso consulta seja inserida por esse metodo
 		
 		PlexiDocumentos doc = plexiConsulta.getPlexiDocumentos();
-		
+		PlexiConsultaDao plexiConsultaDao = new PlexiConsultaDao();
 		if(CommonsUtil.mesmoValor(doc.getUrl(), 
 				"/api/maestro/tjdft/certidao-distribuicao")) {
 			String[] tipoCertidaoArray = {"criminal", "civel"};
 			for(String tipoCertidao : tipoCertidaoArray) {
 				PlexiConsulta plexiConsultaAux = new PlexiConsulta(docAnalise.getPagador(), doc);
 				plexiConsultaAux.setTipoCertidao(tipoCertidao);
-				docAnalise.getPlexiConsultas().add(plexiConsultaAux);
+				
+				List<PlexiConsulta> consultasExistentesRetorno = plexiConsultaDao.getConsultasExistentes(plexiConsultaAux);
+				if(consultasExistentesRetorno.size() <= 0) {
+					docAnalise.getPlexiConsultas().add(plexiConsultaAux);
+				} else {
+					docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+				}
 			}
 			return false;
 		}
@@ -358,7 +380,12 @@ public class PlexiMB {
 					plexiConsultaAux.setOrigem(origem);
 					plexiConsultaAux.setComarca(comarca);
 					plexiConsultaAux.setCompetencia(competencia);
-					docAnalise.getPlexiConsultas().add(plexiConsultaAux);
+					List<PlexiConsulta> consultasExistentesRetorno = plexiConsultaDao.getConsultasExistentes(plexiConsultaAux);
+					if(consultasExistentesRetorno.size() <= 0) {
+						docAnalise.getPlexiConsultas().add(plexiConsultaAux);
+					} else {
+						docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+					}
 				}
 			}
 			return false;
@@ -370,7 +397,12 @@ public class PlexiMB {
 			for(String tipo : tipoArray) {
 				PlexiConsulta plexiConsultaAux = new PlexiConsulta(docAnalise.getPagador(), doc);
 				plexiConsultaAux.setTipo(tipo);
-				docAnalise.getPlexiConsultas().add(plexiConsultaAux);
+				List<PlexiConsulta> consultasExistentesRetorno = plexiConsultaDao.getConsultasExistentes(plexiConsultaAux);
+				if(consultasExistentesRetorno.size() <= 0) {
+					docAnalise.getPlexiConsultas().add(plexiConsultaAux);
+				} else {
+					docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+				}
 			}
 			return false;
 		}
@@ -381,7 +413,12 @@ public class PlexiMB {
 			for(String modelo : modeloArray) {
 				PlexiConsulta plexiConsultaAux = new PlexiConsulta(docAnalise.getPagador(), doc);
 				plexiConsultaAux.setModelo(modelo);
-				docAnalise.getPlexiConsultas().add(plexiConsultaAux);
+				List<PlexiConsulta> consultasExistentesRetorno = plexiConsultaDao.getConsultasExistentes(plexiConsultaAux);
+				if(consultasExistentesRetorno.size() <= 0) {
+					docAnalise.getPlexiConsultas().add(plexiConsultaAux);
+				} else {
+					docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+				}
 			}
 			return false;
 		}
@@ -398,7 +435,12 @@ public class PlexiMB {
 					PlexiConsulta plexiConsultaAux = new PlexiConsulta(docAnalise.getPagador(), doc);
 					plexiConsultaAux.setTipo(tipo);
 					plexiConsultaAux.setOrgaos(orgaos);
-					docAnalise.getPlexiConsultas().add(plexiConsultaAux);
+					List<PlexiConsulta> consultasExistentesRetorno = plexiConsultaDao.getConsultasExistentes(plexiConsultaAux);
+					if(consultasExistentesRetorno.size() <= 0) {
+						docAnalise.getPlexiConsultas().add(plexiConsultaAux);
+					} else {
+						docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+					}
 				}
 			}
 			return false;
@@ -410,7 +452,12 @@ public class PlexiMB {
 			for(String tipo : tipoArray) {
 				PlexiConsulta plexiConsultaAux = new PlexiConsulta(docAnalise.getPagador(), doc);
 				plexiConsultaAux.setTipo(tipo);
-				docAnalise.getPlexiConsultas().add(plexiConsultaAux);
+				List<PlexiConsulta> consultasExistentesRetorno = plexiConsultaDao.getConsultasExistentes(plexiConsultaAux);
+				if(consultasExistentesRetorno.size() <= 0) {
+					docAnalise.getPlexiConsultas().add(plexiConsultaAux);
+				} else {
+					docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+				}
 			}
 			return false;
 		}
@@ -424,7 +471,12 @@ public class PlexiMB {
 					PlexiConsulta plexiConsultaAux = new PlexiConsulta(docAnalise.getPagador(), doc);
 					plexiConsultaAux.setTipo(tipo);
 					plexiConsultaAux.setAbrangencia(abrangencia);
-					docAnalise.getPlexiConsultas().add(plexiConsultaAux);
+					List<PlexiConsulta> consultasExistentesRetorno = plexiConsultaDao.getConsultasExistentes(plexiConsultaAux);
+					if(consultasExistentesRetorno.size() <= 0) {
+						docAnalise.getPlexiConsultas().add(plexiConsultaAux);
+					} else {
+						docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+					}
 				}
 			}
 			return false;
@@ -436,7 +488,12 @@ public class PlexiMB {
 			for(String tipo : tipoArray) {
 				PlexiConsulta plexiConsultaAux = new PlexiConsulta(docAnalise.getPagador(), doc);
 				plexiConsultaAux.setTipo(tipo);
-				docAnalise.getPlexiConsultas().add(plexiConsultaAux);
+				List<PlexiConsulta> consultasExistentesRetorno = plexiConsultaDao.getConsultasExistentes(plexiConsultaAux);
+				if(consultasExistentesRetorno.size() <= 0) {
+					docAnalise.getPlexiConsultas().add(plexiConsultaAux);
+				} else {
+					docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+				}
 			}  
 			return false;
 		}
@@ -452,7 +509,12 @@ public class PlexiMB {
 					PlexiConsulta plexiConsultaAux = new PlexiConsulta(docAnalise.getPagador(), doc);
 					plexiConsultaAux.setTipo(tipo);
 					plexiConsultaAux.setOrgaos(orgaos);
-					docAnalise.getPlexiConsultas().add(plexiConsultaAux);
+					List<PlexiConsulta> consultasExistentesRetorno = plexiConsultaDao.getConsultasExistentes(plexiConsultaAux);
+					if(consultasExistentesRetorno.size() <= 0) {
+						docAnalise.getPlexiConsultas().add(plexiConsultaAux);
+					} else {
+						docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+					}
 				}
 			}
 			return false;

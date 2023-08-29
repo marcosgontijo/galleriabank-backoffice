@@ -1,5 +1,6 @@
 package com.webnowbr.siscoat.cobranca.ws.plexi;
 
+import java.util.Arrays;
 import java.util.Date;
 
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
@@ -23,14 +24,9 @@ public class PlexiConsulta {
 	private String cpfSolicitante; // fazenda SC PJ
 	private String cpf="";// PGE SP DIvida Ativa PF
 	private String cnpj="";// PGE SP DIvida Ativa PJ
-	private String foro;// TJBA
 	private String tipoCertidao;//TJDFT Certidão de Distribuição {criminal, civel, falencia_concordata, especial}
 	private String nomeMae;// (TJDFT Certidão de Distribuição PF + criminal ou especial) (TJRS + PF) (TJSP + PF)
-	private int instancia;// TJMG
-	private String comarca;// (TJMG + instancia 1) (TJRJ + primeiraInstancia)
-	private String tipoPessoa; // TJMG {natural_juridica, natural, juridica}
-	private String naturezaProcesso;// TJMG {civel_crime, civel, crime}
-	private String situacaoParte;// TJMG {ativas_baixadas, ativas, baixadas}
+	private String comarca;// (TJRJ + primeiraInstancia)
 	private String origem;//TJRJ {primeiraInstancia, segundaInstancia}
 	private String competencia;//TJRJ
 	private String tipo;// (TJRS {3, 9}) (TRFX {civel, criminal, eleitoral})
@@ -43,6 +39,7 @@ public class PlexiConsulta {
 	private String dataNascimento;// (TJRS + PF) (TJSP + PF)
 	private String sexo;// TJSP + PF {m,f}
 	private String[] orgaos; // (TRF1) (TRF6)
+	private String orgaosStr; // (TRF1) (TRF6)
 	private String abrangencia;// TRF3
 	private boolean arquivado;// TRT15
 		
@@ -196,14 +193,6 @@ public class PlexiConsulta {
 		this.cnpj = cnpj;
 	}
 
-	public String getForo() {
-		return foro;
-	}
-
-	public void setForo(String foro) {
-		this.foro = foro;
-	}
-
 	public String getTipoCertidao() {
 		return tipoCertidao;
 	}
@@ -220,14 +209,6 @@ public class PlexiConsulta {
 		this.nomeMae = nomeMae;
 	}
 
-	public int getInstancia() {
-		return instancia;
-	}
-
-	public void setInstancia(int instancia) {
-		this.instancia = instancia;
-	}
-
 	public String getComarca() {
 		return comarca;
 	}
@@ -235,31 +216,7 @@ public class PlexiConsulta {
 	public void setComarca(String comarca) {
 		this.comarca = comarca;
 	}
-
-	public String getTipoPessoa() {
-		return tipoPessoa;
-	}
-
-	public void setTipoPessoa(String tipoPessoa) {
-		this.tipoPessoa = tipoPessoa;
-	}
-
-	public String getNaturezaProcesso() {
-		return naturezaProcesso;
-	}
-
-	public void setNaturezaProcesso(String naturezaProcesso) {
-		this.naturezaProcesso = naturezaProcesso;
-	}
-
-	public String getSituacaoParte() {
-		return situacaoParte;
-	}
-
-	public void setSituacaoParte(String situacaoParte) {
-		this.situacaoParte = situacaoParte;
-	}
-
+	
 	public String getOrigem() {
 		return origem;
 	}
@@ -349,11 +306,25 @@ public class PlexiConsulta {
 	}
 
 	public String[] getOrgaos() {
+		if(!CommonsUtil.semValor(orgaosStr)) {
+			orgaos = CommonsUtil.stringToArray(orgaosStr);
+		}
 		return orgaos;
 	}
 
 	public void setOrgaos(String[] orgaos) {
 		this.orgaos = orgaos;
+	}
+	
+	public String getOrgaosStr() {
+		if(!CommonsUtil.semValor(orgaos)) {
+			orgaosStr = Arrays.asList(orgaos).toString();
+		}
+		return orgaosStr;
+	}
+
+	public void setOrgaosStr(String orgaosStr) {
+		this.orgaosStr = orgaosStr;
 	}
 
 	public String getAbrangencia() {
