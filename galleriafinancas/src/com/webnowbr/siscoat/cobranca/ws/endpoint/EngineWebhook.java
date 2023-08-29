@@ -31,6 +31,7 @@ import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
 import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultRelacionamentosPessoaisPJ;
 import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultRelacionamentosPessoaisPJPartnership;
 import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoRequestEnterprisePartnership;
+import br.com.galleriabank.jwt.common.JwtUtil;
 import io.jsonwebtoken.Jwts;
 
 @Path("/engine")
@@ -44,8 +45,9 @@ public class EngineWebhook {
 //		LOGGER.debug(webhookRetorno);
 
 		try {
-
-			Jwts.parserBuilder().setSigningKey(CommonsUtil.CHAVE_WEBHOOK).build().parseClaimsJws(token);
+			if (JwtUtil.isTokenExpiredWebhook(token))
+				return null;
+//			Jwts.parserBuilder().setSigningKey(CommonsUtil.CHAVE_WEBHOOK).build().parseClaimsJws(token);
 
 			DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
 

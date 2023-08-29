@@ -32,7 +32,7 @@ public class FileService {
 
 	/** Log. */
 	private Log logger = LogFactory.getLog(FileService.class);
-
+	
 	public List<FileUploaded> documentoConsultarTodos(String numeroContrato, User usuario) {
 		// Query Url
 		String serverPrincipalUrl = PropertyLoader
