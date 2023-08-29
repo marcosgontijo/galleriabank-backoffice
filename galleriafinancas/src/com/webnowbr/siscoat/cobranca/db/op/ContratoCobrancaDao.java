@@ -6162,7 +6162,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}	
 	
-	private static final String QUERY_CONTRATOS_APROVADOS_ALL = "select c.id from cobranca.contratocobranca c ";
+	//private static final String QUERY_CONTRATOS_APROVADOS_ALL = "select c.id from cobranca.contratocobranca c ";
+	private static final String QUERY_CONTRATOS_APROVADOS_ALL = "select c.id, c.numerocontrato, c.pagador from cobranca.contratocobranca c ";
 	
 	@SuppressWarnings("unchecked")
 	public List<ContratoCobranca> consultaContratosAprovados() {
@@ -6189,8 +6190,18 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					rs = ps.executeQuery();
 					
 					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					PagadorRecebedorDao pDao = new PagadorRecebedorDao();
+					PagadorRecebedor pagador = new PagadorRecebedor();
 					while (rs.next()) {
-						contratoCobranca = findById(rs.getLong(1));
+						contratoCobranca = new ContratoCobranca();
+						contratoCobranca.setNumeroContrato(rs.getString(2));
+						
+						contratoCobranca.setId(rs.getLong(1));
+						
+						pagador = pDao.findById(rs.getLong(3));
+						contratoCobranca.setPagador(pagador);
+						
+						//contratoCobranca = findById(rs.getLong(1));
 						
 						objects.add(contratoCobranca);												
 					}
