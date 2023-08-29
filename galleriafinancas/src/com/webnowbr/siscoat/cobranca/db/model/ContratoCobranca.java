@@ -804,7 +804,6 @@ public class ContratoCobranca implements Serializable {
 	private boolean iniciouGeracaoLaudo;
 	private String avaliacaoPaju;
 	private boolean iniciouGeracaoPaju;
-	private boolean esteriaComentarioLuvison;
 	
 	private boolean contatoDiferenteProprietario;
 	//private String geracaoLaudoObservacao;
@@ -1269,7 +1268,7 @@ public class ContratoCobranca implements Serializable {
 						&& c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
 						&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
 						&& c.isCertificadoEmitido() && c.isCcbPronta() && c.isContratoConferido()
-						&& !c.isAgAssinatura() && c.isAgEnvioCartorio()) {
+						&& !c.isAgAssinatura() && !c.isReanalise() && c.isAgEnvioCartorio()) {
 					c.setStatusEsteira("Ag. Envio Cartório");
 				}
 
@@ -6850,14 +6849,6 @@ public class ContratoCobranca implements Serializable {
 
 	public void setChavePIXBancarioContaPagar(String chavePIXBancarioContaPagar) {
 		this.chavePIXBancarioContaPagar = chavePIXBancarioContaPagar;
-	}
-
-	public boolean isEsteriaComentarioLuvison() {
-		return esteriaComentarioLuvison;
-	}
-
-	public void setEsteriaComentarioLuvison(boolean esteriaComentarioLuvison) {
-		this.esteriaComentarioLuvison = esteriaComentarioLuvison;
 	}
 
 	public boolean isProtestoTaxa() {

@@ -3881,11 +3881,6 @@ public class ContratoCobrancaMB {
 					}
 				}
 				
-				if(this.objetoContratoCobranca.isEsteriaComentarioLuvison()
-						&& this.objetoContratoCobranca.isComentarioJuridicoInterno()) {
-					this.objetoContratoCobranca.setEsteriaComentarioLuvison(false);
-				}
-
 				updateCheckList();
 				this.objetoContratoCobranca.populaStatusEsteira(getUsuarioLogadoNull());
 				contratoCobrancaDao.merge(this.objetoContratoCobranca);
@@ -5641,26 +5636,6 @@ public class ContratoCobrancaMB {
 								+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
 						""));
 		return geraConsultaContratosPorStatus("Análise Aprovada");
-	}
-	
-	public String enviarContratoEsteiraLuvison(ContratoCobranca contrato) {
-		
-		this.objetoContratoCobranca = getContratoById(objetoContratoCobranca.getId());
-		this.objetoContratoCobranca.setEsteriaComentarioLuvison(true);
-		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		contratoCobrancaDao.merge(objetoContratoCobranca);
-		return
-		geraConsultaContratosPorStatus("Comentario Jurídico");
-	}
-	
-	public String enviarContratoEsteiraInterna(ContratoCobranca contrato) {
-		
-		this.objetoContratoCobranca = getContratoById(objetoContratoCobranca.getId());
-		this.objetoContratoCobranca.setEsteriaComentarioLuvison(false);
-		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		contratoCobrancaDao.merge(objetoContratoCobranca);
-		return
-		geraConsultaContratosPorStatus("Comentario Luvison");
 	}
 
 	public void clearEnviarLeadParaComercial() {
@@ -9105,13 +9080,9 @@ public class ContratoCobrancaMB {
 		} else if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Comentario Jurídico")) {
 			if (usuarioLogado.isProfileComentarioJuridico() || usuarioLogado.isAdministrador()) {
 				return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatus.xhtml";
-			} else if(usuarioLogado.isProfilePajuLuvison()){
-				return "/Atendimento/Cobranca/ContratoCobrancaComentarioJuridicoExterno.xhtml";
 			} else { 
 				return "/Atendimento/Cobranca/ContratoCobrancaDetalhesPendentePorStatus.xhtml";
 			}
-		} else if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Comentario Jurídico - Luvison")) {
-			return "/Atendimento/Cobranca/ContratoCobrancaComentarioJuridicoExterno.xhtml";
 		} else if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Comite")) {
 			return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusComite.xhtml";
 		} else if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Pagamento Op.")) {
@@ -9387,7 +9358,7 @@ public class ContratoCobrancaMB {
 						&& this.objetoContratoCobranca.isDocumentosCompletos()
 						&& this.objetoContratoCobranca.isCcbPronta()
 						&& this.objetoContratoCobranca.isContratoConferido()
-						&& this.objetoContratoCobranca.isAgAssinatura()) {
+						&& (this.objetoContratoCobranca.isAgAssinatura() || (this.objetoContratoCobranca.isReanalise()))) {
 					this.indexStepsStatusContrato = 11;
 				}
 
@@ -13337,7 +13308,7 @@ public class ContratoCobrancaMB {
 							&& c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
 							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
 							&& c.isCertificadoEmitido() && c.isCcbPronta() && c.isContratoConferido()
-							&& !c.isAgAssinatura() && c.isAgEnvioCartorio()) {
+							&& !c.isAgAssinatura() && !c.isReanalise() && c.isAgEnvioCartorio()) {
 						c.setStatus("Ag. Envio Cartório");
 					}
 
@@ -13462,9 +13433,6 @@ public class ContratoCobrancaMB {
 		if (status.equals("Comentario Jurídico")) {
 			this.tituloTelaConsultaPreStatus = "Comentario Jurídico";
 		}
-		if (status.equals("Comentario Luvison")) {
-			this.tituloTelaConsultaPreStatus = "Comentario Jurídico - Luvison";
-		}
 		if (status.equals("Pré-Comite")) {
 			this.tituloTelaConsultaPreStatus = "Pré-Comite";
 		}
@@ -13511,16 +13479,9 @@ public class ContratoCobrancaMB {
 		Date auxDataHoje = dataHoje.getTime();
 		
 		User user = getUsuarioLogado();
-
-		/*if (CommonsUtil.mesmoValor(status, "Comentario Jurídico")
-				&& !CommonsUtil.semValor(user)
-				&& user.getId() > 0
-				&& user.isProfilePajuLuvison()) {
-			status = "Comentario Luvison";
-			this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, status);
-		} else {*/
+		
 		this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, status);
-		//}
+		
 
 		if (status.equals("Análise Reprovada")) {
 			for (ContratoCobranca contratos : this.contratosPendentes) {
