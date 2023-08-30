@@ -4563,7 +4563,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 							// busca detalhes parciais
 							PreparedStatement ps_parc = connection
 									.prepareStatement(query_RELATORIO_FINANCEIRO_DETALHE_PARC_CUSTOM);
-							ps_parc.setLong(1, rs.getLong("id"));
+							ps_parc.setLong(1, rs_det.getLong("id"));
 							ResultSet rs_parc = ps_parc.executeQuery();
 							List<ContratoCobrancaFinanceiroDiaConsultaDetalhesParcialVO> listContratoCobrancaDetalhesParcial = new ArrayList<>();
 

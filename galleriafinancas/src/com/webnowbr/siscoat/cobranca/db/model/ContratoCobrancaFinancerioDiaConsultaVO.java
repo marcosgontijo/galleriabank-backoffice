@@ -96,6 +96,7 @@ public class ContratoCobrancaFinancerioDiaConsultaVO implements Serializable {
 		this.id = id;
 		this.numeroContrato = numeroContrato;
 		this.dataContrato = dataContrato;
+		this.dataInicio = dataInicio;
 		this.nomePagador = pagador_nome;
 		this.pagador_nome = pagador_nome;
 		this.pagador_cpf = pagador_cpf;
