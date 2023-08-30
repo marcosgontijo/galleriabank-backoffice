@@ -6,6 +6,7 @@ import java.util.List;
 
 
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
+import com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 
@@ -63,64 +64,11 @@ public class DocumentoAnalise implements Serializable {
 	private String tipoProcesso;
 	private String retornoProcesso;
 	private String retornoPpe;
+	private String retornoLaudoRobo;
 
 	private String retornoScr;
 	private String observacao;
 	private boolean excluido;
-	
-
-	public List<DocumentoAnaliseResumo> getResumoProcesso() {
-		List<DocumentoAnaliseResumo> vProcesso = new ArrayList<>();
-		EngineRetornoExecutionResultProcessos processo = null;
-		try {
-			processo = GsonUtil.fromJson(getRetornoProcesso(), EngineRetornoExecutionResultProcessos.class);
-		} catch (Exception erro) {
-			vProcesso.add(new DocumentoAnaliseResumo(null, null));
-		}
-		if (processo == null) {
-			vProcesso.add(new DocumentoAnaliseResumo("não disponível", null));
-		} else {
-				if (processo.getProcessos()== null) {
-					vProcesso.add(new DocumentoAnaliseResumo("Processos", "Não disponível"));
-				} else {
-					String processos = CommonsUtil.stringValue(processo.getProcessos());
-					vProcesso.add(new DocumentoAnaliseResumo("Processos:", processos));
-						}
-				
-//				if(processo.getProcessos() == null) {
-//					vProcesso.add(new DocumentoAnaliseResumo("Criminal:", "Não disponível"));
-//				} else {
-//					String processos = CommonsUtil.stringValue(processo.getProcessos());
-//					vProcesso.add(new DocumentoAnaliseResumo("Criminal:", "Não disponível"));
-//				}
-//				
-//				if(processo.getProcessos() == null) {
-//					vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:", "Não disponível"));
-//				} else {
-//					vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:", "Não disponível"));
-//				}
-//				
-//				if(processo.getProcessos() == null) {
-//					vProcesso.add(new DocumentoAnaliseResumo("Execução de título:", "Não disponível"));
-//				} else {
-//					vProcesso.add(new DocumentoAnaliseResumo("Execução de título:", "Não disponível"));
-//				}
-//				
-//				if(processo.getProcessos() == null) {
-//					vProcesso.add(new DocumentoAnaliseResumo("Execução fiscal:", "Não disponível"));
-//				} else {
-//					vProcesso.add(new DocumentoAnaliseResumo("Execução fiscal:", "Não disponível"));
-//				}
-//				
-//				if(processo.getProcessos() == null) {
-//					vProcesso.add(new DocumentoAnaliseResumo("Outros:", "Não disponível"));
-//				} else {
-//					vProcesso.add(new DocumentoAnaliseResumo("Outros:", "Não disponível"));
-//				}
-				
-			}
-		return vProcesso;
-	}
 
 	public List<DocumentoAnaliseResumo> getResumoEngine() {
 		List<DocumentoAnaliseResumo> result = new ArrayList<>();
@@ -132,7 +80,7 @@ public class DocumentoAnalise implements Serializable {
 		}
 
 		if (engine == null) {
-			result.add(new DocumentoAnaliseResumo("nâo disponível", null));
+			result.add(new DocumentoAnaliseResumo("Não disponível", null));
 		} else {
 			EngineRetornoRequestFields nome = engine.getRequestFields().stream()
 					.filter(f -> f.getField().equals("nome")).findFirst().orElse(null);
@@ -176,7 +124,6 @@ public class DocumentoAnalise implements Serializable {
 				result.add(new DocumentoAnaliseResumo("Numero  de processos:",
 						CommonsUtil.stringValue(processo.getTotal_acoes_judiciais())));
 			}
-			
 			if(engine.getConsultaCompleta() == null) {
 				result.add(new DocumentoAnaliseResumo("Pessoa Políticamente exposta:", "Não disponível"));
 			} else {
@@ -229,11 +176,11 @@ public class DocumentoAnalise implements Serializable {
 
 		CenprotProtestos data = GsonUtil.fromJson(getRetornoCenprot(), CenprotProtestos.class);
 		if (data == null) {
-			cenprot.add(new DocumentoAnaliseResumo("não disponível", null));
+			cenprot.add(new DocumentoAnaliseResumo("Não disponível", null));
 		} else {
 
 			if (CommonsUtil.semValor(data.getProtestosBrasil().getEstados())) {
-				cenprot.add(new DocumentoAnaliseResumo("Não Disponível", null));
+				cenprot.add(new DocumentoAnaliseResumo("Não disponível", null));
 			} else {
 				for (ProtestosBrasilEstado estado : data.getProtestosBrasil().getEstados()) {
 
@@ -275,14 +222,22 @@ public class DocumentoAnalise implements Serializable {
 			} else {
 				String prejuizo = CommonsUtil.formataValorMonetario(dado.getResumoDoClienteTraduzido().getPrejuizo());
 				scr.add(new DocumentoAnaliseResumo("Prejuizo:", prejuizo));
-			}
-
+			}			
+			
 			if (dado.getResumoDoClienteTraduzido().getCarteiradeCredito() == null) {
-				scr.add(new DocumentoAnaliseResumo("Carteira de Crédito Tomado:", "Não Disponível"));
+			    scr.add(new DocumentoAnaliseResumo("Carteira de Crédito Tomado:", "Não Disponível"));
 			} else {
-				String creditoTomado = CommonsUtil
-						.formataValorMonetario(dado.getResumoDoClienteTraduzido().getCarteiradeCredito());
-				scr.add(new DocumentoAnaliseResumo("Carteira de Crédito Tomado:", creditoTomado));
+			    String creditoTomado = CommonsUtil.formataValorMonetario(dado.getResumoDoClienteTraduzido().getCarteiradeCredito());
+			    double valorCreditoTomado = Double.parseDouble(creditoTomado.replace(",", "").replace("R$", "").trim());
+
+			    if (dado.getResumoDoClienteTraduzido().getLimitesdeCredito() == null) {
+			        scr.add(new DocumentoAnaliseResumo("Limites:", "Não Disponível"));
+			    } else {
+			        String limiteCredito = CommonsUtil.formataValorMonetario(dado.getResumoDoClienteTraduzido().getLimitesdeCredito());
+			        double valorLimiteCredito = Double.parseDouble(limiteCredito.replace(",", "").replace("R$", "").trim());
+			        double soma = valorCreditoTomado + valorLimiteCredito;
+			        scr.add(new DocumentoAnaliseResumo("Carteira de Crédito Tomado:", String.valueOf(soma)));
+			    }
 			}
 
 		}
@@ -382,7 +337,7 @@ public class DocumentoAnalise implements Serializable {
 				return true;
 			}
 
-		return  CommonsUtil.mesmoValor(observacao, "Verificar Engine");
+		return false;
 	}
 
 	
@@ -408,6 +363,11 @@ public class DocumentoAnalise implements Serializable {
 
 		return GsonUtil.toJson(dossieRequest);
 
+	}
+	
+	@Override
+	public String toString() {
+		return "DocumentoAnalise [id=" + id + ", tipo=" + tipo + "]";
 	}
 
 	public long getId() {
@@ -561,6 +521,13 @@ public class DocumentoAnalise implements Serializable {
 	public void setRetornoSerasa(String retornoSerasa) {
 		this.retornoSerasa = retornoSerasa;
 	}
+	
+	public String getRetornoLaudoRobo() {
+		return retornoLaudoRobo;
+	}
+	public void SetRetornoLaudoRobo(String retornoLaudoRobo) {
+		this.retornoLaudoRobo = retornoLaudoRobo;
+	}
 
 	public String getCnpjcpf() {
 		return cnpjcpf;
@@ -657,4 +624,4 @@ public class DocumentoAnalise implements Serializable {
 	public void setExcluido(boolean excluido) {
 		this.excluido = excluido;
 	}
-}
+

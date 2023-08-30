@@ -185,8 +185,16 @@
 								action="#{bmpDigitalMB.baixarDocumento(fileAnalise)}"
 								icon="ui-icon ui-icon-print" value="Download SCR"
 								rendered="#{fileAnalise.scrProcessado }" ajax="false" />
-
-
+								
+							<p:commandButton
+								value="Consultas Plexi"
+								onclick="PF('consultasPlexiDlg').show()"
+								update="ConsultasPlexiForm" ajax="true"
+								rendered="#{fileAnalise.plexiConsultas.size() > 0}" >
+							<f:setPropertyActionListener value="#{fileAnalise}"
+								target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
+							</p:commandButton>
+							
 						</p:column>
 
 						<p:column style="width:100px;" rendered="#{false}">
@@ -215,9 +223,23 @@
 					disabled="#{contratoCobrancaMB.checkConsultasAnaliseDocumento()}" />
 				<p:commandButton value="Certidões Docket"
 					action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.objetoContratoCobranca)}" />
+				<p:commandButton value="Certidões Plexi"
+					action="#{plexiMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise)}" />
 			</p:panel>
+		
+			<p:panel id="pnlLaudoRobo" header="Laudo Robô" style="margin-bottom:10px">
+				<p:commandButton 	value="Laudo" 
+									onclick="PF('laudoRoboDialog').show()"
+									update="laudoRoboForm" 
+									ajax="true"
+									rendered="#{fileAnalise.tipo != 'Rea'}">
+						<f:setPropertyActionListener value="#{fileAnalise}"
+						target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
+				</p:commandButton>
+			</p:panel>
+			
 		</p:panel>
-	
+
 
 	</shiro:hasAnyRoles>
 </ui:composition>

@@ -113,6 +113,14 @@
 		<property name="observacao" type="java.lang.String"  length="65000">
 			<column name="observacao" />
 		</property>
+		
+		<list name="plexiConsultas"
+			table="DocumentoAnalise_PlexiConsultas_Join" cascade="delete" lazy="false">
+			<key column="idDocumentoAnalise" />
+			<list-index></list-index>
+			<many-to-many column="idPlexiConsulta"
+				class="com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta" />
+		</list>		
 						
     </class>
 </hibernate-mapping>
