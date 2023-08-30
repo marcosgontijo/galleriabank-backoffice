@@ -69,6 +69,8 @@ public class DocumentoAnalise implements Serializable {
 	private String observacao;
 	private boolean excluido;
 	
+	private String retornoCNDTrabalhistaTST;
+	
 	private List<PlexiConsulta> plexiConsultas = new ArrayList<PlexiConsulta>();
 
 	
@@ -673,4 +675,14 @@ public class DocumentoAnalise implements Serializable {
 	public void setPlexiConsultas(List<PlexiConsulta> plexiConsultas) {
 		this.plexiConsultas = plexiConsultas;
 	}
+
+	public String getRetornoCNDTrabalhistaTST() {
+		return retornoCNDTrabalhistaTST;
+	}
+
+	public void setRetornoCNDTrabalhistaTST(String retornoCNDTrabalhistaTST) {
+		this.retornoCNDTrabalhistaTST = retornoCNDTrabalhistaTST;
+	}
+	
+	
 }
