@@ -6,7 +6,6 @@ import java.util.List;
 
 
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
-import com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 
@@ -69,6 +68,59 @@ public class DocumentoAnalise implements Serializable {
 	private String retornoScr;
 	private String observacao;
 	private boolean excluido;
+
+	public List<DocumentoAnaliseResumo> getResumoProcesso() {
+		List<DocumentoAnaliseResumo> vProcesso = new ArrayList<>();
+		EngineRetornoExecutionResultProcessos processo = null;
+		try {
+			processo = GsonUtil.fromJson(getRetornoProcesso(), EngineRetornoExecutionResultProcessos.class);
+		} catch (Exception erro) {
+			vProcesso.add(new DocumentoAnaliseResumo(null, null));
+		}
+		if (processo == null) {
+			vProcesso.add(new DocumentoAnaliseResumo("não disponível", null));
+		} else {
+				if (processo.getProcessos()== null) {
+					vProcesso.add(new DocumentoAnaliseResumo("Processos", "Não disponível"));
+				} else {
+					String processos = CommonsUtil.stringValue(processo.getProcessos());
+					vProcesso.add(new DocumentoAnaliseResumo("Processos:", processos));
+						}
+				
+//				if(processo.getProcessos() == null) {
+//					vProcesso.add(new DocumentoAnaliseResumo("Criminal:", "Não disponível"));
+//				} else {
+//					String processos = CommonsUtil.stringValue(processo.getProcessos());
+//					vProcesso.add(new DocumentoAnaliseResumo("Criminal:", "Não disponível"));
+//				}
+//				
+//				if(processo.getProcessos() == null) {
+//					vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:", "Não disponível"));
+//				} else {
+//					vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:", "Não disponível"));
+//				}
+//				
+//				if(processo.getProcessos() == null) {
+//					vProcesso.add(new DocumentoAnaliseResumo("Execução de título:", "Não disponível"));
+//				} else {
+//					vProcesso.add(new DocumentoAnaliseResumo("Execução de título:", "Não disponível"));
+//				}
+//				
+//				if(processo.getProcessos() == null) {
+//					vProcesso.add(new DocumentoAnaliseResumo("Execução fiscal:", "Não disponível"));
+//				} else {
+//					vProcesso.add(new DocumentoAnaliseResumo("Execução fiscal:", "Não disponível"));
+//				}
+//				
+//				if(processo.getProcessos() == null) {
+//					vProcesso.add(new DocumentoAnaliseResumo("Outros:", "Não disponível"));
+//				} else {
+//					vProcesso.add(new DocumentoAnaliseResumo("Outros:", "Não disponível"));
+//				}
+				
+			}
+		return vProcesso;
+	}
 
 	public List<DocumentoAnaliseResumo> getResumoEngine() {
 		List<DocumentoAnaliseResumo> result = new ArrayList<>();
@@ -337,7 +389,7 @@ public class DocumentoAnalise implements Serializable {
 				return true;
 			}
 
-		return false;
+		return  CommonsUtil.mesmoValor(observacao, "Verificar Engine");
 	}
 
 	
@@ -624,4 +676,5 @@ public class DocumentoAnalise implements Serializable {
 	public void setExcluido(boolean excluido) {
 		this.excluido = excluido;
 	}
+}
 

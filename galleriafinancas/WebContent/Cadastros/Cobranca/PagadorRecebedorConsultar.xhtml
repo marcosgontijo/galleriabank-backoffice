@@ -19,16 +19,6 @@
 		        	$("input.cpf:text").mask("999.999.999-99");
 		        });
 			</script>
-			
-			<shiro:hasAnyRoles name="ROOT">
-				<div align="center">
-					<p:commandButton value="Adicionar Registro" 
-						icon="ui-icon-check" style="TEXT-DECORATION: bold;margin-bottom: 25px;"
-						update="fileDialogdlg" oncomplete="PF('fileDialog').show();"
-						action="#{plexiMB.clearDialog}" />
-				</div>
-			</shiro:hasAnyRoles>
-			
 			<p:dataTable id="dtPagadorRecebedor" var="PagadorRecebedor" value="#{pagadorRecebedorMB.lazyModel}" paginator="true" rows="20" lazy="true"
    		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
    		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
@@ -87,35 +77,6 @@
 			<div align="center">	
 				<p:commandButton ajax="false" value="Fechar" immediate="true" icon="ui-icon-close" action="MenuCadastros.xhtml"/>
 			</div>	
-		</h:form>
-		
-		<p:dialog header="Novo Registro" widgetVar="fileDialog"
-			resizable="false" style="FONT-SIZE: 10pt;" width="800">
-			<h:form id="fileDialogdlg">
-				<div align="center">
-				
-					<p:panel id="Arquivos" header="Selecionar Arquivo(s)"
-						style="margin-bottom:10px;text-align: center;">
-						<h:panelGrid columns="1">
-							<p:fileUpload label="Selecionar Arquivo(s)"
-								uploadLabel="Salvar Arquivo(s)" multiple="true"
-								cancelLabel="Cancelar"
-								fileUploadListener="#{plexiMB.handleFileUpload}"
-								mode="advanced" dragDropSupport="true" 
-								update="file"/>
-							<h:outputText id="file" value="#{plexiMB.uploadedFile.fileName}" />
-						</h:panelGrid>
-					</p:panel>					
-					
-					<p:commandButton value="popularEstados " 
-						icon="ui-icon-check" style="margin-top: 5px; margin-bottom: 5px;"
-						action="#{plexiMB.popularDocumentos()}" 
-						onclick="PF('fileDialog').hide();" >
-					</p:commandButton>
-					
-				</div>
-			</h:form>
-		</p:dialog>	
-			
+		</h:form>	
 	</ui:define>
 </ui:composition>	        

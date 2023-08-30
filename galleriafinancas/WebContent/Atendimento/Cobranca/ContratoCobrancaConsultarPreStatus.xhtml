@@ -117,7 +117,15 @@
 			    	<p:column style="text-align: center;" headerText="Responsável" filterBy="#{contratos.nomeResponsavel}" filterMatchMode="contains" sortBy="#{contratos.nomeResponsavel}">
 			            <h:outputText value="#{contratos.nomeResponsavel}" />
 			        </p:column>
-			 				        	  
+			        
+			        
+			        <p:column style="text-align: center;" headerText="Gerente" filterBy="#{contratos.nomeGerente}" 
+			        	filterMatchMode="contains" sortBy="#{contratos.nomeGerente}"
+			        	rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico'}" >
+				    	<h:outputText value="#{contratos.nomeGerente}" />
+				    </p:column>	
+				  
+				        	  
 			        <p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.nomePagador}" filterMatchMode="contains" sortBy="#{contratos.nomePagador}">
 			            <h:outputText value="#{contratos.nomePagador}" />
 			        </p:column>	    
