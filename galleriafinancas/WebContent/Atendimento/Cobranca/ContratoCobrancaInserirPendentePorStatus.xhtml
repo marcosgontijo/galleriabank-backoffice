@@ -3685,7 +3685,7 @@
 										filterMatchMode="contains" sortBy="#{filesPagar.name}">
 										<h:outputText value="#{filesPagar.name}" />
 										<p:spacer height="10" />
-										<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFileContaPagar(filesPagar.name, contratoCobrancaMB.contasPagarSelecionada)}"
+										<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFile(filesPagar)}"
 											immediate="true" icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
 										</p:commandButton>
 									</p:column>  
@@ -4407,7 +4407,7 @@
 								filterMatchMode="contains" sortBy="#{filesComite.name}">
 								<h:outputText value="#{filesComite.name}" />
 								<p:spacer height="10" />
-								<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFileComite(filesComite.name)}"
+								<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFile(filesComite)}"
 									immediate="true" icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
 								</p:commandButton>
 							</p:column>  
@@ -4463,7 +4463,7 @@
 								filterMatchMode="contains" sortBy="#{filesInterno.name}">
 								<h:outputText value="#{filesInterno.name}" />
 								<p:spacer height="10" />
-								<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFileInterno(filesInterno.name)}"
+								<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFile(filesInterno)}"
 									immediate="true" icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
 								</p:commandButton>
 							</p:column>  
@@ -4588,7 +4588,7 @@
 								filterMatchMode="contains" sortBy="#{filesFaltante.name}">
 								<h:outputText value="#{filesFaltante.name}" />
 								<p:spacer height="10" />
-								<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFileFaltante(filesFaltante.name)}"
+								<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFile(filesFaltante)}"
 									immediate="true" icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
 								</p:commandButton>
 							</p:column>  
@@ -4644,7 +4644,7 @@
 								
 										value="#{filesJuridico.name}" />
 								<p:spacer height="10" />
-								<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFileJuridico(filesJuridico.name)}"
+								<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFile(filesJuridico)}"
 									immediate="true" icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
 								</p:commandButton>
 							</p:column>  
@@ -4704,7 +4704,7 @@
 								<h:outputText
 										value="#{files.name}" />
 								<p:spacer height="10" />
-								<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFile(files.name)}"
+								<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFile(files)}"
 									immediate="true" icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
 								</p:commandButton>
 							</p:column> 
@@ -4804,7 +4804,7 @@
 									<h:outputText value="#{files.name}" />
 									<p:spacer height="10" />
 									<p:commandButton value="Abrir" ajax="false"
-										action="#{contratoCobrancaMB.viewFileContaPagar(files.name)}"
+										action="#{contratoCobrancaMB.viewFile(files)}"
 										immediate="true" icon="ui-icon-search"
 										onclick="target='_blank'" onblur="target='_self'">
 									</p:commandButton>

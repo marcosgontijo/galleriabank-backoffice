@@ -20,13 +20,13 @@ public class GsonUtil {
         }
     }
 
-    public static <T> Type getColletionType(Object object) {
-        Type listType =
-                new TypeToken<Collection<T>>() {
-                }.getType();
+	public static <T> Type getColletionType(Object object) {
+		Type listType = new TypeToken<Collection<T>>() {
+		}.getType();
 
-        return listType;
-    }
+		return listType;
+	}
+
 
 
     public static String toJson(Object object) {

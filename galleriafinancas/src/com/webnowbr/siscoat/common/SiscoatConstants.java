@@ -66,4 +66,6 @@ public class SiscoatConstants {
 	public static final String  URL_SISCOAT_DOCKET_WEBHOOK	 = "https://backoffice.galleriabank.com.br/sistema/siscoat/docket/webhook?Token=";
 	public static final String  URL_SISCOAT_CAF_WEBHOOK	 = "https://backoffice.galleriabank.com.br/sistema/siscoat/caf/webhook?Token=";
 	public static final String  URL_SISCOAT_PLEXI_WEBHOOK	 = "https://backoffice.galleriabank.com.br/sistema/siscoat/plexi/webhook?Token=";
+
+	public static int HTTP_COD_SUCESSO = 200;
 }

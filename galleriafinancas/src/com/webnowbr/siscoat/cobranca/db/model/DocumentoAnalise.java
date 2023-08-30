@@ -72,8 +72,8 @@ public class DocumentoAnalise implements Serializable {
 	private String retornoCNDTrabalhistaTST;
 	
 	private List<PlexiConsulta> plexiConsultas = new ArrayList<PlexiConsulta>();
-
 	
+
 	public List<DocumentoAnaliseResumo> getResumoProcesso() {
 		List<DocumentoAnaliseResumo> vProcesso = new ArrayList<>();
 		EngineRetornoExecutionResultProcessos processo = null;
@@ -308,11 +308,11 @@ public class DocumentoAnalise implements Serializable {
 	}
 
 	public boolean isPodeChamarEngine() {
-		return !isEngineProcessado();				
+//		return !isEngineProcessado();				
 				
-//		return !CommonsUtil.mesmoValor(motivoAnalise.toUpperCase(), "PROPRIETARIO ATUAL") && !isEngineProcessado()
-//				&& (CommonsUtil.mesmoValor("PF", tipoPessoa) || (CommonsUtil.mesmoValor("PJ", tipoPessoa)
-//						&& !this.motivoAnalise.contains("Empresa Vinculada")));
+		return !isEngineProcessado()
+				&& (!this.motivoAnalise.startsWith("Empresa Vinculada"));
+		
 	}
 
 	public boolean isEngineProcessado() {
@@ -387,7 +387,7 @@ public class DocumentoAnalise implements Serializable {
 				return true;
 			}
 
-		return false;
+		return  CommonsUtil.mesmoValor(observacao, "Verificar Engine");
 	}
 
 	

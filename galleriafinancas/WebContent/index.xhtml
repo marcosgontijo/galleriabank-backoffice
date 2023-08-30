@@ -298,12 +298,6 @@
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_COMENTARIO_JURIDICO, PROFILE_PAJU_LUVISON">
-									<p:menuitem value="Comentario Jurídico - Luvison"
-										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Comentario Luvison')}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
-								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">					
 									<p:menuitem value="07 - Pré-Comite"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Pré-Comite')}"
@@ -414,30 +408,6 @@
 									<p:menuitem value="Dados Empresa"
 										action="#{dadosEmpresaMB.clearFieldsDadosEmpresa}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />						
-									<p:menuitem value="Contratos Securitizadora"
-										action="#{contratoCobrancaMB.clearFieldsContratos('Securitizadora')}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
-									<p:menuitem value="Contratos FIDC"
-										action="#{contratoCobrancaMB.clearFieldsContratos('FIDC')}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
-									<p:menuitem value="Contratos CRI 1"
-										action="#{contratoCobrancaMB.clearFieldsContratos('CRI 1')}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
-									<p:menuitem value="Contratos CRI 2"
-										action="#{contratoCobrancaMB.clearFieldsContratos('CRI 2')}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
-									<p:menuitem value="Contratos CRI 3"
-										action="#{contratoCobrancaMB.clearFieldsContratos('CRI 3')}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
-									<p:menuitem value="Contratos CRI 4"
-										action="#{contratoCobrancaMB.clearFieldsContratos('CRI 4')}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, COBRANCA">
@@ -466,13 +436,13 @@
 						</shiro:hasAnyRoles>
 						<shiro:hasAnyRoles name="ROOT, COBRANCA, ASSISTENTEFINANCEIRO, AGENTE_ESPELHAMENTO, POSOPERACAO">
 							<p:submenu label="Financeiro" styleClass="titulosMenu">
-									<shiro:hasAnyRoles name="ROOT, POSOPERACAO">
+								<shiro:hasAnyRoles name="ROOT, POSOPERACAO">
 									<p:menuitem value="Pagar Pós Operação"
 										action="#{contasPagarMB.clearFieldsPosOperacao}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
 										styleClass="itemMenu" />
-									</shiro:hasAnyRoles>
-									<shiro:hasAnyRoles name="ROOT, COBRANCA">
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, COBRANCA">
 									<p:menuitem value="Boletos Kobana"
 										action="#{kobanaMB.clearFieldsParcelasBoleto}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
@@ -481,6 +451,7 @@
 										action="#{kobanaMB.clearFieldsConsultarBoleto}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
 										styleClass="itemMenu" />
+									<!-- 
 									<p:menuitem value="Financeiro"
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiro}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
@@ -545,7 +516,9 @@
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroDia('PreAprovado')}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
 										styleClass="itemMenu" />
+									-->
 								</shiro:hasAnyRoles>
+								<!-- 
 								<shiro:hasAnyRoles name="ROOT, COBRANCA, AGENTE_ESPELHAMENTO">
 									<p:menuitem value="Financeiro Dia Espelhamento FIDC"
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroDiaEspelhamento('EspelhamentoFIDC')}"
@@ -648,6 +621,7 @@
 											<f:setPropertyActionListener value="true" target="#{contratoCobrancaMB.financeiroGalleria}"/>
 									</p:menuitem>
 								</shiro:hasAnyRoles>
+								-->
 								<shiro:hasAnyRoles name="ROOT, COBRANCA, ASSISTENTEFINANCEIRO">
 									<p:menuitem value="Pagto. Valor Líquido"
 										action="#{investidorMB.clearFieldsValorLiquido}" ajax="false"
@@ -773,30 +747,7 @@
 									action="#{contratoCobrancaMB.clearFieldsContratosPerformance()}"
 									ajax="false" icon="ui-icon ui-icon-newwin"
 									styleClass="itemMenu" />										
-								<p:menuitem value="Contratos Securitizadora"
-									action="#{contratoCobrancaMB.clearFieldsContratos('Securitizadora')}"
-									ajax="false" icon="ui-icon ui-icon-newwin"
-									styleClass="itemMenu" />
-								<p:menuitem value="Contratos FIDC"
-									action="#{contratoCobrancaMB.clearFieldsContratos('FIDC')}"
-									ajax="false" icon="ui-icon ui-icon-newwin"
-									styleClass="itemMenu" />
-								<p:menuitem value="Contratos CRI 1"
-									action="#{contratoCobrancaMB.clearFieldsContratos('CRI 1')}"
-									ajax="false" icon="ui-icon ui-icon-newwin"
-									styleClass="itemMenu" />
-								<p:menuitem value="Contratos CRI 2"
-									action="#{contratoCobrancaMB.clearFieldsContratos('CRI 2')}"
-									ajax="false" icon="ui-icon ui-icon-newwin"
-									styleClass="itemMenu" />
-								<p:menuitem value="Contratos CRI 3"
-									action="#{contratoCobrancaMB.clearFieldsContratos('CRI 3')}"
-									ajax="false" icon="ui-icon ui-icon-newwin"
-									styleClass="itemMenu" />
-								<p:menuitem value="Contratos CRI 4"
-									action="#{contratoCobrancaMB.clearFieldsContratos('CRI 4')}"
-									ajax="false" icon="ui-icon ui-icon-newwin"
-									styleClass="itemMenu" />
+								
 							</p:submenu>
 							<p:submenu label="Financeiro" styleClass="titulosMenu">
 								<p:menuitem value="Boletos Kobana"

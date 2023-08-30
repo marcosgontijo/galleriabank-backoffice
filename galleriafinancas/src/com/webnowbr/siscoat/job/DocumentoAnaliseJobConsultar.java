@@ -140,7 +140,7 @@ public class DocumentoAnaliseJobConsultar {
 						//PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
 						continue;
 					}
-				} else {
+				} else if( documentoAnalise.isPodeChamarEngine()) {
 					documentoAnalise.addObservacao("Aguardando retorno Engine");
 					documentoAnaliseDao.merge(documentoAnalise);
 					//PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");

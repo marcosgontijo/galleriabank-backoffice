@@ -6723,299 +6723,13 @@ public class CcbMB {
 
 			XWPFRun run;
 
-			XWPFParagraph paragraph = document.createParagraph();
-			paragraph.setAlignment(ParagraphAlignment.CENTER);
-			paragraph.setSpacingBefore(0);
-			paragraph.setSpacingAfter(100);
-			
-			String documento = "";
-			
-			for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {				
-				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "EMITENTE")) {
-					if(CommonsUtil.semValor(this.objetoCcb.getNomeEmitente())) {
-						this.objetoCcb.setNomeEmitente(participante.getPessoa().getNome());
-					}
-					
-					if(CommonsUtil.semValor(this.objetoCcb.getCpfEmitente())) {
-						if(!CommonsUtil.semValor(participante.getPessoa().getCpf())) {
-							this.objetoCcb.setCpfEmitente(participante.getPessoa().getCpf());
-							documento = "CPF: ";
-						} else {
-							this.objetoCcb.setCpfEmitente(participante.getPessoa().getCnpj());
-							documento = "CNPJ: ";
-						}
-					}
-				}
-			}
-			
-			run = paragraph.createRun();
-			run.setText("ANEXO II");
-			run.setFontSize(11);
-			run.setBold(true);
-			XWPFRun run2 = paragraph.createRun();
-			XWPFRun run3 = paragraph.createRun();
-			XWPFRun run4 = paragraph.createRun();
-			
-			paragraph = document.createParagraph();
-			paragraph.setAlignment(ParagraphAlignment.CENTER);
-			paragraph.setSpacingBefore(0);
-			paragraph.setSpacingAfter(0);
-			
-			run.addCarriageReturn();
-			run.setText("CÉDULA DE CRÉDITO IMOBILIÁRIO Nº " + this.objetoCcb.getNumeroCcb());
-			run.setFontSize(11);
-			run.setBold(true);
-			run.addCarriageReturn();
-			run.setText("DESPESAS ACESSÓRIAS (DEVIDAS A TERCEIROS)");
-			run.setFontSize(11);
-			run.setBold(true);
-			
-			paragraph = document.createParagraph();
-			paragraph.setAlignment(ParagraphAlignment.BOTH);
-			paragraph.setSpacingBefore(0);
-			paragraph.setSpacingAfter(200);
-			
-			run = paragraph.createRun();
-			run.setText("Para todos os fins e efeitos de direito, conforme previsto na ");
-			run.setFontSize(11);
-			run.setBold(false);
-			
-			run2 = paragraph.createRun();
-			run2.setFontSize(11);
-			run2.setText("cláusula 3.5 do Quadro Resumo da Cédula de Crédito Imobiliário n° " + this.objetoCcb.getNumeroCcb() 
-				+ ", datada de " + CommonsUtil.formataData(this.objetoCcb.getDataDeEmissao(), "dd/MM/yyyy") );
-			run2.setBold(true);
-			
-			run = paragraph.createRun();
-			run.setText(" (CCI), autorizo o pagamento das despesas acessórias e dos "
-					+ "compromissos diversos abaixo relacionados e aprovados por mim previamente no valor total de");
-			run.setFontSize(11);
-			run.setBold(false);			
-			
-			calcularValorDespesa();
-
-			valorPorExtenso.setNumber(this.objetoCcb.getValorDespesas()); 
-			run2 = paragraph.createRun();
-			run2.setFontSize(11);
-			run2.setText(" "+ CommonsUtil.formataValorMonetario(this.objetoCcb.getValorDespesas(), "R$ ") + " ("+ valorPorExtenso.toString() +"), ");
-			run2.setBold(true);
-			
-			run = paragraph.createRun();
-			run.setText("por meio do crédito oriundo da CCI. O montante total necessário para o pagamento"
-					+ " das despesas acessórias e dos compromissos diversos será transferido para a conta"
-					+ " da Galleria Correspondente Bancário Sociedade Unipessoal Ltda, CNPJ 34.787.885/0001-32, Banco do Brasil"
-					+ " – Ag: 1515-6 C/C: 131094-1, que, na condição de Correspondente Bancário da BMP,"
-					+ " será a responsável por efetuar todos os pagamentos devidamente especificados na"
-					+ " tabela abaixo:");
-			run.setFontSize(11);
-			run.setBold(false);	
-			
-			XWPFTable table = document.createTable();
-			table.setWidth((int) (6.1 * 1440));
-			table.getCTTbl().getTblPr().getTblW().unsetType();
-			setTableAlign(table, ParagraphAlignment.CENTER);
-
-			table.getCTTbl().addNewTblGrid().addNewGridCol().setW(BigInteger.valueOf(6000));
-			table.getCTTbl().getTblGrid().addNewGridCol().setW(BigInteger.valueOf(2500));
-			
-			paragraph = document.createParagraph();
-			paragraph.setAlignment(ParagraphAlignment.CENTER);
-			paragraph.setSpacingBefore(0);
-			paragraph.setSpacingAfter(0);
-			
-			// create first row
-			XWPFTableRow tableRow = table.getRow(0);
-
-			tableRow.getCell(0).setParagraph(paragraph);
-			tableRow.getCell(0).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
-			tableRow.getCell(0).setColor("8880F4");
-			//tableRow.getCell(0).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(3000) ));
-			run = tableRow.getCell(0).getParagraphArray(0).createRun();
-			run.setFontSize(12);
-			run.setBold(true);
-			run.setColor("ffffff");
-			run.setText("Descrição da despesa ou do Compromisso Diverso");
-			
-			tableRow.addNewTableCell();
-			tableRow.addNewTableCell();
-
-			tableRow.getCell(1).setParagraph(paragraph);
-			tableRow.getCell(1).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
-			tableRow.getCell(1).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
-			tableRow.getCell(1).setColor("8880F4");
-			run = tableRow.getCell(1).getParagraphArray(0).createRun();
-			run.setFontSize(12);
-			run.setBold(true);
-			run.setText("Forma de Pagamento");
-			run.setColor("ffffff");	
-			
-			tableRow.getCell(2).setParagraph(paragraph);
-			tableRow.getCell(2).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
-			tableRow.getCell(2).setColor("8880F4");
-			tableRow.getCell(2).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
-			run = tableRow.getCell(2).getParagraphArray(0).createRun();
-			run.setFontSize(12);
-			run.setBold(true);
-			run.setColor("ffffff");
-			run.setText("Valor");
-					
-			for(ContasPagar despesa : objetoCcb.getDespesasAnexo2()) {
-				XWPFTableRow tableRow1 = table.createRow();
-				
-				tableRow1.getCell(0).setParagraph(paragraph);
-				tableRow1.getCell(0).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
-				
-				run = tableRow1.getCell(0).getParagraphArray(0).createRun();
-				run.setFontSize(12);
-				run.setColor("000000");
-				if(CommonsUtil.mesmoValor(despesa.getDescricao(), "Cartório")) {
-					run.setText("Custas Cartorárias");
-				} else if(CommonsUtil.mesmoValor(despesa.getDescricao(), "Certidão de Casamento")) {
-					run.setText("Certidão de estado civil");
-				} else if(CommonsUtil.mesmoValor(despesa.getDescricao(), "IPTU")) {
-					run.setText("IPTU em Atraso");
-				} else if(CommonsUtil.mesmoValor(despesa.getDescricao(), "Condomínio")) {
-					run.setText("Condomínio em Atraso");
-				} else {
-					run.setText(despesa.getDescricao());
-				}
-				
-				tableRow1.getCell(1).setParagraph(paragraph);
-				tableRow1.getCell(1).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
-				tableRow1.getCell(1).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
-				run = tableRow1.getCell(1).getParagraphArray(0).createRun();
-				run.setFontSize(12);
-				if(CommonsUtil.mesmoValor(despesa.getFormaTransferencia(), "TED")) {
-					run.setText("Ted no "+ despesa.getBancoTed() +" AG: "+ despesa.getAgenciaTed()
-					+" C/C: "+ despesa.getContaTed() + " Chave Pix:" + despesa.getPix() + " " + despesa.getNomeTed() 
-					+" CPF/CNPJ: "+ despesa.getCpfTed()); 
-				} else {
-					run.setText(despesa.getFormaTransferencia());
-				}
-				run.setColor("000000");
-				if(CommonsUtil.mesmoValor(despesa.getDescricao(), "Crédito CCI")) {
-					run2 = tableRow1.getCell(1).getParagraphArray(0).createRun();
-					run2.addBreak();
-					run2.addBreak();
-					run2.setText("* Credito será efetuado somente no registro da alienação Fiduciária da CCI " + this.objetoCcb.getNumeroCcb() 
-							+ " da matricula " + this.objetoCcb.getNumeroImovel() + " do "+ this.objetoCcb.getCartorioImovel() 
-							+ "° Cartório de Registro de Imóveis de " + this.objetoCcb.getCidadeImovel() + " - " + this.objetoCcb.getUfImovel() + "* ");
-					run2.setColor("FF0000");
-				}
-				
-				tableRow1.getCell(2).setParagraph(paragraph);
-				tableRow1.getCell(2).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
-				tableRow1.getCell(2).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
-				run = tableRow1.getCell(2).getParagraphArray(0).createRun();
-				run.setFontSize(12);
-				run.setColor("000000");
-				run.setText(CommonsUtil.formataValorMonetario(despesa.getValor(), "R$ "));
-			}
-			
-			for(CcbProcessosJudiciais processo : objetoCcb.getProcessosJucidiais()) {
-				ContasPagar despesa = processo.getContaPagar();
-				if(CommonsUtil.semValor(despesa)) {
-					continue;
-				}
-				XWPFTableRow tableRow1 = table.createRow();
-				
-				tableRow1.getCell(0).setParagraph(paragraph);
-				tableRow1.getCell(0).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
-				
-				run = tableRow1.getCell(0).getParagraphArray(0).createRun();
-				run.setFontSize(12);
-				run.setText(despesa.getDescricao());
-				run.setColor("000000");
-				
-				tableRow1.getCell(1).setParagraph(paragraph);
-				tableRow1.getCell(1).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
-				tableRow1.getCell(1).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
-				run = tableRow1.getCell(1).getParagraphArray(0).createRun();
-				run.setFontSize(12);
-				run.setText(despesa.getFormaTransferencia());
-				run.setColor("000000");
-				
-				tableRow1.getCell(2).setParagraph(paragraph);
-				tableRow1.getCell(2).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
-				tableRow1.getCell(2).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
-				run = tableRow1.getCell(2).getParagraphArray(0).createRun();
-				run.setFontSize(12);
-				run.setColor("000000");
-				run.setText(CommonsUtil.formataValorMonetario(despesa.getValor(), "R$ "));
-			}
-			
-			XWPFTableRow tableRow1 = table.createRow();		
-
-			tableRow1.getCell(1).setParagraph(paragraph);
-			tableRow1.getCell(1).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
-			tableRow1.getCell(1).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));		
-			tableRow1.getCell(1).setColor("8880F4");
-
-			run = tableRow1.getCell(1).getParagraphArray(0).createRun();
-			run.setFontSize(12);
-			run.setBold(true);
-			run.setText("Total");
-			run.setColor("ffffff");	
-			
-			tableRow1.getCell(2).setParagraph(paragraph);
-			tableRow1.getCell(2).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
-			tableRow1.getCell(2).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
-			tableRow1.getCell(2).setColor("8880F4");
-
-			run = tableRow1.getCell(2).getParagraphArray(0).createRun();
-			run.setFontSize(12);
-			run.setColor("ffffff");
-			run.setBold(true);
-			run.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getValorDespesas(), "R$ "));
-			
-			
-			paragraph = document.createParagraph();
-			paragraph.setAlignment(ParagraphAlignment.CENTER);
-			paragraph.setSpacingBefore(0);
-			paragraph.setSpacingAfter(0);
-			
-			run = paragraph.createRun();
-			run.addCarriageReturn();
-			run.addCarriageReturn();
-			run.addCarriageReturn();
-			run.addCarriageReturn();
-			run.addCarriageReturn();
-			
-			run.setText("_____________________________________________________________________________");
-			run.setFontSize(11);
-			run.setBold(false);
-			run.addCarriageReturn();
-			
-			run2 = paragraph.createRun();
-			run2.setColor("000000");
-			run2.setFontSize(12);
-			run2.setText("" + this.objetoCcb.getNomeEmitente().toUpperCase());
-			run2.setBold(true);
-			run2.addCarriageReturn();
-			run2.setText(documento + this.objetoCcb.getCpfEmitente());
-			
-			//ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-			if(!CommonsUtil.semValor(this.objetoCcb.getObjetoContratoCobranca())) {
-				ContratoCobranca contrato = this.objetoCcb.getObjetoContratoCobranca();
-				contrato.setContaPagarValorTotal(this.objetoCcb.getValorDespesas());
-				//cDao.merge(contrato);
-				//this.objetoCcb.setObjetoContratoCobranca(contrato);		
-			}
-			
-			
-			
-			/*
-			 * for (XWPFParagraph p : document.getParagraphs()) { List<XWPFRun> runs =
-			 * p.getRuns(); if (runs != null) { for (XWPFRun r : runs) { String text =
-			 * r.getText(0); adicionarEnter(text, r); } } }
-			 */
-			
-			
+			geraPaginaContratoII(document, "8880F4", true);
 
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
-
+			
 			document.write(out);
 			document.close();
+
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 					FacesContext.getCurrentInstance());
 			String nomeSemvirgula = this.objetoCcb.getNomeEmitente();
@@ -7036,6 +6750,302 @@ public class CcbMB {
 		} 
 
 		return null;
+	}
+
+	private void geraPaginaContratoII(XWPFDocument document, String cor, boolean gerarAssinatura) throws IOException {
+		XWPFRun run;
+		XWPFParagraph paragraph = document.createParagraph();
+		paragraph.setAlignment(ParagraphAlignment.CENTER);
+		paragraph.setSpacingBefore(0);
+		paragraph.setSpacingAfter(100);
+		
+		String documento = "";
+		
+		for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {				
+			if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "EMITENTE")) {
+				if(CommonsUtil.semValor(this.objetoCcb.getNomeEmitente())) {
+					this.objetoCcb.setNomeEmitente(participante.getPessoa().getNome());
+				}
+				
+				if(CommonsUtil.semValor(this.objetoCcb.getCpfEmitente())) {
+					if(!CommonsUtil.semValor(participante.getPessoa().getCpf())) {
+						this.objetoCcb.setCpfEmitente(participante.getPessoa().getCpf());
+						documento = "CPF: ";
+					} else {
+						this.objetoCcb.setCpfEmitente(participante.getPessoa().getCnpj());
+						documento = "CNPJ: ";
+					}
+				}
+			}
+		}
+		
+		run = paragraph.createRun();
+		run.setText("ANEXO II");
+		run.setFontSize(11);
+		run.setBold(true);
+		XWPFRun run2 = paragraph.createRun();
+		XWPFRun run3 = paragraph.createRun();
+		XWPFRun run4 = paragraph.createRun();
+		
+		paragraph = document.createParagraph();
+		paragraph.setAlignment(ParagraphAlignment.CENTER);
+		paragraph.setSpacingBefore(0);
+		paragraph.setSpacingAfter(0);
+		
+		run.addCarriageReturn();
+		run.setText("CÉDULA DE CRÉDITO IMOBILIÁRIO Nº " + this.objetoCcb.getNumeroCcb());
+		run.setFontSize(11);
+		run.setBold(true);
+		run.addCarriageReturn();
+		run.setText("DESPESAS ACESSÓRIAS (DEVIDAS A TERCEIROS)");
+		run.setFontSize(11);
+		run.setBold(true);
+		
+		paragraph = document.createParagraph();
+		paragraph.setAlignment(ParagraphAlignment.BOTH);
+		paragraph.setSpacingBefore(0);
+		paragraph.setSpacingAfter(200);
+		
+		run = paragraph.createRun();
+		run.setText("Para todos os fins e efeitos de direito, conforme previsto na ");
+		run.setFontSize(11);
+		run.setBold(false);
+		
+		run2 = paragraph.createRun();
+		run2.setFontSize(11);
+		run2.setText("cláusula 3.5 do Quadro Resumo da Cédula de Crédito Imobiliário n° " + this.objetoCcb.getNumeroCcb() 
+			+ ", datada de " + CommonsUtil.formataData(this.objetoCcb.getDataDeEmissao(), "dd/MM/yyyy") );
+		run2.setBold(true);
+		
+		run = paragraph.createRun();
+		run.setText(" (CCI), autorizo o pagamento das despesas acessórias e dos "
+				+ "compromissos diversos abaixo relacionados e aprovados por mim previamente no valor total de");
+		run.setFontSize(11);
+		run.setBold(false);			
+		
+		calcularValorDespesa();
+
+		valorPorExtenso.setNumber(this.objetoCcb.getValorDespesas()); 
+		run2 = paragraph.createRun();
+		run2.setFontSize(11);
+		run2.setText(" "+ CommonsUtil.formataValorMonetario(this.objetoCcb.getValorDespesas(), "R$ ") + " ("+ valorPorExtenso.toString() +"), ");
+		run2.setBold(true);
+		
+		run = paragraph.createRun();
+		run.setText("por meio do crédito oriundo da CCI. O montante total necessário para o pagamento"
+				+ " das despesas acessórias e dos compromissos diversos será transferido para a conta"
+				+ " da Galleria Correspondente Bancário Sociedade Unipessoal Ltda, CNPJ 34.787.885/0001-32, Banco do Brasil"
+				+ " – Ag: 1515-6 C/C: 131094-1, que, na condição de Correspondente Bancário da Galleria Sociedade de Crédito Direto,"
+				+ " será a responsável por efetuar todos os pagamentos devidamente especificados na"
+				+ " tabela abaixo:");
+		run.setFontSize(11);
+		run.setBold(false);	
+		
+		XWPFTable table = document.createTable();
+		table.setWidth((int) (6.1 * 1440));
+		table.getCTTbl().getTblPr().getTblW().unsetType();
+		setTableAlign(table, ParagraphAlignment.CENTER);
+
+		table.getCTTbl().addNewTblGrid().addNewGridCol().setW(BigInteger.valueOf(6000));
+		table.getCTTbl().getTblGrid().addNewGridCol().setW(BigInteger.valueOf(2500));
+		
+		paragraph = document.createParagraph();
+		paragraph.setAlignment(ParagraphAlignment.CENTER);
+		paragraph.setSpacingBefore(0);
+		paragraph.setSpacingAfter(0);
+		
+		// create first row
+		XWPFTableRow tableRow = table.getRow(0);
+
+		tableRow.getCell(0).setParagraph(paragraph);
+		tableRow.getCell(0).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+		tableRow.getCell(0).setColor(cor);
+		//tableRow.getCell(0).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(3000) ));
+		run = tableRow.getCell(0).getParagraphArray(0).createRun();
+		run.setFontSize(12);
+		run.setBold(true);
+		run.setColor("ffffff");
+		run.setText("Descrição da despesa ou do Compromisso Diverso");
+		
+		tableRow.addNewTableCell();
+		tableRow.addNewTableCell();
+
+		tableRow.getCell(1).setParagraph(paragraph);
+		tableRow.getCell(1).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+		tableRow.getCell(1).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
+		tableRow.getCell(1).setColor(cor);
+		run = tableRow.getCell(1).getParagraphArray(0).createRun();
+		run.setFontSize(12);
+		run.setBold(true);
+		run.setText("Forma de Pagamento");
+		run.setColor("ffffff");	
+		
+		tableRow.getCell(2).setParagraph(paragraph);
+		tableRow.getCell(2).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
+		tableRow.getCell(2).setColor(cor);
+		tableRow.getCell(2).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+		run = tableRow.getCell(2).getParagraphArray(0).createRun();
+		run.setFontSize(12);
+		run.setBold(true);
+		run.setColor("ffffff");
+		run.setText("Valor");
+				
+		for(ContasPagar despesa : objetoCcb.getDespesasAnexo2()) {
+			XWPFTableRow tableRow1 = table.createRow();
+			
+			tableRow1.getCell(0).setParagraph(paragraph);
+			tableRow1.getCell(0).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+			
+			run = tableRow1.getCell(0).getParagraphArray(0).createRun();
+			run.setFontSize(12);
+			run.setColor("000000");
+			if(CommonsUtil.mesmoValor(despesa.getDescricao(), "Cartório")) {
+				run.setText("Custas Cartorárias");
+			} else if(CommonsUtil.mesmoValor(despesa.getDescricao(), "Certidão de Casamento")) {
+				run.setText("Certidão de estado civil");
+			} else if(CommonsUtil.mesmoValor(despesa.getDescricao(), "IPTU")) {
+				run.setText("IPTU em Atraso");
+			} else if(CommonsUtil.mesmoValor(despesa.getDescricao(), "Condomínio")) {
+				run.setText("Condomínio em Atraso");
+			} else {
+				run.setText(despesa.getDescricao());
+			}
+			
+			tableRow1.getCell(1).setParagraph(paragraph);
+			tableRow1.getCell(1).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+			tableRow1.getCell(1).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
+			run = tableRow1.getCell(1).getParagraphArray(0).createRun();
+			run.setFontSize(12);
+			if(CommonsUtil.mesmoValor(despesa.getFormaTransferencia(), "TED")) {
+				run.setText("Ted no "+ despesa.getBancoTed() +" AG: "+ despesa.getAgenciaTed()
+				+" C/C: "+ despesa.getContaTed() + " Chave Pix:" + despesa.getPix() + " " + despesa.getNomeTed() 
+				+" CPF/CNPJ: "+ despesa.getCpfTed()); 
+			} else {
+				run.setText(despesa.getFormaTransferencia());
+			}
+			run.setColor("000000");
+			if(CommonsUtil.mesmoValor(despesa.getDescricao(), "Crédito CCI")) {
+				run2 = tableRow1.getCell(1).getParagraphArray(0).createRun();
+				run2.addBreak();
+				run2.addBreak();
+				run2.setText("* Credito será efetuado somente no registro da alienação Fiduciária da CCI " + this.objetoCcb.getNumeroCcb() 
+						+ " da matricula " + this.objetoCcb.getNumeroImovel() + " do "+ this.objetoCcb.getCartorioImovel() 
+						+ "° Cartório de Registro de Imóveis de " + this.objetoCcb.getCidadeImovel() + " - " + this.objetoCcb.getUfImovel() + "* ");
+				run2.setColor("FF0000");
+			}
+			
+			tableRow1.getCell(2).setParagraph(paragraph);
+			tableRow1.getCell(2).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+			tableRow1.getCell(2).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
+			run = tableRow1.getCell(2).getParagraphArray(0).createRun();
+			run.setFontSize(12);
+			run.setColor("000000");
+			run.setText(CommonsUtil.formataValorMonetario(despesa.getValor(), "R$ "));
+		}
+		
+		for(CcbProcessosJudiciais processo : objetoCcb.getProcessosJucidiais()) {
+			ContasPagar despesa = processo.getContaPagar();
+			if(CommonsUtil.semValor(despesa)) {
+				continue;
+			}
+			XWPFTableRow tableRow1 = table.createRow();
+			
+			tableRow1.getCell(0).setParagraph(paragraph);
+			tableRow1.getCell(0).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+			
+			run = tableRow1.getCell(0).getParagraphArray(0).createRun();
+			run.setFontSize(12);
+			run.setText(despesa.getDescricao());
+			run.setColor("000000");
+			
+			tableRow1.getCell(1).setParagraph(paragraph);
+			tableRow1.getCell(1).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+			tableRow1.getCell(1).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
+			run = tableRow1.getCell(1).getParagraphArray(0).createRun();
+			run.setFontSize(12);
+			run.setText(despesa.getFormaTransferencia());
+			run.setColor("000000");
+			
+			tableRow1.getCell(2).setParagraph(paragraph);
+			tableRow1.getCell(2).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+			tableRow1.getCell(2).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(CommonsUtil.longValue(2800) ));
+			run = tableRow1.getCell(2).getParagraphArray(0).createRun();
+			run.setFontSize(12);
+			run.setColor("000000");
+			run.setText(CommonsUtil.formataValorMonetario(despesa.getValor(), "R$ "));
+		}
+		
+		
+		if (gerarAssinatura) {
+			XWPFTableRow tableRow1 = table.createRow();
+
+			tableRow1.getCell(1).setParagraph(paragraph);
+			tableRow1.getCell(1).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+			tableRow1.getCell(1).getCTTc().addNewTcPr().addNewTcW()
+					.setW(BigInteger.valueOf(CommonsUtil.longValue(2800)));
+			tableRow1.getCell(1).setColor(cor);
+
+			run = tableRow1.getCell(1).getParagraphArray(0).createRun();
+			run.setFontSize(12);
+			run.setBold(true);
+			run.setText("Total");
+			run.setColor("ffffff");
+
+			tableRow1.getCell(2).setParagraph(paragraph);
+			tableRow1.getCell(2).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+			tableRow1.getCell(2).getCTTc().addNewTcPr().addNewTcW()
+					.setW(BigInteger.valueOf(CommonsUtil.longValue(2800)));
+			tableRow1.getCell(2).setColor(cor);
+
+			run = tableRow1.getCell(2).getParagraphArray(0).createRun();
+			run.setFontSize(12);
+			run.setColor("ffffff");
+			run.setBold(true);
+			run.setText(CommonsUtil.formataValorMonetario(this.objetoCcb.getValorDespesas(), "R$ "));
+
+			paragraph = document.createParagraph();
+			paragraph.setAlignment(ParagraphAlignment.CENTER);
+			paragraph.setSpacingBefore(0);
+			paragraph.setSpacingAfter(0);
+
+			run = paragraph.createRun();
+			run.addCarriageReturn();
+			run.addCarriageReturn();
+			run.addCarriageReturn();
+			run.addCarriageReturn();
+			run.addCarriageReturn();
+
+			run.setText("_____________________________________________________________________________");
+			run.setFontSize(11);
+			run.setBold(false);
+			run.addCarriageReturn();
+
+			run2 = paragraph.createRun();
+			run2.setColor("000000");
+			run2.setFontSize(12);
+			run2.setText("" + this.objetoCcb.getNomeEmitente().toUpperCase());
+			run2.setBold(true);
+			run2.addCarriageReturn();
+			run2.setText(documento + this.objetoCcb.getCpfEmitente());
+
+			// ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+			if (!CommonsUtil.semValor(this.objetoCcb.getObjetoContratoCobranca())) {
+				ContratoCobranca contrato = this.objetoCcb.getObjetoContratoCobranca();
+				contrato.setContaPagarValorTotal(this.objetoCcb.getValorDespesas());
+				// cDao.merge(contrato);
+				// this.objetoCcb.setObjetoContratoCobranca(contrato);
+			}
+		}
+		
+		
+		/*
+		 * for (XWPFParagraph p : document.getParagraphs()) { List<XWPFRun> runs =
+		 * p.getRuns(); if (runs != null) { for (XWPFRun r : runs) { String text =
+		 * r.getText(0); adicionarEnter(text, r); } } }
+		 */
+		
+		
+
 	}
 	
 	public StreamedContent geraCciDinamica() throws IOException {
@@ -7969,6 +7979,8 @@ public class CcbMB {
 				indexParcela++;////////////////////////////////////////////////////////////////////////////////
 			}
 			
+			geraPaginaContratoII(document, "9DC83E", false);
+
 			table = document.getTableArray(2);			
 			CabecalhoAnexo1(table, 0, 1, CommonsUtil.formataData(this.objetoCcb.getDataDeEmissao(), "dd/MM/yyyy"));
 			CabecalhoAnexo1(table, 1, 1, CommonsUtil.formataData(this.objetoCcb.getVencimentoUltimaParcelaPagamento(), "dd/MM/yyyy"));	
