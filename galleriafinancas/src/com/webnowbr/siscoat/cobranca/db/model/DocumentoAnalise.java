@@ -64,14 +64,36 @@ public class DocumentoAnalise implements Serializable {
 	private String tipoProcesso;
 	private String retornoProcesso;
 	private String retornoPpe;
+	private String retornoLaudoRobo;
 
 	private String retornoScr;
 	private String observacao;
 	private boolean excluido;
 	
 	private List<PlexiConsulta> plexiConsultas = new ArrayList<PlexiConsulta>();
-
 	
+	public List<DocumentoAnaliseResumo> getResumoLaudoRobo() {
+		List<DocumentoAnaliseResumo> laudoRobo = new ArrayList<>();
+		EngineRetornoExecutionResultConsultaCompleta laudo = null;
+		try {
+			laudo = GsonUtil.fromJson(getRetornoLaudoRobo(), EngineRetornoExecutionResultConsultaCompleta.class);
+		} catch (Exception erro) {
+			laudoRobo.add(new DocumentoAnaliseResumo(null, null));
+		}
+		if (laudo == null) {
+			laudoRobo.add(new DocumentoAnaliseResumo("Não disponível", null));
+		} else {
+				if (laudo.getIndicators()== null) {
+					laudoRobo.add(new DocumentoAnaliseResumo("Laudo:", "Não disponível"));
+				} else {
+					String processos = CommonsUtil.stringValue(laudo.getIndicators());
+					laudoRobo.add(new DocumentoAnaliseResumo("Laudo:", processos));
+						}
+			}
+		return laudoRobo;
+	}
+
+
 	public List<DocumentoAnaliseResumo> getResumoProcesso() {
 		List<DocumentoAnaliseResumo> vProcesso = new ArrayList<>();
 		EngineRetornoExecutionResultProcessos processo = null;
@@ -89,36 +111,6 @@ public class DocumentoAnalise implements Serializable {
 					String processos = CommonsUtil.stringValue(processo.getProcessos());
 					vProcesso.add(new DocumentoAnaliseResumo("Processos:", processos));
 						}
-				
-//				if(processo.getClass() == null) {
-//					vProcesso.add(new DocumentoAnaliseResumo("Criminal:", "Não disponível"));
-//				} else {
-//					vProcesso.add(new DocumentoAnaliseResumo("Criminal:", "Não disponível"));
-//				}
-//				
-//				if(processo.getProcessos() == null) {
-//					vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:", "Não disponível"));
-//				} else {
-//					vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:", "Não disponível"));
-//				}
-//				
-//				if(processo.getProcessos() == null) {
-//					vProcesso.add(new DocumentoAnaliseResumo("Execução de título:", "Não disponível"));
-//				} else {
-//					vProcesso.add(new DocumentoAnaliseResumo("Execução de título:", "Não disponível"));
-//				}
-//				
-//				if(processo.getProcessos() == null) {
-//					vProcesso.add(new DocumentoAnaliseResumo("Execução fiscal:", "Não disponível"));
-//				} else {
-//					vProcesso.add(new DocumentoAnaliseResumo("Execução fiscal:", "Não disponível"));
-//				}
-//				
-//				if(processo.getProcessos() == null) {
-//					vProcesso.add(new DocumentoAnaliseResumo("Outros:", "Não disponível"));
-//				} else {
-//					vProcesso.add(new DocumentoAnaliseResumo("Outros:", "Não disponível"));
-//				}
 				
 			}
 		return vProcesso;
@@ -178,7 +170,7 @@ public class DocumentoAnalise implements Serializable {
 				result.add(new DocumentoAnaliseResumo("Numero  de processos:",
 						CommonsUtil.stringValue(processo.getTotal_acoes_judiciais())));
 			}
-			
+
 			if(engine.getConsultaCompleta() == null) {
 				result.add(new DocumentoAnaliseResumo("Pessoa Políticamente exposta:", "Não disponível"));
 			} else {
@@ -576,6 +568,13 @@ public class DocumentoAnalise implements Serializable {
 	public void setRetornoSerasa(String retornoSerasa) {
 		this.retornoSerasa = retornoSerasa;
 	}
+	
+	public String getRetornoLaudoRobo() {
+		return retornoLaudoRobo;
+	}
+	public void SetRetornoLaudoRobo(String retornoLaudoRobo) {
+		this.retornoLaudoRobo = retornoLaudoRobo;
+	}
 
 	public String getCnpjcpf() {
 		return cnpjcpf;
@@ -672,3 +671,13 @@ public class DocumentoAnalise implements Serializable {
 	public void setExcluido(boolean excluido) {
 		this.excluido = excluido;
 	}
+
+	public List<PlexiConsulta> getPlexiConsultas() {
+		return plexiConsultas;
+	}
+
+	public void setPlexiConsultas(List<PlexiConsulta> plexiConsultas) {
+		this.plexiConsultas = plexiConsultas;
+	}
+
+}
