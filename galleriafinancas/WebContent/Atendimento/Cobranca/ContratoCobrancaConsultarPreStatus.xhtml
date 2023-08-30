@@ -117,9 +117,7 @@
 			    	<p:column style="text-align: center;" headerText="Responsável" filterBy="#{contratos.nomeResponsavel}" filterMatchMode="contains" sortBy="#{contratos.nomeResponsavel}">
 			            <h:outputText value="#{contratos.nomeResponsavel}" />
 			        </p:column>
-			        
-
-				        	  
+			 				        	  
 			        <p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.nomePagador}" filterMatchMode="contains" sortBy="#{contratos.nomePagador}">
 			            <h:outputText value="#{contratos.nomePagador}" />
 			        </p:column>	    
@@ -206,8 +204,7 @@
 						
 					<shiro:hasAnyRoles name="ROOT, PROFILE_COMENTARIO_JURIDICO">
 						<p:column style="text-align: center;width: 100px" headerText="Documentos" 
-							rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico'
-					        			or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico - Luvison'}">
+							rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico'}">
 							<p:commandButton value="Documentos"
 								icon="ui-icon-arrowthick-1-s"
 								oncomplete="PF('docsJuridico').show();"
@@ -229,30 +226,13 @@
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" />
 		                </p:commandButton>
 		                
-		                <shiro:hasAnyRoles name="ROOT, PROFILE_COMENTARIO_JURIDICO">  
-			                <p:commandButton value="Enviar..." ajax="true" icon="ui-icon-arrowreturnthick-1-e"
-			               		onclick="PF('enviarLuvison').show();" 
-			               		rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico'}">
-			               		<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
-							</p:commandButton>
-						</shiro:hasAnyRoles>
-						
-						<shiro:hasAnyRoles name="ROOT, PROFILE_COMENTARIO_JURIDICO">  
-			                <p:commandButton value="Enviar Esteira Interna" ajax="true" icon="ui-icon-arrowreturnthick-1-e"
-			               		onclick="PF('enviarEsteiraInterna').show();" 
-			               		rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico - Luvison'}">
-			               		<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
-							</p:commandButton>
-						</shiro:hasAnyRoles>
-		                
-		               	<p:commandButton value="PDF P.A." ajax="false" icon="ui-icon-print" rendered="#{contratos.analiseReprovada == false 
+		               	<p:commandButton value="PDF P.A." ajax="false" icon="ui-icon-print" 
+		               	rendered="#{contratos.analiseReprovada == false 
 			                and contratos.statusLead == 'Completo' 
 			                and contratos.inicioAnalise == true
 							and contratos.cadastroAprovadoValor == 'Aprovado'
 							and contratos.aprovadoComite == false
-							and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Comentario Jurídico'}
-							and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Comentario Jurídico - Luvison'}"
-							
+							and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Comentario Jurídico'}"
 						action="#{contratoCobrancaMB.downloadPreAprovadoPDF(contratos.id)}" >
 						</p:commandButton>			
 						<p:commandButton value="PDF Aprovado" ajax="false" icon="ui-icon-print" rendered="#{contratos.analiseReprovada == false 
@@ -369,7 +349,7 @@
 								<h:outputText value="#{filesJuridico.pages}" />
 								<p:spacer width="10px"/>
 								<p:commandButton value="Abrir"  ajax="false"
-									action="#{contratoCobrancaMB.viewFileJuridico(filesJuridico.name)}"
+									action="#{contratoCobrancaMB.viewFile(filesJuridico)}"
 									immediate="true" icon="ui-icon-search"
 									onclick="target='_blank'" onblur="target='_self'">
 								</p:commandButton>
@@ -389,47 +369,6 @@
 				</p:panel>
 			</p:dialog>
 		</h:form>
-	
-		<p:dialog header="Enviar p/ LUVISON ?" widgetVar="enviarLuvison"
-			resizable="false" style="FONT-SIZE: 10pt;" width="600" closable="false">
-			<h:form>
-				<div align="center">
-					<h:outputText value="Deseja Enviar contrato p/ Luvison?" styleClass="labelBold"  
-						style="width:250px;font-weight:bold;font-size: 18px;" />
-					<h:panelGrid columns="3" style="margin-top:50px">
-						<p:commandButton value="Não" onclick="PF('enviarLuvison').hide();" icon="ui-icon-closethick" >
-							<f:setPropertyActionListener 
-							target="#{contratoCobrancaMB.objetoContratoCobranca}"
-							value="#{null}" />
-						</p:commandButton>
-						<p:spacer width="20" />
-						<p:commandButton value="Sim" ajax="false" icon="ui-icon-check" 
-							action="#{contratoCobrancaMB.enviarContratoEsteiraLuvison(contratos)}">
-						</p:commandButton>
-					</h:panelGrid>
-				</div>
-			</h:form>
-		</p:dialog> 
 		
-		<p:dialog header="Enviar p/ Esteira Interna ?" widgetVar="enviarEsteiraInterna"
-			resizable="false" style="FONT-SIZE: 10pt;" width="600" closable="false">
-			<h:form>
-				<div align="center">
-					<h:outputText value="Deseja Enviar contrato p/ Esteira Interna?" styleClass="labelBold"  
-						style="width:250px;font-weight:bold;font-size: 18px;" />
-					<h:panelGrid columns="3" style="margin-top:50px">
-						<p:commandButton value="Não" onclick="PF('enviarEsteiraInterna').hide();" icon="ui-icon-closethick" >
-							<f:setPropertyActionListener 
-							target="#{contratoCobrancaMB.objetoContratoCobranca}"
-							value="#{null}" />
-						</p:commandButton>
-						<p:spacer width="20" />
-						<p:commandButton value="Sim" ajax="false" icon="ui-icon-check" 
-							action="#{contratoCobrancaMB.enviarContratoEsteiraInterna(contratos)}">
-						</p:commandButton>
-					</h:panelGrid>
-				</div>
-			</h:form>
-		</p:dialog>
 	</ui:define>
 </ui:composition>	        

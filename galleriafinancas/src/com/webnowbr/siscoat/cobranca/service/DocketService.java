@@ -1,6 +1,7 @@
 package com.webnowbr.siscoat.cobranca.service;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,6 +40,7 @@ import com.webnowbr.siscoat.cobranca.db.op.DocketDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.model.docket.DocketRetornoConsulta;
+import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.cobranca.ws.endpoint.ReaWebhookRetorno;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
@@ -817,7 +819,18 @@ public class DocketService {
 	@SuppressWarnings("unused")
 	public void uploadREA(DocumentoAnalise documentoAnalise, User user) { // POST para gerar pedido
 		//FacesContext context = FacesContext.getCurrentInstance();
-		File file = new File(documentoAnalise.getPath());
+		
+		FileService fileService =  new FileService();
+		FileUploaded selectedFile = new FileUploaded();
+		selectedFile.setPath(documentoAnalise.getPath().replace(documentoAnalise.getIdentificacao(), ""));
+		selectedFile.setName( CommonsUtil.removeAcentos( documentoAnalise.getIdentificacao()));
+		
+		InputStream  stream = new ByteArrayInputStream( fileService.abrirDocumentos(selectedFile
+				,documentoAnalise.getContratoCobranca().getNumeroContrato(),
+				user));
+		
+//		File file = new File(documentoAnalise.getPath());
+		
 		String twoHyphens = "--";
 		String boundary = "*****";
 		String crlf = "\r\n";
@@ -849,7 +862,7 @@ public class DocketService {
 
 			multipart.addFormField("urlWebhook", urlWebhook);
 
-			multipart.addFilePart("arquivo", new File(file.getPath()));
+			multipart.addFileInputStream("arquivo", selectedFile.getName(), stream);
 
 			HttpURLConnection myURLConnection = multipart.finish();
 

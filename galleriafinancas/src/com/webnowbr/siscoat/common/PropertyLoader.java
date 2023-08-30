@@ -40,12 +40,26 @@ public final class PropertyLoader {
 	private static final String CONFIGURATION_FILE_NAME_LINUX = "/home/webnowbr/Siscoat/Conf/sysconf.properties";
 
 	/**
+	 * Configuration file name.
+	 */
+	private static final String WEBAAPI_FILE_NAME = "webapiconfig.properties";
+	
+	/**
+	 * Configuration file name. no windows
+	 */
+	private static final String  WEBAAPI_FILE_NAME_WINDOWS = "c:\\siscoat\\conf\\webapiconfig.properties";
+	/**
+	 * Configuration file name. no linux
+	 */
+	private static final String  WEBAAPI_FILE_NAME_LINUX = "/home/webnowbr/Siscoat/Conf/webapiconfig.properties";
+
+	/**
 	 * Project configuration properties loaded from configuration file.
 	 */
 	private static Properties sAdrimsProperties;
 
 	/**
-	 * Flag indicating if the project is runnin gin unit test mode.
+	 * Flag indicating if the project is running gin unit test mode.
 	 */
 	private static boolean sIsUnitTest;
 
@@ -59,6 +73,7 @@ public final class PropertyLoader {
 	 * Private constructor to avoid instantiation.
 	 */
 	private PropertyLoader() {
+		
 	}
 
 	/**
@@ -92,6 +107,22 @@ public final class PropertyLoader {
 					final File file = new File(".");
 					LOG.info(CONFIGURATION_FILE_NAME + " not found on path: " + file.getAbsolutePath());
 				}
+				
+				
+				InputStream inputWebApi = Thread.currentThread().getContextClassLoader().getResourceAsStream(WEBAAPI_FILE_NAME);
+
+				if (CommonsUtil.sistemaWindows() && new File(WEBAAPI_FILE_NAME_WINDOWS).exists()) {
+					inputWebApi = new FileInputStream(WEBAAPI_FILE_NAME_WINDOWS);
+				} else 	if (new File(WEBAAPI_FILE_NAME_LINUX).exists()) {
+					inputWebApi = new FileInputStream(WEBAAPI_FILE_NAME_LINUX);
+				}
+				if (inputWebApi != null) {
+					LOG.info(CONFIGURATION_FILE_NAME + " found in the classpath.");
+					sAdrimsProperties.load(inputWebApi);
+				} else {
+					final File file = new File(".");
+					LOG.info(CONFIGURATION_FILE_NAME + " not found on path: " + file.getAbsolutePath());
+				}				
 			}
 		} catch (IOException ioe) {
 			LOG.error(CONFIGURATION_FILE_NAME + " not found!");

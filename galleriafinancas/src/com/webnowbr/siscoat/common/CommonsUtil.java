@@ -64,7 +64,6 @@ public class CommonsUtil {
 
 	public final static SecretKey CHAVE_WEBHOOK = Keys
 			.hmacShaKeyFor("MukS3mqD2ooKCddDumCGTtiNBVotiMFB".getBytes(StandardCharsets.UTF_8));
-
 	
 	public static Double castAsDouble(Object value) {
 		return value == null ? null : doubleValue(value);

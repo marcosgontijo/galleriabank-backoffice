@@ -136,6 +136,9 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhesObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhesParcial;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFavorecidos;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFinanceiroDiaConsultaDetalhesParcialVO;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFinanceiroDiaConsultaDetalhesVO;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFinancerioDiaConsultaVO;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaParcelasInvestidor;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaStatus;
@@ -177,6 +180,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.cobranca.db.op.SeguradoDAO;
 import com.webnowbr.siscoat.cobranca.db.op.StarkBankBaixaDAO;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
+import com.webnowbr.siscoat.cobranca.service.FileService;
 import com.webnowbr.siscoat.cobranca.service.PajuService;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -219,6 +223,7 @@ public class ContratoCobrancaMB {
 	/** Variavel. */
 	private ContratoCobranca objetoContratoCobranca;
 	private String numeroContratoObjetoContratoCobranca;
+	private List<FileUploaded>  documentoConsultarTodos;
 
 	private boolean updateMode = false;
 	private boolean deleteMode = false;
@@ -286,6 +291,10 @@ public class ContratoCobrancaMB {
 	/************************************************************
 	 * Objetos utilizados pelas LoVs
 	 ***********************************************************/
+	/************************************************************
+	 * Objetos utilizados pelas fileService
+	 ***********************************************************/
+	FileService fileService = new FileService();
 
 	/** Objeto selecionado na LoV - Pagador. */
 	private GruposFavorecidos selectedGrupoFavorecido;
@@ -653,6 +662,9 @@ public class ContratoCobrancaMB {
 
 	@ManagedProperty(value = "#{loginBean}")
 	protected LoginBean loginBean;
+	
+	@ManagedProperty(value = "#{kobanaMB}")
+	protected KobanaMB kobanaMB;
 
 	@ManagedProperty(value = "#{crmmb}")
 	protected CRMMB crmmb;
@@ -740,7 +752,7 @@ public class ContratoCobrancaMB {
 
 	public IuguMB iuguMb = new IuguMB();
 
-	public KobanaMB kobanaMB = new KobanaMB();
+	//public KobanaMB kobanaMB = new KobanaMB();
 
 	private List<FilaInvestidores> listFilaInvestidores;
 	private FilaInvestidores selectedInvestidor;
@@ -763,9 +775,9 @@ public class ContratoCobrancaMB {
 	List<ContratoCobrancaParcelasInvestidor> selectedParcelasInvestidorSA;
 	List<ContratoCobrancaParcelasInvestidor> selectedParcelasInvestidorEnvelope;
 
-	List<ContratoCobranca> contratoCobrancaFinanceiroDia;
+	List<ContratoCobrancaFinancerioDiaConsultaVO> contratoCobrancaFinanceiroDia;
 
-	private List<ContratoCobranca> selectedContratoCobrancaFinanceiroDia;
+	private List<ContratoCobrancaFinancerioDiaConsultaVO> selectedContratoCobrancaFinanceiroDia;
 
 	ContratoCobrancaParcelasInvestidor antecipacao;
 	ContratoCobrancaDetalhes amortizacao;
@@ -3869,11 +3881,6 @@ public class ContratoCobrancaMB {
 					}
 				}
 				
-				if(this.objetoContratoCobranca.isEsteriaComentarioLuvison()
-						&& this.objetoContratoCobranca.isComentarioJuridicoInterno()) {
-					this.objetoContratoCobranca.setEsteriaComentarioLuvison(false);
-				}
-
 				updateCheckList();
 				this.objetoContratoCobranca.populaStatusEsteira(getUsuarioLogadoNull());
 				contratoCobrancaDao.merge(this.objetoContratoCobranca);
@@ -5630,26 +5637,6 @@ public class ContratoCobrancaMB {
 						""));
 		return geraConsultaContratosPorStatus("Análise Aprovada");
 	}
-	
-	public String enviarContratoEsteiraLuvison(ContratoCobranca contrato) {
-		
-		this.objetoContratoCobranca = getContratoById(objetoContratoCobranca.getId());
-		this.objetoContratoCobranca.setEsteriaComentarioLuvison(true);
-		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		contratoCobrancaDao.merge(objetoContratoCobranca);
-		return
-		geraConsultaContratosPorStatus("Comentario Jurídico");
-	}
-	
-	public String enviarContratoEsteiraInterna(ContratoCobranca contrato) {
-		
-		this.objetoContratoCobranca = getContratoById(objetoContratoCobranca.getId());
-		this.objetoContratoCobranca.setEsteriaComentarioLuvison(false);
-		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		contratoCobrancaDao.merge(objetoContratoCobranca);
-		return
-		geraConsultaContratosPorStatus("Comentario Luvison");
-	}
 
 	public void clearEnviarLeadParaComercial() {
 		ResponsavelDao rdao = new ResponsavelDao();
@@ -6943,6 +6930,7 @@ public class ContratoCobrancaMB {
 			dataHoje.set(Calendar.MINUTE, 0);
 			dataHoje.set(Calendar.SECOND, 0);
 			dataHoje.set(Calendar.MILLISECOND, 0);
+			ccd.setContrato(objetoContratoCobranca);
 
 			if (dataVencimentoParcela.getTime().before(dataHoje.getTime()) && !ccd.isParcelaPaga()) {
 				ccd.setParcelaVencida(true);
@@ -6967,6 +6955,8 @@ public class ContratoCobrancaMB {
 		filesJuridico = listaArquivosJuridico();
 		filesComite = listaArquivosComite();
 		filesPagar = listaArquivosPagar();
+		
+		kobanaMB.clearFieldsParcelasBoleto();
 
 		return "/Atendimento/Cobranca/ContratoCobrancaDetalhes.xhtml";
 	}
@@ -9090,13 +9080,9 @@ public class ContratoCobrancaMB {
 		} else if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Comentario Jurídico")) {
 			if (usuarioLogado.isProfileComentarioJuridico() || usuarioLogado.isAdministrador()) {
 				return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatus.xhtml";
-			} else if(usuarioLogado.isProfilePajuLuvison()){
-				return "/Atendimento/Cobranca/ContratoCobrancaComentarioJuridicoExterno.xhtml";
 			} else { 
 				return "/Atendimento/Cobranca/ContratoCobrancaDetalhesPendentePorStatus.xhtml";
 			}
-		} else if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Comentario Jurídico - Luvison")) {
-			return "/Atendimento/Cobranca/ContratoCobrancaComentarioJuridicoExterno.xhtml";
 		} else if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Comite")) {
 			return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusComite.xhtml";
 		} else if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Pagamento Op.")) {
@@ -9372,7 +9358,7 @@ public class ContratoCobrancaMB {
 						&& this.objetoContratoCobranca.isDocumentosCompletos()
 						&& this.objetoContratoCobranca.isCcbPronta()
 						&& this.objetoContratoCobranca.isContratoConferido()
-						&& this.objetoContratoCobranca.isAgAssinatura()) {
+						&& (this.objetoContratoCobranca.isAgAssinatura() || (this.objetoContratoCobranca.isReanalise()))) {
 					this.indexStepsStatusContrato = 11;
 				}
 
@@ -9429,7 +9415,7 @@ public class ContratoCobrancaMB {
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 
 		contrato = cDao.findById(idContrato);
-
+		this.documentoConsultarTodos = new ArrayList<FileUploaded>();
 		return contrato;
 	}
 
@@ -12359,12 +12345,12 @@ public class ContratoCobrancaMB {
 		this.consideraDataCorteRelatorioDia = false;
 
 		this.contratoGerado = false;
-		this.contratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
+		this.contratoCobrancaFinanceiroDia = new ArrayList<>();
 
 		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
 		this.selectedContratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
 
-		this.selectedContratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
+		this.selectedContratoCobrancaFinanceiroDia = new ArrayList<>();
 
 		this.tipoContratoCobrancaFinanceiroDia = tipoContratoCobrancaFinanceiroDia;
 
@@ -12374,12 +12360,12 @@ public class ContratoCobrancaMB {
 	public String clearFieldsRelFinanceiroDiaCompleto() {
 		this.relDataContratoInicio = gerarDataHoje();
 		this.contratoGerado = false;
-		this.contratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
+		this.contratoCobrancaFinanceiroDia = new ArrayList<>();
 
 		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
 		this.selectedContratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
 
-		this.selectedContratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
+		this.selectedContratoCobrancaFinanceiroDia = new ArrayList<>();
 
 		this.tipoContratoCobrancaFinanceiroDia = tipoContratoCobrancaFinanceiroDia;
 
@@ -12389,12 +12375,12 @@ public class ContratoCobrancaMB {
 	public String clearFieldsRelFinanceiroDiaEspelhamento(String tipoContratoCobrancaFinanceiroDia) {
 		this.relDataContratoInicio = gerarDataHoje();
 		this.contratoGerado = false;
-		this.contratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
+		this.contratoCobrancaFinanceiroDia = new ArrayList<>();
 
 		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
 		this.selectedContratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
 
-		this.selectedContratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
+		this.selectedContratoCobrancaFinanceiroDia = new ArrayList<>();
 
 		this.tipoContratoCobrancaFinanceiroDia = tipoContratoCobrancaFinanceiroDia;
 
@@ -12404,12 +12390,12 @@ public class ContratoCobrancaMB {
 	public String clearFieldsRelFinanceiroFIDCMigracao() {
 		this.relDataContratoInicio = gerarDataHoje();
 		this.contratoGerado = false;
-		this.contratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
+		this.contratoCobrancaFinanceiroDia = new ArrayList<>();
 
 		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
 		this.selectedContratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
 
-		this.selectedContratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
+		this.selectedContratoCobrancaFinanceiroDia = new ArrayList<>();
 
 		return "/Atendimento/Cobranca/ContratoCobrancaFinanceiroFIDCMigracao.xhtml";
 	}
@@ -13322,7 +13308,7 @@ public class ContratoCobrancaMB {
 							&& c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
 							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isDocumentosCompletos()
 							&& c.isCertificadoEmitido() && c.isCcbPronta() && c.isContratoConferido()
-							&& !c.isAgAssinatura() && c.isAgEnvioCartorio()) {
+							&& !c.isAgAssinatura() && !c.isReanalise() && c.isAgEnvioCartorio()) {
 						c.setStatus("Ag. Envio Cartório");
 					}
 
@@ -13447,9 +13433,6 @@ public class ContratoCobrancaMB {
 		if (status.equals("Comentario Jurídico")) {
 			this.tituloTelaConsultaPreStatus = "Comentario Jurídico";
 		}
-		if (status.equals("Comentario Luvison")) {
-			this.tituloTelaConsultaPreStatus = "Comentario Jurídico - Luvison";
-		}
 		if (status.equals("Pré-Comite")) {
 			this.tituloTelaConsultaPreStatus = "Pré-Comite";
 		}
@@ -13496,16 +13479,9 @@ public class ContratoCobrancaMB {
 		Date auxDataHoje = dataHoje.getTime();
 		
 		User user = getUsuarioLogado();
-
-		/*if (CommonsUtil.mesmoValor(status, "Comentario Jurídico")
-				&& !CommonsUtil.semValor(user)
-				&& user.getId() > 0
-				&& user.isProfilePajuLuvison()) {
-			status = "Comentario Luvison";
-			this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, status);
-		} else {*/
+		
 		this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, status);
-		//}
+		
 
 		if (status.equals("Análise Reprovada")) {
 			for (ContratoCobranca contratos : this.contratosPendentes) {
@@ -14147,7 +14123,7 @@ public class ContratoCobrancaMB {
 
 	public void geraRelFinanceiroDiaEspelhamento() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		this.contratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
+		this.contratoCobrancaFinanceiroDia = new ArrayList<>();
 
 		this.contratoCobrancaFinanceiroDia = contratoCobrancaDao
 				.relatorioFinanceiroDia(this.tipoContratoCobrancaFinanceiroDia);
@@ -14170,9 +14146,9 @@ public class ContratoCobrancaMB {
 		// onRowEdit - nova data
 		rowEditNewDate = auxDataPagamento;
 
-		List<ContratoCobranca> listContratos = new ArrayList<ContratoCobranca>();
+		List<ContratoCobrancaFinancerioDiaConsultaVO> listContratos = new ArrayList<ContratoCobrancaFinancerioDiaConsultaVO>();
 
-		for (ContratoCobranca contratos : this.contratoCobrancaFinanceiroDia) {
+		for (ContratoCobrancaFinancerioDiaConsultaVO contratos : this.contratoCobrancaFinanceiroDia) {
 
 			int countParcelas = 0;
 			BigDecimal somaAmortizacoes = BigDecimal.ZERO;
@@ -14181,7 +14157,7 @@ public class ContratoCobrancaMB {
 
 			if (!CommonsUtil.semValor(contratos.getValorCCB())) {
 				if (contratos.getListContratoCobrancaDetalhes().size() > 0) {
-					if (contratos.getPagador().getCpf() != null) {
+					if (contratos.getPagador_cpf() != null) {
 						simuladorMB.setTipoPessoa("PF");
 					} else {
 						simuladorMB.setTipoPessoa("PJ");
@@ -14208,7 +14184,7 @@ public class ContratoCobrancaMB {
 				}
 			}
 
-			for (ContratoCobrancaDetalhes ccd : contratos.getListContratoCobrancaDetalhes()) {
+			for (ContratoCobrancaFinanceiroDiaConsultaDetalhesVO ccd : contratos.getListContratoCobrancaDetalhes()) {
 
 				if (ccd.isAmortizacao()) {
 					somaAmortizacoes.add(ccd.getVlrParcela());
@@ -14275,7 +14251,7 @@ public class ContratoCobrancaMB {
 
 				BigDecimal somaBaixas = BigDecimal.ZERO;
 
-				for (ContratoCobrancaDetalhesParcial cBaixas : ccd.getListContratoCobrancaDetalhesParcial()) {
+				for (ContratoCobrancaFinanceiroDiaConsultaDetalhesParcialVO cBaixas : ccd.getListContratoCobrancaDetalhesParcial()) {
 					ccd.setDataUltimoPagamento(cBaixas.getDataPagamento());
 
 					if (cBaixas.getVlrRecebido() != null) {
@@ -14319,7 +14295,7 @@ public class ContratoCobrancaMB {
 		this.contratoCobrancaFinanceiroDia = listContratos;
 
 		if (this.contratoCobrancaFinanceiroDia.size() == 0) {
-			this.contratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
+			this.contratoCobrancaFinanceiroDia = new ArrayList<>();
 		}
 
 		this.contratoGerado = false;
@@ -14327,12 +14303,12 @@ public class ContratoCobrancaMB {
 
 	public void geraRelFinanceiroDiaCompleto() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		this.contratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
+		this.contratoCobrancaFinanceiroDia = new ArrayList<>();
 
 		this.contratoCobrancaFinanceiroDia = contratoCobrancaDao.relatorioFinanceiroDiaCompleto();
 
 		if (this.contratoCobrancaFinanceiroDia.size() == 0) {
-			this.contratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
+			this.contratoCobrancaFinanceiroDia = new ArrayList<>();
 		}
 
 		this.contratoGerado = false;
@@ -14340,7 +14316,7 @@ public class ContratoCobrancaMB {
 
 	public void geraRelFinanceiroDia() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		this.contratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
+		this.contratoCobrancaFinanceiroDia = new ArrayList<>();
 
 		this.contratoCobrancaFinanceiroDia = contratoCobrancaDao
 				.relatorioFinanceiroDia(this.tipoContratoCobrancaFinanceiroDia);
@@ -14363,9 +14339,9 @@ public class ContratoCobrancaMB {
 		// onRowEdit - nova data
 		rowEditNewDate = auxDataPagamento;
 
-		List<ContratoCobranca> listContratos = new ArrayList<ContratoCobranca>();
+		List<ContratoCobrancaFinancerioDiaConsultaVO> listContratos = new ArrayList<>();
 
-		for (ContratoCobranca contratos : this.contratoCobrancaFinanceiroDia) {
+		for (ContratoCobrancaFinancerioDiaConsultaVO contratos : this.contratoCobrancaFinanceiroDia) {
 
 			int countParcelas = 0;
 			BigDecimal somaAmortizacoes = BigDecimal.ZERO;
@@ -14374,7 +14350,7 @@ public class ContratoCobrancaMB {
 
 			if (!CommonsUtil.semValor(contratos.getValorCCB())) {
 				if (contratos.getListContratoCobrancaDetalhes().size() > 0) {
-					if (contratos.getPagador().getCpf() != null) {
+					if (contratos.getPagador_cpf() != null) {
 						simuladorMB.setTipoPessoa("PF");
 					} else {
 						simuladorMB.setTipoPessoa("PJ");
@@ -14404,7 +14380,7 @@ public class ContratoCobrancaMB {
 			// calcula coluna valor atualizado
 			ContratoCobrancaUtilsMB contratoCobrancaUtilsMB;
 
-			for (ContratoCobrancaDetalhes ccd : contratos.getListContratoCobrancaDetalhes()) {
+			for (ContratoCobrancaFinanceiroDiaConsultaDetalhesVO ccd : contratos.getListContratoCobrancaDetalhes()) {
 
 				if (ccd.isAmortizacao()) {
 					somaAmortizacoes.add(ccd.getVlrParcela());
@@ -14468,7 +14444,7 @@ public class ContratoCobrancaMB {
 
 				BigDecimal somaBaixas = BigDecimal.ZERO;
 
-				for (ContratoCobrancaDetalhesParcial cBaixas : ccd.getListContratoCobrancaDetalhesParcial()) {
+				for (ContratoCobrancaFinanceiroDiaConsultaDetalhesParcialVO cBaixas : ccd.getListContratoCobrancaDetalhesParcial()) {
 					if (this.consideraDataCorteRelatorioDia) {
 						if (cBaixas.getDataPagamento().before(this.filtroDataCorteRelatorioDia)) {
 							ccd.setDataUltimoPagamento(cBaixas.getDataPagamento());
@@ -14522,7 +14498,7 @@ public class ContratoCobrancaMB {
 		this.contratoCobrancaFinanceiroDia = listContratos;
 
 		if (this.contratoCobrancaFinanceiroDia.size() == 0) {
-			this.contratoCobrancaFinanceiroDia = new ArrayList<ContratoCobranca>();
+			this.contratoCobrancaFinanceiroDia = new ArrayList<>();
 		}
 
 		this.contratoGerado = false;
@@ -14751,7 +14727,7 @@ public class ContratoCobrancaMB {
 
 		int linhaInicioContrato = 0;
 
-		for (ContratoCobranca record : this.contratoCobrancaFinanceiroDia) {
+		for (ContratoCobrancaFinancerioDiaConsultaVO record : this.contratoCobrancaFinanceiroDia) {
 			countLine++;
 			linhaInicioContrato = countLine;
 			row = sheet.createRow(countLine);
@@ -14910,10 +14886,10 @@ public class ContratoCobrancaMB {
 		this.contratoGerado = true;
 	}
 
-	public void geraXLSFinanceiroDia() throws IOException {
+	public StreamedContent geraXLSFinanceiroDia() throws IOException {
 
 		ParametrosDao pDao = new ParametrosDao();
-		this.pathContrato = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
+		//this.pathContrato = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
 		this.nomeContrato = "Relatório Financeiro Dia.xlsx";
 
 		TimeZone zone = TimeZone.getDefault();
@@ -14927,7 +14903,7 @@ public class ContratoCobrancaMB {
 
 		// dataHoje.add(Calendar.DAY_OF_MONTH, 1);
 
-		String excelFileName = this.pathContrato + this.nomeContrato;// name of excel file
+		//String excelFileName = this.pathContrato + this.nomeContrato;// name of excel file
 
 		String sheetName = "Resultado";// name of sheet
 
@@ -15097,12 +15073,27 @@ public class ContratoCobrancaMB {
 		cell.setCellValue("Data Vencimento");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(18);
-		cell.setCellValue("Valor");
+		cell.setCellValue("Amortização");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(19);
-		cell.setCellValue("Data Pagto.");
+		cell.setCellValue("Juros");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(20);
+		cell.setCellValue("Seguro DFI");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(21);
+		cell.setCellValue("Seguro MIP");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(22);
+		cell.setCellValue("Taxa ADM");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(23);
+		cell.setCellValue("Valor");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(24);
+		cell.setCellValue("Data Pagto.");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(25);
 		cell.setCellValue("Valor Pago");
 		cell.setCellStyle(cell_style);
 
@@ -15159,7 +15150,7 @@ public class ContratoCobrancaMB {
 			this.selectedContratoCobrancaFinanceiroDia = this.contratoCobrancaFinanceiroDia;
 		}
 
-		for (ContratoCobranca record : this.selectedContratoCobrancaFinanceiroDia) {
+		for (ContratoCobrancaFinancerioDiaConsultaVO record : this.selectedContratoCobrancaFinanceiroDia) {
 			countLine++;
 			linhaInicioContrato = countLine;
 			row = sheet.createRow(countLine);
@@ -15181,50 +15172,50 @@ public class ContratoCobrancaMB {
 			// Pagador
 			cell = row.createCell(2);
 			cell.setCellStyle(cell_style);
-			cell.setCellValue(record.getPagador().getNome());
+			cell.setCellValue(record.getPagador_nome());
 
 			// CPF CNPJ
 			cell = row.createCell(3);
 			cell.setCellStyle(cell_style);
-			if (record.getPagador().getCpf() != null && !record.getPagador().getCpf().equals("")) {
-				cell.setCellValue(record.getPagador().getCpf());
+			if (record.getPagador_cpf() != null && !record.getPagador_cpf().equals("")) {
+				cell.setCellValue(record.getPagador_cpf());
 			} else {
-				cell.setCellValue(record.getPagador().getCnpj());
+				cell.setCellValue(record.getPagador_cpf());
 			}
 
 			// Data NAscimento Pagador
 			cell = row.createCell(4);
 			cell.setCellStyle(dateStyle);
-			if (record.getPagador().getDtNascimento() != null) {
-				cell.setCellValue(record.getPagador().getDtNascimento());
+			if (record.getPagador_dtNascimento() != null) {
+				cell.setCellValue(record.getPagador_dtNascimento());
 			}
 
 			// Endereço pagador
 			cell = row.createCell(5);
 			cell.setCellStyle(cell_style);
-			cell.setCellValue(record.getPagador().getEndereco() + ", " + record.getPagador().getNumero() + " - "
-					+ record.getPagador().getCidade() + " / " + record.getPagador().getEstado() + " (CEP: "
-					+ record.getPagador().getCep() + ")");
+			cell.setCellValue(record.getPagador_endereco() + ", " + record.getPagador_numero() + " - "
+					+ record.getPagador_cidade() + " / " + record.getPagador_estado() + " (CEP: "
+					+ record.getPagador_cep() + ")");
 
 			// Nome Conjuge
 			cell = row.createCell(6);
 			cell.setCellStyle(cell_style);
-			if (record.getPagador().getNomeConjuge() != null) {
-				cell.setCellValue(record.getPagador().getNomeConjuge());
+			if (record.getPagador_nomeConjuge() != null) {
+				cell.setCellValue(record.getPagador_nomeConjuge());
 			}
 
 			// CPF Conjuge
 			cell = row.createCell(7);
 			cell.setCellStyle(cell_style);
-			if (record.getPagador().getCpfConjuge() != null) {
-				cell.setCellValue(record.getPagador().getCpfConjuge());
+			if (record.getPagador_cpfConjuge() != null) {
+				cell.setCellValue(record.getPagador_cpfConjuge());
 			}
 
 			// Região Imóvel
 			cell = row.createCell(8);
 			cell.setCellStyle(cell_style);
-			if (record.getImovel().getCidade() != null && record.getImovel().getEstado() != null) {
-				cell.setCellValue(record.getImovel().getCidade() + "/" + record.getImovel().getEstado());
+			if (record.getImovel_cidade() != null && record.getImovel_estado() != null) {
+				cell.setCellValue(record.getImovel_cidade() + "/" + record.getImovel_estado());
 			}
 
 			// Tipo Imovel
@@ -15282,7 +15273,7 @@ public class ContratoCobrancaMB {
 			}
 
 			int parcelaCount = 0;
-			for (ContratoCobrancaDetalhes parcelas : record.getListContratoCobrancaDetalhes()) {
+			for (ContratoCobrancaFinanceiroDiaConsultaDetalhesVO parcelas : record.getListContratoCobrancaDetalhes()) {
 				if (parcelaCount > 0) {
 					countLine++;
 					row = sheet.createRow(countLine);
@@ -15306,50 +15297,50 @@ public class ContratoCobrancaMB {
 				// Pagador
 				cell = row.createCell(2);
 				cell.setCellStyle(cell_style);
-				cell.setCellValue(record.getPagador().getNome());
+				cell.setCellValue(record.getPagador_nome());
 
 				// CPF CNPJ
 				cell = row.createCell(3);
 				cell.setCellStyle(cell_style);
-				if (record.getPagador().getCpf() != null && !record.getPagador().getCpf().equals("")) {
-					cell.setCellValue(record.getPagador().getCpf());
+				if (record.getPagador_cpf() != null && !record.getPagador_cpf().equals("")) {
+					cell.setCellValue(record.getPagador_cpf());
 				} else {
-					cell.setCellValue(record.getPagador().getCnpj());
+					cell.setCellValue(record.getPagador_cnpj());
 				}
 
 				// Data NAscimento Pagador
 				cell = row.createCell(4);
 				cell.setCellStyle(dateStyle);
-				if (record.getPagador().getDtNascimento() != null) {
-					cell.setCellValue(record.getPagador().getDtNascimento());
+				if (record.getPagador_dtNascimento() != null) {
+					cell.setCellValue(record.getPagador_dtNascimento());
 				}
 
 				// Endereço pagador
 				cell = row.createCell(5);
 				cell.setCellStyle(cell_style);
-				cell.setCellValue(record.getPagador().getEndereco() + ", " + record.getPagador().getNumero() + " - "
-						+ record.getPagador().getCidade() + " / " + record.getPagador().getEstado() + " (CEP: "
-						+ record.getPagador().getCep() + ")");
+				cell.setCellValue(record.getPagador_endereco() + ", " + record.getPagador_numero() + " - "
+						+ record.getPagador_cidade() + " / " + record.getPagador_estado() + " (CEP: "
+						+ record.getPagador_cep() + ")");
 
 				// Nome Conjuge
 				cell = row.createCell(6);
 				cell.setCellStyle(cell_style);
-				if (record.getPagador().getNomeConjuge() != null) {
-					cell.setCellValue(record.getPagador().getNomeConjuge());
+				if (record.getPagador_nomeConjuge() != null) {
+					cell.setCellValue(record.getPagador_nomeConjuge());
 				}
 
 				// CPF Conjuge
 				cell = row.createCell(7);
 				cell.setCellStyle(cell_style);
-				if (record.getPagador().getCpfConjuge() != null) {
-					cell.setCellValue(record.getPagador().getCpfConjuge());
+				if (record.getPagador_cpfConjuge() != null) {
+					cell.setCellValue(record.getPagador_cpfConjuge());
 				}
 
 				// Região Imóvel
 				cell = row.createCell(8);
 				cell.setCellStyle(cell_style);
-				if (record.getImovel().getCidade() != null && record.getImovel().getEstado() != null) {
-					cell.setCellValue(record.getImovel().getCidade() + "/" + record.getImovel().getEstado());
+				if (record.getImovel_cidade() != null && record.getImovel_estado() != null) {
+					cell.setCellValue(record.getImovel_cidade() + "/" + record.getImovel_estado());
 				}
 
 				// Tipo Imovel
@@ -15400,7 +15391,7 @@ public class ContratoCobrancaMB {
 				// CET
 				cell = row.createCell(14);
 				cell.setCellStyle(numberStyle);
-				if (record.getTxJurosParcelas() != null) {
+				if (record.getCetMes() != null) {
 					cell.setCellValue(((BigDecimal) record.getCetMes()).doubleValue());
 				} else {
 					cell.setCellValue(Double.valueOf("0"));
@@ -15424,34 +15415,66 @@ public class ContratoCobrancaMB {
 
 				// Parcela
 				cell = row.createCell(16);
-				/*
-				 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_String); }
-				 * else { if (parcelas.isParcelaVencida()) {
-				 * cell.setCellStyle(cell_style_vencida_String); } else {
-				 * cell.setCellStyle(cell_style); } }
-				 */
 				cell.setCellStyle(cell_style);
 				cell.setCellValue(parcelas.getNumeroParcela());
 
 				// Data Vencimento
 				cell = row.createCell(17);
-				/*
-				 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_Date); }
-				 * else { if (parcelas.isParcelaVencida()) {
-				 * cell.setCellStyle(cell_style_vencida_Date); } else {
-				 * cell.setCellStyle(dateStyle); } }
-				 */
 				cell.setCellStyle(dateStyle);
 				cell.setCellValue(parcelas.getDataVencimento());
+				
+				// Amortização
+				cell = row.createCell(18);
+				cell.setCellStyle(numericStyle);
+				cell.setCellType(CellType.NUMERIC);
+				if (parcelas.getVlrAmortizacaoParcela() != null) {
+					cell.setCellValue(((BigDecimal) parcelas.getVlrAmortizacaoParcela()).doubleValue());
+				} else {
+					cell.setCellValue(Double.valueOf("0"));
+				}
+				
+				// Juros
+				cell = row.createCell(19);
+				cell.setCellStyle(numericStyle);
+				cell.setCellType(CellType.NUMERIC);
+				if (parcelas.getVlrJurosParcela() != null) {
+					cell.setCellValue(((BigDecimal) parcelas.getVlrJurosParcela()).doubleValue());
+				} else {
+					cell.setCellValue(Double.valueOf("0"));
+				}
+				
+				// DFI
+				cell = row.createCell(20);
+				cell.setCellStyle(numericStyle);
+				cell.setCellType(CellType.NUMERIC);
+				if (parcelas.getVlrSeguroDFI() != null) {
+					cell.setCellValue(((BigDecimal) parcelas.getVlrSeguroDFI()).doubleValue());
+				} else {
+					cell.setCellValue(Double.valueOf("0"));
+				}
+				
+				// MIP
+				cell = row.createCell(21);
+				cell.setCellStyle(numericStyle);
+				cell.setCellType(CellType.NUMERIC);
+				if (parcelas.getVlrSeguroMIP() != null) {
+					cell.setCellValue(((BigDecimal) parcelas.getVlrSeguroMIP()).doubleValue());
+				} else {
+					cell.setCellValue(Double.valueOf("0"));
+				}
+				
+				// Taxa ADM
+				cell = row.createCell(22);
+				cell.setCellStyle(numericStyle);
+				cell.setCellType(CellType.NUMERIC);
+				if (parcelas.getVlrTaxaADM() != null) {
+					cell.setCellValue(((BigDecimal) parcelas.getVlrTaxaADM()).doubleValue());
+				} else {
+					cell.setCellValue(Double.valueOf("0"));
+				}
 
 				// Valor Parcela
-				cell = row.createCell(18);
-				/*
-				 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_Number); }
-				 * else { if (parcelas.isParcelaVencida()) {
-				 * cell.setCellStyle(cell_style_vencida_Number); } else {
-				 * cell.setCellStyle(numericStyle); } }
-				 */
+				cell = row.createCell(23);
 				cell.setCellStyle(numericStyle);
 				cell.setCellType(CellType.NUMERIC);
 				if (parcelas.getVlrParcela() != null) {
@@ -15461,24 +15484,12 @@ public class ContratoCobrancaMB {
 				}
 
 				// Data pagto
-				cell = row.createCell(19);
-				/*
-				 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_Date); }
-				 * else { if (parcelas.isParcelaVencida()) {
-				 * cell.setCellStyle(cell_style_vencida_Date); } else {
-				 * cell.setCellStyle(dateStyle); } }
-				 */
+				cell = row.createCell(24);
 				cell.setCellStyle(dateStyle);
 				cell.setCellValue(parcelas.getDataUltimoPagamento());
 
 				// Valor Pago
-				cell = row.createCell(20);
-				/*
-				 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_Number); }
-				 * else { if (parcelas.isParcelaVencida()) {
-				 * cell.setCellStyle(cell_style_vencida_Number); } else {
-				 * cell.setCellStyle(numericStyle); } }
-				 */
+				cell = row.createCell(25);
 				cell.setCellStyle(numericStyle);
 				cell.setCellType(CellType.NUMERIC);
 				if (parcelas.getValorTotalPagamento() != null) {
@@ -15552,6 +15563,16 @@ public class ContratoCobrancaMB {
 			cell.setCellStyle(cell_style);
 			cell = row.createCell(20);
 			cell.setCellStyle(cell_style);
+			cell = row.createCell(21);
+			cell.setCellStyle(cell_style);
+			cell = row.createCell(22);
+			cell.setCellStyle(cell_style);
+			cell = row.createCell(23);
+			cell.setCellStyle(cell_style);
+			cell = row.createCell(24);
+			cell.setCellStyle(cell_style);
+			cell = row.createCell(25);
+			cell.setCellStyle(cell_style);
 
 			// Style para cabeçalho
 			XSSFCellStyle cell_style_pago = wb.createCellStyle();
@@ -15601,40 +15622,24 @@ public class ContratoCobrancaMB {
 			cell_style_bx_parcial.setWrapText(true);
 			cell_style_bx_parcial.setFillForegroundColor(IndexedColors.ORANGE.getIndex());
 			cell_style_bx_parcial.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-			/*
-			 * if (record.isParcelaPaga()) { cell.setCellStyle(cell_style_pago);
-			 * cell.setCellValue("Pago"); } else { ContratoCobrancaDetalhesDao ccdDao = new
-			 * ContratoCobrancaDetalhesDao(); ContratoCobrancaDetalhes ccd =
-			 * ccdDao.findById(record.getIdParcela());
-			 * 
-			 * Calendar dataParcela = Calendar.getInstance(zone, locale);
-			 * dataParcela.setTime(ccd.getDataVencimentoAtual());
-			 * dataHoje.set(Calendar.HOUR_OF_DAY, 0); dataHoje.set(Calendar.MINUTE, 0);
-			 * dataHoje.set(Calendar.SECOND, 0); dataHoje.set(Calendar.MILLISECOND, 0);
-			 * 
-			 * if (dataParcela.before(dataHoje)) { cell.setCellStyle(cell_style_atraso);
-			 * cell.setCellValue("Em atraso"); } else { if
-			 * (ccd.getListContratoCobrancaDetalhesParcial().size() > 0) {
-			 * cell.setCellStyle(cell_style_bx_parcial);
-			 * cell.setCellValue("Baixado parcialmente"); } else {
-			 * cell.setCellStyle(cell_style_aberto); cell.setCellValue("Em aberto"); } } }
-			 */
+			
 		}
 
-		// Resize columns to fit data
-		// TODO MIGRACAO POI
-		/*
-		 * int noOfColumns = sheet.getRow(0).getLastCellNum(); for (int i = 0; i <
-		 * noOfColumns; i++) { sheet.autoSizeColumn(i); }
-		 */
-		FileOutputStream fileOut = new FileOutputStream(excelFileName);
+		/*FileOutputStream fileOut = new FileOutputStream(excelFileName);
 
-		// write this workbook to an Outputstream.
 		wb.write(fileOut);
 		fileOut.flush();
-		fileOut.close();
+		fileOut.close();*/
 
-		this.contratoGerado = true;
+		this.contratoGerado = true;		
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		wb.write(out);
+		wb.close();	
+		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(FacesContext.getCurrentInstance());
+		gerador.open(nomeContrato);
+		gerador.feed(new ByteArrayInputStream(out.toByteArray()));
+		gerador.close();
+		return null;
 	}
 
 	public void geraXLSFinanceiroDiaEspelhamento() throws IOException {
@@ -15885,7 +15890,7 @@ public class ContratoCobrancaMB {
 			this.selectedContratoCobrancaFinanceiroDia = this.contratoCobrancaFinanceiroDia;
 		}
 
-		for (ContratoCobranca record : this.selectedContratoCobrancaFinanceiroDia) {
+		for (ContratoCobrancaFinancerioDiaConsultaVO record : this.selectedContratoCobrancaFinanceiroDia) {
 			countLine++;
 			linhaInicioContrato = countLine;
 			row = sheet.createRow(countLine);
@@ -15907,50 +15912,50 @@ public class ContratoCobrancaMB {
 			// Pagador
 			cell = row.createCell(2);
 			cell.setCellStyle(cell_style);
-			cell.setCellValue(record.getPagador().getNome());
+			cell.setCellValue(record.getNomePagador());
 
 			// CPF CNPJ
 			cell = row.createCell(3);
 			cell.setCellStyle(cell_style);
-			if (record.getPagador().getCpf() != null && !record.getPagador().getCpf().equals("")) {
-				cell.setCellValue(record.getPagador().getCpf());
+			if (record.getPagador_cpf() != null && !record.getPagador_cpf().equals("")) {
+				cell.setCellValue(record.getPagador_cpf());
 			} else {
-				cell.setCellValue(record.getPagador().getCnpj());
+				cell.setCellValue(record.getPagador_cnpj());
 			}
 
 			// Data NAscimento Pagador
 			cell = row.createCell(4);
 			cell.setCellStyle(dateStyle);
-			if (record.getPagador().getDtNascimento() != null) {
-				cell.setCellValue(record.getPagador().getDtNascimento());
+			if (record.getPagador_dtNascimento() != null) {
+				cell.setCellValue(record.getPagador_dtNascimento());
 			}
 
 			// Endereço pagador
 			cell = row.createCell(5);
 			cell.setCellStyle(cell_style);
-			cell.setCellValue(record.getPagador().getEndereco() + ", " + record.getPagador().getNumero() + " - "
-					+ record.getPagador().getCidade() + " / " + record.getPagador().getEstado() + " (CEP: "
-					+ record.getPagador().getCep() + ")");
+			cell.setCellValue(record.getPagador_endereco() + ", " + record.getPagador_numero() + " - "
+					+ record.getPagador_cidade() + " / " + record.getPagador_estado() + " (CEP: "
+					+ record.getPagador_cep() + ")");
 
 			// Nome Conjuge
 			cell = row.createCell(6);
 			cell.setCellStyle(cell_style);
-			if (record.getPagador().getNomeConjuge() != null) {
-				cell.setCellValue(record.getPagador().getNomeConjuge());
+			if (record.getPagador_nomeConjuge() != null) {
+				cell.setCellValue(record.getPagador_nomeConjuge());
 			}
 
 			// CPF Conjuge
 			cell = row.createCell(7);
 			cell.setCellStyle(cell_style);
-			if (record.getPagador().getCpfConjuge() != null) {
-				cell.setCellValue(record.getPagador().getCpfConjuge());
+			if (record.getPagador_cpfConjuge() != null) {
+				cell.setCellValue(record.getPagador_cpfConjuge());
 			}
 
 			// Região Imóvel
 			cell = row.createCell(8);
 			cell.setCellStyle(cell_style);
-			if (record.getImovel().getCidade() != null && record.getImovel().getEstado() != null) {
-				cell.setCellValue(record.getImovel().getCidade() + "/" + record.getImovel().getEstado());
+			if (record.getImovel_cidade() != null && record.getImovel_estado() != null) {
+				cell.setCellValue(record.getImovel_cidade() + "/" + record.getImovel_estado());
 			}
 
 			// Tipo Imovel
@@ -16011,7 +16016,7 @@ public class ContratoCobrancaMB {
 
 			int baixaLinhaInicio = 0;
 
-			for (ContratoCobrancaDetalhes parcelas : record.getListContratoCobrancaDetalhes()) {
+			for (ContratoCobrancaFinanceiroDiaConsultaDetalhesVO parcelas : record.getListContratoCobrancaDetalhes()) {
 				if (parcelaCount > 0) {
 					countLine++;
 					row = sheet.createRow(countLine);
@@ -16035,50 +16040,50 @@ public class ContratoCobrancaMB {
 				// Pagador
 				cell = row.createCell(2);
 				cell.setCellStyle(cell_style);
-				cell.setCellValue(record.getPagador().getNome());
+				cell.setCellValue(record.getPagador_nome());
 
 				// CPF CNPJ
 				cell = row.createCell(3);
 				cell.setCellStyle(cell_style);
-				if (record.getPagador().getCpf() != null && !record.getPagador().getCpf().equals("")) {
-					cell.setCellValue(record.getPagador().getCpf());
+				if (record.getPagador_cpf() != null && !record.getPagador_cpf().equals("")) {
+					cell.setCellValue(record.getPagador_cpf());
 				} else {
-					cell.setCellValue(record.getPagador().getCnpj());
+					cell.setCellValue(record.getPagador_cnpj());
 				}
 
 				// Data NAscimento Pagador
 				cell = row.createCell(4);
 				cell.setCellStyle(dateStyle);
-				if (record.getPagador().getDtNascimento() != null) {
-					cell.setCellValue(record.getPagador().getDtNascimento());
+				if (record.getPagador_dtNascimento() != null) {
+					cell.setCellValue(record.getPagador_dtNascimento());
 				}
 
 				// Endereço pagador
 				cell = row.createCell(5);
 				cell.setCellStyle(cell_style);
-				cell.setCellValue(record.getPagador().getEndereco() + ", " + record.getPagador().getNumero() + " - "
-						+ record.getPagador().getCidade() + " / " + record.getPagador().getEstado() + " (CEP: "
-						+ record.getPagador().getCep() + ")");
+				cell.setCellValue(record.getPagador_endereco() + ", " + record.getPagador_numero() + " - "
+						+ record.getPagador_cidade() + " / " + record.getPagador_estado() + " (CEP: "
+						+ record.getPagador_cep() + ")");
 
 				// Nome Conjuge
 				cell = row.createCell(6);
 				cell.setCellStyle(cell_style);
-				if (record.getPagador().getNomeConjuge() != null) {
-					cell.setCellValue(record.getPagador().getNomeConjuge());
+				if (record.getPagador_nomeConjuge() != null) {
+					cell.setCellValue(record.getPagador_nomeConjuge());
 				}
 
 				// CPF Conjuge
 				cell = row.createCell(7);
 				cell.setCellStyle(cell_style);
-				if (record.getPagador().getCpfConjuge() != null) {
-					cell.setCellValue(record.getPagador().getCpfConjuge());
+				if (record.getPagador_cpfConjuge() != null) {
+					cell.setCellValue(record.getPagador_cpfConjuge());
 				}
 
 				// Região Imóvel
 				cell = row.createCell(8);
 				cell.setCellStyle(cell_style);
-				if (record.getImovel().getCidade() != null && record.getImovel().getEstado() != null) {
-					cell.setCellValue(record.getImovel().getCidade() + "/" + record.getImovel().getEstado());
+				if (record.getImovel_cidade() != null && record.getImovel_estado() != null) {
+					cell.setCellValue(record.getImovel_cidade() + "/" + record.getImovel_estado());
 				}
 
 				// Tipo Imovel
@@ -16193,7 +16198,7 @@ public class ContratoCobrancaMB {
 				int baixaCount = 0;
 
 				if (parcelas.getListContratoCobrancaDetalhesParcial().size() > 0) {
-					for (ContratoCobrancaDetalhesParcial baixa : parcelas.getListContratoCobrancaDetalhesParcial()) {
+					for (ContratoCobrancaFinanceiroDiaConsultaDetalhesParcialVO baixa : parcelas.getListContratoCobrancaDetalhesParcial()) {
 						if (baixaCount > 0) {
 							countLine++;
 							row = sheet.createRow(countLine);
@@ -16217,50 +16222,50 @@ public class ContratoCobrancaMB {
 						// Pagador
 						cell = row.createCell(2);
 						cell.setCellStyle(cell_style);
-						cell.setCellValue(record.getPagador().getNome());
+						cell.setCellValue(record.getPagador_nome());
 
 						// CPF CNPJ
 						cell = row.createCell(3);
 						cell.setCellStyle(cell_style);
-						if (record.getPagador().getCpf() != null && !record.getPagador().getCpf().equals("")) {
-							cell.setCellValue(record.getPagador().getCpf());
+						if (record.getPagador_cpf() != null && !record.getPagador_cpf().equals("")) {
+							cell.setCellValue(record.getPagador_cpf());
 						} else {
-							cell.setCellValue(record.getPagador().getCnpj());
+							cell.setCellValue(record.getPagador_cnpj());
 						}
 
 						// Data NAscimento Pagador
 						cell = row.createCell(4);
 						cell.setCellStyle(dateStyle);
-						if (record.getPagador().getDtNascimento() != null) {
-							cell.setCellValue(record.getPagador().getDtNascimento());
+						if (record.getPagador_dtNascimento() != null) {
+							cell.setCellValue(record.getPagador_dtNascimento());
 						}
 
 						// Endereço pagador
 						cell = row.createCell(5);
 						cell.setCellStyle(cell_style);
-						cell.setCellValue(record.getPagador().getEndereco() + ", " + record.getPagador().getNumero()
-								+ " - " + record.getPagador().getCidade() + " / " + record.getPagador().getEstado()
-								+ " (CEP: " + record.getPagador().getCep() + ")");
+						cell.setCellValue(record.getPagador_endereco() + ", " + record.getPagador_numero()
+								+ " - " + record.getPagador_cidade() + " / " + record.getPagador_estado()
+								+ " (CEP: " + record.getPagador_cep() + ")");
 
 						// Nome Conjuge
 						cell = row.createCell(6);
 						cell.setCellStyle(cell_style);
-						if (record.getPagador().getNomeConjuge() != null) {
-							cell.setCellValue(record.getPagador().getNomeConjuge());
+						if (record.getPagador_nomeConjuge() != null) {
+							cell.setCellValue(record.getPagador_nomeConjuge());
 						}
 
 						// CPF Conjuge
 						cell = row.createCell(7);
 						cell.setCellStyle(cell_style);
-						if (record.getPagador().getCpfConjuge() != null) {
-							cell.setCellValue(record.getPagador().getCpfConjuge());
+						if (record.getPagador_cpfConjuge() != null) {
+							cell.setCellValue(record.getPagador_cpfConjuge());
 						}
 
 						// Região Imóvel
 						cell = row.createCell(8);
 						cell.setCellStyle(cell_style);
-						if (record.getImovel().getCidade() != null && record.getImovel().getEstado() != null) {
-							cell.setCellValue(record.getImovel().getCidade() + "/" + record.getImovel().getEstado());
+						if (record.getImovel_cidade() != null && record.getImovel_estado() != null) {
+							cell.setCellValue(record.getImovel_cidade() + "/" + record.getImovel_estado());
 						}
 
 						// Tipo Imovel
@@ -16434,50 +16439,50 @@ public class ContratoCobrancaMB {
 					// Pagador
 					cell = row.createCell(2);
 					cell.setCellStyle(cell_style);
-					cell.setCellValue(record.getPagador().getNome());
+					cell.setCellValue(record.getPagador_nome());
 
 					// CPF CNPJ
 					cell = row.createCell(3);
 					cell.setCellStyle(cell_style);
-					if (record.getPagador().getCpf() != null && !record.getPagador().getCpf().equals("")) {
-						cell.setCellValue(record.getPagador().getCpf());
+					if (record.getPagador_cpf() != null && !record.getPagador_cpf().equals("")) {
+						cell.setCellValue(record.getPagador_cpf());
 					} else {
-						cell.setCellValue(record.getPagador().getCnpj());
+						cell.setCellValue(record.getPagador_cnpj());
 					}
 
 					// Data NAscimento Pagador
 					cell = row.createCell(4);
 					cell.setCellStyle(dateStyle);
-					if (record.getPagador().getDtNascimento() != null) {
-						cell.setCellValue(record.getPagador().getDtNascimento());
+					if (record.getPagador_dtNascimento() != null) {
+						cell.setCellValue(record.getPagador_dtNascimento());
 					}
 
 					// Endereço pagador
 					cell = row.createCell(5);
 					cell.setCellStyle(cell_style);
-					cell.setCellValue(record.getPagador().getEndereco() + ", " + record.getPagador().getNumero() + " - "
-							+ record.getPagador().getCidade() + " / " + record.getPagador().getEstado() + " (CEP: "
-							+ record.getPagador().getCep() + ")");
+					cell.setCellValue(record.getPagador_endereco() + ", " + record.getPagador_numero() + " - "
+							+ record.getPagador_cidade() + " / " + record.getPagador_estado() + " (CEP: "
+							+ record.getPagador_cep() + ")");
 
 					// Nome Conjuge
 					cell = row.createCell(6);
 					cell.setCellStyle(cell_style);
-					if (record.getPagador().getNomeConjuge() != null) {
-						cell.setCellValue(record.getPagador().getNomeConjuge());
+					if (record.getPagador_nomeConjuge() != null) {
+						cell.setCellValue(record.getPagador_nomeConjuge());
 					}
 
 					// CPF Conjuge
 					cell = row.createCell(7);
 					cell.setCellStyle(cell_style);
-					if (record.getPagador().getCpfConjuge() != null) {
-						cell.setCellValue(record.getPagador().getCpfConjuge());
+					if (record.getPagador_cpfConjuge() != null) {
+						cell.setCellValue(record.getPagador_cpfConjuge());
 					}
 
 					// Região Imóvel
 					cell = row.createCell(8);
 					cell.setCellStyle(cell_style);
-					if (record.getImovel().getCidade() != null && record.getImovel().getEstado() != null) {
-						cell.setCellValue(record.getImovel().getCidade() + "/" + record.getImovel().getEstado());
+					if (record.getImovel_cidade() != null && record.getImovel_estado() != null) {
+						cell.setCellValue(record.getImovel_cidade() + "/" + record.getImovel_estado());
 					}
 
 					// Tipo Imovel
@@ -31254,17 +31259,11 @@ public class ContratoCobrancaMB {
 					"Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
 		} else {
 			byte[] conteudo = event.getFile().getContents();
-			FileOutputStream fos;
-			try {
-				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
-				fos.write(conteudo);
-				fos.close();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				System.out.println(e);
-			}
+			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(), 
+					 event.getFile().getFileName(), "//pagar/", getUsuarioLogado());
 
 			// atualiza lista de arquivos contidos no diretório
+			documentoConsultarTodos= new ArrayList<FileUploaded>();
 			files = listaArquivos();
 		}
 	}
@@ -31305,16 +31304,9 @@ public class ContratoCobrancaMB {
 					"Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
 		} else {
 			byte[] conteudo = event.getFile().getContents();
-			FileOutputStream fos;
-			try {
-				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
-				fos.write(conteudo);
-				fos.close();
+			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(), 
+					 event.getFile().getFileName(), "//analise/", getUsuarioLogado());
 
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				System.out.println(e);
-			}
 
 			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 			DocumentoAnalise documentoAnalise = new DocumentoAnalise();
@@ -31326,6 +31318,8 @@ public class ContratoCobrancaMB {
 			documentoAnalise.setLiberadoAnalise(true);
 			documentoAnaliseDao.create(documentoAnalise);
 			// atualiza lista de arquivos contidos no diretório
+
+			documentoConsultarTodos= new ArrayList<FileUploaded>();
 			listaArquivosAnaliseDocumentos();
 
 		}
@@ -31333,12 +31327,14 @@ public class ContratoCobrancaMB {
 
 	public void handleFileInternoUpload(FileUploadEvent event) throws IOException {
 		FacesContext context = FacesContext.getCurrentInstance();
+					
 		// recupera local onde será gravado o arquivo
 		ParametrosDao pDao = new ParametrosDao();
 		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
 				// String pathContrato = "C:/Users/Usuario/Desktop/"
-				+ this.objetoContratoCobranca.getNumeroContrato() + "//interno/";
-
+				+ this.objetoContratoCobranca.getNumeroContrato() + "interno";
+	
+		
 		// cria o diretório, caso não exista
 		File diretorio = new File(pathContrato);
 		if (!diretorio.isDirectory()) {
@@ -31349,19 +31345,25 @@ public class ContratoCobrancaMB {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
 		} else {
-			// cria o arquivo
+//			FileUploaded documentoSelecionado = new FileUploaded(fileName, null, filePath);
 			byte[] conteudo = event.getFile().getContents();
-			FileOutputStream fos;
-			try {
-				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
-				fos.write(conteudo);
-				fos.close();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				System.out.println(e);
-			}
+			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(), 
+					 event.getFile().getFileName(), "interno", getUsuarioLogado());
+//			
+//			// cria o arquivo
+//			byte[] conteudo = event.getFile().getContents();
+//			FileOutputStream fos;
+//			try {
+//				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
+//				fos.write(conteudo);
+//				fos.close();
+//			} catch (FileNotFoundException e) {
+//				// TODO Auto-generated catch block
+//				System.out.println(e);
+//			}
 
 			// atualiza lista de arquivos contidos no diretório
+			documentoConsultarTodos= new ArrayList<FileUploaded>();
 			filesInterno = listaArquivosInterno();
 		}
 	}
@@ -31383,19 +31385,14 @@ public class ContratoCobrancaMB {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
 		} else {
-			// cria o arquivo
+
 			byte[] conteudo = event.getFile().getContents();
-			FileOutputStream fos;
-			try {
-				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
-				fos.write(conteudo);
-				fos.close();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				System.out.println(e);
-			}
+			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(), 
+					 event.getFile().getFileName(), "//faltante/", getUsuarioLogado());
 
 			// atualiza lista de arquivos contidos no diretório
+
+			documentoConsultarTodos= new ArrayList<FileUploaded>();
 			filesFaltante = listaArquivosFaltante();
 		}
 	}
@@ -31417,19 +31414,14 @@ public class ContratoCobrancaMB {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
 		} else {
-			// cria o arquivo
-			byte[] conteudo = event.getFile().getContents();
-			FileOutputStream fos;
-			try {
-				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
-				fos.write(conteudo);
-				fos.close();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				System.out.println(e);
-			}
 
+			byte[] conteudo = event.getFile().getContents();
+			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(), 
+					 event.getFile().getFileName(), "//juridico/", getUsuarioLogado());
+			
 			// atualiza lista de arquivos contidos no diretório
+
+			documentoConsultarTodos= new ArrayList<FileUploaded>();
 			filesJuridico = listaArquivosJuridico();
 		}
 	}
@@ -31451,19 +31443,13 @@ public class ContratoCobrancaMB {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
 		} else {
-			// cria o arquivo
 			byte[] conteudo = event.getFile().getContents();
-			FileOutputStream fos;
-			try {
-				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
-				fos.write(conteudo);
-				fos.close();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				System.out.println(e);
-			}
+			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(), 
+					 event.getFile().getFileName(), "//comite/", getUsuarioLogado());
 
 			// atualiza lista de arquivos contidos no diretório
+
+			documentoConsultarTodos= new ArrayList<FileUploaded>();
 			filesComite = listaArquivosComite();
 		}
 	}
@@ -31498,23 +31484,19 @@ public class ContratoCobrancaMB {
 		} else {
 			// cria o arquivo
 			// event.getFile().getFileName();
-			byte[] conteudo = event.getFile().getContents();
+//			byte[] conteudo = event.getFile().getContents();
 			// String oldFileName = new String(event.getFile().getFileName());
 			// String[] strs =
 			// oldFileName.substring(FilenameUtils.getPrefixLength(oldFileName)).split(Pattern.quote("."));
 			// String fileName = strs[0] + "_CntPgr" + generateFileID() + "." + strs[1];
-
-			FileOutputStream fos;
-			try {
-				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
-				fos.write(conteudo);
-				fos.close();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				System.out.println(e);
-			}
+			byte[] conteudo = event.getFile().getContents();
+			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(), 
+					 event.getFile().getFileName(), "//pagar/", getUsuarioLogado());
+			
 
 			// atualiza lista de arquivos contidos no diretório
+
+			documentoConsultarTodos= new ArrayList<FileUploaded>();
 			filesPagar = listaArquivosPagar();
 		}
 	}
@@ -31562,22 +31544,12 @@ public class ContratoCobrancaMB {
 			// cria o arquivo
 			// event.getFile().getFileName();
 			byte[] conteudo = event.getFile().getContents();
-			// String oldFileName = new String(event.getFile().getFileName());
-			// String[] strs =
-			// oldFileName.substring(FilenameUtils.getPrefixLength(oldFileName)).split(Pattern.quote("."));
-			// String fileName = strs[0] + "_CntPgr" + generateFileID() + "." + strs[1];
-			FileOutputStream fos;
-			try {
-				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
-				System.out.println(event.getFile().getFileName());
-				fos.write(conteudo);
-				fos.close();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				System.out.println(e);
-			}
-
+			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(), 
+					 event.getFile().getFileName(), "//pagar/", getUsuarioLogado());
+			
 			// atualiza lista de arquivos contidos no diretório
+
+			documentoConsultarTodos= new ArrayList<FileUploaded>();
 			conta.setFilesContas(listaArquivosContasPagar(conta));
 		}
 	}
@@ -31701,17 +31673,7 @@ public class ContratoCobrancaMB {
 	 * @return
 	 */
 
-	public Collection<FileUploaded> listaArquivos() {
-		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
-		ParametrosDao pDao = new ParametrosDao();
-		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-				// String pathContrato = "C:/Users/Usuario/Desktop/"
-				+ this.objetoContratoCobranca.getNumeroContrato() + "/";
-		File diretorio = new File(pathContrato);
-		File arqs[] = diretorio.listFiles();
-		Collection<FileUploaded> lista = CommonsUtil.listFilesileUploaded(diretorio);
-		return lista;
-	}
+	
 
 	/***
 	 * Lista ois arquivos contidos no diretório
@@ -31756,85 +31718,122 @@ public class ContratoCobrancaMB {
 	public void setListaDocumentoAnalise(List<DocumentoAnalise> listaDocumentoAnalise) {
 		this.listaDocumentoAnalise = listaDocumentoAnalise;
 	}
-
-	public Collection<FileUploaded> listaArquivosInterno() {
-		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
-		ParametrosDao pDao = new ParametrosDao();
-		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-				+ this.objetoContratoCobranca.getNumeroContrato() + "//interno/";
-		File diretorio = new File(pathContrato);
-		File arqs[] = diretorio.listFiles();
-		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
-		if (arqs != null) {
-			for (int i = 0; i < arqs.length; i++) {
-				File arquivo = arqs[i];
-
-				// String nome = arquivo.getName();
-				// String dt_ateracao = formatData.format(new Date(arquivo.lastModified()));
-				lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
-			}
-		}
-		return lista;
+	
+	public Collection<FileUploaded> listaArquivos() {
+		carregaDocumentos();
+		return this.documentoConsultarTodos.stream().filter(f ->  CommonsUtil.mesmoValorIgnoreCase( f.getPathOrigin(), "numContrato")).collect(Collectors.toList());
+	
+		/*
+		 * // DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy"); ParametrosDao
+		 * pDao = new ParametrosDao(); String pathContrato = pDao.findByFilter("nome",
+		 * "COBRANCA_DOCUMENTOS").get(0).getValorString() // String pathContrato =
+		 * "C:/Users/Usuario/Desktop/" + this.objetoContratoCobranca.getNumeroContrato()
+		 * + "/"; File diretorio = new File(pathContrato); File arqs[] =
+		 * diretorio.listFiles(); Collection<FileUploaded> lista =
+		 * CommonsUtil.listFilesileUploaded(diretorio); return lista;
+		 */
 	}
 
-	public Collection<FileUploaded> listaArquivosFaltante() {
-		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
-		ParametrosDao pDao = new ParametrosDao();
-		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-				+ this.objetoContratoCobranca.getNumeroContrato() + "//faltante/";
-		File diretorio = new File(pathContrato);
-		File arqs[] = diretorio.listFiles();
-		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
-		if (arqs != null) {
-			for (int i = 0; i < arqs.length; i++) {
-				File arquivo = arqs[i];
-
-				// String nome = arquivo.getName();
-				// String dt_ateracao = formatData.format(new Date(arquivo.lastModified()));
-				lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
-			}
-		}
-		return lista;
+	public List<FileUploaded> listaArquivosInterno() {
+		carregaDocumentos();
+		return this.documentoConsultarTodos.stream().filter(f ->  CommonsUtil.mesmoValorIgnoreCase( f.getPathOrigin(), "interno")).collect(Collectors.toList());
+		
+//		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
+//		ParametrosDao pDao = new ParametrosDao();
+//		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+//				+ this.objetoContratoCobranca.getNumeroContrato() + "//interno/";
+//		File diretorio = new File(pathContrato);
+//		File arqs[] = diretorio.listFiles();
+//		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
+//		if (arqs != null) {
+//			for (int i = 0; i < arqs.length; i++) {
+//				File arquivo = arqs[i];
+//
+//				// String nome = arquivo.getName();
+//				// String dt_ateracao = formatData.format(new Date(arquivo.lastModified()));
+//				lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
+//			}
+//		}
+//		return lista;
 	}
 
-	public Collection<FileUploaded> listaArquivosJuridico() {
-		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
-		ParametrosDao pDao = new ParametrosDao();
-		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-				+ this.objetoContratoCobranca.getNumeroContrato() + "//juridico/";
-		File diretorio = new File(pathContrato);
-		File arqs[] = diretorio.listFiles();
-		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
-		if (arqs != null) {
-			for (int i = 0; i < arqs.length; i++) {
-				File arquivo = arqs[i];
+	public List<FileUploaded> listaArquivosFaltante() {
+		carregaDocumentos();
 
-				// String nome = arquivo.getName();
-				// String dt_ateracao = formatData.format(new Date(arquivo.lastModified()));
-				lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
-			}
-		}
-		return lista;
+		return this.documentoConsultarTodos.stream().filter(f ->  CommonsUtil.mesmoValorIgnoreCase( f.getPathOrigin(), "faltante")).collect(Collectors.toList());
+		
+//		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
+//		ParametrosDao pDao = new ParametrosDao();
+//		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+//				+ this.objetoContratoCobranca.getNumeroContrato() + "//faltante/";
+//		File diretorio = new File(pathContrato);
+//		File arqs[] = diretorio.listFiles();
+//		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
+//		if (arqs != null) {
+//			for (int i = 0; i < arqs.length; i++) {
+//				File arquivo = arqs[i];
+//
+//				// String nome = arquivo.getName();
+//				// String dt_ateracao = formatData.format(new Date(arquivo.lastModified()));
+//				lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
+//			}
+//		}
+//		return lista;
 	}
 
-	public Collection<FileUploaded> listaArquivosComite() {
-		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
-		ParametrosDao pDao = new ParametrosDao();
-		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-				+ this.objetoContratoCobranca.getNumeroContrato() + "//comite/";
-		File diretorio = new File(pathContrato);
-		File arqs[] = diretorio.listFiles();
-		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
-		if (arqs != null) {
-			for (int i = 0; i < arqs.length; i++) {
-				File arquivo = arqs[i];
-
-				// String nome = arquivo.getName();
-				// String dt_ateracao = formatData.format(new Date(arquivo.lastModified()));
-				lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
-			}
+	private void carregaDocumentos() {
+		documentoConsultarTodos= new ArrayList<FileUploaded>();
+		if (CommonsUtil.semValor(this.documentoConsultarTodos)) {
+			FileService fileService = new FileService();
+			this.documentoConsultarTodos = fileService
+					.documentoConsultarTodos(this.objetoContratoCobranca.getNumeroContrato(), getUsuarioLogado());
 		}
-		return lista;
+	}
+
+	public List<FileUploaded> listaArquivosJuridico() {
+		carregaDocumentos();
+		return this.documentoConsultarTodos.stream().filter(f ->  CommonsUtil.mesmoValorIgnoreCase( f.getPathOrigin(), "juridico")).collect(Collectors.toList());
+//		
+//		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
+//		ParametrosDao pDao = new ParametrosDao();
+//		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+//				+ this.objetoContratoCobranca.getNumeroContrato() + "//juridico/";
+//		File diretorio = new File(pathContrato);
+//		File arqs[] = diretorio.listFiles();
+//		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
+//		if (arqs != null) {
+//			for (int i = 0; i < arqs.length; i++) {
+//				File arquivo = arqs[i];
+//
+//				// String nome = arquivo.getName();
+//				// String dt_ateracao = formatData.format(new Date(arquivo.lastModified()));
+//				lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
+//			}
+//		}
+//		return lista;
+	}
+
+	public List<FileUploaded> listaArquivosComite() {
+		carregaDocumentos();
+		return this.documentoConsultarTodos.stream().filter(f ->  CommonsUtil.mesmoValorIgnoreCase( f.getPathOrigin(), "comite")).collect( Collectors.toList());
+		
+//		// DateFormat formatData = new SimpleDateFormat("dd/MM/yyyy");
+//		ParametrosDao pDao = new ParametrosDao();
+//		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+//				+ this.objetoContratoCobranca.getNumeroContrato() + "//comite/";
+//		File diretorio = new File(pathContrato);
+//		File arqs[] = diretorio.listFiles();
+//		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
+//		if (arqs != null) {
+//			for (int i = 0; i < arqs.length; i++) {
+//				File arquivo = arqs[i];
+//
+//				// String nome = arquivo.getName();
+//				// String dt_ateracao = formatData.format(new Date(arquivo.lastModified()));
+//				lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
+//			}
+//		}
+//		return lista;
 	}
 
 	public Collection<FileUploaded> listaArquivosPagar() {
@@ -31885,7 +31884,7 @@ public class ContratoCobrancaMB {
 		return lista;
 	}
 
-	public void viewFile(String fileName) {
+	public void viewFile(FileUploaded file) {
 		String pathContrato = null;
 		try {
 			FacesContext facesContext = FacesContext.getCurrentInstance();
@@ -31893,20 +31892,10 @@ public class ContratoCobrancaMB {
 			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
 			BufferedInputStream input = null;
 			BufferedOutputStream output = null;
-
-			ParametrosDao pDao = new ParametrosDao();
-			pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-					// String pathContrato = "C:/Users/Usuario/Desktop/"
-					+ this.objetoContratoCobranca.getNumeroContrato() + "/" + fileName;
-
-			/*
-			 * 'docx' =>
-			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-			 * 'xlsx' =>
-			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
-			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
-			 * 'application/pdf' 'psd' => 'application/x-photoshop'
-			 */
+			String fileName = file.getName();
+			String filePath = file.getPath();
+			
+			pathContrato = file.getPath() + "/" + fileName;
 			String mineFile = "";
 
 			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
@@ -31925,17 +31914,20 @@ public class ContratoCobrancaMB {
 				mineFile = "application/pdf";
 			}
 
-			File arquivo = new File(pathContrato);
-
-			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
+			FileService fileService = new FileService();
+			FileUploaded documentoSelecionado = new FileUploaded(fileName, null, filePath);
+			byte[] arquivob = fileService.abrirDocumentos(documentoSelecionado,this.objetoContratoCobranca.getNumeroContrato(), getUsuarioLogado());
+			InputStream arquivo = new ByteArrayInputStream( arquivob );
+			
+			input = new BufferedInputStream(arquivo, 10240);
 
 			response.reset();
 			// lire un fichier pdf
 			response.setHeader("Content-type", mineFile);
 
-			response.setContentLength((int) arquivo.length());
+			response.setContentLength(arquivob.length);
 
-			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
+			response.setHeader("Content-disposition", "inline; filename=" + fileName);
 			output = new BufferedOutputStream(response.getOutputStream(), 10240);
 
 			// Write file contents to response.
@@ -31961,444 +31953,384 @@ public class ContratoCobrancaMB {
 	}
 
 	public void viewFileInterno(String fileName) {
-
-		try {
-			FacesContext facesContext = FacesContext.getCurrentInstance();
-			ExternalContext externalContext = facesContext.getExternalContext();
-			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-			BufferedInputStream input = null;
-			BufferedOutputStream output = null;
-
-			ParametrosDao pDao = new ParametrosDao();
-			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-					// String pathContrato = "C:/Users/Usuario/Desktop/"
-					+ this.objetoContratoCobranca.getNumeroContrato() + "/interno/" + fileName;
-
-			/*
-			 * 'docx' =>
-			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-			 * 'xlsx' =>
-			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
-			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
-			 * 'application/pdf' 'psd' => 'application/x-photoshop'
-			 */
-			String mineFile = "";
-
-			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
-				mineFile = "image-jpg";
-			}
-
-			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
-				mineFile = "image-jpeg";
-			}
-
-			if (fileName.contains(".png") || fileName.contains(".PNG")) {
-				mineFile = "image-png";
-			}
-
-			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
-				mineFile = "application/pdf";
-			}
-
-			File arquivo = new File(pathContrato);
-
-			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
-
-			response.reset();
-			// lire un fichier pdf
-			response.setHeader("Content-type", mineFile);
-
-			response.setContentLength((int) arquivo.length());
-
-			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
-			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-
-			// Write file contents to response.
-			byte[] buffer = new byte[10240];
-			int length;
-			while ((length = input.read(buffer)) > 0) {
-				output.write(buffer, 0, length);
-			}
-
-			// Finalize task.
-			output.flush();
-			output.close();
-			facesContext.responseComplete();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+		//viewFile(fileName);
+		/*
+		 * 
+		 * try { FacesContext facesContext = FacesContext.getCurrentInstance();
+		 * ExternalContext externalContext = facesContext.getExternalContext();
+		 * HttpServletResponse response = (HttpServletResponse)
+		 * externalContext.getResponse(); BufferedInputStream input = null;
+		 * BufferedOutputStream output = null;
+		 * 
+		 * ParametrosDao pDao = new ParametrosDao(); String pathContrato =
+		 * pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString() //
+		 * String pathContrato = "C:/Users/Usuario/Desktop/" +
+		 * this.objetoContratoCobranca.getNumeroContrato() + "/interno/" + fileName;
+		 * 
+		 * 
+		 * 'docx' =>
+		 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+		 * 'xlsx' =>
+		 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
+		 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
+		 * 'application/pdf' 'psd' => 'application/x-photoshop'
+		 * 
+		 * String mineFile = "";
+		 * 
+		 * if (fileName.contains(".jpg") || fileName.contains(".JPG")) { mineFile =
+		 * "image-jpg"; }
+		 * 
+		 * if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) { mineFile =
+		 * "image-jpeg"; }
+		 * 
+		 * if (fileName.contains(".png") || fileName.contains(".PNG")) { mineFile =
+		 * "image-png"; }
+		 * 
+		 * if (fileName.contains(".pdf") || fileName.contains(".PDF")) { mineFile =
+		 * "application/pdf"; }
+		 * 
+		 * File arquivo = new File(pathContrato);
+		 * 
+		 * input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
+		 * 
+		 * response.reset(); // lire un fichier pdf response.setHeader("Content-type",
+		 * mineFile);
+		 * 
+		 * response.setContentLength((int) arquivo.length());
+		 * 
+		 * response.setHeader("Content-disposition", "inline; filename=" +
+		 * arquivo.getName()); output = new
+		 * BufferedOutputStream(response.getOutputStream(), 10240);
+		 * 
+		 * // Write file contents to response. byte[] buffer = new byte[10240]; int
+		 * length; while ((length = input.read(buffer)) > 0) { output.write(buffer, 0,
+		 * length); }
+		 * 
+		 * // Finalize task. output.flush(); output.close();
+		 * facesContext.responseComplete(); } catch (FileNotFoundException e) { // TODO
+		 * Auto-generated catch block e.printStackTrace(); } catch (IOException e) { //
+		 * TODO Auto-generated catch block e.printStackTrace(); }
+		 */}
 
 	public void viewFileFaltante(String fileName) {
-
-		try {
-			FacesContext facesContext = FacesContext.getCurrentInstance();
-			ExternalContext externalContext = facesContext.getExternalContext();
-			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-			BufferedInputStream input = null;
-			BufferedOutputStream output = null;
-
-			ParametrosDao pDao = new ParametrosDao();
-			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-					// String pathContrato = "C:/Users/Usuario/Desktop/"
-					+ this.objetoContratoCobranca.getNumeroContrato() + "/faltante/" + fileName;
-
-			/*
-			 * 'docx' =>
-			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-			 * 'xlsx' =>
-			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
-			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
-			 * 'application/pdf' 'psd' => 'application/x-photoshop'
-			 */
-			String mineFile = "";
-
-			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
-				mineFile = "image-jpg";
-			}
-
-			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
-				mineFile = "image-jpeg";
-			}
-
-			if (fileName.contains(".png") || fileName.contains(".PNG")) {
-				mineFile = "image-png";
-			}
-
-			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
-				mineFile = "application/pdf";
-			}
-
-			File arquivo = new File(pathContrato);
-
-			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
-
-			response.reset();
-			// lire un fichier pdf
-			response.setHeader("Content-type", mineFile);
-
-			response.setContentLength((int) arquivo.length());
-
-			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
-			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-
-			// Write file contents to response.
-			byte[] buffer = new byte[10240];
-			int length;
-			while ((length = input.read(buffer)) > 0) {
-				output.write(buffer, 0, length);
-			}
-
-			// Finalize task.
-			output.flush();
-			output.close();
-			facesContext.responseComplete();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		//viewFile(fileName);
+		/*
+		 * 
+		 * try { FacesContext facesContext = FacesContext.getCurrentInstance();
+		 * ExternalContext externalContext = facesContext.getExternalContext();
+		 * HttpServletResponse response = (HttpServletResponse)
+		 * externalContext.getResponse(); BufferedInputStream input = null;
+		 * BufferedOutputStream output = null;
+		 * 
+		 * ParametrosDao pDao = new ParametrosDao(); String pathContrato =
+		 * pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString() //
+		 * String pathContrato = "C:/Users/Usuario/Desktop/" +
+		 * this.objetoContratoCobranca.getNumeroContrato() + "/faltante/" + fileName;
+		 * 
+		 * 
+		 * 'docx' =>
+		 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+		 * 'xlsx' =>
+		 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
+		 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
+		 * 'application/pdf' 'psd' => 'application/x-photoshop'
+		 * 
+		 * String mineFile = "";
+		 * 
+		 * if (fileName.contains(".jpg") || fileName.contains(".JPG")) { mineFile =
+		 * "image-jpg"; }
+		 * 
+		 * if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) { mineFile =
+		 * "image-jpeg"; }
+		 * 
+		 * if (fileName.contains(".png") || fileName.contains(".PNG")) { mineFile =
+		 * "image-png"; }
+		 * 
+		 * if (fileName.contains(".pdf") || fileName.contains(".PDF")) { mineFile =
+		 * "application/pdf"; }
+		 * 
+		 * File arquivo = new File(pathContrato);
+		 * 
+		 * input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
+		 * 
+		 * response.reset(); // lire un fichier pdf response.setHeader("Content-type",
+		 * mineFile);
+		 * 
+		 * response.setContentLength((int) arquivo.length());
+		 * 
+		 * response.setHeader("Content-disposition", "inline; filename=" +
+		 * arquivo.getName()); output = new
+		 * BufferedOutputStream(response.getOutputStream(), 10240);
+		 * 
+		 * // Write file contents to response. byte[] buffer = new byte[10240]; int
+		 * length; while ((length = input.read(buffer)) > 0) { output.write(buffer, 0,
+		 * length); }
+		 * 
+		 * // Finalize task. output.flush(); output.close();
+		 * facesContext.responseComplete(); } catch (FileNotFoundException e) { // TODO
+		 * Auto-generated catch block e.printStackTrace(); } catch (IOException e) { //
+		 * TODO Auto-generated catch block e.printStackTrace(); }
+		 */
 	}
 
 	public void viewFileJuridico(String fileName) {
 
-		try {
-			FacesContext facesContext = FacesContext.getCurrentInstance();
-			ExternalContext externalContext = facesContext.getExternalContext();
-			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-			BufferedInputStream input = null;
-			BufferedOutputStream output = null;
+		//viewFile(fileName);
 
-			ParametrosDao pDao = new ParametrosDao();
-			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-					// String pathContrato = "C:/Users/Usuario/Desktop/"
-					+ this.objetoContratoCobranca.getNumeroContrato() + "/juridico/" + fileName;
-
-			/*
-			 * 'docx' =>
-			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-			 * 'xlsx' =>
-			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
-			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
-			 * 'application/pdf' 'psd' => 'application/x-photoshop'
-			 */
-			String mineFile = "";
-
-			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
-				mineFile = "image-jpg";
-			}
-
-			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
-				mineFile = "image-jpeg";
-			}
-
-			if (fileName.contains(".png") || fileName.contains(".PNG")) {
-				mineFile = "image-png";
-			}
-
-			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
-				mineFile = "application/pdf";
-			}
-
-			File arquivo = new File(pathContrato);
-
-			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
-
-			response.reset();
-			// lire un fichier pdf
-			response.setHeader("Content-type", mineFile);
-
-			response.setContentLength((int) arquivo.length());
-
-			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
-			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-
-			// Write file contents to response.
-			byte[] buffer = new byte[10240];
-			int length;
-			while ((length = input.read(buffer)) > 0) {
-				output.write(buffer, 0, length);
-			}
-
-			// Finalize task.
-			output.flush();
-			output.close();
-			facesContext.responseComplete();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			FacesContext facesContext = FacesContext.getCurrentInstance();
+//			ExternalContext externalContext = facesContext.getExternalContext();
+//			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+//			BufferedInputStream input = null;
+//			BufferedOutputStream output = null;
+//
+//			ParametrosDao pDao = new ParametrosDao();
+//			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+//					// String pathContrato = "C:/Users/Usuario/Desktop/"
+//					+ this.objetoContratoCobranca.getNumeroContrato() + "/juridico/" + fileName;
+//
+//			/*
+//			 * 'docx' =>
+//			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+//			 * 'xlsx' =>
+//			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
+//			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
+//			 * 'application/pdf' 'psd' => 'application/x-photoshop'
+//			 */
+//			String mineFile = "";
+//
+//			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
+//				mineFile = "image-jpg";
+//			}
+//
+//			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
+//				mineFile = "image-jpeg";
+//			}
+//
+//			if (fileName.contains(".png") || fileName.contains(".PNG")) {
+//				mineFile = "image-png";
+//			}
+//
+//			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
+//				mineFile = "application/pdf";
+//			}
+//
+//			File arquivo = new File(pathContrato);
+//			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
+//
+//			response.reset();
+//			// lire un fichier pdf
+//			response.setHeader("Content-type", mineFile);
+//
+//			response.setContentLength((int) arquivo.length());
+//
+//			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
+//			output = new BufferedOutputStream(response.getOutputStream(), 10240);
+//
+//			// Write file contents to response.
+//			byte[] buffer = new byte[10240];
+//			int length;
+//			while ((length = input.read(buffer)) > 0) {
+//				output.write(buffer, 0, length);
+//			}
+//
+//			// Finalize task.
+//			output.flush();
+//			output.close();
+//			facesContext.responseComplete();
+//		} catch (FileNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 
 	public void viewFileComite(String fileName) {
-
-		try {
-			FacesContext facesContext = FacesContext.getCurrentInstance();
-			ExternalContext externalContext = facesContext.getExternalContext();
-			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-			BufferedInputStream input = null;
-			BufferedOutputStream output = null;
-
-			ParametrosDao pDao = new ParametrosDao();
-			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-					// String pathContrato = "C:/Users/Usuario/Desktop/"
-					+ this.objetoContratoCobranca.getNumeroContrato() + "/comite/" + fileName;
-
-			/*
-			 * 'docx' =>
-			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-			 * 'xlsx' =>
-			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
-			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
-			 * 'application/pdf' 'psd' => 'application/x-photoshop'
-			 */
-			String mineFile = "";
-
-			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
-				mineFile = "image-jpg";
-			}
-
-			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
-				mineFile = "image-jpeg";
-			}
-
-			if (fileName.contains(".png") || fileName.contains(".PNG")) {
-				mineFile = "image-png";
-			}
-
-			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
-				mineFile = "application/pdf";
-			}
-
-			File arquivo = new File(pathContrato);
-
-			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
-
-			response.reset();
-			// lire un fichier pdf
-			response.setHeader("Content-type", mineFile);
-
-			response.setContentLength((int) arquivo.length());
-
-			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
-			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-
-			// Write file contents to response.
-			byte[] buffer = new byte[10240];
-			int length;
-			while ((length = input.read(buffer)) > 0) {
-				output.write(buffer, 0, length);
-			}
-
-			// Finalize task.
-			output.flush();
-			output.close();
-			facesContext.responseComplete();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		//viewFile(fileName);
+		/*
+		 * 
+		 * try { FacesContext facesContext = FacesContext.getCurrentInstance();
+		 * ExternalContext externalContext = facesContext.getExternalContext();
+		 * HttpServletResponse response = (HttpServletResponse)
+		 * externalContext.getResponse(); BufferedInputStream input = null;
+		 * BufferedOutputStream output = null;
+		 * 
+		 * ParametrosDao pDao = new ParametrosDao(); String pathContrato =
+		 * pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString() //
+		 * String pathContrato = "C:/Users/Usuario/Desktop/" +
+		 * this.objetoContratoCobranca.getNumeroContrato() + "/comite/" + fileName;
+		 * 
+		 * 
+		 * 'docx' =>
+		 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+		 * 'xlsx' =>
+		 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
+		 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
+		 * 'application/pdf' 'psd' => 'application/x-photoshop'
+		 * 
+		 * String mineFile = "";
+		 * 
+		 * if (fileName.contains(".jpg") || fileName.contains(".JPG")) { mineFile =
+		 * "image-jpg"; }
+		 * 
+		 * if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) { mineFile =
+		 * "image-jpeg"; }
+		 * 
+		 * if (fileName.contains(".png") || fileName.contains(".PNG")) { mineFile =
+		 * "image-png"; }
+		 * 
+		 * if (fileName.contains(".pdf") || fileName.contains(".PDF")) { mineFile =
+		 * "application/pdf"; }
+		 * 
+		 * File arquivo = new File(pathContrato);
+		 * 
+		 * input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
+		 * 
+		 * response.reset(); // lire un fichier pdf response.setHeader("Content-type",
+		 * mineFile);
+		 * 
+		 * response.setContentLength((int) arquivo.length());
+		 * 
+		 * response.setHeader("Content-disposition", "inline; filename=" +
+		 * arquivo.getName()); output = new
+		 * BufferedOutputStream(response.getOutputStream(), 10240);
+		 * 
+		 * // Write file contents to response. byte[] buffer = new byte[10240]; int
+		 * length; while ((length = input.read(buffer)) > 0) { output.write(buffer, 0,
+		 * length); }
+		 * 
+		 * // Finalize task. output.flush(); output.close();
+		 * facesContext.responseComplete(); } catch (FileNotFoundException e) { // TODO
+		 * Auto-generated catch block e.printStackTrace(); } catch (IOException e) { //
+		 * TODO Auto-generated catch block e.printStackTrace(); }
+		 */
 	}
 
 	public void viewFilePagar(String fileName) {
-
-		try {
-			FacesContext facesContext = FacesContext.getCurrentInstance();
-			ExternalContext externalContext = facesContext.getExternalContext();
-			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-			BufferedInputStream input = null;
-			BufferedOutputStream output = null;
-
-			ParametrosDao pDao = new ParametrosDao();
-			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-					// String pathContrato = "C:/Users/Usuario/Desktop/"
-					+ this.objetoContratoCobranca.getNumeroContrato() + "/pagar/" + fileName;
-
-			/*
-			 * 'docx' =>
-			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-			 * 'xlsx' =>
-			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
-			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
-			 * 'application/pdf' 'psd' => 'application/x-photoshop'
-			 */
-			String mineFile = "";
-
-			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
-				mineFile = "image-jpg";
-			}
-
-			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
-				mineFile = "image-jpeg";
-			}
-
-			if (fileName.contains(".png") || fileName.contains(".PNG")) {
-				mineFile = "image-png";
-			}
-
-			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
-				mineFile = "application/pdf";
-			}
-
-			File arquivo = new File(pathContrato);
-
-			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
-
-			response.reset();
-			// lire un fichier pdf
-			response.setHeader("Content-type", mineFile);
-
-			response.setContentLength((int) arquivo.length());
-
-			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
-			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-
-			// Write file contents to response.
-			byte[] buffer = new byte[10240];
-			int length;
-			while ((length = input.read(buffer)) > 0) {
-				output.write(buffer, 0, length);
-			}
-
-			// Finalize task.
-			output.flush();
-			output.close();
-			facesContext.responseComplete();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		//viewFile(fileName);
+		/*
+		 * 
+		 * try { FacesContext facesContext = FacesContext.getCurrentInstance();
+		 * ExternalContext externalContext = facesContext.getExternalContext();
+		 * HttpServletResponse response = (HttpServletResponse)
+		 * externalContext.getResponse(); BufferedInputStream input = null;
+		 * BufferedOutputStream output = null;
+		 * 
+		 * ParametrosDao pDao = new ParametrosDao(); String pathContrato =
+		 * pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString() //
+		 * String pathContrato = "C:/Users/Usuario/Desktop/" +
+		 * this.objetoContratoCobranca.getNumeroContrato() + "/pagar/" + fileName;
+		 * 
+		 * 
+		 * 'docx' =>
+		 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+		 * 'xlsx' =>
+		 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
+		 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
+		 * 'application/pdf' 'psd' => 'application/x-photoshop'
+		 * 
+		 * String mineFile = "";
+		 * 
+		 * if (fileName.contains(".jpg") || fileName.contains(".JPG")) { mineFile =
+		 * "image-jpg"; }
+		 * 
+		 * if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) { mineFile =
+		 * "image-jpeg"; }
+		 * 
+		 * if (fileName.contains(".png") || fileName.contains(".PNG")) { mineFile =
+		 * "image-png"; }
+		 * 
+		 * if (fileName.contains(".pdf") || fileName.contains(".PDF")) { mineFile =
+		 * "application/pdf"; }
+		 * 
+		 * File arquivo = new File(pathContrato);
+		 * 
+		 * input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
+		 * 
+		 * response.reset(); // lire un fichier pdf response.setHeader("Content-type",
+		 * mineFile);
+		 * 
+		 * response.setContentLength((int) arquivo.length());
+		 * 
+		 * response.setHeader("Content-disposition", "inline; filename=" +
+		 * arquivo.getName()); output = new
+		 * BufferedOutputStream(response.getOutputStream(), 10240);
+		 * 
+		 * // Write file contents to response. byte[] buffer = new byte[10240]; int
+		 * length; while ((length = input.read(buffer)) > 0) { output.write(buffer, 0,
+		 * length); }
+		 * 
+		 * // Finalize task. output.flush(); output.close();
+		 * facesContext.responseComplete(); } catch (FileNotFoundException e) { // TODO
+		 * Auto-generated catch block e.printStackTrace(); } catch (IOException e) { //
+		 * TODO Auto-generated catch block e.printStackTrace(); }
+		 */
 	}
 
 	public void viewFileContaPagar(String fileName, ContasPagar conta) {
-
-		try {
-			FacesContext facesContext = FacesContext.getCurrentInstance();
-			ExternalContext externalContext = facesContext.getExternalContext();
-			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-			BufferedInputStream input = null;
-			BufferedOutputStream output = null;
-
-			ParametrosDao pDao = new ParametrosDao();
-			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-					// String pathContrato = "C:/Users/Usuario/Desktop/"
-					+ this.objetoContratoCobranca.getNumeroContrato() + "/pagar/" + conta.getFileListId() + "/"
-					+ fileName;
-
-			/*
-			 * 'docx' =>
-			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-			 * 'xlsx' =>
-			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
-			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
-			 * 'application/pdf' 'psd' => 'application/x-photoshop'
-			 */
-			String mineFile = "";
-
-			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
-				mineFile = "image-jpg";
-			}
-
-			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
-				mineFile = "image-jpeg";
-			}
-
-			if (fileName.contains(".png") || fileName.contains(".PNG")) {
-				mineFile = "image-png";
-			}
-
-			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
-				mineFile = "application/pdf";
-			}
-
-			File arquivo = new File(pathContrato);
-
-			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
-
-			response.reset();
-			// lire un fichier pdf
-			response.setHeader("Content-type", mineFile);
-
-			response.setContentLength((int) arquivo.length());
-
-			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
-			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-
-			// Write file contents to response.
-			byte[] buffer = new byte[10240];
-			int length;
-			while ((length = input.read(buffer)) > 0) {
-				output.write(buffer, 0, length);
-			}
-
-			// Finalize task.
-			output.flush();
-			output.close();
-			facesContext.responseComplete();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		//viewFile(fileName);
+		/*
+		 * 
+		 * try { FacesContext facesContext = FacesContext.getCurrentInstance();
+		 * ExternalContext externalContext = facesContext.getExternalContext();
+		 * HttpServletResponse response = (HttpServletResponse)
+		 * externalContext.getResponse(); BufferedInputStream input = null;
+		 * BufferedOutputStream output = null;
+		 * 
+		 * ParametrosDao pDao = new ParametrosDao(); String pathContrato =
+		 * pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString() //
+		 * String pathContrato = "C:/Users/Usuario/Desktop/" +
+		 * this.objetoContratoCobranca.getNumeroContrato() + "/pagar/" +
+		 * conta.getFileListId() + "/" + fileName;
+		 * 
+		 * 
+		 * 'docx' =>
+		 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+		 * 'xlsx' =>
+		 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
+		 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
+		 * 'application/pdf' 'psd' => 'application/x-photoshop'
+		 * 
+		 * String mineFile = "";
+		 * 
+		 * if (fileName.contains(".jpg") || fileName.contains(".JPG")) { mineFile =
+		 * "image-jpg"; }
+		 * 
+		 * if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) { mineFile =
+		 * "image-jpeg"; }
+		 * 
+		 * if (fileName.contains(".png") || fileName.contains(".PNG")) { mineFile =
+		 * "image-png"; }
+		 * 
+		 * if (fileName.contains(".pdf") || fileName.contains(".PDF")) { mineFile =
+		 * "application/pdf"; }
+		 * 
+		 * File arquivo = new File(pathContrato);
+		 * 
+		 * input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
+		 * 
+		 * response.reset(); // lire un fichier pdf response.setHeader("Content-type",
+		 * mineFile);
+		 * 
+		 * response.setContentLength((int) arquivo.length());
+		 * 
+		 * response.setHeader("Content-disposition", "inline; filename=" +
+		 * arquivo.getName()); output = new
+		 * BufferedOutputStream(response.getOutputStream(), 10240);
+		 * 
+		 * // Write file contents to response. byte[] buffer = new byte[10240]; int
+		 * length; while ((length = input.read(buffer)) > 0) { output.write(buffer, 0,
+		 * length); }
+		 * 
+		 * // Finalize task. output.flush(); output.close();
+		 * facesContext.responseComplete(); } catch (FileNotFoundException e) { // TODO
+		 * Auto-generated catch block e.printStackTrace(); } catch (IOException e) { //
+		 * TODO Auto-generated catch block e.printStackTrace(); }
+		 */
 		}
-	}
-	
+
 	public void consultaDocsJuridico(ContratoCobranca contrato) throws IOException {
 		filesJuridico = new ArrayList<FileUploaded>();
 		objetoContratoCobranca = contrato;
@@ -32408,11 +32340,11 @@ public class ContratoCobrancaMB {
 		current.executeScript("PF('bui').show();");
 		for (FileUploaded file : filesJuridico) {
 			if(file.getName().toLowerCase().endsWith(".pdf")) {
-				PDDocument doc = PDDocument.load(file.getFile());
+				PDDocument doc = PDDocument.load(fileService.abrirDocumentos(file,
+						this.objetoContratoCobranca.getNumeroContrato(), getUsuarioLogado()));
 				file.setPages(doc.getNumberOfPages());
 			}
 		}
-		
 	}
 	
 	public void closeDialogDocs() {
@@ -32525,15 +32457,11 @@ public class ContratoCobrancaMB {
 	 */
 	public StreamedContent getDownloadFile() {
 		if (this.selectedFile != null) {
-			FileInputStream stream;
-			try {
-				stream = new FileInputStream(this.selectedFile.getFile().getAbsolutePath());
-				downloadFile = new DefaultStreamedContent(stream, this.selectedFile.getPath(),
-						this.selectedFile.getFile().getName());
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				System.out.println("Cobrança - Download de Arquivos - Arquivo Não Encontrado");
-			}
+			InputStream  stream;
+			FileService fileService = new FileService();
+			stream = new ByteArrayInputStream( fileService.abrirDocumentos(this.selectedFile,this.objetoContratoCobranca.getNumeroContrato(), getUsuarioLogado()));
+			downloadFile = new DefaultStreamedContent(stream, this.selectedFile.getPath(),
+					this.selectedFile.getName());
 		}
 		return this.downloadFile;
 	}
@@ -33594,11 +33522,11 @@ public class ContratoCobrancaMB {
 		this.selectedParcelasInvestidorEnvelope = selectedParcelasInvestidorEnvelope;
 	}
 
-	public List<ContratoCobranca> getContratoCobrancaFinanceiroDia() {
+	public List<ContratoCobrancaFinancerioDiaConsultaVO> getContratoCobrancaFinanceiroDia() {
 		return contratoCobrancaFinanceiroDia;
 	}
 
-	public void setContratoCobrancaFinanceiroDia(List<ContratoCobranca> contratoCobrancaFinanceiroDia) {
+	public void setContratoCobrancaFinanceiroDia(List<ContratoCobrancaFinancerioDiaConsultaVO> contratoCobrancaFinanceiroDia) {
 		this.contratoCobrancaFinanceiroDia = contratoCobrancaFinanceiroDia;
 	}
 
@@ -33850,11 +33778,11 @@ public class ContratoCobrancaMB {
 		this.tituloPagadorRecebedorDialog = tituloPagadorRecebedorDialog;
 	}
 
-	public List<ContratoCobranca> getSelectedContratoCobrancaFinanceiroDia() {
+	public List<ContratoCobrancaFinancerioDiaConsultaVO> getSelectedContratoCobrancaFinanceiroDia() {
 		return selectedContratoCobrancaFinanceiroDia;
 	}
 
-	public void setSelectedContratoCobrancaFinanceiroDia(List<ContratoCobranca> selectedContratoCobrancaFinanceiroDia) {
+	public void setSelectedContratoCobrancaFinanceiroDia(List<ContratoCobrancaFinancerioDiaConsultaVO> selectedContratoCobrancaFinanceiroDia) {
 		this.selectedContratoCobrancaFinanceiroDia = selectedContratoCobrancaFinanceiroDia;
 	}
 
@@ -34573,4 +34501,23 @@ public class ContratoCobrancaMB {
 	public void setNomeComprovanteStarkBank(String nomeComprovanteStarkBank) {
 		this.nomeComprovanteStarkBank = nomeComprovanteStarkBank;
 	}
+
+	public List<FileUploaded> getDocumentoConsultarTodos() {
+		return documentoConsultarTodos;
+	}
+
+	public void setDocumentoConsultarTodos(List<FileUploaded> documentoConsultarTodos) {
+		this.documentoConsultarTodos = documentoConsultarTodos;
+	}
+
+	public KobanaMB getKobanaMB() {
+		return kobanaMB;
+	}
+
+	public void setKobanaMB(KobanaMB kobanaMB) {
+		this.kobanaMB = kobanaMB;
+	}
+	
+	
+	
 }

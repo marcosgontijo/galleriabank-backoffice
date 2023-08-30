@@ -6,6 +6,7 @@ public class FileUploaded {
 	private File file;
 	private String name;
 	private String path;
+	private String pathOrigin;
 	private int pages;
 
 	public FileUploaded() {
@@ -15,7 +16,6 @@ public class FileUploaded {
 		this.name = name;
 		this.file = file;
 		this.path = path;
-	
 	}
 
 	/**
@@ -66,6 +66,14 @@ public class FileUploaded {
 
 	public void setPages(int pages) {
 		this.pages = pages;
+	}
+
+	public String getPathOrigin() {
+		return pathOrigin;
+	}
+
+	public void setPathOrigin(String pathOrigin) {
+		this.pathOrigin = pathOrigin;
 	}
 	
 	

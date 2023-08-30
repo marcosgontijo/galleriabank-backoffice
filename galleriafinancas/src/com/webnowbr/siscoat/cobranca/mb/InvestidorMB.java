@@ -7070,7 +7070,9 @@ public class InvestidorMB {
 			DebenturesInvestidorDao diDao = new DebenturesInvestidorDao();
 
 			if (this.debenturesInvestidor.isLastrearTitulos()) {
-				this.debenturesInvestidor.setContrato(this.selectedContratoLov);
+				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+				
+				this.debenturesInvestidor.setContrato(cDao.findById(this.selectedContratoLov.getId()));
 			}
 
 			if (this.debenturesInvestidor.getId() <= 0) {
