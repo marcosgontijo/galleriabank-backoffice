@@ -32,6 +32,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.webnowbr.siscoat.cobranca.db.model.ImovelEstoque;
+import com.webnowbr.siscoat.cobranca.db.op.ImovelEstoqueDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.contab.db.dao.BalancoPatrimonialDao;
 import com.webnowbr.siscoat.contab.db.model.BalancoPatrimonial;
@@ -113,6 +114,7 @@ public class BalancoPatrimonialMB {
 
 	public void geraBalanco() {
 		BalancoPatrimonialDao balancopatrimonialDao = new BalancoPatrimonialDao();
+		ImovelEstoqueDao imovelEstoqueDao = new ImovelEstoqueDao();
 
 		if (!this.editar) {
 			ultimoBalanco = balancopatrimonialDao.consultaUltimoBalanco();
@@ -135,6 +137,7 @@ public class BalancoPatrimonialMB {
 			
 			this.objetoBalanco.saldoCaixaOmie(); // VALOR CAIXAS
 			this.objetoBalanco.calcularCustoPonderado(relatorioBalancoPagar); // VALOR RECURSOS DEBENTURES
+			imoveis = imovelEstoqueDao.balancoEstoque();
 			this.objetoBalanco.calculaValorVendaForcada(imoveis); //VALOR ESTOQUE VENDA FORÇADA
 			
 

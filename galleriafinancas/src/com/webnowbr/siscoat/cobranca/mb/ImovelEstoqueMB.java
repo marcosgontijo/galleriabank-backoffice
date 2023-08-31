@@ -48,7 +48,6 @@ public class ImovelEstoqueMB {
 	private boolean editarEstoque;
 	private List<ContratoCobranca> listaConsultaEstoque = new ArrayList<ContratoCobranca>();
 	private List<ImovelEstoque> listImovelEstoque;
-	private List<RelatorioEstoque> listRelatorioEstoque;
 	private boolean relatorioGerado = false;
 	
 	
@@ -138,7 +137,7 @@ public class ImovelEstoqueMB {
 		listaConsultaEstoque = contratoCobrancaDao.consultaImovelEstoque();
 	}
 	
-	public void StreamedContent readXLSXFileRelatorioEstoque() throws IOException {
+	public void readXLSXFileRelatorioEstoque() throws IOException {
 
 		XSSFWorkbook wb = new XSSFWorkbook(getClass().getResourceAsStream("/resource/TabelaVazia.xlsx"));
 
@@ -175,8 +174,11 @@ public class ImovelEstoqueMB {
 
 		iLinha++;
 
-		for (int iRelatorio = 0; iRelatorio < this.listRelatorioEstoque.size(); iRelatorio++) {
-			RelatorioEstoque relatorio = this.listRelatorioEstoque.get(iRelatorio);
+		ImovelEstoqueDao imovelEstoqueDao = new ImovelEstoqueDao();
+		List<RelatorioEstoque> listRelatorioEstoque = imovelEstoqueDao.listRelatorioEstoque();
+		
+		for (int iRelatorio = 0; iRelatorio < listRelatorioEstoque.size(); iRelatorio++) {
+			RelatorioEstoque relatorio = listRelatorioEstoque.get(iRelatorio);
 
 			linha = sheet.getRow(iLinha);
 			if (linha == null) {
@@ -185,24 +187,24 @@ public class ImovelEstoqueMB {
 			}
 
 			gravaCelula(0, relatorio.getNumeroContratoRelatorio(), linha);
-			gravaCelula(2, relatorio.getVariacaoCustoRelatorio(), linha);
-			gravaCelula(3, relatorio.getLtvLeilaoRelatorio(), linha);
-			gravaCelula(4, relatorio.getValorEmprestimoRelatorio(), linha);
-			gravaCelula(5, relatorio.getVendaForcadaRelatorio(), linha);
-			gravaCelula(6, relatorio.getValorMercadoRelatorio(), linha);
-			gravaCelula(7, relatorio.getNomePagadorRelatorio(), linha);
-			gravaCelula(8, relatorio.getNumeroMatriculaRelatorio(), linha);
-			gravaCelula(9, relatorio.getEnderecoCompletoRelatorio(), linha);
-			gravaCelula(10, relatorio.getDataConsolidadoRelatorio(), linha);
-			gravaCelula(11, relatorio.getDataLeilao1Relatorio(), linha);
-			gravaCelula(12, relatorio.getDataLeilao2Relatorio(), linha);
-			gravaCelula(13, relatorio.getDataLeilao3Relatorio(), linha);
-			gravaCelula(14, relatorio.getStatusLeilaoRelatorio(), linha);
-			gravaCelula(15, relatorio.getStatusAtualRelatorio(), linha);
-			gravaCelula(16, relatorio.getValorLeilao2Relatorio(), linha);
-			gravaCelula(17, relatorio.getValorVendaRelatorio(), linha);
-			gravaCelula(18, relatorio.getDataVendaRelatorio(), linha);
-			gravaCelula(19, relatorio.getTipoVendaRelatorio(), linha);
+			gravaCelula(1, relatorio.getVariacaoCustoRelatorio(), linha);
+			gravaCelula(2, relatorio.getLtvLeilaoRelatorio(), linha);
+			gravaCelula(3, relatorio.getValorEmprestimoRelatorio(), linha);
+			gravaCelula(4, relatorio.getVendaForcadaRelatorio(), linha);
+			gravaCelula(5, relatorio.getValorMercadoRelatorio(), linha);
+			gravaCelula(6, relatorio.getNomePagadorRelatorio(), linha);
+			gravaCelula(7, relatorio.getNumeroMatriculaRelatorio(), linha);
+			gravaCelula(8, relatorio.getEnderecoCompletoRelatorio(), linha);
+			gravaCelula(9, relatorio.getDataConsolidadoRelatorio(), linha);
+			gravaCelula(10, relatorio.getDataLeilao1Relatorio(), linha);
+			gravaCelula(11, relatorio.getDataLeilao2Relatorio(), linha);
+			gravaCelula(12, relatorio.getDataLeilao3Relatorio(), linha);
+			gravaCelula(13, relatorio.getStatusLeilaoRelatorio(), linha);
+			gravaCelula(14, relatorio.getStatusAtualRelatorio(), linha);
+			gravaCelula(15, relatorio.getValorLeilao2Relatorio(), linha);
+			gravaCelula(16, relatorio.getValorVendaRelatorio(), linha);
+			gravaCelula(17, relatorio.getDataVendaRelatorio(), linha);
+			gravaCelula(18, relatorio.getTipoVendaRelatorio(), linha);
 
 
 			iLinha++;
@@ -222,7 +224,6 @@ public class ImovelEstoqueMB {
 		gerador.feed(new ByteArrayInputStream(fileOut.toByteArray()));
 		gerador.close();
 		
-		this.relatorioGerado = true;
 
 	}
 	private void gravaCelula(Integer celula, String value, XSSFRow linha) {
@@ -378,12 +379,4 @@ public class ImovelEstoqueMB {
 		this.listaConsultaEstoque = listaConsultaEstoque;
 	}
 
-	public List<RelatorioEstoque> getListRelatorioEstoque() {
-		return listRelatorioEstoque;
-	}
-
-	public void setListRelatorioEstoque(List<RelatorioEstoque> listRelatorioEstoque) {
-		this.listRelatorioEstoque = listRelatorioEstoque;
-	}
-	
 }

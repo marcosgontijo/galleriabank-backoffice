@@ -54,7 +54,7 @@ public class ImovelEstoqueDao extends HibernateDao <ImovelEstoque,Long> {
     
     private String QUERY_RELATORIO_ESTOQUE = "select c.numerocontrato, ie.variacaocusto, ie.ltvleilao, c.valorccb, c.valorvendaforcadaimovel , c.valormercadoimovel, p.nome, i.numeromatricula, \r\n"
     		+ "concat (i.endereco, ', ', i.bairro, ', ', i.complemento, ', ', i.cidade, ', ', i.estado, '- ', i.cep) as Imovel, ie.dataconsolidado, ie.dataleilao1, ie.dataleilao2, \r\n"
-    		+ "ie.dataleilao3 as LeilãoEstoque, ie.statusleilao, ie.statusatual, ie.valorleilao2, ie.valorvenda, ie.datavenda, ie.tipovenda, ie.estoque \r\n"
+    		+ "ie.dataleilao3 as LeilaoEstoque, ie.statusleilao, ie.statusatual, ie.valorleilao2, ie.valorvenda, ie.datavenda, ie.tipovenda, ie.estoque \r\n"
     		+ "	from cobranca.contratocobranca c\r\n"
     		+ "	left join cobranca.imovelcobranca i on c.imovel = i.id\r\n"
     		+ "	left join cobranca.imovelestoque ie on i.imovelestoque  = ie.id\r\n"
@@ -86,11 +86,11 @@ public class ImovelEstoqueDao extends HibernateDao <ImovelEstoque,Long> {
 						relatorio.setValorMercadoRelatorio(rs.getBigDecimal("valormercadoimovel"));
 						relatorio.setNomePagadorRelatorio(rs.getString("nome"));
 						relatorio.setNumeroMatriculaRelatorio(rs.getString("numeromatricula"));
-						relatorio.setEnderecoCompletoRelatorio(rs.getString("imovel"));
+						relatorio.setEnderecoCompletoRelatorio(rs.getString("Imovel"));
 						relatorio.setDataConsolidadoRelatorio(rs.getDate("dataconsolidado"));
 						relatorio.setDataLeilao1Relatorio(rs.getDate("dataleilao1"));
 						relatorio.setDataLeilao2Relatorio(rs.getDate("dataleilao2"));
-						relatorio.setDataLeilao3Relatorio(rs.getDate("dataleilao3"));
+						relatorio.setDataLeilao3Relatorio(rs.getDate("LeilaoEstoque"));
 						relatorio.setStatusLeilaoRelatorio(rs.getString("statusleilao"));
 						relatorio.setStatusAtualRelatorio(rs.getString("statusatual"));
 						relatorio.setValorLeilao2Relatorio(rs.getBigDecimal("valorleilao2"));
@@ -110,5 +110,38 @@ public class ImovelEstoqueDao extends HibernateDao <ImovelEstoque,Long> {
 		});
 	}
 
+    private String QUERY_ESTOQUE_BALANCO = "select id \r\n"
+    		+ "from cobranca.imovelestoque i \r\n"
+    		+ "where estoque is true";
     
+    @SuppressWarnings("unchecked")
+	public List<ImovelEstoque> balancoEstoque() {
+		return (List<ImovelEstoque>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ImovelEstoque> objects = new ArrayList<ImovelEstoque>();
+				
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				
+				try {
+					connection = getConnection();
+					
+					ps = connection
+							.prepareStatement(QUERY_ESTOQUE_BALANCO);
+					
+					rs = ps.executeQuery();
+					
+					while (rs.next()) {
+						objects.add(findById(rs.getLong(1)));	
+					}
+							
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});
+	}
 }
