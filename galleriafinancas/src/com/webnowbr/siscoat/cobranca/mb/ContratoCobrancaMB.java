@@ -219,6 +219,7 @@ public class ContratoCobrancaMB {
 	private String tipoContratoCobrancaFinanceiroDia;
 
 	private boolean contratoGerado = false;
+
 	
 	private boolean controleWhatsAppAgAssintura = false;
 	private boolean controleWhatsAppAssinado = false;

@@ -21,7 +21,6 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
-import org.primefaces.model.StreamedContent;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
@@ -50,6 +49,7 @@ public class ImovelEstoqueMB {
 	private List<ContratoCobranca> listaConsultaEstoque = new ArrayList<ContratoCobranca>();
 	private List<ImovelEstoque> listImovelEstoque;
 	private List<RelatorioEstoque> listRelatorioEstoque;
+	private boolean relatorioGerado = false;
 	
 	
 	
@@ -138,7 +138,7 @@ public class ImovelEstoqueMB {
 		listaConsultaEstoque = contratoCobrancaDao.consultaImovelEstoque();
 	}
 	
-	public StreamedContent readXLSXFileRelatorioEstoque() throws IOException {
+	public void StreamedContent readXLSXFileRelatorioEstoque() throws IOException {
 
 		XSSFWorkbook wb = new XSSFWorkbook(getClass().getResourceAsStream("/resource/TabelaVazia.xlsx"));
 
@@ -221,8 +221,8 @@ public class ImovelEstoqueMB {
 		gerador.open(String.format("Galleria Bank - Estoque %s.xlsx", ""));
 		gerador.feed(new ByteArrayInputStream(fileOut.toByteArray()));
 		gerador.close();
-
-		return null;
+		
+		this.relatorioGerado = true;
 
 	}
 	private void gravaCelula(Integer celula, String value, XSSFRow linha) {

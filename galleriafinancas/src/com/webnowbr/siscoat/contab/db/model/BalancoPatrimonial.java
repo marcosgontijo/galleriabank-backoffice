@@ -6,13 +6,14 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.poi.ss.formula.functions.FinanceLib;
 
+import com.webnowbr.siscoat.cobranca.db.model.ImovelEstoque;
+import com.webnowbr.siscoat.cobranca.mb.RelatorioEstoque;
 import com.webnowbr.siscoat.cobranca.service.OmieService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
@@ -473,6 +474,16 @@ public class BalancoPatrimonial implements Serializable {
 		
 }
 	} 
+	
+	public void calculaValorVendaForcada(List<ImovelEstoque> imoveis) {
+		BigDecimal somaValorVendaForcada = BigDecimal.ZERO;
+		for (ImovelEstoque imovel : imoveis) {
+			if (imovel.getEstoque()== true) {
+				somaValorVendaForcada = somaValorVendaForcada.add(imovel.getVendaForcada());			
+			}
+		}
+		this.setEstoque(somaValorVendaForcada);
+	}
 	
 	public BigDecimal getTotalAtivos(){
 		BigDecimal result = BigDecimal.ZERO;

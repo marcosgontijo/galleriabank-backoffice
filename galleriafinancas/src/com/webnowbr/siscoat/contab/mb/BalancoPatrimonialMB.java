@@ -31,6 +31,7 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.webnowbr.siscoat.cobranca.db.model.ImovelEstoque;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.contab.db.dao.BalancoPatrimonialDao;
 import com.webnowbr.siscoat.contab.db.model.BalancoPatrimonial;
@@ -58,6 +59,7 @@ public class BalancoPatrimonialMB {
 
 	private List<RelatorioBalanco> relatorioBalancoPagar = new ArrayList<RelatorioBalanco>();
 	private List<RelatorioBalanco> relatorioBalancoReceber = new ArrayList<RelatorioBalanco>();
+	private List<ImovelEstoque> imoveis;
 
 	public String clearFieldsBalancoPatrimonialConsulta() {
 
@@ -118,6 +120,7 @@ public class BalancoPatrimonialMB {
 			// VALOR DEFAULT NO CÓDIGO
 			this.objetoBalanco.setDepositoBacenScd(CommonsUtil.bigDecimalValue(1016095.04));
 
+
 			// VALOR DEFAULT NO DAO - VALOR DO SISTEMA
 
 			this.relatorioBalancoPagar = balancopatrimonialDao.listaRelatorioPagarBalanco();
@@ -132,6 +135,7 @@ public class BalancoPatrimonialMB {
 			
 			this.objetoBalanco.saldoCaixaOmie(); // VALOR CAIXAS
 			this.objetoBalanco.calcularCustoPonderado(relatorioBalancoPagar); // VALOR RECURSOS DEBENTURES
+			this.objetoBalanco.calculaValorVendaForcada(imoveis); //VALOR ESTOQUE VENDA FORÇADA
 			
 
 			int totalRegistros = relatorioBalancoReceber.size();
