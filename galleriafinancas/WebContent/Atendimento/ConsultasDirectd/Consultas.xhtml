@@ -13,12 +13,23 @@
 	  <p:focus /> 
 	  <p:messages/>			
 			<h:panelGrid columns="2">
-			<h:form>	
-			<p:growl id="messages" showDetail="true" sticky="true" />			
-				<p:outputLabel  value="CPF " styleClass="labelBold" style="margin-right: 20px;" />
-				<p:inputMask id="CPF" value="#{consultasMB.cpfCnpj}" label="CNPJ" mask="999.999.999-99" required="true"/>
-													
+			<h:form id="ConsultasForm">
+			<p:outputLabel value="Tipo de Pessoa" styleClass="labelBold" style="margin-right: 20px;"/>
+			<p:selectOneMenu value="#{consultasMB.tipoPessoa}" required="true" >
+			<f:selectItem itemLabel="PF" itemValue="PF" />
+			<f:selectItem itemLabel="PJ" itemValue="PJ"/>
+			<p:ajax event="valueChange" update="consultaCPF"></p:ajax>
+			</p:selectOneMenu>
+			<br></br>
+			<br></br>
+			<p:growl id="messages" showDetail="true" sticky="true"/>			
+				<p:outputLabel  value="CPF " styleClass="labelBold" style="margin-right: 20px;" rendered="#{consultasMB.tipoPessoa == 'PF'}"/>
+				<p:inputMask id="CPF" value="#{consultasMB.cpfCnpj}" label="CNPJ" mask="999.999.999-99" required="true" rendered="#{consultasMB.tipoPessoa == 'PF'}"/>
+				<br></br>
+				<p:outputLabel  value="CNPJ " styleClass="labelBold" style="margin-right: 20px;" rendered="#{consultasMB.tipoPessoa == 'PJ'}" />
+				<p:inputMask id="CNPJ" value="#{consultasMB.cpfCnpj}" label="CNPJ" mask="99.999.999/9999-99" required="true" rendered="#{consultasMB.tipoPessoa == 'PJ'}"/>									
 			
+			<br></br>
 			<br></br>
 		
 				<p:commandButton value="Consultar Serasa" ajax="false" action="#{consultasMB.consultaSerasa}" icon="ui-icon ui-icon-check"  style="TEXT-DECORATION: bold; margin-right: 5px;" />

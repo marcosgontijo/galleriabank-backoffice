@@ -1,5 +1,7 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -35,7 +37,9 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
@@ -224,7 +228,38 @@ public class BmpDigitalMB {
 		ScrService scrService = new ScrService();
 		byte[] contrato = scrService.geraContrato(scrResult, fileGenerator);
 
-		decodarBaixarArquivo(Base64.getEncoder().encodeToString(contrato));
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		ExternalContext externalContext = facesContext.getExternalContext();
+		HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+		BufferedInputStream input = null;
+		BufferedOutputStream output = null;
+		try {
+
+		
+			String mineFile = "application/pdf";
+			input = new BufferedInputStream(new ByteArrayInputStream(contrato));
+			response.reset();
+			// lire un fichier pdf
+			response.setHeader("Content-type", mineFile);
+
+			response.setContentLength(contrato.length);
+
+			response.setHeader("Content-disposition", "inline; FileName=" + "Engine.pdf");
+			output = new BufferedOutputStream(response.getOutputStream(), 10240);
+			byte[] buffer = new byte[10240];
+			int length;
+			while ((length = input.read(buffer)) > 0) {
+				output.write(buffer, 0, length);
+			}
+
+			// Finalize task.
+			output.flush();
+			output.close();
+			
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public StreamedContent decodarBaixarArquivo(String base64) {

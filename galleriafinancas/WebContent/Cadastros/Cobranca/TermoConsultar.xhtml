@@ -58,6 +58,12 @@
 		                	<f:setPropertyActionListener target="#{termoMB.updateMode}" value="false" />
 		                	<f:setPropertyActionListener target="#{termoMB.deleteMode}" value="true" />
 		                </p:commandButton> 
+		                <p:spacer width="10" height="10"/>
+		                <p:commandButton value="ver Assinantes" onclick="PF('AssinantesDialog').show()" action="#{termoMB.listaUsuario(termoConsulta.id)}"  update="assinantesDialogForm" >
+		               
+
+		                </p:commandButton>
+		                
 		            </p:column>
 					<f:facet name="footer">
 						<p:commandButton value="Adicionar" ajax="false"
@@ -72,6 +78,48 @@
 			<div align="center">	
 				<p:commandButton ajax="false" value="Fechar" immediate="true" icon="ui-icon-close" action="MenuCadastros.xhtml"/>
 			</div>	
-		</h:form>	
+		</h:form>
+		<p:dialog header="Assinantes" 
+			widgetVar="AssinantesDialog" showEffect="fade" hideEffect="fade"
+			resizable="false" responsive="false" width="1000"
+			positionType="center center" closable="true">
+			<h:form id="assinantesDialogForm">
+				<h:panelGrid columns="3">
+					<p:panel>
+						<f:facet name="header">
+						<h:outputText value="Assinantes"/>
+						</f:facet>
+							<p:dataTable var="assinantes"
+								value="#{termoMB.usuarios}">
+								<p:column>
+							
+									<h:outputText value="#{assinantes.usuario}" />
+								</p:column>
+								<p:column>
+								<h:outputText value="#{assinantes.data}"/>
+								</p:column>
+								</p:dataTable>
+								
+								
+							
+								<p:dataTable var="documento" value="#{termoMB}">
+								
+								<p:column>
+								<p:commandButton action="#{documento.geraPDF}" value="Download Documento" ajax="false"></p:commandButton>
+								</p:column>
+							</p:dataTable>
+
+
+
+					</p:panel>
+
+				</h:panelGrid>
+
+			</h:form>
+
+
+
+
+		</p:dialog>
 	</ui:define>
 </ui:composition>	        
