@@ -126,7 +126,8 @@
    		         reflow="true"
                  selection="#{brlTrustMB.selectedContratos}" rowKey="#{contratos.id}">    
                  	<f:facet name="header">
-						<p:commandButton action="#{brlTrustMB.geraJSONLiquidacaoMigracao()}" ajax="false"  icon="ui-icon-print" value="Gerar JSON Liquidação Migração" title="Gerar JSON Liquidação Migração"/>
+						<p:commandButton action="#{brlTrustMB.geraJSONLiquidacaoMigracao()}"
+						ajax="false"  icon="ui-icon-print" value="Gerar JSON Liquidação Migração" title="Gerar JSON Liquidação Migração"/>
 						<p:commandButton value="Gerar XLS" ajax="false"
 							icon="ui-icon-print" action="#{brlTrustMB.processaRelatorioFIDCMigracao()}"
 							update="PanelPDF PanelXLS"  />
@@ -159,7 +160,8 @@
 							converter="bigDecimalConverter" />
 					</p:column>
 			       	<f:facet name="footer">
-						<p:commandButton action="#{brlTrustMB.geraJSONLiquidacaoMigracao()}" ajax="false"  icon="ui-icon-print" value="Gerar JSON Liquidação Migração" title="Gerar JSON Liquidação Migração"/>
+						<p:commandButton action="#{brlTrustMB.geraJSONLiquidacaoMigracao()}" ajax="false"
+						onclick="target='_blank'" onblur="target='_self'"  icon="ui-icon-print" value="Gerar JSON Liquidação Migração" title="Gerar JSON Liquidação Migração"/>
 						<p:commandButton value="Gerar XLS" ajax="false"
 							icon="ui-icon-print" action="#{brlTrustMB.processaRelatorioFIDCMigracao()}"
 							update="PanelPDF PanelXLS"  />

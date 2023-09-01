@@ -8,6 +8,7 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 
+
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
@@ -283,13 +284,13 @@ public class DocumentoAnalise implements Serializable {
 			    scr.add(new DocumentoAnaliseResumo("Carteira de Crédito Tomado:", "Não Disponível"));
 			} else {
 			    String creditoTomado = CommonsUtil.formataValorMonetario(dado.getResumoDoClienteTraduzido().getCarteiradeCredito());
-			    double valorCreditoTomado = Double.parseDouble(creditoTomado.replace(",", "").replace("R$", "").trim());
+			    double valorCreditoTomado = Double.parseDouble(creditoTomado.replace(".", "").replace(",", ".").replace("R$", "").trim());
 
 			    if (dado.getResumoDoClienteTraduzido().getLimitesdeCredito() == null) {
 				    scr.add(new DocumentoAnaliseResumo("Limites:", "Não Disponível"));
 				} else {
 				    String limiteCredito = CommonsUtil.formataValorMonetario(dado.getResumoDoClienteTraduzido().getLimitesdeCredito());
-				    double valorLimiteCredito = Double.parseDouble(limiteCredito.replace(",", "").replace("R$", "").trim());
+				    double valorLimiteCredito = Double.parseDouble(limiteCredito.replace(".", "").replace(",", ".").replace("R$", "").trim());
 				    double soma = valorCreditoTomado + valorLimiteCredito;
 
 				    // Formatar o valor da soma em moeda (real)
@@ -299,15 +300,11 @@ public class DocumentoAnalise implements Serializable {
 				    scr.add(new DocumentoAnaliseResumo("Carteira de Crédito Tomado:", somaFormatada));
 				}
 			}
-			
-			
-
 
 		}
 
 		return scr;
 	}
-
 	public boolean isPodeChamarRea() {
 		return isReaNaoEnviado() && CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
 	}

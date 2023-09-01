@@ -1,17 +1,18 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
-import java.io.File;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -19,12 +20,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
-import java.util.concurrent.TimeUnit;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
@@ -44,24 +46,21 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.primefaces.event.SelectEvent;
-import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaBRLLiquidacao;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
-import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhesParcial;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
+import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.simulador.SimulacaoDetalheVO;
 import com.webnowbr.siscoat.simulador.SimulacaoVO;
-import com.webnowbr.siscoat.simulador.SimuladorMB;
 
 
 @ManagedBean(name = "brlTrustMB")
@@ -1163,6 +1162,8 @@ public class BRLTrustMB {
 			 */
 		}
 
+		downloadJson(wb);
+		
 		// Resize columns to fit data
 		// TODO MIGRACAO POI
 		/*
@@ -1525,14 +1526,16 @@ public class BRLTrustMB {
 		
 		jsonSchema.put("cessao", jsonCessao);
 
-		FileOutputStream fileStream;
+//		FileOutputStream fileStream;
 		try {
-			fileStream = new FileOutputStream(new File(this.pathJSON + this.nomeJSON));
-			OutputStreamWriter file;
-			file = new OutputStreamWriter(fileStream, "UTF-8");
+			downloadJson(jsonSchema);
 			
-            file.write(jsonSchema.toString());
-            file.flush();
+//			fileStream = new FileOutputStream(new File(this.pathJSON + this.nomeJSON));
+//			OutputStreamWriter file;
+//			file = new OutputStreamWriter(fileStream, "UTF-8");
+//			
+//            file.write(jsonSchema.toString());
+//            file.flush();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1809,14 +1812,9 @@ public class BRLTrustMB {
 		
 		jsonSchema.put("cessao", jsonCessao);
 
-		FileOutputStream fileStream;
 		try {
-			fileStream = new FileOutputStream(new File(this.pathJSON + this.nomeJSON));
-			OutputStreamWriter file;
-			file = new OutputStreamWriter(fileStream, "UTF-8");
+			downloadJson(jsonSchema);
 			
-            file.write(jsonSchema.toString());
-            file.flush();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -2022,14 +2020,11 @@ public class BRLTrustMB {
 		
 		jsonSchema.put("cessao", jsonCessao);
 
-		FileOutputStream fileStream;
+//		FileOutputStream fileStream;
 		try {
-			fileStream = new FileOutputStream(new File(this.pathJSON + this.nomeJSON));
-			OutputStreamWriter file;
-			file = new OutputStreamWriter(fileStream, "UTF-8");
+
+			downloadJson(jsonSchema);
 			
-            file.write(jsonSchema.toString());
-            file.flush();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -2052,6 +2047,44 @@ public class BRLTrustMB {
 							"Geração JSON BRL Liquidação: Este(s) contrato(s) precisa(m) do processo de gerar Cessão novamente: " + contratosErros,
 							""));	
 		}
+	}
+	
+	
+	private void downloadJson(XSSFWorkbook xls) throws IOException {
+		
+		
+		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+				FacesContext.getCurrentInstance());
+		String nomeSemvirgula = this.nomeXLS;
+		if(nomeSemvirgula.contains(",")) {
+			nomeSemvirgula = nomeSemvirgula.replace(",", "");
+	    }
+		String nomeArquivoDownload = nomeSemvirgula;
+		gerador.open(nomeArquivoDownload);
+		
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		 xls.write(out);
+
+		 
+		gerador.feed(new ByteArrayInputStream(out.toByteArray()));
+		gerador.close();
+	}
+	
+	
+	private void downloadJson(JSONObject jsonSchema) throws IOException {
+		
+		
+		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+				FacesContext.getCurrentInstance());
+		String nomeSemvirgula =this.nomeJSON;
+		if(nomeSemvirgula.contains(",")) {
+			nomeSemvirgula = nomeSemvirgula.replace(",", "");
+	    }
+		String nomeArquivoDownload = nomeSemvirgula;
+		gerador.open(nomeArquivoDownload);
+
+		gerador.feed(new ByteArrayInputStream(jsonSchema.toString().getBytes()));
+		gerador.close();
 	}
 	
 	
@@ -2225,14 +2258,17 @@ public class BRLTrustMB {
 		
 		this.nomeJSON = "JSON_BRL_Trust_Liquidacao_" + identificadorCessao + "_QtdeLiquidados_" + this.qtdeLiquidados + "_ValorTotal_" + this.valorTotalLiquidacao + ".json";
 
-		FileOutputStream fileStream;
+//		FileOutputStream fileStream;
 		try {
-			fileStream = new FileOutputStream(new File(this.pathJSON + this.nomeJSON));
-			OutputStreamWriter file;
-			file = new OutputStreamWriter(fileStream, "UTF-8");
+
+			downloadJson(jsonSchema);
 			
-            file.write(jsonSchema.toString());
-            file.flush();
+//			fileStream = new FileOutputStream(new File(this.pathJSON + this.nomeJSON));
+//			OutputStreamWriter file;
+//			file = new OutputStreamWriter(fileStream, "UTF-8");
+//			
+//            file.write(jsonSchema.toString());
+//            file.flush();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -2434,14 +2470,17 @@ public class BRLTrustMB {
 		
 		jsonSchema.put("cessao", jsonCessao);
 
-		FileOutputStream fileStream;
+//		FileOutputStream fileStream;
 		try {
-			fileStream = new FileOutputStream(new File(this.pathJSON + this.nomeJSON));
-			OutputStreamWriter file;
-			file = new OutputStreamWriter(fileStream, "UTF-8");
+
+			downloadJson(jsonSchema);
 			
-            file.write(jsonSchema.toString());
-            file.flush();
+//			fileStream = new FileOutputStream(new File(this.pathJSON + this.nomeJSON));
+//			OutputStreamWriter file;
+//			file = new OutputStreamWriter(fileStream, "UTF-8");
+//			
+//            file.write(jsonSchema.toString());
+//            file.flush();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
