@@ -74,7 +74,7 @@ public class ReaWebhook {
 //			if ( CommonsUtil.semValor((!CommonsUtil.semValor(dataVendaAtual) ) || (!CommonsUtil.semValor(dataVendaAtual) && DateUtil.isAfterDate(
 //					DateUtil.adicionarPeriodo(DateUtil.getFirstDayOfMonth( DateUtil.getDataHoje() ), -2, Calendar.YEAR), dataVendaAtual))) {
 
-			if (!CommonsUtil.semValor(reaWebhookRetorno.getProprietariosAnterior() != null)) {
+			if (!CommonsUtil.semValor(reaWebhookRetorno.getProprietariosAnterior())) {
 				Date dataVendaAnterior = DateUtil.getDataHoje();
 				for (ReaWebhookRetornoBloco proprietarioAnterior : reaWebhookRetorno.getProprietariosAnterior()) {
 					Date dataVenda = DateUtil.getDecodeDateExtenso(proprietarioAnterior.getConteudo().getTexto());

@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.text.NumberFormat;
+import java.util.Locale;
+
 
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -152,7 +155,7 @@ public class DocumentoAnalise implements Serializable {
 				if (cnpj != null)
 					result.add(new DocumentoAnaliseResumo("CNPJ:", cnpj.getValue()));
 			}
-
+			
 			if (engine.getConsultaCompleta() == null) {
 				result.add(new DocumentoAnaliseResumo("Score:", "Não disponivel"));
 			} else {
@@ -179,43 +182,43 @@ public class DocumentoAnalise implements Serializable {
 			if(engine.getConsultaCompleta() == null) {
 				result.add(new DocumentoAnaliseResumo("Pessoa Políticamente exposta:", "Não disponível"));
 			} else {
-				result.add(new DocumentoAnaliseResumo("Pessoa Políticamente exposta:", "Não disponível"));
+				result.add(new DocumentoAnaliseResumo("Pessoa Políticamente exposta:", "0"));
 			}
 			
 			if(engine.getConsultaCompleta() == null) {
 				result.add(new DocumentoAnaliseResumo("Processos:", "Não disponível"));
 			} else {
-				result.add(new DocumentoAnaliseResumo("Processos:", "Não disponível"));
+				result.add(new DocumentoAnaliseResumo("Processos:", "0"));
 			}
 			
 			if(engine.getConsultaCompleta() == null) {
 				result.add(new DocumentoAnaliseResumo("Valor processos:", "Não disponível"));
 			} else {
-				result.add(new DocumentoAnaliseResumo("Valor processos:", "Não disponível"));
+				result.add(new DocumentoAnaliseResumo("Valor processos:", "0"));
 			}
 			
 			if(engine.getConsultaCompleta() == null) {
 				result.add(new DocumentoAnaliseResumo("Pendências financeiras:", "Não disponível"));
 			} else {
-				result.add(new DocumentoAnaliseResumo("Pendências financeiras:", "Não disponível"));
+				result.add(new DocumentoAnaliseResumo("Pendências financeiras:", "0"));
 			}
 			
 			if(engine.getConsultaCompleta() == null) {
 				result.add(new DocumentoAnaliseResumo("Cheque sem fundo:", "Não disponível"));
 			} else {
-				result.add(new DocumentoAnaliseResumo("Cheque sem fundo:", "Não disponível"));
+				result.add(new DocumentoAnaliseResumo("Cheque sem fundo:", "0"));
 			}
 			
 			if(engine.getConsultaCompleta() == null) {
 				result.add(new DocumentoAnaliseResumo("Inadimplências Comunicadas:", "Não disponível"));
 			} else {
-				result.add(new DocumentoAnaliseResumo("Inadimplências Comunicadas:", "Não disponível"));
+				result.add(new DocumentoAnaliseResumo("Inadimplências Comunicadas:", "0"));
 			}
 			
 			if(engine.getConsultaCompleta() == null) {
 				result.add(new DocumentoAnaliseResumo("Protesto:", "Não disponível"));
 			} else {
-				result.add(new DocumentoAnaliseResumo("Protesto:", "Não disponível"));
+				result.add(new DocumentoAnaliseResumo("Protesto:", "0"));
 			}
 		}
 
@@ -283,14 +286,22 @@ public class DocumentoAnalise implements Serializable {
 			    double valorCreditoTomado = Double.parseDouble(creditoTomado.replace(",", "").replace("R$", "").trim());
 
 			    if (dado.getResumoDoClienteTraduzido().getLimitesdeCredito() == null) {
-			        scr.add(new DocumentoAnaliseResumo("Limites:", "Não Disponível"));
-			    } else {
-			        String limiteCredito = CommonsUtil.formataValorMonetario(dado.getResumoDoClienteTraduzido().getLimitesdeCredito());
-			        double valorLimiteCredito = Double.parseDouble(limiteCredito.replace(",", "").replace("R$", "").trim());
-			        double soma = valorCreditoTomado + valorLimiteCredito;
-			        scr.add(new DocumentoAnaliseResumo("Carteira de Crédito Tomado:", String.valueOf(soma)));
-			    }
+				    scr.add(new DocumentoAnaliseResumo("Limites:", "Não Disponível"));
+				} else {
+				    String limiteCredito = CommonsUtil.formataValorMonetario(dado.getResumoDoClienteTraduzido().getLimitesdeCredito());
+				    double valorLimiteCredito = Double.parseDouble(limiteCredito.replace(",", "").replace("R$", "").trim());
+				    double soma = valorCreditoTomado + valorLimiteCredito;
+
+				    // Formatar o valor da soma em moeda (real)
+				    NumberFormat formatoMoeda = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+				    String somaFormatada = formatoMoeda.format(soma);
+
+				    scr.add(new DocumentoAnaliseResumo("Carteira de Crédito Tomado:", somaFormatada));
+				}
 			}
+			
+			
+
 
 		}
 
