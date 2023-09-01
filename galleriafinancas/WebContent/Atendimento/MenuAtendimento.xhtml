@@ -396,8 +396,7 @@
 									<p:menuitem value="Consultar Kobana"
 										action="#{kobanaMB.clearFieldsConsultarBoleto}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
-										styleClass="itemMenu" />
-									<!--  
+										styleClass="itemMenu" />									 
 									<p:menuitem value="Financeiro"
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiro}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
@@ -461,9 +460,8 @@
 									<p:menuitem value="Financeiro Dia Pré Aprovado"
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroDia('PreAprovado')}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
-										styleClass="itemMenu" />-->
-								</shiro:hasAnyRoles>
-								<!--
+										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>								
 								<shiro:hasAnyRoles name="ROOT, COBRANCA, AGENTE_ESPELHAMENTO">
 									<p:menuitem value="Financeiro Dia Espelhamento FIDC"
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroDiaEspelhamento('EspelhamentoFIDC')}"
@@ -566,7 +564,6 @@
 											<f:setPropertyActionListener value="true" target="#{contratoCobrancaMB.financeiroGalleria}"/>
 									</p:menuitem>
 								</shiro:hasAnyRoles>
-								-->
 								<shiro:hasAnyRoles name="ROOT, COBRANCA, ASSISTENTEFINANCEIRO">
 									<p:menuitem value="Pagto. Valor Líquido"
 										action="#{investidorMB.clearFieldsValorLiquido}" ajax="false"
