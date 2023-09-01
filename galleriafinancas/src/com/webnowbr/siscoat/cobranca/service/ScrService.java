@@ -1,6 +1,7 @@
 package com.webnowbr.siscoat.cobranca.service;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -38,6 +39,7 @@ import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorConsulta;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
+import com.webnowbr.siscoat.cobranca.mb.BmpDigitalMB;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ResumoDoCliente;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ResumoDoClienteTraduzido;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
@@ -45,6 +47,7 @@ import com.webnowbr.siscoat.cobranca.vo.FileGenerator;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
+import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 
@@ -252,15 +255,16 @@ public class ScrService {
 			fileGenerator.setName(sdfDataArquivo.format(date.getTime()) + " SCR " + documentoSemCaracters + ".pdf");
 
 			// os = new FileOutputStream(fileGenerator.getPath() + fileGenerator.getName());
-
+			BmpDigitalMB bmp = new BmpDigitalMB();
 			baos = geraContrato(resumoDoCliente, resumoDoClienteTraduzido, fileGenerator,
 					context);
-			// Associa a stream de saída ao
-			FileOutputStream fos;
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String.format("Galleria Bank - " +  "SCR.pdf", "");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(baos.toByteArray()));
+			gerador.close();
 
-			fos = new FileOutputStream(fileGenerator.getPath() + fileGenerator.getName());
-			fos.write(baos.toByteArray());
-			fos.close();
 			
 			fileGenerator.setPdfGerado(true);
 
