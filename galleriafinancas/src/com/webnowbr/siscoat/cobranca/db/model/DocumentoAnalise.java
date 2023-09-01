@@ -155,7 +155,7 @@ public class DocumentoAnalise implements Serializable {
 				if (cnpj != null)
 					result.add(new DocumentoAnaliseResumo("CNPJ:", cnpj.getValue()));
 			}
-			
+
 			if (engine.getConsultaCompleta() == null) {
 				result.add(new DocumentoAnaliseResumo("Score:", "Não disponivel"));
 			} else {
@@ -283,13 +283,13 @@ public class DocumentoAnalise implements Serializable {
 			    scr.add(new DocumentoAnaliseResumo("Carteira de Crédito Tomado:", "Não Disponível"));
 			} else {
 			    String creditoTomado = CommonsUtil.formataValorMonetario(dado.getResumoDoClienteTraduzido().getCarteiradeCredito());
-			    double valorCreditoTomado = Double.parseDouble(creditoTomado.replace(",", "").replace("R$", "").trim());
+			    double valorCreditoTomado = Double.parseDouble(creditoTomado.replace(".", "").replace(",", ".").replace("R$", "").trim());
 
 			    if (dado.getResumoDoClienteTraduzido().getLimitesdeCredito() == null) {
 				    scr.add(new DocumentoAnaliseResumo("Limites:", "Não Disponível"));
 				} else {
 				    String limiteCredito = CommonsUtil.formataValorMonetario(dado.getResumoDoClienteTraduzido().getLimitesdeCredito());
-				    double valorLimiteCredito = Double.parseDouble(limiteCredito.replace(",", "").replace("R$", "").trim());
+				    double valorLimiteCredito = Double.parseDouble(limiteCredito.replace(".", "").replace(",", ".").replace("R$", "").trim());
 				    double soma = valorCreditoTomado + valorLimiteCredito;
 
 				    // Formatar o valor da soma em moeda (real)
@@ -299,9 +299,6 @@ public class DocumentoAnalise implements Serializable {
 				    scr.add(new DocumentoAnaliseResumo("Carteira de Crédito Tomado:", somaFormatada));
 				}
 			}
-			
-			
-
 
 		}
 
