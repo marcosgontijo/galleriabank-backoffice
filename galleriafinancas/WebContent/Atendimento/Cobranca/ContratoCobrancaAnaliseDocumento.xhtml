@@ -146,33 +146,39 @@
 
 							<p:commandButton
 								action="#{contratoCobrancaMB.baixarEngineDocumento(fileAnalise)}"
-								icon="ui-icon ui-icon-print" value="Download Engine"
+								onclick="target='_blank'" onblur="target='_self'"
+								icon="ui-icon ui-icon-print" value="Abrir Engine"
 								rendered="#{!fileAnalise.podeChamarEngine and fileAnalise.engineProcessado }"
 								ajax="false" />
 
 							<p:commandButton
 								action="#{serasaMB.baixarDocumento(fileAnalise)}"
-								icon="ui-icon ui-icon-print" value="Download Serasa"
+								icon="ui-icon ui-icon-print" value="Abrir Serasa"
+								onclick="target='_blank'" onblur="target='_self'"
 								rendered="#{fileAnalise.serasaProcessado }" ajax="false" />
 
 							<p:commandButton
 								action="#{netrinMB.baixarDocumento(fileAnalise)}"
-								icon="ui-icon ui-icon-print" value="Download Cenprot"
+								onclick="target='_blank'" onblur="target='_self'"
+								icon="ui-icon ui-icon-print" value="Abrir Cenprot"
 								rendered="#{fileAnalise.cenprotProcessado }" ajax="false" />
 
 							<p:commandButton
 								action="#{netrinMB.baixarDocumentoPpe(fileAnalise)}"
-								icon="ui-icon ui-icon-print" value="Download PPE"
+								onclick="target='_blank'" onblur="target='_self'"
+								icon="ui-icon ui-icon-print" value="Abrir PPE"
 								rendered="#{fileAnalise.ppeProcessado }" ajax="false" />
 
 							<p:commandButton
 								action="#{netrinMB.baixarDocumentoDossie(fileAnalise)}"
-								icon="ui-icon ui-icon-print" value="Download Dossiê"
+								onclick="target='_blank'" onblur="target='_self'"
+								icon="ui-icon ui-icon-print" value="Abrir Dossiê"
 								rendered="#{fileAnalise.podeDownlaodDossie }" ajax="false" />
 
 							<p:commandButton
 								action="#{netrinMB.baixarDocumentoProcesso(fileAnalise)}"
-								icon="ui-icon ui-icon-print" value="Download Processos"
+								onclick="target='_blank'" onblur="target='_self'"
+								icon="ui-icon ui-icon-print" value="Abrir Processos"
 								rendered="#{fileAnalise.processoProcessado and fileAnalise.tipoProcesso != 'B'  }" ajax="false" />
 								
 								
@@ -183,7 +189,8 @@
 
 							<p:commandButton
 								action="#{bmpDigitalMB.baixarDocumento(fileAnalise)}"
-								icon="ui-icon ui-icon-print" value="Download SCR"
+								onclick="target='_blank'" onblur="target='_self'"
+								icon="ui-icon ui-icon-print" value="Abrir SCR"
 								rendered="#{fileAnalise.scrProcessado }" ajax="false" />
 
 

@@ -4854,12 +4854,43 @@ public class ContratoCobrancaMB {
 	 */
 
 	public void baixarEngineDocumento(DocumentoAnalise documentoAnalise) {
-		if (docketService == null)
-			docketService = new DocketService();
-		docketService.baixarDocumentoEngine(documentoAnalise.getEngine());
-		docketService.salvarDetalheDocumentoEngine(documentoAnalise);
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		ExternalContext externalContext = facesContext.getExternalContext();
+		HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+		BufferedInputStream input = null;
+		BufferedOutputStream output = null;
+		try {
+			if (docketService == null)
+				docketService = new DocketService();
+			docketService.baixarDocumentoEngine(documentoAnalise.getEngine());
+			docketService.salvarDetalheDocumentoEngine(documentoAnalise);
 
-		decodarBaixarArquivo(documentoAnalise.getEngine().getPdfBase64());
+			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoAnalise.getEngine().getPdfBase64());
+			String mineFile = "application/pdf";
+			input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
+			response.reset();
+			// lire un fichier pdf
+			response.setHeader("Content-type", mineFile);
+
+			response.setContentLength(pdfBytes.length);
+
+			response.setHeader("Content-disposition", "inline; FileName=" + "Engine.pdf");
+			output = new BufferedOutputStream(response.getOutputStream(), 10240);
+			byte[] buffer = new byte[10240];
+			int length;
+			while ((length = input.read(buffer)) > 0) {
+				output.write(buffer, 0, length);
+			}
+
+			// Finalize task.
+			output.flush();
+			output.close();
+			
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	public StreamedContent decodarBaixarArquivo(String base64) {
@@ -24573,6 +24604,7 @@ public class ContratoCobrancaMB {
 			/*
 			 * Fonts Utilizadas no PDF
 			 */
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			Font header = new Font(FontFamily.HELVETICA, 12, Font.BOLD);
 
 			Font titulo = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
@@ -24594,12 +24626,9 @@ public class ContratoCobrancaMB {
 			 * Configuração inicial do PDF - Cria o documento tamanho A4, margens de 2,54cm
 			 */
 			doc = new Document(PageSize.A4.rotate(), 10, 10, 10, 10);
-			this.pathContrato = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
-			this.nomeContrato = "Relatório Financeiro Cobrança.pdf";
-			os = new FileOutputStream(this.pathContrato + this.nomeContrato);
 
 			// Associa a stream de saída ao
-			PdfWriter.getInstance(doc, os);
+			PdfWriter.getInstance(doc, baos);
 
 			// Abre o documento
 			doc.open();
@@ -25748,13 +25777,15 @@ public class ContratoCobrancaMB {
 			table.addCell(cell10);
 
 			doc.add(table);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"Contrato de Cobrança: Este contrato está aberto por algum outro programa, por favor, feche-o e tente novamente! (Contrato: "
-							+ this.objetoContratoCobranca.getNumeroContrato() + ")" + e,
-					""));
-		} catch (Exception e) {
+			doc.close();
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String.format("Galleria Bank - Financeiro.pdf", "");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(baos.toByteArray()));
+			gerador.close();
+			
+		}  catch (Exception e) {
 			context.addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_ERROR,
 							"Contrato de Cobrança: Ocorreu um problema ao gerar o contrato! (Contrato: "
@@ -25763,19 +25794,7 @@ public class ContratoCobrancaMB {
 		} finally {
 			this.contratoGerado = true;
 
-			if (doc != null) {
-				// fechamento do documento
-				doc.close();
-			}
-			if (os != null) {
-				// fechamento da stream de saída
-				try {
-					os.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+			
 		}
 
 	}
@@ -26611,6 +26630,7 @@ public class ContratoCobrancaMB {
 
 	public void writeXLSXFile() throws IOException {
 		ParametrosDao pDao = new ParametrosDao();
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		this.pathContrato = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
 		this.nomeContrato = "Relatório Financeiro Cobrança.xlsx";
 
@@ -27647,12 +27667,15 @@ public class ContratoCobrancaMB {
 		 * int noOfColumns = sheet.getRow(0).getLastCellNum(); for (int i = 0; i <
 		 * noOfColumns; i++) { sheet.autoSizeColumn(i); }
 		 */
-		FileOutputStream fileOut = new FileOutputStream(excelFileName);
 
 		// write this workbook to an Outputstream.
-		wb.write(fileOut);
-		fileOut.flush();
-		fileOut.close();
+		wb.write(baos);
+		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+				FacesContext.getCurrentInstance());
+		String nomeArquivoDownload = String.format("Galleria Bank - Financeiro.xlsx", "");
+		gerador.open(nomeArquivoDownload);
+		gerador.feed(new ByteArrayInputStream(baos.toByteArray()));
+		gerador.close();
 
 		this.contratoGerado = true;
 	}

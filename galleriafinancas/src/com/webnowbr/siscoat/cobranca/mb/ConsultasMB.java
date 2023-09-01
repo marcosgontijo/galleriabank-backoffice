@@ -25,6 +25,7 @@ import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 
 public class ConsultasMB {
 		private String cpfCnpj;
+		private String tipoPessoa;
 		
 		
 		public String clear() {
@@ -39,15 +40,16 @@ public class ConsultasMB {
 			try {
 				SerasaService serasa = new SerasaService();
 				String retornoSerasa = serasa.serasaCriarConsulta(cpfCnpj);
+			
 				if (retornoSerasa != null) {
-					String Base64 = serasa.baixarDocumentoConsulta(retornoSerasa, "PF");
+					String Base64 = serasa.baixarDocumentoConsulta(retornoSerasa, tipoPessoa);
 					decodarBaixarArquivo(cpfCnpj, Base64);
 				} else {
 					context.addMessage(null,
 							new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta", ""));
 				}
 			} catch (Exception e) {
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta", ""));
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta",""));
 
 			}
 
@@ -137,9 +139,12 @@ public class ConsultasMB {
 			this.cpfCnpj = cpfCnpj;
 		}
 
+		public String getTipoPessoa() {
+			return tipoPessoa;
+		}
+
+		public void setTipoPessoa(String tipoPessoa) {
+			this.tipoPessoa = tipoPessoa;
+		}
+
 	}
-	
-	
-
-
-
