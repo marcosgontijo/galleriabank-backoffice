@@ -15,7 +15,7 @@
    		         <p:dataTable id="dtEstoque" var="estoque" value="#{imovelCobrancaMB.listaConsultaEstoque}" paginator="true" rows="20" 
    		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
    		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
-                 rowsPerPageTemplate="20,40,60,80" selection="" emptyMessage="" sortBy="#{estoque.numeroContrato}">
+                 rowsPerPageTemplate="20,40,60,80" selection="" emptyMessage="" sortBy="#{estoque.imovel.imovelEstoque.statusAtual}">
                  	<f:facet name="header">
 	                 	<p:commandButton value="Gerar Arquivo Estoque" icon="ui-icon-print"
 							action="#{imovelEstoqueMB.readXLSXFileRelatorioEstoque}"

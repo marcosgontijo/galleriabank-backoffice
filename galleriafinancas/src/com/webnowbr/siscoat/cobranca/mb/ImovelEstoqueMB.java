@@ -16,6 +16,13 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -142,6 +149,84 @@ public class ImovelEstoqueMB {
 		XSSFWorkbook wb = new XSSFWorkbook(getClass().getResourceAsStream("/resource/TabelaVazia.xlsx"));
 
 		XSSFSheet sheet = wb.getSheetAt(0);
+		
+		ImovelEstoqueDao imovelEstoqueDao = new ImovelEstoqueDao();
+		List<RelatorioEstoque> listRelatorioEstoque = imovelEstoqueDao.listRelatorioEstoque();
+		
+		// Cria uma instância de XSSFCellStyle para aplicar formatação ao cabeçalho
+		XSSFCellStyle headerCellStyle = wb.createCellStyle();
+
+		// Define a cor de fundo para o cabeçalho
+		headerCellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+		headerCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+		// Cria uma fonte para o texto do cabeçalho
+		XSSFFont font = wb.createFont();
+		font.setBold(true); // Defina o texto em negrito
+		headerCellStyle.setFont(font);
+
+		// Alinha o texto ao centro horizontalmente e verticalmente
+		headerCellStyle.setAlignment(HorizontalAlignment.CENTER);
+		headerCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		
+		// Crie o cabeçalho e aplique o estilo a cada célula do cabeçalho
+		XSSFRow headerRow = sheet.createRow(0);
+		String[] headerTexts = {
+		    "N° CONTRATO", "VARIAÇÃO CUSTOS ATÉ LEILÃO", "LTV DO LEILÃO", "VALOR DO EMPRÉSTIMO",
+		    "VENDA FORÇADA", "VALOR MERCADO", "CLIENTE", "MATRÍCULA", "IMÓVEL", "CONSOLIDADO EM",
+		    "1º LEILÃO", "2º LEILÃO", "LEILÃO ESTOQUE", "STATUS LEILÃO", "STATUS ATUAL",
+		    "VALOR 2º LEILÃO", "VALOR VENDA", "DATA VENDA", "TIPO VENDA"
+		};
+
+		for (int i = 0; i < headerTexts.length; i++) {
+		    XSSFCell cell = headerRow.createCell(i);
+		    cell.setCellValue(headerTexts[i]);
+		    cell.setCellStyle(headerCellStyle);
+		}
+		
+		// Ajusta automaticamente o tamanho das colunas com base no conteúdo
+		for (int i = 0; i < headerTexts.length; i++) {
+		    sheet.autoSizeColumn(i);
+		}
+		
+		// Cria uma instância de XSSFCellStyle para a formatação das linhas pares
+		XSSFCellStyle evenRowStyle = wb.createCellStyle();
+
+		// Define a cor de fundo para as linhas pares
+		//evenRowStyle.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
+		//evenRowStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+		// Cria uma instância de XSSFCellStyle para a formatação das linhas ímpares
+		XSSFCellStyle oddRowStyle = wb.createCellStyle();
+
+		// Define a cor de fundo para as linhas ímpares
+		oddRowStyle.setFillForegroundColor(IndexedColors.LEMON_CHIFFON.getIndex());
+		oddRowStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+		// Cria uma fonte para os estilos das linhas
+		XSSFFont rowFont = wb.createFont();
+		rowFont.setBold(false); // Desligue o negrito
+		evenRowStyle.setFont(rowFont);
+		oddRowStyle.setFont(rowFont);
+
+		// Inicia um contador para rastrear linhas ímpares/pares
+		int rowNum = 0;
+
+		for (RelatorioEstoque relatorio : listRelatorioEstoque) {
+		    XSSFRow linha = sheet.createRow(rowNum + 1); // Comece a partir da segunda linha (0 é o cabeçalho)
+
+		    // Aplicar o estilo alternado com base no número da linha
+		    XSSFCellStyle rowStyle = (rowNum % 2 == 0) ? evenRowStyle : oddRowStyle;
+		    for (int i = 0; i < headerTexts.length; i++) {
+		        XSSFCell cell = linha.createCell(i);
+		        // Defina o valor da célula com base nos dados do relatório
+		        // ...
+		        cell.setCellStyle(rowStyle);
+		    }
+
+		    rowNum++;
+		}
+		
 
 		int iLinha = 0;
 
@@ -173,9 +258,6 @@ public class ImovelEstoqueMB {
 
 
 		iLinha++;
-
-		ImovelEstoqueDao imovelEstoqueDao = new ImovelEstoqueDao();
-		List<RelatorioEstoque> listRelatorioEstoque = imovelEstoqueDao.listRelatorioEstoque();
 		
 		for (int iRelatorio = 0; iRelatorio < listRelatorioEstoque.size(); iRelatorio++) {
 			RelatorioEstoque relatorio = listRelatorioEstoque.get(iRelatorio);
