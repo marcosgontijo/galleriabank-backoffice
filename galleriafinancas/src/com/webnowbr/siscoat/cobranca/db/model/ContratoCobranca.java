@@ -498,6 +498,10 @@ public class ContratoCobranca implements Serializable {
 	private BigInteger qtdeVotosAprovadosComite;
 	private BigInteger qtdeVotosReprovadosComite;
 	private BigInteger qtdeVotosNecessariosComite;
+	
+	private boolean okCliente;
+	private Date okClienteData;
+	private String okClienteUsuario;
 
 	private Date statusContratoData;
 	private String statusContrato;
@@ -6942,6 +6946,30 @@ public class ContratoCobranca implements Serializable {
 
 	public void setTerrenoOuBarracaoTaxa(boolean terrenoOuBarracaoTaxa) {
 		this.terrenoOuBarracaoTaxa = terrenoOuBarracaoTaxa;
+	}
+
+	public boolean isOkCliente() {
+		return okCliente;
+	}
+
+	public void setOkCliente(boolean okCliente) {
+		this.okCliente = okCliente;
+	}
+
+	public Date getOkClienteData() {
+		return okClienteData;
+	}
+
+	public void setOkClienteData(Date okClienteData) {
+		this.okClienteData = okClienteData;
+	}
+
+	public String getOkClienteUsuario() {
+		return okClienteUsuario;
+	}
+
+	public void setOkClienteUsuario(String okClienteUsuario) {
+		this.okClienteUsuario = okClienteUsuario;
 	}
 	
 }

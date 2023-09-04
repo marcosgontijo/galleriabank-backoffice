@@ -211,21 +211,18 @@
 									action="#{netrinMB.baixarDocumentoCNDEstadual(fileAnalise)}"
 									icon="ui-icon ui-icon-print" value="Download CND Estadual"
 									onclick="target='_blank'" onblur="target='_self'"
-									icon="ui-icon ui-icon-print" value="Abrir SCR"
 									rendered="#{fileAnalise.CNDEstadualProcessado}" ajax="false" />
 									
 								<p:commandButton 
 									action="#{netrinMB.baixarDocumentoCNDFederal(fileAnalise)}"
 									icon="ui-icon ui-icon-print" value="Download CND Federal"
-									onclick="target='_blank'" onblur="target='_self'"
-									icon="ui-icon ui-icon-print" value="Abrir SCR"
+									onclick="target='_blank'" onblur="target='_self'"  
 									rendered="#{fileAnalise.CNDFederalProcessado}" ajax="false" />
 									
 								<p:commandButton 
 									action="#{netrinMB.baixarDocumentoCNDTrabalhistaTST(fileAnalise)}"
 									icon="ui-icon ui-icon-print" value="Download CNDT TST"
 									onclick="target='_blank'" onblur="target='_self'"
-									icon="ui-icon ui-icon-print" value="Abrir SCR"
 									rendered="#{fileAnalise.CNDTrabalhistaTSTProcessado}" ajax="false" />
 									
 							</h:panelGroup>
@@ -269,18 +266,16 @@
 					widgetVar="executeBtn2" onclick="executeBtn2.disable()"
 					oncomplete="executeBtn2.enable()"/>
 			</p:panel>
-		
+
 			<p:panel id="pnlLaudoRobo" header="Laudo Robô" style="margin-bottom:10px">
-				<p:commandButton 	value="Laudo" 
-									onclick="PF('laudoRoboDialog').show()"
-									update="laudoRoboForm" 
-									ajax="true"
-									rendered="#{fileAnalise.tipo != 'Rea'}">
-						<f:setPropertyActionListener value="#{fileAnalise}"
+				<p:commandButton value="Laudo"
+					onclick="PF('laudoRoboDialog').show()" update="laudoRoboForm"
+					ajax="true" rendered="#{fileAnalise.tipo != 'Rea'}">
+					<f:setPropertyActionListener value="#{fileAnalise}"
 						target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
-				</p:commandButton>		
+				</p:commandButton>
 			</p:panel>
-			
+
 		</p:panel>
 
 
