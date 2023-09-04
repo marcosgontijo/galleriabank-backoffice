@@ -46,6 +46,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.webnowbr.siscoat.cobranca.db.model.directd.AntCriminais;
+import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 
 
@@ -388,16 +389,15 @@ public class ConsultaAntCriminais {
 			SimpleDateFormat sdfDataRel = new SimpleDateFormat("dd/MMM/yyyy", locale);
 			SimpleDateFormat sdfDataRelComHoras = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", locale);
 
-			ParametrosDao pDao = new ParametrosDao(); 
+			ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
 
 			doc = new Document(PageSize.A4.rotate(), 10, 10, 10, 10);
-			this.nomePDF = "Consulta - Antecedentes Criminais - " + this.retornoConsultaAntCriminais.getNome() + ".pdf";
-			this.pathPDF = pDao.findByFilter("nome", "CONSULTAS_DIRECTD").get(0).getValorString();
+	
 
 			os = new FileOutputStream(this.pathPDF + this.nomePDF);  	
 
 			// Associa a stream de saída ao 
-			PdfWriter.getInstance(doc, os);
+			PdfWriter.getInstance(doc, baos);
 
 			// Abre o documento
 			doc.open();     			
@@ -627,32 +627,26 @@ public class ConsultaAntCriminais {
 			table.addCell(cell1);
 			
 			doc.add(table);
+			doc.close();
+			this.nomePDF = "Consulta - Antecedentes Criminais - " + this.retornoConsultaAntCriminais.getNome() + ".pdf";
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String.format(nomePDF, "");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(baos.toByteArray()));
+			gerador.close();
 
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			context.addMessage(null, new FacesMessage(
-					FacesMessage.SEVERITY_ERROR, "PDF PJ: Este contrato está aberto por algum outro programa, por favor, feche-o e tente novamente!" + e, ""));
 		} catch (Exception e) {
 			context.addMessage(null, new FacesMessage(
 					FacesMessage.SEVERITY_ERROR, "PDF PJ: Ocorreu um problema ao gerar o PDF!" + e, ""));
 		} finally {
 			this.pdfGerado = true;
 
-			if (doc != null) {
-				//fechamento do documento
-				doc.close();
-			}
-			if (os != null) {
-				//fechamento da stream de saída
-				try {
-					os.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			
+			
 			}
 		}
-	}
+	
 
 	public boolean isPdfGerado() {
 		return pdfGerado;

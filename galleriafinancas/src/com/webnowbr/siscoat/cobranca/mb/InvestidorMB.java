@@ -6388,7 +6388,6 @@ public class InvestidorMB {
 
 		try {
 			baos = new ByteArrayOutputStream();
-
 			Font header16 = new Font(FontFamily.HELVETICA, 16, Font.BOLD);
 			Font header = new Font(FontFamily.HELVETICA, 14, Font.BOLD);
 			Font header12 = new Font(FontFamily.HELVETICA, 12, Font.BOLD);
@@ -6880,8 +6879,7 @@ public class InvestidorMB {
 			this.titulosQuitadosPDFGerado = true;
 
 		}
-	}
-	
+	}	
 
 	public String clearFieldsConsultaDebentures() {
 		this.listDebenturesInvestidor = new ArrayList<DebenturesInvestidor>();

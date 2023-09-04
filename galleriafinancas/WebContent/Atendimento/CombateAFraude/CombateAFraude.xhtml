@@ -14,16 +14,21 @@
 			<p:panel id="contasPagar" header="Contas a Pagar"
 				style="margin-bottom:20px;">
 				<h:panelGrid columns="2">
-				
 					<p:outputLabel for="cpf"
 						value="cpf: " styleClass="labelBold" />
 					<p:inputMask id="cpf" value="#{combateAFraudeMB.cpf}"
 						style=" width:100px" mask="999.999.999-99">
 						<p:ajax event="blur" />
 					</p:inputMask>
-					
-					
-					
+				</h:panelGrid>
+				<h:panelGrid columns="2" rendered="#{combateAFraudeMB.objetoCaF ne null}">
+					<p:outputLabel for="obs" value="Obs: " styleClass="labelBold" />
+					<h:inputTextarea id="obs" rows="5" cols="25" maxlength="3000" onblur=""
+						counterTemplate="{0} characters remaining." autoResize="false"
+						value="#{combateAFraudeMB.objetoCaF.obs}" 
+						style="white-space: pre-wrap;">
+						<p:ajax process="@this" partialSubmit="true" />
+					</h:inputTextarea> 
 				</h:panelGrid>
 			</p:panel>
 					
@@ -91,7 +96,8 @@
 				</shiro:hasAnyRoles>	
 			</p:panel>
 			<p:commandButton action="#{combateAFraudeMB.combateAFraudeTransaction}"
-				icon="ui-icon ui-icon-print" value="Chamar API" update="form" />	
+				icon="ui-icon ui-icon-print" value="Chamar API" update="form" 
+				disabled="#{!(combateAFraudeMB.objetoCaF eq null or combateAFraudeMB.objetoCaF.retorno eq null)}"/>	
 		</h:form>
 		
 	</ui:define>

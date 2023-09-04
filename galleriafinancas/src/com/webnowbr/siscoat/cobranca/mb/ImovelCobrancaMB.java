@@ -178,12 +178,12 @@ public class ImovelCobrancaMB {
 				||  CommonsUtil.semValor(linha.getCell(2)) 
 				||  CommonsUtil.semValor(linha.getCell(2).getStringCellValue())
 				||  CommonsUtil.semValor(linha.getCell(3)) 
+				||  CommonsUtil.semValor(linha.getCell(4)) 
+				||  CommonsUtil.semValor(linha.getCell(4).getStringCellValue())
+				||  CommonsUtil.semValor(linha.getCell(5)) 
+				||  CommonsUtil.semValor(linha.getCell(5).getNumericCellValue())
 				||  CommonsUtil.semValor(linha.getCell(6)) 
-				||  CommonsUtil.semValor(linha.getCell(6).getStringCellValue())
-				||  CommonsUtil.semValor(linha.getCell(7)) 
-				||  CommonsUtil.semValor(linha.getCell(7).getNumericCellValue())
-				||  CommonsUtil.semValor(linha.getCell(9)) 
-				||  CommonsUtil.semValor(linha.getCell(9).getStringCellValue())) {
+				||  CommonsUtil.semValor(linha.getCell(6).getStringCellValue())) {
 				break;
 			}
 			
@@ -206,9 +206,9 @@ public class ImovelCobrancaMB {
 			
 			
 			
-			String praiaStr = (linha.getCell(6).getStringCellValue());
-			int rankingEstadual = CommonsUtil.intValue(linha.getCell(7).getNumericCellValue());		
-			String pintarStr = (linha.getCell(9).getStringCellValue());
+			String praiaStr = (linha.getCell(4).getStringCellValue());
+			int rankingEstadual = CommonsUtil.intValue(linha.getCell(5).getNumericCellValue());		
+			String pintarStr = (linha.getCell(6).getStringCellValue());
 			
 			while(estado.startsWith(" ")
 					|| estado.startsWith(Character.toString((char) 160))) {

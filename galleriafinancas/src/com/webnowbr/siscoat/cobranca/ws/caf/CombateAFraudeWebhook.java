@@ -37,8 +37,15 @@ public class CombateAFraudeWebhook {
 				Date d = sdf.parse(cafWebhookRetorno.date);
 				caf.setDate(d);
 				for(CombateAFraudeStatusReasons reason : cafWebhookRetorno.statusReasons) {
+					if(CommonsUtil.semValor(reason.description)) {
+						continue;
+					}
+					if(CommonsUtil.semValor(caf.getObs())) {
+						caf.setObs("");
+					}
 					caf.setObs(caf.getObs() + reason.description  + "\n");
 				}
+				caf.setRetorno(webhookRetorno);
 				cafDao.merge(caf);				
 			}
 			//System.out.println(webhookRetorno);		

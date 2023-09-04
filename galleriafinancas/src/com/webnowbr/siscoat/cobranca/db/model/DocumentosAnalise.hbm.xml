@@ -113,6 +113,27 @@
 		<property name="observacao" type="java.lang.String"  length="65000">
 			<column name="observacao" />
 		</property>
+		
+		<property name="retornoCNDTrabalhistaTST" type="java.lang.String"  length="65000">
+			<column name="retornoCNDTrabalhistaTST" />
+		</property>
+		
+		<property name="retornoCNDFederal" type="java.lang.String"  length="65000">
+			<column name="retornoCNDFederal" />
+		</property>
+		
+		<property name="retornoCNDEstadual" type="java.lang.String"  length="65000">
+			<column name="retornoCNDEstadual" />
+		</property>
+		
+		
+		<list name="plexiConsultas"
+			table="DocumentoAnalise_PlexiConsultas_Join" cascade="all" lazy="false">
+			<key column="idDocumentoAnalise" />
+			<list-index></list-index>
+			<many-to-many column="idPlexiConsulta"
+				class="com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta" />
+		</list>
 						
     </class>
 </hibernate-mapping>

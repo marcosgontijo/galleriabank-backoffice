@@ -15,7 +15,7 @@
 			
 	</h:outputStylesheet>
 	<shiro:hasAnyRoles
-		name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO">
+		name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
 		<p:panel id="ImovelAnalisado" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Em Análise' or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Análise' }">
 			<f:facet name="header">
 				<h:outputText value="Cidade imovel" />				
@@ -63,19 +63,22 @@
 					</p:commandButton>
 				</f:facet>
 
-
 				<h:panelGrid columns="1">
 					<p:dataTable id="dtFilesAnalise" var="fileAnalise"
 						value="#{contratoCobrancaMB.listaDocumentoAnalise}"
-						rowKey="#{fileAnalise}" selection="#{contratoCobrancaMB.listaDeleteAnalise}" emptyMessage="">
-						<p:column  selectionMode="multiple" style="width:16px;text-align:center"/>
-						<f:facet name="header">								 
-								<p:commandButton value="Excluir Selecionado(s)" ajax="true" icon="ui-icon-trash" update="dtFilesAnalise" action="#{contratoCobrancaMB.deleteArquivosAnalisados}">
-									<p:confirm header="Confirmação" message="Deseja Excluir os itens selecionados?"/>
-								</p:commandButton>
-					        </f:facet>	        
-					       
+						rowKey="#{fileAnalise}" selection="#{contratoCobrancaMB.listaDeleteAnalise}" 
+						emptyMessage=""
+						rowStyleClass="#{(fileAnalise.liberadoAnalise eq true
+							or contratoCobrancaMB.objetoContratoCobranca.emAnalise) ? '' : 'ui-helper-hidden'}">
 						
+						<f:facet name="header">								 
+							<p:commandButton value="Excluir Selecionado(s)" ajax="true" icon="ui-icon-trash" update="dtFilesAnalise" action="#{contratoCobrancaMB.deleteArquivosAnalisados}">
+								<p:confirm header="Confirmação" message="Deseja Excluir os itens selecionados?"/>
+							</p:commandButton>
+				        </f:facet>
+						
+					   
+						<p:column  selectionMode="multiple" style="width:16px;text-align:center"/>
 
 						<p:column style="text-align: center; width:5rem;">
 						
@@ -138,7 +141,7 @@
 
 						<p:column style="text-align: center;" headerText="Situação"
 							filterMatchMode="contains">
-
+							
 							<h:outputText value="REA Enviado"
 								rendered="#{fileAnalise.podeChamarRea and !fileAnalise.reaNaoEnviado and !fileAnalise.reaProcessado }" />
 							<h:outputText value="REA Processado"
@@ -192,8 +195,41 @@
 								onclick="target='_blank'" onblur="target='_self'"
 								icon="ui-icon ui-icon-print" value="Abrir SCR"
 								rendered="#{fileAnalise.scrProcessado }" ajax="false" />
-
-
+															
+							<p:commandButton
+								value="Consultas Plexi"
+								onclick="PF('consultasPlexiDlg').show()"
+								update="ConsultasPlexiForm" ajax="true"
+								rendered="#{fileAnalise.plexiConsultas.size() > 0}" >
+							<f:setPropertyActionListener value="#{fileAnalise}"
+								target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
+							</p:commandButton>
+						
+							<h:panelGroup rendered="#{contratoCobrancaMB.objetoContratoCobranca.emPedirPaju}">
+							
+								<p:commandButton 
+									action="#{netrinMB.baixarDocumentoCNDEstadual(fileAnalise)}"
+									icon="ui-icon ui-icon-print" value="Download CND Estadual"
+									onclick="target='_blank'" onblur="target='_self'"
+									icon="ui-icon ui-icon-print" value="Abrir SCR"
+									rendered="#{fileAnalise.CNDEstadualProcessado}" ajax="false" />
+									
+								<p:commandButton 
+									action="#{netrinMB.baixarDocumentoCNDFederal(fileAnalise)}"
+									icon="ui-icon ui-icon-print" value="Download CND Federal"
+									onclick="target='_blank'" onblur="target='_self'"
+									icon="ui-icon ui-icon-print" value="Abrir SCR"
+									rendered="#{fileAnalise.CNDFederalProcessado}" ajax="false" />
+									
+								<p:commandButton 
+									action="#{netrinMB.baixarDocumentoCNDTrabalhistaTST(fileAnalise)}"
+									icon="ui-icon ui-icon-print" value="Download CNDT TST"
+									onclick="target='_blank'" onblur="target='_self'"
+									icon="ui-icon ui-icon-print" value="Abrir SCR"
+									rendered="#{fileAnalise.CNDTrabalhistaTSTProcessado}" ajax="false" />
+									
+							</h:panelGroup>
+							
 						</p:column>
 
 						<p:column style="width:100px;" rendered="#{false}">
@@ -205,9 +241,7 @@
 								<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
 							</p:commandButton>
 						</p:column>
-					
-						
-						
+							
 					</p:dataTable>
 				</h:panelGrid>
 
@@ -222,6 +256,18 @@
 					disabled="#{contratoCobrancaMB.checkConsultasAnaliseDocumento()}" />
 				<p:commandButton value="Certidões Docket"
 					action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.objetoContratoCobranca)}" />
+				<p:commandButton value="Certidões Plexi" 
+					action="#{plexiMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise)}" />
+			</p:panel>
+			
+			<p:panel id="pnlCeridoesPedirPaju" header="Certidões Netrin"
+				rendered="#{contratoCobrancaMB.objetoContratoCobranca.emPedirPaju}"
+				style="margin-bottom:10px;">
+
+				<p:commandButton value="Executar Consultas Netrin" ajax="true"
+					action="#{contratoCobrancaMB.executarConsultasPedirPajuDocumento}"
+					widgetVar="executeBtn2" onclick="executeBtn2.disable()"
+					oncomplete="executeBtn2.enable()"/>
 			</p:panel>
 		
 			<p:panel id="pnlLaudoRobo" header="Laudo Robô" style="margin-bottom:10px">
@@ -232,8 +278,7 @@
 									rendered="#{fileAnalise.tipo != 'Rea'}">
 						<f:setPropertyActionListener value="#{fileAnalise}"
 						target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
-				</p:commandButton>				
-				
+				</p:commandButton>		
 			</p:panel>
 			
 		</p:panel>

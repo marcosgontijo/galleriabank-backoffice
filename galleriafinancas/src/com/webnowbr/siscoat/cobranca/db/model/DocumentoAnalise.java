@@ -6,10 +6,8 @@ import java.util.List;
 
 import java.text.NumberFormat;
 import java.util.Locale;
-
-
-
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
+import com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 
@@ -72,6 +70,13 @@ public class DocumentoAnalise implements Serializable {
 	private String retornoScr;
 	private String observacao;
 	private boolean excluido;
+	
+	private String retornoCNDTrabalhistaTST;
+	private String retornoCNDFederal;
+	private String retornoCNDEstadual;
+	
+	private List<PlexiConsulta> plexiConsultas = new ArrayList<PlexiConsulta>();
+	
 
 	public List<DocumentoAnaliseResumo> getResumoProcesso() {
 		List<DocumentoAnaliseResumo> vProcesso = new ArrayList<>();
@@ -366,6 +371,18 @@ public class DocumentoAnalise implements Serializable {
 
 	public boolean isScrProcessado() {
 		return !CommonsUtil.semValor(retornoScr);
+	}
+	
+	public boolean isCNDEstadualProcessado() {
+		return !CommonsUtil.semValor(retornoCNDEstadual);
+	}
+	
+	public boolean isCNDFederalProcessado() {
+		return !CommonsUtil.semValor(retornoCNDFederal);
+	}
+	
+	public boolean isCNDTrabalhistaTSTProcessado() {
+		return !CommonsUtil.semValor(retornoCNDTrabalhistaTST);
 	}
 
 	public boolean isPodeChamarSCR() {
@@ -684,5 +701,36 @@ public class DocumentoAnalise implements Serializable {
 	public void setExcluido(boolean excluido) {
 		this.excluido = excluido;
 	}
-}
+	
+	public List<PlexiConsulta> getPlexiConsultas() {
+		return plexiConsultas;
+	}
 
+	public void setPlexiConsultas(List<PlexiConsulta> plexiConsultas) {
+		this.plexiConsultas = plexiConsultas;
+	}
+
+	public String getRetornoCNDTrabalhistaTST() {
+		return retornoCNDTrabalhistaTST;
+	}
+
+	public void setRetornoCNDTrabalhistaTST(String retornoCNDTrabalhistaTST) {
+		this.retornoCNDTrabalhistaTST = retornoCNDTrabalhistaTST;
+	}
+
+	public String getRetornoCNDFederal() {
+		return retornoCNDFederal;
+	}
+
+	public void setRetornoCNDFederal(String retornoCNDFederal) {
+		this.retornoCNDFederal = retornoCNDFederal;
+	}
+
+	public String getRetornoCNDEstadual() {
+		return retornoCNDEstadual;
+	}
+
+	public void setRetornoCNDEstadual(String retornoCNDEstadual) {
+		this.retornoCNDEstadual = retornoCNDEstadual;
+	}
+}

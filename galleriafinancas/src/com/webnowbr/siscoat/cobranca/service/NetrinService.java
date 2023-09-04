@@ -1076,4 +1076,619 @@ public class NetrinService {
 		return null;
 	}
 
+	/// \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ CND Trabalhista TST
+	public void requestCNDTrabalhistaTST(DocumentoAnalise documentoAnalise) {
+		if (CommonsUtil.semValor(documentoAnalise.getRetornoCNDTrabalhistaTST())) {
+			PagadorRecebedorService pagaPagadorRecebedorService = new PagadorRecebedorService();
+			PagadorRecebedorConsulta pagadorRecebedorConsulta = pagaPagadorRecebedorService
+					.buscaConsultaNoPagadorRecebedor(documentoAnalise.getPagador(), DocumentosAnaliseEnum.CNDTTST);
+
+			if (!CommonsUtil.semValor(pagadorRecebedorConsulta)
+					&& !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta())
+					&& DateUtil.getDaysBetweenDates(pagadorRecebedorConsulta.getDataConsulta(),
+							DateUtil.getDataHoje()) <= 30) {
+				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+				documentoAnalise.setRetornoCNDTrabalhistaTST(pagadorRecebedorConsulta.getRetornoConsulta());
+				documentoAnaliseDao.merge(documentoAnalise);
+			} else
+				netrinCriarConsultaCNDTrabalhistaTST(documentoAnalise);
+		}
+	}
+
+	public FacesMessage netrinCriarConsultaCNDTrabalhistaTST(DocumentoAnalise documentoAnalise) { // POST para gerar consulta
+		try {
+
+			String retornoConsulta;
+
+			// busca dados da receita se nao tiver ainda
+			atualizaDadosPagadoRecebedorComReceitaFederal(documentoAnalise.getPagador());
+			String nomeConsultado = documentoAnalise.getPagador().getNome();
+
+			String cnpjcpf = documentoAnalise.getCnpjcpf();
+			if (!CommonsUtil.semValor(documentoAnalise.getPagador())) {
+				if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa()))
+					cnpjcpf = documentoAnalise.getPagador().getCpf();
+				else
+					cnpjcpf = documentoAnalise.getPagador().getCnpj();
+			}
+
+			
+			retornoConsulta = netrinCriarExecutaConsultaCNDTrabalhistaTST(documentoAnalise.getTipoPessoa(), cnpjcpf,
+					nomeConsultado);
+
+			if (CommonsUtil.semValor(retornoConsulta)) {
+				return new FacesMessage(FacesMessage.SEVERITY_ERROR, "netrinCriarConsultaCNDTrabalhistaTST: Falha na consulta",
+						"");
+			} else {
+
+				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+				documentoAnalise.setRetornoCNDTrabalhistaTST(retornoConsulta);
+
+				documentoAnaliseDao.merge(documentoAnalise);
+
+				PagadorRecebedorService PagadorRecebedorService = new PagadorRecebedorService();
+				PagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+						DocumentosAnaliseEnum.CNDTTST, retornoConsulta);
+
+				return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
+
+			}
+
+		} catch (Exception e) {
+			return new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"netrinCriarConsultaCNDTrabalhistaTST: Falha  (Cod: " + e.getMessage() + ")", "");
+		}
+	}
+
+	public String netrinCriarConsultaCNDTrabalhistaTST(String cnpjCpf) {
+
+		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+		PagadorRecebedor pagadorRecebedor = pagadorRecebedorService.buscaOuInsere(cnpjCpf);
+
+		PagadorRecebedorService pagaPagadorRecebedorService = new PagadorRecebedorService();
+		PagadorRecebedorConsulta pagadorRecebedorConsulta = pagaPagadorRecebedorService
+				.buscaConsultaNoPagadorRecebedor(pagadorRecebedor, DocumentosAnaliseEnum.CNDTTST);
+
+		if (!CommonsUtil.semValor(pagadorRecebedorConsulta)
+				&& !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta()))
+			return pagadorRecebedorConsulta.getRetornoConsulta();
+		else {
+			String consultaRetorno = netrinCriarExecutaConsultaCNDTrabalhistaTST(
+					CommonsUtil.pessoaFisicaJuridicaCnpjCpf(cnpjCpf), cnpjCpf, pagadorRecebedor.getNome());
+			pagaPagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagadorRecebedor,
+					DocumentosAnaliseEnum.CNDTTST, consultaRetorno);
+			return consultaRetorno;
+		}
+
+	}
+
+	public String netrinCriarExecutaConsultaCNDTrabalhistaTST(String tipoPessoa, String cnpjcpf, String nomeConsultado) { 
+
+		//if (SiscoatConstants.DEV)
+		//	return "{\"cpf\":\"431.804.298-79\",\"nome\":\"Edielma Candido da Silva\",\"data\":\"2023-07-11T15:53:55.096-03:00\",\"processosCPF\":{\"totalProcessos\":0,\"totalProcessosAutor\":0,\"totalProcessosReu\":0,\"processosUltimos180dias\":0,\"processos\":[{\"numero\":\"\",\"dataNotificacao\":\"\",\"tipo\":\"\",\"assuntoPrincipal\":\"\",\"status\":\"\",\"varaJulgadora\":\"\",\"tribunal\":\"\",\"tribunalLevel\":\"\",\"tribunalTipo\":\"\",\"tribunalCidade\":\"\",\"estado\":\"\",\"partes\":null,\"dataNotificacaoDate\":null}],\"code\":null,\"message\":null},\"processoResumo\":{\"criminal\":null,\"trabalhista\":null,\"tituloExtraJudicial\":null,\"tituloExecucaoFiscal\":null,\"outros\":null,\"processos\":false,\"extraJudicialProtesto\":null,\"execucaoFiscalProtesto\":null,\"criminalProtesto\":null,\"trabalhistaProtesto\":null,\"outrosProtesto\":null}}";
+
+		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+		PagadorRecebedor pagadorRecebedor = pagadorRecebedorService.buscaOuInsere(cnpjcpf);
+		// TODO: Verifcar consultas anteriores
+		try {
+			// loginDocket();
+			int HTTP_COD_SUCESSO = 200;
+			String retornoConsulta;
+
+			URL myURL;
+			String sUrl = "https://servicos.galleriabank.com.br/netrin/api/v1/CNDTrabalhistaTST/"
+					+ CommonsUtil.somenteNumeros(cnpjcpf);// + "/" + pagadorRecebedor.getNome().replace(" ", "%20");
+			myURL = new URL(sUrl);
+
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setRequestMethod("GET");
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			String sBearer = br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos();
+			myURLConnection.setRequestProperty("Authorization", "Bearer " + sBearer);
+			myURLConnection.setDoOutput(true);
+
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
+				retornoConsulta = null;
+			} else {
+				// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
+				// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
+
+				BufferedReader in;
+				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
+				String inputLine;
+				StringBuffer response = new StringBuffer();
+				while ((inputLine = in.readLine()) != null) {
+					response.append(inputLine);
+				}
+				in.close();
+
+				retornoConsulta = response.toString();
+
+			}
+			myURLConnection.disconnect();
+			return retornoConsulta;
+		} catch (
+
+		MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+	
+	public String baixarDocumentoCNDTrabalhistaTST(DocumentoAnalise documentoAnalise) {
+		return baixarDocumentoCNDTrabalhistaTST(documentoAnalise.getRetornoCNDTrabalhistaTST());
+	}
+	
+	public String baixarDocumentoCNDTrabalhistaTST(String retornoCndtTST) {
+		try {
+			String base64 = null;
+			// loginDocket();
+			int HTTP_COD_SUCESSO = 200;
+			int HTTP_COD_SUCESSO2 = 201;
+
+			URL myURL = new URL("https://servicos.galleriabank.com.br/netrin/api/v1/CNDTrabalhistaTST");
+
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setRequestMethod("POST");
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			myURLConnection.setRequestProperty("Authorization",
+					"Bearer " + br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos());
+			myURLConnection.setDoOutput(true);
+
+			try (OutputStream os = myURLConnection.getOutputStream()) {
+				byte[] input = retornoCndtTST.getBytes("utf-8");
+				os.write(input, 0, input.length);
+			}
+
+			FacesMessage result = null;
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO
+					&& myURLConnection.getResponseCode() != HTTP_COD_SUCESSO2) {
+				result = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Processo: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", "");
+			} else {
+				result = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
+				BufferedReader in;
+				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
+				String inputLine;
+				StringBuffer response = new StringBuffer();
+				while ((inputLine = in.readLine()) != null) {
+					response.append(inputLine);
+				}
+				base64 = response.toString();
+				in.close();
+			}
+
+			myURLConnection.disconnect();
+			return base64;
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+	/// /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\  CND Trabalhista TST
+
+	
+	/// \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ CND Federal
+	public void requestCNDFederal(DocumentoAnalise documentoAnalise) {
+		if (CommonsUtil.semValor(documentoAnalise.getRetornoCNDFederal())) {
+			PagadorRecebedorService pagaPagadorRecebedorService = new PagadorRecebedorService();
+			PagadorRecebedorConsulta pagadorRecebedorConsulta = pagaPagadorRecebedorService
+					.buscaConsultaNoPagadorRecebedor(documentoAnalise.getPagador(), DocumentosAnaliseEnum.CNDFEDERAL);
+
+			if (!CommonsUtil.semValor(pagadorRecebedorConsulta)
+					&& !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta())
+					&& DateUtil.getDaysBetweenDates(pagadorRecebedorConsulta.getDataConsulta(),
+							DateUtil.getDataHoje()) <= 30) {
+				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+				documentoAnalise.setRetornoCNDFederal(pagadorRecebedorConsulta.getRetornoConsulta());
+				documentoAnaliseDao.merge(documentoAnalise);
+			} else
+				netrinCriarConsultaCNDFederal(documentoAnalise);
+		}
+	}
+
+	public FacesMessage netrinCriarConsultaCNDFederal(DocumentoAnalise documentoAnalise) { // POST para gerar consulta
+		try {
+
+			String retornoConsulta;
+
+			// busca dados da receita se nao tiver ainda
+			atualizaDadosPagadoRecebedorComReceitaFederal(documentoAnalise.getPagador());
+			String nomeConsultado = documentoAnalise.getPagador().getNome();
+
+			String cnpjcpf = documentoAnalise.getCnpjcpf();
+			if (!CommonsUtil.semValor(documentoAnalise.getPagador())) {
+				if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa()))
+					cnpjcpf = documentoAnalise.getPagador().getCpf();
+				else
+					cnpjcpf = documentoAnalise.getPagador().getCnpj();
+			}
+
+			
+			retornoConsulta = netrinCriarExecutaConsultaCNDFederal(cnpjcpf);
+
+			if (CommonsUtil.semValor(retornoConsulta)) {
+				return new FacesMessage(FacesMessage.SEVERITY_ERROR, "netrinCriarConsultaCNDFederal: Falha na consulta",
+						"");
+			} else {
+
+				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+				documentoAnalise.setRetornoCNDFederal(retornoConsulta);
+
+				documentoAnaliseDao.merge(documentoAnalise);
+
+				PagadorRecebedorService PagadorRecebedorService = new PagadorRecebedorService();
+				PagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+						DocumentosAnaliseEnum.CNDFEDERAL, retornoConsulta);
+
+				return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
+
+			}
+
+		} catch (Exception e) {
+			return new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"netrinCriarConsultaCNDFederal: Falha  (Cod: " + e.getMessage() + ")", "");
+		}
+	}
+
+	public String netrinCriarConsultaCNDFederal(String cnpjCpf) {
+
+		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+		PagadorRecebedor pagadorRecebedor = pagadorRecebedorService.buscaOuInsere(cnpjCpf);
+
+		PagadorRecebedorService pagaPagadorRecebedorService = new PagadorRecebedorService();
+		PagadorRecebedorConsulta pagadorRecebedorConsulta = pagaPagadorRecebedorService
+				.buscaConsultaNoPagadorRecebedor(pagadorRecebedor, DocumentosAnaliseEnum.CNDFEDERAL);
+
+		if (!CommonsUtil.semValor(pagadorRecebedorConsulta)
+				&& !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta()))
+			return pagadorRecebedorConsulta.getRetornoConsulta();
+		else {
+			String consultaRetorno = netrinCriarExecutaConsultaCNDFederal(cnpjCpf);
+			pagaPagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagadorRecebedor,
+					DocumentosAnaliseEnum.CNDFEDERAL, consultaRetorno);
+			return consultaRetorno;
+		}
+
+	}
+
+	public String netrinCriarExecutaConsultaCNDFederal(String cnpjcpf) { 
+
+		//if (SiscoatConstants.DEV)
+		//	return "{\"cpf\":\"431.804.298-79\",\"nome\":\"Edielma Candido da Silva\",\"data\":\"2023-07-11T15:53:55.096-03:00\",\"processosCPF\":{\"totalProcessos\":0,\"totalProcessosAutor\":0,\"totalProcessosReu\":0,\"processosUltimos180dias\":0,\"processos\":[{\"numero\":\"\",\"dataNotificacao\":\"\",\"tipo\":\"\",\"assuntoPrincipal\":\"\",\"status\":\"\",\"varaJulgadora\":\"\",\"tribunal\":\"\",\"tribunalLevel\":\"\",\"tribunalTipo\":\"\",\"tribunalCidade\":\"\",\"estado\":\"\",\"partes\":null,\"dataNotificacaoDate\":null}],\"code\":null,\"message\":null},\"processoResumo\":{\"criminal\":null,\"trabalhista\":null,\"tituloExtraJudicial\":null,\"tituloExecucaoFiscal\":null,\"outros\":null,\"processos\":false,\"extraJudicialProtesto\":null,\"execucaoFiscalProtesto\":null,\"criminalProtesto\":null,\"trabalhistaProtesto\":null,\"outrosProtesto\":null}}";
+
+		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+		PagadorRecebedor pagadorRecebedor = pagadorRecebedorService.buscaOuInsere(cnpjcpf);
+		// TODO: Verifcar consultas anteriores
+		try {
+			// loginDocket();
+			int HTTP_COD_SUCESSO = 200;
+			String retornoConsulta;
+
+			URL myURL;
+			String sUrl = "https://servicos.galleriabank.com.br/netrin/api/v1/CNDFederal/"
+					+ CommonsUtil.somenteNumeros(cnpjcpf);// + "/" + pagadorRecebedor.getNome().replace(" ", "%20");
+			myURL = new URL(sUrl);
+
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setRequestMethod("GET");
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			String sBearer = br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos();
+			myURLConnection.setRequestProperty("Authorization", "Bearer " + sBearer);
+			myURLConnection.setDoOutput(true);
+
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
+				retornoConsulta = null;
+			} else {
+
+				BufferedReader in;
+				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
+				String inputLine;
+				StringBuffer response = new StringBuffer();
+				while ((inputLine = in.readLine()) != null) {
+					response.append(inputLine);
+				}
+				in.close();
+
+				retornoConsulta = response.toString();
+
+			}
+			myURLConnection.disconnect();
+			return retornoConsulta;
+		} catch (
+
+		MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+	
+	public String baixarDocumentoCNDFederal(DocumentoAnalise documentoAnalise) {
+		return baixarDocumentoCNDFederal(documentoAnalise.getRetornoCNDFederal());
+	}
+	
+	public String baixarDocumentoCNDFederal(String retornoCndFederal) {
+		try {
+			String base64 = null;
+			// loginDocket();
+			int HTTP_COD_SUCESSO = 200;
+			int HTTP_COD_SUCESSO2 = 201;
+
+			URL myURL = new URL("https://servicos.galleriabank.com.br/netrin/api/v1/CNDFederal");
+
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setRequestMethod("POST");
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			myURLConnection.setRequestProperty("Authorization",
+					"Bearer " + br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos());
+			myURLConnection.setDoOutput(true);
+
+			try (OutputStream os = myURLConnection.getOutputStream()) {
+				byte[] input = retornoCndFederal.getBytes("utf-8");
+				os.write(input, 0, input.length);
+			}
+
+			FacesMessage result = null;
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO
+					&& myURLConnection.getResponseCode() != HTTP_COD_SUCESSO2) {
+				result = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Processo: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", "");
+			} else {
+				result = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
+				BufferedReader in;
+				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
+				String inputLine;
+				StringBuffer response = new StringBuffer();
+				while ((inputLine = in.readLine()) != null) {
+					response.append(inputLine);
+				}
+				base64 = response.toString();
+				in.close();
+			}
+
+			myURLConnection.disconnect();
+			return base64;
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+	/// /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\  CND Federal
+	
+	/// \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ CND Estadual
+	public void requestCNDEstadual(DocumentoAnalise documentoAnalise) {
+		if (CommonsUtil.semValor(documentoAnalise.getRetornoCNDEstadual())) {
+			PagadorRecebedorService pagaPagadorRecebedorService = new PagadorRecebedorService();
+			PagadorRecebedorConsulta pagadorRecebedorConsulta = pagaPagadorRecebedorService
+					.buscaConsultaNoPagadorRecebedor(documentoAnalise.getPagador(), DocumentosAnaliseEnum.CNDESTADUAL);
+
+			if (!CommonsUtil.semValor(pagadorRecebedorConsulta)
+					&& !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta())
+					&& DateUtil.getDaysBetweenDates(pagadorRecebedorConsulta.getDataConsulta(),
+							DateUtil.getDataHoje()) <= 30) {
+				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+				documentoAnalise.setRetornoCNDEstadual(pagadorRecebedorConsulta.getRetornoConsulta());
+				documentoAnaliseDao.merge(documentoAnalise);
+			} else
+				netrinCriarConsultaCNDEstadual(documentoAnalise);
+		}
+	}
+
+	public FacesMessage netrinCriarConsultaCNDEstadual(DocumentoAnalise documentoAnalise) { // POST para gerar consulta
+		try {
+
+			String retornoConsulta;
+
+			// busca dados da receita se nao tiver ainda
+			atualizaDadosPagadoRecebedorComReceitaFederal(documentoAnalise.getPagador());
+			String nomeConsultado = documentoAnalise.getPagador().getNome();
+
+			String cnpjcpf = documentoAnalise.getCnpjcpf();
+			if (!CommonsUtil.semValor(documentoAnalise.getPagador())) {
+				if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa()))
+					cnpjcpf = documentoAnalise.getPagador().getCpf();
+				else
+					cnpjcpf = documentoAnalise.getPagador().getCnpj();
+			}
+
+			
+			retornoConsulta = netrinCriarExecutaConsultaCNDEstadual(cnpjcpf);
+
+			if (CommonsUtil.semValor(retornoConsulta)) {
+				return new FacesMessage(FacesMessage.SEVERITY_ERROR, "netrinCriarConsultaCNDEstadual: Falha na consulta",
+						"");
+			} else {
+
+				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+				documentoAnalise.setRetornoCNDEstadual(retornoConsulta);
+
+				documentoAnaliseDao.merge(documentoAnalise);
+
+				PagadorRecebedorService PagadorRecebedorService = new PagadorRecebedorService();
+				PagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+						DocumentosAnaliseEnum.CNDESTADUAL, retornoConsulta);
+
+				return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
+
+			}
+
+		} catch (Exception e) {
+			return new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"netrinCriarConsultaCNDEstadual: Falha  (Cod: " + e.getMessage() + ")", "");
+		}
+	}
+
+	public String netrinCriarConsultaCNDEstadual(String cnpjCpf) {
+
+		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+		PagadorRecebedor pagadorRecebedor = pagadorRecebedorService.buscaOuInsere(cnpjCpf);
+
+		PagadorRecebedorService pagaPagadorRecebedorService = new PagadorRecebedorService();
+		PagadorRecebedorConsulta pagadorRecebedorConsulta = pagaPagadorRecebedorService
+				.buscaConsultaNoPagadorRecebedor(pagadorRecebedor, DocumentosAnaliseEnum.CNDESTADUAL);
+
+		if (!CommonsUtil.semValor(pagadorRecebedorConsulta)
+				&& !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta()))
+			return pagadorRecebedorConsulta.getRetornoConsulta();
+		else {
+			String consultaRetorno = netrinCriarExecutaConsultaCNDEstadual(cnpjCpf);
+			pagaPagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagadorRecebedor,
+					DocumentosAnaliseEnum.CNDESTADUAL, consultaRetorno);
+			return consultaRetorno;
+		}
+
+	}
+
+	public String netrinCriarExecutaConsultaCNDEstadual(String cnpjcpf) { 
+
+		//if (SiscoatConstants.DEV)
+		//	return "{\"cpf\":\"431.804.298-79\",\"nome\":\"Edielma Candido da Silva\",\"data\":\"2023-07-11T15:53:55.096-03:00\",\"processosCPF\":{\"totalProcessos\":0,\"totalProcessosAutor\":0,\"totalProcessosReu\":0,\"processosUltimos180dias\":0,\"processos\":[{\"numero\":\"\",\"dataNotificacao\":\"\",\"tipo\":\"\",\"assuntoPrincipal\":\"\",\"status\":\"\",\"varaJulgadora\":\"\",\"tribunal\":\"\",\"tribunalLevel\":\"\",\"tribunalTipo\":\"\",\"tribunalCidade\":\"\",\"estado\":\"\",\"partes\":null,\"dataNotificacaoDate\":null}],\"code\":null,\"message\":null},\"processoResumo\":{\"criminal\":null,\"trabalhista\":null,\"tituloExtraJudicial\":null,\"tituloExecucaoFiscal\":null,\"outros\":null,\"processos\":false,\"extraJudicialProtesto\":null,\"execucaoFiscalProtesto\":null,\"criminalProtesto\":null,\"trabalhistaProtesto\":null,\"outrosProtesto\":null}}";
+
+		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+		PagadorRecebedor pagadorRecebedor = pagadorRecebedorService.buscaOuInsere(cnpjcpf);
+		// TODO: Verifcar consultas anteriores
+		try {
+			// loginDocket();
+			int HTTP_COD_SUCESSO = 200;
+			String retornoConsulta;
+			
+			URL myURL;
+			String sUrl = "https://servicos.galleriabank.com.br/netrin/api/v1/CNDEstadual/"
+					+ CommonsUtil.somenteNumeros(cnpjcpf)//
+					+ "/" + pagadorRecebedor.getEstado()
+					+ "/" + pagadorRecebedor.getCep();
+			myURL = new URL(sUrl);
+
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setRequestMethod("GET");
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			String sBearer = br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos();
+			myURLConnection.setRequestProperty("Authorization", "Bearer " + sBearer);
+			myURLConnection.setDoOutput(true);
+
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
+				retornoConsulta = null;
+			} else {
+
+				BufferedReader in;
+				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
+				String inputLine;
+				StringBuffer response = new StringBuffer();
+				while ((inputLine = in.readLine()) != null) {
+					response.append(inputLine);
+				}
+				in.close();
+
+				retornoConsulta = response.toString();
+
+			}
+			myURLConnection.disconnect();
+			return retornoConsulta;
+		} catch (
+
+		MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+	
+	public String baixarDocumentoCNDEstadual(DocumentoAnalise documentoAnalise) {
+		return baixarDocumentoCNDEstadual(documentoAnalise.getRetornoCNDEstadual());
+	}
+	
+	public String baixarDocumentoCNDEstadual(String retornoCndEstadual) {
+		try {
+			String base64 = null;
+			// loginDocket();
+			int HTTP_COD_SUCESSO = 200;
+			int HTTP_COD_SUCESSO2 = 201;
+
+			URL myURL = new URL("https://servicos.galleriabank.com.br/netrin/api/v1/CNDEstadual");
+
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setRequestMethod("POST");
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			myURLConnection.setRequestProperty("Authorization",
+					"Bearer " + br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos());
+			myURLConnection.setDoOutput(true);
+
+			try (OutputStream os = myURLConnection.getOutputStream()) {
+				byte[] input = retornoCndEstadual.getBytes("utf-8");
+				os.write(input, 0, input.length);
+			}
+
+			FacesMessage result = null;
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO
+					&& myURLConnection.getResponseCode() != HTTP_COD_SUCESSO2) {
+				result = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Processo: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", "");
+			} else {
+				result = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
+				BufferedReader in;
+				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
+				String inputLine;
+				StringBuffer response = new StringBuffer();
+				while ((inputLine = in.readLine()) != null) {
+					response.append(inputLine);
+				}
+				base64 = response.toString();
+				in.close();
+			}
+
+			myURLConnection.disconnect();
+			return base64;
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+	/// /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\  CND Estadual
 }

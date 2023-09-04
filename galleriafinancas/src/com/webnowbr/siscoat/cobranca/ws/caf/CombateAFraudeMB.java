@@ -2,7 +2,6 @@ package com.webnowbr.siscoat.cobranca.ws.caf;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,7 +39,7 @@ public class CombateAFraudeMB {
 	String templateIdSelfie = "6304e61854dcba000929036b";
 	String templateIdSemSelfie = "6359735b29768d000849aa5d";
 	String cpf;
-	
+	CombateAFraude objetoCaF;
 	List<CombateAFraude> cafList = new ArrayList<CombateAFraude>();
 
 	public String clearFields() {
@@ -48,6 +47,19 @@ public class CombateAFraudeMB {
 		files = new ArrayList<CombateAFraudeFiles>();
 		deleteFiles = new ArrayList<CombateAFraudeFiles>();
 		cpf = "";
+		objetoCaF = null;
+		
+		return "/Atendimento/CombateAFraude/CombateAFraude.xhtml";
+	}
+	
+	public String clearFieldsDetalhes(CombateAFraude caf) {
+		CombateAFraudeDao cafDao = new CombateAFraudeDao();
+		caf = cafDao.findById(caf.getId());
+		fileType = "";
+		deleteFiles = new ArrayList<CombateAFraudeFiles>();
+		files = caf.getCafFiles();
+		cpf = caf.getCpf();
+		objetoCaF = caf;
 		
 		return "/Atendimento/CombateAFraude/CombateAFraude.xhtml";
 	}
@@ -91,10 +103,13 @@ public class CombateAFraudeMB {
 	}
 		
 	public void combateAFraudeTransaction() {
+		FacesContext context = FacesContext.getCurrentInstance();
 		CombateAFraudeService combateAFraudeService = new CombateAFraudeService();
 		CombateAFraudeTransaction transaction = comporObjeto();
+		
 		if(!CommonsUtil.semValor(transaction)) {
-			combateAFraudeService.ChamarCombateAFraude(transaction, null);
+			context.addMessage(null, 
+					combateAFraudeService.ChamarCombateAFraude(transaction, null));
 		}
 	}
 	
@@ -161,10 +176,8 @@ public class CombateAFraudeMB {
 			output.close();
 			facesContext.responseComplete();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -219,8 +232,13 @@ public class CombateAFraudeMB {
 
 	public void setCafList(List<CombateAFraude> cafList) {
 		this.cafList = cafList;
-	}	
-	
-	
+	}
 
+	public CombateAFraude getObjetoCaF() {
+		return objetoCaF;
+	}
+
+	public void setObjetoCaF(CombateAFraude objetoCaF) {
+		this.objetoCaF = objetoCaF;
+	}
 }

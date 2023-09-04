@@ -150,7 +150,7 @@ public class FileService {
 		String serverPrincipalUrl = PropertyLoader
 				.getString("client.galleria.financas.upload.rest.url");
 		logger.info("INFO file server {} POST: ".concat(serverPrincipalUrl.replace("{numeroContrato}", numeroContrato)
-  				.replace("{subpasta}", subpasta)
+  				.replace("{subpasta}", subpasta
   				.replace("{nomeArquivo}", arquivo)));
 
 		URL myURL;

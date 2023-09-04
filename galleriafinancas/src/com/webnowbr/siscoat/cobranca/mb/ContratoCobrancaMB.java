@@ -125,6 +125,7 @@ import com.webnowbr.siscoat.auxiliar.BigDecimalConverter;
 import com.webnowbr.siscoat.auxiliar.EnviaEmail;
 import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobranca;
 import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobrancaResumo;
+import com.webnowbr.siscoat.auxiliar.CompactadorUtil;
 import com.webnowbr.siscoat.cobranca.db.model.AnaliseComite;
 import com.webnowbr.siscoat.cobranca.db.model.Averbacao;
 import com.webnowbr.siscoat.cobranca.db.model.BoletoKobana;
@@ -181,6 +182,8 @@ import com.webnowbr.siscoat.cobranca.db.op.SeguradoDAO;
 import com.webnowbr.siscoat.cobranca.db.op.StarkBankBaixaDAO;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.cobranca.service.FileService;
+import com.webnowbr.siscoat.cobranca.service.NetrinService;
+import com.webnowbr.siscoat.cobranca.service.PagadorRecebedorService;
 import com.webnowbr.siscoat.cobranca.service.PajuService;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -25805,9 +25808,7 @@ public class ContratoCobrancaMB {
 		this.file = null;
 		this.contratoGerado = false;
 
-		ParametrosDao pDao = new ParametrosDao();
-		this.pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString();
-		this.nomeContrato = "Relatório Financeiro - Contador.xlsx";
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
 		TimeZone zone = TimeZone.getDefault();
 		Locale locale = new Locale("pt", "BR");
@@ -26000,12 +26001,15 @@ public class ContratoCobrancaMB {
 			}
 		}
 
-		FileOutputStream fileOut = new FileOutputStream(excelFileName);
 
 		// write this workbook to an Outputstream.
-		wb.write(fileOut);
-		fileOut.flush();
-		fileOut.close();
+		wb.write(baos);
+		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+				FacesContext.getCurrentInstance());
+		String nomeArquivoDownload = String.format("Galleria Bank - FinanceiroContabilidade.xlsx", "");
+		gerador.open(nomeArquivoDownload);
+		gerador.feed(new ByteArrayInputStream(baos.toByteArray()));
+		gerador.close();
 
 		this.contratoGerado = true;
 	}
@@ -26024,6 +26028,7 @@ public class ContratoCobrancaMB {
 			/*
 			 * Fonts Utilizadas no PDF
 			 */
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			Font header = new Font(FontFamily.HELVETICA, 12, Font.BOLD);
 
 			Font titulo = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
@@ -26039,18 +26044,14 @@ public class ContratoCobrancaMB {
 			SimpleDateFormat sdfDataRel = new SimpleDateFormat("dd/MMM/yyyy", locale);
 			SimpleDateFormat sdfDataRelComHoras = new SimpleDateFormat("dd/MMM/yyyy hh:mm:ss", locale);
 
-			ParametrosDao pDao = new ParametrosDao();
 
 			/*
 			 * Configuração inicial do PDF - Cria o documento tamanho A4, margens de 2,54cm
 			 */
 			doc = new Document(PageSize.A4.rotate(), 10, 10, 10, 10);
-			this.pathContrato = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
-			this.nomeContrato = "Relatório Financeiro Cobrança.pdf";
-			os = new FileOutputStream(this.pathContrato + this.nomeContrato);
 
 			// Associa a stream de saída ao
-			PdfWriter.getInstance(doc, os);
+			PdfWriter.getInstance(doc, baos);
 
 			// Abre o documento
 			doc.open();
@@ -26392,13 +26393,15 @@ public class ContratoCobrancaMB {
 			table.addCell(cell10);
 
 			doc.add(table);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"Contrato de Cobrança: Este contrato está aberto por algum outro programa, por favor, feche-o e tente novamente! (Contrato: "
-							+ this.objetoContratoCobranca.getNumeroContrato() + ")" + e,
-					""));
-		} catch (Exception e) {
+			doc.close();
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String.format("Galleria Bank - Financeiro.pdf", "");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(baos.toByteArray()));
+			gerador.close();
+			
+		}  catch (Exception e) {
 			context.addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_ERROR,
 							"Contrato de Cobrança: Ocorreu um problema ao gerar o contrato! (Contrato: "
@@ -26407,20 +26410,10 @@ public class ContratoCobrancaMB {
 		} finally {
 			this.contratoGerado = true;
 
-			if (doc != null) {
-				// fechamento do documento
-				doc.close();
+		
+			
 			}
-			if (os != null) {
-				// fechamento da stream de saída
-				try {
-					os.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
+		
 
 	}
 
@@ -29450,6 +29443,57 @@ public class ContratoCobrancaMB {
 			return false;
 		}
 	}
+	
+	public void executarConsultasPedirPajuDocumento() throws SchedulerException {
+		NetrinService netrinService = new NetrinService();
+		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+	
+		
+		for (DocumentoAnalise documentoAnalise : this.listaDocumentoAnalise.stream().filter(d -> d.isLiberadoAnalise()
+				|| d.isLiberadoSerasa() || d.isLiberadoCenprot() || d.isLiberadoScr() || d.isLiberadoProcesso())
+				.collect(Collectors.toList())) {
+			String observacao = "";
+			if (documentoAnalise.isLiberadoAnalise() && !CommonsUtil.semValor(documentoAnalise.getPagador())) {
+
+				if (CommonsUtil.semValor(documentoAnalise.getRetornoCNDEstadual())) {
+					documentoAnalise.addObservacao("Processando CND Estadual");
+					if(CommonsUtil.semValor(documentoAnalise.getPagador().getEstado())) {
+						observacao = observacao + "Falta UF para consulta estadual \n";
+						documentoAnalise.addObservacao("Falta UF para consulta estadual");
+					} else if(CommonsUtil.mesmoValor(documentoAnalise.getPagador().getEstado().toLowerCase(), "mg")
+							&& CommonsUtil.semValor(documentoAnalise.getPagador().getCep())) {
+						observacao = observacao + "Falta CEP para consulta estadual de MG \n";
+						documentoAnalise.addObservacao("Falta CEP para consulta estadual de MG");
+					} else {
+						netrinService.requestCNDEstadual(documentoAnalise);
+						pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+							DocumentosAnaliseEnum.CNDESTADUAL, documentoAnalise.getRetornoCNDEstadual());
+					}
+				}
+				
+				if (CommonsUtil.semValor(documentoAnalise.getRetornoCNDFederal())) {
+					documentoAnalise.addObservacao("Processando CND Estadual");
+					netrinService.requestCNDFederal(documentoAnalise);
+					pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+							DocumentosAnaliseEnum.CNDFEDERAL, documentoAnalise.getRetornoCNDFederal());
+				}
+				
+				if (CommonsUtil.semValor(documentoAnalise.getRetornoCNDTrabalhistaTST())) {
+					documentoAnalise.addObservacao("Processando CND Estadual");
+					netrinService.requestCNDTrabalhistaTST(documentoAnalise);
+					pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+							DocumentosAnaliseEnum.CNDTTST, documentoAnalise.getRetornoCNDTrabalhistaTST());
+				}
+				
+				
+				observacao = observacao + "Pesquisas finalizadas";
+				documentoAnalise.addObservacao(observacao);
+				documentoAnaliseDao.merge(documentoAnalise);
+			}
+		}
+	}
+	
 
 	/**
 	 * @return the fileRecibo
@@ -31637,9 +31681,114 @@ public class ContratoCobrancaMB {
 		for (FileUploaded f : deletefilesJuridico) {
 			f.getFile().delete();
 		}
+	
 
 		deletefilesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
+	}
+	byte[] arquivos = null;
+	private List<byte[]> bytes = new ArrayList<byte[]>();
+	
+	private StreamedContent downloadFilesJuridico;
+
+	public StreamedContent getdownloadFilesJuridico() {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+
+		try {
+			// recupera path do contrato
+			ParametrosDao pDao = new ParametrosDao();
+			CompactadorUtil compac = new CompactadorUtil();
+			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+					+ this.objetoContratoCobranca.getNumeroContrato() + "//interno/";
+			// cria objetos para ZIP
+
+			// Percorre arquivos selecionados e adiciona ao ZIP
+			for (FileUploaded f : deletefilesJuridico) {
+				String arquivo = f.getName();
+				byte[] arquivoByte = f.getFile().getPath().getBytes();
+				listaArquivos.put(arquivo, arquivoByte);
+
+			}
+			arquivos = compac.compactarZipByte(listaArquivos);
+
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String.format(objetoContratoCobranca.getNumeroContrato() + " Documentos.zip",
+					"");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(arquivos));
+			gerador.close();
+
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+
+		return this.downloadFilesJuridico;
+	}
+private	StreamedContent downloadArquivosFaltantes;
+	public StreamedContent getdownloadArquivosFaltantes() {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+
+		try {
+			// recupera path do contrato
+			ParametrosDao pDao = new ParametrosDao();
+			CompactadorUtil compac = new CompactadorUtil();
+			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+					+ this.objetoContratoCobranca.getNumeroContrato() + "//interno/";
+			// cria objetos para ZIP
+
+			// Percorre arquivos selecionados e adiciona ao ZIP
+			for (FileUploaded f : deletefilesFaltante) {
+				String arquivo = f.getName();
+				byte[] arquivoByte = f.getFile().getPath().getBytes();
+				listaArquivos.put(arquivo, arquivoByte);
+
+			}
+			arquivos = compac.compactarZipByte(listaArquivos);
+
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String.format(objetoContratoCobranca.getNumeroContrato() + " Documentos.zip",
+					"");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(arquivos));
+			gerador.close();
+
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return null;
+
+	}
+	private StreamedContent downloadFileComite;
+	public StreamedContent getdownloadFileComite(){
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+
+		try {
+			// recupera path do contrato
+			ParametrosDao pDao = new ParametrosDao();
+			CompactadorUtil compac = new CompactadorUtil();
+			for (FileUploaded f : deletefilesComite) {
+				String arquivo = f.getName();
+				byte[] arquivoByte = f.getFile().getPath().getBytes();
+				listaArquivos.put(arquivo, arquivoByte);
+
+			}
+			arquivos = compac.compactarZipByte(listaArquivos);
+
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String.format(objetoContratoCobranca.getNumeroContrato() + " Documentos.zip",
+					"");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(arquivos));
+			gerador.close();
+
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return null;
+		
 	}
 
 	public void deleteFileComite() {
@@ -32437,40 +32586,38 @@ public class ContratoCobrancaMB {
 	}
 
 	public StreamedContent getDownloadAllFilesInterno() {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+
 		try {
 			// recupera path do contrato
 			ParametrosDao pDao = new ParametrosDao();
+			CompactadorUtil compac = new CompactadorUtil();
 			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
 					+ this.objetoContratoCobranca.getNumeroContrato() + "//interno/";
 			// cria objetos para ZIP
-			ZipOutputStream zip = null;
-			FileOutputStream fileWriter = null;
-
-			// cria arquivo ZIP
-			fileWriter = new FileOutputStream(
-					pathContrato + "Documentos_" + this.objetoContratoCobranca.getNumeroContrato() + ".zip");
-			zip = new ZipOutputStream(fileWriter);
 
 			// Percorre arquivos selecionados e adiciona ao ZIP
 			for (FileUploaded f : deletefilesInterno) {
-				addFileToZip("", f.getFile().getAbsolutePath(), zip);
+				String arquivo = f.getName();
+				byte[] arquivoByte = f.getFile().getPath().getBytes();
+				listaArquivos.put(arquivo, arquivoByte);
+
 			}
+			arquivos = compac.compactarZipByte(listaArquivos);
 
-			// Fecha o ZIP
-			zip.flush();
-			zip.close();
-
-			// Recupera ZIP gerado para fazer download
-			FileInputStream stream = new FileInputStream(
-					pathContrato + "Documentos_" + this.objetoContratoCobranca.getNumeroContrato() + ".zip");
-			downloadAllFilesInterno = new DefaultStreamedContent(stream, pathContrato,
-					"Documentos_" + this.objetoContratoCobranca.getNumeroContrato() + ".zip");
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String.format(objetoContratoCobranca.getNumeroContrato() + " Documentos.zip",
+					"");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(arquivos));
+			gerador.close();
 
 		} catch (Exception e) {
 			System.out.println(e);
 		}
 
-		return this.downloadAllFilesInterno;
+		return null;
 	}
 
 	/***
