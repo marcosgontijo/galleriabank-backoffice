@@ -1,6 +1,8 @@
 package com.webnowbr.siscoat.cobranca.mb.directd;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -45,6 +47,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.webnowbr.siscoat.cobranca.db.model.directd.Cadin;
 import com.webnowbr.siscoat.cobranca.db.model.directd.Pendencias;
 import com.webnowbr.siscoat.cobranca.db.model.directd.Protestos;
+import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 
 
@@ -336,12 +339,12 @@ public class ConsultaCadin {
 		 */ 		
 
 		Document doc = null;
-		OutputStream os = null;
 
 		try {
 			/*
 			 *  Fonts Utilizadas no PDF
 			 */
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			Font header = new Font(FontFamily.HELVETICA, 12, Font.BOLD);
 
 			Font titulo = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
@@ -362,12 +365,10 @@ public class ConsultaCadin {
 
 			doc = new Document(PageSize.A4.rotate(), 10, 10, 10, 10);
 			this.nomePDF = "Consulta - Cadin - " + this.retornoConsultaCadin.getCodigoDeclaracao() + ".pdf";
-			this.pathPDF = pDao.findByFilter("nome", "CONSULTAS_DIRECTD").get(0).getValorString();
-
-			os = new FileOutputStream(this.pathPDF + this.nomePDF);  	
+			
 
 			// Associa a stream de saída ao 
-			PdfWriter.getInstance(doc, os);
+			PdfWriter.getInstance(doc, baos);
 
 			// Abre o documento
 			doc.open();     			
@@ -615,32 +616,25 @@ public class ConsultaCadin {
 			}
 
 			doc.add(table);
+			doc.close();
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String.format(nomePDF, "");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(baos.toByteArray()));
+			gerador.close();
 
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			context.addMessage(null, new FacesMessage(
-					FacesMessage.SEVERITY_ERROR, "PDF Cadin: Este contrato está aberto por algum outro programa, por favor, feche-o e tente novamente!" + e, ""));
-		} catch (Exception e) {
+		}  catch (Exception e) {
 			context.addMessage(null, new FacesMessage(
 					FacesMessage.SEVERITY_ERROR, "PDF Cadin: Ocorreu um problema ao gerar o PDF!" + e, ""));
 		} finally {
 			this.pdfGerado = true;
 
-			if (doc != null) {
-				//fechamento do documento
-				doc.close();
-			}
-			if (os != null) {
-				//fechamento da stream de saída
-				try {
-					os.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			
+			
 			}
 		}
-	}
+	
 
 	public boolean isPdfGerado() {
 		return pdfGerado;

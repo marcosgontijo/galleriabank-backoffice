@@ -1,5 +1,7 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -51,6 +53,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaParcelasInvestidor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
+import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 
 @ManagedBean(name = "contabilidadeMB")
@@ -1310,7 +1313,7 @@ public class ContabilidadeMB {
 		this.nomeContrato = "";
 		this.file = null;
 		this.xlsGerado = false;
-		
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ParametrosDao pDao = new ParametrosDao(); 
 		this.pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString();
 		this.nomeContrato = "Relatório Posição Atual.xlsx";  	
@@ -1518,12 +1521,15 @@ public class ContabilidadeMB {
 			}
 		}
 			
-		FileOutputStream fileOut = new FileOutputStream(excelFileName);
 
 		//write this workbook to an Outputstream.
-		wb.write(fileOut);
-		fileOut.flush();
-		fileOut.close();
+		wb.write(baos);
+		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+				FacesContext.getCurrentInstance());
+		String nomeArquivoDownload = String.format(nomeContrato, "");
+		gerador.open(nomeArquivoDownload);
+		gerador.feed(new ByteArrayInputStream(baos.toByteArray()));
+		gerador.close();
 
 		this.xlsGerado = true;
 	}
@@ -1534,9 +1540,7 @@ public class ContabilidadeMB {
 		this.file = null;
 		this.xlsGerado = false;
 		
-		ParametrosDao pDao = new ParametrosDao(); 
-		this.pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString();
-		this.nomeContrato = "Relatório Posição Retroativa.xlsx";  	
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();  	
 
 		TimeZone zone = TimeZone.getDefault();  
 		Locale locale = new Locale("pt", "BR");  
@@ -1746,12 +1750,16 @@ public class ContabilidadeMB {
 			}
 		}
 			
-		FileOutputStream fileOut = new FileOutputStream(excelFileName);
+		
 
 		//write this workbook to an Outputstream.
-		wb.write(fileOut);
-		fileOut.flush();
-		fileOut.close();
+		wb.write(baos);
+		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+				FacesContext.getCurrentInstance());
+		String nomeArquivoDownload = String.format("Galleria Bank - PosicaoRetroativa.pdf", "");
+		gerador.open(nomeArquivoDownload);
+		gerador.feed(new ByteArrayInputStream(baos.toByteArray()));
+		gerador.close();
 
 		this.xlsGerado = true;
 	}

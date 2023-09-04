@@ -486,7 +486,7 @@ public class DocketService {
 //						if (documentoAnalise.isPodeChamarSerasa()) {
 //							if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
 //								documentoAnalise.setLiberadoSerasa(true);
-//								serasaService.requestSerasa(documentoAnalise, userService.userSistema());
+								serasaService.requestSerasa(documentoAnalise, userService.userSistema());
 //							}
 //						}
 			if (documentoAnalise.isPodeChamarCenprot()) {
