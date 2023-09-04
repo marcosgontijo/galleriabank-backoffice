@@ -70,6 +70,8 @@ public class DocumentoAnalise implements Serializable {
 	private boolean excluido;
 	
 	private String retornoCNDTrabalhistaTST;
+	private String retornoCNDFederal;
+	private String retornoCNDEstadual;
 	
 	private List<PlexiConsulta> plexiConsultas = new ArrayList<PlexiConsulta>();
 	
@@ -356,6 +358,18 @@ public class DocumentoAnalise implements Serializable {
 
 	public boolean isScrProcessado() {
 		return !CommonsUtil.semValor(retornoScr);
+	}
+	
+	public boolean isCNDEstadualProcessado() {
+		return !CommonsUtil.semValor(retornoCNDEstadual);
+	}
+	
+	public boolean isCNDFederalProcessado() {
+		return !CommonsUtil.semValor(retornoCNDFederal);
+	}
+	
+	public boolean isCNDTrabalhistaTSTProcessado() {
+		return !CommonsUtil.semValor(retornoCNDTrabalhistaTST);
 	}
 
 	public boolean isPodeChamarSCR() {
@@ -683,6 +697,20 @@ public class DocumentoAnalise implements Serializable {
 	public void setRetornoCNDTrabalhistaTST(String retornoCNDTrabalhistaTST) {
 		this.retornoCNDTrabalhistaTST = retornoCNDTrabalhistaTST;
 	}
-	
-	
+
+	public String getRetornoCNDFederal() {
+		return retornoCNDFederal;
+	}
+
+	public void setRetornoCNDFederal(String retornoCNDFederal) {
+		this.retornoCNDFederal = retornoCNDFederal;
+	}
+
+	public String getRetornoCNDEstadual() {
+		return retornoCNDEstadual;
+	}
+
+	public void setRetornoCNDEstadual(String retornoCNDEstadual) {
+		this.retornoCNDEstadual = retornoCNDEstadual;
+	}
 }

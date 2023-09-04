@@ -181,6 +181,8 @@ import com.webnowbr.siscoat.cobranca.db.op.SeguradoDAO;
 import com.webnowbr.siscoat.cobranca.db.op.StarkBankBaixaDAO;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.cobranca.service.FileService;
+import com.webnowbr.siscoat.cobranca.service.NetrinService;
+import com.webnowbr.siscoat.cobranca.service.PagadorRecebedorService;
 import com.webnowbr.siscoat.cobranca.service.PajuService;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -29427,6 +29429,57 @@ public class ContratoCobrancaMB {
 			return false;
 		}
 	}
+	
+	public void executarConsultasPedirPajuDocumento() throws SchedulerException {
+		NetrinService netrinService = new NetrinService();
+		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+	
+		
+		for (DocumentoAnalise documentoAnalise : this.listaDocumentoAnalise.stream().filter(d -> d.isLiberadoAnalise()
+				|| d.isLiberadoSerasa() || d.isLiberadoCenprot() || d.isLiberadoScr() || d.isLiberadoProcesso())
+				.collect(Collectors.toList())) {
+			String observacao = "";
+			if (documentoAnalise.isLiberadoAnalise() && !CommonsUtil.semValor(documentoAnalise.getPagador())) {
+
+				if (CommonsUtil.semValor(documentoAnalise.getRetornoCNDEstadual())) {
+					documentoAnalise.addObservacao("Processando CND Estadual");
+					if(CommonsUtil.semValor(documentoAnalise.getPagador().getEstado())) {
+						observacao = observacao + "Falta UF para consulta estadual \n";
+						documentoAnalise.addObservacao("Falta UF para consulta estadual");
+					} else if(CommonsUtil.mesmoValor(documentoAnalise.getPagador().getEstado().toLowerCase(), "mg")
+							&& CommonsUtil.semValor(documentoAnalise.getPagador().getCep())) {
+						observacao = observacao + "Falta CEP para consulta estadual de MG \n";
+						documentoAnalise.addObservacao("Falta CEP para consulta estadual de MG");
+					} else {
+						netrinService.requestCNDEstadual(documentoAnalise);
+						pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+							DocumentosAnaliseEnum.CNDESTADUAL, documentoAnalise.getRetornoCNDEstadual());
+					}
+				}
+				
+				if (CommonsUtil.semValor(documentoAnalise.getRetornoCNDFederal())) {
+					documentoAnalise.addObservacao("Processando CND Estadual");
+					netrinService.requestCNDFederal(documentoAnalise);
+					pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+							DocumentosAnaliseEnum.CNDFEDERAL, documentoAnalise.getRetornoCNDFederal());
+				}
+				
+				if (CommonsUtil.semValor(documentoAnalise.getRetornoCNDTrabalhistaTST())) {
+					documentoAnalise.addObservacao("Processando CND Estadual");
+					netrinService.requestCNDTrabalhistaTST(documentoAnalise);
+					pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+							DocumentosAnaliseEnum.CNDTTST, documentoAnalise.getRetornoCNDTrabalhistaTST());
+				}
+				
+				
+				observacao = observacao + "Pesquisas finalizadas";
+				documentoAnalise.addObservacao(observacao);
+				documentoAnaliseDao.merge(documentoAnalise);
+			}
+		}
+	}
+	
 
 	/**
 	 * @return the fileRecibo

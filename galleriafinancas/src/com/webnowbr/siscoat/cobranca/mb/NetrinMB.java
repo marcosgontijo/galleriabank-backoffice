@@ -61,6 +61,21 @@ public class NetrinMB {
 		String documentoBase64 = netrinService.baixarDocumentoProcesso(documentoAnalise);
 		decodarBaixarArquivo(documentoAnalise, documentoBase64, "Processo");
 	}
+	
+	public void baixarDocumentoCNDEstadual(DocumentoAnalise documentoAnalise) {
+		String documentoBase64 = netrinService.baixarDocumentoCNDEstadual(documentoAnalise);
+		decodarBaixarArquivo(documentoAnalise, documentoBase64, "CND Estadual");
+	}
+	
+	public void baixarDocumentoCNDFederal(DocumentoAnalise documentoAnalise) {
+		String documentoBase64 = netrinService.baixarDocumentoCNDFederal(documentoAnalise);
+		decodarBaixarArquivo(documentoAnalise, documentoBase64, "CND Federal");
+	}
+	
+	public void baixarDocumentoCNDTrabalhistaTST(DocumentoAnalise documentoAnalise) {
+		String documentoBase64 = netrinService.baixarDocumentoCNDTrabalhistaTST(documentoAnalise);
+		decodarBaixarArquivo(documentoAnalise, documentoBase64, "CND Trabalhista TST");
+	}
 
 	public StreamedContent decodarBaixarArquivo(DocumentoAnalise documentoAnalise, String base64, String Relatorio) {
 		if (CommonsUtil.semValor(base64)) {

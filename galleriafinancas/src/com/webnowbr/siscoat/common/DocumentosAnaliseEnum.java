@@ -10,7 +10,10 @@ public enum DocumentosAnaliseEnum {
 	REA("Rea"), RELATO("Relato"), CREDNET("Crednet"), ENGINE("Engine"), CENPROT("Cenprot"), SCR("SCR"), DOCKET("Docket"), 
 	RECEITA_FEDERAL("Receita Federal"),
 	PROCESSO("Processos"),PROCESSOB("ProcessosBigData"),
-	PPE("Pessoa Exposta"), CNDTTST("CNDTrabalhistaTST");
+	PPE("Pessoa Exposta"), 
+	CNDTTST("CNDTrabalhistaTST"),
+	CNDFEDERAL("CNDFederal"),
+	CNDESTADUAL("CNDEstadual");
 
 	private String nome;
 
