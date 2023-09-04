@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
 import com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta;
@@ -64,6 +66,7 @@ public class DocumentoAnalise implements Serializable {
 	private String tipoProcesso;
 	private String retornoProcesso;
 	private String retornoPpe;
+	private String retornoLaudoRobo;
 
 	private String retornoScr;
 	private String observacao;
@@ -139,7 +142,7 @@ public class DocumentoAnalise implements Serializable {
 		}
 
 		if (engine == null) {
-			result.add(new DocumentoAnaliseResumo("nâo disponível", null));
+			result.add(new DocumentoAnaliseResumo("Não disponível", null));
 		} else {
 			EngineRetornoRequestFields nome = engine.getRequestFields().stream()
 					.filter(f -> f.getField().equals("nome")).findFirst().orElse(null);
@@ -187,43 +190,43 @@ public class DocumentoAnalise implements Serializable {
 			if(engine.getConsultaCompleta() == null) {
 				result.add(new DocumentoAnaliseResumo("Pessoa Políticamente exposta:", "Não disponível"));
 			} else {
-				result.add(new DocumentoAnaliseResumo("Pessoa Políticamente exposta:", "Não disponível"));
+				result.add(new DocumentoAnaliseResumo("Pessoa Políticamente exposta:", "0"));
 			}
 			
 			if(engine.getConsultaCompleta() == null) {
 				result.add(new DocumentoAnaliseResumo("Processos:", "Não disponível"));
 			} else {
-				result.add(new DocumentoAnaliseResumo("Processos:", "Não disponível"));
+				result.add(new DocumentoAnaliseResumo("Processos:", "0"));
 			}
 			
 			if(engine.getConsultaCompleta() == null) {
 				result.add(new DocumentoAnaliseResumo("Valor processos:", "Não disponível"));
 			} else {
-				result.add(new DocumentoAnaliseResumo("Valor processos:", "Não disponível"));
+				result.add(new DocumentoAnaliseResumo("Valor processos:", "0"));
 			}
 			
 			if(engine.getConsultaCompleta() == null) {
 				result.add(new DocumentoAnaliseResumo("Pendências financeiras:", "Não disponível"));
 			} else {
-				result.add(new DocumentoAnaliseResumo("Pendências financeiras:", "Não disponível"));
+				result.add(new DocumentoAnaliseResumo("Pendências financeiras:", "0"));
 			}
 			
 			if(engine.getConsultaCompleta() == null) {
 				result.add(new DocumentoAnaliseResumo("Cheque sem fundo:", "Não disponível"));
 			} else {
-				result.add(new DocumentoAnaliseResumo("Cheque sem fundo:", "Não disponível"));
+				result.add(new DocumentoAnaliseResumo("Cheque sem fundo:", "0"));
 			}
 			
 			if(engine.getConsultaCompleta() == null) {
 				result.add(new DocumentoAnaliseResumo("Inadimplências Comunicadas:", "Não disponível"));
 			} else {
-				result.add(new DocumentoAnaliseResumo("Inadimplências Comunicadas:", "Não disponível"));
+				result.add(new DocumentoAnaliseResumo("Inadimplências Comunicadas:", "0"));
 			}
 			
 			if(engine.getConsultaCompleta() == null) {
 				result.add(new DocumentoAnaliseResumo("Protesto:", "Não disponível"));
 			} else {
-				result.add(new DocumentoAnaliseResumo("Protesto:", "Não disponível"));
+				result.add(new DocumentoAnaliseResumo("Protesto:", "0"));
 			}
 		}
 
@@ -236,11 +239,11 @@ public class DocumentoAnalise implements Serializable {
 
 		CenprotProtestos data = GsonUtil.fromJson(getRetornoCenprot(), CenprotProtestos.class);
 		if (data == null) {
-			cenprot.add(new DocumentoAnaliseResumo("não disponível", null));
+			cenprot.add(new DocumentoAnaliseResumo("Não disponível", null));
 		} else {
 
 			if (CommonsUtil.semValor(data.getProtestosBrasil().getEstados())) {
-				cenprot.add(new DocumentoAnaliseResumo("Não Disponível", null));
+				cenprot.add(new DocumentoAnaliseResumo("Não disponível", null));
 			} else {
 				for (ProtestosBrasilEstado estado : data.getProtestosBrasil().getEstados()) {
 
@@ -285,11 +288,24 @@ public class DocumentoAnalise implements Serializable {
 			}
 
 			if (dado.getResumoDoClienteTraduzido().getCarteiradeCredito() == null) {
-				scr.add(new DocumentoAnaliseResumo("Carteira de Crédito Tomado:", "Não Disponível"));
+			    scr.add(new DocumentoAnaliseResumo("Carteira de Crédito Tomado:", "Não Disponível"));
 			} else {
-				String creditoTomado = CommonsUtil
-						.formataValorMonetario(dado.getResumoDoClienteTraduzido().getCarteiradeCredito());
-				scr.add(new DocumentoAnaliseResumo("Carteira de Crédito Tomado:", creditoTomado));
+			    String creditoTomado = CommonsUtil.formataValorMonetario(dado.getResumoDoClienteTraduzido().getCarteiradeCredito());
+			    double valorCreditoTomado = Double.parseDouble(creditoTomado.replace(".", "").replace(",", ".").replace("R$", "").trim());
+
+			    if (dado.getResumoDoClienteTraduzido().getLimitesdeCredito() == null) {
+				    scr.add(new DocumentoAnaliseResumo("Limites:", "Não Disponível"));
+				} else {
+				    String limiteCredito = CommonsUtil.formataValorMonetario(dado.getResumoDoClienteTraduzido().getLimitesdeCredito());
+				    double valorLimiteCredito = Double.parseDouble(limiteCredito.replace(".", "").replace(",", ".").replace("R$", "").trim());
+				    double soma = valorCreditoTomado + valorLimiteCredito;
+
+				    // Formatar o valor da soma em moeda (real)
+				    NumberFormat formatoMoeda = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+				    String somaFormatada = formatoMoeda.format(soma);
+
+				    scr.add(new DocumentoAnaliseResumo("Carteira de Crédito Tomado:", somaFormatada));
+				}
 			}
 
 		}
@@ -584,6 +600,13 @@ public class DocumentoAnalise implements Serializable {
 
 	public void setRetornoSerasa(String retornoSerasa) {
 		this.retornoSerasa = retornoSerasa;
+	}
+	
+	public String getRetornoLaudoRobo() {
+		return retornoLaudoRobo;
+	}
+	public void SetRetornoLaudoRobo(String retornoLaudoRobo) {
+		this.retornoLaudoRobo = retornoLaudoRobo;
 	}
 
 	public String getCnpjcpf() {

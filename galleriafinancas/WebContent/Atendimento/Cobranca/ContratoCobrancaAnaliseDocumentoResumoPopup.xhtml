@@ -101,6 +101,119 @@
 			</h:form>
 		</p:dialog>
 		
+		<p:dialog header="Laudo robô" 
+			widgetVar="laudoRoboDialog" showEffect="fade" hideEffect="fade"
+			resizable="false" responsive="false" width="1000"
+			closable="true">
+			<h:form id="laudoRoboForm" >
+					<h:panelGrid Columns="2" >
+					
+						<p:outputLabel for="CepImovel" value="Cep: "/>
+						<p:inputMask id="CepImovel"
+							value="#{contratoCobrancaMB.objetoImovelCobranca.cep}"
+							mask="99999-999" label="Cep" disabled="true">
+							<p:ajax event="blur"
+								update="EnderecoImovel BairroImovel CidadeImovel EstadoImovel"
+								listener="#{contratoCobrancaMB.getEnderecoByViaNet()}"/>
+						</p:inputMask>
+
+						<p:outputLabel value="" />
+						<p:outputLabel
+							value="O sistema irá preencher automaticamente o endereço de acordo com o CEP informado. " />
+
+						<p:outputLabel for="EnderecoImovel" value="Endereço: " />
+						<p:inputText id="EnderecoImovel"
+							value="#{contratoCobrancaMB.objetoImovelCobranca.endereco}"
+							label="Endereço" onblur="" style="width:400px;" disabled="true" />
+
+						<p:outputLabel for="ComplementoImovel" value="Complemento: " />
+						<p:inputText id="ComplementoImovel"
+							value="#{contratoCobrancaMB.objetoImovelCobranca.complemento}"
+							label="Complemento" onblur="" style="width:400px;"  disabled="true"/>
+
+						<p:outputLabel for="BairroImovel" value="Bairro: " />
+						<p:inputText id="BairroImovel"
+							value="#{contratoCobrancaMB.objetoImovelCobranca.bairro}"
+							label="Bairro" onblur="" style="width:400px;"  disabled="true"/>
+
+						<p:outputLabel for="CidadeImovel" value="Cidade: " />
+						<p:inputText id="CidadeImovel"
+							value="#{contratoCobrancaMB.objetoImovelCobranca.cidade}"
+							label="Cidade" onblur="" style="width:400px;"  disabled="true"/>
+
+						<p:outputLabel for="EstadoImovel" value="Estado: " />
+						<p:selectOneMenu id="EstadoImovel"
+							value="#{contratoCobrancaMB.objetoImovelCobranca.estado}"
+							label="Estado" style="width:410px;"  disabled="true">
+							<f:selectItem itemValue="" itemLabel="Escolha o Estado" />
+							<f:selectItem itemValue="AC" itemLabel="Acre" />
+							<f:selectItem itemValue="AL" itemLabel="Alagoas" />
+							<f:selectItem itemValue="AP" itemLabel="Amapá" />
+							<f:selectItem itemValue="AM" itemLabel="Amazonas" />
+							<f:selectItem itemValue="BA" itemLabel="Bahia" />
+							<f:selectItem itemValue="CE" itemLabel="Ceará" />
+							<f:selectItem itemValue="DF" itemLabel="Distrito Federal" />
+							<f:selectItem itemValue="ES" itemLabel="Espirito Santo" />
+							<f:selectItem itemValue="GO" itemLabel="Goiás" />
+							<f:selectItem itemValue="MA" itemLabel="Maranhão" />
+							<f:selectItem itemValue="MT" itemLabel="Mato Grosso" />
+							<f:selectItem itemValue="MS" itemLabel="Mato Grosso Do Sul" />
+							<f:selectItem itemValue="MG" itemLabel="Minas Gerais" />
+							<f:selectItem itemValue="PA" itemLabel="Pará" />
+							<f:selectItem itemValue="PB" itemLabel="Paraiba" />
+							<f:selectItem itemValue="PR" itemLabel="Paraná" />
+							<f:selectItem itemValue="PE" itemLabel="Pernambuco" />
+							<f:selectItem itemValue="PI" itemLabel="Piauí" />
+							<f:selectItem itemValue="RJ" itemLabel="Rio De Janeiro" />
+							<f:selectItem itemValue="RN" itemLabel="Rio Grande Do Norte" />
+							<f:selectItem itemValue="RS" itemLabel="Rio Grande Do Sul" />
+							<f:selectItem itemValue="RO" itemLabel="Rondônia" />
+							<f:selectItem itemValue="RR" itemLabel="Roraima" />
+							<f:selectItem itemValue="SC" itemLabel="Santa Catarina" />
+							<f:selectItem itemValue="SP" itemLabel="São Paulo" />
+							<f:selectItem itemValue="SE" itemLabel="Sergipe" />
+							<f:selectItem itemValue="TO" itemLabel="Tocantins" />
+						</p:selectOneMenu>
+						
+						<p:outputLabel for="linkGMapsImovel" value="Link Valuation: " />
+						<p:inputText id="linkGMapsImovel"
+							value="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}"
+							label="Link Google Maps" style="width:400px;"  disabled="true"/>					
+					
+						<h:panelGroup id="botaoLinkImovel">
+							<a href="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}" class="linkPDF" target="_blank"
+								style="background: linear-gradient(90deg, rgba(159,196,24,1) 0%, rgba(115,158,46,1) 100%);padding: 5px;-webkit-border-radius: 5px;text-decoration: none;
+								-moz-border-radius: 5px;
+								border-radius: 5px; "><b>Gerar PDF</b></a>
+						</h:panelGroup>	
+							
+						<p:outputLabel for="Tipo" value="Tipo: " />
+						<p:autoComplete id="Tipo" value="#{contratoCobrancaMB.objetoImovelCobranca.tipo}"
+							completeMethod="#{contratoCobrancaMB.objetoImovelCobranca.completeTipoImovel}" 
+							autocomplete="no" dropdown="true" forceSelection="true" var="tipo" 
+							itemValue="#{contratoCobrancaMB.objetoImovelCobranca.getValue(tipo)}" 
+							itemLabel="#{contratoCobrancaMB.objetoImovelCobranca.getLabel(tipo)}" 
+							scrollHeight="250" disabled="true">
+						</p:autoComplete>
+						
+						<p:outputLabel for="AreaConstruida" value="Área Útil / Construída (metros): " />
+						<h:panelGroup>
+							<p:inputText id="AreaConstruida" value="#{contratoCobrancaMB.objetoImovelCobranca.areaConstruida}" style="width:150px;"/>  
+						</h:panelGroup>
+						
+						<p:outputLabel for="valorEstimado"
+							value="Qual o valor estimado do imóvel? " />
+						<p:inputText id="valorEstimado"
+							value="#{contratoCobrancaMB.objetoImovelCobranca.valoEstimado}"
+							onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);"
+							converter="bigDecimalConverter"  disabled="true"/>
+							
+					</h:panelGrid>
+
+			</h:form>
+		</p:dialog>
+		
 		<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO">
 			<p:dialog header="Adicionar pessoa Analise" overflow="auto"
 			rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
