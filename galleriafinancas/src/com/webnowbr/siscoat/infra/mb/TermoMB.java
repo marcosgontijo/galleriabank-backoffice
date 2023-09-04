@@ -3,18 +3,26 @@ package com.webnowbr.siscoat.infra.mb;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Calendar;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
@@ -32,16 +40,30 @@ import org.primefaces.model.SortOrder;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
 
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.Font.FontFamily;
+import com.webnowbr.siscoat.cobranca.db.model.TermoPopup;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
+import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.db.dao.DAOException;
 import com.webnowbr.siscoat.db.dao.DBConnectionException;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.infra.db.dao.TermoDao;
 import com.webnowbr.siscoat.infra.db.dao.TermoUsuarioDao;
+import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.dao.UserPerfilDao;
 import com.webnowbr.siscoat.infra.db.model.Termo;
 import com.webnowbr.siscoat.infra.db.model.TermoUsuario;
+import com.webnowbr.siscoat.infra.db.model.TermoUsuarioVO;
 import com.webnowbr.siscoat.infra.db.model.User;
 import com.webnowbr.siscoat.infra.db.model.UserPerfil;
 import com.webnowbr.siscoat.security.LoginBean;
@@ -66,6 +88,7 @@ public class TermoMB {
 	private String pathArquivoAnteriorSalvo = null;
 	private String arquivoAnteriorSalvo = null;
 	private StreamedContent pdfContent;
+	private Termo termoUsuarioPopup;
 	List<Termo> termos = new ArrayList<>();
 	int itermo = -1;
 
@@ -94,6 +117,158 @@ public class TermoMB {
 			}
 		};
 	}
+
+	private List<TermoUsuario> termosUsuario;
+	private List<TermoPopup> usuarios = new ArrayList<>();
+	
+	private TermoUsuarioVO usuarioVO;
+	User usuarioNew = null;
+	Date dataAceite = null;
+
+	public void listaUsuario(Long id) {
+		usuarios.clear();
+		TermoUsuarioDao termoDao = new TermoUsuarioDao();
+		UserDao usuario = new UserDao();
+		TermoUsuarioVO TermoUsuariovo = new TermoUsuarioVO();
+		termosUsuario = termoDao.findByFilter("idTermo", id);
+	
+		for (TermoUsuario user : termosUsuario) {
+		
+			User userPesquisa = usuario.findById(user.getIdUsuario());
+			TermoUsuariovo.setDataAceite(user.getDataAceite());
+			TermoUsuariovo.setUsuario(userPesquisa);
+			usuarios.add(new TermoPopup(TermoUsuariovo.getUsuario().getName(), TermoUsuariovo.getDataAceite()));
+			
+			
+
+		}
+
+
+	}
+	private boolean pdfGerado;
+	private String pathPDF;
+	private String nomePDF;
+	private StreamedContent filePDF;
+	
+	
+	public StreamedContent geraPDF() {
+		Document document = null;
+		ByteArrayOutputStream baos = null;
+		try {
+			
+			
+			 baos = new ByteArrayOutputStream();
+			TermoUsuarioVO TermoUsuariovo = new TermoUsuarioVO();
+			
+			UserDao usuario = new UserDao();
+			Font header = new Font(FontFamily.HELVETICA, 12, Font.BOLD);
+
+			Font titulo = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
+			Font tituloBranco = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
+			tituloBranco.setColor(BaseColor.WHITE);
+			Font normal = new Font(FontFamily.HELVETICA, 10);
+			Font subtitulo = new Font(FontFamily.HELVETICA, 10, Font.BOLD);	    	
+			Font subtituloIdent = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
+			Font destaque = new Font(FontFamily.HELVETICA, 8, Font.BOLD);
+
+			TimeZone zone = TimeZone.getDefault();  
+			Locale locale = new Locale("pt", "BR"); 
+			Calendar date = Calendar.getInstance(zone, locale);  
+			SimpleDateFormat sdfDataRel = new SimpleDateFormat("dd/MMM/yyyy", locale);
+			SimpleDateFormat sdfDataRelComHoras = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", locale);
+ 
+			
+			document = new Document(PageSize.A4.rotate(), 10, 10, 10, 10);
+			PdfWriter.getInstance(document, baos);
+			document.open();
+			PdfPTable table = new PdfPTable(3);
+			
+		
+			table.setWidthPercentage(100.0f); 
+			PdfPCell cell1 = new PdfPCell(new Phrase("Assinantes do Termo", header));
+			cell1.setRowspan(2);
+			cell1.setBorder(0);
+			cell1.setPaddingLeft(8f);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(5f);
+			cell1.setPaddingBottom(15f);
+			table.addCell(cell1);
+
+			
+		PdfPCell cell2 = new PdfPCell(new Phrase("Nome: ", titulo));
+			cell2.setRowspan(0);
+			cell2.setBorder(0);
+			cell2.setPaddingLeft(8f);
+			cell2.setBackgroundColor(BaseColor.WHITE);
+			cell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell2.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell2.setUseBorderPadding(true);
+			cell2.setPaddingTop(5f);
+			cell2.setPaddingBottom(15f);
+			table.addCell(cell2);
+			
+			for (TermoUsuario user : termosUsuario) {
+				
+				User userPesquisa = usuario.findById(user.getIdUsuario());
+				TermoUsuariovo.setDataAceite(user.getDataAceite());
+				TermoUsuariovo.setUsuario(userPesquisa);
+			 PdfPCell cell3 = new PdfPCell(new Phrase(TermoUsuariovo.getUsuario().getName(), normal));
+			cell3.setBorder(0);
+			cell3.setPaddingLeft(8f);
+			cell3.setBackgroundColor(BaseColor.WHITE);
+			cell3.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell3.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell3.setUseBorderPadding(true);
+			cell3.setPaddingTop(5f);
+			cell3.setPaddingBottom(15f);
+			table.addCell(cell3);
+			}
+	
+			document.add(table);
+			document.close();
+
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String.format("Galleria Bank - Termos Assinantes.pdf", "");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(baos.toByteArray()));
+			gerador.close();
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+			
+
+	
+
+
+
+
+	public User getUsuarioNew() {
+		return usuarioNew;
+	}
+
+
+	public void setUsuarioNew(User usuarioNew) {
+		this.usuarioNew = usuarioNew;
+	}
+
+
+	public List<TermoUsuario> getTermosUsuario() {
+		return termosUsuario;
+	}
+
+
+	public void setTermosUsuario(List<TermoUsuario> termosUsuario) {
+		this.termosUsuario = termosUsuario;
+	}
+
 
 	public String clearFields() {
 
@@ -433,6 +608,97 @@ public class TermoMB {
 	public void setBtnAceiteDesativado(boolean btnAceiteDesativado) {
 		this.btnAceiteDesativado = btnAceiteDesativado;
 	}
+
+	public Termo getTermoUsuarioPopup() {
+		return termoUsuarioPopup;
+	}
+
+	public void setTermoUsuarioPopup(Termo termoUsuarioPopup) {
+		this.termoUsuarioPopup = termoUsuarioPopup;
+	}
+
+
+
+
+
+	public TermoUsuarioVO getUsuarioVO() {
+		return usuarioVO;
+	}
+
+
+
+
+
+	public void setUsuarioVO(TermoUsuarioVO usuarioVO) {
+		this.usuarioVO = usuarioVO;
+	}
+	public boolean isPdfGerado() {
+		return pdfGerado;
+	}
+	public void setPdfGerado(boolean pdfGerado) {
+		this.pdfGerado = pdfGerado;
+	}
+	public String getPathPDF() {
+		return pathPDF;
+	}
+	public void setPathPDF(String pathPDF) {
+		this.pathPDF = pathPDF;
+	}
+	public String getNomePDF() {
+		return nomePDF;
+	}
+	public void setNomePDF(String nomePDF) {
+		this.nomePDF = nomePDF;
+	}
+	public StreamedContent getFilePDF() {
+		return filePDF;
+	}
+	public void setFilePDF(StreamedContent filePDF) {
+		this.filePDF = filePDF;
+	}
+
+
+
+
+
+
+
+
+	public List<TermoPopup> getUsuarios() {
+		return usuarios;
+	}
+
+
+
+
+
+
+
+
+	public void setUsuarios(List<TermoPopup> usuarios) {
+		this.usuarios = usuarios;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	
 	
 

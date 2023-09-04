@@ -198,7 +198,6 @@ public class NetrinMB {
 		} catch (Exception e) {
 			facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Processos: Ocorreu um problema ao gerar o PDF!", ""));
-
 		}
 	}
 	

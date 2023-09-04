@@ -195,9 +195,7 @@
 								onclick="target='_blank'" onblur="target='_self'"
 								icon="ui-icon ui-icon-print" value="Abrir SCR"
 								rendered="#{fileAnalise.scrProcessado }" ajax="false" />
-								
-							
-								
+															
 							<p:commandButton
 								value="Consultas Plexi"
 								onclick="PF('consultasPlexiDlg').show()"
@@ -244,7 +242,6 @@
 							</p:commandButton>
 						</p:column>
 							
-   
 					</p:dataTable>
 				</h:panelGrid>
 
@@ -281,12 +278,11 @@
 									rendered="#{fileAnalise.tipo != 'Rea'}">
 						<f:setPropertyActionListener value="#{fileAnalise}"
 						target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
-				</p:commandButton>				
-				
+				</p:commandButton>		
 			</p:panel>
 			
 		</p:panel>
-	
+
 
 	</shiro:hasAnyRoles>
 </ui:composition>

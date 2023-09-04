@@ -6,7 +6,6 @@ import java.util.List;
 
 import java.text.NumberFormat;
 import java.util.Locale;
-
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
 import com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta;
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -162,7 +161,7 @@ public class DocumentoAnalise implements Serializable {
 				if (cnpj != null)
 					result.add(new DocumentoAnaliseResumo("CNPJ:", cnpj.getValue()));
 			}
-
+			
 			if (engine.getConsultaCompleta() == null) {
 				result.add(new DocumentoAnaliseResumo("Score:", "Não disponivel"));
 			} else {
@@ -186,7 +185,6 @@ public class DocumentoAnalise implements Serializable {
 				result.add(new DocumentoAnaliseResumo("Numero  de processos:",
 						CommonsUtil.stringValue(processo.getTotal_acoes_judiciais())));
 			}
-			
 			if(engine.getConsultaCompleta() == null) {
 				result.add(new DocumentoAnaliseResumo("Pessoa Políticamente exposta:", "Não disponível"));
 			} else {
@@ -285,8 +283,8 @@ public class DocumentoAnalise implements Serializable {
 			} else {
 				String prejuizo = CommonsUtil.formataValorMonetario(dado.getResumoDoClienteTraduzido().getPrejuizo());
 				scr.add(new DocumentoAnaliseResumo("Prejuizo:", prejuizo));
-			}
-
+			}			
+			
 			if (dado.getResumoDoClienteTraduzido().getCarteiradeCredito() == null) {
 			    scr.add(new DocumentoAnaliseResumo("Carteira de Crédito Tomado:", "Não Disponível"));
 			} else {
@@ -312,7 +310,6 @@ public class DocumentoAnalise implements Serializable {
 
 		return scr;
 	}
-
 	public boolean isPodeChamarRea() {
 		return isReaNaoEnviado() && CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
 	}
@@ -704,7 +701,7 @@ public class DocumentoAnalise implements Serializable {
 	public void setExcluido(boolean excluido) {
 		this.excluido = excluido;
 	}
-
+	
 	public List<PlexiConsulta> getPlexiConsultas() {
 		return plexiConsultas;
 	}

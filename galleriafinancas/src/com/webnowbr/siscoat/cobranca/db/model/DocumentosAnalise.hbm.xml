@@ -114,7 +114,6 @@
 			<column name="observacao" />
 		</property>
 		
-		
 		<property name="retornoCNDTrabalhistaTST" type="java.lang.String"  length="65000">
 			<column name="retornoCNDTrabalhistaTST" />
 		</property>
@@ -134,7 +133,7 @@
 			<list-index></list-index>
 			<many-to-many column="idPlexiConsulta"
 				class="com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta" />
-		</list>		
+		</list>
 						
     </class>
 </hibernate-mapping>
