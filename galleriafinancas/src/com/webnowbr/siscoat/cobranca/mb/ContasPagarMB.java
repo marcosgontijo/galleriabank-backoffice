@@ -106,6 +106,8 @@ public class ContasPagarMB {
 	private boolean addContasPagar;
 	StreamedContent downloadFile;
 	FileUploaded selectedFile =  new FileUploaded();
+	byte[] arquivos = null;
+	List<FileUploaded> deletefiles = new ArrayList<FileUploaded>();
 	
 	public ContasPagarMB() {
 
@@ -261,6 +263,8 @@ public class ContasPagarMB {
 		return lista;
 	}
 	
+	
+	
 	public StreamedContent getDownloadFile() {
 
 		if (this.selectedFile != null) {
@@ -271,6 +275,38 @@ public class ContasPagarMB {
 					this.selectedFile.getName());
 		}
 		return this.downloadFile;
+	}
+	
+	public StreamedContent getDownloadAllFiles() {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+
+		try {
+			// recupera path do contrato
+			ParametrosDao pDao = new ParametrosDao();
+			CompactadorUtil compac = new CompactadorUtil();
+
+			// Percorre arquivos selecionados e adiciona ao ZIP
+			for (FileUploaded f : deletefiles) {
+				String arquivo = f.getName();
+				byte[] arquivoByte = f.getFile().getPath().getBytes();
+				listaArquivos.put(arquivo, arquivoByte);
+
+			}
+			arquivos = compac.compactarZipByte(listaArquivos);
+
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String.format(selectedContratoLov.getNumeroContrato() + " Documentos.zip",
+					"");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(arquivos));
+			gerador.close();
+
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+
+		return null;
 	}
 	
 	public void viewFile(FileUploaded file) {
@@ -1015,8 +1051,12 @@ public class ContasPagarMB {
 	}
 	public void setLoginBean(LoginBean loginBean) {
 		this.loginBean = loginBean;
+	}	
+	public List<FileUploaded> getDeletefiles() {
+		return deletefiles;
+	}	
+	public void setDeletefiles(List<FileUploaded> deletefiles) {
+		this.deletefiles = deletefiles;
 	}
-	
-	
 
 }

@@ -4936,7 +4936,6 @@ public void baixarDocumentoSerasa(DocumentoAnalise documentoAnalise) {
 			// Finalize task.
 			output.flush();
 			output.close();
-			
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -32478,24 +32477,18 @@ private	StreamedContent downloadArquivosFaltantes;
 
 	public StreamedContent getDownloadAllFiles() {
 		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
-
+		
 		try {
 			// recupera path do contrato
-			ParametrosDao pDao = new ParametrosDao();
 			CompactadorUtil compac = new CompactadorUtil();
-			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-					+ this.objetoContratoCobranca.getNumeroContrato() + "//interno/";
-			// cria objetos para ZIP
-
 			// Percorre arquivos selecionados e adiciona ao ZIP
 			for (FileUploaded f : deletefiles) {
 				String arquivo = f.getName();
-				byte[] arquivoByte = f.getFile().getPath().getBytes();
+			    byte[] arquivoByte = fileService.abrirDocumentos
+			    		(f,this.objetoContratoCobranca.getNumeroContrato(), getUsuarioLogado());
 				listaArquivos.put(arquivo, arquivoByte);
-
 			}
 			arquivos = compac.compactarZipByte(listaArquivos);
-
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 					FacesContext.getCurrentInstance());
 			String nomeArquivoDownload = String.format(objetoContratoCobranca.getNumeroContrato() + " Documentos.zip",
@@ -32503,7 +32496,6 @@ private	StreamedContent downloadArquivosFaltantes;
 			gerador.open(nomeArquivoDownload);
 			gerador.feed(new ByteArrayInputStream(arquivos));
 			gerador.close();
-
 		} catch (Exception e) {
 			System.out.println(e);
 		}
