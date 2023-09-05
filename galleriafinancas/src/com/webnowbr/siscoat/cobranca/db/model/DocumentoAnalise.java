@@ -75,7 +75,7 @@ public class DocumentoAnalise implements Serializable {
 	private String retornoCNDFederal;
 	private String retornoCNDEstadual;
 	
-//	private List<PlexiConsulta> plexiConsultas = new ArrayList<PlexiConsulta>();
+	private List<PlexiConsulta> plexiConsultas = new ArrayList<PlexiConsulta>();
 	
 
 	public List<DocumentoAnaliseResumo> getResumoProcesso() {
@@ -701,14 +701,14 @@ public class DocumentoAnalise implements Serializable {
 	public void setExcluido(boolean excluido) {
 		this.excluido = excluido;
 	}
-//	
-//	public List<PlexiConsulta> getPlexiConsultas() {
-//		return plexiConsultas;
-//	}
-//
-//	public void setPlexiConsultas(List<PlexiConsulta> plexiConsultas) {
-//		this.plexiConsultas = plexiConsultas;
-//	}
+	
+	public List<PlexiConsulta> getPlexiConsultas() {
+		return plexiConsultas;
+	}
+
+	public void setPlexiConsultas(List<PlexiConsulta> plexiConsultas) {
+		this.plexiConsultas = plexiConsultas;
+	}
 
 	public String getRetornoCNDTrabalhistaTST() {
 		return retornoCNDTrabalhistaTST;
