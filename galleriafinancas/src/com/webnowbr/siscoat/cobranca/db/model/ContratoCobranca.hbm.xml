@@ -807,6 +807,16 @@
 			<column name="aprovadoComite" />
 		</property>
 		
+		<property name="okClienteData" type="java.util.Date">
+			<column name="okClienteData" />
+		</property>
+		<property name="okCliente" type="boolean">
+			<column name="okCliente" not-null="true" default="false"/>
+		</property>
+		<property name="okClienteUsuario" type="java.lang.String">
+			<column name="okClienteUsuario" />
+		</property>
+		
 		<property name="visitaImovelAprovadaData"
 			type="java.util.Date">
 			<column name="visitaImovelAprovadaData" />

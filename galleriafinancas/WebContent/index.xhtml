@@ -298,7 +298,7 @@
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">					
+								<shiro:hasAnyRoles name="ROOT">					
 									<p:menuitem value="07 - Pré-Comite"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Pré-Comite')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
@@ -313,6 +313,12 @@
 								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE ">
 									<p:menuitem value="08 - Ag. Comite:  #{loginBean.numeroContratosComite}"
 										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Comite')}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">					
+									<p:menuitem value="08.5 - Ag. Ok Cliente"
+										action="#{contratoCobrancaMB.geraConsultaContratosPorStatus('Ag. Ok Cliente')}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>

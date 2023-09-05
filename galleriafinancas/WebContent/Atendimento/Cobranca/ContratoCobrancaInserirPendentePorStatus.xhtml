@@ -312,7 +312,8 @@
 									<h:panelGrid columns="2"
 										style="background-color: #e4e4e4;width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
-										border-radius: 5px; padding: 10px;">
+										border-radius: 5px; padding: 10px;"
+										rendered="#{!contratoCobrancaMB.objetoContratoCobranca.aprovadoComite}">
 										<p:outputLabel styleClass="labelBold">Aprovado Comite</p:outputLabel>
 										<p:spacer></p:spacer>
 										<p:selectBooleanButton id="aprovadoComite"
@@ -324,6 +325,18 @@
 											value="Reprovar Contrato" icon="ui-icon-close"
 											style="width:=60px"
 											onclick="PF('reprovarContratoDialog').show();" />
+									</h:panelGrid>
+									<h:panelGrid columns="2"
+										style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
+										-moz-border-radius: 5px; border-radius: 5px; padding: 10px;"
+										rendered="#{contratoCobrancaMB.objetoContratoCobranca.aprovadoComite}">
+										<p:outputLabel styleClass="labelBold">Cliente deu Ok ?</p:outputLabel>
+										<p:spacer></p:spacer>
+										<p:selectBooleanButton id="okCliente"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.okCliente}"
+											onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+											offIcon="ui-icon-close" style="width:=60px">
+										</p:selectBooleanButton>
 									</h:panelGrid>
 								</ui:fragment>
 								<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 8}">
@@ -988,76 +1001,6 @@
 					<p:panel header="Comitê"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.documentosComite}">
 						<h:panelGrid columns="2">
-							<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 7}">
-								<shiro:hasAnyRoles name="ROOT, COMITEEDITAR">
-									<p:outputLabel for="taxaAprovadaComite" value="Taxa Aprovada: "
-										styleClass="labelBold" />
-									<h:panelGroup>
-										<p:inputText id="taxaAprovadaComite"
-											value="#{contratoCobrancaMB.objetoAnaliseComite.taxaComite}"
-											style="FONT-SIZE: 10pt;width:60px;"
-											onkeypress="return isNumberKey(event);"
-											onkeydown="FormataValor(this, 3, event, 2);"
-											converter="bigDecimalConverter" />
-										<p:outputLabel value="% + IPCA a.m." />
-									</h:panelGroup>
-
-									<p:outputLabel for="prazoMaxAprovadoComite"
-										value="Prazo Maximo Aprovado: " styleClass="labelBold" />
-									<h:panelGroup>
-										<p:inputText id="prazoMaxAprovadoComite" showOn="button"
-											value="#{contratoCobrancaMB.objetoAnaliseComite.prazoMaxComite}"
-											size="100" style="width:60px;" />
-										<p:outputLabel value=" meses" />
-									</h:panelGroup>
-
-									<p:outputLabel for="valorAprovadoComiteComite"
-										value="Valor Aprovado pelo Comitê: " styleClass="labelBold" />
-									<h:panelGroup>
-										<p:inputText id="valorAprovadoComiteComite"
-											value="#{contratoCobrancaMB.objetoAnaliseComite.valorComite}"
-											onkeypress="return isNumberKey(event);"
-											onkeydown="FormataValor(this, 13, event, 2);"
-											converter="bigDecimalConverter"
-											style="FONT-SIZE: 10pt;width:100px;" />
-
-										<!-- -->
-
-										<p:selectOneMenu id="tipoValorComiteComite"
-											value="#{contratoCobrancaMB.objetoAnaliseComite.tipoValorComite}"
-											label="Status" style="width:100px;">
-											<f:selectItem itemValue="bruto" itemLabel="Bruto" />
-											<f:selectItem itemValue="liquido" itemLabel="Líquido" />
-										</p:selectOneMenu>
-									</h:panelGroup>
-									
-									<p:outputLabel value="Carência: "
-											styleClass="labelBold" />					
-									<h:panelGroup>
-										<p:inputText value="#{contratoCobrancaMB.objetoAnaliseComite.carenciaComite}" size="100"
-											style="width:60px;" />
-										<p:outputLabel value=" meses" />
-									</h:panelGroup>
-
-									<p:outputLabel for="comentarioComiteComite"
-										value="Comentários comitê: " styleClass="labelBold" />
-									<p:inputTextarea id="comentarioComiteComite" rows="10"
-										cols="48" maxlength="3000" onblur=""
-										counterTemplate="{0} characters remaining." autoResize="false"
-										value="#{contratoCobrancaMB.objetoAnaliseComite.comentarioComite}" />
-
-									<p:outputLabel for="votoComite" value="Voto do comitê: "
-										styleClass="labelBold" />
-									<p:selectOneRadio id="votoComite"
-										value="#{contratoCobrancaMB.objetoAnaliseComite.votoAnaliseComite}"
-										styleClass="labelBold">
-										<f:selectItem itemValue="Aprovado" itemLabel="Aprovado" />
-										<f:selectItem itemValue="Reprovado" itemLabel="Reprovado" />
-										<f:selectItem itemValue="Pendente" itemLabel="Pendente" />
-									</p:selectOneRadio>
-
-								</shiro:hasAnyRoles>
-							</h:panelGrid>
 							<p:dataView var="comite"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite}"
 								paginator="false" layout="list"
@@ -4645,7 +4588,7 @@
 								<p:commandButton value="Download selecionados" ajax="false">
 								<p:fileDownload value="#{contratoCobrancaMB.downloadFilesJuridico}"></p:fileDownload>
 								</p:commandButton>
-					        </f:facet>	        
+					        </f:facet>	       
 					        <p:column style="text-align: center;"
 								headerText="Nome do Arquivo" filterBy="#{filesJuridico.name}"
 								filterMatchMode="contains" sortBy="#{filesJuridico.name}">
@@ -4669,6 +4612,64 @@
 								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileJuridico}"/>								
 					        </f:facet>             	        		               		        			        			           			 		
 						</p:dataTable>								
+					</h:panelGrid>  
+				</p:panel>
+				<script type="text/javascript">
+					function start() {
+					    PF('statusDialog').show();
+					}
+					 
+					function stop() {
+					    PF('statusDialog').hide();
+					}
+				</script>
+			</p:panel>	
+			
+			<p:panel id="UploadArquivosCci" header="Arquivos CCI" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite' and contratoCobrancaMB.objetoContratoCobranca.aprovadoComite}"   >						
+				<p:panel id="ArquivosCci" header="Selecionar Arquivo Para Upload" style="margin-bottom:10px;text-align: center;" rendered="#{( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'))}">							
+
+					<h:panelGrid columns="1">		
+						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileCciUpload}" mode="advanced" dragDropSupport="true"
+                          update="ArquivosCciSalvos msgArquivo" />								
+					</h:panelGrid>  
+				</p:panel>	
+				
+				<p:dialog modal="true" widgetVar="statusDialog" header="Status Downloading" draggable="false" closable="false" resizable="false">
+				    <p:graphicImage name="image/ajaxloadingbar.gif" />
+				</p:dialog>
+
+				<p:panel id="ArquivosCciSalvos" header="Arquivo(s) CCI Salvo(s) no Contrato" style="margin-bottom:10px;">							
+					<h:panelGrid columns="1">			                      								
+						<p:dataTable id="dtFilesCci" var="filesCci" value="#{contratoCobrancaMB.filesCci}" rowKey="#{filesCci.name}"
+							selection="#{contratoCobrancaMB.deletefilesCci}" emptyMessage="" sortBy="#{filesCci.name}" >
+							<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+							 <f:facet name="header">							 
+								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileCci}"/>
+								<p:commandButton value="Download selecionados" ajax="false">
+								<p:fileDownload value="#{contratoCobrancaMB.downloadFilesCci}"></p:fileDownload>
+								</p:commandButton>
+					        </f:facet>	        
+					        <p:column style="text-align: center;"
+								headerText="Nome do Arquivo" filterBy="#{filesCci.name}"
+								filterMatchMode="contains" sortBy="#{filesCci.name}">
+								<h:outputText value="#{filesCci.name}"/>
+								<p:spacer height="10" />
+								<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFile(filesCci)}"
+									immediate="true" icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
+								</p:commandButton>
+							</p:column>  
+					        
+					        <p:column style="width:100px;">
+								<p:commandButton value="Download" ajax="false"  icon="ui-icon-arrowthick-1-s">						       	 	
+						       	 	<f:setPropertyActionListener target="#{contratoCobrancaMB.selectedFile}" value="#{filesCci}" />
+						       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
+						    	</p:commandButton>	
+				            </p:column>						        
+
+				             <f:facet name="footer">	             
+								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileCci}"/>								
+					        </f:facet>             	        		               		        			        			           			 		
+						</p:dataTable>							
 					</h:panelGrid>  
 				</p:panel>
 				<script type="text/javascript">
