@@ -60,6 +60,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.tools.PDFBox;
 import org.apache.poi.ss.formula.functions.FinanceLib;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
@@ -122,6 +123,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.webnowbr.siscoat.auxiliar.BigDecimalConverter;
+import com.webnowbr.siscoat.auxiliar.CompactadorUtil;
 import com.webnowbr.siscoat.auxiliar.EnviaEmail;
 import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobranca;
 import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobrancaResumo;
@@ -143,6 +145,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFinancerioDiaConsu
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaParcelasInvestidor;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaStatus;
+import com.webnowbr.siscoat.cobranca.db.model.DataEngine;
 import com.webnowbr.siscoat.cobranca.db.model.DataVistoria;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.FilaInvestidores;
@@ -179,18 +182,23 @@ import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.cobranca.db.op.SeguradoDAO;
+import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
 import com.webnowbr.siscoat.cobranca.db.op.StarkBankBaixaDAO;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.cobranca.service.FileService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.cobranca.service.PagadorRecebedorService;
 import com.webnowbr.siscoat.cobranca.service.PajuService;
+import com.webnowbr.siscoat.cobranca.service.ScrService;
+import com.webnowbr.siscoat.cobranca.service.SerasaService;
+import com.webnowbr.siscoat.cobranca.vo.FileGenerator;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.common.GeracaoBoletoMB;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
+import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.common.ReportUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.common.ValidaCNPJ;
@@ -209,6 +217,7 @@ import com.webnowbr.siscoat.simulador.SimulacaoIPCADadosV2;
 import com.webnowbr.siscoat.simulador.SimulacaoVO;
 import com.webnowbr.siscoat.simulador.SimuladorMB;
 
+import br.com.galleriabank.netrin.cliente.model.PPE.PpeResponse;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -4877,7 +4886,7 @@ public class ContratoCobrancaMB {
 
 			response.setContentLength(pdfBytes.length);
 
-			response.setHeader("Content-disposition", "inline; FileName=" + "Engine.pdf");
+			response.setHeader("Content-disposition", "inline; FileName=" + objetoContratoCobranca.getNumeroContrato() + " Engine " + documentoAnalise.getPagador().getNome() + ".pdf");
 			output = new BufferedOutputStream(response.getOutputStream(), 10240);
 			byte[] buffer = new byte[10240];
 			int length;
@@ -4895,6 +4904,240 @@ public class ContratoCobrancaMB {
 		}
 
 	}
+public void baixarDocumentoSerasa(DocumentoAnalise documentoAnalise) {
+		
+		SerasaService serasa = new SerasaService();
+		DocumentoAnalise docAnalise = new DocumentoAnalise();
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		ExternalContext externalContext = facesContext.getExternalContext();
+		HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+		BufferedInputStream input = null;
+		BufferedOutputStream output = null;
+		try {
+			String documentoBase64 = serasa.baixarDocumento(documentoAnalise);
+
+			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
+			String mineFile = "application/pdf";
+			input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
+			response.reset();
+			// lire un fichier pdf
+			response.setHeader("Content-type", mineFile);
+
+			response.setContentLength(pdfBytes.length);
+
+			response.setHeader("Content-disposition", "inline; FileName="+ this.objetoContratoCobranca.getNumeroContrato() + " Serasa " + documentoAnalise.getPagador().getNome() + ".pdf");
+			output = new BufferedOutputStream(response.getOutputStream(), 10240);
+			byte[] buffer = new byte[10240];
+			int length;
+			while ((length = input.read(buffer)) > 0) {
+				output.write(buffer, 0, length);
+			}
+
+			// Finalize task.
+			output.flush();
+			output.close();
+			
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+public void baixarDocumentoPpe(DocumentoAnalise documentoAnalise) {
+	NetrinService netrin = new NetrinService();
+	String documentoBase64 = netrin.baixarDocumentoPpe(documentoAnalise);
+	FacesContext facesContext = FacesContext.getCurrentInstance();
+	ExternalContext externalContext = facesContext.getExternalContext();
+	HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+	BufferedInputStream input = null;
+	BufferedOutputStream output = null;
+	try {
+
+		byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
+		String mineFile = "application/pdf";
+		input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
+		response.reset();
+		// lire un fichier pdf
+		response.setHeader("Content-type", mineFile);
+
+		response.setContentLength(pdfBytes.length);
+
+		response.setHeader("Content-disposition", "inline; FileName=" + objetoContratoCobranca.getNumeroContrato() + " PPE " + documentoAnalise.getPagador().getNome() + ".pdf");
+		output = new BufferedOutputStream(response.getOutputStream(), 10240);
+		byte[] buffer = new byte[10240];
+		int length;
+		while ((length = input.read(buffer)) > 0) {
+			output.write(buffer, 0, length);
+		}
+
+		// Finalize task.
+		output.flush();
+		output.close();
+		
+
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
+}
+public void baixarDocumentoDossie(DocumentoAnalise documentoAnalise) {
+	NetrinService netrin = new NetrinService();
+	String documentoBase64 = netrin.baixarDocumentoDossie(documentoAnalise);
+	FacesContext facesContext = FacesContext.getCurrentInstance();
+	ExternalContext externalContext = facesContext.getExternalContext();
+	HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+	BufferedInputStream input = null;
+	BufferedOutputStream output = null;
+	try {
+
+		byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
+		String mineFile = "application/pdf";
+		input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
+		response.reset();
+		// lire un fichier pdf
+		response.setHeader("Content-type", mineFile);
+
+		response.setContentLength(pdfBytes.length);
+
+		response.setHeader("Content-disposition", "inline; FileName=" + objetoContratoCobranca.getNumeroContrato() + " Dossie " + documentoAnalise.getPagador().getNome() + ".pdf");
+		output = new BufferedOutputStream(response.getOutputStream(), 10240);
+		byte[] buffer = new byte[10240];
+		int length;
+		while ((length = input.read(buffer)) > 0) {
+			output.write(buffer, 0, length);
+		}
+
+		// Finalize task.
+		output.flush();
+		output.close();
+		
+
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
+}
+public void baixarDocumentoCenprot(DocumentoAnalise documentoAnalise) {
+	NetrinService netrin = new NetrinService();
+	String documentoBase64 = netrin.baixarDocumento(documentoAnalise);
+	FacesContext facesContext = FacesContext.getCurrentInstance();
+	ExternalContext externalContext = facesContext.getExternalContext();
+	HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+	BufferedInputStream input = null;
+	BufferedOutputStream output = null;
+	try {
+
+		byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
+		String mineFile = "application/pdf";
+		input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
+		response.reset();
+		// lire un fichier pdf
+		response.setHeader("Content-type", mineFile);
+
+		response.setContentLength(pdfBytes.length);
+
+		response.setHeader("Content-disposition", "inline; FileName=" + objetoContratoCobranca.getNumeroContrato() + " Cenprot " + documentoAnalise.getPagador().getNome() + ".pdf");
+		output = new BufferedOutputStream(response.getOutputStream(), 10240);
+		byte[] buffer = new byte[10240];
+		int length;
+		while ((length = input.read(buffer)) > 0) {
+			output.write(buffer, 0, length);
+		}
+
+		// Finalize task.
+		output.flush();
+		output.close();
+		
+
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
+}
+public void baixarDocumentoProcesso(DocumentoAnalise documentoAnalise) {
+	FacesContext facesContext = FacesContext.getCurrentInstance();
+	NetrinService netrin = new NetrinService();
+	try {
+
+		String documentoBase64 = netrin.baixarDocumentoProcesso(documentoAnalise);
+		if (CommonsUtil.semValor(documentoBase64)) {
+			facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Processos: Ocorreu um problema ao gerar o PDF!", ""));
+			return;
+		}
+
+		byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
+		ExternalContext externalContext = facesContext.getExternalContext();
+		HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+		BufferedInputStream input = null;
+		BufferedOutputStream output = null;
+
+		String mineFile = "application/pdf";
+		input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
+		response.reset();
+		// lire un fichier pdf
+		response.setHeader("Content-type", mineFile);
+
+		response.setContentLength(pdfBytes.length);
+
+		response.setHeader("Content-disposition", "inline; FileName=" + objetoContratoCobranca.getNumeroContrato() + " Processos " + documentoAnalise.getPagador().getNome() + ".pdf");
+		output = new BufferedOutputStream(response.getOutputStream(), 10240);
+		byte[] buffer = new byte[10240];
+		int length;
+		while ((length = input.read(buffer)) > 0) {
+			output.write(buffer, 0, length);
+		}
+		output.flush();
+		output.close();
+		
+	} catch (NullPointerException e) {
+		facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+				"Processos: Ocorreu um problema ao gerar o PDF!", ""));
+	} catch (Exception e) {
+		facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+				"Processos: Ocorreu um problema ao gerar o PDF!", ""));
+
+	}
+}
+public void baixarDocumentoSCR ( DocumentoAnalise documentoAnalise) {
+
+	FileGenerator fileGenerator = new FileGenerator();
+	fileGenerator.setDocumento(documentoAnalise.getCnpjcpf());
+	
+	ScrResult scrResult = GsonUtil.fromJson(documentoAnalise.getRetornoScr(), ScrResult.class);
+	
+	ScrService scrService = new ScrService();
+	byte[] contrato = scrService.geraContrato(scrResult, fileGenerator);
+
+	FacesContext facesContext = FacesContext.getCurrentInstance();
+	ExternalContext externalContext = facesContext.getExternalContext();
+	HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+	BufferedInputStream input = null;
+	BufferedOutputStream output = null;
+	try {
+
+	
+		String mineFile = "application/pdf";
+		input = new BufferedInputStream(new ByteArrayInputStream(contrato));
+		response.reset();
+		// lire un fichier pdf
+		response.setHeader("Content-type", mineFile);
+
+		response.setContentLength(contrato.length);
+
+		response.setHeader("Content-disposition", "inline; FileName=" + objetoContratoCobranca.getNumeroContrato() + " SCR " + documentoAnalise.getPagador().getNome() + ".pdf");
+		output = new BufferedOutputStream(response.getOutputStream(), 10240);
+		byte[] buffer = new byte[10240];
+		int length;
+		while ((length = input.read(buffer)) > 0) {
+			output.write(buffer, 0, length);
+		}
+
+		// Finalize task.
+		output.flush();
+		output.close();
+		
+
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
+}
 
 	public StreamedContent decodarBaixarArquivo(String base64) {
 		if (CommonsUtil.semValor(base64)) {
@@ -31494,7 +31737,7 @@ public class ContratoCobrancaMB {
 	
 	private StreamedContent downloadFilesJuridico;
 
-	public StreamedContent getdownloadFilesJuridico() {
+	public StreamedContent getDownloadFilesJuridico() {
 		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
 
 		try {
@@ -31529,7 +31772,7 @@ public class ContratoCobrancaMB {
 		return this.downloadFilesJuridico;
 	}
 private	StreamedContent downloadArquivosFaltantes;
-	public StreamedContent getdownloadArquivosFaltantes() {
+	public StreamedContent getDownloadArquivosFaltantes() {
 		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
 
 		try {
@@ -31564,7 +31807,7 @@ private	StreamedContent downloadArquivosFaltantes;
 
 	}
 	private StreamedContent downloadFileComite;
-	public StreamedContent getdownloadFileComite(){
+	public StreamedContent getDownloadFileComite(){
 		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
 
 		try {
@@ -32234,40 +32477,38 @@ private	StreamedContent downloadArquivosFaltantes;
 	// removido zippar arquivos (ou não)
 
 	public StreamedContent getDownloadAllFiles() {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+
 		try {
 			// recupera path do contrato
 			ParametrosDao pDao = new ParametrosDao();
-			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString();
-
+			CompactadorUtil compac = new CompactadorUtil();
+			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+					+ this.objetoContratoCobranca.getNumeroContrato() + "//interno/";
 			// cria objetos para ZIP
-			ZipOutputStream zip = null;
-			FileOutputStream fileWriter = null;
-
-			// cria arquivo ZIP
-			fileWriter = new FileOutputStream(
-					pathContrato + "Documentos_" + this.objetoContratoCobranca.getNumeroContrato() + ".zip");
-			zip = new ZipOutputStream(fileWriter);
 
 			// Percorre arquivos selecionados e adiciona ao ZIP
 			for (FileUploaded f : deletefiles) {
-				addFileToZip("", f.getFile().getAbsolutePath(), zip);
+				String arquivo = f.getName();
+				byte[] arquivoByte = f.getFile().getPath().getBytes();
+				listaArquivos.put(arquivo, arquivoByte);
+
 			}
+			arquivos = compac.compactarZipByte(listaArquivos);
 
-			// Fecha o ZIP
-			zip.flush();
-			zip.close();
-
-			// Recupera ZIP gerado para fazer download
-			FileInputStream stream = new FileInputStream(
-					pathContrato + "Documentos_" + this.objetoContratoCobranca.getNumeroContrato() + ".zip");
-			downloadAllFiles = new DefaultStreamedContent(stream, pathContrato,
-					"Documentos_" + this.objetoContratoCobranca.getNumeroContrato() + ".zip");
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String.format(objetoContratoCobranca.getNumeroContrato() + " Documentos.zip",
+					"");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(arquivos));
+			gerador.close();
 
 		} catch (Exception e) {
 			System.out.println(e);
 		}
 
-		return this.downloadAllFiles;
+		return null;
 	}
 
 	public BigDecimal calculaTotalVlrParcelaBaixaLoteSelecionadas() {
