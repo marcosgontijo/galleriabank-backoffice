@@ -355,7 +355,9 @@ public class DocumentoAnalise implements Serializable {
 	}
 
 	public boolean isPodeChamarProcesso() {
-		return !isProcessoProcessado() && CommonsUtil.mesmoValor(this.motivoAnalise.toUpperCase(), "PROPRIETARIO ATUAL")
+		return !isProcessoProcessado()
+				&& (CommonsUtil.mesmoValor(this.motivoAnalise.toUpperCase(), "PROPRIETARIO ATUAL") || CommonsUtil
+						.mesmoValor(this.motivoAnalise.toUpperCase(), "EMPRESA VINCULADA AO PROPRIETARIO ATUAL"))
 				&& !CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
 	}
 

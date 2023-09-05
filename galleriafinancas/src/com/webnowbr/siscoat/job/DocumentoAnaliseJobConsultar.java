@@ -147,7 +147,7 @@ public class DocumentoAnaliseJobConsultar {
 					continue;
 				}
 
-				if (!documentoAnalise.isProcessoProcessado()) {
+				if (!documentoAnalise.isPodeChamarProcesso()) {
 					documentoAnalise.addObservacao("Processando Processos");
 //					PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
 					bigDataService.requestProcesso(documentoAnalise);
