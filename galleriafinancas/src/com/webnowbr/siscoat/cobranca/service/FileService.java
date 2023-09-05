@@ -151,7 +151,7 @@ public class FileService {
 				.getString("client.galleria.financas.upload.rest.url");
 		logger.info("INFO file server {} POST: ".concat(serverPrincipalUrl.replace("{numeroContrato}", numeroContrato)
   				.replace("{subpasta}", subpasta
-  				.replace("{nomeArquivo}", arquivo)));
+  				.replace("{nomeArquivo}", arquivo))));
 
 		URL myURL;
 		try {

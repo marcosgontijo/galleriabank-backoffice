@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -96,6 +97,7 @@ public class ContasPagarMB {
 	private Responsavel selectedResponsavel;
 	private List<Responsavel> listResponsavel;
 	
+	FileService fileService = new FileService();
 	Collection<FileUploaded> filesPagar = new ArrayList<FileUploaded>();
 	List<FileUploaded> deleteFilesPagar = new ArrayList<FileUploaded>();
 	List<FileUploaded> deleteFilesContas= new ArrayList<FileUploaded>();
@@ -132,17 +134,20 @@ public class ContasPagarMB {
 	
 	public void handleFilePagarUpload(FileUploadEvent event) throws IOException {
 		FacesContext context = FacesContext.getCurrentInstance();
-		// recupera local onde será gravado o arquivo
-		ParametrosDao pDao = new ParametrosDao();
-		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-			//	String pathContrato = "C:/Users/Usuario/Desktop/"	
-				+ this.selectedContratoLov.getNumeroContrato() + "//pagar/";
-
-		// cria o diretório, caso não exista
-		File diretorio = new File(pathContrato);
-		if (!diretorio.isDirectory()) {
-			diretorio.mkdir();
+					
+		if (event.getFile().getFileName().endsWith(".zip")) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
+		} else {
+			byte[] conteudo = event.getFile().getContents();
+			fileService.salvarDocumento(conteudo, this.selectedContratoLov.getNumeroContrato(), 
+					 event.getFile().getFileName(), "pagar", getUsuarioLogado());
+			
+			// atualiza lista de arquivos contidos no diretório
+			//documentoConsultarTodos = new ArrayList<FileUploaded>();
+			filesPagar = listaArquivosPagar();
 		}
+		
 		if(!SiscoatConstants.DEV && !CommonsUtil.sistemaWindows()) {
 			if(event.getFile().getFileName().contains("Pag ")
 					|| event.getFile().getFileName().contains("PAG ")) {
@@ -157,54 +162,28 @@ public class ContasPagarMB {
 						event.getFile().getFileName());
 			}
 		}
-
-		if(event.getFile().getFileName().endsWith(".zip")) {
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
-		} else {
-			// cria o arquivo
-			byte[] conteudo = event.getFile().getContents();
-			FileOutputStream fos;
-			try {
-				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
-				fos.write(conteudo);
-				fos.close();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				System.out.println(e);
-			}
-
-			// atualiza lista de arquivos contidos no diretório
-			filesPagar = listaArquivosPagar();
-		}
 	}
 	
 	public void handleFileContaPagarUpload(FileUploadEvent event) throws IOException {
 		ContasPagar conta = (ContasPagar) event.getComponent().getAttributes().get("foo"); 
-		
 		FacesContext context = FacesContext.getCurrentInstance();
 		if(CommonsUtil.semValor(conta.getFileListId())) {
 			conta.setFileListId(generateFileID());
 		}	
-		
-		//cria pasta pagar
-		ParametrosDao pDao = new ParametrosDao();
-		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-		//String pathContrato = "C:/Users/Usuario/Desktop/"
-				+ this.selectedContratoLov.getNumeroContrato() + "//pagar/";		
-		File diretorio = new File(pathContrato);
-		if (!diretorio.isDirectory()) {
-			diretorio.mkdir();
+				
+		if (event.getFile().getFileName().endsWith(".zip")) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
+		} else {
+			byte[] conteudo = event.getFile().getContents();
+			fileService.salvarDocumento(conteudo, this.selectedContratoLov.getNumeroContrato(), 
+					 event.getFile().getFileName(), "pagar".concat("/").concat(conta.getFileListId()) , getUsuarioLogado());
+			
+			// atualiza lista de arquivos contidos no diretório
+			conta.setFilesContas(listaArquivosContasPagar(conta));
 		}
 		
-		//cria pasta da conta
-		pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-		//pathContrato = "C:/Users/Usuario/Desktop/"
-				+ this.selectedContratoLov.getNumeroContrato() + "//pagar/" + conta.getFileListId() + "/";	
-		diretorio = new File(pathContrato);
-		if (!diretorio.isDirectory()) {
-			diretorio.mkdir();
-		}		
-		if(!SiscoatConstants.DEV && !CommonsUtil.sistemaWindows()) {			
+		if(!SiscoatConstants.DEV && !CommonsUtil.sistemaWindows()) {
 			if(event.getFile().getFileName().contains("Pag ")
 					|| event.getFile().getFileName().contains("PAG ")) {
 				TakeBlipMB takeBlipMB = new TakeBlipMB();
@@ -217,30 +196,7 @@ public class ContasPagarMB {
 						this.selectedContratoLov.getNumeroContrato(),
 						event.getFile().getFileName());
 			}
-		}
-		
-		if(event.getFile().getFileName().endsWith(".zip")) {
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
-		} else {
-			// cria o arquivo
-			//event.getFile().getFileName();
-			byte[] conteudo = event.getFile().getContents();
-			//String oldFileName = new String(event.getFile().getFileName());
-			//String[] strs = oldFileName.substring(FilenameUtils.getPrefixLength(oldFileName)).split(Pattern.quote("."));
-			//String fileName = strs[0] + "_CntPgr" + generateFileID() + "." + strs[1];
-			FileOutputStream fos;
-			try {
-				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
-				fos.write(conteudo);
-				fos.close();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				System.out.println(e);
-			}
-
-			// atualiza lista de arquivos contidos no diretório
-			conta.setFilesContas(listaArquivosContasPagar(conta));
-		}
+		}		
 	}
 	
 	public void populateFilesContasPagar(ContasPagar conta) throws IOException {	
@@ -306,161 +262,80 @@ public class ContasPagarMB {
 	}
 	
 	public StreamedContent getDownloadFile() {
+
 		if (this.selectedFile != null) {
-			FileInputStream stream;
-			try {
-				stream = new FileInputStream(this.selectedFile.getFile().getAbsolutePath());
-				downloadFile = new DefaultStreamedContent(stream, this.selectedFile.getPath(),
-						this.selectedFile.getFile().getName());
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				System.out.println("Cobrança - Download de Arquivos - Arquivo Não Encontrado");
-			}
+			InputStream  stream;
+			FileService fileService = new FileService();
+			stream = new ByteArrayInputStream( fileService.abrirDocumentos(this.selectedFile,this.selectedContratoLov.getNumeroContrato(), getUsuarioLogado()));
+			downloadFile = new DefaultStreamedContent(stream, this.selectedFile.getPath(),
+					this.selectedFile.getName());
 		}
 		return this.downloadFile;
 	}
 	
-	public void viewFilePagar(String fileName) {
-
+	public void viewFile(FileUploaded file) {
+		String pathContrato = null;
 		try {
 			FacesContext facesContext = FacesContext.getCurrentInstance();
 			ExternalContext externalContext = facesContext.getExternalContext();
 			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
 			BufferedInputStream input = null;
 			BufferedOutputStream output = null;
-
-			ParametrosDao pDao = new ParametrosDao();
-			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-			//String pathContrato = "C:/Users/Usuario/Desktop/"	
-			+ this.selectedContratoLov.getNumeroContrato() + "//pagar/" + fileName;
-
-			/*
-			 * 'docx' =>
-			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-			 * 'xlsx' =>
-			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
-			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
-			 * 'application/pdf' 'psd' => 'application/x-photoshop'
-			 */
+			String fileName = file.getName();
+			String filePath = file.getPath();
+			
+			pathContrato = file.getPath() + "/" + fileName;
 			String mineFile = "";
-
-			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
-				mineFile = "image-jpg";
-			}
-
-			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
-				mineFile = "image-jpeg";
-			}
-
-			if (fileName.contains(".png") || fileName.contains(".PNG")) {
-				mineFile = "image-png";
-			}
-
-			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
-				mineFile = "application/pdf";
-			}
-
-			File arquivo = new File(pathContrato);
-
-			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
-
-			response.reset();
-			// lire un fichier pdf
-			response.setHeader("Content-type", mineFile);
-
-			response.setContentLength((int) arquivo.length());
-
-			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
-			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-
-			// Write file contents to response.
-			byte[] buffer = new byte[10240];
-			int length;
-			while ((length = input.read(buffer)) > 0) {
-				output.write(buffer, 0, length);
-			}
-
-			// Finalize task.
-			output.flush();
-			output.close();
-			facesContext.responseComplete();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 	
-	public void viewFileContaPagar(String fileName, ContasPagar conta) {
-		
-		try {
-			FacesContext facesContext = FacesContext.getCurrentInstance();
-			ExternalContext externalContext = facesContext.getExternalContext();
-			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-			BufferedInputStream input = null;
-			BufferedOutputStream output = null;
-
-			ParametrosDao pDao = new ParametrosDao();
-			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-				//	String pathContrato = "C:/Users/Usuario/Desktop/"
-					+ this.selectedContratoLov.getNumeroContrato() + "/pagar/" + conta.getFileListId() + "/" + fileName;
-
-			/*
-			 * 'docx' =>
-			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-			 * 'xlsx' =>
-			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
-			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
-			 * 'application/pdf' 'psd' => 'application/x-photoshop'
-			 */
-			String mineFile = "";
-
 			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
 				mineFile = "image-jpg";
 			}
-
+	
 			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
 				mineFile = "image-jpeg";
 			}
-
+	
 			if (fileName.contains(".png") || fileName.contains(".PNG")) {
 				mineFile = "image-png";
 			}
-
+	
 			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
 				mineFile = "application/pdf";
 			}
-
-			File arquivo = new File(pathContrato);
-
-			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
-
+	
+			FileService fileService = new FileService();
+			FileUploaded documentoSelecionado = new FileUploaded(fileName, null, filePath);
+			byte[] arquivob = fileService.abrirDocumentos(documentoSelecionado,this.selectedContratoLov.getNumeroContrato(), getUsuarioLogado());
+			InputStream arquivo = new ByteArrayInputStream( arquivob );
+			
+			input = new BufferedInputStream(arquivo, 10240);
+	
 			response.reset();
 			// lire un fichier pdf
 			response.setHeader("Content-type", mineFile);
-
-			response.setContentLength((int) arquivo.length());
-
-			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
+	
+			response.setContentLength(arquivob.length);
+	
+			response.setHeader("Content-disposition", "inline; filename=" + fileName);
 			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-
+	
 			// Write file contents to response.
 			byte[] buffer = new byte[10240];
 			int length;
 			while ((length = input.read(buffer)) > 0) {
 				output.write(buffer, 0, length);
 			}
-
+	
 			// Finalize task.
 			output.flush();
 			output.close();
 			facesContext.responseComplete();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
+			System.out.println(pathContrato);
 			e.printStackTrace();
 		} catch (IOException e) {
+			System.out.println(pathContrato);
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

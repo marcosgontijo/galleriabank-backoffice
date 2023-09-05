@@ -240,7 +240,7 @@
 			<shiro:hasAnyRoles name="ROOT, POSOPERACAO">  						
 				<p:panel id="ArquivosPagar" header="Selecionar conta a pagar" style="margin-bottom:10px;text-align: center;">							
 					<h:panelGrid columns="1">		
-						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contasPagarMB.handleFilePagarUpload}" mode="advanced" dragDropSupport="true"
+					<!-- TODO arquivos contasPagar -->	<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contasPagarMB.handleFilePagarUpload}" mode="advanced" dragDropSupport="true"
                           update="ArquivosPagarSalvos form:msgArquivo" />								
 					</h:panelGrid>  
 				</p:panel>	
@@ -346,7 +346,7 @@
 					<p:panel id="Arquivos" header="Selecionar Arquivo(s)"
 						style="margin-bottom:10px;text-align: center;">
 						<h:panelGrid columns="1">
-							<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar"
+						<!-- TODO arquivos contasPagar -->	<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar"
 								fileUploadListener="#{contasPagarMB.handleFileContaPagarUpload}" mode="advanced" dragDropSupport="true" 
 								update="contaArquivosForm" >
 								<f:attribute name="foo" value="#{contasPagarMB.contasPagarArquivos}" />

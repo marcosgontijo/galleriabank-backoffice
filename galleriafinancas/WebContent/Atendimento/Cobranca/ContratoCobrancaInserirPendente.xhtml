@@ -5217,7 +5217,7 @@
 					<p:panel id="Arquivos" header="Selecionar Arquivo(s)"
 						style="margin-bottom:10px;text-align: center;">
 						<h:panelGrid columns="1">
-							<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar"
+							<!-- TODO arquivos contasPagar -->	<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar"
 								fileUploadListener="#{contratoCobrancaMB.handleFileContaPagarUpload}" mode="advanced" dragDropSupport="true" 
 								update="contaArquivosForm" >
 								<f:attribute name="foo" value="#{contratoCobrancaMB.contasPagarArquivos}" />
@@ -5239,7 +5239,6 @@
 									style="width:16px;text-align:center" />
 								<f:facet name="header">
 									<p:commandButton value="Download Selecionado(s)" ajax="false"
-										
 										icon="ui-icon-arrowthick-1-s">
 										<p:fileDownload value="#{contratoCobrancaMB.downloadAllFiles}" />
 									</p:commandButton>
