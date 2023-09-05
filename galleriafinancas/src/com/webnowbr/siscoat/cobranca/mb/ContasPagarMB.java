@@ -2,6 +2,7 @@ package com.webnowbr.siscoat.cobranca.mb;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -18,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
+import java.util.zip.ZipOutputStream;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -32,6 +34,7 @@ import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
+import com.webnowbr.siscoat.auxiliar.CompactadorUtil;
 import com.webnowbr.siscoat.cobranca.db.model.ContaContabil;
 import com.webnowbr.siscoat.cobranca.db.model.ContasPagar;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
@@ -42,8 +45,10 @@ import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
+import com.webnowbr.siscoat.cobranca.service.FileService;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
@@ -793,6 +798,48 @@ public class ContasPagarMB {
 		return clearFields();
 	}
 	
+	
+	public StreamedContent getDownloadAllFiles(List<FileUploaded> selectFiles) {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+
+		try {
+			// recupera path do contrato
+//			ParametrosDao pDao = new ParametrosDao();
+//			CompactadorUtil compac = new CompactadorUtil();
+//			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+//					+ this.contasPagarArquivos.getContrato().getNumeroContrato()+ "//pagar/";
+//			// cria objetos para ZIP
+
+			// Percorre arquivos selecionados e adiciona ao ZIP
+			for (FileUploaded f : selectFiles) {
+				String arquivo = f.getName();
+				byte[] arquivoByte = f.getFile().getPath().getBytes();
+				
+				FileService fileService = new FileService();
+				FileUploaded documentoSelecionado = new FileUploaded(f.getName(), null, "pagar");
+
+				byte[] arquivob = fileService.abrirDocumentos(documentoSelecionado,
+						this.contasPagarArquivos.getContrato().getNumeroContrato(), getUsuarioLogado());
+
+				listaArquivos.put(arquivo, arquivob);
+
+			}
+			byte[] arquivos = CompactadorUtil.compactarZipByte(listaArquivos);
+
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String.format(this.contasPagarArquivos.getContrato().getNumeroContrato() + " Documentos.zip",
+					"");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(arquivos));
+			gerador.close();
+
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+
+		return null;
+	}
 	
 	public void setContasPagarPosOperacao(List<ContasPagar> contasPagarPosOperacao) {
 		this.contasPagarPosOperacao = contasPagarPosOperacao;

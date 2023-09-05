@@ -126,14 +126,14 @@
 			<column name="retornoCNDEstadual" />
 		</property>
 		
-		
+		<!-- 
 		<list name="plexiConsultas"
 			table="DocumentoAnalise_PlexiConsultas_Join" cascade="all" lazy="false">
 			<key column="idDocumentoAnalise" />
 			<list-index></list-index>
 			<many-to-many column="idPlexiConsulta"
 				class="com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta" />
-		</list>
+		</list> -->
 						
     </class>
 </hibernate-mapping>
