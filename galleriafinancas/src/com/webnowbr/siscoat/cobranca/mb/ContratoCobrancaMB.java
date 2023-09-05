@@ -4013,8 +4013,10 @@ public class ContratoCobrancaMB {
 								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 						// }
 
-						// envia para o gerente do responsável
-						if (this.objetoContratoCobranca.getResponsavel().getDonoResponsavel() != null) {
+						// envia para o gerente do responsável se o cadastro nao estiver ok
+						if (CommonsUtil.semValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel())
+								|| CommonsUtil.semValor(this.objetoContratoCobranca.getResponsavel()
+										.getDonoResponsavel().getResponsavelAssistenteComercial())) {
 							takeBlipMB = new TakeBlipMB();
 							takeBlipMB.sendWhatsAppMessage(
 									this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
@@ -4038,7 +4040,7 @@ public class ContratoCobrancaMB {
 									this.objetoContratoCobranca.getNumeroContrato(),
 									this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
 									this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
-							
+
 							enviarWhatsappJoaoAntonio("contrato_pre_aprovado",
 									this.objetoContratoCobranca.getPagador().getNome(),
 									this.objetoContratoCobranca.getNumeroContrato(),
@@ -4054,11 +4056,11 @@ public class ContratoCobrancaMB {
 									this.objetoContratoCobranca.getNumeroContrato(),
 									this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
 									this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
-							
+
 						}
 					}
 				}
-			}
+				}
 
 			// Mensagem APROVACAO CREDITO COMPASS / GALACHE
 			if (this.objetoContratoCobranca.isPedidoLaudo() != statusContrato.isPedidoLaudo()) {
@@ -4128,8 +4130,10 @@ public class ContratoCobrancaMB {
 							"contrato_recebido_paju", this.objetoContratoCobranca.getPagador().getNome(),
 							this.objetoContratoCobranca.getNumeroContrato(), "", "");
 
-					// envia para o gerente do responsável
-					if (this.objetoContratoCobranca.getResponsavel().getDonoResponsavel() != null) {
+					// envia para o gerente do responsável se o cadastro nao estiver ok
+					if (CommonsUtil.semValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel())
+							|| CommonsUtil.semValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel()
+									.getResponsavelAssistenteComercial())) {
 						takeBlipMB = new TakeBlipMB();
 						takeBlipMB.sendWhatsAppMessage(
 								this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
@@ -4206,8 +4210,10 @@ public class ContratoCobrancaMB {
 							"contrato_recebido_laudo", this.objetoContratoCobranca.getPagador().getNome(),
 							this.objetoContratoCobranca.getNumeroContrato(), "", "");
 
-					// envia para o gerente do responsável
-					if (this.objetoContratoCobranca.getResponsavel().getDonoResponsavel() != null) {
+					// envia para o gerente do responsável se o cadastro nao estiver ok
+					if (CommonsUtil.semValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel())
+							|| CommonsUtil.semValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel()
+									.getResponsavelAssistenteComercial())) {
 						takeBlipMB = new TakeBlipMB();
 						takeBlipMB.sendWhatsAppMessage(
 								this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
@@ -4307,8 +4313,10 @@ public class ContratoCobrancaMB {
 					.isComentarioJuridicoEsteira()) {
 				if (this.objetoContratoCobranca.isComentarioJuridicoEsteira()) {
 					TakeBlipMB takeBlipMB = new TakeBlipMB();
-					// envia para o gerente do responsável
-					if (this.objetoContratoCobranca.getResponsavel().getDonoResponsavel() != null) {
+					// envia para o gerente do responsável se o cadastro nao estiver ok
+					if (CommonsUtil.semValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel())
+							|| CommonsUtil.semValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel()
+									.getResponsavelAssistenteComercial())) {
 						takeBlipMB = new TakeBlipMB();
 						takeBlipMB.sendWhatsAppMessage(
 								this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
@@ -4458,7 +4466,10 @@ public class ContratoCobrancaMB {
 							this.objetoContratoCobranca.getPagador().getNome(),
 							this.objetoContratoCobranca.getNumeroContrato(), "", "");
 
-					if (this.objetoContratoCobranca.getResponsavel().getDonoResponsavel() != null) {
+					// envia para o gerente do responsável se o cadastro nao estiver ok
+					if (CommonsUtil.semValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel())
+							|| CommonsUtil.semValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel()
+									.getResponsavelAssistenteComercial())) {
 						takeBlipMB = new TakeBlipMB();
 						takeBlipMB.sendWhatsAppMessage(
 								this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
@@ -4581,8 +4592,10 @@ public class ContratoCobrancaMB {
 							this.objetoContratoCobranca.getPagador().getNome(),
 							this.objetoContratoCobranca.getNumeroContrato(), "", "");
 
-					// envia para o gerente do responsável
-					if (this.objetoContratoCobranca.getResponsavel().getDonoResponsavel() != null) {
+					// envia para o gerente do responsável se o cadastro nao estiver ok
+					if (CommonsUtil.semValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel())
+							|| CommonsUtil.semValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel()
+									.getResponsavelAssistenteComercial())) {
 						takeBlipMB = new TakeBlipMB();
 						takeBlipMB.sendWhatsAppMessage(
 								this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
@@ -4621,6 +4634,7 @@ public class ContratoCobrancaMB {
 					}
 				}
 			}
+			
 
 			// Mensagem ASSINADO / AG REGISTRO
 			if (this.objetoContratoCobranca.isAgAssinatura() != statusContrato.isAgAssinatura()) {
@@ -4632,7 +4646,10 @@ public class ContratoCobrancaMB {
 								this.objetoContratoCobranca.getNumeroContrato(), "", "");
 
 						// envia para o gerente do responsável
-						if (this.objetoContratoCobranca.getResponsavel().getDonoResponsavel() != null) {
+						// envia para o gerente do responsável se o cadastro nao estiver ok
+						if (CommonsUtil.semValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel())
+								|| CommonsUtil.semValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel()
+										.getResponsavelAssistenteComercial())) {
 							takeBlipMB = new TakeBlipMB();
 							takeBlipMB.sendWhatsAppMessage(
 									this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
@@ -4679,7 +4696,8 @@ public class ContratoCobrancaMB {
 
 	public void enviarWhatsappGislaine(String template, String nomeCliente, String numeroContrato, String taxaAprovada,
 			String prazoAprovado) {
-		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(), SiscoatConstants.COMMERCIAL_GIS) // gislaine
+		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),
+				SiscoatConstants.COMMERCIAL_GIS) // gislaine
 		// ||
 		// CommonsUtil.mesmoValor(this.objetoContratoCobranca.getResponsavel().getDonoResponsavel().getId(),(long)
 		// 60)//Ana Cecilia
