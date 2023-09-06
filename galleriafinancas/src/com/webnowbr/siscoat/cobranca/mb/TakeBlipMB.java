@@ -418,15 +418,16 @@ public class TakeBlipMB {
 		jsonWhatsApp.put("content", jsonWhatsAppConteudo);
 
 		senderWhatsAppMessage(jsonWhatsApp);
-
-		if (!CommonsUtil.semValor(responsavel.getDonoResponsavel().getResponsavelAssistenteComercial())) {
+		
+		if (!CommonsUtil.semValor(responsavel.getDonoResponsavel())) {
+			/*if (!CommonsUtil.semValor(responsavel.getDonoResponsavel().getResponsavelAssistenteComercial())) {
 			// envia a mensagem para o gerente
-			if (!CommonsUtil.semValor(responsavel.getDonoResponsavel())) {
+			
 				Responsavel rAssistente = responsavel.getDonoResponsavel().getResponsavelAssistenteComercial();
 				// rAssistente = rDao.findById(SiscoatConstants.ASSISTENTE_ISA);
 				this.sendWhatsAppMessage(rAssistente, nomeTemplateMensagem, nomeDoCliente, numeroDoContrato, taxaJuros,
 						prazo);
-			}
+			}*/
 
 			if (!CommonsUtil.semValor(responsavel.getDonoResponsavel().getResponsavelAssistenteComercial())) {
 				Responsavel rAssistente = responsavel.getDonoResponsavel().getResponsavelAssistenteComercial();

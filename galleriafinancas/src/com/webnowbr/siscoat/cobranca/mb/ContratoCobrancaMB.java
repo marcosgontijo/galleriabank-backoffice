@@ -31463,14 +31463,12 @@ public void baixarDocumentoSCR ( DocumentoAnalise documentoAnalise) {
 	
 	String contratoDocumentos = "";
 
+	byte[] arquivos = null;
+	private List<byte[]> bytes = new ArrayList<byte[]>();
+	
 	StreamedContent downloadAllFilesInterno;
 
-	/***
-	 * handler de upload do arquivo
-	 * 
-	 * @param event
-	 * @throws IOException
-	 */
+	
 	public void handleFileUpload(FileUploadEvent event) throws IOException {
 		FacesContext context = FacesContext.getCurrentInstance();
 		
@@ -31617,29 +31615,6 @@ public void baixarDocumentoSCR ( DocumentoAnalise documentoAnalise) {
 	public void handleFileContaPagarUpload(FileUploadEvent event) throws IOException {
 		FacesContext context = FacesContext.getCurrentInstance();
 		ContasPagar conta = (ContasPagar) event.getComponent().getAttributes().get("foo");
-		
-		/*if (CommonsUtil.semValor(conta.getFileListId())) {
-			conta.setFileListId(generateFileID());
-		}
-
-		// cria pasta pagar
-		ParametrosDao pDao = new ParametrosDao();
-		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-				// String pathContrato = "C:/Users/Usuario/Desktop/"
-				+ this.objetoContratoCobranca.getNumeroContrato() + "//pagar/";
-		File diretorio = new File(pathContrato);
-		if (!diretorio.isDirectory()) {
-			diretorio.mkdir();
-		}
-
-		// cria pasta da conta
-		pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-				// pathContrato = "C:/Users/Usuario/Desktop/"
-				+ this.objetoContratoCobranca.getNumeroContrato() + "//pagar/" + conta.getFileListId() + "/";
-		diretorio = new File(pathContrato);
-		if (!diretorio.isDirectory()) {
-			diretorio.mkdir();
-		}*/
 
 		if (event.getFile().getFileName().contains("Pag ") || event.getFile().getFileName().contains("PAG ")) {
 			TakeBlipMB takeBlipMB = new TakeBlipMB();
@@ -31658,7 +31633,7 @@ public void baixarDocumentoSCR ( DocumentoAnalise documentoAnalise) {
 			// event.getFile().getFileName();
 			byte[] conteudo = event.getFile().getContents();
 			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(), 
-					 event.getFile().getFileName(), "//pagar/", getUsuarioLogado());
+					 event.getFile().getFileName(), "//pagar/" + conta.getFileListId() + "/", getUsuarioLogado());
 			
 			// atualiza lista de arquivos contidos no diretório
 
@@ -31683,8 +31658,6 @@ public void baixarDocumentoSCR ( DocumentoAnalise documentoAnalise) {
 			filesCci = listaArquivosCci();
 		}
 	}
-	// Queue<FileUploadEvent> arquivosContasPagar = new
-	// ArrayDeque<FileUploadEvent>();
 
 	public void populateFilesContasPagar(ContasPagar conta) throws IOException {
 		contasPagarArquivos = conta;
@@ -31698,9 +31671,6 @@ public void baixarDocumentoSCR ( DocumentoAnalise documentoAnalise) {
 		return CommonsUtil.stringValue(System.currentTimeMillis());
 	}
 
-	/**
-	 * deleta o arquivo selecionado na tela
-	 */
 	public void deleteFile() {
 		for (FileUploaded f : deletefiles) {
 			f.getFile().delete();
@@ -31749,111 +31719,7 @@ public void baixarDocumentoSCR ( DocumentoAnalise documentoAnalise) {
 		deletefilesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
 	}
-	byte[] arquivos = null;
-	private List<byte[]> bytes = new ArrayList<byte[]>();
 	
-	private StreamedContent downloadFilesJuridico;
-
-	public StreamedContent getDownloadFilesJuridico() {
-		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
-
-		try {
-			// recupera path do contrato
-			ParametrosDao pDao = new ParametrosDao();
-			CompactadorUtil compac = new CompactadorUtil();
-			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-					+ this.objetoContratoCobranca.getNumeroContrato() + "//interno/";
-			// cria objetos para ZIP
-
-			// Percorre arquivos selecionados e adiciona ao ZIP
-			for (FileUploaded f : deletefilesJuridico) {
-				String arquivo = f.getName();
-				byte[] arquivoByte = f.getFile().getPath().getBytes();
-				listaArquivos.put(arquivo, arquivoByte);
-
-			}
-			arquivos = compac.compactarZipByte(listaArquivos);
-
-			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
-					FacesContext.getCurrentInstance());
-			String nomeArquivoDownload = String.format(objetoContratoCobranca.getNumeroContrato() + " Documentos.zip",
-					"");
-			gerador.open(nomeArquivoDownload);
-			gerador.feed(new ByteArrayInputStream(arquivos));
-			gerador.close();
-
-		} catch (Exception e) {
-			System.out.println(e);
-		}
-
-		return this.downloadFilesJuridico;
-	}
-private	StreamedContent downloadArquivosFaltantes;
-	public StreamedContent getDownloadArquivosFaltantes() {
-		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
-
-		try {
-			// recupera path do contrato
-			ParametrosDao pDao = new ParametrosDao();
-			CompactadorUtil compac = new CompactadorUtil();
-			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-					+ this.objetoContratoCobranca.getNumeroContrato() + "//interno/";
-			// cria objetos para ZIP
-
-			// Percorre arquivos selecionados e adiciona ao ZIP
-			for (FileUploaded f : deletefilesFaltante) {
-				String arquivo = f.getName();
-				byte[] arquivoByte = f.getFile().getPath().getBytes();
-				listaArquivos.put(arquivo, arquivoByte);
-
-			}
-			arquivos = compac.compactarZipByte(listaArquivos);
-
-			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
-					FacesContext.getCurrentInstance());
-			String nomeArquivoDownload = String.format(objetoContratoCobranca.getNumeroContrato() + " Documentos.zip",
-					"");
-			gerador.open(nomeArquivoDownload);
-			gerador.feed(new ByteArrayInputStream(arquivos));
-			gerador.close();
-
-		} catch (Exception e) {
-			System.out.println(e);
-		}
-		return null;
-
-	}
-	private StreamedContent downloadFileComite;
-	public StreamedContent getDownloadFileComite(){
-		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
-
-		try {
-			// recupera path do contrato
-			ParametrosDao pDao = new ParametrosDao();
-			CompactadorUtil compac = new CompactadorUtil();
-			for (FileUploaded f : deletefilesComite) {
-				String arquivo = f.getName();
-				byte[] arquivoByte = f.getFile().getPath().getBytes();
-				listaArquivos.put(arquivo, arquivoByte);
-
-			}
-			arquivos = compac.compactarZipByte(listaArquivos);
-
-			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
-					FacesContext.getCurrentInstance());
-			String nomeArquivoDownload = String.format(objetoContratoCobranca.getNumeroContrato() + " Documentos.zip",
-					"");
-			gerador.open(nomeArquivoDownload);
-			gerador.feed(new ByteArrayInputStream(arquivos));
-			gerador.close();
-
-		} catch (Exception e) {
-			System.out.println(e);
-		}
-		return null;
-		
-	}
-
 	public void deleteFileComite() {
 		for (FileUploaded f : deletefilesComite) {
 			f.getFile().delete();
@@ -31892,7 +31758,6 @@ private	StreamedContent downloadArquivosFaltantes;
 			f.getFile().delete();
 		}
 	}
-
 
 	public void listaArquivosAnaliseDocumentos() {
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
@@ -32089,385 +31954,6 @@ private	StreamedContent downloadArquivosFaltantes;
 		}
 	}
 
-	public void viewFileInterno(String fileName) {
-		//viewFile(fileName);
-		/*
-		 * 
-		 * try { FacesContext facesContext = FacesContext.getCurrentInstance();
-		 * ExternalContext externalContext = facesContext.getExternalContext();
-		 * HttpServletResponse response = (HttpServletResponse)
-		 * externalContext.getResponse(); BufferedInputStream input = null;
-		 * BufferedOutputStream output = null;
-		 * 
-		 * ParametrosDao pDao = new ParametrosDao(); String pathContrato =
-		 * pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString() //
-		 * String pathContrato = "C:/Users/Usuario/Desktop/" +
-		 * this.objetoContratoCobranca.getNumeroContrato() + "/interno/" + fileName;
-		 * 
-		 * 
-		 * 'docx' =>
-		 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-		 * 'xlsx' =>
-		 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
-		 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
-		 * 'application/pdf' 'psd' => 'application/x-photoshop'
-		 * 
-		 * String mineFile = "";
-		 * 
-		 * if (fileName.contains(".jpg") || fileName.contains(".JPG")) { mineFile =
-		 * "image-jpg"; }
-		 * 
-		 * if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) { mineFile =
-		 * "image-jpeg"; }
-		 * 
-		 * if (fileName.contains(".png") || fileName.contains(".PNG")) { mineFile =
-		 * "image-png"; }
-		 * 
-		 * if (fileName.contains(".pdf") || fileName.contains(".PDF")) { mineFile =
-		 * "application/pdf"; }
-		 * 
-		 * File arquivo = new File(pathContrato);
-		 * 
-		 * input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
-		 * 
-		 * response.reset(); // lire un fichier pdf response.setHeader("Content-type",
-		 * mineFile);
-		 * 
-		 * response.setContentLength((int) arquivo.length());
-		 * 
-		 * response.setHeader("Content-disposition", "inline; filename=" +
-		 * arquivo.getName()); output = new
-		 * BufferedOutputStream(response.getOutputStream(), 10240);
-		 * 
-		 * // Write file contents to response. byte[] buffer = new byte[10240]; int
-		 * length; while ((length = input.read(buffer)) > 0) { output.write(buffer, 0,
-		 * length); }
-		 * 
-		 * // Finalize task. output.flush(); output.close();
-		 * facesContext.responseComplete(); } catch (FileNotFoundException e) { // TODO
-		 * Auto-generated catch block e.printStackTrace(); } catch (IOException e) { //
-		 * TODO Auto-generated catch block e.printStackTrace(); }
-		 */}
-
-	public void viewFileFaltante(String fileName) {
-		//viewFile(fileName);
-		/*
-		 * 
-		 * try { FacesContext facesContext = FacesContext.getCurrentInstance();
-		 * ExternalContext externalContext = facesContext.getExternalContext();
-		 * HttpServletResponse response = (HttpServletResponse)
-		 * externalContext.getResponse(); BufferedInputStream input = null;
-		 * BufferedOutputStream output = null;
-		 * 
-		 * ParametrosDao pDao = new ParametrosDao(); String pathContrato =
-		 * pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString() //
-		 * String pathContrato = "C:/Users/Usuario/Desktop/" +
-		 * this.objetoContratoCobranca.getNumeroContrato() + "/faltante/" + fileName;
-		 * 
-		 * 
-		 * 'docx' =>
-		 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-		 * 'xlsx' =>
-		 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
-		 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
-		 * 'application/pdf' 'psd' => 'application/x-photoshop'
-		 * 
-		 * String mineFile = "";
-		 * 
-		 * if (fileName.contains(".jpg") || fileName.contains(".JPG")) { mineFile =
-		 * "image-jpg"; }
-		 * 
-		 * if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) { mineFile =
-		 * "image-jpeg"; }
-		 * 
-		 * if (fileName.contains(".png") || fileName.contains(".PNG")) { mineFile =
-		 * "image-png"; }
-		 * 
-		 * if (fileName.contains(".pdf") || fileName.contains(".PDF")) { mineFile =
-		 * "application/pdf"; }
-		 * 
-		 * File arquivo = new File(pathContrato);
-		 * 
-		 * input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
-		 * 
-		 * response.reset(); // lire un fichier pdf response.setHeader("Content-type",
-		 * mineFile);
-		 * 
-		 * response.setContentLength((int) arquivo.length());
-		 * 
-		 * response.setHeader("Content-disposition", "inline; filename=" +
-		 * arquivo.getName()); output = new
-		 * BufferedOutputStream(response.getOutputStream(), 10240);
-		 * 
-		 * // Write file contents to response. byte[] buffer = new byte[10240]; int
-		 * length; while ((length = input.read(buffer)) > 0) { output.write(buffer, 0,
-		 * length); }
-		 * 
-		 * // Finalize task. output.flush(); output.close();
-		 * facesContext.responseComplete(); } catch (FileNotFoundException e) { // TODO
-		 * Auto-generated catch block e.printStackTrace(); } catch (IOException e) { //
-		 * TODO Auto-generated catch block e.printStackTrace(); }
-		 */
-	}
-
-	public void viewFileJuridico(String fileName) {
-
-		//viewFile(fileName);
-
-//		try {
-//			FacesContext facesContext = FacesContext.getCurrentInstance();
-//			ExternalContext externalContext = facesContext.getExternalContext();
-//			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-//			BufferedInputStream input = null;
-//			BufferedOutputStream output = null;
-//
-//			ParametrosDao pDao = new ParametrosDao();
-//			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-//					// String pathContrato = "C:/Users/Usuario/Desktop/"
-//					+ this.objetoContratoCobranca.getNumeroContrato() + "/juridico/" + fileName;
-//
-//			/*
-//			 * 'docx' =>
-//			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-//			 * 'xlsx' =>
-//			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
-//			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
-//			 * 'application/pdf' 'psd' => 'application/x-photoshop'
-//			 */
-//			String mineFile = "";
-//
-//			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
-//				mineFile = "image-jpg";
-//			}
-//
-//			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
-//				mineFile = "image-jpeg";
-//			}
-//
-//			if (fileName.contains(".png") || fileName.contains(".PNG")) {
-//				mineFile = "image-png";
-//			}
-//
-//			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
-//				mineFile = "application/pdf";
-//			}
-//
-//			File arquivo = new File(pathContrato);
-//			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
-//
-//			response.reset();
-//			// lire un fichier pdf
-//			response.setHeader("Content-type", mineFile);
-//
-//			response.setContentLength((int) arquivo.length());
-//
-//			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
-//			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-//
-//			// Write file contents to response.
-//			byte[] buffer = new byte[10240];
-//			int length;
-//			while ((length = input.read(buffer)) > 0) {
-//				output.write(buffer, 0, length);
-//			}
-//
-//			// Finalize task.
-//			output.flush();
-//			output.close();
-//			facesContext.responseComplete();
-//		} catch (FileNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-	}
-
-	public void viewFileComite(String fileName) {
-		//viewFile(fileName);
-		/*
-		 * 
-		 * try { FacesContext facesContext = FacesContext.getCurrentInstance();
-		 * ExternalContext externalContext = facesContext.getExternalContext();
-		 * HttpServletResponse response = (HttpServletResponse)
-		 * externalContext.getResponse(); BufferedInputStream input = null;
-		 * BufferedOutputStream output = null;
-		 * 
-		 * ParametrosDao pDao = new ParametrosDao(); String pathContrato =
-		 * pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString() //
-		 * String pathContrato = "C:/Users/Usuario/Desktop/" +
-		 * this.objetoContratoCobranca.getNumeroContrato() + "/comite/" + fileName;
-		 * 
-		 * 
-		 * 'docx' =>
-		 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-		 * 'xlsx' =>
-		 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
-		 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
-		 * 'application/pdf' 'psd' => 'application/x-photoshop'
-		 * 
-		 * String mineFile = "";
-		 * 
-		 * if (fileName.contains(".jpg") || fileName.contains(".JPG")) { mineFile =
-		 * "image-jpg"; }
-		 * 
-		 * if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) { mineFile =
-		 * "image-jpeg"; }
-		 * 
-		 * if (fileName.contains(".png") || fileName.contains(".PNG")) { mineFile =
-		 * "image-png"; }
-		 * 
-		 * if (fileName.contains(".pdf") || fileName.contains(".PDF")) { mineFile =
-		 * "application/pdf"; }
-		 * 
-		 * File arquivo = new File(pathContrato);
-		 * 
-		 * input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
-		 * 
-		 * response.reset(); // lire un fichier pdf response.setHeader("Content-type",
-		 * mineFile);
-		 * 
-		 * response.setContentLength((int) arquivo.length());
-		 * 
-		 * response.setHeader("Content-disposition", "inline; filename=" +
-		 * arquivo.getName()); output = new
-		 * BufferedOutputStream(response.getOutputStream(), 10240);
-		 * 
-		 * // Write file contents to response. byte[] buffer = new byte[10240]; int
-		 * length; while ((length = input.read(buffer)) > 0) { output.write(buffer, 0,
-		 * length); }
-		 * 
-		 * // Finalize task. output.flush(); output.close();
-		 * facesContext.responseComplete(); } catch (FileNotFoundException e) { // TODO
-		 * Auto-generated catch block e.printStackTrace(); } catch (IOException e) { //
-		 * TODO Auto-generated catch block e.printStackTrace(); }
-		 */
-	}
-
-	public void viewFilePagar(String fileName) {
-		//viewFile(fileName);
-		/*
-		 * 
-		 * try { FacesContext facesContext = FacesContext.getCurrentInstance();
-		 * ExternalContext externalContext = facesContext.getExternalContext();
-		 * HttpServletResponse response = (HttpServletResponse)
-		 * externalContext.getResponse(); BufferedInputStream input = null;
-		 * BufferedOutputStream output = null;
-		 * 
-		 * ParametrosDao pDao = new ParametrosDao(); String pathContrato =
-		 * pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString() //
-		 * String pathContrato = "C:/Users/Usuario/Desktop/" +
-		 * this.objetoContratoCobranca.getNumeroContrato() + "/pagar/" + fileName;
-		 * 
-		 * 
-		 * 'docx' =>
-		 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-		 * 'xlsx' =>
-		 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
-		 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
-		 * 'application/pdf' 'psd' => 'application/x-photoshop'
-		 * 
-		 * String mineFile = "";
-		 * 
-		 * if (fileName.contains(".jpg") || fileName.contains(".JPG")) { mineFile =
-		 * "image-jpg"; }
-		 * 
-		 * if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) { mineFile =
-		 * "image-jpeg"; }
-		 * 
-		 * if (fileName.contains(".png") || fileName.contains(".PNG")) { mineFile =
-		 * "image-png"; }
-		 * 
-		 * if (fileName.contains(".pdf") || fileName.contains(".PDF")) { mineFile =
-		 * "application/pdf"; }
-		 * 
-		 * File arquivo = new File(pathContrato);
-		 * 
-		 * input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
-		 * 
-		 * response.reset(); // lire un fichier pdf response.setHeader("Content-type",
-		 * mineFile);
-		 * 
-		 * response.setContentLength((int) arquivo.length());
-		 * 
-		 * response.setHeader("Content-disposition", "inline; filename=" +
-		 * arquivo.getName()); output = new
-		 * BufferedOutputStream(response.getOutputStream(), 10240);
-		 * 
-		 * // Write file contents to response. byte[] buffer = new byte[10240]; int
-		 * length; while ((length = input.read(buffer)) > 0) { output.write(buffer, 0,
-		 * length); }
-		 * 
-		 * // Finalize task. output.flush(); output.close();
-		 * facesContext.responseComplete(); } catch (FileNotFoundException e) { // TODO
-		 * Auto-generated catch block e.printStackTrace(); } catch (IOException e) { //
-		 * TODO Auto-generated catch block e.printStackTrace(); }
-		 */
-	}
-
-	public void viewFileContaPagar(String fileName, ContasPagar conta) {
-		//viewFile(fileName);
-		/*
-		 * 
-		 * try { FacesContext facesContext = FacesContext.getCurrentInstance();
-		 * ExternalContext externalContext = facesContext.getExternalContext();
-		 * HttpServletResponse response = (HttpServletResponse)
-		 * externalContext.getResponse(); BufferedInputStream input = null;
-		 * BufferedOutputStream output = null;
-		 * 
-		 * ParametrosDao pDao = new ParametrosDao(); String pathContrato =
-		 * pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString() //
-		 * String pathContrato = "C:/Users/Usuario/Desktop/" +
-		 * this.objetoContratoCobranca.getNumeroContrato() + "/pagar/" +
-		 * conta.getFileListId() + "/" + fileName;
-		 * 
-		 * 
-		 * 'docx' =>
-		 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-		 * 'xlsx' =>
-		 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
-		 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
-		 * 'application/pdf' 'psd' => 'application/x-photoshop'
-		 * 
-		 * String mineFile = "";
-		 * 
-		 * if (fileName.contains(".jpg") || fileName.contains(".JPG")) { mineFile =
-		 * "image-jpg"; }
-		 * 
-		 * if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) { mineFile =
-		 * "image-jpeg"; }
-		 * 
-		 * if (fileName.contains(".png") || fileName.contains(".PNG")) { mineFile =
-		 * "image-png"; }
-		 * 
-		 * if (fileName.contains(".pdf") || fileName.contains(".PDF")) { mineFile =
-		 * "application/pdf"; }
-		 * 
-		 * File arquivo = new File(pathContrato);
-		 * 
-		 * input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
-		 * 
-		 * response.reset(); // lire un fichier pdf response.setHeader("Content-type",
-		 * mineFile);
-		 * 
-		 * response.setContentLength((int) arquivo.length());
-		 * 
-		 * response.setHeader("Content-disposition", "inline; filename=" +
-		 * arquivo.getName()); output = new
-		 * BufferedOutputStream(response.getOutputStream(), 10240);
-		 * 
-		 * // Write file contents to response. byte[] buffer = new byte[10240]; int
-		 * length; while ((length = input.read(buffer)) > 0) { output.write(buffer, 0,
-		 * length); }
-		 * 
-		 * // Finalize task. output.flush(); output.close();
-		 * facesContext.responseComplete(); } catch (FileNotFoundException e) { // TODO
-		 * Auto-generated catch block e.printStackTrace(); } catch (IOException e) { //
-		 * TODO Auto-generated catch block e.printStackTrace(); }
-		 */
-		}
-
 	public void consultaDocsJuridico(ContratoCobranca contrato) throws IOException {
 		filesJuridico = new ArrayList<FileUploaded>();
 		objetoContratoCobranca = contrato;
@@ -32491,15 +31977,15 @@ private	StreamedContent downloadArquivosFaltantes;
 		current.executeScript("PF('bui').hide();");
 	}
 	
-	// removido zippar arquivos (ou não)
+	public void fileSelectionListener() {
+		//Apesar dessa função não fazer nada ela é importante para o funcionamento do download em zip.
+		//Não me pergunte o pq
+	}
 
 	public StreamedContent getDownloadAllFiles() {
 		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
-		
 		try {
-			// recupera path do contrato
 			CompactadorUtil compac = new CompactadorUtil();
-			// Percorre arquivos selecionados e adiciona ao ZIP
 			for (FileUploaded f : deletefiles) {
 				String arquivo = f.getName();
 			    byte[] arquivoByte = fileService.abrirDocumentos
@@ -32517,7 +32003,126 @@ private	StreamedContent downloadArquivosFaltantes;
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-
+		return null;
+	}
+	
+	public StreamedContent getDownloadAllFilesInterno() {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+		try {
+			CompactadorUtil compac = new CompactadorUtil();
+			for (FileUploaded f : deletefilesInterno) {
+				String arquivo = f.getName();
+			    byte[] arquivoByte = fileService.abrirDocumentos
+			    		(f,this.objetoContratoCobranca.getNumeroContrato(), getUsuarioLogado());
+				listaArquivos.put(arquivo, arquivoByte);
+			}
+			arquivos = compac.compactarZipByte(listaArquivos);
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String.format(objetoContratoCobranca.getNumeroContrato() + " Documentos_interno.zip",
+					"");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(arquivos));
+			gerador.close();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return null;
+	}
+	
+	public StreamedContent getDownloadAllFilesComite(){
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+		try {
+			CompactadorUtil compac = new CompactadorUtil();
+			for (FileUploaded f : deletefilesComite) {
+				String arquivo = f.getName();
+			    byte[] arquivoByte = fileService.abrirDocumentos
+			    		(f,this.objetoContratoCobranca.getNumeroContrato(), getUsuarioLogado());
+				listaArquivos.put(arquivo, arquivoByte);
+			}
+			arquivos = compac.compactarZipByte(listaArquivos);
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String.format(objetoContratoCobranca.getNumeroContrato() + " Documentos_comite.zip",
+					"");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(arquivos));
+			gerador.close();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return null;
+	}
+	
+	public StreamedContent getDownloadAllFilesFaltante() {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+		try {
+			CompactadorUtil compac = new CompactadorUtil();
+			for (FileUploaded f : deletefilesFaltante) {
+				String arquivo = f.getName();
+			    byte[] arquivoByte = fileService.abrirDocumentos
+			    		(f,this.objetoContratoCobranca.getNumeroContrato(), getUsuarioLogado());
+				listaArquivos.put(arquivo, arquivoByte);
+			}
+			arquivos = compac.compactarZipByte(listaArquivos);
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String.format(objetoContratoCobranca.getNumeroContrato() + " Documentos_faltante.zip",
+					"");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(arquivos));
+			gerador.close();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return null;
+	}
+	
+	public StreamedContent getDownloadAllFilesJuridico() {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+		try {
+			CompactadorUtil compac = new CompactadorUtil();
+			for (FileUploaded f : deletefilesJuridico) {
+				String arquivo = f.getName();
+			    byte[] arquivoByte = fileService.abrirDocumentos
+			    		(f,this.objetoContratoCobranca.getNumeroContrato(), getUsuarioLogado());
+				listaArquivos.put(arquivo, arquivoByte);
+			}
+			arquivos = compac.compactarZipByte(listaArquivos);
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String.format(objetoContratoCobranca.getNumeroContrato() + " Documentos_juridico.zip",
+					"");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(arquivos));
+			gerador.close();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return null;
+	}
+	
+	public StreamedContent getDownloadAllFilesCci() {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+		try {
+			CompactadorUtil compac = new CompactadorUtil();
+			for (FileUploaded f : deletefilesCci) {
+				String arquivo = f.getName();
+			    byte[] arquivoByte = fileService.abrirDocumentos
+			    		(f,this.objetoContratoCobranca.getNumeroContrato(), getUsuarioLogado());
+				listaArquivos.put(arquivo, arquivoByte);
+			}
+			arquivos = compac.compactarZipByte(listaArquivos);
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String.format(objetoContratoCobranca.getNumeroContrato() + " Documentos_cci.zip",
+					"");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(arquivos));
+			gerador.close();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 		return null;
 	}
 
@@ -32541,46 +32146,6 @@ private	StreamedContent downloadArquivosFaltantes;
 		return valorTotal;
 	}
 
-	public StreamedContent getDownloadAllFilesInterno() {
-		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
-
-		try {
-			// recupera path do contrato
-			ParametrosDao pDao = new ParametrosDao();
-			CompactadorUtil compac = new CompactadorUtil();
-			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-					+ this.objetoContratoCobranca.getNumeroContrato() + "//interno/";
-			// cria objetos para ZIP
-
-			// Percorre arquivos selecionados e adiciona ao ZIP
-			for (FileUploaded f : deletefilesInterno) {
-				String arquivo = f.getName();
-				byte[] arquivoByte = f.getFile().getPath().getBytes();
-				listaArquivos.put(arquivo, arquivoByte);
-
-			}
-			arquivos = compac.compactarZipByte(listaArquivos);
-
-			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
-					FacesContext.getCurrentInstance());
-			String nomeArquivoDownload = String.format(objetoContratoCobranca.getNumeroContrato() + " Documentos.zip",
-					"");
-			gerador.open(nomeArquivoDownload);
-			gerador.feed(new ByteArrayInputStream(arquivos));
-			gerador.close();
-
-		} catch (Exception e) {
-			System.out.println(e);
-		}
-
-		return null;
-	}
-
-	/***
-	 * Faz download de um único arquivo - linha do DataTable
-	 * 
-	 * @return
-	 */
 	public StreamedContent getDownloadFile() {
 		if (this.selectedFile != null) {
 			InputStream  stream;
