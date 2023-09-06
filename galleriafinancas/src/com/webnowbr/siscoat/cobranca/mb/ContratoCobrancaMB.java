@@ -9024,18 +9024,41 @@ public void baixarDocumentoSCR ( DocumentoAnalise documentoAnalise) {
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
 		this.objetoPagadorRecebedor = this.objetoContratoCobranca.getPagador();
-
 		this.tituloPainel = "Editar";
 
 		this.valorPresenteParcela = BigDecimal.ZERO;
 
 		listaTodasSubpastas();
-
 		this.objetoContratoCobranca.setContaPagarValorTotal(calcularValorTotalContasPagar());
 
 		loadLovs();
-
 		loadSelectedLovsPendentes();
+		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+		this.contratosPagadorAnalisado = cDao.getContratosDoPagador(this.objetoContratoCobranca);
+		this.contratosImovelAnalisado = cDao.getContratosDoImovel(this.objetoContratoCobranca);	
+		contratosLaudo = "";
+		if(CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Pedir Laudo")) {
+			for (ContratoCobranca contratoImovel : contratosImovelAnalisado) {
+				if(contratoImovel.isLaudoRecebido()) {
+					if(CommonsUtil.semValor(contratosLaudo)) {
+						contratosLaudo = "Operações com pedido de laudo: ";
+					}
+					contratosLaudo = contratosLaudo + contratoImovel.getNumeroContrato()  + "; ";
+				}
+			}
+		}
+
+		if (contratosPagadorAnalisado.size() > 0) {
+			this.contratosPagadorAnalisado = populaStatus(contratosPagadorAnalisado);
+			PrimeFaces current = PrimeFaces.current();
+			current.executeScript("PF('listaContratosPagador').show();");
+		}
+
+		if (contratosImovelAnalisado.size() > 0) {
+			this.contratosImovelAnalisado = populaStatus(contratosImovelAnalisado);
+			PrimeFaces current = PrimeFaces.current();
+			current.executeScript("PF('listaContratosImovel').show();");
+		}
 
 		if (this.objetoContratoCobranca.getPagador() != null) {
 			if (this.objetoContratoCobranca.getPagador().getCnpj() != null
@@ -9065,16 +9088,8 @@ public void baixarDocumentoSCR ( DocumentoAnalise documentoAnalise) {
 		if (this.objetoContratoCobranca.getResponsavel() != null) {
 			this.codigoResponsavel = this.objetoContratoCobranca.getResponsavel().getCodigo();
 		}
-		// this.objetoContratoCobranca.setDataInicio(this.objetoContratoCobranca.getDataContrato());
 
 		saveEstadoCheckListAtual();
-
-		/*
-		 * try { logPrimitivo(getNomeUsuarioLogado() + " acessou o contrato " +
-		 * objetoContratoCobranca.getNumeroContrato() + " (" +
-		 * objetoContratoCobranca.toString() + ")"); } catch (IOException e) { // TODO
-		 * Auto-generated catch block e.printStackTrace(); }
-		 */
 
 		if (this.baixarMode) {
 			return "/Atendimento/Cobranca/ContratoCobrancaPreCustomizadoDetalhes.xhtml";

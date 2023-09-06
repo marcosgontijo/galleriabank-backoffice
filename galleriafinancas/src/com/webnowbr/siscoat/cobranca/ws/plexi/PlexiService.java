@@ -47,7 +47,7 @@ public class PlexiService {
 			}
 			
 			String webHookJWT = JwtUtil.generateJWTWebhook(true);
-			String webhook = SiscoatConstants.URL_SISCOAT_ENGINE_WEBHOOK + webHookJWT;
+			String webhook = SiscoatConstants.URL_SISCOAT_PLEXI_WEBHOOK + webHookJWT;
 			
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
 			myURLConnection.setRequestMethod("POST");
