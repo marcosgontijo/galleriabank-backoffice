@@ -174,18 +174,6 @@
 							<f:selectItem itemValue="SE" itemLabel="Sergipe" />
 							<f:selectItem itemValue="TO" itemLabel="Tocantins" />
 						</p:selectOneMenu>
-						
-						<p:outputLabel for="linkGMapsImovel" value="Link Valuation: " />
-						<p:inputText id="linkGMapsImovel"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}"
-							label="Link Google Maps" style="width:400px;"  disabled="true"/>					
-					
-						<h:panelGroup id="botaoLinkImovel">
-							<a href="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}" class="linkPDF" target="_blank"
-								style="background: linear-gradient(90deg, rgba(159,196,24,1) 0%, rgba(115,158,46,1) 100%);padding: 5px;-webkit-border-radius: 5px;text-decoration: none;
-								-moz-border-radius: 5px;
-								border-radius: 5px; "><b>Gerar PDF</b></a>
-						</h:panelGroup>	
 							
 						<p:outputLabel for="Tipo" value="Tipo: " />
 						<p:autoComplete id="Tipo" value="#{contratoCobrancaMB.objetoImovelCobranca.tipo}"
@@ -200,14 +188,20 @@
 						<h:panelGroup>
 							<p:inputText id="AreaConstruida" value="#{contratoCobrancaMB.objetoImovelCobranca.areaConstruida}" style="width:150px;"/>  
 						</h:panelGroup>
-						
-						<p:outputLabel for="valorEstimado"
-							value="Qual o valor estimado do imóvel? " />
-						<p:inputText id="valorEstimado"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.valoEstimado}"
-							onkeypress="return isNumberKey(event);"
-							onkeydown="FormataValor(this, 13, event, 2);"
-							converter="bigDecimalConverter"  disabled="true"/>
+
+						<h:panelGroup id="botaoLinkImovel">
+							<a href="https://avm.valuation.eemovel.com.br/avaliacao" class="linkPDF" target="_blank"
+								style="background: linear-gradient(90deg, rgba(159,196,24,1) 0%, rgba(115,158,46,1) 100%);padding: 5px;-webkit-border-radius: 5px;text-decoration: none;
+								-moz-border-radius: 5px;
+								border-radius: 5px; "><b>EE valuation</b></a>
+						</h:panelGroup>
+
+						<h:panelGroup id="botaoLinkImovel2">
+								<a href="https://avm.valuation.eemovel.com.br/laudo/3685590d9e8441a19218e919bc52346b" class="linkPDf" target="_blank"
+									style="background: linear-gradient(90deg, rgba(159,196,24,1) 0%, rgba(115,158,46,1) 100%);padding: 5px;-webkit-border-radius: 5px;text-decoration: none;
+									-moz-border-radius: 5px;
+									border-radius: 5px; "><b>Laudo</b></a>
+						</h:panelGroup>
 							
 					</h:panelGrid>
 
