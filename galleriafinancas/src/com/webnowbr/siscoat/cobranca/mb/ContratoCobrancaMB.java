@@ -183,6 +183,7 @@ import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.cobranca.db.op.SeguradoDAO;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
+import com.webnowbr.siscoat.cobranca.service.BigDataService;
 import com.webnowbr.siscoat.cobranca.db.op.StarkBankBaixaDAO;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.cobranca.service.FileService;
@@ -5069,10 +5070,10 @@ public void baixarDocumentoCenprot(DocumentoAnalise documentoAnalise) {
 }
 public void baixarDocumentoProcesso(DocumentoAnalise documentoAnalise) {
 	FacesContext facesContext = FacesContext.getCurrentInstance();
-	NetrinService netrin = new NetrinService();
+	BigDataService bigData = new BigDataService();
 	try {
 
-		String documentoBase64 = netrin.baixarDocumentoProcesso(documentoAnalise);
+		String documentoBase64 = bigData.baixarDocumentoProcesso(documentoAnalise);
 		if (CommonsUtil.semValor(documentoBase64)) {
 			facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Processos: Ocorreu um problema ao gerar o PDF!", ""));
