@@ -4687,6 +4687,9 @@
 								<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
 								 <f:facet name="header">											 
 									<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileComite}"/>
+									<p:commandButton value="Download Selecionados" ajax="false">
+									<p:fileDownload value="#{contratoCobrancaMB.downloadFileComite}"></p:fileDownload>
+									</p:commandButton>
 						        </f:facet>	        
 						        <p:column style="text-align: center;"
 									headerText="Nome do Arquivo" filterBy="#{filesComite.name}"
@@ -4836,6 +4839,9 @@
 							<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
 							 <f:facet name="header">								 
 								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileFaltante}"/>
+								<p:commandButton value="Download Selecionados">
+								<p:fileDownload value="#{contratoCobrancaMB.downloadArquivosFaltantes}"></p:fileDownload>
+								</p:commandButton>
 					        </f:facet>	        
 					        <p:column style="text-align: center;"
 								headerText="Nome do Arquivo" filterBy="#{filesFaltante.name}"
@@ -4892,6 +4898,9 @@
 								<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
 								 <f:facet name="header">							 
 									<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileJuridico}"/>
+									<p:commandButton value="Download Selecionados" ajax="false">
+									<p:fileDownload value="#{contratoCobrancaMB.downloadFilesJuridico}"></p:fileDownload>
+									</p:commandButton>
 						        </f:facet>	        
 						        <p:column style="text-align: center;"
 									headerText="Nome do Arquivo" filterBy="#{filesJuridico.name}"

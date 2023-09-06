@@ -4907,7 +4907,7 @@ public class ContratoCobrancaMB {
 
 			response.setHeader("Content-disposition", "inline; FileName=" + objetoContratoCobranca.getNumeroContrato() + " Engine " + documentoAnalise.getPagador().getNome() + ".pdf");
 			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-			byte[] buffer = new byte[10240];
+			byte[] buffer = new byte[pdfBytes.length];
 			int length;
 			while ((length = input.read(buffer)) > 0) {
 				output.write(buffer, 0, length);
@@ -4946,7 +4946,7 @@ public void baixarDocumentoSerasa(DocumentoAnalise documentoAnalise) {
 
 			response.setHeader("Content-disposition", "inline; FileName="+ this.objetoContratoCobranca.getNumeroContrato() + " Serasa " + documentoAnalise.getPagador().getNome() + ".pdf");
 			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-			byte[] buffer = new byte[10240];
+			byte[] buffer = new byte[pdfBytes.length];
 			int length;
 			while ((length = input.read(buffer)) > 0) {
 				output.write(buffer, 0, length);
@@ -4962,13 +4962,13 @@ public void baixarDocumentoSerasa(DocumentoAnalise documentoAnalise) {
 	}
 public void baixarDocumentoPpe(DocumentoAnalise documentoAnalise) {
 	NetrinService netrin = new NetrinService();
-	String documentoBase64 = netrin.baixarDocumentoPpe(documentoAnalise);
 	FacesContext facesContext = FacesContext.getCurrentInstance();
 	ExternalContext externalContext = facesContext.getExternalContext();
 	HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
 	BufferedInputStream input = null;
 	BufferedOutputStream output = null;
 	try {
+		String documentoBase64 = netrin.baixarDocumentoPpe(documentoAnalise);
 
 		byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
 		String mineFile = "application/pdf";
@@ -4981,7 +4981,7 @@ public void baixarDocumentoPpe(DocumentoAnalise documentoAnalise) {
 
 		response.setHeader("Content-disposition", "inline; FileName=" + objetoContratoCobranca.getNumeroContrato() + " PPE " + documentoAnalise.getPagador().getNome() + ".pdf");
 		output = new BufferedOutputStream(response.getOutputStream(), 10240);
-		byte[] buffer = new byte[10240];
+		byte[] buffer = new byte[pdfBytes.length];
 		int length;
 		while ((length = input.read(buffer)) > 0) {
 			output.write(buffer, 0, length);
@@ -4998,13 +4998,13 @@ public void baixarDocumentoPpe(DocumentoAnalise documentoAnalise) {
 }
 public void baixarDocumentoDossie(DocumentoAnalise documentoAnalise) {
 	NetrinService netrin = new NetrinService();
-	String documentoBase64 = netrin.baixarDocumentoDossie(documentoAnalise);
 	FacesContext facesContext = FacesContext.getCurrentInstance();
 	ExternalContext externalContext = facesContext.getExternalContext();
 	HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
 	BufferedInputStream input = null;
 	BufferedOutputStream output = null;
 	try {
+		String documentoBase64 = netrin.baixarDocumentoDossie(documentoAnalise);
 
 		byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
 		String mineFile = "application/pdf";
@@ -5017,7 +5017,7 @@ public void baixarDocumentoDossie(DocumentoAnalise documentoAnalise) {
 
 		response.setHeader("Content-disposition", "inline; FileName=" + objetoContratoCobranca.getNumeroContrato() + " Dossie " + documentoAnalise.getPagador().getNome() + ".pdf");
 		output = new BufferedOutputStream(response.getOutputStream(), 10240);
-		byte[] buffer = new byte[10240];
+		byte[] buffer = new byte[pdfBytes.length];
 		int length;
 		while ((length = input.read(buffer)) > 0) {
 			output.write(buffer, 0, length);
@@ -5053,7 +5053,7 @@ public void baixarDocumentoCenprot(DocumentoAnalise documentoAnalise) {
 
 		response.setHeader("Content-disposition", "inline; FileName=" + objetoContratoCobranca.getNumeroContrato() + " Cenprot " + documentoAnalise.getPagador().getNome() + ".pdf");
 		output = new BufferedOutputStream(response.getOutputStream(), 10240);
-		byte[] buffer = new byte[10240];
+		byte[] buffer = new byte[pdfBytes.length];
 		int length;
 		while ((length = input.read(buffer)) > 0) {
 			output.write(buffer, 0, length);
@@ -5096,7 +5096,7 @@ public void baixarDocumentoProcesso(DocumentoAnalise documentoAnalise) {
 
 		response.setHeader("Content-disposition", "inline; FileName=" + objetoContratoCobranca.getNumeroContrato() + " Processos " + documentoAnalise.getPagador().getNome() + ".pdf");
 		output = new BufferedOutputStream(response.getOutputStream(), 10240);
-		byte[] buffer = new byte[10240];
+		byte[] buffer = new byte[pdfBytes.length];
 		int length;
 		while ((length = input.read(buffer)) > 0) {
 			output.write(buffer, 0, length);
@@ -5141,7 +5141,7 @@ public void baixarDocumentoSCR ( DocumentoAnalise documentoAnalise) {
 
 		response.setHeader("Content-disposition", "inline; FileName=" + objetoContratoCobranca.getNumeroContrato() + " SCR " + documentoAnalise.getPagador().getNome() + ".pdf");
 		output = new BufferedOutputStream(response.getOutputStream(), 10240);
-		byte[] buffer = new byte[10240];
+		byte[] buffer = new byte[contrato.length];
 		int length;
 		while ((length = input.read(buffer)) > 0) {
 			output.write(buffer, 0, length);
@@ -12496,6 +12496,21 @@ public void baixarDocumentoSCR ( DocumentoAnalise documentoAnalise) {
 		this.contratoGerado = false;
 
 		return "/Atendimento/Cobranca/ContratoCobrancaFinanceiroAtrasoCRI3.xhtml";
+	}
+	public String clearFieldsRelFinanceiroAtrasoCRI4() {
+	TimeZone zone = TimeZone.getDefault();
+	Locale locale = new Locale("pt", "BR");
+	Calendar dataInicio = Calendar.getInstance(zone, locale);
+	this.relDataContratoInicio = dataInicio.getTime();
+	this.relDataContratoFim = dataInicio.getTime();
+
+	this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
+	this.selectedContratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
+	relatorioFinanceiroCobrancaResumo = new RelatorioFinanceiroCobrancaResumo();
+
+	this.contratoGerado = false;
+
+	return "/Atendimento/Cobranca/ContratoCobrancaFinanceiroAtrasoCRI4.xhtml";
 	}
 
 	public String clearFieldsRelFinanceiroAtrasoSecuritizadora() {
