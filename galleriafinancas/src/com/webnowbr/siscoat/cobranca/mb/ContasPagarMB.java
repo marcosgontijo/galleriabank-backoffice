@@ -233,11 +233,12 @@ public class ContasPagarMB {
 					.documentoConsultarTodos(this.selectedContratoLov.getNumeroContrato(), getUsuarioLogado());
 		}
 		return documentoConsultarTodos.stream().filter(f ->  CommonsUtil.mesmoValorIgnoreCase( f.getPathOrigin(), "pagar"))
-				.sorted(new Comparator<FileUploaded>() {
-			        public int compare(FileUploaded o1, FileUploaded o2) {
-			            return o1.getDate().compareTo(o2.getDate());
-			        }
-			    }).collect(Collectors.toList());
+//				.sorted(new Comparator<FileUploaded>() {
+//			        public int compare(FileUploaded o1, FileUploaded o2) {
+//			            return o1.getDate().compareTo(o2.getDate());
+//			        }
+//			    })
+	.collect(Collectors.toList());
 //		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
 //		if (arqs != null) {
 //			for (int i = 0; i < documentoConsultarTodos.size(); i++) {

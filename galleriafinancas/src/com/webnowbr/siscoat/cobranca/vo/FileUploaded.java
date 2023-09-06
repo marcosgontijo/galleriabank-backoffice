@@ -6,7 +6,7 @@ import java.util.Date;
 public class FileUploaded {
 	private File file;
 	private String name;
-	private Date date;
+//	private Date date;
 	private String path;
 	private String pathOrigin;
 	private int pages;
@@ -47,14 +47,14 @@ public class FileUploaded {
 	public void setName(String name) {
 		this.name = name;
 	}
-
-	public Date getDate() {
-		return date;
-	}
-
-	public void setDate(Date date) {
-		this.date = date;
-	}
+//
+//	public Date getDate() {
+//		return date;
+//	}
+//
+//	public void setDate(Date date) {
+//		this.date = date;
+//	}
 
 	/**
 	 * @return the path
