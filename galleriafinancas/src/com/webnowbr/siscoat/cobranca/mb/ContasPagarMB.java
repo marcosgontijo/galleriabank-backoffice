@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -224,18 +225,31 @@ public class ContasPagarMB {
 		+ this.selectedContratoLov.getNumeroContrato() + "//pagar/";
 		File diretorio = new File(pathContrato);
 		File arqs[] = diretorio.listFiles();
-		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
-		if (arqs != null) {
-			for (int i = 0; i < arqs.length; i++) {
-				File arquivo = arqs[i];
-
-				if(arquivo.isFile()) {
-					lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
-				}
-				
-			}
+		
+		List<FileUploaded> documentoConsultarTodos= new ArrayList<FileUploaded>();
+		if (CommonsUtil.semValor(documentoConsultarTodos)) {
+			FileService fileService = new FileService();
+			documentoConsultarTodos = fileService
+					.documentoConsultarTodos(this.selectedContratoLov.getNumeroContrato(), getUsuarioLogado());
 		}
-		return lista;
+		return documentoConsultarTodos.stream().filter(f ->  CommonsUtil.mesmoValorIgnoreCase( f.getPathOrigin(), "pagar"))
+				.sorted(new Comparator<FileUploaded>() {
+			        public int compare(FileUploaded o1, FileUploaded o2) {
+			            return o1.getDate().compareTo(o2.getDate());
+			        }
+			    }).collect(Collectors.toList());
+//		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
+//		if (arqs != null) {
+//			for (int i = 0; i < documentoConsultarTodos.size(); i++) {
+//				File arquivo = arqs[i];
+//
+//				if(arquivo.isFile()) {
+//					lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
+//				}
+//				
+//			}
+//		}
+//		return lista;
 	}
 	
 	public Collection<FileUploaded> listaArquivosContasPagar(ContasPagar conta) {
