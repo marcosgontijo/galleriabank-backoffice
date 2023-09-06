@@ -824,6 +824,7 @@ public class DocketService {
 		FileUploaded selectedFile = new FileUploaded();
 		selectedFile.setPath(documentoAnalise.getPath().replace(documentoAnalise.getIdentificacao(), ""));
 		selectedFile.setName( CommonsUtil.removeAcentos( documentoAnalise.getIdentificacao()));
+		selectedFile.setPathOrigin("analise");
 		
 		InputStream  stream = new ByteArrayInputStream( fileService.abrirDocumentos(selectedFile
 				,documentoAnalise.getContratoCobranca().getNumeroContrato(),

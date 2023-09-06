@@ -31523,6 +31523,11 @@ public void baixarDocumentoSCR ( DocumentoAnalise documentoAnalise) {
 	public void handleAnaliseDocumentoFileUpload(FileUploadEvent event) throws IOException {
 		FacesContext context = FacesContext.getCurrentInstance();
 		
+		ParametrosDao pDao = new ParametrosDao();
+		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString();
+
+		pathContrato += this.objetoContratoCobranca.getNumeroContrato();
+		pathContrato += "/analise/";
 		// cria o arquivo
 		if (event.getFile().getFileName().endsWith(".zip")) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
