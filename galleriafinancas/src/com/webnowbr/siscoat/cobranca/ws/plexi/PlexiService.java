@@ -29,7 +29,7 @@ public class PlexiService {
 
 	String token = "Bearer omA1k5xkozRljXBw0M0EviFVhh2F5qvJAqA8y8wbYMC75tIMd4GQsBsmvCQ2OTcO81XoXBczfj1BUwhhTISUouWX55g0EPleclII";
 	private String urlHomologacao = "https://sandbox.plexi.com.br"; 
-	private String urlProducao = "https://sandbox.plexi.com.br";//https://api.plexi.com.br
+	private String urlProducao = "https://api.plexi.com.br";//https://api.plexi.com.br
 	
 	
 	public FacesMessage PedirConsulta(PlexiConsulta plexiCosulta, User usuarioLogado, DocumentoAnalise docAnalise) {
