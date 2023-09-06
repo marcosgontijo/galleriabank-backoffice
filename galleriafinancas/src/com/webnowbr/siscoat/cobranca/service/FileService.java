@@ -158,7 +158,7 @@ public class FileService {
 			arquivo  = CommonsUtil.removeAcentos(arquivo);
 			//arquivo = "teste";
 			String surl = serverPrincipalUrl.replace("{numeroContrato}", numeroContrato)
-					.replace("{subpasta}", subpasta).replace("{nomeArquivo}", arquivo).replace(" ", "%20");;
+					.replace("{subpasta}", subpasta).replace("{nomeArquivo}", arquivo).replace(" ", "%20");
 			myURL = new URL(surl);
 
 			byte[] postDataBytes = GsonUtil.toJson(documentoSelecionado).getBytes();

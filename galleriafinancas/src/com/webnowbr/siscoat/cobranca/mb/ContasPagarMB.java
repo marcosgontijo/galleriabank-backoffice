@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -224,18 +225,31 @@ public class ContasPagarMB {
 		+ this.selectedContratoLov.getNumeroContrato() + "//pagar/";
 		File diretorio = new File(pathContrato);
 		File arqs[] = diretorio.listFiles();
-		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
-		if (arqs != null) {
-			for (int i = 0; i < arqs.length; i++) {
-				File arquivo = arqs[i];
-
-				if(arquivo.isFile()) {
-					lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
-				}
-				
-			}
+		
+		List<FileUploaded> documentoConsultarTodos= new ArrayList<FileUploaded>();
+		if (CommonsUtil.semValor(documentoConsultarTodos)) {
+			FileService fileService = new FileService();
+			documentoConsultarTodos = fileService
+					.documentoConsultarTodos(this.selectedContratoLov.getNumeroContrato(), getUsuarioLogado());
 		}
-		return lista;
+		return documentoConsultarTodos.stream().filter(f ->  CommonsUtil.mesmoValorIgnoreCase( f.getPathOrigin(), "pagar"))
+				.sorted(new Comparator<FileUploaded>() {
+			        public int compare(FileUploaded o1, FileUploaded o2) {
+			            return o1.getDate().compareTo(o2.getDate());
+			        }
+			    }).collect(Collectors.toList());
+//		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
+//		if (arqs != null) {
+//			for (int i = 0; i < documentoConsultarTodos.size(); i++) {
+//				File arquivo = arqs[i];
+//
+//				if(arquivo.isFile()) {
+//					lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
+//				}
+//				
+//			}
+//		}
+//		return lista;
 	}
 	
 	public Collection<FileUploaded> listaArquivosContasPagar(ContasPagar conta) {
@@ -277,35 +291,56 @@ public class ContasPagarMB {
 		return this.downloadFile;
 	}
 	
-	public StreamedContent getDownloadAllFiles() {
+	public void fileSelectionListener() {
+		//Apesar dessa função não fazer nada ela é importante para o funcionamento do download em zip.
+		//Não me pergunte o pq
+	}
+	
+	public StreamedContent getDownloadAllFilesPagar() {
 		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
-
 		try {
-			// recupera path do contrato
-			ParametrosDao pDao = new ParametrosDao();
 			CompactadorUtil compac = new CompactadorUtil();
-
-			// Percorre arquivos selecionados e adiciona ao ZIP
-			for (FileUploaded f : deletefiles) {
+			for (FileUploaded f : deleteFilesPagar) {
 				String arquivo = f.getName();
-				byte[] arquivoByte = f.getFile().getPath().getBytes();
+			    byte[] arquivoByte = fileService.abrirDocumentos
+			    		(f,this.selectedContratoLov.getNumeroContrato(), getUsuarioLogado());
 				listaArquivos.put(arquivo, arquivoByte);
-
 			}
 			arquivos = compac.compactarZipByte(listaArquivos);
-
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 					FacesContext.getCurrentInstance());
-			String nomeArquivoDownload = String.format(selectedContratoLov.getNumeroContrato() + " Documentos.zip",
+			String nomeArquivoDownload = String.format(selectedContratoLov.getNumeroContrato() + " Documentos_pagar.zip",
 					"");
 			gerador.open(nomeArquivoDownload);
 			gerador.feed(new ByteArrayInputStream(arquivos));
 			gerador.close();
-
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-
+		return null;
+	}
+	
+	public StreamedContent getDownloadAllFilesContaPagar() {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+		try {
+			CompactadorUtil compac = new CompactadorUtil();
+			for (FileUploaded f : deleteFilesContas) {
+				String arquivo = f.getName();
+			    byte[] arquivoByte = fileService.abrirDocumentos
+			    		(f,this.selectedContratoLov.getNumeroContrato(), getUsuarioLogado());
+				listaArquivos.put(arquivo, arquivoByte);
+			}
+			arquivos = compac.compactarZipByte(listaArquivos);
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String.format(selectedContratoLov.getNumeroContrato() + " Documentos_conta.zip",
+					"");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(arquivos));
+			gerador.close();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 		return null;
 	}
 	

@@ -253,7 +253,10 @@
 					<h:panelGrid columns="1">			                      								
 						<p:dataTable id="dtFilesPagar" var="filesPagar" value="#{contasPagarMB.filesPagar}" rowKey="#{filesPagar.name}" selection="#{contasPagarMB.deleteFilesPagar}" emptyMessage="" sortBy="#{filesPagar.name}" >	
 							<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
-							<f:facet name="header">											 
+							<f:facet name="header">
+								<p:commandButton value="Download Selecionado(s)" ajax="false" immediate="true"
+									icon="ui-icon-arrowthick-1-s" action="#{contasPagarMB.getDownloadAllFilesPagar()}">
+								</p:commandButton>											 
 								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contasPagarMB.deleteFile(contasPagarMB.deleteFilesPagar)}"/>
 					        </f:facet>	       
 					        <p:column style="text-align: center;"
@@ -261,7 +264,7 @@
 								filterMatchMode="contains" sortBy="#{filesPagar.name}">
 								<h:outputText value="#{filesPagar.name}" />
 								<p:spacer height="10" />
-								<p:commandButton value="Abrir" ajax="false" action="#{contasPagarMB.viewFilePagar(filesPagar.name)}"
+								<p:commandButton value="Abrir" ajax="false" action="#{contasPagarMB.viewFile(filesPagar)}"
 									icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'" immediate="true">
 								</p:commandButton>
 							</p:column>
@@ -274,9 +277,18 @@
 				            </p:column>						        
 
 				            <f:facet name="footer">
+				            	<p:commandButton value="Download Selecionado(s)" ajax="false" immediate="true"
+									icon="ui-icon-arrowthick-1-s" action="#{contasPagarMB.getDownloadAllFilesPagar()}">
+								</p:commandButton>
 								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contasPagarMB.deleteFile(contasPagarMB.deleteFilesPagar)}"
 								update="ArquivosPagarSalvos"/>								
-					        </f:facet>             	        		               		        			        			           			 		
+					        </f:facet>
+					        <p:ajax event="rowSelectCheckbox" 
+								process="@this" listener="#{contasPagarMB.fileSelectionListener()}"/>
+							<p:ajax event="rowUnselectCheckbox" 
+								process="@this" listener="#{contasPagarMB.fileSelectionListener()}"/>
+							<p:ajax event="toggleSelect" 
+								process="@this" listener="#{contasPagarMB.fileSelectionListener()}"/>             	        		               		        			        			           			 		
 						</p:dataTable>								
 					</h:panelGrid>  
 				</p:panel>
@@ -367,10 +379,8 @@
 								<p:column selectionMode="multiple"
 									style="width:16px;text-align:center" />
 								<f:facet name="header">
-									<p:commandButton value="Download Selecionado(s)" ajax="false"
-										
-										icon="ui-icon-arrowthick-1-s">
-										<p:fileDownload value="#{contratoCobrancaMB.downloadAllFiles}" />
+									<p:commandButton value="Download Selecionado(s)" ajax="false" immediate="true"
+										icon="ui-icon-arrowthick-1-s" action="#{contasPagarMB.getDownloadAllFilesContaPagar()}">
 									</p:commandButton>
 									<p:commandButton value="Excluir Selecionado(s)" 
 										icon="ui-icon-trash" action="#{contasPagarMB.deleteFile(contasPagarMB.deleteFilesContas)}" 
@@ -383,7 +393,7 @@
 									<h:outputText value="#{files.name}" />
 									<p:spacer height="10" />
 									<p:commandButton value="Abrir" ajax="false"
-										action="#{contasPagarMB.viewFileContaPagar(files.name)}"
+										action="#{contasPagarMB.viewFile(files)}"
 										immediate="true" icon="ui-icon-search"
 										onclick="target='_blank'" onblur="target='_self'">
 									</p:commandButton>
@@ -400,10 +410,19 @@
 								</p:column>
 
 								<f:facet name="footer">
+									<p:commandButton value="Download Selecionado(s)" ajax="false" immediate="true"
+										icon="ui-icon-arrowthick-1-s" action="#{contasPagarMB.getDownloadAllFilesContaPagar()}">
+									</p:commandButton>
 									<p:commandButton value="Excluir Selecionado(s)" ajax="false"
 										icon="ui-icon-trash" action="#{contasPagarMB.deleteFile(contasPagarMB.deleteFilesContas)}" 
 										update="contaArquivosForm dtFiles"/>
 								</f:facet>
+								<p:ajax event="rowSelectCheckbox" 
+									process="@this" listener="#{contasPagarMB.fileSelectionListener()}"/>
+								<p:ajax event="rowUnselectCheckbox" 
+									process="@this" listener="#{contasPagarMB.fileSelectionListener()}"/>
+								<p:ajax event="toggleSelect" 
+									process="@this" listener="#{contasPagarMB.fileSelectionListener()}"/>
 							</p:dataTable>
 						</h:panelGrid>
 					</p:panel>
