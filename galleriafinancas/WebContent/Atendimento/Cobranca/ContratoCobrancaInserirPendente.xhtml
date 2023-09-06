@@ -5293,14 +5293,13 @@
 						<h:panelGrid columns="1">
 							<p:dataTable id="dtFiles" var="files"
 								value="#{contratoCobrancaMB.contasPagarArquivos.filesContas}" rowKey="#{files.name}"
-								selection="#{contratoCobrancaMB.deletefiles}" emptyMessage=""
+								selection="#{contratoCobrancaMB.deleteFilesContas}" emptyMessage=""
 								sortBy="#{files.name}">
 								<p:column selectionMode="multiple"
 									style="width:16px;text-align:center" />
 								<f:facet name="header">
-									<p:commandButton value="Download Selecionado(s)" ajax="false"
-										icon="ui-icon-arrowthick-1-s">
-										<p:fileDownload value="#{contratoCobrancaMB.downloadAllFiles}" />
+									<p:commandButton value="Download Selecionado(s)" ajax="false" immediate="true"
+										icon="ui-icon-arrowthick-1-s" action="#{contratoCobrancaMB.getDownloadAllFilesContaPagar()}">
 									</p:commandButton>
 									<p:commandButton value="Excluir Selecionado(s)" 
 										icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFile}" 
@@ -5330,11 +5329,19 @@
 								</p:column>
 
 								<f:facet name="footer">
-								
+									<p:commandButton value="Download Selecionado(s)" ajax="false" immediate="true"
+										icon="ui-icon-arrowthick-1-s" action="#{contratoCobrancaMB.getDownloadAllFilesContaPagar()}">
+									</p:commandButton>
 									<p:commandButton value="Excluir Selecionado(s)" ajax="false"
 										icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFile}" 
 										update="contaArquivosForm dtFiles"/>
 								</f:facet>
+								<p:ajax event="rowSelectCheckbox" 
+									process="@this" listener="#{contratoCobrancaMB.fileSelectionListener()}"/>
+								<p:ajax event="rowUnselectCheckbox" 
+									process="@this" listener="#{contratoCobrancaMB.fileSelectionListener()}"/>
+								<p:ajax event="toggleSelect" 
+									process="@this" listener="#{contratoCobrancaMB.fileSelectionListener()}"/>
 							</p:dataTable>
 						</h:panelGrid>
 					</p:panel>

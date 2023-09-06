@@ -277,35 +277,56 @@ public class ContasPagarMB {
 		return this.downloadFile;
 	}
 	
-	public StreamedContent getDownloadAllFiles() {
+	public void fileSelectionListener() {
+		//Apesar dessa função não fazer nada ela é importante para o funcionamento do download em zip.
+		//Não me pergunte o pq
+	}
+	
+	public StreamedContent getDownloadAllFilesPagar() {
 		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
-
 		try {
-			// recupera path do contrato
-			ParametrosDao pDao = new ParametrosDao();
 			CompactadorUtil compac = new CompactadorUtil();
-
-			// Percorre arquivos selecionados e adiciona ao ZIP
-			for (FileUploaded f : deletefiles) {
+			for (FileUploaded f : deleteFilesPagar) {
 				String arquivo = f.getName();
-				byte[] arquivoByte = f.getFile().getPath().getBytes();
+			    byte[] arquivoByte = fileService.abrirDocumentos
+			    		(f,this.selectedContratoLov.getNumeroContrato(), getUsuarioLogado());
 				listaArquivos.put(arquivo, arquivoByte);
-
 			}
 			arquivos = compac.compactarZipByte(listaArquivos);
-
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 					FacesContext.getCurrentInstance());
-			String nomeArquivoDownload = String.format(selectedContratoLov.getNumeroContrato() + " Documentos.zip",
+			String nomeArquivoDownload = String.format(selectedContratoLov.getNumeroContrato() + " Documentos_pagar.zip",
 					"");
 			gerador.open(nomeArquivoDownload);
 			gerador.feed(new ByteArrayInputStream(arquivos));
 			gerador.close();
-
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-
+		return null;
+	}
+	
+	public StreamedContent getDownloadAllFilesContaPagar() {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+		try {
+			CompactadorUtil compac = new CompactadorUtil();
+			for (FileUploaded f : deleteFilesContas) {
+				String arquivo = f.getName();
+			    byte[] arquivoByte = fileService.abrirDocumentos
+			    		(f,this.selectedContratoLov.getNumeroContrato(), getUsuarioLogado());
+				listaArquivos.put(arquivo, arquivoByte);
+			}
+			arquivos = compac.compactarZipByte(listaArquivos);
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String.format(selectedContratoLov.getNumeroContrato() + " Documentos_conta.zip",
+					"");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(arquivos));
+			gerador.close();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 		return null;
 	}
 	

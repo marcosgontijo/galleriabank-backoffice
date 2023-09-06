@@ -31460,6 +31460,8 @@ public void baixarDocumentoSCR ( DocumentoAnalise documentoAnalise) {
 	List<FileUploaded> deletefilesComite = new ArrayList<FileUploaded>();
 	List<FileUploaded> deletefilesPagar = new ArrayList<FileUploaded>();
 	List<FileUploaded> deletefilesCci = new ArrayList<FileUploaded>();
+	List<FileUploaded> deleteFilesPagar = new ArrayList<FileUploaded>();
+	List<FileUploaded> deleteFilesContas= new ArrayList<FileUploaded>();
 	
 	String contratoDocumentos = "";
 
@@ -32126,6 +32128,55 @@ public void baixarDocumentoSCR ( DocumentoAnalise documentoAnalise) {
 		return null;
 	}
 
+	public StreamedContent getDownloadAllFilesPagar() {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+		try {
+			CompactadorUtil compac = new CompactadorUtil();
+			for (FileUploaded f : deleteFilesPagar) {
+				String arquivo = f.getName();
+			    byte[] arquivoByte = fileService.abrirDocumentos
+			    		(f,this.objetoContratoCobranca.getNumeroContrato(), getUsuarioLogado());
+				listaArquivos.put(arquivo, arquivoByte);
+			}
+			arquivos = compac.compactarZipByte(listaArquivos);
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String.format(objetoContratoCobranca.getNumeroContrato() + " Documentos_pagar.zip",
+					"");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(arquivos));
+			gerador.close();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return null;
+	}
+	
+	public StreamedContent getDownloadAllFilesContaPagar() {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+		try {
+			CompactadorUtil compac = new CompactadorUtil();
+			for (FileUploaded f : deleteFilesContas) {
+				String arquivo = f.getName();
+			    byte[] arquivoByte = fileService.abrirDocumentos
+			    		(f,this.objetoContratoCobranca.getNumeroContrato(), getUsuarioLogado());
+				listaArquivos.put(arquivo, arquivoByte);
+			}
+			arquivos = compac.compactarZipByte(listaArquivos);
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String.format(objetoContratoCobranca.getNumeroContrato() + " Documentos_conta.zip",
+					"");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(arquivos));
+			gerador.close();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return null;
+	}
+	
+	
 	public BigDecimal calculaTotalVlrParcelaBaixaLoteSelecionadas() {
 		BigDecimal valorTotal = BigDecimal.ZERO;
 
@@ -34223,6 +34274,22 @@ public void baixarDocumentoSCR ( DocumentoAnalise documentoAnalise) {
 
 	public void setDeletefilesCci(List<FileUploaded> deletefilesCci) {
 		this.deletefilesCci = deletefilesCci;
+	}
+
+	public List<FileUploaded> getDeleteFilesPagar() {
+		return deleteFilesPagar;
+	}
+
+	public void setDeleteFilesPagar(List<FileUploaded> deleteFilesPagar) {
+		this.deleteFilesPagar = deleteFilesPagar;
+	}
+
+	public List<FileUploaded> getDeleteFilesContas() {
+		return deleteFilesContas;
+	}
+
+	public void setDeleteFilesContas(List<FileUploaded> deleteFilesContas) {
+		this.deleteFilesContas = deleteFilesContas;
 	}
 	
 }
