@@ -229,11 +229,11 @@ public class ContasPagarMB {
 		List<FileUploaded> documentoConsultarTodos= new ArrayList<FileUploaded>();
 		if (CommonsUtil.semValor(documentoConsultarTodos)) {
 			FileService fileService = new FileService();
-			documentoConsultarTodos = fileService
+			documentoConsultarTodos = fileService.documentoConsultarTodos(this.getSelectedContratoLov().getNumeroContrato(), getUsuarioLogado());
 		}
 		return documentoConsultarTodos.stream().filter(f ->  CommonsUtil.mesmoValorIgnoreCase( f.getPathOrigin(), "pagar"))
 //				.sorted(new Comparator<FileUploaded>() {
-				.documentoConsultarTodos(this.selectedContratoLov.getNumeroContrato(), getUsuarioLogado());
+//				.documentoConsultarTodos(this.selectedContratoLov.getNumeroContrato(), getUsuarioLogado())
 //			        public int compare(FileUploaded o1, FileUploaded o2) {
 //			            return o1.getDate().compareTo(o2.getDate());
 //			        }
