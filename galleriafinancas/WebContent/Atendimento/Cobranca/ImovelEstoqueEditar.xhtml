@@ -38,26 +38,6 @@
 				<p:panel id="Estoque" header="Estoque" style="margin-bottom:10px;">
 					<h:panelGrid columns="2">
 							<h:panelGrid columns="2">
-								<p:outputLabel for="parcelaParouPagar" value="Parcela que parou de pagar: "
-									styleClass="labelBold"
-									style="font-weight: bold; font-size: 18px;" />
-								<p:inputText id="parcelaParouPagar" value="#{imovelEstoqueMB.objetoImovelEstoque.parcelaParouPagar}"/>
-									
-								<p:outputLabel for="variacaoCusto" value="Variação custos até leilão: "
-									styleClass="labelBold"
-									style="font-weight: bold; font-size: 18px;" />
-								<p:inputText id="variacaoCusto" value="#{imovelEstoqueMB.objetoImovelEstoque.variacaoCusto}"
-									onkeypress="return isNumberKey(event);"
-									onkeydown="FormataValor(this,13, event, 2);"
-									converter="bigDecimalConverter"/>
-								
-								<p:outputLabel for="ltvLeilao" value="LTV do leilão: "
-									styleClass="labelBold"
-									style="font-weight: bold; font-size: 18px;" />
-								<p:inputText id="ltvLeilao" value="#{imovelEstoqueMB.objetoImovelEstoque.ltvLeilao}"
-									onkeypress="return isNumberKey(event);"
-									onkeydown="FormataValor(this,13, event, 2);"
-									converter="bigDecimalConverter"/>
 								
 								<p:outputLabel for="valorEmprestimo" value="Valor do empréstimo: "
 									styleClass="labelBold"
