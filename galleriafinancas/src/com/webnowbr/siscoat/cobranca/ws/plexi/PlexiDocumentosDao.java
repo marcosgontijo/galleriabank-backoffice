@@ -6,15 +6,16 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.db.dao.HibernateDao;
 
 public class PlexiDocumentosDao extends HibernateDao<PlexiDocumentos, Long> {
 
 	private static final String QUERY_DOC_PF = "select p.id from cobranca.plexiDocumentos p "
-			+ "where p.pf = true";
+			+ "where p.pf = true ";
 
 	@SuppressWarnings("unchecked")
-	public List<PlexiDocumentos> getDocumentosPF() {
+	public List<PlexiDocumentos> getDocumentosPF(List<String> estados, String velocidade) {
 		return (List<PlexiDocumentos>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -24,9 +25,28 @@ public class PlexiDocumentosDao extends HibernateDao<PlexiDocumentos, Long> {
 				PreparedStatement ps = null;
 				ResultSet rs = null;
 				try {
+					String query = QUERY_DOC_PF;
+					
 					connection = getConnection();
+					if(!CommonsUtil.semValor(estados)){
+						query = query + " and(";
+						boolean primeiro = true;
+						for (String uf : estados) {
+							if(primeiro) {
+								query = query + " estados like '%" + uf.toUpperCase() + "%' ";
+								primeiro = false;
+							} else {
+								query = query + " or estados like '%" + uf.toUpperCase() + "%' ";
+							}
+							query = query + ")";
+						}
+					}
+					
+					if(!CommonsUtil.semValor(velocidade)) {
+						query = query + " and velocidade like '%" + velocidade + "%'";
+					}
 
-					ps = connection.prepareStatement(QUERY_DOC_PF);
+					ps = connection.prepareStatement(query);
 					rs = ps.executeQuery();
 
 					PlexiDocumentosDao plexiDocumentosDao = new PlexiDocumentosDao();
@@ -47,7 +67,7 @@ public class PlexiDocumentosDao extends HibernateDao<PlexiDocumentos, Long> {
 			+ "where p.pj = true";
 
 	@SuppressWarnings("unchecked")
-	public List<PlexiDocumentos> getDocumentosPJ() {
+	public List<PlexiDocumentos> getDocumentosPJ(List<String> estados, String velocidade) {
 		return (List<PlexiDocumentos>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -57,7 +77,25 @@ public class PlexiDocumentosDao extends HibernateDao<PlexiDocumentos, Long> {
 				PreparedStatement ps = null;
 				ResultSet rs = null;
 				try {
+					String query = QUERY_DOC_PF;
+					
 					connection = getConnection();
+					if(!CommonsUtil.semValor(estados)){
+						query = query + " and(";
+						boolean primeiro = true;
+						for (String uf : estados) {
+							if(!primeiro) {
+								query = query + " estados like '%" + uf.toUpperCase() + "%' ";
+							} else {
+								query = query + " or estados like '%" + uf.toUpperCase() + "%' ";
+							}
+							query = query + ")";
+						}
+					}
+					
+					if(!CommonsUtil.semValor(velocidade)) {
+						query = query + " and velocidade like '%" + velocidade + "%'";
+					}
 
 					ps = connection.prepareStatement(QUERY_DOC_PJ);
 					rs = ps.executeQuery();

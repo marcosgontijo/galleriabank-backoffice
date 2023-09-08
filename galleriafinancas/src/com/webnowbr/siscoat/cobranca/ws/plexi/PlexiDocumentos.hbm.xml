@@ -26,11 +26,18 @@
 		<property name="pj" type="boolean">
 			<column name="pj" not-null="true" default="true"/>
 		</property>	
+		
+		<property name="estados" type="java.lang.String">
+			<column name="estados" />
+		</property>
 
 		<property name="obs" type="java.lang.String">
 			<column name="obs" />
 		</property>
 		
+		<property name="velocidade" type="java.lang.String">
+			<column name="velocidade" />
+		</property>
 		
 	</class>
 </hibernate-mapping>

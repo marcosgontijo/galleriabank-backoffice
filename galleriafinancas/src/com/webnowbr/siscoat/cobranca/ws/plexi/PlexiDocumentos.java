@@ -6,6 +6,8 @@ public class PlexiDocumentos {
 	private String nome;
 	private boolean pf;
 	private boolean pj;
+	private String estados;
+	private String velocidade;
 	private String obs;
 	
 	@Override
@@ -43,10 +45,27 @@ public class PlexiDocumentos {
 	public void setPj(boolean pj) {
 		this.pj = pj;
 	}
+	public String getEstados() {
+		return estados;
+	}
+	public void setEstados(String estados) {
+		this.estados = estados;
+	}
+
 	public String getObs() {
 		return obs;
 	}
 	public void setObs(String obs) {
 		this.obs = obs;
 	}
+
+	public String getVelocidade() {
+		return velocidade;
+	}
+
+	public void setVelocidade(String velocidade) {
+		this.velocidade = velocidade;
+	}
+
+	
 }
