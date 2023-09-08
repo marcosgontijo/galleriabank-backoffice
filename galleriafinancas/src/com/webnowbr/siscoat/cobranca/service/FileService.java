@@ -209,6 +209,70 @@ public class FileService {
 		return null;
 	}
 
+	public String excluirDocumento(String numeroContrato, String subpasta, String arquivo, User usuario) {
+
+		String serverPrincipalUrl = PropertyLoader
+				.getString("client.galleria.financas.upload.rest.base64.url");
+		logger.info("INFO file server {} POST: ".concat(serverPrincipalUrl.replace("{numeroContrato}", numeroContrato)
+  				.replace("{subpasta}", subpasta
+  				.replace("{nomeArquivo}", arquivo))));
+
+		URL myURL;
+		try {
+			arquivo  = CommonsUtil.removeAcentos(arquivo);
+			//arquivo = "teste";
+			String surl = serverPrincipalUrl.replace("{numeroContrato}", numeroContrato)
+					.replace("{subpasta}", subpasta).replace("{nomeArquivo}",
+							Base64.getEncoder().encodeToString(arquivo.getBytes())).replace(" ", "%20");
+			myURL = new URL(surl);
+
+//			byte[] postDataBytes = GsonUtil.toJson(documentoSelecionado).getBytes();
+ 
+			String token = "Bearer " + JwtUtil.generateJWTSite(usuario.getId(), usuario.getLogin(), "BACKOFFICE");
+			
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestMethod("DELETE");
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+			myURLConnection.setRequestProperty("Authorization", token);
+			myURLConnection.setDoOutput(true);
+			myURLConnection.setDoInput(true);
+//			myURLConnection.getOutputStream().write(Base64.getEncoder().encodeToString(documentoSelecionado).getBytes());
+
+			String retornoConsulta = null;
+			if (myURLConnection.getResponseCode() == SiscoatConstants.HTTP_COD_SUCESSO) {
+				BufferedReader in;
+				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
+				String inputLine;
+				StringBuffer response = new StringBuffer();
+				while ((inputLine = in.readLine()) != null) {
+					response.append(inputLine);
+				}
+				in.close();
+
+				retornoConsulta = response.toString();
+			}
+
+			if (!CommonsUtil.semValor(retornoConsulta)) {
+				ResponseApi teste = GsonUtil.fromJson(retornoConsulta, ResponseApi.class);
+//				FileSiscoat result = null;
+//				Gson gson = new Gson();
+				return teste.getMensagem();
+//				result = gson.fromJson(teste.getClasse(), FileSiscoat.class);
+//				return result.getFile();
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
 
 	
 }

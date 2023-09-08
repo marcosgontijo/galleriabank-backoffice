@@ -230,10 +230,10 @@ public class ContasPagarMB {
 		if (CommonsUtil.semValor(documentoConsultarTodos)) {
 			FileService fileService = new FileService();
 			documentoConsultarTodos = fileService
-					.documentoConsultarTodos(this.selectedContratoLov.getNumeroContrato(), getUsuarioLogado());
 		}
 		return documentoConsultarTodos.stream().filter(f ->  CommonsUtil.mesmoValorIgnoreCase( f.getPathOrigin(), "pagar"))
 //				.sorted(new Comparator<FileUploaded>() {
+				.documentoConsultarTodos(this.selectedContratoLov.getNumeroContrato(), getUsuarioLogado());
 //			        public int compare(FileUploaded o1, FileUploaded o2) {
 //			            return o1.getDate().compareTo(o2.getDate());
 //			        }
@@ -413,9 +413,16 @@ public class ContasPagarMB {
 		}
 	}
 	
+	private void deleteFile(FileUploaded f) {
+		FileService fileService = new FileService();
+		fileService.excluirDocumento(this.selectedContratoLov.getNumeroContrato(), f.getPathOrigin(), f.getName(),
+				getUsuarioLogado());
+	}
+	
 	public void deleteFile(List<FileUploaded> deleteFiles) {
 		for (FileUploaded f : deleteFiles) {
-			f.getFile().delete();
+			deleteFile(f);
+//			f.getFile().delete();
 		}
 		File here = new File(".");
 		System.out.println(here.getAbsolutePath());
