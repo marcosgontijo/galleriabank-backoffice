@@ -6902,7 +6902,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}
 	
-	private static final String QUERY_CONTRATOS_CRM = "select c.taxapreaprovada , c.id, c.numeroContrato, c.dataContrato, res.nome, c.quantoPrecisa, im.cidade, c.statuslead, pr.nome, c.inicioAnalise, c.cadastroAprovadoValor, c.matriculaAprovadaValor, c.pagtoLaudoConfirmada, c.laudoRecebido, c.pajurFavoravel, " + 
+	private static final String QUERY_CONTRATOS_CRM = "select im.tipo, c.taxapreaprovada , c.id, c.numeroContrato, c.dataContrato, res.nome, c.quantoPrecisa, im.cidade, c.statuslead, pr.nome, c.inicioAnalise, c.cadastroAprovadoValor, c.matriculaAprovadaValor, c.pagtoLaudoConfirmada, c.laudoRecebido, c.pajurFavoravel, " + 
 		    "c.documentosCompletos, c.ccbPronta, c.agAssinatura, c.agRegistro, c.preAprovadoComite, c.documentosComite, c.aprovadoComite, c.analiseReprovada, c.dataUltimaAtualizacao, c.preAprovadoComiteUsuario, c.inicioanaliseusuario, c.analiseComercial, c.comentarioJuridicoEsteira, c.status, " +
 			"c.pedidoLaudo, c.pedidoLaudoPajuComercial, c.pedidoPreLaudo, c.pedidoPreLaudoComercial, c.pedidoPajuComercial, c.pendenciaLaudoPaju, " +
 		    "c.avaliacaoLaudoObservacao, c.dataPrevistaVistoria, c.geracaoLaudoObservacao, c.iniciouGeracaoLaudo, c.analistaGeracaoPAJU , c.comentarioJuridicoPendente, " +
@@ -7226,58 +7226,59 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					while (rs.next()) {
 						
 						contratoCobranca = new ContratoCobranca();
-						contratoCobranca.setTaxaPreAprovada(rs.getBigDecimal(1));
-						contratoCobranca.setId(rs.getLong(2));
-						contratoCobranca.setNumeroContrato(rs.getString(3));
-						contratoCobranca.setDataContrato(rs.getTimestamp(4));
-						contratoCobranca.setNomeResponsavel(rs.getString(5));
+						contratoCobranca.setTipoImovel(rs.getString(1));
+						contratoCobranca.setTaxaPreAprovada(rs.getBigDecimal(2));
+						contratoCobranca.setId(rs.getLong(3));
+						contratoCobranca.setNumeroContrato(rs.getString(4));
+						contratoCobranca.setDataContrato(rs.getTimestamp(5));
+						contratoCobranca.setNomeResponsavel(rs.getString(6));
 						contratoCobranca.setResponsavel(new Responsavel());
 						contratoCobranca.getResponsavel().setSuperlogica(rs.getBoolean("superlogica"));
 						contratoCobranca.setNomeGerente(rs.getString("nomeGerente")); // utilizado nome da variavel na query para não mudar a posicao dos elementos
-						contratoCobranca.setQuantoPrecisa(rs.getBigDecimal(6));
-						contratoCobranca.setNomeCidadeImovel(rs.getString(7));
-						contratoCobranca.setStatusLead(rs.getString(8));
-						contratoCobranca.setNomePagador(rs.getString(9));
-						contratoCobranca.setInicioAnalise(rs.getBoolean(10));
-						contratoCobranca.setCadastroAprovadoValor(rs.getString(11));
-						contratoCobranca.setMatriculaAprovadaValor(rs.getString(12));
-						contratoCobranca.setPagtoLaudoConfirmada(rs.getBoolean(13));
-						contratoCobranca.setLaudoRecebido(rs.getBoolean(14));
-						contratoCobranca.setPajurFavoravel(rs.getBoolean(15));
-						contratoCobranca.setDocumentosCompletos(rs.getBoolean(16));
-						contratoCobranca.setCcbPronta(rs.getBoolean(17));
-						contratoCobranca.setAgAssinatura(rs.getBoolean(18));
-						contratoCobranca.setAgRegistro(rs.getBoolean(19));
-						contratoCobranca.setPreAprovadoComite(rs.getBoolean(20));
-						contratoCobranca.setDocumentosComite(rs.getBoolean(21));
-						contratoCobranca.setAprovadoComite(rs.getBoolean(22));
-						contratoCobranca.setAnaliseReprovada(rs.getBoolean(23)); 
-						contratoCobranca.setDataUltimaAtualizacao(rs.getTimestamp(24));
-						contratoCobranca.setPreAprovadoComiteUsuario(rs.getString(25));
-						contratoCobranca.setInicioAnaliseUsuario(rs.getString(26));
-						contratoCobranca.setAnaliseComercial(rs.getBoolean(27));
-						contratoCobranca.setComentarioJuridicoEsteira(rs.getBoolean(28));
-						contratoCobranca.setStatus(rs.getString(29));	
-						contratoCobranca.setPedidoLaudo(rs.getBoolean(30));
-						contratoCobranca.setPedidoLaudoPajuComercial(rs.getBoolean(31));
-						contratoCobranca.setPedidoPreLaudo(rs.getBoolean(32));
-						contratoCobranca.setPedidoPreLaudoComercial(rs.getBoolean(33));
-						contratoCobranca.setPedidoPajuComercial(rs.getBoolean(34));
-						contratoCobranca.setPendenciaLaudoPaju(rs.getBoolean(35));
-						contratoCobranca.setAvaliacaoLaudoObservacao(rs.getString(36));
-						contratoCobranca.setDataPrevistaVistoria(rs.getDate(37));
-						contratoCobranca.setGeracaoLaudoObservacao(rs.getString(38));
-						contratoCobranca.setIniciouGeracaoLaudo(rs.getBoolean(39));
+						contratoCobranca.setQuantoPrecisa(rs.getBigDecimal(7));
+						contratoCobranca.setNomeCidadeImovel(rs.getString(8));
+						contratoCobranca.setStatusLead(rs.getString(9));
+						contratoCobranca.setNomePagador(rs.getString(10));
+						contratoCobranca.setInicioAnalise(rs.getBoolean(11));
+						contratoCobranca.setCadastroAprovadoValor(rs.getString(12));
+						contratoCobranca.setMatriculaAprovadaValor(rs.getString(13));
+						contratoCobranca.setPagtoLaudoConfirmada(rs.getBoolean(14));
+						contratoCobranca.setLaudoRecebido(rs.getBoolean(15));
+						contratoCobranca.setPajurFavoravel(rs.getBoolean(16));
+						contratoCobranca.setDocumentosCompletos(rs.getBoolean(17));
+						contratoCobranca.setCcbPronta(rs.getBoolean(18));
+						contratoCobranca.setAgAssinatura(rs.getBoolean(19));
+						contratoCobranca.setAgRegistro(rs.getBoolean(20));
+						contratoCobranca.setPreAprovadoComite(rs.getBoolean(21));
+						contratoCobranca.setDocumentosComite(rs.getBoolean(22));
+						contratoCobranca.setAprovadoComite(rs.getBoolean(23));
+						contratoCobranca.setAnaliseReprovada(rs.getBoolean(24)); 
+						contratoCobranca.setDataUltimaAtualizacao(rs.getTimestamp(25));
+						contratoCobranca.setPreAprovadoComiteUsuario(rs.getString(26));
+						contratoCobranca.setInicioAnaliseUsuario(rs.getString(27));
+						contratoCobranca.setAnaliseComercial(rs.getBoolean(28));
+						contratoCobranca.setComentarioJuridicoEsteira(rs.getBoolean(29));
+						contratoCobranca.setStatus(rs.getString(30));	
+						contratoCobranca.setPedidoLaudo(rs.getBoolean(31));
+						contratoCobranca.setPedidoLaudoPajuComercial(rs.getBoolean(32));
+						contratoCobranca.setPedidoPreLaudo(rs.getBoolean(33));
+						contratoCobranca.setPedidoPreLaudoComercial(rs.getBoolean(34));
+						contratoCobranca.setPedidoPajuComercial(rs.getBoolean(35));
+						contratoCobranca.setPendenciaLaudoPaju(rs.getBoolean(36));
+						contratoCobranca.setAvaliacaoLaudoObservacao(rs.getString(37));
+						contratoCobranca.setDataPrevistaVistoria(rs.getDate(38));
+						contratoCobranca.setGeracaoLaudoObservacao(rs.getString(39));
+						contratoCobranca.setIniciouGeracaoLaudo(rs.getBoolean(40));
 						ResponsavelDao rDao = new ResponsavelDao();
-						contratoCobranca.setAnalistaGeracaoPAJU(rDao.findById(rs.getLong(40)));
-						contratoCobranca.setComentarioJuridicoPendente(rs.getBoolean(41));
-						contratoCobranca.setValorAprovadoComite(rs.getBigDecimal(42));
-						contratoCobranca.setContratoConferido(rs.getBoolean(43));
+						contratoCobranca.setAnalistaGeracaoPAJU(rDao.findById(rs.getLong(41)));
+						contratoCobranca.setComentarioJuridicoPendente(rs.getBoolean(42));
+						contratoCobranca.setValorAprovadoComite(rs.getBigDecimal(43));
+						contratoCobranca.setContratoConferido(rs.getBoolean(44));
 						contratoCobranca.getPagador().setId(rs.getLong("idPagador"));
-						contratoCobranca.setAgEnvioCartorio(rs.getBoolean(44));
-						contratoCobranca.setReanalise(rs.getBoolean(45));						
-						contratoCobranca.setReanalisePronta(rs.getBoolean(46));					
-						contratoCobranca.setReanaliseJuridico(rs.getBoolean(47));
+						contratoCobranca.setAgEnvioCartorio(rs.getBoolean(45));
+						contratoCobranca.setReanalise(rs.getBoolean(46));						
+						contratoCobranca.setReanalisePronta(rs.getBoolean(47));					
+						contratoCobranca.setReanaliseJuridico(rs.getBoolean(48));
 						contratoCobranca.setObservacaoRenda(rs.getString("observacaoRenda"));
 						contratoCobranca.setPagtoLaudoConfirmadaData(rs.getTimestamp("pagtoLaudoConfirmadaData"));
 						contratoCobranca.setContatoDiferenteProprietario(rs.getBoolean("contatoDiferenteProprietario"));

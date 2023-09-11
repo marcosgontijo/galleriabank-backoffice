@@ -181,6 +181,12 @@
 						rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Análise Pré-Aprovada'}">
 						<h:outputText value="#{contratos.taxaPreAprovada}" />
 					</p:column>
+					<p:column style="text-align: center;" headerText="Tipo De Imóvel"
+						filterBy="#{contratos.tipoImovel}"
+						filterMatchMode="contains" sortBy="#{contratos.tipoImovel}"
+						rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Análise Pré-Aprovada'}">
+						<h:outputText value="#{contratos.tipoImovel}" />
+					</p:column>
 					
 					<p:column style="text-align: center;" headerText="Andamento Docket"
 						rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Pedir PAJU'}">
