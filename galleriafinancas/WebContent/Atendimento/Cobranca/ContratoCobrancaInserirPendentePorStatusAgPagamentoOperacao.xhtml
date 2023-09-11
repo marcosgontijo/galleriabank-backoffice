@@ -608,7 +608,8 @@
 										<p:commandButton oncomplete="PF('pagamentoStarkBankdlg').show();"
 											icon="ui-icon-video" title="Pagamento - StarkBank" value="Pagamento - StarkBank"
 											update=":starkBankForm :form" disabled="#{contas.contaPaga}">
-											<f:setPropertyActionListener target="#{contratoCobrancaMB.contasPagarSelecionada}" value="#{contas}" />									
+											<f:setPropertyActionListener target="#{contratoCobrancaMB.contasPagarSelecionada}" value="#{contas}" />		
+											<f:setPropertyActionListener target="#{contratoCobrancaMB.contasPagarSelecionada.valorPagamento}" value="#{contas.valor}" />								
 										</p:commandButton>
 										<p:commandButton oncomplete="PF('baixasStarkBankdlg').show();"
 											icon="ui-icon-video" title="Baixas - StarkBank" value="Baixas - StarkBank"
@@ -985,7 +986,7 @@
 				</p:panel>
 				
 				<div align="center" style="margin-top: 20px;">
-					<p:commandButton value="Processar Pagamento" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.pagamentoStarkBank()}" style="TEXT-DECORATION: bold; margin-right: 20px;" update=":form:messageContasPagar"/>
+					<p:commandButton value="Enviar Ordem de Pagamento" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.pagamentoStarkBank()}" style="TEXT-DECORATION: bold; margin-right: 20px;" update=":form:messageContasPagar"/>
 					<p:commandButton value="Fechar"
 						icon="ui-icon-arrowreturnthick-1-w"
 						oncomplete="PF('pagamentoStarkBankdlg').hide();" />
@@ -1030,7 +1031,7 @@
 						<p:outputLabel value="#{baixas.idTransacao}"  />
 					</p:column>
 					<p:column style="text-align: center;width:260px;" headerText="Comprovante" >
-						<p:commandButton value="Comprovante" ajax="false" icon="ui-icon-arrowthick-1-s" update=":form:messageContasPagar">						       	 	
+						<p:commandButton value="Comprovante" ajax="false" icon="ui-icon-arrowthick-1-s" update=":form:messageContasPagar" rendered="#{baixas.statusPagamento eq 'Aprovado'}">						       	 	
 				       	 	<p:fileDownload value="#{contratoCobrancaMB.getDownloadComprovanteStarkBank(baixas)}" />
 				    	</p:commandButton>	
 					</p:column>					
