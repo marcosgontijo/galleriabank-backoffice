@@ -97,7 +97,7 @@ public class PlexiDocumentosDao extends HibernateDao<PlexiDocumentos, Long> {
 						query = query + " and velocidade like '%" + velocidade + "%'";
 					}
 
-					ps = connection.prepareStatement(QUERY_DOC_PJ);
+					ps = connection.prepareStatement(query);
 					rs = ps.executeQuery();
 
 					PlexiDocumentosDao plexiDocumentosDao = new PlexiDocumentosDao();

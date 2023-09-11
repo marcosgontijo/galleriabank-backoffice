@@ -15,14 +15,12 @@ import javax.faces.application.FacesMessage;
 import org.json.JSONObject;
 
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
-import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.infra.db.model.User;
 
-import br.com.galleriabank.dataengine.cliente.model.request.DataEngineIdSend;
 import br.com.galleriabank.jwt.common.JwtUtil;
 
 public class PlexiService {
