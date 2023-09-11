@@ -9211,4 +9211,35 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}
 	
+	private static final String QUERY_CONTRATOS_IPCA_JOB =  "select cc.id "
+			+ " from cobranca.contratocobranca cc"
+			+ " where cc.CorrigidoIPCAHibrido = true "
+			+ " or cc.CorrigidoIPCA = true ";
+	
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobranca> consultaContratosIpcaJob() {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+					ps = connection.prepareStatement(QUERY_CONTRATOS_IPCA_JOB);
+					rs = ps.executeQuery();			
+					ContratoCobranca contratoCobranca = new ContratoCobranca();			
+					while (rs.next()) {
+						contratoCobranca = findById(rs.getLong(1));
+						objects.add(contratoCobranca);												
+					}
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}
+	
 }

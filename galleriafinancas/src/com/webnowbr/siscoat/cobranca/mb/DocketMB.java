@@ -127,7 +127,7 @@ public class DocketMB {
 		localidadesSelecionada = new DocumentosPagadorDocket();
 		
 		DocumentosDocketDao docDao = new DocumentosDocketDao();	
-		listaDococumentosDocket = docDao.findAll();
+		listaDococumentosDocket = docDao.getAllDocumentosDocket();
 		
 		listaEsperaPagador = new ArrayList<PagadorRecebedor>();
 
@@ -523,7 +523,7 @@ public class DocketMB {
 		selectedPagadorDocumentos = pagador;
 		DocumentosDocketDao docDao = new DocumentosDocketDao();	
 		listaDococumentosDocket = new ArrayList<DocumentosDocket>();
-		listaDococumentosDocket = docDao.findAll();
+		listaDococumentosDocket = docDao.getAllDocumentosDocket();
 	}
 	
 	public void adicionaDoc(DocumentosDocket doc) { //seleciona um documento no dialog
@@ -603,7 +603,7 @@ public class DocketMB {
 	
 	public void adiconarDocumentospagador(PagadorRecebedor pagador, EstadosEnum estado,  String cidadeImovel) {
 		DocumentosDocketDao docDao = new DocumentosDocketDao();
-		List<DocumentosDocket> listaDocs = docDao.findAll();
+		List<DocumentosDocket> listaDocs = docDao.getAllDocumentosDocket();
 		
 		if(CommonsUtil.mesmoValor(estado.getUf(), "RJ")
 				|| CommonsUtil.mesmoValor(estado.getUf(), "PR")) {
