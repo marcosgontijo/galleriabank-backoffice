@@ -6902,7 +6902,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}
 	
-	private static final String QUERY_CONTRATOS_CRM = "select c.id, c.numeroContrato, c.dataContrato, res.nome, c.quantoPrecisa, im.cidade, c.statuslead, pr.nome, c.inicioAnalise, c.cadastroAprovadoValor, c.matriculaAprovadaValor, c.pagtoLaudoConfirmada, c.laudoRecebido, c.pajurFavoravel, " + 
+	private static final String QUERY_CONTRATOS_CRM = "select c.taxapreaprovada , c.id, c.numeroContrato, c.dataContrato, res.nome, c.quantoPrecisa, im.cidade, c.statuslead, pr.nome, c.inicioAnalise, c.cadastroAprovadoValor, c.matriculaAprovadaValor, c.pagtoLaudoConfirmada, c.laudoRecebido, c.pajurFavoravel, " + 
 		    "c.documentosCompletos, c.ccbPronta, c.agAssinatura, c.agRegistro, c.preAprovadoComite, c.documentosComite, c.aprovadoComite, c.analiseReprovada, c.dataUltimaAtualizacao, c.preAprovadoComiteUsuario, c.inicioanaliseusuario, c.analiseComercial, c.comentarioJuridicoEsteira, c.status, " +
 			"c.pedidoLaudo, c.pedidoLaudoPajuComercial, c.pedidoPreLaudo, c.pedidoPreLaudoComercial, c.pedidoPajuComercial, c.pendenciaLaudoPaju, " +
 		    "c.avaliacaoLaudoObservacao, c.dataPrevistaVistoria, c.geracaoLaudoObservacao, c.iniciouGeracaoLaudo, c.analistaGeracaoPAJU , c.comentarioJuridicoPendente, " +
@@ -7226,58 +7226,58 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					while (rs.next()) {
 						
 						contratoCobranca = new ContratoCobranca();
-
-						contratoCobranca.setId(rs.getLong(1));
-						contratoCobranca.setNumeroContrato(rs.getString(2));
-						contratoCobranca.setDataContrato(rs.getTimestamp(3));
-						contratoCobranca.setNomeResponsavel(rs.getString(4));
+						contratoCobranca.setTaxaPreAprovada(rs.getBigDecimal(1));
+						contratoCobranca.setId(rs.getLong(2));
+						contratoCobranca.setNumeroContrato(rs.getString(3));
+						contratoCobranca.setDataContrato(rs.getTimestamp(4));
+						contratoCobranca.setNomeResponsavel(rs.getString(5));
 						contratoCobranca.setResponsavel(new Responsavel());
 						contratoCobranca.getResponsavel().setSuperlogica(rs.getBoolean("superlogica"));
 						contratoCobranca.setNomeGerente(rs.getString("nomeGerente")); // utilizado nome da variavel na query para não mudar a posicao dos elementos
-						contratoCobranca.setQuantoPrecisa(rs.getBigDecimal(5));
-						contratoCobranca.setNomeCidadeImovel(rs.getString(6));
-						contratoCobranca.setStatusLead(rs.getString(7));
-						contratoCobranca.setNomePagador(rs.getString(8));
-						contratoCobranca.setInicioAnalise(rs.getBoolean(9));
-						contratoCobranca.setCadastroAprovadoValor(rs.getString(10));
-						contratoCobranca.setMatriculaAprovadaValor(rs.getString(11));
-						contratoCobranca.setPagtoLaudoConfirmada(rs.getBoolean(12));
-						contratoCobranca.setLaudoRecebido(rs.getBoolean(13));
-						contratoCobranca.setPajurFavoravel(rs.getBoolean(14));
-						contratoCobranca.setDocumentosCompletos(rs.getBoolean(15));
-						contratoCobranca.setCcbPronta(rs.getBoolean(16));
-						contratoCobranca.setAgAssinatura(rs.getBoolean(17));
-						contratoCobranca.setAgRegistro(rs.getBoolean(18));
-						contratoCobranca.setPreAprovadoComite(rs.getBoolean(19));
-						contratoCobranca.setDocumentosComite(rs.getBoolean(20));
-						contratoCobranca.setAprovadoComite(rs.getBoolean(21));
-						contratoCobranca.setAnaliseReprovada(rs.getBoolean(22)); 
-						contratoCobranca.setDataUltimaAtualizacao(rs.getTimestamp(23));
-						contratoCobranca.setPreAprovadoComiteUsuario(rs.getString(24));
-						contratoCobranca.setInicioAnaliseUsuario(rs.getString(25));
-						contratoCobranca.setAnaliseComercial(rs.getBoolean(26));
-						contratoCobranca.setComentarioJuridicoEsteira(rs.getBoolean(27));
-						contratoCobranca.setStatus(rs.getString(28));	
-						contratoCobranca.setPedidoLaudo(rs.getBoolean(29));
-						contratoCobranca.setPedidoLaudoPajuComercial(rs.getBoolean(30));
-						contratoCobranca.setPedidoPreLaudo(rs.getBoolean(31));
-						contratoCobranca.setPedidoPreLaudoComercial(rs.getBoolean(32));
-						contratoCobranca.setPedidoPajuComercial(rs.getBoolean(33));
-						contratoCobranca.setPendenciaLaudoPaju(rs.getBoolean(34));
-						contratoCobranca.setAvaliacaoLaudoObservacao(rs.getString(35));
-						contratoCobranca.setDataPrevistaVistoria(rs.getDate(36));
-						contratoCobranca.setGeracaoLaudoObservacao(rs.getString(37));
-						contratoCobranca.setIniciouGeracaoLaudo(rs.getBoolean(38));
+						contratoCobranca.setQuantoPrecisa(rs.getBigDecimal(6));
+						contratoCobranca.setNomeCidadeImovel(rs.getString(7));
+						contratoCobranca.setStatusLead(rs.getString(8));
+						contratoCobranca.setNomePagador(rs.getString(9));
+						contratoCobranca.setInicioAnalise(rs.getBoolean(10));
+						contratoCobranca.setCadastroAprovadoValor(rs.getString(11));
+						contratoCobranca.setMatriculaAprovadaValor(rs.getString(12));
+						contratoCobranca.setPagtoLaudoConfirmada(rs.getBoolean(13));
+						contratoCobranca.setLaudoRecebido(rs.getBoolean(14));
+						contratoCobranca.setPajurFavoravel(rs.getBoolean(15));
+						contratoCobranca.setDocumentosCompletos(rs.getBoolean(16));
+						contratoCobranca.setCcbPronta(rs.getBoolean(17));
+						contratoCobranca.setAgAssinatura(rs.getBoolean(18));
+						contratoCobranca.setAgRegistro(rs.getBoolean(19));
+						contratoCobranca.setPreAprovadoComite(rs.getBoolean(20));
+						contratoCobranca.setDocumentosComite(rs.getBoolean(21));
+						contratoCobranca.setAprovadoComite(rs.getBoolean(22));
+						contratoCobranca.setAnaliseReprovada(rs.getBoolean(23)); 
+						contratoCobranca.setDataUltimaAtualizacao(rs.getTimestamp(24));
+						contratoCobranca.setPreAprovadoComiteUsuario(rs.getString(25));
+						contratoCobranca.setInicioAnaliseUsuario(rs.getString(26));
+						contratoCobranca.setAnaliseComercial(rs.getBoolean(27));
+						contratoCobranca.setComentarioJuridicoEsteira(rs.getBoolean(28));
+						contratoCobranca.setStatus(rs.getString(29));	
+						contratoCobranca.setPedidoLaudo(rs.getBoolean(30));
+						contratoCobranca.setPedidoLaudoPajuComercial(rs.getBoolean(31));
+						contratoCobranca.setPedidoPreLaudo(rs.getBoolean(32));
+						contratoCobranca.setPedidoPreLaudoComercial(rs.getBoolean(33));
+						contratoCobranca.setPedidoPajuComercial(rs.getBoolean(34));
+						contratoCobranca.setPendenciaLaudoPaju(rs.getBoolean(35));
+						contratoCobranca.setAvaliacaoLaudoObservacao(rs.getString(36));
+						contratoCobranca.setDataPrevistaVistoria(rs.getDate(37));
+						contratoCobranca.setGeracaoLaudoObservacao(rs.getString(38));
+						contratoCobranca.setIniciouGeracaoLaudo(rs.getBoolean(39));
 						ResponsavelDao rDao = new ResponsavelDao();
-						contratoCobranca.setAnalistaGeracaoPAJU(rDao.findById(rs.getLong(39)));
-						contratoCobranca.setComentarioJuridicoPendente(rs.getBoolean(40));
-						contratoCobranca.setValorAprovadoComite(rs.getBigDecimal(41));
-						contratoCobranca.setContratoConferido(rs.getBoolean(42));
+						contratoCobranca.setAnalistaGeracaoPAJU(rDao.findById(rs.getLong(40)));
+						contratoCobranca.setComentarioJuridicoPendente(rs.getBoolean(41));
+						contratoCobranca.setValorAprovadoComite(rs.getBigDecimal(42));
+						contratoCobranca.setContratoConferido(rs.getBoolean(43));
 						contratoCobranca.getPagador().setId(rs.getLong("idPagador"));
-						contratoCobranca.setAgEnvioCartorio(rs.getBoolean(43));
-						contratoCobranca.setReanalise(rs.getBoolean(44));						
-						contratoCobranca.setReanalisePronta(rs.getBoolean(45));					
-						contratoCobranca.setReanaliseJuridico(rs.getBoolean(46));
+						contratoCobranca.setAgEnvioCartorio(rs.getBoolean(44));
+						contratoCobranca.setReanalise(rs.getBoolean(45));						
+						contratoCobranca.setReanalisePronta(rs.getBoolean(46));					
+						contratoCobranca.setReanaliseJuridico(rs.getBoolean(47));
 						contratoCobranca.setObservacaoRenda(rs.getString("observacaoRenda"));
 						contratoCobranca.setPagtoLaudoConfirmadaData(rs.getTimestamp("pagtoLaudoConfirmadaData"));
 						contratoCobranca.setContatoDiferenteProprietario(rs.getBoolean("contatoDiferenteProprietario"));
