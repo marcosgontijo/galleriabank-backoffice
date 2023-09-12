@@ -80,6 +80,7 @@ public class PlexiService {
 				PlexiConsultaDao plexiDao = new PlexiConsultaDao();
 				plexiCosulta.setUsuario(usuarioLogado);
 				plexiCosulta.setDataConsulta(DateUtil.gerarDataHoje());
+				plexiCosulta.setStatus("Aguardando Retorno");
 				plexiDao.create(plexiCosulta);
 				
 				result = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
