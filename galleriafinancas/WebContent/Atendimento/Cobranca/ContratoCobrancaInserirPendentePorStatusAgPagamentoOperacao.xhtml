@@ -1030,6 +1030,9 @@
 					<p:column style="text-align: center;" headerText="ID Transação"  >
 						<p:outputLabel value="#{baixas.idTransacao}"  />
 					</p:column>
+					<p:column style="text-align: center;" headerText="Status Pagamento"  >
+						<p:outputLabel value="#{baixas.statusPagamento}" />
+					</p:column>
 					<p:column style="text-align: center;width:260px;" headerText="Comprovante" >
 						<p:commandButton value="Comprovante" ajax="false" icon="ui-icon-arrowthick-1-s" update=":form:messageContasPagar" rendered="#{baixas.statusPagamento eq 'Aprovado'}">						       	 	
 				       	 	<p:fileDownload value="#{contratoCobrancaMB.getDownloadComprovanteStarkBank(baixas)}" />
