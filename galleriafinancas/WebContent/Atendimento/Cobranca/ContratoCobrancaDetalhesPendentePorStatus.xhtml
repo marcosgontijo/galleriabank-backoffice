@@ -2300,13 +2300,16 @@
 							label="Estado" style="width:410px;" />
 
 						<p:outputLabel for="linkGMapsImovel" value="Link Google Maps: " />
-						<p:outputLabel id="linkGMapsImovel"
+						<p:inputText id="linkGMapsImovel"
 							value="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}"
-							label="Link Google Maps" style="width:400px;" />
+							label="Link Google Maps" style="width:400px;" >
+							<p:ajax event="keyup" update="gerarLinkimovel"/>
+						</p:inputText>
 
-						<p:commandButton value="Gerar Link"
-							action="#{contratoCobrancaMB.getLinkMaps()}"
-							update="linkGMapsImovel botaoLinkImovel" disabled="true" />
+						<p:commandButton id="gerarLinkimovel" value="Gerar Link" action="#{contratoCobrancaMB.getLinkMaps()}" 
+							disabled="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps ne null 
+								and contratoCobrancaMB.objetoImovelCobranca.linkGMaps ne ''}"
+							update="linkGMapsImovel botaoLinkImovel gerarLinkimovel" />	
 
 						<h:panelGroup id="botaoLinkImovel">
 							<a href="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}"

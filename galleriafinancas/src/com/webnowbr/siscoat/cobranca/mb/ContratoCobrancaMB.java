@@ -29744,7 +29744,7 @@ public class ContratoCobrancaMB {
 		}
 	}
 
-	public void executarConsultasPedirPajuDocumento() throws SchedulerException {
+	public void executarConsultasPedirPajuDocumento(String estado) throws SchedulerException {
 		NetrinService netrinService = new NetrinService();
 		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
@@ -29754,13 +29754,15 @@ public class ContratoCobrancaMB {
 				.collect(Collectors.toList())) {
 			String observacao = "";
 			if (documentoAnalise.isLiberadoAnalise() && !CommonsUtil.semValor(documentoAnalise.getPagador())) {
-
 				if (CommonsUtil.semValor(documentoAnalise.getRetornoCNDEstadual())) {
 					documentoAnalise.addObservacao("Processando CND Estadual");
 					if (CommonsUtil.semValor(documentoAnalise.getPagador().getEstado())) {
-						observacao = observacao + "Falta UF para consulta estadual \n";
-						documentoAnalise.addObservacao("Falta UF para consulta estadual");
-					} else if (CommonsUtil.mesmoValor(documentoAnalise.getPagador().getEstado().toLowerCase(), "mg")
+						documentoAnalise.getPagador().setEstado(estado);
+						//observacao = observacao + "Falta UF para consulta estadual \n";
+						//documentoAnalise.addObservacao("Falta UF para consulta estadual");
+					} 
+					
+					if (CommonsUtil.mesmoValor(documentoAnalise.getPagador().getEstado().toLowerCase(), "mg")
 							&& CommonsUtil.semValor(documentoAnalise.getPagador().getCep())) {
 						observacao = observacao + "Falta CEP para consulta estadual de MG \n";
 						documentoAnalise.addObservacao("Falta CEP para consulta estadual de MG");
