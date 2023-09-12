@@ -123,4 +123,66 @@ public class PlexiConsultaDao extends HibernateDao<PlexiConsulta, Long> {
 		}
 		return true;
 	}
+
+	private static final String QUERY_GET_NUMCONTRATO_ANALISE= "select c.numerocontrato, d.identificacao  from cobranca.documentoanalise_plexiconsultas_join dpj \r\n"
+			+ "inner join cobranca.documentosanalise d on d.id = dpj.iddocumentoanalise \r\n"
+			+ "inner join cobranca.contratocobranca c on c.id = d.contratocobranca \r\n"
+			+ "where dpj.idplexiconsulta = ?";
+
+
+	@SuppressWarnings("unchecked")
+	public String getNumeroContratoAnalise(PlexiConsulta plexiConsulta) {
+		return (String) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				String retorno = "";
+
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+
+					ps = connection.prepareStatement(QUERY_GET_NUMCONTRATO_ANALISE);
+					ps.setLong(1, plexiConsulta.getId());
+					rs = ps.executeQuery();	
+					
+					while (rs.next()) {
+						retorno = rs.getString("numerocontrato");						
+					}
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return retorno;
+			}
+		});
+	}
+	
+	@SuppressWarnings("unchecked")
+	public String getNomeAnalise(PlexiConsulta plexiConsulta) {
+		return (String) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				String retorno = "";
+
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+
+					ps = connection.prepareStatement(QUERY_GET_NUMCONTRATO_ANALISE);
+					ps.setLong(1, plexiConsulta.getId());
+					rs = ps.executeQuery();	
+					
+					while (rs.next()) {
+						retorno = rs.getString("identificacao");						
+					}
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return retorno;
+			}
+		});
+	}
 }

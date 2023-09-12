@@ -77,15 +77,16 @@ public class PlexiDocumentosDao extends HibernateDao<PlexiDocumentos, Long> {
 				PreparedStatement ps = null;
 				ResultSet rs = null;
 				try {
-					String query = QUERY_DOC_PF;
+					String query = QUERY_DOC_PJ;
 					
 					connection = getConnection();
 					if(!CommonsUtil.semValor(estados)){
 						query = query + " and(";
 						boolean primeiro = true;
 						for (String uf : estados) {
-							if(!primeiro) {
+							if(primeiro) {
 								query = query + " estados like '%" + uf.toUpperCase() + "%' ";
+								primeiro = false;
 							} else {
 								query = query + " or estados like '%" + uf.toUpperCase() + "%' ";
 							}
