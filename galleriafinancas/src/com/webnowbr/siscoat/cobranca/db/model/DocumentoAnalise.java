@@ -82,12 +82,14 @@ public class DocumentoAnalise implements Serializable {
 	private boolean politicamenteExposta = false;
 	private String pessoasPoliticamenteExpostas = "0";
 	
+	private double totalPendenciasValor = 0.0;
 	private double totalValorApontamentos = 0.0;
 	private double totalInadimplenciaValor = 0.0;
 	private double totalLawSuitValor = 0.0;
 	private double totalProtestosValor = 0.0;
 	
 	private int totalPendencias = 0;
+	private int totalInadimplencias = 0;
 	private int totalLawSuitApontamentos = 0;
 	private int totalApontamentos = 0;
 	private int totalCcfApontamentos = 0;
@@ -173,7 +175,8 @@ public class DocumentoAnalise implements Serializable {
 				if (cpf != null)
 					result.add(new DocumentoAnaliseResumo("CPF:", cpf.getValue()));
 				
-				if (!engine.getConsultaCompleta().getBestInfo().getAge().isEmpty())
+				if (engine.getConsultaCompleta().getBestInfo().getAge() != null 
+						&& !engine.getConsultaCompleta().getBestInfo().getAge().isEmpty())
 					result.add(new DocumentoAnaliseResumo("Idade:", engine.getConsultaCompleta().getBestInfo().getAge()));
 					
 			} else if (CommonsUtil.mesmoValor(tipoPessoa, "PJ")) {
@@ -204,7 +207,7 @@ public class DocumentoAnalise implements Serializable {
 			} else {
 				EngineRetornoExecutionResultProcessos processo = engine.getProcessos();
 				result.add(new DocumentoAnaliseResumo("Numero  de processos:",
-						CommonsUtil.stringValue(processo.getTotal_acoes_judicias_reu())));
+						CommonsUtil.stringValue(processo.getTotal_acoes_judicias_reu() + totalLawSuitApontamentos)));
 			}
 			if(engine.getConsultaCompleta() == null) {
 				result.add(new DocumentoAnaliseResumo("Pessoa Políticamente exposta:", "Não disponível"));
@@ -220,14 +223,19 @@ public class DocumentoAnalise implements Serializable {
 			if(engine.getConsultaCompleta() == null) {
 				result.add(new DocumentoAnaliseResumo("Valor processos:", "Não disponível"));
 			} else {
-				result.add(new DocumentoAnaliseResumo("Valor processos:", "0"));
+				if (totalLawSuitApontamentos > 0) {
+					result.add(new DocumentoAnaliseResumo("Valor processos:", String.format("%,.2f", totalLawSuitValor) 
+																			 + " (" + CommonsUtil.stringValue(totalLawSuitApontamentos) + ")"));
+				} else {
+					result.add(new DocumentoAnaliseResumo("Valor processos:", "0"));
+				}				
 			}
 			
 			if(engine.getConsultaCompleta() == null) {
 				result.add(new DocumentoAnaliseResumo("Pendências financeiras:", "Não disponível"));
 			} else {
 				if (totalPendencias > 0) {
-					result.add(new DocumentoAnaliseResumo("Pendências financeiras:", String.format("%,.2f", totalValorApontamentos) 
+					result.add(new DocumentoAnaliseResumo("Pendências financeiras:", String.format("%,.2f", totalPendenciasValor) 
 																					+ " (" + CommonsUtil.stringValue(totalPendencias) + ")"));
 				} else {
 					result.add(new DocumentoAnaliseResumo("Pendências financeiras:", "0"));
@@ -237,7 +245,7 @@ public class DocumentoAnalise implements Serializable {
 			if(engine.getConsultaCompleta() == null) {
 				result.add(new DocumentoAnaliseResumo("Cheque sem fundo:", "Não disponível"));
 			} else {
-				if (totalCcfApontamentos > 1) {
+				if (totalCcfApontamentos > 0) {
 					result.add(new DocumentoAnaliseResumo("Cheque sem fundo:", CommonsUtil.stringValue(totalCcfApontamentos)));
 				} else {
 					result.add(new DocumentoAnaliseResumo("Cheque sem fundo:", "0"));
@@ -247,9 +255,9 @@ public class DocumentoAnalise implements Serializable {
 			if(engine.getConsultaCompleta() == null) {
 				result.add(new DocumentoAnaliseResumo("Inadimplências Comunicadas:", "Não disponível"));
 			} else {
-				if (totalApontamentos > 0) {
+				if (totalInadimplencias > 0) {
 					result.add(new DocumentoAnaliseResumo("Inadimplências Comunicadas:", String.format("%,.2f", totalInadimplenciaValor) 
-																						+ " (" + CommonsUtil.stringValue(totalApontamentos) + ")"));
+																						+ " (" + CommonsUtil.stringValue(totalInadimplencias) + ")"));
 				} else {
 					result.add(new DocumentoAnaliseResumo("Inadimplências Comunicadas:", "0"));
 				}	
@@ -285,6 +293,7 @@ public class DocumentoAnalise implements Serializable {
 			if (CommonsUtil.mesmoValor(objER.get("validationSource"), "Consulta completa Credito") 
 				|| CommonsUtil.mesmoValor(objER.get("validationSource"), "Credito PJ")) {
 				if (!CommonsUtil.mesmoValor(objER.getString("observation"), "")) {
+					System.out.println(objER.getString("observation"));
 					calculaPendenciasFinanceiras(new JSONObject(objER.getString("observation")));
 				}
 			}
@@ -298,10 +307,12 @@ public class DocumentoAnalise implements Serializable {
 		 * LawSuit = Ação Judicial
 		 * */
 		
+		if (obj.getJSONObject("Negative").has("PendenciesControlCred")) {
+			totalValorApontamentos = obj.getJSONObject("Negative").getDouble("PendenciesControlCred");
+		}
 		
-		totalValorApontamentos = obj.getJSONObject("Negative").getDouble("PendenciesControlCred");
 		if (obj.getJSONObject("Negative").has("TotalApontamentos")) {
-			totalPendencias = obj.getJSONObject("Negative").getInt("TotalApontamentos");
+			totalInadimplencias = obj.getJSONObject("Negative").getInt("TotalApontamentos");
 			totalInadimplenciaValor = obj.getJSONObject("Negative").getDouble("TotalValorApontamentos");
 		}
 		
@@ -313,10 +324,14 @@ public class DocumentoAnalise implements Serializable {
 		if (obj.getJSONObject("Negative").has("TotalCcfApontamentos")) {
 			totalCcfApontamentos = obj.getJSONObject("Negative").getInt("TotalCcfApontamentos");
 		}
-
+	
+		if (obj.getJSONObject("Negative").has("TotalProtests")) {
+			totalProtestos = obj.getJSONObject("Negative").getInt("TotalProtests");
+			totalProtestosValor = obj.getJSONObject("Negative").getDouble("TotalValorProtests");
+		}
 		
-		totalProtestos = obj.getJSONObject("Negative").getInt("TotalProtests");
-		totalProtestosValor = obj.getJSONObject("Negative").getDouble("TotalValorProtests");
+		totalPendenciasValor = totalInadimplenciaValor + totalLawSuitValor; 
+		totalPendencias = totalInadimplencias + totalLawSuitApontamentos + totalCcfApontamentos;
 	}
 
 
