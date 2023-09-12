@@ -273,10 +273,8 @@ public class DocumentoAnalise implements Serializable {
 	private void populaExecutionResult(EngineRetorno engine) {		
 		for (int i = 0; i < engine.getExecutionResult().size(); i++) {
 			JSONObject objER = new JSONObject(engine.getExecutionResult().get(i));
-			System.out.println("objER: " + objER);
 			
 			if (CommonsUtil.mesmoValor(objER.get("validationSource"), "provider-pep-relacionado")) {
-				System.out.println("pep objER: " + objER.getString("observation"));
 				if (!CommonsUtil.mesmoValor(objER.getString("observation"), "")) {
 					JSONArray novoObj = new JSONArray(objER.getString("observation"));
 					politicamenteExposta = true;
