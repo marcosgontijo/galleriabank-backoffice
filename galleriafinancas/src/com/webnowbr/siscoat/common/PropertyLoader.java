@@ -38,7 +38,10 @@ public final class PropertyLoader {
 	 * Configuration file name. no linux
 	 */
 	private static final String CONFIGURATION_FILE_NAME_LINUX = "/home/webnowbr/Siscoat/Conf/sysconf.properties";
-
+	/**
+	 * Configuration file name. no mac
+	 */
+	private static final String CONFIGURATION_FILE_NAME_MAC = "/Users/hermesjr/Documents/webnowbr/Siscoat/Conf/sysconf.properties";
 	/**
 	 * Configuration file name.
 	 */
@@ -52,7 +55,10 @@ public final class PropertyLoader {
 	 * Configuration file name. no linux
 	 */
 	private static final String  WEBAAPI_FILE_NAME_LINUX = "/home/webnowbr/Siscoat/Conf/webapiconfig.properties";
-
+	/**
+	 * Configuration file name. no mac
+	 */
+	private static final String WEBAAPI_FILE_NAME_MAC = "/Users/hermesjr/Documents/webnowbr/Siscoat/Conf/webapiconfig.properties";
 	/**
 	 * Project configuration properties loaded from configuration file.
 	 */
@@ -100,6 +106,10 @@ public final class PropertyLoader {
 					input = new FileInputStream(CONFIGURATION_FILE_NAME_LINUX);
 				}
 				
+				if (CommonsUtil.sistemaMAC()) {
+					input = new FileInputStream(CONFIGURATION_FILE_NAME_MAC);
+				}
+				
 				if (input != null) {
 					LOG.info(CONFIGURATION_FILE_NAME + " found in the classpath.");
 					sAdrimsProperties.load(input);
@@ -108,7 +118,6 @@ public final class PropertyLoader {
 					LOG.info(CONFIGURATION_FILE_NAME + " not found on path: " + file.getAbsolutePath());
 				}
 				
-				
 				InputStream inputWebApi = Thread.currentThread().getContextClassLoader().getResourceAsStream(WEBAAPI_FILE_NAME);
 
 				if (CommonsUtil.sistemaWindows() && new File(WEBAAPI_FILE_NAME_WINDOWS).exists()) {
@@ -116,6 +125,11 @@ public final class PropertyLoader {
 				} else 	if (new File(WEBAAPI_FILE_NAME_LINUX).exists()) {
 					inputWebApi = new FileInputStream(WEBAAPI_FILE_NAME_LINUX);
 				}
+				
+				if (CommonsUtil.sistemaMAC()) {
+					inputWebApi = new FileInputStream(WEBAAPI_FILE_NAME_MAC);
+				}
+				
 				if (inputWebApi != null) {
 					LOG.info(CONFIGURATION_FILE_NAME + " found in the classpath.");
 					sAdrimsProperties.load(inputWebApi);

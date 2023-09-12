@@ -16,7 +16,9 @@ public class StarkBankBaixa implements Serializable {
     public String documento;
     public String linhaBoleto;
     public String formaPagamento;
-
+    public String statusPagamento;
+    public ContasPagar contasPagar;
+    
 	public StarkBankBaixa(){
 
 	}
@@ -87,5 +89,21 @@ public class StarkBankBaixa implements Serializable {
 
 	public void setFormaPagamento(String formaPagamento) {
 		this.formaPagamento = formaPagamento;
+	}
+
+	public ContasPagar getContasPagar() {
+		return contasPagar;
+	}
+
+	public void setContasPagar(ContasPagar contasPagar) {
+		this.contasPagar = contasPagar;
+	}
+
+	public String getStatusPagamento() {
+		return statusPagamento;
+	}
+
+	public void setStatusPagamento(String statusPagamento) {
+		this.statusPagamento = statusPagamento;
 	}
 }

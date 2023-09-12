@@ -1445,6 +1445,15 @@ public class CommonsUtil {
 		}
 		return result;
 	}
+	
+	public static final boolean sistemaMAC() {
+		String sistemaOperacional = System.getProperty("os.name").toUpperCase();
+		boolean result = false;
+		if (sistemaOperacional.contains("MAC"))  {
+			result = true;
+		}
+		return result;
+	}
 
 	public static final boolean servicoConsultaAtivo(String[] lista, Integer codigoServico) {
 		boolean result = false;

@@ -779,6 +779,9 @@ public class ContratoCobrancaMB {
 	private BigDecimal vlrRepasseFinalNew;
 	private BigDecimal vlrRetencaoFinalNew;
 	private BigDecimal vlrComissaoFinalNew;
+	
+	private List<StarkBankBaixa> pagamentosStarkBankPendentes = new ArrayList<StarkBankBaixa>();
+	private StarkBankBaixa objetoBaixaPagamentoStarkBank = new StarkBankBaixa();
 
 	private DualListModel<PagadorRecebedor> dualListModelRecebedores;
 	private List<PagadorRecebedor> listRecebedoresSeleciodados;
@@ -19943,7 +19946,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.calcularValorTotalContasPagas();
 
 	}
-
+	
 	public void pagamentoStarkBank() {
 		FacesContext context = FacesContext.getCurrentInstance();
 
@@ -19953,16 +19956,8 @@ public class ContratoCobrancaMB {
 		this.contasPagarSelecionada.setTipoDespesa("C");
 		this.contasPagarSelecionada.setResponsavel(this.objetoContratoCobranca.getResponsavel());
 
-		boolean finalizaOperacao = false;
 
 		if (!CommonsUtil.semValor(this.contasPagarSelecionada.getValor())) {
-			if (!CommonsUtil.semValor(this.objetoContratoCobranca.getContaPagarValorTotal())) {
-				this.objetoContratoCobranca.setContaPagarValorTotal(this.objetoContratoCobranca
-						.getContaPagarValorTotal().add(this.contasPagarSelecionada.getValor()));
-			} else {
-				this.objetoContratoCobranca.setContaPagarValorTotal(this.contasPagarSelecionada.getValor());
-			}
-
 			if (!CommonsUtil.semValor(this.contasPagarSelecionada.getValorPagamento())) {
 				StarkBankAPI starkBankAPI = new StarkBankAPI();
 
@@ -19970,136 +19965,200 @@ public class ContratoCobrancaMB {
 
 					this.contasPagarSelecionada.setDescricaoStarkBank("Pagamento de Conta");
 
-					StarkBankBoleto starkBankBoleto = starkBankAPI.paymentBoleto(
-							this.contasPagarSelecionada.getLinhaDigitavelStarkBank(), this.objetoContratoCobranca,
-							this.objetoPagadorRecebedor, this.contasPagarSelecionada.getDescricaoStarkBank(),
-							this.contasPagarSelecionada.getNumeroDocumentoPagadorStarkBank());
-
-					if (starkBankBoleto != null) {
-						// this.contasPagarSelecionada.setComprovantePagamentoStarkBank(starkBankBoleto);
-						StarkBankBaixa baixa = registraBaixaStarkBank(starkBankBoleto.getCreated(),
-								starkBankBoleto.getTaxId(), String.valueOf(starkBankBoleto.getId()),
-								starkBankBoleto.getLine(), this.objetoPagadorRecebedor.getNome(),
-								starkBankBoleto.getAmount(), this.contasPagarSelecionada, "Boleto");
+					StarkBankBaixa baixa = registraBaixaStarkBank(this.contasPagarSelecionada.getDataPagamento(),
+							this.contasPagarSelecionada.getNumeroDocumentoPagadorStarkBank(), null,
+							this.contasPagarSelecionada.getLinhaDigitavelStarkBank(), this.objetoPagadorRecebedor.getNome(),
+							this.contasPagarSelecionada.getValorPagamento(), this.contasPagarSelecionada, "Boleto", "Aguardando Aprovação");
 
 						this.contasPagarSelecionada.getListContasPagarBaixas().add(baixa);
 
-						this.objetoContratoCobranca.setContaPagarValorTotal(this.objetoContratoCobranca
-								.getContaPagarValorTotal().subtract(this.contasPagarSelecionada.getValorPagamento()));
-
 						context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-								"Pagamento StarkBank: Boleto pago sucesso!", ""));
-
-						finalizaOperacao = true;
-					}
+								"Pagamento StarkBank: Ordem de Pagamento de Boleto inserida com sucesso!", ""));
 				}
 
 				if (this.contasPagarSelecionada.getFormaTransferencia().equals("Pix")) {
-					StarkBankPix starkBankPix = starkBankAPI.paymentPix(
-							this.objetoContratoCobranca.getChavePIXBancarioContaPagar(),
-							this.objetoContratoCobranca.getAgenciaBancarioContaPagar(),
-							objetoContratoCobranca.getContaBancarioContaPagar(),
-							this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar(),
-							this.objetoContratoCobranca.getNomeBancarioContaPagar(),
-							this.contasPagarSelecionada.getValorPagamento(),
-							this.contasPagarSelecionada.getFormaTransferencia());
-
-					/*
-					 * estrutura de teste offline StarkBankPix starkBankPix = new StarkBankPix();
-					 * long id = 12121212; starkBankPix.setId(id);
-					 * starkBankPix.setCreated(gerarDataHoje());
-					 * starkBankPix.setScheduled("scheduled");
-					 * starkBankPix.setNomeComprovante("NOME PESSOA"); starkBankPix.setAmount(new
-					 * BigDecimal(1250.00)); starkBankPix.setTaxId("312.559.048-52");
-					 */
-					if (starkBankPix != null) {
-						// this.contasPagarSelecionada.setComprovantePagamentoPixStarkBank(starkBankPix);
-						StarkBankBaixa baixa = registraBaixaStarkBank(starkBankPix.getCreated(),
-								starkBankPix.getTaxId(), String.valueOf(starkBankPix.getId()), null,
-								this.objetoPagadorRecebedor.getNome(), starkBankPix.getAmount(),
-								this.contasPagarSelecionada, "PIX");
+						StarkBankBaixa baixa = registraBaixaStarkBank(gerarDataHoje(),
+								this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar(), null, null,
+								this.objetoPagadorRecebedor.getNome(), this.contasPagarSelecionada.getValorPagamento(),
+								this.contasPagarSelecionada, "PIX", "Aguardando Aprovação");
 
 						this.contasPagarSelecionada.getListContasPagarBaixas().add(baixa);
 
-						this.objetoContratoCobranca.setContaPagarValorTotal(this.objetoContratoCobranca
-								.getContaPagarValorTotal().subtract(this.contasPagarSelecionada.getValorPagamento()));
-
 						context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-								"Pagamento StarkBank: PIX efetuado com sucesso!", ""));
-
-						finalizaOperacao = true;
-					}
+								"Pagamento StarkBank: Ordem de Pagamento de PIX inserida com sucesso!", ""));
 				}
 
 				if (this.contasPagarSelecionada.getFormaTransferencia().equals("TED")) {
-					StarkBankPix starkBankPix = starkBankAPI.paymentTED(
-							this.objetoContratoCobranca.getBancoBancarioContaPagar(),
-							this.objetoContratoCobranca.getAgenciaBancarioContaPagar(),
-							objetoContratoCobranca.getContaBancarioContaPagar(),
-							this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar(),
-							this.objetoContratoCobranca.getNomeBancarioContaPagar(),
-							this.contasPagarSelecionada.getValorPagamento(),
-							this.contasPagarSelecionada.getFormaTransferencia());
 
-					if (starkBankPix != null) {
-						// this.contasPagarSelecionada.setComprovantePagamentoPixStarkBank(starkBankPix);
-
-						StarkBankBaixa baixa = registraBaixaStarkBank(starkBankPix.getCreated(),
-								starkBankPix.getTaxId(), String.valueOf(starkBankPix.getId()), null,
-								this.objetoPagadorRecebedor.getNome(), starkBankPix.getAmount(),
-								this.contasPagarSelecionada, "TED");
+						StarkBankBaixa baixa = registraBaixaStarkBank(gerarDataHoje(),
+								this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar(), null, null,
+								this.objetoPagadorRecebedor.getNome(), this.contasPagarSelecionada.getValorPagamento(),
+								this.contasPagarSelecionada, "TED", "Aguardando Aprovação");
 
 						this.contasPagarSelecionada.getListContasPagarBaixas().add(baixa);
 
-						this.objetoContratoCobranca.setContaPagarValorTotal(this.objetoContratoCobranca
-								.getContaPagarValorTotal().subtract(this.contasPagarSelecionada.getValorPagamento()));
-
 						context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-								"Pagamento StarkBank: TED efetuado com sucesso!", ""));
+								"Pagamento StarkBank: Ordem de Pagamento de TED inserida com sucesso!", ""));
+				}
+				
+				ContasPagarDao contasPagarDao = new ContasPagarDao();
+				if (this.contasPagarSelecionada.getId() <= 0) {
+					contasPagarDao.create(this.contasPagarSelecionada);
+				} else {
+					contasPagarDao.merge(this.contasPagarSelecionada);
+				}
+			}
+		}
+	}
+	
+	public String consultaPagamentosStarkBankPendentes() {
+		
+		StarkBankBaixaDAO starkBankBaixaDAO = new StarkBankBaixaDAO();
+		this.pagamentosStarkBankPendentes = new ArrayList<StarkBankBaixa>();
+		
+		this.pagamentosStarkBankPendentes = starkBankBaixaDAO.findByFilter("statusPagamento", "Aguardando Aprovação");
+		
+		return "/Atendimento/Cobranca/ConsultaPagamentosStarkBankPendentes.xhtml";	
+	}
+	
+	public String processaPagamentoStarkBank() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		boolean finalizaOperacao = false;
+		
+		if (!CommonsUtil.semValor(this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getContaPagarValorTotal())) {
+			this.objetoContratoCobranca.setContaPagarValorTotal(this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato()
+					.getContaPagarValorTotal().add(this.objetoBaixaPagamentoStarkBank.getContasPagar().getValor()));
+		} else {
+			this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().setContaPagarValorTotal(this.objetoBaixaPagamentoStarkBank.getContasPagar().getValor());
+		}
+		
+		if (!CommonsUtil.semValor(this.objetoBaixaPagamentoStarkBank.getContasPagar().getValorPagamento())) {
+			StarkBankAPI starkBankAPI = new StarkBankAPI();
 
-						finalizaOperacao = true;
+			if (this.objetoBaixaPagamentoStarkBank.getContasPagar().getFormaTransferencia().equals("Boleto")) {
+
+				this.objetoBaixaPagamentoStarkBank.getContasPagar().setDescricaoStarkBank("Pagamento de Conta");
+
+				StarkBankBoleto starkBankBoleto = starkBankAPI.paymentBoleto(
+						this.objetoBaixaPagamentoStarkBank.getContasPagar().getLinhaDigitavelStarkBank(), this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato(),
+						this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getPagador(), this.objetoBaixaPagamentoStarkBank.getContasPagar().getDescricaoStarkBank(),
+						this.objetoBaixaPagamentoStarkBank.getContasPagar().getNumeroDocumentoPagadorStarkBank());
+
+				if (starkBankBoleto != null) {
+					// this.contasPagarSelecionada.setComprovantePagamentoStarkBank(starkBankBoleto);
+					StarkBankBaixa baixa = updateBaixaStarkBank(this.objetoBaixaPagamentoStarkBank,							
+							String.valueOf(starkBankBoleto.getId()),
+							starkBankBoleto.getCreated(),
+							starkBankBoleto.getAmount(),
+							"Aprovado",
+							starkBankBoleto.getLine());
+
+					this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().setContaPagarValorTotal(this.objetoContratoCobranca
+							.getContaPagarValorTotal().subtract(this.contasPagarSelecionada.getValorPagamento()));
+
+					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+							"Pagamento StarkBank: Boleto pago sucesso!", ""));
+
+					finalizaOperacao = true;
+				}
+			}
+
+			if (this.objetoBaixaPagamentoStarkBank.getContasPagar().getFormaTransferencia().equals("Pix")) {
+				StarkBankPix starkBankPix = starkBankAPI.paymentPix(
+						this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getChavePIXBancarioContaPagar(),
+						this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getAgenciaBancarioContaPagar(),
+						this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getContaBancarioContaPagar(),
+						this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getCpfCnpjBancarioContaPagar(),
+						this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getNomeBancarioContaPagar(),
+						this.objetoBaixaPagamentoStarkBank.getContasPagar().getValorPagamento(),
+						this.objetoBaixaPagamentoStarkBank.getContasPagar().getFormaTransferencia());
+
+				if (starkBankPix != null) {					
+					StarkBankBaixa baixa = updateBaixaStarkBank(this.objetoBaixaPagamentoStarkBank,							
+							String.valueOf(starkBankPix.getId()),
+							starkBankPix.getCreated(),
+							starkBankPix.getAmount(),
+							"Aprovado",
+							null);
+
+					this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().setContaPagarValorTotal(this.objetoContratoCobranca
+							.getContaPagarValorTotal().subtract(this.contasPagarSelecionada.getValorPagamento()));
+
+					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+							"Pagamento StarkBank: PIX efetuado com sucesso!", ""));
+
+					finalizaOperacao = true;
+				}
+			}
+
+			if (this.objetoBaixaPagamentoStarkBank.getContasPagar().getFormaTransferencia().equals("TED")) {
+				StarkBankPix starkBankPix = starkBankAPI.paymentTED(
+						this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getBancoBancarioContaPagar(),
+						this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getAgenciaBancarioContaPagar(),
+						this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getContaBancarioContaPagar(),
+						this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getCpfCnpjBancarioContaPagar(),
+						this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getNomeBancarioContaPagar(),
+						this.objetoBaixaPagamentoStarkBank.getContasPagar().getValorPagamento(),
+						this.objetoBaixaPagamentoStarkBank.getContasPagar().getFormaTransferencia());
+
+				if (starkBankPix != null) {
+					StarkBankBaixa baixa = updateBaixaStarkBank(this.objetoBaixaPagamentoStarkBank,							
+							String.valueOf(starkBankPix.getId()),
+							starkBankPix.getCreated(),
+							starkBankPix.getAmount(),
+							"Aprovado",
+							null);
+
+					this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().setContaPagarValorTotal(this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato()
+							.getContaPagarValorTotal().subtract(this.objetoBaixaPagamentoStarkBank.getContasPagar().getValorPagamento()));
+
+					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+							"Pagamento StarkBank: TED efetuado com sucesso!", ""));
+
+					finalizaOperacao = true;
+				}
+			}
+		
+			if (finalizaOperacao) {
+				BigDecimal saldoConta = getSaldoContaPagar(this.objetoBaixaPagamentoStarkBank.getContasPagar());
+	
+				this.objetoBaixaPagamentoStarkBank.getContasPagar().setValorPagamento(saldoConta);
+	
+				if (saldoConta.compareTo(this.objetoBaixaPagamentoStarkBank.getContasPagar().getValor()) >= 0) {
+					this.objetoBaixaPagamentoStarkBank.getContasPagar().setContaPaga(true);
+				}
+	
+				if (this.objetoBaixaPagamentoStarkBank.getContasPagar().isContaPaga()
+						&& CommonsUtil.semValor(this.objetoBaixaPagamentoStarkBank.getContasPagar().getDataPagamento())) {
+					this.objetoBaixaPagamentoStarkBank.getContasPagar().setDataPagamento(gerarDataHoje());
+				}
+	
+				this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getListContasPagar().add(this.objetoBaixaPagamentoStarkBank.getContasPagar());
+				/*
+				if (!CommonsUtil.semValor(this.objetoCcb)) {
+					if (!this.objetoCcb.getDespesasAnexo2().contains(contasPagarSelecionada)) {
+						this.objetoCcb.getDespesasAnexo2().add(this.objetoBaixaPagamentoStarkBank.getContasPagar());
 					}
 				}
-			}
-		}
-
-		if (finalizaOperacao) {
-			BigDecimal saldoConta = getSaldoContaPagar(this.contasPagarSelecionada);
-
-			this.contasPagarSelecionada.setValorPagamento(saldoConta);
-
-			if (saldoConta.compareTo(this.contasPagarSelecionada.getValor()) >= 0) {
-				this.contasPagarSelecionada.setContaPaga(true);
-			}
-
-			if (this.contasPagarSelecionada.isContaPaga()
-					&& CommonsUtil.semValor(this.contasPagarSelecionada.getDataPagamento())) {
-				this.contasPagarSelecionada.setDataPagamento(gerarDataHoje());
-			}
-
-			this.objetoContratoCobranca.getListContasPagar().add(this.contasPagarSelecionada);
-
-			if (!CommonsUtil.semValor(this.objetoCcb)) {
-				if (!this.objetoCcb.getDespesasAnexo2().contains(contasPagarSelecionada)) {
-					this.objetoCcb.getDespesasAnexo2().add(this.contasPagarSelecionada);
+				*/
+	
+				BigDecimal valorDespesas = calcularValorTotalContasPagar();
+				this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().setContaPagarValorTotal(valorDespesas);
+				ContasPagarDao contasPagarDao = new ContasPagarDao();
+				if (this.objetoBaixaPagamentoStarkBank.getContasPagar().getId() <= 0) {
+					contasPagarDao.create(this.objetoBaixaPagamentoStarkBank.getContasPagar());
+				} else {
+					contasPagarDao.merge(this.objetoBaixaPagamentoStarkBank.getContasPagar());
 				}
-			}
 
-			BigDecimal valorDespesas = calcularValorTotalContasPagar();
-			this.objetoContratoCobranca.setContaPagarValorTotal(valorDespesas);
-			ContasPagarDao contasPagarDao = new ContasPagarDao();
-			if (contasPagarSelecionada.getId() <= 0) {
-				contasPagarDao.create(contasPagarSelecionada);
-			} else {
-				contasPagarDao.merge(contasPagarSelecionada);
+				this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().calcularValorTotalContasPagas();
+	
+				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+				cDao.merge(this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato());
 			}
-			this.contasPagarSelecionada = new ContasPagar();
-			this.addContasPagar = false;
-			this.objetoContratoCobranca.calcularValorTotalContasPagas();
-
-			ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-			cDao.merge(this.objetoContratoCobranca);
 		}
+		
+		return consultaPagamentosStarkBankPendentes();
 	}
 
 	public void geraReciboPagamentoStarkBank(StarkBankBaixa baixaStarkBank) {
@@ -20406,7 +20465,7 @@ public class ContratoCobrancaMB {
 
 	public StarkBankBaixa registraBaixaStarkBank(Date dataPagamento, String documento, String idTransacao,
 			String linhaBoleto, String nomePagador, BigDecimal valorPago, ContasPagar contaPagar,
-			String formaPagamento) {
+			String formaPagamento, String statusPagamento) {
 		StarkBankBaixaDAO sbDAO = new StarkBankBaixaDAO();
 
 		StarkBankBaixa starkBankBaixa = new StarkBankBaixa();
@@ -20417,8 +20476,24 @@ public class ContratoCobrancaMB {
 		starkBankBaixa.setNomePagador(nomePagador);
 		starkBankBaixa.setValor(valorPago);
 		starkBankBaixa.setFormaPagamento(formaPagamento);
+		starkBankBaixa.setStatusPagamento(statusPagamento);
+		starkBankBaixa.setContasPagar(contaPagar);
 
 		sbDAO.create(starkBankBaixa);
+
+		return starkBankBaixa;
+	}
+	
+	public StarkBankBaixa updateBaixaStarkBank(StarkBankBaixa starkBankBaixa, String idTransacao, Date dataPagamento, BigDecimal valorPago, String statusPagamento, String linhaBoleto) {
+		StarkBankBaixaDAO sbDAO = new StarkBankBaixaDAO();
+
+		starkBankBaixa.setDataPagamento(dataPagamento);
+		starkBankBaixa.setStatusPagamento(statusPagamento);
+		starkBankBaixa.setIdTransacao(idTransacao);
+		starkBankBaixa.setLinhaBoleto(linhaBoleto);
+		starkBankBaixa.setValor(valorPago);
+
+		sbDAO.merge(starkBankBaixa);
 
 		return starkBankBaixa;
 	}
@@ -34369,4 +34444,19 @@ public class ContratoCobrancaMB {
 		this.deleteFilesContas = deleteFilesContas;
 	}
 
+	public List<StarkBankBaixa> getPagamentosStarkBankPendentes() {
+		return pagamentosStarkBankPendentes;
+	}
+
+	public void setPagamentosStarkBankPendentes(List<StarkBankBaixa> pagamentosStarkBankPendentes) {
+		this.pagamentosStarkBankPendentes = pagamentosStarkBankPendentes;
+	}
+
+	public StarkBankBaixa getObjetoBaixaPagamentoStarkBank() {
+		return objetoBaixaPagamentoStarkBank;
+	}
+
+	public void setObjetoBaixaPagamentoStarkBank(StarkBankBaixa objetoBaixaPagamentoStarkBank) {
+		this.objetoBaixaPagamentoStarkBank = objetoBaixaPagamentoStarkBank;
+	}
 }
