@@ -9,6 +9,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
 
+import com.webnowbr.siscoat.cobranca.service.FileService;
+import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.common.CommonsUtil;
 
 import io.jsonwebtoken.Jwts;
@@ -42,7 +44,9 @@ public class PlexiWebhook {
 			plexiConsulta.setWebhookRetorno(webhookRetorno);
 			if(webhookObject.has("pdf")) {
 				plexiConsulta.setPdf(webhookObject.getString("pdf"));
+				salvarPdfRetorno(plexiConsulta, plexiConsultaDao);
 			}
+			plexiConsulta.setStatus("Consulta Concluída");
 			plexiConsultaDao.merge(plexiConsulta);
 
 			return Response.status(200).entity("Processado").build();
@@ -56,5 +60,18 @@ public class PlexiWebhook {
 			e.printStackTrace();
 			return Response.status(500).entity("Erro interno").build();
 		}
+	}
+	
+	public void salvarPdfRetorno(PlexiConsulta plexiConsulta, PlexiConsultaDao plexiConsultaDao) {
+		String numeroContrato = plexiConsultaDao.getNumeroContratoAnalise(plexiConsulta);
+		if(CommonsUtil.semValor(numeroContrato)) {
+			return;
+		}
+		String nomeAnalise = plexiConsultaDao.getNomeAnalise(plexiConsulta);
+		FileUploaded pdfRetorno = new FileUploaded();
+		pdfRetorno.setFileBase64(plexiConsulta.getPdf());
+		pdfRetorno.setName(plexiConsulta.getPlexiDocumentos().getNome() + " - " + nomeAnalise + " - " + plexiConsulta.getId());
+		FileService fileService = new FileService();
+		fileService.salvarDocumentoBase64(pdfRetorno, numeroContrato, "interno", null);
 	}
 }
