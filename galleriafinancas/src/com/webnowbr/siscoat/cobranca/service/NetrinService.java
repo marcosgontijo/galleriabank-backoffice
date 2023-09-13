@@ -1583,12 +1583,18 @@ public class NetrinService {
 			// loginDocket();
 			int HTTP_COD_SUCESSO = 200;
 			String retornoConsulta;
+			String cep;
+			if(CommonsUtil.semValor(pagadorRecebedor.getCep())) {
+				cep = "1";
+			} else{
+				cep = pagadorRecebedor.getCep();
+			}
 			
 			URL myURL;
 			String sUrl = "https://servicos.galleriabank.com.br/netrin/api/v1/CNDEstadual/"
 					+ CommonsUtil.somenteNumeros(cnpjcpf)//
 					+ "/" + pagadorRecebedor.getEstado()
-					+ "/" + pagadorRecebedor.getCep();
+					+ "/" + cep;
 			myURL = new URL(sUrl);
 
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();

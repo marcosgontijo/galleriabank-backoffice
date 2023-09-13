@@ -29780,6 +29780,8 @@ public class ContratoCobrancaMB {
 					documentoAnalise.addObservacao("Processando CND Estadual");
 					if (CommonsUtil.semValor(documentoAnalise.getPagador().getEstado())) {
 						documentoAnalise.getPagador().setEstado(estado);
+						new PagadorRecebedorDao().merge(documentoAnalise.getPagador());
+						
 						//observacao = observacao + "Falta UF para consulta estadual \n";
 						//documentoAnalise.addObservacao("Falta UF para consulta estadual");
 					} 
