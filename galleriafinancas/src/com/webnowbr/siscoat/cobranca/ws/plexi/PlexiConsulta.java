@@ -2,6 +2,7 @@ package com.webnowbr.siscoat.cobranca.ws.plexi;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -95,6 +96,72 @@ public class PlexiConsulta {
 	public String toString() {
 		return "PlexiConsulta [id=" + id + ", requestId=" + requestId + ", cpfCnpj=" + cpfCnpj + ", plexiDocumentos="
 				+ plexiDocumentos + "]";
+	}
+	
+	public String getNomeCompleto() {
+		String nome = plexiDocumentos.getNome();
+		PlexiDocumentos doc = plexiDocumentos;
+		if (CommonsUtil.mesmoValor(doc.getUrl(), "/api/maestro/tjdft/certidao-distribuicao")) {
+			nome = nome + " (" + tipo + ")";
+			//String[] tipoCertidaoArray = {"criminal", "civel"};
+			return nome;
+		}
+
+		if (CommonsUtil.mesmoValor(doc.getUrl(), "/api/maestro/tjrj/consulta-processual")) {
+			nome = nome + "(" + origem + "-" + competencia + ")";
+			//String[] origemArray = {"primeiraInstancia", "segundaInstancia"};
+			//String[] competenciaArray = {"civel", "criminal", "criminalJuri"};
+			return nome;
+		}
+
+		if (CommonsUtil.mesmoValor(doc.getUrl(), "/api/maestro/tjrs/certidao-negativa")) {
+			nome = nome + " (" + tipo + ")";
+			//String[] tipoArray = { "3", "9" };
+			return nome;
+		}
+
+		if (CommonsUtil.mesmoValor(doc.getUrl(), "/api/maestro/tjsp/certidao-negativa")) {
+			nome = nome + " (" + modelo + ")";
+			//String[] modeloArray = { "6", "52" };
+			return nome;
+		}
+
+		if (CommonsUtil.mesmoValor(doc.getUrl(), "/api/maestro/trf1/certidao-distribuicao")) {
+			nome = nome + "(" + tipo + "-" + getOrgaosStr() + ")";
+
+			//String[] tipoArray = { "civel", "criminal" };
+			//String[][] orgaosArray = {
+			//		{ "ac", "am", "ap", "ba", "df", "go", "ma", "mt", "pa", "pi", "ro", "rr", "to", "trf1" },
+			//		{ "varasJuizados" }, { "regionalizada" } };
+			return nome;
+		}
+
+		if (CommonsUtil.mesmoValor(doc.getUrl(), "/api/maestro/trf2/certidao-distribuicao")) {
+			nome = nome + " (" + tipo + ")";
+			//String[] tipoArray = { "civel", "criminal" };
+			return nome;
+		}
+
+		if (CommonsUtil.mesmoValor(doc.getUrl(), "/api/maestro/trf3/certidao-distribuicao")) {
+			nome = nome + " (" + tipo + "-" + abrangencia + ")";
+			//String[] tipoArray = { "civel", "criminal" };
+			//String[] abrangenciaArray = { "sjsp", "sjms" };
+			return nome;
+		}
+
+		if (CommonsUtil.mesmoValor(doc.getUrl(), "/api/maestro/trf4/certidao-regional")) {
+			nome = nome + " (" + tipo + ")";
+			//String[] tipoArray = { "civil", "criminal" };
+			return nome;
+		}
+
+		if (CommonsUtil.mesmoValor(doc.getUrl(), "/api/maestro/trf6/certidao-distribuicao")) {
+			nome = nome + "(" + tipo + "-" + getOrgaosStr() + ")";
+			//String[] tipoArray = { "civel", "criminal" };
+			//String[][] orgaosArray = { { "mg", "trf1" } };
+			return nome;
+		}
+		return nome;
 	}
 
 	public long getId() {

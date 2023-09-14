@@ -56,9 +56,9 @@ public class PlexiMB {
 			if(docAnalise.isLiberadoAnalise()) {
 				listPagador.add(docAnalise);
 				
-				if(CommonsUtil.semValor(docAnalise.getPlexiConsultas()) || docAnalise.getPlexiConsultas().size() == 0) {
+				//if(CommonsUtil.semValor(docAnalise.getPlexiConsultas()) || docAnalise.getPlexiConsultas().size() == 0) {
 					adiconarDocumentospagador(docAnalise);
-				}
+				//}
 			} else {
 				continue;
 			}
