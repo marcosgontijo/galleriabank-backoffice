@@ -39,11 +39,9 @@
 					<p:selectOneMenu id="tipoDownload"
 						value="#{ccbMB.tipoDownload}" ajax="true">
 						<f:selectItem itemValue="CCI" itemLabel="CCI" />				
-						<f:selectItem itemValue="NCnova" itemLabel="Notificacao de cessao" />
 						<f:selectItem itemValue="CartaSplit" itemLabel="Carta Split" />
-						<f:selectItem itemValue="AnexoII" itemLabel="AnexoII" />			
+						<f:selectItem itemValue="AnexoII" itemLabel="AnexoII" />
 						<f:selectItem itemValue="Cessao" itemLabel="Cessao" />
-						<f:selectItem itemValue="InstrumentoEmissaoCCI" itemLabel="Instrumento Emissao CCI" />
 						<f:selectItem itemValue="EndossosEmPretoGalleria" itemLabel="Endossos Em Preto" />		
 						<f:selectItem itemValue="FinanciamentoCCI" itemLabel="FinanciamentoCCI" />		
 						<f:selectItem itemValue="AquisicaoCCI" itemLabel="Aquisicao/Emprestimo" />		
@@ -53,8 +51,6 @@
 						<f:selectItem itemValue="DeclaracaoUniaoEstavel" itemLabel="Declaração de União Estavel" />
 						<f:selectItem itemValue="DeclaracaoDestinacaoRecursos" itemLabel="Declaração Destinação Recursos" />
 						<f:selectItem itemValue="TermoPaju" itemLabel="Termo Responsabilidade Paju" />
-						<f:selectItem itemValue="CCBnova" itemLabel="CCB" />
-						<f:selectItem itemValue="AFnova" itemLabel="AF" />	
 												
 						<p:ajax update="pagadoresAntigos pagadoresNovos despesasPanel SeguradoresPanel PanelBanco PgmntBancoVendedor" event="valueChange"
 							listener="#{ccbMB.verificaModeloAntigo()}" />
