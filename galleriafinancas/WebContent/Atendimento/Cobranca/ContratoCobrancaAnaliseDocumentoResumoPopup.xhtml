@@ -300,19 +300,29 @@
 		                rowsPerPageTemplate="20,40,100,140">
 						
 						<p:column style="text-align: center;" headerText="Identificação"
-							filterBy="#{plexiConsulta.plexiDocumentos.nome}"
-							filterMatchMode="contains" sortBy="#{plexiConsulta.plexiDocumentos.nome}">
-							<h:outputText value="#{plexiConsulta.plexiDocumentos.nome}"/>
+							filterBy="#{plexiConsulta.nomeCompleto}"
+							filterMatchMode="contains" sortBy="#{plexiConsulta.nomeCompleto}">
+							<h:outputText value="#{plexiConsulta.nomeCompleto}"/>
 						</p:column>
 						
-						<p:column style="text-align: center;" headerText="Identificação"
-							filterBy="#{plexiConsulta.plexiDocumentos.nome}"
-							filterMatchMode="contains" sortBy="#{plexiConsulta.plexiDocumentos.nome}">
-							<p:commandButton
+						<p:column style="text-align: center;width: 100px;" headerText="Status"
+							filterBy="#{plexiConsulta.status}"
+							filterMatchMode="contains" sortBy="#{plexiConsulta.status}">
+							<h:outputText value="#{plexiConsulta.status}"/>
+						</p:column>
+						
+						<p:column style="text-align: center;width: 150px;" headerText="" >
+							<!-- <p:commandButton
 								action="#{plexiMB.decodarBaixarArquivo(plexiConsulta)}"
 								icon="ui-icon ui-icon-print" value="Download PDF"
 								rendered="#{plexiConsulta.pdf != null}"
-								ajax="false" />
+								ajax="false" /> -->
+								
+							<p:commandButton 
+								action="#{plexiMB.viewFilePlexi(fileAnalise)}"
+								icon="ui-icon ui-icon-print" value="Abrir PDF"
+								onclick="target='_blank'" onblur="target='_self'"
+								rendered="#{plexiConsulta.pdf != null}" ajax="false" />
 						</p:column>
 												
 						
