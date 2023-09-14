@@ -12,6 +12,8 @@ import org.json.JSONObject;
 import com.webnowbr.siscoat.cobranca.service.FileService;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.infra.db.dao.UserDao;
+import com.webnowbr.siscoat.infra.db.model.User;
 
 import io.jsonwebtoken.Jwts;
 
@@ -70,8 +72,9 @@ public class PlexiWebhook {
 		String nomeAnalise = plexiConsultaDao.getNomeAnalise(plexiConsulta);
 		FileUploaded pdfRetorno = new FileUploaded();
 		pdfRetorno.setFileBase64(plexiConsulta.getPdf());
-		pdfRetorno.setName(plexiConsulta.getNomeCompleto() + " - " + nomeAnalise + " - " + plexiConsulta.getId());
+		pdfRetorno.setName(plexiConsulta.getNomeCompleto() + " - " + nomeAnalise);
 		FileService fileService = new FileService();
-		fileService.salvarDocumentoBase64(pdfRetorno, numeroContrato, "interno", null);
+		User user = new UserDao().findById((long) -1);
+		fileService.salvarDocumentoBase64(pdfRetorno, numeroContrato, "interno", user);
 	}
 }
