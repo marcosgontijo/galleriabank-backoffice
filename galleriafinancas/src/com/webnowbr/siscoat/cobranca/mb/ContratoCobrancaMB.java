@@ -20049,7 +20049,7 @@ public class ContratoCobrancaMB {
 					StarkBankBaixa baixa = updateBaixaStarkBank(this.objetoBaixaPagamentoStarkBank,							
 							String.valueOf(starkBankBoleto.getId()),
 							starkBankBoleto.getCreated(),
-							starkBankBoleto.getAmount(),
+							this.contasPagarSelecionada.getValorPagamento(),
 							"Aprovado",
 							starkBankBoleto.getLine());
 
