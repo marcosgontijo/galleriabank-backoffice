@@ -4929,7 +4929,11 @@ public class ContratoCobrancaMB {
 		BufferedOutputStream output = null;
 		try {
 			String documentoBase64 = serasa.baixarDocumento(documentoAnalise);
-
+			if(CommonsUtil.semValor(documentoBase64)) {
+				facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Serasa: Ocorreu um problema ao gerar o PDF!", ""));
+				return;
+			} else {
 			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
 			String mineFile = "application/pdf";
 			input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
@@ -4952,7 +4956,7 @@ public class ContratoCobrancaMB {
 			// Finalize task.
 			output.flush();
 			output.close();
-
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -4967,7 +4971,11 @@ public class ContratoCobrancaMB {
 		BufferedOutputStream output = null;
 		try {
 			String documentoBase64 = netrin.baixarDocumentoPpe(documentoAnalise);
-
+			if(CommonsUtil.semValor(documentoBase64)) {
+				facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"PPE: Ocorreu um problema ao gerar o PDF!", ""));
+				return;
+			} else {
 			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
 			String mineFile = "application/pdf";
 			input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
@@ -4989,7 +4997,7 @@ public class ContratoCobrancaMB {
 			// Finalize task.
 			output.flush();
 			output.close();
-
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -5004,7 +5012,11 @@ public class ContratoCobrancaMB {
 		BufferedOutputStream output = null;
 		try {
 			String documentoBase64 = netrin.baixarDocumentoDossie(documentoAnalise);
-
+			if(CommonsUtil.semValor(documentoBase64)) {
+				facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Dossiê: Ocorreu um problema ao gerar o PDF!", ""));
+				return;
+			} else {
 			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
 			String mineFile = "application/pdf";
 			input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
@@ -5026,7 +5038,7 @@ public class ContratoCobrancaMB {
 			// Finalize task.
 			output.flush();
 			output.close();
-
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -5034,13 +5046,18 @@ public class ContratoCobrancaMB {
 
 	public void baixarDocumentoCenprot(DocumentoAnalise documentoAnalise) {
 		NetrinService netrin = new NetrinService();
-		String documentoBase64 = netrin.baixarDocumento(documentoAnalise);
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		ExternalContext externalContext = facesContext.getExternalContext();
 		HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
 		BufferedInputStream input = null;
 		BufferedOutputStream output = null;
 		try {
+			String documentoBase64 = netrin.baixarDocumento(documentoAnalise);
+			if(CommonsUtil.semValor(documentoBase64)) {
+				facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Cenprot: Ocorreu um problema ao gerar o PDF!", ""));
+				return;
+			} else {
 
 			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
 			String mineFile = "application/pdf";
@@ -5063,7 +5080,7 @@ public class ContratoCobrancaMB {
 			// Finalize task.
 			output.flush();
 			output.close();
-
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -5124,7 +5141,6 @@ public class ContratoCobrancaMB {
 		ScrResult scrResult = GsonUtil.fromJson(documentoAnalise.getRetornoScr(), ScrResult.class);
 
 		ScrService scrService = new ScrService();
-		byte[] contrato = scrService.geraContrato(scrResult, fileGenerator);
 
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		ExternalContext externalContext = facesContext.getExternalContext();
@@ -5132,6 +5148,12 @@ public class ContratoCobrancaMB {
 		BufferedInputStream input = null;
 		BufferedOutputStream output = null;
 		try {
+			byte[] contrato = scrService.geraContrato(scrResult, fileGenerator);
+			if (CommonsUtil.semValor(contrato)) {
+				facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Processos: Ocorreu um problema ao gerar o PDF!", ""));
+				return;
+			} else {
 
 			String mineFile = "application/pdf";
 			input = new BufferedInputStream(new ByteArrayInputStream(contrato));
@@ -5153,7 +5175,7 @@ public class ContratoCobrancaMB {
 			// Finalize task.
 			output.flush();
 			output.close();
-
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -29744,7 +29766,7 @@ public class ContratoCobrancaMB {
 		}
 	}
 
-	public void executarConsultasPedirPajuDocumento() throws SchedulerException {
+	public void executarConsultasPedirPajuDocumento(String estado) throws SchedulerException {
 		NetrinService netrinService = new NetrinService();
 		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
@@ -29754,13 +29776,17 @@ public class ContratoCobrancaMB {
 				.collect(Collectors.toList())) {
 			String observacao = "";
 			if (documentoAnalise.isLiberadoAnalise() && !CommonsUtil.semValor(documentoAnalise.getPagador())) {
-
 				if (CommonsUtil.semValor(documentoAnalise.getRetornoCNDEstadual())) {
 					documentoAnalise.addObservacao("Processando CND Estadual");
 					if (CommonsUtil.semValor(documentoAnalise.getPagador().getEstado())) {
-						observacao = observacao + "Falta UF para consulta estadual \n";
-						documentoAnalise.addObservacao("Falta UF para consulta estadual");
-					} else if (CommonsUtil.mesmoValor(documentoAnalise.getPagador().getEstado().toLowerCase(), "mg")
+						documentoAnalise.getPagador().setEstado(estado);
+						new PagadorRecebedorDao().merge(documentoAnalise.getPagador());
+						
+						//observacao = observacao + "Falta UF para consulta estadual \n";
+						//documentoAnalise.addObservacao("Falta UF para consulta estadual");
+					} 
+					
+					if (CommonsUtil.mesmoValor(documentoAnalise.getPagador().getEstado().toLowerCase(), "mg")
 							&& CommonsUtil.semValor(documentoAnalise.getPagador().getCep())) {
 						observacao = observacao + "Falta CEP para consulta estadual de MG \n";
 						documentoAnalise.addObservacao("Falta CEP para consulta estadual de MG");

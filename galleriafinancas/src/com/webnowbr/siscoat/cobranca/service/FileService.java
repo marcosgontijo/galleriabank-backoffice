@@ -209,6 +209,57 @@ public class FileService {
 		return null;
 	}
 
+	public String salvarDocumentoBase64(FileUploaded documentoSelecionado, String numeroContrato, String subpasta, User usuario) {
+		String serverPrincipalUrl = PropertyLoader.getString("client.galleria.financas.upload.rest.base64.new.url");
+		logger.info("INFO file server {} POST: ".concat(
+				serverPrincipalUrl.replace("{numeroContrato}", numeroContrato).replace("{subpasta}", subpasta)));
+		URL myURL;
+		try {
+			// arquivo = "teste";
+			String surl = serverPrincipalUrl.replace("{numeroContrato}", numeroContrato).replace("{subpasta}",
+					subpasta);
+			myURL = new URL(surl);
+
+			byte[] postDataBytes = GsonUtil.toJson(documentoSelecionado).getBytes();
+
+			String token = "Bearer " + JwtUtil.generateJWTSite(usuario.getId(), usuario.getLogin(), "BACKOFFICE");
+
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestMethod("POST");
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+			myURLConnection.setRequestProperty("Authorization", token);
+			myURLConnection.setDoOutput(true);
+			myURLConnection.setDoInput(true);
+			myURLConnection.getOutputStream().write(postDataBytes);
+
+			String retornoConsulta = null;
+			if (myURLConnection.getResponseCode() == SiscoatConstants.HTTP_COD_SUCESSO) {
+				BufferedReader in;
+				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
+				String inputLine;
+				StringBuffer response = new StringBuffer();
+				while ((inputLine = in.readLine()) != null) {
+					response.append(inputLine);
+				}
+				in.close();
+
+				retornoConsulta = response.toString();
+			}
+
+			if (!CommonsUtil.semValor(retornoConsulta)) {
+				ResponseApi teste = GsonUtil.fromJson(retornoConsulta, ResponseApi.class);
+				return teste.getMensagem();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
 	public String excluirDocumento(String numeroContrato, String subpasta, String arquivo, User usuario) {
 
 		String serverPrincipalUrl = PropertyLoader

@@ -6716,9 +6716,9 @@ public class CcbMB {
 			XWPFHeader header = headerFooterPolicy.createHeader(XWPFHeaderFooterPolicy.DEFAULT);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			XWPFParagraph paragraphHeader = header.createParagraph();
-			paragraphHeader.setAlignment(ParagraphAlignment.LEFT);
+			paragraphHeader.setAlignment(ParagraphAlignment.CENTER);
 			XWPFRun runHeader = paragraphHeader.createRun();
-			runHeader.addPicture(getClass().getResourceAsStream("/resource/BMP MoneyPlus.png"), 6, "BMP MoneyPlus",
+			runHeader.addPicture(getClass().getResourceAsStream("/resource/GalleriaBank.png"), 6, "Galleria Bank",
 					Units.toEMU(130), Units.toEMU(72));
 
 			XWPFRun run;
@@ -10071,25 +10071,29 @@ public class CcbMB {
 		    } else if(CommonsUtil.mesmoValor(tipoDownload,"DeclaracaoNaoUniaoEstavel")) {
 		    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
 		    		if(!participante.isEmpresa() && !participante.isUniaoEstavel()) {
-		    			return geraDeclaracaoNaoUniaoEstavel(participante);
+		    			geraDeclaracaoNaoUniaoEstavel(participante);
 		    		}
+		    		return null;
 		    	}
 		    } else if(CommonsUtil.mesmoValor(tipoDownload,"DeclaracaoDestinacaoRecursos")) {
 		    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
 		    		if(!participante.isEmpresa() && !participante.isUniaoEstavel()) {
-		    			return geraDeclaracaoDestinacaoRecursos(participante);
+		    			geraDeclaracaoDestinacaoRecursos(participante);
 		    		}
+		    		return null;
 		    	}
 		    } else if(CommonsUtil.mesmoValor(tipoDownload,"DeclaracaoUniaoEstavel")) {
 		    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
 		    		if(!participante.isEmpresa() && participante.isUniaoEstavel()) {
-		    			return geraDeclaracaoUniaoEstavel(participante);
+		    			geraDeclaracaoUniaoEstavel(participante);
 		    		}
+		    		return null;
 		    	}		    	
 		    } else if(CommonsUtil.mesmoValor(tipoDownload,"TermoPaju")) {
 		    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
-		    		return geraTermoResponsabilidadeAnuenciaPaju(participante);
-		    	}		    	
+		    		geraTermoResponsabilidadeAnuenciaPaju(participante);
+		    	}
+		    	return null;
 		    } else {
 	    		
 	    	}

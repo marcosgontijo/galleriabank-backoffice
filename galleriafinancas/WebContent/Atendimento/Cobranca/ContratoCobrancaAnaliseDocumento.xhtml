@@ -258,7 +258,7 @@
 				style="margin-bottom:10px;">
 
 				<p:commandButton value="Executar Consultas Netrin" ajax="true"
-					action="#{contratoCobrancaMB.executarConsultasPedirPajuDocumento}"
+					action="#{contratoCobrancaMB.executarConsultasPedirPajuDocumento(contratoCobrancaMB.objetoImovelCobranca.estado)}"
 					widgetVar="executeBtn2" onclick="executeBtn2.disable()"
 					oncomplete="executeBtn2.enable()"/>
 					
