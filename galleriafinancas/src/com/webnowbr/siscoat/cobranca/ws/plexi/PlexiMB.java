@@ -56,9 +56,9 @@ public class PlexiMB {
 			if(docAnalise.isLiberadoAnalise()) {
 				listPagador.add(docAnalise);
 				
-				if(CommonsUtil.semValor(docAnalise.getPlexiConsultas()) || docAnalise.getPlexiConsultas().size() == 0) {
+				//if(CommonsUtil.semValor(docAnalise.getPlexiConsultas()) || docAnalise.getPlexiConsultas().size() == 0) {
 					adiconarDocumentospagador(docAnalise);
-				}
+				//}
 			} else {
 				continue;
 			}
@@ -248,7 +248,10 @@ public class PlexiMB {
 				if(consultasExistentesRetorno.size() <= 0) {
 					docAnalise.getPlexiConsultas().add(plexiConsulta);
 				} else {
-					docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+					PlexiConsulta db = consultasExistentesRetorno.get(0);
+					if(!docAnalise.getPlexiConsultas().contains(db)) {
+						docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+					}
 				}
 			}
 		}
@@ -368,7 +371,10 @@ public class PlexiMB {
 				if(consultasExistentesRetorno.size() <= 0) {
 					docAnalise.getPlexiConsultas().add(plexiConsultaAux);
 				} else {
-					docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+					PlexiConsulta db = consultasExistentesRetorno.get(0);
+					if(!docAnalise.getPlexiConsultas().contains(db)) {
+						docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+					}
 				}
 			}
 			return false;
@@ -390,7 +396,10 @@ public class PlexiMB {
 					if(consultasExistentesRetorno.size() <= 0) {
 						docAnalise.getPlexiConsultas().add(plexiConsultaAux);
 					} else {
-						docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+						PlexiConsulta db = consultasExistentesRetorno.get(0);
+						if(!docAnalise.getPlexiConsultas().contains(db)) {
+							docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+						}
 					}
 				}
 			}
@@ -407,7 +416,10 @@ public class PlexiMB {
 				if(consultasExistentesRetorno.size() <= 0) {
 					docAnalise.getPlexiConsultas().add(plexiConsultaAux);
 				} else {
-					docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+					PlexiConsulta db = consultasExistentesRetorno.get(0);
+					if(!docAnalise.getPlexiConsultas().contains(db)) {
+						docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+					}
 				}
 			}
 			return false;
@@ -423,7 +435,10 @@ public class PlexiMB {
 				if(consultasExistentesRetorno.size() <= 0) {
 					docAnalise.getPlexiConsultas().add(plexiConsultaAux);
 				} else {
-					docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+					PlexiConsulta db = consultasExistentesRetorno.get(0);
+					if(!docAnalise.getPlexiConsultas().contains(db)) {
+						docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+					}
 				}
 			}
 			return false;
@@ -445,7 +460,10 @@ public class PlexiMB {
 					if(consultasExistentesRetorno.size() <= 0) {
 						docAnalise.getPlexiConsultas().add(plexiConsultaAux);
 					} else {
-						docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+						PlexiConsulta db = consultasExistentesRetorno.get(0);
+						if(!docAnalise.getPlexiConsultas().contains(db)) {
+							docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+						}
 					}
 				}
 			}
@@ -462,7 +480,10 @@ public class PlexiMB {
 				if(consultasExistentesRetorno.size() <= 0) {
 					docAnalise.getPlexiConsultas().add(plexiConsultaAux);
 				} else {
-					docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+					PlexiConsulta db = consultasExistentesRetorno.get(0);
+					if(!docAnalise.getPlexiConsultas().contains(db)) {
+						docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+					}
 				}
 			}
 			return false;
@@ -481,7 +502,10 @@ public class PlexiMB {
 					if(consultasExistentesRetorno.size() <= 0) {
 						docAnalise.getPlexiConsultas().add(plexiConsultaAux);
 					} else {
-						docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+						PlexiConsulta db = consultasExistentesRetorno.get(0);
+						if(!docAnalise.getPlexiConsultas().contains(db)) {
+							docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+						}
 					}
 				}
 			}
@@ -498,7 +522,10 @@ public class PlexiMB {
 				if(consultasExistentesRetorno.size() <= 0) {
 					docAnalise.getPlexiConsultas().add(plexiConsultaAux);
 				} else {
-					docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+					PlexiConsulta db = consultasExistentesRetorno.get(0);
+					if(!docAnalise.getPlexiConsultas().contains(db)) {
+						docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+					}
 				}
 			}  
 			return false;
@@ -519,7 +546,10 @@ public class PlexiMB {
 					if(consultasExistentesRetorno.size() <= 0) {
 						docAnalise.getPlexiConsultas().add(plexiConsultaAux);
 					} else {
-						docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+						PlexiConsulta db = consultasExistentesRetorno.get(0);
+						if(!docAnalise.getPlexiConsultas().contains(db)) {
+							docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+						}
 					}
 				}
 			}

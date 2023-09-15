@@ -70,7 +70,7 @@ public class PlexiWebhook {
 		String nomeAnalise = plexiConsultaDao.getNomeAnalise(plexiConsulta);
 		FileUploaded pdfRetorno = new FileUploaded();
 		pdfRetorno.setFileBase64(plexiConsulta.getPdf());
-		pdfRetorno.setName(plexiConsulta.getPlexiDocumentos().getNome() + " - " + nomeAnalise + " - " + plexiConsulta.getId());
+		pdfRetorno.setName(plexiConsulta.getNomeCompleto() + " - " + nomeAnalise + " - " + plexiConsulta.getId());
 		FileService fileService = new FileService();
 		fileService.salvarDocumentoBase64(pdfRetorno, numeroContrato, "interno", null);
 	}

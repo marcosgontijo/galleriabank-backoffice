@@ -1558,11 +1558,18 @@
 							<f:selectItem itemValue="TO" itemLabel="Tocantins" />							    
 						</p:selectOneMenu>		
 						
-						<p:outputLabel for="linkGMapsImovel" value="Link Google Maps: "/>
-						<p:inputText id="linkGMapsImovel" value="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}" label="Link Google Maps" style="width:400px;"/> 
-						
-						<p:commandButton value="Gerar Link" action="#{contratoCobrancaMB.getLinkMaps()}" update="linkGMapsImovel botaoLinkImovel"/>						       	 	
-						
+						<p:outputLabel for="linkGMapsImovel" value="Link Google Maps: " />
+						<p:inputText id="linkGMapsImovel"
+							value="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}"
+							label="Link Google Maps" style="width:400px;" >
+							<p:ajax event="keyup" update="gerarLinkimovel"/>
+						</p:inputText>
+
+						<p:commandButton id="gerarLinkimovel" value="Gerar Link" action="#{contratoCobrancaMB.getLinkMaps()}" 
+							disabled="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps ne null 
+								and contratoCobrancaMB.objetoImovelCobranca.linkGMaps ne ''}"
+							update="linkGMapsImovel botaoLinkImovel gerarLinkimovel" />
+							
 						<h:panelGroup id="botaoLinkImovel">
 							<a href="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}" class="linkPDF" target="_blank"
 								style="background: linear-gradient(90deg, rgba(159,196,24,1) 0%, rgba(115,158,46,1) 100%);padding: 5px;-webkit-border-radius: 5px;text-decoration: none;
