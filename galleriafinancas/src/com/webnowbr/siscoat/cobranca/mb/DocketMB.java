@@ -142,8 +142,10 @@ public class DocketMB {
 	public String clearFieldsContratoCobranca(ContratoCobranca contrato) { //chama clearFields populado com dados do contrato
 		clearFieldsDocket();
 		this.objetoContratoCobranca = contrato;  
-		populateSelectedContratoCobranca();
-		return "/Atendimento/Cobranca/Docket.xhtml";
+		if(populateSelectedContratoCobranca()){
+			return "/Atendimento/Cobranca/Docket.xhtml";
+		}
+		return "";
 	}
 	
 	public String clearFieldsEngine(ContratoCobranca contrato, List<DataEngine> lista) { //chama clearFields populado com dados do contrato
@@ -542,7 +544,7 @@ public class DocketMB {
 		
 	}
 		
-	public void populateSelectedContratoCobranca() {
+	public boolean populateSelectedContratoCobranca() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		DocketDao docketDao = new DocketDao();
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
@@ -552,18 +554,29 @@ public class DocketMB {
 		ImovelCobranca imovel = new ImovelCobranca();
 		imovel = iDao.findById(contrato.getImovel().getId());
 		this.objetoContratoCobranca = contrato;
-		if(!CommonsUtil.mesmoValor(imovel.getEstado(), "RJ") 
-				&& !CommonsUtil.mesmoValor(imovel.getEstado(), "PR")) {
-			if(!CommonsUtil.semValor(imovel.getEstado())) {
-				localidadesSelecionada.setEstadoSelecionado(EstadosEnum.getByUf(imovel.getEstado()));
+		if (CommonsUtil.mesmoValor(imovel.getEstado(), "RJ") 
+				|| CommonsUtil.mesmoValor(imovel.getEstado(), "PR")
+				|| CommonsUtil.mesmoValor(imovel.getEstado(), "SP")) {
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, "Nâo é possível fazer Docket desse estado", ""));
+			return false;
+		} else {
+			if (!CommonsUtil.semValor(imovel.getEstado())) {
+				EstadosEnum estadoEnum = EstadosEnum.getByUf(imovel.getEstado());
+				if (CommonsUtil.semValor(estadoEnum)) {
+					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"Nâo é possível fazer Docket desse estado", ""));
+					return false;
+				}
+				localidadesSelecionada.setEstadoSelecionado(estadoEnum);
 			}
-			if(!CommonsUtil.semValor(imovel.getCidade())) {
+			if (!CommonsUtil.semValor(imovel.getCidade())) {
 				localidadesSelecionada.setCidade(imovel.getCidade());
 				localidadesSelecionada.getCidadeDocketId();
 			}
 			pegarListaCidadesImovel();
 		}
-		if(!CommonsUtil.semValor(localidadesSelecionada.getCidadeId())) {
+		if (!CommonsUtil.semValor(localidadesSelecionada.getCidadeId())) {
 			inserirLocalidade();
 		}
 		List<DataEngine> listEngine;
@@ -585,7 +598,7 @@ public class DocketMB {
 		if(docketDao.findByFilter("objetoContratoCobranca", contrato).size() > 0) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Pedido desse contrato já existe!", ""));	
 		}
-	
+		return true;
 	}
 		
 	public void removeDoc(PagadorRecebedor pagador, DocumentosPagadorDocket doc) {

@@ -319,10 +319,11 @@
 								ajax="false" /> -->
 								
 							<p:commandButton 
-								action="#{plexiMB.viewFilePlexi(fileAnalise)}"
+								action="#{plexiMB.viewFilePlexi(plexiConsulta)}"
 								icon="ui-icon ui-icon-print" value="Abrir PDF"
 								onclick="target='_blank'" onblur="target='_self'"
-								rendered="#{plexiConsulta.pdf != null}" ajax="false" />
+								rendered="#{plexiConsulta.pdf != null
+									and plexiConsulta.pdf != ''}" ajax="false" />
 						</p:column>
 												
 						
