@@ -1330,13 +1330,13 @@ public class ContratoCobranca implements Serializable {
 		if (terceiroGrantidorTaxa)
 			potuacao -= 150;
 		if (relacionamentoBacenRecenteTaxa)
-			potuacao -= 100;
+			potuacao -= 200;
 		if (dividaVencidaTaxa)
-			potuacao -= 100;
+			potuacao -= 200;
 		if (prejuizoBacenTaxa)
-			potuacao -= 100;
+			potuacao -= 200;
 		if (riscoTotalBaixoTaxa)
-			potuacao -= 100;
+			potuacao -= 200;
 		if (terrenoOuBarracaoTaxa)
 			potuacao -= 400;
 
