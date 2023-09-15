@@ -426,11 +426,8 @@ public class DocumentoAnalise implements Serializable {
 	}
 
 	public boolean isPodeChamarEngine() {
-//		return !isEngineProcessado();				
-				
-		return !isEngineProcessado()
-				&& (!this.motivoAnalise.startsWith("Empresa Vinculada"));
-		
+		return !isEngineProcessado() && (!this.motivoAnalise.startsWith("Empresa Vinculada")
+				&& !this.motivoAnalise.startsWith("Sócio Vinculado ao Proprietario Anterior"));
 	}
 
 	public boolean isEngineProcessado() {
