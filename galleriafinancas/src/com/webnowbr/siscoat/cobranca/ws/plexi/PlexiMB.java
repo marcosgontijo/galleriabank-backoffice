@@ -1,5 +1,7 @@
 package com.webnowbr.siscoat.cobranca.ws.plexi;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,7 +13,9 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -20,6 +24,7 @@ import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
 
+import com.itextpdf.text.pdf.PdfReader;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -215,6 +220,57 @@ public class PlexiMB {
 		gerador.feed(in);
 		gerador.close();
 		return null;
+	}
+	
+	public void viewFilePlexi(PlexiConsulta consulta) {
+		if(CommonsUtil.semValor(consulta)) {
+			return;
+		}
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		try {
+			String documentoBase64 = consulta.getPdf();
+			if (CommonsUtil.semValor(documentoBase64)) {
+				facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Plexi: Ocorreu um problema ao gerar o PDF!", ""));
+				return;
+			}
+			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
+			ExternalContext externalContext = facesContext.getExternalContext();
+			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+			BufferedInputStream input = null;
+			BufferedOutputStream output = null;
+			String mineFile;
+			String fileExtension;
+			try {
+				PdfReader pdf = new PdfReader(pdfBytes);
+				mineFile = "application/pdf";
+				fileExtension = "pdf"; 
+			} catch (Exception e) {
+				mineFile = "text/html";
+				fileExtension = "html"; 
+			}		
+			input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
+			response.reset();
+			// lire un fichier pdf
+			response.setHeader("Content-type", mineFile);
+			response.setContentLength(pdfBytes.length);
+			response.setHeader("Content-disposition", "inline; FileName=" + "Plexi."+fileExtension);
+			output = new BufferedOutputStream(response.getOutputStream(), 10240);
+			byte[] buffer = new byte[10240];
+			int length;
+			while ((length = input.read(buffer)) > 0) {
+				output.write(buffer, 0, length);
+			}
+			output.flush();
+			output.close();
+			facesContext.responseComplete();
+		} catch (NullPointerException e) {
+			facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Plexi: Ocorreu um problema ao gerar o PDF!", ""));
+		} catch (Exception e) {
+			facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Plexi: Ocorreu um problema ao gerar o PDF!", ""));
+		}
 	}
 	
 	public void removeDoc(DocumentoAnalise docAnalise, PlexiConsulta consulta) {

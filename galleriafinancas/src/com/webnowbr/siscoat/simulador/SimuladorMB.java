@@ -73,7 +73,7 @@ public class SimuladorMB {
 		mostrarIPCA = true;
 		validar = true;
 		simularComIPCA = false;
-		usarNovoCustoEmissao = false;
+		usarNovoCustoEmissao = true;
 		
 		return "/Atendimento/Cobranca/Simulador/SimuladorOperacao.xhtml";
 	}
@@ -95,8 +95,8 @@ public class SimuladorMB {
 				if (this.parcelas.compareTo(BigInteger.valueOf(240)) == 1) {
 					validacao.put("Prazo excedido !!", "O prazo máximo é de 240 meses");
 				}
-				if (this.taxaJuros.compareTo(BigDecimal.valueOf(0.99)) < 0) {
-					validacao.put("Juros inválido !!", "A menor taxa de juros é de 0.99%");
+				if (this.taxaJuros.compareTo(BigDecimal.valueOf(1.19)) < 0) {
+					validacao.put("Juros inválido !!", "A menor taxa de juros é de 1.19%");
 				}
 			}
 			if (this.valorCredito.compareTo(BigDecimal.ZERO) == 0) {

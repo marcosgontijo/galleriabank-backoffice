@@ -48,7 +48,7 @@ public enum EstadosEnum {
 	
 	public static EstadosEnum getByUf(String uf) {
 		for(EstadosEnum estado : EstadosEnum.values()) {
-			if(CommonsUtil.mesmoValor(uf, estado.getUf())) {
+			if(CommonsUtil.mesmoValor(uf.toLowerCase().trim(), estado.getUf().toLowerCase().trim())) {
 				return estado;
 			}
 		}

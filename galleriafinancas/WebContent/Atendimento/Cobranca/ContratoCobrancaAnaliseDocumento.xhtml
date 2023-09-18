@@ -247,7 +247,7 @@
 					action="#{contratoCobrancaMB.executarConsultasAnaliseDocumento}"
 					widgetVar="executeBtn" onclick="executeBtn.disable()" 
 					disabled="#{contratoCobrancaMB.checkConsultasAnaliseDocumento()}" />
-				<p:commandButton value="Certidões Docket"
+				<p:commandButton value="Certidões Docket" ajax="false"
 					action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.objetoContratoCobranca)}" />
 				<p:commandButton value="Certidões Plexi" 
 					action="#{plexiMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, contratoCobrancaMB.objetoImovelCobranca.estado, 'lento')}" />

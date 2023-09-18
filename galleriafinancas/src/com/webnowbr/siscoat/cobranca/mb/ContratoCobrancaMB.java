@@ -4911,7 +4911,7 @@ public class ContratoCobrancaMB {
 			// Finalize task.
 			output.flush();
 			output.close();
-
+			facesContext.responseComplete();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -4934,28 +4934,29 @@ public class ContratoCobrancaMB {
 						"Serasa: Ocorreu um problema ao gerar o PDF!", ""));
 				return;
 			} else {
-			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
-			String mineFile = "application/pdf";
-			input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
-			response.reset();
-			// lire un fichier pdf
-			response.setHeader("Content-type", mineFile);
+				byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
+				String mineFile = "application/pdf";
+				input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
+				response.reset();
+				// lire un fichier pdf
+				response.setHeader("Content-type", mineFile);
 
-			response.setContentLength(pdfBytes.length);
+				response.setContentLength(pdfBytes.length);
 
-			response.setHeader("Content-disposition",
-					"inline; FileName=" + this.objetoContratoCobranca.getNumeroContrato() + " Serasa "
-							+ documentoAnalise.getPagador().getNome() + ".pdf");
-			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-			byte[] buffer = new byte[pdfBytes.length];
-			int length;
-			while ((length = input.read(buffer)) > 0) {
-				output.write(buffer, 0, length);
-			}
+				response.setHeader("Content-disposition",
+						"inline; FileName=" + this.objetoContratoCobranca.getNumeroContrato() + " Serasa "
+								+ documentoAnalise.getPagador().getNome() + ".pdf");
+				output = new BufferedOutputStream(response.getOutputStream(), 10240);
+				byte[] buffer = new byte[pdfBytes.length];
+				int length;
+				while ((length = input.read(buffer)) > 0) {
+					output.write(buffer, 0, length);
+				}
 
-			// Finalize task.
-			output.flush();
-			output.close();
+				// Finalize task.
+				output.flush();
+				output.close();
+				facesContext.responseComplete();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -4976,27 +4977,29 @@ public class ContratoCobrancaMB {
 						"PPE: Ocorreu um problema ao gerar o PDF!", ""));
 				return;
 			} else {
-			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
-			String mineFile = "application/pdf";
-			input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
-			response.reset();
-			// lire un fichier pdf
-			response.setHeader("Content-type", mineFile);
+				byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
+				String mineFile = "application/pdf";
+				input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
+				response.reset();
+				// lire un fichier pdf
+				response.setHeader("Content-type", mineFile);
 
-			response.setContentLength(pdfBytes.length);
+				response.setContentLength(pdfBytes.length);
 
-			response.setHeader("Content-disposition", "inline; FileName=" + objetoContratoCobranca.getNumeroContrato()
-					+ " PPE " + documentoAnalise.getPagador().getNome() + ".pdf");
-			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-			byte[] buffer = new byte[pdfBytes.length];
-			int length;
-			while ((length = input.read(buffer)) > 0) {
-				output.write(buffer, 0, length);
-			}
+				response.setHeader("Content-disposition",
+						"inline; FileName=" + objetoContratoCobranca.getNumeroContrato() + " PPE "
+								+ documentoAnalise.getPagador().getNome() + ".pdf");
+				output = new BufferedOutputStream(response.getOutputStream(), 10240);
+				byte[] buffer = new byte[pdfBytes.length];
+				int length;
+				while ((length = input.read(buffer)) > 0) {
+					output.write(buffer, 0, length);
+				}
 
-			// Finalize task.
-			output.flush();
-			output.close();
+				// Finalize task.
+				output.flush();
+				output.close();
+				facesContext.responseComplete();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -5017,27 +5020,29 @@ public class ContratoCobrancaMB {
 						"Dossiê: Ocorreu um problema ao gerar o PDF!", ""));
 				return;
 			} else {
-			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
-			String mineFile = "application/pdf";
-			input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
-			response.reset();
-			// lire un fichier pdf
-			response.setHeader("Content-type", mineFile);
+				byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
+				String mineFile = "application/pdf";
+				input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
+				response.reset();
+				// lire un fichier pdf
+				response.setHeader("Content-type", mineFile);
 
-			response.setContentLength(pdfBytes.length);
+				response.setContentLength(pdfBytes.length);
 
-			response.setHeader("Content-disposition", "inline; FileName=" + objetoContratoCobranca.getNumeroContrato()
-					+ " Dossie " + documentoAnalise.getPagador().getNome() + ".pdf");
-			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-			byte[] buffer = new byte[pdfBytes.length];
-			int length;
-			while ((length = input.read(buffer)) > 0) {
-				output.write(buffer, 0, length);
-			}
+				response.setHeader("Content-disposition",
+						"inline; FileName=" + objetoContratoCobranca.getNumeroContrato() + " Dossie "
+								+ documentoAnalise.getPagador().getNome() + ".pdf");
+				output = new BufferedOutputStream(response.getOutputStream(), 10240);
+				byte[] buffer = new byte[pdfBytes.length];
+				int length;
+				while ((length = input.read(buffer)) > 0) {
+					output.write(buffer, 0, length);
+				}
 
-			// Finalize task.
-			output.flush();
-			output.close();
+				// Finalize task.
+				output.flush();
+				output.close();
+				facesContext.responseComplete();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -5059,27 +5064,29 @@ public class ContratoCobrancaMB {
 				return;
 			} else {
 
-			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
-			String mineFile = "application/pdf";
-			input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
-			response.reset();
-			// lire un fichier pdf
-			response.setHeader("Content-type", mineFile);
+				byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
+				String mineFile = "application/pdf";
+				input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
+				response.reset();
+				// lire un fichier pdf
+				response.setHeader("Content-type", mineFile);
 
-			response.setContentLength(pdfBytes.length);
+				response.setContentLength(pdfBytes.length);
 
-			response.setHeader("Content-disposition", "inline; FileName=" + objetoContratoCobranca.getNumeroContrato()
-					+ " Cenprot " + documentoAnalise.getPagador().getNome() + ".pdf");
-			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-			byte[] buffer = new byte[pdfBytes.length];
-			int length;
-			while ((length = input.read(buffer)) > 0) {
-				output.write(buffer, 0, length);
-			}
+				response.setHeader("Content-disposition",
+						"inline; FileName=" + objetoContratoCobranca.getNumeroContrato() + " Cenprot "
+								+ documentoAnalise.getPagador().getNome() + ".pdf");
+				output = new BufferedOutputStream(response.getOutputStream(), 10240);
+				byte[] buffer = new byte[pdfBytes.length];
+				int length;
+				while ((length = input.read(buffer)) > 0) {
+					output.write(buffer, 0, length);
+				}
 
-			// Finalize task.
-			output.flush();
-			output.close();
+				// Finalize task.
+				output.flush();
+				output.close();
+				facesContext.responseComplete();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -5122,7 +5129,7 @@ public class ContratoCobrancaMB {
 			}
 			output.flush();
 			output.close();
-
+			facesContext.responseComplete();
 		} catch (NullPointerException e) {
 			facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Processos: Ocorreu um problema ao gerar o PDF!", ""));
@@ -5155,26 +5162,28 @@ public class ContratoCobrancaMB {
 				return;
 			} else {
 
-			String mineFile = "application/pdf";
-			input = new BufferedInputStream(new ByteArrayInputStream(contrato));
-			response.reset();
-			// lire un fichier pdf
-			response.setHeader("Content-type", mineFile);
+				String mineFile = "application/pdf";
+				input = new BufferedInputStream(new ByteArrayInputStream(contrato));
+				response.reset();
+				// lire un fichier pdf
+				response.setHeader("Content-type", mineFile);
 
-			response.setContentLength(contrato.length);
+				response.setContentLength(contrato.length);
 
-			response.setHeader("Content-disposition", "inline; FileName=" + objetoContratoCobranca.getNumeroContrato()
-					+ " SCR " + documentoAnalise.getPagador().getNome() + ".pdf");
-			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-			byte[] buffer = new byte[contrato.length];
-			int length;
-			while ((length = input.read(buffer)) > 0) {
-				output.write(buffer, 0, length);
-			}
+				response.setHeader("Content-disposition",
+						"inline; FileName=" + objetoContratoCobranca.getNumeroContrato() + " SCR "
+								+ documentoAnalise.getPagador().getNome() + ".pdf");
+				output = new BufferedOutputStream(response.getOutputStream(), 10240);
+				byte[] buffer = new byte[contrato.length];
+				int length;
+				while ((length = input.read(buffer)) > 0) {
+					output.write(buffer, 0, length);
+				}
 
-			// Finalize task.
-			output.flush();
-			output.close();
+				// Finalize task.
+				output.flush();
+				output.close();
+				facesContext.responseComplete();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
