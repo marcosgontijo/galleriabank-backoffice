@@ -17,6 +17,7 @@ import org.primefaces.model.StreamedContent;
 
 import com.itextpdf.text.pdf.PdfReader;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
+import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
@@ -76,12 +77,13 @@ public class NetrinMB {
 			// Finalize task.
 			output.flush();
 			output.close();
-			facesContext.responseComplete();
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+
 	
 	public void baixarDocumentoPpe(DocumentoAnalise documentoAnalise) {
 		String documentoBase64 = netrinService.baixarDocumentoPpe(documentoAnalise);
@@ -112,7 +114,7 @@ public class NetrinMB {
 			// Finalize task.
 			output.flush();
 			output.close();
-			facesContext.responseComplete();
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -148,7 +150,7 @@ public class NetrinMB {
 			// Finalize task.
 			output.flush();
 			output.close();
-			facesContext.responseComplete();
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -156,23 +158,15 @@ public class NetrinMB {
 	}
 	
 	public void baixarDocumentoProcesso(DocumentoAnalise documentoAnalise) {
+		String documentoBase64 = netrinService.baixarDocumentoProcesso(documentoAnalise);
 		FacesContext facesContext = FacesContext.getCurrentInstance();
-
+		ExternalContext externalContext = facesContext.getExternalContext();
+		HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+		BufferedInputStream input = null;
+		BufferedOutputStream output = null;
 		try {
 
-			String documentoBase64 = netrinService.baixarDocumentoProcesso(documentoAnalise);
-			if (CommonsUtil.semValor(documentoBase64)) {
-				facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-						"Processos: Ocorreu um problema ao gerar o PDF!", ""));
-				return;
-			}
-
 			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
-			ExternalContext externalContext = facesContext.getExternalContext();
-			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-			BufferedInputStream input = null;
-			BufferedOutputStream output = null;
-
 			String mineFile = "application/pdf";
 			input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
 			response.reset();
@@ -188,15 +182,14 @@ public class NetrinMB {
 			while ((length = input.read(buffer)) > 0) {
 				output.write(buffer, 0, length);
 			}
+
+			// Finalize task.
 			output.flush();
 			output.close();
-			facesContext.responseComplete();
-		} catch (NullPointerException e) {
-			facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"Processos: Ocorreu um problema ao gerar o PDF!", ""));
+			
+
 		} catch (Exception e) {
-			facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"Processos: Ocorreu um problema ao gerar o PDF!", ""));
+			e.printStackTrace();
 		}
 	}
 	

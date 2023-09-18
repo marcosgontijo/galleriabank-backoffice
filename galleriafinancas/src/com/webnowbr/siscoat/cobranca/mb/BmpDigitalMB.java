@@ -255,7 +255,7 @@ public class BmpDigitalMB {
 			// Finalize task.
 			output.flush();
 			output.close();
-			facesContext.responseComplete();
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();

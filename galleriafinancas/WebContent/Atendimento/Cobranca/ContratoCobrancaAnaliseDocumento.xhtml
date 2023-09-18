@@ -155,39 +155,37 @@
 								ajax="false" />
 
 							<p:commandButton
-								action="#{contratoCobrancaMB.baixarDocumentoSerasa(fileAnalise)}"
+								action="#{serasaMB.baixarDocumento(fileAnalise)}"
 								icon="ui-icon ui-icon-print" value="Abrir Serasa"
 								onclick="target='_blank'" onblur="target='_self'"
 								rendered="#{fileAnalise.serasaProcessado }" ajax="false" />
 
 							<p:commandButton
-								action="#{contratoCobrancaMB.baixarDocumentoCenprot(fileAnalise)}"
+								action="#{netrinMB.baixarDocumento(fileAnalise)}"
 								onclick="target='_blank'" onblur="target='_self'"
 								icon="ui-icon ui-icon-print" value="Abrir Cenprot"
 								rendered="#{fileAnalise.cenprotProcessado }" ajax="false" />
 
 							<p:commandButton
-								action="#{contratoCobrancaMB.baixarDocumentoPpe(fileAnalise)}"
+								action="#{netrinMB.baixarDocumentoPpe(fileAnalise)}"
 								onclick="target='_blank'" onblur="target='_self'"
 								icon="ui-icon ui-icon-print" value="Abrir PPE"
 								rendered="#{fileAnalise.ppeProcessado }" ajax="false" />
 
 							<p:commandButton
-								action="#{contratoCobrancaMB.baixarDocumentoDossie(fileAnalise)}"
+								action="#{netrinMB.baixarDocumentoDossie(fileAnalise)}"
 								onclick="target='_blank'" onblur="target='_self'"
 								icon="ui-icon ui-icon-print" value="Abrir Dossiê"
 								rendered="#{fileAnalise.podeDownlaodDossie }" ajax="false" />
 
-								
-								
 							<p:commandButton
-								action="#{contratoCobrancaMB.baixarDocumentoProcesso(fileAnalise)}"
+								action="#{netrinMB.baixarDocumentoProcesso(fileAnalise)}"
 								onclick="target='_blank'" onblur="target='_self'"
 								icon="ui-icon ui-icon-print" value="Abrir Processos"
-								rendered="#{fileAnalise.processoProcessado and fileAnalise.tipoProcesso == 'B'  }" ajax="false" />
+								rendered="#{fileAnalise.processoProcessado }" ajax="false" />
 
 							<p:commandButton
-								action="#{contratoCobrancaMB.baixarDocumentoSCR(fileAnalise)}"
+								action="#{bmpDigitalMB.baixarDocumento(fileAnalise)}"
 								onclick="target='_blank'" onblur="target='_self'"
 								icon="ui-icon ui-icon-print" value="Abrir SCR"
 								rendered="#{fileAnalise.scrProcessado }" ajax="false" />

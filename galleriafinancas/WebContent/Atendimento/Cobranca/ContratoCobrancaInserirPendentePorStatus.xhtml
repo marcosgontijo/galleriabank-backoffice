@@ -4361,11 +4361,11 @@
 					<h:panelGrid columns="1">			                      								
 						<p:dataTable id="dtFilesComite" var="filesComite" value="#{contratoCobrancaMB.filesComite}" rowKey="#{filesComite.name}" selection="#{contratoCobrancaMB.deletefilesComite}" emptyMessage="" sortBy="#{filesComite.name}" >	
 							<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
-							 <f:facet name="header">
-							 	<p:commandButton value="Download Selecionado(s)" ajax="false" immediate="true"
-									icon="ui-icon-arrowthick-1-s" action="#{contratoCobrancaMB.getDownloadAllFilesComite()}">
-								</p:commandButton>										 
-								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileComite}"/>	
+							 <f:facet name="header">											 
+								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileComite}"/>
+								<p:commandButton value="Download selecionados" ajax="false">
+									<p:fileDownload value="#{contratoCobrancaMB.downloadFileComite}"></p:fileDownload>
+								</p:commandButton>
 					        </f:facet>	        
 					        <p:column style="text-align: center;"
 								headerText="Nome do Arquivo" filterBy="#{filesComite.name}"
@@ -4568,6 +4568,9 @@
 									action="#{contratoCobrancaMB.getDownloadAllFilesFaltante()}">
 								</p:commandButton> 
 								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileFaltante}"/>
+								<p:commandButton value="Download selecionados" ajax="false">
+									<p:fileDownload value="#{contratoCobrancaMB.downloadArquivosFaltantes}"></p:fileDownload>
+								</p:commandButton>
 					        </f:facet>	        
 					        <p:column style="text-align: center;"
 								headerText="Nome do Arquivo" filterBy="#{filesFaltante.name}"
@@ -4636,7 +4639,10 @@
 									action="#{contratoCobrancaMB.getDownloadAllFilesJuridico()}">
 								</p:commandButton>
 								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileJuridico}"/>
-					        </f:facet>	       
+								<p:commandButton value="Download selecionados" ajax="false">
+								<p:fileDownload value="#{contratoCobrancaMB.downloadFilesJuridico}"></p:fileDownload>
+								</p:commandButton>
+					        </f:facet>	        
 					        <p:column style="text-align: center;"
 								headerText="Nome do Arquivo" filterBy="#{filesJuridico.name}"
 								filterMatchMode="contains" sortBy="#{filesJuridico.name}">

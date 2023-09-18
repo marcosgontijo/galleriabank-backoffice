@@ -373,15 +373,15 @@ public class DocumentoAnalise implements Serializable {
 	public List<DocumentoAnaliseResumo> getResumoCenprot() {
 		List<DocumentoAnaliseResumo> cenprot = new ArrayList<>();
 
-		CenprotProtestos data = GsonUtil.fromJson(getRetornoCenprot(), CenprotProtestos.class);
+		CenprotResponse data = GsonUtil.fromJson(getRetornoCenprot(), CenprotResponse.class);
 		if (data == null) {
 			cenprot.add(new DocumentoAnaliseResumo("Não disponível", null));
 		} else {
 
-			if (CommonsUtil.semValor(data.getProtestosBrasil().getEstados())) {
+			if (CommonsUtil.semValor(data.getCenprotProtestos().getProtestosBrasil().getEstados())) {
 				cenprot.add(new DocumentoAnaliseResumo("Não disponível", null));
 			} else {
-				for (ProtestosBrasilEstado estado : data.getProtestosBrasil().getEstados()) {
+				for (ProtestosBrasilEstado estado : data.getCenprotProtestos().getProtestosBrasil().getEstados()) {
 
 					String valorEstado = CommonsUtil.stringValue(estado.getValorTotal()) + " (" + estado.getValorTotal()
 							+ ") ";
