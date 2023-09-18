@@ -223,6 +223,9 @@ public class PlexiMB {
 	}
 	
 	public void viewFilePlexi(PlexiConsulta consulta) {
+		if(CommonsUtil.semValor(consulta)) {
+			return;
+		}
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		try {
 			String documentoBase64 = consulta.getPdf();
