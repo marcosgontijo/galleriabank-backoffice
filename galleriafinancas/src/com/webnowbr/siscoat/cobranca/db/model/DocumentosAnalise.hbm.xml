@@ -126,6 +126,9 @@
 			<column name="retornoCNDEstadual" />
 		</property>
 		
+		<property name="estadosConsultaStr" type="java.lang.String" >
+			<column name="estadosConsultaStr" />
+		</property>
 		
 		<list name="plexiConsultas"
 			table="DocumentoAnalise_PlexiConsultas_Join" cascade="all" lazy="false">

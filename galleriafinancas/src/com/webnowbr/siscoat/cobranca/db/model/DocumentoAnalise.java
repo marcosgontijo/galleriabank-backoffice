@@ -78,6 +78,8 @@ public class DocumentoAnalise implements Serializable {
 	private String retornoCNDEstadual;
 	
 	private List<PlexiConsulta> plexiConsultas = new ArrayList<PlexiConsulta>();
+	private List<String> estadosConsulta = new ArrayList<String>();
+	private String estadosConsultaStr;
 	
 	private boolean politicamenteExposta = false;
 	private String pessoasPoliticamenteExpostas = "0";
@@ -426,11 +428,8 @@ public class DocumentoAnalise implements Serializable {
 	}
 
 	public boolean isPodeChamarEngine() {
-//		return !isEngineProcessado();				
-				
-		return !isEngineProcessado()
-				&& (!this.motivoAnalise.startsWith("Empresa Vinculada"));
-		
+		return !isEngineProcessado() && (!this.motivoAnalise.startsWith("Empresa Vinculada")
+				&& !this.motivoAnalise.startsWith("Sócio Vinculado ao Proprietario Anterior"));
 	}
 
 	public boolean isEngineProcessado() {
@@ -845,5 +844,27 @@ public class DocumentoAnalise implements Serializable {
 
 	private void setPessoasPoliticamenteExpostas(int pessoasPoliticamenteExpostas) {
 		this.pessoasPoliticamenteExpostas = Integer.toString(pessoasPoliticamenteExpostas);
+	}
+	
+	public List<String> getEstadosConsulta() {
+		if(!CommonsUtil.semValor(estadosConsultaStr)) {
+			estadosConsulta = CommonsUtil.stringToList(estadosConsultaStr);
+		}
+		return estadosConsulta;
+	}
+
+	public void setEstadosConsulta(List<String> estadosConsulta) {
+		this.estadosConsulta = estadosConsulta;
+	}
+	
+	public String getEstadosConsultaStr() {
+		if(!CommonsUtil.semValor(estadosConsulta)) {
+			estadosConsultaStr = estadosConsulta.toString();
+		}
+		return estadosConsultaStr;
+	}
+
+	public void setEstadosConsultaStr(String estadosConsultaStr) {
+		this.estadosConsultaStr = estadosConsultaStr;
 	}
 }
