@@ -62,7 +62,7 @@
 						style="width:250px;font-weight: bold; font-size: 18px;">
 						<f:convertDateTime locale="pt_BR" />
 						<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
-					</h:outputText>
+					</h:outputText>					
 				</h:panelGrid>
 
 				<shiro:hasAnyRoles name="ROOT">
@@ -73,9 +73,19 @@
 						<p:selectBooleanCheckbox id="contratoRestritoAdm"
 							value="#{contratoCobrancaMB.objetoContratoCobranca.contratoRestritoAdm}"
 							style="margin-left: 12px;" />
-						<p:spacer width="10" />
+						<p:spacer width="5" />
 					</h:panelGrid>
 				</shiro:hasAnyRoles>
+				
+				<h:panelGrid columns="2"
+					style="width: 250px;">
+					<p:commandButton value="Contratos do Pagador"
+						onclick="PF('listaContratosPagador').show();"
+						rendered="#{contratoCobrancaMB.contratosPagadorAnalisado.size() > 0}" />
+					<p:commandButton value="Contratos do Imovel"
+						onclick="PF('listaContratosImovel').show();"
+						rendered="#{contratoCobrancaMB.contratosImovelAnalisado.size() > 0}" />
+				</h:panelGrid>
 
 				<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA, PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
 							PROFILE_ANALISTA_POS_COMITE, 
@@ -3529,11 +3539,14 @@
 						<p:outputLabel for="linkGMapsImovel" value="Link Google Maps: " />
 						<p:inputText id="linkGMapsImovel"
 							value="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}"
-							label="Link Google Maps" style="width:400px;" />
+							label="Link Google Maps" style="width:400px;" >
+							<p:ajax event="keyup" update="gerarLinkimovel"/>
+						</p:inputText>
 
-						<p:commandButton value="Gerar Link"
-							action="#{contratoCobrancaMB.getLinkMaps()}"
-							update="linkGMapsImovel botaoLinkImovel" />
+						<p:commandButton id="gerarLinkimovel" value="Gerar Link" action="#{contratoCobrancaMB.getLinkMaps()}" 
+							disabled="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps ne null 
+								and contratoCobrancaMB.objetoImovelCobranca.linkGMaps ne ''}"
+							update="linkGMapsImovel botaoLinkImovel gerarLinkimovel" />
 
 						<h:panelGroup id="botaoLinkImovel">
 							<a href="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}"
@@ -4683,9 +4696,14 @@
 	
 					<p:panel id="ArquivosComiteSalvos" header="Arquivo(s) Comite Salvo(s) no Contrato" style="margin-bottom:10px;">							
 						<h:panelGrid columns="1">			                      								
-							<p:dataTable id="dtFilesComite" var="filesComite" value="#{contratoCobrancaMB.filesComite}" rowKey="#{filesComite.name}" selection="#{contratoCobrancaMB.deletefilesComite}" emptyMessage="" sortBy="#{filesComite.name}" >	
+							<p:dataTable id="dtFilesComite" var="filesComite" value="#{contratoCobrancaMB.filesComite}" 
+							rowKey="#{filesComite.name}" selection="#{contratoCobrancaMB.deletefilesComite}" 
+							emptyMessage="" sortBy="#{filesComite.name}" >	
 								<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
-								 <f:facet name="header">											 
+								 <f:facet name="header">	
+								 	<p:commandButton value="Download Selecionado(s)" ajax="false" immediate="true"
+										icon="ui-icon-arrowthick-1-s" action="#{contratoCobrancaMB.getDownloadAllFilesComite()}">
+									</p:commandButton>											 
 									<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileComite}"/>
 						        </f:facet>	        
 						        <p:column style="text-align: center;"
@@ -4706,8 +4724,17 @@
 					            </p:column>						        
 	
 					             <f:facet name="footer">
+					            	<p:commandButton value="Download Selecionado(s)" ajax="false" immediate="true"
+										icon="ui-icon-arrowthick-1-s" action="#{contratoCobrancaMB.getDownloadAllFilesComite()}">
+									</p:commandButton>
 									<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileComite}"/>								
-						        </f:facet>             	        		               		        			        			           			 		
+						        </f:facet>    
+						        <p:ajax event="rowSelectCheckbox" 
+									process="@this" listener="#{contratoCobrancaMB.fileSelectionListener()}"/>
+								<p:ajax event="rowUnselectCheckbox" 
+									process="@this" listener="#{contratoCobrancaMB.fileSelectionListener()}"/>
+								<p:ajax event="toggleSelect" 
+									process="@this" listener="#{contratoCobrancaMB.fileSelectionListener()}"/>         	        		               		        			        			           			 		
 							</p:dataTable>								
 						</h:panelGrid>  
 					</p:panel>
@@ -4759,10 +4786,8 @@
 									style="width:16px;text-align:center" />
 								<f:facet name="header">
 									<p:commandButton value="Download Selecionado(s)" ajax="false"
-										
+										immediate="true" action="#{contratoCobrancaMB.getDownloadAllFilesInterno()}"
 										icon="ui-icon-arrowthick-1-s">
-										<p:fileDownload
-											value="#{contratoCobrancaMB.downloadAllFilesInterno}" />
 									</p:commandButton>
 									<p:commandButton value="Excluir Selecionado(s)" ajax="false"
 										icon="ui-icon-trash"
@@ -4794,15 +4819,19 @@
 	
 								<f:facet name="footer">
 									<p:commandButton value="Download Selecionado(s)" ajax="false"
-										
+										immediate="true" action="#{contratoCobrancaMB.getDownloadAllFilesInterno()}"
 										icon="ui-icon-arrowthick-1-s">
-										<p:fileDownload
-											value="#{contratoCobrancaMB.downloadAllFilesInterno}" />
 									</p:commandButton>
 									<p:commandButton value="Excluir Selecionado(s)" ajax="false"
 										icon="ui-icon-trash"
 										action="#{contratoCobrancaMB.deleteFileInterno}" />
 								</f:facet>
+								<p:ajax event="rowSelectCheckbox" update="dtFilesInterno" 
+									process="@this" listener="#{contratoCobrancaMB.fileSelectionListener()}"/>
+								<p:ajax event="rowUnselectCheckbox" update="dtFilesInterno" 
+									process="@this" listener="#{contratoCobrancaMB.fileSelectionListener()}"/>
+								<p:ajax event="toggleSelect" update="dtFilesInterno" 
+									process="@this" listener="#{contratoCobrancaMB.fileSelectionListener()}"/>	
 							</p:dataTable>
 						</h:panelGrid>
 					</p:panel>
@@ -4832,9 +4861,15 @@
 
 				<p:panel id="ArquivosFaltantesSalvos" header="Arquivo(s) Faltante Salvo(s) no Contrato" style="margin-bottom:10px;">							
 					<h:panelGrid columns="1">			                      								
-						<p:dataTable id="dtFilesFaltante" var="filesFaltante" value="#{contratoCobrancaMB.filesFaltante}" rowKey="#{filesFaltante.name}" selection="#{contratoCobrancaMB.deletefilesFaltante}" emptyMessage="" sortBy="#{filesFaltante.name}" >	
+						<p:dataTable id="dtFilesFaltante" var="filesFaltante" value="#{contratoCobrancaMB.filesFaltante}" 
+						rowKey="#{filesFaltante.name}" selection="#{contratoCobrancaMB.deletefilesFaltante}" 
+						emptyMessage="" sortBy="#{filesFaltante.name}" >	
 							<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
-							 <f:facet name="header">								 
+							 <f:facet name="header">
+							 	<p:commandButton value="Download Selecionado(s)" ajax="false"
+									icon="ui-icon-arrowthick-1-s" immediate="true"
+									action="#{contratoCobrancaMB.getDownloadAllFilesFaltante()}">
+								</p:commandButton>									 
 								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileFaltante}"/>
 					        </f:facet>	        
 					        <p:column style="text-align: center;"
@@ -4854,9 +4889,19 @@
 						    	</p:commandButton>	
 				            </p:column>						        
 
-				             <f:facet name="footer">				             
+				             <f:facet name="footer">
+				            	<p:commandButton value="Download Selecionado(s)" ajax="false"
+									icon="ui-icon-arrowthick-1-s" immediate="true"
+									action="#{contratoCobrancaMB.getDownloadAllFilesFaltante()}">
+								</p:commandButton>				             
 								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileFaltante}"/>								
-					        </f:facet>             	        		               		        			        			           			 		
+					        </f:facet>
+							<p:ajax event="rowSelectCheckbox" process="@this"
+								listener="#{contratoCobrancaMB.fileSelectionListener()}" />
+							<p:ajax event="rowUnselectCheckbox" process="@this"
+								listener="#{contratoCobrancaMB.fileSelectionListener()}" />
+							<p:ajax event="toggleSelect" process="@this"
+								listener="#{contratoCobrancaMB.fileSelectionListener()}" />
 						</p:dataTable>								
 					</h:panelGrid>  
 				</p:panel>
@@ -4888,17 +4933,22 @@
 	
 					<p:panel id="ArquivosJuridicoSalvos" header="Arquivo(s) Juridico Salvo(s) no Contrato" style="margin-bottom:10px;">							
 						<h:panelGrid columns="1">			                      								
-							<p:dataTable id="dtFilesJuridico" var="filesJuridico" value="#{contratoCobrancaMB.filesJuridico}" rowKey="#{filesJuridico.name}" selection="#{contratoCobrancaMB.deletefilesJuridico}" emptyMessage="" sortBy="#{filesJuridico.name}" >	
+							<p:dataTable id="dtFilesJuridico" var="filesJuridico" value="#{contratoCobrancaMB.filesJuridico}" 
+							rowKey="#{filesJuridico.name}" selection="#{contratoCobrancaMB.deletefilesJuridico}"
+							 emptyMessage="" sortBy="#{filesJuridico.name}" >	
 								<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
-								 <f:facet name="header">							 
+								 <f:facet name="header">
+									<p:commandButton value="Download Selecionado(s)" ajax="false"
+										icon="ui-icon-arrowthick-1-s" immediate="true"
+										action="#{contratoCobrancaMB.getDownloadAllFilesJuridico()}">
+									</p:commandButton>							 
 									<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileJuridico}"/>
+								
 						        </f:facet>	        
 						        <p:column style="text-align: center;"
 									headerText="Nome do Arquivo" filterBy="#{filesJuridico.name}"
 									filterMatchMode="contains" sortBy="#{filesJuridico.name}">
-									<h:outputText
-									
-											value="#{filesJuridico.name}" />
+									<h:outputText value="#{filesJuridico.name}" />
 									<p:spacer height="10" />
 									<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFile(filesJuridico)}"
 										immediate="true" icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
@@ -4912,9 +4962,19 @@
 							    	</p:commandButton>	
 					            </p:column>						        
 	
-					             <f:facet name="footer">	             
+					             <f:facet name="footer">
+					             	<p:commandButton value="Download Selecionado(s)" ajax="false"
+										icon="ui-icon-arrowthick-1-s" immediate="true"
+										action="#{contratoCobrancaMB.getDownloadAllFilesJuridico()}">
+									</p:commandButton>	             
 									<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileJuridico}"/>								
-						        </f:facet>             	        		               		        			        			           			 		
+						        </f:facet>
+								<p:ajax event="rowSelectCheckbox" process="@this"
+									listener="#{contratoCobrancaMB.fileSelectionListener()}" />
+								<p:ajax event="rowUnselectCheckbox" process="@this"
+									listener="#{contratoCobrancaMB.fileSelectionListener()}" />
+								<p:ajax event="toggleSelect" process="@this"
+									listener="#{contratoCobrancaMB.fileSelectionListener()}" />
 							</p:dataTable>								
 						</h:panelGrid>  
 					</p:panel>
@@ -4929,6 +4989,73 @@
 					</script>
 				</p:panel>	
 			</shiro:hasAnyRoles>
+			
+			<p:panel id="UploadArquivosCci" header="Arquivos CCI" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite' and contratoCobrancaMB.objetoContratoCobranca.aprovadoComite}"   >						
+				<p:panel id="ArquivosCci" header="Selecionar Arquivo Para Upload" style="margin-bottom:10px;text-align: center;" rendered="#{( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'))}">							
+
+					<h:panelGrid columns="1">		
+						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileCciUpload}" mode="advanced" dragDropSupport="true"
+                          update="ArquivosCciSalvos msgArquivo" />								
+					</h:panelGrid>  
+				</p:panel>	
+				
+				<p:dialog modal="true" widgetVar="statusDialog" header="Status Downloading" draggable="false" closable="false" resizable="false">
+				    <p:graphicImage name="image/ajaxloadingbar.gif" />
+				</p:dialog>
+
+				<p:panel id="ArquivosCciSalvos" header="Arquivo(s) CCI Salvo(s) no Contrato" style="margin-bottom:10px;">							
+					<h:panelGrid columns="1">			                      								
+						<p:dataTable id="dtFilesCci" var="filesCci" value="#{contratoCobrancaMB.filesCci}" rowKey="#{filesCci.name}"
+							selection="#{contratoCobrancaMB.deletefilesCci}" emptyMessage="" sortBy="#{filesCci.name}" >
+							<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+							 <f:facet name="header">	
+								<p:commandButton value="Download selecionados" ajax="false"
+								 	immediate="true" action="#{contratoCobrancaMB.getDownloadAllFilesCci()}">
+								</p:commandButton>
+								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileCci}"/>
+					        </f:facet>	        
+					        <p:column style="text-align: center;"
+								headerText="Nome do Arquivo" filterBy="#{filesCci.name}"
+								filterMatchMode="contains" sortBy="#{filesCci.name}">
+								<h:outputText value="#{filesCci.name}"/>
+								<p:spacer height="10" />
+								<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFile(filesCci)}"
+									immediate="true" icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
+								</p:commandButton>
+							</p:column>  
+					        
+					        <p:column style="width:100px;">
+								<p:commandButton value="Download" ajax="false"  icon="ui-icon-arrowthick-1-s">						       	 	
+						       	 	<f:setPropertyActionListener target="#{contratoCobrancaMB.selectedFile}" value="#{filesCci}" />
+						       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
+						    	</p:commandButton>	
+				            </p:column>						        
+
+				             <f:facet name="footer">	    
+				             	<p:commandButton value="Download selecionados" ajax="false"
+								 	immediate="true" action="#{contratoCobrancaMB.getDownloadAllFilesCci()}">
+								</p:commandButton>         
+								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileCci}"/>								
+					        </f:facet>
+							<p:ajax event="rowSelectCheckbox" process="@this"
+								listener="#{contratoCobrancaMB.fileSelectionListener()}" />
+							<p:ajax event="rowUnselectCheckbox" process="@this"
+								listener="#{contratoCobrancaMB.fileSelectionListener()}" />
+							<p:ajax event="toggleSelect" process="@this"
+								listener="#{contratoCobrancaMB.fileSelectionListener()}" />
+						</p:dataTable>							
+					</h:panelGrid>  
+				</p:panel>
+				<script type="text/javascript">
+					function start() {
+					    PF('statusDialog').show();
+					}
+					 
+					function stop() {
+					    PF('statusDialog').hide();
+					}
+				</script>
+			</p:panel>	
 		
 			<p:panel id="UploadArquivos" header="Upload de Arquivo(s)"
 				style="margin-bottom:10px;">
@@ -4961,9 +5088,8 @@
 								style="width:16px;text-align:center" />
 							<f:facet name="header">
 								<p:commandButton value="Download Selecionado(s)" ajax="false"
-									
-									icon="ui-icon-arrowthick-1-s">
-									<p:fileDownload value="#{contratoCobrancaMB.downloadAllFiles}" />
+									icon="ui-icon-arrowthick-1-s" immediate="true"
+									action="#{contratoCobrancaMB.getDownloadAllFiles()}">
 								</p:commandButton>
 								<p:commandButton value="Excluir Selecionado(s)" ajax="false"
 									icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFile}" />
@@ -4993,12 +5119,18 @@
 
 							<f:facet name="footer">
 								<p:commandButton value="Download Selecionado(s)" ajax="false"
-									icon="ui-icon-arrowthick-1-s">
-									<p:fileDownload value="#{contratoCobrancaMB.downloadAllFiles}" />
+									icon="ui-icon-arrowthick-1-s" immediate="true"
+									action="#{contratoCobrancaMB.getDownloadAllFiles()}">
 								</p:commandButton>
 								<p:commandButton value="Excluir Selecionado(s)" ajax="false"
 									icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFile}" />
 							</f:facet>
+							<p:ajax event="rowSelectCheckbox" process="@this"
+								listener="#{contratoCobrancaMB.fileSelectionListener()}" />
+							<p:ajax event="rowUnselectCheckbox" process="@this"
+								listener="#{contratoCobrancaMB.fileSelectionListener()}" />
+							<p:ajax event="toggleSelect" process="@this"
+								listener="#{contratoCobrancaMB.fileSelectionListener()}" />
 						</p:dataTable>
 					</h:panelGrid>
 				</p:panel>
@@ -5159,7 +5291,7 @@
 					<p:panel id="Arquivos" header="Selecionar Arquivo(s)"
 						style="margin-bottom:10px;text-align: center;">
 						<h:panelGrid columns="1">
-							<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar"
+							<!-- TODO arquivos contasPagar -->	<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar"
 								fileUploadListener="#{contratoCobrancaMB.handleFileContaPagarUpload}" mode="advanced" dragDropSupport="true" 
 								update="contaArquivosForm" >
 								<f:attribute name="foo" value="#{contratoCobrancaMB.contasPagarArquivos}" />
@@ -5175,15 +5307,13 @@
 						<h:panelGrid columns="1">
 							<p:dataTable id="dtFiles" var="files"
 								value="#{contratoCobrancaMB.contasPagarArquivos.filesContas}" rowKey="#{files.name}"
-								selection="#{contratoCobrancaMB.deletefiles}" emptyMessage=""
+								selection="#{contratoCobrancaMB.deleteFilesContas}" emptyMessage=""
 								sortBy="#{files.name}">
 								<p:column selectionMode="multiple"
 									style="width:16px;text-align:center" />
 								<f:facet name="header">
-									<p:commandButton value="Download Selecionado(s)" ajax="false"
-										
-										icon="ui-icon-arrowthick-1-s">
-										<p:fileDownload value="#{contratoCobrancaMB.downloadAllFiles}" />
+									<p:commandButton value="Download Selecionado(s)" ajax="false" immediate="true"
+										icon="ui-icon-arrowthick-1-s" action="#{contratoCobrancaMB.getDownloadAllFilesContaPagar()}">
 									</p:commandButton>
 									<p:commandButton value="Excluir Selecionado(s)" 
 										icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFile}" 
@@ -5213,11 +5343,19 @@
 								</p:column>
 
 								<f:facet name="footer">
-								
+									<p:commandButton value="Download Selecionado(s)" ajax="false" immediate="true"
+										icon="ui-icon-arrowthick-1-s" action="#{contratoCobrancaMB.getDownloadAllFilesContaPagar()}">
+									</p:commandButton>
 									<p:commandButton value="Excluir Selecionado(s)" ajax="false"
 										icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFile}" 
 										update="contaArquivosForm dtFiles"/>
 								</f:facet>
+								<p:ajax event="rowSelectCheckbox" 
+									process="@this" listener="#{contratoCobrancaMB.fileSelectionListener()}"/>
+								<p:ajax event="rowUnselectCheckbox" 
+									process="@this" listener="#{contratoCobrancaMB.fileSelectionListener()}"/>
+								<p:ajax event="toggleSelect" 
+									process="@this" listener="#{contratoCobrancaMB.fileSelectionListener()}"/>
 							</p:dataTable>
 						</h:panelGrid>
 					</p:panel>
@@ -5353,6 +5491,99 @@
 				</div>
 			</h:form>
 		</p:dialog>	
+		
+		<p:dialog header="Lista de Contratos Cliente Analisado" overflow="auto"
+			widgetVar="listaContratosPagador" resizable="true" style="FONT-SIZE: 13pt;"
+			width="800" minWidth="800">
+			<h:form id="contratosPagadorForm">
+				<p:dataTable var="contratos" rows="10" paginator="true"
+					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+					value="#{contratoCobrancaMB.contratosPagadorAnalisado}"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					<p:column style="text-align: center" headerText="Numero Contrato"
+						filterBy="#{contratos.numeroContrato}" sortBy="#{contratos.numeroContrato}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.numeroContrato}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+					<!-- 
+					<p:column style="text-align: center" headerText="Pagador"
+						filterBy="#{contratos.pagador.nome}" sortBy="#{contratos.pagador.nome}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.pagador.nome}"
+							style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column> 
+					-->
+					<p:column style="text-align: center" headerText="Data Analise"
+						filterBy="#{contratos.cadastroAprovadoData}" sortBy="#{contratos.cadastroAprovadoData}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.cadastroAprovadoData}"
+							style="FONT-SIZE: 10pt;width:100px;" >
+							<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+						</p:outputLabel>
+					</p:column>
+					<p:column style="text-align: center" headerText="Cidade"
+						filterBy="#{contratos.imovel.cidade}" sortBy="#{contratos.imovel.cidade}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.imovel.cidade}"
+							style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+					<p:column style="text-align: center" headerText="Status"
+						filterBy="#{contratos.status}" sortBy="#{contratos.status}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.status}"
+							style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+					<p:column style="text-align: center">
+						<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar">
+		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
+		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="false" />
+		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" />
+		                </p:commandButton>			
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="Lista de Contratos Imovel Analisado" overflow="auto"
+			widgetVar="listaContratosImovel" resizable="true" style="FONT-SIZE: 13pt;"
+			width="800" minWidth="800">
+			<h:form id="contratosImovelForm">
+				<p:dataTable var="contratos" rows="10" paginator="true"
+					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+					value="#{contratoCobrancaMB.contratosImovelAnalisado}"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					<p:column style="text-align: center" headerText="Numero Contrato"
+						filterBy="#{contratos.numeroContrato}" sortBy="#{contratos.numeroContrato}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.numeroContrato}"
+							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>				
+					<p:column style="text-align: center" headerText="Pagador"
+						filterBy="#{contratos.pagador.nome}" sortBy="#{contratos.pagador.nome}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.pagador.nome}"
+							style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column> 
+					<p:column style="text-align: center" headerText="Data Analise"
+						filterBy="#{contratos.cadastroAprovadoData}" sortBy="#{contratos.cadastroAprovadoData}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.cadastroAprovadoData}"
+							style="FONT-SIZE: 10pt;width:100px;" >
+							<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+						</p:outputLabel>
+					</p:column>			
+					<!-- 
+					<p:column style="text-align: center" headerText="Cidade"
+						filterBy="#{contratos.imovel.cidade}" sortBy="#{contratos.imovel.cidade}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.imovel.cidade}"
+							style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>-->
+					<p:column style="text-align: center" headerText="Status"
+						filterBy="#{contratos.status}" sortBy="#{contratos.status}" filterMatchMode="contains">
+						<p:outputLabel value="#{contratos.status}"
+							style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+		
 		<!-- popup de analise de documento -->
 		<ui:include src="ContratoCobrancaAnaliseDocumentoResumoPopup.xhtml"></ui:include>
 		

@@ -202,7 +202,7 @@
 				<p:messages id="msgArquivo"/>
 				<p:panel id="ArquivosPagar" header="Anexar comprovante" style="margin-bottom:10px;text-align: center;">							
 					<h:panelGrid columns="1">		
-						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contasPagarMB.handleFilePagarUpload}" mode="advanced" dragDropSupport="true"
+					<!-- TODO arquivos contasPagar --> <p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contasPagarMB.handleFilePagarUpload}" mode="advanced" dragDropSupport="true"
                           update="ArquivosPagarSalvos form:msgArquivo" />								
 					</h:panelGrid>  
 				</p:panel>	
@@ -212,35 +212,60 @@
 				</p:dialog>
 				
 				
-				<p:panel id="ArquivosPagarSalvos" header="Arquivo(s) a Pagar Salvo(s) no Contrato" style="margin-bottom:10px;">							
-					<h:panelGrid columns="1">			                      								
-						<p:dataTable id="dtFilesPagar" var="filesPagar" value="#{contasPagarMB.filesPagar}" rowKey="#{filesPagar.name}" selection="#{contasPagarMB.deleteFilesPagar}" emptyMessage="" sortBy="#{filesPagar.name}" >	
-							<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
-							<f:facet name="header">											 
-								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contasPagarMB.deleteFile(contasPagarMB.deleteFilesPagar)}"/>
-					        </f:facet>	       
-					        <p:column style="text-align: center;"
+				<p:panel id="ArquivosPagarSalvos" header="Arquivo(s) a Pagar Salvo(s) no Contrato" style="margin-bottom:10px;">
+					<h:panelGrid columns="1">
+						<p:dataTable id="dtFilesPagar" var="filesPagar"
+							value="#{contasPagarMB.filesPagar}" rowKey="#{filesPagar.name}"
+							selection="#{contasPagarMB.deleteFilesPagar}" emptyMessage=""
+							sortBy="#{filesPagar.name}">
+							<p:column selectionMode="multiple"
+								style="width:16px;text-align:center" />
+							<f:facet name="header">
+								<p:commandButton value="Download Selecionado(s)" ajax="false" immediate="true"
+									icon="ui-icon-arrowthick-1-s" action="#{contasPagarMB.getDownloadAllFilesPagar()}">
+								</p:commandButton>
+								<p:commandButton value="Excluir Selecionado(s)" ajax="false"
+									icon="ui-icon-trash"
+									action="#{contasPagarMB.deleteFile(contasPagarMB.deleteFilesPagar)}" />
+							</f:facet>
+							<p:column style="text-align: center;"
 								headerText="Nome do Arquivo" filterBy="#{filesPagar.name}"
 								filterMatchMode="contains" sortBy="#{filesPagar.name}">
 								<h:outputText value="#{filesPagar.name}" />
 								<p:spacer height="10" />
-								<p:commandButton value="Abrir" ajax="false" action="#{contasPagarMB.viewFilePagar(filesPagar.name)}"
-									icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'" immediate="true">
+								<p:commandButton value="Abrir" ajax="false"
+									action="#{contasPagarMB.viewFile(filesPagar)}"
+									icon="ui-icon-search" onclick="target='_blank'"
+									onblur="target='_self'" immediate="true">
 								</p:commandButton>
 							</p:column>
-					        
-					        <p:column style="width:100px;">
-								<p:commandButton value="Download" ajax="false"  icon="ui-icon-arrowthick-1-s">						       	 	
-						       	 	<f:setPropertyActionListener target="#{contasPagarMB.selectedFile}" value="#{filesPagar}" />
-						       	 	<p:fileDownload value="#{contasPagarMB.downloadFile}" immediate="true" />
-						    	</p:commandButton>	
-				            </p:column>						        
 
-				            <f:facet name="footer">
-								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contasPagarMB.deleteFile(contasPagarMB.deleteFilesPagar)}"/>								
-					        </f:facet>             	        		               		        			        			           			 		
-						</p:dataTable>								
-					</h:panelGrid>  
+							<p:column style="width:100px;">
+								<p:commandButton value="Download" ajax="false"
+									icon="ui-icon-arrowthick-1-s">
+									<f:setPropertyActionListener
+										target="#{contasPagarMB.selectedFile}" value="#{filesPagar}" />
+									<p:fileDownload value="#{contasPagarMB.downloadFile}"
+										immediate="true" />
+								</p:commandButton>
+							</p:column>
+
+							<f:facet name="footer">
+								<p:commandButton value="Download Selecionado(s)" ajax="false" immediate="true"
+									icon="ui-icon-arrowthick-1-s" action="#{contasPagarMB.getDownloadAllFilesPagar()}">
+								</p:commandButton>
+								<p:commandButton value="Excluir Selecionado(s)" ajax="false"
+									icon="ui-icon-trash"
+									action="#{contasPagarMB.deleteFile(contasPagarMB.deleteFilesPagar)}" />
+							</f:facet>
+							<p:ajax event="rowSelectCheckbox" 
+								process="@this" listener="#{contasPagarMB.fileSelectionListener()}"/>
+							<p:ajax event="rowUnselectCheckbox" 
+								process="@this" listener="#{contasPagarMB.fileSelectionListener()}"/>
+							<p:ajax event="toggleSelect" 
+								process="@this" listener="#{contasPagarMB.fileSelectionListener()}"/>
+						</p:dataTable>
+					</h:panelGrid>
 				</p:panel>
 				
 			</p:panel>

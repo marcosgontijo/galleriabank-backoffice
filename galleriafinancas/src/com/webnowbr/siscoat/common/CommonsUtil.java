@@ -271,6 +271,19 @@ public class CommonsUtil {
 
 		return new String(outputData);
 	}
+	
+	public static String[] stringToArray(String object) {
+		if(semValor(object)) {
+			return null;
+		}
+		String[] array = object.split(",");
+		for(int i = 0; i < array.length; i++) {
+			array[i] = array[i].replace("[", "");
+			array[i] = array[i].replace("]", "");
+			array[i] = array[i].trim();
+		}
+		return array;
+	}
 
 	/**
 	 * Ajusta valor para valor monetário (arredondado com 2 casas decimais)
@@ -1428,6 +1441,15 @@ public class CommonsUtil {
 		boolean result = false;
 		if (sistemaOperacional.contains("WINDOWS") || sistemaOperacional.indexOf("MAC") >= 0)  {
 			// System.out.println("Rodando em Windows: "+sistemaOperacional);
+			result = true;
+		}
+		return result;
+	}
+	
+	public static final boolean sistemaMAC() {
+		String sistemaOperacional = System.getProperty("os.name").toUpperCase();
+		boolean result = false;
+		if (sistemaOperacional.contains("MAC"))  {
 			result = true;
 		}
 		return result;

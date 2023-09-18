@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="cobranca">
+	<class name="com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta"
+		table="PlexiConsulta">
+		
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="increment" />
+		</id>
+
+		<property name="requestId" type="java.lang.String">
+			<column name="requestId" />
+		</property>
+
+		<property name="cpfCnpj" type="java.lang.String">
+			<column name="cpfCnpj" />
+		</property>
+		
+		<property name="status" type="java.lang.String">
+			<column name="status" />
+		</property>
+		
+		<property name="pdf" type="text">
+			<column name="pdf" />
+		</property>
+		
+		<property name="webhookRetorno" type="java.lang.String">
+			<column name="webhookRetorno" />
+		</property>
+
+		<many-to-one name="plexiDocumentos"
+			class="com.webnowbr.siscoat.cobranca.ws.plexi.PlexiDocumentos"
+			lazy="false">
+			<column name="plexiDocumentos" />
+		</many-to-one>
+		
+		<many-to-one name="usuario"
+			class="com.webnowbr.siscoat.infra.db.model.User"
+			lazy="false">
+			<column name="usuario" />
+		</many-to-one> 
+		
+		<property name="dataConsulta" type="java.util.Date">
+			<column name="dataConsulta" />
+		</property>
+		<property name="expirado" type="boolean">
+			<column name="expirado" not-null="true" default="false"/>
+		</property>
+		
+		<property name="uf" type="java.lang.String">
+			<column name="uf" />
+		</property>
+		<property name="cep" type="java.lang.String">
+			<column name="cep" />
+		</property>
+		<property name="cpfSolicitante" type="java.lang.String">
+			<column name="cpfSolicitante" />
+		</property>
+		<property name="cpf" type="java.lang.String">
+			<column name="cpf" />
+		</property>
+		<property name="cnpj" type="java.lang.String">
+			<column name="cnpj" />
+		</property>
+		<property name="tipoCertidao" type="java.lang.String">
+			<column name="tipoCertidao" />
+		</property>
+		<property name="nomeMae" type="java.lang.String">
+			<column name="nomeMae" />
+		</property>
+		<property name="comarca" type="java.lang.String">
+			<column name="comarca" />
+		</property>
+		<property name="origem" type="java.lang.String">
+			<column name="origem" />
+		</property>
+		<property name="competencia" type="java.lang.String">
+			<column name="competencia" />
+		</property>
+		<property name="tipo" type="java.lang.String">
+			<column name="tipo" />
+		</property>
+		<property name="modelo" type="java.lang.String">
+			<column name="modelo" />
+		</property>
+		<property name="nome" type="java.lang.String">
+			<column name="nome" />
+		</property>
+		<property name="endereco" type="java.lang.String">
+			<column name="endereco" />
+		</property>
+		<property name="rg" type="java.lang.String">
+			<column name="rg" />
+		</property>
+		<property name="orgaoExpedidorRg" type="java.lang.String">
+			<column name="orgaoExpedidorRg" />
+		</property>
+		<property name="ufRg" type="java.lang.String">
+			<column name="ufRg" />
+		</property>
+		<property name="dataNascimento" type="java.lang.String">
+			<column name="dataNascimento" />
+		</property>
+		<property name="sexo" type="java.lang.String">
+			<column name="sexo" />
+		</property>
+		<property name="orgaosStr" type="java.lang.String">
+			<column name="orgaosStr" />
+		</property>
+		<property name="abrangencia" type="java.lang.String">
+			<column name="abrangencia" />
+		</property>
+		
+	</class>
+</hibernate-mapping>

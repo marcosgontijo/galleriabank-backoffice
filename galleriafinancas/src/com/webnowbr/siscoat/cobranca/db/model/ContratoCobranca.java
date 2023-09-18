@@ -498,6 +498,10 @@ public class ContratoCobranca implements Serializable {
 	private BigInteger qtdeVotosAprovadosComite;
 	private BigInteger qtdeVotosReprovadosComite;
 	private BigInteger qtdeVotosNecessariosComite;
+	
+	private boolean okCliente;
+	private Date okClienteData;
+	private String okClienteUsuario;
 
 	private Date statusContratoData;
 	private String statusContrato;
@@ -1303,6 +1307,11 @@ public class ContratoCobranca implements Serializable {
 		List<String> lstEmAnalise =  Arrays.asList("Aprovado", "Reprovado", "Baixado", "Desistência Cliente");
 		return CommonsUtil.semValor(this.cadastroAprovadoValor) && !lstEmAnalise.contains(this.status) && leadCompleto && inicioAnalise;
 	}
+	
+	public boolean isEmPedirPaju() {
+		List<String> lstEmAnalise =  Arrays.asList("Aprovado", "Reprovado", "Baixado", "Desistência Cliente");
+		return pedidoLaudo && !pagtoLaudoConfirmada && !lstEmAnalise.contains(this.status) && leadCompleto && inicioAnalise;
+	}
 
 	
 	public void calcularTaxaPreAprovada() {
@@ -1321,13 +1330,13 @@ public class ContratoCobranca implements Serializable {
 		if (terceiroGrantidorTaxa)
 			potuacao -= 150;
 		if (relacionamentoBacenRecenteTaxa)
-			potuacao -= 100;
+			potuacao -= 200;
 		if (dividaVencidaTaxa)
-			potuacao -= 100;
+			potuacao -= 200;
 		if (prejuizoBacenTaxa)
-			potuacao -= 100;
+			potuacao -= 200;
 		if (riscoTotalBaixoTaxa)
-			potuacao -= 100;
+			potuacao -= 200;
 		if (terrenoOuBarracaoTaxa)
 			potuacao -= 400;
 
@@ -6937,6 +6946,30 @@ public class ContratoCobranca implements Serializable {
 
 	public void setTerrenoOuBarracaoTaxa(boolean terrenoOuBarracaoTaxa) {
 		this.terrenoOuBarracaoTaxa = terrenoOuBarracaoTaxa;
+	}
+
+	public boolean isOkCliente() {
+		return okCliente;
+	}
+
+	public void setOkCliente(boolean okCliente) {
+		this.okCliente = okCliente;
+	}
+
+	public Date getOkClienteData() {
+		return okClienteData;
+	}
+
+	public void setOkClienteData(Date okClienteData) {
+		this.okClienteData = okClienteData;
+	}
+
+	public String getOkClienteUsuario() {
+		return okClienteUsuario;
+	}
+
+	public void setOkClienteUsuario(String okClienteUsuario) {
+		this.okClienteUsuario = okClienteUsuario;
 	}
 	
 }

@@ -555,7 +555,7 @@ public class DocketService {
 
 			for (EngineRetornoExecutionResultRelacionamentosPessoaisPJ engineRetornoExecutionResultRelacionamentosPessoaisPJ : engineWebhookRetorno
 					.getRelacionamentosPessoaisPJ().getResult()) {
-
+				
 				if (!CommonsUtil.semValor(
 						engineRetornoExecutionResultRelacionamentosPessoaisPJ.getRelationships())) {
 
@@ -563,9 +563,23 @@ public class DocketService {
 							.getRelationships().getRelationships()))
 						for (EngineRetornoExecutionResultRelacionamentosPessoaisPJPartnership engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership : engineRetornoExecutionResultRelacionamentosPessoaisPJ
 								.getRelationships().getRelationships()) {
+
+							if (engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership
+									.getRelatedEntityTaxIdType().equalsIgnoreCase("CPF")) {
+								motivo = "Sócio Vinculado ao Proprietario Atual";
+								if (!CommonsUtil.mesmoValor(documentoAnalise.getMotivoAnalise().toUpperCase(),
+										"PROPRIETARIO ATUAL"))
+									motivo = "Sócio Vinculado ao Proprietario Anterior";
+							} else {
+								motivo = "Empresa Vinculada ao Proprietario Atual";
+								if (!CommonsUtil.mesmoValor(documentoAnalise.getMotivoAnalise().toUpperCase(),
+										"PROPRIETARIO ATUAL"))
+									motivo = "Empresa Vinculada ao Proprietario Anterior";
+							}
+
 							documentoAnaliseService.cadastrarPessoRetornoEngine(
-									engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership,
-									userSistema, documentoAnaliseDao, pagadorRecebedorService,
+									engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership, userSistema,
+									documentoAnaliseDao, pagadorRecebedorService,
 									documentoAnalise.getContratoCobranca(), motivo);
 						}
 
@@ -824,6 +838,7 @@ public class DocketService {
 		FileUploaded selectedFile = new FileUploaded();
 		selectedFile.setPath(documentoAnalise.getPath().replace(documentoAnalise.getIdentificacao(), ""));
 		selectedFile.setName( CommonsUtil.removeAcentos( documentoAnalise.getIdentificacao()));
+		selectedFile.setPathOrigin("analise");
 		
 		InputStream  stream = new ByteArrayInputStream( fileService.abrirDocumentos(selectedFile
 				,documentoAnalise.getContratoCobranca().getNumeroContrato(),

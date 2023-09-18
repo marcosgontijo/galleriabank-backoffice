@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorConsulta;
+import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.db.dao.*;
 
@@ -25,6 +26,10 @@ public class PagadorRecebedorConsultaDao extends HibernateDao<PagadorRecebedorCo
 	@SuppressWarnings("unchecked")
 	public PagadorRecebedorConsulta getConsultaByPagadorAndTipo(final PagadorRecebedor pagador,
 			final DocumentosAnaliseEnum tipoConsulta) {
+		
+		if ( CommonsUtil.semValor(pagador) )
+			return null;
+		
 		return (PagadorRecebedorConsulta) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {

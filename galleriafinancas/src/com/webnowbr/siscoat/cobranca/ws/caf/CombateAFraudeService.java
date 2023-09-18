@@ -64,7 +64,7 @@ public class CombateAFraudeService {
 				caf.setUuid(combateAFraudeTransaction.getId());
 				caf.setRequestId(combateAFraudeTransaction.getRequestId());
 				caf.setStatus("Aguradando Retorno");
-				
+				caf.setCafFiles(combateAFraudeTransaction.files);
 				CombateAFraudeDao cafDao = new CombateAFraudeDao(); 
 				cafDao.create(caf);
 				

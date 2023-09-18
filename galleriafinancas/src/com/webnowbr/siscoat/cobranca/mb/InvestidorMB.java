@@ -3,6 +3,7 @@ package com.webnowbr.siscoat.cobranca.mb;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -92,6 +93,7 @@ import com.webnowbr.siscoat.cobranca.vo.ContratoCobrancaResumoVO;
 import com.webnowbr.siscoat.cobranca.vo.DashboardInvestidorResumoVO;
 import com.webnowbr.siscoat.cobranca.vo.ExtratoVO;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.common.Util;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
@@ -5657,8 +5659,10 @@ public class InvestidorMB {
 
 		Document doc = null;
 		OutputStream os = null;
+		ByteArrayOutputStream baos = null;
 
 		try {
+			baos = new ByteArrayOutputStream();
 			Font header16 = new Font(FontFamily.HELVETICA, 16, Font.BOLD);
 			Font header = new Font(FontFamily.HELVETICA, 14, Font.BOLD);
 			Font header12 = new Font(FontFamily.HELVETICA, 12, Font.BOLD);
@@ -5692,21 +5696,17 @@ public class InvestidorMB {
 
 			ValorPorExtenso valorPorExtenso = new ValorPorExtenso();
 			NumeroPorExtenso numeroPorExtenso = new NumeroPorExtenso();
-
-			ParametrosDao pDao = new ParametrosDao();
 			/*
 			 * Configuração inicial do PDF - Cria o documento tamanho A4, margens de 2,54cm
 			 */
 
 			// esquerda / direita / top / down
 			doc = new Document(PageSize.A4.rotate(), 10, 10, 10, 10);
-			this.operacoesIndividualizadoPDFStr = "OperacoesIndividualizado.pdf";
-			this.pathPDF = pDao.findByFilter("nome", "RECIBOS_IUGU").get(0).getValorString();
 
-			os = new FileOutputStream(this.pathPDF + this.operacoesIndividualizadoPDFStr);
+			
 
 			// Associa a stream de saída ao
-			PdfWriter writer = PdfWriter.getInstance(doc, os);
+			PdfWriter writer = PdfWriter.getInstance(doc, baos);
 
 			// adiciona cabeçalho e rodapé
 			PDFCabecalhoRodape event = new PDFCabecalhoRodape();
@@ -6223,34 +6223,25 @@ public class InvestidorMB {
 			table.addCell(cell1);
 
 			doc.add(table);
+			doc.close();
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String.format("Galleria Bank - NovaOperacaoDetalhe.pdf", "");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(baos.toByteArray()));
+			gerador.close();
 
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"Detalhamento Novas Operações: Este documento está aberto por algum outro programa, por favor, feche-o e tente novamente!"
-							+ e,
-					""));
 		} catch (Exception e) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Detalhamento Novas Operações: Ocorreu um problema ao gerar o PDF!" + e, ""));
 		} finally {
 			this.operacoesIndividualizadoPDFGerado = true;
 
-			if (doc != null) {
-				// fechamento do documento
-				doc.close();
-			}
-			if (os != null) {
-				// fechamento da stream de saída
-				try {
-					os.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			
+			
 			}
 		}
-	}
+	
 
 	public final String clearFieldsTitulosQuitados() {
 		this.dataInicio = gerarDataHoje();
@@ -6393,8 +6384,10 @@ public class InvestidorMB {
 
 		Document doc = null;
 		OutputStream os = null;
+		ByteArrayOutputStream baos = null;
 
 		try {
+			baos = new ByteArrayOutputStream();
 			Font header16 = new Font(FontFamily.HELVETICA, 16, Font.BOLD);
 			Font header = new Font(FontFamily.HELVETICA, 14, Font.BOLD);
 			Font header12 = new Font(FontFamily.HELVETICA, 12, Font.BOLD);
@@ -6436,13 +6429,9 @@ public class InvestidorMB {
 
 			// esquerda / direita / top / down
 			doc = new Document(PageSize.A4.rotate(), 30, 30, 30, 30);
-			this.titulosQuitadosPDFStr = "TitulosQuitados.pdf";
-			this.pathPDF = pDao.findByFilter("nome", "RECIBOS_IUGU").get(0).getValorString();
-
-			os = new FileOutputStream(this.pathPDF + this.titulosQuitadosPDFStr);
 
 			// Associa a stream de saída ao
-			PdfWriter writer = PdfWriter.getInstance(doc, os);
+			PdfWriter writer = PdfWriter.getInstance(doc, baos);
 
 			// adiciona cabeçalho e rodapé
 			PDFCabecalhoRodape event = new PDFCabecalhoRodape();
@@ -6875,34 +6864,22 @@ public class InvestidorMB {
 			table.addCell(cell1);
 
 			doc.add(table);
+			doc.close();
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String.format("Galleria Bank - DebenturesEmitidas.pdf", "");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(baos.toByteArray()));
+			gerador.close();
 
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"Debêntures Emitidas: Este documento está aberto por algum outro programa, por favor, feche-o e tente novamente!"
-							+ e,
-					""));
 		} catch (Exception e) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Debêntures Emitidas: Ocorreu um problema ao gerar o PDF!" + e, ""));
 		} finally {
 			this.titulosQuitadosPDFGerado = true;
 
-			if (doc != null) {
-				// fechamento do documento
-				doc.close();
-			}
-			if (os != null) {
-				// fechamento da stream de saída
-				try {
-					os.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
 		}
-	}
+	}	
 
 	public String clearFieldsConsultaDebentures() {
 		this.listDebenturesInvestidor = new ArrayList<DebenturesInvestidor>();
@@ -10917,18 +10894,15 @@ public class InvestidorMB {
 			SimpleDateFormat ano = new SimpleDateFormat("yyyy", locale);
 
 			ParametrosDao pDao = new ParametrosDao();
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			/*
 			 * Configuração inicial do PDF - Cria o documento tamanho A4, margens de 2,54cm
 			 */
 
 			doc = new Document(PageSize.A4, 10, 10, 10, 10);
-			this.nomePDF = "Investidores - IR Retido.pdf";
-			this.pathPDF = pDao.findByFilter("nome", "RECIBOS_IUGU").get(0).getValorString();
-
-			os = new FileOutputStream(this.pathPDF + this.nomePDF);
 
 			// Associa a stream de saída ao
-			PdfWriter.getInstance(doc, os);
+			PdfWriter.getInstance(doc, baos);
 
 			// Abre o documento
 			doc.open();
@@ -11409,32 +11383,22 @@ public class InvestidorMB {
 			}
 
 			doc.add(table);
+			doc.close();
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String.format("Galleria Bank - IRretidoInvestidores.pdf", "");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(baos.toByteArray()));
+			gerador.close();
+			
 
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"Investidores: Este documento está aberto por algum outro programa, por favor, feche-o e tente novamente!"
-							+ e,
-					""));
 		} catch (Exception e) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Investidores: Ocorreu um problema ao gerar o PDF!" + e, ""));
 		} finally {
 			this.irRetidoInvestidoresPDFGerado = true;
-
-			if (doc != null) {
-				// fechamento do documento
-				doc.close();
-			}
-			if (os != null) {
-				// fechamento da stream de saída
-				try {
-					os.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+				
+			
 		}
 	}
 

@@ -2300,13 +2300,16 @@
 							label="Estado" style="width:410px;" />
 
 						<p:outputLabel for="linkGMapsImovel" value="Link Google Maps: " />
-						<p:outputLabel id="linkGMapsImovel"
+						<p:inputText id="linkGMapsImovel"
 							value="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}"
-							label="Link Google Maps" style="width:400px;" />
+							label="Link Google Maps" style="width:400px;" >
+							<p:ajax event="keyup" update="gerarLinkimovel"/>
+						</p:inputText>
 
-						<p:commandButton value="Gerar Link"
-							action="#{contratoCobrancaMB.getLinkMaps()}"
-							update="linkGMapsImovel botaoLinkImovel" disabled="true" />
+						<p:commandButton id="gerarLinkimovel" value="Gerar Link" action="#{contratoCobrancaMB.getLinkMaps()}" 
+							disabled="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps ne null 
+								and contratoCobrancaMB.objetoImovelCobranca.linkGMaps ne ''}"
+							update="linkGMapsImovel botaoLinkImovel gerarLinkimovel" />	
 
 						<h:panelGroup id="botaoLinkImovel">
 							<a href="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}"
@@ -2826,9 +2829,9 @@
 							<p:dataTable id="dtFilesInterno" var="filesInterno" value="#{contratoCobrancaMB.filesInterno}" rowKey="#{filesInterno.name}" selection="#{contratoCobrancaMB.deletefilesInterno}" emptyMessage="" sortBy="#{filesInterno.name}" >	
 								<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
 								 <f:facet name="header">
-									<p:commandButton value="Download Selecionado(s)" ajax="false"  icon="ui-icon-arrowthick-1-s">						       	 	
-							       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadAllFilesInterno}" />
-							    	</p:commandButton>								 
+									<p:commandButton value="Download Selecionado(s)" ajax="false" immediate="true"
+										icon="ui-icon-arrowthick-1-s" action="#{contratoCobrancaMB.getDownloadAllFilesComite()}">
+									</p:commandButton>											 
 						        </f:facet>	        
 						        <p:column style="text-align: center;"
 									headerText="Nome do Arquivo" filterBy="#{filesInterno.name}"
@@ -2884,8 +2887,12 @@
 					<h:panelGrid columns="1">			                      								
 						<p:dataTable id="dtFilesFaltante" var="filesFaltante" value="#{contratoCobrancaMB.filesFaltante}" rowKey="#{filesFaltante.name}" selection="#{contratoCobrancaMB.deletefilesFaltante}" emptyMessage="" sortBy="#{filesFaltante.name}" >	
 							<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
-							 <f:facet name="header">								 
+							 <f:facet name="header">
+							 <p:commandButton value="Download Selecionado(s)" ajax="false"
+									icon="ui-icon-arrowthick-1-s" immediate="true"
+									action="#{contratoCobrancaMB.getDownloadAllFilesFaltante()}"/>								 
 								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileFaltante}"/>
+								
 					        </f:facet>	        
 					        <p:column style="text-align: center;"
 								headerText="Nome do Arquivo" filterBy="#{filesFaltante.name}"
@@ -2931,7 +2938,10 @@
 						<h:panelGrid columns="1">			                      								
 							<p:dataTable id="dtFilesJuridico" var="filesJuridico" value="#{contratoCobrancaMB.filesJuridico}" rowKey="#{filesJuridico.name}" selection="#{contratoCobrancaMB.deletefilesJuridico}" emptyMessage="" sortBy="#{filesJuridico.name}" >	
 								<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
-								 <f:facet name="header">							 
+								 <f:facet name="header">
+								 <p:commandButton value="Download Selecionado(s)" ajax="false"
+										icon="ui-icon-arrowthick-1-s" immediate="true"
+										action="#{contratoCobrancaMB.getDownloadAllFilesJuridico()}"/>							 
 									<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileJuridico}"/>
 						        </f:facet>	        
 						        <p:column style="text-align: center;"

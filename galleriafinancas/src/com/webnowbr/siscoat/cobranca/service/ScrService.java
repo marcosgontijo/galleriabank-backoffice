@@ -266,6 +266,7 @@ public class ScrService {
 			gerador.close();
 
 			
+			
 			fileGenerator.setPdfGerado(true);
 
 		} catch (Exception e) {

@@ -443,7 +443,7 @@ public class ImpressoesPDFMB {
 			table.addCell(cell1);
 			
 			
-			cell1 = new PdfPCell(new Phrase("Declaramos, sob as penas da lei, que as informações prestadas são verdadeiras, e comprometo-me a informar, no prazo de 10 (dez) dias, quaisquer alterações que vierem a ocorrer nos meus dados cadastrais, bem como autorizamos a BMP Money Plus Sociedade de Crédito Direto S.A. a consultar as fontes de referência indicadas (clientes, fornecedores e bancos) e inserir e solicitar informações relacionadas com nossa empresa e coligadas, junto ao mercado financeiro e entidades cadastrais em geral, inclusive junto ao SCR-Sistema de Informações de Crédito do Banco Central do Brasil (Res. 3.658 do Conselho Monetário Nacional), SERASA ou qualquer outro órgão ou entidade assemelhada.", normal));
+			cell1 = new PdfPCell(new Phrase("Declaramos, sob as penas da lei, que as informações prestadas são verdadeiras, e comprometo-me a informar, no prazo de 10 (dez) dias, quaisquer alterações que vierem a ocorrer nos meus dados cadastrais, bem como autorizamos a GALLERIA SOCIEDADE DE CRÉDITO DIRETO S/A. a consultar as fontes de referência indicadas (clientes, fornecedores e bancos) e inserir e solicitar informações relacionadas com nossa empresa e coligadas, junto ao mercado financeiro e entidades cadastrais em geral, inclusive junto ao SCR-Sistema de Informações de Crédito do Banco Central do Brasil (Res. 3.658 do Conselho Monetário Nacional), SERASA ou qualquer outro órgão ou entidade assemelhada.", normal));
 			cell1.setBorder(0);
 			cell1.setBorderWidthLeft(1);
 			cell1.setBorderColorLeft(BaseColor.BLACK);
@@ -781,7 +781,7 @@ public class ImpressoesPDFMB {
 			table.addCell(cell1);
 			
 			
-			cell1 = new PdfPCell(new Phrase("Declaramos, sob as penas da lei, que as informações prestadas são verdadeiras, e comprometo-me a informar, no prazo de 10 (dez) dias, quaisquer alterações que vierem a ocorrer nos meus dados cadastrais, bem como autorizamos a BMP Money Plus Sociedade de Crédito Direto S.A. a consultar as fontes de referência indicadas (clientes, fornecedores e bancos) e inserir e solicitar informações relacionadas com nossa empresa e coligadas, junto ao mercado financeiro e entidades cadastrais em geral, inclusive junto ao SCR-Sistema de Informações de Crédito do Banco Central do Brasil (Res. 3.658 do Conselho Monetário Nacional), SERASA ou qualquer outro órgão ou entidade assemelhada.", normal));
+			cell1 = new PdfPCell(new Phrase("Declaramos, sob as penas da lei, que as informações prestadas são verdadeiras, e comprometo-me a informar, no prazo de 10 (dez) dias, quaisquer alterações que vierem a ocorrer nos meus dados cadastrais, bem como autorizamos a GALLERIA SOCIEDADE DE CRÉDITO DIRETO S/A. a consultar as fontes de referência indicadas (clientes, fornecedores e bancos) e inserir e solicitar informações relacionadas com nossa empresa e coligadas, junto ao mercado financeiro e entidades cadastrais em geral, inclusive junto ao SCR-Sistema de Informações de Crédito do Banco Central do Brasil (Res. 3.658 do Conselho Monetário Nacional), SERASA ou qualquer outro órgão ou entidade assemelhada.", normal));
 			cell1.setBorder(0);
 			cell1.setBorderWidthLeft(1);
 			cell1.setBorderColorLeft(BaseColor.BLACK);
@@ -1134,7 +1134,7 @@ public class ImpressoesPDFMB {
 			table.addCell(cell1);
 			
 			
-			cell1 = new PdfPCell(new Phrase("Declaramos, sob as penas da lei, que as informações prestadas são verdadeiras, e comprometo-me a informar, no prazo de 10 (dez) dias, quaisquer alterações que vierem a ocorrer nos meus dados cadastrais, bem como autorizamos a BMP Money Plus Sociedade de Crédito Direto S.A. a consultar as fontes de referência indicadas (clientes, fornecedores e bancos) e inserir e solicitar informações relacionadas com nossa empresa e coligadas, junto ao mercado financeiro e entidades cadastrais em geral, inclusive junto ao SCR-Sistema de Informações de Crédito do Banco Central do Brasil (Res. 3.658 do Conselho Monetário Nacional), SERASA ou qualquer outro órgão ou entidade assemelhada.", normal));
+			cell1 = new PdfPCell(new Phrase("Declaramos, sob as penas da lei, que as informações prestadas são verdadeiras, e comprometo-me a informar, no prazo de 10 (dez) dias, quaisquer alterações que vierem a ocorrer nos meus dados cadastrais, bem como autorizamos a GALLERIA SOCIEDADE DE CRÉDITO DIRETO S/A. a consultar as fontes de referência indicadas (clientes, fornecedores e bancos) e inserir e solicitar informações relacionadas com nossa empresa e coligadas, junto ao mercado financeiro e entidades cadastrais em geral, inclusive junto ao SCR-Sistema de Informações de Crédito do Banco Central do Brasil (Res. 3.658 do Conselho Monetário Nacional), SERASA ou qualquer outro órgão ou entidade assemelhada.", normal));
 			cell1.setBorder(0);
 			cell1.setBorderWidthLeft(1);
 			cell1.setBorderColorLeft(BaseColor.BLACK);

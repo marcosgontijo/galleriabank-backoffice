@@ -45,9 +45,10 @@
 						</p:outputLabel>
 			        </p:column>
 			        
-			        <p:column style="text-align: center;width:100px;" headerText="Obs" 
-			       		filterBy="#{consultas.obs}" filterMatchMode="contains" sortBy="#{consultas.obs}">
-			            <h:outputText value="#{consultas.obs}" />
+			        <p:column style="text-align: center;" headerText="" >
+			        	<p:commandButton value="Vizualizar Consulta" 
+							icon="ui-icon-pencil" ajax="false"
+							action="#{combateAFraudeMB.clearFieldsDetalhes(consultas)}" />
 			        </p:column>
 							            		        		               		        			        			           			 		
 				</p:dataTable>

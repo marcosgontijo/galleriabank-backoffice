@@ -78,6 +78,7 @@ public enum BancosEnum {
 	NUBANK("260", "Nubank"),
 	BANCO_CACIQUE_S_A("263", "Banco Cacique S.A."),
 	BANCO_FATOR_S_A("265", "Banco Fator S.A."),
+	BANCO_PRIMACREDI("279", "Banco Primacredi"),
 	BANCO_PAGSEGURO_INTENERT_S_A_PAGBANK("290", "PagSeguro Internet S.A.(PagBank)"),
 	BANCO_BMG_S_A("318", "Banco BMG S.A."),
 	BANCO_INDUSTRIAL_E_COMERCIAL_S_A("320", "Banco Industrial e Comercial S.A."),

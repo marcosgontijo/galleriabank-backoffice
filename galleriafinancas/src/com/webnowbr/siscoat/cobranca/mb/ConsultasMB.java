@@ -16,8 +16,12 @@ import javax.faces.context.FacesContext;
 import org.primefaces.model.StreamedContent;
 
 import com.webnowbr.siscoat.cobranca.service.BigDataService;
+import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
+import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
+import com.webnowbr.siscoat.cobranca.service.ScrService;
 import com.webnowbr.siscoat.cobranca.service.SerasaService;
+import com.webnowbr.siscoat.cobranca.vo.FileGenerator;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 @ManagedBean(name = "consultasMB")
@@ -25,7 +29,7 @@ import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 
 public class ConsultasMB {
 		private String cpfCnpj;
-		private String tipoPessoa;
+		private String tipoPessoa = "PF";
 		
 		
 		public String clear() {
@@ -49,7 +53,7 @@ public class ConsultasMB {
 							new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta", ""));
 				}
 			} catch (Exception e) {
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta", ""));
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta",""));
 
 			}
 
@@ -124,6 +128,28 @@ public class ConsultasMB {
 			gerador.feed(in);
 			gerador.close();
 			return null;
+		}
+		public void consultaSCR() {
+			try {
+				FacesContext context = FacesContext.getCurrentInstance();
+
+				ScrService scrService = new ScrService();
+				ScrResult scrResult = scrService.consultaSCR(cpfCnpj, context);
+							
+				FileGenerator fileGenerator = new FileGenerator();
+				fileGenerator.setDocumento(cpfCnpj);
+
+				if (!CommonsUtil.semValor(scrResult)) {
+					System.out.println("SUCESSO NA GERAÇÃO DO SCR");
+					// gera pdf
+					scrService.imprimeContrato(scrResult.getResumoDoCliente(), scrResult.getResumoDoClienteTraduzido(),
+							fileGenerator, context);
+					
+				}
+			
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		
 		public String getCpfCnpj() {

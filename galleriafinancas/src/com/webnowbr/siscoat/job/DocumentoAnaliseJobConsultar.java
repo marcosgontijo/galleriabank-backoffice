@@ -147,7 +147,7 @@ public class DocumentoAnaliseJobConsultar {
 					continue;
 				}
 
-				if (!documentoAnalise.isProcessoProcessado()) {
+				if (documentoAnalise.isPodeChamarProcesso()) {
 					documentoAnalise.addObservacao("Processando Processos");
 //					PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
 					bigDataService.requestProcesso(documentoAnalise);
@@ -158,7 +158,7 @@ public class DocumentoAnaliseJobConsultar {
 					
 				}
 
-				if (CommonsUtil.semValor(documentoAnalise.getRetornoCenprot())) {
+				if (documentoAnalise.isPodeChamarCenprot()) {
 					documentoAnalise.addObservacao("Processando Protestos");
 					//PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
 					step ++;
@@ -185,7 +185,7 @@ public class DocumentoAnaliseJobConsultar {
 //				}
 				
 
-				if (CommonsUtil.semValor(documentoAnalise.getRetornoScr())) {
+				if (documentoAnalise.isPodeChamarSCR()) {
 					documentoAnalise.addObservacao("Processando SCR");
 					//PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
 					step ++;

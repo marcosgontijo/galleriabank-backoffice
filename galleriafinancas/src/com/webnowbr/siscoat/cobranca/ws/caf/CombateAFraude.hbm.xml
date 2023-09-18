@@ -42,5 +42,17 @@
 			<column name="obs" />
 		</property>
 		
+		<property name="retorno" type="text">
+			<column name="retorno" />
+		</property>
+		
+		<list name="cafFiles"
+			table="CombateAFraude_CombateAFraudeFiles_join" cascade="all" lazy="false">
+			<key column="idCaf" />
+			<list-index></list-index>
+			<many-to-many column="idFile"
+				class="com.webnowbr.siscoat.cobranca.ws.caf.CombateAFraudeFiles" />
+		</list>
+		
 	</class>
 </hibernate-mapping>

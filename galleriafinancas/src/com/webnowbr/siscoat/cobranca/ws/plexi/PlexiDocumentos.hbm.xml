@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="cobranca">
+	<class name="com.webnowbr.siscoat.cobranca.ws.plexi.PlexiDocumentos"
+		table="PlexiDocumentos">
+		
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="increment" />
+		</id>
+
+		<property name="url" type="java.lang.String">
+			<column name="url" />
+		</property>
+
+		<property name="nome" type="java.lang.String">
+			<column name="nome" />
+		</property>
+		
+		<property name="pf" type="boolean">
+			<column name="pf" not-null="true" default="true"/>
+		</property>
+		
+		<property name="pj" type="boolean">
+			<column name="pj" not-null="true" default="true"/>
+		</property>	
+		
+		<property name="estados" type="java.lang.String">
+			<column name="estados" />
+		</property>
+
+		<property name="obs" type="java.lang.String">
+			<column name="obs" />
+		</property>
+		
+		<property name="velocidade" type="java.lang.String">
+			<column name="velocidade" />
+		</property>
+		
+	</class>
+</hibernate-mapping>

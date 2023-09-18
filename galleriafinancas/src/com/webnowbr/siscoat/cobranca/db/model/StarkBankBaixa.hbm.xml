@@ -25,9 +25,17 @@
         </property>
         <property name="formaPagamento" type="java.lang.String">
             <column name="formaPagamento"/>
-        </property>	 	 
+        </property>	 
+        <property name="statusPagamento" type="java.lang.String">
+            <column name="statusPagamento"/>
+        </property>	 
         <property name="dataPagamento" type="java.util.Date">
             <column name="dataPagamento"/>
-        </property>	                             
+        </property>	             
+        <many-to-one name="contasPagar" 
+			class="com.webnowbr.siscoat.cobranca.db.model.ContasPagar"
+			lazy="false">
+			<column name="contasPagar" />
+		</many-to-one>            
     </class>
 </hibernate-mapping>

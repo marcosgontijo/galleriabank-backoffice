@@ -11,12 +11,15 @@ public class SiscoatConstants {
 	
 	public static final Long ASSISTENTE_ISA = 1556L;
 	public static final Long ASSISTENTE_BIA = 359L;
+	public static final Long ASSISTENTE_JAQUE = 689L;
+	
 	public static final Long COMMERCIAL_GIS  = 5L;
 	public static final Long COMMERCIAL_LUIS = 6L;
 	public static final Long COMMERCIAL_ERIK = 35L;
 	public static final Long COMMERCIAL_JOAO_ANTONIO = 1695L;
 	public static final Long COMMERCIAL_ALINE = 1191L;
 	public static final Long COMMERCIAL_PAULA = 826L;
+	public static final Long COMMERCIAL_MARCIA = 826L;
 
 	public static final String CONTRATO_QUITADO = "Quitado";
 	public static final String CONTRATO_ATIVO = "Ativo";
@@ -45,12 +48,13 @@ public class SiscoatConstants {
 	public static final BigDecimal TARIFA_IOF_PJ_ANTIGA2 = BigDecimal.valueOf(0.00559);
 	public static final BigDecimal TARIFA_IOF_PF_ANTIGA2 = BigDecimal.valueOf(0.01118);
 	
-	public static final BigDecimal TARIFA_IOF_PJ_ANTIGA = BigDecimal.valueOf(0.0041);
-	public static final BigDecimal TARIFA_IOF_PF_ANTIGA = BigDecimal.valueOf(0.0082);
+	//troca feita para pq n precisa bater com excel em 14/09/2023
+	public static final BigDecimal TARIFA_IOF_PJ = BigDecimal.valueOf(0.0041);
+	public static final BigDecimal TARIFA_IOF_PF = BigDecimal.valueOf(0.0082);
 		
 	//troca feita para bater valores com excel em 20/09/22
-	public static final BigDecimal TARIFA_IOF_PJ = BigDecimal.valueOf(0.00410958904109589);
-	public static final BigDecimal TARIFA_IOF_PF = BigDecimal.valueOf(0.00821917808219178);
+	public static final BigDecimal TARIFA_IOF_PJ_ANTIGA = BigDecimal.valueOf(0.00410958904109589);
+	public static final BigDecimal TARIFA_IOF_PF_ANTIGA = BigDecimal.valueOf(0.00821917808219178);
 	
 	public static final boolean DEV = false;
 
@@ -64,8 +68,9 @@ public class SiscoatConstants {
 	public static final String  URL_SISCOAT_REA_WEBHOOK = "https://backoffice.galleriabank.com.br/sistema/siscoat/rea/webhook?Token=";
 	public static final String  URL_SISCOAT_ENGINE_WEBHOOK = "https://backoffice.galleriabank.com.br/sistema/siscoat/engine/webhook?Token=";
 	public static final String  URL_SISCOAT_DOCKET_WEBHOOK	 = "https://backoffice.galleriabank.com.br/sistema/siscoat/docket/webhook?Token=";
-	public static final String  URL_SISCOAT_CAF_WEBHOOK	 = "https://backoffice.galleriabank.com.br/sistema/siscoat/caf/webhook?Token=";
-	
+	public static final String  URL_SISCOAT_CAF_WEBHOOK	 = "https://backoffice.galleriabank.com.br/sistema/siscoat/caf/webhook?Token=";	
+	public static final String  URL_SISCOAT_PLEXI_WEBHOOK	 = "https://backoffice.galleriabank.com.br/sistema/siscoat/plexi/webhook?Token=";
+
 	public static int HTTP_COD_SUCESSO = 200;
-	
+
 }

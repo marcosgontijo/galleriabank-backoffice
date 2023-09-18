@@ -6,6 +6,7 @@ import java.util.Base64;
 
 public class CombateAFraudeFiles {
 	
+	private long id;
 	public String type; //"RG_FRONT, RG_BACK, CNH_FRONT, CNH_BACK, CRLV ou SELFIE"
 	public String data; // url ou base64
 	
@@ -39,11 +40,24 @@ public class CombateAFraudeFiles {
 		return in;
 	}
 	
+	
+	public long getId() {
+		return id;
+	}
+	public void setId(long id) {
+		this.id = id;
+	}
 	public String getType() {
 		return type;
 	}
 	public void setType(String type) {
 		this.type = type;
+	}
+	public String getData() {
+		return data;
+	}
+	public void setData(String data) {
+		this.data = data;
 	}
 	public String getMimeType() {
 		return mimeType;

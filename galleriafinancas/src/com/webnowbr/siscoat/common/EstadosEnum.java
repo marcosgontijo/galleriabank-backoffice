@@ -31,7 +31,7 @@ public enum EstadosEnum {
 	RONDÔNIA("Rondônia", "RO", "93164dfb-3ef9-467f-26f0-5b52e8bad2e3"),
 	RORAIMA("Roraima", "RR", "d6565664-02ae-bdd8-55c3-9062d08a4e11"),	
 	SANTA_CATARINA("Santa Catarina", "SC", "82bd7834-e4f0-aacf-0bf2-53f5bc5ac00c"),
-	SÃO_PAULO("São Paulo", "SP", "52f0da38-2fb5-4a87-22ef-32670b94d916"),
+	//SÃO_PAULO("São Paulo", "SP", "52f0da38-2fb5-4a87-22ef-32670b94d916"),
 	SERGIPE("Sergipe", "SE", "6b443de5-0b7e-b5c4-73ba-1689fc5dbb03"),
 	TOCANTINS("Tocantins", "TO", "d358c3f6-aa96-69ed-f6e0-1e1133d87b51");
 
@@ -48,7 +48,7 @@ public enum EstadosEnum {
 	
 	public static EstadosEnum getByUf(String uf) {
 		for(EstadosEnum estado : EstadosEnum.values()) {
-			if(CommonsUtil.mesmoValor(uf, estado.getUf())) {
+			if(CommonsUtil.mesmoValor(uf.toLowerCase().trim(), estado.getUf().toLowerCase().trim())) {
 				return estado;
 			}
 		}
