@@ -15965,92 +15965,6 @@ public class ContratoCobrancaMB {
 		cell_style.setBorderLeft(BorderStyle.THIN);
 		cell_style.setWrapText(true);
 
-		// Style para cabeçalho
-		XSSFCellStyle cell_style_pago_String = wb.createCellStyle();
-		cell_style_pago_String.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
-		cell_style_pago_String.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		cell_style_pago_String.setFont(font);
-		cell_style_pago_String.setAlignment(HorizontalAlignment.CENTER);
-		cell_style_pago_String.setVerticalAlignment(VerticalAlignment.CENTER);
-		cell_style_pago_String.setBorderBottom(BorderStyle.THIN);
-		cell_style_pago_String.setBorderTop(BorderStyle.THIN);
-		cell_style_pago_String.setBorderRight(BorderStyle.THIN);
-		cell_style_pago_String.setBorderLeft(BorderStyle.THIN);
-		cell_style_pago_String.setWrapText(true);
-
-		// Style para cabeçalho
-		XSSFCellStyle cell_style_pago_Date = wb.createCellStyle();
-		cell_style_pago_Date.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
-		cell_style_pago_Date.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		cell_style_pago_Date.setFont(font);
-		cell_style_pago_Date.setAlignment(HorizontalAlignment.CENTER);
-		cell_style_pago_Date.setVerticalAlignment(VerticalAlignment.CENTER);
-		cell_style_pago_Date.setBorderBottom(BorderStyle.THIN);
-		cell_style_pago_Date.setBorderTop(BorderStyle.THIN);
-		cell_style_pago_Date.setBorderRight(BorderStyle.THIN);
-		cell_style_pago_Date.setBorderLeft(BorderStyle.THIN);
-		cell_style_pago_Date.setWrapText(true);
-		cell_style_pago_Date.setDataFormat((short) BuiltinFormats.getBuiltinFormat("m/d/yy"));
-
-		// Style para cabeçalho
-		XSSFCellStyle cell_style_pago_Number = wb.createCellStyle();
-		cell_style_pago_Number.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
-		cell_style_pago_Number.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		cell_style_pago_Number.setFont(font);
-		cell_style_pago_Number.setAlignment(HorizontalAlignment.CENTER);
-		cell_style_pago_Number.setVerticalAlignment(VerticalAlignment.CENTER);
-		cell_style_pago_Number.setBorderBottom(BorderStyle.THIN);
-		cell_style_pago_Number.setBorderTop(BorderStyle.THIN);
-		cell_style_pago_Number.setBorderRight(BorderStyle.THIN);
-		cell_style_pago_Number.setBorderLeft(BorderStyle.THIN);
-		cell_style_pago_Number.setWrapText(true);
-		CreationHelper chNumber = wb.getCreationHelper();
-		cell_style_pago_Number.setDataFormat(
-				chNumber.createDataFormat().getFormat("_(R$* #,##0.00_);_(R$* (#,##0.00);_(R$* \"-\"??_);_(@_)"));
-
-		// Style para cabeçalho
-		XSSFCellStyle cell_style_vencida_String = wb.createCellStyle();
-		cell_style_vencida_String.setFillForegroundColor(IndexedColors.RED.getIndex());
-		cell_style_vencida_String.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		cell_style_vencida_String.setFont(font);
-		cell_style_vencida_String.setAlignment(HorizontalAlignment.CENTER);
-		cell_style_vencida_String.setVerticalAlignment(VerticalAlignment.CENTER);
-		cell_style_vencida_String.setBorderBottom(BorderStyle.THIN);
-		cell_style_vencida_String.setBorderTop(BorderStyle.THIN);
-		cell_style_vencida_String.setBorderRight(BorderStyle.THIN);
-		cell_style_vencida_String.setBorderLeft(BorderStyle.THIN);
-		cell_style_vencida_String.setWrapText(true);
-
-		// Style para cabeçalho
-		XSSFCellStyle cell_style_vencida_Date = wb.createCellStyle();
-		cell_style_vencida_Date.setFillForegroundColor(IndexedColors.RED.getIndex());
-		cell_style_vencida_Date.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		cell_style_vencida_Date.setFont(font);
-		cell_style_vencida_Date.setAlignment(HorizontalAlignment.CENTER);
-		cell_style_vencida_Date.setVerticalAlignment(VerticalAlignment.CENTER);
-		cell_style_vencida_Date.setBorderBottom(BorderStyle.THIN);
-		cell_style_vencida_Date.setBorderTop(BorderStyle.THIN);
-		cell_style_vencida_Date.setBorderRight(BorderStyle.THIN);
-		cell_style_vencida_Date.setBorderLeft(BorderStyle.THIN);
-		cell_style_vencida_Date.setWrapText(true);
-		cell_style_vencida_Date.setDataFormat((short) BuiltinFormats.getBuiltinFormat("m/d/yy"));
-
-		// Style para cabeçalho
-		XSSFCellStyle cell_style_vencida_Number = wb.createCellStyle();
-		cell_style_vencida_Number.setFillForegroundColor(IndexedColors.RED.getIndex());
-		cell_style_vencida_Number.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		cell_style_vencida_Number.setFont(font);
-		cell_style_vencida_Number.setAlignment(HorizontalAlignment.CENTER);
-		cell_style_vencida_Number.setVerticalAlignment(VerticalAlignment.CENTER);
-		cell_style_vencida_Number.setBorderBottom(BorderStyle.THIN);
-		cell_style_vencida_Number.setBorderTop(BorderStyle.THIN);
-		cell_style_vencida_Number.setBorderRight(BorderStyle.THIN);
-		cell_style_vencida_Number.setBorderLeft(BorderStyle.THIN);
-		cell_style_vencida_Number.setWrapText(true);
-		chNumber = wb.getCreationHelper();
-		cell_style_vencida_Number.setDataFormat(
-				chNumber.createDataFormat().getFormat("_(R$* #,##0.00_);_(R$* (#,##0.00);_(R$* \"-\"??_);_(@_)"));
-
 		// iterating r number of rows
 		// cria CABEÇALHO
 		int countLine = 0;
@@ -16968,54 +16882,6 @@ public class ContratoCobrancaMB {
 			cell = row.createCell(20);
 			cell.setCellStyle(cell_style);
 
-			// Style para cabeçalho
-			XSSFCellStyle cell_style_pago = wb.createCellStyle();
-			cell_style_pago = wb.createCellStyle();
-			cell_style_pago.setAlignment(HorizontalAlignment.CENTER);
-			cell_style_pago.setVerticalAlignment(VerticalAlignment.CENTER);
-			cell_style_pago.setBorderBottom(BorderStyle.THIN);
-			cell_style_pago.setBorderTop(BorderStyle.THIN);
-			cell_style_pago.setBorderRight(BorderStyle.THIN);
-			cell_style_pago.setBorderLeft(BorderStyle.THIN);
-			cell_style_pago.setWrapText(true);
-			cell_style_pago.setFillForegroundColor(IndexedColors.BRIGHT_GREEN.getIndex());
-			cell_style_pago.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-
-			XSSFCellStyle cell_style_aberto = wb.createCellStyle();
-			cell_style_aberto = wb.createCellStyle();
-			cell_style_aberto.setAlignment(HorizontalAlignment.CENTER);
-			cell_style_aberto.setVerticalAlignment(VerticalAlignment.CENTER);
-			cell_style_aberto.setBorderBottom(BorderStyle.THIN);
-			cell_style_aberto.setBorderTop(BorderStyle.THIN);
-			cell_style_aberto.setBorderRight(BorderStyle.THIN);
-			cell_style_aberto.setBorderLeft(BorderStyle.THIN);
-			cell_style_aberto.setWrapText(true);
-			cell_style_aberto.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
-			cell_style_aberto.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-
-			XSSFCellStyle cell_style_atraso = wb.createCellStyle();
-			cell_style_atraso = wb.createCellStyle();
-			cell_style_atraso.setAlignment(HorizontalAlignment.CENTER);
-			cell_style_atraso.setVerticalAlignment(VerticalAlignment.CENTER);
-			cell_style_atraso.setBorderBottom(BorderStyle.THIN);
-			cell_style_atraso.setBorderTop(BorderStyle.THIN);
-			cell_style_atraso.setBorderRight(BorderStyle.THIN);
-			cell_style_atraso.setBorderLeft(BorderStyle.THIN);
-			cell_style_atraso.setWrapText(true);
-			cell_style_atraso.setFillForegroundColor(IndexedColors.RED.getIndex());
-			cell_style_atraso.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-
-			XSSFCellStyle cell_style_bx_parcial = wb.createCellStyle();
-			cell_style_bx_parcial = wb.createCellStyle();
-			cell_style_bx_parcial.setAlignment(HorizontalAlignment.CENTER);
-			cell_style_bx_parcial.setVerticalAlignment(VerticalAlignment.CENTER);
-			cell_style_bx_parcial.setBorderBottom(BorderStyle.THIN);
-			cell_style_bx_parcial.setBorderTop(BorderStyle.THIN);
-			cell_style_bx_parcial.setBorderRight(BorderStyle.THIN);
-			cell_style_bx_parcial.setBorderLeft(BorderStyle.THIN);
-			cell_style_bx_parcial.setWrapText(true);
-			cell_style_bx_parcial.setFillForegroundColor(IndexedColors.ORANGE.getIndex());
-			cell_style_bx_parcial.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 			/*
 			 * if (record.isParcelaPaga()) { cell.setCellStyle(cell_style_pago);
 			 * cell.setCellValue("Pago"); } else { ContratoCobrancaDetalhesDao ccdDao = new
@@ -20080,7 +19946,7 @@ public class ContratoCobrancaMB {
 					StarkBankBaixa baixa = updateBaixaStarkBank(this.objetoBaixaPagamentoStarkBank,							
 							String.valueOf(starkBankBoleto.getId()),
 							starkBankBoleto.getCreated(),
-							starkBankBoleto.getAmount(),
+							this.contasPagarSelecionada.getValorPagamento(),
 							"Aprovado",
 							starkBankBoleto.getLine());
 
