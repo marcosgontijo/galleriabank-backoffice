@@ -466,17 +466,18 @@ public class NetrinService {
 		} else
 			receitaFederalPJ = netrinCriarConsultaCadastroPJ(pagadorRecebedor.getCnpj(), facesMessage);
 
-		pagadorRecebedor.setNome(receitaFederalPJ.getReceitaFederal().getRazaoSocial());
-		pagadorRecebedor.setEndereco(receitaFederalPJ.getReceitaFederal().getLogradouro());
-		pagadorRecebedor.setNumero(receitaFederalPJ.getReceitaFederal().getNumero());
-		pagadorRecebedor.setComplemento(receitaFederalPJ.getReceitaFederal().getComplemento());
-		pagadorRecebedor.setBairro(receitaFederalPJ.getReceitaFederal().getBairro());
-		pagadorRecebedor.setCidade(receitaFederalPJ.getReceitaFederal().getMunicipio());
-		pagadorRecebedor.setCep(receitaFederalPJ.getReceitaFederal().getCep());
-		pagadorRecebedor.setEstado(receitaFederalPJ.getReceitaFederal().getUf());
-		pagadorRecebedor.setEmail(receitaFederalPJ.getReceitaFederal().getEmail());
+		if (!CommonsUtil.semValor(receitaFederalPJ.getReceitaFederal().getRazaoSocial())) {
+			pagadorRecebedor.setNome(receitaFederalPJ.getReceitaFederal().getRazaoSocial());
+			pagadorRecebedor.setEndereco(receitaFederalPJ.getReceitaFederal().getLogradouro());
+			pagadorRecebedor.setNumero(receitaFederalPJ.getReceitaFederal().getNumero());
+			pagadorRecebedor.setComplemento(receitaFederalPJ.getReceitaFederal().getComplemento());
+			pagadorRecebedor.setBairro(receitaFederalPJ.getReceitaFederal().getBairro());
+			pagadorRecebedor.setCidade(receitaFederalPJ.getReceitaFederal().getMunicipio());
+			pagadorRecebedor.setCep(receitaFederalPJ.getReceitaFederal().getCep());
+			pagadorRecebedor.setEstado(receitaFederalPJ.getReceitaFederal().getUf());
+			pagadorRecebedor.setEmail(receitaFederalPJ.getReceitaFederal().getEmail());
 //			pagadorRecebedor.sett(receitaFederalPJ.getReceitaFederal().getTelefone());
-
+		}
 		return receitaFederalPJ;
 	}
 
