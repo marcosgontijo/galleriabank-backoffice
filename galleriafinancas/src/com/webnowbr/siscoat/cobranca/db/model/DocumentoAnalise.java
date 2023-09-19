@@ -110,13 +110,13 @@ public class DocumentoAnalise implements Serializable {
 		if (processo == null) {
 			vProcesso.add(new DocumentoAnaliseResumo("não disponível", null));
 		} else {
-				if (processo.getProcessos()== null) {
-					vProcesso.add(new DocumentoAnaliseResumo("Processos", "Não disponível"));
-				} else {
-					String processos = CommonsUtil.stringValue(processo.getProcessos());
-					vProcesso.add(new DocumentoAnaliseResumo("Processos:", processos));
-						}
-				
+			if (processo.getProcessos() == null) {
+				vProcesso.add(new DocumentoAnaliseResumo("Processos", "Não disponível"));
+			} else {
+				String processos = CommonsUtil.stringValue(processo.getProcessos());
+				vProcesso.add(new DocumentoAnaliseResumo("Processos:", processos));
+			}
+
 //				if(processo.getProcessos() == null) {
 //					vProcesso.add(new DocumentoAnaliseResumo("Criminal:", "Não disponível"));
 //				} else {
@@ -147,8 +147,8 @@ public class DocumentoAnalise implements Serializable {
 //				} else {
 //					vProcesso.add(new DocumentoAnaliseResumo("Outros:", "Não disponível"));
 //				}
-				
-			}
+
+		}
 		return vProcesso;
 	}
 	
