@@ -218,6 +218,7 @@ import com.webnowbr.siscoat.simulador.SimulacaoIPCADadosV2;
 import com.webnowbr.siscoat.simulador.SimulacaoVO;
 import com.webnowbr.siscoat.simulador.SimuladorMB;
 
+import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
 import br.com.galleriabank.netrin.cliente.model.PPE.PpeResponse;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -4915,8 +4916,28 @@ public class ContratoCobrancaMB {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
+	
+	public void testeEngineEstado(DocumentoAnalise documentoAnalise) {
+		try {
+			if (docketService == null)
+				docketService = new DocketService();
+			
+			docketService.baixarDocumentoEngine(documentoAnalise.getEngine());
+			docketService.salvarDetalheDocumentoEngine(documentoAnalise);
+			
+			EngineRetorno retorno = GsonUtil.fromJson(documentoAnalise.getRetornoEngine(), EngineRetorno.class);
+			System.out.println(retorno.getEstados());
+			documentoAnalise.setEstadosConsultaStr(retorno.getEstados());
+			System.out.println(documentoAnalise.getEstadosConsulta());
+			documentoAnalise.getEstadosConsulta().add("AA");
+			DocumentoAnaliseDao dDao = new DocumentoAnaliseDao();
+			dDao.merge(documentoAnalise);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 
 	public void baixarDocumentoSerasa(DocumentoAnalise documentoAnalise) {
 

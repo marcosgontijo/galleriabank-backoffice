@@ -295,7 +295,7 @@ public class CommonsUtil {
 			array[i] = array[i].replace("]", "");
 			array[i] = array[i].trim();
 		}
-		List<String> list = Arrays.asList(array);
+		List<String> list = new ArrayList<String>(Arrays.asList(array));
 		return list;
 	}
 
