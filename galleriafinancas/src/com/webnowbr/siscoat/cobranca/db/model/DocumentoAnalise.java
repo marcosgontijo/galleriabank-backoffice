@@ -15,6 +15,7 @@ import com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 
+import br.com.galleriabank.bigdata.cliente.model.processos.ProcessoResumo;
 import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
 import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetornoRequestFields;
 import br.com.galleriabank.dataengine.cliente.model.retorno.AntecedentesCriminais.EngineRetornoExecutionResultAntecedenteCriminaisEvidences;
@@ -101,52 +102,50 @@ public class DocumentoAnalise implements Serializable {
 
 	public List<DocumentoAnaliseResumo> getResumoProcesso() {
 		List<DocumentoAnaliseResumo> vProcesso = new ArrayList<>();
-		EngineRetornoExecutionResultProcessos processo = null;
+		ProcessoResumo processo = null;
 		try {
-			processo = GsonUtil.fromJson(getRetornoProcesso(), EngineRetornoExecutionResultProcessos.class);
+			processo = GsonUtil.fromJson(getRetornoProcesso(), ProcessoResumo.class);
 		} catch (Exception erro) {
 			vProcesso.add(new DocumentoAnaliseResumo(null, null));
 		}
 		if (processo == null) {
 			vProcesso.add(new DocumentoAnaliseResumo("não disponível", null));
 		} else {
-			if (processo.getProcessos() == null) {
-				vProcesso.add(new DocumentoAnaliseResumo("Processos", "Não disponível"));
+
+			if (processo.getCriminal() == null) {
+				vProcesso.add(new DocumentoAnaliseResumo("Criminal:", "Não disponível"));
 			} else {
-				String processos = CommonsUtil.stringValue(processo.getProcessos());
-				vProcesso.add(new DocumentoAnaliseResumo("Processos:", processos));
+				String processos = CommonsUtil.stringValue(processo.getCriminal());
+				vProcesso.add(new DocumentoAnaliseResumo("Criminal:", processos));
 			}
 
-//				if(processo.getProcessos() == null) {
-//					vProcesso.add(new DocumentoAnaliseResumo("Criminal:", "Não disponível"));
-//				} else {
-//					String processos = CommonsUtil.stringValue(processo.getProcessos());
-//					vProcesso.add(new DocumentoAnaliseResumo("Criminal:", "Não disponível"));
-//				}
-//				
-//				if(processo.getProcessos() == null) {
-//					vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:", "Não disponível"));
-//				} else {
-//					vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:", "Não disponível"));
-//				}
-//				
-//				if(processo.getProcessos() == null) {
-//					vProcesso.add(new DocumentoAnaliseResumo("Execução de título:", "Não disponível"));
-//				} else {
-//					vProcesso.add(new DocumentoAnaliseResumo("Execução de título:", "Não disponível"));
-//				}
-//				
-//				if(processo.getProcessos() == null) {
-//					vProcesso.add(new DocumentoAnaliseResumo("Execução fiscal:", "Não disponível"));
-//				} else {
-//					vProcesso.add(new DocumentoAnaliseResumo("Execução fiscal:", "Não disponível"));
-//				}
-//				
-//				if(processo.getProcessos() == null) {
-//					vProcesso.add(new DocumentoAnaliseResumo("Outros:", "Não disponível"));
-//				} else {
-//					vProcesso.add(new DocumentoAnaliseResumo("Outros:", "Não disponível"));
-//				}
+			if (processo.getTrabalhista() == null) {
+				vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:", "Não disponível"));
+			} else {
+				String processos = CommonsUtil.stringValue(processo.getTrabalhista());
+				vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:", processos));
+			}
+
+			if (processo.getTituloExecucaoFiscal() == null) {
+				vProcesso.add(new DocumentoAnaliseResumo("Execução de título:", "Não disponível"));
+			} else {
+				String processos = CommonsUtil.stringValue(processo.getTituloExecucaoFiscal());
+				vProcesso.add(new DocumentoAnaliseResumo("Execução de título:", processos));
+			}
+
+			if (processo.getExecucaoFiscalProtesto() == null) {
+				vProcesso.add(new DocumentoAnaliseResumo("Execução Fiscal:", "Não disponível"));
+			} else {
+				String processos = CommonsUtil.stringValue(processo.getExecucaoFiscalProtesto());
+				vProcesso.add(new DocumentoAnaliseResumo("Execução Fiscal:", processos));
+			}
+
+			if (processo.getOutros() == null) {
+				vProcesso.add(new DocumentoAnaliseResumo("Outros:", "Não disponível"));
+			} else {
+				String processos = CommonsUtil.stringValue(processo.getOutros());
+				vProcesso.add(new DocumentoAnaliseResumo("Outros:", processos));
+			}
 
 		}
 		return vProcesso;
