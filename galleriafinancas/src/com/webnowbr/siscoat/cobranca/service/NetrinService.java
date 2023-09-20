@@ -402,7 +402,7 @@ public class NetrinService {
 
 			URL myURL;
 			myURL = new URL("https://servicos.galleriabank.com.br/netrin/api/v1/ppe/" + numeorsCpfCnpj + "/"
-					+ nomeConsultado.replace(" ", "%20"));
+					+ nomeConsultado.replace(" ", "%20").replace("/", "%2F"));
 
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
 			myURLConnection.setRequestMethod("GET");
@@ -649,7 +649,7 @@ public class NetrinService {
 
 			URL myURL;
 			String sUrl = "https://servicos.galleriabank.com.br/netrin/api/v1/processo/"
-					+ CommonsUtil.somenteNumeros(cnpjcpf) + "/" + pagadorRecebedor.getNome().replace(" ", "%20");
+					+ CommonsUtil.somenteNumeros(cnpjcpf) + "/" + pagadorRecebedor.getNome().replace(" ", "%20").replace("/", "%2F");
 			myURL = new URL(sUrl);
 
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
@@ -1178,7 +1178,7 @@ public class NetrinService {
 
 			URL myURL;
 			String sUrl = "https://servicos.galleriabank.com.br/netrin/api/v1/CNDTrabalhistaTST/"
-					+ CommonsUtil.somenteNumeros(cnpjcpf);// + "/" + pagadorRecebedor.getNome().replace(" ", "%20");
+					+ CommonsUtil.somenteNumeros(cnpjcpf);// + "/" + pagadorRecebedor.getNome().replace(" ", "%20").replace("/", "%2F");
 			myURL = new URL(sUrl);
 
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
@@ -1384,7 +1384,7 @@ public class NetrinService {
 
 			URL myURL;
 			String sUrl = "https://servicos.galleriabank.com.br/netrin/api/v1/CNDFederal/"
-					+ CommonsUtil.somenteNumeros(cnpjcpf);// + "/" + pagadorRecebedor.getNome().replace(" ", "%20");
+					+ CommonsUtil.somenteNumeros(cnpjcpf);// + "/" + pagadorRecebedor.getNome().replace(" ", "%20").replace("/", "%2F");
 			myURL = new URL(sUrl);
 
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
