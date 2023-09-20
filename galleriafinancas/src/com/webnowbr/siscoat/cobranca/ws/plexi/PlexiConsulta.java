@@ -43,6 +43,9 @@ public class PlexiConsulta {
 	private String orgaosStr; // (TRF1) (TRF6)
 	private String abrangencia;// TRF3
 	private boolean arquivado;// TRT15
+	private String email;
+	private String senha;
+	
 		
 	public PlexiConsulta() {
 		super();
@@ -432,5 +435,21 @@ public class PlexiConsulta {
 
 	public void setExpirado(boolean expirado) {
 		this.expirado = expirado;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getSenha() {
+		return senha;
+	}
+
+	public void setSenha(String senha) {
+		this.senha = senha;
 	}
 }
