@@ -1525,6 +1525,12 @@
 								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado" 
 									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
 							</p:selectBooleanCheckbox>
+							<p:spacer width="5px"/>
+							<p:outputLabel value="Nada Consta" styleClass="labelBold" />
+							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.nadaConstaTaxa}">
+							<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado"
+							listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}"/>
+							</p:selectBooleanCheckbox>
 						</h:panelGrid>
 						<h:panelGrid columns="2">
 							<h:panelGroup>

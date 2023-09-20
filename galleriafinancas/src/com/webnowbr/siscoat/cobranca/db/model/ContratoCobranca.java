@@ -792,7 +792,8 @@ public class ContratoCobranca implements Serializable {
 	private boolean dividaVencidaTaxa; 
 	private boolean prejuizoBacenTaxa; 
 	private boolean riscoTotalBaixoTaxa; 
-	private boolean terrenoOuBarracaoTaxa; 
+	private boolean terrenoOuBarracaoTaxa;
+	private boolean nadaConstaTaxa;
 	
 	private String formaDePagamentoLaudoPAJU;
 	private String nomeContatoAgendaLaudoAvaliacao;
@@ -6970,6 +6971,14 @@ public class ContratoCobranca implements Serializable {
 
 	public void setOkClienteUsuario(String okClienteUsuario) {
 		this.okClienteUsuario = okClienteUsuario;
+	}
+
+	public boolean isNadaConstaTaxa() {
+		return nadaConstaTaxa;
+	}
+
+	public void setNadaConstaTaxa(boolean nadaConstaTaxa) {
+		this.nadaConstaTaxa = nadaConstaTaxa;
 	}
 	
 }
