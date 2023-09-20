@@ -153,11 +153,6 @@
 								icon="ui-icon ui-icon-print" value="Abrir Engine"
 								rendered="#{!fileAnalise.podeChamarEngine and fileAnalise.engineProcessado }"
 								ajax="false" />
-								
-							<p:commandButton
-								action="#{contratoCobrancaMB.testeEngineEstado(fileAnalise)}"
-								icon="ui-icon ui-icon-print" value="teste Engine"
-								rendered="#{!fileAnalise.podeChamarEngine and fileAnalise.engineProcessado }"/>
 
 							<p:commandButton
 								action="#{contratoCobrancaMB.baixarDocumentoSerasa(fileAnalise)}"
@@ -221,6 +216,7 @@
 								icon="ui-icon ui-icon-print" value="Download CNDT TST"
 								onclick="target='_blank'" onblur="target='_self'"
 								rendered="#{fileAnalise.CNDTrabalhistaTSTProcessado}" ajax="false" />
+
 						</p:column>
 
 						<p:column style="width:100px;" rendered="#{false}">

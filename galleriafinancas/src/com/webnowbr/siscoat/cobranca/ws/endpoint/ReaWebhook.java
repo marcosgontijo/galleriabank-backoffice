@@ -167,15 +167,6 @@ public class ReaWebhook {
 						pagador.setCnpj(propietario.getCnpj());
 					}
 					pagador.setNome(propietario.getNome());
-					if(!CommonsUtil.semValor(contratoCobranca)
-							&&!CommonsUtil.semValor(contratoCobranca.getImovel())
-							&&!CommonsUtil.semValor(contratoCobranca.getImovel().getEstado())) {
-						if(CommonsUtil.semValor(documentoAnalise.getEstadosConsulta())) {
-							documentoAnalise.setEstadosConsulta(new ArrayList<String>());
-						}
-						documentoAnalise.getEstadosConsulta().add(contratoCobranca.getImovel().getEstado());
-					}
-
 					pagador = pagadorRecebedorService.buscaOuInsere(pagador);
 					documentoAnalise.setPagador(pagador);
 

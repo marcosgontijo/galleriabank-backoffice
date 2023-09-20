@@ -548,7 +548,7 @@ public class PlexiMB {
 		if(CommonsUtil.mesmoValor(doc.getUrl(), 
 				"/api/maestro/trf3/certidao-distribuicao")) {
 			String[] tipoArray = {"civel", "criminal"};
-			String[] abrangenciaArray = {"sjsp", "sjms"};
+			String[] abrangenciaArray = {"sjsp", "trf"};
 			for(String tipo : tipoArray) {
 				for(String abrangencia : abrangenciaArray) {
 					PlexiConsulta plexiConsultaAux = new PlexiConsulta(docAnalise.getPagador(), doc);

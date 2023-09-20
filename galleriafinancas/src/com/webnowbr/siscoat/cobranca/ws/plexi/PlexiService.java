@@ -97,6 +97,47 @@ public class PlexiService {
 		}
 		return result;
 	}
+	
+	public JSONObject getRetornoPlexi(String requestId) {
+		JSONObject retorno = null;
+		try {
+			int HTTP_COD_SUCESSO = 200;
+			int HTTP_COD_SUCESSO1 = 201;
+			int HTTP_COD_SUCESSO2 = 202;
+			URL myURL;
+			
+			if (SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
+				myURL = new URL(urlHomologacao + "/api/maestro/result/" + requestId);
+			} else {
+				myURL = new URL(urlProducao + "/api/maestro/result/" + requestId);
+			}
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setRequestMethod("GET");
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			myURLConnection.setRequestProperty("Authorization", token);
+			myURLConnection.setDoOutput(true);
+			
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO 
+					&& myURLConnection.getResponseCode() != HTTP_COD_SUCESSO1
+					&& myURLConnection.getResponseCode() != HTTP_COD_SUCESSO2) {
+				System.out.println("Não foi encontrato retorno de requestId:" + requestId);
+			} else {
+				retorno = getJsonSucesso(myURLConnection.getInputStream());
+			}
+			myURLConnection.disconnect();
+			return retorno;
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return retorno;
+	}
 
 	public JSONObject getJsonSucesso(InputStream inputStream) {
 		BufferedReader in;
