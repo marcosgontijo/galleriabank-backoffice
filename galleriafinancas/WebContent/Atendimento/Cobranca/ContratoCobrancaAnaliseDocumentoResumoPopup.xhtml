@@ -284,14 +284,12 @@
 			</p:dialog>
 		</shiro:hasAnyRoles>
 		
-		
-		<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO">
-			<p:dialog header="Consultas Plexi" overflow="auto"
-				id="dialogConsultasPlexi"
-				widgetVar="consultasPlexiDlg" resizable="true"
-				style="FONT-SIZE: 13pt;" width="800" minWidth="800">
-				<h:form id="ConsultasPlexiForm">
-					<div align="center">
+		<p:dialog header="Consultas Plexi" overflow="auto"
+			id="dialogConsultasPlexi"
+			widgetVar="consultasPlexiDlg" resizable="true"
+			style="FONT-SIZE: 13pt;" width="800" minWidth="800">
+			<h:form id="ConsultasPlexiForm">
+				<div align="center">
 					<p:dataTable id="dtConsultasPlexi" var="plexiConsulta"
 						value="#{contratoCobrancaMB.documentoAnalisePopup.plexiConsultas}"
 						emptyMessage="" rows="20" paginator="true"
@@ -325,13 +323,9 @@
 								rendered="#{plexiConsulta.pdf != null
 									and plexiConsulta.pdf != ''}" ajax="false" />
 						</p:column>
-												
-						
 					</p:dataTable>
-
 				</div>
-				</h:form>
-			</p:dialog>
-		</shiro:hasAnyRoles>
+			</h:form>
+		</p:dialog>
 		
 </ui:composition>
