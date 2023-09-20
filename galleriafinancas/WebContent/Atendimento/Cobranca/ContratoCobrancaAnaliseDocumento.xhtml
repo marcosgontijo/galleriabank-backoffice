@@ -248,7 +248,7 @@
 				<p:commandButton value="Certidões Docket" ajax="false"
 					action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.objetoContratoCobranca)}" />
 				<p:commandButton value="Certidões Plexi" 
-					action="#{plexiMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, contratoCobrancaMB.objetoImovelCobranca.estado, 'lento')}" />
+					action="#{plexiMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'lento')}" />
 			</p:panel>
 			
 			<p:panel id="pnlCeridoesPedirPaju" header="Certidões Netrin"
@@ -261,7 +261,7 @@
 					oncomplete="executeBtn2.enable()"/>
 					
 				<p:commandButton value="Certidões Plexi" 
-					action="#{plexiMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, contratoCobrancaMB.objetoImovelCobranca.estado, 'rapido')}" />
+					action="#{plexiMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'rapido')}" />
 			
 			</p:panel>
 

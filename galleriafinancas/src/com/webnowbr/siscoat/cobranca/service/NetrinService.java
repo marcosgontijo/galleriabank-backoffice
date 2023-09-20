@@ -21,6 +21,8 @@ import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 
+import br.com.galleriabank.bigdata.cliente.model.processos.ProcessoResult;
+import br.com.galleriabank.netrin.cliente.model.cenprot.CenprotResponse;
 import br.com.galleriabank.netrin.cliente.model.contabancaria.ValidaContaBancariaRequest;
 import br.com.galleriabank.netrin.cliente.model.contabancaria.ValidaContaBancariaResponse;
 import br.com.galleriabank.netrin.cliente.model.contabancaria.ValidaPixRequest;
@@ -80,7 +82,14 @@ public class NetrinService {
 		}
 
 		try {
+			
 			String response = netrinCriarExecutaConsultaCenprot(cnpjcpf);
+			try {
+				CenprotResponse retornoCenprot  = GsonUtil.fromJson(response, CenprotResponse.class);
+				documentoAnalise.adicionaEstados(retornoCenprot.getEstados());
+			} catch (Exception e){
+				e.printStackTrace();
+			}
 			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 			documentoAnalise.setRetornoCenprot(response);
 

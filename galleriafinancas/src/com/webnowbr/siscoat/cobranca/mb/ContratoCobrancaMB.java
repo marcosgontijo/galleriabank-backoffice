@@ -4940,9 +4940,8 @@ public class ContratoCobrancaMB {
 
 
 	public void baixarDocumentoSerasa(DocumentoAnalise documentoAnalise) {
-
 		SerasaService serasa = new SerasaService();
-		DocumentoAnalise docAnalise = new DocumentoAnalise();
+		//DocumentoAnalise docAnalise = new DocumentoAnalise();
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		ExternalContext externalContext = facesContext.getExternalContext();
 		HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
@@ -31980,6 +31979,7 @@ public class ContratoCobrancaMB {
 		this.tituloPagadorRecebedorDialog = "";
 		this.tipoPesquisaPagadorRecebedor = "";
 		this.updatePagadorRecebedor = "";
+		documentoAnaliseAdicionar.adiconarEstadosPeloCadastro();
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 		documentoAnaliseDao.merge(documentoAnaliseAdicionar);
 		listaArquivosAnaliseDocumentos();

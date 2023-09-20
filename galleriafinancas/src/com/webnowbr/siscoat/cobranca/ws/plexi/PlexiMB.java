@@ -38,7 +38,7 @@ import com.webnowbr.siscoat.security.LoginBean;
 public class PlexiMB {
 	
 	private List<DocumentoAnalise> listPagador;
-	private List<String> estados;
+	//private List<String> estados;
 	private String velocidade;
 	
 	@ManagedProperty(value = "#{loginBean}")
@@ -49,9 +49,9 @@ public class PlexiMB {
 	String cpfCnpj;
 	
 	
-	public String clearFieldsContratoCobranca(List<DocumentoAnalise> listDocAnalise, String estadoImovel, String velocidadeConsultas) {
-		estados = new ArrayList<String>();
-		estados.add(estadoImovel);
+	public String clearFieldsContratoCobranca(List<DocumentoAnalise> listDocAnalise, String velocidadeConsultas) {
+		//estados = new ArrayList<String>();
+		//estados.add(estadoImovel);
 		velocidade = velocidadeConsultas;
 		listPagador = new ArrayList<DocumentoAnalise>();
 		for(DocumentoAnalise docAnalise : listDocAnalise) {
@@ -290,9 +290,9 @@ public class PlexiMB {
 		}
 		
 		if(!CommonsUtil.semValor(docAnalise.getPagador().getCpf())) {
-			plexiDocumentos = plexiDocsDao.getDocumentosPF(estados, velocidade);
+			plexiDocumentos = plexiDocsDao.getDocumentosPF(docAnalise.getEstadosConsulta(), velocidade);
 		} else {
-			plexiDocumentos = plexiDocsDao.getDocumentosPJ(estados, velocidade);
+			plexiDocumentos = plexiDocsDao.getDocumentosPJ(docAnalise.getEstadosConsulta(), velocidade);
 		}
 		
 		PlexiConsultaDao plexiConsultaDao = new PlexiConsultaDao();
@@ -644,15 +644,7 @@ public class PlexiMB {
 	
 	public void setLoginBean(LoginBean loginBean) {
 		this.loginBean = loginBean;
-	}
-
-	public List<String> getEstados() {
-		return estados;
-	}
-
-	public void setEstados(List<String> estados) {
-		this.estados = estados;
-	}
+	}	
 
 	public String getVelocidade() {
 		return velocidade;
