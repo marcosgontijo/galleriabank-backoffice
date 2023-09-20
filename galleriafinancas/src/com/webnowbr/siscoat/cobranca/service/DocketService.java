@@ -608,7 +608,7 @@ public class DocketService {
 
 		}
 		docketService.gerarRelacoesEngine(documentoAnalise);
-		documentoAnalise.adicionaEstados(engineWebhookRetorno.getEstados());
+		documentoAnalise.adicionaEstados(CommonsUtil.stringToList(engineWebhookRetorno.getEstados()));
 		documentoAnalise.setObservacao("Engine processado");
 		documentoAnaliseDao.merge(documentoAnalise);
 	}

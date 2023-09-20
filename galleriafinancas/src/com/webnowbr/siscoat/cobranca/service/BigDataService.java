@@ -78,7 +78,7 @@ public class BigDataService {
 				
 				try {
 					ProcessoResult retornoProcessoB  = GsonUtil.fromJson(retornoConsulta, ProcessoResult.class);
-					documentoAnalise.adicionaEstados(retornoProcessoB.getEstados());
+					documentoAnalise.adicionaEstados(CommonsUtil.stringToList(retornoProcessoB.getEstados()));
 				} catch (Exception e){
 					e.printStackTrace();
 				}

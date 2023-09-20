@@ -15,13 +15,15 @@ import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorConsulta;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
+import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
+import com.webnowbr.siscoat.infra.db.dao.UserDao;
+import com.webnowbr.siscoat.infra.db.model.User;
 
-import br.com.galleriabank.bigdata.cliente.model.processos.ProcessoResult;
 import br.com.galleriabank.netrin.cliente.model.cenprot.CenprotResponse;
 import br.com.galleriabank.netrin.cliente.model.contabancaria.ValidaContaBancariaRequest;
 import br.com.galleriabank.netrin.cliente.model.contabancaria.ValidaContaBancariaResponse;
@@ -85,8 +87,8 @@ public class NetrinService {
 			
 			String response = netrinCriarExecutaConsultaCenprot(cnpjcpf);
 			try {
-				CenprotResponse retornoCenprot  = GsonUtil.fromJson(response, CenprotResponse.class);
-				documentoAnalise.adicionaEstados(retornoCenprot.getEstados());
+				CenprotResponse retornoCenprot = GsonUtil.fromJson(response, CenprotResponse.class);
+				documentoAnalise.adicionaEstados(CommonsUtil.stringToList(retornoCenprot.getEstados()));
 			} catch (Exception e){
 				e.printStackTrace();
 			}
@@ -98,6 +100,9 @@ public class NetrinService {
 			PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
 			pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
 					DocumentosAnaliseEnum.CENPROT, response);
+			
+			String base64 = baixarDocumento(documentoAnalise);
+			salvarPdfRetorno(documentoAnalise, base64, "Cenprot", "interno");
 			result = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
 
 		} catch (Exception e) {
@@ -1139,7 +1144,10 @@ public class NetrinService {
 				PagadorRecebedorService PagadorRecebedorService = new PagadorRecebedorService();
 				PagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
 						DocumentosAnaliseEnum.CNDTTST, retornoConsulta);
-
+				
+				String base64 = baixarDocumentoCNDTrabalhistaTST(documentoAnalise);
+				salvarPdfRetorno(documentoAnalise, base64, "CNDT TST", "interno");
+				
 				return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
 
 			}
@@ -1346,6 +1354,9 @@ public class NetrinService {
 				PagadorRecebedorService PagadorRecebedorService = new PagadorRecebedorService();
 				PagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
 						DocumentosAnaliseEnum.CNDFEDERAL, retornoConsulta);
+				
+				String base64 = baixarDocumentoCNDFederal(documentoAnalise);
+				salvarPdfRetorno(documentoAnalise, base64, "CND Federal", "interno");
 
 				return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
 
@@ -1549,9 +1560,10 @@ public class NetrinService {
 				PagadorRecebedorService PagadorRecebedorService = new PagadorRecebedorService();
 				PagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
 						DocumentosAnaliseEnum.CNDESTADUAL, retornoConsulta);
-
+				String base64 = baixarDocumentoCNDEstadual(documentoAnalise);
+				salvarPdfRetorno(documentoAnalise, base64, "CND Estadual", "interno");
+				
 				return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
-
 			}
 
 		} catch (Exception e) {
@@ -1707,4 +1719,18 @@ public class NetrinService {
 		return null;
 	}
 	/// /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\  CND Estadual
+	
+	public void salvarPdfRetorno(DocumentoAnalise documentoAnalise, String base64, String nomeConsulta, String diretorio) {
+		String nomeAnalise = documentoAnalise.getPagador().getNome();
+		String numeroContrato = documentoAnalise.getContratoCobranca().getNumeroContrato();
+		if(CommonsUtil.semValor(numeroContrato)) {
+			return;
+		}
+		FileUploaded pdfRetorno = new FileUploaded();
+		pdfRetorno.setFileBase64(base64);
+		pdfRetorno.setName(nomeConsulta + " - " + nomeAnalise + ".pdf");
+		FileService fileService = new FileService();
+		User user = new UserDao().findById((long) -1);
+		fileService.salvarDocumentoBase64(pdfRetorno, numeroContrato, diretorio, user);
+	}
 }
