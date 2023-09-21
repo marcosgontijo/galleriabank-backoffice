@@ -128,7 +128,7 @@
 								action="#{contratoCobrancaMB.clearFieldsRelatorioComercial}" update=":form:relatorioComercial"/>
 						</shiro:hasAnyRoles>
 			        </f:facet>                 
-                	<p:column style="text-align: center;width:105px;" headerText="Contrato" filterBy="#{contratos.numeroContrato}" filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
+                	<p:column style="text-align: center;width:105px;" headerText="Contrato" filterEvent="enter" filterBy="#{contratos.numeroContrato}" filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
 			            <h:outputText value="#{contratos.numeroContrato}" />
 			        </p:column>
 			        <p:column style="text-align: center;" headerText="Data Contrato" sortBy="#{contratos.dataContrato}">
@@ -137,21 +137,21 @@
 			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 			            </h:outputText>
 			        </p:column>	
-			        <p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.pagador.nome}" filterMatchMode="contains" sortBy="#{contratos.pagador.nome}">
+			        <p:column style="text-align: center;" headerText="Pagador" filterEvent="enter" filterBy="#{contratos.pagador.nome}" filterMatchMode="contains" sortBy="#{contratos.pagador.nome}">
 			            <h:outputText value="#{contratos.pagador.nome}" />
 			        </p:column>	
-			        <p:column style="text-align: center;" headerText="Responsável" filterBy="#{contratos.responsavel.nome}" filterMatchMode="contains" sortBy="#{contratos.responsavel.nome}">
+			        <p:column style="text-align: center;" headerText="Responsável" filterEvent="enter" filterBy="#{contratos.responsavel.nome}" filterMatchMode="contains" sortBy="#{contratos.responsavel.nome}">
 			            <h:outputText value="#{contratos.responsavel.nome}" />
 			        </p:column>	
 			        <shiro:hasAnyRoles name="ROOT">  	
-				        <p:column style="text-align: center;" headerText="Gerente" filterBy="#{contratos.responsavel.donoResponsavel.nome}" filterMatchMode="contains" sortBy="#{contratos.responsavel.donoResponsavel.nome}">
+				        <p:column style="text-align: center;" headerText="Gerente" filterEvent="enter" filterBy="#{contratos.responsavel.donoResponsavel.nome}" filterMatchMode="contains" sortBy="#{contratos.responsavel.donoResponsavel.nome}">
 				            <h:outputText value="#{contratos.responsavel.donoResponsavel.nome}" />
 				        </p:column>	
 			        </shiro:hasAnyRoles>        
 			        <p:column style="text-align: center;" headerText="Valor Solicitado (R$)">
 			            <h:outputText value="R$ " /><h:outputText value="#{contratos.quantoPrecisa}" converter="bigDecimalConverter" />
 			        </p:column>	
-			        <p:column style="text-align: center;" headerText="Status" filterBy="#{contratos.status}" filterMatchMode="contains" sortBy="#{contratos.status}">
+			        <p:column style="text-align: center;" headerText="Status" filterEvent="enter" filterBy="#{contratos.status}" filterMatchMode="contains" sortBy="#{contratos.status}">
 			            <h:outputText value="#{contratos.status}" />
 			        </p:column>	
 			        

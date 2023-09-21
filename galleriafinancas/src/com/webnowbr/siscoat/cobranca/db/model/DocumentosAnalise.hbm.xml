@@ -56,6 +56,10 @@
 			<column name="liberadoContinuarAnalise" not-null="true" default ="false" />
 		</property>		
 		
+		<property name="liberadoCertidoes" type="boolean">
+			<column name="liberadoCertidoes" not-null="true" default ="false" />
+		</property>		
+				
 		<property name="liberadoSerasa" type="boolean">
 			<column name="liberadoSerasa" not-null="true" default ="false" />
 		</property>	
