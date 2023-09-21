@@ -4962,35 +4962,42 @@ public class ContratoCobrancaMB {
 			e.printStackTrace();
 		}
 	}
-	public void baixarMatricula(FileUploaded file) {
-
+	
+	public void baixarMatricula(Long id) {
+			FileUploaded fileRea = new FileUploaded();
+			
 			FileService fileService = new FileService();
-			DocumentoAnalise docAnalise = new DocumentoAnalise();
+			DocumentoAnaliseDao docAnaliseDao = new DocumentoAnaliseDao();
 			FacesContext facesContext = FacesContext.getCurrentInstance();
 			ExternalContext externalContext = facesContext.getExternalContext();
 			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
 			BufferedInputStream input = null;
 			BufferedOutputStream output = null;
+			ParametrosDao pDao = new ParametrosDao();
+		DocumentoAnalise documentoAnalise =	docAnaliseDao.findById(id);
+		fileRea.setName(documentoAnalise.getIdentificacao());
+		fileRea.setPath("/home/webnowbr/Siscoat/GalleriaFinancas/DocumentosCobranca/" + this.objetoContratoCobranca.getNumeroContrato() + "/analise/");
+		fileRea.setFile(null);
+			
 			try {
-				byte[] documentoBase64 = fileService.abrirDocumentos(file, numeroContratoObjetoContratoCobranca, getUsuarioLogado());
-				if(CommonsUtil.semValor(documentoBase64)) {
+				byte[] bytesArquivo = fileService.abrirDocumentos(fileRea, this.objetoContratoCobranca.getNumeroContrato(), getUsuarioLogado());
+				if(CommonsUtil.semValor(bytesArquivo)) {
 					facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-							"Serasa: Ocorreu um problema ao gerar o PDF!", ""));
+							"REA: Ocorreu um problema ao gerar o PDF!", ""));
 					return;
 				} else {
-					byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
 					String mineFile = "application/pdf";
-					input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
+					input = new BufferedInputStream(new ByteArrayInputStream(bytesArquivo));
 					response.reset();
 					// lire un fichier pdf
 					response.setHeader("Content-type", mineFile);
 
-					response.setContentLength(pdfBytes.length);
+					response.setContentLength(bytesArquivo.length);
 
 					response.setHeader("Content-disposition",
-							"inline; FileName=" + " Serasa " + ".pdf");
+							"inline; FileName=" +  this.objetoContratoCobranca.getNumeroContrato() + " " + documentoAnalise.getIdentificacao() + ".pdf");
 					output = new BufferedOutputStream(response.getOutputStream(), 10240);
-					byte[] buffer = new byte[pdfBytes.length];
+					byte[] buffer = new byte[bytesArquivo.length];
 					int length;
 					while ((length = input.read(buffer)) > 0) {
 						output.write(buffer, 0, length);
