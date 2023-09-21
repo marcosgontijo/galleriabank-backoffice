@@ -93,7 +93,7 @@ public class SerasaMB {
 			// Finalize task.
 			output.flush();
 			output.close();
-			
+			facesContext.responseComplete();
 
 		} catch (Exception e) {
 			e.printStackTrace();
