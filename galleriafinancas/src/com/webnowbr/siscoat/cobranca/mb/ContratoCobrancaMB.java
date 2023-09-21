@@ -29691,9 +29691,8 @@ public class ContratoCobrancaMB {
 		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 
-		for (DocumentoAnalise documentoAnalise : this.listaDocumentoAnalise.stream().filter(d -> d.isLiberadoAnalise()
-				|| d.isLiberadoSerasa() || d.isLiberadoCenprot() || d.isLiberadoScr() || d.isLiberadoProcesso())
-				.collect(Collectors.toList())) {
+		for (DocumentoAnalise documentoAnalise : this.listaDocumentoAnalise.stream()
+				.filter(d -> d.isLiberadoCertidoes()).collect(Collectors.toList())) {
 			String observacao = "";
 			if (documentoAnalise.isLiberadoAnalise() && !CommonsUtil.semValor(documentoAnalise.getPagador())) {
 				if (CommonsUtil.semValor(documentoAnalise.getRetornoCNDEstadual())) {
@@ -29701,11 +29700,11 @@ public class ContratoCobrancaMB {
 					if (CommonsUtil.semValor(documentoAnalise.getPagador().getEstado())) {
 						documentoAnalise.getPagador().setEstado(estado);
 						new PagadorRecebedorDao().merge(documentoAnalise.getPagador());
-						
-						//observacao = observacao + "Falta UF para consulta estadual \n";
-						//documentoAnalise.addObservacao("Falta UF para consulta estadual");
-					} 
-					
+
+						// observacao = observacao + "Falta UF para consulta estadual \n";
+						// documentoAnalise.addObservacao("Falta UF para consulta estadual");
+					}
+
 					if (CommonsUtil.mesmoValor(documentoAnalise.getPagador().getEstado().toLowerCase(), "mg")
 							&& CommonsUtil.semValor(documentoAnalise.getPagador().getCep())) {
 						observacao = observacao + "Falta CEP para consulta estadual de MG \n";
