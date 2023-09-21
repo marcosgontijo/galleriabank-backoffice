@@ -4962,6 +4962,50 @@ public class ContratoCobrancaMB {
 			e.printStackTrace();
 		}
 	}
+	public void baixarMatricula(FileUploaded file) {
+
+			FileService fileService = new FileService();
+			DocumentoAnalise docAnalise = new DocumentoAnalise();
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			ExternalContext externalContext = facesContext.getExternalContext();
+			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+			BufferedInputStream input = null;
+			BufferedOutputStream output = null;
+			try {
+				byte[] documentoBase64 = fileService.abrirDocumentos(file, numeroContratoObjetoContratoCobranca, getUsuarioLogado());
+				if(CommonsUtil.semValor(documentoBase64)) {
+					facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"Serasa: Ocorreu um problema ao gerar o PDF!", ""));
+					return;
+				} else {
+					byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
+					String mineFile = "application/pdf";
+					input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
+					response.reset();
+					// lire un fichier pdf
+					response.setHeader("Content-type", mineFile);
+
+					response.setContentLength(pdfBytes.length);
+
+					response.setHeader("Content-disposition",
+							"inline; FileName=" + " Serasa " + ".pdf");
+					output = new BufferedOutputStream(response.getOutputStream(), 10240);
+					byte[] buffer = new byte[pdfBytes.length];
+					int length;
+					while ((length = input.read(buffer)) > 0) {
+						output.write(buffer, 0, length);
+					}
+
+					// Finalize task.
+					output.flush();
+					output.close();
+					facesContext.responseComplete();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		
+	}
 
 	public void baixarDocumentoPpe(DocumentoAnalise documentoAnalise) {
 		NetrinService netrin = new NetrinService();
@@ -9198,6 +9242,7 @@ public class ContratoCobrancaMB {
 
 	public String clearFieldsEditarPendentesAnalistas() {
 		clearMensagensWhatsApp();
+		this.objetoContratoCobranca.calcularTaxaPreAprovada();
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
 		this.objetoPagadorRecebedor = this.objetoContratoCobranca.getPagador();
@@ -9245,9 +9290,9 @@ public class ContratoCobrancaMB {
 			this.codigoResponsavel = this.objetoContratoCobranca.getResponsavel().getCodigo();
 		}
 		// this.objetoContratoCobranca.setDataInicio(this.objetoContratoCobranca.getDataContrato());
-		if (CommonsUtil.semValor(objetoContratoCobranca.getTaxaPreAprovada())) {
-			this.objetoContratoCobranca.calcularTaxaPreAprovada();
-		}
+	
+		this.objetoContratoCobranca.calcularTaxaPreAprovada();
+
 
 		saveEstadoCheckListAtual();
 
@@ -29646,9 +29691,8 @@ public class ContratoCobrancaMB {
 		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 
-		for (DocumentoAnalise documentoAnalise : this.listaDocumentoAnalise.stream().filter(d -> d.isLiberadoAnalise()
-				|| d.isLiberadoSerasa() || d.isLiberadoCenprot() || d.isLiberadoScr() || d.isLiberadoProcesso())
-				.collect(Collectors.toList())) {
+		for (DocumentoAnalise documentoAnalise : this.listaDocumentoAnalise.stream()
+				.filter(d -> d.isLiberadoCertidoes()).collect(Collectors.toList())) {
 			String observacao = "";
 			if (documentoAnalise.isLiberadoAnalise() && !CommonsUtil.semValor(documentoAnalise.getPagador())) {
 				if (CommonsUtil.semValor(documentoAnalise.getRetornoCNDEstadual())) {
@@ -29656,11 +29700,11 @@ public class ContratoCobrancaMB {
 					if (CommonsUtil.semValor(documentoAnalise.getPagador().getEstado())) {
 						documentoAnalise.getPagador().setEstado(estado);
 						new PagadorRecebedorDao().merge(documentoAnalise.getPagador());
-						
-						//observacao = observacao + "Falta UF para consulta estadual \n";
-						//documentoAnalise.addObservacao("Falta UF para consulta estadual");
-					} 
-					
+
+						// observacao = observacao + "Falta UF para consulta estadual \n";
+						// documentoAnalise.addObservacao("Falta UF para consulta estadual");
+					}
+
 					if (CommonsUtil.mesmoValor(documentoAnalise.getPagador().getEstado().toLowerCase(), "mg")
 							&& CommonsUtil.semValor(documentoAnalise.getPagador().getCep())) {
 						observacao = observacao + "Falta CEP para consulta estadual de MG \n";

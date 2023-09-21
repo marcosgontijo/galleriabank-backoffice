@@ -128,7 +128,7 @@ public class BigDataService {
 
 			URL myURL;
 			String sUrl = "https://servicos.galleriabank.com.br/bigData/api/v1/processo/"
-					+ CommonsUtil.somenteNumeros(cnpjcpf) + "/" + pagadorRecebedor.getNome().replace(" ", "%20").replace("/", "%2F");
+					+ CommonsUtil.somenteNumeros(cnpjcpf) + "/" + (pagadorRecebedor.getNome().replace(" ", "%20").replace("/", "%2F"));
 			myURL = new URL(sUrl);
 
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();

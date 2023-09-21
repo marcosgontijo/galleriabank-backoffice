@@ -10,6 +10,7 @@ import java.util.Locale;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.webnowbr.siscoat.cobranca.mb.FileUploadMB.FileUploaded;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
 import com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta;
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -53,6 +54,7 @@ public class DocumentoAnalise implements Serializable {
 	private String tipo;
 	private boolean liberadoAnalise;	
 	private boolean liberadoContinuarAnalise;
+	private boolean liberadoCertidoes;	
 	
 	private boolean liberadoSerasa;
 	private boolean liberadoCenprot;
@@ -98,6 +100,7 @@ public class DocumentoAnalise implements Serializable {
 	private int totalCcfApontamentos = 0;
 	private int totalProtestos = 0;
 	private int numeroParticipacaoEmpresas = 0;
+	private FileUploaded file;
 	
 
 	public List<DocumentoAnaliseResumo> getResumoProcesso() {
@@ -461,6 +464,10 @@ public class DocumentoAnalise implements Serializable {
 	public boolean isPodeChamarRea() {
 		return isReaNaoEnviado() && CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
 	}
+	
+	public boolean isPodeChamarCertidoes() {
+		return !CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
+	}
 
 	public boolean isReaNaoEnviado() {
 		return CommonsUtil.semValor(idRemoto);
@@ -664,13 +671,21 @@ public class DocumentoAnalise implements Serializable {
 	public void setLiberadoAnalise(boolean liberadoAnalise) {
 		this.liberadoAnalise = liberadoAnalise;
 	}
-
+	
 	public boolean isLiberadoContinuarAnalise() {
 		return liberadoContinuarAnalise;
 	}
 
 	public void setLiberadoContinuarAnalise(boolean liberadoContinuarAnalise) {
 		this.liberadoContinuarAnalise = liberadoContinuarAnalise;
+	}
+
+	public boolean isLiberadoCertidoes() {
+		return liberadoCertidoes;
+	}
+
+	public void setLiberadoCertidoes(boolean liberadoCertidoes) {
+		this.liberadoCertidoes = liberadoCertidoes;
 	}
 
 	public DocumentosAnaliseEnum getTipoEnum() {
