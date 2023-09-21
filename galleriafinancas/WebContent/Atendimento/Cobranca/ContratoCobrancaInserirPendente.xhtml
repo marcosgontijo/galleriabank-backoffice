@@ -1895,7 +1895,7 @@
 									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
 							</p:selectBooleanCheckbox>
 												
-							<p:outputLabel value="Score &gt; 300" styleClass="labelBold" />
+							<p:outputLabel value="Score &lt; 450" styleClass="labelBold" />
 							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.scoreBaixoTaxa}">
 								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado" 
 									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
