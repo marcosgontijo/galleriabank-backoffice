@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.db.dao.HibernateDao;
 
@@ -67,7 +68,7 @@ public class PlexiDocumentosDao extends HibernateDao<PlexiDocumentos, Long> {
 			+ "where p.pj = true";
 
 	@SuppressWarnings("unchecked")
-	public List<PlexiDocumentos> getDocumentosPJ(List<String> estados, String velocidade) {
+	public List<PlexiDocumentos> getDocumentosPJ(List<String> estados, String velocidade, DocumentoAnalise docAnalise) {
 		return (List<PlexiDocumentos>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -105,6 +106,10 @@ public class PlexiDocumentosDao extends HibernateDao<PlexiDocumentos, Long> {
 					
 					while (rs.next()) {
 						PlexiDocumentos doc = plexiDocumentosDao.findById(rs.getLong(1));
+						if(CommonsUtil.mesmoValor(doc.getUrl(), "/api/maestro/receita/qsa")
+								&& !CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise(), "Proprietario Atual")) {
+							continue;
+						}
 						documentosPf.add(doc);
 					}
 				} finally {

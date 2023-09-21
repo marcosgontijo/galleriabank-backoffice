@@ -94,7 +94,7 @@
 
 						</p:column>
 
-						<p:column headerText="Liberado Análise">
+						<p:column headerText="Liberado Análise" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.emPedirPaju }">
 							<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"
 								rendered="#{!fileAnalise.isAnaliseBloqueada() and contratoCobrancaMB.objetoContratoCobranca.emAnalise  }"
 								onLabel="Sim" offLabel="Não" style="width:6rem">
@@ -108,6 +108,15 @@
 							<p:selectBooleanButton value="#{fileAnalise.liberadoContinuarAnalise}"
 								rendered="#{fileAnalise.isAnaliseBloqueada() and contratoCobrancaMB.objetoContratoCobranca.emAnalise  }"
 								onLabel="Continuar Analise" offLabel="Analise Bloqueada" style="width:6rem">
+								<p:ajax event="change"
+									listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
+							</p:selectBooleanButton>
+						</p:column>
+						
+						<p:column headerText="Liberado Certidoes" rendered="#{contratoCobrancaMB.objetoContratoCobranca.emPedirPaju }">
+							<p:selectBooleanButton value="#{fileAnalise.liberadoCertidoes}"							
+								rendered="#{fileAnalise.podeChamarCertidoes}"
+								onLabel="Sim" offLabel="Não" style="width:6rem">
 								<p:ajax event="change"
 									listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
 							</p:selectBooleanButton>
@@ -199,28 +208,24 @@
 							<f:setPropertyActionListener value="#{fileAnalise}"
 								target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
 							</p:commandButton>
-						
-							<h:panelGroup rendered="#{contratoCobrancaMB.objetoContratoCobranca.emPedirPaju}">
 							
-								<p:commandButton 
-									action="#{netrinMB.baixarDocumentoCNDEstadual(fileAnalise)}"
-									icon="ui-icon ui-icon-print" value="Download CND Estadual"
-									onclick="target='_blank'" onblur="target='_self'"
-									rendered="#{fileAnalise.CNDEstadualProcessado}" ajax="false" />
-									
-								<p:commandButton 
-									action="#{netrinMB.baixarDocumentoCNDFederal(fileAnalise)}"
-									icon="ui-icon ui-icon-print" value="Download CND Federal"
-									onclick="target='_blank'" onblur="target='_self'"  
-									rendered="#{fileAnalise.CNDFederalProcessado}" ajax="false" />
-									
-								<p:commandButton 
-									action="#{netrinMB.baixarDocumentoCNDTrabalhistaTST(fileAnalise)}"
-									icon="ui-icon ui-icon-print" value="Download CNDT TST"
-									onclick="target='_blank'" onblur="target='_self'"
-									rendered="#{fileAnalise.CNDTrabalhistaTSTProcessado}" ajax="false" />
-									
-							</h:panelGroup>
+							<p:commandButton 
+								action="#{netrinMB.baixarDocumentoCNDEstadual(fileAnalise)}"
+								icon="ui-icon ui-icon-print" value="Download CND Estadual"
+								onclick="target='_blank'" onblur="target='_self'"
+								rendered="#{fileAnalise.CNDEstadualProcessado}" ajax="false" />
+								
+							<p:commandButton 
+								action="#{netrinMB.baixarDocumentoCNDFederal(fileAnalise)}"
+								icon="ui-icon ui-icon-print" value="Download CND Federal"
+								onclick="target='_blank'" onblur="target='_self'"  
+								rendered="#{fileAnalise.CNDFederalProcessado}" ajax="false" />
+								
+							<p:commandButton 
+								action="#{netrinMB.baixarDocumentoCNDTrabalhistaTST(fileAnalise)}"
+								icon="ui-icon ui-icon-print" value="Download CNDT TST"
+								onclick="target='_blank'" onblur="target='_self'"
+								rendered="#{fileAnalise.CNDTrabalhistaTSTProcessado}" ajax="false" />
 							
 						</p:column>
 
