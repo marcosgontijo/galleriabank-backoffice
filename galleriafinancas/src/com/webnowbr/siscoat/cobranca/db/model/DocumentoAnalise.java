@@ -155,31 +155,35 @@ public class DocumentoAnalise implements Serializable {
 		String str = "";
 		EngineRetorno engine = null;
 		engine = GsonUtil.fromJson(getRetornoEngine(), EngineRetorno.class);
-
-		EngineRetornoRequestFields nome = engine.getRequestFields().stream().filter(f -> f.getField().equals("nome"))
-				.findFirst().orElse(null);
-
-		EngineRetornoRequestFields cpf = engine.getRequestFields().stream().filter(g -> g.getField().equals("cpf"))
+		if (engine != null) {
+			EngineRetornoRequestFields nome = engine.getRequestFields().stream().filter(f -> f.getField().equals("nome"))
 					.findFirst().orElse(null);
 
-		EngineRetornoRequestFields cnpj = engine.getRequestFields().stream()
-					.filter(s -> s.getField().equals("cnpj")).findFirst().orElse(null);
-		
-		if (nome != null) {
-			str = nome.getValue();
-			str = str.trim();
-		}
-		
-		if (cpf != null) {
-			if (engine.getConsultaCompleta().getBestInfo().getAge() != null) {
-				str = String.join(" - ", str, engine.getConsultaCompleta().getBestInfo().getAge() + " Anos");
+			EngineRetornoRequestFields cpf = engine.getRequestFields().stream().filter(g -> g.getField().equals("cpf"))
+						.findFirst().orElse(null);
+
+			EngineRetornoRequestFields cnpj = engine.getRequestFields().stream()
+						.filter(s -> s.getField().equals("cnpj")).findFirst().orElse(null);
+			
+			if (nome != null) {
+				str = nome.getValue();
+				str = str.trim();
 			}
 			
-			str = String.join(" - ", str, cpf.getValue());
-		}
-		
-		if (cnpj != null) {
-			str = String.join(" - ", str, cnpj.getValue());
+			if (cpf != null) {
+				if (engine.getConsultaCompleta() != null && engine.getConsultaCompleta().getBestInfo().getAge() != null) {
+					str = String.join(" - ", str, engine.getConsultaCompleta().getBestInfo().getAge() + " Anos");
+				}
+				
+				str = String.join(" - ", str, cpf.getValue());
+			}
+			
+			if (cnpj != null) {
+				str = String.join(" - ", str, cnpj.getValue());
+			}
+			if (getMotivoAnalise() != null && !getMotivoAnalise().isEmpty()) {
+				str = String.join(" - ", str, getMotivoAnalise());
+			}
 		}
 		return str;
 	}
@@ -275,30 +279,31 @@ public class DocumentoAnalise implements Serializable {
 				} else {
 					result.add(new DocumentoAnaliseResumo("PEP ou VIP:", "Não"));
 				}	
-			}			
-		}
-
-		if(engine.getConsultaCompleta() == null) {
-			result.add(new DocumentoAnaliseResumo("PEP Relacionado:", "Não disponível"));
-		} else {
-			if (politicamenteExposta) {
-				result.add(new DocumentoAnaliseResumo("PEP Relacionado:", "Sim"));
+			}
+			
+			if(engine.getConsultaCompleta() == null) {
+				result.add(new DocumentoAnaliseResumo("PEP Relacionado:", "Não disponível"));
 			} else {
-				result.add(new DocumentoAnaliseResumo("PEP Relacionado:", "Não"));				}	
-		}			
+				if (politicamenteExposta) {
+					result.add(new DocumentoAnaliseResumo("PEP Relacionado:", "Sim"));
+				} else {
+					result.add(new DocumentoAnaliseResumo("PEP Relacionado:", "Não"));				
+					}	
+			}			
 
-		if (engine.getConsultaAntecedenteCriminais() == null) {
-			result.add(new DocumentoAnaliseResumo("Antecedentes criminais:", "Não disponível"));
-		} else {
-			EngineRetornoExecutionResultAntecedenteCriminaisEvidences mensagem = engine
-					.getConsultaAntecedenteCriminais().getEvidences();
-			result.add(new DocumentoAnaliseResumo("Antecedentes criminais:",  (mensagem.getMessage() != null) ? mensagem.getMessage() : "Nada consta"));
+			if (engine.getConsultaAntecedenteCriminais() == null) {
+				result.add(new DocumentoAnaliseResumo("Antecedentes criminais:", "Não disponível"));
+			} else {
+				EngineRetornoExecutionResultAntecedenteCriminaisEvidences mensagem = engine
+						.getConsultaAntecedenteCriminais().getEvidences();
+				result.add(new DocumentoAnaliseResumo("Antecedentes criminais:",  (mensagem.getMessage() != null) ? mensagem.getMessage() : "Nada consta"));
+			}
 		}
 
 		return result;
 	}
 
-	private void populaExecutionResult(EngineRetorno engine) {		
+	private void populaExecutionResult(EngineRetorno engine) {
 		for (int i = 0; i < engine.getExecutionResult().size(); i++) {
 			JSONObject objER = new JSONObject(engine.getExecutionResult().get(i));
 			
@@ -396,6 +401,7 @@ public class DocumentoAnalise implements Serializable {
 	public List<DocumentoAnaliseResumo> getResumoScr() {
 		List<DocumentoAnaliseResumo> scr = new ArrayList<>();
 		ScrResult dado = GsonUtil.fromJson(getRetornoScr(), ScrResult.class);
+
 		if (dado == null) {
 			scr.add(new DocumentoAnaliseResumo("Dados não disponíveis", "0"));
 		} else {
@@ -442,7 +448,12 @@ public class DocumentoAnalise implements Serializable {
 				    scr.add(new DocumentoAnaliseResumo("Carteira de Crédito Tomado:", somaFormatada));
 				}
 			}
-
+			
+			if (dado.getResumoDoClienteTraduzido().getDtInicioRelacionamento() == null) {
+				scr.add(new DocumentoAnaliseResumo("Data inicio relacionamento:", "Não Disponível"));
+			} else {
+				scr.add(new DocumentoAnaliseResumo("Data inicio relacionamento:", dado.getResumoDoClienteTraduzido().getDtInicioRelacionamento()));
+			}
 		}
 
 		return scr;
