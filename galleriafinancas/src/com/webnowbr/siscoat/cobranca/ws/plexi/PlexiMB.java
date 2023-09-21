@@ -292,7 +292,7 @@ public class PlexiMB {
 		if(!CommonsUtil.semValor(docAnalise.getPagador().getCpf())) {
 			plexiDocumentos = plexiDocsDao.getDocumentosPF(docAnalise.getEstadosConsulta(), velocidade);
 		} else {
-			plexiDocumentos = plexiDocsDao.getDocumentosPJ(docAnalise.getEstadosConsulta(), velocidade);
+			plexiDocumentos = plexiDocsDao.getDocumentosPJ(docAnalise.getEstadosConsulta(), velocidade, docAnalise);
 		}
 		
 		PlexiConsultaDao plexiConsultaDao = new PlexiConsultaDao();
@@ -316,24 +316,6 @@ public class PlexiMB {
 	public boolean verificaCamposDoc(PlexiConsulta plexiConsulta) {
 		PlexiDocumentos doc = plexiConsulta.getPlexiDocumentos();
 		boolean retorno = true;
-		
-		if(CommonsUtil.mesmoValor(doc.getUrl(), 
-				"/api/maestro/fazenda-mg/certidao-debitos-tributarios")) {
-			if(CommonsUtil.semValor(plexiConsulta.getCep())){
-				retorno = false;
-				FacesContext.getCurrentInstance().addMessage(null,
-				new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Cep",""));
-			}
-		}
-		
-		if(CommonsUtil.mesmoValor(doc.getUrl(), 
-				"/api/maestro/fazenda-mg/certidao-debitos-tributarios")) {
-			if(CommonsUtil.semValor(plexiConsulta.getCep())){
-				retorno = false;
-				FacesContext.getCurrentInstance().addMessage(null,
-				new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Cep", ""));
-			}
-		}
 		
 		if(CommonsUtil.mesmoValor(doc.getUrl(), 
 				"/api/maestro/tjrs/certidao-negativa")) {
@@ -398,16 +380,56 @@ public class PlexiMB {
 		}
 		
 		if(CommonsUtil.mesmoValor(doc.getUrl(), 
-				"/api/maestro/fazenda-sc/certidao-negativa-debitos")) {
-			if(!CommonsUtil.semValor(plexiConsulta.getCnpj())) {			
-				if(CommonsUtil.semValor(plexiConsulta.getCpfSolicitante())){
+				"/api/maestro/trf4/certidao-regional")) {
+			if(!CommonsUtil.semValor(plexiConsulta.getCpf())) {			
+				if(CommonsUtil.semValor(plexiConsulta.getRg())){
 					retorno = false;
 					FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta CPF Solicitante", ""));
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Rg", ""));
+				}
+				
+				if(CommonsUtil.semValor(plexiConsulta.getOrgaoExpedidorRg())){
+					retorno = false;
+					FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Orgao Rg", ""));
+				}
+				
+				if(CommonsUtil.semValor(plexiConsulta.getNomeMae())){
+					retorno = false;
+					FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Nome da Mãe", ""));
+				}
+				
+				if(CommonsUtil.semValor(plexiConsulta.getDataNascimento())){
+					retorno = false;
+					FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Data Nascimento", ""));
 				}
 			}
 		}
 		
+		/*
+		 * if(CommonsUtil.mesmoValor(doc.getUrl(),
+		 * "/api/maestro/fazenda-mg/certidao-debitos-tributarios")) {
+		 * if(CommonsUtil.semValor(plexiConsulta.getCep())){ retorno = false;
+		 * FacesContext.getCurrentInstance().addMessage(null, new
+		 * FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() +
+		 * " - Falta Cep",""));}} if(CommonsUtil.mesmoValor(doc.getUrl(),
+		 * "/api/maestro/fazenda-mg/certidao-debitos-tributarios")) {
+		 * if(CommonsUtil.semValor(plexiConsulta.getCep())){ retorno = false;
+		 * FacesContext.getCurrentInstance().addMessage(null, new
+		 * FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Cep",
+		 * "")); } }
+		 * 
+		 * if(CommonsUtil.mesmoValor(doc.getUrl(),
+		 * "/api/maestro/fazenda-sc/certidao-negativa-debitos")) {
+		 * if(!CommonsUtil.semValor(plexiConsulta.getCnpj())) {
+		 * if(CommonsUtil.semValor(plexiConsulta.getCpfSolicitante())){ retorno = false;
+		 * FacesContext.getCurrentInstance().addMessage(null, new
+		 * FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() +
+		 * " - Falta CPF Solicitante", "")); } } }
+		 */
+
 		return retorno;
 	}
 	
@@ -574,6 +596,8 @@ public class PlexiMB {
 			for(String tipo : tipoArray) {
 				PlexiConsulta plexiConsultaAux = new PlexiConsulta(docAnalise.getPagador(), doc);
 				plexiConsultaAux.setTipo(tipo);
+				plexiConsultaAux.setEmail("tatiane@galleriabank.com.br");
+				plexiConsultaAux.setSenha("r0P8Z9o8");
 				List<PlexiConsulta> consultasExistentesRetorno = plexiConsultaDao.getConsultasExistentes(plexiConsultaAux);
 				if(consultasExistentesRetorno.size() <= 0) {
 					docAnalise.getPlexiConsultas().add(plexiConsultaAux);
