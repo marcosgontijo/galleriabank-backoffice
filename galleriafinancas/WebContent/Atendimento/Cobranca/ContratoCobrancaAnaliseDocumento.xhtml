@@ -84,8 +84,8 @@
 						
 
 							<p:commandButton value="ver Resumo"
-								onclick="PF('resumoConsutlasDialog').show()"
-								update="resumoConsutlasForm" ajax="true"
+								oncomplete="PF('resumoConsutlasDialog').show()"
+								update="resumoConsutlasForm resumoDialogHeader" ajax="true"
 								style="TEXT-DECORATION: bold;" rendered="#{fileAnalise.tipo != 'Rea'}">
 
 								<f:setPropertyActionListener value="#{fileAnalise}"
@@ -187,8 +187,7 @@
 								icon="ui-icon ui-icon-print" value="Abrir Dossiê"
 								rendered="#{fileAnalise.podeDownlaodDossie }" ajax="false" />
 
-								
-								
+
 							<p:commandButton
 								action="#{contratoCobrancaMB.baixarDocumentoProcesso(fileAnalise)}"
 								onclick="target='_blank'" onblur="target='_self'"

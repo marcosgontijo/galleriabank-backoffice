@@ -403,7 +403,6 @@ public class NetrinService {
 			URL myURL;
 			myURL = new URL("https://servicos.galleriabank.com.br/netrin/api/v1/ppe/" + numeorsCpfCnpj + "/"
 					+ (nomeConsultado.replace(" ", "%20").replace("/", "%2F")));
-
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
 			myURLConnection.setRequestMethod("GET");
 			myURLConnection.setUseCaches(false);
