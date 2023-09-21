@@ -84,8 +84,8 @@
 						
 
 							<p:commandButton value="ver Resumo"
-								onclick="PF('resumoConsutlasDialog').show()"
-								update="resumoConsutlasForm" ajax="true"
+								oncomplete="PF('resumoConsutlasDialog').show()"
+								update="resumoConsutlasForm resumoDialogHeader" ajax="true"
 								style="TEXT-DECORATION: bold;" rendered="#{fileAnalise.tipo != 'Rea'}">
 
 								<f:setPropertyActionListener value="#{fileAnalise}"
@@ -94,7 +94,7 @@
 
 						</p:column>
 
-						<p:column headerText="Liberado Análise">
+						<p:column headerText="Liberado Análise" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.emPedirPaju }">
 							<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"
 								rendered="#{!fileAnalise.isAnaliseBloqueada() and contratoCobrancaMB.objetoContratoCobranca.emAnalise  }"
 								onLabel="Sim" offLabel="Não" style="width:6rem">
@@ -108,6 +108,15 @@
 							<p:selectBooleanButton value="#{fileAnalise.liberadoContinuarAnalise}"
 								rendered="#{fileAnalise.isAnaliseBloqueada() and contratoCobrancaMB.objetoContratoCobranca.emAnalise  }"
 								onLabel="Continuar Analise" offLabel="Analise Bloqueada" style="width:6rem">
+								<p:ajax event="change"
+									listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
+							</p:selectBooleanButton>
+						</p:column>
+						
+						<p:column headerText="Liberado Certidoes" rendered="#{contratoCobrancaMB.objetoContratoCobranca.emPedirPaju }">
+							<p:selectBooleanButton value="#{fileAnalise.liberadoCertidoes}"							
+								rendered="#{fileAnalise.podeChamarCertidoes}"
+								onLabel="Sim" offLabel="Não" style="width:6rem">
 								<p:ajax event="change"
 									listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
 							</p:selectBooleanButton>
@@ -178,8 +187,7 @@
 								icon="ui-icon ui-icon-print" value="Abrir Dossiê"
 								rendered="#{fileAnalise.podeDownlaodDossie }" ajax="false" />
 
-								
-								
+
 							<p:commandButton
 								action="#{contratoCobrancaMB.baixarDocumentoProcesso(fileAnalise)}"
 								onclick="target='_blank'" onblur="target='_self'"

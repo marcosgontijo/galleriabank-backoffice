@@ -7,10 +7,13 @@
 	xmlns:shiro="http://shiro.apache.org/tags">
 
 
-	<p:dialog header="Resumo Consultas" 
+	<p:dialog  id="resumoDialogHeader" 
 			widgetVar="resumoConsutlasDialog" showEffect="fade" hideEffect="fade"
 			resizable="false" responsive="false" width="1000"
-			positionType="center center" closable="true">
+			positionType="center center" closable="true" update="true">
+				<f:facet name="header">
+					<h:outputText value="#{contratoCobrancaMB.documentoAnalisePopup.dialogHeader}" />
+				</f:facet>
 			<h:form id="resumoConsutlasForm">
 				<h:panelGrid columns="5" columnClasses="painelResumo,painelResumo,painelResumo,painelResumo,painelResumo">
 				
