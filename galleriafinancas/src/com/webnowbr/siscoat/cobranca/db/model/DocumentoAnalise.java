@@ -2,9 +2,13 @@ package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import org.json.JSONArray;
@@ -455,7 +459,15 @@ public class DocumentoAnalise implements Serializable {
 			if (dado.getResumoDoClienteTraduzido().getDtInicioRelacionamento() == null) {
 				scr.add(new DocumentoAnaliseResumo("Data inicio relacionamento:", "Não Disponível"));
 			} else {
-				scr.add(new DocumentoAnaliseResumo("Data inicio relacionamento:", dado.getResumoDoClienteTraduzido().getDtInicioRelacionamento()));
+				System.out.println(dado.getResumoDoClienteTraduzido().getDtInicioRelacionamento());
+				
+				String[] str = dado.getResumoDoClienteTraduzido().getDtInicioRelacionamento().split("-");
+				Arrays.sort(str);
+				List<String> listStrData = Arrays.asList(str);
+				String dataRelacionamento = String.join("/", listStrData);
+				
+				System.out.println(dataRelacionamento);
+				scr.add(new DocumentoAnaliseResumo("Data inicio relacionamento:", dataRelacionamento));
 			}
 		}
 
