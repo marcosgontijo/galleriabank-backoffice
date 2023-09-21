@@ -818,6 +818,11 @@ public class ContratoCobrancaMB {
 
 	private List<ContratoCobrancaDetalhes> selectedParcelas = new ArrayList<ContratoCobrancaDetalhes>();
 
+	
+    public String rowSelected() {
+    	return null;
+    }
+	
 	public void saveContratoEmCartorio() {
 		FacesContext context = FacesContext.getCurrentInstance();
 

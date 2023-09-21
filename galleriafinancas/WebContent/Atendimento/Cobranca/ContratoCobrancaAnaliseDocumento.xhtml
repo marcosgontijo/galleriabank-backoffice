@@ -245,7 +245,12 @@
 								<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
 							</p:commandButton>
 						</p:column>
-							
+						 <p:ajax event="rowSelectCheckbox" process="@this"
+								listener="#{contratoCobrancaMB.fileSelectionListener()}" />
+							<p:ajax event="rowUnselectCheckbox" process="@this"
+								listener="#{contratoCobrancaMB.fileSelectionListener()}" />
+							<p:ajax event="toggleSelect" process="@this"
+								listener="#{contratoCobrancaMB.fileSelectionListener()}" />  
 					</p:dataTable>
 				</h:panelGrid>
 
