@@ -52,6 +52,7 @@ public class DocumentoAnalise implements Serializable {
 	private String tipo;
 	private boolean liberadoAnalise;	
 	private boolean liberadoContinuarAnalise;
+	private boolean liberadoCertidoes;	
 	
 	private boolean liberadoSerasa;
 	private boolean liberadoCenprot;
@@ -416,6 +417,10 @@ public class DocumentoAnalise implements Serializable {
 	public boolean isPodeChamarRea() {
 		return isReaNaoEnviado() && CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
 	}
+	
+	public boolean isPodeChamarCertidoes() {
+		return !CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
+	}
 
 	public boolean isReaNaoEnviado() {
 		return CommonsUtil.semValor(idRemoto);
@@ -619,13 +624,21 @@ public class DocumentoAnalise implements Serializable {
 	public void setLiberadoAnalise(boolean liberadoAnalise) {
 		this.liberadoAnalise = liberadoAnalise;
 	}
-
+	
 	public boolean isLiberadoContinuarAnalise() {
 		return liberadoContinuarAnalise;
 	}
 
 	public void setLiberadoContinuarAnalise(boolean liberadoContinuarAnalise) {
 		this.liberadoContinuarAnalise = liberadoContinuarAnalise;
+	}
+
+	public boolean isLiberadoCertidoes() {
+		return liberadoCertidoes;
+	}
+
+	public void setLiberadoCertidoes(boolean liberadoCertidoes) {
+		this.liberadoCertidoes = liberadoCertidoes;
 	}
 
 	public DocumentosAnaliseEnum getTipoEnum() {

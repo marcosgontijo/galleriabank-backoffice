@@ -94,7 +94,7 @@
 
 						</p:column>
 
-						<p:column headerText="Liberado Análise">
+						<p:column headerText="Liberado Análise" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.emPedirPaju }">
 							<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"
 								rendered="#{!fileAnalise.isAnaliseBloqueada() and contratoCobrancaMB.objetoContratoCobranca.emAnalise  }"
 								onLabel="Sim" offLabel="Não" style="width:6rem">
@@ -108,6 +108,15 @@
 							<p:selectBooleanButton value="#{fileAnalise.liberadoContinuarAnalise}"
 								rendered="#{fileAnalise.isAnaliseBloqueada() and contratoCobrancaMB.objetoContratoCobranca.emAnalise  }"
 								onLabel="Continuar Analise" offLabel="Analise Bloqueada" style="width:6rem">
+								<p:ajax event="change"
+									listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
+							</p:selectBooleanButton>
+						</p:column>
+						
+						<p:column headerText="Liberado Certidoes" rendered="#{contratoCobrancaMB.objetoContratoCobranca.emPedirPaju }">
+							<p:selectBooleanButton value="#{fileAnalise.liberadoCertidoes}"							
+								rendered="#{fileAnalise.podeChamarCertidoes}"
+								onLabel="Sim" offLabel="Não" style="width:6rem">
 								<p:ajax event="change"
 									listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
 							</p:selectBooleanButton>
