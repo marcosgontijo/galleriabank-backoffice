@@ -180,6 +180,29 @@ public class PagadorRecebedorService {
 		pagadorRecebedorConsultaDao.merge(pagadorRecebedorConsulta);
 
 	}
+	
+	public void adicionarConsultaNoPagadorRecebedor(PagadorRecebedor pagador, DocumentosAnaliseEnum tipoConsulta,
+			String consulta, String uf) {
+
+		PagadorRecebedorConsultaDao pagadorRecebedorConsultaDao = new PagadorRecebedorConsultaDao();
+
+		// buscando ultima consutla do pagador
+		PagadorRecebedorConsulta pagadorRecebedorConsulta = pagadorRecebedorConsultaDao
+				.getConsultaByPagadorAndTipo(pagador, tipoConsulta, uf);
+		if (pagadorRecebedorConsulta == null) {
+			pagadorRecebedorConsulta = new PagadorRecebedorConsulta();
+		}
+		pagadorRecebedorConsulta.setDataConsulta(new Date());
+		pagadorRecebedorConsulta.setRetornoConsulta(consulta);
+		pagadorRecebedorConsulta.setPessoa(pagador);
+		pagadorRecebedorConsulta.setTipoEnum(tipoConsulta, uf);
+
+//		if (CommonsUtil.semValor(pagadorRecebedorConsulta.getId()))
+//			PagadorRecebedorConsultaDao.create(pagadorRecebedorConsulta);
+//		else
+		pagadorRecebedorConsultaDao.merge(pagadorRecebedorConsulta);
+
+	}
 
 	public PagadorRecebedorConsulta buscaConsultaNoPagadorRecebedor(PagadorRecebedor pagador,
 			DocumentosAnaliseEnum tipoConsulta) {
@@ -189,6 +212,18 @@ public class PagadorRecebedorService {
 		// buscando ultima consutla do pagador
 		PagadorRecebedorConsulta pagadorRecebedorConsulta = PagadorRecebedorConsultaDao
 				.getConsultaByPagadorAndTipo(pagador, tipoConsulta);
+		return pagadorRecebedorConsulta;
+
+	}
+	
+	public PagadorRecebedorConsulta buscaConsultaNoPagadorRecebedor(PagadorRecebedor pagador,
+			DocumentosAnaliseEnum tipoConsulta, String uf) {
+
+		PagadorRecebedorConsultaDao PagadorRecebedorConsultaDao = new PagadorRecebedorConsultaDao();
+
+		// buscando ultima consutla do pagador
+		PagadorRecebedorConsulta pagadorRecebedorConsulta = PagadorRecebedorConsultaDao
+				.getConsultaByPagadorAndTipo(pagador, tipoConsulta, uf);
 		return pagadorRecebedorConsulta;
 
 	}

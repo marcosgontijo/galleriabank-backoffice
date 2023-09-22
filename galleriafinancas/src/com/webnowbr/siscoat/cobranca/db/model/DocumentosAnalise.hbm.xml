@@ -137,6 +137,14 @@
 			<many-to-many column="idPlexiConsulta"
 				class="com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta" />
 		</list>
+		
+		<set name="netrinConsultas" table="NetrinConsultas" cascade="merge"
+                 lazy="false" fetch="select">
+            <key>
+                <column name="documentoAnalise" not-null="true" />
+            </key>
+            <one-to-many class="com.webnowbr.siscoat.cobranca.ws.netrin.NetrinConsulta" />
+        </set>
 						
     </class>
 </hibernate-mapping>

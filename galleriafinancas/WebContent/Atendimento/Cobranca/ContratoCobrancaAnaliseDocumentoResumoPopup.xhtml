@@ -328,4 +328,49 @@
 			</h:form>
 		</p:dialog>
 		
+		<p:dialog header="Consultas Netrin" overflow="auto"
+			id="dialogConsultasNetrin"
+			widgetVar="consultasNetrinDlg" resizable="true"
+			style="FONT-SIZE: 13pt;" width="800" minWidth="800">
+			<h:form id="ConsultasNetrinForm">
+				<div align="center">
+					<p:dataTable id="dtConsultasNetrin" var="netrinConsulta"
+						value="#{contratoCobrancaMB.documentoAnalisePopup.netrinConsultas}"
+						emptyMessage="" rows="20" paginator="true"
+		                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+		                currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+		                rowsPerPageTemplate="20,40,100,140">
+						
+						<p:column style="text-align: center;" headerText="Identificação"
+							filterBy="#{netrinConsulta.nomeCompleto}"
+							filterMatchMode="contains" sortBy="#{netrinConsulta.netrinDocumentos.nome}">
+							<h:outputText value="#{netrinConsulta.netrinDocumentos.nome}"/>
+							<h:outputText value=" - #{netrinConsulta.uf}" rendered="#{netrinConsulta.uf ne null}"/>
+						</p:column>
+						
+						<p:column style="text-align: center;width: 100px;" headerText="Status"
+							filterBy="#{netrinConsulta.status}"
+							filterMatchMode="contains" sortBy="#{netrinConsulta.status}">
+							<h:outputText value="#{netrinConsulta.status}"/>
+						</p:column>
+						
+						<p:column style="text-align: center;width: 150px;" headerText="" >
+							<!-- <p:commandButton
+								action="#{netrinMB.decodarBaixarArquivo(netrinConsulta)}"
+								icon="ui-icon ui-icon-print" value="Download PDF"
+								rendered="#{netrinConsulta.pdf != null}"
+								ajax="false" /> -->
+								
+							<p:commandButton 
+								action="#{netrinMB.viewFileNetrin(netrinConsulta)}"
+								icon="ui-icon ui-icon-print" value="Abrir PDF"
+								onclick="target='_blank'" onblur="target='_self'"
+								rendered="#{netrinConsulta.pdf != null
+									and netrinConsulta.pdf != ''}" ajax="false" />
+						</p:column>
+					</p:dataTable>
+				</div>
+			</h:form>
+		</p:dialog>
+		
 </ui:composition>

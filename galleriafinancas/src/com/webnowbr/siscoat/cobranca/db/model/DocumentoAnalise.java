@@ -3,15 +3,18 @@ package com.webnowbr.siscoat.cobranca.db.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import java.text.NumberFormat;
 import java.util.Locale;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
+import com.webnowbr.siscoat.cobranca.ws.netrin.NetrinConsulta;
 import com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
@@ -79,6 +82,7 @@ public class DocumentoAnalise implements Serializable {
 	private String retornoCNDEstadual;
 	
 	private List<PlexiConsulta> plexiConsultas = new ArrayList<PlexiConsulta>();
+	private Set<NetrinConsulta> netrinConsultas = new HashSet<>();
 	private List<String> estadosConsulta = new ArrayList<String>();
 	private String estadosConsultaStr;
 	
@@ -948,5 +952,13 @@ public class DocumentoAnalise implements Serializable {
 
 	public void setEstadosConsultaStr(String estadosConsultaStr) {
 		this.estadosConsultaStr = estadosConsultaStr;
+	}
+
+	public Set<NetrinConsulta> getNetrinConsultas() {
+		return netrinConsultas;
+	}
+
+	public void setNetrinConsultas(Set<NetrinConsulta> netrinConsultas) {
+		this.netrinConsultas = netrinConsultas;
 	}
 }

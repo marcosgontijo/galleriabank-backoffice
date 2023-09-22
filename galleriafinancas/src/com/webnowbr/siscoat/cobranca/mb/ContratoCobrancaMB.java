@@ -29672,14 +29672,14 @@ public class ContratoCobrancaMB {
 				}
 
 				if (CommonsUtil.semValor(documentoAnalise.getRetornoCNDFederal())) {
-					documentoAnalise.addObservacao("Processando CND Estadual");
+					documentoAnalise.addObservacao("Processando CND Federal");
 					netrinService.requestCNDFederal(documentoAnalise);
 					pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
 							DocumentosAnaliseEnum.CNDFEDERAL, documentoAnalise.getRetornoCNDFederal());
 				}
 
 				if (CommonsUtil.semValor(documentoAnalise.getRetornoCNDTrabalhistaTST())) {
-					documentoAnalise.addObservacao("Processando CND Estadual");
+					documentoAnalise.addObservacao("Processando CNDT TST");
 					netrinService.requestCNDTrabalhistaTST(documentoAnalise);
 					pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
 							DocumentosAnaliseEnum.CNDTTST, documentoAnalise.getRetornoCNDTrabalhistaTST());

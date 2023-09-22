@@ -76,22 +76,15 @@
 								<p:confirm header="Confirmação" message="Deseja Excluir os itens selecionados?"/>
 							</p:commandButton>
 				        </f:facet>
-						
-					   
 						<p:column  selectionMode="multiple" style="width:16px;text-align:center"/>
-
-						<p:column style="text-align: center; width:5rem;">
-						
-
+						<p:column style="text-align: center; width:5rem;">				
 							<p:commandButton value="ver Resumo"
 								onclick="PF('resumoConsutlasDialog').show()"
 								update="resumoConsutlasForm" ajax="true"
 								style="TEXT-DECORATION: bold;" rendered="#{fileAnalise.tipo != 'Rea'}">
-
 								<f:setPropertyActionListener value="#{fileAnalise}"
 									target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
 							</p:commandButton>
-
 						</p:column>
 
 						<p:column headerText="Liberado Análise">
@@ -199,23 +192,14 @@
 								target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
 							</p:commandButton>
 							
-							<p:commandButton 
-								action="#{netrinMB.baixarDocumentoCNDEstadual(fileAnalise)}"
-								icon="ui-icon ui-icon-print" value="Download CND Estadual"
-								onclick="target='_blank'" onblur="target='_self'"
-								rendered="#{fileAnalise.CNDEstadualProcessado}" ajax="false" />
-								
-							<p:commandButton 
-								action="#{netrinMB.baixarDocumentoCNDFederal(fileAnalise)}"
-								icon="ui-icon ui-icon-print" value="Download CND Federal"
-								onclick="target='_blank'" onblur="target='_self'"  
-								rendered="#{fileAnalise.CNDFederalProcessado}" ajax="false" />
-								
-							<p:commandButton 
-								action="#{netrinMB.baixarDocumentoCNDTrabalhistaTST(fileAnalise)}"
-								icon="ui-icon ui-icon-print" value="Download CNDT TST"
-								onclick="target='_blank'" onblur="target='_self'"
-								rendered="#{fileAnalise.CNDTrabalhistaTSTProcessado}" ajax="false" />
+							<p:commandButton
+								value="Consultas Netrin"
+								onclick="PF('consultasNetrinDlg').show()"
+								update="ConsultasNetrinForm" ajax="true"
+								rendered="#{fileAnalise.netrinConsultas.size() > 0}" >
+							<f:setPropertyActionListener value="#{fileAnalise}"
+								target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
+							</p:commandButton>
 
 						</p:column>
 
@@ -245,20 +229,19 @@
 					action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.objetoContratoCobranca)}" />
 				<p:commandButton value="Certidões Plexi" 
 					action="#{plexiMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'lento')}" />
+				<p:commandButton value="Certidões Netrin" 
+					action="#{netrinMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'analise')}" />
 			</p:panel>
 			
-			<p:panel id="pnlCeridoesPedirPaju" header="Certidões Netrin"
+			<p:panel id="pnlCeridoesPedirPaju" header="Certidões"
 				rendered="#{contratoCobrancaMB.objetoContratoCobranca.emPedirPaju}"
 				style="margin-bottom:10px;">
-
-				<p:commandButton value="Executar Consultas Netrin" ajax="true"
-					action="#{contratoCobrancaMB.executarConsultasPedirPajuDocumento(contratoCobrancaMB.objetoImovelCobranca.estado)}"
-					widgetVar="executeBtn2" onclick="executeBtn2.disable()"
-					oncomplete="executeBtn2.enable()"/>
-					
+				
 				<p:commandButton value="Certidões Plexi" 
 					action="#{plexiMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'rapido')}" />
-			
+					
+				<p:commandButton value="Certidões Netrin" 
+					action="#{netrinMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'pedir paju')}" />
 			</p:panel>
 
 			<p:panel id="pnlLaudoRobo" header="Laudo Robô" style="margin-bottom:10px">

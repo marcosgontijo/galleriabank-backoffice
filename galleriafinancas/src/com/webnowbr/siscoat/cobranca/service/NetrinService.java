@@ -7,6 +7,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -16,6 +18,8 @@ import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorConsulta;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
+import com.webnowbr.siscoat.cobranca.ws.netrin.NetrinConsulta;
+import com.webnowbr.siscoat.cobranca.ws.netrin.NetrinConsultaDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
@@ -1128,8 +1132,7 @@ public class NetrinService {
 			}
 
 			
-			retornoConsulta = netrinCriarExecutaConsultaCNDTrabalhistaTST(documentoAnalise.getTipoPessoa(), cnpjcpf,
-					nomeConsultado);
+			retornoConsulta = netrinCriarExecutaConsultaCNDTrabalhistaTST(cnpjcpf);
 
 			if (CommonsUtil.semValor(retornoConsulta)) {
 				return new FacesMessage(FacesMessage.SEVERITY_ERROR, "netrinCriarConsultaCNDTrabalhistaTST: Falha na consulta",
@@ -1171,8 +1174,7 @@ public class NetrinService {
 				&& !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta()))
 			return pagadorRecebedorConsulta.getRetornoConsulta();
 		else {
-			String consultaRetorno = netrinCriarExecutaConsultaCNDTrabalhistaTST(
-					CommonsUtil.pessoaFisicaJuridicaCnpjCpf(cnpjCpf), cnpjCpf, pagadorRecebedor.getNome());
+			String consultaRetorno = netrinCriarExecutaConsultaCNDTrabalhistaTST(cnpjCpf);
 			pagaPagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagadorRecebedor,
 					DocumentosAnaliseEnum.CNDTTST, consultaRetorno);
 			return consultaRetorno;
@@ -1180,7 +1182,7 @@ public class NetrinService {
 
 	}
 
-	public String netrinCriarExecutaConsultaCNDTrabalhistaTST(String tipoPessoa, String cnpjcpf, String nomeConsultado) { 
+	public String netrinCriarExecutaConsultaCNDTrabalhistaTST(String cnpjcpf) { 
 
 		//if (SiscoatConstants.DEV)
 		//	return "{\"cpf\":\"431.804.298-79\",\"nome\":\"Edielma Candido da Silva\",\"data\":\"2023-07-11T15:53:55.096-03:00\",\"processosCPF\":{\"totalProcessos\":0,\"totalProcessosAutor\":0,\"totalProcessosReu\":0,\"processosUltimos180dias\":0,\"processos\":[{\"numero\":\"\",\"dataNotificacao\":\"\",\"tipo\":\"\",\"assuntoPrincipal\":\"\",\"status\":\"\",\"varaJulgadora\":\"\",\"tribunal\":\"\",\"tribunalLevel\":\"\",\"tribunalTipo\":\"\",\"tribunalCidade\":\"\",\"estado\":\"\",\"partes\":null,\"dataNotificacaoDate\":null}],\"code\":null,\"message\":null},\"processoResumo\":{\"criminal\":null,\"trabalhista\":null,\"tituloExtraJudicial\":null,\"tituloExecucaoFiscal\":null,\"outros\":null,\"processos\":false,\"extraJudicialProtesto\":null,\"execucaoFiscalProtesto\":null,\"criminalProtesto\":null,\"trabalhistaProtesto\":null,\"outrosProtesto\":null}}";
@@ -1528,10 +1530,12 @@ public class NetrinService {
 	}
 
 	public FacesMessage netrinCriarConsultaCNDEstadual(DocumentoAnalise documentoAnalise) { // POST para gerar consulta
+		return netrinCriarConsultaCNDEstadual(documentoAnalise, null);
+	}
+	
+	public FacesMessage netrinCriarConsultaCNDEstadual(DocumentoAnalise documentoAnalise, String uf) { // POST para gerar consulta
 		try {
-
 			String retornoConsulta;
-
 			// busca dados da receita se nao tiver ainda
 			atualizaDadosPagadoRecebedorComReceitaFederal(documentoAnalise.getPagador());
 			String nomeConsultado = documentoAnalise.getPagador().getNome();
@@ -1544,25 +1548,32 @@ public class NetrinService {
 					cnpjcpf = documentoAnalise.getPagador().getCnpj();
 			}
 
-			
-			retornoConsulta = netrinCriarExecutaConsultaCNDEstadual(cnpjcpf);
+			if(CommonsUtil.semValor(uf)) {
+				retornoConsulta = netrinCriarExecutaConsultaCNDEstadual(cnpjcpf);
+			} else {
+				retornoConsulta = netrinCriarExecutaConsultaCNDEstadual(cnpjcpf, uf);
+			}
 
 			if (CommonsUtil.semValor(retornoConsulta)) {
 				return new FacesMessage(FacesMessage.SEVERITY_ERROR, "netrinCriarConsultaCNDEstadual: Falha na consulta",
 						"");
 			} else {
-
 				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 				documentoAnalise.setRetornoCNDEstadual(retornoConsulta);
 
 				documentoAnaliseDao.merge(documentoAnalise);
-
+				String nomedoc = "CND Estadual";
 				PagadorRecebedorService PagadorRecebedorService = new PagadorRecebedorService();
-				PagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
-						DocumentosAnaliseEnum.CNDESTADUAL, retornoConsulta);
-				String base64 = baixarDocumentoCNDEstadual(documentoAnalise);
-				salvarPdfRetorno(documentoAnalise, base64, "CND Estadual", "interno");
-				
+				if(!CommonsUtil.semValor(uf)) {
+					nomedoc = nomedoc + " " + uf;
+					PagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+							DocumentosAnaliseEnum.CNDESTADUAL, retornoConsulta, uf);
+				} else {
+					PagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+							DocumentosAnaliseEnum.CNDESTADUAL, retornoConsulta);
+				}
+				String base64 = baixarDocumentoCNDEstadual(retornoConsulta);
+				salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
 				return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
 			}
 
@@ -1594,6 +1605,12 @@ public class NetrinService {
 	}
 
 	public String netrinCriarExecutaConsultaCNDEstadual(String cnpjcpf) { 
+		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+		PagadorRecebedor pagadorRecebedor = pagadorRecebedorService.buscaOuInsere(cnpjcpf);	
+		return netrinCriarExecutaConsultaCNDEstadual(cnpjcpf, pagadorRecebedor.getEstado());	
+	}
+	
+	public String netrinCriarExecutaConsultaCNDEstadual(String cnpjcpf, String uf) { 
 
 		//if (SiscoatConstants.DEV)
 		//	return "{\"cpf\":\"431.804.298-79\",\"nome\":\"Edielma Candido da Silva\",\"data\":\"2023-07-11T15:53:55.096-03:00\",\"processosCPF\":{\"totalProcessos\":0,\"totalProcessosAutor\":0,\"totalProcessosReu\":0,\"processosUltimos180dias\":0,\"processos\":[{\"numero\":\"\",\"dataNotificacao\":\"\",\"tipo\":\"\",\"assuntoPrincipal\":\"\",\"status\":\"\",\"varaJulgadora\":\"\",\"tribunal\":\"\",\"tribunalLevel\":\"\",\"tribunalTipo\":\"\",\"tribunalCidade\":\"\",\"estado\":\"\",\"partes\":null,\"dataNotificacaoDate\":null}],\"code\":null,\"message\":null},\"processoResumo\":{\"criminal\":null,\"trabalhista\":null,\"tituloExtraJudicial\":null,\"tituloExecucaoFiscal\":null,\"outros\":null,\"processos\":false,\"extraJudicialProtesto\":null,\"execucaoFiscalProtesto\":null,\"criminalProtesto\":null,\"trabalhistaProtesto\":null,\"outrosProtesto\":null}}";
@@ -1608,14 +1625,14 @@ public class NetrinService {
 			String cep;
 			if(CommonsUtil.semValor(pagadorRecebedor.getCep())) {
 				cep = "1";
-			} else{
+			} else {
 				cep = pagadorRecebedor.getCep();
 			}
 			
 			URL myURL;
 			String sUrl = "https://servicos.galleriabank.com.br/netrin/api/v1/CNDEstadual/"
 					+ CommonsUtil.somenteNumeros(cnpjcpf)//
-					+ "/" + pagadorRecebedor.getEstado()
+					+ "/" + uf.toUpperCase()
 					+ "/" + cep;
 			myURL = new URL(sUrl);
 
@@ -1732,5 +1749,99 @@ public class NetrinService {
 		FileService fileService = new FileService();
 		User user = new UserDao().findById((long) -1);
 		fileService.salvarDocumentoBase64(pdfRetorno, numeroContrato, diretorio, user);
+	}
+
+	public FacesMessage pedirConsulta(NetrinConsulta netrinConsulta) {
+		try {
+			String url = netrinConsulta.getNetrinDocumentos().getUrlService();
+			DocumentoAnalise documentoAnalise = netrinConsulta.getDocumentoAnalise();
+			atualizaDadosPagadoRecebedorComReceitaFederal(documentoAnalise.getPagador());
+			String cnpjcpf = documentoAnalise.getCnpjcpf();
+			if (!CommonsUtil.semValor(documentoAnalise.getPagador())) {
+				if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa()))
+					cnpjcpf = documentoAnalise.getPagador().getCpf();
+				else
+					cnpjcpf = documentoAnalise.getPagador().getCnpj();
+			}
+			PagadorRecebedorService PagadorRecebedorService = new PagadorRecebedorService();
+			NetrinConsultaDao netrinConsultaDao = new NetrinConsultaDao();
+			netrinConsulta.setCpfCnpj(cnpjcpf);			
+			
+			if(CommonsUtil.mesmoValor(url, "/api/v1/processo")) {
+				requestProcessoNetrinConulta(netrinConsulta, documentoAnalise, PagadorRecebedorService);
+			} else if(CommonsUtil.mesmoValor(url, "/api/v1/CNDEstadual")) {
+				requestCndEstadualNetrinConulta(netrinConsulta, documentoAnalise, PagadorRecebedorService);
+			} else if(CommonsUtil.mesmoValor(url, "/api/v1/CNDFederal")) {
+				requestCndFederalNetrinConulta(netrinConsulta, documentoAnalise, PagadorRecebedorService);
+			} else if(CommonsUtil.mesmoValor(url, "/api/v1/CNDTrabalhistaTST")) {
+				requestCndTrabalhistaTSTNetrinConulta(netrinConsulta, documentoAnalise, PagadorRecebedorService);
+			}
+			netrinConsultaDao.create(netrinConsulta);
+			return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
+		} catch (Exception e) {
+			return new FacesMessage(FacesMessage.SEVERITY_ERROR, 
+					netrinConsulta.getNetrinDocumentos().getNome() + " - " + netrinConsulta.getCpfCnpj() + ": Já existente", "");
+		}
+	}
+
+	private void requestProcessoNetrinConulta(NetrinConsulta netrinConsulta, DocumentoAnalise documentoAnalise,
+			PagadorRecebedorService PagadorRecebedorService) {
+		String retornoConsulta;
+		String base64;
+		String nomedoc;
+		retornoConsulta = netrinCriarExecutaConsultaProcesso(documentoAnalise.getTipoPessoa(),
+				netrinConsulta.getCpfCnpj(),documentoAnalise.getPagador().getNome());
+		netrinConsulta.setRetorno(retornoConsulta);
+		netrinConsulta.setPdf(baixarDocumentoProcesso(retornoConsulta));
+		PagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+				DocumentosAnaliseEnum.PROCESSO, retornoConsulta);
+		base64 = baixarDocumentoProcesso(retornoConsulta);
+		nomedoc = "Consulta Processual";
+		salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
+	}
+	
+	private void requestCndEstadualNetrinConulta(NetrinConsulta netrinConsulta, DocumentoAnalise documentoAnalise,
+			PagadorRecebedorService PagadorRecebedorService) {
+		String retornoConsulta;
+		String base64;
+		String nomedoc;
+		retornoConsulta = netrinCriarExecutaConsultaCNDEstadual(netrinConsulta.getCpfCnpj(), netrinConsulta.getUf());
+		netrinConsulta.setRetorno(retornoConsulta);
+		netrinConsulta.setPdf(baixarDocumentoCNDEstadual(retornoConsulta));
+		PagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+				DocumentosAnaliseEnum.CNDESTADUAL, retornoConsulta, netrinConsulta.getUf());
+		base64 = baixarDocumentoCNDEstadual(retornoConsulta);
+		nomedoc = "CND Estadual " +  netrinConsulta.getUf().toUpperCase();
+		salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
+	}
+	
+	private void requestCndFederalNetrinConulta(NetrinConsulta netrinConsulta, DocumentoAnalise documentoAnalise,
+			PagadorRecebedorService PagadorRecebedorService) {
+		String retornoConsulta;
+		String base64;
+		String nomedoc;
+		retornoConsulta = netrinCriarExecutaConsultaCNDFederal(netrinConsulta.getCpfCnpj());
+		netrinConsulta.setRetorno(retornoConsulta);
+		netrinConsulta.setPdf(baixarDocumentoCNDFederal(retornoConsulta));
+		PagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+				DocumentosAnaliseEnum.CNDFEDERAL, retornoConsulta);
+		base64 = baixarDocumentoCNDFederal(retornoConsulta);
+		nomedoc = "CND Federal";
+		salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
+	}
+
+	private void requestCndTrabalhistaTSTNetrinConulta(NetrinConsulta netrinConsulta, DocumentoAnalise documentoAnalise,
+			PagadorRecebedorService PagadorRecebedorService) {
+		String retornoConsulta;
+		String base64;
+		String nomedoc;
+		retornoConsulta = netrinCriarExecutaConsultaCNDTrabalhistaTST(netrinConsulta.getCpfCnpj());
+		netrinConsulta.setRetorno(retornoConsulta);
+		netrinConsulta.setPdf(baixarDocumentoCNDTrabalhistaTST(retornoConsulta));
+		PagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+				DocumentosAnaliseEnum.CNDTTST, retornoConsulta);
+		base64 = baixarDocumentoCNDFederal(retornoConsulta);
+		nomedoc = "CNDT TST";
+		salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
 	}
 }
