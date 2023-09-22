@@ -1508,7 +1508,7 @@
 									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
 							</p:selectBooleanCheckbox>
 												
-							<p:outputLabel value="Score &gt; 300" styleClass="labelBold" />
+							<p:outputLabel value="Score &lt; 450" styleClass="labelBold" />
 							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.scoreBaixoTaxa}">
 								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado" 
 									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
@@ -1524,6 +1524,12 @@
 							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.terceiroGrantidorTaxa}">
 								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado" 
 									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
+							</p:selectBooleanCheckbox>
+							<p:spacer width="5px"/>
+							<p:outputLabel value="Nada Consta" styleClass="labelBold" />
+							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.nadaConstaTaxa}">
+							<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado"
+							listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}"/>
 							</p:selectBooleanCheckbox>
 						</h:panelGrid>
 						<h:panelGrid columns="2">
@@ -4568,6 +4574,9 @@
 									action="#{contratoCobrancaMB.getDownloadAllFilesFaltante()}">
 								</p:commandButton> 
 								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileFaltante}"/>
+								<p:commandButton value="Download selecionados" ajax="false">
+									<p:fileDownload value="#{contratoCobrancaMB.downloadArquivosFaltantes}"></p:fileDownload>
+								</p:commandButton>
 					        </f:facet>	        
 					        <p:column style="text-align: center;"
 								headerText="Nome do Arquivo" filterBy="#{filesFaltante.name}"
@@ -4636,7 +4645,10 @@
 									action="#{contratoCobrancaMB.getDownloadAllFilesJuridico()}">
 								</p:commandButton>
 								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileJuridico}"/>
-					        </f:facet>	       
+								<p:commandButton value="Download selecionados" ajax="false">
+								<p:fileDownload value="#{contratoCobrancaMB.downloadFilesJuridico}"></p:fileDownload>
+								</p:commandButton>
+					        </f:facet>	        
 					        <p:column style="text-align: center;"
 								headerText="Nome do Arquivo" filterBy="#{filesJuridico.name}"
 								filterMatchMode="contains" sortBy="#{filesJuridico.name}">

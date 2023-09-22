@@ -2237,6 +2237,9 @@
 		<property name="terrenoOuBarracaoTaxa" type="boolean">
 			<column name="terrenoOuBarracaoTaxa" not-null="true" default="false"/>
 		</property>	
+		<property name="nadaConstaTaxa" type="boolean">
+		<column name="nadaConstaTaxa" not-null="true" default="false"/>
+		</property>
 		
 	</class>
 </hibernate-mapping>
