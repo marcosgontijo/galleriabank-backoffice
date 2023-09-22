@@ -159,8 +159,8 @@
 										action="#{contratoCobrancaMB.baixarMatricula(fileAnalise.id)}"
 										onclick="target='_blank'" onblur="target='_self'"
 										icon="ui-icon ui-icon-print" value="Abrir Rea"
-										rendered="#{fileAnalise.reaProcessado }"
-										ajax="false" />
+										ajax="false" 
+										rendered="#{fileAnalise.tipo == 'Rea'}"/>
 								
 
 							<p:commandButton
