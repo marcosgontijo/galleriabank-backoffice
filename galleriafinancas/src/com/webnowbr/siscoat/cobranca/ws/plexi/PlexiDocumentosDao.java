@@ -16,7 +16,7 @@ public class PlexiDocumentosDao extends HibernateDao<PlexiDocumentos, Long> {
 			+ "where p.pf = true ";
 
 	@SuppressWarnings("unchecked")
-	public List<PlexiDocumentos> getDocumentosPF(List<String> estados, String velocidade) {
+	public List<PlexiDocumentos> getDocumentosPF(List<String> estados, String etapa) {
 		return (List<PlexiDocumentos>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -43,8 +43,8 @@ public class PlexiDocumentosDao extends HibernateDao<PlexiDocumentos, Long> {
 						}
 					}
 					
-					if(!CommonsUtil.semValor(velocidade)) {
-						query = query + " and velocidade like '%" + velocidade + "%'";
+					if(!CommonsUtil.semValor(etapa)) {
+						query = query + " and etapa like '%" + etapa + "%'";
 					}
 
 					ps = connection.prepareStatement(query);
@@ -68,7 +68,7 @@ public class PlexiDocumentosDao extends HibernateDao<PlexiDocumentos, Long> {
 			+ "where p.pj = true";
 
 	@SuppressWarnings("unchecked")
-	public List<PlexiDocumentos> getDocumentosPJ(List<String> estados, String velocidade, DocumentoAnalise docAnalise) {
+	public List<PlexiDocumentos> getDocumentosPJ(List<String> estados, String etapa, DocumentoAnalise docAnalise) {
 		return (List<PlexiDocumentos>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -95,8 +95,8 @@ public class PlexiDocumentosDao extends HibernateDao<PlexiDocumentos, Long> {
 						}
 					}
 					
-					if(!CommonsUtil.semValor(velocidade)) {
-						query = query + " and velocidade like '%" + velocidade + "%'";
+					if(!CommonsUtil.semValor(etapa)) {
+						query = query + " and etapa like '%" + etapa + "%'";
 					}
 
 					ps = connection.prepareStatement(query);

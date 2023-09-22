@@ -39,7 +39,7 @@ public class PlexiMB {
 	
 	private List<DocumentoAnalise> listPagador;
 	//private List<String> estados;
-	private String velocidade;
+	private String etapa;
 	
 	@ManagedProperty(value = "#{loginBean}")
 	protected LoginBean loginBean;
@@ -49,16 +49,17 @@ public class PlexiMB {
 	String cpfCnpj;
 	
 	
-	public String clearFieldsContratoCobranca(List<DocumentoAnalise> listDocAnalise, String velocidadeConsultas) {
+	public String clearFieldsContratoCobranca(List<DocumentoAnalise> listDocAnalise, String etapaConsulta) {
 		//estados = new ArrayList<String>();
 		//estados.add(estadoImovel);
-		velocidade = velocidadeConsultas;
+		this.etapa = etapaConsulta;
 		listPagador = new ArrayList<DocumentoAnalise>();
 		for(DocumentoAnalise docAnalise : listDocAnalise) {
 			if(CommonsUtil.semValor(docAnalise.getPagador())) {
 				continue;
 			}
-			if(docAnalise.isLiberadoAnalise()) {
+			if((CommonsUtil.mesmoValor(etapa, "analise") && docAnalise.isLiberadoAnalise())
+			|| (CommonsUtil.mesmoValor(etapa, "pedir paju") && docAnalise.isLiberadoCertidoes())) {
 				listPagador.add(docAnalise);
 				
 				//if(CommonsUtil.semValor(docAnalise.getPlexiConsultas()) || docAnalise.getPlexiConsultas().size() == 0) {
@@ -290,9 +291,9 @@ public class PlexiMB {
 		}
 		
 		if(!CommonsUtil.semValor(docAnalise.getPagador().getCpf())) {
-			plexiDocumentos = plexiDocsDao.getDocumentosPF(docAnalise.getEstadosConsulta(), velocidade);
+			plexiDocumentos = plexiDocsDao.getDocumentosPF(docAnalise.getEstadosConsulta(), etapa);
 		} else {
-			plexiDocumentos = plexiDocsDao.getDocumentosPJ(docAnalise.getEstadosConsulta(), velocidade, docAnalise);
+			plexiDocumentos = plexiDocsDao.getDocumentosPJ(docAnalise.getEstadosConsulta(), etapa, docAnalise);
 		}
 		
 		PlexiConsultaDao plexiConsultaDao = new PlexiConsultaDao();
@@ -668,14 +669,14 @@ public class PlexiMB {
 	
 	public void setLoginBean(LoginBean loginBean) {
 		this.loginBean = loginBean;
+	}
+
+	public String getEtapa() {
+		return etapa;
+	}
+
+	public void setEtapa(String etapa) {
+		this.etapa = etapa;
 	}	
-
-	public String getVelocidade() {
-		return velocidade;
-	}
-
-	public void setVelocidade(String velocidade) {
-		this.velocidade = velocidade;
-	}
 	
 }

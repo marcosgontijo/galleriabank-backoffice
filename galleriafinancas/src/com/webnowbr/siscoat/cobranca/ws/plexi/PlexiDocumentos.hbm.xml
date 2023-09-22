@@ -35,8 +35,8 @@
 			<column name="obs" />
 		</property>
 		
-		<property name="velocidade" type="java.lang.String">
-			<column name="velocidade" />
+		<property name="etapa" type="java.lang.String">
+			<column name="etapa" />
 		</property>
 		
 	</class>

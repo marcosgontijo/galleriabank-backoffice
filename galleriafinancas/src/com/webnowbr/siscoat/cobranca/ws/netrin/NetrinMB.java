@@ -60,7 +60,8 @@ public class NetrinMB {
 			if(CommonsUtil.semValor(docAnalise.getPagador())) {
 				continue;
 			}
-			if(docAnalise.isLiberadoAnalise()) {
+			if((CommonsUtil.mesmoValor(etapa, "analise") && docAnalise.isLiberadoAnalise())
+			|| (CommonsUtil.mesmoValor(etapa, "pedir paju") && docAnalise.isLiberadoCertidoes())) {
 				listPagador.add(docAnalise);
 				
 				//if(CommonsUtil.semValor(docAnalise.getNetrinConsultas()) || docAnalise.getNetrinConsultas().size() == 0) {
