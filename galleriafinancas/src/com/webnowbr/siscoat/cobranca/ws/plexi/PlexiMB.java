@@ -1,5 +1,7 @@
 package com.webnowbr.siscoat.cobranca.ws.plexi;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,7 +13,9 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -20,6 +24,7 @@ import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
 
+import com.itextpdf.text.pdf.PdfReader;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -217,6 +222,57 @@ public class PlexiMB {
 		return null;
 	}
 	
+	public void viewFilePlexi(PlexiConsulta consulta) {
+		if(CommonsUtil.semValor(consulta)) {
+			return;
+		}
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		try {
+			String documentoBase64 = consulta.getPdf();
+			if (CommonsUtil.semValor(documentoBase64)) {
+				facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Plexi: Ocorreu um problema ao gerar o PDF!", ""));
+				return;
+			}
+			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
+			ExternalContext externalContext = facesContext.getExternalContext();
+			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+			BufferedInputStream input = null;
+			BufferedOutputStream output = null;
+			String mineFile;
+			String fileExtension;
+			try {
+				PdfReader pdf = new PdfReader(pdfBytes);
+				mineFile = "application/pdf";
+				fileExtension = "pdf"; 
+			} catch (Exception e) {
+				mineFile = "text/html";
+				fileExtension = "html"; 
+			}		
+			input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
+			response.reset();
+			// lire un fichier pdf
+			response.setHeader("Content-type", mineFile);
+			response.setContentLength(pdfBytes.length);
+			response.setHeader("Content-disposition", "inline; FileName=" + "Plexi."+fileExtension);
+			output = new BufferedOutputStream(response.getOutputStream(), 10240);
+			byte[] buffer = new byte[10240];
+			int length;
+			while ((length = input.read(buffer)) > 0) {
+				output.write(buffer, 0, length);
+			}
+			output.flush();
+			output.close();
+			facesContext.responseComplete();
+		} catch (NullPointerException e) {
+			facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Plexi: Ocorreu um problema ao gerar o PDF!", ""));
+		} catch (Exception e) {
+			facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Plexi: Ocorreu um problema ao gerar o PDF!", ""));
+		}
+	}
+	
 	public void removeDoc(DocumentoAnalise docAnalise, PlexiConsulta consulta) {
 		docAnalise.getPlexiConsultas().remove(consulta);
 	}
@@ -236,7 +292,7 @@ public class PlexiMB {
 		if(!CommonsUtil.semValor(docAnalise.getPagador().getCpf())) {
 			plexiDocumentos = plexiDocsDao.getDocumentosPF(estados, velocidade);
 		} else {
-			plexiDocumentos = plexiDocsDao.getDocumentosPJ(estados, velocidade);
+			plexiDocumentos = plexiDocsDao.getDocumentosPJ(estados, velocidade, docAnalise);
 		}
 		
 		PlexiConsultaDao plexiConsultaDao = new PlexiConsultaDao();
@@ -248,7 +304,10 @@ public class PlexiMB {
 				if(consultasExistentesRetorno.size() <= 0) {
 					docAnalise.getPlexiConsultas().add(plexiConsulta);
 				} else {
-					docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+					PlexiConsulta db = consultasExistentesRetorno.get(0);
+					if(!docAnalise.getPlexiConsultas().contains(db)) {
+						docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+					}
 				}
 			}
 		}
@@ -257,24 +316,6 @@ public class PlexiMB {
 	public boolean verificaCamposDoc(PlexiConsulta plexiConsulta) {
 		PlexiDocumentos doc = plexiConsulta.getPlexiDocumentos();
 		boolean retorno = true;
-		
-		if(CommonsUtil.mesmoValor(doc.getUrl(), 
-				"/api/maestro/fazenda-mg/certidao-debitos-tributarios")) {
-			if(CommonsUtil.semValor(plexiConsulta.getCep())){
-				retorno = false;
-				FacesContext.getCurrentInstance().addMessage(null,
-				new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Cep",""));
-			}
-		}
-		
-		if(CommonsUtil.mesmoValor(doc.getUrl(), 
-				"/api/maestro/fazenda-mg/certidao-debitos-tributarios")) {
-			if(CommonsUtil.semValor(plexiConsulta.getCep())){
-				retorno = false;
-				FacesContext.getCurrentInstance().addMessage(null,
-				new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Cep", ""));
-			}
-		}
 		
 		if(CommonsUtil.mesmoValor(doc.getUrl(), 
 				"/api/maestro/tjrs/certidao-negativa")) {
@@ -339,16 +380,56 @@ public class PlexiMB {
 		}
 		
 		if(CommonsUtil.mesmoValor(doc.getUrl(), 
-				"/api/maestro/fazenda-sc/certidao-negativa-debitos")) {
-			if(!CommonsUtil.semValor(plexiConsulta.getCnpj())) {			
-				if(CommonsUtil.semValor(plexiConsulta.getCpfSolicitante())){
+				"/api/maestro/trf4/certidao-regional")) {
+			if(!CommonsUtil.semValor(plexiConsulta.getCpf())) {			
+				if(CommonsUtil.semValor(plexiConsulta.getRg())){
 					retorno = false;
 					FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta CPF Solicitante", ""));
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Rg", ""));
+				}
+				
+				if(CommonsUtil.semValor(plexiConsulta.getOrgaoExpedidorRg())){
+					retorno = false;
+					FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Orgao Rg", ""));
+				}
+				
+				if(CommonsUtil.semValor(plexiConsulta.getNomeMae())){
+					retorno = false;
+					FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Nome da Mãe", ""));
+				}
+				
+				if(CommonsUtil.semValor(plexiConsulta.getDataNascimento())){
+					retorno = false;
+					FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Data Nascimento", ""));
 				}
 			}
 		}
 		
+		/*
+		 * if(CommonsUtil.mesmoValor(doc.getUrl(),
+		 * "/api/maestro/fazenda-mg/certidao-debitos-tributarios")) {
+		 * if(CommonsUtil.semValor(plexiConsulta.getCep())){ retorno = false;
+		 * FacesContext.getCurrentInstance().addMessage(null, new
+		 * FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() +
+		 * " - Falta Cep",""));}} if(CommonsUtil.mesmoValor(doc.getUrl(),
+		 * "/api/maestro/fazenda-mg/certidao-debitos-tributarios")) {
+		 * if(CommonsUtil.semValor(plexiConsulta.getCep())){ retorno = false;
+		 * FacesContext.getCurrentInstance().addMessage(null, new
+		 * FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Cep",
+		 * "")); } }
+		 * 
+		 * if(CommonsUtil.mesmoValor(doc.getUrl(),
+		 * "/api/maestro/fazenda-sc/certidao-negativa-debitos")) {
+		 * if(!CommonsUtil.semValor(plexiConsulta.getCnpj())) {
+		 * if(CommonsUtil.semValor(plexiConsulta.getCpfSolicitante())){ retorno = false;
+		 * FacesContext.getCurrentInstance().addMessage(null, new
+		 * FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() +
+		 * " - Falta CPF Solicitante", "")); } } }
+		 */
+
 		return retorno;
 	}
 	
@@ -368,7 +449,10 @@ public class PlexiMB {
 				if(consultasExistentesRetorno.size() <= 0) {
 					docAnalise.getPlexiConsultas().add(plexiConsultaAux);
 				} else {
-					docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+					PlexiConsulta db = consultasExistentesRetorno.get(0);
+					if(!docAnalise.getPlexiConsultas().contains(db)) {
+						docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+					}
 				}
 			}
 			return false;
@@ -390,7 +474,10 @@ public class PlexiMB {
 					if(consultasExistentesRetorno.size() <= 0) {
 						docAnalise.getPlexiConsultas().add(plexiConsultaAux);
 					} else {
-						docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+						PlexiConsulta db = consultasExistentesRetorno.get(0);
+						if(!docAnalise.getPlexiConsultas().contains(db)) {
+							docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+						}
 					}
 				}
 			}
@@ -407,7 +494,10 @@ public class PlexiMB {
 				if(consultasExistentesRetorno.size() <= 0) {
 					docAnalise.getPlexiConsultas().add(plexiConsultaAux);
 				} else {
-					docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+					PlexiConsulta db = consultasExistentesRetorno.get(0);
+					if(!docAnalise.getPlexiConsultas().contains(db)) {
+						docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+					}
 				}
 			}
 			return false;
@@ -423,7 +513,10 @@ public class PlexiMB {
 				if(consultasExistentesRetorno.size() <= 0) {
 					docAnalise.getPlexiConsultas().add(plexiConsultaAux);
 				} else {
-					docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+					PlexiConsulta db = consultasExistentesRetorno.get(0);
+					if(!docAnalise.getPlexiConsultas().contains(db)) {
+						docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+					}
 				}
 			}
 			return false;
@@ -445,7 +538,10 @@ public class PlexiMB {
 					if(consultasExistentesRetorno.size() <= 0) {
 						docAnalise.getPlexiConsultas().add(plexiConsultaAux);
 					} else {
-						docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+						PlexiConsulta db = consultasExistentesRetorno.get(0);
+						if(!docAnalise.getPlexiConsultas().contains(db)) {
+							docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+						}
 					}
 				}
 			}
@@ -462,7 +558,10 @@ public class PlexiMB {
 				if(consultasExistentesRetorno.size() <= 0) {
 					docAnalise.getPlexiConsultas().add(plexiConsultaAux);
 				} else {
-					docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+					PlexiConsulta db = consultasExistentesRetorno.get(0);
+					if(!docAnalise.getPlexiConsultas().contains(db)) {
+						docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+					}
 				}
 			}
 			return false;
@@ -471,7 +570,7 @@ public class PlexiMB {
 		if(CommonsUtil.mesmoValor(doc.getUrl(), 
 				"/api/maestro/trf3/certidao-distribuicao")) {
 			String[] tipoArray = {"civel", "criminal"};
-			String[] abrangenciaArray = {"sjsp", "sjms"};
+			String[] abrangenciaArray = {"sjsp", "trf"};
 			for(String tipo : tipoArray) {
 				for(String abrangencia : abrangenciaArray) {
 					PlexiConsulta plexiConsultaAux = new PlexiConsulta(docAnalise.getPagador(), doc);
@@ -481,7 +580,10 @@ public class PlexiMB {
 					if(consultasExistentesRetorno.size() <= 0) {
 						docAnalise.getPlexiConsultas().add(plexiConsultaAux);
 					} else {
-						docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+						PlexiConsulta db = consultasExistentesRetorno.get(0);
+						if(!docAnalise.getPlexiConsultas().contains(db)) {
+							docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+						}
 					}
 				}
 			}
@@ -494,11 +596,16 @@ public class PlexiMB {
 			for(String tipo : tipoArray) {
 				PlexiConsulta plexiConsultaAux = new PlexiConsulta(docAnalise.getPagador(), doc);
 				plexiConsultaAux.setTipo(tipo);
+				plexiConsultaAux.setEmail("tatiane@galleriabank.com.br");
+				plexiConsultaAux.setSenha("r0P8Z9o8");
 				List<PlexiConsulta> consultasExistentesRetorno = plexiConsultaDao.getConsultasExistentes(plexiConsultaAux);
 				if(consultasExistentesRetorno.size() <= 0) {
 					docAnalise.getPlexiConsultas().add(plexiConsultaAux);
 				} else {
-					docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+					PlexiConsulta db = consultasExistentesRetorno.get(0);
+					if(!docAnalise.getPlexiConsultas().contains(db)) {
+						docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+					}
 				}
 			}  
 			return false;
@@ -519,7 +626,10 @@ public class PlexiMB {
 					if(consultasExistentesRetorno.size() <= 0) {
 						docAnalise.getPlexiConsultas().add(plexiConsultaAux);
 					} else {
-						docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+						PlexiConsulta db = consultasExistentesRetorno.get(0);
+						if(!docAnalise.getPlexiConsultas().contains(db)) {
+							docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
+						}
 					}
 				}
 			}

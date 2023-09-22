@@ -792,7 +792,8 @@ public class ContratoCobranca implements Serializable {
 	private boolean dividaVencidaTaxa; 
 	private boolean prejuizoBacenTaxa; 
 	private boolean riscoTotalBaixoTaxa; 
-	private boolean terrenoOuBarracaoTaxa; 
+	private boolean terrenoOuBarracaoTaxa;
+	private boolean nadaConstaTaxa;
 	
 	private String formaDePagamentoLaudoPAJU;
 	private String nomeContatoAgendaLaudoAvaliacao;
@@ -1316,6 +1317,7 @@ public class ContratoCobranca implements Serializable {
 	
 	public void calcularTaxaPreAprovada() {
 		int potuacao = 1000;
+		taxaPreAprovada = null;
 		
 		if (protestoTaxa)
 			potuacao -= 100;
@@ -1330,13 +1332,13 @@ public class ContratoCobranca implements Serializable {
 		if (terceiroGrantidorTaxa)
 			potuacao -= 150;
 		if (relacionamentoBacenRecenteTaxa)
-			potuacao -= 100;
+			potuacao -= 200;
 		if (dividaVencidaTaxa)
-			potuacao -= 100;
+			potuacao -= 200;
 		if (prejuizoBacenTaxa)
-			potuacao -= 100;
+			potuacao -= 200;
 		if (riscoTotalBaixoTaxa)
-			potuacao -= 100;
+			potuacao -= 200;
 		if (terrenoOuBarracaoTaxa)
 			potuacao -= 400;
 
@@ -1354,8 +1356,10 @@ public class ContratoCobranca implements Serializable {
 			taxaPreAprovada = BigDecimal.valueOf(1.39);
 		} else if (potuacao >= 900 && potuacao < 999) {
 			taxaPreAprovada = BigDecimal.valueOf(1.29);
-		} else {
+		} else if(nadaConstaTaxa) {
 			taxaPreAprovada = BigDecimal.valueOf(1.19);
+		} else {
+			taxaPreAprovada = null;
 		}
 		
 		if(CommonsUtil.semValor(prazoMaxPreAprovado)) {
@@ -6970,6 +6974,14 @@ public class ContratoCobranca implements Serializable {
 
 	public void setOkClienteUsuario(String okClienteUsuario) {
 		this.okClienteUsuario = okClienteUsuario;
+	}
+
+	public boolean isNadaConstaTaxa() {
+		return nadaConstaTaxa;
+	}
+
+	public void setNadaConstaTaxa(boolean nadaConstaTaxa) {
+		this.nadaConstaTaxa = nadaConstaTaxa;
 	}
 	
 }

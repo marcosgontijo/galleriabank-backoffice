@@ -16,7 +16,7 @@ import com.webnowbr.siscoat.db.dao.HibernateDao;
  */
 public class DocumentosDocketDao extends HibernateDao <DocumentosDocket,Long> {
 	
-	private static final String QUERY_DOC_DOCKET = "select * from cobranca.documentsosdocket d "
+	private static final String QUERY_DOC_DOCKET = "select * from cobranca.documentosdocket d "
 			+ "where d.id not in (1,3,4)";
 
 	@SuppressWarnings("unchecked")

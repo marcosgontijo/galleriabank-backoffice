@@ -402,8 +402,7 @@ public class NetrinService {
 
 			URL myURL;
 			myURL = new URL("https://servicos.galleriabank.com.br/netrin/api/v1/ppe/" + numeorsCpfCnpj + "/"
-					+ nomeConsultado.replace(" ", "%20"));
-
+					+ (nomeConsultado.replace(" ", "%20").replace("/", "%2F")));
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
 			myURLConnection.setRequestMethod("GET");
 			myURLConnection.setUseCaches(false);
@@ -466,17 +465,18 @@ public class NetrinService {
 		} else
 			receitaFederalPJ = netrinCriarConsultaCadastroPJ(pagadorRecebedor.getCnpj(), facesMessage);
 
-		pagadorRecebedor.setNome(receitaFederalPJ.getReceitaFederal().getRazaoSocial());
-		pagadorRecebedor.setEndereco(receitaFederalPJ.getReceitaFederal().getLogradouro());
-		pagadorRecebedor.setNumero(receitaFederalPJ.getReceitaFederal().getNumero());
-		pagadorRecebedor.setComplemento(receitaFederalPJ.getReceitaFederal().getComplemento());
-		pagadorRecebedor.setBairro(receitaFederalPJ.getReceitaFederal().getBairro());
-		pagadorRecebedor.setCidade(receitaFederalPJ.getReceitaFederal().getMunicipio());
-		pagadorRecebedor.setCep(receitaFederalPJ.getReceitaFederal().getCep());
-		pagadorRecebedor.setEstado(receitaFederalPJ.getReceitaFederal().getUf());
-		pagadorRecebedor.setEmail(receitaFederalPJ.getReceitaFederal().getEmail());
+		if (!CommonsUtil.semValor(receitaFederalPJ.getReceitaFederal().getRazaoSocial())) {
+			pagadorRecebedor.setNome(receitaFederalPJ.getReceitaFederal().getRazaoSocial());
+			pagadorRecebedor.setEndereco(receitaFederalPJ.getReceitaFederal().getLogradouro());
+			pagadorRecebedor.setNumero(receitaFederalPJ.getReceitaFederal().getNumero());
+			pagadorRecebedor.setComplemento(receitaFederalPJ.getReceitaFederal().getComplemento());
+			pagadorRecebedor.setBairro(receitaFederalPJ.getReceitaFederal().getBairro());
+			pagadorRecebedor.setCidade(receitaFederalPJ.getReceitaFederal().getMunicipio());
+			pagadorRecebedor.setCep(receitaFederalPJ.getReceitaFederal().getCep());
+			pagadorRecebedor.setEstado(receitaFederalPJ.getReceitaFederal().getUf());
+			pagadorRecebedor.setEmail(receitaFederalPJ.getReceitaFederal().getEmail());
 //			pagadorRecebedor.sett(receitaFederalPJ.getReceitaFederal().getTelefone());
-
+		}
 		return receitaFederalPJ;
 	}
 
@@ -648,7 +648,7 @@ public class NetrinService {
 
 			URL myURL;
 			String sUrl = "https://servicos.galleriabank.com.br/netrin/api/v1/processo/"
-					+ CommonsUtil.somenteNumeros(cnpjcpf) + "/" + pagadorRecebedor.getNome().replace(" ", "%20");
+					+ CommonsUtil.somenteNumeros(cnpjcpf) + "/" + (pagadorRecebedor.getNome().replace(" ", "%20").replace("/", "%2F"));
 			myURL = new URL(sUrl);
 
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
@@ -1177,7 +1177,7 @@ public class NetrinService {
 
 			URL myURL;
 			String sUrl = "https://servicos.galleriabank.com.br/netrin/api/v1/CNDTrabalhistaTST/"
-					+ CommonsUtil.somenteNumeros(cnpjcpf);// + "/" + pagadorRecebedor.getNome().replace(" ", "%20");
+					+ CommonsUtil.somenteNumeros(cnpjcpf);// + "/" + pagadorRecebedor.getNome().replace(" ", "%20").replace("/", "%2F");
 			myURL = new URL(sUrl);
 
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
@@ -1383,7 +1383,7 @@ public class NetrinService {
 
 			URL myURL;
 			String sUrl = "https://servicos.galleriabank.com.br/netrin/api/v1/CNDFederal/"
-					+ CommonsUtil.somenteNumeros(cnpjcpf);// + "/" + pagadorRecebedor.getNome().replace(" ", "%20");
+					+ CommonsUtil.somenteNumeros(cnpjcpf);// + "/" + pagadorRecebedor.getNome().replace(" ", "%20").replace("/", "%2F");
 			myURL = new URL(sUrl);
 
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();

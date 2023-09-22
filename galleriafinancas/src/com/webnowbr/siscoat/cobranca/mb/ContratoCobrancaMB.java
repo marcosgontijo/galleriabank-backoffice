@@ -233,6 +233,7 @@ public class ContratoCobrancaMB {
 	private LazyDataModel<ContratoCobranca> lazyModel;
 	private LazyDataModel<Responsavel> responsaveisLazy;
 	/** Variavel. */
+	private DocumentoAnalise objetoDocumentoAnalise;
 	private ContratoCobranca objetoContratoCobranca;
 	private String numeroContratoObjetoContratoCobranca;
 	private List<FileUploaded> documentoConsultarTodos;
@@ -818,6 +819,11 @@ public class ContratoCobrancaMB {
 
 	private List<ContratoCobrancaDetalhes> selectedParcelas = new ArrayList<ContratoCobrancaDetalhes>();
 
+	
+    public String rowSelected() {
+    	return null;
+    }
+	
 	public void saveContratoEmCartorio() {
 		FacesContext context = FacesContext.getCurrentInstance();
 
@@ -4911,7 +4917,7 @@ public class ContratoCobrancaMB {
 			// Finalize task.
 			output.flush();
 			output.close();
-
+			facesContext.responseComplete();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -4934,32 +4940,90 @@ public class ContratoCobrancaMB {
 						"Serasa: Ocorreu um problema ao gerar o PDF!", ""));
 				return;
 			} else {
-			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
-			String mineFile = "application/pdf";
-			input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
-			response.reset();
-			// lire un fichier pdf
-			response.setHeader("Content-type", mineFile);
+				byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
+				String mineFile = "application/pdf";
+				input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
+				response.reset();
+				// lire un fichier pdf
+				response.setHeader("Content-type", mineFile);
 
-			response.setContentLength(pdfBytes.length);
+				response.setContentLength(pdfBytes.length);
 
-			response.setHeader("Content-disposition",
-					"inline; FileName=" + this.objetoContratoCobranca.getNumeroContrato() + " Serasa "
-							+ documentoAnalise.getPagador().getNome() + ".pdf");
-			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-			byte[] buffer = new byte[pdfBytes.length];
-			int length;
-			while ((length = input.read(buffer)) > 0) {
-				output.write(buffer, 0, length);
-			}
+				response.setHeader("Content-disposition",
+						"inline; FileName=" + this.objetoContratoCobranca.getNumeroContrato() + " Serasa "
+								+ documentoAnalise.getPagador().getNome() + ".pdf");
+				output = new BufferedOutputStream(response.getOutputStream(), 10240);
+				byte[] buffer = new byte[pdfBytes.length];
+				int length;
+				while ((length = input.read(buffer)) > 0) {
+					output.write(buffer, 0, length);
+				}
 
-			// Finalize task.
-			output.flush();
-			output.close();
+				// Finalize task.
+				output.flush();
+				output.close();
+				facesContext.responseComplete();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void baixarMatricula(Long id) {
+			FileUploaded fileRea = new FileUploaded();
+			
+			FileService fileService = new FileService();
+			DocumentoAnaliseDao docAnaliseDao = new DocumentoAnaliseDao();
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			ExternalContext externalContext = facesContext.getExternalContext();
+			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+			BufferedInputStream input = null;
+			BufferedOutputStream output = null;
+			ParametrosDao pDao = new ParametrosDao();
+		DocumentoAnalise documentoAnalise =	docAnaliseDao.findById(id);
+		fileRea.setName(documentoAnalise.getIdentificacao());
+		fileRea.setPath("/home/webnowbr/Siscoat/GalleriaFinancas/DocumentosCobranca/" + this.objetoContratoCobranca.getNumeroContrato() + "/analise/");
+		fileRea.setFile(null);
+			
+			try {
+				if(CommonsUtil.semValor(fileRea.getName())) {
+					facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"REA: Ocorreu um problema ao gerar o PDF!", ""));
+						return;
+				} else {
+				byte[] bytesArquivo = fileService.abrirDocumentos(fileRea, this.objetoContratoCobranca.getNumeroContrato(), getUsuarioLogado());
+				if(CommonsUtil.semValor(bytesArquivo)) {
+					facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"REA: Ocorreu um problema ao gerar o PDF!", ""));
+					return;
+				} else {
+					String mineFile = "application/pdf";
+					input = new BufferedInputStream(new ByteArrayInputStream(bytesArquivo));
+					response.reset();
+					// lire un fichier pdf
+					response.setHeader("Content-type", mineFile);
+
+					response.setContentLength(bytesArquivo.length);
+
+					response.setHeader("Content-disposition",
+							"inline; FileName=" +  this.objetoContratoCobranca.getNumeroContrato() + " " + documentoAnalise.getIdentificacao() + ".pdf");
+					output = new BufferedOutputStream(response.getOutputStream(), 10240);
+					byte[] buffer = new byte[bytesArquivo.length];
+					int length;
+					while ((length = input.read(buffer)) > 0) {
+						output.write(buffer, 0, length);
+					}
+
+					// Finalize task.
+					output.flush();
+					output.close();
+					facesContext.responseComplete();
+				}
+			}
+			}	catch (Exception e) {
+				e.printStackTrace();
+			}
+		
 	}
 
 	public void baixarDocumentoPpe(DocumentoAnalise documentoAnalise) {
@@ -4976,27 +5040,29 @@ public class ContratoCobrancaMB {
 						"PPE: Ocorreu um problema ao gerar o PDF!", ""));
 				return;
 			} else {
-			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
-			String mineFile = "application/pdf";
-			input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
-			response.reset();
-			// lire un fichier pdf
-			response.setHeader("Content-type", mineFile);
+				byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
+				String mineFile = "application/pdf";
+				input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
+				response.reset();
+				// lire un fichier pdf
+				response.setHeader("Content-type", mineFile);
 
-			response.setContentLength(pdfBytes.length);
+				response.setContentLength(pdfBytes.length);
 
-			response.setHeader("Content-disposition", "inline; FileName=" + objetoContratoCobranca.getNumeroContrato()
-					+ " PPE " + documentoAnalise.getPagador().getNome() + ".pdf");
-			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-			byte[] buffer = new byte[pdfBytes.length];
-			int length;
-			while ((length = input.read(buffer)) > 0) {
-				output.write(buffer, 0, length);
-			}
+				response.setHeader("Content-disposition",
+						"inline; FileName=" + objetoContratoCobranca.getNumeroContrato() + " PPE "
+								+ documentoAnalise.getPagador().getNome() + ".pdf");
+				output = new BufferedOutputStream(response.getOutputStream(), 10240);
+				byte[] buffer = new byte[pdfBytes.length];
+				int length;
+				while ((length = input.read(buffer)) > 0) {
+					output.write(buffer, 0, length);
+				}
 
-			// Finalize task.
-			output.flush();
-			output.close();
+				// Finalize task.
+				output.flush();
+				output.close();
+				facesContext.responseComplete();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -5017,27 +5083,29 @@ public class ContratoCobrancaMB {
 						"Dossiê: Ocorreu um problema ao gerar o PDF!", ""));
 				return;
 			} else {
-			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
-			String mineFile = "application/pdf";
-			input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
-			response.reset();
-			// lire un fichier pdf
-			response.setHeader("Content-type", mineFile);
+				byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
+				String mineFile = "application/pdf";
+				input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
+				response.reset();
+				// lire un fichier pdf
+				response.setHeader("Content-type", mineFile);
 
-			response.setContentLength(pdfBytes.length);
+				response.setContentLength(pdfBytes.length);
 
-			response.setHeader("Content-disposition", "inline; FileName=" + objetoContratoCobranca.getNumeroContrato()
-					+ " Dossie " + documentoAnalise.getPagador().getNome() + ".pdf");
-			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-			byte[] buffer = new byte[pdfBytes.length];
-			int length;
-			while ((length = input.read(buffer)) > 0) {
-				output.write(buffer, 0, length);
-			}
+				response.setHeader("Content-disposition",
+						"inline; FileName=" + objetoContratoCobranca.getNumeroContrato() + " Dossie "
+								+ documentoAnalise.getPagador().getNome() + ".pdf");
+				output = new BufferedOutputStream(response.getOutputStream(), 10240);
+				byte[] buffer = new byte[pdfBytes.length];
+				int length;
+				while ((length = input.read(buffer)) > 0) {
+					output.write(buffer, 0, length);
+				}
 
-			// Finalize task.
-			output.flush();
-			output.close();
+				// Finalize task.
+				output.flush();
+				output.close();
+				facesContext.responseComplete();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -5059,27 +5127,29 @@ public class ContratoCobrancaMB {
 				return;
 			} else {
 
-			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
-			String mineFile = "application/pdf";
-			input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
-			response.reset();
-			// lire un fichier pdf
-			response.setHeader("Content-type", mineFile);
+				byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
+				String mineFile = "application/pdf";
+				input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
+				response.reset();
+				// lire un fichier pdf
+				response.setHeader("Content-type", mineFile);
 
-			response.setContentLength(pdfBytes.length);
+				response.setContentLength(pdfBytes.length);
 
-			response.setHeader("Content-disposition", "inline; FileName=" + objetoContratoCobranca.getNumeroContrato()
-					+ " Cenprot " + documentoAnalise.getPagador().getNome() + ".pdf");
-			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-			byte[] buffer = new byte[pdfBytes.length];
-			int length;
-			while ((length = input.read(buffer)) > 0) {
-				output.write(buffer, 0, length);
-			}
+				response.setHeader("Content-disposition",
+						"inline; FileName=" + objetoContratoCobranca.getNumeroContrato() + " Cenprot "
+								+ documentoAnalise.getPagador().getNome() + ".pdf");
+				output = new BufferedOutputStream(response.getOutputStream(), 10240);
+				byte[] buffer = new byte[pdfBytes.length];
+				int length;
+				while ((length = input.read(buffer)) > 0) {
+					output.write(buffer, 0, length);
+				}
 
-			// Finalize task.
-			output.flush();
-			output.close();
+				// Finalize task.
+				output.flush();
+				output.close();
+				facesContext.responseComplete();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -5122,7 +5192,7 @@ public class ContratoCobrancaMB {
 			}
 			output.flush();
 			output.close();
-
+			facesContext.responseComplete();
 		} catch (NullPointerException e) {
 			facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Processos: Ocorreu um problema ao gerar o PDF!", ""));
@@ -5155,26 +5225,28 @@ public class ContratoCobrancaMB {
 				return;
 			} else {
 
-			String mineFile = "application/pdf";
-			input = new BufferedInputStream(new ByteArrayInputStream(contrato));
-			response.reset();
-			// lire un fichier pdf
-			response.setHeader("Content-type", mineFile);
+				String mineFile = "application/pdf";
+				input = new BufferedInputStream(new ByteArrayInputStream(contrato));
+				response.reset();
+				// lire un fichier pdf
+				response.setHeader("Content-type", mineFile);
 
-			response.setContentLength(contrato.length);
+				response.setContentLength(contrato.length);
 
-			response.setHeader("Content-disposition", "inline; FileName=" + objetoContratoCobranca.getNumeroContrato()
-					+ " SCR " + documentoAnalise.getPagador().getNome() + ".pdf");
-			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-			byte[] buffer = new byte[contrato.length];
-			int length;
-			while ((length = input.read(buffer)) > 0) {
-				output.write(buffer, 0, length);
-			}
+				response.setHeader("Content-disposition",
+						"inline; FileName=" + objetoContratoCobranca.getNumeroContrato() + " SCR "
+								+ documentoAnalise.getPagador().getNome() + ".pdf");
+				output = new BufferedOutputStream(response.getOutputStream(), 10240);
+				byte[] buffer = new byte[contrato.length];
+				int length;
+				while ((length = input.read(buffer)) > 0) {
+					output.write(buffer, 0, length);
+				}
 
-			// Finalize task.
-			output.flush();
-			output.close();
+				// Finalize task.
+				output.flush();
+				output.close();
+				facesContext.responseComplete();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -9189,6 +9261,7 @@ public class ContratoCobrancaMB {
 
 	public String clearFieldsEditarPendentesAnalistas() {
 		clearMensagensWhatsApp();
+		this.objetoContratoCobranca.calcularTaxaPreAprovada();
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
 		this.objetoPagadorRecebedor = this.objetoContratoCobranca.getPagador();
@@ -9236,9 +9309,9 @@ public class ContratoCobrancaMB {
 			this.codigoResponsavel = this.objetoContratoCobranca.getResponsavel().getCodigo();
 		}
 		// this.objetoContratoCobranca.setDataInicio(this.objetoContratoCobranca.getDataContrato());
-		if (CommonsUtil.semValor(objetoContratoCobranca.getTaxaPreAprovada())) {
-			this.objetoContratoCobranca.calcularTaxaPreAprovada();
-		}
+	
+		this.objetoContratoCobranca.calcularTaxaPreAprovada();
+
 
 		saveEstadoCheckListAtual();
 
@@ -15956,92 +16029,6 @@ public class ContratoCobrancaMB {
 		cell_style.setBorderLeft(BorderStyle.THIN);
 		cell_style.setWrapText(true);
 
-		// Style para cabeçalho
-		XSSFCellStyle cell_style_pago_String = wb.createCellStyle();
-		cell_style_pago_String.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
-		cell_style_pago_String.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		cell_style_pago_String.setFont(font);
-		cell_style_pago_String.setAlignment(HorizontalAlignment.CENTER);
-		cell_style_pago_String.setVerticalAlignment(VerticalAlignment.CENTER);
-		cell_style_pago_String.setBorderBottom(BorderStyle.THIN);
-		cell_style_pago_String.setBorderTop(BorderStyle.THIN);
-		cell_style_pago_String.setBorderRight(BorderStyle.THIN);
-		cell_style_pago_String.setBorderLeft(BorderStyle.THIN);
-		cell_style_pago_String.setWrapText(true);
-
-		// Style para cabeçalho
-		XSSFCellStyle cell_style_pago_Date = wb.createCellStyle();
-		cell_style_pago_Date.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
-		cell_style_pago_Date.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		cell_style_pago_Date.setFont(font);
-		cell_style_pago_Date.setAlignment(HorizontalAlignment.CENTER);
-		cell_style_pago_Date.setVerticalAlignment(VerticalAlignment.CENTER);
-		cell_style_pago_Date.setBorderBottom(BorderStyle.THIN);
-		cell_style_pago_Date.setBorderTop(BorderStyle.THIN);
-		cell_style_pago_Date.setBorderRight(BorderStyle.THIN);
-		cell_style_pago_Date.setBorderLeft(BorderStyle.THIN);
-		cell_style_pago_Date.setWrapText(true);
-		cell_style_pago_Date.setDataFormat((short) BuiltinFormats.getBuiltinFormat("m/d/yy"));
-
-		// Style para cabeçalho
-		XSSFCellStyle cell_style_pago_Number = wb.createCellStyle();
-		cell_style_pago_Number.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
-		cell_style_pago_Number.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		cell_style_pago_Number.setFont(font);
-		cell_style_pago_Number.setAlignment(HorizontalAlignment.CENTER);
-		cell_style_pago_Number.setVerticalAlignment(VerticalAlignment.CENTER);
-		cell_style_pago_Number.setBorderBottom(BorderStyle.THIN);
-		cell_style_pago_Number.setBorderTop(BorderStyle.THIN);
-		cell_style_pago_Number.setBorderRight(BorderStyle.THIN);
-		cell_style_pago_Number.setBorderLeft(BorderStyle.THIN);
-		cell_style_pago_Number.setWrapText(true);
-		CreationHelper chNumber = wb.getCreationHelper();
-		cell_style_pago_Number.setDataFormat(
-				chNumber.createDataFormat().getFormat("_(R$* #,##0.00_);_(R$* (#,##0.00);_(R$* \"-\"??_);_(@_)"));
-
-		// Style para cabeçalho
-		XSSFCellStyle cell_style_vencida_String = wb.createCellStyle();
-		cell_style_vencida_String.setFillForegroundColor(IndexedColors.RED.getIndex());
-		cell_style_vencida_String.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		cell_style_vencida_String.setFont(font);
-		cell_style_vencida_String.setAlignment(HorizontalAlignment.CENTER);
-		cell_style_vencida_String.setVerticalAlignment(VerticalAlignment.CENTER);
-		cell_style_vencida_String.setBorderBottom(BorderStyle.THIN);
-		cell_style_vencida_String.setBorderTop(BorderStyle.THIN);
-		cell_style_vencida_String.setBorderRight(BorderStyle.THIN);
-		cell_style_vencida_String.setBorderLeft(BorderStyle.THIN);
-		cell_style_vencida_String.setWrapText(true);
-
-		// Style para cabeçalho
-		XSSFCellStyle cell_style_vencida_Date = wb.createCellStyle();
-		cell_style_vencida_Date.setFillForegroundColor(IndexedColors.RED.getIndex());
-		cell_style_vencida_Date.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		cell_style_vencida_Date.setFont(font);
-		cell_style_vencida_Date.setAlignment(HorizontalAlignment.CENTER);
-		cell_style_vencida_Date.setVerticalAlignment(VerticalAlignment.CENTER);
-		cell_style_vencida_Date.setBorderBottom(BorderStyle.THIN);
-		cell_style_vencida_Date.setBorderTop(BorderStyle.THIN);
-		cell_style_vencida_Date.setBorderRight(BorderStyle.THIN);
-		cell_style_vencida_Date.setBorderLeft(BorderStyle.THIN);
-		cell_style_vencida_Date.setWrapText(true);
-		cell_style_vencida_Date.setDataFormat((short) BuiltinFormats.getBuiltinFormat("m/d/yy"));
-
-		// Style para cabeçalho
-		XSSFCellStyle cell_style_vencida_Number = wb.createCellStyle();
-		cell_style_vencida_Number.setFillForegroundColor(IndexedColors.RED.getIndex());
-		cell_style_vencida_Number.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		cell_style_vencida_Number.setFont(font);
-		cell_style_vencida_Number.setAlignment(HorizontalAlignment.CENTER);
-		cell_style_vencida_Number.setVerticalAlignment(VerticalAlignment.CENTER);
-		cell_style_vencida_Number.setBorderBottom(BorderStyle.THIN);
-		cell_style_vencida_Number.setBorderTop(BorderStyle.THIN);
-		cell_style_vencida_Number.setBorderRight(BorderStyle.THIN);
-		cell_style_vencida_Number.setBorderLeft(BorderStyle.THIN);
-		cell_style_vencida_Number.setWrapText(true);
-		chNumber = wb.getCreationHelper();
-		cell_style_vencida_Number.setDataFormat(
-				chNumber.createDataFormat().getFormat("_(R$* #,##0.00_);_(R$* (#,##0.00);_(R$* \"-\"??_);_(@_)"));
-
 		// iterating r number of rows
 		// cria CABEÇALHO
 		int countLine = 0;
@@ -16959,54 +16946,6 @@ public class ContratoCobrancaMB {
 			cell = row.createCell(20);
 			cell.setCellStyle(cell_style);
 
-			// Style para cabeçalho
-			XSSFCellStyle cell_style_pago = wb.createCellStyle();
-			cell_style_pago = wb.createCellStyle();
-			cell_style_pago.setAlignment(HorizontalAlignment.CENTER);
-			cell_style_pago.setVerticalAlignment(VerticalAlignment.CENTER);
-			cell_style_pago.setBorderBottom(BorderStyle.THIN);
-			cell_style_pago.setBorderTop(BorderStyle.THIN);
-			cell_style_pago.setBorderRight(BorderStyle.THIN);
-			cell_style_pago.setBorderLeft(BorderStyle.THIN);
-			cell_style_pago.setWrapText(true);
-			cell_style_pago.setFillForegroundColor(IndexedColors.BRIGHT_GREEN.getIndex());
-			cell_style_pago.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-
-			XSSFCellStyle cell_style_aberto = wb.createCellStyle();
-			cell_style_aberto = wb.createCellStyle();
-			cell_style_aberto.setAlignment(HorizontalAlignment.CENTER);
-			cell_style_aberto.setVerticalAlignment(VerticalAlignment.CENTER);
-			cell_style_aberto.setBorderBottom(BorderStyle.THIN);
-			cell_style_aberto.setBorderTop(BorderStyle.THIN);
-			cell_style_aberto.setBorderRight(BorderStyle.THIN);
-			cell_style_aberto.setBorderLeft(BorderStyle.THIN);
-			cell_style_aberto.setWrapText(true);
-			cell_style_aberto.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
-			cell_style_aberto.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-
-			XSSFCellStyle cell_style_atraso = wb.createCellStyle();
-			cell_style_atraso = wb.createCellStyle();
-			cell_style_atraso.setAlignment(HorizontalAlignment.CENTER);
-			cell_style_atraso.setVerticalAlignment(VerticalAlignment.CENTER);
-			cell_style_atraso.setBorderBottom(BorderStyle.THIN);
-			cell_style_atraso.setBorderTop(BorderStyle.THIN);
-			cell_style_atraso.setBorderRight(BorderStyle.THIN);
-			cell_style_atraso.setBorderLeft(BorderStyle.THIN);
-			cell_style_atraso.setWrapText(true);
-			cell_style_atraso.setFillForegroundColor(IndexedColors.RED.getIndex());
-			cell_style_atraso.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-
-			XSSFCellStyle cell_style_bx_parcial = wb.createCellStyle();
-			cell_style_bx_parcial = wb.createCellStyle();
-			cell_style_bx_parcial.setAlignment(HorizontalAlignment.CENTER);
-			cell_style_bx_parcial.setVerticalAlignment(VerticalAlignment.CENTER);
-			cell_style_bx_parcial.setBorderBottom(BorderStyle.THIN);
-			cell_style_bx_parcial.setBorderTop(BorderStyle.THIN);
-			cell_style_bx_parcial.setBorderRight(BorderStyle.THIN);
-			cell_style_bx_parcial.setBorderLeft(BorderStyle.THIN);
-			cell_style_bx_parcial.setWrapText(true);
-			cell_style_bx_parcial.setFillForegroundColor(IndexedColors.ORANGE.getIndex());
-			cell_style_bx_parcial.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 			/*
 			 * if (record.isParcelaPaga()) { cell.setCellStyle(cell_style_pago);
 			 * cell.setCellValue("Pago"); } else { ContratoCobrancaDetalhesDao ccdDao = new
@@ -20071,7 +20010,7 @@ public class ContratoCobrancaMB {
 					StarkBankBaixa baixa = updateBaixaStarkBank(this.objetoBaixaPagamentoStarkBank,							
 							String.valueOf(starkBankBoleto.getId()),
 							starkBankBoleto.getCreated(),
-							starkBankBoleto.getAmount(),
+							this.contasPagarSelecionada.getValorPagamento(),
 							"Aprovado",
 							starkBankBoleto.getLine());
 
@@ -29771,9 +29710,8 @@ public class ContratoCobrancaMB {
 		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 
-		for (DocumentoAnalise documentoAnalise : this.listaDocumentoAnalise.stream().filter(d -> d.isLiberadoAnalise()
-				|| d.isLiberadoSerasa() || d.isLiberadoCenprot() || d.isLiberadoScr() || d.isLiberadoProcesso())
-				.collect(Collectors.toList())) {
+		for (DocumentoAnalise documentoAnalise : this.listaDocumentoAnalise.stream()
+				.filter(d -> d.isLiberadoCertidoes()).collect(Collectors.toList())) {
 			String observacao = "";
 			if (documentoAnalise.isLiberadoAnalise() && !CommonsUtil.semValor(documentoAnalise.getPagador())) {
 				if (CommonsUtil.semValor(documentoAnalise.getRetornoCNDEstadual())) {
@@ -29781,11 +29719,11 @@ public class ContratoCobrancaMB {
 					if (CommonsUtil.semValor(documentoAnalise.getPagador().getEstado())) {
 						documentoAnalise.getPagador().setEstado(estado);
 						new PagadorRecebedorDao().merge(documentoAnalise.getPagador());
-						
-						//observacao = observacao + "Falta UF para consulta estadual \n";
-						//documentoAnalise.addObservacao("Falta UF para consulta estadual");
-					} 
-					
+
+						// observacao = observacao + "Falta UF para consulta estadual \n";
+						// documentoAnalise.addObservacao("Falta UF para consulta estadual");
+					}
+
 					if (CommonsUtil.mesmoValor(documentoAnalise.getPagador().getEstado().toLowerCase(), "mg")
 							&& CommonsUtil.semValor(documentoAnalise.getPagador().getCep())) {
 						observacao = observacao + "Falta CEP para consulta estadual de MG \n";
@@ -34484,5 +34422,13 @@ public class ContratoCobrancaMB {
 
 	public void setObjetoBaixaPagamentoStarkBank(StarkBankBaixa objetoBaixaPagamentoStarkBank) {
 		this.objetoBaixaPagamentoStarkBank = objetoBaixaPagamentoStarkBank;
+	}
+
+	public DocumentoAnalise getObjetoDocumentoAnalise() {
+		return objetoDocumentoAnalise;
+	}
+
+	public void setObjetoDocumentoAnalise(DocumentoAnalise objetoDocumentoAnalise) {
+		this.objetoDocumentoAnalise = objetoDocumentoAnalise;
 	}
 }

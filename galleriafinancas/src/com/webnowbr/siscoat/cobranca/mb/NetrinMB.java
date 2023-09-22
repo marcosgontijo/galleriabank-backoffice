@@ -15,8 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.primefaces.model.StreamedContent;
 
+import com.itextpdf.text.pdf.PdfReader;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
-import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
@@ -76,13 +76,12 @@ public class NetrinMB {
 			// Finalize task.
 			output.flush();
 			output.close();
-			
+			facesContext.responseComplete();
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
 	
 	public void baixarDocumentoPpe(DocumentoAnalise documentoAnalise) {
 		String documentoBase64 = netrinService.baixarDocumentoPpe(documentoAnalise);
@@ -113,7 +112,7 @@ public class NetrinMB {
 			// Finalize task.
 			output.flush();
 			output.close();
-			
+			facesContext.responseComplete();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -149,7 +148,7 @@ public class NetrinMB {
 			// Finalize task.
 			output.flush();
 			output.close();
-			
+			facesContext.responseComplete();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -191,7 +190,7 @@ public class NetrinMB {
 			}
 			output.flush();
 			output.close();
-			
+			facesContext.responseComplete();
 		} catch (NullPointerException e) {
 			facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Processos: Ocorreu um problema ao gerar o PDF!", ""));
@@ -203,31 +202,34 @@ public class NetrinMB {
 	
 	public void baixarDocumentoCNDEstadual(DocumentoAnalise documentoAnalise) {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
-
 		try {
-
 			String documentoBase64 = netrinService.baixarDocumentoCNDEstadual(documentoAnalise);
 			if (CommonsUtil.semValor(documentoBase64)) {
 				facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 						"CND Estadual: Ocorreu um problema ao gerar o PDF!", ""));
 				return;
 			}
-
 			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
 			ExternalContext externalContext = facesContext.getExternalContext();
 			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
 			BufferedInputStream input = null;
 			BufferedOutputStream output = null;
-
-			String mineFile = "application/pdf";
+			String mineFile;
+			String fileExtension;
+			try {
+				PdfReader pdf = new PdfReader(pdfBytes);
+				mineFile = "application/pdf";
+				fileExtension = "pdf"; 
+			} catch (Exception e) {
+				mineFile = "text/html";
+				fileExtension = "html"; 
+			}		
 			input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
 			response.reset();
 			// lire un fichier pdf
 			response.setHeader("Content-type", mineFile);
-
 			response.setContentLength(pdfBytes.length);
-
-			response.setHeader("Content-disposition", "inline; FileName=" + "Engine.pdf");
+			response.setHeader("Content-disposition", "inline; FileName=" + "CNDEstadual."+fileExtension);
 			output = new BufferedOutputStream(response.getOutputStream(), 10240);
 			byte[] buffer = new byte[10240];
 			int length;
@@ -236,44 +238,46 @@ public class NetrinMB {
 			}
 			output.flush();
 			output.close();
-			
+			facesContext.responseComplete();
 		} catch (NullPointerException e) {
 			facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"CND Estadual: Ocorreu um problema ao gerar o PDF!", ""));
 		} catch (Exception e) {
 			facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"CND Estadual: Ocorreu um problema ao gerar o PDF!", ""));
-
 		}
 	}
 	
 	public void baixarDocumentoCNDFederal(DocumentoAnalise documentoAnalise) {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
-
 		try {
-
 			String documentoBase64 = netrinService.baixarDocumentoCNDFederal(documentoAnalise);
 			if (CommonsUtil.semValor(documentoBase64)) {
 				facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 						"CND Federal: Ocorreu um problema ao gerar o PDF!", ""));
 				return;
 			}
-
 			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
 			ExternalContext externalContext = facesContext.getExternalContext();
 			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
 			BufferedInputStream input = null;
 			BufferedOutputStream output = null;
-
-			String mineFile = "application/pdf";
+			String mineFile;
+			String fileExtension;
+			try {
+				PdfReader pdf = new PdfReader(pdfBytes);
+				mineFile = "application/pdf";
+				fileExtension = "pdf"; 
+			} catch (Exception e) {
+				mineFile = "text/html";
+				fileExtension = "html"; 
+			}		
 			input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
 			response.reset();
 			// lire un fichier pdf
 			response.setHeader("Content-type", mineFile);
-
 			response.setContentLength(pdfBytes.length);
-
-			response.setHeader("Content-disposition", "inline; FileName=" + "Engine.pdf");
+			response.setHeader("Content-disposition", "inline; FileName=" + "CNDFederal."+fileExtension);
 			output = new BufferedOutputStream(response.getOutputStream(), 10240);
 			byte[] buffer = new byte[10240];
 			int length;
@@ -282,44 +286,46 @@ public class NetrinMB {
 			}
 			output.flush();
 			output.close();
-			
+			facesContext.responseComplete();
 		} catch (NullPointerException e) {
 			facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"CND Federal: Ocorreu um problema ao gerar o PDF!", ""));
 		} catch (Exception e) {
 			facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"CND Federal: Ocorreu um problema ao gerar o PDF!", ""));
-
 		}
 	}
 	
 	public void baixarDocumentoCNDTrabalhistaTST(DocumentoAnalise documentoAnalise) {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
-
 		try {
-
 			String documentoBase64 = netrinService.baixarDocumentoCNDTrabalhistaTST(documentoAnalise);
 			if (CommonsUtil.semValor(documentoBase64)) {
 				facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 						"CNDT TST: Ocorreu um problema ao gerar o PDF!", ""));
 				return;
 			}
-
 			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
 			ExternalContext externalContext = facesContext.getExternalContext();
 			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
 			BufferedInputStream input = null;
 			BufferedOutputStream output = null;
-
-			String mineFile = "application/pdf";
+			String mineFile;
+			String fileExtension;
+			try {
+				PdfReader pdf = new PdfReader(pdfBytes);
+				mineFile = "application/pdf";
+				fileExtension = "pdf"; 
+			} catch (Exception e) {
+				mineFile = "text/html";
+				fileExtension = "html"; 
+			}		
 			input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
 			response.reset();
 			// lire un fichier pdf
 			response.setHeader("Content-type", mineFile);
-
 			response.setContentLength(pdfBytes.length);
-
-			response.setHeader("Content-disposition", "inline; FileName=" + "Engine.pdf");
+			response.setHeader("Content-disposition", "inline; FileName=" + "CNDTST."+fileExtension);
 			output = new BufferedOutputStream(response.getOutputStream(), 10240);
 			byte[] buffer = new byte[10240];
 			int length;
@@ -328,14 +334,13 @@ public class NetrinMB {
 			}
 			output.flush();
 			output.close();
-			
+			facesContext.responseComplete();
 		} catch (NullPointerException e) {
 			facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"CNDT TST: Ocorreu um problema ao gerar o PDF!", ""));
 		} catch (Exception e) {
 			facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"CNDT TST: Ocorreu um problema ao gerar o PDF!", ""));
-
 		}
 	}
 	

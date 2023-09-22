@@ -50,19 +50,25 @@
 						value="#{contratoCobrancaMB.contasPagarSelecionada}" />
 				</p:fileUpload>
 			</h:panelGrid>
-
 			<p:panel id="ArquivosSalvosAnalise"
 				header="Arquivo(s) Salvo(s) na analise" style="margin-bottom:10px;">
 				<f:facet name="header"> Arquivo(s) Salvo(s) na analise 
 							<p:outputLabel value="" />
 					<p:commandButton value="Adicionar Pessoa"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise and contratoCobrancaMB.objetoDocumentoAnalise.engineProcessado}"
 						action="#{contratoCobrancaMB.preparaAdicionarPessoaAnalise}"
 						oncomplete="PF('adicionarPessoaAnaliseDlg').show();"
 						update="adicionarPessoaAnaliseForm">
 					</p:commandButton>
+					<p:commandButton value="Adicionar Pessoa"
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
+						action="#{contratoCobrancaMB.preparaAdicionarPessoaAnalise}"
+						oncomplete="PF('adicionarPessoaAnaliseDlg').show();"
+						disabled="true"
+						update="adicionarPessoaAnaliseForm">
+						
+					</p:commandButton>
 				</f:facet>
-
 				<h:panelGrid columns="1">
 					<p:dataTable id="dtFilesAnalise" var="fileAnalise"
 						value="#{contratoCobrancaMB.listaDocumentoAnalise}"
@@ -72,7 +78,7 @@
 							or contratoCobrancaMB.objetoContratoCobranca.emAnalise) ? '' : 'ui-helper-hidden'}">
 						
 						<f:facet name="header">								 
-							<p:commandButton value="Excluir Selecionado(s)" ajax="true" icon="ui-icon-trash" update="dtFilesAnalise" action="#{contratoCobrancaMB.deleteArquivosAnalisados}">
+							<p:commandButton value="Excluir Selecionado(s)" ajax="false" immediate="true" icon="ui-icon-trash" update="dtFilesAnalise" action="#{contratoCobrancaMB.deleteArquivosAnalisados}">
 								<p:confirm header="Confirmação" message="Deseja Excluir os itens selecionados?"/>
 							</p:commandButton>
 				        </f:facet>
@@ -84,8 +90,8 @@
 						
 
 							<p:commandButton value="ver Resumo"
-								onclick="PF('resumoConsutlasDialog').show()"
-								update="resumoConsutlasForm" ajax="true"
+								oncomplete="PF('resumoConsutlasDialog').show()"
+								update="resumoConsutlasForm resumoDialogHeader" ajax="true"
 								style="TEXT-DECORATION: bold;" rendered="#{fileAnalise.tipo != 'Rea'}">
 
 								<f:setPropertyActionListener value="#{fileAnalise}"
@@ -94,7 +100,7 @@
 
 						</p:column>
 
-						<p:column headerText="Liberado Análise">
+						<p:column headerText="Liberado Análise" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.emPedirPaju }">
 							<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"
 								rendered="#{!fileAnalise.isAnaliseBloqueada() and contratoCobrancaMB.objetoContratoCobranca.emAnalise  }"
 								onLabel="Sim" offLabel="Não" style="width:6rem">
@@ -108,6 +114,15 @@
 							<p:selectBooleanButton value="#{fileAnalise.liberadoContinuarAnalise}"
 								rendered="#{fileAnalise.isAnaliseBloqueada() and contratoCobrancaMB.objetoContratoCobranca.emAnalise  }"
 								onLabel="Continuar Analise" offLabel="Analise Bloqueada" style="width:6rem">
+								<p:ajax event="change"
+									listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
+							</p:selectBooleanButton>
+						</p:column>
+						
+						<p:column headerText="Liberado Certidoes" rendered="#{contratoCobrancaMB.objetoContratoCobranca.emPedirPaju }">
+							<p:selectBooleanButton value="#{fileAnalise.liberadoCertidoes}"							
+								rendered="#{fileAnalise.podeChamarCertidoes}"
+								onLabel="Sim" offLabel="Não" style="width:6rem">
 								<p:ajax event="change"
 									listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
 							</p:selectBooleanButton>
@@ -146,6 +161,13 @@
 								rendered="#{fileAnalise.podeChamarRea and !fileAnalise.reaNaoEnviado and !fileAnalise.reaProcessado }" />
 							<h:outputText value="REA Processado"
 								rendered="#{fileAnalise.podeChamarRea and fileAnalise.reaProcessado }" />
+									<p:commandButton
+										action="#{contratoCobrancaMB.baixarMatricula(fileAnalise.id)}"
+										onclick="target='_blank'" onblur="target='_self'"
+										icon="ui-icon ui-icon-print" value="Abrir Rea"
+										ajax="false" 
+										rendered="#{fileAnalise.tipo == 'Rea'}"/>
+								
 
 							<p:commandButton
 								action="#{contratoCobrancaMB.baixarEngineDocumento(fileAnalise)}"
@@ -178,8 +200,7 @@
 								icon="ui-icon ui-icon-print" value="Abrir Dossiê"
 								rendered="#{fileAnalise.podeDownlaodDossie }" ajax="false" />
 
-								
-								
+
 							<p:commandButton
 								action="#{contratoCobrancaMB.baixarDocumentoProcesso(fileAnalise)}"
 								onclick="target='_blank'" onblur="target='_self'"
@@ -200,28 +221,24 @@
 							<f:setPropertyActionListener value="#{fileAnalise}"
 								target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
 							</p:commandButton>
-						
-							<h:panelGroup rendered="#{contratoCobrancaMB.objetoContratoCobranca.emPedirPaju}">
 							
-								<p:commandButton 
-									action="#{netrinMB.baixarDocumentoCNDEstadual(fileAnalise)}"
-									icon="ui-icon ui-icon-print" value="Download CND Estadual"
-									onclick="target='_blank'" onblur="target='_self'"
-									rendered="#{fileAnalise.CNDEstadualProcessado}" ajax="false" />
-									
-								<p:commandButton 
-									action="#{netrinMB.baixarDocumentoCNDFederal(fileAnalise)}"
-									icon="ui-icon ui-icon-print" value="Download CND Federal"
-									onclick="target='_blank'" onblur="target='_self'"  
-									rendered="#{fileAnalise.CNDFederalProcessado}" ajax="false" />
-									
-								<p:commandButton 
-									action="#{netrinMB.baixarDocumentoCNDTrabalhistaTST(fileAnalise)}"
-									icon="ui-icon ui-icon-print" value="Download CNDT TST"
-									onclick="target='_blank'" onblur="target='_self'"
-									rendered="#{fileAnalise.CNDTrabalhistaTSTProcessado}" ajax="false" />
-									
-							</h:panelGroup>
+							<p:commandButton 
+								action="#{netrinMB.baixarDocumentoCNDEstadual(fileAnalise)}"
+								icon="ui-icon ui-icon-print" value="Download CND Estadual"
+								onclick="target='_blank'" onblur="target='_self'"
+								rendered="#{fileAnalise.CNDEstadualProcessado}" ajax="false" />
+								
+							<p:commandButton 
+								action="#{netrinMB.baixarDocumentoCNDFederal(fileAnalise)}"
+								icon="ui-icon ui-icon-print" value="Download CND Federal"
+								onclick="target='_blank'" onblur="target='_self'"  
+								rendered="#{fileAnalise.CNDFederalProcessado}" ajax="false" />
+								
+							<p:commandButton 
+								action="#{netrinMB.baixarDocumentoCNDTrabalhistaTST(fileAnalise)}"
+								icon="ui-icon ui-icon-print" value="Download CNDT TST"
+								onclick="target='_blank'" onblur="target='_self'"
+								rendered="#{fileAnalise.CNDTrabalhistaTSTProcessado}" ajax="false" />
 							
 						</p:column>
 
@@ -234,7 +251,7 @@
 								<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
 							</p:commandButton>
 						</p:column>
-							
+						 
 					</p:dataTable>
 				</h:panelGrid>
 
@@ -247,7 +264,7 @@
 					action="#{contratoCobrancaMB.executarConsultasAnaliseDocumento}"
 					widgetVar="executeBtn" onclick="executeBtn.disable()" 
 					disabled="#{contratoCobrancaMB.checkConsultasAnaliseDocumento()}" />
-				<p:commandButton value="Certidões Docket"
+				<p:commandButton value="Certidões Docket" ajax="false"
 					action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.objetoContratoCobranca)}" />
 				<p:commandButton value="Certidões Plexi" 
 					action="#{plexiMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, contratoCobrancaMB.objetoImovelCobranca.estado, 'lento')}" />
