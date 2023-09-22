@@ -233,6 +233,7 @@ public class ContratoCobrancaMB {
 	private LazyDataModel<ContratoCobranca> lazyModel;
 	private LazyDataModel<Responsavel> responsaveisLazy;
 	/** Variavel. */
+	private DocumentoAnalise objetoDocumentoAnalise;
 	private ContratoCobranca objetoContratoCobranca;
 	private String numeroContratoObjetoContratoCobranca;
 	private List<FileUploaded> documentoConsultarTodos;
@@ -34415,5 +34416,13 @@ public class ContratoCobrancaMB {
 
 	public void setObjetoBaixaPagamentoStarkBank(StarkBankBaixa objetoBaixaPagamentoStarkBank) {
 		this.objetoBaixaPagamentoStarkBank = objetoBaixaPagamentoStarkBank;
+	}
+
+	public DocumentoAnalise getObjetoDocumentoAnalise() {
+		return objetoDocumentoAnalise;
+	}
+
+	public void setObjetoDocumentoAnalise(DocumentoAnalise objetoDocumentoAnalise) {
+		this.objetoDocumentoAnalise = objetoDocumentoAnalise;
 	}
 }

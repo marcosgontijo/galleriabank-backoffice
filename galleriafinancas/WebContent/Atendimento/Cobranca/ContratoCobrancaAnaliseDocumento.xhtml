@@ -50,19 +50,25 @@
 						value="#{contratoCobrancaMB.contasPagarSelecionada}" />
 				</p:fileUpload>
 			</h:panelGrid>
-
 			<p:panel id="ArquivosSalvosAnalise"
 				header="Arquivo(s) Salvo(s) na analise" style="margin-bottom:10px;">
 				<f:facet name="header"> Arquivo(s) Salvo(s) na analise 
 							<p:outputLabel value="" />
 					<p:commandButton value="Adicionar Pessoa"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise and contratoCobrancaMB.objetoDocumentoAnalise.engineProcessado}"
 						action="#{contratoCobrancaMB.preparaAdicionarPessoaAnalise}"
 						oncomplete="PF('adicionarPessoaAnaliseDlg').show();"
 						update="adicionarPessoaAnaliseForm">
 					</p:commandButton>
+					<p:commandButton value="Adicionar Pessoa"
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
+						action="#{contratoCobrancaMB.preparaAdicionarPessoaAnalise}"
+						oncomplete="PF('adicionarPessoaAnaliseDlg').show();"
+						disabled="true"
+						update="adicionarPessoaAnaliseForm">
+						
+					</p:commandButton>
 				</f:facet>
-
 				<h:panelGrid columns="1">
 					<p:dataTable id="dtFilesAnalise" var="fileAnalise"
 						value="#{contratoCobrancaMB.listaDocumentoAnalise}"
