@@ -4986,6 +4986,11 @@ public class ContratoCobrancaMB {
 		fileRea.setFile(null);
 			
 			try {
+				if(CommonsUtil.semValor(fileRea.getName())) {
+					facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"REA: Ocorreu um problema ao gerar o PDF!", ""));
+						return;
+				} else {
 				byte[] bytesArquivo = fileService.abrirDocumentos(fileRea, this.objetoContratoCobranca.getNumeroContrato(), getUsuarioLogado());
 				if(CommonsUtil.semValor(bytesArquivo)) {
 					facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
@@ -5014,7 +5019,8 @@ public class ContratoCobrancaMB {
 					output.close();
 					facesContext.responseComplete();
 				}
-			} catch (Exception e) {
+			}
+			}	catch (Exception e) {
 				e.printStackTrace();
 			}
 		

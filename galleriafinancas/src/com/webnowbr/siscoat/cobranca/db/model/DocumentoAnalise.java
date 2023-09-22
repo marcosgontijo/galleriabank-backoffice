@@ -394,7 +394,7 @@ public class DocumentoAnalise implements Serializable {
 			} else {
 				for (ProtestosBrasilEstado estado : data.getCenprotProtestos().getProtestosBrasil().getEstados()) {
 
-					String valorEstado = CommonsUtil.stringValue(estado.getValorTotal()) + " (" + estado.getValorTotal()
+					String valorEstado = CommonsUtil.stringValue(estado.getValorTotal()) + " (" + estado.getQuantidadeTotal()
 							+ ") ";
 					cenprot.add(new DocumentoAnaliseResumo(estado.getEstado(), valorEstado));
 
