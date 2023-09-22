@@ -72,7 +72,7 @@
 							or contratoCobrancaMB.objetoContratoCobranca.emAnalise) ? '' : 'ui-helper-hidden'}">
 						
 						<f:facet name="header">								 
-							<p:commandButton value="Excluir Selecionado(s)" ajax="true" icon="ui-icon-trash" update="dtFilesAnalise" action="#{contratoCobrancaMB.deleteArquivosAnalisados}">
+							<p:commandButton value="Excluir Selecionado(s)" ajax="false" immediate="true" icon="ui-icon-trash" update="dtFilesAnalise" action="#{contratoCobrancaMB.deleteArquivosAnalisados}">
 								<p:confirm header="Confirmação" message="Deseja Excluir os itens selecionados?"/>
 							</p:commandButton>
 				        </f:facet>
@@ -245,7 +245,7 @@
 								<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
 							</p:commandButton>
 						</p:column>
-							
+						 
 					</p:dataTable>
 				</h:panelGrid>
 
