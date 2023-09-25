@@ -1102,7 +1102,9 @@ public class DocketService {
 		while (webHookJWT.length() > (256 - SiscoatConstants.URL_SISCOAT_DOCKET_WEBHOOK.length())) {
 			webHookJWT = JwtUtil.generateJWTWebhook(false);
 		}
-		jsonDocketPedido.put("urlWebHookEntregaDocumento", webHookJWT);
+		String webhook = SiscoatConstants.URL_SISCOAT_DOCKET_WEBHOOK + webHookJWT;
+		jsonDocketPedido.put("urlWebHookEntregaDocumento", webhook);
+		
 
 		return jsonDocketPedido;
 	}

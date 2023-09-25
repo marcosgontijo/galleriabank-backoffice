@@ -50,10 +50,10 @@ public class NetrinDocumentosDao extends HibernateDao<NetrinDocumentos, Long> {
 					ps = connection.prepareStatement(query);
 					rs = ps.executeQuery();
 
-					NetrinDocumentosDao plexiDocumentosDao = new NetrinDocumentosDao();
+					NetrinDocumentosDao netrinDocumentosDao = new NetrinDocumentosDao();
 					
 					while (rs.next()) {
-						NetrinDocumentos doc = plexiDocumentosDao.findById(rs.getLong(1));
+						NetrinDocumentos doc = netrinDocumentosDao.findById(rs.getLong(1));
 						documentosPf.add(doc);
 					}
 				} finally {
@@ -102,10 +102,10 @@ public class NetrinDocumentosDao extends HibernateDao<NetrinDocumentos, Long> {
 					ps = connection.prepareStatement(query);
 					rs = ps.executeQuery();
 
-					NetrinDocumentosDao plexiDocumentosDao = new NetrinDocumentosDao();
+					NetrinDocumentosDao netrinDocumentosDao = new NetrinDocumentosDao();
 					
 					while (rs.next()) {
-						NetrinDocumentos doc = plexiDocumentosDao.findById(rs.getLong(1));
+						NetrinDocumentos doc = netrinDocumentosDao.findById(rs.getLong(1));
 						documentosPf.add(doc);
 					}
 				} finally {

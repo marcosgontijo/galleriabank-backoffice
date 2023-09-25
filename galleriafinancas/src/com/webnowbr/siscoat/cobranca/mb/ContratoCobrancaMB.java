@@ -8299,45 +8299,6 @@ public class ContratoCobrancaMB {
 		}
 	}
 
-	public void testeDocket() {
-		DocketMB docket = new DocketMB();
-		docket.loginDocket();
-	}
-
-	public void logPrimitivo() throws IOException {
-		ParametrosDao pDao = new ParametrosDao();
-		// String pathContrato = pDao.findByFilter("nome",
-		// "COBRANCA_DOCUMENTOS").get(0).getValorString()
-		String pathContrato = "C:/Users/Usuario/Desktop/" + "log.txt";
-		// cria o diretório, caso não exista
-		File log = new File(pathContrato);
-		FileWriter fileWriter = new FileWriter(log, true);
-		PrintWriter printWriter = new PrintWriter(fileWriter);
-
-		Date data = gerarDataHoje();
-		String dataStr = CommonsUtil.formataData(data, "yyyy-MM-dd HH:mm:ss.SSS");
-
-		printWriter.println(dataStr + " " + Math.random());
-		printWriter.close();
-	}
-
-	public void logPrimitivo(String msg) throws IOException {
-		ParametrosDao pDao = new ParametrosDao();
-		// String pathContrato = pDao.findByFilter("nome",
-		// "COBRANCA_DOCUMENTOS").get(0).getValorString()
-		String pathContrato = "C:/Users/Usuario/Desktop/" + "log.txt";
-		// cria o diretório, caso não exista
-		File log = new File(pathContrato);
-		FileWriter fileWriter = new FileWriter(log, true);
-		PrintWriter printWriter = new PrintWriter(fileWriter);
-
-		Date data = gerarDataHoje();
-		String dataStr = CommonsUtil.formataData(data, "yyyy-MM-dd HH:mm:ss.SSS");
-
-		printWriter.println(dataStr + " - " + msg);
-		printWriter.close();
-	}
-
 	public void recuperarContratoReprovado() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
@@ -9752,14 +9713,7 @@ public class ContratoCobrancaMB {
 		}
 		// this.objetoContratoCobranca.setDataInicio(this.objetoContratoCobranca.getDataContrato());
 
-		// saveEstadoCheckListAtual();
-
-		/*
-		 * try { logPrimitivo(getNomeUsuarioLogado() + " acessou o contrato " +
-		 * objetoContratoCobranca.getNumeroContrato() + " (" +
-		 * objetoContratoCobranca.toString() + ")"); } catch (IOException e) { // TODO
-		 * Auto-generated catch block e.printStackTrace(); }
-		 */
+		// saveEstadoCheckListAtual();		
 
 		if (!this.objetoContratoCobranca.isInicioAnalise()) {
 			return "/Atendimento/Cobranca/ContratoCobrancaPreCustomizadoInserir.xhtml";
