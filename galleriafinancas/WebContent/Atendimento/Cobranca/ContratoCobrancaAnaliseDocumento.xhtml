@@ -37,6 +37,12 @@
 					action="#{contratoCobrancaMB.listaArquivosAnaliseDocumentos}"
 					immediate="true" icon="ui-icon-search">
 				</p:commandButton>
+				<shiro:hasAnyRoles name="ROOT">
+					<p:commandButton value="Atualiza Plexi"
+						action="#{plexiMB.atualizaRetorno(contratoCobrancaMB.listaDocumentoAnalise)}"
+						update="dtFilesAnalise">
+					</p:commandButton>
+				</shiro:hasAnyRoles>
 			</f:facet>
 
 			<h:panelGrid columns="1">
@@ -190,8 +196,17 @@
 								action="#{contratoCobrancaMB.baixarDocumentoSCR(fileAnalise)}"
 								onclick="target='_blank'" onblur="target='_self'"
 								icon="ui-icon ui-icon-print" value="Abrir SCR"
-								rendered="#{fileAnalise.scrProcessado }" ajax="false" />
+								rendered="#{fileAnalise.scrProcessado }" ajax="false" />															
 															
+							<p:commandButton
+								value="Consultas Docket"
+								onclick="PF('consultasDocketDlg').show()"
+								update="ConsultasDocketForm" ajax="true"
+								rendered="#{fileAnalise.docketConsultas.size() > 0}" >
+							<f:setPropertyActionListener value="#{fileAnalise}"
+								target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
+							</p:commandButton>
+							
 							<p:commandButton
 								value="Consultas Plexi"
 								onclick="PF('consultasPlexiDlg').show()"

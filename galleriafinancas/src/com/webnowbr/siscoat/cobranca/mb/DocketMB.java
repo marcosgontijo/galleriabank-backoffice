@@ -113,8 +113,8 @@ public class DocketMB {
 	public void adiconarDocumentospagador(DocumentoAnalise docAnalise) {
 		List<DocumentosDocket> docketDocumentos = new ArrayList<DocumentosDocket>();
 		DocumentosDocketDao docketDocsDao = new DocumentosDocketDao();
-		if(CommonsUtil.semValor(docAnalise.getNetrinConsultas())) {
-			docAnalise.setNetrinConsultas(new HashSet<>());
+		if(CommonsUtil.semValor(docAnalise.getDocketConsultas())) {
+			docAnalise.setDocketConsultas(new HashSet<>());
 		}
 		
 		if(!CommonsUtil.semValor(docAnalise.getPagador().getCpf())) {
@@ -270,7 +270,7 @@ public class DocketMB {
 		return null;
 	}
 	
-	public void viewFileNetrin(DocketConsulta consulta) {
+	public void viewFileDocket(DocketConsulta consulta) {
 		if(CommonsUtil.semValor(consulta)) {
 			return;
 		}
@@ -302,7 +302,7 @@ public class DocketMB {
 			// lire un fichier pdf
 			response.setHeader("Content-type", mineFile);
 			response.setContentLength(pdfBytes.length);
-			response.setHeader("Content-disposition", "inline; FileName=" + "Netrin."+fileExtension);
+			response.setHeader("Content-disposition", "inline; FileName=" + "Docket."+fileExtension);
 			output = new BufferedOutputStream(response.getOutputStream(), 10240);
 			byte[] buffer = new byte[10240];
 			int length;

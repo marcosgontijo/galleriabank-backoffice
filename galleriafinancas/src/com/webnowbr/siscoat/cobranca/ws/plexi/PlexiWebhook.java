@@ -28,13 +28,14 @@ public class PlexiWebhook {
 	public Response webhookPlexi(String webhookRetorno, @QueryParam("Token") String token) {
 		try {
 			JSONObject webhookObject = new JSONObject(webhookRetorno);
-			if(JwtUtil.isTokenExpiredWebhook(token) && webhookObject.has("requestId")) {
+			PlexiService plexiService = new PlexiService();
+			try {
+				Jwts.parserBuilder().setSigningKey(CommonsUtil.CHAVE_WEBHOOK).build().parseClaimsJws(token);		
+			} catch (Exception e) {
+				System.out.println("token plexi expirado");
 				String requestId = webhookObject.getString("requestId");
-				PlexiService plexiService = new PlexiService();
 				webhookObject = plexiService.getRetornoPlexi(requestId);
 				webhookObject.put("requestId", requestId);
-			} else {
-				Jwts.parserBuilder().setSigningKey(CommonsUtil.CHAVE_WEBHOOK).build().parseClaimsJws(token);
 			}
 
 			PlexiConsultaDao plexiConsultaDao = new PlexiConsultaDao();
@@ -52,7 +53,7 @@ public class PlexiWebhook {
 			plexiConsulta.setWebhookRetorno(webhookRetorno);
 			if(webhookObject.has("pdf")) {
 				plexiConsulta.setPdf(webhookObject.getString("pdf"));
-				salvarPdfRetorno(plexiConsulta, plexiConsultaDao);
+				plexiService.salvarPdfRetorno(plexiConsulta, plexiConsultaDao);
 			}
 			plexiConsulta.setStatus("Consulta Concluída");
 			plexiConsultaDao.merge(plexiConsulta);
@@ -70,17 +71,5 @@ public class PlexiWebhook {
 		}
 	}
 	
-	public void salvarPdfRetorno(PlexiConsulta plexiConsulta, PlexiConsultaDao plexiConsultaDao) {
-		String numeroContrato = plexiConsultaDao.getNumeroContratoAnalise(plexiConsulta);
-		if(CommonsUtil.semValor(numeroContrato)) {
-			return;
-		}
-		String nomeAnalise = plexiConsultaDao.getNomeAnalise(plexiConsulta);
-		FileUploaded pdfRetorno = new FileUploaded();
-		pdfRetorno.setFileBase64(plexiConsulta.getPdf());
-		pdfRetorno.setName(plexiConsulta.getNomeCompleto() + " - " + nomeAnalise + ".pdf");
-		FileService fileService = new FileService();
-		User user = new UserDao().findById((long) -1);
-		fileService.salvarDocumentoBase64(pdfRetorno, numeroContrato, "interno", user);
-	}
+	
 }

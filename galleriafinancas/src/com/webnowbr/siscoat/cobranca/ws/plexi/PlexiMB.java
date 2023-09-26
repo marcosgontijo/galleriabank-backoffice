@@ -644,6 +644,26 @@ public class PlexiMB {
 		}
 		return true;
 	}
+	
+	public String atualizaRetorno(List<DocumentoAnalise> listDocAnalise) {
+		PlexiService plexiService = new PlexiService();
+		for(DocumentoAnalise docAnalise : listDocAnalise) {
+			if(CommonsUtil.semValor(docAnalise.getPlexiConsultas()) 
+				|| docAnalise.getPlexiConsultas().size() <= 0) 
+				continue;
+			
+			for(PlexiConsulta plexi : docAnalise.getPlexiConsultas()) {
+				if(CommonsUtil.semValor(plexi.getRequestId()))
+					continue;
+				if(!CommonsUtil.semValor(plexi.getWebhookRetorno()))
+					continue;
+				
+				plexiService.atualizaRetornoPlexi(plexi.getRequestId());
+			}
+		}
+		
+		return "/Atendimento/Cobranca/Plexi.xhtml";
+	}	
 
 	public UploadedFile getUploadedFile() {
 		return uploadedFile;
