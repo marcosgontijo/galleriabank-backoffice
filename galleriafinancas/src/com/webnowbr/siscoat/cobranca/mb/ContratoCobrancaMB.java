@@ -218,6 +218,7 @@ import com.webnowbr.siscoat.simulador.SimulacaoIPCADadosV2;
 import com.webnowbr.siscoat.simulador.SimulacaoVO;
 import com.webnowbr.siscoat.simulador.SimuladorMB;
 
+import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
 import br.com.galleriabank.netrin.cliente.model.PPE.PpeResponse;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -4915,13 +4916,11 @@ public class ContratoCobrancaMB {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	public void baixarDocumentoSerasa(DocumentoAnalise documentoAnalise) {
-
 		SerasaService serasa = new SerasaService();
-		DocumentoAnalise docAnalise = new DocumentoAnalise();
+		//DocumentoAnalise docAnalise = new DocumentoAnalise();
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		ExternalContext externalContext = facesContext.getExternalContext();
 		HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();

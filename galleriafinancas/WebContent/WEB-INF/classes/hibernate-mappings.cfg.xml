@@ -56,6 +56,9 @@
        	
        	<mapping resource="com/webnowbr/siscoat/cobranca/ws/plexi/PlexiConsulta.hbm.xml"/>
        	<mapping resource="com/webnowbr/siscoat/cobranca/ws/plexi/PlexiDocumentos.hbm.xml"/>
+       	
+       	<mapping resource="com/webnowbr/siscoat/cobranca/ws/netrin/NetrinConsulta.hbm.xml"/>
+       	<mapping resource="com/webnowbr/siscoat/cobranca/ws/netrin/NetrinDocumentos.hbm.xml"/>
 	
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/DocumentosDocket.hbm.xml"/>    
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/DocumentosPagadorDocket.hbm.xml"/> 

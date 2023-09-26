@@ -14,10 +14,17 @@ import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorConsulta;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
+import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
+import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
+import com.webnowbr.siscoat.infra.db.dao.UserDao;
+import com.webnowbr.siscoat.infra.db.model.User;
+
+import br.com.galleriabank.bigdata.cliente.model.processos.ProcessoResult;
+import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
 
 public class BigDataService {
 
@@ -71,16 +78,26 @@ public class BigDataService {
 				return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Big Data CriarConsultaProcesso: Falha na consulta",
 						"");
 			} else {
-
+				
+				try {
+					ProcessoResult retornoProcessoB  = GsonUtil.fromJson(retornoConsulta, ProcessoResult.class);
+					documentoAnalise.adicionaEstados(CommonsUtil.stringToList(retornoProcessoB.getEstados()));
+				} catch (Exception e){
+					e.printStackTrace();
+				}
+				
 				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 				documentoAnalise.setRetornoProcesso(retornoConsulta);
 				documentoAnalise.setTipoProcesso("B");
+				
 				documentoAnaliseDao.merge(documentoAnalise);
 
 				PagadorRecebedorService PagadorRecebedorService = new PagadorRecebedorService();
 				PagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
 						DocumentosAnaliseEnum.PROCESSOB, retornoConsulta);
-
+				
+				String base64 = baixarDocumentoProcesso(documentoAnalise);
+				salvarPdfRetorno(documentoAnalise, base64, "Processo", "interno");
 				return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
 
 			}
@@ -235,5 +252,17 @@ public class BigDataService {
 		return null;
 	}
 
-
+	public void salvarPdfRetorno(DocumentoAnalise documentoAnalise, String base64, String nomeConsulta, String diretorio) {
+		String nomeAnalise = documentoAnalise.getPagador().getNome();
+		String numeroContrato = documentoAnalise.getContratoCobranca().getNumeroContrato();
+		if(CommonsUtil.semValor(numeroContrato)) {
+			return;
+		}
+		FileUploaded pdfRetorno = new FileUploaded();
+		pdfRetorno.setFileBase64(base64);
+		pdfRetorno.setName(nomeConsulta + " - " + nomeAnalise + ".pdf");
+		FileService fileService = new FileService();
+		User user = new UserDao().findById((long) -1);
+		fileService.salvarDocumentoBase64(pdfRetorno, numeroContrato, diretorio, user);
+	}
 }

@@ -3,16 +3,16 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping schema="cobranca">
-	<class name="com.webnowbr.siscoat.cobranca.ws.plexi.PlexiDocumentos"
-		table="PlexiDocumentos">
+	<class name="com.webnowbr.siscoat.cobranca.ws.netrin.NetrinDocumentos"
+		table="NetrinDocumentos">
 		
 		<id name="id" type="long">
 			<column name="ID" />
 			<generator class="increment" />
 		</id>
 
-		<property name="url" type="java.lang.String">
-			<column name="url" />
+		<property name="urlService" type="java.lang.String">
+			<column name="urlService" />
 		</property>
 
 		<property name="nome" type="java.lang.String">

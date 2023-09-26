@@ -104,6 +104,7 @@ public final class User implements Serializable {
     private boolean profilePajuNeves; 
     private boolean profilePajuLuvison;    
     private boolean profileCompliance;    
+    private boolean profileController;
     
 	private boolean cadastraResponsavel;
     private boolean consultaIndividual;
@@ -738,6 +739,13 @@ public final class User implements Serializable {
 
 	public void setConsultaIndividual(boolean consultaIndividual) {
 		this.consultaIndividual = consultaIndividual;
+	}
+
+	public boolean isProfileController() {
+		return profileController;
+	}
+
+	public void setProfileController(boolean profileController) {
+		this.profileController = profileController;
 	}	
-	
 }
