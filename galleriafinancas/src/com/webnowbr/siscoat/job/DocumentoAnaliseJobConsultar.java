@@ -10,6 +10,7 @@ import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.service.BigDataService;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.cobranca.service.DocumentoAnaliseService;
+import com.webnowbr.siscoat.cobranca.service.EngineService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.cobranca.service.PagadorRecebedorService;
 import com.webnowbr.siscoat.cobranca.service.ScrService;
@@ -34,7 +35,7 @@ public class DocumentoAnaliseJobConsultar {
 	@SuppressWarnings("deprecation")
 	public void executarConsultasAnaliseDocumento() {
 
-		DocketService docketService = new DocketService();
+		EngineService engineService = new EngineService();
 
 		SerasaService serasaService = new SerasaService();
 
@@ -60,7 +61,7 @@ public class DocumentoAnaliseJobConsultar {
 					if (documentoAnalise.isPodeChamarRea()) {
 						documentoAnalise.addObservacao("Processando REA");
 						//PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
-						docketService.uploadREA(documentoAnalise, user);
+						engineService.uploadREA(documentoAnalise, user);
 						step ++;
 					}
 					continue;
@@ -81,22 +82,22 @@ public class DocumentoAnaliseJobConsultar {
 					
 					if (documentoAnalise.isPodeChamarEngine() && !documentoAnalise.isEngineProcessado()) {
 						
-						DataEngine engine = docketService.engineInserirPessoa(documentoAnalise.getPagador(),
+						DataEngine engine = engineService.engineInserirPessoa(documentoAnalise.getPagador(),
 								objetoContratoCobranca);
 						step ++;
 						stepDescricao= "";
-						docketService.engineCriarConsulta(documentoAnalise, engine, user);
+						engineService.engineCriarConsulta(documentoAnalise, engine, user);
 						
 						
 						if(!CommonsUtil.semValor(documentoAnalise.getRetornoEngine())) {
 							if (documentoAnalise.getRetornoEngine().startsWith("consulta efetuada anteriormente Id: ") ) {
-								docketService.salvarDetalheDocumentoEngine(documentoAnalise);
+								engineService.salvarDetalheDocumentoEngine(documentoAnalise);
 								
 								engineRetorno = GsonUtil.fromJson(documentoAnalise.getRetornoEngine(), EngineRetorno.class);
 								if (CommonsUtil.semValor(engineRetorno.getIdCallManager())) {
 									engineRetorno.setIdCallManager(engineRetorno.getIdCallManager());
 								}
-								docketService.processaWebHookEngine( documentoAnaliseService, engineRetorno,
+								engineService.processaWebHookEngine( documentoAnaliseService, engineRetorno,
 										pagadorRecebedorService, documentoAnaliseDao, documentoAnalise);
 							}
 						}
@@ -106,13 +107,13 @@ public class DocumentoAnaliseJobConsultar {
 					} else if (documentoAnalise.isEngineProcessado()) {
 						if(!CommonsUtil.semValor(documentoAnalise.getRetornoEngine())) {
 							if (documentoAnalise.getRetornoEngine().startsWith("consulta efetuada anteriormente Id: ") ) {
-								docketService.salvarDetalheDocumentoEngine(documentoAnalise);
+								engineService.salvarDetalheDocumentoEngine(documentoAnalise);
 								
 								engineRetorno = GsonUtil.fromJson(documentoAnalise.getRetornoEngine(), EngineRetorno.class);
 								if (CommonsUtil.semValor(engineRetorno.getIdCallManager())) {
 									engineRetorno.setIdCallManager(engineRetorno.getIdCallManager());
 								}
-								docketService.processaWebHookEngine( documentoAnaliseService, engineRetorno,
+								engineService.processaWebHookEngine( documentoAnaliseService, engineRetorno,
 										pagadorRecebedorService, documentoAnaliseDao, documentoAnalise);
 							}
 						}

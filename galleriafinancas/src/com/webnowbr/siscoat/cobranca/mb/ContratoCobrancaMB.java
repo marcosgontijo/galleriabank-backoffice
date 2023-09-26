@@ -184,8 +184,9 @@ import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.cobranca.db.op.SeguradoDAO;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
 import com.webnowbr.siscoat.cobranca.service.BigDataService;
-import com.webnowbr.siscoat.cobranca.db.op.StarkBankBaixaDAO;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
+import com.webnowbr.siscoat.cobranca.db.op.StarkBankBaixaDAO;
+import com.webnowbr.siscoat.cobranca.service.EngineService;
 import com.webnowbr.siscoat.cobranca.service.FileService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.cobranca.service.PagadorRecebedorService;
@@ -299,7 +300,7 @@ public class ContratoCobrancaMB {
 	/************************************************************
 	 * Objetos para docket
 	 ************************************************************/
-	DocketService docketService;
+	EngineService engineService;
 
 	/************************************************************
 	 * Objetos utilizados pelas LoVs
@@ -868,7 +869,7 @@ public class ContratoCobrancaMB {
 
 		objetoContratoCobranca = new ContratoCobranca();
 
-		docketService = new DocketService();
+		engineService = new EngineService();
 
 		lazyModel = new LazyDataModel<ContratoCobranca>() {
 
@@ -4886,10 +4887,10 @@ public class ContratoCobrancaMB {
 		BufferedInputStream input = null;
 		BufferedOutputStream output = null;
 		try {
-			if (docketService == null)
-				docketService = new DocketService();
-			docketService.baixarDocumentoEngine(documentoAnalise.getEngine());
-			docketService.salvarDetalheDocumentoEngine(documentoAnalise);
+			if (engineService == null)
+				engineService = new EngineService();
+			engineService.baixarDocumentoEngine(documentoAnalise.getEngine());
+			engineService.salvarDetalheDocumentoEngine(documentoAnalise);
 
 			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoAnalise.getEngine().getPdfBase64());
 			String mineFile = "application/pdf";
