@@ -37,7 +37,10 @@
 		
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/DocketCidades.hbm.xml"/>
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/DocketEstados.hbm.xml"/>
+		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/DocketConsulta.hbm.xml"/>
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/Docket.hbm.xml"/>
+		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/DocumentosDocket.hbm.xml"/>    
+		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/DocumentosPagadorDocket.hbm.xml"/> 
 		
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/UniProofDocuments.hbm.xml"/>
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/UniProof.hbm.xml"/>    
@@ -60,8 +63,6 @@
        	<mapping resource="com/webnowbr/siscoat/cobranca/ws/netrin/NetrinConsulta.hbm.xml"/>
        	<mapping resource="com/webnowbr/siscoat/cobranca/ws/netrin/NetrinDocumentos.hbm.xml"/>
 	
-		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/DocumentosDocket.hbm.xml"/>    
-		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/DocumentosPagadorDocket.hbm.xml"/> 
         <mapping resource="com/webnowbr/siscoat/cobranca/db/model/Segurado.hbm.xml"/>    
        	<mapping resource="com/webnowbr/siscoat/cobranca/db/model/PagadorRecebedorSocio.hbm.xml"/>
        	<mapping resource="com/webnowbr/siscoat/cobranca/db/model/PagadorRecebedorAdicionais.hbm.xml"/>

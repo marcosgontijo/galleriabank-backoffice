@@ -377,6 +377,12 @@ public class PlexiMB {
 					FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Sexo", ""));
 				}
+				
+				if(CommonsUtil.semValor(plexiConsulta.getNomeMae())){
+					retorno = false;
+					FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Nome Mãe", ""));
+				}
 			}
 		}
 		

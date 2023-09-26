@@ -2,7 +2,6 @@ package com.webnowbr.siscoat.cobranca.service;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -13,6 +12,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
@@ -29,6 +30,7 @@ import org.json.JSONObject;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.DataEngine;
 import com.webnowbr.siscoat.cobranca.db.model.Docket;
+import com.webnowbr.siscoat.cobranca.db.model.DocketConsulta;
 import com.webnowbr.siscoat.cobranca.db.model.DocketRetorno;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentosDocket;
@@ -36,11 +38,13 @@ import com.webnowbr.siscoat.cobranca.db.model.DocumentosPagadorDocket;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.DataEngineDao;
+import com.webnowbr.siscoat.cobranca.db.op.DocketConsultaDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocketDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.model.docket.DocketRetornoConsulta;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
+import com.webnowbr.siscoat.cobranca.ws.endpoint.DocketWebhookRetornoDocumento;
 import com.webnowbr.siscoat.cobranca.ws.endpoint.ReaWebhookRetorno;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
@@ -1235,6 +1239,182 @@ public class DocketService {
 		}
 		return null;
 	}
+	
+	
+	private JSONObject getBodyJsonPedido(List<DocumentoAnalise> listaDocumentoAnalise, String etapa) { // JSON
+		// p/
+		// pedido
+		JSONObject jsonDocketBodyPedido = new JSONObject();
+		jsonDocketBodyPedido.put("pedido", getJsonPedido(listaDocumentoAnalise, etapa));
+		return jsonDocketBodyPedido;
+	}
+
+	private JSONObject getJsonPedido(List<DocumentoAnalise> listaDocumentoAnalise, String etapa) { // JSON
+		// p/
+		// pedido
+		JSONArray jsonDocumentosArray = new JSONArray();
+		for (DocumentoAnalise docAnalise : listaDocumentoAnalise) {
+			PagadorRecebedor pagador = docAnalise.getPagador();
+			
+			for (DocketConsulta consultas : docAnalise.getDocketConsultas()) {
+				if(CommonsUtil.semValor(consultas.getIdDocket())) {
+					jsonDocumentosArray.put(getJsonDocumentos(pagador, consultas));
+				}
+			}
+		}
+		
+		ContratoCobranca contrato = listaDocumentoAnalise.get(0).getContratoCobranca();
+	
+		JSONObject jsonDocketPedido = new JSONObject();
+		String nomePedido = "";
+		if (CommonsUtil.semValor(contrato.getId())) {
+			if (CommonsUtil.semValor(contrato.getPagador())) {
+				nomePedido = "00000 - " + contrato.getPagador().getNome() + " - " + etapa;
+			} else {
+				nomePedido = "00000 - nome" + " - " + etapa;
+			}
+		} else {
+			nomePedido = contrato.getNumeroContrato() + " - " + contrato.getPagador().getNome().trim() + " - " + etapa;
+		}
+	// jsonDocketPedido = new JSONObject();
+		jsonDocketPedido.put("lead", nomePedido);
+		jsonDocketPedido.put("documentos", jsonDocumentosArray);
+		String webHookJWT = JwtUtil.generateJWTWebhook(true);
+		while (webHookJWT.length() > (256 - SiscoatConstants.URL_SISCOAT_DOCKET_WEBHOOK.length())) {
+			webHookJWT = JwtUtil.generateJWTWebhook(false);
+		}
+		String webhook = SiscoatConstants.URL_SISCOAT_DOCKET_WEBHOOK + webHookJWT;
+		jsonDocketPedido.put("urlWebHookEntregaDocumento", webhook);
+	
+		return jsonDocketPedido;
+	}
+
+	private JSONObject getJsonDocumentos(PagadorRecebedor pagador, DocketConsulta consulta) { // JSON
+	// p/
+	// pedido
+	// PagadorRecebedor pagador = new PagadorRecebedor();
+		JSONObject jsonDocketDocumentos = new JSONObject();
+		DocumentosDocket documento = consulta.getDocketDocumentos();
+		String estadoId = consulta.getEstadoId();
+		String cidadeId = consulta.getCidadeId();
+	// jsonDocketDocumentos = new JSONObject();
+		jsonDocketDocumentos.put("documentKitId", documento.getDocumentKitId());
+		jsonDocketDocumentos.put("produtoId", documento.getProdutoId());
+		jsonDocketDocumentos.put("kitId", kitIdGalleria);
+		jsonDocketDocumentos.put("kitNome", kitNomeGalleria);
+		jsonDocketDocumentos.put("documentoNome", documento.getDocumentoNome());
+		if (!CommonsUtil.semValor(pagador.getCpf())) {
+			jsonDocketDocumentos.put("titularTipo", "PESSOA_FISICA");
+		} else {
+			jsonDocketDocumentos.put("titularTipo", "PESSOA_JURIDICA");
+		}
+		jsonDocketDocumentos.put("campos", getJsonCampos(pagador, estadoId, cidadeId));
+	
+		return jsonDocketDocumentos;
+	}
+
+	@SuppressWarnings("unused")
+	public FacesMessage criaPedidoDocketDocumentoAnalise(List<DocumentoAnalise> listaDocumentoAnalise, User user, String etapa) {
+
+		// POST para gerar pedido
+		FacesContext context = FacesContext.getCurrentInstance();
+		DocketDao docketDao = new DocketDao();
+		
+		try {
+			loginDocket(user);
+			int HTTP_COD_SUCESSO = 200;
+
+			URL myURL;
+			if (SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
+				myURL = new URL(urlHomologacao + "/api/v2/" + organizacao_url + "/shopping-documentos/alpha/pedidos");
+			} else {
+				myURL = new URL(urlProducao + "/api/v2/" + organizacao_url + "/shopping-documentos/alpha/pedidos");
+			}
+
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+
+			myURLConnection.setRequestMethod("POST");
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			myURLConnection.setRequestProperty("Authorization", "Bearer " + this.tokenLogin);
+			myURLConnection.setDoOutput(true);
+
+//			JSONObject myResponse = null;
+			JSONObject jsonWhatsApp = getBodyJsonPedido(listaDocumentoAnalise, etapa);
+
+			try (OutputStream os = myURLConnection.getOutputStream()) {
+				byte[] input = jsonWhatsApp.toString().getBytes("utf-8");
+				os.write(input, 0, input.length);
+			}
+
+			/*
+			 * try(BufferedReader br = new BufferedReader( new
+			 * InputStreamReader(myURLConnection.getInputStream(), "utf-8"))) {
+			 * StringBuilder response = new StringBuilder(); String responseLine = null;
+			 * while ((responseLine = br.readLine()) != null) {
+			 * response.append(responseLine.trim()); }
+			 * System.out.println(response.toString()); }
+			 */
+
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Docket: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", ""));
+				System.out.println(jsonWhatsApp.toString());
+			} else {
+				ContratoCobranca objetoContratoCobranca = listaDocumentoAnalise.get(0).getContratoCobranca();
+				DocketRetorno myResponse = docketJSONRetorno(myURLConnection.getInputStream());
+				if(!CommonsUtil.semValor(objetoContratoCobranca.getId())) {
+					ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+					cDao.merge(objetoContratoCobranca);					
+				} else {
+					objetoContratoCobranca = null;
+				}
+				List<PagadorRecebedor> listPagador = new ArrayList<PagadorRecebedor>();
+				for (DocumentoAnalise documentoAnalise : listaDocumentoAnalise) {
+					listPagador.add(documentoAnalise.getPagador());
+				}
+				Docket docket = new Docket(objetoContratoCobranca, listPagador, "", "", "", "",
+						user.getName(), gerarDataHoje(), myResponse.getPedido().getId(), myResponse.getPedido().getIdExibicao());
+				docketDao.create(docket);
+				
+				DocketConsultaDao consultaDao = new DocketConsultaDao();
+				DocumentoAnaliseDao analiseDao = new DocumentoAnaliseDao();
+				
+				for (DocumentoAnalise documentoAnalise : listaDocumentoAnalise) {
+					for(DocketConsulta docketConsulta : documentoAnalise.getDocketConsultas()) {
+						for (DocketWebhookRetornoDocumento retorno : myResponse.getPedido().documentos) {
+							if(CommonsUtil.mesmoValor(retorno.documentKitId, docketConsulta.getDocketDocumentos().getDocumentKitId())
+								&&CommonsUtil.mesmoValor(retorno.campos.estado, docketConsulta.getEstadoId())
+								&& CommonsUtil.mesmoValor(retorno.campos.cidade, docketConsulta.getCidadeId())) {
+								if((CommonsUtil.mesmoValor(retorno.campos.cpf, CommonsUtil.somenteNumeros(documentoAnalise.getCnpjcpf())))
+									|| CommonsUtil.mesmoValor(retorno.campos.cnpj, CommonsUtil.somenteNumeros(documentoAnalise.getCnpjcpf()))){
+									docketConsulta.setIdDocket(retorno.id);
+									consultaDao.create(docketConsulta);
+								}
+							}
+						}
+						docketConsulta.setStatus("Ag. Retorno");
+						docketConsulta.setDataConsulta(gerarDataHoje());
+						docketConsulta.setUsuario(user);
+						consultaDao.merge(docketConsulta);
+					}
+					analiseDao.merge(documentoAnalise);
+				}
+				
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Pedido feito com sucesso", ""));
+			}
+
+			myURLConnection.disconnect();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	public DocketRetornoConsulta verificarCertidoesContrato(ContratoCobranca contrato, String idCallManager) {
 		
@@ -1351,4 +1531,19 @@ public class DocketService {
 		User user = new UserDao().findById((long) -1);
 		fileService.salvarDocumentoBase64(pdfRetorno, numeroContrato, diretorio, user);
 	}
+
+	public String getPdfBase64(String documento) {
+		DocketWebhookRetornoDocumento documentoPdf = GsonUtil.fromJson(documento, DocketWebhookRetornoDocumento.class);
+        try { 
+        	String urlComprovante = documentoPdf.getArquivos().get(0).getLinks().get(0).getHref();
+            java.net.URL url = new java.net.URL(urlComprovante);
+            InputStream is = url.openStream();
+            byte[] bytes = org.apache.commons.io.IOUtils.toByteArray(is);
+            byte[] encoded = Base64.getEncoder().encode(bytes);
+            return new String(encoded);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

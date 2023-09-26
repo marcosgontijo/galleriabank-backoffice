@@ -85,6 +85,7 @@ public class DocumentoAnalise implements Serializable {
 	
 	private List<PlexiConsulta> plexiConsultas = new ArrayList<PlexiConsulta>();
 	private Set<NetrinConsulta> netrinConsultas = new HashSet<>();
+	private Set<DocketConsulta> docketConsultas = new HashSet<>();
 	private List<String> estadosConsulta = new ArrayList<String>();
 	private String estadosConsultaStr;
 	
@@ -1021,4 +1022,12 @@ public class DocumentoAnalise implements Serializable {
     	dialogHeader = dialogHeader();
         return dialogHeader;
     }
+
+	public Set<DocketConsulta> getDocketConsultas() {
+		return docketConsultas;
+	}
+
+	public void setDocketConsultas(Set<DocketConsulta> docketConsultas) {
+		this.docketConsultas = docketConsultas;
+	}
 }

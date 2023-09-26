@@ -21,6 +21,11 @@ public class DocumentosDocket implements Serializable {
 	private String etapa;
 	private String obs;
 	
+	@Override
+	public String toString() {
+		return "DocumentosDocket [id=" + id + ", documentoNome=" + documentoNome + "]";
+	}
+	
 	public long getId() {
 		return id;
 	}
