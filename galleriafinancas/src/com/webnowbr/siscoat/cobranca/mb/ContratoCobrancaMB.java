@@ -4900,7 +4900,7 @@ public class ContratoCobrancaMB {
 			response.setContentLength(pdfBytes.length);
 
 			response.setHeader("Content-disposition", "inline; FileName=" + objetoContratoCobranca.getNumeroContrato()
-					+ " Engine " + documentoAnalise.getPagador().getNome() + ".pdf");
+					+ " Engine " + documentoAnalise.getPagador().getNome().replace(",", "_")  + ".pdf");
 			output = new BufferedOutputStream(response.getOutputStream(), 10240);
 			byte[] buffer = new byte[pdfBytes.length];
 			int length;
@@ -4945,7 +4945,7 @@ public class ContratoCobrancaMB {
 
 				response.setHeader("Content-disposition",
 						"inline; FileName=" + this.objetoContratoCobranca.getNumeroContrato() + " Serasa "
-								+ documentoAnalise.getPagador().getNome() + ".pdf");
+								+ documentoAnalise.getPagador().getNome().replace(",", "_")  + ".pdf");
 				output = new BufferedOutputStream(response.getOutputStream(), 10240);
 				byte[] buffer = new byte[pdfBytes.length];
 				int length;
@@ -4988,7 +4988,7 @@ public class ContratoCobrancaMB {
 
 				response.setHeader("Content-disposition",
 						"inline; FileName=" + objetoContratoCobranca.getNumeroContrato() + " PPE "
-								+ documentoAnalise.getPagador().getNome() + ".pdf");
+								+ documentoAnalise.getPagador().getNome().replace(",", "_")  + ".pdf");
 				output = new BufferedOutputStream(response.getOutputStream(), 10240);
 				byte[] buffer = new byte[pdfBytes.length];
 				int length;
@@ -5031,7 +5031,7 @@ public class ContratoCobrancaMB {
 
 				response.setHeader("Content-disposition",
 						"inline; FileName=" + objetoContratoCobranca.getNumeroContrato() + " Dossie "
-								+ documentoAnalise.getPagador().getNome() + ".pdf");
+								+ documentoAnalise.getPagador().getNome().replace(",", "_")  + ".pdf");
 				output = new BufferedOutputStream(response.getOutputStream(), 10240);
 				byte[] buffer = new byte[pdfBytes.length];
 				int length;
@@ -5075,7 +5075,7 @@ public class ContratoCobrancaMB {
 
 				response.setHeader("Content-disposition",
 						"inline; FileName=" + objetoContratoCobranca.getNumeroContrato() + " Cenprot "
-								+ documentoAnalise.getPagador().getNome() + ".pdf");
+								+ documentoAnalise.getPagador().getNome().replace(",", "_") +  ".pdf");
 				output = new BufferedOutputStream(response.getOutputStream(), 10240);
 				byte[] buffer = new byte[pdfBytes.length];
 				int length;
@@ -5120,7 +5120,7 @@ public class ContratoCobrancaMB {
 			response.setContentLength(pdfBytes.length);
 
 			response.setHeader("Content-disposition", "inline; FileName=" + objetoContratoCobranca.getNumeroContrato()
-					+ " Processos " + documentoAnalise.getPagador().getNome() + ".pdf");
+					+ " Processos " + documentoAnalise.getPagador().getNome().replace(",", "_")  + ".pdf");
 			output = new BufferedOutputStream(response.getOutputStream(), 10240);
 			byte[] buffer = new byte[pdfBytes.length];
 			int length;
@@ -5172,7 +5172,7 @@ public class ContratoCobrancaMB {
 
 				response.setHeader("Content-disposition",
 						"inline; FileName=" + objetoContratoCobranca.getNumeroContrato() + " SCR "
-								+ documentoAnalise.getPagador().getNome() + ".pdf");
+								+ documentoAnalise.getPagador().getNome().replace(",", "_")  + ".pdf");
 				output = new BufferedOutputStream(response.getOutputStream(), 10240);
 				byte[] buffer = new byte[contrato.length];
 				int length;
@@ -29672,14 +29672,14 @@ public class ContratoCobrancaMB {
 				}
 
 				if (CommonsUtil.semValor(documentoAnalise.getRetornoCNDFederal())) {
-					documentoAnalise.addObservacao("Processando CND Estadual");
+					documentoAnalise.addObservacao("Processando CND Federal");
 					netrinService.requestCNDFederal(documentoAnalise);
 					pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
 							DocumentosAnaliseEnum.CNDFEDERAL, documentoAnalise.getRetornoCNDFederal());
 				}
 
 				if (CommonsUtil.semValor(documentoAnalise.getRetornoCNDTrabalhistaTST())) {
-					documentoAnalise.addObservacao("Processando CND Estadual");
+					documentoAnalise.addObservacao("Processando CNDT TST");
 					netrinService.requestCNDTrabalhistaTST(documentoAnalise);
 					pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
 							DocumentosAnaliseEnum.CNDTTST, documentoAnalise.getRetornoCNDTrabalhistaTST());
@@ -31824,6 +31824,7 @@ public class ContratoCobrancaMB {
 		this.tituloPagadorRecebedorDialog = "";
 		this.tipoPesquisaPagadorRecebedor = "";
 		this.updatePagadorRecebedor = "";
+		documentoAnaliseAdicionar.adiconarEstadosPeloCadastro();
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 		documentoAnaliseDao.merge(documentoAnaliseAdicionar);
 		listaArquivosAnaliseDocumentos();
