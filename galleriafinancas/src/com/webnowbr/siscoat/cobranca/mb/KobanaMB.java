@@ -365,8 +365,11 @@ public class KobanaMB {
 									if (objetoDataBoleto.has("idParcela")) {
 										ContratoCobrancaDetalhes parcela = new ContratoCobrancaDetalhes();
 										parcela = parcelaDao.findById(Long.valueOf(objetoDataBoleto.getString("idParcela")));
-										boleto.setParcela(parcela);
-										boleto.setVlrParcela(parcela.getVlrParcela());
+										
+										if (parcela != null) {
+											boleto.setParcela(parcela);
+											boleto.setVlrParcela(parcela.getVlrParcela());
+										}
 									}
 								} else {
 									// se gerou para mais de parcela
@@ -384,24 +387,36 @@ public class KobanaMB {
 											
 										    if (nomeObjeto.contains("idParcela")) {
 										    	String valorObjeto = objetoDataBoleto.get(nomeObjeto).toString();
-										    	parcelasBoleto.add(cDao.findById(Long.valueOf(valorObjeto)));
+										    	ContratoCobrancaDetalhes objeto = null;
+										    	objeto = cDao.findById(Long.valueOf(valorObjeto));
+										    	
+										    	if (objeto != null) {
+										    		if (objetoDataBoleto.has("valorParcelaKobana/" + objeto.getId())) {
+										    			objeto.setVlrBoletoKobana(objetoDataBoleto.getBigDecimal("valorParcelaKobana/" + objeto.getId()));
+										    		} else {
+										    			objeto.setVlrBoletoKobana(objetoDataBoleto.getBigDecimal("valorParcelaOriginal/" + objeto.getId()));
+										    		}
+										    		
+										    		parcelasBoleto.add(objeto);
+										    	}
 										    }
 										}
+										
+										
+										// verifica se as parcelas est
 				
 										boleto.setMultiParcelas(parcelasBoleto);
-										
-										for (ContratoCobrancaDetalhes parcelas : boleto.getMultiParcelas()) {
-											if (parcelas.getVlrParcela() != null) {
-												// TODO VER COMO CAPTURAR O VALOR DAS PARCELAS DOS BOLETOS
-												//boleto.setVlrParcela(boleto.getVlrParcela().add(parcelas.getVlrParcela()));
-											}
-										}
-									}
+									} 
 								}
 							} else {
 								if (objetoDataBoleto.has("idParcela")) {
 									ContratoCobrancaDetalhes parcela = new ContratoCobrancaDetalhes();
 									parcela = parcelaDao.findById(Long.valueOf(objetoDataBoleto.getString("idParcela")));
+									
+									if (parcela.isParcelaPaga()) {
+										boleto.setParcelasBaixadas(true);
+									}
+									
 									boleto.setParcela(parcela);
 									boleto.setVlrParcela(parcela.getVlrParcela());
 								}
@@ -413,7 +428,9 @@ public class KobanaMB {
 				boleto.setCustomerPersonName(objetoBoleto.getString("customer_person_name"));
 				boleto.setCustomerPersonCNPJCPF(objetoBoleto.getString("customer_cnpj_cpf"));
 				boleto.setCustomerEmail(objetoBoleto.getString("customer_email"));
-				boleto.setPaidAmount(BigDecimal.valueOf(objetoBoleto.getDouble("paid_amount")));
+				if (!objetoBoleto.isNull("paid_amount")) { 
+					boleto.setPaidAmount(BigDecimal.valueOf(objetoBoleto.getDouble("paid_amount")));
+				}
 				boleto.setUrlBoleto(objetoBoleto.getString("url"));
 				boleto.setBeneficiaryName(objetoBoleto.getString("beneficiary_name"));
 								
@@ -434,6 +451,9 @@ public class KobanaMB {
 				}
 				*/
 				
+				// Verifica status das parcelas contidas no boleto
+				verificaSeParcelasBaixadasPeloKobana(boleto);
+				
 				// Filtra Empresa
 				if (this.filtroEmpresa.equals("")) {
 					this.listBoletosKobana.add(boleto);	
@@ -448,6 +468,31 @@ public class KobanaMB {
 				}				
 			}
 		}
+	}
+	
+	public boolean verificaSeParcelasBaixadasPeloKobana(BoletoKobana boletosKobana) {
+		boolean retorno = false;
+		
+		// Verifica status multiparcela
+		if (boletosKobana.getMultiParcelas() != null && boletosKobana.getMultiParcelas().size() > 0) {
+			boletosKobana.setParcelasBaixadas(true);
+			
+			for (ContratoCobrancaDetalhes parcelas : boletosKobana.getMultiParcelas()) {
+				if (!parcelas.isParcelaPaga()) {
+					boletosKobana.setParcelasBaixadas(false);
+				}
+			}
+		} else {
+			if (boletosKobana.getParcela() != null) {
+				if (boletosKobana.getParcela().isParcelaPaga()) {
+					boletosKobana.setParcelasBaixadas(true);
+				} else {
+					boletosKobana.setParcelasBaixadas(false);
+				}
+			}
+		}
+		
+		return retorno;
 	}
 	
 	public Date processStringToDate(String dateStr) {
@@ -786,6 +831,14 @@ public class KobanaMB {
 			jsonBoleto.put("bank_billet_account_id", 9251);
 		}
 
+		if (contrato.getEmpresa().equals("CRI 3")) {
+			jsonBoleto.put("bank_billet_account_id", 9657);
+		}
+		
+		if (contrato.getEmpresa().equals("CRI 4")) {
+			jsonBoleto.put("bank_billet_account_id", 9766);
+		}
+
 	    /*
 	    Número do Contrato
 	     */
@@ -849,7 +902,11 @@ public class KobanaMB {
 	    	jsonBoleto.put("customer_address", cliente.getEndereco());
 	    }
 	
-		jsonBoleto.put("customer_address_complement", cliente.getComplemento());
+	    if (cliente.getComplemento() != null && cliente.getComplemento().length() > 60) {
+	    	jsonBoleto.put("customer_address_complement", cliente.getComplemento().substring(0, 59));
+	    } else {
+	    	jsonBoleto.put("customer_address_complement", cliente.getComplemento());
+	    }
 
 		jsonBoleto.put("customer_address_number", cliente.getNumero());
 		
@@ -940,7 +997,7 @@ public class KobanaMB {
 	    }
 		
 		jsonBoleto.put("description", "Crédito com Imóvel em Garantia - Contrato: " + contrato.getNumeroContrato() + " / Parcela(s): " + parcelas);
-		jsonBoleto.put("instructions", "Não receber após 30 dias do vencimento");
+		jsonBoleto.put("instructions", "");
 		
 		JSONObject jsonCustomData = new JSONObject();
 		
@@ -957,6 +1014,8 @@ public class KobanaMB {
 				
 				for (int i = 0; i < parcelasSelecionadas.size(); i++) {
 					jsonCustomData.put("idParcela/" + i, String.valueOf(parcelasSelecionadas.get(i).getId()));
+					jsonCustomData.put("valorParcelaOriginal/" + String.valueOf(parcelasSelecionadas.get(i).getId()), String.valueOf(parcelasSelecionadas.get(i).getVlrParcela()));
+					jsonCustomData.put("valorParcelaKobana/" + String.valueOf(parcelasSelecionadas.get(i).getId()), String.valueOf(parcelasSelecionadas.get(i).getVlrBoletoKobana()));
 		    	}
 			}
 		}
@@ -998,7 +1057,8 @@ public class KobanaMB {
 		}
 		
 		if (!contrato.getEmpresa().equals("GALLERIA FINANÇAS SECURITIZADORA S.A.") && !contrato.getEmpresa().equals("FIDC GALLERIA")
-				&& !contrato.getEmpresa().equals("CRI 1") && !contrato.getEmpresa().equals("CRI 2")) {
+				&& !contrato.getEmpresa().equals("CRI 1") && !contrato.getEmpresa().equals("CRI 2") && !contrato.getEmpresa().equals("CRI 3")
+				 && !contrato.getEmpresa().equals("CRI 4")) {
 			retorno = true;
 			
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
@@ -1170,6 +1230,13 @@ public class KobanaMB {
 			jsonBoleto.put("bank_billet_account_id", 9251);
 		}
 
+		if (contrato.getEmpresa().equals("CRI 3")) {
+			jsonBoleto.put("bank_billet_account_id", 9657);
+		}
+		
+		if (contrato.getEmpresa().equals("CRI 4")) {
+			jsonBoleto.put("bank_billet_account_id", 9766);
+		}
 	    /*
 	    Número do Contrato
 	     */
@@ -1286,7 +1353,11 @@ public class KobanaMB {
 		//jsonBoleto.put("days_for_infine_valueterest", fine_value);
 		
 		jsonBoleto.put("description", "Crédito com Imóvel em Garantia");
-		jsonBoleto.put("instructions", "Não receber após 30 dias do vencimento");
+		
+		if (contrato.getEmpresa().equals("CRI 4")) {
+			jsonBoleto.put("instructions", "Crédito cedido para Companhia Província de Securitização, CNPJ/MF n° 04.200.649/0001-07");
+		}
+		//jsonBoleto.put("instructions", "Não receber após 30 dias do vencimento");
 		
 		JSONObject jsonCustomData = new JSONObject();
 		jsonCustomData.put("idContrato", String.valueOf(contrato.getId()));

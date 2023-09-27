@@ -1,3 +1,4 @@
+
 package com.webnowbr.siscoat.common;
 
 import java.math.BigDecimal;
@@ -7,6 +8,18 @@ import java.util.List;
 
 public class SiscoatConstants {
 	public static final int GALLERIA_FINANCAS_ID = 14;
+	
+	public static final Long ASSISTENTE_ISA = 1556L;
+	public static final Long ASSISTENTE_BIA = 359L;
+	public static final Long ASSISTENTE_JAQUE = 689L;
+	
+	public static final Long COMMERCIAL_GIS  = 5L;
+	public static final Long COMMERCIAL_LUIS = 6L;
+	public static final Long COMMERCIAL_ERIK = 35L;
+	public static final Long COMMERCIAL_JOAO_ANTONIO = 1695L;
+	public static final Long COMMERCIAL_ALINE = 1191L;
+	public static final Long COMMERCIAL_PAULA = 826L;
+	public static final Long COMMERCIAL_MARCIA = 826L;
 
 	public static final String CONTRATO_QUITADO = "Quitado";
 	public static final String CONTRATO_ATIVO = "Ativo";
@@ -17,6 +30,7 @@ public class SiscoatConstants {
 	public static final BigDecimal SEGURO_MIP_5_DIGITOS = BigDecimal.valueOf(0.00021); // seguro MIP: 0,021% sobre saldo devedor parcela anterior;
 	
 	public static final BigDecimal CUSTO_EMISSAO_PERCENTUAL_LIQUIDO = BigDecimal.valueOf(4.3);
+	public static final BigDecimal CUSTO_EMISSAO_PERCENTUAL_BRUTO_NOVO = BigDecimal.valueOf(5);
 	public static final BigDecimal CUSTO_EMISSAO_PERCENTUAL_BRUTO = BigDecimal.valueOf(4);
 	public static final BigDecimal CUSTO_EMISSAO_MINIMO = BigDecimal.valueOf(3500);
 	
@@ -34,13 +48,13 @@ public class SiscoatConstants {
 	public static final BigDecimal TARIFA_IOF_PJ_ANTIGA2 = BigDecimal.valueOf(0.00559);
 	public static final BigDecimal TARIFA_IOF_PF_ANTIGA2 = BigDecimal.valueOf(0.01118);
 	
-	public static final BigDecimal TARIFA_IOF_PJ_ANTIGA = BigDecimal.valueOf(0.0041);
-	public static final BigDecimal TARIFA_IOF_PF_ANTIGA = BigDecimal.valueOf(0.0082);
-	
-	
+	//troca feita para pq n precisa bater com excel em 14/09/2023
+	public static final BigDecimal TARIFA_IOF_PJ = BigDecimal.valueOf(0.0041);
+	public static final BigDecimal TARIFA_IOF_PF = BigDecimal.valueOf(0.0082);
+		
 	//troca feita para bater valores com excel em 20/09/22
-	public static final BigDecimal TARIFA_IOF_PJ = BigDecimal.valueOf(0.00410958904109589);
-	public static final BigDecimal TARIFA_IOF_PF = BigDecimal.valueOf(0.00821917808219178);
+	public static final BigDecimal TARIFA_IOF_PJ_ANTIGA = BigDecimal.valueOf(0.00410958904109589);
+	public static final BigDecimal TARIFA_IOF_PF_ANTIGA = BigDecimal.valueOf(0.00821917808219178);
 	
 	public static final boolean DEV = true;
 
@@ -51,5 +65,12 @@ public class SiscoatConstants {
 	public static final List<Long> COMERCIAL_INTERNO = Arrays.asList(5l, 6l, 14l, 18l, 27l, 34l, 35l, 60l, 71l, 87l,
 			102l, 256l, 357l, 359l, 376l, 393l, 571l, 689l, 826l, 844l, 944l, 960l);
 	
-	public static final String  URL_SISCOAT_WEBHOOK = "https://backoffice.galleriabank.com.br/sistema/siscoat/rea/webhook?Token=";
+	public static final String  URL_SISCOAT_REA_WEBHOOK = "https://backoffice.galleriabank.com.br/sistema/siscoat/rea/webhook?Token=";
+	public static final String  URL_SISCOAT_ENGINE_WEBHOOK = "https://backoffice.galleriabank.com.br/sistema/siscoat/engine/webhook?Token=";
+	public static final String  URL_SISCOAT_DOCKET_WEBHOOK	 = "https://backoffice.galleriabank.com.br/sistema/siscoat/docket/webhook?Token=";
+	public static final String  URL_SISCOAT_CAF_WEBHOOK	 = "https://backoffice.galleriabank.com.br/sistema/siscoat/caf/webhook?Token=";	
+	public static final String  URL_SISCOAT_PLEXI_WEBHOOK	 = "https://backoffice.galleriabank.com.br/sistema/siscoat/plexi/webhook?Token=";
+
+	public static int HTTP_COD_SUCESSO = 200;
+
 }

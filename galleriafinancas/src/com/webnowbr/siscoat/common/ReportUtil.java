@@ -10,6 +10,7 @@ import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 public class ReportUtil {
+	
 
 	// For PDF files:
 	public static final String PDF_MIMETYPE = "application/pdf";
@@ -29,7 +30,7 @@ public class ReportUtil {
 	 * 
 	 * @param nomeRelatorio
 	 * @return
-	 * @throws BusinessException
+	 * @throws SiscoatException
 	 */
 	public JasperReport getRelatorio(String nomeRelatorio) throws JRException {
 		JasperReport jasperReport = null;

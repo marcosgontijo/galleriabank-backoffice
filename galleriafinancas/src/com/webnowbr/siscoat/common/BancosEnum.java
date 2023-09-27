@@ -78,11 +78,13 @@ public enum BancosEnum {
 	NUBANK("260", "Nubank"),
 	BANCO_CACIQUE_S_A("263", "Banco Cacique S.A."),
 	BANCO_FATOR_S_A("265", "Banco Fator S.A."),
+	BANCO_PRIMACREDI("279", "Banco Primacredi"),
 	BANCO_PAGSEGURO_INTENERT_S_A_PAGBANK("290", "PagSeguro Internet S.A.(PagBank)"),
 	BANCO_BMG_S_A("318", "Banco BMG S.A."),
 	BANCO_INDUSTRIAL_E_COMERCIAL_S_A("320", "Banco Industrial e Comercial S.A."),
 	BANCO_C6_S_A("336", "Banco C6 S.A."),
 	ITAU_UNIBANCO_S_A("341", "Itaú Unibanco S.A."),
+	BANCO_XP_S_A("348", "Banco XP S.A."), //
 	BANCO_REAL_S_A("356", "Banco Real S.A."),
 	BANCO_SOCIETE_GENERALE_BRASIL_S_A("366", "Banco Société Générale Brasil S.A."),
 	BANCO_MIZUHO_DO_BRASIL_S_A("370", "Banco Mizuho do Brasil S.A."),
@@ -103,6 +105,7 @@ public enum BancosEnum {
 	JPMORGAN_CHASE_BANK("488", "JPMorgan Chase Bank"),
 	ING_BANK_N_V("492", "ING Bank N.V."),
 	BANCO_CREDIT_SUISSE_Brasil_S_A("505", "Banco Credit Suisse (Brasil) S.A."),	
+	BANCO_NEON("536", "Banco Neon"),//AZUL NEON
 	BANCO_LUSO_BRASILEIRO_S_A("600", "Banco Luso Brasileiro S.A."),
 	BANCO_INDUSTRIAL_DO_BRASIL_S_A("604", "Banco Industrial do Brasil S.A."),
 	BANCO_VR_S_A("610", "Banco VR S.A."),

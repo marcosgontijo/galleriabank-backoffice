@@ -2,12 +2,19 @@ package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
+import com.webnowbr.siscoat.cobranca.db.op.CidadeDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 
 public class ImovelCobranca implements Serializable {
@@ -54,6 +61,8 @@ public class ImovelCobranca implements Serializable {
 	
 	private ImovelEstoque imovelEstoque;
 	
+	private Cidade objetoCidade;	
+	
 	public ImovelCobranca(){
 		resetarBololean();
 	}
@@ -93,6 +102,129 @@ public class ImovelCobranca implements Serializable {
 		this.comprovanteFotosImovelCheckList = false;
 		this.comprovanteIptuImovelCheckList = false;
 	}
+	
+	private static final Map<String, String> siglasEstados = new HashMap<>();
+    static {
+        siglasEstados.put("AC", "Acre");
+        siglasEstados.put("AL", "Alagoas");
+        siglasEstados.put("AP", "Amapá");
+        siglasEstados.put("AM", "Amazonas");
+        siglasEstados.put("BA", "Bahia");
+        siglasEstados.put("CE", "Ceará");
+        siglasEstados.put("DF", "Distrito Federal");
+        siglasEstados.put("ES", "Espírito Santo");
+        siglasEstados.put("GO", "Goiás");
+        siglasEstados.put("MA", "Maranhão");
+        siglasEstados.put("MT", "Mato Grosso");
+        siglasEstados.put("MS", "Mato Grosso do Sul");
+        siglasEstados.put("MG", "Minas Gerais");
+        siglasEstados.put("PA", "Pará");
+        siglasEstados.put("PB", "Paraíba");
+        siglasEstados.put("PR", "Paraná");
+        siglasEstados.put("PE", "Pernambuco");
+        siglasEstados.put("PI", "Piauí");
+        siglasEstados.put("RJ", "Rio de Janeiro");
+        siglasEstados.put("RN", "Rio Grande do Norte");
+        siglasEstados.put("RS", "Rio Grande do Sul");
+        siglasEstados.put("RO", "Rondônia");
+        siglasEstados.put("RR", "Roraima");
+        siglasEstados.put("SC", "Santa Catarina");
+        siglasEstados.put("SP", "São Paulo");
+        siglasEstados.put("SE", "Sergipe");
+        siglasEstados.put("TO", "Tocantins");
+    }
+    public static String getEstadoPorSigla(String sigla) {
+        return siglasEstados.getOrDefault(sigla, "UF de estado inválido");
+    }
+	
+	public List<String> pegarListaCidades() {
+		List<String> cidades = new ArrayList<>();
+		String estadoStr = getEstadoPorSigla(estado);
+		CidadeDao cidadeDao = new CidadeDao();
+		cidades = cidadeDao.pegarCidadesPeloEstado(estadoStr);
+		return cidades;
+	}
+	
+	public List<String> completeCidadesImovel(String query) {
+		String queryLowerCase = query.toLowerCase();
+		List<String> cidades = new ArrayList<>();
+		List<String> listaCidades = pegarListaCidades();
+		if(!CommonsUtil.semValor(listaCidades)) {
+			for (String cidade : listaCidades) {
+				cidades.add(cidade);
+			}
+		}
+		return cidades.stream().filter(t -> t.toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());
+	 }
+	
+	public List<String> completeTipoImovel(String query) {
+		String queryLowerCase = query.toLowerCase();
+		List<String> listaTipos = new ArrayList<>();
+		for(String tipo : listaTipoImovel()) {
+			listaTipos.add(tipo//.split(Pattern.quote(","))[0]
+					);
+		}
+		return listaTipos.stream().filter(t -> t.toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());
+	}
+	
+	public List<String> listaTipoImovel() {
+		List<String> tipos = new ArrayList<>();
+		tipos.add("Apartamento,Apartamento");
+		tipos.add("Casa,Casa");
+		tipos.add("Galpão,Galpão");
+		tipos.add("Sala Comercial,Sala Comercial");
+		tipos.add("Prédio Comercial,Prédio Comercial");
+		tipos.add("Prédio Misto,Prédio Misto");
+		tipos.add("Casa de Condomínio,Casa de condomínio");
+		//tipos.add("Casa de Condomínio acima1000,Casa de condomínio (acima 1000m²)");
+		tipos.add("Terreno,Terreno");
+		tipos.add("Terreno de Condomínio,Terreno de Condomínio");
+		tipos.add("Chácara,Chácara");
+		tipos.add("Rural,Rural");
+		tipos.add("Casa em construção,Casa em construção");
+		return tipos;
+	}
+	
+	public String separarTipoVirgula(String value, int i) {
+		if(CommonsUtil.semValor(value)) {
+			return "";
+		}
+				
+		if(value.contains(",")) {
+			return value.split(Pattern.quote(","))[i];
+		} else {
+			List<String> tipos = listaTipoImovel();
+			List<String> lista = tipos.stream().filter(t -> t.toLowerCase().contains(value.toLowerCase())).collect(Collectors.toList());
+			if(lista.size() <= 0) {
+				return "";
+			}
+			String retorno = lista.get(0);
+			return retorno.split(Pattern.quote(","))[i];
+		}
+	}
+	
+	public String getValue(String value) {
+		return separarTipoVirgula(value, 0);
+	}
+	
+	public String getLabel(String value) {
+		return separarTipoVirgula(value, 1);
+	}
+	
+
+	public void consultarObjetoCidade() {
+		String estadoStr = getEstadoPorSigla(estado);
+		CidadeDao cidadeDao = new CidadeDao();
+		objetoCidade = cidadeDao.busccaCidadeConculta(cidade, estadoStr, false);
+	}
+	
+	public void popularObjetoCidade() {
+		String estadoStr = getEstadoPorSigla(estado);
+		CidadeDao cidadeDao = new CidadeDao();
+		objetoCidade = cidadeDao.buscaCidade(cidade, estadoStr);
+	}
+	
+	
 	
 	public String getEnderecoCompleto() {
 		String enderecoCompleto =   (!CommonsUtil.semValor(endereco)? endereco:"") +
@@ -498,6 +630,15 @@ public class ImovelCobranca implements Serializable {
 		this.inscricaoMunicipal = inscricaoMunicipal;
 	}
 
+
+	public Cidade getObjetoCidade() {
+		return objetoCidade;
+	}
+
+	public void setObjetoCidade(Cidade objetoCidade) {
+		this.objetoCidade = objetoCidade;
+	}	
+	
 	public ImovelEstoque getImovelEstoque() {
 		return imovelEstoque;
 	}

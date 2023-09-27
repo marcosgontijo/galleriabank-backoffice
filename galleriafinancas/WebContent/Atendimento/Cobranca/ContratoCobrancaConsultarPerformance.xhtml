@@ -80,6 +80,8 @@
 			            <f:selectItem itemLabel="FIDC GALLERIA" itemValue="FIDC GALLERIA" />
 			            <f:selectItem itemValue="CRI 1" itemLabel="CRI 1" />
 			            <f:selectItem itemValue="CRI 2" itemLabel="CRI 2" />
+			            <f:selectItem itemValue="CRI 3" itemLabel="CRI 3" />
+			            <f:selectItem itemValue="CRI 4" itemLabel="CRI 4" />
 			            <p:ajax event="change" update="ConsultaContratos" listener="#{contratoCobrancaMB.changeStatusConsultaContratosPerformance}" />
 			        </p:selectOneListbox>	
 					<p:spacer></p:spacer>												
@@ -146,7 +148,7 @@
 			                </p:commandButton>
 			                <p:spacer width="10" height="10"/>	
 		                </shiro:hasAnyRoles>		                	                						
-						<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA">  	                
+						<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA, PRECOBRANCA">  	                
 			                <p:commandButton action="#{contratoCobrancaMB.clearFieldsBaixar}" ajax="false" icon="ui-icon-check" value="Baixar" title="Baixar Parcela">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
@@ -284,6 +286,8 @@
 							<f:selectItem itemValue="FIDC GALLERIA" itemLabel="FIDC GALLERIA" />
 							<f:selectItem itemValue="CRI 1" itemLabel="CRI 1" />
 							<f:selectItem itemValue="CRI 2" itemLabel="CRI 2" />
+							<f:selectItem itemValue="CRI 3" itemLabel="CRI 3" />
+							<f:selectItem itemValue="CRI 4" itemLabel="CRI 4" />
 						</p:selectOneMenu>	
 					</h:panelGrid>
 				</div>

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	template="../MenuAtendimento.xhtml">
+	
+	<ui:define name="conteudo">
+		<h:form id="form">
+			<script src="#{request.contextPath}/resources/resources/js/functions.js"></script>
+			<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>
+			<link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/resources/css/Style.css" title="" media="all" />
+			
+			<p:panel id="NetrinPanel" header="Netrin"
+				style="margin-bottom:10px;">
+				<p:focus />
+				<p:messages id="msgs" />	
+				
+				<h:panelGroup id="Dados">
+					<p:dataList id="pagadorList" value="#{netrinMB.listPagador}" var="DocAnalise" style="padding: 0;" type="definition">
+						<p:panel id="pagadorPanel" header="#{DocAnalise.pagador.nome}" style="padding: none" 
+							toggleable="true" toggleableHeader="true">
+							<f:facet name="header" styleClass="ui-accordion-header">
+								<p:commandButton icon="ui-icon ui-icon-trash"
+									action="#{netrinMB.removerPessoa(DocAnalise)}"
+									ajax="true" update=":form:NetrinPanel" />
+								<p:outputLabel value="#{DocAnalise.pagador.nome}" style="FONT-SIZE: 15pt;margin-left: 5px" styleClass="ui-panel-title"/>
+							</f:facet>
+							<h:panelGrid columns="1">
+								<h:panelGroup rendered="#{DocAnalise.pagador.cpf != null and DocAnalise.pagador.cpf != ''}">
+									<h:panelGrid columns="6">
+										<h:panelGrid columns="2">
+											<p:outputLabel value="Nome:" styleClass="labelBold"/>
+											<p:outputLabel value="#{DocAnalise.pagador.nome}" />  
+										</h:panelGrid>		
+										<h:panelGrid columns="2">				
+											<p:outputLabel value="CPF:"  styleClass="labelBold"/>
+											<p:inputMask value="#{DocAnalise.pagador.cpf}" style="width:100px" mask="999.999.999-99" />  
+										</h:panelGrid>
+										<h:panelGrid columns="2">								
+											<p:outputLabel value="Mãe:" styleClass="labelBold"/>
+											<p:inputText value="#{DocAnalise.pagador.nomeMae}" /> 	
+										</h:panelGrid>
+										<h:panelGrid columns="2">						 
+											<p:outputLabel value="RG:" styleClass="labelBold"/>
+											<p:inputText value="#{DocAnalise.pagador.rg}" /> 	
+										</h:panelGrid>
+										<h:panelGrid columns="2">							
+											<p:outputLabel value="Data Nascimento:" styleClass="labelBold"/>
+											<p:calendar value="#{DocAnalise.pagador.dtNascimento}" styleClass="dateTimeField" 
+												pattern="dd/MM/yyyy" size="50" inputStyle="margin-right: 5px; width:70px"/>
+										</h:panelGrid>
+										<h:panelGrid columns="2">
+											<p:outputLabel value="Cep:" styleClass="labelBold"/>
+											<p:inputMask value="#{DocAnalise.pagador.cep}" mask="99999-999" label="Cep" style="width:75px" />
+										</h:panelGrid>
+									</h:panelGrid>
+									<h:panelGrid columns="6">
+										<h:panelGrid columns="2">
+											<p:outputLabel value="Endereço:" styleClass="labelBold"/>
+											<p:inputText value="#{DocAnalise.pagador.endereco}" />
+										</h:panelGrid>
+										<h:panelGrid columns="2">
+											<p:outputLabel value="Orgão Emissor RG:" styleClass="labelBold"/>
+											<p:inputText value="#{DocAnalise.pagador.orgaoEmissorRG}" />
+										</h:panelGrid>
+										<h:panelGrid columns="2">	
+											<p:outputLabel value="Estado RG (uf):" styleClass="labelBold" />
+											<p:inputText value="#{DocAnalise.pagador.estado}" style="width:25px" />
+										</h:panelGrid>
+										<h:panelGrid columns="2">
+											<p:outputLabel value=" Sexo: " styleClass="labelBold" />
+											<p:selectOneRadio value="#{DocAnalise.pagador.sexo}">
+												<f:selectItem itemLabel="MASCULINO" itemValue="MASCULINO" />
+												<f:selectItem itemLabel="FEMININO" itemValue="FEMININO" />
+											</p:selectOneRadio>
+										</h:panelGrid>
+									</h:panelGrid>
+								</h:panelGroup>	
+								<h:panelGrid columns="6" rendered="#{DocAnalise.pagador.cpf eq null or DocAnalise.pagador.cpf eq ''}">
+										<h:panelGrid columns="2">
+										<p:outputLabel value="Razão Social:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
+										<p:outputLabel value="#{DocAnalise.pagador.nome}" style="FONT-SIZE: 5pt; margin-right: 5px" />  
+									</h:panelGrid>
+									<h:panelGrid columns="2">						
+										<p:outputLabel value="CNPJ:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
+										<p:inputText value="#{DocAnalise.pagador.cnpj}" style="FONT-SIZE: 5pt; margin-right: 5px; width:120px" />
+									</h:panelGrid>
+									<h:panelGrid columns="2">
+										<p:outputLabel value="Cep:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
+										<p:inputMask value="#{DocAnalise.pagador.cep}" mask="99999-999" label="Cep" />
+									</h:panelGrid>
+									<h:panelGrid columns="2">
+										<p:outputLabel value="Endereço:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
+										<p:inputText value="#{DocAnalise.pagador.endereco}" style="FONT-SIZE: 5pt; margin-right: 5px; width:100px" />
+									</h:panelGrid>					
+								</h:panelGrid> 						    
+								<h:panelGrid columns="2">
+									<p:outputLabel value="UF:" styleClass="labelBold" />
+									<p:outputLabel value="#{DocAnalise.estadosConsultaStr}" />
+								</h:panelGrid>
+							</h:panelGrid>	
+							<p:panel id="docsPanel" header="" style="padding: 0" toggleable="true" toggleableHeader="true" >
+								<f:facet name="header" styleClass="ui-accordion-header">
+									<p:outputLabel value="Documentos - #{DocAnalise.netrinConsultas.size()}" 
+									style="FONT-SIZE: 15pt;margin-left: 5px" styleClass="ui-panel-title"/>
+								</f:facet>
+								<p:dataList id="docsList" value="#{DocAnalise.netrinConsultas}" var="docs" style="padding: 0" type="definition">
+									<p:panel id="PanelGridDocs" header="Documentos" style="padding: 0" toggleable="true" toggleableHeader="true" collapsed="true" >			
+										<f:facet name="header" styleClass="ui-accordion-header">
+											<p:commandButton icon="ui-icon ui-icon-trash" ajax="true"
+												action="#{netrinMB.removeDoc(DocAnalise, docs)}"
+												update="form:pagadorList"
+												disabled="#{docs.retorno ne null}" />
+											<p:outputLabel value="X - " style="FONT-SIZE: 15pt;margin-left: 5px;margin-right: 0px" styleClass="ui-panel-title" rendered="#{docs.retorno eq null}"/>
+											<p:outputLabel value="✓ - " style="FONT-SIZE: 15pt;margin-left: 5px;margin-right: 0px" styleClass="ui-panel-title" rendered="#{docs.retorno ne null}"/>
+											<p:outputLabel value="#{docs.netrinDocumentos.nome}" style="FONT-SIZE: 15pt;margin-left: 5px" styleClass="ui-panel-title"/>
+											<p:outputLabel value="#{docs.uf}" style="FONT-SIZE: 15pt;margin-left: 5px" styleClass="ui-panel-title"/>
+										</f:facet>
+								
+										<h:panelGrid columns="2">
+											<p:outputLabel value="Nome:" styleClass="labelBold" />
+											<p:outputLabel value="#{DocAnalise.pagador.nome}" />
+										</h:panelGrid>
+									</p:panel>	
+								</p:dataList>
+							</p:panel>
+						</p:panel>
+					</p:dataList>
+				</h:panelGroup>
+			
+				<h:panelGrid columns="3">	
+					<p:commandButton action="#{netrinMB.criarPedido}"
+						icon="ui-icon ui-icon-print" value="Fazer Pedido"  update=":form  msgs" />			
+				</h:panelGrid>
+			</p:panel>
+		</h:form>
+		
+	</ui:define>
+</ui:composition>

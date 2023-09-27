@@ -277,7 +277,7 @@ public class BalancoPatrimonial implements Serializable {
 						// (1 + IPCA + TAXA CRI1)
 						
 						BigDecimal ipcaCalculo = ipca.divide(new BigDecimal(100));
-						BigDecimal taxaCriCalculo = taxaCri4.divide(new BigDecimal(100));
+						BigDecimal taxaCriCalculo = CommonsUtil.bigDecimalValue(taxaCri4) .divide(new BigDecimal(100));
 						
 						jurosFidc = jurosFidc.add(ipcaCalculo);
 						jurosFidc = jurosFidc.add(taxaCriCalculo);

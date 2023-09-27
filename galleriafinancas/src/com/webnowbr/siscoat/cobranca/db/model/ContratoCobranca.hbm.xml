@@ -247,6 +247,9 @@
 		<property name="acao" type="java.lang.String">
 			<column name="ACAO" />
 		</property>
+		<property name="ispbPixContaPagar" type="java.lang.String">
+			<column name="ispbPixContaPagar" />
+		</property>
 		<property name="observacao" type="text">
 			<column name="OBSERVACAO" />
 		</property>
@@ -508,6 +511,9 @@
 		</property>
 		<property name="dataInclusaoRecebedor10" type="java.util.Date">
 			<column name="dataInclusaoRecebedor10" />
+		</property>	
+		<property name="dataCorteBaixaIPCAHibrido" type="java.util.Date">
+			<column name="dataCorteBaixaIPCAHibrido" />
 		</property>	
 		<property name="reprovadoData" type="java.util.Date">
 			<column name="reprovadoData" />
@@ -801,6 +807,16 @@
 			<column name="aprovadoComite" />
 		</property>
 		
+		<property name="okClienteData" type="java.util.Date">
+			<column name="okClienteData" />
+		</property>
+		<property name="okCliente" type="boolean">
+			<column name="okCliente" not-null="true" default="false"/>
+		</property>
+		<property name="okClienteUsuario" type="java.lang.String">
+			<column name="okClienteUsuario" />
+		</property>
+		
 		<property name="visitaImovelAprovadaData"
 			type="java.util.Date">
 			<column name="visitaImovelAprovadaData" />
@@ -1083,7 +1099,7 @@
 			<column name="motivoReprovaLead" />
 		</property>
 		
-		<set name="listSegurados" table="segurado"  cascade="all-delete-orphan"
+		<set name="listSegurados" table="segurado"  cascade="merge"
                  lazy="false" fetch="select">
             <key>
                 <column name="contratoCobranca" not-null="true" />
@@ -1107,7 +1123,7 @@
             <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorAdicionais" />
         </set>   
         
-        <set name="listContasPagar" table="CONTASPAGAR" cascade="all-delete-orphan"
+        <set name="listContasPagar" table="CONTASPAGAR" cascade="persist"
                  lazy="false" fetch="select">
             <key>
                 <column name="contrato" />
@@ -1115,7 +1131,7 @@
             <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.ContasPagar" />
         </set>  
         
-        <set name="listProcessos" table="ccbprocessosjudiciais" cascade="all-delete-orphan"
+        <set name="listProcessos" table="ccbprocessosjudiciais" cascade="merge"
                  lazy="false" fetch="select">
             <key>
                 <column name="contrato" />
@@ -1137,6 +1153,14 @@
                 <column name="contratoCobranca" not-null="true" />
             </key>
             <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.DataVistoria" />
+        </set>
+        
+        <set name="listAverbacao" table="Averbacao" cascade="all-delete-orphan"
+                 lazy="false" fetch="select">
+            <key>
+                <column name="contratoCobranca" not-null="true" />
+            </key>
+            <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.Averbacao" />
         </set>
         
         <property name="tipoCalculoInvestidor1" type="java.lang.String">
@@ -1670,6 +1694,10 @@
 			<column name="observacaoContatoAgendaLaudoAvaliacao" />
 		</property>	
 		
+		<property name="comentarioContatoAgendaLaudoAvaliacao" type="java.lang.String">
+			<column name="comentarioContatoAgendaLaudoAvaliacao" />
+		</property>
+		
 		<property name="formaDePagamentoLaudoPAJU" type="java.lang.String">
 			<column name="formaDePagamentoLaudoPAJU" />
 		</property>	
@@ -1733,6 +1761,11 @@
 		<property name="iniciouGeracaoLaudo" type="boolean">
 			<column name="iniciouGeracaoLaudo" not-null="true" default="false" />
 		</property>	
+		
+		<property name="iniciouGeracaoPaju" type="boolean">
+			<column name="iniciouGeracaoPaju" not-null="true" default="false" />
+		</property>	
+		
 		<many-to-one name="analistaGeracaoPAJU"
 			class="com.webnowbr.siscoat.cobranca.db.model.Responsavel"
 			lazy="false">
@@ -1869,6 +1902,14 @@
 			<column name="contaBancarioContaPagar" />
 		</property>	
 		
+		<property name="digitoContaBancarioContaPagar" type="java.lang.String">
+			<column name="digitoContaBancarioContaPagar" />
+		</property>	
+		
+		<property name="chavePIXBancarioContaPagar" type="java.lang.String">
+			<column name="chavePIXBancarioContaPagar" />
+		</property>	
+		
 		<property name="observacaoPagamento" type="text">
 			<column name="observacaoPagamento" />
 		</property>
@@ -1984,6 +2025,9 @@
 		<property name="baixadoUsuario" type="java.lang.String">
 			<column name="baixadoUsuario" />
 		</property>
+		<property name="baixaMotivoCancelamento" type="java.lang.String">
+			<column name="baixaMotivoCancelamento" />
+		</property>		
 		
 		<property name="valorEmprestimo" type="big_decimal">
 			<column name="valorEmprestimo"/>
@@ -2084,13 +2128,13 @@
 			<column name="dispositivoCertificado" />
 		</property>
 		
-		<list name="listCadastroStatus"
-			table="ContratoCobranca_CadastroStatus_Join" cascade="all" lazy="false">
-			<key column="idContratoCobranca" />
-			<list-index></list-index>
-			<many-to-many column="idCadastroStatus"
-				class="com.webnowbr.siscoat.cobranca.db.model.CadastroStatus" />
-		</list>	
+		<set name="listCadastroStatus" table="CadastroStatus" cascade="all"
+                 lazy="false" fetch="select">
+            <key>
+                <column name="contratoCobranca" not-null="true" />
+            </key>
+            <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.CadastroStatus" />
+        </set>
 		
 		<property name="solicitarNota" type="java.lang.String">
 			<column name="solicitarNota" />
@@ -2114,6 +2158,87 @@
 		
 		<property name="valorTotalProcessos" type="big_decimal">
 			<column name="valorTotalProcessos" />
+		</property>
+		
+		<property name="dividaIPTU" type="big_decimal">
+			<column name="dividaIPTU" />
+		</property>
+		
+		<property name="dividaCondominio" type="big_decimal">
+			<column name="dividaCondominio" />
+		</property>
+		
+		<property name="valorTotalAverbacao" type="big_decimal">
+			<column name="valorTotalAverbacao" />
+		</property>
+		
+		<property name="apenasPagamentoAntecipado" type="boolean">
+			<column name="apenasPagamentoAntecipado" not-null="true" default="false"/>
+		</property>	
+		
+		<property name="contatoDiferenteProprietario" type="boolean">
+			<column name="contatoDiferenteProprietario" not-null="true" default="false"/>
+		</property>	
+		
+		<property name="avaliacaoPaju" type="java.lang.String">
+			<column name="avaliacaoPaju" />
+		</property>
+		
+		<property name="apenasPagamentoIntegral" type="boolean">
+			<column name="apenasPagamentoIntegral" not-null="true" default="false"/>
+		</property>	
+		
+		<property name="statusEsteira" type="java.lang.String">
+			<column name="statusEsteira" />
+		</property>
+		
+		<property name="contratoPrioridadeAlta" type="boolean">
+			<column name="contratoPrioridadeAlta" not-null="true" default="false"/>
+		</property>	
+		
+		<property name="contratoPrioridadeAltaData" type="java.util.Date">
+			<column name="contratoPrioridadeAltaData" />
+		</property>
+		
+		<property name="contratoPrioridadeAltaUser" type="java.lang.String">
+			<column name="contratoPrioridadeAltaUser" />
+		</property>
+		
+		<property name="protestoTaxa" type="boolean">
+			<column name="protestoTaxa" not-null="true" default="false"/>
+		</property>	
+		<property name="chequeDevolvidoTaxa" type="boolean">
+			<column name="chequeDevolvidoTaxa" not-null="true" default="false"/>
+		</property>	
+		<property name="pefinTaxa" type="boolean">
+			<column name="pefinTaxa" not-null="true" default="false"/>
+		</property>	
+		<property name="refinTaxa" type="boolean">
+			<column name="refinTaxa" not-null="true" default="false"/>
+		</property>	
+		<property name="scoreBaixoTaxa" type="boolean">
+			<column name="scoreBaixoTaxa" not-null="true" default="false"/>
+		</property>	
+		<property name="terceiroGrantidorTaxa" type="boolean">
+			<column name="terceiroGrantidorTaxa" not-null="true" default="false"/>
+		</property>	
+		<property name="relacionamentoBacenRecenteTaxa" type="boolean">
+			<column name="relacionamentoBacenRecenteTaxa" not-null="true" default="false"/>
+		</property>	
+		<property name="dividaVencidaTaxa" type="boolean">
+			<column name="dividaVencidaTaxa" not-null="true" default="false"/>
+		</property>	
+		<property name="prejuizoBacenTaxa" type="boolean">
+			<column name="prejuizoBacenTaxa" not-null="true" default="false"/>
+		</property>	
+		<property name="riscoTotalBaixoTaxa" type="boolean">
+			<column name="riscoTotalBaixoTaxa" not-null="true" default="false"/>
+		</property>	
+		<property name="terrenoOuBarracaoTaxa" type="boolean">
+			<column name="terrenoOuBarracaoTaxa" not-null="true" default="false"/>
+		</property>	
+		<property name="nadaConstaTaxa" type="boolean">
+		<column name="nadaConstaTaxa" not-null="true" default="false"/>
 		</property>
 		
 	</class>

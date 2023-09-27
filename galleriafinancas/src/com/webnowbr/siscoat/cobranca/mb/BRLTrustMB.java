@@ -1,17 +1,18 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
-import java.io.File;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -19,12 +20,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
-import java.util.concurrent.TimeUnit;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
@@ -44,24 +46,21 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.primefaces.event.SelectEvent;
-import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaBRLLiquidacao;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
-import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhesParcial;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
+import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.simulador.SimulacaoDetalheVO;
 import com.webnowbr.siscoat.simulador.SimulacaoVO;
-import com.webnowbr.siscoat.simulador.SimuladorMB;
 
 
 @ManagedBean(name = "brlTrustMB")
@@ -101,6 +100,13 @@ public class BRLTrustMB {
 	private BigDecimal taxaDesconto;
 	
 	private Date dataValorPresente;
+	
+	private BigDecimal valorTotalRecebidoLiquidacao;
+	private BigDecimal valorTotalJurosAmortizacaoLiquidacao;
+	private int qtdSelecionadoLiquidacao;
+	
+	private BigDecimal valorTotalLiquidacao;
+	private int qtdeLiquidados;
 	
 	List<ContratoCobrancaBRLLiquidacao> parcelasLiquidacao = new ArrayList<ContratoCobrancaBRLLiquidacao>();
 	ContratoCobrancaBRLLiquidacao parcelaLiquidacao = new ContratoCobrancaBRLLiquidacao();
@@ -187,6 +193,10 @@ public class BRLTrustMB {
 		
 		this.jsonGerado = false;
 		
+		valorTotalRecebidoLiquidacao = BigDecimal.ZERO;
+		valorTotalJurosAmortizacaoLiquidacao = BigDecimal.ZERO;
+		qtdSelecionadoLiquidacao = 0;
+		
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarBRLJsonLiquidacao.xhtml";
 	}
 	
@@ -230,7 +240,20 @@ public class BRLTrustMB {
     	
     	return total;
     }
-	
+    
+	public void calculaValorTotalLiquidacao() {
+    	BigDecimal totalRecebido = BigDecimal.ZERO;
+    	BigDecimal totalJurosAmortizacao = BigDecimal.ZERO;
+    	for (ContratoCobrancaBRLLiquidacao contrato : selectedJsonLiquidacao) {
+    		totalRecebido = totalRecebido.add(contrato.getVlrRecebido());
+    		totalJurosAmortizacao = totalJurosAmortizacao.add(contrato.getVlrJurosParcela());
+    		totalJurosAmortizacao = totalJurosAmortizacao.add(contrato.getVlrAmortizacaoParcela());
+    	}
+    	valorTotalRecebidoLiquidacao = totalRecebido;
+    	valorTotalJurosAmortizacaoLiquidacao = totalJurosAmortizacao;
+    	qtdSelecionadoLiquidacao = selectedJsonLiquidacao.size();
+    }
+    
 	public void pesquisaContratosLiquidacao() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		
@@ -524,12 +547,21 @@ public class BRLTrustMB {
 		cell.setCellValue("Data Vencimento");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(23);
-		cell.setCellValue("Valor");
+		cell.setCellValue("Amortização");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(24);
-		cell.setCellValue("Data Pagto.");
+		cell.setCellValue("Juros");
 		cell.setCellStyle(cell_style);
 		cell = row.createCell(25);
+		cell.setCellValue("Taxa Adm");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(26);
+		cell.setCellValue("Valor");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(27);
+		cell.setCellValue("Data Pagto.");
+		cell.setCellStyle(cell_style);
+		cell = row.createCell(28);
 		cell.setCellValue("Valor Pago");
 		cell.setCellStyle(cell_style);
 		
@@ -692,8 +724,8 @@ public class BRLTrustMB {
 			// CET
 			cell = row.createCell(14);
 			cell.setCellStyle(numberStyle);
-			if (record.getTxJurosParcelas() != null) {
-				cell.setCellValue(((BigDecimal) record.getCetMes()).doubleValue());
+			if (!CommonsUtil.semValor(record.getCetMes())) {
+				cell.setCellValue((record.getCetMes()).doubleValue());
 			} else {
 				cell.setCellValue(Double.valueOf("0"));
 			}
@@ -860,7 +892,7 @@ public class BRLTrustMB {
 					// CET
 					cell = row.createCell(14);
 					cell.setCellStyle(numberStyle);
-					if (record.getTxJurosParcelas() != null) {
+					if (!CommonsUtil.semValor(record.getCetMes())) {
 						cell.setCellValue(((BigDecimal) record.getCetMes()).doubleValue());
 					} else {
 						cell.setCellValue(Double.valueOf("0"));
@@ -888,8 +920,38 @@ public class BRLTrustMB {
 					cell.setCellStyle(dateStyle);
 					cell.setCellValue(parcelas.getDataVencimento());
 	
-					// Valor Parcela
+					// Amortização
 					cell = row.createCell(23);
+					cell.setCellStyle(numericStyle);
+					cell.setCellType(CellType.NUMERIC);
+					if (parcelas.getVlrAmortizacaoParcela() != null) {
+						cell.setCellValue(((BigDecimal) parcelas.getVlrAmortizacaoParcela()).doubleValue());					
+					} else {
+						cell.setCellValue(Double.valueOf("0"));
+					}
+					
+					// Taxa Juros
+					cell = row.createCell(24);
+					cell.setCellStyle(numericStyle);
+					cell.setCellType(CellType.NUMERIC);
+					if (parcelas.getVlrJurosParcela() != null) {
+						cell.setCellValue(((BigDecimal) parcelas.getVlrJurosParcela()).doubleValue());					
+					} else {
+						cell.setCellValue(Double.valueOf("0"));
+					}
+					
+					// Taxa Adm
+					cell = row.createCell(25);
+					cell.setCellStyle(numericStyle);
+					cell.setCellType(CellType.NUMERIC);
+					if (parcelas.getTaxaAdm() != null) {
+						cell.setCellValue(((BigDecimal) parcelas.getTaxaAdm()).doubleValue());					
+					} else {
+						cell.setCellValue(Double.valueOf("0"));
+					}
+					
+					// Valor Parcela
+					cell = row.createCell(26);
 					/*
 					 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_Number); }
 					 * else { if (parcelas.isParcelaVencida()) {
@@ -917,7 +979,7 @@ public class BRLTrustMB {
 					}
 	
 					// Data pagto
-					cell = row.createCell(24);
+					cell = row.createCell(27);
 					/*
 					 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_Date); }
 					 * else { if (parcelas.isParcelaVencida()) {
@@ -928,7 +990,7 @@ public class BRLTrustMB {
 					cell.setCellValue(parcelas.getDataUltimoPagamento());
 	
 					// Valor Pago
-					cell = row.createCell(25);
+					cell = row.createCell(28);
 					/*
 					 * if (parcelas.isParcelaPaga()) { cell.setCellStyle(cell_style_pago_Number); }
 					 * else { if (parcelas.isParcelaVencida()) {
@@ -1025,6 +1087,12 @@ public class BRLTrustMB {
 			cell.setCellStyle(cell_style);
 			cell = row.createCell(25);
 			cell.setCellStyle(cell_style);
+			cell = row.createCell(26);
+			cell.setCellStyle(cell_style);
+			cell = row.createCell(27);
+			cell.setCellStyle(cell_style);
+			cell = row.createCell(28);
+			cell.setCellStyle(cell_style);
 			
 			// Style para cabeçalho
 			XSSFCellStyle cell_style_pago = wb.createCellStyle();
@@ -1094,6 +1162,8 @@ public class BRLTrustMB {
 			 */
 		}
 
+		downloadJson(wb);
+		
 		// Resize columns to fit data
 		// TODO MIGRACAO POI
 		/*
@@ -1456,14 +1526,16 @@ public class BRLTrustMB {
 		
 		jsonSchema.put("cessao", jsonCessao);
 
-		FileOutputStream fileStream;
+//		FileOutputStream fileStream;
 		try {
-			fileStream = new FileOutputStream(new File(this.pathJSON + this.nomeJSON));
-			OutputStreamWriter file;
-			file = new OutputStreamWriter(fileStream, "UTF-8");
+			downloadJson(jsonSchema);
 			
-            file.write(jsonSchema.toString());
-            file.flush();
+//			fileStream = new FileOutputStream(new File(this.pathJSON + this.nomeJSON));
+//			OutputStreamWriter file;
+//			file = new OutputStreamWriter(fileStream, "UTF-8");
+//			
+//            file.write(jsonSchema.toString());
+//            file.flush();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1740,14 +1812,9 @@ public class BRLTrustMB {
 		
 		jsonSchema.put("cessao", jsonCessao);
 
-		FileOutputStream fileStream;
 		try {
-			fileStream = new FileOutputStream(new File(this.pathJSON + this.nomeJSON));
-			OutputStreamWriter file;
-			file = new OutputStreamWriter(fileStream, "UTF-8");
+			downloadJson(jsonSchema);
 			
-            file.write(jsonSchema.toString());
-            file.flush();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1860,7 +1927,11 @@ public class BRLTrustMB {
 					JSONObject jsonEndereco = new JSONObject();
 					if (contrato.getPagador().getCep() != null && !contrato.getPagador().getCep().equals("")) {
 						jsonEndereco.put("cep", Long.valueOf(getStringSemCaracteres(contrato.getPagador().getCep())));
+					} else {
+						System.out.println(contrato.getPagador().getNome() + "Contrato: " + contrato.getNumeroContrato());
+						jsonEndereco.put("cep","");
 					}
+					
 					jsonEndereco.put("logradouro", contrato.getPagador().getEndereco());
 					jsonEndereco.put("numero", contrato.getPagador().getNumero());
 					jsonEndereco.put("complemento", contrato.getPagador().getComplemento());
@@ -1901,9 +1972,9 @@ public class BRLTrustMB {
 						}
 					}
 					
-					System.out.println("contrato: " + contrato.getNumeroContrato());
-					System.out.println("cessao: " + contrato.getTxJurosCessao());
-					System.out.println("juros parcela: " + contrato.getTxJurosParcelas());
+					//System.out.println("contrato: " + contrato.getNumeroContrato());
+					//System.out.println("cessao: " + contrato.getTxJurosCessao());
+					//System.out.println("juros parcela: " + contrato.getTxJurosParcelas());
 					
 					if (contrato != null) {
 						if (contrato.getTxJurosCessao() != null) {
@@ -1949,14 +2020,11 @@ public class BRLTrustMB {
 		
 		jsonSchema.put("cessao", jsonCessao);
 
-		FileOutputStream fileStream;
+//		FileOutputStream fileStream;
 		try {
-			fileStream = new FileOutputStream(new File(this.pathJSON + this.nomeJSON));
-			OutputStreamWriter file;
-			file = new OutputStreamWriter(fileStream, "UTF-8");
+
+			downloadJson(jsonSchema);
 			
-            file.write(jsonSchema.toString());
-            file.flush();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1982,12 +2050,53 @@ public class BRLTrustMB {
 	}
 	
 	
+	private void downloadJson(XSSFWorkbook xls) throws IOException {
+		
+		
+		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+				FacesContext.getCurrentInstance());
+		String nomeSemvirgula = this.nomeXLS;
+		if(nomeSemvirgula.contains(",")) {
+			nomeSemvirgula = nomeSemvirgula.replace(",", "");
+	    }
+		String nomeArquivoDownload = nomeSemvirgula;
+		gerador.open(nomeArquivoDownload);
+		
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		 xls.write(out);
+
+		 
+		gerador.feed(new ByteArrayInputStream(out.toByteArray()));
+		gerador.close();
+	}
+	
+	
+	private void downloadJson(JSONObject jsonSchema) throws IOException {
+		
+		
+		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+				FacesContext.getCurrentInstance());
+		String nomeSemvirgula =this.nomeJSON;
+		if(nomeSemvirgula.contains(",")) {
+			nomeSemvirgula = nomeSemvirgula.replace(",", "");
+	    }
+		String nomeArquivoDownload = nomeSemvirgula;
+		gerador.open(nomeArquivoDownload);
+
+		gerador.feed(new ByteArrayInputStream(jsonSchema.toString().getBytes()));
+		gerador.close();
+	}
+	
+	
 	public void geraJSONLiquidacao() {
 		/***
 		 * TODO SE CEDENTE DIFERENTE, GERAR ARQUIVOS DIFERENTES 
 		 */		
 		
 		FacesContext context = FacesContext.getCurrentInstance();
+		
+		this.valorTotalLiquidacao = BigDecimal.ZERO;
+		this.qtdeLiquidados = 0;
 		
 		this.jsonGerado = true;
 		String contratosErros = null;
@@ -2002,7 +2111,6 @@ public class BRLTrustMB {
 		
 		ParametrosDao pDao = new ParametrosDao();
 		this.pathJSON = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
-		this.nomeJSON = "JSON_BRL_Trust_Liquidacao_" + identificadorCessao + ".json";
 		
 		JSONObject jsonSchema = new JSONObject();
 		jsonSchema.put("$schema", "https://schemas.brltrust.com.br/json/fidc/v1.2/cessao.schema.json");
@@ -2106,9 +2214,9 @@ public class BRLTrustMB {
 				}
 			}
 			
-			System.out.println("contrato: " + parcela.getContrato().getNumeroContrato());
-			System.out.println("cessao: " + parcela.getContrato().getTxJurosCessao());
-			System.out.println("juros parcela: " + parcela.getContrato().getTxJurosParcelas());
+			//System.out.println("contrato: " + parcela.getContrato().getNumeroContrato());
+			//System.out.println("cessao: " + parcela.getContrato().getTxJurosCessao());
+			//System.out.println("juros parcela: " + parcela.getContrato().getTxJurosParcelas());
 			
 			if (parcela.getContrato() != null) {
 				if (parcela.getContrato().getTxJurosCessao() != null) {
@@ -2125,9 +2233,15 @@ public class BRLTrustMB {
 			if (parcela.getDataPagamento().before(parcela.getDataVencimento()) &&
 					parcela.getVlrRecebido().compareTo(valorParcelaOriginal) < 0) {
 				jsonValores.put("liquidacao", parcela.getVlrRecebido());
+				
+				this.valorTotalLiquidacao = this.valorTotalLiquidacao.add(parcela.getVlrRecebido());
 			} else {	
 				jsonValores.put("liquidacao", valorParcelaOriginal); 
-			}
+				
+				this.valorTotalLiquidacao = this.valorTotalLiquidacao.add(valorParcelaOriginal);
+			} 
+			
+			this.qtdeLiquidados = this.qtdeLiquidados + 1;
 			
 			jsonRecebivel.put("valores", jsonValores);
 			
@@ -2141,15 +2255,20 @@ public class BRLTrustMB {
 		jsonCessao.put("recebiveis", jsonRecebiveis);
 		
 		jsonSchema.put("cessao", jsonCessao);
+		
+		this.nomeJSON = "JSON_BRL_Trust_Liquidacao_" + identificadorCessao + "_QtdeLiquidados_" + this.qtdeLiquidados + "_ValorTotal_" + this.valorTotalLiquidacao + ".json";
 
-		FileOutputStream fileStream;
+//		FileOutputStream fileStream;
 		try {
-			fileStream = new FileOutputStream(new File(this.pathJSON + this.nomeJSON));
-			OutputStreamWriter file;
-			file = new OutputStreamWriter(fileStream, "UTF-8");
+
+			downloadJson(jsonSchema);
 			
-            file.write(jsonSchema.toString());
-            file.flush();
+//			fileStream = new FileOutputStream(new File(this.pathJSON + this.nomeJSON));
+//			OutputStreamWriter file;
+//			file = new OutputStreamWriter(fileStream, "UTF-8");
+//			
+//            file.write(jsonSchema.toString());
+//            file.flush();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -2351,14 +2470,17 @@ public class BRLTrustMB {
 		
 		jsonSchema.put("cessao", jsonCessao);
 
-		FileOutputStream fileStream;
+//		FileOutputStream fileStream;
 		try {
-			fileStream = new FileOutputStream(new File(this.pathJSON + this.nomeJSON));
-			OutputStreamWriter file;
-			file = new OutputStreamWriter(fileStream, "UTF-8");
+
+			downloadJson(jsonSchema);
 			
-            file.write(jsonSchema.toString());
-            file.flush();
+//			fileStream = new FileOutputStream(new File(this.pathJSON + this.nomeJSON));
+//			OutputStreamWriter file;
+//			file = new OutputStreamWriter(fileStream, "UTF-8");
+//			
+//            file.write(jsonSchema.toString());
+//            file.flush();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -2862,6 +2984,45 @@ public class BRLTrustMB {
 	public void setSelectedJsonLiquidacao(List<ContratoCobrancaBRLLiquidacao> selectedJsonLiquidacao) {
 		this.selectedJsonLiquidacao = selectedJsonLiquidacao;
 	}
-	
-	
+
+	public BigDecimal getValorTotalLiquidacao() {
+		return valorTotalLiquidacao;
+	}
+
+	public void setValorTotalLiquidacao(BigDecimal valorTotalLiquidacao) {
+		this.valorTotalLiquidacao = valorTotalLiquidacao;
+	}
+
+	public int getQtdeLiquidados() {
+		return qtdeLiquidados;
+	}
+
+	public void setQtdeLiquidados(int qtdeLiquidados) {
+		this.qtdeLiquidados = qtdeLiquidados;
+	}
+
+	public BigDecimal getValorTotalRecebidoLiquidacao() {
+		return valorTotalRecebidoLiquidacao;
+	}
+
+	public void setValorTotalRecebidoLiquidacao(BigDecimal valorTotalRecebidoLiquidacao) {
+		this.valorTotalRecebidoLiquidacao = valorTotalRecebidoLiquidacao;
+	}
+
+	public BigDecimal getValorTotalJurosAmortizacaoLiquidacao() {
+		return valorTotalJurosAmortizacaoLiquidacao;
+	}
+
+	public void setValorTotalJurosAmortizacaoLiquidacao(BigDecimal valorTotalJurosAmortizacaoLiquidacao) {
+		this.valorTotalJurosAmortizacaoLiquidacao = valorTotalJurosAmortizacaoLiquidacao;
+	}
+
+	public int getQtdSelecionadoLiquidacao() {
+		return qtdSelecionadoLiquidacao;
+	}
+
+	public void setQtdSelecionadoLiquidacao(int qtdSelecionadoLiquidacao) {
+		this.qtdSelecionadoLiquidacao = qtdSelecionadoLiquidacao;
+	}
+
 }

@@ -22,16 +22,16 @@ public enum EstadosEnum {
 	MINAS_GERIAS("Minas Gerais", "MG","b374cd92-4a27-f25f-c1e0-9aa6aed81d32"),
 	PARÁ("Pará", "PA", "2ac26f93-c3aa-e04d-1add-87562c187e9b"),
 	PARAÍBA("Paraíba", "PB", "684f0ccf-6729-776f-4012-2a74fb31bd91"),
-	PARANÁ("Paraná", "PR", "e0992d76-53fb-4933-cec1-eb51b79d63bb"),
+	//PARANÁ("Paraná", "PR", "e0992d76-53fb-4933-cec1-eb51b79d63bb"),
 	PERNAMBUCO("Pernambuco", "PE", "360d9f3c-3eab-b482-5b0f-6e5a0a09944e"),
 	PIAUÍ("Piauí", "PI","eb6564fc-4232-0ca7-e5ee-ba2c328746a2"),
-	RIO_DE_JANEIRO("Rio de Janeiro", "RJ","074c0821-bf46-c6b6-5f7c-e39f5df39f98"),
+	//RIO_DE_JANEIRO("Rio de Janeiro", "RJ","074c0821-bf46-c6b6-5f7c-e39f5df39f98"),
 	RIO_GRANDE_DO_NORTE("Rio Grande do Norte", "RN", "f4e7b2e6-2e75-b146-2826-67f9072e8d2d"),
 	RIO_GRANDE_DO_SUL("Rio Grande do Sul", "RS", "76925d4c-a65f-4936-f876-bc753fcfbb38"),
 	RONDÔNIA("Rondônia", "RO", "93164dfb-3ef9-467f-26f0-5b52e8bad2e3"),
 	RORAIMA("Roraima", "RR", "d6565664-02ae-bdd8-55c3-9062d08a4e11"),	
 	SANTA_CATARINA("Santa Catarina", "SC", "82bd7834-e4f0-aacf-0bf2-53f5bc5ac00c"),
-	SÃO_PAULO("São Paulo", "SP", "52f0da38-2fb5-4a87-22ef-32670b94d916"),
+	//SÃO_PAULO("São Paulo", "SP", "52f0da38-2fb5-4a87-22ef-32670b94d916"),
 	SERGIPE("Sergipe", "SE", "6b443de5-0b7e-b5c4-73ba-1689fc5dbb03"),
 	TOCANTINS("Tocantins", "TO", "d358c3f6-aa96-69ed-f6e0-1e1133d87b51");
 
@@ -48,7 +48,7 @@ public enum EstadosEnum {
 	
 	public static EstadosEnum getByUf(String uf) {
 		for(EstadosEnum estado : EstadosEnum.values()) {
-			if(CommonsUtil.mesmoValor(uf, estado.getUf())) {
+			if(CommonsUtil.mesmoValor(uf.toLowerCase().trim(), estado.getUf().toLowerCase().trim())) {
 				return estado;
 			}
 		}

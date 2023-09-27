@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:shiro="http://shiro.apache.org/tags">
+
+
+	<h:outputStylesheet>
+			.painelResumo{
+				vertical-align: top;
+				
+			}
+			
+	</h:outputStylesheet>
+	<shiro:hasAnyRoles
+		name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
+		<p:panel id="ImovelAnalisado" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Em Análise' or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Análise' }">
+			<f:facet name="header">
+				<h:outputText value="Cidade imovel" />				
+			</f:facet>
+			<p:outputLabel
+				value="#{contratoCobrancaMB.objetoImovelCobranca.objetoCidade.cidadeString()}"
+				styleClass="labelBold" style="white-space: pre-wrap;" />
+
+		</p:panel>
+		
+		<p:panel id="ArquivosAnalisados"
+			style="margin-bottom:10px;text-align: center;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' 
+			and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' 
+			and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite' }">
+			<f:facet name="header">
+				<h:outputText value="Analise Documentos" />
+				<p:commandButton value="Atualizar listagem" ajax="true"
+					update="ArquivosAnalisados" style="margin-left:10px;"
+					action="#{contratoCobrancaMB.listaArquivosAnaliseDocumentos}"
+					immediate="true" icon="ui-icon-search">
+				</p:commandButton>
+				<shiro:hasAnyRoles name="ROOT">
+					<p:commandButton value="Atualiza Plexi"
+						action="#{plexiMB.atualizaRetorno(contratoCobrancaMB.listaDocumentoAnalise)}"
+						update="dtFilesAnalise">
+					</p:commandButton>
+				</shiro:hasAnyRoles>
+			</f:facet>
+
+			<h:panelGrid columns="1">
+				<p:fileUpload label="Selecionar Arquivo"				
+					rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
+					uploadLabel="Salvar Arquivo" multiple="false"
+					cancelLabel="Cancelar"
+					fileUploadListener="#{contratoCobrancaMB.handleAnaliseDocumentoFileUpload}"
+					mode="advanced" dragDropSupport="true" update="dtFilesAnalise">
+					<f:attribute name="foo"
+						value="#{contratoCobrancaMB.contasPagarSelecionada}" />
+				</p:fileUpload>
+			</h:panelGrid>
+
+			<p:panel id="ArquivosSalvosAnalise"
+				header="Arquivo(s) Salvo(s) na analise" style="margin-bottom:10px;">
+				<f:facet name="header"> Arquivo(s) Salvo(s) na analise 
+							<p:outputLabel value="" />
+					<p:commandButton value="Adicionar Pessoa"
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
+						action="#{contratoCobrancaMB.preparaAdicionarPessoaAnalise}"
+						oncomplete="PF('adicionarPessoaAnaliseDlg').show();"
+						update="adicionarPessoaAnaliseForm">
+					</p:commandButton>
+				</f:facet>
+
+				<h:panelGrid columns="1">
+					<p:dataTable id="dtFilesAnalise" var="fileAnalise"
+						value="#{contratoCobrancaMB.listaDocumentoAnalise}"
+						rowKey="#{fileAnalise}" selection="#{contratoCobrancaMB.listaDeleteAnalise}" 
+						emptyMessage=""
+						rowStyleClass="#{(fileAnalise.liberadoAnalise eq true
+							or contratoCobrancaMB.objetoContratoCobranca.emAnalise) ? '' : 'ui-helper-hidden'}">
+						
+						<f:facet name="header">								 
+							<p:commandButton value="Excluir Selecionado(s)" ajax="true" icon="ui-icon-trash" update="dtFilesAnalise" action="#{contratoCobrancaMB.deleteArquivosAnalisados}">
+								<p:confirm header="Confirmação" message="Deseja Excluir os itens selecionados?"/>
+							</p:commandButton>
+				        </f:facet>
+						<p:column  selectionMode="multiple" style="width:16px;text-align:center"/>
+						<p:column style="text-align: center; width:5rem;">				
+							<p:commandButton value="ver Resumo"
+								oncomplete="PF('resumoConsutlasDialog').show()"
+								update="resumoConsutlasForm resumoDialogHeader" ajax="true"
+								style="TEXT-DECORATION: bold;" rendered="#{fileAnalise.tipo != 'Rea'}">
+								<f:setPropertyActionListener value="#{fileAnalise}"
+									target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
+							</p:commandButton>
+						</p:column>
+
+						<p:column headerText="Liberado Análise" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.emPedirPaju }">
+							<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"
+								rendered="#{!fileAnalise.isAnaliseBloqueada() and contratoCobrancaMB.objetoContratoCobranca.emAnalise  }"
+								onLabel="Sim" offLabel="Não" style="width:6rem">
+								<p:ajax event="change"
+									listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
+							</p:selectBooleanButton>
+							<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"
+								rendered="#{!contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
+								disabled="true" onLabel="Sim" offLabel="Não" style="width:6rem">
+							</p:selectBooleanButton>
+							<p:selectBooleanButton value="#{fileAnalise.liberadoContinuarAnalise}"
+								rendered="#{fileAnalise.isAnaliseBloqueada() and contratoCobrancaMB.objetoContratoCobranca.emAnalise  }"
+								onLabel="Continuar Analise" offLabel="Analise Bloqueada" style="width:6rem">
+								<p:ajax event="change"
+									listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
+							</p:selectBooleanButton>
+						</p:column>
+						
+						<p:column headerText="Liberado Certidoes" rendered="#{contratoCobrancaMB.objetoContratoCobranca.emPedirPaju }">
+							<p:selectBooleanButton value="#{fileAnalise.liberadoCertidoes}"							
+								rendered="#{fileAnalise.podeChamarCertidoes}"
+								onLabel="Sim" offLabel="Não" style="width:6rem">
+								<p:ajax event="change"
+									listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
+							</p:selectBooleanButton>
+						</p:column>
+
+
+						<p:column style="text-align: center;" headerText="Identificação"
+							filterBy="#{fileAnalise.identificacao}"
+							filterMatchMode="contains" sortBy="#{fileAnalise.identificacao}">
+
+							<h:outputText value="#{fileAnalise.identificacao}"
+								rendered="#{fileAnalise.podeChamarRea}" />
+							<h:outputText
+								value="#{fileAnalise.identificacao} #{fileAnalise.cnpjcpf} "
+								rendered="#{!fileAnalise.podeChamarRea}" />
+							<p:spacer height="10" />
+							<h:outputText
+								value="#{fileAnalise.pagador.estado}" />
+							<p:spacer height="10" />
+						</p:column>
+
+						<p:column style="text-align: center;" headerText="Motivo"
+							filterMatchMode="contains">
+							<h:outputText value="#{fileAnalise.motivoAnalise}" />
+						</p:column>
+
+						<p:column style="text-align: center;" headerText="Observação"
+							filterMatchMode="contains">
+							<h:outputText value="#{fileAnalise.observacao}" />
+						</p:column>
+
+						<p:column style="text-align: center;" headerText="Situação"
+							filterMatchMode="contains">
+							
+							<h:outputText value="REA Enviado"
+								rendered="#{fileAnalise.podeChamarRea and !fileAnalise.reaNaoEnviado and !fileAnalise.reaProcessado }" />
+							<h:outputText value="REA Processado"
+								rendered="#{fileAnalise.podeChamarRea and fileAnalise.reaProcessado }" />
+
+							<p:commandButton
+								action="#{contratoCobrancaMB.baixarEngineDocumento(fileAnalise)}"
+								onclick="target='_blank'" onblur="target='_self'"
+								icon="ui-icon ui-icon-print" value="Abrir Engine"
+								rendered="#{!fileAnalise.podeChamarEngine and fileAnalise.engineProcessado }"
+								ajax="false" />
+
+							<p:commandButton
+								action="#{contratoCobrancaMB.baixarDocumentoSerasa(fileAnalise)}"
+								icon="ui-icon ui-icon-print" value="Abrir Serasa"
+								onclick="target='_blank'" onblur="target='_self'"
+								rendered="#{fileAnalise.serasaProcessado }" ajax="false" />
+
+							<p:commandButton
+								action="#{contratoCobrancaMB.baixarDocumentoCenprot(fileAnalise)}"
+								onclick="target='_blank'" onblur="target='_self'"
+								icon="ui-icon ui-icon-print" value="Abrir Cenprot"
+								rendered="#{fileAnalise.cenprotProcessado }" ajax="false" />
+
+							<p:commandButton
+								action="#{contratoCobrancaMB.baixarDocumentoPpe(fileAnalise)}"
+								onclick="target='_blank'" onblur="target='_self'"
+								icon="ui-icon ui-icon-print" value="Abrir PPE"
+								rendered="#{fileAnalise.ppeProcessado }" ajax="false" />
+
+							<p:commandButton
+								action="#{contratoCobrancaMB.baixarDocumentoDossie(fileAnalise)}"
+								onclick="target='_blank'" onblur="target='_self'"
+								icon="ui-icon ui-icon-print" value="Abrir Dossiê"
+								rendered="#{fileAnalise.podeDownlaodDossie }" ajax="false" />
+
+							<p:commandButton
+								action="#{contratoCobrancaMB.baixarDocumentoProcesso(fileAnalise)}"
+								onclick="target='_blank'" onblur="target='_self'"
+								icon="ui-icon ui-icon-print" value="Abrir Processos"
+								rendered="#{fileAnalise.processoProcessado and fileAnalise.tipoProcesso == 'B'  }" ajax="false" />
+
+							<p:commandButton
+								action="#{contratoCobrancaMB.baixarDocumentoSCR(fileAnalise)}"
+								onclick="target='_blank'" onblur="target='_self'"
+								icon="ui-icon ui-icon-print" value="Abrir SCR"
+								rendered="#{fileAnalise.scrProcessado }" ajax="false" />															
+															
+							<p:commandButton
+								value="Consultas Docket"
+								onclick="PF('consultasDocketDlg').show()"
+								update="ConsultasDocketForm" ajax="true"
+								rendered="#{fileAnalise.docketConsultas.size() > 0}" >
+							<f:setPropertyActionListener value="#{fileAnalise}"
+								target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
+							</p:commandButton>
+							
+							<p:commandButton
+								value="Consultas Plexi"
+								onclick="PF('consultasPlexiDlg').show()"
+								update="ConsultasPlexiForm" ajax="true"
+								rendered="#{fileAnalise.plexiConsultas.size() > 0}" >
+							<f:setPropertyActionListener value="#{fileAnalise}"
+								target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
+							</p:commandButton>
+							
+							<p:commandButton
+								value="Consultas Netrin"
+								onclick="PF('consultasNetrinDlg').show()"
+								update="ConsultasNetrinForm" ajax="true"
+								rendered="#{fileAnalise.netrinConsultas.size() > 0}" >
+							<f:setPropertyActionListener value="#{fileAnalise}"
+								target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
+							</p:commandButton>
+
+						</p:column>
+
+						<p:column style="width:100px;" rendered="#{false}">
+							<p:commandButton value="Download" ajax="false"
+								icon="ui-icon-arrowthick-1-s">
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.selectedFile}"
+									value="#{fileAnalise}" />
+								<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
+							</p:commandButton>
+						</p:column>
+							
+					</p:dataTable>
+				</h:panelGrid>
+
+			</p:panel>
+			<p:panel id="pnlCeridoesAnalise" header="Certidões"
+				rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
+				style="margin-bottom:10px;">
+
+				<p:commandButton value="Executar Consultas" ajax="true"
+					action="#{contratoCobrancaMB.executarConsultasAnaliseDocumento}"
+					widgetVar="executeBtn" onclick="executeBtn.disable()" 
+					disabled="#{contratoCobrancaMB.checkConsultasAnaliseDocumento()}" />
+				<p:commandButton value="Certidões Docket" ajax="false"
+					action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'analise')}" />
+				<p:commandButton value="Certidões Plexi" 
+					action="#{plexiMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'analise')}" />
+				<p:commandButton value="Certidões Netrin" 
+					action="#{netrinMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'analise')}" />
+			</p:panel>
+			
+			<p:panel id="pnlCeridoesPedirPaju" header="Certidões"
+				rendered="#{contratoCobrancaMB.objetoContratoCobranca.emPedirPaju}"
+				style="margin-bottom:10px;">
+				
+				<p:commandButton value="Certidões Docket" ajax="false"
+					action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'pedir paju')}" />		
+				<p:commandButton value="Certidões Plexi" 
+					action="#{plexiMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'pedir paju')}" />				
+				<p:commandButton value="Certidões Netrin" 
+					action="#{netrinMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'pedir paju')}" />
+					
+			</p:panel>
+
+			<p:panel id="pnlLaudoRobo" header="Laudo Robô" style="margin-bottom:10px">
+				<p:commandButton value="Laudo"
+					onclick="PF('laudoRoboDialog').show()" update="laudoRoboForm"
+					ajax="true" rendered="#{fileAnalise.tipo != 'Rea'}">
+					<f:setPropertyActionListener value="#{fileAnalise}"
+						target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
+				</p:commandButton>
+
+					
+				
+			</p:panel>
+
+		</p:panel>
+
+
+	</shiro:hasAnyRoles>
+</ui:composition>

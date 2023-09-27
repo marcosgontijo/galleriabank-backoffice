@@ -24,6 +24,9 @@ public final class User implements Serializable {
     private String login;
     /** Senha. */
     private String password;
+    /** Perfil do usuario. */
+    private UserPerfil userPerfil;
+    
     /** Informacoes adicionais. */
     private String addInfo;
     
@@ -98,6 +101,15 @@ public final class User implements Serializable {
     private boolean profileAvaliadorImovelCompass;
     private boolean profileAvaliadorImovelGalache;
     private boolean profileLaudo; 
+    private boolean profilePajuNeves; 
+    private boolean profilePajuLuvison;    
+    private boolean profileCompliance;    
+    private boolean profileController;
+    
+	private boolean cadastraResponsavel;
+    private boolean consultaIndividual;
+    
+    private List<Termo> listTermos;
     
     /**
      * Construtor.
@@ -105,7 +117,12 @@ public final class User implements Serializable {
     public User() {
     }
 
-    /**
+    @Override
+	public String toString() {
+		return "User [id=" + id + ", name=" + name + ", login=" + login + "]";
+	}
+    
+	/**
      * @see id.
      * @return the id
      */
@@ -201,7 +218,16 @@ public final class User implements Serializable {
         this.password = value;
     }
 
-    /**
+
+	public UserPerfil getUserPerfil() {
+		return userPerfil;
+	}
+
+	public void setUserPerfil(UserPerfil userPerfil) {
+		this.userPerfil = userPerfil;
+	}
+
+	/**
      * Get.
      * @return addInfo.
      */
@@ -666,5 +692,60 @@ public final class User implements Serializable {
 	public void setSenhaDocket(String senhaDocket) {
 		this.senhaDocket = senhaDocket;
 	}
-	
+
+	public List<Termo> getListTermos() {
+		return listTermos;
+	}
+
+	public void setListTermos(List<Termo> listTermos) {
+		this.listTermos = listTermos;
+	}
+
+	public boolean isProfilePajuNeves() {
+		return profilePajuNeves;
+	}
+
+	public void setProfilePajuNeves(boolean profilePajuNeves) {
+		this.profilePajuNeves = profilePajuNeves;
+	}
+
+	public boolean isProfilePajuLuvison() {
+		return profilePajuLuvison;
+	}
+
+	public void setProfilePajuLuvison(boolean profilePajuLuvison) {
+		this.profilePajuLuvison = profilePajuLuvison;
+	}
+
+	public boolean isProfileCompliance() {
+		return profileCompliance;
+	}
+
+	public void setProfileCompliance(boolean profileCompliance) {
+		this.profileCompliance = profileCompliance;
+	}
+
+	public boolean isCadastraResponsavel() {
+		return cadastraResponsavel;
+	}
+
+	public void setCadastraResponsavel(boolean cadastraResponsavel) {
+		this.cadastraResponsavel = cadastraResponsavel;
+	}
+
+	public boolean isConsultaIndividual() {
+		return consultaIndividual;
+	}
+
+	public void setConsultaIndividual(boolean consultaIndividual) {
+		this.consultaIndividual = consultaIndividual;
+	}
+
+	public boolean isProfileController() {
+		return profileController;
+	}
+
+	public void setProfileController(boolean profileController) {
+		this.profileController = profileController;
+	}	
 }

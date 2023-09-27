@@ -2,7 +2,9 @@ package com.webnowbr.siscoat.infra.mb;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -13,19 +15,21 @@ import org.primefaces.model.LazyDataModel;
 
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
+import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.db.dao.DAOException;
 import com.webnowbr.siscoat.db.dao.DBConnectionException;
-
-
 import com.webnowbr.siscoat.infra.db.dao.GroupDao;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
+import com.webnowbr.siscoat.infra.db.dao.UserPerfilDao;
 import com.webnowbr.siscoat.infra.db.model.GroupAdm;
 import com.webnowbr.siscoat.infra.db.model.User;
+import com.webnowbr.siscoat.infra.db.model.UserPerfil;
 import com.webnowbr.siscoat.security.TwoFactorAuth;
 
 import org.primefaces.model.SortOrder;
 
 import java.util.Map;
+import java.util.Optional;
 
 /** ManagedBean. */
 @ManagedBean(name = "usuarioMB")
@@ -39,73 +43,68 @@ public class UsuarioMB {
 	private boolean updateMode = false;
 	private boolean deleteMode = false;
 	private String tituloPainel = null;
-	
+
 	private List<String> listPostos;
-	
+
 	private List<String> diasSemana;
 	private String[] selectedDiasSemana;
-	
+
 	private Responsavel selectedResponsaveis[];
 	private List<Responsavel> responsaveis;
-	
+	private List<UserPerfil> perfil;
+	Optional<UserPerfil> userPerfilPublico;
+
 	/**
 	 * Construtor.
 	 */
 	public UsuarioMB() {
 
 		objetoUsuario = new User();
-
+		
+		
 		lazyModel = new LazyDataModel<User>() {
 
 			/** Serial. */
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			public List<User> load(final int first, final int pageSize,
-					final String sortField, final SortOrder sortOrder,
-					final Map<String, Object> filters) {
+			public List<User> load(final int first, final int pageSize, final String sortField,
+					final SortOrder sortOrder, final Map<String, Object> filters) {
 
 				UserDao postoDao = new UserDao();
-				
+
 				filters.put("userInvestidor", "false");
 
 				setRowCount(postoDao.count(filters));
-				return postoDao.findByFilter(first, pageSize, sortField,
-						sortOrder.toString(), filters);
+				return postoDao.findByFilter(first, pageSize, sortField, sortOrder.toString(), filters);
 			}
 		};
 	}
-	
+
 	public void loadResponsavel() {
 		this.responsaveis = new ArrayList<Responsavel>();
 		ResponsavelDao rDao = new ResponsavelDao();
 		this.responsaveis = rDao.findAll();
 	}
+	
+	private void carregaListaPerfil() {
+		if (perfil == null) {
+			UserPerfilDao userPerfilDao = new UserPerfilDao();
+			perfil = userPerfilDao.findAll().stream().sorted(Comparator.comparing(UserPerfil::getId))
+					.collect(Collectors.toList());
+			userPerfilPublico = perfil.stream().filter(p -> p.getId() == 1000l).findFirst();
+		}
+	}
 
 	public String clearFields() {
 		objetoUsuario = new User();
-		this.tituloPainel = "Adicionar";	
 		
-		this.diasSemana = new ArrayList<String>();
-		this.diasSemana.add("Segunda-Feira");
-		this.diasSemana.add("Terça-Feira");
-		this.diasSemana.add("Quarta-Feira");
-		this.diasSemana.add("Quinta-Feira");
-		this.diasSemana.add("Sexta-Feira");
-		this.diasSemana.add("Sábado");
-		this.diasSemana.add("Domingo"); 
+		if (userPerfilPublico == null)
+			carregaListaPerfil();
+		objetoUsuario.setUserPerfil(userPerfilPublico.get());
 		
-		this.selectedDiasSemana = new String[0];
-		this.selectedResponsaveis = new Responsavel[0];
-		
-		loadResponsavel();
+		this.tituloPainel = "Adicionar";
 
-		return "UsuarioInserir.xhtml";
-	}
-	
-	public String clearFieldsUpdate() {
-		this.tituloPainel = "Editar";
-		
 		this.diasSemana = new ArrayList<String>();
 		this.diasSemana.add("Segunda-Feira");
 		this.diasSemana.add("Terça-Feira");
@@ -114,20 +113,40 @@ public class UsuarioMB {
 		this.diasSemana.add("Sexta-Feira");
 		this.diasSemana.add("Sábado");
 		this.diasSemana.add("Domingo");
-		
+
+		this.selectedDiasSemana = new String[0];
+		this.selectedResponsaveis = new Responsavel[0];
+		carregaListaPerfil();
+		loadResponsavel();
+
+		return "UsuarioInserir.xhtml";
+	}
+
+	public String clearFieldsUpdate() {
+		this.tituloPainel = "Editar";
+
+		this.diasSemana = new ArrayList<String>();
+		this.diasSemana.add("Segunda-Feira");
+		this.diasSemana.add("Terça-Feira");
+		this.diasSemana.add("Quarta-Feira");
+		this.diasSemana.add("Quinta-Feira");
+		this.diasSemana.add("Sexta-Feira");
+		this.diasSemana.add("Sábado");
+		this.diasSemana.add("Domingo");
+
 		if (this.objetoUsuario.getDiasSemana() != null) {
 			this.selectedDiasSemana = new String[this.objetoUsuario.getDiasSemana().size()];
-			
+
 			if (this.objetoUsuario.getDiasSemana().size() > 0) {
-				for (int i = 0; i < this.objetoUsuario.getDiasSemana().size(); i++) {		
+				for (int i = 0; i < this.objetoUsuario.getDiasSemana().size(); i++) {
 					this.selectedDiasSemana[i] = this.objetoUsuario.getDiasSemana().get(i);
-		        }
+				}
 			}
 		}
-		
+		carregaListaPerfil();
 		loadResponsavel();
 		this.selectedResponsaveis = new Responsavel[this.objetoUsuario.getListResponsavel().size()];
-		
+
 		if (this.objetoUsuario.getListResponsavel().size() > 0) {
 			for (int i = 0; i < this.objetoUsuario.getListResponsavel().size(); i++) {
 				this.selectedResponsaveis[i] = this.objetoUsuario.getListResponsavel().get(i);
@@ -136,7 +155,7 @@ public class UsuarioMB {
 
 		return "UsuarioInserir.xhtml";
 	}
-	
+
 	public String inserir() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		UserDao postoDao = new UserDao();
@@ -146,34 +165,34 @@ public class UsuarioMB {
 			List<GroupAdm> gAdm = new ArrayList<GroupAdm>();
 			List<GroupAdm> gAdmAux = new ArrayList<GroupAdm>();
 			gAdm = gDao.findByFilter("acronym", "ROOT");
-			if (objetoUsuario.isAdministrador()) {												
+			if (objetoUsuario.isAdministrador()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "POSTO");
-			if (objetoUsuario.isUserPosto()) {				
+			if (objetoUsuario.isUserPosto()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "LOCACAO");
-			if (objetoUsuario.isUserLocacao()) {				
+			if (objetoUsuario.isUserLocacao()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "COBRANCA");
-			if (objetoUsuario.isUserCobranca()) {				
+			if (objetoUsuario.isUserCobranca()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
@@ -182,115 +201,115 @@ public class UsuarioMB {
 			}
 
 			gAdm = gDao.findByFilter("acronym", "COBRANCA_EDITA");
-			if (objetoUsuario.isUserCobrancaEdita()) {				
+			if (objetoUsuario.isUserCobrancaEdita()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "COBRANCA_BAIXA");
-			if (objetoUsuario.isUserCobrancaBaixa()) {				
+			if (objetoUsuario.isUserCobrancaBaixa()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "COBRANCA_LEAD");
-			if (objetoUsuario.isUserCobrancaLead()) {				
+			if (objetoUsuario.isUserCobrancaLead()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "COBRANCA_IUGU");
-			if (objetoUsuario.isUserCobrancaIugu()) {				
+			if (objetoUsuario.isUserCobrancaIugu()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "COBRANCA_FINANCEIRO");
-			if (objetoUsuario.isUserCobrancaFinanceiro()) {				
+			if (objetoUsuario.isUserCobrancaFinanceiro()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "IUGU_POSTO");
-			if (objetoUsuario.isUserIuguPosto()) {				
+			if (objetoUsuario.isUserIuguPosto()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "PRECOBRANCA");
-			if (objetoUsuario.isUserPreContrato()) {				
+			if (objetoUsuario.isUserPreContrato()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "AVALIADORIMOVEL");
-			if (objetoUsuario.isUserAvaliadorImovel()) {				
+			if (objetoUsuario.isUserAvaliadorImovel()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "LAUDO");
-			if (objetoUsuario.isUserLaudo()) {				
+			if (objetoUsuario.isUserLaudo()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "USER_GALACHE");
-			if (objetoUsuario.isUserGalache()) {				
+			if (objetoUsuario.isUserGalache()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "AGENTE_ESPELHAMENTO");
-			if (objetoUsuario.isUserAgenteEspelhamento()) {				
+			if (objetoUsuario.isUserAgenteEspelhamento()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "PRECOBRANCAIUGU");
-			if (objetoUsuario.isUserPreContratoIUGU()) {				
+			if (objetoUsuario.isUserPreContratoIUGU()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "BLOCK_BACKOFFICE");
-			if (objetoUsuario.isBlockBackoffice()) {				
+			if (objetoUsuario.isBlockBackoffice()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
@@ -299,25 +318,25 @@ public class UsuarioMB {
 			}
 
 			gAdm = gDao.findByFilter("acronym", "PRECOBRANCAANALISTA");
-			if (objetoUsuario.isUserPreContratoAnalista()) {				
+			if (objetoUsuario.isUserPreContratoAnalista()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "ASSISTENTEFINANCEIRO");
-			if (objetoUsuario.isAssistFinanceiro()) {				
+			if (objetoUsuario.isAssistFinanceiro()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
 				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "POSOPERACAO");
-			if (objetoUsuario.isUserPosOperacao()) {				
+			if (objetoUsuario.isUserPosOperacao()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
@@ -326,171 +345,230 @@ public class UsuarioMB {
 			}
 
 			gAdm = gDao.findByFilter("acronym", "INVESTIDOR");
-			if (objetoUsuario.isUserInvestidor()) {				
+			if (objetoUsuario.isUserInvestidor()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
-				}				
+				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "COMITEEDITAR");
-			if (objetoUsuario.isComiteEditar()) {				
+			if (objetoUsuario.isComiteEditar()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
-				}				
+				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "COMITECONSULTAR");
-			if (objetoUsuario.isComiteConsultar()) {				
+			if (objetoUsuario.isComiteConsultar()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
-				}				
+				}
 			}
-		    
-		    gAdm = gDao.findByFilter("acronym", "PROFILE_ANALISTA_CREDITO");
-			if (objetoUsuario.isProfileAnalistaCredito()) {				
+
+			gAdm = gDao.findByFilter("acronym", "PROFILE_ANALISTA_CREDITO");
+			if (objetoUsuario.isProfileAnalistaCredito()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
-				}				
+				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "PROFILE_ANALISTA_COMITE");
-			if (objetoUsuario.isProfileAnalistaComite()) {				
+			if (objetoUsuario.isProfileAnalistaComite()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
-				}				
+				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "PROFILE_ANALISTA_POS_COMITE");
-			if (objetoUsuario.isProfileAnalistaPosComite()) {				
+			if (objetoUsuario.isProfileAnalistaPosComite()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
-				}				
+				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "PROFILE_GERENTE_ANALISE");
-			if (objetoUsuario.isProfileGerenteAnalise()) {				
+			if (objetoUsuario.isProfileGerenteAnalise()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
-				}				
+				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "PROFILE_CONTRATO");
-			if (objetoUsuario.isProfileContrato()) {				
+			if (objetoUsuario.isProfileContrato()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
-				}				
+				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "PROFILE_COBRANCA");
-			if (objetoUsuario.isProfileCobranca()) {				
+			if (objetoUsuario.isProfileCobranca()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
-				}				
+				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "PROFILE_COMENTARIO_JURIDICO");
-			if (objetoUsuario.isProfileComentarioJuridico()) {				
+			if (objetoUsuario.isProfileComentarioJuridico()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
-				}				
+				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "PROFILE_AVALIADOR_IMOVEL");
-			if (objetoUsuario.isProfileAvaliadorImovel()) {				
+			if (objetoUsuario.isProfileAvaliadorImovel()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
-				}				
+				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "PROFILE_AVALIADOR_IMOVEL_COMPASS");
-			if (objetoUsuario.isProfileAvaliadorImovelCompass()) {				
+			if (objetoUsuario.isProfileAvaliadorImovelCompass()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
-				}				
+				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "PROFILE_AVALIADOR_IMOVEL_GALACHE");
-			if (objetoUsuario.isProfileAvaliadorImovelGalache()) {				
+			if (objetoUsuario.isProfileAvaliadorImovelGalache()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
-				}				
+				}
 			}
-			
+
 			gAdm = gDao.findByFilter("acronym", "PROFILE_LAUDO");
-			if (objetoUsuario.isProfileLaudo()) {				
+			if (objetoUsuario.isProfileLaudo()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
-				}				
+				}
 			}
 			
+			gAdm = gDao.findByFilter("acronym", "PROFILE_PAJU_NEVES");
+			if (objetoUsuario.isProfilePajuNeves()) {
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}
+			}
+			
+			gAdm = gDao.findByFilter("acronym", "PROFILE_PAJU_LUVISON");
+			if (objetoUsuario.isProfilePajuLuvison()) {
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}
+			}
+
 			gAdm = gDao.findByFilter("acronym", "PROFILE_MARKETING");
-			if (objetoUsuario.isProfileMarketing()) {				
+			if (objetoUsuario.isProfileMarketing()) {
 				gAdmAux.add(gAdm.get(0));
 			} else {
 				if (objetoUsuario.getGroupList() != null) {
 					objetoUsuario.getGroupList().remove(gAdm);
-				}				
+				}
 			}
 			
+			gAdm = gDao.findByFilter("acronym", "CADASTRA_RESPONSAVEL");
+			if (objetoUsuario.isCadastraResponsavel()) {
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}
+			}
+			
+			gAdm = gDao.findByFilter("acronym", "PROFILE_COMPLIANCE");
+			if (objetoUsuario.isProfileCompliance()) {
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}
+			}
+			
+			gAdm = gDao.findByFilter("acronym", "PROFILE_CONTROLLER");
+			if (objetoUsuario.isProfileController()) {
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}
+			}
+			
+			gAdm = gDao.findByFilter("acronym", "CONSULTA_INDIVIDUAL");
+			if (objetoUsuario.isConsultaIndividual()) {
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}
+			}
+			
+			
+
+
 			if (!objetoUsuario.isUserInvestidor() && !objetoUsuario.isUserPreContrato()) {
 				objetoUsuario.setCodigoResponsavel(null);
 			}
-			
+
 			objetoUsuario.setGroupList(gAdmAux);
-			
-			if (this.objetoUsuario.getHoraInicioPermissaoAcesso() == null || this.objetoUsuario.getHoraFimPermissaoAcesso() == null) {
+
+			if (this.objetoUsuario.getHoraInicioPermissaoAcesso() == null
+					|| this.objetoUsuario.getHoraFimPermissaoAcesso() == null) {
 				this.objetoUsuario.setHoraInicioPermissaoAcesso(null);
 				this.objetoUsuario.setHoraFimPermissaoAcesso(null);
 			}
-			
+
 			if (this.selectedDiasSemana.length > 0) {
 				objetoUsuario.setDiasSemana(Arrays.asList(this.selectedDiasSemana));
 			}
-			
+
 			// Google Authenticator
 			if (objetoUsuario.isTwoFactorAuth()) {
 				if (objetoUsuario.getKey() == null || objetoUsuario.getKey().equals("")) {
 					TwoFactorAuth TwoFactorAuth = new TwoFactorAuth();
 					String base32Secret = TwoFactorAuth.generateBase32Secret();
-					
-					String qrCode = TwoFactorAuth.getQrCodeGoogle(this.objetoUsuario.getLogin() + "@siscoat.com.br", base32Secret);
-					
+
+					String qrCode = TwoFactorAuth.getQrCodeGoogle(this.objetoUsuario.getLogin() + "@siscoat.com.br",
+							base32Secret);
+
 					objetoUsuario.setKey(base32Secret);
 					objetoUsuario.setUrlQRCode(qrCode);
 				}
 			}
-			
+
 			this.objetoUsuario.setListResponsavel(Arrays.asList(this.selectedResponsaveis));
-						
-			if (objetoUsuario.getId() <= 0) {
+
+			if (CommonsUtil.semValor(objetoUsuario.getId())) {
 				postoDao.create(objetoUsuario);
 				msgRetorno = "inserido";
 			} else {
@@ -498,25 +576,24 @@ public class UsuarioMB {
 				msgRetorno = "atualizado";
 			}
 
-			context.addMessage(null, new FacesMessage(
-					FacesMessage.SEVERITY_INFO, "Usuário: Registro "
-							+ msgRetorno + " com sucesso! (Usuário: "
-							+ objetoUsuario.getLogin() + ")", ""));
-			
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+					"Usuário: Registro " + msgRetorno + " com sucesso! (Usuário: " + objetoUsuario.getLogin() + ")",
+					""));
+
 			objetoUsuario = new User();
 
 		} catch (DAOException e) {
 
-			context.addMessage(null, new FacesMessage(
-					FacesMessage.SEVERITY_ERROR, "Usuário: " + e, ""));
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Usuário: " + e, ""));
 
 			return "";
 		} catch (DBConnectionException e) {
-			context.addMessage(null, new FacesMessage(
-					FacesMessage.SEVERITY_ERROR, "Usuário: " + e, ""));
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Usuário: " + e, ""));
 
 			return "";
 		}
+		
+		popularListaResponsavel();
 
 		return "UsuarioConsultar.xhtml";
 	}
@@ -528,80 +605,74 @@ public class UsuarioMB {
 		try {
 			objetoUsuario.getGroupList().clear();
 			postoDao.delete(objetoUsuario);
-			
 
-			context.addMessage(null, new FacesMessage(
-					FacesMessage.SEVERITY_INFO,
-					"Usuário: Registro excluído com sucesso! (Usuário: "
-							+ objetoUsuario.getLogin() + ")", ""));
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+					"Usuário: Registro excluído com sucesso! (Usuário: " + objetoUsuario.getLogin() + ")", ""));
 
 		} catch (DAOException e) {
 
-			context.addMessage(
-					null,
-					new FacesMessage(
-							FacesMessage.SEVERITY_ERROR,
-							"Usuário: Exclusão não permitida!! Este registro está relacionado com algum outro registro.",
-							""));
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Usuário: Exclusão não permitida!! Este registro está relacionado com algum outro registro.", ""));
 
 			return "";
 		} catch (DBConnectionException e) {
-			context.addMessage(null, new FacesMessage(
-					FacesMessage.SEVERITY_ERROR, "Usuário: " + e, ""));
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Usuário: " + e, ""));
 
 			return "";
 		}
 
 		return "UsuarioConsultar.xhtml";
 	}
-	
+
 	public void geraLoginSenha() {
-		
+
 		if (!this.updateMode && !this.deleteMode) {
-			String[] carctLogin ={"0","1","2","3","4","5","6","7","8","9"};
-	
+			String[] carctLogin = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+
 			String login = "";
-			
+
 			if (this.objetoUsuario.getName().length() >= 6) {
-				login = this.objetoUsuario.getName().substring(0, 6);			
+				login = this.objetoUsuario.getName().substring(0, 6);
 			} else {
-				login = this.objetoUsuario.getName().substring(0, this.objetoUsuario.getName().length());	
-				
+				login = this.objetoUsuario.getName().substring(0, this.objetoUsuario.getName().length());
+
 				int count = (6 - this.objetoUsuario.getName().length()) + 1;
-				
-			    for (int x=0; x < count; x++){
-			        int j = (int) (Math.random()*carctLogin.length);
-			        login += carctLogin[j];
-			    }
+
+				for (int x = 0; x < count; x++) {
+					int j = (int) (Math.random() * carctLogin.length);
+					login += carctLogin[j];
+				}
 			}
-			
-			this.objetoUsuario.setLogin(login);		
-			
+
+			this.objetoUsuario.setLogin(login);
+
 			// gera senha
-			String[] carctSenha ={"0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"};
-		    String senha="";
-	
-		    for (int x=0; x<10; x++){
-		        int j = (int) (Math.random()*carctSenha.length);
-		        senha += carctSenha[j];
-		    }
-			
-		    this.objetoUsuario.setPassword(senha);
+			String[] carctSenha = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g",
+					"h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A",
+					"B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U",
+					"V", "W", "X", "Y", "Z" };
+			String senha = "";
+
+			for (int x = 0; x < 10; x++) {
+				int j = (int) (Math.random() * carctSenha.length);
+				senha += carctSenha[j];
+			}
+
+			this.objetoUsuario.setPassword(senha);
 		}
 	}
 
-	public void popularListaResponsavel(){
+	public void popularListaResponsavel() {
 		UserDao uDao = new UserDao();
 		uDao.popularListaResponsavel();
 	}
-	
+
 	public void atualizaListagem() {
 		UserDao userDao = new UserDao();
 		userDao.carregarListaResponsavel(objetoUsuario);
-		selectedResponsaveis = (Responsavel[]) objetoUsuario.getListResponsavel().toArray();
+		//selectedResponsaveis = (Responsavel[]) objetoUsuario.getListResponsavel().toArray();
 	}
-			
-	
+
 	/**
 	 * @return the lazyModel
 	 */
@@ -610,8 +681,7 @@ public class UsuarioMB {
 	}
 
 	/**
-	 * @param lazyModel
-	 *            the lazyModel to set
+	 * @param lazyModel the lazyModel to set
 	 */
 	public void setLazyModel(LazyDataModel<User> lazyModel) {
 		this.lazyModel = lazyModel;
@@ -625,10 +695,14 @@ public class UsuarioMB {
 	}
 
 	/**
-	 * @param objetoUsuario
-	 *            the objetoUsuario to set
+	 * @param objetoUsuario the objetoUsuario to set
 	 */
 	public void setObjetoUsuario(User objetoUsuario) {
+		if (CommonsUtil.semValor(objetoUsuario.getUserPerfil())) {
+			if (userPerfilPublico == null)
+				carregaListaPerfil();
+			objetoUsuario.setUserPerfil(userPerfilPublico.get());
+		}
 		this.objetoUsuario = objetoUsuario;
 	}
 
@@ -640,8 +714,7 @@ public class UsuarioMB {
 	}
 
 	/**
-	 * @param updateMode
-	 *            the updateMode to set
+	 * @param updateMode the updateMode to set
 	 */
 	public void setUpdateMode(boolean updateMode) {
 		if (updateMode) {
@@ -660,8 +733,7 @@ public class UsuarioMB {
 	}
 
 	/**
-	 * @param deleteMode
-	 *            the deleteMode to set
+	 * @param deleteMode the deleteMode to set
 	 */
 	public void setDeleteMode(boolean deleteMode) {
 		if (deleteMode) {
@@ -684,8 +756,7 @@ public class UsuarioMB {
 	}
 
 	/**
-	 * @param tituloPainel
-	 *            the tituloPainel to set
+	 * @param tituloPainel the tituloPainel to set
 	 */
 	public void setTituloPainel(String tituloPainel) {
 		this.tituloPainel = tituloPainel;
@@ -735,5 +806,13 @@ public class UsuarioMB {
 
 	public void setResponsaveis(List<Responsavel> responsaveis) {
 		this.responsaveis = responsaveis;
+	}
+
+	public List<UserPerfil> getPerfil() {
+		return perfil;
+	}
+
+	public void setPerfil(List<UserPerfil> perfil) {
+		this.perfil = perfil;
 	}
 }

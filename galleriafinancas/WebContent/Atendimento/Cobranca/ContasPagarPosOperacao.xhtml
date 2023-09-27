@@ -60,7 +60,7 @@
 
 							<p:outputLabel value="Adicionar Conta a Pagar"
 								styleClass="labelBold" />
-							<!-- espaço em branco para formação dos elementos na tela -->
+							<p:spacer height="0" />
 
 							<p:outputLabel for="ContaPagarDescricao" value="Descrição: "
 								styleClass="labelBold"
@@ -182,40 +182,39 @@
 							update=":form:ContasPagarPanel" icon="ui-icon ui-icon-check" />
 					</h:panelGroup>
 				
-					<p:dataTable var="contas" value="#{contasPagarMB.contasPagarPosOperacao}" id="tblContasPagarList" allowUnsorting="true" >
-						
-							<p:column style="text-align: center;" headerText="Descrição: " styleClass="labelBold" >
+					<p:dataTable var="contas" value="#{contasPagarMB.contasPagarPosOperacao}" id="tblContasPagarList" allowUnsorting="true" > 
+						<p:column style="text-align: center;" headerText="Descrição: " styleClass="labelBold" >
 							<p:outputLabel value="#{contas.descricao}"
 								styleClass="labelBold" style="FONT-SIZE: 10pt;" />
-							</p:column>
+						</p:column>
 
-							<p:column style="text-align: center;" headerText="Valor: " styleClass="labelBold" >
+						<p:column style="text-align: center;" headerText="Valor: " styleClass="labelBold" >
 							<p:outputLabel value="#{contas.valor}"
 								converter="bigDecimalConverter" styleClass="labelBold"
 								style="FONT-SIZE: 10pt;width:100px;white-space: nowrap;" />
-							</p:column>
+						</p:column>
 
-							<p:column style="text-align: center;" headerText="Data Vencimento: " styleClass="labelBold" >
+						<p:column style="text-align: center;" headerText="Data Vencimento: " styleClass="labelBold" >
 							<h:outputText value="#{contas.dataVencimento}"
 								styleClass="labelBold">
 								<f:convertDateTime pattern="dd/MM/yyyy" />
 							</h:outputText>
-							</p:column>
+						</p:column>
 
-							<p:column style="text-align: center;" headerText="Valor Pago: " styleClass="labelBold" sortBy="#{contas.valorPagamento}"  >
+						<p:column style="text-align: center;" headerText="Valor Pago: " styleClass="labelBold" sortBy="#{contas.valorPagamento}"  >
 							<p:outputLabel value="#{contas.valorPagamento}"
 								converter="bigDecimalConverter" styleClass="labelBold"
 								style="FONT-SIZE: 10pt;width:100px;white-space: nowrap;" />
-							</p:column>
+						</p:column>
 
-							<p:column style="text-align: center;" headerText="Data Pagamento: " styleClass="labelBold" sortBy="#{contas.dataPagamento}" >
+						<p:column style="text-align: center;" headerText="Data Pagamento: " styleClass="labelBold" sortBy="#{contas.dataPagamento}" >
 							<p:outputLabel value="#{contas.dataPagamento}"
 								styleClass="labelBold">
 								<f:convertDateTime pattern="dd/MM/yyyy" />
 							</p:outputLabel>
-							</p:column>
-							
-							<p:column styleClass="colunaResponsiva">
+						</p:column>
+						
+						<p:column styleClass="colunaResponsiva">
 							<p:commandButton value="Editar" icon="ui-icon-pencil"
 								action="#{contasPagarMB.editarContaPosOperacao(contas)}" ajax="true"
 								update=":form:ContasPagarPanel" />
@@ -227,7 +226,7 @@
 							<p:commandButton value="Arquivos" icon="ui-icon-print"
 								action="#{contasPagarMB.populateFilesContasPagar(contas)}"
 								ajax="true" update=":form:ContasPagarPanel contaArquivosForm" />
-							</p:column>
+						</p:column>
 					</p:dataTable>
 					
 				</h:panelGrid>
@@ -241,7 +240,7 @@
 			<shiro:hasAnyRoles name="ROOT, POSOPERACAO">  						
 				<p:panel id="ArquivosPagar" header="Selecionar conta a pagar" style="margin-bottom:10px;text-align: center;">							
 					<h:panelGrid columns="1">		
-						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contasPagarMB.handleFilePagarUpload}" mode="advanced" dragDropSupport="true"
+					<!-- TODO arquivos contasPagar -->	<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contasPagarMB.handleFilePagarUpload}" mode="advanced" dragDropSupport="true"
                           update="ArquivosPagarSalvos form:msgArquivo" />								
 					</h:panelGrid>  
 				</p:panel>	
@@ -254,15 +253,18 @@
 					<h:panelGrid columns="1">			                      								
 						<p:dataTable id="dtFilesPagar" var="filesPagar" value="#{contasPagarMB.filesPagar}" rowKey="#{filesPagar.name}" selection="#{contasPagarMB.deleteFilesPagar}" emptyMessage="" sortBy="#{filesPagar.name}" >	
 							<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
-							<f:facet name="header">											 
-								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contasPagarMB.deleteFilesPagar}"/>
+							<f:facet name="header">
+								<p:commandButton value="Download Selecionado(s)" ajax="false" immediate="true"
+									icon="ui-icon-arrowthick-1-s" action="#{contasPagarMB.getDownloadAllFilesPagar()}">
+								</p:commandButton>											 
+								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contasPagarMB.deleteFile(contasPagarMB.deleteFilesPagar)}"/>
 					        </f:facet>	       
 					        <p:column style="text-align: center;"
 								headerText="Nome do Arquivo" filterBy="#{filesPagar.name}"
 								filterMatchMode="contains" sortBy="#{filesPagar.name}">
 								<h:outputText value="#{filesPagar.name}" />
 								<p:spacer height="10" />
-								<p:commandButton value="Abrir" ajax="false" action="#{contasPagarMB.viewFilePagar(filesPagar.name)}"
+								<p:commandButton value="Abrir" ajax="false" action="#{contasPagarMB.viewFile(filesPagar)}"
 									icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'" immediate="true">
 								</p:commandButton>
 							</p:column>
@@ -275,8 +277,18 @@
 				            </p:column>						        
 
 				            <f:facet name="footer">
-								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contasPagarMB.deleteFilesPagar}"/>								
-					        </f:facet>             	        		               		        			        			           			 		
+				            	<p:commandButton value="Download Selecionado(s)" ajax="false" immediate="true"
+									icon="ui-icon-arrowthick-1-s" action="#{contasPagarMB.getDownloadAllFilesPagar()}">
+								</p:commandButton>
+								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contasPagarMB.deleteFile(contasPagarMB.deleteFilesPagar)}"
+								update="ArquivosPagarSalvos"/>								
+					        </f:facet>
+					        <p:ajax event="rowSelectCheckbox" 
+								process="@this" listener="#{contasPagarMB.fileSelectionListener()}"/>
+							<p:ajax event="rowUnselectCheckbox" 
+								process="@this" listener="#{contasPagarMB.fileSelectionListener()}"/>
+							<p:ajax event="toggleSelect" 
+								process="@this" listener="#{contasPagarMB.fileSelectionListener()}"/>             	        		               		        			        			           			 		
 						</p:dataTable>								
 					</h:panelGrid>  
 				</p:panel>
@@ -346,7 +358,7 @@
 					<p:panel id="Arquivos" header="Selecionar Arquivo(s)"
 						style="margin-bottom:10px;text-align: center;">
 						<h:panelGrid columns="1">
-							<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar"
+						<!-- TODO arquivos contasPagar -->	<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar"
 								fileUploadListener="#{contasPagarMB.handleFileContaPagarUpload}" mode="advanced" dragDropSupport="true" 
 								update="contaArquivosForm" >
 								<f:attribute name="foo" value="#{contasPagarMB.contasPagarArquivos}" />
@@ -367,13 +379,11 @@
 								<p:column selectionMode="multiple"
 									style="width:16px;text-align:center" />
 								<f:facet name="header">
-									<p:commandButton value="Download Selecionado(s)" ajax="false"
-										
-										icon="ui-icon-arrowthick-1-s">
-										<p:fileDownload value="#{contratoCobrancaMB.downloadAllFiles}" />
+									<p:commandButton value="Download Selecionado(s)" ajax="false" immediate="true"
+										icon="ui-icon-arrowthick-1-s" action="#{contasPagarMB.getDownloadAllFilesContaPagar()}">
 									</p:commandButton>
 									<p:commandButton value="Excluir Selecionado(s)" 
-										icon="ui-icon-trash" action="#{contasPagarMB.deleteFile}" 
+										icon="ui-icon-trash" action="#{contasPagarMB.deleteFile(contasPagarMB.deleteFilesContas)}" 
 										update="contaArquivosForm dtFiles :dialogArquivosConta "/>
 								</f:facet>
 
@@ -383,7 +393,7 @@
 									<h:outputText value="#{files.name}" />
 									<p:spacer height="10" />
 									<p:commandButton value="Abrir" ajax="false"
-										action="#{contasPagarMB.viewFileContaPagar(files.name)}"
+										action="#{contasPagarMB.viewFile(files)}"
 										immediate="true" icon="ui-icon-search"
 										onclick="target='_blank'" onblur="target='_self'">
 									</p:commandButton>
@@ -400,11 +410,19 @@
 								</p:column>
 
 								<f:facet name="footer">
-								
+									<p:commandButton value="Download Selecionado(s)" ajax="false" immediate="true"
+										icon="ui-icon-arrowthick-1-s" action="#{contasPagarMB.getDownloadAllFilesContaPagar()}">
+									</p:commandButton>
 									<p:commandButton value="Excluir Selecionado(s)" ajax="false"
-										icon="ui-icon-trash" action="#{contasPagarMB.deleteFile}" 
+										icon="ui-icon-trash" action="#{contasPagarMB.deleteFile(contasPagarMB.deleteFilesContas)}" 
 										update="contaArquivosForm dtFiles"/>
 								</f:facet>
+								<p:ajax event="rowSelectCheckbox" 
+									process="@this" listener="#{contasPagarMB.fileSelectionListener()}"/>
+								<p:ajax event="rowUnselectCheckbox" 
+									process="@this" listener="#{contasPagarMB.fileSelectionListener()}"/>
+								<p:ajax event="toggleSelect" 
+									process="@this" listener="#{contasPagarMB.fileSelectionListener()}"/>
 							</p:dataTable>
 						</h:panelGrid>
 					</p:panel>
@@ -424,6 +442,7 @@
 		<ui:include src="../../Dialog/DialogRecebedorPagador.xhtml">
 			<ui:param name="mbean" value="#{contasPagarMB}"></ui:param>
 			<ui:param name="titulo" value="Recebedor"></ui:param>
+			<ui:param name="permiteAdicionarPessoa" value="false"></ui:param>			
 		</ui:include>
 
 		<ui:include src="../../Dialog/DialogResponsavel.xhtml">

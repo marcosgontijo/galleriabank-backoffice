@@ -2,13 +2,26 @@ package com.webnowbr.siscoat.cobranca.model.bmpdigital;
 
 import java.util.List;
 
-public class ScrResult {
+import com.google.gson.annotations.SerializedName;
 
+public class ScrResult {
+	
+	@SerializedName("Erro")
 	private boolean erro;
+	
+	@SerializedName("MensagemOperador")
 	private String mensagemOperador;
+	
+	@SerializedName("Periodo")
 	private String periodo;
+	
+	@SerializedName("ResumoDoCliente")
 	private ResumoDoCliente resumoDoCliente;
+	
+	@SerializedName("ResumoDoClienteTraduzido")
 	private ResumoDoClienteTraduzido resumoDoClienteTraduzido;
+	
+	@SerializedName("ResumoModalidade")
 	private List<ResumoModalidade> resumoModalidade;
 	
 	public ScrResult() {

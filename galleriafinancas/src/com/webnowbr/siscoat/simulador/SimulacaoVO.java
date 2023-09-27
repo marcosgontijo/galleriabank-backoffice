@@ -16,10 +16,12 @@ import java.util.TimeZone;
 import org.apache.poi.ss.formula.functions.FinanceLib;
 
 import com.webnowbr.siscoat.cobranca.db.op.IPCADao;
+import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
+import com.webnowbr.siscoat.simulador.GoalSeekFunction.ComputeInterface;
 
-public class SimulacaoVO {
+public class SimulacaoVO implements ComputeInterface{
 
 	// parametros
 	private BigDecimal tarifaIOFDiario;
@@ -47,6 +49,7 @@ public class SimulacaoVO {
 	private BigInteger qtdParcelas;
 	private BigDecimal valorImovel;
 	private BigDecimal custoEmissaoValor;
+	private BigDecimal custoEmissaoPercentual;
 	
 	private BigDecimal txAdm = BigDecimal.ZERO;
 	private BigDecimal valorSeguroDFI = BigDecimal.ZERO;
@@ -254,6 +257,26 @@ public class SimulacaoVO {
 		// .divide(BigDecimal.valueOf(qtdParcelas.subtract(carencia).doubleValue()),
 		// MathContext.DECIMAL128);
 		return valorIOFAdicional;
+	}
+	
+	public void calcularValorLiberado() {
+		this.custoEmissaoValor = SiscoatConstants.CUSTO_EMISSAO_MINIMO;
+		if(!CommonsUtil.semValor(custoEmissaoPercentual)) {			
+			if (this.valorCredito.multiply(this.custoEmissaoPercentual.divide(BigDecimal.valueOf(100)))
+					.compareTo(SiscoatConstants.CUSTO_EMISSAO_MINIMO) > 0) {
+				this.custoEmissaoValor = this.valorCredito.multiply(custoEmissaoPercentual.divide(BigDecimal.valueOf(100)));
+			}
+		}
+		
+		this.valorCreditoLiberado = this.valorCredito;
+		
+		if (this.custoEmissaoValor != null) {
+			this.valorCreditoLiberado = this.valorCreditoLiberado.subtract(this.custoEmissaoValor);
+		} 
+		
+		if (this.getIOFTotal() != null) {
+			this.valorCreditoLiberado = this.valorCreditoLiberado.subtract(this.getIOFTotal());
+		}
 	}
 
 	public void calcularSac() {
@@ -615,6 +638,12 @@ public class SimulacaoVO {
 		}
 	}
 	
+	public double compute(double valorBruto) {
+		this.valorCredito = CommonsUtil.bigDecimalValue(valorBruto);
+		calcular();
+		calcularValorLiberado();
+		return CommonsUtil.doubleValue(valorCreditoLiberado);
+	}
 	
 	private BigDecimal getIPCAMes(Date dataReferencia) {
 		// Transforma data para 2 meses antes
@@ -883,5 +912,14 @@ public class SimulacaoVO {
 
 	public void setCorrigidoNovoIPCA(boolean corrigidoNovoIPCA) {
 		this.corrigidoNovoIPCA = corrigidoNovoIPCA;
-	}		
+	}
+
+	public BigDecimal getCustoEmissaoPercentual() {
+		return custoEmissaoPercentual;
+	}
+
+	public void setCustoEmissaoPercentual(BigDecimal custoEmissaoPercentual) {
+		this.custoEmissaoPercentual = custoEmissaoPercentual;
+	}	
+	
 }

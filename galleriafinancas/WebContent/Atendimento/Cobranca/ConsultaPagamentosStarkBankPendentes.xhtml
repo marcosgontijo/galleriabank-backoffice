@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="#{request.contextPath}/resources/js/functions.js"></script>
+			<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>
+			<script type="text/javascript"
+					src="/banking/faces/javax.faces.resource/jquery/jquery-plugins.js?ln=primefaces&amp;v=4.0"></script>
+			<link type="text/css" rel="stylesheet"
+					href="/banking/faces/javax.faces.resource/primefaces.css?ln=primefaces&amp;v=4.0" />
+			<p:messages id="mensagens" showDetail="true" />
+						<p:panel id="PanelPDF" header="Impressão em PDF"
+				style="margin-bottom:10px;" rendered="#{impressoesPDFMB.pdfCadastroPessoaFisicaGerado}">
+				<p:focus />
+				
+				
+				<p:messages />
+				<h:panelGrid columns="2">
+					<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+						draggable="false" closable="false" resizable="false">
+						<p:graphicImage name="image/ajaxloadingbar.gif" />
+					</p:dialog>
+
+					<h:form>
+						<p:commandButton value="Ficha Principal" ajax="false"
+							
+							icon="ui-icon-arrowthick-1-s">
+							<p:fileDownload value="#{impressoesPDFMB.file}" />
+						</p:commandButton>
+						<p:commandButton value="Ficha Conjuge" ajax="false"
+							
+							icon="ui-icon-arrowthick-1-s">
+							<p:fileDownload value="#{impressoesPDFMB.fileConjuge}" />
+						</p:commandButton>
+					</h:form>
+
+					<script type="text/javascript">
+						function start() {
+							PF('statusDialog').show();
+						}
+
+						function stop() {
+							PF('statusDialog').hide();
+						}
+					</script>
+
+				</h:panelGrid>
+			</p:panel>
+			<p:panel id="ConsultaContratosResultados" header="StarkBank - Aprovação de Pagamentos Pendentes" style="margin-bottom:10px;">		    		    
+                 <p:dataTable id="dtContratos" var="pagamento" value="#{contratoCobrancaMB.pagamentosStarkBankPendentes}" selection="" emptyMessage="" sortBy="#{pagamento.dataPagamento}" sortOrder="descending"
+   		         reflow="true"
+   		         rows="10"
+                 paginator="true"
+                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                 currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                 rowsPerPageTemplate="10,50,100">      
+                 	<p:column style="text-align: center;width:105px;" headerText="Contrato">
+			            <h:outputText value="#{pagamento.contasPagar.contrato.numeroContrato}" />
+			        </p:column>          
+                	<p:column style="text-align: center;width:105px;" headerText="Nome" >
+			            <h:outputText value="#{pagamento.nomePagador}" />
+			        </p:column>
+			        <p:column style="text-align: center;width:105px;" headerText="Despesa" >
+			            <h:outputText value="#{pagamento.contasPagar.descricao}" />
+			        </p:column>
+			        <p:column style="text-align: center;width:105px;" headerText="Forma de Pagamento">
+			            <h:outputText value="#{pagamento.formaPagamento}" />
+			        </p:column>  
+			        <p:column style="text-align: center;" headerText="Data Pagamento" sortBy="#{pagamento.dataPagamento}">
+			            <h:outputText value="#{pagamento.dataPagamento}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+			            </h:outputText>
+			        </p:column>		
+			        <p:column style="text-align: center;" headerText="Valor (R$)"  >
+						<p:outputLabel value="#{pagamento.valor}" 
+							style="FONT-SIZE: 10pt;"
+							converter="bigDecimalConverter" />
+					</p:column>       
+			        <p:column styleClass="colunaResponsiva">	
+			       		<shiro:hasAnyRoles name="ROOT">  
+				        	<p:commandButton action="#{contratoCobrancaMB.processaPagamentoStarkBank()}" ajax="false" icon="ui-icon-print" value="Aprovar Pagamento" title="Aprovar Pagamento">
+				        		<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoBaixaPagamentoStarkBank}" value="#{pagamento}" />
+			                </p:commandButton>
+			                <p:spacer width="10" height="10"/>		
+			            </shiro:hasAnyRoles>               
+		            </p:column>			        		               		        			        			           			 		
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

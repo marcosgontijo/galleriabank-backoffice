@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="infra">
+	<class name="com.webnowbr.siscoat.infra.db.model.Termo"
+		table="Termo">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="increment" />
+		</id>
+		<property name="identificacao" type="java.lang.String">
+			<column name="identificacao" not-null="true" />
+		</property>
+		 <property name="inicioValidade" type="java.util.Date">
+            <column name="inicioValidade" />
+        </property>  
+         <property name="fimValidade" type="java.util.Date">
+            <column name="fimValidade" />
+        </property>  
+
+		<property name="arquivo" type="java.lang.String">
+			<column name="arquivo" not-null="true" unique="true" />
+		</property>
+		<property name="path" type="java.lang.String">
+			<column name="path" not-null="true" />
+		</property>
+
+		<many-to-one name="UserPerfil"
+			class="com.webnowbr.siscoat.infra.db.model.UserPerfil" lazy="false">
+			<column name="idUserPerfil" />
+		</many-to-one>
+
+
+	</class>
+</hibernate-mapping>

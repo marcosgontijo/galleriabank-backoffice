@@ -397,8 +397,8 @@
 							<p:selectOneMenu id="valorBoletoPre"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.valorBoletoPreContratoStr}" ajax="true" 
 								style="font-weight: bold;">
-								<f:selectItem itemValue="900,00" itemLabel="50% - R$900,00" />
-								<f:selectItem itemValue="1.800,00" itemLabel="100% - R$1.800,00" />
+								<f:selectItem itemValue="925,00" itemLabel="50% - R$925,00" />
+								<f:selectItem itemValue="1.850,00" itemLabel="100% - R$1.850,00" />
 							</p:selectOneMenu>
 							
 							<p:outputLabel value="Exibir Fatura: "
@@ -504,23 +504,13 @@
 									label="Link Google Maps" style="width:400px;" />
 
 								<p:outputLabel for="TipoLaudoPaju" value="Tipo: " />
-								<p:selectOneMenu id="TipoLaudoPaju"
-									value="#{contratoCobrancaMB.objetoImovelCobranca.tipo}"
-									label="Tipo" style="width:410px;">
-									<f:selectItem itemValue="" itemLabel="Escolha o Tipo do Imóvel" />
-									<f:selectItem itemValue="Apartamento" itemLabel="Apartamento" />
-									<f:selectItem itemValue="Casa" itemLabel="Casa" />
-									<f:selectItem itemValue="Galpão" itemLabel="Galpão" />
-									<f:selectItem itemValue="Sala Comercial" itemLabel="Sala Comercial" />
-									<f:selectItem itemValue="Prédio Comercial" itemLabel="Prédio Comercial" />
-									<f:selectItem itemValue="Prédio Misto" itemLabel="Prédio Misto" />
-									<f:selectItem itemValue="Casa de Condomínio" itemLabel="Casa de condomínio (até 1000m²)" />
-									<f:selectItem itemValue="Casa de Condomínio acima1000" itemLabel="Casa de condomínio (acima 1000m²)" />
-									<f:selectItem itemValue="Terreno" itemLabel="Terreno" />
-									<f:selectItem itemValue="Chácara" itemLabel="Chácara" />
-									<f:selectItem itemValue="Rural" itemLabel="Rural" />
-									<f:selectItem itemValue="Casa em construção" itemLabel="Casa em construção" />
-								</p:selectOneMenu>
+								<p:autoComplete id="TipoLaudoPaju" value="#{contratoCobrancaMB.objetoImovelCobranca.tipo}"
+									completeMethod="#{contratoCobrancaMB.objetoImovelCobranca.completeTipoImovel}" 
+									autocomplete="no" dropdown="true" forceSelection="true" var="tipo" 
+									itemValue="#{contratoCobrancaMB.objetoImovelCobranca.getValue(tipo)}" 
+									itemLabel="#{contratoCobrancaMB.objetoImovelCobranca.getLabel(tipo)}" 
+									scrollHeight="250">
+								</p:autoComplete>
 
 								<p:outputLabel for="AreaTotalLaudoPaju"
 									value="Área Total / Terreno (metros):  " />
@@ -1568,11 +1558,18 @@
 							<f:selectItem itemValue="TO" itemLabel="Tocantins" />							    
 						</p:selectOneMenu>		
 						
-						<p:outputLabel for="linkGMapsImovel" value="Link Google Maps: "/>
-						<p:inputText id="linkGMapsImovel" value="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}" label="Link Google Maps" style="width:400px;"/> 
-						
-						<p:commandButton value="Gerar Link" action="#{contratoCobrancaMB.getLinkMaps()}" update="linkGMapsImovel botaoLinkImovel"/>						       	 	
-						
+						<p:outputLabel for="linkGMapsImovel" value="Link Google Maps: " />
+						<p:inputText id="linkGMapsImovel"
+							value="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}"
+							label="Link Google Maps" style="width:400px;" >
+							<p:ajax event="keyup" update="gerarLinkimovel"/>
+						</p:inputText>
+
+						<p:commandButton id="gerarLinkimovel" value="Gerar Link" action="#{contratoCobrancaMB.getLinkMaps()}" 
+							disabled="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps ne null 
+								and contratoCobrancaMB.objetoImovelCobranca.linkGMaps ne ''}"
+							update="linkGMapsImovel botaoLinkImovel gerarLinkimovel" />
+							
 						<h:panelGroup id="botaoLinkImovel">
 							<a href="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}" class="linkPDF" target="_blank"
 								style="background: linear-gradient(90deg, rgba(159,196,24,1) 0%, rgba(115,158,46,1) 100%);padding: 5px;-webkit-border-radius: 5px;text-decoration: none;
@@ -1581,22 +1578,13 @@
 						</h:panelGroup>
 						
 						<p:outputLabel for="Tipo" value="Tipo: " />
-						<p:selectOneMenu id="Tipo" value="#{contratoCobrancaMB.objetoImovelCobranca.tipo}" label="Tipo" style="width:410px;">
-							<f:selectItem itemValue="" itemLabel="Escolha o Tipo do Imóvel" />
-							<f:selectItem itemValue="Apartamento" itemLabel="Apartamento" />		
-							<f:selectItem itemValue="Casa" itemLabel="Casa" />		
-							<f:selectItem itemValue="Galpão" itemLabel="Galpão" />		
-							<f:selectItem itemValue="Sala Comercial" itemLabel="Sala Comercial" />
-							<f:selectItem itemValue="Prédio Comercial" itemLabel="Prédio Comercial" />	
-							<f:selectItem itemValue="Prédio Misto" itemLabel="Prédio Misto" />	
-							<f:selectItem itemValue="Casa de Condomínio" itemLabel="Casa de condomínio (até 1000m²)" />
-							<f:selectItem itemValue="Casa de Condomínio acima1000" itemLabel="Casa de condomínio (acima 1000m²)" />
-							<f:selectItem itemValue="Terreno" itemLabel="Terreno" />
-							<f:selectItem itemValue="Chácara" itemLabel="Chácara" />
-							<f:selectItem itemValue="Rural" itemLabel="Rural" />		
-							<f:selectItem itemValue="Casa em construção" itemLabel="Casa em construção" />									
-							<p:ajax update="BoletoPanel" event="change" />    
-						</p:selectOneMenu>	
+						<p:autoComplete id="Tipo" value="#{contratoCobrancaMB.objetoImovelCobranca.tipo}"
+							completeMethod="#{contratoCobrancaMB.objetoImovelCobranca.completeTipoImovel}" 
+							autocomplete="no" dropdown="true" forceSelection="true" var="tipo" 
+							itemValue="#{contratoCobrancaMB.objetoImovelCobranca.getValue(tipo)}" 
+							itemLabel="#{contratoCobrancaMB.objetoImovelCobranca.getLabel(tipo)}" 
+							scrollHeight="250">
+						</p:autoComplete>
 						
 						<p:outputLabel for="valorEstimado" value="Qual o valor estimado do imóvel? "  />
 						<p:inputText id="valorEstimado" value="#{contratoCobrancaMB.objetoImovelCobranca.valoEstimado}" onkeypress="return isNumberKey(event);" onkeydown="FormataValor(this, 13, event, 2);" converter="bigDecimalConverter"/>
@@ -2071,7 +2059,7 @@
 									<h:outputText
 											value="#{files.name}" />
 									<p:spacer height="10" />
-									<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFile(files.name)}"
+									<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFile(files)}"
 										immediate="true" icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
 									</p:commandButton>
 								</p:column>
@@ -2181,6 +2169,7 @@
 		<ui:include src="../../Dialog/DialogRecebedorPagador.xhtml">
 				<ui:param name="mbean" value="#{contratoCobrancaMB}"></ui:param>
 				<ui:param name="titulo" value="#{contratoCobrancaMB.tituloPagadorRecebedorDialog}"></ui:param>
+				<ui:param name="permiteAdicionarPessoa" value="false"></ui:param>			
 		</ui:include>
 		
 		<ui:include src="../../Dialog/DialogResponsavel.xhtml">

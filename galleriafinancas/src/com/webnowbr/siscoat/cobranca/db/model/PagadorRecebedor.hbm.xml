@@ -98,7 +98,15 @@
         </property> 
         <property name="conta" type="java.lang.String">
             <column name="CONTA"/>
+        </property>         
+        <property name="contaDigito" type="java.lang.String">
+            <column name="CONTADIGITO"/>
         </property> 
+        
+		<property name="contaBancariaValidada" type="boolean">
+			<column name="CONTABANCARIAVALIDADA" not-null="true" default="false" />
+		</property>
+				
         <property name="nomeCC" type="java.lang.String">
             <column name="NOMECC"/>
         </property>   
@@ -580,6 +588,31 @@
 			<column name="pix" />
 		</property>	  
 		
+		<property name="tipoPix" type="java.lang.String">
+			<column name="tipoPix" />
+		</property>
+		
+		<property name="bancoPix" type="java.lang.String">
+            <column name="BANCOPIX"/>
+        </property> 
+                
+       <property name="agenciaPix" type="java.lang.String">
+            <column name="AGENCIAPIX"/>
+        </property> 
+		  
+        <property name="contaPix" type="java.lang.String">
+            <column name="CONTAPIX"/>
+        </property> 
+        
+		<property name="pixValidado" type="boolean">
+			<column name="PIXVALIDADO" not-null="true" default="false" />
+		</property>
+		
+		<property name="contaDigitoPix" type="java.lang.String">
+            <column name="CONTADIGITOPIX"/>
+        </property>
+		
+		
 		<list name="documentosDocket"
 			table="PagadorRecebedor_DocumentosPagadorDocket_Join" cascade="all" lazy="false">
 			<key column="idPagador" />
@@ -587,6 +620,23 @@
 			<many-to-many column="idDocumentosPagadorDocket"
 				class="com.webnowbr.siscoat.cobranca.db.model.DocumentosPagadorDocket" />
 		</list>
+		
+		<property name="orgaoEmissorRG" type="java.lang.String">
+			<column name="orgaoEmissorRG" />
+		</property>
+		
+		<property name="orgaoEmissorRGConjuge" type="java.lang.String">
+			<column name="orgaoEmissorRGConjuge" />
+		</property>
+		
+		<property name="tipoConta" type="java.lang.String">
+			<column name="tipoConta" />
+		</property>
+		
+		<property name="dataCasamento" type="java.util.Date">
+			<column name="dataCasamento" />
+		</property>
+		
 		
     </class>
 </hibernate-mapping>

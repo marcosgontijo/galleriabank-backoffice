@@ -132,7 +132,10 @@
         </property>     
         <property name="profileMarketing" type="boolean">
             <column name="profileMarketing" />
-        </property>     
+        </property> 
+        <property name="profileController" type="boolean">
+            <column name="profileController" not-null="true" default="false" />
+        </property>    
         <property name="comiteEditar" type="boolean">
             <column name="comiteEditar" />
         </property>
@@ -190,7 +193,35 @@
         </property>
         <property name="senhaDocket" type="encryptedString">
             <column name="senhaDocket" />
-        </property>         		      
+        </property>    
+        
+        <many-to-one name="UserPerfil" class="com.webnowbr.siscoat.infra.db.model.UserPerfil" lazy="false" >
+        	<column name="idUserPerfil" />
+   		</many-to-one>
+         		      
+        <list name="listTermos"
+			table="termoUsuario" cascade="all" lazy="false">
+			<key column="idUsuario" />
+			<list-index></list-index>
+			<many-to-many column="idTermo"
+				class="com.webnowbr.siscoat.infra.db.model.Termo" />
+		</list> 
+		
+		<property name="profilePajuNeves" type="boolean">
+			<column name="profilePajuNeves" not-null="true" default="false" />
+		</property>	
+		
+		<property name="profilePajuLuvison" type="boolean">
+			<column name="profilePajuLuvison" not-null="true" default="false" />
+		</property>
+		
+		<property name="cadastraResponsavel" type="boolean">
+			<column name="cadastraResponsavel" not-null="true" default="false" />
+		</property>
+		
+		<property name="consultaIndividual" type="boolean">
+			<column name="consultaIndividual" not-null="true" default="false" />
+		</property>
 
     </class>
 </hibernate-mapping>

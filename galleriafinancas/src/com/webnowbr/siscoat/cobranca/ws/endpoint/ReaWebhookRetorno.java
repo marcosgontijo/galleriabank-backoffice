@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -44,7 +45,7 @@ public class ReaWebhookRetorno {
 			} else if ( !reaWebhookRetornoBloco.relacionadoAoProprietarioAtual) {
 				proprietariosAnterior.add(reaWebhookRetornoBloco);
 			}
-		}
+		} 
 	}
 
 //	private ReaWebhookRetornoBloco getProprietarioAtual() {

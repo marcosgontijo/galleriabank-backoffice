@@ -29,10 +29,9 @@
 			<p:panel id="PanelLocador" header="Contrato"
 				style="margin-bottom:10px;">
 				<p:focus />
-				<p:messages />
-				<p:messages id="msgs" />	
+				<p:messages id="msgs" />
 				<p:commandButton ajax="false" action="#{ccbMB.readXWPFile}"
-						icon="ui-icon ui-icon-print" value="Fazer Download"  update=" :form  msgs" />			
+					icon="ui-icon ui-icon-print" value="Fazer Download"  update=" :form  msgs" />			
 
 				<h:panelGrid columns="2">							
 					<p:outputLabel for="tipoDownload"
@@ -40,19 +39,18 @@
 					<p:selectOneMenu id="tipoDownload"
 						value="#{ccbMB.tipoDownload}" ajax="true">
 						<f:selectItem itemValue="CCI" itemLabel="CCI" />				
-						<f:selectItem itemValue="NCnova" itemLabel="Notificacao de cessao" />
 						<f:selectItem itemValue="CartaSplit" itemLabel="Carta Split" />
-						<f:selectItem itemValue="AnexoII" itemLabel="AnexoII" />			
+						<f:selectItem itemValue="AnexoII" itemLabel="AnexoII" />
 						<f:selectItem itemValue="Cessao" itemLabel="Cessao" />
-						<f:selectItem itemValue="InstrumentoEmissaoCCI" itemLabel="Instrumento Emissao CCI" />
 						<f:selectItem itemValue="EndossosEmPretoGalleria" itemLabel="Endossos Em Preto" />		
-						<f:selectItem itemValue="FinanciamentoCCI" itemLabel="FinanciamentoCCI" />			
+						<f:selectItem itemValue="FinanciamentoCCI" itemLabel="FinanciamentoCCI" />		
+						<f:selectItem itemValue="AquisicaoCCI" itemLabel="Aquisicao/Emprestimo" />		
 						<f:selectItem itemValue="Ficha PPE" itemLabel="Ficha PPE - PF" />	
 						<f:selectItem itemValue="Ficha PLD e FT" itemLabel="Ficha PLD e FT - PJ" />	
-						<f:selectItem itemValue="DeclaracaoNaoUniaoEstavel" itemLabel="DeclaracaoNaoUniaoEstavel" />
-						<f:selectItem itemValue="CCBnova" itemLabel="CCB" />
-						<f:selectItem itemValue="AFnova" itemLabel="AF" />	
-						
+						<f:selectItem itemValue="DeclaracaoNaoUniaoEstavel" itemLabel="Declaração Não União Estavel" />
+						<f:selectItem itemValue="DeclaracaoUniaoEstavel" itemLabel="Declaração de União Estavel" />
+						<f:selectItem itemValue="DeclaracaoDestinacaoRecursos" itemLabel="Declaração Destinação Recursos" />
+						<f:selectItem itemValue="TermoPaju" itemLabel="Termo Responsabilidade Paju" />
 												
 						<p:ajax update="pagadoresAntigos pagadoresNovos despesasPanel SeguradoresPanel PanelBanco PgmntBancoVendedor" event="valueChange"
 							listener="#{ccbMB.verificaModeloAntigo()}" />
@@ -1151,6 +1149,8 @@
 											<f:selectItem itemValue="VIÚVO" itemLabel="Viúvo" />											
 											<f:selectItem itemValue="DIVORCIADO" itemLabel="Divorciado" />
 											<f:selectItem itemValue="SEPARADO" itemLabel="Separado" />
+											<f:selectItem itemValue="SEPARADO JUDICIALMENTE" 
+												itemLabel="Separado Judicialmente" />
 											<p:ajax update=":form:conjugueParticipante" event="change" />
 										</p:selectOneMenu>
 
@@ -1656,9 +1656,9 @@
 										style="FONT-SIZE: 10pt;width:100px;"
 										converter="bigDecimalConverter" />
 									<p:spacer width="10px"/>
-									<p:commandButton ajax="false" icon="ui-icon-trash"
+									<p:commandButton icon="ui-icon-trash"
 										action="#{ccbMB.removeDespesa(despesas)}"
-										update="ListaDespesas" />
+										update="form:despesasPanel form:valorDespesas" />
 								</p:dataViewListItem>
 							</p:dataView>				
 							<h:panelGroup>
@@ -1690,8 +1690,7 @@
 										<f:selectItem itemValue="TED" itemLabel="TED" />
 										<f:selectItem itemValue="Pix" itemLabel="Pix" />
 										<f:selectItem itemValue="Boleto" itemLabel="Boleto" />
-										<p:ajax event="change" 
-											update="tedGrid" />
+										<p:ajax event="change"  update="tedGrid" />
 									</p:selectOneMenu>
 								</h:panelGrid>
 								<h:panelGroup id="tedGrid">
@@ -1706,16 +1705,27 @@
 											<p:outputLabel value="C/C: " styleClass="labelBold"
 												style="font-weight: bold; font-size: 18px;" />
 											<p:inputText value="#{ccbMB.objetoCcb.CCBCC}" />
-											<p:outputLabel value="CNPJ: " styleClass="labelBold"
+											<p:outputLabel value="Dígito C/C: " styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText value="#{ccbMB.objetoCcb.CCBDigito}" />
+											<p:outputLabel value="Tipo Da Conta " styleClass="labelBold" />
+											<p:selectOneMenu value="#{ccbMB.objetoCcb.CCBTipoConta}" >
+												<f:selectItem itemValue="Conta Corrente" itemLabel="Conta Corrente" />
+												<f:selectItem itemValue="Conta Poupança" itemLabel="Conta Poupança" />
+											</p:selectOneMenu>
+											<p:outputLabel value="CPF/CNPJ: " styleClass="labelBold"
 												style="font-weight: bold; font-size: 18px;" />
 											<p:inputText value="#{ccbMB.objetoCcb.CCBCNPJ}" />
 											<p:outputLabel value="Nome: " styleClass="labelBold"
 												style="font-weight: bold; font-size: 18px;" />
 											<p:inputText value="#{ccbMB.objetoCcb.CCBNome}" />
+											<p:outputLabel value="Pix: " styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText value="#{ccbMB.objetoCcb.CCBPix}" />
 										</h:panelGrid>
 									
 										<h:panelGrid columns="2" rendered="#{ccbMB.despesaSelecionada.formaTransferencia eq 'Pix'}">
-											<p:outputLabel value="Pix: " styleClass="labelBold"
+											<p:outputLabel value="Chave Pix: " styleClass="labelBold"
 												style="font-weight: bold; font-size: 18px;" />
 											<p:inputText value="#{ccbMB.objetoCcb.CCBPix}" />
 										</h:panelGrid>
@@ -1732,12 +1742,20 @@
 											<p:outputLabel value="C/C: " styleClass="labelBold"
 												style="font-weight: bold; font-size: 18px;" />
 											<p:inputText value="#{ccbMB.objetoCcb.intermediacaoCC}" />
-											<p:outputLabel value="CNPJ: " styleClass="labelBold"
+											<p:outputLabel value="Tipo Da Conta: " styleClass="labelBold" />
+											<p:selectOneMenu value="#{ccbMB.objetoCcb.intermediacaoTipoConta}" >
+												<f:selectItem itemValue="Conta Corrente" itemLabel="Conta Corrente" />
+												<f:selectItem itemValue="Conta Poupança" itemLabel="Conta Poupança" />
+											</p:selectOneMenu>
+											<p:outputLabel value="CPF/CNPJ: " styleClass="labelBold"
 												style="font-weight: bold; font-size: 18px;" />
 											<p:inputText value="#{ccbMB.objetoCcb.intermediacaoCNPJ}" />
 											<p:outputLabel value="Nome: " styleClass="labelBold"
 												style="font-weight: bold; font-size: 18px;" />
 											<p:inputText value="#{ccbMB.objetoCcb.intermediacaoNome}" />
+											<p:outputLabel value="Pix: " styleClass="labelBold"
+												style="font-weight: bold; font-size: 18px;" />
+											<p:inputText value="#{ccbMB.objetoCcb.intermediacaoPix}" />
 										</h:panelGrid>
 										
 										<h:panelGrid columns="2" rendered="#{ccbMB.despesaSelecionada.formaTransferencia eq 'Pix'}">
@@ -1748,10 +1766,10 @@
 									</h:panelGroup>
 								</h:panelGroup>
 																		
-								<p:commandButton value="Inserir Despesa" ajax="false"
+								<p:commandButton value="Inserir Despesa" 
 									icon="ui-icon-check"
 									action="#{ccbMB.addDespesa}" 
-									update="despesasPanel ListaDespesas">
+									update="form:despesasPanel form:valorDespesas">
 								</p:commandButton>				
 							</h:panelGroup>
 							
@@ -1770,10 +1788,9 @@
 									<p:spacer width="10px"/>
 									<p:commandButton icon="ui-icon-trash"
 										action="#{ccbMB.removeProcesso(processos)}"
-										update="ListaProcessos" />
+										update="form:despesasPanel form:valorDespesas" />
 								</p:dataViewListItem>
-							</p:dataView>
-							
+							</p:dataView>			
 							<h:panelGrid columns="2">
 								<p:outputLabel
 									value="Valor: " styleClass="labelBold"
@@ -1797,91 +1814,17 @@
 								<p:selectOneMenu 
 									value="#{ccbMB.processoSelecionado.quitar}">
 									<f:selectItem itemValue="" itemLabel="Selecione" />
-									<f:selectItem itemValue="Não" itemLabel="Não" />
 									<f:selectItem itemValue="Quitar" itemLabel="Quitar" />
 									<f:selectItem itemValue="Quitar ou indicar bens" itemLabel="Quitar ou indicar bens" />
+									<f:selectItem itemValue="Indicar bens" itemLabel="Indicar bens" />
 								</p:selectOneMenu>
 									
 								<p:commandButton value="Inserir Processo"
 									icon="ui-icon-check"
 									action="#{ccbMB.addProcesso}" 
-									update="despesasPanel ListaProcessos">
+									update="form:despesasPanel form:valorDespesas">
 								</p:commandButton>
 							</h:panelGrid>							
-
-						</h:panelGrid>
-					</p:panel>
-				</h:panelGroup>
-
-				<h:panelGroup id="SeguradoresPanel">
-					<p:panel header="Segurados" style="margin-bottom:10px;"
-						rendered="#{ccbMB.tipoDownload == 'CCI' || ccbMB.tipoDownload == 'AquisicaoCCI' || ccbMB.tipoDownload == 'FinanciamentoCCI' }">
-						<f:facet name="header"> Segurados 
-						<p:outputLabel value="" />
-							<p:selectBooleanButton
-								value="#{ccbMB.addSegurador}"
-								onLabel="Adicionar Segurado" offLabel="Adicionar Segurado">
-								<p:ajax update=":form:SeguradoresPanel" event="change" />
-							</p:selectBooleanButton>
-						</f:facet>
-
-						<p:dataView var="segurado"
-							value="#{ccbMB.objetoCcb.listSegurados}"
-							paginator="false" layout="list"
-							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
-							<p:dataViewListItem>
-								<p:outputLabel value="Nome: " styleClass="labelBold" />
-								<p:outputLabel value="#{segurado.pessoa.nome}"
-									styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
-								<p:spacer height="10" />
-								<p:outputLabel value="|" styleClass="labelBold" />
-								<p:spacer height="10" />
-								<p:outputLabel for="SeguradorPorcentagem"
-									value="Porcentagem do segurado: " styleClass="labelBold"
-									style="width:200px;" />
-								<p:inputText id="SeguradorPorcentagem"
-									value="#{segurado.porcentagemSegurador}" required="true"
-									style="FONT-SIZE: 10pt;width:200px;" />
-								<p:commandButton value="Remover"
-									action="#{ccbMB.removerSegurado(segurado)}"
-									ajax="true" update=":form:SeguradoresPanel" />
-							</p:dataViewListItem>
-						</p:dataView>
-
-						<h:panelGrid columns="2" id="addSegurado"
-							rendered="#{ccbMB.addSegurador}">
-
-							<p:spacer height="10" />
-							<p:spacer height="10" />
-							<p:outputLabel value="Adicionar Segurado" styleClass="labelBold" />
-							<p:spacer height="10" />
-							<p:outputLabel for="SeguradorNome" value="Nome do segurado: "
-								styleClass="labelBold" />
-							<h:panelGroup>
-								<p:outputLabel id="SeguradorNome"
-									value="#{ccbMB.seguradoSelecionado.pessoa.nome}"
-									required="false" style="FONT-SIZE: 10pt;width:300px;" />
-								<p:spacer height="10" />
-								<p:commandButton
-									action="#{ccbMB.pesquisaSegurado()}"
-									icon="ui-icon ui-icon-circle-zoomin"
-									oncomplete="PF('pagadorRecebedorDialog').show();"
-									update="formReceborPagador" />
-							</h:panelGroup>
-
-							<p:outputLabel for="SeguradorPorcentagem"
-								value="Porcentagem do segurado: " styleClass="labelBold" />
-							<p:inputText id="SeguradorPorcentagem"
-								value="#{ccbMB.seguradoSelecionado.porcentagemSegurador}"
-								style="FONT-SIZE: 10pt;width:300px;" 
-								onkeypress="return isNumberKey(event);"
-								onkeydown="FormataValor(this, 13, event, 2);" 
-								converter="bigDecimalConverter"/>
-							<p:spacer height="10" />
-
-							<p:commandButton value="Adicionar" ajax="true"
-								action="#{ccbMB.concluirSegurado()}"
-								update=":form:SeguradoresPanel" icon="ui-icon ui-icon-check" />
 
 						</h:panelGrid>
 					</p:panel>
@@ -1932,6 +1875,11 @@
 									<f:selectItem itemValue="B" itemLabel="Bruto" />
 									<f:selectItem itemValue="L" itemLabel="Liquido" />						
 								</p:selectOneMenu>
+								
+								<p:outputLabel value="Usar Novo Custo Emissão: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+								<p:selectBooleanCheckbox id="objetoCcb" value="#{ccbMB.objetoCcb.usarNovoCustoEmissao}" >
+								</p:selectBooleanCheckbox>
 								
 								<p:outputLabel for="prazo"
 									value="Prazo:  " styleClass="labelBold"
@@ -1991,11 +1939,19 @@
 									onkeydown="FormataValor(this,13, event, 2);"
 									converter="bigDecimalConverter" />
 									
-								<p:outputLabel for="contaCorrente" value="Nº Conta Corrente: "
+								<p:outputLabel for="contaCorrente" value="Nº Conta: "
 									styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
 								<p:inputText id="contaCorrente" value="#{ccbMB.objetoCcb.contaCorrente}"
 									label="Contrato" />
+										
+								<p:outputLabel for="tipoContaBanco"
+									value="Tipo Da Conta " styleClass="labelBold" />
+								<p:selectOneMenu id="tipoContaBanco"
+									value="#{ccbMB.objetoCcb.tipoContaBanco}" >
+									<f:selectItem itemValue="Conta Corrente" itemLabel="Conta Corrente" />
+									<f:selectItem itemValue="Conta Poupança" itemLabel="Conta Poupança" />
+								</p:selectOneMenu>
 
 								<p:outputLabel for="agencia" value="Nº Agência: "
 									styleClass="labelBold"
@@ -2038,22 +1994,14 @@
 									style="font-weight: bold; font-size: 18px;" />
 								<p:inputText id="PixBanco" value="#{ccbMB.objetoCcb.pixBanco}"
 									label="Contrato" />							
-							</h:panelGrid>
-							<h:panelGrid columns="2" rendered="#{ccbMB.tipoDownload == 'FinanciamentoCCI'}">
+							
 								<p:outputLabel for="digitoBanco" value="Digito: "
 									styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
 								<p:inputText id="digitoBanco" value="#{ccbMB.objetoCcb.digitoBanco}"
 									label="Contrato" />		
 									
-								<p:outputLabel for="tipoContaBanco"
-									value="Tipo Da Conta " styleClass="labelBold" />
-								<p:selectOneMenu id="tipoContaBanco" required="true"
-									value="#{ccbMB.objetoCcb.tipoContaBanco}" >
-									<f:selectItem itemValue="" itemLabel="Selecione" />
-									<f:selectItem itemValue="Conta Corrente" itemLabel="Conta Corrente" />
-									<f:selectItem itemValue="Conta Poupança" itemLabel="Conta Poupança" />
-								</p:selectOneMenu>
+								
 							</h:panelGrid>							
 						</p:panel>
 						<p:panel header="Imóvel">
@@ -2078,7 +2026,7 @@
 								<p:outputLabel for="cartorioImovel"
 									value="Nº Cartório Do Imóvel: " styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
-								<p:inputText id="cartorioImovel"
+								<p:inputText id="cartorioImovel" type="number"
 									value="#{ccbMB.objetoCcb.cartorioImovel}" label="Contrato" />
 									
 								<p:outputLabel for="inscricaoMunicipal" value="Inscrição Municipal: "
@@ -2185,11 +2133,19 @@
 										onkeydown="FormataValor(this, 13, event, 2);"
 										converter="bigDecimalConverter" />
 										
-									<p:outputLabel for="contaCorrenteVendedor" value="Nº Conta Corrente: "
+									<p:outputLabel for="contaCorrenteVendedor" value="Nº Conta: "
 										styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
 									<p:inputText id="contaCorrenteVendedor" value="#{ccbMB.objetoCcb.contaCorrenteVendedor}"
 										label="Contrato" />
+										
+									<p:outputLabel for="tipoContaBancoVendedor"
+										value="Tipo Da Conta: " styleClass="labelBold" />
+									<p:selectOneMenu id="tipoContaBancoVendedor" 
+										value="#{ccbMB.objetoCcb.tipoContaBancoVendedor}" >
+										<f:selectItem itemValue="Conta Corrente" itemLabel="Conta Corrente" />
+										<f:selectItem itemValue="Conta Poupança" itemLabel="Conta Poupança" />			
+									</p:selectOneMenu>
 
 									<p:outputLabel for="agenciaVendedor" value="Nº Agência: "
 										styleClass="labelBold"
@@ -2239,15 +2195,6 @@
 									<p:inputText id="digitoBancoVendedor" value="#{ccbMB.objetoCcb.digitoBancoVendedor}"
 										label="Contrato" />		
 										
-									<p:outputLabel for="tipoContaBancoVendedor"
-										value="Tipo Da Conta: " styleClass="labelBold" />
-									<p:selectOneMenu id="tipoContaBancoVendedor" 
-										value="#{ccbMB.objetoCcb.tipoContaBancoVendedor}" >
-										<f:selectItem itemValue="" itemLabel="Selecione" />
-										<f:selectItem itemValue="Conta Corrente" itemLabel="Conta Corrente" />
-										<f:selectItem itemValue="Conta Poupança" itemLabel="Conta Poupança" />			
-									</p:selectOneMenu>
-											
 								</h:panelGrid>		
 							</p:panel>
 						</h:panelGroup>
@@ -2540,6 +2487,80 @@
 									</h:panelGrid>
 								</p:panel>					
 							</h:panelGrid>
+							
+							<h:panelGroup id="SeguradoresPanel">
+								<p:panel header="Segurados" style="margin-bottom:10px;"
+									rendered="#{ccbMB.tipoDownload == 'CCI' || ccbMB.tipoDownload == 'AquisicaoCCI' || ccbMB.tipoDownload == 'FinanciamentoCCI' }">
+									<f:facet name="header"> Segurados 
+									<p:outputLabel value="" />
+										<p:selectBooleanButton
+											value="#{ccbMB.addSegurador}"
+											onLabel="Adicionar Segurado" offLabel="Adicionar Segurado">
+											<p:ajax update=":form:SeguradoresPanel" event="change" />
+										</p:selectBooleanButton>
+									</f:facet>
+			
+									<p:dataView var="segurado"
+										value="#{ccbMB.objetoCcb.listSegurados}"
+										paginator="false" layout="list"
+										paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+										<p:dataViewListItem>
+											<p:outputLabel value="Nome: " styleClass="labelBold" />
+											<p:outputLabel value="#{segurado.pessoa.nome}"
+												styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+											<p:spacer height="10" />
+											<p:outputLabel value="|" styleClass="labelBold" />
+											<p:spacer height="10" />
+											<p:outputLabel for="SeguradorPorcentagem"
+												value="Porcentagem do segurado: " styleClass="labelBold"
+												style="width:200px;" />
+											<p:inputText id="SeguradorPorcentagem"
+												value="#{segurado.porcentagemSegurador}" required="true"
+												style="FONT-SIZE: 10pt;width:200px;" />
+											<p:commandButton value="Remover"
+												action="#{ccbMB.removerSegurado(segurado)}"
+												ajax="true" update=":form:SeguradoresPanel" />
+										</p:dataViewListItem>
+									</p:dataView>
+			
+									<h:panelGrid columns="2" id="addSegurado"
+										rendered="#{ccbMB.addSegurador}">
+			
+										<p:spacer height="10" />
+										<p:spacer height="10" />
+										<p:outputLabel value="Adicionar Segurado" styleClass="labelBold" />
+										<p:spacer height="10" />
+										<p:outputLabel for="SeguradorNome" value="Nome do segurado: "
+											styleClass="labelBold" />
+										<h:panelGroup>
+											<p:outputLabel id="SeguradorNome"
+												value="#{ccbMB.seguradoSelecionado.pessoa.nome}"
+												required="false" style="FONT-SIZE: 10pt;width:300px;" />
+											<p:spacer height="10" />
+											<p:commandButton
+												action="#{ccbMB.pesquisaSegurado()}"
+												icon="ui-icon ui-icon-circle-zoomin"
+												oncomplete="PF('pagadorRecebedorDialog').show();"
+												update="formReceborPagador" />
+										</h:panelGroup>
+			
+										<p:outputLabel for="SeguradorPorcentagem"
+											value="Porcentagem do segurado: " styleClass="labelBold" />
+										<p:inputText id="SeguradorPorcentagem"
+											value="#{ccbMB.seguradoSelecionado.porcentagemSegurador}"
+											style="FONT-SIZE: 10pt;width:300px;" 
+											onkeypress="return isNumberKey(event);"
+											onkeydown="FormataValor(this, 13, event, 2);" 
+											converter="bigDecimalConverter"/>
+										<p:spacer height="10" />
+			
+										<p:commandButton value="Adicionar" ajax="true"
+											action="#{ccbMB.concluirSegurado()}"
+											update=":form:SeguradoresPanel" icon="ui-icon ui-icon-check" />
+			
+									</h:panelGrid>
+								</p:panel>
+							</h:panelGroup>					
 						</p:panel>
 					</h:panelGroup>
 
@@ -2585,6 +2606,7 @@
 					<p:commandButton ajax="false" action="#{ccbMB.enviarMoneyPlus}"
 						icon="ui-icon ui-icon-print" value="Integrar Money Plus" />					
 				</h:panelGrid>
+			
 				<h:panelGrid columns="2">	
 					<p:outputLabel id="aviso" value="#{ccbMB.aviso} " styleClass="labelBold" />
 					<p:commandButton ajax="true"
@@ -2595,7 +2617,8 @@
 	
 		<ui:include src="../../Dialog/DialogRecebedorPagador.xhtml">
 			<ui:param name="mbean" value="#{ccbMB}"></ui:param>
-			<ui:param name="titulo" value="#{ccbMB.tituloPagadorRecebedorDialog}"></ui:param>
+			<ui:param name="titulo" value="#{ccbMB.tituloPagadorRecebedorDialog}"></ui:param>			
+			<ui:param name="permiteAdicionarPessoa" value="false"></ui:param>			
 		</ui:include>
 
 		<p:dialog header="Contratos" widgetVar="contratoCobrancaDialog"

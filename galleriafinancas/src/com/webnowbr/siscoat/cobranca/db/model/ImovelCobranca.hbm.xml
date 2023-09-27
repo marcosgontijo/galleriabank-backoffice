@@ -132,6 +132,12 @@
 		<property name="inscricaoMunicipal" type="java.lang.String">
 			<column name="inscricaoMunicipal" />
 		</property>
+		
+		<many-to-one name="objetoCidade"
+			class="com.webnowbr.siscoat.cobranca.db.model.Cidade"
+			lazy="false">
+			<column name="objetoCidade" />
+		</many-to-one>
 
     </class>
 </hibernate-mapping>

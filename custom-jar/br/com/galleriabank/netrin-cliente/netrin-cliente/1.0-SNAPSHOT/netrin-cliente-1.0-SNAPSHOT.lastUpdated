@@ -1,0 +1,10 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Wed May 17 11:04:56 BRT 2023
+file\://${basedir}/../custom-jar/.error=
+file\://${basedir}/../custom-jar/.lastUpdated=1684332292364
+https\://repo.dotcms.com/artifactory/list/jcenter/.error=
+https\://repo.dotcms.com/artifactory/list/jcenter/.lastUpdated=1684332293527
+https\://repo.maven.apache.org/maven2/.error=
+https\://repo.maven.apache.org/maven2/.lastUpdated=1684332292360
+https\://repository.primefaces.org//.error=
+https\://repository.primefaces.org//.lastUpdated=1684332296181

@@ -1,11 +1,16 @@
 package com.webnowbr.siscoat.cobranca.vo;
 
 import java.io.File;
+import java.util.Date;
 
 public class FileUploaded {
 	private File file;
 	private String name;
+//	private Date date;
 	private String path;
+	private String pathOrigin;
+	private int pages;
+	private String fileBase64;
 
 	public FileUploaded() {
 	}
@@ -43,6 +48,14 @@ public class FileUploaded {
 	public void setName(String name) {
 		this.name = name;
 	}
+//
+//	public Date getDate() {
+//		return date;
+//	}
+//
+//	public void setDate(Date date) {
+//		this.date = date;
+//	}
 
 	/**
 	 * @return the path
@@ -58,4 +71,27 @@ public class FileUploaded {
 		this.path = path;
 	}
 
+	public int getPages() {
+		return pages;
+	}
+
+	public void setPages(int pages) {
+		this.pages = pages;
+	}
+
+	public String getPathOrigin() {
+		return pathOrigin;
+	}
+
+	public void setPathOrigin(String pathOrigin) {
+		this.pathOrigin = pathOrigin;
+	}
+
+	public String getFileBase64() {
+		return fileBase64;
+	}
+
+	public void setFileBase64(String fileBase64) {
+		this.fileBase64 = fileBase64;
+	}
 }

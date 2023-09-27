@@ -62,9 +62,9 @@ public class CommonsUtil {
 	/** Logger instance. */
 	private static final Log LOGGER = LogFactory.getLog(CommonsUtil.class);
 
-	public final static SecretKey CHAVE = Keys
+	public final static SecretKey CHAVE_WEBHOOK = Keys
 			.hmacShaKeyFor("MukS3mqD2ooKCddDumCGTtiNBVotiMFB".getBytes(StandardCharsets.UTF_8));
-
+	
 	public static Double castAsDouble(Object value) {
 		return value == null ? null : doubleValue(value);
 	}
@@ -192,6 +192,27 @@ public class CommonsUtil {
 		}
 		return BigDecimal.valueOf(doubleValue(object));
 	}
+	
+	public static BigInteger bigIntegerValue(Object object) {
+		if (object == null) {
+			return BigInteger.ZERO;
+		}
+		return BigInteger.valueOf(intValue(object));
+	}
+	
+	public static BigInteger bigIntegerValue(Long object) {
+		if (object == null) {
+			return BigInteger.ZERO;
+		}
+		return BigInteger.valueOf(intValue(object));
+	}
+	
+	public static BigInteger bigIntegerValue(int object) {
+		if (object == 0) {
+			return BigInteger.ZERO;
+		}
+		return BigInteger.valueOf(object);
+	}
 
 	public static Date dateValue(Object object) {
 		if (object == null) {
@@ -208,6 +229,7 @@ public class CommonsUtil {
 			return null;
 		}
 	}
+	
 
 	public static Date dateValue(Object object, String formatoData) {
 		if (object == null) {
@@ -248,6 +270,33 @@ public class CommonsUtil {
 		byte[] outputData = outputBuffer.array();
 
 		return new String(outputData);
+	}
+	
+	public static String[] stringToArray(String object) {
+		if(semValor(object)) {
+			return null;
+		}
+		String[] array = object.split(",");
+		for(int i = 0; i < array.length; i++) {
+			array[i] = array[i].replace("[", "");
+			array[i] = array[i].replace("]", "");
+			array[i] = array[i].trim();
+		}
+		return array;
+	}
+	
+	public static List<String> stringToList(String object) {
+		if(semValor(object)) {
+			return null;
+		}
+		String[] array = object.split(",");
+		for(int i = 0; i < array.length; i++) {
+			array[i] = array[i].replace("[", "");
+			array[i] = array[i].replace("]", "");
+			array[i] = array[i].trim();
+		}
+		List<String> list = new ArrayList<String>(Arrays.asList(array));
+		return list;
 	}
 
 	/**
@@ -407,6 +456,11 @@ public class CommonsUtil {
 	public static final boolean mesmoValor(String a, String b) {
 		return a == null ? b == null : a.equals(b);
 	}
+	
+	public static final boolean mesmoValorIgnoreCase(String a, String b) {
+		return a == null ? b == null : a.equalsIgnoreCase(b);
+	}
+	
 
 	public static final boolean mesmoValor(Character a, Character b) {
 		return a == null ? b == null : a.equals(b);
@@ -987,6 +1041,7 @@ public class CommonsUtil {
 
 	public static final String formataCnpjCpf(String cnpjCpf, boolean isUsarPrefixos) {
 		String result = "";
+		cnpjCpf = somenteNumeros(cnpjCpf);
 		if (cnpjCpf != null) {
 			switch (cnpjCpf.length()) {
 			case 11:
@@ -996,6 +1051,24 @@ public class CommonsUtil {
 			case 14:
 				result = (isUsarPrefixos ? "CNPJ " : "") + cnpjCpf.substring(0, 2) + "." + cnpjCpf.substring(2, 5) + "."
 						+ cnpjCpf.substring(5, 8) + "/" + cnpjCpf.substring(8, 12) + "-" + cnpjCpf.substring(12);
+				break;
+			default:
+				result = cnpjCpf;
+				break;
+			}
+		}
+		return result;
+	}
+	
+	public static final String pessoaFisicaJuridicaCnpjCpf(String cnpjCpf) {
+		String result = "";
+		if (cnpjCpf != null) {
+			switch (cnpjCpf.length()) {
+			case 11:
+				result = "PF";
+				break;
+			case 14:
+				result = "PJ";
 				break;
 			default:
 				result = cnpjCpf;
@@ -1371,6 +1444,7 @@ public class CommonsUtil {
 
 	}
 
+	
 	/**
 	 * Retorna o sistema operacional que o sistema está rodando Util para definir os
 	 * locais de arquivos em ambiente Windows e Linux Bonatte: 06/03/2015 retorna
@@ -1381,6 +1455,15 @@ public class CommonsUtil {
 		boolean result = false;
 		if (sistemaOperacional.contains("WINDOWS") || sistemaOperacional.indexOf("MAC") >= 0)  {
 			// System.out.println("Rodando em Windows: "+sistemaOperacional);
+			result = true;
+		}
+		return result;
+	}
+	
+	public static final boolean sistemaMAC() {
+		String sistemaOperacional = System.getProperty("os.name").toUpperCase();
+		boolean result = false;
+		if (sistemaOperacional.contains("MAC"))  {
 			result = true;
 		}
 		return result;
@@ -1829,5 +1912,15 @@ public class CommonsUtil {
 		 */
 
 		return outputStream;
+	}
+	
+	public static BigDecimal calcularPorcentagemValores(BigDecimal valorBase, BigDecimal valorCampo) {
+		BigDecimal porcentagem = BigDecimal.ZERO;
+		
+		if (valorBase.compareTo(BigDecimal.ZERO) > 0 && valorCampo.compareTo(BigDecimal.ZERO) > 0) {
+			porcentagem = valorCampo.divide(valorBase, 2, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(100));
+		}   
+		
+		return porcentagem;
 	}
 }

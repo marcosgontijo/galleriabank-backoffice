@@ -2,14 +2,17 @@ package com.webnowbr.siscoat.cobranca.mb;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
+import java.util.zip.ZipOutputStream;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -32,6 +36,7 @@ import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
+import com.webnowbr.siscoat.auxiliar.CompactadorUtil;
 import com.webnowbr.siscoat.cobranca.db.model.ContaContabil;
 import com.webnowbr.siscoat.cobranca.db.model.ContasPagar;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
@@ -42,8 +47,11 @@ import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
+import com.webnowbr.siscoat.cobranca.service.FileService;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
+import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
@@ -90,14 +98,17 @@ public class ContasPagarMB {
 	private Responsavel selectedResponsavel;
 	private List<Responsavel> listResponsavel;
 	
+	FileService fileService = new FileService();
 	Collection<FileUploaded> filesPagar = new ArrayList<FileUploaded>();
-	List<FileUploaded> DeleteFilesPagar = new ArrayList<FileUploaded>();
+	List<FileUploaded> deleteFilesPagar = new ArrayList<FileUploaded>();
 	List<FileUploaded> deleteFilesContas= new ArrayList<FileUploaded>();
 	
 	
 	private boolean addContasPagar;
 	StreamedContent downloadFile;
 	FileUploaded selectedFile =  new FileUploaded();
+	byte[] arquivos = null;
+	List<FileUploaded> deletefiles = new ArrayList<FileUploaded>();
 	
 	public ContasPagarMB() {
 
@@ -126,113 +137,69 @@ public class ContasPagarMB {
 	
 	public void handleFilePagarUpload(FileUploadEvent event) throws IOException {
 		FacesContext context = FacesContext.getCurrentInstance();
-		// recupera local onde será gravado o arquivo
-		ParametrosDao pDao = new ParametrosDao();
-		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-			//	String pathContrato = "C:/Users/Usuario/Desktop/"	
-				+ this.selectedContratoLov.getNumeroContrato() + "//pagar/";
-
-		// cria o diretório, caso não exista
-		File diretorio = new File(pathContrato);
-		if (!diretorio.isDirectory()) {
-			diretorio.mkdir();
+					
+		if (event.getFile().getFileName().endsWith(".zip")) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
+		} else {
+			byte[] conteudo = event.getFile().getContents();
+			fileService.salvarDocumento(conteudo, this.selectedContratoLov.getNumeroContrato(), 
+					 event.getFile().getFileName(), "pagar", getUsuarioLogado());
+			
+			// atualiza lista de arquivos contidos no diretório
+			//documentoConsultarTodos = new ArrayList<FileUploaded>();
+			filesPagar = listaArquivosPagar();
 		}
 		
-		if(event.getFile().getFileName().contains("Pag ")
-				|| event.getFile().getFileName().contains("PAG ")) {
-			TakeBlipMB takeBlipMB = new TakeBlipMB();
-			ResponsavelDao rDao = new ResponsavelDao();
-			Responsavel rGerente = new Responsavel();
-			rGerente = rDao.findById((long) 1175); //camilo
-			takeBlipMB.sendWhatsAppMessageComprovante(rGerente,
-					"comprovante_anexado", 
-					getNomeUsuarioLogado(),
-					this.selectedContratoLov.getNumeroContrato(),
-					event.getFile().getFileName());
-		}
-
-		if(event.getFile().getFileName().endsWith(".zip")) {
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
-		} else {
-			// cria o arquivo
-			byte[] conteudo = event.getFile().getContents();
-			FileOutputStream fos;
-			try {
-				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
-				fos.write(conteudo);
-				fos.close();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				System.out.println(e);
+		if(!SiscoatConstants.DEV && !CommonsUtil.sistemaWindows()) {
+			if(event.getFile().getFileName().contains("Pag ")
+					|| event.getFile().getFileName().contains("PAG ")) {
+				TakeBlipMB takeBlipMB = new TakeBlipMB();
+				ResponsavelDao rDao = new ResponsavelDao();
+				Responsavel rGerente = new Responsavel();
+				rGerente = rDao.findById((long) 1175); //camilo
+				takeBlipMB.sendWhatsAppMessageComprovante(rGerente,
+						"comprovante_anexado", 
+						getNomeUsuarioLogado(),
+						this.selectedContratoLov.getNumeroContrato(),
+						event.getFile().getFileName());
 			}
-
-			// atualiza lista de arquivos contidos no diretório
-			filesPagar = listaArquivosPagar();
 		}
 	}
 	
 	public void handleFileContaPagarUpload(FileUploadEvent event) throws IOException {
 		ContasPagar conta = (ContasPagar) event.getComponent().getAttributes().get("foo"); 
-		
 		FacesContext context = FacesContext.getCurrentInstance();
 		if(CommonsUtil.semValor(conta.getFileListId())) {
 			conta.setFileListId(generateFileID());
 		}	
-		
-		//cria pasta pagar
-		ParametrosDao pDao = new ParametrosDao();
-		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-		//String pathContrato = "C:/Users/Usuario/Desktop/"
-				+ this.selectedContratoLov.getNumeroContrato() + "//pagar/";		
-		File diretorio = new File(pathContrato);
-		if (!diretorio.isDirectory()) {
-			diretorio.mkdir();
-		}
-		
-		//cria pasta da conta
-		pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-		//pathContrato = "C:/Users/Usuario/Desktop/"
-				+ this.selectedContratoLov.getNumeroContrato() + "//pagar/" + conta.getFileListId() + "/";	
-		diretorio = new File(pathContrato);
-		if (!diretorio.isDirectory()) {
-			diretorio.mkdir();
-		}		
-
-		if(event.getFile().getFileName().contains("Pag ")
-				|| event.getFile().getFileName().contains("PAG ")) {
-			TakeBlipMB takeBlipMB = new TakeBlipMB();
-			ResponsavelDao rDao = new ResponsavelDao();
-			Responsavel rGerente = new Responsavel();
-			rGerente = rDao.findById((long) 1175); //camilo
-			takeBlipMB.sendWhatsAppMessageComprovante(rGerente,
-					"comprovante_anexado", 
-					getNomeUsuarioLogado(),
-					this.selectedContratoLov.getNumeroContrato(),
-					event.getFile().getFileName());
-		}
-		
-		if(event.getFile().getFileName().endsWith(".zip")) {
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
+				
+		if (event.getFile().getFileName().endsWith(".zip")) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
 		} else {
-			// cria o arquivo
-			//event.getFile().getFileName();
 			byte[] conteudo = event.getFile().getContents();
-			//String oldFileName = new String(event.getFile().getFileName());
-			//String[] strs = oldFileName.substring(FilenameUtils.getPrefixLength(oldFileName)).split(Pattern.quote("."));
-			//String fileName = strs[0] + "_CntPgr" + generateFileID() + "." + strs[1];
-			FileOutputStream fos;
-			try {
-				fos = new FileOutputStream(pathContrato + event.getFile().getFileName());
-				fos.write(conteudo);
-				fos.close();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				System.out.println(e);
-			}
-
+			fileService.salvarDocumento(conteudo, this.selectedContratoLov.getNumeroContrato(), 
+					 event.getFile().getFileName(), "pagar".concat("/").concat(conta.getFileListId()) , getUsuarioLogado());
+			
 			// atualiza lista de arquivos contidos no diretório
 			conta.setFilesContas(listaArquivosContasPagar(conta));
 		}
+		
+		if(!SiscoatConstants.DEV && !CommonsUtil.sistemaWindows()) {
+			if(event.getFile().getFileName().contains("Pag ")
+					|| event.getFile().getFileName().contains("PAG ")) {
+				TakeBlipMB takeBlipMB = new TakeBlipMB();
+				ResponsavelDao rDao = new ResponsavelDao();
+				Responsavel rGerente = new Responsavel();
+				rGerente = rDao.findById((long) 1175); //camilo
+				takeBlipMB.sendWhatsAppMessageComprovante(rGerente,
+						"comprovante_anexado", 
+						getNomeUsuarioLogado(),
+						this.selectedContratoLov.getNumeroContrato(),
+						event.getFile().getFileName());
+			}
+		}		
 	}
 	
 	public void populateFilesContasPagar(ContasPagar conta) throws IOException {	
@@ -258,18 +225,32 @@ public class ContasPagarMB {
 		+ this.selectedContratoLov.getNumeroContrato() + "//pagar/";
 		File diretorio = new File(pathContrato);
 		File arqs[] = diretorio.listFiles();
-		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
-		if (arqs != null) {
-			for (int i = 0; i < arqs.length; i++) {
-				File arquivo = arqs[i];
-
-				if(arquivo.isFile()) {
-					lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
-				}
-				
-			}
+		
+		List<FileUploaded> documentoConsultarTodos= new ArrayList<FileUploaded>();
+		if (CommonsUtil.semValor(documentoConsultarTodos)) {
+			FileService fileService = new FileService();
+			documentoConsultarTodos = fileService.documentoConsultarTodos(this.getSelectedContratoLov().getNumeroContrato(), getUsuarioLogado());
 		}
-		return lista;
+		return documentoConsultarTodos.stream().filter(f ->  CommonsUtil.mesmoValorIgnoreCase( f.getPathOrigin(), "pagar"))
+//				.sorted(new Comparator<FileUploaded>() {
+//				.documentoConsultarTodos(this.selectedContratoLov.getNumeroContrato(), getUsuarioLogado())
+//			        public int compare(FileUploaded o1, FileUploaded o2) {
+//			            return o1.getDate().compareTo(o2.getDate());
+//			        }
+//			    })
+	.collect(Collectors.toList());
+//		Collection<FileUploaded> lista = new ArrayList<FileUploaded>();
+//		if (arqs != null) {
+//			for (int i = 0; i < documentoConsultarTodos.size(); i++) {
+//				File arquivo = arqs[i];
+//
+//				if(arquivo.isFile()) {
+//					lista.add(new FileUploaded(arquivo.getName(), arquivo, pathContrato));
+//				}
+//				
+//			}
+//		}
+//		return lista;
 	}
 	
 	public Collection<FileUploaded> listaArquivosContasPagar(ContasPagar conta) {
@@ -297,174 +278,157 @@ public class ContasPagarMB {
 		return lista;
 	}
 	
+	
+	
 	public StreamedContent getDownloadFile() {
+
 		if (this.selectedFile != null) {
-			FileInputStream stream;
-			try {
-				stream = new FileInputStream(this.selectedFile.getFile().getAbsolutePath());
-				downloadFile = new DefaultStreamedContent(stream, this.selectedFile.getPath(),
-						this.selectedFile.getFile().getName());
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				System.out.println("Cobrança - Download de Arquivos - Arquivo Não Encontrado");
-			}
+			InputStream  stream;
+			FileService fileService = new FileService();
+			stream = new ByteArrayInputStream( fileService.abrirDocumentos(this.selectedFile,this.selectedContratoLov.getNumeroContrato(), getUsuarioLogado()));
+			downloadFile = new DefaultStreamedContent(stream, this.selectedFile.getPath(),
+					this.selectedFile.getName());
 		}
 		return this.downloadFile;
 	}
 	
-	public void viewFilePagar(String fileName) {
-
+	public void fileSelectionListener() {
+		//Apesar dessa função não fazer nada ela é importante para o funcionamento do download em zip.
+		//Não me pergunte o pq
+	}
+	
+	public StreamedContent getDownloadAllFilesPagar() {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+		try {
+			CompactadorUtil compac = new CompactadorUtil();
+			for (FileUploaded f : deleteFilesPagar) {
+				String arquivo = f.getName();
+			    byte[] arquivoByte = fileService.abrirDocumentos
+			    		(f,this.selectedContratoLov.getNumeroContrato(), getUsuarioLogado());
+				listaArquivos.put(arquivo, arquivoByte);
+			}
+			arquivos = compac.compactarZipByte(listaArquivos);
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String.format(selectedContratoLov.getNumeroContrato() + " Documentos_pagar.zip",
+					"");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(arquivos));
+			gerador.close();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return null;
+	}
+	
+	public StreamedContent getDownloadAllFilesContaPagar() {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+		try {
+			CompactadorUtil compac = new CompactadorUtil();
+			for (FileUploaded f : deleteFilesContas) {
+				String arquivo = f.getName();
+			    byte[] arquivoByte = fileService.abrirDocumentos
+			    		(f,this.selectedContratoLov.getNumeroContrato(), getUsuarioLogado());
+				listaArquivos.put(arquivo, arquivoByte);
+			}
+			arquivos = compac.compactarZipByte(listaArquivos);
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String.format(selectedContratoLov.getNumeroContrato() + " Documentos_conta.zip",
+					"");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(arquivos));
+			gerador.close();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return null;
+	}
+	
+	public void viewFile(FileUploaded file) {
+		String pathContrato = null;
 		try {
 			FacesContext facesContext = FacesContext.getCurrentInstance();
 			ExternalContext externalContext = facesContext.getExternalContext();
 			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
 			BufferedInputStream input = null;
 			BufferedOutputStream output = null;
-
-			ParametrosDao pDao = new ParametrosDao();
-			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-			//String pathContrato = "C:/Users/Usuario/Desktop/"	
-			+ this.selectedContratoLov.getNumeroContrato() + "//pagar/" + fileName;
-
-			/*
-			 * 'docx' =>
-			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-			 * 'xlsx' =>
-			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
-			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
-			 * 'application/pdf' 'psd' => 'application/x-photoshop'
-			 */
+			String fileName = file.getName();
+			String filePath = file.getPath();
+			
+			pathContrato = file.getPath() + "/" + fileName;
 			String mineFile = "";
-
+	
 			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
 				mineFile = "image-jpg";
 			}
-
+	
 			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
 				mineFile = "image-jpeg";
 			}
-
+	
 			if (fileName.contains(".png") || fileName.contains(".PNG")) {
 				mineFile = "image-png";
 			}
-
+	
 			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
 				mineFile = "application/pdf";
 			}
-
-			File arquivo = new File(pathContrato);
-
-			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
-
+	
+			FileService fileService = new FileService();
+			FileUploaded documentoSelecionado = new FileUploaded(fileName, null, filePath);
+			byte[] arquivob = fileService.abrirDocumentos(documentoSelecionado,this.selectedContratoLov.getNumeroContrato(), getUsuarioLogado());
+			InputStream arquivo = new ByteArrayInputStream( arquivob );
+			
+			input = new BufferedInputStream(arquivo, 10240);
+	
 			response.reset();
 			// lire un fichier pdf
 			response.setHeader("Content-type", mineFile);
-
-			response.setContentLength((int) arquivo.length());
-
-			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
+	
+			response.setContentLength(arquivob.length);
+	
+			response.setHeader("Content-disposition", "inline; filename=" + fileName);
 			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-
+	
 			// Write file contents to response.
 			byte[] buffer = new byte[10240];
 			int length;
 			while ((length = input.read(buffer)) > 0) {
 				output.write(buffer, 0, length);
 			}
-
+	
 			// Finalize task.
 			output.flush();
 			output.close();
 			facesContext.responseComplete();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
+			System.out.println(pathContrato);
 			e.printStackTrace();
 		} catch (IOException e) {
+			System.out.println(pathContrato);
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	public void viewFileContaPagar(String fileName, ContasPagar conta) {
-		
-		try {
-			FacesContext facesContext = FacesContext.getCurrentInstance();
-			ExternalContext externalContext = facesContext.getExternalContext();
-			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-			BufferedInputStream input = null;
-			BufferedOutputStream output = null;
-
-			ParametrosDao pDao = new ParametrosDao();
-			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
-				//	String pathContrato = "C:/Users/Usuario/Desktop/"
-					+ this.selectedContratoLov.getNumeroContrato() + "/pagar/" + conta.getFileListId() + "/" + fileName;
-
-			/*
-			 * 'docx' =>
-			 * 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-			 * 'xlsx' =>
-			 * 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'word'
-			 * => 'application/msword', 'xls' => 'application/excel', 'pdf' =>
-			 * 'application/pdf' 'psd' => 'application/x-photoshop'
-			 */
-			String mineFile = "";
-
-			if (fileName.contains(".jpg") || fileName.contains(".JPG")) {
-				mineFile = "image-jpg";
-			}
-
-			if (fileName.contains(".jpeg") || fileName.contains(".jpeg")) {
-				mineFile = "image-jpeg";
-			}
-
-			if (fileName.contains(".png") || fileName.contains(".PNG")) {
-				mineFile = "image-png";
-			}
-
-			if (fileName.contains(".pdf") || fileName.contains(".PDF")) {
-				mineFile = "application/pdf";
-			}
-
-			File arquivo = new File(pathContrato);
-
-			input = new BufferedInputStream(new FileInputStream(arquivo), 10240);
-
-			response.reset();
-			// lire un fichier pdf
-			response.setHeader("Content-type", mineFile);
-
-			response.setContentLength((int) arquivo.length());
-
-			response.setHeader("Content-disposition", "inline; filename=" + arquivo.getName());
-			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-
-			// Write file contents to response.
-			byte[] buffer = new byte[10240];
-			int length;
-			while ((length = input.read(buffer)) > 0) {
-				output.write(buffer, 0, length);
-			}
-
-			// Finalize task.
-			output.flush();
-			output.close();
-			facesContext.responseComplete();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	private void deleteFile(FileUploaded f) {
+		FileService fileService = new FileService();
+		fileService.excluirDocumento(this.selectedContratoLov.getNumeroContrato(), f.getPathOrigin(), f.getName(),
+				getUsuarioLogado());
 	}
 	
-	public void deleteFile() {
-		for (FileUploaded f : deleteFilesContas) {
-			f.getFile().delete();
+	public void deleteFile(List<FileUploaded> deleteFiles) {
+		for (FileUploaded f : deleteFiles) {
+			deleteFile(f);
+//			f.getFile().delete();
 		}
 		File here = new File(".");
 		System.out.println(here.getAbsolutePath());
-		deleteFilesContas = new ArrayList<FileUploaded>();
+		deleteFiles = new ArrayList<FileUploaded>();
+		filesPagar = listaArquivosPagar();
+		listaArquivosContasPagar(contasPagarArquivos);
 	}
 	
 	public void pesquisaContratoCobranca() {
@@ -539,6 +503,14 @@ public class ContasPagarMB {
 			this.objetoContasPagar.setDataPagamento(gerarDataHoje());
 		}
 		this.selectedContratoLov.getListContasPagar().add(this.objetoContasPagar);
+		
+		ContasPagarDao contasPagarDao = new ContasPagarDao();
+		if(objetoContasPagar.getId() <= 0) {
+			contasPagarDao.create(objetoContasPagar);
+		} else {
+			contasPagarDao.merge(objetoContasPagar);
+		}
+		
 		this.objetoContasPagar = new ContasPagar();
 		this.addContasPagar = false;
 		
@@ -570,8 +542,10 @@ public class ContasPagarMB {
 		try {				
 			contratoCobrancaDao.merge(this.selectedContratoLov);
 			
-			TakeBlipMB takeBlipMB = new TakeBlipMB (); 
-			takeBlipMB.sendWhatsAppMessageNovaConta (this.selectedContratoLov.getNumeroContrato());
+			if(!SiscoatConstants.DEV && !CommonsUtil.sistemaWindows()) {
+				TakeBlipMB takeBlipMB = new TakeBlipMB (); 
+				takeBlipMB.sendWhatsAppMessageNovaConta (this.selectedContratoLov.getNumeroContrato());
+			}
 			
 			context.addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -778,6 +752,48 @@ public class ContasPagarMB {
 		return clearFields();
 	}
 	
+	
+	public StreamedContent getDownloadAllFiles(List<FileUploaded> selectFiles) {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+
+		try {
+			// recupera path do contrato
+//			ParametrosDao pDao = new ParametrosDao();
+//			CompactadorUtil compac = new CompactadorUtil();
+//			String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString()
+//					+ this.contasPagarArquivos.getContrato().getNumeroContrato()+ "//pagar/";
+//			// cria objetos para ZIP
+
+			// Percorre arquivos selecionados e adiciona ao ZIP
+			for (FileUploaded f : selectFiles) {
+				String arquivo = f.getName();
+				byte[] arquivoByte = f.getFile().getPath().getBytes();
+				
+				FileService fileService = new FileService();
+				FileUploaded documentoSelecionado = new FileUploaded(f.getName(), null, "pagar");
+
+				byte[] arquivob = fileService.abrirDocumentos(documentoSelecionado,
+						this.contasPagarArquivos.getContrato().getNumeroContrato(), getUsuarioLogado());
+
+				listaArquivos.put(arquivo, arquivob);
+
+			}
+			byte[] arquivos = CompactadorUtil.compactarZipByte(listaArquivos);
+
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String.format(this.contasPagarArquivos.getContrato().getNumeroContrato() + " Documentos.zip",
+					"");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(arquivos));
+			gerador.close();
+
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+
+		return null;
+	}
 	
 	public void setContasPagarPosOperacao(List<ContasPagar> contasPagarPosOperacao) {
 		this.contasPagarPosOperacao = contasPagarPosOperacao;
@@ -1037,11 +1053,12 @@ public class ContasPagarMB {
 	public void setFilesPagar(Collection<FileUploaded> filesPagar) {
 		this.filesPagar = filesPagar;
 	}
+	
 	public List<FileUploaded> getDeleteFilesPagar() {
-		return DeleteFilesPagar;
+		return deleteFilesPagar;
 	}
-	public void setDeleteFilesPagar(List<FileUploaded> DeleteFilesPagar) {
-		this.DeleteFilesPagar = DeleteFilesPagar;
+	public void setDeleteFilesPagar(List<FileUploaded> deleteFilesPagar) {
+		this.deleteFilesPagar = deleteFilesPagar;
 	}
 	public void setDownloadFile(StreamedContent downloadFile) {
 		this.downloadFile = downloadFile;
@@ -1077,8 +1094,12 @@ public class ContasPagarMB {
 	}
 	public void setLoginBean(LoginBean loginBean) {
 		this.loginBean = loginBean;
+	}	
+	public List<FileUploaded> getDeletefiles() {
+		return deletefiles;
+	}	
+	public void setDeletefiles(List<FileUploaded> deletefiles) {
+		this.deletefiles = deletefiles;
 	}
-	
-	
 
 }

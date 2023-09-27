@@ -2,43 +2,116 @@ package com.webnowbr.siscoat.cobranca.model.bmpdigital;
 
 import java.math.BigDecimal;
 
+import com.google.gson.annotations.SerializedName;
+
 public class ResumoDoClienteTraduzido {
 
+	@SerializedName("PercDocumentosProcessados")
 	private String percDocumentosProcessados;
+	
+	@SerializedName("DtInicioRelacionamento")
 	private String dtInicioRelacionamento;
+	
+	@SerializedName("QtdeInstituicoes")
 	private int qtdeInstituicoes;
+	
+	@SerializedName("QtdeOperacoes")
 	private int qtdeOperacoes;
+	
+	@SerializedName("QtdeOperacoesDiscordancia")
 	private int qtdeOperacoesDiscordancia;
+	
+	@SerializedName("VlrOperacoesDiscordancia")
 	private BigDecimal vlrOperacoesDiscordancia;
+	
+	@SerializedName("QtdeOperacoesSobJudice")
 	private int qtdeOperacoesSobJudice;
+	
+	@SerializedName("VlrOperacoesSobJudice")
 	private BigDecimal vlrOperacoesSobJudice;
+	
+	@SerializedName("CarteiraVencer")
 	private BigDecimal carteiraVencer;
+	
+	@SerializedName("CarteiraVencerAte30diasVencidosAte14dias")
 	private BigDecimal carteiraVencerAte30diasVencidosAte14dias;
+	
+	@SerializedName("CarteiraVencer31a60dias")
 	private BigDecimal carteiraVencer31a60dias;
+	
+	@SerializedName("CarteiraVencer61a90dias")
 	private BigDecimal carteiraVencer61a90dias;
+	
+	@SerializedName("CarteiraVencer91a180dias")
 	private BigDecimal carteiraVencer91a180dias;
+	
+	@SerializedName("CarteiraVencer181a360dias")
 	private BigDecimal carteiraVencer181a360dias;
+	
+	@SerializedName("CarteiraVencerAcima360dias")
 	private BigDecimal carteiraVencerAcima360dias;
+	
+	@SerializedName("CarteiraVencerPrazoIndeterminado")
 	private BigDecimal carteiraVencerPrazoIndeterminado;
+	
+	@SerializedName("CarteiraVencido")
 	private BigDecimal carteiraVencido;
+	
+	@SerializedName("CarteiraVencido15a30dias")
 	private BigDecimal carteiraVencido15a30dias;
+	
+	@SerializedName("CarteiraVencido31a60dias")
 	private BigDecimal carteiraVencido31a60dias;
+	
+	@SerializedName("CarteiraVencido61a90dias")
 	private BigDecimal carteiraVencido61a90dias;
+	
+	@SerializedName("CarteiraVencido91a180dias")
 	private BigDecimal carteiraVencido91a180dias;
+	
+	@SerializedName("CarteiraVencido181a360dias")
 	private BigDecimal carteiraVencido181a360dias;
+	
+	@SerializedName("CarteiraVencidoAcima360dias")
 	private BigDecimal carteiraVencidoAcima360dias;
+	
+	@SerializedName("Prejuizo")
 	private BigDecimal prejuizo;
+	
+	@SerializedName("PrejuizoAte12meses")
 	private BigDecimal prejuizoAte12meses;
+	
+	@SerializedName("PrejuizoAcima12meses")
 	private BigDecimal prejuizoAcima12meses;
+	
+	@SerializedName("CarteiradeCredito")
 	private BigDecimal carteiradeCredito;
+	
+	@SerializedName("Repasses")
 	private BigDecimal repasses;
+	
+	@SerializedName("Coobrigacoes")
 	private BigDecimal coobrigacoes;
+	
+	@SerializedName("ResponsabilidadeTotal")
 	private BigDecimal responsabilidadeTotal;
+	
+	@SerializedName("CreditosaLiberar")
 	private BigDecimal creditosaLiberar;
+	
+	@SerializedName("LimitesdeCredito")
 	private BigDecimal limitesdeCredito;
+	
+	@SerializedName("LimitesdeCreditoAte360dias")
 	private BigDecimal limitesdeCreditoAte360dias;
+	
+	@SerializedName("LimitesdeCreditoAcima360dias")
 	private BigDecimal limitesdeCreditoAcima360dias;
+	
+	@SerializedName("RiscoIndiretoVendor")
 	private BigDecimal riscoIndiretoVendor;
+	
+	@SerializedName("RiscoTotal")
 	private BigDecimal riscoTotal;
 	
 	public ResumoDoClienteTraduzido() {

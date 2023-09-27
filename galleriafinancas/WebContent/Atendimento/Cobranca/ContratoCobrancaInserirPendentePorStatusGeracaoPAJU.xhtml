@@ -40,6 +40,7 @@
 				width: 100px;
 			}
 			</h:outputStylesheet>
+			<ui:include src="ContratoCobrancaAnaliseDocumento.xhtml"></ui:include>
 				
 			<p:panel id="PanelLocador" header="Contrato - #{contratoCobrancaMB.tituloPainel}" style="margin-bottom:10px;">
 				<p:focus /> 
@@ -76,29 +77,23 @@
 						style="margin-bottom:20px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}">		
 						<p:spacer height="10"></p:spacer>
 						<p:panel id="StatusGeracaoLaudo" style="border: none">
-							<h:panelGrid columns="3">
+							<h:panelGrid columns="4">
 								<p:outputLabel styleClass="labelBold">Geração PAJU Iniciada? </p:outputLabel>									
-								<p:selectBooleanButton id="statusPAJU" value="#{contratoCobrancaMB.objetoContratoCobranca.iniciouGeracaoLaudo}" 
+								<p:selectBooleanButton id="statusPAJU" value="#{contratoCobrancaMB.objetoContratoCobranca.iniciouGeracaoPaju}" 
 											onLabel="Iniciado" offLabel="Não Iniciado" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px"/>
+											
+
+								<p:commandButton value="Download Modelo PAJU" ajax="false"
+									icon="ui-icon-check"
+									action="#{contratoCobrancaMB.downloadModeloPaju}"
+									style="TEXT-DECORATION: bold; width: 170px; height: 55px;">
+								</p:commandButton>
+								
 								<p:commandButton value="Atualizar Status" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.editPreContratoPorStatus()}" style="TEXT-DECORATION: bold; width: 170px; height: 55px;" rendered="#{contratoCobrancaMB.updateMode}">
 									<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="false" />	
 								</p:commandButton>
 							</h:panelGrid>	
 							<h:panelGrid columns="2">
-								<!--
-								<p:outputLabel for="AnalistaGeracaoPAJU" value="Analista: " styleClass="labelBold"/>
-								<p:selectOneMenu id="AnalistaGeracaoPAJU"
-									value="#{contratoCobrancaMB.idAnalistaGeracaoPAJU}"
-									label="Estado" style="width:550px;" >
-									<f:selectItem itemValue="" itemLabel="Escolha o Analista" />
-									<f:selectItem itemValue="797" itemLabel="João Paulo Gomes Massaro" />
-									<f:selectItem itemValue="798" itemLabel="Maria Clara Pazin Costa" />
-									<f:selectItem itemValue="796" itemLabel="Luciana Melara Alves Sant'Ana" />
-									<f:selectItem itemValue="795" itemLabel="Pâmela Montesanti Demuci" />
-									<f:selectItem itemValue="793" itemLabel="Adelaide Cristina Grilo Fornari" />
-								</p:selectOneMenu>
-								 -->				
-								<p:outputLabel id="espacoParaFormatacaoTexto" value=""/> 
 								<p:outputLabel for="geracaoLaudo"
 									value="Observação PAJU: " styleClass="labelBold" />
 								<p:inputTextarea id="geracaoLaudo" rows="5"
@@ -139,7 +134,17 @@
 						<p:inputText id="Cartorio"
 							value="#{contratoCobrancaMB.objetoImovelCobranca.cartorio}"
 							label="Cartório" onblur="" style="width:400px;"  disabled="true"/>
-
+							
+						<p:outputLabel for="cartorioEstado" value="Estado Cartório: " />
+						<h:panelGroup>
+							<p:inputText id="cartorioEstado" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioEstado}" disabled="true" /> 										
+							<p:outputLabel for="cartorioMunicipio" value=" Município Cartório: " />
+							<p:inputText id="cartorioMunicipio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioMunicipio}" disabled="true" />s
+						</h:panelGroup>
+						
+						<p:outputLabel for="numeroCartorio" value="Numero Cartório: " />
+						<p:inputText id="numeroCartorio" value="#{contratoCobrancaMB.objetoImovelCobranca.numeroCartorio}"  disabled="true" /> 
+						
 						<p:outputLabel for="CepImovel" value="Cep: "/>
 						<p:inputMask id="CepImovel"
 							value="#{contratoCobrancaMB.objetoImovelCobranca.cep}"
@@ -222,23 +227,13 @@
 						</h:panelGroup>
 
 						<p:outputLabel for="Tipo" value="Tipo: " />
-						<p:selectOneMenu id="Tipo"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.tipo}"
-							label="Tipo" style="width:410px;" disabled="true">
-							<f:selectItem itemValue="" itemLabel="Escolha o Tipo do Imóvel" />
-							<f:selectItem itemValue="Apartamento" itemLabel="Apartamento" />
-							<f:selectItem itemValue="Casa" itemLabel="Casa" />
-							<f:selectItem itemValue="Galpão" itemLabel="Galpão" />
-							<f:selectItem itemValue="Sala Comercial" itemLabel="Sala Comercial" />
-							<f:selectItem itemValue="Prédio Comercial" itemLabel="Prédio Comercial" />
-							<f:selectItem itemValue="Prédio Misto" itemLabel="Prédio Misto" />
-							<f:selectItem itemValue="Casa de Condomínio" itemLabel="Casa de condomínio (até 1000m²)" />
-							<f:selectItem itemValue="Casa de Condomínio acima1000" itemLabel="Casa de condomínio (acima 1000m²)" />
-							<f:selectItem itemValue="Terreno" itemLabel="Terreno" />
-							<f:selectItem itemValue="Chácara" itemLabel="Chácara" />
-							<f:selectItem itemValue="Rural" itemLabel="Rural" />		
-							<f:selectItem itemValue="Casa em construção" itemLabel="Casa em construção" />
-						</p:selectOneMenu>
+						<p:autoComplete id="Tipo" value="#{contratoCobrancaMB.objetoImovelCobranca.tipo}"
+							completeMethod="#{contratoCobrancaMB.objetoImovelCobranca.completeTipoImovel}" 
+							autocomplete="no" dropdown="true" forceSelection="true" var="tipo" 
+							itemValue="#{contratoCobrancaMB.objetoImovelCobranca.getValue(tipo)}" 
+							itemLabel="#{contratoCobrancaMB.objetoImovelCobranca.getLabel(tipo)}" 
+							scrollHeight="250" disabled="true">
+						</p:autoComplete>
 						
 						<p:outputLabel for="AreaTotal" value="Área Total / Terreno (metros):  " />
 						<h:panelGroup>
@@ -309,15 +304,6 @@
 						<p:outputLabel for="inscricaoMunicipal" value="Inscrição Municipal: " />
 						<p:inputText id="inscricaoMunicipal" value="#{contratoCobrancaMB.objetoImovelCobranca.inscricaoMunicipal}" />
 						
-						<p:outputLabel for="numeroCartorio" value="Numero Cartório: " />
-						<p:inputText id="numeroCartorio" value="#{contratoCobrancaMB.objetoImovelCobranca.numeroCartorio}" disabled="true" /> 
-											
-						<p:outputLabel for="cartorioEstado" value="Estado Cartório: " />
-						<p:inputText id="cartorioEstado" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioEstado}" disabled="true" /> 
-											
-						<p:outputLabel for="cartorioMunicipio" value="Município Cartório: " />
-						<p:inputText id="cartorioMunicipio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioMunicipio}" disabled="true" />
-
 					</h:panelGrid>
 				</p:panel>
 
@@ -388,7 +374,7 @@
 								
 										value="#{filesInterno.name}" />
 								<p:spacer height="10" />
-								<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFileInterno(filesInterno.name)}"
+								<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFile(filesInterno)}"
 									immediate="true" icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
 								</p:commandButton>
 							</p:column>  
@@ -437,6 +423,9 @@
 							<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
 							 <f:facet name="header">							 
 								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileJuridico}"/>
+								<p:commandButton value="Download selecionados" ajax="false">
+								<p:fileDownload value="#{contratoCobrancaMB.downloadFilesJuridico}"/>
+								</p:commandButton>
 					        </f:facet>	        
 					        <p:column style="text-align: center;"
 								headerText="Nome do Arquivo" filterBy="#{filesJuridico.name}"
@@ -445,7 +434,7 @@
 								
 										value="#{filesJuridico.name}" />
 								<p:spacer height="10" />
-								<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFileJuridico(filesJuridico.name)}"
+								<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFile(filesJuridico)}"
 									immediate="true" icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
 								</p:commandButton>
 							</p:column>  
@@ -480,6 +469,7 @@
 				</p:commandButton>		 						
 				<p:commandButton value="Cancelar" immediate="true" icon="ui-icon-cancel" onclick="window.history.back();" style="TEXT-DECORATION: bold; "/>								
 			</div>			
-		</h:form>	
+		</h:form>
+			<ui:include src="ContratoCobrancaAnaliseDocumentoResumoPopup.xhtml"></ui:include>
 	</ui:define>
 </ui:composition>

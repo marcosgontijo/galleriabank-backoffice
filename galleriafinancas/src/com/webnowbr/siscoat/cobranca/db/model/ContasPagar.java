@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
@@ -36,11 +37,21 @@ public class ContasPagar implements Serializable {
 	private String cpfTed;
 	private String bancoTed;
 	private String contaTed;
+	private String digitoContaTed;
 	private String agenciaTed;
 	
 	private String fileListId;
 	
 	private Responsavel responsavel;
+	
+	private String linhaDigitavelStarkBank;
+	private String descricaoStarkBank;
+	private String numeroDocumentoPagadorStarkBank;
+	
+	private StarkBankBoleto comprovantePagamentoStarkBank;
+	private StarkBankPix comprovantePagamentoPixStarkBank;
+	
+	private List<StarkBankBaixa> listContasPagarBaixas = new ArrayList<StarkBankBaixa>();
 	
 	private Collection<FileUploaded> filesContas = new ArrayList<FileUploaded>();
 
@@ -61,21 +72,24 @@ public class ContasPagar implements Serializable {
 	 public List<String> contaPagarDescricaoLista(String query){
 		String queryLowerCase = query.toLowerCase();
 		List<String> listaNome = new ArrayList<>();
+		listaNome.add("Crédito CCI");
+		listaNome.add("Transferência");
+		listaNome.add("ITBI");
 		listaNome.add("Cartório");
 		listaNome.add("Certidão");
-		listaNome.add("Condomínio");
-		listaNome.add("Crédito Cliente");
-		listaNome.add("Devolução");
+		listaNome.add("Certidão de Casamento");
 		listaNome.add("Honorário");
+		listaNome.add("Devolução");	
 		listaNome.add("IPTU");
+		listaNome.add("Condomínio");
 		listaNome.add("IQ");
-		listaNome.add("ITBI");
 		listaNome.add("Laudo");
 		listaNome.add("Processo");
-		listaNome.add("Transferência");
-		listaNome.add("Certidão de Casamento");
+		listaNome.add("Averbação");
+		listaNome.add("Comissão");
+		listaNome.add("Registro");
 		listaNome.add("Laudo De Avaliação");
-		listaNome.add("Crédito CCI");
+		listaNome.add("Crédito Cliente");
 		
 		return listaNome.stream().filter(t -> t.toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());
 	}
@@ -279,7 +293,60 @@ public class ContasPagar implements Serializable {
 	public void setFilesContas(Collection<FileUploaded> filesContas) {
 		this.filesContas = filesContas;
 	}
-	
-	
-	
+
+	public String getLinhaDigitavelStarkBank() {
+		return linhaDigitavelStarkBank;
+	}
+
+	public void setLinhaDigitavelStarkBank(String linhaDigitavelStarkBank) {
+		this.linhaDigitavelStarkBank = linhaDigitavelStarkBank;
+	}
+
+	public String getDescricaoStarkBank() {
+		return descricaoStarkBank;
+	}
+
+	public void setDescricaoStarkBank(String descricaoStarkBank) {
+		this.descricaoStarkBank = descricaoStarkBank;
+	}
+
+	public String getNumeroDocumentoPagadorStarkBank() {
+		return numeroDocumentoPagadorStarkBank;
+	}
+
+	public void setNumeroDocumentoPagadorStarkBank(String numeroDocumentoPagadorStarkBank) {
+		this.numeroDocumentoPagadorStarkBank = numeroDocumentoPagadorStarkBank;
+	}
+
+	public StarkBankBoleto getComprovantePagamentoStarkBank() {
+		return comprovantePagamentoStarkBank;
+	}
+
+	public void setComprovantePagamentoStarkBank(StarkBankBoleto comprovantePagamentoStarkBank) {
+		this.comprovantePagamentoStarkBank = comprovantePagamentoStarkBank;
+	}
+
+	public StarkBankPix getComprovantePagamentoPixStarkBank() {
+		return comprovantePagamentoPixStarkBank;
+	}
+
+	public void setComprovantePagamentoPixStarkBank(StarkBankPix comprovantePagamentoPixStarkBank) {
+		this.comprovantePagamentoPixStarkBank = comprovantePagamentoPixStarkBank;
+	}
+
+	public String getDigitoContaTed() {
+		return digitoContaTed;
+	}
+
+	public void setDigitoContaTed(String digitoContaTed) {
+		this.digitoContaTed = digitoContaTed;
+	}
+
+	public List<StarkBankBaixa> getListContasPagarBaixas() {
+		return listContasPagarBaixas;
+	}
+
+	public void setListContasPagarBaixas(List<StarkBankBaixa> listContasPagarBaixas) {
+		this.listContasPagarBaixas = listContasPagarBaixas;
+	}
 }

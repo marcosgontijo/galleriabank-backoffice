@@ -40,6 +40,7 @@
 				width: 100px;
 			}
 			</h:outputStylesheet>
+			<ui:include src="ContratoCobrancaAnaliseDocumento.xhtml"></ui:include>
 				
 			<p:panel id="PanelLocador" header="Contrato - #{contratoCobrancaMB.tituloPainel}" style="margin-bottom:10px;">
 				<p:focus /> 
@@ -171,23 +172,13 @@
 									label="Link Google Maps" style="width:400px;" />
 
 								<p:outputLabel for="TipoLaudoPaju" value="Tipo: " />
-								<p:selectOneMenu id="TipoLaudoPaju"
-									value="#{contratoCobrancaMB.objetoImovelCobranca.tipo}"
-									label="Tipo" style="width:410px;">
-									<f:selectItem itemValue="" itemLabel="Escolha o Tipo do Imóvel" />
-									<f:selectItem itemValue="Apartamento" itemLabel="Apartamento" />
-									<f:selectItem itemValue="Casa" itemLabel="Casa" />
-									<f:selectItem itemValue="Galpão" itemLabel="Galpão" />
-									<f:selectItem itemValue="Sala Comercial" itemLabel="Sala Comercial" />									
-									<f:selectItem itemValue="Prédio Comercial" itemLabel="Prédio Comercial" />
-									<f:selectItem itemValue="Prédio Misto" itemLabel="Prédio Misto" />
-									<f:selectItem itemValue="Casa de Condomínio" itemLabel="Casa de condomínio (até 1000m²)" />
-									<f:selectItem itemValue="Casa de Condomínio acima1000" itemLabel="Casa de condomínio (acima 1000m²)" />
-									<f:selectItem itemValue="Terreno" itemLabel="Terreno" />
-									<f:selectItem itemValue="Chácara" itemLabel="Chácara" />
-									<f:selectItem itemValue="Rural" itemLabel="Rural" />	
-									<f:selectItem itemValue="Casa em construção" itemLabel="Casa em construção" />
-								</p:selectOneMenu>
+								<p:autoComplete id="TipoLaudoPaju" value="#{contratoCobrancaMB.objetoImovelCobranca.tipo}"
+									completeMethod="#{contratoCobrancaMB.objetoImovelCobranca.completeTipoImovel}" 
+									autocomplete="no" dropdown="true" forceSelection="true" var="tipo" 
+									itemValue="#{contratoCobrancaMB.objetoImovelCobranca.getValue(tipo)}" 
+									itemLabel="#{contratoCobrancaMB.objetoImovelCobranca.getLabel(tipo)}" 
+									scrollHeight="250">
+								</p:autoComplete>
 
 								<p:outputLabel for="AreaTotalLaudoPaju"
 									value="Área Total / Terreno (metros):  " />
@@ -242,7 +233,7 @@
 													update="form:CheckListInformacoesAdicionais" />
 											</shiro:hasAnyRoles>
 											
-											<shiro:hasAnyRoles name="ROOT, USER_GALACHE, AVALIADORIMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_AVALIADOR_IMOVEL_GALACHE, PROFILE_GERENTE_ANALISE">
+											<shiro:hasAnyRoles name="ROOT, USER_GALACHE, AVALIADORIMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_AVALIADOR_IMOVEL_GALACHE, PROFILE_GERENTE_ANALISE, PROFILE_LAUDO">
 												<p:commandButton icon="ui-icon-check" 
 													rendered="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria == null 
 													|| contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria == ''}"
@@ -263,15 +254,18 @@
 										value="Nome Vistoriador: " styleClass="labelBold" />
 									<p:inputText id="nomeVistoriador"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.nomeVistoriador}"
-										style="FONT-SIZE: 10pt;width:300px;"/>	
-																																													
-								
+										style="FONT-SIZE: 10pt;width:300px;"/>																							
+																																															
 									<p:outputLabel for="avaliacaoLaudoObservacao"
 										value="Observação Avaliação: " styleClass="labelBold" />
 									<p:inputTextarea id="avaliacaoLaudoObservacao" rows="5"
 										cols="84" maxlength="3000" onblur=""
 										counterTemplate="{0} characters remaining." autoResize="false"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudoObservacao}" />	
+										
+									<p:outputLabel styleClass="labelBold">Geração Laudo Iniciada? </p:outputLabel>									
+									<p:selectBooleanButton value="#{contratoCobrancaMB.objetoContratoCobranca.iniciouGeracaoLaudo}" 
+											onLabel="Iniciado" offLabel="Não Iniciado" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px"/>													
 										
 									<shiro:hasAnyRoles name="ROOT, AVALIADORIMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS">				
 										<p:outputLabel for="avaliacaoEngenharia"
@@ -315,6 +309,16 @@
 							value="#{contratoCobrancaMB.objetoImovelCobranca.cartorio}"
 							label="Cartório" onblur="" style="width:400px;"  disabled="true"/>
 
+						<p:outputLabel for="cartorioEstado" value="Estado Cartório: " />
+						<h:panelGroup>
+							<p:inputText id="cartorioEstado" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioEstado}" disabled="true" /> 												
+							<p:outputLabel for="cartorioMunicipio" value=" Município Cartório: " />
+							<p:inputText id="cartorioMunicipio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioMunicipio}" disabled="true" />
+						</h:panelGroup>
+																	
+						<p:outputLabel for="numeroCartorio" value="Numero Cartório: " />
+						<p:inputText id="numeroCartorio" value="#{contratoCobrancaMB.objetoImovelCobranca.numeroCartorio}" disabled="true" /> 					
+						
 						<p:outputLabel for="CepImovel" value="Cep: "/>
 						<p:inputMask id="CepImovel"
 							value="#{contratoCobrancaMB.objetoImovelCobranca.cep}"
@@ -397,23 +401,13 @@
 						</h:panelGroup>
 
 						<p:outputLabel for="Tipo" value="Tipo: " />
-						<p:selectOneMenu id="Tipo"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.tipo}"
-							label="Tipo" style="width:410px;" disabled="true">
-							<f:selectItem itemValue="" itemLabel="Escolha o Tipo do Imóvel" />
-							<f:selectItem itemValue="Apartamento" itemLabel="Apartamento" />
-							<f:selectItem itemValue="Casa" itemLabel="Casa" />
-							<f:selectItem itemValue="Galpão" itemLabel="Galpão" />
-							<f:selectItem itemValue="Sala Comercial" itemLabel="Sala Comercial" />
-							<f:selectItem itemValue="Prédio Comercial" itemLabel="Prédio Comercial" />
-							<f:selectItem itemValue="Prédio Misto" itemLabel="Prédio Misto" />
-							<f:selectItem itemValue="Casa de Condomínio" itemLabel="Casa de condomínio (até 1000m²)" />
-							<f:selectItem itemValue="Casa de Condomínio acima1000" itemLabel="Casa de condomínio (acima 1000m²)" />
-							<f:selectItem itemValue="Terreno" itemLabel="Terreno" />
-							<f:selectItem itemValue="Chácara" itemLabel="Chácara" />
-							<f:selectItem itemValue="Rural" itemLabel="Rural" />
-							<f:selectItem itemValue="Casa em construção" itemLabel="Casa em construção" />
-						</p:selectOneMenu>
+						<p:autoComplete id="Tipo" value="#{contratoCobrancaMB.objetoImovelCobranca.tipo}"
+							completeMethod="#{contratoCobrancaMB.objetoImovelCobranca.completeTipoImovel}" 
+							autocomplete="no" dropdown="true" forceSelection="true" var="tipo" 
+							itemValue="#{contratoCobrancaMB.objetoImovelCobranca.getValue(tipo)}" 
+							itemLabel="#{contratoCobrancaMB.objetoImovelCobranca.getLabel(tipo)}" 
+							scrollHeight="250">
+						</p:autoComplete>
 						
 						<p:outputLabel for="AreaTotal" value="Área Total / Terreno (metros):  " />
 						<h:panelGroup>
@@ -483,15 +477,7 @@
 						
 						<p:outputLabel for="inscricaoMunicipal" value="Inscrição Municipal: " />
 						<p:inputText id="inscricaoMunicipal" value="#{contratoCobrancaMB.objetoImovelCobranca.inscricaoMunicipal}" />
-						
-						<p:outputLabel for="numeroCartorio" value="Numero Cartório: " />
-						<p:inputText id="numeroCartorio" value="#{contratoCobrancaMB.objetoImovelCobranca.numeroCartorio}" disabled="true" /> 
 											
-						<p:outputLabel for="cartorioEstado" value="Estado Cartório: " />
-						<p:inputText id="cartorioEstado" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioEstado}" disabled="true" /> 
-											
-						<p:outputLabel for="cartorioMunicipio" value="Município Cartório: " />
-						<p:inputText id="cartorioMunicipio" value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioMunicipio}" disabled="true" />
 
 					</h:panelGrid>
 				</p:panel>
@@ -563,7 +549,7 @@
 								
 										value="#{filesInterno.name}" />
 								<p:spacer height="10" />
-								<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFileInterno(filesInterno.name)}"
+								<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFile(filesInterno)}"
 									immediate="true" icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
 								</p:commandButton>
 							</p:column>  
@@ -612,6 +598,9 @@
 							<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
 							 <f:facet name="header">							 
 								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileJuridico}"/>
+								<p:commandButton value="Download selecionados" ajax="false">
+									<p:fileDownload value="#{contratoCobrancaMB.downloadFilesJuridico}"></p:fileDownload>
+								</p:commandButton>
 					        </f:facet>	        
 					        <p:column style="text-align: center;"
 								headerText="Nome do Arquivo" filterBy="#{filesJuridico.name}"
@@ -620,7 +609,7 @@
 								
 										value="#{filesJuridico.name}" />
 								<p:spacer height="10" />
-								<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFileJuridico(filesJuridico.name)}"
+								<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFile(filesJuridico)}"
 									immediate="true" icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
 								</p:commandButton>
 							</p:column>  
@@ -656,5 +645,6 @@
 				<p:commandButton value="Cancelar" immediate="true" icon="ui-icon-cancel" onclick="window.history.back();" style="TEXT-DECORATION: bold; "/>								
 			</div>			
 		</h:form>	
+		<ui:include src="ContratoCobrancaAnaliseDocumentoResumoPopup.xhtml"></ui:include>
 	</ui:define>
 </ui:composition>

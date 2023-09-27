@@ -35,6 +35,16 @@
 						<f:validateLength maximum="10" minimum="1" />
 					</p:password>
 
+					<h:outputLabel for="userPerfil" value="Perfil: "
+						class="campoRequerido" />
+					<p:selectOneMenu id="userPerfil"
+						value="#{usuarioMB.objetoUsuario.userPerfil.id}">
+						<f:selectItems value="#{usuarioMB.perfil}" var="perfil"
+							itemLabel="#{perfil.perfil}" itemValue="#{perfil.id}" />
+
+					</p:selectOneMenu>
+
+
 					<h:outputLabel for="Administrador" value="Administrador: "
 						class="labelBold" />
 					<h:panelGroup>
@@ -342,19 +352,46 @@
 					header="Novo Sistema de Permissionamento"
 					style="margin-bottom:10px;margin-top:20px;">
 					<h:panelGrid columns="2">
-						<h:outputLabel for="profileAnalistaCredito" value="Analista de Crédito"
+					
+						<h:outputLabel for="profileController" value="Controller"
 							class="labelBold" />
 						<h:panelGroup>
+							<p:selectBooleanButton id="profileController"
+								value="#{usuarioMB.objetoUsuario.profileController}"
+								onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+								offIcon="ui-icon-close" style="width:60px">
+							</p:selectBooleanButton>
+							<shiro:hasAnyRoles name="ROOT">
+								<h:outputLabel value="CONTROLLER" />
+							</shiro:hasAnyRoles>
+						</h:panelGroup>
+						
+						<h:outputLabel for="profileCompliance" value="Compliance"
+							class="labelBold" />
+						<h:panelGroup>
+							<p:selectBooleanButton id="profileCompliance"
+								value="#{usuarioMB.objetoUsuario.profileCompliance}"
+								onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+								offIcon="ui-icon-close" style="width:60px">
+							</p:selectBooleanButton>
+							<shiro:hasAnyRoles name="ROOT">
+								<h:outputLabel value="COMPLIANCE" />
+							</shiro:hasAnyRoles>
+						</h:panelGroup>
+
+						<h:outputLabel for="profileAnalistaCredito"
+							value="Analista de Crédito" class="labelBold" />
+						<h:panelGroup>
 							<p:selectBooleanButton id="profileAnalistaCredito"
-								value="#{usuarioMB.objetoUsuario.profileAnalistaCredito}" onLabel="Sim"
-								offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
-								style="width:60px">
+								value="#{usuarioMB.objetoUsuario.profileAnalistaCredito}"
+								onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+								offIcon="ui-icon-close" style="width:60px">
 							</p:selectBooleanButton>
 							<shiro:hasAnyRoles name="ROOT">
 								<h:outputLabel value="PROFILE_ANALISTA_CREDITO" />
-							</shiro:hasAnyRoles>	
-						</h:panelGroup>					
-						
+							</shiro:hasAnyRoles>
+						</h:panelGroup>
+
 						<h:outputLabel for="profileAnalistaComite" value="Analista Comitê"
 							class="labelBold" />
 						<h:panelGroup>
@@ -485,6 +522,32 @@
 							</shiro:hasAnyRoles>
 						</h:panelGroup>
 						
+						<h:outputLabel for="profilePajuNeves" value="PAJU - NEVES"
+							class="labelBold" />
+						<h:panelGroup>
+							<p:selectBooleanButton id="profilePajuNeves"
+								value="#{usuarioMB.objetoUsuario.profilePajuNeves}" onLabel="Sim"
+								offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+								style="width:60px">
+							</p:selectBooleanButton>
+							<shiro:hasAnyRoles name="ROOT">
+								<h:outputLabel value="PROFILE_PAJU_NEVES" />
+							</shiro:hasAnyRoles>
+						</h:panelGroup>
+						
+						<h:outputLabel for="profilePajuLuvison" value="PAJU - Luvison"
+							class="labelBold" />
+						<h:panelGroup>
+							<p:selectBooleanButton id="profilePajuLuvison"
+								value="#{usuarioMB.objetoUsuario.profilePajuLuvison}" onLabel="Sim"
+								offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+								style="width:60px">
+							</p:selectBooleanButton>
+							<shiro:hasAnyRoles name="ROOT">
+								<h:outputLabel value="PROFILE_PAJU_LUVISON" />
+							</shiro:hasAnyRoles>
+						</h:panelGroup>
+						
 						<h:outputLabel for="marketing"
 							value="Marketing:" class="labelBold" />
 						<h:panelGroup>
@@ -498,6 +561,33 @@
 								<h:outputLabel value="PROFILE_MARKETING" />
 							</shiro:hasAnyRoles>
 						</h:panelGroup>
+						
+						<h:outputLabel for="cadastraResponsavel"
+							value="Cadastra Responsavel:" class="labelBold" />
+						<h:panelGroup>
+							<p:selectBooleanButton id="cadastraResponsavel"
+								value="#{usuarioMB.objetoUsuario.cadastraResponsavel}" onLabel="Sim"
+								offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+								style="width:60px">
+							</p:selectBooleanButton>
+							<shiro:hasAnyRoles name="ROOT">
+								<h:outputLabel value="CADASTRA_RESPONSAVEL" />
+							</shiro:hasAnyRoles>
+						</h:panelGroup>
+						
+						<h:outputLabel for="consultaIndividual" value="Consultas Individuais"
+							class="labelBold" />
+						<h:panelGroup>
+							<p:selectBooleanButton id="consultaIndividual"
+								value="#{usuarioMB.objetoUsuario.consultaIndividual}"
+								onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+								offIcon="ui-icon-close" style="width:60px">
+							</p:selectBooleanButton>
+							<shiro:hasAnyRoles name="ROOT">
+								<h:outputLabel value="CONSULTA_INDIVIDUAL" />
+							</shiro:hasAnyRoles>
+						</h:panelGroup>
+						
 					</h:panelGrid>
 				</p:panel>
 				<p:panel id="PanelBlockBackoffice"
@@ -524,7 +614,7 @@
 						<h:outputLabel for="senhaDocket" value="Senha Docket: " />
 						<p:password id="senhaDocket" value="#{usuarioMB.objetoUsuario.senhaDocket}"
 							promptLabel="Por favor, digite a senha." weakLabel="Fácil"
-							goodLabel="Regular" strongLabel="Díficil" maxlength="10"
+							goodLabel="Regular" strongLabel="Díficil" maxlength="20"
 							redisplay="true" feedback="true" inline="true"/>
 					</h:panelGrid>
 				</p:panel>

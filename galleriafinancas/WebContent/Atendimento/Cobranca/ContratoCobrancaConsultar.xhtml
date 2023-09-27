@@ -551,6 +551,454 @@
 							</h:panelGroup>
 						</h:panelGrid>
 					</p:panel>
+					<p:panel rendered="#{contratoCobrancaMB.tituloPainel == 'CRI 3'}"
+						header="Dados da Consulta CRI 3">
+						<f:facet name="header">
+							<p:commandButton value="Consultar CRI 3"
+								action="#{contratoCobrancaMB.consultaDadosCRI('CRI 3')}"
+								update="panelCRI3 ina30Form ina60Form ina90Form formGrafico prazoMinForm"/>
+							<shiro:hasAnyRoles name="ROOT">
+								<p:commandButton value="Mostrar Grafico" action="#{contratoCobrancaMB.createStackedGroupBarModel}" update="formGrafico"
+									oncomplete="PF('graficoFidc').show();" />
+								<p:commandButton value="Gerar Excel" ajax="false" update="mensagens" action="#{contratoCobrancaMB.geraRelatorioCRI('CRI 3')}" />
+							</shiro:hasAnyRoles>
+						</f:facet>
+						<h:panelGrid columns="2" id="panelCRI3" style="">
+							<p:outputLabel for="TotalContratosCRI3" value="Total de Contratos: "
+								styleClass="labelBold" />
+							<p:outputLabel id="TotalContratosCRI3"
+								value="#{contratoCobrancaMB.totalContratosConsultar}"
+								styleClass="labelBold" />
+
+							<p:outputLabel for="CarteiraCRI3" value="Volume Carteira:  "
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel value="R$ " styleClass="labelBold" />
+								<p:outputLabel id="CarteiraCRI3"
+									value="#{contratoCobrancaMB.volumeCarteira}"
+									styleClass="labelBold" converter="bigDecimalConverter" />
+							</h:panelGroup>
+
+							<p:outputLabel for="totalAVencerCRI3" value="Total a Vencer:  "
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel value="R$ " styleClass="labelBold" />
+								<p:outputLabel id="totalAVencerCRI3"
+									value="#{contratoCobrancaMB.totalAVencer}"
+									styleClass="labelBold" converter="bigDecimalConverter" />
+							</h:panelGroup>
+
+							<p:outputLabel for="porcentagem180CRI3" value="Até 180 meses: "
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="porcentagem180CRI3"
+									value="#{contratoCobrancaMB.porcentagem180}"
+									styleClass="labelBold" converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel for="porcentagem240CRI3" value="Acima 180 meses: "
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="porcentagem240CRI3"
+									value="#{contratoCobrancaMB.porcentagem240}"
+									styleClass="labelBold" converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel value=" _________________________ "
+								styleClass="labelBold" />
+							<p:outputLabel value="  _________________________"
+								styleClass="labelBold" />
+
+							<p:outputLabel for="inadimplencia30CRI3"
+								value="1 parcela em atraso: " styleClass="labelBold" />
+							<h:panelGroup id="inadimplencia30CRI3">
+								<p:commandLink onclick="PF('ina30Dialog').show()">
+									<h:outputText
+										value="#{contratoCobrancaMB.inadimplencia30Porcentagem}"
+										styleClass="labelBold" converter="bigDecimalConverter" />
+									<h:outputText value="% " styleClass="labelBold" />
+								</p:commandLink>
+							</h:panelGroup>
+
+
+							<p:outputLabel for="inadimplencia60CRI3"
+								value="2 parcelas em atraso: " styleClass="labelBold" />
+							<h:panelGroup id="inadimplencia60CRI3">
+								<p:commandLink onclick="PF('ina60Dialog').show()">
+									<h:outputText
+										value="#{contratoCobrancaMB.inadimplencia60Porcentagem}"
+										styleClass="labelBold" converter="bigDecimalConverter" />
+									<h:outputText value="% " styleClass="labelBold" />
+								</p:commandLink>
+							</h:panelGroup>
+
+							<p:outputLabel for="inadimplencia90CRI3"
+								value="3 ou + parcelas em atraso: " styleClass="labelBold" />
+							<h:panelGroup id="inadimplencia90CRI3">
+								<p:commandLink onclick="PF('ina90Dialog').show()">
+									<h:outputText
+										value="#{contratoCobrancaMB.inadimplencia90Porcentagem}"
+										styleClass="labelBold" converter="bigDecimalConverter" />
+									<h:outputText value="% " styleClass="labelBold" />
+								</p:commandLink>
+							</h:panelGroup>
+
+							<p:outputLabel value=" _________________________ "
+								styleClass="labelBold" />
+							<p:outputLabel value="  _________________________"
+								styleClass="labelBold" />
+
+							<p:outputLabel for="prazoMaxCRI3" value="Prazo Máximo"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="prazoMaxCRI3"
+									value="#{contratoCobrancaMB.prazoMax}" styleClass="labelBold"
+									converter="bigDecimalConverter" />
+								<p:outputLabel value=" Meses " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel for="prazoMinCRI3" value="Prazo Mínimo"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:commandLink onclick="PF('prazoMinDialog').show()">
+									<p:outputLabel id="prazoMinCRI3"
+										value="#{contratoCobrancaMB.prazoMin}" styleClass="labelBold"
+										converter="bigDecimalConverter" />
+									<p:outputLabel value=" Meses " styleClass="labelBold" />
+								</p:commandLink>
+							</h:panelGroup>
+
+
+							<p:outputLabel for="prazoMedioCRI3" value="Prazo Médio"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="prazoMedioCRI3"
+									value="#{contratoCobrancaMB.prazoMedio}" styleClass="labelBold"
+									converter="bigDecimalConverter" />
+								<p:outputLabel value=" Meses " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel value=" _________________________ "
+								styleClass="labelBold" />
+							<p:outputLabel value="  _________________________"
+								styleClass="labelBold" />
+
+							<p:outputLabel for="taxaMaxIPCACRI3" value="Taxa Máxima Pós"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="taxaMaxIPCACRI3"
+									value="#{contratoCobrancaMB.taxaMaxIPCA}"
+									styleClass="labelBold" converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel for="taxaMinIPCACRI3" value="Taxa Minima Pós"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="taxaMinIPCACRI3"
+									value="#{contratoCobrancaMB.taxaMinIPCA}"
+									styleClass="labelBold" converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel for="taxaMediaIPCACRI3" value="Taxa Média Pós"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="taxaMediaIPCACRI3"
+									value="#{contratoCobrancaMB.taxaMediaIPCA}"
+									styleClass="labelBold" converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel value=" _________________________ "
+								styleClass="labelBold" />
+							<p:outputLabel value="  _________________________"
+								styleClass="labelBold" />
+
+							<p:outputLabel for="taxaMaxCRI3" value="Taxa Máxima Pré"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="taxaMaxCRI3"
+									value="#{contratoCobrancaMB.taxaMax}" styleClass="labelBold"
+									converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel for="taxaMinCRI3" value="Taxa Minima Pré"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="taxaMinCRI3"
+									value="#{contratoCobrancaMB.taxaMin}" styleClass="labelBold"
+									converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel for="taxaMediaCRI3" value="Taxa Média Pré"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="taxaMediaCRI3"
+									value="#{contratoCobrancaMB.taxaMedia}" styleClass="labelBold"
+									converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel value=" _________________________ "
+								styleClass="labelBold" />
+							<p:outputLabel value="  _________________________"
+								styleClass="labelBold" />
+
+							<p:outputLabel for="ltvMaxCRI3" value="LTV Máximo"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="ltvMaxCRI3" value="#{contratoCobrancaMB.ltvMax}"
+									styleClass="labelBold" converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel for="ltvMinCRI3" value="LTV Mínimo"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="ltvMinCRI3" value="#{contratoCobrancaMB.ltvMin}"
+									styleClass="labelBold" converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel for="ltvMedioCRI3" value="LVT Médio"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="ltvMedioCRI3"
+									value="#{contratoCobrancaMB.ltvMedio}" styleClass="labelBold"
+									converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+						</h:panelGrid>
+					</p:panel>
+					<p:panel rendered="#{contratoCobrancaMB.tituloPainel == 'CRI 4'}"
+						header="Dados da Consulta CRI 4">
+						<f:facet name="header">
+							<p:commandButton value="Consultar CRI 4"
+								action="#{contratoCobrancaMB.consultaDadosCRI('CRI 4')}"
+								update="panelCRI4 ina30Form ina60Form ina90Form formGrafico prazoMinForm"/>
+							<shiro:hasAnyRoles name="ROOT">
+								<p:commandButton value="Mostrar Grafico" action="#{contratoCobrancaMB.createStackedGroupBarModel}" update="formGrafico"
+									oncomplete="PF('graficoFidc').show();" />
+								<p:commandButton value="Gerar Excel" ajax="false" update="mensagens" action="#{contratoCobrancaMB.geraRelatorioCRI('CRI 4')}" />
+							</shiro:hasAnyRoles>
+						</f:facet>
+						<h:panelGrid columns="2" id="panelCRI4" style="">
+							<p:outputLabel for="TotalContratosCRI4" value="Total de Contratos: "
+								styleClass="labelBold" />
+							<p:outputLabel id="TotalContratosCRI4"
+								value="#{contratoCobrancaMB.totalContratosConsultar}"
+								styleClass="labelBold" />
+
+							<p:outputLabel for="CarteiraCRI4" value="Volume Carteira:  "
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel value="R$ " styleClass="labelBold" />
+								<p:outputLabel id="CarteiraCRI4"
+									value="#{contratoCobrancaMB.volumeCarteira}"
+									styleClass="labelBold" converter="bigDecimalConverter" />
+							</h:panelGroup>
+
+							<p:outputLabel for="totalAVencerCRI4" value="Total a Vencer:  "
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel value="R$ " styleClass="labelBold" />
+								<p:outputLabel id="totalAVencerCRI4"
+									value="#{contratoCobrancaMB.totalAVencer}"
+									styleClass="labelBold" converter="bigDecimalConverter" />
+							</h:panelGroup>
+
+							<p:outputLabel for="porcentagem180CRI4" value="Até 180 meses: "
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="porcentagem180CRI4"
+									value="#{contratoCobrancaMB.porcentagem180}"
+									styleClass="labelBold" converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel for="porcentagem240CRI4" value="Acima 180 meses: "
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="porcentagem240CRI4"
+									value="#{contratoCobrancaMB.porcentagem240}"
+									styleClass="labelBold" converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel value=" _________________________ "
+								styleClass="labelBold" />
+							<p:outputLabel value="  _________________________"
+								styleClass="labelBold" />
+
+							<p:outputLabel for="inadimplencia30CRI4"
+								value="1 parcela em atraso: " styleClass="labelBold" />
+							<h:panelGroup id="inadimplencia30CRI4">
+								<p:commandLink onclick="PF('ina30Dialog').show()">
+									<h:outputText
+										value="#{contratoCobrancaMB.inadimplencia30Porcentagem}"
+										styleClass="labelBold" converter="bigDecimalConverter" />
+									<h:outputText value="% " styleClass="labelBold" />
+								</p:commandLink>
+							</h:panelGroup>
+
+
+							<p:outputLabel for="inadimplencia60CRI4"
+								value="2 parcelas em atraso: " styleClass="labelBold" />
+							<h:panelGroup id="inadimplencia60CRI4">
+								<p:commandLink onclick="PF('ina60Dialog').show()">
+									<h:outputText
+										value="#{contratoCobrancaMB.inadimplencia60Porcentagem}"
+										styleClass="labelBold" converter="bigDecimalConverter" />
+									<h:outputText value="% " styleClass="labelBold" />
+								</p:commandLink>
+							</h:panelGroup>
+
+							<p:outputLabel for="inadimplencia90CRI4"
+								value="3 ou + parcelas em atraso: " styleClass="labelBold" />
+							<h:panelGroup id="inadimplencia90CRI4">
+								<p:commandLink onclick="PF('ina90Dialog').show()">
+									<h:outputText
+										value="#{contratoCobrancaMB.inadimplencia90Porcentagem}"
+										styleClass="labelBold" converter="bigDecimalConverter" />
+									<h:outputText value="% " styleClass="labelBold" />
+								</p:commandLink>
+							</h:panelGroup>
+
+							<p:outputLabel value=" _________________________ "
+								styleClass="labelBold" />
+							<p:outputLabel value="  _________________________"
+								styleClass="labelBold" />
+
+							<p:outputLabel for="prazoMaxCRI4" value="Prazo Máximo"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="prazoMaxCRI4"
+									value="#{contratoCobrancaMB.prazoMax}" styleClass="labelBold"
+									converter="bigDecimalConverter" />
+								<p:outputLabel value=" Meses " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel for="prazoMinCRI4" value="Prazo Mínimo"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:commandLink onclick="PF('prazoMinDialog').show()">
+									<p:outputLabel id="prazoMinCRI4"
+										value="#{contratoCobrancaMB.prazoMin}" styleClass="labelBold"
+										converter="bigDecimalConverter" />
+									<p:outputLabel value=" Meses " styleClass="labelBold" />
+								</p:commandLink>
+							</h:panelGroup>
+
+
+							<p:outputLabel for="prazoMedioCRI4" value="Prazo Médio"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="prazoMedioCRI4"
+									value="#{contratoCobrancaMB.prazoMedio}" styleClass="labelBold"
+									converter="bigDecimalConverter" />
+								<p:outputLabel value=" Meses " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel value=" _________________________ "
+								styleClass="labelBold" />
+							<p:outputLabel value="  _________________________"
+								styleClass="labelBold" />
+
+							<p:outputLabel for="taxaMaxIPCACRI4" value="Taxa Máxima Pós"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="taxaMaxIPCACRI4"
+									value="#{contratoCobrancaMB.taxaMaxIPCA}"
+									styleClass="labelBold" converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel for="taxaMinIPCACRI4" value="Taxa Minima Pós"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="taxaMinIPCACRI4"
+									value="#{contratoCobrancaMB.taxaMinIPCA}"
+									styleClass="labelBold" converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel for="taxaMediaIPCACRI4" value="Taxa Média Pós"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="taxaMediaIPCACRI4"
+									value="#{contratoCobrancaMB.taxaMediaIPCA}"
+									styleClass="labelBold" converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel value=" _________________________ "
+								styleClass="labelBold" />
+							<p:outputLabel value="  _________________________"
+								styleClass="labelBold" />
+
+							<p:outputLabel for="taxaMaxCRI4" value="Taxa Máxima Pré"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="taxaMaxCRI4"
+									value="#{contratoCobrancaMB.taxaMax}" styleClass="labelBold"
+									converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel for="taxaMinCRI4" value="Taxa Minima Pré"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="taxaMinCRI4"
+									value="#{contratoCobrancaMB.taxaMin}" styleClass="labelBold"
+									converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel for="taxaMediaCRI4" value="Taxa Média Pré"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="taxaMediaCRI4"
+									value="#{contratoCobrancaMB.taxaMedia}" styleClass="labelBold"
+									converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel value=" _________________________ "
+								styleClass="labelBold" />
+							<p:outputLabel value="  _________________________"
+								styleClass="labelBold" />
+
+							<p:outputLabel for="ltvMaxCRI4" value="LTV Máximo"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="ltvMaxCRI4" value="#{contratoCobrancaMB.ltvMax}"
+									styleClass="labelBold" converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel for="ltvMinCRI4" value="LTV Mínimo"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="ltvMinCRI4" value="#{contratoCobrancaMB.ltvMin}"
+									styleClass="labelBold" converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+
+							<p:outputLabel for="ltvMedioCRI4" value="LVT Médio"
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel id="ltvMedioCRI4"
+									value="#{contratoCobrancaMB.ltvMedio}" styleClass="labelBold"
+									converter="bigDecimalConverter" />
+								<p:outputLabel value="% " styleClass="labelBold" />
+							</h:panelGroup>
+						</h:panelGrid>
+					</p:panel>
 					<p:panel rendered="#{contratoCobrancaMB.tituloPainel == 'FIDC GALLERIA'}"
 						header="Dados da Consulta FIDC">
 						<f:facet name="header">

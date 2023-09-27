@@ -101,6 +101,8 @@ public class PowerBiMb {
 		powerBiNew.add(getPBNewDataBase("Reanalise pós comitê"));
 		powerBiNew.add(getPBNewDataBase("Com pedido de laudo"));
 		powerBiNew.add(getPBNewDataBase("Com pedido de paju"));
+		powerBiNew.add(getPBNewDataBase("Com paju Neves recebido"));
+		powerBiNew.add(getPBNewDataBase("Com paju Luvison recebido"));
 		powerBiNew.add(getPBNewDataBase("Enviadas para Com. Jurídico"));
 		powerBiNew.add(getPBNewDataBase("Comentadas pelo Jurídico"));
 		powerBiNew.add(getPBNewDataBase("Reanlise Jurídico pós comitê"));

@@ -101,6 +101,8 @@
 									itemLabel="FIDC GALLERIA" />
 								<f:selectItem itemValue="CRI 1" itemLabel="CRI 1" />
 								<f:selectItem itemValue="CRI 2" itemLabel="CRI 2" />
+								<f:selectItem itemValue="CRI 3" itemLabel="CRI 3" />
+								<f:selectItem itemValue="CRI 4" itemLabel="CRI 4" />
 							</p:selectOneMenu>
 						</h:panelGrid>
 						<h:panelGrid columns="4">
@@ -2021,21 +2023,21 @@
 								value="Numero Presente Parcela" />
 							<p:inputText id="numeroPresenteParcela"
 								value="#{contratoCobrancaMB.numeroPresenteParcela}" />
-							<!--  -->
+							<p:spacer width="0" />
 
 
 							<p:outputLabel value="Calcular Valor Presente Parcela " />
 							<p:commandButton value="Calcular Valor Presente Parcela"
 								action="#{contratoCobrancaMB.calcularValorPresenteParcela}"
 								ajax="true" update="valorPresenteParcela" />
-							<!--  -->
+							<p:spacer width="0" />
 
 							<p:outputLabel for="valorPresenteParcela"
 								value="Valor Presente Parcela" />
 							<p:outputLabel id="valorPresenteParcela"
 								value="#{contratoCobrancaMB.valorPresenteParcela}"
 								converter="bigDecimalConverter" />
-							<!--  -->
+							<p:spacer width="0" />
 						</h:panelGrid>
 					</p:panel>
 				</shiro:hasAnyRoles>
@@ -2070,7 +2072,7 @@
 
 									<p:outputLabel value="Adicionar Conta a Pagar"
 										styleClass="labelBold" />
-									<!-- espaço em branco para formação dos elementos na tela -->
+									<p:spacer width="0" />
 
 									<p:outputLabel for="ContaPagarDescricao" value="Descrição: "
 										styleClass="labelBold"
@@ -2401,7 +2403,7 @@
 								<h:outputText value="#{files.name}" />
 								<p:spacer height="10" />
 								<p:commandButton value="Abrir" ajax="false"
-									action="#{contratoCobrancaMB.viewFile(files.name)}"
+									action="#{contratoCobrancaMB.viewFile(files)}"
 									immediate="true" icon="ui-icon-search"
 									onclick="target='_blank'" onblur="target='_self'">
 								</p:commandButton>
@@ -2478,7 +2480,7 @@
 									<h:outputText value="#{filesInterno.name}" />
 									<p:spacer height="10" />
 									<p:commandButton value="Abrir" ajax="false"
-										action="#{contratoCobrancaMB.viewFileInterno(filesInterno.name)}"
+										action="#{contratoCobrancaMB.viewFile(filesInterno)}"
 										immediate="true" icon="ui-icon-search"
 										onclick="target='_blank'" onblur="target='_self'">
 									</p:commandButton>
@@ -2539,6 +2541,7 @@
 			<ui:include src="../../Dialog/DialogRecebedorPagador.xhtml">
 				<ui:param name="mbean" value="#{contratoCobrancaMB}"></ui:param>
 				<ui:param name="titulo" value="Segurado"></ui:param>
+				<ui:param name="permiteAdicionarPessoa" value="false"></ui:param>			
 			</ui:include>
 
 			<p:dialog header="Pagadores" widgetVar="pagadorDialog"

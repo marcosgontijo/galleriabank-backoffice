@@ -80,7 +80,7 @@
 							<p:outputLabel value="%" styleClass="labelBold" />
 							<h:panelGroup class="labelInfo"
 								rendered="#{simuladorMB.tipoCalculo ne 'Americano'}">
-								Valor mínimo de 0,99%
+								Valor mínimo de 1,19%
 							</h:panelGroup>
 							<h:panelGroup class="labelInfo"
 								rendered="#{simuladorMB.tipoCalculo eq 'Americano'}">
@@ -156,6 +156,12 @@
 								</p:inputText>
 								<p:outputLabel value="%" rendered="#{simuladorMB.simularComIPCA}"  styleClass="labelBold" />
 							</h:panelGrid>					
+						
+							<p:outputLabel for="usarNovoCustoEmissao" value="Usar Novo Custo Emissão: "
+								styleClass="labelBold" />
+							<p:selectBooleanCheckbox id="usarNovoCustoEmissao" 
+								value="#{simuladorMB.usarNovoCustoEmissao}"  style="margin-left: 12px;">
+							</p:selectBooleanCheckbox>
 						</shiro:hasAnyRoles>
 						
 					</h:panelGrid>

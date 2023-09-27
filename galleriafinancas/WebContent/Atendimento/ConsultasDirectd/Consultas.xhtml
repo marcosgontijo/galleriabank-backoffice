@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition 
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  xmlns:p="http://primefaces.org/ui"
+	  template="../MenuAtendimento.xhtml">
+	  <ui:define name="conteudo">
+	  
+	  <p:panel id="consultaCPF" header="Consultas" style="margin-bottom:10px;">
+	  <p:focus /> 
+	  <p:messages/>			
+			<h:panelGrid columns="2">
+			<h:form id="ConsultasForm">
+			<p:outputLabel value="Tipo de Pessoa" styleClass="labelBold" style="margin-right: 20px;"/>
+			<p:selectOneMenu value="#{consultasMB.tipoPessoa}" required="true" >
+			<f:selectItem itemLabel="PF" itemValue="PF" />
+			<f:selectItem itemLabel="PJ" itemValue="PJ"/>
+			<p:ajax event="valueChange" update="consultaCPF"></p:ajax>
+			</p:selectOneMenu>
+			<br></br>
+			<br></br>
+			<p:growl id="messages" showDetail="true" sticky="true"/>			
+				<p:outputLabel  value="CPF " styleClass="labelBold" style="margin-right: 20px;" rendered="#{consultasMB.tipoPessoa == 'PF'}"/>
+				<p:inputMask id="CPF" value="#{consultasMB.cpfCnpj}" label="CNPJ" mask="999.999.999-99" required="true" rendered="#{consultasMB.tipoPessoa == 'PF'}"/>
+				<br></br>
+				<p:outputLabel  value="CNPJ " styleClass="labelBold" style="margin-right: 20px;" rendered="#{consultasMB.tipoPessoa == 'PJ'}" />
+				<p:inputMask id="CNPJ" value="#{consultasMB.cpfCnpj}" label="CNPJ" mask="99.999.999/9999-99" required="true" rendered="#{consultasMB.tipoPessoa == 'PJ'}"/>									
+			
+			<br></br>
+			<br></br>
+		
+				<p:commandButton value="Consultar SCR" ajax="false" action="#{consultasMB.consultaSCR}" icon="ui-icon ui-icon-check"  style="TEXT-DECORATION: bold; margin-right: 5px;" />
+				<p:commandButton value="Consultar Cenprot" ajax="false" action="#{consultasMB.consultaCenprot}" icon="ui-icon ui-icon-check"  style="TEXT-DECORATION: bold; margin-right: 5px;" />
+				<p:commandButton value="Consultar Processos" ajax="false" action="#{consultasMB.consultarProcessos}" icon="ui-icon ui-icon-check"  style="TEXT-DECORATION: bold; margin-right: 5px;" />
+				<p:commandButton value="Consultar PEP" ajax="false" action="#{consultasMB.consultaPEP}" icon="ui-icon ui-icon-check"  style="TEXT-DECORATION: bold; margin-right: 5px;" />
+				
+					</h:form>					
+</h:panelGrid>
+	  </p:panel>
+	  
+	  </ui:define>
+	  </ui:composition>

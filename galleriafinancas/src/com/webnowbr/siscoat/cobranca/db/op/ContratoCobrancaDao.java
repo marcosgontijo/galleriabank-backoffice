@@ -1,7 +1,6 @@
 package com.webnowbr.siscoat.cobranca.db.op;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,14 +15,15 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
-import org.hibernate.engine.JoinSequence.Join;
-import org.jboss.resteasy.util.CommitHeaderOutputStream;
-
 import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.AnaliseComite;
+import com.webnowbr.siscoat.cobranca.db.model.Cidade;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaBRLLiquidacao;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFinanceiroDiaConsultaDetalhesParcialVO;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFinanceiroDiaConsultaDetalhesVO;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFinancerioDiaConsultaVO;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaStatus;
 import com.webnowbr.siscoat.cobranca.db.model.Dashboard;
@@ -468,6 +468,46 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			}
 		});	
 	}
+	
+	private static final String QUERY_CONSULTA_CONTRATOS_POR_NUMERO =  	"select cc.id "
+			+ "from cobranca.contratocobranca cc "
+			+ "where cc.numerocontrato = ? ";
+	
+	@SuppressWarnings("unchecked")
+	public ContratoCobranca getContratoPorNumeroContrato(final String numeroContrato) {
+		return (ContratoCobranca) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				ContratoCobranca contratoCobranca = null;
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				String query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_CONSULTA_CONTRATOS_POR_NUMERO;	
+				try {
+					connection = getConnection();
+
+					ps = connection
+							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);
+				
+					ps.setString(1, numeroContrato);
+	
+					rs = ps.executeQuery();
+					
+					
+					
+					while (rs.next()) {
+						contratoCobranca = findById(rs.getLong(1));						
+						break;												
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return contratoCobranca;
+			}
+		});	
+	}		
 	
 	private static final String QUERY_GET_CONTRATOS_POR_INVESTIDOR =  	"select cc.id "
 			+ "from cobranca.contratocobranca cc "
@@ -2537,6 +2577,154 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}
 	
+	private static final String QUERY_RELATORIO_FINANCEIRO_BAIXADO_PERIODO_TOTAL_CRI4 =  	
+			"select cc.numerocontrato, r.nome, pr.nome, cc.valorccb,  cd.numeroparcela || ' de ' || cc.qtdeparcelas, cd.vlrParcela, cdbp.vlrrecebido, cc.numeroContratoSeguro, cd.numeroparcela, cdbp.datavencimento, cdbp.datapagamento " + 
+			"from cobranca.contratocobrancadetalhesparcial cdbp  " +
+			"inner join cobranca.cobranca_detalhes_parcial_join cdbpj on cdbp.id = cdbpj.idcontratocobrancadetalhesparcial " +
+			"inner join cobranca.contratocobranca_detalhes_join cdj on cdj.idcontratocobrancadetalhes = cdbpj.idcontratocobrancadetalhes  " +
+			"inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca  " +
+			"inner join cobranca.contratocobrancadetalhes cd on cd.id = cdj.idcontratocobrancadetalhes  " +
+			"inner join cobranca.responsavel r on cc.responsavel = r.id   " +
+			"inner join cobranca.pagadorrecebedor pr on cc.pagador = pr.id  " +
+			"where  " +
+			"cdbp.dataPagamento >= ? ::timestamp  " +	
+			"and cdbp.dataPagamento <= ? ::timestamp  " +
+			"and cc.empresa = 'CRI 4' " +
+			"order by cc.numerocontrato, cd.numeroparcela ";
+	
+	@SuppressWarnings("unchecked")
+	public List<RelatorioFinanceiroCobranca> relatorioFinanceiroBaixadoPeriodoTotalCRI4(final Date dtRelInicio, final Date dtRelFim) {
+		return (List<RelatorioFinanceiroCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<RelatorioFinanceiroCobranca> objects = new ArrayList<RelatorioFinanceiroCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				
+				String query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_BAIXADO_PERIODO_TOTAL_CRI4;
+
+				try {
+					connection = getConnection();
+						
+					ps = connection
+							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);						
+					
+					java.sql.Date dtRelInicioSQL = new java.sql.Date(dtRelInicio.getTime());
+					java.sql.Date dtRelFimSQL = new java.sql.Date(dtRelFim.getTime());
+	
+					ps.setDate(1, dtRelInicioSQL);
+					ps.setDate(2, dtRelFimSQL);								
+	
+					rs = ps.executeQuery();
+					
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					RelatorioFinanceiroCobranca relatorioFinanceiroCobrancaAux = new RelatorioFinanceiroCobranca();
+		
+					while (rs.next()) { 
+						relatorioFinanceiroCobrancaAux = new RelatorioFinanceiroCobranca();
+						
+						relatorioFinanceiroCobrancaAux.setNumeroContrato(rs.getString(1));
+						relatorioFinanceiroCobrancaAux.setNomeResponsavel(rs.getString(2));
+						relatorioFinanceiroCobrancaAux.setNomePagador(rs.getString(3));
+						relatorioFinanceiroCobrancaAux.setValorCCB(rs.getBigDecimal(4));
+						relatorioFinanceiroCobrancaAux.setParcela(rs.getString(5));
+						relatorioFinanceiroCobrancaAux.setVlrParcela(rs.getBigDecimal(6));
+						relatorioFinanceiroCobrancaAux.setVlrTotalPago(rs.getBigDecimal(7));
+						relatorioFinanceiroCobrancaAux.setDataVencimento(rs.getDate(10));
+						relatorioFinanceiroCobrancaAux.setDataPagamento(rs.getDate(11));
+						
+						if (!rs.getString(8).equals("")) {
+							relatorioFinanceiroCobrancaAux.setParcelaCCB(rs.getString(8) + "-" + rs.getString(9));
+						} else {
+							relatorioFinanceiroCobrancaAux.setParcelaCCB("");
+						}
+												
+						objects.add(relatorioFinanceiroCobrancaAux);								
+					}
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}
+	
+	private static final String QUERY_RELATORIO_FINANCEIRO_BAIXADO_PERIODO_TOTAL_CRI3 =  	
+			"select cc.numerocontrato, r.nome, pr.nome, cc.valorccb,  cd.numeroparcela || ' de ' || cc.qtdeparcelas, cd.vlrParcela, cdbp.vlrrecebido, cc.numeroContratoSeguro, cd.numeroparcela, cdbp.datavencimento, cdbp.datapagamento " + 
+			"from cobranca.contratocobrancadetalhesparcial cdbp  " +
+			"inner join cobranca.cobranca_detalhes_parcial_join cdbpj on cdbp.id = cdbpj.idcontratocobrancadetalhesparcial " +
+			"inner join cobranca.contratocobranca_detalhes_join cdj on cdj.idcontratocobrancadetalhes = cdbpj.idcontratocobrancadetalhes  " +
+			"inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca  " +
+			"inner join cobranca.contratocobrancadetalhes cd on cd.id = cdj.idcontratocobrancadetalhes  " +
+			"inner join cobranca.responsavel r on cc.responsavel = r.id   " +
+			"inner join cobranca.pagadorrecebedor pr on cc.pagador = pr.id  " +
+			"where  " +
+			"cdbp.dataPagamento >= ? ::timestamp  " +	
+			"and cdbp.dataPagamento <= ? ::timestamp  " +
+			"and cc.empresa = 'CRI 3' " +
+			"order by cc.numerocontrato, cd.numeroparcela ";
+	
+	@SuppressWarnings("unchecked")
+	public List<RelatorioFinanceiroCobranca> relatorioFinanceiroBaixadoPeriodoTotalCRI3(final Date dtRelInicio, final Date dtRelFim) {
+		return (List<RelatorioFinanceiroCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<RelatorioFinanceiroCobranca> objects = new ArrayList<RelatorioFinanceiroCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				
+				String query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_BAIXADO_PERIODO_TOTAL_CRI3;
+
+				try {
+					connection = getConnection();
+						
+					ps = connection
+							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);						
+					
+					java.sql.Date dtRelInicioSQL = new java.sql.Date(dtRelInicio.getTime());
+					java.sql.Date dtRelFimSQL = new java.sql.Date(dtRelFim.getTime());
+	
+					ps.setDate(1, dtRelInicioSQL);
+					ps.setDate(2, dtRelFimSQL);								
+	
+					rs = ps.executeQuery();
+					
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					RelatorioFinanceiroCobranca relatorioFinanceiroCobrancaAux = new RelatorioFinanceiroCobranca();
+		
+					while (rs.next()) { 
+						relatorioFinanceiroCobrancaAux = new RelatorioFinanceiroCobranca();
+						
+						relatorioFinanceiroCobrancaAux.setNumeroContrato(rs.getString(1));
+						relatorioFinanceiroCobrancaAux.setNomeResponsavel(rs.getString(2));
+						relatorioFinanceiroCobrancaAux.setNomePagador(rs.getString(3));
+						relatorioFinanceiroCobrancaAux.setValorCCB(rs.getBigDecimal(4));
+						relatorioFinanceiroCobrancaAux.setParcela(rs.getString(5));
+						relatorioFinanceiroCobrancaAux.setVlrParcela(rs.getBigDecimal(6));
+						relatorioFinanceiroCobrancaAux.setVlrTotalPago(rs.getBigDecimal(7));
+						relatorioFinanceiroCobrancaAux.setDataVencimento(rs.getDate(10));
+						relatorioFinanceiroCobrancaAux.setDataPagamento(rs.getDate(11));
+						
+						if (!rs.getString(8).equals("")) {
+							relatorioFinanceiroCobrancaAux.setParcelaCCB(rs.getString(8) + "-" + rs.getString(9));
+						} else {
+							relatorioFinanceiroCobrancaAux.setParcelaCCB("");
+						}
+												
+						objects.add(relatorioFinanceiroCobrancaAux);								
+					}
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}
+	
 	private static final String QUERY_RELATORIO_FINANCEIRO_BAIXADO_PERIODO_TOTAL_CRI2 =  	
 			"select cc.numerocontrato, r.nome, pr.nome, cc.valorccb,  cd.numeroparcela || ' de ' || cc.qtdeparcelas, cd.vlrParcela, cdbp.vlrrecebido, cc.numeroContratoSeguro, cd.numeroparcela, cdbp.datavencimento, cdbp.datapagamento " + 
 			"from cobranca.contratocobrancadetalhesparcial cdbp  " +
@@ -2643,6 +2831,180 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				ResultSet rs = null;
 				
 				String query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_BAIXADO_PERIODO_TOTAL_CRI12;
+
+				try {
+					connection = getConnection();
+						
+					ps = connection
+							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);						
+					
+					java.sql.Date dtRelInicioSQL = new java.sql.Date(dtRelInicio.getTime());
+					java.sql.Date dtRelFimSQL = new java.sql.Date(dtRelFim.getTime());
+	
+					ps.setDate(1, dtRelInicioSQL);
+					ps.setDate(2, dtRelFimSQL);		
+					ps.setDate(3, dtRelInicioSQL);
+					ps.setDate(4, dtRelFimSQL);	
+	
+					rs = ps.executeQuery();
+					
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					RelatorioFinanceiroCobranca relatorioFinanceiroCobrancaAux = new RelatorioFinanceiroCobranca();
+		
+					while (rs.next()) { 
+						relatorioFinanceiroCobrancaAux = new RelatorioFinanceiroCobranca();
+						
+						relatorioFinanceiroCobrancaAux.setNumeroContrato(rs.getString(1));
+						relatorioFinanceiroCobrancaAux.setNomeResponsavel(rs.getString(2));
+						relatorioFinanceiroCobrancaAux.setNomePagador(rs.getString(3));
+						relatorioFinanceiroCobrancaAux.setValorCCB(rs.getBigDecimal(4));
+						relatorioFinanceiroCobrancaAux.setParcela(rs.getString(5));
+						relatorioFinanceiroCobrancaAux.setVlrParcela(rs.getBigDecimal(6));
+						relatorioFinanceiroCobrancaAux.setVlrTotalPago(rs.getBigDecimal(7));
+						relatorioFinanceiroCobrancaAux.setDataVencimento(rs.getDate(10));
+						relatorioFinanceiroCobrancaAux.setDataPagamento(rs.getDate(11));
+						
+						if(rs.getBoolean("baixagalleria")) { //rs.getBoolean(12)
+							relatorioFinanceiroCobrancaAux.setDataPagamento(rs.getDate("datapagamentogalleria")); //rs.getDate(13)
+							relatorioFinanceiroCobrancaAux.setVlrTotalPago(rs.getBigDecimal("vlrRecebidoGalleria")); //rs.getBigDecimal(14)
+						}
+						
+						
+						if (!rs.getString(8).equals("")) {
+							relatorioFinanceiroCobrancaAux.setParcelaCCB(rs.getString(8) + "-" + rs.getString(9));
+						} else {
+							relatorioFinanceiroCobrancaAux.setParcelaCCB("");
+						}
+												
+						objects.add(relatorioFinanceiroCobrancaAux);								
+					}
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}
+	
+	private static final String QUERY_RELATORIO_FINANCEIRO_BAIXADO_PERIODO_TOTAL_CRI44 =  	
+			"select cc.numerocontrato, r.nome, pr.nome, cc.valorccb,  cd.numeroparcela || ' de ' || cc.qtdeparcelas, cd.vlrParcela, cdbp.vlrrecebido, cc.numeroContratoSeguro, cd.numeroparcela, cdbp.datavencimento, cdbp.datapagamento, " + 
+			" cdbp.baixagalleria, cdbp.datapagamentogalleria, cdbp.vlrRecebidoGalleria  " + 
+			"from cobranca.contratocobrancadetalhesparcial cdbp  " +
+			"inner join cobranca.cobranca_detalhes_parcial_join cdbpj on cdbp.id = cdbpj.idcontratocobrancadetalhesparcial " +
+			"inner join cobranca.contratocobranca_detalhes_join cdj on cdj.idcontratocobrancadetalhes = cdbpj.idcontratocobrancadetalhes  " +
+			"inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca  " +
+			"inner join cobranca.contratocobrancadetalhes cd on cd.id = cdj.idcontratocobrancadetalhes  " +
+			"inner join cobranca.responsavel r on cc.responsavel = r.id   " +
+			"inner join cobranca.pagadorrecebedor pr on cc.pagador = pr.id  " +
+			" where  cc.empresa = 'CRI 4' " +
+			"	and " +
+			"	( (cdbp.dataPagamento >= ? ::timestamp " +
+			"		and cdbp.dataPagamento <= ? ::timestamp) " +
+			"	   or " +
+			"	  (cdbp.baixagalleria  " +
+			"		and cdbp.datapagamentogalleria >= ? ::timestamp " +
+			"		and cdbp.datapagamentogalleria <= ? ::timestamp) ) "  +
+			" order by cc.numerocontrato, cd.numeroparcela ";
+	
+	@SuppressWarnings("unchecked")
+	public List<RelatorioFinanceiroCobranca> relatorioFinanceiroBaixadoPeriodoTotalCRI44(final Date dtRelInicio, final Date dtRelFim) {
+		return (List<RelatorioFinanceiroCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<RelatorioFinanceiroCobranca> objects = new ArrayList<RelatorioFinanceiroCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				
+				String query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_BAIXADO_PERIODO_TOTAL_CRI44;
+
+				try {
+					connection = getConnection();
+						
+					ps = connection
+							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);						
+					
+					java.sql.Date dtRelInicioSQL = new java.sql.Date(dtRelInicio.getTime());
+					java.sql.Date dtRelFimSQL = new java.sql.Date(dtRelFim.getTime());
+	
+					ps.setDate(1, dtRelInicioSQL);
+					ps.setDate(2, dtRelFimSQL);		
+					ps.setDate(3, dtRelInicioSQL);
+					ps.setDate(4, dtRelFimSQL);	
+	
+					rs = ps.executeQuery();
+					
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					RelatorioFinanceiroCobranca relatorioFinanceiroCobrancaAux = new RelatorioFinanceiroCobranca();
+		
+					while (rs.next()) { 
+						relatorioFinanceiroCobrancaAux = new RelatorioFinanceiroCobranca();
+						
+						relatorioFinanceiroCobrancaAux.setNumeroContrato(rs.getString(1));
+						relatorioFinanceiroCobrancaAux.setNomeResponsavel(rs.getString(2));
+						relatorioFinanceiroCobrancaAux.setNomePagador(rs.getString(3));
+						relatorioFinanceiroCobrancaAux.setValorCCB(rs.getBigDecimal(4));
+						relatorioFinanceiroCobrancaAux.setParcela(rs.getString(5));
+						relatorioFinanceiroCobrancaAux.setVlrParcela(rs.getBigDecimal(6));
+						relatorioFinanceiroCobrancaAux.setVlrTotalPago(rs.getBigDecimal(7));
+						relatorioFinanceiroCobrancaAux.setDataVencimento(rs.getDate(10));
+						relatorioFinanceiroCobrancaAux.setDataPagamento(rs.getDate(11));
+						
+						if(rs.getBoolean("baixagalleria")) { //rs.getBoolean(12)
+							relatorioFinanceiroCobrancaAux.setDataPagamento(rs.getDate("datapagamentogalleria")); //rs.getDate(13)
+							relatorioFinanceiroCobrancaAux.setVlrTotalPago(rs.getBigDecimal("vlrRecebidoGalleria")); //rs.getBigDecimal(14)
+						}
+						
+						
+						if (!rs.getString(8).equals("")) {
+							relatorioFinanceiroCobrancaAux.setParcelaCCB(rs.getString(8) + "-" + rs.getString(9));
+						} else {
+							relatorioFinanceiroCobrancaAux.setParcelaCCB("");
+						}
+												
+						objects.add(relatorioFinanceiroCobrancaAux);								
+					}
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}
+	
+	private static final String QUERY_RELATORIO_FINANCEIRO_BAIXADO_PERIODO_TOTAL_CRI33 =  	
+			"select cc.numerocontrato, r.nome, pr.nome, cc.valorccb,  cd.numeroparcela || ' de ' || cc.qtdeparcelas, cd.vlrParcela, cdbp.vlrrecebido, cc.numeroContratoSeguro, cd.numeroparcela, cdbp.datavencimento, cdbp.datapagamento, " + 
+			" cdbp.baixagalleria, cdbp.datapagamentogalleria, cdbp.vlrRecebidoGalleria  " + 
+			"from cobranca.contratocobrancadetalhesparcial cdbp  " +
+			"inner join cobranca.cobranca_detalhes_parcial_join cdbpj on cdbp.id = cdbpj.idcontratocobrancadetalhesparcial " +
+			"inner join cobranca.contratocobranca_detalhes_join cdj on cdj.idcontratocobrancadetalhes = cdbpj.idcontratocobrancadetalhes  " +
+			"inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca  " +
+			"inner join cobranca.contratocobrancadetalhes cd on cd.id = cdj.idcontratocobrancadetalhes  " +
+			"inner join cobranca.responsavel r on cc.responsavel = r.id   " +
+			"inner join cobranca.pagadorrecebedor pr on cc.pagador = pr.id  " +
+			" where  cc.empresa = 'CRI 3' " +
+			"	and " +
+			"	( (cdbp.dataPagamento >= ? ::timestamp " +
+			"		and cdbp.dataPagamento <= ? ::timestamp) " +
+			"	   or " +
+			"	  (cdbp.baixagalleria  " +
+			"		and cdbp.datapagamentogalleria >= ? ::timestamp " +
+			"		and cdbp.datapagamentogalleria <= ? ::timestamp) ) "  +
+			" order by cc.numerocontrato, cd.numeroparcela ";
+	
+	@SuppressWarnings("unchecked")
+	public List<RelatorioFinanceiroCobranca> relatorioFinanceiroBaixadoPeriodoTotalCRI33(final Date dtRelInicio, final Date dtRelFim) {
+		return (List<RelatorioFinanceiroCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<RelatorioFinanceiroCobranca> objects = new ArrayList<RelatorioFinanceiroCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				
+				String query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_BAIXADO_PERIODO_TOTAL_CRI33;
 
 				try {
 					connection = getConnection();
@@ -2843,7 +3205,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						relatorioFinanceiroCobrancaAux.setDataVencimento(rs.getDate(10));
 						relatorioFinanceiroCobrancaAux.setDataPagamento(rs.getDate(11));
 						
-						if (!rs.getString(8).equals("")) {
+						if (!CommonsUtil.semValor(rs.getString(8))) {
 							relatorioFinanceiroCobrancaAux.setParcelaCCB(rs.getString(8) + "-" + rs.getString(9));
 						} else {
 							relatorioFinanceiroCobrancaAux.setParcelaCCB("");
@@ -3311,6 +3673,12 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					} else if (empresa.equals("CRI 2")) {
 						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM 
 								+  " and cc.empresa = 'CRI 2' ";
+					} else if (empresa.equals("CRI 3")) {
+						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM 
+								+  " and cc.empresa = 'CRI 3' ";
+					} else if (empresa.equals("CRI 4")) {
+						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM 
+								+  " and cc.empresa = 'CRI 4' ";
 					}
 					
 					query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM 
@@ -3438,12 +3806,30 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ " where cc.cedenteBRLCessao = ? "
 			+  " and cc.empresa != 'CRI 1' "
 			+  " and cc.empresa != 'CRI 2' "
+			+  " and cc.empresa != 'CRI 3' "
+			+  " and cc.empresa != 'CRI 4' "
 			+ " and "
 			+ "	( (cdp.dataPagamento >= ? ::timestamp "
 			+ "	and cdp.dataPagamento <= ? ::timestamp) "
 			+ "	or (cdp.baixagalleria "
 			+ "		and cdp.datapagamentogalleria >= ? ::timestamp "
 			+ "		and cdp.datapagamentogalleria <= ? ::timestamp))	";	
+	
+	private static final String QUERY_CONSULTA_BRL_CONTRATO_JSON_LIQUIDACAO =  	"select cc.id, cd.numeroParcela, cd.vlrJurosParcela, cd.vlrAmortizacaoParcela, cdp.dataVencimento , cdp.dataPagamento , cdp.vlrParcela , cdp.vlrRecebido, cd.id, cd.valorJurosSemIPCA, cd.valorAmortizacaoSemIPCA, "
+			+ " cdp.baixagalleria, cdp.datapagamentogalleria, cdp.vlrRecebidoGalleria  "
+			+ " from cobranca.contratocobrancadetalhes cd "
+			+ " inner join cobranca.cobranca_detalhes_parcial_join cdpj on cdpj.idcontratocobrancadetalhes = cd.id "
+			+ " inner join cobranca.contratocobrancadetalhesparcial cdp on cdp.id = cdpj.idcontratocobrancadetalhesparcial " 
+			+ " inner join cobranca.contratocobranca_detalhes_join cdj on cd.id = cdj.idcontratocobrancadetalhes "
+			+ " inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca  "
+			+ " where cc.cedenteBRLCessao = ? "
+			+ " and cc.empresa = 'FIDC GALLERIA' "
+			+ " and "
+			+ "	( (cdp.dataPagamento >= ? ::timestamp "
+			+ "	and cdp.dataPagamento <= ? ::timestamp) "
+			+ "	or (cdp.baixagalleria "
+			+ "		and cdp.datapagamentogalleria >= ? ::timestamp "
+			+ "		and cdp.datapagamentogalleria <= ? ::timestamp))	";
 
 	@SuppressWarnings("unchecked")
 	public List<ContratoCobrancaBRLLiquidacao> consultaContratosBRLLiquidacao(final Date dataBaixaInicial, final Date dataBaixaFinal, final String cedenteCessao) {
@@ -3459,7 +3845,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				try {
 					connection = getConnection();
 					
-					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_CONSULTA_BRL_CONTRATO;
+					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_CONSULTA_BRL_CONTRATO_JSON_LIQUIDACAO;
 					
 					java.sql.Date dtRelInicioSQL = new java.sql.Date(dataBaixaInicial.getTime());
 					java.sql.Date dtRelFimSQL = new java.sql.Date(dataBaixaFinal.getTime());
@@ -3605,6 +3991,16 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 								+  " and cc.empresa = 'CRI 2' ";
 					}
 					
+					if (empresa.equals("CRI 3")) {
+						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM 
+								+  " and cc.empresa = 'CRI 3' ";
+					}
+					
+					if (empresa.equals("CRI 4")) {
+						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM 
+								+  " and cc.empresa = 'CRI 4' ";
+					}
+					
 					query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM 
 					+ " order by cc.datacontrato desc ";
 					
@@ -3631,7 +4027,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}	
 	
-	private static final String QUERY_CONSULTA_CONTRATOS_POR_NUMERO =  	"select cc.id "
+	private static final String QUERY_CONSULTA_CONTRATOS_POR_NUMERO_NAO_GALLERIA =  	"select cc.id "
 			+ "from cobranca.contratocobranca cc "
 			+ "where cc.status = 'Aprovado' "
 			+ "and cc.pagador not in (15, 34,14, 182, 417, 803) "
@@ -3647,7 +4043,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				Connection connection = null;
 				PreparedStatement ps = null;
 				ResultSet rs = null;
-				String query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_CONSULTA_CONTRATOS_POR_NUMERO;	
+				String query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_CONSULTA_CONTRATOS_POR_NUMERO_NAO_GALLERIA;	
 				try {
 					connection = getConnection();
 
@@ -4003,99 +4399,218 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}	
 	
-	private static final String QUERY_RELATORIO_FINANCEIRO_DIA_FIDC = "select c.id from cobranca.contratocobranca c "
-			+ "where c.status = 'Aprovado' "
+
+	private static final String QUERY_BASE_RELATORIO_FINANCEIRO_DIA = 
+	"select c.id,  c.numeroContrato, c.dataContrato, c.dataInicio, "
+	+ "			p.nome pagador_nome, p.cpf pagador_cpf, p.cnpj pagador_cnpj, "
+	+ "			p.dtNascimento pagador_dtNascimento, p.endereco pagador_endereco, p.numero pagador_numero, p.cidade pagador_cidade, "
+	+ "			p.estado pagador_estado, p.cep pagador_cep, p.nomeConjuge pagador_nomeConjuge, p.cpfConjuge pagador_cpfConjuge, "
+	+ "			i.cidade imovel_cidade, i.estado imovel_estado, c.valorCCB, c.txJurosParcelas, c.tipoCalculo, " 
+	+ "			c.temSeguroDFI, c.temSeguroMIP, c.mesesCarencia, c.temTxAdm, "
+	+ "	 c.empresa,	 c.valorImovel, tipoImovel, c.corrigidoIPCA, c.corrigidoNovoIPCA,"
+	+ "	 p.email  emailPagador, p.telcelular celularPagador, c.qtdeParcelas, c.numeroContratoSeguro "
+	+ "  from cobranca.contratocobranca c inner join cobranca.pagadorrecebedor p on c.pagador  = p.id inner join cobranca.imovelcobranca i on c.imovel = i.id ";
+	
+	private static final String QUERY_BASE_RELATORIO_FINANCEIRO_DIA_DETALHE = 
+			" select  c.id, cdj.idcontratocobranca  contratoCobranca,  numeroParcela, c.parcelaPaga, dataVencimento, c.datapagamento ,"
+			+ "         c.vlrparcela , vlrParcelaOriginal, vlrJurosParcela, vlrAmortizacaoParcela, seguroMip, "
+			+ "	 seguroDfi, taxaAdm,  vlrSaldoParcela, vlrjuros, txMulta"
+			+ "  from cobranca.contratocobranca_detalhes_join cdj "
+			+ "  inner join cobranca.contratocobrancadetalhes c on cdj.idcontratocobrancadetalhes  = c.id "
+			+ "  where cdj.idcontratocobranca  = ? ";
+	
+	private static final String  QUERY_BASE_RELATORIO_FINANCEIRO_DIA_DETALHE_PARC = 	
+			" select c.id, c.numeroparcela , c.datavencimento , c.datavencimentoatual , c.datapagamento , c.vlrrecebido , c.vlrparcelaatualizado , c.vlrrecebidogalleria , c.datapagamentogalleria , c.baixagalleria "
+			+ "   from cobranca.cobranca_detalhes_parcial_join cdpj "
+			+ "   inner join cobranca.contratocobrancadetalhesparcial c on cdpj.idcontratocobrancadetalhesparcial  = c.id "
+			+ "   where cdpj.idcontratocobrancadetalhes = ? ";
+	
+	
+	private static final String QUERY_RELATORIO_FINANCEIRO_DIA_FIDC = " where c.status = 'Aprovado' "
 			+ "and c.pagador not in (15, 34,14, 182, 417, 803) "
 			+ "and c.empresa = 'FIDC GALLERIA'"
 			+ " order by numerocontrato";
 	
-	private static final String QUERY_RELATORIO_FINANCEIRO_DIA_PRE_APROVADO = " select c.id from cobranca.contratocobranca c "
-			+ "	where (c.status = 'Pendente' and c.AgEnvioCartorio = false and c.agregistro = true and (c.valorccb != null or c.valorccb != 0)) "
+	private static final String QUERY_RELATORIO_FINANCEIRO_DIA_PRE_APROVADO =  
+			" where (c.status = 'Pendente' and c.AgEnvioCartorio = false and c.agregistro = true and (c.valorccb != null or c.valorccb != 0)) "
 			+ "	and c.pagador not in (15, 34,14, 182, 417, 803) "
 			+ "	order by numerocontrato ";
 	
-	private static final String QUERY_RELATORIO_FINANCEIRO_DIA_SECURITIZADORA = "select c.id from cobranca.contratocobranca c "
-			+ "where c.status = 'Aprovado' "
+	private static final String QUERY_RELATORIO_FINANCEIRO_DIA_SECURITIZADORA = 
+			 "where c.status = 'Aprovado' "
 			+ "and c.pagador not in (15, 34,14, 182, 417, 803) "
 			+ "and c.empresa = 'GALLERIA FINANÇAS SECURITIZADORA S.A.'"
 			+ " order by numerocontrato";
 	
-	private static final String QUERY_RELATORIO_FINANCEIRO_DIA_CRI_1 = " select c.id from cobranca.contratocobranca c "
-			+ "	where c.status = 'Aprovado' "
+	private static final String QUERY_RELATORIO_FINANCEIRO_DIA_CRI_1 = 
+			 "	where c.status = 'Aprovado' "
 			+ "	and c.pagador not in (15, 34,14, 182, 417, 803) "
 			+ " and c.empresa = 'CRI 1' "
 			+ "	order by numerocontrato ";
 	
-	private static final String QUERY_RELATORIO_FINANCEIRO_DIA_CRI_2 = " select c.id from cobranca.contratocobranca c "
-			+ "	where c.status = 'Aprovado' "
+	private static final String QUERY_RELATORIO_FINANCEIRO_DIA_CRI_2 = 
+			 "	where c.status = 'Aprovado' "
 			+ "	and c.pagador not in (15, 34,14, 182, 417, 803) "
 			+ " and c.empresa = 'CRI 2' "
 			+ "	order by numerocontrato ";
+	
+	private static final String QUERY_RELATORIO_FINANCEIRO_DIA_CRI_3 = 
+			 "	where c.status = 'Aprovado' "
+			+ "	and c.pagador not in (15, 34,14, 182, 417, 803) "
+			+ " and c.empresa = 'CRI 3' "
+			+ "	order by numerocontrato ";
+	
+	private static final String QUERY_RELATORIO_FINANCEIRO_DIA_CRI_4 = 
+			 "	where c.status = 'Aprovado' "
+			+ "	and c.pagador not in (15, 34,14, 182, 417, 803) "
+			+ " and c.empresa = 'CRI 4' "
+			+ "	order by numerocontrato ";
 
 	@SuppressWarnings("unchecked")
-	public List<ContratoCobranca> relatorioFinanceiroDia(String tipoContratoCobrancaFinanceiroDia) {
-		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+	public List<ContratoCobrancaFinancerioDiaConsultaVO> relatorioFinanceiroDia(String tipoContratoCobrancaFinanceiroDia) {
+		return (List<ContratoCobrancaFinancerioDiaConsultaVO>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
-				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+				List<ContratoCobrancaFinancerioDiaConsultaVO> objects = new ArrayList<ContratoCobrancaFinancerioDiaConsultaVO>();
 	
 				Connection connection = null;
 				PreparedStatement ps = null;
 				ResultSet rs = null;
 				
-				String query_RELATORIO_FINANCEIRO_CUSTOM = "";
+				String query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_BASE_RELATORIO_FINANCEIRO_DIA;
+
+				String query_RELATORIO_FINANCEIRO_DETALHE_CUSTOM = QUERY_BASE_RELATORIO_FINANCEIRO_DIA_DETALHE;
+				
+				String query_RELATORIO_FINANCEIRO_DETALHE_PARC_CUSTOM = QUERY_BASE_RELATORIO_FINANCEIRO_DIA_DETALHE_PARC;
 				
 				if (tipoContratoCobrancaFinanceiroDia.equals("Securitizadora")) {
-					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_DIA_SECURITIZADORA;	
+					query_RELATORIO_FINANCEIRO_CUSTOM += QUERY_RELATORIO_FINANCEIRO_DIA_SECURITIZADORA;	
 				}
 				
+				
 				if (tipoContratoCobrancaFinanceiroDia.equals("FIDC")) {
-					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_DIA_FIDC;		
+					query_RELATORIO_FINANCEIRO_CUSTOM += QUERY_RELATORIO_FINANCEIRO_DIA_FIDC;		
 				}
 				
 				if (tipoContratoCobrancaFinanceiroDia.equals("PreAprovado")) {
-					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_DIA_PRE_APROVADO;		
+					query_RELATORIO_FINANCEIRO_CUSTOM += QUERY_RELATORIO_FINANCEIRO_DIA_PRE_APROVADO;		
 				}
 				
 				if (tipoContratoCobrancaFinanceiroDia.equals("CRI 1")) {
-					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_DIA_CRI_1;		
+					query_RELATORIO_FINANCEIRO_CUSTOM += QUERY_RELATORIO_FINANCEIRO_DIA_CRI_1;		
 				}
 				
 				if (tipoContratoCobrancaFinanceiroDia.equals("CRI 2")) {
-					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_DIA_CRI_2;		
+					query_RELATORIO_FINANCEIRO_CUSTOM += QUERY_RELATORIO_FINANCEIRO_DIA_CRI_2;		
+				}
+
+				if (tipoContratoCobrancaFinanceiroDia.equals("CRI 3")) {
+					query_RELATORIO_FINANCEIRO_CUSTOM += QUERY_RELATORIO_FINANCEIRO_DIA_CRI_3;		
+				}
+				
+				if (tipoContratoCobrancaFinanceiroDia.equals("CRI 4")) {
+					query_RELATORIO_FINANCEIRO_CUSTOM += QUERY_RELATORIO_FINANCEIRO_DIA_CRI_4;		
 				}
 				
 				if (tipoContratoCobrancaFinanceiroDia.equals("EspelhamentoFIDC")) {
-					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_DIA_FIDC;		
+					query_RELATORIO_FINANCEIRO_CUSTOM += QUERY_RELATORIO_FINANCEIRO_DIA_FIDC;		
 				}
 				
 				if (tipoContratoCobrancaFinanceiroDia.equals("EspelhamentoCRI1")) {
-					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_DIA_CRI_1;		
+					query_RELATORIO_FINANCEIRO_CUSTOM += QUERY_RELATORIO_FINANCEIRO_DIA_CRI_1;		
 				}
 				
 				if (tipoContratoCobrancaFinanceiroDia.equals("EspelhamentoCRI2")) {
-					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_DIA_CRI_2;		
+					query_RELATORIO_FINANCEIRO_CUSTOM += QUERY_RELATORIO_FINANCEIRO_DIA_CRI_2;		
+				}
+				
+				if (tipoContratoCobrancaFinanceiroDia.equals("EspelhamentoCRI3")) {
+					query_RELATORIO_FINANCEIRO_CUSTOM += QUERY_RELATORIO_FINANCEIRO_DIA_CRI_3;		
 				}
 				
 				try {
 					connection = getConnection();
-					
-					ps = connection
-							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);
-					
+
+					ps = connection.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);
+
 					rs = ps.executeQuery();
-					ContratoCobranca contratoCobranca = new ContratoCobranca();
-					
+					ContratoCobrancaFinancerioDiaConsultaVO contratoCobranca;
+
 					while (rs.next()) {
-						contratoCobranca = findById(rs.getLong(1));
-						
-						objects.add(contratoCobranca);		
+						contratoCobranca = new ContratoCobrancaFinancerioDiaConsultaVO(rs.getLong("id"),
+								rs.getString("numeroContrato"), rs.getDate("dataContrato"), rs.getDate("dataInicio"),
+								rs.getString("pagador_nome"), rs.getString("pagador_cpf"), rs.getString("pagador_cnpj"),
+								rs.getDate("pagador_dtNascimento"), rs.getString("pagador_endereco"),
+								rs.getString("pagador_numero"), rs.getString("pagador_cidade"),
+								rs.getString("pagador_estado"), rs.getString("pagador_cep"),
+								rs.getString("pagador_nomeConjuge"), rs.getString("pagador_cpfConjuge"),
+								rs.getString("imovel_cidade"), rs.getString("imovel_estado"),
+								rs.getBigDecimal("valorCCB"), rs.getBigDecimal("txJurosParcelas"),
+								rs.getString("tipoCalculo"), rs.getBoolean("temSeguroDFI"),
+								rs.getBoolean("temSeguroMIP"), rs.getLong("mesesCarencia"), rs.getBoolean("temTxAdm"),
+								rs.getString("empresa"), rs.getBigDecimal("valorImovel"), rs.getString("tipoImovel"),
+								rs.getBoolean("corrigidoIPCA"), rs.getBoolean("corrigidoNovoIPCA"),
+								rs.getString("emailPagador"), rs.getString("celularPagador"),
+								rs.getLong("qtdeParcelas"), rs.getString("numeroContratoSeguro"));
+
+						// busca detalhes
+						PreparedStatement ps_det = connection
+								.prepareStatement(query_RELATORIO_FINANCEIRO_DETALHE_CUSTOM);
+
+						ps_det.setLong(1, contratoCobranca.getId());
+
+						ResultSet rs_det = ps_det.executeQuery();
+
+						while (rs_det.next()) {
+							// busca detalhes parciais
+							PreparedStatement ps_parc = connection
+									.prepareStatement(query_RELATORIO_FINANCEIRO_DETALHE_PARC_CUSTOM);
+							ps_parc.setLong(1, rs_det.getLong("id"));
+							ResultSet rs_parc = ps_parc.executeQuery();
+							List<ContratoCobrancaFinanceiroDiaConsultaDetalhesParcialVO> listContratoCobrancaDetalhesParcial = new ArrayList<>();
+
+							while (rs_parc.next()) {
+								listContratoCobrancaDetalhesParcial
+										.add(new ContratoCobrancaFinanceiroDiaConsultaDetalhesParcialVO(
+												rs_parc.getLong("id"), rs_parc.getString("numeroParcela"),
+												rs_parc.getDate("dataVencimento"),
+												rs_parc.getDate("dataVencimentoAtual"),
+												rs_parc.getDate("dataPagamento"), rs_parc.getBigDecimal("vlrRecebido"),
+												rs_parc.getBigDecimal("vlrParcelaAtualizado"),
+												rs_parc.getBigDecimal("vlrRecebidoGalleria"),
+												rs_parc.getDate("dataPagamentoGalleria"),
+												rs_parc.getBoolean("baixaGalleria")));
+							}
+
+							contratoCobranca.getListContratoCobrancaDetalhes()
+									.add(new ContratoCobrancaFinanceiroDiaConsultaDetalhesVO(rs_det.getLong("id"),
+											rs_det.getLong("contratoCobranca"), rs_det.getString("numeroParcela"),
+											rs_det.getBoolean("parcelaPaga"), rs_det.getDate("dataVencimento"),
+											rs_det.getDate("dataPagamento"),
+											null,
+											rs_det.getBigDecimal("vlrParcela"),
+											rs_det.getBigDecimal("vlrParcelaOriginal"),
+											rs_det.getBigDecimal("vlrJurosParcela"),
+											rs_det.getBigDecimal("vlrAmortizacaoParcela"),
+											rs_det.getBigDecimal("seguroDfi"),
+											rs_det.getBigDecimal("seguroMip"),
+											rs_det.getBigDecimal("taxaAdm"),
+											rs_det.getBigDecimal("vlrSaldoParcela"),
+											rs_det.getBigDecimal("vlrjuros"),
+											rs_det.getBigDecimal("txMulta"),
+											listContratoCobrancaDetalhesParcial));
+
+						}
+
+//						contratoCobranca = findById(rs.getLong(1));
+
+						objects.add(contratoCobranca);
 					}
-	
+
 				} finally {
 					closeResources(connection, ps, rs);					
 				}
-				return objects;
+				return objects; 
 			}
 		});	
 	}	
@@ -4114,7 +4629,9 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "	ic.cidade, ic.estado, "
 			+ "	cc.valorCCB, "
 			+ "	cc.txJurosParcelas, "
-			+ "	cc.valorImovel "
+			+ "	cc.valorImovel, "
+			+ "	pp.email, "
+			+ "	pp.telCelular "
 			+ "	from cobranca.contratocobranca cc "
 			+ "	inner join cobranca.pagadorrecebedor pp on pp.id = cc.pagador "
 			+ "	inner join cobranca.imovelcobranca ic on ic.id = cc.imovel "
@@ -4123,8 +4640,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "	order by numerocontrato ";
 
 	@SuppressWarnings("unchecked")
-	public List<ContratoCobranca> relatorioFinanceiroDiaCompleto() {
-		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+	public List<ContratoCobrancaFinancerioDiaConsultaVO> relatorioFinanceiroDiaCompleto() {
+		return (List<ContratoCobrancaFinancerioDiaConsultaVO>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
 				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
@@ -4166,6 +4683,9 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setValorCCB(rs.getBigDecimal(13));
 						contratoCobranca.setTxJurosParcelas(rs.getBigDecimal(14));
 						contratoCobranca.setValorImovel(rs.getBigDecimal(15));
+						
+						contratoCobranca.setEmailPagador(rs.getString(16));
+						contratoCobranca.setCelularPagador(rs.getString(17));
 						
 						objects.add(contratoCobranca);		
 					}
@@ -4278,6 +4798,150 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					connection = getConnection();
 					
 					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_ATRASO_DT_ATUALIZADA_FULL_CRI2;
+					
+					ps = connection
+							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);
+					
+					java.sql.Date dtRelFimSQL = new java.sql.Date(dtRelFim.getTime());
+					
+					ps.setDate(1, dtRelFimSQL);	
+					
+					rs = ps.executeQuery();
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					
+					boolean exiteParcela = false;
+					
+					while (rs.next()) {
+						exiteParcela = false;
+						
+						contratoCobranca = findById(rs.getLong(1));
+						
+						String parcela = rs.getString(2);
+						if (parcela.length() == 1) {
+							parcela = "00" + parcela;
+						} else if (parcela.length() == 2) {
+							parcela = "0" + parcela;
+						} else {
+							parcela = parcela;
+						}
+					
+						String responsavelNome = (contratoCobranca.getResponsavel()==null)?"": contratoCobranca.getResponsavel().getNome();
+						String pagadorNome = (contratoCobranca.getPagador()==null)?"":contratoCobranca.getPagador().getNome();
+						String recebedorNome = (contratoCobranca.getRecebedor()==null)?"":contratoCobranca.getRecebedor().getNome();
+							
+							
+						objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), responsavelNome,
+								pagadorNome, recebedorNome, parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getLong(9), rs.getBigDecimal(10), rs.getString(11)));																	
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}	
+	
+	private static final String QUERY_RELATORIO_FINANCEIRO_ATRASO_DT_ATUALIZADA_FULL_CRI4 = "select cdj.idcontratocobranca, cd.numeroParcela, cd.dataVencimento, cd.vlrParcela, cd.vlrRetencao, cd.vlrComissao, cd.parcelaPaga, cd.dataVencimentoatual, cd.id, cd.vlrRepasse, "
+			+ " cc.numeroContratoSeguro "
+			+ "from cobranca.contratocobrancadetalhes cd "
+			+ "inner join cobranca.contratocobranca_detalhes_join cdj on cd.id = cdj.idcontratocobrancadetalhes " 
+			+ "inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca " 
+			+ "where cc.status = 'Aprovado' "
+			+ "and cd.parcelapaga = false "
+			+ "and cc.pagador not in (15, 34, 14, 182, 417, 803) "
+			+ "and cc.empresa = 'CRI 4' "
+			+ "and cd.datavencimentoatual < ? ::timestamp "
+			+ " order by cd.dataVencimentoatual desc ";
+	
+	@SuppressWarnings("unchecked")
+	public List<RelatorioFinanceiroCobranca> relatorioControleEstoqueAtrasoFullCRI4(final Date dtRelFim) {
+		return (List<RelatorioFinanceiroCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<RelatorioFinanceiroCobranca> objects = new ArrayList<RelatorioFinanceiroCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				String query_RELATORIO_FINANCEIRO_CUSTOM = null;	
+			
+				try {
+					connection = getConnection();
+					
+					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_ATRASO_DT_ATUALIZADA_FULL_CRI4;
+					
+					ps = connection
+							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);
+					
+					java.sql.Date dtRelFimSQL = new java.sql.Date(dtRelFim.getTime());
+					
+					ps.setDate(1, dtRelFimSQL);	
+					
+					rs = ps.executeQuery();
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					
+					boolean exiteParcela = false;
+					
+					while (rs.next()) {
+						exiteParcela = false;
+						
+						contratoCobranca = findById(rs.getLong(1));
+						
+						String parcela = rs.getString(2);
+						if (parcela.length() == 1) {
+							parcela = "00" + parcela;
+						} else if (parcela.length() == 2) {
+							parcela = "0" + parcela;
+						} else {
+							parcela = parcela;
+						}
+					
+						String responsavelNome = (contratoCobranca.getResponsavel()==null)?"": contratoCobranca.getResponsavel().getNome();
+						String pagadorNome = (contratoCobranca.getPagador()==null)?"":contratoCobranca.getPagador().getNome();
+						String recebedorNome = (contratoCobranca.getRecebedor()==null)?"":contratoCobranca.getRecebedor().getNome();
+							
+							
+						objects.add(new RelatorioFinanceiroCobranca(contratoCobranca.getNumeroContrato(), contratoCobranca.getDataContrato(), responsavelNome,
+								pagadorNome, recebedorNome, parcela, rs.getDate(3), rs.getBigDecimal(4), contratoCobranca, rs.getBigDecimal(5), rs.getBigDecimal(6), rs.getBoolean(7), rs.getDate(8), rs.getLong(9), rs.getBigDecimal(10), rs.getString(11)));																	
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}	
+	
+	private static final String QUERY_RELATORIO_FINANCEIRO_ATRASO_DT_ATUALIZADA_FULL_CRI3 = "select cdj.idcontratocobranca, cd.numeroParcela, cd.dataVencimento, cd.vlrParcela, cd.vlrRetencao, cd.vlrComissao, cd.parcelaPaga, cd.dataVencimentoatual, cd.id, cd.vlrRepasse, "
+			+ " cc.numeroContratoSeguro "
+			+ "from cobranca.contratocobrancadetalhes cd "
+			+ "inner join cobranca.contratocobranca_detalhes_join cdj on cd.id = cdj.idcontratocobrancadetalhes " 
+			+ "inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca " 
+			+ "where cc.status = 'Aprovado' "
+			+ "and cd.parcelapaga = false "
+			+ "and cc.pagador not in (15, 34, 14, 182, 417, 803) "
+			+ "and cc.empresa = 'CRI 3' "
+			+ "and cd.datavencimentoatual < ? ::timestamp "
+			+ " order by cd.dataVencimentoatual desc ";
+	
+	@SuppressWarnings("unchecked")
+	public List<RelatorioFinanceiroCobranca> relatorioControleEstoqueAtrasoFullCRI3(final Date dtRelFim) {
+		return (List<RelatorioFinanceiroCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<RelatorioFinanceiroCobranca> objects = new ArrayList<RelatorioFinanceiroCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				String query_RELATORIO_FINANCEIRO_CUSTOM = null;	
+			
+				try {
+					connection = getConnection();
+					
+					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_FINANCEIRO_ATRASO_DT_ATUALIZADA_FULL_CRI3;
 					
 					ps = connection
 							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);
@@ -5504,7 +6168,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}	
 	
-	private static final String QUERY_CONTRATOS_APROVADOS_ALL = "select c.id from cobranca.contratocobranca c ";
+	//private static final String QUERY_CONTRATOS_APROVADOS_ALL = "select c.id from cobranca.contratocobranca c ";
+	private static final String QUERY_CONTRATOS_APROVADOS_ALL = "select c.id, c.numerocontrato, c.pagador from cobranca.contratocobranca c ";
 	
 	@SuppressWarnings("unchecked")
 	public List<ContratoCobranca> consultaContratosAprovados() {
@@ -5531,8 +6196,18 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					rs = ps.executeQuery();
 					
 					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					PagadorRecebedorDao pDao = new PagadorRecebedorDao();
+					PagadorRecebedor pagador = new PagadorRecebedor();
 					while (rs.next()) {
-						contratoCobranca = findById(rs.getLong(1));
+						contratoCobranca = new ContratoCobranca();
+						contratoCobranca.setNumeroContrato(rs.getString(2));
+						
+						contratoCobranca.setId(rs.getLong(1));
+						
+						pagador = pDao.findById(rs.getLong(3));
+						contratoCobranca.setPagador(pagador);
+						
+						//contratoCobranca = findById(rs.getLong(1));
 						
 						objects.add(contratoCobranca);												
 					}
@@ -5867,10 +6542,21 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						where = where + " and res.codigo = '" + codResponsavel + "' ";			
 					} 	
 					
-					if(!CommonsUtil.semValor(tipoParametro)) {
+					if(!CommonsUtil.semValor(tipoParametro) && !CommonsUtil.semValor(valorParametrto)) {
 						if(CommonsUtil.mesmoValor(tipoParametro, "Matricula")) {
-							where = where + " and imv.numeromatricula like '%" + valorParametrto + "%' ";
-						}
+							where = where + " and udf_GetNumeric(numeromatricula) like '%"
+							+ CommonsUtil.somenteNumeros(valorParametrto) + "%' ";
+						} else if (tipoParametro.equals("nomePagador")) {
+		            		where = where + " and unaccent(pare.nome) ilike unaccent('%" + valorParametrto + "%')";
+		            	} else if (tipoParametro.equals("cpfPagador")) {
+		            		where = where + " and pare.cpf = '" + valorParametrto + "'";
+		            	} else if (tipoParametro.equals("cnpjPagador")) {
+		            		where = where + " and pare.cnpj = '" + valorParametrto + "'";
+		            	} else if (tipoParametro.equals("numeroContrato")) {
+		            		where = where + " and coco.numerocontrato = '" + valorParametrto + "'";
+		            	} else if (tipoParametro.equals("numeroCCB")) {
+		            		where = where + " and coco.numeroContratoSeguro = '" + valorParametrto + "'";
+		            	}
 					}
 					
 					query = query + where;					
@@ -5883,8 +6569,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						
 					query = query + " order by id desc";
 					
-					ps = connection
-							.prepareStatement(query);
+					ps = connection.prepareStatement(query);
 					
 					rs = ps.executeQuery();
 					
@@ -5934,7 +6619,18 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setReanalisePronta(rs.getBoolean("reanalisePronta"));
 						contratoCobranca.setReanaliseJuridico(rs.getBoolean("reanaliseJuridico"));
 						contratoCobranca.setCertificadoEmitido(rs.getBoolean("certificadoEmitido"));
+						contratoCobranca.setContratoPrioridadeAlta(rs.getBoolean("contratoPrioridadeAlta"));
+						contratoCobranca.setOkCliente(rs.getBoolean("okCliente"));
 						//contratoCobranca = findById(rs.getLong(1));
+						
+						ImovelCobranca imovel = new ImovelCobranca();
+						imovel.setEstado(rs.getString("estado"));
+						imovel.setCidade(rs.getString("cidade"));
+						Cidade cidade = new Cidade();
+						cidade.setPintarLinha(rs.getBoolean("pintarLinha"));
+						imovel.setObjetoCidade(cidade);
+						//imovel.consultarObjetoCidade();
+						contratoCobranca.setImovel(imovel);
 						
 						objects.add(contratoCobranca);												
 					}
@@ -5954,12 +6650,14 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "	coco.laudoRecebido, coco.pajurFavoravel,  coco.documentosCompletos, coco.ccbPronta, coco.agAssinatura, "
 			+ "	coco.agRegistro, coco.preAprovadoComite, coco.documentosComite, coco.aprovadoComite, coco.analiseReprovada, coco.analiseComercial, coco.comentarioJuridicoEsteira, coco.status,"
 			+ " pedidoLaudo, pedidoLaudoPajuComercial, pedidoPreLaudo, pedidoPreLaudoComercial, pedidoPajuComercial, pendenciaLaudoPaju, avaliacaoLaudo , contratoConferido, agEnvioCartorio, "
-			+ " reanalise, reanalisePronta, reanaliseJuridico, certificadoEmitido, pare.id idPagador "
+			+ " reanalise, reanalisePronta, reanaliseJuridico, certificadoEmitido, pare.id idPagador,"
+			+ " imv.cidade, imv.estado, c2.pintarLinha, coco.contratoPrioridadeAlta, coco.okCliente"
 			+ "	from cobranca.contratocobranca coco "
 			+ "	inner join cobranca.responsavel res on coco.responsavel = res.id "
 			+ "	inner join cobranca.pagadorrecebedor pare on pare.id = coco.pagador "
 			+ "	inner join cobranca.imovelcobranca imv on imv.id = coco.imovel "
-			+ "	left join cobranca.responsavel gerente on res.donoresponsavel = gerente.id ";
+			+ "	left join cobranca.responsavel gerente on res.donoresponsavel = gerente.id "
+			+ "	left join cobranca.cidade c2 on c2.id = imv.objetoCidade ";
 	
 	
 	@SuppressWarnings("unchecked")
@@ -6042,6 +6740,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setReanalisePronta(rs.getBoolean("reanalisePronta"));
 						contratoCobranca.setReanaliseJuridico(rs.getBoolean("reanaliseJuridico"));
 						contratoCobranca.setCertificadoEmitido(rs.getBoolean("certificadoEmitido"));
+						
 						//contratoCobranca = findById(rs.getLong(1));
 						
 						objects.add(contratoCobranca);												
@@ -6205,12 +6904,13 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}
 	
-	private static final String QUERY_CONTRATOS_CRM = "select c.id, c.numeroContrato, c.dataContrato, res.nome, c.quantoPrecisa, im.cidade, c.statuslead, pr.nome, c.inicioAnalise, c.cadastroAprovadoValor, c.matriculaAprovadaValor, c.pagtoLaudoConfirmada, c.laudoRecebido, c.pajurFavoravel, " + 
+	private static final String QUERY_CONTRATOS_CRM = "select im.tipo, c.taxapreaprovada , c.id, c.numeroContrato, c.dataContrato, res.nome, c.quantoPrecisa, im.cidade, c.statuslead, pr.nome, c.inicioAnalise, c.cadastroAprovadoValor, c.matriculaAprovadaValor, c.pagtoLaudoConfirmada, c.laudoRecebido, c.pajurFavoravel, " + 
 		    "c.documentosCompletos, c.ccbPronta, c.agAssinatura, c.agRegistro, c.preAprovadoComite, c.documentosComite, c.aprovadoComite, c.analiseReprovada, c.dataUltimaAtualizacao, c.preAprovadoComiteUsuario, c.inicioanaliseusuario, c.analiseComercial, c.comentarioJuridicoEsteira, c.status, " +
 			"c.pedidoLaudo, c.pedidoLaudoPajuComercial, c.pedidoPreLaudo, c.pedidoPreLaudoComercial, c.pedidoPajuComercial, c.pendenciaLaudoPaju, " +
 		    "c.avaliacaoLaudoObservacao, c.dataPrevistaVistoria, c.geracaoLaudoObservacao, c.iniciouGeracaoLaudo, c.analistaGeracaoPAJU , c.comentarioJuridicoPendente, " +
 			"c.valorAprovadoComite, c.contratoConferido, c.agEnvioCartorio, reanalise, reanalisePronta, reanaliseJuridico" +
-			" , gerente.nome nomeGerente, pr.id idPagador, res.superlogica, observacaoRenda " +
+			" , gerente.nome nomeGerente, pr.id idPagador, res.superlogica, observacaoRenda, pagtoLaudoConfirmadaData, contatoDiferenteProprietario, c.iniciouGeracaoPaju, "
+			+ " im.estado, contratoPrioridadeAlta " +
 			"from cobranca.contratocobranca c " +		
 			"inner join cobranca.responsavel res on c.responsavel = res.id " +
 			"inner join cobranca.pagadorrecebedor pr on pr.id = c.pagador " +
@@ -6306,6 +7006,22 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 								+ " and pedidoLaudoPajuComercial = true and pagtoLaudoConfirmada = true and pajurFavoravel = false";
 					}
 					
+					if (tipoConsulta.equals("Geração do PAJU - Neves")) {
+						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
+								+ " and cadastroAprovadoValor = 'Aprovado' "
+								+ " and pendenciaLaudoPaju = false "
+								+ " and pedidoLaudoPajuComercial = true and pagtoLaudoConfirmada = true and pajurFavoravel = false"
+								+ " and avaliacaoPaju = 'Neves' ";
+					}
+					
+					if (tipoConsulta.equals("Geração do PAJU - Luvison")) {
+						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
+								+ " and cadastroAprovadoValor = 'Aprovado' "
+								+ " and pendenciaLaudoPaju = false "
+								+ " and pedidoLaudoPajuComercial = true and pagtoLaudoConfirmada = true and pajurFavoravel = false"
+								+ " and avaliacaoPaju = 'Luvison' ";
+					}
+					
 					if (tipoConsulta.equals("Pedir PAJU")) {
 						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true "
 								+ " and cadastroAprovadoValor = 'Aprovado' "
@@ -6345,7 +7061,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and pajurFavoravel = true and analiseComercial = true"
 								+ " and comentarioJuridicoEsteira = false ";
-					} 										
+					} 
 					
 					if (tipoConsulta.equals("Pré-Comite")) {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
@@ -6366,41 +7082,32 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 								+ " and aprovadoComite = false";
 					}
 					
+					if (tipoConsulta.equals("Ag. Ok Cliente")) {
+						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
+								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true"
+								+ " and analiseComercial = true and comentarioJuridicoEsteira = true and preAprovadoComite = true and documentosComite = true"
+								+ " and aprovadoComite = true and okCliente = false";
+					}
+					
 					if (tipoConsulta.equals("Ag. DOC")) {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true"
 								+ " and analiseComercial = true and comentarioJuridicoEsteira = true and preAprovadoComite = true and documentosComite = true"
-								+ " and aprovadoComite = true and  documentosCompletos = false";
-					}
-					
-					if (tipoConsulta.equals("Ag. Reanalise")) {
-						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
-								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true"
-								+ " and analiseComercial = true and comentarioJuridicoEsteira = true and preAprovadoComite = true and documentosComite = true"
-								+ " and aprovadoComite = true and documentosCompletos = true "
-								+ " and reanalise = true and (reanalisePronta = false or pajuAtualizado = false)";
-					}
-					
-					if (tipoConsulta.equals("Ag. Reanalise Juridico")) {
-						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
-								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true"
-								+ " and analiseComercial = true and comentarioJuridicoEsteira = true and preAprovadoComite = true and documentosComite = true"
-								+ " and aprovadoComite = true and documentosCompletos = true "
-								+ " and reanalise = true and reanalisePronta = true and pajuAtualizado = true and reanaliseJuridico = false";
+								+ " and aprovadoComite = true and okCliente = true and  documentosCompletos = false";
 					}
 					
 					if (tipoConsulta.equals("Ag. Certificado")) {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true"
 								+ " and analiseComercial = true and comentarioJuridicoEsteira = true and documentosCompletos = true and preAprovadoComite = true"
-								+ " and documentosComite = true and aprovadoComite = true and documentosCompletos = true and reanalise = false and certificadoEmitido = false";
+								+ " and documentosComite = true and aprovadoComite = true and okCliente = true and documentosCompletos = true and reanalise = false and certificadoEmitido = false";
 					}
 
 					if (tipoConsulta.equals("Ag. CCB")) {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true"
 								+ " and analiseComercial = true and comentarioJuridicoEsteira = true and documentosCompletos = true and preAprovadoComite = true"
-								+ " and documentosComite = true and aprovadoComite = true and documentosCompletos = true and reanalise = false and certificadoEmitido = true "
+								+ " and documentosComite = true and aprovadoComite = true and okCliente = true and documentosCompletos = true and reanalise = false and certificadoEmitido = true "
 								+ " and ccbPronta = false";
 					}
 
@@ -6408,7 +7115,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						query = query 	+ "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true"
 								+ " and analiseComercial = true and comentarioJuridicoEsteira = true and documentosCompletos = true and preAprovadoComite = true"
-								+ " and documentosComite = true and aprovadoComite = true and documentosCompletos = true and reanalise = false and certificadoEmitido = true"
+								+ " and documentosComite = true and aprovadoComite = true and okCliente = true and documentosCompletos = true and reanalise = false and certificadoEmitido = true"
 								+ " and ccbPronta = true and contratoConferido = false";
 					}
 
@@ -6417,15 +7124,33 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 								+ "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true"
 								+ " and analiseComercial = true and comentarioJuridicoEsteira = true and documentosCompletos = true and preAprovadoComite = true"
-								+ " and documentosComite = true and aprovadoComite = true and documentosCompletos = true and reanalise = false and certificadoEmitido = true"
+								+ " and documentosComite = true and aprovadoComite = true and okCliente = true and documentosCompletos = true and reanalise = false and certificadoEmitido = true"
 								+ " and ccbPronta = true and contratoConferido = true and agAssinatura = true";
+					}
+					
+					if (tipoConsulta.equals("Ag. Reanalise")) {
+						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
+								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true"
+								+ " and analiseComercial = true and comentarioJuridicoEsteira = true and documentosCompletos = true and preAprovadoComite = true"
+								+ " and documentosComite = true and aprovadoComite = true and okCliente = true and documentosCompletos = true and certificadoEmitido = true"
+								+ " and ccbPronta = true and contratoConferido = true"
+								+ " and reanalise = true and (reanalisePronta = false or pajuAtualizado = false)";
+					}
+					
+					if (tipoConsulta.equals("Ag. Reanalise Juridico")) {
+						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
+								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true"
+								+ " and analiseComercial = true and comentarioJuridicoEsteira = true and documentosCompletos = true and preAprovadoComite = true"
+								+ " and documentosComite = true and aprovadoComite = true and okCliente = true and documentosCompletos = true and certificadoEmitido = true"
+								+ " and ccbPronta = true and contratoConferido = true"
+								+ " and reanalise = true and reanalisePronta = true and pajuAtualizado = true and reanaliseJuridico = false";
 					}
 
 					if (tipoConsulta.equals("Ag. Envio Cartorio")) {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true"
 								+ " and analiseComercial = true and comentarioJuridicoEsteira = true and documentosCompletos = true and preAprovadoComite = true"
-								+ " and documentosComite = true and aprovadoComite = true and documentosCompletos = true and reanalise = false and certificadoEmitido = true"
+								+ " and documentosComite = true and aprovadoComite = true and okCliente = true and documentosCompletos = true and reanalise = false and certificadoEmitido = true"
 								+ " and ccbPronta = true and contratoConferido = true and agAssinatura = false"
 								+ " and agEnvioCartorio = true";
 					}
@@ -6434,7 +7159,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true"
 								+ " and analiseComercial = true and comentarioJuridicoEsteira = true and documentosCompletos = true and preAprovadoComite = true"
-								+ " and documentosComite = true and aprovadoComite = true and documentosCompletos = true and reanalise = false and certificadoEmitido = true"
+								+ " and documentosComite = true and aprovadoComite = true and okCliente = true and documentosCompletos = true and reanalise = false and certificadoEmitido = true"
 								+ " and ccbPronta = true and contratoConferido = true and agAssinatura = false"
 								+ " and agEnvioCartorio = false and agRegistro = true";
 					}
@@ -6503,60 +7228,71 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					while (rs.next()) {
 						
 						contratoCobranca = new ContratoCobranca();
-
-						contratoCobranca.setId(rs.getLong(1));
-						contratoCobranca.setNumeroContrato(rs.getString(2));
-						contratoCobranca.setDataContrato(rs.getTimestamp(3));
-						contratoCobranca.setNomeResponsavel(rs.getString(4));
+						contratoCobranca.setTipoImovel(rs.getString(1));
+						contratoCobranca.setTaxaPreAprovada(rs.getBigDecimal(2));
+						contratoCobranca.setId(rs.getLong(3));
+						contratoCobranca.setNumeroContrato(rs.getString(4));
+						contratoCobranca.setDataContrato(rs.getTimestamp(5));
+						contratoCobranca.setNomeResponsavel(rs.getString(6));
 						contratoCobranca.setResponsavel(new Responsavel());
 						contratoCobranca.getResponsavel().setSuperlogica(rs.getBoolean("superlogica"));
 						contratoCobranca.setNomeGerente(rs.getString("nomeGerente")); // utilizado nome da variavel na query para não mudar a posicao dos elementos
-						contratoCobranca.setQuantoPrecisa(rs.getBigDecimal(5));
-						contratoCobranca.setNomeCidadeImovel(rs.getString(6));
-						contratoCobranca.setStatusLead(rs.getString(7));
-						contratoCobranca.setNomePagador(rs.getString(8));
-						contratoCobranca.setInicioAnalise(rs.getBoolean(9));
-						contratoCobranca.setCadastroAprovadoValor(rs.getString(10));
-						contratoCobranca.setMatriculaAprovadaValor(rs.getString(11));
-						contratoCobranca.setPagtoLaudoConfirmada(rs.getBoolean(12));
-						contratoCobranca.setLaudoRecebido(rs.getBoolean(13));
-						contratoCobranca.setPajurFavoravel(rs.getBoolean(14));
-						contratoCobranca.setDocumentosCompletos(rs.getBoolean(15));
-						contratoCobranca.setCcbPronta(rs.getBoolean(16));
-						contratoCobranca.setAgAssinatura(rs.getBoolean(17));
-						contratoCobranca.setAgRegistro(rs.getBoolean(18));
-						contratoCobranca.setPreAprovadoComite(rs.getBoolean(19));
-						contratoCobranca.setDocumentosComite(rs.getBoolean(20));
-						contratoCobranca.setAprovadoComite(rs.getBoolean(21));
-						contratoCobranca.setAnaliseReprovada(rs.getBoolean(22)); 
-						contratoCobranca.setDataUltimaAtualizacao(rs.getTimestamp(23));
-						contratoCobranca.setPreAprovadoComiteUsuario(rs.getString(24));
-						contratoCobranca.setInicioAnaliseUsuario(rs.getString(25));
-						contratoCobranca.setAnaliseComercial(rs.getBoolean(26));
-						contratoCobranca.setComentarioJuridicoEsteira(rs.getBoolean(27));
-						contratoCobranca.setStatus(rs.getString(28));	
-						contratoCobranca.setPedidoLaudo(rs.getBoolean(29));
-						contratoCobranca.setPedidoLaudoPajuComercial(rs.getBoolean(30));
-						contratoCobranca.setPedidoPreLaudo(rs.getBoolean(31));
-						contratoCobranca.setPedidoPreLaudoComercial(rs.getBoolean(32));
-						contratoCobranca.setPedidoPajuComercial(rs.getBoolean(33));
-						contratoCobranca.setPendenciaLaudoPaju(rs.getBoolean(34));
-						contratoCobranca.setAvaliacaoLaudoObservacao(rs.getString(35));
-						contratoCobranca.setDataPrevistaVistoria(rs.getDate(36));
-						contratoCobranca.setGeracaoLaudoObservacao(rs.getString(37));
-						contratoCobranca.setIniciouGeracaoLaudo(rs.getBoolean(38));
+						contratoCobranca.setQuantoPrecisa(rs.getBigDecimal(7));
+						contratoCobranca.setNomeCidadeImovel(rs.getString(8));
+						contratoCobranca.setStatusLead(rs.getString(9));
+						contratoCobranca.setNomePagador(rs.getString(10));
+						contratoCobranca.setInicioAnalise(rs.getBoolean(11));
+						contratoCobranca.setCadastroAprovadoValor(rs.getString(12));
+						contratoCobranca.setMatriculaAprovadaValor(rs.getString(13));
+						contratoCobranca.setPagtoLaudoConfirmada(rs.getBoolean(14));
+						contratoCobranca.setLaudoRecebido(rs.getBoolean(15));
+						contratoCobranca.setPajurFavoravel(rs.getBoolean(16));
+						contratoCobranca.setDocumentosCompletos(rs.getBoolean(17));
+						contratoCobranca.setCcbPronta(rs.getBoolean(18));
+						contratoCobranca.setAgAssinatura(rs.getBoolean(19));
+						contratoCobranca.setAgRegistro(rs.getBoolean(20));
+						contratoCobranca.setPreAprovadoComite(rs.getBoolean(21));
+						contratoCobranca.setDocumentosComite(rs.getBoolean(22));
+						contratoCobranca.setAprovadoComite(rs.getBoolean(23));
+						contratoCobranca.setAnaliseReprovada(rs.getBoolean(24)); 
+						contratoCobranca.setDataUltimaAtualizacao(rs.getTimestamp(25));
+						contratoCobranca.setPreAprovadoComiteUsuario(rs.getString(26));
+						contratoCobranca.setInicioAnaliseUsuario(rs.getString(27));
+						contratoCobranca.setAnaliseComercial(rs.getBoolean(28));
+						contratoCobranca.setComentarioJuridicoEsteira(rs.getBoolean(29));
+						contratoCobranca.setStatus(rs.getString(30));	
+						contratoCobranca.setPedidoLaudo(rs.getBoolean(31));
+						contratoCobranca.setPedidoLaudoPajuComercial(rs.getBoolean(32));
+						contratoCobranca.setPedidoPreLaudo(rs.getBoolean(33));
+						contratoCobranca.setPedidoPreLaudoComercial(rs.getBoolean(34));
+						contratoCobranca.setPedidoPajuComercial(rs.getBoolean(35));
+						contratoCobranca.setPendenciaLaudoPaju(rs.getBoolean(36));
+						contratoCobranca.setAvaliacaoLaudoObservacao(rs.getString(37));
+						contratoCobranca.setDataPrevistaVistoria(rs.getDate(38));
+						contratoCobranca.setGeracaoLaudoObservacao(rs.getString(39));
+						contratoCobranca.setIniciouGeracaoLaudo(rs.getBoolean(40));
 						ResponsavelDao rDao = new ResponsavelDao();
-						contratoCobranca.setAnalistaGeracaoPAJU(rDao.findById(rs.getLong(39)));
-						contratoCobranca.setComentarioJuridicoPendente(rs.getBoolean(40));
-						contratoCobranca.setValorAprovadoComite(rs.getBigDecimal(41));
-						contratoCobranca.setContratoConferido(rs.getBoolean(42));
+						contratoCobranca.setAnalistaGeracaoPAJU(rDao.findById(rs.getLong(41)));
+						contratoCobranca.setComentarioJuridicoPendente(rs.getBoolean(42));
+						contratoCobranca.setValorAprovadoComite(rs.getBigDecimal(43));
+						contratoCobranca.setContratoConferido(rs.getBoolean(44));
 						contratoCobranca.getPagador().setId(rs.getLong("idPagador"));
-						contratoCobranca.setAgEnvioCartorio(rs.getBoolean(43));
-						contratoCobranca.setReanalise(rs.getBoolean(44));						
-						contratoCobranca.setReanalisePronta(rs.getBoolean(45));					
-						contratoCobranca.setReanaliseJuridico(rs.getBoolean(46));
+						contratoCobranca.setAgEnvioCartorio(rs.getBoolean(45));
+						contratoCobranca.setReanalise(rs.getBoolean(46));						
+						contratoCobranca.setReanalisePronta(rs.getBoolean(47));					
+						contratoCobranca.setReanaliseJuridico(rs.getBoolean(48));
 						contratoCobranca.setObservacaoRenda(rs.getString("observacaoRenda"));
-
+						contratoCobranca.setPagtoLaudoConfirmadaData(rs.getTimestamp("pagtoLaudoConfirmadaData"));
+						contratoCobranca.setContatoDiferenteProprietario(rs.getBoolean("contatoDiferenteProprietario"));
+						contratoCobranca.setIniciouGeracaoPaju(rs.getBoolean("iniciouGeracaoPaju"));
+						contratoCobranca.setContratoPrioridadeAlta(rs.getBoolean("contratoPrioridadeAlta"));
+					
+						ImovelCobranca imovel = new ImovelCobranca();
+						imovel.setCidade(rs.getString("cidade"));
+						imovel.setEstado(rs.getString("estado"));
+						imovel.consultarObjetoCidade();
+						contratoCobranca.setImovel(imovel);
+						
 						idsContratoCobranca.add( CommonsUtil.stringValue(contratoCobranca.getId()));
 						//contratoCobranca = findById(rs.getLong(1));
 						
@@ -8424,6 +9160,87 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					closeResources(connection, ps, rs);					
 				}
 				return retorno;
+			}
+		});	
+	}
+
+	@Override
+	public void merge(ContratoCobranca entity) {
+		//System.out.println(entity.toString());  
+		super.merge(entity);
+	}
+	
+	private static final String QUERY_RELATORIO_INADIMPLENCIA =  	"select cc.id "
+			+ "from cobranca.contratocobranca cc "
+			+ "where cc.status = 'Aprovado' "
+			+ "and cc.pagador not in (15, 34,14, 182, 417, 803) ";
+	
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobranca> consultaInadimplencia() {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				String query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_RELATORIO_INADIMPLENCIA;	
+				try {
+					
+					query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM 
+					+ " order by cc.datacontrato desc ";
+					
+					connection = getConnection();
+
+					ps = connection
+							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);
+	
+					rs = ps.executeQuery();
+					
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					
+					while (rs.next()) {
+						contratoCobranca = findById(rs.getLong(1));
+						
+						objects.add(contratoCobranca);												
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});	
+	}
+	
+	private static final String QUERY_CONTRATOS_IPCA_JOB =  "select cc.id "
+			+ " from cobranca.contratocobranca cc"
+			+ " where cc.CorrigidoIPCAHibrido = true "
+			+ " or cc.CorrigidoIPCA = true ";
+	
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobranca> consultaContratosIpcaJob() {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+					ps = connection.prepareStatement(QUERY_CONTRATOS_IPCA_JOB);
+					rs = ps.executeQuery();			
+					ContratoCobranca contratoCobranca = new ContratoCobranca();			
+					while (rs.next()) {
+						contratoCobranca = findById(rs.getLong(1));
+						objects.add(contratoCobranca);												
+					}
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
 			}
 		});	
 	}

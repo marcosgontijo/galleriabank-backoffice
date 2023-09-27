@@ -96,7 +96,11 @@
 				<p:dataTable id="dtContratos" var="contratos"
 					value="#{contratoCobrancaMB.contratoCobrancaFinanceiroDia}"
 					emptyMessage="" sortBy="#{contratos.numeroContrato}" scrollable="true" 
-					selection="#{contratoCobrancaMB.selectedContratoCobrancaFinanceiroDia}" rowKey="#{contratos.id}">
+					selection="#{contratoCobrancaMB.selectedContratoCobrancaFinanceiroDia}" rowKey="#{contratos.id}"
+	                 paginator="true" rows="50"
+	                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+	                 currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+	                 rowsPerPageTemplate="50,100,150,50000">
 					
 					<f:facet name="header">
 						<p:commandButton value="Gerar XLS" ajax="false"
@@ -127,17 +131,17 @@
 						headerText="Pagador" filterBy="#{contratos.nomePagador}"
 						filterMatchMode="contains" sortBy="#{contratos.nomePagador}"
 						>
-						<h:outputText value="#{contratos.pagador.nome}" />
+						<h:outputText value="#{contratos.pagador_nome}" />
 					</p:column>
 					<p:column style="text-align: center;width: 200px;"
 						headerText="CPF / CNPJ" >
-						<h:outputText value="#{contratos.pagador.cpf}" rendered="#{contratos.pagador.cpf != null}"/>
-						<h:outputText value="#{contratos.pagador.cnpj}" rendered="#{contratos.pagador.cnpj != null}"/>
+						<h:outputText value="#{contratos.pagador_cpf}" rendered="#{contratos.pagador_cpf != null}"/>
+						<h:outputText value="#{contratos.pagador_cnpj}" rendered="#{contratos.pagador_cnpj != null}"/>
 					</p:column>	
 					<p:column style="text-align: center;width: 200px;"
 						headerText="Dt. Nascimento Pagador"
 						>
-						<h:outputText value="#{contratos.pagador.dtNascimento}">
+						<h:outputText value="#{contratos.pagador_dtNascimento}">
 							<f:convertDateTime locale="pt_BR" />
 							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
 						</h:outputText>
@@ -145,24 +149,24 @@
 					<p:column style="text-align: center;width: 200px;"
 						headerText="Endereço Pagador"
 						>
-						<h:outputText value="#{contratos.pagador.endereco}, #{contratos.pagador.numero} - #{contratos.pagador.cidade}/#{contratos.pagador.estado} (CEP: #{contratos.pagador.cep})" />
+						<h:outputText value="#{contratos.pagador_endereco}, #{contratos.pagador_numero} - #{contratos.pagador_cidade}/#{contratos.pagador_estado} (CEP: #{contratos.pagador_cep})" />
 					</p:column>
 					<p:column style="text-align: center;width: 200px;"
-						headerText="Nome Cônjuge" filterBy="#{contratos.pagador.nomeConjuge}"
-						filterMatchMode="contains" sortBy="#{contratos.pagador.nomeConjuge}"
+						headerText="Nome Cônjuge" filterBy="#{contratos.pagador_nomeConjuge}"
+						filterMatchMode="contains" sortBy="#{contratos.pagador_nomeConjuge}"
 						>
-						<h:outputText value="#{contratos.pagador.nomeConjuge}" />
+						<h:outputText value="#{contratos.pagador_nomeConjuge}" />
 					</p:column>
 					<p:column style="text-align: center;width: 200px;"
-						headerText="CPF Cônjuge" filterBy="#{contratos.pagador.cpfConjuge}"
-						filterMatchMode="contains" sortBy="#{contratos.pagador.cpfConjuge}"
+						headerText="CPF Cônjuge" filterBy="#{contratos.pagador_cpfConjuge}"
+						filterMatchMode="contains" sortBy="#{contratos.pagador_cpfConjuge}"
 						>
-						<h:outputText value="#{contratos.pagador.cpfConjuge}" />
+						<h:outputText value="#{contratos.pagador_cpfConjuge}" />
 					</p:column>	
 					<p:column style="text-align: center;width: 200px;"
 						headerText="Região Imóvel"
 						>
-						<h:outputText value="#{contratos.imovel.cidade}/#{contratos.imovel.estado}" />
+						<h:outputText value="#{contratos.imovel_cidade}/#{contratos.imovel_estado}" />
 					</p:column>		
 					<p:column style="text-align: center;width: 100px;"
 						headerText="Valor CCB" >
@@ -175,7 +179,6 @@
 						<h:outputText value="#{contratos.txJurosParcelas}"
 							converter="bigDecimalConverter" />
 					</p:column>	
-					
 		            <p:rowExpansion>
 		                <div class="product">
 		                    <div class="product-list-item">

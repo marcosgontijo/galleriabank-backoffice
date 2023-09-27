@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" template="../MenuCadastros.xhtml">
+	<ui:define name="conteudo">
+		<h:form id="form">
+			<script src="#{request.contextPath}/resources/js/functions.js"></script>
+			<script
+				src="#{request.contextPath}/resources/js/locale-primefaces.js"></script>
+			<p:panel id="PanelRegistro" header="Tabela de Registros de Imovel"
+				style="margin-bottom:10px;">
+				<p:focus />
+				<p:messages />
+
+				<div align="center">
+					<p:commandButton value="Adicionar Registro" 
+						icon="ui-icon-check" style="TEXT-DECORATION: bold;margin-bottom: 25px;"
+						update="fileDialogdlg" oncomplete="PF('fileDialog').show();"
+						action="#{registroImovelTabelaMB.clearDialog}" />
+				</div>
+
+				<p:dataTable var="registro" id="dataTableRegistros"
+					value="#{registroImovelTabelaMB.listRegistro}" paginator="true"
+					rows="20" lazy="true"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					currentPageReportTemplate="( {currentPage}   de   {totalPages} )"
+					rowsPerPageTemplate="20,40,60,80"  emptyMessage=""
+					sortBy="#{registro.total}" sortOrder="desc">
+
+
+					<p:column style="text-align: center;" headerText="Valor Min">
+						<h:outputText value="#{registro.valorMin}"
+							converter="bigDecimalConverter" />
+					</p:column>
+
+					<p:column style="text-align: center;" headerText="Valor Max">
+						<h:outputText value="#{registro.valorMax}"
+							converter="bigDecimalConverter" />
+					</p:column>
+
+					<p:column style="text-align: center;" headerText="Total">
+						<h:outputText value="#{registro.total}"
+							converter="bigDecimalConverter" />
+					</p:column>
+
+					<p:column style="width:120px;">
+						<p:commandButton
+							action="#{registroImovelTabelaMB.excluirRegistro(registro)}"
+							icon="ui-icon-trash" title="Excluir" update=":form:PanelRegistro">
+							<p:confirm header="Confirmação"
+								message="Deseja realmente excluir esse registro?"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+						<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+							<p:commandButton value="Sim" type="button"
+								styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+							<p:commandButton value="Não" type="button"
+								styleClass="ui-confirmdialog-no" icon="ui-icon-cancel" />
+						</p:confirmDialog>
+					</p:column>
+
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+		
+		<p:dialog header="Novo Registro" widgetVar="fileDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="800">
+			<h:form id="fileDialogdlg">
+				<div align="center">
+				
+					<p:panel id="Arquivos" header="Selecionar Arquivo(s)"
+						style="margin-bottom:10px;text-align: center;">
+						<h:panelGrid columns="1">
+							<p:fileUpload label="Selecionar Arquivo(s)"
+								uploadLabel="Salvar Arquivo(s)" multiple="true"
+								cancelLabel="Cancelar"
+								fileUploadListener="#{registroImovelTabelaMB.handleFileUpload}"
+								mode="advanced" dragDropSupport="true" 
+								update="file"/>
+							<h:outputText id="file" value="#{registroImovelTabelaMB.uploadedFile.fileName}" />
+						</h:panelGrid>
+					</p:panel>					
+					
+					<p:commandButton value="Começar processamento" 
+						icon="ui-icon-check" style="margin-top: 5px; margin-bottom: 5px;"
+						action="#{registroImovelTabelaMB.processarRegistros}" 
+						onclick="PF('fileDialog').hide();"
+						update="form:dataTableRegistros" >
+					</p:commandButton>
+				</div>
+			</h:form>
+		</p:dialog>		
+		
+	</ui:define>
+</ui:composition>

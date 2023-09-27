@@ -78,6 +78,7 @@ public class CcbContrato implements Serializable{
 	private BigDecimal montantePagamento;
 	private BigDecimal valorParcela;
 	private char tipoCalculoFinal; 
+	private boolean usarNovoCustoEmissao; 
 
 	private String numeroParcelasDFI;
 	private Date vencimentoPrimeiraParcelaDFI;
@@ -144,16 +145,19 @@ public class CcbContrato implements Serializable{
     private String intermediacaoCNPJ; 
     private String intermediacaoNome; 
     private String intermediacaoPix; 
+    private String intermediacaoTipoConta; 
     
     private BigDecimal CCBValor = BigDecimal.ZERO; // - (Banco, Agência, C/C, CNPJ, nome completo e PIX)
     private boolean CCBInseridoContrato;
     private String CCBBanco; 
     private String CCBAgencia; 
     private String CCBCC; 
+    private String CCBDigito; 
     private String CCBCNPJ; 
     private String CCBNome; 
     private String CCBPix;
     private String CCBDocumento;
+    private String CCBTipoConta;
         
     private BigDecimal iptuEmAtrasoValor = BigDecimal.ZERO;
     private boolean iptuInseridoContrato;
@@ -163,6 +167,9 @@ public class CcbContrato implements Serializable{
     private boolean iqInseridoContrato;
     private BigDecimal itbiValor = BigDecimal.ZERO;
     private boolean itbiInseridoContrato;
+    private BigDecimal averbacaoValor = BigDecimal.ZERO;
+    private BigDecimal registroImovelValor = BigDecimal.ZERO;
+    
     
     private List<CcbProcessosJudiciais> processosJucidiais; // (++)
     private List<ContasPagar> despesasAnexo2;
@@ -178,6 +185,14 @@ public class CcbContrato implements Serializable{
     	this.listaParticipantes = new ArrayList<CcbParticipantes>(); 
     	this.processosJucidiais = new ArrayList<CcbProcessosJudiciais>(); 
     	this.listSegurados = new ArrayList<Segurado>(); 
+    }
+    
+    public void pegarTaxa() {
+    	if(usarNovoCustoEmissao) {
+    		taxaDeJurosMes = objetoContratoCobranca.getTaxaAprovada().subtract(BigDecimal.valueOf(0.02));
+    	} else {
+    		taxaDeJurosMes = objetoContratoCobranca.getTaxaAprovada();
+    	}
     }
 
 	public String getNomeEmitente() {
@@ -1232,7 +1247,52 @@ public class CcbContrato implements Serializable{
 	public void setDespesasAnexo2(List<ContasPagar> despesasAnexo2) {
 		this.despesasAnexo2 = despesasAnexo2;
 	}
-	
-	
-	
+
+	public BigDecimal getAverbacaoValor() {
+		return averbacaoValor;
+	}
+
+	public void setAverbacaoValor(BigDecimal averbacaoValor) {
+		this.averbacaoValor = averbacaoValor;
+	}
+
+	public BigDecimal getRegistroImovelValor() {
+		return registroImovelValor;
+	}
+
+	public void setRegistroImovelValor(BigDecimal registroImovelValor) {
+		this.registroImovelValor = registroImovelValor;
+	}
+
+	public String getIntermediacaoTipoConta() {
+		return intermediacaoTipoConta;
+	}
+
+	public void setIntermediacaoTipoConta(String intermediacaoTipoConta) {
+		this.intermediacaoTipoConta = intermediacaoTipoConta;
+	}
+
+	public String getCCBTipoConta() {
+		return CCBTipoConta;
+	}
+
+	public void setCCBTipoConta(String cCBTipoConta) {
+		CCBTipoConta = cCBTipoConta;
+	}
+
+	public boolean isUsarNovoCustoEmissao() {
+		return usarNovoCustoEmissao;
+	}
+
+	public void setUsarNovoCustoEmissao(boolean usarNovoCustoEmissao) {
+		this.usarNovoCustoEmissao = usarNovoCustoEmissao;
+	}
+
+	public String getCCBDigito() {
+		return CCBDigito;
+	}
+
+	public void setCCBDigito(String cCBDigito) {
+		CCBDigito = cCBDigito;
+	} 
 }

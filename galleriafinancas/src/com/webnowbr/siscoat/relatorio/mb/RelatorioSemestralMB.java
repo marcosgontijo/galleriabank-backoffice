@@ -151,8 +151,8 @@ public class RelatorioSemestralMB {
 
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 				FacesContext.getCurrentInstance());
-
-		gerador.open(String.format("Galleria Bank - ParcelasReceber %s.xlsx", ""));
+		String nomeArquivoDownload = String.format("Galleria Bank - ParcelasReceber %s.xlsx", "");
+		gerador.open(nomeArquivoDownload);
 		gerador.feed(new ByteArrayInputStream(fileOut.toByteArray()));
 		gerador.close();
 
@@ -225,8 +225,9 @@ public class RelatorioSemestralMB {
 
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 				FacesContext.getCurrentInstance());
-
-		gerador.open(String.format("Galleria Bank - ParcelasPagar %s.xlsx", ""));
+		
+		String nomeArquivoDownload = String.format("Galleria Bank - ParcelasPagar %s.xlsx", "");
+		gerador.open(nomeArquivoDownload);
 		gerador.feed(new ByteArrayInputStream(fileOut.toByteArray()));
 		gerador.close();
 
@@ -532,7 +533,8 @@ public class RelatorioSemestralMB {
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 				FacesContext.getCurrentInstance());
 		
-		gerador.open(String.format("Galleria Bank - Debentures %s.xlsx", ""));
+		String nomeArquivoDownload = String.format("Galleria Bank - Debentures %s.xlsx", "");
+		gerador.open(nomeArquivoDownload);
 		gerador.feed( new ByteArrayInputStream(fileOut.toByteArray()));
 		gerador.close();
 

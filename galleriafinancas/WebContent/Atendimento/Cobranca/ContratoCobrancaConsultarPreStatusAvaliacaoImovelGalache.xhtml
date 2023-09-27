@@ -33,8 +33,10 @@
 			<p:messages id="mensagens" showDetail="true"/>									
 			<p:panel id="ConsultaContratos" header="Pré-Contratos #{contratoCobrancaMB.tituloTelaConsultaPreStatus} - Consultar" style="margin-bottom:10px;">					    		    
    		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratosPendentes}" selection="" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending"
-   		         rowStyleClass="#{(contratos.laudoRecebido eq true and contratos.pajurFavoravel eq true) ? 'parcelaPaga' : '' } #{(contratos.cadastroAprovadoValor eq 'Pendente') ? 'linhaRoxa' : '' }
-   		         #{(contratos.pendenciaLaudoPaju eq true) ? 'parcelaparcial' : '' }"
+   		         rowStyleClass="#{contratos.iniciouGeracaoLaudo eq true ? 'parcelaPaga' : '' }
+   		          	#{(contratos.cadastroAprovadoValor eq 'Pendente') ? 'linhaRoxa' : '' }
+   		        	#{(contratos.pendenciaLaudoPaju eq true) ? 'parcelaparcial' : '' }
+   		        	#{(contratos.contratoPrioridadeAlta eq true) ? 'linhaRosa' : '' }"
    		         rows="50"
                  paginator="true"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
@@ -89,6 +91,15 @@
 						rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Em Análise' or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Análise Pendente'}">
 						<h:outputText value="#{contratos.inicioAnaliseUsuario}"  escape="false" />
 					</p:column>
+					
+					<p:column style="text-align: center;" headerText="Iniciou geração?" sortBy="#{contratos.iniciouGeracaoLaudo}">
+			            <ui:fragment rendered="#{contratos.iniciouGeracaoLaudo}">
+							<h:outputText value="Sim" />
+						</ui:fragment>
+						<ui:fragment rendered="#{!contratos.iniciouGeracaoLaudo}">
+							<h:outputText value="Não" />
+						</ui:fragment>
+			        </p:column>
 					
 					<p:column style="width:180px;">			
 		                <p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarAvaliacaoImovelGalache}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar">

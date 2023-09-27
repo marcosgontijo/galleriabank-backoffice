@@ -268,6 +268,9 @@
 		<property name="CCBCC" type="java.lang.String">
 			<column name="CCBCC" />
 		</property> 
+		<property name="CCBDigito" type="java.lang.String">
+			<column name="CCBDigito" />
+		</property> 
 		<property name="CCBCNPJ" type="java.lang.String">
 			<column name="CCBCNPJ" />
 		</property> 
@@ -286,7 +289,7 @@
 			<column name="condominioEmAtrasoValor" />
 		</property>
 		
-		<many-to-one name="objetoContratoCobranca"
+		<many-to-one name="objetoContratoCobranca" cascade="persist"
 			class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca"
 			lazy="false">
 			<column name="objetoContratoCobranca" />
@@ -301,7 +304,7 @@
 		</list>
 		
 		<list name="processosJucidiais"
-			table="ccbcontrato_processosjucidiais_join" cascade="all" lazy="false">
+			table="ccbcontrato_processosjucidiais_join" cascade="persist" lazy="false">
 			<key column="idccbcontrato" />
 			<list-index></list-index>
 			<many-to-many column="idprocesso"
@@ -309,7 +312,7 @@
 		</list>
 		
 		<list name="despesasAnexo2"
-			table="ccbcontrato_contasPagar_join" cascade="all" lazy="false">
+			table="ccbcontrato_contasPagar_join" cascade="persist" lazy="false">
 			<key column="idCcbContrato" />
 			<list-index></list-index>
 			<many-to-many column="idContasPagar"
@@ -349,7 +352,7 @@
 		</property> 
 		
 		<list name="listSegurados"
-			table="ccbcontrato_segurados_join" cascade="all" lazy="false">
+			table="ccbcontrato_segurados_join" cascade="persist" lazy="false">
 			<key column="idccbcontrato" />
 			<list-index></list-index>
 			<many-to-many column="idsegurado"
@@ -418,7 +421,7 @@
 		
 		<property name="vlrImovel" type="big_decimal">
 			<column name="vlrImovel" />
-		</property>
+		</property> 
 		
 		<property name="TipoPessoaEmitente" type="java.lang.String">
 			<column name="TipoPessoaEmitente" />
@@ -487,6 +490,26 @@
 		<property name="CCBDocumento" type="java.lang.String">
 			<column name="CCBDocumento" />
 		</property> 
+		
+		<property name="averbacaoValor" type="big_decimal">
+			<column name="averbacaoValor" />
+		</property>
+		
+		<property name="registroImovelValor" type="big_decimal">
+			<column name="registroImovelValor" />
+		</property>
+		
+		<property name="intermediacaoTipoConta" type="java.lang.String">
+			<column name="intermediacaoTipoConta" />
+		</property> 
+		
+		<property name="CCBTipoConta" type="java.lang.String">
+			<column name="CCBTipoConta" />
+		</property> 
+		
+		<property name="usarNovoCustoEmissao" type="boolean">
+			<column name="usarNovoCustoEmissao" not-null="true" default="false" />
+		</property>	
 		        
     </class>
 </hibernate-mapping>

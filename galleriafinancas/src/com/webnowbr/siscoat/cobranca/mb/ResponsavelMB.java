@@ -1,12 +1,14 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.TimeZone;
+import java.util.UUID;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -17,14 +19,11 @@ import javax.faces.context.FacesContext;
 
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
 
 import com.webnowbr.siscoat.cobranca.db.model.ComissaoResponsavel;
-import com.webnowbr.siscoat.cobranca.db.model.ContasPagar;
-import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
-import com.webnowbr.siscoat.cobranca.db.model.Segurado;
 import com.webnowbr.siscoat.cobranca.db.op.ComissaoResponsavelDao;
-import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.ValidaCNPJ;
@@ -35,12 +34,6 @@ import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
 import com.webnowbr.siscoat.infra.mb.UsuarioMB;
 import com.webnowbr.siscoat.security.LoginBean;
-
-import org.primefaces.model.SortOrder;
-
-import java.util.Map;
-import java.util.TimeZone;
-import java.util.UUID;
 
 /** ManagedBean. */
 @ManagedBean(name = "responsavelMB")
@@ -253,12 +246,18 @@ public class ResponsavelMB {
 						userMb.getObjetoUsuario().setCodigoResponsavel(this.objetoResponsavel.getCodigo());
 						userMb.getObjetoUsuario().setName(this.objetoResponsavel.getNome());
 						userMb.getObjetoUsuario().setUserPreContrato(true);
+						if(CommonsUtil.semValor(userMb.getObjetoUsuario().getListResponsavel())) {
+							userMb.getObjetoUsuario().setListResponsavel(new ArrayList<>());
+						}
+						userMb.getObjetoUsuario().getListResponsavel().add(this.objetoResponsavel);
 						userMb.inserir();
+						
 						for (Responsavel responsavel : this.selectedResponsaveis) {
 							user = userDao.findByFilter("codigoResponsavel", responsavel.getCodigo()).get(0);
 							user.getListResponsavel().add(this.objetoResponsavel);
 							userDao.merge(user);
 						}	
+						
 					}
 					msgRetorno = "inserido";
 				} else {

@@ -1,0 +1,175 @@
+package com.webnowbr.siscoat.cobranca.mb;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.util.Base64;
+
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
+
+import org.primefaces.model.StreamedContent;
+
+import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
+import com.webnowbr.siscoat.cobranca.service.BigDataService;
+import com.webnowbr.siscoat.cobranca.service.NetrinService;
+import com.webnowbr.siscoat.cobranca.service.ScrService;
+import com.webnowbr.siscoat.cobranca.service.SerasaService;
+import com.webnowbr.siscoat.cobranca.vo.FileGenerator;
+import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
+@ManagedBean(name = "consultasMB")
+@SessionScoped
+
+public class ConsultasMB {
+		private String cpfCnpj;
+		private String tipoPessoa = "PF";
+		
+		
+		public String clear() {
+			cpfCnpj = "";
+			return "/Atendimento/ConsultasDirectd/Consultas.xhtml";
+			
+		}
+
+		public void consultaSerasa()
+				throws MalformedURLException, ProtocolException, UnsupportedEncodingException, IOException {
+			FacesContext context = FacesContext.getCurrentInstance();
+			try {
+				SerasaService serasa = new SerasaService();
+				String retornoSerasa = serasa.serasaCriarConsulta(cpfCnpj);
+			
+				if (retornoSerasa != null) {
+					String Base64 = serasa.baixarDocumentoConsulta(retornoSerasa, tipoPessoa);
+					decodarBaixarArquivo(cpfCnpj, Base64);
+				} else {
+					context.addMessage(null,
+							new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta", ""));
+				}
+			} catch (Exception e) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta",""));
+
+			}
+
+		}
+
+		public void consultaCenprot() throws Exception {
+			FacesContext context = FacesContext.getCurrentInstance();
+			try {
+				NetrinService cenprot = new NetrinService();
+				String retornoCenprot = cenprot.netrinCriarConsultaCenprot(cpfCnpj);
+				if (retornoCenprot != null) {
+					String base64 = cenprot.baixarDocumentoCenprot(retornoCenprot);
+					decodarBaixarArquivo(cpfCnpj, base64);
+				} else {
+
+					context.addMessage(null,
+							new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta", ""));
+				}
+			} catch (Exception e) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta", ""));
+			}
+
+		}
+
+		public void consultarProcessos() {
+			FacesContext context = FacesContext.getCurrentInstance();
+			try {
+//			NetrinService processos = new NetrinService();
+//			String retornoProcessos = processos.netrinCriarConsultaProcesso(cpfCnpj);
+
+				BigDataService processos = new BigDataService();
+				String retornoProcessos = processos.criarConsultaProcesso(cpfCnpj);
+
+				if (retornoProcessos != null) {
+					String base64 = processos.baixarDocumentoProcesso(retornoProcessos);
+					decodarBaixarArquivo(cpfCnpj, base64);
+				} else {
+					context.addMessage(null,
+							new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta", ""));
+				}
+			} catch (Exception e) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta", ""));
+
+			}
+		}
+
+		public void consultaPEP() {
+			FacesContext context = FacesContext.getCurrentInstance();
+			try {
+				NetrinService pep = new NetrinService();
+				String retornoPEP = pep.netrinCriarConsultaCadastroPpePF(cpfCnpj);
+				if (retornoPEP != null) {
+					String base64 = pep.baixarDocumentoPpe(retornoPEP);
+					decodarBaixarArquivo(cpfCnpj, base64);
+				} else {
+					context.addMessage(null,
+							new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta", ""));
+				}
+			} catch (Exception e) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao baixar Consulta", ""));
+
+			}
+
+		}
+		public StreamedContent decodarBaixarArquivo(String cpfCnpj, String base64 ) {
+
+			byte[] decoded = Base64.getDecoder().decode(base64);
+
+			InputStream in = new ByteArrayInputStream(decoded);
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+
+			String cnpjcpf = this.cpfCnpj;
+			gerador.open(String.format("Galleria Bank - CredNet %s.pdf",
+			CommonsUtil.somenteNumeros(cnpjcpf)));
+
+			gerador.feed(in);
+			gerador.close();
+			return null;
+		}
+		public void consultaSCR() {
+			try {
+				FacesContext context = FacesContext.getCurrentInstance();
+
+				ScrService scrService = new ScrService();
+				ScrResult scrResult = scrService.consultaSCR(cpfCnpj, context);
+							
+				FileGenerator fileGenerator = new FileGenerator();
+				fileGenerator.setDocumento(cpfCnpj);
+
+				if (!CommonsUtil.semValor(scrResult)) {
+					System.out.println("SUCESSO NA GERAÇÃO DO SCR");
+					// gera pdf
+					scrService.imprimeContrato(scrResult.getResumoDoCliente(), scrResult.getResumoDoClienteTraduzido(),
+							fileGenerator, context);
+					
+				}
+			
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		public String getCpfCnpj() {
+			return cpfCnpj;
+		}
+
+		public void setCpfCnpj(String cpfCnpj) {
+			this.cpfCnpj = cpfCnpj;
+		}
+
+		public String getTipoPessoa() {
+			return tipoPessoa;
+		}
+
+		public void setTipoPessoa(String tipoPessoa) {
+			this.tipoPessoa = tipoPessoa;
+		}
+
+	}

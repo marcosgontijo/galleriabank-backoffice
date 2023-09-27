@@ -92,6 +92,10 @@
 			<column name="contaTed" />
 		</property>	
 		
+		<property name="digitoContaTed" type="java.lang.String">
+			<column name="digitoContaTed" />
+		</property>
+		
 		<property name="agenciaTed" type="java.lang.String">
 			<column name="agenciaTed" />
 		</property>	
@@ -99,6 +103,36 @@
 		<property name="fileListId" type="java.lang.String">
 			<column name="fileListId" />
 		</property>	
+		
+		<property name="linhaDigitavelStarkBank" type="java.lang.String">
+			<column name="linhaDigitavelStarkBank" />
+		</property>	
+		
+		<property name="descricaoStarkBank" type="java.lang.String">
+			<column name="descricaoStarkBank" />
+		</property>	
+		
+		<property name="numeroDocumentoPagadorStarkBank" type="java.lang.String">
+			<column name="numeroDocumentoPagadorStarkBank" />
+		</property>	
+		
+		<many-to-one name="comprovantePagamentoStarkBank"
+			class="com.webnowbr.siscoat.cobranca.db.model.StarkBankBoleto"
+			lazy="false">
+			<column name="comprovantePagamentoStarkBank" />
+		</many-to-one>
+		<many-to-one name="comprovantePagamentoPixStarkBank"
+			class="com.webnowbr.siscoat.cobranca.db.model.StarkBankPix"
+			lazy="false">
+			<column name="comprovantePagamentoPixStarkBank" />
+		</many-to-one>
 
+        <list name="listContasPagarBaixas"
+			table="ContasPagarStarkBankBaixa" cascade="all" lazy="false">
+			<key column="idContasPagar" />
+			<list-index></list-index>
+			<many-to-many column="idBaixaStarkBank"
+				class="com.webnowbr.siscoat.cobranca.db.model.StarkBankBaixa" />
+		</list>	
 	</class>
 </hibernate-mapping>

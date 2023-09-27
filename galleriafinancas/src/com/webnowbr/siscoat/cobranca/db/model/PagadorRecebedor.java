@@ -9,12 +9,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
 
+import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.common.BancosEnum;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.ValidaCPF;
 import com.webnowbr.siscoat.infra.db.model.User;
 
 public class PagadorRecebedor implements Serializable {
@@ -84,11 +87,13 @@ public class PagadorRecebedor implements Serializable {
 
 	
 	private Date dataEmissaoRGConjuge;
+	private String orgaoEmissorRGConjuge;
 	
 	private String rg;
 	private String cpf;
 	private String cnpj;
 	private Date dataEmissaoRG;
+	private String orgaoEmissorRG;
 	private String cep;
 	
 	private String bancoCompleto;
@@ -96,10 +101,23 @@ public class PagadorRecebedor implements Serializable {
 	private String banco;
 	private String agencia;
 	private String conta;
+	private String contaDigito;
 	private String nomeCC;
 	private String cpfCC;
 	private String cnpjCC;
+	private String tipoConta;
+
+	private boolean contaBancariaValidada;
+
+	private String tipoPix;
 	private String pix;
+	private String bancoPix;
+	private String agenciaPix;
+	private String contaPix;
+	private String contaDigitoPix;
+	
+	private boolean pixValidado;
+	
 	
 	private String idIugu;
 	
@@ -350,6 +368,21 @@ public class PagadorRecebedor implements Serializable {
 		}
 	}
 	
+	public long calcularIdadeLong() {
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+		Date dateHoje = dataHoje.getTime();
+		if(!CommonsUtil.semValor(this.getDtNascimento())) {
+			long idadeLong = dateHoje.getTime() - this.getDtNascimento().getTime();
+			idadeLong = TimeUnit.DAYS.convert(idadeLong, TimeUnit.MILLISECONDS);
+			idadeLong = idadeLong / 30;
+			idadeLong = idadeLong / 12;
+			return idadeLong;
+		}
+		return 0;
+	}
+	
 	public void calcularIdadeConjuge() {
 		TimeZone zone = TimeZone.getDefault();
 		Locale locale = new Locale("pt", "BR");
@@ -364,6 +397,127 @@ public class PagadorRecebedor implements Serializable {
 		}
 	}
 	
+	public void criarConjugeNoSistema() {
+		PagadorRecebedor pagador = this;
+		if(CommonsUtil.semValor(pagador.getEstadocivil())){
+			return;
+		}
+		if(CommonsUtil.semValor(pagador.getCpfConjuge())){
+			return;
+		}
+		if(!CommonsUtil.mesmoValor(pagador.getEstadocivil(), "CASADO")){
+			return;
+		}
+		
+		PagadorRecebedor conjuge = null;
+		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
+
+		List<PagadorRecebedor> pagadorRecebedorBD = new ArrayList<PagadorRecebedor>();
+		boolean registraPagador = false;
+		Long idPagador = (long) 0;
+
+		if (!CommonsUtil.semValor(pagador.getCpfConjuge())) {
+			boolean validaCPF = ValidaCPF.isCPF(pagador.getCpfConjuge());
+			if(validaCPF) {
+				pagadorRecebedorBD = pagadorRecebedorDao.findByFilter("cpf", pagador.getCpfConjuge());
+				if (pagadorRecebedorBD.size() > 0) {
+					conjuge = pagadorRecebedorBD.get(0);
+				} else {
+					conjuge = new PagadorRecebedor();
+					registraPagador = true;
+				}
+			} else {
+				return;
+			}
+		} else {
+			return;
+		}
+		
+		conjuge.setEstadocivil(pagador.getEstadocivil());
+		conjuge.setDataCasamento(pagador.getDataCasamento());
+		conjuge.setRegimeCasamento(pagador.getRegimeCasamento());
+		conjuge.setRegistroPactoAntenupcial(pagador.getRegistroPactoAntenupcial());
+		conjuge.setLivroPactoAntenupcial(pagador.getLivroPactoAntenupcial());
+		conjuge.setFolhasPactoAntenupcial(pagador.getFolhasPactoAntenupcial());
+		conjuge.setDataPactoAntenupcial(pagador.getDataPactoAntenupcial());
+		
+		conjuge.setNome(pagador.getNomeConjuge());
+		conjuge.setCpf(pagador.getCpfConjuge());
+		conjuge.setAtividade(pagador.getCargoConjuge());
+		conjuge.setRg(pagador.getRgConjuge());
+		conjuge.setDataEmissaoRG(pagador.getDataEmissaoRGConjuge());
+		conjuge.setOrgaoEmissorRG(pagador.getOrgaoEmissorRGConjuge());
+		conjuge.setSexo(pagador.getSexoConjuge());
+		conjuge.setTelResidencial(pagador.getTelResidencialConjuge());
+		conjuge.setTelCelular(pagador.getTelCelularConjuge());
+		conjuge.setDtNascimento(pagador.getDtNascimentoConjuge());
+		conjuge.setIdade(pagador.getIdadeConjuge());
+		conjuge.setNomeMae(pagador.getNomeMaeConjuge());
+		conjuge.setNomePai(pagador.getNomePaiConjuge());
+		conjuge.setEndereco(pagador.getEnderecoConjuge());
+		conjuge.setBairro(pagador.getBairroConjuge());
+		conjuge.setComplemento(pagador.getComplementoConjuge());
+		conjuge.setCidade(pagador.getCidadeConjuge());
+		conjuge.setEstado(pagador.getEstadoConjuge());
+		conjuge.setCep(pagador.getCepConjuge());
+		conjuge.setEmail(pagador.getEmailConjuge());
+		conjuge.setBanco(pagador.getBancoConjuge());
+		conjuge.setAgencia(pagador.getAgenciaConjuge());
+		conjuge.setConta(pagador.getContaConjuge());
+		conjuge.setNomeCC(pagador.getNomeCCConjuge());
+		conjuge.setCpfCC(pagador.getCpfCCConjuge());
+		
+		conjuge.setNomeConjuge(pagador.getNome());
+		conjuge.setCpfConjuge(pagador.getCpf());
+		conjuge.setCargoConjuge(pagador.getAtividade());
+		conjuge.setRgConjuge(pagador.getRg());
+		conjuge.setDataEmissaoRGConjuge(pagador.getDataEmissaoRG());
+		conjuge.setOrgaoEmissorRGConjuge(pagador.getOrgaoEmissorRG());
+		conjuge.setSexoConjuge(pagador.getSexo());
+		conjuge.setTelResidencialConjuge(pagador.getTelResidencial());
+		conjuge.setTelCelularConjuge(pagador.getTelCelular());
+		conjuge.setDtNascimentoConjuge(pagador.getDtNascimento());
+		conjuge.setIdadeConjuge(pagador.getIdade());
+		conjuge.setNomeMaeConjuge(pagador.getNomeMae());
+		conjuge.setNomePaiConjuge(pagador.getNomePai());
+		conjuge.setEnderecoConjuge(pagador.getEndereco());
+		conjuge.setBairroConjuge(pagador.getBairro());
+		conjuge.setComplementoConjuge(pagador.getComplemento());
+		conjuge.setCidadeConjuge(pagador.getCidade());
+		conjuge.setEstadoConjuge(pagador.getEstado());
+		conjuge.setCepConjuge(pagador.getCep());
+		conjuge.setEmailConjuge(pagador.getEmail());
+		conjuge.setBancoConjuge(pagador.getBanco());
+		conjuge.setAgenciaConjuge(pagador.getAgencia());
+		conjuge.setContaConjuge(pagador.getConta());
+		conjuge.setNomeCCConjuge(pagador.getNomeCC());
+		conjuge.setCpfCCConjuge(pagador.getCpfCC());
+		
+		if (registraPagador) {
+			idPagador = pagadorRecebedorDao.create(conjuge);
+			conjuge = pagadorRecebedorDao.findById(idPagador);
+			System.out.println("ConjugeCriado");
+		} else {
+			pagadorRecebedorDao.merge(conjuge);
+		}
+	}
+
+	
+	public String getCodigoBanco() {
+		String[] banco = getBanco().split(Pattern.quote("|"));
+		if (banco.length > 0) {
+			return CommonsUtil.trimNull(banco[0]);
+
+		} else
+			return null;}
+	
+	
+	
+	@Override
+	public String toString() {
+		return "PagadorRecebedor [id=" + id + ", nome=" + nome + "]";
+	}
+
 	/**
 	 * @return the id
 	 */
@@ -645,6 +799,14 @@ public class PagadorRecebedor implements Serializable {
 	 */
 	public void setConta(String conta) {
 		this.conta = conta;
+	}
+	
+	public String getContaDigito() {
+		return contaDigito;
+	}
+
+	public void setContaDigito(String contaDigito) {
+		this.contaDigito = contaDigito;
 	}
 
 	/**
@@ -2068,6 +2230,55 @@ public class PagadorRecebedor implements Serializable {
 		this.pix = pix;
 	}
 
+	public boolean isPixValidado() {
+		return pixValidado;
+	}
+
+	public void setPixValidado(boolean pixValidado) {
+		this.pixValidado = pixValidado;
+	}
+
+	public String getTipoPix() {
+		return tipoPix;
+	}
+
+	public void setTipoPix(String tipoPix) {
+		this.tipoPix = tipoPix;
+	}	
+	
+
+	public String getBancoPix() {
+		return bancoPix;
+	}
+
+	public void setBancoPix(String bancoPix) {
+		this.bancoPix = bancoPix;
+	}
+
+	public String getAgenciaPix() {
+		return agenciaPix;
+	}
+
+	public void setAgenciaPix(String agenciaPix) {
+		this.agenciaPix = agenciaPix;
+	}
+
+	public String getContaPix() {
+		return contaPix;
+	}
+
+	public void setContaPix(String contaPix) {
+		this.contaPix = contaPix;
+	}
+
+	public String getContaDigitoPix() {
+		return contaDigitoPix;
+	}
+
+	public void setContaDigitoPix(String contaDigitoPix) {
+		this.contaDigitoPix = contaDigitoPix;
+	}
+
 	public List<DocumentosPagadorDocket> getDocumentosDocket() {
 		return documentosDocket;
 	}
@@ -2099,4 +2310,37 @@ public class PagadorRecebedor implements Serializable {
 	public void setValorProcessos(BigDecimal valorProcessos) {
 		this.valorProcessos = valorProcessos;
 	}
+
+	public String getOrgaoEmissorRGConjuge() {
+		return orgaoEmissorRGConjuge;
+	}
+
+	public void setOrgaoEmissorRGConjuge(String orgaoEmissorRGConjuge) {
+		this.orgaoEmissorRGConjuge = orgaoEmissorRGConjuge;
+	}
+
+	public String getOrgaoEmissorRG() {
+		return orgaoEmissorRG;
+	}
+
+	public void setOrgaoEmissorRG(String orgaoEmissorRG) {
+		this.orgaoEmissorRG = orgaoEmissorRG;
+	}
+
+	public String getTipoConta() {
+		return tipoConta;
+	}
+
+	public void setTipoConta(String tipoConta) {
+		this.tipoConta = tipoConta;
+	}
+
+	public boolean isContaBancariaValidada() {
+		return contaBancariaValidada;
+	}
+
+	public void setContaBancariaValidada(boolean contaBancariaValidada) {
+		this.contaBancariaValidada = contaBancariaValidada;
+	}	
+	
 }

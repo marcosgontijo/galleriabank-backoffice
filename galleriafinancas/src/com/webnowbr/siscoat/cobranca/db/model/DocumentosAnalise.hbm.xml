@@ -44,9 +44,37 @@
 			<column name="tipo" />
 		</property>
 		
+		<property name="excluido" type="boolean">
+			<column name="excluido" not-null="true" default ="false"/>
+		</property>
+		
 		<property name="liberadoAnalise" type="boolean">
-			<column name="liberadoAnalise" />
+			<column name="liberadoAnalise" not-null="true" default ="false" />
 		</property>		
+		
+		<property name="liberadoContinuarAnalise" type="boolean">
+			<column name="liberadoContinuarAnalise" not-null="true" default ="false" />
+		</property>		
+		
+		<property name="liberadoCertidoes" type="boolean">
+			<column name="liberadoCertidoes" not-null="true" default ="false" />
+		</property>		
+				
+		<property name="liberadoSerasa" type="boolean">
+			<column name="liberadoSerasa" not-null="true" default ="false" />
+		</property>	
+		
+		<property name="liberadoCenprot" type="boolean">
+			<column name="liberadoCenprot" not-null="true" default ="false" />
+		</property>	
+		
+		<property name="liberadoProcesso" type="boolean">
+			<column name="liberadoProcesso" not-null="true" default ="false" />
+		</property>	
+		
+		<property name="liberadoScr" type="boolean">
+			<column name="liberadoScr" not-null="true" default ="false" />
+		</property>	
 		
 		<property name="cnpjcpf" type="java.lang.String"  >
 			<column name="cnpjcpf" />
@@ -62,10 +90,65 @@
 		</property>		
 		<property name="retornoSerasa" type="java.lang.String"  length="65000">
 			<column name="retornoSerasa" />
+		</property>	
+		<property name="retornoCenprot" type="java.lang.String"  length="65000">
+			<column name="retornoCenprot" />
 		</property>
+		<property name="retornoScr" type="java.lang.String"  length="65000">
+			<column name="retornoScr" />
+		</property>
+		
+		<property name="retornoProcesso" type="java.lang.String"  length="65000">
+			<column name="retornoProcesso" />
+		</property>
+		
+		<property name="tipoProcesso" type="java.lang.String"  length="1">
+			<column name="tipoProcesso" />
+		</property>
+		
+		
+		<property name="retornoPpe" type="java.lang.String"  length="65000">
+			<column name="retornoPpe" />
+		</property>
+		
 		<property name="motivoAnalise" type="java.lang.String"  length="65000">
 			<column name="motivoAnalise" />
 		</property>
+		<property name="observacao" type="java.lang.String"  length="65000">
+			<column name="observacao" />
+		</property>
 		
+		<property name="retornoCNDTrabalhistaTST" type="java.lang.String"  length="65000">
+			<column name="retornoCNDTrabalhistaTST" />
+		</property>
+		
+		<property name="retornoCNDFederal" type="java.lang.String"  length="65000">
+			<column name="retornoCNDFederal" />
+		</property>
+		
+		<property name="retornoCNDEstadual" type="java.lang.String"  length="65000">
+			<column name="retornoCNDEstadual" />
+		</property>
+		
+		<property name="estadosConsultaStr" type="java.lang.String" >
+			<column name="estadosConsultaStr" />
+		</property>
+		
+		<list name="plexiConsultas"
+			table="DocumentoAnalise_PlexiConsultas_Join" cascade="all" lazy="false">
+			<key column="idDocumentoAnalise" />
+			<list-index></list-index>
+			<many-to-many column="idPlexiConsulta"
+				class="com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta" />
+		</list>
+		
+		<set name="netrinConsultas" table="NetrinConsultas" cascade="merge"
+                 lazy="false" fetch="select">
+            <key>
+                <column name="documentoAnalise" not-null="true" />
+            </key>
+            <one-to-many class="com.webnowbr.siscoat.cobranca.ws.netrin.NetrinConsulta" />
+        </set>
+						
     </class>
 </hibernate-mapping>
