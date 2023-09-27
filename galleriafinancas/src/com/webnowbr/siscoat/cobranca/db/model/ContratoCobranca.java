@@ -1317,6 +1317,7 @@ public class ContratoCobranca implements Serializable {
 	
 	public void calcularTaxaPreAprovada() {
 		int potuacao = 1000;
+		taxaPreAprovada = null;
 		
 		if (protestoTaxa)
 			potuacao -= 100;
@@ -1355,8 +1356,10 @@ public class ContratoCobranca implements Serializable {
 			taxaPreAprovada = BigDecimal.valueOf(1.39);
 		} else if (potuacao >= 900 && potuacao < 999) {
 			taxaPreAprovada = BigDecimal.valueOf(1.29);
-		} else {
+		} else if(nadaConstaTaxa) {
 			taxaPreAprovada = BigDecimal.valueOf(1.19);
+		} else {
+			taxaPreAprovada = null;
 		}
 		
 		if(CommonsUtil.semValor(prazoMaxPreAprovado)) {

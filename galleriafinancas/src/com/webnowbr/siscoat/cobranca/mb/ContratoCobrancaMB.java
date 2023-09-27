@@ -235,6 +235,7 @@ public class ContratoCobrancaMB {
 	private LazyDataModel<ContratoCobranca> lazyModel;
 	private LazyDataModel<Responsavel> responsaveisLazy;
 	/** Variavel. */
+	private DocumentoAnalise objetoDocumentoAnalise;
 	private ContratoCobranca objetoContratoCobranca;
 	private String numeroContratoObjetoContratoCobranca;
 	private List<FileUploaded> documentoConsultarTodos;
@@ -4962,6 +4963,63 @@ public class ContratoCobrancaMB {
 			e.printStackTrace();
 		}
 	}
+	
+	public void baixarMatricula(Long id) {
+			FileUploaded fileRea = new FileUploaded();
+			
+			FileService fileService = new FileService();
+			DocumentoAnaliseDao docAnaliseDao = new DocumentoAnaliseDao();
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			ExternalContext externalContext = facesContext.getExternalContext();
+			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+			BufferedInputStream input = null;
+			BufferedOutputStream output = null;
+			ParametrosDao pDao = new ParametrosDao();
+		DocumentoAnalise documentoAnalise =	docAnaliseDao.findById(id);
+		fileRea.setName(documentoAnalise.getIdentificacao());
+		fileRea.setPath("/home/webnowbr/Siscoat/GalleriaFinancas/DocumentosCobranca/" + this.objetoContratoCobranca.getNumeroContrato() + "/analise/");
+		fileRea.setFile(null);
+			
+			try {
+				if(CommonsUtil.semValor(fileRea.getName())) {
+					facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"REA: Ocorreu um problema ao gerar o PDF!", ""));
+						return;
+				} else {
+				byte[] bytesArquivo = fileService.abrirDocumentos(fileRea, this.objetoContratoCobranca.getNumeroContrato(), getUsuarioLogado());
+				if(CommonsUtil.semValor(bytesArquivo)) {
+					facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"REA: Ocorreu um problema ao gerar o PDF!", ""));
+					return;
+				} else {
+					String mineFile = "application/pdf";
+					input = new BufferedInputStream(new ByteArrayInputStream(bytesArquivo));
+					response.reset();
+					// lire un fichier pdf
+					response.setHeader("Content-type", mineFile);
+
+					response.setContentLength(bytesArquivo.length);
+
+					response.setHeader("Content-disposition",
+							"inline; FileName=" +  this.objetoContratoCobranca.getNumeroContrato() + " " + documentoAnalise.getIdentificacao() + ".pdf");
+					output = new BufferedOutputStream(response.getOutputStream(), 10240);
+					byte[] buffer = new byte[bytesArquivo.length];
+					int length;
+					while ((length = input.read(buffer)) > 0) {
+						output.write(buffer, 0, length);
+					}
+
+					// Finalize task.
+					output.flush();
+					output.close();
+					facesContext.responseComplete();
+				}
+			}
+			}	catch (Exception e) {
+				e.printStackTrace();
+			}
+		
+	}
 
 	public void baixarDocumentoPpe(DocumentoAnalise documentoAnalise) {
 		NetrinService netrin = new NetrinService();
@@ -9159,6 +9217,7 @@ public class ContratoCobrancaMB {
 
 	public String clearFieldsEditarPendentesAnalistas() {
 		clearMensagensWhatsApp();
+		this.objetoContratoCobranca.calcularTaxaPreAprovada();
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
 		this.objetoPagadorRecebedor = this.objetoContratoCobranca.getPagador();
@@ -9206,9 +9265,9 @@ public class ContratoCobrancaMB {
 			this.codigoResponsavel = this.objetoContratoCobranca.getResponsavel().getCodigo();
 		}
 		// this.objetoContratoCobranca.setDataInicio(this.objetoContratoCobranca.getDataContrato());
-		if (CommonsUtil.semValor(objetoContratoCobranca.getTaxaPreAprovada())) {
-			this.objetoContratoCobranca.calcularTaxaPreAprovada();
-		}
+	
+		this.objetoContratoCobranca.calcularTaxaPreAprovada();
+
 
 		saveEstadoCheckListAtual();
 
@@ -34313,5 +34372,13 @@ public class ContratoCobrancaMB {
 
 	public void setObjetoBaixaPagamentoStarkBank(StarkBankBaixa objetoBaixaPagamentoStarkBank) {
 		this.objetoBaixaPagamentoStarkBank = objetoBaixaPagamentoStarkBank;
+	}
+
+	public DocumentoAnalise getObjetoDocumentoAnalise() {
+		return objetoDocumentoAnalise;
+	}
+
+	public void setObjetoDocumentoAnalise(DocumentoAnalise objetoDocumentoAnalise) {
+		this.objetoDocumentoAnalise = objetoDocumentoAnalise;
 	}
 }
