@@ -36,6 +36,7 @@ public class PlexiConsulta {
 	private String endereco;//TJRS
 	private String rg;// (TJRS + PF) (TJSP + PF)
 	private String orgaoExpedidorRg;//TJRS + PF
+	private String orgaoExpedidor;//TRF4
 	private String ufRg;//TJRS + PF
 	private String dataNascimento;// (TJRS + PF) (TJSP + PF)
 	private String sexo;// TJSP + PF {m,f}
@@ -77,6 +78,7 @@ public class PlexiConsulta {
 		}
 		if(!CommonsUtil.semValor(pagador.getOrgaoEmissorRG())) {
 			orgaoExpedidorRg = pagador.getOrgaoEmissorRG();
+			orgaoExpedidor = pagador.getOrgaoEmissorRG();
 		}
 		if(!CommonsUtil.semValor(pagador.getCep())) {
 			cep = pagador.getCep();
@@ -451,5 +453,13 @@ public class PlexiConsulta {
 
 	public void setSenha(String senha) {
 		this.senha = senha;
+	}
+
+	public String getOrgaoExpedidor() {
+		return orgaoExpedidor;
+	}
+
+	public void setOrgaoExpedidor(String orgaoExpedidor) {
+		this.orgaoExpedidor = orgaoExpedidor;
 	}
 }

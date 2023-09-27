@@ -734,16 +734,40 @@ public class DocketService {
 
 	public String getPdfBase64(String documento) {
 		DocketWebhookRetornoDocumento documentoPdf = GsonUtil.fromJson(documento, DocketWebhookRetornoDocumento.class);
-        try { 
-        	String urlComprovante = documentoPdf.getArquivos().get(0).getLinks().get(0).getHref();
-            java.net.URL url = new java.net.URL(urlComprovante);
-            InputStream is = url.openStream();
-            byte[] bytes = org.apache.commons.io.IOUtils.toByteArray(is);
-            byte[] encoded = Base64.getEncoder().encode(bytes);
-            return new String(encoded);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+		try {
+			loginDocket(null);
+			int HTTP_COD_SUCESSO = 200;
+			URL myURL;
+			String idCallManager = documentoPdf.getArquivos().get(0).getId();
+			if (SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
+				myURL = new URL(urlHomologacao + "/api/v2/" + organizacao_url + "/downloads/" + idCallManager);
+			} else {
+				myURL = new URL(urlProducao + "/api/v2/" + organizacao_url + "/downloads/" + idCallManager);
+			}
+
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setRequestMethod("GET");
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			myURLConnection.setRequestProperty("Authorization", tokenLogin);
+			myURLConnection.setDoOutput(true);
+
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
+				System.out.println("Não foi possivel consultar pdf docket. IdCallManager: " + idCallManager);
+			} else {
+				byte[] bytes = org.apache.commons.io.IOUtils.toByteArray(myURLConnection.getInputStream());
+				byte[] encoded = Base64.getEncoder().encode(bytes);
+				return new String(encoded);
+			}
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
         return null;
     }
 	

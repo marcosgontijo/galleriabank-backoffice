@@ -2044,9 +2044,11 @@
 										
 									<p:outputLabel for="obsDocsPendentesRessalva" value="Obs. Documentos Pendentes: "
 										style="margin-left:30px;" />
-									<p:inputText id="obsDocsPendentesRessalva"
+									<p:inputTextarea id="obsDocsPendentesRessalva"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.obsDocsPendentesRessalva}"
-										style="FONT-SIZE: 10pt;width:260px;"
+										style="FONT-SIZE: 10pt;width:260px;" rows="10" cols="48"
+										maxlength="3000" onblur="" autoResize="false"
+										counterTemplate="{0} characters remaining."
 										disabled="#{contratoCobrancaMB.deleteMode}" />
 
 								</h:panelGrid>
