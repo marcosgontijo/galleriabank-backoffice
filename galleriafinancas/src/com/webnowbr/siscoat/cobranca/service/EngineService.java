@@ -727,12 +727,6 @@ public class EngineService {
 		return null;
 	}
 
-	@SuppressWarnings("unused")
-	public void loginDocket(User user) {}
-
-	@SuppressWarnings("unused")
-	public void uploadREA(DocumentoAnalise documentoAnalise, User user) {}
-
 	private JSONObject engineBodyJsonEngine(PagadorRecebedor pagador) {
 		JSONObject jsonDocketBodyPedido = new JSONObject();
 		if (!CommonsUtil.semValor(pagador.getCpf())) {

@@ -36,6 +36,7 @@ public class DocumentoAnaliseJobConsultar {
 	public void executarConsultasAnaliseDocumento() {
 
 		EngineService engineService = new EngineService();
+		DocketService docketService = new DocketService();
 
 		SerasaService serasaService = new SerasaService();
 
@@ -61,7 +62,7 @@ public class DocumentoAnaliseJobConsultar {
 					if (documentoAnalise.isPodeChamarRea()) {
 						documentoAnalise.addObservacao("Processando REA");
 						//PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
-						engineService.uploadREA(documentoAnalise, user);
+						docketService.uploadREA(documentoAnalise, user);
 						step ++;
 					}
 					continue;
