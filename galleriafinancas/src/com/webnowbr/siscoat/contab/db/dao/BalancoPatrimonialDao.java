@@ -292,17 +292,17 @@ public class BalancoPatrimonialDao extends HibernateDao <BalancoPatrimonial,Long
 	}
 	
 	private static final String QUERY_CONTRATOS_RECEBER_BALANCO = "select coco.id, numerocontrato, datacontrato , txJurosParcelas, empresa, ccd.dataVencimento, ccd.vlrParcela, pare.nome, corrigidoIPCA, corrigidonovoipca\r\n"
-			+ "			from cobranca.contratocobranca coco			\r\n"
-			+ "			left join cobranca.contratocobranca_detalhes_join ccdj ON ccdj.idcontratocobranca = coco.id\r\n"
-			+ "			inner join cobranca.contratocobrancadetalhes ccd ON ccd.id = ccdj.idcontratocobrancadetalhes and ccd.parcelapaga = false\r\n"
-			+ "			inner join cobranca.pagadorrecebedor pare ON pare.id = coco.pagador\r\n"
-			+ "			left join cobranca.imovelcobranca i on coco.imovel = i.id\r\n"
-			+ "			left join cobranca.imovelestoque ie on i.imovelestoque  = ie.id			\r\n"
-			+ "			where status = 'Aprovado' and ccd.id is not null \r\n"
-			+ "			and pagador not in (15, 34,14, 182, 417, 803) \r\n"
-			+ "			and ccd.vlrparcela is not null\r\n"
-			+ "			and ie.estoque is not true\r\n"
-			+ "			ORDER BY numerocontrato asc";
+			+ "	from cobranca.contratocobranca coco			\r\n"
+			+ "	left join cobranca.contratocobranca_detalhes_join ccdj ON ccdj.idcontratocobranca = coco.id\r\n"
+			+ "	inner join cobranca.contratocobrancadetalhes ccd ON ccd.id = ccdj.idcontratocobrancadetalhes and ccd.parcelapaga = false\r\n"
+			+ "	inner join cobranca.pagadorrecebedor pare ON pare.id = coco.pagador\r\n"
+			+ "	left join cobranca.imovelcobranca i on coco.imovel = i.id\r\n"
+			+ "	left join cobranca.imovelestoque ie on i.imovelestoque  = ie.id			\r\n"
+			+ "	where status = 'Aprovado' and ccd.id is not null \r\n"
+			+ "	and pagador not in (15, 34,14, 182, 417, 803) \r\n"
+			+ "	and ccd.vlrparcela is not null\r\n"
+			+ "	and ie.quitado is not true\r\n"
+			+ "	ORDER BY numerocontrato asc";
 
 	private static final String QUERY_CONTRATOS_PAGAR_FAVORECIDO_BALANCO = "select\r\n"
 			+ "	coco.id, coco.numerocontrato, coco.txJurosParcelas, coco.taxaremuneracaoinvestidor1, coco.empresa, ccpi.dataVencimento, ccpi.amortizacao,\r\n"

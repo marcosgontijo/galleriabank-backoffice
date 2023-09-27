@@ -22,14 +22,15 @@ public class ImovelEstoque implements Serializable {
 	private Date dataConsolidado;
 	private Date dataLeilao1;
 	private Date dataLeilao2;
-	private Date dataLeilao3;
+	private Date dataLeilao3; //leilão estoque
+	private String leiloeiro;
 	private String statusLeilao;
 	private String statusAtual;
 	private BigDecimal valorLeilao2;
 	private BigDecimal valorVenda;
 	private Date dataVenda;
 	private String tipoVenda;
-	private Boolean estoque;
+	private Boolean quitado;
 	private ContratoCobranca objetoContratoCobranca;
 	private ImovelCobranca objetoImovelCobranca;
 	
@@ -136,11 +137,17 @@ public class ImovelEstoque implements Serializable {
 	public void setTipoVenda(String tipoVenda) {
 		this.tipoVenda = tipoVenda;
 	}
-	public Boolean getEstoque() {
-		return estoque;
+	public Boolean getQuitado() {
+		return quitado;
 	}
-	public void setEstoque(Boolean estoque) {
-		this.estoque = estoque;
+	public void setQuitado(Boolean quitado) {
+		this.quitado = quitado;
+	}
+	public String getLeiloeiro() {
+		return leiloeiro;
+	}
+	public void setLeiloeiro(String leiloeiro) {
+		this.leiloeiro = leiloeiro;
 	}
 	
 	

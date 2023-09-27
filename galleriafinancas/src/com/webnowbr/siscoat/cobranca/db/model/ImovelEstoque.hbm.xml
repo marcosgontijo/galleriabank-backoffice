@@ -37,6 +37,9 @@
         </property>       
         <property name="dataLeilao3" type="java.util.Date">
             <column name="DATALEILAO3"/>
+        </property>
+        <property name="leiloeiro" type="java.lang.String">
+            <column name="LEILOEIRO"/>
         </property>  
         <property name="statusLeilao" type="java.lang.String">
             <column name="STATUSLEILAO"/>
@@ -56,8 +59,8 @@
         <property name="tipoVenda" type="java.lang.String">
             <column name="TIPOVENDA"/>
         </property>
-        <property name="estoque" type="boolean">
-            <column name="ESTOQUE" not-null="true" default="false"/>
+        <property name="quitado" type="boolean">
+            <column name="QUITADO" not-null="true" default="false"/>
         </property>
         
     </class>

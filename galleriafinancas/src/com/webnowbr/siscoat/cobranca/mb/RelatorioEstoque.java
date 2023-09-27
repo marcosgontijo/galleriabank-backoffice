@@ -21,13 +21,14 @@ public class RelatorioEstoque implements Serializable {
 	private Date dataLeilao1Relatorio;
 	private Date dataLeilao2Relatorio;
 	private Date dataLeilao3Relatorio; //leilão estoque
+	private String leiloeiroRelatorio;
 	private String statusLeilaoRelatorio;
 	private String statusAtualRelatorio;
 	private BigDecimal valorLeilao2Relatorio;
 	private BigDecimal valorVendaRelatorio;
 	private Date dataVendaRelatorio;
 	private String tipoVendaRelatorio;
-	private Boolean estoqueRelatorio;
+	private Boolean quitadoRelatorio;
 	
 	
 	public String getNumeroContratoRelatorio() {
@@ -144,11 +145,17 @@ public class RelatorioEstoque implements Serializable {
 	public void setTipoVendaRelatorio(String tipoVendaRelatorio) {
 		this.tipoVendaRelatorio = tipoVendaRelatorio;
 	}
-	public Boolean getEstoqueRelatorio() {
-		return estoqueRelatorio;
+	public Boolean getQuitadoRelatorio() {
+		return quitadoRelatorio;
 	}
-	public void setEstoqueRelatorio(Boolean estoqueRelatorio) {
-		this.estoqueRelatorio = estoqueRelatorio;
+	public void setQuitadoRelatorio(Boolean quitadoRelatorio) {
+		this.quitadoRelatorio = quitadoRelatorio;
+	}
+	public String getLeiloeiroRelatorio() {
+		return leiloeiroRelatorio;
+	}
+	public void setLeiloeiroRelatorio(String leiloeiroRelatorio) {
+		this.leiloeiroRelatorio = leiloeiroRelatorio;
 	}
 	
 	
