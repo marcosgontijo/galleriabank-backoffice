@@ -1,13 +1,9 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
-import java.util.ArrayList;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -23,12 +19,11 @@ import org.primefaces.model.SortOrder;
 import org.primefaces.model.UploadedFile;
 
 import com.webnowbr.siscoat.cobranca.db.model.Cidade;
-import com.webnowbr.siscoat.cobranca.db.model.DocketCidades;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelEstoque;
-import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.CidadeDao;
+import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.db.dao.DAOException;
@@ -52,9 +47,6 @@ public class ImovelCobrancaMB {
 	
 	private ImovelEstoque objetoImovelEstoque;
 	private ContratoCobranca objetoContratoCobranca;
-	private boolean updateMode = false;
-	private boolean deleteMode = false;
-	private String tituloPainel = null;
 	private boolean editarEstoque;
 	private List<ContratoCobranca> listaConsultaEstoque = new ArrayList<ContratoCobranca>();
 	/**

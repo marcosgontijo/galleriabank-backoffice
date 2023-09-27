@@ -34154,4 +34154,180 @@ public class ContratoCobrancaMB {
 	public void setPessoasProcessos(List<PagadorRecebedor> pessoasProcessos) {
 		this.pessoasProcessos = pessoasProcessos;
 	}
+
+	public Averbacao getAverbacaoSelecionada() {
+		return averbacaoSelecionada;
+	}
+
+	public void setAverbacaoSelecionada(Averbacao averbacaoSelecionada) {
+		this.averbacaoSelecionada = averbacaoSelecionada;
+	}
+
+	public DocumentoAnalise getDocumentoAnaliseAdicionar() {
+		return documentoAnaliseAdicionar;
+	}
+
+	public void setDocumentoAnaliseAdicionar(DocumentoAnalise documentoAnaliseAdicionar) {
+		this.documentoAnaliseAdicionar = documentoAnaliseAdicionar;
+	}
+
+	public DocumentoAnalise getDocumentoAnalisePopup() {
+		return documentoAnalisePopup;
+	}
+
+	public void setDocumentoAnalisePopup(DocumentoAnalise documentoAnalisePopup) {
+		this.documentoAnalisePopup = documentoAnalisePopup;
+	}
+
+	public boolean isBaixaMultiParcelasComTxADM() {
+		return baixaMultiParcelasComTxADM;
+	}
+
+	public void setBaixaMultiParcelasComTxADM(boolean baixaMultiParcelasComTxADM) {
+		this.baixaMultiParcelasComTxADM = baixaMultiParcelasComTxADM;
+	}
+
+	public List<DocumentoAnalise> getListaDeleteAnalise() {
+		return listaDeleteAnalise;
+	}
+
+	public void setListaDeleteAnalise(List<DocumentoAnalise> listaDeleteAnalise) {
+
+		this.listaDeleteAnalise = listaDeleteAnalise;
+	}
+
+	public String getContratosLaudo() {
+		return contratosLaudo;
+	}
+
+	public void setContratosLaudo(String contratosLaudo) {
+		this.contratosLaudo = contratosLaudo;
+	}
+
+	public String getContratoDocumentos() {
+		return contratoDocumentos;
+	}
+
+	public void setContratoDocumentos(String contratoDocumentos) {
+		this.contratoDocumentos = contratoDocumentos;
+	}
+
+	public String pathComprovanteStarkBank;
+	public String nomeComprovanteStarkBank;
+
+	public StreamedContent getDownloadComprovanteStarkBank(StarkBankBaixa baixaStarkBank) {
+		FacesContext context = FacesContext.getCurrentInstance();
+
+		geraReciboPagamentoStarkBank(baixaStarkBank);
+
+		String caminho = this.pathComprovanteStarkBank + this.nomeComprovanteStarkBank;
+		String arquivo = this.nomeComprovanteStarkBank;
+		FileInputStream stream = null;
+
+		try {
+			stream = new FileInputStream(caminho);
+			downloadComprovanteStarkBank = new DefaultStreamedContent(stream, this.pathComprovanteStarkBank,
+					this.nomeComprovanteStarkBank);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			System.out.println("StarkBank - Comprovante não encontrado!");
+		}
+
+		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+				"[Stark Bank - Recibo de Pagamento] Recibo de pagamento gerado com sucesso!", ""));
+
+		return this.downloadComprovanteStarkBank;
+	}
+
+	public void setDownloadComprovanteStarkBank(StreamedContent downloadComprovanteStarkBank) {
+		this.downloadComprovanteStarkBank = downloadComprovanteStarkBank;
+	}
+
+	public boolean isComprovanteStarkBankGerado() {
+		return comprovanteStarkBankGerado;
+	}
+
+	public void setComprovanteStarkBankGerado(boolean comprovanteStarkBankGerado) {
+		this.comprovanteStarkBankGerado = comprovanteStarkBankGerado;
+	}
+
+	public String getPathComprovanteStarkBank() {
+		return pathComprovanteStarkBank;
+	}
+
+	public void setPathComprovanteStarkBank(String pathComprovanteStarkBank) {
+		this.pathComprovanteStarkBank = pathComprovanteStarkBank;
+	}
+
+	public String getNomeComprovanteStarkBank() {
+		return nomeComprovanteStarkBank;
+	}
+
+	public void setNomeComprovanteStarkBank(String nomeComprovanteStarkBank) {
+		this.nomeComprovanteStarkBank = nomeComprovanteStarkBank;
+	}
+
+	public List<FileUploaded> getDocumentoConsultarTodos() {
+		return documentoConsultarTodos;
+	}
+
+	public void setDocumentoConsultarTodos(List<FileUploaded> documentoConsultarTodos) {
+		this.documentoConsultarTodos = documentoConsultarTodos;
+	}
+
+	public KobanaMB getKobanaMB() {
+		return kobanaMB;
+	}
+
+	public void setKobanaMB(KobanaMB kobanaMB) {
+		this.kobanaMB = kobanaMB;
+	}
+
+	public Collection<FileUploaded> getFilesCci() {
+		return filesCci;
+	}
+
+	public void setFilesCci(Collection<FileUploaded> filesCci) {
+		this.filesCci = filesCci;
+	}
+
+	public List<FileUploaded> getDeletefilesCci() {
+		return deletefilesCci;
+	}
+
+	public void setDeletefilesCci(List<FileUploaded> deletefilesCci) {
+		this.deletefilesCci = deletefilesCci;
+	}
+
+	public List<FileUploaded> getDeleteFilesPagar() {
+		return deleteFilesPagar;
+	}
+
+	public void setDeleteFilesPagar(List<FileUploaded> deleteFilesPagar) {
+		this.deleteFilesPagar = deleteFilesPagar;
+	}
+
+	public List<FileUploaded> getDeleteFilesContas() {
+		return deleteFilesContas;
+	}
+
+	public void setDeleteFilesContas(List<FileUploaded> deleteFilesContas) {
+		this.deleteFilesContas = deleteFilesContas;
+	}
+
+	public List<StarkBankBaixa> getPagamentosStarkBankPendentes() {
+		return pagamentosStarkBankPendentes;
+	}
+
+	public void setPagamentosStarkBankPendentes(List<StarkBankBaixa> pagamentosStarkBankPendentes) {
+		this.pagamentosStarkBankPendentes = pagamentosStarkBankPendentes;
+	}
+
+	public StarkBankBaixa getObjetoBaixaPagamentoStarkBank() {
+		return objetoBaixaPagamentoStarkBank;
+	}
+
+	public void setObjetoBaixaPagamentoStarkBank(StarkBankBaixa objetoBaixaPagamentoStarkBank) {
+		this.objetoBaixaPagamentoStarkBank = objetoBaixaPagamentoStarkBank;
+	}
 }
