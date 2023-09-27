@@ -14,6 +14,7 @@
 			}
 			
 	</h:outputStylesheet>
+	<h:outputStylesheet name="primeicons/primeicons.css" library="primefaces"/>
 	<shiro:hasAnyRoles
 		name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
 		<p:panel id="ImovelAnalisado" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Em Análise' or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Análise' }">
@@ -84,8 +85,8 @@
 				        </f:facet>
 						<p:column  selectionMode="multiple" style="width:16px;text-align:center"/>
 						<p:column style="text-align: center; width:5rem;">				
-							<p:commandButton value="ver Resumo"
-								oncomplete="PF('resumoConsutlasDialog').show()"
+							<p:commandButton value="ver Resumo" 
+								oncomplete="PF('resumoConsutlasDialog').show()" icon="pi pi-bars"
 								update="resumoConsutlasForm resumoDialogHeader" ajax="true"
 								style="TEXT-DECORATION: bold;" rendered="#{fileAnalise.tipo != 'Rea'}">
 								<f:setPropertyActionListener value="#{fileAnalise}"
@@ -154,6 +155,13 @@
 								rendered="#{fileAnalise.podeChamarRea and !fileAnalise.reaNaoEnviado and !fileAnalise.reaProcessado }" />
 							<h:outputText value="REA Processado"
 								rendered="#{fileAnalise.podeChamarRea and fileAnalise.reaProcessado }" />
+									<p:commandButton
+										action="#{contratoCobrancaMB.baixarMatricula(fileAnalise.id)}"
+										onclick="target='_blank'" onblur="target='_self'"
+										icon="ui-icon ui-icon-print" value="Abrir Rea"
+										ajax="false" 
+										rendered="#{fileAnalise.tipo == 'Rea'}"/>
+								
 
 							<p:commandButton
 								action="#{contratoCobrancaMB.baixarEngineDocumento(fileAnalise)}"
