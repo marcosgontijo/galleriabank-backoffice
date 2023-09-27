@@ -118,29 +118,29 @@ public class DocumentoAnalise implements Serializable {
 
 	public List<DocumentoAnaliseResumo> getResumoProcesso() {
 		List<DocumentoAnaliseResumo> vProcesso = new ArrayList<>();
-		ProcessoResumo processo = null;
+		br.com.galleriabank.bigdata.cliente.model.processos.ProcessoResult processoResponse = null;
 		try {
-			processo = GsonUtil.fromJson(getRetornoProcesso() , ProcessoResumo.class);
+			processoResponse = GsonUtil.fromJson(getRetornoProcesso() , br.com.galleriabank.bigdata.cliente.model.processos.ProcessoResult.class);
 		} catch (Exception erro) {
 			vProcesso.add(new DocumentoAnaliseResumo(null, null));
 		}
-		if (processo == null) {
+		if (processoResponse == null) {
 			vProcesso.add(new DocumentoAnaliseResumo("não disponível", null));
 		} else {
-
+			br.com.galleriabank.bigdata.cliente.model.processos.ProcessoResumo processo = processoResponse.getProcessoResumo();
 			if (processo.getCriminal() == null) {
 				vProcesso.add(new DocumentoAnaliseResumo("Criminal:", "Não disponível"));
 			} else {
-				String processosQuantidade = CommonsUtil.stringValue(processo.getCriminal().stream().mapToInt(p -> p.getQuatidade()));
-				String processosValor = CommonsUtil.stringValue(processo.getCriminal().stream().mapToDouble(p -> p.getValor()));
+				String processosQuantidade = CommonsUtil.stringValue(processo.getCriminal().stream().mapToInt(p -> p.getQuatidade()).sum());
+				String processosValor = CommonsUtil.stringValue(processo.getCriminal().stream().mapToDouble(p -> p.getValor()).sum());
 				vProcesso.add(new DocumentoAnaliseResumo("Criminal:", processosValor + "(" + processosQuantidade + ")"));
 			}
 
 			if (processo.getTrabalhista() == null) {
 				vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:", "Não disponível"));
 			} else {
-				String processosQuantidade = CommonsUtil.stringValue(processo.getTrabalhista().stream().mapToInt(p -> p.getQuatidade()));
-				String processosValor = CommonsUtil.stringValue(processo.getTrabalhista().stream().mapToDouble(p -> p.getValor()));
+				String processosQuantidade = CommonsUtil.stringValue(processo.getTrabalhista().stream().mapToInt(p -> p.getQuatidade()).sum());
+				String processosValor = CommonsUtil.stringValue(processo.getTrabalhista().stream().mapToDouble(p -> p.getValor()).sum());
 				
 				vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:", processosValor + "(" + processosQuantidade + ")"));
 			}
@@ -148,24 +148,24 @@ public class DocumentoAnalise implements Serializable {
 			if (processo.getTituloExecucaoFiscal() == null) {
 				vProcesso.add(new DocumentoAnaliseResumo("Execução de título:", "Não disponível"));
 			} else {
-				String processosQuantidade = CommonsUtil.stringValue(processo.getTituloExecucaoFiscal().stream().mapToInt(p -> p.getQuatidade()));
-				String processosValor = CommonsUtil.stringValue(processo.getTituloExecucaoFiscal().stream().mapToDouble(p -> p.getValor()));
+				String processosQuantidade = CommonsUtil.stringValue(processo.getTituloExecucaoFiscal().stream().mapToInt(p -> p.getQuatidade()).sum());
+				String processosValor = CommonsUtil.stringValue(processo.getTituloExecucaoFiscal().stream().mapToDouble(p -> p.getValor()).sum());
 				vProcesso.add(new DocumentoAnaliseResumo("Execução de título:", processosValor + "(" + processosQuantidade + ")"));
 			}
 
 			if (processo.getExecucaoFiscalProtesto() == null) {
 				vProcesso.add(new DocumentoAnaliseResumo("Execução Fiscal:", "Não disponível"));
 			} else {
-				String processosQuantidade = CommonsUtil.stringValue(processo.getTituloExecucaoFiscal().stream().mapToInt(p -> p.getQuatidade()));
-				String processosValor = CommonsUtil.stringValue(processo.getTituloExecucaoFiscal().stream().mapToDouble(p -> p.getValor()));
+				String processosQuantidade = CommonsUtil.stringValue(processo.getTituloExecucaoFiscal().stream().mapToInt(p -> p.getQuatidade()).sum());
+				String processosValor = CommonsUtil.stringValue(processo.getTituloExecucaoFiscal().stream().mapToDouble(p -> p.getValor()).sum());
 				vProcesso.add(new DocumentoAnaliseResumo("Execução Fiscal:", processosValor + "(" + processosQuantidade + ")"));
 			}
 
 			if (processo.getOutros() == null) {
 				vProcesso.add(new DocumentoAnaliseResumo("Outros:", "Não disponível"));
 			} else {
-				String processosQuantidade = CommonsUtil.stringValue(processo.getOutros().stream().mapToInt(p -> p.getQuatidade()));
-				String processosValor = CommonsUtil.stringValue(processo.getOutros().stream().mapToDouble(p -> p.getValor()));
+				String processosQuantidade = CommonsUtil.stringValue(processo.getOutros().stream().mapToInt(p -> p.getQuatidade()).sum());
+				String processosValor = CommonsUtil.stringValue(processo.getOutros().stream().mapToDouble(p -> p.getValor()).sum());
 				vProcesso.add(new DocumentoAnaliseResumo("Outros:",processosValor + "(" + processosQuantidade + ")"));
 			}
 
