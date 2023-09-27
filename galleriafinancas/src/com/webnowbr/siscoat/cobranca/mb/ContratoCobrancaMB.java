@@ -60,7 +60,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.tools.PDFBox;
 import org.apache.poi.ss.formula.functions.FinanceLib;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
@@ -81,6 +80,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.hibernate.JDBCException;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
@@ -108,7 +108,6 @@ import org.quartz.SchedulerFactory;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
-
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
@@ -127,7 +126,6 @@ import com.webnowbr.siscoat.auxiliar.CompactadorUtil;
 import com.webnowbr.siscoat.auxiliar.EnviaEmail;
 import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobranca;
 import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobrancaResumo;
-import com.webnowbr.siscoat.auxiliar.CompactadorUtil;
 import com.webnowbr.siscoat.cobranca.db.model.AnaliseComite;
 import com.webnowbr.siscoat.cobranca.db.model.Averbacao;
 import com.webnowbr.siscoat.cobranca.db.model.BoletoKobana;
@@ -145,7 +143,6 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFinancerioDiaConsu
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaParcelasInvestidor;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaStatus;
-import com.webnowbr.siscoat.cobranca.db.model.DataEngine;
 import com.webnowbr.siscoat.cobranca.db.model.DataVistoria;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.FilaInvestidores;
@@ -824,8 +821,10 @@ public class ContratoCobrancaMB {
 
 	private List<ContratoCobrancaDetalhes> selectedParcelas = new ArrayList<ContratoCobrancaDetalhes>();
 	
-	
-
+	private BigDecimal imovelCobrancaLatitude;
+	private BigDecimal imovelCobrancaLongitude;
+	private String laudoEndereco = "";
+	private boolean laudoDone = false;
 	
     public String rowSelected() {
     	return null;
@@ -1834,7 +1833,7 @@ public class ContratoCobrancaMB {
 				+ " <table width='100%' border='0' cellspacing='0' cellpadding='0'>" + " <tbody>"
 				+ " <tr style='background-color:#f0f0f0;height:61px;font-family:Arial,sans-serif;font-size:10px;color:#fff'>"
 				+ " <td style='color:#16243f;padding-left:20px; font-size: 12px;'> © Todos direitos reservados. </td>"
-				+ " <td style='text-align: right;padding-right: 20px;'><a style='color:#16243f;font-size: 12px; text-decoration: none;'  target='_blank'>Galleria Bank</a> </td>"
+				+ " <td style='text-align: right;padding-right: 20px;'><a style='color:#16243f;font-size: 12px; text-decoration: none;'  target=' '>Galleria Bank</a> </td>"
 				+ " </tr>" + " </tbody>" + " </table>" + " <div class='yj6qo'></div>" + " <div class='adL'> </div>"
 				+ " </div>" + " <div class='adL'> </div>" + " <div class='adL'> </div>" + " </div>" + " </body>"
 				+ " </html>";
@@ -29736,6 +29735,317 @@ public class ContratoCobrancaMB {
 
 		return fileRecibo;
 	}
+	
+	public void geraLaudo() {
+		try {			
+			String apikey = "cApKsaLHk1dgXwlkXbVGaqwnL4CPOuq3ICbMc8Va";
+			getLatAndLon(this.objetoImovelCobranca.getEndereco());
+			
+			JSONObject assessingObj = new JSONObject();
+			assessingObj.put("category_id", this.objetoImovelCobranca.getCategoria());
+			assessingObj.put("lat", imovelCobrancaLatitude);
+			assessingObj.put("lon", imovelCobrancaLongitude);
+			assessingObj.put("neighborhood", this.objetoImovelCobranca.getBairro());
+			assessingObj.put("area", (this.objetoImovelCobranca.getAreaConstruida().isEmpty()) ? 0.0 : Double.valueOf(this.objetoImovelCobranca.getAreaConstruida()));
+			assessingObj.put("street", this.objetoImovelCobranca.getEndereco());
+			assessingObj.put("number", this.objetoImovelCobranca.getNumeroImovel());
+			assessingObj.put("sub_category_id", this.objetoImovelCobranca.getCategoria());
+			assessingObj.put("city", this.objetoImovelCobranca.getCidade());
+			assessingObj.put("postal_code", this.objetoImovelCobranca.getCep());
+			assessingObj.put("state", this.objetoImovelCobranca.getEstado());
+			assessingObj.put("complement", this.objetoImovelCobranca.getComplemento());
+			
+			JSONObject assessingTypo = new JSONObject();
+			assessingTypo.put("features_bathroom", (this.objetoImovelCobranca.getNumeroBanheiros() <= 0) ? 1 : this.objetoImovelCobranca.getNumeroBanheiros());
+			assessingTypo.put("features_bedroom", (this.objetoImovelCobranca.getNumeroQuartos() <= 0) ? 1 : this.objetoImovelCobranca.getNumeroQuartos());
+			assessingTypo.put("features_suite", (this.objetoImovelCobranca.getNumeroSuites() <= 0) ? 1 : this.objetoImovelCobranca.getNumeroSuites());
+			assessingTypo.put("features_garage", (this.objetoImovelCobranca.getNumeroGaragens() <= 0) ? 1 : this.objetoImovelCobranca.getNumeroGaragens());
+			
+			assessingObj.put("typology", assessingTypo);
+			
+			JSONObject address = new JSONObject();
+			address.put("street", this.objetoImovelCobranca.getEndereco());
+			address.put("neighborhood", this.objetoImovelCobranca.getBairro());
+			address.put("city", this.objetoImovelCobranca.getCidade());
+			address.put("postal_code", this.objetoImovelCobranca.getCep());
+			address.put("state", this.objetoImovelCobranca.getEstado());
+			address.put("street_long", this.objetoImovelCobranca.getEndereco());
+			address.put("number", this.objetoImovelCobranca.getNumeroImovel());
+			
+			JSONObject location = new JSONObject();
+			location.put("radius", 0);
+			location.put("lat", imovelCobrancaLatitude);
+			location.put("lon", imovelCobrancaLongitude);
+			
+			JSONObject typologyWithArray = new JSONObject();
+			typologyWithArray.put("features_bathroom", new JSONArray());
+			typologyWithArray.put("features_bedroom", new JSONArray());
+			typologyWithArray.put("features_suite", new JSONArray());
+			typologyWithArray.put("features_garage", new JSONArray());
+			
+
+			JSONObject realty_type = new JSONObject();
+			realty_type.put("category_id", (this.objetoImovelCobranca.getCategoria() == 1) ? new JSONArray(1) : new JSONArray(2));
+			realty_type.put("sub_category_id", new JSONArray());
+			
+			JSONObject price_total = new JSONObject();
+			price_total.put("value", 0);
+			price_total.put("percentage", 100);
+			
+			JSONObject priceAreaUsefulObj = new JSONObject();
+			priceAreaUsefulObj.put("value", 0);
+			priceAreaUsefulObj.put("percentage", 100);
+			
+			JSONObject priceAreaTotalObj = new JSONObject();
+			priceAreaTotalObj.put("value", 0);
+			priceAreaTotalObj.put("percentage", 100);
+			
+			JSONObject price_AreaObj = new JSONObject();
+			price_AreaObj.put("useful", priceAreaUsefulObj);
+			price_AreaObj.put("total", priceAreaTotalObj);
+			
+			JSONObject areaUsefulObj = new JSONObject();
+			areaUsefulObj.put("value", Double.valueOf(this.objetoImovelCobranca.getAreaConstruida()));
+			areaUsefulObj.put("percentage", 40);
+			
+			JSONObject areaTotalObj = new JSONObject();
+			areaTotalObj.put("value", 0);
+			areaTotalObj.put("percentage", 100);
+			
+			JSONObject areaObj = new JSONObject();
+			areaObj.put("useful", areaUsefulObj);
+			areaObj.put("total", areaTotalObj);
+			
+			JSONObject searchObj = new JSONObject();
+			searchObj.put("is_sale", true);
+			searchObj.put("max_age", 0);
+			searchObj.put("address", address);
+			searchObj.put("typology", typologyWithArray);
+			searchObj.put("area", areaObj);
+			searchObj.put("price_area", price_AreaObj);
+			searchObj.put("price_total", price_total);
+			searchObj.put("location", location);
+			searchObj.put("realty_type", realty_type);
+			
+			JSONObject moreFilters = new JSONObject();
+			moreFilters.put("full_address", true);
+			moreFilters.put("remove_duplicates", true);
+			moreFilters.put("active_ads", true);
+			moreFilters.put("recent_ads", false);
+			moreFilters.put("min_quantity_ad", 5);
+			moreFilters.put("min_similarity", 0.3);
+			
+			JSONObject postObj = new JSONObject();
+			postObj.put("search", searchObj);
+			postObj.put("assessing", assessingObj);
+			postObj.put("more_filters", moreFilters);
+
+			String idAval = "";
+			
+			URL myURL = new URL("https://api.prd.valuation.eemovel.com.br/valuation/assessment/internal/realty/calculator");
+			
+
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setRequestMethod("POST");
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+			myURLConnection.setRequestProperty("x-api-key", apikey);
+			myURLConnection.setDoOutput(true);
+			
+			try(OutputStream os = myURLConnection.getOutputStream()) {
+			    byte[] input = postObj.toString().getBytes("utf-8");
+			    os.write(input, 0, input.length);
+			    os.close();
+			}
+			
+			if (myURLConnection.getResponseCode() == HttpURLConnection.HTTP_INTERNAL_ERROR) {
+				BufferedReader in = new BufferedReader(new InputStreamReader(myURLConnection.getErrorStream(), "utf-8"));
+				String inputLine;
+				StringBuilder response = new StringBuilder();
+
+				while ((inputLine = in.readLine()) != null) {
+					response.append(inputLine);
+				}
+				in.close();
+				
+				System.out.println(response);
+			}
+			
+			if (myURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+				BufferedReader in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "utf-8"));
+				String inputLine;
+				StringBuilder response = new StringBuilder();
+
+				while ((inputLine = in.readLine()) != null) {
+					response.append(inputLine);
+				}
+				in.close();
+
+				JSONObject responseObj = new JSONObject(response.toString());
+				System.out.println(responseObj);
+				
+				if(responseObj.has("data")) {
+					idAval = responseObj.getString("data");
+				}
+			}
+			myURLConnection.disconnect();
+			laudoDone = getLaudoStatus(idAval, apikey);
+			
+			if (laudoDone) {
+				myURL = new URL("https://api.prd.valuation.eemovel.com.br/valuation/files/public/report/" + idAval);
+				
+				HttpURLConnection myURLConnectionPdf = (HttpURLConnection) myURL.openConnection();
+				myURLConnectionPdf.setRequestMethod("GET");
+				myURLConnectionPdf.setUseCaches(false);
+				myURLConnectionPdf.setRequestProperty("Accept", "application/json");
+				myURLConnectionPdf.setRequestProperty("Accept-Charset", "utf-8");
+				myURLConnectionPdf.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+				myURLConnectionPdf.setRequestProperty("x-api-key", apikey);
+
+				if (myURLConnectionPdf.getResponseCode() == HttpURLConnection.HTTP_OK) {
+					BufferedReader in = new BufferedReader(new InputStreamReader(myURLConnectionPdf.getInputStream()));
+					String inputLine;
+					StringBuffer response = new StringBuffer();
+
+					while ((inputLine = in.readLine()) != null) {
+						response.append(inputLine);
+					}
+					in.close();
+
+					JSONObject responseObj = new JSONObject(response.toString());
+					if (responseObj.has("data")) {
+						String dataObj = responseObj.getString("data");
+						laudoEndereco = dataObj;
+					}
+				}
+				myURLConnection.disconnect();
+			}		
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void abreLaudo() throws IOException {
+	    ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+	    externalContext.redirect(getLaudoEndereco());
+	    laudoEndereco = "";
+	}
+	
+	private void getLatAndLon(String endereco) {
+		try {
+			int HTTP_COD_SUCESSO = 200;
+			String accessKey = "ee7ad0e9d2562d49dbd70dc21429df96";
+
+			URL myURL = new URL("http://api.positionstack.com/v1/forward?access_key=" + accessKey + "&query=" + this.objetoImovelCobranca.getEndereco());
+
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestMethod("GET");
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+			myURLConnection.setDoOutput(true);
+
+
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
+			
+			} else {
+
+				BufferedReader in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream()));
+				String inputLine;
+				StringBuffer response = new StringBuffer();
+
+				while ((inputLine = in.readLine()) != null) {
+					response.append(inputLine);
+				}
+				in.close();
+				
+				JSONObject jsonObj = new JSONObject(response.toString());
+				JSONArray dataObj = jsonObj.getJSONArray("data");
+				for (int i = 0; i < dataObj.length(); i++) {
+					JSONObject obj = dataObj.getJSONObject(i);
+					
+					if(obj.has("latitude")) {
+						imovelCobrancaLatitude = obj.getBigDecimal("latitude");
+					}
+					
+					if(obj.has("longitude")) {
+						imovelCobrancaLongitude = obj.getBigDecimal("longitude");
+					}
+				}						
+			}
+			myURLConnection.disconnect();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public boolean getLaudoStatus(String avaliacaoString, String apikey) {
+		boolean isLaudoDone = false;
+		
+		while(!isLaudoDone) {
+			try {
+				Thread.sleep(5000);
+				URL myURL = new URL("https://api.prd.valuation.eemovel.com.br/valuation/assessment/internal/status/"
+						+ avaliacaoString);
+
+				HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+				myURLConnection.setRequestMethod("GET");
+				myURLConnection.setUseCaches(false);
+				myURLConnection.setRequestProperty("Accept", "application/json");
+				myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+				myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+				myURLConnection.setRequestProperty("x-api-key", apikey);
+				myURLConnection.setDoOutput(true);
+
+				if (myURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+					BufferedReader in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream()));
+					String inputLine;
+					StringBuffer response = new StringBuffer();
+
+					while ((inputLine = in.readLine()) != null) {
+						
+						response.append(inputLine);
+					}
+					in.close();
+
+					JSONObject responseObj = new JSONObject(response.toString());
+					if (responseObj.has("data")) {
+						JSONObject dataObj = responseObj.getJSONObject("data");
+						if (dataObj.has("progress")) {
+							JSONObject progressObj = dataObj.getJSONObject("progress");
+							if (CommonsUtil.mesmoValor(progressObj.get("selection"), "Numero mínimo de amostras selecionadas não foi atingido.")) {
+								break;
+							} else if (progressObj.getBoolean("selection") 
+									&& progressObj.getBoolean("search")
+									&& progressObj.getBoolean("price")) {
+								isLaudoDone = true;
+							}
+						}
+					}
+				}
+				myURLConnection.disconnect();
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+			return isLaudoDone;
+
+	}
 
 	/**
 	 * @param fileRecibo the fileRecibo to set
@@ -34401,5 +34711,13 @@ public class ContratoCobrancaMB {
 
 	public void setObjetoDocumentoAnalise(DocumentoAnalise objetoDocumentoAnalise) {
 		this.objetoDocumentoAnalise = objetoDocumentoAnalise;
+	}
+	
+	public String getLaudoEndereco() {
+		return laudoEndereco;
+	}
+	
+	public boolean hasLaudo() {
+		return (laudoEndereco != "") ? true : false;	
 	}
 }

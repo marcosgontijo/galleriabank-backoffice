@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -60,6 +61,13 @@ public class ImovelCobranca implements Serializable {
 	private boolean simuladorCheckList;//
 	
 	private ImovelEstoque imovelEstoque;
+	private int numeroQuartos;
+	private int numeroBanheiros;
+	private int numeroSuites;
+	private int numeroGaragens;
+	private int numeroImovel;
+
+	private Cidade objetoCidade;
 	
 	private Cidade objetoCidade;	
 	
@@ -648,4 +656,61 @@ public class ImovelCobranca implements Serializable {
 	}
 
 	
+	public int getNumeroQuartos() {
+		return numeroQuartos;
+	}
+
+	public void setNumeroQuartos(int numeroQuartos) {
+		this.numeroQuartos = numeroQuartos;
+	}
+
+	public int getNumeroBanheiros() {
+		return numeroBanheiros;
+	}
+
+	public void setNumeroBanheiros(int numeroBanheiros) {
+		this.numeroBanheiros = numeroBanheiros;
+	}
+
+	public int getNumeroSuites() {
+		return numeroSuites;
+	}
+
+	public void setNumeroSuites(int numeroSuites) {
+		this.numeroSuites = numeroSuites;
+	}
+
+	public int getNumeroGaragens() {
+		return numeroGaragens;
+	}
+
+	public void setNumeroGaragens(int numeroGaragens) {
+		this.numeroGaragens = numeroGaragens;
+	}
+
+	public int getCategoria() {
+		if (CommonsUtil.mesmoValor(this.getTipo(), "Apartamento")) {
+			return 1;
+		}
+		if (CommonsUtil.mesmoValor(this.getTipo(), "Casa")) {
+			return 2;
+		}
+		if (this.getTipo().toLowerCase().contains("condomínio")) {
+			return 3;
+		}
+		return 0;
+	}
+	
+	public String getNumeroImovel() {
+		return String.valueOf(numeroImovel);
+	}
+
+	public void setNumeroImovel() {
+		String[] split = this.endereco.split(",");
+		if (split.length > 1) {
+			this.numeroImovel = Integer.valueOf(split[1]);
+		} else {
+			this.numeroImovel = 0;
+		}
+	}
 }
