@@ -56,19 +56,25 @@
 						value="#{contratoCobrancaMB.contasPagarSelecionada}" />
 				</p:fileUpload>
 			</h:panelGrid>
-
 			<p:panel id="ArquivosSalvosAnalise"
 				header="Arquivo(s) Salvo(s) na analise" style="margin-bottom:10px;">
 				<f:facet name="header"> Arquivo(s) Salvo(s) na analise 
 							<p:outputLabel value="" />
 					<p:commandButton value="Adicionar Pessoa"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise and contratoCobrancaMB.objetoDocumentoAnalise.engineProcessado}"
 						action="#{contratoCobrancaMB.preparaAdicionarPessoaAnalise}"
 						oncomplete="PF('adicionarPessoaAnaliseDlg').show();"
 						update="adicionarPessoaAnaliseForm">
 					</p:commandButton>
+					<p:commandButton value="Adicionar Pessoa"
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
+						action="#{contratoCobrancaMB.preparaAdicionarPessoaAnalise}"
+						oncomplete="PF('adicionarPessoaAnaliseDlg').show();"
+						disabled="true"
+						update="adicionarPessoaAnaliseForm">
+						
+					</p:commandButton>
 				</f:facet>
-
 				<h:panelGrid columns="1">
 					<p:dataTable id="dtFilesAnalise" var="fileAnalise"
 						value="#{contratoCobrancaMB.listaDocumentoAnalise}"
@@ -78,7 +84,7 @@
 							or contratoCobrancaMB.objetoContratoCobranca.emAnalise) ? '' : 'ui-helper-hidden'}">
 						
 						<f:facet name="header">								 
-							<p:commandButton value="Excluir Selecionado(s)" ajax="true" icon="ui-icon-trash" update="dtFilesAnalise" action="#{contratoCobrancaMB.deleteArquivosAnalisados}">
+							<p:commandButton value="Excluir Selecionado(s)" ajax="false" immediate="true" icon="ui-icon-trash" update="dtFilesAnalise" action="#{contratoCobrancaMB.deleteArquivosAnalisados}">
 								<p:confirm header="Confirmação" message="Deseja Excluir os itens selecionados?"/>
 							</p:commandButton>
 				        </f:facet>
@@ -154,6 +160,13 @@
 								rendered="#{fileAnalise.podeChamarRea and !fileAnalise.reaNaoEnviado and !fileAnalise.reaProcessado }" />
 							<h:outputText value="REA Processado"
 								rendered="#{fileAnalise.podeChamarRea and fileAnalise.reaProcessado }" />
+									<p:commandButton
+										action="#{contratoCobrancaMB.baixarMatricula(fileAnalise.id)}"
+										onclick="target='_blank'" onblur="target='_self'"
+										icon="ui-icon ui-icon-print" value="Abrir Rea"
+										ajax="false" 
+										rendered="#{fileAnalise.tipo == 'Rea'}"/>
+								
 
 							<p:commandButton
 								action="#{contratoCobrancaMB.baixarEngineDocumento(fileAnalise)}"
@@ -236,7 +249,7 @@
 								<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
 							</p:commandButton>
 						</p:column>
-							
+						 
 					</p:dataTable>
 				</h:panelGrid>
 
