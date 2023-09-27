@@ -17,6 +17,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocketConsultaDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocketDao;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
+import com.webnowbr.siscoat.cobranca.service.FileService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GsonUtil;
 
@@ -64,7 +65,8 @@ public class DocketWebhook {
 				docketConsulta.setRetorno(GsonUtil.toJson(documentoRetorno));
 				String base64 = docketService.getPdfBase64(docketConsulta.getRetorno());
 				docketConsulta.setPdf(base64);
-				docketService.salvarPdfRetorno(docketConsulta.getDocumentoAnalise(), base64, documentoRetorno.getDocumentoNome(), "interno");
+				FileService fileService = new FileService();
+				fileService.salvarPdfRetorno(docketConsulta.getDocumentoAnalise(), base64, documentoRetorno.getDocumentoNome(), "interno");
 			}
 			
 			if (objetoContratoCobranca.isPresent()) {
