@@ -13,7 +13,8 @@
 			<p:messages id="mensagens" showDetail="true" />
 			
 			<p:panel id="variaveis" header="Variáveis a preencher"
-				style="margin-bottom:20px;">
+				style="margin-bottom:20px;" 
+				rendered="#{not balancoPatrimonialMB.editar}">
 
 				<h:panelGrid columns="2">
 						
@@ -67,6 +68,12 @@
 					<p:inputNumber id="taxaCri4"
 						value="#{balancoPatrimonialMB.objetoBalanco.taxaCri4}"
 						decimalPlaces="4" />
+					
+					<p:outputLabel for="taxaCri5" value="Informe Taxa Cri 5: "
+						styleClass="labelBold" />
+					<p:inputNumber id="taxaCri5"
+						value="#{balancoPatrimonialMB.objetoBalanco.taxaCri5}"
+						decimalPlaces="4" />	
 					
 					<p:outputLabel for="kpmg" value="Informe Taxa KPMG: "
 						styleClass="labelBold" />

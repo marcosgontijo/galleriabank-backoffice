@@ -52,14 +52,14 @@ public class ImovelEstoqueDao extends HibernateDao <ImovelEstoque,Long> {
 		});
 	}
     
-    private String QUERY_RELATORIO_ESTOQUE = "select c.numerocontrato, ie.variacaocusto, ie.ltvleilao, c.valorccb, c.valorvendaforcadaimovel , c.valormercadoimovel, p.nome, i.numeromatricula, \r\n"
+    private String QUERY_RELATORIO_ESTOQUE = "select c.numerocontrato, ie.variacaocusto, ie.ltvleilao, ie.valoremprestimo, ie.vendaforcada, ie.valormercado, p.nome, i.numeromatricula, \r\n"
     		+ "concat (i.endereco, ', ', i.bairro, ', ', i.complemento, ', ', i.cidade, ', ', i.estado, '- ', i.cep) as Imovel, ie.dataconsolidado, ie.dataleilao1, ie.dataleilao2, \r\n"
-    		+ "ie.dataleilao3 as LeilaoEstoque, ie.statusleilao, ie.statusatual, ie.valorleilao2, ie.valorvenda, ie.datavenda, ie.tipovenda, ie.estoque \r\n"
+    		+ "ie.dataleilao3 as LeilaoEstoque, ie.statusleilao, ie.leiloeiro, ie.statusatual, ie.valorleilao2, ie.valorvenda, ie.datavenda, ie.tipovenda, ie.quitado \r\n"
     		+ "	from cobranca.contratocobranca c\r\n"
     		+ "	left join cobranca.imovelcobranca i on c.imovel = i.id\r\n"
     		+ "	left join cobranca.imovelestoque ie on i.imovelestoque  = ie.id\r\n"
     		+ "	left join cobranca.pagadorrecebedor p on c.pagador = p.id\r\n"
-    		+ "	where c.status = 'Aprovado' and c.valorccb > 0 and ie.estoque is not null\r\n"
+    		+ "	where c.status = 'Aprovado' and c.valorccb > 0 and ie.quitado is not null and c.imovel <> 29\r\n"
     		+ "	order by c.numerocontrato";
     
     @SuppressWarnings("unchecked")
@@ -81,9 +81,9 @@ public class ImovelEstoqueDao extends HibernateDao <ImovelEstoque,Long> {
 						relatorio.setNumeroContratoRelatorio(rs.getString("numerocontrato"));
 						relatorio.setVariacaoCustoRelatorio(rs.getBigDecimal("variacaocusto"));
 						relatorio.setLtvLeilaoRelatorio(rs.getBigDecimal("ltvleilao"));
-						relatorio.setValorEmprestimoRelatorio(rs.getBigDecimal("valorccb"));
-						relatorio.setVendaForcadaRelatorio(rs.getBigDecimal("valorvendaforcadaimovel"));
-						relatorio.setValorMercadoRelatorio(rs.getBigDecimal("valormercadoimovel"));
+						relatorio.setValorEmprestimoRelatorio(rs.getBigDecimal("valoremprestimo"));
+						relatorio.setVendaForcadaRelatorio(rs.getBigDecimal("vendaforcada"));
+						relatorio.setValorMercadoRelatorio(rs.getBigDecimal("valormercado"));
 						relatorio.setNomePagadorRelatorio(rs.getString("nome"));
 						relatorio.setNumeroMatriculaRelatorio(rs.getString("numeromatricula"));
 						relatorio.setEnderecoCompletoRelatorio(rs.getString("Imovel"));
@@ -91,6 +91,7 @@ public class ImovelEstoqueDao extends HibernateDao <ImovelEstoque,Long> {
 						relatorio.setDataLeilao1Relatorio(rs.getDate("dataleilao1"));
 						relatorio.setDataLeilao2Relatorio(rs.getDate("dataleilao2"));
 						relatorio.setDataLeilao3Relatorio(rs.getDate("LeilaoEstoque"));
+						relatorio.setLeiloeiroRelatorio(rs.getString("leiloeiro"));
 						relatorio.setStatusLeilaoRelatorio(rs.getString("statusleilao"));
 						relatorio.setStatusAtualRelatorio(rs.getString("statusatual"));
 						relatorio.setValorLeilao2Relatorio(rs.getBigDecimal("valorleilao2"));
@@ -112,7 +113,7 @@ public class ImovelEstoqueDao extends HibernateDao <ImovelEstoque,Long> {
 
     private String QUERY_ESTOQUE_BALANCO = "select id \r\n"
     		+ "from cobranca.imovelestoque i \r\n"
-    		+ "where estoque is true";
+    		+ "where quitado is true";
     
     @SuppressWarnings("unchecked")
 	public List<ImovelEstoque> balancoEstoque() {

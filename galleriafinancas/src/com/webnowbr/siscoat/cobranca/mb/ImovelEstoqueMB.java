@@ -17,6 +17,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -113,17 +114,19 @@ public class ImovelEstoqueMB {
 			if(CommonsUtil.semValor(this.objetoImovelCobranca.getImovelEstoque())) {
 				this.objetoImovelCobranca.setImovelEstoque(this.objetoImovelEstoque);	
 			
-			ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();				
-			imovelCobrancaDao.merge(this.objetoImovelCobranca);
 			}
 			
 			// Chama os métodos de cálculo e define os valores diretamente nos campos do objeto ImovelEstoque
 			this.objetoImovelEstoque.setVariacaoCusto(
 		            calcularVariacaoCustos(this.objetoImovelEstoque.getValorLeilao2(), this.objetoImovelEstoque.getValorEmprestimo())
 		        );
-		        this.objetoImovelEstoque.setLtvLeilao(
+		    this.objetoImovelEstoque.setLtvLeilao(
 		            calcularLtvLeilao(this.objetoImovelEstoque.getValorLeilao2(), this.objetoImovelEstoque.getValorMercado())
 		        );
+		        
+		     ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();				
+		     imovelCobrancaDao.merge(this.objetoImovelCobranca);    
+		     imovelEstoqueDao.merge(this.objetoImovelEstoque); 
 
 
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Estoque Inserido com sucesso!!", ""));
@@ -143,7 +146,11 @@ public class ImovelEstoqueMB {
 		if (CommonsUtil.semValor(this.objetoImovelEstoque)) {
 			objetoImovelEstoque = new ImovelEstoque();
 		}
-
+		
+		if (objetoContratoCobranca != null) {
+	        preencherCamposComDadosContrato(); // Chama o método para preencher os campos com os dados do contrato
+	    }
+		
 		return "/Atendimento/Cobranca/ImovelEstoqueEditar.xhtml";
 	}
 		
@@ -152,9 +159,25 @@ public class ImovelEstoqueMB {
 		listaConsultaEstoque = contratoCobrancaDao.consultaImovelEstoque();
 	}
 	
+	public void preencherCamposComDadosContrato() {
+	    if (objetoContratoCobranca != null) {
+	        // Verifique se os campos do ContratoCobranca que deseja copiar não são nulos
+	        if (objetoContratoCobranca.getValorCCB() != null) {
+	            objetoImovelEstoque.setValorEmprestimo(objetoContratoCobranca.getValorCCB());
+	        }
+	        if (objetoContratoCobranca.getValorVendaForcadaImovel() != null) {
+	            objetoImovelEstoque.setVendaForcada(objetoContratoCobranca.getValorVendaForcadaImovel());
+	        }
+	        if (objetoContratoCobranca.getValorImovel() != null) {
+	            objetoImovelEstoque.setValorMercado(objetoContratoCobranca.getValorImovel());
+	        }
+	        // Continue preenchendo outros campos conforme necessário
+	    }
+	}
+	
 	public BigDecimal calcularVariacaoCustos(BigDecimal valorLeilao2, BigDecimal valorEmprestimo) {
 	    if (valorLeilao2 != null && valorEmprestimo != null && BigDecimal.ZERO.compareTo(valorEmprestimo) != 0) {
-	        return (valorLeilao2.divide(valorEmprestimo, RoundingMode.HALF_UP).subtract(BigDecimal.ONE)).multiply(BigDecimal.valueOf(100));
+	        return (valorLeilao2.divide(valorEmprestimo, RoundingMode.HALF_UP).subtract(BigDecimal.ONE));
 	    } else {
 	        // Trata o caso em que um dos valores é nulo ou zero
 	        return BigDecimal.ZERO;
@@ -163,7 +186,7 @@ public class ImovelEstoqueMB {
 
 	public BigDecimal calcularLtvLeilao(BigDecimal valorLeilao2, BigDecimal valorMercado) {
 	    if (valorLeilao2 != null && valorMercado != null && BigDecimal.ZERO.compareTo(valorMercado) != 0) {
-	        return (valorLeilao2.divide(valorMercado, RoundingMode.HALF_UP)).multiply(BigDecimal.valueOf(100));
+	        return (valorLeilao2.divide(valorMercado, RoundingMode.HALF_UP));
 	    } else {
 	        // Trata o caso em que um dos valores é nulo ou zero
 	        return BigDecimal.ZERO; // Ou outro valor padrão, dependendo do seu caso
@@ -200,7 +223,7 @@ public class ImovelEstoqueMB {
 	    String[] headerTexts = {
 	        "N° CONTRATO", "VARIAÇÃO CUSTOS ATÉ LEILÃO", "LTV DO LEILÃO", "VALOR DO EMPRÉSTIMO",
 	        "VENDA FORÇADA", "VALOR MERCADO", "CLIENTE", "MATRÍCULA", "IMÓVEL", "CONSOLIDADO EM",
-	        "1º LEILÃO", "2º LEILÃO", "LEILÃO ESTOQUE", "STATUS LEILÃO", "STATUS ATUAL",
+	        "1º LEILÃO", "2º LEILÃO", "LEILÃO ESTOQUE","LEILOEIRO",  "STATUS LEILÃO", "STATUS ATUAL",
 	        "VALOR 2º LEILÃO", "VALOR VENDA", "DATA VENDA", "TIPO VENDA"
 	    };
 
@@ -216,33 +239,40 @@ public class ImovelEstoqueMB {
 	    }
 
 	    // Cria uma instância de XSSFCellStyle para a formatação das linhas pares
-	    XSSFCellStyle evenRowStyle = wb.createCellStyle();
+	    //XSSFCellStyle evenRowStyle = wb.createCellStyle();
 
 	    // Define a cor de fundo para as linhas pares
 	    //evenRowStyle.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
 	    //evenRowStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
 	    // Cria uma instância de XSSFCellStyle para a formatação das linhas ímpares
-	    XSSFCellStyle oddRowStyle = wb.createCellStyle();
+	    //XSSFCellStyle oddRowStyle = wb.createCellStyle();
 
 	    // Define a cor de fundo para as linhas ímpares
-	    oddRowStyle.setFillForegroundColor(IndexedColors.LEMON_CHIFFON.getIndex());
-	    oddRowStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+	    //oddRowStyle.setFillForegroundColor(IndexedColors.LEMON_CHIFFON.getIndex());
+	    //oddRowStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
 	    // Cria uma fonte para os estilos das linhas
 	    XSSFFont rowFont = wb.createFont();
 	    rowFont.setBold(false); // Desligue o negrito
-	    evenRowStyle.setFont(rowFont);
-	    oddRowStyle.setFont(rowFont);
+	    //evenRowStyle.setFont(rowFont);
+	    //oddRowStyle.setFont(rowFont);
 	    
+	    // formatação dados geral
+	 	XSSFCellStyle normal_style = wb.createCellStyle();
+	 	CellStyle normalStyle = wb.createCellStyle();
+	 	normalStyle.setAlignment(HorizontalAlignment.LEFT);
+	 	normalStyle.setVerticalAlignment(VerticalAlignment.TOP);
+
 	    // Cria um estilo personalizado para formato de moeda
-	    XSSFCellStyle currencyCellStyle = wb.createCellStyle();
-	    //currencyCellStyle.setDataFormat(wb.createDataFormat().getFormat("R$ #,##0.00")); // Define o formato da moeda
-	    
+	    XSSFCellStyle currencyCellStyle = wb.createCellStyle();	    
 	    CreationHelper ch = wb.getCreationHelper();
 	    currencyCellStyle.setDataFormat(ch.createDataFormat().getFormat("_(R$* #,##0.00_);_(R$* (#,##0.00);_(R$* \"-\"??_);_(@_)")); // Define o formato da moeda
 
-
+	    // Cria um estilo personalizado para formato percentual
+	    XSSFCellStyle percentCellStyle = wb.createCellStyle();
+	    percentCellStyle.setDataFormat(ch.createDataFormat().getFormat("0.00%"));
+	    
 	    // Inicia um contador para rastrear linhas ímpares/pares
 	    int rowNum = 0;
 
@@ -250,12 +280,12 @@ public class ImovelEstoqueMB {
 	        XSSFRow linha = sheet.createRow(rowNum + 1); // Comece a partir da segunda linha (0 é o cabeçalho)
 
 	        // Aplicar o estilo alternado com base no número da linha
-	        XSSFCellStyle rowStyle = (rowNum % 2 == 0) ? evenRowStyle : oddRowStyle;
+	        //XSSFCellStyle rowStyle = (rowNum % 2 == 0) ? evenRowStyle : oddRowStyle;
 	        for (int i = 0; i < headerTexts.length; i++) {
 	            XSSFCell cell = linha.createCell(i);
 	            // Defina o valor da célula com base nos dados do relatório
 	            // ...
-	            cell.setCellStyle(rowStyle);
+	            cell.setCellStyle(normalStyle);
 	        }
 
 	        rowNum++;
@@ -282,12 +312,13 @@ public class ImovelEstoqueMB {
 	    gravaCelula(10, "1º LEILÃO", linha);
 	    gravaCelula(11, "2º LEILÃO", linha);
 	    gravaCelula(12, "LEILÃO ESTOQUE", linha);
-	    gravaCelula(13, "STATUS LEILÃO", linha);
-	    gravaCelula(14, "STATUS ATUAL", linha);
-	    gravaCelula(15, "VALOR 2º LEILÃO", linha);
-	    gravaCelula(16, "VALOR VENDA", linha);
-	    gravaCelula(17, "DATA VENDA", linha);
-	    gravaCelula(18, "TIPO VENDA", linha);
+	    gravaCelula(13, "LEILOEIRO", linha);
+	    gravaCelula(14, "STATUS LEILÃO", linha);
+	    gravaCelula(15, "STATUS ATUAL", linha);
+	    gravaCelula(16, "VALOR 2º LEILÃO", linha);
+	    gravaCelula(17, "VALOR VENDA", linha);
+	    gravaCelula(18, "DATA VENDA", linha);
+	    gravaCelula(19, "TIPO VENDA", linha);
 
 	    iLinha++;
 
@@ -313,19 +344,28 @@ public class ImovelEstoqueMB {
 	        gravaCelula(10, relatorio.getDataLeilao1Relatorio(), linha);
 	        gravaCelula(11, relatorio.getDataLeilao2Relatorio(), linha);
 	        gravaCelula(12, relatorio.getDataLeilao3Relatorio(), linha);
-	        gravaCelula(13, relatorio.getStatusLeilaoRelatorio(), linha);
-	        gravaCelula(14, relatorio.getStatusAtualRelatorio(), linha);
-	        gravaCelulaComEstiloMoeda(15, relatorio.getValorLeilao2Relatorio(), linha, currencyCellStyle);
-	        gravaCelulaComEstiloMoeda(16, relatorio.getValorVendaRelatorio(), linha, currencyCellStyle);
-	        gravaCelula(17, relatorio.getDataVendaRelatorio(), linha);
-	        gravaCelula(18, relatorio.getTipoVendaRelatorio(), linha);
+	        gravaCelula(13, relatorio.getLeiloeiroRelatorio(), linha);
+	        gravaCelula(14, relatorio.getStatusLeilaoRelatorio(), linha);
+	        gravaCelula(15, relatorio.getStatusAtualRelatorio(), linha);
+	        gravaCelulaComEstiloMoeda(16, relatorio.getValorLeilao2Relatorio(), linha, currencyCellStyle);
+	        gravaCelulaComEstiloMoeda(17, relatorio.getValorVendaRelatorio(), linha, currencyCellStyle);
+	        gravaCelula(18, relatorio.getDataVendaRelatorio(), linha);
+	        gravaCelula(19, relatorio.getTipoVendaRelatorio(), linha);
 
 	        // Aplica o estilo de formatação da linha
-	        XSSFCellStyle rowStyle = (iLinha % 2 == 0) ? evenRowStyle : oddRowStyle;
+	        //XSSFCellStyle rowStyle = (iLinha % 2 == 0) ? evenRowStyle : oddRowStyle;
+	        
 	        for (int i = 0; i < headerTexts.length; i++) {
 	            XSSFCell cell = linha.getCell(i);
-	            cell.setCellStyle(rowStyle);
-	        }
+	            
+	            if (i == 1 || i == 2) { // Colunas 1 e 2 são formatadas como percentual
+		            cell.setCellStyle(percentCellStyle);
+		            }
+	            
+	            if (i != 1 && i != 2) { // Colunas 1 e 2 não são formatadas como moeda
+	            cell.setCellStyle(currencyCellStyle);
+	            }
+	        }   
 
 	        rowNum++;
 

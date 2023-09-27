@@ -101,11 +101,25 @@
 								<p:selectOneMenu id="statusLeilao"
 									value="#{imovelEstoqueMB.objetoImovelEstoque.statusLeilao}" 
 									style="width: 180px;">
-									<f:selectItem itemValue="" itemLabel="" />
-									<f:selectItem itemValue="Estoque" itemLabel="Estoque" />	
+									<f:selectItem itemValue="" itemLabel="" />	
 									<f:selectItem itemValue="Negativo" itemLabel="Negativo" />
+									<f:selectItem itemValue="Online" itemLabel="Online" />
+									<f:selectItem itemValue="Positivo" itemLabel="Positivo" />
+									<f:selectItem itemValue="Presencial" itemLabel="Presencial" />
 									<f:selectItem itemValue="Suspenso por decisão judicial" itemLabel="Suspenso por decisão judicial"/>
 								</p:selectOneMenu>
+								
+								<p:outputLabel for="leiloeiro" value="Leiloeiro: "
+									styleClass="labelBold" />
+								<p:selectOneMenu id="leiloeiro"
+									value="#{imovelEstoqueMB.objetoImovelEstoque.leiloeiro}" 
+									style="width: 180px;">
+									<f:selectItem itemValue="" itemLabel="" />
+									<f:selectItem itemValue="Leiloaria" itemLabel="Leiloaria" />	
+									<f:selectItem itemValue="Pecini" itemLabel="Pecini" />
+									<f:selectItem itemValue="Sato" itemLabel="Sato" />
+									<f:selectItem itemValue="Superbid" itemLabel="Superbid" />
+									</p:selectOneMenu>
 								
 								<p:outputLabel for="statusAtual" value="Status Atual: "
 									styleClass="labelBold" />
@@ -114,11 +128,11 @@
 									style="width: 180px;">
 									<f:selectItem itemValue="" itemLabel=""/>
 									<f:selectItem itemValue="Alugado" itemLabel="Alugado"/>	
-									<f:selectItem itemValue="Cancelado por acordo" itemLabel="Cancelado por acordo"/>
 									<f:selectItem itemValue="Estoque" itemLabel="Estoque"/>
-									<f:selectItem itemValue="Online" itemLabel="Online"/>
+									<f:selectItem itemValue="Leilão de Estoque" itemLabel="Leilão de Estoque"/>
 									<f:selectItem itemValue="Pendente por decisão judicial" itemLabel="Pendente por decisão judicial"/>
 									<f:selectItem itemValue="Reintegração de posse" itemLabel="Reintegração de posse"/>
+									<f:selectItem itemValue="Suspenso por decisão judicial" itemLabel="Suspenso por decisão judicial"/>
 									<f:selectItem itemValue="Vendido" itemLabel="Vendido"/>
 								</p:selectOneMenu>
 								
@@ -158,9 +172,9 @@
 									<f:selectItem itemValue="Preferência" itemLabel="Preferência"/>
 								</p:selectOneMenu>	
 									
-								<p:outputLabel value="Estoque atual?: " styleClass="labelBold"
+								<p:outputLabel value="Contrato quitado?: " styleClass="labelBold"
 										style="font-weight: bold; font-size: 18px;" />
-							<p:selectBooleanCheckbox id="estoque" value="#{imovelEstoqueMB.objetoImovelEstoque.estoque}" >
+							<p:selectBooleanCheckbox id="estoque" value="#{imovelEstoqueMB.objetoImovelEstoque.quitado}" >
 								<p:ajax event="change" />
 							</p:selectBooleanCheckbox>	
 							</h:panelGrid>

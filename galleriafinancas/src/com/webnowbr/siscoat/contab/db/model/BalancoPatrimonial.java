@@ -76,6 +76,7 @@ public class BalancoPatrimonial implements Serializable {
 	private BigDecimal taxaCri2;
 	private BigDecimal taxaCri3;
 	private BigDecimal taxaCri4;
+	private BigDecimal taxaCri5;
 	private BigDecimal kpmg;
 	
 	private BigDecimal custoPonderado;
@@ -99,7 +100,7 @@ public class BalancoPatrimonial implements Serializable {
 			quantidadeItens = quantidadeItens+1;
 		}
 		
-		System.out.println("Quantidade de itens: " + quantidadeItens);
+		System.out.println("Quantidade de itens Pagar: " + quantidadeItens);
 		System.out.println("somaParcela: " +somaParcela);
 		System.out.println("somaFatorX: " +somaFatorX);
 		custoPonderado = (somaFatorX.divide(somaParcela,MathContext.DECIMAL128));
@@ -274,10 +275,28 @@ public class BalancoPatrimonial implements Serializable {
 						saldoAtualizado = vlrParcela.multiply(juros); // parcela * juros
 						saldoAtualizado = saldoAtualizado.multiply(multa.add(new BigDecimal(1))); // parcela * juros * multa
 					} else {
-						// (1 + IPCA + TAXA CRI1)
+						// (1 + IPCA + TAXA CRI4)
 						
 						BigDecimal ipcaCalculo = ipca.divide(new BigDecimal(100));
 						BigDecimal taxaCriCalculo = CommonsUtil.bigDecimalValue(taxaCri4) .divide(new BigDecimal(100));
+						
+						jurosFidc = jurosFidc.add(ipcaCalculo);
+						jurosFidc = jurosFidc.add(taxaCriCalculo);
+						// juros ^ meses
+						jurosFidc = CommonsUtil.bigDecimalValue(
+								Math.pow(CommonsUtil.doubleValue(jurosFidc), CommonsUtil.doubleValue(quantidadeDeMeses)));
+						saldoAtualizado = valorFace.multiply(jurosFidc);
+					}
+				}
+				else if (CommonsUtil.mesmoValor(empresa, "CRI 5")) {
+					if (quantidadeDeMeses.compareTo(BigDecimal.ZERO) > 0) {
+						saldoAtualizado = vlrParcela.multiply(juros); // parcela * juros
+						saldoAtualizado = saldoAtualizado.multiply(multa.add(new BigDecimal(1))); // parcela * juros * multa
+					} else {
+						// (1 + IPCA + TAXA CRI5)
+						
+						BigDecimal ipcaCalculo = ipca.divide(new BigDecimal(100));
+						BigDecimal taxaCriCalculo = taxaCri5.divide(new BigDecimal(100));
 						
 						jurosFidc = jurosFidc.add(ipcaCalculo);
 						jurosFidc = jurosFidc.add(taxaCriCalculo);
@@ -478,7 +497,7 @@ public class BalancoPatrimonial implements Serializable {
 	public void calculaValorVendaForcada(List<ImovelEstoque> imoveis) {
 		BigDecimal somaValorVendaForcada = BigDecimal.ZERO;
 		for (ImovelEstoque imovel : imoveis) {
-			if (imovel.getEstoque()== true) {
+			if (imovel.getQuitado()== true) {
 				somaValorVendaForcada = somaValorVendaForcada.add(imovel.getVendaForcada());			
 			}
 		}
@@ -1128,6 +1147,13 @@ public class BalancoPatrimonial implements Serializable {
 	}
 	public void setTaxaCri4(BigDecimal taxaCri4) {
 		this.taxaCri4 = taxaCri4;
+	}
+	
+	public BigDecimal getTaxaCri5() {
+		return taxaCri5;
+	}
+	public void setTaxaCri5(BigDecimal taxaCri5) {
+		this.taxaCri5 = taxaCri5;
 	}
 	public BigDecimal getKpmg() {
 		return kpmg;

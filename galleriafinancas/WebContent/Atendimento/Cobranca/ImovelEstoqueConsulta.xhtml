@@ -43,6 +43,8 @@
 		                <p:commandButton action="#{imovelEstoqueMB.editarEstoque}" ajax="false" icon="ui-icon-pencil" title="Editar">			        		
 			        		<f:setPropertyActionListener target="#{imovelEstoqueMB.objetoImovelEstoque}" value="#{estoque.imovel.imovelEstoque}" />
 			        		<f:setPropertyActionListener target="#{imovelEstoqueMB.objetoImovelCobranca}" value="#{estoque.imovel}" />
+			        		<f:setPropertyActionListener target="#{imovelEstoqueMB.objetoContratoCobranca}" value="#{estoque}" />
+			      
 		                </p:commandButton>
 		            </p:column>			        		               		        			        			           			 		
 			        

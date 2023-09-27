@@ -62,6 +62,7 @@ public class BalancoPatrimonialMB {
 	private List<RelatorioBalanco> relatorioBalancoReceber = new ArrayList<RelatorioBalanco>();
 	private List<ImovelEstoque> imoveis;
 
+
 	public String clearFieldsBalancoPatrimonialConsulta() {
 
 		BalancoPatrimonialDao balancopatrimonialDao = new BalancoPatrimonialDao();
@@ -88,7 +89,8 @@ public class BalancoPatrimonialMB {
 
 	public String clearBalancoPatrimonialEditar() {
 		BalancoPatrimonialDao balancopatrimonialDao = new BalancoPatrimonialDao();
-
+		
+		editar = true;
 		if (!this.editar) {
 			objetoBalanco = new BalancoPatrimonial();
 			ultimoBalanco = balancopatrimonialDao.consultaUltimoBalanco();
@@ -108,7 +110,9 @@ public class BalancoPatrimonialMB {
 				this.objetoBalanco.setInvestOperantigas(ultimoBalanco.getInvestOperantigas());
 				this.objetoBalanco.setCapitalSocial(ultimoBalanco.getCapitalSocial());
 			}
+		editar = false;	
 		}
+		
 		return "/Atendimento/Cobranca/Contabilidade/BalancoPatrimonialInserir.xhtml";
 	}
 
@@ -159,6 +163,8 @@ public class BalancoPatrimonialMB {
 				balancoPatrimonial.setTaxaCri1(this.objetoBalanco.getTaxaCri1());
 				balancoPatrimonial.setTaxaCri2(this.objetoBalanco.getTaxaCri2());
 				balancoPatrimonial.setTaxaCri3(this.objetoBalanco.getTaxaCri3());
+				balancoPatrimonial.setTaxaCri4(this.objetoBalanco.getTaxaCri4());
+				balancoPatrimonial.setTaxaCri5(this.objetoBalanco.getTaxaCri5());
 				balancos.add(balancoPatrimonial);
 				inicio = fim;
 				fim = inicio + qtdPorTask;
