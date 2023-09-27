@@ -1,5 +1,9 @@
 package com.webnowbr.siscoat.contab.mb;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -13,7 +17,9 @@ import java.util.TimeZone;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
@@ -55,8 +61,6 @@ public class BalancoPatrimonialMB {
 	private boolean editar;
 	private boolean excluir;
 	private boolean balancoPatrimonialXLSGerado;
-	private String pathBalanco;
-	private String nomeBalanco;
 
 	private List<RelatorioBalanco> relatorioBalancoPagar = new ArrayList<RelatorioBalanco>();
 	private List<RelatorioBalanco> relatorioBalancoReceber = new ArrayList<RelatorioBalanco>();
@@ -269,8 +273,7 @@ public class BalancoPatrimonialMB {
 
 	public void geraXLSBalancoPatrimonial() throws IOException {
 		ParametrosDao pDao = new ParametrosDao();
-		this.pathBalanco = pDao.findByFilter("nome", "BALANCO_PATH").get(0).getValorString();
-		this.nomeBalanco = "Balanço Patrimonial Teste.xlsx";
+		String nomeBalanco = "Balanço Patrimonial Teste.xlsx";
 
 		TimeZone zone = TimeZone.getDefault();
 		Locale locale = new Locale("pt", "BR");
@@ -283,7 +286,7 @@ public class BalancoPatrimonialMB {
 
 		// dataHoje.add(Calendar.DAY_OF_MONTH, 1);
 
-		String excelFileName = this.pathBalanco + this.nomeBalanco;// name of excel file
+//		String excelFileName = this.nomeBalanco;// name of excel file
 
 		String sheetName = "BalançoPatrimonial";// name of sheet
 
@@ -1069,14 +1072,41 @@ public class BalancoPatrimonialMB {
 		} else {
 			cell.setCellValue(Double.valueOf("0.00"));
 		}
+		
+		
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		ExternalContext externalContext = facesContext.getExternalContext();
+		HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+		
+				
+		response.reset();
+		// lire un fichier pdf
+		String mineFile = "application/vnd. ms-excel";
+		response.setHeader("Content-type", mineFile);
 
-		FileOutputStream fileOut = new FileOutputStream(excelFileName);
+		
 
-		// write this workbook to an Outputstream.
-		wb.write(fileOut);
-		fileOut.flush();
-		fileOut.close();
+		response.setHeader("Content-disposition",
+				"inline; FileName=" + nomeBalanco);
 
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		wb.write(bos);
+		byte[] pdfBytes = bos.toByteArray();
+		response.setContentLength(pdfBytes.length);
+		
+		BufferedOutputStream output = new BufferedOutputStream(response.getOutputStream(), 10240);
+		BufferedInputStream input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
+		
+		byte[] buffer = new byte[pdfBytes.length];
+		int length;
+		while ((length = input.read(buffer)) > 0) {
+			output.write(buffer, 0, length);
+		}
+
+		// Finalize task.
+		output.flush();
+		output.close();
+		facesContext.responseComplete();
 		this.balancoPatrimonialXLSGerado = true;
 	}
 
@@ -1157,20 +1187,6 @@ public class BalancoPatrimonialMB {
 		this.balancoPatrimonialXLSGerado = balancoPatrimonialXLSGerado;
 	}
 
-	public String getPathBalanco() {
-		return pathBalanco;
-	}
 
-	public void setPathBalanco(String pathBalanco) {
-		this.pathBalanco = pathBalanco;
-	}
-
-	public String getNomeBalanco() {
-		return nomeBalanco;
-	}
-
-	public void setNomeBalanco(String nomeBalanco) {
-		this.nomeBalanco = nomeBalanco;
-	}
 
 }
