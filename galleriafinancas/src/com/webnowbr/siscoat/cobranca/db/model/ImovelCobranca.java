@@ -59,7 +59,9 @@ public class ImovelCobranca implements Serializable {
 	private boolean matriculaGaragemCheckList;//
 	private boolean simuladorCheckList;//
 	
-	private Cidade objetoCidade;
+	private ImovelEstoque imovelEstoque;
+	
+	private Cidade objetoCidade;	
 	
 	public ImovelCobranca(){
 		resetarBololean();
@@ -222,6 +224,18 @@ public class ImovelCobranca implements Serializable {
 		objetoCidade = cidadeDao.buscaCidade(cidade, estadoStr);
 	}
 	
+	
+	
+	public String getEnderecoCompleto() {
+		String enderecoCompleto =   (!CommonsUtil.semValor(endereco)? endereco:"") +
+									(!CommonsUtil.semValor(bairro)? ", " + bairro:"") +
+									(!CommonsUtil.semValor(complemento)? ", " + complemento:"") +
+									(!CommonsUtil.semValor(cidade)? ", " + cidade:"") +
+									(!CommonsUtil.semValor(estado)? ", " + estado:"") +
+									(!CommonsUtil.semValor(cep)? ", " + cep:"");
+									
+		return enderecoCompleto;
+	}
 	
 	/**
 	 * @return the id
@@ -616,6 +630,7 @@ public class ImovelCobranca implements Serializable {
 		this.inscricaoMunicipal = inscricaoMunicipal;
 	}
 
+
 	public Cidade getObjetoCidade() {
 		return objetoCidade;
 	}
@@ -623,5 +638,14 @@ public class ImovelCobranca implements Serializable {
 	public void setObjetoCidade(Cidade objetoCidade) {
 		this.objetoCidade = objetoCidade;
 	}	
+	
+	public ImovelEstoque getImovelEstoque() {
+		return imovelEstoque;
+	}
+
+	public void setImovelEstoque(ImovelEstoque imovelEstoque) {
+		this.imovelEstoque = imovelEstoque;
+	}
+
 	
 }

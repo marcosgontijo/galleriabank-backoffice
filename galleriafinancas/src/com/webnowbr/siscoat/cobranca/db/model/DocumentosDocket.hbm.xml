@@ -20,5 +20,26 @@
 		<property name="documentoNome" type="java.lang.String">
 			<column name="documentoNome" />
 		</property>
+		
+		<property name="pf" type="boolean">
+			<column name="pf" not-null="true" default="true"/>
+		</property>
+		
+		<property name="pj" type="boolean">
+			<column name="pj" not-null="true" default="true"/>
+		</property>	
+		
+		<property name="estados" type="java.lang.String">
+			<column name="estados" />
+		</property>
+
+		<property name="etapa" type="java.lang.String">
+			<column name="etapa" />
+		</property>
+		
+		<property name="obs" type="java.lang.String">
+			<column name="obs" />
+		</property>
+		
     </class>
 </hibernate-mapping>

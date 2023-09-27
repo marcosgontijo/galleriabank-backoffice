@@ -43,7 +43,8 @@ public class CcbDao extends HibernateDao <CcbContrato,Long> {
 					ps = connection.prepareStatement(QUERY_CONSULTA_CCBS);
 
 					rs = ps.executeQuery();
-					while (rs.next()) {						CcbContrato ccbContrato = new CcbContrato();
+					while (rs.next()) {
+						CcbContrato ccbContrato = new CcbContrato();
 						ccbContrato.setId(rs.getLong("id"));
 						ccbContrato.setNumeroCcb(rs.getString("numeroccb"));
 						ccbContrato.setNumeroOperacao(rs.getString("numeroOperacao"));

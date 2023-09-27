@@ -13,6 +13,7 @@ public class DocketEstados implements Serializable {
 	private String nome;
 	private String url;
 	
+	private DocketCidades capital;
 	private List<DocketCidades> cidades;
 	
 	public DocketEstados(){
@@ -58,4 +59,12 @@ public class DocketEstados implements Serializable {
 	public void setCidades(List<DocketCidades> cidades) {
 		this.cidades = cidades;
 	}
+
+	public DocketCidades getCapital() {
+		return capital;
+	}
+
+	public void setCapital(DocketCidades capital) {
+		this.capital = capital;
+	}	
 }

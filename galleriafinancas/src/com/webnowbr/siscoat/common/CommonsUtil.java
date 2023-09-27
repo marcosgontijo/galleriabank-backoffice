@@ -284,6 +284,20 @@ public class CommonsUtil {
 		}
 		return array;
 	}
+	
+	public static List<String> stringToList(String object) {
+		if(semValor(object)) {
+			return null;
+		}
+		String[] array = object.split(",");
+		for(int i = 0; i < array.length; i++) {
+			array[i] = array[i].replace("[", "");
+			array[i] = array[i].replace("]", "");
+			array[i] = array[i].trim();
+		}
+		List<String> list = new ArrayList<String>(Arrays.asList(array));
+		return list;
+	}
 
 	/**
 	 * Ajusta valor para valor monetário (arredondado com 2 casas decimais)
