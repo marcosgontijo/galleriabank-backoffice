@@ -168,13 +168,13 @@ public class DocketMB {
 		boolean retorno = true;
 		PagadorRecebedor pagador = docketConsulta.getDocumentoAnalise().getPagador();
 		
-		if(CommonsUtil.semValor(pagador.getNome())){
-			retorno = false;
-			FacesContext.getCurrentInstance().addMessage(null,
-			new FacesMessage(FacesMessage.SEVERITY_ERROR, pagador.getNome() + " - Falta Nome", ""));
-		}
-		
 		if(!CommonsUtil.semValor(pagador.getCpf())){
+			if(CommonsUtil.semValor(pagador.getNome())){
+				retorno = false;
+				FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_ERROR, pagador.getNome() + " - Falta Nome", ""));
+			}
+			
 			if(CommonsUtil.semValor(pagador.getNomeMae())){
 				retorno = false;
 				FacesContext.getCurrentInstance().addMessage(null,
@@ -191,6 +191,12 @@ public class DocketMB {
 				retorno = false;
 				FacesContext.getCurrentInstance().addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_ERROR, pagador.getNome() + " - Falta RG", ""));
+			}
+		} else if(!CommonsUtil.semValor(pagador.getCnpj())){ 
+			if(CommonsUtil.semValor(pagador.getNome())){
+				retorno = false;
+				FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_ERROR, pagador.getNome() + " - Falta Nome", ""));
 			}
 		} else {
 			retorno = false;
