@@ -38,8 +38,8 @@ import com.webnowbr.siscoat.security.LoginBean;
 public class PlexiMB {
 	
 	private List<DocumentoAnalise> listPagador;
-	private List<String> estados;
-	private String velocidade;
+	//private List<String> estados;
+	private String etapa;
 	
 	@ManagedProperty(value = "#{loginBean}")
 	protected LoginBean loginBean;
@@ -49,16 +49,17 @@ public class PlexiMB {
 	String cpfCnpj;
 	
 	
-	public String clearFieldsContratoCobranca(List<DocumentoAnalise> listDocAnalise, String estadoImovel, String velocidadeConsultas) {
-		estados = new ArrayList<String>();
-		estados.add(estadoImovel);
-		velocidade = velocidadeConsultas;
+	public String clearFieldsContratoCobranca(List<DocumentoAnalise> listDocAnalise, String etapaConsulta) {
+		//estados = new ArrayList<String>();
+		//estados.add(estadoImovel);
+		this.etapa = etapaConsulta;
 		listPagador = new ArrayList<DocumentoAnalise>();
 		for(DocumentoAnalise docAnalise : listDocAnalise) {
 			if(CommonsUtil.semValor(docAnalise.getPagador())) {
 				continue;
 			}
-			if(docAnalise.isLiberadoAnalise()) {
+			if((CommonsUtil.mesmoValor(etapa, "analise") && docAnalise.isLiberadoAnalise())
+			|| (CommonsUtil.mesmoValor(etapa, "pedir paju") && docAnalise.isLiberadoCertidoes())) {
 				listPagador.add(docAnalise);
 				
 				//if(CommonsUtil.semValor(docAnalise.getPlexiConsultas()) || docAnalise.getPlexiConsultas().size() == 0) {
@@ -290,9 +291,9 @@ public class PlexiMB {
 		}
 		
 		if(!CommonsUtil.semValor(docAnalise.getPagador().getCpf())) {
-			plexiDocumentos = plexiDocsDao.getDocumentosPF(estados, velocidade);
+			plexiDocumentos = plexiDocsDao.getDocumentosPF(docAnalise.getEstadosConsulta(), etapa);
 		} else {
-			plexiDocumentos = plexiDocsDao.getDocumentosPJ(estados, velocidade, docAnalise);
+			plexiDocumentos = plexiDocsDao.getDocumentosPJ(docAnalise.getEstadosConsulta(), etapa, docAnalise);
 		}
 		
 		PlexiConsultaDao plexiConsultaDao = new PlexiConsultaDao();
@@ -375,6 +376,12 @@ public class PlexiMB {
 					retorno = false;
 					FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Sexo", ""));
+				}
+				
+				if(CommonsUtil.semValor(plexiConsulta.getNomeMae())){
+					retorno = false;
+					FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Nome Mãe", ""));
 				}
 			}
 		}
@@ -637,6 +644,26 @@ public class PlexiMB {
 		}
 		return true;
 	}
+	
+	public String atualizaRetorno(List<DocumentoAnalise> listDocAnalise) {
+		PlexiService plexiService = new PlexiService();
+		for(DocumentoAnalise docAnalise : listDocAnalise) {
+			if(CommonsUtil.semValor(docAnalise.getPlexiConsultas()) 
+				|| docAnalise.getPlexiConsultas().size() <= 0) 
+				continue;
+			
+			for(PlexiConsulta plexi : docAnalise.getPlexiConsultas()) {
+				if(CommonsUtil.semValor(plexi.getRequestId()))
+					continue;
+				if(!CommonsUtil.semValor(plexi.getWebhookRetorno()))
+					continue;
+				
+				plexiService.atualizaRetornoPlexi(plexi.getRequestId());
+			}
+		}
+		
+		return "/Atendimento/Cobranca/Plexi.xhtml";
+	}	
 
 	public UploadedFile getUploadedFile() {
 		return uploadedFile;
@@ -670,20 +697,12 @@ public class PlexiMB {
 		this.loginBean = loginBean;
 	}
 
-	public List<String> getEstados() {
-		return estados;
+	public String getEtapa() {
+		return etapa;
 	}
 
-	public void setEstados(List<String> estados) {
-		this.estados = estados;
-	}
-
-	public String getVelocidade() {
-		return velocidade;
-	}
-
-	public void setVelocidade(String velocidade) {
-		this.velocidade = velocidade;
-	}
+	public void setEtapa(String etapa) {
+		this.etapa = etapa;
+	}	
 	
 }

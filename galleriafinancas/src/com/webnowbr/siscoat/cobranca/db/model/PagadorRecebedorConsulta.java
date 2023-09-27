@@ -62,6 +62,11 @@ public class PagadorRecebedorConsulta implements Serializable {
 		this.tipo = tipoEnum.getNome();
 	}
 	
+	public void setTipoEnum(DocumentosAnaliseEnum tipoEnum, String uf) {
+		this.tipoEnum = tipoEnum;
+		this.tipo = tipoEnum.getNome() + " " + uf;
+	}
+	
 	public String getTipo() {
 		return tipo;
 	}

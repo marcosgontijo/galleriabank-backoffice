@@ -60,4 +60,41 @@ public class PagadorRecebedorConsultaDao extends HibernateDao<PagadorRecebedorCo
 		});
 	}
 	
+	@SuppressWarnings("unchecked")
+	public PagadorRecebedorConsulta getConsultaByPagadorAndTipo(final PagadorRecebedor pagador,
+			final DocumentosAnaliseEnum tipoConsulta,final String uf) {
+		
+		if ( CommonsUtil.semValor(pagador) )
+			return null;
+		
+		return (PagadorRecebedorConsulta) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				PagadorRecebedorConsulta pagadorRecebedor = null;
+
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+
+					ps = connection.prepareStatement(QUERY_PESQUISA_CONSULTA);
+
+					ps.setLong(1, pagador.getId());
+					ps.setString(2, tipoConsulta.getNome() + " " + uf);
+
+					rs = ps.executeQuery();
+
+					if (rs.next()) {
+						pagadorRecebedor = findById(rs.getLong(1));
+					}
+
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return pagadorRecebedor;
+			}
+		});
+	}
+	
 }

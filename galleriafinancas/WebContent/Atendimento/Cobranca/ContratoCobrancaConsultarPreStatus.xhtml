@@ -267,8 +267,7 @@
 			                	<f:setPropertyActionListener  target="#{ccbMB.objetoContratoCobranca}" value="#{contratos}" />
 			                </p:commandButton>	
 			            </shiro:hasAnyRoles>		            
-						<p:commandButton rendered ="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Aguardando Análise' or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Em Análise'}" value="Certidões Docket" action="#{docketMB.clearFieldsContratoCobranca(contratos)}"/>		
-						<p:commandButton rendered ="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Aguardando Análise' or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Em Análise'}" value="Data Engine" action="#{dataEngineMB.clearFieldsContratoCobranca(contratos)}"/>		            
+						     
 		                <shiro:hasAnyRoles name="ROOT, PROFILE_GERENTE_ANALISE"> 
 		                	<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-arrowthick-1-s" value="Baixar" title="Baixar">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />

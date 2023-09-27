@@ -1,5 +1,6 @@
 package com.webnowbr.siscoat.cobranca.ws.endpoint;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import javax.ws.rs.GET;
@@ -166,7 +167,6 @@ public class ReaWebhook {
 						pagador.setCnpj(propietario.getCnpj());
 					}
 					pagador.setNome(propietario.getNome());
-
 					pagador = pagadorRecebedorService.buscaOuInsere(pagador);
 					documentoAnalise.setPagador(pagador);
 

@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="cobranca">
+    <class name="com.webnowbr.siscoat.cobranca.db.model.ImovelEstoque" table="IMOVELESTOQUE">
+        <id name="id" type="long">
+            <column name="ID" />
+            <generator class="increment" />
+        </id>
+        <property name="parcelaParouPagar" type="long">
+            <column name="PARCELAPAROUPAGAR"/>
+        </property>        
+        <property name="variacaoCusto" type="big_decimal">
+            <column name="VARIACAOCUSTO" />
+        </property>
+        <property name="ltvLeilao" type="big_decimal">
+            <column name="LTVLEILAO"/>
+        </property>   
+        <property name="valorEmprestimo" type="big_decimal">
+            <column name="VALOREMPRESTIMO"/>
+        </property>               
+        <property name="vendaForcada" type="big_decimal">
+            <column name="VENDAFORCADA"/>
+        </property> 
+        <property name="valorMercado" type="big_decimal">
+            <column name="VALORMERCADO"/>
+        </property> 
+        <property name="dataConsolidado" type="java.util.Date">
+            <column name="DATACONSOLIDADO"/>
+        </property>      
+        <property name="dataLeilao1" type="java.util.Date">
+            <column name="DATALEILAO1"/>
+        </property>    
+        <property name="dataLeilao2" type="java.util.Date">
+            <column name="DATALEILAO2"/>
+        </property>       
+        <property name="dataLeilao3" type="java.util.Date">
+            <column name="DATALEILAO3"/>
+        </property>
+        <property name="leiloeiro" type="java.lang.String">
+            <column name="LEILOEIRO"/>
+        </property>  
+        <property name="statusLeilao" type="java.lang.String">
+            <column name="STATUSLEILAO"/>
+        </property>   
+        <property name="statusAtual" type="java.lang.String">
+            <column name="STATUSATUAL"/>
+        </property>           
+        <property name="valorLeilao2" type="big_decimal">
+            <column name="VALORLEILAO2"/>
+        </property>  
+        <property name="valorVenda" type="big_decimal">
+            <column name="VALORVENDA"/>
+        </property>    
+        <property name="dataVenda" type="java.util.Date">
+            <column name="DATAVENDA"/>
+        </property>    
+        <property name="tipoVenda" type="java.lang.String">
+            <column name="TIPOVENDA"/>
+        </property>
+        <property name="quitado" type="boolean">
+            <column name="QUITADO" not-null="true" default="false"/>
+        </property>
+        
+    </class>
+</hibernate-mapping>

@@ -35,6 +35,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.DataEngineDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
+import com.webnowbr.siscoat.cobranca.service.EngineService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
@@ -69,11 +70,11 @@ public class DataEngineMB {
 	private PagadorRecebedor pagadorAdicionar;
 	private ContratoCobranca objetoContratoCobranca;
 	
-	private DocketService docketService;
+	private EngineService engineService;
 	
 	public DataEngineMB() {
-		if (docketService == null) {
-			docketService = new DocketService();
+		if (engineService == null) {
+			engineService = new EngineService();
 		}
 	}
 	
@@ -108,18 +109,18 @@ public class DataEngineMB {
 	}
 	
 	public void baixarDocumento(DataEngine engine) {
-		if (docketService ==null)
-			docketService = new DocketService();		
-		docketService.baixarDocumentoEngine(engine);
+		if (engineService ==null)
+			engineService = new EngineService();		
+		engineService.baixarDocumentoEngine(engine);
 		decodarBaixarArquivo(engine.getPdfBase64());
 	}
 	
 	public void criarConsulta(DataEngine engine) {	//POST para gerar consulta	
 		FacesContext context = FacesContext.getCurrentInstance();
-		if (docketService == null) {
-			docketService = new DocketService();
+		if (engineService == null) {
+			engineService = new EngineService();
 		}
-		FacesMessage facesMessage = docketService.engineCriarConsulta(engine, loginBean.getUsuarioLogado());
+		FacesMessage facesMessage = engineService.engineCriarConsulta(engine, loginBean.getUsuarioLogado());
 		
 		if ( facesMessage != null) {
 			context.addMessage(null, facesMessage);	
@@ -259,10 +260,10 @@ public class DataEngineMB {
 	}
 	
 	public void inserirPessoa() {
-		if (docketService == null) {
-			docketService = new DocketService();
+		if (engineService == null) {
+			engineService = new EngineService();
 		}
-		DataEngine engine = docketService.engineInserirPessoa(pagadorAdicionar, objetoContratoCobranca);
+		DataEngine engine = engineService.engineInserirPessoa(pagadorAdicionar, objetoContratoCobranca);
 		
 
 		this.listEngine.add(engine);

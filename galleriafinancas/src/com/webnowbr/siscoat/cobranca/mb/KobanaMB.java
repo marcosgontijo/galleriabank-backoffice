@@ -1353,7 +1353,11 @@ public class KobanaMB {
 		//jsonBoleto.put("days_for_infine_valueterest", fine_value);
 		
 		jsonBoleto.put("description", "Crédito com Imóvel em Garantia");
-		jsonBoleto.put("instructions", "Não receber após 30 dias do vencimento");
+		
+		if (contrato.getEmpresa().equals("CRI 4")) {
+			jsonBoleto.put("instructions", "Crédito cedido para Companhia Província de Securitização, CNPJ/MF n° 04.200.649/0001-07");
+		}
+		//jsonBoleto.put("instructions", "Não receber após 30 dias do vencimento");
 		
 		JSONObject jsonCustomData = new JSONObject();
 		jsonCustomData.put("idContrato", String.valueOf(contrato.getId()));

@@ -1,6 +1,9 @@
 package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.io.Serializable;
+import java.util.List;
+
+import com.webnowbr.siscoat.cobranca.ws.endpoint.DocketWebhookRetornoDocumento;
 
 public class DocketRetornoPedido implements Serializable {
 	
@@ -13,6 +16,8 @@ public class DocketRetornoPedido implements Serializable {
 	private String idExibicao;
 	private String lead;
 	private String urlWebHookEntregaDocumento;
+	
+	public List<DocketWebhookRetornoDocumento> documentos;
 
 	public String getId() {
 		return id;
