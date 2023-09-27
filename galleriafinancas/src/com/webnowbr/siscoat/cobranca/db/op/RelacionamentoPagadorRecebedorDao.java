@@ -9,7 +9,7 @@ import java.util.List;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.RelacionamentoPagadorRecebedor;
-import com.webnowbr.siscoat.cobranca.service.DocketService;
+import com.webnowbr.siscoat.cobranca.service.EngineService;
 import com.webnowbr.siscoat.cobranca.service.SerasaService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.db.dao.HibernateDao;
@@ -174,7 +174,7 @@ public class RelacionamentoPagadorRecebedorDao extends HibernateDao <Relacioname
 					DocumentoAnaliseDao docDao = new DocumentoAnaliseDao();
 					while (rs.next()) {
 						DocumentoAnalise docAnalise = docDao.findById(rs.getLong("id"));
-						DocketService service = new DocketService();
+						EngineService service = new EngineService();
 						service.gerarRelacoesEngine(docAnalise);
 					}
 				} finally {

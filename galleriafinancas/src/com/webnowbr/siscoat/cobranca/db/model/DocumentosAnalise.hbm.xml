@@ -130,6 +130,9 @@
 			<column name="retornoCNDEstadual" />
 		</property>
 		
+		<property name="estadosConsultaStr" type="java.lang.String" >
+			<column name="estadosConsultaStr" />
+		</property>
 		
 		<list name="plexiConsultas"
 			table="DocumentoAnalise_PlexiConsultas_Join" cascade="all" lazy="false">
@@ -138,6 +141,14 @@
 			<many-to-many column="idPlexiConsulta"
 				class="com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta" />
 		</list>
+		
+		<set name="netrinConsultas" table="NetrinConsultas" cascade="merge"
+                 lazy="false" fetch="select">
+            <key>
+                <column name="documentoAnalise" not-null="true" />
+            </key>
+            <one-to-many class="com.webnowbr.siscoat.cobranca.ws.netrin.NetrinConsulta" />
+        </set>
 						
     </class>
 </hibernate-mapping>

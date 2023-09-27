@@ -132,7 +132,10 @@
         </property>     
         <property name="profileMarketing" type="boolean">
             <column name="profileMarketing" />
-        </property>     
+        </property> 
+        <property name="profileController" type="boolean">
+            <column name="profileController" not-null="true" default="false" />
+        </property>    
         <property name="comiteEditar" type="boolean">
             <column name="comiteEditar" />
         </property>

@@ -3,6 +3,7 @@ package com.webnowbr.siscoat.cobranca.db.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Date;
 import java.util.List;
 
@@ -10,12 +11,14 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.webnowbr.siscoat.cobranca.mb.FileUploadMB.FileUploaded;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
+import com.webnowbr.siscoat.cobranca.ws.netrin.NetrinConsulta;
 import com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
@@ -86,6 +89,10 @@ public class DocumentoAnalise implements Serializable {
 	private String retornoCNDEstadual;
 	
 	private List<PlexiConsulta> plexiConsultas = new ArrayList<PlexiConsulta>();
+	private Set<NetrinConsulta> netrinConsultas = new HashSet<>();
+	private Set<DocketConsulta> docketConsultas = new HashSet<>();
+	private List<String> estadosConsulta = new ArrayList<String>();
+	private String estadosConsultaStr;
 	
 	private boolean politicamenteExposta = false;
 	private boolean isPepVip = false;
@@ -547,7 +554,87 @@ public class DocumentoAnalise implements Serializable {
 		dossieRequest.setProcesso(GsonUtil.fromJson(retornoProcesso, ProcessoResponse.class));
 
 		return GsonUtil.toJson(dossieRequest);
-
+	}
+	
+	public void adicionarEstadoCpf() {
+		if(CommonsUtil.semValor(pagador))
+			return;
+		if(CommonsUtil.semValor(pagador.getCpf()))
+			return;
+		String cpfNum = CommonsUtil.somenteNumeros(pagador.getCpf()).trim();
+		if(CommonsUtil.semValor(cpfNum.length() < 8))
+			return;
+	
+		int index = CommonsUtil.integerValue(cpfNum.charAt(8));
+		List<String> estadosReturn = pegarEstadoCpf(index);
+		adicionaEstados(estadosReturn);
+	}
+	
+	public List<String> pegarEstadoCpf(int i){
+		List<String> estadosReturn = new ArrayList<String>();
+		switch (i) {
+		case 0:
+			estadosReturn = new ArrayList<String>(Arrays.asList(new String[]{"RS"}));
+			break;
+		case 1:
+			estadosReturn = new ArrayList<String>(Arrays.asList(new String[]{"DF", "GO", "MS", "TO"}));
+			break;
+		case 2:
+			estadosReturn = new ArrayList<String>(Arrays.asList(new String[]{"PA", "AM", "AC", "AP", "RO", "RR"}));
+			break;
+		case 3:
+			estadosReturn = new ArrayList<String>(Arrays.asList(new String[]{"CE", "MA", "PI"}));
+			break;
+		case 4:
+			estadosReturn = new ArrayList<String>(Arrays.asList(new String[]{"PE", "RN", "PB", "AL"}));
+			break;
+		case 5:
+			estadosReturn = new ArrayList<String>(Arrays.asList(new String[]{"BA", "SE"}));
+			break;
+		case 6:
+			estadosReturn = new ArrayList<String>(Arrays.asList(new String[]{"MG"}));
+			break;
+		case 7:
+			estadosReturn = new ArrayList<String>(Arrays.asList(new String[]{"RJ", "ES"}));
+			break;
+		case 8:
+			estadosReturn = new ArrayList<String>(Arrays.asList(new String[]{"SP"}));
+			break;
+		case 9:
+			estadosReturn = new ArrayList<String>(Arrays.asList(new String[]{"PR", "SC"}));
+			break;
+		default:
+			break;
+		}
+		return estadosReturn;
+	}
+	
+	public void pegarEstadoImovel() {
+		if(CommonsUtil.semValor(contratoCobranca)) 
+			return;
+		if(CommonsUtil.semValor(contratoCobranca.getImovel())) 
+			return;
+		if(CommonsUtil.semValor(contratoCobranca.getImovel().getEstado())) 
+			return;
+		
+		adicionaEstados(contratoCobranca.getImovel().getEstado());
+	}
+	
+	public void adiconarEstadosPeloCadastro() {
+		adicionarEstadoCpf();
+		pegarEstadoImovel();
+	}
+	
+	public void adicionaEstados(List<String> estados) {
+		for (String estado : estados) {
+			adicionaEstados(estado);
+		}
+	}
+	
+	public void adicionaEstados(String estado) {
+		if(!getEstadosConsulta().contains(estado)) {
+			getEstadosConsulta().add(estado);
+		}
 	}
 	
 	@Override
@@ -760,6 +847,7 @@ public class DocumentoAnalise implements Serializable {
 
 	public void setPagador(PagadorRecebedor pagador) {
 		this.pagador = pagador;
+		adiconarEstadosPeloCadastro();
 	}
 
 	public boolean isLiberadoSerasa() {
@@ -850,8 +938,51 @@ public class DocumentoAnalise implements Serializable {
 		this.retornoCNDEstadual = retornoCNDEstadual;
 	}
 
-    public String getDialogHeader() {
+	
+	public List<String> getEstadosConsulta() {
+		if(!CommonsUtil.semValor(estadosConsultaStr)) {
+			estadosConsulta = CommonsUtil.stringToList(estadosConsultaStr);
+		}
+		return estadosConsulta;
+	}
+
+	public void setEstadosConsulta(List<String> estadosConsulta) {
+		this.estadosConsulta = estadosConsulta;
+	}
+	
+	public String getEstadosConsultaStr() {
+		if(!CommonsUtil.semValor(estadosConsulta)) {
+			estadosConsultaStr = estadosConsulta.toString();
+		}
+		return estadosConsultaStr;
+	}
+
+	public void setEstadosConsultaStr(String estadosConsultaStr) {
+		this.estadosConsultaStr = estadosConsultaStr;
+	}
+
+	public Set<NetrinConsulta> getNetrinConsultas() {
+		return netrinConsultas;
+	}
+
+	public void setNetrinConsultas(Set<NetrinConsulta> netrinConsultas) {
+		this.netrinConsultas = netrinConsultas;
+	}
+	
+	private void setPessoasPoliticamenteExpostas(int pessoasPoliticamenteExpostas) {
+		this.pessoasPoliticamenteExpostas = Integer.toString(pessoasPoliticamenteExpostas);
+	}
+	
+  public String getDialogHeader() {
     	dialogHeader = dialogHeader();
         return dialogHeader;
     }
+
+	public Set<DocketConsulta> getDocketConsultas() {
+		return docketConsultas;
+	}
+
+	public void setDocketConsultas(Set<DocketConsulta> docketConsultas) {
+		this.docketConsultas = docketConsultas;
+	}
 }

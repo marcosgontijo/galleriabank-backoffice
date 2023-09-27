@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="#{request.contextPath}/resources/js/functions.js"></script>
+			<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>
+			<p:messages id="mensagens" showDetail="true" />
+			
+			<p:panel id="variaveis" header="Variáveis a preencher"
+				style="margin-bottom:20px;">
+
+				<h:panelGrid columns="2">
+						
+					<p:outputLabel for="referencia" value="Referência: "
+						styleClass="labelBold" />
+
+					<p:calendar id="referencia"
+						value="#{balancoPatrimonialMB.objetoBalanco.aaaaMM}" label="Data"
+						size="100" pattern="dd/MM/yyyy" styleClass="dateTimeField">
+					
+					</p:calendar>
+					
+					<p:outputLabel for="cdi" value="Informe CDI: "
+						styleClass="labelBold" />
+					<p:inputNumber id="cdi"
+						value="#{balancoPatrimonialMB.objetoBalanco.cdi}"
+						decimalPlaces="4" />
+					
+					<p:outputLabel for="ipca" value="Informe IPCA: "
+						styleClass="labelBold" />
+					<p:inputNumber id="ipca"
+						value="#{balancoPatrimonialMB.objetoBalanco.ipca}"
+						decimalPlaces="4" />
+					
+					<p:outputLabel for="taxaFidc" value="Informe Taxa FIDC: "
+						styleClass="labelBold" />
+					<p:inputNumber id="taxaFidc"
+						value="#{balancoPatrimonialMB.objetoBalanco.taxaFidc}"
+						decimalPlaces="4" />
+					
+					<p:outputLabel for="taxaCri1" value="Informe Taxa Cri 1: "
+						styleClass="labelBold" />
+					<p:inputNumber id="taxaCri1"
+						value="#{balancoPatrimonialMB.objetoBalanco.taxaCri1}"
+						decimalPlaces="4" />
+					
+					<p:outputLabel for="taxaCri2" value="Informe Taxa Cri 2: "
+						styleClass="labelBold" />
+					<p:inputNumber id="taxaCri2"
+						value="#{balancoPatrimonialMB.objetoBalanco.taxaCri2}"
+						decimalPlaces="4" />
+					
+					<p:outputLabel for="taxaCri3" value="Informe Taxa Cri 3: "
+						styleClass="labelBold" />
+					<p:inputNumber id="taxaCri3"
+						value="#{balancoPatrimonialMB.objetoBalanco.taxaCri3}"
+						decimalPlaces="4" />
+					
+					<p:outputLabel for="taxaCri4" value="Informe Taxa Cri 4: "
+						styleClass="labelBold" />
+					<p:inputNumber id="taxaCri4"
+						value="#{balancoPatrimonialMB.objetoBalanco.taxaCri4}"
+						decimalPlaces="4" />
+					
+					<p:outputLabel for="kpmg" value="Informe Taxa KPMG: "
+						styleClass="labelBold" />
+					<p:inputNumber id="kpmg"
+						value="#{balancoPatrimonialMB.objetoBalanco.kpmg}"
+						decimalPlaces="4" />
+					</h:panelGrid>
+					
+					<p:commandButton value="Gerar Balanço" icon="ui-icon-plus" ajax="false"
+						action="#{balancoPatrimonialMB.geraBalanco}" update=" mensagens :variaveis :visaoBalanco">
+					</p:commandButton>
+					
+				</p:panel>
+					
+					
+						
+				<h:panelGrid columns="2" styleClass="row" id="visaoBalanco">
+				
+					<p:panel id="balancoInserir" 					
+					
+				style="margin-bottom:20px;"> 
+				<f:facet name="header">
+				<h:outputLabel escape = "false" value= "Balanço Patrimonial - Ativos &lt;br /&gt;*Preencher campos em amarelo"/>
+				</f:facet>
+				
+					<h:panelGrid columns="2">
+					<p:outputLabel for="caixa" value="Caixa: "
+						styleClass="labelBold"  title="#{balancoPatrimonialMB.objetoBalanco.saldoCaixaNaoConciliado}"/>
+					
+					<p:inputText id="caixa"
+						value="#{balancoPatrimonialMB.objetoBalanco.saldoCaixa}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter">
+					</p:inputText>
+					<p:outputLabel for="saldoBancos" value="Saldo Bancário Total: "
+						styleClass="labelBold" />
+					<p:inputText id="saldoBancos"
+						value="#{balancoPatrimonialMB.objetoBalanco.saldoBancos}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter">
+					</p:inputText>
+					<p:outputLabel for="saldoAplFin" value="Aplicação Financeira: "
+						styleClass="labelBold" title="#{balancoPatrimonialMB.objetoBalanco.saldoAplFinNaoConciliado}" />
+					<p:inputText id="saldoAplFin"
+						value="#{balancoPatrimonialMB.objetoBalanco.saldoAplFin}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter">	
+					</p:inputText>
+					<p:outputLabel for="opPagasReceberFidc" value="Operações pagas e a receber do FIDC: "
+						styleClass="labelBold" />
+					<p:inputText id="opPagasReceberFidc"
+						value="#{balancoPatrimonialMB.objetoBalanco.opPagasReceberFidc}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter"
+						style="background-color: yellow">	
+					</p:inputText>
+					<p:outputLabel for="apItauSoberano" value="Aplicação Fundo Itaú Soberano: "
+						styleClass="labelBold" />
+					<p:inputText id="apItauSoberano"
+						value="#{balancoPatrimonialMB.objetoBalanco.apItauSoberano}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter"
+						style="background-color: yellow">	
+					</p:inputText>
+					<p:outputLabel for="provisaoDevedoresDuvidosos" value="Provisão Devedores Duvidosos: "
+						styleClass="labelBold" />
+					<p:inputText id="provisaoDevedoresDuvidosos"
+						value="#{balancoPatrimonialMB.objetoBalanco.provisaoDevedoresDuvidosos}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter"
+						style="background-color: yellow">	
+					</p:inputText>
+					<p:outputLabel for="saldoCobrancaFidc" value="Saldo conta Cobrança FIDC: "
+						styleClass="labelBold" />
+					<p:inputText id="saldoCobrancaFidc"
+						value="#{balancoPatrimonialMB.objetoBalanco.saldoCobrancaFidc}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter"
+						style="background-color: yellow">	
+					</p:inputText>
+					<p:outputLabel for="depositoBacenScd" value="Depósito Bacen para SCD: "
+						styleClass="labelBold" />
+					<p:inputText id="depositoBacenScd"
+						value="#{balancoPatrimonialMB.objetoBalanco.depositoBacenScd}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter">	
+					</p:inputText>
+					<p:outputLabel for="direitosCreditorios" value="Direitos Creditórios: "
+						styleClass="labelBold" />
+					<p:inputText id="direitosCreditorios"
+						value="#{balancoPatrimonialMB.objetoBalanco.direitosCreditorios}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter">	
+					</p:inputText>
+					<p:outputLabel for="tributosCompensar" value="Tributos a Compensar: "
+						styleClass="labelBold" />
+					<p:inputText id="tributosCompensar"
+						value="#{balancoPatrimonialMB.objetoBalanco.tributosCompensar}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter"
+						style="background-color: yellow">	
+					</p:inputText>
+					<p:outputLabel for="adiantamentos" value="Adiantamentos: "
+						styleClass="labelBold" />
+					<p:inputText id="adiantamentos"
+						value="#{balancoPatrimonialMB.objetoBalanco.adiantamentos}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter"
+						style="background-color: yellow">	
+					</p:inputText>
+					<p:outputLabel for="outrosCreditos" value="Outros Créditos a Identificar: "
+						styleClass="labelBold" />
+					<p:inputText id="outrosCreditos"
+						value="#{balancoPatrimonialMB.objetoBalanco.outrosCreditos}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter"
+						style="background-color: yellow">	
+					</p:inputText>
+					<p:outputLabel for="estoque" value="Estoque (imóveis): "
+						styleClass="labelBold" />
+					<p:inputText id="estoque"
+						value="#{balancoPatrimonialMB.objetoBalanco.estoque}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter">	
+					</p:inputText>
+					<p:outputLabel for="depositosJudiciais" value="Depositos Judiciais: "
+						styleClass="labelBold" />
+					<p:inputText id="depositosJudiciais"
+						value="#{balancoPatrimonialMB.objetoBalanco.depositosJudiciais}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter">	
+					</p:inputText>
+					<p:outputLabel for="investOperAntigas" value="Invest. Oper. Antigas: "
+						styleClass="labelBold" />
+					<p:inputText id="investOperAntigas"
+						value="#{balancoPatrimonialMB.objetoBalanco.investOperAntigas}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter">	
+					</p:inputText>
+					<p:outputLabel for="investimentos" value="Investimentos: "
+						styleClass="labelBold" />
+					<p:inputText id="investimentos"
+						value="#{balancoPatrimonialMB.objetoBalanco.investimentos}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter"
+						style="background-color: yellow">	
+					</p:inputText>
+					<p:outputLabel for="bensImobilizados" value="Bens (Móveis e informática) "
+						styleClass="labelBold" />
+					<p:inputText id="bensImobilizados"
+						value="#{balancoPatrimonialMB.objetoBalanco.bensImobilizados}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter"
+						style="background-color: yellow">	
+					</p:inputText>
+					</h:panelGrid>
+			</p:panel>
+					
+					
+					
+					<p:panel id="balancoInserirPassivo" 
+					
+					style="margin-bottom:20px;">
+					
+					<f:facet name="header">
+					<h:outputLabel escape = "false" value= "Balanço Patrimonial - Passivos &lt;br /&gt;*Preencher campos em amarelo"/>
+					</f:facet>
+					<h:panelGrid columns="2">
+				
+					
+					<p:outputLabel for="contaCorrenteClientes" value="Conta Corrente Clientes "
+						styleClass="labelBold" />
+					<p:inputText id="contaCorrenteClientes"
+						value="#{balancoPatrimonialMB.objetoBalanco.contaCorrenteClientes}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter"
+						style="background-color: yellow">	
+					</p:inputText>
+					<p:outputLabel for="fornecedoresConsorcio" value="Fornecedores - Consórcio "
+						styleClass="labelBold" />
+					<p:inputText id="fornecedoresConsorcio"
+						value="#{balancoPatrimonialMB.objetoBalanco.fornecedoresConsorcio}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter"
+						style="background-color: yellow">	
+					</p:inputText>
+					<p:outputLabel for="obrigacoesTributarias" value="Obrigações Tributárias "
+						styleClass="labelBold" />
+					<p:inputText id="obrigacoesTributarias"
+						value="#{balancoPatrimonialMB.objetoBalanco.obrigacoesTributarias}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter"
+						style="background-color: yellow">	
+					</p:inputText>
+					<p:outputLabel for="obrigacoesSociaisEstatutarias" value="Obrigações Sociais Estatutarias "
+						styleClass="labelBold" />
+					<p:inputText id="obrigacoesSociaisEstatutarias"
+						value="#{balancoPatrimonialMB.objetoBalanco.obrigacoesSociaisEstatutarias}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter"
+						style="background-color: yellow">	
+					</p:inputText>
+					<p:outputLabel for="recursosDebentures" value="Recursos de Debentures "
+						styleClass="labelBold" />
+					<p:inputText id="recursosDebentures"
+						value="#{balancoPatrimonialMB.objetoBalanco.recursosDebentures}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter">
+					</p:inputText>
+					<p:outputLabel for="recursosFidc" value="Recursos do Fidc "
+						styleClass="labelBold" />
+					<p:inputText id="recursosFidc"
+						value="#{balancoPatrimonialMB.objetoBalanco.recursosFidc}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter"
+						style="background-color: yellow">	
+					</p:inputText>
+					<p:outputLabel for="recursosCri" value="Recursos do CRI "
+						styleClass="labelBold" />
+					<p:inputText id="recursosCri"
+						value="#{balancoPatrimonialMB.objetoBalanco.recursosCri}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter"
+						style="background-color: yellow">	
+					</p:inputText>
+					<p:outputLabel for="provisaoLiquidAntecipada" value="Provisão para Liquidação Antecipada "
+						styleClass="labelBold" />
+					<p:inputText id="provisaoLiquidAntecipada"
+						value="#{balancoPatrimonialMB.objetoBalanco.provisaoLiquidAntecipada}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter">	
+					</p:inputText>
+					<p:outputLabel for="valorExigivelLongoPrazo" value="Valores Exigíveis a Longo Prazo "
+						styleClass="labelBold" />
+					<p:inputText id="valorExigivelLongoPrazo"
+						value="#{balancoPatrimonialMB.objetoBalanco.valorExigivelLongoPrazo}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter"
+						style="background-color: yellow">	
+					</p:inputText>
+					<p:outputLabel for="capitalSocial" value="Capital Social "
+						styleClass="labelBold" />
+					<p:inputText id="capitalSocial"
+						value="#{balancoPatrimonialMB.objetoBalanco.capitalSocial}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter">	
+					</p:inputText>
+					<p:outputLabel for="lucrosAcumuladosAnoAnterior" value="Lucros Acumulados até Ano Anterior "
+						styleClass="labelBold" />
+					<p:inputText id="lucrosAcumuladosAnoAnterior"
+						value="#{balancoPatrimonialMB.objetoBalanco.lucrosAcumuladosAnoAnterior}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter"
+						style="background-color: yellow">	
+					</p:inputText>
+					<p:outputLabel for="distribuicao2Pago1" value="Distribuição Lucros 2º Semestre pago no 1º Semestre "
+						styleClass="labelBold" />
+					<p:inputText id="distribuicao2Pago1"
+						value="#{balancoPatrimonialMB.objetoBalanco.distribuicao2Pago1}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter"
+						style="background-color: yellow">	
+					</p:inputText>
+					<p:outputLabel for="lucroSemestreAnterior" value="Lucros Semestre Anterior "
+						styleClass="labelBold" />
+					<p:inputText id="lucroSemestreAnterior"
+						value="#{balancoPatrimonialMB.objetoBalanco.lucroSemestreAnterior}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter"
+						style="background-color: yellow">	
+					</p:inputText>
+					<p:outputLabel for="aumentoCapitalSocial" value="Aumento de Capital Social "
+						styleClass="labelBold" />
+					<p:inputText id="aumentoCapitalSocial"
+						value="#{balancoPatrimonialMB.objetoBalanco.aumentoCapitalSocial}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter"
+						style="background-color: yellow">	
+					</p:inputText>
+					<p:outputLabel for="distribuicao1Pago2" value="Distribuição Lucros 1º Semestre pago no 2º Semestre "
+						styleClass="labelBold" />
+					<p:inputText id="distribuicao1Pago2"
+						value="#{balancoPatrimonialMB.objetoBalanco.distribuicao1Pago2}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter"
+						style="background-color: yellow">	
+					</p:inputText>
+					<p:outputLabel for="lucroAnterior" value="Lucro Anterior "
+						styleClass="labelBold"  />
+					<p:inputText id="lucroAnterior"
+						value="#{balancoPatrimonialMB.objetoBalanco.lucroAnterior}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);" required="true"
+						converter="bigDecimalConverter"
+						style="background-color: yellow">	
+					</p:inputText>
+					</h:panelGrid>
+			</p:panel>
+		</h:panelGrid>
+			<p:commandButton value="Salvar" ajax="false"
+				icon="ui-icon-print" action="#{balancoPatrimonialMB.salvarBalanco}" />
+			<p:spacer height="10"/>
+			<p:commandButton value="Cancelar" ajax="false" immediate="true"
+				icon="ui-icon-cancel" action="#{balancoPatrimonialMB.clearFieldsBalancoPatrimonialConsulta}"
+				style="TEXT-DECORATION: bold; " />
+			
+		</h:form>
+	</ui:define>
+</ui:composition>

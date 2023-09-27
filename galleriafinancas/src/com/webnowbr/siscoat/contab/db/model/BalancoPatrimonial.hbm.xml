@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="contab">
+	<class
+		name="com.webnowbr.siscoat.contab.db.model.BalancoPatrimonial"
+		table="BALANCO_PATRIMONIAL">
+		 <id name="id" type="long">
+            <column name="ID" />
+            <generator class="increment" />
+        </id>
+<!--ATIVO-->
+		<property name="saldo_total_api" type="big_decimal">
+			<column name="saldo_total_api" /></property>
+		<property name="aaaaMM" type="java.util.Date">
+			<column name="aaaa_m_m" /></property> 	
+		<property name="saldoCaixa" type="big_decimal"></property>
+		<property name="saldoBancos" type="big_decimal"></property>
+		<property name="saldoAplFin" type="big_decimal"></property>
+	 	<property name="opPagasReceberFidc" type="big_decimal"></property>
+		<property name="apItauSoberano" type="big_decimal"></property>
+		<property name="provisaoDevedoresDuvidosos" type="big_decimal"></property>
+		<property name="saldoCobrancaFidc" type="big_decimal"></property>
+		<property name="depositoBacenScd" type="big_decimal"></property>
+		<property name="direitosCreditorios" type="big_decimal"></property>
+ 		<property name="tributosCompensar" type="big_decimal"></property>
+ 		<property name="adiantamentos" type="big_decimal"></property>
+ 		<property name="outrosCreditos" type="big_decimal"></property>
+		<property name="estoque" type="big_decimal"></property>
+		<property name="depositosJudiciais" type="big_decimal"></property>
+		<property name="investOperAntigas" type="big_decimal"></property>
+ 		<property name="investimentos" type="big_decimal"></property>
+ 		<property name="bensImobilizados" type="big_decimal"></property>
+ 		
+<!--PASSIVO-->
+ 		<property name="contaCorrenteClientes" type="big_decimal"></property>
+ 		<property name="fornecedoresConsorcio" type="big_decimal"></property>
+ 		<property name="obrigacoesTributarias" type="big_decimal"></property>
+ 		<property name="obrigacoesSociaisEstatutarias" type="big_decimal"></property>
+ 		<property name="recursosDebentures" type="big_decimal"></property>
+ 		<property name="recursosFidc" type="big_decimal"></property>
+ 		<property name="recursosCri" type="big_decimal"></property>
+ 		<property name="provisaoLiquidAntecipada" type="big_decimal"></property>
+ 		<property name="valorExigivelLongoPrazo" type="big_decimal"></property>
+ 		<property name="capitalSocial" type="big_decimal"></property>
+ 		<property name="lucrosAcumuladosAnoAnterior" type="big_decimal"></property>
+ 		<property name="distribuicao2Pago1" type="big_decimal"></property>
+ 		<property name="lucroSemestreAnterior" type="big_decimal"></property>
+ 		<property name="aumentoCapitalSocial" type="big_decimal"></property>
+ 		<property name="distribuicao1Pago2" type="big_decimal"></property>
+ 		<property name="lucroAnterior" type="big_decimal"></property>
+
+ 		<!--<property name="empresa" type="big_decimal"></property> -->
+	</class>
+</hibernate-mapping>

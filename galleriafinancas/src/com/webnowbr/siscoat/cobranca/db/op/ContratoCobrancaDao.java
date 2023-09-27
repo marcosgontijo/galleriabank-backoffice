@@ -29,6 +29,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaStatus;
 import com.webnowbr.siscoat.cobranca.db.model.Dashboard;
 import com.webnowbr.siscoat.cobranca.db.model.GruposPagadores;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.ImovelEstoque;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PesquisaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
@@ -38,6 +39,7 @@ import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.db.dao.HibernateDao;
+import com.webnowbr.siscoat.db.dao.HibernateDao.DBRunnable;
 import com.webnowbr.siscoat.relatorio.vo.RelatorioVendaOperacaoVO;
 
 /**
@@ -9243,4 +9245,37 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		});	
 	}
 	
+private String QUERY_ID_IMOVELESTOQUE = "select id from cobranca.contratocobranca where status = 'Aprovado'";
+    
+    @SuppressWarnings("unchecked")
+	public List<ContratoCobranca> consultaImovelEstoque() {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+				
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				
+				try {
+					connection = getConnection();
+					
+					ps = connection
+							.prepareStatement(QUERY_ID_IMOVELESTOQUE);
+					
+					rs = ps.executeQuery();
+					
+					while (rs.next()) {
+						objects.add(findById(rs.getLong(1)));
+					}
+							
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
+			}
+		});
+	}
+    
 }

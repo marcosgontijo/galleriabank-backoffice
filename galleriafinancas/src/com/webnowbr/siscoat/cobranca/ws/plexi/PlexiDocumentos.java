@@ -7,7 +7,7 @@ public class PlexiDocumentos {
 	private boolean pf;
 	private boolean pj;
 	private String estados;
-	private String velocidade;
+	private String etapa;
 	private String obs;
 	
 	@Override
@@ -59,13 +59,11 @@ public class PlexiDocumentos {
 		this.obs = obs;
 	}
 
-	public String getVelocidade() {
-		return velocidade;
+	public String getEtapa() {
+		return etapa;
 	}
 
-	public void setVelocidade(String velocidade) {
-		this.velocidade = velocidade;
+	public void setEtapa(String etapa) {
+		this.etapa = etapa;
 	}
-
-	
 }

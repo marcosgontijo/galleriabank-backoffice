@@ -52,4 +52,39 @@ public class DocketEstadosDao extends HibernateDao <DocketEstados,Long> {
 		});	
 	}
 	
+private static final String QUERY_GET_ESTADO_UF = "select id from cobranca.docketestados where url = ? ";
+	
+	@SuppressWarnings("unchecked")
+	public DocketEstados getEstadoByUf(final String uf) {
+		return (DocketEstados) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				
+				DocketEstados estado = null;
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				
+				try {
+					connection = getConnection();
+
+					ps = connection
+							.prepareStatement(QUERY_GET_ESTADO_UF);	
+					
+					ps.setString(1, uf);
+					
+					rs = ps.executeQuery();
+										
+					while (rs.next()) {
+						estado = findById(rs.getLong("id"));
+					}
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return estado;
+			}
+		});	
+	}
+	
 }

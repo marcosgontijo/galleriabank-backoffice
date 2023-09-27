@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui"
+	template="../../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+
+		<h:outputStylesheet>
+			.row { 
+				width:100%
+			}
+			.columns { 
+				width:20%;
+				max-width:20%;
+				text-align:center;
+			}	 
+   		</h:outputStylesheet>
+		<h:form id="form"> 	
+		<p:panel id="ConsultaBalanco" header="Balanço Patrimonial #{balancoPatrimonialMB.tituloPagina}" style="margin-bottom:10px;">		    		    
+   		         <p:dataTable id="dtBalancoPat" var="balanco" value="#{balancoPatrimonialMB.todosBalancos}" selection="" emptyMessage="" sortBy="#{balanco.aaaaMM}" sortOrder="descending">                 
+   		         	<f:facet name="header">						
+						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{balancoPatrimonialMB.clearBalancoPatrimonialNew()}">
+						<f:setPropertyActionListener target="#{balancoPatrimonialMB.editar}"
+								value="false" />
+							<f:setPropertyActionListener target="#{balancoPatrimonialMB.excluir}"
+								value="false" />
+						</p:commandButton>
+			        </f:facet>  
+			        
+			        <p:column style="text-align: center;width:105px;" headerText="ID" sortBy="#{balanco.aaaaMM}">
+			            <h:outputText value="#{balanco.id}" />	
+			        </p:column>               
+                	
+                	<p:column style="text-align: center;width:105px;" headerText="Referência" sortBy="#{balanco.aaaaMM}">
+			            <p:outputLabel value="#{balanco.aaaaMM}" >
+			            <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+			            </p:outputLabel>
+			        </p:column>
+			       
+			        <p:column style="text-align: center;width:105px;" headerText="Total do Ativo" sortBy="#{balanco.totalAtivos}">
+			            <h:outputText value="#{balanco.totalAtivos}" 
+			            converter="bigDecimalConverter" style="margin-left:10px;" >
+						<f:convertNumber pattern="#,##0.00"/>
+						</h:outputText>
+					</p:column>
+					
+					<p:column style="text-align: center;width:105px;" headerText="Total do Passivo" sortBy="#{balanco.totalPassivo}">
+			            <h:outputText value="#{balanco.totalPassivo}" 
+			            converter="bigDecimalConverter" style="margin-left:10px;" >
+						<f:convertNumber pattern="#,##0.00"/>
+						</h:outputText>
+					</p:column>
+			       
+					<f:facet name="footer">
+					<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{balancoPatrimonialMB.clearBalancoPatrimonialNew()}">	
+					<f:setPropertyActionListener target="#{balancoPatrimonialMB.editar}"
+								value="false" />
+					<f:setPropertyActionListener target="#{balancoPatrimonialMB.excluir}"
+								value="false" />
+					</p:commandButton>	
+			        </f:facet>	
+			        <p:column styleClass="colunaResponsiva">
+						<p:commandButton action="#{balancoPatrimonialMB.clearBalancoPatrimonialEditar}"
+								ajax="false" icon="ui-icon-pencil" title="Editar">
+							<f:setPropertyActionListener
+								target="#{balancoPatrimonialMB.objetoBalanco}"
+								value="#{balanco}" />
+							<f:setPropertyActionListener target="#{balancoPatrimonialMB.editar}"
+								value="true" />
+							<f:setPropertyActionListener target="#{balancoPatrimonialMB.excluir}"
+								value="false" />
+						</p:commandButton>
+						<p:commandButton action="#{balancoPatrimonialMB.excluirBalanco}" update=":form:ConsultaBalanco"
+							icon="ui-icon-trash" title="Excluir">
+								<f:setPropertyActionListener
+								target="#{balancoPatrimonialMB.objetoBalanco}"
+								value="#{balanco}" />
+						<p:confirm header="Confirmação"
+								message="Deseja realmente excluir este Balanço?" icon="ui-icon-trash" />			
+						</p:commandButton>
+						<p:commandButton action="#{balancoPatrimonialMB.geraXLSBalancoPatrimonial}"
+							ajax="false" icon="ui-icon-arrowthick-1-s" title="Gerar XLS">
+							<f:setPropertyActionListener
+								target="#{balancoPatrimonialMB.objetoBalanco}"
+								value="#{balanco}" />
+						</p:commandButton>
+					</p:column>	            		        		               		        			        			           			 		
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

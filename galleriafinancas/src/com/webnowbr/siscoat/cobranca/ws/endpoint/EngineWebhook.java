@@ -15,24 +15,15 @@ import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.DataEngineDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
-import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.cobranca.service.DocumentoAnaliseService;
-import com.webnowbr.siscoat.cobranca.service.NetrinService;
+import com.webnowbr.siscoat.cobranca.service.EngineService;
 import com.webnowbr.siscoat.cobranca.service.PagadorRecebedorService;
-import com.webnowbr.siscoat.cobranca.service.ScrService;
-import com.webnowbr.siscoat.cobranca.service.SerasaService;
-import com.webnowbr.siscoat.cobranca.service.UserService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.common.GsonUtil;
-import com.webnowbr.siscoat.infra.db.model.User;
 
 import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
-import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultRelacionamentosPessoaisPJ;
-import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultRelacionamentosPessoaisPJPartnership;
-import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoRequestEnterprisePartnership;
 import br.com.galleriabank.jwt.common.JwtUtil;
-import io.jsonwebtoken.Jwts;
 
 @Path("/engine")
 public class EngineWebhook {
@@ -68,7 +59,7 @@ public class EngineWebhook {
 			if (engines.size() > 0) {
 				dataEngine = engines.get(0);
 				
-				DocketService docketService = new DocketService();
+				EngineService engineService = new EngineService();
 				
 				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
 				
@@ -86,9 +77,7 @@ public class EngineWebhook {
 						DocumentosAnaliseEnum.ENGINE, webhookRetorno);
 
 				if (!CommonsUtil.semValor(documentoAnalise)) {
-
-					
-					docketService.processaWebHookEngine( documentoAnaliseService, engineWebhookRetorno,
+					engineService.processaWebHookEngine( documentoAnaliseService, engineWebhookRetorno,
 							pagadorRecebedorService, documentoAnaliseDao, documentoAnalise);
 				}
 			}
