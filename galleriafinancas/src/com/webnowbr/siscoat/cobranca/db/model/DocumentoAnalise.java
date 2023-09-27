@@ -622,31 +622,31 @@ public class DocumentoAnalise implements Serializable {
 			estadosReturn = new ArrayList<String>(Arrays.asList(new String[]{"RS"}));
 			break;
 		case 1:
-			estadosReturn = new ArrayList<String>(Arrays.asList(new String[]{"DF", "GO", "MS", "TO"}));
+			//estadosReturn = new ArrayList<String>(Arrays.asList(new String[]{"DF", "GO", "MS", "TO"}));
 			break;
 		case 2:
-			estadosReturn = new ArrayList<String>(Arrays.asList(new String[]{"PA", "AM", "AC", "AP", "RO", "RR"}));
+			//estadosReturn = new ArrayList<String>(Arrays.asList(new String[]{"PA", "AM", "AC", "AP", "RO", "RR"}));
 			break;
 		case 3:
-			estadosReturn = new ArrayList<String>(Arrays.asList(new String[]{"CE", "MA", "PI"}));
+			//estadosReturn = new ArrayList<String>(Arrays.asList(new String[]{"CE", "MA", "PI"}));
 			break;
 		case 4:
-			estadosReturn = new ArrayList<String>(Arrays.asList(new String[]{"PE", "RN", "PB", "AL"}));
+			//estadosReturn = new ArrayList<String>(Arrays.asList(new String[]{"PE", "RN", "PB", "AL"}));
 			break;
 		case 5:
-			estadosReturn = new ArrayList<String>(Arrays.asList(new String[]{"BA", "SE"}));
+			//estadosReturn = new ArrayList<String>(Arrays.asList(new String[]{"BA", "SE"}));
 			break;
 		case 6:
 			estadosReturn = new ArrayList<String>(Arrays.asList(new String[]{"MG"}));
 			break;
 		case 7:
-			estadosReturn = new ArrayList<String>(Arrays.asList(new String[]{"RJ", "ES"}));
+			//estadosReturn = new ArrayList<String>(Arrays.asList(new String[]{"RJ", "ES"}));
 			break;
 		case 8:
 			estadosReturn = new ArrayList<String>(Arrays.asList(new String[]{"SP"}));
 			break;
 		case 9:
-			estadosReturn = new ArrayList<String>(Arrays.asList(new String[]{"PR", "SC"}));
+			//estadosReturn = new ArrayList<String>(Arrays.asList(new String[]{"PR", "SC"}));
 			break;
 		default:
 			break;
