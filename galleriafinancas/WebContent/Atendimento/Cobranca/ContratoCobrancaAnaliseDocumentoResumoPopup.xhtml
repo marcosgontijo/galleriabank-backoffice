@@ -8,6 +8,16 @@
 
 	<h:outputStylesheet name="primeicons/primeicons.css"
 		library="primefaces" />
+		
+	<p:ajaxStatus onstart="PF('statusDialog').show()"
+		oncomplete="PF('statusDialog').hide()" />
+
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+		closable="false" resizable="false" showHeader="false">
+		<div class="text-center">
+			<i class="pi pi-spin pi-spinner loading-icon" aria-hidden="true"></i>
+		</div>
+	</p:dialog>
 
 	<p:dialog id="resumoDialogHeader" widgetVar="resumoConsutlasDialog"
 		showEffect="fade" hideEffect="fade" resizable="false"
@@ -211,15 +221,7 @@
 						onkeydown="FormataValor(this, 13, event, 2);"
 						converter="bigDecimalConverter" disabled="true" />
 
-					<p:ajaxStatus onstart="PF('statusDialog').show()"
-						onsuccess="PF('statusDialog').hide()" />
-
-					<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
-						closable="false" resizable="false" showHeader="false">
-						<div class="text-center">
-							<i class="pi pi-spin pi-spinner loading-icon" aria-hidden="true"></i>
-						</div>
-					</p:dialog>
+					
 
 					<h:panelGrid columns="2" id="botoesPanelGrid">
 						<h:panelGroup id="botaoLinkImovel">

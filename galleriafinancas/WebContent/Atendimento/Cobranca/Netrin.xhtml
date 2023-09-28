@@ -133,7 +133,18 @@
 			
 				<h:panelGrid columns="3">	
 					<p:commandButton action="#{netrinMB.criarPedido}"
-						icon="ui-icon ui-icon-print" value="Fazer Pedido"  update=":form  msgs" />			
+						icon="ui-icon ui-icon-print" value="Fazer Pedido"  update=":form  msgs" />		
+						
+					<p:commandButton value="Voltar p/ Contrato" action="#{contratoCobrancaMB.clearFieldsEditarPendentesAnalistas}" 
+						ajax="false" icon="ui-icon-pencil" title="Editar" rendered="#{netrinMB.contratoCobranca ne null}">
+	                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{netrinMB.contratoCobranca}" />
+	                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{netrinMB.contratoCobranca.pagador}" />
+	                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{netrinMB.contratoCobranca.imovel}" />
+	                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
+	                	<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="false" />
+	                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+	                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" />
+	                </p:commandButton>	
 				</h:panelGrid>
 			</p:panel>
 		</h:form>

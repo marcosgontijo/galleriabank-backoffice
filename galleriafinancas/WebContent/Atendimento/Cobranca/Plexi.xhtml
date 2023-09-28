@@ -163,7 +163,18 @@
 			
 				<h:panelGrid columns="3">	
 					<p:commandButton action="#{plexiMB.criarPedido}"
-						icon="ui-icon ui-icon-print" value="Fazer Pedido"  update=":form  msgs" />			
+						icon="ui-icon ui-icon-print" value="Fazer Pedido"  update=":form  msgs" />
+						
+					<p:commandButton value="Voltar p/ Contrato" action="#{contratoCobrancaMB.clearFieldsEditarPendentesAnalistas}" 
+						ajax="false" icon="ui-icon-pencil" title="Editar" rendered="#{plexiMB.contratoCobranca ne null}">
+	                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{plexiMB.contratoCobranca}" />
+	                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{plexiMB.contratoCobranca.pagador}" />
+	                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{plexiMB.contratoCobranca.imovel}" />
+	                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
+	                	<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="false" />
+	                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
+	                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" />
+	                </p:commandButton>			
 				</h:panelGrid>
 			</p:panel>
 		</h:form>
