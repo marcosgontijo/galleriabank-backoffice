@@ -198,17 +198,10 @@ public class PlexiService {
 		return null;
 	}
 	
-	public void salvarPdfRetorno(PlexiConsulta plexiConsulta, PlexiConsultaDao plexiConsultaDao) {
-		String numeroContrato = plexiConsultaDao.getNumeroContratoAnalise(plexiConsulta);
-		if(CommonsUtil.semValor(numeroContrato)) {
-			return;
-		}
+	public void salvarPdfRetornoPlexi(PlexiConsulta plexiConsulta, PlexiConsultaDao plexiConsultaDao) {
 		String nomeAnalise = plexiConsultaDao.getNomeAnalise(plexiConsulta);
-		FileUploaded pdfRetorno = new FileUploaded();
-		pdfRetorno.setFileBase64(plexiConsulta.getPdf());
-		pdfRetorno.setName(plexiConsulta.getNomeCompleto() + " - " + nomeAnalise + ".pdf");
+		String numeroContrato = plexiConsultaDao.getNumeroContratoAnalise(plexiConsulta);
 		FileService fileService = new FileService();
-		User user = new UserDao().findById((long) -1);
-		fileService.salvarDocumentoBase64(pdfRetorno, numeroContrato, "interno", user);
+		fileService.salvarPdfRetorno(nomeAnalise, numeroContrato, plexiConsulta.getPdf(), plexiConsulta.getNomeCompleto(), "interno");
 	}
 }

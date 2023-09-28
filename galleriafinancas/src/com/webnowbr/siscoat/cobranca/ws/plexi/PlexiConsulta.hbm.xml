@@ -98,6 +98,9 @@
 		<property name="orgaoExpedidorRg" type="java.lang.String">
 			<column name="orgaoExpedidorRg" />
 		</property>
+		<property name="orgaoExpedidor" type="java.lang.String">
+			<column name="orgaoExpedidor" />
+		</property>
 		<property name="ufRg" type="java.lang.String">
 			<column name="ufRg" />
 		</property>

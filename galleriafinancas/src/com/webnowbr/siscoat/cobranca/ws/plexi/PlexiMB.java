@@ -395,7 +395,7 @@ public class PlexiMB {
 					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Rg", ""));
 				}
 				
-				if(CommonsUtil.semValor(plexiConsulta.getOrgaoExpedidorRg())){
+				if(CommonsUtil.semValor(plexiConsulta.getOrgaoExpedidor())){
 					retorno = false;
 					FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Orgao Rg", ""));
