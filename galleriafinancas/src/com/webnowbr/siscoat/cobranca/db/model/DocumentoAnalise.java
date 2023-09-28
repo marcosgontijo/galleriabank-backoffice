@@ -4,9 +4,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Date;
 import java.util.List;
 
 import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Set;
 
@@ -110,53 +113,60 @@ public class DocumentoAnalise implements Serializable {
 	private int totalCcfApontamentos = 0;
 	private int totalProtestos = 0;
 	private int numeroParticipacaoEmpresas = 0;
+	private FileUploaded file;
 	
 
 	public List<DocumentoAnaliseResumo> getResumoProcesso() {
 		List<DocumentoAnaliseResumo> vProcesso = new ArrayList<>();
-		ProcessoResumo processo = null;
+		br.com.galleriabank.bigdata.cliente.model.processos.ProcessoResult processoResponse = null;
 		try {
-			processo = GsonUtil.fromJson(getRetornoProcesso(), ProcessoResumo.class);
+			processoResponse = GsonUtil.fromJson(getRetornoProcesso() , br.com.galleriabank.bigdata.cliente.model.processos.ProcessoResult.class);
 		} catch (Exception erro) {
 			vProcesso.add(new DocumentoAnaliseResumo(null, null));
 		}
-		if (processo == null) {
+		if (processoResponse == null) {
 			vProcesso.add(new DocumentoAnaliseResumo("não disponível", null));
 		} else {
-
+			br.com.galleriabank.bigdata.cliente.model.processos.ProcessoResumo processo = processoResponse.getProcessoResumo();
 			if (processo.getCriminal() == null) {
 				vProcesso.add(new DocumentoAnaliseResumo("Criminal:", "Não disponível"));
 			} else {
-				String processos = CommonsUtil.stringValue(processo.getCriminal());
-				vProcesso.add(new DocumentoAnaliseResumo("Criminal:", processos));
+				String processosQuantidade = CommonsUtil.stringValue(processo.getCriminal().stream().mapToInt(p -> p.getQuatidade()).sum());
+				String processosValor = CommonsUtil.stringValue(processo.getCriminal().stream().mapToDouble(p -> p.getValor()).sum());
+				vProcesso.add(new DocumentoAnaliseResumo("Criminal:", processosValor + "(" + processosQuantidade + ")"));
 			}
 
 			if (processo.getTrabalhista() == null) {
 				vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:", "Não disponível"));
 			} else {
-				String processos = CommonsUtil.stringValue(processo.getTrabalhista());
-				vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:", processos));
+				String processosQuantidade = CommonsUtil.stringValue(processo.getTrabalhista().stream().mapToInt(p -> p.getQuatidade()).sum());
+				String processosValor = CommonsUtil.stringValue(processo.getTrabalhista().stream().mapToDouble(p -> p.getValor()).sum());
+				
+				vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:", processosValor + "(" + processosQuantidade + ")"));
 			}
 
 			if (processo.getTituloExecucaoFiscal() == null) {
 				vProcesso.add(new DocumentoAnaliseResumo("Execução de título:", "Não disponível"));
 			} else {
-				String processos = CommonsUtil.stringValue(processo.getTituloExecucaoFiscal());
-				vProcesso.add(new DocumentoAnaliseResumo("Execução de título:", processos));
+				String processosQuantidade = CommonsUtil.stringValue(processo.getTituloExecucaoFiscal().stream().mapToInt(p -> p.getQuatidade()).sum());
+				String processosValor = CommonsUtil.stringValue(processo.getTituloExecucaoFiscal().stream().mapToDouble(p -> p.getValor()).sum());
+				vProcesso.add(new DocumentoAnaliseResumo("Execução de título:", processosValor + "(" + processosQuantidade + ")"));
 			}
 
 			if (processo.getExecucaoFiscalProtesto() == null) {
 				vProcesso.add(new DocumentoAnaliseResumo("Execução Fiscal:", "Não disponível"));
 			} else {
-				String processos = CommonsUtil.stringValue(processo.getExecucaoFiscalProtesto());
-				vProcesso.add(new DocumentoAnaliseResumo("Execução Fiscal:", processos));
+				String processosQuantidade = CommonsUtil.stringValue(processo.getTituloExecucaoFiscal().stream().mapToInt(p -> p.getQuatidade()).sum());
+				String processosValor = CommonsUtil.stringValue(processo.getTituloExecucaoFiscal().stream().mapToDouble(p -> p.getValor()).sum());
+				vProcesso.add(new DocumentoAnaliseResumo("Execução Fiscal:", processosValor + "(" + processosQuantidade + ")"));
 			}
 
 			if (processo.getOutros() == null) {
 				vProcesso.add(new DocumentoAnaliseResumo("Outros:", "Não disponível"));
 			} else {
-				String processos = CommonsUtil.stringValue(processo.getOutros());
-				vProcesso.add(new DocumentoAnaliseResumo("Outros:", processos));
+				String processosQuantidade = CommonsUtil.stringValue(processo.getOutros().stream().mapToInt(p -> p.getQuatidade()).sum());
+				String processosValor = CommonsUtil.stringValue(processo.getOutros().stream().mapToDouble(p -> p.getValor()).sum());
+				vProcesso.add(new DocumentoAnaliseResumo("Outros:",processosValor + "(" + processosQuantidade + ")"));
 			}
 
 		}
@@ -185,6 +195,8 @@ public class DocumentoAnalise implements Serializable {
 			if (cpf != null) {
 				if (engine.getConsultaCompleta() != null && engine.getConsultaCompleta().getBestInfo().getAge() != null) {
 					str = String.join(" - ", str, engine.getConsultaCompleta().getBestInfo().getAge() + " Anos");
+				} else {
+					str = String.join(" - ", str, null);
 				}
 				
 				str = String.join(" - ", str, cpf.getValue());
@@ -463,8 +475,13 @@ public class DocumentoAnalise implements Serializable {
 			
 			if (dado.getResumoDoClienteTraduzido().getDtInicioRelacionamento() == null) {
 				scr.add(new DocumentoAnaliseResumo("Data inicio relacionamento:", "Não Disponível"));
-			} else {
-				scr.add(new DocumentoAnaliseResumo("Data inicio relacionamento:", dado.getResumoDoClienteTraduzido().getDtInicioRelacionamento()));
+			} else {			
+				String[] str = dado.getResumoDoClienteTraduzido().getDtInicioRelacionamento().split("-");
+				Arrays.sort(str);
+				List<String> listStrData = Arrays.asList(str);
+				String dataRelacionamento = String.join("/", listStrData);
+				
+				scr.add(new DocumentoAnaliseResumo("Data inicio relacionamento:", dataRelacionamento));
 			}
 		}
 
@@ -1021,7 +1038,7 @@ public class DocumentoAnalise implements Serializable {
 		this.pessoasPoliticamenteExpostas = Integer.toString(pessoasPoliticamenteExpostas);
 	}
 	
-    public String getDialogHeader() {
+  public String getDialogHeader() {
     	dialogHeader = dialogHeader();
         return dialogHeader;
     }
