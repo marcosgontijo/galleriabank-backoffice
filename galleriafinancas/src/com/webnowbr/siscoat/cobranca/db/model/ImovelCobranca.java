@@ -69,8 +69,6 @@ public class ImovelCobranca implements Serializable {
 
 	private Cidade objetoCidade;
 	
-	private Cidade objetoCidade;	
-	
 	public ImovelCobranca(){
 		resetarBololean();
 	}
