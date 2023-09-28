@@ -21,7 +21,7 @@ import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 
-@ManagedBean(name = "netrinMB")
+@ManagedBean(name = "asdasd")
 @SessionScoped
 public class NetrinMB {
 

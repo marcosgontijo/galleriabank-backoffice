@@ -11,14 +11,18 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.faces.application.FacesMessage;
+import javax.ws.rs.core.Response;
 
 import org.json.JSONObject;
 
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
+import com.webnowbr.siscoat.cobranca.service.FileService;
+import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
+import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
 
 import br.com.galleriabank.jwt.common.JwtUtil;
@@ -138,6 +142,33 @@ public class PlexiService {
 		}
 		return retorno;
 	}
+	
+	public void atualizaRetornoPlexi(String requestId) {
+		JSONObject webhookObject = getRetornoPlexi(requestId);
+		if(CommonsUtil.semValor(webhookObject)) {
+			return;
+		}
+		webhookObject.put("requestId", requestId);
+		PlexiConsultaDao plexiConsultaDao = new PlexiConsultaDao();
+		if(!webhookObject.has("requestId")) {
+			return;
+		}
+		PlexiConsulta plexiConsulta = plexiConsultaDao.findByFilter("requestId", 
+				webhookObject.getString("requestId"))
+				.stream().findFirst().orElse(null);
+		
+		if(CommonsUtil.semValor(plexiConsulta)) {
+			System.out.println("Erro Plexi: " + webhookObject.getString("requestId"));
+		}
+		
+		plexiConsulta.setWebhookRetorno(webhookObject.toString());
+		if(webhookObject.has("pdf")) {
+			plexiConsulta.setPdf(webhookObject.getString("pdf"));
+			//salvarPdfRetorno(plexiConsulta, plexiConsultaDao);
+		}
+		plexiConsulta.setStatus("Consulta Concluída");
+		plexiConsultaDao.merge(plexiConsulta);
+	}
 
 	public JSONObject getJsonSucesso(InputStream inputStream) {
 		BufferedReader in;
@@ -165,5 +196,12 @@ public class PlexiService {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public void salvarPdfRetornoPlexi(PlexiConsulta plexiConsulta, PlexiConsultaDao plexiConsultaDao) {
+		String nomeAnalise = plexiConsultaDao.getNomeAnalise(plexiConsulta);
+		String numeroContrato = plexiConsultaDao.getNumeroContratoAnalise(plexiConsulta);
+		FileService fileService = new FileService();
+		fileService.salvarPdfRetorno(nomeAnalise, numeroContrato, plexiConsulta.getPdf(), plexiConsulta.getNomeCompleto(), "interno");
 	}
 }

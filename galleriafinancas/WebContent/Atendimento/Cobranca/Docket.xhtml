@@ -17,119 +17,85 @@
 				style="margin-bottom:10px;">
 				<p:focus />
 				<p:messages id="msgs" />	
-				<shiro:hasAnyRoles name="ROOT">
-					<p:commandButton action="#{docketMB.teste}"
-						update="msgs" value="teste"/>
-				</shiro:hasAnyRoles>
 				<h:panelGrid columns="3">		
-					<h:panelGrid columns="2">							
-						<p:outputLabel for="contrato" value="Referente a Operação: "
-							styleClass="labelBold"
-							style="font-weight: bold; font-size: 18px;" />
-						<h:panelGroup>
-							<p:outputLabel id="contrato" disabled="true"
-								value="#{docketMB.objetoContratoCobranca.numeroContrato}"
-								required="false" style="FONT-SIZE: 10pt;" />
-							<p:spacer height="10" />
-							<p:commandButton icon="ui-icon ui-icon-circle-zoomin" ajax="true"
-								action="#{docketMB.pesquisaContratoCobranca}"
-								disabled="#{docketMB.objetoContratoCobranca.numeroContrato ne null}"
-								oncomplete="PF('contratoCobrancaDialog').show();"
-								update="contrato contratoDialogdlg" />
-						</h:panelGroup>
-						
-						<p:outputLabel value="Adicionar Pagadores: "
-							styleClass="labelBold"
-							style="font-weight: bold; font-size: 18px;" />
-						<p:commandButton action="#{docketMB.clearPessoaDialog}"
-							icon="ui-icon ui-icon-plus" ajax="true"
-							oncomplete="PF('pessoaDialog').show();"
-							update="pessoaDialogdlg" />
-					</h:panelGrid>
-				
 					
-					
-				
 				</h:panelGrid>	
 				
-				<h:panelGroup id="Dados">				
-					<p:dataList id="pagadorList" value="#{docketMB.listaPagador}" var="pagador" style="padding: 0;" type="definition">
-						<p:panel id="pagadorPanel" header="#{pagador.nome}" style="padding: none" 
+				<h:panelGroup id="Dados">
+					<p:dataList id="pagadorList" value="#{docketMB.listPagador}" var="DocAnalise" style="padding: 0;" type="definition">
+						<p:panel id="pagadorPanel" header="#{DocAnalise.pagador.nome}" style="padding: none" 
 							toggleable="true" toggleableHeader="true">
 							<f:facet name="header" styleClass="ui-accordion-header">
 								<p:commandButton icon="ui-icon ui-icon-trash"
-									action="#{docketMB.removerPessoa(pagador)}"
+									action="#{docketMB.removerPessoa(DocAnalise)}"
 									ajax="true" update=":form:DocketPanel" />
-								<p:outputLabel value="#{pagador.nome}" style="FONT-SIZE: 15pt;margin-left: 5px" styleClass="ui-panel-title"/>
+								<p:outputLabel value="#{DocAnalise.pagador.nome}" style="FONT-SIZE: 15pt;margin-left: 5px" styleClass="ui-panel-title"/>
 							</f:facet>
-							<h:panelGrid columns="2">					
-								<p:commandButton icon="ui-icon ui-icon-plus"
-									action="#{docketMB.clearDialogDoc(pagador)}"
-									oncomplete="PF('documentosDialog').show();"
-									ajax="true" update="documentosform" />								
-								<h:panelGroup rendered="#{pagador.cpf != null and pagador.cpf != ''}">
-									<p:outputLabel value="Nome:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
-									<p:outputLabel value="#{pagador.nome}" style="FONT-SIZE: 5pt; margin-right: 5px"  />  								
-									<p:outputLabel value="| CPF:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
-									<p:inputText value="#{pagador.cpf}" style="FONT-SIZE: 5pt; margin-right: 5px; width:100px" />  								
-									<p:outputLabel value="| Mãe:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
-									<p:inputText value="#{pagador.nomeMae}" style="FONT-SIZE: 5pt; margin-right: 5px; width:100px" /> 							 
-									<p:outputLabel value="| RG:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
-									<p:inputText value="#{pagador.rg}" style="FONT-SIZE: 5pt; margin-right: 5px; width:100px" /> 								
-									<p:outputLabel value="| Data Nascimento:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
-									<p:calendar value="#{pagador.dtNascimento}" size="50" styleClass="dateTimeField" pattern="dd/MM/yyyy" 
-										inputStyle="margin-right: 5px; width:70px"/>							
-								</h:panelGroup> 						
-								<h:panelGroup rendered="#{pagador.cpf eq null or pagador.cpf eq ''}">
-									<p:outputLabel value="Razão Social:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
-									<p:outputLabel value="#{pagador.nome}" style="FONT-SIZE: 5pt; margin-right: 5px" />  							
-									<p:outputLabel value="| CNPJ:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
-									<p:inputText value="#{pagador.cnpj}" style="FONT-SIZE: 5pt; margin-right: 5px; width:120px" />  						
-								</h:panelGroup> 						    
+							<h:panelGrid columns="1">
+								<h:panelGroup rendered="#{DocAnalise.pagador.cpf != null and DocAnalise.pagador.cpf != ''}">
+									<h:panelGrid columns="6">
+										<h:panelGrid columns="2">
+											<p:outputLabel value="Nome:" styleClass="labelBold"/>
+											<p:outputLabel value="#{DocAnalise.pagador.nome}" />  
+										</h:panelGrid>		
+										<h:panelGrid columns="2">				
+											<p:outputLabel value="CPF:"  styleClass="labelBold"/>
+											<p:inputMask value="#{DocAnalise.pagador.cpf}" style="width:100px" mask="999.999.999-99" />  
+										</h:panelGrid>
+										<h:panelGrid columns="2">								
+											<p:outputLabel value="Mãe:" styleClass="labelBold"/>
+											<p:inputText value="#{DocAnalise.pagador.nomeMae}" /> 	
+										</h:panelGrid>
+										<h:panelGrid columns="2">						 
+											<p:outputLabel value="RG:" styleClass="labelBold"/>
+											<p:inputText value="#{DocAnalise.pagador.rg}" /> 	
+										</h:panelGrid>
+										<h:panelGrid columns="2">							
+											<p:outputLabel value="Data Nascimento:" styleClass="labelBold"/>
+											<p:calendar value="#{DocAnalise.pagador.dtNascimento}" styleClass="dateTimeField" 
+												pattern="dd/MM/yyyy" size="50" inputStyle="margin-right: 5px; width:70px"/>
+										</h:panelGrid>
+									</h:panelGrid>
+								</h:panelGroup>	
+								<h:panelGrid columns="6" rendered="#{DocAnalise.pagador.cpf eq null or DocAnalise.pagador.cpf eq ''}">
+										<h:panelGrid columns="2">
+										<p:outputLabel value="Razão Social:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
+										<p:outputLabel value="#{DocAnalise.pagador.nome}" style="FONT-SIZE: 5pt; margin-right: 5px" />  
+									</h:panelGrid>
+									<h:panelGrid columns="2">						
+										<p:outputLabel value="CNPJ:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
+										<p:inputText value="#{DocAnalise.pagador.cnpj}" style="FONT-SIZE: 5pt; margin-right: 5px; width:120px" />
+									</h:panelGrid>					
+								</h:panelGrid> 						    
+								<h:panelGrid columns="2">
+									<p:outputLabel value="UF:" styleClass="labelBold" />
+									<p:outputLabel value="#{DocAnalise.estadosConsultaStr}" />
+								</h:panelGrid>
 							</h:panelGrid>	
 							<p:panel id="docsPanel" header="" style="padding: 0" toggleable="true" toggleableHeader="true" >
 								<f:facet name="header" styleClass="ui-accordion-header">
-									<p:outputLabel value="Documentos - #{pagador.documentosDocket.size()}" 
+									<p:outputLabel value="Documentos - #{DocAnalise.docketConsultas.size()}" 
 									style="FONT-SIZE: 15pt;margin-left: 5px" styleClass="ui-panel-title"/>
 								</f:facet>
-								 <p:dataList id="docsList" value="#{pagador.documentosDocket}" var="docs" style="padding: 0" type="definition">
-								 	<p:panel id="PanelGridDocs" header="Documentos" style="padding: 0" toggleable="true" toggleableHeader="true" collapsed="true" >			
+								<p:dataList id="docsList" value="#{DocAnalise.docketConsultas}" var="docs" style="padding: 0" type="definition">
+									<p:panel id="PanelGridDocs" header="Documentos" style="padding: 0" toggleable="true" toggleableHeader="true" collapsed="true" >			
 										<f:facet name="header" styleClass="ui-accordion-header">
 											<p:commandButton icon="ui-icon ui-icon-trash" ajax="true"
-												action="#{docketMB.removeDoc(pagador, docs)}"
-												update="form:pagadorList" />
-											<p:outputLabel value="#{docs.estadoSelecionado.uf} - #{docs.documentoDocket.documentoNome}" style="FONT-SIZE: 15pt;margin-left: 5px" styleClass="ui-panel-title"/>
+												action="#{docketMB.removeDoc(DocAnalise, docs)}"
+												update="form:pagadorList"
+												disabled="#{docs.retorno ne null}" />
+											<p:outputLabel value="X - " style="FONT-SIZE: 15pt;margin-left: 5px;margin-right: 0px" styleClass="ui-panel-title" rendered="#{docs.idDocket eq null}"/>
+											<p:outputLabel value="✓ - " style="FONT-SIZE: 15pt;margin-left: 5px;margin-right: 0px" styleClass="ui-panel-title" rendered="#{docs.idDocket ne null}"/>
+											<p:outputLabel value="#{docs.docketDocumentos.documentoNome}" style="FONT-SIZE: 15pt;margin-left: 5px" styleClass="ui-panel-title"/>
+											<p:outputLabel value="#{docs.uf}" style="FONT-SIZE: 15pt;margin-left: 5px" styleClass="ui-panel-title"/>
 										</f:facet>
-										<h:panelGrid columns="5">		
-											<p:outputLabel value="Estado" style="FONT-SIZE: 10pt;" />
-	    									<h:selectOneMenu value="#{docs.estadoSelecionado}" >								
-												<f:selectItems value="#{docketMB.listaEstados}" var="estado"
-		    										itemValue="#{estado}" itemLabel="#{estado}" />		
-		    									<p:ajax update="docsList" event="change" listener="#{docketMB.pegarListaCidades(docs)}"/>										
-	    									</h:selectOneMenu>
-												
-											<p:outputLabel value="Cidade" style="FONT-SIZE: 10pt;" />
-											<p:autoComplete value="#{docs.cidade}"
-												completeMethod="#{docketMB.completeCidades}" autocomplete="no" 
-												var="cidade" itemLabel="#{cidade}" itemValue="#{cidade}"
-												forceSelection="true" styleClass="labelBold" style="width:100px;margin-right: 30px;"
-												scrollHeight="250" >
-												<p:ajax update="cidadeID" event="blur" listener="#{docs.getCidadeDocketId}" />
-												<f:attribute name="documentoAtual" value="#{docs}" />	
-											</p:autoComplete>
-											
-											<p:selectBooleanButton style="margin-left: 40px"
-												value="#{docs.travado}"
-												onLabel="" offLabel=""
-												onIcon="ui-icon-locked" offIcon="ui-icon-unlocked">
-											</p:selectBooleanButton>
+								
+										<h:panelGrid columns="2">
+											<p:outputLabel value="Nome:" styleClass="labelBold" />
+											<p:outputLabel value="#{DocAnalise.pagador.nome}" />
 										</h:panelGrid>
-										<h:panelGrid columns="2">	
-											<p:outputLabel id="estadoID" value="#{docs.estadoId}" style="FONT-SIZE: 10pt;" />
-											<p:outputLabel id="cidadeID" value="#{docs.cidadeId}" style="FONT-SIZE: 10pt;" />
-										</h:panelGrid>	
 									</p:panel>	
-								 </p:dataList>
+								</p:dataList>
 							</p:panel>
 						</p:panel>
 					</p:dataList>
@@ -140,183 +106,8 @@
 						icon="ui-icon ui-icon-print" value="Fazer Pedido"  update=":form  msgs" />			
 				</h:panelGrid>
 			</p:panel>
-			<p:commandButton action="#{dataEngineMB.pedirEngineDocket(docketMB.listaPagador, docketMB.objetoContratoCobranca)}"
-				icon="ui-icon ui-icon-print" value="Pedir Engine"  update=":form  msgs" />			
+				
 		</h:form>
-	
-		<p:dialog header="Documentos" widgetVar="documentosDialog"
-		 style="FONT-SIZE: 10pt;" width="800" position="center center">
-			<h:form id="documentosform">
-				<p:dataTable var="docs"
-					value="#{docketMB.listaDococumentosDocket}" paginator="true" rows="10"
-					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-					rowsPerPageTemplate="5,10,15"
-					style="FONT-SIZE: 10pt;" emptyMessage="">
-
-					<p:column style="text-align: center;"
-						sortBy="#{docs.documentoNome}"
-						filterBy="#{docs.documentoNome}" filterMatchMode="contains">
-						<f:facet name="header">
-							<h:outputText value="Nome Documento" />
-						</f:facet>
-						<h:outputText value="#{docs.documentoNome}" />
-					</p:column>
-					
-					<p:column style="text-align: center;">
-						<p:commandButton ajax="true" icon="ui-icon ui-icon-check"
-							action="#{docketMB.adicionaDoc(docs)}"
-							update=":form:DocketPanel"
-							oncomplete="PF('documentosDialog').hide();" />
-					</p:column>
-
-					<f:facet name="footer">
-						<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
-							oncomplete="PF('documentosDialog').hide();" />
-					</f:facet>
-				</p:dataTable>
-			</h:form>
-		</p:dialog>
-									
-		<p:dialog header="Contratos" widgetVar="contratoCobrancaDialog"
-			resizable="false" style="FONT-SIZE: 10pt;" width="800">
-			<h:form id="contratoDialogdlg">
-				<p:dataTable var="contratos"
-					value="#{docketMB.listaContratosConsultar}" paginator="true" rows="10"
-					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-					rowsPerPageTemplate="5,10,15"
-					selection="#{docketMB.objetoContratoCobranca}"
-					style="FONT-SIZE: 10pt;" emptyMessage="">
-
-					<p:column style="text-align: center;"
-						sortBy="#{contratos.numeroContrato}"
-						filterBy="#{contratos.numeroContrato}" filterMatchMode="contains">
-						<f:facet name="header">
-							<h:outputText value="Numero Contrato" />
-						</f:facet>
-						<h:outputText value="#{contratos.numeroContrato}" />
-					</p:column>
-
-					<p:column style="text-align: center;"
-						sortBy="#{contratos.pagador.nome}"
-						filterBy="#{contratos.pagador.nome}" filterMatchMode="contains">
-						<f:facet name="header">
-							<h:outputText value="Nome Pagador" />
-						</f:facet>
-						<h:outputText value="#{contratos.pagador.nome}" />
-					</p:column>
-					
-					<p:column style="text-align: center;">
-						<p:commandButton ajax="true" icon="ui-icon ui-icon-check"
-							action="#{docketMB.populateSelectedContratoCobranca}"
-							update=":form:DocketPanel"
-							oncomplete="PF('contratoCobrancaDialog').hide();" >
-							<f:setPropertyActionListener 
-								target="#{docketMB.objetoContratoCobranca}" value="#{contratos}" />
-						</p:commandButton>
-					</p:column>
-
-					<f:facet name="footer">
-						<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
-							oncomplete="PF('contratoCobrancaDialog').hide();" />
-					</f:facet>
-				</p:dataTable>
-			</h:form>
-		</p:dialog>
-		
-		<p:dialog header="Nova Pessoa" widgetVar="pessoaDialog"
-			resizable="false" style="FONT-SIZE: 10pt;" width="800">
-			<h:form id="pessoaDialogdlg">
-				<p:messages id="msgsPessoa" />			
-				<div align="center">		
-					<h:panelGrid columns="2">
-						<p:outputLabel for="Pessoa" value="Pessoa: "
-							styleClass="labelBold" />
-						<p:selectOneRadio id="Pessoa"
-							value="#{docketMB.tipoPessoaIsFisica}" required="true">
-							<f:selectItem itemLabel="Física" itemValue="true" />
-							<f:selectItem itemLabel="Jurídica" itemValue="false" />
-							<p:ajax update="pessoaDialogdlg" event="valueChange"
-								listener="#{docketMB.selectedTipoPessoaPublico}" />
-						</p:selectOneRadio>
-					</h:panelGrid>		
-					<h:panelGrid columns="2" rendered="#{docketMB.tipoPessoaIsFisica}">
-						<p:outputLabel value="CPF:"  styleClass="labelBold"/>			
-						<p:inputMask value="#{docketMB.pagadorAdicionar.cpf}"
-							style=" width:100px" mask="999.999.999-99">
-							<p:ajax event="blur"
-								update="pessoaDialogdlg"
-								listener="#{docketMB.procurarPF}" />
-						</p:inputMask>
-						<p:outputLabel value="Nome:" styleClass="labelBold"/>
-						<p:inputText value="#{docketMB.pagadorAdicionar.nome}" />
-						<p:outputLabel value="Mãe:"  styleClass="labelBold"/>
-						<p:inputText value="#{docketMB.pagadorAdicionar.nomeMae}" style=" width:100px" /> 							 
-						<p:outputLabel value="RG:"  styleClass="labelBold"/>
-						<p:inputText value="#{docketMB.pagadorAdicionar.rg}" style=" width:100px" /> 								
-						<p:outputLabel value="Data Nascimento:"  styleClass="labelBold"/>
-						<p:calendar value="#{docketMB.pagadorAdicionar.dtNascimento}" size="50" styleClass="dateTimeField" pattern="dd/MM/yyyy" 
-							inputStyle="margin-right: 5px; width:70px"/>
-					</h:panelGrid>	
-					<h:panelGrid columns="2" rendered="#{!docketMB.tipoPessoaIsFisica}">
-						<p:outputLabel value="CNPJ:"  styleClass="labelBold"/>
-						<p:inputMask value="#{docketMB.pagadorAdicionar.cnpj}"
-							label="CNPJ" mask="99.999.999/9999-99" style=" width:100px">
-							<p:ajax event="blur"
-								update="pessoaDialogdlg"
-								listener="#{docketMB.procurarPJ}" />
-						</p:inputMask>
-						<p:outputLabel value="Razão Social:" styleClass="labelBold"/>
-						<p:inputText value="#{docketMB.pagadorAdicionar.nome}"/>				
-					</h:panelGrid>
-					
-					<h:panelGrid columns="2" id="grid2">
-						<p:dataView var="local" style="min-width: 150px;"
-							value="#{docketMB.listaLocalidades}"
-							paginator="false" layout="list">
-							<p:dataViewListItem>
-								<p:outputLabel value="#{local.estado} - #{local.cidade}" styleClass="labelBold" />
-								<p:spacer width="10px"></p:spacer>
-								<p:commandButton icon="ui-icon-trash"
-									action="#{docketMB.removerLocalidade(local)}"
-									update=":pessoaDialogdlg:grid2" />
-							</p:dataViewListItem>
-						</p:dataView>
-	
-						<h:panelGroup id="locaisValor">
-							<h:panelGrid columns="2">
-								<p:outputLabel value="Estado" style="FONT-SIZE: 10pt;" />
-								<h:selectOneMenu value="#{docketMB.localidadesSelecionada.estadoSelecionado}" >								
-									<f:selectItems value="#{docketMB.listaEstados}" var="estado"
-										itemValue="#{estado}" itemLabel="#{estado}" />		
-									<p:ajax update="locaisValor" event="change" listener="#{docketMB.pegarListaCidadesImovel}"/>										
-								</h:selectOneMenu>
-								
-								<p:outputLabel value="Cidade" style="FONT-SIZE: 10pt;" />
-								<p:autoComplete id="cidadesImovel" value="#{docketMB.localidadesSelecionada.cidade}"
-									completeMethod="#{docketMB.completeCidadesImovel}" autocomplete="no" 
-									var="cidade" itemLabel="#{cidade}" itemValue="#{cidade}"  dropdown="true"
-									forceSelection="true"
-									scrollHeight="250">
-									<p:ajax update="pessoaDialogdlg:grid2" event="itemSelect" listener="#{docketMB.populateCidadeLocalidade}" /> 
-								</p:autoComplete>
-							</h:panelGrid>
-							<p:commandButton value="Inserir local" 
-								icon="ui-icon-check"
-								action="#{docketMB.inserirLocalidade}"
-								update="grid2">
-							</p:commandButton>
-						</h:panelGroup>
-					</h:panelGrid>
-					
-					<p:commandButton  value="Adicionar" 
-						action="#{docketMB.inserirPessoa}" 
-						onclick="PF('pessoaDialog').close();"
-						update=":form:DocketPanel" 
-						style="margin-bottom:50px; margin-top:10px"/>	
-				</div>
-			</h:form>
-			<p:ajax event="close" listener="#{docketMB.closeDialog}" update="pessoaDialogdlg" />
-		</p:dialog>
 		
 	</ui:define>
 </ui:composition>

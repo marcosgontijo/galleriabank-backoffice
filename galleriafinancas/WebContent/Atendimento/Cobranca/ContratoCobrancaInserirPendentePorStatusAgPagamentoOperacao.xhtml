@@ -604,7 +604,7 @@
 										action="#{contratoCobrancaMB.populateFilesContasPagar(contas)}"
 										ajax="true" update=":form:ContasPagarPanel contaArquivosForm" />
 										
-									<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR">
+									<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR, COBRANCA_FINANCEIRO">
 										<p:commandButton oncomplete="PF('pagamentoStarkBankdlg').show();"
 											icon="ui-icon-video" title="Pagamento - StarkBank" value="Pagamento - StarkBank"
 											update=":starkBankForm :form" disabled="#{contas.contaPaga}">

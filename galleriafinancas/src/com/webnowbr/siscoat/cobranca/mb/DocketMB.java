@@ -1,17 +1,14 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
-import java.io.BufferedReader;
-import java.io.IOException;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -21,36 +18,25 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
-import javax.faces.component.UIComponent;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
+import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.primefaces.PrimeFaces;
+import org.primefaces.model.StreamedContent;
 
+import com.itextpdf.text.pdf.PdfReader;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
-import com.webnowbr.siscoat.cobranca.db.model.DataEngine;
-import com.webnowbr.siscoat.cobranca.db.model.Docket;
-import com.webnowbr.siscoat.cobranca.db.model.DocketCidades;
+import com.webnowbr.siscoat.cobranca.db.model.DocketConsulta;
 import com.webnowbr.siscoat.cobranca.db.model.DocketEstados;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentosDocket;
-import com.webnowbr.siscoat.cobranca.db.model.DocumentosPagadorDocket;
-import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
-import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
-import com.webnowbr.siscoat.cobranca.db.op.DataEngineDao;
-import com.webnowbr.siscoat.cobranca.db.op.DocketCidadesDao;
-import com.webnowbr.siscoat.cobranca.db.op.DocketDao;
+import com.webnowbr.siscoat.cobranca.db.op.DocketConsultaDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocketEstadosDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentosDocketDao;
-import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
-import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.common.CommonsUtil;
-import com.webnowbr.siscoat.common.EstadosEnum;
-import com.webnowbr.siscoat.common.SiscoatConstants;
+import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
 import com.webnowbr.siscoat.security.LoginBean;
@@ -62,765 +48,8 @@ public class DocketMB {
 	@ManagedProperty(value = "#{loginBean}")
 	protected LoginBean loginBean;
 	
-	private String urlHomologacao = "https://sandbox-saas.docket.com.br";
-	private String urlProducao = "https://saascompany.docket.com.br";
-	private String kitIdGalleria = "02859d48-ff2a-45a4-922b-d6b9842affcc";
-	private String kitNomeGalleria = "1 - GALLERIA BANK";
-	private String login = "galleria-bank.api";
-	private String senha = "5TM*sgZKJ3hoh@J";
-	private String loginProd = "tatiane.galleria";
-	private String senhaProd = "Nina2021@";
-	private String organizacao_url = "galleria-bank";	
-	private String tokenLogin;
-	
-	private List<PagadorRecebedor> listRecebedorPagador;	//lista de consulta
-	private List<ContratoCobranca> listaContratosConsultar;	//lista de consulta
-	private PagadorRecebedor selectedPagadorDocumentos; //usado para consulta de docs
-	private PagadorRecebedor pagadorAdicionar;
-	private boolean tipoPessoaIsFisica;
-	
-	private List<DocumentosDocket> listaDococumentosDocket;  //listagem de docs
-	private List<DocumentosPagadorDocket> listaDococumentosPagador; //listagem de docs
-	List<SelectItem> listaEstados; // listagem de estados
-		
-	private ContratoCobranca objetoContratoCobranca; //op de referencia
-	private List<PagadorRecebedor> listaPagador; //titulares pra enviar pedido
-	private EstadosEnum estadoSelecionadoImovel;
-	private List<DocketCidades> listaCidadesImovel;
-	private String estadoImovel;
-	private String cidadeImovel;
-	
-	private List<DocumentosPagadorDocket> listaLocalidades;
-	private DocumentosPagadorDocket localidadesSelecionada;
-	private List<PagadorRecebedor> listaEsperaPagador;
-
-	private Docket docket = new Docket();
-	
-	public DocketMB() {
-		listRecebedorPagador = new ArrayList<PagadorRecebedor>();
-		listaContratosConsultar = new ArrayList<ContratoCobranca>();	
-		listaDococumentosDocket = new ArrayList<DocumentosDocket>(); 
-		listaDococumentosPagador = new ArrayList<DocumentosPagadorDocket>();
-		listaEstados = pesquisaEstadosListaNome(); 
-		objetoContratoCobranca = new ContratoCobranca(); 
-		listaPagador = new ArrayList<PagadorRecebedor>(); 
-		listaEsperaPagador = new ArrayList<PagadorRecebedor>();
-		clearContratoCobranca();
-	}
-	
-	public String clearFieldsDocket() {
-		this.objetoContratoCobranca = new ContratoCobranca();
-		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-		listaContratosConsultar = new ArrayList<ContratoCobranca>();
-		this.listaContratosConsultar = cDao.consultaContratosDocket();
-		
-		listaPagador = new ArrayList<PagadorRecebedor>();
-		listaDococumentosPagador = new ArrayList<DocumentosPagadorDocket>(); 
-		listaDococumentosDocket = new ArrayList<DocumentosDocket>(); 
-		estadoSelecionadoImovel = null;
-		listaCidadesImovel = new ArrayList<DocketCidades>(); 
-		estadoImovel = null;
-		cidadeImovel = null;
-		docket = new Docket();
-		
-		listaLocalidades = new ArrayList<DocumentosPagadorDocket>();
-		localidadesSelecionada = new DocumentosPagadorDocket();
-		
-		DocumentosDocketDao docDao = new DocumentosDocketDao();	
-		listaDococumentosDocket = docDao.getAllDocumentosDocket();
-		
-		listaEsperaPagador = new ArrayList<PagadorRecebedor>();
-
-		for(DocumentosDocket doc : listaDococumentosDocket) {
-			DocumentosPagadorDocket docPagador = new DocumentosPagadorDocket();
-			docPagador.setDocumentoDocket(doc);
-			listaDococumentosPagador.add(docPagador);
-		}
-		return "/Atendimento/Cobranca/Docket.xhtml";
-	}
-	
-	public String clearFieldsContratoCobranca(ContratoCobranca contrato) { //chama clearFields populado com dados do contrato
-		clearFieldsDocket();
-		this.objetoContratoCobranca = contrato;  
-		if(populateSelectedContratoCobranca()){
-			return "/Atendimento/Cobranca/Docket.xhtml";
-		}
-		return "";
-	}
-	
-	public String clearFieldsEngine(ContratoCobranca contrato, List<DataEngine> lista) { //chama clearFields populado com dados do contrato
-		clearFieldsDocket();
-		this.objetoContratoCobranca = contrato; 
-		populateSelectedContratoCobranca();	
-		/*for(DataEngine engine : lista) {
-			PagadorRecebedor pagador = engine.getPagador();
-			if(CommonsUtil.mesmoValor(pagador.getNome(), contrato.getPagador().getNome())) {
-				continue;
-			}
-			listaEsperaPagador.add(pagador);
-		}*/
-		return "/Atendimento/Cobranca/Docket.xhtml";
-	}
-	
-	public void teste() {
-		FacesContext context = FacesContext.getCurrentInstance();
-		tokenLogin = null;
-		loginDocket();
-		if(!CommonsUtil.semValor(tokenLogin)) {
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-			"[Docket - Login] Docket conectada", ""));
-		}
-	}
-	
-	public void loginDocket() {	//POST pra pegar token	
-		try {		
-			FacesContext context = FacesContext.getCurrentInstance();
-			int HTTP_COD_SUCESSO = 200;
-
-			URL myURL;
-			
-			JSONObject jsonObj = new JSONObject();
-			String loginDocket;
-			String senhaDocket;
-			
-			if(SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
-				myURL = new URL(urlHomologacao + "/api/v2/auth/login");
-				loginDocket = login;
-				senhaDocket = senha;
-				
-			} else {
-				myURL = new URL(urlProducao + "/api/v2/auth/login");
-				loginDocket = loginProd;
-				senhaDocket = senhaProd;
-				User user = getUsuarioLogado();
-				if(!CommonsUtil.semValor(user)) {
-					if(!CommonsUtil.semValor(user.getLoginDocket()) && !CommonsUtil.semValor(user.getSenhaDocket())) {
-						loginDocket = user.getLoginDocket();
-						senhaDocket = user.getSenhaDocket();
-					}
-				}
-			}
-
-			jsonObj.put("login", loginDocket);
-			jsonObj.put("senha", senhaDocket);
-			
-			
-			byte[] postDataBytes = jsonObj.toString().getBytes();
-
-			HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
-			myURLConnection.setUseCaches(false);
-			myURLConnection.setRequestMethod("POST");
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json");
-		     
-			myURLConnection.setDoOutput(true);
-			
-			try(OutputStream os = myURLConnection.getOutputStream()) {
-			    byte[] input = jsonObj.toString().getBytes("utf-8");
-			    os.write(input, 0, input.length);
-			    os.close();
-			}
-	
-			JSONObject myResponse = null;
-			int status = myURLConnection.getResponseCode();
-			
-			myResponse = getJSONSucesso(myURLConnection.getInputStream());			
-			
-			this.tokenLogin = "";
-			
-			if (status == HTTP_COD_SUCESSO) {
-				if (myResponse.has("token")) {
-					if (!myResponse.isNull("token")) {
-						this.tokenLogin = myResponse.getString("token");
-					}
-				}
-			} else {
-				System.out.println(jsonObj.toString());
-				if (status == 401) {
-					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-							"[Docket - Login] Falha de autenticação. Token inválido!", ""));
-				}
-				if (status == 400) {
-					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-							"[Docket - Login] Erro no login.", ""));
-				}
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-						"[Docket - Login] Erro não conhecido!", ""));
-			}
-						
-			myURLConnection.disconnect();
-			
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}	
-	}
-	
-	public void pegarListaCidades(DocumentosPagadorDocket doc) {
-		DocketCidadesDao dcDao = new DocketCidadesDao();
-		List<DocketCidades> lista = new ArrayList<DocketCidades>();
-		lista = dcDao.getListaCidades(doc.getEstadoSelecionado().getUf());
-		if(CommonsUtil.semValor(lista)) {
-			pegarCidadesPorEstadoID(doc.getEstadoId());
-			lista = dcDao.getListaCidades(doc.getEstadoSelecionado().getUf());
-		}
-		doc.setListaCidades(lista);
-	}
-	
-	public void pegarListaCidadesImovel() {
-		DocketCidadesDao dcDao = new DocketCidadesDao();
-		List<DocketCidades> lista = new ArrayList<DocketCidades>();
-		lista = dcDao.getListaCidades(localidadesSelecionada.getEstadoSelecionado().getUf());
-		if(CommonsUtil.semValor(lista)) {
-			pegarCidadesPorEstadoID(localidadesSelecionada.getEstadoSelecionado().getIdDocket());
-			lista = dcDao.getListaCidades(localidadesSelecionada.getEstadoSelecionado().getUf());
-		}
-		listaCidadesImovel = lista;
-	}
-	
-	public void pegarCidadesPorEstadoID(String estadoID) {	//GET pra pegar cidades na API
-		try {		
-			FacesContext context = FacesContext.getCurrentInstance();
-			int HTTP_COD_SUCESSO = 200;
-
-			URL myURL;
-			if(SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
-				myURL = new URL(urlHomologacao + "/api/v2/"+organizacao_url+"/cidades?estadoId=" + estadoID);
-			} else {
-				myURL = new URL(urlProducao + "/api/v2/"+organizacao_url+"/cidades?estadoId=" + estadoID);
-			}
-
-			// GET TOKEN Login
-			loginDocket();
-
-			HttpURLConnection myURLConnection = (HttpURLConnection)myURL.openConnection();
-			myURLConnection.setUseCaches(false);
-			myURLConnection.setRequestMethod("GET");
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json");
-			myURLConnection.setRequestProperty("Authorization", "Bearer " + this.tokenLogin);
-		     
-			myURLConnection.setDoOutput(true);
-
-			JSONObject myResponse = null;
-			int status = myURLConnection.getResponseCode();
-			
-			myResponse = getJSONSucesso(myURLConnection.getInputStream());
-			
-			if (status == HTTP_COD_SUCESSO) {				
-				if (myResponse.has("cidades")) {					
-					if (!myResponse.isNull("cidades")) {
-						
-						DocketEstadosDao docketEstadosDao= new DocketEstadosDao();
-						
-						DocketEstados estado = null;
-						
-						estado = docketEstadosDao.getEstado(estadoID);
-						
-						if (estado == null) {
-							estado = new DocketEstados();
-							
-							estado.setIdDocket(estadoID);
-						
-							// TODO set NOME
-							//estado.setNome(estadoID);
-							// TODO set URL
-							//estado.setUrl(estadoID);
-						} 
-						
-						List<DocketCidades> cidades = new ArrayList<DocketCidades>();														
-						JSONArray cidadesObj = myResponse.getJSONArray("cidades");		
-						
-						for (int i = 0; i < cidadesObj.length(); i++) {
-							DocketCidades cidade = new DocketCidades();
-							
-							JSONObject cidadeObj = cidadesObj.getJSONObject(i);
-							
-							cidade.setIdDocket(cidadeObj.getString("id"));
-							cidade.setNome(cidadeObj.getString("nome"));
-							cidade.setUrl(cidadeObj.getString("url"));
-							
-							cidades.add(cidade);
-						}
-						
-						estado.setCidades(cidades);
-						
-						docketEstadosDao.merge(estado);
-					}
-				}
-			} else {
-				if (status == 401) {
-					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-							"[Docket - getCidadesPorEstadoID] Falha de autenticação. Token inválido!", ""));
-				}
-				if (status == 403) {
-					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-							"[Docket - getCidadesPorEstadoID] Falha de autenticação.", ""));
-				}
-				if (status == 404) {
-					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-							"[Docket - getCidadesPorEstadoID] Não foram encontrados resultados para a sua busca.", ""));
-				}
-				if (status == 500) {
-					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-							"[Docket - getCidadesPorEstadoID] Erro na request.", ""));
-				}
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-						"[Docket - Login] Erro não conhecido!", ""));
-			}
-						
-			myURLConnection.disconnect();
-			
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}	
-	}
-	
-	public void criarPedido() {	//POST para gerar pedido	
-		FacesContext context = FacesContext.getCurrentInstance();
-		
-		if(!CommonsUtil.semValor(objetoContratoCobranca.getId())) {
-			ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-			cDao.merge(objetoContratoCobranca);
-			DocketDao docketDao = new DocketDao();
-			if(docketDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca).size() > 0) {
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Pedido desse contrato já existe!!!!!!", ""));	
-				return;
-			}
-		}
-			
-		DocketService docketService= new DocketService();
-		FacesMessage facesMessage = docketService.criaPedidoDocket(objetoContratoCobranca, listaPagador, estadoImovel, cidadeImovel, loginBean.getUsuarioLogado());
-		
-		if ( facesMessage != null) {
-			context.addMessage(null, facesMessage);	
-			return;
-		}				
-	}
-	
-	public void uploadREA(DocumentoAnalise documentoAnalise) {
-		DocketService docketService = new DocketService();
-		docketService.uploadREA(documentoAnalise, loginBean.getUsuarioLogado());
-	}
-
-	public void requestEnginefromRea(DocumentoAnalise documentoAnalise) {
-		DocketService docketService = new DocketService();
-
-		DataEngine engine = docketService.engineInserirPessoa(documentoAnalise.getPagador(), objetoContratoCobranca);
-		
-		docketService.engineCriarConsulta( documentoAnalise,  engine,  loginBean.getUsuarioLogado());
-		
-	}
-	
-	public JSONObject getBodyREA() { //JSON p/ pedido	
-		JSONObject jsonDocketBodyREA = new JSONObject();	
-		jsonDocketBodyREA.put("arquivo","" /*arquivo_Da_Matricula*/);
-		jsonDocketBodyREA.put("urlWebhook","" /*URL_Para_Resposta*/);
-		return jsonDocketBodyREA;
-	}
-	
-	public JSONObject getBodyJsonPedido(List<PagadorRecebedor> listaPagador) { //JSON p/ pedido	
-		JSONObject jsonDocketBodyPedido = new JSONObject();	
-		jsonDocketBodyPedido.put("pedido", getJsonPedido(listaPagador));
-		return jsonDocketBodyPedido;
-	}
-	
-	public JSONObject getJsonPedido(List<PagadorRecebedor> listaPagador) { //JSON p/ pedido		
-		JSONArray jsonDocumentosArray = new JSONArray();
-		for(PagadorRecebedor pagador : listaPagador) {
-			for(DocumentosPagadorDocket documentos : pagador.getDocumentosDocket()) {
-				jsonDocumentosArray.put(getJsonDocumentos(pagador, documentos));
-			}	
-		}
-
-		JSONObject jsonDocketPedido = new JSONObject();			
-		String nomePedido = objetoContratoCobranca.getNumeroContrato() + " - " + objetoContratoCobranca.getPagador().getNome();
-		//jsonDocketPedido = new JSONObject();		
-		jsonDocketPedido.put("lead", nomePedido);
-		jsonDocketPedido.put("documentos", jsonDocumentosArray);
-
-		return jsonDocketPedido;
-	}
-	
-	public JSONObject getJsonDocumentos(PagadorRecebedor pagador, DocumentosPagadorDocket documentosPagador) { //JSON p/ pedido		
-		//PagadorRecebedor pagador = new PagadorRecebedor();
-		JSONObject jsonDocketDocumentos = new JSONObject();	
-		DocumentosDocket documento = documentosPagador.getDocumentoDocket();
-		String estadoId = documentosPagador.getEstadoId();
-		String cidadeId = documentosPagador.getCidadeId();
-		//jsonDocketDocumentos = new JSONObject();
-		jsonDocketDocumentos.put("documentKitId", documento.getDocumentKitId());
-		jsonDocketDocumentos.put("produtoId", documento.getProdutoId());
-		jsonDocketDocumentos.put("kitId", kitIdGalleria);
-		jsonDocketDocumentos.put("kitNome", kitNomeGalleria);
-		jsonDocketDocumentos.put("documentoNome", documento.getDocumentoNome());
-		if(!CommonsUtil.semValor(pagador.getCpf())) {
-			jsonDocketDocumentos.put("titularTipo", "PESSOA_FISICA"); 
-		} else {
-			jsonDocketDocumentos.put("titularTipo", "PESSOA_JURIDICA"); 
-		}
-		jsonDocketDocumentos.put("campos", getJsonCampos(pagador, estadoId, cidadeId));
-		
-		return jsonDocketDocumentos;
-	}
-	
-	public JSONObject getJsonCampos(PagadorRecebedor pagador, String estadoId, String cidadeId) { //JSON p/ pedido		
-		JSONObject jsonDocketCampos = new JSONObject();				
-		//jsonDocketCampos = new JSONObject();		
-		if(!CommonsUtil.semValor(pagador.getCpf())) {
-			jsonDocketCampos.put("nomeCompleto", pagador.getNome());
-			jsonDocketCampos.put("cpf", pagador.getCpf());
-			jsonDocketCampos.put("nomeMae", pagador.getNomeMae());
-			jsonDocketCampos.put("rg", pagador.getRg());
-			jsonDocketCampos.put("dataNascimento", CommonsUtil.formataData(pagador.getDtNascimento(), "yyyy-MM-dd")); //2003-01-10T02:00:00.000+0000
-		} else {
-			jsonDocketCampos.put("razaoSocial", pagador.getNome());
-			jsonDocketCampos.put("cnpj", pagador.getCnpj());
-		}
-		jsonDocketCampos.put("cidade", cidadeId);
-		jsonDocketCampos.put("estado", estadoId);
-		
-		return jsonDocketCampos;
-	}
-	
-	public JSONObject getJSONSucesso(InputStream inputStream) { //Pega resultado da API
-		BufferedReader in;
-		try {
-			in = new BufferedReader(
-					new InputStreamReader(inputStream, "UTF-8"));
-
-			String inputLine;
-			StringBuffer response = new StringBuffer();
-
-			while ((inputLine = in.readLine()) != null) {
-				response.append(inputLine);
-			}
-			in.close();
-
-			//READ JSON response and print
-			JSONObject myResponse = new JSONObject(response.toString());
-
-			return myResponse;
-
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
-		
-	public void clearDialogDoc(PagadorRecebedor pagador) { //abre o dialog dos documentos
-		selectedPagadorDocumentos = pagador;
-		DocumentosDocketDao docDao = new DocumentosDocketDao();	
-		listaDococumentosDocket = new ArrayList<DocumentosDocket>();
-		listaDococumentosDocket = docDao.getAllDocumentosDocket();
-	}
-	
-	public void adicionaDoc(DocumentosDocket doc) { //seleciona um documento no dialog
-		DocumentosPagadorDocket docPagador = new DocumentosPagadorDocket(doc);
-		selectedPagadorDocumentos.getDocumentosDocket().add(docPagador);
-		selectedPagadorDocumentos = new PagadorRecebedor();
-	}
-
-	public void pesquisaContratoCobranca() { 
-		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-		listaContratosConsultar = new ArrayList<ContratoCobranca>();
-		this.listaContratosConsultar = cDao.consultaContratosDocket();
-	}	
-	
-	public void clearContratoCobranca() {
-		
-	}
-		
-	public boolean populateSelectedContratoCobranca() {
-		FacesContext context = FacesContext.getCurrentInstance();
-		DocketDao docketDao = new DocketDao();
-		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-		ImovelCobrancaDao iDao = new ImovelCobrancaDao();
-		ContratoCobranca contrato = new ContratoCobranca();
-		contrato = cDao.findById(this.objetoContratoCobranca.getId());	
-		ImovelCobranca imovel = new ImovelCobranca();
-		imovel = iDao.findById(contrato.getImovel().getId());
-		this.objetoContratoCobranca = contrato;
-		if (CommonsUtil.mesmoValor(imovel.getEstado(), "RJ") 
-				|| CommonsUtil.mesmoValor(imovel.getEstado(), "PR")
-				|| CommonsUtil.mesmoValor(imovel.getEstado(), "SP")) {
-			context.addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_ERROR, "Nâo é possível fazer Docket desse estado", ""));
-			return false;
-		} else {
-			if (!CommonsUtil.semValor(imovel.getEstado())) {
-				EstadosEnum estadoEnum = EstadosEnum.getByUf(imovel.getEstado());
-				if (CommonsUtil.semValor(estadoEnum)) {
-					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-							"Nâo é possível fazer Docket desse estado", ""));
-					return false;
-				}
-				localidadesSelecionada.setEstadoSelecionado(estadoEnum);
-			}
-			if (!CommonsUtil.semValor(imovel.getCidade())) {
-				localidadesSelecionada.setCidade(imovel.getCidade());
-				localidadesSelecionada.getCidadeDocketId();
-			}
-			pegarListaCidadesImovel();
-		}
-		if (!CommonsUtil.semValor(localidadesSelecionada.getCidadeId())) {
-			inserirLocalidade();
-		}
-		List<DataEngine> listEngine;
-		DataEngineDao engineDao = new DataEngineDao();
-		PagadorRecebedorDao pDao = new PagadorRecebedorDao();
-		PagadorRecebedor pagador;
-		listEngine = engineDao.findByFilter("contrato", objetoContratoCobranca);
-		if(listEngine.size() > 0) {
-			for(DataEngine engine : listEngine) {
-				pagador = pDao.findById(engine.getPagador().getId());	
-				listaEsperaPagador.add(pagador);
-				adicionarPagadorOpendialog(listaEsperaPagador.get(0));
-			}
-		} else {
-			pagador = pDao.findById(contrato.getPagador().getId());	
-			adicionarPagadorOpendialog(pagador);
-		}
-					
-		if(docketDao.findByFilter("objetoContratoCobranca", contrato).size() > 0) {
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Pedido desse contrato já existe!", ""));	
-		}
-		return true;
-	}
-		
-	public void removeDoc(PagadorRecebedor pagador, DocumentosPagadorDocket doc) {
-		pagador.getDocumentosDocket().remove(doc);
-	}
-	
-	public void removerPessoa(PagadorRecebedor pagador) {
-		pagador.getDocumentosDocket().clear();
-		listaPagador.remove(pagador);
-	}
-	
-	public void adiconarDocumentospagador(PagadorRecebedor pagador) {
-		adiconarDocumentospagador(pagador, estadoSelecionadoImovel, cidadeImovel);
-	}
-	
-	public void adiconarDocumentospagador(PagadorRecebedor pagador, EstadosEnum estado,  String cidadeImovel) {
-		DocumentosDocketDao docDao = new DocumentosDocketDao();
-		List<DocumentosDocket> listaDocs = docDao.getAllDocumentosDocket();
-		
-		if(CommonsUtil.mesmoValor(estado.getUf(), "RJ")
-				|| CommonsUtil.mesmoValor(estado.getUf(), "PR")) {
-			return;
-		}
-				
-		for(DocumentosDocket doc : listaDocs) {
-			boolean addDoc = true;
-			DocumentosPagadorDocket docPagador = new DocumentosPagadorDocket(doc);
-			if(!CommonsUtil.semValor(estado)) {
-				docPagador.setEstadoSelecionado(estado);
-			}
-			
-			if(CommonsUtil.mesmoValor(doc.getDocumentoNome(), 
-					"Certidão Conjunta de Débitos Relativos a Tributos Federais e a Dívida Ativa da União - Receita Federal")) {
-				for(DocumentosPagadorDocket docsSalvos : pagador.getDocumentosDocket()) {
-					if(CommonsUtil.mesmoValor(docsSalvos.getDocumentoDocket().getDocumentoNome(), doc.getDocumentoNome())) {
-						addDoc = false;
-						break;
-					}
-				}
-			}
-			
-			if(CommonsUtil.mesmoValor(doc.getDocumentoNome(),
-					"Certidão Negativa de Débitos Trabalhistas - CNDT")) {
-				for(DocumentosPagadorDocket docsSalvos : pagador.getDocumentosDocket()) {
-					if(CommonsUtil.mesmoValor(docsSalvos.getDocumentoDocket().getDocumentoNome(), doc.getDocumentoNome())) {
-						addDoc = false;
-						break;
-					}
-				}
-			}
-			
-			if(CommonsUtil.mesmoValor(estado.getUf(), "SP") &&
-				(CommonsUtil.mesmoValor(doc.getDocumentoNome(),
-						"Certidão de Distribuição de Ações Trabalhistas - Tribunal Regional do Trabalho (1° instância)")
-				||CommonsUtil.mesmoValor(doc.getDocumentoNome(),
-						"Certidão de Distribuição de Ações Trabalhistas - Tribunal Regional do Trabalho (1° instância) - Processos Judiciais Eletrônicos"))) {
-				docPagador.setCidade("São Paulo");
-				docPagador.getCidadeDocketId();
-				docPagador.setTravado(true);
-				DocumentosPagadorDocket trtCampinas = new DocumentosPagadorDocket(doc);
-				trtCampinas.setEstadoSelecionado(estado);
-				trtCampinas.setCidade("Campinas");
-				trtCampinas.getCidadeDocketId();
-				trtCampinas.setTravado(true);
-				pagador.getDocumentosDocket().add(trtCampinas);
-			} else if(!CommonsUtil.semValor(cidadeImovel)) {
-				docPagador.setCidade(cidadeImovel);
-				docPagador.getCidadeDocketId();
-			} 
-			if(addDoc) {
-				pagador.getDocumentosDocket().add(docPagador);
-			}
-		}
-	}
-
-	public List<SelectItem> pesquisaEstadosListaNome() {
-		List<SelectItem> listaEstados= new ArrayList<>();
-		for(EstadosEnum estado : EstadosEnum.values()) {
-			SelectItem item = new SelectItem(estado);
-			item.setLabel(estado.getNomeComposto());
-			listaEstados.add(item);
-		}
-		return listaEstados;
-	}
-		
-	public List<String> completeCidades(String query) {
-		String queryLowerCase = query.toLowerCase();
-		List<String> cidades = new ArrayList<>();
-		FacesContext context = FacesContext.getCurrentInstance();
-		DocumentosPagadorDocket doc = (DocumentosPagadorDocket) UIComponent.getCurrentComponent(context).getAttributes().get("documentoAtual");
-		if(!CommonsUtil.semValor(doc.getListaCidades())) {
-			for (DocketCidades cidade : doc.getListaCidades()) {
-				String cidadeStr = cidade.getNome();
-				cidades.add(cidadeStr);
-			}
-		}
-		return cidades.stream().filter(t -> t.toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());
-	 }
-	
-	public List<String> completeCidadesImovel(String query) {
-		String queryLowerCase = query.toLowerCase();
-		List<String> cidades = new ArrayList<>();
-		if(!CommonsUtil.semValor(listaCidadesImovel)) {
-			for (DocketCidades cidade : listaCidadesImovel) {
-				String cidadeStr = cidade.getNome();
-				cidades.add(cidadeStr);
-			}
-		}
-		return cidades.stream().filter(t -> t.toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());
-	 }
-	
-	public void clearPessoaDialog() {
-		pagadorAdicionar = new PagadorRecebedor();
-		tipoPessoaIsFisica = true;
-		listaEsperaPagador.add(pagadorAdicionar);
-	}
-	
-	public void adicionarPagadorOpendialog(PagadorRecebedor pagador){
-		pagadorAdicionar = pagador;
-		if(!CommonsUtil.semValor(pagadorAdicionar.getCpf())) {
-			tipoPessoaIsFisica = true;
-		} else { 
-			tipoPessoaIsFisica = false;
-		}
-		PrimeFaces current = PrimeFaces.current();
-		current.executeScript("PF('pessoaDialog').show();");
-	}
-	
-	public void closeDialog() {
-		listaEsperaPagador.remove(pagadorAdicionar);
-		
-		if(listaEsperaPagador.size() > 0) {
-			adicionarPagadorOpendialog(listaEsperaPagador.get(0));
-		} else {
-			pagadorAdicionar = new PagadorRecebedor();
-		}
-	}
-	
-	public void populateCidadeLocalidade() {
-		localidadesSelecionada.getCidadeDocketId();
-	}
-	
-	public void inserirLocalidade() {
-		if(CommonsUtil.semValor(localidadesSelecionada.getCidadeId()) 
-				|| CommonsUtil.semValor(localidadesSelecionada.getEstadoId())) {
-			return;
-		}
-		listaLocalidades.add(localidadesSelecionada);
-		localidadesSelecionada = new DocumentosPagadorDocket();
-	}
-	
-	public void removerLocalidade(DocumentosPagadorDocket local) {
-		listaLocalidades.remove(local);
-	}
-	
-	public void inserirPessoa() {
-		FacesContext context = FacesContext.getCurrentInstance();
-		pagadorAdicionar.getDocumentosDocket().clear();
-		for(DocumentosPagadorDocket doc : listaLocalidades) {
-			adiconarDocumentospagador(pagadorAdicionar,doc.getEstadoSelecionado(), doc.getCidade());
-		}		
-		if(pagadorAdicionar.getId() <= 0) {
-			PagadorRecebedorDao pDao = new PagadorRecebedorDao();
-			pDao.create(pagadorAdicionar);
-		}	
-		
-		this.listaPagador.add(pagadorAdicionar);	
-		this.listaEsperaPagador.remove(pagadorAdicionar);
-
-		if(listaEsperaPagador.size() > 0) {
-			adicionarPagadorOpendialog(listaEsperaPagador.get(0));
-		} else {
-			pagadorAdicionar = new PagadorRecebedor();
-		}
-	}
-	
-	public void procurarPF() {
-		FacesContext context = FacesContext.getCurrentInstance();
-		if(CommonsUtil.semValor(pagadorAdicionar.getCpf())) {
-			return;
-		}
-		PagadorRecebedorDao pDao = new PagadorRecebedorDao();
-		if(pDao.findByFilter("cpf", pagadorAdicionar.getCpf()).size() > 0) {
-			pagadorAdicionar = pDao.findByFilter("cpf", pagadorAdicionar.getCpf()).get(0);	
-			if(verificaPagadorTaNaLista(pagadorAdicionar)) {
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Pessoa já inserida", ""));	
-				pagadorAdicionar = new PagadorRecebedor();
-			}
-		} else {
-			return;
-		}
-	}
-	
-	public void procurarPJ() {
-		FacesContext context = FacesContext.getCurrentInstance();
-		if(CommonsUtil.semValor(pagadorAdicionar.getCnpj())) {
-			return;
-		}		
-		PagadorRecebedorDao pDao = new PagadorRecebedorDao();
-		if(pDao.findByFilter("cnpj", pagadorAdicionar.getCnpj()).size() > 0) {
-			pagadorAdicionar = pDao.findByFilter("cnpj", pagadorAdicionar.getCnpj()).get(0);
-			if(verificaPagadorTaNaLista(pagadorAdicionar)) {
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Pessoa já inserida", ""));	
-				pagadorAdicionar = new PagadorRecebedor();
-			}
-		} else {
-			return;
-		}	
-	}
-	
-	public boolean verificaPagadorTaNaLista(PagadorRecebedor pagador) {
-		for(PagadorRecebedor p : listaPagador) {
-			if(CommonsUtil.mesmoValor(p.getId(), pagador.getId())){
-				return true;
-			}
-		} 
-		return false;
-	}
-	
-	public void selectedTipoPessoaPublico() {
-		this.pagadorAdicionar = new PagadorRecebedor();
-	}
+	private List<DocumentoAnalise> listPagador;
+	private String etapa;
 	
 	public Date gerarDataHoje() {
 		TimeZone zone = TimeZone.getDefault();
@@ -860,145 +89,265 @@ public class DocketMB {
 		return usuario;
 	}
 	
-	public List<ContratoCobranca> getListaContratosConsultar() {
-		return listaContratosConsultar;
-	}
-
-	public void setListaContratosConsultar(List<ContratoCobranca> listaContratosConsultar) {
-		this.listaContratosConsultar = listaContratosConsultar;
-	}
-
-	public List<PagadorRecebedor> getListaPagador() {
-		return listaPagador;
-	}
-
-	public void setListaPagador(List<PagadorRecebedor> listaPagador) {
-		this.listaPagador = listaPagador;
-	}
-
-	public ContratoCobranca getObjetoContratoCobranca() {
-		return objetoContratoCobranca;
-	}
-
-	public void setObjetoContratoCobranca(ContratoCobranca objetoContratoCobranca) {
-		this.objetoContratoCobranca = objetoContratoCobranca;
-	}
-
-	public List<PagadorRecebedor> getListRecebedorPagador() {
-		return listRecebedorPagador;
-	}
-
-	public void setListRecebedorPagador(List<PagadorRecebedor> listRecebedorPagador) {
-		this.listRecebedorPagador = listRecebedorPagador;
-	}
-
-	public List<DocumentosDocket> getListaDococumentosDocket() {
-		return listaDococumentosDocket;
-	}
-
-	public void setListaDococumentosDocket(List<DocumentosDocket> listaDococumentosDocket) {
-		this.listaDococumentosDocket = listaDococumentosDocket;
-	}
-
-	public List<DocumentosPagadorDocket> getListaDococumentosPagador() {
-		return listaDococumentosPagador;
-	}
-
-	public void setListaDococumentosPagador(List<DocumentosPagadorDocket> listaDococumentosPagador) {
-		this.listaDococumentosPagador = listaDococumentosPagador;
-	}
-
-	public PagadorRecebedor getSelectedPagadorDocumentos() {
-		return selectedPagadorDocumentos;
-	}
-
-	public void setSelectedPagadorDocumentos(PagadorRecebedor selectedPagadorDocumentos) {
-		this.selectedPagadorDocumentos = selectedPagadorDocumentos;
-	}
-
-	public List<SelectItem> getListaEstados() {
-		return listaEstados;
-	}
-
-	public void setListaEstados(List<SelectItem> listaEstados) {
-		this.listaEstados = listaEstados;
-	}
-
-	public EstadosEnum getEstadoSelecionadoImovel() {
-		return estadoSelecionadoImovel;
-	}
-
-	public void setEstadoSelecionadoImovel(EstadosEnum estadoSelecionadoImovel) {
-		this.estadoSelecionadoImovel = estadoSelecionadoImovel;
-		this.estadoImovel = estadoSelecionadoImovel.getNome();
-	}
-
-	public void setListaCidadesImovel(List<DocketCidades> listaCidadesImovel) {
-		this.listaCidadesImovel = listaCidadesImovel;
-	}
-
-	public String getEstadoImovel() {
-		return estadoImovel;
-	}
-
-	public void setEstadoImovel(String estadoImovel) {
-		this.estadoImovel = estadoImovel;
-	}
-
-	public String getCidadeImovel() {
-		return cidadeImovel;
-	}
-
-	public void setCidadeImovel(String cidadeImovel) {
-		this.cidadeImovel = cidadeImovel;
+	public String clearFieldsContratoCobranca(List<DocumentoAnalise> listDocAnalise, String etapaConsultas) {
+		//estados = new ArrayList<String>();
+		//estados.add(estadoImovel);
+		etapa = etapaConsultas;
+		listPagador = new ArrayList<DocumentoAnalise>();
+		for(DocumentoAnalise docAnalise : listDocAnalise) {
+			if(CommonsUtil.semValor(docAnalise.getPagador())) {
+				continue;
+			}
+			if((CommonsUtil.mesmoValor(etapa, "analise") && docAnalise.isLiberadoAnalise())
+			|| (CommonsUtil.mesmoValor(etapa, "pedir paju") && docAnalise.isLiberadoCertidoes())) {
+				listPagador.add(docAnalise);
+				adiconarDocumentospagador(docAnalise);
+			} else {
+				continue;
+			}
+		}
+		
+		return "/Atendimento/Cobranca/Docket.xhtml";
 	}
 	
-	public Docket getDocket() {
-		return docket;
-	}
+	public void adiconarDocumentospagador(DocumentoAnalise docAnalise) {
+		List<DocumentosDocket> docketDocumentos = new ArrayList<DocumentosDocket>();
+		DocumentosDocketDao docketDocsDao = new DocumentosDocketDao();
+		if(CommonsUtil.semValor(docAnalise.getDocketConsultas())) {
+			docAnalise.setDocketConsultas(new HashSet<>());
+		}
+		
+		if(!CommonsUtil.semValor(docAnalise.getPagador().getCpf())) {
+			docketDocumentos = docketDocsDao.getDocumentosPF(docAnalise.getEstadosConsulta(), etapa);
+		} else {
+			docketDocumentos = docketDocsDao.getDocumentosPJ(docAnalise.getEstadosConsulta(), etapa);
+		}
+		
+		DocketConsultaDao docketConsultaDao = new DocketConsultaDao();
+		ContratoCobranca contrato = docAnalise.getContratoCobranca();
+		List<DocketConsulta> listAux = new ArrayList<DocketConsulta>();
+		for (DocumentosDocket doc : docketDocumentos) {
+			DocketConsulta docketConsulta = null;
+			if (doc.getDocumentoNome().contains("Federal")) {
+				docketConsulta = new DocketConsulta(docAnalise, doc);
+				docketConsulta.setUf(contrato.getImovel().getEstado());
+				listAux.add(docketConsulta);
+			} else {
+				for (String uf : docAnalise.getEstadosConsulta()) {
+					if (doc.getEstados().contains(uf)) {
+						docketConsulta = new DocketConsulta(docAnalise, doc);
+						docketConsulta.setUf(uf);
+						listAux.add(docketConsulta);
+					}
+				}
+			}
+		}
+		for (DocketConsulta docketConsulta : listAux) {
+			DocketEstadosDao estadosDao = new DocketEstadosDao();
+			DocketEstados docketEstado = estadosDao.getEstadoByUf(docketConsulta.getUf());
+			docketConsulta.setEstadoId(docketEstado.getIdDocket());
+			docketConsulta.setCidade(docketEstado.getCapital().getNome());
+			docketConsulta.setCidadeId(docketEstado.getCapital().getIdDocket());
 
-	public void setDocket(Docket docket) {
-		this.docket = docket;
+			List<DocketConsulta> consultasExistentesRetorno = docketConsultaDao.getConsultasExistentes(docketConsulta);
+			if (consultasExistentesRetorno.size() <= 0) {
+				docAnalise.getDocketConsultas().add(docketConsulta);
+			} else {
+				DocketConsulta db = consultasExistentesRetorno.get(0);
+				if (docAnalise.getDocketConsultas().stream().filter(d -> CommonsUtil.mesmoValor(d.getId(), db.getId()))
+						.collect(Collectors.toList()).size() <= 0) {
+					docAnalise.getDocketConsultas().add(consultasExistentesRetorno.get(0));
+				}
+				docketConsulta.setDocumentoAnalise(null);
+			}
+		}
 	}
-
+	
+	public boolean verificaCamposDoc(DocketConsulta docketConsulta) {
+		DocumentosDocket doc = docketConsulta.getDocketDocumentos();
+		boolean retorno = true;
+		PagadorRecebedor pagador = docketConsulta.getDocumentoAnalise().getPagador();
+		
+		if(!CommonsUtil.semValor(pagador.getCpf())){
+			if(CommonsUtil.semValor(pagador.getNome())){
+				retorno = false;
+				FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_ERROR, pagador.getNome() + " - Falta Nome", ""));
+			}
+			
+			if(CommonsUtil.semValor(pagador.getNomeMae())){
+				retorno = false;
+				FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_ERROR, pagador.getNome() + " - Falta Nome da Mãe", ""));
+			}
+			
+			if(CommonsUtil.semValor(pagador.getDtNascimento())){
+				retorno = false;
+				FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_ERROR, pagador.getNome() + " - Falta Data de Nascimento", ""));
+			}
+			
+			if(CommonsUtil.semValor(pagador.getRg())){
+				retorno = false;
+				FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_ERROR, pagador.getNome() + " - Falta RG", ""));
+			}
+		} else if(!CommonsUtil.semValor(pagador.getCnpj())){ 
+			if(CommonsUtil.semValor(pagador.getNome())){
+				retorno = false;
+				FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_ERROR, pagador.getNome() + " - Falta Nome", ""));
+			}
+		} else {
+			retorno = false;
+			FacesContext.getCurrentInstance().addMessage(null,
+			new FacesMessage(FacesMessage.SEVERITY_ERROR, pagador.getNome() + " - Falta Documento", ""));
+		}
+		return retorno;
+	}
+	
+	public void criarPedido() {	//POST para gerar pedido
+		FacesContext context = FacesContext.getCurrentInstance();
+		DocketService docketService = new DocketService();
+		DocketConsultaDao docketConsultaDao = new DocketConsultaDao();
+		User user = null;
+		if(!CommonsUtil.semValor(loginBean)) {
+			user = loginBean.getUsuarioLogado();
+		}
+		boolean podeChamar = true;
+		for(DocumentoAnalise docAnalise : listPagador) {
+			List<DocketConsulta> consultasExistentes = new ArrayList<DocketConsulta>();
+			List<DocketConsulta> consultasExistentesDB = new ArrayList<DocketConsulta>();
+			
+			//atualizarDocumentos(docAnalise);
+			for(DocketConsulta docketConsulta : docAnalise.getDocketConsultas()) {
+				docketConsulta.populatePagadorRecebedor(docAnalise.getPagador());
+				List<DocketConsulta> consultasExistentesRetorno = docketConsultaDao.getConsultasExistentes(docketConsulta);
+				if(consultasExistentesRetorno.size() > 0) {
+					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
+							docketConsulta.getDocketDocumentos().getDocumentoNome() + " - " + docketConsulta.getCpfCnpj() + ": Já existente", ""));
+					consultasExistentes.add(docketConsulta);
+					consultasExistentesDB.add(consultasExistentesRetorno.get(0));
+					continue;
+				}
+				
+				if(!CommonsUtil.semValor(docketConsulta.getIdDocket())) 
+				continue;
+				
+				podeChamar = verificaCamposDoc(docketConsulta);
+				if(!podeChamar) 
+					break;
+				
+			}
+			docAnalise.getDocketConsultas().removeAll(consultasExistentes);
+		}
+		
+		if (podeChamar) {
+			docketService.criaPedidoDocketDocumentoAnalise(listPagador, user, etapa);
+			
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", ""));
+		}
+	}
+		
+	public void removeDoc(DocumentoAnalise docAnalise, DocketConsulta consulta) {
+		docAnalise.getDocketConsultas().remove(consulta);
+	}
+	
+	public void removerPessoa(DocumentoAnalise docAnalise) {
+		docAnalise.getDocketConsultas().clear();
+		listPagador.remove(docAnalise);
+	}
+	
+	public StreamedContent decodarBaixarArquivo(DocketConsulta consulta) {
+		if(CommonsUtil.semValor(consulta) && CommonsUtil.semValor(consulta.getPdf()) ) {
+			//System.out.println("Arquivo Base64 não existe");
+			return null;
+		}
+		
+		byte[] decoded = Base64.getDecoder().decode(consulta.getPdf());
+		
+		InputStream in = new ByteArrayInputStream(decoded);
+		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(FacesContext.getCurrentInstance());
+		String nomeArquivoDownload = "Galleria Bank - Docket " 
+		+ CommonsUtil.removeAcentos(consulta.getDocketDocumentos().getDocumentoNome())  + ".pdf";
+		gerador.open(nomeArquivoDownload);
+		gerador.feed(in);
+		gerador.close();
+		return null;
+	}
+	
+	public void viewFileDocket(DocketConsulta consulta) {
+		if(CommonsUtil.semValor(consulta)) {
+			return;
+		}
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		try {
+			String documentoBase64 = consulta.getPdf();
+			if (CommonsUtil.semValor(documentoBase64)) {
+				facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Docket: Ocorreu um problema ao gerar o PDF!", ""));
+				return;
+			}
+			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
+			ExternalContext externalContext = facesContext.getExternalContext();
+			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+			BufferedInputStream input = null;
+			BufferedOutputStream output = null;
+			String mineFile;
+			String fileExtension;
+			try {
+				PdfReader pdf = new PdfReader(pdfBytes);
+				mineFile = "application/pdf";
+				fileExtension = "pdf"; 
+			} catch (Exception e) {
+				mineFile = "text/html";
+				fileExtension = "html"; 
+			}		
+			input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
+			response.reset();
+			// lire un fichier pdf
+			response.setHeader("Content-type", mineFile);
+			response.setContentLength(pdfBytes.length);
+			response.setHeader("Content-disposition", "inline; FileName=" + "Docket."+fileExtension);
+			output = new BufferedOutputStream(response.getOutputStream(), 10240);
+			byte[] buffer = new byte[10240];
+			int length;
+			while ((length = input.read(buffer)) > 0) {
+				output.write(buffer, 0, length);
+			}
+			output.flush();
+			output.close();
+			facesContext.responseComplete();
+		} catch (NullPointerException e) {
+			facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Docket: Ocorreu um problema ao gerar o PDF!", ""));
+		} catch (Exception e) {
+			facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Docket: Ocorreu um problema ao gerar o PDF!", ""));
+		}
+	}
+	
 	public LoginBean getLoginBean() {
 		return loginBean;
 	}
-
+	
 	public void setLoginBean(LoginBean loginBean) {
 		this.loginBean = loginBean;
 	}
-
-	public PagadorRecebedor getPagadorAdicionar() {
-		return pagadorAdicionar;
+	
+	public List<DocumentoAnalise> getListPagador() {
+		return listPagador;
 	}
-
-	public void setPagadorAdicionar(PagadorRecebedor pagadorAdicionar) {
-		this.pagadorAdicionar = pagadorAdicionar;
+	
+	public void setListPagador(List<DocumentoAnalise> listPagador) {
+		this.listPagador = listPagador;
 	}
-
-	public boolean isTipoPessoaIsFisica() {
-		return tipoPessoaIsFisica;
+	
+	public String getEtapa() {
+		return etapa;
 	}
-
-	public void setTipoPessoaIsFisica(boolean tipoPessoaIsFisica) {
-		this.tipoPessoaIsFisica = tipoPessoaIsFisica;
+	
+	public void setEtapa(String etapa) {
+		this.etapa = etapa;
 	}
-
-	public List<DocumentosPagadorDocket> getListaLocalidades() {
-		return listaLocalidades;
-	}
-
-	public void setListaLocalidades(List<DocumentosPagadorDocket> listaLocalidades) {
-		this.listaLocalidades = listaLocalidades;
-	}
-
-	public DocumentosPagadorDocket getLocalidadesSelecionada() {
-		return localidadesSelecionada;
-	}
-
-	public void setLocalidadesSelecionada(DocumentosPagadorDocket localidadesSelecionada) {
-		this.localidadesSelecionada = localidadesSelecionada;
-	}	
-
 }

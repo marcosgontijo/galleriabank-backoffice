@@ -287,14 +287,56 @@
 			</p:dialog>
 		</shiro:hasAnyRoles>
 		
+		<p:dialog header="Consultas Docket" overflow="auto"
+			id="dialogConsultasDocket"
+			widgetVar="consultasDocketDlg" resizable="true"
+			style="FONT-SIZE: 13pt;" width="800" minWidth="800">
+			<h:form id="ConsultasDocketForm">
+				<div align="center">
+					<p:dataTable id="dtConsultasDocket" var="docketConsulta"
+						value="#{contratoCobrancaMB.documentoAnalisePopup.docketConsultas}"
+						emptyMessage="" rows="20" paginator="true"
+		                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+		                currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+		                rowsPerPageTemplate="20,40,100,140">
+						
+						<p:column style="text-align: center;" headerText="Identificação"
+							filterBy="#{docketConsulta.nomeCompleto}"
+							filterMatchMode="contains" sortBy="#{docketConsulta.nomeCompleto}">
+							<h:outputText value="#{docketConsulta.nomeCompleto}"/>
+						</p:column>
+						
+						<p:column style="text-align: center;width: 100px;" headerText="Status"
+							filterBy="#{docketConsulta.status}"
+							filterMatchMode="contains" sortBy="#{docketConsulta.status}">
+							<h:outputText value="#{docketConsulta.status}"/>
+						</p:column>
+						
+						<p:column style="text-align: center;width: 150px;" headerText="" >
+							<!-- <p:commandButton
+								action="#{docketMB.decodarBaixarArquivo(docketConsulta)}"
+								icon="ui-icon ui-icon-print" value="Download PDF"
+								rendered="#{docketConsulta.pdf != null}"
+								ajax="false" /> -->
+								
+							<p:commandButton 
+								action="#{docketMB.viewFileDocket(docketConsulta)}"
+								icon="ui-icon ui-icon-print" value="Abrir PDF"
+								onclick="target='_blank'" onblur="target='_self'"
+								rendered="#{docketConsulta.pdf != null
+									and docketConsulta.pdf != ''}" ajax="false" />
+						</p:column>
+					</p:dataTable>
+				</div>
+			</h:form>
+		</p:dialog>
 		
-		<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO">
-			<p:dialog header="Consultas Plexi" overflow="auto"
-				id="dialogConsultasPlexi"
-				widgetVar="consultasPlexiDlg" resizable="true"
-				style="FONT-SIZE: 13pt;" width="800" minWidth="800">
-				<h:form id="ConsultasPlexiForm">
-					<div align="center">
+		<p:dialog header="Consultas Plexi" overflow="auto"
+			id="dialogConsultasPlexi"
+			widgetVar="consultasPlexiDlg" resizable="true"
+			style="FONT-SIZE: 13pt;" width="800" minWidth="800">
+			<h:form id="ConsultasPlexiForm">
+				<div align="center">
 					<p:dataTable id="dtConsultasPlexi" var="plexiConsulta"
 						value="#{contratoCobrancaMB.documentoAnalisePopup.plexiConsultas}"
 						emptyMessage="" rows="20" paginator="true"
@@ -328,13 +370,54 @@
 								rendered="#{plexiConsulta.pdf != null
 									and plexiConsulta.pdf != ''}" ajax="false" />
 						</p:column>
-												
-						
 					</p:dataTable>
-
 				</div>
-				</h:form>
-			</p:dialog>
-		</shiro:hasAnyRoles>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="Consultas Netrin" overflow="auto"
+			id="dialogConsultasNetrin"
+			widgetVar="consultasNetrinDlg" resizable="true"
+			style="FONT-SIZE: 13pt;" width="800" minWidth="800">
+			<h:form id="ConsultasNetrinForm">
+				<div align="center">
+					<p:dataTable id="dtConsultasNetrin" var="netrinConsulta"
+						value="#{contratoCobrancaMB.documentoAnalisePopup.netrinConsultas}"
+						emptyMessage="" rows="20" paginator="true"
+		                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+		                currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+		                rowsPerPageTemplate="20,40,100,140">
+						
+						<p:column style="text-align: center;" headerText="Identificação"
+							filterBy="#{netrinConsulta.nomeCompleto}"
+							filterMatchMode="contains" sortBy="#{netrinConsulta.netrinDocumentos.nome}">
+							<h:outputText value="#{netrinConsulta.netrinDocumentos.nome}"/>
+							<h:outputText value=" - #{netrinConsulta.uf}" rendered="#{netrinConsulta.uf ne null}"/>
+						</p:column>
+						
+						<p:column style="text-align: center;width: 100px;" headerText="Status"
+							filterBy="#{netrinConsulta.status}"
+							filterMatchMode="contains" sortBy="#{netrinConsulta.status}">
+							<h:outputText value="#{netrinConsulta.status}"/>
+						</p:column>
+						
+						<p:column style="text-align: center;width: 150px;" headerText="" >
+							<!-- <p:commandButton
+								action="#{netrinMB.decodarBaixarArquivo(netrinConsulta)}"
+								icon="ui-icon ui-icon-print" value="Download PDF"
+								rendered="#{netrinConsulta.pdf != null}"
+								ajax="false" /> -->
+								
+							<p:commandButton 
+								action="#{netrinMB.viewFileNetrin(netrinConsulta)}"
+								icon="ui-icon ui-icon-print" value="Abrir PDF"
+								onclick="target='_blank'" onblur="target='_self'"
+								rendered="#{netrinConsulta.pdf != null
+									and netrinConsulta.pdf != ''}" ajax="false" />
+						</p:column>
+					</p:dataTable>
+				</div>
+			</h:form>
+		</p:dialog>
 		
 </ui:composition>

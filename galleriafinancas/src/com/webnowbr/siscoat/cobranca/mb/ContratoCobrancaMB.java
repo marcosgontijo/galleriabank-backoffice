@@ -184,8 +184,9 @@ import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.cobranca.db.op.SeguradoDAO;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
 import com.webnowbr.siscoat.cobranca.service.BigDataService;
-import com.webnowbr.siscoat.cobranca.db.op.StarkBankBaixaDAO;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
+import com.webnowbr.siscoat.cobranca.db.op.StarkBankBaixaDAO;
+import com.webnowbr.siscoat.cobranca.service.EngineService;
 import com.webnowbr.siscoat.cobranca.service.FileService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.cobranca.service.PagadorRecebedorService;
@@ -218,6 +219,7 @@ import com.webnowbr.siscoat.simulador.SimulacaoIPCADadosV2;
 import com.webnowbr.siscoat.simulador.SimulacaoVO;
 import com.webnowbr.siscoat.simulador.SimuladorMB;
 
+import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
 import br.com.galleriabank.netrin.cliente.model.PPE.PpeResponse;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -233,6 +235,7 @@ public class ContratoCobrancaMB {
 	private LazyDataModel<ContratoCobranca> lazyModel;
 	private LazyDataModel<Responsavel> responsaveisLazy;
 	/** Variavel. */
+	private DocumentoAnalise objetoDocumentoAnalise;
 	private ContratoCobranca objetoContratoCobranca;
 	private String numeroContratoObjetoContratoCobranca;
 	private List<FileUploaded> documentoConsultarTodos;
@@ -298,7 +301,7 @@ public class ContratoCobrancaMB {
 	/************************************************************
 	 * Objetos para docket
 	 ************************************************************/
-	DocketService docketService;
+	EngineService engineService;
 
 	/************************************************************
 	 * Objetos utilizados pelas LoVs
@@ -867,7 +870,7 @@ public class ContratoCobrancaMB {
 
 		objetoContratoCobranca = new ContratoCobranca();
 
-		docketService = new DocketService();
+		engineService = new EngineService();
 
 		lazyModel = new LazyDataModel<ContratoCobranca>() {
 
@@ -4885,10 +4888,10 @@ public class ContratoCobrancaMB {
 		BufferedInputStream input = null;
 		BufferedOutputStream output = null;
 		try {
-			if (docketService == null)
-				docketService = new DocketService();
-			docketService.baixarDocumentoEngine(documentoAnalise.getEngine());
-			docketService.salvarDetalheDocumentoEngine(documentoAnalise);
+			if (engineService == null)
+				engineService = new EngineService();
+			engineService.baixarDocumentoEngine(documentoAnalise.getEngine());
+			engineService.salvarDetalheDocumentoEngine(documentoAnalise);
 
 			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoAnalise.getEngine().getPdfBase64());
 			String mineFile = "application/pdf";
@@ -4900,7 +4903,7 @@ public class ContratoCobrancaMB {
 			response.setContentLength(pdfBytes.length);
 
 			response.setHeader("Content-disposition", "inline; FileName=" + objetoContratoCobranca.getNumeroContrato()
-					+ " Engine " + documentoAnalise.getPagador().getNome() + ".pdf");
+					+ " Engine " + documentoAnalise.getPagador().getNome().replace(",", "_")  + ".pdf");
 			output = new BufferedOutputStream(response.getOutputStream(), 10240);
 			byte[] buffer = new byte[pdfBytes.length];
 			int length;
@@ -4915,13 +4918,11 @@ public class ContratoCobrancaMB {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	public void baixarDocumentoSerasa(DocumentoAnalise documentoAnalise) {
-
 		SerasaService serasa = new SerasaService();
-		DocumentoAnalise docAnalise = new DocumentoAnalise();
+		//DocumentoAnalise docAnalise = new DocumentoAnalise();
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		ExternalContext externalContext = facesContext.getExternalContext();
 		HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
@@ -4945,7 +4946,7 @@ public class ContratoCobrancaMB {
 
 				response.setHeader("Content-disposition",
 						"inline; FileName=" + this.objetoContratoCobranca.getNumeroContrato() + " Serasa "
-								+ documentoAnalise.getPagador().getNome() + ".pdf");
+								+ documentoAnalise.getPagador().getNome().replace(",", "_")  + ".pdf");
 				output = new BufferedOutputStream(response.getOutputStream(), 10240);
 				byte[] buffer = new byte[pdfBytes.length];
 				int length;
@@ -4980,6 +4981,11 @@ public class ContratoCobrancaMB {
 		fileRea.setFile(null);
 			
 			try {
+				if(CommonsUtil.semValor(fileRea.getName())) {
+					facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"REA: Ocorreu um problema ao gerar o PDF!", ""));
+						return;
+				} else {
 				byte[] bytesArquivo = fileService.abrirDocumentos(fileRea, this.objetoContratoCobranca.getNumeroContrato(), getUsuarioLogado());
 				if(CommonsUtil.semValor(bytesArquivo)) {
 					facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
@@ -5008,7 +5014,8 @@ public class ContratoCobrancaMB {
 					output.close();
 					facesContext.responseComplete();
 				}
-			} catch (Exception e) {
+			}
+			}	catch (Exception e) {
 				e.printStackTrace();
 			}
 		
@@ -5039,7 +5046,7 @@ public class ContratoCobrancaMB {
 
 				response.setHeader("Content-disposition",
 						"inline; FileName=" + objetoContratoCobranca.getNumeroContrato() + " PPE "
-								+ documentoAnalise.getPagador().getNome() + ".pdf");
+								+ documentoAnalise.getPagador().getNome().replace(",", "_")  + ".pdf");
 				output = new BufferedOutputStream(response.getOutputStream(), 10240);
 				byte[] buffer = new byte[pdfBytes.length];
 				int length;
@@ -5082,7 +5089,7 @@ public class ContratoCobrancaMB {
 
 				response.setHeader("Content-disposition",
 						"inline; FileName=" + objetoContratoCobranca.getNumeroContrato() + " Dossie "
-								+ documentoAnalise.getPagador().getNome() + ".pdf");
+								+ documentoAnalise.getPagador().getNome().replace(",", "_")  + ".pdf");
 				output = new BufferedOutputStream(response.getOutputStream(), 10240);
 				byte[] buffer = new byte[pdfBytes.length];
 				int length;
@@ -5126,7 +5133,7 @@ public class ContratoCobrancaMB {
 
 				response.setHeader("Content-disposition",
 						"inline; FileName=" + objetoContratoCobranca.getNumeroContrato() + " Cenprot "
-								+ documentoAnalise.getPagador().getNome() + ".pdf");
+								+ documentoAnalise.getPagador().getNome().replace(",", "_") +  ".pdf");
 				output = new BufferedOutputStream(response.getOutputStream(), 10240);
 				byte[] buffer = new byte[pdfBytes.length];
 				int length;
@@ -5171,7 +5178,7 @@ public class ContratoCobrancaMB {
 			response.setContentLength(pdfBytes.length);
 
 			response.setHeader("Content-disposition", "inline; FileName=" + objetoContratoCobranca.getNumeroContrato()
-					+ " Processos " + documentoAnalise.getPagador().getNome() + ".pdf");
+					+ " Processos " + documentoAnalise.getPagador().getNome().replace(",", "_")  + ".pdf");
 			output = new BufferedOutputStream(response.getOutputStream(), 10240);
 			byte[] buffer = new byte[pdfBytes.length];
 			int length;
@@ -5223,7 +5230,7 @@ public class ContratoCobrancaMB {
 
 				response.setHeader("Content-disposition",
 						"inline; FileName=" + objetoContratoCobranca.getNumeroContrato() + " SCR "
-								+ documentoAnalise.getPagador().getNome() + ".pdf");
+								+ documentoAnalise.getPagador().getNome().replace(",", "_")  + ".pdf");
 				output = new BufferedOutputStream(response.getOutputStream(), 10240);
 				byte[] buffer = new byte[contrato.length];
 				int length;
@@ -8351,45 +8358,6 @@ public class ContratoCobrancaMB {
 		}
 	}
 
-	public void testeDocket() {
-		DocketMB docket = new DocketMB();
-		docket.loginDocket();
-	}
-
-	public void logPrimitivo() throws IOException {
-		ParametrosDao pDao = new ParametrosDao();
-		// String pathContrato = pDao.findByFilter("nome",
-		// "COBRANCA_DOCUMENTOS").get(0).getValorString()
-		String pathContrato = "C:/Users/Usuario/Desktop/" + "log.txt";
-		// cria o diretório, caso não exista
-		File log = new File(pathContrato);
-		FileWriter fileWriter = new FileWriter(log, true);
-		PrintWriter printWriter = new PrintWriter(fileWriter);
-
-		Date data = gerarDataHoje();
-		String dataStr = CommonsUtil.formataData(data, "yyyy-MM-dd HH:mm:ss.SSS");
-
-		printWriter.println(dataStr + " " + Math.random());
-		printWriter.close();
-	}
-
-	public void logPrimitivo(String msg) throws IOException {
-		ParametrosDao pDao = new ParametrosDao();
-		// String pathContrato = pDao.findByFilter("nome",
-		// "COBRANCA_DOCUMENTOS").get(0).getValorString()
-		String pathContrato = "C:/Users/Usuario/Desktop/" + "log.txt";
-		// cria o diretório, caso não exista
-		File log = new File(pathContrato);
-		FileWriter fileWriter = new FileWriter(log, true);
-		PrintWriter printWriter = new PrintWriter(fileWriter);
-
-		Date data = gerarDataHoje();
-		String dataStr = CommonsUtil.formataData(data, "yyyy-MM-dd HH:mm:ss.SSS");
-
-		printWriter.println(dataStr + " - " + msg);
-		printWriter.close();
-	}
-
 	public void recuperarContratoReprovado() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
@@ -9805,14 +9773,7 @@ public class ContratoCobrancaMB {
 		}
 		// this.objetoContratoCobranca.setDataInicio(this.objetoContratoCobranca.getDataContrato());
 
-		// saveEstadoCheckListAtual();
-
-		/*
-		 * try { logPrimitivo(getNomeUsuarioLogado() + " acessou o contrato " +
-		 * objetoContratoCobranca.getNumeroContrato() + " (" +
-		 * objetoContratoCobranca.toString() + ")"); } catch (IOException e) { // TODO
-		 * Auto-generated catch block e.printStackTrace(); }
-		 */
+		// saveEstadoCheckListAtual();		
 
 		if (!this.objetoContratoCobranca.isInicioAnalise()) {
 			return "/Atendimento/Cobranca/ContratoCobrancaPreCustomizadoInserir.xhtml";
@@ -29724,14 +29685,14 @@ public class ContratoCobrancaMB {
 				}
 
 				if (CommonsUtil.semValor(documentoAnalise.getRetornoCNDFederal())) {
-					documentoAnalise.addObservacao("Processando CND Estadual");
+					documentoAnalise.addObservacao("Processando CND Federal");
 					netrinService.requestCNDFederal(documentoAnalise);
 					pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
 							DocumentosAnaliseEnum.CNDFEDERAL, documentoAnalise.getRetornoCNDFederal());
 				}
 
 				if (CommonsUtil.semValor(documentoAnalise.getRetornoCNDTrabalhistaTST())) {
-					documentoAnalise.addObservacao("Processando CND Estadual");
+					documentoAnalise.addObservacao("Processando CNDT TST");
 					netrinService.requestCNDTrabalhistaTST(documentoAnalise);
 					pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
 							DocumentosAnaliseEnum.CNDTTST, documentoAnalise.getRetornoCNDTrabalhistaTST());
@@ -31876,6 +31837,7 @@ public class ContratoCobrancaMB {
 		this.tituloPagadorRecebedorDialog = "";
 		this.tipoPesquisaPagadorRecebedor = "";
 		this.updatePagadorRecebedor = "";
+		documentoAnaliseAdicionar.adiconarEstadosPeloCadastro();
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 		documentoAnaliseDao.merge(documentoAnaliseAdicionar);
 		listaArquivosAnaliseDocumentos();
@@ -34410,5 +34372,13 @@ public class ContratoCobrancaMB {
 
 	public void setObjetoBaixaPagamentoStarkBank(StarkBankBaixa objetoBaixaPagamentoStarkBank) {
 		this.objetoBaixaPagamentoStarkBank = objetoBaixaPagamentoStarkBank;
+	}
+
+	public DocumentoAnalise getObjetoDocumentoAnalise() {
+		return objetoDocumentoAnalise;
+	}
+
+	public void setObjetoDocumentoAnalise(DocumentoAnalise objetoDocumentoAnalise) {
+		this.objetoDocumentoAnalise = objetoDocumentoAnalise;
 	}
 }

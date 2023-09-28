@@ -16,7 +16,12 @@
         </property>     			               
        <property name="url" type="java.lang.String">
             <column name="url" />
-       </property>           
+       </property>
+       <many-to-one name="capital"
+			class="com.webnowbr.siscoat.cobranca.db.model.DocketCidades"
+			lazy="false">
+			<column name="capital" />
+		</many-to-one>    
        <list name="cidades"
 			table="Docket_Cidades_Estados" cascade="all" lazy="false">
 			<key column="idEstado" />

@@ -13,26 +13,19 @@
 			<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>
 			<link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/resources/css/Style.css" title="" media="all" />
 			
-			<p:panel id="PlexiPanel" header="Plexi"
+			<p:panel id="NetrinPanel" header="Netrin"
 				style="margin-bottom:10px;">
 				<p:focus />
 				<p:messages id="msgs" />	
-				<shiro:hasAnyRoles name="ROOT">
-					<!--  <p:commandButton action="#{plexiMB.teste}"
-						update="msgs" value="teste"/> -->
-				</shiro:hasAnyRoles>
-				
-				
 				
 				<h:panelGroup id="Dados">
-					
-					<p:dataList id="pagadorList" value="#{plexiMB.listPagador}" var="DocAnalise" style="padding: 0;" type="definition">
+					<p:dataList id="pagadorList" value="#{netrinMB.listPagador}" var="DocAnalise" style="padding: 0;" type="definition">
 						<p:panel id="pagadorPanel" header="#{DocAnalise.pagador.nome}" style="padding: none" 
 							toggleable="true" toggleableHeader="true">
 							<f:facet name="header" styleClass="ui-accordion-header">
 								<p:commandButton icon="ui-icon ui-icon-trash"
-									action="#{plexiMB.removerPessoa(DocAnalise)}"
-									ajax="true" update=":form:PlexiPanel" />
+									action="#{netrinMB.removerPessoa(DocAnalise)}"
+									ajax="true" update=":form:NetrinPanel" />
 								<p:outputLabel value="#{DocAnalise.pagador.nome}" style="FONT-SIZE: 15pt;margin-left: 5px" styleClass="ui-panel-title"/>
 							</f:facet>
 							<h:panelGrid columns="1">
@@ -87,7 +80,7 @@
 									</h:panelGrid>
 								</h:panelGroup>	
 								<h:panelGrid columns="6" rendered="#{DocAnalise.pagador.cpf eq null or DocAnalise.pagador.cpf eq ''}">
-									<h:panelGrid columns="2">
+										<h:panelGrid columns="2">
 										<p:outputLabel value="Razão Social:" style="FONT-SIZE: 5pt; margin-right: 5px" styleClass="labelBold"/>
 										<p:outputLabel value="#{DocAnalise.pagador.nome}" style="FONT-SIZE: 5pt; margin-right: 5px" />  
 									</h:panelGrid>
@@ -104,56 +97,33 @@
 										<p:inputText value="#{DocAnalise.pagador.endereco}" style="FONT-SIZE: 5pt; margin-right: 5px; width:100px" />
 									</h:panelGrid>					
 								</h:panelGrid> 						    
+								<h:panelGrid columns="2">
+									<p:outputLabel value="UF:" styleClass="labelBold" />
+									<p:outputLabel value="#{DocAnalise.estadosConsultaStr}" />
+								</h:panelGrid>
 							</h:panelGrid>	
 							<p:panel id="docsPanel" header="" style="padding: 0" toggleable="true" toggleableHeader="true" >
 								<f:facet name="header" styleClass="ui-accordion-header">
-									<p:outputLabel value="Documentos - #{DocAnalise.plexiConsultas.size()}" 
+									<p:outputLabel value="Documentos - #{DocAnalise.netrinConsultas.size()}" 
 									style="FONT-SIZE: 15pt;margin-left: 5px" styleClass="ui-panel-title"/>
 								</f:facet>
-								<p:dataList id="docsList" value="#{DocAnalise.plexiConsultas}" var="docs" style="padding: 0" type="definition">
+								<p:dataList id="docsList" value="#{DocAnalise.netrinConsultas}" var="docs" style="padding: 0" type="definition">
 									<p:panel id="PanelGridDocs" header="Documentos" style="padding: 0" toggleable="true" toggleableHeader="true" collapsed="true" >			
 										<f:facet name="header" styleClass="ui-accordion-header">
 											<p:commandButton icon="ui-icon ui-icon-trash" ajax="true"
-												action="#{plexiMB.removeDoc(DocAnalise, docs)}"
-												update="form:pagadorList" />
-											<p:outputLabel value="X - " style="FONT-SIZE: 15pt;margin-left: 5px;margin-right: 0px" styleClass="ui-panel-title" rendered="#{docs.requestId eq null}"/>
-											<p:outputLabel value="✓ - " style="FONT-SIZE: 15pt;margin-left: 5px;margin-right: 0px" styleClass="ui-panel-title" rendered="#{docs.requestId ne null}"/>
-											<p:outputLabel value="#{docs.plexiDocumentos.nome}" style="FONT-SIZE: 15pt;margin-left: 5px" styleClass="ui-panel-title"/>
+												action="#{netrinMB.removeDoc(DocAnalise, docs)}"
+												update="form:pagadorList"
+												disabled="#{docs.retorno ne null}" />
+											<p:outputLabel value="X - " style="FONT-SIZE: 15pt;margin-left: 5px;margin-right: 0px" styleClass="ui-panel-title" rendered="#{docs.retorno eq null}"/>
+											<p:outputLabel value="✓ - " style="FONT-SIZE: 15pt;margin-left: 5px;margin-right: 0px" styleClass="ui-panel-title" rendered="#{docs.retorno ne null}"/>
+											<p:outputLabel value="#{docs.netrinDocumentos.nome}" style="FONT-SIZE: 15pt;margin-left: 5px" styleClass="ui-panel-title"/>
+											<p:outputLabel value="#{docs.uf}" style="FONT-SIZE: 15pt;margin-left: 5px" styleClass="ui-panel-title"/>
 										</f:facet>
 								
 										<h:panelGrid columns="2">
 											<p:outputLabel value="Nome:" styleClass="labelBold" />
 											<p:outputLabel value="#{DocAnalise.pagador.nome}" />
 										</h:panelGrid>
-										<h:panelGrid columns="2" rendered="#{docs.tipoCertidao ne null}">
-											<p:outputLabel value="tipoCertidao:" styleClass="labelBold" />
-											<p:outputLabel value="#{docs.tipoCertidao}" />
-										</h:panelGrid>
-										<h:panelGrid columns="2" rendered="#{docs.origem ne null}">	
-											<p:outputLabel value="origem:" styleClass="labelBold"/>
-											<p:outputLabel value="#{docs.origem}" />
-										</h:panelGrid>
-										<h:panelGrid columns="2" rendered="#{docs.competencia ne null}">	
-											<p:outputLabel value="competencia:" styleClass="labelBold"/>
-											<p:outputLabel value="#{docs.competencia}" />
-										</h:panelGrid>
-										<h:panelGrid columns="2" rendered="#{docs.tipo ne null}">	
-											<p:outputLabel value="tipo:" styleClass="labelBold"/>
-											<p:outputLabel value="#{docs.tipo}" />
-										</h:panelGrid>
-										<h:panelGrid columns="2" rendered="#{docs.modelo ne null}">	
-											<p:outputLabel value="modelo:" styleClass="labelBold"/>
-											<p:outputLabel value="#{docs.modelo}" />
-										</h:panelGrid>
-										<h:panelGrid columns="2" rendered="#{docs.orgaosStr ne null}">	
-											<p:outputLabel value="orgaos:" styleClass="labelBold"/>
-											<p:outputLabel value="#{docs.orgaosStr}" />
-										</h:panelGrid>
-										<h:panelGrid columns="2" rendered="#{docs.abrangencia ne null}" >	
-											<p:outputLabel value="abrangencia:" styleClass="labelBold"/>
-											<p:outputLabel value="#{docs.abrangencia}" />
-										</h:panelGrid>
-										
 									</p:panel>	
 								</p:dataList>
 							</p:panel>
@@ -162,7 +132,7 @@
 				</h:panelGroup>
 			
 				<h:panelGrid columns="3">	
-					<p:commandButton action="#{plexiMB.criarPedido}"
+					<p:commandButton action="#{netrinMB.criarPedido}"
 						icon="ui-icon ui-icon-print" value="Fazer Pedido"  update=":form  msgs" />			
 				</h:panelGrid>
 			</p:panel>

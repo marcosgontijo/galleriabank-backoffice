@@ -3,22 +3,20 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping schema="cobranca">
-	<class name="com.webnowbr.siscoat.cobranca.db.model.DocumentosDocket" table="DocumentosDocket">
+	<class name="com.webnowbr.siscoat.cobranca.ws.netrin.NetrinDocumentos"
+		table="NetrinDocumentos">
+		
 		<id name="id" type="long">
 			<column name="ID" />
 			<generator class="increment" />
 		</id>
-		
-		<property name="documentKitId" type="java.lang.String">
-			<column name="documentKitId" />
+
+		<property name="urlService" type="java.lang.String">
+			<column name="urlService" />
 		</property>
-		
-		<property name="produtoId" type="java.lang.String">
-			<column name="produtoId" />
-		</property>
-		
-		<property name="documentoNome" type="java.lang.String">
-			<column name="documentoNome" />
+
+		<property name="nome" type="java.lang.String">
+			<column name="nome" />
 		</property>
 		
 		<property name="pf" type="boolean">
@@ -33,13 +31,13 @@
 			<column name="estados" />
 		</property>
 
-		<property name="etapa" type="java.lang.String">
-			<column name="etapa" />
-		</property>
-		
 		<property name="obs" type="java.lang.String">
 			<column name="obs" />
 		</property>
 		
-    </class>
+		<property name="etapa" type="java.lang.String">
+			<column name="etapa" />
+		</property>
+		
+	</class>
 </hibernate-mapping>

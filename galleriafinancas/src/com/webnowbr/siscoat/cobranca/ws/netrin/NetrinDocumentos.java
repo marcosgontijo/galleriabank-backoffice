@@ -1,8 +1,8 @@
-package com.webnowbr.siscoat.cobranca.ws.plexi;
+package com.webnowbr.siscoat.cobranca.ws.netrin;
 
-public class PlexiDocumentos {
+public class NetrinDocumentos {
 	private long id;	
-	private String url;
+	private String urlService;
 	private String nome;
 	private boolean pf;
 	private boolean pj;
@@ -12,7 +12,7 @@ public class PlexiDocumentos {
 	
 	@Override
 	public String toString() {
-		return "PlexiDocumentos [id=" + id + ", url=" + url + ", nome=" + nome + "]";
+		return "NetrinDocumentos [id=" + id + ", url=" + urlService + ", nome=" + nome + "]";
 	}
 	
 	public long getId() {
@@ -21,42 +21,45 @@ public class PlexiDocumentos {
 	public void setId(long id) {
 		this.id = id;
 	}
-	public String getUrl() {
-		return url;
+
+	public String getUrlService() {
+		return urlService;
 	}
-	public void setUrl(String url) {
-		this.url = url;
+
+	public void setUrlService(String urlService) {
+		this.urlService = urlService;
 	}
+
 	public String getNome() {
 		return nome;
 	}
+
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
+
 	public boolean isPf() {
 		return pf;
 	}
+
 	public void setPf(boolean pf) {
 		this.pf = pf;
 	}
+
 	public boolean isPj() {
 		return pj;
 	}
+
 	public void setPj(boolean pj) {
 		this.pj = pj;
 	}
+
 	public String getEstados() {
 		return estados;
 	}
+
 	public void setEstados(String estados) {
 		this.estados = estados;
-	}
-
-	public String getObs() {
-		return obs;
-	}
-	public void setObs(String obs) {
-		this.obs = obs;
 	}
 
 	public String getEtapa() {
@@ -65,5 +68,13 @@ public class PlexiDocumentos {
 
 	public void setEtapa(String etapa) {
 		this.etapa = etapa;
+	}
+
+	public String getObs() {
+		return obs;
+	}
+
+	public void setObs(String obs) {
+		this.obs = obs;
 	}
 }

@@ -1,4 +1,4 @@
-package com.webnowbr.siscoat.cobranca.db.op;
+package com.webnowbr.siscoat.cobranca.ws.netrin;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -6,58 +6,21 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.webnowbr.siscoat.cobranca.db.model.DocumentosDocket;
+import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.db.dao.HibernateDao;
 
-/**
- * DAO access layer for the Tecnico entity
- * @author hv.junior
- *
- */
-public class DocumentosDocketDao extends HibernateDao <DocumentosDocket,Long> {
-	
-	private static final String QUERY_DOC_DOCKET = "select * from cobranca.documentosdocket d "
-			+ "where d.id not in (1,3,4)";
+public class NetrinDocumentosDao extends HibernateDao<NetrinDocumentos, Long> {
+
+	private static final String QUERY_DOC_PF = "select n.id from cobranca.netrinDocumentos n "
+			+ "where n.pf = true ";
 
 	@SuppressWarnings("unchecked")
-	public List<DocumentosDocket> getAllDocumentosDocket() {
-		return (List<DocumentosDocket>) executeDBOperation(new DBRunnable() {
+	public List<NetrinDocumentos> getDocumentosPF(List<String> estados, String etapa) {
+		return (List<NetrinDocumentos>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
-				List<DocumentosDocket> documentos = new ArrayList<DocumentosDocket>();
-
-				Connection connection = null;
-				PreparedStatement ps = null;
-				ResultSet rs = null;
-				try {					
-					connection = getConnection();
-					ps = connection.prepareStatement(QUERY_DOC_DOCKET);
-					rs = ps.executeQuery();
-
-					DocumentosDocketDao docDocketDao = new DocumentosDocketDao();
-					
-					while (rs.next()) {
-						DocumentosDocket doc = docDocketDao.findById(rs.getLong(1));
-						documentos.add(doc);
-					}
-				} finally {
-					closeResources(connection, ps, rs);
-				}
-				return documentos;
-			}
-		});
-	}
-	
-	private static final String QUERY_DOC_PF = "select d.id from cobranca.documentosdocket d "
-			+ "where d.pf = true ";
-
-	@SuppressWarnings("unchecked")
-	public List<DocumentosDocket> getDocumentosPF(List<String> estados, String etapa) {
-		return (List<DocumentosDocket>) executeDBOperation(new DBRunnable() {
-			@Override
-			public Object run() throws Exception {
-				List<DocumentosDocket> documentosPf = new ArrayList<DocumentosDocket>();
+				List<NetrinDocumentos> documentosPf = new ArrayList<NetrinDocumentos>();
 
 				Connection connection = null;
 				PreparedStatement ps = null;
@@ -87,10 +50,10 @@ public class DocumentosDocketDao extends HibernateDao <DocumentosDocket,Long> {
 					ps = connection.prepareStatement(query);
 					rs = ps.executeQuery();
 
-					DocumentosDocketDao documentosDocketDao = new DocumentosDocketDao();
+					NetrinDocumentosDao netrinDocumentosDao = new NetrinDocumentosDao();
 					
 					while (rs.next()) {
-						DocumentosDocket doc = documentosDocketDao.findById(rs.getLong(1));
+						NetrinDocumentos doc = netrinDocumentosDao.findById(rs.getLong(1));
 						documentosPf.add(doc);
 					}
 				} finally {
@@ -101,15 +64,15 @@ public class DocumentosDocketDao extends HibernateDao <DocumentosDocket,Long> {
 		});
 	}
 	
-	private static final String QUERY_DOC_PJ = "select d.id from cobranca.documentosdocket d "
-			+ "where d.pj = true";
+	private static final String QUERY_DOC_PJ = "select n.id from cobranca.netrinDocumentos n "
+			+ "where n.pj = true";
 
 	@SuppressWarnings("unchecked")
-	public List<DocumentosDocket> getDocumentosPJ(List<String> estados, String etapa) {
-		return (List<DocumentosDocket>) executeDBOperation(new DBRunnable() {
+	public List<NetrinDocumentos> getDocumentosPJ(List<String> estados, String etapa) {
+		return (List<NetrinDocumentos>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
-				List<DocumentosDocket> documentosPf = new ArrayList<DocumentosDocket>();
+				List<NetrinDocumentos> documentosPf = new ArrayList<NetrinDocumentos>();
 
 				Connection connection = null;
 				PreparedStatement ps = null;
@@ -139,10 +102,10 @@ public class DocumentosDocketDao extends HibernateDao <DocumentosDocket,Long> {
 					ps = connection.prepareStatement(query);
 					rs = ps.executeQuery();
 
-					DocumentosDocketDao documentosDocketDao = new DocumentosDocketDao();
+					NetrinDocumentosDao netrinDocumentosDao = new NetrinDocumentosDao();
 					
 					while (rs.next()) {
-						DocumentosDocket doc = documentosDocketDao.findById(rs.getLong(1));
+						NetrinDocumentos doc = netrinDocumentosDao.findById(rs.getLong(1));
 						documentosPf.add(doc);
 					}
 				} finally {
@@ -152,4 +115,5 @@ public class DocumentosDocketDao extends HibernateDao <DocumentosDocket,Long> {
 			}
 		});
 	}
+
 }

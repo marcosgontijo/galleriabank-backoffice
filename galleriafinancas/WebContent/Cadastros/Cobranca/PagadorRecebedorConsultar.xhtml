@@ -18,14 +18,15 @@
 		        	$("input.cnpj:text").mask("99.999.999/9999-99");
 		        	$("input.cpf:text").mask("999.999.999-99");
 		        });
-			</script>
+			</script> 
 			<p:dataTable id="dtPagadorRecebedor" var="PagadorRecebedor" value="#{pagadorRecebedorMB.lazyModel}" paginator="true" rows="20" lazy="true"
    		         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
    		         currentPageReportTemplate="( {currentPage}   de   {totalPages} )" 
                  rowsPerPageTemplate="20,40,60,80" selection="" emptyMessage="" sortBy="#{PagadorRecebedor.nome}">
 			        <f:facet name="header">
+			        <shiro:lacksRole name="PROFILE_COBRANCA">
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{pagadorRecebedorMB.clearFields}"/>
-
+					</shiro:lacksRole>
 						<p:commandButton value="popular Geral" ajax="false"
 							icon="ui-icon-plus" disabled="true"
 							action="#{relacionamentoPagadorRecebedorMB.populaGeral}" />
@@ -67,10 +68,12 @@
 						
 		            </p:column>			        		               		        			        			           			 		
 			        <f:facet name="footer">
+			        <shiro:lacksRole name="PROFILE_COBRANCA">
 						<p:commandButton value="Adicionar" ajax="false" icon="ui-icon-plus" action="#{pagadorRecebedorMB.clearFields}">
 							<f:setPropertyActionListener target="#{pagadorRecebedorMB.updateMode}" value="false" />
 		                	<f:setPropertyActionListener target="#{pagadorRecebedorMB.deleteMode}" value="false" />
 		                </p:commandButton>
+		            </shiro:lacksRole>
 			        </f:facet>
 				</p:dataTable>
 			</p:panel>
