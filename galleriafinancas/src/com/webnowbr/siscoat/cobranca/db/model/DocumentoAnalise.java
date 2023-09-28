@@ -622,7 +622,7 @@ public class DocumentoAnalise implements Serializable {
 			estadosReturn = new ArrayList<String>(Arrays.asList(new String[]{"RS"}));
 			break;
 		case 1:
-			//estadosReturn = new ArrayList<String>(Arrays.asList(new String[]{"DF", "GO", "MS", "TO"}));
+			//estadosReturn = new ArrayList<String>(Arrays.asList(new String[]{"DF", "GO", "MT", "MS", "TO"}));
 			break;
 		case 2:
 			//estadosReturn = new ArrayList<String>(Arrays.asList(new String[]{"PA", "AM", "AC", "AP", "RO", "RR"}));

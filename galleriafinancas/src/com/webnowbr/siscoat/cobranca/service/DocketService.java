@@ -427,7 +427,9 @@ public class DocketService {
 			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 						"Docket: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", ""));
+				System.out.println("---------------- Docket Falha no Pedido ---------------- ");
 				System.out.println(jsonWhatsApp.toString());
+				System.out.println("---------------- Docket Falha no Pedido ---------------- ");
 			} else {
 				
 				DocketRetorno myResponse = docketJSONRetorno(myURLConnection.getInputStream());
