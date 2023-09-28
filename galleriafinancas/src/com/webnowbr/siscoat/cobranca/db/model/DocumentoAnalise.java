@@ -4,15 +4,20 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Date;
 import java.util.List;
 
 import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.webnowbr.siscoat.cobranca.mb.BigDataMB;
+import com.webnowbr.siscoat.cobranca.mb.FileUploadMB.FileUploaded;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
 import com.webnowbr.siscoat.cobranca.ws.netrin.NetrinConsulta;
 import com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta;
@@ -23,6 +28,7 @@ import br.com.galleriabank.bigdata.cliente.model.processos.ProcessoResumo;
 import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
 import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetornoRequestFields;
 import br.com.galleriabank.dataengine.cliente.model.retorno.AntecedentesCriminais.EngineRetornoExecutionResultAntecedenteCriminaisEvidences;
+import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultConsultaNegative;
 import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultConsultaQuodScore;
 import br.com.galleriabank.dataengine.cliente.model.retorno.processos.EngineRetornoExecutionResultProcessos;
 import br.com.galleriabank.netrin.cliente.model.PPE.PpeResponse;
@@ -107,53 +113,60 @@ public class DocumentoAnalise implements Serializable {
 	private int totalCcfApontamentos = 0;
 	private int totalProtestos = 0;
 	private int numeroParticipacaoEmpresas = 0;
+	private FileUploaded file;
 	
 
 	public List<DocumentoAnaliseResumo> getResumoProcesso() {
 		List<DocumentoAnaliseResumo> vProcesso = new ArrayList<>();
-		ProcessoResumo processo = null;
+		br.com.galleriabank.bigdata.cliente.model.processos.ProcessoResult processoResponse = null;
 		try {
-			processo = GsonUtil.fromJson(getRetornoProcesso(), ProcessoResumo.class);
+			processoResponse = GsonUtil.fromJson(getRetornoProcesso() , br.com.galleriabank.bigdata.cliente.model.processos.ProcessoResult.class);
 		} catch (Exception erro) {
 			vProcesso.add(new DocumentoAnaliseResumo(null, null));
 		}
-		if (processo == null) {
+		if (processoResponse == null) {
 			vProcesso.add(new DocumentoAnaliseResumo("não disponível", null));
 		} else {
-
+			br.com.galleriabank.bigdata.cliente.model.processos.ProcessoResumo processo = processoResponse.getProcessoResumo();
 			if (processo.getCriminal() == null) {
 				vProcesso.add(new DocumentoAnaliseResumo("Criminal:", "Não disponível"));
 			} else {
-				String processos = CommonsUtil.stringValue(processo.getCriminal());
-				vProcesso.add(new DocumentoAnaliseResumo("Criminal:", processos));
+				String processosQuantidade = CommonsUtil.stringValue(processo.getCriminal().stream().mapToInt(p -> p.getQuatidade()).sum());
+				String processosValor = CommonsUtil.stringValue(processo.getCriminal().stream().mapToDouble(p -> p.getValor()).sum());
+				vProcesso.add(new DocumentoAnaliseResumo("Criminal:", processosValor + "(" + processosQuantidade + ")"));
 			}
 
 			if (processo.getTrabalhista() == null) {
 				vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:", "Não disponível"));
 			} else {
-				String processos = CommonsUtil.stringValue(processo.getTrabalhista());
-				vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:", processos));
+				String processosQuantidade = CommonsUtil.stringValue(processo.getTrabalhista().stream().mapToInt(p -> p.getQuatidade()).sum());
+				String processosValor = CommonsUtil.stringValue(processo.getTrabalhista().stream().mapToDouble(p -> p.getValor()).sum());
+				
+				vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:", processosValor + "(" + processosQuantidade + ")"));
 			}
 
 			if (processo.getTituloExecucaoFiscal() == null) {
 				vProcesso.add(new DocumentoAnaliseResumo("Execução de título:", "Não disponível"));
 			} else {
-				String processos = CommonsUtil.stringValue(processo.getTituloExecucaoFiscal());
-				vProcesso.add(new DocumentoAnaliseResumo("Execução de título:", processos));
+				String processosQuantidade = CommonsUtil.stringValue(processo.getTituloExecucaoFiscal().stream().mapToInt(p -> p.getQuatidade()).sum());
+				String processosValor = CommonsUtil.stringValue(processo.getTituloExecucaoFiscal().stream().mapToDouble(p -> p.getValor()).sum());
+				vProcesso.add(new DocumentoAnaliseResumo("Execução de título:", processosValor + "(" + processosQuantidade + ")"));
 			}
 
 			if (processo.getExecucaoFiscalProtesto() == null) {
 				vProcesso.add(new DocumentoAnaliseResumo("Execução Fiscal:", "Não disponível"));
 			} else {
-				String processos = CommonsUtil.stringValue(processo.getExecucaoFiscalProtesto());
-				vProcesso.add(new DocumentoAnaliseResumo("Execução Fiscal:", processos));
+				String processosQuantidade = CommonsUtil.stringValue(processo.getTituloExecucaoFiscal().stream().mapToInt(p -> p.getQuatidade()).sum());
+				String processosValor = CommonsUtil.stringValue(processo.getTituloExecucaoFiscal().stream().mapToDouble(p -> p.getValor()).sum());
+				vProcesso.add(new DocumentoAnaliseResumo("Execução Fiscal:", processosValor + "(" + processosQuantidade + ")"));
 			}
 
 			if (processo.getOutros() == null) {
 				vProcesso.add(new DocumentoAnaliseResumo("Outros:", "Não disponível"));
 			} else {
-				String processos = CommonsUtil.stringValue(processo.getOutros());
-				vProcesso.add(new DocumentoAnaliseResumo("Outros:", processos));
+				String processosQuantidade = CommonsUtil.stringValue(processo.getOutros().stream().mapToInt(p -> p.getQuatidade()).sum());
+				String processosValor = CommonsUtil.stringValue(processo.getOutros().stream().mapToDouble(p -> p.getValor()).sum());
+				vProcesso.add(new DocumentoAnaliseResumo("Outros:",processosValor + "(" + processosQuantidade + ")"));
 			}
 
 		}
@@ -182,6 +195,8 @@ public class DocumentoAnalise implements Serializable {
 			if (cpf != null) {
 				if (engine.getConsultaCompleta() != null && engine.getConsultaCompleta().getBestInfo().getAge() != null) {
 					str = String.join(" - ", str, engine.getConsultaCompleta().getBestInfo().getAge() + " Anos");
+				} else {
+					str = String.join(" - ", str, null);
 				}
 				
 				str = String.join(" - ", str, cpf.getValue());
@@ -208,73 +223,89 @@ public class DocumentoAnalise implements Serializable {
 
 		if (engine == null) {
 			result.add(new DocumentoAnaliseResumo("Não disponível", null));
+		} else {		
+			populaResumoEngine(engine, result);
+		}
+		return result;
+	}
+	
+	private void populaResumoEngine(EngineRetorno engine, List<DocumentoAnaliseResumo> result) {
+		EngineRetornoExecutionResultConsultaNegative engineRetorno = (engine.getDadosCadastraisPJ() != null) 
+				   													? engine.getDadosCadastraisPJ().getNegative()
+				   													: engine.getConsultaCompleta().getNegative();
+		
+		EngineRetornoExecutionResultProcessos processo = (engine.getDadosCadastraisPJ() != null) 
+														? engine.getProcessosPJ()
+														: engine.getProcessos();
+		
+		if (engine.getDadosCadastraisPJ() == null && engine.getConsultaCompleta() == null) {
+			result.add(new DocumentoAnaliseResumo("Score:", "Não disponivel"));
+		} else {
+			EngineRetornoExecutionResultConsultaQuodScore score = (engine.getDadosCadastraisPJ() != null) 
+																? engine.getDadosCadastraisPJ().getQuodScorePJ() 
+																: engine.getConsultaCompleta().getQuodScore();
+			
+			result.add(new DocumentoAnaliseResumo("Score:", CommonsUtil.stringValue(score.getScore())));
+		}
+
+		if(engine.getDadosCadastraisPJ() == null && engine.getConsultaCompleta() == null) {
+			result.add(new DocumentoAnaliseResumo("Pefin/Refin:", "Não disponível"));
 		} else {			
-			populaExecutionResult(engine);
-
-			if (engine.getConsultaCompleta() == null) {
-				result.add(new DocumentoAnaliseResumo("Score:", "Não disponivel"));
+			if (engineRetorno.getTotalApontamentos() > 0) {
+				result.add(new DocumentoAnaliseResumo("Pefin/Refin:", String.format("%,.2f", engineRetorno.getTotalValorApontamentos()) 
+						+ " (" + CommonsUtil.stringValue(engine.getDadosCadastraisPJ().getNegative().getTotalApontamentos()) + ")"));
 			} else {
-				EngineRetornoExecutionResultConsultaQuodScore score = engine.getConsultaCompleta().getQuodScore();
-				result.add(new DocumentoAnaliseResumo("Score:", CommonsUtil.stringValue(score.getScore())));
-			}
+				result.add(new DocumentoAnaliseResumo("Pefin/Refin:", "0"));
+			}	
+		}
 
-			if(engine.getConsultaCompleta() == null) {
-				result.add(new DocumentoAnaliseResumo("Pefin/Refin:", "Não disponível"));
+		if(engine.getDadosCadastraisPJ() == null && engine.getConsultaCompleta() == null) {
+			result.add(new DocumentoAnaliseResumo("Protesto:", "Não disponível"));
+		} else {	
+			if (engineRetorno.getTotalProtests() > 0) {
+				result.add(new DocumentoAnaliseResumo("Protesto:", String.format("%,.2f", engineRetorno.getTotalValorProtests())
+						+ " (" + CommonsUtil.stringValue(engine.getDadosCadastraisPJ().getNegative().getTotalProtests()) + ")"));
 			} else {
-				if (totalInadimplencias > 0) {
-					result.add(new DocumentoAnaliseResumo("Pefin/Refin:", String.format("%,.2f", totalInadimplenciaValor) 
-							+ " (" + CommonsUtil.stringValue(totalInadimplencias) + ")"));
-				} else {
-					result.add(new DocumentoAnaliseResumo("Pefin/Refin:", "0"));
-				}	
-			}
+				result.add(new DocumentoAnaliseResumo("Protesto:", "0"));
+			}		
+		}
 
-			if(engine.getConsultaCompleta() == null) {
-				result.add(new DocumentoAnaliseResumo("Protesto:", "Não disponível"));
+		if(engine.getDadosCadastraisPJ() == null && engine.getConsultaCompleta() == null) {
+			result.add(new DocumentoAnaliseResumo("Cheque sem fundo:", "Não disponível"));
+		} else {
+			if (engineRetorno.getTotalCcfApontamentos() > 0) {
+				result.add(new DocumentoAnaliseResumo("Cheque sem fundo:", CommonsUtil.stringValue(engineRetorno.getTotalCcfApontamentos())));
 			} else {
-				if (totalProtestos > 0) {
-					result.add(new DocumentoAnaliseResumo("Protesto:", String.format("%,.2f", totalProtestosValor)
-							+ " (" + CommonsUtil.stringValue(totalProtestos) + ")"));
-				} else {
-					result.add(new DocumentoAnaliseResumo("Protesto:", "0"));
-				}		
-			}
+				result.add(new DocumentoAnaliseResumo("Cheque sem fundo:", "0"));
+			}			
+		}
 
-			if(engine.getConsultaCompleta() == null) {
-				result.add(new DocumentoAnaliseResumo("Cheque sem fundo:", "Não disponível"));
+		if(engine.getDadosCadastraisPJ() == null && engine.getConsultaCompleta() == null) {
+			result.add(new DocumentoAnaliseResumo("Ações Judiciais:", "Não disponível"));
+		} else {
+			if (engineRetorno.getTotalLawSuitApontamentos() > 0) {
+				result.add(new DocumentoAnaliseResumo("Ações Judiciais:", String.format("%,.2f", engineRetorno.getTotalValorLawSuitApontamentos()) 
+						+ " (" + CommonsUtil.stringValue(engineRetorno.getTotalLawSuitApontamentos()) + ")"));
 			} else {
-				if (totalCcfApontamentos > 0) {
-					result.add(new DocumentoAnaliseResumo("Cheque sem fundo:", CommonsUtil.stringValue(totalCcfApontamentos)));
-				} else {
-					result.add(new DocumentoAnaliseResumo("Cheque sem fundo:", "0"));
-				}			
-			}
+				result.add(new DocumentoAnaliseResumo("Ações Judiciais:", "0"));
+			}				
+		}
 
-			if(engine.getConsultaCompleta() == null) {
-				result.add(new DocumentoAnaliseResumo("Ações Judiciais:", "Não disponível"));
-			} else {
-				if (totalLawSuitApontamentos > 0) {
-					result.add(new DocumentoAnaliseResumo("Ações Judiciais:", String.format("%,.2f", totalLawSuitValor) 
-							+ " (" + CommonsUtil.stringValue(totalLawSuitApontamentos) + ")"));
-				} else {
-					result.add(new DocumentoAnaliseResumo("Ações Judiciais:", "0"));
-				}				
-			}
+		if (processo == null) {
+			result.add(new DocumentoAnaliseResumo("Nº de processos judiciais:", "Não disponível"));
 
-			if (engine.getProcessos() == null) {
-				result.add(new DocumentoAnaliseResumo("Nº de processos judiciais:", "Não disponível"));
-
-			} else {
-				EngineRetornoExecutionResultProcessos processo = engine.getProcessos();
-				result.add(new DocumentoAnaliseResumo("Nº de processos judiciais:",
-						CommonsUtil.stringValue(processo.getTotal_acoes_judicias_reu() + totalLawSuitApontamentos)));
-			}
-
+		} else {
+			result.add(new DocumentoAnaliseResumo("Nº de processos judiciais:",
+					CommonsUtil.stringValue(processo.getTotal_acoes_judicias_reu() + engineRetorno.getTotalLawSuitApontamentos())));
+		}
+		
+		if(engine.getConsultaCompleta() != null && engine.getDadosCadastraisPJ() == null) {
 			if(engine.getConsultaCompleta() == null) {
 				result.add(new DocumentoAnaliseResumo("Participação em empresas:", "Não disponível"));
 			} else {
-				if (numeroParticipacaoEmpresas > 0) {
-					result.add(new DocumentoAnaliseResumo("Participação em empresas:", CommonsUtil.stringValue(numeroParticipacaoEmpresas)));
+				if (engine.getConsultaCompleta().getEnterpriseData().getPartnership() != null) {
+					result.add(new DocumentoAnaliseResumo("Participação em empresas:", 
+							CommonsUtil.stringValue(engine.getConsultaCompleta().getEnterpriseData().getPartnership().getPartnerships().size())));
 				} else {
 					result.add(new DocumentoAnaliseResumo("Participação em empresas:", "0"));
 				}
@@ -283,7 +314,7 @@ public class DocumentoAnalise implements Serializable {
 			if(engine.getConsultaCompleta() == null) {
 				result.add(new DocumentoAnaliseResumo("PEP ou VIP:", "Não disponível"));
 			} else {
-				if (isPepVip) {
+				if (CommonsUtil.mesmoValor(engine.getConsultaCompleta().getErrorMessage(), "Cliente PEP ou VIP")) {
 					result.add(new DocumentoAnaliseResumo("PEP ou VIP:", "Sim"));
 				} else {
 					result.add(new DocumentoAnaliseResumo("PEP ou VIP:", "Não"));
@@ -293,7 +324,7 @@ public class DocumentoAnalise implements Serializable {
 			if(engine.getConsultaCompleta() == null) {
 				result.add(new DocumentoAnaliseResumo("PEP Relacionado:", "Não disponível"));
 			} else {
-				if (politicamenteExposta) {
+				if (engine.getPep()) {
 					result.add(new DocumentoAnaliseResumo("PEP Relacionado:", "Sim"));
 				} else {
 					result.add(new DocumentoAnaliseResumo("PEP Relacionado:", "Não"));				
@@ -308,78 +339,6 @@ public class DocumentoAnalise implements Serializable {
 				result.add(new DocumentoAnaliseResumo("Antecedentes criminais:",  (mensagem.getMessage() != null) ? mensagem.getMessage() : "Nada consta"));
 			}
 		}
-
-		return result;
-	}
-
-	private void populaExecutionResult(EngineRetorno engine) {
-		for (int i = 0; i < engine.getExecutionResult().size(); i++) {
-			JSONObject objER = new JSONObject(engine.getExecutionResult().get(i));
-			
-			if (CommonsUtil.mesmoValor(objER.get("validationSource"), "provider-pep-relacionado")) {
-				if (!CommonsUtil.mesmoValor(objER.getString("observation"), "")) {
-					JSONArray novoObj = new JSONArray(objER.getString("observation"));
-					politicamenteExposta = true;
-					setPessoasPoliticamenteExpostas(novoObj.length());
-				}
-			}
-			
-			if (CommonsUtil.mesmoValor(objER.get("validationSource"), "Consulta completa Credito") 
-				|| CommonsUtil.mesmoValor(objER.get("validationSource"), "Credito PJ")) {
-				if (!CommonsUtil.mesmoValor(objER.getString("observation"), "")) {
-					calculaPendenciasFinanceiras(new JSONObject(objER.getString("observation")));
-					calculaParticipacaoEmpresas(new JSONObject(objER.getString("observation")));
-					verificaPepVip(new JSONObject(objER.getString("observation")));
-				}
-			}
-		}
-	}
-	
-	public void verificaPepVip(JSONObject obj) {
-		if(obj.has("ErrorMessage") && CommonsUtil.mesmoValor(obj.getString("ErrorMessage"), "Cliente PEP ou VIP")) {
-			isPepVip = true;
-		}	
-	}
-	
-	public void calculaParticipacaoEmpresas(JSONObject obj) {
-		if (obj.getJSONObject("EnterpriseData").has("Partnerships")) {
-			JSONArray arrObj = obj.getJSONObject("EnterpriseData").getJSONObject("Partnerships").getJSONArray("Partnership");
-			numeroParticipacaoEmpresas = arrObj.length();
-		}
-	}
-	
-	public void calculaPendenciasFinanceiras(JSONObject obj) {
-		/*
-		 * Apontamentos = Inadimplencia;
-		 * CCF = Cheque sem fundo;
-		 * LawSuit = Ação Judicial
-		 * */
-		
-		if (obj.getJSONObject("Negative").has("PendenciesControlCred")) {
-			totalValorApontamentos = obj.getJSONObject("Negative").getDouble("PendenciesControlCred");
-		}
-		
-		if (obj.getJSONObject("Negative").has("TotalApontamentos")) {
-			totalInadimplencias = obj.getJSONObject("Negative").getInt("TotalApontamentos");
-			totalInadimplenciaValor = obj.getJSONObject("Negative").getDouble("TotalValorApontamentos");
-		}
-		
-		if (obj.getJSONObject("Negative").has("TotalLawSuitApontamentos")) {
-			totalLawSuitApontamentos = obj.getJSONObject("Negative").getInt("TotalLawSuitApontamentos");
-			totalLawSuitValor = obj.getJSONObject("Negative").getDouble("TotalValorLawSuitApontamentos");
-		}
-		
-		if (obj.getJSONObject("Negative").has("TotalCcfApontamentos")) {
-			totalCcfApontamentos = obj.getJSONObject("Negative").getInt("TotalCcfApontamentos");
-		}
-	
-		if (obj.getJSONObject("Negative").has("TotalProtests")) {
-			totalProtestos = obj.getJSONObject("Negative").getInt("TotalProtests");
-			totalProtestosValor = obj.getJSONObject("Negative").getDouble("TotalValorProtests");
-		}
-		
-		totalPendenciasValor = totalInadimplenciaValor + totalLawSuitValor; 
-		totalPendencias = totalInadimplencias + totalLawSuitApontamentos + totalCcfApontamentos;
 	}
 
 
@@ -396,7 +355,7 @@ public class DocumentoAnalise implements Serializable {
 			} else {
 				for (ProtestosBrasilEstado estado : data.getCenprotProtestos().getProtestosBrasil().getEstados()) {
 
-					String valorEstado = CommonsUtil.stringValue(estado.getValorTotal()) + " (" + estado.getValorTotal()
+					String valorEstado = CommonsUtil.stringValue(estado.getValorTotal()) + " (" + estado.getQuantidadeTotal()
 							+ ") ";
 					cenprot.add(new DocumentoAnaliseResumo(estado.getEstado(), valorEstado));
 
@@ -460,8 +419,13 @@ public class DocumentoAnalise implements Serializable {
 			
 			if (dado.getResumoDoClienteTraduzido().getDtInicioRelacionamento() == null) {
 				scr.add(new DocumentoAnaliseResumo("Data inicio relacionamento:", "Não Disponível"));
-			} else {
-				scr.add(new DocumentoAnaliseResumo("Data inicio relacionamento:", dado.getResumoDoClienteTraduzido().getDtInicioRelacionamento()));
+			} else {			
+				String[] str = dado.getResumoDoClienteTraduzido().getDtInicioRelacionamento().split("-");
+				Arrays.sort(str);
+				List<String> listStrData = Arrays.asList(str);
+				String dataRelacionamento = String.join("/", listStrData);
+				
+				scr.add(new DocumentoAnaliseResumo("Data inicio relacionamento:", dataRelacionamento));
 			}
 		}
 
@@ -1018,7 +982,7 @@ public class DocumentoAnalise implements Serializable {
 		this.pessoasPoliticamenteExpostas = Integer.toString(pessoasPoliticamenteExpostas);
 	}
 	
-    public String getDialogHeader() {
+  public String getDialogHeader() {
     	dialogHeader = dialogHeader();
         return dialogHeader;
     }
