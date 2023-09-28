@@ -17,6 +17,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocketConsultaDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocketDao;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
+import com.webnowbr.siscoat.cobranca.service.FileService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GsonUtil;
 
@@ -44,9 +45,23 @@ public class DocketWebhook {
 			DocketWebhookRetorno docketWebhookRetorno = GsonUtil.fromJson(webhookRetorno, DocketWebhookRetorno.class);
 
 			Optional<ContratoCobranca> objetoContratoCobranca;
+			DocketConsultaDao consultaDao = new DocketConsultaDao();
+			DocketService docketService = new DocketService();
 
-			if (docketWebhookRetorno.getPedido().getLead() == null) {
-				return null;
+			if (CommonsUtil.semValor(docketWebhookRetorno) || CommonsUtil.semValor(docketWebhookRetorno.getPedido())) {				
+				DocketWebhookRetornoDocumento documentoRetorno = GsonUtil.fromJson(webhookRetorno, DocketWebhookRetornoDocumento.class);			
+				if(CommonsUtil.semValor(documentoRetorno.getId())) 
+					return Response.status(500).entity("Id inesxistente").build();
+				
+				DocketConsulta docketConsulta = consultaDao.getConsultasExistentesWebhook(documentoRetorno.id);
+				docketConsulta.setStatus("Concluido");
+				docketConsulta.setRetorno(GsonUtil.toJson(documentoRetorno));
+				String base64 = docketService.getPdfBase64(docketConsulta.getRetorno());
+				docketConsulta.setPdf(base64);
+				FileService fileService = new FileService();
+				fileService.salvarPdfRetorno(docketConsulta.getDocumentoAnalise(), base64, documentoRetorno.getDocumentoNome(), "interno");
+				consultaDao.merge(docketConsulta);
+				return Response.status(200).entity("Processado ID:" + documentoRetorno.id).build();
 			}
 
 			DocketDao docketDao = new DocketDao();
@@ -56,15 +71,15 @@ public class DocketWebhook {
 
 			objetoContratoCobranca = contratoCobrancaDao.findByFilter("numeroContrato", sNumeroContrato).stream().findFirst();
 			
-			DocketConsultaDao consultaDao = new DocketConsultaDao();
-			DocketService docketService = new DocketService();
 			for (DocketWebhookRetornoDocumento documentoRetorno : docketWebhookRetorno.getPedido().getDocumentos()) {	
 				DocketConsulta docketConsulta = consultaDao.getConsultasExistentesWebhook(documentoRetorno.id);
 				docketConsulta.setStatus("Concluido");
 				docketConsulta.setRetorno(GsonUtil.toJson(documentoRetorno));
 				String base64 = docketService.getPdfBase64(docketConsulta.getRetorno());
 				docketConsulta.setPdf(base64);
-				docketService.salvarPdfRetorno(docketConsulta.getDocumentoAnalise(), base64, documentoRetorno.getDocumentoNome(), "interno");
+				FileService fileService = new FileService();
+				fileService.salvarPdfRetorno(docketConsulta.getDocumentoAnalise(), base64, documentoRetorno.getDocumentoNome(), "interno");
+				consultaDao.merge(docketConsulta);
 			}
 			
 			if (objetoContratoCobranca.isPresent()) {

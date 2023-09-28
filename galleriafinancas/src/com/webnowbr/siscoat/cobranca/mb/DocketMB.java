@@ -50,6 +50,8 @@ public class DocketMB {
 	
 	private List<DocumentoAnalise> listPagador;
 	private String etapa;
+	private ContratoCobranca contratoCobranca;
+	
 	
 	public Date gerarDataHoje() {
 		TimeZone zone = TimeZone.getDefault();
@@ -89,10 +91,9 @@ public class DocketMB {
 		return usuario;
 	}
 	
-	public String clearFieldsContratoCobranca(List<DocumentoAnalise> listDocAnalise, String etapaConsultas) {
-		//estados = new ArrayList<String>();
-		//estados.add(estadoImovel);
+	public String clearFieldsContratoCobranca(List<DocumentoAnalise> listDocAnalise, String etapaConsultas, ContratoCobranca contrato) {
 		etapa = etapaConsultas;
+		contratoCobranca = contrato;
 		listPagador = new ArrayList<DocumentoAnalise>();
 		for(DocumentoAnalise docAnalise : listDocAnalise) {
 			if(CommonsUtil.semValor(docAnalise.getPagador())) {
@@ -349,5 +350,13 @@ public class DocketMB {
 	
 	public void setEtapa(String etapa) {
 		this.etapa = etapa;
+	}
+
+	public ContratoCobranca getContratoCobranca() {
+		return contratoCobranca;
+	}
+
+	public void setContratoCobranca(ContratoCobranca contratoCobranca) {
+		this.contratoCobranca = contratoCobranca;
 	}
 }

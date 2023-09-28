@@ -7,8 +7,6 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -17,7 +15,6 @@ import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorConsulta;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
-import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.cobranca.ws.netrin.NetrinConsulta;
 import com.webnowbr.siscoat.cobranca.ws.netrin.NetrinConsultaDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -25,8 +22,6 @@ import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
-import com.webnowbr.siscoat.infra.db.dao.UserDao;
-import com.webnowbr.siscoat.infra.db.model.User;
 
 import br.com.galleriabank.netrin.cliente.model.cenprot.CenprotResponse;
 import br.com.galleriabank.netrin.cliente.model.contabancaria.ValidaContaBancariaRequest;
@@ -106,7 +101,8 @@ public class NetrinService {
 					DocumentosAnaliseEnum.CENPROT, response);
 			
 			String base64 = baixarDocumento(documentoAnalise);
-			salvarPdfRetorno(documentoAnalise, base64, "Cenprot", "interno");
+			FileService fileService = new FileService();
+			fileService.salvarPdfRetorno(documentoAnalise, base64, "Cenprot", "interno");
 			result = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
 
 		} catch (Exception e) {
@@ -1148,7 +1144,8 @@ public class NetrinService {
 						DocumentosAnaliseEnum.CNDTTST, retornoConsulta);
 				
 				String base64 = baixarDocumentoCNDTrabalhistaTST(documentoAnalise);
-				salvarPdfRetorno(documentoAnalise, base64, "CNDT TST", "interno");
+				FileService fileService = new FileService();
+				fileService.salvarPdfRetorno(documentoAnalise, base64, "CNDT TST", "interno");
 				
 				return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
 
@@ -1357,7 +1354,8 @@ public class NetrinService {
 						DocumentosAnaliseEnum.CNDFEDERAL, retornoConsulta);
 				
 				String base64 = baixarDocumentoCNDFederal(documentoAnalise);
-				salvarPdfRetorno(documentoAnalise, base64, "CND Federal", "interno");
+				FileService fileService = new FileService();
+				fileService.salvarPdfRetorno(documentoAnalise, base64, "CND Federal", "interno");
 
 				return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
 
@@ -1572,7 +1570,8 @@ public class NetrinService {
 							DocumentosAnaliseEnum.CNDESTADUAL, retornoConsulta);
 				}
 				String base64 = baixarDocumentoCNDEstadual(retornoConsulta);
-				salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
+				FileService fileService = new FileService();
+				fileService.salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
 				return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
 			}
 
@@ -1736,20 +1735,6 @@ public class NetrinService {
 	}
 	/// /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\  CND Estadual
 	
-	public void salvarPdfRetorno(DocumentoAnalise documentoAnalise, String base64, String nomeConsulta, String diretorio) {
-		String nomeAnalise = documentoAnalise.getPagador().getNome();
-		String numeroContrato = documentoAnalise.getContratoCobranca().getNumeroContrato();
-		if(CommonsUtil.semValor(numeroContrato)) {
-			return;
-		}
-		FileUploaded pdfRetorno = new FileUploaded();
-		pdfRetorno.setFileBase64(base64);
-		pdfRetorno.setName(nomeConsulta + " - " + nomeAnalise + ".pdf");
-		FileService fileService = new FileService();
-		User user = new UserDao().findById((long) -1);
-		fileService.salvarDocumentoBase64(pdfRetorno, numeroContrato, diretorio, user);
-	}
-
 	public FacesMessage pedirConsulta(NetrinConsulta netrinConsulta) {
 		try {
 			String url = netrinConsulta.getNetrinDocumentos().getUrlService();
@@ -1796,7 +1781,8 @@ public class NetrinService {
 				DocumentosAnaliseEnum.PROCESSO, retornoConsulta);
 		base64 = baixarDocumentoProcesso(retornoConsulta);
 		nomedoc = "Consulta Processual";
-		salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
+		FileService fileService = new FileService();
+		fileService.salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
 	}
 	
 	private void requestCndEstadualNetrinConulta(NetrinConsulta netrinConsulta, DocumentoAnalise documentoAnalise,
@@ -1811,7 +1797,8 @@ public class NetrinService {
 				DocumentosAnaliseEnum.CNDESTADUAL, retornoConsulta, netrinConsulta.getUf());
 		base64 = baixarDocumentoCNDEstadual(retornoConsulta);
 		nomedoc = "CND Estadual " +  netrinConsulta.getUf().toUpperCase();
-		salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
+		FileService fileService = new FileService();
+		fileService.salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
 	}
 	
 	private void requestCndFederalNetrinConulta(NetrinConsulta netrinConsulta, DocumentoAnalise documentoAnalise,
@@ -1826,7 +1813,8 @@ public class NetrinService {
 				DocumentosAnaliseEnum.CNDFEDERAL, retornoConsulta);
 		base64 = baixarDocumentoCNDFederal(retornoConsulta);
 		nomedoc = "CND Federal";
-		salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
+		FileService fileService = new FileService();
+		fileService.salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
 	}
 
 	private void requestCndTrabalhistaTSTNetrinConulta(NetrinConsulta netrinConsulta, DocumentoAnalise documentoAnalise,
@@ -1841,6 +1829,7 @@ public class NetrinService {
 				DocumentosAnaliseEnum.CNDTTST, retornoConsulta);
 		base64 = baixarDocumentoCNDFederal(retornoConsulta);
 		nomedoc = "CNDT TST";
-		salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
+		FileService fileService = new FileService();
+		fileService.salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
 	}
 }

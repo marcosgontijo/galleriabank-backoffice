@@ -25,6 +25,7 @@ import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
 
 import com.itextpdf.text.pdf.PdfReader;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -44,15 +45,14 @@ public class PlexiMB {
 	@ManagedProperty(value = "#{loginBean}")
 	protected LoginBean loginBean;
 	
-	public UploadedFile uploadedFile;
-	//PlexiConsulta plexiConsulta = new PlexiConsulta();
-	String cpfCnpj;
+	private ContratoCobranca contratoCobranca;
 	
 	
-	public String clearFieldsContratoCobranca(List<DocumentoAnalise> listDocAnalise, String etapaConsulta) {
+	public String clearFieldsContratoCobranca(List<DocumentoAnalise> listDocAnalise, String etapaConsulta, ContratoCobranca contrato) {
 		//estados = new ArrayList<String>();
 		//estados.add(estadoImovel);
 		this.etapa = etapaConsulta;
+		contratoCobranca = contrato;
 		listPagador = new ArrayList<DocumentoAnalise>();
 		for(DocumentoAnalise docAnalise : listDocAnalise) {
 			if(CommonsUtil.semValor(docAnalise.getPagador())) {
@@ -131,78 +131,6 @@ public class PlexiMB {
 		for(PlexiConsulta plexiConsulta : docAnalise.getPlexiConsultas()) {
 			plexiConsulta.populatePagadorRecebedor(docAnalise.getPagador());
 		}
-	}
-
-	public void handleFileUpload(FileUploadEvent event) {
-		uploadedFile = event.getFile();
-	}
-	
-	public void popularDocumentos() throws IOException {
-		XSSFWorkbook wb = new XSSFWorkbook((uploadedFile.getInputstream()));
-		XSSFSheet sheet = wb.getSheetAt(0);
-
-		int iLinha = 0;
-		XSSFRow linha = sheet.getRow(iLinha);
-		
-		PlexiDocumentosDao plexiDocsDao = new PlexiDocumentosDao();
-		while (!CommonsUtil.semValor(linha)) {
-			
-			linha = sheet.getRow(iLinha);
-			if(CommonsUtil.semValor(linha) 
-				||  CommonsUtil.semValor(linha.getCell(0)) 
-				||  CommonsUtil.semValor(linha.getCell(0).getStringCellValue())
-				||  CommonsUtil.semValor(linha.getCell(1)) 
-				||  CommonsUtil.semValor(linha.getCell(1).getStringCellValue())
-				||  CommonsUtil.semValor(linha.getCell(2)) 
-				||  CommonsUtil.semValor(linha.getCell(2).getStringCellValue())
-				||  CommonsUtil.semValor(linha.getCell(3)) 
-				||  CommonsUtil.semValor(linha.getCell(3).getStringCellValue())
-				) {
-				break;
-			}
-			
-			String url = (linha.getCell(0).getStringCellValue());
-			String nome = (linha.getCell(1).getStringCellValue());
-			String pfStr = (linha.getCell(2).getStringCellValue());
-			String pjStr = (linha.getCell(3).getStringCellValue());
-			String obs = "";
-			if(!CommonsUtil.semValor(linha.getCell(4)) && !CommonsUtil.semValor(linha.getCell(4).getStringCellValue()) ) {
-				obs = (linha.getCell(4).getStringCellValue());
-			}
-			
-			
-			PlexiDocumentos doc = new PlexiDocumentos();
-			if(plexiDocsDao.findByFilter("url", url).size() > 0) {
-				doc = plexiDocsDao.findByFilter("url", url).get(0);
-			}
-			doc.setUrl(url);
-			doc.setNome(nome);
-			doc.setObs(obs);
-			
-			if(CommonsUtil.mesmoValor(pfStr, "false")) {
-				doc.setPf(false);
-			} else if(CommonsUtil.mesmoValor(pfStr, "true")) {
-				doc.setPf(true);
-			}
-			
-			if(CommonsUtil.mesmoValor(pjStr, "false")) {
-				doc.setPj(false);
-			} else if(CommonsUtil.mesmoValor(pjStr, "true")) {
-				doc.setPj(true);
-			}
-			
-			if(doc.getId() > 0) {
-				plexiDocsDao.merge(doc);
-			} else {
-				plexiDocsDao.create(doc);
-			}
-			
-			iLinha++;
-		}
-	}
-	
-	public void clearDialog() {
-		this.uploadedFile = null;
 	}
 	
 	public StreamedContent decodarBaixarArquivo(PlexiConsulta consulta) {
@@ -395,7 +323,7 @@ public class PlexiMB {
 					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Rg", ""));
 				}
 				
-				if(CommonsUtil.semValor(plexiConsulta.getOrgaoExpedidorRg())){
+				if(CommonsUtil.semValor(plexiConsulta.getOrgaoExpedidor())){
 					retorno = false;
 					FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Orgao Rg", ""));
@@ -664,23 +592,7 @@ public class PlexiMB {
 		
 		return "/Atendimento/Cobranca/Plexi.xhtml";
 	}	
-
-	public UploadedFile getUploadedFile() {
-		return uploadedFile;
-	}
-
-	public void setUploadedFile(UploadedFile uploadedFile) {
-		this.uploadedFile = uploadedFile;
-	}
-
-	public String getCpfCnpj() {
-		return cpfCnpj;
-	}
-
-	public void setCpfCnpj(String cpfCnpj) {
-		this.cpfCnpj = cpfCnpj;
-	}
-
+	
 	public List<DocumentoAnalise> getListPagador() {
 		return listPagador;
 	}
@@ -703,6 +615,13 @@ public class PlexiMB {
 
 	public void setEtapa(String etapa) {
 		this.etapa = etapa;
+	}
+
+	public ContratoCobranca getContratoCobranca() {
+		return contratoCobranca;
+	}
+
+	public void setContratoCobranca(ContratoCobranca contratoCobranca) {
+		this.contratoCobranca = contratoCobranca;
 	}	
-	
 }

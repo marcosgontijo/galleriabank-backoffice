@@ -596,7 +596,8 @@ public class EngineService {
 		documentoAnalise.setObservacao("Engine processado");
 		documentoAnaliseDao.merge(documentoAnalise);
 		String base64 = documentoAnalise.getEngine().getPdfBase64();
-		salvarPdfRetorno(documentoAnalise, base64, "Processo", "interno");
+		FileService fileService = new FileService();
+		fileService.salvarPdfRetorno(documentoAnalise, base64, "Processo", "interno");
 		
 	}
 		
@@ -843,22 +844,7 @@ public class EngineService {
 		Calendar dataHoje = Calendar.getInstance(zone, locale);
 
 		return dataHoje.getTime();
-	}
-
-	
-	public void salvarPdfRetorno(DocumentoAnalise documentoAnalise, String base64, String nomeConsulta, String diretorio) {
-		String nomeAnalise = documentoAnalise.getPagador().getNome();
-		String numeroContrato = documentoAnalise.getContratoCobranca().getNumeroContrato();
-		if(CommonsUtil.semValor(numeroContrato)) {
-			return;
-		}
-		FileUploaded pdfRetorno = new FileUploaded();
-		pdfRetorno.setFileBase64(base64);
-		pdfRetorno.setName(nomeConsulta + " - " + nomeAnalise + ".pdf");
-		FileService fileService = new FileService();
-		User user = new UserDao().findById((long) -1);
-		fileService.salvarDocumentoBase64(pdfRetorno, numeroContrato, diretorio, user);
-	}
+	}	
 
 	public String getPdfBase64(String documento) {
 		DocketWebhookRetornoDocumento documentoPdf = GsonUtil.fromJson(documento, DocketWebhookRetornoDocumento.class);

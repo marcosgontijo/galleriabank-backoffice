@@ -82,7 +82,7 @@
 						value="#{contratoCobrancaMB.listaDocumentoAnalise}"
 						rowKey="#{fileAnalise}" selection="#{contratoCobrancaMB.listaDeleteAnalise}" 
 						emptyMessage=""
-						rowStyleClass="#{(fileAnalise.liberadoAnalise eq true
+						rowStyleClass="#{(fileAnalise.observacao ne null
 							or contratoCobrancaMB.objetoContratoCobranca.emAnalise) ? '' : 'ui-helper-hidden'}">
 						
 						<f:facet name="header">								 
@@ -265,11 +265,11 @@
 					widgetVar="executeBtn" onclick="executeBtn.disable()" 
 					disabled="#{contratoCobrancaMB.checkConsultasAnaliseDocumento()}" />
 				<p:commandButton value="Certidões Docket" ajax="false"
-					action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'analise')}" />
+					action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'analise', contratoCobrancaMB.objetoContratoCobranca)}" />
 				<p:commandButton value="Certidões Plexi" 
-					action="#{plexiMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'analise')}" />
+					action="#{plexiMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'analise', contratoCobrancaMB.objetoContratoCobranca)}" />
 				<p:commandButton value="Certidões Netrin" 
-					action="#{netrinMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'analise')}" />
+					action="#{netrinMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'analise', contratoCobrancaMB.objetoContratoCobranca)}" />
 			</p:panel>
 			
 			<p:panel id="pnlCeridoesPedirPaju" header="Certidões"
@@ -277,11 +277,11 @@
 				style="margin-bottom:10px;">
 				
 				<p:commandButton value="Certidões Docket" ajax="false"
-					action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'pedir paju')}" />		
+					action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'pedir paju', contratoCobrancaMB.objetoContratoCobranca)}" />		
 				<p:commandButton value="Certidões Plexi" 
-					action="#{plexiMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'pedir paju')}" />				
+					action="#{plexiMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'pedir paju', contratoCobrancaMB.objetoContratoCobranca)}" />				
 				<p:commandButton value="Certidões Netrin" 
-					action="#{netrinMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'pedir paju')}" />
+					action="#{netrinMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'pedir paju', contratoCobrancaMB.objetoContratoCobranca)}" />
 					
 			</p:panel>
 
