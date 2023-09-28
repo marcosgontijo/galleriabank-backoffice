@@ -253,7 +253,7 @@ public class DocumentoAnalise implements Serializable {
 		} else {			
 			if (engineRetorno.getTotalApontamentos() > 0 && !CommonsUtil.semValor(engine.getDadosCadastraisPJ())) {
 				result.add(new DocumentoAnaliseResumo("Pefin/Refin:", String.format("%,.2f", engineRetorno.getTotalValorApontamentos()) 
-						+ " (" + CommonsUtil.stringValue(engine.getDadosCadastraisPJ().getNegative().getTotalApontamentos()) + ")"));
+						+ " (" + CommonsUtil.stringValue(engineRetorno.getTotalApontamentos()) + ")"));
 			} else {
 				result.add(new DocumentoAnaliseResumo("Pefin/Refin:", "0"));
 			}	
@@ -264,7 +264,7 @@ public class DocumentoAnalise implements Serializable {
 		} else {	
 			if (engineRetorno.getTotalProtests() > 0) {
 				result.add(new DocumentoAnaliseResumo("Protesto:", String.format("%,.2f", engineRetorno.getTotalValorProtests())
-						+ " (" + CommonsUtil.stringValue(engine.getDadosCadastraisPJ().getNegative().getTotalProtests()) + ")"));
+						+ " (" + CommonsUtil.stringValue(engineRetorno.getTotalProtests()) + ")"));
 			} else {
 				result.add(new DocumentoAnaliseResumo("Protesto:", "0"));
 			}		
@@ -290,10 +290,9 @@ public class DocumentoAnalise implements Serializable {
 				result.add(new DocumentoAnaliseResumo("Ações Judiciais:", "0"));
 			}				
 		}
-
+		
 		if (processo == null) {
 			result.add(new DocumentoAnaliseResumo("Nº de processos judiciais:", "Não disponível"));
-
 		} else {
 			result.add(new DocumentoAnaliseResumo("Nº de processos judiciais:",
 					CommonsUtil.stringValue(processo.getTotal_acoes_judicias_reu() + engineRetorno.getTotalLawSuitApontamentos())));
@@ -418,7 +417,7 @@ public class DocumentoAnalise implements Serializable {
 			}
 			
 			if (dado.getResumoDoClienteTraduzido().getDtInicioRelacionamento() == null) {
-				scr.add(new DocumentoAnaliseResumo("Data inicio relacionamento:", "Não Disponível"));
+				scr.add(new DocumentoAnaliseResumo("Data inicio relacionamento:", "--"));
 			} else {			
 				String[] str = dado.getResumoDoClienteTraduzido().getDtInicioRelacionamento().split("-");
 				Arrays.sort(str);
