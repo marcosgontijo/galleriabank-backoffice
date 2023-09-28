@@ -2,10 +2,8 @@ package com.webnowbr.siscoat.cobranca.mb;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -21,9 +19,11 @@ import org.primefaces.model.SortOrder;
 import org.primefaces.model.UploadedFile;
 
 import com.webnowbr.siscoat.cobranca.db.model.Cidade;
-import com.webnowbr.siscoat.cobranca.db.model.DocketCidades;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.ImovelEstoque;
 import com.webnowbr.siscoat.cobranca.db.op.CidadeDao;
+import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.db.dao.DAOException;
@@ -41,14 +41,21 @@ public class ImovelCobrancaMB {
 	private boolean updateMode = false;
 	private boolean deleteMode = false;
 	private String tituloPainel = null;
-	
+
 	
 	public UploadedFile uploadedFile;
 	
-	/*Construtor.*/
+	private ImovelEstoque objetoImovelEstoque;
+	private ContratoCobranca objetoContratoCobranca;
+	private boolean editarEstoque;
+	private List<ContratoCobranca> listaConsultaEstoque = new ArrayList<ContratoCobranca>();
+	/**
+	 * Construtor.
+	 */
 	public ImovelCobrancaMB() {
 
 		objetoImovelCobranca = new ImovelCobranca();
+		objetoImovelEstoque = new ImovelEstoque();
 
 		lazyModel = new LazyDataModel<ImovelCobranca>() {
 
@@ -73,9 +80,20 @@ public class ImovelCobrancaMB {
 		objetoImovelCobranca = new ImovelCobranca();
 		this.tituloPainel = "Adicionar";
 
-		return "ImovelCobrancaInserir.xhtml";
+		return "/Atendimento/Cobranca/ImovelCobrancaInserir.xhtml";
 	}
+	
+	public String clearFieldsEstoqueImoveis() {
+		objetoContratoCobranca = new ContratoCobranca();
+		objetoImovelCobranca = new ImovelCobranca();
+		this.consultaEstoque();
 
+		
+		return "/Atendimento/Cobranca/ImovelEstoqueConsulta.xhtml";
+	}
+	
+	
+	
 	public String inserir() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
@@ -95,6 +113,7 @@ public class ImovelCobrancaMB {
 							+ objetoImovelCobranca.getNome() + ")", ""));
 			
 			objetoImovelCobranca = new ImovelCobranca();
+			
 
 		} catch (DAOException e) {
 
@@ -152,6 +171,11 @@ public class ImovelCobrancaMB {
 		}
 
 		return "ImovelCobrancaConsultar.xhtml";
+	}
+	
+	public void consultaEstoque() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		listaConsultaEstoque = contratoCobrancaDao.consultaImovelEstoque();
 	}
 
 	
@@ -255,10 +279,6 @@ public class ImovelCobrancaMB {
 	public void clearDialog() {
 		this.uploadedFile = null;
 	}
-		
-	
-    
-	
 	
 	/**
 	 * @return the lazyModel
@@ -293,8 +313,17 @@ public class ImovelCobrancaMB {
 	/**
 	 * @return the updateMode
 	 */
+	
 	public boolean isUpdateMode() {
 		return updateMode;
+	}
+
+	public ImovelEstoque getObjetoImovelEstoque() {
+		return objetoImovelEstoque;
+	}
+
+	public void setObjetoImovelEstoque(ImovelEstoque objetoImovelEstoque) {
+		this.objetoImovelEstoque = objetoImovelEstoque;
 	}
 
 	/**
@@ -357,5 +386,29 @@ public class ImovelCobrancaMB {
 		this.uploadedFile = uploadedFile;
 	}
 	
+	
+	public ContratoCobranca getObjetoContratoCobranca() {
+		return objetoContratoCobranca;
+	}
+
+	public void setObjetoContratoCobranca(ContratoCobranca objetoContratoCobranca) {
+		this.objetoContratoCobranca = objetoContratoCobranca;
+	}
+
+	public boolean isEditarEstoque() {
+		return editarEstoque;
+	}
+
+	public void setEditarEstoque(boolean editarEstoque) {
+		this.editarEstoque = editarEstoque;
+	}
+
+	public List<ContratoCobranca> getListaConsultaEstoque() {
+		return listaConsultaEstoque;
+	}
+
+	public void setListaConsultaEstoque(List<ContratoCobranca> listaConsultaEstoque) {
+		this.listaConsultaEstoque = listaConsultaEstoque;
+	}
 	
 }
