@@ -32,8 +32,8 @@ public class PlexiWebhook {
 			try {
 				Jwts.parserBuilder().setSigningKey(CommonsUtil.CHAVE_WEBHOOK).build().parseClaimsJws(token);		
 			} catch (Exception e) {
-				System.out.println("token plexi expirado");
 				String requestId = webhookObject.getString("requestId");
+				System.out.println("token plexi expirado: " + requestId);
 				webhookObject = plexiService.getRetornoPlexi(requestId);
 				webhookObject.put("requestId", requestId);
 			}
@@ -70,6 +70,4 @@ public class PlexiWebhook {
 			return Response.status(500).entity("Erro interno").build();
 		}
 	}
-	
-	
 }
