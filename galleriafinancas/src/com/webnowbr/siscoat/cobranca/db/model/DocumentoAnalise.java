@@ -251,7 +251,7 @@ public class DocumentoAnalise implements Serializable {
 		if(engine.getDadosCadastraisPJ() == null && engine.getConsultaCompleta() == null) {
 			result.add(new DocumentoAnaliseResumo("Pefin/Refin:", "Não disponível"));
 		} else {			
-			if (engineRetorno.getTotalApontamentos() > 0) {
+			if (engineRetorno.getTotalApontamentos() > 0 && !CommonsUtil.semValor(engine.getDadosCadastraisPJ())) {
 				result.add(new DocumentoAnaliseResumo("Pefin/Refin:", String.format("%,.2f", engineRetorno.getTotalValorApontamentos()) 
 						+ " (" + CommonsUtil.stringValue(engine.getDadosCadastraisPJ().getNegative().getTotalApontamentos()) + ")"));
 			} else {
@@ -960,9 +960,6 @@ public class DocumentoAnalise implements Serializable {
 	}
 	
 	public String getEstadosConsultaStr() {
-		if(!CommonsUtil.semValor(estadosConsulta)) {
-			estadosConsultaStr = estadosConsulta.toString();
-		}
 		return estadosConsultaStr;
 	}
 
