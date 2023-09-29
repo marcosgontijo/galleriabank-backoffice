@@ -826,6 +826,7 @@ public class ContratoCobrancaMB {
 	private BigDecimal imovelCobrancaLongitude;
 	private String laudoEndereco = "";
 	private boolean laudoDone = false;
+	private boolean erroPedidoLaudo = false;
 	
     public String rowSelected() {
     	return null;
@@ -29740,15 +29741,16 @@ public class ContratoCobrancaMB {
 	public void geraLaudo() {
 		try {			
 			String apikey = "cApKsaLHk1dgXwlkXbVGaqwnL4CPOuq3ICbMc8Va";
+			this.objetoImovelCobranca.separaEnderecoNumero(this.objetoImovelCobranca.getEndereco());
 			getLatAndLon(this.objetoImovelCobranca.getEndereco());
-			
+		
 			JSONObject assessingObj = new JSONObject();
 			assessingObj.put("category_id", this.objetoImovelCobranca.getCategoria());
 			assessingObj.put("lat", imovelCobrancaLatitude);
 			assessingObj.put("lon", imovelCobrancaLongitude);
 			assessingObj.put("neighborhood", this.objetoImovelCobranca.getBairro());
 			assessingObj.put("area", (this.objetoImovelCobranca.getAreaConstruida().isEmpty()) ? 0.0 : Double.valueOf(this.objetoImovelCobranca.getAreaConstruida()));
-			assessingObj.put("street", this.objetoImovelCobranca.getEndereco());
+			assessingObj.put("street", this.objetoImovelCobranca.getEnderecoSemNumero());
 			assessingObj.put("number", this.objetoImovelCobranca.getNumeroImovel());
 			assessingObj.put("sub_category_id", this.objetoImovelCobranca.getCategoria());
 			assessingObj.put("city", this.objetoImovelCobranca.getCidade());
@@ -29765,12 +29767,12 @@ public class ContratoCobrancaMB {
 			assessingObj.put("typology", assessingTypo);
 			
 			JSONObject address = new JSONObject();
-			address.put("street", this.objetoImovelCobranca.getEndereco());
+			address.put("street", this.objetoImovelCobranca.getEnderecoSemNumero());
 			address.put("neighborhood", this.objetoImovelCobranca.getBairro());
 			address.put("city", this.objetoImovelCobranca.getCidade());
 			address.put("postal_code", this.objetoImovelCobranca.getCep());
 			address.put("state", this.objetoImovelCobranca.getEstado());
-			address.put("street_long", this.objetoImovelCobranca.getEndereco());
+			address.put("street_long", this.objetoImovelCobranca.getEnderecoSemNumero());
 			address.put("number", this.objetoImovelCobranca.getNumeroImovel());
 			
 			JSONObject location = new JSONObject();
@@ -29784,9 +29786,10 @@ public class ContratoCobrancaMB {
 			typologyWithArray.put("features_suite", new JSONArray());
 			typologyWithArray.put("features_garage", new JSONArray());
 			
-
 			JSONObject realty_type = new JSONObject();
-			realty_type.put("category_id", (this.objetoImovelCobranca.getCategoria() == 1) ? new JSONArray(1) : new JSONArray(2));
+			JSONArray catArray = new JSONArray();
+			catArray = (this.objetoImovelCobranca.getCategoria() == 1) ? catArray.put(1) : catArray.put(2);
+			realty_type.put("category_id", catArray);
 			realty_type.put("sub_category_id", new JSONArray());
 			
 			JSONObject price_total = new JSONObject();
@@ -29833,7 +29836,7 @@ public class ContratoCobrancaMB {
 			moreFilters.put("remove_duplicates", true);
 			moreFilters.put("active_ads", true);
 			moreFilters.put("recent_ads", false);
-			moreFilters.put("min_quantity_ad", 5);
+			moreFilters.put("min_quantity_ad", 2);
 			moreFilters.put("min_similarity", 0.3);
 			
 			JSONObject postObj = new JSONObject();
@@ -29844,7 +29847,6 @@ public class ContratoCobrancaMB {
 			String idAval = "";
 			
 			URL myURL = new URL("https://api.prd.valuation.eemovel.com.br/valuation/assessment/internal/realty/calculator");
-			
 
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
 			myURLConnection.setRequestMethod("POST");
@@ -29870,8 +29872,9 @@ public class ContratoCobrancaMB {
 					response.append(inputLine);
 				}
 				in.close();
-				
-				System.out.println(response);
+				erroPedidoLaudo = true;
+				JSONObject responseObj = new JSONObject(response.toString());
+				System.out.println("Retorno postER: " + responseObj);
 			}
 			
 			if (myURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
@@ -29885,16 +29888,16 @@ public class ContratoCobrancaMB {
 				in.close();
 
 				JSONObject responseObj = new JSONObject(response.toString());
-				System.out.println(responseObj);
 				
 				if(responseObj.has("data")) {
 					idAval = responseObj.getString("data");
 				}
 			}
 			myURLConnection.disconnect();
+			
 			laudoDone = getLaudoStatus(idAval, apikey);
 			
-			if (laudoDone) {
+			if (laudoDone && !erroPedidoLaudo) {
 				myURL = new URL("https://api.prd.valuation.eemovel.com.br/valuation/files/public/report/" + idAval);
 				
 				HttpURLConnection myURLConnectionPdf = (HttpURLConnection) myURL.openConnection();
@@ -29935,15 +29938,17 @@ public class ContratoCobrancaMB {
 	public void abreLaudo() throws IOException {
 	    ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
 	    externalContext.redirect(getLaudoEndereco());
-	    laudoEndereco = "";
 	}
 	
 	private void getLatAndLon(String endereco) {
 		try {
 			int HTTP_COD_SUCESSO = 200;
-			String accessKey = "ee7ad0e9d2562d49dbd70dc21429df96";
-
-			URL myURL = new URL("http://api.positionstack.com/v1/forward?access_key=" + accessKey + "&query=" + this.objetoImovelCobranca.getEndereco());
+			String accessKey = "pk.771df7af1e6ab5e0ea29d01bbdf717a7";
+			
+			
+			URL myURL = new URL("https://us1.locationiq.com/v1/search/structured?street=" + this.objetoImovelCobranca.getEnderecoSemNumero() + " " + this.objetoImovelCobranca.getNumeroImovel() 
+							+ "&city=" + this.objetoImovelCobranca.getCidade() + "&state=" + this.objetoImovelCobranca.getEstado() + "&country=Brazil&postalcode=" 
+							+ this.objetoImovelCobranca.getCep() + "&format=json&key=" + accessKey);
 
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
 			myURLConnection.setUseCaches(false);
@@ -29967,19 +29972,15 @@ public class ContratoCobrancaMB {
 				}
 				in.close();
 				
-				JSONObject jsonObj = new JSONObject(response.toString());
-				JSONArray dataObj = jsonObj.getJSONArray("data");
-				for (int i = 0; i < dataObj.length(); i++) {
-					JSONObject obj = dataObj.getJSONObject(i);
-					
-					if(obj.has("latitude")) {
-						imovelCobrancaLatitude = obj.getBigDecimal("latitude");
-					}
-					
-					if(obj.has("longitude")) {
-						imovelCobrancaLongitude = obj.getBigDecimal("longitude");
-					}
-				}						
+				JSONArray jsonObj = new JSONArray(response.toString());
+				JSONObject dataObj = jsonObj.getJSONObject(0);
+				if (dataObj.has("lat")) {
+					imovelCobrancaLatitude = dataObj.getBigDecimal("lat");
+				}
+				
+				if(dataObj.has("lon")) {
+					imovelCobrancaLongitude = dataObj.getBigDecimal("lon");
+				}					
 			}
 			myURLConnection.disconnect();
 		} catch (MalformedURLException e) {
@@ -29993,8 +29994,13 @@ public class ContratoCobrancaMB {
 	
 	public boolean getLaudoStatus(String avaliacaoString, String apikey) {
 		boolean isLaudoDone = false;
+		int quantidadePesquisa = 0;
 		
-		while(!isLaudoDone) {
+		if (CommonsUtil.mesmoValor(avaliacaoString, "")) {
+			return false;
+		}
+		
+		while(!isLaudoDone && quantidadePesquisa < 7) {
 			try {
 				Thread.sleep(5000);
 				URL myURL = new URL("https://api.prd.valuation.eemovel.com.br/valuation/assessment/internal/status/"
@@ -30014,8 +30020,7 @@ public class ContratoCobrancaMB {
 					String inputLine;
 					StringBuffer response = new StringBuffer();
 
-					while ((inputLine = in.readLine()) != null) {
-						
+					while ((inputLine = in.readLine()) != null) {					
 						response.append(inputLine);
 					}
 					in.close();
@@ -30036,6 +30041,7 @@ public class ContratoCobrancaMB {
 					}
 				}
 				myURLConnection.disconnect();
+				quantidadePesquisa++;
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -34730,5 +34736,9 @@ public class ContratoCobrancaMB {
 			
 		}
 		return false;
+	}
+	
+	public void limpaLaudo() {
+		laudoEndereco = "";
 	}
 }
