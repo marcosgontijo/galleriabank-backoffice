@@ -60,7 +60,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.tools.PDFBox;
 import org.apache.poi.ss.formula.functions.FinanceLib;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
@@ -81,6 +80,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.hibernate.JDBCException;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
@@ -108,7 +108,6 @@ import org.quartz.SchedulerFactory;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
-
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
@@ -127,7 +126,6 @@ import com.webnowbr.siscoat.auxiliar.CompactadorUtil;
 import com.webnowbr.siscoat.auxiliar.EnviaEmail;
 import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobranca;
 import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobrancaResumo;
-import com.webnowbr.siscoat.auxiliar.CompactadorUtil;
 import com.webnowbr.siscoat.cobranca.db.model.AnaliseComite;
 import com.webnowbr.siscoat.cobranca.db.model.Averbacao;
 import com.webnowbr.siscoat.cobranca.db.model.BoletoKobana;
@@ -145,7 +143,6 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFinancerioDiaConsu
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaParcelasInvestidor;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaStatus;
-import com.webnowbr.siscoat.cobranca.db.model.DataEngine;
 import com.webnowbr.siscoat.cobranca.db.model.DataVistoria;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.FilaInvestidores;
@@ -153,6 +150,7 @@ import com.webnowbr.siscoat.cobranca.db.model.GruposFavorecidos;
 import com.webnowbr.siscoat.cobranca.db.model.GruposPagadores;
 import com.webnowbr.siscoat.cobranca.db.model.IPCA;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.ImovelEstoque;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorAdicionais;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorSocio;
@@ -184,8 +182,9 @@ import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.cobranca.db.op.SeguradoDAO;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
 import com.webnowbr.siscoat.cobranca.service.BigDataService;
-import com.webnowbr.siscoat.cobranca.db.op.StarkBankBaixaDAO;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
+import com.webnowbr.siscoat.cobranca.db.op.StarkBankBaixaDAO;
+import com.webnowbr.siscoat.cobranca.service.EngineService;
 import com.webnowbr.siscoat.cobranca.service.FileService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.cobranca.service.PagadorRecebedorService;
@@ -234,6 +233,7 @@ public class ContratoCobrancaMB {
 	private LazyDataModel<ContratoCobranca> lazyModel;
 	private LazyDataModel<Responsavel> responsaveisLazy;
 	/** Variavel. */
+	private DocumentoAnalise objetoDocumentoAnalise;
 	private ContratoCobranca objetoContratoCobranca;
 	private String numeroContratoObjetoContratoCobranca;
 	private List<FileUploaded> documentoConsultarTodos;
@@ -262,6 +262,7 @@ public class ContratoCobrancaMB {
 
 	private boolean contratoGerado = false;
 
+	
 	private boolean controleWhatsAppAgAssintura = false;
 	private boolean controleWhatsAppAssinado = false;
 	private boolean controleWhatsAppPajuLaudoRecebido = false;
@@ -299,7 +300,7 @@ public class ContratoCobrancaMB {
 	/************************************************************
 	 * Objetos para docket
 	 ************************************************************/
-	DocketService docketService;
+	EngineService engineService;
 
 	/************************************************************
 	 * Objetos utilizados pelas LoVs
@@ -711,6 +712,7 @@ public class ContratoCobrancaMB {
 	protected InvestidorMB investidorMB;
 
 	private ImovelCobranca objetoImovelCobranca;
+	private ImovelEstoque objetoImovelEstoque;
 	private PagadorRecebedor objetoPagadorRecebedor;
 	private PagadorRecebedorSocio objetoSocio;
 	private CcbContrato objetoCcb;
@@ -818,7 +820,16 @@ public class ContratoCobrancaMB {
 	private Boolean addPagadorPreContrato;
 
 	private List<ContratoCobrancaDetalhes> selectedParcelas = new ArrayList<ContratoCobrancaDetalhes>();
-
+	
+	private BigDecimal imovelCobrancaLatitude;
+	private BigDecimal imovelCobrancaLongitude;
+	private String laudoEndereco = "";
+	private boolean laudoDone = false;
+	
+    public String rowSelected() {
+    	return null;
+    }
+	
 	public void saveContratoEmCartorio() {
 		FacesContext context = FacesContext.getCurrentInstance();
 
@@ -868,7 +879,7 @@ public class ContratoCobrancaMB {
 
 		objetoContratoCobranca = new ContratoCobranca();
 
-		docketService = new DocketService();
+		engineService = new EngineService();
 
 		lazyModel = new LazyDataModel<ContratoCobranca>() {
 
@@ -1822,7 +1833,7 @@ public class ContratoCobrancaMB {
 				+ " <table width='100%' border='0' cellspacing='0' cellpadding='0'>" + " <tbody>"
 				+ " <tr style='background-color:#f0f0f0;height:61px;font-family:Arial,sans-serif;font-size:10px;color:#fff'>"
 				+ " <td style='color:#16243f;padding-left:20px; font-size: 12px;'> © Todos direitos reservados. </td>"
-				+ " <td style='text-align: right;padding-right: 20px;'><a style='color:#16243f;font-size: 12px; text-decoration: none;'  target='_blank'>Galleria Bank</a> </td>"
+				+ " <td style='text-align: right;padding-right: 20px;'><a style='color:#16243f;font-size: 12px; text-decoration: none;'  target=' '>Galleria Bank</a> </td>"
 				+ " </tr>" + " </tbody>" + " </table>" + " <div class='yj6qo'></div>" + " <div class='adL'> </div>"
 				+ " </div>" + " <div class='adL'> </div>" + " <div class='adL'> </div>" + " </div>" + " </body>"
 				+ " </html>";
@@ -3190,6 +3201,7 @@ public class ContratoCobrancaMB {
 			}
 			this.objetoContratoCobranca.populaStatusEsteira(getUsuarioLogadoNull());
 			contratoCobrancaDao.merge(this.objetoContratoCobranca);
+
 
 			// verifica se o contrato for aprovado, manda um tipo de email..
 			// senao valida se houve alteração no checklist para envio de email.
@@ -4886,10 +4898,10 @@ public class ContratoCobrancaMB {
 		BufferedInputStream input = null;
 		BufferedOutputStream output = null;
 		try {
-			if (docketService == null)
-				docketService = new DocketService();
-			docketService.baixarDocumentoEngine(documentoAnalise.getEngine());
-			docketService.salvarDetalheDocumentoEngine(documentoAnalise);
+			if (engineService == null)
+				engineService = new EngineService();
+			engineService.baixarDocumentoEngine(documentoAnalise.getEngine());
+			engineService.salvarDetalheDocumentoEngine(documentoAnalise);
 
 			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoAnalise.getEngine().getPdfBase64());
 			String mineFile = "application/pdf";
@@ -4901,7 +4913,7 @@ public class ContratoCobrancaMB {
 			response.setContentLength(pdfBytes.length);
 
 			response.setHeader("Content-disposition", "inline; FileName=" + objetoContratoCobranca.getNumeroContrato()
-					+ " Engine " + documentoAnalise.getPagador().getNome() + ".pdf");
+					+ " Engine " + documentoAnalise.getPagador().getNome().replace(",", "_")  + ".pdf");
 			output = new BufferedOutputStream(response.getOutputStream(), 10240);
 			byte[] buffer = new byte[pdfBytes.length];
 			int length;
@@ -4944,7 +4956,7 @@ public class ContratoCobrancaMB {
 
 				response.setHeader("Content-disposition",
 						"inline; FileName=" + this.objetoContratoCobranca.getNumeroContrato() + " Serasa "
-								+ documentoAnalise.getPagador().getNome() + ".pdf");
+								+ documentoAnalise.getPagador().getNome().replace(",", "_")  + ".pdf");
 				output = new BufferedOutputStream(response.getOutputStream(), 10240);
 				byte[] buffer = new byte[pdfBytes.length];
 				int length;
@@ -4960,6 +4972,63 @@ public class ContratoCobrancaMB {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void baixarMatricula(Long id) {
+			FileUploaded fileRea = new FileUploaded();
+			
+			FileService fileService = new FileService();
+			DocumentoAnaliseDao docAnaliseDao = new DocumentoAnaliseDao();
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			ExternalContext externalContext = facesContext.getExternalContext();
+			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+			BufferedInputStream input = null;
+			BufferedOutputStream output = null;
+			ParametrosDao pDao = new ParametrosDao();
+		DocumentoAnalise documentoAnalise =	docAnaliseDao.findById(id);
+		fileRea.setName(documentoAnalise.getIdentificacao());
+		fileRea.setPath("/home/webnowbr/Siscoat/GalleriaFinancas/DocumentosCobranca/" + this.objetoContratoCobranca.getNumeroContrato() + "/analise/");
+		fileRea.setFile(null);
+			
+			try {
+				if(CommonsUtil.semValor(fileRea.getName())) {
+					facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"REA: Ocorreu um problema ao gerar o PDF!", ""));
+						return;
+				} else {
+				byte[] bytesArquivo = fileService.abrirDocumentos(fileRea, this.objetoContratoCobranca.getNumeroContrato(), getUsuarioLogado());
+				if(CommonsUtil.semValor(bytesArquivo)) {
+					facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"REA: Ocorreu um problema ao gerar o PDF!", ""));
+					return;
+				} else {
+					String mineFile = "application/pdf";
+					input = new BufferedInputStream(new ByteArrayInputStream(bytesArquivo));
+					response.reset();
+					// lire un fichier pdf
+					response.setHeader("Content-type", mineFile);
+
+					response.setContentLength(bytesArquivo.length);
+
+					response.setHeader("Content-disposition",
+							"inline; FileName=" +  this.objetoContratoCobranca.getNumeroContrato() + " " + documentoAnalise.getIdentificacao() + ".pdf");
+					output = new BufferedOutputStream(response.getOutputStream(), 10240);
+					byte[] buffer = new byte[bytesArquivo.length];
+					int length;
+					while ((length = input.read(buffer)) > 0) {
+						output.write(buffer, 0, length);
+					}
+
+					// Finalize task.
+					output.flush();
+					output.close();
+					facesContext.responseComplete();
+				}
+			}
+			}	catch (Exception e) {
+				e.printStackTrace();
+			}
+		
 	}
 
 	public void baixarDocumentoPpe(DocumentoAnalise documentoAnalise) {
@@ -4987,7 +5056,7 @@ public class ContratoCobrancaMB {
 
 				response.setHeader("Content-disposition",
 						"inline; FileName=" + objetoContratoCobranca.getNumeroContrato() + " PPE "
-								+ documentoAnalise.getPagador().getNome() + ".pdf");
+								+ documentoAnalise.getPagador().getNome().replace(",", "_")  + ".pdf");
 				output = new BufferedOutputStream(response.getOutputStream(), 10240);
 				byte[] buffer = new byte[pdfBytes.length];
 				int length;
@@ -5030,7 +5099,7 @@ public class ContratoCobrancaMB {
 
 				response.setHeader("Content-disposition",
 						"inline; FileName=" + objetoContratoCobranca.getNumeroContrato() + " Dossie "
-								+ documentoAnalise.getPagador().getNome() + ".pdf");
+								+ documentoAnalise.getPagador().getNome().replace(",", "_")  + ".pdf");
 				output = new BufferedOutputStream(response.getOutputStream(), 10240);
 				byte[] buffer = new byte[pdfBytes.length];
 				int length;
@@ -5074,7 +5143,7 @@ public class ContratoCobrancaMB {
 
 				response.setHeader("Content-disposition",
 						"inline; FileName=" + objetoContratoCobranca.getNumeroContrato() + " Cenprot "
-								+ documentoAnalise.getPagador().getNome() + ".pdf");
+								+ documentoAnalise.getPagador().getNome().replace(",", "_") +  ".pdf");
 				output = new BufferedOutputStream(response.getOutputStream(), 10240);
 				byte[] buffer = new byte[pdfBytes.length];
 				int length;
@@ -5119,7 +5188,7 @@ public class ContratoCobrancaMB {
 			response.setContentLength(pdfBytes.length);
 
 			response.setHeader("Content-disposition", "inline; FileName=" + objetoContratoCobranca.getNumeroContrato()
-					+ " Processos " + documentoAnalise.getPagador().getNome() + ".pdf");
+					+ " Processos " + documentoAnalise.getPagador().getNome().replace(",", "_")  + ".pdf");
 			output = new BufferedOutputStream(response.getOutputStream(), 10240);
 			byte[] buffer = new byte[pdfBytes.length];
 			int length;
@@ -5171,7 +5240,7 @@ public class ContratoCobrancaMB {
 
 				response.setHeader("Content-disposition",
 						"inline; FileName=" + objetoContratoCobranca.getNumeroContrato() + " SCR "
-								+ documentoAnalise.getPagador().getNome() + ".pdf");
+								+ documentoAnalise.getPagador().getNome().replace(",", "_")  + ".pdf");
 				output = new BufferedOutputStream(response.getOutputStream(), 10240);
 				byte[] buffer = new byte[contrato.length];
 				int length;
@@ -6302,51 +6371,31 @@ public class ContratoCobrancaMB {
 		} else {
 			cpf = con.getPagador().getCnpj();
 		}
-		BigDecimal parcelaPGTO = BigDecimal
-				.valueOf(FinanceLib.pmt(con.getTaxaAprovada().divide(BigDecimal.valueOf(100)).doubleValue(), // taxa
-						con.getPrazoMaxAprovado().intValue(), // prazo
-						con.getValorAprovadoComite().negate().doubleValue(), // valor credito - VP
-						Double.valueOf("0"), // VF
-						false // pagamento no inico
-				));
-
-		// BigDecimal saldoDevedorAnterior = con.getValorAprovadoComite();
-		// BigDecimal valorSeguroDFI =
-		// con.getValorMercadoImovel().multiply(SiscoatConstants.SEGURO_DFI.divide(BigDecimal.valueOf(100)));
-		// BigDecimal valorSeguroMIP =
-		// saldoDevedorAnterior.multiply(SiscoatConstants.SEGURO_MIP.divide(BigDecimal.valueOf(100)));
-		// BigDecimal txAdm = SiscoatConstants.TAXA_ADM;
-		// parcelaPGTO = parcelaPGTO.add(valorSeguroDFI);
-		// parcelaPGTO = parcelaPGTO.add(valorSeguroMIP);
-		// parcelaPGTO = parcelaPGTO.add(txAdm);
-
-		SimulacaoVO simulador = new SimulacaoVO();
-		BigDecimal tarifaIOFDiario = BigDecimal.ZERO;
-		BigDecimal tarifaIOFAdicional = SiscoatConstants.TARIFA_IOF_ADICIONAL.divide(BigDecimal.valueOf(100));
-		if (con.getPagador().getCpf() != null) {
-			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PF.divide(BigDecimal.valueOf(100));
-			simulador.setTipoPessoa("PF");
+		SimuladorMB simuladorMB = new SimuladorMB();
+		simuladorMB.clearFields();		
+		if (con.getPagador() != null) {
+			simuladorMB.setTipoPessoa("PF");
 		} else {
-			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PJ.divide(BigDecimal.valueOf(100));
-			simulador.setTipoPessoa("PJ");
+			simuladorMB.setTipoPessoa("PJ");
 		}
-		simulador.setDataSimulacao(DateUtil.getDataHoje());
-		simulador.setTarifaIOFDiario(tarifaIOFDiario);
-		simulador.setTarifaIOFAdicional(tarifaIOFAdicional);
-		simulador.setSeguroMIP(SiscoatConstants.SEGURO_MIP);
-		simulador.setSeguroDFI(SiscoatConstants.SEGURO_DFI);
-		simulador.setValorCredito(con.getValorAprovadoComite());
-		simulador.setTaxaJuros(con.getTaxaAprovada());
-		simulador.setCarencia(BigInteger.ONE);
-		simulador.setQtdParcelas(con.getPrazoMaxAprovado());
-		simulador.setValorImovel(con.getValorMercadoImovel());
-		simulador.setTipoCalculo("Price");
-		simulador.setNaoCalcularDFI(false);
-		simulador.setNaoCalcularMIP(false);
-		simulador.setNaoCalcularTxAdm(false);
-		simulador.calcular();
-
-		parcelaPGTO = simulador.getParcelas().get(2).getValorParcela();
+		simuladorMB.setTipoCalculo("Price");
+		simuladorMB.setValorImovel(con.getValorMercadoImovel());
+		simuladorMB.setValorCredito(con.getValorAprovadoComite());
+		simuladorMB.setTaxaJuros(con.getTaxaAprovada());
+		simuladorMB.setParcelas(con.getPrazoMaxAprovado());
+		simuladorMB.setCarencia(BigInteger.ONE);
+		simuladorMB.setNaoCalcularMIP(false);
+		simuladorMB.setNaoCalcularDFI(false);
+		simuladorMB.setNaoCalcularTxAdm(false);
+		simuladorMB.setMostrarIPCA(true);
+		simuladorMB.setTipoCalculoFinal(con.getTipoValorComite().toUpperCase().charAt(0));
+		simuladorMB.setValidar(false);
+		simuladorMB.setSimularComIPCA(false);
+		simuladorMB.setIpcaSimulado(BigDecimal.ZERO);
+		simuladorMB.simular();
+		SimulacaoVO simulador = simuladorMB.getSimulacao();
+		
+		BigDecimal parcelaPGTO = simulador.getParcelas().get(2).getValorParcela();
 		BigDecimal rendaMinima = parcelaPGTO.divide(BigDecimal.valueOf(0.3), MathContext.DECIMAL128);
 
 		PreAprovadoPDF documento = new PreAprovadoPDF(con.getPagador().getNome(), con.getDataContrato(),
@@ -7233,6 +7282,7 @@ public class ContratoCobrancaMB {
 		clearRecebedorFinal9();
 		clearRecebedorFinal10();
 	}
+
 
 	public String geraNumeroContrato() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
@@ -8299,45 +8349,6 @@ public class ContratoCobrancaMB {
 		}
 	}
 
-	public void testeDocket() {
-		DocketMB docket = new DocketMB();
-		docket.loginDocket();
-	}
-
-	public void logPrimitivo() throws IOException {
-		ParametrosDao pDao = new ParametrosDao();
-		// String pathContrato = pDao.findByFilter("nome",
-		// "COBRANCA_DOCUMENTOS").get(0).getValorString()
-		String pathContrato = "C:/Users/Usuario/Desktop/" + "log.txt";
-		// cria o diretório, caso não exista
-		File log = new File(pathContrato);
-		FileWriter fileWriter = new FileWriter(log, true);
-		PrintWriter printWriter = new PrintWriter(fileWriter);
-
-		Date data = gerarDataHoje();
-		String dataStr = CommonsUtil.formataData(data, "yyyy-MM-dd HH:mm:ss.SSS");
-
-		printWriter.println(dataStr + " " + Math.random());
-		printWriter.close();
-	}
-
-	public void logPrimitivo(String msg) throws IOException {
-		ParametrosDao pDao = new ParametrosDao();
-		// String pathContrato = pDao.findByFilter("nome",
-		// "COBRANCA_DOCUMENTOS").get(0).getValorString()
-		String pathContrato = "C:/Users/Usuario/Desktop/" + "log.txt";
-		// cria o diretório, caso não exista
-		File log = new File(pathContrato);
-		FileWriter fileWriter = new FileWriter(log, true);
-		PrintWriter printWriter = new PrintWriter(fileWriter);
-
-		Date data = gerarDataHoje();
-		String dataStr = CommonsUtil.formataData(data, "yyyy-MM-dd HH:mm:ss.SSS");
-
-		printWriter.println(dataStr + " - " + msg);
-		printWriter.close();
-	}
-
 	public void recuperarContratoReprovado() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
@@ -9197,6 +9208,7 @@ public class ContratoCobrancaMB {
 
 	public String clearFieldsEditarPendentesAnalistas() {
 		clearMensagensWhatsApp();
+		this.objetoContratoCobranca.calcularTaxaPreAprovada();
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
 		this.objetoPagadorRecebedor = this.objetoContratoCobranca.getPagador();
@@ -9244,9 +9256,9 @@ public class ContratoCobrancaMB {
 			this.codigoResponsavel = this.objetoContratoCobranca.getResponsavel().getCodigo();
 		}
 		// this.objetoContratoCobranca.setDataInicio(this.objetoContratoCobranca.getDataContrato());
-		if (CommonsUtil.semValor(objetoContratoCobranca.getTaxaPreAprovada())) {
-			this.objetoContratoCobranca.calcularTaxaPreAprovada();
-		}
+	
+		this.objetoContratoCobranca.calcularTaxaPreAprovada();
+
 
 		saveEstadoCheckListAtual();
 
@@ -9752,14 +9764,7 @@ public class ContratoCobrancaMB {
 		}
 		// this.objetoContratoCobranca.setDataInicio(this.objetoContratoCobranca.getDataContrato());
 
-		// saveEstadoCheckListAtual();
-
-		/*
-		 * try { logPrimitivo(getNomeUsuarioLogado() + " acessou o contrato " +
-		 * objetoContratoCobranca.getNumeroContrato() + " (" +
-		 * objetoContratoCobranca.toString() + ")"); } catch (IOException e) { // TODO
-		 * Auto-generated catch block e.printStackTrace(); }
-		 */
+		// saveEstadoCheckListAtual();		
 
 		if (!this.objetoContratoCobranca.isInicioAnalise()) {
 			return "/Atendimento/Cobranca/ContratoCobrancaPreCustomizadoInserir.xhtml";
@@ -29710,6 +29715,317 @@ public class ContratoCobrancaMB {
 
 		return fileRecibo;
 	}
+	
+	public void geraLaudo() {
+		try {			
+			String apikey = "cApKsaLHk1dgXwlkXbVGaqwnL4CPOuq3ICbMc8Va";
+			getLatAndLon(this.objetoImovelCobranca.getEndereco());
+			
+			JSONObject assessingObj = new JSONObject();
+			assessingObj.put("category_id", this.objetoImovelCobranca.getCategoria());
+			assessingObj.put("lat", imovelCobrancaLatitude);
+			assessingObj.put("lon", imovelCobrancaLongitude);
+			assessingObj.put("neighborhood", this.objetoImovelCobranca.getBairro());
+			assessingObj.put("area", (this.objetoImovelCobranca.getAreaConstruida().isEmpty()) ? 0.0 : Double.valueOf(this.objetoImovelCobranca.getAreaConstruida()));
+			assessingObj.put("street", this.objetoImovelCobranca.getEndereco());
+			assessingObj.put("number", this.objetoImovelCobranca.getNumeroImovel());
+			assessingObj.put("sub_category_id", this.objetoImovelCobranca.getCategoria());
+			assessingObj.put("city", this.objetoImovelCobranca.getCidade());
+			assessingObj.put("postal_code", this.objetoImovelCobranca.getCep());
+			assessingObj.put("state", this.objetoImovelCobranca.getEstado());
+			assessingObj.put("complement", this.objetoImovelCobranca.getComplemento());
+			
+			JSONObject assessingTypo = new JSONObject();
+			assessingTypo.put("features_bathroom", (this.objetoImovelCobranca.getNumeroBanheiros() <= 0) ? 1 : this.objetoImovelCobranca.getNumeroBanheiros());
+			assessingTypo.put("features_bedroom", (this.objetoImovelCobranca.getNumeroQuartos() <= 0) ? 1 : this.objetoImovelCobranca.getNumeroQuartos());
+			assessingTypo.put("features_suite", (this.objetoImovelCobranca.getNumeroSuites() <= 0) ? 1 : this.objetoImovelCobranca.getNumeroSuites());
+			assessingTypo.put("features_garage", (this.objetoImovelCobranca.getNumeroGaragens() <= 0) ? 1 : this.objetoImovelCobranca.getNumeroGaragens());
+			
+			assessingObj.put("typology", assessingTypo);
+			
+			JSONObject address = new JSONObject();
+			address.put("street", this.objetoImovelCobranca.getEndereco());
+			address.put("neighborhood", this.objetoImovelCobranca.getBairro());
+			address.put("city", this.objetoImovelCobranca.getCidade());
+			address.put("postal_code", this.objetoImovelCobranca.getCep());
+			address.put("state", this.objetoImovelCobranca.getEstado());
+			address.put("street_long", this.objetoImovelCobranca.getEndereco());
+			address.put("number", this.objetoImovelCobranca.getNumeroImovel());
+			
+			JSONObject location = new JSONObject();
+			location.put("radius", 0);
+			location.put("lat", imovelCobrancaLatitude);
+			location.put("lon", imovelCobrancaLongitude);
+			
+			JSONObject typologyWithArray = new JSONObject();
+			typologyWithArray.put("features_bathroom", new JSONArray());
+			typologyWithArray.put("features_bedroom", new JSONArray());
+			typologyWithArray.put("features_suite", new JSONArray());
+			typologyWithArray.put("features_garage", new JSONArray());
+			
+
+			JSONObject realty_type = new JSONObject();
+			realty_type.put("category_id", (this.objetoImovelCobranca.getCategoria() == 1) ? new JSONArray(1) : new JSONArray(2));
+			realty_type.put("sub_category_id", new JSONArray());
+			
+			JSONObject price_total = new JSONObject();
+			price_total.put("value", 0);
+			price_total.put("percentage", 100);
+			
+			JSONObject priceAreaUsefulObj = new JSONObject();
+			priceAreaUsefulObj.put("value", 0);
+			priceAreaUsefulObj.put("percentage", 100);
+			
+			JSONObject priceAreaTotalObj = new JSONObject();
+			priceAreaTotalObj.put("value", 0);
+			priceAreaTotalObj.put("percentage", 100);
+			
+			JSONObject price_AreaObj = new JSONObject();
+			price_AreaObj.put("useful", priceAreaUsefulObj);
+			price_AreaObj.put("total", priceAreaTotalObj);
+			
+			JSONObject areaUsefulObj = new JSONObject();
+			areaUsefulObj.put("value", Double.valueOf(this.objetoImovelCobranca.getAreaConstruida()));
+			areaUsefulObj.put("percentage", 40);
+			
+			JSONObject areaTotalObj = new JSONObject();
+			areaTotalObj.put("value", 0);
+			areaTotalObj.put("percentage", 100);
+			
+			JSONObject areaObj = new JSONObject();
+			areaObj.put("useful", areaUsefulObj);
+			areaObj.put("total", areaTotalObj);
+			
+			JSONObject searchObj = new JSONObject();
+			searchObj.put("is_sale", true);
+			searchObj.put("max_age", 0);
+			searchObj.put("address", address);
+			searchObj.put("typology", typologyWithArray);
+			searchObj.put("area", areaObj);
+			searchObj.put("price_area", price_AreaObj);
+			searchObj.put("price_total", price_total);
+			searchObj.put("location", location);
+			searchObj.put("realty_type", realty_type);
+			
+			JSONObject moreFilters = new JSONObject();
+			moreFilters.put("full_address", true);
+			moreFilters.put("remove_duplicates", true);
+			moreFilters.put("active_ads", true);
+			moreFilters.put("recent_ads", false);
+			moreFilters.put("min_quantity_ad", 5);
+			moreFilters.put("min_similarity", 0.3);
+			
+			JSONObject postObj = new JSONObject();
+			postObj.put("search", searchObj);
+			postObj.put("assessing", assessingObj);
+			postObj.put("more_filters", moreFilters);
+
+			String idAval = "";
+			
+			URL myURL = new URL("https://api.prd.valuation.eemovel.com.br/valuation/assessment/internal/realty/calculator");
+			
+
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setRequestMethod("POST");
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+			myURLConnection.setRequestProperty("x-api-key", apikey);
+			myURLConnection.setDoOutput(true);
+			
+			try(OutputStream os = myURLConnection.getOutputStream()) {
+			    byte[] input = postObj.toString().getBytes("utf-8");
+			    os.write(input, 0, input.length);
+			    os.close();
+			}
+			
+			if (myURLConnection.getResponseCode() == HttpURLConnection.HTTP_INTERNAL_ERROR) {
+				BufferedReader in = new BufferedReader(new InputStreamReader(myURLConnection.getErrorStream(), "utf-8"));
+				String inputLine;
+				StringBuilder response = new StringBuilder();
+
+				while ((inputLine = in.readLine()) != null) {
+					response.append(inputLine);
+				}
+				in.close();
+				
+				System.out.println(response);
+			}
+			
+			if (myURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+				BufferedReader in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "utf-8"));
+				String inputLine;
+				StringBuilder response = new StringBuilder();
+
+				while ((inputLine = in.readLine()) != null) {
+					response.append(inputLine);
+				}
+				in.close();
+
+				JSONObject responseObj = new JSONObject(response.toString());
+				System.out.println(responseObj);
+				
+				if(responseObj.has("data")) {
+					idAval = responseObj.getString("data");
+				}
+			}
+			myURLConnection.disconnect();
+			laudoDone = getLaudoStatus(idAval, apikey);
+			
+			if (laudoDone) {
+				myURL = new URL("https://api.prd.valuation.eemovel.com.br/valuation/files/public/report/" + idAval);
+				
+				HttpURLConnection myURLConnectionPdf = (HttpURLConnection) myURL.openConnection();
+				myURLConnectionPdf.setRequestMethod("GET");
+				myURLConnectionPdf.setUseCaches(false);
+				myURLConnectionPdf.setRequestProperty("Accept", "application/json");
+				myURLConnectionPdf.setRequestProperty("Accept-Charset", "utf-8");
+				myURLConnectionPdf.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+				myURLConnectionPdf.setRequestProperty("x-api-key", apikey);
+
+				if (myURLConnectionPdf.getResponseCode() == HttpURLConnection.HTTP_OK) {
+					BufferedReader in = new BufferedReader(new InputStreamReader(myURLConnectionPdf.getInputStream()));
+					String inputLine;
+					StringBuffer response = new StringBuffer();
+
+					while ((inputLine = in.readLine()) != null) {
+						response.append(inputLine);
+					}
+					in.close();
+
+					JSONObject responseObj = new JSONObject(response.toString());
+					if (responseObj.has("data")) {
+						String dataObj = responseObj.getString("data");
+						laudoEndereco = dataObj;
+					}
+				}
+				myURLConnection.disconnect();
+			}		
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void abreLaudo() throws IOException {
+	    ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+	    externalContext.redirect(getLaudoEndereco());
+	    laudoEndereco = "";
+	}
+	
+	private void getLatAndLon(String endereco) {
+		try {
+			int HTTP_COD_SUCESSO = 200;
+			String accessKey = "ee7ad0e9d2562d49dbd70dc21429df96";
+
+			URL myURL = new URL("http://api.positionstack.com/v1/forward?access_key=" + accessKey + "&query=" + this.objetoImovelCobranca.getEndereco());
+
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestMethod("GET");
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+			myURLConnection.setDoOutput(true);
+
+
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
+			
+			} else {
+
+				BufferedReader in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream()));
+				String inputLine;
+				StringBuffer response = new StringBuffer();
+
+				while ((inputLine = in.readLine()) != null) {
+					response.append(inputLine);
+				}
+				in.close();
+				
+				JSONObject jsonObj = new JSONObject(response.toString());
+				JSONArray dataObj = jsonObj.getJSONArray("data");
+				for (int i = 0; i < dataObj.length(); i++) {
+					JSONObject obj = dataObj.getJSONObject(i);
+					
+					if(obj.has("latitude")) {
+						imovelCobrancaLatitude = obj.getBigDecimal("latitude");
+					}
+					
+					if(obj.has("longitude")) {
+						imovelCobrancaLongitude = obj.getBigDecimal("longitude");
+					}
+				}						
+			}
+			myURLConnection.disconnect();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public boolean getLaudoStatus(String avaliacaoString, String apikey) {
+		boolean isLaudoDone = false;
+		
+		while(!isLaudoDone) {
+			try {
+				Thread.sleep(5000);
+				URL myURL = new URL("https://api.prd.valuation.eemovel.com.br/valuation/assessment/internal/status/"
+						+ avaliacaoString);
+
+				HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+				myURLConnection.setRequestMethod("GET");
+				myURLConnection.setUseCaches(false);
+				myURLConnection.setRequestProperty("Accept", "application/json");
+				myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+				myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+				myURLConnection.setRequestProperty("x-api-key", apikey);
+				myURLConnection.setDoOutput(true);
+
+				if (myURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+					BufferedReader in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream()));
+					String inputLine;
+					StringBuffer response = new StringBuffer();
+
+					while ((inputLine = in.readLine()) != null) {
+						
+						response.append(inputLine);
+					}
+					in.close();
+
+					JSONObject responseObj = new JSONObject(response.toString());
+					if (responseObj.has("data")) {
+						JSONObject dataObj = responseObj.getJSONObject("data");
+						if (dataObj.has("progress")) {
+							JSONObject progressObj = dataObj.getJSONObject("progress");
+							if (CommonsUtil.mesmoValor(progressObj.get("selection"), "Numero mínimo de amostras selecionadas não foi atingido.")) {
+								break;
+							} else if (progressObj.getBoolean("selection") 
+									&& progressObj.getBoolean("search")
+									&& progressObj.getBoolean("price")) {
+								isLaudoDone = true;
+							}
+						}
+					}
+				}
+				myURLConnection.disconnect();
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+			return isLaudoDone;
+
+	}
 
 	/**
 	 * @param fileRecibo the fileRecibo to set
@@ -31139,6 +31455,15 @@ public class ContratoCobrancaMB {
 	public void setObjetoImovelCobranca(ImovelCobranca objetoImovelCobranca) {
 		this.objetoImovelCobranca = objetoImovelCobranca;
 	}
+	
+
+	public ImovelEstoque getObjetoImovelEstoque() {
+		return objetoImovelEstoque;
+	}
+
+	public void setObjetoImovelEstoque(ImovelEstoque objetoImovelEstoque) {
+		this.objetoImovelEstoque = objetoImovelEstoque;
+	}
 
 	/**
 	 * @return the objetoPagadorRecebedor
@@ -32299,7 +32624,7 @@ public class ContratoCobrancaMB {
 			}
 		}
 	}
-
+	
 	/**
 	 * @return the files
 	 */
@@ -34358,5 +34683,21 @@ public class ContratoCobrancaMB {
 
 	public void setObjetoBaixaPagamentoStarkBank(StarkBankBaixa objetoBaixaPagamentoStarkBank) {
 		this.objetoBaixaPagamentoStarkBank = objetoBaixaPagamentoStarkBank;
+	}
+
+	public DocumentoAnalise getObjetoDocumentoAnalise() {
+		return objetoDocumentoAnalise;
+	}
+
+	public void setObjetoDocumentoAnalise(DocumentoAnalise objetoDocumentoAnalise) {
+		this.objetoDocumentoAnalise = objetoDocumentoAnalise;
+	}
+	
+	public String getLaudoEndereco() {
+		return laudoEndereco;
+	}
+	
+	public boolean hasLaudo() {
+		return (laudoEndereco != "") ? true : false;	
 	}
 }

@@ -17,6 +17,8 @@ import org.apache.commons.logging.LogFactory;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.itextpdf.text.pdf.PdfReader;
+import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.vo.FileSiscoat;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.cobranca.vo.ResponseApi;
@@ -24,6 +26,7 @@ import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.common.PropertyLoader;
 import com.webnowbr.siscoat.common.SiscoatConstants;
+import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
 
 import br.com.galleriabank.jwt.common.JwtUtil;
@@ -324,6 +327,34 @@ public class FileService {
 		return null;
 	}
 
-
+	public void salvarPdfRetorno(DocumentoAnalise documentoAnalise, String base64, String nomeConsulta, String diretorio) {
+		String nomeAnalise = documentoAnalise.getPagador().getNome();
+		String numeroContrato = documentoAnalise.getContratoCobranca().getNumeroContrato();
+		salvarPdfRetorno(nomeAnalise, numeroContrato, base64, nomeConsulta, diretorio);
+	}
+	
+	public void salvarPdfRetorno(String nome, String contrato, String base64, String nomeConsulta, String diretorio) {
+		String nomeAnalise = nome;
+		String numeroContrato = contrato;
+		if(CommonsUtil.semValor(numeroContrato)) {
+			return;
+		}
+		FileUploaded pdfRetorno = new FileUploaded();
+		pdfRetorno.setFileBase64(base64);
+		String fileExtension = "";
+		try {
+			byte[] pdfBytes = java.util.Base64.getDecoder().decode(base64);
+			PdfReader pdf = new PdfReader(pdfBytes);
+			fileExtension = "pdf"; 
+		} catch (Exception e) {
+			fileExtension = "html"; 
+		}	
+		pdfRetorno.setName(nomeConsulta + " - " + nomeAnalise + "." + fileExtension);
+		FileService fileService = new FileService();
+		User user = new UserDao().findById((long) -1);
+		fileService.salvarDocumentoBase64(pdfRetorno, numeroContrato, diretorio, user);
+	}
+	
+	
 	
 }

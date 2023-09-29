@@ -8,6 +8,12 @@
             <column name="ID" />
             <generator class="increment" />
         </id>
+        <many-to-one name="imovelEstoque"
+			class="com.webnowbr.siscoat.cobranca.db.model.ImovelEstoque"
+			lazy="false">
+			<column name="IMOVELESTOQUE" />
+		</many-to-one>
+        
         <property name="numeroMatricula" type="java.lang.String">
             <column name="NUMEROMATRICULA"/>
         </property>        

@@ -3,7 +3,6 @@ package com.webnowbr.siscoat.cobranca.ws.netrin;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -19,14 +18,10 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.StreamedContent;
-import org.primefaces.model.UploadedFile;
 
 import com.itextpdf.text.pdf.PdfReader;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
@@ -46,15 +41,14 @@ public class NetrinMB {
 	@ManagedProperty(value = "#{loginBean}")
 	protected LoginBean loginBean;
 	
-	public UploadedFile uploadedFile;
-	//NetrinConsulta netrinConsulta = new NetrinConsulta();
-	String cpfCnpj;
+	private ContratoCobranca contratoCobranca;
 	
 	
-	public String clearFieldsContratoCobranca(List<DocumentoAnalise> listDocAnalise, String etapaConsultas) {
+	public String clearFieldsContratoCobranca(List<DocumentoAnalise> listDocAnalise, String etapaConsultas, ContratoCobranca contrato) {
 		//estados = new ArrayList<String>();
 		//estados.add(estadoImovel);
 		etapa = etapaConsultas;
+		contratoCobranca = contrato;
 		listPagador = new ArrayList<DocumentoAnalise>();
 		for(DocumentoAnalise docAnalise : listDocAnalise) {
 			if(CommonsUtil.semValor(docAnalise.getPagador())) {
@@ -278,22 +272,7 @@ public class NetrinMB {
 		return retorno;
 	}
 
-	public UploadedFile getUploadedFile() {
-		return uploadedFile;
-	}
-
-	public void setUploadedFile(UploadedFile uploadedFile) {
-		this.uploadedFile = uploadedFile;
-	}
-
-	public String getCpfCnpj() {
-		return cpfCnpj;
-	}
-
-	public void setCpfCnpj(String cpfCnpj) {
-		this.cpfCnpj = cpfCnpj;
-	}
-
+	
 	public List<DocumentoAnalise> getListPagador() {
 		return listPagador;
 	}
@@ -317,5 +296,12 @@ public class NetrinMB {
 	public void setEtapa(String etapa) {
 		this.etapa = etapa;
 	}
-	
+
+	public ContratoCobranca getContratoCobranca() {
+		return contratoCobranca;
+	}
+
+	public void setContratoCobranca(ContratoCobranca contratoCobranca) {
+		this.contratoCobranca = contratoCobranca;
+	}	
 }

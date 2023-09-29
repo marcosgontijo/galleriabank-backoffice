@@ -213,14 +213,14 @@
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAANALISTA, PROFILE_ANALISTA_CREDITO, PROFILE_GERENTE_ANALISE">
-									<p:menuitem value="Docket"
+									<!--<p:menuitem value="Docket"
 										action="#{docketMB.clearFieldsDocket}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
 									<p:menuitem value="Consulta SCR"
 										action="#{bmpDigitalMB.clearFields}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu"/>		
+										styleClass="itemMenu"/>	-->	
 									<p:menuitem value="Data Engine"
 										action="#{dataEngineMB.clearFieldsDataEngine}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
@@ -460,8 +460,14 @@
 										action="#{contasPagarMB.clearFieldsPosOperacao}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
 										styleClass="itemMenu" />
-								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT, COBRANCA, PROFILE_COBRANCA">
+									</shiro:hasAnyRoles>
+									<shiro:hasAnyRoles name="ROOT, POSOPERACAO">
+									<p:menuitem value="Estoque Imóveis"
+										action="#{imovelCobrancaMB.clearFieldsEstoqueImoveis}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" />
+									</shiro:hasAnyRoles>
+									<shiro:hasAnyRoles name="ROOT, COBRANCA, PROFILE_COBRANCA">
 									<p:menuitem value="Boletos Kobana"
 										action="#{kobanaMB.clearFieldsParcelasBoleto}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
@@ -682,6 +688,12 @@
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroContabilidade}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
 										styleClass="itemMenu" />
+								<shiro:hasAnyRoles name="ROOT">
+									<p:menuitem value="Balanco Patrimonial"
+										action="#{balancoPatrimonialMB.clearFieldsBalancoPatrimonialConsulta}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>	
 								</shiro:hasAnyRoles>
 							</p:submenu>
 						</shiro:hasAnyRoles>

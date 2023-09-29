@@ -97,7 +97,8 @@ public class BigDataService {
 						DocumentosAnaliseEnum.PROCESSOB, retornoConsulta);
 				
 				String base64 = baixarDocumentoProcesso(documentoAnalise);
-				salvarPdfRetorno(documentoAnalise, base64, "Processo", "interno");
+				FileService fileService = new FileService();
+				fileService.salvarPdfRetorno(documentoAnalise, base64, "Processo", "interno");
 				return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
 
 			}
@@ -250,19 +251,5 @@ public class BigDataService {
 		}
 
 		return null;
-	}
-
-	public void salvarPdfRetorno(DocumentoAnalise documentoAnalise, String base64, String nomeConsulta, String diretorio) {
-		String nomeAnalise = documentoAnalise.getPagador().getNome();
-		String numeroContrato = documentoAnalise.getContratoCobranca().getNumeroContrato();
-		if(CommonsUtil.semValor(numeroContrato)) {
-			return;
-		}
-		FileUploaded pdfRetorno = new FileUploaded();
-		pdfRetorno.setFileBase64(base64);
-		pdfRetorno.setName(nomeConsulta + " - " + nomeAnalise + ".pdf");
-		FileService fileService = new FileService();
-		User user = new UserDao().findById((long) -1);
-		fileService.salvarDocumentoBase64(pdfRetorno, numeroContrato, diretorio, user);
 	}
 }

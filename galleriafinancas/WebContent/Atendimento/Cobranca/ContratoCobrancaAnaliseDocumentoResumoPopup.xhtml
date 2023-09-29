@@ -6,35 +6,50 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:shiro="http://shiro.apache.org/tags">
 
+	<h:outputStylesheet name="primeicons/primeicons.css"
+		library="primefaces" />
+		
+	<p:ajaxStatus onstart="PF('statusDialog').show()"
+		oncomplete="PF('statusDialog').hide()" />
 
-	<p:dialog  id="resumoDialogHeader" 
-			widgetVar="resumoConsutlasDialog" showEffect="fade" hideEffect="fade"
-			resizable="false" responsive="false" width="1000"
-			positionType="center center" closable="true" update="true">
-				<f:facet name="header">
-					<h:outputText value="#{contratoCobrancaMB.documentoAnalisePopup.dialogHeader}" />
-				</f:facet>
-			<h:form id="resumoConsutlasForm">
-				<h:panelGrid columns="5" columnClasses="painelResumo,painelResumo,painelResumo,painelResumo,painelResumo">
-				
-					<p:panel>
-						<f:facet name="header">
-							<h:outputText value="Engine" />
-						</f:facet>
-						
-						<p:dataTable id="resumocliente" var="engine" rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
-							value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoEngine()}">
-							<p:column>
-								<h:outputText value="#{engine.descricao}"></h:outputText>
-							</p:column>
-							<p:column>
-								<h:outputText value="#{engine.valor}"></h:outputText>
-							</p:column>
-							
-						</p:dataTable>					
-					</p:panel>
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+		closable="false" resizable="false" showHeader="false">
+		<div class="text-center">
+			<i class="pi pi-spin pi-spinner loading-icon" aria-hidden="true"></i>
+		</div>
+	</p:dialog>
 
-					<!--<p:panel style="justify-content:start;">
+	<p:dialog id="resumoDialogHeader" widgetVar="resumoConsutlasDialog"
+		showEffect="fade" hideEffect="fade" resizable="false"
+		responsive="false" width="1000" positionType="center center"
+		closable="true" update="true">
+		<f:facet name="header">
+			<h:outputText
+				value="#{contratoCobrancaMB.documentoAnalisePopup.dialogHeader}" />
+		</f:facet>
+		<h:form id="resumoConsutlasForm">
+			<h:panelGrid columns="5"
+				columnClasses="painelResumo,painelResumo,painelResumo,painelResumo,painelResumo">
+
+				<p:panel>
+					<f:facet name="header">
+						<h:outputText value="Engine" />
+					</f:facet>
+
+					<p:dataTable id="resumocliente" var="engine"
+						rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
+						value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoEngine()}">
+						<p:column>
+							<h:outputText value="#{engine.descricao}"></h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText value="#{engine.valor}"></h:outputText>
+						</p:column>
+
+					</p:dataTable>
+				</p:panel>
+
+				<!--<p:panel style="justify-content:start;">
 						<f:facet name="header">
 							<h:outputText value="Serasa" />
 							<p:dataTable id="resumoSerasa" var="Serasa" rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
@@ -49,186 +64,226 @@
 						</f:facet>
 						
 					</p:panel>-->
-					
-					<p:panel>
-						<f:facet name="header">
-							<h:outputText value="SCR" />
-							<p:dataTable id="resumoScr" var="scr" rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
+
+				<p:panel>
+					<f:facet name="header">
+						<h:outputText value="SCR" />
+						<p:dataTable id="resumoScr" var="scr"
+							rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
 							value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoScr()}">
 							<p:column>
-								<h:outputText value="#{scr.descricao}"/>
+								<h:outputText value="#{scr.descricao}" />
 							</p:column>l
 							<p:column>
-								<h:outputText value="#{scr.valor}"/>
+								<h:outputText value="#{scr.valor}" />
 							</p:column>
-							</p:dataTable>
-						</f:facet>
-						
-					</p:panel>
-					
-					<p:panel style="justify-content:start;">
-						<f:facet name="header">
-							<h:outputText value="Cenprot" />
-							<p:dataTable id="resumoCenprot" var="Cenprot" rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
+						</p:dataTable>
+					</f:facet>
+
+				</p:panel>
+
+				<p:panel style="justify-content:start;">
+					<f:facet name="header">
+						<h:outputText value="Cenprot" />
+						<p:dataTable id="resumoCenprot" var="Cenprot"
+							rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
 							value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoCenprot()}">
-								<p:column>
-									<h:outputText value="#{Cenprot.descricao}" />
-								</p:column>
-								<p:column>
-									<h:outputText value="#{Cenprot.valor}"/>
-								</p:column>
-							
-							
-							</p:dataTable>
-						</f:facet>
-					</p:panel>
-					
-					<p:panel>
-						<f:facet name="header">
-							<h:outputText value="Processo" />
-							<p:dataTable id="resumoProcesso" var="Processo" rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
+							<p:column>
+								<h:outputText value="#{Cenprot.descricao}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="#{Cenprot.valor}" />
+							</p:column>
+
+
+						</p:dataTable>
+					</f:facet>
+				</p:panel>
+
+				<p:panel>
+					<f:facet name="header">
+						<h:outputText value="Processo" />
+						<p:dataTable id="resumoProcesso" var="Processo"
+							rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
 							value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoProcesso()}">
 							<p:column>
-								<h:outputText value="#{Processo.descricao}"/>
+								<h:outputText value="#{Processo.descricao}" />
 							</p:column>
 							<p:column>
-								<h:outputText value="#{Processo.valor}"/>
+								<h:outputText value="#{Processo.valor}" />
 							</p:column>
-							</p:dataTable>
-						</f:facet>
-						
-					</p:panel>
+						</p:dataTable>
+					</f:facet>
+
+				</p:panel>
+
+			</h:panelGrid>
+
+		</h:form>
+	</p:dialog>
+
+	<p:dialog header="Laudo robô" id="laudoRoboDialog"
+		widgetVar="laudoRoboDialog" showEffect="fade" hideEffect="fade"
+		resizable="false" responsive="false" width="1000" closable="true">
+		<h:form id="laudoRoboForm">
+			<h:panelGrid columns="2">
+				<h:panelGrid columns="2">
+					<p:outputLabel for="CepImovel" value="Cep: " />
+					<p:inputMask id="CepImovel"
+						value="#{contratoCobrancaMB.objetoImovelCobranca.cep}"
+						mask="99999-999" label="Cep" disabled="true">
+						<p:ajax event="blur"
+							update="EnderecoImovel BairroImovel CidadeImovel EstadoImovel"
+							listener="#{contratoCobrancaMB.getEnderecoByViaNet()}" />
+					</p:inputMask>
+
+					<p:outputLabel value="" />
+					<p:outputLabel style="display:block;width:300px"
+						value="O sistema irá preencher automaticamente o endereço de acordo com o CEP informado. " />
+
+					<p:outputLabel for="EnderecoImovel" value="Endereço: " />
+					<p:inputText id="EnderecoImovel"
+						value="#{contratoCobrancaMB.objetoImovelCobranca.endereco}"
+						label="Endereço" onblur="" style="width:200px;" disabled="true" />
+
+					<p:outputLabel for="ComplementoImovel" value="Complemento: " />
+					<p:inputText id="ComplementoImovel"
+						value="#{contratoCobrancaMB.objetoImovelCobranca.complemento}"
+						label="Complemento" onblur="" style="width:200px;" disabled="true" />
+
+					<p:outputLabel for="BairroImovel" value="Bairro: " />
+					<p:inputText id="BairroImovel"
+						value="#{contratoCobrancaMB.objetoImovelCobranca.bairro}"
+						label="Bairro" onblur="" style="width:200px;" disabled="true" />
+
+					<p:outputLabel for="CidadeImovel" value="Cidade: " />
+					<p:inputText id="CidadeImovel"
+						value="#{contratoCobrancaMB.objetoImovelCobranca.cidade}"
+						label="Cidade" onblur="" style="width:200px;" disabled="true" />
+
+					<p:outputLabel for="EstadoImovel" value="Estado: " />
+					<p:selectOneMenu id="EstadoImovel"
+						value="#{contratoCobrancaMB.objetoImovelCobranca.estado}"
+						label="Estado" style="width:205px;" disabled="true">
+						<f:selectItem itemValue="" itemLabel="Escolha o Estado" />
+						<f:selectItem itemValue="AC" itemLabel="Acre" />
+						<f:selectItem itemValue="AL" itemLabel="Alagoas" />
+						<f:selectItem itemValue="AP" itemLabel="Amapá" />
+						<f:selectItem itemValue="AM" itemLabel="Amazonas" />
+						<f:selectItem itemValue="BA" itemLabel="Bahia" />
+						<f:selectItem itemValue="CE" itemLabel="Ceará" />
+						<f:selectItem itemValue="DF" itemLabel="Distrito Federal" />
+						<f:selectItem itemValue="ES" itemLabel="Espirito Santo" />
+						<f:selectItem itemValue="GO" itemLabel="Goiás" />
+						<f:selectItem itemValue="MA" itemLabel="Maranhão" />
+						<f:selectItem itemValue="MT" itemLabel="Mato Grosso" />
+						<f:selectItem itemValue="MS" itemLabel="Mato Grosso Do Sul" />
+						<f:selectItem itemValue="MG" itemLabel="Minas Gerais" />
+						<f:selectItem itemValue="PA" itemLabel="Pará" />
+						<f:selectItem itemValue="PB" itemLabel="Paraiba" />
+						<f:selectItem itemValue="PR" itemLabel="Paraná" />
+						<f:selectItem itemValue="PE" itemLabel="Pernambuco" />
+						<f:selectItem itemValue="PI" itemLabel="Piauí" />
+						<f:selectItem itemValue="RJ" itemLabel="Rio De Janeiro" />
+						<f:selectItem itemValue="RN" itemLabel="Rio Grande Do Norte" />
+						<f:selectItem itemValue="RS" itemLabel="Rio Grande Do Sul" />
+						<f:selectItem itemValue="RO" itemLabel="Rondônia" />
+						<f:selectItem itemValue="RR" itemLabel="Roraima" />
+						<f:selectItem itemValue="SC" itemLabel="Santa Catarina" />
+						<f:selectItem itemValue="SP" itemLabel="São Paulo" />
+						<f:selectItem itemValue="SE" itemLabel="Sergipe" />
+						<f:selectItem itemValue="TO" itemLabel="Tocantins" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="Tipo" value="Tipo: " />
+					<p:autoComplete id="Tipo"
+						value="#{contratoCobrancaMB.objetoImovelCobranca.tipo}"
+						completelMethod="#{contratoCobrancaMB.objetoImovelCobranca.completeTipoImovel}"
+						autocomplete="no" dropdown="true" forceSelection="true" var="tipo"
+						itemValue="#{contratoCobrancaMB.objetoImovelCobranca.getValue(tipo)}"
+						itemLabel="#{contratoCobrancaMB.objetoImovelCobranca.getLabel(tipo)}"
+						scrollHeight="250" disabled="true">
+					</p:autoComplete>
+
+					<p:outputLabel for="AreaConstruida"
+						value="Área Útil / Construída (metros): " />
+					<h:panelGroup>
+						<p:inputText id="AreaConstruida"
+							value="#{contratoCobrancaMB.objetoImovelCobranca.areaConstruida}"
+							style="width:75px;" required="true" />
+					</h:panelGroup>
+
+					<p:outputLabel for="valorEstimado"
+						value="Qual o valor estimado do imóvel? " />
+					<p:inputText id="valorEstimado"
+						value="#{contratoCobrancaMB.objetoImovelCobranca.valoEstimado}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);"
+						converter="bigDecimalConverter" disabled="true" />
+
 					
-				</h:panelGrid>
-				
-			</h:form>
-		</p:dialog>
-		
-		<p:dialog header="Laudo robô" 
-			widgetVar="laudoRoboDialog" showEffect="fade" hideEffect="fade"
-			resizable="false" responsive="false" width="1000"
-			closable="true">
-			<h:form id="laudoRoboForm" >
-					<h:panelGrid Columns="2" >
-					
-						<p:outputLabel for="CepImovel" value="Cep: "/>
-						<p:inputMask id="CepImovel"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.cep}"
-							mask="99999-999" label="Cep" disabled="true">
-							<p:ajax event="blur"
-								update="EnderecoImovel BairroImovel CidadeImovel EstadoImovel"
-								listener="#{contratoCobrancaMB.getEnderecoByViaNet()}"/>
-						</p:inputMask>
 
-						<p:outputLabel value="" />
-						<p:outputLabel
-							value="O sistema irá preencher automaticamente o endereço de acordo com o CEP informado. " />
-
-						<p:outputLabel for="EnderecoImovel" value="Endereço: " />
-						<p:inputText id="EnderecoImovel"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.endereco}"
-							label="Endereço" onblur="" style="width:400px;" disabled="true" />
-
-						<p:outputLabel for="ComplementoImovel" value="Complemento: " />
-						<p:inputText id="ComplementoImovel"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.complemento}"
-							label="Complemento" onblur="" style="width:400px;"  disabled="true"/>
-
-						<p:outputLabel for="BairroImovel" value="Bairro: " />
-						<p:inputText id="BairroImovel"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.bairro}"
-							label="Bairro" onblur="" style="width:400px;"  disabled="true"/>
-
-						<p:outputLabel for="CidadeImovel" value="Cidade: " />
-						<p:inputText id="CidadeImovel"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.cidade}"
-							label="Cidade" onblur="" style="width:400px;"  disabled="true"/>
-
-						<p:outputLabel for="EstadoImovel" value="Estado: " />
-						<p:selectOneMenu id="EstadoImovel"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.estado}"
-							label="Estado" style="width:410px;"  disabled="true">
-							<f:selectItem itemValue="" itemLabel="Escolha o Estado" />
-							<f:selectItem itemValue="AC" itemLabel="Acre" />
-							<f:selectItem itemValue="AL" itemLabel="Alagoas" />
-							<f:selectItem itemValue="AP" itemLabel="Amapá" />
-							<f:selectItem itemValue="AM" itemLabel="Amazonas" />
-							<f:selectItem itemValue="BA" itemLabel="Bahia" />
-							<f:selectItem itemValue="CE" itemLabel="Ceará" />
-							<f:selectItem itemValue="DF" itemLabel="Distrito Federal" />
-							<f:selectItem itemValue="ES" itemLabel="Espirito Santo" />
-							<f:selectItem itemValue="GO" itemLabel="Goiás" />
-							<f:selectItem itemValue="MA" itemLabel="Maranhão" />
-							<f:selectItem itemValue="MT" itemLabel="Mato Grosso" />
-							<f:selectItem itemValue="MS" itemLabel="Mato Grosso Do Sul" />
-							<f:selectItem itemValue="MG" itemLabel="Minas Gerais" />
-							<f:selectItem itemValue="PA" itemLabel="Pará" />
-							<f:selectItem itemValue="PB" itemLabel="Paraiba" />
-							<f:selectItem itemValue="PR" itemLabel="Paraná" />
-							<f:selectItem itemValue="PE" itemLabel="Pernambuco" />
-							<f:selectItem itemValue="PI" itemLabel="Piauí" />
-							<f:selectItem itemValue="RJ" itemLabel="Rio De Janeiro" />
-							<f:selectItem itemValue="RN" itemLabel="Rio Grande Do Norte" />
-							<f:selectItem itemValue="RS" itemLabel="Rio Grande Do Sul" />
-							<f:selectItem itemValue="RO" itemLabel="Rondônia" />
-							<f:selectItem itemValue="RR" itemLabel="Roraima" />
-							<f:selectItem itemValue="SC" itemLabel="Santa Catarina" />
-							<f:selectItem itemValue="SP" itemLabel="São Paulo" />
-							<f:selectItem itemValue="SE" itemLabel="Sergipe" />
-							<f:selectItem itemValue="TO" itemLabel="Tocantins" />
-						</p:selectOneMenu>
-							
-						<p:outputLabel for="Tipo" value="Tipo: " />
-						<p:autoComplete id="Tipo" value="#{contratoCobrancaMB.objetoImovelCobranca.tipo}"
-							completeMethod="#{contratoCobrancaMB.objetoImovelCobranca.completeTipoImovel}" 
-							autocomplete="no" dropdown="true" forceSelection="true" var="tipo" 
-							itemValue="#{contratoCobrancaMB.objetoImovelCobranca.getValue(tipo)}" 
-							itemLabel="#{contratoCobrancaMB.objetoImovelCobranca.getLabel(tipo)}" 
-							scrollHeight="250" disabled="true">
-						</p:autoComplete>
-						
-						<p:outputLabel for="AreaConstruida" value="Área Útil / Construída (metros): " />
-						<h:panelGroup>
-							<p:inputText id="AreaConstruida" value="#{contratoCobrancaMB.objetoImovelCobranca.areaConstruida}" style="width:150px;"/>  
+					<h:panelGrid columns="2" id="botoesPanelGrid">
+						<h:panelGroup id="botaoLinkImovel">
+							<p:commandButton value="Gerar Laudo"
+								action="#{contratoCobrancaMB.geraLaudo}"
+								icon="ui-icon ui-icon-circle-zoomin" update="laudoRoboForm"
+								style="background: linear-gradient(90deg, rgba(159,196,24,1) 0%, rgba(115,158,46,1) 100%);padding: 5px;-webkit-border-radius: 5px;text-decoration: none;
+									-moz-border-radius: 5px; border-radius: 5px;">
+							</p:commandButton>
 						</h:panelGroup>
-						
-						<p:outputLabel for="valorEstimado"
-							value="Qual o valor estimado do imóvel? " />
-						<p:inputText id="valorEstimado"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.valoEstimado}"
-							onkeypress="return isNumberKey(event);"
-							onkeydown="FormataValor(this, 13, event, 2);"
-							converter="bigDecimalConverter"  disabled="true"/>
-
-						<h:panelGrid columns="2">
-							<h:panelGroup id="botaoLinkImovel">
-								<a href="https://avm.valuation.eemovel.com.br/avaliacao" class="linkPDF" target="_blank"
-									style="background: linear-gradient(90deg, rgba(159,196,24,1) 0%, rgba(115,158,46,1) 100%);padding: 5px;-webkit-border-radius: 5px;text-decoration: none;
-									-moz-border-radius: 5px;
-									border-radius: 5px; "><b>EE valuation</b></a>
-							</h:panelGroup>
-	
-							<h:panelGroup id="botaoLinkImovel2">
-									<a href="https://avm.valuation.eemovel.com.br/laudo/3685590d9e8441a19218e919bc52346b" class="linkPDf" target="_blank"
-										style="background: linear-gradient(90deg, rgba(159,196,24,1) 0%, rgba(115,158,46,1) 100%);padding: 5px;-webkit-border-radius: 5px;text-decoration: none;
-										-moz-border-radius: 5px;
-										border-radius: 5px; "><b>Laudo</b></a>
-							</h:panelGroup>
-						</h:panelGrid>
-							
+						<h:panelGroup id="botaoAbreLaudo">
+							<p:commandLink ajax="false" target="_blank" value="Abrir Laudo"
+								action="#{contratoCobrancaMB.abreLaudo}"
+								rendered="#{contratoCobrancaMB.hasLaudo()}">
+							</p:commandLink>
+						</h:panelGroup>
 					</h:panelGrid>
 
-			</h:form>
-		</p:dialog>
-		
-		<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO">
-			<p:dialog header="Adicionar pessoa Analise" overflow="auto"
+				</h:panelGrid>
+				<h:panelGrid columns="4">
+					<f:facet name="header">
+						<h:outputText value="Caracteristicas do Imovel" />
+					</f:facet>
+					<p:outputLabel for="NumeroDeQuartos" value="Número de quartos: " />
+					<h:panelGroup>
+						<p:inputText id="NumeroDeQuartos"
+							value="#{contratoCobrancaMB.objetoImovelCobranca.numeroQuartos}"
+							style="width:32.5px;" />
+					</h:panelGroup>
+					<p:outputLabel for="NumeroDeBanheiros"
+						value="Número de banheiros: " />
+					<h:panelGroup>
+						<p:inputText id="NumeroDeBanheiros"
+							value="#{contratoCobrancaMB.objetoImovelCobranca.numeroBanheiros}"
+							style="width:32.5px;" />
+					</h:panelGroup>
+					<p:outputLabel for="NumeroDeSuites" value="Número de suites: " />
+					<h:panelGroup>
+						<p:inputText id="NumeroDeSuites"
+							value="#{contratoCobrancaMB.objetoImovelCobranca.numeroSuites}"
+							style="width:32.5px;" />
+					</h:panelGroup>
+					<p:outputLabel for="NumeroDeGaragens" value="Número de garagens: " />
+					<h:panelGroup>
+						<p:inputText id="NumeroDeGaragens"
+							value="#{contratoCobrancaMB.objetoImovelCobranca.numeroGaragens}"
+							style="width:32.5px;" />
+					</h:panelGroup>
+				</h:panelGrid>
+			</h:panelGrid>
+		</h:form>
+	</p:dialog>
+
+	<shiro:hasAnyRoles
+		name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO">
+		<p:dialog header="Adicionar pessoa Analise" overflow="auto"
 			rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
-				id="dialogAdicionarPessoaAnalise"
-				widgetVar="adicionarPessoaAnaliseDlg" resizable="true"
-				style="FONT-SIZE: 13pt;" width="800" minWidth="800">
-				<h:form id="adicionarPessoaAnaliseForm">
-					<div align="center">
+			id="dialogAdicionarPessoaAnalise"
+			widgetVar="adicionarPessoaAnaliseDlg" resizable="true"
+			style="FONT-SIZE: 13pt;" width="800" minWidth="800">
+			<h:form id="adicionarPessoaAnaliseForm">
+				<div align="center">
 					<h:panelGrid columns="2">
 						<p:outputLabel for="AnaliseDocumentoPessoaNome"
 							value="Nome da pessoa " style="margin-right:10px" />
@@ -287,6 +342,50 @@
 			</p:dialog>
 		</shiro:hasAnyRoles>
 		
+		<p:dialog header="Consultas Docket" overflow="auto"
+			id="dialogConsultasDocket"
+			widgetVar="consultasDocketDlg" resizable="true"
+			style="FONT-SIZE: 13pt;" width="800" minWidth="800">
+			<h:form id="ConsultasDocketForm">
+				<div align="center">
+					<p:dataTable id="dtConsultasDocket" var="docketConsulta"
+						value="#{contratoCobrancaMB.documentoAnalisePopup.docketConsultas}"
+						emptyMessage="" rows="20" paginator="true"
+		                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+		                currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+		                rowsPerPageTemplate="20,40,100,140">
+						
+						<p:column style="text-align: center;" headerText="Identificação"
+							filterBy="#{docketConsulta.nomeCompleto}"
+							filterMatchMode="contains" sortBy="#{docketConsulta.nomeCompleto}">
+							<h:outputText value="#{docketConsulta.nomeCompleto}"/>
+						</p:column>
+						
+						<p:column style="text-align: center;width: 100px;" headerText="Status"
+							filterBy="#{docketConsulta.status}"
+							filterMatchMode="contains" sortBy="#{docketConsulta.status}">
+							<h:outputText value="#{docketConsulta.status}"/>
+						</p:column>
+						
+						<p:column style="text-align: center;width: 150px;" headerText="" >
+							<!-- <p:commandButton
+								action="#{docketMB.decodarBaixarArquivo(docketConsulta)}"
+								icon="ui-icon ui-icon-print" value="Download PDF"
+								rendered="#{docketConsulta.pdf != null}"
+								ajax="false" /> -->
+								
+							<p:commandButton 
+								action="#{docketMB.viewFileDocket(docketConsulta)}"
+								icon="ui-icon ui-icon-print" value="Abrir PDF"
+								onclick="target='_blank'" onblur="target='_self'"
+								rendered="#{docketConsulta.pdf != null
+									and docketConsulta.pdf != ''}" ajax="false" />
+						</p:column>
+					</p:dataTable>
+				</div>
+			</h:form>
+		</p:dialog>
+		
 		<p:dialog header="Consultas Plexi" overflow="auto"
 			id="dialogConsultasPlexi"
 			widgetVar="consultasPlexiDlg" resizable="true"
@@ -296,35 +395,35 @@
 					<p:dataTable id="dtConsultasPlexi" var="plexiConsulta"
 						value="#{contratoCobrancaMB.documentoAnalisePopup.plexiConsultas}"
 						emptyMessage="" rows="20" paginator="true"
-		                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-		                currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
-		                rowsPerPageTemplate="20,40,100,140">
-						
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+						rowsPerPageTemplate="20,40,100,140">
+
 						<p:column style="text-align: center;" headerText="Identificação"
 							filterBy="#{plexiConsulta.nomeCompleto}"
 							filterMatchMode="contains" sortBy="#{plexiConsulta.nomeCompleto}">
-							<h:outputText value="#{plexiConsulta.nomeCompleto}"/>
+							<h:outputText value="#{plexiConsulta.nomeCompleto}" />
 						</p:column>
-						
-						<p:column style="text-align: center;width: 100px;" headerText="Status"
-							filterBy="#{plexiConsulta.status}"
+
+						<p:column style="text-align: center;width: 100px;"
+							headerText="Status" filterBy="#{plexiConsulta.status}"
 							filterMatchMode="contains" sortBy="#{plexiConsulta.status}">
-							<h:outputText value="#{plexiConsulta.status}"/>
+							<h:outputText value="#{plexiConsulta.status}" />
 						</p:column>
-						
-						<p:column style="text-align: center;width: 150px;" headerText="" >
+
+						<p:column style="text-align: center;width: 150px;" headerText="">
 							<!-- <p:commandButton
 								action="#{plexiMB.decodarBaixarArquivo(plexiConsulta)}"
 								icon="ui-icon ui-icon-print" value="Download PDF"
 								rendered="#{plexiConsulta.pdf != null}"
 								ajax="false" /> -->
-								
-							<p:commandButton 
-								action="#{plexiMB.viewFilePlexi(plexiConsulta)}"
+
+							<p:commandButton action="#{plexiMB.viewFilePlexi(plexiConsulta)}"
 								icon="ui-icon ui-icon-print" value="Abrir PDF"
 								onclick="target='_blank'" onblur="target='_self'"
 								rendered="#{plexiConsulta.pdf != null
-									and plexiConsulta.pdf != ''}" ajax="false" />
+									and plexiConsulta.pdf != ''}"
+								ajax="false" />
 						</p:column>
 					</p:dataTable>
 				</div>

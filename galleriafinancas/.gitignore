@@ -5,4 +5,4 @@
 /.settings/
 /.classpath
 /.metadata/
-/hibernate.cfg.xml/
+/WebContent/WEB-INF/classes/hibernate.cfg.xml/
