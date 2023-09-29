@@ -642,6 +642,7 @@ public class DocumentoAnalise implements Serializable {
 	public void adicionaEstados(String estado) {
 		if(!getEstadosConsulta().contains(estado)) {
 			getEstadosConsulta().add(estado);
+			estadosConsultaStr = getEstadosConsulta().toString();
 		}
 	}
 	

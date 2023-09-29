@@ -20724,15 +20724,12 @@ public class ContratoCobrancaMB {
 		// de Laudo e a garantia não for imóvel comercial,
 		// terreno ou chácara, operação pode ser aprovada com apenas 1 voto
 		if (!CommonsUtil.semValor(contrato.getAvaliacaoEngenharia())
-				&& !CommonsUtil.semValor(contrato.getAvaliacaoEquipeLaudo())) {
-			if (CommonsUtil.mesmoValor(contrato.getAvaliacaoEngenharia(), "Bom")
-					&& CommonsUtil.mesmoValor(contrato.getAvaliacaoEquipeLaudo(), "Bom")) {
-				if (!CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Prédio Comercial")
-						&& !CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Sala Comercial")
-						&& !CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Terreno")
-						&& !CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Chácara")) {
-					return BigInteger.valueOf(1);
-				}
+				&& CommonsUtil.mesmoValor(contrato.getAvaliacaoEngenharia(), "Bom")) {
+			if (!CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Prédio Comercial")
+					&& !CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Sala Comercial")
+					&& !CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Terreno")
+					&& !CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Chácara")) {
+				return BigInteger.valueOf(1);
 			}
 		}
 

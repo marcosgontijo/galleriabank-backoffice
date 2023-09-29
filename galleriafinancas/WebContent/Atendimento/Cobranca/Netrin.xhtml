@@ -12,7 +12,7 @@
 			<script src="#{request.contextPath}/resources/resources/js/functions.js"></script>
 			<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>
 			<link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/resources/css/Style.css" title="" media="all" />
-			
+			<h:outputStylesheet name="primeicons/primeicons.css" library="primefaces" />
 			<p:panel id="NetrinPanel" header="Netrin"
 				style="margin-bottom:10px;">
 				<p:focus />
@@ -132,7 +132,7 @@
 				</h:panelGroup>
 			
 				<h:panelGrid columns="3">	
-					<p:commandButton action="#{netrinMB.criarPedido}"
+					<p:commandButton action="#{netrinMB.criarPedido}" ajax="false"
 						icon="ui-icon ui-icon-print" value="Fazer Pedido"  update=":form  msgs" />		
 						
 					<p:commandButton value="Voltar p/ Contrato" action="#{contratoCobrancaMB.clearFieldsEditarPendentesAnalistas}" 

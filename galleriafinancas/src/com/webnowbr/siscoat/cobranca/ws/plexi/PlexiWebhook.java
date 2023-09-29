@@ -34,8 +34,8 @@ public class PlexiWebhook {
 			} catch (Exception e) {
 				String requestId = webhookObject.getString("requestId");
 				System.out.println("token plexi expirado: " + requestId);
-				webhookObject = plexiService.getRetornoPlexi(requestId);
-				webhookObject.put("requestId", requestId);
+				//webhookObject = plexiService.getRetornoPlexi(requestId);
+				//webhookObject.put("requestId", requestId);
 			}
 
 			PlexiConsultaDao plexiConsultaDao = new PlexiConsultaDao();

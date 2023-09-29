@@ -106,7 +106,7 @@ public class NetrinMB {
 					if(!CommonsUtil.semValor(netrinConsulta.getRetorno())) {
 						continue;
 					}
-					FacesMessage facesMessage = netrinService.pedirConsulta(netrinConsulta);
+					FacesMessage facesMessage = netrinService.pedirConsulta(netrinConsulta, user);
 					if(CommonsUtil.semValor(facesMessage) || CommonsUtil.mesmoValor(facesMessage.getSeverity(), 
 							FacesMessage.SEVERITY_ERROR)) {
 						consultasFalhadas.add(netrinConsulta);
