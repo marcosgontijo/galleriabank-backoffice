@@ -34721,14 +34721,14 @@ public class ContratoCobrancaMB {
 	public boolean hasLaudo() {
 		return (laudoEndereco != "") ? true : false;	
 	}
+
 	public boolean isVerificaReaProcessado() {
-		for(DocumentoAnalise documento: listaDocumentoAnalise) {
-			if(documento.isReaProcessado()) {
-				verificaReaProcessado = true;
-			} else {
-				verificaReaProcessado = false;
-			}
-				}
-		return verificaReaProcessado;
-			}
+		for (DocumentoAnalise documento : listaDocumentoAnalise) {
+
+			if (documento.isReaProcessado()) 
+				return true;
+			
+		}
+		return false;
+	}
 }
