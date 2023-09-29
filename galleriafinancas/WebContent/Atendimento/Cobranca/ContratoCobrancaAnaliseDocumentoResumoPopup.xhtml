@@ -124,7 +124,8 @@
 
 	<p:dialog header="Laudo robô" id="laudoRoboDialog"
 		widgetVar="laudoRoboDialog" showEffect="fade" hideEffect="fade"
-		resizable="false" responsive="false" width="1000" closable="true">
+		resizable="false" responsive="false" width="1000" closable="true" ajax="true">
+		<p:ajax event="close" listener="#{contratoCobrancaMB.limpaLaudo}" />
 		<h:form id="laudoRoboForm">
 			<h:panelGrid columns="2">
 				<h:panelGrid columns="2">
