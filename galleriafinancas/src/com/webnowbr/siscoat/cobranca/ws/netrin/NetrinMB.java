@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.primefaces.model.StreamedContent;
 
 import com.itextpdf.text.pdf.PdfReader;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
@@ -40,14 +41,14 @@ public class NetrinMB {
 	@ManagedProperty(value = "#{loginBean}")
 	protected LoginBean loginBean;
 	
-	//NetrinConsulta netrinConsulta = new NetrinConsulta();
-	String cpfCnpj;
+	private ContratoCobranca contratoCobranca;
 	
 	
-	public String clearFieldsContratoCobranca(List<DocumentoAnalise> listDocAnalise, String etapaConsultas) {
+	public String clearFieldsContratoCobranca(List<DocumentoAnalise> listDocAnalise, String etapaConsultas, ContratoCobranca contrato) {
 		//estados = new ArrayList<String>();
 		//estados.add(estadoImovel);
 		etapa = etapaConsultas;
+		contratoCobranca = contrato;
 		listPagador = new ArrayList<DocumentoAnalise>();
 		for(DocumentoAnalise docAnalise : listDocAnalise) {
 			if(CommonsUtil.semValor(docAnalise.getPagador())) {
@@ -272,15 +273,6 @@ public class NetrinMB {
 	}
 
 	
-
-	public String getCpfCnpj() {
-		return cpfCnpj;
-	}
-
-	public void setCpfCnpj(String cpfCnpj) {
-		this.cpfCnpj = cpfCnpj;
-	}
-
 	public List<DocumentoAnalise> getListPagador() {
 		return listPagador;
 	}
@@ -304,5 +296,12 @@ public class NetrinMB {
 	public void setEtapa(String etapa) {
 		this.etapa = etapa;
 	}
-	
+
+	public ContratoCobranca getContratoCobranca() {
+		return contratoCobranca;
+	}
+
+	public void setContratoCobranca(ContratoCobranca contratoCobranca) {
+		this.contratoCobranca = contratoCobranca;
+	}	
 }

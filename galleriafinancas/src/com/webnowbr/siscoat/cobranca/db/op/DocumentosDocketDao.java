@@ -128,8 +128,8 @@ public class DocumentosDocketDao extends HibernateDao <DocumentosDocket,Long> {
 							} else {
 								query = query + " or estados like '%" + uf.toUpperCase() + "%' ";
 							}
-							query = query + ")";
 						}
+						query = query + ")";
 					}
 					
 					if(!CommonsUtil.semValor(etapa)) {
