@@ -237,6 +237,7 @@ public class ContratoCobrancaMB {
 	private ContratoCobranca objetoContratoCobranca;
 	private String numeroContratoObjetoContratoCobranca;
 	private List<FileUploaded> documentoConsultarTodos;
+	private boolean verificaReaProcessado;
 
 	private boolean updateMode = false;
 	private boolean deleteMode = false;
@@ -34720,4 +34721,14 @@ public class ContratoCobrancaMB {
 	public boolean hasLaudo() {
 		return (laudoEndereco != "") ? true : false;	
 	}
+	public boolean isVerificaReaProcessado() {
+		for(DocumentoAnalise documento: listaDocumentoAnalise) {
+			if(documento.isReaProcessado()) {
+				verificaReaProcessado = true;
+			} else {
+				verificaReaProcessado = false;
+			}
+				}
+		return verificaReaProcessado;
+			}
 }

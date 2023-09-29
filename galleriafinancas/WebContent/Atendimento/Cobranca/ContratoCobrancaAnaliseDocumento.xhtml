@@ -63,7 +63,7 @@
 				<f:facet name="header"> Arquivo(s) Salvo(s) na analise 
 							<p:outputLabel value="" />
 					<p:commandButton value="Adicionar Pessoa"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise and contratoCobrancaMB.objetoDocumentoAnalise.engineProcessado}"
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise and contratoCobrancaMB.verificaReaProcessado}"
 						action="#{contratoCobrancaMB.preparaAdicionarPessoaAnalise}"
 						oncomplete="PF('adicionarPessoaAnaliseDlg').show();"
 						update="adicionarPessoaAnaliseForm">
