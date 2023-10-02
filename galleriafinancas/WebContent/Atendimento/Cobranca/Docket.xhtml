@@ -102,7 +102,7 @@
 				</h:panelGroup>
 			
 				<h:panelGrid columns="3">	
-					<p:commandButton action="#{docketMB.criarPedido}"
+					<p:commandButton action="#{docketMB.criarPedido}" ajax="false"
 						icon="ui-icon ui-icon-print" value="Fazer Pedido"  update=":form  msgs" />		
 						
 					<p:commandButton value="Voltar p/ Contrato" action="#{contratoCobrancaMB.clearFieldsEditarPendentesAnalistas}" 

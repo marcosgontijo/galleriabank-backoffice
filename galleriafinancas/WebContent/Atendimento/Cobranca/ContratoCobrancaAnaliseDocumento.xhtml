@@ -63,7 +63,7 @@
 				<f:facet name="header"> Arquivo(s) Salvo(s) na analise 
 							<p:outputLabel value="" />
 					<p:commandButton value="Adicionar Pessoa"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise and contratoCobrancaMB.objetoDocumentoAnalise.engineProcessado}"
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
 						action="#{contratoCobrancaMB.preparaAdicionarPessoaAnalise}"
 						oncomplete="PF('adicionarPessoaAnaliseDlg').show();"
 						update="adicionarPessoaAnaliseForm">
@@ -266,9 +266,9 @@
 					disabled="#{contratoCobrancaMB.checkConsultasAnaliseDocumento()}" />
 				<p:commandButton value="Certidões Docket" ajax="false"
 					action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'analise', contratoCobrancaMB.objetoContratoCobranca)}" />
-				<p:commandButton value="Certidões Plexi" 
+				<p:commandButton value="Certidões Plexi" ajax="false"
 					action="#{plexiMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'analise', contratoCobrancaMB.objetoContratoCobranca)}" />
-				<p:commandButton value="Certidões Netrin" 
+				<p:commandButton value="Certidões Netrin" ajax="false"
 					action="#{netrinMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'analise', contratoCobrancaMB.objetoContratoCobranca)}" />
 			</p:panel>
 			
@@ -278,9 +278,9 @@
 				
 				<p:commandButton value="Certidões Docket" ajax="false"
 					action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'pedir paju', contratoCobrancaMB.objetoContratoCobranca)}" />		
-				<p:commandButton value="Certidões Plexi" 
+				<p:commandButton value="Certidões Plexi" ajax="false"
 					action="#{plexiMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'pedir paju', contratoCobrancaMB.objetoContratoCobranca)}" />				
-				<p:commandButton value="Certidões Netrin" 
+				<p:commandButton value="Certidões Netrin" ajax="false"
 					action="#{netrinMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'pedir paju', contratoCobrancaMB.objetoContratoCobranca)}" />
 					
 			</p:panel>

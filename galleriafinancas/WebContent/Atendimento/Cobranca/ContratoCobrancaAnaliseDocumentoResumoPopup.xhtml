@@ -9,10 +9,12 @@
 	<h:outputStylesheet name="primeicons/primeicons.css"
 		library="primefaces" />
 		
-	<p:ajaxStatus onstart="PF('statusDialog').show()"
-		oncomplete="PF('statusDialog').hide()" />
+	<p:ajaxStatus onstart="PF('statusDialog2').show()"
+		oncomplete="PF('statusDialog2').hide()"
+		onsuccess="PF('statusDialog2').hide()"
+		onerror="PF('statusDialog2').hide()" />
 
-	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+	<p:dialog widgetVar="statusDialog2" modal="true" draggable="false"
 		closable="false" resizable="false" showHeader="false">
 		<div class="text-center">
 			<i class="pi pi-spin pi-spinner loading-icon" aria-hidden="true"></i>
