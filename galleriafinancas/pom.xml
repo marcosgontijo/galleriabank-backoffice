@@ -67,6 +67,11 @@
 			<name>galleriabank repo</name>
 			<url>https://amurta.bytesafe.dev/maven/galleriabank</url>			
 		</repository>
+		<repository>
+			<id>galleriabank_nexus</id>
+			<name>galleriabank repo</name>
+			<url>https://espelho.galleriabank.com.br/nexus</url>			
+		</repository>
 	</repositories>
 	<dependencies>
 		<dependency>
