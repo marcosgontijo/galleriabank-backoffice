@@ -357,6 +357,7 @@ public class ContratoCobrancaMB {
 	private boolean gerenciaStatus;
 	private boolean addPessoaAnalise;
 	private DocumentoAnalise documentoAnalisePopup;
+	private String estadoConsultaAdd;
 
 	/** Lista dos Pagadores utilizada pela LOV. */
 	private List<PagadorRecebedor> listPagadores;
@@ -30910,6 +30911,7 @@ public class ContratoCobrancaMB {
 			documentoAnalise.setPath(pathContrato + event.getFile().getFileName());
 			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.REA);
 			documentoAnalise.setLiberadoAnalise(true);
+			documentoAnalise.adiconarEstadosPeloCadastro();
 			documentoAnaliseDao.create(documentoAnalise);
 			// atualiza lista de arquivos contidos no diretório
 
@@ -31191,6 +31193,12 @@ public class ContratoCobrancaMB {
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 		documentoAnaliseDao.merge(documentoAnaliseAdicionar);
 		listaArquivosAnaliseDocumentos();
+	}
+	
+	public void adicionaEstado() {
+		documentoAnalisePopup.adicionaEstados(estadoConsultaAdd);
+		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+		documentoAnaliseDao.merge(documentoAnalisePopup);
 	}
 
 	public List<DocumentoAnalise> getListaDocumentoAnalise() {
@@ -33738,5 +33746,13 @@ public class ContratoCobrancaMB {
 	
 	public boolean hasLaudo() {
 		return (laudoEndereco != "") ? true : false;	
+	}
+
+	public String getEstadoConsultaAdd() {
+		return estadoConsultaAdd;
+	}
+
+	public void setEstadoConsultaAdd(String estadoConsultaAdd) {
+		this.estadoConsultaAdd = estadoConsultaAdd;
 	}
 }

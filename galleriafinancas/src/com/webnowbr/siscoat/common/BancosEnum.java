@@ -51,6 +51,7 @@ public enum BancosEnum {
 	BANCO_PETRA_S_A("094-2", "Banco Petra S.A."), //
 	BANCO_CONFIDENCE_DE_CAMBIO_S_A("095", "Banco Confidence de Câmbio S.A."), //
 	BANCO_BMFBOVESPA_DE_SERVICOS_DE_LIQUIDACAO_E_CUSTODIA_S_A("096", "Banco BMFBOVESPA de Serviços de Liquidação e Custódia S.A."), //
+	BANCO_CREDISIS("097", "Credisis"), 
 	BANCO_UNIPRIME("099", "Banco Uniprime"), //
 	BANCO_XP_INVESTIMENTOS("102", "XP Investimentos"), //
 	CAIXA_ECONOMICA_FEDERAL("104", "Caixa Econômica Federal"), //

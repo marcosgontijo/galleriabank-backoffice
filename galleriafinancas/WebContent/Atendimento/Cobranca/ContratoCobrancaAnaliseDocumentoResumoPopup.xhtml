@@ -477,4 +477,55 @@
 			</h:form>
 		</p:dialog>
 		
+		<p:dialog header="Inserir Estado" widgetVar="estadoDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="400">
+			<h:form id="estadoDialogdlg">			
+				<div align="center">		
+					<h:panelGrid columns="2">
+						<p:outputLabel for="estadoConsultaInserir" value="Estado: " />
+						<p:selectOneMenu id="estadoConsultaInserir"
+							value="#{contratoCobrancaMB.estadoConsultaAdd}"
+							label="Estado" style="width:200px;">
+							<f:selectItem itemValue="" itemLabel="Escolha o Estado" />
+							<f:selectItem itemValue="AC" itemLabel="Acre" />
+							<f:selectItem itemValue="AL" itemLabel="Alagoas" />
+							<f:selectItem itemValue="AP" itemLabel="Amapá" />
+							<f:selectItem itemValue="AM" itemLabel="Amazonas" />
+							<f:selectItem itemValue="BA" itemLabel="Bahia" />
+							<f:selectItem itemValue="CE" itemLabel="Ceará" />
+							<f:selectItem itemValue="DF" itemLabel="Distrito Federal" />
+							<f:selectItem itemValue="ES" itemLabel="Espirito Santo" />
+							<f:selectItem itemValue="GO" itemLabel="Goiás" />
+							<f:selectItem itemValue="MA" itemLabel="Maranhão" />
+							<f:selectItem itemValue="MT" itemLabel="Mato Grosso" />
+							<f:selectItem itemValue="MS" itemLabel="Mato Grosso Do Sul" />
+							<f:selectItem itemValue="MG" itemLabel="Minas Gerais" />
+							<f:selectItem itemValue="PA" itemLabel="Pará" />
+							<f:selectItem itemValue="PB" itemLabel="Paraiba" />
+							<f:selectItem itemValue="PR" itemLabel="Paraná" />
+							<f:selectItem itemValue="PE" itemLabel="Pernambuco" />
+							<f:selectItem itemValue="PI" itemLabel="Piauí" />
+							<f:selectItem itemValue="RJ" itemLabel="Rio De Janeiro" />
+							<f:selectItem itemValue="RN" itemLabel="Rio Grande Do Norte" />
+							<f:selectItem itemValue="RS" itemLabel="Rio Grande Do Sul" />
+							<f:selectItem itemValue="RO" itemLabel="Rondônia" />
+							<f:selectItem itemValue="RR" itemLabel="Roraima" />
+							<f:selectItem itemValue="SC" itemLabel="Santa Catarina" />
+							<f:selectItem itemValue="SP" itemLabel="São Paulo" />
+							<f:selectItem itemValue="SE" itemLabel="Sergipe" />
+							<f:selectItem itemValue="TO" itemLabel="Tocantins" />
+							<p:ajax update="estadoDialogdlg" ></p:ajax>
+						</p:selectOneMenu>
+					</h:panelGrid>
+					<p:commandButton value="Inserir Estado" 
+						icon="ui-icon-check" style="margin-top: 5px; margin-bottom: 5px;"
+						action="#{contratoCobrancaMB.adicionaEstado()}"
+						disabled="#{contratoCobrancaMB.estadoConsultaAdd eq null}"
+						onclick="PF('estadoDialog').hide();"
+						update="form:dtFilesAnalise" >
+					</p:commandButton>
+				</div>
+			</h:form>
+		</p:dialog>	
+		
 </ui:composition>

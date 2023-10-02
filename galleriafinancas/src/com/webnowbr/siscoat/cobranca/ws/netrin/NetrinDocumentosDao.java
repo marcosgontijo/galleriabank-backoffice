@@ -91,8 +91,8 @@ public class NetrinDocumentosDao extends HibernateDao<NetrinDocumentos, Long> {
 							} else {
 								query = query + " or estados like '%" + uf.toUpperCase() + "%' ";
 							}
-							query = query + ")";
 						}
+						query = query + ")";
 					}
 					
 					if(!CommonsUtil.semValor(etapa)) {
