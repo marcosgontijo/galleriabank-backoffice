@@ -35,11 +35,11 @@ public class DocketWebhook {
 
 		try {
 			DocketWebhookRetorno docketWebhookRetorno = GsonUtil.fromJson(webhookRetorno, DocketWebhookRetorno.class);
-			try {
+			/*try {
 				Jwts.parserBuilder().setSigningKey(CommonsUtil.CHAVE_WEBHOOK).build().parseClaimsJws(token);		
 			} catch (Exception e) {
 				System.out.println("token docket expirado: " + webhookRetorno);
-			}
+			}*/
 			
 			Optional<ContratoCobranca> objetoContratoCobranca;
 			DocketConsultaDao consultaDao = new DocketConsultaDao();

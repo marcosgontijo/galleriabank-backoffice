@@ -29,25 +29,26 @@ public class PlexiWebhook {
 		try {
 			JSONObject webhookObject = new JSONObject(webhookRetorno);
 			PlexiService plexiService = new PlexiService();
-			try {
+			/*try {
 				Jwts.parserBuilder().setSigningKey(CommonsUtil.CHAVE_WEBHOOK).build().parseClaimsJws(token);		
 			} catch (Exception e) {
 				String requestId = webhookObject.getString("requestId");
 				System.out.println("token plexi expirado: " + requestId);
 				//webhookObject = plexiService.getRetornoPlexi(requestId);
 				//webhookObject.put("requestId", requestId);
-			}
+			}*/
 
 			PlexiConsultaDao plexiConsultaDao = new PlexiConsultaDao();
 			if(!webhookObject.has("requestId")) {
-				return Response.status(500).entity("requestId não foi encontrato").build();
+				System.out.println("Request ID plexi não foi encontrado: " + webhookRetorno);
+				return Response.status(500).entity("requestId não foi encontrado").build();
 			}
 			PlexiConsulta plexiConsulta = plexiConsultaDao.findByFilter("requestId", 
 					webhookObject.getString("requestId"))
 					.stream().findFirst().orElse(null);
 			
 			if(CommonsUtil.semValor(plexiConsulta)) {
-				System.out.println("Erro Plexi: " + webhookObject.getString("requestId"));
+				System.out.println("Erro webhook Plexi: " + webhookObject.getString("requestId"));
 			}
 			
 			plexiConsulta.setWebhookRetorno(webhookRetorno);
