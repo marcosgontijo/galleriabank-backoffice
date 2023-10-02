@@ -10,12 +10,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -29,6 +27,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Collection;
@@ -41,6 +40,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
@@ -108,6 +108,7 @@ import org.quartz.SchedulerFactory;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
+
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
@@ -156,8 +157,10 @@ import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorAdicionais;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorSocio;
 import com.webnowbr.siscoat.cobranca.db.model.PesquisaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.PreAprovadoPDF;
+import com.webnowbr.siscoat.cobranca.db.model.PreAprovadoPDFDetalheDespesas;
 import com.webnowbr.siscoat.cobranca.db.model.QuitacaoPDF;
 import com.webnowbr.siscoat.cobranca.db.model.QuitacaoParcelasPDF;
+import com.webnowbr.siscoat.cobranca.db.model.RegistroImovelTabela;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.db.model.Segurado;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankBaixa;
@@ -178,12 +181,13 @@ import com.webnowbr.siscoat.cobranca.db.op.GruposPagadoresDao;
 import com.webnowbr.siscoat.cobranca.db.op.IPCADao;
 import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
+import com.webnowbr.siscoat.cobranca.db.op.RegistroImovelTabelaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.cobranca.db.op.SeguradoDAO;
+import com.webnowbr.siscoat.cobranca.db.op.StarkBankBaixaDAO;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
 import com.webnowbr.siscoat.cobranca.service.BigDataService;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
-import com.webnowbr.siscoat.cobranca.db.op.StarkBankBaixaDAO;
 import com.webnowbr.siscoat.cobranca.service.EngineService;
 import com.webnowbr.siscoat.cobranca.service.FileService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
@@ -217,8 +221,6 @@ import com.webnowbr.siscoat.simulador.SimulacaoIPCADadosV2;
 import com.webnowbr.siscoat.simulador.SimulacaoVO;
 import com.webnowbr.siscoat.simulador.SimuladorMB;
 
-import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
-import br.com.galleriabank.netrin.cliente.model.PPE.PpeResponse;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -6372,7 +6374,7 @@ public class ContratoCobrancaMB {
 			cpf = con.getPagador().getCnpj();
 		}
 		SimuladorMB simuladorMB = new SimuladorMB();
-		simuladorMB.clearFields();		
+		simuladorMB.clearFields();
 		if (con.getPagador() != null) {
 			simuladorMB.setTipoPessoa("PF");
 		} else {
@@ -6394,16 +6396,65 @@ public class ContratoCobrancaMB {
 		simuladorMB.setIpcaSimulado(BigDecimal.ZERO);
 		simuladorMB.simular();
 		SimulacaoVO simulador = simuladorMB.getSimulacao();
-		
+
 		BigDecimal parcelaPGTO = simulador.getParcelas().get(2).getValorParcela();
 		BigDecimal rendaMinima = parcelaPGTO.divide(BigDecimal.valueOf(0.3), MathContext.DECIMAL128);
 
+		String cep = con.getImovel().getCep();
+		
+		BigInteger carencia = BigInteger.ONE.add(CommonsUtil.bigIntegerValue(con.getCarenciaComite()))
+				.multiply(CommonsUtil.bigIntegerValue(30));
+		BigDecimal despesa = BigDecimal.ZERO;
+		BigDecimal valorCustoEmissao = BigDecimal.ZERO;
+		BigDecimal valorIOF = BigDecimal.ZERO;
+		
+		BigDecimal valorLiquido = BigDecimal.ZERO;
+		List<PreAprovadoPDFDetalheDespesas> detalhesDespesas = new ArrayList<>();
+
+		detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Debitos de IPTU", "Se existir"));
+		List<String> ImoveisComCondominio = Arrays.asList("Casa de Condomínio", "Apartamento", "Terreno de Condomínio",
+				"Sala Comercial", "Prédio Comercial", "Prédio Misto");
+
+		if (ImoveisComCondominio.contains(con.getImovel().getTipo()))
+			detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Debitos de Condomínio", "Se existir"));
+
+		RegistroImovelTabelaDao rDao = new RegistroImovelTabelaDao();
+		final BigDecimal valorRegistro = rDao.getValorRegistro(objetoCcb.getValorCredito());
+
+		List<RegistroImovelTabela> registroImovelTabela = rDao.findAll();
+		Optional<RegistroImovelTabela> registroImovel = registroImovelTabela.stream()
+				.sorted((o1, o2) -> o1.getTotal().compareTo(o2.getTotal()))
+				.filter(a -> a.getTotal().compareTo(valorRegistro) == 1).findFirst();
+		
+		if (registroImovel.isPresent()) {
+			despesa.add(registroImovel.get().getTotal());
+			detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Custas Estimada Para Registro",
+					CommonsUtil.formataValorMonetario(registroImovel.get().getTotal(), "")));
+		}
+
+		despesa.add(con.getValorLaudoPajuFaltante());
+		detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Laudo + Paracer Juridico",
+				CommonsUtil.formataValorMonetario(con.getValorLaudoPajuFaltante(), "")));
+
+		for (CcbProcessosJudiciais processo : con.getListProcessos().stream()
+				.filter(p -> p.isSelecionadoComite() && p.getQuitar().contains("Quitar"))
+				.collect(Collectors.toList())) {
+			despesa.add(processo.getValor());
+			detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Processo Nº " + processo.getNumero(),
+					CommonsUtil.formataValorMonetario(processo.getValor(), "")));
+		}
+
+		valorLiquido = con.getValorAprovadoComite().subtract(despesa);
+
+		// adicionar cep e carencia ( 1 + carencia * 30 )
 		PreAprovadoPDF documento = new PreAprovadoPDF(con.getPagador().getNome(), con.getDataContrato(),
 				con.getNumeroContrato(), cpf, con.getTaxaAprovada(), con.getProcessosQuitarComite(),
 				con.getImovel().getCidade(), con.getImovel().getNumeroMatricula(), con.getImovel().getEstado(),
 				con.getPrazoMaxAprovado().toString(), con.getValorAprovadoComite(), con.getValorMercadoImovel(),
-				parcelaPGTO, con.getTipoValorComite());
+				parcelaPGTO, con.getTipoValorComite(), cep, carencia, despesa,
+				valorCustoEmissao, valorIOF , valorLiquido, detalhesDespesas);
 		list.add(documento);
+		
 		final JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(list);
 		return JasperFillManager.fillReport(rptSimulacao, parameters, dataSource);
 	}
@@ -20724,15 +20775,12 @@ public class ContratoCobrancaMB {
 		// de Laudo e a garantia não for imóvel comercial,
 		// terreno ou chácara, operação pode ser aprovada com apenas 1 voto
 		if (!CommonsUtil.semValor(contrato.getAvaliacaoEngenharia())
-				&& !CommonsUtil.semValor(contrato.getAvaliacaoEquipeLaudo())) {
-			if (CommonsUtil.mesmoValor(contrato.getAvaliacaoEngenharia(), "Bom")
-					&& CommonsUtil.mesmoValor(contrato.getAvaliacaoEquipeLaudo(), "Bom")) {
-				if (!CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Prédio Comercial")
-						&& !CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Sala Comercial")
-						&& !CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Terreno")
-						&& !CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Chácara")) {
-					return BigInteger.valueOf(1);
-				}
+				&& CommonsUtil.mesmoValor(contrato.getAvaliacaoEngenharia(), "Bom")) {
+			if (!CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Prédio Comercial")
+					&& !CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Sala Comercial")
+					&& !CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Terreno")
+					&& !CommonsUtil.mesmoValor(contrato.getImovel().getTipo(), "Chácara")) {
+				return BigInteger.valueOf(1);
 			}
 		}
 
