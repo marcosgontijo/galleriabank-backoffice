@@ -6358,12 +6358,18 @@ public class ContratoCobrancaMB {
 	public JasperPrint geraPDFPAprovadoComite(long idContrato) throws JRException, IOException {
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 		final ReportUtil ReportUtil = new ReportUtil();
-		JasperReport rptSimulacao = ReportUtil.getRelatorio("AprovadoComitePDF");
-		InputStream logoStream = getClass().getResourceAsStream("/resource/timbrado aprovadoComite.png");
-
+		JasperReport rptSimulacao = ReportUtil.getRelatorio("AprovadoComitePDFN");
+		InputStream logoStream = getClass().getResourceAsStream("/resource/novoCreditoAprovado.png");
+		InputStream rodapeStream = getClass().getResourceAsStream("/resource/novoCreditoAprovadoRodape.png");
+		JasperReport rptDetalhe = ReportUtil.getRelatorio("AprovadoComitePDFNDetalhe");
+		
+		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("REPORT_LOCALE", new Locale("pt", "BR"));
+
+		parameters.put("SUBREPORT_DETALHE_DESPESA", rptDetalhe);
 		parameters.put("IMAGEMFUNDO", IOUtils.toByteArray(logoStream));
+		parameters.put("IMAGEMRODAPE", IOUtils.toByteArray(rodapeStream));
 
 		List<PreAprovadoPDF> list = new ArrayList<PreAprovadoPDF>();
 		ContratoCobranca con = cDao.findById(idContrato);
