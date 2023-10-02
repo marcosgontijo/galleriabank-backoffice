@@ -13393,54 +13393,38 @@ public class ContratoCobrancaMB {
 			} else if (CommonsUtil.mesmoValor(c.getStatus(), "Desistência Cliente")) {
 				c.setStatus("Reprovado");
 			} else {
-
-				if (!CommonsUtil.semValor(c.getStatusLead())) {
+				if (CommonsUtil.semValor(c.getStatusLead())) {
+					c.setStatus("Não Definido");
+					continue;
+				} else if (!c.getStatusLead().equals("Completo")) {
 					if (c.getStatusLead().equals("Novo Lead")) {
 						c.setStatus("Novo Lead");
-					}
-
-					if (c.getStatusLead().equals("Em Tratamento")) {
+					} else if (c.getStatusLead().equals("Em Tratamento")) {
 						c.setStatus("Lead em Tratamento");
-					}
-
-					if (c.getStatusLead().equals("Ag. Contato")) {
+					} else if (c.getStatusLead().equals("Ag. Contato")) {
 						c.setStatus("Lead Ag. Contato");
-					}
-
-					if (c.getStatusLead().equals("Ag. Doc.")) {
+					} else if (c.getStatusLead().equals("Ag. Doc.")) {
 						c.setStatus("Lead Ag. Doc.");
-					}
-
-					if (c.getStatusLead().equals("Reprovado")) {
+					} else if (CommonsUtil.mesmoValor(c.getStatusLead(), "Reprovado")) {
 						c.setStatus("Lead Reprovado");
-					}
-
-					if (c.getStatusLead().equals("Completo") && !c.isInicioAnalise()) {
-						c.setStatus("Ag. Análise");
-					}
-
-					if (c.getStatusLead().equals("Arquivado")) {
+					} else if (c.getStatusLead().equals("Arquivado")) {
 						c.setStatus("Lead Arquivado");
 					}
-
-				} else {
-					c.setStatus("Não Definido");
+					continue;
 				}
+				
+				c.setStatus("Lead Completo");				
+				
+				if (!c.isInicioAnalise()) 
+					c.setStatus("Ag. Análise");				
 
-				if (c.isInicioAnalise()) {
-					c.setStatus("Em Análise");
-				}
+				if (c.isInicioAnalise()) 
+					c.setStatus("Em Análise");				
 
 				if (c.getCadastroAprovadoValor() != null) {
-					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")) {
-						c.setStatus("Em Análise");
-					}
-
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Pendente")) {
 						c.setStatus("Análise Pendente");
-					}
-
-					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")) {
+					} else if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")) {
 						c.setStatus("Análise Pré-Aprovada");
 					}
 

@@ -132,8 +132,10 @@
 				</h:panelGroup>
 			
 				<h:panelGrid columns="3">	
-					<p:commandButton action="#{netrinMB.criarPedido}" ajax="false"
-						icon="ui-icon ui-icon-print" value="Fazer Pedido"  update=":form  msgs" />		
+					<p:commandButton action="#{netrinMB.criarPedidoJob}" ajax="true"
+						icon="ui-icon ui-icon-print" value="Fazer Pedido"  update=":form  msgs"
+						widgetVar="executeBtnNetrin" onclick="executeBtnNetrin.disable()" 
+						disabled="#{netrinMB.checkConsultasCertidoes()}" /> />		
 						
 					<p:commandButton value="Voltar p/ Contrato" action="#{contratoCobrancaMB.clearFieldsEditarPendentesAnalistas}" 
 						ajax="false" icon="ui-icon-pencil" title="Editar" rendered="#{netrinMB.contratoCobranca ne null}">
