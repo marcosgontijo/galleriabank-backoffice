@@ -22,29 +22,76 @@
 		<variableExpression><![CDATA["12.34"]]></variableExpression>
 	</variable>
 	<detail>
-		<band height="33" splitType="Stretch">
+		<band height="25" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<printWhenExpression><![CDATA[new Boolean(($V{COLUMN_COUNT}.intValue() % 2) != 0)]]></printWhenExpression>
+			<rectangle>
+				<reportElement mode="Opaque" x="40" y="0" width="507" height="25" backcolor="#F2F2F2" uuid="5bf3c9bf-37b4-4405-906d-13e424aaab0b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineColor="rgba(0, 0, 0, 0.0)"/>
+				</graphicElement>
+			</rectangle>
 			<textField>
-				<reportElement x="399" y="0" width="148" height="30" forecolor="#FFFFFF" uuid="3a3e7a4b-e7bc-4ca4-8ce6-0550e8026fd2">
+				<reportElement x="399" y="0" width="148" height="25" forecolor="#000000" uuid="3a3e7a4b-e7bc-4ca4-8ce6-0550e8026fd2">
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
 					<pen lineColor="#FFFFFF"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="14" isBold="true"/>
+					<font fontName="SansSerif" size="14" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{valor}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="40" y="0" width="348" height="30" forecolor="#FFFFFF" uuid="56553443-fafe-4454-94f0-ec61ba2792f3">
+				<reportElement x="40" y="0" width="348" height="25" forecolor="#000000" uuid="56553443-fafe-4454-94f0-ec61ba2792f3">
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<box>
 					<pen lineColor="#FFFFFF"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="14" isBold="true"/>
+					<font fontName="SansSerif" size="14" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{descricao}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="25">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<printWhenExpression><![CDATA[new Boolean(($V{COLUMN_COUNT}.intValue() % 2) == 0)]]></printWhenExpression>
+			<rectangle>
+				<reportElement mode="Opaque" x="40" y="0" width="507" height="25" backcolor="#BEBEBE" uuid="715ab86f-929b-4602-a27e-b94fbca7a539">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineColor="rgba(0, 0, 0, 0.0)"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement x="399" y="0" width="148" height="25" forecolor="#000000" uuid="4a4cc08b-75d6-4616-a98d-0d223dc32602">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="14" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="40" y="0" width="348" height="25" forecolor="#000000" uuid="ba8db126-ab45-45c4-b1d4-3f2bbfff960f">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="14" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{descricao}]]></textFieldExpression>
 			</textField>
