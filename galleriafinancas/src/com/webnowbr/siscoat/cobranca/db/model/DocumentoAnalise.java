@@ -632,6 +632,8 @@ public class DocumentoAnalise implements Serializable {
 	}
 	
 	public void adicionaEstados(List<String> estados) {
+		if(CommonsUtil.semValor(estados))
+			return;
 		for (String estado : estados) {
 			adicionaEstados(estado);
 		}

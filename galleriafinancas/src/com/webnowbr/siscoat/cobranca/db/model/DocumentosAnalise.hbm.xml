@@ -149,6 +149,14 @@
             </key>
             <one-to-many class="com.webnowbr.siscoat.cobranca.ws.netrin.NetrinConsulta" />
         </set>
+        
+        <set name="docketConsultas" table="DocketConsulta" cascade="merge"
+                 lazy="false" fetch="select">
+            <key>
+                <column name="documentoAnalise" not-null="true" />
+            </key>
+            <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.DocketConsulta" />
+        </set>
 						
     </class>
 </hibernate-mapping>

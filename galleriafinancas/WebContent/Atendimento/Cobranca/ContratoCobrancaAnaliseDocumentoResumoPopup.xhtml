@@ -358,9 +358,9 @@
 		                rowsPerPageTemplate="20,40,100,140">
 						
 						<p:column style="text-align: center;" headerText="Identificação"
-							filterBy="#{docketConsulta.nomeCompleto}"
-							filterMatchMode="contains" sortBy="#{docketConsulta.nomeCompleto}">
-							<h:outputText value="#{docketConsulta.nomeCompleto}"/>
+							filterBy="#{docketConsulta.docketDocumentos.documentoNome}"
+							filterMatchMode="contains" sortBy="#{docketConsulta.docketDocumentos.documentoNome}">
+							<h:outputText value="#{docketConsulta.docketDocumentos.documentoNome}"/>
 						</p:column>
 						
 						<p:column style="text-align: center;width: 100px;" headerText="Status"
