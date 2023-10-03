@@ -88,7 +88,8 @@ public class NetrinService {
 			String response = netrinCriarExecutaConsultaCenprot(cnpjcpf);
 			try {
 				CenprotResponse retornoCenprot = GsonUtil.fromJson(response, CenprotResponse.class);
-				documentoAnalise.adicionaEstados(CommonsUtil.stringToList(retornoCenprot.getEstados()));
+				if(!CommonsUtil.semValor(retornoCenprot))
+					documentoAnalise.adicionaEstados(CommonsUtil.stringToList(retornoCenprot.getEstados()));	
 			} catch (Exception e){
 				e.printStackTrace();
 			}

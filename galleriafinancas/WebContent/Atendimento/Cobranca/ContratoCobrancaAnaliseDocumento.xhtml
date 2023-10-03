@@ -154,6 +154,25 @@
 							filterMatchMode="contains">
 							<h:outputText value="#{fileAnalise.observacao}" />
 						</p:column>
+						
+						<p:column style="text-align: center; width:95px;padding: 0; border:0; " headerText="Estados">
+							<p:dataList id="estadosList" value="#{fileAnalise.estadosConsulta}" var="estado"  type="definition">
+								<h:panelGroup>
+									<p:commandButton icon="ui-icon ui-icon-trash" 
+										action="#{fileAnalise.removerEstado(estado)}"
+										ajax="true" update="estadosList" />
+									<h:outputText value=" #{estado}"  />
+								</h:panelGroup>
+							</p:dataList>
+							<p:commandButton value="+"
+								onclick="PF('estadoDialog').show()"
+								update="estadoDialogdlg"
+								style="padding: 0; border:0; ">
+								<f:setPropertyActionListener value="#{fileAnalise}"
+									target="#{contratoCobrancaMB.documentoAnalisePopup}">
+								</f:setPropertyActionListener>
+							</p:commandButton>
+						</p:column>
 
 						<p:column style="text-align: center;" headerText="Situação"
 							filterMatchMode="contains">

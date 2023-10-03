@@ -114,7 +114,6 @@ public class DocumentoAnalise implements Serializable {
 	private int totalProtestos = 0;
 	private int numeroParticipacaoEmpresas = 0;
 	private FileUploaded file;
-	
 
 	public List<DocumentoAnaliseResumo> getResumoProcesso() {
 		List<DocumentoAnaliseResumo> vProcesso = new ArrayList<>();
@@ -340,7 +339,6 @@ public class DocumentoAnalise implements Serializable {
 		}
 	}
 
-
 	public List<DocumentoAnaliseResumo> getResumoCenprot() {
 		List<DocumentoAnaliseResumo> cenprot = new ArrayList<>();
 
@@ -430,6 +428,7 @@ public class DocumentoAnalise implements Serializable {
 
 		return scr;
 	}
+
 	public boolean isPodeChamarRea() {
 		return isReaNaoEnviado() && CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
 	}
@@ -539,7 +538,6 @@ public class DocumentoAnalise implements Serializable {
 
 		return  CommonsUtil.mesmoValor(observacao, "Verificar Engine");
 	}
-
 	
 	public void addObservacao(String observacao) {
 
@@ -634,15 +632,26 @@ public class DocumentoAnalise implements Serializable {
 	}
 	
 	public void adicionaEstados(List<String> estados) {
+		if(CommonsUtil.semValor(estados))
+			return;
 		for (String estado : estados) {
 			adicionaEstados(estado);
 		}
 	}
 	
 	public void adicionaEstados(String estado) {
-		if(!getEstadosConsulta().contains(estado)) {
-			getEstadosConsulta().add(estado);
-			estadosConsultaStr = getEstadosConsulta().toString();
+		if(!CommonsUtil.semValor(estado) && !getEstadosConsulta().contains(estado)) {
+			List<String> aux = getEstadosConsulta();
+			aux.add(estado);
+			estadosConsultaStr = aux.toString();
+		}
+	}
+	
+	public void removerEstado(String estado) {
+		if(!CommonsUtil.semValor(estado) && getEstadosConsulta().contains(estado)) {
+			List<String> aux = getEstadosConsulta();
+			aux.remove(estado);
+			estadosConsultaStr = aux.toString();
 		}
 	}
 	
