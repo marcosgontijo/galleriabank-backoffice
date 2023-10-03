@@ -357,6 +357,7 @@ public class ContratoCobrancaMB {
 	private boolean gerenciaStatus;
 	private boolean addPessoaAnalise;
 	private DocumentoAnalise documentoAnalisePopup;
+	private String estadoConsultaAdd;
 
 	/** Lista dos Pagadores utilizada pela LOV. */
 	private List<PagadorRecebedor> listPagadores;
@@ -6407,22 +6408,23 @@ public class ContratoCobrancaMB {
 		BigDecimal rendaMinima = parcelaPGTO.divide(BigDecimal.valueOf(0.3), MathContext.DECIMAL128);
 
 		String cep = con.getImovel().getCep();
+		String  observacao = con.getProcessosQuitarComite();
 		
 		BigInteger carencia = BigInteger.ONE.add(CommonsUtil.bigIntegerValue(con.getCarenciaComite()))
 				.multiply(CommonsUtil.bigIntegerValue(30));
 		BigDecimal despesa = BigDecimal.ZERO;
-		BigDecimal valorCustoEmissao = BigDecimal.ZERO;
-		BigDecimal valorIOF = BigDecimal.ZERO;
+		
+		BigDecimal valorIOF = simulador.getValorTotalIOF();
 		
 		BigDecimal valorLiquido = BigDecimal.ZERO;
 		List<PreAprovadoPDFDetalheDespesas> detalhesDespesas = new ArrayList<>();
 
-		detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Debitos de IPTU", "Se existir"));
+		detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Debitos de IPTU", "Se houver"));
 		List<String> ImoveisComCondominio = Arrays.asList("Casa de Condomínio", "Apartamento", "Terreno de Condomínio",
-				"Sala Comercial", "Prédio Comercial", "Prédio Misto");
+				"Sala Comercial");
 
 		if (ImoveisComCondominio.contains(con.getImovel().getTipo()))
-			detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Debitos de Condomínio", "Se existir"));
+			detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Debitos de Condomínio", "Se houver"));
 
 		RegistroImovelTabelaDao rDao = new RegistroImovelTabelaDao();
 		final BigDecimal valorRegistro = rDao.getValorRegistro(con.getValorAprovadoComite());
@@ -6433,28 +6435,40 @@ public class ContratoCobrancaMB {
 				.filter(a -> a.getTotal().compareTo(valorRegistro) == 1).findFirst();
 		
 		if (registroImovel.isPresent()) {
-			despesa.add(registroImovel.get().getTotal());
+			despesa = despesa.add(registroImovel.get().getTotal());
 			detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Custas Estimada Para Registro",
-					CommonsUtil.formataValorMonetario(registroImovel.get().getTotal(), "")));
+					CommonsUtil.formataValorMonetario(registroImovel.get().getTotal(), "R$ ")));
 		}
-
-		despesa.add(con.getValorLaudoPajuFaltante());
-		detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Laudo + Paracer Juridico",
-				CommonsUtil.formataValorMonetario(con.getValorLaudoPajuFaltante(), "")));
+		
+		BigDecimal valorCustoEmissao = simulador.getCustoEmissaoValor();
+		despesa = despesa.add(valorCustoEmissao);
+//		detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Custo de Emissão", 
+//				CommonsUtil.formataValorMonetario(valorCustoEmissao, "R$ ")));
+		
+		despesa = despesa.add(con.getValorLaudoPajuFaltante());
+		detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Laudo + Parecer Juridico",
+				CommonsUtil.formataValorMonetario(con.getValorLaudoPajuFaltante(), "R$ ")));
 
 		for (CcbProcessosJudiciais processo : con.getListProcessos().stream()
 				.filter(p -> p.isSelecionadoComite() && p.getQuitar().contains("Quitar"))
 				.collect(Collectors.toList())) {
-			despesa.add(processo.getValor());
+			
+			String retiraObservaco = processo.getNumero() + " - "
+			+ CommonsUtil.formataValorMonetario(processo.getValor(), "R$ ") + "\n";
+			
+			observacao = observacao.replace( retiraObservaco, "");
+			despesa = despesa.add(processo.getValor());
 			detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Processo Nº " + processo.getNumero(),
-					CommonsUtil.formataValorMonetario(processo.getValor(), "")));
+					CommonsUtil.formataValorMonetario(processo.getValor(), "R$ ")));
+			
+			
 		}
 
 		valorLiquido = con.getValorAprovadoComite().subtract(despesa);
 
 		// adicionar cep e carencia ( 1 + carencia * 30 )
 		PreAprovadoPDF documento = new PreAprovadoPDF(con.getPagador().getNome(), con.getDataContrato(),
-				con.getNumeroContrato(), cpf, con.getTaxaAprovada(), con.getProcessosQuitarComite(),
+				con.getNumeroContrato(), cpf, con.getTaxaAprovada(), observacao,
 				con.getImovel().getCidade(), con.getImovel().getNumeroMatricula(), con.getImovel().getEstado(),
 				con.getPrazoMaxAprovado().toString(), con.getValorAprovadoComite(), con.getValorMercadoImovel(),
 				parcelaPGTO, con.getTipoValorComite(), cep, carencia, despesa,
@@ -19679,13 +19693,15 @@ public class ContratoCobrancaMB {
 			comentarioComiteFinal += comite.getUsuarioComite() + ": " + comite.getComentarioComite() + "  //  ";
 		}
 
-		for (CcbProcessosJudiciais processo : contrato.getListProcessos()) {
-			if (!processo.isSelecionadoComite()) {
-				continue;
-			}
-			contrato.setProcessosQuitarComite(contrato.getProcessosQuitarComite() + processo.getNumero() + " - "
-					+ CommonsUtil.formataValorMonetario(processo.getValor(), "R$ ") + "\n");
-		}
+//		não  precisa mais incluir para sair na ficha do cliente
+//		for (CcbProcessosJudiciais processo : contrato.getListProcessos()) {
+//			if (!processo.isSelecionadoComite()) {
+//				continue;
+//			}
+//			contrato.setProcessosQuitarComite(contrato.getProcessosQuitarComite() + processo.getNumero() + " - "
+//					+ CommonsUtil.formataValorMonetario(processo.getValor(), "R$ ") + "\n");
+//		}
+		
 		contrato.setTaxaAprovada(maiorTaxaAprovada);
 		contrato.setTipoValorComite(menorValorAprovadoTipo);
 		contrato.setComentarioComite(comentarioComiteFinal);
@@ -30916,6 +30932,7 @@ public class ContratoCobrancaMB {
 			documentoAnalise.setPath(pathContrato + event.getFile().getFileName());
 			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.REA);
 			documentoAnalise.setLiberadoAnalise(true);
+			documentoAnalise.adiconarEstadosPeloCadastro();
 			documentoAnaliseDao.create(documentoAnalise);
 			// atualiza lista de arquivos contidos no diretório
 
@@ -31197,6 +31214,12 @@ public class ContratoCobrancaMB {
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 		documentoAnaliseDao.merge(documentoAnaliseAdicionar);
 		listaArquivosAnaliseDocumentos();
+	}
+	
+	public void adicionaEstado() {
+		documentoAnalisePopup.adicionaEstados(estadoConsultaAdd);
+		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+		documentoAnaliseDao.merge(documentoAnalisePopup);
 	}
 
 	public List<DocumentoAnalise> getListaDocumentoAnalise() {
@@ -33744,5 +33767,13 @@ public class ContratoCobrancaMB {
 	
 	public boolean hasLaudo() {
 		return (laudoEndereco != "") ? true : false;	
+	}
+
+	public String getEstadoConsultaAdd() {
+		return estadoConsultaAdd;
+	}
+
+	public void setEstadoConsultaAdd(String estadoConsultaAdd) {
+		this.estadoConsultaAdd = estadoConsultaAdd;
 	}
 }
