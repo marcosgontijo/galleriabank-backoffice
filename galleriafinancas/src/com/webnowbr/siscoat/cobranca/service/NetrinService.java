@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -1764,7 +1765,12 @@ public class NetrinService {
 			}
 			netrinConsulta.setDataConsulta(DateUtil.gerarDataHoje());
 			netrinConsulta.setUsuario(user);
-			netrinConsultaDao.create(netrinConsulta);
+			netrinConsulta.setStatus("Consulta Concluída");
+			if(netrinConsulta.getId() <=0) {
+				netrinConsultaDao.create(netrinConsulta);
+			} else {
+				netrinConsultaDao.merge(netrinConsulta);
+			}
 			return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
 		} catch (Exception e) {
 			return new FacesMessage(FacesMessage.SEVERITY_ERROR, 
@@ -1837,5 +1843,61 @@ public class NetrinService {
 		nomedoc = "CNDT TST";
 		FileService fileService = new FileService();
 		fileService.salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
+	}
+	
+	public void atualizaRetorno(List<DocumentoAnalise> listDocAnalise) {
+		for(DocumentoAnalise docAnalise : listDocAnalise) {
+			if(CommonsUtil.semValor(docAnalise.getNetrinConsultas()) 
+				|| docAnalise.getNetrinConsultas().size() <= 0) 
+				continue;
+			for(NetrinConsulta netrin : docAnalise.getNetrinConsultas()) {
+				atualizaRetornoCertidaoNetrin(netrin);
+			}
+		}
+		return;
+	}
+	
+	public void atualizaRetornoCertidaoNetrin(NetrinConsulta netrin) {
+		NetrinConsultaDao netrinConsultaDao = new NetrinConsultaDao();
+		String retorno;
+		String nomedoc = "";
+		if(!CommonsUtil.semValor(netrin.getRetorno()) && !CommonsUtil.semValor(netrin.getPdf())) {
+			netrin.setStatus("Consulta Concluída");
+			netrinConsultaDao.merge(netrin);
+			return;
+		} else if(!CommonsUtil.semValor(netrin.getRetorno())) {
+			retorno = netrin.getRetorno();
+		} else {
+			netrin.setStatus("Falha: Consulta Sem Retorno. Favor Consultar Novamente");
+			netrinConsultaDao.merge(netrin);
+			return;
+		}
+		if(retorno.contains("urlComprovante")) {
+			String url = netrin.getNetrinDocumentos().getUrlService();
+			String pdf = null;
+			if (CommonsUtil.mesmoValor(url, "/api/v1/processo")) {
+				pdf = baixarDocumentoProcesso(retorno);
+				nomedoc = "Consulta Processual";
+			} else if (CommonsUtil.mesmoValor(url, "/api/v1/CNDEstadual")) {
+				pdf = baixarDocumentoCNDEstadual(retorno);
+				nomedoc = "CND Estadual " +  netrin.getUf().toUpperCase();
+			} else if (CommonsUtil.mesmoValor(url, "/api/v1/CNDFederal")) {
+				pdf = baixarDocumentoCNDFederal(retorno);
+				nomedoc = "CND Federal";
+			} else if (CommonsUtil.mesmoValor(url, "/api/v1/CNDTrabalhistaTST")) {
+				pdf = baixarDocumentoCNDTrabalhistaTST(retorno);
+				nomedoc = "CNDT TST";
+			}
+			netrin.setPdf(pdf);
+			netrin.setStatus("Consulta Concluída");
+		} else {
+			netrin.setStatus("Falha: Retorno sem pdf");
+			netrinConsultaDao.merge(netrin);
+			return;
+		}
+		netrinConsultaDao.merge(netrin);
+		String base64 = netrin.getPdf();
+		FileService fileService = new FileService();
+		fileService.salvarPdfRetorno(netrin.getDocumentoAnalise(), base64, nomedoc, "interno");
 	}
 }

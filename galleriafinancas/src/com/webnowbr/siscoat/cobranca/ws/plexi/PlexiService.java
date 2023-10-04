@@ -9,20 +9,18 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 import javax.faces.application.FacesMessage;
-import javax.ws.rs.core.Response;
 
 import org.json.JSONObject;
 
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.service.FileService;
-import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
-import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
 
 import br.com.galleriabank.jwt.common.JwtUtil;
@@ -85,7 +83,11 @@ public class PlexiService {
 				plexiCosulta.setUsuario(usuarioLogado);
 				plexiCosulta.setDataConsulta(DateUtil.gerarDataHoje());
 				plexiCosulta.setStatus("Aguardando Retorno");
-				plexiDao.create(plexiCosulta);
+				if(plexiCosulta.getId() <=0) {
+					plexiDao.create(plexiCosulta);
+				} else {
+					plexiDao.merge(plexiCosulta);
+				}
 				
 				result = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
 			}
@@ -143,31 +145,44 @@ public class PlexiService {
 		return retorno;
 	}
 	
-	public void atualizaRetornoPlexi(String requestId) {
-		JSONObject webhookObject = getRetornoPlexi(requestId);
-		if(CommonsUtil.semValor(webhookObject)) {
+	public void atualizaRetorno(List<DocumentoAnalise> listDocAnalise) {
+		for(DocumentoAnalise docAnalise : listDocAnalise) {
+			if(CommonsUtil.semValor(docAnalise.getPlexiConsultas()) 
+				|| docAnalise.getPlexiConsultas().size() <= 0) 
+				continue;
+			for(PlexiConsulta plexi : docAnalise.getPlexiConsultas()) {
+				if(CommonsUtil.semValor(plexi.getRequestId()))
+					continue;
+				atualizaRetornoPlexi(plexi);
+			}
+		}
+		return;
+	}
+	
+	public void atualizaRetornoPlexi(PlexiConsulta plexi) {
+		JSONObject webhookObject;
+		String requestId = plexi.getRequestId();
+		if(!CommonsUtil.semValor(plexi.getWebhookRetorno()) && !CommonsUtil.semValor(plexi.getPdf())) {
 			return;
-		}
-		webhookObject.put("requestId", requestId);
-		PlexiConsultaDao plexiConsultaDao = new PlexiConsultaDao();
-		if(!webhookObject.has("requestId")) {
-			return;
-		}
-		PlexiConsulta plexiConsulta = plexiConsultaDao.findByFilter("requestId", 
-				webhookObject.getString("requestId"))
-				.stream().findFirst().orElse(null);
-		
-		if(CommonsUtil.semValor(plexiConsulta)) {
-			System.out.println("Erro Plexi: " + webhookObject.getString("requestId"));
+		} else if(!CommonsUtil.semValor(plexi.getWebhookRetorno())) {
+			webhookObject = new JSONObject(plexi.getWebhookRetorno());
+		} else {
+			webhookObject = getRetornoPlexi(requestId);
+			if(CommonsUtil.semValor(webhookObject)) {
+				return;
+			}
 		}
 		
-		plexiConsulta.setWebhookRetorno(webhookObject.toString());
+		if(!webhookObject.has("requestId")) 
+			webhookObject.put("requestId", requestId);	
+		plexi.setWebhookRetorno(webhookObject.toString());
 		if(webhookObject.has("pdf")) {
-			plexiConsulta.setPdf(webhookObject.getString("pdf"));
-			//salvarPdfRetorno(plexiConsulta, plexiConsultaDao);
+			plexi.setPdf(webhookObject.getString("pdf"));
 		}
-		plexiConsulta.setStatus("Consulta Concluída");
-		plexiConsultaDao.merge(plexiConsulta);
+		plexi.setStatus("Consulta Concluída");
+		PlexiConsultaDao plexiConsultaDao = new PlexiConsultaDao();
+		plexiConsultaDao.merge(plexi);
+		salvarPdfRetornoPlexi(plexi);
 	}
 
 	public JSONObject getJsonSucesso(InputStream inputStream) {
@@ -198,10 +213,20 @@ public class PlexiService {
 		return null;
 	}
 	
+	public void salvarPdfRetornoPlexi(PlexiConsulta plexiConsulta) {
+		PlexiConsultaDao plexiConsultaDao = new PlexiConsultaDao();
+		salvarPdfRetornoPlexi(plexiConsulta, plexiConsultaDao);
+	}
+	
 	public void salvarPdfRetornoPlexi(PlexiConsulta plexiConsulta, PlexiConsultaDao plexiConsultaDao) {
+		FileService fileService = new FileService();
+		if(!CommonsUtil.semValor(plexiConsulta.getDocumentoAnalise())) {
+			fileService.salvarPdfRetorno(plexiConsulta.getDocumentoAnalise(),
+					plexiConsulta.getPdf(), plexiConsulta.getNomeCompleto(), "interno");
+			return;
+		}
 		String nomeAnalise = plexiConsultaDao.getNomeAnalise(plexiConsulta);
 		String numeroContrato = plexiConsultaDao.getNumeroContratoAnalise(plexiConsulta);
-		FileService fileService = new FileService();
 		fileService.salvarPdfRetorno(nomeAnalise, numeroContrato, plexiConsulta.getPdf(), plexiConsulta.getNomeCompleto(), "interno");
 	}
 }

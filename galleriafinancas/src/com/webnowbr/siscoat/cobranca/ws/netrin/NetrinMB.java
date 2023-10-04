@@ -136,23 +136,36 @@ public class NetrinMB {
 	}
 	
 	public void criarPedidoJob() throws SchedulerException {
-		SchedulerFactory shedFact = new StdSchedulerFactory();
-		Scheduler scheduler = shedFact.getScheduler();
-		try {
-			scheduler.start();
-			JobDetail jobDetail = JobBuilder.newJob(CertidoesJob.class)
-					.withIdentity("certidoesJOB", contratoCobranca.getNumeroContrato() + "_netrin_" + etapa).build();
-			User user = loginBean.getUsuarioLogado();
-			jobDetail.getJobDataMap().put("listaDocumentoAnalise", listPagador);
-			jobDetail.getJobDataMap().put("user", user);
-			jobDetail.getJobDataMap().put("objetoContratoCobranca", contratoCobranca);
-			Trigger trigger = TriggerBuilder.newTrigger()
-					.withIdentity("certidoesJOB", contratoCobranca.getNumeroContrato() + "_netrin_" + etapa).startNow().build();
-			scheduler.scheduleJob(jobDetail, trigger);
-			FacesContext context = FacesContext.getCurrentInstance();
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta iniciada com sucesso", ""));
-		} catch (SchedulerException e) {
-			e.printStackTrace();
+		boolean podeChamar = true;
+		for (DocumentoAnalise docAnalise : listPagador) {
+			//atualizarDocumentos(docAnalise);
+			for (NetrinConsulta netrinConsulta : docAnalise.getNetrinConsultas()) {
+				netrinConsulta.populatePagadorRecebedor(docAnalise.getPagador());
+				podeChamar = netrinConsulta.verificaCamposDoc();
+				if (!podeChamar) {
+					break;
+				}
+			}
+		}
+		if(podeChamar) {
+			SchedulerFactory shedFact = new StdSchedulerFactory();
+			Scheduler scheduler = shedFact.getScheduler();
+			try {
+				scheduler.start();
+				JobDetail jobDetail = JobBuilder.newJob(CertidoesJob.class)
+						.withIdentity("certidoesJOB", contratoCobranca.getNumeroContrato() + "_netrin_" + etapa).build();
+				User user = loginBean.getUsuarioLogado();
+				jobDetail.getJobDataMap().put("listaDocumentoAnalise", listPagador);
+				jobDetail.getJobDataMap().put("user", user);
+				jobDetail.getJobDataMap().put("objetoContratoCobranca", contratoCobranca);
+				Trigger trigger = TriggerBuilder.newTrigger()
+						.withIdentity("certidoesJOB", contratoCobranca.getNumeroContrato() + "_netrin_" + etapa).startNow().build();
+				scheduler.scheduleJob(jobDetail, trigger);
+				FacesContext context = FacesContext.getCurrentInstance();
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta iniciada com sucesso", ""));
+			} catch (SchedulerException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -236,7 +249,7 @@ public class NetrinMB {
 	}
 	
 	public void removerPessoa(DocumentoAnalise docAnalise) {
-		docAnalise.getNetrinConsultas().clear();
+		//docAnalise.getNetrinConsultas().clear();
 		listPagador.remove(docAnalise);
 	}
 	

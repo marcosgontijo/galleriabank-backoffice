@@ -55,46 +55,34 @@ public class CertidoesJobConsultar {
 		for(DocumentoAnalise docAnalise : listaDocumentoAnalise) {
 			List<NetrinConsulta> consultasExistentes = new ArrayList<NetrinConsulta>();
 			List<NetrinConsulta> consultasExistentesDB = new ArrayList<NetrinConsulta>();
-			boolean podeChamar = true;
-			//atualizarDocumentos(docAnalise);
 			for(NetrinConsulta netrinConsulta : docAnalise.getNetrinConsultas()) {
-				netrinConsulta.populatePagadorRecebedor(docAnalise.getPagador());
 				List<NetrinConsulta> consultasExistentesRetorno = netrinConsultaDao.getConsultasExistentes(netrinConsulta);
 				if(consultasExistentesRetorno.size() > 0) {
-					//context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
-					//		netrinConsulta.getNetrinDocumentos().getNome() + " - " + netrinConsulta.getCpfCnpj() + ": Já existente", ""));
-					System.out.println("CertidoesJobConsultar WARN: " + netrinConsulta.getNetrinDocumentos().getNome() + " - " + netrinConsulta.getCpfCnpj() + ": Já existente");
+					System.out.println("CertidoesJobConsultar WARN: " + 
+						netrinConsulta.getNetrinDocumentos().getNome() + 
+						" - " + netrinConsulta.getCpfCnpj() + ": Já existente");
 					consultasExistentes.add(netrinConsulta);
 					consultasExistentesDB.add(consultasExistentesRetorno.get(0));
 					continue;
 				}
-				podeChamar = netrinConsulta.verificaCamposDoc();
-				if(!podeChamar) {
-					break;
-				}
 			}
-			
 			docAnalise.getNetrinConsultas().removeAll(consultasExistentes);
-			if(podeChamar) {
-				List<NetrinConsulta> consultasFalhadas = new ArrayList<NetrinConsulta>();
-				for(NetrinConsulta netrinConsulta : docAnalise.getNetrinConsultas()) {
-					if(!CommonsUtil.semValor(netrinConsulta.getRetorno())) {
-						continue;
-					}
-					FacesMessage facesMessage = netrinService.pedirConsulta(netrinConsulta, userConsulta);
-					if(CommonsUtil.semValor(facesMessage) || CommonsUtil.mesmoValor(facesMessage.getSeverity(), 
-							FacesMessage.SEVERITY_ERROR)) {
-						consultasFalhadas.add(netrinConsulta);
-					}
+			List<NetrinConsulta> consultasFalhadas = new ArrayList<NetrinConsulta>();
+			for(NetrinConsulta netrinConsulta : docAnalise.getNetrinConsultas()) {
+				if(!CommonsUtil.semValor(netrinConsulta.getRetorno())) {
+					continue;
 				}
-				docAnalise.getNetrinConsultas().removeAll(consultasFalhadas);
-				docAnalise.getNetrinConsultas().addAll(consultasExistentesDB);
-				DocumentoAnaliseDao docAnaliseDao = new DocumentoAnaliseDao(); 
-				docAnaliseDao.merge(docAnalise);
-				//context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", ""));
+				FacesMessage facesMessage = netrinService.pedirConsulta(netrinConsulta, userConsulta);
+				if(CommonsUtil.semValor(facesMessage) || CommonsUtil.mesmoValor(facesMessage.getSeverity(), 
+						FacesMessage.SEVERITY_ERROR)) {
+					consultasFalhadas.add(netrinConsulta);
+				}
 			}
+			docAnalise.getNetrinConsultas().removeAll(consultasFalhadas);
+			docAnalise.getNetrinConsultas().addAll(consultasExistentesDB);
+			DocumentoAnaliseDao docAnaliseDao = new DocumentoAnaliseDao(); 
+			docAnaliseDao.merge(docAnalise);
 		}
-	
 	}
 
 	@Override

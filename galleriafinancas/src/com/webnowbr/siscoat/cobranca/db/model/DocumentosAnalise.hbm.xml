@@ -25,7 +25,7 @@
 			<column name="engine" />
 		</many-to-one>		
 		
-			<many-to-one name="pagador" 
+		<many-to-one name="pagador" 
 			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
 			lazy="false">
 			<column name="pagador" />
@@ -134,13 +134,13 @@
 			<column name="estadosConsultaStr" />
 		</property>
 		
-		<list name="plexiConsultas"
-			table="DocumentoAnalise_PlexiConsultas_Join" cascade="all" lazy="false">
-			<key column="idDocumentoAnalise" />
-			<list-index></list-index>
-			<many-to-many column="idPlexiConsulta"
-				class="com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta" />
-		</list>
+		<set name="plexiConsultas" table="PlexiConsultas" cascade="merge"
+                 lazy="false" fetch="select">
+            <key>
+                <column name="documentoAnalise" not-null="true" />
+            </key>
+            <one-to-many class="com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta" />
+        </set>
 		
 		<set name="netrinConsultas" table="NetrinConsultas" cascade="merge"
                  lazy="false" fetch="select">

@@ -197,6 +197,7 @@ import com.webnowbr.siscoat.cobranca.service.ScrService;
 import com.webnowbr.siscoat.cobranca.service.SerasaService;
 import com.webnowbr.siscoat.cobranca.vo.FileGenerator;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
+import com.webnowbr.siscoat.cobranca.ws.plexi.PlexiService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
@@ -5694,10 +5695,7 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setDocumentosComiteData(gerarDataHoje());
 				this.objetoContratoCobranca
 						.setDataUltimaAtualizacao(this.objetoContratoCobranca.getDocumentosComiteData());
-				this.objetoContratoCobranca.setDocumentosComiteUsuario(getNomeUsuarioLogado());
-				// gerarVotoLaudo(this.objetoContratoCobranca);
-				this.objetoContratoCobranca
-						.setQtdeVotosNecessariosComite(definirQtdeVotoComite(this.objetoContratoCobranca));
+				this.objetoContratoCobranca.setDocumentosComiteUsuario(getNomeUsuarioLogado());				
 			}
 		}
 
@@ -9391,6 +9389,7 @@ public class ContratoCobrancaMB {
 					}
 				}
 			}
+			this.objetoContratoCobranca.setQtdeVotosNecessariosComite(definirQtdeVotoComite(this.objetoContratoCobranca));
 			gerarRecomendacaoComite();
 		}
 
@@ -33754,5 +33753,12 @@ public class ContratoCobrancaMB {
 
 	public void setEstadoConsultaAdd(String estadoConsultaAdd) {
 		this.estadoConsultaAdd = estadoConsultaAdd;
+	}
+	
+	public void testeAttCertidoes(List<DocumentoAnalise> listDocAnalise) {
+		PlexiService plexiService = new PlexiService();
+		plexiService.atualizaRetorno(listDocAnalise);
+		NetrinService netrinService = new NetrinService();
+		netrinService.atualizaRetorno(listDocAnalise);
 	}
 }

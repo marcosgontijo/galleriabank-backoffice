@@ -129,19 +129,19 @@ public class DocketMB {
 		List<DocketConsulta> listAux = new ArrayList<DocketConsulta>();
 		for (DocumentosDocket doc : docketDocumentos) {
 			DocketConsulta docketConsulta = null;
-			if (doc.getDocumentoNome().contains("Federal")) {
+			/*if (doc.getDocumentoNome().contains("Federal")) {
 				docketConsulta = new DocketConsulta(docAnalise, doc);
 				docketConsulta.setUf(contrato.getImovel().getEstado());
 				listAux.add(docketConsulta);
-			} else {
-				for (String uf : docAnalise.getEstadosConsulta()) {
-					if (doc.getEstados().contains(uf)) {
-						docketConsulta = new DocketConsulta(docAnalise, doc);
-						docketConsulta.setUf(uf);
-						listAux.add(docketConsulta);
-					}
+			} else {*/
+			for (String uf : docAnalise.getEstadosConsulta()) {
+				if (doc.getEstados().contains(uf)) {
+					docketConsulta = new DocketConsulta(docAnalise, doc);
+					docketConsulta.setUf(uf);
+					listAux.add(docketConsulta);
 				}
 			}
+			//}
 		}
 		for (DocketConsulta docketConsulta : listAux) {
 			DocketEstadosDao estadosDao = new DocketEstadosDao();
@@ -255,7 +255,7 @@ public class DocketMB {
 	}
 	
 	public void removerPessoa(DocumentoAnalise docAnalise) {
-		docAnalise.getDocketConsultas().clear();
+		//docAnalise.getDocketConsultas().clear();
 		listPagador.remove(docAnalise);
 	}
 	

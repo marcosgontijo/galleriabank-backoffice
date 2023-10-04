@@ -89,7 +89,8 @@ public class DocumentoAnalise implements Serializable {
 	private String retornoCNDFederal;
 	private String retornoCNDEstadual;
 	
-	private List<PlexiConsulta> plexiConsultas = new ArrayList<PlexiConsulta>();
+	//private List<PlexiConsulta> plexiConsultas = new ArrayList<PlexiConsulta>();
+	private Set<PlexiConsulta> plexiConsultas = new HashSet<>();
 	private Set<NetrinConsulta> netrinConsultas = new HashSet<>();
 	private Set<DocketConsulta> docketConsultas = new HashSet<>();
 	private List<String> estadosConsulta = new ArrayList<String>();
@@ -924,11 +925,11 @@ public class DocumentoAnalise implements Serializable {
 		this.excluido = excluido;
 	}
 	
-	public List<PlexiConsulta> getPlexiConsultas() {
+	public Set<PlexiConsulta> getPlexiConsultas() {
 		return plexiConsultas;
 	}
 
-	public void setPlexiConsultas(List<PlexiConsulta> plexiConsultas) {
+	public void setPlexiConsultas(Set<PlexiConsulta> plexiConsultas) {
 		this.plexiConsultas = plexiConsultas;
 	}
 
