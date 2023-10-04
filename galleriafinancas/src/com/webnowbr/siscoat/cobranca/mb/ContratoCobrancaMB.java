@@ -34741,4 +34741,57 @@ public class ContratoCobrancaMB {
 	public void limpaLaudo() {
 		laudoEndereco = "";
 	}
+	
+	public void hasDocAnalise() {
+		this.objetoContratoCobranca.setChequeDevolvidoTaxa(false);
+		this.objetoContratoCobranca.setPefinTaxa(false);
+		this.objetoContratoCobranca.setProtestoTaxa(false);
+		this.objetoContratoCobranca.setScoreBaixoTaxa(false);
+		this.objetoContratoCobranca.setDividaVencidaTaxa(false);
+		this.objetoContratoCobranca.setPrejuizoBacenTaxa(false);
+		this.objetoContratoCobranca.setTerrenoOuBarracaoTaxa(false);
+		this.objetoContratoCobranca.setNadaConstaTaxa(false);
+		
+		if (this.listaDocumentoAnalise != null && this.listaDocumentoAnalise.size() > 0) {
+			for (DocumentoAnalise docAnalise : listaDocumentoAnalise) {	
+				if (docAnalise.getMotivoAnalise().toLowerCase().contains("atual")) {
+					docAnalise.getResumoEngine();
+					docAnalise.getResumoScr();
+					if (docAnalise.HasCcfApontamentos()) {
+						this.objetoContratoCobranca.setChequeDevolvidoTaxa(true);
+					}
+					if (docAnalise.HasPefinRefin()) {
+						this.objetoContratoCobranca.setPefinTaxa(true);
+					}
+					if (docAnalise.HasProtestos()) {
+						this.objetoContratoCobranca.setProtestoTaxa(true);
+					}
+					if (docAnalise.HasScoreBaixo()) {
+						this.objetoContratoCobranca.setScoreBaixoTaxa(true);
+					}
+					if (docAnalise.HasDividaVencida()) {
+						this.objetoContratoCobranca.setDividaVencidaTaxa(true);
+					}
+					if (docAnalise.HasPrejuizoBacen()) {
+						this.objetoContratoCobranca.setPrejuizoBacenTaxa(true);
+					}
+					if (this.objetoImovelCobranca.getTipo().contains("Galpão") || this.objetoImovelCobranca.getTipo().contains("Terreno")) {
+						this.objetoContratoCobranca.setTerrenoOuBarracaoTaxa(true);
+					}
+					if (docAnalise.getInicioRelacionamentoBacen()) {
+						this.objetoContratoCobranca.setRelacionamentoBacenRecenteTaxa(true);
+					}
+					if (docAnalise.HasRiscoTotal()) {
+						this.objetoContratoCobranca.setRiscoTotalBaixoTaxa(true);
+					}
+				}
+			}
+			
+			this.objetoContratoCobranca.calcularTaxaPreAprovada();
+			PrimeFaces current = PrimeFaces.current();
+			current.ajax().update("form:taxaPreAprovadaPanel");
+		} else {
+			this.objetoContratoCobranca.setNadaConstaTaxa(true);
+		}
+	}
 }
