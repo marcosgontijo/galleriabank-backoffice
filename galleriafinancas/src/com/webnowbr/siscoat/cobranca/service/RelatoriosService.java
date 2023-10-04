@@ -128,7 +128,7 @@ public class RelatoriosService {
 		}
 		
 		BigDecimal valorCustoEmissao = simulador.getCustoEmissaoValor();
-		despesa = despesa.add(valorCustoEmissao);
+//		despesa = despesa.add(valorCustoEmissao);
 //		detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Custo de Emissão", 
 //				CommonsUtil.formataValorMonetario(valorCustoEmissao, "R$ ")));
 		
@@ -151,7 +151,7 @@ public class RelatoriosService {
 			
 		}
 
-		valorLiquido = con.getValorAprovadoComite().subtract(despesa);
+		valorLiquido = con.getValorAprovadoComite().subtract(valorIOF).subtract(valorCustoEmissao).subtract(despesa);
 
 		// adicionar cep e carencia ( 1 + carencia * 30 )
 		PreAprovadoPDF documento = new PreAprovadoPDF(con.getPagador().getNome(), con.getDataContrato(),
