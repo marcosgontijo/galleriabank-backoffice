@@ -10,21 +10,18 @@ import java.net.URL;
 
 import javax.faces.application.FacesMessage;
 
+import com.itextpdf.text.pdf.codec.Base64;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorConsulta;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
-import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
-import com.webnowbr.siscoat.infra.db.dao.UserDao;
-import com.webnowbr.siscoat.infra.db.model.User;
 
 import br.com.galleriabank.bigdata.cliente.model.processos.ProcessoResult;
-import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
 
 public class BigDataService {
 
@@ -145,8 +142,8 @@ public class BigDataService {
 			String retornoConsulta;
 
 			URL myURL;
-			String sUrl = "https://servicos.galleriabank.com.br/bigData/api/v1/processo/"
-					+ CommonsUtil.somenteNumeros(cnpjcpf) + "/" + (pagadorRecebedor.getNome().replace(" ", "%20").replace("/", "%2F"));
+			String sUrl = "https://servicos.galleriabank.com.br/bigData/api/v1/processo/64/"
+					+ CommonsUtil.somenteNumeros(cnpjcpf) + "/" + new String(java.util.Base64.getEncoder().encode(pagadorRecebedor.getNome().getBytes()));
 			myURL = new URL(sUrl);
 
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();

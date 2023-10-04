@@ -193,6 +193,7 @@ import com.webnowbr.siscoat.cobranca.service.FileService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.cobranca.service.PagadorRecebedorService;
 import com.webnowbr.siscoat.cobranca.service.PajuService;
+import com.webnowbr.siscoat.cobranca.service.RelatoriosService;
 import com.webnowbr.siscoat.cobranca.service.ScrService;
 import com.webnowbr.siscoat.cobranca.service.SerasaService;
 import com.webnowbr.siscoat.cobranca.vo.FileGenerator;
@@ -6328,7 +6329,8 @@ public class ContratoCobrancaMB {
 
 	public StreamedContent downloadAprovadoComitePDF(long idContrato) throws JRException, IOException {
 		JasperPrint jp = null;
-		jp = geraPDFPAprovadoComite(idContrato);
+		RelatoriosService relatorioService = new RelatoriosService();
+		jp = relatorioService.geraPDFPAprovadoComite(idContrato);
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 		ContratoCobranca con = cDao.findById(idContrato);
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
@@ -6354,109 +6356,7 @@ public class ContratoCobrancaMB {
 		return null;
 	}
 
-	public JasperPrint geraPDFPAprovadoComite(long idContrato) throws JRException, IOException {
-		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-		final ReportUtil ReportUtil = new ReportUtil();
-		JasperReport rptSimulacao = ReportUtil.getRelatorio("AprovadoComitePDF");
-		InputStream logoStream = getClass().getResourceAsStream("/resource/timbrado aprovadoComite.png");
-
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put("REPORT_LOCALE", new Locale("pt", "BR"));
-		parameters.put("IMAGEMFUNDO", IOUtils.toByteArray(logoStream));
-
-		List<PreAprovadoPDF> list = new ArrayList<PreAprovadoPDF>();
-		ContratoCobranca con = cDao.findById(idContrato);
-		String cpf = "";
-		if (!CommonsUtil.semValor(con.getPagador().getCpf())) {
-			cpf = con.getPagador().getCpf();
-		} else {
-			cpf = con.getPagador().getCnpj();
-		}
-		SimuladorMB simuladorMB = new SimuladorMB();
-		simuladorMB.clearFields();
-		if (con.getPagador() != null) {
-			simuladorMB.setTipoPessoa("PF");
-		} else {
-			simuladorMB.setTipoPessoa("PJ");
-		}
-		simuladorMB.setTipoCalculo("Price");
-		simuladorMB.setValorImovel(con.getValorMercadoImovel());
-		simuladorMB.setValorCredito(con.getValorAprovadoComite());
-		simuladorMB.setTaxaJuros(con.getTaxaAprovada());
-		simuladorMB.setParcelas(con.getPrazoMaxAprovado());
-		simuladorMB.setCarencia(BigInteger.ONE);
-		simuladorMB.setNaoCalcularMIP(false);
-		simuladorMB.setNaoCalcularDFI(false);
-		simuladorMB.setNaoCalcularTxAdm(false);
-		simuladorMB.setMostrarIPCA(true);
-		simuladorMB.setTipoCalculoFinal(con.getTipoValorComite().toUpperCase().charAt(0));
-		simuladorMB.setValidar(false);
-		simuladorMB.setSimularComIPCA(false);
-		simuladorMB.setIpcaSimulado(BigDecimal.ZERO);
-		simuladorMB.simular();
-		SimulacaoVO simulador = simuladorMB.getSimulacao();
-
-		BigDecimal parcelaPGTO = simulador.getParcelas().get(2).getValorParcela();
-		BigDecimal rendaMinima = parcelaPGTO.divide(BigDecimal.valueOf(0.3), MathContext.DECIMAL128);
-
-		String cep = con.getImovel().getCep();
-		
-		BigInteger carencia = BigInteger.ONE.add(CommonsUtil.bigIntegerValue(con.getCarenciaComite()))
-				.multiply(CommonsUtil.bigIntegerValue(30));
-		BigDecimal despesa = BigDecimal.ZERO;
-		BigDecimal valorCustoEmissao = BigDecimal.ZERO;
-		BigDecimal valorIOF = BigDecimal.ZERO;
-		
-		BigDecimal valorLiquido = BigDecimal.ZERO;
-		List<PreAprovadoPDFDetalheDespesas> detalhesDespesas = new ArrayList<>();
-
-		detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Debitos de IPTU", "Se existir"));
-		List<String> ImoveisComCondominio = Arrays.asList("Casa de Condomínio", "Apartamento", "Terreno de Condomínio",
-				"Sala Comercial", "Prédio Comercial", "Prédio Misto");
-
-		if (ImoveisComCondominio.contains(con.getImovel().getTipo()))
-			detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Debitos de Condomínio", "Se existir"));
-
-		RegistroImovelTabelaDao rDao = new RegistroImovelTabelaDao();
-		final BigDecimal valorRegistro = rDao.getValorRegistro(con.getValorAprovadoComite());
-
-		List<RegistroImovelTabela> registroImovelTabela = rDao.findAll();
-		Optional<RegistroImovelTabela> registroImovel = registroImovelTabela.stream()
-				.sorted((o1, o2) -> o1.getTotal().compareTo(o2.getTotal()))
-				.filter(a -> a.getTotal().compareTo(valorRegistro) == 1).findFirst();
-		
-		if (registroImovel.isPresent()) {
-			despesa.add(registroImovel.get().getTotal());
-			detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Custas Estimada Para Registro",
-					CommonsUtil.formataValorMonetario(registroImovel.get().getTotal(), "")));
-		}
-
-		despesa.add(con.getValorLaudoPajuFaltante());
-		detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Laudo + Paracer Juridico",
-				CommonsUtil.formataValorMonetario(con.getValorLaudoPajuFaltante(), "")));
-
-		for (CcbProcessosJudiciais processo : con.getListProcessos().stream()
-				.filter(p -> p.isSelecionadoComite() && p.getQuitar().contains("Quitar"))
-				.collect(Collectors.toList())) {
-			despesa.add(processo.getValor());
-			detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Processo Nº " + processo.getNumero(),
-					CommonsUtil.formataValorMonetario(processo.getValor(), "")));
-		}
-
-		valorLiquido = con.getValorAprovadoComite().subtract(despesa);
-
-		// adicionar cep e carencia ( 1 + carencia * 30 )
-		PreAprovadoPDF documento = new PreAprovadoPDF(con.getPagador().getNome(), con.getDataContrato(),
-				con.getNumeroContrato(), cpf, con.getTaxaAprovada(), con.getProcessosQuitarComite(),
-				con.getImovel().getCidade(), con.getImovel().getNumeroMatricula(), con.getImovel().getEstado(),
-				con.getPrazoMaxAprovado().toString(), con.getValorAprovadoComite(), con.getValorMercadoImovel(),
-				parcelaPGTO, con.getTipoValorComite(), cep, carencia, despesa,
-				valorCustoEmissao, valorIOF , valorLiquido, detalhesDespesas);
-		list.add(documento);
-		
-		final JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(list);
-		return JasperFillManager.fillReport(rptSimulacao, parameters, dataSource);
-	}
+	
 
 	public Date getDataComMais15Dias(Date dataOriginal) {
 		Date dataRetorno = new Date();
@@ -19673,13 +19573,15 @@ public class ContratoCobrancaMB {
 			comentarioComiteFinal += comite.getUsuarioComite() + ": " + comite.getComentarioComite() + "  //  ";
 		}
 
-		for (CcbProcessosJudiciais processo : contrato.getListProcessos()) {
-			if (!processo.isSelecionadoComite()) {
-				continue;
-			}
-			contrato.setProcessosQuitarComite(contrato.getProcessosQuitarComite() + processo.getNumero() + " - "
-					+ CommonsUtil.formataValorMonetario(processo.getValor(), "R$ ") + "\n");
-		}
+//		não  precisa mais incluir para sair na ficha do cliente
+//		for (CcbProcessosJudiciais processo : contrato.getListProcessos()) {
+//			if (!processo.isSelecionadoComite()) {
+//				continue;
+//			}
+//			contrato.setProcessosQuitarComite(contrato.getProcessosQuitarComite() + processo.getNumero() + " - "
+//					+ CommonsUtil.formataValorMonetario(processo.getValor(), "R$ ") + "\n");
+//		}
+		
 		contrato.setTaxaAprovada(maiorTaxaAprovada);
 		contrato.setTipoValorComite(menorValorAprovadoTipo);
 		contrato.setComentarioComite(comentarioComiteFinal);
