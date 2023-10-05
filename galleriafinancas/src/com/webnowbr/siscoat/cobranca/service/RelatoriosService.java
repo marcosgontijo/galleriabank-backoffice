@@ -133,8 +133,11 @@ public class RelatoriosService {
 //				CommonsUtil.formataValorMonetario(valorCustoEmissao, "R$ ")));
 		
 		despesa = despesa.add(con.getValorLaudoPajuFaltante());
-		detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Laudo + Parecer Juridico",
+		if(con.getValorLaudoPajuFaltante().compareTo(BigDecimal.ZERO) > 0) {
+			detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Laudo + Parecer Juridico",
 				CommonsUtil.formataValorMonetario(con.getValorLaudoPajuFaltante(), "R$ ")));
+		}
+		
 
 		for (CcbProcessosJudiciais processo : con.getListProcessos().stream()
 				.filter(p -> p.isSelecionadoComite() && p.getQuitar().contains("Quitar"))
