@@ -34,16 +34,13 @@ public class DocketWebhook {
 //		LOGGER.debug(webhookRetorno);
 
 		try {
-
-			Jwts.parserBuilder().setSigningKey(CommonsUtil.CHAVE_WEBHOOK).build().parseClaimsJws(token);
-
-			/*
-			 * System.out.println("---------------- REA webhookRetorno ---------------- ");
-			 * System.out.println(webhookRetorno);
-			 * System.out.println("---------------- REA webhookRetorno ---------------- ");
-			 */
 			DocketWebhookRetorno docketWebhookRetorno = GsonUtil.fromJson(webhookRetorno, DocketWebhookRetorno.class);
-
+			/*try {
+				Jwts.parserBuilder().setSigningKey(CommonsUtil.CHAVE_WEBHOOK).build().parseClaimsJws(token);		
+			} catch (Exception e) {
+				System.out.println("token docket expirado: " + webhookRetorno);
+			}*/
+			
 			Optional<ContratoCobranca> objetoContratoCobranca;
 			DocketConsultaDao consultaDao = new DocketConsultaDao();
 			DocketService docketService = new DocketService();

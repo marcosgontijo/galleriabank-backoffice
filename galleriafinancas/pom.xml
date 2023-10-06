@@ -67,6 +67,11 @@
 			<name>galleriabank repo</name>
 			<url>https://amurta.bytesafe.dev/maven/galleriabank</url>			
 		</repository>
+		<repository>
+			<id>galleriabank_nexus</id>
+			<name>galleriabank repo</name>
+			<url>https://espelho.galleriabank.com.br/nexus</url>			
+		</repository>
 	</repositories>
 	<dependencies>
 		<dependency>
@@ -285,12 +290,12 @@
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports-fonts</artifactId>
-			<version>6.20.5</version>
+			<version>6.20.6</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
-			<version>6.20.5</version>
+			<version>6.20.6</version>
 			
 		</dependency>
 		<!--<dependency>

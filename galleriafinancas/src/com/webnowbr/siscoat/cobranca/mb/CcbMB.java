@@ -7519,33 +7519,9 @@ public class CcbMB {
 			document.getStyles().setDefaultFonts(fonts);
 			document.getStyle().getDocDefaults().getRPrDefault().getRPr().setRFonts(fonts);
 			
-			if(segurados.size() > 0) {
-				BigDecimal porcentagem =  BigDecimal.valueOf(100).divide(BigDecimal.valueOf(segurados.size()), MathContext.DECIMAL128).setScale(2, BigDecimal.ROUND_HALF_UP);
-				if(this.objetoCcb.getListSegurados().size() != segurados.size()) {
-					this.objetoCcb.getListSegurados().clear();
-					this.objetoCcb.getObjetoContratoCobranca().getListSegurados().clear();
-					
-					for(CcbParticipantes participante : segurados) {
-						Segurado segurado = new Segurado();
-						if(!CommonsUtil.semValor(this.objetoCcb.getObjetoContratoCobranca())) {
-							segurado.setPessoa(participante.getPessoa());
-							segurado.setPorcentagemSegurador(porcentagem);
-							segurado.setPosicao(this.objetoCcb.getListSegurados().size() + 1);
-							if(!this.objetoCcb.getObjetoContratoCobranca().getListSegurados().contains(segurado)) {		
-								segurado.setContratoCobranca(this.objetoCcb.getObjetoContratoCobranca());
-								this.objetoCcb.getObjetoContratoCobranca().getListSegurados().add(segurado);
-							}
-							if(!this.objetoCcb.getListSegurados().contains(segurado)) {	
-								SeguradoDAO seguradoDAO = new SeguradoDAO();
-								seguradoDAO.create(segurado);
-								this.objetoCcb.getListSegurados().add(segurado);
-							}
-						}
-					}
-				} 
-			}
+			organizaSegurados(segurados);
 		
-			int indexSegurados = 40;
+			int indexSegurados = 41;
 			
 			for(Segurado segurado : objetoCcb.getListSegurados()) {
 				XWPFTable table = document.getTables().get(0);
@@ -7739,7 +7715,8 @@ public class CcbMB {
 								text = trocaValoresXWPF(text, r, "titularConta", this.objetoCcb.getTitularConta());
 								text = trocaValoresXWPF(text, r, "agencia", this.objetoCcb.getAgencia());
 								text = trocaValoresXWPF(text, r, "contaCorrente", this.objetoCcb.getContaCorrente());					
-								text = trocaValoresXWPF(text, r, "nomeBanco", this.objetoCcb.getNomeBanco());		
+								text = trocaValoresXWPF(text, r, "nomeBanco", this.objetoCcb.getNomeBanco());
+								text = trocaValoresXWPF(text, r, "pixBanco", this.objetoCcb.getPixBanco());
 								
 								text = trocaValoresXWPF(text, r, "prazoContrato", this.objetoCcb.getPrazo());
 								text = trocaValoresXWPF(text, r, "numeroParcelasPagamento", this.objetoCcb.getNumeroParcelasPagamento());
@@ -8020,6 +7997,50 @@ public class CcbMB {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	private void organizaSegurados(List<CcbParticipantes> segurados) {
+		if(segurados.size() <= 0) {
+			return;
+		}
+		BigDecimal porcentagem =  BigDecimal.valueOf(100).divide(BigDecimal.valueOf(segurados.size()), MathContext.DECIMAL128).setScale(2, BigDecimal.ROUND_HALF_UP);
+		if(this.objetoCcb.getListSegurados().size() == segurados.size()) {
+			return;
+		}
+		
+		SeguradoDAO seguradoDAO = new SeguradoDAO();
+		this.objetoCcb.getListSegurados().clear();
+		if(objetoCcb.getObjetoContratoCobranca().getListSegurados().size() == segurados.size()) {
+			for(Segurado segurado : this.objetoCcb.getObjetoContratoCobranca().getListSegurados()) {
+				this.objetoCcb.getListSegurados().add(segurado);
+			}
+		} else {
+			for(Segurado segurado : this.objetoCcb.getObjetoContratoCobranca().getListSegurados()) {
+				segurado.setContratoCobranca(null);
+				seguradoDAO.delete(segurado);
+			}
+			this.objetoCcb.getObjetoContratoCobranca().getListSegurados().clear();
+		
+			for(CcbParticipantes participante : segurados) {
+				Segurado segurado = new Segurado();
+				if(!CommonsUtil.semValor(this.objetoCcb.getObjetoContratoCobranca())) {
+					segurado.setPessoa(participante.getPessoa());
+					segurado.setPorcentagemSegurador(porcentagem);
+					segurado.setPosicao(this.objetoCcb.getListSegurados().size() + 1);
+					if(!this.objetoCcb.getObjetoContratoCobranca().getListSegurados().contains(segurado)) {		
+						segurado.setContratoCobranca(this.objetoCcb.getObjetoContratoCobranca());
+						this.objetoCcb.getObjetoContratoCobranca().getListSegurados().add(segurado);
+					}
+					if(!this.objetoCcb.getListSegurados().contains(segurado)) {	
+						
+						seguradoDAO.create(segurado);
+						this.objetoCcb.getListSegurados().add(segurado);
+					}
+				}
+			}
+		}
+			
+		
 	}
 
 	private void CabecalhoAnexo1(XWPFTable table, int r, int c, String text) {

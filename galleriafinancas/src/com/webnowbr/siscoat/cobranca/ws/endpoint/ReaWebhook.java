@@ -169,7 +169,7 @@ public class ReaWebhook {
 					pagador.setNome(propietario.getNome());
 					pagador = pagadorRecebedorService.buscaOuInsere(pagador);
 					documentoAnalise.setPagador(pagador);
-
+					documentoAnalise.adiconarEstadosPeloCadastro();
 					documentoAnaliseDao.create(documentoAnalise);
 				}else {
 					documentoAnaliseCadastrado.setExcluido(false);

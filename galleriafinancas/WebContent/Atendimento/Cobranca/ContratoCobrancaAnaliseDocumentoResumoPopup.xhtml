@@ -9,10 +9,12 @@
 	<h:outputStylesheet name="primeicons/primeicons.css"
 		library="primefaces" />
 		
-	<p:ajaxStatus onstart="PF('statusDialog').show()"
-		oncomplete="PF('statusDialog').hide()" />
+	<p:ajaxStatus onstart="PF('statusDialog2').show()"
+		oncomplete="PF('statusDialog2').hide()"
+		onsuccess="PF('statusDialog2').hide()"
+		onerror="PF('statusDialog2').hide()" />
 
-	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+	<p:dialog widgetVar="statusDialog2" modal="true" draggable="false"
 		closable="false" resizable="false" showHeader="false">
 		<div class="text-center">
 			<i class="pi pi-spin pi-spinner loading-icon" aria-hidden="true"></i>
@@ -351,15 +353,15 @@
 				<div align="center">
 					<p:dataTable id="dtConsultasDocket" var="docketConsulta"
 						value="#{contratoCobrancaMB.documentoAnalisePopup.docketConsultas}"
-						emptyMessage="" rows="20" paginator="true"
+						emptyMessage="" rows="10" paginator="true"
 		                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 		                currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
 		                rowsPerPageTemplate="20,40,100,140">
 						
 						<p:column style="text-align: center;" headerText="Identificação"
-							filterBy="#{docketConsulta.nomeCompleto}"
-							filterMatchMode="contains" sortBy="#{docketConsulta.nomeCompleto}">
-							<h:outputText value="#{docketConsulta.nomeCompleto}"/>
+							filterBy="#{docketConsulta.docketDocumentos.documentoNome}"
+							filterMatchMode="contains" sortBy="#{docketConsulta.docketDocumentos.documentoNome}">
+							<h:outputText value="#{docketConsulta.docketDocumentos.documentoNome}"/>
 						</p:column>
 						
 						<p:column style="text-align: center;width: 100px;" headerText="Status"
@@ -395,7 +397,7 @@
 				<div align="center">
 					<p:dataTable id="dtConsultasPlexi" var="plexiConsulta"
 						value="#{contratoCobrancaMB.documentoAnalisePopup.plexiConsultas}"
-						emptyMessage="" rows="20" paginator="true"
+						emptyMessage="" rows="10" paginator="true"
 						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 						currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
 						rowsPerPageTemplate="20,40,100,140">
@@ -439,7 +441,7 @@
 				<div align="center">
 					<p:dataTable id="dtConsultasNetrin" var="netrinConsulta"
 						value="#{contratoCobrancaMB.documentoAnalisePopup.netrinConsultas}"
-						emptyMessage="" rows="20" paginator="true"
+						emptyMessage="" rows="10" paginator="true"
 		                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 		                currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
 		                rowsPerPageTemplate="20,40,100,140">
@@ -475,5 +477,59 @@
 				</div>
 			</h:form>
 		</p:dialog>
+		
+		<shiro:hasAnyRoles
+		name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
+			<p:dialog header="Inserir Estado" widgetVar="estadoDialog"
+				resizable="false" style="FONT-SIZE: 10pt;" width="400">
+				<h:form id="estadoDialogdlg">			
+					<div align="center">		
+						<h:panelGrid columns="2">
+							<p:outputLabel for="estadoConsultaInserir" value="Estado: " />
+							<p:selectOneMenu id="estadoConsultaInserir"
+								value="#{contratoCobrancaMB.estadoConsultaAdd}"
+								label="Estado" style="width:200px;">
+								<f:selectItem itemValue="" itemLabel="Escolha o Estado" />
+								<f:selectItem itemValue="AC" itemLabel="Acre" />
+								<f:selectItem itemValue="AL" itemLabel="Alagoas" />
+								<f:selectItem itemValue="AP" itemLabel="Amapá" />
+								<f:selectItem itemValue="AM" itemLabel="Amazonas" />
+								<f:selectItem itemValue="BA" itemLabel="Bahia" />
+								<f:selectItem itemValue="CE" itemLabel="Ceará" />
+								<f:selectItem itemValue="DF" itemLabel="Distrito Federal" />
+								<f:selectItem itemValue="ES" itemLabel="Espirito Santo" />
+								<f:selectItem itemValue="GO" itemLabel="Goiás" />
+								<f:selectItem itemValue="MA" itemLabel="Maranhão" />
+								<f:selectItem itemValue="MT" itemLabel="Mato Grosso" />
+								<f:selectItem itemValue="MS" itemLabel="Mato Grosso Do Sul" />
+								<f:selectItem itemValue="MG" itemLabel="Minas Gerais" />
+								<f:selectItem itemValue="PA" itemLabel="Pará" />
+								<f:selectItem itemValue="PB" itemLabel="Paraiba" />
+								<f:selectItem itemValue="PR" itemLabel="Paraná" />
+								<f:selectItem itemValue="PE" itemLabel="Pernambuco" />
+								<f:selectItem itemValue="PI" itemLabel="Piauí" />
+								<f:selectItem itemValue="RJ" itemLabel="Rio De Janeiro" />
+								<f:selectItem itemValue="RN" itemLabel="Rio Grande Do Norte" />
+								<f:selectItem itemValue="RS" itemLabel="Rio Grande Do Sul" />
+								<f:selectItem itemValue="RO" itemLabel="Rondônia" />
+								<f:selectItem itemValue="RR" itemLabel="Roraima" />
+								<f:selectItem itemValue="SC" itemLabel="Santa Catarina" />
+								<f:selectItem itemValue="SP" itemLabel="São Paulo" />
+								<f:selectItem itemValue="SE" itemLabel="Sergipe" />
+								<f:selectItem itemValue="TO" itemLabel="Tocantins" />
+								<p:ajax update="estadoDialogdlg" ></p:ajax>
+							</p:selectOneMenu>
+						</h:panelGrid>
+						<p:commandButton value="Inserir Estado" 
+							icon="ui-icon-check" style="margin-top: 5px; margin-bottom: 5px;"
+							action="#{contratoCobrancaMB.adicionaEstado()}"
+							disabled="#{contratoCobrancaMB.estadoConsultaAdd eq null}"
+							onclick="PF('estadoDialog').hide();"
+							update="form:dtFilesAnalise" >
+						</p:commandButton>
+					</div>
+				</h:form>
+			</p:dialog>	
+		</shiro:hasAnyRoles>
 		
 </ui:composition>

@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -22,6 +23,7 @@ import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
+import com.webnowbr.siscoat.infra.db.model.User;
 
 import br.com.galleriabank.netrin.cliente.model.cenprot.CenprotResponse;
 import br.com.galleriabank.netrin.cliente.model.contabancaria.ValidaContaBancariaRequest;
@@ -87,7 +89,8 @@ public class NetrinService {
 			String response = netrinCriarExecutaConsultaCenprot(cnpjcpf);
 			try {
 				CenprotResponse retornoCenprot = GsonUtil.fromJson(response, CenprotResponse.class);
-				documentoAnalise.adicionaEstados(CommonsUtil.stringToList(retornoCenprot.getEstados()));
+				if(!CommonsUtil.semValor(retornoCenprot))
+					documentoAnalise.adicionaEstados(CommonsUtil.stringToList(retornoCenprot.getEstados()));	
 			} catch (Exception e){
 				e.printStackTrace();
 			}
@@ -99,8 +102,9 @@ public class NetrinService {
 			PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
 			pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
 					DocumentosAnaliseEnum.CENPROT, response);
-			
-			String base64 = baixarDocumento(documentoAnalise);
+			String base64 = "";
+			if(CommonsUtil.semValor(response)) 
+				base64 = baixarDocumentoCenprot(response);
 			FileService fileService = new FileService();
 			fileService.salvarPdfRetorno(documentoAnalise, base64, "Cenprot", "interno");
 			result = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
@@ -1735,7 +1739,7 @@ public class NetrinService {
 	}
 	/// /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\  CND Estadual
 	
-	public FacesMessage pedirConsulta(NetrinConsulta netrinConsulta) {
+	public FacesMessage pedirConsulta(NetrinConsulta netrinConsulta, User user) {
 		try {
 			String url = netrinConsulta.getNetrinDocumentos().getUrlService();
 			DocumentoAnalise documentoAnalise = netrinConsulta.getDocumentoAnalise();
@@ -1760,7 +1764,17 @@ public class NetrinService {
 			} else if(CommonsUtil.mesmoValor(url, "/api/v1/CNDTrabalhistaTST")) {
 				requestCndTrabalhistaTSTNetrinConulta(netrinConsulta, documentoAnalise, PagadorRecebedorService);
 			}
-			netrinConsultaDao.create(netrinConsulta);
+			netrinConsulta.setDataConsulta(DateUtil.gerarDataHoje());
+			netrinConsulta.setUsuario(user);
+			netrinConsulta.setStatus("Consulta Concluída");
+			if(netrinConsulta.getId() <=0) {
+				netrinConsultaDao.create(netrinConsulta);
+			} else {
+				netrinConsultaDao.merge(netrinConsulta);
+			}
+			if(CommonsUtil.semValor(netrinConsulta.getRetorno())) {
+				System.out.println("falha no pdf netrin. ID:" + netrinConsulta.getId());
+			}
 			return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
 		} catch (Exception e) {
 			return new FacesMessage(FacesMessage.SEVERITY_ERROR, 
@@ -1774,12 +1788,16 @@ public class NetrinService {
 		String base64;
 		String nomedoc;
 		retornoConsulta = netrinCriarExecutaConsultaProcesso(documentoAnalise.getTipoPessoa(),
-				netrinConsulta.getCpfCnpj(),documentoAnalise.getPagador().getNome());
+				netrinConsulta.getCpfCnpj(), documentoAnalise.getPagador().getNome());
 		netrinConsulta.setRetorno(retornoConsulta);
-		netrinConsulta.setPdf(baixarDocumentoProcesso(retornoConsulta));
+		if(!CommonsUtil.semValor(retornoConsulta)) {
+			netrinConsulta.setPdf(baixarDocumentoProcesso(retornoConsulta));
+		} else {
+			System.out.println("falha no pdf netrin. ID:" + netrinConsulta.getId());
+		}
 		PagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
 				DocumentosAnaliseEnum.PROCESSO, retornoConsulta);
-		base64 = baixarDocumentoProcesso(retornoConsulta);
+		base64 = netrinConsulta.getPdf();
 		nomedoc = "Consulta Processual";
 		FileService fileService = new FileService();
 		fileService.salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
@@ -1792,13 +1810,18 @@ public class NetrinService {
 		String nomedoc;
 		retornoConsulta = netrinCriarExecutaConsultaCNDEstadual(netrinConsulta.getCpfCnpj(), netrinConsulta.getUf());
 		netrinConsulta.setRetorno(retornoConsulta);
-		netrinConsulta.setPdf(baixarDocumentoCNDEstadual(retornoConsulta));
+		if(!CommonsUtil.semValor(retornoConsulta)) {
+			netrinConsulta.setPdf(baixarDocumentoProcesso(retornoConsulta));
+		} else {
+			System.out.println("falha no pdf netrin. ID:" + netrinConsulta.getId());
+		}
 		PagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
 				DocumentosAnaliseEnum.CNDESTADUAL, retornoConsulta, netrinConsulta.getUf());
-		base64 = baixarDocumentoCNDEstadual(retornoConsulta);
+		base64 = netrinConsulta.getPdf();
 		nomedoc = "CND Estadual " +  netrinConsulta.getUf().toUpperCase();
 		FileService fileService = new FileService();
 		fileService.salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
+		
 	}
 	
 	private void requestCndFederalNetrinConulta(NetrinConsulta netrinConsulta, DocumentoAnalise documentoAnalise,
@@ -1808,13 +1831,18 @@ public class NetrinService {
 		String nomedoc;
 		retornoConsulta = netrinCriarExecutaConsultaCNDFederal(netrinConsulta.getCpfCnpj());
 		netrinConsulta.setRetorno(retornoConsulta);
-		netrinConsulta.setPdf(baixarDocumentoCNDFederal(retornoConsulta));
+		if(!CommonsUtil.semValor(retornoConsulta)) {
+			netrinConsulta.setPdf(baixarDocumentoProcesso(retornoConsulta));
+		} else {
+			System.out.println("falha no pdf netrin. ID:" + netrinConsulta.getId());
+		}
 		PagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
 				DocumentosAnaliseEnum.CNDFEDERAL, retornoConsulta);
-		base64 = baixarDocumentoCNDFederal(retornoConsulta);
+		base64 = netrinConsulta.getPdf();
 		nomedoc = "CND Federal";
 		FileService fileService = new FileService();
 		fileService.salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
+		
 	}
 
 	private void requestCndTrabalhistaTSTNetrinConulta(NetrinConsulta netrinConsulta, DocumentoAnalise documentoAnalise,
@@ -1824,12 +1852,79 @@ public class NetrinService {
 		String nomedoc;
 		retornoConsulta = netrinCriarExecutaConsultaCNDTrabalhistaTST(netrinConsulta.getCpfCnpj());
 		netrinConsulta.setRetorno(retornoConsulta);
-		netrinConsulta.setPdf(baixarDocumentoCNDTrabalhistaTST(retornoConsulta));
+		if(!CommonsUtil.semValor(retornoConsulta)) {
+			netrinConsulta.setPdf(baixarDocumentoProcesso(retornoConsulta));
+		} else {
+			System.out.println("falha no pdf netrin. ID:" + netrinConsulta.getId());
+		}
 		PagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
 				DocumentosAnaliseEnum.CNDTTST, retornoConsulta);
-		base64 = baixarDocumentoCNDFederal(retornoConsulta);
+		base64 = netrinConsulta.getPdf();
 		nomedoc = "CNDT TST";
 		FileService fileService = new FileService();
 		fileService.salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
+	}
+	
+	public void atualizaRetorno(List<DocumentoAnalise> listDocAnalise) {
+		for(DocumentoAnalise docAnalise : listDocAnalise) {
+			if(CommonsUtil.semValor(docAnalise.getNetrinConsultas()) 
+				|| docAnalise.getNetrinConsultas().size() <= 0) 
+				continue;
+			for(NetrinConsulta netrin : docAnalise.getNetrinConsultas()) {
+				atualizaRetornoCertidaoNetrin(netrin);
+			}
+		}
+		return;
+	}
+	
+	public void atualizaRetornoCertidaoNetrin(NetrinConsulta netrin) {
+		NetrinConsultaDao netrinConsultaDao = new NetrinConsultaDao();
+		String retorno;
+		String nomedoc = "";
+		if(!CommonsUtil.semValor(netrin.getRetorno()) && !CommonsUtil.semValor(netrin.getPdf())) {
+			netrin.setStatus("Consulta Concluída");
+			netrinConsultaDao.merge(netrin);
+			return;
+		} else if(!CommonsUtil.semValor(netrin.getRetorno())) {
+			retorno = netrin.getRetorno();
+		} else {
+			netrin.setStatus("Falha: Consulta Sem Retorno. Favor Consultar Novamente");
+			netrinConsultaDao.merge(netrin);
+			return;
+		}
+		if(!retorno.contains("urlComprovante")) {
+			netrin.setStatus("Falha: Retorno sem pdf");
+			netrinConsultaDao.merge(netrin);
+			return;
+		}	
+		
+		if(!retorno.contains("Não conseguimos gerar o link do comprovante.")) {
+			netrin.setStatus("Falha: Retorno sem pdf");
+			netrinConsultaDao.merge(netrin);
+			return;
+		}
+		
+		String url = netrin.getNetrinDocumentos().getUrlService();
+		String pdf = null;
+		if (CommonsUtil.mesmoValor(url, "/api/v1/processo")) {
+			pdf = baixarDocumentoProcesso(retorno);
+			nomedoc = "Consulta Processual";
+		} else if (CommonsUtil.mesmoValor(url, "/api/v1/CNDEstadual")) {
+			pdf = baixarDocumentoCNDEstadual(retorno);
+			nomedoc = "CND Estadual " +  netrin.getUf().toUpperCase();
+		} else if (CommonsUtil.mesmoValor(url, "/api/v1/CNDFederal")) {
+			pdf = baixarDocumentoCNDFederal(retorno);
+			nomedoc = "CND Federal";
+		} else if (CommonsUtil.mesmoValor(url, "/api/v1/CNDTrabalhistaTST")) {
+			pdf = baixarDocumentoCNDTrabalhistaTST(retorno);
+			nomedoc = "CNDT TST";
+		}
+		netrin.setPdf(pdf);
+		netrin.setStatus("Consulta Concluída");
+		
+		netrinConsultaDao.merge(netrin);
+		String base64 = netrin.getPdf();
+		FileService fileService = new FileService();
+		fileService.salvarPdfRetorno(netrin.getDocumentoAnalise(), base64, nomedoc, "interno");
 	}
 }

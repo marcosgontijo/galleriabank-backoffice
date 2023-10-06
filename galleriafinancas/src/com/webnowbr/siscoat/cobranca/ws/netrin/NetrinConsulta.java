@@ -2,6 +2,9 @@ package com.webnowbr.siscoat.cobranca.ws.netrin;
 
 import java.util.Date;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+
 import org.apache.commons.lang3.math.Fraction;
 
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
@@ -53,30 +56,21 @@ public class NetrinConsulta {
 		return "NetrinConsulta [id=" + id + ", cpfCnpj=" + cpfCnpj + ", netrinDocumentos=" + netrinDocumentos + "]";
 	}
 	
-	/*@Override
-	public int hashCode() {
-	    final int prime = 31;
-	    int result = 1;
-	    result = prime * result + (int)id;
-	    result = prime * result + (int)id;
-	    return result;
+	public boolean verificaCamposDoc() {
+		NetrinConsulta netrinConsulta = this;
+		NetrinDocumentos doc = netrinConsulta.getNetrinDocumentos();
+		boolean retorno = true;
+		
+		if(CommonsUtil.mesmoValor(doc.getUrlService(), "/api/v1/CNDEstadual")
+				&& CommonsUtil.mesmoValor(netrinConsulta.getUf().toUpperCase().trim(), "MG")) {
+			if(CommonsUtil.semValor(netrinConsulta.getCep())){
+				retorno = false;
+				FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Cep p/ MG", ""));
+			}
+		}
+		return retorno;
 	}
-
-	@Override
-	public boolean equals(Object obj) {
-	    if (this == obj)
-	        return true;
-	    if (obj == null)
-	        return false;
-	    if (getClass() != obj.getClass())
-	        return false;
-	    NetrinConsulta other = (NetrinConsulta) obj;
-	    if (id != other.id)
-	        return false;
-	    if (id != other.id)
-	        return false;
-	    return true;
-	}*/
 
 	public long getId() {
 		return id;

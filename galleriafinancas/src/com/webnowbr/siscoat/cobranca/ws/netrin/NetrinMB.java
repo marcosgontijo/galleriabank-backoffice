@@ -19,15 +19,27 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 
 import org.primefaces.model.StreamedContent;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.JobKey;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.SchedulerFactory;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.quartz.impl.StdSchedulerFactory;
 
 import com.itextpdf.text.pdf.PdfReader;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
+import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.infra.db.model.User;
+import com.webnowbr.siscoat.job.CertidoesJob;
+import com.webnowbr.siscoat.job.DocumentoAnaliseJob;
 import com.webnowbr.siscoat.security.LoginBean;
 
 /** ManagedBean. */
@@ -93,7 +105,7 @@ public class NetrinMB {
 					consultasExistentesDB.add(consultasExistentesRetorno.get(0));
 					continue;
 				}
-				podeChamar = verificaCamposDoc(netrinConsulta);
+				podeChamar = netrinConsulta.verificaCamposDoc();
 				if(!podeChamar) {
 					break;
 				}
@@ -106,7 +118,7 @@ public class NetrinMB {
 					if(!CommonsUtil.semValor(netrinConsulta.getRetorno())) {
 						continue;
 					}
-					FacesMessage facesMessage = netrinService.pedirConsulta(netrinConsulta);
+					FacesMessage facesMessage = netrinService.pedirConsulta(netrinConsulta, user);
 					if(CommonsUtil.semValor(facesMessage) || CommonsUtil.mesmoValor(facesMessage.getSeverity(), 
 							FacesMessage.SEVERITY_ERROR)) {
 						consultasFalhadas.add(netrinConsulta);
@@ -120,6 +132,42 @@ public class NetrinMB {
 				DocumentoAnaliseDao docAnaliseDao = new DocumentoAnaliseDao(); 
 				docAnaliseDao.merge(docAnalise);
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", ""));
+			}
+		}
+	}
+	
+	public void criarPedidoJob() throws SchedulerException {
+		boolean podeChamar = true;
+		for (DocumentoAnalise docAnalise : listPagador) {
+			//atualizarDocumentos(docAnalise);
+			PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
+			pagadorRecebedorDao.merge(docAnalise.getPagador());
+			for (NetrinConsulta netrinConsulta : docAnalise.getNetrinConsultas()) {
+				netrinConsulta.populatePagadorRecebedor(docAnalise.getPagador());
+				podeChamar = netrinConsulta.verificaCamposDoc();
+				if (!podeChamar) {
+					break;
+				}
+			}
+		}
+		if(podeChamar) {
+			SchedulerFactory shedFact = new StdSchedulerFactory();
+			Scheduler scheduler = shedFact.getScheduler();
+			try {
+				scheduler.start();
+				JobDetail jobDetail = JobBuilder.newJob(CertidoesJob.class)
+						.withIdentity("certidoesJOB", contratoCobranca.getNumeroContrato() + "_netrin_" + etapa).build();
+				User user = loginBean.getUsuarioLogado();
+				jobDetail.getJobDataMap().put("listaDocumentoAnalise", listPagador);
+				jobDetail.getJobDataMap().put("user", user);
+				jobDetail.getJobDataMap().put("objetoContratoCobranca", contratoCobranca);
+				Trigger trigger = TriggerBuilder.newTrigger()
+						.withIdentity("certidoesJOB", contratoCobranca.getNumeroContrato() + "_netrin_" + etapa).startNow().build();
+				scheduler.scheduleJob(jobDetail, trigger);
+				FacesContext context = FacesContext.getCurrentInstance();
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta iniciada com sucesso", ""));
+			} catch (SchedulerException e) {
+				e.printStackTrace();
 			}
 		}
 	}
@@ -204,7 +252,7 @@ public class NetrinMB {
 	}
 	
 	public void removerPessoa(DocumentoAnalise docAnalise) {
-		docAnalise.getNetrinConsultas().clear();
+		//docAnalise.getNetrinConsultas().clear();
 		listPagador.remove(docAnalise);
 	}
 	
@@ -257,21 +305,19 @@ public class NetrinMB {
 		}
 	}
 	
-	public boolean verificaCamposDoc(NetrinConsulta netrinConsulta) {
-		NetrinDocumentos doc = netrinConsulta.getNetrinDocumentos();
-		boolean retorno = true;
-		
-		if(CommonsUtil.mesmoValor(doc.getUrlService(), "/api/v1/CNDEstadual")
-				&& CommonsUtil.mesmoValor(netrinConsulta.getUf().toUpperCase().trim(), "MG")) {
-			if(CommonsUtil.semValor(netrinConsulta.getCep())){
-				retorno = false;
-				FacesContext.getCurrentInstance().addMessage(null,
-				new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Cep p/ MG", ""));
-			}
+	public boolean checkConsultasCertidoes() throws SchedulerException {
+		try {
+			SchedulerFactory shedFact = new StdSchedulerFactory();
+			Scheduler scheduler = shedFact.getScheduler();
+			JobKey key = JobKey.jobKey("certidoesJOB", contratoCobranca.getNumeroContrato() + "_netrin_" + etapa);
+			boolean jobExist = scheduler.checkExists(key);
+			return jobExist;
+		} catch (SchedulerException e) {
+			e.printStackTrace();
+			return false;
 		}
-		return retorno;
 	}
-
+	
 	
 	public List<DocumentoAnalise> getListPagador() {
 		return listPagador;

@@ -82,7 +82,7 @@
 					
 					<f:facet name="header">
 						<p:commandButton value="Gerar XLS" ajax="false"
-							icon="ui-icon-print" action="#{contratoCobrancaMB.geraXLSFinanceiroDiaEspelhamento}"
+							icon="ui-icon-print" action="#{contratoCobrancaMB.geraXLSFinanceiroDia(true)}"
 							update="PanelPDF PanelXLS"
 							disabled="#{contratoCobrancaMB.contratoCobrancaFinanceiroDia.size() == 0}" />
 					</f:facet>
@@ -210,7 +210,7 @@
 		            
 		            <f:facet name="footer">
 						<p:commandButton value="Gerar XLS" ajax="false"
-							icon="ui-icon-print" action="#{contratoCobrancaMB.geraXLSFinanceiroDiaEspelhamento}"
+							icon="ui-icon-print" action="#{contratoCobrancaMB.geraXLSFinanceiroDia(true)}"
 							update="PanelPDF PanelXLS"
 							disabled="#{contratoCobrancaMB.contratoCobrancaFinanceiroDia.size() == 0}" />
 					</f:facet>				

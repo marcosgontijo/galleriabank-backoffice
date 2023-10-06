@@ -91,7 +91,8 @@ public class DocumentoAnalise implements Serializable {
 	private String retornoCNDFederal;
 	private String retornoCNDEstadual;
 	
-	private List<PlexiConsulta> plexiConsultas = new ArrayList<PlexiConsulta>();
+	//private List<PlexiConsulta> plexiConsultas = new ArrayList<PlexiConsulta>();
+	private Set<PlexiConsulta> plexiConsultas = new HashSet<>();
 	private Set<NetrinConsulta> netrinConsultas = new HashSet<>();
 	private Set<DocketConsulta> docketConsultas = new HashSet<>();
 	private List<String> estadosConsulta = new ArrayList<String>();
@@ -120,7 +121,6 @@ public class DocumentoAnalise implements Serializable {
 	private boolean isRelacionamentoBacenIniciadoAvailable = false;
 	private boolean isRiscoTotalAvailable = false;
 	private FileUploaded file;
-	
 
 	public List<DocumentoAnaliseResumo> getResumoProcesso() {
 		List<DocumentoAnaliseResumo> vProcesso = new ArrayList<>();
@@ -354,7 +354,6 @@ public class DocumentoAnalise implements Serializable {
 		}
 	}
 
-
 	public List<DocumentoAnaliseResumo> getResumoCenprot() {
 		List<DocumentoAnaliseResumo> cenprot = new ArrayList<>();
 
@@ -461,6 +460,7 @@ public class DocumentoAnalise implements Serializable {
 
 		return scr;
 	}
+
 	public boolean isPodeChamarRea() {
 		return isReaNaoEnviado() && CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
 	}
@@ -570,7 +570,6 @@ public class DocumentoAnalise implements Serializable {
 
 		return  CommonsUtil.mesmoValor(observacao, "Verificar Engine");
 	}
-
 	
 	public void addObservacao(String observacao) {
 
@@ -665,14 +664,26 @@ public class DocumentoAnalise implements Serializable {
 	}
 	
 	public void adicionaEstados(List<String> estados) {
+		if(CommonsUtil.semValor(estados))
+			return;
 		for (String estado : estados) {
 			adicionaEstados(estado);
 		}
 	}
 	
 	public void adicionaEstados(String estado) {
-		if(!getEstadosConsulta().contains(estado)) {
-			getEstadosConsulta().add(estado);
+		if(!CommonsUtil.semValor(estado) && !getEstadosConsulta().contains(estado)) {
+			List<String> aux = getEstadosConsulta();
+			aux.add(estado);
+			estadosConsultaStr = aux.toString();
+		}
+	}
+	
+	public void removerEstado(String estado) {
+		if(!CommonsUtil.semValor(estado) && getEstadosConsulta().contains(estado)) {
+			List<String> aux = getEstadosConsulta();
+			aux.remove(estado);
+			estadosConsultaStr = aux.toString();
 		}
 	}
 	
@@ -945,11 +956,11 @@ public class DocumentoAnalise implements Serializable {
 		this.excluido = excluido;
 	}
 	
-	public List<PlexiConsulta> getPlexiConsultas() {
+	public Set<PlexiConsulta> getPlexiConsultas() {
 		return plexiConsultas;
 	}
 
-	public void setPlexiConsultas(List<PlexiConsulta> plexiConsultas) {
+	public void setPlexiConsultas(Set<PlexiConsulta> plexiConsultas) {
 		this.plexiConsultas = plexiConsultas;
 	}
 
