@@ -34757,31 +34757,31 @@ public class ContratoCobrancaMB {
 				if (docAnalise.getMotivoAnalise().toLowerCase().contains("proprietario atual")) {
 					docAnalise.getResumoEngine();
 					docAnalise.getResumoScr();
-					if (docAnalise.HasCcfApontamentos()) {
+					if (docAnalise.isCcfApontamentosAvailable()) {
 						this.objetoContratoCobranca.setChequeDevolvidoTaxa(true);
 					}
-					if (docAnalise.HasPefinRefin()) {
+					if (docAnalise.isPefinRefinAvailable()) {
 						this.objetoContratoCobranca.setPefinTaxa(true);
 					}
-					if (docAnalise.HasProtestos()) {
+					if (docAnalise.isProtestosAvailable()) {
 						this.objetoContratoCobranca.setProtestoTaxa(true);
 					}
-					if (docAnalise.HasScoreBaixo()) {
+					if (docAnalise.isScoreBaixo()) {
 						this.objetoContratoCobranca.setScoreBaixoTaxa(true);
 					}
-					if (docAnalise.HasDividaVencida()) {
+					if (docAnalise.isDividaVencidaAvailable()) {
 						this.objetoContratoCobranca.setDividaVencidaTaxa(true);
 					}
-					if (docAnalise.HasPrejuizoBacen()) {
+					if (docAnalise.isPrejuizoBacenAvailable()) {
 						this.objetoContratoCobranca.setPrejuizoBacenTaxa(true);
 					}
 					if (this.objetoImovelCobranca.getTipo().contains("Galpão") || this.objetoImovelCobranca.getTipo().contains("Terreno")) {
 						this.objetoContratoCobranca.setTerrenoOuBarracaoTaxa(true);
 					}
-					if (docAnalise.getInicioRelacionamentoBacen()) {
+					if (docAnalise.isRelacionamentoBacenIniciadoAvailable()) {
 						this.objetoContratoCobranca.setRelacionamentoBacenRecenteTaxa(true);
 					}
-					if (docAnalise.HasRiscoTotal()) {
+					if (docAnalise.isRiscoTotalAvailable()) {
 						this.objetoContratoCobranca.setRiscoTotalBaixoTaxa(true);
 					}
 				}

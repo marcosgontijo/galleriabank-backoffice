@@ -109,16 +109,16 @@ public class DocumentoAnalise implements Serializable {
 	private double totalProtestosValor = 0.0;
 	
 	private int totalPendencias = 0;
-	private boolean hasPefinRefin = false;
+	private boolean isPefinRefinAvailable = false;
 	private int totalLawSuitApontamentos = 0;
 	private int totalApontamentos = 0;
-	private boolean hasCcfApontamentos = false;
-	private boolean hasProtestos = false;
-	private boolean hasScoreBaixo = false;
-	private boolean hasDividaVencida = false;
-	private boolean hasPrejuizoBacen = false;
-	private boolean inicioRelacionamentoBacen = false;
-	private boolean hasRiscoTotal = false;
+	private boolean isCcfApontamentosAvailable = false;
+	private boolean isProtestosAvailable = false;
+	private boolean isScoreBaixo = false;
+	private boolean isDividaVencidaAvailable = false;
+	private boolean isPrejuizoBacenAvailable = false;
+	private boolean isRelacionamentoBacenIniciadoAvailable = false;
+	private boolean isRiscoTotalAvailable = false;
 	private FileUploaded file;
 	
 
@@ -254,7 +254,7 @@ public class DocumentoAnalise implements Serializable {
 			result.add(new DocumentoAnaliseResumo("Score:", CommonsUtil.stringValue(score.getScore())));
 			
 			if (score.getScore() > 0 && score.getScore() < 450) {
-				hasScoreBaixo = true;
+				isScoreBaixo = true;
 			}
 		}
 
@@ -265,7 +265,7 @@ public class DocumentoAnalise implements Serializable {
 				result.add(new DocumentoAnaliseResumo("Pefin/Refin:", String.format("%,.2f", engineRetorno.getTotalValorApontamentos()) 
 						+ " (" + CommonsUtil.stringValue(engineRetorno.getTotalApontamentos()) + ")"));
 				
-				hasPefinRefin = true;
+				isPefinRefinAvailable = true;
 			} else {
 				result.add(new DocumentoAnaliseResumo("Pefin/Refin:", "0"));
 			}	
@@ -277,7 +277,7 @@ public class DocumentoAnalise implements Serializable {
 			if (engineRetorno.getTotalProtests() > 0) {
 				result.add(new DocumentoAnaliseResumo("Protesto:", String.format("%,.2f", engineRetorno.getTotalValorProtests())
 						+ " (" + CommonsUtil.stringValue(engineRetorno.getTotalProtests()) + ")"));
-				hasProtestos = true;
+				isProtestosAvailable = true;
 			} else {
 				result.add(new DocumentoAnaliseResumo("Protesto:", "0"));
 			}		
@@ -288,7 +288,7 @@ public class DocumentoAnalise implements Serializable {
 		} else {
 			if (engineRetorno.getTotalCcfApontamentos() > 0) {
 				result.add(new DocumentoAnaliseResumo("Cheque sem fundo:", CommonsUtil.stringValue(engineRetorno.getTotalCcfApontamentos())));
-				hasCcfApontamentos = true;
+				isCcfApontamentosAvailable = true;
 			} else {
 				result.add(new DocumentoAnaliseResumo("Cheque sem fundo:", "0"));
 			}			
@@ -400,7 +400,7 @@ public class DocumentoAnalise implements Serializable {
 				String carteiraVencido = CommonsUtil
 						.formataValorMonetario(dado.getResumoDoClienteTraduzido().getCarteiraVencido());
 				scr.add(new DocumentoAnaliseResumo("Carteira vencido:", carteiraVencido));
-				hasDividaVencida = true;
+				isDividaVencidaAvailable = true;
 			}
 
 			if (dado.getResumoDoClienteTraduzido().getPrejuizo() == null) {
@@ -408,7 +408,7 @@ public class DocumentoAnalise implements Serializable {
 			} else {
 				String prejuizo = CommonsUtil.formataValorMonetario(dado.getResumoDoClienteTraduzido().getPrejuizo());
 				scr.add(new DocumentoAnaliseResumo("Prejuizo:", prejuizo));
-				hasPrejuizoBacen = true;
+				isPrejuizoBacenAvailable = true;
 			}			
 			
 			if (dado.getResumoDoClienteTraduzido().getCarteiradeCredito() == null) {
@@ -1018,67 +1018,67 @@ public class DocumentoAnalise implements Serializable {
 		this.docketConsultas = docketConsultas;
 	}
 	
-	public boolean HasPefinRefin() {
-		return hasPefinRefin;
+	public boolean isPefinRefinAvailable() {
+		return isPefinRefinAvailable;
 	}
 
 	public void setHasPefinRefin(boolean hasPefinRefin) {
-		this.hasPefinRefin = hasPefinRefin;
+		this.isPefinRefinAvailable = hasPefinRefin;
 	}
 
-	public boolean HasCcfApontamentos() {
-		return hasCcfApontamentos;
+	public boolean isCcfApontamentosAvailable() {
+		return isCcfApontamentosAvailable;
 	}
 
 	public void setHasCcfApontamentos(boolean hasCcfApontamentos) {
-		this.hasCcfApontamentos = hasCcfApontamentos;
+		this.isCcfApontamentosAvailable = hasCcfApontamentos;
 	}
 
-	public boolean HasProtestos() {
-		return hasProtestos;
+	public boolean isProtestosAvailable() {
+		return isProtestosAvailable;
 	}
 
 	public void setHasProtestos(boolean hasProtestos) {
-		this.hasProtestos = hasProtestos;
+		this.isProtestosAvailable = hasProtestos;
 	}
 
-	public boolean HasScoreBaixo() {
-		return hasScoreBaixo;
+	public boolean isScoreBaixo() {
+		return isScoreBaixo;
 	}
 
 	public void setHasScoreBaixo(boolean hasScoreBaixo) {
-		this.hasScoreBaixo = hasScoreBaixo;
+		this.isScoreBaixo = hasScoreBaixo;
 	}
 
-	public boolean HasDividaVencida() {
-		return hasDividaVencida;
+	public boolean isDividaVencidaAvailable() {
+		return isDividaVencidaAvailable;
 	}
 
 	public void setHasDividaVencida(boolean hasDividaVencida) {
-		this.hasDividaVencida = hasDividaVencida;
+		this.isDividaVencidaAvailable = hasDividaVencida;
 	}
 
-	public boolean HasPrejuizoBacen() {
-		return hasPrejuizoBacen;
+	public boolean isPrejuizoBacenAvailable() {
+		return isPrejuizoBacenAvailable;
 	}
 
 	public void setHasPrejuizoBacen(boolean hasPrejuizoBacen) {
-		this.hasPrejuizoBacen = hasPrejuizoBacen;
+		this.isPrejuizoBacenAvailable = hasPrejuizoBacen;
 	}
 
-	public boolean getInicioRelacionamentoBacen() {
-		return inicioRelacionamentoBacen;
+	public boolean isRelacionamentoBacenIniciadoAvailable() {
+		return isRelacionamentoBacenIniciadoAvailable;
 	}
 
 	public void setInicioRelacionamentoBacen(boolean inicioRelacionamentoBacen) {
-		this.inicioRelacionamentoBacen = inicioRelacionamentoBacen;
+		this.isRelacionamentoBacenIniciadoAvailable = inicioRelacionamentoBacen;
 	}
 
-	public boolean HasRiscoTotal() {
-		return hasRiscoTotal;
+	public boolean isRiscoTotalAvailable() {
+		return isRiscoTotalAvailable;
 	}
 
 	public void setHasRiscoTotal(boolean hasRiscoTotal) {
-		this.hasRiscoTotal = hasRiscoTotal;
+		this.isRiscoTotalAvailable = hasRiscoTotal;
 	}
 }
