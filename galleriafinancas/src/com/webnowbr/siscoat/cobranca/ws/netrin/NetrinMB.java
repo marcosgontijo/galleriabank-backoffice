@@ -33,6 +33,7 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
+import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
@@ -139,6 +140,8 @@ public class NetrinMB {
 		boolean podeChamar = true;
 		for (DocumentoAnalise docAnalise : listPagador) {
 			//atualizarDocumentos(docAnalise);
+			PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
+			pagadorRecebedorDao.merge(docAnalise.getPagador());
 			for (NetrinConsulta netrinConsulta : docAnalise.getNetrinConsultas()) {
 				netrinConsulta.populatePagadorRecebedor(docAnalise.getPagador());
 				podeChamar = netrinConsulta.verificaCamposDoc();
@@ -308,7 +311,6 @@ public class NetrinMB {
 			Scheduler scheduler = shedFact.getScheduler();
 			JobKey key = JobKey.jobKey("certidoesJOB", contratoCobranca.getNumeroContrato() + "_netrin_" + etapa);
 			boolean jobExist = scheduler.checkExists(key);
-
 			return jobExist;
 		} catch (SchedulerException e) {
 			e.printStackTrace();

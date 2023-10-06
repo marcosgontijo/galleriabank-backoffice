@@ -3441,7 +3441,7 @@ public class ContratoCobrancaMB {
 		}
 	}
 
-	public void verificaPagementoAntecipado() {
+	public void verificaPagamentoAntecipado() {
 		if (objetoContratoCobranca.isApenasPagamentoAntecipado()) {
 			return;
 		}
@@ -3455,6 +3455,22 @@ public class ContratoCobrancaMB {
 			objetoContratoCobranca.setApenasPagamentoAntecipado(false);
 		} else {
 			objetoContratoCobranca.setApenasPagamentoAntecipado(true);
+		}
+	}
+	
+	public void verificaPagamentoIntegral() {
+		if (objetoContratoCobranca.isApenasPagamentoIntegral()) {
+			return;
+		}
+
+		if (CommonsUtil.mesmoValor(objetoImovelCobranca.getTipo(), "Apartamento")
+				|| CommonsUtil.mesmoValor(objetoImovelCobranca.getTipo(), "Casa")
+				|| CommonsUtil.mesmoValor(objetoImovelCobranca.getTipo(), "Casa de Condomínio")
+				|| CommonsUtil.mesmoValor(objetoImovelCobranca.getTipo(), "Casa de Condomínio acima1000")
+				|| CommonsUtil.mesmoValor(objetoImovelCobranca.getTipo(), "Casa em construção")) {
+			objetoContratoCobranca.setApenasPagamentoIntegral(false);
+		} else {
+			objetoContratoCobranca.setApenasPagamentoIntegral(true);
 		}
 	}
 
@@ -9217,7 +9233,8 @@ public class ContratoCobrancaMB {
 		// monta listagem de Arquivo para analise
 		listaArquivosAnaliseDocumentos();
 
-		verificaPagementoAntecipado();
+		verificaPagamentoAntecipado();
+		verificaPagamentoIntegral();
 
 		this.objetoAnaliseComite = new AnaliseComite();
 		this.objetoContratoCobranca.setQtdeVotosAprovadosComite(BigInteger.ZERO);

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -22,7 +23,9 @@ import org.primefaces.model.StreamedContent;
 import com.itextpdf.text.pdf.PdfReader;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
+import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
+import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.infra.db.model.User;
@@ -54,7 +57,8 @@ public class PlexiMB {
 				continue;
 			}
 			if((CommonsUtil.mesmoValor(etapa, "analise") && docAnalise.isLiberadoAnalise())
-			|| (CommonsUtil.mesmoValor(etapa, "pedir paju") && docAnalise.isLiberadoCertidoes())) {
+			|| (CommonsUtil.mesmoValor(etapa, "pedir paju") && docAnalise.isLiberadoAnalise())
+					){
 				listPagador.add(docAnalise);
 				
 				//if(CommonsUtil.semValor(docAnalise.getPlexiConsultas()) || docAnalise.getPlexiConsultas().size() == 0) {
@@ -78,6 +82,8 @@ public class PlexiMB {
 		}
 		
 		for(DocumentoAnalise docAnalise : listPagador) {
+			PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
+			pagadorRecebedorDao.merge(docAnalise.getPagador());
 			List<PlexiConsulta> consultasExistentes = new ArrayList<PlexiConsulta>();
 			List<PlexiConsulta> consultasExistentesDB = new ArrayList<PlexiConsulta>();
 			boolean podeChamar = true;
@@ -229,7 +235,8 @@ public class PlexiMB {
 					docAnalise.getPlexiConsultas().add(plexiConsulta);
 				} else {
 					PlexiConsulta db = consultasExistentesRetorno.get(0);
-					if(!docAnalise.getPlexiConsultas().contains(db)) {
+					if(docAnalise.getPlexiConsultas().stream().filter(d -> CommonsUtil.mesmoValor(d.getId(), db.getId()))
+							.collect(Collectors.toList()).size() <= 0) {
 						docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
 					}
 					plexiConsulta.setDocumentoAnalise(null);
@@ -381,7 +388,8 @@ public class PlexiMB {
 					docAnalise.getPlexiConsultas().add(plexiConsultaAux);
 				} else {
 					PlexiConsulta db = consultasExistentesRetorno.get(0);
-					if(!docAnalise.getPlexiConsultas().contains(db)) {
+					if(docAnalise.getPlexiConsultas().stream().filter(d -> CommonsUtil.mesmoValor(d.getId(), db.getId()))
+							.collect(Collectors.toList()).size() <= 0) {
 						docAnalise.getPlexiConsultas().add(consultasExistentesRetorno.get(0));
 					}
 				}
@@ -406,7 +414,8 @@ public class PlexiMB {
 						docAnalise.getPlexiConsultas().add(plexiConsultaAux);
 					} else {
 						PlexiConsulta db = consultasExistentesRetorno.get(0);
-						if(!docAnalise.getPlexiConsultas().contains(db)) {
+						if(docAnalise.getPlexiConsultas().stream().filter(d -> CommonsUtil.mesmoValor(d.getId(), db.getId()))
+								.collect(Collectors.toList()).size() <= 0) {
 							docAnalise.getPlexiConsultas().add(db);
 						}
 						plexiConsultaAux.setDocumentoAnalise(null);
@@ -427,7 +436,8 @@ public class PlexiMB {
 					docAnalise.getPlexiConsultas().add(plexiConsultaAux);
 				} else {
 					PlexiConsulta db = consultasExistentesRetorno.get(0);
-					if(!docAnalise.getPlexiConsultas().contains(db)) {
+					if(docAnalise.getPlexiConsultas().stream().filter(d -> CommonsUtil.mesmoValor(d.getId(), db.getId()))
+							.collect(Collectors.toList()).size() <= 0) {
 						docAnalise.getPlexiConsultas().add(db);
 					}
 					plexiConsultaAux.setDocumentoAnalise(null);
@@ -447,7 +457,8 @@ public class PlexiMB {
 					docAnalise.getPlexiConsultas().add(plexiConsultaAux);
 				} else {
 					PlexiConsulta db = consultasExistentesRetorno.get(0);
-					if(!docAnalise.getPlexiConsultas().contains(db)) {
+					if(docAnalise.getPlexiConsultas().stream().filter(d -> CommonsUtil.mesmoValor(d.getId(), db.getId()))
+							.collect(Collectors.toList()).size() <= 0) {
 						docAnalise.getPlexiConsultas().add(db);
 					}
 					plexiConsultaAux.setDocumentoAnalise(null);
@@ -473,7 +484,8 @@ public class PlexiMB {
 						docAnalise.getPlexiConsultas().add(plexiConsultaAux);
 					} else {
 						PlexiConsulta db = consultasExistentesRetorno.get(0);
-						if(!docAnalise.getPlexiConsultas().contains(db)) {
+						if(docAnalise.getPlexiConsultas().stream().filter(d -> CommonsUtil.mesmoValor(d.getId(), db.getId()))
+								.collect(Collectors.toList()).size() <= 0) {
 							docAnalise.getPlexiConsultas().add(db);
 						}
 						plexiConsultaAux.setDocumentoAnalise(null);
@@ -494,7 +506,8 @@ public class PlexiMB {
 					docAnalise.getPlexiConsultas().add(plexiConsultaAux);
 				} else {
 					PlexiConsulta db = consultasExistentesRetorno.get(0);
-					if(!docAnalise.getPlexiConsultas().contains(db)) {
+					if(docAnalise.getPlexiConsultas().stream().filter(d -> CommonsUtil.mesmoValor(d.getId(), db.getId()))
+							.collect(Collectors.toList()).size() <= 0) {
 						docAnalise.getPlexiConsultas().add(db);
 					}
 					plexiConsultaAux.setDocumentoAnalise(null);
@@ -517,7 +530,8 @@ public class PlexiMB {
 						docAnalise.getPlexiConsultas().add(plexiConsultaAux);
 					} else {
 						PlexiConsulta db = consultasExistentesRetorno.get(0);
-						if(!docAnalise.getPlexiConsultas().contains(db)) {
+						if(docAnalise.getPlexiConsultas().stream().filter(d -> CommonsUtil.mesmoValor(d.getId(), db.getId()))
+								.collect(Collectors.toList()).size() <= 0) {
 							docAnalise.getPlexiConsultas().add(db);
 						}
 						plexiConsultaAux.setDocumentoAnalise(null);
@@ -540,7 +554,8 @@ public class PlexiMB {
 					docAnalise.getPlexiConsultas().add(plexiConsultaAux);
 				} else {
 					PlexiConsulta db = consultasExistentesRetorno.get(0);
-					if(!docAnalise.getPlexiConsultas().contains(db)) {
+					if(docAnalise.getPlexiConsultas().stream().filter(d -> CommonsUtil.mesmoValor(d.getId(), db.getId()))
+							.collect(Collectors.toList()).size() <= 0) {
 						docAnalise.getPlexiConsultas().add(db);
 					}
 					plexiConsultaAux.setDocumentoAnalise(null);
@@ -565,7 +580,8 @@ public class PlexiMB {
 						docAnalise.getPlexiConsultas().add(plexiConsultaAux);
 					} else {
 						PlexiConsulta db = consultasExistentesRetorno.get(0);
-						if(!docAnalise.getPlexiConsultas().contains(db)) {
+						if(docAnalise.getPlexiConsultas().stream().filter(d -> CommonsUtil.mesmoValor(d.getId(), db.getId()))
+								.collect(Collectors.toList()).size() <= 0) {
 							docAnalise.getPlexiConsultas().add(db);
 						}
 						plexiConsultaAux.setDocumentoAnalise(null);

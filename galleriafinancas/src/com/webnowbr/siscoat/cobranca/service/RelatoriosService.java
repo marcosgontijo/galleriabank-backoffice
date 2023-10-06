@@ -107,8 +107,8 @@ public class RelatoriosService {
 		List<PreAprovadoPDFDetalheDespesas> detalhesDespesas = new ArrayList<>();
 
 		detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Debitos de IPTU", "Se houver"));
-		List<String> ImoveisComCondominio = Arrays.asList("Casa de Condomínio", "Apartamento", "Terreno de Condomínio",
-				"Sala Comercial");
+		List<String> ImoveisComCondominio = Arrays.asList("Casa de Condomínio", "Apartamento", "Terreno de Condomínio", 
+				"Terreno", "Sala Comercial");
 
 		if (ImoveisComCondominio.contains(con.getImovel().getTipo()))
 			detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Debitos de Condomínio", "Se houver"));
@@ -132,12 +132,11 @@ public class RelatoriosService {
 //		detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Custo de Emissão", 
 //				CommonsUtil.formataValorMonetario(valorCustoEmissao, "R$ ")));
 		
-		despesa = despesa.add(con.getValorLaudoPajuFaltante());
 		if(con.getValorLaudoPajuFaltante().compareTo(BigDecimal.ZERO) > 0) {
+			despesa = despesa.add(con.getValorLaudoPajuFaltante());
 			detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Laudo + Parecer Juridico",
 				CommonsUtil.formataValorMonetario(con.getValorLaudoPajuFaltante(), "R$ ")));
-		}
-		
+		}	
 
 		for (CcbProcessosJudiciais processo : con.getListProcessos().stream()
 				.filter(p -> p.isSelecionadoComite() && p.getQuitar().contains("Quitar"))
@@ -150,8 +149,6 @@ public class RelatoriosService {
 			despesa = despesa.add(processo.getValor());
 			detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Processo Nº " + processo.getNumero(),
 					CommonsUtil.formataValorMonetario(processo.getValor(), "R$ ")));
-			
-			
 		}
 
 		valorLiquido = con.getValorAprovadoComite().subtract(valorIOF).subtract(valorCustoEmissao).subtract(despesa);

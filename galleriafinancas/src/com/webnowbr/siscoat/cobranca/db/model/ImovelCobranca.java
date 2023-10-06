@@ -184,7 +184,7 @@ public class ImovelCobranca implements Serializable {
 		tipos.add("Casa de Condomínio,Casa de condomínio");
 		//tipos.add("Casa de Condomínio acima1000,Casa de condomínio (acima 1000m²)");
 		tipos.add("Terreno,Terreno");
-		tipos.add("Terreno de Condomínio,Terreno de Condomínio");
+		//tipos.add("Terreno de Condomínio,Terreno de Condomínio");
 		tipos.add("Chácara,Chácara");
 		tipos.add("Rural,Rural");
 		tipos.add("Casa em construção,Casa em construção");

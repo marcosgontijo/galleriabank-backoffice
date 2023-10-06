@@ -34,6 +34,7 @@ import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.DocketConsultaDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocketEstadosDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentosDocketDao;
+import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
@@ -217,6 +218,8 @@ public class DocketMB {
 		}
 		boolean podeChamar = true;
 		for(DocumentoAnalise docAnalise : listPagador) {
+			PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
+			pagadorRecebedorDao.merge(docAnalise.getPagador());
 			List<DocketConsulta> consultasExistentes = new ArrayList<DocketConsulta>();
 			List<DocketConsulta> consultasExistentesDB = new ArrayList<DocketConsulta>();
 			
