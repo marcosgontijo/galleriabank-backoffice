@@ -400,7 +400,9 @@ public class DocumentoAnalise implements Serializable {
 				String carteiraVencido = CommonsUtil
 						.formataValorMonetario(dado.getResumoDoClienteTraduzido().getCarteiraVencido());
 				scr.add(new DocumentoAnaliseResumo("Carteira vencido:", carteiraVencido));
-				isDividaVencidaAvailable = true;
+				if (dado.getResumoDoClienteTraduzido().getCarteiraVencido().compareTo(new BigDecimal("1000.00")) > 0) {
+					isDividaVencidaAvailable = true;
+				}
 			}
 
 			if (dado.getResumoDoClienteTraduzido().getPrejuizo() == null) {
@@ -408,7 +410,9 @@ public class DocumentoAnalise implements Serializable {
 			} else {
 				String prejuizo = CommonsUtil.formataValorMonetario(dado.getResumoDoClienteTraduzido().getPrejuizo());
 				scr.add(new DocumentoAnaliseResumo("Prejuizo:", prejuizo));
-				isPrejuizoBacenAvailable = true;
+				if (dado.getResumoDoClienteTraduzido().getPrejuizo().compareTo(new BigDecimal("1000.00")) > 0) {
+					isPrejuizoBacenAvailable = true;
+				}
 			}			
 			
 			if (dado.getResumoDoClienteTraduzido().getCarteiradeCredito() == null) {
