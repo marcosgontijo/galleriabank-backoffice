@@ -2337,17 +2337,6 @@
 										<f:selectItem itemValue="Ruim" itemLabel="Ruim" />
 									</p:selectOneMenu>
 								</shiro:hasAnyRoles>	
-									
-								<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,PRECOBRANCA, PROFILE_AVALIADOR_IMOVEL, PROFILE_LAUDO, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">				
-									<p:outputLabel for="avaliacaoEquipeLaudo" rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}"
-										value="Avaliação Equipe Laudo: " styleClass="labelBold" />
-									<p:selectOneMenu id="avaliacaoEquipeLaudo" required="true" rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoEquipeLaudo}" style="width:100px;" >
-										<f:selectItem itemValue="" itemLabel="" />
-										<f:selectItem itemValue="Bom" itemLabel="Bom" />
-										<f:selectItem itemValue="Ruim" itemLabel="Ruim" />
-									</p:selectOneMenu>
-								</shiro:hasAnyRoles>				
 							
 								<p:dataView var="data" style="min-width: 150px;"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.listDatasVistoria}"

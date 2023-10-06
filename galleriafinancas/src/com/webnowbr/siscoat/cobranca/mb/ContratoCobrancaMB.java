@@ -19630,27 +19630,6 @@ public class ContratoCobrancaMB {
 		contrato.setComentarioComite(comentarioComiteFinal);
 	}
 
-	public void gerarVotoLaudo(ContratoCobranca contrato) {
-		if (CommonsUtil.semValor(contrato.getAvaliacaoEngenharia())
-				|| CommonsUtil.semValor(contrato.getAvaliacaoEquipeLaudo())) {
-			return;
-		}
-
-		if (CommonsUtil.mesmoValor(contrato.getAvaliacaoEngenharia(), "Bom")
-				&& CommonsUtil.mesmoValor(contrato.getAvaliacaoEquipeLaudo(), "Bom")) {
-			AnaliseComite voto = new AnaliseComite();
-			voto.setTaxaComite(contrato.getTaxaPreAprovada());
-			voto.setPrazoMaxComite(contrato.getPrazoMaxPreAprovado());
-			voto.setValorComite(contrato.getQuantoPrecisa());
-			voto.setDataComite(gerarDataHoje());
-			voto.setUsuarioComite("Laudo");
-			voto.setTipoValorComite("bruto");
-			voto.setComentarioComite("Voto Gerado Pelo Sistema");
-			voto.setVotoAnaliseComite("Aprovado");
-			contrato.getListaAnaliseComite().add(voto);
-		}
-	}
-
 	public BigInteger definirQtdeVotoComite(ContratoCobranca contrato) {
 		// Se o valor solicitado no início for menor do que o solicitado pelo comercial,
 		// a operação irá precisar de 2 votos no comitê
