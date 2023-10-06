@@ -99,7 +99,7 @@ public class PlexiConsultaDao extends HibernateDao<PlexiConsulta, Long> {
 		if(CommonsUtil.mesmoValor(doc.getUrl(), 
 				"/api/maestro/trf1/certidao-distribuicao")) {
 			return (CommonsUtil.mesmoValor(plexiConsulta.getTipo(), consultaDB.getTipo())
-					&& CommonsUtil.mesmoValor(plexiConsulta.getOrgaos(), consultaDB.getOrgaos()));
+					&& CommonsUtil.mesmoValor(plexiConsulta.getOrgaosStr(), consultaDB.getOrgaosStr()));
 		}
 		
 		if(CommonsUtil.mesmoValor(doc.getUrl(), 
@@ -121,7 +121,7 @@ public class PlexiConsultaDao extends HibernateDao<PlexiConsulta, Long> {
 		if(CommonsUtil.mesmoValor(doc.getUrl(), 
 				"/api/maestro/trf6/certidao-distribuicao")) {
 			return (CommonsUtil.mesmoValor(plexiConsulta.getTipo(), consultaDB.getTipo())
-					&& CommonsUtil.mesmoValor(plexiConsulta.getOrgaos(), consultaDB.getOrgaos()));
+					&& CommonsUtil.mesmoValor(plexiConsulta.getOrgaosStr(), consultaDB.getOrgaosStr()));
 		}
 		return true;
 	}

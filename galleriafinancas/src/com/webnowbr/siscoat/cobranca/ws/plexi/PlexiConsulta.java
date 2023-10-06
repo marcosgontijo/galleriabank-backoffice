@@ -3,6 +3,7 @@ package com.webnowbr.siscoat.cobranca.ws.plexi;
 import java.util.Arrays;
 import java.util.Date;
 
+import com.google.gson.annotations.Expose;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -16,8 +17,8 @@ public class PlexiConsulta {
 	private String status;
 	private String pdf;
 	private String webhookRetorno;
-	private DocumentoAnalise documentoAnalise;
-	private PlexiDocumentos plexiDocumentos;
+	protected DocumentoAnalise documentoAnalise;
+	protected PlexiDocumentos plexiDocumentos;
 	private User usuario;
 	private Date dataConsulta;
 	private boolean expirado;
@@ -50,6 +51,7 @@ public class PlexiConsulta {
 	
 		
 	public PlexiConsulta() {
+		
 		super();
 	}
 

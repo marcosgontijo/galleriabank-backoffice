@@ -70,7 +70,7 @@
 						update="adicionarPessoaAnaliseForm">
 					</p:commandButton>
 					<p:commandButton value="Adicionar Pessoa"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise and !contratoCobrancaMB.verificaReaProcessado}"
 						action="#{contratoCobrancaMB.preparaAdicionarPessoaAnalise}"
 						oncomplete="PF('adicionarPessoaAnaliseDlg').show();"
 						disabled="true"

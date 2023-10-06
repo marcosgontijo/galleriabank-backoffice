@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Modifier;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -15,6 +16,8 @@ import javax.faces.application.FacesMessage;
 
 import org.json.JSONObject;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.service.FileService;
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -33,7 +36,8 @@ public class PlexiService {
 	
 	
 	public FacesMessage PedirConsulta(PlexiConsulta plexiCosulta, User usuarioLogado, DocumentoAnalise docAnalise) {
-		String plexiJson = GsonUtil.toJson(plexiCosulta);
+		Gson gson = new GsonBuilder().excludeFieldsWithModifiers(Modifier.PROTECTED).create();
+		String plexiJson = gson.toJson(plexiCosulta);
 		FacesMessage result = null;
 		try {
 			int HTTP_COD_SUCESSO = 201;
@@ -56,7 +60,7 @@ public class PlexiService {
 			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
 			myURLConnection.setRequestProperty("Content-Type", "application/json");
 			myURLConnection.setRequestProperty("Authorization", token);
-			myURLConnection.addRequestProperty("Callback", webhook);
+			//myURLConnection.addRequestProperty("Callback", webhook);
 			
 			myURLConnection.setDoOutput(true);
 			
