@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="AprovadoComitePDFN" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="e8050dff-0706-47c2-95a6-0b1a5d26bf66">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="538"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="451"/>
+	<property name="com.jaspersoft.studio.report.description" value=""/>
+	<subDataset name="Dataset1" uuid="86a051c9-05d4-4dd5-a974-393e284621e1">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+	</subDataset>
+	<parameter name="IMAGEMFUNDO" class="java.lang.Object"/>
+	<parameter name="IMAGEMRODAPE" class="java.lang.Object"/>
+	<parameter name="SUBREPORT_DETALHE_DESPESA" class="net.sf.jasperreports.engine.JasperReport">
+		<defaultValueExpression><![CDATA[$P{SUBREPORT_DIR} + "AprovadoComitePDF_NovoDetalhe.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Galleria\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="taxa" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[taxa]]></fieldDescription>
+	</field>
+	<field name="valorCustoEmissao" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorCustoEmissao]]></fieldDescription>
+	</field>
+	<field name="carencia" class="java.math.BigInteger">
+		<fieldDescription><![CDATA[carencia]]></fieldDescription>
+	</field>
+	<field name="cidade" class="java.lang.String">
+		<fieldDescription><![CDATA[cidade]]></fieldDescription>
+	</field>
+	<field name="numeroOp" class="java.lang.String">
+		<fieldDescription><![CDATA[numeroOp]]></fieldDescription>
+	</field>
+	<field name="observacao" class="java.lang.String">
+		<fieldDescription><![CDATA[observacao]]></fieldDescription>
+	</field>
+	<field name="valorLiquido" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorLiquido]]></fieldDescription>
+	</field>
+	<field name="data" class="java.util.Date">
+		<fieldDescription><![CDATA[data]]></fieldDescription>
+	</field>
+	<field name="despesa" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[despesa]]></fieldDescription>
+	</field>
+	<field name="detalhesDespesas" class="java.util.List">
+		<fieldDescription><![CDATA[detalhesDespesas]]></fieldDescription>
+	</field>
+	<field name="rendaMinima" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[rendaMinima]]></fieldDescription>
+	</field>
+	<field name="nome" class="java.lang.String">
+		<fieldDescription><![CDATA[nome]]></fieldDescription>
+	</field>
+	<field name="prazo" class="java.lang.String">
+		<fieldDescription><![CDATA[prazo]]></fieldDescription>
+	</field>
+	<field name="cep" class="java.lang.String">
+		<fieldDescription><![CDATA[cep]]></fieldDescription>
+	</field>
+	<field name="valorGarantia" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorGarantia]]></fieldDescription>
+	</field>
+	<field name="uf" class="java.lang.String">
+		<fieldDescription><![CDATA[uf]]></fieldDescription>
+	</field>
+	<field name="valorParcela" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorParcela]]></fieldDescription>
+	</field>
+	<field name="valorSolicitado" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorSolicitado]]></fieldDescription>
+	</field>
+	<field name="cpf" class="java.lang.String">
+		<fieldDescription><![CDATA[cpf]]></fieldDescription>
+	</field>
+	<field name="matricula" class="java.lang.String">
+		<fieldDescription><![CDATA[matricula]]></fieldDescription>
+	</field>
+	<field name="tipoValor" class="java.lang.String">
+		<fieldDescription><![CDATA[tipoValor]]></fieldDescription>
+	</field>
+	<field name="valorIOF" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorIOF]]></fieldDescription>
+	</field>
+	<variable name="Number" class="java.lang.String">
+		<variableExpression><![CDATA["12.34"]]></variableExpression>
+	</variable>
+	<detail>
+		<band height="558" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle">
+				<reportElement stretchType="ContainerHeight" isPrintRepeatedValues="false" x="0" y="0" width="595" height="558" uuid="9e64483a-d1fd-4f66-a483-4f1a664d70ac">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA[new java.io.ByteArrayInputStream( (byte[]) $P{IMAGEMFUNDO} )]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="220" y="250" width="116" height="20" forecolor="#92D050" uuid="7ccd33d4-5f80-4ef8-b2a3-8ba0f6aee9c9"/>
+				<box>
+					<pen lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="14" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[com.webnowbr.siscoat.common.CommonsUtil.formataValorMonetario($F{taxa}) + "% + IPCA"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="342" y="250" width="112" height="20" forecolor="#92D050" uuid="c97eafd7-6f1d-4990-b83d-ca9d96eb7dde"/>
+				<box>
+					<pen lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="14" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{prazo} + " meses"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="45" y="170" width="255" height="20" forecolor="#080808" uuid="c18e3d11-2f86-4d2e-ab77-250ec00fa10f"/>
+				<box>
+					<pen lineColor="#FFFFFF"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="44" y="203" width="234" height="20" forecolor="#92D050" uuid="f5041394-591c-4ac5-9abd-00fd8e203f46"/>
+				<box>
+					<pen lineColor="#FFFFFF"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif" size="14" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cpf}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="426" y="203" width="90" height="20" forecolor="#92D050" uuid="034101eb-1c7e-4626-844c-06df35052362"/>
+				<box>
+					<pen lineColor="#FFFFFF"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif" size="14" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{matricula}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="307" y="203" width="103" height="20" forecolor="#92D050" uuid="87bb4f94-0044-4bba-972f-ce394751d760"/>
+				<box>
+					<pen lineColor="#FFFFFF"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif" size="14" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cep}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="362" y="101" width="185" height="30" forecolor="#FFFFFF" uuid="2ef9b2fe-67a5-4d6e-b401-17f4f68f483b"/>
+				<box>
+					<pen lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="18" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["R$ " + com.webnowbr.siscoat.common.CommonsUtil.formataValorMonetario($F{valorSolicitado})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="44" y="250" width="176" height="20" forecolor="#92D050" uuid="e2115c55-22e7-45f1-bbfb-3724ea1f7166"/>
+				<box>
+					<pen lineColor="#FFFFFF"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif" size="14" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["R$ " + com.webnowbr.siscoat.common.CommonsUtil.formataValorMonetario($F{valorParcela})  + " + IPCA"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="473" y="250" width="80" height="20" forecolor="#92D050" uuid="97946e49-a1f6-435c-9ecb-9110dc153580"/>
+				<box>
+					<pen lineColor="#FFFFFF"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif" size="14" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{carencia} + " dias "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="399" y="286" width="148" height="30" forecolor="#FFFFFF" uuid="22d7f639-8960-4f92-8b63-7b93204a1d13"/>
+				<box>
+					<pen lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="14" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["R$ " + com.webnowbr.siscoat.common.CommonsUtil.formataValorMonetario($F{valorSolicitado})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="398" y="317" width="148" height="30" forecolor="#000000" uuid="61f10e3a-f027-40a1-907f-2a2bc9c5b9ba"/>
+				<box>
+					<pen lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="14" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["R$ " + com.webnowbr.siscoat.common.CommonsUtil.formataValorMonetario($F{valorIOF})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="399" y="348" width="148" height="30" forecolor="#000000" uuid="266fe9be-a1e9-4079-8038-6f322490e70a"/>
+				<box>
+					<pen lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="14" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["R$ " + com.webnowbr.siscoat.common.CommonsUtil.formataValorMonetario($F{valorCustoEmissao})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="400" y="379" width="148" height="30" forecolor="#000000" uuid="05d04cb5-e9a7-49d6-b30f-cdf9d2bad292"/>
+				<box>
+					<pen lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="14" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["R$ " + com.webnowbr.siscoat.common.CommonsUtil.formataValorMonetario($F{despesa})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="400" y="407" width="148" height="30" forecolor="#FFFFFF" uuid="de38940a-8184-4ca4-ae89-9275ffa2abe6"/>
+				<box>
+					<pen lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="14" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["R$ " + com.webnowbr.siscoat.common.CommonsUtil.formataValorMonetario($F{valorLiquido})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="398" y="45" width="68" height="20" forecolor="#000000" uuid="66234736-ba99-4ec8-840e-cf66a3d6a4b7"/>
+				<box>
+					<pen lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font fontName="SansSerif" size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numeroOp}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="490" y="45" width="70" height="20" forecolor="#000000" uuid="ed127a04-9f8c-4fc8-9ed8-49e106322c06">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineColor="#FFFFFF"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif" size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yy").format($F{data})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Transparent" x="50" y="487" width="506" height="50" forecolor="#000000" uuid="18a36d71-2282-4f00-9e36-6d92d02392a7"/>
+				<box>
+					<pen lineColor="#FFFFFF"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{observacao}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="26">
+			<subreport>
+				<reportElement x="0" y="0" width="595" height="26" uuid="74f6e486-0d7f-45f7-9b8d-7b6bb2054233">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{detalhesDespesas})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DETALHE_DESPESA}]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="44">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<image scaleImage="FillFrame">
+				<reportElement stretchType="ContainerHeight" isPrintRepeatedValues="false" x="0" y="0" width="595" height="40" uuid="6d5ebce2-3f4d-41ff-86af-4b130be51038">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA[new java.io.ByteArrayInputStream( (byte[]) $P{IMAGEMRODAPE} )]]></imageExpression>
+			</image>
+		</band>
+	</pageFooter>
+</jasperReport>

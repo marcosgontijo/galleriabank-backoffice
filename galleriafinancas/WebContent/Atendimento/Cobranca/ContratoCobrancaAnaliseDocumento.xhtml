@@ -40,8 +40,9 @@
 					immediate="true" icon="ui-icon-search">
 				</p:commandButton>
 				<shiro:hasAnyRoles name="ROOT">
-					<p:commandButton value="Atualiza Plexi"
-						action="#{plexiMB.atualizaRetorno(contratoCobrancaMB.listaDocumentoAnalise)}"
+					<p:commandButton value="Atualiza Certidoes" ajax="false"
+						action="#{contratoCobrancaMB.testeAttCertidoes(contratoCobrancaMB.listaDocumentoAnalise)}"
+						widgetVar="attCertideosBtn" onclick="attCertideosBtn.disable()" oncomplete="attCertideosBtn.enable()"
 						update="dtFilesAnalise">
 					</p:commandButton>
 				</shiro:hasAnyRoles>
@@ -63,7 +64,7 @@
 				<f:facet name="header"> Arquivo(s) Salvo(s) na analise 
 							<p:outputLabel value="" />
 					<p:commandButton value="Adicionar Pessoa"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise and contratoCobrancaMB.verificaReaProcessado}"
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
 						action="#{contratoCobrancaMB.preparaAdicionarPessoaAnalise}"
 						oncomplete="PF('adicionarPessoaAnaliseDlg').show();"
 						update="adicionarPessoaAnaliseForm">
@@ -153,6 +154,25 @@
 						<p:column style="text-align: center;" headerText="Observação"
 							filterMatchMode="contains">
 							<h:outputText value="#{fileAnalise.observacao}" />
+						</p:column>
+						
+						<p:column style="text-align: center; width:95px;padding: 0; border:0; " headerText="Estados">
+							<p:dataList id="estadosList" value="#{fileAnalise.estadosConsulta}" var="estado"  type="definition">
+								<h:panelGroup>
+									<p:commandButton icon="ui-icon ui-icon-trash" 
+										action="#{fileAnalise.removerEstado(estado)}"
+										ajax="true" update="estadosList" />
+									<h:outputText value=" #{estado}"  />
+								</h:panelGroup>
+							</p:dataList>
+							<p:commandButton value="+"
+								onclick="PF('estadoDialog').show()"
+								update="estadoDialogdlg"
+								style="padding: 0; border:0; ">
+								<f:setPropertyActionListener value="#{fileAnalise}"
+									target="#{contratoCobrancaMB.documentoAnalisePopup}">
+								</f:setPropertyActionListener>
+							</p:commandButton>
 						</p:column>
 
 						<p:column style="text-align: center;" headerText="Situação"
@@ -257,31 +277,31 @@
 
 			</p:panel>
 			<p:panel id="pnlCeridoesAnalise" header="Certidões"
-				rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
+				
 				style="margin-bottom:10px;">
 
 				<p:commandButton value="Executar Consultas" ajax="true"
 					action="#{contratoCobrancaMB.executarConsultasAnaliseDocumento}"
 					widgetVar="executeBtn" onclick="executeBtn.disable()" 
 					disabled="#{contratoCobrancaMB.checkConsultasAnaliseDocumento()}" />
-				<p:commandButton value="Certidões Docket" ajax="false"
-					action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'analise')}" />
-				<p:commandButton value="Certidões Plexi" 
-					action="#{plexiMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'analise')}" />
-				<p:commandButton value="Certidões Netrin" 
-					action="#{netrinMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'analise')}" />
+				<p:commandButton value="Analise Docket" ajax="false"
+					action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'analise', contratoCobrancaMB.objetoContratoCobranca)}" />
+				<p:commandButton value="Analise Plexi" ajax="false"
+					action="#{plexiMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'analise', contratoCobrancaMB.objetoContratoCobranca)}" />
+				<p:commandButton value="Analise Netrin" ajax="false"
+					action="#{netrinMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'analise', contratoCobrancaMB.objetoContratoCobranca)}" />
 			</p:panel>
 			
 			<p:panel id="pnlCeridoesPedirPaju" header="Certidões"
-				rendered="#{contratoCobrancaMB.objetoContratoCobranca.emPedirPaju}"
+				
 				style="margin-bottom:10px;">
 				
-				<p:commandButton value="Certidões Docket" ajax="false"
-					action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'pedir paju')}" />		
-				<p:commandButton value="Certidões Plexi" 
-					action="#{plexiMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'pedir paju')}" />				
-				<p:commandButton value="Certidões Netrin" 
-					action="#{netrinMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'pedir paju')}" />
+				<p:commandButton value="PAJU Docket" ajax="false"
+					action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'pedir paju', contratoCobrancaMB.objetoContratoCobranca)}" />		
+				<p:commandButton value="PAJU Plexi" ajax="false"
+					action="#{plexiMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'pedir paju', contratoCobrancaMB.objetoContratoCobranca)}" />				
+				<p:commandButton value="PAJU Netrin" ajax="false"
+					action="#{netrinMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'pedir paju', contratoCobrancaMB.objetoContratoCobranca)}" />
 					
 			</p:panel>
 

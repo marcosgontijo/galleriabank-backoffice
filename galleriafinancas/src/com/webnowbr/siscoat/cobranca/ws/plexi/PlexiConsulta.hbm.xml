@@ -30,6 +30,12 @@
 		<property name="webhookRetorno" type="java.lang.String">
 			<column name="webhookRetorno" />
 		</property>
+		
+		<many-to-one name="documentoAnalise"
+			class="com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise"
+			lazy="false">
+			<column name="documentoAnalise" />
+		</many-to-one>
 
 		<many-to-one name="plexiDocumentos"
 			class="com.webnowbr.siscoat.cobranca.ws.plexi.PlexiDocumentos"
