@@ -47,8 +47,11 @@ public class RelatoriosService {
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 		final ReportUtil ReportUtil = new ReportUtil();
 		JasperReport rptSimulacao = ReportUtil.getRelatorio("AprovadoComitePDFN");
-		InputStream logoStream = getClass().getResourceAsStream("/resource/novoCreditoAprovado.png");
+		InputStream logoStream = getClass().getResourceAsStream("/resource/novoCreditoAprovado2.png");
 		InputStream rodapeStream = getClass().getResourceAsStream("/resource/novoCreditoAprovadoRodape.png");
+		InputStream barraStream = getClass().getResourceAsStream("/resource/novoCreditoAprovadoBarra.png");
+		
+		
 		JasperReport rptDetalhe = ReportUtil.getRelatorio("AprovadoComitePDFNDetalhe");
 		JasperReport rptDetalheParcelas = ReportUtil.getRelatorio("AprovadoComitePDFNParcelas");
 		
@@ -60,6 +63,7 @@ public class RelatoriosService {
 		parameters.put("SUBREPORT_DETALHE_PARCELA", rptDetalheParcelas);
 		parameters.put("IMAGEMFUNDO", IOUtils.toByteArray(logoStream));
 		parameters.put("IMAGEMRODAPE", IOUtils.toByteArray(rodapeStream));
+		parameters.put("IMAGEMBARRA", IOUtils.toByteArray(barraStream));		
 		parameters.put("MOSTRARIPCA", true);
 
 		List<PreAprovadoPDF> list = new ArrayList<PreAprovadoPDF>();
