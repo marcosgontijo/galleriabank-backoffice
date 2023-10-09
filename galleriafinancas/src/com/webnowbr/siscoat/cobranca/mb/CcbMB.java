@@ -7513,7 +7513,7 @@ public class CcbMB {
 						continue;
 					}
 					numerosProcessos = numerosProcessos + ((!CommonsUtil.semValor(numerosProcessos)) ? ", " : "")
-							+ "nº " + CommonsUtil.stringValueVazio(processo.getNumero()) + " ";
+							+ "Nº " + CommonsUtil.stringValueVazio(processo.getNumero()) + " ";
 					totalProcessos = totalProcessos.add(processo.getValor());
 				}
 				numerosProcessos = numerosProcessos.trim();
@@ -7693,7 +7693,7 @@ public class CcbMB {
 						text = trocaValoresXWPF(text, r, "emissaoAno", (this.objetoCcb.getDataDeEmissao().getYear() + 1900));
 						
 						text = trocaValoresXWPF(text, r, "numerosProcessos",numerosProcessos);
-						text = trocaValoresXWPF(text, r, "totalProcessos", totalProcessos);
+						text = trocaValoresXWPF(text, r, "totalProcessos", CommonsUtil.formataValorMonetario(totalProcessos));
 						
 			        }
 			    }

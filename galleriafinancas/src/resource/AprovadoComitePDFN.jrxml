@@ -292,10 +292,10 @@
 				<subreportExpression><![CDATA[$P{SUBREPORT_DETALHE_DESPESA}]]></subreportExpression>
 			</subreport>
 		</band>
-		<band height="26">
+		<band height="40">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<subreport>
-				<reportElement x="0" y="0" width="595" height="26" uuid="c0d1d0c2-5dfb-4b35-abf7-5f3fb6813a3d">
+				<reportElement x="0" y="14" width="595" height="26" uuid="c0d1d0c2-5dfb-4b35-abf7-5f3fb6813a3d">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<subreportParameter name="MOSTRARIPCA">

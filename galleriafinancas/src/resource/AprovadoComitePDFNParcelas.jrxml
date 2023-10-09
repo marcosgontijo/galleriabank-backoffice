@@ -28,6 +28,9 @@
 	<field name="seguroDFI" class="java.math.BigDecimal">
 		<fieldDescription><![CDATA[seguroDFI]]></fieldDescription>
 	</field>
+	<field name="txAdm" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[txAdm]]></fieldDescription>
+	</field>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -94,7 +97,7 @@
 				<text><![CDATA[Juros]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="325" y="0" width="60" height="20" forecolor="#EDFFF4" backcolor="#92D050" uuid="8b80e426-8554-43ca-af79-462fa7668a4b">
+				<reportElement mode="Opaque" x="325" y="0" width="74" height="20" forecolor="#EDFFF4" backcolor="#92D050" uuid="8b80e426-8554-43ca-af79-462fa7668a4b">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -109,12 +112,13 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Seguro MIP]]></text>
+				<text><![CDATA[Seguros MIP/DFI]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="385" y="0" width="60" height="20" forecolor="#EDFFF4" backcolor="#92D050" uuid="0ec331e2-d3a8-4413-b51e-ef845258a927">
+				<reportElement mode="Opaque" x="399" y="0" width="48" height="20" forecolor="#EDFFF4" backcolor="#92D050" uuid="0ec331e2-d3a8-4413-b51e-ef845258a927">
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<box>
 					<pen lineWidth="1.5"/>
@@ -126,10 +130,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Seguro DFI]]></text>
+				<text><![CDATA[Taxa ADM]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="445" y="0" width="102" height="20" forecolor="#EDFFF4" backcolor="#92D050" uuid="fb11e87b-224d-4d57-9414-84aece36c12e">
+				<reportElement mode="Opaque" x="447" y="0" width="100" height="20" forecolor="#EDFFF4" backcolor="#92D050" uuid="fb11e87b-224d-4d57-9414-84aece36c12e">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -218,7 +222,7 @@
 				<textFieldExpression><![CDATA["R$ " +  com.webnowbr.siscoat.common.CommonsUtil.formataValorMonetario($F{juros})]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
-				<reportElement x="325" y="0" width="60" height="15" uuid="8aae7a4e-fea6-4eb2-aef3-cc03115c28cb">
+				<reportElement x="325" y="0" width="74" height="15" uuid="8aae7a4e-fea6-4eb2-aef3-cc03115c28cb">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box bottomPadding="1">
@@ -231,10 +235,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA["R$ " +  com.webnowbr.siscoat.common.CommonsUtil.formataValorMonetario($F{seguroMIP})]]></textFieldExpression>
+				<textFieldExpression><![CDATA["R$ " +  com.webnowbr.siscoat.common.CommonsUtil.formataValorMonetario($F{seguroMIP}.add($F{seguroDFI}))]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
-				<reportElement x="385" y="0" width="60" height="15" uuid="6029851c-cda2-4a9c-842c-783415a3e8dd">
+				<reportElement x="399" y="0" width="48" height="15" uuid="6029851c-cda2-4a9c-842c-783415a3e8dd">
 					<property name="local_mesure_unity" value="pixel"/>
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -249,10 +253,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA["R$ " +  com.webnowbr.siscoat.common.CommonsUtil.formataValorMonetario($F{seguroDFI})]]></textFieldExpression>
+				<textFieldExpression><![CDATA["R$ " +  com.webnowbr.siscoat.common.CommonsUtil.formataValorMonetario($F{txAdm})]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
-				<reportElement x="445" y="0" width="102" height="15" uuid="737edd8d-b2a7-4747-98b3-2582df95b05c">
+				<reportElement x="447" y="0" width="100" height="15" uuid="737edd8d-b2a7-4747-98b3-2582df95b05c">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<printWhenExpression><![CDATA[$P{MOSTRARIPCA}]]></printWhenExpression>
 				</reportElement>
@@ -285,9 +289,10 @@
 				<textFieldExpression><![CDATA["R$ " + com.webnowbr.siscoat.common.CommonsUtil.formataValorMonetario($F{saldoDevedorInicial})]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
-				<reportElement x="445" y="0" width="80" height="15" uuid="ffff1489-c860-48bd-b658-dee5e07482dc">
+				<reportElement x="447" y="0" width="78" height="15" uuid="ffff1489-c860-48bd-b658-dee5e07482dc">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<printWhenExpression><![CDATA[$P{MOSTRARIPCA}==false]]></printWhenExpression>
 				</reportElement>
 				<box bottomPadding="1">
