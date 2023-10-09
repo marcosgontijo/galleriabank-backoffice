@@ -1898,8 +1898,8 @@ public class NetrinService {
 			return;
 		}	
 		
-		if(!retorno.contains("Não conseguimos gerar o link do comprovante.")) {
-			netrin.setStatus("Falha: Retorno sem pdf");
+		if(retorno.contains("Não conseguimos gerar o link do comprovante.")) {
+			netrin.setStatus("Falha: Retorno sem link do pdf");
 			netrinConsultaDao.merge(netrin);
 			return;
 		}
