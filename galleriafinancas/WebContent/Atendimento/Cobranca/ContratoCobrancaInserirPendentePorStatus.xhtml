@@ -1459,10 +1459,17 @@
 				<h:panelGroup id="PreAprovadoPanel" style="margin-bottom:20px;">
 					<p:panel header="Pré-Aprovado"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise and ( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus !='Pré-Comite'))}">
-						<h:panelGrid columns="5">
+						<f:facet name="header">
+							Pré-Aprovado
+							<p:commandButton icon="pi pi-refresh" value="Atualizar informações">
+									<p:ajax event="click" update="panelGridPreAprovado"
+									listener="#{contratoCobrancaMB.hasDocAnalise}"/>
+							</p:commandButton>
+						</f:facet>
+						<h:panelGrid columns="5" id="panelGridPreAprovado">
 							<p:outputLabel value="Tem Protesto" styleClass="labelBold" />
-							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.protestoTaxa}">
-								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado" 
+							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.protestoTaxa}" id="protestoCBox">
+								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado taxaPreAprovadaPanel" 
 									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
 							</p:selectBooleanCheckbox>
 							<p:spacer width="5px"/>
@@ -1484,11 +1491,11 @@
 									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
 							</p:selectBooleanCheckbox>
 							
-							<p:outputLabel value="Tem Pefin" styleClass="labelBold" />
-							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.pefinTaxa}">
-								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado" 
+							<p:outputLabel value="Tem Pefin/Refin" styleClass="labelBold" />
+							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.pefinTaxa}" id="pefinCBox">
+								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado taxaPreAprovadaPanel" 
 									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
-							</p:selectBooleanCheckbox>
+							</p:selectBooleanCheckbox>							
 							<p:spacer width="5px"/>
 							<p:outputLabel value="Tem Prejuízo Bacen " styleClass="labelBold" />
 							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.prejuizoBacenTaxa}">
@@ -1496,44 +1503,32 @@
 									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
 							</p:selectBooleanCheckbox>
 													
-							<p:outputLabel value="Tem Refin" styleClass="labelBold" />
-							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.refinTaxa}">
-								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado" 
-									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
-							</p:selectBooleanCheckbox>
-							<p:spacer width="5px"/>
 							<p:outputLabel value="Risco Total &lt; 20.000,00" styleClass="labelBold" />
 							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.riscoTotalBaixoTaxa}">
 								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado" 
 									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
 							</p:selectBooleanCheckbox>
-												
+							<p:spacer width="5px"/>
 							<p:outputLabel value="Score &lt; 450" styleClass="labelBold" />
-							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.scoreBaixoTaxa}">
-								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado" 
-									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
+							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.scoreBaixoTaxa}" id="scoreCBox">
+								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado taxaPreAprovadaPanel" 
+									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada}" />
 							</p:selectBooleanCheckbox>
-							<p:spacer width="5px"/>							
+							
 							<p:outputLabel value="Garantia é Terreno ou Barracão?" styleClass="labelBold" />
 							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.terrenoOuBarracaoTaxa}">
 								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado" 
 									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
-							</p:selectBooleanCheckbox>
-							
-							<p:outputLabel value="Tem Terceiro Grantidor" styleClass="labelBold" />
-							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.terceiroGrantidorTaxa}">
-								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado" 
-									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
-							</p:selectBooleanCheckbox>
+							</p:selectBooleanCheckbox>							
 							<p:spacer width="5px"/>
 							<p:outputLabel value="Nada Consta" styleClass="labelBold" />
 							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.nadaConstaTaxa}">
-							<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado"
-							listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}"/>
+								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado"
+									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}"/>
 							</p:selectBooleanCheckbox>
 						</h:panelGrid>
 						<h:panelGrid columns="2">
-							<h:panelGroup>
+							<h:panelGroup id="taxaPreAprovadaPanel">
 								<h:panelGrid columns="2">
 									<p:outputLabel for="taxaPreAprovada"
 										value="Taxa Pré-Aprovada: " styleClass="labelBold" />
@@ -1976,18 +1971,7 @@
 										<f:selectItem itemValue="Bom" itemLabel="Bom" />
 										<f:selectItem itemValue="Ruim" itemLabel="Ruim" />
 									</p:selectOneMenu>
-								</shiro:hasAnyRoles>	
-									
-								<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,PRECOBRANCA, PROFILE_AVALIADOR_IMOVEL, PROFILE_LAUDO, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">				
-									<p:outputLabel for="avaliacaoEquipeLaudo" rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}"
-										value="Avaliação Equipe Laudo: " styleClass="labelBold" />
-									<p:selectOneMenu id="avaliacaoEquipeLaudo" required="true" rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoEquipeLaudo}" style="width:100px;" >
-										<f:selectItem itemValue="" itemLabel="" />
-										<f:selectItem itemValue="Bom" itemLabel="Bom" />
-										<f:selectItem itemValue="Ruim" itemLabel="Ruim" />
-									</p:selectOneMenu>
-								</shiro:hasAnyRoles>				
+								</shiro:hasAnyRoles>												
 							
 								<p:dataView var="data" style="min-width: 150px;"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.listDatasVistoria}"

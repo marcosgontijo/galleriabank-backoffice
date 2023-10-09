@@ -65,8 +65,9 @@ public class ImovelCobranca implements Serializable {
 	private int numeroBanheiros;
 	private int numeroSuites;
 	private int numeroGaragens;
-	private int numeroImovel;
-
+	private String numeroImovel;
+	private String enderecoSemNumero;
+	
 	private Cidade objetoCidade;
 	
 	public ImovelCobranca(){
@@ -184,7 +185,7 @@ public class ImovelCobranca implements Serializable {
 		tipos.add("Casa de Condomínio,Casa de condomínio");
 		//tipos.add("Casa de Condomínio acima1000,Casa de condomínio (acima 1000m²)");
 		tipos.add("Terreno,Terreno");
-		tipos.add("Terreno de Condomínio,Terreno de Condomínio");
+		//tipos.add("Terreno de Condomínio,Terreno de Condomínio");
 		tipos.add("Chácara,Chácara");
 		tipos.add("Rural,Rural");
 		tipos.add("Casa em construção,Casa em construção");
@@ -700,15 +701,21 @@ public class ImovelCobranca implements Serializable {
 	}
 	
 	public String getNumeroImovel() {
-		return String.valueOf(numeroImovel);
+		return numeroImovel;
 	}
 
-	public void setNumeroImovel() {
-		String[] split = this.endereco.split(",");
+	public void separaEnderecoNumero(String string) {
+		String[] split = string.split(",");
 		if (split.length > 1) {
-			this.numeroImovel = Integer.valueOf(split[1]);
+			this.enderecoSemNumero = split[0].trim();
+			this.numeroImovel = split[1].trim();
 		} else {
-			this.numeroImovel = 0;
+			this.enderecoSemNumero = "";
+			this.numeroImovel = "0";
 		}
+	}
+	
+	public String getEnderecoSemNumero() {
+		return enderecoSemNumero;
 	}
 }

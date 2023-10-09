@@ -48,7 +48,7 @@ public class DocumentoAnaliseService {
 
 		pagador = pagadorRecebedorService.buscaOuInsere(pagador);
 		documentoAnalise.setPagador(pagador);
-
+		documentoAnalise.adiconarEstadosPeloCadastro();
 		documentoAnaliseDao.create(documentoAnalise);
 		return pagador;
 	}
@@ -197,7 +197,7 @@ public class DocumentoAnaliseService {
 		pagador = pagadorRecebedorService.preecheDadosReceita(pagador);
 		
 		documentoAnalise.setPagador(pagador);
-
+		documentoAnalise.adiconarEstadosPeloCadastro();
 		documentoAnaliseDao.create(documentoAnalise);
 
 	}
@@ -237,10 +237,8 @@ public class DocumentoAnaliseService {
 		pagador = pagadorRecebedorService.buscaOuInsere(pagador);
 		documentoAnalise.setPagador(pagador);
 		
-
+		documentoAnalise.adiconarEstadosPeloCadastro();
 		documentoAnaliseDao.create(documentoAnalise);
-		
-
 	}
 	
 	public PagadorRecebedor cadastrarPartnershipRetornoEngine(EngineRetornoRequestEnterprisePartnership partnership, 

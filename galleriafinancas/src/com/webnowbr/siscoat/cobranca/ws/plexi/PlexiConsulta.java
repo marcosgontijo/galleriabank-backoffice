@@ -2,8 +2,9 @@ package com.webnowbr.siscoat.cobranca.ws.plexi;
 
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
+import com.google.gson.annotations.Expose;
+import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.infra.db.model.User;
@@ -16,7 +17,8 @@ public class PlexiConsulta {
 	private String status;
 	private String pdf;
 	private String webhookRetorno;
-	private PlexiDocumentos plexiDocumentos;
+	protected DocumentoAnalise documentoAnalise;
+	protected PlexiDocumentos plexiDocumentos;
 	private User usuario;
 	private Date dataConsulta;
 	private boolean expirado;
@@ -49,12 +51,14 @@ public class PlexiConsulta {
 	
 		
 	public PlexiConsulta() {
+		
 		super();
 	}
 
-	public PlexiConsulta(PagadorRecebedor pagador, PlexiDocumentos plexiDocumentos) {
+	public PlexiConsulta(DocumentoAnalise documentoAnalise, PlexiDocumentos plexiDocumentos) {
 		super();
-		populatePagadorRecebedor(pagador);
+		this.documentoAnalise = documentoAnalise;
+		populatePagadorRecebedor(documentoAnalise.getPagador());
 		this.plexiDocumentos = plexiDocumentos;
 	}
 
@@ -68,7 +72,7 @@ public class PlexiConsulta {
 		cpfCnpj = cpf + cnpj;
 		
 		if(!CommonsUtil.semValor(pagador.getNome())) {
-			nome = pagador.getNome();
+			nome = pagador.getNome().replace(",", "").replace(".", "").replace("/", "");
 		}
 		if(!CommonsUtil.semValor(pagador.getDtNascimento())) {
 			dataNascimento = CommonsUtil.formataData(pagador.getDtNascimento(), "dd/MM/yyyy");
@@ -461,5 +465,13 @@ public class PlexiConsulta {
 
 	public void setOrgaoExpedidor(String orgaoExpedidor) {
 		this.orgaoExpedidor = orgaoExpedidor;
+	}
+
+	public DocumentoAnalise getDocumentoAnalise() {
+		return documentoAnalise;
+	}
+
+	public void setDocumentoAnalise(DocumentoAnalise documentoAnalise) {
+		this.documentoAnalise = documentoAnalise;
 	}
 }

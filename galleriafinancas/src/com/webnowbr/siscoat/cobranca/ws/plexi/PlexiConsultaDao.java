@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
+import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.db.dao.HibernateDao;
@@ -97,7 +99,7 @@ public class PlexiConsultaDao extends HibernateDao<PlexiConsulta, Long> {
 		if(CommonsUtil.mesmoValor(doc.getUrl(), 
 				"/api/maestro/trf1/certidao-distribuicao")) {
 			return (CommonsUtil.mesmoValor(plexiConsulta.getTipo(), consultaDB.getTipo())
-					&& CommonsUtil.mesmoValor(plexiConsulta.getOrgaos(), consultaDB.getOrgaos()));
+					&& CommonsUtil.mesmoValor(plexiConsulta.getOrgaosStr(), consultaDB.getOrgaosStr()));
 		}
 		
 		if(CommonsUtil.mesmoValor(doc.getUrl(), 
@@ -119,7 +121,7 @@ public class PlexiConsultaDao extends HibernateDao<PlexiConsulta, Long> {
 		if(CommonsUtil.mesmoValor(doc.getUrl(), 
 				"/api/maestro/trf6/certidao-distribuicao")) {
 			return (CommonsUtil.mesmoValor(plexiConsulta.getTipo(), consultaDB.getTipo())
-					&& CommonsUtil.mesmoValor(plexiConsulta.getOrgaos(), consultaDB.getOrgaos()));
+					&& CommonsUtil.mesmoValor(plexiConsulta.getOrgaosStr(), consultaDB.getOrgaosStr()));
 		}
 		return true;
 	}
@@ -182,6 +184,38 @@ public class PlexiConsultaDao extends HibernateDao<PlexiConsulta, Long> {
 					closeResources(connection, ps, rs);
 				}
 				return retorno;
+			}
+		});
+	}
+	
+	private static final String QUERY_GET_ADD_DOCANALISE= "select * from cobranca.documentoanalise_plexiconsultas_join dpj";			;
+
+	@SuppressWarnings("unchecked")
+	public void addDocumentoAnalise() {
+		 executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+					ps = connection.prepareStatement(QUERY_GET_ADD_DOCANALISE);
+					rs = ps.executeQuery();	
+					PlexiConsultaDao plexiConsultaDao = new PlexiConsultaDao();
+					DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+					PlexiConsulta plexiConsulta;
+					DocumentoAnalise documentoAnalise;
+					while (rs.next()) {
+						plexiConsulta = plexiConsultaDao.findById(rs.getLong("idplexiconsulta"));
+						documentoAnalise = documentoAnaliseDao.findById(rs.getLong("iddocumentoanalise"));
+						plexiConsulta.setDocumentoAnalise(documentoAnalise);
+						plexiConsultaDao.merge(plexiConsulta);
+					}
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return null;
 			}
 		});
 	}
