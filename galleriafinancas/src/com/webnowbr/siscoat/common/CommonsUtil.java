@@ -1192,6 +1192,26 @@ public class CommonsUtil {
 
 		return sb.toString();
 	}
+	
+	public static final String somenteLetrasNumeros(String s) {
+		if (s == null) 
+			return null;
+		if ("".equals(s)) 
+			return "";
+		
+		StringBuilder sb = new StringBuilder(s);
+		for (int i = 0; i < s.length(); i++) {
+			char c = sb.charAt(i);
+			if (!Character.isLetter(c) && !Character.isDigit(c) && !Character.isSpace(c)) {
+				sb.setCharAt(i, ' ');
+			}
+		}
+		s = sb.toString();
+		while(s.contains("  ")) {
+			s = s.replace("  ", " ");
+		}
+		return s.trim();
+	}
 
 	public static boolean eSomenteNumero(String s) {
 		String sNumeros = somenteNumeros(s);

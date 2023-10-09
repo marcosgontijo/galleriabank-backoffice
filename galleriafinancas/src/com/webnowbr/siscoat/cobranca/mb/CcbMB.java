@@ -7499,18 +7499,27 @@ public class CcbMB {
 			if(this.objetoCcb.isTerceiroGarantidor()) {
 				document = new XWPFDocument(getClass().getResourceAsStream("/resource/CciTg.docx"));
 			} else {
-				document = new XWPFDocument(getClass().getResourceAsStream("/resource/Cci.docx"));
-				/*
-				 * document.getDocument().getBody().removeTbl(0);
-				 * //document.getDocument().getBody().removeTbl(1); int i = 0; for(XWPFParagraph
-				 * p : document.getParagraphs()) { document.getDocument().getBody().removeP(i);
-				 * }
-				 * 
-				 * for(XWPFTable p : document.getTables()) {
-				 * document.getDocument().getBody().removeTbl(i); }
-				 */
-				
+				if ( CommonsUtil.semValor( this.objetoCcb.getProcessosJucidiais() ) )
+					document = new XWPFDocument(getClass().getResourceAsStream("/resource/Cci.docx"));
+				else
+					document = new XWPFDocument(getClass().getResourceAsStream("/resource/CciComProcesso.docx"));
 			}		
+			
+			String numerosProcessos = "";
+			BigDecimal totalProcessos = BigDecimal.ZERO;
+			if (!CommonsUtil.semValor(this.objetoCcb.getProcessosJucidiais())) {
+				for (CcbProcessosJudiciais processo : this.objetoCcb.getProcessosJucidiais()) {
+					if (CommonsUtil.semValor(processo.getValor())) {
+						continue;
+					}
+					numerosProcessos = numerosProcessos + ((!CommonsUtil.semValor(numerosProcessos)) ? ", " : "")
+							+ "Nº " + CommonsUtil.stringValueVazio(processo.getNumero()) + " ";
+					totalProcessos = totalProcessos.add(processo.getValor());
+				}
+				numerosProcessos = numerosProcessos.trim();
+			}
+
+			
 			CTFonts fonts = CTFonts.Factory.newInstance();
 			fonts.setHAnsi("Calibri");
 			fonts.setAscii("Calibri");
@@ -7589,6 +7598,8 @@ public class CcbMB {
 				indexSegurados++;
 			}
 			
+			
+		
 			
 			XWPFTable table = document.getTables().get(0);
 			XWPFTableRow tableRow1 = table.getRow(3);
@@ -7679,21 +7690,31 @@ public class CcbMB {
 			            text = trocaValoresTaxaExtensoXWPF(text, r, "PorcentagemImovel", this.objetoCcb.getPorcentagemImovel());
 						text = trocaValoresXWPF(text, r, "emissaoDia", this.objetoCcb.getDataDeEmissao().getDate());
 						text = trocaValoresXWPF(text, r, "emissaoMes", CommonsUtil.formataMesExtenso(this.objetoCcb.getDataDeEmissao()).toLowerCase());
-						text = trocaValoresXWPF(text, r, "emissaoAno", (this.objetoCcb.getDataDeEmissao().getYear() + 1900));		
+						text = trocaValoresXWPF(text, r, "emissaoAno", (this.objetoCcb.getDataDeEmissao().getYear() + 1900));
+						
+						text = trocaValoresXWPF(text, r, "numerosProcessos",numerosProcessos);
+						text = trocaValoresXWPF(text, r, "totalProcessos", CommonsUtil.formataValorMonetario(totalProcessos));
+						
 			        }
 			    }
 			}	
+			
+			
 			
 			BigDecimal taxaAdm = SiscoatConstants.TAXA_ADM;
 			if(!CommonsUtil.semValor(this.objetoCcb.getPrazo()) && !CommonsUtil.semValor(this.objetoCcb.getNumeroParcelasPagamento())) {
 				taxaAdm = taxaAdm.multiply(BigDecimal.valueOf( Long.parseLong(CommonsUtil.somenteNumeros(this.objetoCcb.getPrazo())) - Long.parseLong(CommonsUtil.somenteNumeros(this.objetoCcb.getNumeroParcelasPagamento())) + 1));
 			} 
 			BigDecimal totalPrimeiraParcela = BigDecimal.ZERO;
-			totalPrimeiraParcela = this.objetoCcb.getValorMipParcela();
-			totalPrimeiraParcela = totalPrimeiraParcela.add(this.objetoCcb.getValorDfiParcela());
-			totalPrimeiraParcela = totalPrimeiraParcela.add(this.objetoCcb.getValorParcela());
+
+			if (!CommonsUtil.semValor(this.objetoCcb.getValorMipParcela()))
+				totalPrimeiraParcela = this.objetoCcb.getValorMipParcela();
+			if (!CommonsUtil.semValor(this.objetoCcb.getValorDfiParcela()))
+				totalPrimeiraParcela = totalPrimeiraParcela.add(this.objetoCcb.getValorDfiParcela());
+			if (!CommonsUtil.semValor(this.objetoCcb.getValorParcela()))
+				totalPrimeiraParcela = totalPrimeiraParcela.add(this.objetoCcb.getValorParcela());
 			totalPrimeiraParcela = totalPrimeiraParcela.add(taxaAdm);
-			
+						
 		    for (XWPFTable tbl : document.getTables()) {
 				for (XWPFTableRow row : tbl.getRows()) {
 					for (XWPFTableCell cell : row.getTableCells()) {
@@ -7763,6 +7784,7 @@ public class CcbMB {
 								text = trocaValoresXWPF(text, r, "nomeTestemunha2", this.objetoCcb.getNomeTestemunha2());
 								text = trocaValoresXWPF(text, r, "cpfTestemunha2", this.objetoCcb.getCpfTestemunha2());
 								text = trocaValoresXWPF(text, r, "rgTestemunha2", this.objetoCcb.getRgTestemunha2());
+						
 								
 								if (text != null && text.contains("sistemaAmortizacao")) {
 									if(CommonsUtil.mesmoValor(this.objetoCcb.getSistemaAmortizacao(), "Price")) {
@@ -7863,8 +7885,6 @@ public class CcbMB {
 			}
 			
 			int indexParcela = 1;
-			
-			//calcularSimulador();
 			
 
 			XWPFParagraph paragraph1 = document.createParagraph();
@@ -8339,6 +8359,7 @@ public class CcbMB {
 			this.objetoCcb.setCustasCartorariasValor(custasCartorarias);
 			this.objetoCcb.setItbiValor(itbi);
 			
+			
 		    for (XWPFTable tbl : document.getTables()) {
 				for (XWPFTableRow row : tbl.getRows()) {
 					for (XWPFTableCell cell : row.getTableCells()) {
@@ -8414,6 +8435,9 @@ public class CcbMB {
 								text = trocaValoresXWPF(text, r, "nomeTestemunha2", this.objetoCcb.getNomeTestemunha2());
 								text = trocaValoresXWPF(text, r, "cpfTestemunha2", this.objetoCcb.getCpfTestemunha2());
 								text = trocaValoresXWPF(text, r, "rgTestemunha2", this.objetoCcb.getRgTestemunha2());
+								
+								
+								
 								
 								if (text != null && text.contains("sistemaAmortizacao")) {
 									if(CommonsUtil.mesmoValor(this.objetoCcb.getSistemaAmortizacao(), "Price")) {

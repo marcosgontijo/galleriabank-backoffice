@@ -47,17 +47,24 @@ public class RelatoriosService {
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 		final ReportUtil ReportUtil = new ReportUtil();
 		JasperReport rptSimulacao = ReportUtil.getRelatorio("AprovadoComitePDFN");
-		InputStream logoStream = getClass().getResourceAsStream("/resource/novoCreditoAprovado.png");
+		InputStream logoStream = getClass().getResourceAsStream("/resource/novoCreditoAprovado2.png");
 		InputStream rodapeStream = getClass().getResourceAsStream("/resource/novoCreditoAprovadoRodape.png");
+		InputStream barraStream = getClass().getResourceAsStream("/resource/novoCreditoAprovadoBarra.png");
+		
+		
 		JasperReport rptDetalhe = ReportUtil.getRelatorio("AprovadoComitePDFNDetalhe");
+		JasperReport rptDetalheParcelas = ReportUtil.getRelatorio("AprovadoComitePDFNParcelas");
 		
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("REPORT_LOCALE", new Locale("pt", "BR"));
 
 		parameters.put("SUBREPORT_DETALHE_DESPESA", rptDetalhe);
+		parameters.put("SUBREPORT_DETALHE_PARCELA", rptDetalheParcelas);
 		parameters.put("IMAGEMFUNDO", IOUtils.toByteArray(logoStream));
 		parameters.put("IMAGEMRODAPE", IOUtils.toByteArray(rodapeStream));
+		parameters.put("IMAGEMBARRA", IOUtils.toByteArray(barraStream));		
+		parameters.put("MOSTRARIPCA", true);
 
 		List<PreAprovadoPDF> list = new ArrayList<PreAprovadoPDF>();
 		ContratoCobranca con = cDao.findById(idContrato);
@@ -159,7 +166,7 @@ public class RelatoriosService {
 				con.getImovel().getCidade(), con.getImovel().getNumeroMatricula(), con.getImovel().getEstado(),
 				con.getPrazoMaxAprovado().toString(), con.getValorAprovadoComite(), con.getValorMercadoImovel(),
 				parcelaPGTO, con.getTipoValorComite(), cep, carencia, despesa,
-				valorCustoEmissao, valorIOF , valorLiquido, detalhesDespesas);
+				valorCustoEmissao, valorIOF , valorLiquido, detalhesDespesas, simulador.getParcelas());
 		list.add(documento);
 		
 		final JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(list);

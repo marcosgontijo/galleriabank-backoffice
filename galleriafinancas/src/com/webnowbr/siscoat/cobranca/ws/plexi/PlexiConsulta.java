@@ -72,7 +72,8 @@ public class PlexiConsulta {
 		cpfCnpj = cpf + cnpj;
 		
 		if(!CommonsUtil.semValor(pagador.getNome())) {
-			nome = pagador.getNome().replace(",", "").replace(".", "").replace("/", "");
+			//nome = pagador.getNome().replace(",", "").replace(".", "").replace("/", "").replace("-", "");
+			nome = CommonsUtil.somenteLetrasNumeros(pagador.getNome());
 		}
 		if(!CommonsUtil.semValor(pagador.getDtNascimento())) {
 			dataNascimento = CommonsUtil.formataData(pagador.getDtNascimento(), "dd/MM/yyyy");
