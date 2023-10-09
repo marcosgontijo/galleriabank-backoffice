@@ -19,6 +19,10 @@
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["C:\\Galleria\\"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="SUBREPORT_DETALHE_PARCELA" class="net.sf.jasperreports.engine.JasperReport">
+		<defaultValueExpression><![CDATA[$P{SUBREPORT_DIR} + "SimulacaoCreditoParcelasNovo.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="MOSTRARIPCA" class="java.lang.Boolean"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -87,6 +91,9 @@
 	</field>
 	<field name="valorIOF" class="java.math.BigDecimal">
 		<fieldDescription><![CDATA[valorIOF]]></fieldDescription>
+	</field>
+	<field name="parcelas" class="java.util.List">
+		<fieldDescription><![CDATA[parcelas]]></fieldDescription>
 	</field>
 	<variable name="Number" class="java.lang.String">
 		<variableExpression><![CDATA["12.34"]]></variableExpression>
@@ -283,6 +290,19 @@
 				</reportElement>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{detalhesDespesas})]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DETALHE_DESPESA}]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="26">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<subreport>
+				<reportElement x="0" y="0" width="595" height="26" uuid="c0d1d0c2-5dfb-4b35-abf7-5f3fb6813a3d">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<subreportParameter name="MOSTRARIPCA">
+					<subreportParameterExpression><![CDATA[$P{MOSTRARIPCA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{parcelas})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DETALHE_PARCELA}]]></subreportExpression>
 			</subreport>
 		</band>
 	</detail>

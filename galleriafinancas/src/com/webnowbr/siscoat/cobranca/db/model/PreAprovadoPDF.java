@@ -3,10 +3,12 @@ package com.webnowbr.siscoat.cobranca.db.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.simulador.SimulacaoDetalheVO;
 
 public class PreAprovadoPDF implements Serializable {
 
@@ -39,6 +41,7 @@ public class PreAprovadoPDF implements Serializable {
 	private BigDecimal valorLiquido;
 	
 	List<PreAprovadoPDFDetalheDespesas> detalhesDespesas;
+	private List<SimulacaoDetalheVO> parcelas = new ArrayList<SimulacaoDetalheVO>();
 	
 	
 	public PreAprovadoPDF(String nome, Date data, String numeroOp, String cpf, BigDecimal taxa, String observacao,
@@ -84,12 +87,21 @@ public class PreAprovadoPDF implements Serializable {
 			this.observacao = "";
 		}
 	}
-
 	public PreAprovadoPDF(String nome, Date data, String numeroOp, String cpf, BigDecimal taxa, String observacao,
 			String cidade, String matricula, String uf, String prazo, BigDecimal valorSolicitado,
 			BigDecimal valorGarantia, BigDecimal valorParcela, String tipoValor, String cep, BigInteger carencia,
 			BigDecimal despesa, BigDecimal valorCustoEmissao, BigDecimal valorIOF, BigDecimal valorLiquido,
 			List<PreAprovadoPDFDetalheDespesas> detalhesDespesas) {
+		this(nome, data, numeroOp, cpf, taxa, observacao, cidade, matricula, uf, prazo, valorSolicitado, valorGarantia,
+				valorParcela, tipoValor, cep, carencia, despesa, valorCustoEmissao, valorIOF, valorLiquido,
+				detalhesDespesas, null);
+	}
+	
+	public PreAprovadoPDF(String nome, Date data, String numeroOp, String cpf, BigDecimal taxa, String observacao,
+			String cidade, String matricula, String uf, String prazo, BigDecimal valorSolicitado,
+			BigDecimal valorGarantia, BigDecimal valorParcela, String tipoValor, String cep, BigInteger carencia,
+			BigDecimal despesa, BigDecimal valorCustoEmissao, BigDecimal valorIOF, BigDecimal valorLiquido,
+			List<PreAprovadoPDFDetalheDespesas> detalhesDespesas, List<SimulacaoDetalheVO> parcelas ) {
 		super();
 		this.nome = nome;
 		this.data = data;
@@ -117,6 +129,7 @@ public class PreAprovadoPDF implements Serializable {
 		
 		this.valorLiquido = valorLiquido;
 		this.detalhesDespesas = detalhesDespesas;
+		this.parcelas  = parcelas;
 	}
 	
 	
@@ -242,6 +255,14 @@ public class PreAprovadoPDF implements Serializable {
 
 	public void setValorLiquido(BigDecimal valorLiquido) {
 		this.valorLiquido = valorLiquido;
+	}
+
+	public List<SimulacaoDetalheVO> getParcelas() {
+		return parcelas;
+	}
+
+	public void setParcelas(List<SimulacaoDetalheVO> parcelas) {
+		this.parcelas = parcelas;
 	}
 
 	public List<PreAprovadoPDFDetalheDespesas> getDetalhesDespesas() {
