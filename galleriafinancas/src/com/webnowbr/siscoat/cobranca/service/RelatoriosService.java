@@ -101,7 +101,7 @@ public class RelatoriosService {
 				.multiply(CommonsUtil.bigIntegerValue(30));
 		BigDecimal despesa = BigDecimal.ZERO;
 		
-		BigDecimal valorIOF = simulador.getValorTotalIOF();
+		BigDecimal valorIOF = simulador.getValorTotalIOF().add(simulador.getValorTotalIOFAdicional());
 		
 		BigDecimal valorLiquido = BigDecimal.ZERO;
 		List<PreAprovadoPDFDetalheDespesas> detalhesDespesas = new ArrayList<>();
