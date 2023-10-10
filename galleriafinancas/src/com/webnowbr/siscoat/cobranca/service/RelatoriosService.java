@@ -150,12 +150,12 @@ public class RelatoriosService {
 				.collect(Collectors.toList())) {
 			
 			String retiraObservaco = processo.getNumero() + " - "
-			+ CommonsUtil.formataValorMonetario(processo.getValor(), "R$ ") + "\n";
+			+ CommonsUtil.formataValorMonetario(processo.getValorAtualizado(), "R$ ") + "\n";
 			
 			observacao = observacao.replace( retiraObservaco, "");
-			despesa = despesa.add(processo.getValor());
+			despesa = despesa.add(processo.getValorAtualizado());
 			detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Processo Nº " + processo.getNumero(),
-					CommonsUtil.formataValorMonetario(processo.getValor(), "R$ ")));
+					CommonsUtil.formataValorMonetario(processo.getValorAtualizado(), "R$ ")));
 		}
 
 		valorLiquido = con.getValorAprovadoComite().subtract(valorIOF).subtract(valorCustoEmissao).subtract(despesa);

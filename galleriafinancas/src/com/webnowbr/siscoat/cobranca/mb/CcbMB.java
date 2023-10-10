@@ -1084,8 +1084,8 @@ public class CcbMB {
 		
 		if(!this.objetoCcb.getProcessosJucidiais().isEmpty()) {
 			for(CcbProcessosJudiciais processo : this.objetoCcb.getProcessosJucidiais()) {
-				if(!CommonsUtil.semValor(processo.getValor()))
-					total = total.add(processo.getValor());
+				if(!CommonsUtil.semValor(processo.getValorAtualizado()))
+					total = total.add(processo.getValorAtualizado());
 			}
 		}
 		this.objetoCcb.setValorDespesas(total);
@@ -7510,12 +7510,12 @@ public class CcbMB {
 			BigDecimal totalProcessos = BigDecimal.ZERO;
 			if (!CommonsUtil.semValor(this.objetoCcb.getProcessosJucidiais())) {
 				for (CcbProcessosJudiciais processo : this.objetoCcb.getProcessosJucidiais()) {
-					if (CommonsUtil.semValor(processo.getValor())) {
+					if (CommonsUtil.semValor(processo.getValorAtualizado())) {
 						continue;
 					}
 					numerosProcessos = numerosProcessos + ((!CommonsUtil.semValor(numerosProcessos)) ? ", " : "")
 							+ "Nº " + CommonsUtil.stringValueVazio(processo.getNumero()) + " ";
-					totalProcessos = totalProcessos.add(processo.getValor());
+					totalProcessos = totalProcessos.add(processo.getValorAtualizado());
 				}
 				numerosProcessos = numerosProcessos.trim();
 			}
