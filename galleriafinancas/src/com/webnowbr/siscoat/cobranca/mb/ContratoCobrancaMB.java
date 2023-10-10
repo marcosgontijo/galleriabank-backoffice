@@ -8915,7 +8915,7 @@ public class ContratoCobrancaMB {
 		juros = juros.divide(BigDecimal.valueOf(100));
 		juros = juros.add(BigDecimal.ONE);
 		double divisor = Math.pow(CommonsUtil.doubleValue(juros), quantidadeDeMesesDouble);
-		BigDecimal valorPresenteParcela = (saldo).divide(CommonsUtil.bigDecimalValue(divisor), MathContext.DECIMAL128);
+		BigDecimal valorPresenteParcela = (saldo).multiply(CommonsUtil.bigDecimalValue(divisor));
 		valorPresenteParcela = valorPresenteParcela.setScale(2, BigDecimal.ROUND_HALF_UP);
 		return valorPresenteParcela;
 	}
@@ -19551,7 +19551,7 @@ public class ContratoCobrancaMB {
 			return;
 		if(CommonsUtil.semValor(processoSelecionado.getValor()))
 			return;
-		String[] numeroArray = processoSelecionado.getNumero().split(".");
+		String[] numeroArray = processoSelecionado.getNumero().split("\\.");
 		if(numeroArray.length <= 1) 
 			return;
 		String ano = numeroArray[1];

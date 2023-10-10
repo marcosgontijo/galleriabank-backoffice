@@ -51,8 +51,8 @@
 						<f:selectItem itemValue="DeclaracaoUniaoEstavel" itemLabel="Declaração de União Estavel" />
 						<f:selectItem itemValue="DeclaracaoDestinacaoRecursos" itemLabel="Declaração Destinação Recursos" />
 						<f:selectItem itemValue="TermoPaju" itemLabel="Termo Responsabilidade Paju" />
-												
-						<p:ajax update="pagadoresAntigos pagadoresNovos despesasPanel SeguradoresPanel PanelBanco PgmntBancoVendedor" event="valueChange"
+											
+						<p:ajax update=" pagadoresNovos despesasPanel SeguradoresPanel PanelBanco PgmntBancoVendedor" event="valueChange"
 							listener="#{ccbMB.verificaModeloAntigo()}" />
 					</p:selectOneMenu>	
 					
