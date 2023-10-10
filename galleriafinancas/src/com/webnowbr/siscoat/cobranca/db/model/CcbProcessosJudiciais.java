@@ -3,6 +3,9 @@ package com.webnowbr.siscoat.cobranca.db.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DateUtil;
+
 public class CcbProcessosJudiciais implements Serializable{
 	/**
 	 * 
@@ -12,6 +15,7 @@ public class CcbProcessosJudiciais implements Serializable{
 	private long id;
 	
 	private BigDecimal valor = BigDecimal.ZERO;
+	private BigDecimal valorAtualizado = BigDecimal.ZERO;
 	private String numero = "";
 	private ContasPagar contaPagar;
 	private ContratoCobranca contrato;
@@ -101,5 +105,12 @@ public class CcbProcessosJudiciais implements Serializable{
 	public void setObservacao(String observacao) {
 		this.observacao = observacao;
 	}
-	
+
+	public BigDecimal getValorAtualizado() {
+		return valorAtualizado;
+	}
+
+	public void setValorAtualizado(BigDecimal valorAtualizado) {
+		this.valorAtualizado = valorAtualizado;
+	}	
 }

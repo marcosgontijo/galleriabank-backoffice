@@ -14,6 +14,10 @@
 			<column name="valor" />
 		</property>
 		
+		<property name="valorAtualizado" type="big_decimal">
+			<column name="valorAtualizado" />
+		</property>
+		
 		<property name="numero" type="java.lang.String">
 			<column name="numero" />
 		</property>

@@ -254,6 +254,36 @@ public final class DateUtil {
 		endDate = getZeroHour(endDate);
 		return startDate.getTime() <= newDate.getTime() && endDate.getTime() >= newDate.getTime();
 	}
+	
+	/**
+	 * Recupera o primeiro dia do primeiro mês apartir da data informada.
+	 * 
+	 * @param date
+	 * @return
+	 */
+	public static Date getFirstDayOfYear(Date date) {
+		Calendar cal = GregorianCalendar.getInstance();
+		cal.setTime(date);
+		cal.set(GregorianCalendar.MONTH, 0);
+		cal.set(GregorianCalendar.DAY_OF_MONTH, 1);
+		cal.set(GregorianCalendar.MILLISECOND, 0);
+		cal.set(GregorianCalendar.SECOND, 0);
+		cal.set(GregorianCalendar.MINUTE, 0);
+		cal.set(GregorianCalendar.HOUR_OF_DAY, 0);
+		return cal.getTime();
+	}
+	
+	public static Date getFirstDayOfYear(int ano) {
+		Calendar cal = GregorianCalendar.getInstance();
+		cal.set(GregorianCalendar.YEAR, ano);
+		cal.set(GregorianCalendar.MONTH, 0);
+		cal.set(GregorianCalendar.DAY_OF_MONTH, 1);
+		cal.set(GregorianCalendar.MILLISECOND, 0);
+		cal.set(GregorianCalendar.SECOND, 0);
+		cal.set(GregorianCalendar.MINUTE, 0);
+		cal.set(GregorianCalendar.HOUR_OF_DAY, 0);
+		return cal.getTime();
+	}
 
 	/**
 	 * Recupera o primeiro dia do primeiro mês apartir da data informada.

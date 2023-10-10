@@ -8903,6 +8903,23 @@ public class ContratoCobrancaMB {
 		this.valorPresenteParcela = (saldo).divide(CommonsUtil.bigDecimalValue(divisor), MathContext.DECIMAL128);
 		this.valorPresenteParcela = this.valorPresenteParcela.setScale(2, BigDecimal.ROUND_HALF_UP);
 	}
+	
+	public BigDecimal calcularValorPresente(Date dataInicio, Date dataFim, BigDecimal valor, BigDecimal txJuros) {
+		BigDecimal juros = txJuros;
+		BigDecimal saldo = valor;
+		BigDecimal quantidadeDeMeses = BigDecimal.ONE;
+		
+		quantidadeDeMeses = BigDecimal.valueOf(DateUtil.Days360(dataInicio, dataFim));
+		quantidadeDeMeses = quantidadeDeMeses.divide(BigDecimal.valueOf(30), MathContext.DECIMAL128);
+		Double quantidadeDeMesesDouble = CommonsUtil.doubleValue(quantidadeDeMeses);
+		juros = juros.divide(BigDecimal.valueOf(100));
+		juros = juros.add(BigDecimal.ONE);
+		double divisor = Math.pow(CommonsUtil.doubleValue(juros), quantidadeDeMesesDouble);
+		BigDecimal valorPresenteParcela = (saldo).divide(CommonsUtil.bigDecimalValue(divisor), MathContext.DECIMAL128);
+		valorPresenteParcela = valorPresenteParcela.setScale(2, BigDecimal.ROUND_HALF_UP);
+		return valorPresenteParcela;
+	}
+	
 
 	public StreamedContent downloadPDFQuitacao() throws JRException, IOException {
 		if (!CommonsUtil.semValor(this.quitacaoPDF.getParcelas())) {
@@ -19491,7 +19508,7 @@ public class ContratoCobrancaMB {
 		if (CommonsUtil.semValor(objetoContratoCobranca.getListProcessos())) {
 			objetoContratoCobranca.setListProcessos(new HashSet<>());
 		}
-		processoSelecionado.getContaPagar().setValor(processoSelecionado.getValor());
+		processoSelecionado.getContaPagar().setValor(processoSelecionado.getValorAtualizado());
 		processoSelecionado.getContaPagar().setDescricao("Processo N°: " + processoSelecionado.getNumero());
 		processoSelecionado.getContaPagar().setFormaTransferencia("Boleto");
 		processoSelecionado.getContaPagar().setNumeroDocumento(objetoContratoCobranca.getNumeroContrato());
@@ -19527,6 +19544,23 @@ public class ContratoCobrancaMB {
 		calcularValorTotalProcessos();
 		processoSelecionado = new CcbProcessosJudiciais();
 		processoSelecionado.setPagador(pessoa);
+	}
+	
+	public void atualizarValorProcesso() {
+		if(CommonsUtil.semValor(processoSelecionado.getNumero()))
+			return;
+		if(CommonsUtil.semValor(processoSelecionado.getValor()))
+			return;
+		String[] numeroArray = processoSelecionado.getNumero().split(".");
+		if(numeroArray.length <= 1) 
+			return;
+		String ano = numeroArray[1];
+		Date dataProcesso = DateUtil.getFirstDayOfYear(CommonsUtil.intValue(CommonsUtil.somenteNumeros(ano)));
+		Date hoje = DateUtil.gerarDataHoje();
+		BigDecimal valorPresente = calcularValorPresente(dataProcesso, hoje, 
+				processoSelecionado.getValor(), BigDecimal.valueOf(1.25));
+		valorPresente = valorPresente.multiply(BigDecimal.valueOf(1.1));
+		processoSelecionado.setValorAtualizado(valorPresente);
 	}
 
 	public void editProcesso(CcbProcessosJudiciais processo) {
