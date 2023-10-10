@@ -63,6 +63,11 @@
 			<url>https://repository.primefaces.org//</url>
 		</repository>
 		<repository>
+			<id>galleriabank</id>
+			<name>galleriabank repo</name>
+			<url>https://amurta.bytesafe.dev/maven/galleriabank</url>			
+		</repository>		
+		<repository>
 			<id>galleriabank_nexus</id>
 			<name>galleriabank repo</name>
 			<url>https://espelho.galleriabank.com.br/nexus/repository/maven-releases/</url>
