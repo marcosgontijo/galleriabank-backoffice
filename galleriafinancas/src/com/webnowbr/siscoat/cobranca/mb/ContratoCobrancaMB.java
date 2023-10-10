@@ -19560,6 +19560,7 @@ public class ContratoCobrancaMB {
 		BigDecimal valorPresente = calcularValorPresente(dataProcesso, hoje, 
 				processoSelecionado.getValor(), BigDecimal.valueOf(1.25));
 		valorPresente = valorPresente.multiply(BigDecimal.valueOf(1.1));
+		valorPresente = valorPresente.setScale(2, BigDecimal.ROUND_HALF_UP);
 		processoSelecionado.setValorAtualizado(valorPresente);
 	}
 

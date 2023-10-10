@@ -518,29 +518,31 @@ public class PlexiMB {
 		
 		if(CommonsUtil.mesmoValor(doc.getUrl(), 
 				"/api/maestro/trf3/certidao-distribuicao")) {
-			String[] tipoArray = {"civel", "criminal"};
-			String[] abrangenciaArray = new String[1]; 
-			//if(CommonsUtil.mesmoValor(plexiConsulta.getUf(), "SP"))
-				abrangenciaArray[0] = "sjsp";
-			//else if(CommonsUtil.mesmoValor(plexiConsulta.getUf(), "MS"))
-			//	abrangenciaArray[0] = "sjms";
-			//else
-				//abrangenciaArray[0] = "";
-			for(String tipo : tipoArray) {
-				for(String abrangencia : abrangenciaArray) {
-					PlexiConsulta plexiConsultaAux = new PlexiConsulta(docAnalise, doc);
-					plexiConsultaAux.setTipo(tipo);
-					plexiConsultaAux.setAbrangencia(abrangencia);
-					List<PlexiConsulta> consultasExistentesRetorno = plexiConsultaDao.getConsultasExistentes(plexiConsultaAux);
-					if(consultasExistentesRetorno.size() <= 0) {
-						docAnalise.getPlexiConsultas().add(plexiConsultaAux);
-					} else {
-						PlexiConsulta db = consultasExistentesRetorno.get(0);
-						if(docAnalise.getPlexiConsultas().stream().filter(d -> CommonsUtil.mesmoValor(d.getId(), db.getId()))
-								.collect(Collectors.toList()).size() <= 0) {
-							docAnalise.getPlexiConsultas().add(db);
+			for(String estado : docAnalise.getEstadosConsulta()) {
+				String[] tipoArray = {"civel", "criminal"};
+				String[] abrangenciaArray = new String[1];
+				if(CommonsUtil.mesmoValor(estado, "SP"))
+					abrangenciaArray[0] = "sjsp";
+				else if(CommonsUtil.mesmoValor(estado, "MS"))
+					abrangenciaArray[0] = "sjms";
+				else
+					return false;
+				for(String tipo : tipoArray) {
+					for(String abrangencia : abrangenciaArray) {
+						PlexiConsulta plexiConsultaAux = new PlexiConsulta(docAnalise, doc);
+						plexiConsultaAux.setTipo(tipo);
+						plexiConsultaAux.setAbrangencia(abrangencia);
+						List<PlexiConsulta> consultasExistentesRetorno = plexiConsultaDao.getConsultasExistentes(plexiConsultaAux);
+						if(consultasExistentesRetorno.size() <= 0) {
+							docAnalise.getPlexiConsultas().add(plexiConsultaAux);
+						} else {
+							PlexiConsulta db = consultasExistentesRetorno.get(0);
+							if(docAnalise.getPlexiConsultas().stream().filter(d -> CommonsUtil.mesmoValor(d.getId(), db.getId()))
+									.collect(Collectors.toList()).size() <= 0) {
+								docAnalise.getPlexiConsultas().add(db);
+							}
+							plexiConsultaAux.setDocumentoAnalise(null);
 						}
-						plexiConsultaAux.setDocumentoAnalise(null);
 					}
 				}
 			}
