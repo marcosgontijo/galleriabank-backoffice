@@ -1,9 +1,11 @@
 package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Date;
 import java.util.List;
 
@@ -108,12 +110,16 @@ public class DocumentoAnalise implements Serializable {
 	private double totalProtestosValor = 0.0;
 	
 	private int totalPendencias = 0;
-	private int totalInadimplencias = 0;
+	private boolean isPefinRefinAvailable = false;
 	private int totalLawSuitApontamentos = 0;
 	private int totalApontamentos = 0;
-	private int totalCcfApontamentos = 0;
-	private int totalProtestos = 0;
-	private int numeroParticipacaoEmpresas = 0;
+	private boolean isCcfApontamentosAvailable = false;
+	private boolean isProtestosAvailable = false;
+	private boolean isScoreBaixo = false;
+	private boolean isDividaVencidaAvailable = false;
+	private boolean isPrejuizoBacenAvailable = false;
+	private boolean isRelacionamentoBacenIniciadoAvailable = false;
+	private boolean isRiscoTotalAvailable = false;
 	private FileUploaded file;
 
 	public List<DocumentoAnaliseResumo> getResumoProcesso() {
@@ -132,41 +138,41 @@ public class DocumentoAnalise implements Serializable {
 				vProcesso.add(new DocumentoAnaliseResumo("Criminal:", "Não disponível"));
 			} else {
 				String processosQuantidade = CommonsUtil.stringValue(processo.getCriminal().stream().mapToInt(p -> p.getQuatidade()).sum());
-				String processosValor = CommonsUtil.stringValue(processo.getCriminal().stream().mapToDouble(p -> p.getValor()).sum());
-				vProcesso.add(new DocumentoAnaliseResumo("Criminal:", processosValor + "(" + processosQuantidade + ")"));
+				Double processosValor = processo.getCriminal().stream().mapToDouble(p -> p.getValor()).sum();
+				vProcesso.add(new DocumentoAnaliseResumo("Criminal:", String.format("%,.2f", processosValor) + " (" + processosQuantidade + ")"));
 			}
 
 			if (processo.getTrabalhista() == null) {
 				vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:", "Não disponível"));
 			} else {
 				String processosQuantidade = CommonsUtil.stringValue(processo.getTrabalhista().stream().mapToInt(p -> p.getQuatidade()).sum());
-				String processosValor = CommonsUtil.stringValue(processo.getTrabalhista().stream().mapToDouble(p -> p.getValor()).sum());
+				Double processosValor = processo.getTrabalhista().stream().mapToDouble(p -> p.getValor()).sum();
 				
-				vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:", processosValor + "(" + processosQuantidade + ")"));
+				vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:", String.format("%,.2f", processosValor) + " (" + processosQuantidade + ")"));
 			}
 
 			if (processo.getTituloExecucaoFiscal() == null) {
 				vProcesso.add(new DocumentoAnaliseResumo("Execução de título:", "Não disponível"));
 			} else {
 				String processosQuantidade = CommonsUtil.stringValue(processo.getTituloExecucaoFiscal().stream().mapToInt(p -> p.getQuatidade()).sum());
-				String processosValor = CommonsUtil.stringValue(processo.getTituloExecucaoFiscal().stream().mapToDouble(p -> p.getValor()).sum());
-				vProcesso.add(new DocumentoAnaliseResumo("Execução de título:", processosValor + "(" + processosQuantidade + ")"));
+				Double processosValor = processo.getTituloExecucaoFiscal().stream().mapToDouble(p -> p.getValor()).sum();
+				vProcesso.add(new DocumentoAnaliseResumo("Execução de título:", String.format("%,.2f", processosValor) + " (" + processosQuantidade + ")"));
 			}
 
 			if (processo.getExecucaoFiscalProtesto() == null) {
 				vProcesso.add(new DocumentoAnaliseResumo("Execução Fiscal:", "Não disponível"));
 			} else {
 				String processosQuantidade = CommonsUtil.stringValue(processo.getTituloExecucaoFiscal().stream().mapToInt(p -> p.getQuatidade()).sum());
-				String processosValor = CommonsUtil.stringValue(processo.getTituloExecucaoFiscal().stream().mapToDouble(p -> p.getValor()).sum());
-				vProcesso.add(new DocumentoAnaliseResumo("Execução Fiscal:", processosValor + "(" + processosQuantidade + ")"));
+				Double processosValor = processo.getTituloExecucaoFiscal().stream().mapToDouble(p -> p.getValor()).sum();
+				vProcesso.add(new DocumentoAnaliseResumo("Execução Fiscal:", String.format("%,.2f", processosValor) + " (" + processosQuantidade + ")"));
 			}
 
 			if (processo.getOutros() == null) {
 				vProcesso.add(new DocumentoAnaliseResumo("Outros:", "Não disponível"));
 			} else {
 				String processosQuantidade = CommonsUtil.stringValue(processo.getOutros().stream().mapToInt(p -> p.getQuatidade()).sum());
-				String processosValor = CommonsUtil.stringValue(processo.getOutros().stream().mapToDouble(p -> p.getValor()).sum());
-				vProcesso.add(new DocumentoAnaliseResumo("Outros:",processosValor + "(" + processosQuantidade + ")"));
+				Double processosValor = processo.getOutros().stream().mapToDouble(p -> p.getValor()).sum();
+				vProcesso.add(new DocumentoAnaliseResumo("Outros:", String.format("%,.2f", processosValor) + " (" + processosQuantidade + ")"));
 			}
 
 		}
@@ -246,14 +252,20 @@ public class DocumentoAnalise implements Serializable {
 																: engine.getConsultaCompleta().getQuodScore();
 			
 			result.add(new DocumentoAnaliseResumo("Score:", CommonsUtil.stringValue(score.getScore())));
+			
+			if (score.getScore() > 0 && score.getScore() < 450) {
+				isScoreBaixo = true;
+			}
 		}
 
 		if(engine.getDadosCadastraisPJ() == null && engine.getConsultaCompleta() == null) {
 			result.add(new DocumentoAnaliseResumo("Pefin/Refin:", "Não disponível"));
 		} else {			
-			if (engineRetorno.getTotalApontamentos() > 0 && !CommonsUtil.semValor(engine.getDadosCadastraisPJ())) {
+			if (engineRetorno.getTotalApontamentos() > 0) {
 				result.add(new DocumentoAnaliseResumo("Pefin/Refin:", String.format("%,.2f", engineRetorno.getTotalValorApontamentos()) 
 						+ " (" + CommonsUtil.stringValue(engineRetorno.getTotalApontamentos()) + ")"));
+				
+				isPefinRefinAvailable = true;
 			} else {
 				result.add(new DocumentoAnaliseResumo("Pefin/Refin:", "0"));
 			}	
@@ -265,6 +277,7 @@ public class DocumentoAnalise implements Serializable {
 			if (engineRetorno.getTotalProtests() > 0) {
 				result.add(new DocumentoAnaliseResumo("Protesto:", String.format("%,.2f", engineRetorno.getTotalValorProtests())
 						+ " (" + CommonsUtil.stringValue(engineRetorno.getTotalProtests()) + ")"));
+				isProtestosAvailable = true;
 			} else {
 				result.add(new DocumentoAnaliseResumo("Protesto:", "0"));
 			}		
@@ -275,6 +288,7 @@ public class DocumentoAnalise implements Serializable {
 		} else {
 			if (engineRetorno.getTotalCcfApontamentos() > 0) {
 				result.add(new DocumentoAnaliseResumo("Cheque sem fundo:", CommonsUtil.stringValue(engineRetorno.getTotalCcfApontamentos())));
+				isCcfApontamentosAvailable = true;
 			} else {
 				result.add(new DocumentoAnaliseResumo("Cheque sem fundo:", "0"));
 			}			
@@ -353,7 +367,7 @@ public class DocumentoAnalise implements Serializable {
 			} else {
 				for (ProtestosBrasilEstado estado : data.getCenprotProtestos().getProtestosBrasil().getEstados()) {
 
-					String valorEstado = CommonsUtil.stringValue(estado.getValorTotal()) + " (" + estado.getQuantidadeTotal()
+					String valorEstado = CommonsUtil.stringValue(String.format("%,.2f", estado.getValorTotal())) + " (" + estado.getQuantidadeTotal()
 							+ ") ";
 					cenprot.add(new DocumentoAnaliseResumo(estado.getEstado(), valorEstado));
 
@@ -385,6 +399,7 @@ public class DocumentoAnalise implements Serializable {
 				String carteiraVencido = CommonsUtil
 						.formataValorMonetario(dado.getResumoDoClienteTraduzido().getCarteiraVencido());
 				scr.add(new DocumentoAnaliseResumo("Carteira vencido:", carteiraVencido));
+				isDividaVencidaAvailable = true;
 			}
 
 			if (dado.getResumoDoClienteTraduzido().getPrejuizo() == null) {
@@ -392,6 +407,7 @@ public class DocumentoAnalise implements Serializable {
 			} else {
 				String prejuizo = CommonsUtil.formataValorMonetario(dado.getResumoDoClienteTraduzido().getPrejuizo());
 				scr.add(new DocumentoAnaliseResumo("Prejuizo:", prejuizo));
+				isPrejuizoBacenAvailable = true;
 			}			
 			
 			if (dado.getResumoDoClienteTraduzido().getCarteiradeCredito() == null) {
@@ -417,13 +433,24 @@ public class DocumentoAnalise implements Serializable {
 			
 			if (dado.getResumoDoClienteTraduzido().getDtInicioRelacionamento() == null) {
 				scr.add(new DocumentoAnaliseResumo("Data inicio relacionamento:", "--"));
-			} else {			
+			} else {		
 				String[] str = dado.getResumoDoClienteTraduzido().getDtInicioRelacionamento().split("-");
-				Arrays.sort(str);
-				List<String> listStrData = Arrays.asList(str);
+				if (Integer.parseInt(str[0]) > 2018) {
+					setInicioRelacionamentoBacen(true);
+				}
+				
+				LinkedList<String> listStrData = new LinkedList<String>();
+				for(int i = 0; i < str.length; ++i) {
+					listStrData.addFirst(str[i]);
+				}
+				
 				String dataRelacionamento = String.join("/", listStrData);
 				
 				scr.add(new DocumentoAnaliseResumo("Data inicio relacionamento:", dataRelacionamento));
+			}
+			
+			if (dado.getResumoDoClienteTraduzido().getRiscoTotal().compareTo(new BigDecimal("20000")) < 0) {
+				setHasRiscoTotal(true);
 			}
 		}
 
@@ -1000,5 +1027,69 @@ public class DocumentoAnalise implements Serializable {
 
 	public void setDocketConsultas(Set<DocketConsulta> docketConsultas) {
 		this.docketConsultas = docketConsultas;
+	}
+	
+	public boolean isPefinRefinAvailable() {
+		return isPefinRefinAvailable;
+	}
+
+	public void setHasPefinRefin(boolean hasPefinRefin) {
+		this.isPefinRefinAvailable = hasPefinRefin;
+	}
+
+	public boolean isCcfApontamentosAvailable() {
+		return isCcfApontamentosAvailable;
+	}
+
+	public void setHasCcfApontamentos(boolean hasCcfApontamentos) {
+		this.isCcfApontamentosAvailable = hasCcfApontamentos;
+	}
+
+	public boolean isProtestosAvailable() {
+		return isProtestosAvailable;
+	}
+
+	public void setHasProtestos(boolean hasProtestos) {
+		this.isProtestosAvailable = hasProtestos;
+	}
+
+	public boolean isScoreBaixo() {
+		return isScoreBaixo;
+	}
+
+	public void setHasScoreBaixo(boolean hasScoreBaixo) {
+		this.isScoreBaixo = hasScoreBaixo;
+	}
+
+	public boolean isDividaVencidaAvailable() {
+		return isDividaVencidaAvailable;
+	}
+
+	public void setHasDividaVencida(boolean hasDividaVencida) {
+		this.isDividaVencidaAvailable = hasDividaVencida;
+	}
+
+	public boolean isPrejuizoBacenAvailable() {
+		return isPrejuizoBacenAvailable;
+	}
+
+	public void setHasPrejuizoBacen(boolean hasPrejuizoBacen) {
+		this.isPrejuizoBacenAvailable = hasPrejuizoBacen;
+	}
+
+	public boolean isRelacionamentoBacenIniciadoAvailable() {
+		return isRelacionamentoBacenIniciadoAvailable;
+	}
+
+	public void setInicioRelacionamentoBacen(boolean inicioRelacionamentoBacen) {
+		this.isRelacionamentoBacenIniciadoAvailable = inicioRelacionamentoBacen;
+	}
+
+	public boolean isRiscoTotalAvailable() {
+		return isRiscoTotalAvailable;
+	}
+
+	public void setHasRiscoTotal(boolean hasRiscoTotal) {
+		this.isRiscoTotalAvailable = hasRiscoTotal;
 	}
 }
