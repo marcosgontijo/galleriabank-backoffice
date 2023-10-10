@@ -164,7 +164,7 @@ public class RelatoriosService {
 		PreAprovadoPDF documento = new PreAprovadoPDF(con.getPagador().getNome(), con.getDataContrato(),
 				con.getNumeroContrato(), cpf, con.getTaxaAprovada(), observacao,
 				con.getImovel().getCidade(), con.getImovel().getNumeroMatricula(), con.getImovel().getEstado(),
-				con.getPrazoMaxAprovado().toString(), con.getValorAprovadoComite(), con.getValorMercadoImovel(),
+				con.getPrazoMaxAprovado().toString(), simulador.getValorCredito(), con.getValorMercadoImovel(),
 				parcelaPGTO, con.getTipoValorComite(), cep, carencia, despesa,
 				valorCustoEmissao, valorIOF , valorLiquido, detalhesDespesas, simulador.getParcelas());
 		list.add(documento);
