@@ -725,7 +725,7 @@ public class CcbMB {
 	}
 	
 	public void addProcesso() {
-		processoSelecionado.getContaPagar().setValor(processoSelecionado.getValor());
+		processoSelecionado.getContaPagar().setValor(processoSelecionado.getValorAtualizado());
 		processoSelecionado.getContaPagar().setDescricao("Processo N°: " + processoSelecionado.getNumero());
 		
 		if(!CommonsUtil.semValor(objetoCcb.getObjetoContratoCobranca())) {

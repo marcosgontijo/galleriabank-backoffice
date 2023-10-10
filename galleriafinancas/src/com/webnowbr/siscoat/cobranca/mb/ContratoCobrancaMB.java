@@ -19496,8 +19496,8 @@ public class ContratoCobrancaMB {
 						pagador.setProcessos(new ArrayList<CcbProcessosJudiciais>());
 					}
 					pagador.getProcessos().add(processo);
-					if (!CommonsUtil.semValor(processo.getValor())) {
-						pagador.setValorProcessos(pagador.getValorProcessos().add(processo.getValor()));
+					if (!CommonsUtil.semValor(processo.getValorAtualizado())) {
+						pagador.setValorProcessos(pagador.getValorProcessos().add(processo.getValorAtualizado()));
 					}
 				}
 			}
@@ -19958,8 +19958,8 @@ public class ContratoCobrancaMB {
 		BigDecimal valorTotal = BigDecimal.ZERO;
 		if (!CommonsUtil.semValor(objetoContratoCobranca.getListProcessos())) {
 			for (CcbProcessosJudiciais processo : this.objetoContratoCobranca.getListProcessos()) {
-				if (!CommonsUtil.semValor(processo.getValor())) {
-					valorTotal = valorTotal.add(processo.getValor());
+				if (!CommonsUtil.semValor(processo.getValorAtualizado())) {
+					valorTotal = valorTotal.add(processo.getValorAtualizado());
 				}
 			}
 		}
