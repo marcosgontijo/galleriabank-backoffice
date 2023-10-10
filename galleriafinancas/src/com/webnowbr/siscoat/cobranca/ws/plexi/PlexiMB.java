@@ -399,7 +399,7 @@ public class PlexiMB {
 		
 		if(CommonsUtil.mesmoValor(doc.getUrl(), 
 				"/api/maestro/tjrj/consulta-processual")) {
-			String[] origemArray = {"primeiraInstancia", "segundaInstancia"};
+			String[] origemArray = {"primeiraInstancia"};
 			String comarca = "todas";
 			String[] competenciaArray = {"civel", "criminal", "criminalJuri"};
 			
@@ -471,7 +471,7 @@ public class PlexiMB {
 				"/api/maestro/trf1/certidao-distribuicao")) {
 			String[] tipoArray = {"civel", "criminal"};
 			String[][] orgaosArray = { 
-					{"ac","am","ap","ba","df","go","ma","mt","pa","pi","ro","rr","to","trf1"},
+					{"ac","am","ap","ba","df","go","ma","mt","pa","pi","ro","rr","to"},
 					{"varasJuizados"},
 					{"regionalizada"}};
 			for(String tipo : tipoArray) {
@@ -519,7 +519,7 @@ public class PlexiMB {
 		if(CommonsUtil.mesmoValor(doc.getUrl(), 
 				"/api/maestro/trf3/certidao-distribuicao")) {
 			String[] tipoArray = {"civel", "criminal"};
-			String[] abrangenciaArray = {"sjsp", "trf"};
+			String[] abrangenciaArray = {"sjsp"};//TODO sjms
 			for(String tipo : tipoArray) {
 				for(String abrangencia : abrangenciaArray) {
 					PlexiConsulta plexiConsultaAux = new PlexiConsulta(docAnalise, doc);
@@ -568,7 +568,7 @@ public class PlexiMB {
 				"/api/maestro/trf6/certidao-distribuicao")) {
 			String[] tipoArray = {"civel", "criminal"};
 			String[][] orgaosArray = {
-					{"mg","trf1"}
+					{"mg"}
 					};
 			for(String tipo : tipoArray) {
 				for(String[] orgaos : orgaosArray) {

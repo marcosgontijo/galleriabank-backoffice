@@ -35,7 +35,7 @@
 		</property>
         
         <property name="selecionadoComite" type="boolean">
-			<column name="selecionadoComite" not-null="true" default="true"/>
+			<column name="selecionadoComite" not-null="true" default="false"/>
 		</property>	
 		
 		<many-to-one name="pagador"

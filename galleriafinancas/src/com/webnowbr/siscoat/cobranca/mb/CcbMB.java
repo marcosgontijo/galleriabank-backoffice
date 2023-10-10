@@ -7488,7 +7488,8 @@ public class CcbMB {
 			XWPFRun run4;
 			List<CcbParticipantes> segurados = new ArrayList<CcbParticipantes>();
 			for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {				
-				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "TERCEIRO GARANTIDOR")) {
+				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "TERCEIRO GARANTIDOR")
+						|| CommonsUtil.mesmoValor(participante.getTipoParticipante(), "DEVEDOR FIDUCIANTE") ) {
 					this.objetoCcb.setTerceiroGarantidor(true);
 					participante.setTipoParticipante("DEVEDOR FIDUCIANTE");
 					segurados.add(participante);

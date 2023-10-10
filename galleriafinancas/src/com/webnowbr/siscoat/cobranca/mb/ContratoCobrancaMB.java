@@ -9410,6 +9410,13 @@ public class ContratoCobrancaMB {
 		if (CommonsUtil.semValor(this.objetoAnaliseComite.getCarenciaComite())) {
 			this.objetoAnaliseComite.setCarenciaComite(1);
 		}
+		
+		for(CcbProcessosJudiciais processo : this.objetoContratoCobranca.getListProcessos()) {
+			if(CommonsUtil.mesmoValor(processo.getQuitar(), "Quitar")) {
+				processo.setSelecionadoComite(true);
+			}
+		}
+		
 	}
 
 	public String clearFieldsEditarAvaliacaoImovel() {
