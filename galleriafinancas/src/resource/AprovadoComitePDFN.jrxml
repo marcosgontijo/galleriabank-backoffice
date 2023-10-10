@@ -296,7 +296,7 @@
 				<text><![CDATA[Observações]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="44" y="523" width="210" height="30" forecolor="#000000" uuid="115a5a7e-8b9a-4f6c-92c5-2ac1017a817e">
+				<reportElement x="44" y="523" width="502" height="30" forecolor="#000000" uuid="115a5a7e-8b9a-4f6c-92c5-2ac1017a817e">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<box>
@@ -313,7 +313,7 @@
 				</reportElement>
 			</line>
 			<line>
-				<reportElement x="44" y="524" width="509" height="1" uuid="7e04f4f9-2f69-4ccd-a981-094d99fcf3b8">
+				<reportElement x="44" y="529" width="509" height="1" uuid="7e04f4f9-2f69-4ccd-a981-094d99fcf3b8">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 			</line>

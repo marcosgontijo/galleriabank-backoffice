@@ -121,7 +121,7 @@ public class RelatoriosService {
 			detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Debitos de Condomínio", "Se houver"));
 
 		RegistroImovelTabelaDao rDao = new RegistroImovelTabelaDao();
-		final BigDecimal valorRegistro = rDao.getValorRegistro(con.getValorAprovadoComite());
+		final BigDecimal valorRegistro = rDao.getValorRegistro( simulador.getValorCredito());
 
 		List<RegistroImovelTabela> registroImovelTabela = rDao.findAll();
 		Optional<RegistroImovelTabela> registroImovel = registroImovelTabela.stream()
@@ -158,7 +158,7 @@ public class RelatoriosService {
 					CommonsUtil.formataValorMonetario(processo.getValor(), "R$ ")));
 		}
 
-		valorLiquido = con.getValorAprovadoComite().subtract(valorIOF).subtract(valorCustoEmissao).subtract(despesa);
+		valorLiquido =  simulador.getValorCredito().subtract(valorIOF).subtract(valorCustoEmissao).subtract(despesa);
 
 		// adicionar cep e carencia ( 1 + carencia * 30 )
 		PreAprovadoPDF documento = new PreAprovadoPDF(con.getPagador().getNome(), con.getDataContrato(),
