@@ -28866,7 +28866,7 @@ public class ContratoCobrancaMB {
 						String dataObj = responseObj.getString("data");
 						laudoEndereco = dataObj;					    
 					    FileService fileService = new FileService();
-//					    fileService.salvarPdfRetorno("", this.objetoContratoCobranca.getNumeroContrato(), retornaBase64(laudoEndereco), "LaudoRobo", "interno");
+					    fileService.salvarPdfRetorno("", this.objetoContratoCobranca.getNumeroContrato(), retornaBase64(laudoEndereco), "LaudoRobo", "interno");
 					    PrimeFaces.current().ajax().update("form:ArquivosInternosSalvos");
 					}
 				}
