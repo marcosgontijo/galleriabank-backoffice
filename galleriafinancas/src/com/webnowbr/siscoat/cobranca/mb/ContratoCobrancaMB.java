@@ -28781,6 +28781,11 @@ public class ContratoCobrancaMB {
 			postObj.put("search", searchObj);
 			postObj.put("assessing", assessingObj);
 			postObj.put("more_filters", moreFilters);
+			
+			if(!this.objetoImovelCobranca.getAreaConstruida().isEmpty()) {
+				this.objetoImovelCobranca.setAreaConstruida(this.objetoImovelCobranca.getAreaConstruida());
+				PrimeFaces.current().ajax().update("form:Imovel");
+			}
 
 			String idAval = "";
 			
@@ -28862,6 +28867,7 @@ public class ContratoCobrancaMB {
 						laudoEndereco = dataObj;					    
 					    FileService fileService = new FileService();
 					    fileService.salvarPdfRetorno("", this.objetoContratoCobranca.getNumeroContrato(), retornaBase64(laudoEndereco), "LaudoRobo", "interno");
+					    PrimeFaces.current().ajax().update("form:ArquivosInternosSalvos");
 					}
 				}
 				myURLConnection.disconnect();
