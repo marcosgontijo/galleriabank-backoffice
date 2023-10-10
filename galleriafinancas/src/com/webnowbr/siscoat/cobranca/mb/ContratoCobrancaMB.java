@@ -19558,7 +19558,7 @@ public class ContratoCobrancaMB {
 		Date dataProcesso = DateUtil.getFirstDayOfYear(CommonsUtil.intValue(CommonsUtil.somenteNumeros(ano)));
 		Date hoje = DateUtil.gerarDataHoje();
 		BigDecimal valorPresente = calcularValorPresente(dataProcesso, hoje, 
-				processoSelecionado.getValor(), BigDecimal.valueOf(1.25));
+				processoSelecionado.getValor(), BigDecimal.valueOf(1));
 		valorPresente = valorPresente.multiply(BigDecimal.valueOf(1.1));
 		valorPresente = valorPresente.setScale(2, BigDecimal.ROUND_HALF_UP);
 		processoSelecionado.setValorAtualizado(valorPresente);
