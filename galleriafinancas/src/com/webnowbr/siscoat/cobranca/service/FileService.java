@@ -352,7 +352,11 @@ public class FileService {
 		} catch (Exception e) {
 			fileExtension = "html"; 
 		}	
-		pdfRetorno.setName(nomeConsulta + " - " + nomeAnalise + "." + fileExtension);
+		if (CommonsUtil.semValor(nomeAnalise)) {
+			pdfRetorno.setName(nomeConsulta + "." + fileExtension);
+		} else {
+			pdfRetorno.setName(nomeConsulta + " - " + nomeAnalise + "." + fileExtension);
+		}
 		FileService fileService = new FileService();
 		User user = new UserDao().findById((long) -1);
 		fileService.salvarDocumentoBase64(pdfRetorno, numeroContrato, diretorio, user);
