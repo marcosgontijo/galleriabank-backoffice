@@ -28859,11 +28859,13 @@ public class ContratoCobrancaMB {
 					JSONObject responseObj = new JSONObject(response.toString());
 					if (responseObj.has("data")) {
 						String dataObj = responseObj.getString("data");
-						laudoEndereco = dataObj;
+						laudoEndereco = dataObj;					    
+					    FileService fileService = new FileService();
+					    fileService.salvarPdfRetorno("", this.objetoContratoCobranca.getNumeroContrato(), retornaBase64(laudoEndereco), "LaudoRobo", "interno");
 					}
 				}
 				myURLConnection.disconnect();
-			}		
+			}		    
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -28871,6 +28873,14 @@ public class ContratoCobrancaMB {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public String retornaBase64(String str) throws Exception {
+		java.net.URL url = new java.net.URL(str);
+        InputStream is = url.openStream();
+        byte[] bytes = org.apache.commons.io.IOUtils.toByteArray(is);
+        byte[] encoded = Base64.getEncoder().encode(bytes);
+        return new String(encoded);
 	}
 	
 	public void abreLaudo() throws IOException {
@@ -28974,6 +28984,8 @@ public class ContratoCobrancaMB {
 									&& progressObj.getBoolean("search")
 									&& progressObj.getBoolean("price")) {
 								isLaudoDone = true;
+								this.objetoContratoCobranca.setValorPreLaudo(dataObj.getBigDecimal("price"));
+								PrimeFaces.current().ajax().update("form:RecebidoPajulaudoPanel");
 							}
 						}
 					}
