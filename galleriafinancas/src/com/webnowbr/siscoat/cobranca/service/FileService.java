@@ -328,6 +328,9 @@ public class FileService {
 	}
 
 	public void salvarPdfRetorno(DocumentoAnalise documentoAnalise, String base64, String nomeConsulta, String diretorio) {
+		if(CommonsUtil.semValor(base64)) 
+			return;
+		
 		String nomeAnalise = documentoAnalise.getPagador().getNome();
 		String numeroContrato = documentoAnalise.getContratoCobranca().getNumeroContrato();
 		salvarPdfRetorno(nomeAnalise, numeroContrato, base64, nomeConsulta, diretorio);
