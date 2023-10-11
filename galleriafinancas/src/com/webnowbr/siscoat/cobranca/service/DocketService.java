@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -15,7 +14,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -28,7 +26,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
-import com.webnowbr.siscoat.cobranca.db.model.DataEngine;
 import com.webnowbr.siscoat.cobranca.db.model.Docket;
 import com.webnowbr.siscoat.cobranca.db.model.DocketConsulta;
 import com.webnowbr.siscoat.cobranca.db.model.DocketRetorno;
@@ -37,27 +34,19 @@ import com.webnowbr.siscoat.cobranca.db.model.DocumentosDocket;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentosPagadorDocket;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
-import com.webnowbr.siscoat.cobranca.db.op.DataEngineDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocketConsultaDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocketDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
-import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
+import com.webnowbr.siscoat.cobranca.model.docket.DocketDocumento;
 import com.webnowbr.siscoat.cobranca.model.docket.DocketRetornoConsulta;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.cobranca.ws.endpoint.DocketWebhookRetornoDocumento;
 import com.webnowbr.siscoat.cobranca.ws.endpoint.ReaWebhookRetorno;
 import com.webnowbr.siscoat.common.CommonsUtil;
-import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.MultipartUtility;
 import com.webnowbr.siscoat.common.SiscoatConstants;
-import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
 
-import br.com.galleriabank.dataengine.cliente.model.request.DataEngineIdSend;
-import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
-import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultRelacionamentosPessoaisPJ;
-import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultRelacionamentosPessoaisPJPartnership;
-import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoRequestEnterprisePartnership;
 import br.com.galleriabank.jwt.common.JwtUtil;
 import br.com.galleriabank.serasarelato.cliente.util.GsonUtil;
 
@@ -78,7 +67,7 @@ public class DocketService {
 	public void loginDocket(User user) { // POST pra pegar token
 		JSONObject jsonObj = new JSONObject();
 		try {
-			FacesContext context = FacesContext.getCurrentInstance();
+			//FacesContext context = FacesContext.getCurrentInstance();
 			int HTTP_COD_SUCESSO = 200;
 
 			URL myURL;
@@ -140,15 +129,12 @@ public class DocketService {
 			} else {
 				System.out.println(jsonObj.toString());
 				if (status == 401) {
-					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-							"[Docket - Login] Falha de autenticação. Token inválido!", ""));
+					System.out.println("[Docket - Login] Falha de autenticação. Token inválido!");
 				}
 				if (status == 400) {
-					context.addMessage(null,
-							new FacesMessage(FacesMessage.SEVERITY_ERROR, "[Docket - Login] Erro no login.", ""));
+					System.out.println("[Docket - Login] Erro no login.");
 				}
-				context.addMessage(null,
-						new FacesMessage(FacesMessage.SEVERITY_ERROR, "[Docket - Login] Erro não conhecido!", ""));
+				System.out.println("[Docket - Login] Erro não conhecido!");
 			}
 
 			myURLConnection.disconnect();
@@ -704,6 +690,62 @@ public class DocketService {
 		}
 		return null;
 	}
+	
+	public DocketRetornoConsulta buscarRetornoPedido(String idCallManager) {
+		try {
+			loginDocket(null);
+			int HTTP_COD_SUCESSO = 200;
+			URL myURL;
+			if (SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
+				myURL = new URL(urlHomologacao + "/api/v2/" + organizacao_url + "/shopping-documentos/alpha/pedidos/" + idCallManager);
+			} else {
+				myURL = new URL(urlProducao + "/api/v2/" + organizacao_url + "/shopping-documentos/alpha/pedidos/" + idCallManager);
+			}
+
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setRequestMethod("GET");
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			myURLConnection.setRequestProperty("Authorization", tokenLogin);
+			myURLConnection.setDoOutput(true);
+
+			DocketRetornoConsulta docketRetorno =null;
+			
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
+				System.out.println("Não foi possivle consultar docket. IdCallManager: " + idCallManager);
+			} else {
+				JSONObject retornoConsulta = null;
+				retornoConsulta = getJsonSucesso(myURLConnection.getInputStream());
+
+//				System.out.println(retornoConsulta.toString());
+				docketRetorno =  GsonUtil.fromJson(retornoConsulta.toString(), DocketRetornoConsulta.class);
+				
+				if(CommonsUtil.semValor(docketRetorno)) {
+					return null;
+				}				
+				
+				if( CommonsUtil.semValor(docketRetorno.getPedido())) {
+					return null;
+				}
+				
+				if( CommonsUtil.semValor(docketRetorno.getPedido().getDocumentos())) {
+					return null;
+				}
+			}
+
+			myURLConnection.disconnect();
+			return docketRetorno;
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	public JSONObject getJsonSucesso(InputStream inputStream) {
 		BufferedReader in;
@@ -799,5 +841,66 @@ public class DocketService {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public void atualizaRetorno(List<DocumentoAnalise> listDocAnalise) {
+		for(DocumentoAnalise docAnalise : listDocAnalise) {
+			if(CommonsUtil.semValor(docAnalise.getDocketConsultas()) 
+				|| docAnalise.getDocketConsultas().size() <= 0) 
+				continue;
+			for(DocketConsulta docket : docAnalise.getDocketConsultas()) {
+				atualizaRetornoCertidaoDocket(docket, docAnalise.getContratoCobranca());
+			}
+		}
+		return;
+	}
+	
+	public void atualizaRetornoCertidaoDocket(DocketConsulta docket, ContratoCobranca contrato) {
+		DocketConsultaDao consultaDao = new DocketConsultaDao();
+		DocketService docketService = new DocketService();
+		String retorno = "";
+		if(!CommonsUtil.semValor(docket.getRetorno()) && !CommonsUtil.semValor(docket.getPdf())) {
+			docket.setStatus("Consulta Concluída");
+			consultaDao.merge(docket);
+			return;
+		}
+		if(CommonsUtil.semValor(docket.getIdDocket())) {
+			docket.setStatus("Falha: Consulta Sem Id Docket. Favor Consultar Novamente");
+			consultaDao.merge(docket);
+			return;
+		}
+		if(CommonsUtil.semValor(docket.getRetorno())) {
+			DocketDao docketDao = new DocketDao();
+			List<Docket> lista = docketDao.findByFilter("objetoContratoCobranca", contrato);
+			if(lista.size() > 0) {
+				DocketRetornoConsulta retornoObject = docketService.buscarRetornoPedido(docketDao.findByFilter("objetoContratoCobranca", contrato).get(0).getIdCallManager());
+				for(DocketDocumento documento : retornoObject.getPedido().getDocumentos()) {
+					if(CommonsUtil.mesmoValor(documento.getId(), docket.getIdDocket())) {
+						docket.setRetorno(GsonUtil.toJson(documento));
+					}
+				}
+			} else {
+				return;
+			}
+		}
+		
+		if(!CommonsUtil.semValor(docket.getRetorno())) {
+			retorno = docket.getRetorno();
+		} else {
+			docket.setStatus("Falha: Consulta Sem Retorno");
+			consultaDao.merge(docket);
+			return;
+		}
+		
+		DocketWebhookRetornoDocumento documentoRetorno = GsonUtil.fromJson(retorno, DocketWebhookRetornoDocumento.class);			
+		DocketConsulta docketConsulta = consultaDao.getConsultasExistentesWebhook(documentoRetorno.id);
+		docketConsulta.setStatus("Concluido");
+		docketConsulta.setRetorno(GsonUtil.toJson(documentoRetorno));
+		consultaDao.merge(docketConsulta);
+		String base64 = docketService.getPdfBase64(docketConsulta.getRetorno());
+		docketConsulta.setPdf(base64);
+		FileService fileService = new FileService();
+		consultaDao.merge(docketConsulta);
+		fileService.salvarPdfRetorno(docketConsulta.getDocumentoAnalise(), base64, documentoRetorno.getDocumentoNome(), "interno");
 	}
 }

@@ -8207,18 +8207,18 @@ public class ContratoCobrancaMB {
 				}
 
 				if (!CommonsUtil.semValor(objetoContratoCobranca.getDataUltimaAtualizacao())) {
-					if (getDifferenceDays(objetoContratoCobranca.getDataUltimaAtualizacao(), auxDataHoje) > 30) {
+					if (getDifferenceDays(objetoContratoCobranca.getDataUltimaAtualizacao(), auxDataHoje) > 15) {
 						if (!objetoContratoCobranca.isContratoResgatadoBaixar()) {
 							baixarPreContratoSemMensagem();
 						} else if (getDifferenceDays(objetoContratoCobranca.getContratoResgatadoData(),
-								auxDataHoje) > 30) {
+								auxDataHoje) > 15) {
 							baixarPreContratoSemMensagem();
 						}
 					}
 				} else {
 					if (!objetoContratoCobranca.isContratoResgatadoBaixar()) {
 						baixarPreContratoSemMensagem();
-					} else if (getDifferenceDays(objetoContratoCobranca.getContratoResgatadoData(), auxDataHoje) > 30) {
+					} else if (getDifferenceDays(objetoContratoCobranca.getContratoResgatadoData(), auxDataHoje) > 15) {
 						baixarPreContratoSemMensagem();
 					}
 				}
@@ -33709,6 +33709,8 @@ public class ContratoCobrancaMB {
 		plexiService.atualizaRetorno(listDocAnalise);
 		NetrinService netrinService = new NetrinService();
 		netrinService.atualizaRetorno(listDocAnalise);
+		DocketService docketService = new DocketService();
+		docketService.atualizaRetorno(listDocAnalise);
 	}
 
 	public boolean isVerificaReaProcessado() {
