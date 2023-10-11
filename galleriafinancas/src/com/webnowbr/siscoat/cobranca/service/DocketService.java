@@ -67,7 +67,7 @@ public class DocketService {
 	public void loginDocket(User user) { // POST pra pegar token
 		JSONObject jsonObj = new JSONObject();
 		try {
-			FacesContext context = FacesContext.getCurrentInstance();
+			//FacesContext context = FacesContext.getCurrentInstance();
 			int HTTP_COD_SUCESSO = 200;
 
 			URL myURL;
@@ -129,15 +129,12 @@ public class DocketService {
 			} else {
 				System.out.println(jsonObj.toString());
 				if (status == 401) {
-					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-							"[Docket - Login] Falha de autenticação. Token inválido!", ""));
+					System.out.println("[Docket - Login] Falha de autenticação. Token inválido!");
 				}
 				if (status == 400) {
-					context.addMessage(null,
-							new FacesMessage(FacesMessage.SEVERITY_ERROR, "[Docket - Login] Erro no login.", ""));
+					System.out.println("[Docket - Login] Erro no login.");
 				}
-				context.addMessage(null,
-						new FacesMessage(FacesMessage.SEVERITY_ERROR, "[Docket - Login] Erro não conhecido!", ""));
+				System.out.println("[Docket - Login] Erro não conhecido!");
 			}
 
 			myURLConnection.disconnect();
