@@ -33740,6 +33740,15 @@ public class ContratoCobrancaMB {
 		DocketService docketService = new DocketService();
 		docketService.atualizaRetorno(listDocAnalise);
 	}
+	
+	public void testeAttTodasCertidoes() {
+		System.out.println("AttCertidoes inicio");
+		DocumentoAnaliseDao analiseDao = new DocumentoAnaliseDao();
+		List<DocumentoAnalise> listDocAnalise = analiseDao.listagemCertidoesIncompletas();
+		System.out.println("listagem concluida");
+		testeAttCertidoes(listDocAnalise);
+		System.out.println("AttCertidoes Concluido");
+	}
 
 	public boolean isVerificaReaProcessado() {
 		for (DocumentoAnalise documento : listaDocumentoAnalise) {
