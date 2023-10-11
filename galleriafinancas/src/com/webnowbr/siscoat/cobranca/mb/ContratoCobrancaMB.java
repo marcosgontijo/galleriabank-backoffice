@@ -18939,8 +18939,8 @@ public class ContratoCobrancaMB {
 							"Aprovado",
 							starkBankBoleto.getLine());
 
-					this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().setContaPagarValorTotal(this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().
-							getContaPagarValorTotal().subtract(this.contasPagarSelecionada.getValorPagamento()));
+					this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().setContaPagarValorTotal(this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getContaPagarValorTotal()
+							.subtract(this.objetoBaixaPagamentoStarkBank.getContasPagar().getValor()));
 
 					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
 							"Pagamento StarkBank: Boleto pago sucesso!", ""));
@@ -19318,7 +19318,9 @@ public class ContratoCobrancaMB {
 		BigDecimal saldo = BigDecimal.ZERO;
 
 		for (StarkBankBaixa baixas : contaPagar.getListContasPagarBaixas()) {
-			saldo = saldo.add(baixas.getValor());
+			if (baixas.getValor() != null) {
+				saldo = saldo.add(baixas.getValor());
+			}
 		}
 
 		return saldo;
