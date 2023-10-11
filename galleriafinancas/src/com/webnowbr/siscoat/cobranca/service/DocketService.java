@@ -792,14 +792,11 @@ public class DocketService {
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
 			myURLConnection.setRequestMethod("GET");
 			myURLConnection.setUseCaches(false);
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json");
 			myURLConnection.setRequestProperty("Authorization", tokenLogin);
 			myURLConnection.setDoOutput(true);
 
 			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
-				System.out.println("Não foi possivel consultar pdf docket. IdCallManager: " + idCallManager);
+				System.out.println("Erro: "+ myURLConnection.getResponseCode() + " Não foi possivel consultar pdf docket. IdCallManager: " + idCallManager);
 			} else {
 				byte[] bytes = org.apache.commons.io.IOUtils.toByteArray(myURLConnection.getInputStream());
 				byte[] encoded = Base64.getEncoder().encode(bytes);
@@ -887,7 +884,7 @@ public class DocketService {
 		if(!CommonsUtil.semValor(docket.getRetorno())) {
 			retorno = docket.getRetorno();
 		} else {
-			docket.setStatus("Falha: Consulta Sem Retorno");
+			docket.setStatus("Falha: Consulta Sem Retorno. Verificar Plataforma");
 			consultaDao.merge(docket);
 			return;
 		}
