@@ -8089,7 +8089,7 @@ public class CcbMB {
 				}
 			}
 			
-			document = new XWPFDocument(getClass().getResourceAsStream("/resource/AquisicaoCCI.docx"));
+			document = new XWPFDocument(getClass().getResourceAsStream("/resource/AquisicaoCCI_Novo.docx"));
 				
 			CTFonts fonts = CTFonts.Factory.newInstance();
 			fonts.setHAnsi("Times New Roman");
@@ -8327,9 +8327,13 @@ public class CcbMB {
 						
 			BigDecimal taxaAdm = SiscoatConstants.TAXA_ADM;
 			BigDecimal totalPrimeiraParcela = BigDecimal.ZERO;
-			totalPrimeiraParcela = this.objetoCcb.getValorMipParcela();
+			if (!CommonsUtil.semValor(this.objetoCcb.getValorMipParcela()))
+				totalPrimeiraParcela = this.objetoCcb.getValorMipParcela();
+			if (!CommonsUtil.semValor(this.objetoCcb.getValorDfiParcela()))
 			totalPrimeiraParcela = totalPrimeiraParcela.add(this.objetoCcb.getValorDfiParcela());
+			if (!CommonsUtil.semValor(this.objetoCcb.getValorParcela()))
 			totalPrimeiraParcela = totalPrimeiraParcela.add(this.objetoCcb.getValorParcela());
+			if (!CommonsUtil.semValor(taxaAdm))
 			totalPrimeiraParcela = totalPrimeiraParcela.add(taxaAdm);
 			
 			BigDecimal despesas = this.objetoCcb.getValorDespesas();
@@ -8436,6 +8440,12 @@ public class CcbMB {
 								text = trocaValoresXWPF(text, r, "nomeTestemunha2", this.objetoCcb.getNomeTestemunha2());
 								text = trocaValoresXWPF(text, r, "cpfTestemunha2", this.objetoCcb.getCpfTestemunha2());
 								text = trocaValoresXWPF(text, r, "rgTestemunha2", this.objetoCcb.getRgTestemunha2());
+								
+
+								text = trocaValoresXWPF(text, r, "elaboradorNome", this.objetoCcb.getElaboradorNome());								
+								text = trocaValoresXWPF(text, r, "elaboradorCrea", this.objetoCcb.getElaboradorCrea());
+								text = trocaValoresXWPF(text, r, "responsavelNome", this.objetoCcb.getResponsavelNome());
+								text = trocaValoresXWPF(text, r, "responsavelCrea", this.objetoCcb.getResponsavelCrea());
 								
 								
 								

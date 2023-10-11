@@ -5949,6 +5949,34 @@ public class ContratoCobrancaMB {
 		return geraConsultaContratosPorStatus("Ag. Comite");
 	}
 
+	
+	public String  voltarContratoParaOkCliente() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		FacesContext context = FacesContext.getCurrentInstance();
+//		this.objetoContratoCobranca.setAprovadoComite(false);
+//		this.objetoContratoCobranca.setDocumentosCompletos(false);
+//		this.objetoContratoCobranca.setCcbPronta(false);
+//		this.objetoContratoCobranca.setContratoConferido(false);
+
+		this.objetoContratoCobranca.setOkCliente(false);
+		
+//		if (!objetoContratoCobranca.getListaAnaliseComite().isEmpty()) {
+//			for (AnaliseComite comite : objetoContratoCobranca.getListaAnaliseComite()) {
+//				comite.setVotoAnaliseComite("");
+//			}
+//		}
+		updateCheckList();
+		this.objetoContratoCobranca.populaStatusEsteira(getUsuarioLogadoNull());
+		contratoCobrancaDao.merge(this.objetoContratoCobranca);
+		context.addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
+								+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
+						""));
+		return geraConsultaContratosPorStatus("Ag. DOC");
+	}
+	
+	
 	public String voltarAnaliseComercial() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		FacesContext context = FacesContext.getCurrentInstance();
