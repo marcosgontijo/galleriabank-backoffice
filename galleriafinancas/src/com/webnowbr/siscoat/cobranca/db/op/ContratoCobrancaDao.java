@@ -8960,7 +8960,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						Date data = rs.getDate("ContratoResgatadoData");
 						boolean baixar = true;
 						if (rs.getBoolean("ContratoResgatadoBaixar")) {
-							if (getDifferenceDays(data, auxDataHoje) <= 30) {
+							if (getDifferenceDays(data, auxDataHoje) <= 15) {
 								baixar = false;
 							}
 						}

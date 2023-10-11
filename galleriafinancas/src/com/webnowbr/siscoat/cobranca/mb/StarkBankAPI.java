@@ -301,7 +301,7 @@ public class StarkBankAPI{
 		try {
 			HashMap<String, Object> params = new HashMap<>();
 			params.put("after", "2023-05-01");
-			params.put("before", "2023-06-10");
+			params.put("before", "2023-12-31");
 			Generator<BoletoPayment> payments;
 			payments = BoletoPayment.query(params);
 

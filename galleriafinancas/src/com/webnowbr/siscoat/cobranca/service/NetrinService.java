@@ -1777,6 +1777,7 @@ public class NetrinService {
 			}
 			return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
 		} catch (Exception e) {
+			e.printStackTrace();
 			return new FacesMessage(FacesMessage.SEVERITY_ERROR, 
 					netrinConsulta.getNetrinDocumentos().getNome() + " - " + netrinConsulta.getCpfCnpj() + ": Já existente", "");
 		}
