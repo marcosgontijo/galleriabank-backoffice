@@ -778,10 +778,15 @@ public class DocketService {
 
 	public String getPdfBase64(String documento) {
 		DocketWebhookRetornoDocumento documentoPdf = GsonUtil.fromJson(documento, DocketWebhookRetornoDocumento.class);
+		return getPdfBase64(documentoPdf);
+    }
+	
+	public String getPdfBase64(DocketWebhookRetornoDocumento documentoPdf) {
 		try {
 			loginDocket(null);
 			int HTTP_COD_SUCESSO = 200;
 			URL myURL;
+			
 			String idCallManager = documentoPdf.getArquivos().get(0).getId();
 			if (SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
 				myURL = new URL(urlHomologacao + "/api/v2/" + organizacao_url + "/downloads/" + idCallManager);
@@ -894,10 +899,15 @@ public class DocketService {
 		docketConsulta.setStatus("Concluido");
 		docketConsulta.setRetorno(GsonUtil.toJson(documentoRetorno));
 		consultaDao.merge(docketConsulta);
-		String base64 = docketService.getPdfBase64(docketConsulta.getRetorno());
-		docketConsulta.setPdf(base64);
-		FileService fileService = new FileService();
+		DocketWebhookRetornoDocumento documentoPdf = GsonUtil.fromJson(docketConsulta.getRetorno(), DocketWebhookRetornoDocumento.class);
+		if(!CommonsUtil.semValor(documentoPdf.getArquivos()) && documentoPdf.getArquivos().size() > 0) {
+			String base64 = docketService.getPdfBase64(documentoPdf);
+			docketConsulta.setPdf(base64);
+			FileService fileService = new FileService();
+			fileService.salvarPdfRetorno(docketConsulta.getDocumentoAnalise(), base64, documentoRetorno.getDocumentoNome(), "interno");
+		} else {
+			docketConsulta.setStatus("Consulta Sem PDF");
+		}
 		consultaDao.merge(docketConsulta);
-		fileService.salvarPdfRetorno(docketConsulta.getDocumentoAnalise(), base64, documentoRetorno.getDocumentoNome(), "interno");
 	}
 }
