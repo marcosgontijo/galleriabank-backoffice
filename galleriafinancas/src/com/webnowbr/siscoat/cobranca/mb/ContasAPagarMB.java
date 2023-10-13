@@ -1,13 +1,10 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -27,6 +24,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DateUtil;
 
 @ManagedBean(name = "contasAPagarMB")
 @SessionScoped
@@ -95,7 +93,7 @@ public class ContasAPagarMB {
 	public String clearFieldsInsert() {
 		this.objetoContasPagar = new ContasPagar();
 		this.objetoContasPagar.setTipoDespesa(tipoDespesa);
-		this.objetoContasPagar.setDataPagamento(gerarDataHoje());
+		this.objetoContasPagar.setDataPagamento(DateUtil.gerarDataHoje());
 
 		return "/Atendimento/Cobranca/ContasAPagarInserir.xhtml";
 	}
@@ -189,14 +187,6 @@ public class ContasAPagarMB {
 		this.contasPagar.remove(this.objetoContasPagar);
 
 		return "/Atendimento/Cobranca/ContasAPagarConsultar.xhtml";
-	}
-
-	public Date gerarDataHoje() {
-		TimeZone zone = TimeZone.getDefault();
-		Locale locale = new Locale("pt", "BR");
-		Calendar dataHoje = Calendar.getInstance(zone, locale);
-
-		return dataHoje.getTime();
 	}
 
 	public String salvarConta() {

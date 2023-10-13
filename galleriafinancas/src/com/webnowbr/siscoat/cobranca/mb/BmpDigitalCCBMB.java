@@ -1,14 +1,9 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
@@ -16,82 +11,20 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TimeZone;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
-import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
-
-import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.primefaces.model.DefaultStreamedContent;
-import org.primefaces.model.LazyDataModel;
-import org.primefaces.model.SortOrder;
-import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
-import org.primefaces.util.CalendarUtils;
 
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.Font.FontFamily;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
-import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobranca;
-import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
-import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
-import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhesObservacoes;
-import com.webnowbr.siscoat.cobranca.db.model.FaturaIUGU;
-import com.webnowbr.siscoat.cobranca.db.model.OperacaoContratoIUGU;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
-import com.webnowbr.siscoat.cobranca.db.model.SaldoIUGU;
-import com.webnowbr.siscoat.cobranca.db.model.SaqueIUGU;
-import com.webnowbr.siscoat.cobranca.db.model.SubContaIUGU;
-import com.webnowbr.siscoat.cobranca.db.model.TransferenciasIUGU;
 import com.webnowbr.siscoat.cobranca.db.model.TransferenciasObservacoesIUGU;
-import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
-import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
-import com.webnowbr.siscoat.cobranca.db.op.TransferenciasObservacoesIUGUDao;
-import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
-import com.webnowbr.siscoat.cobranca.model.bmpdigital.BcMsgRetorno;
-import com.webnowbr.siscoat.cobranca.model.bmpdigital.ResumoDaOperacao;
-import com.webnowbr.siscoat.cobranca.model.bmpdigital.ResumoDoCliente;
-import com.webnowbr.siscoat.cobranca.model.bmpdigital.ResumoDoClienteTraduzido;
-import com.webnowbr.siscoat.cobranca.model.bmpdigital.ResumoDoVencimento;
-import com.webnowbr.siscoat.cobranca.model.bmpdigital.ResumoModalidade;
-import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
-import com.webnowbr.siscoat.common.CommonsUtil;
-import com.webnowbr.siscoat.common.DateUtil;
-import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
-import com.webnowbr.siscoat.infra.db.dao.UserDao;
-import com.webnowbr.siscoat.infra.db.model.User;
-import com.webnowbr.siscoat.security.LoginBean;
 
 @ManagedBean(name = "bmpDigitalCCBMB")
 @SessionScoped
@@ -1083,14 +1016,6 @@ public class BmpDigitalCCBMB {
 		}
 		
 		return ip;
-	}
-	
-	public Date gerarDataHoje() {
-		TimeZone zone = TimeZone.getDefault();
-		Locale locale = new Locale("pt", "BR");
-		Calendar dataHoje = Calendar.getInstance(zone, locale);
-
-		return dataHoje.getTime();
 	}
 	
 	// retorna a string do objeto JSON, mesmo em caso de nulos

@@ -6,12 +6,8 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
@@ -53,15 +49,7 @@ public class DocketMB {
 	private String etapa;
 	private ContratoCobranca contratoCobranca;
 	
-	
-	public Date gerarDataHoje() {
-		TimeZone zone = TimeZone.getDefault();
-		Locale locale = new Locale("pt", "BR");
-		Calendar dataHoje = Calendar.getInstance(zone, locale);
 
-		return dataHoje.getTime();
-	}
-	
 	public String getNomeUsuarioLogado() {
 		User usuario = getUsuarioLogado();
 

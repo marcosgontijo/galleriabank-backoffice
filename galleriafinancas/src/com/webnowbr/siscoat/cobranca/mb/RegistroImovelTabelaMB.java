@@ -2,11 +2,8 @@ package com.webnowbr.siscoat.cobranca.mb;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -40,7 +37,7 @@ public class RegistroImovelTabelaMB {
 
 	public String clearFieldsRegistros() {
 		RegistroImovelTabelaDao registroImovelTabelaDao = new RegistroImovelTabelaDao();
-		this.listRegistro = registroImovelTabelaDao.listarRegistros(gerarDataHoje());
+		this.listRegistro = registroImovelTabelaDao.listarRegistros(DateUtil.gerarDataHoje());
 
 		return "/Cadastros/Cobranca/RegistroImovelTabela.xhtml";
 	}
@@ -89,14 +86,6 @@ public class RegistroImovelTabelaMB {
 	
 	public void clearDialog() {
 		this.uploadedFile = null;
-	}
-	
-	public Date gerarDataHoje() {
-		TimeZone zone = TimeZone.getDefault();
-		Locale locale = new Locale("pt", "BR");
-		Calendar dataHoje = Calendar.getInstance(zone, locale);
-
-		return dataHoje.getTime();
 	}
 
 	public List<RegistroImovelTabela> getListRegistro() {

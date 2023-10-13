@@ -4,7 +4,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -40,6 +39,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelEstoque;
 import com.webnowbr.siscoat.cobranca.db.op.ImovelEstoqueDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.contab.db.dao.BalancoPatrimonialDao;
 import com.webnowbr.siscoat.contab.db.model.BalancoPatrimonial;
 import com.webnowbr.siscoat.contab.db.model.TaskCalcularVariaveisReceber;
@@ -99,7 +99,7 @@ public class BalancoPatrimonialMB {
 			objetoBalanco = new BalancoPatrimonial();
 			ultimoBalanco = balancopatrimonialDao.consultaUltimoBalanco();
 
-			this.objetoBalanco.setAaaamm(gerarDataHoje());
+			this.objetoBalanco.setAaaamm(DateUtil.gerarDataHoje());
 
 			// VALOR DEFAULT NO CÓDIGO
 			this.objetoBalanco.setDepositoBacenScd(CommonsUtil.bigDecimalValue(1016095.04));
@@ -1108,14 +1108,6 @@ public class BalancoPatrimonialMB {
 		output.close();
 		facesContext.responseComplete();
 		this.balancoPatrimonialXLSGerado = true;
-	}
-
-	public Date gerarDataHoje() {
-		TimeZone zone = TimeZone.getDefault();
-		Locale locale = new Locale("pt", "BR");
-		Calendar dataHoje = Calendar.getInstance(zone, locale);
-
-		return dataHoje.getTime();
 	}
 
 	public BalancoPatrimonialMB() {

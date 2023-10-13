@@ -205,7 +205,7 @@ public class NetrinService {
 						"Cenprot: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", "");
 			} else {
 				// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
-				// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
+				// cidadeImovel, "", getNomeUsuarioLogado(), DateUtil.gerarDataHoje());
 				result = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
 				BufferedReader in;
 				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
@@ -317,7 +317,7 @@ public class NetrinService {
 						"Serasa: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", "");
 			} else {
 				// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
-				// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
+				// cidadeImovel, "", getNomeUsuarioLogado(), DateUtil.gerarDataHoje());
 
 				BufferedReader in;
 				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
@@ -529,7 +529,7 @@ public class NetrinService {
 						"Serasa: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", "");
 			} else {
 				// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
-				// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
+				// cidadeImovel, "", getNomeUsuarioLogado(), DateUtil.gerarDataHoje());
 
 				BufferedReader in;
 				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
@@ -683,7 +683,7 @@ public class NetrinService {
 				retornoConsulta = null;
 			} else {
 				// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
-				// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
+				// cidadeImovel, "", getNomeUsuarioLogado(), DateUtil.gerarDataHoje());
 
 				BufferedReader in;
 				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
@@ -801,7 +801,7 @@ public class NetrinService {
 						"Processo: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", "");
 			} else {
 				// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
-				// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
+				// cidadeImovel, "", getNomeUsuarioLogado(), DateUtil.gerarDataHoje());
 				result = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
 				BufferedReader in;
 				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
@@ -862,7 +862,7 @@ public class NetrinService {
 						"PPE: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", "");
 			} else {
 				// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
-				// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
+				// cidadeImovel, "", getNomeUsuarioLogado(), DateUtil.gerarDataHoje());
 				result = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
 				BufferedReader in;
 				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
@@ -923,7 +923,7 @@ public class NetrinService {
 						"Dossie: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", "");
 			} else {
 				// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
-				// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
+				// cidadeImovel, "", getNomeUsuarioLogado(), DateUtil.gerarDataHoje());
 				result = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
 				BufferedReader in;
 				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
@@ -989,7 +989,7 @@ public class NetrinService {
 						"Valida Conta Bancaria: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", ""));
 			} else {
 				// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
-				// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
+				// cidadeImovel, "", getNomeUsuarioLogado(), DateUtil.gerarDataHoje());
 
 				BufferedReader in;
 				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
@@ -1061,7 +1061,7 @@ public class NetrinService {
 						"Valida Pix: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", ""));
 			} else {
 				// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
-				// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
+				// cidadeImovel, "", getNomeUsuarioLogado(), DateUtil.gerarDataHoje());
 
 				BufferedReader in;
 				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
@@ -1214,7 +1214,7 @@ public class NetrinService {
 				retornoConsulta = null;
 			} else {
 				// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
-				// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
+				// cidadeImovel, "", getNomeUsuarioLogado(), DateUtil.gerarDataHoje());
 
 				BufferedReader in;
 				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
