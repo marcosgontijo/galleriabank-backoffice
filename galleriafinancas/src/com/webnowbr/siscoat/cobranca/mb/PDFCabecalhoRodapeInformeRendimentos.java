@@ -1,16 +1,13 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
-import java.util.TimeZone;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
-import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Font.FontFamily;
+import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -30,12 +27,5 @@ public class PDFCabecalhoRodapeInformeRendimentos extends PdfPageEventHelper {
         ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_LEFT, new Phrase("galleriafinancas.com.br | (19) 3255-4575", normal8), 50, 10, 0);
         ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_RIGHT, new Phrase("Av. Dr. José Bonifácio Coutinho Nogueira, 150 - Térreo – Campinas/SP – CEP 13091-611", normal8), 550, 10, 0);
     }
-     
-	public Date gerarDataHoje() {
-		TimeZone zone = TimeZone.getDefault();  
-		Locale locale = new Locale("pt", "BR");  
-		Calendar dataHoje = Calendar.getInstance(zone, locale);
-
-		return dataHoje.getTime();
-	}
+   
 }

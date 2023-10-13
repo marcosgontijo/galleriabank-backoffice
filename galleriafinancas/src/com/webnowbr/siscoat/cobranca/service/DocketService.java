@@ -13,11 +13,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -43,6 +39,7 @@ import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.cobranca.ws.endpoint.DocketWebhookRetornoDocumento;
 import com.webnowbr.siscoat.cobranca.ws.endpoint.ReaWebhookRetorno;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.MultipartUtility;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.infra.db.model.User;
@@ -262,14 +259,6 @@ public class DocketService {
 		return null;
 	}
 
-	private Date gerarDataHoje() {
-		TimeZone zone = TimeZone.getDefault();
-		Locale locale = new Locale("pt", "BR");
-		Calendar dataHoje = Calendar.getInstance(zone, locale);
-
-		return dataHoje.getTime();
-	}
-
 	private JSONObject getBodyJsonPedido(ContratoCobranca objetoContratoCobranca, List<PagadorRecebedor> listaPagador) { // JSON
 																															// p/
 																															// pedido
@@ -426,7 +415,7 @@ public class DocketService {
 					objetoContratoCobranca = null;
 				}
 				Docket docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "", cidadeImovel, "",
-						user.getName(), gerarDataHoje(), myResponse.getPedido().getId(), myResponse.getPedido().getIdExibicao());
+						user.getName(), DateUtil.gerarDataHoje(), myResponse.getPedido().getId(), myResponse.getPedido().getIdExibicao());
 				docketDao.create(docket);
 
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Pedido feito com sucesso", ""));
@@ -577,7 +566,7 @@ public class DocketService {
 					listPagador.add(documentoAnalise.getPagador());
 				}
 				Docket docket = new Docket(objetoContratoCobranca, listPagador, "", "", "", "",
-						user.getName(), gerarDataHoje(), myResponse.getPedido().getId(), myResponse.getPedido().getIdExibicao());
+						user.getName(), DateUtil.gerarDataHoje(), myResponse.getPedido().getId(), myResponse.getPedido().getIdExibicao());
 				docketDao.create(docket);
 				
 				DocketConsultaDao consultaDao = new DocketConsultaDao();
@@ -597,7 +586,7 @@ public class DocketService {
 							}
 						}
 						docketConsulta.setStatus("Ag. Retorno");
-						docketConsulta.setDataConsulta(gerarDataHoje());
+						docketConsulta.setDataConsulta(DateUtil.gerarDataHoje());
 						docketConsulta.setUsuario(user);
 						consultaDao.merge(docketConsulta);
 					}

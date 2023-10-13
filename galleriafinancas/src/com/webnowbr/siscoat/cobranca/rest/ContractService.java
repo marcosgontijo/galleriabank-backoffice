@@ -6,12 +6,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
-import java.util.TimeZone;
 
 import javax.faces.bean.ManagedProperty;
 import javax.ws.rs.Consumes;
@@ -40,6 +37,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorAdicionaisDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
+import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.Parametros;
@@ -676,14 +674,6 @@ public class ContractService {
 		return String.format("%05d", numeroUltimoContrato);
 	}
 	
-	public Date gerarDataHoje() {
-		TimeZone zone = TimeZone.getDefault();
-		Locale locale = new Locale("pt", "BR");
-		Calendar dataHoje = Calendar.getInstance(zone, locale);
-
-		return dataHoje.getTime();
-	}
-	
 	public String getNomeUsuarioLogado() {
 		User usuario = getUsuarioLogado();
 
@@ -716,9 +706,9 @@ public class ContractService {
 		
 	public void clearCriacaoContrato() {
 		this.objetoContratoCobranca = new ContratoCobranca();
-		this.objetoContratoCobranca.setDataContrato(gerarDataHoje());
-		this.objetoContratoCobranca.setDataCadastro(gerarDataHoje());
-		this.objetoContratoCobranca.setDataUltimaAtualizacao(gerarDataHoje());
+		this.objetoContratoCobranca.setDataContrato(DateUtil.gerarDataHoje());
+		this.objetoContratoCobranca.setDataCadastro(DateUtil.gerarDataHoje());
+		this.objetoContratoCobranca.setDataUltimaAtualizacao(DateUtil.gerarDataHoje());
 		this.objetoContratoCobranca.setGeraParcelaFinal(false);
 
 		this.objetoImovelCobranca = new ImovelCobranca();
@@ -744,9 +734,9 @@ public class ContractService {
 	
 	public void clearEditarContrato() {
 		this.objetoContratoCobranca = new ContratoCobranca();
-		this.objetoContratoCobranca.setDataContrato(gerarDataHoje());
-		this.objetoContratoCobranca.setDataCadastro(gerarDataHoje());
-		this.objetoContratoCobranca.setDataUltimaAtualizacao(gerarDataHoje());
+		this.objetoContratoCobranca.setDataContrato(DateUtil.gerarDataHoje());
+		this.objetoContratoCobranca.setDataCadastro(DateUtil.gerarDataHoje());
+		this.objetoContratoCobranca.setDataUltimaAtualizacao(DateUtil.gerarDataHoje());
 		this.objetoContratoCobranca.setUserCadastro(getNomeUsuarioLogado());
 		this.objetoContratoCobranca.setGeraParcelaFinal(false);
 		this.objetoImovelCobranca = new ImovelCobranca();

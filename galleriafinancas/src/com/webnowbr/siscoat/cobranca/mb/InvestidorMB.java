@@ -93,6 +93,7 @@ import com.webnowbr.siscoat.cobranca.vo.ContratoCobrancaResumoVO;
 import com.webnowbr.siscoat.cobranca.vo.DashboardInvestidorResumoVO;
 import com.webnowbr.siscoat.cobranca.vo.ExtratoVO;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.common.Util;
@@ -270,8 +271,8 @@ public class InvestidorMB {
 		this.valorInvestidorAnoAtual = BigDecimal.ZERO;
 		this.valorInvestidorAnoAnterior = BigDecimal.ZERO;
 
-		this.dataInicio = gerarDataHoje();
-		this.dataFim = gerarDataHoje();
+		this.dataInicio = DateUtil.gerarDataHoje();
+		this.dataFim = DateUtil.gerarDataHoje();
 
 		this.parcelasInvestidor = new ArrayList<ContratoCobrancaParcelasInvestidor>();
 
@@ -290,8 +291,8 @@ public class InvestidorMB {
 	}
 
 	public String clearFieldsInformeRendimentos() {
-		this.dataInicio = gerarDataHoje();
-		this.dataFim = gerarDataHoje();
+		this.dataInicio = DateUtil.gerarDataHoje();
+		this.dataFim = DateUtil.gerarDataHoje();
 
 		this.valorInvestidorAnoAtual = BigDecimal.ZERO;
 		this.valorInvestidorAnoAnterior = BigDecimal.ZERO;
@@ -1110,8 +1111,8 @@ public class InvestidorMB {
 	}
 
 	public String clearFieldsValorLiquido() {
-		this.dataInicio = gerarDataHoje();
-		this.dataFim = gerarDataHoje();
+		this.dataInicio = DateUtil.gerarDataHoje();
+		this.dataFim = DateUtil.gerarDataHoje();
 
 		this.parcelasInvestidor = new ArrayList<ContratoCobrancaParcelasInvestidor>();
 		this.parcelasInvestidorEnvelope = new ArrayList<ContratoCobrancaParcelasInvestidor>();
@@ -1129,8 +1130,8 @@ public class InvestidorMB {
 	}
 
 	public String clearFieldsValorLiquidoRelatorio() {
-		this.dataInicio = gerarDataHoje();
-		this.dataFim = gerarDataHoje();
+		this.dataInicio = DateUtil.gerarDataHoje();
+		this.dataFim = DateUtil.gerarDataHoje();
 
 		this.parcelasInvestidor = new ArrayList<ContratoCobrancaParcelasInvestidor>();
 		this.parcelasInvestidorEnvelope = new ArrayList<ContratoCobrancaParcelasInvestidor>();
@@ -1220,8 +1221,8 @@ public class InvestidorMB {
 	}
 
 	public String clearFieldsIRRetido() {
-		this.dataInicio = gerarDataHoje();
-		this.dataFim = gerarDataHoje();
+		this.dataInicio = DateUtil.gerarDataHoje();
+		this.dataFim = DateUtil.gerarDataHoje();
 
 		this.parcelasInvestidor = new ArrayList<ContratoCobrancaParcelasInvestidor>();
 
@@ -3239,14 +3240,6 @@ public class InvestidorMB {
 		}
 	}
 
-	public Date gerarDataHoje() {
-		TimeZone zone = TimeZone.getDefault();
-		Locale locale = new Locale("pt", "BR");
-		Calendar dataHoje = Calendar.getInstance(zone, locale);
-
-		return dataHoje.getTime();
-	}
-
 	public void habilitaFiltrosContrato() {
 		loadContratos();
 
@@ -3286,8 +3279,8 @@ public class InvestidorMB {
 	}
 
 	public final String clearFieldsOperacoesIndividualizado() {
-		this.dataInicio = gerarDataHoje();
-		this.dataFim = gerarDataHoje();
+		this.dataInicio = DateUtil.gerarDataHoje();
+		this.dataFim = DateUtil.gerarDataHoje();
 
 		clearOperacoesIndividualizadoPDFParams();
 
@@ -3367,8 +3360,8 @@ public class InvestidorMB {
 		// pega a data da primeira parcela e data da última parcela,
 		// calcula a quantidade de dias neste período
 
-		Date dataInicioParcelas = gerarDataHoje();
-		Date dataFimParcelas = gerarDataHoje();
+		Date dataInicioParcelas = DateUtil.gerarDataHoje();
+		Date dataFimParcelas = DateUtil.gerarDataHoje();
 
 		if (contrato.getListContratoCobrancaDetalhes().size() > 0) {
 			dataInicioParcelas = contrato.getListContratoCobrancaDetalhes().get(0).getDataVencimento();
@@ -6244,8 +6237,8 @@ public class InvestidorMB {
 	
 
 	public final String clearFieldsTitulosQuitados() {
-		this.dataInicio = gerarDataHoje();
-		this.dataFim = gerarDataHoje();
+		this.dataInicio = DateUtil.gerarDataHoje();
+		this.dataFim = DateUtil.gerarDataHoje();
 
 		clearTitulosQuitadosPDFParams();
 
@@ -6253,8 +6246,8 @@ public class InvestidorMB {
 	}
 
 	public final String clearFieldsDebeturesEmitidas() {
-		this.dataInicio = gerarDataHoje();
-		this.dataFim = gerarDataHoje();
+		this.dataInicio = DateUtil.gerarDataHoje();
+		this.dataFim = DateUtil.gerarDataHoje();
 
 		clearTitulosQuitadosPDFParams();
 
@@ -6269,8 +6262,8 @@ public class InvestidorMB {
 	}
 
 	public final String clearFieldsRelatorioDebeturesEmitidas() {
-		this.dataInicio = gerarDataHoje();
-		this.dataFim = gerarDataHoje();
+		this.dataInicio = DateUtil.gerarDataHoje();
+		this.dataFim = DateUtil.gerarDataHoje();
 
 		this.filtroDebenturesDocumento = "";
 		this.filtroDebenturesTipoDocumento = "Todos";
@@ -6305,8 +6298,8 @@ public class InvestidorMB {
 
 	public void updateTipoFiltro() {
 		if (this.filtroDebenturesTipoFiltro.equals("Periodo")) {
-			this.dataInicio = gerarDataHoje();
-			this.dataFim = gerarDataHoje();
+			this.dataInicio = DateUtil.gerarDataHoje();
+			this.dataFim = DateUtil.gerarDataHoje();
 
 			this.filtroNumeroContrato = "";
 		} else {
@@ -6953,7 +6946,7 @@ public class InvestidorMB {
 		this.debenturesInvestidor = new DebenturesInvestidor();
 
 		this.debenturesInvestidor.setLastrearTitulos(true);
-		this.debenturesInvestidor.setDataDebentures(gerarDataHoje());
+		this.debenturesInvestidor.setDataDebentures(DateUtil.gerarDataHoje());
 
 		this.filtraContrato = true;
 		this.filtroNumeroContrato = "";
