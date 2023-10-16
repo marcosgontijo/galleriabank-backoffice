@@ -7,7 +7,6 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 
 import javax.faces.application.FacesMessage;
@@ -149,7 +148,7 @@ public class SerasaService {
 				return new FacesMessage(FacesMessage.SEVERITY_ERROR, "Serasa: Falha na consulta", "");
 			} else {
 				// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
-				// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
+				// cidadeImovel, "", getNomeUsuarioLogado(), DateUtil.gerarDataHoje());
 
 				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 				documentoAnalise.setRetornoSerasa(retornoConsulta);
@@ -213,7 +212,7 @@ public class SerasaService {
 						"Engine: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", "");
 			} else {
 				// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
-				// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
+				// cidadeImovel, "", getNomeUsuarioLogado(), DateUtil.gerarDataHoje());
 				result = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
 				BufferedReader in;
 				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
@@ -270,7 +269,7 @@ public class SerasaService {
 				retornoConsulta = null;
 			} else {
 				// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
-				// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
+				// cidadeImovel, "", getNomeUsuarioLogado(), DateUtil.gerarDataHoje());
 
 				BufferedReader in;
 				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
@@ -364,7 +363,7 @@ public class SerasaService {
 					"Engine: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", "");
 		} else {
 			// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
-			// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
+			// cidadeImovel, "", getNomeUsuarioLogado(), DateUtil.gerarDataHoje());
 			result = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
 			BufferedReader in;
 			in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));

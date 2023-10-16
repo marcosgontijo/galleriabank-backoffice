@@ -1,69 +1,28 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
-import com.starkbank.ellipticcurve.Signature;
-import com.starkbank.utils.Generator;
-import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
-import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
-import com.webnowbr.siscoat.cobranca.db.model.StarkBankBoleto;
-import com.webnowbr.siscoat.cobranca.db.model.StarkBankPix;
-import com.webnowbr.siscoat.cobranca.db.model.TransferenciasIUGU;
-import com.webnowbr.siscoat.cobranca.db.model.TransferenciasObservacoesIUGU;
-import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
-import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
-import com.webnowbr.siscoat.cobranca.db.op.StarkBankBoletoDAO;
-import com.webnowbr.siscoat.cobranca.db.op.StarkBankPixDAO;
-import com.webnowbr.siscoat.cobranca.db.op.TransferenciasObservacoesIUGUDao;
-import com.webnowbr.siscoat.common.DateUtil;
-import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
-
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import javax.imageio.ImageIO;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.primefaces.model.DefaultStreamedContent;
-import org.primefaces.model.StreamedContent;
 
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Font.FontFamily;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
 import com.starkbank.Balance;
 import com.starkbank.BoletoPayment;
 import com.starkbank.DictKey;
@@ -72,6 +31,16 @@ import com.starkbank.Settings;
 import com.starkbank.Transfer;
 import com.starkbank.ellipticcurve.Ecdsa;
 import com.starkbank.ellipticcurve.PrivateKey;
+import com.starkbank.ellipticcurve.Signature;
+import com.starkbank.utils.Generator;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
+import com.webnowbr.siscoat.cobranca.db.model.StarkBankBoleto;
+import com.webnowbr.siscoat.cobranca.db.model.StarkBankPix;
+import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
+import com.webnowbr.siscoat.cobranca.db.op.StarkBankBoletoDAO;
+import com.webnowbr.siscoat.cobranca.db.op.StarkBankPixDAO;
+import com.webnowbr.siscoat.common.DateUtil;
 
 @ManagedBean(name = "starkBankAPI")
 @SessionScoped
@@ -550,7 +519,7 @@ public class StarkBankAPI{
     
     	loginStarkBank(); 
     	
-    	Date dataHoje = gerarDataHoje();
+    	Date dataHoje = DateUtil.gerarDataHoje();
     	
     	try {
 	    	rules.add(new Transfer.Rule("resendingLimit", 5));
@@ -569,7 +538,7 @@ public class StarkBankAPI{
 		    	data.put("name", dictKey.name);
 		    	data.put("externalId", "PagamentoPix-" + dictKey.name.replace(" ", "-") + "-" + DateUtil.todayInMilli());
 		    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		    	data.put("scheduled", sdf.format(gerarDataHoje()));
+		    	data.put("scheduled", sdf.format(DateUtil.gerarDataHoje()));
 		    	//data.put("tags", new String[]{"daenerys", "invoice/1234"});
 		    	//data.put("rules", rules);
 		    	
@@ -622,7 +591,7 @@ public class StarkBankAPI{
     
     	loginStarkBank(); 
     	
-    	Date dataHoje = gerarDataHoje();
+    	Date dataHoje = DateUtil.gerarDataHoje();
     	
     	try {
 	    	rules.add(new Transfer.Rule("resendingLimit", 5));
@@ -677,7 +646,7 @@ public class StarkBankAPI{
     	StarkBankPix starkBankPix = new StarkBankPix();
     	
     	starkBankPix.setId(212);
-    	starkBankPix.setCreated(gerarDataHoje());
+    	starkBankPix.setCreated(DateUtil.gerarDataHoje());
     	starkBankPix.setScheduled("sadsad");
     	starkBankPix.setNomeComprovante("nome");
     	starkBankPix.setAmount(BigDecimal.TEN);

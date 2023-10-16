@@ -5426,12 +5426,25 @@
 						<p:inputText  value="#{contratoCobrancaMB.processoSelecionado.valor}"
 							label="Contrato" onkeypress="return isNumberKey(event);"
 							onkeydown="FormataValor(this, 13, event, 2);"
-							converter="bigDecimalConverter" /> 
+							converter="bigDecimalConverter" >
+							<p:ajax event="blur" update="valorAtualizadoProcesso"
+									listener="#{contratoCobrancaMB.atualizarValorProcesso()}" /> 
+						</p:inputText>
 							
 						<p:outputLabel  value="Numero: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />
 						<p:inputText value="#{contratoCobrancaMB.processoSelecionado.numero}"
-							label="Contrato" /> 
+							label="Contrato" >
+							<p:ajax event="blur" update="valorAtualizadoProcesso"
+								listener="#{contratoCobrancaMB.atualizarValorProcesso()}" />
+						</p:inputText>
+							
+						<p:outputLabel value="Valor Atualizado: " styleClass="labelBold"
+							style="font-weight: bold; font-size: 18px;" />
+						<p:inputText id="valorAtualizadoProcesso" value="#{contratoCobrancaMB.processoSelecionado.valorAtualizado}"
+							label="Contrato" onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);"
+							converter="bigDecimalConverter" /> 
 							
 						<p:outputLabel value="Quitar: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />

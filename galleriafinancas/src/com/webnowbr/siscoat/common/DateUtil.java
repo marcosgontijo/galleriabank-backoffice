@@ -2,6 +2,8 @@ package com.webnowbr.siscoat.common;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -1010,10 +1012,23 @@ public final class DateUtil {
 	}
 	
 	public static Date gerarDataHoje() {
-		TimeZone zone = TimeZone.getDefault();
-		Locale locale = new Locale("pt", "BR");
-		Calendar dataHoje = Calendar.getInstance(zone, locale);
-
+		Calendar dataHoje = Calendar.getInstance();
+		toLocalDateTime(dataHoje.getTime());
 		return dataHoje.getTime();
+	}
+	
+	public static LocalDateTime toLocalDateTime(Date date) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		TimeZone tz = cal.getTimeZone();
+		ZoneId zid = tz == null ? ZoneId.systemDefault() : tz.toZoneId();
+		return LocalDateTime.ofInstant(cal.toInstant(), zid);
+	}
+	
+	public static Date toLocalDateTime(LocalDateTime localDateTime) {
+		if (CommonsUtil.semValor(localDateTime))
+			return null;
+
+		return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
 	}
 }
