@@ -151,15 +151,15 @@ public class DocumentoAnalise implements Serializable {
 				vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:", String.format("%,.2f", processosValor) + " (" + processosQuantidade + ")"));
 			}
 
-			if (processo.getTituloExecucaoFiscal() == null) {
+			if (processo.getTituloExtraJudicial() == null) {
 				vProcesso.add(new DocumentoAnaliseResumo("Execução de título:", "Não disponível"));
 			} else {
-				String processosQuantidade = CommonsUtil.stringValue(processo.getTituloExecucaoFiscal().stream().mapToInt(p -> p.getQuatidade()).sum());
-				Double processosValor = processo.getTituloExecucaoFiscal().stream().mapToDouble(p -> p.getValor()).sum();
+				String processosQuantidade = CommonsUtil.stringValue(processo.getTituloExtraJudicial().stream().mapToInt(p -> p.getQuatidade()).sum());
+				Double processosValor = processo.getTituloExtraJudicial().stream().mapToDouble(p -> p.getValor()).sum();
 				vProcesso.add(new DocumentoAnaliseResumo("Execução de título:", String.format("%,.2f", processosValor) + " (" + processosQuantidade + ")"));
 			}
 
-			if (processo.getExecucaoFiscalProtesto() == null) {
+			if (processo.getTituloExecucaoFiscal() == null) {
 				vProcesso.add(new DocumentoAnaliseResumo("Execução Fiscal:", "Não disponível"));
 			} else {
 				String processosQuantidade = CommonsUtil.stringValue(processo.getTituloExecucaoFiscal().stream().mapToInt(p -> p.getQuatidade()).sum());
