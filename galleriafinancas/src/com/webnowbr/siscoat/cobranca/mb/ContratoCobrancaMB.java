@@ -20997,7 +20997,7 @@ public class ContratoCobrancaMB {
 						.add(contratoCobrancaDetalhesParcial);
 
 				bpContratoCobrancaDetalhes.setParcelaPaga(true);
-				bpContratoCobrancaDetalhes.setOrigemBaixa("baixarParcelaParcial");
+				bpContratoCobrancaDetalhes.setOrigemBaixa("baixarParcelaParcial - Antecipação");
 
 				// compoem o valor da parcela de acordo com o historico de baixas
 				BigDecimal valorParcelaAtual = BigDecimal.ZERO;
@@ -21131,6 +21131,8 @@ public class ContratoCobrancaMB {
 
 					bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial()
 							.add(contratoCobrancaDetalhesParcial);
+					
+					bpContratoCobrancaDetalhes.setOrigemBaixa("baixarParcelaParcial - Else Final");
 
 					// se o valor recebido for menor que o da parcela
 					bpContratoCobrancaDetalhes.setVlrParcela(
@@ -21167,6 +21169,19 @@ public class ContratoCobrancaMB {
 			bpContratoCobrancaDetalhes.setVlrParcelaAtualizada(null);
 			bpContratoCobrancaDetalhes.setVlrParcela(this.vlrParcelaNew);
 		}
+		
+		//INICIO - Tratativa para validar status parcela
+		BigDecimal somaBaixasStatus = BigDecimal.ZERO;
+
+		for (ContratoCobrancaDetalhesParcial cBaixas : bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial()) {
+			somaBaixasStatus = somaBaixasStatus.add(cBaixas.getVlrRecebido());
+		}
+		
+		if (somaBaixasStatus.compareTo(bpContratoCobrancaDetalhes.getVlrParcela()) >= 0) {
+			bpContratoCobrancaDetalhes.setParcelaPaga(true);
+			bpContratoCobrancaDetalhes.setOrigemBaixa("baixarParcelaParcial - Tratativa Status");
+		}		
+		//FIM - Tratativa para validar status parcela		
 
 		contratoCobrancaDetalhesDao.merge(bpContratoCobrancaDetalhes);
 
