@@ -55,6 +55,7 @@ import org.hibernate.JDBCException;
 import org.hibernate.TransientObjectException;
 import org.json.JSONObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTAbstractNum;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDrawing;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHMerge;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTJc;
@@ -7804,12 +7805,19 @@ public class CcbMB {
 								
 								if (text != null && text.contains("ImagemImovel") && filesList.size() > 0) {
 									int iImagem = 0;
+									int idImage = 50;
 									for(UploadedFile imagem : filesList) {
 										r.addBreak();
 										this.populateFiles(iImagem);
 										r.addPicture(this.getBis(), fileTypeInt, fileName.toLowerCase(), Units.toEMU(400), Units.toEMU(300));
 										r.addBreak();	
 										iImagem++;
+										
+									}
+									for (int i = 0; i < r.getCTR().getDrawingList().size(); i++) {
+										CTDrawing drawing = r.getCTR().getDrawingList().get(i);
+										drawing.getInlineList().get(0).getDocPr().setId(idImage);
+										idImage++;
 									}
 									text = trocaValoresXWPF(text, r, "ImagemImovel", "");						
 									adicionarEnter(text, r);
@@ -7821,6 +7829,8 @@ public class CcbMB {
 					}
 				}
 			}
+		    
+		    
 		    
 		    XWPFTableRow tableRow2 = document.getTableArray(1).getRow(1);
 
