@@ -45,6 +45,10 @@ import com.webnowbr.siscoat.common.DateUtil;
 @ManagedBean(name = "starkBankAPI")
 @SessionScoped
 public class StarkBankAPI{
+	
+	private Date dataInicio;
+	private Date dataFim;
+	private List<StarkBankBoleto> listBoletos;
     
 	/*
 	 * VALIDAÇÃO DAS CHAVES DE SEGURANÇA*/
@@ -263,6 +267,44 @@ public class StarkBankAPI{
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
 	}
+	
+	public void consultarBoletos() {
+		loginStarkBank();
+		this.listBoletos = new ArrayList<StarkBankBoleto>();
+		StarkBankBoleto boleto = new StarkBankBoleto();
+		
+		try {
+			HashMap<String, Object> params = new HashMap<>();
+			params.put("after", DateUtil.getDataAmericano(this.dataInicio));
+			params.put("before", DateUtil.getDataAmericano(this.dataFim));
+			Generator<BoletoPayment> payments;
+			payments = BoletoPayment.query(params);
+
+			for (BoletoPayment payment : payments){
+				boleto = new StarkBankBoleto();
+			    
+	    		String tagsStr = "";
+	    		if (payment.tags.length > 0) {
+	    			for (String tag : payment.tags) {
+	    				if (tag.equals("")) {
+	    					tagsStr = tag;
+	    				} else {
+	    					tagsStr = tagsStr + " | " + tag;
+	    				}
+	    			}
+	    		}
+			    
+			    boleto = new StarkBankBoleto(Long.valueOf(payment.id), BigDecimal.valueOf(payment.amount), payment.taxId, tagsStr, payment.description, payment.scheduled,
+	    				payment.line, payment.barCode, payment.fee, payment.status, DateUtil.convertDateTimeToDate(payment.created), null, null);
+	    		
+			    
+			    this.listBoletos.add(boleto);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	public void listPaymentBoleto() {
 		loginStarkBank();
@@ -289,7 +331,7 @@ public class StarkBankAPI{
 	
 		try {
 			HashMap<String, Object> params = new HashMap<>();
-			params.put("paymentIds", "4666592117915648");
+			params.put("paymentIds", "4991624148942848");
 			Generator<BoletoPayment.Log> logs = BoletoPayment.Log.query(params);
 			
 			for (BoletoPayment.Log log : logs){
@@ -297,7 +339,7 @@ public class StarkBankAPI{
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e.printStackTrace(); 
 		}
 	}
 	
@@ -618,4 +660,41 @@ public class StarkBankAPI{
     	 return starkBankPix;
     }
     
+	public Date gerarDataHoje() {
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+
+		return dataHoje.getTime();
+	}
+
+
+	public Date getDataInicio() {
+		return dataInicio;
+	}
+
+
+	public void setDataInicio(Date dataInicio) {
+		this.dataInicio = dataInicio;
+	}
+
+
+	public Date getDataFim() {
+		return dataFim;
+	}
+
+
+	public void setDataFim(Date dataFim) {
+		this.dataFim = dataFim;
+	}
+
+
+	public List<StarkBankBoleto> getListBoletos() {
+		return listBoletos;
+	}
+
+
+	public void setListBoletos(List<StarkBankBoleto> listBoletos) {
+		this.listBoletos = listBoletos;
+	}
 }

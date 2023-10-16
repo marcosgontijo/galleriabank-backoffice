@@ -424,6 +424,13 @@ public final class DateUtil {
 		
 		return simpleDateFormat.format(getDataHoje());
 	}
+	
+	public static String getDataAmericano(Date data) {
+		String pattern = "yyyy-MM-dd";
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+		
+		return simpleDateFormat.format(data);
+	}
 
 	/**
 	 * @return dia da dataHoje
