@@ -424,6 +424,13 @@ public final class DateUtil {
 		
 		return simpleDateFormat.format(getDataHoje());
 	}
+	
+	public static String getDataAmericano(Date data) {
+		String pattern = "yyyy-MM-dd";
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+		
+		return simpleDateFormat.format(data);
+	}
 
 	/**
 	 * @return dia da dataHoje
@@ -1014,7 +1021,7 @@ public final class DateUtil {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
 		TimeZone tz = cal.getTimeZone();
-		ZoneId zid = tz == null ? ZoneId.systemDefault() : tz.toZoneId();
+		ZoneId zid = tz == null ? TimeZone.getTimeZone("America/Sao_Paulo").toZoneId() : tz.toZoneId();
 		return LocalDateTime.ofInstant(cal.toInstant(), zid);
 	}
 	
