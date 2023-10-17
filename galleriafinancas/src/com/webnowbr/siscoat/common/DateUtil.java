@@ -1013,19 +1013,22 @@ public final class DateUtil {
 	
 	public static Date gerarDataHoje() {
 		Calendar dataHoje = Calendar.getInstance();
-		toLocalDateTime(dataHoje.getTime());
-		return dataHoje.getTime();
+		return LocalDateTimeToDate(DateToLocalDateTime(dataHoje.getTime()));
+//		return dataHoje.getTime();
 	}
 	
-	public static LocalDateTime toLocalDateTime(Date date) {
+	public static LocalDateTime DateToLocalDateTime(Date date) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
-		TimeZone tz = cal.getTimeZone();
-		ZoneId zid = tz == null ? TimeZone.getTimeZone("America/Sao_Paulo").toZoneId() : tz.toZoneId();
+
+		TimeZone tz = TimeZone.getTimeZone("America/Sao_Paulo"); //cal.getTimeZone();
+		cal.setTimeZone(tz);
+		//ZoneId zid = tz == null ? TimeZone.getTimeZone("America/Sao_Paulo").toZoneId() : tz.toZoneId();
+		ZoneId zid =  tz.toZoneId();
 		return LocalDateTime.ofInstant(cal.toInstant(), zid);
 	}
 	
-	public static Date toLocalDateTime(LocalDateTime localDateTime) {
+	public static Date LocalDateTimeToDate(LocalDateTime localDateTime) {
 		if (CommonsUtil.semValor(localDateTime))
 			return null;
 
