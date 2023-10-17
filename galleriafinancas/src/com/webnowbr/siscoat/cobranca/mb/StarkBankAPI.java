@@ -11,9 +11,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -668,31 +671,25 @@ public class StarkBankAPI{
 		return dataHoje.getTime();
 	}
 
-
 	public Date getDataInicio() {
 		return dataInicio;
 	}
-
 
 	public void setDataInicio(Date dataInicio) {
 		this.dataInicio = dataInicio;
 	}
 
-
 	public Date getDataFim() {
 		return dataFim;
 	}
-
-
+	
 	public void setDataFim(Date dataFim) {
 		this.dataFim = dataFim;
 	}
 
-
 	public List<StarkBankBoleto> getListBoletos() {
 		return listBoletos;
 	}
-
 
 	public void setListBoletos(List<StarkBankBoleto> listBoletos) {
 		this.listBoletos = listBoletos;
