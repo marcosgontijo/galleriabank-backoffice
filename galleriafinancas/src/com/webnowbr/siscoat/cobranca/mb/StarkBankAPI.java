@@ -298,8 +298,16 @@ public class StarkBankAPI{
 	    		}
 	    		
 	    		String retornoLog = paymentBoletoLog(payment.id);
+	    		
+	    		String valorTratadoStr = payment.amount.toString();
+	    		
+	    		if (valorTratadoStr.length() >= 3) {
+	    			valorTratadoStr = valorTratadoStr.substring(0, valorTratadoStr.length() - 2) + "." + valorTratadoStr.substring(valorTratadoStr.length() - 2, valorTratadoStr.length());
+	    		}
+	    		
+	    		double valorTratadoLong = Double.valueOf(valorTratadoStr);
 			    
-			    boleto = new StarkBankBoleto(Long.valueOf(payment.id), BigDecimal.valueOf(payment.amount), payment.taxId, tagsStr, payment.description, payment.scheduled,
+			    boleto = new StarkBankBoleto(Long.valueOf(payment.id), BigDecimal.valueOf(valorTratadoLong).setScale(2), payment.taxId, tagsStr, payment.description, payment.scheduled,
 	    				payment.line, payment.barCode, payment.fee, payment.status, DateUtil.convertDateTimeToDate(payment.created), retornoLog);
 	    		
 			    
@@ -342,7 +350,6 @@ public class StarkBankAPI{
 			Generator<BoletoPayment.Log> logs = BoletoPayment.Log.query(params);
 			
 			for (BoletoPayment.Log log : logs){
-			    System.out.println(log);
 			    if (log.type.equals("failed")) {
 			    	for (String erro : log.errors) {
 			    		retorno = retorno + erro;
