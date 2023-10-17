@@ -20,7 +20,7 @@
 	</h:outputStylesheet>
 	<h:outputStylesheet name="primeicons/primeicons.css" library="primefaces"/>
 	<shiro:hasAnyRoles
-		name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
+		name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO, PROFILE_PAJU_NEVES, PROFILE_PAJU_LUVISON">
 		<p:panel id="ImovelAnalisado" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Em Análise' or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Análise' }">
 			<f:facet name="header">
 				<h:outputText value="Cidade imovel" />				
@@ -49,35 +49,42 @@
 				</p:commandButton>
 			</f:facet>
 
-			<h:panelGrid columns="1">
-				<p:fileUpload label="Selecionar Arquivo"				
-					rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
-					uploadLabel="Salvar Arquivo" multiple="false"
-					cancelLabel="Cancelar"
-					fileUploadListener="#{contratoCobrancaMB.handleAnaliseDocumentoFileUpload}"
-					mode="advanced" dragDropSupport="true" update="dtFilesAnalise">
-					<f:attribute name="foo"
-						value="#{contratoCobrancaMB.contasPagarSelecionada}" />
-				</p:fileUpload>
-			</h:panelGrid>
+			<shiro:hasAnyRoles
+				name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
+
+				<h:panelGrid columns="1">
+					<p:fileUpload label="Selecionar Arquivo"
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
+						uploadLabel="Salvar Arquivo" multiple="false"
+						cancelLabel="Cancelar"
+						fileUploadListener="#{contratoCobrancaMB.handleAnaliseDocumentoFileUpload}"
+						mode="advanced" dragDropSupport="true" update="dtFilesAnalise">
+						<f:attribute name="foo"
+							value="#{contratoCobrancaMB.contasPagarSelecionada}" />
+					</p:fileUpload>
+				</h:panelGrid>
+			</shiro:hasAnyRoles>
 			<p:panel id="ArquivosSalvosAnalise"
 				header="Arquivo(s) Salvo(s) na analise" style="margin-bottom:10px;">
 				<f:facet name="header"> Arquivo(s) Salvo(s) na analise 
 							<p:outputLabel value="" />
-					<p:commandButton value="Adicionar Pessoa"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
-						action="#{contratoCobrancaMB.preparaAdicionarPessoaAnalise}"
-						oncomplete="PF('adicionarPessoaAnaliseDlg').show();"
-						update="adicionarPessoaAnaliseForm">
-					</p:commandButton>
-					<p:commandButton value="Adicionar Pessoa"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise and !contratoCobrancaMB.verificaReaProcessado}"
-						action="#{contratoCobrancaMB.preparaAdicionarPessoaAnalise}"
-						oncomplete="PF('adicionarPessoaAnaliseDlg').show();"
-						disabled="true"
-						update="adicionarPessoaAnaliseForm">
-						
-					</p:commandButton>
+					<shiro:hasAnyRoles
+						name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
+						<p:commandButton value="Adicionar Pessoa"
+							rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
+							action="#{contratoCobrancaMB.preparaAdicionarPessoaAnalise}"
+							oncomplete="PF('adicionarPessoaAnaliseDlg').show();"
+							update="adicionarPessoaAnaliseForm">
+						</p:commandButton>
+						<p:commandButton value="Adicionar Pessoa"
+							rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise and !contratoCobrancaMB.verificaReaProcessado}"
+							action="#{contratoCobrancaMB.preparaAdicionarPessoaAnalise}"
+							oncomplete="PF('adicionarPessoaAnaliseDlg').show();"
+							disabled="true" update="adicionarPessoaAnaliseForm">
+
+						</p:commandButton>
+					</shiro:hasAnyRoles>
+
 				</f:facet>
 				<h:panelGrid columns="1">
 					<p:dataTable id="dtFilesAnalise" var="fileAnalise"
@@ -87,21 +94,30 @@
 						rowStyleClass="#{(fileAnalise.observacao ne null
 							or contratoCobrancaMB.objetoContratoCobranca.emAnalise) ? '' : 'ui-helper-hidden'}">
 						
-						<f:facet name="header">								 
+						<f:facet name="header">		
+						<shiro:hasAnyRoles
+						name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">						 
 							<p:commandButton value="Excluir Selecionado(s)" ajax="false" immediate="true" icon="ui-icon-trash" update="dtFilesAnalise" action="#{contratoCobrancaMB.deleteArquivosAnalisados}">
 								<p:confirm header="Confirmação" message="Deseja Excluir os itens selecionados?"/>
 							</p:commandButton>
+							</shiro:hasAnyRoles>
 				        </f:facet>
-						<p:column  selectionMode="multiple" style="width:16px;text-align:center"/>
-						<p:column style="text-align: center; width:5rem;">				
-							<p:commandButton value="ver Resumo" 
-								oncomplete="PF('resumoConsutlasDialog').show()" icon="pi pi-bars"
-								update="resumoConsutlasForm resumoDialogHeader" ajax="true"
-								style="TEXT-DECORATION: bold;" rendered="#{fileAnalise.tipo != 'Rea'}">
-								<f:setPropertyActionListener value="#{fileAnalise}"
-									target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
-							</p:commandButton>
-						</p:column>
+						<p:column selectionMode="multiple"
+							style="width:16px;text-align:center" />
+						<shiro:hasAnyRoles
+							name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
+							<p:column style="text-align: center; width:5rem;">
+								<p:commandButton value="ver Resumo"
+									oncomplete="PF('resumoConsutlasDialog').show()"
+									icon="pi pi-bars"
+									update="resumoConsutlasForm resumoDialogHeader" ajax="true"
+									style="TEXT-DECORATION: bold;"
+									rendered="#{fileAnalise.tipo != 'Rea'}">
+									<f:setPropertyActionListener value="#{fileAnalise}"
+										target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
+								</p:commandButton>
+							</p:column>
+						</shiro:hasAnyRoles>
 
 						<p:column headerText="Liberado Análise" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.emPedirPaju }">
 							<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"
@@ -156,7 +172,8 @@
 							filterMatchMode="contains">
 							<h:outputText value="#{fileAnalise.observacao}" />
 						</p:column>
-						
+						<shiro:hasAnyRoles
+							name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
 						<p:column style="text-align: center; width:95px;padding: 0; border:0; " headerText="Estados"  >
 							<p:dataList id="estadosList" value="#{fileAnalise.estadosConsulta}" var="estado" 
 							 type="definition">
@@ -176,6 +193,7 @@
 								</f:setPropertyActionListener>
 							</p:commandButton>
 						</p:column>
+						</shiro:hasAnyRoles>
 
 						<p:column style="text-align: center;" headerText="Situação"
 							filterMatchMode="contains">
@@ -278,6 +296,8 @@
 				</h:panelGrid>
 
 			</p:panel>
+			<shiro:hasAnyRoles
+							name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
 			<p:panel id="pnlCeridoesAnalise" header="Certidões"
 				
 				style="margin-bottom:10px;">
@@ -318,6 +338,7 @@
 					
 				
 			</p:panel>
+			</shiro:hasAnyRoles>
 
 		</p:panel>
 

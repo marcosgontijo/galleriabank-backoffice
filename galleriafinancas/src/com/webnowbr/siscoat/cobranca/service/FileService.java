@@ -354,7 +354,9 @@ public class FileService {
 		} catch (Exception e) {
 			fileExtension = "html"; 
 		}	
-		pdfRetorno.setName(nomeConsulta + " - " + nomeAnalise + "." + fileExtension);
+		String nomeArquivo = nomeConsulta + " - " + nomeAnalise + "." + fileExtension;
+		nomeArquivo = Base64.getEncoder().encodeToString(nomeArquivo.getBytes());
+		pdfRetorno.setName(nomeArquivo);
 		FileService fileService = new FileService();
 		User user = new UserDao().findById((long) -1);
 		fileService.salvarDocumentoBase64(pdfRetorno, numeroContrato, diretorio, user);
