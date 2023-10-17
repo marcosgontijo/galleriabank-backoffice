@@ -56,11 +56,8 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.webnowbr.siscoat.cobranca.auxiliar.UtilsMB;
 import com.webnowbr.siscoat.cobranca.db.model.Calculos;
 import com.webnowbr.siscoat.cobranca.db.model.CalculosDetalhes;
-import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
-import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.CalculoDao;
-import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
@@ -343,8 +340,8 @@ public class ContratoCobrancaUtilsMB {
 	public String addCalculo() {
 		this.objetoCalculo = new Calculos();
 
-		this.objetoCalculo.setDataCalculo(gerarDataHoje());
-		this.objetoCalculo.setDataAtualizacao(gerarDataHoje());
+		this.objetoCalculo.setDataCalculo(DateUtil.gerarDataHoje());
+		this.objetoCalculo.setDataAtualizacao(DateUtil.gerarDataHoje());
 		this.objetoCalculo.setTxJuros(new BigDecimal("10.00"));
 		this.objetoCalculo.setMulta(new BigDecimal("2.00"));
 		this.objetoCalculo.setImprimeTaxas(true);
@@ -504,7 +501,7 @@ public class ContratoCobrancaUtilsMB {
 	}
 
 	public String editCalculo() {
-		this.objetoCalculo.setDataAtualizacao(gerarDataHoje());
+		this.objetoCalculo.setDataAtualizacao(DateUtil.gerarDataHoje());
 
 		return "/Atendimento/Cobranca/ContratoCobrancaCalculoInserir.xhtml";
 	}
@@ -1064,14 +1061,6 @@ public class ContratoCobrancaUtilsMB {
 						, ""));
 
 		return "/Atendimento/Cobranca/ContratoCobrancaCalculo.xhtml";
-	}
-
-	public Date gerarDataHoje() {
-		TimeZone zone = TimeZone.getDefault();  
-		Locale locale = new Locale("pt", "BR");  
-		Calendar dataHoje = Calendar.getInstance(zone, locale);
-
-		return dataHoje.getTime();
 	}
 
 	/*

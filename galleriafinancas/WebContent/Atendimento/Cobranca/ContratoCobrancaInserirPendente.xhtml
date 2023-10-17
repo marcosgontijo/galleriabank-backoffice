@@ -1560,8 +1560,8 @@
 													style="FONT-SIZE: 10pt;" />
 											</p:column>
 											
-											<p:column style="text-align: center;width:75px;" headerText=" Valor: "  >
-												<p:outputLabel value="#{processosPessoas2.valor}" 
+											<p:column style="text-align: center;width:75px;" headerText=" Valor Atualizado: "  >
+												<p:outputLabel value="#{processosPessoas2.valorAtualizado}" 
 													style="FONT-SIZE: 10pt;"
 													converter="bigDecimalConverter" />
 											</p:column> 
@@ -2219,8 +2219,8 @@
 												style="FONT-SIZE: 10pt;" />
 										</p:column>
 										
-										<p:column style="text-align: center;width:75px;" headerText=" Valor: "  >
-											<p:outputLabel value="#{processosPessoas.valor}" 
+										<p:column style="text-align: center;width:75px;" headerText=" ValorAtualizado: "  >
+											<p:outputLabel value="#{processosPessoas.valorAtualizado}" 
 												style="FONT-SIZE: 10pt;"
 												converter="bigDecimalConverter" />
 										</p:column> 
@@ -5426,12 +5426,25 @@
 						<p:inputText  value="#{contratoCobrancaMB.processoSelecionado.valor}"
 							label="Contrato" onkeypress="return isNumberKey(event);"
 							onkeydown="FormataValor(this, 13, event, 2);"
-							converter="bigDecimalConverter" /> 
+							converter="bigDecimalConverter" >
+							<p:ajax event="blur" update="valorAtualizadoProcesso"
+									listener="#{contratoCobrancaMB.atualizarValorProcesso()}" /> 
+						</p:inputText>
 							
 						<p:outputLabel  value="Numero: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />
 						<p:inputText value="#{contratoCobrancaMB.processoSelecionado.numero}"
-							label="Contrato" /> 
+							label="Contrato" >
+							<p:ajax event="blur" update="valorAtualizadoProcesso"
+								listener="#{contratoCobrancaMB.atualizarValorProcesso()}" />
+						</p:inputText>
+							
+						<p:outputLabel value="Valor Atualizado: " styleClass="labelBold"
+							style="font-weight: bold; font-size: 18px;" />
+						<p:inputText id="valorAtualizadoProcesso" value="#{contratoCobrancaMB.processoSelecionado.valorAtualizado}"
+							label="Contrato" onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);"
+							converter="bigDecimalConverter" /> 
 							
 						<p:outputLabel value="Quitar: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />

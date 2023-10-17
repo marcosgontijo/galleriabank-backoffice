@@ -13,7 +13,10 @@
 				vertical-align: top;
 				
 			}
-			
+
+			.ui-datalist-content{
+				background-color: transparent;
+			}
 	</h:outputStylesheet>
 	<h:outputStylesheet name="primeicons/primeicons.css" library="primefaces"/>
 	<shiro:hasAnyRoles
@@ -39,13 +42,11 @@
 					action="#{contratoCobrancaMB.listaArquivosAnaliseDocumentos}"
 					immediate="true" icon="ui-icon-search">
 				</p:commandButton>
-				<shiro:hasAnyRoles name="ROOT">
-					<p:commandButton value="Atualiza Certidoes" ajax="false"
-						action="#{contratoCobrancaMB.testeAttCertidoes(contratoCobrancaMB.listaDocumentoAnalise)}"
-						widgetVar="attCertideosBtn" onclick="attCertideosBtn.disable()" oncomplete="attCertideosBtn.enable()"
-						update="dtFilesAnalise">
-					</p:commandButton>
-				</shiro:hasAnyRoles>
+				<p:commandButton value="Atualiza Certidoes" ajax="false"
+					action="#{contratoCobrancaMB.testeAttCertidoes(contratoCobrancaMB.listaDocumentoAnalise)}"
+					widgetVar="attCertideosBtn" onclick="attCertideosBtn.disable()" oncomplete="attCertideosBtn.enable()"
+					update="dtFilesAnalise">
+				</p:commandButton>
 			</f:facet>
 
 			<h:panelGrid columns="1">
@@ -156,9 +157,10 @@
 							<h:outputText value="#{fileAnalise.observacao}" />
 						</p:column>
 						
-						<p:column style="text-align: center; width:95px;padding: 0; border:0; " headerText="Estados">
-							<p:dataList id="estadosList" value="#{fileAnalise.estadosConsulta}" var="estado"  type="definition">
-								<h:panelGroup>
+						<p:column style="text-align: center; width:95px;padding: 0; border:0; " headerText="Estados"  >
+							<p:dataList id="estadosList" value="#{fileAnalise.estadosConsulta}" var="estado" 
+							 type="definition">
+								<h:panelGroup >
 									<p:commandButton icon="ui-icon ui-icon-trash" 
 										action="#{fileAnalise.removerEstado(estado)}"
 										ajax="true" update="estadosList" />

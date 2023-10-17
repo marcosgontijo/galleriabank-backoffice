@@ -47,17 +47,24 @@ public class RelatoriosService {
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 		final ReportUtil ReportUtil = new ReportUtil();
 		JasperReport rptSimulacao = ReportUtil.getRelatorio("AprovadoComitePDFN");
-		InputStream logoStream = getClass().getResourceAsStream("/resource/novoCreditoAprovado.png");
+		InputStream logoStream = getClass().getResourceAsStream("/resource/novoCreditoAprovado2.png");
 		InputStream rodapeStream = getClass().getResourceAsStream("/resource/novoCreditoAprovadoRodape.png");
+		InputStream barraStream = getClass().getResourceAsStream("/resource/novoCreditoAprovadoBarra.png");
+		
+		
 		JasperReport rptDetalhe = ReportUtil.getRelatorio("AprovadoComitePDFNDetalhe");
+		JasperReport rptDetalheParcelas = ReportUtil.getRelatorio("AprovadoComitePDFNParcelas");
 		
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("REPORT_LOCALE", new Locale("pt", "BR"));
 
 		parameters.put("SUBREPORT_DETALHE_DESPESA", rptDetalhe);
+		parameters.put("SUBREPORT_DETALHE_PARCELA", rptDetalheParcelas);
 		parameters.put("IMAGEMFUNDO", IOUtils.toByteArray(logoStream));
 		parameters.put("IMAGEMRODAPE", IOUtils.toByteArray(rodapeStream));
+		parameters.put("IMAGEMBARRA", IOUtils.toByteArray(barraStream));		
+		parameters.put("MOSTRARIPCA", true);
 
 		List<PreAprovadoPDF> list = new ArrayList<PreAprovadoPDF>();
 		ContratoCobranca con = cDao.findById(idContrato);
@@ -114,7 +121,7 @@ public class RelatoriosService {
 			detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Debitos de Condomínio", "Se houver"));
 
 		RegistroImovelTabelaDao rDao = new RegistroImovelTabelaDao();
-		final BigDecimal valorRegistro = rDao.getValorRegistro(con.getValorAprovadoComite());
+		final BigDecimal valorRegistro = rDao.getValorRegistro( simulador.getValorCredito());
 
 		List<RegistroImovelTabela> registroImovelTabela = rDao.findAll();
 		Optional<RegistroImovelTabela> registroImovel = registroImovelTabela.stream()
@@ -143,23 +150,23 @@ public class RelatoriosService {
 				.collect(Collectors.toList())) {
 			
 			String retiraObservaco = processo.getNumero() + " - "
-			+ CommonsUtil.formataValorMonetario(processo.getValor(), "R$ ") + "\n";
+			+ CommonsUtil.formataValorMonetario(processo.getValorAtualizado(), "R$ ") + "\n";
 			
 			observacao = observacao.replace( retiraObservaco, "");
-			despesa = despesa.add(processo.getValor());
+			despesa = despesa.add(processo.getValorAtualizado());
 			detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Processo Nº " + processo.getNumero(),
-					CommonsUtil.formataValorMonetario(processo.getValor(), "R$ ")));
+					CommonsUtil.formataValorMonetario(processo.getValorAtualizado(), "R$ ")));
 		}
 
-		valorLiquido = con.getValorAprovadoComite().subtract(valorIOF).subtract(valorCustoEmissao).subtract(despesa);
+		valorLiquido =  simulador.getValorCredito().subtract(valorIOF).subtract(valorCustoEmissao).subtract(despesa);
 
 		// adicionar cep e carencia ( 1 + carencia * 30 )
 		PreAprovadoPDF documento = new PreAprovadoPDF(con.getPagador().getNome(), con.getDataContrato(),
 				con.getNumeroContrato(), cpf, con.getTaxaAprovada(), observacao,
 				con.getImovel().getCidade(), con.getImovel().getNumeroMatricula(), con.getImovel().getEstado(),
-				con.getPrazoMaxAprovado().toString(), con.getValorAprovadoComite(), con.getValorMercadoImovel(),
+				con.getPrazoMaxAprovado().toString(), simulador.getValorCredito(), con.getValorMercadoImovel(),
 				parcelaPGTO, con.getTipoValorComite(), cep, carencia, despesa,
-				valorCustoEmissao, valorIOF , valorLiquido, detalhesDespesas);
+				valorCustoEmissao, valorIOF , valorLiquido, detalhesDespesas, simulador.getParcelas());
 		list.add(documento);
 		
 		final JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(list);

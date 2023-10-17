@@ -4,24 +4,17 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.TimeZone;
 import java.util.stream.Collectors;
-import java.util.zip.ZipOutputStream;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -50,6 +43,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.cobranca.service.FileService;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
@@ -464,7 +458,7 @@ public class ContasPagarMB {
 	public String clearFieldsInsert() {
 		this.objetoContasPagar = new ContasPagar();
 		this.objetoContasPagar.setTipoDespesa(tipoDespesa);
-		this.objetoContasPagar.setDataPagamento(gerarDataHoje());
+		this.objetoContasPagar.setDataPagamento(DateUtil.gerarDataHoje());
 
 		return "/Atendimento/Cobranca/ContasPagarInserir.xhtml";
 	}
@@ -500,7 +494,7 @@ public class ContasPagarMB {
 		}	
 		
 		if(this.objetoContasPagar.isContaPaga() && CommonsUtil.semValor(this.objetoContasPagar.getDataPagamento())) {
-			this.objetoContasPagar.setDataPagamento(gerarDataHoje());
+			this.objetoContasPagar.setDataPagamento(DateUtil.gerarDataHoje());
 		}
 		this.selectedContratoLov.getListContasPagar().add(this.objetoContasPagar);
 		
@@ -669,14 +663,6 @@ public class ContasPagarMB {
 		this.contasPagar.remove(this.objetoContasPagar);
 
 		return "/Atendimento/Cobranca/ContasPagarConsultar.xhtml";
-	}
-
-	public Date gerarDataHoje() {
-		TimeZone zone = TimeZone.getDefault();
-		Locale locale = new Locale("pt", "BR");
-		Calendar dataHoje = Calendar.getInstance(zone, locale);
-
-		return dataHoje.getTime();
 	}
 
 	public String salvarConta() {

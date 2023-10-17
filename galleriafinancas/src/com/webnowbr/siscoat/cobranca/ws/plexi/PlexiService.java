@@ -60,7 +60,7 @@ public class PlexiService {
 			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
 			myURLConnection.setRequestProperty("Content-Type", "application/json");
 			myURLConnection.setRequestProperty("Authorization", token);
-			//myURLConnection.addRequestProperty("Callback", webhook);
+			myURLConnection.addRequestProperty("Callback", webhook);
 			
 			myURLConnection.setDoOutput(true);
 			

@@ -71,6 +71,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.TransferenciasObservacoesIUGUDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
@@ -333,8 +334,8 @@ public class IuguMB {
 			this.relDataContratoFim = null;
 		} else {
 			this.numeroContrato = null;
-			this.relDataContratoInicio = gerarDataHoje();
-			this.relDataContratoFim = gerarDataHoje();
+			this.relDataContratoInicio = DateUtil.gerarDataHoje();
+			this.relDataContratoFim = DateUtil.gerarDataHoje();
 
 		}
 		this.parcelas3meses = new ArrayList<ContratoCobrancaDetalhes>();
@@ -422,7 +423,7 @@ public class IuguMB {
 		this.parcelas3meses = new ArrayList<ContratoCobrancaDetalhes>();
 		Date data3meses = gerarDataMenos3Meses();
 		Date data1mes = gerarDataMais1Mes();
-		Date dataHoje = gerarDataHoje();
+		Date dataHoje = DateUtil.gerarDataHoje();
 		this.operacaoContratoIUGU = new ArrayList<OperacaoContratoIUGU>();
 		this.transferenciasIUGU = new ArrayList<TransferenciasIUGU>();
 		this.parcelaObservacao = 0;
@@ -513,18 +514,6 @@ public class IuguMB {
 		this.operacaoContratoIUGU = new ArrayList<OperacaoContratoIUGU>();
 		consultaSaldosContratoSelecionado();
 		return "/Atendimento/Cobranca/OperacoesContratoIugu.xhtml";
-	}
-
-	/**
-	 * GERA A DATA DE HOJE
-	 * @return
-	 */
-	public Date gerarDataHoje() {
-		TimeZone zone = TimeZone.getDefault();  
-		Locale locale = new Locale("pt", "BR");  
-		Calendar dataHoje = Calendar.getInstance(zone, locale);
-
-		return dataHoje.getTime();
 	}
 
 	/**
@@ -6698,7 +6687,7 @@ public class IuguMB {
 
 				if (this.contratoCobrancaDetalhes != null) {	
 					if (this.contratoCobrancaDetalhes.getId() > 0) {
-						this.dataObservacao = gerarDataHoje();					
+						this.dataObservacao = DateUtil.gerarDataHoje();					
 						this.observacao = "Sacado: " + tempTransferenciasIUGU.getRecebedor() + 
 								"| Dt. Solicitação: " + tempTransferenciasIUGU.getCreated_at() + 
 								" | Valor R$ " + tempTransferenciasIUGU.getTotal() + 
@@ -6724,7 +6713,7 @@ public class IuguMB {
 			if (this.contratoCobrancaDetalhes != null) {	
 				if (this.contratoCobrancaDetalhes.getId() > 0) {
 					String observacao="";
-					this.dataObservacao = gerarDataHoje();					
+					this.dataObservacao = DateUtil.gerarDataHoje();					
 					observacao = "Sacado: " + this.selectedRecebedor.getNome() + 
 							"| Dt. Solicitação: " + this.dataObservacao + 
 							" | Valor R$ " + this.valorItem + 
