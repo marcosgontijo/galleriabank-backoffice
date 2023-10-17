@@ -994,7 +994,10 @@ public class KobanaMB {
 	    }
 		
 		jsonBoleto.put("description", "Crédito com Imóvel em Garantia - Contrato: " + contrato.getNumeroContrato() + " / Parcela(s): " + parcelas);
-		jsonBoleto.put("instructions", "");
+		
+		if (contrato.getEmpresa().equals("CRI 4")) {
+			jsonBoleto.put("instructions", "Crédito cedido para Companhia Província de Securitização, CNPJ/MF n° 04.200.649/0001-07");
+		}
 		
 		JSONObject jsonCustomData = new JSONObject();
 		
