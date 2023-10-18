@@ -71,7 +71,6 @@
 					<shiro:hasAnyRoles
 						name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
 						<p:commandButton value="Adicionar Pessoa"
-							rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
 							action="#{contratoCobrancaMB.preparaAdicionarPessoaAnalise}"
 							oncomplete="PF('adicionarPessoaAnaliseDlg').show();"
 							update="adicionarPessoaAnaliseForm">
