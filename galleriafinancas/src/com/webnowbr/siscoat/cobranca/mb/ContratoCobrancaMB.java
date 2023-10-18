@@ -33763,6 +33763,35 @@ public class ContratoCobrancaMB {
 		}
 	}
 	
+	public void testedDownloadCertidoesPastas(List<DocumentoAnalise> listDocAnalise) {
+		try {
+			Map<String[], byte[]> listaTodosArquivos = new HashMap<String[], byte[]> ();
+			for (DocumentoAnalise documentoAnalise : listDocAnalise) {
+				if(CommonsUtil.semValor(documentoAnalise.getPagador()))
+					continue;
+				Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+				listaArquivos.putAll(documentoAnalise.zipDeCertidoes());
+				for (Map.Entry<String, byte[]> entry : listaArquivos.entrySet()) {
+					String nomepagador = documentoAnalise.getPagador().getNome().replace(",", "_");
+					String[] key = new String[] {nomepagador, entry.getKey()};
+					listaTodosArquivos.put(key, entry.getValue());
+			    }
+			}
+			
+			CompactadorUtil compac = new CompactadorUtil();
+			arquivos = compac.compactarZipBytePastas(listaTodosArquivos);
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String.format(objetoContratoCobranca.getNumeroContrato() + " Certidoes.zip",
+					"");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(arquivos));
+			gerador.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void testeAttCertidoes(List<DocumentoAnalise> listDocAnalise) {
 		PlexiService plexiService = new PlexiService();
 		plexiService.atualizaRetorno(listDocAnalise);
