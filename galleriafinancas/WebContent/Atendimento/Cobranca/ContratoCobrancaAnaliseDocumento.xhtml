@@ -100,6 +100,9 @@
 							<p:commandButton value="Excluir Selecionado(s)" ajax="false" immediate="true" icon="ui-icon-trash" update="dtFilesAnalise" action="#{contratoCobrancaMB.deleteArquivosAnalisados}">
 								<p:confirm header="Confirmação" message="Deseja Excluir os itens selecionados?"/>
 							</p:commandButton>
+							<p:commandButton value="Download das certidoes" ajax="false" immediate="true" icon="ui-icon-arrowthick-1-s"
+								action="#{contratoCobrancaMB.testedDownloadCertidoes(contratoCobrancaMB.listaDocumentoAnalise)}">
+							</p:commandButton>
 							</shiro:hasAnyRoles>
 				        </f:facet>
 						<p:column selectionMode="multiple"

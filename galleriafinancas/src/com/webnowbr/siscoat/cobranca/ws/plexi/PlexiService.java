@@ -22,7 +22,6 @@ import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.service.FileService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
-import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.infra.db.model.User;
 
@@ -185,6 +184,7 @@ public class PlexiService {
 		PlexiConsultaDao plexiConsultaDao = new PlexiConsultaDao();
 		if(webhookObject.has("erro404")) {
 			plexi.setStatus("Consulta expirada");
+			plexi.setRequestId(null);
 			plexiConsultaDao.merge(plexi);
 			return;
 		}

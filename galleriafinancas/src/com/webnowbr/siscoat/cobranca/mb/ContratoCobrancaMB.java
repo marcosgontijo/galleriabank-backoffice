@@ -33742,6 +33742,27 @@ public class ContratoCobrancaMB {
 		this.estadoConsultaAdd = estadoConsultaAdd;
 	}
 	
+	public void testedDownloadCertidoes(List<DocumentoAnalise> listDocAnalise) {
+		try {
+			Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+			for (DocumentoAnalise documentoAnalise : listDocAnalise) {
+				listaArquivos.putAll(documentoAnalise.zipDeCertidoes());
+			}
+			
+			CompactadorUtil compac = new CompactadorUtil();
+			arquivos = compac.compactarZipByte(listaArquivos);
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String.format(objetoContratoCobranca.getNumeroContrato() + " Certidoes.zip",
+					"");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(arquivos));
+			gerador.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void testeAttCertidoes(List<DocumentoAnalise> listDocAnalise) {
 		PlexiService plexiService = new PlexiService();
 		plexiService.atualizaRetorno(listDocAnalise);
