@@ -353,7 +353,7 @@ public class FileService {
 			fileExtension = "html"; 
 		}	
 		String nomeArquivo = nomeConsulta + " - " + nomeAnalise + "." + fileExtension;
-		nomeArquivo = Base64.getEncoder().encodeToString(nomeConsulta.getBytes());
+		nomeArquivo = Base64.getEncoder().encodeToString(nomeArquivo.getBytes());
 		pdfRetorno.setName(nomeArquivo);
 		FileService fileService = new FileService();
 		User user = new UserDao().findById((long) -1);
