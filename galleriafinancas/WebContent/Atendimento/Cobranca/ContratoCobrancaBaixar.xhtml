@@ -2522,7 +2522,7 @@
 					<p:selectOneRadio id="taxa" value="#{contratoCobrancaMB.txZero}">
 						<f:selectItem itemLabel="Cálculo normal" itemValue="true" />
 						<f:selectItem itemLabel="Taxa 0%" itemValue="false" />
-						<p:ajax update="dataPagamento valorAt" event="valueChange"
+						<p:ajax update="ValoresAtualizados dataPagamento valorAt" event="valueChange"
 							listener="#{contratoCobrancaMB.verificaTaxaZero}" />
 					</p:selectOneRadio>
 					<p:outputLabel for="dataPagamento" value="Data do Pagamento: "
