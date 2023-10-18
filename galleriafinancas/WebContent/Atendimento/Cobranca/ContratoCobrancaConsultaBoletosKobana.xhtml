@@ -198,6 +198,9 @@
 							<f:setPropertyActionListener 
 								target="#{contratoCobrancaMB.rowEditNewDate}"
 								value="#{boleto.paidAt}" />
+							<f:setPropertyActionListener 
+								target="#{contratoCobrancaMB.selectedBoletosKobanaBaixa}"
+								value="#{boleto}" />									
 						</p:commandButton>
 						<p:commandButton onclick="PF('baixaParcialMultiParcelasDialog').show();"
 							title="Baixar Parcela - MultiParcelas" icon="ui-icon-circle-plus"

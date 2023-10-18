@@ -235,6 +235,7 @@ public class PlexiService {
 	
 	public void salvarPdfRetornoPlexi(PlexiConsulta plexiConsulta, PlexiConsultaDao plexiConsultaDao) {
 		FileService fileService = new FileService();
+				
 		if(!CommonsUtil.semValor(plexiConsulta.getDocumentoAnalise())) {
 			fileService.salvarPdfRetorno(plexiConsulta.getDocumentoAnalise(),
 					plexiConsulta.getPdf(), plexiConsulta.getNomeCompleto(), "interno");

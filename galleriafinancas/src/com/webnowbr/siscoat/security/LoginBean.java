@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
@@ -88,6 +89,12 @@ public class LoginBean {
 		this.newPassword = newPassword;
 	}
 
+	@PostConstruct
+	public void config() {
+		TimeZone.setDefault(TimeZone.getTimeZone("America/Sao_Paulo"));
+	}
+	
+	
 	public void loginNow() throws AuthenticationException{
         boolean loggedIn = false;
         Subject currentUser = SecurityUtils.getSubject();        

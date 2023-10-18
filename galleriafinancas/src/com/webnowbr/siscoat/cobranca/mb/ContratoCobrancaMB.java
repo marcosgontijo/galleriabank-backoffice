@@ -284,6 +284,8 @@ public class ContratoCobrancaMB {
 	private List<BoletoKobana> selectedBoletosKobana = new ArrayList<BoletoKobana>();
 	private List<DocumentoAnalise> listaDocumentoAnalise;
 	private List<DocumentoAnalise> listaDeleteAnalise = new ArrayList<DocumentoAnalise>();
+	
+	private BoletoKobana selectedBoletosKobanaBaixa = null;
 
 	/************************************************************
 	 * Objetos para antecipacao de parcela
@@ -20921,6 +20923,10 @@ public class ContratoCobrancaMB {
 
 	public void baixarParcelaParcial() {
 		ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
+		
+		if (this.selectedBoletosKobanaBaixa != null) {
+			System.out.println(this.selectedBoletosKobanaBaixa);		
+		}
 
 		List<ContratoCobrancaDetalhesParcial> listaBaixaGalleria = new ArrayList<ContratoCobrancaDetalhesParcial>();
 		for (ContratoCobrancaDetalhesParcial cBaixas : bpContratoCobrancaDetalhes
@@ -21264,6 +21270,8 @@ public class ContratoCobrancaMB {
 			IPCAMB ipcaMB = new IPCAMB();
 			ipcaMB.atualizaIPCAChamadaTela(this.objetoContratoCobranca.getNumeroContrato());
 		}
+		
+		this.selectedBoletosKobanaBaixa = null;
 
 		/*
 		 * //se valor atualizado == valor parcela //valor atualizado recebe null
@@ -33817,5 +33825,13 @@ public class ContratoCobrancaMB {
 		} else {
 			this.objetoContratoCobranca.setNadaConstaTaxa(true);
 		}
+	}
+
+	public BoletoKobana getSelectedBoletosKobanaBaixa() {
+		return selectedBoletosKobanaBaixa;
+	}
+
+	public void setSelectedBoletosKobanaBaixa(BoletoKobana selectedBoletosKobanaBaixa) {
+		this.selectedBoletosKobanaBaixa = selectedBoletosKobanaBaixa;
 	}
 }
