@@ -95,15 +95,14 @@
 							or contratoCobrancaMB.objetoContratoCobranca.emAnalise) ? '' : 'ui-helper-hidden'}">
 						
 						<f:facet name="header">		
-						<shiro:hasAnyRoles
-						name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">						 
+						<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">						 
 							<p:commandButton value="Excluir Selecionado(s)" ajax="false" immediate="true" icon="ui-icon-trash" update="dtFilesAnalise" action="#{contratoCobrancaMB.deleteArquivosAnalisados}">
 								<p:confirm header="Confirmação" message="Deseja Excluir os itens selecionados?"/>
 							</p:commandButton>
+						</shiro:hasAnyRoles>
 							<p:commandButton value="Download das certidoes" ajax="false" immediate="true" icon="ui-icon-arrowthick-1-s"
 								action="#{contratoCobrancaMB.testedDownloadCertidoesPastas(contratoCobrancaMB.listaDocumentoAnalise)}">
 							</p:commandButton>
-							</shiro:hasAnyRoles>
 				        </f:facet>
 						<p:column selectionMode="multiple"
 							style="width:16px;text-align:center" />
