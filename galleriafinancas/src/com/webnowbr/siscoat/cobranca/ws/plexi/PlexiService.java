@@ -133,7 +133,12 @@ public class PlexiService {
 			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO 
 					&& myURLConnection.getResponseCode() != HTTP_COD_SUCESSO1
 					&& myURLConnection.getResponseCode() != HTTP_COD_SUCESSO2) {
-				System.out.println("Não foi encontrato retorno de requestId:" + requestId);
+				if(CommonsUtil.mesmoValor(myURLConnection.getResponseCode(), 404)){
+					//System.out.println("Não foi encontrato retorno de requestId:" + requestId);
+					JSONObject obj = new JSONObject("{erro404}");
+					return obj;
+				}
+				
 			} else {
 				retorno = getJsonSucesso(myURLConnection.getInputStream());
 			}
@@ -176,15 +181,20 @@ public class PlexiService {
 				return;
 			}
 		}
-		
+		PlexiConsultaDao plexiConsultaDao = new PlexiConsultaDao();
+		if(CommonsUtil.mesmoValor(webhookObject, new JSONObject("{erro404}")) ) {
+			plexi.setStatus("Consulta expirada");
+			plexiConsultaDao.merge(plexi);
+			return;
+		}
+	
 		if(!webhookObject.has("requestId")) 
 			webhookObject.put("requestId", requestId);	
 		plexi.setWebhookRetorno(webhookObject.toString());
 		if(webhookObject.has("pdf")) {
 			plexi.setPdf(webhookObject.getString("pdf"));
 		}
-		plexi.setStatus("Consulta Concluída");
-		PlexiConsultaDao plexiConsultaDao = new PlexiConsultaDao();
+		plexi.setStatus("Consulta Concluída");	
 		plexiConsultaDao.merge(plexi);
 		salvarPdfRetornoPlexi(plexi);
 	}

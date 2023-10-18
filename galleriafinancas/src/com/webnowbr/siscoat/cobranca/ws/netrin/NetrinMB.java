@@ -318,6 +318,9 @@ public class NetrinMB {
 		}
 	}
 	
+	public void gerarTokenServico() {
+		System.out.println(br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos());
+	}
 	
 	public List<DocumentoAnalise> getListPagador() {
 		return listPagador;
