@@ -135,8 +135,9 @@ public class PlexiService {
 					&& myURLConnection.getResponseCode() != HTTP_COD_SUCESSO2) {
 				if(CommonsUtil.mesmoValor(myURLConnection.getResponseCode(), 404)){
 					//System.out.println("Não foi encontrato retorno de requestId:" + requestId);
-					JSONObject obj = new JSONObject("{erro404}");
-					return obj;
+					JSONObject jsonObject = new JSONObject();
+					jsonObject.put("erro404", "true");
+					return jsonObject;
 				}
 				
 			} else {
@@ -182,7 +183,7 @@ public class PlexiService {
 			}
 		}
 		PlexiConsultaDao plexiConsultaDao = new PlexiConsultaDao();
-		if(CommonsUtil.mesmoValor(webhookObject, new JSONObject("{erro404}")) ) {
+		if(webhookObject.has("erro404")) {
 			plexi.setStatus("Consulta expirada");
 			plexiConsultaDao.merge(plexi);
 			return;
