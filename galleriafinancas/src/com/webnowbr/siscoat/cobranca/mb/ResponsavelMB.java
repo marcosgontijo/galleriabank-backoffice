@@ -147,6 +147,10 @@ public class ResponsavelMB {
 		}	
 		
 		UserDao uDao = new UserDao();
+		showUsuario = false;
+		addUsuario = false;
+		login = "";
+		senha = "";
 		List<User> listaUser = uDao.findByFilter("codigoResponsavel", objetoResponsavel.getCodigo());
 		if(!CommonsUtil.semValor(listaUser)) {
 			User user = listaUser.get(0);
@@ -155,10 +159,6 @@ public class ResponsavelMB {
 				showUsuario = true;
 				login = user.getLogin();
 				senha = user.getPassword();
-			} else {
-				showUsuario = false;
-				login = "";
-				senha = "";
 			}
 		}
 		
@@ -177,6 +177,10 @@ public class ResponsavelMB {
 		}	
 		
 		UserDao uDao = new UserDao();
+		showUsuario = false;
+		addUsuario = false;
+		login = "";
+		senha = "";
 		List<User> listaUser = new ArrayList<User>();
 		listaUser = uDao.findByFilter("codigoResponsavel", objetoResponsavel.getCodigo());
 		if(!CommonsUtil.semValor(listaUser)) {
@@ -186,10 +190,6 @@ public class ResponsavelMB {
 				showUsuario = true;
 				login = user.getLogin();
 				senha = user.getPassword();
-			} else {
-				showUsuario = false;
-				login = "";
-				senha = "";
 			}
 		}
 		
@@ -234,39 +234,40 @@ public class ResponsavelMB {
 			}
 
 			if (objetoResponsavel.getId() <= 0) {
-				if (responsavelDao.findByFilter("codigo", this.objetoResponsavel.getCodigo()).size() <= 0) {
-					responsavelDao.create(objetoResponsavel);
-					if(this.addUsuario) {
-						UsuarioMB userMb = new UsuarioMB();
-						userMb.clearFields();
-						userMb.getObjetoUsuario().setPassword(this.getSenha());
-						userMb.getObjetoUsuario().setLogin(this.getLogin());
-						userMb.getObjetoUsuario().setCodigoResponsavel(this.objetoResponsavel.getCodigo());
-						userMb.getObjetoUsuario().setName(this.objetoResponsavel.getNome());
-						userMb.getObjetoUsuario().setUserPreContrato(true);
-						if(CommonsUtil.semValor(userMb.getObjetoUsuario().getListResponsavel())) {
-							userMb.getObjetoUsuario().setListResponsavel(new ArrayList<>());
-						}
-						userMb.getObjetoUsuario().getListResponsavel().add(this.objetoResponsavel);
-						userMb.inserir();
-						
-						for (Responsavel responsavel : this.selectedResponsaveis) {
-							user = userDao.findByFilter("codigoResponsavel", responsavel.getCodigo()).get(0);
-							user.getListResponsavel().add(this.objetoResponsavel);
-							userDao.merge(user);
-						}	
-						
-					}
-					msgRetorno = "inserido";
-				} else {
-					context.addMessage(null,
-							new FacesMessage(FacesMessage.SEVERITY_ERROR, "Codigo já Resgistrado", ""));
-					return "";
-				}
+				responsavelDao.create(objetoResponsavel);
 			} else {
 				responsavelDao.merge(objetoResponsavel);
 				msgRetorno = "atualizado";
 			}
+			
+			if (responsavelDao.findByFilter("codigo", this.objetoResponsavel.getCodigo()).size() <= 0) {
+				if(this.addUsuario) {
+					UsuarioMB userMb = new UsuarioMB();
+					userMb.clearFields();
+					userMb.getObjetoUsuario().setPassword(this.getSenha());
+					userMb.getObjetoUsuario().setLogin(this.getLogin());
+					userMb.getObjetoUsuario().setCodigoResponsavel(this.objetoResponsavel.getCodigo());
+					userMb.getObjetoUsuario().setName(this.objetoResponsavel.getNome());
+					userMb.getObjetoUsuario().setUserPreContrato(true);
+					if(CommonsUtil.semValor(userMb.getObjetoUsuario().getListResponsavel())) {
+						userMb.getObjetoUsuario().setListResponsavel(new ArrayList<>());
+					}
+					userMb.getObjetoUsuario().getListResponsavel().add(this.objetoResponsavel);
+					userMb.inserir();
+					
+					for (Responsavel responsavel : this.selectedResponsaveis) {
+						user = userDao.findByFilter("codigoResponsavel", responsavel.getCodigo()).get(0);
+						user.getListResponsavel().add(this.objetoResponsavel);
+						userDao.merge(user);
+					}
+				}
+				msgRetorno = "inserido";
+			} else {
+				context.addMessage(null,
+						new FacesMessage(FacesMessage.SEVERITY_ERROR, "Codigo já Resgistrado", ""));
+				return "";
+			}
+			
 
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Responsavel: Registro " + msgRetorno
 					+ " com sucesso! (Responsavel: " + objetoResponsavel.getNome() + ")", ""));

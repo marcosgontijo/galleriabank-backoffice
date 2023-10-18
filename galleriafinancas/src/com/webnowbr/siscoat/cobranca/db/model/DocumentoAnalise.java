@@ -2,31 +2,29 @@ package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Date;
 import java.util.List;
-
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import com.webnowbr.siscoat.cobranca.mb.BigDataMB;
 import com.webnowbr.siscoat.cobranca.mb.FileUploadMB.FileUploaded;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
+import com.webnowbr.siscoat.cobranca.service.BigDataService;
+import com.webnowbr.siscoat.cobranca.service.EngineService;
+import com.webnowbr.siscoat.cobranca.service.NetrinService;
+import com.webnowbr.siscoat.cobranca.service.ScrService;
+import com.webnowbr.siscoat.cobranca.vo.FileGenerator;
 import com.webnowbr.siscoat.cobranca.ws.netrin.NetrinConsulta;
 import com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 
-import br.com.galleriabank.bigdata.cliente.model.processos.ProcessoResumo;
 import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
 import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetornoRequestFields;
 import br.com.galleriabank.dataengine.cliente.model.retorno.AntecedentesCriminais.EngineRetornoExecutionResultAntecedenteCriminaisEvidences;
@@ -34,7 +32,6 @@ import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetor
 import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultConsultaQuodScore;
 import br.com.galleriabank.dataengine.cliente.model.retorno.processos.EngineRetornoExecutionResultProcessos;
 import br.com.galleriabank.netrin.cliente.model.PPE.PpeResponse;
-import br.com.galleriabank.netrin.cliente.model.cenprot.CenprotProtestos;
 import br.com.galleriabank.netrin.cliente.model.cenprot.CenprotResponse;
 import br.com.galleriabank.netrin.cliente.model.cenprot.ProtestosBrasilEstado;
 import br.com.galleriabank.netrin.cliente.model.dossie.DossieRequest;
@@ -691,6 +688,124 @@ public class DocumentoAnalise implements Serializable {
 			aux.remove(estado);
 			estadosConsultaStr = aux.toString();
 		}
+	}
+	
+	public Map<String, byte[]> zipDeCertidoes(){
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+		listaArquivos.putAll(zipEngine());
+		listaArquivos.putAll(zipProtesto());
+		listaArquivos.putAll(zipProcesso());
+		listaArquivos.putAll(zipScr());
+		for(DocketConsulta docket : docketConsultas) {
+			listaArquivos.putAll(zipDocket(docket));
+		}
+		for(PlexiConsulta plexi : plexiConsultas) {
+			listaArquivos.putAll(zipPlexi(plexi));
+		}
+		for(NetrinConsulta netrin : netrinConsultas) {
+			listaArquivos.putAll(zipNetrin(netrin));
+		}
+		return listaArquivos;
+	}
+	
+	public Map<String, byte[]> zipEngine() {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+		String nomeArquivo = "Engine " + getPagador().getNome().replace(",", "_")  + ".pdf";
+		if(CommonsUtil.semValor(getEngine())) 
+			return listaArquivos;
+		EngineService engineService = new EngineService();
+		engineService.baixarDocumentoEngine(getEngine());
+		if(CommonsUtil.semValor(getEngine().getPdfBase64())) 
+			return listaArquivos;
+		String documentoBase64 = getEngine().getPdfBase64();
+		byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
+		listaArquivos.put(nomeArquivo, pdfBytes);
+		return listaArquivos;
+	}
+	
+	public Map<String, byte[]> zipProtesto() {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+		String nomeArquivo = "Cenprot "+ getPagador().getNome().replace(",", "_") +  ".pdf";
+		NetrinService netrin = new NetrinService();
+		String documentoBase64 = netrin.baixarDocumento(this);
+		if(!CommonsUtil.semValor(documentoBase64)) {
+			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
+			listaArquivos.put(nomeArquivo, pdfBytes);
+		}
+		return listaArquivos;
+	}
+	
+	public Map<String, byte[]> zipProcesso() {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+		String nomeArquivo = "Processos " + getPagador().getNome().replace(",", "_")  + ".pdf";
+		BigDataService bigData = new BigDataService();
+		String documentoBase64 = bigData.baixarDocumentoProcesso(this);
+		if(!CommonsUtil.semValor(documentoBase64)) {
+			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
+			listaArquivos.put(nomeArquivo, pdfBytes);
+		}
+		return listaArquivos;
+	}
+	
+	public Map<String, byte[]> zipScr() {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+		if(CommonsUtil.semValor(getRetornoScr()))
+			return listaArquivos;
+		String nomeArquivo = "SCR " + getPagador().getNome().replace(",", "_")  + ".pdf";
+		FileGenerator fileGenerator = new FileGenerator();
+		fileGenerator.setDocumento(this.getCnpjcpf());
+		ScrResult scrResult = GsonUtil.fromJson(getRetornoScr(), ScrResult.class);
+		ScrService scrService = new ScrService();
+		byte[] pdfBytes = scrService.geraContrato(scrResult, fileGenerator);
+		listaArquivos.put(nomeArquivo, pdfBytes);
+		return listaArquivos;
+	}
+	
+	public Map<String, byte[]> zipDocket(DocketConsulta docket) {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+		String nomeArquivo = docket.getDocketDocumentos().getDocumentoNome() 
+				+ " " + this.getPagador().getNome().replace(",", "_") + ".pdf";
+		String documentoBase64 = docket.getPdf();
+		if(!CommonsUtil.semValor(documentoBase64)) {
+			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
+			listaArquivos.put(nomeArquivo, pdfBytes);
+		}
+		return listaArquivos;
+	}
+	
+	public Map<String, byte[]> zipPlexi(PlexiConsulta plexi) {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+		String nomeArquivo = plexi.getNomeCompleto()
+			+ " " + this.getPagador().getNome().replace(",", "_") + ".pdf";
+		String documentoBase64 = plexi.getPdf();
+		if(!CommonsUtil.semValor(documentoBase64)) {
+			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
+			listaArquivos.put(nomeArquivo, pdfBytes);
+		}
+		return listaArquivos;
+	}
+	
+	public Map<String, byte[]> zipNetrin(NetrinConsulta netrin) {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+		String url = netrin.getNetrinDocumentos().getUrlService();
+		String nomedoc = "";
+		if (CommonsUtil.mesmoValor(url, "/api/v1/processo")) {
+			nomedoc = "Consulta Processual";
+		} else if (CommonsUtil.mesmoValor(url, "/api/v1/CNDEstadual")) {
+			nomedoc = "CND Estadual " +  netrin.getUf().toUpperCase();
+		} else if (CommonsUtil.mesmoValor(url, "/api/v1/CNDFederal")) {
+			nomedoc = "CND Federal";
+		} else if (CommonsUtil.mesmoValor(url, "/api/v1/CNDTrabalhistaTST")) {
+			nomedoc = "CNDT TST";
+		}
+		String nomeArquivo = nomedoc + " " 
+			+ this.getPagador().getNome().replace(",", "_") + ".pdf";
+		String documentoBase64 = netrin.getPdf();
+		if(!CommonsUtil.semValor(documentoBase64)) {
+			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
+			listaArquivos.put(nomeArquivo, pdfBytes);
+		}
+		return listaArquivos;
 	}
 	
 	@Override
