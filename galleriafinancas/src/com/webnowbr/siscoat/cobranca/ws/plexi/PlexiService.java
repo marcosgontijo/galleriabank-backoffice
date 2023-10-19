@@ -163,6 +163,8 @@ public class PlexiService {
 			for(PlexiConsulta plexi : docAnalise.getPlexiConsultas()) {
 				if(CommonsUtil.semValor(plexi.getRequestId()))
 					continue;
+				if(CommonsUtil.mesmoValor(plexi.getStatus(), "Consulta expirada"))
+					continue;
 				atualizaRetornoPlexi(plexi);
 			}
 		}

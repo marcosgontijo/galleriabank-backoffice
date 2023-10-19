@@ -42,11 +42,10 @@
 					action="#{contratoCobrancaMB.listaArquivosAnaliseDocumentos}"
 					immediate="true" icon="ui-icon-search">
 				</p:commandButton>
-				<p:commandButton value="Atualiza Certidoes" ajax="false"
+				<p:commandButton value="Atualiza Certidoes" ajax="true"
 					action="#{contratoCobrancaMB.testeAttCertidoes(contratoCobrancaMB.listaDocumentoAnalise)}"
-					widgetVar="attCertideosBtn" onclick="attCertideosBtn.disable()" oncomplete="attCertideosBtn.enable()"
-					update="dtFilesAnalise">
-				</p:commandButton>
+					widgetVar="atuzalizaCertidoesBtn" onclick="atuzalizaCertidoesBtn.disable()" 
+					disabled="#{contratoCobrancaMB.checkAtualizaCertidoes}" />
 			</f:facet>
 
 			<shiro:hasAnyRoles
