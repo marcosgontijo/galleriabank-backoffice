@@ -140,7 +140,8 @@ public class PlexiService {
 				}
 				
 			} else {
-				retorno = getJsonSucesso(myURLConnection.getInputStream());
+				if(!CommonsUtil.mesmoValor(myURLConnection.getResponseCode(), 202))
+					retorno = getJsonSucesso(myURLConnection.getInputStream());
 			}
 			myURLConnection.disconnect();
 			return retorno;

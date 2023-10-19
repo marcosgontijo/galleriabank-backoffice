@@ -20227,8 +20227,9 @@ public class ContratoCobrancaMB {
 	public void verificaTaxaZero() {
 		if (!this.txZero) {
 			this.vlrParcelaAtualizadaNew = this.bpContratoCobrancaDetalhes.getVlrParcela();
+			this.vlrRecebido = this.vlrParcelaNew;
 		} else {
-			calculaNovaData(this.rowEditNewDate);
+			calculaNovaData(this.rowEditNewDate);	
 		}
 	}
 
@@ -20893,11 +20894,24 @@ public class ContratoCobrancaMB {
 
 		return totalBaixas;
 	}
+	
+	public void clearFieldsBaixaLote() {
+		this.callMetodoPorDialogBaixaParcial = true;
+		this.objetoContratoCobranca = null;
+		this.rowEditNewDate = null;
+		this.selectedParcelas = null;
+		this.reciboGerado = false;
+		this.txZero = true;
+		this.vlrRecebido = null;
+		this.dataQuitacao = null;
+	}
 
 	public void baixarParcelasKobanaLote() {
 		FacesContext context = FacesContext.getCurrentInstance();
 
 		for (BoletoKobana boletosKokanaSelecionados : this.selectedBoletosKobana) {
+			
+			clearFieldsBaixaLote();
 			// baixa multiparcelas
 			if (boletosKokanaSelecionados.getParcela() == null) {
 				this.callMetodoPorDialogBaixaParcial = true;
@@ -20907,7 +20921,7 @@ public class ContratoCobrancaMB {
 				this.reciboGerado = false;
 				this.txZero = true;
 				this.vlrRecebido = boletosKokanaSelecionados.getPaidAmount();
-				this.dataQuitacao = boletosKokanaSelecionados.getPaidAt();
+				this.dataQuitacao = boletosKokanaSelecionados.getExpireAt();
 
 				baixarMultiParcelaParcial();
 			} else {

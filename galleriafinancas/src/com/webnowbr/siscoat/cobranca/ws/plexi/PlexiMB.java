@@ -131,6 +131,9 @@ public class PlexiMB {
 	public void atualizarDocumentos(DocumentoAnalise docAnalise) {
 		for(PlexiConsulta plexiConsulta : docAnalise.getPlexiConsultas()) {
 			plexiConsulta.populatePagadorRecebedor(docAnalise.getPagador());
+			if(!CommonsUtil.semValor(plexiConsulta.getOrgaosStr())) {
+				plexiConsulta.setOrgaos(plexiConsulta.getOrgaos());
+			}
 		}
 	}
 	
