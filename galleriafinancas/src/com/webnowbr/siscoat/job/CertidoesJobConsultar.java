@@ -41,10 +41,10 @@ public class CertidoesJobConsultar {
 	private String stepDescricao;
 	
 	public void atualizarConsultasCertidoes() {
-		//PlexiService plexiService = new PlexiService();
-		//plexiService.atualizaRetorno(listaDocumentoAnalise);
-		//NetrinService netrinService = new NetrinService();
-		//netrinService.atualizaRetorno(listaDocumentoAnalise);
+		PlexiService plexiService = new PlexiService();
+		plexiService.atualizaRetorno(listaDocumentoAnalise);
+		NetrinService netrinService = new NetrinService();
+		netrinService.atualizaRetorno(listaDocumentoAnalise);
 		DocketService docketService = new DocketService();
 		docketService.atualizaRetorno(listaDocumentoAnalise);
 	}
