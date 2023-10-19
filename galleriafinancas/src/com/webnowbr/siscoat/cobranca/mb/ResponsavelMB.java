@@ -236,13 +236,14 @@ public class ResponsavelMB {
 
 			if (objetoResponsavel.getId() <= 0) {
 				responsavelDao.create(objetoResponsavel);
+				msgRetorno = "inserido";
 			} else {
 				responsavelDao.merge(objetoResponsavel);
 				msgRetorno = "atualizado";
 			}
 			
-			if (userDao.findByFilter("codigoresponsavel", this.objetoResponsavel.getCodigo()).size() <= 0) {
-				if(this.addUsuario) {
+			if(this.addUsuario) {
+				if (userDao.findByFilter("codigoResponsavel", this.objetoResponsavel.getCodigo()).size() <= 0) {	
 					UsuarioMB userMb = new UsuarioMB();
 					userMb.clearFields();
 					userMb.getObjetoUsuario().setPassword(this.getSenha());
@@ -261,14 +262,12 @@ public class ResponsavelMB {
 						user.getListResponsavel().add(this.objetoResponsavel);
 						userDao.merge(user);
 					}
+				} else {
+					context.addMessage(null,
+							new FacesMessage(FacesMessage.SEVERITY_ERROR, "Codigo já Resgistrado", ""));
+					return "";
 				}
-				msgRetorno = "inserido";
-			} else {
-				context.addMessage(null,
-						new FacesMessage(FacesMessage.SEVERITY_ERROR, "Codigo já Resgistrado", ""));
-				return "";
 			}
-			
 
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Responsavel: Registro " + msgRetorno
 					+ " com sucesso! (Responsavel: " + objetoResponsavel.getNome() + ")", ""));
