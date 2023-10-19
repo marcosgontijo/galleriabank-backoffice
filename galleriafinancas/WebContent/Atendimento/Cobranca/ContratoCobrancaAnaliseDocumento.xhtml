@@ -45,7 +45,7 @@
 				<p:commandButton value="Atualiza Certidoes" ajax="true"
 					action="#{contratoCobrancaMB.testeAttCertidoes(contratoCobrancaMB.listaDocumentoAnalise)}"
 					widgetVar="atuzalizaCertidoesBtn" onclick="atuzalizaCertidoesBtn.disable()" 
-					disabled="#{contratoCobrancaMB.checkAtualizaCertidoes}" />
+					disabled="#{contratoCobrancaMB.checkAtualizaCertidoes()}" />
 			</f:facet>
 
 			<shiro:hasAnyRoles
