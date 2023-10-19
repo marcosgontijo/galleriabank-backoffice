@@ -1893,20 +1893,19 @@ public class NetrinService {
 			netrinConsultaDao.merge(netrin);
 			return;
 		}
-		if(!retorno.contains("urlComprovante")) {
+		String url = netrin.getNetrinDocumentos().getUrlService();
+		String pdf = null;
+		if(!retorno.contains("urlComprovante") && !CommonsUtil.mesmoValor(url, "/api/v1/processo")) {
 			netrin.setStatus("Falha: Retorno sem pdf");
 			netrinConsultaDao.merge(netrin);
 			return;
 		}	
-		
 		if(retorno.contains("Não conseguimos gerar o link do comprovante.")) {
 			netrin.setStatus("Falha: Retorno sem link do pdf");
 			netrinConsultaDao.merge(netrin);
 			return;
 		}
 		
-		String url = netrin.getNetrinDocumentos().getUrlService();
-		String pdf = null;
 		if (CommonsUtil.mesmoValor(url, "/api/v1/processo")) {
 			pdf = baixarDocumentoProcesso(retorno);
 			nomedoc = "Consulta Processual";
@@ -1921,8 +1920,10 @@ public class NetrinService {
 			nomedoc = "CNDT TST";
 		}
 		netrin.setPdf(pdf);
-		netrin.setStatus("Consulta Concluída");
-		
+		if(!CommonsUtil.semValor(pdf))
+			netrin.setStatus("Consulta Concluída");
+		else
+			netrin.setStatus("Consulta Sem PDF");
 		netrinConsultaDao.merge(netrin);
 		String base64 = netrin.getPdf();
 		FileService fileService = new FileService();
