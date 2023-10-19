@@ -68,7 +68,7 @@ public class RelacionamentoPagadorRecebedorDao extends HibernateDao <Relacioname
 		});	
 	}
 	
-	private static final String QUERY_RELACIONAMENTOS_EXISTENTES = "select * from cobranca.RelacionamentoPagadorRecebedor " 
+	private static final String QUERY_RELACIONAMENTOS_EXISTENTES = "select id from cobranca.RelacionamentoPagadorRecebedor " 
 			+ " where pessoaRoot = ? "
 			+ " and pessoaChild = ? ";
 	
