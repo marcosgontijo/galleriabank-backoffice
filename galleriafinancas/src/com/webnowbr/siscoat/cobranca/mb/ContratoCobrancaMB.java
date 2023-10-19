@@ -31176,13 +31176,13 @@ public class ContratoCobrancaMB {
 				return CommonsUtil.castAsLong(one.getId()).compareTo(other.getId());
 			}
 		});
-
 	}
 
 	public void preparaAdicionarPessoaAnalise() {
 		this.documentoAnaliseAdicionar = new DocumentoAnalise();
 		documentoAnaliseAdicionar.setPagador(new PagadorRecebedor());
 		documentoAnaliseAdicionar.setContratoCobranca(this.objetoContratoCobranca);
+		documentoAnaliseAdicionar.setObservacao(".");
 	}
 
 	public void adicionarPessoaAnalise() {
