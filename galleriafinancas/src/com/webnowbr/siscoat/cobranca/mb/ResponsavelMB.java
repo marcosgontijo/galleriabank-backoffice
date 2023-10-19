@@ -28,6 +28,7 @@ import com.webnowbr.siscoat.common.ValidaCNPJ;
 import com.webnowbr.siscoat.common.ValidaCPF;
 import com.webnowbr.siscoat.db.dao.DAOException;
 import com.webnowbr.siscoat.db.dao.DBConnectionException;
+import com.webnowbr.siscoat.infra.db.dao.TermoUsuarioDao;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
 import com.webnowbr.siscoat.infra.mb.UsuarioMB;
@@ -240,7 +241,7 @@ public class ResponsavelMB {
 				msgRetorno = "atualizado";
 			}
 			
-			if (responsavelDao.findByFilter("codigo", this.objetoResponsavel.getCodigo()).size() <= 0) {
+			if (userDao.findByFilter("codigoresponsavel", this.objetoResponsavel.getCodigo()).size() <= 0) {
 				if(this.addUsuario) {
 					UsuarioMB userMb = new UsuarioMB();
 					userMb.clearFields();
