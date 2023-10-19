@@ -48,38 +48,7 @@ public class DocketMB {
 	private List<DocumentoAnalise> listPagador;
 	private String etapa;
 	private ContratoCobranca contratoCobranca;
-	
-
-	public String getNomeUsuarioLogado() {
-		User usuario = getUsuarioLogado();
-
-		if (usuario.getLogin() != null) {
-			if (!usuario.getLogin().equals("")) {
-				return usuario.getLogin();
-			} else {
-				return "";
-			}
-		} else {
-			return "";
-		}
-	}
-	
-	public User getUsuarioLogado() {
-		User usuario = new User();
-		if (loginBean != null) {
-			List<User> usuarioLogado = new ArrayList<User>();
-			UserDao u = new UserDao();
-
-			usuarioLogado = u.findByFilter("login", loginBean.getUsername());
-
-			if (usuarioLogado.size() > 0) {
-				usuario = usuarioLogado.get(0);
-			}
-		}
-
-		return usuario;
-	}
-	
+		
 	public String clearFieldsContratoCobranca(List<DocumentoAnalise> listDocAnalise, String etapaConsultas, ContratoCobranca contrato) {
 		etapa = etapaConsultas;
 		contratoCobranca = contrato;

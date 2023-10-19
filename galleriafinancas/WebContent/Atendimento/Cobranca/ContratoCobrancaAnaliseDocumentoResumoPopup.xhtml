@@ -278,8 +278,7 @@
 		</h:form>
 	</p:dialog>
 
-	<shiro:hasAnyRoles
-		name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO">
+	<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA, COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO">
 		<p:dialog header="Adicionar pessoa Analise" overflow="auto"
 			id="dialogAdicionarPessoaAnalise"
 			widgetVar="adicionarPessoaAnaliseDlg" resizable="true"
@@ -530,5 +529,5 @@
 				</h:form>
 			</p:dialog>	
 		</shiro:hasAnyRoles>
-		
+	
 </ui:composition>
