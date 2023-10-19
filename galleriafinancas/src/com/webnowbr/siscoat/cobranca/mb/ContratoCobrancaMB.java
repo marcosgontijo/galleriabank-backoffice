@@ -155,6 +155,7 @@ import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorAdicionais;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorSocio;
 import com.webnowbr.siscoat.cobranca.db.model.PesquisaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.PreAprovadoPDF;
+import com.webnowbr.siscoat.cobranca.db.model.PreAprovadoPDFDetalheDespesas;
 import com.webnowbr.siscoat.cobranca.db.model.QuitacaoPDF;
 import com.webnowbr.siscoat.cobranca.db.model.QuitacaoParcelasPDF;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
@@ -9437,9 +9438,7 @@ public class ContratoCobrancaMB {
 			}
 		}
 
-		if (CommonsUtil.semValor(this.objetoContratoCobranca.getProcessosQuitarComite())) {
-			this.objetoContratoCobranca.setProcessosQuitarComite(this.objetoContratoCobranca.getProcessosPajuInterno());
-		}
+		gerarProcessosQuitarComite();
 
 		if (CommonsUtil.semValor(this.objetoAnaliseComite.getCarenciaComite())) {
 			this.objetoAnaliseComite.setCarenciaComite(1);
@@ -9451,6 +9450,26 @@ public class ContratoCobrancaMB {
 			}
 		}
 		
+	}
+
+	public void gerarProcessosQuitarComite() {
+//		if (CommonsUtil.semValor(this.objetoContratoCobranca.getProcessosQuitarComite())) {
+
+			StringBuilder sProcesosQuitar = new StringBuilder();
+			for (CcbProcessosJudiciais processo : this.objetoContratoCobranca.getListProcessos().stream()
+					.filter(p -> p.isSelecionadoComite()).collect(Collectors.toList())) {
+
+				String retiraObservaco = processo.getNumero() + " - "
+						+ CommonsUtil.formataValorMonetario(processo.getValorAtualizado(), "R$ ") + "\n";
+				sProcesosQuitar.append(retiraObservaco);
+			}
+
+			if (!CommonsUtil.semValor(sProcesosQuitar)) {
+				this.objetoContratoCobranca.setProcessosQuitarComite(sProcesosQuitar.toString());
+			} else
+				this.objetoContratoCobranca.setProcessosQuitarComite(null);
+
+//		}
 	}
 
 	public String clearFieldsEditarAvaliacaoImovel() {

@@ -2093,6 +2093,7 @@ public class CcbMB {
 			if( !processo.isSelecionadoComite() || CommonsUtil.semValor(despesa)) {
 				continue;
 			}
+			
 			XWPFTableRow tableRow1 = table.createRow();
 			
 			tableRow1.getCell(0).setParagraph(paragraph);
