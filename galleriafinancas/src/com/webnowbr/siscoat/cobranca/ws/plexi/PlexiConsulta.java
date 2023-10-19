@@ -19,7 +19,7 @@ public class PlexiConsulta {
 	private String webhookRetorno;
 	protected DocumentoAnalise documentoAnalise;
 	protected PlexiDocumentos plexiDocumentos;
-	private User usuario;
+	protected User usuario;
 	private Date dataConsulta;
 	private boolean expirado;
 	private String uf;// fazenda MG
