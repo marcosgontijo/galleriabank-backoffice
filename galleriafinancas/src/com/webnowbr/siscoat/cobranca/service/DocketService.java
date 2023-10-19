@@ -860,7 +860,7 @@ public class DocketService {
 			consultaDao.merge(docket);
 			return;
 		}
-		if(CommonsUtil.semValor(docket.getRetorno())) {
+		if(CommonsUtil.semValor(docket.getPdf())) {
 			DocketDao docketDao = new DocketDao();
 			List<Docket> lista = docketDao.findByFilter("objetoContratoCobranca", contrato);
 			if(lista.size() > 0) {

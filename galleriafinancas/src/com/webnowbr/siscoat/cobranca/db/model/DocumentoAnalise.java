@@ -763,7 +763,7 @@ public class DocumentoAnalise implements Serializable {
 	
 	public Map<String, byte[]> zipDocket(DocketConsulta docket) {
 		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
-		String nomeArquivo = docket.getDocketDocumentos().getDocumentoNome() 
+		String nomeArquivo = docket.getId() + "_" + docket.getDocketDocumentos().getDocumentoNome() 
 				+ " " + this.getPagador().getNome().replace(",", "_") + ".pdf";
 		String documentoBase64 = docket.getPdf();
 		if(!CommonsUtil.semValor(documentoBase64)) {
@@ -775,7 +775,7 @@ public class DocumentoAnalise implements Serializable {
 	
 	public Map<String, byte[]> zipPlexi(PlexiConsulta plexi) {
 		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
-		String nomeArquivo = plexi.getNomeCompleto()
+		String nomeArquivo = plexi.getId() + "_" + plexi.getNomeCompleto()
 			+ " " + this.getPagador().getNome().replace(",", "_") + ".pdf";
 		String documentoBase64 = plexi.getPdf();
 		if(!CommonsUtil.semValor(documentoBase64)) {
@@ -798,7 +798,7 @@ public class DocumentoAnalise implements Serializable {
 		} else if (CommonsUtil.mesmoValor(url, "/api/v1/CNDTrabalhistaTST")) {
 			nomedoc = "CNDT TST";
 		}
-		String nomeArquivo = nomedoc + " " 
+		String nomeArquivo = netrin.getId() + "_" + nomedoc + " " 
 			+ this.getPagador().getNome().replace(",", "_") + ".pdf";
 		String documentoBase64 = netrin.getPdf();
 		if(!CommonsUtil.semValor(documentoBase64)) {
