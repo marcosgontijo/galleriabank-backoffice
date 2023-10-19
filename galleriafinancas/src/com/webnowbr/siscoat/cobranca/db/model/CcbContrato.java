@@ -7,8 +7,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.primefaces.model.UploadedFile;
+
+import com.webnowbr.siscoat.common.CommonsUtil;
 
 public class CcbContrato implements Serializable{
 	/**
@@ -807,6 +810,13 @@ public class CcbContrato implements Serializable{
 
 	public List<CcbProcessosJudiciais> getProcessosJucidiais() {
 		return processosJucidiais;
+	}
+	
+	public List<CcbProcessosJudiciais> getProcessosJucidiaisSelecionados() {
+		if (!CommonsUtil.semValor(processosJucidiais))
+			return null;
+		else
+			return processosJucidiais.stream().filter(p -> p.isSelecionadoComite()).collect(Collectors.toList());
 	}
 
 	public void setProcessosJucidiais(List<CcbProcessosJudiciais> processosJucidiais) {
