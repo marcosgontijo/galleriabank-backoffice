@@ -146,7 +146,7 @@ public class RelatoriosService {
 		}	
 
 		for (CcbProcessosJudiciais processo : con.getListProcessos().stream()
-				.filter(p -> p.isSelecionadoComite() && p.getQuitar().contains("Quitar"))
+				.filter(p -> p.isSelecionadoComite() )//&& p.getQuitar().contains("Quitar"))
 				.collect(Collectors.toList())) {
 			
 			String retiraObservaco = processo.getNumero() + " - "

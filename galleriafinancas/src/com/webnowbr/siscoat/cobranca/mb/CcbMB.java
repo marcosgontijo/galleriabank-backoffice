@@ -6946,9 +6946,10 @@ public class CcbMB {
 		
 		for(CcbProcessosJudiciais processo : objetoCcb.getProcessosJucidiais()) {
 			ContasPagar despesa = processo.getContaPagar();
-			if(CommonsUtil.semValor(despesa)) {
+			if( !processo.isSelecionadoComite() || CommonsUtil.semValor(despesa)) {
 				continue;
 			}
+			
 			XWPFTableRow tableRow1 = table.createRow();
 			
 			tableRow1.getCell(0).setParagraph(paragraph);
