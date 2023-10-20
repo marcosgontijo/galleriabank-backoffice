@@ -509,9 +509,15 @@ public class PagadorRecebedor implements Serializable {
 			return CommonsUtil.trimNull(banco[0]);
 
 		} else
-			return null;}
+			return null;
+	}
 	
-	
+	public String getCpfCnpj() {
+		if(!CommonsUtil.semValor(cpf))
+			return cpf;
+		else
+			return cnpj;
+	}
 	
 	@Override
 	public String toString() {

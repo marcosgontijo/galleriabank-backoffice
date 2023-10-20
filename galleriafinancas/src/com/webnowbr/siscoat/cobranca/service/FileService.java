@@ -333,7 +333,8 @@ public class FileService {
 		if(CommonsUtil.semValor(base64)) 
 			return;
 		
-		String nomeAnalise = documentoAnalise.getPagador().getNome();
+		String nomeAnalise = documentoAnalise.getPagador().getNome() + 
+				"_" + CommonsUtil.somenteNumeros(documentoAnalise.getPagador().getCpfCnpj());
 		String numeroContrato = documentoAnalise.getContratoCobranca().getNumeroContrato();
 		salvarPdfRetorno(nomeAnalise, numeroContrato, base64, nomeConsulta, diretorio);
 	}

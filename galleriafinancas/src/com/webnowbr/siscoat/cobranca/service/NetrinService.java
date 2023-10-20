@@ -1799,7 +1799,7 @@ public class NetrinService {
 		PagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
 				DocumentosAnaliseEnum.PROCESSO, retornoConsulta);
 		base64 = netrinConsulta.getPdf();
-		nomedoc = "Consulta Processual";
+		nomedoc = netrinConsulta.getNomeCompleto();
 		FileService fileService = new FileService();
 		fileService.salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
 	}
@@ -1819,7 +1819,7 @@ public class NetrinService {
 		PagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
 				DocumentosAnaliseEnum.CNDESTADUAL, retornoConsulta, netrinConsulta.getUf());
 		base64 = netrinConsulta.getPdf();
-		nomedoc = "CND Estadual " +  netrinConsulta.getUf().toUpperCase();
+		nomedoc = netrinConsulta.getNomeCompleto();
 		FileService fileService = new FileService();
 		fileService.salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
 		
@@ -1840,7 +1840,7 @@ public class NetrinService {
 		PagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
 				DocumentosAnaliseEnum.CNDFEDERAL, retornoConsulta);
 		base64 = netrinConsulta.getPdf();
-		nomedoc = "CND Federal";
+		nomedoc = netrinConsulta.getNomeCompleto();
 		FileService fileService = new FileService();
 		fileService.salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
 		
@@ -1861,7 +1861,7 @@ public class NetrinService {
 		PagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
 				DocumentosAnaliseEnum.CNDTTST, retornoConsulta);
 		base64 = netrinConsulta.getPdf();
-		nomedoc = "CNDT TST";
+		nomedoc = netrinConsulta.getNomeCompleto();
 		FileService fileService = new FileService();
 		fileService.salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
 	}
@@ -1881,7 +1881,6 @@ public class NetrinService {
 	public void atualizaRetornoCertidaoNetrin(NetrinConsulta netrin) {
 		NetrinConsultaDao netrinConsultaDao = new NetrinConsultaDao();
 		String retorno;
-		String nomedoc = "";
 		if(!CommonsUtil.semValor(netrin.getRetorno()) && !CommonsUtil.semValor(netrin.getPdf())) {
 			netrin.setStatus("Consulta Concluída");
 			netrinConsultaDao.merge(netrin);
@@ -1906,19 +1905,6 @@ public class NetrinService {
 			return;
 		}
 		
-		if (CommonsUtil.mesmoValor(url, "/api/v1/processo")) {
-			pdf = baixarDocumentoProcesso(retorno);
-			nomedoc = "Consulta Processual";
-		} else if (CommonsUtil.mesmoValor(url, "/api/v1/CNDEstadual")) {
-			pdf = baixarDocumentoCNDEstadual(retorno);
-			nomedoc = "CND Estadual " +  netrin.getUf().toUpperCase();
-		} else if (CommonsUtil.mesmoValor(url, "/api/v1/CNDFederal")) {
-			pdf = baixarDocumentoCNDFederal(retorno);
-			nomedoc = "CND Federal";
-		} else if (CommonsUtil.mesmoValor(url, "/api/v1/CNDTrabalhistaTST")) {
-			pdf = baixarDocumentoCNDTrabalhistaTST(retorno);
-			nomedoc = "CNDT TST";
-		}
 		netrin.setPdf(pdf);
 		if(!CommonsUtil.semValor(pdf))
 			netrin.setStatus("Consulta Concluída");
@@ -1927,6 +1913,6 @@ public class NetrinService {
 		netrinConsultaDao.merge(netrin);
 		String base64 = netrin.getPdf();
 		FileService fileService = new FileService();
-		fileService.salvarPdfRetorno(netrin.getDocumentoAnalise(), base64, nomedoc, "interno");
+		fileService.salvarPdfRetorno(netrin.getDocumentoAnalise(), base64, netrin.getNomeCompleto(), "interno");
 	}
 }

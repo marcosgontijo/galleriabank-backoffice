@@ -31201,6 +31201,8 @@ public class ContratoCobrancaMB {
 		documentoAnaliseAdicionar.setPagador(new PagadorRecebedor());
 		documentoAnaliseAdicionar.setContratoCobranca(this.objetoContratoCobranca);
 		documentoAnaliseAdicionar.setObservacao(".");
+		documentoAnaliseAdicionar.setLiberadoAnalise(true);
+		documentoAnaliseAdicionar.setLiberadoCertidoes(true);
 	}
 
 	public void adicionarPessoaAnalise() {
@@ -33804,7 +33806,8 @@ public class ContratoCobrancaMB {
 				Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
 				listaArquivos.putAll(documentoAnalise.zipDeCertidoes());
 				for (Map.Entry<String, byte[]> entry : listaArquivos.entrySet()) {
-					String nomepagador = documentoAnalise.getPagador().getNome().replace(",", "_");
+					String nomepagador = documentoAnalise.getPagador().getNome().replace(",", "_") + 
+							"_"+ CommonsUtil.somenteNumeros(documentoAnalise.getPagador().getCpfCnpj());
 					String[] key = new String[] {nomepagador, entry.getKey()};
 					listaTodosArquivos.put(key, entry.getValue());
 			    }
@@ -33872,10 +33875,8 @@ public class ContratoCobrancaMB {
 
 	public boolean isVerificaReaProcessado() {
 		for (DocumentoAnalise documento : listaDocumentoAnalise) {
-
 			if (documento.isReaProcessado()) 
 				return true;
-			
 		}
 		return false;
 	}
