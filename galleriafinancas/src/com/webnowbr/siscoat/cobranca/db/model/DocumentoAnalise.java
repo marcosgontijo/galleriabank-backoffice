@@ -13,6 +13,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import com.webnowbr.siscoat.cobranca.db.op.RelacionamentoPagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.mb.FileUploadMB.FileUploaded;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
 import com.webnowbr.siscoat.cobranca.service.BigDataService;
@@ -79,6 +80,7 @@ public class DocumentoAnalise implements Serializable {
 	private String retornoProcesso;
 	private String retornoPpe;
 	private String retornoLaudoRobo;
+	private String retornoRelacionamento;
 
 	private String retornoScr;
 	private String observacao;
@@ -100,16 +102,8 @@ public class DocumentoAnalise implements Serializable {
 	private String pessoasPoliticamenteExpostas = "0";
 	private String dialogHeader;
 	
-	private double totalPendenciasValor = 0.0;
-	private double totalValorApontamentos = 0.0;
-	private double totalInadimplenciaValor = 0.0;
-	private double totalLawSuitValor = 0.0;
-	private double totalProtestosValor = 0.0;
 	
-	private int totalPendencias = 0;
 	private boolean isPefinRefinAvailable = false;
-	private int totalLawSuitApontamentos = 0;
-	private int totalApontamentos = 0;
 	private boolean isCcfApontamentosAvailable = false;
 	private boolean isProtestosAvailable = false;
 	private boolean isScoreBaixo = false;
@@ -118,6 +112,9 @@ public class DocumentoAnalise implements Serializable {
 	private boolean isRelacionamentoBacenIniciadoAvailable = false;
 	private boolean isRiscoTotalAvailable = false;
 	private FileUploaded file;
+	
+	private List<DocumentoAnaliseResumo> resumorelacionamentos;
+	
 
 	public List<DocumentoAnaliseResumo> getResumoProcesso() {
 		List<DocumentoAnaliseResumo> vProcesso = new ArrayList<>();
@@ -457,8 +454,43 @@ public class DocumentoAnalise implements Serializable {
 
 		return scr;
 	}
+	
+	public List<DocumentoAnaliseResumo> getResumoRelacionamentos() {
+		
+		if (resumorelacionamentos != null) {
+			return resumorelacionamentos;
+		}
+		resumorelacionamentos = new ArrayList<DocumentoAnaliseResumo>();
+		
+//		List<DocumentoAnaliseResumo> resumorelacionamentos = new ArrayList<>();
 
-	public boolean isPodeChamarRea() {
+		RelacionamentoPagadorRecebedorDao rprDao = new RelacionamentoPagadorRecebedorDao();
+		List<RelacionamentoPagadorRecebedor> listRelacoes = new ArrayList<RelacionamentoPagadorRecebedor>();
+
+		listRelacoes = rprDao.getRelacionamentos(pagador, listRelacoes);
+		for (RelacionamentoPagadorRecebedor relacionamentoPagadorRecebedor : listRelacoes) {
+
+			PagadorRecebedor pessoaRelacao = new PagadorRecebedor();
+
+			if (  CommonsUtil.mesmoValor( relacionamentoPagadorRecebedor.getPessoaRoot().getId(),pagador.getId()))
+				pessoaRelacao = relacionamentoPagadorRecebedor.getPessoaChild();
+			else
+				pessoaRelacao = relacionamentoPagadorRecebedor.getPessoaRoot();
+
+			String descricao = pessoaRelacao.getNome() + " "
+					+ (!CommonsUtil.semValor(pessoaRelacao.getCpf()) ? "CPF: " + pessoaRelacao.getCpf()
+							: "CNPJ: " + pessoaRelacao.getCnpj());
+			String valor = relacionamentoPagadorRecebedor.getRelacao();
+
+			resumorelacionamentos.add(new DocumentoAnaliseResumo(descricao, valor));
+		}
+
+
+		return resumorelacionamentos;
+
+	}
+	
+ 	public boolean isPodeChamarRea() {
 		return isReaNaoEnviado() && CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
 	}
 	
@@ -510,6 +542,11 @@ public class DocumentoAnalise implements Serializable {
 				&& !CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
 	}
 
+	public boolean isPodeChamarRelacionamentos() {
+		return !isRelaciomentoProcessado() && CommonsUtil.mesmoValor("PJ", tipoPessoa)
+				&& !CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
+	}
+
 	public boolean isPodeChamarPpe() {
 		return !isPpeProcessado() && CommonsUtil.mesmoValor("PF", tipoPessoa)
 				&& CommonsUtil.mesmoValor(this.motivoAnalise.toUpperCase(), "PROPRIETARIO ATUAL")
@@ -544,6 +581,11 @@ public class DocumentoAnalise implements Serializable {
 	public boolean isPpeProcessado() {
 		return !CommonsUtil.semValor(retornoPpe);
 	}
+	
+	public boolean isRelaciomentoProcessado() {
+		return !CommonsUtil.semValor(retornoRelacionamento);
+	}
+
 
 	public boolean isPodeDownlaodDossie() {
 		return isPpeProcessado() && isCenprotProcessado() && isProcessoProcessado()
@@ -763,7 +805,7 @@ public class DocumentoAnalise implements Serializable {
 	
 	public Map<String, byte[]> zipDocket(DocketConsulta docket) {
 		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
-		String nomeArquivo = docket.getDocketDocumentos().getDocumentoNome() 
+		String nomeArquivo = docket.getId() + "_" + docket.getDocketDocumentos().getDocumentoNome() 
 				+ " " + this.getPagador().getNome().replace(",", "_") + ".pdf";
 		String documentoBase64 = docket.getPdf();
 		if(!CommonsUtil.semValor(documentoBase64)) {
@@ -775,7 +817,7 @@ public class DocumentoAnalise implements Serializable {
 	
 	public Map<String, byte[]> zipPlexi(PlexiConsulta plexi) {
 		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
-		String nomeArquivo = plexi.getNomeCompleto()
+		String nomeArquivo = plexi.getId() + "_" + plexi.getNomeCompleto()
 			+ " " + this.getPagador().getNome().replace(",", "_") + ".pdf";
 		String documentoBase64 = plexi.getPdf();
 		if(!CommonsUtil.semValor(documentoBase64)) {
@@ -798,7 +840,7 @@ public class DocumentoAnalise implements Serializable {
 		} else if (CommonsUtil.mesmoValor(url, "/api/v1/CNDTrabalhistaTST")) {
 			nomedoc = "CNDT TST";
 		}
-		String nomeArquivo = nomedoc + " " 
+		String nomeArquivo = netrin.getId() + "_" + nomedoc + " " 
 			+ this.getPagador().getNome().replace(",", "_") + ".pdf";
 		String documentoBase64 = netrin.getPdf();
 		if(!CommonsUtil.semValor(documentoBase64)) {

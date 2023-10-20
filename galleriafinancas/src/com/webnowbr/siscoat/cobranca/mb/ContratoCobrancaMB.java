@@ -193,7 +193,6 @@ import com.webnowbr.siscoat.cobranca.service.ScrService;
 import com.webnowbr.siscoat.cobranca.service.SerasaService;
 import com.webnowbr.siscoat.cobranca.vo.FileGenerator;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
-import com.webnowbr.siscoat.cobranca.ws.plexi.PlexiService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
@@ -210,6 +209,7 @@ import com.webnowbr.siscoat.exception.SiscoatException;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
+import com.webnowbr.siscoat.job.CertidoesJob;
 import com.webnowbr.siscoat.job.DocumentoAnaliseJob;
 import com.webnowbr.siscoat.security.LoginBean;
 import com.webnowbr.siscoat.simulador.SimulacaoDetalheVO;
@@ -9437,9 +9437,7 @@ public class ContratoCobrancaMB {
 			}
 		}
 
-		if (CommonsUtil.semValor(this.objetoContratoCobranca.getProcessosQuitarComite())) {
-			this.objetoContratoCobranca.setProcessosQuitarComite(this.objetoContratoCobranca.getProcessosPajuInterno());
-		}
+		gerarProcessosQuitarComite();
 
 		if (CommonsUtil.semValor(this.objetoAnaliseComite.getCarenciaComite())) {
 			this.objetoAnaliseComite.setCarenciaComite(1);
@@ -9451,6 +9449,26 @@ public class ContratoCobrancaMB {
 			}
 		}
 		
+	}
+
+	public void gerarProcessosQuitarComite() {
+//		if (CommonsUtil.semValor(this.objetoContratoCobranca.getProcessosQuitarComite())) {
+
+			StringBuilder sProcesosQuitar = new StringBuilder();
+			for (CcbProcessosJudiciais processo : this.objetoContratoCobranca.getListProcessos().stream()
+					.filter(p -> p.isSelecionadoComite()).collect(Collectors.toList())) {
+
+				String retiraObservaco = processo.getNumero() + " - "
+						+ CommonsUtil.formataValorMonetario(processo.getValorAtualizado(), "R$ ") + "\n";
+				sProcesosQuitar.append(retiraObservaco);
+			}
+
+			if (!CommonsUtil.semValor(sProcesosQuitar)) {
+				this.objetoContratoCobranca.setProcessosQuitarComite(sProcesosQuitar.toString());
+			} else
+				this.objetoContratoCobranca.setProcessosQuitarComite(null);
+
+//		}
 	}
 
 	public String clearFieldsEditarAvaliacaoImovel() {
@@ -31176,13 +31194,13 @@ public class ContratoCobrancaMB {
 				return CommonsUtil.castAsLong(one.getId()).compareTo(other.getId());
 			}
 		});
-
 	}
 
 	public void preparaAdicionarPessoaAnalise() {
 		this.documentoAnaliseAdicionar = new DocumentoAnalise();
 		documentoAnaliseAdicionar.setPagador(new PagadorRecebedor());
 		documentoAnaliseAdicionar.setContratoCobranca(this.objetoContratoCobranca);
+		documentoAnaliseAdicionar.setObservacao(".");
 	}
 
 	public void adicionarPessoaAnalise() {
@@ -33807,12 +33825,40 @@ public class ContratoCobrancaMB {
 	}
 	
 	public void testeAttCertidoes(List<DocumentoAnalise> listDocAnalise) {
-		PlexiService plexiService = new PlexiService();
-		plexiService.atualizaRetorno(listDocAnalise);
-		NetrinService netrinService = new NetrinService();
-		netrinService.atualizaRetorno(listDocAnalise);
-		DocketService docketService = new DocketService();
-		docketService.atualizaRetorno(listDocAnalise);
+		try {
+			ContratoCobranca contratoCobranca = listDocAnalise.get(0).getContratoCobranca();
+			SchedulerFactory shedFact = new StdSchedulerFactory();
+			Scheduler scheduler = shedFact.getScheduler();
+			scheduler.start();
+			JobDetail jobDetail = JobBuilder.newJob(CertidoesJob.class)
+					.withIdentity("certidoesJOB", contratoCobranca.getNumeroContrato() + "_certidoesAtualizar").build();
+			User user = loginBean.getUsuarioLogado();
+			jobDetail.getJobDataMap().put("listaDocumentoAnalise", listDocAnalise);
+			jobDetail.getJobDataMap().put("user", user);
+			jobDetail.getJobDataMap().put("objetoContratoCobranca", contratoCobranca);
+			jobDetail.getJobDataMap().put("tipoProcesso", "AtualizarPesquisas");
+			Trigger trigger = TriggerBuilder.newTrigger()
+					.withIdentity("certidoesJOB", contratoCobranca.getNumeroContrato() + "_certidoesAtualizar").startNow().build();
+			scheduler.scheduleJob(jobDetail, trigger);
+			FacesContext context = FacesContext.getCurrentInstance();
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta iniciada com sucesso", ""));
+		} catch (SchedulerException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public boolean checkAtualizaCertidoes() throws SchedulerException {
+		try {
+			SchedulerFactory shedFact = new StdSchedulerFactory();
+			Scheduler scheduler = shedFact.getScheduler();
+			JobKey key = JobKey.jobKey("certidoesJOB", objetoContratoCobranca.getNumeroContrato() + "_certidoesAtualizar");
+			boolean jobExist = scheduler.checkExists(key);
+
+			return jobExist;
+		} catch (SchedulerException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 	
 	public void testeAttTodasCertidoes() {

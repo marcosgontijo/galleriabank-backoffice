@@ -159,6 +159,18 @@ public class DocumentoAnaliseJobConsultar {
 							DocumentosAnaliseEnum.PROCESSOB, documentoAnalise.getRetornoProcesso());
 					
 				}
+				
+				if (documentoAnalise.isPodeChamarRelacionamentos()) {
+					documentoAnalise.addObservacao("Processando Relacionamentos");
+//					PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
+					bigDataService.requestRelacionamentos(documentoAnalise);
+
+//					PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+					pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+							DocumentosAnaliseEnum.RELACIONAMENTO, documentoAnalise.getRetornoRelacionamento());
+					
+				}
+				
 
 				if (documentoAnalise.isPodeChamarCenprot()) {
 					documentoAnalise.addObservacao("Processando Protestos");

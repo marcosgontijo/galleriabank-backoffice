@@ -21,6 +21,7 @@ import com.webnowbr.siscoat.cobranca.service.ScrService;
 import com.webnowbr.siscoat.cobranca.service.SerasaService;
 import com.webnowbr.siscoat.cobranca.ws.netrin.NetrinConsulta;
 import com.webnowbr.siscoat.cobranca.ws.netrin.NetrinConsultaDao;
+import com.webnowbr.siscoat.cobranca.ws.plexi.PlexiService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.common.GsonUtil;
@@ -33,12 +34,21 @@ public class CertidoesJobConsultar {
 	public List<DocumentoAnalise> listaDocumentoAnalise;
 	public User user;
 	public ContratoCobranca objetoContratoCobranca;
+	public String tipoProcesso;
 	
 	private int stepTotal;	
 	private int step;
 	private String stepDescricao;
+	
+	public void atualizarConsultasCertidoes() {
+		PlexiService plexiService = new PlexiService();
+		plexiService.atualizaRetorno(listaDocumentoAnalise);
+		NetrinService netrinService = new NetrinService();
+		netrinService.atualizaRetorno(listaDocumentoAnalise);
+		DocketService docketService = new DocketService();
+		docketService.atualizaRetorno(listaDocumentoAnalise);
+	}
 
-	@SuppressWarnings("deprecation")
 	public void executarConsultasCertidoes() {
 		executarConsultaNetrin();
 	}

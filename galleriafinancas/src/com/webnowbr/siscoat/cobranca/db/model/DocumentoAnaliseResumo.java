@@ -15,6 +15,7 @@ public class DocumentoAnaliseResumo implements Serializable {
 	
 	
 
+
 	public DocumentoAnaliseResumo(String descricao, String valor) {
 		super();
 		this.descricao = descricao;

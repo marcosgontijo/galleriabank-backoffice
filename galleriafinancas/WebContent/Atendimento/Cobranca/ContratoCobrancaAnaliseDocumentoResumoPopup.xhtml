@@ -30,6 +30,27 @@
 				value="#{contratoCobrancaMB.documentoAnalisePopup.dialogHeader}" />
 		</f:facet>
 		<h:form id="resumoConsutlasForm">
+		
+		<h:panelGrid columns="1" rendered="#{contratoCobrancaMB.documentoAnalisePopup.resumoRelacionamentos.size() > 0}">
+				<p:panel style="justify-content:start;">
+					<f:facet name="header">
+						<h:outputText value="Relacionamentos" />
+						<p:dataTable id="resumoRelacionamentos" var="relacionamentos"
+							rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
+							value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoRelacionamentos()}">
+							<p:column>
+								<h:outputText value="#{relacionamentos.descricao}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="#{relacionamentos.valor}" />
+							</p:column>
+
+
+						</p:dataTable>
+					</f:facet>
+				</p:panel>
+			</h:panelGrid>
+			
 			<h:panelGrid columns="5"
 				columnClasses="painelResumo,painelResumo,painelResumo,painelResumo,painelResumo">
 
@@ -119,7 +140,12 @@
 
 				</p:panel>
 
+
+
+
 			</h:panelGrid>
+
+			
 
 		</h:form>
 	</p:dialog>
@@ -278,10 +304,8 @@
 		</h:form>
 	</p:dialog>
 
-	<shiro:hasAnyRoles
-		name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO">
+	<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA, COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO">
 		<p:dialog header="Adicionar pessoa Analise" overflow="auto"
-			rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
 			id="dialogAdicionarPessoaAnalise"
 			widgetVar="adicionarPessoaAnaliseDlg" resizable="true"
 			style="FONT-SIZE: 13pt;" width="800" minWidth="800">
@@ -531,5 +555,5 @@
 				</h:form>
 			</p:dialog>	
 		</shiro:hasAnyRoles>
-		
+	
 </ui:composition>

@@ -1054,7 +1054,7 @@
 										<p:column style="text-align: center;width:25px;" headerText="">
 											<p:selectBooleanCheckbox
 												value="#{processosPessoas.selecionadoComite}">
-												<p:ajax event="change" update="form:pessoasProcessos" />
+												<p:ajax event="change" update="form:pessoasProcessos form:processosQuitarComite" listener="#{contratoCobrancaMB.gerarProcessosQuitarComite}" />
 											</p:selectBooleanCheckbox>
 										</p:column>
 									</p:dataTable>
@@ -4922,8 +4922,7 @@
 		
 		<ui:include src="../../Dialog/DialogRecebedorPagador.xhtml">
 			<ui:param name="mbean" value="#{contratoCobrancaMB}"></ui:param>
-			<ui:param name="titulo"
-				value="#{contratoCobrancaMB.tituloPagadorRecebedorDialog}"></ui:param>
+			<ui:param name="titulo" value="#{contratoCobrancaMB.tituloPagadorRecebedorDialog}"></ui:param>
 			<ui:param name="permiteAdicionarPessoa" value="false"></ui:param>
 		</ui:include>
 	</ui:define>

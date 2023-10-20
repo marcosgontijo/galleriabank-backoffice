@@ -42,11 +42,10 @@
 					action="#{contratoCobrancaMB.listaArquivosAnaliseDocumentos}"
 					immediate="true" icon="ui-icon-search">
 				</p:commandButton>
-				<p:commandButton value="Atualiza Certidoes" ajax="false"
+				<p:commandButton value="Atualiza Certidoes" ajax="true"
 					action="#{contratoCobrancaMB.testeAttCertidoes(contratoCobrancaMB.listaDocumentoAnalise)}"
-					widgetVar="attCertideosBtn" onclick="attCertideosBtn.disable()" oncomplete="attCertideosBtn.enable()"
-					update="dtFilesAnalise">
-				</p:commandButton>
+					widgetVar="atuzalizaCertidoesBtn" onclick="atuzalizaCertidoesBtn.disable()" 
+					disabled="#{contratoCobrancaMB.checkAtualizaCertidoes()}" />
 			</f:facet>
 
 			<shiro:hasAnyRoles
@@ -68,8 +67,7 @@
 				header="Arquivo(s) Salvo(s) na analise" style="margin-bottom:10px;">
 				<f:facet name="header"> Arquivo(s) Salvo(s) na analise 
 							<p:outputLabel value="" />
-					<shiro:hasAnyRoles
-						name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
+					<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
 						<p:commandButton value="Adicionar Pessoa"
 							action="#{contratoCobrancaMB.preparaAdicionarPessoaAnalise}"
 							oncomplete="PF('adicionarPessoaAnaliseDlg').show();"

@@ -140,7 +140,8 @@ public class PlexiService {
 				}
 				
 			} else {
-				retorno = getJsonSucesso(myURLConnection.getInputStream());
+				if(!CommonsUtil.mesmoValor(myURLConnection.getResponseCode(), 202))
+					retorno = getJsonSucesso(myURLConnection.getInputStream());
 			}
 			myURLConnection.disconnect();
 			return retorno;
@@ -161,6 +162,8 @@ public class PlexiService {
 				continue;
 			for(PlexiConsulta plexi : docAnalise.getPlexiConsultas()) {
 				if(CommonsUtil.semValor(plexi.getRequestId()))
+					continue;
+				if(CommonsUtil.mesmoValor(plexi.getStatus(), "Consulta expirada"))
 					continue;
 				atualizaRetornoPlexi(plexi);
 			}

@@ -13,7 +13,8 @@ public enum DocumentosAnaliseEnum {
 	PPE("Pessoa Exposta"), 
 	CNDTTST("CNDTrabalhistaTST"),
 	CNDFEDERAL("CNDFederal"),
-	CNDESTADUAL("CNDEstadual");
+	CNDESTADUAL("CNDEstadual"),
+	RELACIONAMENTO("Relacionamentos");
 
 	private String nome;
 
