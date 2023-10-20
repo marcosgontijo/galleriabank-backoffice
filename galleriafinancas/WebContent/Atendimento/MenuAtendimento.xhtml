@@ -79,25 +79,31 @@
 							</p:submenu>	
 						</shiro:hasAnyRoles>
 						
-						<shiro:hasAnyRoles name="ROOT, CONSULTA_INDIVIDUAL">	
-							<p:submenu label="Consultas" styleClass="titulosMenu">													
-								<p:menuitem value="Consulta PF por CPF"
-									action="#{consultaPF.clearConsultaPF}"
-									ajax="false" icon="ui-icon ui-icon-newwin"
-									styleClass="itemMenu" />
-								<p:menuitem value="Processos UniProof"
-									action="#{uniproofMB.clearFieldsProcessos}"
-									ajax="false" icon="ui-icon ui-icon-newwin"
-									styleClass="itemMenu" />	
-								<p:menuitem value="Consultas"
-									action="#{consultasMB.clear}"
-									ajax="false" icon="ui-icon ui-icon-newwin"
-									styleClass="itemMenu" />
-								<p:menuitem value="Combate a Fraude"
-									action="#{combateAFraudeMB.clearFieldsConsulta}"
-									ajax="false" icon="ui-icon ui-icon-newwin"
-									styleClass="itemMenu" />
-							</p:submenu>					
+						<shiro:hasAnyRoles name="ROOT, CONSULTA_INDIVIDUAL, PROFILE_GERENTE_ANALISE">
+							<p:submenu label="Consultas" styleClass="titulosMenu">		
+								<shiro:hasAnyRoles name="ROOT, CONSULTA_INDIVIDUAL">												
+									<p:menuitem value="Consulta PF por CPF"
+										action="#{consultaPF.clearConsultaPF}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+									<p:menuitem value="Processos UniProof"
+										action="#{uniproofMB.clearFieldsProcessos}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />	
+								</shiro:hasAnyRoles>						
+								<shiro:hasAnyRoles name="ROOT, CONSULTA_INDIVIDUAL, PROFILE_GERENTE_ANALISE">
+									<p:menuitem value="Consultas"
+										action="#{consultasMB.clear}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, CONSULTA_INDIVIDUAL">	
+									<p:menuitem value="Combate a Fraude"
+										action="#{combateAFraudeMB.clearFieldsConsulta}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+							</p:submenu>
 						</shiro:hasAnyRoles>						
 						<shiro:hasAnyRoles name="ROOT, COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_CREDITO,
 						 PROFILE_GERENTE_ANALISE, PROFILE_AVALIADOR_IMOVEL,PROFILE_AVALIADOR_IMOVEL_COMPASS,
