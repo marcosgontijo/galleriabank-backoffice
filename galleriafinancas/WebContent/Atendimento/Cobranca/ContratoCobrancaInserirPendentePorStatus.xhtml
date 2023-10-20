@@ -1514,12 +1514,11 @@
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise and ( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus !='Pré-Comite'))}">
 						<f:facet name="header">
 							Pré-Aprovado
-							<p:commandButton icon="pi pi-refresh" value="Atualizar informações">
-									<p:ajax event="click" update="panelGridPreAprovado"
-									listener="#{contratoCobrancaMB.hasDocAnalise}"/>
-							</p:commandButton>
 						</f:facet>
-						<h:panelGrid columns="5" id="panelGridPreAprovado">
+						<h:panelGrid id="panelGridPreAprovadoSemEngine" rendered="#{contratoCobrancaMB.isEngineProcessados() == false}">
+							<p:outputLabel value="Engine ainda não processado" styleClass="labelBold" />
+						</h:panelGrid>
+						<h:panelGrid columns="5" id="panelGridPreAprovado" rendered="#{contratoCobrancaMB.isEngineProcessados() == true}">
 							<p:outputLabel value="Tem Protesto" styleClass="labelBold" />
 							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.protestoTaxa}" id="protestoCBox">
 								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado taxaPreAprovadaPanel" 
