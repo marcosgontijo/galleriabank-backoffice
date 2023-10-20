@@ -1,7 +1,5 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -24,9 +22,7 @@ import java.util.TimeZone;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
@@ -208,7 +204,7 @@ public class BRLTrustMB {
 		
 		this.dataAquisicao = new Date();
 		
-		this.dataValorPresente = gerarDataHoje();
+		this.dataValorPresente = DateUtil.gerarDataHoje();
 		
 		this.dataBaixaInicial = gerarDataOntem();
 		this.dataBaixaFinal = gerarDataOntem();
@@ -1183,7 +1179,7 @@ public class BRLTrustMB {
 		
 	public int consideraContratoJSONMigracao(ContratoCobranca contrato) {
 		int parcelasVencidas = 0;
-		Date dataHoje = gerarDataHoje();
+		Date dataHoje = DateUtil.gerarDataHoje();
 		
 		for (ContratoCobrancaDetalhes parcela : contrato.getListContratoCobrancaDetalhes()) {
 			// verifica parcelas vencidas, se maior que 1 não mostra contrato
@@ -1289,7 +1285,7 @@ public class BRLTrustMB {
 		String patternyyyyMMddComTraco = "yyyy-MM-dd";
 		SimpleDateFormat simpleDateFormatyyyyMMddComTraco = new SimpleDateFormat(patternyyyyMMddComTraco);
 		
-		String identificadorCessao = simpleDateFormatyyyyMMdd.format(gerarDataHoje()) + this.objetoContratoCobranca.getNumeroContrato();
+		String identificadorCessao = simpleDateFormatyyyyMMdd.format(DateUtil.gerarDataHoje()) + this.objetoContratoCobranca.getNumeroContrato();
 		
 		ParametrosDao pDao = new ParametrosDao();
 		this.pathJSON = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
@@ -1368,7 +1364,7 @@ public class BRLTrustMB {
 			taxaJurosCessao = this.objetoContratoCobranca.getTxJurosParcelas();
 		}
 		
-		Date datahoje = gerarDataHoje();
+		Date datahoje = DateUtil.gerarDataHoje();
 		for (ContratoCobrancaDetalhes parcela : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
 			if (parcela.getDataVencimento().after(datahoje)) {
 				BigDecimal valorPresenteParcela = calcularValorPresenteParcela(parcela.getId(), taxaJurosCessao, this.objetoContratoCobranca.getDataAquisicaoCessao());
@@ -1387,7 +1383,7 @@ public class BRLTrustMB {
 		 * INICIO - CALCULA MESES CARENCIA
 		 */
 		int mesesCarencia = 0;
-		Date dataHoje = gerarDataHoje();
+		Date dataHoje = DateUtil.gerarDataHoje();
 		for (ContratoCobrancaDetalhes parcela : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
 			if (!parcela.isParcelaPaga()) {
 				mesesCarencia = mesesEntre(getDateCalendar(dataHoje),getDateCalendar(parcela.getDataVencimento()));
@@ -1569,7 +1565,7 @@ public class BRLTrustMB {
 		String patternyyyyMMddComTraco = "yyyy-MM-dd";
 		SimpleDateFormat simpleDateFormatyyyyMMddComTraco = new SimpleDateFormat(patternyyyyMMddComTraco);
 		
-		String identificadorCessao = simpleDateFormatyyyyMMdd.format(gerarDataHoje()) + this.objetoContratoCobranca.getNumeroContrato();
+		String identificadorCessao = simpleDateFormatyyyyMMdd.format(DateUtil.gerarDataHoje()) + this.objetoContratoCobranca.getNumeroContrato();
 		
 		ParametrosDao pDao = new ParametrosDao();
 		this.pathJSON = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
@@ -1648,7 +1644,7 @@ public class BRLTrustMB {
 			taxaJurosCessao = this.objetoContratoCobranca.getTxJurosParcelas();
 		}
 		
-		Date datahoje = gerarDataHoje();
+		Date datahoje = DateUtil.gerarDataHoje();
 		for (ContratoCobrancaDetalhes parcela : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
 			if (parcela.getDataVencimento().after(datahoje)) {
 				BigDecimal valorPresenteParcela = calcularValorPresenteParcela(parcela.getId(), taxaJurosCessao, this.objetoContratoCobranca.getDataAquisicaoCessao());
@@ -1667,7 +1663,7 @@ public class BRLTrustMB {
 		 * INICIO - CALCULA MESES CARENCIA
 		 */
 		int mesesCarencia = 0;
-		Date dataHoje = gerarDataHoje();
+		Date dataHoje = DateUtil.gerarDataHoje();
 		for (ContratoCobrancaDetalhes parcela : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
 			if (!parcela.isParcelaPaga()) {
 				mesesCarencia = mesesEntre(getDateCalendar(dataHoje),getDateCalendar(parcela.getDataVencimento()));
@@ -1852,7 +1848,7 @@ public class BRLTrustMB {
 		String patternyyyyMMddComTraco = "yyyy-MM-dd";
 		SimpleDateFormat simpleDateFormatyyyyMMddComTraco = new SimpleDateFormat(patternyyyyMMddComTraco);
 		
-		String identificadorCessao = simpleDateFormatyyyyMMdd.format(gerarDataHoje()) + "_LIQ";
+		String identificadorCessao = simpleDateFormatyyyyMMdd.format(DateUtil.gerarDataHoje()) + "_LIQ";
 		
 		ParametrosDao pDao = new ParametrosDao();
 		this.pathJSON = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
@@ -2107,7 +2103,7 @@ public class BRLTrustMB {
 		String patternyyyyMMddComTraco = "yyyy-MM-dd";
 		SimpleDateFormat simpleDateFormatyyyyMMddComTraco = new SimpleDateFormat(patternyyyyMMddComTraco);
 		
-		String identificadorCessao = simpleDateFormatyyyyMMdd.format(gerarDataHoje()) + "_LIQ";
+		String identificadorCessao = simpleDateFormatyyyyMMdd.format(DateUtil.gerarDataHoje()) + "_LIQ";
 		
 		ParametrosDao pDao = new ParametrosDao();
 		this.pathJSON = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
@@ -2360,7 +2356,7 @@ public class BRLTrustMB {
 			numeroParcela = this.parcelaLiquidacao.getNumeroParcela();
 		}
 		
-		String identificadorCessao = simpleDateFormatyyyyMMdd.format(gerarDataHoje()) + numeroParcela + "_LIQ_";
+		String identificadorCessao = simpleDateFormatyyyyMMdd.format(DateUtil.gerarDataHoje()) + numeroParcela + "_LIQ_";
 		
 		ParametrosDao pDao = new ParametrosDao();
 		this.pathJSON = pDao.findByFilter("nome", "LOCACAO_PATH_COBRANCA").get(0).getValorString();
@@ -2727,14 +2723,6 @@ public class BRLTrustMB {
 		retorno = documento.replace(".", "").replace("/", "").replace("-", "");
 				
 		return retorno;
-	}
-	
-	public Date gerarDataHoje() {
-		TimeZone zone = TimeZone.getDefault();
-		Locale locale = new Locale("pt", "BR");
-		Calendar dataHoje = Calendar.getInstance(zone, locale);
-
-		return dataHoje.getTime();
 	}
 	
 	public Date gerarDataOntem() {

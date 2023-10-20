@@ -2,11 +2,7 @@ package com.webnowbr.siscoat.cobranca.mb;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -18,6 +14,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
 import com.webnowbr.siscoat.cobranca.db.model.ErrosProcessamentoEmLote;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ErrosProcessamentoEmLoteDao;
+import com.webnowbr.siscoat.common.DateUtil;
 
 @ManagedBean(name = "processamentoEmLoteMB")
 @SessionScoped
@@ -38,7 +35,7 @@ public class ProcessamentoEmLoteMB {
 		ErrosProcessamentoEmLote erro = new ErrosProcessamentoEmLote();
 	
 		erro = new ErrosProcessamentoEmLote();
-		erro.setDataProcessamento(gerarDataHoje());
+		erro.setDataProcessamento(DateUtil.gerarDataHoje());
 		erro.setDescricaoProcessamento(descricao);
 		erro.setNumeroContrato(contrato);
 		 
@@ -414,14 +411,6 @@ public class ProcessamentoEmLoteMB {
 	public double PV(float rate, float nper, float pmt)
 	{
 	    return pmt / rate * (1 - Math.pow(1 + rate, -nper));
-	}
-
-	public Date gerarDataHoje() {
-		TimeZone zone = TimeZone.getDefault();
-		Locale locale = new Locale("pt", "BR");
-		Calendar dataHoje = Calendar.getInstance(zone, locale);
-
-		return dataHoje.getTime();
 	}
 
 	public BigDecimal getTxJurosCustom() {

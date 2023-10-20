@@ -1560,8 +1560,8 @@
 													style="FONT-SIZE: 10pt;" />
 											</p:column>
 											
-											<p:column style="text-align: center;width:75px;" headerText=" Valor: "  >
-												<p:outputLabel value="#{processosPessoas2.valor}" 
+											<p:column style="text-align: center;width:75px;" headerText=" Valor Atualizado: "  >
+												<p:outputLabel value="#{processosPessoas2.valorAtualizado}" 
 													style="FONT-SIZE: 10pt;"
 													converter="bigDecimalConverter" />
 											</p:column> 
@@ -2219,8 +2219,8 @@
 												style="FONT-SIZE: 10pt;" />
 										</p:column>
 										
-										<p:column style="text-align: center;width:75px;" headerText=" Valor: "  >
-											<p:outputLabel value="#{processosPessoas.valor}" 
+										<p:column style="text-align: center;width:75px;" headerText=" ValorAtualizado: "  >
+											<p:outputLabel value="#{processosPessoas.valorAtualizado}" 
 												style="FONT-SIZE: 10pt;"
 												converter="bigDecimalConverter" />
 										</p:column> 
@@ -2337,17 +2337,6 @@
 										<f:selectItem itemValue="Ruim" itemLabel="Ruim" />
 									</p:selectOneMenu>
 								</shiro:hasAnyRoles>	
-									
-								<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,PRECOBRANCA, PROFILE_AVALIADOR_IMOVEL, PROFILE_LAUDO, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">				
-									<p:outputLabel for="avaliacaoEquipeLaudo" rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}"
-										value="Avaliação Equipe Laudo: " styleClass="labelBold" />
-									<p:selectOneMenu id="avaliacaoEquipeLaudo" required="true" rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoEquipeLaudo}" style="width:100px;" >
-										<f:selectItem itemValue="" itemLabel="" />
-										<f:selectItem itemValue="Bom" itemLabel="Bom" />
-										<f:selectItem itemValue="Ruim" itemLabel="Ruim" />
-									</p:selectOneMenu>
-								</shiro:hasAnyRoles>				
 							
 								<p:dataView var="data" style="min-width: 150px;"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.listDatasVistoria}"
@@ -5437,12 +5426,25 @@
 						<p:inputText  value="#{contratoCobrancaMB.processoSelecionado.valor}"
 							label="Contrato" onkeypress="return isNumberKey(event);"
 							onkeydown="FormataValor(this, 13, event, 2);"
-							converter="bigDecimalConverter" /> 
+							converter="bigDecimalConverter" >
+							<p:ajax event="blur" update="valorAtualizadoProcesso"
+									listener="#{contratoCobrancaMB.atualizarValorProcesso()}" /> 
+						</p:inputText>
 							
 						<p:outputLabel  value="Numero: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />
 						<p:inputText value="#{contratoCobrancaMB.processoSelecionado.numero}"
-							label="Contrato" /> 
+							label="Contrato" >
+							<p:ajax event="blur" update="valorAtualizadoProcesso"
+								listener="#{contratoCobrancaMB.atualizarValorProcesso()}" />
+						</p:inputText>
+							
+						<p:outputLabel value="Valor Atualizado: " styleClass="labelBold"
+							style="font-weight: bold; font-size: 18px;" />
+						<p:inputText id="valorAtualizadoProcesso" value="#{contratoCobrancaMB.processoSelecionado.valorAtualizado}"
+							label="Contrato" onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);"
+							converter="bigDecimalConverter" /> 
 							
 						<p:outputLabel value="Quitar: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />

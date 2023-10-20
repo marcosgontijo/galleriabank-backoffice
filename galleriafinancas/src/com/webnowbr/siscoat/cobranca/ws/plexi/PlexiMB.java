@@ -296,7 +296,13 @@ public class PlexiMB {
 		
 		if(CommonsUtil.mesmoValor(doc.getUrl(), 
 				"/api/maestro/tjsp/certidao-negativa")) {
-			if(!CommonsUtil.semValor(plexiConsulta.getCpf())) {			
+			if(!CommonsUtil.semValor(plexiConsulta.getCpf())) {	
+				if(CommonsUtil.semValor(plexiConsulta.getDataNascimento())){
+					retorno = false;
+					FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Data Nascimento", ""));
+				}
+				
 				if(CommonsUtil.semValor(plexiConsulta.getRg())){
 					retorno = false;
 					FacesContext.getCurrentInstance().addMessage(null,
@@ -380,6 +386,8 @@ public class PlexiMB {
 				"/api/maestro/tjdft/certidao-distribuicao")) {
 			String[] tipoCertidaoArray = {"criminal", "civel"};
 			for(String tipoCertidao : tipoCertidaoArray) {
+				if(!CommonsUtil.semValor(plexiConsulta.getCnpj()) && CommonsUtil.mesmoValor(tipoCertidao, "criminal")) 
+					continue;
 				PlexiConsulta plexiConsultaAux = new PlexiConsulta(docAnalise, doc);
 				plexiConsultaAux.setTipoCertidao(tipoCertidao);
 				
@@ -399,12 +407,16 @@ public class PlexiMB {
 		
 		if(CommonsUtil.mesmoValor(doc.getUrl(), 
 				"/api/maestro/tjrj/consulta-processual")) {
-			String[] origemArray = {"primeiraInstancia", "segundaInstancia"};
+			String[] origemArray = {"primeiraInstancia"};
 			String comarca = "todas";
 			String[] competenciaArray = {"civel", "criminal", "criminalJuri"};
 			
 			for(String origem : origemArray) {
 				for(String competencia : competenciaArray) {
+					if(!CommonsUtil.semValor(plexiConsulta.getCnpj()) && 
+						(CommonsUtil.mesmoValor(competenciaArray, "criminal")
+						|| CommonsUtil.mesmoValor(competenciaArray, "criminalJuri"))) 
+						continue;
 					PlexiConsulta plexiConsultaAux = new PlexiConsulta(docAnalise, doc);
 					plexiConsultaAux.setOrigem(origem);
 					plexiConsultaAux.setComarca(comarca);
@@ -450,6 +462,8 @@ public class PlexiMB {
 				"/api/maestro/tjsp/certidao-negativa")) {
 			String[] modeloArray = {"6", "52"};
 			for(String modelo : modeloArray) {
+				if(!CommonsUtil.semValor(plexiConsulta.getCnpj()) && CommonsUtil.mesmoValor(modelo, "6")) 
+					continue;
 				PlexiConsulta plexiConsultaAux = new PlexiConsulta(docAnalise, doc);
 				plexiConsultaAux.setModelo(modelo);
 				List<PlexiConsulta> consultasExistentesRetorno = plexiConsultaDao.getConsultasExistentes(plexiConsultaAux);
@@ -471,10 +485,12 @@ public class PlexiMB {
 				"/api/maestro/trf1/certidao-distribuicao")) {
 			String[] tipoArray = {"civel", "criminal"};
 			String[][] orgaosArray = { 
-					{"ac","am","ap","ba","df","go","ma","mt","pa","pi","ro","rr","to","trf1"},
+					{"ac","am","ap","ba","df","go","ma","mt","pa","pi","ro","rr","to"},
 					{"varasJuizados"},
 					{"regionalizada"}};
 			for(String tipo : tipoArray) {
+				if(!CommonsUtil.semValor(plexiConsulta.getCnpj()) && CommonsUtil.mesmoValor(tipo, "criminal")) 
+					continue;
 				for(String[] orgaos : orgaosArray) {
 					PlexiConsulta plexiConsultaAux = new PlexiConsulta(docAnalise, doc);
 					plexiConsultaAux.setTipo(tipo);
@@ -499,6 +515,8 @@ public class PlexiMB {
 				"/api/maestro/trf2/certidao-distribuicao")) {
 			String[] tipoArray = {"civel", "criminal"};
 			for(String tipo : tipoArray) {
+				if(!CommonsUtil.semValor(plexiConsulta.getCnpj()) && CommonsUtil.mesmoValor(tipo, "criminal")) 
+					continue;
 				PlexiConsulta plexiConsultaAux = new PlexiConsulta(docAnalise, doc);
 				plexiConsultaAux.setTipo(tipo);
 				List<PlexiConsulta> consultasExistentesRetorno = plexiConsultaDao.getConsultasExistentes(plexiConsultaAux);
@@ -518,23 +536,33 @@ public class PlexiMB {
 		
 		if(CommonsUtil.mesmoValor(doc.getUrl(), 
 				"/api/maestro/trf3/certidao-distribuicao")) {
-			String[] tipoArray = {"civel", "criminal"};
-			String[] abrangenciaArray = {"sjsp", "trf"};
-			for(String tipo : tipoArray) {
-				for(String abrangencia : abrangenciaArray) {
-					PlexiConsulta plexiConsultaAux = new PlexiConsulta(docAnalise, doc);
-					plexiConsultaAux.setTipo(tipo);
-					plexiConsultaAux.setAbrangencia(abrangencia);
-					List<PlexiConsulta> consultasExistentesRetorno = plexiConsultaDao.getConsultasExistentes(plexiConsultaAux);
-					if(consultasExistentesRetorno.size() <= 0) {
-						docAnalise.getPlexiConsultas().add(plexiConsultaAux);
-					} else {
-						PlexiConsulta db = consultasExistentesRetorno.get(0);
-						if(docAnalise.getPlexiConsultas().stream().filter(d -> CommonsUtil.mesmoValor(d.getId(), db.getId()))
-								.collect(Collectors.toList()).size() <= 0) {
-							docAnalise.getPlexiConsultas().add(db);
+			for(String estado : docAnalise.getEstadosConsulta()) {
+				String[] tipoArray = {"civel", "criminal"};
+				String[] abrangenciaArray = new String[1];
+				if(CommonsUtil.mesmoValor(estado, "SP"))
+					abrangenciaArray[0] = "sjsp";
+				else if(CommonsUtil.mesmoValor(estado, "MS"))
+					abrangenciaArray[0] = "sjms";
+				else
+					return false;
+				for(String tipo : tipoArray) {
+					if(!CommonsUtil.semValor(plexiConsulta.getCnpj()) && CommonsUtil.mesmoValor(tipo, "criminal")) 
+						continue;
+					for(String abrangencia : abrangenciaArray) {
+						PlexiConsulta plexiConsultaAux = new PlexiConsulta(docAnalise, doc);
+						plexiConsultaAux.setTipo(tipo);
+						plexiConsultaAux.setAbrangencia(abrangencia);
+						List<PlexiConsulta> consultasExistentesRetorno = plexiConsultaDao.getConsultasExistentes(plexiConsultaAux);
+						if(consultasExistentesRetorno.size() <= 0) {
+							docAnalise.getPlexiConsultas().add(plexiConsultaAux);
+						} else {
+							PlexiConsulta db = consultasExistentesRetorno.get(0);
+							if(docAnalise.getPlexiConsultas().stream().filter(d -> CommonsUtil.mesmoValor(d.getId(), db.getId()))
+									.collect(Collectors.toList()).size() <= 0) {
+								docAnalise.getPlexiConsultas().add(db);
+							}
+							plexiConsultaAux.setDocumentoAnalise(null);
 						}
-						plexiConsultaAux.setDocumentoAnalise(null);
 					}
 				}
 			}
@@ -545,6 +573,8 @@ public class PlexiMB {
 				"/api/maestro/trf4/certidao-regional")) {
 			String[] tipoArray = {"civil", "criminal"};
 			for(String tipo : tipoArray) {
+				if(!CommonsUtil.semValor(plexiConsulta.getCnpj()) && CommonsUtil.mesmoValor(tipo, "criminal")) 
+					continue;
 				PlexiConsulta plexiConsultaAux = new PlexiConsulta(docAnalise, doc);
 				plexiConsultaAux.setTipo(tipo);
 				plexiConsultaAux.setEmail("tatiane@galleriabank.com.br");
@@ -568,9 +598,11 @@ public class PlexiMB {
 				"/api/maestro/trf6/certidao-distribuicao")) {
 			String[] tipoArray = {"civel", "criminal"};
 			String[][] orgaosArray = {
-					{"mg","trf1"}
+					{"mg"}
 					};
 			for(String tipo : tipoArray) {
+				if(!CommonsUtil.semValor(plexiConsulta.getCnpj()) && CommonsUtil.mesmoValor(tipo, "criminal")) 
+					continue;
 				for(String[] orgaos : orgaosArray) {
 					PlexiConsulta plexiConsultaAux = new PlexiConsulta(docAnalise, doc);
 					plexiConsultaAux.setTipo(tipo);

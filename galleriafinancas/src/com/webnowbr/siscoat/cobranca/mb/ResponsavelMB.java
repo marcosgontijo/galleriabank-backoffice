@@ -2,12 +2,9 @@ package com.webnowbr.siscoat.cobranca.mb;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.UUID;
 
 import javax.faces.application.FacesMessage;
@@ -26,6 +23,7 @@ import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.db.op.ComissaoResponsavelDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.ValidaCNPJ;
 import com.webnowbr.siscoat.common.ValidaCPF;
 import com.webnowbr.siscoat.db.dao.DAOException;
@@ -338,7 +336,7 @@ public class ResponsavelMB {
 		}
 		
 		objetoResponsavel.setDesativado(true);
-		objetoResponsavel.setDataDesativado(gerarDataHoje());
+		objetoResponsavel.setDataDesativado(DateUtil.gerarDataHoje());
 		objetoResponsavel.setNome("DESATIVADO - " + objetoResponsavel.getNome());
 		responsavelDao.merge(objetoResponsavel);
 		
@@ -517,7 +515,7 @@ public class ResponsavelMB {
 		}
 		this.selectedComissao.setUserCriacao(getUsuarioLogado());
 		this.selectedComissao.setLoginCriacao(getNomeUsuarioLogado());
-		this.selectedComissao.setDataCriacao(gerarDataHoje());
+		this.selectedComissao.setDataCriacao(DateUtil.gerarDataHoje());
 		
 		ComissaoResponsavelDao comDao = new ComissaoResponsavelDao();
 		comDao.create(this.selectedComissao);
@@ -534,7 +532,7 @@ public class ResponsavelMB {
 	public void removerComissao(ComissaoResponsavel comissao) {
 		comissao.setUserRemocao(getUsuarioLogado());
 		comissao.setLoginRemocao(getNomeUsuarioLogado());
-		comissao.setDataRemocao(gerarDataHoje());
+		comissao.setDataRemocao(DateUtil.gerarDataHoje());
 		ComissaoResponsavelDao comDao = new ComissaoResponsavelDao();
 		comDao.merge(comissao);
 		this.objetoResponsavel.getTaxasComissao().remove(comissao);
@@ -591,14 +589,6 @@ public class ResponsavelMB {
 		} else {
 			return "";
 		}
-	}
-	
-	public Date gerarDataHoje() {
-		TimeZone zone = TimeZone.getDefault();
-		Locale locale = new Locale("pt", "BR");
-		Calendar dataHoje = Calendar.getInstance(zone, locale);
-
-		return dataHoje.getTime();
 	}
 
 

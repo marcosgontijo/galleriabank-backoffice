@@ -11,10 +11,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -96,15 +92,6 @@ public class BmpDigitalMB {
 		this.pdfGerado = false;
 		
 		return "/Atendimento/Cobranca/ConsultaSCR.xhtml";
-	}
-	
-	
-	public Date gerarDataHoje() {
-		TimeZone zone = TimeZone.getDefault();
-		Locale locale = new Locale("pt", "BR");
-		Calendar dataHoje = Calendar.getInstance(zone, locale);
-
-		return dataHoje.getTime();
 	}
 
 	// retorna a string do objeto JSON, mesmo em caso de nulos

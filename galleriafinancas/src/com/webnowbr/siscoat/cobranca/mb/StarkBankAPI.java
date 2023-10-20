@@ -1,38 +1,14 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
-import com.starkbank.ellipticcurve.Signature;
-import com.starkbank.utils.Generator;
-import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
-import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
-import com.webnowbr.siscoat.cobranca.db.model.StarkBankBoleto;
-import com.webnowbr.siscoat.cobranca.db.model.StarkBankPix;
-import com.webnowbr.siscoat.cobranca.db.model.TransferenciasIUGU;
-import com.webnowbr.siscoat.cobranca.db.model.TransferenciasObservacoesIUGU;
-import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
-import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
-import com.webnowbr.siscoat.cobranca.db.op.StarkBankBoletoDAO;
-import com.webnowbr.siscoat.cobranca.db.op.StarkBankPixDAO;
-import com.webnowbr.siscoat.cobranca.db.op.TransferenciasObservacoesIUGUDao;
-import com.webnowbr.siscoat.common.DateUtil;
-import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
-
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -46,24 +22,10 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import javax.imageio.ImageIO;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.primefaces.model.DefaultStreamedContent;
-import org.primefaces.model.StreamedContent;
 
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Font.FontFamily;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
 import com.starkbank.Balance;
 import com.starkbank.BoletoPayment;
 import com.starkbank.DictKey;
@@ -72,10 +34,24 @@ import com.starkbank.Settings;
 import com.starkbank.Transfer;
 import com.starkbank.ellipticcurve.Ecdsa;
 import com.starkbank.ellipticcurve.PrivateKey;
+import com.starkbank.ellipticcurve.Signature;
+import com.starkbank.utils.Generator;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
+import com.webnowbr.siscoat.cobranca.db.model.StarkBankBoleto;
+import com.webnowbr.siscoat.cobranca.db.model.StarkBankPix;
+import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
+import com.webnowbr.siscoat.cobranca.db.op.StarkBankBoletoDAO;
+import com.webnowbr.siscoat.cobranca.db.op.StarkBankPixDAO;
+import com.webnowbr.siscoat.common.DateUtil;
 
 @ManagedBean(name = "starkBankAPI")
 @SessionScoped
 public class StarkBankAPI{
+	
+	private Date dataInicio;
+	private Date dataFim;
+	private List<StarkBankBoleto> listBoletos;
     
 	/*
 	 * VALIDAÇÃO DAS CHAVES DE SEGURANÇA*/
@@ -294,6 +270,44 @@ public class StarkBankAPI{
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
 	}
+	
+	public void consultarBoletos() {
+		loginStarkBank();
+		this.listBoletos = new ArrayList<StarkBankBoleto>();
+		StarkBankBoleto boleto = new StarkBankBoleto();
+		
+		try {
+			HashMap<String, Object> params = new HashMap<>();
+			params.put("after", DateUtil.getDataAmericano(this.dataInicio));
+			params.put("before", DateUtil.getDataAmericano(this.dataFim));
+			Generator<BoletoPayment> payments;
+			payments = BoletoPayment.query(params);
+
+			for (BoletoPayment payment : payments){
+				boleto = new StarkBankBoleto();
+			    
+	    		String tagsStr = "";
+	    		if (payment.tags.length > 0) {
+	    			for (String tag : payment.tags) {
+	    				if (tag.equals("")) {
+	    					tagsStr = tag;
+	    				} else {
+	    					tagsStr = tagsStr + " | " + tag;
+	    				}
+	    			}
+	    		}
+			    
+			    boleto = new StarkBankBoleto(Long.valueOf(payment.id), BigDecimal.valueOf(payment.amount), payment.taxId, tagsStr, payment.description, payment.scheduled,
+	    				payment.line, payment.barCode, payment.fee, payment.status, DateUtil.convertDateTimeToDate(payment.created), null, null);
+	    		
+			    
+			    this.listBoletos.add(boleto);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	public void listPaymentBoleto() {
 		loginStarkBank();
@@ -301,7 +315,7 @@ public class StarkBankAPI{
 		try {
 			HashMap<String, Object> params = new HashMap<>();
 			params.put("after", "2023-05-01");
-			params.put("before", "2023-06-10");
+			params.put("before", "2023-12-31");
 			Generator<BoletoPayment> payments;
 			payments = BoletoPayment.query(params);
 
@@ -320,7 +334,7 @@ public class StarkBankAPI{
 	
 		try {
 			HashMap<String, Object> params = new HashMap<>();
-			params.put("paymentIds", "4666592117915648");
+			params.put("paymentIds", "4991624148942848");
 			Generator<BoletoPayment.Log> logs = BoletoPayment.Log.query(params);
 			
 			for (BoletoPayment.Log log : logs){
@@ -328,7 +342,7 @@ public class StarkBankAPI{
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e.printStackTrace(); 
 		}
 	}
 	
@@ -508,7 +522,7 @@ public class StarkBankAPI{
     
     	loginStarkBank(); 
     	
-    	Date dataHoje = gerarDataHoje();
+    	Date dataHoje = DateUtil.gerarDataHoje();
     	
     	try {
 	    	rules.add(new Transfer.Rule("resendingLimit", 5));
@@ -527,7 +541,7 @@ public class StarkBankAPI{
 		    	data.put("name", dictKey.name);
 		    	data.put("externalId", "PagamentoPix-" + dictKey.name.replace(" ", "-") + "-" + DateUtil.todayInMilli());
 		    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		    	data.put("scheduled", sdf.format(gerarDataHoje()));
+		    	data.put("scheduled", sdf.format(DateUtil.gerarDataHoje()));
 		    	//data.put("tags", new String[]{"daenerys", "invoice/1234"});
 		    	//data.put("rules", rules);
 		    	
@@ -580,7 +594,7 @@ public class StarkBankAPI{
     
     	loginStarkBank(); 
     	
-    	Date dataHoje = gerarDataHoje();
+    	Date dataHoje = DateUtil.gerarDataHoje();
     	
     	try {
 	    	rules.add(new Transfer.Rule("resendingLimit", 5));
@@ -635,7 +649,7 @@ public class StarkBankAPI{
     	StarkBankPix starkBankPix = new StarkBankPix();
     	
     	starkBankPix.setId(212);
-    	starkBankPix.setCreated(gerarDataHoje());
+    	starkBankPix.setCreated(DateUtil.gerarDataHoje());
     	starkBankPix.setScheduled("sadsad");
     	starkBankPix.setNomeComprovante("nome");
     	starkBankPix.setAmount(BigDecimal.TEN);
@@ -655,5 +669,29 @@ public class StarkBankAPI{
 		Calendar dataHoje = Calendar.getInstance(zone, locale);
 
 		return dataHoje.getTime();
+	}
+
+	public Date getDataInicio() {
+		return dataInicio;
+	}
+
+	public void setDataInicio(Date dataInicio) {
+		this.dataInicio = dataInicio;
+	}
+
+	public Date getDataFim() {
+		return dataFim;
+	}
+	
+	public void setDataFim(Date dataFim) {
+		this.dataFim = dataFim;
+	}
+
+	public List<StarkBankBoleto> getListBoletos() {
+		return listBoletos;
+	}
+
+	public void setListBoletos(List<StarkBankBoleto> listBoletos) {
+		this.listBoletos = listBoletos;
 	}
 }
