@@ -62,10 +62,10 @@ public class EngineService {
 			+ "R2t-P-qwzvsS5ADEsY5vTLTqyWo0";
 
 	public FacesMessage engineCriarConsulta(DataEngine engine, User usuarioLogado) {
-		return engineCriarConsulta(null, engine, usuarioLogado);
+		return engineCriarConsulta(null, engine, usuarioLogado, null);
 	}
 
-	public FacesMessage engineCriarConsulta(DocumentoAnalise documentoAnalise, DataEngine engine, User usuarioLogado) { 
+	public FacesMessage engineCriarConsulta(DocumentoAnalise documentoAnalise, DataEngine engine, User usuarioLogado, String urlWenhook ) { 
 		DataEngineDao engineDao = new DataEngineDao();
 		if (!CommonsUtil.semValor(engine.getIdCallManager())) {
 			if (documentoAnalise != null) {
@@ -107,7 +107,7 @@ public class EngineService {
 			myURLConnection.setDoOutput(true);
 
 			DataEngineIdSend myResponse = null;
-			JSONObject jsonWhatsApp = engineBodyJsonEngine(engine.getPagador());
+			JSONObject jsonWhatsApp = engineBodyJsonEngine(engine.getPagador(), urlWenhook );
 
 			try (OutputStream os = myURLConnection.getOutputStream()) {
 				byte[] input = jsonWhatsApp.toString().getBytes("utf-8");
@@ -713,7 +713,7 @@ public class EngineService {
 		return null;
 	}
 
-	private JSONObject engineBodyJsonEngine(PagadorRecebedor pagador) {
+	private JSONObject engineBodyJsonEngine(PagadorRecebedor pagador, String urlWenhook ) {
 		JSONObject jsonDocketBodyPedido = new JSONObject();
 		if (!CommonsUtil.semValor(pagador.getCpf())) {
 			jsonDocketBodyPedido.put("idProviderFlow", engineIdproviderFlowPF);
@@ -723,7 +723,10 @@ public class EngineService {
 			jsonDocketBodyPedido.put("fields", engineJsonPJ(pagador));
 		}
 		String webHookJWT = JwtUtil.generateJWTWebhook(true);
-		jsonDocketBodyPedido.put("urlWebhook", SiscoatConstants.URL_SISCOAT_ENGINE_WEBHOOK + webHookJWT);
+		if ( CommonsUtil.semValor( urlWenhook )) 
+			jsonDocketBodyPedido.put("urlWebhook", SiscoatConstants.URL_SISCOAT_ENGINE_WEBHOOK + webHookJWT);
+		else
+			jsonDocketBodyPedido.put("urlWebhook", SiscoatConstants.URL_SISCOAT_ENGINE_WEBHOOK.replace("https://backoffice.galleriabank.com.br", urlWenhook) + webHookJWT);
 
 		return jsonDocketBodyPedido;
 	}

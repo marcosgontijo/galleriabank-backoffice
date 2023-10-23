@@ -55,6 +55,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
@@ -21183,30 +21184,10 @@ public class ContratoCobrancaMB {
 			bpContratoCobrancaDetalhes.setParcelaPaga(true);
 			bpContratoCobrancaDetalhes.setOrigemBaixa("baixarParcelaParcial - Tratativa Status");
 		}		
-		//FIM - Tratativa para validar status parcela		
 		
-		//INICIO - Tratativa para validar status parcela
-		BigDecimal somaBaixasStatus = BigDecimal.ZERO;
-
-		for (ContratoCobrancaDetalhesParcial cBaixas : bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial()) {
-			somaBaixasStatus = somaBaixasStatus.add(cBaixas.getVlrRecebido());
-		}
-		
-		if (somaBaixasStatus.compareTo(bpContratoCobrancaDetalhes.getVlrParcela()) >= 0) {
-			bpContratoCobrancaDetalhes.setParcelaPaga(true);
-			bpContratoCobrancaDetalhes.setOrigemBaixa("baixarParcelaParcial - Tratativa Status");
-		}		
 		//FIM - Tratativa para validar status parcela		
 
-		for (ContratoCobrancaDetalhesParcial cBaixas : bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial()) {
-			somaBaixasStatus = somaBaixasStatus.add(cBaixas.getVlrRecebido());
-		}
 		
-		if (somaBaixasStatus.compareTo(bpContratoCobrancaDetalhes.getVlrParcela()) >= 0) {
-			bpContratoCobrancaDetalhes.setParcelaPaga(true);
-			bpContratoCobrancaDetalhes.setOrigemBaixa("baixarParcelaParcial - Tratativa Status");
-		}		
-		//FIM - Tratativa para validar status parcela		
 
 		contratoCobrancaDetalhesDao.merge(bpContratoCobrancaDetalhes);
 
@@ -28658,8 +28639,16 @@ public class ContratoCobrancaMB {
 			JobDetail jobDetail = JobBuilder.newJob(DocumentoAnaliseJob.class)
 					.withIdentity("documentoAnaliseJOB", objetoContratoCobranca.getNumeroContrato()).build();
 			User user = loginBean.getUsuarioLogado();
+			
+			FacesContext fContext = FacesContext.getCurrentInstance();
+			ExternalContext extContext = fContext.getExternalContext();
+			HttpServletRequest request = (HttpServletRequest) fContext.getExternalContext().getRequest();
+			
+			String urlWenhook =  request.getRequestURL().toString().replace(request.getRequestURI(),"");
+			
 			jobDetail.getJobDataMap().put("listaDocumentoAnalise", listaDocumentoAnalise);
 			jobDetail.getJobDataMap().put("user", user);
+			jobDetail.getJobDataMap().put("urlWenhook", urlWenhook);
 			jobDetail.getJobDataMap().put("objetoContratoCobranca", objetoContratoCobranca);
 			Trigger trigger = TriggerBuilder.newTrigger()
 					.withIdentity("documentoAnaliseJOB", objetoContratoCobranca.getNumeroContrato()).startNow().build();
