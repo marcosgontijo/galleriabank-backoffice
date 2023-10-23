@@ -205,7 +205,7 @@ public class EngineService {
 			myURLConnection.addRequestProperty("x-api-key", this.engineChaveApi);
 
 			JSONObject myResponse = null;
-			JSONObject jsonWhatsApp = engineBodyJsonEngine(engine.getPagador());
+			JSONObject jsonWhatsApp = engineBodyJsonEngine(engine.getPagador(),null );
 
 			try (OutputStream os = myURLConnection.getOutputStream()) {
 				byte[] input = jsonWhatsApp.toString().getBytes("utf-8");
@@ -293,7 +293,7 @@ public class EngineService {
 	public void requestEngine(DocumentoAnalise documentoAnalise, DataEngine engine, User usuarioLogado) {
 
 		if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
-			engineCriarConsulta(documentoAnalise, engine, usuarioLogado);
+			engineCriarConsulta(documentoAnalise, engine, usuarioLogado, null);
 		}
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 		documentoAnalise = documentoAnaliseDao.findById(documentoAnalise.getId());
