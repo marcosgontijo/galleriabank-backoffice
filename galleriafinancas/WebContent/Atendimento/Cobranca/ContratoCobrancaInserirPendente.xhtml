@@ -5502,59 +5502,94 @@
 					</p:commandButton>
 				</div>
 			</h:form>
-		</p:dialog>	
-		
-		<p:dialog header="Lista de Contratos Cliente Analisado" overflow="auto"
-			widgetVar="listaContratosPagador" resizable="true" style="FONT-SIZE: 13pt;"
-			width="800" minWidth="800">
+		</p:dialog>
+
+		<p:dialog header="Lista de Contratos Cliente Analisado"
+			overflow="auto" styleClass="overflowy"
+			widgetVar="listaContratosPagador" resizable="true"
+			style="FONT-SIZE: 13pt;" width="1000" minWidth="1000">
 			<h:form id="contratosPagadorForm">
-				<p:dataTable var="contratos" rows="10" paginator="true"
-					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
-					value="#{contratoCobrancaMB.contratosPagadorAnalisado}"
-					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
-					<p:column style="text-align: center" headerText="Numero Contrato"
-						filterBy="#{contratos.numeroContrato}" sortBy="#{contratos.numeroContrato}" filterMatchMode="contains">
-						<p:outputLabel value="#{contratos.numeroContrato}"
-							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
-					</p:column>
-					<!-- 
-					<p:column style="text-align: center" headerText="Pagador"
-						filterBy="#{contratos.pagador.nome}" sortBy="#{contratos.pagador.nome}" filterMatchMode="contains">
-						<p:outputLabel value="#{contratos.pagador.nome}"
-							style="FONT-SIZE: 10pt;width:100px;" />
-					</p:column> 
-					-->
-					<p:column style="text-align: center" headerText="Data Analise"
-						filterBy="#{contratos.cadastroAprovadoData}" sortBy="#{contratos.cadastroAprovadoData}" filterMatchMode="contains">
-						<p:outputLabel value="#{contratos.cadastroAprovadoData}"
-							style="FONT-SIZE: 10pt;width:100px;" >
-							<f:convertDateTime locale="pt_BR"  />
-			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
-						</p:outputLabel>
-					</p:column>
-					<p:column style="text-align: center" headerText="Cidade"
-						filterBy="#{contratos.imovel.cidade}" sortBy="#{contratos.imovel.cidade}" filterMatchMode="contains">
-						<p:outputLabel value="#{contratos.imovel.cidade}"
-							style="FONT-SIZE: 10pt;width:100px;" />
-					</p:column>
-					<p:column style="text-align: center" headerText="Status"
-						filterBy="#{contratos.status}" sortBy="#{contratos.status}" filterMatchMode="contains">
-						<p:outputLabel value="#{contratos.status}"
-							style="FONT-SIZE: 10pt;width:100px;" />
-					</p:column>
-					<p:column style="text-align: center">
-						<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar">
-		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
-		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
-		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="false" />
-		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
-		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" />
-		                </p:commandButton>			
-					</p:column>
-				</p:dataTable>
+
+
+				<p:tabView value="#{contratoCobrancaMB.contratosPagadorAnalisado}"
+					var="lstContratosPagadorAnalisado" dynamic="true" cache="true">		
+					<p:tab title="#{lstContratosPagadorAnalisado.pagador.nome}">
+
+						<f:facet name="title">
+						<h:panelGrid columns="1">
+							<h:outputText
+								value="#{lstContratosPagadorAnalisado.pagador.nome}" />
+							<h:outputText
+								value="#{lstContratosPagadorAnalisado.relacionamento.relacao}" />
+							</h:panelGrid>
+						</f:facet>
+
+						<p:dataTable var="contratos" rows="10" paginator="true"
+								currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+								value="#{lstContratosPagadorAnalisado.contratosPagadorAnalisado}"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+
+								<p:column style="text-align: center"
+									headerText="Numero Contrato"
+									filterBy="#{contratos.numeroContrato}"
+									sortBy="#{contratos.numeroContrato}" filterMatchMode="contains">
+									<p:outputLabel value="#{contratos.numeroContrato}"
+										styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
+								</p:column>
+
+								<!-- <p:column style="text-align: center" headerText="Pagador"
+									filterBy="#{contratos.pagador.nome}"
+									sortBy="#{contratos.pagador.nome}" filterMatchMode="contains">
+									<p:outputLabel value="#{contratos.pagador.nome}"
+										style="FONT-SIZE: 10pt;width:100px;" />
+								</p:column> -->
+
+								<p:column style="text-align: center" headerText="Data Analise"
+									filterBy="#{contratos.cadastroAprovadoData}"
+									sortBy="#{contratos.cadastroAprovadoData}"
+									filterMatchMode="contains">
+									<p:outputLabel value="#{contratos.cadastroAprovadoData}"
+										style="FONT-SIZE: 10pt;width:100px;">
+										<f:convertDateTime locale="pt_BR" />
+										<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+									</p:outputLabel>
+								</p:column>
+								<p:column style="text-align: center" headerText="Cidade"
+									filterBy="#{contratos.imovel.cidade}"
+									sortBy="#{contratos.imovel.cidade}" filterMatchMode="contains">
+									<p:outputLabel value="#{contratos.imovel.cidade}"
+										style="FONT-SIZE: 10pt;width:100px;" />
+								</p:column>
+								<p:column style="text-align: center" headerText="Status"
+									filterBy="#{contratos.status}" sortBy="#{contratos.status}"
+									filterMatchMode="contains">
+									<p:outputLabel value="#{contratos.status}"
+										style="FONT-SIZE: 10pt;width:100px;" />
+								</p:column>
+								<p:column style="text-align: center">
+									<p:commandButton
+										action="#{contratoCobrancaMB.clearFieldsEditarPendentes}"
+										ajax="false" icon="ui-icon-pencil" value="Editar"
+										title="Editar">
+										<f:setPropertyActionListener
+											target="#{contratoCobrancaMB.objetoContratoCobranca}"
+											value="#{contratos}" />
+										<f:setPropertyActionListener
+											target="#{contratoCobrancaMB.updateMode}" value="true" />
+										<f:setPropertyActionListener
+											target="#{contratoCobrancaMB.crmMode}" value="false" />
+										<f:setPropertyActionListener
+											target="#{contratoCobrancaMB.deleteMode}" value="false" />
+										<f:setPropertyActionListener
+											target="#{contratoCobrancaMB.baixarMode}" value="false" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+					</p:tab>
+				</p:tabView>
 			</h:form>
 		</p:dialog>
-		
+
 		<p:dialog header="Lista de Contratos Imovel Analisado" overflow="auto"
 			widgetVar="listaContratosImovel" resizable="true" style="FONT-SIZE: 13pt;"
 			width="800" minWidth="800">

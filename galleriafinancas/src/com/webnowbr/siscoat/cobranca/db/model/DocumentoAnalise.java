@@ -1025,16 +1025,8 @@ public class DocumentoAnalise implements Serializable {
 	public void setRetornoLaudoRobo(String retornoLaudoRobo) {
 		this.retornoLaudoRobo = retornoLaudoRobo;
 	}
-	
-	
 
-	public String getRetornoRelacionamento() {
-		return retornoRelacionamento;
-	}
 
-	public void setRetornoRelacionamento(String retornoRelacionamento) {
-		this.retornoRelacionamento = retornoRelacionamento;
-	}
 
 	public String getCnpjcpf() {
 		return cnpjcpf;

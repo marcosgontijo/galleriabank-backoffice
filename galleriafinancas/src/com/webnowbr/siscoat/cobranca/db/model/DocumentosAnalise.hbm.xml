@@ -111,6 +111,12 @@
 			<column name="retornoPpe" />
 		</property>
 		
+		<property name="retornoRelacionamento" type="java.lang.String"  length="65000">
+			<column name="retornoRelacionamento" />
+		</property>
+		
+		
+		
 		<property name="motivoAnalise" type="java.lang.String"  length="65000">
 			<column name="motivoAnalise" />
 		</property>

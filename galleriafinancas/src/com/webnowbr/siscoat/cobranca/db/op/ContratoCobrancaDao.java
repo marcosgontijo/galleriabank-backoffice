@@ -1,7 +1,6 @@
 package com.webnowbr.siscoat.cobranca.db.op;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,11 +12,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
-
-import org.hibernate.engine.JoinSequence.Join;
-import org.jboss.resteasy.util.CommitHeaderOutputStream;
+import java.util.stream.Collectors;
 
 import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.AnaliseComite;
@@ -33,17 +31,17 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaStatus;
 import com.webnowbr.siscoat.cobranca.db.model.Dashboard;
 import com.webnowbr.siscoat.cobranca.db.model.GruposPagadores;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
-import com.webnowbr.siscoat.cobranca.db.model.ImovelEstoque;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PesquisaObservacoes;
+import com.webnowbr.siscoat.cobranca.db.model.RelacionamentoPagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
+import com.webnowbr.siscoat.cobranca.vo.ContratosPagadorAnalisadoVO;
 import com.webnowbr.siscoat.cobranca.vo.DemonstrativoResultadosGrupo;
 import com.webnowbr.siscoat.cobranca.vo.DemonstrativoResultadosGrupoDetalhe;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.db.dao.HibernateDao;
-import com.webnowbr.siscoat.db.dao.HibernateDao.DBRunnable;
 import com.webnowbr.siscoat.relatorio.vo.RelatorioVendaOperacaoVO;
 
 /**
@@ -9084,38 +9082,67 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	    return diff;
 	}
 	
-	private static final String QUERY_CONTRATOS_DO_PAGADOR =  "select id from cobranca.contratocobranca "
-			+ " where pagador = ?"
-			+ " and numeroContrato != ?"
-			+ " order by id ";
+	private static final String QUERY_CONTRATOS_DO_PAGADOR =  "select c2.id , r.id rId "
+			+ " 	from cobranca.contratocobranca c "
+			+ "	 left join cobranca.relacionamentopagadorrecebedor r on ( r.pessoaroot = c.pagador  or r.pessoachild = c.pagador ) "
+			+ "	 left join cobranca.contratocobranca c2 on ( c2.pagador = case when r.pessoaroot = c.pagador then r.pessoachild "
+			+ "															 else r.pessoaroot end  or "
+			+ "											     c2.pagador = c.pagador ) and c2.id <> c.id "
+			+ "	  where c.numeroContrato = ? and  not c2.id is null "
+			+ "			order by c2.pagador , c2.id ";
 	
 	@SuppressWarnings("unchecked")
-	public List<ContratoCobranca> getContratosDoPagador(ContratoCobranca contrato) {
-		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+	public List<ContratosPagadorAnalisadoVO> getContratosDoPagador(ContratoCobranca contrato) {
+		return (List<ContratosPagadorAnalisadoVO>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
 				Connection connection = null;
 				PreparedStatement ps = null;
 				ResultSet rs = null;		
-				List<ContratoCobranca> retorno = new ArrayList<ContratoCobranca>();
-				PagadorRecebedor pagador = contrato.getPagador();
+				List<ContratosPagadorAnalisadoVO> retorno = new ArrayList<ContratosPagadorAnalisadoVO>();
 				try {
 					connection = getConnection();					
 					ps = connection
 							.prepareStatement(QUERY_CONTRATOS_DO_PAGADOR);									
-					ps.setLong(1, pagador.getId());
-					ps.setString(2, contrato.getNumeroContrato());
+					ps.setString(1, contrato.getNumeroContrato());
 					rs = ps.executeQuery();	
 					ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+					RelacionamentoPagadorRecebedorDao rDao = new RelacionamentoPagadorRecebedorDao();
 					
 					while (rs.next()) {	
-						retorno.add(cDao.findById(rs.getLong("id")));
+						ContratoCobranca contratoCobranca = cDao.findById(rs.getLong("id"));
+						RelacionamentoPagadorRecebedor relacionamentoPagadorRecebedor = new RelacionamentoPagadorRecebedor();
+						relacionamentoPagadorRecebedor.setRelacao("PAGADOR");
+						if (!CommonsUtil.semValor(rs.getLong("rId")) && !CommonsUtil
+								.mesmoValor(contratoCobranca.getPagador().getId(), contrato.getPagador().getId())) {
+							relacionamentoPagadorRecebedor = rDao.findById(rs.getLong("rId"));
+						}
+
+						Optional<ContratosPagadorAnalisadoVO> contratosPagadorAnalisadoVO = retorno.stream()
+								.filter(r -> CommonsUtil.mesmoValor(r.getPagador().getId(),
+										contratoCobranca.getPagador().getId()))
+								.findAny();
+
+						if (!contratosPagadorAnalisadoVO.isPresent()) {
+							contratosPagadorAnalisadoVO = Optional.of(new ContratosPagadorAnalisadoVO());
+							contratosPagadorAnalisadoVO.get().setPagador(contratoCobranca.getPagador());
+							contratosPagadorAnalisadoVO.get().setRelacionamento(relacionamentoPagadorRecebedor);
+							contratosPagadorAnalisadoVO.get()
+									.setContratosPagadorAnalisado(new ArrayList<ContratoCobranca>());
+							retorno.add(contratosPagadorAnalisadoVO.get());
+						}
+						
+		 				contratosPagadorAnalisadoVO.get().getContratosPagadorAnalisado().add(contratoCobranca);
 					}
 	
 				} finally {
 					closeResources(connection, ps, rs);					
 				}
-				return retorno;
+				
+				return retorno.stream()
+						.sorted((o1, o2) -> (o1.getRelacionamento().getRelacao().equals("PAGADOR") ? 0 : 1))
+						.sorted((o1, o2) -> o1.getPagador().getNome().compareTo(o2.getPagador().getNome()))
+						.collect(Collectors.toList());
 			}
 		});	
 	}

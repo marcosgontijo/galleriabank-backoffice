@@ -1325,6 +1325,7 @@ public class ContratoCobranca implements Serializable {
 		List<String> lstEmAnalise =  Arrays.asList("Aprovado", "Reprovado", "Baixado", "Desistência Cliente");
 		return pedidoLaudo && !pagtoLaudoConfirmada && !lstEmAnalise.contains(this.status) && leadCompleto && inicioAnalise;
 	}
+	
 
 	
 	public void calcularTaxaPreAprovada() {
