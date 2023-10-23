@@ -71,13 +71,14 @@
 			</p:panel>									
 			<p:panel id="ConsultaContratos" header="Pré-Contratos #{contratoCobrancaMB.tituloTelaConsultaPreStatus} - Consultar" style="margin-bottom:10px;">					    		    
    		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratosPendentes}" selection="" emptyMessage="" sortBy="#{contratos.dataUltimaAtualizacao}" sortOrder="ascending"
-   		         rowStyleClass="#{(contratos.pendenciaPagamento eq true or contratos.contatoDiferenteProprietario eq true) ? 'parcelaVencendo' : '' }
+   		         rowStyleClass="#{(contratos.agComite) ? 'linhaBranca' : ''}
+   		         #{(contratos.pendenciaPagamento eq true or contratos.contatoDiferenteProprietario eq true) ? 'parcelaVencendo' : '' }
 	   		         #{(contratos.laudoRecebido eq true and contratos.pajurFavoravel eq true) ? 'parcelaPaga' : '' }
 	   		         #{(contratos.cadastroAprovadoValor eq 'Pendente') ? 'linhaRoxa' : '' }
 	   		         #{(contratos.pendenciaLaudoPaju eq true) ? 'parcelaparcial' : '' } 
 	   		         #{(contratos.responsavel.superlogica) ? 'superlogica' : '' } 
 	   		         #{(contratos.imovel.objetoCidade.pintarLinha eq true) ? 'parcelaBoletoPago' : '' }
-	   		         #{(contratos.contratoPrioridadeAlta eq true) ? 'linhaRosa' : '' }"
+	   		         #{(contratos.contratoPrioridadeAlta eq true) ? 'linhaRosa' : ''}"
    		         rows="50" paginator="true"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                  currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
@@ -252,7 +253,8 @@
 			                and contratos.inicioAnalise == true
 							and contratos.cadastroAprovadoValor == 'Aprovado'
 							and contratos.aprovadoComite == false
-							and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Comentario Jurídico'}"
+							and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Comentario Jurídico'
+							and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Comite'}"
 						action="#{contratoCobrancaMB.downloadPreAprovadoPDF(contratos.id)}" >
 						</p:commandButton>			
 						<p:commandButton value="PDF Aprovado" ajax="false" icon="ui-icon-print" rendered="#{contratos.analiseReprovada == false 
@@ -269,7 +271,7 @@
 			            </shiro:hasAnyRoles>		            
 						     
 		                <shiro:hasAnyRoles name="ROOT, PROFILE_GERENTE_ANALISE"> 
-		                	<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-arrowthick-1-s" value="Baixar" title="Baixar">
+		                	<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-arrowthick-1-s" value="Baixar" title="Baixar" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Comite'}">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{contratos.pagador}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{contratos.imovel}" />
@@ -280,7 +282,7 @@
 			                </p:commandButton>
 		                </shiro:hasAnyRoles>
 		                <shiro:hasAnyRoles name="ROOT"> 
-							<p:commandButton value="Excluir" action="#{contratoCobrancaMB.clearFieldsEditarPendentesAnalistas}" ajax="false" icon="ui-icon-trash"  title="Excluir">
+							<p:commandButton value="Excluir" action="#{contratoCobrancaMB.clearFieldsEditarPendentesAnalistas}" ajax="false" icon="ui-icon-trash" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Comite'}"  title="Excluir">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{contratos.pagador}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{contratos.imovel}" />

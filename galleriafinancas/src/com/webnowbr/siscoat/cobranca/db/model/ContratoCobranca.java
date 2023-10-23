@@ -443,6 +443,8 @@ public class ContratoCobranca implements Serializable {
 	//
 	private boolean reanalise;
 	
+	private boolean agComite;
+	
 	private Date reanaliseProntaData;
 	private boolean reanalisePronta;
 	private String reanaliseProntaUsuario;
@@ -1312,6 +1314,23 @@ public class ContratoCobranca implements Serializable {
 	public boolean isEmPedirPaju() {
 		List<String> lstEmAnalise =  Arrays.asList("Aprovado", "Reprovado", "Baixado", "Desistência Cliente");
 		return pedidoLaudo && !pagtoLaudoConfirmada && !lstEmAnalise.contains(this.status) && leadCompleto && inicioAnalise;
+	}
+	public boolean isAgComite() {
+		ContratoCobranca c = this;
+		try {
+		if (c.isInicioAnalise() && "Aprovado".equals( c.getCadastroAprovadoValor())
+				&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
+				&& c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+				&& c.isDocumentosComite() && !c.isAprovadoComite()) {
+			agComite = true;
+		
+		} else {
+			agComite = false;
+		}
+		return agComite;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	
