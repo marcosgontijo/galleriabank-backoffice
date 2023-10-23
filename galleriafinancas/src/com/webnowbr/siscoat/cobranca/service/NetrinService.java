@@ -103,7 +103,7 @@ public class NetrinService {
 			pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
 					DocumentosAnaliseEnum.CENPROT, response);
 			String base64 = "";
-			if(CommonsUtil.semValor(response)) 
+			if(!CommonsUtil.semValor(response)) 
 				base64 = baixarDocumentoCenprot(response);
 			FileService fileService = new FileService();
 			fileService.salvarPdfRetorno(documentoAnalise, base64, "Cenprot", "interno");
@@ -180,6 +180,9 @@ public class NetrinService {
 			// loginDocket();
 			int HTTP_COD_SUCESSO = 200;
 			int HTTP_COD_SUCESSO2 = 201;
+			if(CommonsUtil.semValor(retornoCenprot))
+				return null;
+			
 
 			URL myURL = new URL("https://servicos.galleriabank.com.br/netrin/api/v1/protesto/false");
 

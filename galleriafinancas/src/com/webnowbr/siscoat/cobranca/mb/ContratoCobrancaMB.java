@@ -19563,6 +19563,8 @@ public class ContratoCobrancaMB {
 			ContasPagarDao cpDao = new ContasPagarDao();
 			if (processoSelecionado.getContaPagar().getId() <= 0) {
 				cpDao.create(processoSelecionado.getContaPagar());
+			} else {
+				cpDao.merge(processoSelecionado.getContaPagar());
 			}
 		}
 		CcbProcessosJudiciaisDao ccbProcessosJudiciaisDao = new CcbProcessosJudiciaisDao();
