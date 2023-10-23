@@ -53,6 +53,7 @@ public class DocketWebhook {
 				DocketConsulta docketConsulta = consultaDao.getConsultasExistentesWebhook(documentoRetorno.id);
 				docketConsulta.setStatus("Concluido");
 				docketConsulta.setRetorno(GsonUtil.toJson(documentoRetorno));
+				consultaDao.merge(docketConsulta);
 				String base64 = docketService.getPdfBase64(docketConsulta.getRetorno());
 				docketConsulta.setPdf(base64);
 				FileService fileService = new FileService();

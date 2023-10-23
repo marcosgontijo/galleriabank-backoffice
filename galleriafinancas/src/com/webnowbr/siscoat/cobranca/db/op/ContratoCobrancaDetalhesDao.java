@@ -5,12 +5,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
@@ -235,7 +232,7 @@ public class ContratoCobrancaDetalhesDao extends HibernateDao <ContratoCobrancaD
 	
 	public int getParcelasVencidas(ContratoCobranca contrato) {
 		int parcelasVencidas = 0;
-		Date dataHoje = gerarDataHoje();
+		Date dataHoje = DateUtil.gerarDataHoje();
 		
 		for (ContratoCobrancaDetalhes parcela : contrato.getListContratoCobrancaDetalhes()) {
 			// verifica parcelas vencidas, se maior que 1 não mostra contrato
@@ -249,13 +246,5 @@ public class ContratoCobrancaDetalhesDao extends HibernateDao <ContratoCobrancaD
 		}
 		
 		return parcelasVencidas;
-	}
-	
-	public Date gerarDataHoje() {
-		TimeZone zone = TimeZone.getDefault();
-		Locale locale = new Locale("pt", "BR");
-		Calendar dataHoje = Calendar.getInstance(zone, locale);
-
-		return dataHoje.getTime();
-	}
+	}	
 }

@@ -2,12 +2,10 @@ package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.io.Serializable;
 import java.math.BigInteger;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
 
@@ -33,7 +31,7 @@ public class CadastroStatus implements Serializable {
 		super();
 		this.status = status;
 		this.statusAnteriror = statusAnterior;
-		this.data = gerarDataHoje();
+		this.data = DateUtil.gerarDataHoje();
 		
 		if(CommonsUtil.mesmoValor(status, "Baixado") || CommonsUtil.mesmoValor(status, "Lead Arquivado")) {
 			if(CommonsUtil.mesmoValor(status, "Baixado") &&
@@ -59,14 +57,6 @@ public class CadastroStatus implements Serializable {
 		this.contratoCobranca = contratoCobranca;
 		numeroContrato = this.contratoCobranca.getNumeroContrato();
 		ordemStatus = CommonsUtil.bigIntegerValue(this.contratoCobranca.getListCadastroStatus().size());
-	}
-	
-	public Date gerarDataHoje() {
-		TimeZone zone = TimeZone.getDefault();
-		Locale locale = new Locale("pt", "BR");
-		Calendar dataHoje = Calendar.getInstance(zone, locale);
-
-		return dataHoje.getTime();
 	}
 
 	public CadastroStatus() {

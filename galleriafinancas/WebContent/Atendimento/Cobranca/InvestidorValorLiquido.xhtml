@@ -96,7 +96,7 @@
 									value="#{parcelas}" />
 								<f:setPropertyActionListener
 									target="#{contratoCobrancaMB.dataPagamentoInvestidor}"
-									value="#{contratoCobrancaMB.gerarDataHoje()}" />
+									value="#{DateUtil.gerarDataHoje()}" />
 							</p:commandButton>									
 						</f:facet>
 						<p:headerRow>
@@ -210,7 +210,7 @@
 									value="#{parcelas}" />
 								<f:setPropertyActionListener
 									target="#{contratoCobrancaMB.dataPagamentoInvestidor}"
-									value="#{contratoCobrancaMB.gerarDataHoje()}" />
+									value="#{DateUtil.gerarDataHoje()}" />
 							</p:commandButton>												
 						</f:facet>
 					</p:dataTable>
@@ -370,7 +370,7 @@
 								value="#{parcelas}" />
 							<f:setPropertyActionListener
 								target="#{contratoCobrancaMB.dataPagamentoInvestidor}"
-								value="#{contratoCobrancaMB.gerarDataHoje()}" />
+								value="#{DateUtil.gerarDataHoje()}" />
 						</p:commandButton>								
 					</f:facet>
 					<p:headerRow>
@@ -485,7 +485,7 @@
 								value="#{parcelas}" />
 							<f:setPropertyActionListener
 								target="#{contratoCobrancaMB.dataPagamentoInvestidor}"
-								value="#{contratoCobrancaMB.gerarDataHoje()}" />
+								value="#{DateUtil.gerarDataHoje()}" />
 						</p:commandButton>						
 					</f:facet>
 				</p:dataTable>

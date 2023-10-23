@@ -21184,6 +21184,29 @@ public class ContratoCobrancaMB {
 			bpContratoCobrancaDetalhes.setOrigemBaixa("baixarParcelaParcial - Tratativa Status");
 		}		
 		//FIM - Tratativa para validar status parcela		
+		
+		//INICIO - Tratativa para validar status parcela
+		BigDecimal somaBaixasStatus = BigDecimal.ZERO;
+
+		for (ContratoCobrancaDetalhesParcial cBaixas : bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial()) {
+			somaBaixasStatus = somaBaixasStatus.add(cBaixas.getVlrRecebido());
+		}
+		
+		if (somaBaixasStatus.compareTo(bpContratoCobrancaDetalhes.getVlrParcela()) >= 0) {
+			bpContratoCobrancaDetalhes.setParcelaPaga(true);
+			bpContratoCobrancaDetalhes.setOrigemBaixa("baixarParcelaParcial - Tratativa Status");
+		}		
+		//FIM - Tratativa para validar status parcela		
+
+		for (ContratoCobrancaDetalhesParcial cBaixas : bpContratoCobrancaDetalhes.getListContratoCobrancaDetalhesParcial()) {
+			somaBaixasStatus = somaBaixasStatus.add(cBaixas.getVlrRecebido());
+		}
+		
+		if (somaBaixasStatus.compareTo(bpContratoCobrancaDetalhes.getVlrParcela()) >= 0) {
+			bpContratoCobrancaDetalhes.setParcelaPaga(true);
+			bpContratoCobrancaDetalhes.setOrigemBaixa("baixarParcelaParcial - Tratativa Status");
+		}		
+		//FIM - Tratativa para validar status parcela		
 
 		contratoCobrancaDetalhesDao.merge(bpContratoCobrancaDetalhes);
 
@@ -28922,7 +28945,7 @@ public class ContratoCobrancaMB {
 						laudoEndereco = dataObj;					    
 					    FileService fileService = new FileService();
 					    fileService.salvarPdfRetorno("", this.objetoContratoCobranca.getNumeroContrato(), retornaBase64(laudoEndereco), "LaudoRobo", "interno");
-					    carregaDocumentos();
+					    PrimeFaces.current().ajax().update("form:ArquivosInternosSalvos");
 					}
 				}
 				myURLConnection.disconnect();
@@ -28934,7 +28957,7 @@ public class ContratoCobrancaMB {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		}
+	}
 	
 	public String retornaBase64(String str) throws Exception {
 		java.net.URL url = new java.net.URL(str);
