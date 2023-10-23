@@ -55,6 +55,7 @@ import org.hibernate.JDBCException;
 import org.hibernate.TransientObjectException;
 import org.json.JSONObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTAbstractNum;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDrawing;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHMerge;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTJc;
@@ -725,7 +726,7 @@ public class CcbMB {
 	}
 	
 	public void addProcesso() {
-		processoSelecionado.getContaPagar().setValor(processoSelecionado.getValor());
+		processoSelecionado.getContaPagar().setValor(processoSelecionado.getValorAtualizado());
 		processoSelecionado.getContaPagar().setDescricao("Processo N°: " + processoSelecionado.getNumero());
 		
 		if(!CommonsUtil.semValor(objetoCcb.getObjetoContratoCobranca())) {
@@ -1084,8 +1085,8 @@ public class CcbMB {
 		
 		if(!this.objetoCcb.getProcessosJucidiais().isEmpty()) {
 			for(CcbProcessosJudiciais processo : this.objetoCcb.getProcessosJucidiais()) {
-				if(!CommonsUtil.semValor(processo.getValor()))
-					total = total.add(processo.getValor());
+				if(!CommonsUtil.semValor(processo.getValorAtualizado()))
+					total = total.add(processo.getValorAtualizado());
 			}
 		}
 		this.objetoCcb.setValorDespesas(total);
@@ -7488,7 +7489,8 @@ public class CcbMB {
 			XWPFRun run4;
 			List<CcbParticipantes> segurados = new ArrayList<CcbParticipantes>();
 			for (CcbParticipantes participante : this.objetoCcb.getListaParticipantes()) {				
-				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "TERCEIRO GARANTIDOR")) {
+				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "TERCEIRO GARANTIDOR")
+						|| CommonsUtil.mesmoValor(participante.getTipoParticipante(), "DEVEDOR FIDUCIANTE") ) {
 					this.objetoCcb.setTerceiroGarantidor(true);
 					participante.setTipoParticipante("DEVEDOR FIDUCIANTE");
 					segurados.add(participante);
@@ -7499,18 +7501,27 @@ public class CcbMB {
 			if(this.objetoCcb.isTerceiroGarantidor()) {
 				document = new XWPFDocument(getClass().getResourceAsStream("/resource/CciTg.docx"));
 			} else {
-				document = new XWPFDocument(getClass().getResourceAsStream("/resource/Cci.docx"));
-				/*
-				 * document.getDocument().getBody().removeTbl(0);
-				 * //document.getDocument().getBody().removeTbl(1); int i = 0; for(XWPFParagraph
-				 * p : document.getParagraphs()) { document.getDocument().getBody().removeP(i);
-				 * }
-				 * 
-				 * for(XWPFTable p : document.getTables()) {
-				 * document.getDocument().getBody().removeTbl(i); }
-				 */
-				
+				if ( CommonsUtil.semValor( this.objetoCcb.getProcessosJucidiais() ) )
+					document = new XWPFDocument(getClass().getResourceAsStream("/resource/Cci.docx"));
+				else
+					document = new XWPFDocument(getClass().getResourceAsStream("/resource/CciComProcesso.docx"));
 			}		
+			
+			String numerosProcessos = "";
+			BigDecimal totalProcessos = BigDecimal.ZERO;
+			if (!CommonsUtil.semValor(this.objetoCcb.getProcessosJucidiais())) {
+				for (CcbProcessosJudiciais processo : this.objetoCcb.getProcessosJucidiais()) {
+					if (CommonsUtil.semValor(processo.getValorAtualizado())) {
+						continue;
+					}
+					numerosProcessos = numerosProcessos + ((!CommonsUtil.semValor(numerosProcessos)) ? ", " : "")
+							+ "Nº " + CommonsUtil.stringValueVazio(processo.getNumero()) + " ";
+					totalProcessos = totalProcessos.add(processo.getValorAtualizado());
+				}
+				numerosProcessos = numerosProcessos.trim();
+			}
+
+			
 			CTFonts fonts = CTFonts.Factory.newInstance();
 			fonts.setHAnsi("Calibri");
 			fonts.setAscii("Calibri");
@@ -7519,33 +7530,9 @@ public class CcbMB {
 			document.getStyles().setDefaultFonts(fonts);
 			document.getStyle().getDocDefaults().getRPrDefault().getRPr().setRFonts(fonts);
 			
-			if(segurados.size() > 0) {
-				BigDecimal porcentagem =  BigDecimal.valueOf(100).divide(BigDecimal.valueOf(segurados.size()), MathContext.DECIMAL128).setScale(2, BigDecimal.ROUND_HALF_UP);
-				if(this.objetoCcb.getListSegurados().size() != segurados.size()) {
-					this.objetoCcb.getListSegurados().clear();
-					this.objetoCcb.getObjetoContratoCobranca().getListSegurados().clear();
-					
-					for(CcbParticipantes participante : segurados) {
-						Segurado segurado = new Segurado();
-						if(!CommonsUtil.semValor(this.objetoCcb.getObjetoContratoCobranca())) {
-							segurado.setPessoa(participante.getPessoa());
-							segurado.setPorcentagemSegurador(porcentagem);
-							segurado.setPosicao(this.objetoCcb.getListSegurados().size() + 1);
-							if(!this.objetoCcb.getObjetoContratoCobranca().getListSegurados().contains(segurado)) {		
-								segurado.setContratoCobranca(this.objetoCcb.getObjetoContratoCobranca());
-								this.objetoCcb.getObjetoContratoCobranca().getListSegurados().add(segurado);
-							}
-							if(!this.objetoCcb.getListSegurados().contains(segurado)) {	
-								SeguradoDAO seguradoDAO = new SeguradoDAO();
-								seguradoDAO.create(segurado);
-								this.objetoCcb.getListSegurados().add(segurado);
-							}
-						}
-					}
-				} 
-			}
+			organizaSegurados(segurados);
 		
-			int indexSegurados = 40;
+			int indexSegurados = 41;
 			
 			for(Segurado segurado : objetoCcb.getListSegurados()) {
 				XWPFTable table = document.getTables().get(0);
@@ -7613,6 +7600,8 @@ public class CcbMB {
 				indexSegurados++;
 			}
 			
+			
+		
 			
 			XWPFTable table = document.getTables().get(0);
 			XWPFTableRow tableRow1 = table.getRow(3);
@@ -7703,21 +7692,31 @@ public class CcbMB {
 			            text = trocaValoresTaxaExtensoXWPF(text, r, "PorcentagemImovel", this.objetoCcb.getPorcentagemImovel());
 						text = trocaValoresXWPF(text, r, "emissaoDia", this.objetoCcb.getDataDeEmissao().getDate());
 						text = trocaValoresXWPF(text, r, "emissaoMes", CommonsUtil.formataMesExtenso(this.objetoCcb.getDataDeEmissao()).toLowerCase());
-						text = trocaValoresXWPF(text, r, "emissaoAno", (this.objetoCcb.getDataDeEmissao().getYear() + 1900));		
+						text = trocaValoresXWPF(text, r, "emissaoAno", (this.objetoCcb.getDataDeEmissao().getYear() + 1900));
+						
+						text = trocaValoresXWPF(text, r, "numerosProcessos",numerosProcessos);
+						text = trocaValoresXWPF(text, r, "totalProcessos", CommonsUtil.formataValorMonetario(totalProcessos));
+						
 			        }
 			    }
 			}	
+			
+			
 			
 			BigDecimal taxaAdm = SiscoatConstants.TAXA_ADM;
 			if(!CommonsUtil.semValor(this.objetoCcb.getPrazo()) && !CommonsUtil.semValor(this.objetoCcb.getNumeroParcelasPagamento())) {
 				taxaAdm = taxaAdm.multiply(BigDecimal.valueOf( Long.parseLong(CommonsUtil.somenteNumeros(this.objetoCcb.getPrazo())) - Long.parseLong(CommonsUtil.somenteNumeros(this.objetoCcb.getNumeroParcelasPagamento())) + 1));
 			} 
 			BigDecimal totalPrimeiraParcela = BigDecimal.ZERO;
-			totalPrimeiraParcela = this.objetoCcb.getValorMipParcela();
-			totalPrimeiraParcela = totalPrimeiraParcela.add(this.objetoCcb.getValorDfiParcela());
-			totalPrimeiraParcela = totalPrimeiraParcela.add(this.objetoCcb.getValorParcela());
+
+			if (!CommonsUtil.semValor(this.objetoCcb.getValorMipParcela()))
+				totalPrimeiraParcela = this.objetoCcb.getValorMipParcela();
+			if (!CommonsUtil.semValor(this.objetoCcb.getValorDfiParcela()))
+				totalPrimeiraParcela = totalPrimeiraParcela.add(this.objetoCcb.getValorDfiParcela());
+			if (!CommonsUtil.semValor(this.objetoCcb.getValorParcela()))
+				totalPrimeiraParcela = totalPrimeiraParcela.add(this.objetoCcb.getValorParcela());
 			totalPrimeiraParcela = totalPrimeiraParcela.add(taxaAdm);
-			
+						
 		    for (XWPFTable tbl : document.getTables()) {
 				for (XWPFTableRow row : tbl.getRows()) {
 					for (XWPFTableCell cell : row.getTableCells()) {
@@ -7739,7 +7738,8 @@ public class CcbMB {
 								text = trocaValoresXWPF(text, r, "titularConta", this.objetoCcb.getTitularConta());
 								text = trocaValoresXWPF(text, r, "agencia", this.objetoCcb.getAgencia());
 								text = trocaValoresXWPF(text, r, "contaCorrente", this.objetoCcb.getContaCorrente());					
-								text = trocaValoresXWPF(text, r, "nomeBanco", this.objetoCcb.getNomeBanco());		
+								text = trocaValoresXWPF(text, r, "nomeBanco", this.objetoCcb.getNomeBanco());
+								text = trocaValoresXWPF(text, r, "pixBanco", this.objetoCcb.getPixBanco());
 								
 								text = trocaValoresXWPF(text, r, "prazoContrato", this.objetoCcb.getPrazo());
 								text = trocaValoresXWPF(text, r, "numeroParcelasPagamento", this.objetoCcb.getNumeroParcelasPagamento());
@@ -7786,6 +7786,7 @@ public class CcbMB {
 								text = trocaValoresXWPF(text, r, "nomeTestemunha2", this.objetoCcb.getNomeTestemunha2());
 								text = trocaValoresXWPF(text, r, "cpfTestemunha2", this.objetoCcb.getCpfTestemunha2());
 								text = trocaValoresXWPF(text, r, "rgTestemunha2", this.objetoCcb.getRgTestemunha2());
+						
 								
 								if (text != null && text.contains("sistemaAmortizacao")) {
 									if(CommonsUtil.mesmoValor(this.objetoCcb.getSistemaAmortizacao(), "Price")) {
@@ -7804,12 +7805,19 @@ public class CcbMB {
 								
 								if (text != null && text.contains("ImagemImovel") && filesList.size() > 0) {
 									int iImagem = 0;
+									int idImage = 50;
 									for(UploadedFile imagem : filesList) {
 										r.addBreak();
 										this.populateFiles(iImagem);
 										r.addPicture(this.getBis(), fileTypeInt, fileName.toLowerCase(), Units.toEMU(400), Units.toEMU(300));
 										r.addBreak();	
 										iImagem++;
+										
+									}
+									for (int i = 0; i < r.getCTR().getDrawingList().size(); i++) {
+										CTDrawing drawing = r.getCTR().getDrawingList().get(i);
+										drawing.getInlineList().get(0).getDocPr().setId(idImage);
+										idImage++;
 									}
 									text = trocaValoresXWPF(text, r, "ImagemImovel", "");						
 									adicionarEnter(text, r);
@@ -7821,6 +7829,8 @@ public class CcbMB {
 					}
 				}
 			}
+		    
+		    
 		    
 		    XWPFTableRow tableRow2 = document.getTableArray(1).getRow(1);
 
@@ -7886,8 +7896,6 @@ public class CcbMB {
 			}
 			
 			int indexParcela = 1;
-			
-			//calcularSimulador();
 			
 
 			XWPFParagraph paragraph1 = document.createParagraph();
@@ -8022,6 +8030,50 @@ public class CcbMB {
 		return null;
 	}
 
+	private void organizaSegurados(List<CcbParticipantes> segurados) {
+		if(segurados.size() <= 0) {
+			return;
+		}
+		BigDecimal porcentagem =  BigDecimal.valueOf(100).divide(BigDecimal.valueOf(segurados.size()), MathContext.DECIMAL128).setScale(2, BigDecimal.ROUND_HALF_UP);
+		if(this.objetoCcb.getListSegurados().size() == segurados.size()) {
+			return;
+		}
+		
+		SeguradoDAO seguradoDAO = new SeguradoDAO();
+		this.objetoCcb.getListSegurados().clear();
+		if(objetoCcb.getObjetoContratoCobranca().getListSegurados().size() == segurados.size()) {
+			for(Segurado segurado : this.objetoCcb.getObjetoContratoCobranca().getListSegurados()) {
+				this.objetoCcb.getListSegurados().add(segurado);
+			}
+		} else {
+			for(Segurado segurado : this.objetoCcb.getObjetoContratoCobranca().getListSegurados()) {
+				segurado.setContratoCobranca(null);
+				seguradoDAO.delete(segurado);
+			}
+			this.objetoCcb.getObjetoContratoCobranca().getListSegurados().clear();
+		
+			for(CcbParticipantes participante : segurados) {
+				Segurado segurado = new Segurado();
+				if(!CommonsUtil.semValor(this.objetoCcb.getObjetoContratoCobranca())) {
+					segurado.setPessoa(participante.getPessoa());
+					segurado.setPorcentagemSegurador(porcentagem);
+					segurado.setPosicao(this.objetoCcb.getListSegurados().size() + 1);
+					if(!this.objetoCcb.getObjetoContratoCobranca().getListSegurados().contains(segurado)) {		
+						segurado.setContratoCobranca(this.objetoCcb.getObjetoContratoCobranca());
+						this.objetoCcb.getObjetoContratoCobranca().getListSegurados().add(segurado);
+					}
+					if(!this.objetoCcb.getListSegurados().contains(segurado)) {	
+						
+						seguradoDAO.create(segurado);
+						this.objetoCcb.getListSegurados().add(segurado);
+					}
+				}
+			}
+		}
+			
+		
+	}
+
 	private void CabecalhoAnexo1(XWPFTable table, int r, int c, String text) {
 		XWPFRun run;
 		XWPFTableRow tableRow1;
@@ -8047,7 +8099,7 @@ public class CcbMB {
 				}
 			}
 			
-			document = new XWPFDocument(getClass().getResourceAsStream("/resource/AquisicaoCCI.docx"));
+			document = new XWPFDocument(getClass().getResourceAsStream("/resource/AquisicaoCCI_Novo.docx"));
 				
 			CTFonts fonts = CTFonts.Factory.newInstance();
 			fonts.setHAnsi("Times New Roman");
@@ -8285,9 +8337,13 @@ public class CcbMB {
 						
 			BigDecimal taxaAdm = SiscoatConstants.TAXA_ADM;
 			BigDecimal totalPrimeiraParcela = BigDecimal.ZERO;
-			totalPrimeiraParcela = this.objetoCcb.getValorMipParcela();
+			if (!CommonsUtil.semValor(this.objetoCcb.getValorMipParcela()))
+				totalPrimeiraParcela = this.objetoCcb.getValorMipParcela();
+			if (!CommonsUtil.semValor(this.objetoCcb.getValorDfiParcela()))
 			totalPrimeiraParcela = totalPrimeiraParcela.add(this.objetoCcb.getValorDfiParcela());
+			if (!CommonsUtil.semValor(this.objetoCcb.getValorParcela()))
 			totalPrimeiraParcela = totalPrimeiraParcela.add(this.objetoCcb.getValorParcela());
+			if (!CommonsUtil.semValor(taxaAdm))
 			totalPrimeiraParcela = totalPrimeiraParcela.add(taxaAdm);
 			
 			BigDecimal despesas = this.objetoCcb.getValorDespesas();
@@ -8317,6 +8373,7 @@ public class CcbMB {
 			
 			this.objetoCcb.setCustasCartorariasValor(custasCartorarias);
 			this.objetoCcb.setItbiValor(itbi);
+			
 			
 		    for (XWPFTable tbl : document.getTables()) {
 				for (XWPFTableRow row : tbl.getRows()) {
@@ -8393,6 +8450,15 @@ public class CcbMB {
 								text = trocaValoresXWPF(text, r, "nomeTestemunha2", this.objetoCcb.getNomeTestemunha2());
 								text = trocaValoresXWPF(text, r, "cpfTestemunha2", this.objetoCcb.getCpfTestemunha2());
 								text = trocaValoresXWPF(text, r, "rgTestemunha2", this.objetoCcb.getRgTestemunha2());
+								
+
+								text = trocaValoresXWPF(text, r, "elaboradorNome", this.objetoCcb.getElaboradorNome());								
+								text = trocaValoresXWPF(text, r, "elaboradorCrea", this.objetoCcb.getElaboradorCrea());
+								text = trocaValoresXWPF(text, r, "responsavelNome", this.objetoCcb.getResponsavelNome());
+								text = trocaValoresXWPF(text, r, "responsavelCrea", this.objetoCcb.getResponsavelCrea());
+								
+								
+								
 								
 								if (text != null && text.contains("sistemaAmortizacao")) {
 									if(CommonsUtil.mesmoValor(this.objetoCcb.getSistemaAmortizacao(), "Price")) {

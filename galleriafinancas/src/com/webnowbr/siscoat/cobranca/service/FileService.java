@@ -328,6 +328,9 @@ public class FileService {
 	}
 
 	public void salvarPdfRetorno(DocumentoAnalise documentoAnalise, String base64, String nomeConsulta, String diretorio) {
+		if(CommonsUtil.semValor(base64)) 
+			return;
+		
 		String nomeAnalise = documentoAnalise.getPagador().getNome();
 		String numeroContrato = documentoAnalise.getContratoCobranca().getNumeroContrato();
 		salvarPdfRetorno(nomeAnalise, numeroContrato, base64, nomeConsulta, diretorio);
@@ -349,7 +352,11 @@ public class FileService {
 		} catch (Exception e) {
 			fileExtension = "html"; 
 		}	
-		pdfRetorno.setName(nomeConsulta + " - " + nomeAnalise + "." + fileExtension);
+		if (CommonsUtil.semValor(nomeAnalise)) {
+			pdfRetorno.setName(nomeConsulta + "." + fileExtension);
+		} else {
+			pdfRetorno.setName(nomeConsulta + " - " + nomeAnalise + "." + fileExtension);
+		}
 		FileService fileService = new FileService();
 		User user = new UserDao().findById((long) -1);
 		fileService.salvarDocumentoBase64(pdfRetorno, numeroContrato, diretorio, user);

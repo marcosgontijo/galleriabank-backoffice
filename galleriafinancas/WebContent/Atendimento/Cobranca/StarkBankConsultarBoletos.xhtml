@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" template="../MenuAtendimento.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form" style="margin-bottom:10px;">
+			<script src="#{request.contextPath}/resources/js/functions.js"></script>
+			<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>
+			<p:messages id="mensagens" showDetail="true" />
+			<p:panel id="ConsultaStarkBankBoletos" header="Boletos StarkBank - Consultar"
+				style="margin-bottom:10px;">		
+				<h:panelGrid columns="2">					
+					<p:outputLabel for="dataInicio" value="Data Inicio: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataInicio"
+						value="#{starkBankAPI.dataInicio}"
+						required="true" label="Data Inicio" size="100"
+						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField"/>
+					<p:outputLabel for="dataFim" value="Data Fim: "
+						styleClass="labelBold" style="margin-right: 59px;" />
+					<p:calendar id="dataFim"
+						value="#{starkBankAPI.dataFim}" required="true"
+						label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt"
+						styleClass="dateTimeField"/>
+				</h:panelGrid>
+				<p:commandButton value="Consultar"
+					action="#{starkBankAPI.consultarBoletos}"
+					icon="ui-icon ui-icon-check"
+					update=":form:ConsultaStarkBankBoletosResultado"
+					style="TEXT-DECORATION: bold;" />
+			</p:panel>
+			<p:panel id="ConsultaStarkBankBoletosResultado" header="Boletos StarkBank - Resultados" style="margin-bottom:10px;">		    		    
+   		         <p:dataTable id="dtBoletos" var="boleto" value="#{starkBankAPI.listBoletos}" 
+   		         emptyMessage="" 
+   		         rowStyleClass= "#{boleto.status eq 'success' ? 'parcelaPaga' : (boleto.status eq 'failed' ? 'faltou' : null) } ">   
+                	<f:facet name="header">
+			        </f:facet>                              	
+			     	<p:column style="text-align: center;" headerText="CPF/CNPJ (Cedente)" filterBy="#{boleto.taxId}" filterMatchMode="contains" sortBy="#{boleto.taxId}">
+			            <h:outputText value="#{boleto.taxId}" />
+			        </p:column>		
+			        <p:column style="text-align: center;" headerText="Contrato" filterBy="#{boleto.tags}" filterMatchMode="contains" sortBy="#{boleto.tags}">
+			            <h:outputText value="#{boleto.tags}" />
+			        </p:column>	
+			        <p:column style="text-align: center;" headerText="Contrato" filterBy="#{boleto.status}" filterMatchMode="contains" sortBy="#{boleto.status}">
+			            <h:outputText value="#{boleto.status}" />
+			        </p:column>	
+			        <p:column style="text-align: center;" headerText="Emissão" sortBy="#{boleto.created}">
+			            <h:outputText value="#{boleto.created}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+			            </h:outputText>
+			        </p:column>	
+        		    <p:column style="text-align: center;"
+							headerText="Valor" >
+						<h:outputText value="R$ "/><h:outputText value="#{boleto.amount}" converter="bigDecimalConverter"/>
+					</p:column>	
+					<p:column style="text-align: center;" headerText="Linha Digitável">
+			            <h:outputText value="#{boleto.line}" />
+			        </p:column>	
+			        <f:facet name="footer">
+			        </f:facet>             		        			        			           			 		
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

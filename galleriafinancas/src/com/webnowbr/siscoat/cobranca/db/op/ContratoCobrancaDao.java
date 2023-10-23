@@ -4532,6 +4532,10 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					query_RELATORIO_FINANCEIRO_CUSTOM += QUERY_RELATORIO_FINANCEIRO_DIA_CRI_3;		
 				}
 				
+				if (tipoContratoCobrancaFinanceiroDia.equals("EspelhamentoCRI4")) {
+					query_RELATORIO_FINANCEIRO_CUSTOM += QUERY_RELATORIO_FINANCEIRO_DIA_CRI_4;		
+				}
+				
 				try {
 					connection = getConnection();
 
@@ -8956,7 +8960,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						Date data = rs.getDate("ContratoResgatadoData");
 						boolean baixar = true;
 						if (rs.getBoolean("ContratoResgatadoBaixar")) {
-							if (getDifferenceDays(data, auxDataHoje) <= 30) {
+							if (getDifferenceDays(data, auxDataHoje) <= 15) {
 								baixar = false;
 							}
 						}

@@ -2,9 +2,6 @@ package com.webnowbr.siscoat.cobranca.mb;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -33,7 +30,6 @@ import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.job.IpcaJobCalcular;
 import com.webnowbr.siscoat.job.IpcaJobContrato;
 import com.webnowbr.siscoat.simulador.SimulacaoDetalheVO;
-import com.webnowbr.siscoat.simulador.SimulacaoVO;
 
 
 @ManagedBean(name = "ipcaMB")
@@ -67,7 +63,7 @@ public class IPCAMB {
 	}
 	
 	public String clearFieldsIPCA() {
-		this.data = gerarDataHoje();
+		this.data = DateUtil.gerarDataHoje();
 		this.taxa = BigDecimal.ZERO;				
 		
 		IPCADao ipcaDao = new IPCADao();
@@ -688,14 +684,6 @@ public class IPCAMB {
 		}
 	}
 	
-	public Date gerarDataHoje() {
-		TimeZone zone = TimeZone.getDefault();
-		Locale locale = new Locale("pt", "BR");
-		Calendar dataHoje = Calendar.getInstance(zone, locale);
-
-		return dataHoje.getTime();
-	}
-
 	public List<IPCA> getListIPCA() {
 		return listIPCA;
 	}

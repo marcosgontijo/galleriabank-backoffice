@@ -26,6 +26,7 @@ public class DocumentoAnaliseJobConsultar {
 	
 	public List<DocumentoAnalise> listaDocumentoAnalise;
 	public User user;
+	public String urlWenhook;
 	public ContratoCobranca objetoContratoCobranca;
 	
 	private int stepTotal;	
@@ -87,7 +88,7 @@ public class DocumentoAnaliseJobConsultar {
 								objetoContratoCobranca);
 						step ++;
 						stepDescricao= "";
-						engineService.engineCriarConsulta(documentoAnalise, engine, user);
+						engineService.engineCriarConsulta(documentoAnalise, engine, user, urlWenhook );
 						
 						
 						if(!CommonsUtil.semValor(documentoAnalise.getRetornoEngine())) {

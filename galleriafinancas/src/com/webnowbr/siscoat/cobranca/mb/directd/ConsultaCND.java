@@ -46,6 +46,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.webnowbr.siscoat.cobranca.db.model.directd.CND;
+import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 
 
@@ -244,25 +245,14 @@ public class ConsultaCND {
 			try {
 				retorno = ((java.util.Date) formatterOnlyDate.parse(dateStr));
 			} catch (ParseException e1) {
-				retorno = gerarDataHoje();
+				retorno = DateUtil.gerarDataHoje();
 
 				return retorno;
 			}
 			return retorno;
 		}
 	}
-	/**
-	 * GERA A DATA DE HOJE
-	 * @return
-	 */
-	public Date gerarDataHoje() {
-		TimeZone zone = TimeZone.getDefault();  
-		Locale locale = new Locale("pt", "BR");  
-		Calendar dataHoje = Calendar.getInstance(zone, locale);
-
-		return dataHoje.getTime();
-	}
-
+	
 	/***
 	 * 
 	 * PARSE DO RETORNO SUCESSO

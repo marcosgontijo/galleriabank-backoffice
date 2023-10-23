@@ -6,12 +6,8 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
@@ -34,6 +30,7 @@ import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.DocketConsultaDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocketEstadosDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentosDocketDao;
+import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
@@ -52,15 +49,7 @@ public class DocketMB {
 	private String etapa;
 	private ContratoCobranca contratoCobranca;
 	
-	
-	public Date gerarDataHoje() {
-		TimeZone zone = TimeZone.getDefault();
-		Locale locale = new Locale("pt", "BR");
-		Calendar dataHoje = Calendar.getInstance(zone, locale);
 
-		return dataHoje.getTime();
-	}
-	
 	public String getNomeUsuarioLogado() {
 		User usuario = getUsuarioLogado();
 
@@ -129,19 +118,19 @@ public class DocketMB {
 		List<DocketConsulta> listAux = new ArrayList<DocketConsulta>();
 		for (DocumentosDocket doc : docketDocumentos) {
 			DocketConsulta docketConsulta = null;
-			if (doc.getDocumentoNome().contains("Federal")) {
+			/*if (doc.getDocumentoNome().contains("Federal")) {
 				docketConsulta = new DocketConsulta(docAnalise, doc);
 				docketConsulta.setUf(contrato.getImovel().getEstado());
 				listAux.add(docketConsulta);
-			} else {
-				for (String uf : docAnalise.getEstadosConsulta()) {
-					if (doc.getEstados().contains(uf)) {
-						docketConsulta = new DocketConsulta(docAnalise, doc);
-						docketConsulta.setUf(uf);
-						listAux.add(docketConsulta);
-					}
+			} else {*/
+			for (String uf : docAnalise.getEstadosConsulta()) {
+				if (doc.getEstados().contains(uf)) {
+					docketConsulta = new DocketConsulta(docAnalise, doc);
+					docketConsulta.setUf(uf);
+					listAux.add(docketConsulta);
 				}
 			}
+			//}
 		}
 		for (DocketConsulta docketConsulta : listAux) {
 			DocketEstadosDao estadosDao = new DocketEstadosDao();
@@ -217,6 +206,8 @@ public class DocketMB {
 		}
 		boolean podeChamar = true;
 		for(DocumentoAnalise docAnalise : listPagador) {
+			PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
+			pagadorRecebedorDao.merge(docAnalise.getPagador());
 			List<DocketConsulta> consultasExistentes = new ArrayList<DocketConsulta>();
 			List<DocketConsulta> consultasExistentesDB = new ArrayList<DocketConsulta>();
 			
@@ -255,7 +246,7 @@ public class DocketMB {
 	}
 	
 	public void removerPessoa(DocumentoAnalise docAnalise) {
-		docAnalise.getDocketConsultas().clear();
+		//docAnalise.getDocketConsultas().clear();
 		listPagador.remove(docAnalise);
 	}
 	

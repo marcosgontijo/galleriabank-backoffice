@@ -40,10 +40,14 @@ public class DocumentoAnaliseJob implements Job {
 	        //fetch parameters from JobDataMap
 			List<DocumentoAnalise> listaDocumentoAnalise = (List<DocumentoAnalise>) dataMap.get("listaDocumentoAnalise");
 	        User user = (User) dataMap.get("user");
+	        
+	        String urlWenhook =  (String) dataMap.get("urlWenhook");
+	        
 	        ContratoCobranca objetoContratoCobranca = (ContratoCobranca) dataMap.get("objetoContratoCobranca");
 	        
 	        documentoAnaliseJobConsultar.listaDocumentoAnalise = listaDocumentoAnalise;
 	        documentoAnaliseJobConsultar.user = user;
+	        documentoAnaliseJobConsultar.urlWenhook = urlWenhook;
 	        documentoAnaliseJobConsultar.objetoContratoCobranca = objetoContratoCobranca;
 	        
 			jobKey = "" + context.getJobDetail().getKey();

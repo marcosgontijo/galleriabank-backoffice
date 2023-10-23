@@ -1,7 +1,6 @@
 package com.webnowbr.siscoat.cobranca.service;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -11,8 +10,6 @@ import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Comparator;
@@ -29,28 +26,16 @@ import org.json.JSONObject;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.DataEngine;
-import com.webnowbr.siscoat.cobranca.db.model.Docket;
-import com.webnowbr.siscoat.cobranca.db.model.DocketConsulta;
-import com.webnowbr.siscoat.cobranca.db.model.DocketRetorno;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
-import com.webnowbr.siscoat.cobranca.db.model.DocumentosDocket;
-import com.webnowbr.siscoat.cobranca.db.model.DocumentosPagadorDocket;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.DataEngineDao;
-import com.webnowbr.siscoat.cobranca.db.op.DocketConsultaDao;
-import com.webnowbr.siscoat.cobranca.db.op.DocketDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
-import com.webnowbr.siscoat.cobranca.model.docket.DocketRetornoConsulta;
-import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.cobranca.ws.endpoint.DocketWebhookRetornoDocumento;
-import com.webnowbr.siscoat.cobranca.ws.endpoint.ReaWebhookRetorno;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
-import com.webnowbr.siscoat.common.MultipartUtility;
 import com.webnowbr.siscoat.common.SiscoatConstants;
-import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
 
 import br.com.galleriabank.dataengine.cliente.model.request.DataEngineIdSend;
@@ -77,10 +62,10 @@ public class EngineService {
 			+ "R2t-P-qwzvsS5ADEsY5vTLTqyWo0";
 
 	public FacesMessage engineCriarConsulta(DataEngine engine, User usuarioLogado) {
-		return engineCriarConsulta(null, engine, usuarioLogado);
+		return engineCriarConsulta(null, engine, usuarioLogado, null);
 	}
 
-	public FacesMessage engineCriarConsulta(DocumentoAnalise documentoAnalise, DataEngine engine, User usuarioLogado) { 
+	public FacesMessage engineCriarConsulta(DocumentoAnalise documentoAnalise, DataEngine engine, User usuarioLogado, String urlWenhook ) { 
 		DataEngineDao engineDao = new DataEngineDao();
 		if (!CommonsUtil.semValor(engine.getIdCallManager())) {
 			if (documentoAnalise != null) {
@@ -122,7 +107,7 @@ public class EngineService {
 			myURLConnection.setDoOutput(true);
 
 			DataEngineIdSend myResponse = null;
-			JSONObject jsonWhatsApp = engineBodyJsonEngine(engine.getPagador());
+			JSONObject jsonWhatsApp = engineBodyJsonEngine(engine.getPagador(), urlWenhook );
 
 			try (OutputStream os = myURLConnection.getOutputStream()) {
 				byte[] input = jsonWhatsApp.toString().getBytes("utf-8");
@@ -138,7 +123,7 @@ public class EngineService {
 						"Engine: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", "");
 			} else {
 				// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
-				// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
+				// cidadeImovel, "", getNomeUsuarioLogado(), DateUtil.gerarDataHoje());
 
 				myResponse = engineJSONRetorno(myURLConnection.getInputStream());
 				if (CommonsUtil.mesmoValor("401", myResponse.getCode())) {
@@ -147,7 +132,7 @@ public class EngineService {
 				}
 
 				engine.setIdCallManager(myResponse.getIdCallManager());
-				engine.setData(DateUtil.getDataHoje());
+				engine.setData(DateUtil.gerarDataHoje());
 				engine.setUsuario(usuarioLogado.getName());
 				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 				if (engine.getContrato() != null && engine.getContrato().getId() > 0)
@@ -220,7 +205,7 @@ public class EngineService {
 			myURLConnection.addRequestProperty("x-api-key", this.engineChaveApi);
 
 			JSONObject myResponse = null;
-			JSONObject jsonWhatsApp = engineBodyJsonEngine(engine.getPagador());
+			JSONObject jsonWhatsApp = engineBodyJsonEngine(engine.getPagador(),null );
 
 			try (OutputStream os = myURLConnection.getOutputStream()) {
 				byte[] input = jsonWhatsApp.toString().getBytes("utf-8");
@@ -236,11 +221,11 @@ public class EngineService {
 						"Engine: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", "");
 			} else {
 				// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
-				// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
+				// cidadeImovel, "", getNomeUsuarioLogado(), DateUtil.gerarDataHoje());
 
 				myResponse = engineJSONSucesso(myURLConnection.getInputStream());
 				engine.setIdCallManager(myResponse.get("idCallManager").toString());
-				engine.setData(DateUtil.getDataHoje());
+				engine.setData(DateUtil.gerarDataHoje());
 				engine.setUsuario(usuarioLogado.getName());
 				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 				if (engine.getContrato() != null && engine.getContrato().getId() > 0)
@@ -308,7 +293,7 @@ public class EngineService {
 	public void requestEngine(DocumentoAnalise documentoAnalise, DataEngine engine, User usuarioLogado) {
 
 		if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
-			engineCriarConsulta(documentoAnalise, engine, usuarioLogado);
+			engineCriarConsulta(documentoAnalise, engine, usuarioLogado, null);
 		}
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 		documentoAnalise = documentoAnaliseDao.findById(documentoAnalise.getId());
@@ -640,7 +625,7 @@ public class EngineService {
 				System.out.println(myURL.toString());
 			} else {
 				// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
-				// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
+				// cidadeImovel, "", getNomeUsuarioLogado(), DateUtil.gerarDataHoje());
 				context.addMessage(null,
 						new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", ""));
 				BufferedReader in;
@@ -702,7 +687,7 @@ public class EngineService {
 				System.out.println(myURL.toString());
 			} else {
 				// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
-				// cidadeImovel, "", getNomeUsuarioLogado(), gerarDataHoje());
+				// cidadeImovel, "", getNomeUsuarioLogado(), DateUtil.gerarDataHoje());
 //				context.addMessage(null,
 //						new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", ""));
 				BufferedReader in;
@@ -728,7 +713,7 @@ public class EngineService {
 		return null;
 	}
 
-	private JSONObject engineBodyJsonEngine(PagadorRecebedor pagador) {
+	private JSONObject engineBodyJsonEngine(PagadorRecebedor pagador, String urlWenhook ) {
 		JSONObject jsonDocketBodyPedido = new JSONObject();
 		if (!CommonsUtil.semValor(pagador.getCpf())) {
 			jsonDocketBodyPedido.put("idProviderFlow", engineIdproviderFlowPF);
@@ -738,7 +723,10 @@ public class EngineService {
 			jsonDocketBodyPedido.put("fields", engineJsonPJ(pagador));
 		}
 		String webHookJWT = JwtUtil.generateJWTWebhook(true);
-		jsonDocketBodyPedido.put("urlWebhook", SiscoatConstants.URL_SISCOAT_ENGINE_WEBHOOK + webHookJWT);
+		if ( CommonsUtil.semValor( urlWenhook )) 
+			jsonDocketBodyPedido.put("urlWebhook", SiscoatConstants.URL_SISCOAT_ENGINE_WEBHOOK + webHookJWT);
+		else
+			jsonDocketBodyPedido.put("urlWebhook", SiscoatConstants.URL_SISCOAT_ENGINE_WEBHOOK.replace("https://backoffice.galleriabank.com.br", urlWenhook) + webHookJWT);
 
 		return jsonDocketBodyPedido;
 	}
@@ -838,13 +826,6 @@ public class EngineService {
 		return null;
 	}
 
-	private Date gerarDataHoje() {
-		TimeZone zone = TimeZone.getDefault();
-		Locale locale = new Locale("pt", "BR");
-		Calendar dataHoje = Calendar.getInstance(zone, locale);
-
-		return dataHoje.getTime();
-	}	
 
 	public String getPdfBase64(String documento) {
 		DocketWebhookRetornoDocumento documentoPdf = GsonUtil.fromJson(documento, DocketWebhookRetornoDocumento.class);

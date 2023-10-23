@@ -16,7 +16,7 @@
 			<ui:define name="menu">  
 				<h:form style="margin-bottom:10px;" id="menuAtendimentoForm" >
 					<p:menu style="width: 250px; ">	
-						<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA, ASSISTENTEFINANCEIRO, PRECOBRANCAANALISTA, PROFILE_MARKETING, ASSISTENTEFINANCEIRO">					
+						<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCA, ASSISTENTEFINANCEIRO, PRECOBRANCAANALISTA, PROFILE_MARKETING, ASSISTENTEFINANCEIRO, PROFILE_GERENTE_ANALISE">					
 							<p:submenu label="Gerenciamento" styleClass="titulosMenu">
 								<shiro:hasAnyRoles name="ROOT, ASSISTENTEFINANCEIRO">
 									<p:menuitem value="Contas a Pagar"
@@ -33,6 +33,8 @@
 										action="#{contasPagarMB.clearFieldsContasPagas}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, PROFILE_GERENTE_ANALISE">
 									<p:menuitem value="Dashboard SEO"
 										action="#{dashboardMB.clearFields}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
@@ -42,13 +44,13 @@
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT, PROFILE_MARKETING">
+								<shiro:hasAnyRoles name="ROOT, PROFILE_MARKETING, PROFILE_GERENTE_ANALISE">
 									<p:menuitem value="Dashboard Manager Ver2"
 										action="#{dashboardMBVer2.clearFieldsDashContratos}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT">
+								<shiro:hasAnyRoles name="ROOT, PROFILE_GERENTE_ANALISE">
 									<p:menuitem value="PowerBi"
 										action="#{powerBiMb.clearPowerBi}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
@@ -61,6 +63,8 @@
 										action="#{visaoGeralMB.clearFields}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT">
 									<p:menuitem value="Notifica Responsáveis"
 										action="#{notificacoesMB.clearFields}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
@@ -153,11 +157,11 @@
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, COBRANCA, PRECOBRANCAANALISTA, PROFILE_ANALISTA_CREDITO, PROFILE_GERENTE_ANALISE">
-									<p:menuitem value="Docket"
+									<!--<p:menuitem value="Docket"
 										action="#{docketMB.clearFieldsDocket}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
-								<!-- 	<p:menuitem value="Consulta SCR"
+								 	<p:menuitem value="Consulta SCR"
 										action="#{bmpDigitalMB.clearFields}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu"/> -->		
@@ -330,6 +334,10 @@
 								<shiro:hasAnyRoles name="ROOT">
 									<p:menuitem value="StarkBank - Aprovar Pagamentos"
 										action="#{contratoCobrancaMB.consultaPagamentosStarkBankPendentes()}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+									<p:menuitem value="StarkBank - Consultar Boletos"
+										action="/Atendimento/Cobranca/StarkBankConsultarBoletos.xhtml"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
