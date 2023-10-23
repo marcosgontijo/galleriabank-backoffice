@@ -864,10 +864,13 @@ public class DocketService {
 			DocketDao docketDao = new DocketDao();
 			List<Docket> lista = docketDao.findByFilter("objetoContratoCobranca", contrato);
 			if(lista.size() > 0) {
-				DocketRetornoConsulta retornoObject = docketService.buscarRetornoPedido(docketDao.findByFilter("objetoContratoCobranca", contrato).get(0).getIdCallManager());
-				for(DocketDocumento documento : retornoObject.getPedido().getDocumentos()) {
-					if(CommonsUtil.mesmoValor(documento.getId(), docket.getIdDocket())) {
-						docket.setRetorno(GsonUtil.toJson(documento));
+				List<Docket> listaDockets = docketDao.findByFilter("objetoContratoCobranca", contrato);
+				for (Docket objDocket : listaDockets) {
+					DocketRetornoConsulta retornoObject = docketService.buscarRetornoPedido(objDocket.getIdCallManager());
+					for (DocketDocumento documento : retornoObject.getPedido().getDocumentos()) {
+						if (CommonsUtil.mesmoValor(documento.getId(), docket.getIdDocket())) {
+							docket.setRetorno(GsonUtil.toJson(documento));
+						}
 					}
 				}
 			} else {

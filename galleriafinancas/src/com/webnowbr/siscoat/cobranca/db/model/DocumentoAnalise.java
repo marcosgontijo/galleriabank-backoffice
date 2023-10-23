@@ -1273,4 +1273,12 @@ public class DocumentoAnalise implements Serializable {
 	public void setHasRiscoTotal(boolean hasRiscoTotal) {
 		this.isRiscoTotalAvailable = hasRiscoTotal;
 	}
+
+	public String getRetornoRelacionamento() {
+		return retornoRelacionamento;
+	}
+
+	public void setRetornoRelacionamento(String retornoRelacionamento) {
+		this.retornoRelacionamento = retornoRelacionamento;
+	}
 }

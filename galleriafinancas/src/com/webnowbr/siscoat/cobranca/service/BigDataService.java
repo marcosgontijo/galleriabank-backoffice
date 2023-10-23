@@ -208,6 +208,8 @@ public class BigDataService {
 			// loginDocket();
 			int HTTP_COD_SUCESSO = 200;
 			int HTTP_COD_SUCESSO2 = 201;
+			if(CommonsUtil.semValor(retornoProcesso))
+				return null;
 
 			URL myURL = new URL("https://servicos.galleriabank.com.br/bigData/api/v1/processo/true");
 

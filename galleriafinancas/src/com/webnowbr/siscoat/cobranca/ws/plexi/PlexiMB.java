@@ -627,14 +627,7 @@ public class PlexiMB {
 		}
 		return true;
 	}	
-	
-	public void atualizaConsultasDocumentoAnalise() {
-		System.out.println("inicio");
-		PlexiConsultaDao plexiConsultaDao = new PlexiConsultaDao();
-		plexiConsultaDao.addDocumentoAnalise();
-		System.out.println("Fim");
-	}
-	
+		
 	public List<DocumentoAnalise> getListPagador() {
 		return listPagador;
 	}
