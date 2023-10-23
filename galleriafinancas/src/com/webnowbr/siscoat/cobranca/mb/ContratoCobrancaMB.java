@@ -191,6 +191,7 @@ import com.webnowbr.siscoat.cobranca.service.PajuService;
 import com.webnowbr.siscoat.cobranca.service.RelatoriosService;
 import com.webnowbr.siscoat.cobranca.service.ScrService;
 import com.webnowbr.siscoat.cobranca.service.SerasaService;
+import com.webnowbr.siscoat.cobranca.vo.ContratosPagadorAnalisadoVO;
 import com.webnowbr.siscoat.cobranca.vo.FileGenerator;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -692,7 +693,7 @@ public class ContratoCobrancaMB {
 
 	private Collection<ContratoCobranca> contratosPendentes;
 	private Collection<ContratoCobranca> contratos;
-	private Collection<ContratoCobranca> contratosPagadorAnalisado;
+	private Collection<ContratosPagadorAnalisadoVO> contratosPagadorAnalisado;
 	private Collection<ContratoCobranca> contratosImovelAnalisado;
 	private String contratosLaudo;
 
@@ -9093,7 +9094,12 @@ public class ContratoCobrancaMB {
 		}
 
 		if (contratosPagadorAnalisado.size() > 0) {
-			this.contratosPagadorAnalisado = populaStatus(contratosPagadorAnalisado);
+			for (ContratosPagadorAnalisadoVO contratosPagadorAnalisadoVO : contratosPagadorAnalisado) {
+//				for (ContratoCobranca contratoCobranca : contratosPagadorAnalisadoVO.getContratosPagadorAnalisado()) {
+//				contratosPagadorAnalisadoVO.setContratosPagadorAnalisado(
+				populaStatus(contratosPagadorAnalisadoVO.getContratosPagadorAnalisado());
+//				}
+			}
 			PrimeFaces current = PrimeFaces.current();
 			current.executeScript("PF('listaContratosPagador').show();");
 		}
@@ -9302,7 +9308,10 @@ public class ContratoCobrancaMB {
 			}
 
 			if (contratosPagadorAnalisado.size() > 0) {
-				this.contratosPagadorAnalisado = populaStatus(contratosPagadorAnalisado);
+				for (ContratosPagadorAnalisadoVO contratosPagadorAnalisadoVO : contratosPagadorAnalisado) {
+					contratosPagadorAnalisadoVO.setContratosPagadorAnalisado(
+							populaStatus(contratosPagadorAnalisadoVO.getContratosPagadorAnalisado()));
+				}
 				PrimeFaces current = PrimeFaces.current();
 				current.executeScript("PF('listaContratosPagador').show();");
 			}
@@ -13129,6 +13138,7 @@ public class ContratoCobrancaMB {
 				}
 			}
 		}
+		
 		this.contratosPendentes = populaStatus(this.contratosPendentes);
 
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPendentes.xhtml";
@@ -19563,6 +19573,8 @@ public class ContratoCobrancaMB {
 			ContasPagarDao cpDao = new ContasPagarDao();
 			if (processoSelecionado.getContaPagar().getId() <= 0) {
 				cpDao.create(processoSelecionado.getContaPagar());
+			} else {
+				cpDao.merge(processoSelecionado.getContaPagar());
 			}
 		}
 		CcbProcessosJudiciaisDao ccbProcessosJudiciaisDao = new CcbProcessosJudiciaisDao();
@@ -31201,6 +31213,8 @@ public class ContratoCobrancaMB {
 		documentoAnaliseAdicionar.setPagador(new PagadorRecebedor());
 		documentoAnaliseAdicionar.setContratoCobranca(this.objetoContratoCobranca);
 		documentoAnaliseAdicionar.setObservacao(".");
+		documentoAnaliseAdicionar.setLiberadoAnalise(true);
+		documentoAnaliseAdicionar.setLiberadoCertidoes(true);
 	}
 
 	public void adicionarPessoaAnalise() {
@@ -33362,11 +33376,11 @@ public class ContratoCobrancaMB {
 		this.baixaCustosDiversos = baixaCustosDiversos;
 	}
 
-	public Collection<ContratoCobranca> getContratosPagadorAnalisado() {
+	public Collection<ContratosPagadorAnalisadoVO> getContratosPagadorAnalisado() {
 		return contratosPagadorAnalisado;
 	}
 
-	public void setContratosPagadorAnalisado(Collection<ContratoCobranca> contratosPagadorAnalisado) {
+	public void setContratosPagadorAnalisado(Collection<ContratosPagadorAnalisadoVO> contratosPagadorAnalisado) {
 		this.contratosPagadorAnalisado = contratosPagadorAnalisado;
 	}
 
@@ -33804,7 +33818,8 @@ public class ContratoCobrancaMB {
 				Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
 				listaArquivos.putAll(documentoAnalise.zipDeCertidoes());
 				for (Map.Entry<String, byte[]> entry : listaArquivos.entrySet()) {
-					String nomepagador = documentoAnalise.getPagador().getNome().replace(",", "_");
+					String nomepagador = documentoAnalise.getPagador().getNome().replace(",", "_") + 
+							"_"+ CommonsUtil.somenteNumeros(documentoAnalise.getPagador().getCpfCnpj());
 					String[] key = new String[] {nomepagador, entry.getKey()};
 					listaTodosArquivos.put(key, entry.getValue());
 			    }
@@ -33872,10 +33887,8 @@ public class ContratoCobrancaMB {
 
 	public boolean isVerificaReaProcessado() {
 		for (DocumentoAnalise documento : listaDocumentoAnalise) {
-
 			if (documento.isReaProcessado()) 
 				return true;
-			
 		}
 		return false;
 	}

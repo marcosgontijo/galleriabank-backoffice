@@ -8,12 +8,14 @@
 
 	<h:outputStylesheet name="primeicons/primeicons.css"
 		library="primefaces" />
-		
+	
+
 	<p:ajaxStatus onstart="PF('statusDialog2').show()"
 		oncomplete="PF('statusDialog2').hide()"
 		onsuccess="PF('statusDialog2').hide()"
 		onerror="PF('statusDialog2').hide()" />
-
+		
+		
 	<p:dialog widgetVar="statusDialog2" modal="true" draggable="false"
 		closable="false" resizable="false" showHeader="false">
 		<div class="text-center">
@@ -22,8 +24,8 @@
 	</p:dialog>
 
 	<p:dialog id="resumoDialogHeader" widgetVar="resumoConsutlasDialog"
-		showEffect="fade" hideEffect="fade" resizable="false"
-		responsive="false" width="1000" positionType="center center"
+		showEffect="fade" hideEffect="fade" resizable="false"  styleClass="overflowy" 
+		responsive="false" width="1000"  positionType="center center" 
 		closable="true" update="true">
 		<f:facet name="header">
 			<h:outputText
@@ -42,7 +44,7 @@
 								<h:outputText value="#{relacionamentos.descricao}" />
 							</p:column>
 							<p:column>
-								<h:outputText value="#{relacionamentos.valor}" />
+								<h:outputText value="#{relacionamentos.valor}"  style="text-transform:uppercase"/>
 							</p:column>
 
 
@@ -304,7 +306,7 @@
 		</h:form>
 	</p:dialog>
 
-	<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA, COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO">
+	<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
 		<p:dialog header="Adicionar pessoa Analise" overflow="auto"
 			id="dialogAdicionarPessoaAnalise"
 			widgetVar="adicionarPessoaAnaliseDlg" resizable="true"
