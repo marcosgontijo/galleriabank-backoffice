@@ -994,6 +994,18 @@ public class KobanaMB {
 	    }
 		
 		jsonBoleto.put("description", "Crédito com Imóvel em Garantia - Contrato: " + contrato.getNumeroContrato() + " / Parcela(s): " + parcelas);
+			
+		if (contrato.getEmpresa().equals("GALLERIA FINANÇAS SECURITIZADORA S.A.")) {
+			jsonBoleto.put("instructions", "Crédito cedido para GALLERIA FINANCAS SECURITIZADORA S.A., CNPJ nº 34.425.347/0001-06");
+		}
+		
+		if (contrato.getEmpresa().equals("FIDC GALLERIA")) {
+			jsonBoleto.put("instructions", "Crédito cedido para GALLERIA HOME EQUITY FIDC, CNPJ nº 37.294.759/0001-34");
+		}
+		
+		if (contrato.getEmpresa().equals("CRI 1") || contrato.getEmpresa().equals("CRI 2") || contrato.getEmpresa().equals("CRI 3")) {
+			jsonBoleto.put("instructions", "Crédito cedido para True Securitizadora S.A., CNPJ nº 12.130.744/0001-00");
+		}
 		
 		if (contrato.getEmpresa().equals("CRI 4")) {
 			jsonBoleto.put("instructions", "Crédito cedido para Companhia Província de Securitização, CNPJ/MF n° 04.200.649/0001-07");
@@ -1353,6 +1365,18 @@ public class KobanaMB {
 		//jsonBoleto.put("days_for_infine_valueterest", fine_value);
 		
 		jsonBoleto.put("description", "Crédito com Imóvel em Garantia");
+		
+		if (contrato.getEmpresa().equals("GALLERIA FINANÇAS SECURITIZADORA S.A.")) {
+			jsonBoleto.put("instructions", "Crédito cedido para GALLERIA FINANCAS SECURITIZADORA S.A., CNPJ nº 34.425.347/0001-06");
+		}
+		
+		if (contrato.getEmpresa().equals("FIDC GALLERIA")) {
+			jsonBoleto.put("instructions", "Crédito cedido para GALLERIA HOME EQUITY FIDC, CNPJ nº 37.294.759/0001-34");
+		}
+		
+		if (contrato.getEmpresa().equals("CRI 1") || contrato.getEmpresa().equals("CRI 2") || contrato.getEmpresa().equals("CRI 3")) {
+			jsonBoleto.put("instructions", "Crédito cedido para True Securitizadora S.A., CNPJ nº 12.130.744/0001-00");
+		}
 		
 		if (contrato.getEmpresa().equals("CRI 4")) {
 			jsonBoleto.put("instructions", "Crédito cedido para Companhia Província de Securitização, CNPJ/MF n° 04.200.649/0001-07");

@@ -136,6 +136,9 @@
         <property name="profileController" type="boolean">
             <column name="profileController" not-null="true" default="false" />
         </property>    
+        <property name="profileConsultaKobana" type="boolean">
+            <column name="profileConsultaKobana" not-null="true" default="false" />
+        </property>         
         <property name="comiteEditar" type="boolean">
             <column name="comiteEditar" />
         </property>

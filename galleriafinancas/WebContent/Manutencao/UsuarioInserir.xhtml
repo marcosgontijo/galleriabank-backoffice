@@ -353,6 +353,19 @@
 					style="margin-bottom:10px;margin-top:20px;">
 					<h:panelGrid columns="2">
 					
+						<h:outputLabel for="profileConsultaKobana" value="Consulta Kobana"
+							class="labelBold" />
+						<h:panelGroup>
+							<p:selectBooleanButton id="profileConsultaKobana"
+								value="#{usuarioMB.objetoUsuario.profileConsultaKobana}"
+								onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+								offIcon="ui-icon-close" style="width:60px">
+							</p:selectBooleanButton>
+							<shiro:hasAnyRoles name="ROOT">
+								<h:outputLabel value="PROFILE_CONSULTA_KOBANA" />
+							</shiro:hasAnyRoles>
+						</h:panelGroup>
+						
 						<h:outputLabel for="profileController" value="Controller"
 							class="labelBold" />
 						<h:panelGroup>
