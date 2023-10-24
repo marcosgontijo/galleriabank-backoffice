@@ -462,9 +462,9 @@
 								</shiro:hasAnyRoles>
 							</p:submenu>
 						</shiro:hasAnyRoles>
-						<shiro:hasAnyRoles name="ROOT, COBRANCA, ASSISTENTEFINANCEIRO, AGENTE_ESPELHAMENTO, POSOPERACAO, PROFILE_COBRANCA">
+						<shiro:hasAnyRoles name="ROOT, COBRANCA, ASSISTENTEFINANCEIRO, AGENTE_ESPELHAMENTO, POSOPERACAO, PROFILE_COBRANCA, PROFILE_CONTROLLER, PROFILE_CONSULTA_KOBANA">
 							<p:submenu label="Financeiro" styleClass="titulosMenu">
-								<shiro:hasAnyRoles name="ROOT, POSOPERACAO, PROFILE_COBRANCA">
+								<shiro:hasAnyRoles name="ROOT, PROFILE_CONTROLLER, POSOPERACAO, PROFILE_COBRANCA">
 									<p:menuitem value="Pagar Pós Operação"
 										action="#{contasPagarMB.clearFieldsPosOperacao}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
@@ -475,16 +475,20 @@
 										action="#{imovelCobrancaMB.clearFieldsEstoqueImoveis}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
 										styleClass="itemMenu" />
-									</shiro:hasAnyRoles>
-									<shiro:hasAnyRoles name="ROOT, COBRANCA, PROFILE_COBRANCA">
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, PROFILE_CONTROLLER, COBRANCA, PROFILE_COBRANCA">
 									<p:menuitem value="Boletos Kobana"
 										action="#{kobanaMB.clearFieldsParcelasBoleto}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
 										styleClass="itemMenu" />
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, PROFILE_CONTROLLER, COBRANCA, PROFILE_COBRANCA, PROFILE_CONSULTA_KOBANA">
 									<p:menuitem value="Consultar Kobana"
 										action="#{kobanaMB.clearFieldsConsultarBoleto}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
 										styleClass="itemMenu" />								
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="ROOT, PROFILE_CONTROLLER, COBRANCA, PROFILE_COBRANCA">
 									<p:menuitem value="Financeiro"
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiro}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
