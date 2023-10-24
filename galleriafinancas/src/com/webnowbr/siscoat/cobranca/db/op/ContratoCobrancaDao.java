@@ -9132,7 +9132,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 							retorno.add(contratosPagadorAnalisadoVO.get());
 						}
 						
-		 				contratosPagadorAnalisadoVO.get().getContratosPagadorAnalisado().add(contratoCobranca);
+						if ( !contratosPagadorAnalisadoVO.get().getContratosPagadorAnalisado().stream().filter(r ->  CommonsUtil.mesmoValor(r.getId(),contratoCobranca.getId() )).findAny().isPresent())
+							contratosPagadorAnalisadoVO.get().getContratosPagadorAnalisado().add(contratoCobranca);
 					}
 	
 				} finally {
@@ -9140,7 +9141,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				}
 				
 				return retorno.stream()
-						.sorted((o1, o2) -> (o1.getRelacionamento().getRelacao().equals("PAGADOR") ? 0 : 1))
+						.sorted((o1, o2) -> (o1.getRelacionamento().getRelacao().equals("PAGADOR") ? 1 : 0))
 						.sorted((o1, o2) -> o1.getPagador().getNome().compareTo(o2.getPagador().getNome()))
 						.collect(Collectors.toList());
 			}
