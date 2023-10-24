@@ -1908,6 +1908,16 @@ public class NetrinService {
 			return;
 		}
 		
+		if (CommonsUtil.mesmoValor(url, "/api/v1/processo")) {
+			pdf = baixarDocumentoProcesso(retorno);
+		} else if (CommonsUtil.mesmoValor(url, "/api/v1/CNDEstadual")) {
+			pdf = baixarDocumentoCNDEstadual(retorno);
+		} else if (CommonsUtil.mesmoValor(url, "/api/v1/CNDFederal")) {
+			pdf = baixarDocumentoCNDFederal(retorno);
+		} else if (CommonsUtil.mesmoValor(url, "/api/v1/CNDTrabalhistaTST")) {
+			pdf = baixarDocumentoCNDTrabalhistaTST(retorno);
+		}
+		
 		netrin.setPdf(pdf);
 		if(!CommonsUtil.semValor(pdf))
 			netrin.setStatus("Consulta Concluída");
