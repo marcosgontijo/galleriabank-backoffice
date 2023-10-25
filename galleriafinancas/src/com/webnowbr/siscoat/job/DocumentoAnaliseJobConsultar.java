@@ -176,7 +176,7 @@ public class DocumentoAnaliseJobConsultar {
 
 				}
 
-				if (documentoAnalise.isPodeChamarCenprot()) {
+				/*if (documentoAnalise.isPodeChamarCenprot()) {
 					documentoAnalise.addObservacao("Processando Protestos");
 					// PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
 					step++;
@@ -187,7 +187,7 @@ public class DocumentoAnaliseJobConsultar {
 					pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
 							DocumentosAnaliseEnum.CENPROT, documentoAnalise.getRetornoCenprot());
 
-				}
+				}aaaaaaaaaaaaaaa*/
 
 //				if (documentoAnalise.isPodeChamarSerasa()
 //						&& CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {

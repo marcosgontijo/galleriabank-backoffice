@@ -1769,15 +1769,19 @@ public class NetrinService {
 			}
 			netrinConsulta.setDataConsulta(DateUtil.gerarDataHoje());
 			netrinConsulta.setUsuario(user);
-			netrinConsulta.setStatus("Consulta Concluída");
+			if(CommonsUtil.semValor(netrinConsulta.getRetorno())) {
+				System.out.println("falha no pdf netrin. ID:" + netrinConsulta.getId());
+				netrinConsulta.setStatus("Consulta Falhou");
+			} else {
+				netrinConsulta.setStatus("Consulta Concluída");
+			}
+			
 			if(netrinConsulta.getId() <=0) {
 				netrinConsultaDao.create(netrinConsulta);
 			} else {
 				netrinConsultaDao.merge(netrinConsulta);
 			}
-			if(CommonsUtil.semValor(netrinConsulta.getRetorno())) {
-				System.out.println("falha no pdf netrin. ID:" + netrinConsulta.getId());
-			}
+			
 			return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -13,6 +13,8 @@ import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -64,6 +66,8 @@ import com.webnowbr.siscoat.simulador.GoalSeekFunction;
 import com.webnowbr.siscoat.simulador.SimulacaoDetalheVO;
 import com.webnowbr.siscoat.simulador.SimulacaoVO;
 import com.webnowbr.siscoat.simulador.SimuladorMB;
+
+import net.sf.jasperreports.engine.JRException;
 
 /** ManagedBean. */@ManagedBean(name = "ccbMB")
 @SessionScoped
@@ -544,7 +548,9 @@ public class CcbMB {
 		ContratoCobranca contrato = objetoContratoCobranca;
 		this.objetoCcb.setObjetoContratoCobranca(contrato);
 		this.objetoCcb.setNumeroOperacao(contrato.getNumeroContrato());
-		String numeroCci = objetoContratoCobranca.getNumeroContrato() + (objetoCcb.getDataDeEmissao().getMonth() + 1) + (objetoCcb.getDataDeEmissao().getYear() + 1900);
+		DateFormat dateFormat = new SimpleDateFormat("MMyy");  
+		String strDate = dateFormat.format(objetoCcb.getDataDeEmissao());  
+		String numeroCci = objetoContratoCobranca.getNumeroContrato() + strDate;
 		objetoCcb.setNumeroCcb(numeroCci);
 		
 		if (CommonsUtil.mesmoValor(contrato.getAvaliacaoLaudo(), "Compass")) {
@@ -564,7 +570,7 @@ public class CcbMB {
 		this.objetoCcb.setNumeroImovel(imovel.getNumeroMatricula());
 		this.objetoCcb.setInscricaoMunicipal(CommonsUtil.somenteNumeros(imovel.getInscricaoMunicipal()));
 		this.objetoCcb.setCidadeImovel(imovel.getCidade());
-		this.objetoCcb.setCartorioImovel(imovel.getCartorio());
+		this.objetoCcb.setCartorioImovel(CommonsUtil.somenteNumeros(imovel.getNumeroCartorio()));
 		this.objetoCcb.setUfImovel(imovel.getEstado());
 		String[] endereco = imovel.getEndereco().split(Pattern.quote(","));
 		if(endereco.length > 0) {
@@ -1408,7 +1414,16 @@ public class CcbMB {
 	    return null;
 	}
 		
-	
+	public void geraFichaCadastro(PagadorRecebedor pagador) throws IOException{
+		try {CcbService ccbService = new CcbService(filesList, objetoCcb, simulador);
+			byte[] arquivo = ccbService.geraFichaCadastro(pagador);
+			ccbService.geraDownloadByteArray(arquivo, "Ficha Cadastro");
+		} catch (JRException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 	
+	}
 
 	public void clearPagadorRecebedor() {
 		this.participanteSelecionado = new CcbParticipantes();

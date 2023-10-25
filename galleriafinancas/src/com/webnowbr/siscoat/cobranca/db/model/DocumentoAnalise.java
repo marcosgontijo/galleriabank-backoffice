@@ -735,7 +735,7 @@ public class DocumentoAnalise implements Serializable {
 	public Map<String, byte[]> zipDeCertidoes(){
 		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
 		listaArquivos.putAll(zipEngine());
-		listaArquivos.putAll(zipProtesto());
+		//listaArquivos.putAll(zipProtesto());
 		listaArquivos.putAll(zipProcesso());
 		listaArquivos.putAll(zipScr());
 		for(DocketConsulta docket : docketConsultas) {

@@ -33832,7 +33832,7 @@ public class ContratoCobrancaMB {
 				Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
 				listaArquivos.putAll(documentoAnalise.zipDeCertidoes());
 				for (Map.Entry<String, byte[]> entry : listaArquivos.entrySet()) {
-					String nomepagador = documentoAnalise.getPagador().getNome().replace(",", "_") + 
+					String nomepagador = documentoAnalise.getId() + "_" + documentoAnalise.getPagador().getNome().replace(",", "_") + 
 							"_"+ CommonsUtil.somenteNumeros(documentoAnalise.getPagador().getCpfCnpj());
 					String[] key = new String[] {nomepagador, entry.getKey()};
 					listaTodosArquivos.put(key, entry.getValue());
@@ -33893,7 +33893,10 @@ public class ContratoCobrancaMB {
 	public void testeAttTodasCertidoes() {
 		System.out.println("AttCertidoes inicio");
 		DocumentoAnaliseDao analiseDao = new DocumentoAnaliseDao();
-		List<DocumentoAnalise> listDocAnalise = analiseDao.listagemCertidoesIncompletas();
+		List<DocumentoAnalise> listDocAnalise = new ArrayList<DocumentoAnalise>();
+		for(ContratoCobranca contrato : contratosPendentes) {
+			listDocAnalise.addAll(analiseDao.listagemDocumentoAnalise(contrato));
+		}
 		System.out.println("listagem concluida");
 		testeAttCertidoes(listDocAnalise);
 		System.out.println("AttCertidoes Concluido");
