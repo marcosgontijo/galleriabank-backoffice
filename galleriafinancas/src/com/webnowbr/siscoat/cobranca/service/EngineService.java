@@ -148,6 +148,8 @@ public class EngineService {
 				// engine.getContrato().getId());
 				if (engine.getId() <= 0) {
 					engineDao.create(engine);
+				}else {
+					engineDao.merge(engine);
 				}
 
 				if (documentoAnalise != null) {
