@@ -110,7 +110,7 @@ public class PlexiMB {
 					if(!CommonsUtil.semValor(plexiConsulta.getRequestId())) {
 						continue;
 					}
-					FacesMessage facesMessage = plexiService.PedirConsulta(plexiConsulta, user, docAnalise);
+					FacesMessage facesMessage = plexiService.PedirConsulta(plexiConsulta, user);
 					if(CommonsUtil.semValor(facesMessage) || CommonsUtil.mesmoValor(facesMessage.getSeverity(), 
 							FacesMessage.SEVERITY_ERROR)) {
 						consultasFalhadas.add(plexiConsulta);

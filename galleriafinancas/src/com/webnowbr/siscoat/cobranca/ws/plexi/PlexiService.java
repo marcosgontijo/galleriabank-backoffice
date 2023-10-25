@@ -34,7 +34,7 @@ public class PlexiService {
 	private String urlProducao = "https://api.plexi.com.br";//https://api.plexi.com.br
 	
 	
-	public FacesMessage PedirConsulta(PlexiConsulta plexiCosulta, User usuarioLogado, DocumentoAnalise docAnalise) {
+	public FacesMessage PedirConsulta(PlexiConsulta plexiCosulta, User usuarioLogado) {
 		Gson gson = new GsonBuilder().excludeFieldsWithModifiers(Modifier.PROTECTED).create();
 		String plexiJson = gson.toJson(plexiCosulta);
 		FacesMessage result = null;
@@ -74,7 +74,7 @@ public class PlexiService {
 				result = new FacesMessage(FacesMessage.SEVERITY_ERROR, 
 						"Erro: " +  plexiCosulta.getPlexiDocumentos().getNome() 
 						+ " / HTTP:" + myURLConnection.getResponseCode(), "");
-				System.out.println(getJsonSucesso(myURLConnection.getErrorStream()).toString());
+				System.out.println(getJsonSucessoStr(myURLConnection.getErrorStream()).toString());
 				System.out.println(myURLConnection.getResponseMessage());
 			} else {
 				JSONObject retorno = null;
@@ -156,7 +156,7 @@ public class PlexiService {
 		return retorno;
 	}
 	
-	public void atualizaRetorno(List<DocumentoAnalise> listDocAnalise) {
+	public void atualizaRetorno(List<DocumentoAnalise> listDocAnalise, User user) {
 		for(DocumentoAnalise docAnalise : listDocAnalise) {
 			if(CommonsUtil.semValor(docAnalise.getPlexiConsultas()) 
 				|| docAnalise.getPlexiConsultas().size() <= 0) 
@@ -166,13 +166,13 @@ public class PlexiService {
 					continue;
 				if(CommonsUtil.mesmoValor(plexi.getStatus(), "Consulta expirada"))
 					continue;
-				atualizaRetornoPlexi(plexi);
+				atualizaRetornoPlexi(plexi, user);
 			}
 		}
 		return;
 	}
 	
-	public void atualizaRetornoPlexi(PlexiConsulta plexi) {
+	public void atualizaRetornoPlexi(PlexiConsulta plexi, User user) {
 		JSONObject webhookObject;
 		String requestId = plexi.getRequestId();
 		if(!CommonsUtil.semValor(plexi.getWebhookRetorno()) && !CommonsUtil.semValor(plexi.getPdf())) {
@@ -189,8 +189,14 @@ public class PlexiService {
 		if(webhookObject.has("erro404")) {
 			plexi.setStatus("Consulta expirada");
 			plexi.setRequestId(null);
+			PedirConsulta(plexi, user);
 			plexiConsultaDao.merge(plexi);
 			return;
+		} else if(webhookObject.has("error") && CommonsUtil.mesmoValor(webhookObject.get("error"), true)) {
+			plexi.setStatus("Consulta com erro");
+			plexi.setRequestId(null);
+			PedirConsulta(plexi, user);
+			plexiConsultaDao.merge(plexi);
 		}
 	
 		if(!webhookObject.has("requestId")) 
@@ -221,6 +227,31 @@ public class PlexiService {
 			JSONObject myResponse = new JSONObject(response.toString());
 
 			return myResponse;
+
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public String getJsonSucessoStr(InputStream inputStream) {
+		BufferedReader in;
+		try {
+			in = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();		
+
+			return response.toString();
 
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
