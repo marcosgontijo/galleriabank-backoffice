@@ -13805,7 +13805,11 @@ public class ContratoCobrancaMB {
 
 		/* consultaListagemCertidoes() */
 
-		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
+		if (status.equals("Ag. Ok Cliente")) {
+			return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatusAgOkCliente.xhtml";
+		} else {
+			return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
+		}
 	}
 
 	public String consultaAgPagamentoOp() {
