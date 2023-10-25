@@ -129,9 +129,9 @@ public class RelatoriosService {
 				.filter(a -> a.getTotal().compareTo(valorRegistro) == 1).findFirst();
 		
 		if (registroImovel.isPresent()) {
-			despesa = despesa.add(registroImovel.get().getTotal());
+			//despesa = despesa.add(registroImovel.get().getTotal());
 			detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Custas Estimada Para Registro",
-					CommonsUtil.formataValorMonetario(registroImovel.get().getTotal(), "R$ ")));
+					"A Calcular"));
 		}
 		
 		BigDecimal valorCustoEmissao = simulador.getCustoEmissaoValor();
