@@ -519,7 +519,7 @@ public class ImpressoesPDFMB {
 	}
 	
 	
-	public StreamedContent geraPdfCadastroPagadorRecebedor(PagadorRecebedor pagador) throws IOException {
+	public byte[] geraPdfCadastroPagadorRecebedor(PagadorRecebedor pagador) throws IOException {
 		DecimalFormat df = new DecimalFormat("###,###,###,###,###.00");
 		FacesContext context = FacesContext.getCurrentInstance();		
 		Document doc = null;
@@ -837,6 +837,8 @@ public class ImpressoesPDFMB {
 			gerador.open(nomeArquivoDownload);
 			gerador.feed(new ByteArrayInputStream(out.toByteArray()));
 			gerador.close();
+			
+			return out.toByteArray();
 
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block

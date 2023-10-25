@@ -54,6 +54,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
@@ -5923,6 +5924,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setDocumentosCompletos(false);
 		this.objetoContratoCobranca.setCcbPronta(false);
 		this.objetoContratoCobranca.setContratoConferido(false);
+		this.objetoContratoCobranca.setOkCliente(false);
 		if (!objetoContratoCobranca.getListaAnaliseComite().isEmpty()) {
 			for (AnaliseComite comite : objetoContratoCobranca.getListaAnaliseComite()) {
 				comite.setVotoAnaliseComite("");
@@ -13803,7 +13805,11 @@ public class ContratoCobrancaMB {
 
 		/* consultaListagemCertidoes() */
 
-		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
+		if (status.equals("Ag. Ok Cliente")) {
+			return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatusAgOkCliente.xhtml";
+		} else {
+			return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
+		}
 	}
 
 	public String consultaAgPagamentoOp() {
@@ -28685,8 +28691,16 @@ public class ContratoCobrancaMB {
 			JobDetail jobDetail = JobBuilder.newJob(DocumentoAnaliseJob.class)
 					.withIdentity("documentoAnaliseJOB", objetoContratoCobranca.getNumeroContrato()).build();
 			User user = loginBean.getUsuarioLogado();
+			
+			FacesContext fContext = FacesContext.getCurrentInstance();
+			ExternalContext extContext = fContext.getExternalContext();
+			HttpServletRequest request = (HttpServletRequest) fContext.getExternalContext().getRequest();
+			
+			String urlWenhook =  request.getRequestURL().toString().replace(request.getRequestURI(),"");
+			
 			jobDetail.getJobDataMap().put("listaDocumentoAnalise", listaDocumentoAnalise);
 			jobDetail.getJobDataMap().put("user", user);
+			jobDetail.getJobDataMap().put("urlWenhook", urlWenhook);
 			jobDetail.getJobDataMap().put("objetoContratoCobranca", objetoContratoCobranca);
 			Trigger trigger = TriggerBuilder.newTrigger()
 					.withIdentity("documentoAnaliseJOB", objetoContratoCobranca.getNumeroContrato()).startNow().build();
@@ -33818,7 +33832,7 @@ public class ContratoCobrancaMB {
 				Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
 				listaArquivos.putAll(documentoAnalise.zipDeCertidoes());
 				for (Map.Entry<String, byte[]> entry : listaArquivos.entrySet()) {
-					String nomepagador = documentoAnalise.getPagador().getNome().replace(",", "_") + 
+					String nomepagador = documentoAnalise.getId() + "_" + documentoAnalise.getPagador().getNome().replace(",", "_") + 
 							"_"+ CommonsUtil.somenteNumeros(documentoAnalise.getPagador().getCpfCnpj());
 					String[] key = new String[] {nomepagador, entry.getKey()};
 					listaTodosArquivos.put(key, entry.getValue());
@@ -33879,7 +33893,10 @@ public class ContratoCobrancaMB {
 	public void testeAttTodasCertidoes() {
 		System.out.println("AttCertidoes inicio");
 		DocumentoAnaliseDao analiseDao = new DocumentoAnaliseDao();
-		List<DocumentoAnalise> listDocAnalise = analiseDao.listagemCertidoesIncompletas();
+		List<DocumentoAnalise> listDocAnalise = new ArrayList<DocumentoAnalise>();
+		for(ContratoCobranca contrato : contratosPendentes) {
+			listDocAnalise.addAll(analiseDao.listagemDocumentoAnalise(contrato));
+		}
 		System.out.println("listagem concluida");
 		testeAttCertidoes(listDocAnalise);
 		System.out.println("AttCertidoes Concluido");

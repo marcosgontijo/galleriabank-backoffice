@@ -18,8 +18,8 @@ public class DocumentoAnaliseJob implements Job {
 	/** Logger instance. */
 	private static final Log LOGGER = LogFactory.getLog(DocumentoAnaliseJob.class);
 
-	private final  DocumentoAnaliseJobConsultar documentoAnaliseJobConsultar; 
-	
+	private final DocumentoAnaliseJobConsultar documentoAnaliseJobConsultar;
+
 	/**
 	 * Empty constructor for job initilization
 	 */
@@ -37,15 +37,20 @@ public class DocumentoAnaliseJob implements Job {
 		String jobKey = "";
 		if (context != null) {
 			JobDataMap dataMap = context.getJobDetail().getJobDataMap();
-	        //fetch parameters from JobDataMap
-			List<DocumentoAnalise> listaDocumentoAnalise = (List<DocumentoAnalise>) dataMap.get("listaDocumentoAnalise");
-	        User user = (User) dataMap.get("user");
-	        ContratoCobranca objetoContratoCobranca = (ContratoCobranca) dataMap.get("objetoContratoCobranca");
-	        
-	        documentoAnaliseJobConsultar.listaDocumentoAnalise = listaDocumentoAnalise;
-	        documentoAnaliseJobConsultar.user = user;
-	        documentoAnaliseJobConsultar.objetoContratoCobranca = objetoContratoCobranca;
-	        
+			// fetch parameters from JobDataMap
+			List<DocumentoAnalise> listaDocumentoAnalise = (List<DocumentoAnalise>) dataMap
+					.get("listaDocumentoAnalise");
+			User user = (User) dataMap.get("user");
+
+			String urlWenhook = (String) dataMap.get("urlWenhook");
+
+			ContratoCobranca objetoContratoCobranca = (ContratoCobranca) dataMap.get("objetoContratoCobranca");
+
+			documentoAnaliseJobConsultar.listaDocumentoAnalise = listaDocumentoAnalise;
+			documentoAnaliseJobConsultar.user = user;
+			documentoAnaliseJobConsultar.urlWenhook = urlWenhook;
+			documentoAnaliseJobConsultar.objetoContratoCobranca = objetoContratoCobranca;
+
 			jobKey = "" + context.getJobDetail().getKey();
 			if (LOGGER.isDebugEnabled()) {
 				System.out.println("DocumentoAnaliseJob.execute: jobKey=" + jobKey + " disparado pelo trigger ["
@@ -56,20 +61,24 @@ public class DocumentoAnaliseJob implements Job {
 			consultarPesquisas();
 		} catch (Exception e) {
 			System.out.println("1 parameter value : " + documentoAnaliseJobConsultar.listaDocumentoAnalise);
-	        System.out.println("2 parameter value : " + documentoAnaliseJobConsultar.user);
-	        System.out.println("3 parameter value : " + documentoAnaliseJobConsultar.objetoContratoCobranca);
-			System.out.println("DocumentoAnaliseJob.execute (jobKey=" + jobKey + "): EXCEPTION" + e + " - " + documentoAnaliseJobConsultar);
+			System.out.println("2 parameter value : " + documentoAnaliseJobConsultar.user);
+			System.out.println("3 parameter value : " + documentoAnaliseJobConsultar.objetoContratoCobranca);
+			System.out.println("DocumentoAnaliseJob.execute (jobKey=" + jobKey + "): EXCEPTION" + e + " - "
+					+ documentoAnaliseJobConsultar);
 			e.printStackTrace();
 		}
 	}
 
 	public void consultarPesquisas() {
 		try {
-			System.out.println("incio DocumentoAnaliseJob" + documentoAnaliseJobConsultar.objetoContratoCobranca.getNumeroContrato());
+			System.out.println("incio DocumentoAnaliseJob"
+					+ documentoAnaliseJobConsultar.objetoContratoCobranca.getNumeroContrato());
 			documentoAnaliseJobConsultar.executarConsultasAnaliseDocumento();
-			System.out.println("Fim DocumentoAnaliseJob - " + documentoAnaliseJobConsultar.objetoContratoCobranca.getNumeroContrato());
- 		} catch (Exception e) {
-			System.out.println("DocumentoAnaliseJob.execute " + "DocumentoAnaliseJob: EXCEPTION" +  e.toString() + " - " + documentoAnaliseJobConsultar);
+			System.out.println("Fim DocumentoAnaliseJob - "
+					+ documentoAnaliseJobConsultar.objetoContratoCobranca.getNumeroContrato());
+		} catch (Exception e) {
+			System.out.println("DocumentoAnaliseJob.execute " + "DocumentoAnaliseJob: EXCEPTION" + e.toString() + " - "
+					+ documentoAnaliseJobConsultar);
 			e.printStackTrace();
 		}
 	}

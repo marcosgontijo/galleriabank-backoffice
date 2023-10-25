@@ -4824,52 +4824,7 @@
 			</h:form>
 		</p:dialog>
 
-		<p:dialog header="Lista de Contratos Cliente Analisado"
-			overflow="auto" widgetVar="listaContratosPagador" resizable="true"
-			style="FONT-SIZE: 13pt;" width="800" minWidth="800">
-			<h:form id="contratosPagadorForm">
-				<p:dataTable var="contratos" rows="10" paginator="true"
-					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
-					value="#{contratoCobrancaMB.contratosPagadorAnalisado}"
-					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
-					<p:column style="text-align: center" headerText="Numero Contrato"
-						filterBy="#{contratos.numeroContrato}"
-						sortBy="#{contratos.numeroContrato}" filterMatchMode="contains">
-						<p:outputLabel value="#{contratos.numeroContrato}"
-							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
-					</p:column>
-					<!-- 
-					<p:column style="text-align: center" headerText="Pagador"
-						filterBy="#{contratos.pagador.nome}" sortBy="#{contratos.pagador.nome}" filterMatchMode="contains">
-						<p:outputLabel value="#{contratos.pagador.nome}"
-							style="FONT-SIZE: 10pt;width:100px;" />
-					</p:column> 
-					-->
-					<p:column style="text-align: center" headerText="Data Analise"
-						filterBy="#{contratos.cadastroAprovadoData}"
-						sortBy="#{contratos.cadastroAprovadoData}"
-						filterMatchMode="contains">
-						<p:outputLabel value="#{contratos.cadastroAprovadoData}"
-							style="FONT-SIZE: 10pt;width:100px;">
-							<f:convertDateTime locale="pt_BR" />
-							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
-						</p:outputLabel>
-					</p:column>
-					<p:column style="text-align: center" headerText="Cidade"
-						filterBy="#{contratos.imovel.cidade}"
-						sortBy="#{contratos.imovel.cidade}" filterMatchMode="contains">
-						<p:outputLabel value="#{contratos.imovel.cidade}"
-							style="FONT-SIZE: 10pt;width:100px;" />
-					</p:column>
-					<p:column style="text-align: center" headerText="Status"
-						filterBy="#{contratos.status}" sortBy="#{contratos.status}"
-						filterMatchMode="contains">
-						<p:outputLabel value="#{contratos.status}"
-							style="FONT-SIZE: 10pt;width:100px;" />
-					</p:column>
-				</p:dataTable>
-			</h:form>
-		</p:dialog>
+		<ui:include src="Dialog/ContratoCobrancaListaContratosPagador.xhtml" />
 
 		<p:dialog header="Lista de Contratos Imovel Analisado" overflow="auto"
 			widgetVar="listaContratosImovel" resizable="true"
