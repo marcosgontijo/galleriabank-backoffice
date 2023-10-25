@@ -30,7 +30,6 @@ public class ContasPagarDao extends HibernateDao<ContasPagar, Long> {
 			+ " and tipodespesa = 'E'" + " order by case when  contPai.nome is null then cont.nome"
 			+ "               else contPai.nome " + "          end, cont.nome";
 
-
 	public DemonstrativoResultadosGrupo getDreContasPagar(final Date dataInicio, final Date dataFim) throws Exception {
 
 		DemonstrativoResultadosGrupo demonstrativosResultadosGrupoDetalhe = new DemonstrativoResultadosGrupo();
@@ -188,9 +187,7 @@ public class ContasPagarDao extends HibernateDao<ContasPagar, Long> {
 		}
 		return listContasPagar;
 	}
-	
-	
-	
+		
 	private static final String QUERY_GET_DRE_CONTASPAGAR_SECURITIZADORA = " SELECT COPA.ID,"
 			+ "	COPA.NUMERODOCUMENTO,"
 			+ "	PARE.NOME, "
@@ -307,6 +304,43 @@ public class ContasPagarDao extends HibernateDao<ContasPagar, Long> {
 		}
 		return demonstrativosResultadosGrupoDetalhe;
 
+	}
+
+	private static final String QUERY_BUSCAR_DEPESA = "select c.id "+		
+			" from cobranca.contaspagar c " +
+			" where descricao = ? " +
+			" and numeroDocumento = ? ";
+
+	public List<ContasPagar> buscarDespesa(final String descricao, final String NumeroDocumento) throws Exception {
+
+		List<ContasPagar> listContasPagar = new ArrayList<ContasPagar>();
+
+		Connection connection = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			connection = getConnection();
+			
+			String query = QUERY_BUSCAR_DEPESA;
+		
+			ps = connection.prepareStatement(query);
+
+			ps.setString(1, descricao);
+			ps.setString(2, NumeroDocumento);
+			
+			rs = ps.executeQuery();
+			ContasPagarDao cDao = new ContasPagarDao();
+			
+			while (rs.next()) {
+				ContasPagar contasPagar = cDao.findById(rs.getLong("id"));
+				listContasPagar.add(contasPagar);
+			}
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		} finally {
+			closeResources(connection, ps, rs);
+		}
+		return listContasPagar;
 	}
 }
 

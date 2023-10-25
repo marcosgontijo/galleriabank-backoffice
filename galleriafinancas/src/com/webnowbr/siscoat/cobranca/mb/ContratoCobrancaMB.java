@@ -5924,6 +5924,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setDocumentosCompletos(false);
 		this.objetoContratoCobranca.setCcbPronta(false);
 		this.objetoContratoCobranca.setContratoConferido(false);
+		this.objetoContratoCobranca.setOkCliente(false);
 		if (!objetoContratoCobranca.getListaAnaliseComite().isEmpty()) {
 			for (AnaliseComite comite : objetoContratoCobranca.getListaAnaliseComite()) {
 				comite.setVotoAnaliseComite("");

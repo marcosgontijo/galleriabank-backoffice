@@ -51,7 +51,13 @@
 										<p:menuitem value="gerarTokenServico"
 										action="#{netrinMB.gerarTokenServico}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />	
+										styleClass="itemMenu" />
+										
+										<p:menuitem value="atualizaCcbs"
+										action="#{ccbMB.atualizarObjetos}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+											
 										<p:menuitem value="STARK - Ver Saldo "
 										action="#{starkBankAPI.getBalanceSDK()}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
