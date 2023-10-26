@@ -899,11 +899,25 @@ public class CcbMB {
 			objetoContratoCobranca.getListContasPagar().remove(despesaAverbacao);
 			objetoCcb.setAverbacaoValor(BigDecimal.ZERO);
 		}
+		int qtdMatriculas  =1;
+		String matriculas = objetoContratoCobranca.getImovel().getNumeroMatricula().trim();
+		if (matriculas.endsWith(",")) {
+			matriculas = matriculas.substring(0, matriculas.lastIndexOf(",")).trim();
+		}
+		//Emprestimo = financiamento
+		if (CommonsUtil.mesmoValorIgnoreCase("Emprestimo", objetoContratoCobranca.getTipoOperacao()))
+			qtdMatriculas = qtdMatriculas * 2;
+
+		qtdMatriculas = matriculas.split(",").length;
+		//se for apartamento é no minimo 3		
+		if (CommonsUtil.mesmoValorIgnoreCase("Apartamento", objetoContratoCobranca.getImovel().getTipo()) && qtdMatriculas == 1) {
+			qtdMatriculas = 3;
+		}
 		
 		ContasPagar despesaRegistro = buscarDespesa("Registro", objetoContratoCobranca.getNumeroContrato());
 		if(!CommonsUtil.semValor(objetoCcb.getValorCredito())) {
 			RegistroImovelTabelaDao rDao = new RegistroImovelTabelaDao();
-			BigDecimal valorRegistro = rDao.getValorRegistro(objetoCcb.getValorCredito());
+			BigDecimal valorRegistro = rDao.getValorRegistro(objetoCcb.getValorCredito().multiply(CommonsUtil.bigDecimalValue(qtdMatriculas)));
 			if(CommonsUtil.semValor(objetoCcb.getRegistroImovelValor())) {
 				criarDespesa("Registro", valorRegistro);
 				objetoCcb.setRegistroImovelValor(valorRegistro);
