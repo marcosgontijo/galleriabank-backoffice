@@ -16,6 +16,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -1233,6 +1234,35 @@ public class CcbMB {
 		pagadorRecebedor.criarConjugeNoSistema();
 	}
 	
+	public void salvarCcb() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		try {
+			CcbDao ccbDao = new CcbDao();
+			if (this.objetoCcb.getId() > 0) {
+				ccbDao.merge(this.objetoCcb);
+				System.out.println("CCB Merge ID: " + objetoCcb.getId() + " / "  + objetoCcb.getNumeroCcb() + " / "
+						+ objetoCcb.getNumeroOperacao() + " / " + objetoCcb.getNomeEmitente() + " / " + "Salvar");
+			} else {
+				ccbDao.create(this.objetoCcb);
+				System.out.println("CCB Create ID: " + objetoCcb.getId() + " / "  + objetoCcb.getNumeroCcb() + " / "
+						+ objetoCcb.getNumeroOperacao() + " / " + objetoCcb.getNomeEmitente() + " / " + "Salvar");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "CCB: " + e.getCause(), ""));
+		} finally {
+			if (this.objetoCcb.getId() > 0) {
+				//this.setAviso("CCB: Contrato salvo no sistema " + objetoCcb.getNumeroCcb() + " / "
+				//	+ objetoCcb.getNumeroOperacao() + " / " + objetoCcb.getNomeEmitente() + " (" + objetoCcb.getId() + ")");
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "CCB: Contrato salvo no sistema", ""));
+			} else {
+				//this.setAviso("CCB: Erro ao salver contrato no sistema " + objetoCcb.getNumeroCcb() + " / "
+				//		+ objetoCcb.getNumeroOperacao() + " / " + objetoCcb.getNomeEmitente());
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "CCB: Erro ao salvar contrato no sistema", ""));
+			}		
+		}
+	}
+	
 	public void criarCcbNosistema() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		try {
@@ -1609,6 +1639,20 @@ public class CcbMB {
 		BigDecimal tarifaIOFAdicional = SiscoatConstants.TARIFA_IOF_ADICIONAL.divide(BigDecimal.valueOf(100));
 		simulador.setTipoPessoa(this.objetoCcb.getTipoPessoaEmitente());
 		
+		List<String> imoveis = Arrays.asList("Apartamento", "Casa", "Casa de Condomínio", "Terreno");
+		
+		if(!objetoCcb.getEmitentePrincipal().isEmpresa() &&
+				imoveis.contains(objetoCcb.getObjetoContratoCobranca().getImovel().getTipo())) {
+			tarifaIOFDiario = BigDecimal.ZERO;
+			tarifaIOFAdicional = BigDecimal.ZERO;
+		} else {
+			if (CommonsUtil.mesmoValor(this.objetoCcb.getTipoPessoaEmitente(), "PF")) {		
+				tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PF.divide(BigDecimal.valueOf(100));		
+			} else {		
+				tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PJ.divide(BigDecimal.valueOf(100));		
+			}
+		}
+		
 		BigDecimal custoEmissaoValor = SiscoatConstants.CUSTO_EMISSAO_MINIMO;
 		
 		final BigDecimal custoEmissaoPercentual;
@@ -1621,12 +1665,6 @@ public class CcbMB {
 		if (objetoCcb.getValorCredito().multiply(custoEmissaoPercentual.divide(BigDecimal.valueOf(100)))
 				.compareTo(SiscoatConstants.CUSTO_EMISSAO_MINIMO) > 0) {
 			custoEmissaoValor = objetoCcb.getValorCredito().multiply(custoEmissaoPercentual.divide(BigDecimal.valueOf(100)));
-		}
-		
-		if (CommonsUtil.mesmoValor(this.objetoCcb.getTipoPessoaEmitente(), "PF")) {		
-			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PF.divide(BigDecimal.valueOf(100));		
-		} else {		
-			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PJ.divide(BigDecimal.valueOf(100));		
 		}
 		
 		if(!CommonsUtil.semValor(this.objetoCcb.getPrazo()) && !CommonsUtil.semValor(objetoCcb.getCarencia())) {
@@ -1787,6 +1825,7 @@ public class CcbMB {
 		loadLovs();	
 		clearPagadorRecebedor();
 		clearDespesas();
+		listarDownloads();
 		this.simulador = new SimulacaoVO();
 		//this.seguradoSelecionado = new Segurado();
 		//this.seguradoSelecionado.setPessoa(new PagadorRecebedor());

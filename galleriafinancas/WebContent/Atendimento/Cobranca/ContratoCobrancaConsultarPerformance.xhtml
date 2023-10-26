@@ -203,7 +203,7 @@
 					    	</p:confirmDialog>   
 		                </shiro:hasAnyRoles>      
 		                <shiro:hasAnyRoles name="ROOT, PROFILE_COBRANCA">  	                
-			                <p:commandButton oncomplete="PF('contratoEmCartorioDialog').show();" icon="ui-icon-info" value="Contrato em Cartório?" >
+			                <p:commandButton oncomplete="PF('contratoEmCartorioDialog').show();" icon="ui-icon-info" value="Contrato em Cartório?" update="contratoEmCartorioForm" >
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 			                </p:commandButton>	            		                		               
 			                <p:spacer width="10" height="10"/>
