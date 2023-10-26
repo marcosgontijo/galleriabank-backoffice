@@ -1322,6 +1322,7 @@ public class CcbMB {
 	public StreamedContent readXWPFile() throws IOException {
 		FacesContext context = FacesContext.getCurrentInstance();
 		atualizaDadosEmitente();
+		calcularSimulador();
 		CcbService ccbService = new CcbService(filesList, objetoCcb, simulador);
 	    try {
 	    	String tipoDownload = this.getTipoDownload();
