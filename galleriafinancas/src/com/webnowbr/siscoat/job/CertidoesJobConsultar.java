@@ -44,7 +44,7 @@ public class CertidoesJobConsultar {
 		PlexiService plexiService = new PlexiService();
 		plexiService.atualizaRetorno(listaDocumentoAnalise, user);
 		NetrinService netrinService = new NetrinService();
-		//netrinService.atualizaRetorno(listaDocumentoAnalise, user);
+		netrinService.atualizaRetorno(listaDocumentoAnalise, user);
 		DocketService docketService = new DocketService();
 		docketService.atualizaRetorno(listaDocumentoAnalise);
 	}
