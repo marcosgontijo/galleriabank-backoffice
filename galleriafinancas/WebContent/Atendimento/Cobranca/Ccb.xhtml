@@ -36,24 +36,15 @@
 				<h:panelGrid columns="2">							
 					<p:outputLabel for="tipoDownload"
 						value="Tipo Do Documento: " styleClass="labelBold" />
-					<p:selectOneMenu id="tipoDownload"
-						value="#{ccbMB.tipoDownload}" ajax="true">
-						<f:selectItem itemValue="CCI" itemLabel="CCI" />				
-						<f:selectItem itemValue="CartaSplit" itemLabel="Carta Split" />
-						<f:selectItem itemValue="AnexoII" itemLabel="AnexoII" />
-						<f:selectItem itemValue="Cessao" itemLabel="Cessao" />
-						<f:selectItem itemValue="EndossosEmPretoGalleria" itemLabel="Endossos Em Preto" />		
-						<f:selectItem itemValue="FinanciamentoCCI" itemLabel="FinanciamentoCCI" />		
-						<f:selectItem itemValue="AquisicaoCCI" itemLabel="Aquisicao/Emprestimo" />		
-						<f:selectItem itemValue="Ficha PPE" itemLabel="Ficha PPE - PF" />	
-						<f:selectItem itemValue="Ficha PLD e FT" itemLabel="Ficha PLD e FT - PJ" />	
-						<f:selectItem itemValue="DeclaracaoNaoUniaoEstavel" itemLabel="Declaração Não União Estavel" />
-						<f:selectItem itemValue="DeclaracaoUniaoEstavel" itemLabel="Declaração de União Estavel" />
-						<f:selectItem itemValue="DeclaracaoDestinacaoRecursos" itemLabel="Declaração Destinação Recursos" />
-						<f:selectItem itemValue="TermoPaju" itemLabel="Termo Responsabilidade Paju" />
-											
-						<p:ajax update=" pagadoresNovos despesasPanel SeguradoresPanel PanelBanco PgmntBancoVendedor" event="valueChange" />
-					</p:selectOneMenu>	
+						
+					<p:autoComplete id="tipoDownload" dropdown="true"
+						value="#{ccbMB.tipoDownload}"
+						completeMethod="#{ccbMB.getListaTipoDownload()}"
+						scrollHeight="250"  >
+																	
+						<p:ajax update=" pagadoresNovos despesasPanel SeguradoresPanel PanelBanco PgmntBancoVendedor" 
+							event="valueChange" />
+					</p:autoComplete>	
 					
 					<p:outputLabel for="numeroContrato" value="Número do Contrato: "
 						styleClass="labelBold"
@@ -71,7 +62,7 @@
 						styleClass="labelBold"
 						style="font-weight: bold; font-size: 18px;" />
 					<h:panelGroup>
-						<p:outputLabel id="contrato" disabled="true"
+						<p:outputLabel id="contrato" disabled="false"
 							value="#{ccbMB.objetoCcb.objetoContratoCobranca.numeroContrato}"
 							required="false" style="FONT-SIZE: 10pt;" />
 						<p:spacer height="10" />
@@ -694,9 +685,6 @@
 										style="FONT-SIZE: 10pt;width:100px;"
 										converter="bigDecimalConverter" />
 									<p:spacer width="10px"/>
-									<p:commandButton icon="ui-icon-trash"
-										action="#{ccbMB.removeDespesa(despesas)}"
-										update="form:despesasPanel form:valorDespesas" />
 								</p:dataViewListItem>
 							</p:dataView>				
 							<h:panelGroup>
@@ -824,9 +812,6 @@
 										style="FONT-SIZE: 10pt;width:100px;"
 										converter="bigDecimalConverter" />
 									<p:spacer width="10px"/>
-									<p:commandButton icon="ui-icon-trash"
-										action="#{ccbMB.removeProcesso(processos)}"
-										update="form:despesasPanel form:valorDespesas" />
 								</p:dataViewListItem>
 							</p:dataView>			
 							<h:panelGrid columns="2">
@@ -878,20 +863,20 @@
 								<p:inputText id="valorCredito" value="#{ccbMB.objetoCcb.valorCredito}"
 									label="Contrato" onkeypress="return isNumberKey(event);"
 									onkeydown="FormataValor(this, 13, event, 2);"
-									converter="bigDecimalConverter" disabled="true" />
+									converter="bigDecimalConverter" disabled="false" />
 									
 								<p:outputLabel for="taxaDeJurosMes"
 									value="Taxa De Juros (Mes%): " styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
 								<p:inputNumber id="taxaDeJurosMes"
 									value="#{ccbMB.objetoCcb.taxaDeJurosMes}" decimalPlaces="2"
-									 disabled="true" />
+									 disabled="false" />
 								
 								<p:outputLabel for="tipoPessoaEmitente" value="Tipo Pessoa: "
 									styleClass="labelBold" />
 								<p:selectOneMenu id="tipoPessoaEmitente"
 									value="#{ccbMB.objetoCcb.tipoPessoaEmitente}" 
-									style="width: 80px;" disabled="true">
+									style="width: 80px;" disabled="false">
 									<f:selectItem itemValue="" itemLabel="" />
 									<f:selectItem itemValue="PF" itemLabel="PF" />	
 									<f:selectItem itemValue="PJ" itemLabel="PJ" />						
@@ -901,7 +886,7 @@
 									styleClass="labelBold" />
 								<p:selectOneMenu id="sistemaAmortizacao"
 									value="#{ccbMB.objetoCcb.sistemaAmortizacao}" required="true"
-									style="width: 80px;"  disabled="true" >
+									style="width: 80px;"  disabled="false" >
 									<f:selectItem itemValue="Price" itemLabel="Price" />
 									<f:selectItem itemValue="SAC" itemLabel="SAC" />						
 								</p:selectOneMenu>
@@ -910,7 +895,7 @@
 									styleClass="labelBold" />
 								<p:selectOneMenu id="tipoCalculoFinal"
 									value="#{ccbMB.objetoCcb.tipoCalculoFinal}" required="true"
-									style="width: 80px;"  disabled="true">
+									style="width: 80px;"  disabled="false">
 									<f:selectItem itemValue="B" itemLabel="Bruto" />
 									<f:selectItem itemValue="L" itemLabel="Liquido" />						
 								</p:selectOneMenu>
@@ -921,7 +906,7 @@
 								<h:panelGroup>
 									<p:inputText id="prazo"
 										value="#{ccbMB.objetoCcb.prazo}" label="Contrato"
-										disabled="true">
+										disabled="false">
 									</p:inputText>
 									<p:outputLabel value=" meses" label="Contrato"/>
 								</h:panelGroup>
@@ -931,7 +916,7 @@
 									style="font-weight: bold; font-size: 18px;" />
 								<p:inputText id="carencia"
 									value="#{ccbMB.objetoCcb.carencia}" label="Contrato"
-									disabled="true">
+									disabled="false">
 								</p:inputText>
 								
 								<p:outputLabel for="dataDeEmissao" value="Data De Emissão: "
@@ -949,7 +934,7 @@
 									label="Contrato" onkeypress="return isNumberKey(event);"
 									onkeydown="FormataValor(this,13, event, 2);"
 									converter="bigDecimalConverter"
-									disabled="true" />
+									disabled="false" />
 									
 								<p:outputLabel for="valorDespesas" value="Valor do Despesas: "
 									styleClass="labelBold"
@@ -958,7 +943,7 @@
 									label="Contrato" onkeypress="return isNumberKey(event);"
 									onkeydown="FormataValor(this,13, event, 2);"
 									converter="bigDecimalConverter"
-									disabled="true" />
+									disabled="false" />
 									
 								<p:commandButton ajax="true"
 									action="#{ccbMB.calcularSimulador}"
@@ -972,12 +957,12 @@
 									styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
 								<p:inputText id="contaCorrente" value="#{ccbMB.objetoCcb.contaCorrente}"
-									label="Contrato"  disabled="true"/>
+									label="Contrato"  disabled="false"/>
 										
 								<p:outputLabel for="tipoContaBanco"
 									value="Tipo Da Conta " styleClass="labelBold" />
 								<p:selectOneMenu id="tipoContaBanco"
-									value="#{ccbMB.objetoCcb.tipoContaBanco}"  disabled="true">
+									value="#{ccbMB.objetoCcb.tipoContaBanco}"  disabled="false">
 									<f:selectItem itemValue="Conta Corrente" itemLabel="Conta Corrente" />
 									<f:selectItem itemValue="Conta Poupança" itemLabel="Conta Poupança" />
 								</p:selectOneMenu>
@@ -986,7 +971,7 @@
 									styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
 								<p:inputText id="agencia" value="#{ccbMB.objetoCcb.agencia}"
-									label="Contrato"  disabled="true"/>
+									label="Contrato"  disabled="false"/>
 
 								<p:outputLabel for="nomeBanco" value="Nome do Banco: "
 									styleClass="labelBold" />
@@ -994,7 +979,7 @@
 									completeMethod="#{ccbMB.completeBancosNome}" var="bancoNome"
 									itemLabel="#{bancoNome}" itemValue="#{bancoNome}"
 									forceSelection="true" styleClass="labelBold" label="Conta"
-									style="width:100px;" scrollHeight="250"  disabled="true">
+									style="width:100px;" scrollHeight="250"  disabled="false">
 									<p:ajax update="numeroBanco" event="itemSelect"
 										listener="#{ccbMB.populateCodigosBanco()}" />
 								</p:autoComplete>
@@ -1007,7 +992,7 @@
 									var="bancoCodigo" itemLabel="#{bancoCodigo}"
 									itemValue="#{bancoCodigo}" forceSelection="true"
 									styleClass="labelBold" label="Conta" style="width:100px;"
-									scrollHeight="250"  disabled="true">
+									scrollHeight="250"  disabled="false">
 									<p:ajax update="nomeBanco" event="itemSelect"
 										listener="#{ccbMB.populateNomesBanco()}" />
 								</p:autoComplete>
@@ -1016,19 +1001,19 @@
 									styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
 								<p:inputText id="titularConta" value="#{ccbMB.objetoCcb.titularConta}"
-									label="Contrato"  disabled="true"/>
+									label="Contrato"  disabled="false"/>
 									
 								<p:outputLabel for="PixBanco" value="Pix: "
 									styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
 								<p:inputText id="PixBanco" value="#{ccbMB.objetoCcb.pixBanco}"
-									label="Contrato"  disabled="true"/>							
+									label="Contrato"  disabled="false"/>							
 							
 								<p:outputLabel for="digitoBanco" value="Digito: "
 									styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
 								<p:inputText id="digitoBanco" value="#{ccbMB.objetoCcb.digitoBanco}"
-									label="Contrato" disabled="true"/>		
+									label="Contrato" disabled="false"/>		
 									
 							</h:panelGrid>							
 						</p:panel>
@@ -1039,7 +1024,7 @@
 									style="font-weight: bold; font-size: 18px;" />
 								<p:inputText id="cepImovel"
 									value="#{ccbMB.objetoCcb.cepImovel}"
-									label="Contrato" mask="99999-999"  disabled="true">
+									label="Contrato" mask="99999-999"  disabled="false">
 									<p:ajax event="blur"
 										update="bairroImovel LogradouroRua ufImovel"
 										listener="#{ccbMB.getEnderecoByViaNetImovelCobranca()}"/>									
@@ -1049,19 +1034,19 @@
 									value="Nº Matricula Do Imóvel: " styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
 								<p:inputText id="numeroImovel" value="#{ccbMB.objetoCcb.numeroImovel}"
-									label="Contrato"  disabled="true"/>
+									label="Contrato"  disabled="false"/>
 
 								<p:outputLabel for="cartorioImovel"
 									value="Nº Cartório Do Imóvel: " styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
 								<p:inputText id="cartorioImovel"
-									value="#{ccbMB.objetoCcb.cartorioImovel}" label="Contrato"  disabled="true"/>
+									value="#{ccbMB.objetoCcb.cartorioImovel}" label="Contrato"  disabled="false"/>
 									
 								<p:outputLabel for="inscricaoMunicipal" value="Inscrição Municipal: "
 									styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
 								<p:inputText id="inscricaoMunicipal" value="#{ccbMB.objetoCcb.inscricaoMunicipal}"
-									label="Contrato"  disabled="true" />
+									label="Contrato"  disabled="false" />
 									
 								<p:outputLabel for="numeroRegistroMatricula" value="Modo de aquisição (nº do Registro da matrícula): "
 									styleClass="labelBold"
@@ -1247,14 +1232,14 @@
 										<p:inputText id="custoEmissao" value="#{ccbMB.objetoCcb.custoEmissao}"
 											label="Contrato" onkeypress="return isNumberKey(event);"
 											onkeydown="FormataValor(this, 13, event, 2);"
-											converter="bigDecimalConverter" disabled="true"/>
+											converter="bigDecimalConverter" disabled="false"/>
 										<p:outputLabel for="valorIOF" value="Valor do IOF: "
 											styleClass="labelBold"
 											style="font-weight: bold; font-size: 18px;" />
 										<p:inputText id="valorIOF" value="#{ccbMB.objetoCcb.valorIOF}"
 											label="Contrato" onkeypress="return isNumberKey(event);"
 											onkeydown="FormataValor(this,13, event, 2);"
-											converter="bigDecimalConverter" disabled="true"/>															
+											converter="bigDecimalConverter" disabled="false"/>															
 										<p:outputLabel for="valorLiquidoCredito"
 											value="Valor Liquido do Credito: " styleClass="labelBold"
 											style="font-weight: bold; font-size: 18px;" />
@@ -1262,7 +1247,7 @@
 											value="#{ccbMB.objetoCcb.valorLiquidoCredito}" label="Contrato"
 											onkeypress="return isNumberKey(event);"
 											onkeydown="FormataValor(this,13, event, 2);"
-											converter="bigDecimalConverter" disabled="true"/>
+											converter="bigDecimalConverter" disabled="false"/>
 										<p:spacer height="10" />
 									</h:panelGrid>
 								</p:panel>
@@ -1272,19 +1257,19 @@
 											value="Taxa De Juros (Ano%): " styleClass="labelBold"
 											style="font-weight: bold; font-size: 18px;" />
 										<p:inputNumber id="taxaDeJurosAno"
-											value="#{ccbMB.objetoCcb.taxaDeJurosAno}" decimalPlaces="4" disabled="true"/>
+											value="#{ccbMB.objetoCcb.taxaDeJurosAno}" decimalPlaces="4" disabled="false"/>
 	
 										<p:outputLabel for="cetMes" value="CET(Mes%): "
 											styleClass="labelBold"
 											style="font-weight: bold; font-size: 18px;" />
 										<p:inputNumber id="cetMes" value="#{ccbMB.objetoCcb.cetMes}"
-											decimalPlaces="4" disabled="true"/>
+											decimalPlaces="4" disabled="false"/>
 	
 										<p:outputLabel for="cetAno" value="CET(Ano%): "
 											styleClass="labelBold"
 											style="font-weight: bold; font-size: 18px;" />
 										<p:inputNumber id="cetAno" value="#{ccbMB.objetoCcb.cetAno}"
-											decimalPlaces="4" disabled="true"/>
+											decimalPlaces="4" disabled="false"/>
 									</h:panelGrid>
 								</p:panel>
 								<p:panel header="Parcelas Pagamento">
@@ -1298,7 +1283,7 @@
 												showOn="button"
 												value="#{ccbMB.objetoCcb.vencimentoPrimeiraParcelaPagamento}"
 												label="Vencimento Da Primeira Parcela" size="100"
-												pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" disabled="true">
+												pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" disabled="false">
 												<p:ajax event="change" process="@form"
 													action="#{ccbMB.populateParcelaSeguro}" update="Dados" />
 											</p:calendar>
@@ -1312,7 +1297,7 @@
 											showOn="button"
 											value="#{ccbMB.objetoCcb.vencimentoUltimaParcelaPagamento}"
 											label="Vencimento Da Última Parcela" size="100"
-											pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" disabled="true">
+											pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" disabled="false">
 											<p:ajax event="change" process="@form"
 												action="#{ccbMB.populateParcelaSeguro}" update="Dados" />
 										</p:calendar>
@@ -1324,7 +1309,7 @@
 												value="#{ccbMB.objetoCcb.montantePagamento}" label="Contrato"
 												onkeypress="return isNumberKey(event);"
 												onkeydown="FormataValor(this,13, event, 2);"
-												converter="bigDecimalConverter"  disabled="true"/>
+												converter="bigDecimalConverter"  disabled="false"/>
 												<p:spacer height="10" />
 										</h:panelGroup>
 											
@@ -1334,7 +1319,7 @@
 											value="#{ccbMB.objetoCcb.valorParcela}"
 											onkeypress="return isNumberKey(event);"
 											onkeydown="FormataValor(this, 13, event, 2);" required="true"
-											converter="bigDecimalConverter" disabled="true" >
+											converter="bigDecimalConverter" disabled="false" >
 										</p:inputText>																
 									</h:panelGrid>
 								</p:panel>
@@ -1344,7 +1329,7 @@
 											value="Nº de Parcelas MIP:  " styleClass="labelBold"
 											style="font-weight: bold; font-size: 18px;" />
 										<p:inputText id="numeroParcelasMIP"
-											value="#{ccbMB.objetoCcb.numeroParcelasMIP}" label="Contrato" disabled="true" />
+											value="#{ccbMB.objetoCcb.numeroParcelasMIP}" label="Contrato" disabled="false" />
 										<p:outputLabel for="vencimentoPrimeiraParcelaMIP"
 											value="Vencimento Da Primeira Parcela MIP:  "
 											styleClass="labelBold"
@@ -1352,7 +1337,7 @@
 										<p:calendar id="vencimentoPrimeiraParcelaMIP" showOn="button"
 											value="#{ccbMB.objetoCcb.vencimentoPrimeiraParcelaMIP}"
 											label="Vencimento Da Primeira Parcela MIP" size="100"
-											pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" disabled="true" />
+											pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" disabled="false" />
 										<p:outputLabel for="vencimentoUltimaParcelaMIP"
 											value="Vencimento Da Última Parcela MIP:  "
 											styleClass="labelBold"
@@ -1360,21 +1345,21 @@
 										<p:calendar id="vencimentoUltimaParcelaMIP" showOn="button"
 											value="#{ccbMB.objetoCcb.vencimentoUltimaParcelaMIP}"
 											label="Vencimento Da Última Parcela MIP" size="100"
-											pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" disabled="true" />
+											pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" disabled="false" />
 										<p:outputLabel for="montanteMIP" value="Montante MIP :  "
 											styleClass="labelBold"
 											style="font-weight: bold; font-size: 18px;" />
 										<p:inputText id="montanteMIP" value="#{ccbMB.objetoCcb.montanteMIP}"
 											label="Contrato" onkeypress="return isNumberKey(event);"
 											onkeydown="FormataValor(this,13, event, 2);"
-											converter="bigDecimalConverter" disabled="true" />
+											converter="bigDecimalConverter" disabled="false" />
 										<p:outputLabel for="valorMipParcela" value="Valor MIP Parcela (R$): "
 											styleClass="labelBold" />
 										<p:inputText id="valorMipParcela"
 											value="#{ccbMB.objetoCcb.valorMipParcela}"
 											onkeypress="return isNumberKey(event);"
 											onkeydown="FormataValor(this, 13, event, 2);" required="true"
-											converter="bigDecimalConverter" disabled="true">
+											converter="bigDecimalConverter" disabled="false">
 										</p:inputText>	
 									</h:panelGrid>
 								</p:panel>								
@@ -1384,7 +1369,7 @@
 											value="Nº de Parcelas DFI:  " styleClass="labelBold"
 											style="font-weight: bold; font-size: 18px;" />
 										<p:inputText id="numeroParcelasDFI"
-											value="#{ccbMB.objetoCcb.numeroParcelasDFI}" label="Contrato" disabled="true" />
+											value="#{ccbMB.objetoCcb.numeroParcelasDFI}" label="Contrato" disabled="false" />
 										<p:outputLabel for="vencimentoPrimeiraParcelaDFI"
 											value="Vencimento Da Primeira Parcela DFI: "
 											styleClass="labelBold"
@@ -1392,7 +1377,7 @@
 										<p:calendar id="vencimentoPrimeiraParcelaDFI" showOn="button"
 											value="#{ccbMB.objetoCcb.vencimentoPrimeiraParcelaDFI}"
 											label="Vencimento Da Primeira Parcela DFI" size="100"
-											pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" disabled="true" />
+											pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" disabled="false" />
 										<p:outputLabel for="vencimentoUltimaParcelaDFI"
 											value="Vencimento Da Última Parcela DFI:"
 											styleClass="labelBold"
@@ -1400,21 +1385,21 @@
 										<p:calendar id="vencimentoUltimaParcelaDFI" showOn="button"
 											value="#{ccbMB.objetoCcb.vencimentoUltimaParcelaDFI}"
 											label="Vencimento Da Última Parcela DFI" size="100"
-											pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" disabled="true" />
+											pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" disabled="false" />
 										<p:outputLabel for="montanteDFI" value="Montante DFI:  "
 											styleClass="labelBold"
 											style="font-weight: bold; font-size: 18px;" />
 										<p:inputText id="montanteDFI" value="#{ccbMB.objetoCcb.montanteDFI}"
 											label="Contrato" onkeypress="return isNumberKey(event);"
 											onkeydown="FormataValor(this,13, event, 2);"
-											converter="bigDecimalConverter" disabled="true" />										
+											converter="bigDecimalConverter" disabled="false" />										
 										<p:outputLabel for="valorDfiParcela" value="Valor DFI Parcela (R$): "
 											styleClass="labelBold" />
 										<p:inputText id="valorDfiParcela"
 											value="#{ccbMB.objetoCcb.valorDfiParcela}"
 											onkeypress="return isNumberKey(event);"
 											onkeydown="FormataValor(this, 13, event, 2);" required="true"
-											converter="bigDecimalConverter" disabled="true">
+											converter="bigDecimalConverter" disabled="false">
 										</p:inputText>	
 									</h:panelGrid>
 								</p:panel>										
@@ -1424,25 +1409,25 @@
 											styleClass="labelBold"
 											style="font-weight: bold; font-size: 18px;" />
 										<p:inputText id="cidadeImovel" value="#{ccbMB.objetoCcb.cidadeImovel}"
-											label="Contrato" disabled="true" />
+											label="Contrato" disabled="false" />
 	
 										<p:outputLabel for="ufImovel" value="Estado Do Imóvel: "
 											styleClass="labelBold"
 											style="font-weight: bold; font-size: 18px;" />
 										<p:inputText id="ufImovel" value="#{ccbMB.objetoCcb.ufImovel}"
-											label="Contrato" disabled="true" />
+											label="Contrato" disabled="false" />
 											
 										<p:outputLabel for="LogradouroRua" value="Logradouro: "
 											styleClass="labelBold"
 											style="font-weight: bold; font-size: 18px;" />
 										<p:inputText id="LogradouroRua" value="#{ccbMB.objetoCcb.logradouroRuaImovel}"
-											label="Contrato" disabled="true" />																						
+											label="Contrato" disabled="false" />																						
 											
 										<p:outputLabel for="bairroImovel" value="Bairro: "
 											styleClass="labelBold"
 											style="font-weight: bold; font-size: 18px;" />
 										<p:inputText id="bairroImovel" value="#{ccbMB.objetoCcb.bairroImovel}"
-											label="Contrato" disabled="true" />																																											
+											label="Contrato" disabled="false" />																																											
 									</h:panelGrid>
 								</p:panel>	
 								<p:panel header="Leilão">
@@ -1453,7 +1438,7 @@
 										<p:inputText id="vendaLeilao" value="#{ccbMB.objetoCcb.vendaLeilao}"
 											label="Contrato" onkeypress="return isNumberKey(event);"
 											onkeydown="FormataValor(this,13, event, 2);"
-											converter="bigDecimalConverter" disabled="true" />
+											converter="bigDecimalConverter" disabled="false" />
 	
 										<p:outputLabel for="elaboradorNome"
 											value="Nome do Elaborador: " styleClass="labelBold"
@@ -1461,7 +1446,7 @@
 										<p:autoComplete id="elaboradorNome" dropdown="true"
 											value="#{ccbMB.objetoCcb.elaboradorNome}"
 											completeMethod="#{ccbMB.completeTextNomes()}"
-											scrollHeight="250" disabled="true" />
+											scrollHeight="250" disabled="false" />
 	
 										<p:outputLabel for="elaboradorCrea"
 											value="Crea do Elaborador: " styleClass="labelBold"
@@ -1469,7 +1454,7 @@
 										<p:autoComplete id="elaboradorCrea" dropdown="true"
 											value="#{ccbMB.objetoCcb.elaboradorCrea}"
 											completeMethod="#{ccbMB.completeTextCrea()}"
-											scrollHeight="250" disabled="true" />
+											scrollHeight="250" disabled="false" />
 	
 	
 										<p:outputLabel for="responsavelNome"
@@ -1478,7 +1463,7 @@
 										<p:autoComplete id="responsavelNome" dropdown="true"
 											value="#{ccbMB.objetoCcb.responsavelNome}"
 											completeMethod="#{ccbMB.completeTextNomes()}"
-											scrollHeight="250" disabled="true" />
+											scrollHeight="250" disabled="false" />
 	
 										<p:outputLabel for="responsavelCrea"
 											value="Crea do Responsável: " styleClass="labelBold"
@@ -1487,7 +1472,7 @@
 											<p:autoComplete id="responsavelCrea" dropdown="true"
 												value="#{ccbMB.objetoCcb.responsavelCrea}"
 												completeMethod="#{ccbMB.completeTextCrea()}"
-												scrollHeight="250" disabled="true" />
+												scrollHeight="250" disabled="false" />
 										</h:panelGroup>
 	
 										<p:outputLabel for="PorcentagemImovel"
@@ -1497,7 +1482,7 @@
 											value="#{ccbMB.objetoCcb.porcentagemImovel}" label="Contrato"
 											onkeypress="return isNumberKey(event);"
 											onkeydown="FormataValor(this,13, event, 2);"
-											converter="bigDecimalConverter" disabled="true" />
+											converter="bigDecimalConverter" disabled="false" />
 	
 									</h:panelGrid>
 								</p:panel>					
@@ -1688,6 +1673,42 @@
 				</p:dataTable>
 			</h:form>
 		</p:dialog>
+		
+		<p:dataTable id="participantesDialogdlg" var="participantesDlg"
+				value="#{ccbMB.objetoCcb.listaParticipantes}" paginator="true" rows="10"
+				selectionMode="single"
+				paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				rowsPerPageTemplate="5,10,15"
+				selection="#{mbean.selectedPagadorGenerico}"
+				style="FONT-SIZE: 10pt;" emptyMessage=""
+				rowKey="#{participantesDlg.id}">
+
+				<p:column style="text-align: center;"
+					sortBy="#{participantesDlg.pessoa.nome}"
+					filterBy="#{participantesDlg.pessoa.nome}" filterMatchMode="contains">
+					<f:facet name="header">
+						<h:outputText value="Nome" />
+					</f:facet>
+					<h:outputText value="#{participantesDlg.pessoa.nome}" />
+				</p:column>
+
+				<f:facet name="footer">
+					<p:commandButton value="Selecionar" id="selectedPagadorRecebedor"
+						action="#{mbean.populateSelectedPagadorRecebedor}"
+						icon="ui-icon ui-icon-check"
+						update="#{mbean.updatePagadorRecebedor}"
+						oncomplete="PF('pagadorRecebedorDialog').hide();" />
+					<p:commandButton value="Limpar Seleção"
+						action="#{mbean.clearPagadorRecebedor}"
+						icon="ui-icon ui-icon-trash" update=":form pagadorDialogdlg"
+						oncomplete="PF('pagadorRecebedorDialog').hide();" />
+					<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
+						oncomplete="PF('pagadorRecebedorDialog').hide();" />
+				</f:facet>
+			</p:dataTable>
+		</p:dialog>
+	</h:form>
+		
 		
 	</ui:define>
 </ui:composition>

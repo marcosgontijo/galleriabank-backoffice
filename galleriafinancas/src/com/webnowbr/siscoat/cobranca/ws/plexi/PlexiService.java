@@ -134,7 +134,6 @@ public class PlexiService {
 					&& myURLConnection.getResponseCode() != HTTP_COD_SUCESSO1
 					&& myURLConnection.getResponseCode() != HTTP_COD_SUCESSO2) {
 				if(CommonsUtil.mesmoValor(myURLConnection.getResponseCode(), 404)){
-					//System.out.println("Não foi encontrato retorno de requestId:" + requestId);
 					JSONObject jsonObject = new JSONObject();
 					jsonObject.put("erro404", "true");
 					return jsonObject;
@@ -189,13 +188,17 @@ public class PlexiService {
 		if(webhookObject.has("erro404")) {
 			plexi.setStatus("Consulta expirada");
 			plexi.setRequestId(null);
-			PedirConsulta(plexi, user);
+			atualizarDocumentos(plexi);
+			if(plexi.verificaCamposDoc())
+				PedirConsulta(plexi, user);
 			plexiConsultaDao.merge(plexi);
 			return;
 		} else if(webhookObject.has("error") && CommonsUtil.mesmoValor(webhookObject.get("error"), true)) {
 			plexi.setStatus("Consulta com erro");
 			plexi.setRequestId(null);
-			PedirConsulta(plexi, user);
+			atualizarDocumentos(plexi);
+			if(plexi.verificaCamposDoc())
+				PedirConsulta(plexi, user);
 			plexiConsultaDao.merge(plexi);
 		}
 	
@@ -208,6 +211,15 @@ public class PlexiService {
 		plexi.setStatus("Consulta Concluída");	
 		plexiConsultaDao.merge(plexi);
 		salvarPdfRetornoPlexi(plexi);
+	}
+	
+	public void atualizarDocumentos(PlexiConsulta plexiConsulta) {
+		DocumentoAnalise docAnalise = plexiConsulta.documentoAnalise;
+		plexiConsulta.populatePagadorRecebedor(docAnalise.getPagador());
+		if(!CommonsUtil.semValor(plexiConsulta.getOrgaosStr())) {
+			String[] orgaos = plexiConsulta.getOrgaos();
+			plexiConsulta.setOrgaos(orgaos);
+		}
 	}
 
 	public JSONObject getJsonSucesso(InputStream inputStream) {

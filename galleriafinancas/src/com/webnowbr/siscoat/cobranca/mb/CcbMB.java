@@ -18,7 +18,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -34,6 +36,7 @@ import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
 
+import com.webnowbr.siscoat.auxiliar.CompactadorUtil;
 import com.webnowbr.siscoat.cobranca.auxiliar.NumeroPorExtenso;
 import com.webnowbr.siscoat.cobranca.auxiliar.PorcentagemPorExtenso;
 import com.webnowbr.siscoat.cobranca.auxiliar.ValorPorExtenso;
@@ -43,6 +46,7 @@ import com.webnowbr.siscoat.cobranca.db.model.CcbParticipantes;
 import com.webnowbr.siscoat.cobranca.db.model.CcbProcessosJudiciais;
 import com.webnowbr.siscoat.cobranca.db.model.ContasPagar;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.Segurado;
@@ -57,6 +61,7 @@ import com.webnowbr.siscoat.cobranca.service.CcbService;
 import com.webnowbr.siscoat.common.BancosEnum;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
+import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.common.ValidaCNPJ;
 import com.webnowbr.siscoat.common.ValidaCPF;
@@ -81,6 +86,8 @@ public class CcbMB {
 	private PagadorRecebedor testemunha1Selecionado;
 	private PagadorRecebedor testemunha2Selecionado;
 	private List<PagadorRecebedor> listPagadores;
+	
+	private List<String> listaTipoDownload = new ArrayList<String>();
 	
 	private String tipoPesquisa;
 	private String tipoDownload;
@@ -412,7 +419,7 @@ public class CcbMB {
 					}					
 					if(!CommonsUtil.semValor(objetoCcb.getCCBAgencia())) {
 						despesaSelecionada.setAgenciaTed(objetoCcb.getCCBAgencia());
-					}					
+					}
 					if(!CommonsUtil.semValor(objetoCcb.getCCBCC())) {
 						despesaSelecionada.setContaTed(objetoCcb.getCCBCC());
 					}
@@ -489,6 +496,7 @@ public class CcbMB {
 		ContasPagarDao contasPagarDao = new ContasPagarDao();
 		contasPagarDao.create(despesaSelecionada);
 		despesaSelecionada = new ContasPagar();
+		calcularSimulador();
 	}
 	
 	public void removeDespesa(ContasPagar conta) {
@@ -546,6 +554,7 @@ public class CcbMB {
 	
 	public void populateSelectedContratoCobranca() {
 		ContratoCobranca contrato = objetoContratoCobranca;
+		listarDownloads();
 		this.objetoCcb.setObjetoContratoCobranca(contrato);
 		this.objetoCcb.setNumeroOperacao(contrato.getNumeroContrato());
 		DateFormat dateFormat = new SimpleDateFormat("MMyy");  
@@ -586,6 +595,7 @@ public class CcbMB {
 		this.objetoCcb.setUsarNovoCustoEmissao(true);
 		this.objetoCcb.setVlrImovel(contrato.getValorMercadoImovel());
 		this.objetoCcb.setVendaLeilao(contrato.getValorVendaForcadaImovel());
+		this.objetoCcb.setPrecoVendaCompra(contrato.getValorCompraVenda());
 		objetoCcb.setValorCredito(objetoContratoCobranca.getValorAprovadoComite());
 		objetoCcb.setTaxaDeJurosMes(objetoContratoCobranca.getTaxaAprovada());
 		objetoCcb.setPrazo(objetoContratoCobranca.getPrazoMaxAprovado().toString());
@@ -603,6 +613,24 @@ public class CcbMB {
 		calcularValorDespesa();
 		
 		this.objetoContratoCobranca = null;
+	}
+
+	private void listarDownloads() {
+		listaTipoDownload.clear();
+		listaTipoDownload.add("TODOS");
+		listaTipoDownload.add("CCI");
+		listaTipoDownload.add("Carta Split");
+		listaTipoDownload.add("AnexoII");
+		listaTipoDownload.add("Cessao");
+		listaTipoDownload.add("Endossos Em Preto");
+		listaTipoDownload.add("FinanciamentoCCI");
+		listaTipoDownload.add("Aquisicao/Emprestimo");
+		listaTipoDownload.add("Ficha PPE - PF");
+		listaTipoDownload.add("Ficha PLD e FT - PJ");
+		listaTipoDownload.add("Declaração Não União Estavel");
+		listaTipoDownload.add("Declaração de União Estavel");
+		listaTipoDownload.add("Declaração Destinação Recursos");
+		listaTipoDownload.add("Termo Responsabilidade Paju");
 	}
 
 	public void clearContratoCobranca() {
@@ -1329,88 +1357,174 @@ public class CcbMB {
 		FacesContext context = FacesContext.getCurrentInstance();
 		atualizaDadosEmitente();
 		CcbService ccbService = new CcbService(filesList, objetoCcb, simulador);
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+		byte[] arquivos = null;
+		List<String> listaDocumentos = new ArrayList<String>();
+		listaDocumentos.addAll(listaTipoDownload);
 	    try {
-	    	String tipoDownload = this.getTipoDownload();
-	    	
-	    	if(CommonsUtil.mesmoValor(tipoDownload,"CCBnova")){
-	    		byte[] arquivo = ccbService.geraCcbDinamica();
-	    		ccbService.geraDownloadByteArray(arquivo, "CCB");
-	    	} else if(CommonsUtil.mesmoValor(tipoDownload,"AFnova")){
-	    		byte[] arquivo = ccbService.geraAFDinamica();
-	    		ccbService.geraDownloadByteArray(arquivo, "CCB");
-	    	} else if(CommonsUtil.mesmoValor(tipoDownload,"NCnova")){
-	    		byte[] arquivo = ccbService.geraNCDinamica();
-	    		ccbService.geraDownloadByteArray(arquivo, "NC");
-	    	} else if(CommonsUtil.mesmoValor(tipoDownload,"CartaSplit")){
-	    		byte[] arquivo = ccbService.geraCartaSplitDinamica();
-	    		ccbService.geraDownloadByteArray(arquivo, "CartaSplit");
-	    	} else if(CommonsUtil.mesmoValor(tipoDownload,"AnexoII")){
-	    		byte[] arquivo = ccbService.geraAnexoII();
-	    		ccbService.geraDownloadByteArray(arquivo, "AnexoII");
-	    	} else if(CommonsUtil.mesmoValor(tipoDownload,"CCI")) {
-	    		byte[] arquivo = ccbService.geraCci();
-	    		ccbService.geraDownloadByteArray(arquivo, "CCI");
-		    } else if(CommonsUtil.mesmoValor(tipoDownload,"Cessao")) {
-		    	byte[] arquivo = ccbService.geraCessao();
-	    		ccbService.geraDownloadByteArray(arquivo, "Cessao");
-		    } else if(CommonsUtil.mesmoValor(tipoDownload,"InstrumentoEmissaoCCI")) {
-		    	byte[] arquivo = ccbService.geraInstrumentoEmissaoCCI();
-	    		ccbService.geraDownloadByteArray(arquivo, "InstrumentoEmissaoCCI");
-		    } else if(CommonsUtil.mesmoValor(tipoDownload,"EndossosEmPretoGalleria")) {
-		    	byte[] arquivo = ccbService.geraEndossosEmPretoGalleria();
-	    		ccbService.geraDownloadByteArray(arquivo, "EndossosEmPretoGalleria");
-		    } else if(CommonsUtil.mesmoValor(tipoDownload,"AquisicaoCCI")) {
-		    	byte[] arquivo = ccbService.geraCciAquisicao();
-	    		ccbService.geraDownloadByteArray(arquivo, "AquisicaoCCI");
-		    } else if(CommonsUtil.mesmoValor(tipoDownload,"FinanciamentoCCI")) {
-		    	byte[] arquivo = ccbService.geraCciFinanciamento();
-	    		ccbService.geraDownloadByteArray(arquivo, "FinanciamentoCCI");
-		    } else if(CommonsUtil.mesmoValor(tipoDownload,"Ficha PPE")) {
-		    	byte[] arquivo = ccbService.geraFichaPPE();
-	    		ccbService.geraDownloadByteArray(arquivo, "Ficha PPE");
-		    } else if(CommonsUtil.mesmoValor(tipoDownload,"Ficha PLD e FT")) {
-		    	byte[] arquivo = ccbService.geraFichaPLDeFT();
-	    		ccbService.geraDownloadByteArray(arquivo, "Ficha PLD e FT"); 	
-		    } else if(CommonsUtil.mesmoValor(tipoDownload,"DeclaracaoNaoUniaoEstavel")) {
-		    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
-		    		if(!participante.isEmpresa() && !participante.isUniaoEstavel()) {
-		    			byte[] arquivo = ccbService.geraDeclaracaoNaoUniaoEstavel(participante);
-			    		ccbService.geraDownloadByteArray(arquivo, "DeclaracaoNaoUniaoEstavel"); 	
-		    		}
-		    		return null;
-		    	}
-		    } else if(CommonsUtil.mesmoValor(tipoDownload,"DeclaracaoDestinacaoRecursos")) {
-		    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
-		    		if(!participante.isEmpresa() && !participante.isUniaoEstavel()) {
-		    			byte[] arquivo = ccbService.geraDeclaracaoDestinacaoRecursos(participante);
-			    		ccbService.geraDownloadByteArray(arquivo, "DeclaracaoDestinacaoRecursos"); 	
-		    		}
-		    		return null;
-		    	}
-		    } else if(CommonsUtil.mesmoValor(tipoDownload,"DeclaracaoUniaoEstavel")) {
-		    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
-		    		if(!participante.isEmpresa() && participante.isUniaoEstavel()) {
-		    			byte[] arquivo = ccbService.geraDeclaracaoUniaoEstavel(participante);
-			    		ccbService.geraDownloadByteArray(arquivo, "DeclaracaoUniaoEstavel"); 	
-		    		}
-		    		return null;
-		    	}		    	
-		    } else if(CommonsUtil.mesmoValor(tipoDownload,"TermoPaju")) {
-		    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
-		    		byte[] arquivo = ccbService.geraTermoResponsabilidadeAnuenciaPaju(participante);
-		    		ccbService.geraDownloadByteArray(arquivo, "TermoPaju"); 	
-		    	}
-		    	return null;
-		    } else {
-	    		
+	    	if(!CommonsUtil.mesmoValor(this.tipoDownload, "TODOS")) {
+	    		listaDocumentos = listaTipoDownload;
+	    		listaTipoDownload.clear();
+	    		listaTipoDownload.add(this.tipoDownload);
 	    	}
-   	
+	    	boolean arquicoUnico = true;
+    		if(listaTipoDownload.size() > 1){
+    			arquicoUnico = false;
+    		}
+	    	for(String tipoDownload : listaTipoDownload) {
+	    		byte[] arquivo;
+	    		String nomeDoc;
+		    	if(CommonsUtil.mesmoValor(tipoDownload,"CCB")){
+		    		arquivo = ccbService.geraCcbDinamica();
+		    		nomeDoc = "CCB.docx";
+		    		if(arquicoUnico)
+		    			ccbService.geraDownloadByteArray(arquivo,nomeDoc);
+		    		else
+		    			listaArquivos.put(nomeDoc, arquivo);
+				} else if (CommonsUtil.mesmoValor(tipoDownload, "AF")) {
+					arquivo = ccbService.geraAFDinamica();
+					nomeDoc = "AF.docx";
+					if (arquicoUnico)
+						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
+					else
+						listaArquivos.put(nomeDoc, arquivo);
+				} else if (CommonsUtil.mesmoValor(tipoDownload, "NC")) {
+					arquivo = ccbService.geraNCDinamica();
+					nomeDoc = "NC.docx";
+					if (arquicoUnico)
+						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
+					else
+						listaArquivos.put(nomeDoc, arquivo);
+				} else if (CommonsUtil.mesmoValor(tipoDownload, "Carta Split")) {
+					arquivo = ccbService.geraCartaSplitDinamica();
+					nomeDoc = "CartaSplit.docx";
+					if (arquicoUnico)
+						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
+					else
+						listaArquivos.put(nomeDoc, arquivo);
+				} else if (CommonsUtil.mesmoValor(tipoDownload, "AnexoII")) {
+					arquivo = ccbService.geraAnexoII();
+					nomeDoc = "AnexoII.docx";
+					if (arquicoUnico)
+						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
+					else
+						listaArquivos.put(nomeDoc, arquivo);
+				} else if (CommonsUtil.mesmoValor(tipoDownload, "CCI")) {
+					arquivo = ccbService.geraCci();
+					nomeDoc = "CCI.docx";
+					if (arquicoUnico)
+						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
+					else
+						listaArquivos.put(nomeDoc, arquivo);
+				} else if (CommonsUtil.mesmoValor(tipoDownload, "Cessao")) {
+					arquivo = ccbService.geraCessao();
+					nomeDoc = "Cessao.docx";
+					if (arquicoUnico)
+						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
+					else
+						listaArquivos.put(nomeDoc, arquivo);
+				} else if (CommonsUtil.mesmoValor(tipoDownload, "InstrumentoEmissaoCCI")) {
+					arquivo = ccbService.geraInstrumentoEmissaoCCI();
+					nomeDoc = "InstrumentoEmissaoCCI.docx";
+					if (arquicoUnico)
+						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
+					else
+						listaArquivos.put(nomeDoc, arquivo);
+				} else if (CommonsUtil.mesmoValor(tipoDownload, "Endossos Em Preto")) {
+					arquivo = ccbService.geraEndossosEmPretoGalleria();
+					nomeDoc = "EndossosEmPretoGalleria.docx";
+					if (arquicoUnico)
+						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
+					else
+						listaArquivos.put(nomeDoc, arquivo);
+				} else if (CommonsUtil.mesmoValor(tipoDownload, "Aquisicao/Emprestimo")) {
+					arquivo = ccbService.geraCciAquisicao();
+					nomeDoc = "AquisicaoCCI.docx";
+					if (arquicoUnico)
+						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
+					else
+						listaArquivos.put(nomeDoc, arquivo);
+				} else if (CommonsUtil.mesmoValor(tipoDownload, "FinanciamentoCCI")) {
+					arquivo = ccbService.geraCciFinanciamento();
+					nomeDoc = "FinanciamentoCCI.docx";
+					if (arquicoUnico)
+						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
+					else
+						listaArquivos.put(nomeDoc, arquivo);
+				} else if (CommonsUtil.mesmoValor(tipoDownload, "Ficha PPE - PF")) {
+					arquivo = ccbService.geraFichaPPE();
+					nomeDoc = "Ficha PPE.docx";
+					if (arquicoUnico)
+						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
+					else
+						listaArquivos.put(nomeDoc, arquivo);
+				} else if (CommonsUtil.mesmoValor(tipoDownload, "Ficha PLD e FT - PJ")) {
+					arquivo = ccbService.geraFichaPLDeFT();
+					nomeDoc = "Ficha PLD e FT.docx";
+					if (arquicoUnico)
+						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
+					else
+						listaArquivos.put(nomeDoc, arquivo);
+				} else if(CommonsUtil.mesmoValor(tipoDownload,"Declaração Não União Estavel")) {
+			    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
+			    		if(!participante.isEmpresa() && !participante.isUniaoEstavel()) {
+			    			arquivo = ccbService.geraDeclaracaoNaoUniaoEstavel(participante);
+			    			nomeDoc = "DeclaracaoNaoUniaoEstavel.docx";
+				    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
+				    		listaArquivos.put(nomeDoc, arquivo);
+			    		}
+			    		return null;
+			    	}
+			    } else if(CommonsUtil.mesmoValor(tipoDownload,"Declaração de União Estavel")) {
+			    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
+			    		if(!participante.isEmpresa() && participante.isUniaoEstavel()) {
+			    			arquivo = ccbService.geraDeclaracaoUniaoEstavel(participante);
+			    			nomeDoc = "DeclaracaoUniaoEstavel.docx";
+				    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc); 	
+				    		listaArquivos.put(nomeDoc, arquivo);
+			    		}
+			    		return null;
+			    	}		    	
+			    } else if(CommonsUtil.mesmoValor(tipoDownload,"Declaração Destinação Recursos")) {
+			    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
+			    			arquivo = ccbService.geraDeclaracaoDestinacaoRecursos(participante);
+			    			nomeDoc = "DeclaracaoDestinacaoRecursos.docx";
+				    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
+				    		listaArquivos.put(nomeDoc, arquivo);
+			    		return null;
+			    	}
+			    }  else if(CommonsUtil.mesmoValor(tipoDownload,"Termo Responsabilidade Paju")) {
+			    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
+			    		arquivo = ccbService.geraTermoResponsabilidadeAnuenciaPaju(participante);
+			    		nomeDoc = "TermoPaju.docx";
+			    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc); 	
+			    		listaArquivos.put(nomeDoc, arquivo);
+			    	}
+			    	return null;
+			    } else {
+		    		
+		    	}
+		    	 
+	    	}
+	    	 
+	    	arquivos = CompactadorUtil.compactarZipByte(listaArquivos);
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String.format(objetoCcb.getNumeroOperacao() + " Contratos.zip",
+					"");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(arquivos));
+			gerador.close();
+			listaTipoDownload.clear();
+	  	    listaTipoDownload = listaDocumentos;
 	    } catch (Exception e) {
 			context.addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_ERROR,
 							"Contrato de Cobrança: Ocorreu um problema ao gerar o documento!  " + e + ";" + e.getCause(),
 							""));
 	    }  
+	  
+		
 	    return null;
 	}
 		
@@ -1664,6 +1778,7 @@ public class CcbMB {
 	public String clearFieldsInserirCcb() {
 		loadLovs();	
 		clearDespesas();
+		listarDownloads();
 		this.addSegurador = false;
 		this.objetoCcb = new CcbContrato();
 		this.objetoCcb.setListaParticipantes(new ArrayList<CcbParticipantes>());
@@ -2098,5 +2213,13 @@ public class CcbMB {
 
 	public void setProcessoSelecionado(CcbProcessosJudiciais processoSelecionado) {
 		this.processoSelecionado = processoSelecionado;
+	}
+
+	public List<String> getListaTipoDownload() {
+		return listaTipoDownload;
+	}
+
+	public void setListaTipoDownload(List<String> listaTipoDownload) {
+		this.listaTipoDownload = listaTipoDownload;
 	}	
 }

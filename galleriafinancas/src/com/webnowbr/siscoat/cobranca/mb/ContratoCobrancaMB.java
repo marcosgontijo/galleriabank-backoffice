@@ -33853,27 +33853,32 @@ public class ContratoCobrancaMB {
 		}
 	}
 	
-	public void testeAttCertidoes(List<DocumentoAnalise> listDocAnalise) {
+	public void testeAttCertidoes(List<DocumentoAnalise> listDocAnalise, String key) {
 		try {
 			ContratoCobranca contratoCobranca = listDocAnalise.get(0).getContratoCobranca();
 			SchedulerFactory shedFact = new StdSchedulerFactory();
 			Scheduler scheduler = shedFact.getScheduler();
 			scheduler.start();
 			JobDetail jobDetail = JobBuilder.newJob(CertidoesJob.class)
-					.withIdentity("certidoesJOB", contratoCobranca.getNumeroContrato() + "_certidoesAtualizar").build();
+					.withIdentity("certidoesJOB", key + "_certidoesAtualizar").build();
 			User user = loginBean.getUsuarioLogado();
 			jobDetail.getJobDataMap().put("listaDocumentoAnalise", listDocAnalise);
 			jobDetail.getJobDataMap().put("user", user);
 			jobDetail.getJobDataMap().put("objetoContratoCobranca", contratoCobranca);
 			jobDetail.getJobDataMap().put("tipoProcesso", "AtualizarPesquisas");
 			Trigger trigger = TriggerBuilder.newTrigger()
-					.withIdentity("certidoesJOB", contratoCobranca.getNumeroContrato() + "_certidoesAtualizar").startNow().build();
+					.withIdentity("certidoesJOB", key + "_certidoesAtualizar").startNow().build();
 			scheduler.scheduleJob(jobDetail, trigger);
 			FacesContext context = FacesContext.getCurrentInstance();
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta iniciada com sucesso", ""));
 		} catch (SchedulerException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void testeAttCertidoes(List<DocumentoAnalise> listDocAnalise) {
+		ContratoCobranca contratoCobranca = listDocAnalise.get(0).getContratoCobranca();
+		testeAttCertidoes(listDocAnalise, contratoCobranca.getNumeroContrato());
 	}
 	
 	public boolean checkAtualizaCertidoes() throws SchedulerException {
@@ -33898,7 +33903,7 @@ public class ContratoCobrancaMB {
 			listDocAnalise.addAll(analiseDao.listagemDocumentoAnalise(contrato));
 		}
 		System.out.println("listagem concluida");
-		testeAttCertidoes(listDocAnalise);
+		testeAttCertidoes(listDocAnalise, "ContratosConsulta");
 		System.out.println("AttCertidoes Concluido");
 	}
 
