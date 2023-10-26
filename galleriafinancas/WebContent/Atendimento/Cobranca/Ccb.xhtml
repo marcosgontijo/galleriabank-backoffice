@@ -33,44 +33,61 @@
 				<p:commandButton ajax="false" action="#{ccbMB.readXWPFile}"
 					icon="ui-icon ui-icon-print" value="Fazer Download"  update=" :form  msgs" />			
 
-				<h:panelGrid columns="2">							
-					<p:outputLabel for="tipoDownload"
-						value="Tipo Do Documento: " styleClass="labelBold" />
+				<h:panelGrid columns="2">	
+					<h:panelGrid columns="2">							
+						<p:outputLabel for="tipoDownload"
+							value="Tipo Do Documento: " styleClass="labelBold" />
+							
+						<p:autoComplete id="tipoDownload" dropdown="true"
+							value="#{ccbMB.tipoDownload}"
+							completeMethod="#{ccbMB.getListaTipoDownload()}"
+							scrollHeight="250"  >
+																		
+							<p:ajax update=" pagadoresNovos despesasPanel SeguradoresPanel PanelBanco PgmntBancoVendedor" 
+								event="itemSelect" />
+						</p:autoComplete>	
+							
+						<p:outputLabel for="numeroContrato" value="Número do Contrato: "
+							styleClass="labelBold"
+							style="font-weight: bold; font-size: 18px;" />
+						<p:inputText id="numeroContrato" value="#{ccbMB.objetoCcb.numeroCcb}"
+							label="Contrato" style="width:150px;" />
+							
+						<p:outputLabel for="serieCcb" value="Serie:"
+							styleClass="labelBold"
+							style="font-weight: bold; font-size: 18px;" />
+						<p:inputText id="serieCcb" value="#{ccbMB.objetoCcb.serieCcb}"
+							label="Contrato" style="width:150px;" />
 						
-					<p:autoComplete id="tipoDownload" dropdown="true"
-						value="#{ccbMB.tipoDownload}"
-						completeMethod="#{ccbMB.getListaTipoDownload()}"
-						scrollHeight="250"  >
-																	
-						<p:ajax update=" pagadoresNovos despesasPanel SeguradoresPanel PanelBanco PgmntBancoVendedor" 
-							event="itemSelect" />
-					</p:autoComplete>	
-					
-					<p:outputLabel for="numeroContrato" value="Número do Contrato: "
-						styleClass="labelBold"
-						style="font-weight: bold; font-size: 18px;" />
-					<p:inputText id="numeroContrato" value="#{ccbMB.objetoCcb.numeroCcb}"
-						label="Contrato" style="width:150px;" />
-						
-					<p:outputLabel for="serieCcb" value="Serie:"
-						styleClass="labelBold"
-						style="font-weight: bold; font-size: 18px;" />
-					<p:inputText id="serieCcb" value="#{ccbMB.objetoCcb.serieCcb}"
-						label="Contrato" style="width:150px;" />
-					
-					<p:outputLabel for="contrato" value="Referente a Operação: "
-						styleClass="labelBold"
-						style="font-weight: bold; font-size: 18px;" />
-					<h:panelGroup>
-						<p:outputLabel id="contrato" disabled="false"
-							value="#{ccbMB.objetoCcb.objetoContratoCobranca.numeroContrato}"
-							required="false" style="FONT-SIZE: 10pt;" />
-						<p:spacer height="10" />
-						<p:commandButton icon="ui-icon ui-icon-circle-zoomin" ajax="true"
-							action="#{ccbMB.pesquisaContratoCobranca}"
-							oncomplete="PF('contratoCobrancaDialog').show();"
-							update="contrato contratoDialogdlg" />
-					</h:panelGroup>
+						<p:outputLabel for="contrato" value="Referente a Operação: "
+							styleClass="labelBold"
+							style="font-weight: bold; font-size: 18px;" />
+						<h:panelGroup>
+							<p:outputLabel id="contrato" disabled="false"
+								value="#{ccbMB.objetoCcb.objetoContratoCobranca.numeroContrato}"
+								required="false" style="FONT-SIZE: 10pt;" />
+							<p:spacer height="10" />
+							<p:commandButton icon="ui-icon ui-icon-circle-zoomin" ajax="true"
+								action="#{ccbMB.pesquisaContratoCobranca}"
+								oncomplete="PF('contratoCobrancaDialog').show();"
+								update="contrato contratoDialogdlg" />
+						</h:panelGroup>
+					</h:panelGrid>
+					<h:panelGrid columns="2">
+						<p:outputLabel value="Emitente Principal: "
+							styleClass="labelBold"
+							style="font-weight: bold; font-size: 18px;" />
+						<h:panelGroup>
+							<p:outputLabel id="emitentePrincipal"
+								value="#{ccbMB.objetoCcb.emitentePrincipal.pessoa.nome}"
+								 style="FONT-SIZE: 10pt;" />
+							<p:spacer height="10" />
+							<p:commandButton icon="ui-icon ui-icon-circle-zoomin" ajax="true"
+								action="#{ccbMB.pesquisaEmitente()}"
+								oncomplete="PF('participanteDialog').show();"
+								update="emitentePrincipal participanteDialogForm" />
+						</h:panelGroup>
+					</h:panelGrid>
 				</h:panelGrid>
 				
 				<h:panelGroup id="pagadoresNovos">
@@ -1674,8 +1691,55 @@
 			</h:form>
 		</p:dialog>
 		
+	
+		<p:dialog widgetVar="participanteDialog" style="FONT-SIZE: 10pt;" width="800">
+			<h:form id="participanteDialogForm">
+				<p:dataTable id="participanteDialogdlg" var="participanteDialogdlg"
+					value="#{ccbMB.objetoCcb.listaParticipantes}" paginator="true" rows="10"
+					selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{ccbMB.selectedParticipante}"
+					style="FONT-SIZE: 10pt;" emptyMessage=""
+					rowKey="#{participanteDialogdlg.id}">
 		
+					<p:column style="text-align: center;"
+						sortBy="#{participanteDialogdlg.pessoa.cnpj}"
+						filterBy="#{participanteDialogdlg.pessoa.cnpj}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CNPJ" />
+						</f:facet>
+						<h:outputText value="#{participanteDialogdlg.pessoa.cnpj}" />
+					</p:column>
 		
+					<p:column style="text-align: center;"
+						sortBy="#{participanteDialogdlg.pessoa.cpf}" filterBy="#{participanteDialogdlg.pessoa.cpf}"
+						filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CPF" />
+						</f:facet>
+						<h:outputText value="#{participanteDialogdlg.pessoa.cpf}" />
+					</p:column>
 		
+					<p:column style="text-align: center;"
+						sortBy="#{participanteDialogdlg.pessoa.nome}"
+						filterBy="#{participanteDialogdlg.pessoa.nome}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{participanteDialogdlg.pessoa.nome}" />
+					</p:column>
+		
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar" 
+							action="#{ccbMB.populateSelectedParticipante}"
+							icon="ui-icon ui-icon-check"
+							update=":form:emitentePrincipal"
+							oncomplete="PF('participanteDialog').hide();" />
+					</f:facet>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+				
 	</ui:define>
 </ui:composition>
