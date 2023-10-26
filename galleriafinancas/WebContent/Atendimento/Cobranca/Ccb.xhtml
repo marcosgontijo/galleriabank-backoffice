@@ -43,7 +43,7 @@
 						scrollHeight="250"  >
 																	
 						<p:ajax update=" pagadoresNovos despesasPanel SeguradoresPanel PanelBanco PgmntBancoVendedor" 
-							event="valueChange" />
+							event="itemSelect" />
 					</p:autoComplete>	
 					
 					<p:outputLabel for="numeroContrato" value="Número do Contrato: "
@@ -1674,40 +1674,7 @@
 			</h:form>
 		</p:dialog>
 		
-		<p:dataTable id="participantesDialogdlg" var="participantesDlg"
-				value="#{ccbMB.objetoCcb.listaParticipantes}" paginator="true" rows="10"
-				selectionMode="single"
-				paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-				rowsPerPageTemplate="5,10,15"
-				selection="#{mbean.selectedPagadorGenerico}"
-				style="FONT-SIZE: 10pt;" emptyMessage=""
-				rowKey="#{participantesDlg.id}">
-
-				<p:column style="text-align: center;"
-					sortBy="#{participantesDlg.pessoa.nome}"
-					filterBy="#{participantesDlg.pessoa.nome}" filterMatchMode="contains">
-					<f:facet name="header">
-						<h:outputText value="Nome" />
-					</f:facet>
-					<h:outputText value="#{participantesDlg.pessoa.nome}" />
-				</p:column>
-
-				<f:facet name="footer">
-					<p:commandButton value="Selecionar" id="selectedPagadorRecebedor"
-						action="#{mbean.populateSelectedPagadorRecebedor}"
-						icon="ui-icon ui-icon-check"
-						update="#{mbean.updatePagadorRecebedor}"
-						oncomplete="PF('pagadorRecebedorDialog').hide();" />
-					<p:commandButton value="Limpar Seleção"
-						action="#{mbean.clearPagadorRecebedor}"
-						icon="ui-icon ui-icon-trash" update=":form pagadorDialogdlg"
-						oncomplete="PF('pagadorRecebedorDialog').hide();" />
-					<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
-						oncomplete="PF('pagadorRecebedorDialog').hide();" />
-				</f:facet>
-			</p:dataTable>
-		</p:dialog>
-	</h:form>
+		
 		
 		
 	</ui:define>
