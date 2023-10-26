@@ -2238,7 +2238,11 @@
 			<column name="terrenoOuBarracaoTaxa" not-null="true" default="false"/>
 		</property>	
 		<property name="nadaConstaTaxa" type="boolean">
-		<column name="nadaConstaTaxa" not-null="true" default="false"/>
+			<column name="nadaConstaTaxa" not-null="true" default="false"/>
+		</property>
+		
+		<property name="valorCartorio" type="big_decimal">
+			<column name="valorCartorio" />
 		</property>
 		
 	</class>

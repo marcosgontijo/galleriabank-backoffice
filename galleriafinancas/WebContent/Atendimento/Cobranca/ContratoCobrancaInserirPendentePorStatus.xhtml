@@ -3917,6 +3917,17 @@
 									onkeydown="FormataValor(this, 13, event, 2);"
 									converter="bigDecimalConverter" />
 							</h:panelGroup>
+							
+							<p:outputLabel for="valorCartorio" value="Valor de Cartório "
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel value="R$ " />
+								<p:inputText id="valorCartorio"  style="FONT-SIZE: 10pt;width:125px;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.valorCartorio}"
+									size="100" onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);"
+									converter="bigDecimalConverter" />
+							</h:panelGroup>
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>

@@ -178,6 +178,7 @@ import com.webnowbr.siscoat.cobranca.db.op.GruposPagadoresDao;
 import com.webnowbr.siscoat.cobranca.db.op.IPCADao;
 import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
+import com.webnowbr.siscoat.cobranca.db.op.RegistroImovelTabelaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.cobranca.db.op.SeguradoDAO;
 import com.webnowbr.siscoat.cobranca.db.op.StarkBankBaixaDAO;
@@ -9355,6 +9356,29 @@ public class ContratoCobrancaMB {
 			}
 			this.objetoContratoCobranca.setQtdeVotosNecessariosComite(definirQtdeVotoComite(this.objetoContratoCobranca));
 			gerarRecomendacaoComite();
+		}
+		
+		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. DOC")) {
+			int qtdMatriculas  =1;
+			String matriculas = objetoContratoCobranca.getImovel().getNumeroMatricula().trim();
+			if (matriculas.endsWith(",")) {
+				matriculas = matriculas.substring(0, matriculas.lastIndexOf(",")).trim();
+			}
+			//Emprestimo = financiamento
+			if (CommonsUtil.mesmoValorIgnoreCase("Emprestimo", objetoContratoCobranca.getTipoOperacao()))
+				qtdMatriculas = qtdMatriculas * 2;
+
+			qtdMatriculas = matriculas.split(",").length;
+			//se for apartamento é no minimo 3		
+			if (CommonsUtil.mesmoValorIgnoreCase("Apartamento", objetoContratoCobranca.getImovel().getTipo()) && qtdMatriculas == 1) {
+				qtdMatriculas = 3;
+			}
+			
+			RegistroImovelTabelaDao rDao = new RegistroImovelTabelaDao();
+			BigDecimal valorRegistro = rDao.getValorRegistro(objetoCcb.getValorCredito().multiply(CommonsUtil.bigDecimalValue(qtdMatriculas)));
+			if(valorRegistro.compareTo(objetoContratoCobranca.getValorCartorio()) > 0) {
+				objetoContratoCobranca.setValorCartorio(valorRegistro);
+			}			
 		}
 
 		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Registro")) {

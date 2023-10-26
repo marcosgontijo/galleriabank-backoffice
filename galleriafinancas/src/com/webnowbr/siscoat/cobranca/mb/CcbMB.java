@@ -557,9 +557,9 @@ public class CcbMB {
 		}
 		
 		//Calcular Parcelas
-		calcularSimulador();
 		prepararDespesasContrato();
 		calcularValorDespesa();
+		calcularSimulador();
 		
 		this.objetoContratoCobranca = null;
 	}
@@ -848,25 +848,12 @@ public class CcbMB {
 			objetoContratoCobranca.getListContasPagar().remove(despesaAverbacao);
 			objetoCcb.setAverbacaoValor(BigDecimal.ZERO);
 		}
-		int qtdMatriculas  =1;
-		String matriculas = objetoContratoCobranca.getImovel().getNumeroMatricula().trim();
-		if (matriculas.endsWith(",")) {
-			matriculas = matriculas.substring(0, matriculas.lastIndexOf(",")).trim();
-		}
-		//Emprestimo = financiamento
-		if (CommonsUtil.mesmoValorIgnoreCase("Emprestimo", objetoContratoCobranca.getTipoOperacao()))
-			qtdMatriculas = qtdMatriculas * 2;
-
-		qtdMatriculas = matriculas.split(",").length;
-		//se for apartamento é no minimo 3		
-		if (CommonsUtil.mesmoValorIgnoreCase("Apartamento", objetoContratoCobranca.getImovel().getTipo()) && qtdMatriculas == 1) {
-			qtdMatriculas = 3;
-		}
+		
 		
 		ContasPagar despesaRegistro = buscarDespesa("Registro", objetoContratoCobranca.getNumeroContrato());
-		if(!CommonsUtil.semValor(objetoCcb.getValorCredito())) {
+		if(!CommonsUtil.semValor(objetoContratoCobranca.getValorCartorio())) {
 			RegistroImovelTabelaDao rDao = new RegistroImovelTabelaDao();
-			BigDecimal valorRegistro = rDao.getValorRegistro(objetoCcb.getValorCredito().multiply(CommonsUtil.bigDecimalValue(qtdMatriculas)));
+			BigDecimal valorRegistro = objetoContratoCobranca.getValorCartorio();
 			if(CommonsUtil.semValor(objetoCcb.getRegistroImovelValor())) {
 				criarDespesa("Registro", valorRegistro);
 				objetoCcb.setRegistroImovelValor(valorRegistro);
@@ -1420,7 +1407,10 @@ public class CcbMB {
 		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
 		byte[] arquivos = null;
 		List<String> listaDocumentos = new ArrayList<String>();
-		listaDocumentos.addAll(listaTipoDownload);
+		for(String s : listaTipoDownload) {
+			String s2 = new String(s);
+			listaDocumentos.add(s2);
+		}
 	    try {
 	    	if(!CommonsUtil.mesmoValor(this.tipoDownload, "TODOS")) {
 	    		listaDocumentos = listaTipoDownload;
@@ -1533,7 +1523,6 @@ public class CcbMB {
 				    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 				    		listaArquivos.put(nomeDoc, arquivo);
 			    		}
-			    		return null;
 			    	}
 			    } else if(CommonsUtil.mesmoValor(tipoDownload,"Declaração de União Estavel")) {
 			    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
@@ -1543,7 +1532,6 @@ public class CcbMB {
 				    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc); 	
 				    		listaArquivos.put(nomeDoc, arquivo);
 			    		}
-			    		return null;
 			    	}		    	
 			    } else if(CommonsUtil.mesmoValor(tipoDownload,"Declaração Destinação Recursos")) {
 			    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
@@ -1551,7 +1539,6 @@ public class CcbMB {
 			    			nomeDoc = "DeclaracaoDestinacaoRecursos.docx";
 				    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 				    		listaArquivos.put(nomeDoc, arquivo);
-			    		return null;
 			    	}
 			    }  else if(CommonsUtil.mesmoValor(tipoDownload,"Termo Responsabilidade Paju")) {
 			    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
@@ -1560,7 +1547,6 @@ public class CcbMB {
 			    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc); 	
 			    		listaArquivos.put(nomeDoc, arquivo);
 			    	}
-			    	return null;
 			    } else {
 		    		
 		    	}
@@ -1584,7 +1570,7 @@ public class CcbMB {
 							""));
 	    }  
 	  
-		
+	    listarDownloads();
 	    return null;
 	}
 		

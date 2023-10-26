@@ -831,6 +831,7 @@ public class ContratoCobranca implements Serializable {
 	
 	private BigDecimal dividaIPTU;
 	private BigDecimal dividaCondominio;
+	private BigDecimal valorCartorio;
 	
 	private String emailPagador;
 	private String celularPagador;
@@ -6996,5 +6997,12 @@ public class ContratoCobranca implements Serializable {
 	public void setNadaConstaTaxa(boolean nadaConstaTaxa) {
 		this.nadaConstaTaxa = nadaConstaTaxa;
 	}
-	
+
+	public BigDecimal getValorCartorio() {
+		return valorCartorio;
+	}
+
+	public void setValorCartorio(BigDecimal valorCartorio) {
+		this.valorCartorio = valorCartorio;
+	}
 }
