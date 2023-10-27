@@ -108,6 +108,8 @@ public class CcbService {
 					segurados.add(participante);
 				} else if(CommonsUtil.mesmoValor(participante.getTipoParticipante(), "EMITENTE")){
 					segurados.add(participante);
+				}  else if(CommonsUtil.mesmoValor(participante.getTipoParticipante(), "COMPRADOR")){
+					segurados.add(participante);
 				}
 			}
 			if(objetoCcb.isTerceiroGarantidor()) {

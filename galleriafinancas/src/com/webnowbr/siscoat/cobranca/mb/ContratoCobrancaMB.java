@@ -9470,6 +9470,9 @@ public class ContratoCobrancaMB {
 			} else {
 				this.objetoAnaliseComite.setValorComite(valorSugerido);
 			}
+			if(CommonsUtil.semValor(objetoImovelCobranca.getLinkGMaps())) {
+				getLinkMaps();
+			}
 		}
 
 		gerarProcessosQuitarComite();

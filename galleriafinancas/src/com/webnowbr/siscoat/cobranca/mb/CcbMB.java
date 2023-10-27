@@ -914,12 +914,6 @@ public class CcbMB {
 			populateSelectedPagadorRecebedor();	
 			addParticipante = true;
 			
-			if(participanteSelecionado.isEmpresa()) {
-				objetoCcb.setTipoPessoaEmitente("PJ");
-			} else {
-				objetoCcb.setTipoPessoaEmitente("PF");
-			}
-			
 			participanteSelecionado.setTipoParticipante("EMITENTE");
 			concluirParticipante();
 			
@@ -946,18 +940,21 @@ public class CcbMB {
 		populateSelectedContratoCobranca();
 		calculaPorcentagemImovel();
 		
-		//luana
-		pesquisaTestemunha1();
-		selectedPagadorGenerico = ccbDao.ConsultaTestemunha((long) 11960);
-		populateSelectedPagadorRecebedor();
+		if(CommonsUtil.semValor(objetoCcb.getCpfTestemunha1())) {
+			//luana
+			pesquisaTestemunha1();
+			selectedPagadorGenerico = ccbDao.ConsultaTestemunha((long) 11960);
+			populateSelectedPagadorRecebedor();			
+		}
 		
-		//anna flavia
-		pesquisaTestemunha2();
-		selectedPagadorGenerico = ccbDao.ConsultaTestemunha((long) 25929);
-		populateSelectedPagadorRecebedor();
+		if(CommonsUtil.semValor(objetoCcb.getCpfTestemunha2())) {
+			//bianca
+			pesquisaTestemunha2();
+			selectedPagadorGenerico = ccbDao.ConsultaTestemunha((long) 47570);
+			populateSelectedPagadorRecebedor();
+		}
 		
 		criarCcbNosistema();
-		//clearFieldsInserirCcb();
 		return "/Atendimento/Cobranca/Ccb.xhtml";
 	}
 	
@@ -1060,10 +1057,12 @@ public class CcbMB {
 			objetoCcb.setCpfEmitente(emitente.getCpf());
 			this.objetoCcb.setCCBDocumento("CPF");
 			this.objetoCcb.setCCBCNPJ(emitente.getCpf());
+			objetoCcb.setTipoPessoaEmitente("PF");
 		} else if (!CommonsUtil.semValor(emitente.getCnpj())) {
 			objetoCcb.setCpfEmitente(emitente.getCnpj());
 			this.objetoCcb.setCCBDocumento("CNPJ");
 			this.objetoCcb.setCCBCNPJ(emitente.getCnpj());
+			objetoCcb.setTipoPessoaEmitente("PJ");
 		}
 		
 		if(!CommonsUtil.semValor(emitente.getConta())) {
@@ -1515,14 +1514,14 @@ public class CcbMB {
 						listaArquivos.put(nomeDoc, arquivo);
 				} else if (CommonsUtil.mesmoValor(tipoDownload, "Ficha PPE - PF")) {
 					arquivo = ccbService.geraFichaPPE();
-					nomeDoc = "Ficha PPE.docx";
+					nomeDoc = "Ficha PPE.pdf";
 					if (arquicoUnico)
 						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 					else
 						listaArquivos.put(nomeDoc, arquivo);
 				} else if (CommonsUtil.mesmoValor(tipoDownload, "Ficha PLD e FT - PJ")) {
 					arquivo = ccbService.geraFichaPLDeFT();
-					nomeDoc = "Ficha PLD e FT.docx";
+					nomeDoc = "Ficha PLD e FT.pdf";
 					if (arquicoUnico)
 						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 					else
@@ -1531,7 +1530,7 @@ public class CcbMB {
 			    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
 			    		if(!participante.isEmpresa() && !participante.isUniaoEstavel()) {
 			    			arquivo = ccbService.geraDeclaracaoNaoUniaoEstavel(participante);
-			    			nomeDoc = "DeclaracaoNaoUniaoEstavel.docx";
+			    			nomeDoc = participante.getPessoa().getNome() + "_" + "DeclaracaoNaoUniaoEstavel.docx";
 				    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 				    		listaArquivos.put(nomeDoc, arquivo);
 			    		}
@@ -1540,7 +1539,7 @@ public class CcbMB {
 			    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
 			    		if(!participante.isEmpresa() && participante.isUniaoEstavel()) {
 			    			arquivo = ccbService.geraDeclaracaoUniaoEstavel(participante);
-			    			nomeDoc = "DeclaracaoUniaoEstavel.docx";
+			    			nomeDoc = participante.getPessoa().getNome() + "_" + "DeclaracaoUniaoEstavel.docx";
 				    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc); 	
 				    		listaArquivos.put(nomeDoc, arquivo);
 			    		}
@@ -1548,14 +1547,14 @@ public class CcbMB {
 			    } else if(CommonsUtil.mesmoValor(tipoDownload,"Declaração Destinação Recursos")) {
 			    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
 			    			arquivo = ccbService.geraDeclaracaoDestinacaoRecursos(participante);
-			    			nomeDoc = "DeclaracaoDestinacaoRecursos.docx";
+			    			nomeDoc = participante.getPessoa().getNome() + "_" +  "DeclaracaoDestinacaoRecursos.docx";
 				    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 				    		listaArquivos.put(nomeDoc, arquivo);
 			    	}
 			    }  else if(CommonsUtil.mesmoValor(tipoDownload,"Termo Responsabilidade Paju")) {
 			    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
 			    		arquivo = ccbService.geraTermoResponsabilidadeAnuenciaPaju(participante);
-			    		nomeDoc = "TermoPaju.docx";
+			    		nomeDoc = participante.getPessoa().getNome() + "_" + "TermoPaju.docx";
 			    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc); 	
 			    		listaArquivos.put(nomeDoc, arquivo);
 			    	}
