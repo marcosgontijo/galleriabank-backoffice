@@ -9375,7 +9375,7 @@ public class ContratoCobrancaMB {
 			}
 			
 			RegistroImovelTabelaDao rDao = new RegistroImovelTabelaDao();
-			BigDecimal valorRegistro = rDao.getValorRegistro(objetoCcb.getValorCredito().multiply(CommonsUtil.bigDecimalValue(qtdMatriculas)));
+			BigDecimal valorRegistro = rDao.getValorRegistro(objetoContratoCobranca.getValorAprovadoComite().multiply(CommonsUtil.bigDecimalValue(qtdMatriculas)));
 			if(valorRegistro.compareTo(objetoContratoCobranca.getValorCartorio()) > 0) {
 				objetoContratoCobranca.setValorCartorio(valorRegistro);
 			}			

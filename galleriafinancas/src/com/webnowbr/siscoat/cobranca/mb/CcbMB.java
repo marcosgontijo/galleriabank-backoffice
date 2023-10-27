@@ -1550,7 +1550,6 @@ public class CcbMB {
 			    } else {
 		    		
 		    	}
-		    	 
 	    	}
 	    	 
 	    	arquivos = CompactadorUtil.compactarZipByte(listaArquivos);
@@ -1628,7 +1627,8 @@ public class CcbMB {
 		List<String> imoveis = Arrays.asList("Apartamento", "Casa", "Casa de Condomínio", "Terreno");
 		
 		if(!objetoCcb.getEmitentePrincipal().isEmpresa() &&
-				imoveis.contains(objetoCcb.getObjetoContratoCobranca().getImovel().getTipo())) {
+				imoveis.contains(objetoCcb.getObjetoContratoCobranca().getImovel().getTipo())
+				&& CommonsUtil.mesmoValor(objetoCcb.getObjetoContratoCobranca().getTipoOperacao(), "Emprestimo")) {
 			tarifaIOFDiario = BigDecimal.ZERO;
 			tarifaIOFAdicional = BigDecimal.ZERO;
 		} else {
