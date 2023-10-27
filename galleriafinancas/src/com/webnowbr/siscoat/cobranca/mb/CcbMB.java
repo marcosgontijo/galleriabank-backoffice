@@ -761,6 +761,13 @@ public class CcbMB {
 				}
 			}
 			
+			despesaTransferencia.setBancoTed(objetoContratoCobranca.getResponsavel().getBanco());
+			despesaTransferencia.setAgenciaTed(objetoContratoCobranca.getResponsavel().getAgencia());
+			despesaTransferencia.setContaTed(objetoContratoCobranca.getResponsavel().getConta());
+			despesaTransferencia.setCpfTed(objetoContratoCobranca.getResponsavel().getCpfCnpjCC());
+			despesaTransferencia.setNomeTed(objetoContratoCobranca.getResponsavel().getNomeCC());
+			despesaTransferencia.setPix(objetoContratoCobranca.getResponsavel().getPix());
+			
 			if(CommonsUtil.semValor(objetoCcb.getIntermediacaoValor())) {
 				criarDespesa("Transferência", valorTranferencia, "TED");
 			} else {
@@ -1047,24 +1054,36 @@ public class CcbMB {
 	}
 	
 	private void atualizaDadosEmitente() {
-		if(!CommonsUtil.semValor(objetoCcb.getEmitentePrincipal().getPessoa().getConta())) {
-			this.objetoCcb.setContaCorrente(objetoCcb.getEmitentePrincipal().getPessoa().getConta() + "-" + objetoCcb.getEmitentePrincipal().getPessoa().getContaDigito());
-			this.objetoCcb.setCCBCC(objetoCcb.getEmitentePrincipal().getPessoa().getConta() + "-" + objetoCcb.getEmitentePrincipal().getPessoa().getContaDigito());
+		PagadorRecebedor emitente = objetoCcb.getEmitentePrincipal().getPessoa();
+		objetoCcb.setNomeEmitente(emitente.getNome());
+		if(!CommonsUtil.semValor(emitente.getCpf())) {
+			objetoCcb.setCpfEmitente(emitente.getCpf());
+			this.objetoCcb.setCCBDocumento("CPF");
+			this.objetoCcb.setCCBCNPJ(emitente.getCpf());
+		} else if (!CommonsUtil.semValor(emitente.getCnpj())) {
+			objetoCcb.setCpfEmitente(emitente.getCnpj());
+			this.objetoCcb.setCCBDocumento("CNPJ");
+			this.objetoCcb.setCCBCNPJ(emitente.getCnpj());
 		}
 		
-		if(!CommonsUtil.semValor(objetoCcb.getEmitentePrincipal().getPessoa().getTipoConta())) {
-			this.objetoCcb.setTipoContaBanco(objetoCcb.getEmitentePrincipal().getPessoa().getTipoConta());
-			this.objetoCcb.setCCBTipoConta(objetoCcb.getEmitentePrincipal().getPessoa().getTipoConta());
+		if(!CommonsUtil.semValor(emitente.getConta())) {
+			this.objetoCcb.setContaCorrente(emitente.getConta() + "-" + emitente.getContaDigito());
+			this.objetoCcb.setCCBCC(emitente.getConta() + "-" + emitente.getContaDigito());
 		}
 		
-		if(!CommonsUtil.semValor(objetoCcb.getEmitentePrincipal().getPessoa().getAgencia())) {
-			this.objetoCcb.setAgencia(objetoCcb.getEmitentePrincipal().getPessoa().getAgencia());
-			this.objetoCcb.setCCBAgencia(objetoCcb.getEmitentePrincipal().getPessoa().getAgencia());
+		if(!CommonsUtil.semValor(emitente.getTipoConta())) {
+			this.objetoCcb.setTipoContaBanco(emitente.getTipoConta());
+			this.objetoCcb.setCCBTipoConta(emitente.getTipoConta());
 		}
 		
-		if(!CommonsUtil.semValor(objetoCcb.getEmitentePrincipal().getPessoa().getBanco())) {		
-			this.objetoCcb.setCCBBanco(objetoCcb.getEmitentePrincipal().getPessoa().getBanco());
-			String[] banco = objetoCcb.getEmitentePrincipal().getPessoa().getBanco().split(Pattern.quote("|"));
+		if(!CommonsUtil.semValor(emitente.getAgencia())) {
+			this.objetoCcb.setAgencia(emitente.getAgencia());
+			this.objetoCcb.setCCBAgencia(emitente.getAgencia());
+		}
+		
+		if(!CommonsUtil.semValor(emitente.getBanco())) {		
+			this.objetoCcb.setCCBBanco(emitente.getBanco());
+			String[] banco = emitente.getBanco().split(Pattern.quote("|"));
 			if(banco.length == 1) {
 				if(CommonsUtil.eSomenteNumero(banco[0])) {
 					this.objetoCcb.setNumeroBanco(CommonsUtil.trimNull(banco[0]));
@@ -1083,24 +1102,17 @@ public class CcbMB {
 			}
 		}
 		
-		if(!CommonsUtil.semValor(objetoCcb.getEmitentePrincipal().getPessoa().getNomeCC())) {
-			this.objetoCcb.setTitularConta(objetoCcb.getEmitentePrincipal().getPessoa().getNomeCC());
-			this.objetoCcb.setCCBNome(objetoCcb.getEmitentePrincipal().getPessoa().getNomeCC());
+		if(!CommonsUtil.semValor(emitente.getNomeCC())) {
+			this.objetoCcb.setTitularConta(emitente.getNomeCC());
+			this.objetoCcb.setCCBNome(emitente.getNomeCC());
 		}
-		if(!CommonsUtil.semValor(objetoCcb.getEmitentePrincipal().getPessoa().getContaDigito())) {
-			this.objetoCcb.setDigitoBanco(objetoCcb.getEmitentePrincipal().getPessoa().getContaDigito());
-			this.objetoCcb.setCCBDigito(objetoCcb.getEmitentePrincipal().getPessoa().getContaDigito());
+		if(!CommonsUtil.semValor(emitente.getContaDigito())) {
+			this.objetoCcb.setDigitoBanco(emitente.getContaDigito());
+			this.objetoCcb.setCCBDigito(emitente.getContaDigito());
 		}
-		if(!CommonsUtil.semValor(objetoCcb.getEmitentePrincipal().getPessoa().getPix())) {
-			this.objetoCcb.setPixBanco(objetoCcb.getEmitentePrincipal().getPessoa().getPix());
-			this.objetoCcb.setCCBPix(objetoCcb.getEmitentePrincipal().getPessoa().getPix());
-		}
-		if(!CommonsUtil.semValor(objetoCcb.getEmitentePrincipal().getPessoa().getCpf())) {
-			this.objetoCcb.setCCBDocumento("CPF");
-			this.objetoCcb.setCCBCNPJ(objetoCcb.getEmitentePrincipal().getPessoa().getCpf());
-		} else if (!CommonsUtil.semValor(objetoCcb.getEmitentePrincipal().getPessoa().getCnpj())) {
-			this.objetoCcb.setCCBDocumento("CNPJ");
-			this.objetoCcb.setCCBCNPJ(objetoCcb.getEmitentePrincipal().getPessoa().getCnpj());
+		if(!CommonsUtil.semValor(emitente.getPix())) {
+			this.objetoCcb.setPixBanco(emitente.getPix());
+			this.objetoCcb.setCCBPix(emitente.getPix());
 		}
 	}
 	
