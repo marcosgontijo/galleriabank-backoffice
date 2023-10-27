@@ -18,6 +18,7 @@ import java.util.Map;
 import javax.faces.context.FacesContext;
 import javax.imageio.ImageIO;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
@@ -2735,10 +2736,10 @@ public class CcbService {
 	}
 	
 	public byte[] geraFichaPPE() throws IOException{
-		try {
-			InputStream in = getClass().getResourceAsStream("/resource/Ficha PPE.pdf");
-			byte[] out = new byte[in.available()];
-			return out;
+		try {			
+			InputStream is = getClass().getResourceAsStream("/resource/Ficha PPE.pdf");
+			byte[] bytes = IOUtils.toByteArray(is);
+			return bytes;
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -2747,9 +2748,9 @@ public class CcbService {
 	
 	public byte[] geraFichaPLDeFT() throws IOException{
 		try {
-			InputStream in = getClass().getResourceAsStream("/resource/Ficha PLD e FT.pdf");
-			byte[] out = new byte[in.available()];
-			return out;
+			InputStream is = getClass().getResourceAsStream("/resource/Ficha PLD e FT.pdf");
+			byte[] bytes = IOUtils.toByteArray(is);
+			return bytes;
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -2771,7 +2772,7 @@ public class CcbService {
 		if(nomeSemvirgula.contains(",")) {
 			nomeSemvirgula = nomeSemvirgula.replace(",", "");
 	    }
-		gerador.open(String.format("Galleria Bank - "+fileName+" %s.docx", ""));
+		gerador.open(String.format("Galleria Bank - "+fileName, ""));
 		gerador.feed(new ByteArrayInputStream(file));
 		gerador.close();
 		
@@ -2924,7 +2925,7 @@ public class CcbService {
 			run = tableRow1.getCell(0).getParagraphArray(0).createRun();
 			run.setFontSize(12);
 			run.setColor("000000");
-			if(CommonsUtil.mesmoValor(despesa.getDescricao(), "Cartório")) {
+			if(CommonsUtil.mesmoValor(despesa.getDescricao(), "Cartório") || CommonsUtil.mesmoValor(despesa.getDescricao(), "Registro")) {
 				run.setText("Custas Cartorárias");
 			} else if(CommonsUtil.mesmoValor(despesa.getDescricao(), "Certidão de Casamento")) {
 				run.setText("Certidão de estado civil");

@@ -856,19 +856,20 @@ public class CcbMB {
 			objetoCcb.setAverbacaoValor(BigDecimal.ZERO);
 		}
 		
-		
-		ContasPagar despesaRegistro = buscarDespesa("Registro", objetoContratoCobranca.getNumeroContrato());
+		ContasPagar despesaRegistro = buscarDespesa("Cartório", objetoContratoCobranca.getNumeroContrato());
+		if(CommonsUtil.semValor(despesaRegistro))
+			despesaRegistro = buscarDespesa("Registro", objetoContratoCobranca.getNumeroContrato());
 		if(!CommonsUtil.semValor(objetoContratoCobranca.getValorCartorio())) {
 			RegistroImovelTabelaDao rDao = new RegistroImovelTabelaDao();
 			BigDecimal valorRegistro = objetoContratoCobranca.getValorCartorio();
 			if(CommonsUtil.semValor(objetoCcb.getRegistroImovelValor())) {
-				criarDespesa("Registro", valorRegistro);
-				objetoCcb.setRegistroImovelValor(valorRegistro);
+				criarDespesa("Cartório", valorRegistro);
 			} else {
 				despesaRegistro.setValor(valorRegistro);
-				objetoCcb.setRegistroImovelValor(valorRegistro);
 				contasPagarDao.merge(despesaRegistro);
 			}
+			objetoCcb.setRegistroImovelValor(valorRegistro);
+			objetoCcb.setCustasCartorariasValor(valorRegistro);
 		} else if(!CommonsUtil.semValor(despesaRegistro)) {
 			despesaRegistro.setValor(BigDecimal.ZERO);
 			objetoCcb.getDespesasAnexo2().remove(despesaRegistro);
