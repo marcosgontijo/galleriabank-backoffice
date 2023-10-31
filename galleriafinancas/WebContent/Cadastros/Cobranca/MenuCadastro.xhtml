@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+			    xmlns:ui="http://java.sun.com/jsf/facelets"
+			    xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+			    template="../MenuCadastros.xhtml">
+	<ui:define name="conteudo">
+		<h:form id="form">
+			<p:panel id="MenuCadastro" header="Cadastro de menu" style="margin-bottom:10px;">
+			<p:focus/>
+			<p:messages/>
+			<p:panelGrid columns="2" style="border: none;" >
+			<p:outputLabel  value="nome:" styleClass="labelBold"></p:outputLabel>
+			<p:inputText value="#{menuItemMB.objetoMenuItem.nome}" required="true" label="Nome" onblur="" style="width:400px;"></p:inputText>
+			
+			<p:outputLabel value="Ação:" styleClass="labelBold"></p:outputLabel>
+			<p:inputText value="#{menuItemMB.objetoMenuItem.acao}"  label="Acao"  onblur="" style="width:400px;"></p:inputText>
+			
+			<p:outputLabel value="icone:" styleClass="labelBold"></p:outputLabel>
+			<p:inputText value="#{menuItemMB.objetoMenuItem.icone}"  label="Icone"  onblur="" style="width:400px;" ></p:inputText>
+		
+			<p:outputLabel value="permissão:" styleClass="labelBold"></p:outputLabel>
+			<p:inputText value="#{menuItemMB.objetoMenuItem.permissao}"  label="Permissao"  onblur="" style="width:400px;"></p:inputText>
+			
+			<p:outputLabel value="Ordem:" styleClass="labelBold"></p:outputLabel>
+			<p:inputText value="#{menuItemMB.objetoMenuItem.ordem}"  label="ordem"  onblur="" style="width:400px;"></p:inputText>
+			
+			<p:outputLabel value="tipo:" styleClass="labelBold"></p:outputLabel>
+			<p:selectOneMenu value="#{menuItemMB.objetoMenuItem.tipo}">
+			<f:selectItem itemLabel="Insira o item do Menu" itemValue=""/>
+			<f:selectItem itemLabel="Módulo" itemValue="Módulo"/>
+			<f:selectItem itemLabel="Submódulo" itemValue="Submódulo"/>
+			<f:selectItem itemLabel="Item" itemValue="Item"/>
+			<p:ajax event="valueChange" update="MenuCadastro"></p:ajax>
+			</p:selectOneMenu>
+			
+			
+			
+			
+			<p:outputLabel value="Menu Pai:" styleClass="labelBold" rendered="#{menuItemMB.objetoMenuItem.tipo == 'Submódulo' or menuItemMB.objetoMenuItem.tipo == 'Item'}"></p:outputLabel>
+			<p:selectOneMenu  value="#{menuItemMB.objetoMenuItem.itemPai.id}" rendered="#{menuItemMB.objetoMenuItem.tipo == 'Submódulo'}">
+			<f:selectItem itemLabel="Insira o menu" itemValue=""/>
+			<f:selectItems value="#{menuItemMB.menuItemModulo}"
+						var="itemPai"
+						 itemValue="#{itemPai.id}"
+						 itemLabel="#{itemPai.nome}" />
+			</p:selectOneMenu>
+			<p:selectOneMenu  value="#{menuItemMB.objetoMenuItem.itemPai.id}" rendered="#{menuItemMB.objetoMenuItem.tipo == 'Item'}">
+			<f:selectItem itemLabel="Insira o menu" itemValue=""/>
+			<f:selectItems value="#{menuItemMB.menuItemSubmodulo}"
+						var="itemPai"
+						 itemValue="#{itemPai.id}"
+						 itemLabel="#{itemPai.nome}" />
+			</p:selectOneMenu>
+			</p:panelGrid>
+			<div align="center">
+				<p:commandButton value="Ok" ajax="false" icon="ui-icon-check" action="#{menuItemMB.salvarMenu()}" style="TEXT-DECORATION: bold;"/>		 						
+				<p:spacer height="10" />
+				<p:commandButton value="Cancelar" ajax="false" immediate="true" icon="ui-icon-cancel" action="MenuListagem.xhtml" style="TEXT-DECORATION: bold; "/>
+			</div>
+			</p:panel>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		</h:form>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	</ui:define>
+</ui:composition>
