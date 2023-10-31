@@ -33837,8 +33837,16 @@ public class ContratoCobrancaMB {
 						nadaConsta = false;
 						ressalvaProtesto.add(docAnalise.getRessalvaProtestoNome());
 					}
-					if (docAnalise.isScoreBaixo()) {
-						this.objetoContratoCobranca.setScoreBaixoTaxa(true);
+//					if (docAnalise.isScoreBaixo()) {
+//						this.objetoContratoCobranca.setScoreBaixoTaxa(true);
+//						nadaConsta = false;
+//					}
+					if (docAnalise.isScoreBaixo450()) {
+						this.objetoContratoCobranca.setScoreBaixo450Taxa(true);;
+						nadaConsta = false;
+					}
+					if (docAnalise.isScoreBaixo700()) {
+						this.objetoContratoCobranca.setScoreBaixo700Taxa(true);
 						nadaConsta = false;
 					}
 					if (docAnalise.isDividaVencidaAvailable()) {
@@ -33857,8 +33865,20 @@ public class ContratoCobrancaMB {
 						this.objetoContratoCobranca.setRelacionamentoBacenRecenteTaxa(true);
 						nadaConsta = false;
 					}
-					if (docAnalise.isRiscoTotalAvailable()) {
-						this.objetoContratoCobranca.setRiscoTotalBaixoTaxa(true);
+					if (docAnalise.isInicioRelacionamentoInexistente()) {
+						this.objetoContratoCobranca.setInicioRelacionamentoInexistenteTaxa(true);
+						nadaConsta = false;
+					}
+//					if (docAnalise.isRiscoTotalAvailable()) {
+//						this.objetoContratoCobranca.setRiscoTotalBaixoTaxa(true);
+//						nadaConsta = false;
+//					}
+					if (docAnalise.isRiscoTotal20k()) {
+						this.objetoContratoCobranca.setRiscoTotal20kTaxa(true);
+						nadaConsta = false;
+					}
+					if (docAnalise.isRiscoTotal50k()) {
+						this.objetoContratoCobranca.setRiscoTotal50kTaxa(true);
 						nadaConsta = false;
 					}
 					if (docAnalise.isContemAcoesEngine() || docAnalise.isContemAcoesProcesso()) {

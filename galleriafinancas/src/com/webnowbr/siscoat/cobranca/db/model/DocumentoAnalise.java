@@ -128,6 +128,11 @@ public class DocumentoAnalise implements Serializable {
 	private String ressalvaCcfNome = "";
 	private boolean contemAcoesEngine = false;
 	private boolean contemAcoesProcesso = false;
+	private boolean isScoreBaixo450 = false;
+	private boolean isScoreBaixo700 = false;
+	private boolean isInicioRelacionamentoInexistente = false;
+	private boolean isRiscoTotal20k = false;
+	private boolean isRiscoTotal50k = false;
 
 	public List<DocumentoAnaliseResumo> getResumoProcesso() {
 		List<DocumentoAnaliseResumo> vProcesso = new ArrayList<>();
@@ -142,7 +147,7 @@ public class DocumentoAnalise implements Serializable {
 		} else {
 			br.com.galleriabank.bigdata.cliente.model.processos.ProcessoResumo processo = processoResponse.getProcessoResumo();
 			if (processo.getCriminal() == null) {
-				vProcesso.add(new DocumentoAnaliseResumo("Criminal:", "Não disponível"));
+				vProcesso.add(new DocumentoAnaliseResumo("Criminal:", "Nada consta"));
 			} else {
 				String processosQuantidade = CommonsUtil.stringValue(processo.getCriminal().stream().mapToInt(p -> p.getQuatidade()).sum());
 				Double processosValor = processo.getCriminal().stream().mapToDouble(p -> p.getValor()).sum();
@@ -155,7 +160,7 @@ public class DocumentoAnalise implements Serializable {
 			}
 
 			if (processo.getTrabalhista() == null) {
-				vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:", "Não disponível"));
+				vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:", "Nada consta"));
 			} else {
 				String processosQuantidade = CommonsUtil.stringValue(processo.getTrabalhista().stream().mapToInt(p -> p.getQuatidade()).sum());
 				Double processosValor = processo.getTrabalhista().stream().mapToDouble(p -> p.getValor()).sum();
@@ -169,7 +174,7 @@ public class DocumentoAnalise implements Serializable {
 			}
 
 			if (processo.getTituloExtraJudicial() == null) {
-				vProcesso.add(new DocumentoAnaliseResumo("Execução de título:", "Não disponível"));
+				vProcesso.add(new DocumentoAnaliseResumo("Execução de título:", "Nada consta"));
 			} else {
 				String processosQuantidade = CommonsUtil.stringValue(processo.getTituloExtraJudicial().stream().mapToInt(p -> p.getQuatidade()).sum());
 				Double processosValor = processo.getTituloExtraJudicial().stream().mapToDouble(p -> p.getValor()).sum();
@@ -181,7 +186,7 @@ public class DocumentoAnalise implements Serializable {
 			}
 
 			if (processo.getTituloExecucaoFiscal() == null) {
-				vProcesso.add(new DocumentoAnaliseResumo("Execução Fiscal:", "Não disponível"));
+				vProcesso.add(new DocumentoAnaliseResumo("Execução Fiscal:", "Nada consta"));
 			} else {
 				String processosQuantidade = CommonsUtil.stringValue(processo.getTituloExecucaoFiscal().stream().mapToInt(p -> p.getQuatidade()).sum());
 				Double processosValor = processo.getTituloExecucaoFiscal().stream().mapToDouble(p -> p.getValor()).sum();
@@ -193,7 +198,7 @@ public class DocumentoAnalise implements Serializable {
 			}
 
 			if (processo.getOutros() == null) {
-				vProcesso.add(new DocumentoAnaliseResumo("Outros:", "Não disponível"));
+				vProcesso.add(new DocumentoAnaliseResumo("Outros:", "Nada consta"));
 			} else {
 				String processosQuantidade = CommonsUtil.stringValue(processo.getOutros().stream().mapToInt(p -> p.getQuatidade()).sum());
 				Double processosValor = processo.getOutros().stream().mapToDouble(p -> p.getValor()).sum();
@@ -298,6 +303,9 @@ public class DocumentoAnalise implements Serializable {
 			
 			if (score.getScore() > 0 && score.getScore() < 450) {
 				isScoreBaixo = true;
+				isScoreBaixo450 = true;
+			} else if (score.getScore() > 451 && score.getScore() < 700) {
+				isScoreBaixo700 = true;
 			}
 			
 			
@@ -355,6 +363,13 @@ public class DocumentoAnalise implements Serializable {
 			} else {
 				result.add(new DocumentoAnaliseResumo("Ações Judiciais:", "0"));
 			}				
+		}
+		
+		if (engine.getDadosCadastraisPJ() != null && engine.getConsultaCompleta() == null) {
+			if (engine.getDadosCadastraisPJ().getBestInfo() == null) {
+				result.add(new DocumentoAnaliseResumo("Situação Cadastral:", "Nada consta"));
+			}
+			result.add(new DocumentoAnaliseResumo("Situação Cadastral:", engine.getDadosCadastraisPJ().getBestInfo().getCompanyStatus()));
 		}
 		
 		if (processo == null) {
@@ -421,7 +436,7 @@ public class DocumentoAnalise implements Serializable {
 		} else {
 
 			if (CommonsUtil.semValor(data.getCenprotProtestos().getProtestosBrasil().getEstados())) {
-				cenprot.add(new DocumentoAnaliseResumo("Não disponível", null));
+				cenprot.add(new DocumentoAnaliseResumo("Nada consta", null));
 			} else {
 				for (ProtestosBrasilEstado estado : data.getCenprotProtestos().getProtestosBrasil().getEstados()) {
 
@@ -473,7 +488,7 @@ public class DocumentoAnalise implements Serializable {
 			}			
 			
 			if (dado.getResumoDoClienteTraduzido().getCarteiradeCredito() == null) {
-			    scr.add(new DocumentoAnaliseResumo("Carteira de Crédito Tomado:", "Não Disponível"));
+			    scr.add(new DocumentoAnaliseResumo("Carteira de Crédito Total:", "Não Disponível"));
 			} else {
 			    String creditoTomado = CommonsUtil.formataValorMonetario(dado.getResumoDoClienteTraduzido().getCarteiradeCredito());
 			    double valorCreditoTomado = Double.parseDouble(creditoTomado.replace(".", "").replace(",", ".").replace("R$", "").trim());
@@ -495,7 +510,7 @@ public class DocumentoAnalise implements Serializable {
 			
 			if (dado.getResumoDoClienteTraduzido().getDtInicioRelacionamento() == null) {
 				scr.add(new DocumentoAnaliseResumo("Data inicio relacionamento:", "--"));
-				setInicioRelacionamentoBacen(false);
+				setInicioRelacionamentoInexistente(true);
 			} else {		
 				String[] str = dado.getResumoDoClienteTraduzido().getDtInicioRelacionamento().split("-");
 				
@@ -515,6 +530,11 @@ public class DocumentoAnalise implements Serializable {
 			
 			if (dado.getResumoDoClienteTraduzido().getRiscoTotal().compareTo(new BigDecimal("20000")) < 0) {
 				setHasRiscoTotal(true);
+				setRiscoTotal20k(true);
+			} else if (dado.getResumoDoClienteTraduzido().getRiscoTotal().compareTo(new BigDecimal("20001")) > 0 
+					&& dado.getResumoDoClienteTraduzido().getRiscoTotal().compareTo(new BigDecimal("50000")) < 0) {
+				setHasRiscoTotal(true);
+				setRiscoTotal50k(true);
 			}
 		}
 
@@ -1189,5 +1209,45 @@ public class DocumentoAnalise implements Serializable {
 
 	public boolean isContemAcoesProcesso() {
 		return contemAcoesProcesso;
+	}
+
+	public boolean isInicioRelacionamentoInexistente() {
+		return isInicioRelacionamentoInexistente;
+	}
+
+	public void setInicioRelacionamentoInexistente(boolean isInicioRelacionamentoInexistente) {
+		this.isInicioRelacionamentoInexistente = isInicioRelacionamentoInexistente;
+	}
+
+	public boolean isRiscoTotal20k() {
+		return isRiscoTotal20k;
+	}
+
+	public void setRiscoTotal20k(boolean isRiscoTotal20k) {
+		this.isRiscoTotal20k = isRiscoTotal20k;
+	}
+
+	public boolean isRiscoTotal50k() {
+		return isRiscoTotal50k;
+	}
+
+	public void setRiscoTotal50k(boolean isRiscoTotal50k) {
+		this.isRiscoTotal50k = isRiscoTotal50k;
+	}
+
+	public boolean isScoreBaixo450() {
+		return isScoreBaixo450;
+	}
+
+	public void setScoreBaixo450(boolean isScoreBaixo450) {
+		this.isScoreBaixo450 = isScoreBaixo450;
+	}
+
+	public boolean isScoreBaixo700() {
+		return isScoreBaixo700;
+	}
+
+	public void setScoreBaixo700(boolean isScoreBaixo700) {
+		this.isScoreBaixo700 = isScoreBaixo700;
 	}
 }
