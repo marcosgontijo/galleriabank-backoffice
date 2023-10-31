@@ -213,36 +213,49 @@ public class DocumentoAnalise implements Serializable {
 		EngineRetorno engine = null;
 		engine = GsonUtil.fromJson(getRetornoEngine(), EngineRetorno.class);
 		if (engine != null) {
-			EngineRetornoRequestFields nome = engine.getRequestFields().stream().filter(f -> f.getField().equals("nome"))
-					.findFirst().orElse(null);
-
-			EngineRetornoRequestFields cpf = engine.getRequestFields().stream().filter(g -> g.getField().equals("cpf"))
+			if (engine.getConsultaCompleta() != null) {
+				EngineRetornoRequestFields nome = engine.getRequestFields().stream().filter(f -> f.getField().equals("nome"))
 						.findFirst().orElse(null);
 
-			EngineRetornoRequestFields cnpj = engine.getRequestFields().stream()
-						.filter(s -> s.getField().equals("cnpj")).findFirst().orElse(null);
-			
-			if (nome != null) {
-				str = nome.getValue();
-				str = str.trim();
-			}
-			
-			if (cpf != null) {
-				if (engine.getConsultaCompleta() != null && engine.getConsultaCompleta().getBestInfo().getAge() != null) {
-					str = String.join(" - ", str, engine.getConsultaCompleta().getBestInfo().getAge() + " Anos");
-				} else {
-					str = String.join(" - ", str, null);
+				EngineRetornoRequestFields cpf = engine.getRequestFields().stream().filter(g -> g.getField().equals("cpf"))
+							.findFirst().orElse(null);
+
+				EngineRetornoRequestFields cnpj = engine.getRequestFields().stream()
+							.filter(s -> s.getField().equals("cnpj")).findFirst().orElse(null);
+				
+				if (nome != null) {
+					str = nome.getValue();
+					str = str.trim();
 				}
 				
-				str = String.join(" - ", str, cpf.getValue());
-			}
-			
-			if (cnpj != null) {
-				str = String.join(" - ", str, cnpj.getValue());
-			}
-			if (getMotivoAnalise() != null && !getMotivoAnalise().isEmpty()) {
-				str = String.join(" - ", str, getMotivoAnalise());
-			}
+				if (cpf != null) {
+					if (engine.getConsultaCompleta() != null && engine.getConsultaCompleta().getBestInfo().getAge() != null) {
+						str = String.join(" - ", str, engine.getConsultaCompleta().getBestInfo().getAge() + " Anos");
+					} else {
+						str = String.join(" - ", str, null);
+					}
+					
+					str = String.join(" - ", str, cpf.getValue());
+				}
+				
+				if (cnpj != null) {
+					str = String.join(" - ", str, cnpj.getValue());
+				}
+				if (getMotivoAnalise() != null && !getMotivoAnalise().isEmpty()) {
+					str = String.join(" - ", str, getMotivoAnalise());
+				}
+			} else {
+				if (engine.getDadosCadastraisPJ() != null) {
+					if (engine.getDadosCadastraisPJ().getBestInfo() != null) {						
+						str = engine.getDadosCadastraisPJ().getBestInfo().getCompanyName();
+						str = str.trim();
+						str = String.join(" - ", str, engine.getDadosCadastraisPJ().getCnpj());
+					}
+				}
+			}			
+		} else {
+			str = this.getIdentificacao();
+			str = String.join(" - ", str, this.cnpjcpf);
 		}
 		return str;
 	}
@@ -275,6 +288,7 @@ public class DocumentoAnalise implements Serializable {
 		
 		if (engine.getDadosCadastraisPJ() == null && engine.getConsultaCompleta() == null) {
 			result.add(new DocumentoAnaliseResumo("Score:", "Não disponivel"));
+			result.add(new DocumentoAnaliseResumo("Prob. Pag:", "Não disponivel"));
 		} else {
 			EngineRetornoExecutionResultConsultaQuodScore score = (engine.getDadosCadastraisPJ() != null) 
 																? engine.getDadosCadastraisPJ().getQuodScorePJ() 
@@ -285,6 +299,9 @@ public class DocumentoAnalise implements Serializable {
 			if (score.getScore() > 0 && score.getScore() < 450) {
 				isScoreBaixo = true;
 			}
+			
+			
+			result.add(new DocumentoAnaliseResumo("Prob. Pag:", CommonsUtil.stringValue(score.getProbabilityOfPayment() + "%")));
 		}
 
 		if(engine.getDadosCadastraisPJ() == null && engine.getConsultaCompleta() == null) {
@@ -478,8 +495,10 @@ public class DocumentoAnalise implements Serializable {
 			
 			if (dado.getResumoDoClienteTraduzido().getDtInicioRelacionamento() == null) {
 				scr.add(new DocumentoAnaliseResumo("Data inicio relacionamento:", "--"));
+				setInicioRelacionamentoBacen(false);
 			} else {		
 				String[] str = dado.getResumoDoClienteTraduzido().getDtInicioRelacionamento().split("-");
+				
 				if (Integer.parseInt(str[0]) > 2018) {
 					setInicioRelacionamentoBacen(true);
 				}

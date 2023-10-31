@@ -829,7 +829,8 @@ public class ContratoCobrancaMB {
 	private String laudoEndereco = "";
 	private boolean laudoDone = false;
 	private boolean erroPedidoLaudo = false;
-	boolean engineProcessados = false;
+	private boolean engineProcessados = false;
+	private List<DocumentoAnalise> docList = new ArrayList<DocumentoAnalise>();
 	
 	public String rowSelected() {
     	return null;
@@ -33877,11 +33878,13 @@ public class ContratoCobrancaMB {
 			this.objetoContratoCobranca.setProcessosRessalva(String.join(", ", ressalvaProcesso));
 			this.objetoContratoCobranca.setTrabalhistaRessalva(String.join(", ", ressalvaTrabalhista));
 			this.objetoContratoCobranca.setNadaConstaTaxa(nadaConsta);
-			
-			this.objetoContratoCobranca.calcularTaxaPreAprovada();
-			PrimeFaces current = PrimeFaces.current();
-			current.ajax().update("form:PreAprovadoPanel");
+		} else {
+			this.objetoContratoCobranca.setNadaConstaTaxa(true);
 		}
+		
+		this.objetoContratoCobranca.calcularTaxaPreAprovada();
+		PrimeFaces current = PrimeFaces.current();
+		current.ajax().update("form:PreAprovadoPanel");
 	}
 	
 	public void verificaEngineProcessados() {
@@ -33900,18 +33903,22 @@ public class ContratoCobrancaMB {
     public boolean isEngineProcessados() {
     	boolean isAllEngineProcessados = true;
     	
-		if (listaDocumentoAnalise.size() < 1) {
-			isAllEngineProcessados = false;
-			return isAllEngineProcessados;
-		}
-    	
-    	for (DocumentoAnalise docAnalise : listaDocumentoAnalise) { 
-    		if ((docAnalise.getMotivoAnalise().startsWith("Proprietario Atual"))) {
-    			if (!docAnalise.isEngineProcessado()) {
-        			isAllEngineProcessados = false;
-        			break;
-    			}
-    		}
+		docList = listaDocumentoAnalise
+				.stream()
+				.filter(x -> x.isLiberadoAnalise())
+				.collect(Collectors.toList());
+		
+    	for (DocumentoAnalise docAnalise : docList) { 
+			if (docAnalise.getEngine() == null) {
+    			continue;
+			}
+			
+			if (docAnalise.getEngine() != null && !CommonsUtil.semValor(docAnalise.getEngine().getIdCallManager())) {
+				if (CommonsUtil.semValor(docAnalise.getRetornoEngine())) {
+					isAllEngineProcessados = false;
+					break;
+				}
+			}
     	}
     	
     	if (isAllEngineProcessados) {
