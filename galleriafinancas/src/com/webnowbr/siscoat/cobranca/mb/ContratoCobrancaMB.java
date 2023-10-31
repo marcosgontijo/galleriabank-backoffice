@@ -683,7 +683,7 @@ public class ContratoCobrancaMB {
 	@ManagedProperty(value = "#{loginBean}")
 	protected LoginBean loginBean;
 
-	@ManagedProperty(value = "#{kobanaMB}")
+	@ManagedProperty(value = "#{kobanaMB}") 
 	protected KobanaMB kobanaMB;
 
 	@ManagedProperty(value = "#{crmmb}")
@@ -21157,7 +21157,7 @@ public class ContratoCobrancaMB {
 					// bpContratoCobrancaDetalhes.setVlrSaldoParcela(BigDecimal.ZERO);
 
 					// verifica se pagamento é igual ao valor presente
-				} else if (this.vlrRecebido.compareTo(this.valorPresenteParcela) == 0) {
+				} else if (this.vlrRecebido.compareTo(this.valorPresenteParcela) >= 0) {
 
 					// atualiza data de vencimento para a data atual se a data de vencimento for
 					// menor que a data de hoje
@@ -21260,7 +21260,7 @@ public class ContratoCobrancaMB {
 			somaBaixasStatus = somaBaixasStatus.add(cBaixas.getVlrRecebido());
 		}
 		
-		if (somaBaixasStatus.compareTo(bpContratoCobrancaDetalhes.getVlrParcela()) >= 0) {
+		if (somaBaixasStatus.compareTo(bpContratoCobrancaDetalhes.getVlrParcela()) >= 0 && baixaTotal) {
 			bpContratoCobrancaDetalhes.setParcelaPaga(true);
 			bpContratoCobrancaDetalhes.setOrigemBaixa("baixarParcelaParcial - Tratativa Status");
 		}		
