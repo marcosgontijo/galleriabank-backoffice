@@ -545,10 +545,10 @@ public class CcbMB {
 		this.objetoCcb.setVlrImovel(contrato.getValorMercadoImovel());
 		this.objetoCcb.setVendaLeilao(contrato.getValorVendaForcadaImovel());
 		this.objetoCcb.setPrecoVendaCompra(contrato.getValorCompraVenda());
-		objetoCcb.setValorCredito(objetoContratoCobranca.getValorAprovadoComite());
+		objetoCcb.setValorCredito(objetoContratoCobranca.getValorAprovadoCCB());
 		objetoCcb.setTaxaDeJurosMes(objetoContratoCobranca.getTaxaAprovada());
-		objetoCcb.setPrazo(objetoContratoCobranca.getPrazoMaxAprovado().toString());
-		objetoCcb.setSistemaAmortizacao("Price");
+		objetoCcb.setPrazo(objetoContratoCobranca.getPrazoAprovadoCCB().toString());
+		objetoCcb.setSistemaAmortizacao(objetoContratoCobranca.getTipoCalculoAprovadoCCB());
 		objetoCcb.setCarencia(CommonsUtil.stringValue(objetoContratoCobranca.getCarenciaComite()));
 		if(CommonsUtil.mesmoValor(objetoContratoCobranca.getTipoValorComite(), "liquido")) {
 			objetoCcb.setTipoCalculoFinal('L');

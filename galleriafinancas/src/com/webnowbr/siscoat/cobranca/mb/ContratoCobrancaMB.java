@@ -9393,11 +9393,11 @@ public class ContratoCobrancaMB {
 			if (CommonsUtil.semValor(this.objetoContratoCobranca.getValorImovel())) {
 				this.objetoContratoCobranca.setValorImovel(this.objetoContratoCobranca.getValorMercadoImovel());
 			}
-			if (!CommonsUtil.semValor(this.objetoContratoCobranca.getPrazoMaxAprovado())) {
-				this.qtdeParcelas = this.objetoContratoCobranca.getPrazoMaxAprovado().toString();
+			if (!CommonsUtil.semValor(this.objetoContratoCobranca.getPrazoAprovadoCCB())) {
+				this.qtdeParcelas = this.objetoContratoCobranca.getPrazoAprovadoCCB().toString();
 			}
 			if (CommonsUtil.semValor(this.objetoContratoCobranca.getValorCCB())) {
-				this.objetoContratoCobranca.setValorCCB(this.objetoContratoCobranca.getValorAprovadoComite());
+				this.objetoContratoCobranca.setValorCCB(this.objetoContratoCobranca.getValorAprovadoCCB());
 			}
 			if (CommonsUtil.semValor(this.objetoContratoCobranca.getTxJurosParcelas())) {
 				this.objetoContratoCobranca.setTxJurosParcelas(this.objetoContratoCobranca.getTaxaAprovada());

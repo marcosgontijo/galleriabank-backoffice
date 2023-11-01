@@ -1267,6 +1267,47 @@
 					</p:panel>
 				</h:panelGroup>
 
+				<h:panelGroup id="DadosAleradosPanelView"
+					style="margin-bottom:20px;">
+					<p:panel header="Dados Alterados Comercial"
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.dadosAprovadosComercial}">
+						<h:panelGrid columns="2">
+
+							<p:outputLabel for="valorAlteradoComercialView"
+								rendered="#{contratoCobrancaMB.objetoContratoCobranca.valorAprovadoComercial != null}"
+								value="Valor Alterado: " styleClass="labelBold" />
+							<h:panelGroup
+								rendered="#{contratoCobrancaMB.objetoContratoCobranca.valorAprovadoComercial != null}">
+								<h:outputText value="R$ " />
+								<p:outputLabel id="valorAlteradoComercialView"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.valorAprovadoComercial}"
+									converter="bigDecimalConverter"
+									style="FONT-SIZE: 10pt;width:100px;" />
+							</h:panelGroup>
+
+							<p:outputLabel for="prazoAlteradoComercialView"
+								rendered="#{contratoCobrancaMB.objetoContratoCobranca.prazoAprovadoComercial != null}"
+								value="Prazo Alterado: " styleClass="labelBold" />
+							<h:panelGroup rendered="#{contratoCobrancaMB.objetoContratoCobranca.prazoAprovadoComercial != null}">
+								<p:outputLabel id="prazoAlteradoComercialView" showOn="button"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.prazoAprovadoComercial}"
+									size="100" style="width:60px;" />
+								<p:outputLabel value=" meses" />
+							</h:panelGroup>
+
+							<p:outputLabel for="tipoCalculoAlteradoComercialView"
+								showOn="button" value="Tipo Cálculo Alterado: "
+								rendered="#{contratoCobrancaMB.objetoContratoCobranca.tipoCalculoAprovadoComercial != null}"
+								styleClass="labelBold" />
+							<p:outputLabel id="tipoCalculoAlteradoComercialView"
+								rendered="#{contratoCobrancaMB.objetoContratoCobranca.tipoCalculoAprovadoComercial != null}"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.tipoCalculoAprovadoComercial}" />
+
+						</h:panelGrid>
+					</p:panel>
+				</h:panelGroup>
+
+
 				<h:panelGroup id="AnaliseReprovadaPanel">
 					<p:panel
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada || contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Reprovado' }"

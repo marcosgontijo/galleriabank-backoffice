@@ -653,6 +653,10 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal taxaAprovada;
 	private BigInteger prazoMaxAprovado;
 	private BigDecimal valorAprovadoComite;
+	private BigDecimal valorAprovadoComercial;
+    private BigInteger  prazoAprovadoComercial;
+    private String tipoCalculoAprovadoComercial;
+    
 	private String tipoValorComite;
 	private String comentarioComite;
 	private String processosQuitarComite;
@@ -1311,6 +1315,37 @@ public class ContratoCobranca implements Serializable {
 		
 		return c;
 	}
+	
+	public boolean isDadosAprovadosComercial() {
+		return !CommonsUtil.semValor(valorAprovadoComercial) || //
+				!CommonsUtil.semValor(prazoAprovadoComercial) || //
+				!CommonsUtil.semValor(tipoCalculoAprovadoComercial);
+	}
+	
+	public BigDecimal getValorAprovadoCCB() {
+		if (!CommonsUtil.semValor(valorAprovadoComercial))
+			return valorAprovadoComercial;
+		else
+			return valorAprovadoComite;
+	}
+	
+	public BigInteger getPrazoAprovadoCCB() {
+		if (!CommonsUtil.semValor(prazoAprovadoComercial))
+			return prazoAprovadoComercial;
+		else
+			return prazoMaxAprovado;
+	}
+	
+	public String getTipoCalculoAprovadoCCB() {
+		if (CommonsUtil.semValor(tipoCalculoAprovadoComercial) && CommonsUtil.semValor(tipoCalculo))
+			return "Price";
+
+		if (!CommonsUtil.semValor(tipoCalculoAprovadoComercial))
+			return tipoCalculoAprovadoComercial;
+		else
+			return tipoCalculo;
+	}
+	
 	
 	@Override
 	public String toString() {
@@ -4997,6 +5032,30 @@ public class ContratoCobranca implements Serializable {
 
 	public void setValorAprovadoComite(BigDecimal valorAprovadoComite) {
 		this.valorAprovadoComite = valorAprovadoComite;
+	}
+
+	public BigDecimal getValorAprovadoComercial() {
+		return valorAprovadoComercial;
+	}
+
+	public void setValorAprovadoComercial(BigDecimal valorAprovadoComercial) {
+		this.valorAprovadoComercial = valorAprovadoComercial;
+	}
+
+	public BigInteger getPrazoAprovadoComercial() {
+		return prazoAprovadoComercial;
+	}
+
+	public void setPrazoAprovadoComercial(BigInteger prazoAprovadoComercial) {
+		this.prazoAprovadoComercial = prazoAprovadoComercial;
+	}
+
+	public String getTipoCalculoAprovadoComercial() {
+		return tipoCalculoAprovadoComercial;
+	}
+
+	public void setTipoCalculoAprovadoComercial(String tipoCalculoAprovadoComercial) {
+		this.tipoCalculoAprovadoComercial = tipoCalculoAprovadoComercial;
 	}
 
 	public String getTipoValorComite() {
