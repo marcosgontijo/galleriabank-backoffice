@@ -856,10 +856,6 @@ public class CcbMB {
 			objetoCcb.setAverbacaoValor(BigDecimal.ZERO);
 		}
 		
-<<<<<<< HEAD
-
-=======
->>>>>>> branch 'master' of https://github.com/Galleria-Bank-Developers/backoffice.git
 		ContasPagar despesaRegistro = buscarDespesa("Cartório", objetoContratoCobranca.getNumeroContrato());
 		if(CommonsUtil.semValor(despesaRegistro))
 			despesaRegistro = buscarDespesa("Registro", objetoContratoCobranca.getNumeroContrato());
