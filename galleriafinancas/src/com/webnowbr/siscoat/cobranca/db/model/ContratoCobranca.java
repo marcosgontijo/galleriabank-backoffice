@@ -1364,17 +1364,13 @@ public class ContratoCobranca implements Serializable {
 			potuacao -= 100;
 		if (refinTaxa) 
 			potuacao -= 100;
-		if (scoreBaixoTaxa)
-			potuacao -= 100;
 		if (terceiroGrantidorTaxa)
 			potuacao -= 150;
-		if (relacionamentoBacenRecenteTaxa) //mudar?
+		if (relacionamentoBacenRecenteTaxa)
 			potuacao -= 150;
 		if (dividaVencidaTaxa)
 			potuacao -= 150;
 		if (prejuizoBacenTaxa)
-			potuacao -= 150;
-		if (riscoTotalBaixoTaxa) //mudar?
 			potuacao -= 150;
 		if (terrenoOuBarracaoTaxa)
 			potuacao -= 400;
@@ -1385,9 +1381,9 @@ public class ContratoCobranca implements Serializable {
 		if (isInicioRelacionamentoInexistenteTaxa)
 			potuacao -= 100;
 		if (isRiscoTotal20kTaxa)
-			potuacao -= 100;
-		if (isRiscoTotal50kTaxa)
 			potuacao -= 200;
+		if (isRiscoTotal50kTaxa)
+			potuacao -= 100;
 
 		if (potuacao < 400) {
 			taxaPreAprovada = BigDecimal.valueOf(1.89);
