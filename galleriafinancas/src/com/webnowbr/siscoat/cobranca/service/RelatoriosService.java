@@ -85,7 +85,7 @@ public class RelatoriosService {
 		simuladorMB.setValorImovel(con.getValorMercadoImovel());
 		simuladorMB.setValorCredito(con.getValorAprovadoComite());
 		simuladorMB.setTaxaJuros(con.getTaxaAprovada());
-		simuladorMB.setParcelas(con.getPrazoMaxAprovado());
+		simuladorMB.setParcelas(con.getPrazoAprovadoCCB());
 		simuladorMB.setCarencia(BigInteger.ONE);
 		simuladorMB.setNaoCalcularMIP(false);
 		simuladorMB.setNaoCalcularDFI(false);
