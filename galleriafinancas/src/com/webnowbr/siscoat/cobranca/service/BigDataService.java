@@ -275,7 +275,7 @@ public class BigDataService {
 					&& DateUtil.getDaysBetweenDates(pagadorRecebedorConsulta.getDataConsulta(),
 							DateUtil.getDataHoje()) <= 30) {
 				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-				documentoAnalise.setRetornoProcesso(pagadorRecebedorConsulta.getRetornoConsulta());
+				documentoAnalise.setRetornoRelacionamento(pagadorRecebedorConsulta.getRetornoConsulta());
 				documentoAnaliseDao.merge(documentoAnalise);
 			} else
 				criarConsultaRelacionamento(documentoAnalise);
@@ -286,28 +286,30 @@ public class BigDataService {
 
 				List<String> tipoPessoa = new ArrayList<String>(Arrays.asList("CPF", "CNPJ"));
 				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
-				for (Relacionamento relacionamento : retornoProcessoB.getRelacionamento().getCurrentRelationships()
-						.stream().filter(r -> tipoPessoa.contains(r.getRelatedEntityTaxIdType()))
-						.collect(Collectors.toList())) {
-					PagadorRecebedor pagadorRecebedor = new PagadorRecebedor();
-					pagadorRecebedor.setNome(relacionamento.getRelatedEntityName());
-					if (CommonsUtil.mesmoValor("CPF", relacionamento.getRelatedEntityTaxIdType()))
-						pagadorRecebedor.setCpf(relacionamento.getRelatedEntityTaxIdNumber());
-					else
-						pagadorRecebedor.setCnpj(relacionamento.getRelatedEntityTaxIdNumber());
-
-					pagadorRecebedor = pagadorRecebedorService.buscaOuInsere(pagadorRecebedor);
-					String relacao = "SOCIO/";
-					if (!relacionamento.getRelationshipName().contains("SOCIO"))
-						relacao = relacao + relacionamento.getRelationshipName();
-					else
-						relacao = relacionamento.getRelationshipName();
-
-					pagadorRecebedorService.geraRelacionamento(pagadorRecebedor, relacao, documentoAnalise.getPagador(),
-							null);
-
+				if(!CommonsUtil.semValor(retornoProcessoB.getRelacionamento()) 
+						&& !CommonsUtil.semValor(retornoProcessoB.getRelacionamento().getCurrentRelationships())) {
+					for (Relacionamento relacionamento : retornoProcessoB.getRelacionamento().getCurrentRelationships()
+							.stream().filter(r -> tipoPessoa.contains(r.getRelatedEntityTaxIdType()))
+							.collect(Collectors.toList())) {
+						PagadorRecebedor pagadorRecebedor = new PagadorRecebedor();
+						pagadorRecebedor.setNome(relacionamento.getRelatedEntityName());
+						if (CommonsUtil.mesmoValor("CPF", relacionamento.getRelatedEntityTaxIdType()))
+							pagadorRecebedor.setCpf(relacionamento.getRelatedEntityTaxIdNumber());
+						else
+							pagadorRecebedor.setCnpj(relacionamento.getRelatedEntityTaxIdNumber());
+	
+						pagadorRecebedor = pagadorRecebedorService.buscaOuInsere(pagadorRecebedor);
+						String relacao = "SOCIO/";
+						if (!relacionamento.getRelationshipName().contains("SOCIO"))
+							relacao = relacao + relacionamento.getRelationshipName();
+						else
+							relacao = relacionamento.getRelationshipName();
+	
+						pagadorRecebedorService.geraRelacionamento(pagadorRecebedor, relacao, documentoAnalise.getPagador(),
+								null);
+	
+					}
 				}
-
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

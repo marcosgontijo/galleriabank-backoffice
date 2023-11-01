@@ -16,6 +16,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -854,22 +855,11 @@ public class CcbMB {
 			objetoContratoCobranca.getListContasPagar().remove(despesaAverbacao);
 			objetoCcb.setAverbacaoValor(BigDecimal.ZERO);
 		}
-		int qtdMatriculas  =1;
-		String matriculas = objetoContratoCobranca.getImovel().getNumeroMatricula().trim();
-		if (matriculas.endsWith(",")) {
-			matriculas = matriculas.substring(0, matriculas.lastIndexOf(",")).trim();
-		}
-		//Emprestimo = financiamento
-		if (CommonsUtil.mesmoValorIgnoreCase("Emprestimo", objetoContratoCobranca.getTipoOperacao()))
-			qtdMatriculas = qtdMatriculas * 2;
-
-		qtdMatriculas = matriculas.split(",").length;
-		//se for apartamento é no minimo 3		
-		if (CommonsUtil.mesmoValorIgnoreCase("Apartamento", objetoContratoCobranca.getImovel().getTipo()) && qtdMatriculas == 1) {
-			qtdMatriculas = 3;
-		}
 		
+<<<<<<< HEAD
 
+=======
+>>>>>>> branch 'master' of https://github.com/Galleria-Bank-Developers/backoffice.git
 		ContasPagar despesaRegistro = buscarDespesa("Cartório", objetoContratoCobranca.getNumeroContrato());
 		if(CommonsUtil.semValor(despesaRegistro))
 			despesaRegistro = buscarDespesa("Registro", objetoContratoCobranca.getNumeroContrato());
@@ -970,7 +960,6 @@ public class CcbMB {
 		}
 		
 		criarCcbNosistema();
-		//clearFieldsInserirCcb();
 		return "/Atendimento/Cobranca/Ccb.xhtml";
 	}
 	
