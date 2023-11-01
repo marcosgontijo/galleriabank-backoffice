@@ -1591,6 +1591,46 @@
 						</h:panelGroup>	
 					</p:panel>
 				</h:panelGroup>
+			<h:panelGroup id="DadosAleradosPanelView"
+					style="margin-bottom:20px;">
+					<p:panel header="Dados Alterados Comercial"
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.dadosAprovadosComercial}">
+						<h:panelGrid columns="2">
+
+							<p:outputLabel for="valorAlteradoComercialView"
+								rendered="#{contratoCobrancaMB.objetoContratoCobranca.valorAprovadoComercial != null}"
+								value="Valor Alterado: " styleClass="labelBold" />
+							<h:panelGroup
+								rendered="#{contratoCobrancaMB.objetoContratoCobranca.valorAprovadoComercial != null}">
+								<h:outputText value="R$ " />
+								<p:outputLabel id="valorAlteradoComercialView"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.valorAprovadoComercial}"
+									converter="bigDecimalConverter"
+									style="FONT-SIZE: 10pt;width:100px;" />
+							</h:panelGroup>
+
+							<p:outputLabel for="prazoAlteradoComercialView"
+								rendered="#{contratoCobrancaMB.objetoContratoCobranca.prazoAprovadoComercial != null}"
+								value="Prazo Alterado: " styleClass="labelBold" />
+							<h:panelGroup rendered="#{contratoCobrancaMB.objetoContratoCobranca.prazoAprovadoComercial != null}">
+								<p:outputLabel id="prazoAlteradoComercialView" showOn="button"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.prazoAprovadoComercial}"
+									size="100" style="width:60px;" />
+								<p:outputLabel value=" meses" />
+							</h:panelGroup>
+
+							<p:outputLabel for="tipoCalculoAlteradoComercialView"
+								showOn="button" value="Tipo Cálculo Alterado: "
+								rendered="#{contratoCobrancaMB.objetoContratoCobranca.tipoCalculoAprovadoComercial != null}"
+								styleClass="labelBold" />
+							<p:outputLabel id="tipoCalculoAlteradoComercialView"
+								rendered="#{contratoCobrancaMB.objetoContratoCobranca.tipoCalculoAprovadoComercial != null}"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.tipoCalculoAprovadoComercial}" />
+
+						</h:panelGrid>
+					</p:panel>
+				</h:panelGroup>
+
 
 				<h:panelGroup id="AnaliseReprovadaPanel">
 					<p:panel
@@ -2565,7 +2605,7 @@
 							<p:outputLabel for="EMail" value="E-Mail: " />
 							<p:outputLabel id="EMail"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.email}"
-								label="E-Mail" type="email" onblur="" style="width:400px;" />
+								label="E-Mail"  onblur="" style="width:400px;" />
 
 							<p:outputLabel for="pagadorDonoGarantia"
 								value="Pagador é dono da garantia?" />
@@ -2777,7 +2817,7 @@
 									<p:outputLabel for="EmailConjuge" value="E-mail: " />
 									<p:outputLabel id="EmailConjuge"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.emailConjuge}"
-										label="E-Mail" type="email" onblur="" style="width:400px;" />
+										label="E-Mail"  onblur="" style="width:400px;" />
 
 									<p:outputLabel for="DtNascimentoConjuge"
 										value="Data de Nascimento: " />
@@ -2974,7 +3014,7 @@
 										<p:outputLabel for="SocioEMail" value="E-Mail: " />
 										<p:inputText id="SocioEMail"
 											value="#{contratoCobrancaMB.socioSelecionado.pessoa.email}"
-											label="E-Mail" type="email" onblur="" style="width:400px;" />
+											label="E-Mail"  onblur="" style="width:400px;" />
 
 										<p:outputLabel for="SocioDtNascimento"
 											value="Data de Nascimento: " />
@@ -3243,7 +3283,7 @@
 										<p:outputLabel for="EMailPagador" value="E-Mail: " />
 										<p:inputText id="EMailPagador"
 											value="#{contratoCobrancaMB.pagadorSecundarioSelecionado.pessoa.email}"
-											label="E-Mail" type="email" onblur="" style="width:400px;" />
+											label="E-Mail"  onblur="" style="width:400px;" />
 
 										<p:outputLabel for="DtNascimentoPagador"
 											value="Data de Nascimento: " />
@@ -4187,6 +4227,17 @@
 									onkeydown="FormataValor(this, 13, event, 2);"
 									converter="bigDecimalConverter" />
 							</h:panelGroup>
+							
+							<p:outputLabel for="valorCartorio" value="Valor de Cartório "
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel value="R$ " />
+								<p:inputText id="valorCartorio"  style="FONT-SIZE: 10pt;width:125px;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.valorCartorio}"
+									size="100" onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);"
+									converter="bigDecimalConverter" />
+							</h:panelGroup>
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
@@ -4821,9 +4872,9 @@
 										immediate="true" action="#{contratoCobrancaMB.getDownloadAllFilesInterno()}"
 										icon="ui-icon-arrowthick-1-s">
 									</p:commandButton>
-									<p:commandButton value="Excluir Selecionado(s)" ajax="false"
-										icon="ui-icon-trash"
-										action="#{contratoCobrancaMB.deleteFileInterno}" />
+									<p:commandButton value="Excluir Selecionado(s)"  ajax="false"
+										immediate="true" icon="ui-icon-trash"
+										action="#{contratoCobrancaMB.deleteFileInterno()}" />
 								</f:facet>
 								<p:ajax event="rowSelectCheckbox" update="dtFilesInterno" 
 									process="@this" listener="#{contratoCobrancaMB.fileSelectionListener()}"/>

@@ -544,10 +544,10 @@ public class CcbMB {
 		this.objetoCcb.setVlrImovel(contrato.getValorMercadoImovel());
 		this.objetoCcb.setVendaLeilao(contrato.getValorVendaForcadaImovel());
 		this.objetoCcb.setPrecoVendaCompra(contrato.getValorCompraVenda());
-		objetoCcb.setValorCredito(objetoContratoCobranca.getValorAprovadoComite());
+		objetoCcb.setValorCredito(objetoContratoCobranca.getValorAprovadoCCB());
 		objetoCcb.setTaxaDeJurosMes(objetoContratoCobranca.getTaxaAprovada());
-		objetoCcb.setPrazo(objetoContratoCobranca.getPrazoMaxAprovado().toString());
-		objetoCcb.setSistemaAmortizacao("Price");
+		objetoCcb.setPrazo(objetoContratoCobranca.getPrazoAprovadoCCB().toString());
+		objetoCcb.setSistemaAmortizacao(objetoContratoCobranca.getTipoCalculoAprovadoCCB());
 		objetoCcb.setCarencia(CommonsUtil.stringValue(objetoContratoCobranca.getCarenciaComite()));
 		if(CommonsUtil.mesmoValor(objetoContratoCobranca.getTipoValorComite(), "liquido")) {
 			objetoCcb.setTipoCalculoFinal('L');
@@ -556,9 +556,9 @@ public class CcbMB {
 		}
 		
 		//Calcular Parcelas
-		calcularSimulador();
 		prepararDespesasContrato();
 		calcularValorDespesa();
+		calcularSimulador();
 		
 		this.objetoContratoCobranca = null;
 	}
@@ -760,6 +760,13 @@ public class CcbMB {
 				}
 			}
 			
+			despesaTransferencia.setBancoTed(objetoContratoCobranca.getResponsavel().getBanco());
+			despesaTransferencia.setAgenciaTed(objetoContratoCobranca.getResponsavel().getAgencia());
+			despesaTransferencia.setContaTed(objetoContratoCobranca.getResponsavel().getConta());
+			despesaTransferencia.setCpfTed(objetoContratoCobranca.getResponsavel().getCpfCnpjCC());
+			despesaTransferencia.setNomeTed(objetoContratoCobranca.getResponsavel().getNomeCC());
+			despesaTransferencia.setPix(objetoContratoCobranca.getResponsavel().getPix());
+			
 			if(CommonsUtil.semValor(objetoCcb.getIntermediacaoValor())) {
 				criarDespesa("Transferência", valorTranferencia, "TED");
 			} else {
@@ -862,18 +869,21 @@ public class CcbMB {
 			qtdMatriculas = 3;
 		}
 		
-		ContasPagar despesaRegistro = buscarDespesa("Registro", objetoContratoCobranca.getNumeroContrato());
-		if(!CommonsUtil.semValor(objetoCcb.getValorCredito())) {
+
+		ContasPagar despesaRegistro = buscarDespesa("Cartório", objetoContratoCobranca.getNumeroContrato());
+		if(CommonsUtil.semValor(despesaRegistro))
+			despesaRegistro = buscarDespesa("Registro", objetoContratoCobranca.getNumeroContrato());
+		if(!CommonsUtil.semValor(objetoContratoCobranca.getValorCartorio())) {
 			RegistroImovelTabelaDao rDao = new RegistroImovelTabelaDao();
-			BigDecimal valorRegistro = rDao.getValorRegistro(objetoCcb.getValorCredito().multiply(CommonsUtil.bigDecimalValue(qtdMatriculas)));
+			BigDecimal valorRegistro = objetoContratoCobranca.getValorCartorio();
 			if(CommonsUtil.semValor(objetoCcb.getRegistroImovelValor())) {
-				criarDespesa("Registro", valorRegistro);
-				objetoCcb.setRegistroImovelValor(valorRegistro);
+				criarDespesa("Cartório", valorRegistro);
 			} else {
 				despesaRegistro.setValor(valorRegistro);
-				objetoCcb.setRegistroImovelValor(valorRegistro);
 				contasPagarDao.merge(despesaRegistro);
 			}
+			objetoCcb.setRegistroImovelValor(valorRegistro);
+			objetoCcb.setCustasCartorariasValor(valorRegistro);
 		} else if(!CommonsUtil.semValor(despesaRegistro)) {
 			despesaRegistro.setValor(BigDecimal.ZERO);
 			objetoCcb.getDespesasAnexo2().remove(despesaRegistro);
@@ -919,12 +929,6 @@ public class CcbMB {
 			populateSelectedPagadorRecebedor();	
 			addParticipante = true;
 			
-			if(participanteSelecionado.isEmpresa()) {
-				objetoCcb.setTipoPessoaEmitente("PJ");
-			} else {
-				objetoCcb.setTipoPessoaEmitente("PF");
-			}
-			
 			participanteSelecionado.setTipoParticipante("EMITENTE");
 			concluirParticipante();
 			
@@ -951,15 +955,19 @@ public class CcbMB {
 		populateSelectedContratoCobranca();
 		calculaPorcentagemImovel();
 		
-		//luana
-		pesquisaTestemunha1();
-		selectedPagadorGenerico = ccbDao.ConsultaTestemunha((long) 11960);
-		populateSelectedPagadorRecebedor();
+		if(CommonsUtil.semValor(objetoCcb.getCpfTestemunha1())) {
+			//luana
+			pesquisaTestemunha1();
+			selectedPagadorGenerico = ccbDao.ConsultaTestemunha((long) 11960);
+			populateSelectedPagadorRecebedor();			
+		}
 		
-		//anna flavia
-		pesquisaTestemunha2();
-		selectedPagadorGenerico = ccbDao.ConsultaTestemunha((long) 25929);
-		populateSelectedPagadorRecebedor();
+		if(CommonsUtil.semValor(objetoCcb.getCpfTestemunha2())) {
+			//bianca
+			pesquisaTestemunha2();
+			selectedPagadorGenerico = ccbDao.ConsultaTestemunha((long) 47570);
+			populateSelectedPagadorRecebedor();
+		}
 		
 		criarCcbNosistema();
 		//clearFieldsInserirCcb();
@@ -1059,24 +1067,38 @@ public class CcbMB {
 	}
 	
 	private void atualizaDadosEmitente() {
-		if(!CommonsUtil.semValor(objetoCcb.getEmitentePrincipal().getPessoa().getConta())) {
-			this.objetoCcb.setContaCorrente(objetoCcb.getEmitentePrincipal().getPessoa().getConta() + "-" + objetoCcb.getEmitentePrincipal().getPessoa().getContaDigito());
-			this.objetoCcb.setCCBCC(objetoCcb.getEmitentePrincipal().getPessoa().getConta() + "-" + objetoCcb.getEmitentePrincipal().getPessoa().getContaDigito());
+		PagadorRecebedor emitente = objetoCcb.getEmitentePrincipal().getPessoa();
+		objetoCcb.setNomeEmitente(emitente.getNome());
+		if(!CommonsUtil.semValor(emitente.getCpf())) {
+			objetoCcb.setCpfEmitente(emitente.getCpf());
+			this.objetoCcb.setCCBDocumento("CPF");
+			this.objetoCcb.setCCBCNPJ(emitente.getCpf());
+			objetoCcb.setTipoPessoaEmitente("PF");
+		} else if (!CommonsUtil.semValor(emitente.getCnpj())) {
+			objetoCcb.setCpfEmitente(emitente.getCnpj());
+			this.objetoCcb.setCCBDocumento("CNPJ");
+			this.objetoCcb.setCCBCNPJ(emitente.getCnpj());
+			objetoCcb.setTipoPessoaEmitente("PJ");
 		}
 		
-		if(!CommonsUtil.semValor(objetoCcb.getEmitentePrincipal().getPessoa().getTipoConta())) {
-			this.objetoCcb.setTipoContaBanco(objetoCcb.getEmitentePrincipal().getPessoa().getTipoConta());
-			this.objetoCcb.setCCBTipoConta(objetoCcb.getEmitentePrincipal().getPessoa().getTipoConta());
+		if(!CommonsUtil.semValor(emitente.getConta())) {
+			this.objetoCcb.setContaCorrente(emitente.getConta() + "-" + emitente.getContaDigito());
+			this.objetoCcb.setCCBCC(emitente.getConta() + "-" + emitente.getContaDigito());
 		}
 		
-		if(!CommonsUtil.semValor(objetoCcb.getEmitentePrincipal().getPessoa().getAgencia())) {
-			this.objetoCcb.setAgencia(objetoCcb.getEmitentePrincipal().getPessoa().getAgencia());
-			this.objetoCcb.setCCBAgencia(objetoCcb.getEmitentePrincipal().getPessoa().getAgencia());
+		if(!CommonsUtil.semValor(emitente.getTipoConta())) {
+			this.objetoCcb.setTipoContaBanco(emitente.getTipoConta());
+			this.objetoCcb.setCCBTipoConta(emitente.getTipoConta());
 		}
 		
-		if(!CommonsUtil.semValor(objetoCcb.getEmitentePrincipal().getPessoa().getBanco())) {		
-			this.objetoCcb.setCCBBanco(objetoCcb.getEmitentePrincipal().getPessoa().getBanco());
-			String[] banco = objetoCcb.getEmitentePrincipal().getPessoa().getBanco().split(Pattern.quote("|"));
+		if(!CommonsUtil.semValor(emitente.getAgencia())) {
+			this.objetoCcb.setAgencia(emitente.getAgencia());
+			this.objetoCcb.setCCBAgencia(emitente.getAgencia());
+		}
+		
+		if(!CommonsUtil.semValor(emitente.getBanco())) {		
+			this.objetoCcb.setCCBBanco(emitente.getBanco());
+			String[] banco = emitente.getBanco().split(Pattern.quote("|"));
 			if(banco.length == 1) {
 				if(CommonsUtil.eSomenteNumero(banco[0])) {
 					this.objetoCcb.setNumeroBanco(CommonsUtil.trimNull(banco[0]));
@@ -1095,24 +1117,17 @@ public class CcbMB {
 			}
 		}
 		
-		if(!CommonsUtil.semValor(objetoCcb.getEmitentePrincipal().getPessoa().getNomeCC())) {
-			this.objetoCcb.setTitularConta(objetoCcb.getEmitentePrincipal().getPessoa().getNomeCC());
-			this.objetoCcb.setCCBNome(objetoCcb.getEmitentePrincipal().getPessoa().getNomeCC());
+		if(!CommonsUtil.semValor(emitente.getNomeCC())) {
+			this.objetoCcb.setTitularConta(emitente.getNomeCC());
+			this.objetoCcb.setCCBNome(emitente.getNomeCC());
 		}
-		if(!CommonsUtil.semValor(objetoCcb.getEmitentePrincipal().getPessoa().getContaDigito())) {
-			this.objetoCcb.setDigitoBanco(objetoCcb.getEmitentePrincipal().getPessoa().getContaDigito());
-			this.objetoCcb.setCCBDigito(objetoCcb.getEmitentePrincipal().getPessoa().getContaDigito());
+		if(!CommonsUtil.semValor(emitente.getContaDigito())) {
+			this.objetoCcb.setDigitoBanco(emitente.getContaDigito());
+			this.objetoCcb.setCCBDigito(emitente.getContaDigito());
 		}
-		if(!CommonsUtil.semValor(objetoCcb.getEmitentePrincipal().getPessoa().getPix())) {
-			this.objetoCcb.setPixBanco(objetoCcb.getEmitentePrincipal().getPessoa().getPix());
-			this.objetoCcb.setCCBPix(objetoCcb.getEmitentePrincipal().getPessoa().getPix());
-		}
-		if(!CommonsUtil.semValor(objetoCcb.getEmitentePrincipal().getPessoa().getCpf())) {
-			this.objetoCcb.setCCBDocumento("CPF");
-			this.objetoCcb.setCCBCNPJ(objetoCcb.getEmitentePrincipal().getPessoa().getCpf());
-		} else if (!CommonsUtil.semValor(objetoCcb.getEmitentePrincipal().getPessoa().getCnpj())) {
-			this.objetoCcb.setCCBDocumento("CNPJ");
-			this.objetoCcb.setCCBCNPJ(objetoCcb.getEmitentePrincipal().getPessoa().getCnpj());
+		if(!CommonsUtil.semValor(emitente.getPix())) {
+			this.objetoCcb.setPixBanco(emitente.getPix());
+			this.objetoCcb.setCCBPix(emitente.getPix());
 		}
 	}
 	
@@ -1231,6 +1246,35 @@ public class CcbMB {
 		}
 		
 		pagadorRecebedor.criarConjugeNoSistema();
+	}
+	
+	public void salvarCcb() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		try {
+			CcbDao ccbDao = new CcbDao();
+			if (this.objetoCcb.getId() > 0) {
+				ccbDao.merge(this.objetoCcb);
+				System.out.println("CCB Merge ID: " + objetoCcb.getId() + " / "  + objetoCcb.getNumeroCcb() + " / "
+						+ objetoCcb.getNumeroOperacao() + " / " + objetoCcb.getNomeEmitente() + " / " + "Salvar");
+			} else {
+				ccbDao.create(this.objetoCcb);
+				System.out.println("CCB Create ID: " + objetoCcb.getId() + " / "  + objetoCcb.getNumeroCcb() + " / "
+						+ objetoCcb.getNumeroOperacao() + " / " + objetoCcb.getNomeEmitente() + " / " + "Salvar");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "CCB: " + e.getCause(), ""));
+		} finally {
+			if (this.objetoCcb.getId() > 0) {
+				//this.setAviso("CCB: Contrato salvo no sistema " + objetoCcb.getNumeroCcb() + " / "
+				//	+ objetoCcb.getNumeroOperacao() + " / " + objetoCcb.getNomeEmitente() + " (" + objetoCcb.getId() + ")");
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "CCB: Contrato salvo no sistema", ""));
+			} else {
+				//this.setAviso("CCB: Erro ao salver contrato no sistema " + objetoCcb.getNumeroCcb() + " / "
+				//		+ objetoCcb.getNumeroOperacao() + " / " + objetoCcb.getNomeEmitente());
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "CCB: Erro ao salvar contrato no sistema", ""));
+			}		
+		}
 	}
 	
 	public void criarCcbNosistema() {
@@ -1390,7 +1434,10 @@ public class CcbMB {
 		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
 		byte[] arquivos = null;
 		List<String> listaDocumentos = new ArrayList<String>();
-		listaDocumentos.addAll(listaTipoDownload);
+		for(String s : listaTipoDownload) {
+			String s2 = new String(s);
+			listaDocumentos.add(s2);
+		}
 	    try {
 	    	if(!CommonsUtil.mesmoValor(this.tipoDownload, "TODOS")) {
 	    		listaDocumentos = listaTipoDownload;
@@ -1483,14 +1530,14 @@ public class CcbMB {
 						listaArquivos.put(nomeDoc, arquivo);
 				} else if (CommonsUtil.mesmoValor(tipoDownload, "Ficha PPE - PF")) {
 					arquivo = ccbService.geraFichaPPE();
-					nomeDoc = "Ficha PPE.docx";
+					nomeDoc = "Ficha PPE.pdf";
 					if (arquicoUnico)
 						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 					else
 						listaArquivos.put(nomeDoc, arquivo);
 				} else if (CommonsUtil.mesmoValor(tipoDownload, "Ficha PLD e FT - PJ")) {
 					arquivo = ccbService.geraFichaPLDeFT();
-					nomeDoc = "Ficha PLD e FT.docx";
+					nomeDoc = "Ficha PLD e FT.pdf";
 					if (arquicoUnico)
 						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 					else
@@ -1499,42 +1546,37 @@ public class CcbMB {
 			    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
 			    		if(!participante.isEmpresa() && !participante.isUniaoEstavel()) {
 			    			arquivo = ccbService.geraDeclaracaoNaoUniaoEstavel(participante);
-			    			nomeDoc = "DeclaracaoNaoUniaoEstavel.docx";
+			    			nomeDoc = participante.getPessoa().getNome() + "_" + "DeclaracaoNaoUniaoEstavel.docx";
 				    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 				    		listaArquivos.put(nomeDoc, arquivo);
 			    		}
-			    		return null;
 			    	}
 			    } else if(CommonsUtil.mesmoValor(tipoDownload,"Declaração de União Estavel")) {
 			    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
 			    		if(!participante.isEmpresa() && participante.isUniaoEstavel()) {
 			    			arquivo = ccbService.geraDeclaracaoUniaoEstavel(participante);
-			    			nomeDoc = "DeclaracaoUniaoEstavel.docx";
+			    			nomeDoc = participante.getPessoa().getNome() + "_" + "DeclaracaoUniaoEstavel.docx";
 				    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc); 	
 				    		listaArquivos.put(nomeDoc, arquivo);
 			    		}
-			    		return null;
 			    	}		    	
 			    } else if(CommonsUtil.mesmoValor(tipoDownload,"Declaração Destinação Recursos")) {
 			    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
 			    			arquivo = ccbService.geraDeclaracaoDestinacaoRecursos(participante);
-			    			nomeDoc = "DeclaracaoDestinacaoRecursos.docx";
+			    			nomeDoc = participante.getPessoa().getNome() + "_" +  "DeclaracaoDestinacaoRecursos.docx";
 				    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 				    		listaArquivos.put(nomeDoc, arquivo);
-			    		return null;
 			    	}
 			    }  else if(CommonsUtil.mesmoValor(tipoDownload,"Termo Responsabilidade Paju")) {
 			    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
 			    		arquivo = ccbService.geraTermoResponsabilidadeAnuenciaPaju(participante);
-			    		nomeDoc = "TermoPaju.docx";
+			    		nomeDoc = participante.getPessoa().getNome() + "_" + "TermoPaju.docx";
 			    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc); 	
 			    		listaArquivos.put(nomeDoc, arquivo);
 			    	}
-			    	return null;
 			    } else {
 		    		
 		    	}
-		    	 
 	    	}
 	    	 
 	    	arquivos = CompactadorUtil.compactarZipByte(listaArquivos);
@@ -1554,7 +1596,7 @@ public class CcbMB {
 							""));
 	    }  
 	  
-		
+	    listarDownloads();
 	    return null;
 	}
 		
@@ -1609,6 +1651,21 @@ public class CcbMB {
 		BigDecimal tarifaIOFAdicional = SiscoatConstants.TARIFA_IOF_ADICIONAL.divide(BigDecimal.valueOf(100));
 		simulador.setTipoPessoa(this.objetoCcb.getTipoPessoaEmitente());
 		
+		List<String> imoveis = Arrays.asList("Apartamento", "Casa", "Casa de Condomínio", "Terreno");
+		
+		if(!objetoCcb.getEmitentePrincipal().isEmpresa() &&
+				imoveis.contains(objetoCcb.getObjetoContratoCobranca().getImovel().getTipo())
+				&& CommonsUtil.mesmoValor(objetoCcb.getObjetoContratoCobranca().getTipoOperacao(), "Emprestimo")) {
+			tarifaIOFDiario = BigDecimal.ZERO;
+			tarifaIOFAdicional = BigDecimal.ZERO;
+		} else {
+			if (CommonsUtil.mesmoValor(this.objetoCcb.getTipoPessoaEmitente(), "PF")) {		
+				tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PF.divide(BigDecimal.valueOf(100));		
+			} else {		
+				tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PJ.divide(BigDecimal.valueOf(100));		
+			}
+		}
+		
 		BigDecimal custoEmissaoValor = SiscoatConstants.CUSTO_EMISSAO_MINIMO;
 		
 		final BigDecimal custoEmissaoPercentual;
@@ -1621,12 +1678,6 @@ public class CcbMB {
 		if (objetoCcb.getValorCredito().multiply(custoEmissaoPercentual.divide(BigDecimal.valueOf(100)))
 				.compareTo(SiscoatConstants.CUSTO_EMISSAO_MINIMO) > 0) {
 			custoEmissaoValor = objetoCcb.getValorCredito().multiply(custoEmissaoPercentual.divide(BigDecimal.valueOf(100)));
-		}
-		
-		if (CommonsUtil.mesmoValor(this.objetoCcb.getTipoPessoaEmitente(), "PF")) {		
-			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PF.divide(BigDecimal.valueOf(100));		
-		} else {		
-			tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PJ.divide(BigDecimal.valueOf(100));		
 		}
 		
 		if(!CommonsUtil.semValor(this.objetoCcb.getPrazo()) && !CommonsUtil.semValor(objetoCcb.getCarencia())) {
@@ -1787,6 +1838,7 @@ public class CcbMB {
 		loadLovs();	
 		clearPagadorRecebedor();
 		clearDespesas();
+		listarDownloads();
 		this.simulador = new SimulacaoVO();
 		//this.seguradoSelecionado = new Segurado();
 		//this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
