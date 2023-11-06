@@ -38,7 +38,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
 import com.webnowbr.siscoat.common.DateUtil;
 
-@ManagedBean(name = "kobanaMB")
+@ManagedBean(name = "facilTechMB")
 @SessionScoped
 public class FacilTechMB {
 

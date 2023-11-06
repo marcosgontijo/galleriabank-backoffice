@@ -81,40 +81,43 @@ public class ValorPorExtenso {
        System.out.println(toString());  
     }
    
-    public String toString() {  
-       StringBuffer buf = new StringBuffer();    
-       //int numero = ((Integer) nro.get(0)).intValue();  
-       int ct;  
-  
-       for (ct = nro.size() - 1; ct > 0; ct--) {  
-          // Se ja existe texto e o atual não é zero  
-          if (buf.length() > 0 && ! ehGrupoZero(ct)) {  
-             buf.append(" e ");  
-          }  
-          buf.append(numToString(((Integer) nro.get(ct)).intValue(), ct));  
-       }  
-       if (buf.length() > 0) {  
-          if (ehUnicoGrupo())  
-             buf.append(" de ");  
-          while (buf.toString().endsWith(" "))  
-            buf.setLength(buf.length()-1);  
-          if (ehPrimeiroGrupoUm())  
-             //buf.insert(0, "h");  
-          buf.insert(0, "");
-          if (nro.size() == 2 && ((Integer)nro.get(1)).intValue() == 1) {  
-             buf.append(" real");  
-          } else {  
-             buf.append(" reais");  
-          }  
-          if (((Integer) nro.get(0)).intValue() != 0) {  
-             buf.append(" e ");  
-          }  
-       }  
-       if (((Integer) nro.get(0)).intValue() != 0) {  
-          buf.append(numToString(((Integer) nro.get(0)).intValue(), 0));  
-       }  
-       return buf.toString();  
-    }  
+	public String toString() {
+		StringBuffer buf = new StringBuffer();
+		// int numero = ((Integer) nro.get(0)).intValue();
+		int ct;
+		if (!CommonsUtil.semValor(nro)) {
+			for (ct = nro.size() - 1; ct > 0; ct--) {
+				// Se ja existe texto e o atual não é zero
+				if (buf.length() > 0 && !ehGrupoZero(ct)) {
+					buf.append(" e ");
+				}
+				buf.append(numToString(((Integer) nro.get(ct)).intValue(), ct));
+			}
+			if (buf.length() > 0) {
+				if (ehUnicoGrupo())
+					buf.append(" de ");
+				while (buf.toString().endsWith(" "))
+					buf.setLength(buf.length() - 1);
+				if (ehPrimeiroGrupoUm())
+					// buf.insert(0, "h");
+					buf.insert(0, "");
+				if (nro.size() == 2 && ((Integer) nro.get(1)).intValue() == 1) {
+					buf.append(" real");
+				} else {
+					buf.append(" reais");
+				}
+				if (((Integer) nro.get(0)).intValue() != 0) {
+					buf.append(" e ");
+				}
+			}
+			if (((Integer) nro.get(0)).intValue() != 0) {
+				buf.append(numToString(((Integer) nro.get(0)).intValue(), 0));
+			}
+		} else {
+			buf.append("NÚMERO INVALIDO");
+		}
+		return buf.toString();
+	}  
    
     private boolean ehPrimeiroGrupoUm() {  
        if (((Integer)nro.get(nro.size()-1)).intValue() == 1)  

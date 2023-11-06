@@ -13396,6 +13396,7 @@ public class ContratoCobrancaMB {
 			linha.createCell(celula);
 		linha.getCell(celula).setCellValue(value);
 	}
+	
 
 	public Collection<ContratoCobranca> populaStatus(Collection<ContratoCobranca> contratos) {
 		// POPULA STATUS

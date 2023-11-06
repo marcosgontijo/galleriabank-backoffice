@@ -61,7 +61,7 @@
 					</f:facet>
 
 					<p:dataTable id="resumocliente" var="engine"
-						rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
+						rendered="#{contratoCobrancaMB.documentoAnalisePopup != null  and contratoCobrancaMB.documentoAnalisePopup.resumoEngine != null }"
 						value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoEngine()}">
 						<p:column>
 							<h:outputText value="#{engine.descricao}"></h:outputText>

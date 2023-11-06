@@ -47,7 +47,6 @@ import com.webnowbr.siscoat.cobranca.db.model.CcbParticipantes;
 import com.webnowbr.siscoat.cobranca.db.model.CcbProcessosJudiciais;
 import com.webnowbr.siscoat.cobranca.db.model.ContasPagar;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
-import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.Segurado;
@@ -725,7 +724,7 @@ public class CcbMB {
 		
 		ContasPagar despesaLaudo = buscarDespesa("Laudo", objetoContratoCobranca.getNumeroContrato());
 		if(!CommonsUtil.semValor(objetoContratoCobranca.getValorLaudoPajuFaltante())) {
-			if(CommonsUtil.semValor(objetoCcb.getLaudoDeAvaliacaoValor())) {
+			if(CommonsUtil.semValor(objetoCcb.getLaudoDeAvaliacaoValor()) || CommonsUtil.semValor(despesaLaudo)) {
 				criarDespesa("Laudo", objetoContratoCobranca.getValorLaudoPajuFaltante());
 			} else {
 				despesaLaudo.setValor(objetoCcb.getLaudoDeAvaliacaoValor());
@@ -761,16 +760,18 @@ public class CcbMB {
 				}
 			}
 			
-			despesaTransferencia.setBancoTed(objetoContratoCobranca.getResponsavel().getBanco());
-			despesaTransferencia.setAgenciaTed(objetoContratoCobranca.getResponsavel().getAgencia());
-			despesaTransferencia.setContaTed(objetoContratoCobranca.getResponsavel().getConta());
-			despesaTransferencia.setCpfTed(objetoContratoCobranca.getResponsavel().getCpfCnpjCC());
-			despesaTransferencia.setNomeTed(objetoContratoCobranca.getResponsavel().getNomeCC());
-			despesaTransferencia.setPix(objetoContratoCobranca.getResponsavel().getPix());
 			
-			if(CommonsUtil.semValor(objetoCcb.getIntermediacaoValor())) {
+			
+			if(CommonsUtil.semValor(objetoCcb.getIntermediacaoValor()) || CommonsUtil.semValor(despesaTransferencia)) {
 				criarDespesa("Transferência", valorTranferencia, "TED");
 			} else {
+				despesaTransferencia.setBancoTed(objetoContratoCobranca.getResponsavel().getBanco());
+				despesaTransferencia.setAgenciaTed(objetoContratoCobranca.getResponsavel().getAgencia());
+				despesaTransferencia.setContaTed(objetoContratoCobranca.getResponsavel().getConta());
+				despesaTransferencia.setCpfTed(objetoContratoCobranca.getResponsavel().getCpfCnpjCC());
+				despesaTransferencia.setNomeTed(objetoContratoCobranca.getResponsavel().getNomeCC());
+				despesaTransferencia.setPix(objetoContratoCobranca.getResponsavel().getPix());
+				
 				despesaTransferencia.setValor(valorTranferencia);
 				contasPagarDao.merge(despesaTransferencia);
 			}
@@ -791,7 +792,7 @@ public class CcbMB {
 		
 		ContasPagar despesaIQ = buscarDespesa("IQ", objetoContratoCobranca.getNumeroContrato());
 		if(CommonsUtil.mesmoValor(objetoContratoCobranca.getDivida(), "Sim")) {
-			if(CommonsUtil.semValor(objetoCcb.getIqValor())) {
+			if(CommonsUtil.semValor(objetoCcb.getIqValor())|| CommonsUtil.semValor(despesaIQ)) {
 				criarDespesa("IQ", objetoContratoCobranca.getDividaValor());				
 			} else {
 				despesaIQ.setValor(objetoContratoCobranca.getDividaValor());
@@ -807,7 +808,7 @@ public class CcbMB {
 		
 		ContasPagar despesaIPTU = buscarDespesa("IPTU", objetoContratoCobranca.getNumeroContrato());
 		if(!CommonsUtil.semValor(objetoContratoCobranca.getDividaIPTU())) {
-			if(CommonsUtil.semValor(objetoCcb.getIptuEmAtrasoValor())) {
+			if(CommonsUtil.semValor(objetoCcb.getIptuEmAtrasoValor())|| CommonsUtil.semValor(despesaIPTU)) {
 				criarDespesa("IPTU", objetoContratoCobranca.getDividaIPTU());
 			} else {
 				despesaIPTU.setValor(objetoContratoCobranca.getDividaIPTU());
@@ -823,7 +824,7 @@ public class CcbMB {
 		
 		ContasPagar despesaCondominio = buscarDespesa("Condomínio", objetoContratoCobranca.getNumeroContrato());
 		if(!CommonsUtil.semValor(objetoContratoCobranca.getDividaCondominio())) {
-			if(CommonsUtil.semValor(objetoCcb.getCondominioEmAtrasoValor())) {
+			if(CommonsUtil.semValor(objetoCcb.getCondominioEmAtrasoValor())|| CommonsUtil.semValor(despesaCondominio)) {
 				criarDespesa("Condomínio", objetoContratoCobranca.getDividaCondominio());
 			} else {
 				despesaCondominio.setValor(objetoContratoCobranca.getDividaCondominio());
@@ -843,7 +844,7 @@ public class CcbMB {
 			for(Averbacao averbacao : objetoContratoCobranca.getListAverbacao()) {
 				averbacaoTotal = averbacaoTotal.add(averbacao.getValor());
 			}
-			if(CommonsUtil.semValor(objetoCcb.getIntermediacaoValor())) {
+			if (CommonsUtil.semValor(objetoCcb.getIntermediacaoValor()) || CommonsUtil.semValor(despesaAverbacao)) {
 				criarDespesa("Averbação", averbacaoTotal);
 			} else {
 				despesaAverbacao.setValor(averbacaoTotal);
@@ -862,7 +863,7 @@ public class CcbMB {
 		if(!CommonsUtil.semValor(objetoContratoCobranca.getValorCartorio())) {
 			RegistroImovelTabelaDao rDao = new RegistroImovelTabelaDao();
 			BigDecimal valorRegistro = objetoContratoCobranca.getValorCartorio();
-			if(CommonsUtil.semValor(objetoCcb.getRegistroImovelValor())) {
+			if(CommonsUtil.semValor(objetoCcb.getRegistroImovelValor())|| CommonsUtil.semValor(despesaRegistro)) {
 				criarDespesa("Cartório", valorRegistro);
 			} else {
 				despesaRegistro.setValor(valorRegistro);

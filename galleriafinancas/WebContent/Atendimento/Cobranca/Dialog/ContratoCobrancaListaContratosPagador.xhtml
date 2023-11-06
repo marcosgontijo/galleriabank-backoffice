@@ -61,11 +61,26 @@
 									<p:outputLabel value="#{contratos.imovel.cidade}"
 										style="FONT-SIZE: 10pt;width:100px;" />
 								</p:column>
+								<p:column style="text-align: center" headerText="Valor Imóvel"
+									filterBy="#{contratos.status}" sortBy="#{contratos.valorMercadoImovel}"
+									filterMatchMode="contains">
+									<p:outputLabel value="#{contratos.valorMercadoImovel}"
+										style="FONT-SIZE: 10pt;width:100px;" 
+									converter="bigDecimalConverter" />
+								</p:column>
 								<p:column style="text-align: center" headerText="Status"
 									filterBy="#{contratos.status}" sortBy="#{contratos.status}"
 									filterMatchMode="contains">
 									<p:outputLabel value="#{contratos.status}"
 										style="FONT-SIZE: 10pt;width:100px;" />
+								</p:column>
+								<p:column style="text-align: center" headerText="Complemento"
+									filterBy="#{contratos.status}" sortBy="#{contratos.status}"
+									filterMatchMode="contains">
+									<p:outputLabel value="Último status: #{contratos.statusEsteira}" rendered="#{contratos.status eq 'Baixado'}"
+										style="FONT-SIZE: 10pt;width:100px;" />
+										<p:outputLabel value="Motivo: #{contratos.motivoReprovacaoAnalise}" rendered="#{contratos.status eq 'Reprovado'}"
+										style="FONT-SIZE: 10pt;width:100px;" />														
 								</p:column>
 								<p:column style="text-align: center">
 									<p:commandButton

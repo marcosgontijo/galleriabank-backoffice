@@ -766,11 +766,15 @@ public class BRLTrustMB {
 			// endereço
 			cell = row.createCell(20);
 			cell.setCellStyle(cell_style);
-			if (record.getImovel() != null && !record.getImovel().getEndereco().equals("") && !record.getImovel().getComplemento().equals("")
+			if (record.getImovel() != null && !record.getImovel().getEndereco().equals("") //&& !record.getImovel().getComplemento().equals("")
 					 && !record.getImovel().getBairro().equals("") && !record.getImovel().getCidade().equals("") && !record.getImovel().getEstado().equals("")
 					 && !record.getImovel().getCep().equals("")) {
-				cell.setCellValue(record.getImovel().getEndereco() + " - " + record.getImovel().getComplemento() + 
-						record.getImovel().getBairro() + " - " + record.getImovel().getCidade() + "/" + record.getImovel().getEstado() + " - " + record.getImovel().getCep());
+				cell.setCellValue(CommonsUtil.stringValueVazio(record.getImovel().getEndereco()) + " - " //
+						+ CommonsUtil.stringValueVazio(record.getImovel().getComplemento() //
+								+ CommonsUtil.stringValueVazio(record.getImovel().getBairro()) + " - " + //
+								CommonsUtil.stringValueVazio(record.getImovel().getCidade()) + "/" + //
+								CommonsUtil.stringValueVazio(record.getImovel().getEstado()) + " - " + //
+								CommonsUtil.stringValueVazio(record.getImovel().getCep())));
 			}
 			
 

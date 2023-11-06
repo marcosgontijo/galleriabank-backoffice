@@ -57,7 +57,7 @@ public class PlexiMB {
 				continue;
 			}
 			if((CommonsUtil.mesmoValor(etapa, "analise") && docAnalise.isLiberadoAnalise())
-			|| (CommonsUtil.mesmoValor(etapa, "pedir paju") && docAnalise.isLiberadoAnalise())
+			|| (CommonsUtil.mesmoValor(etapa, "pedir paju") && (docAnalise.isLiberadoCertidoes() || docAnalise.isLiberadoAnalise()))
 					){
 				listPagador.add(docAnalise);
 				
@@ -90,7 +90,8 @@ public class PlexiMB {
 			atualizarDocumentos(docAnalise);
 			for(PlexiConsulta plexiConsulta : docAnalise.getPlexiConsultas()) {
 				List<PlexiConsulta> consultasExistentesRetorno = plexiConsultaDao.getConsultasExistentes(plexiConsulta);
-				if(consultasExistentesRetorno.size() > 0) {
+				if(consultasExistentesRetorno.size() > 0 && 
+						consultasExistentesRetorno.stream().filter(c -> !CommonsUtil.semValor( c.getRequestId())).findAny().isPresent() ){
 					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
 							plexiConsulta.getPlexiDocumentos().getNome() + " - " + plexiConsulta.getNome() + ": Já existente", ""));
 					consultasExistentes.add(plexiConsulta);
@@ -421,7 +422,7 @@ public class PlexiMB {
 				else if(CommonsUtil.mesmoValor(estado, "MS"))
 					abrangenciaArray[0] = "sjms";
 				else
-					return false;
+					continue;
 				for(String tipo : tipoArray) {
 					if(!CommonsUtil.semValor(plexiConsulta.getCnpj()) && CommonsUtil.mesmoValor(tipo, "criminal")) 
 						continue;
