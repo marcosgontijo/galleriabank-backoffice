@@ -13,9 +13,8 @@
 		<h:body>
 			<ui:composition template="../index.xhtml">                	  
 				<ui:define name="menu">		
-					<h:form style="margin-bottom:10px;">
-					<p:commandButton value="Favoritar" action="/Favoritos/FavoritosManutencao.xhtml"></p:commandButton>		
-						<p:menu style="width: 250px;" model="#{menuItemMB.modelManutencao}"/>																		
+					<h:form style="margin-bottom:10px;">		
+						<p:menu style="width: 250px;" model="#{menuItemMB.modelFavoritarRelatorio}"/>																		
 					  	
 					</h:form>				
 				</ui:define>

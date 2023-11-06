@@ -26,14 +26,14 @@ public class MenuService {
 	private DataTable data = new DataTable();
 	
 	
-	
-	
-	
+	private MenuModel modelFavoritosManutencao;
+	private MenuModel modelFavoritosRelatorio;
+	private MenuModel modelFavoritosAtendimento;
 	private MenuModel modelCobranca;
 	private MenuModel modelAtendimento;
 	private MenuModel modelRelatórios;
 	private MenuModel modelManutencao;
-	private MenuModel modelFavoritos;
+	private MenuModel modelFavoritosCadastro;
 	private MenuModel modelFavoritoUsuario;
 	@ManagedProperty(value = "#{loginBean}")
 	protected LoginBean loginBean;
@@ -62,7 +62,10 @@ public class MenuService {
 				menuPrime.setCommand(item.getAcao());
 				menuPrime.setIcon(item.getIcone());
 				menuPrime.setStyleClass("itemMenu");
+				menuPrime.setAjax(true);
+				menuPrime.setUpdate("@all");
 				Submenu.addElement(menuPrime);
+			
 			}
 			modelCobranca.addElement(Submenu);
 		}
@@ -86,6 +89,8 @@ public class MenuService {
 				menuPrime.setCommand(item.getAcao());
 				menuPrime.setIcon(item.getIcone());
 				menuPrime.setStyleClass("itemMenu");
+				menuPrime.setAjax(true);
+				menuPrime.setUpdate("@all");
 				primeiroSubmenu.addElement(menuPrime);
 			}
 			modelAtendimento.addElement(primeiroSubmenu);
@@ -111,6 +116,8 @@ public class MenuService {
 				menuPrime.setCommand(item.getAcao());
 				menuPrime.setIcon(item.getIcone());
 				menuPrime.setStyleClass("itemMenu");
+				menuPrime.setAjax(true);
+				menuPrime.setUpdate("@all");
 				primeiroSubmenu.addElement(menuPrime);
 			}
 			modelRelatórios.addElement(primeiroSubmenu);
@@ -136,6 +143,8 @@ public class MenuService {
 				menuPrime.setCommand(item.getAcao());
 				menuPrime.setIcon(item.getIcone());
 				menuPrime.setStyleClass("itemMenu");
+				menuPrime.setAjax(true);
+				menuPrime.setUpdate("@all");
 				primeiroSubmenu.addElement(menuPrime);
 			}
 			modelManutencao.addElement(primeiroSubmenu);
@@ -143,11 +152,11 @@ public class MenuService {
 		return modelManutencao;
 	}
 public MenuModel constroiFavoritarCadastro() {
-	modelFavoritos = new DefaultMenuModel();
+	 modelFavoritosCadastro = new DefaultMenuModel();
 	DefaultSubMenu primeiroSubmenu = new DefaultSubMenu();
 	MenuItemDao dao = new MenuItemDao();
 	DefaultMenuItem menuPrime = new DefaultMenuItem(); 
-	List<MenuItem> menusSubmoduloCadastro = dao.exibeSubmodulo();
+	List<MenuItem> menusSubmoduloCadastro = dao.ConsultaSubmodulo( (long) 17);
 	for(MenuItem sub : menusSubmoduloCadastro) {
 		primeiroSubmenu = new DefaultSubMenu();
 		primeiroSubmenu.setLabel(sub.getNome());
@@ -160,13 +169,97 @@ public MenuModel constroiFavoritarCadastro() {
 			menuPrime.setCommand("#{menuItemMB.clearFieldsFavorito(" + item.getId() + ")}");
 			menuPrime.setIcon("ui-icon-star");
 			menuPrime.setStyleClass("itemMenu");
+			menuPrime.setAjax(true);
+			menuPrime.setUpdate("@all");
 			primeiroSubmenu.addElement(menuPrime);
 		}
-		modelFavoritos.addElement(primeiroSubmenu);
+		modelFavoritosCadastro.addElement(primeiroSubmenu);
 	}
-	return modelFavoritos;
+	return modelFavoritosCadastro;
 	
 }
+public MenuModel constroiFavoritarAtendimento() {
+	modelFavoritosAtendimento = new DefaultMenuModel();
+	DefaultSubMenu primeiroSubmenu = new DefaultSubMenu();
+	MenuItemDao dao = new MenuItemDao();
+	DefaultMenuItem menuPrime = new DefaultMenuItem(); 
+	List<MenuItem> menusSubmoduloCadastro = dao.ConsultaSubmodulo( (long) 18);
+	for(MenuItem sub : menusSubmoduloCadastro) {
+		primeiroSubmenu = new DefaultSubMenu();
+		primeiroSubmenu.setLabel(sub.getNome());
+		primeiroSubmenu.setStyleClass("titulosMenu");
+		List<MenuItem> menusItem = dao.ConsultaItem(sub.getId());
+		for(MenuItem item : menusItem) {
+			
+			menuPrime = new DefaultMenuItem();
+			menuPrime.setValue(item.getNome());
+			menuPrime.setCommand("#{menuItemMB.clearFieldsFavorito(" + item.getId() + ")}");
+			menuPrime.setIcon("ui-icon-star");
+			menuPrime.setStyleClass("itemMenu");
+			menuPrime.setAjax(true);
+			menuPrime.setUpdate("@all");
+			primeiroSubmenu.addElement(menuPrime);
+		}
+		modelFavoritosAtendimento.addElement(primeiroSubmenu);
+	}
+	return modelFavoritosAtendimento;
+	
+}
+public MenuModel constroiFavoritarRelatorio() {
+	modelFavoritosRelatorio = new DefaultMenuModel();
+	DefaultSubMenu primeiroSubmenu = new DefaultSubMenu();
+	MenuItemDao dao = new MenuItemDao();
+	DefaultMenuItem menuPrime = new DefaultMenuItem(); 
+	List<MenuItem> menusSubmoduloCadastro = dao.ConsultaSubmodulo( (long) 22);
+	for(MenuItem sub : menusSubmoduloCadastro) {
+		primeiroSubmenu = new DefaultSubMenu();
+		primeiroSubmenu.setLabel(sub.getNome());
+		primeiroSubmenu.setStyleClass("titulosMenu");
+		List<MenuItem> menusItem = dao.ConsultaItem(sub.getId());
+		for(MenuItem item : menusItem) {
+			
+			menuPrime = new DefaultMenuItem();
+			menuPrime.setValue(item.getNome());
+			menuPrime.setCommand("#{menuItemMB.clearFieldsFavorito(" + item.getId() + ")}");
+			menuPrime.setIcon("ui-icon-star");
+			menuPrime.setStyleClass("itemMenu");
+			menuPrime.setAjax(true);
+			menuPrime.setUpdate("@all");
+			primeiroSubmenu.addElement(menuPrime);
+		}
+		modelFavoritosRelatorio.addElement(primeiroSubmenu);
+	}
+	return modelFavoritosRelatorio;
+	
+}
+public MenuModel constroiFavoritarManutencao() {
+	modelFavoritosManutencao = new DefaultMenuModel();
+	DefaultSubMenu primeiroSubmenu = new DefaultSubMenu();
+	MenuItemDao dao = new MenuItemDao();
+	DefaultMenuItem menuPrime = new DefaultMenuItem(); 
+	List<MenuItem> menusSubmoduloCadastro = dao.ConsultaSubmodulo( (long) 23);
+	for(MenuItem sub : menusSubmoduloCadastro) {
+		primeiroSubmenu = new DefaultSubMenu();
+		primeiroSubmenu.setLabel(sub.getNome());
+		primeiroSubmenu.setStyleClass("titulosMenu");
+		List<MenuItem> menusItem = dao.ConsultaItem(sub.getId());
+		for(MenuItem item : menusItem) {
+			
+			menuPrime = new DefaultMenuItem();
+			menuPrime.setValue(item.getNome());
+			menuPrime.setCommand("#{menuItemMB.clearFieldsFavorito(" + item.getId() + ")}");
+			menuPrime.setIcon("ui-icon-star");
+			menuPrime.setStyleClass("itemMenu");
+			menuPrime.setAjax(true);
+			menuPrime.setUpdate("@all");
+			primeiroSubmenu.addElement(menuPrime);
+		}
+		modelFavoritosManutencao.addElement(primeiroSubmenu);
+	}
+	return modelFavoritosManutencao;
+	
+}
+
 
 public MenuModel carregaFavoritos(User user) {
 	List<MenuItem> listasubmenu = new ArrayList<>();
@@ -196,6 +289,7 @@ public MenuModel carregaFavoritos(User user) {
 			menuPrime.setCommand(item.getAcao());
 			menuPrime.setIcon(item.getIcone());
 			menuPrime.setStyleClass("itemMenu");
+			menuPrime.setAjax(true);
 			submenu.addElement(menuPrime);
 
 
@@ -251,19 +345,37 @@ public MenuModel carregaFavoritos(User user) {
 	public void setData(DataTable data) {
 		this.data = data;
 	}
-	public MenuModel getModelFavoritos() {
-		return modelFavoritos;
-	}
-	public void setModelFavoritos(MenuModel modelFavoritos) {
-		this.modelFavoritos = modelFavoritos;
-	}
+	
 	public MenuModel getModelFavoritoUsuario() {
 		return modelFavoritoUsuario;
 	}
 	public void setModelFavoritoUsuario(MenuModel modelFavoritoUsuario) {
 		this.modelFavoritoUsuario = modelFavoritoUsuario;
 	}
-	
+	public MenuModel getModelFavoritosCadastro() {
+		return modelFavoritosCadastro;
+	}
+	public void setModelFavoritosCadastro(MenuModel modelFavoritosCadastro) {
+		this.modelFavoritosCadastro = modelFavoritosCadastro;
+	}
+	public MenuModel getModelFavoritosAtendimento() {
+		return modelFavoritosAtendimento;
+	}
+	public void setModelFavoritosAtendimento(MenuModel modelFavoritosAtendimento) {
+		this.modelFavoritosAtendimento = modelFavoritosAtendimento;
+	}
+	public MenuModel getModelFavoritosRelatorio() {
+		return modelFavoritosRelatorio;
+	}
+	public void setModelFavoritosRelatorio(MenuModel modelFavoritosRelatorio) {
+		this.modelFavoritosRelatorio = modelFavoritosRelatorio;
+	}
+	public MenuModel getModelFavoritosManutencao() {
+		return modelFavoritosManutencao;
+	}
+	public void setModelFavoritosManutencao(MenuModel modelFavoritosManutencao) {
+		this.modelFavoritosManutencao = modelFavoritosManutencao;
+	}
 	
 
 }
