@@ -41,7 +41,11 @@ public class MenuItemMB {
 	private MenuModel modelAtendimento = menuService.constroiMenuAtendimento();
 	private MenuModel modelRelatorio = menuService.constroiMenuRelatório();
 	private MenuModel modelManutencao = menuService.constroiMenuManutencao();
-	private MenuModel modelfvoritos = menuService.constroiFavoritarCadastro();
+	private MenuModel modelFavoritarCadastro = menuService.constroiFavoritarCadastro();
+	private MenuModel modelFavoritarAtendimento = menuService.constroiFavoritarAtendimento();
+	private MenuModel modelFavoritarRelatorio = menuService.constroiFavoritarRelatorio();
+	private MenuModel modelFavoritarManutencao = menuService.constroiFavoritarManutencao();
+	
 	@ManagedProperty(value = "#{loginBean}")
 	protected LoginBean loginBean;
 	private MenuModel modelFavoritoUsuario;
@@ -264,14 +268,6 @@ public class MenuItemMB {
 		this.modelManutencao = modelManutencao;
 	}
 
-	public MenuModel getModelfvoritos() {
-		return modelfvoritos;
-	}
-
-	public void setModelfvoritos(MenuModel modelfvoritos) {
-		this.modelfvoritos = modelfvoritos;
-	}
-
 	public MenuModel getModelFavoritoUsuario() {
 		return modelFavoritoUsuario;
 	}
@@ -290,6 +286,36 @@ public class MenuItemMB {
 	}
 	public void setObjetoItemFavorito(MenuItem objetoItemFavorito) {
 		this.objetoItemFavorito = objetoItemFavorito;
+	}
+	public MenuModel getModelFavoritarAtendimento() {
+		return modelFavoritarAtendimento;
+	}
+	public void setModelFavoritarAtendimento(MenuModel modelFavoritarAtendimento) {
+		this.modelFavoritarAtendimento = modelFavoritarAtendimento;
+	}
+	public MenuModel getModelfavoritarCadastro() {
+		return modelFavoritarCadastro;
+	}
+	public void setModelfavoritarCadastro(MenuModel modelfavoritarCadastro) {
+		this.modelFavoritarCadastro = modelfavoritarCadastro;
+	}
+	public MenuModel getModelFavoritarRelatorio() {
+		return modelFavoritarRelatorio;
+	}
+	public void setModelFavoritarRelatorio(MenuModel modelFavoritarRelatorio) {
+		this.modelFavoritarRelatorio = modelFavoritarRelatorio;
+	}
+	public MenuModel getModelFavoritarManutencao() {
+		return modelFavoritarManutencao;
+	}
+	public void setModelFavoritarManutencao(MenuModel modelFavoritarManutencao) {
+		this.modelFavoritarManutencao = modelFavoritarManutencao;
+	}
+	public MenuModel getModelFavoritarCadastro() {
+		return modelFavoritarCadastro;
+	}
+	public void setModelFavoritarCadastro(MenuModel modelFavoritarCadastro) {
+		this.modelFavoritarCadastro = modelFavoritarCadastro;
 	}
 
 }
