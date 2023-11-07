@@ -35,6 +35,7 @@ import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.ws.endpoint.DocketWebhookRetornoDocumento;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
+import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.infra.db.model.User;
 
@@ -445,8 +446,7 @@ public class EngineService {
 		String webhookRetorno = GsonUtil.toJson(engineWebhookRetorno);
 
 		documentoAnalise.setRetornoEngine(webhookRetorno);
-
-		SerasaService serasaService = new SerasaService();
+		
 		NetrinService netrinService = new NetrinService();
 		UserService userService = new UserService();
 		ScrService scrService = new ScrService();
@@ -710,6 +710,24 @@ public class EngineService {
 				in.close();
 			}
 			myURLConnection.disconnect();
+			
+			///  trecho retirado do webhook
+			PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+			PagadorRecebedor pagaRecebedor = engine.getPagador();
+			pagadorRecebedorService.preecheDadosReceita(pagaRecebedor);
+			pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagaRecebedor,
+					DocumentosAnaliseEnum.ENGINE, result);
+			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+			DocumentoAnalise documentoAnalise = documentoAnaliseDao.findByFilter("engine", engine).stream()
+					.findFirst().orElse(null);
+			DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
+			EngineRetorno engineWebhookRetorno = GsonUtil.fromJson(result, EngineRetorno.class);
+			if (!CommonsUtil.semValor(documentoAnalise)) {
+				processaWebHookEngine(documentoAnaliseService, engineWebhookRetorno,
+					pagadorRecebedorService, documentoAnaliseDao, documentoAnalise);
+			}
+			///  trecho retirado do webhook
+			
 			return result;
 
 		} catch (MalformedURLException e) {
