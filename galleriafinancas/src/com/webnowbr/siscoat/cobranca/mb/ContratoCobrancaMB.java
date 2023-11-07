@@ -221,6 +221,7 @@ import com.webnowbr.siscoat.simulador.SimulacaoIPCADadosV2;
 import com.webnowbr.siscoat.simulador.SimulacaoVO;
 import com.webnowbr.siscoat.simulador.SimuladorMB;
 
+import br.com.galleriabank.jwt.common.JwtUtil;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -28724,7 +28725,8 @@ public class ContratoCobrancaMB {
 			ExternalContext extContext = fContext.getExternalContext();
 			HttpServletRequest request = (HttpServletRequest) fContext.getExternalContext().getRequest();
 			
-			String urlWenhook =  request.getRequestURL().toString().replace(request.getRequestURI(),"");
+			String webHookJWT = JwtUtil.generateJWTWebhook(true);
+			String urlWenhook = SiscoatConstants.URL_SISCOAT_ENGINE_WEBHOOK + webHookJWT;
 			
 			jobDetail.getJobDataMap().put("listaDocumentoAnalise", listaDocumentoAnalise);
 			jobDetail.getJobDataMap().put("user", user);
