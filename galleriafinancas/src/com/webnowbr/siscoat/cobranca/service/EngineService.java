@@ -753,8 +753,7 @@ public class EngineService {
 		if (CommonsUtil.semValor(urlWenhook))
 			jsonDocketBodyPedido.put("urlWebhook", SiscoatConstants.URL_SISCOAT_ENGINE_WEBHOOK + webHookJWT);
 		else
-			jsonDocketBodyPedido.put("urlWebhook", SiscoatConstants.URL_SISCOAT_ENGINE_WEBHOOK
-					.replace("https://backoffice.galleriabank.com.br", urlWenhook) + webHookJWT);
+			jsonDocketBodyPedido.put("urlWebhook", urlWenhook);
 
 		return jsonDocketBodyPedido;
 	}
