@@ -18,6 +18,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContaContabil;
 import com.webnowbr.siscoat.cobranca.db.op.ContaContabilDao;
 import com.webnowbr.siscoat.infra.db.dao.MenuFavoritoDao;
 import com.webnowbr.siscoat.infra.db.dao.MenuItemDao;
+import com.webnowbr.siscoat.infra.db.model.IDmenus;
 import com.webnowbr.siscoat.infra.db.model.MenuFavorito;
 import com.webnowbr.siscoat.infra.db.model.MenuItem;
 import com.webnowbr.siscoat.infra.db.model.User;
@@ -27,6 +28,7 @@ import com.webnowbr.siscoat.security.LoginBean;
 @ManagedBean(name = "menuItemMB")
 @SessionScoped
 public class MenuItemMB {
+
 	private MenuItemDao dao = new MenuItemDao();
 	private MenuItem objetoMenuItem = new MenuItem();
 	private MenuItem objetoItemFavorito;
@@ -37,14 +39,14 @@ public class MenuItemMB {
 	private List<MenuItem> menuItemItem = dao.exibeItem();
 	private MenuItem menu = new MenuItem();
 	private MenuService menuService = new MenuService();
-	private MenuModel modelCadastro = menuService.constroiMenuCobranca();
-	private MenuModel modelAtendimento = menuService.constroiMenuAtendimento();
-	private MenuModel modelRelatorio = menuService.constroiMenuRelatório();
-	private MenuModel modelManutencao = menuService.constroiMenuManutencao();
-	private MenuModel modelFavoritarCadastro = menuService.constroiFavoritarCadastro();
-	private MenuModel modelFavoritarAtendimento = menuService.constroiFavoritarAtendimento();
-	private MenuModel modelFavoritarRelatorio = menuService.constroiFavoritarRelatorio();
-	private MenuModel modelFavoritarManutencao = menuService.constroiFavoritarManutencao();
+	private MenuModel modelCadastro = menuService.constroiMenu((long) 17);
+	private MenuModel modelAtendimento = menuService.constroiMenu((long) 18);
+	private MenuModel modelRelatorio = menuService.constroiMenu((long) 22);
+	private MenuModel modelManutencao = menuService.constroiMenu((long) 23);
+	private MenuModel modelFavoritarCadastro = menuService.constroiFavoritar((long) 17);
+	private MenuModel modelFavoritarAtendimento = menuService.constroiFavoritar((long) 18);
+	private MenuModel modelFavoritarRelatorio = menuService.constroiFavoritar((long) 22);
+	private MenuModel modelFavoritarManutencao = menuService.constroiFavoritar((long) 23);
 	
 	@ManagedProperty(value = "#{loginBean}")
 	protected LoginBean loginBean;
@@ -139,11 +141,6 @@ public class MenuItemMB {
 		return "MenuListagem.xhtml";
 	}
 
-	public String exibeMenuAtendimento() {
-		MenuService menu = new MenuService();
-		modelAtendimento = menu.constroiMenuAtendimento();
-		return "/Atendimento/atendimentoTeste.xhtml";
-	}
 
 	public void favoritar(Long id) {
 		MenuFavorito menuFavorito = new MenuFavorito();
@@ -317,5 +314,6 @@ public class MenuItemMB {
 	public void setModelFavoritarCadastro(MenuModel modelFavoritarCadastro) {
 		this.modelFavoritarCadastro = modelFavoritarCadastro;
 	}
+
 
 }
