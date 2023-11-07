@@ -14,6 +14,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesParcialDao;
 import com.webnowbr.siscoat.cobranca.db.op.IPCADao;
+import com.webnowbr.siscoat.cobranca.service.IpcaService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 
 public class IpcaJobContrato implements Job {
@@ -59,10 +60,14 @@ public class IpcaJobContrato implements Job {
 	private void atualizaIPCAInicioContrato() {
 		try {
 			IPCADao ipcaDao = new IPCADao();
+			IpcaService ipcaService = new IpcaService();
 			ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
 			ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 			ContratoCobrancaDetalhesParcialDao contratoCobrancaDetalhesParcialDao = new ContratoCobrancaDetalhesParcialDao();
 
+			LOGGER.info("atualiza o ipca");
+			ipcaService.verificaNovoIPCA();
+			
 			List<ContratoCobranca> contratosCobranca = contratoCobrancaDao.getContratosCalculoIpca();
 			LOGGER.info("incio job atualizaIPCAInicioContrato");
 			for (ContratoCobranca contratoCobranca : contratosCobranca) {

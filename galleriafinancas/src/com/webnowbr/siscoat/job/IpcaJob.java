@@ -3,9 +3,6 @@ package com.webnowbr.siscoat.job;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.quartz.Job;
@@ -18,6 +15,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesParcialDao;
 import com.webnowbr.siscoat.cobranca.db.op.IPCADao;
+import com.webnowbr.siscoat.cobranca.service.IpcaService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 
 
@@ -70,13 +68,20 @@ public class IpcaJob implements Job {
 	public void atualizaIPCA() {
 		try {
 			IPCADao ipcaDao = new IPCADao();
+			IpcaService ipcaService = new IpcaService();
 			ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
 			ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 			ContratoCobrancaDetalhesParcialDao contratoCobrancaDetalhesParcialDao = new ContratoCobrancaDetalhesParcialDao();
 			
-			List<ContratoCobranca> contratosCobranca = contratoCobrancaDao.findAll();
 
 			LOGGER.info("incio atualizaIPCAPorContrato");
+			LOGGER.info("atualiza o ipca");
+			ipcaService.verificaNovoIPCA();
+			
+			List<ContratoCobranca> contratosCobranca = contratoCobrancaDao.findAll();
+
+			
+			//atualiza o ipca
 			
 			if (contratosCobranca.size() > 0) {								
 				for (ContratoCobranca contratoCobranca : contratosCobranca) {	
