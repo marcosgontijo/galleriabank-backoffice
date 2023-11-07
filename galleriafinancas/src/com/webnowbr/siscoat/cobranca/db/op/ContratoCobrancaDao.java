@@ -6581,7 +6581,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					
 					ContratoCobranca contratoCobranca = new ContratoCobranca();
 					while (rs.next()) {
-						
+		
 						contratoCobranca = new ContratoCobranca();
 						contratoCobranca.setId(rs.getLong("id"));
 						contratoCobranca.setNumeroContrato(rs.getString("numerocontrato"));
@@ -6709,7 +6709,6 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					
 					ContratoCobranca contratoCobranca = new ContratoCobranca();
 					while (rs.next()) {
-						
 						contratoCobranca = new ContratoCobranca();
 						contratoCobranca.setId(rs.getLong("id"));
 						contratoCobranca.setNumeroContrato(rs.getString("numerocontrato"));
@@ -6738,16 +6737,33 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setAprovadoComite(rs.getBoolean("AprovadoComite"));
 						contratoCobranca.setAnaliseReprovada(rs.getBoolean("analisereprovada"));
 						contratoCobranca.setComentarioJuridicoEsteira(rs.getBoolean("comentarioJuridicoEsteira"));
+						contratoCobranca.setAnaliseComercial(rs.getBoolean("analiseComercial"));
+						
+						contratoCobranca.setPedidoLaudo(rs.getBoolean("pedidoLaudo"));
+						contratoCobranca.setPedidoLaudoPajuComercial(rs.getBoolean("pedidoLaudoPajuComercial"));
+						contratoCobranca.setPedidoPreLaudo(rs.getBoolean("pedidoPreLaudo"));
+						contratoCobranca.setPedidoPreLaudoComercial(rs.getBoolean("pedidoPreLaudoComercial"));
 						contratoCobranca.setPedidoPajuComercial(rs.getBoolean("pedidoPajuComercial"));
-						contratoCobranca.setAvaliacaoLaudo(rs.getString("avaliacaoLaudo"));
-						contratoCobranca.setContratoConferido(rs.getBoolean("contratoConferido"));
-						contratoCobranca.setStatus(rs.getString("status"));
+						contratoCobranca.setPendenciaLaudoPaju(rs.getBoolean("pendenciaLaudoPaju"));
+						contratoCobranca.setAvaliacaoLaudo(rs.getString("avaliacaoLaudo"));				
+						contratoCobranca.setContratoConferido(rs.getBoolean("contratoConferido"));						
+						contratoCobranca.setStatus(rs.getString("status"));						
 						contratoCobranca.setReanalise(rs.getBoolean("reanalise"));
 						contratoCobranca.setReanalisePronta(rs.getBoolean("reanalisePronta"));
 						contratoCobranca.setReanaliseJuridico(rs.getBoolean("reanaliseJuridico"));
 						contratoCobranca.setCertificadoEmitido(rs.getBoolean("certificadoEmitido"));
-						
+						contratoCobranca.setContratoPrioridadeAlta(rs.getBoolean("contratoPrioridadeAlta"));
+						contratoCobranca.setOkCliente(rs.getBoolean("okCliente"));
 						//contratoCobranca = findById(rs.getLong(1));
+						
+						ImovelCobranca imovel = new ImovelCobranca();
+						imovel.setEstado(rs.getString("estado"));
+						imovel.setCidade(rs.getString("cidade"));
+						Cidade cidade = new Cidade();
+						cidade.setPintarLinha(rs.getBoolean("pintarLinha"));
+						imovel.setObjetoCidade(cidade);
+						//imovel.consultarObjetoCidade();
+						contratoCobranca.setImovel(imovel);
 						
 						objects.add(contratoCobranca);												
 					}
