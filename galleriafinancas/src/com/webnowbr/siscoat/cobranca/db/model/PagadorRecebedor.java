@@ -255,6 +255,8 @@ public class PagadorRecebedor implements Serializable {
 	private BigDecimal saldoInvestidor;
 	
 	private String whatsAppNumero;
+	
+	private Date inicioEmpresa; //TODO: Mudar para string?
 
 	public PagadorRecebedor(){
 		resetarBololean();
@@ -2341,6 +2343,15 @@ public class PagadorRecebedor implements Serializable {
 
 	public void setContaBancariaValidada(boolean contaBancariaValidada) {
 		this.contaBancariaValidada = contaBancariaValidada;
+	}
+
+	//TODO: Alterar DATE para STRING??
+	public Date getInicioEmpresa() {
+		return inicioEmpresa;
+	}
+
+	public void setInicioEmpresa(Date inicioEmpresa) {
+		this.inicioEmpresa = inicioEmpresa;
 	}	
 	
 }

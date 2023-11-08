@@ -637,6 +637,8 @@
 			<column name="dataCasamento" />
 		</property>
 		
-		
+		<property name="inicioEmpresa" type="java.util.Date">
+			<column name="inicioEmpresa"/>
+		</property>
     </class>
 </hibernate-mapping>
