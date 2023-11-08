@@ -120,8 +120,21 @@ public class RelatoriosService {
 		if (ImoveisComCondominio.contains(con.getImovel().getTipo()))
 			detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Debitos de Condomínio", "Se houver"));
 
+		
+		int qtdMatriculas  =1;
+		String matriculas = con.getImovel().getNumeroMatricula().trim();
+		if (matriculas.endsWith(",")) {
+			matriculas = matriculas.substring(0, matriculas.lastIndexOf(",")).trim();
+		}
+	
+		qtdMatriculas = matriculas.split(",").length;
+		//se for apartamento é no minimo 3		
+		if (CommonsUtil.mesmoValorIgnoreCase("Apartamento", con.getImovel().getTipo()) && qtdMatriculas == 1) {
+			qtdMatriculas = 3;
+		}		
+		
 		RegistroImovelTabelaDao rDao = new RegistroImovelTabelaDao();
-		final BigDecimal valorRegistro = rDao.getValorRegistro( simulador.getValorCredito());
+		final BigDecimal valorRegistro = rDao.getValorRegistro( simulador.getValorCredito().multiply( CommonsUtil.bigDecimalValue( qtdMatriculas)) );
 
 		List<RegistroImovelTabela> registroImovelTabela = rDao.findAll();
 		Optional<RegistroImovelTabela> registroImovel = registroImovelTabela.stream()
@@ -129,9 +142,16 @@ public class RelatoriosService {
 				.filter(a -> a.getTotal().compareTo(valorRegistro) == 1).findFirst();
 		
 		if (registroImovel.isPresent()) {
-			//despesa = despesa.add(registroImovel.get().getTotal());
+			
+			 BigDecimal valorRegistroDespesa = registroImovel.get().getTotal();
+			
+			//Emprestimo = financiamento
+			if (CommonsUtil.mesmoValorIgnoreCase("Emprestimo", con.getTipoOperacao()))
+				valorRegistroDespesa =valorRegistroDespesa.multiply(CommonsUtil.bigDecimalValue(2));
+			
+			despesa = despesa.add(valorRegistroDespesa);
 			detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Custas Estimada Para Registro",
-					"A Calcular"));
+					CommonsUtil.formataValorMonetario(valorRegistroDespesa, "R$ ")));
 		}
 		
 		BigDecimal valorCustoEmissao = simulador.getCustoEmissaoValor();

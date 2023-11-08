@@ -11,16 +11,13 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Base64;
-import java.util.Calendar;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -508,9 +505,9 @@ public class EngineService {
 
 		documentoAnaliseDao.merge(documentoAnalise);
 
-		String motivo = "Empresa Vinculada ao Proprietario Atual";
-		if (!CommonsUtil.mesmoValor(documentoAnalise.getMotivoAnalise().toUpperCase(), "PROPRIETARIO ATUAL"))
-			motivo = "Empresa Vinculada ao Proprietario Anterior";
+		String motivo = "Empresa Vinculada ao " + StringUtils.capitalize(documentoAnalise.getMotivoAnalise());
+//		if (!CommonsUtil.mesmoValor(documentoAnalise.getMotivoAnalise().toUpperCase(), "PROPRIETARIO ATUAL"))
+//			motivo = "Empresa Vinculada ao Proprietario Anterior";
 
 		if (!CommonsUtil.semValor(engineWebhookRetorno.getConsultaCompleta())
 				&& !CommonsUtil.semValor(engineWebhookRetorno.getConsultaCompleta().getEnterpriseData())
@@ -543,15 +540,15 @@ public class EngineService {
 
 							if (engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership
 									.getRelatedEntityTaxIdType().equalsIgnoreCase("CPF")) {
-								motivo = "Sócio Vinculado ao Proprietario Atual";
-								if (!CommonsUtil.mesmoValor(documentoAnalise.getMotivoAnalise().toUpperCase(),
-										"PROPRIETARIO ATUAL"))
-									motivo = "Sócio Vinculado ao Proprietario Anterior";
+								motivo = "Sócio Vinculado ao " + StringUtils.capitalize(documentoAnalise.getMotivoAnalise());
+//								if (!CommonsUtil.mesmoValor(documentoAnalise.getMotivoAnalise().toUpperCase(),
+//										"PROPRIETARIO ATUAL"))
+//									motivo = "Sócio Vinculado ao Proprietario Anterior";
 							} else {
-								motivo = "Empresa Vinculada ao Proprietario Atual";
-								if (!CommonsUtil.mesmoValor(documentoAnalise.getMotivoAnalise().toUpperCase(),
-										"PROPRIETARIO ATUAL"))
-									motivo = "Empresa Vinculada ao Proprietario Anterior";
+								motivo = "Empresa Vinculada ao "  + StringUtils.capitalize(documentoAnalise.getMotivoAnalise());
+//								if (!CommonsUtil.mesmoValor(documentoAnalise.getMotivoAnalise().toUpperCase(),
+//										"PROPRIETARIO ATUAL"))
+//									motivo = "Empresa Vinculada ao Proprietario Anterior";
 							}
 
 							documentoAnaliseService.cadastrarPessoRetornoEngine(
