@@ -17,6 +17,7 @@ public class MenuItem {
 	private MenuItem itemPai;
 	
 	private boolean favorito =false;
+	private boolean clickFavorito = false;
 	
 	public String getPermissao() {
 		return permissao;
@@ -88,6 +89,14 @@ public class MenuItem {
 
 	public void setFavorito(boolean favorito) {
 		this.favorito = favorito;
+	}
+
+	public boolean isClickFavorito() {
+		return clickFavorito;
+	}
+
+	public void setClickFavorito(boolean clickFavorito) {
+		this.clickFavorito = clickFavorito;
 	}
 	
 

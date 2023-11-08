@@ -36,7 +36,9 @@
 					   <p:repeat var="modulo" value="#{menuItemMB.menuItemModulo}">
 					    <div>
 					    
-					    		<p:commandLink title="#{modulo.nome}"  action="#{modulo.getAcao}" ajax="false"><img src="#{modulo.icone}" alt=""/></p:commandLink>
+					    		<p:commandLink title="#{modulo.nome}"  action="#{modulo.getAcao}" ajax="false"><img src="#{modulo.icone}" alt=""/>
+					    		<f:setPropertyActionListener value="false" target="#{menuItemMB.clickFavorito}"></f:setPropertyActionListener>
+					    		</p:commandLink>
 								
 					    </div>
 					    <p:spacer width="20px"/>

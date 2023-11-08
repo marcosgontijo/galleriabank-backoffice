@@ -83,10 +83,11 @@ public class MenuService {
 		for (MenuItem sub : menusSubmoduloCadastro) {
 			primeiroSubmenu = new DefaultSubMenu();
 			primeiroSubmenu.setLabel(sub.getNome());
+			
 			primeiroSubmenu.setStyleClass("titulosMenu");
 			List<MenuItem> menusItem = dao.ConsultaItem(sub.getId());
 			for (MenuItem item : menusItem) {
-
+				
 				menuPrime = new DefaultMenuItem();
 				menuPrime.setValue(item.getNome());
 				menuPrime.setCommand("#{menuItemMB.clearFieldsFavorito(" + item.getId() + ")}");
