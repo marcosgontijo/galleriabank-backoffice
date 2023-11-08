@@ -26,35 +26,46 @@ public class MenuService {
 	private MenuModel modelMenu;
 	private MenuModel modelFavoritos;
 	private MenuModel modelFavoritoUsuario;
-	
+
 	@ManagedProperty(value = "#{loginBean}")
 	protected LoginBean loginBean;
-	
+
 	public LoginBean getLoginBean() {
 		return loginBean;
 	}
+
 	public void setLoginBean(LoginBean loginBean) {
 		this.loginBean = loginBean;
 	}
-	public MenuModel constroiMenu(Long id) {
+
+	public MenuModel constroiMenu(Long idModulo, Long idUsuario, boolean montaFavorito) {
 		modelMenu = new DefaultMenuModel();
 		DefaultSubMenu primeiroSubmenu = new DefaultSubMenu();
 		MenuItemDao dao = new MenuItemDao();
-		DefaultMenuItem menuPrime = new DefaultMenuItem(); 
-		List<MenuItem> menusSubmoduloCadastro = dao.ConsultaSubmodulo(id);
-		for(MenuItem sub : menusSubmoduloCadastro) {
+		DefaultMenuItem menuPrime = new DefaultMenuItem();
+		List<MenuItem> menusSubmoduloCadastro = dao.consultaMenuItem("Submódulo", idModulo, idUsuario);
+		for (MenuItem sub : menusSubmoduloCadastro) {
 			primeiroSubmenu = new DefaultSubMenu();
 			primeiroSubmenu.setLabel(sub.getNome());
 			primeiroSubmenu.setStyleClass("titulosMenu");
-			List<MenuItem> menusItem = dao.ConsultaItem(sub.getId());
-			for(MenuItem item : menusItem) {
-				
+			List<MenuItem> menusItem = dao.consultaMenuItem("Item", sub.getId(), idUsuario);
+			for (MenuItem item : menusItem) {
+
 				menuPrime = new DefaultMenuItem();
 				menuPrime.setValue(item.getNome());
 				menuPrime.setCommand(item.getAcao());
-				menuPrime.setIcon(item.getIcone());
+				if( item.isFavorito())
+					menuPrime.setIcon("ui-icon-star");
+				else
+					menuPrime.setIcon(item.getIcone());
 				menuPrime.setStyleClass("itemMenu");
-				menuPrime.setAjax(false);
+				if(montaFavorito) {
+					menuPrime.setCommand("#{menuItemMB.clearFieldsFavorito(" + item.getId() + ")}");
+				}else {
+					menuPrime.setCommand(item.getAcao());
+				}
+				menuPrime.setAjax(montaFavorito);
+				
 				menuPrime.setUpdate("@all");
 				primeiroSubmenu.addElement(menuPrime);
 			}
@@ -63,72 +74,69 @@ public class MenuService {
 		return modelMenu;
 	}
 
+	public MenuModel constroiFavoritar(Long idModulo, Long idUsuario) {
+		modelFavoritos = new DefaultMenuModel();
+		DefaultSubMenu primeiroSubmenu = new DefaultSubMenu();
+		MenuItemDao dao = new MenuItemDao();
+		DefaultMenuItem menuPrime = new DefaultMenuItem();
+		List<MenuItem> menusSubmoduloCadastro = dao.consultaMenuItem("Submódulo", idModulo, idUsuario);
+		for (MenuItem sub : menusSubmoduloCadastro) {
+			primeiroSubmenu = new DefaultSubMenu();
+			primeiroSubmenu.setLabel(sub.getNome());
+			primeiroSubmenu.setStyleClass("titulosMenu");
+			List<MenuItem> menusItem = dao.ConsultaItem(sub.getId());
+			for (MenuItem item : menusItem) {
 
-public MenuModel constroiFavoritar(Long id) {
-	modelFavoritos = new DefaultMenuModel();
-	DefaultSubMenu primeiroSubmenu = new DefaultSubMenu();
-	MenuItemDao dao = new MenuItemDao();
-	DefaultMenuItem menuPrime = new DefaultMenuItem(); 
-	List<MenuItem> menusSubmoduloCadastro = dao.ConsultaSubmodulo(id);
-	for(MenuItem sub : menusSubmoduloCadastro) {
-		primeiroSubmenu = new DefaultSubMenu();
-		primeiroSubmenu.setLabel(sub.getNome());
-		primeiroSubmenu.setStyleClass("titulosMenu");
-		List<MenuItem> menusItem = dao.ConsultaItem(sub.getId());
-		for(MenuItem item : menusItem) {
-			
-			menuPrime = new DefaultMenuItem();
-			menuPrime.setValue(item.getNome());
-			menuPrime.setCommand("#{menuItemMB.clearFieldsFavorito(" + item.getId() + ")}");
-			menuPrime.setIcon("ui-icon-star");
-			menuPrime.setStyleClass("itemMenu");
-			menuPrime.setAjax(false);
-			menuPrime.setUpdate("@all");
-			primeiroSubmenu.addElement(menuPrime);
+				menuPrime = new DefaultMenuItem();
+				menuPrime.setValue(item.getNome());
+				menuPrime.setCommand("#{menuItemMB.clearFieldsFavorito(" + item.getId() + ")}");
+				menuPrime.setIcon("ui-icon-star");
+				menuPrime.setStyleClass("itemMenu");
+				menuPrime.setAjax(false);
+				menuPrime.setUpdate("@all");
+				primeiroSubmenu.addElement(menuPrime);
+			}
+			modelFavoritos.addElement(primeiroSubmenu);
 		}
-		modelFavoritos.addElement(primeiroSubmenu);
+		return modelFavoritos;
+
 	}
-	return modelFavoritos;
-	
-}
-public MenuModel carregaFavoritos(User user) {
-	List<MenuItem> listasubmenu = new ArrayList<>();
-	List<MenuItem> menuitem = new ArrayList<>();
-	modelFavoritoUsuario = new DefaultMenuModel();
-	DefaultMenuItem menuPrime = new DefaultMenuItem();
-	MenuFavoritoDao favoritoDao = new MenuFavoritoDao();
-	MenuItemDao itemDao = new MenuItemDao();
-	List<MenuFavorito> favorito = favoritoDao.findByFilter("user", user);
-	for (MenuFavorito menu : favorito) {
-		menuitem = itemDao.findByFilter("id", menu.getMenuItemFavorito().getId());
-		for (MenuItem item : menuitem) {
-			DefaultSubMenu	submenu = new DefaultSubMenu();
-			Optional<MenuElement> menuElement = modelFavoritoUsuario.getElements().stream()
-					.filter(e -> ((DefaultSubMenu) e).getLabel().equals(item.getItemPai().getNome())).findFirst();
-			if (!menuElement.isPresent()) {
-				submenu.setLabel(item.getItemPai().getNome());
-				submenu.setStyleClass("titulosMenu");
-				modelFavoritoUsuario.addElement(submenu);
-			} else {
-				submenu = (DefaultSubMenu) menuElement.get();
+
+	public MenuModel carregaFavoritos(User user) {
+		List<MenuItem> listasubmenu = new ArrayList<>();
+		List<MenuItem> menuitem = new ArrayList<>();
+		modelFavoritoUsuario = new DefaultMenuModel();
+		DefaultMenuItem menuPrime = new DefaultMenuItem();
+		MenuFavoritoDao favoritoDao = new MenuFavoritoDao();
+		MenuItemDao itemDao = new MenuItemDao();
+		List<MenuFavorito> favorito = favoritoDao.findByFilter("user", user);
+		for (MenuFavorito menu : favorito) {
+			menuitem = itemDao.findByFilter("id", menu.getMenuItemFavorito().getId());
+			for (MenuItem item : menuitem) {
+				DefaultSubMenu submenu = new DefaultSubMenu();
+				Optional<MenuElement> menuElement = modelFavoritoUsuario.getElements().stream()
+						.filter(e -> ((DefaultSubMenu) e).getLabel().equals(item.getItemPai().getNome())).findFirst();
+				if (!menuElement.isPresent()) {
+					submenu.setLabel(item.getItemPai().getNome());
+					submenu.setStyleClass("titulosMenu");
+					modelFavoritoUsuario.addElement(submenu);
+				} else {
+					submenu = (DefaultSubMenu) menuElement.get();
+				}
+
+				menuPrime = new DefaultMenuItem();
+
+				menuPrime.setValue(item.getNome());
+				menuPrime.setCommand(item.getAcao());
+				menuPrime.setIcon(item.getIcone());
+				menuPrime.setStyleClass("itemMenu");
+				menuPrime.setAjax(false);
+				submenu.addElement(menuPrime);
+
 			}
 
-			menuPrime = new DefaultMenuItem();
-
-			menuPrime.setValue(item.getNome());
-			menuPrime.setCommand(item.getAcao());
-			menuPrime.setIcon(item.getIcone());
-			menuPrime.setStyleClass("itemMenu");
-			menuPrime.setAjax(false);
-			submenu.addElement(menuPrime);
-
-
 		}
-
+		return modelFavoritoUsuario;
 	}
-	return modelFavoritoUsuario;
-}
-	
-	
 
 }
