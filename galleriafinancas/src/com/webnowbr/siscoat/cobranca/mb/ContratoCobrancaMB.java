@@ -9365,21 +9365,23 @@ public class ContratoCobrancaMB {
 			if (matriculas.endsWith(",")) {
 				matriculas = matriculas.substring(0, matriculas.lastIndexOf(",")).trim();
 			}
-			//Emprestimo = financiamento
-			if (CommonsUtil.mesmoValorIgnoreCase("Emprestimo", objetoContratoCobranca.getTipoOperacao()))
-				qtdMatriculas = qtdMatriculas * 2;
-
+		
 			qtdMatriculas = matriculas.split(",").length;
 			//se for apartamento é no minimo 3		
 			if (CommonsUtil.mesmoValorIgnoreCase("Apartamento", objetoContratoCobranca.getImovel().getTipo()) && qtdMatriculas == 1) {
 				qtdMatriculas = 3;
 			}
-			
+
 			RegistroImovelTabelaDao rDao = new RegistroImovelTabelaDao();
-			BigDecimal valorRegistro = rDao.getValorRegistro(objetoContratoCobranca.getValorAprovadoComite().multiply(CommonsUtil.bigDecimalValue(qtdMatriculas)));
-			if(valorRegistro.compareTo(objetoContratoCobranca.getValorCartorio()) > 0) {
-				objetoContratoCobranca.setValorCartorio(valorRegistro);
-			}			
+			BigDecimal valorRegistro = rDao.getValorRegistro(objetoContratoCobranca.getValorAprovadoComite()
+					.multiply(CommonsUtil.bigDecimalValue(qtdMatriculas)));
+			if (valorRegistro.compareTo(objetoContratoCobranca.getValorCartorio()) > 0) {
+				// Emprestimo = financiamento
+				if (CommonsUtil.mesmoValorIgnoreCase("Emprestimo", objetoContratoCobranca.getTipoOperacao()))
+					objetoContratoCobranca.setValorCartorio(valorRegistro.multiply(CommonsUtil.bigDecimalValue(2)));
+				else
+					objetoContratoCobranca.setValorCartorio(valorRegistro);
+			}
 		}
 
 		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Registro")) {
@@ -33961,7 +33963,7 @@ public class ContratoCobrancaMB {
 		
 		if (this.listaDocumentoAnalise != null && this.listaDocumentoAnalise.size() > 0) {
 			for (DocumentoAnalise docAnalise : listaDocumentoAnalise) {	
-				if (docAnalise.getMotivoAnalise().toLowerCase().contains("proprietario atual")) {
+				if (docAnalise.getMotivoAnalise().toLowerCase().contains("proprietario atual") || docAnalise.getMotivoAnalise().toLowerCase().contains("comprador")) {
 					docAnalise.getResumoEngine();
 					docAnalise.getResumoScr();
 					if (docAnalise.isCcfApontamentosAvailable()) {

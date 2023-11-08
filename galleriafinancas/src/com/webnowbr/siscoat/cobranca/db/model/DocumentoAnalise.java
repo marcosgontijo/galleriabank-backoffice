@@ -516,10 +516,8 @@ public class DocumentoAnalise implements Serializable {
 	}
 
 	public boolean isPodeChamarSerasa() {
-		return !isSerasaProcessado() && CommonsUtil.mesmoValor(this.motivoAnalise.toUpperCase(), "PROPRIETARIO ATUAL"); // (CommonsUtil.mesmoValor("PJ",
-																														// //
-																														// tipoPessoa)
-																														// ||
+		return !isSerasaProcessado() && (CommonsUtil.mesmoValor(this.motivoAnalise.toUpperCase(), "PROPRIETARIO ATUAL")
+				|| CommonsUtil.mesmoValor(this.motivoAnalise.toUpperCase(), "COMPRADOR"));
 	}
 
 	public boolean isSerasaProcessado() {
@@ -549,7 +547,8 @@ public class DocumentoAnalise implements Serializable {
 
 	public boolean isPodeChamarPpe() {
 		return !isPpeProcessado() && CommonsUtil.mesmoValor("PF", tipoPessoa)
-				&& CommonsUtil.mesmoValor(this.motivoAnalise.toUpperCase(), "PROPRIETARIO ATUAL")
+				&& (CommonsUtil.mesmoValor(this.motivoAnalise.toUpperCase(), "PROPRIETARIO ATUAL") ||
+						CommonsUtil.mesmoValor(this.motivoAnalise.toUpperCase(), "COMPRADOR"))
 				&& !CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
 	}
 
