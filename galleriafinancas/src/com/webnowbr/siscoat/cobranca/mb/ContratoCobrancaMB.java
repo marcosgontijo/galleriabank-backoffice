@@ -133,6 +133,7 @@ import com.webnowbr.siscoat.cobranca.db.model.CcbContrato;
 import com.webnowbr.siscoat.cobranca.db.model.CcbProcessosJudiciais;
 import com.webnowbr.siscoat.cobranca.db.model.ContasPagar;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaBRLLiquidacao;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhesObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhesParcial;
@@ -8687,6 +8688,261 @@ public class ContratoCobrancaMB {
 		}
 		quitacaoPDF.setValorQuitacao(valorPresenteTotal);
 	}
+	
+	public void geraJSONLiquidacao() {
+		String nomeJSON = "";		
+		BigDecimal valorTotalLiquidacao = BigDecimal.ZERO;
+		int qtdeLiquidados = 0;
+		
+		String contratosErros = null;
+	
+		String patternyyyyMMdd = "yyyyMMdd";
+		SimpleDateFormat simpleDateFormatyyyyMMdd = new SimpleDateFormat(patternyyyyMMdd);	
+		String patternyyyyMMddComTraco = "yyyy-MM-dd";
+		SimpleDateFormat simpleDateFormatyyyyMMddComTraco = new SimpleDateFormat(patternyyyyMMddComTraco);	
+		String identificadorCessao = simpleDateFormatyyyyMMdd.format(DateUtil.gerarDataHoje()) + "_LIQ";
+		
+		JSONObject jsonSchema = new JSONObject();
+		jsonSchema.put("$schema", "https://schemas.brltrust.com.br/json/fidc/v1.2/cessao.schema.json");
+		
+		JSONObject jsonFundo = new JSONObject();
+		jsonFundo.put("identificacao", Long.valueOf("37294759000134"));
+		jsonFundo.put("nome", "FIDC GALLERIA");		
+		jsonSchema.put("fundo", jsonFundo);
+		
+		JSONObject jsonCessao = new JSONObject();
+		
+		JSONObject jsonOriginador = new JSONObject();
+		jsonOriginador.put("codigo", "34425347000106");
+		jsonOriginador.put("nome", "GALLERIA FINANCAS SEC");		
+		jsonCessao.put("originador", jsonOriginador);
+		
+		jsonCessao.put("identificadorCessao", identificadorCessao);
+		
+		JSONArray jsonRecebiveis = new JSONArray();
+		
+		for (ContratoCobrancaDetalhes detalhes : listContratoCobrancaDetalhesQuitar) {
+			if (detalhes.isParcelaPaga()) {
+				continue;
+			}
+			ContratoCobrancaBRLLiquidacao parcela = new ContratoCobrancaBRLLiquidacao();
+			String numero = detalhes.getNumeroParcela();
+			if (numero.length() == 1) {
+				numero = "00" + numero;
+			} else if (numero.length() == 2) {
+				numero = "0" + numero;
+			} else {
+				numero = numero;
+			}
+			this.valorPresenteParcela = BigDecimal.ZERO;
+			
+			if (this.dataQuitacao.after(detalhes.getDataVencimento())
+					|| this.dataQuitacao.after(DateUtil.adicionarDias(detalhes.getDataVencimento(), -30))) {
+				calcularValorPresenteParcelaDataValor(this.dataQuitacao, detalhes, detalhes.getVlrParcela());
+			} else {
+				this.numeroPresenteParcela = CommonsUtil.intValue(detalhes.getNumeroParcela());
+				calcularValorPresenteParcelaData(this.dataQuitacao, detalhes);
+				if (this.objetoContratoCobranca.isTemTxAdm()) {
+					valorPresenteParcela = valorPresenteParcela.add(SiscoatConstants.TAXA_ADM);
+				}
+			}
+			BigDecimal vlrParcela = BigDecimal.ZERO;
+			BigDecimal valorParcelaOriginal = BigDecimal.ZERO;
+			if(!CommonsUtil.semValor(detalhes.getVlrAmortizacaoParcela())) {
+				vlrParcela = vlrParcela.add(detalhes.getVlrAmortizacaoParcela());
+				valorParcelaOriginal = valorParcelaOriginal.add(detalhes.getVlrAmortizacaoParcela());
+			}
+			if(!CommonsUtil.semValor(detalhes.getVlrJurosParcela())) {
+				vlrParcela = vlrParcela.add(detalhes.getVlrJurosParcela());
+				valorParcelaOriginal = valorParcelaOriginal.add(detalhes.getVlrJurosParcela());
+			}
+			parcela.setNumeroParcela(numero);
+			parcela.setVlrAmortizacaoParcela(detalhes.getVlrAmortizacaoParcela());
+			parcela.setDataVencimento(detalhes.getDataVencimento());
+			parcela.setDataPagamento(dataQuitacao);
+			parcela.setVlrParcela(vlrParcela);
+			parcela.setVlrRecebido(valorPresenteParcela);
+			parcela.setId(detalhes.getId());
+			parcela.setVlrJurosSemIPCA(detalhes.getValorJurosSemIPCA());
+			parcela.setVlrAmortizacaoSemIPCA(detalhes.getValorAmortizacaoSemIPCA());
+			parcela.setContrato(this.objetoContratoCobranca);
+			
+			JSONObject jsonRecebivel = new JSONObject();
+			
+			String numeroParcela = "";
+			
+			if (parcela.getNumeroParcela().length() == 1) {
+				numeroParcela = "00" + parcela.getNumeroParcela();
+			} else if (parcela.getNumeroParcela().length() == 2) {
+				numeroParcela = "0" + parcela.getNumeroParcela();
+			} else {
+				numeroParcela = parcela.getNumeroParcela();
+			}
+			
+			jsonRecebivel.put("numeroControle", parcela.getContrato().getNumeroContratoSeguro() + "-" + numeroParcela);
+			jsonRecebivel.put("coobrigacao", false);
+			jsonRecebivel.put("ocorrencia", 33);
+			jsonRecebivel.put("tipo", 73);
+			jsonRecebivel.put("documento", parcela.getContrato().getNumeroContratoSeguro());
+			jsonRecebivel.put("termoCessao", parcela.getContrato().getTermoCessao());
+			
+			JSONObject jsonSacado = new JSONObject();
+			
+			JSONObject jsonPessoa = new JSONObject();
+			if (parcela.getContrato().getPagador().getCpf() != null && !parcela.getContrato().getPagador().getCpf().equals("")) {
+				jsonPessoa.put("tipo", "PF");
+				jsonPessoa.put("identificacao", Long.valueOf(CommonsUtil.somenteNumeros((parcela.getContrato().getPagador().getCpf()))));				
+			} else {
+				jsonPessoa.put("tipo", "PJ");
+				jsonPessoa.put("identificacao", Long.valueOf(CommonsUtil.somenteNumeros(parcela.getContrato().getPagador().getCnpj())));
+			}
+			jsonPessoa.put("nome", parcela.getContrato().getPagador().getNome());
+			jsonSacado.put("pessoa", jsonPessoa);
+			
+			JSONObject jsonEndereco = new JSONObject();
+			if (!CommonsUtil.semValor(parcela.getContrato().getPagador().getCep())) {
+				jsonEndereco.put("cep", Long.valueOf(CommonsUtil.somenteNumeros(parcela.getContrato().getPagador().getCep())));
+			} else {
+				jsonEndereco.put("cep", Long.valueOf(00000000));
+			}
+			jsonEndereco.put("logradouro", parcela.getContrato().getPagador().getEndereco());
+			jsonEndereco.put("numero", parcela.getContrato().getPagador().getNumero());
+			jsonEndereco.put("complemento", parcela.getContrato().getPagador().getComplemento());
+			jsonEndereco.put("bairro", parcela.getContrato().getPagador().getBairro());
+			jsonEndereco.put("municipio", parcela.getContrato().getPagador().getCidade());
+			jsonEndereco.put("uf", parcela.getContrato().getPagador().getEstado());
+			jsonSacado.put("endereco", jsonEndereco);	
+			jsonRecebivel.put("sacado", jsonSacado);
+			
+			JSONObject jsonCedente = new JSONObject();
+			jsonCedente.put("tipo", "PJ");
+			
+			if (parcela.getContrato().getCedenteBRLCessao().equals("BMP Money Plus SCD S.A.")) {
+				jsonCedente.put("identificacao", Long.valueOf("34337707000100"));
+				jsonCedente.put("nome", "BMP Money Plus SCD S.A.");		
+			} else {
+				jsonCedente.put("identificacao", Long.valueOf("34425347000106"));
+				jsonCedente.put("nome", "Galleria Finanças Securitizadora S.A.");	
+			}
+			jsonRecebivel.put("cedente", jsonCedente);
+			
+			jsonRecebivel.put("aquisicao", simpleDateFormatyyyyMMddComTraco.format(parcela.getContrato().getDataAquisicaoCessao()));
+			jsonRecebivel.put("emissao", simpleDateFormatyyyyMMddComTraco.format(parcela.getContrato().getDataInicio()));
+			jsonRecebivel.put("vencimento", simpleDateFormatyyyyMMddComTraco.format(parcela.getDataVencimento()));
+			jsonRecebivel.put("liquidacao", simpleDateFormatyyyyMMddComTraco.format(parcela.getDataVencimento()));
+			JSONObject jsonValores = new JSONObject();
+			
+			if (parcela.getVlrAmortizacaoSemIPCA() != null && parcela.getVlrJurosSemIPCA() != null) {
+				jsonValores.put("face", parcela.getVlrAmortizacaoSemIPCA().add(parcela.getVlrJurosSemIPCA()).setScale(2, RoundingMode.HALF_EVEN));
+			} else {				
+				if (contratosErros == null) {
+					contratosErros = parcela.getContrato().getNumeroContrato();
+				} else {
+					contratosErros = contratosErros + " / " + parcela.getContrato().getNumeroContrato();
+				}
+			}			
+			if (parcela.getContrato() != null) {
+				if (parcela.getContrato().getTxJurosCessao() != null) {
+					jsonValores.put("aquisicao", calcularValorPresenteParcelaJson(parcela.getId(), 
+							parcela.getContrato().getTxJurosCessao(), parcela.getContrato().getDataAquisicaoCessao()));
+				} else {
+					jsonValores.put("aquisicao", calcularValorPresenteParcelaJson(parcela.getId(), 
+							parcela.getContrato().getTxJurosParcelas(), parcela.getContrato().getDataAquisicaoCessao()));
+				}
+			} else {
+				jsonValores.put("aquisicao", calcularValorPresenteParcelaJson(parcela.getId(), parcela.getContrato().getTxJurosParcelas(), parcela.getContrato().getDataAquisicaoCessao()));
+			}			
+			
+			if (parcela.getDataPagamento().before(parcela.getDataVencimento()) &&
+					parcela.getVlrRecebido().compareTo(valorParcelaOriginal) < 0) {
+				jsonValores.put("liquidacao", parcela.getVlrRecebido());
+				
+				valorTotalLiquidacao = valorTotalLiquidacao.add(parcela.getVlrRecebido());
+			} else {	
+				jsonValores.put("liquidacao", valorParcelaOriginal); 
+				
+				valorTotalLiquidacao = valorTotalLiquidacao.add(valorParcelaOriginal);
+			} 			
+			qtdeLiquidados = qtdeLiquidados + 1;			
+			jsonRecebivel.put("valores", jsonValores);
+			JSONObject jsonDados = new JSONObject();
+			jsonDados.put("indice", "IPCA");			
+			jsonRecebivel.put("dados", jsonDados);		
+		
+			jsonRecebiveis.put(jsonRecebivel);
+		}
+		
+		jsonCessao.put("recebiveis", jsonRecebiveis);
+		
+		jsonSchema.put("cessao", jsonCessao);
+		
+		nomeJSON = "JSON_BRL_Trust_Liquidacao_" + identificadorCessao + "_QtdeLiquidados_" 
+				+ qtdeLiquidados + "_ValorTotal_" + valorTotalLiquidacao + ".json";
+		try {
+			downloadJson(jsonSchema, nomeJSON);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public BigDecimal calcularValorPresenteParcelaJson(Long idParcela, BigDecimal txJuros, Date dataAquisicao){
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+		//Date auxDataHoje = dataHoje.getTime();
+		Date auxDataHoje = dataAquisicao;
+		BigDecimal valorPresenteParcela;
+		
+		ContratoCobrancaDetalhesDao cDao = new ContratoCobrancaDetalhesDao();		
+		ContratoCobrancaDetalhes parcelas = cDao.findById(idParcela);
+		
+		BigDecimal juros = txJuros;
+		BigDecimal saldo = BigDecimal.ZERO;
+		
+		if (parcelas.getValorJurosSemIPCA() != null && parcelas.getValorAmortizacaoSemIPCA() != null) {
+			saldo = parcelas.getValorJurosSemIPCA().add(parcelas.getValorAmortizacaoSemIPCA());
+		}
+		
+		BigDecimal quantidadeDeMeses = BigDecimal.ONE;
+
+		quantidadeDeMeses = BigDecimal.valueOf(DateUtil.Days360(auxDataHoje, parcelas.getDataVencimento()));
+		
+		quantidadeDeMeses = quantidadeDeMeses.divide(BigDecimal.valueOf(30), MathContext.DECIMAL128);
+			
+		if(quantidadeDeMeses.compareTo(BigDecimal.ZERO) == -1) { 
+			quantidadeDeMeses = quantidadeDeMeses.multiply(BigDecimal.valueOf(-1)); 
+		} 
+
+		Double quantidadeDeMesesDouble = CommonsUtil.doubleValue(quantidadeDeMeses); 
+		
+		juros = juros.divide(BigDecimal.valueOf(100));
+		juros = juros.add(BigDecimal.ONE);
+		
+		double divisor = Math.pow(CommonsUtil.doubleValue(juros), quantidadeDeMesesDouble);
+	
+		valorPresenteParcela = (saldo).divide(CommonsUtil.bigDecimalValue(divisor) , MathContext.DECIMAL128);
+		valorPresenteParcela = valorPresenteParcela.setScale(2, BigDecimal.ROUND_HALF_UP);
+		
+		return valorPresenteParcela;
+	}
+	
+	private void downloadJson(JSONObject jsonSchema, String nomeJSON) throws IOException {
+		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+				FacesContext.getCurrentInstance());
+		String nomeSemvirgula = nomeJSON;
+		if(nomeSemvirgula.contains(",")) {
+			nomeSemvirgula = nomeSemvirgula.replace(",", "");
+	    }
+		String nomeArquivoDownload = nomeSemvirgula;
+		gerador.open(nomeArquivoDownload);
+
+		gerador.feed(new ByteArrayInputStream(jsonSchema.toString().getBytes()));
+		gerador.close();
+	}
 
 	public void amortizarContratoValorPresente() {
 
@@ -9297,6 +9553,10 @@ public class ContratoCobrancaMB {
 				|| CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Documentos Comite")
 				|| CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Comite")
 				|| CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. DOC")) {
+			if(CommonsUtil.mesmoValor(objetoContratoCobranca.getFormaDePagamentoLaudoPAJU(), "No final")){
+				objetoContratoCobranca.setValorLaudoPajuPago(BigDecimal.ZERO);
+				objetoContratoCobranca.setValorLaudoPajuFaltante(objetoContratoCobranca.getValorLaudoPajuTotal());
+			}
 			this.contratosPagadorAnalisado = cDao.getContratosDoPagador(this.objetoContratoCobranca);
 			this.contratosImovelAnalisado = cDao.getContratosDoImovel(this.objetoContratoCobranca);
 			contratosLaudo = "";
