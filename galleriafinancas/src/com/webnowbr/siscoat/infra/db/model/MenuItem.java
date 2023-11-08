@@ -16,7 +16,7 @@ public class MenuItem {
 	
 	private MenuItem itemPai;
 	
-	private boolean favorito;
+	private boolean favorito =false;
 	
 	public String getPermissao() {
 		return permissao;

@@ -30,6 +30,7 @@ import com.webnowbr.siscoat.cobranca.mb.InvestidorMB;
 import com.webnowbr.siscoat.db.dao.HibernateFactory;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
+import com.webnowbr.siscoat.infra.mb.MenuItemMB;
 
 @ManagedBean(name = "loginBean")
 @SessionScoped
@@ -40,7 +41,7 @@ import com.webnowbr.siscoat.infra.db.model.User;
  */
 public class LoginBean {
     private static boolean initialized = false;
-	
+    	
     /** Logger. */
     private static final Log LOG = LogFactory.getLog(LoginBean.class);
     private String message = "";
@@ -205,7 +206,7 @@ public class LoginBean {
             	    if(request instanceof HttpServletRequest) {
             	    	url = ((HttpServletRequest) request).getRequestURL().toString();
             	    }
-                	
+            	    
                 	// faz o redirecionamento de acordo com o perfil do usuário
                 	if (userTmp.size() > 0) {
                 		if (userTmp.get(0).isUserInvestidor()) {

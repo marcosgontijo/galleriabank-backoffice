@@ -14,6 +14,7 @@ import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.common.GsonUtil;
 
+import br.com.galleriabank.bigdata.cliente.model.cadastro.DadosBasicosResultPj;
 import br.com.galleriabank.netrin.cliente.model.receitafederal.ReceitaFederalPF;
 import br.com.galleriabank.netrin.cliente.model.receitafederal.ReceitaFederalPJ;
 
@@ -107,6 +108,7 @@ public class PagadorRecebedorService {
 	public PagadorRecebedor preecheDadosReceita(PagadorRecebedor pagadorAdicionar) {
 		String stringResponse = null;
 		NetrinService netrinService = new NetrinService();
+		BigDataService bigDataService = new BigDataService();
 
 //		if (!CommonsUtil.semValor(pagadorAdicionar.getCpf()) || !CommonsUtil.semValor(pagadorAdicionar.getCnpj()))
 //			pagadorAdicionar = buscaOuInsere(pagadorAdicionar);
@@ -117,11 +119,10 @@ public class PagadorRecebedorService {
 
 			stringResponse = GsonUtil.toJson(receitaFederalPF);
 
-		} else if (!CommonsUtil.semValor(pagadorAdicionar.getCnpj())) {
+		} else if (!CommonsUtil.semValor(pagadorAdicionar.getCnpj())) {			
+			DadosBasicosResultPj dadosBasicosResultPj = bigDataService.requestCadastroPJ(pagadorAdicionar);
 
-			ReceitaFederalPJ receitaFederalPJ = netrinService.requestCadastroPJ(pagadorAdicionar);
-
-			stringResponse = GsonUtil.toJson(receitaFederalPJ);
+			stringResponse = GsonUtil.toJson(dadosBasicosResultPj);
 
 		}
 		if (!CommonsUtil.semValor(pagadorAdicionar.getCpf()) || !CommonsUtil.semValor(pagadorAdicionar.getCnpj()))
