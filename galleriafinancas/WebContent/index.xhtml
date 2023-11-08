@@ -31,12 +31,12 @@
 					<div style="width: 30%; vertical-align: top;">
 					<img src="/sistema/javax.faces.resource/image/LogoSiscoatSmall.png.xhtml" />
 					</div>
-					  <div style="display: flex; flex-direction: row">
+					  <div style="display: flex; flex-direction: row;">
 					   <p:repeat var="modulo" value="#{menuItemMB.menuItemModulo}">
 					    <div>
 					    
 					    		<p:commandLink title="#{modulo.nome}"  action="#{modulo.getAcao}" ajax="false"><img src="#{modulo.icone}" alt=""/></p:commandLink>
-
+								<p:spacer width="10px"/>
 					    </div>
 					   </p:repeat>
 					   <div>
@@ -44,8 +44,8 @@
 					   </div>
 					   </div>
 					    <div><p:commandLink title="Sair" actionListener="#{logoutBean.logout}"><img src="#{resource['image/Commons/logoSair.png']}" alt=""/><p:confirm header="Confirmation" message="Deseja realmente sair?" icon="ui-icon-alert"/></p:commandLink></div>
-					    <div style="padding-top:5px;">
-					    <div style="vertical-align: top; align-items: end; justify-content: end">
+					    <div style="padding-top:5px; text-align: right; margin-left: 10px">
+					    <div style="vertical-align: top;">
 					    	<p:outputLabel value="Usuário:  " styleClass="usuarioLogin"/>
 					    	<h:outputText value="#{loginBean.username}" styleClass="usuarioLogin"/>
 					    	<br></br>
