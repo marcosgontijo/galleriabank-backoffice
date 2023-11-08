@@ -637,6 +637,13 @@
 			<column name="dataCasamento" />
 		</property>
 		
+		<property name="tipoDocumento" type="java.lang.String">
+			<column name="tipoDocumento" />
+		</property>
+		
+		<property name="tipoDocumentoConjuge" type="java.lang.String">
+			<column name="tipoDocumentoConjuge" />
+		</property>
 		
     </class>
 </hibernate-mapping>

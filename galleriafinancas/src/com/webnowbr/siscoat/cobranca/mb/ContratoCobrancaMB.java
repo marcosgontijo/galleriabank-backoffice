@@ -9620,7 +9620,7 @@ public class ContratoCobrancaMB {
 		}
 		
 		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. DOC")) {
-			int qtdMatriculas  =1;
+			int qtdMatriculas = 1;
 			String matriculas = objetoContratoCobranca.getImovel().getNumeroMatricula().trim();
 			if (matriculas.endsWith(",")) {
 				matriculas = matriculas.substring(0, matriculas.lastIndexOf(",")).trim();
@@ -9628,9 +9628,9 @@ public class ContratoCobrancaMB {
 		
 			qtdMatriculas = matriculas.split(",").length;
 			//se for apartamento é no minimo 3		
-			if (CommonsUtil.mesmoValorIgnoreCase("Apartamento", objetoContratoCobranca.getImovel().getTipo()) && qtdMatriculas == 1) {
+			/*if (CommonsUtil.mesmoValorIgnoreCase("Apartamento", objetoContratoCobranca.getImovel().getTipo()) && qtdMatriculas == 1) {
 				qtdMatriculas = 3;
-			}
+			}*/
 
 			RegistroImovelTabelaDao rDao = new RegistroImovelTabelaDao();
 			BigDecimal valorRegistro = rDao.getValorRegistro(objetoContratoCobranca.getValorAprovadoComite()
@@ -29098,7 +29098,7 @@ public class ContratoCobrancaMB {
 			assessingObj.put("lat", imovelCobrancaLatitude);
 			assessingObj.put("lon", imovelCobrancaLongitude);
 			assessingObj.put("neighborhood", this.objetoImovelCobranca.getBairro());
-			assessingObj.put("area", (this.objetoImovelCobranca.getAreaConstruida().isEmpty()) ? 0.0 : Double.valueOf(this.objetoImovelCobranca.getAreaConstruida()));
+			assessingObj.put("area", (this.objetoImovelCobranca.getAreaConstruida().isEmpty()) ? 0.0 : Double.valueOf(this.objetoImovelCobranca.getAreaConstruida().replace(",", "\\.")));
 			assessingObj.put("street", this.objetoImovelCobranca.getEnderecoSemNumero());
 			assessingObj.put("number", this.objetoImovelCobranca.getNumeroImovel());
 			assessingObj.put("sub_category_id", this.objetoImovelCobranca.getCategoria());

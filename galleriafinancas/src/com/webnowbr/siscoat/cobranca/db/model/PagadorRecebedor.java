@@ -85,10 +85,11 @@ public class PagadorRecebedor implements Serializable {
 	private String cpfCCConjuge;
 	private String cnpjCCConjuge;
 
-	
+	private String tipoDocumentoConjuge;
 	private Date dataEmissaoRGConjuge;
 	private String orgaoEmissorRGConjuge;
 	
+	private String tipoDocumento;
 	private String rg;
 	private String cpf;
 	private String cnpj;
@@ -280,10 +281,11 @@ public class PagadorRecebedor implements Serializable {
 		this.cep = cep;
 		
 		resetarBololean();
-		
 	}
 	
 	public void resetarBololean() {
+		this.tipoDocumento = "RG";
+		this.tipoDocumentoConjuge = "RG";
 		this.rgDocumentosCheckList = false;
 		this.comprovanteEnderecoDocumentosCheckList = false;
 		this.certidaoCasamentoNascimentoDocumentosCheckList = false;
@@ -444,6 +446,7 @@ public class PagadorRecebedor implements Serializable {
 		conjuge.setNome(pagador.getNomeConjuge());
 		conjuge.setCpf(pagador.getCpfConjuge());
 		conjuge.setAtividade(pagador.getCargoConjuge());
+		conjuge.setTipoDocumento(pagador.getTipoDocumentoConjuge());
 		conjuge.setRg(pagador.getRgConjuge());
 		conjuge.setDataEmissaoRG(pagador.getDataEmissaoRGConjuge());
 		conjuge.setOrgaoEmissorRG(pagador.getOrgaoEmissorRGConjuge());
@@ -470,6 +473,7 @@ public class PagadorRecebedor implements Serializable {
 		conjuge.setNomeConjuge(pagador.getNome());
 		conjuge.setCpfConjuge(pagador.getCpf());
 		conjuge.setCargoConjuge(pagador.getAtividade());
+		conjuge.setTipoDocumentoConjuge(pagador.getTipoDocumento());
 		conjuge.setRgConjuge(pagador.getRg());
 		conjuge.setDataEmissaoRGConjuge(pagador.getDataEmissaoRG());
 		conjuge.setOrgaoEmissorRGConjuge(pagador.getOrgaoEmissorRG());
@@ -2347,6 +2351,21 @@ public class PagadorRecebedor implements Serializable {
 
 	public void setContaBancariaValidada(boolean contaBancariaValidada) {
 		this.contaBancariaValidada = contaBancariaValidada;
+	}
+
+	public String getTipoDocumentoConjuge() {
+		return tipoDocumentoConjuge;
+	}
+
+	public void setTipoDocumentoConjuge(String tipoDocumentoConjuge) {
+		this.tipoDocumentoConjuge = tipoDocumentoConjuge;
+	}
+
+	public String getTipoDocumento() {
+		return tipoDocumento;
+	}
+
+	public void setTipoDocumento(String tipoDocumento) {
+		this.tipoDocumento = tipoDocumento;
 	}	
-	
 }
