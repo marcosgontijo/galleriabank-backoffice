@@ -355,7 +355,12 @@ public class FileService {
 		} catch (Exception e) {
 			fileExtension = "html"; 
 		}	
-		String nomeArquivo = nomeConsulta + " - " + nomeAnalise + "." + fileExtension;
+        String nomeArquivo = "";
+		if (CommonsUtil.semValor(nomeAnalise)) {
+			nomeArquivo = nomeConsulta + "." + fileExtension;
+		} else {
+			nomeArquivo = nomeConsulta + " - " + nomeAnalise + "." + fileExtension;
+        }
 		nomeArquivo = Base64.getEncoder().encodeToString(nomeArquivo.getBytes());
 		pdfRetorno.setName(nomeArquivo);
 		FileService fileService = new FileService();
