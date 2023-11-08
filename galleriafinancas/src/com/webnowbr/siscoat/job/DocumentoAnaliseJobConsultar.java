@@ -23,12 +23,13 @@ import com.webnowbr.siscoat.infra.db.model.User;
 import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
 
 public class DocumentoAnaliseJobConsultar {
-	
+
 	public List<DocumentoAnalise> listaDocumentoAnalise;
 	public User user;
+	public String urlWenhook;
 	public ContratoCobranca objetoContratoCobranca;
-	
-	private int stepTotal;	
+
+	private int stepTotal;
 	private int step;
 	private String stepDescricao;
 
@@ -44,12 +45,12 @@ public class DocumentoAnaliseJobConsultar {
 		BigDataService bigDataService = new BigDataService();
 
 		ScrService scrService = new ScrService();
-		
+
 		DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
 		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
 
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-		step = 0 ;
+		step = 0;
 		for (DocumentoAnalise documentoAnalise : this.listaDocumentoAnalise.stream().filter(d -> d.isLiberadoAnalise()
 				|| d.isLiberadoSerasa() || d.isLiberadoCenprot() || d.isLiberadoScr() || d.isLiberadoProcesso())
 				.collect(Collectors.toList())) {
@@ -58,18 +59,18 @@ public class DocumentoAnaliseJobConsultar {
 
 				EngineRetorno engineRetorno = null;
 				if (DocumentosAnaliseEnum.REA.equals(documentoAnalise.getTipoEnum())) {
-					stepTotal= 1;
+					stepTotal = 1;
 					if (documentoAnalise.isPodeChamarRea()) {
 						documentoAnalise.addObservacao("Processando REA");
-						//PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
+						// PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
 						docketService.uploadREA(documentoAnalise, user);
-						step ++;
+						step++;
 					}
 					continue;
 				} else {
-					
-					stepTotal= 3;
-					
+
+					stepTotal = 3;
+
 //					if (documentoAnalise.isPodeChamarEngine()
 //							&& CommonsUtil.semValor(documentoAnalise.getRetornoEngine())) {
 //
@@ -80,41 +81,44 @@ public class DocumentoAnaliseJobConsultar {
 //						docketService.engineCriarConsulta(documentoAnalise, engine, loginBean.getUsuarioLogado());
 //					}
 //					
-					
+
 					if (documentoAnalise.isPodeChamarEngine() && !documentoAnalise.isEngineProcessado()) {
-						
+
 						DataEngine engine = engineService.engineInserirPessoa(documentoAnalise.getPagador(),
 								objetoContratoCobranca);
-						step ++;
-						stepDescricao= "";
-						engineService.engineCriarConsulta(documentoAnalise, engine, user);
-						
-						
-						if(!CommonsUtil.semValor(documentoAnalise.getRetornoEngine())) {
-							if (documentoAnalise.getRetornoEngine().startsWith("consulta efetuada anteriormente Id: ") ) {
+						step++;
+						stepDescricao = "";
+						engineService.engineCriarConsulta(documentoAnalise, engine, user, urlWenhook);
+
+						if (!CommonsUtil.semValor(documentoAnalise.getRetornoEngine())) {
+							if (documentoAnalise.getRetornoEngine()
+									.startsWith("consulta efetuada anteriormente Id: ")) {
 								engineService.salvarDetalheDocumentoEngine(documentoAnalise);
-								
-								engineRetorno = GsonUtil.fromJson(documentoAnalise.getRetornoEngine(), EngineRetorno.class);
+
+								engineRetorno = GsonUtil.fromJson(documentoAnalise.getRetornoEngine(),
+										EngineRetorno.class);
 								if (CommonsUtil.semValor(engineRetorno.getIdCallManager())) {
 									engineRetorno.setIdCallManager(engineRetorno.getIdCallManager());
 								}
-								engineService.processaWebHookEngine( documentoAnaliseService, engineRetorno,
+								engineService.processaWebHookEngine(documentoAnaliseService, engineRetorno,
 										pagadorRecebedorService, documentoAnaliseDao, documentoAnalise);
 							}
 						}
-						
+
 						engineRetorno = GsonUtil.fromJson(documentoAnalise.getRetornoEngine(), EngineRetorno.class);
-						
+
 					} else if (documentoAnalise.isEngineProcessado()) {
-						if(!CommonsUtil.semValor(documentoAnalise.getRetornoEngine())) {
-							if (documentoAnalise.getRetornoEngine().startsWith("consulta efetuada anteriormente Id: ") ) {
+						if (!CommonsUtil.semValor(documentoAnalise.getRetornoEngine())) {
+							if (documentoAnalise.getRetornoEngine()
+									.startsWith("consulta efetuada anteriormente Id: ")) {
 								engineService.salvarDetalheDocumentoEngine(documentoAnalise);
-								
-								engineRetorno = GsonUtil.fromJson(documentoAnalise.getRetornoEngine(), EngineRetorno.class);
+
+								engineRetorno = GsonUtil.fromJson(documentoAnalise.getRetornoEngine(),
+										EngineRetorno.class);
 								if (CommonsUtil.semValor(engineRetorno.getIdCallManager())) {
 									engineRetorno.setIdCallManager(engineRetorno.getIdCallManager());
 								}
-								engineService.processaWebHookEngine( documentoAnaliseService, engineRetorno,
+								engineService.processaWebHookEngine(documentoAnaliseService, engineRetorno,
 										pagadorRecebedorService, documentoAnaliseDao, documentoAnalise);
 							}
 						}
@@ -128,24 +132,25 @@ public class DocumentoAnaliseJobConsultar {
 //					PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
 //					continue;
 //				}
-				
+
 				if (!CommonsUtil.semValor(engineRetorno)) {
-					if (!CommonsUtil.booleanValue(documentoAnalise.isLiberadoContinuarAnalise())
-							&& (!(CommonsUtil.semValor(engineRetorno.getConsultaAntecedenteCriminais())
-									|| ( !CommonsUtil.semValor(engineRetorno.getConsultaAntecedenteCriminais().getResult())  && !CommonsUtil.semValor(engineRetorno.getConsultaAntecedenteCriminais().getResult()
+					if (!CommonsUtil.booleanValue(documentoAnalise.isLiberadoContinuarAnalise()) && (!(CommonsUtil
+							.semValor(engineRetorno.getConsultaAntecedenteCriminais())
+							|| (!CommonsUtil.semValor(engineRetorno.getConsultaAntecedenteCriminais().getResult())
+									&& !CommonsUtil.semValor(engineRetorno.getConsultaAntecedenteCriminais().getResult()
 											.get(0).getOnlineCertificates())))
-									&& (!CommonsUtil.semValor(engineRetorno.getProcessos()) && CommonsUtil.intValue(
-											engineRetorno.getProcessos().getTotal_acoes_judicias_reu()) == 0))) {
+							&& (!CommonsUtil.semValor(engineRetorno.getProcessos()) && CommonsUtil
+									.intValue(engineRetorno.getProcessos().getTotal_acoes_judicias_reu()) == 0))) {
 
 						documentoAnalise.addObservacao("Verificar Engine");
 						documentoAnaliseDao.merge(documentoAnalise);
-						//PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
+						// PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
 						continue;
 					}
-				} else if( documentoAnalise.isPodeChamarEngine()) {
+				} else if (documentoAnalise.isPodeChamarEngine()) {
 					documentoAnalise.addObservacao("Aguardando retorno Engine");
 					documentoAnaliseDao.merge(documentoAnalise);
-					//PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
+					// PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
 					continue;
 				}
 
@@ -157,20 +162,31 @@ public class DocumentoAnaliseJobConsultar {
 //					PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
 					pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
 							DocumentosAnaliseEnum.PROCESSOB, documentoAnalise.getRetornoProcesso());
-					
+
+				}
+
+				if (documentoAnalise.isPodeChamarRelacionamentos()) {
+					documentoAnalise.addObservacao("Processando Relacionamentos");
+//					PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
+					bigDataService.requestRelacionamentos(documentoAnalise);
+
+//					PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+					pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+							DocumentosAnaliseEnum.RELACIONAMENTO, documentoAnalise.getRetornoRelacionamento());
+
 				}
 
 				if (documentoAnalise.isPodeChamarCenprot()) {
 					documentoAnalise.addObservacao("Processando Protestos");
-					//PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
-					step ++;
-					stepDescricao= "Processando Protestos";
+					// PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
+					step++;
+					stepDescricao = "Processando Protestos";
 					netrinService.requestCenprot(documentoAnalise);
-					
+
 //					PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
 					pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
 							DocumentosAnaliseEnum.CENPROT, documentoAnalise.getRetornoCenprot());
-					
+
 				}
 
 //				if (documentoAnalise.isPodeChamarSerasa()
@@ -185,19 +201,18 @@ public class DocumentoAnaliseJobConsultar {
 //					PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
 //					netrinService.requestCadastroPepPF(documentoAnalise);
 //				}
-				
 
 				if (documentoAnalise.isPodeChamarSCR()) {
 					documentoAnalise.addObservacao("Processando SCR");
-					//PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
-					step ++;
-					stepDescricao= "Processando SCR";
+					// PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
+					step++;
+					stepDescricao = "Processando SCR";
 					scrService.requestScr(documentoAnalise);
 				}
-				
+
 				documentoAnalise.addObservacao("Pesquisas finalizadas");
 				documentoAnaliseDao.merge(documentoAnalise);
-				//PrimeFaces.current().ajax().update("form:ArquivosAnalisados");
+				// PrimeFaces.current().ajax().update("form:ArquivosAnalisados");
 			}
 		}
 	}
@@ -231,8 +246,5 @@ public class DocumentoAnaliseJobConsultar {
 	public void setStepDescricao(String stepDescricao) {
 		this.stepDescricao = stepDescricao;
 	}
-	
-	
-	
-	
+
 }

@@ -524,6 +524,15 @@ public class UsuarioMB {
 				}
 			}
 			
+			gAdm = gDao.findByFilter("acronym", "PROFILE_CONSULTA_KOBANA");
+			if (objetoUsuario.isProfileConsultaKobana()) {
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}
+			}
+			
 			gAdm = gDao.findByFilter("acronym", "CONSULTA_INDIVIDUAL");
 			if (objetoUsuario.isConsultaIndividual()) {
 				gAdmAux.add(gAdm.get(0));

@@ -61,16 +61,11 @@
 		<repository>
 			<id>org.primefaces</id>
 			<url>https://repository.primefaces.org//</url>
-		</repository>
-		<repository>
-			<id>galleriabank</id>
-			<name>galleriabank repo</name>
-			<url>https://amurta.bytesafe.dev/maven/galleriabank</url>			
-		</repository>
+		</repository>	
 		<repository>
 			<id>galleriabank_nexus</id>
 			<name>galleriabank repo</name>
-			<url>https://espelho.galleriabank.com.br/nexus</url>			
+			<url>https://espelho.galleriabank.com.br/nexus/repository/maven-releases/</url>
 		</repository>
 	</repositories>
 	<dependencies>
@@ -408,7 +403,12 @@
 		<dependency>
 			<groupId>br.com.galleriabank.bigdata-cliente</groupId>
 			<artifactId>bigdata-cliente</artifactId>
-			<version>1.0.3</version>
+			<version>1.0.4</version>
+		</dependency>		
+		<dependency>
+			<groupId>br.com.galleriabank.debit-cliente</groupId>
+			<artifactId>debit-cliente</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 	</dependencies>
 </project>

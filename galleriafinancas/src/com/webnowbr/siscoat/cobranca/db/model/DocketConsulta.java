@@ -42,12 +42,20 @@ public class DocketConsulta {
 		if(!CommonsUtil.semValor(pagador.getCnpj())) {
 			cpfCnpj = pagador.getCnpj();
 		}
-		
 	}
 
 	@Override
 	public String toString() {
 		return "DocketConsulta [id=" + id + ", cpfCnpj=" + cpfCnpj + ", docketDocumentos=" + docketDocumentos + "]";
+	}
+	
+	public String getNomeCompleto() {
+		String nome = docketDocumentos.getDocumentoNome();
+		if (!CommonsUtil.semValor(uf)) {
+			nome = nome + " " + uf;
+			return nome;
+		}
+		return nome;
 	}
 
 	public long getId() {

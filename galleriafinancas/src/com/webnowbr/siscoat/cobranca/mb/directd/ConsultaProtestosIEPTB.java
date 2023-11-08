@@ -27,34 +27,28 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
-import com.webnowbr.siscoat.cobranca.db.model.directd.Telefone;
-import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
-import com.webnowbr.siscoat.cobranca.db.model.directd.PFPlus;
-import com.webnowbr.siscoat.cobranca.db.model.directd.ParticipacoesEmpresa;
-import com.webnowbr.siscoat.cobranca.db.model.directd.Protesto;
-import com.webnowbr.siscoat.cobranca.db.model.directd.Protestos;
-import com.webnowbr.siscoat.cobranca.db.model.directd.ProtestosIEPTB;
-import com.webnowbr.siscoat.cobranca.db.model.directd.Relacionado;
-import com.webnowbr.siscoat.cobranca.db.model.directd.Sociedade;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
+import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.webnowbr.siscoat.cobranca.db.model.directd.CartoriosProtesto;
-import com.webnowbr.siscoat.cobranca.db.model.directd.Email;
-import com.webnowbr.siscoat.cobranca.db.model.directd.Endereco;
-import com.webnowbr.siscoat.cobranca.db.model.directd.PF;
+import com.webnowbr.siscoat.cobranca.db.model.directd.Protesto;
+import com.webnowbr.siscoat.cobranca.db.model.directd.Protestos;
+import com.webnowbr.siscoat.cobranca.db.model.directd.ProtestosIEPTB;
+import com.webnowbr.siscoat.common.DateUtil;
+import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 
 
 @ManagedBean(name = "consultaProtestosIEPTB")
@@ -306,18 +300,6 @@ public class ConsultaProtestosIEPTB {
 		}
 	}
 	
-	/**
-	 * GERA A DATA DE HOJE
-	 * @return
-	 */
-	public Date gerarDataHoje() {
-		TimeZone zone = TimeZone.getDefault();  
-		Locale locale = new Locale("pt", "BR");  
-		Calendar dataHoje = Calendar.getInstance(zone, locale);
-
-		return dataHoje.getTime();
-	}
-	
 	public Date converteDate(String dateStr) {
 		Date retorno = new Date();
 		
@@ -341,7 +323,7 @@ public class ConsultaProtestosIEPTB {
 			try {
 				retorno = ((java.util.Date) formatterOnlyDate.parse(dateStr));
 			} catch (ParseException e1) {
-				retorno = gerarDataHoje();
+				retorno = DateUtil.gerarDataHoje();
 				
 				return retorno;
 			}

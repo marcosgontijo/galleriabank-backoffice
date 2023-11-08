@@ -8,14 +8,12 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -38,7 +36,6 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
-import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.common.DateUtil;
 
 @ManagedBean(name = "kobanaMB")
@@ -137,14 +134,14 @@ public class KobanaMB {
 		
 		this.listBoletosKobana = new ArrayList<BoletoKobana>();
 		this.selectedParcelas = new ArrayList<ContratoCobrancaDetalhes>();
-		//this.dtInicioConsulta = gerarDataHoje();
-		//this.dtFimConsulta = gerarDataHoje();
+		//this.dtInicioConsulta = DateUtil.gerarDataHoje();
+		//this.dtFimConsulta = DateUtil.gerarDataHoje();
 		
 		this.filtroStatus = "paid";
 		this.filtroData = "Pagamento";
 		this.filtroEmpresa = "";
 		
-		Date dataWorokingDayBeforeToday = DateUtil.getWorkingDayBeforeToday(gerarDataHoje());
+		Date dataWorokingDayBeforeToday = DateUtil.getWorkingDayBeforeToday(DateUtil.gerarDataHoje());
 		
 		this.dtInicioConsulta = dataWorokingDayBeforeToday;
 		this.dtFimConsulta = dataWorokingDayBeforeToday;
@@ -997,7 +994,22 @@ public class KobanaMB {
 	    }
 		
 		jsonBoleto.put("description", "Crédito com Imóvel em Garantia - Contrato: " + contrato.getNumeroContrato() + " / Parcela(s): " + parcelas);
-		jsonBoleto.put("instructions", "");
+			
+		if (contrato.getEmpresa().equals("GALLERIA FINANÇAS SECURITIZADORA S.A.")) {
+			jsonBoleto.put("instructions", "Crédito cedido para GALLERIA FINANCAS SECURITIZADORA S.A., CNPJ nº 34.425.347/0001-06");
+		}
+		
+		if (contrato.getEmpresa().equals("FIDC GALLERIA")) {
+			jsonBoleto.put("instructions", "Crédito cedido para GALLERIA HOME EQUITY FIDC, CNPJ nº 37.294.759/0001-34");
+		}
+		
+		if (contrato.getEmpresa().equals("CRI 1") || contrato.getEmpresa().equals("CRI 2") || contrato.getEmpresa().equals("CRI 3")) {
+			jsonBoleto.put("instructions", "Crédito cedido para True Securitizadora S.A., CNPJ nº 12.130.744/0001-00");
+		}
+		
+		if (contrato.getEmpresa().equals("CRI 4")) {
+			jsonBoleto.put("instructions", "Crédito cedido para Companhia Província de Securitização, CNPJ/MF n° 04.200.649/0001-07");
+		}
 		
 		JSONObject jsonCustomData = new JSONObject();
 		
@@ -1028,8 +1040,8 @@ public class KobanaMB {
 	public String clearFieldsParcelasBoleto() {
 		
 		this.listContratoCobrancaDetalhes = new ArrayList<ContratoCobrancaDetalhes>();
-		this.dtInicioConsulta = gerarDataHoje();
-		this.dtFimConsulta = gerarDataHoje();
+		this.dtInicioConsulta = DateUtil.gerarDataHoje();
+		this.dtFimConsulta = DateUtil.gerarDataHoje();
 		
 		return "/Atendimento/Cobranca/ContratoCobrancaBoletosKobana.xhtml";
 	}
@@ -1042,7 +1054,7 @@ public class KobanaMB {
 
 		this.listContratoCobrancaDetalhes = cDao.getParcelasPorVencimento(this.dtInicioConsulta, this.dtFimConsulta);
 		
-		this.dataHoje = gerarDataHoje();
+		this.dataHoje = DateUtil.gerarDataHoje();
 	}
 	
 	public boolean validateParcelaGeracaoBoletoKobana(ContratoCobranca contrato, ContratoCobrancaDetalhes parcela) {
@@ -1354,6 +1366,18 @@ public class KobanaMB {
 		
 		jsonBoleto.put("description", "Crédito com Imóvel em Garantia");
 		
+		if (contrato.getEmpresa().equals("GALLERIA FINANÇAS SECURITIZADORA S.A.")) {
+			jsonBoleto.put("instructions", "Crédito cedido para GALLERIA FINANCAS SECURITIZADORA S.A., CNPJ nº 34.425.347/0001-06");
+		}
+		
+		if (contrato.getEmpresa().equals("FIDC GALLERIA")) {
+			jsonBoleto.put("instructions", "Crédito cedido para GALLERIA HOME EQUITY FIDC, CNPJ nº 37.294.759/0001-34");
+		}
+		
+		if (contrato.getEmpresa().equals("CRI 1") || contrato.getEmpresa().equals("CRI 2") || contrato.getEmpresa().equals("CRI 3")) {
+			jsonBoleto.put("instructions", "Crédito cedido para True Securitizadora S.A., CNPJ nº 12.130.744/0001-00");
+		}
+		
 		if (contrato.getEmpresa().equals("CRI 4")) {
 			jsonBoleto.put("instructions", "Crédito cedido para Companhia Província de Securitização, CNPJ/MF n° 04.200.649/0001-07");
 		}
@@ -1392,14 +1416,6 @@ public class KobanaMB {
 		
 		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 				"[Kobana - Geração Boleto] Não é possível gerar boleto de contratos com parcelas vencidas!", ""));	
-	}
-
-	public Date gerarDataHoje() {
-		TimeZone zone = TimeZone.getDefault();
-		Locale locale = new Locale("pt", "BR");
-		Calendar dataHoje = Calendar.getInstance(zone, locale);
-
-		return dataHoje.getTime();
 	}
 
 	public String getDataFormatada(Date data) {		

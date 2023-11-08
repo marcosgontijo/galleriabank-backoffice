@@ -7,8 +7,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.primefaces.model.UploadedFile;
+
+import com.webnowbr.siscoat.common.CommonsUtil;
 
 public class CcbContrato implements Serializable{
 	/**
@@ -23,16 +26,10 @@ public class CcbContrato implements Serializable{
 	private String serieCcb;
 	private String nomeEmitente;
 	private String cpfEmitente;
-	private String logradouroEmitente;
-	private String numeroEmitente;
-	private String complementoEmitente;
-	private String cidadeEmitente;
-	private String ufEmitente;
-	private String cepEmitente;
-	private String bairroEmitente;
 	private String TipoPessoaEmitente;
 	private String tipoParticipanteEmitente;
 	
+	private CcbParticipantes emitentePrincipal;
 	private List<CcbParticipantes> listaParticipantes;
 
 	private BigDecimal valorLiquidoCredito;
@@ -54,7 +51,7 @@ public class CcbContrato implements Serializable{
 	private String nomeBanco;
 	private String titularConta;
 	private String pixBanco;
-	private String digitoBanco;//
+	private String digitoBanco;
 	private String tipoContaBanco;
 	
 	private BigDecimal recursosProprios;
@@ -67,10 +64,11 @@ public class CcbContrato implements Serializable{
 	private String titularContaVendedor;
 	private String pixBancoVendedor;
 	private String digitoBancoVendedor;
-	private String tipoContaBancoVendedor;//
+	private String tipoContaBancoVendedor;
 	
 	private String sistemaAmortizacao;
 	
+	private String carencia;
 	private String prazo;
 	private String numeroParcelasPagamento;
 	private Date vencimentoPrimeiraParcelaPagamento;
@@ -171,7 +169,7 @@ public class CcbContrato implements Serializable{
     private BigDecimal registroImovelValor = BigDecimal.ZERO;
     
     
-    private List<CcbProcessosJudiciais> processosJucidiais; // (++)
+    private List<CcbProcessosJudiciais> processosJucidiais; 
     private List<ContasPagar> despesasAnexo2;
     
     private List<Segurado> listSegurados;
@@ -209,54 +207,6 @@ public class CcbContrato implements Serializable{
 
 	public void setCpfEmitente(String cpfEmitente) {
 		this.cpfEmitente = cpfEmitente;
-	}
-
-	public String getLogradouroEmitente() {
-		return logradouroEmitente;
-	}
-
-	public void setLogradouroEmitente(String logradouroEmitente) {
-		this.logradouroEmitente = logradouroEmitente;
-	}
-
-	public String getNumeroEmitente() {
-		return numeroEmitente;
-	}
-
-	public void setNumeroEmitente(String numeroEmitente) {
-		this.numeroEmitente = numeroEmitente;
-	}
-
-	public String getComplementoEmitente() {
-		return complementoEmitente;
-	}
-
-	public void setComplementoEmitente(String complementoEmitente) {
-		this.complementoEmitente = complementoEmitente;
-	}
-
-	public String getCidadeEmitente() {
-		return cidadeEmitente;
-	}
-
-	public void setCidadeEmitente(String cidadeEmitente) {
-		this.cidadeEmitente = cidadeEmitente;
-	}
-
-	public String getUfEmitente() {
-		return ufEmitente;
-	}
-
-	public void setUfEmitente(String ufEmitente) {
-		this.ufEmitente = ufEmitente;
-	}
-
-	public String getCepEmitente() {
-		return cepEmitente;
-	}
-
-	public void setCepEmitente(String cepEmitente) {
-		this.cepEmitente = cepEmitente;
 	}
 
 	public List<CcbParticipantes> getListaParticipantes() {
@@ -808,6 +758,13 @@ public class CcbContrato implements Serializable{
 	public List<CcbProcessosJudiciais> getProcessosJucidiais() {
 		return processosJucidiais;
 	}
+	
+	public List<CcbProcessosJudiciais> getProcessosJucidiaisSelecionados() {
+		if (!CommonsUtil.semValor(processosJucidiais))
+			return null;
+		else
+			return processosJucidiais.stream().filter(p -> p.isSelecionadoComite()).collect(Collectors.toList());
+	}
 
 	public void setProcessosJucidiais(List<CcbProcessosJudiciais> processosJucidiais) {
 		this.processosJucidiais = processosJucidiais;
@@ -1216,14 +1173,6 @@ public class CcbContrato implements Serializable{
 		this.tipoContaBancoVendedor = tipoContaBancoVendedor;
 	}
 
-	public String getBairroEmitente() {
-		return bairroEmitente;
-	}
-
-	public void setBairroEmitente(String bairroEmitente) {
-		this.bairroEmitente = bairroEmitente;
-	}
-
 	public char getTipoCalculoFinal() {
 		return tipoCalculoFinal;
 	}
@@ -1294,5 +1243,21 @@ public class CcbContrato implements Serializable{
 
 	public void setCCBDigito(String cCBDigito) {
 		CCBDigito = cCBDigito;
+	}
+
+	public CcbParticipantes getEmitentePrincipal() {
+		return emitentePrincipal;
+	}
+
+	public void setEmitentePrincipal(CcbParticipantes emitentePrincipal) {
+		this.emitentePrincipal = emitentePrincipal;
+	}
+
+	public String getCarencia() {
+		return carencia;
+	}
+
+	public void setCarencia(String carencia) {
+		this.carencia = carencia;
 	} 
 }

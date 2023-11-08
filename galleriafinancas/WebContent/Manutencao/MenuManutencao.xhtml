@@ -44,10 +44,20 @@
 										action="#{brlTrustMB.clearFieldsBRLJsonSemIPCA()}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />			
-										<p:menuitem value="aaaaaaaaaa"
-										action="#{plexiMB.atualizaConsultasDocumentoAnalise}"
+										<p:menuitem value="att Todas Certidoes"
+										action="#{contratoCobrancaMB.testeAttTodasCertidoes()}"
 										ajax="false" icon="ui-icon ui-icon-newwin"
 										styleClass="itemMenu" />	
+										<p:menuitem value="gerarTokenServico"
+										action="#{netrinMB.gerarTokenServico}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+										
+										<p:menuitem value="atualizaCcbs"
+										action="#{ccbMB.atualizarObjetos}"
+										ajax="false" icon="ui-icon ui-icon-newwin"
+										styleClass="itemMenu" />
+											
 										<p:menuitem value="STARK - Ver Saldo "
 										action="#{starkBankAPI.getBalanceSDK()}"
 										ajax="false" icon="ui-icon ui-icon-newwin"

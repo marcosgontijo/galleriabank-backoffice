@@ -56,134 +56,135 @@
 				<p:messages />
 				<h:panelGrid columns="2">
 					<h:panelGrid columns="2">
-						<shiro:lacksRole name="PROFILE_COBRANCA">
-							<p:outputLabel for="Pessoa" value="Pessoa: " styleClass="labelBold" />
-							<p:selectOneRadio id="Pessoa"
-								value="#{pagadorRecebedorMB.tipoPessoaIsFisica}" required="true">
-								<f:selectItem itemLabel="Física" itemValue="true" />
-								<f:selectItem itemLabel="Jurídica" itemValue="false" />
-								<p:ajax
-									update="PanelPagadorRecebedor PanelDadosBancarios PanelCasado "
-									event="valueChange"
-									listener="#{pagadorRecebedorMB.selectedTipoPessoa}" />
-							</p:selectOneRadio>
-		
-							<p:outputLabel for="Cpf" value="CPF: " styleClass="labelBold"
-								rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
-							<p:inputMask id="Cpf"
-								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cpf}"
-								label="CPF" mask="999.999.999-99" required="true"
-								validator="#{pagadorRecebedorMB.validaCPF}"
-								rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}">
-								<p:ajax update="CpfCC Nome DtNascimento Sexo mae NomeCC " event="valueChange"
-									listener="#{pagadorRecebedorMB.selectedCPF}" />
-							</p:inputMask>
-		
-							<p:outputLabel for="Rg" value="RG / CNH: "
-								rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
-							<p:inputText id="Rg"
-								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.rg}"
-								label="RG / CNH"
-								rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
-		
-							<p:outputLabel for="DtEmissaoRG" value="Data Emissão: " />
-							<p:inputMask id="DtEmissaoRG"
-								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dataEmissaoRG}"
+
+						<p:outputLabel for="Pessoa" value="Pessoa: " styleClass="labelBold" />
+						<p:selectOneRadio id="Pessoa"
+							value="#{pagadorRecebedorMB.tipoPessoaIsFisica}" required="true">
+							<f:selectItem itemLabel="Física" itemValue="true" />
+							<f:selectItem itemLabel="Jurídica" itemValue="false" />
+							<p:ajax
+								update="PanelPagadorRecebedor PanelDadosBancarios PanelCasado "
+								event="valueChange"
+								listener="#{pagadorRecebedorMB.selectedTipoPessoa}" />
+						</p:selectOneRadio>
+	
+						<p:outputLabel for="Cpf" value="CPF: " styleClass="labelBold"
+							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
+						<p:inputMask id="Cpf"
+							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cpf}"
+							label="CPF" mask="999.999.999-99" required="true"
+							validator="#{pagadorRecebedorMB.validaCPF}"
+							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}"
+							disabled="#{pagadorRecebedorMB.objetoPagadorRecebedor.id > 0}">
+							<p:ajax update="CpfCC Nome DtNascimento Sexo mae NomeCC " event="valueChange"
+								listener="#{pagadorRecebedorMB.selectedCPF}" />
+						</p:inputMask>
+	
+						<p:outputLabel for="Rg" value="RG / CNH: "
+							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
+						<p:inputText id="Rg"
+							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.rg}"
+							label="RG / CNH"
+							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
+	
+						<p:outputLabel for="DtEmissaoRG" value="Data Emissão: " />
+						<p:inputMask id="DtEmissaoRG"
+							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dataEmissaoRG}"
+							mask="99/99/9999" label="Data de Nascimento">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:inputMask>
+						
+						<p:outputLabel for="orgaoEmissorRG" value="Orgão Emissor" />
+						<p:inputText id="orgaoEmissorRG"
+							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.orgaoEmissorRG}" />
+	
+						<p:outputLabel for="CNPJ" value="CNPJ: " styleClass="labelBold"
+							rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisica}" />
+						<p:inputMask id="CNPJ"
+							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cnpj}"
+							label="CNPJ" mask="99.999.999/9999-99" required="true"
+							validator="#{pagadorRecebedorMB.validaCNPJ}"
+							rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisica}"
+							disabled="#{pagadorRecebedorMB.objetoPagadorRecebedor.id > 0}">
+							<p:ajax update="CNPJCC NomeCC Nome Endereco Numero Bairro Cidade Cep Estado EMail" event="valueChange"
+								listener="#{pagadorRecebedorMB.selectedCNPJ}" />
+						</p:inputMask>
+	
+						<p:outputLabel for="Atividade" value="Profissão: "
+							styleClass="labelBold"
+							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
+						<p:outputLabel for="Atividade" value="Ramo de Atividade: "
+							styleClass="labelBold"
+							rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisica}" />
+						<p:inputText id="Atividade"
+							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.atividade}"
+							label="Atividade" />
+	
+						<p:outputLabel for="site" value="Site: " styleClass="labelBold" />
+						<p:inputText id="site"
+							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.site}"
+							label="Site" 
+							style="width:400px;" />
+	
+						<p:outputLabel for="Nome" value="Nome: " styleClass="labelBold"
+							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
+						<p:outputLabel for="Nome" value="Razão Social: "
+							styleClass="labelBold"
+							rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisica}" />
+						<p:inputText id="Nome"
+							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.nome}"
+							label="Nome" required="true" onblur=""
+							style="width:400px;">
+							<p:ajax update="NomeCC" event="valueChange"
+								listener="#{pagadorRecebedorMB.selectedNome}" />
+						</p:inputText>					
+						
+						<p:outputLabel for="pai" value="Nome do pai: "
+							styleClass="labelBold"
+							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}"
+							style=" font-size: 18px;" />
+						<p:inputText id="pai" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.nomePai}"
+							label="Contrato" 
+							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
+							
+						<p:outputLabel for="mae" value="Nome da mãe: "
+							styleClass="labelBold" rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}"
+							style=" font-size: 18px;" />
+						<p:inputText id="mae" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.nomeMae}"
+							label="Contrato" 
+							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
+	
+						<p:outputLabel for="Sexo" value="Sexo: "
+							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
+						<p:selectOneRadio id="Sexo"
+							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.sexo}"
+							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}">
+							<f:selectItem itemLabel="MASCULINO" itemValue="MASCULINO" />
+							<f:selectItem itemLabel="FEMININO" itemValue="FEMININO" />
+						</p:selectOneRadio>
+	
+						<p:outputLabel for="EMail" value="E-Mail: " styleClass="labelBold" />
+						<p:inputText id="EMail"
+							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.email}"
+							label="E-Mail"  
+							onblur="" style="width:400px;">
+							<p:ajax event="blur" update=":form:PanelInvestidor" />
+						</p:inputText>
+	
+						<p:outputLabel for="DtNascimento" value="Data de Nascimento: " rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
+						<h:panelGroup rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}">
+							<p:inputMask id="DtNascimento"
+								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dtNascimento}"
 								mask="99/99/9999" label="Data de Nascimento">
+								<p:ajax event="blur" update="idade"
+									listener="#{pagadorRecebedorMB.objetoPagadorRecebedor.calcularIdade()}" />
 								<f:convertDateTime pattern="dd/MM/yyyy" />
-							</p:inputMask>
+							</p:inputMask>					
+							<p:spacer width="10px"/>
 							
-							<p:outputLabel for="orgaoEmissorRG" value="Orgão Emissor" />
-							<p:inputText id="orgaoEmissorRG"
-								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.orgaoEmissorRG}" />
-		
-							<p:outputLabel for="CNPJ" value="CNPJ: " styleClass="labelBold"
-								rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisica}" />
-							<p:inputMask id="CNPJ"
-								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cnpj}"
-								label="CNPJ" mask="99.999.999/9999-99" required="true"
-								validator="#{pagadorRecebedorMB.validaCNPJ}"
-								rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisica}">
-								<p:ajax update="CNPJCC NomeCC Nome Endereco Numero Bairro Cidade Cep Estado EMail" event="valueChange"
-									listener="#{pagadorRecebedorMB.selectedCNPJ}" />
-							</p:inputMask>
-		
-							<p:outputLabel for="Atividade" value="Profissão: "
-								styleClass="labelBold"
-								rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
-							<p:outputLabel for="Atividade" value="Ramo de Atividade: "
-								styleClass="labelBold"
-								rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisica}" />
-							<p:inputText id="Atividade"
-								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.atividade}"
-								label="Atividade" />
-		
-							<p:outputLabel for="site" value="Site: " styleClass="labelBold" />
-							<p:inputText id="site"
-								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.site}"
-								label="Site" 
-								style="width:400px;" />
-		
-							<p:outputLabel for="Nome" value="Nome: " styleClass="labelBold"
-								rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
-							<p:outputLabel for="Nome" value="Razão Social: "
-								styleClass="labelBold"
-								rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisica}" />
-							<p:inputText id="Nome"
-								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.nome}"
-								label="Nome" required="true" onblur=""
-								style="width:400px;">
-								<p:ajax update="NomeCC" event="valueChange"
-									listener="#{pagadorRecebedorMB.selectedNome}" />
-							</p:inputText>					
-							
-							<p:outputLabel for="pai" value="Nome do pai: "
-								styleClass="labelBold"
-								rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}"
-								style=" font-size: 18px;" />
-							<p:inputText id="pai" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.nomePai}"
-								label="Contrato" 
-								rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
-								
-							<p:outputLabel for="mae" value="Nome da mãe: "
-								styleClass="labelBold" rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}"
-								style=" font-size: 18px;" />
-							<p:inputText id="mae" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.nomeMae}"
-								label="Contrato" 
-								rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
-		
-							<p:outputLabel for="Sexo" value="Sexo: "
-								rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
-							<p:selectOneRadio id="Sexo"
-								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.sexo}"
-								rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}">
-								<f:selectItem itemLabel="MASCULINO" itemValue="MASCULINO" />
-								<f:selectItem itemLabel="FEMININO" itemValue="FEMININO" />
-							</p:selectOneRadio>
-		
-							<p:outputLabel for="EMail" value="E-Mail: " styleClass="labelBold" />
-							<p:inputText id="EMail"
-								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.email}"
-								label="E-Mail" type="email" 
-								onblur="" style="width:400px;">
-								<p:ajax event="blur" update=":form:PanelInvestidor" />
-							</p:inputText>
-		
-							<p:outputLabel for="DtNascimento" value="Data de Nascimento: " rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
-							<h:panelGroup rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}">
-								<p:inputMask id="DtNascimento"
-									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dtNascimento}"
-									mask="99/99/9999" label="Data de Nascimento">
-									<p:ajax event="blur" update="idade"
-										listener="#{pagadorRecebedorMB.objetoPagadorRecebedor.calcularIdade()}" />
-									<f:convertDateTime pattern="dd/MM/yyyy" />
-								</p:inputMask>					
-								<p:spacer width="10px"/>
-								
-								<p:outputLabel for="idade" value="Idade: " />
-								<p:inputText id="idade" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.idade}" />
-							</h:panelGroup>
-						</shiro:lacksRole>	
+							<p:outputLabel for="idade" value="Idade: " />
+							<p:inputText id="idade" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.idade}" />
+						</h:panelGroup>
 						
 						<p:outputLabel for="TelCelular" value="Telefone Celular: " />
 						<p:inputText id="TelCelular"
@@ -390,7 +391,7 @@
 								styleClass="labelBold"  />
 							<p:inputText id="emailConjuge"
 								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.emailConjuge}"
-								label="E-Mail" type="email" 
+								label="E-Mail"  
 								onblur="" style="width:400px;"  />
 	
 							<p:outputLabel for="DtNascimentoConjuge"
@@ -502,264 +503,262 @@
 						</h:panelGroup>
 					</h:panelGrid>
 				</p:panel>
-				
-				<shiro:lacksRole name="PROFILE_COBRANCA">				
-					<p:panel id="PanelInvestidor" header="Habilitar Portal Investidor"
-						style="margin-bottom:10px;margin-top:20px;">
-						<h:panelGrid columns="1">
-							<p:selectBooleanButton id="value2" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.userInvestidor}" onLabel="Sim" offLabel="Não" onIcon="ui-icon ui-icon-check" offIcon="ui-icon ui-icon-close" style="width:60px">
-					            <p:ajax update="PanelInvestidor" listener="#{pagadorRecebedorMB.geraSenhaInvestidor()}" />
-					        </p:selectBooleanButton>
-						</h:panelGrid>
-						<h:panelGrid columns="2">	
-							<p:outputLabel id="login" value="Login Investidor: " styleClass="labelBold" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.userInvestidor}"/>
-							<p:inputText id="loginInput"
-								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.loginInvestidor}" required="true"
-								label="Login Investidor" onblur="" style="width:400px;" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.userInvestidor}">
-							</p:inputText>
-		
-							<p:outputLabel id="pwd" value="Senha Investidor: " styleClass="labelBold"  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.userInvestidor}"/>
-							<p:inputText id="pwdInput"
-								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.senhaInvestidor}" required="true"
-								label="Senha Investidor" style="width: 180px;"  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.userInvestidor}">
-							</p:inputText>
-						</h:panelGrid>					
-					</p:panel>
+							
+				<p:panel id="PanelInvestidor" header="Habilitar Portal Investidor"
+					style="margin-bottom:10px;margin-top:20px;">
+					<h:panelGrid columns="1">
+						<p:selectBooleanButton id="value2" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.userInvestidor}" onLabel="Sim" offLabel="Não" onIcon="ui-icon ui-icon-check" offIcon="ui-icon ui-icon-close" style="width:60px">
+				            <p:ajax update="PanelInvestidor" listener="#{pagadorRecebedorMB.geraSenhaInvestidor()}" />
+				        </p:selectBooleanButton>
+					</h:panelGrid>
+					<h:panelGrid columns="2">	
+						<p:outputLabel id="login" value="Login Investidor: " styleClass="labelBold" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.userInvestidor}"/>
+						<p:inputText id="loginInput"
+							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.loginInvestidor}" required="true"
+							label="Login Investidor" onblur="" style="width:400px;" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.userInvestidor}">
+						</p:inputText>
 	
-					<p:panel id="PanelDadosBancarios" header="Dados Bancários"
-						style="margin-bottom:10px;margin-top:20px;">
-						<div class="ui-g" id="teste">
-							<div class="ui-g-12 ui-md-6 ui-lg-6">
-								<h:panelGrid columns="2">
-									<p:outputLabel for="PessoaCC" value="Pessoa: "
-										styleClass="labelBold" />
-									<p:selectOneRadio id="PessoaCC"
-										value="#{pagadorRecebedorMB.tipoPessoaIsFisicaCC}"
-										required="true">
-										<f:selectItem itemLabel="Física" itemValue="true" />
-										<f:selectItem itemLabel="Jurídica" itemValue="false" />
-										<p:ajax update="PanelDadosBancarios" event="valueChange"
-											listener="#{pagadorRecebedorMB.selectedTipoPessoaCC}" />
-									</p:selectOneRadio>
-	
-									<p:outputLabel for="CpfCC" value="CPF: " styleClass="labelBold"
-										rendered="#{pagadorRecebedorMB.tipoPessoaIsFisicaCC}" />
-									<p:inputMask id="CpfCC"
-										value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cpfCC}"
-										label="CPF" mask="999.999.999-99" required="true"
-										validator="#{pagadorRecebedorMB.validaCPF}"
-										rendered="#{pagadorRecebedorMB.tipoPessoaIsFisicaCC}">
-									</p:inputMask>
-	
-									<p:outputLabel for="CNPJCC" value="CNPJ: "
-										styleClass="labelBold"
-										rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisicaCC}" />
-									<p:inputMask id="CNPJCC"
-										value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cnpjCC}"
-										label="CNPJ" mask="99.999.999/9999-99" required="true"
-										validator="#{pagadorRecebedorMB.validaCNPJ}"
-										rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisicaCC}" />
-	
-									<p:outputLabel for="NomeCC" value="Nome: "
-										styleClass="labelBold"
-										rendered="#{pagadorRecebedorMB.tipoPessoaIsFisicaCC}" />
-									<p:outputLabel for="NomeCC" value="Razão Social: "
-										styleClass="labelBold"
-										rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisicaCC}" />
-									<p:inputText id="NomeCC"
-										value="#{pagadorRecebedorMB.objetoPagadorRecebedor.nomeCC}"
-										label="Nome" onblur=""
-										style="width:400px;" />
-	
-									<p:outputLabel value="Banco: " for="Banco"
-										styleClass="labelBold" />
-									<p:autoComplete id="Banco"
-										value="#{pagadorRecebedorMB.objetoPagadorRecebedor.banco}"
-										completeMethod="#{pagadorRecebedorMB.objetoPagadorRecebedor.completeBancos}"
-										var="banco" itemLabel="#{banco}" itemValue="#{banco}"
-										forceSelection="true" styleClass="labelBold" label="Conta"
-										style="width:100px; " scrollHeight="250">
-										<p:ajax event="valueChange"
-											listener="#{pagadorRecebedorMB.verificaAlteracaoContaCobranca}" />
-									</p:autoComplete>
-	
-									<p:outputLabel for="Agencia" value="Agência: "
-										styleClass="labelBold" />
-									<p:inputText id="Agencia"
-										value="#{pagadorRecebedorMB.objetoPagadorRecebedor.agencia}"
-										label="Agência" onblur="" style="width:100px;">
+						<p:outputLabel id="pwd" value="Senha Investidor: " styleClass="labelBold"  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.userInvestidor}"/>
+						<p:inputText id="pwdInput"
+							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.senhaInvestidor}" required="true"
+							label="Senha Investidor" style="width: 180px;"  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.userInvestidor}">
+						</p:inputText>
+					</h:panelGrid>					
+				</p:panel>
+
+				<p:panel id="PanelDadosBancarios" header="Dados Bancários"
+					style="margin-bottom:10px;margin-top:20px;">
+					<div class="ui-g" id="teste">
+						<div class="ui-g-12 ui-md-6 ui-lg-6">
+							<h:panelGrid columns="2">
+								<p:outputLabel for="PessoaCC" value="Pessoa: "
+									styleClass="labelBold" />
+								<p:selectOneRadio id="PessoaCC"
+									value="#{pagadorRecebedorMB.tipoPessoaIsFisicaCC}"
+									required="true">
+									<f:selectItem itemLabel="Física" itemValue="true" />
+									<f:selectItem itemLabel="Jurídica" itemValue="false" />
+									<p:ajax update="PanelDadosBancarios" event="valueChange"
+										listener="#{pagadorRecebedorMB.selectedTipoPessoaCC}" />
+								</p:selectOneRadio>
+
+								<p:outputLabel for="CpfCC" value="CPF: " styleClass="labelBold"
+									rendered="#{pagadorRecebedorMB.tipoPessoaIsFisicaCC}" />
+								<p:inputMask id="CpfCC"
+									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cpfCC}"
+									label="CPF" mask="999.999.999-99" required="true"
+									validator="#{pagadorRecebedorMB.validaCPF}"
+									rendered="#{pagadorRecebedorMB.tipoPessoaIsFisicaCC}">
+								</p:inputMask>
+
+								<p:outputLabel for="CNPJCC" value="CNPJ: "
+									styleClass="labelBold"
+									rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisicaCC}" />
+								<p:inputMask id="CNPJCC"
+									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cnpjCC}"
+									label="CNPJ" mask="99.999.999/9999-99" required="true"
+									validator="#{pagadorRecebedorMB.validaCNPJ}"
+									rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisicaCC}" />
+
+								<p:outputLabel for="NomeCC" value="Nome: "
+									styleClass="labelBold"
+									rendered="#{pagadorRecebedorMB.tipoPessoaIsFisicaCC}" />
+								<p:outputLabel for="NomeCC" value="Razão Social: "
+									styleClass="labelBold"
+									rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisicaCC}" />
+								<p:inputText id="NomeCC"
+									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.nomeCC}"
+									label="Nome" onblur=""
+									style="width:400px;" />
+
+								<p:outputLabel value="Banco: " for="Banco"
+									styleClass="labelBold" />
+								<p:autoComplete id="Banco"
+									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.banco}"
+									completeMethod="#{pagadorRecebedorMB.objetoPagadorRecebedor.completeBancos}"
+									var="banco" itemLabel="#{banco}" itemValue="#{banco}"
+									forceSelection="true" styleClass="labelBold" label="Conta"
+									style="width:100px; " scrollHeight="250">
+									<p:ajax event="valueChange"
+										listener="#{pagadorRecebedorMB.verificaAlteracaoContaCobranca}" />
+								</p:autoComplete>
+
+								<p:outputLabel for="Agencia" value="Agência: "
+									styleClass="labelBold" />
+								<p:inputText id="Agencia"
+									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.agencia}"
+									label="Agência" onblur="" style="width:100px;">
+									<p:ajax event="valueChange"
+										listener="#{pagadorRecebedorMB.verificaAlteracaoContaCobranca}" />
+								</p:inputText>
+								<p:outputLabel for="Conta" value="Conta: "
+									styleClass="labelBold">
+									<i class="fa font-solid #{pagadorRecebedorMB.objetoPagadorRecebedor.contaBancariaValidada?'fa-check green':'fa-ban red'}"
+										id="contaValidacao" />
+								</p:outputLabel>
+
+								<h:panelGroup>
+									<p:inputText id="Conta"
+										value="#{pagadorRecebedorMB.objetoPagadorRecebedor.conta}"
+										styleClass="labelBold" label="Conta" onblur=""
+										style="width:100px;margin-right: 10px;">
 										<p:ajax event="valueChange"
 											listener="#{pagadorRecebedorMB.verificaAlteracaoContaCobranca}" />
 									</p:inputText>
-									<p:outputLabel for="Conta" value="Conta: "
-										styleClass="labelBold">
-										<i class="fa font-solid #{pagadorRecebedorMB.objetoPagadorRecebedor.contaBancariaValidada?'fa-check green':'fa-ban red'}"
-											id="contaValidacao" />
-									</p:outputLabel>
-	
-									<h:panelGroup>
-										<p:inputText id="Conta"
-											value="#{pagadorRecebedorMB.objetoPagadorRecebedor.conta}"
-											styleClass="labelBold" label="Conta" onblur=""
-											style="width:100px;margin-right: 10px;">
-											<p:ajax event="valueChange"
-												listener="#{pagadorRecebedorMB.verificaAlteracaoContaCobranca}" />
-										</p:inputText>
-										<p:commandButton value="Verificar"  ajax="true" 
-											icon="ui-icon-check" rendered="#{!pagadorRecebedorMB.objetoPagadorRecebedor.contaBancariaValidada}"
-											action="#{pagadorRecebedorMB.validaContaBancaria}"
-											style="TEXT-DECORATION: bold" />
-									</h:panelGroup>
-									
-										<p:outputLabel for="ContaDigito" value="Conta Digito: "
-										styleClass="labelBold">									
-									</p:outputLabel>
-										<p:inputText id="ContaDigito"
-											value="#{pagadorRecebedorMB.objetoPagadorRecebedor.contaDigito}"
-											styleClass="labelBold" label="contaDigito" onblur="" maxlength="1"
-											style="width:100px;margin-right: 10px;">
-											<p:ajax event="valueChange"
-												listener="#{pagadorRecebedorMB.verificaAlteracaoContaCobranca}" />
-										</p:inputText>
-									
-	
-									<p:outputLabel for="tipoConta" value="Tipo Da Conta "
-										styleClass="labelBold" />
-									<p:selectOneMenu id="tipoConta"
-										value="#{pagadorRecebedorMB.objetoPagadorRecebedor.tipoConta}">
-										<f:selectItem itemValue="CONTA_CORRENTE"
-											itemLabel="Conta Corrente" />
-										<f:selectItem itemValue="CONTA_POUPANCA"
-											itemLabel="Conta Poupança" />
-	
+									<p:commandButton value="Verificar"  ajax="true" 
+										icon="ui-icon-check" rendered="#{!pagadorRecebedorMB.objetoPagadorRecebedor.contaBancariaValidada}"
+										action="#{pagadorRecebedorMB.validaContaBancaria}"
+										style="TEXT-DECORATION: bold" />
+								</h:panelGroup>
+								
+									<p:outputLabel for="ContaDigito" value="Conta Digito: "
+									styleClass="labelBold">									
+								</p:outputLabel>
+									<p:inputText id="ContaDigito"
+										value="#{pagadorRecebedorMB.objetoPagadorRecebedor.contaDigito}"
+										styleClass="labelBold" label="contaDigito" onblur="" maxlength="1"
+										style="width:100px;margin-right: 10px;">
 										<p:ajax event="valueChange"
 											listener="#{pagadorRecebedorMB.verificaAlteracaoContaCobranca}" />
-									</p:selectOneMenu>
-	
-									<p:outputLabel for="pix" value="Pix: " styleClass="labelBold">
-										<i class="fa font-solid #{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado?'fa-check green':'fa-ban red'}"
-											id="pixValidacao" />
-									</p:outputLabel>
-									
-									<h:panelGroup>
-										<p:inputText id="pix"
-											value="#{pagadorRecebedorMB.objetoPagadorRecebedor.pix}"
-											styleClass="labelBold" label="pix"
-											style="width:100px;margin-right: 10px;">
-											<p:ajax event="valueChange"
-												listener="#{pagadorRecebedorMB.verificaAlteracaoPix}" />
-										</p:inputText>
-										<p:commandButton value="Verificar" ajax="true"  rendered="#{!pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
-											icon="ui-icon-check" action="#{pagadorRecebedorMB.validaPix}"
-											style="TEXT-DECORATION: bold" />
-									</h:panelGroup>
-	
-	
-	
-									<p:outputLabel for="tipoPix" value="Tipo Do Pix "
-										styleClass="labelBold" />
-	
-									<p:selectOneMenu id="tipoPix"
-										value="#{pagadorRecebedorMB.objetoPagadorRecebedor.tipoPix}">
-										<f:selectItem itemValue="CPF" itemLabel="CPF" />
-										<f:selectItem itemValue="CNPJ" itemLabel="CNPJ" />
-										<f:selectItem itemValue="TELEFONE" itemLabel="Telefone" />
-										<f:selectItem itemValue="EMAIL" itemLabel="E-mail" />
-										<f:selectItem itemValue="CHAVE_ALEATORIA"
-											itemLabel="Chave Aleatória" />
+									</p:inputText>
+								
+
+								<p:outputLabel for="tipoConta" value="Tipo Da Conta "
+									styleClass="labelBold" />
+								<p:selectOneMenu id="tipoConta"
+									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.tipoConta}">
+									<f:selectItem itemValue="CONTA_CORRENTE"
+										itemLabel="Conta Corrente" />
+									<f:selectItem itemValue="CONTA_POUPANCA"
+										itemLabel="Conta Poupança" />
+
+									<p:ajax event="valueChange"
+										listener="#{pagadorRecebedorMB.verificaAlteracaoContaCobranca}" />
+								</p:selectOneMenu>
+
+								<p:outputLabel for="pix" value="Pix: " styleClass="labelBold">
+									<i class="fa font-solid #{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado?'fa-check green':'fa-ban red'}"
+										id="pixValidacao" />
+								</p:outputLabel>
+								
+								<h:panelGroup>
+									<p:inputText id="pix"
+										value="#{pagadorRecebedorMB.objetoPagadorRecebedor.pix}"
+										styleClass="labelBold" label="pix"
+										style="width:100px;margin-right: 10px;">
 										<p:ajax event="valueChange"
 											listener="#{pagadorRecebedorMB.verificaAlteracaoPix}" />
-									</p:selectOneMenu>
-	
-	
-									<p:outputLabel value="Banco: " for="Banco"  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
-										styleClass="labelBold" />
-									<p:outputLabel  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
-										value="#{pagadorRecebedorMB.objetoPagadorRecebedor.bancoPix}"
-										styleClass="labelBold" />
-	
-									<p:outputLabel for="Agencia" value="Agência: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
-										styleClass="labelBold" />
-									<p:outputLabel  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
-										value="#{pagadorRecebedorMB.objetoPagadorRecebedor.agenciaPix}"
-										styleClass="labelBold" />
-	
-	
-									<p:outputLabel for="Conta" value="Conta: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
-										styleClass="labelBold">
-									</p:outputLabel>
-									<p:outputLabel  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
-										value="#{pagadorRecebedorMB.objetoPagadorRecebedor.contaPix}"
-										styleClass="labelBold" />
-	
-	
-									<p:outputLabel for="ContaDigito" value="Conta Digito: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
-										styleClass="labelBold">
-									</p:outputLabel>
-									<p:outputLabel  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
-										value="#{pagadorRecebedorMB.objetoPagadorRecebedor.contaDigitoPix}"
-										styleClass="labelBold" />
-										
-	
-								</h:panelGrid>
-							</div>
-							<div class="ui-g-12 ui-md-6 ui-lg-6">
-								<p:panelGrid columns="3">
-	
-									<f:facet name="header" style="font-size: 18px !important;">Dígito Verificador Agência e Conta</f:facet>
-	
-									<p:outputLabel value="Banco" styleClass="labelBold"
-										style="font-size: 14px !important;" />
-									<p:outputLabel value="Agência" styleClass="labelBold"
-										style="font-size: 14px !important;" />
-									<p:outputLabel value="Conta" styleClass="labelBold"
-										style="font-size: 14px !important;" />
-	
-									<p:outputLabel value="Banco do Brasil" styleClass="labelBold" />
-									<p:outputLabel value="9999-D" styleClass="labelBold" />
-									<p:outputLabel value="99999999-D" styleClass="labelBold" />
-	
-									<p:outputLabel value="Santander" styleClass="labelBold" />
-									<p:outputLabel value="9999" styleClass="labelBold" />
-									<p:outputLabel value="99999999-D" styleClass="labelBold" />
-	
-									<p:outputLabel value="Caixa Econômica" styleClass="labelBold" />
-									<p:outputLabel value="9999" styleClass="labelBold" />
-									<p:outputLabel value="XXX99999999-D (X: Operação)"
-										styleClass="labelBold" />
-	
-									<p:outputLabel value="Bradesco" styleClass="labelBold" />
-									<p:outputLabel value="9999-D" styleClass="labelBold" />
-									<p:outputLabel value="9999999-D" styleClass="labelBold" />
-	
-									<p:outputLabel value="Itaú" styleClass="labelBold" />
-									<p:outputLabel value="9999" styleClass="labelBold" />
-									<p:outputLabel value="99999-D" styleClass="labelBold" />
-	
-									<p:outputLabel value="Banrisul" styleClass="labelBold" />
-									<p:outputLabel value="9999" styleClass="labelBold" />
-									<p:outputLabel value="999999999-D" styleClass="labelBold" />
-	
-									<p:outputLabel value="Sicredi" styleClass="labelBold" />
-									<p:outputLabel value="9999" styleClass="labelBold" />
-									<p:outputLabel value="99999D" styleClass="labelBold" />
-	
-									<p:outputLabel value="Sicoob (Bancoob)" styleClass="labelBold" />
-									<p:outputLabel value="9999" styleClass="labelBold" />
-									<p:outputLabel value="999999999-D" styleClass="labelBold" />
-	
-									<p:outputLabel value="Inter" styleClass="labelBold" />
-									<p:outputLabel value="9999" styleClass="labelBold" />
-									<p:outputLabel value="999999999-D" styleClass="labelBold" />
-	
-									<p:outputLabel value="BRB" styleClass="labelBold" />
-									<p:outputLabel value="9999" styleClass="labelBold" />
-									<p:outputLabel value="999999999-D" styleClass="labelBold" />
-								</p:panelGrid>
-							</div>
+									</p:inputText>
+									<p:commandButton value="Verificar" ajax="true"  rendered="#{!pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+										icon="ui-icon-check" action="#{pagadorRecebedorMB.validaPix}"
+										style="TEXT-DECORATION: bold" />
+								</h:panelGroup>
+
+
+
+								<p:outputLabel for="tipoPix" value="Tipo Do Pix "
+									styleClass="labelBold" />
+
+								<p:selectOneMenu id="tipoPix"
+									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.tipoPix}">
+									<f:selectItem itemValue="CPF" itemLabel="CPF" />
+									<f:selectItem itemValue="CNPJ" itemLabel="CNPJ" />
+									<f:selectItem itemValue="TELEFONE" itemLabel="Telefone" />
+									<f:selectItem itemValue="EMAIL" itemLabel="E-mail" />
+									<f:selectItem itemValue="CHAVE_ALEATORIA"
+										itemLabel="Chave Aleatória" />
+									<p:ajax event="valueChange"
+										listener="#{pagadorRecebedorMB.verificaAlteracaoPix}" />
+								</p:selectOneMenu>
+
+
+								<p:outputLabel value="Banco: " for="Banco"  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+									styleClass="labelBold" />
+								<p:outputLabel  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.bancoPix}"
+									styleClass="labelBold" />
+
+								<p:outputLabel for="Agencia" value="Agência: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+									styleClass="labelBold" />
+								<p:outputLabel  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.agenciaPix}"
+									styleClass="labelBold" />
+
+
+								<p:outputLabel for="Conta" value="Conta: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+									styleClass="labelBold">
+								</p:outputLabel>
+								<p:outputLabel  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.contaPix}"
+									styleClass="labelBold" />
+
+
+								<p:outputLabel for="ContaDigito" value="Conta Digito: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+									styleClass="labelBold">
+								</p:outputLabel>
+								<p:outputLabel  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.contaDigitoPix}"
+									styleClass="labelBold" />
+									
+
+							</h:panelGrid>
 						</div>
-					</p:panel>
-				</shiro:lacksRole>
+						<div class="ui-g-12 ui-md-6 ui-lg-6">
+							<p:panelGrid columns="3">
+
+								<f:facet name="header" style="font-size: 18px !important;">Dígito Verificador Agência e Conta</f:facet>
+
+								<p:outputLabel value="Banco" styleClass="labelBold"
+									style="font-size: 14px !important;" />
+								<p:outputLabel value="Agência" styleClass="labelBold"
+									style="font-size: 14px !important;" />
+								<p:outputLabel value="Conta" styleClass="labelBold"
+									style="font-size: 14px !important;" />
+
+								<p:outputLabel value="Banco do Brasil" styleClass="labelBold" />
+								<p:outputLabel value="9999-D" styleClass="labelBold" />
+								<p:outputLabel value="99999999-D" styleClass="labelBold" />
+
+								<p:outputLabel value="Santander" styleClass="labelBold" />
+								<p:outputLabel value="9999" styleClass="labelBold" />
+								<p:outputLabel value="99999999-D" styleClass="labelBold" />
+
+								<p:outputLabel value="Caixa Econômica" styleClass="labelBold" />
+								<p:outputLabel value="9999" styleClass="labelBold" />
+								<p:outputLabel value="XXX99999999-D (X: Operação)"
+									styleClass="labelBold" />
+
+								<p:outputLabel value="Bradesco" styleClass="labelBold" />
+								<p:outputLabel value="9999-D" styleClass="labelBold" />
+								<p:outputLabel value="9999999-D" styleClass="labelBold" />
+
+								<p:outputLabel value="Itaú" styleClass="labelBold" />
+								<p:outputLabel value="9999" styleClass="labelBold" />
+								<p:outputLabel value="99999-D" styleClass="labelBold" />
+
+								<p:outputLabel value="Banrisul" styleClass="labelBold" />
+								<p:outputLabel value="9999" styleClass="labelBold" />
+								<p:outputLabel value="999999999-D" styleClass="labelBold" />
+
+								<p:outputLabel value="Sicredi" styleClass="labelBold" />
+								<p:outputLabel value="9999" styleClass="labelBold" />
+								<p:outputLabel value="99999D" styleClass="labelBold" />
+
+								<p:outputLabel value="Sicoob (Bancoob)" styleClass="labelBold" />
+								<p:outputLabel value="9999" styleClass="labelBold" />
+								<p:outputLabel value="999999999-D" styleClass="labelBold" />
+
+								<p:outputLabel value="Inter" styleClass="labelBold" />
+								<p:outputLabel value="9999" styleClass="labelBold" />
+								<p:outputLabel value="999999999-D" styleClass="labelBold" />
+
+								<p:outputLabel value="BRB" styleClass="labelBold" />
+								<p:outputLabel value="9999" styleClass="labelBold" />
+								<p:outputLabel value="999999999-D" styleClass="labelBold" />
+							</p:panelGrid>
+						</div>
+					</div>
+				</p:panel>
 			</p:panel>
 
 			<div align="center">

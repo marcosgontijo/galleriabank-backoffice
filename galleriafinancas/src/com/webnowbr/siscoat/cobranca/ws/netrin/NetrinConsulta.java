@@ -71,6 +71,15 @@ public class NetrinConsulta {
 		}
 		return retorno;
 	}
+	
+	public String getNomeCompleto() {
+		String nome = netrinDocumentos.getNome();
+		if (!CommonsUtil.semValor(uf)) {
+			nome = nome + " " + uf;
+			return nome;
+		}
+		return nome;
+	}
 
 	public long getId() {
 		return id;

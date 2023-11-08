@@ -1470,6 +1470,18 @@
 			<column name="valorAprovadoComite" />
 		</property>
 		
+		<property name="valorAprovadoComercial" type="big_decimal">
+			<column name="valorAprovadoComercial" />
+		</property>
+		
+		<property name="prazoAprovadoComercial" type="big_integer">
+			<column name="prazoAprovadoComercial" />
+		</property>
+		
+		<property name="tipoCalculoAprovadoComercial" type="java.lang.String">
+			<column name="tipoCalculoAprovadoComercial" />
+		</property>
+		
 		<property name="valorLaudoPajuTotal" type="big_decimal">
 			<column name="valorLaudoPajuTotal" />
 		</property>
@@ -2238,7 +2250,11 @@
 			<column name="terrenoOuBarracaoTaxa" not-null="true" default="false"/>
 		</property>	
 		<property name="nadaConstaTaxa" type="boolean">
-		<column name="nadaConstaTaxa" not-null="true" default="false"/>
+			<column name="nadaConstaTaxa" not-null="true" default="false"/>
+		</property>
+		
+		<property name="valorCartorio" type="big_decimal">
+			<column name="valorCartorio" />
 		</property>
 		
 	</class>

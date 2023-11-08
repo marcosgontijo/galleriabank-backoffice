@@ -27,6 +27,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.primefaces.model.DefaultStreamedContent;
@@ -36,19 +37,14 @@ import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
+import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.webnowbr.siscoat.cobranca.db.model.directd.Email;
-import com.webnowbr.siscoat.cobranca.db.model.directd.Endereco;
-import com.webnowbr.siscoat.cobranca.db.model.directd.ParticipacoesEmpresa;
-import com.webnowbr.siscoat.cobranca.db.model.directd.Sociedade;
-import com.webnowbr.siscoat.cobranca.db.model.directd.TRF3;
 import com.webnowbr.siscoat.cobranca.db.model.directd.TST;
-import com.webnowbr.siscoat.cobranca.db.model.directd.Telefone;
+import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 
 
@@ -225,24 +221,12 @@ public class ConsultaTST {
 			try {
 				retorno = ((java.util.Date) formatterOnlyDate.parse(dateStr));
 			} catch (ParseException e1) {
-				retorno = gerarDataHoje();
+				retorno = DateUtil.gerarDataHoje();
 				
 				return retorno;
 			}
 			return retorno;
 		}
-	}
-	
-	/**
-	 * GERA A DATA DE HOJE
-	 * @return
-	 */
-	public Date gerarDataHoje() {
-		TimeZone zone = TimeZone.getDefault();  
-		Locale locale = new Locale("pt", "BR");  
-		Calendar dataHoje = Calendar.getInstance(zone, locale);
-
-		return dataHoje.getTime();
 	}
 
 	/***

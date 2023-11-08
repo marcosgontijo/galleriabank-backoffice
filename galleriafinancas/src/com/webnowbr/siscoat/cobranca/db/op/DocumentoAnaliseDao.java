@@ -75,5 +75,45 @@ public class DocumentoAnaliseDao extends HibernateDao<DocumentoAnalise, Long> {
 			}
 		});
 	}
+	
+	private static final String QUERY_CERTIDOES_INCOMPLETAS = "select distinct id from (select d.id from cobranca.documentosanalise d \r\n"
+			+ " inner join cobranca.contratocobranca c on c.id = d.contratocobranca \r\n"
+			+ " inner join cobranca.plexiconsulta p on p.documentoanalise = d.id \r\n"
+			+ " where p.requestid is not null and p.pdf is null"
+			+ " and p.status not ilike '%expirada%' \r\n"
+			+ " union \r\n"
+			+ " select d.id from cobranca.documentosanalise d \r\n"
+			+ " inner join cobranca.contratocobranca c on c.id = d.contratocobranca \r\n"
+			+ " inner join cobranca.netrinconsulta n  on n.documentoanalise = d.id \r\n"
+			+ " where n.retorno is not null and n.pdf is null\r\n"
+			+ " union \r\n"
+			+ " select d.id from cobranca.documentosanalise d \r\n"
+			+ " inner join cobranca.contratocobranca c on c.id = d.contratocobranca \r\n"
+			+ " inner join cobranca.docketconsulta d2 on d2.documentoanalise = d.id \r\n"
+			+ " where d2.iddocket is not null and d2.pdf is null ) total";
+	
+	@SuppressWarnings("unchecked")
+	public List<DocumentoAnalise> listagemCertidoesIncompletas() {
+		return (List<DocumentoAnalise>) executeDBOperation(new DBRunnable() {
 
+			@Override
+			public Object run() throws Exception {
+				List<DocumentoAnalise> listaAnalise = new ArrayList<DocumentoAnalise>();
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+					ps = connection.prepareStatement(QUERY_CERTIDOES_INCOMPLETAS);
+					rs = ps.executeQuery();
+					while (rs.next()) {
+						listaAnalise.add(findById(rs.getLong("id")));
+					}
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return listaAnalise;
+			}
+		});
+	}
 }

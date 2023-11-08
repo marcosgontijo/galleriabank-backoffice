@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import com.webnowbr.siscoat.cobranca.db.model.CcbContrato;
+import com.webnowbr.siscoat.cobranca.db.model.CcbParticipantes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.db.dao.HibernateDao;
@@ -153,4 +154,39 @@ public class CcbDao extends HibernateDao <CcbContrato,Long> {
 		});	
 	}	
 	
+	private static final String QUERY_ATUALIZA_CCB = "select c.id ccb, p.nome, c2.id participante, * from cobranca.ccbcontrato c \r\n"
+			+ "inner join cobranca.ccbcontrato_ccbparticipantes_join ccj on ccj.idccbcontrato  = c.id \r\n"
+			+ "inner join cobranca.ccbparticipantes c2 on c2.id = ccj.idccbparticipante \r\n"
+			+ "inner join cobranca.pagadorrecebedor p on p.id = c2.pessoa \r\n"
+			+ "where (p.cpf = c.cpfemitente) or (p.cnpj = c.cpfemitente)\r\n"
+			+ " and emitenteprincipal is null";
+	
+	@SuppressWarnings("unchecked")
+	public String atualizaCcbs() {
+		return (String) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+					ps = connection.prepareStatement(QUERY_ATUALIZA_CCB);
+					rs = ps.executeQuery();
+					CcbDao ccbDao = new CcbDao();
+					CcbParticipantesDao ccbParticipantesDao = new CcbParticipantesDao();
+					while (rs.next()) {
+						CcbContrato ccbContrato = ccbDao.findById(rs.getLong("ccb"));
+						CcbParticipantes participante = ccbParticipantesDao.findById(rs.getLong("participante"));
+						ccbContrato.setEmitentePrincipal(participante);
+						ccbDao.merge(ccbContrato);
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return null;
+			}
+		});	
+	}
 }

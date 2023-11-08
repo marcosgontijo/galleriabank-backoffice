@@ -1299,7 +1299,7 @@
 							<p:outputLabel for="EMail" value="E-Mail: " />
 							<p:outputLabel id="EMail"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.email}"
-								label="E-Mail" type="email" style="width:400px;" />
+								label="E-Mail"  style="width:400px;" />
 
 							<p:outputLabel for="pagadorDonoGarantia"
 								value="Pagador é dono da garantia?" />
@@ -1479,7 +1479,7 @@
 									<p:outputLabel for="EmailConjuge" value="E-mail: " />
 									<p:outputLabel id="EmailConjuge"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.emailConjuge}"
-										label="E-Mail" type="email" style="width:400px;" />
+										label="E-Mail"  style="width:400px;" />
 
 									<p:outputLabel for="DtNascimentoConjuge"
 										value="Data de Nascimento: " />
@@ -1636,7 +1636,7 @@
 										rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.coobrigado}" />
 									<p:outputLabel id="EmailCoobrigado"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.emailCoobrigado}"
-										label="E-Mail" type="email" onblur="" style="width:400px;"
+										label="E-Mail"  onblur="" style="width:400px;"
 										rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.coobrigado}" />
 									<p:outputLabel for="DtNascimentoCoobrigado"
 										value="Data de Nascimento: "
@@ -1781,7 +1781,7 @@
 										<p:outputLabel for="emailCoobrigadoCasado" value="E-Mail: " />
 										<p:outputLabel id="emailCoobrigadoCasado"
 											value="#{contratoCobrancaMB.objetoPagadorRecebedor.emailCoobrigadoCasado}"
-											label="E-Mail" type="email" onblur="" style="width:400px;" />
+											label="E-Mail"  onblur="" style="width:400px;" />
 
 										<p:outputLabel for="DtNascimentoCoobrigadoCasado"
 											value="Data de Nascimento: " />
@@ -1938,7 +1938,7 @@
 
 												<p:outputLabel for="SocioEMail" value="E-Mail: " />
 												<p:outputLabel id="SocioEMail" value="#{socio.pessoa.email}"
-													label="E-Mail" type="email" onblur="" style="width:400px;" />
+													label="E-Mail"  onblur="" style="width:400px;" />
 
 												<p:outputLabel for="SocioDtNascimento"
 													value="Data de Nascimento: " />
@@ -2111,7 +2111,7 @@
 
 												<p:outputLabel for="EMailPagador" value="E-Mail: " />
 												<p:outputLabel id="EMailPagador"
-													value="#{pagador.pessoa.email}" label="E-Mail" type="email"
+													value="#{pagador.pessoa.email}" label="E-Mail" 
 													onblur="" style="width:400px;" />
 
 												<p:outputLabel for="DtNascimentoPagador"
@@ -2830,7 +2830,7 @@
 								<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
 								 <f:facet name="header">
 									<p:commandButton value="Download Selecionado(s)" ajax="false" immediate="true"
-										icon="ui-icon-arrowthick-1-s" action="#{contratoCobrancaMB.getDownloadAllFilesComite()}">
+										icon="ui-icon-arrowthick-1-s" action="#{contratoCobrancaMB.getDownloadAllFilesInterno()}">
 									</p:commandButton>											 
 						        </f:facet>	        
 						        <p:column style="text-align: center;"

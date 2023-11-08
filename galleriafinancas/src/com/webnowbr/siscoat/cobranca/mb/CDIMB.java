@@ -1,10 +1,6 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
 import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -13,17 +9,12 @@ import java.util.TimeZone;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 
 import com.webnowbr.siscoat.cobranca.db.model.CDI;
-import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
-import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
-import com.webnowbr.siscoat.cobranca.db.model.CDI;
-import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
-import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
 import com.webnowbr.siscoat.cobranca.db.op.CDIDao;
+import com.webnowbr.siscoat.common.DateUtil;
 
 
 @ManagedBean(name = "cdiMB")
@@ -40,7 +31,7 @@ public class CDIMB {
 	}
 	
 	public String clearFieldsCDI() {
-		this.data = gerarDataHoje();
+		this.data = DateUtil.gerarDataHoje();
 		this.taxa = BigDecimal.ZERO;				
 		
 		CDIDao cidDao = new CDIDao();
@@ -137,15 +128,6 @@ public class CDIMB {
 			
 		context.addMessage(null, new FacesMessage(
 				FacesMessage.SEVERITY_INFO, "[CDI] Taxa excluída com sucesso!", ""));
-	}
-	
-	
-	public Date gerarDataHoje() {
-		TimeZone zone = TimeZone.getDefault();
-		Locale locale = new Locale("pt", "BR");
-		Calendar dataHoje = Calendar.getInstance(zone, locale);
-
-		return dataHoje.getTime();
 	}
 
 	public List<CDI> getListCDI() {
