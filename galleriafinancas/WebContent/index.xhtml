@@ -43,7 +43,7 @@
 					    <p:spacer width="40px"/>
 					   </p:repeat>
 					   <div>
-					   <p:commandLink title="Favoritos" action="#{menuItemMB.carregarFavoritos}" ajax="false"> <img src="/sistema/javax.faces.resource/image/Commons/star2.png.xhtml" alt="" height="88" width="90"/></p:commandLink>
+					   <p:commandLink title="Favoritos" action="#{menuItemMB.carregarFavoritos}" ajax="false"> <img src="#{resource['image/Commons/favorito.png']}" alt="" height="88" width="90"/></p:commandLink>
 					   </div>
 					   </div>
 					    <div><p:commandLink title="Sair" actionListener="#{logoutBean.logout}"><img src="#{resource['image/Commons/logoSair.png']}" alt=""/><p:confirm header="Confirmation" message="Deseja realmente sair?" icon="ui-icon-alert"/></p:commandLink></div>
