@@ -844,7 +844,7 @@ public class CcbMB {
 			for(Averbacao averbacao : objetoContratoCobranca.getListAverbacao()) {
 				averbacaoTotal = averbacaoTotal.add(averbacao.getValor());
 			}
-			if (CommonsUtil.semValor(objetoCcb.getIntermediacaoValor()) || CommonsUtil.semValor(despesaAverbacao)) {
+			if (CommonsUtil.semValor(objetoCcb.getAverbacaoValor()) || CommonsUtil.semValor(despesaAverbacao)) {
 				criarDespesa("Averbação", averbacaoTotal);
 			} else {
 				despesaAverbacao.setValor(averbacaoTotal);
@@ -1530,6 +1530,14 @@ public class CcbMB {
 						listaArquivos.put(nomeDoc, arquivo);
 				} else if(CommonsUtil.mesmoValor(tipoDownload,"Declaração Não União Estavel")) {
 			    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
+			    		if(participante.getSocios().size() > 0){
+			    			for(CcbParticipantes socio : participante.getSocios()) {
+			    				arquivo = ccbService.geraDeclaracaoNaoUniaoEstavel(socio);
+				    			nomeDoc = socio.getPessoa().getNome() + "_" + "DeclaracaoNaoUniaoEstavel.docx";
+					    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
+					    		listaArquivos.put(nomeDoc, arquivo);
+			    			}
+			    		}
 			    		if(!participante.isEmpresa() && !participante.isUniaoEstavel()) {
 			    			arquivo = ccbService.geraDeclaracaoNaoUniaoEstavel(participante);
 			    			nomeDoc = participante.getPessoa().getNome() + "_" + "DeclaracaoNaoUniaoEstavel.docx";
@@ -1539,6 +1547,14 @@ public class CcbMB {
 			    	}
 			    } else if(CommonsUtil.mesmoValor(tipoDownload,"Declaração de União Estavel")) {
 			    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
+			    		if(participante.getSocios().size() > 0){
+			    			for(CcbParticipantes socio : participante.getSocios()) {
+			    				arquivo = ccbService.geraDeclaracaoUniaoEstavel(socio);
+				    			nomeDoc = socio.getPessoa().getNome() + "_" + "DeclaracaoUniaoEstavel.docx";
+					    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
+					    		listaArquivos.put(nomeDoc, arquivo);
+			    			}
+			    		}
 			    		if(!participante.isEmpresa() && participante.isUniaoEstavel()) {
 			    			arquivo = ccbService.geraDeclaracaoUniaoEstavel(participante);
 			    			nomeDoc = participante.getPessoa().getNome() + "_" + "DeclaracaoUniaoEstavel.docx";
@@ -1548,15 +1564,46 @@ public class CcbMB {
 			    	}		    	
 			    } else if(CommonsUtil.mesmoValor(tipoDownload,"Declaração Destinação Recursos")) {
 			    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
-			    			arquivo = ccbService.geraDeclaracaoDestinacaoRecursos(participante);
-			    			nomeDoc = participante.getPessoa().getNome() + "_" +  "DeclaracaoDestinacaoRecursos.docx";
-				    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
-				    		listaArquivos.put(nomeDoc, arquivo);
+			    		if(participante.getSocios().size() > 0){
+			    			for(CcbParticipantes socio : participante.getSocios()) {
+			    				arquivo = ccbService.geraDeclaracaoDestinacaoRecursos(socio);
+				    			nomeDoc = socio.getPessoa().getNome() + "_" + "DeclaracaoDestinacaoRecursos.docx";
+					    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
+					    		listaArquivos.put(nomeDoc, arquivo);
+			    			}
+			    		}
+		    			arquivo = ccbService.geraDeclaracaoDestinacaoRecursos(participante);
+		    			nomeDoc = participante.getPessoa().getNome() + "_" +  "DeclaracaoDestinacaoRecursos.docx";
+			    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
+			    		listaArquivos.put(nomeDoc, arquivo);
 			    	}
 			    }  else if(CommonsUtil.mesmoValor(tipoDownload,"Termo Responsabilidade Paju")) {
 			    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
+			    		if(participante.getSocios().size() > 0){
+			    			for(CcbParticipantes socio : participante.getSocios()) {
+			    				arquivo = ccbService.geraTermoResponsabilidadeAnuenciaPaju(socio);
+				    			nomeDoc = socio.getPessoa().getNome() + "_" + "TermoPaju.docx";
+					    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
+					    		listaArquivos.put(nomeDoc, arquivo);
+			    			}
+			    		}
 			    		arquivo = ccbService.geraTermoResponsabilidadeAnuenciaPaju(participante);
 			    		nomeDoc = participante.getPessoa().getNome() + "_" + "TermoPaju.docx";
+			    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc); 	
+			    		listaArquivos.put(nomeDoc, arquivo);
+			    	}
+			    } else if(CommonsUtil.mesmoValor(tipoDownload,"Averbacao")) {
+			    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
+			    		if(participante.getSocios().size() > 0){
+			    			for(CcbParticipantes socio : participante.getSocios()) {
+			    				arquivo = ccbService.geraAverbacao(socio);
+				    			nomeDoc = socio.getPessoa().getNome() + "_" + "Averbacao.docx";
+					    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
+					    		listaArquivos.put(nomeDoc, arquivo);
+			    			}
+			    		}
+			    		arquivo = ccbService.geraAverbacao(participante);
+			    		nomeDoc = participante.getPessoa().getNome() + "_" + "Averbacao.docx";
 			    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc); 	
 			    		listaArquivos.put(nomeDoc, arquivo);
 			    	}

@@ -9620,7 +9620,7 @@ public class ContratoCobrancaMB {
 		}
 		
 		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. DOC")) {
-			int qtdMatriculas  =1;
+			int qtdMatriculas = 1;
 			String matriculas = objetoContratoCobranca.getImovel().getNumeroMatricula().trim();
 			if (matriculas.endsWith(",")) {
 				matriculas = matriculas.substring(0, matriculas.lastIndexOf(",")).trim();
@@ -9628,9 +9628,9 @@ public class ContratoCobrancaMB {
 		
 			qtdMatriculas = matriculas.split(",").length;
 			//se for apartamento é no minimo 3		
-			if (CommonsUtil.mesmoValorIgnoreCase("Apartamento", objetoContratoCobranca.getImovel().getTipo()) && qtdMatriculas == 1) {
+			/*if (CommonsUtil.mesmoValorIgnoreCase("Apartamento", objetoContratoCobranca.getImovel().getTipo()) && qtdMatriculas == 1) {
 				qtdMatriculas = 3;
-			}
+			}*/
 
 			RegistroImovelTabelaDao rDao = new RegistroImovelTabelaDao();
 			BigDecimal valorRegistro = rDao.getValorRegistro(objetoContratoCobranca.getValorAprovadoComite()
