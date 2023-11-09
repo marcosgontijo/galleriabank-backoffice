@@ -27,7 +27,7 @@ public class CcbParticipantes implements Serializable{
 	private String municipioEmpresa;
 	private String salaEmpresa;
 	private List<CcbParticipantes> socios;
-	
+	private Set<Averbacao> listAverbacao;
 	
 	public CcbParticipantes() {
 		this.pessoa = new PagadorRecebedor();
@@ -116,5 +116,11 @@ public class CcbParticipantes implements Serializable{
 	}
 	public void setUniaoEstavel(boolean uniaoEstavel) {
 		this.uniaoEstavel = uniaoEstavel;
+	}
+	public Set<Averbacao> getListAverbacao() {
+		return listAverbacao;
+	}
+	public void setListAverbacao(Set<Averbacao> listAverbacao) {
+		this.listAverbacao = listAverbacao;
 	}
 }
