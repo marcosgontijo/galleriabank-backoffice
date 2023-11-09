@@ -3,8 +3,11 @@ package com.webnowbr.siscoat.infra.db.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.webnowbr.siscoat.db.dao.HibernateDao;
+import com.webnowbr.siscoat.db.dao.HibernateDao.DBRunnable;
 import com.webnowbr.siscoat.infra.db.model.MenuFavorito;
 import com.webnowbr.siscoat.infra.db.model.MenuItem;
 import com.webnowbr.siscoat.infra.db.model.User;
@@ -40,6 +43,7 @@ public class MenuFavoritoDao extends HibernateDao<MenuFavorito, Long> {
 			}
 		});
 	}
+
 }
 
 

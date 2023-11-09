@@ -302,4 +302,41 @@ public class MenuItemDao extends HibernateDao<MenuItem, Long> {
 
 		});
 	}
+	@SuppressWarnings("unchecked")
+	public List<MenuItem> Consultaitemfavorito(Long idfavorito) {
+
+		return (List<MenuItem>) executeDBOperation(new DBRunnable() {
+
+			@Override
+			public Object run() throws Exception {
+				List<MenuItem> menuItemItem = new ArrayList<MenuItem>();
+
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+					StringBuilder query = new StringBuilder();
+
+					query.append("select id from infra.menuitem ");
+					query.append("where id = ? ");
+					query.append("order by ordem ");
+
+					ps = connection.prepareStatement(query.toString());
+					ps.setLong(1, idfavorito);
+					rs = ps.executeQuery();
+
+					MenuItemDao menuDao = new MenuItemDao();
+
+					while (rs.next()) {
+						menuItemItem.add(menuDao.findById(rs.getLong(1)));
+					}
+
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return menuItemItem;
+			}
+		});
+	}
 }

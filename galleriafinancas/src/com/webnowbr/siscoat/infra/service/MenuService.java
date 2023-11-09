@@ -112,7 +112,7 @@ public class MenuService {
 		MenuItemDao itemDao = new MenuItemDao();
 		List<MenuFavorito> favorito = favoritoDao.findByFilter("user", user);
 		for (MenuFavorito menu : favorito) {
-			menuitem = itemDao.findByFilter("id", menu.getMenuItemFavorito().getId());
+			menuitem = itemDao.Consultaitemfavorito(menu.getMenuItemFavorito().getId());
 			for (MenuItem item : menuitem) {
 				DefaultSubMenu submenu = new DefaultSubMenu();
 				Optional<MenuElement> menuElement = modelFavoritoUsuario.getElements().stream()
