@@ -51,6 +51,7 @@ import org.primefaces.model.UploadedFile;
 import com.webnowbr.siscoat.cobranca.auxiliar.NumeroPorExtenso;
 import com.webnowbr.siscoat.cobranca.auxiliar.PorcentagemPorExtenso;
 import com.webnowbr.siscoat.cobranca.auxiliar.ValorPorExtenso;
+import com.webnowbr.siscoat.cobranca.db.model.Averbacao;
 import com.webnowbr.siscoat.cobranca.db.model.CcbContrato;
 import com.webnowbr.siscoat.cobranca.db.model.CcbParticipantes;
 import com.webnowbr.siscoat.cobranca.db.model.CcbProcessosJudiciais;
@@ -2758,12 +2759,153 @@ public class CcbService {
 	}
 
 	public byte[] geraFichaCadastro(PagadorRecebedor pagador) throws IOException{
-		//PagadorRecebedorDao pDao = new PagadorRecebedorDao();
-		//PagadorRecebedor pagador = new PagadorRecebedor();
-		//pagador = pDao.findById((long)27193); 
 		ImpressoesPDFMB impressaoMb = new ImpressoesPDFMB();
-		
 		return impressaoMb.geraPdfCadastroPagadorRecebedor(pagador);
+	}
+	
+	public byte[] geraAverbacao(CcbParticipantes participante) throws IOException{
+		try {
+			//PagadorRecebedor pagador
+			XWPFDocument document;
+			XWPFRun run;
+			XWPFRun run2;
+			List<String> documentos = new ArrayList<String>();
+			
+			document = new XWPFDocument(getClass().getResourceAsStream("/resource/Averbacao.docx"));			
+			CTFonts fonts = CTFonts.Factory.newInstance();
+			fonts.setHAnsi("Calibri");
+			fonts.setAscii("Calibri");
+			fonts.setEastAsia("Calibri");
+			fonts.setCs("Calibri");
+			document.getStyles().setDefaultFonts(fonts);
+			document.getStyle().getDocDefaults().getRPrDefault().getRPr().setRFonts(fonts);
+			
+			run = document.getParagraphs().get(2).getRuns().get(2);
+			document.getParagraphs().get(2).setAlignment(ParagraphAlignment.BOTH);
+			run.setFontSize(12);
+			String runText = run.getText(0);
+			trocaValoresXWPF(runText, run, "paragrafoPF", "");
+			run.setText(participante.getPessoa().getNome().toUpperCase() + ", ");
+			run.setBold(true);
+			run.setCharacterSpacing(1*10);
+			run2 = document.getParagraphs().get(2).insertNewRun(3);
+			run2.setFontSize(12);
+			geraParagrafoPF(run2, participante);
+			run2.getText(0).replace("; ", "");
+			runText = run2.getText(0);
+			trocaValoresXWPF(runText, run2, "; ", "");
+			
+			int index = 6;
+			boolean inicio = true;
+			for(Averbacao averbacao : participante.getListAverbacao()) {
+				if(!documentos.contains(averbacao.getDocumento())) {
+					documentos.add(averbacao.getDocumento());
+				}
+				run = document.getParagraphs().get(5).insertNewRun(index);
+				String informacaoString = "";
+				if(CommonsUtil.mesmoValor(averbacao.getInformacao(), "CNH")) {
+					informacaoString = "o nº da Cédula de Identidade CNH";
+				} else if(CommonsUtil.mesmoValor(averbacao.getInformacao(), "RG")) {
+					informacaoString = "o nº da Cédula de Identidade RG";
+				} else if(CommonsUtil.mesmoValor(averbacao.getInformacao(), "Estado Civil")) {
+					informacaoString = "o estado civil";
+				} else if(CommonsUtil.mesmoValor(averbacao.getInformacao(), "Nome")) {
+					informacaoString = "o nome do proprietário";
+				}
+				if(CommonsUtil.mesmoValor(averbacao.getTipoAverbacao(), "INCLUIR")) {
+					informacaoString = informacaoString + " n° ";
+				} else if(CommonsUtil.mesmoValor(averbacao.getTipoAverbacao(), "ALTERAR")) {
+					informacaoString = informacaoString + ", onde se lia ";
+				}
+				
+				if(!inicio) {
+					run2 = document.getParagraphs().get(5).insertNewRun(index);
+					run2.setText(" e ");
+					index++;
+				} else {
+					inicio = false;
+				}
+				run.setText(averbacao.getTipoAverbacao() + " ");
+				run.setBold(true);
+				index++;
+				run2 = document.getParagraphs().get(5).insertNewRun(index);
+				run2.setBold(false);
+				run2.setText(informacaoString);
+				if(CommonsUtil.mesmoValor(averbacao.getTipoAverbacao(), "INCLUIR")) {
+					index++;
+					run = document.getParagraphs().get(5).insertNewRun(index);
+					run.setText(averbacao.getTexto1() + ",");
+				} else {
+					index++;
+					run = document.getParagraphs().get(5).insertNewRun(index);
+					run.setText(averbacao.getTexto1() + ", passará a CONSTAR " + averbacao.getTexto2() + ",");
+					run.setBold(true);
+				}
+				index++;
+			}
+			
+			XWPFParagraph paragrafo = document.getParagraphs().get(6);
+			for(String documento : documentos) {
+				run = paragrafo.createRun();
+				if(CommonsUtil.mesmoValor(documento, "RG"))
+					run.setText("- Cópia do " + documento);
+				else
+					run.setText("- Cópia da " + documento);
+				run.addCarriageReturn();
+			}
+
+		    for (XWPFParagraph p : document.getParagraphs()) {
+				List<XWPFRun> runs = p.getRuns();
+			    if (runs != null) {  	
+			    	for (XWPFRun r : runs) {
+			            String text = r.getText(0);		            
+			            if(CommonsUtil.semValor(text)) {
+			            	continue;
+			            }			            
+			            text = trocaValoresXWPF(text, r, "cidadeEmitente", (participante.getPessoa().getCidade()));    
+			            text = trocaValoresXWPF(text, r, "ufEmitente", (participante.getPessoa().getEstado()));			            
+			            text = trocaValoresXWPF(text, r, "emissaoDia", objetoCcb.getDataDeEmissao().getDate());
+						text = trocaValoresXWPF(text, r, "emissaoMes", CommonsUtil.formataMesExtenso(objetoCcb.getDataDeEmissao()).toLowerCase());
+						text = trocaValoresXWPF(text, r, "emissaoAno", (objetoCcb.getDataDeEmissao().getYear() + 1900));						
+						text = trocaValoresXWPF(text, r, "nomeEmitente", (participante.getPessoa().getNome()));    
+			            text = trocaValoresXWPF(text, r, "cpfEmitente", (participante.getPessoa().getCpf()));
+			            
+			            text = trocaValoresXWPF(text, r, "cidadeImovel", objetoCcb.getCidadeImovel());
+						text = trocaValoresXWPF(text, r, "ufImovel", objetoCcb.getUfImovel());
+						text = trocaValoresXWPF(text, r, "numeroImovel", objetoCcb.getNumeroImovel());
+					}
+			    }
+			}
+		    
+		    for (XWPFTable tbl : document.getTables()) {
+				for (XWPFTableRow row : tbl.getRows()) {
+					for (XWPFTableCell cell : row.getTableCells()) {
+						for (XWPFParagraph p : cell.getParagraphs()) {
+							for (XWPFRun r : p.getRuns()) {
+					            String text = r.getText(0);					            
+					            if(CommonsUtil.semValor(text)) {
+					            	continue;
+					            }				         
+								text = trocaValoresXWPF(text, r, "nomeTestemunha1", objetoCcb.getNomeTestemunha1());
+								text = trocaValoresXWPF(text, r, "cpfTestemunha1", objetoCcb.getCpfTestemunha1());
+								text = trocaValoresXWPF(text, r, "rgTestemunha1", objetoCcb.getRgTestemunha1());						
+								text = trocaValoresXWPF(text, r, "nomeTestemunha2", objetoCcb.getNomeTestemunha2());
+								text = trocaValoresXWPF(text, r, "cpfTestemunha2", objetoCcb.getCpfTestemunha2());		
+								text = trocaValoresXWPF(text, r, "rgTestemunha2", objetoCcb.getRgTestemunha2());
+							}
+						}
+					}
+				}
+			}
+		   
+		    ByteArrayOutputStream out = new ByteArrayOutputStream();
+			document.write(out);
+			document.close();
+			return out.toByteArray();
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public byte[] geraDownloadByteArray(byte[] file, String fileName) throws JRException, IOException {
@@ -3115,11 +3257,18 @@ public class CcbService {
 				estadoCivilStr = estadoCivilStr + " não convivente em união estável";
 			}
 		}
+		String rgCnhString = "";
+		if(CommonsUtil.mesmoValor(pessoa.getTipoDocumento(), "RG")){
+			rgCnhString = "RG";
+		} else if(CommonsUtil.mesmoValor(pessoa.getTipoDocumento(), "CNH")){
+			rgCnhString = "CNH";
+		}
+		
 		
 		run2.setText( filho + " de " + pessoa.getNomeMae() + " e " + pessoa.getNomePai() + ", "
 				+ nacionalidade + ", "+ pessoa.getAtividade() + ", "+ estadoCivilStr 
 				+ conjugeStr + ","
-				+ " portador(a) da Cédula de Identidade RG nº "+ pessoa.getRg() + " " + pessoa.getOrgaoEmissorRG() + ","
+				+ " portador(a) da Cédula de Identidade " + rgCnhString + " nº "+ pessoa.getRg() + " " + pessoa.getOrgaoEmissorRG() + ","
 				+ " inscrito(a) no CPF/MF sob o nº "+ pessoa.getCpf() +", endereço eletrônico: "+ pessoa.getEmail() +","
 				+ " residente e domiciliado à "+ pessoa.getEndereco() +", nº "+ pessoa.getNumero() +", "
 				+ pessoa.getComplemento() + ", "+ pessoa.getBairro() + ", " 
@@ -3476,7 +3625,6 @@ public class CcbService {
 				if (!participante.isEmpresa()) {
 					geraParagrafoPF(run2, participante);
 					run2.addCarriageReturn();
-
 				} else {
 					run2.setFontSize(12);
 					PagadorRecebedor pessoa = participante.getPessoa();
