@@ -645,5 +645,13 @@
 			<column name="tipoDocumentoConjuge" />
 		</property>
 		
+		<set name="listAverbacao" table="Averbacao" cascade="merge"
+                 lazy="false" fetch="select">
+            <key>
+                <column name="pagador" />
+            </key>
+            <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.Averbacao" />
+        </set> 
+		
     </class>
 </hibernate-mapping>

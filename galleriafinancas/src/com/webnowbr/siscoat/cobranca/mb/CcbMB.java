@@ -579,6 +579,7 @@ public class CcbMB {
 		listaTipoDownload.add("Declaração de União Estavel");
 		listaTipoDownload.add("Declaração Destinação Recursos");
 		listaTipoDownload.add("Termo Responsabilidade Paju");
+		listaTipoDownload.add("Averbacao");
 	}
 
 	public void clearContratoCobranca() {
@@ -760,8 +761,6 @@ public class CcbMB {
 				}
 			}
 			
-			
-			
 			if(CommonsUtil.semValor(objetoCcb.getIntermediacaoValor()) || CommonsUtil.semValor(despesaTransferencia)) {
 				criarDespesa("Transferência", valorTranferencia, "TED");
 			} else {
@@ -850,6 +849,7 @@ public class CcbMB {
 				despesaAverbacao.setValor(averbacaoTotal);
 				contasPagarDao.merge(despesaAverbacao);
 			}
+			objetoCcb.setAverbacaoValor(averbacaoTotal);
 		} else if(!CommonsUtil.semValor(despesaAverbacao)) {
 			despesaAverbacao.setValor(BigDecimal.ZERO);
 			objetoCcb.getDespesasAnexo2().remove(despesaAverbacao);
@@ -878,7 +878,7 @@ public class CcbMB {
 			objetoCcb.setRegistroImovelValor(BigDecimal.ZERO);
 		}
 	}
-
+	
 	public List<String> completeTextNomes(){
 		List<String> listaNome = new ArrayList<>();
 		listaNome.add("Galache Engenharia Ltda");
@@ -1596,12 +1596,16 @@ public class CcbMB {
 			    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
 			    		if(participante.getSocios().size() > 0){
 			    			for(CcbParticipantes socio : participante.getSocios()) {
+			    				if(socio.getPessoa().getListAverbacao().size() <= 0) 
+			    					continue;
 			    				arquivo = ccbService.geraAverbacao(socio);
 				    			nomeDoc = socio.getPessoa().getNome() + "_" + "Averbacao.docx";
 					    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 					    		listaArquivos.put(nomeDoc, arquivo);
 			    			}
 			    		}
+			    		if(participante.getPessoa().getListAverbacao().size() <= 0) 
+	    					continue;
 			    		arquivo = ccbService.geraAverbacao(participante);
 			    		nomeDoc = participante.getPessoa().getNome() + "_" + "Averbacao.docx";
 			    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc); 	
@@ -1634,7 +1638,8 @@ public class CcbMB {
 	}
 		
 	public void geraFichaCadastro(PagadorRecebedor pagador) throws IOException{
-		try {CcbService ccbService = new CcbService(filesList, objetoCcb, simulador);
+		try {
+			CcbService ccbService = new CcbService(filesList, objetoCcb, simulador);
 			byte[] arquivo = ccbService.geraFichaCadastro(pagador);
 			ccbService.geraDownloadByteArray(arquivo, "Ficha Cadastro");
 		} catch (JRException e) {
@@ -1674,7 +1679,6 @@ public class CcbMB {
 		if (!CommonsUtil.semValor(this.objetoCcb.getValorCredito()) && this.objetoCcb.getVendaLeilao() != null) {
 			this.objetoCcb.setPorcentagemImovel(((this.objetoCcb.getVendaLeilao().divide(this.objetoCcb.getValorCredito(), MathContext.DECIMAL128)).multiply(BigDecimal.valueOf(100))).setScale(2, BigDecimal.ROUND_HALF_UP));	
 		}
-
 	}
 	
 	public void calcularSimulador() {

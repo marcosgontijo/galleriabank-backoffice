@@ -74,6 +74,7 @@ public class PlexiService {
 				result = new FacesMessage(FacesMessage.SEVERITY_ERROR, 
 						"Erro: " +  plexiCosulta.getPlexiDocumentos().getNome() 
 						+ " / HTTP:" + myURLConnection.getResponseCode(), "");
+				System.out.println(myURL);
 				System.out.println(getJsonSucessoStr(myURLConnection.getErrorStream()).toString());
 				System.out.println(myURLConnection.getResponseMessage());
 			} else {

@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
@@ -118,7 +119,6 @@ public class PagadorRecebedor implements Serializable {
 	private String contaDigitoPix;
 	
 	private boolean pixValidado;
-	
 	
 	private String idIugu;
 	
@@ -249,6 +249,7 @@ public class PagadorRecebedor implements Serializable {
 	
 	private List<DocumentosPagadorDocket> documentosDocket;
 	private List<CcbProcessosJudiciais> processos;
+	private Set<Averbacao> listAverbacao;
 	private BigDecimal valorProcessos;
 	
 	private User usuario;
@@ -2367,5 +2368,13 @@ public class PagadorRecebedor implements Serializable {
 
 	public void setTipoDocumento(String tipoDocumento) {
 		this.tipoDocumento = tipoDocumento;
+	}
+
+	public Set<Averbacao> getListAverbacao() {
+		return listAverbacao;
+	}
+
+	public void setListAverbacao(Set<Averbacao> listAverbacao) {
+		this.listAverbacao = listAverbacao;
 	}	
 }

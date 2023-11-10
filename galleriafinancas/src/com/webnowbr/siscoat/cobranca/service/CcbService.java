@@ -2765,6 +2765,7 @@ public class CcbService {
 	
 	public byte[] geraAverbacao(CcbParticipantes participante) throws IOException{
 		try {
+			
 			//PagadorRecebedor pagador
 			XWPFDocument document;
 			XWPFRun run;
@@ -2797,7 +2798,7 @@ public class CcbService {
 			
 			int index = 6;
 			boolean inicio = true;
-			for(Averbacao averbacao : participante.getListAverbacao()) {
+			for(Averbacao averbacao : participante.getPessoa().getListAverbacao()) {
 				if(!documentos.contains(averbacao.getDocumento())) {
 					documentos.add(averbacao.getDocumento());
 				}
