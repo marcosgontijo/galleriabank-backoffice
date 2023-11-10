@@ -1,112 +1,147 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">  
-<html xmlns="http://www.w3.org/1999/xhtml"  
-      xmlns:ui="http://java.sun.com/jsf/facelets"  
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:shiro="http://shiro.apache.org/tags"
-      xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:pe="http://primefaces.org/ui/extensions">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions">
 
-    <h:head>
-        <title>Galleria Bank</title>          
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-        <link rel="shortcut icon" type="image/x-icon" href="#{resource['image/Commons/icon.ico']}"></link>  
-	        <link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/css/Style.css" title="" media="all" />
-		<h:outputStylesheet library="webjars"
-			name="font-awesome/5.8.2/css/all.min-jsf.css" />
-		<h:outputStylesheet library="webjars"
-			name="font-awesome/5.8.2/css/v4-shims.min-jsf.css" />
-		<script src="#{request.contextPath}/resources/js/functions.js"></script>
-        <script src="#{request.contextPath}/resources/js/locale-primefaces.js"></script>
- 
-		<meta http-equiv="Access-Control-Allow-Origin" content="*"/>
-    </h:head>
-	<h:body onload="register_tab_GUID()">    
-		<p:layout fullPage="true" > 		    
-	  		<p:layoutUnit position="north" size="130" resizable="true" collapsible="true" style="BORDER:none; overflow: hidden;FONT-SIZE: 10pt;" spacingOpen="0">
-	  			<h:form id="menuSuperior">
-						<div style="margin-top: 14px;padding-right: 15px; display: flex; flex-direction: row">
+<h:head>
+	<title>Galleria Bank</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link rel="shortcut icon" type="image/x-icon"
+		href="#{resource['image/Commons/icon.ico']}"></link>
+	<link rel="stylesheet" type="text/css"
+		href="#{request.contextPath}/resources/css/Style.css" title=""
+		media="all" />
+	<h:outputStylesheet library="webjars"
+		name="font-awesome/5.8.2/css/all.min-jsf.css" />
+	<h:outputStylesheet library="webjars"
+		name="font-awesome/5.8.2/css/v4-shims.min-jsf.css" />
+	<script src="#{request.contextPath}/resources/js/functions.js"></script>
+	<script src="#{request.contextPath}/resources/js/locale-primefaces.js"></script>
+
+	<meta http-equiv="Access-Control-Allow-Origin" content="*" />
+</h:head>
+<h:body onload="register_tab_GUID()">
+	<p:layout fullPage="true">
+		<p:layoutUnit position="north" size="130" resizable="true"
+			collapsible="true"
+			style="BORDER:none; overflow: hidden;FONT-SIZE: 10pt;"
+			spacingOpen="0">
+			<h:form id="menuSuperior">
+				<div
+					style="margin-top: 14px; padding-right: 15px; display: flex; flex-direction: row">
 					<div style="width: 30%; vertical-align: top;">
-					<img src="/sistema/javax.faces.resource/image/LogoSiscoatSmall.png.xhtml" />
+						<img
+							src="/sistema/javax.faces.resource/image/LogoSiscoatSmall.png.xhtml" />
 					</div>
-				
-					  <div style="display: flex; flex-direction: row; width: 40%">
-					   <p:repeat var="modulo" value="#{menuItemMB.menuItemModulo}">
-					    <div>
-					    
-					    		<p:commandLink title="#{modulo.nome}"  action="#{modulo.getAcao}" ajax="false"><img src="#{modulo.icone}" alt=""/>
-					    		<f:setPropertyActionListener value="false" target="#{menuItemMB.clickFavorito}"></f:setPropertyActionListener>
-					    		</p:commandLink>
-								
-					    </div>
-					    <p:spacer width="40px"/>
-					   </p:repeat>
-					   <div>
-					   <p:commandLink title="Favoritos" action="#{menuItemMB.carregarFavoritos}" ajax="false"> <img src="#{resource['image/Commons/favorito.png']}" alt="" height="88" width="90"/></p:commandLink>
-					   </div>
-					   </div>
-					    <div><p:commandLink title="Sair" actionListener="#{logoutBean.logout}"><img src="#{resource['image/Commons/logoSair.png']}" alt=""/><p:confirm header="Confirmation" message="Deseja realmente sair?" icon="ui-icon-alert"/></p:commandLink></div>
-					    <div style="padding-top:5px; text-align: right; vertical-align: top; width: 30%" >
-					    <div style="vertical-align: top;">
-					    	<p:outputLabel value="Usuário:  " styleClass="usuarioLogin"/>
-					    	<h:outputText value="#{loginBean.username}" styleClass="usuarioLogin"/>
-					    	<br></br>
-					    	<br></br>
-					    	<p:clock pattern="dd/MM/yyyy HH:mm:ss"/>
-					    	</div>					    	
-					    </div>
-					  </div>
+
+					<div style="display: flex; flex-direction: row; width: 40%">
+						<p:repeat var="modulo" value="#{menuItemMB.menuItemModulo}">
+							<div>
+
+								<p:commandLink title="#{modulo.nome}" action="#{modulo.getAcao}"
+									ajax="false">
+									<img src="#{modulo.icone}" alt="" />
+									<f:setPropertyActionListener value="false"
+										target="#{menuItemMB.clickFavorito}"></f:setPropertyActionListener>
+								</p:commandLink>
+
+							</div>
+							<p:spacer width="40px" />
+						</p:repeat>
+						<div>
+							<p:commandLink title="Favoritos"
+								action="#{menuItemMB.carregarFavoritos}" ajax="false">
+								<img src="#{resource['image/Commons/favorito.png']}" alt=""
+									 />
+							</p:commandLink>
+						</div>
+					</div>
+					<div>
+						<p:commandLink title="Sair" actionListener="#{logoutBean.logout}">
+							<img src="#{resource['image/Commons/logoSair.png']}" alt="" />
+							<p:confirm header="Confirmation" message="Deseja realmente sair?"
+								icon="ui-icon-alert" />
+						</p:commandLink>
+					</div>
+					<div
+						style="padding-top: 5px; text-align: right; vertical-align: top; width: 30%">
+						<div style="vertical-align: top;">
+							<p:outputLabel value="Usuário:  " styleClass="usuarioLogin" />
+							<h:outputText value="#{loginBean.username}"
+								styleClass="usuarioLogin" />
+							<br></br> <br></br>
+							<p:clock pattern="dd/MM/yyyy HH:mm:ss" />
+						</div>
+					</div>
+				</div>
 
 
-					<p:confirmDialog global="true" showEffect="fade" widgetVar="logout">
-					   <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" onclick="logout.hide()"/>
-					   <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" onclick="logout.hide()"/>
-					</p:confirmDialog>				
-				</h:form>				
-	    	</p:layoutUnit> 	
-		    <p:layoutUnit id="menu" position="west" size="285" 
-		    resizable="true" closable="false" collapsible="true" 
-			 maxSize="285" spacingOpen="0" header="Siscoat">
-		    	<ui:insert name="menu">
+				<p:confirmDialog global="true" showEffect="fade" widgetVar="logout">
+					<p:commandButton value="Sim" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+						onclick="logout.hide()" />
+					<p:commandButton value="Não" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close"
+						onclick="logout.hide()" />
+				</p:confirmDialog>
+			</h:form>
+		</p:layoutUnit>
+		<p:layoutUnit id="menu" position="west" size="285" resizable="true"
+			closable="false" collapsible="true" maxSize="285" spacingOpen="0"
+			header="Siscoat">
+			
+			<ui:insert name="menu">
 				<h:form style="margin-bottom:10px;">
-					<p:menu style="width: 250px;" model="#{menuItemMB.modelAtendimento}"/>	
-						
-				</h:form>
-		    	</ui:insert>          			
-		    </p:layoutUnit>   	    			    		
-		    <p:layoutUnit position="center" id="conteudo" spacingOpen="0">
-				<ui:insert name="conteudo">						    	        		           
-                </ui:insert>
-		    </p:layoutUnit>
-		    <p:layoutUnit position="south" size="35" resizable="false" closable="true" style="BORDER:none;" spacingOpen="0">
-				<p:outputLabel value="Copyright © 2023 Todos os direitos reservados. " styleClass="labelBold"/>
-		    </p:layoutUnit>	
-		    <p:outputLabel value="#{termoMB.verificaTermosNaoAssinados()}"/>		    			   
-			
-		</p:layout>
+				<p:commandButton value="Favoritar" icon="ui-icon-star"
+						action="/Favoritos/FavoritosAtendimento.xhtml"></p:commandButton>
+					<p:menu style="width: 250px;"
+						model="#{menuItemMB.modelAtendimento}" />
 
-			
-	<p:dialog widgetVar="dlgTermos" showEffect="fade" modal="true" closable="false"
-		width="1000" height="570" minWidth="800">
-		
+				</h:form>
+			</ui:insert>
+		</p:layoutUnit>
+		<p:layoutUnit position="center" id="conteudo" spacingOpen="0">
+			<ui:insert name="conteudo">
+			</ui:insert>
+		</p:layoutUnit>
+		<p:layoutUnit position="south" size="35" resizable="false"
+			closable="true" style="BORDER:none;" spacingOpen="0">
+			<p:outputLabel
+				value="Copyright © 2023 Todos os direitos reservados. "
+				styleClass="labelBold" />
+		</p:layoutUnit>
+		<p:outputLabel value="#{termoMB.verificaTermosNaoAssinados()}" />
+
+	</p:layout>
+
+
+	<p:dialog widgetVar="dlgTermos" showEffect="fade" modal="true"
+		closable="false" width="1000" height="570" minWidth="800">
+
 		<h:form id="termoForm" onsubmit="handleResponse(xhr, status, args)">
-		
-			<p:dialog modal="true" widgetVar="statusDialogTermo" header="Carregando próximo termo" draggable="false" closable="false" resizable="false">
+
+			<p:dialog modal="true" widgetVar="statusDialogTermo"
+				header="Carregando próximo termo" draggable="false" closable="false"
+				resizable="false">
 				<p:graphicImage name="image/ajaxloadingbar.gif" />
 			</p:dialog>
-		
-			<div id="top"/>
-		
+
+			<div id="top" />
+
 			<div align="center">
-				<img src="#{termoMB.carregaPdfTermo()}" width="100%"  />
+				<img src="#{termoMB.carregaPdfTermo()}" width="100%" />
 			</div>
-		
-			
+
+
 			<div align="center">
-				<p:commandButton value="Aceitar" ajax="true" icon="ui-icon-check" id="btnAceite"
-					update=":termoForm" action="#{termoMB.aceitar()}"
-					widgetVar="btnAceite" 
+				<p:commandButton value="Aceitar" ajax="true" icon="ui-icon-check"
+					id="btnAceite" update=":termoForm" action="#{termoMB.aceitar()}"
+					widgetVar="btnAceite"
 					onclick="PF('btnAceite').disable(); PF('statusDialogTermo').show()"
 					oncomplete="javascript:window.location='#top' ; PF('statusDialogTermo').hide()"
 					style="TEXT-DECORATION: bold;" />
@@ -114,6 +149,6 @@
 		</h:form>
 
 	</p:dialog>
-	
+
 </h:body>
 </html>
