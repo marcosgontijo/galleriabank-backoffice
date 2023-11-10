@@ -464,6 +464,10 @@
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroAtrasoCRI4}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
 										styleClass="itemMenu" />
+									<p:menuitem value="Financeiro Atraso CRI 5"
+										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroAtrasoCRI5}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" />	
 									<p:menuitem value="Financeiro Atraso Securitizadora"
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroAtrasoSecuritizadora}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
@@ -496,6 +500,10 @@
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroDia('CRI 4')}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
 										styleClass="itemMenu" />
+									<p:menuitem value="Financeiro Dia CRI 5"
+										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroDia('CRI 5')}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" />	
 									<p:menuitem value="Financeiro Dia Pré Aprovado"
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroDia('PreAprovado')}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
@@ -520,6 +528,10 @@
 										styleClass="itemMenu" />
 									<p:menuitem value="Financeiro Dia Espelhamento CRI 4"
 										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroDiaEspelhamento('EspelhamentoCRI4')}"
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" />
+									<p:menuitem value="Financeiro Dia Espelhamento CRI 5"
+										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroDiaEspelhamento('EspelhamentoCRI5')}"
 										ajax="false" icon="ui-icon ui-icon-calculator"
 										styleClass="itemMenu" />
 								</shiro:hasAnyRoles>
@@ -560,6 +572,12 @@
 										styleClass="itemMenu" >
 										<f:setPropertyActionListener value="false" target="#{contratoCobrancaMB.financeiroGalleria}"/>
 									</p:menuitem>
+									<p:menuitem value="Financeiro Baixado CRI 5"
+										action="#{contratoCobrancaMB.clearFieldsRelFinanceiroBaixadoCRI5}" 
+										ajax="false" icon="ui-icon ui-icon-calculator"
+										styleClass="itemMenu" >
+										<f:setPropertyActionListener value="false" target="#{contratoCobrancaMB.financeiroGalleria}"/>
+									</p:menuitem>
 								</shiro:hasAnyRoles>
 								<shiro:hasAnyRoles name="ROOT, PROFILE_CONTROLLER, COBRANCA_BAIXA">
 									<p:menuitem value="Financeiro Recebedores"
@@ -592,6 +610,12 @@
 									</p:menuitem>
 									<p:menuitem value="Agente Espelhamento CRI 4"
 											action="#{contratoCobrancaMB.clearFieldsRelFinanceiroBaixadoCRI4}"
+											ajax="false" icon="ui-icon ui-icon-calculator"
+											styleClass="itemMenu" >
+											<f:setPropertyActionListener value="true" target="#{contratoCobrancaMB.financeiroGalleria}"/>
+									</p:menuitem>
+									<p:menuitem value="Agente Espelhamento CRI 5"
+											action="#{contratoCobrancaMB.clearFieldsRelFinanceiroBaixadoCRI5}"
 											ajax="false" icon="ui-icon ui-icon-calculator"
 											styleClass="itemMenu" >
 											<f:setPropertyActionListener value="true" target="#{contratoCobrancaMB.financeiroGalleria}"/>

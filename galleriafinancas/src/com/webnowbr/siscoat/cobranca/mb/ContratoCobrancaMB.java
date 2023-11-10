@@ -7519,7 +7519,8 @@ public class ContratoCobrancaMB {
 			} else if (this.objetoContratoCobranca.getEmpresa().equals("CRI 1")
 					|| this.objetoContratoCobranca.getEmpresa().equals("CRI 2")
 					|| this.objetoContratoCobranca.getEmpresa().equals("CRI 3")
-					|| this.objetoContratoCobranca.getEmpresa().equals("CRI 4")) {
+					|| this.objetoContratoCobranca.getEmpresa().equals("CRI 4")
+					|| this.objetoContratoCobranca.getEmpresa().equals("CRI 5")) {
 				this.selectedRecebedor = prDao.findById((long) 15765);
 			} else {
 				this.selectedRecebedor = prDao.findById((long) 803);
@@ -10819,6 +10820,18 @@ public class ContratoCobrancaMB {
 
 		return "/Atendimento/Cobranca/ContratoCobrancaFinanceiroBaixadoCRI4.xhtml";
 	}
+	
+	public String clearFieldsRelFinanceiroBaixadoCRI5() {
+		this.relDataContratoInicio = DateUtil.gerarDataHoje();
+		this.relDataContratoFim = DateUtil.gerarDataHoje();
+
+		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
+		this.selectedContratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
+		relatorioFinanceiroCobrancaResumo = new RelatorioFinanceiroCobrancaResumo();
+		this.contratoGerado = false;
+
+		return "/Atendimento/Cobranca/ContratoCobrancaFinanceiroBaixadoCRI5.xhtml";
+	}
 
 	public String clearFieldsRelFinanceiroRecebedor() {
 		this.relDataContratoInicio = null;
@@ -10987,6 +11000,15 @@ public class ContratoCobrancaMB {
 			stackedGroupBarModel = new BarChartModel();
 
 			this.tituloPainel = "CRI 4";
+		}
+		
+		if (empresa.equals("CRI 5")) {
+			this.contratos = contratoCobrancaDao.consultaContratosUltimos10(empresa);
+
+			clearCRI5();
+			stackedGroupBarModel = new BarChartModel();
+
+			this.tituloPainel = "CRI 5";
 		}
 
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultar.xhtml";
@@ -11222,6 +11244,47 @@ public class ContratoCobrancaMB {
 	}
 
 	public void clearCRI3() {
+		this.somaContratos240 = BigDecimal.ZERO;
+		this.volumeCarteira = BigDecimal.ZERO;
+		this.somaContratos180 = BigDecimal.ZERO;
+		this.valorUltimaPareclaPaga = BigDecimal.ZERO;
+		this.qtdDeparcelasVencidas = 0;
+		this.inadimplencia30Soma = BigDecimal.ZERO;
+		this.inadimplencia60Soma = BigDecimal.ZERO;
+		this.inadimplencia90Soma = BigDecimal.ZERO;
+		this.inadimplencia30Porcentagem = BigDecimal.ZERO;
+		this.inadimplencia60Porcentagem = BigDecimal.ZERO;
+		this.inadimplencia90Porcentagem = BigDecimal.ZERO;
+
+		this.contratosInadimplencia30 = new ArrayList<ContratoCobranca>();
+		this.contratosInadimplencia60 = new ArrayList<ContratoCobranca>();
+		this.contratosInadimplencia90 = new ArrayList<ContratoCobranca>();
+		this.contratoPrazoMin = new ArrayList<ContratoCobranca>();
+
+		this.prazoMax = BigDecimal.ZERO;
+		this.prazoMedio = BigDecimal.ZERO;
+		this.prazoMin = BigDecimal.valueOf(0);
+
+		this.taxaMax = BigDecimal.ZERO;
+		this.taxaMedia = BigDecimal.ZERO;
+		this.taxaMin = BigDecimal.valueOf(0);
+
+		this.taxaMaxIPCA = BigDecimal.ZERO;
+		this.taxaMediaIPCA = BigDecimal.ZERO;
+		this.taxaMinIPCA = BigDecimal.valueOf(0);
+
+		this.ltvMax = BigDecimal.ZERO;
+		this.ltvMedio = BigDecimal.ZERO;
+		this.ltvMin = BigDecimal.valueOf(0);
+
+		this.totalContratosConsultar = 0;
+
+		this.totalAVencer = BigDecimal.ZERO;
+		this.porcentagem240 = BigDecimal.ZERO;
+		this.porcentagem180 = BigDecimal.ZERO;
+	}
+	
+	public void clearCRI5() {
 		this.somaContratos240 = BigDecimal.ZERO;
 		this.volumeCarteira = BigDecimal.ZERO;
 		this.somaContratos180 = BigDecimal.ZERO;
@@ -12907,6 +12970,22 @@ public class ContratoCobrancaMB {
 
 		return "/Atendimento/Cobranca/ContratoCobrancaFinanceiroAtrasoCRI4.xhtml";
 	}
+	
+	public String clearFieldsRelFinanceiroAtrasoCRI5() {
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataInicio = Calendar.getInstance(zone, locale);
+		this.relDataContratoInicio = dataInicio.getTime();
+		this.relDataContratoFim = dataInicio.getTime();
+
+		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
+		this.selectedContratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
+		relatorioFinanceiroCobrancaResumo = new RelatorioFinanceiroCobrancaResumo();
+
+		this.contratoGerado = false;
+
+		return "/Atendimento/Cobranca/ContratoCobrancaFinanceiroAtrasoCRI5.xhtml";
+	}
 
 	public String clearFieldsRelFinanceiroAtrasoSecuritizadora() {
 
@@ -13310,6 +13389,28 @@ public class ContratoCobrancaMB {
 		} else {
 			this.relObjetoContratoCobranca = contratoCobrancaDao
 					.relatorioFinanceiroBaixadoPeriodoTotalCRI4(this.relDataContratoInicio, this.relDataContratoFim);
+		}
+
+		this.relSelectedObjetoContratoCobranca = new RelatorioFinanceiroCobranca();
+
+		if (this.relObjetoContratoCobranca.size() == 0) {
+			this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
+		}
+
+		geraResumo();
+
+		this.contratoGerado = false;
+	}
+	
+	public void geraRelFinanceiroBaixadoCRI5() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+
+		if (this.financeiroGalleria) {
+			this.relObjetoContratoCobranca = contratoCobrancaDao
+					.relatorioFinanceiroBaixadoPeriodoTotalCRI55(this.relDataContratoInicio, this.relDataContratoFim);
+		} else {
+			this.relObjetoContratoCobranca = contratoCobrancaDao
+					.relatorioFinanceiroBaixadoPeriodoTotalCRI5(this.relDataContratoInicio, this.relDataContratoFim);
 		}
 
 		this.relSelectedObjetoContratoCobranca = new RelatorioFinanceiroCobranca();
@@ -14582,6 +14683,36 @@ public class ContratoCobrancaMB {
 
 		// Busca Contratos com Parcelas que vencem no dia atual
 		relObjetoContratoCobrancaAux = contratoCobrancaDao.relatorioControleEstoqueAtrasoFullCRI4(DateUtil.gerarDataHoje());
+
+		// exclui o registro, quando o pagador é a Galleria SA
+		/*
+		 * if (relObjetoContratoCobrancaAux.size() > 0) { for
+		 * (RelatorioFinanceiroCobranca r : relObjetoContratoCobrancaAux) { if
+		 * (r.getContratoCobranca().getPagador().getId() != 14) {
+		 * this.relObjetoContratoCobranca.add(r); } } }
+		 */
+		if (relObjetoContratoCobrancaAux.size() > 0) {
+			this.relObjetoContratoCobranca = relObjetoContratoCobrancaAux;
+		}
+
+		processaDadosRelFinanceiroAtrasoFull();
+
+		this.relSelectedObjetoContratoCobranca = new RelatorioFinanceiroCobranca();
+
+		if (this.relObjetoContratoCobranca.size() == 0) {
+			this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
+		}
+
+		this.contratoGerado = false;
+	}
+	
+	public void geraRelFinanceiroAtrasoCRI5() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
+		List<RelatorioFinanceiroCobranca> relObjetoContratoCobrancaAux = new ArrayList<RelatorioFinanceiroCobranca>();
+
+		// Busca Contratos com Parcelas que vencem no dia atual
+		relObjetoContratoCobrancaAux = contratoCobrancaDao.relatorioControleEstoqueAtrasoFullCRI5(DateUtil.gerarDataHoje());
 
 		// exclui o registro, quando o pagador é a Galleria SA
 		/*
@@ -20989,7 +21120,8 @@ public class ContratoCobrancaMB {
 				} else if (this.objetoContratoCobranca.getEmpresa().equals("CRI 1")
 						|| this.objetoContratoCobranca.getEmpresa().equals("CRI 2")
 						|| this.objetoContratoCobranca.getEmpresa().equals("CRI 3")
-						|| this.objetoContratoCobranca.getEmpresa().equals("CRI 4")) {
+						|| this.objetoContratoCobranca.getEmpresa().equals("CRI 4")
+						|| this.objetoContratoCobranca.getEmpresa().equals("CRI 5")) {
 					this.selectedRecebedor = prDao.findById((long) 15765);
 				} else {
 					this.selectedRecebedor = prDao.findById((long) 803);
@@ -21037,6 +21169,8 @@ public class ContratoCobrancaMB {
 				this.selectedRecebedor = prDao.findById((long) 39103);
 			} else if (this.objetoContratoCobranca.getEmpresa().equals("CRI 4")) {
 				this.selectedRecebedor = prDao.findById((long) 57385);
+			} else if (this.objetoContratoCobranca.getEmpresa().equals("CRI 5")) {
+				this.selectedRecebedor = prDao.findById((long) 74381);
 			} else {
 				this.selectedRecebedor = prDao.findById((long) 803); // galleria sec
 			}
@@ -21097,7 +21231,8 @@ public class ContratoCobrancaMB {
 				} else if (this.objetoContratoCobranca.getEmpresa().equals("CRI 1")
 						|| this.objetoContratoCobranca.getEmpresa().equals("CRI 2")
 						|| this.objetoContratoCobranca.getEmpresa().equals("CRI 3")
-						|| this.objetoContratoCobranca.getEmpresa().equals("CRI 4")) {
+						|| this.objetoContratoCobranca.getEmpresa().equals("CRI 4")
+						|| this.objetoContratoCobranca.getEmpresa().equals("CRI 5")) {
 					this.selectedRecebedor = prDao.findById((long) 15765);
 				} else {
 					this.selectedRecebedor = prDao.findById((long) 803);
