@@ -101,9 +101,9 @@ public class BigDataService {
 				PagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
 						DocumentosAnaliseEnum.PROCESSOB, retornoConsulta);
 
-				String base64 = baixarDocumentoProcesso(documentoAnalise);
+				//String base64 = baixarDocumentoProcesso(documentoAnalise);
 				FileService fileService = new FileService();
-				fileService.salvarPdfRetorno(documentoAnalise, base64, "Processo", "interno");
+				//fileService.salvarPdfRetorno(documentoAnalise, base64, "Processo", "interno");
 				return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
 
 			}

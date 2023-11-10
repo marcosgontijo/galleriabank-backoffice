@@ -896,7 +896,7 @@ public class DocketService {
 			String base64 = docketService.getPdfBase64(documentoPdf);
 			docketConsulta.setPdf(base64);
 			FileService fileService = new FileService();
-			fileService.salvarPdfRetorno(docketConsulta.getDocumentoAnalise(), base64, documentoRetorno.getDocumentoNome(), "interno");
+			//fileService.salvarPdfRetorno(docketConsulta.getDocumentoAnalise(), base64, documentoRetorno.getDocumentoNome(), "interno");
 		} else {
 			docketConsulta.setStatus("Consulta Sem PDF");
 		}

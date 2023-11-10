@@ -211,7 +211,7 @@ public class PlexiService {
 		}
 		plexi.setStatus("Consulta Concluída");	
 		plexiConsultaDao.merge(plexi);
-		salvarPdfRetornoPlexi(plexi);
+		//salvarPdfRetornoPlexi(plexi);
 	}
 	
 	public void atualizarDocumentos(PlexiConsulta plexiConsulta) {
@@ -278,7 +278,7 @@ public class PlexiService {
 	
 	public void salvarPdfRetornoPlexi(PlexiConsulta plexiConsulta) {
 		PlexiConsultaDao plexiConsultaDao = new PlexiConsultaDao();
-		salvarPdfRetornoPlexi(plexiConsulta, plexiConsultaDao);
+		//salvarPdfRetornoPlexi(plexiConsulta, plexiConsultaDao);
 	}
 	
 	public void salvarPdfRetornoPlexi(PlexiConsulta plexiConsulta, PlexiConsultaDao plexiConsultaDao) {

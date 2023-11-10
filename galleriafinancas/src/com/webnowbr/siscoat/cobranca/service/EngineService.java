@@ -587,7 +587,7 @@ public class EngineService {
 		documentoAnaliseDao.merge(documentoAnalise);
 		String base64 = documentoAnalise.getEngine().getPdfBase64();
 		FileService fileService = new FileService();
-		fileService.salvarPdfRetorno(documentoAnalise, base64, "Processo", "interno");
+		//fileService.salvarPdfRetorno(documentoAnalise, base64, "Processo", "interno");
 
 	}
 

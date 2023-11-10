@@ -106,7 +106,7 @@ public class NetrinService {
 			if(!CommonsUtil.semValor(response)) 
 				base64 = baixarDocumentoCenprot(response);
 			FileService fileService = new FileService();
-			fileService.salvarPdfRetorno(documentoAnalise, base64, "Cenprot", "interno");
+			//fileService.salvarPdfRetorno(documentoAnalise, base64, "Cenprot", "interno");
 			result = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
 
 		} catch (Exception e) {
@@ -1152,7 +1152,7 @@ public class NetrinService {
 				
 				String base64 = baixarDocumentoCNDTrabalhistaTST(documentoAnalise);
 				FileService fileService = new FileService();
-				fileService.salvarPdfRetorno(documentoAnalise, base64, "CNDT TST", "interno");
+				//fileService.salvarPdfRetorno(documentoAnalise, base64, "CNDT TST", "interno");
 				
 				return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
 
@@ -1362,7 +1362,7 @@ public class NetrinService {
 				
 				String base64 = baixarDocumentoCNDFederal(documentoAnalise);
 				FileService fileService = new FileService();
-				fileService.salvarPdfRetorno(documentoAnalise, base64, "CND Federal", "interno");
+				//fileService.salvarPdfRetorno(documentoAnalise, base64, "CND Federal", "interno");
 
 				return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
 
@@ -1578,7 +1578,7 @@ public class NetrinService {
 				}
 				String base64 = baixarDocumentoCNDEstadual(retornoConsulta);
 				FileService fileService = new FileService();
-				fileService.salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
+				//fileService.salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
 				return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
 			}
 
@@ -1809,7 +1809,7 @@ public class NetrinService {
 		base64 = netrinConsulta.getPdf();
 		nomedoc = netrinConsulta.getNomeCompleto();
 		FileService fileService = new FileService();
-		fileService.salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
+		//fileService.salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
 	}
 	
 	private void requestCndEstadualNetrinConulta(NetrinConsulta netrinConsulta, DocumentoAnalise documentoAnalise,
@@ -1830,7 +1830,7 @@ public class NetrinService {
 		base64 = netrinConsulta.getPdf();
 		nomedoc = netrinConsulta.getNomeCompleto();
 		FileService fileService = new FileService();
-		fileService.salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
+		//fileService.salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
 		
 	}
 	
@@ -1852,7 +1852,7 @@ public class NetrinService {
 		base64 = netrinConsulta.getPdf();
 		nomedoc = netrinConsulta.getNomeCompleto();
 		FileService fileService = new FileService();
-		fileService.salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
+		//fileService.salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
 		
 	}
 
@@ -1874,7 +1874,7 @@ public class NetrinService {
 		base64 = netrinConsulta.getPdf();
 		nomedoc = netrinConsulta.getNomeCompleto();
 		FileService fileService = new FileService();
-		fileService.salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
+		//fileService.salvarPdfRetorno(documentoAnalise, base64, nomedoc, "interno");
 	}
 	
 	public void atualizaRetorno(List<DocumentoAnalise> listDocAnalise, User user) {
@@ -1943,6 +1943,6 @@ public class NetrinService {
 		netrinConsultaDao.merge(netrin);
 		String base64 = netrin.getPdf();
 		FileService fileService = new FileService();
-		fileService.salvarPdfRetorno(netrin.getDocumentoAnalise(), base64, netrin.getNomeCompleto(), "interno");
+		//fileService.salvarPdfRetorno(netrin.getDocumentoAnalise(), base64, netrin.getNomeCompleto(), "interno");
 	}
 }
