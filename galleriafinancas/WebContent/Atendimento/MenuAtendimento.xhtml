@@ -15,7 +15,7 @@
 			<ui:define name="menu">
 				<h:form style="margin-bottom:10px;" id="menuAtendimentoForm">
 					<p:commandButton value="Favoritar"
-						action="/Favoritos/FavoritosAtendimento.xhtml"></p:commandButton>
+						action="#{menuItemMB.carregafavoritar}"></p:commandButton>
 					<p:menu style="width: 250px;"
 						model="#{menuItemMB.modelAtendimento}" />
 

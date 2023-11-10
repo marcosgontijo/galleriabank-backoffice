@@ -37,6 +37,7 @@
 					    
 					    		<p:commandLink title="#{modulo.nome}"  action="#{modulo.getAcao}" ajax="false"><img src="#{modulo.icone}" alt=""/>
 					    		<f:setPropertyActionListener value="false" target="#{menuItemMB.clickFavorito}"></f:setPropertyActionListener>
+					    		<f:setPropertyActionListener value="#{modulo.nome}" target="#{menuItemMB.menuAtual}"></f:setPropertyActionListener>
 					    		</p:commandLink>
 								
 					    </div>
