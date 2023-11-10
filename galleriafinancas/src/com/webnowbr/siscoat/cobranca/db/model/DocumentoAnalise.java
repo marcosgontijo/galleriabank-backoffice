@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Date;
@@ -14,6 +15,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Set;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -261,8 +264,26 @@ public class DocumentoAnalise implements Serializable {
 		} else {
 			str = this.getIdentificacao();
 			str = String.join(" - ", str, this.cnpjcpf);
+
+		}
+		if (this.pagador.getInicioEmpresa() != null) {
+			str = String.join(" - ", str, calcularIdade(this.pagador.getInicioEmpresa()) + " Anos");
 		}
 		return str;
+	}
+	
+	public String calcularIdade(Date data) {
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+		Date dateHoje = dataHoje.getTime();
+
+		long idadeLong = dateHoje.getTime() - data.getTime();
+		idadeLong = TimeUnit.DAYS.convert(idadeLong, TimeUnit.MILLISECONDS);
+		idadeLong = idadeLong / 30;
+		idadeLong = idadeLong / 12;
+		
+		return CommonsUtil.stringValue(idadeLong);
 	}
 
 	public List<DocumentoAnaliseResumo> getResumoEngine() {
