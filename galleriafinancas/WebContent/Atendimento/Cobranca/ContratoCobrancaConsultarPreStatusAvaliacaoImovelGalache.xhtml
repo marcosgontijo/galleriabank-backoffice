@@ -32,7 +32,7 @@
 			</script>			
 			<p:messages id="mensagens" showDetail="true"/>									
 			<p:panel id="ConsultaContratos" header="Pré-Contratos #{contratoCobrancaMB.tituloTelaConsultaPreStatus} - Consultar" style="margin-bottom:10px;">					    		    
-   		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratosPendentes}" selection="" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending"
+   		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratosPendentes}" selection="" emptyMessage=""
    		         rowStyleClass="#{contratos.iniciouGeracaoLaudo eq true ? 'parcelaPaga' : '' }
    		          	#{(contratos.cadastroAprovadoValor eq 'Pendente') ? 'linhaRoxa' : '' }
    		        	#{(contratos.pendenciaLaudoPaju eq true) ? 'parcelaparcial' : '' }

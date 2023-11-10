@@ -70,7 +70,7 @@
 				</h:panelGrid>
 			</p:panel>									
 			<p:panel id="ConsultaContratos" header="Pré-Contratos #{contratoCobrancaMB.tituloTelaConsultaPreStatus} - Consultar" style="margin-bottom:10px;">					    		    
-   		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratosPendentes}" selection="" emptyMessage="" sortBy="#{contratos.dataUltimaAtualizacao}" sortOrder="ascending"
+   		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratosPendentes}" selection="" emptyMessage=""
    		         rowStyleClass="#{(contratos.pendenciaPagamento eq true or contratos.contatoDiferenteProprietario eq true) ? 'parcelaVencendo' : '' }
 	   		         #{(contratos.laudoRecebido eq true and contratos.pajurFavoravel eq true) ? 'parcelaPaga' : '' }
 	   		         #{(contratos.cadastroAprovadoValor eq 'Pendente') ? 'linhaRoxa' : '' }

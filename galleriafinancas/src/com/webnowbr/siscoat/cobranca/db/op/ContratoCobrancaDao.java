@@ -6955,6 +6955,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				ResultSet rs = null;			
 				try {
 					String query = QUERY_CONTRATOS_CRM;
+					String order = " order by contratoprioridadealta desc, dataultimaatualizacao ";
 					
 					query = query + "where status != 'Aprovado' and status != 'Reprovado' and status != 'Baixado' and status != 'Desistência Cliente' " ;
 					
@@ -6962,10 +6963,12 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					if (tipoConsulta.equals("Todos")) {
 						//
 						query = query + " and res.codigo != 'lead' and c.statusLead != 'Em Tratamento'";
+						order = " order by id desc";
 					}
 					
 					if (tipoConsulta.equals("Lead")) {
 						query = query + " and inicioanalise = false and c.statusLead != 'Completo' and c.statusLead != 'Reprovado' and c.statusLead != 'Arquivado' "; 
+						order = " order by id desc";
 					}
 					
 					if (tipoConsulta.equals("Aguardando Análise")) {
@@ -6987,6 +6990,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					if (tipoConsulta.equals("Análise Aprovada CRM")) {
 						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' and pedidoLaudoPajuComercial = false";
+						order = " order by id desc";
 					}
 					
 					if (tipoConsulta.equals("Análise Aprovada")) {
@@ -7025,7 +7029,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' "
 								+ " and pendenciaLaudoPaju = false "
-								+ " and pedidoLaudoPajuComercial = true and pagtoLaudoConfirmada = true and pajurFavoravel = false";
+								+ " and pedidoLaudoPajuComercial = true and pagtoLaudoConfirmada = true and pajurFavoravel = false";				
+						order = " order by contratoprioridadealta desc, pagtolaudoconfirmadadata ";
 					}
 					
 					if (tipoConsulta.equals("Geração do PAJU - Neves")) {
@@ -7034,6 +7039,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 								+ " and pendenciaLaudoPaju = false "
 								+ " and pedidoLaudoPajuComercial = true and pagtoLaudoConfirmada = true and pajurFavoravel = false"
 								+ " and avaliacaoPaju = 'Neves' ";
+						order = " order by contratoprioridadealta desc, pagtolaudoconfirmadadata ";
 					}
 					
 					if (tipoConsulta.equals("Geração do PAJU - Luvison")) {
@@ -7042,6 +7048,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 								+ " and pendenciaLaudoPaju = false "
 								+ " and pedidoLaudoPajuComercial = true and pagtoLaudoConfirmada = true and pajurFavoravel = false"
 								+ " and avaliacaoPaju = 'Luvison' ";
+						order = " order by contratoprioridadealta desc, pagtolaudoconfirmadadata ";
 					}
 					
 					if (tipoConsulta.equals("Pedir PAJU")) {
@@ -7236,7 +7243,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						}
 					}
 					
-					query = query + " order by id desc";
+					query = query + order;
 					
 					connection = getConnection();
 					ps = connection
