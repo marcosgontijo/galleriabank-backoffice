@@ -1114,3 +1114,8 @@
 	font-size: 18px;
 	font-weight: bold;
 }
+
+.overflowy {
+	height:87% !important;
+	overflow-y: scroll !important;
+}

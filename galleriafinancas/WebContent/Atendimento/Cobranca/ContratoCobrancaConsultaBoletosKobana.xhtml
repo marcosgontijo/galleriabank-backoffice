@@ -56,6 +56,7 @@
 						<f:selectItem itemValue="CRI 2" itemLabel="CRI 2" />
 						<f:selectItem itemValue="CRI 3" itemLabel="CRI 3" />
 						<f:selectItem itemValue="CRI 4" itemLabel="CRI 4" />
+						<f:selectItem itemValue="CRI 5" itemLabel="CRI 5" />
 					</p:selectOneMenu>
 				</h:panelGrid>
 				
@@ -198,6 +199,9 @@
 							<f:setPropertyActionListener 
 								target="#{contratoCobrancaMB.rowEditNewDate}"
 								value="#{boleto.paidAt}" />
+							<f:setPropertyActionListener 
+								target="#{contratoCobrancaMB.selectedBoletosKobanaBaixa}"
+								value="#{boleto}" />									
 						</p:commandButton>
 						<p:commandButton onclick="PF('baixaParcialMultiParcelasDialog').show();"
 							title="Baixar Parcela - MultiParcelas" icon="ui-icon-circle-plus"
@@ -329,7 +333,7 @@
 				</p:panel>
 
 				<div align="center" style="margin-top: 20px;">
-					<shiro:hasAnyRoles name="ROOT">
+					<shiro:hasAnyRoles name="ROOT, PROFILE_CONSULTA_KOBANA">
 						<p:commandButton
 							action="#{contratoCobrancaMB.baixarParcelasKobanaLote()}" ajax="false" 
 							icon="ui-icon-transferthick-e-w" value="Baixar"
@@ -423,7 +427,7 @@
 				</p:panel>
 
 				<div align="center" style="margin-top: 20px;">
-					<shiro:hasAnyRoles name="ROOT">
+					<shiro:hasAnyRoles name="ROOT, PROFILE_CONSULTA_KOBANA">
 						<p:commandButton
 							action="#{contratoCobrancaMB.baixarMultiParcelaParcial()}" ajax="false" 
 							icon="ui-icon-transferthick-e-w" value="Baixar"
@@ -557,7 +561,7 @@
 				</p:panel>
 
 				<div align="center" style="margin-top: 20px;">
-					<shiro:hasAnyRoles name="ROOT">
+					<shiro:hasAnyRoles name="ROOT, PROFILE_CONSULTA_KOBANA">
 						<p:commandButton
 							action="#{contratoCobrancaMB.baixarParcelaParcial}" ajax="false"
 							icon="ui-icon-transferthick-e-w" value="Baixar"

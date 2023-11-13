@@ -61,7 +61,7 @@
 		<repository>
 			<id>org.primefaces</id>
 			<url>https://repository.primefaces.org//</url>
-		</repository>		
+		</repository>	
 		<repository>
 			<id>galleriabank_nexus</id>
 			<name>galleriabank repo</name>
@@ -404,6 +404,11 @@
 			<groupId>br.com.galleriabank.bigdata-cliente</groupId>
 			<artifactId>bigdata-cliente</artifactId>
 			<version>1.0.5</version>
+		</dependency>		
+		<dependency>
+			<groupId>br.com.galleriabank.debit-cliente</groupId>
+			<artifactId>debit-cliente</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 	</dependencies>
 </project>

@@ -11,6 +11,7 @@ import org.quartz.JobExecutionException;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
+import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.infra.db.model.User;
 
 public class CertidoesJob implements Job {
@@ -40,10 +41,12 @@ public class CertidoesJob implements Job {
 			List<DocumentoAnalise> listaDocumentoAnalise = (List<DocumentoAnalise>) dataMap.get("listaDocumentoAnalise");
 	        User user = (User) dataMap.get("user");
 	        ContratoCobranca objetoContratoCobranca = (ContratoCobranca) dataMap.get("objetoContratoCobranca");
+	        String tipoProcesso =  (String) dataMap.get("tipoProcesso");
 	        
 	        certidoesJobConsultar.listaDocumentoAnalise = listaDocumentoAnalise;
 	        certidoesJobConsultar.user = user;
 	        certidoesJobConsultar.objetoContratoCobranca = objetoContratoCobranca;
+	        certidoesJobConsultar.tipoProcesso = tipoProcesso;
 	        
 			jobKey = "" + context.getJobDetail().getKey();
 			//if (LOGGER.isDebugEnabled()) {
@@ -64,9 +67,15 @@ public class CertidoesJob implements Job {
 
 	public void consultarPesquisas() {
 		try {
-			System.out.println("incio CertidoesJob" + certidoesJobConsultar.objetoContratoCobranca.getNumeroContrato());
-			certidoesJobConsultar.executarConsultasCertidoes();
-			System.out.println("Fim CertidoesJob - " + certidoesJobConsultar.objetoContratoCobranca.getNumeroContrato());
+			if(CommonsUtil.mesmoValor(certidoesJobConsultar.tipoProcesso, "ConsultarPesquisas")) {
+				System.out.println("incio CertidoesJob" + certidoesJobConsultar.objetoContratoCobranca.getNumeroContrato());
+				certidoesJobConsultar.executarConsultasCertidoes();
+				System.out.println("Fim CertidoesJob - " + certidoesJobConsultar.objetoContratoCobranca.getNumeroContrato());
+			} else if(CommonsUtil.mesmoValor(certidoesJobConsultar.tipoProcesso, "AtualizarPesquisas")) {
+				System.out.println("incio AtualizarCertidoesJob" + certidoesJobConsultar.objetoContratoCobranca.getNumeroContrato());
+				certidoesJobConsultar.atualizarConsultasCertidoes();
+				System.out.println("Fim AtualizarCertidoesJob - " + certidoesJobConsultar.objetoContratoCobranca.getNumeroContrato());
+			}
  		} catch (Exception e) {
 			System.out.println("CertidoesJob.execute " + "CertidoesJob: EXCEPTION" +  e.toString() + " - " + certidoesJobConsultar);
 			e.printStackTrace();

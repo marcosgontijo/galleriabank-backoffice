@@ -107,7 +107,8 @@ public class PlexiDocumentosDao extends HibernateDao<PlexiDocumentos, Long> {
 					while (rs.next()) {
 						PlexiDocumentos doc = plexiDocumentosDao.findById(rs.getLong(1));
 						if(CommonsUtil.mesmoValor(doc.getUrl(), "/api/maestro/receita/qsa")
-								&& !CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise(), "Proprietario Atual")) {
+								&& !CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise(), "Proprietario Atual")
+								&&  !CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise(), "Comprador")) {
 							continue;
 						}
 						documentosPf.add(doc);

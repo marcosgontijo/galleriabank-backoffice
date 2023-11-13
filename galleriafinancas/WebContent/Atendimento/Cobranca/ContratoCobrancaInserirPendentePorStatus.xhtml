@@ -987,7 +987,7 @@
 
 
 				<h:panelGroup id="comentarioComitePanel" style="margin-bottom:20px;">
-					<p:panel header="Comentário Comitê" rendered="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite.size() > 0 and ( usuarioMB.objetoUsuario.administrador or ( contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'))}">
+					<p:panel header="Comentário Comitê" rendered="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite.size() > 0 and ( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'))}">
 						<p:outputLabel id="comentarioComite"
 							value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioComite}"
 							styleClass="labelBold" />
@@ -1267,6 +1267,46 @@
 					</p:panel>
 				</h:panelGroup>
 
+				<h:panelGroup id="DadosAleradosPanelView"
+					style="margin-bottom:20px;">
+					<p:panel header="Dados Alterados Comercial"
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.dadosAprovadosComercial}">
+						<h:panelGrid columns="2">
+
+							<p:outputLabel for="valorAlteradoComercialView"
+								rendered="#{contratoCobrancaMB.objetoContratoCobranca.valorAprovadoComercial != null}"
+								value="Valor Alterado: " styleClass="labelBold" />
+							<h:panelGroup
+								rendered="#{contratoCobrancaMB.objetoContratoCobranca.valorAprovadoComercial != null}">
+								<h:outputText value="R$ " />
+								<p:outputLabel id="valorAlteradoComercialView"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.valorAprovadoComercial}"
+									converter="bigDecimalConverter"
+									style="FONT-SIZE: 10pt;width:100px;" />
+							</h:panelGroup>
+
+							<p:outputLabel for="prazoAlteradoComercialView"
+								rendered="#{contratoCobrancaMB.objetoContratoCobranca.prazoAprovadoComercial != null}"
+								value="Prazo Alterado: " styleClass="labelBold" />
+							<h:panelGroup rendered="#{contratoCobrancaMB.objetoContratoCobranca.prazoAprovadoComercial != null}">
+								<p:outputLabel id="prazoAlteradoComercialView" showOn="button"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.prazoAprovadoComercial}"
+									size="100" style="width:60px;" />
+								<p:outputLabel value=" meses" />
+							</h:panelGroup>
+
+							<p:outputLabel for="tipoCalculoAlteradoComercialView"
+								showOn="button" value="Tipo Cálculo Alterado: "
+								rendered="#{contratoCobrancaMB.objetoContratoCobranca.tipoCalculoAprovadoComercial != null}"
+								styleClass="labelBold" />
+							<p:outputLabel id="tipoCalculoAlteradoComercialView"
+								rendered="#{contratoCobrancaMB.objetoContratoCobranca.tipoCalculoAprovadoComercial != null}"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.tipoCalculoAprovadoComercial}" />
+
+						</h:panelGrid>
+					</p:panel>
+				</h:panelGroup>
+
 				<h:panelGroup id="AnaliseReprovadaPanel">
 					<p:panel
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada || contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Reprovado' }"
@@ -1394,7 +1434,7 @@
 				
 				<h:panelGroup id="BoletoPanel" >
 					<p:panel id="BoletoPAJULaudo" header="Gerar Boleto PAJU e Laudo"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado' and ( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'))}" >
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado' and ( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'))}" >
 						<h:panelGrid columns="2"> 
 							<p:outputLabel for="vencimentoBoleto"
 								value="Data Vencimeto Boleto: " styleClass="labelBold" />
@@ -1511,7 +1551,7 @@
 
 				<h:panelGroup id="PreAprovadoPanel" style="margin-bottom:20px;">
 					<p:panel header="Pré-Aprovado"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise and ( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus !='Pré-Comite'))}">
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise and ( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus !='Pré-Comite'))}">
 						<f:facet name="header">
 							Pré-Aprovado
 							<p:commandButton icon="pi pi-refresh">
@@ -1742,7 +1782,7 @@
 					style="margin-bottom:20px;">
 					<p:panel header="Recebido PAJU e laudo"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise and ( usuarioMB.objetoUsuario.administrador or 
-						(contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'))}">
+						(contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'))}">
 						<h:panelGrid columns="2">
 							<h:panelGrid columns="2">
 								<p:outputLabel for="valorPreLaudo" value="Valor Pré Laudo: "
@@ -1955,18 +1995,18 @@
 							rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel == true}">
 							<p:dataTable var="averbacao" id="averbacaoDataTable"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.listAverbacao}"
-								style="width:350px;" size="small">
+								style="width:600px;" size="small">
 								<f:facet name="header">
 									<div align="left">
 										<p:outputLabel value="Averbações - " style="FONT-SIZE: 10pt;" />
-										<p:commandButton action="#{contratoCobrancaMB.clearAverbacao}"
+										<p:commandButton action="#{averbacaoMB.clearAverbacao(contratoCobrancaMB.objetoContratoCobranca)}"
 											icon="ui-icon ui-icon-plus" ajax="true"
 											oncomplete="PF('averbacaoDialog').show();"
 											update="averbacaoDialogdlg" />
 									</div>
 								</f:facet>
-								<p:column style="text-align: center;width:175px;"
-									headerText="descrição">
+								<p:column style="text-align: center;width:70px;"
+									headerText="Descrição">
 									<p:outputLabel value="#{averbacao.descricao}"
 										style="FONT-SIZE: 10pt;" />
 								</p:column>
@@ -1976,10 +2016,34 @@
 									<p:outputLabel value="#{averbacao.valor}"
 										style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
 								</p:column>
-
+								
+								<p:column style="text-align: center;width:70px;"
+									headerText="Tipo">
+									<p:outputLabel value="#{averbacao.tipoAverbacao}"
+										style="FONT-SIZE: 10pt;" />
+								</p:column>
+								
+								<p:column style="text-align: center;width:70px;"
+									headerText="Informação">
+									<p:outputLabel value="#{averbacao.informacao}"
+										style="FONT-SIZE: 10pt;" />
+								</p:column>
+								
+								<p:column style="text-align: center;width:70px;"
+									headerText="Texto1">
+									<p:outputLabel value="#{averbacao.texto1}"
+										style="FONT-SIZE: 10pt;" />
+								</p:column>
+								
+								<p:column style="text-align: center;width:70px;"
+									headerText="Texto2">
+									<p:outputLabel value="#{averbacao.texto2}"
+										style="FONT-SIZE: 10pt;" />
+								</p:column>
+								
 								<p:column style="text-align: center;width:25px;" headerText="">
 									<p:commandButton icon="ui-icon-trash"
-										action="#{contratoCobrancaMB.removeAverbacao(averbacao)}"
+										action="#{averbacaoMB.removeAverbacao(averbacao)}"
 										update="form:RecebidoPajulaudoPanel" />
 								</p:column>
 							</p:dataTable>
@@ -2235,7 +2299,7 @@
 							<p:outputLabel for="EMail" value="E-Mail: " />
 							<p:outputLabel id="EMail"
 								value="#{contratoCobrancaMB.objetoPagadorRecebedor.email}"
-								label="E-Mail" type="email" onblur="" style="width:400px;" />
+								label="E-Mail"  onblur="" style="width:400px;" />
 
 							<p:outputLabel for="pagadorDonoGarantia"
 								value="Pagador é dono da garantia?" />
@@ -2448,7 +2512,7 @@
 									<p:outputLabel for="EmailConjuge" value="E-mail: " />
 									<p:outputLabel id="EmailConjuge"
 										value="#{contratoCobrancaMB.objetoPagadorRecebedor.emailConjuge}"
-										label="E-Mail" type="email" onblur="" style="width:400px;" />
+										label="E-Mail"  onblur="" style="width:400px;" />
 
 									<p:outputLabel for="DtNascimentoConjuge"
 										value="Data de Nascimento: " />
@@ -2645,7 +2709,7 @@
 										<p:outputLabel for="SocioEMail" value="E-Mail: " />
 										<p:inputText id="SocioEMail"
 											value="#{contratoCobrancaMB.socioSelecionado.pessoa.email}"
-											label="E-Mail" type="email" onblur="" style="width:400px;" />
+											label="E-Mail"  onblur="" style="width:400px;" />
 
 										<p:outputLabel for="SocioDtNascimento"
 											value="Data de Nascimento: " />
@@ -2914,7 +2978,7 @@
 										<p:outputLabel for="EMailPagador" value="E-Mail: " />
 										<p:inputText id="EMailPagador"
 											value="#{contratoCobrancaMB.pagadorSecundarioSelecionado.pessoa.email}"
-											label="E-Mail" type="email" onblur="" style="width:400px;" />
+											label="E-Mail"  onblur="" style="width:400px;" />
 
 										<p:outputLabel for="DtNascimentoPagador"
 											value="Data de Nascimento: " />
@@ -3192,9 +3256,9 @@
 								listener="#{contratoCobrancaMB.objetoImovelCobranca.completeCidadesImovel}" />
 						</p:selectOneMenu>
 						
-						<p:outputLabel for="CidadeImovel" value="Cidade" style="FONT-SIZE: 10pt;" />
+						<p:outputLabel for="CidadeImovel" value="Cidade: " style="FONT-SIZE: 10pt;" />
 						<p:autoComplete id="CidadeImovel" value="#{contratoCobrancaMB.objetoImovelCobranca.cidade}"
-							completeMethod="#{contratoCobrancaMB.objetoImovelCobranca.completeCidadesImovel('')}" autocomplete="no" 
+							completeMethod="#{contratoCobrancaMB.objetoImovelCobranca.completeCidadesImovel}" 
 							var="cidade" itemLabel="#{cidade}" itemValue="#{cidade}"  dropdown="true"
 							forceSelection="false"
 							scrollHeight="250">
@@ -3324,6 +3388,7 @@
 								<f:selectItem itemValue="CRI 2" itemLabel="CRI 2" />
 								<f:selectItem itemValue="CRI 3" itemLabel="CRI 3" />
 								<f:selectItem itemValue="CRI 4" itemLabel="CRI 4" />
+								<f:selectItem itemValue="CRI 5" itemLabel="CRI 5" />
 							</p:selectOneMenu>
 
 							<p:outputLabel for="txHonorario" value="Honorários (%): "
@@ -3921,6 +3986,17 @@
 									onkeydown="FormataValor(this, 13, event, 2);"
 									converter="bigDecimalConverter" />
 							</h:panelGroup>
+							
+							<p:outputLabel for="valorCartorio" value="Valor de Cartório "
+								styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel value="R$ " />
+								<p:inputText id="valorCartorio"  style="FONT-SIZE: 10pt;width:125px;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.valorCartorio}"
+									size="100" onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);"
+									converter="bigDecimalConverter" />
+							</h:panelGroup>
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
@@ -3977,7 +4053,7 @@
 					</h:panelGrid>
 				</p:panel>
 
-				<p:panel id="AcaoObservacao" header="Motivo e Observação" style="margin-bottom:10px;" rendered="#{( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'))}">							
+				<p:panel id="AcaoObservacao" header="Motivo e Observação" style="margin-bottom:10px;" rendered="#{( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'))}">							
 					<h:panelGrid columns="3">					
 						<p:outputLabel for="Acao" value="Ação: " />
 						<p:inputText id="Acao" value="#{contratoCobrancaMB.objetoContratoCobranca.acao}" label="Ação" onblur=""  style="width:300px;"/>
@@ -4525,6 +4601,7 @@
 					}
 				</script>
 			</p:panel>
+			
 			<h:panelGroup id="votosComitePanel">
 				<p:panel header="Votos do Comite" rendered="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite and ( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'))}">
 					<p:dataView var="comite"
@@ -4665,7 +4742,7 @@
 				</script>
 			</p:panel>	
 					
-			<p:panel id="UploadArquivosJuridico" header="Arquivo Juridico(s)" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'}"   >						
+			<p:panel id="UploadArquivosJuridico" header="Arquivo Juridico(s)" style="margin-bottom:10px;" >						
 				<p:panel id="ArquivosJuridico" header="Selecionar Arquivo Para Upload" style="margin-bottom:10px;text-align: center;" rendered="#{( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'))}">							
 
 					<h:panelGrid columns="1">		
@@ -4688,9 +4765,10 @@
 									action="#{contratoCobrancaMB.getDownloadAllFilesJuridico()}">
 								</p:commandButton>
 								<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileJuridico}"/>
-								<p:commandButton value="Download selecionados" ajax="false">
-								<p:fileDownload value="#{contratoCobrancaMB.downloadFilesJuridico}"></p:fileDownload>
-								</p:commandButton>
+								<p:commandButton value="Download Selecionado(s)" ajax="false"
+									icon="ui-icon-arrowthick-1-s" immediate="true"
+									action="#{contratoCobrancaMB.getDownloadAllFilesJuridico()}">
+								</p:commandButton>	
 					        </f:facet>	        
 					        <p:column style="text-align: center;"
 								headerText="Nome do Arquivo" filterBy="#{filesJuridico.name}"
@@ -4886,8 +4964,6 @@
 				<p:commandButton value="Cancelar" immediate="true" icon="ui-icon-cancel" onclick="window.history.back();" style="TEXT-DECORATION: bold; "/>								
 			</div>			
 		</h:form>
-
-		
 
 		<p:dialog header="Arquivos da Conta" overflow="auto" id="dialogArquivosConta"
 			widgetVar="contaArquivosdlg" resizable="true" style="FONT-SIZE: 13pt;"
@@ -5241,56 +5317,7 @@
 			</h:form>
 		</p:dialog>
 
-		<p:dialog header="Lista de Contratos Cliente Analisado" overflow="auto"
-			widgetVar="listaContratosPagador" resizable="true" style="FONT-SIZE: 13pt;"
-			width="800" minWidth="800">
-			<h:form id="contratosPagadorForm">
-				<p:dataTable var="contratos" rows="10" paginator="true"
-					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
-					value="#{contratoCobrancaMB.contratosPagadorAnalisado}"
-					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
-					<p:column style="text-align: center" headerText="Numero Contrato"
-						filterBy="#{contratos.numeroContrato}" sortBy="#{contratos.numeroContrato}" filterMatchMode="contains">
-						<p:outputLabel value="#{contratos.numeroContrato}"
-							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
-					</p:column>
-					<!-- 
-					<p:column style="text-align: center" headerText="Pagador"
-						filterBy="#{contratos.pagador.nome}" sortBy="#{contratos.pagador.nome}" filterMatchMode="contains">
-						<p:outputLabel value="#{contratos.pagador.nome}"
-							style="FONT-SIZE: 10pt;width:100px;" />
-					</p:column> 
-					-->
-					<p:column style="text-align: center" headerText="Data Analise"
-						filterBy="#{contratos.cadastroAprovadoData}" sortBy="#{contratos.cadastroAprovadoData}" filterMatchMode="contains">
-						<p:outputLabel value="#{contratos.cadastroAprovadoData}"
-							style="FONT-SIZE: 10pt;width:100px;" >
-							<f:convertDateTime locale="pt_BR"  />
-			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
-						</p:outputLabel>
-					</p:column>
-					<p:column style="text-align: center" headerText="Cidade"
-						filterBy="#{contratos.imovel.cidade}" sortBy="#{contratos.imovel.cidade}" filterMatchMode="contains">
-						<p:outputLabel value="#{contratos.imovel.cidade}"
-							style="FONT-SIZE: 10pt;width:100px;" />
-					</p:column>
-					<p:column style="text-align: center" headerText="Status"
-						filterBy="#{contratos.status}" sortBy="#{contratos.status}" filterMatchMode="contains">
-						<p:outputLabel value="#{contratos.status}"
-							style="FONT-SIZE: 10pt;width:100px;" />
-					</p:column>
-					<p:column style="text-align: center">
-						<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar">
-		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
-		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
-		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="false" />
-		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
-		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" />
-		                </p:commandButton>			
-					</p:column>
-				</p:dataTable>
-			</h:form>
-		</p:dialog>
+		<ui:include src="Dialog/ContratoCobrancaListaContratosPagador.xhtml" />
 		
 		<p:dialog header="Lista de Contratos Imovel Analisado" overflow="auto"
 			widgetVar="listaContratosImovel" resizable="true" style="FONT-SIZE: 13pt;"
@@ -5336,7 +5363,7 @@
 		<ui:include src="../../Dialog/DialogRecebedorPagador.xhtml">
 			<ui:param name="mbean" value="#{contratoCobrancaMB}"></ui:param>
 			<ui:param name="titulo" value="#{contratoCobrancaMB.tituloPagadorRecebedorDialog}"></ui:param>
-			<ui:param name="permiteAdicionarPessoa" value="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"></ui:param>			
+			<ui:param name="permiteAdicionarPessoa" value="true"></ui:param>			
 		</ui:include>			
 		
 		<p:dialog header="Nova Pessoa" widgetVar="pessoaDialog"
@@ -5453,22 +5480,127 @@
 					<h:panelGrid columns="2">
 						<p:outputLabel value="Descrição: " styleClass="labelBold" 
 							style="font-weight: bold; font-size: 18px;" />
-						<p:inputText value="#{contratoCobrancaMB.averbacaoSelecionada.descricao}"/> 
+						<p:inputText value="#{averbacaoMB.averbacaoSelecionada.descricao}"/> 
 					
 						<p:outputLabel value="Valor: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />
-						<p:inputText value="#{contratoCobrancaMB.averbacaoSelecionada.valor}"
+						<p:inputText value="#{averbacaoMB.averbacaoSelecionada.valor}"
 							label="Contrato" onkeypress="return isNumberKey(event);"
 							onkeydown="FormataValor(this, 13, event, 2);"
-							converter="bigDecimalConverter" /> 
+							converter="bigDecimalConverter" />
 					</h:panelGrid>
-					<p:commandButton value="Inserir Averbação" 
-						icon="ui-icon-check" style="margin-top: 5px; margin-bottom: 5px;"
-						action="#{contratoCobrancaMB.addAverbacao}" 
-						onclick="PF('averbacaoDialog').hide();"
-						update="form:RecebidoPajulaudoPanel" >
-					</p:commandButton>
+							
+					<p:selectOneMenu value="#{averbacaoMB.averbacaoSelecionada.tipoAverbacao}">
+						<f:selectItem itemValue="" itemLabel="" />
+						<f:selectItem itemValue="INCLUIR" itemLabel="INCLUIR" />
+						<f:selectItem itemValue="ALTERAR" itemLabel="ALTERAR" />
+						<p:ajax event="valueChange" update="dadosAverbacao" />
+					</p:selectOneMenu>
+				
+					<p:selectOneMenu value="#{averbacaoMB.averbacaoSelecionada.informacao}" >
+						<f:selectItem itemValue="" itemLabel="" />
+						<f:selectItem itemValue="CNH" itemLabel="CNH" />
+						<f:selectItem itemValue="RG" itemLabel="RG" />
+						<f:selectItem itemValue="Estado Civil" itemLabel="Estado Civil" />
+						<f:selectItem itemValue="Nome" itemLabel="Nome" />
+						<p:ajax event="valueChange" update="dadosAverbacao" />
+					</p:selectOneMenu>
+					
+					<h:panelGrid columns="2" id="dadosAverbacao">
+						<p:outputLabel value=" Texto de inclusão " styleClass="labelBold" 
+							style="font-weight: bold; font-size: 18px;" rendered="#{averbacaoMB.averbacaoSelecionada.tipoAverbacao == 'INCLUIR'}"/>
+						<p:inputText value="#{averbacaoMB.averbacaoSelecionada.texto1}" rendered="#{averbacaoMB.averbacaoSelecionada.tipoAverbacao == 'INCLUIR'}"/> 
+						
+						<p:outputLabel value=" onde se lia " styleClass="labelBold" 
+							style="font-weight: bold; font-size: 18px;" rendered="#{averbacaoMB.averbacaoSelecionada.tipoAverbacao == 'ALTERAR'}"/>
+						<p:inputText value="#{averbacaoMB.averbacaoSelecionada.texto1}" rendered="#{averbacaoMB.averbacaoSelecionada.tipoAverbacao == 'ALTERAR'}"/> 
+						
+						<p:outputLabel value=" passará a CONSTAR " styleClass="labelBold" 
+							style="font-weight: bold; font-size: 18px;" rendered="#{averbacaoMB.averbacaoSelecionada.tipoAverbacao == 'ALTERAR'}" />
+						<p:inputText value="#{averbacaoMB.averbacaoSelecionada.texto2}" rendered="#{averbacaoMB.averbacaoSelecionada.tipoAverbacao == 'ALTERAR'}"/>
+					
+						<p:outputLabel value="documento" styleClass="labelBold" 
+							style="font-weight: bold; font-size: 18px;" 
+							rendered="#{averbacaoMB.averbacaoSelecionada.informacao == 'Nome'}"/>
+						<p:selectOneMenu value="#{averbacaoMB.averbacaoSelecionada.documento}" 
+							rendered="#{averbacaoMB.averbacaoSelecionada.informacao == 'Nome'}">
+							<f:selectItem itemValue="CNH" itemLabel="CNH" />
+							<f:selectItem itemValue="RG" itemLabel="RG" />
+						</p:selectOneMenu>
+					
+						<p:outputLabel value="Pessoa: "
+							styleClass="labelBold"
+							style="font-weight: bold; font-size: 18px;" />
+						<h:panelGroup>
+							<p:outputLabel id="pessoaAverbacao"
+								value="#{averbacaoMB.averbacaoSelecionada.pagador.nome}"
+								 style="FONT-SIZE: 10pt;" />
+							<p:spacer height="10" />
+							<p:commandButton icon="ui-icon ui-icon-circle-zoomin" ajax="true"
+								action="#{averbacaoMB.pesquisaPagador()}"
+								oncomplete="PF('participanteDialog').show();"
+								update="pessoaAverbacao participanteDialogForm" />
+						</h:panelGroup>
+					</h:panelGrid>
+					
+					<h:panelGrid columns="1">
+						<p:commandButton value="Inserir Averbação" 
+							icon="ui-icon-check" style="margin-top: 5px; margin-bottom: 5px;"
+							action="#{averbacaoMB.addAverbacao}"
+							onclick="PF('averbacaoDialog').hide();"
+							update="form:RecebidoPajulaudoPanel" >
+						</p:commandButton>
+					</h:panelGrid>
 				</div>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog widgetVar="participanteDialog" style="FONT-SIZE: 10pt;" width="800">
+			<h:form id="participanteDialogForm">
+				<p:dataTable id="participanteDialogdlg" var="pessoa"
+					value="#{averbacaoMB.listPagador}" paginator="true" rows="10"
+					selectionMode="single"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{averbacaoMB.pagadorSelecionado}"
+					style="FONT-SIZE: 10pt;" emptyMessage=""
+					rowKey="#{pessoa.id}">
+		
+					<p:column style="text-align: center;"
+						sortBy="#{pessoa.cnpj}"
+						filterBy="#{pessoa.cnpj}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CNPJ" />
+						</f:facet>
+						<h:outputText value="#{pessoa.cnpj}" />
+					</p:column>
+		
+					<p:column style="text-align: center;"
+						sortBy="#{pessoa.cpf}" filterBy="#{pessoa.cpf}"
+						filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="CPF" />
+						</f:facet>
+						<h:outputText value="#{pessoa.cpf}" />
+					</p:column>
+		
+					<p:column style="text-align: center;"
+						sortBy="#{pessoa.nome}"
+						filterBy="#{pessoa.nome}" filterMatchMode="contains">
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{pessoa.nome}" />
+					</p:column>
+		
+					<f:facet name="footer">
+						<p:commandButton value="Selecionar" 
+							action="#{averbacaoMB.populateSelectedPagador}"
+							icon="ui-icon ui-icon-check"
+							update="averbacaoDialogdlg"
+							oncomplete="PF('participanteDialog').hide();" />
+					</f:facet>
+				</p:dataTable>
 			</h:form>
 		</p:dialog>
 

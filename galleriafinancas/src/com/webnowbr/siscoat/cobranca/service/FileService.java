@@ -38,55 +38,57 @@ public class FileService {
 	
 	public List<FileUploaded> documentoConsultarTodos(String numeroContrato, User usuario) {
 		// Query Url
-		String serverPrincipalUrl = PropertyLoader
-				.getString("client.galleria.financas.upload.lista.todos.doc.rest.url");
-
-		logger.info("INFO file server documentoConsultarTodos {} GET: "
-				.concat(serverPrincipalUrl.replace("{numeroContrato}", numeroContrato)));
-//		HttpServletRequest request;
-
-		URL myURL;
-		try {
-			myURL = new URL(serverPrincipalUrl.replace("{numeroContrato}", numeroContrato));
-
-			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
-			myURLConnection.setUseCaches(false);
-			myURLConnection.setRequestMethod("GET");
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-			myURLConnection.setRequestProperty("Authorization",
-					"Bearer " + JwtUtil.generateJWTSite(usuario.getId(), usuario.getLogin(), "BACKOFFICE"));
-			myURLConnection.setDoOutput(true);
-
-			String retornoConsulta = null;
-			if (myURLConnection.getResponseCode() == SiscoatConstants.HTTP_COD_SUCESSO) {
-				BufferedReader in;
-				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
-				String inputLine;
-				StringBuffer response = new StringBuffer();
-				while ((inputLine = in.readLine()) != null) {
-					response.append(inputLine);
+		if (numeroContrato != null) { 
+			String serverPrincipalUrl = PropertyLoader
+					.getString("client.galleria.financas.upload.lista.todos.doc.rest.url");
+	
+			logger.info("INFO file server documentoConsultarTodos {} GET: "
+					.concat(serverPrincipalUrl.replace("{numeroContrato}", numeroContrato)));
+	//		HttpServletRequest request;
+	
+			URL myURL;
+			try {
+				myURL = new URL(serverPrincipalUrl.replace("{numeroContrato}", numeroContrato));
+	
+				HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+				myURLConnection.setUseCaches(false);
+				myURLConnection.setRequestMethod("GET");
+				myURLConnection.setRequestProperty("Accept", "application/json");
+				myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+				myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+				myURLConnection.setRequestProperty("Authorization",
+						"Bearer " + JwtUtil.generateJWTSite(usuario.getId(), usuario.getLogin(), "BACKOFFICE"));
+				myURLConnection.setDoOutput(true);
+	
+				String retornoConsulta = null;
+				if (myURLConnection.getResponseCode() == SiscoatConstants.HTTP_COD_SUCESSO) {
+					BufferedReader in;
+					in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
+					String inputLine;
+					StringBuffer response = new StringBuffer();
+					while ((inputLine = in.readLine()) != null) {
+						response.append(inputLine);
+					}
+					in.close();
+	
+					retornoConsulta = response.toString();
 				}
-				in.close();
-
-				retornoConsulta = response.toString();
+	
+				if (!CommonsUtil.semValor(retornoConsulta)) {
+					ResponseApi teste  = GsonUtil.fromJson(retornoConsulta, ResponseApi.class);
+					Collection<FileUploaded> result = new ArrayList<FileUploaded>();
+					
+					
+					result = GsonUtil.fromJson(teste.getClasse(), new TypeToken<ArrayList<FileUploaded>>() {
+		            }.getType());
+					return  result.stream().collect(Collectors.toList());
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-
-			if (!CommonsUtil.semValor(retornoConsulta)) {
-				ResponseApi teste  = GsonUtil.fromJson(retornoConsulta, ResponseApi.class);
-				Collection<FileUploaded> result = new ArrayList<FileUploaded>();
-				
-				
-				result = GsonUtil.fromJson(teste.getClasse(), new TypeToken<ArrayList<FileUploaded>>() {
-	            }.getType());
-				return  result.stream().collect(Collectors.toList());
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 
 		return new ArrayList<FileUploaded>();
@@ -331,7 +333,8 @@ public class FileService {
 		if(CommonsUtil.semValor(base64)) 
 			return;
 		
-		String nomeAnalise = documentoAnalise.getPagador().getNome();
+		String nomeAnalise = documentoAnalise.getPagador().getNome() + 
+				"_" + CommonsUtil.somenteNumeros(documentoAnalise.getPagador().getCpfCnpj());
 		String numeroContrato = documentoAnalise.getContratoCobranca().getNumeroContrato();
 		salvarPdfRetorno(nomeAnalise, numeroContrato, base64, nomeConsulta, diretorio);
 	}
@@ -352,11 +355,14 @@ public class FileService {
 		} catch (Exception e) {
 			fileExtension = "html"; 
 		}	
+        String nomeArquivo = "";
 		if (CommonsUtil.semValor(nomeAnalise)) {
-			pdfRetorno.setName(nomeConsulta + "." + fileExtension);
+			nomeArquivo = nomeConsulta + "." + fileExtension;
 		} else {
-			pdfRetorno.setName(nomeConsulta + " - " + nomeAnalise + "." + fileExtension);
-		}
+			nomeArquivo = nomeConsulta + " - " + nomeAnalise + "." + fileExtension;
+        }
+		nomeArquivo = Base64.getEncoder().encodeToString(nomeArquivo.getBytes());
+		pdfRetorno.setName(nomeArquivo);
 		FileService fileService = new FileService();
 		User user = new UserDao().findById((long) -1);
 		fileService.salvarDocumentoBase64(pdfRetorno, numeroContrato, diretorio, user);

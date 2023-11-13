@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
@@ -85,10 +86,11 @@ public class PagadorRecebedor implements Serializable {
 	private String cpfCCConjuge;
 	private String cnpjCCConjuge;
 
-	
+	private String tipoDocumentoConjuge;
 	private Date dataEmissaoRGConjuge;
 	private String orgaoEmissorRGConjuge;
 	
+	private String tipoDocumento;
 	private String rg;
 	private String cpf;
 	private String cnpj;
@@ -117,7 +119,6 @@ public class PagadorRecebedor implements Serializable {
 	private String contaDigitoPix;
 	
 	private boolean pixValidado;
-	
 	
 	private String idIugu;
 	
@@ -248,6 +249,7 @@ public class PagadorRecebedor implements Serializable {
 	
 	private List<DocumentosPagadorDocket> documentosDocket;
 	private List<CcbProcessosJudiciais> processos;
+	private Set<Averbacao> listAverbacao;
 	private BigDecimal valorProcessos;
 	
 	private User usuario;
@@ -256,7 +258,7 @@ public class PagadorRecebedor implements Serializable {
 	
 	private String whatsAppNumero;
 	
-	private Date inicioEmpresa; //TODO: Mudar para string?
+	private Date inicioEmpresa;
 
 	public PagadorRecebedor(){
 		resetarBololean();
@@ -282,10 +284,11 @@ public class PagadorRecebedor implements Serializable {
 		this.cep = cep;
 		
 		resetarBololean();
-		
 	}
 	
 	public void resetarBololean() {
+		this.tipoDocumento = "RG";
+		this.tipoDocumentoConjuge = "RG";
 		this.rgDocumentosCheckList = false;
 		this.comprovanteEnderecoDocumentosCheckList = false;
 		this.certidaoCasamentoNascimentoDocumentosCheckList = false;
@@ -446,6 +449,7 @@ public class PagadorRecebedor implements Serializable {
 		conjuge.setNome(pagador.getNomeConjuge());
 		conjuge.setCpf(pagador.getCpfConjuge());
 		conjuge.setAtividade(pagador.getCargoConjuge());
+		conjuge.setTipoDocumento(pagador.getTipoDocumentoConjuge());
 		conjuge.setRg(pagador.getRgConjuge());
 		conjuge.setDataEmissaoRG(pagador.getDataEmissaoRGConjuge());
 		conjuge.setOrgaoEmissorRG(pagador.getOrgaoEmissorRGConjuge());
@@ -472,6 +476,7 @@ public class PagadorRecebedor implements Serializable {
 		conjuge.setNomeConjuge(pagador.getNome());
 		conjuge.setCpfConjuge(pagador.getCpf());
 		conjuge.setCargoConjuge(pagador.getAtividade());
+		conjuge.setTipoDocumentoConjuge(pagador.getTipoDocumento());
 		conjuge.setRgConjuge(pagador.getRg());
 		conjuge.setDataEmissaoRGConjuge(pagador.getDataEmissaoRG());
 		conjuge.setOrgaoEmissorRGConjuge(pagador.getOrgaoEmissorRG());
@@ -511,9 +516,15 @@ public class PagadorRecebedor implements Serializable {
 			return CommonsUtil.trimNull(banco[0]);
 
 		} else
-			return null;}
+			return null;
+	}
 	
-	
+	public String getCpfCnpj() {
+		if(!CommonsUtil.semValor(cpf))
+			return cpf;
+		else
+			return cnpj;
+	}
 	
 	@Override
 	public String toString() {
@@ -2345,7 +2356,31 @@ public class PagadorRecebedor implements Serializable {
 		this.contaBancariaValidada = contaBancariaValidada;
 	}
 
-	//TODO: Alterar DATE para STRING??
+
+	public String getTipoDocumentoConjuge() {
+		return tipoDocumentoConjuge;
+	}
+
+	public void setTipoDocumentoConjuge(String tipoDocumentoConjuge) {
+		this.tipoDocumentoConjuge = tipoDocumentoConjuge;
+	}
+
+	public String getTipoDocumento() {
+		return tipoDocumento;
+	}
+
+	public void setTipoDocumento(String tipoDocumento) {
+		this.tipoDocumento = tipoDocumento;
+	}
+
+	public Set<Averbacao> getListAverbacao() {
+		return listAverbacao;
+	}
+
+	public void setListAverbacao(Set<Averbacao> listAverbacao) {
+		this.listAverbacao = listAverbacao;
+	}
+
 	public Date getInicioEmpresa() {
 		return inicioEmpresa;
 	}
@@ -2353,5 +2388,4 @@ public class PagadorRecebedor implements Serializable {
 	public void setInicioEmpresa(Date inicioEmpresa) {
 		this.inicioEmpresa = inicioEmpresa;
 	}	
-	
 }

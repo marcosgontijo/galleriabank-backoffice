@@ -29,7 +29,15 @@
 		
 		<property name="cidade" type="java.lang.String">
 			<column name="cidade" />
-		</property>		
+		</property>
+		
+		<property name="estadoId" type="java.lang.String">
+			<column name="estadoId" />
+		</property>
+		
+		<property name="cidadeId" type="java.lang.String">
+			<column name="cidadeId" />
+		</property>
 		
 		<property name="pdf" type="text">
 			<column name="pdf" />

@@ -54,11 +54,11 @@ public class RelacionamentoPagadorRecebedorDao extends HibernateDao <Relacioname
 							listRelacoes.add(relacao);
 						}
 						
-						if(CommonsUtil.mesmoValor(relacao.getPessoaRoot(), pagador)) {
-							rprDao.getRelacionamentos(relacao.getPessoaChild(), listRelacoes);
-						} else if (CommonsUtil.mesmoValor(relacao.getPessoaChild(), pagador))  {
-							rprDao.getRelacionamentos(relacao.getPessoaRoot(), listRelacoes);
-						}	
+//						if(CommonsUtil.mesmoValor(relacao.getPessoaRoot(), pagador)) {
+//							rprDao.getRelacionamentos(relacao.getPessoaChild(), listRelacoes);
+//						} else if (CommonsUtil.mesmoValor(relacao.getPessoaChild(), pagador))  {
+//							rprDao.getRelacionamentos(relacao.getPessoaRoot(), listRelacoes);
+//						}	
 					}
 				} finally {
 					closeResources(connection, ps, rs);					
@@ -68,7 +68,7 @@ public class RelacionamentoPagadorRecebedorDao extends HibernateDao <Relacioname
 		});	
 	}
 	
-	private static final String QUERY_RELACIONAMENTOS_EXISTENTES = "select * from cobranca.RelacionamentoPagadorRecebedor " 
+	private static final String QUERY_RELACIONAMENTOS_EXISTENTES = "select id from cobranca.RelacionamentoPagadorRecebedor " 
 			+ " where pessoaRoot = ? "
 			+ " and pessoaChild = ? ";
 	
