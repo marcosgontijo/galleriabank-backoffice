@@ -84,7 +84,7 @@
 			<ui:insert name="menu">
 				<h:form style="margin-bottom:10px;">
 				<p:commandButton value="Favoritar" icon="ui-icon-star"
-						action="/Favoritos/FavoritosAtendimento.xhtml"></p:commandButton>
+						action="#{menuItemMB.carregafavoritar}"></p:commandButton>
 					<p:menu style="width: 250px;"
 						model="#{menuItemMB.modelAtendimento}" />
 
