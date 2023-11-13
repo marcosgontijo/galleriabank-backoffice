@@ -16,73 +16,8 @@
 					<h:form style="margin-bottom:10px;">
 					<p:commandButton value="Favoritar" action="#{menuItemMB.carregafavoritar}" icon="ui-icon-star"></p:commandButton>		
 
-						<p:menu style="width: 250px;" model="#{menuItemMB.modelManutencao}"/>																		
-					  	
-					<h:form style="margin-bottom:10px;">	
-							<p:menu style="width: 250px;">						
-								<p:submenu label="Manutenção" styleClass="titulosMenu">
-									<shiro:hasAnyRoles name="ROOT, PROFILE_COMPLIANCE">
-										<p:menuitem value="Usuário" action="UsuarioConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-person" styleClass="itemMenu"/>
-									</shiro:hasAnyRoles>	
-								
-									<shiro:hasRole name="ROOT">											
-										<p:menuitem value="Parâmetros" action="ParametroConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-link" styleClass="itemMenu"/>
-										<p:menuitem value="Limpeza Servidor" action="LimpezaServidor.xhtml" ajax="false" icon="ui-icon ui-icon-link" styleClass="itemMenu"/>
-										<p:menuitem value="Money Plus Testes"
-										action="#{bmpDigitalCCBMB.integraCCBMoneyPlus}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />		
-										<p:menuitem value="Load Database UniProof Finanças"
-										action="#{uniproofMB.loadDatabaseFinancas}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
-										<p:menuitem value="Load Database UniProof Correspondente"
-										action="#{uniproofMB.loadDatabaseCorrespondente}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
-										<p:menuitem value="Load Database UniProof Fundo"
-										action="#{uniproofMB.loadDatabaseFundo}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />	
-										<p:menuitem value="Processa IPCA Híbrido" action="ProcessaIPCAHibrido.xhtml" ajax="false" icon="ui-icon ui-icon-person" styleClass="itemMenu"/>
-										<p:menuitem value="BRL Json Cessão Sem IPCA"
-										action="#{brlTrustMB.clearFieldsBRLJsonSemIPCA()}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />			
-										<p:menuitem value="att Todas Certidoes"
-										action="#{contratoCobrancaMB.testeAttTodasCertidoes()}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />	
-										<p:menuitem value="gerarTokenServico"
-										action="#{netrinMB.gerarTokenServico}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
-										
-										<p:menuitem value="atualizaCcbs"
-										action="#{ccbMB.atualizarObjetos}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
-											
-										<p:menuitem value="STARK - Ver Saldo "
-										action="#{starkBankAPI.getBalanceSDK()}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
-										<p:menuitem value="STARK - Pagar Boleto"
-										action="BoletoStarkBank.xhtml"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
-										<p:menuitem value="STARK - Listar Pagto Boleto"
-										action="#{starkBankAPI.listPaymentBoleto}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
-										<p:menuitem value="STARK - Log Pagto Boleto"
-										action="#{starkBankAPI.paymentBoletoLog}"
-										ajax="false" icon="ui-icon ui-icon-newwin"
-										styleClass="itemMenu" />
-									</shiro:hasRole>																							
-								</p:submenu>																																		
-							</p:menu>  	
-					</h:form>				
+						<p:menu style="width: 250px;" model="#{menuItemMB.modelManutencao}"/>	
+						</h:form>																	
 				</ui:define>
 			</ui:composition>					
 		</h:body>
