@@ -38,7 +38,10 @@
    		         emptyMessage="" 
    		         rowStyleClass= "#{boleto.status eq 'success' ? 'parcelaPaga' : (boleto.status eq 'failed' ? 'faltou' : null) } ">   
                 	<f:facet name="header">
-			        </f:facet>                              	
+			        </f:facet>      
+			        <p:column style="text-align: center;" headerText="ID" filterBy="#{boleto.id}" filterMatchMode="contains" sortBy="#{boleto.id}">
+			            <h:outputText value="#{boleto.id}" />
+			        </p:column>	                        	
 			     	<p:column style="text-align: center;" headerText="CPF/CNPJ (Cedente)" filterBy="#{boleto.taxId}" filterMatchMode="contains" sortBy="#{boleto.taxId}">
 			            <h:outputText value="#{boleto.taxId}" />
 			        </p:column>		
@@ -61,6 +64,9 @@
 					<p:column style="text-align: center;" headerText="Linha Digitável">
 			            <h:outputText value="#{boleto.line}" />
 			        </p:column>	
+			        <p:column style="text-align: center;" headerText="Motivo Falha"> 
+			            <h:outputText value="#{boleto.motivoFalha}" />
+			        </p:column>	 
 			        <f:facet name="footer">
 			        </f:facet>             		        			        			           			 		
 				</p:dataTable>

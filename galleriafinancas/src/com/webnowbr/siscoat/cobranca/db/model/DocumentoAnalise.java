@@ -2,34 +2,34 @@ package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Date;
 import java.util.List;
-
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import com.webnowbr.siscoat.cobranca.mb.BigDataMB;
+import com.webnowbr.siscoat.cobranca.db.op.RelacionamentoPagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.mb.FileUploadMB.FileUploaded;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
+import com.webnowbr.siscoat.cobranca.service.BigDataService;
+import com.webnowbr.siscoat.cobranca.service.EngineService;
+import com.webnowbr.siscoat.cobranca.service.NetrinService;
+import com.webnowbr.siscoat.cobranca.service.ScrService;
+import com.webnowbr.siscoat.cobranca.vo.FileGenerator;
 import com.webnowbr.siscoat.cobranca.ws.netrin.NetrinConsulta;
 import com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 
-import br.com.galleriabank.bigdata.cliente.model.processos.ProcessoResumo;
 import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
 import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetornoRequestFields;
 import br.com.galleriabank.dataengine.cliente.model.retorno.AntecedentesCriminais.EngineRetornoExecutionResultAntecedenteCriminaisEvidences;
@@ -37,7 +37,6 @@ import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetor
 import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultConsultaQuodScore;
 import br.com.galleriabank.dataengine.cliente.model.retorno.processos.EngineRetornoExecutionResultProcessos;
 import br.com.galleriabank.netrin.cliente.model.PPE.PpeResponse;
-import br.com.galleriabank.netrin.cliente.model.cenprot.CenprotProtestos;
 import br.com.galleriabank.netrin.cliente.model.cenprot.CenprotResponse;
 import br.com.galleriabank.netrin.cliente.model.cenprot.ProtestosBrasilEstado;
 import br.com.galleriabank.netrin.cliente.model.dossie.DossieRequest;
@@ -85,6 +84,7 @@ public class DocumentoAnalise implements Serializable {
 	private String retornoProcesso;
 	private String retornoPpe;
 	private String retornoLaudoRobo;
+	private String retornoRelacionamento;
 
 	private String retornoScr;
 	private String observacao;
@@ -106,16 +106,8 @@ public class DocumentoAnalise implements Serializable {
 	private String pessoasPoliticamenteExpostas = "0";
 	private String dialogHeader;
 	
-	private double totalPendenciasValor = 0.0;
-	private double totalValorApontamentos = 0.0;
-	private double totalInadimplenciaValor = 0.0;
-	private double totalLawSuitValor = 0.0;
-	private double totalProtestosValor = 0.0;
 	
-	private int totalPendencias = 0;
 	private boolean isPefinRefinAvailable = false;
-	private int totalLawSuitApontamentos = 0;
-	private int totalApontamentos = 0;
 	private boolean isCcfApontamentosAvailable = false;
 	private boolean isProtestosAvailable = false;
 	private boolean isScoreBaixo = false;
@@ -136,6 +128,9 @@ public class DocumentoAnalise implements Serializable {
 	private boolean isInicioRelacionamentoInexistente = false;
 	private boolean isRiscoTotal20k = false;
 	private boolean isRiscoTotal50k = false;
+	
+	private List<DocumentoAnaliseResumo> resumorelacionamentos;
+	
 
 	public List<DocumentoAnaliseResumo> getResumoProcesso() {
 		List<DocumentoAnaliseResumo> vProcesso = new ArrayList<>();
@@ -561,8 +556,43 @@ public class DocumentoAnalise implements Serializable {
 
 		return scr;
 	}
+	
+	public List<DocumentoAnaliseResumo> getResumoRelacionamentos() {
+		
+		if (resumorelacionamentos != null) {
+			return resumorelacionamentos;
+		}
+		resumorelacionamentos = new ArrayList<DocumentoAnaliseResumo>();
+		
+//		List<DocumentoAnaliseResumo> resumorelacionamentos = new ArrayList<>();
 
-	public boolean isPodeChamarRea() {
+		RelacionamentoPagadorRecebedorDao rprDao = new RelacionamentoPagadorRecebedorDao();
+		List<RelacionamentoPagadorRecebedor> listRelacoes = new ArrayList<RelacionamentoPagadorRecebedor>();
+
+		listRelacoes = rprDao.getRelacionamentos(pagador, listRelacoes);
+		for (RelacionamentoPagadorRecebedor relacionamentoPagadorRecebedor : listRelacoes) {
+
+			PagadorRecebedor pessoaRelacao = new PagadorRecebedor();
+
+			if (  CommonsUtil.mesmoValor( relacionamentoPagadorRecebedor.getPessoaRoot().getId(),pagador.getId()))
+				pessoaRelacao = relacionamentoPagadorRecebedor.getPessoaChild();
+			else
+				pessoaRelacao = relacionamentoPagadorRecebedor.getPessoaRoot();
+
+			String descricao = pessoaRelacao.getNome() + " "
+					+ (!CommonsUtil.semValor(pessoaRelacao.getCpf()) ? "CPF: " + pessoaRelacao.getCpf()
+							: "CNPJ: " + pessoaRelacao.getCnpj());
+			String valor = relacionamentoPagadorRecebedor.getRelacao();
+
+			resumorelacionamentos.add(new DocumentoAnaliseResumo(descricao, valor));
+		}
+
+
+		return resumorelacionamentos;
+
+	}
+	
+ 	public boolean isPodeChamarRea() {
 		return isReaNaoEnviado() && CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
 	}
 	
@@ -588,10 +618,8 @@ public class DocumentoAnalise implements Serializable {
 	}
 
 	public boolean isPodeChamarSerasa() {
-		return !isSerasaProcessado() && CommonsUtil.mesmoValor(this.motivoAnalise.toUpperCase(), "PROPRIETARIO ATUAL"); // (CommonsUtil.mesmoValor("PJ",
-																														// //
-																														// tipoPessoa)
-																														// ||
+		return !isSerasaProcessado() && (CommonsUtil.mesmoValor(this.motivoAnalise.toUpperCase(), "PROPRIETARIO ATUAL")
+				|| CommonsUtil.mesmoValor(this.motivoAnalise.toUpperCase(), "COMPRADOR"));
 	}
 
 	public boolean isSerasaProcessado() {
@@ -614,9 +642,15 @@ public class DocumentoAnalise implements Serializable {
 				&& !CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
 	}
 
+	public boolean isPodeChamarRelacionamentos() {
+		return !isRelaciomentoProcessado() && CommonsUtil.mesmoValor("PJ", tipoPessoa)
+				&& !CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
+	}
+
 	public boolean isPodeChamarPpe() {
 		return !isPpeProcessado() && CommonsUtil.mesmoValor("PF", tipoPessoa)
-				&& CommonsUtil.mesmoValor(this.motivoAnalise.toUpperCase(), "PROPRIETARIO ATUAL")
+				&& (CommonsUtil.mesmoValor(this.motivoAnalise.toUpperCase(), "PROPRIETARIO ATUAL") ||
+						CommonsUtil.mesmoValor(this.motivoAnalise.toUpperCase(), "COMPRADOR"))
 				&& !CommonsUtil.mesmoValor(DocumentosAnaliseEnum.REA, tipoEnum);
 	}
 
@@ -648,6 +682,11 @@ public class DocumentoAnalise implements Serializable {
 	public boolean isPpeProcessado() {
 		return !CommonsUtil.semValor(retornoPpe);
 	}
+	
+	public boolean isRelaciomentoProcessado() {
+		return !CommonsUtil.semValor(retornoRelacionamento);
+	}
+
 
 	public boolean isPodeDownlaodDossie() {
 		return isPpeProcessado() && isCenprotProcessado() && isProcessoProcessado()
@@ -792,6 +831,128 @@ public class DocumentoAnalise implements Serializable {
 			aux.remove(estado);
 			estadosConsultaStr = aux.toString();
 		}
+	}
+	
+	public Map<String, byte[]> zipDeCertidoes(){
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+		listaArquivos.putAll(zipEngine());
+		listaArquivos.putAll(zipProtesto());
+		listaArquivos.putAll(zipProcesso());
+		listaArquivos.putAll(zipScr());
+		for(DocketConsulta docket : docketConsultas) {
+			listaArquivos.putAll(zipDocket(docket));
+		}
+		for(PlexiConsulta plexi : plexiConsultas) {
+			listaArquivos.putAll(zipPlexi(plexi));
+		}
+		for(NetrinConsulta netrin : netrinConsultas) {
+			listaArquivos.putAll(zipNetrin(netrin));
+		}
+		return listaArquivos;
+	}
+	
+	public Map<String, byte[]> zipEngine() {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+		String nomeArquivo = "Engine " + getPagador().getNome().replace(",", "_") + 
+				"_" + CommonsUtil.somenteNumeros(getPagador().getCpfCnpj()) + ".pdf";
+		if(CommonsUtil.semValor(getEngine())) 
+			return listaArquivos;
+		EngineService engineService = new EngineService();
+		engineService.baixarDocumentoEngine(getEngine());
+		if(CommonsUtil.semValor(getEngine().getPdfBase64())) 
+			return listaArquivos;
+		String documentoBase64 = getEngine().getPdfBase64();
+		byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
+		listaArquivos.put(nomeArquivo, pdfBytes);
+		return listaArquivos;
+	}
+	
+	public Map<String, byte[]> zipProtesto() {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+		String nomeArquivo = "Cenprot "+ getPagador().getNome().replace(",", "_") + 
+				"_" + CommonsUtil.somenteNumeros(getPagador().getCpfCnpj()) + ".pdf";
+		NetrinService netrin = new NetrinService();
+		String documentoBase64 = netrin.baixarDocumento(this);
+		if(!CommonsUtil.semValor(documentoBase64)) {
+			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
+			listaArquivos.put(nomeArquivo, pdfBytes);
+		}
+		return listaArquivos;
+	}
+	
+	public Map<String, byte[]> zipProcesso() {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+		String nomeArquivo = "Processos " + getPagador().getNome().replace(",", "_") + 
+				"_" + CommonsUtil.somenteNumeros(getPagador().getCpfCnpj()) + ".pdf";
+		BigDataService bigData = new BigDataService();
+		String documentoBase64 = bigData.baixarDocumentoProcesso(this);
+		if(!CommonsUtil.semValor(documentoBase64)) {
+			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
+			listaArquivos.put(nomeArquivo, pdfBytes);
+		}
+		return listaArquivos;
+	}
+	
+	public Map<String, byte[]> zipScr() {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+		if(CommonsUtil.semValor(getRetornoScr()))
+			return listaArquivos;
+		String nomeArquivo = "SCR " + getPagador().getNome().replace(",", "_") +
+				"_" + CommonsUtil.somenteNumeros(getPagador().getCpfCnpj()) + ".pdf";
+		FileGenerator fileGenerator = new FileGenerator();
+		fileGenerator.setDocumento(this.getCnpjcpf());
+		ScrResult scrResult = GsonUtil.fromJson(getRetornoScr(), ScrResult.class);
+		ScrService scrService = new ScrService();
+		byte[] pdfBytes = scrService.geraContrato(scrResult, fileGenerator);
+		listaArquivos.put(nomeArquivo, pdfBytes);
+		return listaArquivos;
+	}
+	
+	public Map<String, byte[]> zipDocket(DocketConsulta docket) {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+		String nomeArquivo = docket.getDocketDocumentos().getDocumentoNome() +
+				"_" + CommonsUtil.somenteNumeros(getPagador().getCpfCnpj()) + ".pdf";
+		String documentoBase64 = docket.getPdf();
+		if(!CommonsUtil.semValor(documentoBase64)) {
+			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
+			listaArquivos.put(nomeArquivo, pdfBytes);
+		}
+		return listaArquivos;
+	}
+	
+	public Map<String, byte[]> zipPlexi(PlexiConsulta plexi) {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+		String nomeArquivo = plexi.getNomeCompleto() + " " + this.getPagador().getNome().replace(",", "_") + 
+				"_" + CommonsUtil.somenteNumeros(getPagador().getCpfCnpj()) + ".pdf";
+		String documentoBase64 = plexi.getPdf();
+		if(!CommonsUtil.semValor(documentoBase64)) {
+			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
+			listaArquivos.put(nomeArquivo, pdfBytes);
+		}
+		return listaArquivos;
+	}
+	
+	public Map<String, byte[]> zipNetrin(NetrinConsulta netrin) {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+		String url = netrin.getNetrinDocumentos().getUrlService();
+		String nomedoc = "";
+		if (CommonsUtil.mesmoValor(url, "/api/v1/processo")) {
+			nomedoc = "Consulta Processual";
+		} else if (CommonsUtil.mesmoValor(url, "/api/v1/CNDEstadual")) {
+			nomedoc = "CND Estadual " +  netrin.getUf().toUpperCase();
+		} else if (CommonsUtil.mesmoValor(url, "/api/v1/CNDFederal")) {
+			nomedoc = "CND Federal";
+		} else if (CommonsUtil.mesmoValor(url, "/api/v1/CNDTrabalhistaTST")) {
+			nomedoc = "CNDT TST";
+		}
+		String nomeArquivo = nomedoc + " " + this.getPagador().getNome().replace(",", "_") + 
+				"_" + CommonsUtil.somenteNumeros(getPagador().getCpfCnpj()) + ".pdf";
+		String documentoBase64 = netrin.getPdf();
+		if(!CommonsUtil.semValor(documentoBase64)) {
+			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
+			listaArquivos.put(nomeArquivo, pdfBytes);
+		}
+		return listaArquivos;
 	}
 	
 	@Override
@@ -962,9 +1123,11 @@ public class DocumentoAnalise implements Serializable {
 	public String getRetornoLaudoRobo() {
 		return retornoLaudoRobo;
 	}
-	public void SetRetornoLaudoRobo(String retornoLaudoRobo) {
+	public void setRetornoLaudoRobo(String retornoLaudoRobo) {
 		this.retornoLaudoRobo = retornoLaudoRobo;
 	}
+
+
 
 	public String getCnpjcpf() {
 		return cnpjcpf;
@@ -1202,6 +1365,14 @@ public class DocumentoAnalise implements Serializable {
 
 	public void setHasRiscoTotal(boolean hasRiscoTotal) {
 		this.isRiscoTotalAvailable = hasRiscoTotal;
+	}
+
+	public String getRetornoRelacionamento() {
+		return retornoRelacionamento;
+	}
+
+	public void setRetornoRelacionamento(String retornoRelacionamento) {
+		this.retornoRelacionamento = retornoRelacionamento;
 	}
 	
 	public String getRessalvaProcessosNome() {

@@ -296,9 +296,19 @@ public class StarkBankAPI{
 	    				}
 	    			}
 	    		}
+	    		
+	    		String retornoLog = paymentBoletoLog(payment.id);
+	    		
+	    		String valorTratadoStr = payment.amount.toString();
+	    		
+	    		if (valorTratadoStr.length() >= 3) {
+	    			valorTratadoStr = valorTratadoStr.substring(0, valorTratadoStr.length() - 2) + "." + valorTratadoStr.substring(valorTratadoStr.length() - 2, valorTratadoStr.length());
+	    		}
+	    		
+	    		double valorTratadoLong = Double.valueOf(valorTratadoStr);
 			    
-			    boleto = new StarkBankBoleto(Long.valueOf(payment.id), BigDecimal.valueOf(payment.amount), payment.taxId, tagsStr, payment.description, payment.scheduled,
-	    				payment.line, payment.barCode, payment.fee, payment.status, DateUtil.convertDateTimeToDate(payment.created), null, null);
+			    boleto = new StarkBankBoleto(Long.valueOf(payment.id), BigDecimal.valueOf(valorTratadoLong).setScale(2), payment.taxId, tagsStr, payment.description, payment.scheduled,
+	    				payment.line, payment.barCode, payment.fee, payment.status, DateUtil.convertDateTimeToDate(payment.created), retornoLog);
 	    		
 			    
 			    this.listBoletos.add(boleto);
@@ -328,6 +338,32 @@ public class StarkBankAPI{
 		}
 	}
 	
+	public String paymentBoletoLog(String idBoleto) {
+		
+		loginStarkBank();
+		
+		String retorno = "";
+	
+		try {
+			HashMap<String, Object> params = new HashMap<>();
+			params.put("paymentIds", idBoleto);
+			Generator<BoletoPayment.Log> logs = BoletoPayment.Log.query(params);
+			
+			for (BoletoPayment.Log log : logs){
+			    if (log.type.equals("failed")) {
+			    	for (String erro : log.errors) {
+			    		retorno = retorno + erro;
+			    	}
+			    }
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace(); 
+		}
+		
+		return retorno;
+	}
+	
 	public void paymentBoletoLog() {
 	
 		loginStarkBank();
@@ -338,7 +374,7 @@ public class StarkBankAPI{
 			Generator<BoletoPayment.Log> logs = BoletoPayment.Log.query(params);
 			
 			for (BoletoPayment.Log log : logs){
-			    System.out.println(log);
+			    System.out.println(log);			    
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -349,7 +385,7 @@ public class StarkBankAPI{
     public String linhaDigitavel = "";
     public String descricao = "";
     
-    public void chamaBoletoStarkTela() {
+    public void chamaBoletoStarkTela() { 
 		FacesContext context = FacesContext.getCurrentInstance();
 		
     	PagadorRecebedor pagador = new PagadorRecebedor();

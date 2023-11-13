@@ -23,5 +23,31 @@
 			<column name="contratocobranca" />
 		</many-to-one>       
 		
+		<many-to-one name="pagador"
+			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
+			lazy="false">
+			<column name="pagador" />
+		</many-to-one>  
+		
+		<property name="tipoAverbacao" type="java.lang.String">
+			<column name="tipoAverbacao" />
+		</property>
+		
+		<property name="informacao" type="java.lang.String">
+			<column name="informacao" />
+		</property>
+		
+		<property name="documento" type="java.lang.String">
+			<column name="documento" />
+		</property>
+		
+		<property name="texto1" type="java.lang.String">
+			<column name="texto1" />
+		</property>
+		
+		<property name="texto2" type="java.lang.String">
+			<column name="texto2" />
+		</property>
+		
     </class>
 </hibernate-mapping>

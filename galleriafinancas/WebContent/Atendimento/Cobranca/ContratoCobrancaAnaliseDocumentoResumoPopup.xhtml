@@ -13,7 +13,8 @@
 		oncomplete="PF('statusDialog2').hide()"
 		onsuccess="PF('statusDialog2').hide()"
 		onerror="PF('statusDialog2').hide()" />
-
+		
+		
 	<p:dialog widgetVar="statusDialog2" modal="true" draggable="false"
 		closable="false" resizable="false" showHeader="false">
 		<div class="text-center">
@@ -22,14 +23,35 @@
 	</p:dialog>
 
 	<p:dialog id="resumoDialogHeader" widgetVar="resumoConsutlasDialog"
-		showEffect="fade" hideEffect="fade" resizable="false"
-		responsive="false" width="1000" positionType="center center"
+		showEffect="fade" hideEffect="fade" resizable="false"  styleClass="overflowy" 
+		responsive="false" width="1000"  positionType="center center" 
 		closable="true" update="true">
 		<f:facet name="header">
 			<h:outputText
 				value="#{contratoCobrancaMB.documentoAnalisePopup.dialogHeader}" />
 		</f:facet>
 		<h:form id="resumoConsutlasForm">
+		
+		<h:panelGrid columns="1" rendered="#{contratoCobrancaMB.documentoAnalisePopup.resumoRelacionamentos.size() > 0}">
+				<p:panel style="justify-content:start;">
+					<f:facet name="header">
+						<h:outputText value="Relacionamentos" />
+						<p:dataTable id="resumoRelacionamentos" var="relacionamentos"
+							rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
+							value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoRelacionamentos()}">
+							<p:column>
+								<h:outputText value="#{relacionamentos.descricao}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="#{relacionamentos.valor}"  style="text-transform:uppercase"/>
+							</p:column>
+
+
+						</p:dataTable>
+					</f:facet>
+				</p:panel>
+			</h:panelGrid>
+			
 			<h:panelGrid columns="5"
 				columnClasses="painelResumo,painelResumo,painelResumo,painelResumo,painelResumo">
 
@@ -39,7 +61,7 @@
 					</f:facet>
 
 					<p:dataTable id="resumocliente" var="engine"
-						rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
+						rendered="#{contratoCobrancaMB.documentoAnalisePopup != null  and contratoCobrancaMB.documentoAnalisePopup.resumoEngine != null }"
 						value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoEngine()}">
 						<p:column>
 							<h:outputText value="#{engine.descricao}"></h:outputText>
@@ -119,7 +141,12 @@
 
 				</p:panel>
 
+
+
+
 			</h:panelGrid>
+
+			
 
 		</h:form>
 	</p:dialog>
@@ -278,10 +305,8 @@
 		</h:form>
 	</p:dialog>
 
-	<shiro:hasAnyRoles
-		name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO">
+	<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
 		<p:dialog header="Adicionar pessoa Analise" overflow="auto"
-			rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise}"
 			id="dialogAdicionarPessoaAnalise"
 			widgetVar="adicionarPessoaAnaliseDlg" resizable="true"
 			style="FONT-SIZE: 13pt;" width="800" minWidth="800">
@@ -324,11 +349,16 @@
 								itemValue="Proprietario Atual" />
 							<f:selectItem itemLabel="Proprietario Anterior"
 								itemValue="Proprietario Anterior" />
+							<f:selectItem itemLabel="Comprador"
+								itemValue="Comprador" />
 							<f:selectItem itemLabel="Empresa Vinculada ao Proprietario Atual"
 								itemValue="Empresa Vinculada ao Proprietario Atual" />
 							<f:selectItem
 								itemLabel="Empresa Vinculada ao Proprietario Anterior"
 								itemValue="Empresa Vinculada ao Proprietario Anterior" />
+							<f:selectItem
+								itemLabel="Empresa vinculada ao Comprador"
+								itemValue="Empresa vinculada ao Comprador" />
 						</p:selectOneMenu>
 					</h:panelGrid>
 					<h:panelGrid columns="2" style="text-align:center">
@@ -531,5 +561,5 @@
 				</h:form>
 			</p:dialog>	
 		</shiro:hasAnyRoles>
-		
+	
 </ui:composition>

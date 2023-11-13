@@ -74,13 +74,26 @@
 							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cpf}"
 							label="CPF" mask="999.999.999-99" required="true"
 							validator="#{pagadorRecebedorMB.validaCPF}"
-							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}">
+							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}"
+							disabled="#{pagadorRecebedorMB.objetoPagadorRecebedor.id > 0}">
 							<p:ajax update="CpfCC Nome DtNascimento Sexo mae NomeCC " event="valueChange"
 								listener="#{pagadorRecebedorMB.selectedCPF}" />
 						</p:inputMask>
-	
-						<p:outputLabel for="Rg" value="RG / CNH: "
-							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
+						
+						<p:outputLabel for="tipoDocumento" value="Tipo Documento: " styleClass="labelBold" />
+						<p:selectOneRadio id="tipoDocumento"
+							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.tipoDocumento}" required="true">
+							<f:selectItem itemLabel="RG" itemValue="RG" />
+							<f:selectItem itemLabel="CNH" itemValue="CNH" />
+							<p:ajax update="documentoTxt" event="valueChange" />
+						</p:selectOneRadio>
+						
+						<h:panelGroup id="documentoTxt">
+							<p:outputLabel value="RG: "
+								rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica and pagadorRecebedorMB.objetoPagadorRecebedor.tipoDocumento eq 'RG'}" />
+							<p:outputLabel value="CNH: "
+								rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica and pagadorRecebedorMB.objetoPagadorRecebedor.tipoDocumento eq 'CNH'}" />
+						</h:panelGroup>
 						<p:inputText id="Rg"
 							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.rg}"
 							label="RG / CNH"
@@ -103,7 +116,8 @@
 							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cnpj}"
 							label="CNPJ" mask="99.999.999/9999-99" required="true"
 							validator="#{pagadorRecebedorMB.validaCNPJ}"
-							rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisica}">
+							rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisica}"
+							disabled="#{pagadorRecebedorMB.objetoPagadorRecebedor.id > 0}">
 							<p:ajax update="CNPJCC NomeCC Nome Endereco Numero Bairro Cidade Cep Estado EMail" event="valueChange"
 								listener="#{pagadorRecebedorMB.selectedCNPJ}" />
 						</p:inputMask>
@@ -173,7 +187,7 @@
 						<p:outputLabel for="EMail" value="E-Mail: " styleClass="labelBold" />
 						<p:inputText id="EMail"
 							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.email}"
-							label="E-Mail" type="email" 
+							label="E-Mail"  
 							onblur="" style="width:400px;">
 							<p:ajax event="blur" update=":form:PanelInvestidor" />
 						</p:inputText>
@@ -369,7 +383,21 @@
 								label="CPF" mask="999.999.999-99" 
 								validator="#{pagadorRecebedorMB.validaCPF}">
 							</p:inputMask>
-							<p:outputLabel for="RgConjuge" value="RG / CNH: " />
+							
+							<p:outputLabel for="tipoDocumentoConjuge" value="Tipo Documento: " styleClass="labelBold" />
+							<p:selectOneRadio id="tipoDocumentoConjuge"
+								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.tipoDocumento}" required="true">
+								<f:selectItem itemLabel="RG" itemValue="RG" />
+								<f:selectItem itemLabel="CNH" itemValue="CNH" />
+								<p:ajax update="documentoTxtConjuge" event="valueChange" />
+							</p:selectOneRadio>
+							
+							<h:panelGroup id="documentoTxtConjuge">
+								<p:outputLabel value="RG: "
+									rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica and pagadorRecebedorMB.objetoPagadorRecebedor.tipoDocumentoConjuge eq 'RG'}" />
+								<p:outputLabel value="CNH: "
+									rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica and pagadorRecebedorMB.objetoPagadorRecebedor.tipoDocumentoConjuge eq 'CNH'}" />
+							</h:panelGroup>
 							<p:inputText id="RgConjuge"
 								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.rgConjuge}"
 								label="RG  / CNH" />
@@ -398,7 +426,7 @@
 								styleClass="labelBold"  />
 							<p:inputText id="emailConjuge"
 								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.emailConjuge}"
-								label="E-Mail" type="email" 
+								label="E-Mail"  
 								onblur="" style="width:400px;"  />
 	
 							<p:outputLabel for="DtNascimentoConjuge"

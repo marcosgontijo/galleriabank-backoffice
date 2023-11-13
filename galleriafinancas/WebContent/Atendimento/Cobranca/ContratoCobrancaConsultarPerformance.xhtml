@@ -82,6 +82,7 @@
 			            <f:selectItem itemValue="CRI 2" itemLabel="CRI 2" />
 			            <f:selectItem itemValue="CRI 3" itemLabel="CRI 3" />
 			            <f:selectItem itemValue="CRI 4" itemLabel="CRI 4" />
+			            <f:selectItem itemValue="CRI 5" itemLabel="CRI 5" />
 			            <p:ajax event="change" update="ConsultaContratos" listener="#{contratoCobrancaMB.changeStatusConsultaContratosPerformance}" />
 			        </p:selectOneListbox>	
 					<p:spacer></p:spacer>												
@@ -203,7 +204,7 @@
 					    	</p:confirmDialog>   
 		                </shiro:hasAnyRoles>      
 		                <shiro:hasAnyRoles name="ROOT, PROFILE_COBRANCA">  	                
-			                <p:commandButton oncomplete="PF('contratoEmCartorioDialog').show();" icon="ui-icon-info" value="Contrato em Cartório?" >
+			                <p:commandButton oncomplete="PF('contratoEmCartorioDialog').show();" icon="ui-icon-info" value="Contrato em Cartório?" update="contratoEmCartorioForm" >
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 			                </p:commandButton>	            		                		               
 			                <p:spacer width="10" height="10"/>
@@ -288,6 +289,7 @@
 							<f:selectItem itemValue="CRI 2" itemLabel="CRI 2" />
 							<f:selectItem itemValue="CRI 3" itemLabel="CRI 3" />
 							<f:selectItem itemValue="CRI 4" itemLabel="CRI 4" />
+							<f:selectItem itemValue="CRI 5" itemLabel="CRI 5" />
 						</p:selectOneMenu>	
 					</h:panelGrid>
 				</div>

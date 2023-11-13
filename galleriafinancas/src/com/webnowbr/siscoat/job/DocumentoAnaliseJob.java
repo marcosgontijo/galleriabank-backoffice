@@ -18,8 +18,8 @@ public class DocumentoAnaliseJob implements Job {
 	/** Logger instance. */
 	private static final Log LOGGER = LogFactory.getLog(DocumentoAnaliseJob.class);
 
-	private final  DocumentoAnaliseJobConsultar documentoAnaliseJobConsultar; 
-	
+	private final DocumentoAnaliseJobConsultar documentoAnaliseJobConsultar;
+
 	/**
 	 * Empty constructor for job initilization
 	 */
@@ -60,20 +60,24 @@ public class DocumentoAnaliseJob implements Job {
 			consultarPesquisas();
 		} catch (Exception e) {
 			System.out.println("1 parameter value : " + documentoAnaliseJobConsultar.listaDocumentoAnalise);
-	        System.out.println("2 parameter value : " + documentoAnaliseJobConsultar.user);
-	        System.out.println("3 parameter value : " + documentoAnaliseJobConsultar.objetoContratoCobranca);
-			System.out.println("DocumentoAnaliseJob.execute (jobKey=" + jobKey + "): EXCEPTION" + e + " - " + documentoAnaliseJobConsultar);
+			System.out.println("2 parameter value : " + documentoAnaliseJobConsultar.user);
+			System.out.println("3 parameter value : " + documentoAnaliseJobConsultar.objetoContratoCobranca);
+			System.out.println("DocumentoAnaliseJob.execute (jobKey=" + jobKey + "): EXCEPTION" + e + " - "
+					+ documentoAnaliseJobConsultar);
 			e.printStackTrace();
 		}
 	}
 
 	public void consultarPesquisas() {
 		try {
-			System.out.println("incio DocumentoAnaliseJob" + documentoAnaliseJobConsultar.objetoContratoCobranca.getNumeroContrato());
+			System.out.println("incio DocumentoAnaliseJob"
+					+ documentoAnaliseJobConsultar.objetoContratoCobranca.getNumeroContrato());
 			documentoAnaliseJobConsultar.executarConsultasAnaliseDocumento();
-			System.out.println("Fim DocumentoAnaliseJob - " + documentoAnaliseJobConsultar.objetoContratoCobranca.getNumeroContrato());
- 		} catch (Exception e) {
-			System.out.println("DocumentoAnaliseJob.execute " + "DocumentoAnaliseJob: EXCEPTION" +  e.toString() + " - " + documentoAnaliseJobConsultar);
+			System.out.println("Fim DocumentoAnaliseJob - "
+					+ documentoAnaliseJobConsultar.objetoContratoCobranca.getNumeroContrato());
+		} catch (Exception e) {
+			System.out.println("DocumentoAnaliseJob.execute " + "DocumentoAnaliseJob: EXCEPTION" + e.toString() + " - "
+					+ documentoAnaliseJobConsultar);
 			e.printStackTrace();
 		}
 	}

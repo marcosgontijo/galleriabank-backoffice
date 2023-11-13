@@ -11,16 +11,13 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Base64;
-import java.util.Calendar;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -35,6 +32,7 @@ import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.ws.endpoint.DocketWebhookRetornoDocumento;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
+import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.infra.db.model.User;
 
@@ -65,7 +63,8 @@ public class EngineService {
 		return engineCriarConsulta(null, engine, usuarioLogado, null);
 	}
 
-	public FacesMessage engineCriarConsulta(DocumentoAnalise documentoAnalise, DataEngine engine, User usuarioLogado, String urlWenhook ) { 
+	public FacesMessage engineCriarConsulta(DocumentoAnalise documentoAnalise, DataEngine engine, User usuarioLogado,
+			String urlWenhook) {
 		DataEngineDao engineDao = new DataEngineDao();
 		if (!CommonsUtil.semValor(engine.getIdCallManager())) {
 			if (documentoAnalise != null) {
@@ -74,19 +73,21 @@ public class EngineService {
 				documentoAnalise.setRetornoEngine("consulta efetuada anteriormente Id: " + engine.getId());
 				documentoAnaliseDao.merge(documentoAnalise);
 				salvarDetalheDocumentoEngine(documentoAnalise);
-				
-				EngineRetorno engineRetorno = GsonUtil.fromJson(documentoAnalise.getRetornoEngine(), EngineRetorno.class);
+
+				EngineRetorno engineRetorno = GsonUtil.fromJson(documentoAnalise.getRetornoEngine(),
+						EngineRetorno.class);
 				if (CommonsUtil.semValor(engineRetorno.getIdCallManager())) {
 					engineRetorno.setIdCallManager(engine.getIdCallManager());
 				}
-				
+
 				DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
 				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
-				
-				processaWebHookEngine(documentoAnaliseService, engineRetorno,
-						pagadorRecebedorService, documentoAnaliseDao, documentoAnalise);
+
+				processaWebHookEngine(documentoAnaliseService, engineRetorno, pagadorRecebedorService,
+						documentoAnaliseDao, documentoAnalise);
 			}
-			return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta já existente!" + engine.getIdCallManager(),"");
+			return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta já existente!" + engine.getIdCallManager(),
+					"");
 		}
 		try {
 			// loginDocket();
@@ -107,7 +108,7 @@ public class EngineService {
 			myURLConnection.setDoOutput(true);
 
 			DataEngineIdSend myResponse = null;
-			JSONObject jsonWhatsApp = engineBodyJsonEngine(engine.getPagador(), urlWenhook );
+			JSONObject jsonWhatsApp = engineBodyJsonEngine(engine.getPagador(), urlWenhook);
 
 			try (OutputStream os = myURLConnection.getOutputStream()) {
 				byte[] input = jsonWhatsApp.toString().getBytes("utf-8");
@@ -145,6 +146,8 @@ public class EngineService {
 				// engine.getContrato().getId());
 				if (engine.getId() <= 0) {
 					engineDao.create(engine);
+				}else {
+					engineDao.merge(engine);
 				}
 
 				if (documentoAnalise != null) {
@@ -205,7 +208,7 @@ public class EngineService {
 			myURLConnection.addRequestProperty("x-api-key", this.engineChaveApi);
 
 			JSONObject myResponse = null;
-			JSONObject jsonWhatsApp = engineBodyJsonEngine(engine.getPagador(),null );
+			JSONObject jsonWhatsApp = engineBodyJsonEngine(engine.getPagador(), null);
 
 			try (OutputStream os = myURLConnection.getOutputStream()) {
 				byte[] input = jsonWhatsApp.toString().getBytes("utf-8");
@@ -316,9 +319,10 @@ public class EngineService {
 				pagadorRecebedorDao.merge(documentoAnalise.getPagador());
 			}
 
-			if (!CommonsUtil.semValor(engineRetorno.getConsultaCompleta().getEnterpriseData()) &&
-					!CommonsUtil.semValor(engineRetorno.getConsultaCompleta().getEnterpriseData().getPartnership()) &&
-					!CommonsUtil.semValor(engineRetorno.getConsultaCompleta().getEnterpriseData().getPartnership().getPartnerships())) {
+			if (!CommonsUtil.semValor(engineRetorno.getConsultaCompleta().getEnterpriseData())
+					&& !CommonsUtil.semValor(engineRetorno.getConsultaCompleta().getEnterpriseData().getPartnership())
+					&& !CommonsUtil.semValor(engineRetorno.getConsultaCompleta().getEnterpriseData().getPartnership()
+							.getPartnerships())) {
 				DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
 
 				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
@@ -328,7 +332,8 @@ public class EngineService {
 
 					documentoAnaliseService.cadastrarPessoRetornoEngine(partnership, usuarioLogado, documentoAnaliseDao,
 							pagadorRecebedorService, documentoAnalise.getContratoCobranca(),
-							( ( CommonsUtil.mesmoValor("INAPTO",  partnership.getCNPJStatus()))?"INAPTO":"" )+  "Empresa Vinculada ao " + documentoAnalise.getMotivoAnalise());
+							((CommonsUtil.mesmoValor("INAPTO", partnership.getCNPJStatus())) ? "INAPTO" : "")
+									+ "Empresa Vinculada ao " + documentoAnalise.getMotivoAnalise());
 				}
 			}
 
@@ -339,16 +344,17 @@ public class EngineService {
 	public void gerarRelacoesEngine(DocumentoAnalise documentoAnalise) {
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 		documentoAnalise = documentoAnaliseDao.findById(documentoAnalise.getId());
-		EngineRetorno engineRetorno = null;// = GsonUtil.fromJson(documentoAnalise.getRetornoEngine(), EngineRetorno.class);
+		EngineRetorno engineRetorno = null;// = GsonUtil.fromJson(documentoAnalise.getRetornoEngine(),
+											// EngineRetorno.class);
 		try {
 			engineRetorno = GsonUtil.fromJson(documentoAnalise.getRetornoEngine(), EngineRetorno.class);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			//e.printStackTrace();
+			// e.printStackTrace();
 		}
 		DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
 		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
-		
+
 		if (CommonsUtil.semValor(engineRetorno)) {
 			return;
 		}
@@ -380,11 +386,13 @@ public class EngineService {
 			}
 			for (EngineRetornoExecutionResultRelacionamentosPessoaisPJ ererrppj : engineRetorno
 					.getRelacionamentosPessoaisPJ().getResult()) {
-				if (CommonsUtil.semValor(ererrppj.getRelationships()) || ererrppj.getRelationships().getRelationships().size() <= 0) {
+				if (CommonsUtil.semValor(ererrppj.getRelationships())
+						|| ererrppj.getRelationships().getRelationships().size() <= 0) {
 					return;
 				}
 
-				for (EngineRetornoExecutionResultRelacionamentosPessoaisPJPartnership ererr : ererrppj.getRelationships().getRelationships()) {
+				for (EngineRetornoExecutionResultRelacionamentosPessoaisPJPartnership ererr : ererrppj
+						.getRelationships().getRelationships()) {
 					String relacao = "";
 					if (CommonsUtil.mesmoValor(ererr.getRelationshipName(), "OWNER")) {
 						relacao = "Dono";
@@ -416,9 +424,10 @@ public class EngineService {
 	}
 
 	public void salvarDetalheDocumentoEngine(DocumentoAnalise documentoAnalise) {
-		//FacesContext context = FacesContext.getCurrentInstance();
+		// FacesContext context = FacesContext.getCurrentInstance();
 		if (CommonsUtil.semValor(documentoAnalise.getEngine().getIdCallManager())) {
-			//context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Consulta sem IdCallManager", ""));
+			// context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+			// "Consulta sem IdCallManager", ""));
 			return;
 		}
 		documentoAnalise.setRetornoEngine(PegarDetalheDataEngine(documentoAnalise.getEngine()));
@@ -427,30 +436,27 @@ public class EngineService {
 		documentoAnaliseDao.merge(documentoAnalise);
 	}
 
-	public void processaWebHookEngine( DocumentoAnaliseService documentoAnaliseService,
+	public void processaWebHookEngine(DocumentoAnaliseService documentoAnaliseService,
 			EngineRetorno engineWebhookRetorno, PagadorRecebedorService pagadorRecebedorService,
 			DocumentoAnaliseDao documentoAnaliseDao, DocumentoAnalise documentoAnalise) {
-		
-		String webhookRetorno = GsonUtil.toJson(engineWebhookRetorno);
-		
-		documentoAnalise.setRetornoEngine(webhookRetorno);
 
-		SerasaService serasaService = new SerasaService();
+		String webhookRetorno = GsonUtil.toJson(engineWebhookRetorno);
+
+		documentoAnalise.setRetornoEngine(webhookRetorno);
+		
 		NetrinService netrinService = new NetrinService();
 		UserService userService = new UserService();
 		ScrService scrService = new ScrService();
 		EngineService engineService = new EngineService();
 
-		
 		User userSistema = userService.userSistema();
-		
+
 		engineWebhookRetorno.getConsultaAntecedenteCriminais();
 
-		if ((CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais())
-				|| CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais().getResult()
-						.get(0).getOnlineCertificates()))
-				&& (CommonsUtil.semValor(engineWebhookRetorno.getProcessos()) || CommonsUtil.intValue(
-						engineWebhookRetorno.getProcessos().getTotal_acoes_judicias_reu()) == 0)) {
+		if ((CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais()) || CommonsUtil.semValor(
+				engineWebhookRetorno.getConsultaAntecedenteCriminais().getResult().get(0).getOnlineCertificates()))
+				&& (CommonsUtil.semValor(engineWebhookRetorno.getProcessos()) || CommonsUtil
+						.intValue(engineWebhookRetorno.getProcessos().getTotal_acoes_judicias_reu()) == 0)) {
 			// libera a consulta do crednet da PF
 //						if (documentoAnalise.isPodeChamarSerasa()) {
 //							if (CommonsUtil.semValor(documentoAnalise.getRetornoSerasa())) {
@@ -479,42 +485,42 @@ public class EngineService {
 //								DocumentosAnaliseEnum.ENGINE, webhookRetorno);
 
 		} else {
-			if (!CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais()) 
+			if (!CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais())
 					&& !CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais().getResult())
-					&& !CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais()
-							.getResult().get(0).getOnlineCertificates())
+					&& !CommonsUtil.semValor(engineWebhookRetorno.getConsultaAntecedenteCriminais().getResult().get(0)
+							.getOnlineCertificates())
 					&& !CommonsUtil.mesmoValorIgnoreCase("NADA CONSTA",
 							engineWebhookRetorno.getConsultaAntecedenteCriminais().getResult().get(0)
 									.getOnlineCertificates().get(0).getBaseStatus())) {
 				documentoAnalise.addObservacao("Possui antecedentes criminais");
 			}
 			if (!CommonsUtil.semValor(engineWebhookRetorno.getProcessos())
-				&& !CommonsUtil.semValor(engineWebhookRetorno.getProcessos().getTotal_acoes_judicias_reu())
-				&& CommonsUtil.mesmoValor(CommonsUtil.intValue(
-						engineWebhookRetorno.getProcessos().getTotal_acoes_judicias_reu()),0)) {
+					&& !CommonsUtil.semValor(engineWebhookRetorno.getProcessos().getTotal_acoes_judicias_reu())
+					&& CommonsUtil.mesmoValor(
+							CommonsUtil.intValue(engineWebhookRetorno.getProcessos().getTotal_acoes_judicias_reu()),
+							0)) {
 				documentoAnalise.addObservacao("Possui Processos");
 			}
 		}
 
 		documentoAnaliseDao.merge(documentoAnalise);
 
-		String motivo = "Empresa Vinculada ao Proprietario Atual";
-		if (!CommonsUtil.mesmoValor(documentoAnalise.getMotivoAnalise().toUpperCase(),
-				"PROPRIETARIO ATUAL"))
-			motivo = "Empresa Vinculada ao Proprietario Anterior";
-		
+		String motivo = "Empresa Vinculada ao " + StringUtils.capitalize(documentoAnalise.getMotivoAnalise());
+//		if (!CommonsUtil.mesmoValor(documentoAnalise.getMotivoAnalise().toUpperCase(), "PROPRIETARIO ATUAL"))
+//			motivo = "Empresa Vinculada ao Proprietario Anterior";
+
 		if (!CommonsUtil.semValor(engineWebhookRetorno.getConsultaCompleta())
 				&& !CommonsUtil.semValor(engineWebhookRetorno.getConsultaCompleta().getEnterpriseData())
-				&& !CommonsUtil.semValor(engineWebhookRetorno.getConsultaCompleta().getEnterpriseData().getPartnership())
+				&& !CommonsUtil
+						.semValor(engineWebhookRetorno.getConsultaCompleta().getEnterpriseData().getPartnership())
 				&& !CommonsUtil.semValor(engineWebhookRetorno.getConsultaCompleta().getEnterpriseData().getPartnership()
 						.getPartnerships())) {
 
-			for (EngineRetornoRequestEnterprisePartnership partnership : engineWebhookRetorno
-					.getConsultaCompleta().getEnterpriseData().getPartnership().getPartnerships()) {
+			for (EngineRetornoRequestEnterprisePartnership partnership : engineWebhookRetorno.getConsultaCompleta()
+					.getEnterpriseData().getPartnership().getPartnerships()) {
 
-				documentoAnaliseService.cadastrarPessoRetornoEngine(partnership, userSistema,
-						documentoAnaliseDao, pagadorRecebedorService,
-						documentoAnalise.getContratoCobranca(), motivo);
+				documentoAnaliseService.cadastrarPessoRetornoEngine(partnership, userSistema, documentoAnaliseDao,
+						pagadorRecebedorService, documentoAnalise.getContratoCobranca(), motivo);
 
 			}
 		}
@@ -524,26 +530,25 @@ public class EngineService {
 
 			for (EngineRetornoExecutionResultRelacionamentosPessoaisPJ engineRetornoExecutionResultRelacionamentosPessoaisPJ : engineWebhookRetorno
 					.getRelacionamentosPessoaisPJ().getResult()) {
-				
-				if (!CommonsUtil.semValor(
-						engineRetornoExecutionResultRelacionamentosPessoaisPJ.getRelationships())) {
 
-					if (!CommonsUtil.semValor(engineRetornoExecutionResultRelacionamentosPessoaisPJ
-							.getRelationships().getRelationships()))
+				if (!CommonsUtil.semValor(engineRetornoExecutionResultRelacionamentosPessoaisPJ.getRelationships())) {
+
+					if (!CommonsUtil.semValor(engineRetornoExecutionResultRelacionamentosPessoaisPJ.getRelationships()
+							.getRelationships()))
 						for (EngineRetornoExecutionResultRelacionamentosPessoaisPJPartnership engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership : engineRetornoExecutionResultRelacionamentosPessoaisPJ
 								.getRelationships().getRelationships()) {
 
 							if (engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership
 									.getRelatedEntityTaxIdType().equalsIgnoreCase("CPF")) {
-								motivo = "Sócio Vinculado ao Proprietario Atual";
-								if (!CommonsUtil.mesmoValor(documentoAnalise.getMotivoAnalise().toUpperCase(),
-										"PROPRIETARIO ATUAL"))
-									motivo = "Sócio Vinculado ao Proprietario Anterior";
+								motivo = "Sócio Vinculado ao " + StringUtils.capitalize(documentoAnalise.getMotivoAnalise());
+//								if (!CommonsUtil.mesmoValor(documentoAnalise.getMotivoAnalise().toUpperCase(),
+//										"PROPRIETARIO ATUAL"))
+//									motivo = "Sócio Vinculado ao Proprietario Anterior";
 							} else {
-								motivo = "Empresa Vinculada ao Proprietario Atual";
-								if (!CommonsUtil.mesmoValor(documentoAnalise.getMotivoAnalise().toUpperCase(),
-										"PROPRIETARIO ATUAL"))
-									motivo = "Empresa Vinculada ao Proprietario Anterior";
+								motivo = "Empresa Vinculada ao "  + StringUtils.capitalize(documentoAnalise.getMotivoAnalise());
+//								if (!CommonsUtil.mesmoValor(documentoAnalise.getMotivoAnalise().toUpperCase(),
+//										"PROPRIETARIO ATUAL"))
+//									motivo = "Empresa Vinculada ao Proprietario Anterior";
 							}
 
 							documentoAnaliseService.cadastrarPessoRetornoEngine(
@@ -552,23 +557,23 @@ public class EngineService {
 									documentoAnalise.getContratoCobranca(), motivo);
 						}
 
-					if (!CommonsUtil.semValor(engineRetornoExecutionResultRelacionamentosPessoaisPJ
-							.getRelationships().getCurrentRelationships()))
+					if (!CommonsUtil.semValor(engineRetornoExecutionResultRelacionamentosPessoaisPJ.getRelationships()
+							.getCurrentRelationships()))
 						for (EngineRetornoExecutionResultRelacionamentosPessoaisPJPartnership engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership : engineRetornoExecutionResultRelacionamentosPessoaisPJ
 								.getRelationships().getCurrentRelationships()) {
 							documentoAnaliseService.cadastrarPessoRetornoEngine(
-									engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership,
-									userSistema, documentoAnaliseDao, pagadorRecebedorService,
+									engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership, userSistema,
+									documentoAnaliseDao, pagadorRecebedorService,
 									documentoAnalise.getContratoCobranca(), motivo);
 						}
 
-					if (!CommonsUtil.semValor(engineRetornoExecutionResultRelacionamentosPessoaisPJ
-							.getRelationships().getHistoricalRelationships()))
+					if (!CommonsUtil.semValor(engineRetornoExecutionResultRelacionamentosPessoaisPJ.getRelationships()
+							.getHistoricalRelationships()))
 						for (EngineRetornoExecutionResultRelacionamentosPessoaisPJPartnership engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership : engineRetornoExecutionResultRelacionamentosPessoaisPJ
 								.getRelationships().getHistoricalRelationships()) {
 							documentoAnaliseService.cadastrarPessoRetornoEngine(
-									engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership,
-									userSistema, documentoAnaliseDao, pagadorRecebedorService,
+									engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership, userSistema,
+									documentoAnaliseDao, pagadorRecebedorService,
 									documentoAnalise.getContratoCobranca(), motivo);
 						}
 
@@ -582,10 +587,10 @@ public class EngineService {
 		documentoAnaliseDao.merge(documentoAnalise);
 		String base64 = documentoAnalise.getEngine().getPdfBase64();
 		FileService fileService = new FileService();
-		fileService.salvarPdfRetorno(documentoAnalise, base64, "Processo", "interno");
-		
+		//fileService.salvarPdfRetorno(documentoAnalise, base64, "Processo", "interno");
+
 	}
-		
+
 	private void PegarPDFDataEngine(DataEngine engine) { // POST para pegar pdf
 		FacesContext context = FacesContext.getCurrentInstance();
 		if (CommonsUtil.semValor(engine.getIdCallManager())) {
@@ -649,10 +654,11 @@ public class EngineService {
 	}
 
 	private String PegarDetalheDataEngine(DataEngine engine) { // POST para pegar pdf
-		//FacesContext context = FacesContext.getCurrentInstance();
+		// FacesContext context = FacesContext.getCurrentInstance();
 		if (CommonsUtil.semValor(engine.getIdCallManager())) {
-			//context.addMessage(null,
-			//		new FacesMessage(FacesMessage.SEVERITY_FATAL, "Não Foi gerado ID da consulta!!!", ""));
+			// context.addMessage(null,
+			// new FacesMessage(FacesMessage.SEVERITY_FATAL, "Não Foi gerado ID da
+			// consulta!!!", ""));
 			return null;
 		}
 
@@ -682,8 +688,8 @@ public class EngineService {
 //			JSONObject myResponse = null;
 			String result = null;
 			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
-				//context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-				//		"Engine: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", ""));
+				// context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+				// "Engine: Falha (Cod: " + myURLConnection.getResponseCode() + ")", ""));
 				System.out.println(myURL.toString());
 			} else {
 				// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
@@ -701,6 +707,24 @@ public class EngineService {
 				in.close();
 			}
 			myURLConnection.disconnect();
+			
+			///  trecho retirado do webhook
+			PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+			PagadorRecebedor pagaRecebedor = engine.getPagador();
+			pagadorRecebedorService.preecheDadosReceita(pagaRecebedor);
+			pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagaRecebedor,
+					DocumentosAnaliseEnum.ENGINE, result);
+			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+			DocumentoAnalise documentoAnalise = documentoAnaliseDao.findByFilter("engine", engine).stream()
+					.findFirst().orElse(null);
+			DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
+			EngineRetorno engineWebhookRetorno = GsonUtil.fromJson(result, EngineRetorno.class);
+			if (!CommonsUtil.semValor(documentoAnalise)) {
+				processaWebHookEngine(documentoAnaliseService, engineWebhookRetorno,
+					pagadorRecebedorService, documentoAnaliseDao, documentoAnalise);
+			}
+			///  trecho retirado do webhook
+			
 			return result;
 
 		} catch (MalformedURLException e) {
@@ -713,7 +737,7 @@ public class EngineService {
 		return null;
 	}
 
-	private JSONObject engineBodyJsonEngine(PagadorRecebedor pagador, String urlWenhook ) {
+	private JSONObject engineBodyJsonEngine(PagadorRecebedor pagador, String urlWenhook) {
 		JSONObject jsonDocketBodyPedido = new JSONObject();
 		if (!CommonsUtil.semValor(pagador.getCpf())) {
 			jsonDocketBodyPedido.put("idProviderFlow", engineIdproviderFlowPF);
@@ -723,10 +747,10 @@ public class EngineService {
 			jsonDocketBodyPedido.put("fields", engineJsonPJ(pagador));
 		}
 		String webHookJWT = JwtUtil.generateJWTWebhook(true);
-		if ( CommonsUtil.semValor( urlWenhook )) 
+		if (CommonsUtil.semValor(urlWenhook))
 			jsonDocketBodyPedido.put("urlWebhook", SiscoatConstants.URL_SISCOAT_ENGINE_WEBHOOK + webHookJWT);
 		else
-			jsonDocketBodyPedido.put("urlWebhook", SiscoatConstants.URL_SISCOAT_ENGINE_WEBHOOK.replace("https://backoffice.galleriabank.com.br", urlWenhook) + webHookJWT);
+			jsonDocketBodyPedido.put("urlWebhook", urlWenhook);
 
 		return jsonDocketBodyPedido;
 	}
@@ -826,19 +850,18 @@ public class EngineService {
 		return null;
 	}
 
-
 	public String getPdfBase64(String documento) {
 		DocketWebhookRetornoDocumento documentoPdf = GsonUtil.fromJson(documento, DocketWebhookRetornoDocumento.class);
-        try { 
-        	String urlComprovante = documentoPdf.getArquivos().get(0).getLinks().get(0).getHref();
-            java.net.URL url = new java.net.URL(urlComprovante);
-            InputStream is = url.openStream();
-            byte[] bytes = org.apache.commons.io.IOUtils.toByteArray(is);
-            byte[] encoded = Base64.getEncoder().encode(bytes);
-            return new String(encoded);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+		try {
+			String urlComprovante = documentoPdf.getArquivos().get(0).getLinks().get(0).getHref();
+			java.net.URL url = new java.net.URL(urlComprovante);
+			InputStream is = url.openStream();
+			byte[] bytes = org.apache.commons.io.IOUtils.toByteArray(is);
+			byte[] encoded = Base64.getEncoder().encode(bytes);
+			return new String(encoded);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

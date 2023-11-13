@@ -161,6 +161,7 @@ public class NetrinMB {
 				jobDetail.getJobDataMap().put("listaDocumentoAnalise", listPagador);
 				jobDetail.getJobDataMap().put("user", user);
 				jobDetail.getJobDataMap().put("objetoContratoCobranca", contratoCobranca);
+				jobDetail.getJobDataMap().put("tipoProcesso", "ConsultarPesquisas");
 				Trigger trigger = TriggerBuilder.newTrigger()
 						.withIdentity("certidoesJOB", contratoCobranca.getNumeroContrato() + "_netrin_" + etapa).startNow().build();
 				scheduler.scheduleJob(jobDetail, trigger);
@@ -318,6 +319,9 @@ public class NetrinMB {
 		}
 	}
 	
+	public void gerarTokenServico() {
+		System.out.println(br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos());
+	}
 	
 	public List<DocumentoAnalise> getListPagador() {
 		return listPagador;

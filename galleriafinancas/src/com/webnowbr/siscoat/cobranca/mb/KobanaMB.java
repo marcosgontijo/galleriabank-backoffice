@@ -40,10 +40,10 @@ import com.webnowbr.siscoat.common.DateUtil;
 
 @ManagedBean(name = "kobanaMB")
 @SessionScoped
-public class KobanaMB {
+public class KobanaMB { 
 
 	/****
-	 * Token de Segurança
+	 * Token de Segurança 
 		Integrações > API > Token de API.
 		
 		Sandbox
@@ -280,7 +280,7 @@ public class KobanaMB {
 								"[Kobana - Geração Boleto] Falha de permissão. Você não tem o Scope obrigatório para essa chamada.", ""));
 					}	
 					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-							"[Kobana - Consulta Boletos] Erro não conhecido!", ""));
+							"[Kobana - Consulta Boletos] Erro não conhecido!", "")); 
 				}
 							
 				myURLConnection.disconnect();
@@ -835,6 +835,10 @@ public class KobanaMB {
 		if (contrato.getEmpresa().equals("CRI 4")) {
 			jsonBoleto.put("bank_billet_account_id", 9766);
 		}
+		
+		if (contrato.getEmpresa().equals("CRI 5")) {
+			jsonBoleto.put("bank_billet_account_id", 10132);
+		}
 
 	    /*
 	    Número do Contrato
@@ -994,7 +998,26 @@ public class KobanaMB {
 	    }
 		
 		jsonBoleto.put("description", "Crédito com Imóvel em Garantia - Contrato: " + contrato.getNumeroContrato() + " / Parcela(s): " + parcelas);
-		jsonBoleto.put("instructions", "");
+			
+		if (contrato.getEmpresa().equals("GALLERIA FINANÇAS SECURITIZADORA S.A.")) {
+			jsonBoleto.put("instructions", "Crédito cedido para GALLERIA FINANCAS SECURITIZADORA S.A., CNPJ nº 34.425.347/0001-06");
+		}
+		
+		if (contrato.getEmpresa().equals("FIDC GALLERIA")) {
+			jsonBoleto.put("instructions", "Crédito cedido para GALLERIA HOME EQUITY FIDC, CNPJ nº 37.294.759/0001-34");
+		}
+		
+		if (contrato.getEmpresa().equals("CRI 1") || contrato.getEmpresa().equals("CRI 2") || contrato.getEmpresa().equals("CRI 3")) {
+			jsonBoleto.put("instructions", "Crédito cedido para True Securitizadora S.A., CNPJ nº 12.130.744/0001-00");
+		}
+		
+		if (contrato.getEmpresa().equals("CRI 4")) {
+			jsonBoleto.put("instructions", "Crédito cedido para Companhia Província de Securitização, CNPJ/MF n° 04.200.649/0001-07");
+		}
+		
+		if (contrato.getEmpresa().equals("CRI 5")) {
+			jsonBoleto.put("instructions", "");
+		}
 		
 		JSONObject jsonCustomData = new JSONObject();
 		
@@ -1055,7 +1078,7 @@ public class KobanaMB {
 		
 		if (!contrato.getEmpresa().equals("GALLERIA FINANÇAS SECURITIZADORA S.A.") && !contrato.getEmpresa().equals("FIDC GALLERIA")
 				&& !contrato.getEmpresa().equals("CRI 1") && !contrato.getEmpresa().equals("CRI 2") && !contrato.getEmpresa().equals("CRI 3")
-				 && !contrato.getEmpresa().equals("CRI 4")) {
+				 && !contrato.getEmpresa().equals("CRI 4") && !contrato.getEmpresa().equals("CRI 5")) {
 			retorno = true;
 			
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
@@ -1234,6 +1257,10 @@ public class KobanaMB {
 		if (contrato.getEmpresa().equals("CRI 4")) {
 			jsonBoleto.put("bank_billet_account_id", 9766);
 		}
+		
+		if (contrato.getEmpresa().equals("CRI 5")) {
+			jsonBoleto.put("bank_billet_account_id", 10132);
+		}
 	    /*
 	    Número do Contrato
 	     */
@@ -1351,8 +1378,24 @@ public class KobanaMB {
 		
 		jsonBoleto.put("description", "Crédito com Imóvel em Garantia");
 		
+		if (contrato.getEmpresa().equals("GALLERIA FINANÇAS SECURITIZADORA S.A.")) {
+			jsonBoleto.put("instructions", "Crédito cedido para GALLERIA FINANCAS SECURITIZADORA S.A., CNPJ nº 34.425.347/0001-06");
+		}
+		
+		if (contrato.getEmpresa().equals("FIDC GALLERIA")) {
+			jsonBoleto.put("instructions", "Crédito cedido para GALLERIA HOME EQUITY FIDC, CNPJ nº 37.294.759/0001-34");
+		}
+		
+		if (contrato.getEmpresa().equals("CRI 1") || contrato.getEmpresa().equals("CRI 2") || contrato.getEmpresa().equals("CRI 3")) {
+			jsonBoleto.put("instructions", "Crédito cedido para True Securitizadora S.A., CNPJ nº 12.130.744/0001-00");
+		}
+		
 		if (contrato.getEmpresa().equals("CRI 4")) {
 			jsonBoleto.put("instructions", "Crédito cedido para Companhia Província de Securitização, CNPJ/MF n° 04.200.649/0001-07");
+		}
+		
+		if (contrato.getEmpresa().equals("CRI 5")) {
+			jsonBoleto.put("instructions", "");
 		}
 		//jsonBoleto.put("instructions", "Não receber após 30 dias do vencimento");
 		

@@ -22,7 +22,6 @@ import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.service.FileService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
-import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.infra.db.model.User;
 
@@ -35,7 +34,7 @@ public class PlexiService {
 	private String urlProducao = "https://api.plexi.com.br";//https://api.plexi.com.br
 	
 	
-	public FacesMessage PedirConsulta(PlexiConsulta plexiCosulta, User usuarioLogado, DocumentoAnalise docAnalise) {
+	public FacesMessage PedirConsulta(PlexiConsulta plexiCosulta, User usuarioLogado) {
 		Gson gson = new GsonBuilder().excludeFieldsWithModifiers(Modifier.PROTECTED).create();
 		String plexiJson = gson.toJson(plexiCosulta);
 		FacesMessage result = null;
@@ -75,7 +74,9 @@ public class PlexiService {
 				result = new FacesMessage(FacesMessage.SEVERITY_ERROR, 
 						"Erro: " +  plexiCosulta.getPlexiDocumentos().getNome() 
 						+ " / HTTP:" + myURLConnection.getResponseCode(), "");
-				System.out.println(getJsonSucesso(myURLConnection.getInputStream()).toString());
+				System.out.println(myURL);
+				System.out.println(getJsonSucessoStr(myURLConnection.getErrorStream()).toString());
+				System.out.println(myURLConnection.getResponseMessage());
 			} else {
 				JSONObject retorno = null;
 				retorno = getJsonSucesso(myURLConnection.getInputStream());
@@ -133,9 +134,15 @@ public class PlexiService {
 			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO 
 					&& myURLConnection.getResponseCode() != HTTP_COD_SUCESSO1
 					&& myURLConnection.getResponseCode() != HTTP_COD_SUCESSO2) {
-				System.out.println("Não foi encontrato retorno de requestId:" + requestId);
+				if(CommonsUtil.mesmoValor(myURLConnection.getResponseCode(), 404)){
+					JSONObject jsonObject = new JSONObject();
+					jsonObject.put("erro404", "true");
+					return jsonObject;
+				}
+				
 			} else {
-				retorno = getJsonSucesso(myURLConnection.getInputStream());
+				if(!CommonsUtil.mesmoValor(myURLConnection.getResponseCode(), 202))
+					retorno = getJsonSucesso(myURLConnection.getInputStream());
 			}
 			myURLConnection.disconnect();
 			return retorno;
@@ -149,7 +156,7 @@ public class PlexiService {
 		return retorno;
 	}
 	
-	public void atualizaRetorno(List<DocumentoAnalise> listDocAnalise) {
+	public void atualizaRetorno(List<DocumentoAnalise> listDocAnalise, User user) {
 		for(DocumentoAnalise docAnalise : listDocAnalise) {
 			if(CommonsUtil.semValor(docAnalise.getPlexiConsultas()) 
 				|| docAnalise.getPlexiConsultas().size() <= 0) 
@@ -157,13 +164,15 @@ public class PlexiService {
 			for(PlexiConsulta plexi : docAnalise.getPlexiConsultas()) {
 				if(CommonsUtil.semValor(plexi.getRequestId()))
 					continue;
-				atualizaRetornoPlexi(plexi);
+				if(CommonsUtil.mesmoValor(plexi.getStatus(), "Consulta expirada"))
+					continue;
+				atualizaRetornoPlexi(plexi, user);
 			}
 		}
 		return;
 	}
 	
-	public void atualizaRetornoPlexi(PlexiConsulta plexi) {
+	public void atualizaRetornoPlexi(PlexiConsulta plexi, User user) {
 		JSONObject webhookObject;
 		String requestId = plexi.getRequestId();
 		if(!CommonsUtil.semValor(plexi.getWebhookRetorno()) && !CommonsUtil.semValor(plexi.getPdf())) {
@@ -176,17 +185,42 @@ public class PlexiService {
 				return;
 			}
 		}
-		
+		PlexiConsultaDao plexiConsultaDao = new PlexiConsultaDao();
+		if(webhookObject.has("erro404")) {
+			plexi.setStatus("Consulta expirada");
+			plexi.setRequestId(null);
+			atualizarDocumentos(plexi);
+			if(plexi.verificaCamposDoc())
+				PedirConsulta(plexi, user);
+			plexiConsultaDao.merge(plexi);
+			return;
+		} else if(webhookObject.has("error") && CommonsUtil.mesmoValor(webhookObject.get("error"), true)) {
+			plexi.setStatus("Consulta com erro");
+			plexi.setRequestId(null);
+			atualizarDocumentos(plexi);
+			if(plexi.verificaCamposDoc())
+				PedirConsulta(plexi, user);
+			plexiConsultaDao.merge(plexi);
+		}
+	
 		if(!webhookObject.has("requestId")) 
 			webhookObject.put("requestId", requestId);	
 		plexi.setWebhookRetorno(webhookObject.toString());
 		if(webhookObject.has("pdf")) {
 			plexi.setPdf(webhookObject.getString("pdf"));
 		}
-		plexi.setStatus("Consulta Concluída");
-		PlexiConsultaDao plexiConsultaDao = new PlexiConsultaDao();
+		plexi.setStatus("Consulta Concluída");	
 		plexiConsultaDao.merge(plexi);
-		salvarPdfRetornoPlexi(plexi);
+		//salvarPdfRetornoPlexi(plexi);
+	}
+	
+	public void atualizarDocumentos(PlexiConsulta plexiConsulta) {
+		DocumentoAnalise docAnalise = plexiConsulta.documentoAnalise;
+		plexiConsulta.populatePagadorRecebedor(docAnalise.getPagador());
+		if(!CommonsUtil.semValor(plexiConsulta.getOrgaosStr())) {
+			String[] orgaos = plexiConsulta.getOrgaos();
+			plexiConsulta.setOrgaos(orgaos);
+		}
 	}
 
 	public JSONObject getJsonSucesso(InputStream inputStream) {
@@ -217,13 +251,39 @@ public class PlexiService {
 		return null;
 	}
 	
+	public String getJsonSucessoStr(InputStream inputStream) {
+		BufferedReader in;
+		try {
+			in = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();		
+
+			return response.toString();
+
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public void salvarPdfRetornoPlexi(PlexiConsulta plexiConsulta) {
 		PlexiConsultaDao plexiConsultaDao = new PlexiConsultaDao();
-		salvarPdfRetornoPlexi(plexiConsulta, plexiConsultaDao);
+		//salvarPdfRetornoPlexi(plexiConsulta, plexiConsultaDao);
 	}
 	
 	public void salvarPdfRetornoPlexi(PlexiConsulta plexiConsulta, PlexiConsultaDao plexiConsultaDao) {
 		FileService fileService = new FileService();
+				
 		if(!CommonsUtil.semValor(plexiConsulta.getDocumentoAnalise())) {
 			fileService.salvarPdfRetorno(plexiConsulta.getDocumentoAnalise(),
 					plexiConsulta.getPdf(), plexiConsulta.getNomeCompleto(), "interno");

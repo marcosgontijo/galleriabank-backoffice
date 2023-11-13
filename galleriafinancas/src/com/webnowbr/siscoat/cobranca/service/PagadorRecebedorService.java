@@ -235,7 +235,8 @@ public class PagadorRecebedorService {
 				pessoaChild, porcentagem);
 
 		RelacionamentoPagadorRecebedorDao rDao = new RelacionamentoPagadorRecebedorDao();
-		if (rDao.verificaRelacaoExistente(pessoaRoot, pessoaChild).size() <= 0) {
+		 List<RelacionamentoPagadorRecebedor> relacaoExistente = rDao.verificaRelacaoExistente(pessoaRoot, pessoaChild);
+		if (relacaoExistente.size() <= 0) {
 			rDao.create(relacioanameto);
 		}
 	}

@@ -27,7 +27,7 @@ public class CcbParticipantes implements Serializable{
 	private String municipioEmpresa;
 	private String salaEmpresa;
 	private List<CcbParticipantes> socios;
-	
+
 	
 	public CcbParticipantes() {
 		this.pessoa = new PagadorRecebedor();

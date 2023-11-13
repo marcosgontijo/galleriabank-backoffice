@@ -70,9 +70,8 @@
 				</h:panelGrid>
 			</p:panel>									
 			<p:panel id="ConsultaContratos" header="Pré-Contratos #{contratoCobrancaMB.tituloTelaConsultaPreStatus} - Consultar" style="margin-bottom:10px;">					    		    
-   		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratosPendentes}" selection="" emptyMessage="" sortBy="#{contratos.dataUltimaAtualizacao}" sortOrder="ascending"
-   		         rowStyleClass="#{(contratos.agComite) ? 'linhaBranca' : ''}
-   		         #{(contratos.pendenciaPagamento eq true or contratos.contatoDiferenteProprietario eq true) ? 'parcelaVencendo' : '' }
+   		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratosPendentes}" selection="" emptyMessage=""
+   		         rowStyleClass="#{(contratos.pendenciaPagamento eq true or contratos.contatoDiferenteProprietario eq true) ? 'parcelaVencendo' : '' }
 	   		         #{(contratos.laudoRecebido eq true and contratos.pajurFavoravel eq true) ? 'parcelaPaga' : '' }
 	   		         #{(contratos.cadastroAprovadoValor eq 'Pendente') ? 'linhaRoxa' : '' }
 	   		         #{(contratos.pendenciaLaudoPaju eq true) ? 'parcelaparcial' : '' } 
@@ -300,47 +299,7 @@
 				</p:dataTable>
 			</p:panel>
 			  
-			<p:dialog header="Ficha Individual - PDF" widgetVar="fichaIndividual" height="420">
-			   	<p:panel id="dados" header="Dados da Ficha" style="margin-bottom:10px;">
-					<h:panelGrid columns="2">	
-						<p:outputLabel for="Pessoa" value="Pessoa: " styleClass="labelBold" />
-						<p:selectOneRadio id="Pessoa" value="#{impressoesPDFMB.tipoPessoaIsFisica}" required="true">
-							<f:selectItem itemLabel="Física" itemValue="true" />
-							<f:selectItem itemLabel="Jurídica" itemValue="false" />
-							<p:ajax update="dados" event="valueChange" listener="#{impressoesPDFMB.selectedTipoPessoaPublico}"/>
-						</p:selectOneRadio>		
-		
-						<p:outputLabel for="Cpf" value="CPF: " styleClass="labelBold" rendered="#{impressoesPDFMB.tipoPessoaIsFisica}"/>
-						<p:inputMask id="Cpf" value="#{impressoesPDFMB.documento}" label="CPF" mask="999.999.999-99" rendered="#{impressoesPDFMB.tipoPessoaIsFisica}">
-						</p:inputMask>
-						
-						<p:outputLabel for="CNPJ" value="CNPJ: " styleClass="labelBold" rendered="#{!impressoesPDFMB.tipoPessoaIsFisica}"/>
-						<p:inputMask id="CNPJ" value="#{impressoesPDFMB.documento}" label="CNPJ" mask="99.999.999/9999-99" rendered="#{!impressoesPDFMB.tipoPessoaIsFisica}">
-						</p:inputMask>
-						
-						<p:outputLabel for="NomeCPF" value="Nome: " styleClass="labelBold" rendered="#{impressoesPDFMB.tipoPessoaIsFisica}"/>
-						<p:outputLabel for="NomeCNPJ" value="Razão Social: " styleClass="labelBold" rendered="#{!impressoesPDFMB.tipoPessoaIsFisica}"/>
-						<p:inputText id="NomeCPF" value="#{impressoesPDFMB.nome}" label="Nome" onblur=""  style="width:400px;" rendered="#{impressoesPDFMB.tipoPessoaIsFisica}">
-						</p:inputText>	
-						<p:inputText id="NomeCNPJ" value="#{impressoesPDFMB.nome}" label="Nome" onblur=""  style="width:400px;" rendered="#{!impressoesPDFMB.tipoPessoaIsFisica}">
-						</p:inputText>	
-						
-						<p:outputLabel for="EMail" value="E-Mail: " />					
-						<p:inputText id="EMail" value="#{impressoesPDFMB.email}" label="E-Mail" type="email"  onblur="" style="width:300px;"/>
-		
-						<p:outputLabel for="TelCelular" value="Telefone Celular: " />		
-						<p:inputMask id="TelCelular" value="#{impressoesPDFMB.telefone}" styleClass="phone" mask="(99) 99999-9999" />																						
-				    </h:panelGrid>
-			
-			        <div align="center" style="margin-top: 25px;">
-						  <p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
-							oncomplete="PF('fichaIndividual').hide();" />
-						  <p:spacer height="10" />
-						  <p:commandButton action="#{impressoesPDFMB.geraPdfCadastroPessoaFisica}" ajax="false" update="PanelPDF" icon="ui-icon-arrowthick-1-s" value="PDF" title="Gerar PDF">
-					      </p:commandButton>
-					</div>			
-				</p:panel>
-			</p:dialog> 
+			<ui:include src="Dialog/ContratoCobrancaFichaIndividual.xhtml" />
 		</h:form>	
 		
 		<h:form id="ArquivosForm" style="margin-bottom:10px;" >			

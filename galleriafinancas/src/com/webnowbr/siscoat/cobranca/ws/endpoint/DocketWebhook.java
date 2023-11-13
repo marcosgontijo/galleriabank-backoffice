@@ -56,9 +56,9 @@ public class DocketWebhook {
 				consultaDao.merge(docketConsulta);
 				String base64 = docketService.getPdfBase64(docketConsulta.getRetorno());
 				docketConsulta.setPdf(base64);
-				FileService fileService = new FileService();
-				fileService.salvarPdfRetorno(docketConsulta.getDocumentoAnalise(), base64, documentoRetorno.getDocumentoNome(), "interno");
 				consultaDao.merge(docketConsulta);
+				FileService fileService = new FileService();
+				//fileService.salvarPdfRetorno(docketConsulta.getDocumentoAnalise(), base64, docketConsulta.getNomeCompleto(), "interno");
 				return Response.status(200).entity("Processado ID:" + documentoRetorno.id).build();
 			}
 
@@ -75,9 +75,9 @@ public class DocketWebhook {
 				docketConsulta.setRetorno(GsonUtil.toJson(documentoRetorno));
 				String base64 = docketService.getPdfBase64(docketConsulta.getRetorno());
 				docketConsulta.setPdf(base64);
-				FileService fileService = new FileService();
-				fileService.salvarPdfRetorno(docketConsulta.getDocumentoAnalise(), base64, documentoRetorno.getDocumentoNome(), "interno");
 				consultaDao.merge(docketConsulta);
+				FileService fileService = new FileService();
+				//fileService.salvarPdfRetorno(docketConsulta.getDocumentoAnalise(), base64, docketConsulta.getNomeCompleto(), "interno");
 			}
 			
 			if (objetoContratoCobranca.isPresent()) {

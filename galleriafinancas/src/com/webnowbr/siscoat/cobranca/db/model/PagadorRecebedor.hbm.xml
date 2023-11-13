@@ -637,6 +637,22 @@
 			<column name="dataCasamento" />
 		</property>
 		
+		<property name="tipoDocumento" type="java.lang.String">
+			<column name="tipoDocumento" />
+		</property>
+		
+		<property name="tipoDocumentoConjuge" type="java.lang.String">
+			<column name="tipoDocumentoConjuge" />
+		</property>
+		
+		<set name="listAverbacao" table="Averbacao" cascade="merge"
+                 lazy="false" fetch="select">
+            <key>
+                <column name="pagador" />
+            </key>
+            <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.Averbacao" />
+        </set> 
+		
 		<property name="inicioEmpresa" type="java.util.Date">
 			<column name="inicioEmpresa"/>
 		</property>

@@ -22,7 +22,8 @@ public class StarkBankBoleto implements Serializable {
     public Date created;
     public String pathComprovante;
     public String nomeComprovante;
-
+    public String motivoFalha;
+    
 	public StarkBankBoleto(){
 
 	}
@@ -42,6 +43,22 @@ public class StarkBankBoleto implements Serializable {
 		this.created = created;
 		this.pathComprovante = pathComprovante;
 		this.nomeComprovante = nomeComprovante;
+	}
+    
+    public StarkBankBoleto(long id, BigDecimal amount, String taxId, String tags, String description, String scheduled,
+            String line, String barCode, Integer fee, String status, Date created, String motivoFalha) {
+		this.id = id;
+		this.taxId = taxId;
+		this.description = description;
+		this.line = line;
+		this.barCode = barCode;
+		this.scheduled = scheduled;
+		this.tags = tags;
+		this.amount = amount;
+		this.status = status;
+		this.fee = fee;
+		this.created = created;
+		this.motivoFalha = motivoFalha;
 	}
 
 	public long getId() {
@@ -146,5 +163,13 @@ public class StarkBankBoleto implements Serializable {
 
 	public void setNomeComprovante(String nomeComprovante) {
 		this.nomeComprovante = nomeComprovante;
+	}
+
+	public String getMotivoFalha() {
+		return motivoFalha;
+	}
+
+	public void setMotivoFalha(String motivoFalha) {
+		this.motivoFalha = motivoFalha;
 	}
 }

@@ -38,6 +38,20 @@ public class CompactadorUtil {
             throw new IOException(e.getMessage());
         }
     }
+       
+    public static byte[] compactarZipBytePastas(Map<String[], byte[]> arquivos) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ZipOutputStream zos = new ZipOutputStream(baos);
+        for (Map.Entry<String[], byte[]> reporte : arquivos.entrySet()) {
+            ZipEntry entry = new ZipEntry(reporte.getKey()[0] + "/" + reporte.getKey()[1]);
+            entry.setSize(reporte.getValue().length);
+            zos.putNextEntry(entry);
+            zos.write(reporte.getValue());
+        }
+        zos.closeEntry();
+        zos.close();
+        return baos.toByteArray();
+    }
 
     public static byte[] compactarZipByte(Map<String, byte[]> arquivos) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
