@@ -9,8 +9,18 @@
 
 <f:view contentType="text/html">
 	<h:head>
-		
 	</h:head>
+	<h:body>
+		<ui:composition template="../index.xhtml">
+			<ui:define name="menu">
+				<h:form style="margin-bottom:10px;" id="menuAtendimentoForm">
+
+					<p:commandButton value="Favoritar"
+						action="#{menuItemMB.carregafavoritar}" icon="ui-icon-star"></p:commandButton>
+
+					<p:menu style="width: 250px;"
+						model="#{menuItemMB.modelAtendimento}" />
+
 	<h:body onload="register_tab_GUID()">
 		<ui:composition template="../index.xhtml">			
 			<ui:define name="menu">  
@@ -753,7 +763,7 @@
 						</shiro:hasAnyRoles>																	
 					</p:menu>
 				</h:form>
-			</ui:define>		
+			</ui:define>
 		</ui:composition>
 	</h:body>
 </f:view>

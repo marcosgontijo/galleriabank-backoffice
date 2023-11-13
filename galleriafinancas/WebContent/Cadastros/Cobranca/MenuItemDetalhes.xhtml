@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" template="../MenuCadastros.xhtml">
+	<ui:define name="conteudo">
+		<h:form id="form">
+
+			<p:panel id="PanelExcluirMenu"
+				header="itemMenu - Excluir"
+				style="margin-bottom:10px;">
+				<p:focus />
+				<p:messages />
+				<h:panelGrid columns="2">
+
+
+					<p:outputLabel value="Nome: " styleClass="labelBold" />
+					<h:outputText id="Nome"
+						value="#{menuItemMB.objetoMenuItem.nome}"
+						label="Nome" required="true" onblur="" style="width:400px;">
+					</h:outputText>
+
+					<p:outputLabel  value="Ação: " styleClass="labelBold" />
+					<h:outputText id="Acao"
+						value="#{menuItemMB.objetoMenuItem.acao}"
+						label="Acao" required="true" onblur="" style="width:400px;">
+					</h:outputText>
+
+					<p:outputLabel  value="item Pai: " />
+					<h:outputText id="ItemPai"
+						value="#{menuItemMB.objetoMenuItem.itemPai.nome}"
+						label="ItemPai"  onblur="" style="width:400px;">
+					</h:outputText>
+				</h:panelGrid>
+			</p:panel>
+
+
+			<div align="center">
+				<p:commandButton value="Excluir" ajax="false" action="#{menuItemMB.excluirMenuItem}"  icon="ui-icon-trash" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold;"/>		 						
+				<p:spacer height="10"/>
+				<p:commandButton value="Cancelar" ajax="false" immediate="true" icon="ui-icon-cancel" action="MenuListagem.xhtml" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold; "/>											
+				<p:commandButton value="Voltar" ajax="false" immediate="true" icon="ui-icon-arrowreturnthick-1-w" action="MenuListagem.xhtml" style="FONT-SIZE: 10pt;TEXT-DECORATION: bold; "/>								
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -39,6 +39,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
@@ -834,8 +835,10 @@ public class ContratoCobrancaMB {
 	private String laudoEndereco = "";
 	private boolean laudoDone = false;
 	private boolean erroPedidoLaudo = false;
+	private boolean engineProcessados = false;
+	private List<DocumentoAnalise> docList = new ArrayList<DocumentoAnalise>();
 	
-    public String rowSelected() {
+	public String rowSelected() {
     	return null;
     }
 	
@@ -21663,7 +21666,10 @@ public class ContratoCobrancaMB {
 			bpContratoCobrancaDetalhes.setParcelaPaga(true);
 			bpContratoCobrancaDetalhes.setOrigemBaixa("baixarParcelaParcial - Tratativa Status");
 		}		
+		
 		//FIM - Tratativa para validar status parcela		
+
+		
 
 		contratoCobrancaDetalhesDao.merge(bpContratoCobrancaDetalhes);
 
@@ -34375,47 +34381,139 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setTerrenoOuBarracaoTaxa(false);
 		this.objetoContratoCobranca.setNadaConstaTaxa(false);
 		
+		Set<String> ressalvaPefin = new HashSet<String>();
+		Set<String> ressalvaCcf = new HashSet<String>();
+		Set<String> ressalvaProtesto = new HashSet<String>();
+		Set<String> ressalvaTrabalhista = new HashSet<String>();
+		Set<String> ressalvaProcesso = new HashSet<String>();
+		
 		if (this.listaDocumentoAnalise != null && this.listaDocumentoAnalise.size() > 0) {
+			boolean nadaConsta = true;
 			for (DocumentoAnalise docAnalise : listaDocumentoAnalise) {	
 				if (docAnalise.getMotivoAnalise().toLowerCase().contains("proprietario atual") || docAnalise.getMotivoAnalise().toLowerCase().contains("comprador")) {
 					docAnalise.getResumoEngine();
 					docAnalise.getResumoScr();
+					docAnalise.getResumoProcesso();
 					if (docAnalise.isCcfApontamentosAvailable()) {
 						this.objetoContratoCobranca.setChequeDevolvidoTaxa(true);
+						nadaConsta = false;
+						ressalvaCcf.add(docAnalise.getRessalvaCcfNome());
 					}
 					if (docAnalise.isPefinRefinAvailable()) {
 						this.objetoContratoCobranca.setPefinTaxa(true);
+						nadaConsta = false;
+						ressalvaPefin.add(docAnalise.getRessalvaPefinNome());
 					}
 					if (docAnalise.isProtestosAvailable()) {
 						this.objetoContratoCobranca.setProtestoTaxa(true);
+						nadaConsta = false;
+						ressalvaProtesto.add(docAnalise.getRessalvaProtestoNome());
 					}
-					if (docAnalise.isScoreBaixo()) {
-						this.objetoContratoCobranca.setScoreBaixoTaxa(true);
+					if (docAnalise.isScoreBaixo450()) {
+						this.objetoContratoCobranca.setScoreBaixo450Taxa(true);;
+						nadaConsta = false;
+					}
+					if (docAnalise.isScoreBaixo700()) {
+						this.objetoContratoCobranca.setScoreBaixo700Taxa(true);
+						nadaConsta = false;
 					}
 					if (docAnalise.isDividaVencidaAvailable()) {
 						this.objetoContratoCobranca.setDividaVencidaTaxa(true);
+						nadaConsta = false;
 					}
 					if (docAnalise.isPrejuizoBacenAvailable()) {
 						this.objetoContratoCobranca.setPrejuizoBacenTaxa(true);
+						nadaConsta = false;
 					}
 					if (this.objetoImovelCobranca.getTipo().contains("Galpão") || this.objetoImovelCobranca.getTipo().contains("Terreno")) {
 						this.objetoContratoCobranca.setTerrenoOuBarracaoTaxa(true);
+						nadaConsta = false;
 					}
 					if (docAnalise.isRelacionamentoBacenIniciadoAvailable()) {
 						this.objetoContratoCobranca.setRelacionamentoBacenRecenteTaxa(true);
+						nadaConsta = false;
 					}
-					if (docAnalise.isRiscoTotalAvailable()) {
-						this.objetoContratoCobranca.setRiscoTotalBaixoTaxa(true);
+					if (docAnalise.isInicioRelacionamentoInexistente()) {
+						this.objetoContratoCobranca.setInicioRelacionamentoInexistenteTaxa(true);
+						nadaConsta = false;
+					}
+					if (docAnalise.isRiscoTotal20k()) {
+						this.objetoContratoCobranca.setRiscoTotal20kTaxa(true);
+						nadaConsta = false;
+					}
+					if (docAnalise.isRiscoTotal50k()) {
+						this.objetoContratoCobranca.setRiscoTotal50kTaxa(true);
+						nadaConsta = false;
+					}
+					if (docAnalise.isContemAcoesEngine() || docAnalise.isContemAcoesProcesso()) {
+						if (!docAnalise.getRessalvaProcessosNome().isEmpty()) {
+							ressalvaProcesso.add(docAnalise.getRessalvaProcessosNome());
+						}			
+					}
+					if (!docAnalise.getRessalvaTrabalhistaNome().isEmpty()) {
+						ressalvaTrabalhista.add(docAnalise.getRessalvaTrabalhistaNome());
 					}
 				}
 			}
 			
-			this.objetoContratoCobranca.calcularTaxaPreAprovada();
-			PrimeFaces current = PrimeFaces.current();
-			current.ajax().update("form:taxaPreAprovadaPanel");
+			this.objetoContratoCobranca.setPefinRefinRessalva(String.join(", ", ressalvaPefin));
+			this.objetoContratoCobranca.setChequeDevolvidoRessalva(String.join(", ", ressalvaCcf));
+			this.objetoContratoCobranca.setProtestoRessalva(String.join(", ", ressalvaProtesto));
+			this.objetoContratoCobranca.setProcessosRessalva(String.join(", ", ressalvaProcesso));
+			this.objetoContratoCobranca.setTrabalhistaRessalva(String.join(", ", ressalvaTrabalhista));
+			this.objetoContratoCobranca.setNadaConstaTaxa(nadaConsta);
 		} else {
 			this.objetoContratoCobranca.setNadaConstaTaxa(true);
 		}
+		
+		this.objetoContratoCobranca.calcularTaxaPreAprovada();
+		PrimeFaces current = PrimeFaces.current();
+		current.ajax().update("form:PreAprovadoPanel");
+	}
+	
+	public void verificaEngineProcessados() {
+		for (DocumentoAnalise doc : listaDocumentoAnalise) {
+			if (doc.getEngine() == null) {
+				setEngineProcessados(false);
+				break;
+			}
+		}
+		setEngineProcessados(true);
+		if (isEngineProcessados()) {
+			hasDocAnalise();
+		}
+	}
+	
+    public boolean isEngineProcessados() {
+    	boolean isAllEngineProcessados = true;
+    	
+		docList = listaDocumentoAnalise
+				.stream()
+				.filter(x -> x.isLiberadoAnalise())
+				.collect(Collectors.toList());
+		
+    	for (DocumentoAnalise docAnalise : docList) { 
+			if (docAnalise.getEngine() == null) {
+    			continue;
+			}
+			
+			if (docAnalise.getEngine() != null && !CommonsUtil.semValor(docAnalise.getEngine().getIdCallManager())) {
+				if (CommonsUtil.semValor(docAnalise.getRetornoEngine())) {
+					isAllEngineProcessados = false;
+					break;
+				}
+			}
+    	}
+    	
+    	if (isAllEngineProcessados) {
+    		hasDocAnalise();
+    	}
+    	
+		return isAllEngineProcessados;
+	}
+
+	public void setEngineProcessados(boolean engineProcessados) {
+		this.engineProcessados = engineProcessados;
 	}
 
 	public BoletoKobana getSelectedBoletosKobanaBaixa() {

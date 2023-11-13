@@ -1,74 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:shiro="http://shiro.apache.org/tags"
-	xmlns:p="http://primefaces.org/ui">
+	  <html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  xmlns:p="http://primefaces.org/ui">
+	  
+	<f:view contentType="text/html">
+		<h:head>
+		</h:head>
+		<h:body>
+			<ui:composition template="../index.xhtml">                	  
+				<ui:define name="menu">		
+					<h:form style="margin-bottom:10px;">	
+					<p:commandButton value="Favoritar" action="#{menuItemMB.carregafavoritar}" icon="ui-icon-star"></p:commandButton>	
 
-<f:view contentType="text/html">
-	<h:head>
-	</h:head>
-	<h:body>
-		<ui:composition template="../index.xhtml">
-			<ui:define name="menu">
-				<h:form style="margin-bottom:10px;">
-					<p:menu style="width: 250px;">
-						<shiro:hasAnyRoles name="ROOT, POSTO">
-							<p:submenu label="Venda" styleClass="titulosMenu">
-								<p:menuitem value="Operacao"
-									action="#{relatorioVendaOperacaoMB.clearFields}" ajax="false"
-									icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />
-							</p:submenu>
-						</shiro:hasAnyRoles>
-
-						<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">
-							<p:submenu label="Seguro" styleClass="titulosMenu">
-								<p:menuitem value="Tabela"
-									action="#{seguroTabelaMB.clearFields}" ajax="false"
-									icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />
-
-							</p:submenu>
-						</shiro:hasAnyRoles>
-
-						<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA">
-							<p:submenu label="Pagamentos" styleClass="titulosMenu">
-								<p:menuitem value="Boletos Pagos"
-									action="#{boletosPagosMB.clearFields}" ajax="false"
-									icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />
-
-								<p:menuitem value="Relatorio Semestral"
-									action="#{relatorioSemestralMB.clearFields}" ajax="false"
-									icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />
-									
-								<p:menuitem value="Relatorio Debentures"
-									action="#{relatorioSemestralMB.clearFieldsDebentures}" ajax="false"
-									icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />
-									
-								<shiro:hasAnyRoles name="ROOT">
-									<p:menuitem value="Laudo + Paju"
-										action="#{laudoPajuMB.clearFields}" ajax="false"
-										icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />
-										
-									<p:menuitem value="Relatorio Inadimplencia"
-										action="#{relatorioInadimplenciaMB.clearFieldsInadimplencia}" ajax="false"
-										icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />
-								</shiro:hasAnyRoles>								
-							</p:submenu>
-
-							<p:submenu label="Analise" styleClass="titulosMenu">
-								<p:menuitem value="Tempo de Analise"
-									action="#{tempoAnaliseMB.clearTempoAnalise}" ajax="false"
-									icon="ui-icon ui-icon-newwin" styleClass="itemMenu" />
-							</p:submenu>
-							
-						</shiro:hasAnyRoles>
-
-					</p:menu>
-				</h:form>
-			</ui:define>
-		</ui:composition>
-	</h:body>
-</f:view>
-</html>
+						<p:menu style="width: 250px;" model="#{menuItemMB.modelRelatorio}"/>																		
+					  	
+					</h:form>				
+				</ui:define>
+			</ui:composition>					
+		</h:body>
+	</f:view>
+</html>            

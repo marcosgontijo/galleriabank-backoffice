@@ -4,7 +4,7 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
 	  xmlns:h="http://java.sun.com/jsf/html"
-	  xmlns:shiro="http://shiro.apache.org/tags"	  
+	  xmlns:shiro="http://shiro.apache.org/tags"
 	  xmlns:p="http://primefaces.org/ui">
 	  
 	<f:view contentType="text/html">
@@ -13,6 +13,11 @@
 		<h:body>
 			<ui:composition template="../index.xhtml">                	  
 				<ui:define name="menu">		
+					<h:form style="margin-bottom:10px;">
+					<p:commandButton value="Favoritar" action="#{menuItemMB.carregafavoritar}" icon="ui-icon-star"></p:commandButton>		
+
+						<p:menu style="width: 250px;" model="#{menuItemMB.modelManutencao}"/>																		
+					  	
 					<h:form style="margin-bottom:10px;">	
 							<p:menu style="width: 250px;">						
 								<p:submenu label="Manutenção" styleClass="titulosMenu">
@@ -82,4 +87,4 @@
 			</ui:composition>					
 		</h:body>
 	</f:view>
-</html>            
+</html>              

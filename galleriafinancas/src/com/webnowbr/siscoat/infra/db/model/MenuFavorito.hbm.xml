@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping schema="infra">
+	<class name="com.webnowbr.siscoat.infra.db.model.MenuFavorito"
+		table="MenuFavorito">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="increment" />
+		</id>
+		<many-to-one name="menuItemFavorito"
+			class="com.webnowbr.siscoat.infra.db.model.MenuItem" lazy="false">
+			<column name="idmenuItemFavorito" />
+		</many-to-one>
+		<many-to-one name="user"
+			class="com.webnowbr.siscoat.infra.db.model.User" lazy="false">
+			<column name="iduser" />
+		</many-to-one>
+		<property name="favoritado" type="boolean">
+			<column name="favoritado" not-null="true" default="false" />
+		</property>
+		
+		
+		
+		
+</class>
+</hibernate-mapping>
+

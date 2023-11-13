@@ -11,9 +11,9 @@
     <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>	
     
  	  
- 	<property name="hibernate.connection.url">jdbc:postgresql://postgresql:5432/webnowbr_galleriafinancas</property>
-	<property name="hibernate.connection.username">webnowbr</property>
-	<property name="hibernate.connection.password">geRGJXO3$nj87HMw7D$j</property>
+ 	<property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/webnowbr_galleriafinancas</property>
+	<property name="hibernate.connection.username">postgres</property>
+	<property name="hibernate.connection.password">123456</property>
 	 
 	 
 	<!-- <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/webnowbr_galleriafinancas</property>
@@ -27,10 +27,11 @@
 	<property name="hibernate.connection.password">Hvj28383**</property>
 	-->
 	<!-- -->
-	<property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/galleriabank</property>
+
+	<!--  <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/galleriabank</property>
 	<property name="hibernate.connection.username">postgres</property>
 	<property name="hibernate.connection.password">root</property>
-	
+	-->
 	<!--
 	<property name="hibernate.connection.username">hermesjr</property>
 	<property name="hibernate.connection.password">hvj28383</property>
