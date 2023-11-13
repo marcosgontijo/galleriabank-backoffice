@@ -3253,9 +3253,9 @@
 								listener="#{contratoCobrancaMB.objetoImovelCobranca.completeCidadesImovel}" />
 						</p:selectOneMenu>
 						
-						<p:outputLabel for="CidadeImovel" value="Cidade" style="FONT-SIZE: 10pt;" />
+						<p:outputLabel for="CidadeImovel" value="Cidade: " style="FONT-SIZE: 10pt;" />
 						<p:autoComplete id="CidadeImovel" value="#{contratoCobrancaMB.objetoImovelCobranca.cidade}"
-							completeMethod="#{contratoCobrancaMB.objetoImovelCobranca.completeCidadesImovel('')}" autocomplete="no" 
+							completeMethod="#{contratoCobrancaMB.objetoImovelCobranca.completeCidadesImovel}" 
 							var="cidade" itemLabel="#{cidade}" itemValue="#{cidade}"  dropdown="true"
 							forceSelection="false"
 							scrollHeight="250">
