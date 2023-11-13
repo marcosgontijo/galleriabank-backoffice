@@ -257,6 +257,8 @@ public class PagadorRecebedor implements Serializable {
 	private BigDecimal saldoInvestidor;
 	
 	private String whatsAppNumero;
+	
+	private Date inicioEmpresa;
 
 	public PagadorRecebedor(){
 		resetarBololean();
@@ -2354,6 +2356,7 @@ public class PagadorRecebedor implements Serializable {
 		this.contaBancariaValidada = contaBancariaValidada;
 	}
 
+
 	public String getTipoDocumentoConjuge() {
 		return tipoDocumentoConjuge;
 	}
@@ -2376,5 +2379,13 @@ public class PagadorRecebedor implements Serializable {
 
 	public void setListAverbacao(Set<Averbacao> listAverbacao) {
 		this.listAverbacao = listAverbacao;
+	}
+
+	public Date getInicioEmpresa() {
+		return inicioEmpresa;
+	}
+
+	public void setInicioEmpresa(Date inicioEmpresa) {
+		this.inicioEmpresa = inicioEmpresa;
 	}	
 }
