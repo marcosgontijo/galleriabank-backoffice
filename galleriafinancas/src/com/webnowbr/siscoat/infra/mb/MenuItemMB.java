@@ -15,6 +15,7 @@ import org.primefaces.model.menu.MenuModel;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.infra.db.dao.MenuFavoritoDao;
 import com.webnowbr.siscoat.infra.db.dao.MenuItemDao;
+import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.MenuFavorito;
 import com.webnowbr.siscoat.infra.db.model.MenuItem;
 import com.webnowbr.siscoat.infra.service.MenuService;
@@ -27,7 +28,8 @@ public class MenuItemMB {
 	@ManagedProperty(value = "#{loginBean}")
 	protected LoginBean loginBean;
 	private boolean clickFavorito;
-	private String menuAtual;
+	private String menuAtual = null;
+	private boolean temFavorito = false;
 	private MenuItemDao dao = new MenuItemDao();
 	private MenuItem objetoMenuItem = new MenuItem();
 	private MenuItem objetoItemFavorito;
@@ -187,11 +189,11 @@ public class MenuItemMB {
 		MenuFavorito menuFavorito = new MenuFavorito();
 		MenuItemDao menuItemDao = new MenuItemDao();
 		MenuFavoritoDao favoritoDao = new MenuFavoritoDao();
+		UserDao userDao = new UserDao();
 		MenuItem menu = menuItemDao.findById(id);
 		menuFavorito.setFavoritado(true);
 		menuFavorito.setMenuItemFavorito(menu);
 		menuFavorito.setUser(loginBean.getUsuarioLogado());
-
 		favoritoDao.create(menuFavorito);
 		clearFieldsFavorito(id);
 
@@ -259,6 +261,12 @@ public class MenuItemMB {
 		if (menuItemModulo == null) {
 			 MenuItemDao dao = new MenuItemDao();
 			 menuItemModulo = dao.consultaMenuItem("Módulo" , 0l, loginBean.getUsuarioLogado().getId());
+		}
+		MenuModel favorito = menuService.carregaFavoritos(loginBean.getUsuarioLogado());
+		if (CommonsUtil.semValor(favorito.getElements()) ) {
+			temFavorito = false;
+		} else {
+			temFavorito = true;
 		}
 		return menuItemModulo;
 	}
@@ -434,6 +442,12 @@ public class MenuItemMB {
 
 	public void setModelMenuFavorito(MenuModel modelMenuFavorito) {
 		this.modelMenuFavorito = modelMenuFavorito;
+	}
+	public boolean isTemFavorito() {
+		return temFavorito;
+	}
+	public void setTemFavorito(boolean temFavorito) {
+		this.temFavorito = temFavorito;
 	}
 
 }
