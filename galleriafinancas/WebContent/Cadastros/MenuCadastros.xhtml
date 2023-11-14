@@ -13,44 +13,15 @@
 		<h:body>
 			<ui:composition template="../index.xhtml">                	  
 				<ui:define name="menu">		
-					<h:form style="margin-bottom:10px;">		
-						<p:menu style="width: 250px;">
-							<p:submenu label="Cadastros Cobrança" styleClass="titulosMenu">
-								<shiro:hasAnyRoles name="ROOT, COBRANCA, CADASTRA_RESPONSAVEL">
-									<p:menuitem value="Responsável" action="/Cadastros/Cobranca/ResponsavelConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-person" styleClass="itemMenu"/>									
-								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT, COBRANCA, IUGU_POSTO, ASSISTENTEFINANCEIRO, PROFILE_ANALISTA_POS_COMITE, PROFILE_ANALISTA_COMITE, PROFILE_CONTRATO, PROFILE_ANALISTA_CREDITO, PROFILE_COBRANCA">													
-									<p:menuitem value="Pagador / Recebedor" action="/Cadastros/Cobranca/PagadorRecebedorConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-person" styleClass="itemMenu"/>
-								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT, COBRANCA, IUGU_POSTO, ASSISTENTEFINANCEIRO, PROFILE_ANALISTA_POS_COMITE, PROFILE_ANALISTA_COMITE, PROFILE_CONTRATO">
-									<p:menuitem value="Imóveis" action="/Cadastros/Cobranca/ImovelCobrancaConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-home" styleClass="itemMenu"/>
-								</shiro:hasAnyRoles>
-								<shiro:hasAnyRoles name="ROOT, COBRANCA">
-									<p:menuitem value="Contas Contábeis" action="/Cadastros/Cobranca/ContasContabeisConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-transferthick-e-w" styleClass="itemMenu"/>
-									<p:menuitem value="Grupos Favorecidos" action="/Cadastros/Cobranca/GruposFavorecidosConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-person" styleClass="itemMenu"/>
-									<p:menuitem value="Grupos Pagadores" action="/Cadastros/Cobranca/GruposPagadoresConsultar.xhtml" ajax="false" icon="ui-icon ui-icon-person" styleClass="itemMenu"/>
-								</shiro:hasAnyRoles>	
-								<shiro:hasAnyRoles name="ROOT, COBRANCA">
-									<p:menuitem value="Taxa Juros IUGU" action="#{iuguMB.clearAlteraTaxaJurosSubContas}" ajax="false" icon="ui-icon ui-icon-transferthick-e-w" styleClass="itemMenu"/>
-									<p:menuitem value="IPCA" action="#{ipcaMB.clearFieldsIPCA}" ajax="false" icon="ui-icon ui-icon-transferthick-e-w" styleClass="itemMenu"/>
-									<p:menuitem value="CDI" action="#{cdiMB.clearFieldsCDI}" ajax="false" icon="ui-icon ui-icon-transferthick-e-w" styleClass="itemMenu"/>
-									<p:menuitem value="Registro de Imóveis" action="#{registroImovelTabelaMB.clearFieldsRegistros}" ajax="false" icon="ui-icon ui-icon-transferthick-e-w" styleClass="itemMenu"/>
-								</shiro:hasAnyRoles>
-							</p:submenu>
-							<shiro:hasAnyRoles name="ROOT, PROFILE_COMPLIANCE">		
-								<p:submenu label="Termos" styleClass="titulosMenu">																			
-									<p:menuitem value="Termos" action="#{termoMB.clearFields}" ajax="false" icon="ui-icon ui-icon-link" styleClass="itemMenu"/>										
-								</p:submenu>
-							</shiro:hasAnyRoles>	
-							<shiro:hasAnyRoles name="ROOT, COBRANCA">		
-								<p:submenu label="Processamento em Lote" styleClass="titulosMenu">																			
-									<p:menuitem value="Calcula Contrato" action="#{processamentoEmLoteMB.clearFieldsvaloresParcelasContratos}" ajax="false" icon="ui-icon ui-icon-link" styleClass="itemMenu"/>										
-								</p:submenu>
-							</shiro:hasAnyRoles>																																										
-						</p:menu>  	
+					<h:form style="margin-bottom:10px;">	
+
+					<p:commandButton value="Favoritar" action="#{menuItemMB.carregafavoritar}" icon="ui-icon-star"></p:commandButton>	
+
+						<p:menu style="width: 250px;" model="#{menuItemMB.modelCadastro}"/>																		
+					  	
 					</h:form>				
 				</ui:define>
 			</ui:composition>					
 		</h:body>
 	</f:view>
-</html>            
+</html>              

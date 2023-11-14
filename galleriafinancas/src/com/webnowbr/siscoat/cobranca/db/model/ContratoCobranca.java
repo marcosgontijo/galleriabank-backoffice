@@ -24,6 +24,7 @@ public class ContratoCobranca implements Serializable {
 	/**
 	 * 
 	 */
+	private boolean agComite;
 	private String cessionario;
 	
 	private BigDecimal valorAgilCessao;
@@ -1316,6 +1317,7 @@ public class ContratoCobranca implements Serializable {
 		return c;
 	}
 	
+	
 	public boolean isDadosAprovadosComercial() {
 		return !CommonsUtil.semValor(valorAprovadoComercial) || //
 				!CommonsUtil.semValor(prazoAprovadoComercial) || //
@@ -1360,6 +1362,17 @@ public class ContratoCobranca implements Serializable {
 	public boolean isEmPedirPaju() {
 		List<String> lstEmAnalise =  Arrays.asList("Aprovado", "Reprovado", "Baixado", "Desistência Cliente");
 		return pedidoLaudo && !pagtoLaudoConfirmada && !lstEmAnalise.contains(this.status) && leadCompleto && inicioAnalise;
+	}
+	public boolean isAgComite() {
+		if (this.inicioAnalise && CommonsUtil.mesmoValor(cadastroAprovadoValor,"Aprovado")
+				&& this.pagtoLaudoConfirmada && this.laudoRecebido && this.pajurFavoravel
+				&& this.analiseComercial && this.comentarioJuridicoEsteira && this.preAprovadoComite
+				&& this.documentosComite && !this.aprovadoComite) {
+			return true;
+			
+		} else {
+			return false;
+		}
 	}
 	
 
@@ -7300,5 +7313,9 @@ public class ContratoCobranca implements Serializable {
 
 	public void setValorCartorio(BigDecimal valorCartorio) {
 		this.valorCartorio = valorCartorio;
+	}
+
+	public void setAgComite(boolean agComite) {
+		this.agComite = agComite;
 	}
 }

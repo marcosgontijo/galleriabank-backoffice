@@ -88,7 +88,11 @@
 		}
 		
 		.ui-datatable .ui-datatable-data .linhaRosa td{
-		    background-color: #ff80ff;  
+		    background-color: #ff80ff;
+		}
+				
+		.ui-datatable .ui-datatable-data .linhaBranca td{
+			background-color: #ffffff;
 		}
 		
 
