@@ -527,8 +527,8 @@
 
 									<ui:fragment
 										rendered="#{!(contratoCobrancaMB.indexStepsStatusContrato == 0  
-								|| contratoCobrancaMB.indexStepsStatusContrato == 1 || contratoCobrancaMB.indexStepsStatusContrato == 2 || contratoCobrancaMB.indexStepsStatusContrato == 5 || contratoCobrancaMB.indexStepsStatusContrato == 7
-								|| contratoCobrancaMB.indexStepsStatusContrato == 8)}">
+										|| contratoCobrancaMB.indexStepsStatusContrato == 1 || contratoCobrancaMB.indexStepsStatusContrato == 2 || contratoCobrancaMB.indexStepsStatusContrato == 5 || contratoCobrancaMB.indexStepsStatusContrato == 7
+										|| contratoCobrancaMB.indexStepsStatusContrato == 8)}">
 										<h:panelGrid columns="2"
 											style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
@@ -1902,6 +1902,12 @@
 								</p:inputTextarea>
 								<p:outputLabel id="display2" />
 							</h:panelGroup>
+							
+							<p:outputLabel for="dataPajuComentado"
+								value="Data do Paju Comentado:" styleClass="labelBold" />
+							<p:calendar id="dataPajuComentado" showOn="button"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.dataPajuComentado}"
+								size="100" pattern="dd/MM/yyyy" styleClass="dateTimeField" />
 						</h:panelGrid>
 						<h:panelGrid columns="2"
 							rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel == true and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC'}">

@@ -105,7 +105,6 @@ public class CcbService {
 			for (CcbParticipantes participante : objetoCcb.getListaParticipantes()) {				
 				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "TERCEIRO GARANTIDOR")
 						|| CommonsUtil.mesmoValor(participante.getTipoParticipante(), "DEVEDOR FIDUCIANTE") ) {
-					objetoCcb.setTerceiroGarantidor(true);
 					participante.setTipoParticipante("DEVEDOR FIDUCIANTE");
 					segurados.add(participante);
 				} else if(CommonsUtil.mesmoValor(participante.getTipoParticipante(), "EMITENTE")){

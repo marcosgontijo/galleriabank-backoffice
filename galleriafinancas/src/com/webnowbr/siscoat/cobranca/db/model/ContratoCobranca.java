@@ -648,6 +648,7 @@ public class ContratoCobranca implements Serializable {
 	private String avaliacaoEngenharia;
 	private String avaliacaoEquipeLaudo;
 	
+	private Date dataPajuComentado;
 	private String processosPajuExterno;
 	private String processosPajuInterno;
 	
@@ -7317,5 +7318,13 @@ public class ContratoCobranca implements Serializable {
 
 	public void setAgComite(boolean agComite) {
 		this.agComite = agComite;
+	}
+
+	public Date getDataPajuComentado() {
+		return dataPajuComentado;
+	}
+
+	public void setDataPajuComentado(Date dataPajuComentado) {
+		this.dataPajuComentado = dataPajuComentado;
 	}
 }
