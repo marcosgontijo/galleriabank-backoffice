@@ -23,7 +23,6 @@ import org.primefaces.model.StreamedContent;
 import com.itextpdf.text.pdf.PdfReader;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
-import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -246,10 +245,19 @@ public class PlexiMB {
 					PlexiConsulta db = consultasExistentesRetorno.get(0);
 					if(docAnalise.getPlexiConsultas().stream().filter(d -> CommonsUtil.mesmoValor(d.getId(), db.getId()))
 							.collect(Collectors.toList()).size() <= 0) {
-						docAnalise.getPlexiConsultas().add(db);
-						db.setDocumentoAnalise(docAnalise);
+						//verificar se tem consulta com mesmo documento analise
+						List<PlexiConsulta> listaDbDocAnalise = consultasExistentesRetorno.stream().filter(
+								t -> CommonsUtil.mesmoValor(t.getDocumentoAnalise().getId(), docAnalise.getId()))
+								.collect(Collectors.toList());
+						//se tiver, insere 
+						if(listaDbDocAnalise.size() > 0) {
+							docAnalise.getPlexiConsultas().add(listaDbDocAnalise.get(0));
+							plexiConsulta.setDocumentoAnalise(null);
+						//senão, duplica
+						} else {
+							plexiConsulta.popularCampos(consultasExistentesRetorno.get(0));
+						}
 					}
-					plexiConsulta.setDocumentoAnalise(null);
 				}
 			}
 		}

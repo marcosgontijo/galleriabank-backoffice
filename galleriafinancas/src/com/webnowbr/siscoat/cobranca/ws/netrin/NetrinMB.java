@@ -284,9 +284,20 @@ public class NetrinMB {
 						NetrinConsulta db = consultasExistentesRetorno.get(0);
 						if(docAnalise.getNetrinConsultas().stream().filter(d -> CommonsUtil.mesmoValor(d.getId(), db.getId()))
 								.collect(Collectors.toList()).size() <= 0) {
-							docAnalise.getNetrinConsultas().add(consultasExistentesRetorno.get(0));
+							
+							//verificar se tem consulta com msm documento analise
+							List<NetrinConsulta> listaDbDocAnalise = consultasExistentesRetorno.stream().filter(
+									t -> CommonsUtil.mesmoValor(t.getDocumentoAnalise().getId(), docAnalise.getId()))
+									.collect(Collectors.toList());
+							//se tiver, insere 
+							if(listaDbDocAnalise.size() > 0) {
+								docAnalise.getNetrinConsultas().add(listaDbDocAnalise.get(0));
+								netrinConsulta.setDocumentoAnalise(null);
+							//senão, duplica
+							} else {
+								netrinConsulta.popularCampos(consultasExistentesRetorno.get(0));
+							}
 						}
-						netrinConsulta.setDocumentoAnalise(null);
 					}
 				}
 			} else {
@@ -298,9 +309,19 @@ public class NetrinMB {
 					NetrinConsulta db = consultasExistentesRetorno.get(0);
 					if(docAnalise.getNetrinConsultas().stream().filter(d -> CommonsUtil.mesmoValor(d.getId(), db.getId()))
 							.collect(Collectors.toList()).size() <= 0) {
-						docAnalise.getNetrinConsultas().add(consultasExistentesRetorno.get(0));
+						//verificar se tem consulta com mesmo documento analise
+						List<NetrinConsulta> listaDbDocAnalise = consultasExistentesRetorno.stream().filter(
+								t -> CommonsUtil.mesmoValor(t.getDocumentoAnalise().getId(), docAnalise.getId()))
+								.collect(Collectors.toList());
+						//se tiver, insere 
+						if(listaDbDocAnalise.size() > 0) {
+							docAnalise.getNetrinConsultas().add(listaDbDocAnalise.get(0));
+							netrinConsulta.setDocumentoAnalise(null);
+						//senão, duplica
+						} else {
+							netrinConsulta.popularCampos(consultasExistentesRetorno.get(0));
+						}
 					}
-					netrinConsulta.setDocumentoAnalise(null);
 				}
 			}
 		}

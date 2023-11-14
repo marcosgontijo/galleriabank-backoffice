@@ -51,6 +51,15 @@ public class NetrinConsulta {
 		
 	}
 	
+	public void popularCampos(NetrinConsulta consulta) {
+		this.status = consulta.getStatus(); 
+		this.uf = consulta.getUf();
+		this.pdf = consulta.getPdf();
+		this.retorno = consulta.getRetorno();
+		this.usuario = consulta.getUsuario();
+		this.dataConsulta = consulta.getDataConsulta();
+	}
+
 	@Override
 	public String toString() {
 		return "NetrinConsulta [id=" + id + ", cpfCnpj=" + cpfCnpj + ", netrinDocumentos=" + netrinDocumentos + "]";

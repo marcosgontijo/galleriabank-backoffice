@@ -34,6 +34,21 @@ public class DocketConsulta {
 		populatePagadorRecebedor(documentoAnalise.getPagador());
 		this.docketDocumentos = docketDocumentos;
 	}
+	
+	public void popularCampos(DocketConsulta consulta) {
+		this.idDocket = consulta.getIdDocket();
+		this.status = consulta.getStatus();
+		this.uf = consulta.getUf();
+		this.cidade = consulta.getCidade();
+		this.pdf = consulta.getPdf();
+		this.retorno = consulta.getRetorno();
+		this.docketDocumentos = consulta.getDocketDocumentos();
+		this.usuario = consulta.getUsuario();
+		this.dataConsulta = consulta.getDataConsulta();
+		this.expirado = consulta.isExpirado();
+		this.estadoId = consulta.getEstadoId();
+		this.cidadeId = consulta.getCidadeId();
+	}
 
 	public void populatePagadorRecebedor(PagadorRecebedor pagador) {
 		if(!CommonsUtil.semValor(pagador.getCpf())) {
