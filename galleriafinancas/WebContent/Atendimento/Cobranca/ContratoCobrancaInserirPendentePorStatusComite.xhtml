@@ -857,7 +857,10 @@
 												style="FONT-SIZE: 10pt;width:60px;"
 												onkeypress="return isNumberKey(event);"
 												onkeydown="FormataValor(this, 3, event, 2);"
-												converter="bigDecimalConverter" />
+												converter="bigDecimalConverter" >
+												<p:ajax event="blur" update="vlrParcela"
+													listener="#{contratoCobrancaMB.objetoAnaliseComite.calcularValorParcela()}" />
+											</p:inputText>
 											<p:outputLabel value="% + IPCA a.m." />
 										</h:panelGroup>
 
@@ -866,7 +869,10 @@
 										<h:panelGroup>
 											<p:inputText id="prazoMaxAprovadoComite" showOn="button"
 												value="#{contratoCobrancaMB.objetoAnaliseComite.prazoMaxComite}"
-												size="100" style="width:60px;" />
+												size="100" style="width:60px;">
+												<p:ajax event="blur" update="vlrParcela"
+													listener="#{contratoCobrancaMB.objetoAnaliseComite.calcularValorParcela()}" />
+											</p:inputText>
 											<p:outputLabel value=" meses" />
 										</h:panelGroup>
 
@@ -878,7 +884,10 @@
 												onkeypress="return isNumberKey(event);"
 												onkeydown="FormataValor(this, 13, event, 2);"
 												converter="bigDecimalConverter"
-												style="FONT-SIZE: 10pt;width:100px;" />
+												style="FONT-SIZE: 10pt;width:100px;" >
+												<p:ajax event="blur" update="vlrParcela"
+													listener="#{contratoCobrancaMB.objetoAnaliseComite.calcularValorParcela()}" />
+											</p:inputText>
 
 											<!-- -->
 
@@ -887,6 +896,8 @@
 												label="Status" style="width:100px;">
 												<f:selectItem itemValue="bruto" itemLabel="Bruto" />
 												<f:selectItem itemValue="liquido" itemLabel="Líquido" />
+												<p:ajax update="vlrParcela" event="change"
+													listener="#{contratoCobrancaMB.objetoAnaliseComite.calcularValorParcela()}" />
 											</p:selectOneMenu>
 										</h:panelGroup>
 
@@ -894,8 +905,19 @@
 										<h:panelGroup>
 											<p:inputText
 												value="#{contratoCobrancaMB.objetoAnaliseComite.carenciaComite}"
-												size="100" style="width:60px;" />
+												size="100" style="width:60px;">
+												<p:ajax event="blur" update="vlrParcela"
+													listener="#{contratoCobrancaMB.objetoAnaliseComite.calcularValorParcela()}" />
+											</p:inputText>
 											<p:outputLabel value=" meses" />
+										</h:panelGroup>
+										
+										<p:outputLabel value="Vlr Parcela: " styleClass="labelBold" />
+										<h:panelGroup>
+											<p:outputLabel value="R$ " styleClass="labelBold" />
+											<p:outputLabel converter="bigDecimalConverter" id="vlrParcela"
+												value="#{contratoCobrancaMB.objetoAnaliseComite.vlrParcela}"
+												styleClass="labelBold"/>
 										</h:panelGroup>
 
 										<p:outputLabel for="comentarioComiteComite"

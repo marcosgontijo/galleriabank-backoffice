@@ -4089,6 +4089,14 @@ public class ContratoCobrancaMB {
 									this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
 									this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 
+						} else {
+							takeBlipMB = new TakeBlipMB();
+							takeBlipMB.sendWhatsAppMessage(
+									this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
+									"contrato_pre_aprovado", this.objetoContratoCobranca.getPagador().getNome(),
+									this.objetoContratoCobranca.getNumeroContrato(),
+									this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+									this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 						}
 					}
 				}
@@ -4195,6 +4203,13 @@ public class ContratoCobrancaMB {
 								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
 								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 
+					} else {
+						takeBlipMB = new TakeBlipMB();
+						takeBlipMB.sendWhatsAppMessage(
+								this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
+								"contrato_recebido_paju",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(), "", "");
 					}
 
 					ResponsavelDao rDao = new ResponsavelDao();
@@ -4275,6 +4290,13 @@ public class ContratoCobrancaMB {
 								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
 								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 
+					} else {
+						takeBlipMB = new TakeBlipMB();
+						takeBlipMB.sendWhatsAppMessage(
+								this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
+								"contrato_recebido_laudo",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(), "", "");
 					}
 
 					ResponsavelDao rDao = new ResponsavelDao();
@@ -4379,8 +4401,11 @@ public class ContratoCobrancaMB {
 								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 
 					} else {
-						takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
-								"comentado_juridico_interno", this.objetoContratoCobranca.getPagador().getNome(),
+						takeBlipMB = new TakeBlipMB();
+						takeBlipMB.sendWhatsAppMessage(
+								this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
+								"comentado_juridico_interno",
+								this.objetoContratoCobranca.getPagador().getNome(),
 								this.objetoContratoCobranca.getNumeroContrato(), "", "");
 					}
 				}
@@ -4528,8 +4553,11 @@ public class ContratoCobrancaMB {
 								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 
 					} else {
-						takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
-								"aprovado_comite_ag_ccb", this.objetoContratoCobranca.getPagador().getNome(),
+						takeBlipMB = new TakeBlipMB();
+						takeBlipMB.sendWhatsAppMessage(
+								this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
+								"aprovado_comite_ag_ccb",
+								this.objetoContratoCobranca.getPagador().getNome(),
 								this.objetoContratoCobranca.getNumeroContrato(), "", "");
 					}
 				}
@@ -4653,7 +4681,13 @@ public class ContratoCobrancaMB {
 								this.objetoContratoCobranca.getNumeroContrato(),
 								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
 								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
-
+					} else {
+						takeBlipMB = new TakeBlipMB();
+						takeBlipMB.sendWhatsAppMessage(
+								this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
+								"contrato_pronto_para_assinatura_operacao",
+								this.objetoContratoCobranca.getPagador().getNome(),
+								this.objetoContratoCobranca.getNumeroContrato(), "", "");
 					}
 				}
 			}
@@ -4704,6 +4738,13 @@ public class ContratoCobrancaMB {
 									this.objetoContratoCobranca.getNumeroContrato(),
 									this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
 									this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
+						} else {
+							takeBlipMB = new TakeBlipMB();
+							takeBlipMB.sendWhatsAppMessage(
+									this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
+									"contrato_dado_entrada_cartorio",
+									this.objetoContratoCobranca.getPagador().getNome(),
+									this.objetoContratoCobranca.getNumeroContrato(), "", "");
 						}
 					}
 				}
@@ -9636,12 +9677,15 @@ public class ContratoCobrancaMB {
 			RegistroImovelTabelaDao rDao = new RegistroImovelTabelaDao();
 			BigDecimal valorRegistro = rDao.getValorRegistro(objetoContratoCobranca.getValorAprovadoComite()
 					.multiply(CommonsUtil.bigDecimalValue(qtdMatriculas)));
-			if (valorRegistro.compareTo(objetoContratoCobranca.getValorCartorio()) > 0) {
-				// Emprestimo = financiamento
-				if (CommonsUtil.mesmoValorIgnoreCase("Emprestimo", objetoContratoCobranca.getTipoOperacao()))
+			// Emprestimo = financiamento
+			if (CommonsUtil.mesmoValorIgnoreCase("Emprestimo", objetoContratoCobranca.getTipoOperacao()))
+				valorRegistro = valorRegistro.multiply(CommonsUtil.bigDecimalValue(2));
+			if (CommonsUtil.semValor(objetoContratoCobranca.getValorCartorio()) 
+					|| valorRegistro.compareTo(objetoContratoCobranca.getValorCartorio()) > 0) {
+				/*if (CommonsUtil.mesmoValorIgnoreCase("Emprestimo", objetoContratoCobranca.getTipoOperacao()))
 					objetoContratoCobranca.setValorCartorio(valorRegistro.multiply(CommonsUtil.bigDecimalValue(2)));
-				else
-					objetoContratoCobranca.setValorCartorio(valorRegistro);
+				else*/
+				objetoContratoCobranca.setValorCartorio(valorRegistro);
 			}
 		}
 
@@ -9696,6 +9740,10 @@ public class ContratoCobrancaMB {
 	}
 
 	private void gerarRecomendacaoComite() {
+		objetoAnaliseComite.setTipoPessoa(objetoContratoCobranca.getPagador().getCpf());
+		objetoAnaliseComite.setTipoImovel(objetoContratoCobranca.getImovel().getTipo()); 
+		objetoAnaliseComite.setTipoOp(objetoContratoCobranca.getTipoOperacao());
+		objetoAnaliseComite.setVlrImovel(objetoContratoCobranca.getValorMercadoImovel());
 		if (CommonsUtil.semValor(this.objetoAnaliseComite.getTaxaComite())
 				&& !CommonsUtil.semValor(this.objetoContratoCobranca.getTaxaPreAprovada())) {
 			this.objetoAnaliseComite.setTaxaComite(this.objetoContratoCobranca.getTaxaPreAprovada());
@@ -9737,6 +9785,7 @@ public class ContratoCobrancaMB {
 			if(CommonsUtil.semValor(objetoImovelCobranca.getLinkGMaps())) {
 				getLinkMaps();
 			}
+			objetoAnaliseComite.calcularValorParcela();
 		}
 
 		gerarProcessosQuitarComite();
@@ -34278,7 +34327,8 @@ public class ContratoCobrancaMB {
 				Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
 				listaArquivos.putAll(documentoAnalise.zipDeCertidoes());
 				for (Map.Entry<String, byte[]> entry : listaArquivos.entrySet()) {
-					String nomepagador = documentoAnalise.getId() + "_" + documentoAnalise.getPagador().getNome().replace(",", "_") + 
+					String primeiroNome = documentoAnalise.getPagador().getNome().split(" ")[0];
+					String nomepagador = documentoAnalise.getId() + "_" + primeiroNome.replace(",", "_") + 
 							"_"+ CommonsUtil.somenteNumeros(documentoAnalise.getPagador().getCpfCnpj());
 					String[] key = new String[] {nomepagador, entry.getKey()};
 					listaTodosArquivos.put(key, entry.getValue());
