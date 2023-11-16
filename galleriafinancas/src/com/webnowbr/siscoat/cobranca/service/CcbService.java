@@ -1201,8 +1201,11 @@ public class CcbService {
 				}
 			}
 			
-			document = new XWPFDocument(getClass().getResourceAsStream("/resource/CCI - Financiamento (final).docx"));
-				
+			if ( CommonsUtil.semValor( objetoCcb.getProcessosJucidiais() ) )
+				document = new XWPFDocument(getClass().getResourceAsStream("/resource/CCI - Financiamento202310SemProcesso.docx"));
+			else
+				document = new XWPFDocument(getClass().getResourceAsStream("/resource/CCI - Financiamento202310ComProcesso.docx"));
+			
 			CTFonts fonts = CTFonts.Factory.newInstance();
 			fonts.setHAnsi("Times New Roman");
 			fonts.setAscii("Times New Roman");
@@ -1334,6 +1337,27 @@ public class CcbService {
 				}
 			}
 			
+			String numerosProcessos = "";
+			String totalProcessosFormatado = "";
+			BigDecimal totalProcessos = BigDecimal.ZERO;
+			if (!CommonsUtil.semValor(objetoCcb.getProcessosJucidiais())) {
+				for (CcbProcessosJudiciais processo : objetoCcb.getProcessosJucidiais()) {
+					if (CommonsUtil.semValor(processo.getValorAtualizado())) {
+						continue;
+					}
+					numerosProcessos = numerosProcessos + ((!CommonsUtil.semValor(numerosProcessos)) ? ", " : "")
+							+ "Nº " + CommonsUtil.stringValueVazio(processo.getNumero());
+					totalProcessos = totalProcessos.add(processo.getValorAtualizado());
+				}
+				numerosProcessos = numerosProcessos.trim();
+			}
+			if (totalProcessos.compareTo(BigDecimal.ZERO) > 0) {
+				int ultimaVirgula = numerosProcessos.lastIndexOf(", ");
+				numerosProcessos = numerosProcessos.substring(0,ultimaVirgula) + " e "  + numerosProcessos.substring(ultimaVirgula + 2);
+				valorPorExtenso.setNumber(totalProcessos);
+				totalProcessosFormatado = CommonsUtil.formataValorMonetarioCci(totalProcessos, "") + " ("
+						+ valorPorExtenso.toString() + ")";
+			}
 			for (XWPFParagraph p : document.getParagraphs()) {
 				List<XWPFRun> runs = p.getRuns();
 			    if (runs != null) {  	
@@ -1353,6 +1377,14 @@ public class CcbService {
 						text = trocaValoresXWPF(text, r, "nomeTestemunha2", objetoCcb.getNomeTestemunha2());
 						text = trocaValoresXWPF(text, r, "cpfTestemunha2", objetoCcb.getCpfTestemunha2());
 						text = trocaValoresXWPF(text, r, "rgTestemunha2", objetoCcb.getRgTestemunha2());
+						
+						text = trocaValoresXWPF(text, r, "elaboradorNome", objetoCcb.getElaboradorNome());								
+						text = trocaValoresXWPF(text, r, "elaboradorCrea", objetoCcb.getElaboradorCrea());
+						text = trocaValoresXWPF(text, r, "responsavelNome", objetoCcb.getResponsavelNome());
+						text = trocaValoresXWPF(text, r, "responsavelCrea", objetoCcb.getResponsavelCrea());
+						
+						text = trocaValoresXWPF(text, r, "numerosProcessos",numerosProcessos);
+						text = trocaValoresXWPF(text, r, "totalProcessos",totalProcessosFormatado);
 						
 						if(CommonsUtil.mesmoValor(text, "aaaaaaaaaaa")){
 							text = trocaValoresXWPF(text, r, "aaaaaaaaaaa", "");	 	
@@ -1658,9 +1690,7 @@ public class CcbService {
 			}
 		    
 		    int indexParcela = 1;
-			
-			//calcularSimulador();
-
+		    
 			XWPFParagraph paragraph1 = document.createParagraph();
 			paragraph1.setAlignment(ParagraphAlignment.CENTER);
 			paragraph1.setSpacingBefore(0);
@@ -1672,6 +1702,8 @@ public class CcbService {
 			paragraph2.setSpacingAfter(0);
 			
 			int fontSize = 7;
+//			calcularSimulador();
+			
 			for(SimulacaoDetalheVO p : simulador.getParcelas()) {
 				table = document.getTableArray(2);
 				table.insertNewTableRow(indexParcela);
@@ -1749,7 +1781,8 @@ public class CcbService {
 				run.setText(CommonsUtil.formataValorMonetarioCci(p.getValorParcela(), "R$ ") + " + IPCA");
 				indexParcela++;////////////////////////////////////////////////////////////////////////////////
 			}
-			
+		    
+//		    geraPaginaContratoII(document, "9DC83E", false);
 			table = document.getTableArray(1);			
 			CabecalhoAnexo1(table, 0, 1, CommonsUtil.formataData(objetoCcb.getDataDeEmissao(), "dd/MM/yyyy"));
 			CabecalhoAnexo1(table, 1, 1, CommonsUtil.formataData(objetoCcb.getVencimentoUltimaParcelaPagamento(), "dd/MM/yyyy"));	
