@@ -240,7 +240,7 @@ public class MenuItemMB {
 		
 		
 		}
-		return "/Favoritos/ItemFavoritoAtendimento.xhtml";
+		return "/Favoritos/ItemFavorito.xhtml";
 	}
 	
 	
