@@ -75,7 +75,10 @@
 							label="CPF" mask="999.999.999-99" required="true"
 							validator="#{pagadorRecebedorMB.validaCPF}"
 							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}"
-							disabled="#{pagadorRecebedorMB.objetoPagadorRecebedor.id > 0}">
+							disabled="#{pagadorRecebedorMB.objetoPagadorRecebedor.id > 0 and 
+								(pagadorRecebedorMB.objetoPagadorRecebedor.cpf.length() > 0 or
+								 pagadorRecebedorMB.objetoPagadorRecebedor.cnpj.length() > 0)}">
+								 
 							<p:ajax update="CpfCC Nome DtNascimento Sexo mae NomeCC " event="valueChange"
 								listener="#{pagadorRecebedorMB.selectedCPF}" />
 						</p:inputMask>

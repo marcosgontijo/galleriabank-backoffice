@@ -15614,56 +15614,6 @@ public class ContratoCobrancaMB {
 			} else {
 				cell.setCellValue(Double.valueOf("0"));
 			}
-
-			// Style para cabeçalho
-			XSSFCellStyle cell_style_pago = wb.createCellStyle();
-			cell_style_pago = wb.createCellStyle();
-			cell_style_pago.setAlignment(HorizontalAlignment.CENTER);
-			cell_style_pago.setVerticalAlignment(VerticalAlignment.CENTER);
-			cell_style_pago.setBorderBottom(BorderStyle.THIN);
-			cell_style_pago.setBorderTop(BorderStyle.THIN);
-			cell_style_pago.setBorderRight(BorderStyle.THIN);
-			cell_style_pago.setBorderLeft(BorderStyle.THIN);
-			cell_style_pago.setWrapText(true);
-			cell_style_pago.setFillForegroundColor(IndexedColors.BRIGHT_GREEN.getIndex());
-			cell_style_pago.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-
-			XSSFCellStyle cell_style_aberto = wb.createCellStyle();
-			cell_style_aberto = wb.createCellStyle();
-			cell_style_aberto.setAlignment(HorizontalAlignment.CENTER);
-			cell_style_aberto.setVerticalAlignment(VerticalAlignment.CENTER);
-			cell_style_aberto.setBorderBottom(BorderStyle.THIN);
-			cell_style_aberto.setBorderTop(BorderStyle.THIN);
-			cell_style_aberto.setBorderRight(BorderStyle.THIN);
-			cell_style_aberto.setBorderLeft(BorderStyle.THIN);
-			cell_style_aberto.setWrapText(true);
-			cell_style_aberto.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
-			cell_style_aberto.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-
-			XSSFCellStyle cell_style_atraso = wb.createCellStyle();
-			cell_style_atraso = wb.createCellStyle();
-			cell_style_atraso.setAlignment(HorizontalAlignment.CENTER);
-			cell_style_atraso.setVerticalAlignment(VerticalAlignment.CENTER);
-			cell_style_atraso.setBorderBottom(BorderStyle.THIN);
-			cell_style_atraso.setBorderTop(BorderStyle.THIN);
-			cell_style_atraso.setBorderRight(BorderStyle.THIN);
-			cell_style_atraso.setBorderLeft(BorderStyle.THIN);
-			cell_style_atraso.setWrapText(true);
-			cell_style_atraso.setFillForegroundColor(IndexedColors.RED.getIndex());
-			cell_style_atraso.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-
-			XSSFCellStyle cell_style_bx_parcial = wb.createCellStyle();
-			cell_style_bx_parcial = wb.createCellStyle();
-			cell_style_bx_parcial.setAlignment(HorizontalAlignment.CENTER);
-			cell_style_bx_parcial.setVerticalAlignment(VerticalAlignment.CENTER);
-			cell_style_bx_parcial.setBorderBottom(BorderStyle.THIN);
-			cell_style_bx_parcial.setBorderTop(BorderStyle.THIN);
-			cell_style_bx_parcial.setBorderRight(BorderStyle.THIN);
-			cell_style_bx_parcial.setBorderLeft(BorderStyle.THIN);
-			cell_style_bx_parcial.setWrapText(true);
-			cell_style_bx_parcial.setFillForegroundColor(IndexedColors.ORANGE.getIndex());
-			cell_style_bx_parcial.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-
 		}
 
 		FileOutputStream fileOut = new FileOutputStream(excelFileName);
@@ -16366,56 +16316,6 @@ public class ContratoCobrancaMB {
 			cell.setCellStyle(cell_style);
 			cell = row.createCell(25);
 			cell.setCellStyle(cell_style);
-
-			// Style para cabeçalho
-			XSSFCellStyle cell_style_pago = wb.createCellStyle();
-			cell_style_pago = wb.createCellStyle();
-			cell_style_pago.setAlignment(HorizontalAlignment.CENTER);
-			cell_style_pago.setVerticalAlignment(VerticalAlignment.CENTER);
-			cell_style_pago.setBorderBottom(BorderStyle.THIN);
-			cell_style_pago.setBorderTop(BorderStyle.THIN);
-			cell_style_pago.setBorderRight(BorderStyle.THIN);
-			cell_style_pago.setBorderLeft(BorderStyle.THIN);
-			cell_style_pago.setWrapText(true);
-			cell_style_pago.setFillForegroundColor(IndexedColors.BRIGHT_GREEN.getIndex());
-			cell_style_pago.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-
-			XSSFCellStyle cell_style_aberto = wb.createCellStyle();
-			cell_style_aberto = wb.createCellStyle();
-			cell_style_aberto.setAlignment(HorizontalAlignment.CENTER);
-			cell_style_aberto.setVerticalAlignment(VerticalAlignment.CENTER);
-			cell_style_aberto.setBorderBottom(BorderStyle.THIN);
-			cell_style_aberto.setBorderTop(BorderStyle.THIN);
-			cell_style_aberto.setBorderRight(BorderStyle.THIN);
-			cell_style_aberto.setBorderLeft(BorderStyle.THIN);
-			cell_style_aberto.setWrapText(true);
-			cell_style_aberto.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
-			cell_style_aberto.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-
-			XSSFCellStyle cell_style_atraso = wb.createCellStyle();
-			cell_style_atraso = wb.createCellStyle();
-			cell_style_atraso.setAlignment(HorizontalAlignment.CENTER);
-			cell_style_atraso.setVerticalAlignment(VerticalAlignment.CENTER);
-			cell_style_atraso.setBorderBottom(BorderStyle.THIN);
-			cell_style_atraso.setBorderTop(BorderStyle.THIN);
-			cell_style_atraso.setBorderRight(BorderStyle.THIN);
-			cell_style_atraso.setBorderLeft(BorderStyle.THIN);
-			cell_style_atraso.setWrapText(true);
-			cell_style_atraso.setFillForegroundColor(IndexedColors.RED.getIndex());
-			cell_style_atraso.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-
-			XSSFCellStyle cell_style_bx_parcial = wb.createCellStyle();
-			cell_style_bx_parcial = wb.createCellStyle();
-			cell_style_bx_parcial.setAlignment(HorizontalAlignment.CENTER);
-			cell_style_bx_parcial.setVerticalAlignment(VerticalAlignment.CENTER);
-			cell_style_bx_parcial.setBorderBottom(BorderStyle.THIN);
-			cell_style_bx_parcial.setBorderTop(BorderStyle.THIN);
-			cell_style_bx_parcial.setBorderRight(BorderStyle.THIN);
-			cell_style_bx_parcial.setBorderLeft(BorderStyle.THIN);
-			cell_style_bx_parcial.setWrapText(true);
-			cell_style_bx_parcial.setFillForegroundColor(IndexedColors.ORANGE.getIndex());
-			cell_style_bx_parcial.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-
 		}
 
 		/*
