@@ -2680,8 +2680,19 @@ public class CcbService {
 			XWPFDocument document;
 			XWPFRun run;
 			XWPFRun run2;
+			int fontSize = 10;
 			
-			document = new XWPFDocument(getClass().getResourceAsStream("/resource/TermoDeResponsabilidadeAnuenciaPaju.docx"));			
+			if(CommonsUtil.mesmoValor(objetoCcb.getUfImovel(), "PR") || CommonsUtil.mesmoValor(objetoCcb.getUfImovel(), "Paraná")) {
+				document = new XWPFDocument(getClass().getResourceAsStream("/resource/TermoDeResponsabilidadeAnuenciaPajuPR.docx"));
+				fontSize = 12;
+			} else if(CommonsUtil.mesmoValor(objetoCcb.getUfImovel(), "RJ") || CommonsUtil.mesmoValor(objetoCcb.getUfImovel(), "Rio de Janeiro")) {
+				document = new XWPFDocument(getClass().getResourceAsStream("/resource/TermoDeResponsabilidadeAnuenciaPajuRJ.docx"));
+				fontSize = 11;
+			} else {
+				document = new XWPFDocument(getClass().getResourceAsStream("/resource/TermoDeResponsabilidadeAnuenciaPaju.docx"));
+				fontSize = 10;
+			}
+						
 			CTFonts fonts = CTFonts.Factory.newInstance();
 			fonts.setHAnsi("Calibri");
 			fonts.setAscii("Calibri");
@@ -2698,13 +2709,13 @@ public class CcbService {
 			run.setBold(true);
 			run.setUnderline(UnderlinePatterns.NONE);
 			run.setCharacterSpacing(1*10);
-			run.setFontSize(10);
+			run.setFontSize(fontSize);
 			run2 = document.getParagraphs().get(paragraph).insertNewRun(1);
 			run = document.getParagraphs().get(paragraph).insertNewRun(2);
 			//run2.setFontFamily("Calibri");
 			geraParagrafoPF(run2, participante);
 			run2.setUnderline(UnderlinePatterns.NONE);
-			run2.setFontSize(10);
+			run2.setFontSize(fontSize);
 			run2.setText(run2.getText(0).replace(';', ','));
 			//run2.addCarriageReturn();
 
@@ -2734,7 +2745,7 @@ public class CcbService {
 						text = trocaValoresXWPF(text, r, "cpfTestemunha2", objetoCcb.getCpfTestemunha2());		
 						text = trocaValoresXWPF(text, r, "rgTestemunha2", objetoCcb.getRgTestemunha2());
 						
-						Date pajuGerado = objetoCcb.getObjetoContratoCobranca().getPajurFavoravelData();
+						Date pajuGerado = objetoCcb.getObjetoContratoCobranca().getDataPajuComentado();
 						
 						text = trocaValoresXWPF(text, r, "pajuDia", pajuGerado.getDate());
 						text = trocaValoresXWPF(text, r, "pajuMes", CommonsUtil.formataMesExtenso(pajuGerado).toLowerCase());
