@@ -1119,18 +1119,18 @@ public class ContratoCobranca implements Serializable {
 						&& !this.laudoRecebido) {
 					if (!CommonsUtil.semValor(this.avaliacaoLaudo)
 							&& CommonsUtil.mesmoValor(this.avaliacaoLaudo, "Compass")) {
-						c.setStatusEsteira("Pedir Laudo Compass");
+						c.setStatusEsteira("Aguardando Laudo Compass");
 						if (!CommonsUtil.semValor(status)) {
 							status = status + " | ";
 						}
-						status = status + "Pedir Laudo Compass";
+						status = status + "Aguardando Laudo Compass";
 					} else if (!CommonsUtil.semValor(this.avaliacaoLaudo)
 							&& CommonsUtil.mesmoValor(this.avaliacaoLaudo, "Galache")) {
-						c.setStatusEsteira("Pedir Laudo Galache");
+						c.setStatusEsteira("Aguardando Laudo Galache");
 						if (!CommonsUtil.semValor(status)) {
 							status = status + " | ";
 						}
-						status = status + "Pedir Laudo Galache";
+						status = status + "Aguardando Laudo Galache";
 					} else {
 						c.setStatusEsteira("Ag. Laudo");
 						if (!CommonsUtil.semValor(status)) {
@@ -6991,14 +6991,14 @@ public class ContratoCobranca implements Serializable {
 					if (!CommonsUtil.semValor(status)) {
 						status = status + " | ";
 					}
-					status = status + "Pedir Laudo Compass";
+					status = status + "Aguardando Laudo Compass";
 				} else if (!CommonsUtil.semValor(this.avaliacaoLaudo)
 						&& CommonsUtil.mesmoValor(this.avaliacaoLaudo, "Galache")) {
 //						c.setStatus("Pedir Laudo Galache");
 					if (!CommonsUtil.semValor(status)) {
 						status = status + " | ";
 					}
-					status = status + "Pedir Laudo Galache";
+					status = status + "Aguardando Laudo Galache";
 				} else {
 //						c.setStatus("Ag. Laudo");
 					if (!CommonsUtil.semValor(status)) {

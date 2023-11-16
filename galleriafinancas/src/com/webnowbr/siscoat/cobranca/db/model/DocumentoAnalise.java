@@ -318,7 +318,6 @@ public class DocumentoAnalise implements Serializable {
 			result.add(new DocumentoAnaliseResumo("Score:", CommonsUtil.stringValue(score.getScore())));
 			
 			if (score.getScore() > 0 && score.getScore() < 450) {
-				isScoreBaixo = true;
 				isScoreBaixo450 = true;
 			} else if (score.getScore() > 451 && score.getScore() < 700) {
 				isScoreBaixo700 = true;
@@ -545,11 +544,9 @@ public class DocumentoAnalise implements Serializable {
 			}
 			
 			if (dado.getResumoDoClienteTraduzido().getRiscoTotal().compareTo(new BigDecimal("20000")) < 0) {
-				setHasRiscoTotal(true);
 				setRiscoTotal20k(true);
 			} else if (dado.getResumoDoClienteTraduzido().getRiscoTotal().compareTo(new BigDecimal("20001")) > 0 
 					&& dado.getResumoDoClienteTraduzido().getRiscoTotal().compareTo(new BigDecimal("50000")) < 0) {
-				setHasRiscoTotal(true);
 				setRiscoTotal50k(true);
 			}
 		}

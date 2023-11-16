@@ -13830,18 +13830,18 @@ public class ContratoCobrancaMB {
 							&& !c.isLaudoRecebido()) {
 						if (!CommonsUtil.semValor(c.getAvaliacaoLaudo())
 								&& CommonsUtil.mesmoValor(c.getAvaliacaoLaudo(), "Compass")) {
-							c.setStatus("Pedir Laudo Compass");
+							c.setStatus("Aguardando Laudo Compass");
 							if (!CommonsUtil.semValor(status)) {
 								status = status + " | ";
 							}
-							status = status + "Pedir Laudo Compass";
+							status = status + "Aguardando Laudo Compass";
 						} else if (!CommonsUtil.semValor(c.getAvaliacaoLaudo())
 								&& CommonsUtil.mesmoValor(c.getAvaliacaoLaudo(), "Galache")) {
-							c.setStatus("Pedir Laudo Galache");
+							c.setStatus("Aguardando Laudo Galache");
 							if (!CommonsUtil.semValor(status)) {
 								status = status + " | ";
 							}
-							status = status + "Pedir Laudo Galache";
+							status = status + "Aguardando Laudo Galache";
 						} else {
 							c.setStatus("Ag. Laudo");
 							if (!CommonsUtil.semValor(status)) {

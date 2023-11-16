@@ -1571,19 +1571,19 @@
 							<p:spacer width="5px"/>
 							<p:outputLabel value="Inicio Relacionamento Bacen &gt; 2018" styleClass="labelBold" />
 							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.relacionamentoBacenRecenteTaxa}">
-								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado" 
+								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado taxaPreAprovadaPanel" 
 									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
 							</p:selectBooleanCheckbox>
 							
 							<p:outputLabel value="Tem Cheque Devolvido" styleClass="labelBold" />
 							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.chequeDevolvidoTaxa}">
-								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado" 
+								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado taxaPreAprovadaPanel" 
 									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
 							</p:selectBooleanCheckbox>
 							<p:spacer width="5px"/>
 							<p:outputLabel value="Tem Divida Vencida" styleClass="labelBold" />
 							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.dividaVencidaTaxa}">
-								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado" 
+								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado taxaPreAprovadaPanel" 
 									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
 							</p:selectBooleanCheckbox>
 							
@@ -1595,31 +1595,43 @@
 							<p:spacer width="5px"/>
 							<p:outputLabel value="Tem Prejuízo Bacen " styleClass="labelBold" />
 							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.prejuizoBacenTaxa}">
-								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado" 
+								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado taxaPreAprovadaPanel" 
 									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
 							</p:selectBooleanCheckbox>
 													
 							<p:outputLabel value="Risco Total &lt; 20.000,00" styleClass="labelBold" />
-							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.riscoTotalBaixoTaxa}">
-								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado" 
+							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.riscoTotal20kTaxa}">
+								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado taxaPreAprovadaPanel" 
 									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
 							</p:selectBooleanCheckbox>
 							<p:spacer width="5px"/>
 							<p:outputLabel value="Score &lt; 450" styleClass="labelBold" />
-							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.scoreBaixoTaxa}" id="scoreCBox">
+							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.scoreBaixo450Taxa}">
 								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado taxaPreAprovadaPanel" 
-									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada}" />
+									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
 							</p:selectBooleanCheckbox>
 							
+							<p:outputLabel value="Risco Total &lt; 50.000,00" styleClass="labelBold" />
+							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.riscoTotal50kTaxa}">
+								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado taxaPreAprovadaPanel" 
+									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
+							</p:selectBooleanCheckbox>
+							<p:spacer width="5px"/>
+							<p:outputLabel value="Score &lt; 700" styleClass="labelBold" />
+							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.scoreBaixo700Taxa}">
+								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado taxaPreAprovadaPanel" 
+									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
+							</p:selectBooleanCheckbox>
+				
 							<p:outputLabel value="Garantia é Terreno ou Barracão?" styleClass="labelBold" />
 							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.terrenoOuBarracaoTaxa}">
-								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado" 
+								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado taxaPreAprovadaPanel" 
 									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
 							</p:selectBooleanCheckbox>							
 							<p:spacer width="5px"/>
 							<p:outputLabel value="Nada Consta" styleClass="labelBold" />
 							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.nadaConstaTaxa}">
-								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado"
+								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado taxaPreAprovadaPanel"
 									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}"/>
 							</p:selectBooleanCheckbox>
 						</h:panelGrid>
@@ -4470,7 +4482,7 @@
 			
 			<p:messages id="msgArquivo"/>			
 			 	
-			<p:panel id="UploadArquivosComite" header="Arquivo Comite(s)" style="margin-bottom:10px;" rendered="#{( usuarioMB.objetoUsuario.administrador or contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro')}" >						
+			<!-- <p:panel id="UploadArquivosComite" header="Arquivo Comite(s)" style="margin-bottom:10px;" rendered="#{( usuarioMB.objetoUsuario.administrador or contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro')}" >						
 				<p:panel id="ArquivosComite" header="Selecionar Arquivo Para Upload" style="margin-bottom:10px;text-align: center;">							
 					<h:panelGrid columns="1">		
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileComiteUpload}" mode="advanced" dragDropSupport="true"
@@ -4533,7 +4545,7 @@
 					    PF('statusDialog').hide();
 					}
 				</script>
-			</p:panel>	
+			</p:panel> -->
 						  	
 			<p:panel id="UploadArquivosInternos" header="Arquivo Interno(s)" style="margin-bottom:10px;" rendered="#{( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' ))}">						
 				<p:panel id="ArquivosInternos" header="Selecionar Arquivo  Para Upload" style="margin-bottom:10px;text-align: center;">							
