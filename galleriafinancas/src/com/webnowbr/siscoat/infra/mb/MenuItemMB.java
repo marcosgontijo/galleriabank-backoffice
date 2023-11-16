@@ -82,6 +82,7 @@ public class MenuItemMB {
 		} else {
 			modelMenuFavorito = menuService.constroiMenu((long)18, loginBean.getUsuarioLogado().getId(), true);
 		}
+		menuAtual = null;
 		return "/Favoritos/FavoritosMenu.xhtml";
 			
 			
