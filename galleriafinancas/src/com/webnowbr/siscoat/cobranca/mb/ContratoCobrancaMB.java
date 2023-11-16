@@ -9688,7 +9688,13 @@ public class ContratoCobrancaMB {
 				objetoContratoCobranca.setValorCartorio(valorRegistro);
 			}
 		}
-
+		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Assinatura")) {
+			if(!CommonsUtil.semValor(this.objetoContratoCobranca.getDataPajuComentado())
+					&& getDifferenceDays(objetoContratoCobranca.getDataPajuComentado(), DateUtil.gerarDataHoje()) > 30){
+				this.objetoContratoCobranca.setReanalise(true);
+			}
+		}
+		
 		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Registro")) {
 			this.objetoContratoCobranca.setTxHonorario(BigDecimal.valueOf(20.00));
 			this.objetoContratoCobranca.setTxJuros(BigDecimal.valueOf(1.00));
