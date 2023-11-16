@@ -10,7 +10,7 @@
 		
 
 	
-		<p:outputLabel value="#{menuItemMB.objetoItemFavorito.nome}"/>]
+		<p:outputLabel value="#{menuItemMB.objetoItemFavorito.nome}"/>
 		<p:spacer width="10px"></p:spacer>
 		
 		<p:commandButton value="Desfavoritar" action="#{menuItemMB.desfavoritar(menuItemMB.objetoItemFavorito.id)}" update="Itemform" rendered="#{menuItemMB.objetoItemFavorito.favorito == true}"></p:commandButton>
