@@ -712,8 +712,8 @@ public class ImovelCobranca implements Serializable {
 			this.enderecoSemNumero = split[0].trim();
 			this.numeroImovel = split[1].trim();
 		} else {
-			this.enderecoSemNumero = "";
-			this.numeroImovel = "0";
+			this.enderecoSemNumero = string;
+			this.numeroImovel = "";
 		}
 	}
 	
