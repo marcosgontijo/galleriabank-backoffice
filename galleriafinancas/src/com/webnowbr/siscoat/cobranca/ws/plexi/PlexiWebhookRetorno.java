@@ -12,9 +12,9 @@ public class PlexiWebhookRetorno {
 	String validadeCertidao;
 	String nome;
 	String cpfCnpj;
-	List<PlexiWebhookRetornoProcessos> processos;
+	List<Object> processos;
 	String status;
-	String error;
+	Boolean error;
 	Integer totalProcessos;
 	String mensagem;
 
@@ -82,11 +82,11 @@ public class PlexiWebhookRetorno {
 		this.cpfCnpj = cpfCnpj;
 	}
 
-	public List<PlexiWebhookRetornoProcessos> getProcessos() {
+	public List<Object> getProcessos() {
 		return processos;
 	}
 
-	public void setProcessos(List<PlexiWebhookRetornoProcessos> processos) {
+	public void setProcessos(List<Object> processos) {
 		this.processos = processos;
 	}
 
@@ -98,11 +98,11 @@ public class PlexiWebhookRetorno {
 		this.status = status;
 	}
 
-	public String getError() {
+	public Boolean getError() {
 		return error;
 	}
 
-	public void setError(String error) {
+	public void setError(Boolean error) {
 		this.error = error;
 	}
 
