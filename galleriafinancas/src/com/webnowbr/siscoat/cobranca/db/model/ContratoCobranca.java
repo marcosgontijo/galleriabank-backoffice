@@ -815,6 +815,7 @@ public class ContratoCobranca implements Serializable {
 	private boolean iniciouGeracaoLaudo;
 	private String avaliacaoPaju;
 	private boolean iniciouGeracaoPaju;
+	private String avaliacaoPajuReanalise;
 	
 	private boolean contatoDiferenteProprietario;
 	//private String geracaoLaudoObservacao;
@@ -7327,4 +7328,13 @@ public class ContratoCobranca implements Serializable {
 	public void setDataPajuComentado(Date dataPajuComentado) {
 		this.dataPajuComentado = dataPajuComentado;
 	}
+
+	public String getAvaliacaoPajuReanalise() {
+		return avaliacaoPajuReanalise;
+	}
+
+	public void setAvaliacaoPajuReanalise(String avaliacaoPajuReanalise) {
+		this.avaliacaoPajuReanalise = avaliacaoPajuReanalise;
+	}
+	
 }

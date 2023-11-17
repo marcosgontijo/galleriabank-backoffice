@@ -2260,6 +2260,9 @@
 			<column name="dataPajuComentado" />
 		</property>
 		
+		<property name="avaliacaoPajuReanalise" type="java.lang.String">
+			<column name="avaliacaoPajuReanalise" />
+		</property>
 		
 	</class>
 </hibernate-mapping>

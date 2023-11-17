@@ -454,19 +454,35 @@
 										</h:panelGrid>
 										<h:panelGrid columns="2"
 											style="background-color: #e4e4e4;width: 250px; height: 110px; -webkit-border-radius: 5px;
+											-moz-border-radius: 5px; border-radius: 5px; padding: 10px;"
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.reanalise 
+												and (!contratoCobrancaMB.objetoContratoCobranca.reanalisePronta 
+												or !contratoCobrancaMB.objetoContratoCobranca.pajuAtualizado)}">
+											
+											<p:outputLabel styleClass="labelBold">Reanalise Pronta</p:outputLabel>
+											<p:selectBooleanButton id="reanalisePronta"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.reanalisePronta}"
+												onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+												offIcon="ui-icon-close" style="width:=60px" />
+												
+											<p:outputLabel styleClass="labelBold">Avaliação Paju Reanalise</p:outputLabel>
+											<p:selectOneMenu id="avaliacaoPajuReanalise"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoPajuReanalise}">
+												<f:selectItem itemValue="" itemLabel="" />
+												<f:selectItem itemValue="Neves" itemLabel="Neves" />
+												<f:selectItem itemValue="Luvison" itemLabel="Luvison" />
+												<f:selectItem itemValue="Outro" itemLabel="Outro" />
+												<p:ajax event="valueChange"
+													update=":form:Status"/>
+											</p:selectOneMenu>											
+										</h:panelGrid>
+										<h:panelGrid columns="2"
+											style="background-color: #e4e4e4;width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px; border-radius: 5px; padding: 10px;"
 											rendered="#{contratoCobrancaMB.objetoContratoCobranca.reanalise 
-										and (!contratoCobrancaMB.objetoContratoCobranca.reanalisePronta 
-										or !contratoCobrancaMB.objetoContratoCobranca.pajuAtualizado)}">
-											<h:panelGrid columns="2">
-												<p:outputLabel styleClass="labelBold">Reanalise Pronta</p:outputLabel>
-												<p:spacer></p:spacer>
-												<p:selectBooleanButton id="reanalisePronta"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.reanalisePronta}"
-													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-													offIcon="ui-icon-close" style="width:=60px" />
-											</h:panelGrid>
-											<h:panelGrid columns="2">
+												and contratoCobrancaMB.objetoContratoCobranca.pajuAtualizado}">
+											<h:panelGrid columns="2" 
+												rendered="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoPajuReanalise eq 'Outro'}">
 												<p:outputLabel styleClass="labelBold">PAJU Atualizado</p:outputLabel>
 												<p:spacer></p:spacer>
 												<p:selectBooleanButton id="pajuAtualizado"
@@ -474,19 +490,14 @@
 													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 													offIcon="ui-icon-close" style="width:=60px" />
 											</h:panelGrid>
-										</h:panelGrid>
-										<h:panelGrid columns="2"
-											style="background-color: #e4e4e4;width: 250px; height: 110px; -webkit-border-radius: 5px;
-										-moz-border-radius: 5px; border-radius: 5px; padding: 10px;"
-											rendered="#{contratoCobrancaMB.objetoContratoCobranca.reanalise 
-										and contratoCobrancaMB.objetoContratoCobranca.reanalisePronta
-										and contratoCobrancaMB.objetoContratoCobranca.pajuAtualizado}">
-											<p:outputLabel styleClass="labelBold">Reanalise Jurídico</p:outputLabel>
-											<p:spacer></p:spacer>
-											<p:selectBooleanButton id="reanaliseJuridico"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.reanaliseJuridico}"
-												onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-												offIcon="ui-icon-close" style="width:=60px" />
+											<h:panelGrid columns="2">
+												<p:outputLabel styleClass="labelBold">Reanalise Jurídico</p:outputLabel>
+												<p:spacer></p:spacer>
+												<p:selectBooleanButton id="reanaliseJuridico"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.reanaliseJuridico}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-close" style="width:=60px" />
+											</h:panelGrid>
 										</h:panelGrid>
 									</ui:fragment>
 									<ui:fragment
