@@ -162,14 +162,26 @@
 										border-radius: 5px; padding: 10px;"
 											rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Pedir Laudo'}">
 
-											<p:outputLabel styleClass="labelBold">Forma de Pagamento: </p:outputLabel>
-											<p:selectOneMenu id="formaDePagamentoLaudoPAJU"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.formaDePagamentoLaudoPAJU}"
-												label="Tipo">
-												<f:selectItem itemValue="" itemLabel="" />
-												<f:selectItem itemValue="No final" itemLabel="No final" />
-												<f:selectItem itemValue="Antecipado" itemLabel="Antecipado" />
-											</p:selectOneMenu>
+											<shiro:hasAnyRoles name="ROOT, PROFILE_GERENTE_ANALISE">
+												<p:outputLabel styleClass="labelBold">Forma de Pagamento: </p:outputLabel>
+												<p:selectOneMenu 
+													value="#{contratoCobrancaMB.objetoContratoCobranca.formaDePagamentoLaudoPAJU}"
+													label="Tipo">
+													<f:selectItem itemValue="" itemLabel="" />
+													<f:selectItem itemValue="No final" itemLabel="No final" />
+													<f:selectItem itemValue="Antecipado" itemLabel="Antecipado" />
+												</p:selectOneMenu>
+											</shiro:hasAnyRoles>
+											<shiro:lacksRole name="PROFILE_GERENTE_ANALISE">
+												<p:outputLabel styleClass="labelBold">Forma de Pagamento: </p:outputLabel>
+												<p:selectOneMenu 
+													value="#{contratoCobrancaMB.objetoContratoCobranca.formaDePagamentoLaudoPAJU}"
+													label="Tipo" disabled="true">
+													<f:selectItem itemValue="" itemLabel="" />
+													<f:selectItem itemValue="No final" itemLabel="No final" />
+													<f:selectItem itemValue="Antecipado" itemLabel="Antecipado" />
+												</p:selectOneMenu>
+											</shiro:lacksRole>
 
 											<p:outputLabel styleClass="labelBold"
 												rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}">Avaliação Laudo: </p:outputLabel>

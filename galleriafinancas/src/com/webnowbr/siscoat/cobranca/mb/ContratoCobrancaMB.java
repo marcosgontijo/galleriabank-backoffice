@@ -3787,7 +3787,23 @@ public class ContratoCobrancaMB {
 		ResponsavelDao responsavelDao = new ResponsavelDao();
 		FacesContext context = FacesContext.getCurrentInstance();
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-
+		
+		if(this.tituloTelaConsultaPreStatus.contains("Pedir")) {
+			if(CommonsUtil.mesmoValor(objetoContratoCobranca.getFormaDePagamentoLaudoPAJU(), "Antecipado")
+				&& CommonsUtil.semValor(objetoContratoCobranca.getValorLaudoPajuPago())) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Contrato Cobrança: Falta Valor PAGO de Laudo + Paju!",
+								""));
+				return "";
+			}
+			if(CommonsUtil.semValor(objetoContratoCobranca.getValorLaudoPajuTotal())) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Contrato Cobrança: Falta Valor TOTAL de Laudo + Paju!",
+								""));
+				return "";
+			}
+		}
+		
 		try {
 
 			if (!SiscoatConstants.DEV && !CommonsUtil.sistemaWindows()) {
@@ -3850,7 +3866,7 @@ public class ContratoCobrancaMB {
 				ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
 				objetoImovelCobranca.popularObjetoCidade();
 				imovelCobrancaDao.merge(this.objetoImovelCobranca);
-
+				
 				// teste para ver se para de sobrescrever pagador
 
 				this.objetoContratoCobranca.setPagador(objetoPagadorRecebedor);
