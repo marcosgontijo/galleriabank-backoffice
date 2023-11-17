@@ -72,7 +72,7 @@
 					</p:panel>
 				</h:panelGroup>
 				
-				<h:panelGroup id="CheckListInformacoesAdicionais">
+				<h:panelGroup id="CheckListInformacoesAdicionais" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.reanalisePronta}">
 					<p:panel header="Check-List - Informações Adicionais"
 						style="margin-bottom:20px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado'}">		
 						<p:spacer height="10"></p:spacer>
@@ -100,16 +100,6 @@
 									cols="84" maxlength="3000" onblur=""
 									counterTemplate="{0} characters remaining." autoResize="false"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.geracaoLaudoObservacao}" />
-
-								<p:outputLabel for="processosPajuExterno"
-									value="Processos para quitar:" styleClass="labelBold" />
-								<p:inputTextarea id="processosPajuExterno" rows="10" cols="48"
-									counter="display2" maxlength="3000" onblur=""
-									counterTemplate="{0} characters remaining." autoResize="false"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.processosPajuExterno}">
-									<p:ajax process="@this" partialSubmit="true" />
-								</p:inputTextarea>
-								<p:outputLabel id="display2" />
 							</h:panelGrid>
 							<h:panelGrid columns="3">
 								<p:outputLabel styleClass="labelBold">PAJU Gerado: </p:outputLabel>									
@@ -123,6 +113,43 @@
 					</p:panel>
 				</h:panelGroup>			
 													
+				<h:panelGroup id="CheckListReanalise" rendered="#{contratoCobrancaMB.objetoContratoCobranca.reanalisePronta}">
+					<p:panel header="Check-List - REANALISE"
+						style="margin-bottom:20px;">		
+						<p:spacer height="10"></p:spacer>
+						<p:panel id="StatusGeracaoLaudoReanalise" style="border: none">
+							<h:panelGrid columns="4">
+								<p:commandButton value="Download Modelo PAJU" ajax="false"
+									icon="ui-icon-check"
+									action="#{contratoCobrancaMB.downloadModeloPaju}"
+									style="TEXT-DECORATION: bold; width: 170px; height: 55px;">
+								</p:commandButton>
+								
+								<p:commandButton value="Atualizar Status" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.editPreContratoPorStatus()}" style="TEXT-DECORATION: bold; width: 170px; height: 55px;" rendered="#{contratoCobrancaMB.updateMode}">
+									<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="false" />	
+								</p:commandButton>
+							</h:panelGrid>	
+							<h:panelGrid columns="2">
+								<p:outputLabel for="geracaoLaudoReanalise"
+									value="Observação PAJU: " styleClass="labelBold" />
+								<p:inputTextarea id="geracaoLaudoReanalise" rows="5"
+									cols="84" maxlength="3000" onblur=""
+									counterTemplate="{0} characters remaining." autoResize="false"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.geracaoLaudoObservacao}" />
+							</h:panelGrid>
+							<h:panelGrid columns="3">
+								<p:outputLabel styleClass="labelBold">PAJU Reanalise Gerado: </p:outputLabel>									
+											<p:selectBooleanButton id="pedirPajuReanaliseBtn" value="#{contratoCobrancaMB.objetoContratoCobranca.pajuAtualizado}" 
+											onLabel="Gerado" offLabel="Não Gerado" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px"/>
+								<p:commandButton value="Atualizar Check-List" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.editPreContratoPorStatus()}" 
+									style="TEXT-DECORATION: bold; width: 170px; height: 55px;" rendered="#{contratoCobrancaMB.updateMode}">
+									<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="false" />	
+								</p:commandButton>
+							</h:panelGrid>	
+						</p:panel>
+					</p:panel>
+				</h:panelGroup>
+				
 				<p:panel id="Imovel" header="Imóvel Ofertado Como Garantia" style="margin-bottom:10px;" >
 					<h:panelGrid columns="2">
 						<p:outputLabel for="NumeroMatricula" value="Numero Matrícula: " />

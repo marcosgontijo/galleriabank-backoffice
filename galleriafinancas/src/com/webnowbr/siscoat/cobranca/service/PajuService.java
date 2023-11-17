@@ -382,8 +382,9 @@ public class PajuService {
 					ContratoTipoTemplateBloco blocoFilho = bloco.getBlocosFilho().stream().filter(
 							b -> CommonsUtil.mesmoValor(b.getCodigoTipoTemplateBloco(), BLOCO_PESSOA_FISICA_DOCUMENTOS_PLEXI))
 							.findFirst().orElse(null);
-					if (!CommonsUtil.semValor(blocoFilho)) {						
-						adicionaParagrafoPlexi(docTemplate, paragrafoDocumentoTemplate, blocoFilho, plexiConsulta);
+					if (!CommonsUtil.semValor(blocoFilho)) {
+						if (!CommonsUtil.booleanValue(plexiConsulta.getPlexiWebhookRetorno().getError()))
+							adicionaParagrafoPlexi(docTemplate, paragrafoDocumentoTemplate, blocoFilho, plexiConsulta);
 					}
 					
 				}
@@ -447,19 +448,38 @@ public class PajuService {
 		for (DocumentoAnalise participante : participantes) {
 
 			adicionaParagrafo(docTemplate, paragrafoTemplate, bloco, participante);
-			if (!CommonsUtil.semValor(docketRetornoConsulta) && !CommonsUtil.semValor(docketRetornoConsulta.getPedido())
-					&& !CommonsUtil.semValor(docketRetornoConsulta.getPedido().getDocumentos())) {
-
+			if (!CommonsUtil.semValor(docketRetornoConsulta)) {
 				List<DocketDocumento> documentosParticipante = docketRetornoConsulta.getPedido().getDocumentos();
 				List<DocketDocumento> documentosParticipanteFiltro = documentosParticipante.stream()
-						.filter(d -> CommonsUtil.mesmoValor(d.getCampos().getCnpj(),
+						.filter(d -> CommonsUtil.mesmoValor(d.getCampos().getCpf(),
 								CommonsUtil.somenteNumeros(participante.getCnpjcpf())))
 						.collect(Collectors.toList());
 				for (DocketDocumento docketDocumento : documentosParticipanteFiltro) {
-					adicionaParagrafo(docTemplate, paragrafoDocumentoTemplate, bloco.getBlocosFilho().get(0),
-							docketDocumento);
+					ContratoTipoTemplateBloco blocoFilho = bloco.getBlocosFilho().stream().filter(
+							b -> CommonsUtil.mesmoValor(b.getCodigoTipoTemplateBloco(), BLOCO_PESSOA_JURIDICA_DOCUMENTOS))
+							.findFirst().orElse(null);
+					if (!CommonsUtil.semValor(blocoFilho))
+						adicionaParagrafo(docTemplate, paragrafoDocumentoTemplate, blocoFilho, docketDocumento);
 				}
 			}
+
+			if (!CommonsUtil.semValor(participante.getPlexiConsultas())) {
+				for (PlexiConsulta plexiConsulta : participante.getPlexiConsultas()) {
+
+					ContratoTipoTemplateBloco blocoFilho = bloco
+							.getBlocosFilho().stream().filter(b -> CommonsUtil
+									.mesmoValor(b.getCodigoTipoTemplateBloco(), BLOCO_PESSOA_JURIDICA_DOCUMENTOS_PLEXI))
+							.findFirst().orElse(null);
+					if (!CommonsUtil.semValor(blocoFilho)) {
+						if (!CommonsUtil.booleanValue(plexiConsulta.getPlexiWebhookRetorno().getError()))
+							adicionaParagrafoPlexi(docTemplate, paragrafoDocumentoTemplate, blocoFilho, plexiConsulta);
+					}
+
+				}
+
+			}
+//			adicionaParagrafo(docTemplate, paragrafoDocumentoTemplate, bloco, documentosParticipanteFiltro);
+
 		}
 
 		if (paragrafoTemplate != null) {

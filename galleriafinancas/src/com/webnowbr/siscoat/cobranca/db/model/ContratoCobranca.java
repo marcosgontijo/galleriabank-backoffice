@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.TimeZone;
 
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.infra.db.model.User;
 
 public class ContratoCobranca implements Serializable {
@@ -815,6 +816,7 @@ public class ContratoCobranca implements Serializable {
 	private boolean iniciouGeracaoLaudo;
 	private String avaliacaoPaju;
 	private boolean iniciouGeracaoPaju;
+	private String avaliacaoPajuReanalise;
 	
 	private boolean contatoDiferenteProprietario;
 	//private String geracaoLaudoObservacao;
@@ -1374,6 +1376,13 @@ public class ContratoCobranca implements Serializable {
 		} else {
 			return false;
 		}
+	}
+	
+	public boolean isPajuVencido() {
+		boolean retorno = false;
+		if(!CommonsUtil.semValor(dataPajuComentado)) 
+			retorno = (DateUtil.getDaysBetweenDates(dataPajuComentado, DateUtil.gerarDataHoje()) > 30);
+		return retorno;
 	}
 	
 
@@ -7327,4 +7336,13 @@ public class ContratoCobranca implements Serializable {
 	public void setDataPajuComentado(Date dataPajuComentado) {
 		this.dataPajuComentado = dataPajuComentado;
 	}
+
+	public String getAvaliacaoPajuReanalise() {
+		return avaliacaoPajuReanalise;
+	}
+
+	public void setAvaliacaoPajuReanalise(String avaliacaoPajuReanalise) {
+		this.avaliacaoPajuReanalise = avaliacaoPajuReanalise;
+	}
+	
 }
