@@ -11,6 +11,8 @@ import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.infra.db.model.User;
 
+import br.com.galleriabank.serasacrednet.cliente.util.GsonUtil;
+
 public class PlexiConsulta {
 
 	private long id;
@@ -128,7 +130,11 @@ public class PlexiConsulta {
 		}
 	}
 	
+	public PlexiWebhookRetorno getPlexiWebhookRetorno() {
+		return GsonUtil.fromJson(getWebhookRetorno(), PlexiWebhookRetorno.class);
+	}
 	@Override
+	
 	public String toString() {
 		return "PlexiConsulta [id=" + id + ", requestId=" + requestId + ", cpfCnpj=" + cpfCnpj + ", plexiDocumentos="
 				+ plexiDocumentos + "]";
