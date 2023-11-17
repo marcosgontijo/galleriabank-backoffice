@@ -34390,7 +34390,8 @@ public class ContratoCobrancaMB {
 		if (this.listaDocumentoAnalise != null && this.listaDocumentoAnalise.size() > 0) {
 			boolean nadaConsta = true;
 			for (DocumentoAnalise docAnalise : listaDocumentoAnalise) {	
-				if (docAnalise.getMotivoAnalise().toLowerCase().contains("proprietario atual") || docAnalise.getMotivoAnalise().toLowerCase().contains("comprador")) {
+				if ((docAnalise.getMotivoAnalise().toLowerCase().contains("proprietario atual") || docAnalise.getMotivoAnalise().toLowerCase().contains("comprador")) 
+						&& docAnalise.isLiberadoAnalise()) {
 					docAnalise.getResumoEngine();
 					docAnalise.getResumoScr();
 					docAnalise.getResumoProcesso();
