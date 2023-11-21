@@ -952,15 +952,23 @@ public class KobanaMB {
 		1 Para percentual do valor do boleto
 		2 Para valor fixo  		 
 		 */
+		jsonBoleto.put("fine_type", 1);
+		
 		if (parcela != null) {
+			if (parcela.getDataVencimento().before(getDataHoje())) {
+				jsonBoleto.put("fine_type", 0);
+			} else {
+				jsonBoleto.put("fine_type", 1);
+			}
+			
+			/*
 			if (!parcela.isParcelaVencida()) {
 				jsonBoleto.put("fine_type", 1);	
 			} else {
 				jsonBoleto.put("fine_type", 0);
 			}
-		} else {
-			jsonBoleto.put("fine_type", 1);	
-		}
+			*/
+		} 
 		
 		/*
 		 * VALORES PADRÕES
@@ -1358,6 +1366,22 @@ public class KobanaMB {
 		2 Para valor fixo  		 
 		 */
 		jsonBoleto.put("fine_type", 1);
+		
+		if (parcela != null) {
+			if (parcela.getDataVencimento().before(getDataHoje())) {
+				jsonBoleto.put("fine_type", 0);
+			} else {
+				jsonBoleto.put("fine_type", 1);
+			}
+			
+			/*
+			if (!parcela.isParcelaVencida()) {
+				jsonBoleto.put("fine_type", 1);	
+			} else {
+				jsonBoleto.put("fine_type", 0);
+			}
+			*/
+		} 
 		
 		/*
 		 * VALORES PADRÕES
