@@ -29,21 +29,23 @@ public class PlexiConsulta {
 	private String uf;// fazenda MG
 	private String cep;// fazenda MG
 	private String cpfSolicitante; // fazenda SC PJ
-	private String cpf="";// PGE SP DIvida Ativa PF
-	private String cnpj="";// PGE SP DIvida Ativa PJ
-	private String tipoCertidao;//TJDFT Certidão de Distribuição {criminal, civel, falencia_concordata, especial}
-	private String nomeMae;// (TJDFT Certidão de Distribuição PF + criminal ou especial) (TJRS + PF) (TJSP + PF)
+	private String cpf = "";// PGE SP DIvida Ativa PF
+	private String cnpj = "";// PGE SP DIvida Ativa PJ
+	private String tipoCertidao;// TJDFT Certidão de Distribuição {criminal, civel, falencia_concordata,
+								// especial}
+	private String nomeMae;// (TJDFT Certidão de Distribuição PF + criminal ou especial) (TJRS + PF) (TJSP
+							// + PF)
 	private String comarca;// (TJRJ + primeiraInstancia)
-	private String origem;//TJRJ {primeiraInstancia, segundaInstancia}
-	private String competencia;//TJRJ
+	private String origem;// TJRJ {primeiraInstancia, segundaInstancia}
+	private String competencia;// TJRJ
 	private String tipo;// (TJRS {3, 9}) (TRFX {civel, criminal, eleitoral})
 	private String modelo; // TJSP Certidoes
-	private String nome;//TJRS TJSP TRF3 TRT2
-	private String endereco;//TJRS
+	private String nome;// TJRS TJSP TRF3 TRT2
+	private String endereco;// TJRS
 	private String rg;// (TJRS + PF) (TJSP + PF)
-	private String orgaoExpedidorRg;//TJRS + PF
-	private String orgaoExpedidor;//TRF4
-	private String ufRg;//TJRS + PF
+	private String orgaoExpedidorRg;// TJRS + PF
+	private String orgaoExpedidor;// TRF4
+	private String ufRg;// TJRS + PF
 	private String dataNascimento;// (TJRS + PF) (TJSP + PF)
 	private String sexo;// TJSP + PF {m,f}
 	private String[] orgaos; // (TRF1) (TRF6)
@@ -52,10 +54,9 @@ public class PlexiConsulta {
 	private boolean arquivado;// TRT15
 	private String email;
 	private String senha;
-	
-		
+
 	public PlexiConsulta() {
-		
+
 		super();
 	}
 
@@ -65,7 +66,7 @@ public class PlexiConsulta {
 		populatePagadorRecebedor(documentoAnalise.getPagador());
 		this.plexiDocumentos = plexiDocumentos;
 	}
-	
+
 	public void popularCampos(PlexiConsulta consulta) {
 		this.requestId = consulta.getRequestId();
 		this.status = consulta.getStatus();
@@ -91,229 +92,228 @@ public class PlexiConsulta {
 	}
 
 	public void populatePagadorRecebedor(PagadorRecebedor pagador) {
-		if(!CommonsUtil.semValor(pagador.getCpf())) {
+		if (!CommonsUtil.semValor(pagador.getCpf())) {
 			cpf = pagador.getCpf();
 		}
-		if(!CommonsUtil.semValor(pagador.getCnpj())) {
+		if (!CommonsUtil.semValor(pagador.getCnpj())) {
 			cnpj = pagador.getCnpj();
 		}
 		cpfCnpj = cpf + cnpj;
-		
-		if(!CommonsUtil.semValor(pagador.getNome())) {
-			//nome = pagador.getNome().replace(",", "").replace(".", "").replace("/", "").replace("-", "");
+
+		if (!CommonsUtil.semValor(pagador.getNome())) {
+			// nome = pagador.getNome().replace(",", "").replace(".", "").replace("/",
+			// "").replace("-", "");
 			nome = CommonsUtil.somenteLetrasNumeros(pagador.getNome());
 		}
-		if(!CommonsUtil.semValor(pagador.getDtNascimento())) {
+		if (!CommonsUtil.semValor(pagador.getDtNascimento())) {
 			dataNascimento = CommonsUtil.formataData(pagador.getDtNascimento(), "dd/MM/yyyy");
 		}
-		if(!CommonsUtil.semValor(pagador.getRg())) {
+		if (!CommonsUtil.semValor(pagador.getRg())) {
 			rg = pagador.getRg();
 		}
-		if(!CommonsUtil.semValor(pagador.getOrgaoEmissorRG())) {
+		if (!CommonsUtil.semValor(pagador.getOrgaoEmissorRG())) {
 			orgaoExpedidorRg = pagador.getOrgaoEmissorRG();
 			orgaoExpedidor = pagador.getOrgaoEmissorRG();
 		}
-		if(!CommonsUtil.semValor(pagador.getCep())) {
+		if (!CommonsUtil.semValor(pagador.getCep())) {
 			cep = pagador.getCep();
 		}
-		if(!CommonsUtil.semValor(pagador.getEstado())) {
+		if (!CommonsUtil.semValor(pagador.getEstado())) {
 			ufRg = pagador.getEstado();
 		}
-		if(!CommonsUtil.semValor(pagador.getEndereco())) {
+		if (!CommonsUtil.semValor(pagador.getEndereco())) {
 			endereco = pagador.getEndereco();
 		}
-		if(!CommonsUtil.semValor(pagador.getSexo())) {
+		if (!CommonsUtil.semValor(pagador.getSexo())) {
 			sexo = CommonsUtil.stringValue(pagador.getSexo().toCharArray()[0]);
 		}
-		if(!CommonsUtil.semValor(pagador.getNomeMae())) {
+		if (!CommonsUtil.semValor(pagador.getNomeMae())) {
 			nomeMae = pagador.getNomeMae();
 		}
 	}
-	
+
 	public PlexiWebhookRetorno getPlexiWebhookRetorno() {
 		return GsonUtil.fromJson(getWebhookRetorno(), PlexiWebhookRetorno.class);
 	}
+
 	@Override
-	
 	public String toString() {
 		return "PlexiConsulta [id=" + id + ", requestId=" + requestId + ", cpfCnpj=" + cpfCnpj + ", plexiDocumentos="
 				+ plexiDocumentos + "]";
 	}
-	
+
 	public String getNomeCompleto() {
 		String nome = plexiDocumentos.getNome();
 		PlexiDocumentos doc = plexiDocumentos;
 		if (CommonsUtil.mesmoValor(doc.getUrl(), "/api/maestro/tjdft/certidao-distribuicao")) {
 			nome = nome + " (" + tipo + ")";
-			//String[] tipoCertidaoArray = {"criminal", "civel"};
+			// String[] tipoCertidaoArray = {"criminal", "civel"};
 			return nome;
 		}
 
 		if (CommonsUtil.mesmoValor(doc.getUrl(), "/api/maestro/tjrj/consulta-processual")) {
 			nome = nome + "(" + origem + "-" + competencia + ")";
-			//String[] origemArray = {"primeiraInstancia", "segundaInstancia"};
-			//String[] competenciaArray = {"civel", "criminal", "criminalJuri"};
+			// String[] origemArray = {"primeiraInstancia", "segundaInstancia"};
+			// String[] competenciaArray = {"civel", "criminal", "criminalJuri"};
 			return nome;
 		}
 
 		if (CommonsUtil.mesmoValor(doc.getUrl(), "/api/maestro/tjrs/certidao-negativa")) {
 			nome = nome + " (" + tipo + ")";
-			//String[] tipoArray = { "3", "9" };
+			// String[] tipoArray = { "3", "9" };
 			return nome;
 		}
 
 		if (CommonsUtil.mesmoValor(doc.getUrl(), "/api/maestro/tjsp/certidao-negativa")) {
 			nome = nome + " (" + modelo + ")";
-			//String[] modeloArray = { "6", "52" };
+			// String[] modeloArray = { "6", "52" };
 			return nome;
 		}
 
 		if (CommonsUtil.mesmoValor(doc.getUrl(), "/api/maestro/trf1/certidao-distribuicao")) {
 			nome = nome + "(" + tipo + "-" + getOrgaosStr() + ")";
 
-			//String[] tipoArray = { "civel", "criminal" };
-			//String[][] orgaosArray = {
-			//		{ "ac", "am", "ap", "ba", "df", "go", "ma", "mt", "pa", "pi", "ro", "rr", "to", "trf1" },
-			//		{ "varasJuizados" }, { "regionalizada" } };
+			// String[] tipoArray = { "civel", "criminal" };
+			// String[][] orgaosArray = {
+			// { "ac", "am", "ap", "ba", "df", "go", "ma", "mt", "pa", "pi", "ro", "rr",
+			// "to", "trf1" },
+			// { "varasJuizados" }, { "regionalizada" } };
 			return nome;
 		}
 
 		if (CommonsUtil.mesmoValor(doc.getUrl(), "/api/maestro/trf2/certidao-distribuicao")) {
 			nome = nome + " (" + tipo + ")";
-			//String[] tipoArray = { "civel", "criminal" };
+			// String[] tipoArray = { "civel", "criminal" };
 			return nome;
 		}
 
 		if (CommonsUtil.mesmoValor(doc.getUrl(), "/api/maestro/trf3/certidao-distribuicao")) {
 			nome = nome + " (" + tipo + "-" + abrangencia + ")";
-			//String[] tipoArray = { "civel", "criminal" };
-			//String[] abrangenciaArray = { "sjsp", "sjms" };
+			// String[] tipoArray = { "civel", "criminal" };
+			// String[] abrangenciaArray = { "sjsp", "sjms" };
 			return nome;
 		}
 
 		if (CommonsUtil.mesmoValor(doc.getUrl(), "/api/maestro/trf4/certidao-regional")) {
 			nome = nome + " (" + tipo + ")";
-			//String[] tipoArray = { "civil", "criminal" };
+			// String[] tipoArray = { "civil", "criminal" };
 			return nome;
 		}
 
 		if (CommonsUtil.mesmoValor(doc.getUrl(), "/api/maestro/trf6/certidao-distribuicao")) {
 			nome = nome + "(" + tipo + "-" + getOrgaosStr() + ")";
-			//String[] tipoArray = { "civel", "criminal" };
-			//String[][] orgaosArray = { { "mg", "trf1" } };
+			// String[] tipoArray = { "civel", "criminal" };
+			// String[][] orgaosArray = { { "mg", "trf1" } };
 			return nome;
 		}
 		return nome;
 	}
-	
+
 	public boolean verificaCamposDoc() {
 		PlexiConsulta plexiConsulta = this;
 		PlexiDocumentos doc = plexiConsulta.getPlexiDocumentos();
 		boolean retorno = true;
-		
-		if(CommonsUtil.mesmoValor(doc.getUrl(), 
-				"/api/maestro/tjrs/certidao-negativa")) {
-			if(CommonsUtil.semValor(plexiConsulta.getEndereco())){
+
+		if (CommonsUtil.mesmoValor(doc.getUrl(), "/api/maestro/tjrs/certidao-negativa")) {
+			if (CommonsUtil.semValor(plexiConsulta.getEndereco())) {
 				retorno = false;
 				FacesContext.getCurrentInstance().addMessage(null,
-				new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Endereço", ""));
+						new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Endereço", ""));
 			}
-			
-			if(!CommonsUtil.semValor(plexiConsulta.getCpf())) {
-				if(CommonsUtil.semValor(plexiConsulta.getRg())){
+
+			if (!CommonsUtil.semValor(plexiConsulta.getCpf())) {
+				if (CommonsUtil.semValor(plexiConsulta.getRg())) {
 					retorno = false;
 					FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Rg", ""));
+							new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Rg", ""));
 				}
-				
-				if(CommonsUtil.semValor(plexiConsulta.getOrgaoExpedidorRg())){
+
+				if (CommonsUtil.semValor(plexiConsulta.getOrgaoExpedidorRg())) {
 					retorno = false;
 					FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Orgao Rg", ""));
+							new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Orgao Rg", ""));
 				}
-				
-				if(CommonsUtil.semValor(plexiConsulta.getUfRg())){
+
+				if (CommonsUtil.semValor(plexiConsulta.getUfRg())) {
 					retorno = false;
 					FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta UF Rg", ""));
-				} else if(plexiConsulta.getUfRg().toCharArray().length > 2) {
+							new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta UF Rg", ""));
+				} else if (plexiConsulta.getUfRg().toCharArray().length > 2) {
 					retorno = false;
 					FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - UF Rg Inválido", ""));
+							new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - UF Rg Inválido", ""));
 				}
-				
-				if(CommonsUtil.semValor(plexiConsulta.getNomeMae())){
+
+				if (CommonsUtil.semValor(plexiConsulta.getNomeMae())) {
 					retorno = false;
 					FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Nome da Mãe", ""));
+							new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Nome da Mãe", ""));
 				}
-				
-				if(CommonsUtil.semValor(plexiConsulta.getDataNascimento())){
+
+				if (CommonsUtil.semValor(plexiConsulta.getDataNascimento())) {
 					retorno = false;
-					FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Data Nascimento", ""));
-				}
-			}
-		}
-		
-		if(CommonsUtil.mesmoValor(doc.getUrl(), 
-				"/api/maestro/tjsp/certidao-negativa")) {
-			if(!CommonsUtil.semValor(plexiConsulta.getCpf())) {	
-				if(CommonsUtil.semValor(plexiConsulta.getDataNascimento())){
-					retorno = false;
-					FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Data Nascimento", ""));
-				}
-				
-				if(CommonsUtil.semValor(plexiConsulta.getRg())){
-					retorno = false;
-					FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Rg", ""));
-				}
-				
-				if(CommonsUtil.semValor(plexiConsulta.getSexo())){
-					retorno = false;
-					FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Sexo", ""));
-				}
-				
-				if(CommonsUtil.semValor(plexiConsulta.getNomeMae())){
-					retorno = false;
-					FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Nome Mãe", ""));
+					FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							doc.getNome() + " - Falta Data Nascimento", ""));
 				}
 			}
 		}
-		
-		if(CommonsUtil.mesmoValor(doc.getUrl(), 
-				"/api/maestro/trf4/certidao-regional")) {
-			if(!CommonsUtil.semValor(plexiConsulta.getCpf())) {			
-				if(CommonsUtil.semValor(plexiConsulta.getRg())){
+
+		if (CommonsUtil.mesmoValor(doc.getUrl(), "/api/maestro/tjsp/certidao-negativa")) {
+			if (!CommonsUtil.semValor(plexiConsulta.getCpf())) {
+				if (CommonsUtil.semValor(plexiConsulta.getDataNascimento())) {
 					retorno = false;
-					FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Rg", ""));
+					FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							doc.getNome() + " - Falta Data Nascimento", ""));
 				}
-				
-				if(CommonsUtil.semValor(plexiConsulta.getOrgaoExpedidor())){
+
+				if (CommonsUtil.semValor(plexiConsulta.getRg())) {
 					retorno = false;
 					FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Orgao Rg", ""));
+							new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Rg", ""));
 				}
-				
-				if(CommonsUtil.semValor(plexiConsulta.getNomeMae())){
+
+				if (CommonsUtil.semValor(plexiConsulta.getSexo())) {
 					retorno = false;
 					FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Nome da Mãe", ""));
+							new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Sexo", ""));
 				}
-				
-				if(CommonsUtil.semValor(plexiConsulta.getDataNascimento())){
+
+				if (CommonsUtil.semValor(plexiConsulta.getNomeMae())) {
 					retorno = false;
 					FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Data Nascimento", ""));
+							new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Nome Mãe", ""));
 				}
 			}
 		}
-		
+
+		if (CommonsUtil.mesmoValor(doc.getUrl(), "/api/maestro/trf4/certidao-regional")) {
+			if (!CommonsUtil.semValor(plexiConsulta.getCpf())) {
+				if (CommonsUtil.semValor(plexiConsulta.getRg())) {
+					retorno = false;
+					FacesContext.getCurrentInstance().addMessage(null,
+							new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Rg", ""));
+				}
+
+				if (CommonsUtil.semValor(plexiConsulta.getOrgaoExpedidor())) {
+					retorno = false;
+					FacesContext.getCurrentInstance().addMessage(null,
+							new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Orgao Rg", ""));
+				}
+
+				if (CommonsUtil.semValor(plexiConsulta.getNomeMae())) {
+					retorno = false;
+					FacesContext.getCurrentInstance().addMessage(null,
+							new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Nome da Mãe", ""));
+				}
+
+				if (CommonsUtil.semValor(plexiConsulta.getDataNascimento())) {
+					retorno = false;
+					FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							doc.getNome() + " - Falta Data Nascimento", ""));
+				}
+			}
+		}
+
 		/*
 		 * if(CommonsUtil.mesmoValor(doc.getUrl(),
 		 * "/api/maestro/fazenda-mg/certidao-debitos-tributarios")) {
@@ -338,80 +338,77 @@ public class PlexiConsulta {
 
 		return retorno;
 	}
-	
+
 	public boolean verificaCamposDocSemMsg() {
 		PlexiConsulta plexiConsulta = this;
 		PlexiDocumentos doc = plexiConsulta.getPlexiDocumentos();
 		boolean retorno = true;
-		
-		if(CommonsUtil.mesmoValor(doc.getUrl(), 
-				"/api/maestro/tjrs/certidao-negativa")) {
-			if(CommonsUtil.semValor(plexiConsulta.getEndereco())){
+
+		if (CommonsUtil.mesmoValor(doc.getUrl(), "/api/maestro/tjrs/certidao-negativa")) {
+			if (CommonsUtil.semValor(plexiConsulta.getEndereco())) {
 				retorno = false;
 			}
-			
-			if(!CommonsUtil.semValor(plexiConsulta.getCpf())) {
-				if(CommonsUtil.semValor(plexiConsulta.getRg())){
+
+			if (!CommonsUtil.semValor(plexiConsulta.getCpf())) {
+				if (CommonsUtil.semValor(plexiConsulta.getRg())) {
 					retorno = false;
 				}
-				
-				if(CommonsUtil.semValor(plexiConsulta.getOrgaoExpedidorRg())){
+
+				if (CommonsUtil.semValor(plexiConsulta.getOrgaoExpedidorRg())) {
 					retorno = false;
 				}
-				
-				if(CommonsUtil.semValor(plexiConsulta.getUfRg())){
+
+				if (CommonsUtil.semValor(plexiConsulta.getUfRg())) {
 					retorno = false;
-				} else if(plexiConsulta.getUfRg().toCharArray().length > 2) {
-					retorno = false;
-				}
-				
-				if(CommonsUtil.semValor(plexiConsulta.getNomeMae())){
+				} else if (plexiConsulta.getUfRg().toCharArray().length > 2) {
 					retorno = false;
 				}
-				
-				if(CommonsUtil.semValor(plexiConsulta.getDataNascimento())){
+
+				if (CommonsUtil.semValor(plexiConsulta.getNomeMae())) {
 					retorno = false;
 				}
-			}
-		}
-		
-		if(CommonsUtil.mesmoValor(doc.getUrl(), 
-				"/api/maestro/tjsp/certidao-negativa")) {
-			if(!CommonsUtil.semValor(plexiConsulta.getCpf())) {	
-				if(CommonsUtil.semValor(plexiConsulta.getDataNascimento())){
-					retorno = false;
-				}
-				
-				if(CommonsUtil.semValor(plexiConsulta.getRg())){
-					retorno = false;
-				}
-				
-				if(CommonsUtil.semValor(plexiConsulta.getSexo())){
-					retorno = false;
-				}
-				
-				if(CommonsUtil.semValor(plexiConsulta.getNomeMae())){
+
+				if (CommonsUtil.semValor(plexiConsulta.getDataNascimento())) {
 					retorno = false;
 				}
 			}
 		}
-		
-		if(CommonsUtil.mesmoValor(doc.getUrl(), 
-				"/api/maestro/trf4/certidao-regional")) {
-			if(!CommonsUtil.semValor(plexiConsulta.getCpf())) {			
-				if(CommonsUtil.semValor(plexiConsulta.getRg())){
+
+		if (CommonsUtil.mesmoValor(doc.getUrl(), "/api/maestro/tjsp/certidao-negativa")) {
+			if (!CommonsUtil.semValor(plexiConsulta.getCpf())) {
+				if (CommonsUtil.semValor(plexiConsulta.getDataNascimento())) {
 					retorno = false;
 				}
-				
-				if(CommonsUtil.semValor(plexiConsulta.getOrgaoExpedidor())){
+
+				if (CommonsUtil.semValor(plexiConsulta.getRg())) {
 					retorno = false;
 				}
-				
-				if(CommonsUtil.semValor(plexiConsulta.getNomeMae())){
+
+				if (CommonsUtil.semValor(plexiConsulta.getSexo())) {
 					retorno = false;
 				}
-				
-				if(CommonsUtil.semValor(plexiConsulta.getDataNascimento())){
+
+				if (CommonsUtil.semValor(plexiConsulta.getNomeMae())) {
+					retorno = false;
+				}
+			}
+		}
+
+		if (CommonsUtil.mesmoValor(doc.getUrl(), "/api/maestro/trf4/certidao-regional")) {
+			if (!CommonsUtil.semValor(plexiConsulta.getCpf())) {
+				if (CommonsUtil.semValor(plexiConsulta.getRg())) {
+					retorno = false;
+				}
+
+				if (CommonsUtil.semValor(plexiConsulta.getOrgaoExpedidor())) {
+					retorno = false;
+				}
+
+				if (CommonsUtil.semValor(plexiConsulta.getNomeMae())) {
+					retorno = false;
+				}
+
+				if (CommonsUtil.semValor(plexiConsulta.getDataNascimento())) {
 					retorno = false;
 				}
 			}
@@ -419,7 +416,7 @@ public class PlexiConsulta {
 
 		return retorno;
 	}
-	
+
 	public long getId() {
 		return id;
 	}
@@ -539,7 +536,7 @@ public class PlexiConsulta {
 	public void setComarca(String comarca) {
 		this.comarca = comarca;
 	}
-	
+
 	public String getOrigem() {
 		return origem;
 	}
@@ -629,7 +626,7 @@ public class PlexiConsulta {
 	}
 
 	public String[] getOrgaos() {
-		if(!CommonsUtil.semValor(orgaosStr)) {
+		if (!CommonsUtil.semValor(orgaosStr)) {
 			orgaos = CommonsUtil.stringToArray(orgaosStr);
 		}
 		return orgaos;
@@ -638,9 +635,9 @@ public class PlexiConsulta {
 	public void setOrgaos(String[] orgaos) {
 		this.orgaos = orgaos;
 	}
-	
+
 	public String getOrgaosStr() {
-		if(!CommonsUtil.semValor(orgaos)) {
+		if (!CommonsUtil.semValor(orgaos)) {
 			orgaosStr = Arrays.asList(orgaos).toString();
 		}
 		return orgaosStr;
