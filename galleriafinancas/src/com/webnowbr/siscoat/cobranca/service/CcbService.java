@@ -105,7 +105,6 @@ public class CcbService {
 			for (CcbParticipantes participante : objetoCcb.getListaParticipantes()) {				
 				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "TERCEIRO GARANTIDOR")
 						|| CommonsUtil.mesmoValor(participante.getTipoParticipante(), "DEVEDOR FIDUCIANTE") ) {
-					objetoCcb.setTerceiroGarantidor(true);
 					participante.setTipoParticipante("DEVEDOR FIDUCIANTE");
 					segurados.add(participante);
 				} else if(CommonsUtil.mesmoValor(participante.getTipoParticipante(), "EMITENTE")){
@@ -1202,8 +1201,11 @@ public class CcbService {
 				}
 			}
 			
-			document = new XWPFDocument(getClass().getResourceAsStream("/resource/CCI - Financiamento (final).docx"));
-				
+			if ( CommonsUtil.semValor( objetoCcb.getProcessosJucidiais() ) )
+				document = new XWPFDocument(getClass().getResourceAsStream("/resource/CCI - Financiamento202310SemProcesso.docx"));
+			else
+				document = new XWPFDocument(getClass().getResourceAsStream("/resource/CCI - Financiamento202310ComProcesso.docx"));
+			
 			CTFonts fonts = CTFonts.Factory.newInstance();
 			fonts.setHAnsi("Times New Roman");
 			fonts.setAscii("Times New Roman");
@@ -1335,6 +1337,27 @@ public class CcbService {
 				}
 			}
 			
+			String numerosProcessos = "";
+			String totalProcessosFormatado = "";
+			BigDecimal totalProcessos = BigDecimal.ZERO;
+			if (!CommonsUtil.semValor(objetoCcb.getProcessosJucidiais())) {
+				for (CcbProcessosJudiciais processo : objetoCcb.getProcessosJucidiais()) {
+					if (CommonsUtil.semValor(processo.getValorAtualizado())) {
+						continue;
+					}
+					numerosProcessos = numerosProcessos + ((!CommonsUtil.semValor(numerosProcessos)) ? ", " : "")
+							+ "Nº " + CommonsUtil.stringValueVazio(processo.getNumero());
+					totalProcessos = totalProcessos.add(processo.getValorAtualizado());
+				}
+				numerosProcessos = numerosProcessos.trim();
+			}
+			if (totalProcessos.compareTo(BigDecimal.ZERO) > 0) {
+				int ultimaVirgula = numerosProcessos.lastIndexOf(", ");
+				numerosProcessos = numerosProcessos.substring(0,ultimaVirgula) + " e "  + numerosProcessos.substring(ultimaVirgula + 2);
+				valorPorExtenso.setNumber(totalProcessos);
+				totalProcessosFormatado = CommonsUtil.formataValorMonetarioCci(totalProcessos, "") + " ("
+						+ valorPorExtenso.toString() + ")";
+			}
 			for (XWPFParagraph p : document.getParagraphs()) {
 				List<XWPFRun> runs = p.getRuns();
 			    if (runs != null) {  	
@@ -1354,6 +1377,14 @@ public class CcbService {
 						text = trocaValoresXWPF(text, r, "nomeTestemunha2", objetoCcb.getNomeTestemunha2());
 						text = trocaValoresXWPF(text, r, "cpfTestemunha2", objetoCcb.getCpfTestemunha2());
 						text = trocaValoresXWPF(text, r, "rgTestemunha2", objetoCcb.getRgTestemunha2());
+						
+						text = trocaValoresXWPF(text, r, "elaboradorNome", objetoCcb.getElaboradorNome());								
+						text = trocaValoresXWPF(text, r, "elaboradorCrea", objetoCcb.getElaboradorCrea());
+						text = trocaValoresXWPF(text, r, "responsavelNome", objetoCcb.getResponsavelNome());
+						text = trocaValoresXWPF(text, r, "responsavelCrea", objetoCcb.getResponsavelCrea());
+						
+						text = trocaValoresXWPF(text, r, "numerosProcessos",numerosProcessos);
+						text = trocaValoresXWPF(text, r, "totalProcessos",totalProcessosFormatado);
 						
 						if(CommonsUtil.mesmoValor(text, "aaaaaaaaaaa")){
 							text = trocaValoresXWPF(text, r, "aaaaaaaaaaa", "");	 	
@@ -1659,9 +1690,7 @@ public class CcbService {
 			}
 		    
 		    int indexParcela = 1;
-			
-			//calcularSimulador();
-
+		    
 			XWPFParagraph paragraph1 = document.createParagraph();
 			paragraph1.setAlignment(ParagraphAlignment.CENTER);
 			paragraph1.setSpacingBefore(0);
@@ -1673,6 +1702,8 @@ public class CcbService {
 			paragraph2.setSpacingAfter(0);
 			
 			int fontSize = 7;
+//			calcularSimulador();
+			
 			for(SimulacaoDetalheVO p : simulador.getParcelas()) {
 				table = document.getTableArray(2);
 				table.insertNewTableRow(indexParcela);
@@ -1750,7 +1781,8 @@ public class CcbService {
 				run.setText(CommonsUtil.formataValorMonetarioCci(p.getValorParcela(), "R$ ") + " + IPCA");
 				indexParcela++;////////////////////////////////////////////////////////////////////////////////
 			}
-			
+		    
+//		    geraPaginaContratoII(document, "9DC83E", false);
 			table = document.getTableArray(1);			
 			CabecalhoAnexo1(table, 0, 1, CommonsUtil.formataData(objetoCcb.getDataDeEmissao(), "dd/MM/yyyy"));
 			CabecalhoAnexo1(table, 1, 1, CommonsUtil.formataData(objetoCcb.getVencimentoUltimaParcelaPagamento(), "dd/MM/yyyy"));	
@@ -2648,8 +2680,19 @@ public class CcbService {
 			XWPFDocument document;
 			XWPFRun run;
 			XWPFRun run2;
+			int fontSize = 10;
 			
-			document = new XWPFDocument(getClass().getResourceAsStream("/resource/TermoDeResponsabilidadeAnuenciaPaju.docx"));			
+			if(CommonsUtil.mesmoValor(objetoCcb.getUfImovel(), "PR") || CommonsUtil.mesmoValor(objetoCcb.getUfImovel(), "Paraná")) {
+				document = new XWPFDocument(getClass().getResourceAsStream("/resource/TermoDeResponsabilidadeAnuenciaPajuPR.docx"));
+				fontSize = 12;
+			} else if(CommonsUtil.mesmoValor(objetoCcb.getUfImovel(), "RJ") || CommonsUtil.mesmoValor(objetoCcb.getUfImovel(), "Rio de Janeiro")) {
+				document = new XWPFDocument(getClass().getResourceAsStream("/resource/TermoDeResponsabilidadeAnuenciaPajuRJ.docx"));
+				fontSize = 11;
+			} else {
+				document = new XWPFDocument(getClass().getResourceAsStream("/resource/TermoDeResponsabilidadeAnuenciaPaju.docx"));
+				fontSize = 10;
+			}
+						
 			CTFonts fonts = CTFonts.Factory.newInstance();
 			fonts.setHAnsi("Calibri");
 			fonts.setAscii("Calibri");
@@ -2666,13 +2709,13 @@ public class CcbService {
 			run.setBold(true);
 			run.setUnderline(UnderlinePatterns.NONE);
 			run.setCharacterSpacing(1*10);
-			run.setFontSize(10);
+			run.setFontSize(fontSize);
 			run2 = document.getParagraphs().get(paragraph).insertNewRun(1);
 			run = document.getParagraphs().get(paragraph).insertNewRun(2);
 			//run2.setFontFamily("Calibri");
 			geraParagrafoPF(run2, participante);
 			run2.setUnderline(UnderlinePatterns.NONE);
-			run2.setFontSize(10);
+			run2.setFontSize(fontSize);
 			run2.setText(run2.getText(0).replace(';', ','));
 			//run2.addCarriageReturn();
 
@@ -2702,7 +2745,7 @@ public class CcbService {
 						text = trocaValoresXWPF(text, r, "cpfTestemunha2", objetoCcb.getCpfTestemunha2());		
 						text = trocaValoresXWPF(text, r, "rgTestemunha2", objetoCcb.getRgTestemunha2());
 						
-						Date pajuGerado = objetoCcb.getObjetoContratoCobranca().getPajurFavoravelData();
+						Date pajuGerado = objetoCcb.getObjetoContratoCobranca().getDataPajuComentado();
 						
 						text = trocaValoresXWPF(text, r, "pajuDia", pajuGerado.getDate());
 						text = trocaValoresXWPF(text, r, "pajuMes", CommonsUtil.formataMesExtenso(pajuGerado).toLowerCase());

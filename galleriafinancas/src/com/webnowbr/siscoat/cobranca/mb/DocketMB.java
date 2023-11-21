@@ -34,7 +34,6 @@ import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
-import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
 import com.webnowbr.siscoat.security.LoginBean;
 
@@ -115,9 +114,19 @@ public class DocketMB {
 				DocketConsulta db = consultasExistentesRetorno.get(0);
 				if (docAnalise.getDocketConsultas().stream().filter(d -> CommonsUtil.mesmoValor(d.getId(), db.getId()))
 						.collect(Collectors.toList()).size() <= 0) {
-					docAnalise.getDocketConsultas().add(consultasExistentesRetorno.get(0));
+					//verificar se tem consulta com mesmo documento analise
+					List<DocketConsulta> listaDbDocAnalise = consultasExistentesRetorno.stream().filter(
+							t -> CommonsUtil.mesmoValor(t.getDocumentoAnalise().getId(), docAnalise.getId()))
+							.collect(Collectors.toList());
+					//se tiver, insere 
+					if(listaDbDocAnalise.size() > 0) {
+						docAnalise.getDocketConsultas().add(listaDbDocAnalise.get(0));
+						docketConsulta.setDocumentoAnalise(null);
+					//senão, duplica
+					} else {
+						docketConsulta.popularCampos(consultasExistentesRetorno.get(0));
+					}
 				}
-				docketConsulta.setDocumentoAnalise(null);
 			}
 		}
 	}

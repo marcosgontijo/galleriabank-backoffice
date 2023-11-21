@@ -751,7 +751,8 @@ public class DocumentoAnalise implements Serializable {
 	
 	public Map<String, byte[]> zipEngine() {
 		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
-		String nomeArquivo = "Engine " + getPagador().getNome().replace(",", "_") + 
+		String primeiroNome = getPagador().getNome().split(" ")[0];
+		String nomeArquivo = "Engine " + primeiroNome.replace(",", "_") + 
 				"_" + CommonsUtil.somenteNumeros(getPagador().getCpfCnpj()) + ".pdf";
 		if(CommonsUtil.semValor(getEngine())) 
 			return listaArquivos;
@@ -767,7 +768,8 @@ public class DocumentoAnalise implements Serializable {
 	
 	public Map<String, byte[]> zipProtesto() {
 		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
-		String nomeArquivo = "Cenprot "+ getPagador().getNome().replace(",", "_") + 
+		String primeiroNome = getPagador().getNome().split(" ")[0];
+		String nomeArquivo = "Cenprot "+ primeiroNome.replace(",", "_") + 
 				"_" + CommonsUtil.somenteNumeros(getPagador().getCpfCnpj()) + ".pdf";
 		NetrinService netrin = new NetrinService();
 		String documentoBase64 = netrin.baixarDocumento(this);
@@ -780,7 +782,8 @@ public class DocumentoAnalise implements Serializable {
 	
 	public Map<String, byte[]> zipProcesso() {
 		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
-		String nomeArquivo = "Processos " + getPagador().getNome().replace(",", "_") + 
+		String primeiroNome = getPagador().getNome().split(" ")[0];
+		String nomeArquivo = "Processos " + primeiroNome.replace(",", "_") + 
 				"_" + CommonsUtil.somenteNumeros(getPagador().getCpfCnpj()) + ".pdf";
 		BigDataService bigData = new BigDataService();
 		String documentoBase64 = bigData.baixarDocumentoProcesso(this);
@@ -795,7 +798,8 @@ public class DocumentoAnalise implements Serializable {
 		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
 		if(CommonsUtil.semValor(getRetornoScr()))
 			return listaArquivos;
-		String nomeArquivo = "SCR " + getPagador().getNome().replace(",", "_") +
+		String primeiroNome = getPagador().getNome().split(" ")[0];
+		String nomeArquivo = "SCR " + primeiroNome.replace(",", "_") +
 				"_" + CommonsUtil.somenteNumeros(getPagador().getCpfCnpj()) + ".pdf";
 		FileGenerator fileGenerator = new FileGenerator();
 		fileGenerator.setDocumento(this.getCnpjcpf());
@@ -820,7 +824,8 @@ public class DocumentoAnalise implements Serializable {
 	
 	public Map<String, byte[]> zipPlexi(PlexiConsulta plexi) {
 		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
-		String nomeArquivo = plexi.getNomeCompleto() + " " + this.getPagador().getNome().replace(",", "_") + 
+		String primeiroNome = getPagador().getNome().split(" ")[0];
+		String nomeArquivo = plexi.getNomeCompleto() + " " + primeiroNome.replace(",", "_") + 
 				"_" + CommonsUtil.somenteNumeros(getPagador().getCpfCnpj()) + ".pdf";
 		String documentoBase64 = plexi.getPdf();
 		if(!CommonsUtil.semValor(documentoBase64)) {
@@ -843,7 +848,8 @@ public class DocumentoAnalise implements Serializable {
 		} else if (CommonsUtil.mesmoValor(url, "/api/v1/CNDTrabalhistaTST")) {
 			nomedoc = "CNDT TST";
 		}
-		String nomeArquivo = nomedoc + " " + this.getPagador().getNome().replace(",", "_") + 
+		String primeiroNome = getPagador().getNome().split(" ")[0];
+		String nomeArquivo = nomedoc + " " + primeiroNome.replace(",", "_") + 
 				"_" + CommonsUtil.somenteNumeros(getPagador().getCpfCnpj()) + ".pdf";
 		String documentoBase64 = netrin.getPdf();
 		if(!CommonsUtil.semValor(documentoBase64)) {

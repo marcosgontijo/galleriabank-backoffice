@@ -916,6 +916,12 @@ public class CcbMB {
 			populateSelectedPagadorRecebedor();	
 			addParticipante = true;
 			
+			if(participanteSelecionado.isEmpresa()) {
+				objetoCcb.setTipoPessoaEmitente("PJ");
+			} else {
+				objetoCcb.setTipoPessoaEmitente("PF");
+			}
+			
 			participanteSelecionado.setTipoParticipante("EMITENTE");
 			concluirParticipante();
 			

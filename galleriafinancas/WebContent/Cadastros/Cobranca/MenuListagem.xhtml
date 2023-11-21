@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" template="/Menus/Menu.xhtml">
+	<h:outputStylesheet name="primeicons/primeicons.css" library="primefaces"/>
+	<ui:define name="conteudo">
+	<h:form>
+		<p:panel header="Itens do menu" style="margin-bottom:10px;">
+		<p:panelGrid columns="1">
+			<p:dataTable id="menu" var="item" value="#{menuItemMB.listaMenuItem}">
+			<f:facet name="header">
+				<p:commandButton value="Adicionar" action="#{menuItemMB.clearFieldsMenuItem}"/>
+			</f:facet>
+				<p:column headerText="Nome">
+					<p:outputLabel value="#{item.nome}"></p:outputLabel>
+				</p:column>
+				<p:column headerText="Ação">
+				<p:outputLabel value="#{item.acao}"></p:outputLabel>
+				</p:column>
+				<p:column headerText="Ícone">
+				<p:outputLabel value="#{item.icone}"></p:outputLabel>
+				</p:column>
+				<p:column headerText="Permissão">
+				<p:outputLabel value="#{item.permissao}"></p:outputLabel>
+				</p:column>
+				<p:column headerText="Ordem">
+				<p:outputLabel value="#{item.ordem}"/>
+				</p:column>
+				<p:column headerText="Tipo">
+				<p:outputLabel value="#{item.tipo}"/>
+				</p:column>
+				<p:column headerText="ItemPai">
+				<p:outputLabel value="#{item.itemPai.nome}"/>
+				</p:column>
+				<p:column headerText="opções">
+				<p:commandButton action="#{menuItemMB.clearFieldsExcluir}" ajax="false" icon="ui-icon-trash" title="Excluir">
+		        <f:setPropertyActionListener target="#{menuItemMB.objetoMenuItem}" value="#{item}" />
+		        </p:commandButton>
+				<p:commandButton icon="ui-icon-pencil" action="#{menuItemMB.clearFieldsUpdate}" >
+				<f:setPropertyActionListener value="#{item}" target="#{menuItemMB.objetoMenuItem}"/>
+				</p:commandButton>
+				</p:column>
+				
+			
+			</p:dataTable>
+		</p:panelGrid>
+		</p:panel>
+		</h:form>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	</ui:define>
+</ui:composition>

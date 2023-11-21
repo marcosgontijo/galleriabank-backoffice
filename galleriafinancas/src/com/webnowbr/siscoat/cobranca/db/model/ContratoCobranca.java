@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.TimeZone;
 
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.infra.db.model.User;
 
 public class ContratoCobranca implements Serializable {
@@ -24,6 +25,7 @@ public class ContratoCobranca implements Serializable {
 	/**
 	 * 
 	 */
+	private boolean agComite;
 	private String cessionario;
 	
 	private BigDecimal valorAgilCessao;
@@ -647,6 +649,7 @@ public class ContratoCobranca implements Serializable {
 	private String avaliacaoEngenharia;
 	private String avaliacaoEquipeLaudo;
 	
+	private Date dataPajuComentado;
 	private String processosPajuExterno;
 	private String processosPajuInterno;
 	
@@ -813,6 +816,7 @@ public class ContratoCobranca implements Serializable {
 	private boolean iniciouGeracaoLaudo;
 	private String avaliacaoPaju;
 	private boolean iniciouGeracaoPaju;
+	private String avaliacaoPajuReanalise;
 	
 	private boolean contatoDiferenteProprietario;
 	//private String geracaoLaudoObservacao;
@@ -1316,6 +1320,7 @@ public class ContratoCobranca implements Serializable {
 		return c;
 	}
 	
+	
 	public boolean isDadosAprovadosComercial() {
 		return !CommonsUtil.semValor(valorAprovadoComercial) || //
 				!CommonsUtil.semValor(prazoAprovadoComercial) || //
@@ -1360,6 +1365,24 @@ public class ContratoCobranca implements Serializable {
 	public boolean isEmPedirPaju() {
 		List<String> lstEmAnalise =  Arrays.asList("Aprovado", "Reprovado", "Baixado", "Desistência Cliente");
 		return pedidoLaudo && !pagtoLaudoConfirmada && !lstEmAnalise.contains(this.status) && leadCompleto && inicioAnalise;
+	}
+	public boolean isAgComite() {
+		if (this.inicioAnalise && CommonsUtil.mesmoValor(cadastroAprovadoValor,"Aprovado")
+				&& this.pagtoLaudoConfirmada && this.laudoRecebido && this.pajurFavoravel
+				&& this.analiseComercial && this.comentarioJuridicoEsteira && this.preAprovadoComite
+				&& this.documentosComite && !this.aprovadoComite) {
+			return true;
+			
+		} else {
+			return false;
+		}
+	}
+	
+	public boolean isPajuVencido() {
+		boolean retorno = false;
+		if(!CommonsUtil.semValor(dataPajuComentado)) 
+			retorno = (DateUtil.getDaysBetweenDates(dataPajuComentado, DateUtil.gerarDataHoje()) > 30);
+		return retorno;
 	}
 	
 
@@ -7301,4 +7324,25 @@ public class ContratoCobranca implements Serializable {
 	public void setValorCartorio(BigDecimal valorCartorio) {
 		this.valorCartorio = valorCartorio;
 	}
+
+	public void setAgComite(boolean agComite) {
+		this.agComite = agComite;
+	}
+
+	public Date getDataPajuComentado() {
+		return dataPajuComentado;
+	}
+
+	public void setDataPajuComentado(Date dataPajuComentado) {
+		this.dataPajuComentado = dataPajuComentado;
+	}
+
+	public String getAvaliacaoPajuReanalise() {
+		return avaliacaoPajuReanalise;
+	}
+
+	public void setAvaliacaoPajuReanalise(String avaliacaoPajuReanalise) {
+		this.avaliacaoPajuReanalise = avaliacaoPajuReanalise;
+	}
+	
 }

@@ -6,11 +6,12 @@ import java.util.Date;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
-import com.google.gson.annotations.Expose;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.infra.db.model.User;
+
+import br.com.galleriabank.serasacrednet.cliente.util.GsonUtil;
 
 public class PlexiConsulta {
 
@@ -64,6 +65,30 @@ public class PlexiConsulta {
 		populatePagadorRecebedor(documentoAnalise.getPagador());
 		this.plexiDocumentos = plexiDocumentos;
 	}
+	
+	public void popularCampos(PlexiConsulta consulta) {
+		this.requestId = consulta.getRequestId();
+		this.status = consulta.getStatus();
+		this.pdf = consulta.getPdf();
+		this.webhookRetorno = consulta.getWebhookRetorno();
+		this.usuario = consulta.getUsuario();
+		this.dataConsulta = consulta.getDataConsulta();
+		this.expirado = consulta.isExpirado();
+		this.uf = consulta.getUf();
+		this.cpfSolicitante = consulta.getCpfSolicitante();
+		this.tipoCertidao = consulta.getTipoCertidao();
+		this.comarca = consulta.getComarca();
+		this.origem = consulta.getOrigem();
+		this.competencia = consulta.getCompetencia();
+		this.tipo = consulta.getTipo();
+		this.modelo = consulta.getModelo();
+		this.orgaos = consulta.getOrgaos();
+		this.orgaosStr = consulta.getOrgaosStr();
+		this.abrangencia = consulta.getAbrangencia();
+		this.arquivado = consulta.isArquivado();
+		this.email = consulta.getEmail();
+		this.senha = consulta.getSenha();
+	}
 
 	public void populatePagadorRecebedor(PagadorRecebedor pagador) {
 		if(!CommonsUtil.semValor(pagador.getCpf())) {
@@ -105,7 +130,11 @@ public class PlexiConsulta {
 		}
 	}
 	
+	public PlexiWebhookRetorno getPlexiWebhookRetorno() {
+		return GsonUtil.fromJson(getWebhookRetorno(), PlexiWebhookRetorno.class);
+	}
 	@Override
+	
 	public String toString() {
 		return "PlexiConsulta [id=" + id + ", requestId=" + requestId + ", cpfCnpj=" + cpfCnpj + ", plexiDocumentos="
 				+ plexiDocumentos + "]";
