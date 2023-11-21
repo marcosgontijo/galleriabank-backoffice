@@ -939,7 +939,7 @@ public class KobanaMB {
 		0 Inexistente (Padrão)
 		1 Para porcentagem diária
 		2 Para valor diário*/
-		//jsonBoleto.put("interest_type", 2);
+		jsonBoleto.put("interest_type", 2);
 		/*
 		Tipo de Dias para juros:
 		0 Corridos
@@ -952,13 +952,13 @@ public class KobanaMB {
 		1 Para percentual do valor do boleto
 		2 Para valor fixo  		 
 		 */
+		jsonBoleto.put("fine_type", 1);
+		
 		if (parcela != null) {
 			if (parcela.getDataVencimento().before(getDataHoje())) {
 				jsonBoleto.put("fine_type", 0);
-				jsonBoleto.put("interest_type", 0);
 			} else {
 				jsonBoleto.put("fine_type", 1);
-				jsonBoleto.put("interest_type", 2);
 			}
 			
 			/*
@@ -968,10 +968,7 @@ public class KobanaMB {
 				jsonBoleto.put("fine_type", 0);
 			}
 			*/
-		} else {
-			jsonBoleto.put("fine_type", 1);	
-			jsonBoleto.put("interest_type", 2);
-		}
+		} 
 		
 		/*
 		 * VALORES PADRÕES
@@ -1355,7 +1352,7 @@ public class KobanaMB {
 		0 Inexistente (Padrão)
 		1 Para porcentagem diária
 		2 Para valor diário*/
-		//jsonBoleto.put("interest_type", 2);
+		jsonBoleto.put("interest_type", 2);
 		/*
 		Tipo de Dias para juros:
 		0 Corridos
@@ -1368,15 +1365,13 @@ public class KobanaMB {
 		1 Para percentual do valor do boleto
 		2 Para valor fixo  		 
 		 */
-		//jsonBoleto.put("fine_type", 1);
+		jsonBoleto.put("fine_type", 1);
 		
 		if (parcela != null) {
 			if (parcela.getDataVencimento().before(getDataHoje())) {
 				jsonBoleto.put("fine_type", 0);
-				jsonBoleto.put("interest_type", 0);
 			} else {
 				jsonBoleto.put("fine_type", 1);
-				jsonBoleto.put("interest_type", 2);
 			}
 			
 			/*
@@ -1386,11 +1381,7 @@ public class KobanaMB {
 				jsonBoleto.put("fine_type", 0);
 			}
 			*/
-		} else {
-			jsonBoleto.put("fine_type", 1);	
-			jsonBoleto.put("interest_type", 2);
-		}
-		
+		} 
 		
 		/*
 		 * VALORES PADRÕES
