@@ -467,8 +467,15 @@ public class MenuItemMB {
 		this.temFavorito = temFavorito;
 	}
 	public MenuModel getMenuCarregado() {
-		if (menuCarregado == null)
-			menuCarregado = menuService.constroiMenu((long) 18, loginBean.getUsuarioLogado().getId(), false);
+		if (menuCarregado == null) {
+			MenuModel temFavorito = menuService.carregaFavoritos(loginBean.getUsuarioLogado());
+			if(CommonsUtil.semValor(temFavorito.getElements())) {
+				menuCarregado = menuService.constroiMenu((long) 18, loginBean.getUsuarioLogado().getId(),true);
+			} else {
+				menuCarregado = menuService.carregaFavoritos(loginBean.getUsuarioLogado());
+				
+			}
+		}
 		return menuCarregado;
 	}
 	public void setMenuCarregado(MenuModel menuCarregado) {
