@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.webnowbr.siscoat.common.CommonsUtil;
+
 public class CcbParticipantes implements Serializable{
 	/**
 	 * 
@@ -38,6 +40,27 @@ public class CcbParticipantes implements Serializable{
 		this.empresa = false;
 	}
 	
+	public void atualizaDados() {
+		if(CommonsUtil.semValor(pessoa)) {
+			this.setEmpresa(true);
+		}
+		if(this.pessoa.getSexo() != null) {
+			if(CommonsUtil.mesmoValor(this.pessoa.getSexo(), "MASCULINO")) {
+				setFeminino(false);
+			} else if(CommonsUtil.mesmoValor(this.pessoa.getSexo(), "FEMININO")) {
+				setFeminino(true);
+			} else {
+				setFeminino(false);
+			}
+		}
+		if(this.pessoa.getEstadocivil() != null) {
+			if(CommonsUtil.mesmoValor(this.pessoa.getEstadocivil(), "CASADO")) {
+				setUniaoEstavel(false);
+			} else if(CommonsUtil.mesmoValor(this.pessoa.getEstadocivil(), "UNIÃO ESTÁVEL")) {
+				setUniaoEstavel(true);
+			}
+		}
+	}
 	
 	public PagadorRecebedor getPessoa() {
 		return pessoa;

@@ -433,10 +433,10 @@
 										<h:panelGrid columns="2"
 											style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
-										border-radius: 5px; padding: 10px; 
-										margin-left: 20px;"
-											rendered="#{!contratoCobrancaMB.objetoContratoCobranca.reanalise 
-										and contratoCobrancaMB.objetoContratoCobranca.contratoConferido}">
+										border-radius: 5px; padding: 10px;"
+											rendered="#{contratoCobrancaMB.objetoContratoCobranca.agAssinatura 
+										and contratoCobrancaMB.objetoContratoCobranca.contratoConferido
+										and !contratoCobrancaMB.objetoContratoCobranca.reanalisePronta}">
 											<p:outputLabel styleClass="labelBold">Aguardando Assinatura</p:outputLabel>
 											<p:spacer></p:spacer>
 											<p:selectBooleanButton id="agAssinatura"
@@ -450,7 +450,10 @@
 											<p:selectBooleanButton id="precisaReanalise"
 												value="#{contratoCobrancaMB.objetoContratoCobranca.reanalise}"
 												onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-												offIcon="ui-icon-close" style="width:=60px" />
+												offIcon="ui-icon-close" style="width:=60px" >
+												<p:ajax event="change"
+													update=":form:Status"/>
+											</p:selectBooleanButton>
 										</h:panelGrid>
 										<h:panelGrid columns="2"
 											style="background-color: #e4e4e4;width: 250px; height: 110px; -webkit-border-radius: 5px;
@@ -480,7 +483,9 @@
 											style="background-color: #e4e4e4;width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px; border-radius: 5px; padding: 10px;"
 											rendered="#{contratoCobrancaMB.objetoContratoCobranca.reanalise 
-												and contratoCobrancaMB.objetoContratoCobranca.pajuAtualizado}">
+												and contratoCobrancaMB.objetoContratoCobranca.reanalisePronta
+												and (contratoCobrancaMB.objetoContratoCobranca.avaliacaoPajuReanalise eq 'Outro'
+												or contratoCobrancaMB.objetoContratoCobranca.pajuAtualizado)}">
 											<h:panelGrid columns="2" 
 												rendered="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoPajuReanalise eq 'Outro'}">
 												<p:outputLabel styleClass="labelBold">PAJU Atualizado</p:outputLabel>
@@ -490,7 +495,7 @@
 													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 													offIcon="ui-icon-close" style="width:=60px" />
 											</h:panelGrid>
-											<h:panelGrid columns="2">
+											<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajuAtualizado}">
 												<p:outputLabel styleClass="labelBold">Reanalise Jurídico</p:outputLabel>
 												<p:spacer></p:spacer>
 												<p:selectBooleanButton id="reanaliseJuridico"
@@ -510,7 +515,7 @@
 											<p:outputLabel styleClass="labelBold">Aguardando Envio Cartório</p:outputLabel>
 											<p:spacer></p:spacer>
 											<p:selectBooleanButton id="agEnvioCartorio"
-												disabled="#{contratoCobrancaMB.objetoContratoCobranca.pajuVencido}"
+												disabled="#{contratoCobrancaMB.objetoContratoCobranca.desabilitarEnviarParaCartorio()}"
 												value="#{contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio}"
 												onLabel="Não enviado" offLabel="Enviado"
 												onIcon="ui-icon-close" offIcon="ui-icon-check"
@@ -1817,6 +1822,7 @@
 									onkeydown="FormataValor(this, 13, event, 2);"
 									converter="bigDecimalConverter"
 									style="FONT-SIZE: 10pt;width:300px;"
+									required="true"
 									disabled="#{contratoCobrancaMB.deleteMode}">
 									</p:inputText>
 

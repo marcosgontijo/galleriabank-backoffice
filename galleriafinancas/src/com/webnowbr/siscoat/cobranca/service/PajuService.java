@@ -383,16 +383,17 @@ public class PajuService {
 							b -> CommonsUtil.mesmoValor(b.getCodigoTipoTemplateBloco(), BLOCO_PESSOA_FISICA_DOCUMENTOS_PLEXI))
 							.findFirst().orElse(null);
 					if (!CommonsUtil.semValor(blocoFilho)) {
-						if (!CommonsUtil.booleanValue(plexiConsulta.getPlexiWebhookRetorno().getError()))
+						if (!CommonsUtil.semValor(plexiConsulta.getPlexiWebhookRetorno()) &&
+								!CommonsUtil.booleanValue(plexiConsulta.getPlexiWebhookRetorno().getError()))
 							adicionaParagrafoPlexi(docTemplate, paragrafoDocumentoTemplate, blocoFilho, plexiConsulta);
 					}
 					
 				}
 
 			}
-
+			
 //			adicionaParagrafo(docTemplate, paragrafoDocumentoTemplate, bloco, documentosParticipanteFiltro);
-
+			
 		}
 
 		if (paragrafoTemplate != null) {

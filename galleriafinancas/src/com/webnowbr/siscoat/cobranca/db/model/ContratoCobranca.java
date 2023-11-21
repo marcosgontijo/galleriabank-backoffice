@@ -1384,7 +1384,15 @@ public class ContratoCobranca implements Serializable {
 			retorno = (DateUtil.getDaysBetweenDates(dataPajuComentado, DateUtil.gerarDataHoje()) > 30);
 		return retorno;
 	}
-	
+
+	public boolean desabilitarEnviarParaCartorio() {
+		if(isPajuVencido()) 
+			return true;
+		if("RJ;PR".contains(imovel.getEstado()) && !reanaliseJuridico) 
+			return true;
+		
+		return false;
+	}
 
 	
 	public void calcularTaxaPreAprovada() {

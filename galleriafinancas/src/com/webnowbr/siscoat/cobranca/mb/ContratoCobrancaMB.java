@@ -9691,16 +9691,15 @@ public class ContratoCobrancaMB {
 			}*/
 
 			RegistroImovelTabelaDao rDao = new RegistroImovelTabelaDao();
-			BigDecimal valorRegistro = rDao.getValorRegistro(objetoContratoCobranca.getValorAprovadoComite()
-					.multiply(CommonsUtil.bigDecimalValue(qtdMatriculas)));
+			BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoComite().
+					divide(BigDecimal.valueOf(qtdMatriculas), MathContext.DECIMAL128);
+			BigDecimal valorRegistro = rDao.getValorRegistro(valorPorMatricula);
+			valorRegistro = valorRegistro.multiply(BigDecimal.valueOf(qtdMatriculas));
 			// Emprestimo = financiamento
 			if (CommonsUtil.mesmoValorIgnoreCase("Emprestimo", objetoContratoCobranca.getTipoOperacao()))
 				valorRegistro = valorRegistro.multiply(CommonsUtil.bigDecimalValue(2));
 			if (CommonsUtil.semValor(objetoContratoCobranca.getValorCartorio()) 
 					|| valorRegistro.compareTo(objetoContratoCobranca.getValorCartorio()) > 0) {
-				/*if (CommonsUtil.mesmoValorIgnoreCase("Emprestimo", objetoContratoCobranca.getTipoOperacao()))
-					objetoContratoCobranca.setValorCartorio(valorRegistro.multiply(CommonsUtil.bigDecimalValue(2)));
-				else*/
 				objetoContratoCobranca.setValorCartorio(valorRegistro);
 			}
 		}
