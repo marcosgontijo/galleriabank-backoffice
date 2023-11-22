@@ -34363,16 +34363,25 @@ public class ContratoCobrancaMB {
 				}
 			}
 			
-			this.objetoContratoCobranca.setPefinRefinRessalva(String.join(", ", ressalvaPefin));
-			this.objetoContratoCobranca.setChequeDevolvidoRessalva(String.join(", ", ressalvaCcf));
-			this.objetoContratoCobranca.setProtestoRessalva(String.join(", ", ressalvaProtesto));
-			this.objetoContratoCobranca.setProcessosRessalva(String.join(", ", ressalvaProcesso));
-			this.objetoContratoCobranca.setTrabalhistaRessalva(String.join(", ", ressalvaTrabalhista));
+			this.objetoContratoCobranca.setPefinRefinRessalva(this.objetoContratoCobranca.getPefinRefinRessalva() == "" 
+																? String.join(", ", ressalvaPefin) 
+																: this.objetoContratoCobranca.getPefinRefinRessalva());
+			this.objetoContratoCobranca.setChequeDevolvidoRessalva(this.objetoContratoCobranca.getChequeDevolvidoRessalva() == "" 
+																? String.join(", ", ressalvaCcf)
+																: this.objetoContratoCobranca.getChequeDevolvidoRessalva());
+			this.objetoContratoCobranca.setProtestoRessalva(this.objetoContratoCobranca.getProtestoRessalva() == "" 
+																? String.join(", ", ressalvaProtesto) 
+																: this.objetoContratoCobranca.getProtestoRessalva());
+			this.objetoContratoCobranca.setProcessosRessalva(this.objetoContratoCobranca.getProcessosRessalva() == "" 
+																? String.join(", ", ressalvaProcesso)
+																: this.objetoContratoCobranca.getProcessosRessalva());
+			this.objetoContratoCobranca.setTrabalhistaRessalva(this.objetoContratoCobranca.getTrabalhistaRessalva() == "" 
+																? String.join(", ", ressalvaTrabalhista) 
+																: this.objetoContratoCobranca.getTrabalhistaRessalva());
 			this.objetoContratoCobranca.setNadaConstaTaxa(nadaConsta);
 		} else {
 			this.objetoContratoCobranca.setNadaConstaTaxa(true);
 		}
-		
 		this.objetoContratoCobranca.calcularTaxaPreAprovada();
 		PrimeFaces current = PrimeFaces.current();
 		current.ajax().update("form:PreAprovadoPanel");
