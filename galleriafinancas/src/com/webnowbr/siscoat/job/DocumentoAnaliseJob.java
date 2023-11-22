@@ -37,20 +37,19 @@ public class DocumentoAnaliseJob implements Job {
 		String jobKey = "";
 		if (context != null) {
 			JobDataMap dataMap = context.getJobDetail().getJobDataMap();
-			// fetch parameters from JobDataMap
-			List<DocumentoAnalise> listaDocumentoAnalise = (List<DocumentoAnalise>) dataMap
-					.get("listaDocumentoAnalise");
-			User user = (User) dataMap.get("user");
-
-			String urlWenhook = (String) dataMap.get("urlWenhook");
-
-			ContratoCobranca objetoContratoCobranca = (ContratoCobranca) dataMap.get("objetoContratoCobranca");
-
-			documentoAnaliseJobConsultar.listaDocumentoAnalise = listaDocumentoAnalise;
-			documentoAnaliseJobConsultar.user = user;
-			documentoAnaliseJobConsultar.urlWenhook = urlWenhook;
-			documentoAnaliseJobConsultar.objetoContratoCobranca = objetoContratoCobranca;
-
+	        //fetch parameters from JobDataMap
+			List<DocumentoAnalise> listaDocumentoAnalise = (List<DocumentoAnalise>) dataMap.get("listaDocumentoAnalise");
+	        User user = (User) dataMap.get("user");
+	        
+	        String urlWenhook =  (String) dataMap.get("urlWenhook");
+	        
+	        ContratoCobranca objetoContratoCobranca = (ContratoCobranca) dataMap.get("objetoContratoCobranca");
+	        
+	        documentoAnaliseJobConsultar.listaDocumentoAnalise = listaDocumentoAnalise;
+	        documentoAnaliseJobConsultar.user = user;
+	        documentoAnaliseJobConsultar.urlWenhook = urlWenhook;
+	        documentoAnaliseJobConsultar.objetoContratoCobranca = objetoContratoCobranca;
+	        
 			jobKey = "" + context.getJobDetail().getKey();
 			if (LOGGER.isDebugEnabled()) {
 				System.out.println("DocumentoAnaliseJob.execute: jobKey=" + jobKey + " disparado pelo trigger ["

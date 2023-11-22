@@ -1,7 +1,9 @@
 package com.webnowbr.siscoat.cobranca.ws.netrin;
 
+import com.webnowbr.siscoat.common.CommonsUtil;
+
 public class NetrinDocumentos {
-	private long id;	
+	private long id;
 	private String urlService;
 	private String nome;
 	private boolean pf;
@@ -9,15 +11,19 @@ public class NetrinDocumentos {
 	private String estados;
 	private String etapa;
 	private String obs;
-	
+
+	private String nomePaju;
+	private boolean mostrarPaju;
+
 	@Override
 	public String toString() {
 		return "NetrinDocumentos [id=" + id + ", url=" + urlService + ", nome=" + nome + "]";
 	}
-	
+
 	public long getId() {
 		return id;
 	}
+
 	public void setId(long id) {
 		this.id = id;
 	}
@@ -76,5 +82,21 @@ public class NetrinDocumentos {
 
 	public void setObs(String obs) {
 		this.obs = obs;
+	}
+
+	public String getNomePaju() {
+		return (!CommonsUtil.semValor(nomePaju)) ? this.nomePaju : this.nome;
+	}
+
+	public void setNomePaju(String nomePaju) {
+		this.nomePaju = nomePaju;
+	}
+
+	public boolean isMostrarPaju() {
+		return mostrarPaju;
+	}
+
+	public void setMostrarPaju(boolean mostrarPaju) {
+		this.mostrarPaju = mostrarPaju;
 	}
 }

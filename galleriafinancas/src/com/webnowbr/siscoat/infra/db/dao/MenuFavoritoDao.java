@@ -13,10 +13,11 @@ import com.webnowbr.siscoat.infra.db.model.MenuItem;
 import com.webnowbr.siscoat.infra.db.model.User;
 
 public class MenuFavoritoDao extends HibernateDao<MenuFavorito, Long> {
+
 	@SuppressWarnings("unchecked")
 	public boolean consultaMenu(User user, MenuItem menu) {
 
-			return (Boolean)	executeDBOperation(new DBRunnable() {
+		return (Boolean) executeDBOperation(new DBRunnable() {
 
 			public Object run() throws Exception {
 
@@ -24,28 +25,23 @@ public class MenuFavoritoDao extends HibernateDao<MenuFavorito, Long> {
 				PreparedStatement ps = null;
 				try {
 					connection = getConnection();
-					StringBuilder query  = new StringBuilder();
-					
-					query.append("delete from infra.menufavorito ");					
+					StringBuilder query = new StringBuilder();
+
+					query.append("delete from infra.menufavorito ");
 					query.append("where idmenuitemfavorito = " + menu.getId());
 					query.append(" and iduser = " + user.getId());
-							
 
 					ps = connection.prepareStatement(query.toString());
 
 					ps.executeUpdate();
 					return true;
-					
-				}finally {
+
+				} finally {
 					closeResources(connection, ps);
 				}
-				
+
 			}
 		});
 	}
 
 }
-
-
-
-
