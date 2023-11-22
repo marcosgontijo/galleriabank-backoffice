@@ -4,7 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:shiro="http://shiro.apache.org/tags"
-	xmlns:p="http://primefaces.org/ui" template="../MenuCadastros.xhtml">
+	xmlns:p="http://primefaces.org/ui" template="/Menus/Menu.xhtml">
 	<ui:define name="conteudo">
 	
 			<h:outputStylesheet>
@@ -75,39 +75,42 @@
 							label="CPF" mask="999.999.999-99" required="true"
 							validator="#{pagadorRecebedorMB.validaCPF}"
 							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}"
-							disabled="#{pagadorRecebedorMB.objetoPagadorRecebedor.id > 0}">
+							disabled="#{pagadorRecebedorMB.objetoPagadorRecebedor.id > 0 and 
+								(pagadorRecebedorMB.objetoPagadorRecebedor.cpf.length() > 0 or
+								 pagadorRecebedorMB.objetoPagadorRecebedor.cnpj.length() > 0)}">
+								 
 							<p:ajax update="CpfCC Nome DtNascimento Sexo mae NomeCC " event="valueChange"
 								listener="#{pagadorRecebedorMB.selectedCPF}" />
 						</p:inputMask>
 						
-						<p:outputLabel for="tipoDocumento" value="Tipo Documento: " styleClass="labelBold" />
-						<p:selectOneRadio id="tipoDocumento"
+						<p:outputLabel for="tipoDocumento" value="Tipo Documento: " styleClass="labelBold" rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
+						<p:selectOneRadio id="tipoDocumento" rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" 
 							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.tipoDocumento}" required="true">
 							<f:selectItem itemLabel="RG" itemValue="RG" />
 							<f:selectItem itemLabel="CNH" itemValue="CNH" />
 							<p:ajax update="documentoTxt" event="valueChange" />
 						</p:selectOneRadio>
 						
-						<h:panelGroup id="documentoTxt">
+						<h:panelGroup id="documentoTxt" rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" >
 							<p:outputLabel value="RG: "
-								rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica and pagadorRecebedorMB.objetoPagadorRecebedor.tipoDocumento eq 'RG'}" />
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.tipoDocumento eq 'RG'}" />
 							<p:outputLabel value="CNH: "
-								rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica and pagadorRecebedorMB.objetoPagadorRecebedor.tipoDocumento eq 'CNH'}" />
+								rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.tipoDocumento eq 'CNH'}" />
 						</h:panelGroup>
 						<p:inputText id="Rg"
 							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.rg}"
 							label="RG / CNH"
 							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
 	
-						<p:outputLabel for="DtEmissaoRG" value="Data Emissão: " />
-						<p:inputMask id="DtEmissaoRG"
+						<p:outputLabel for="DtEmissaoRG" value="Data Emissão: " rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
+						<p:inputMask id="DtEmissaoRG" rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" 
 							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dataEmissaoRG}"
 							mask="99/99/9999" label="Data de Nascimento">
 							<f:convertDateTime pattern="dd/MM/yyyy" />
 						</p:inputMask>
 						
-						<p:outputLabel for="orgaoEmissorRG" value="Orgão Emissor" />
-						<p:inputText id="orgaoEmissorRG"
+						<p:outputLabel for="orgaoEmissorRG" value="Orgão Emissor" rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
+						<p:inputText id="orgaoEmissorRG" rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" 
 							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.orgaoEmissorRG}" />
 	
 						<p:outputLabel for="CNPJ" value="CNPJ: " styleClass="labelBold"
@@ -614,7 +617,7 @@
 									var="banco" itemLabel="#{banco}" itemValue="#{banco}"
 									forceSelection="true" styleClass="labelBold" label="Conta"
 									style="width:100px; " scrollHeight="250">
-									<p:ajax event="valueChange"
+									<p:ajax event="itemSelect" 
 										listener="#{pagadorRecebedorMB.verificaAlteracaoContaCobranca}" />
 								</p:autoComplete>
 

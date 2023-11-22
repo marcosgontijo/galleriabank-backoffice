@@ -1,6 +1,7 @@
 package com.webnowbr.siscoat.cobranca.service;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -47,7 +48,9 @@ import com.webnowbr.siscoat.cobranca.db.model.RegistroImovelTabela;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.RegistroImovelTabelaDao;
 import com.webnowbr.siscoat.cobranca.model.request.FichaIndividualRequest;
+import com.webnowbr.siscoat.cobranca.model.request.TermoCienciaRequest;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.common.ReportUtil;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.simulador.SimulacaoVO;
@@ -59,6 +62,7 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.data.JsonDataSource;
 
 public class RelatoriosService {
 
@@ -298,7 +302,7 @@ public class RelatoriosService {
 			cell1.setColspan(3);
 			table.addCell(cell1);
 
-			if (CommonsUtil.booleanValue( fichaIndividualRequest.isTipoPessoaIsFisica())) {
+			if (CommonsUtil.booleanValue(fichaIndividualRequest.isTipoPessoaIsFisica())) {
 				cell1 = new PdfPCell(new Phrase("Autorização Consulta SCR", headerFull));
 			} else {
 				cell1 = new PdfPCell(new Phrase("Autorização Consulta SCR", headerFull));
@@ -514,4 +518,38 @@ public class RelatoriosService {
 		return baos.toByteArray();
 
 	}
+
+	public byte[] geraPDFTermoCienciaByteArray(TermoCienciaRequest termoCienciaRequest) throws JRException, IOException {
+		JasperPrint jp = geraPDFTermoCiencia(termoCienciaRequest);
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+		JasperExportManager.exportReportToPdfStream(jp, bos);
+
+		return bos.toByteArray();
+	}
+
+	public JasperPrint geraPDFTermoCiencia(TermoCienciaRequest termoCienciaRequest) throws JRException, IOException {
+		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+		final ReportUtil ReportUtil = new ReportUtil();
+		JasperReport rptTermoCiencia = ReportUtil.getRelatorio("TermoCiencia");
+		InputStream logoStream = getClass().getResourceAsStream("/resource/GalleriaBank.png");
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("REPORT_LOCALE", new Locale("pt", "BR"));
+
+		parameters.put("IMAGEMLOGO", IOUtils.toByteArray(logoStream));
+
+//		
+//		DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+//        Document document = docBuilder.parse(new InputSource(new StringReader(GsonUtil.toJson(contratoCobranca))));
+//
+//        JRDataSource xmlDataSource = new JRXmlDataSource(document, impressao.getPathExpression());
+//		  JRDataSource jsonDataSource = new JsonDataSource(GsonUtil.toJson(termoCienciaRequest));
+//		parameters.put(JsonQueryExecuterFactory.JSON_INPUT_STREAM, GsonUtil.toJson(termoCienciaRequest));
+		JsonDataSource dataSource = new JsonDataSource(
+				new ByteArrayInputStream(GsonUtil.toJson(termoCienciaRequest).getBytes()));
+
+		return JasperFillManager.fillReport(rptTermoCiencia, parameters, dataSource);
+
+	}
+
 }

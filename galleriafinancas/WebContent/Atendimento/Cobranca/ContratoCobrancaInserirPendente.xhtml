@@ -1,21 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:p="http://primefaces.org/ui"
-	xmlns:shiro="http://shiro.apache.org/tags"
-	template="../MenuAtendimento.xhtml">
-	<ui:define name="conteudo">
-		<h:form id="form">
-			<script src="#{request.contextPath}/resources/js/functions.js"></script>
-			<script
-				src="#{request.contextPath}/resources/js/locale-primefaces.js"
-				library="javascript"></script>
-			<link rel="stylesheet" type="text/css"
-				href="#{request.contextPath}/resources/css/Style.css" title=""
-				media="all" />
-			<script src=".#{request.contextPath}/resources/js/jquery.mask.min.js"></script>
+			    xmlns:ui="http://java.sun.com/jsf/facelets"
+			    xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:shiro="http://shiro.apache.org/tags"
+			    template="/Menus/Menu.xhtml">
+	<ui:define name="conteudo">  
+		<h:form id="form">		
+		 	<script src="#{request.contextPath}/resources/js/functions.js"></script>
+		 	<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>			
+		 	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/css/Style.css" title="" media="all" /> 	
+		 	<script src=".#{request.contextPath}/resources/js/jquery.mask.min.js"></script>	
 			<script>
 		        function validatePhone() {
 		

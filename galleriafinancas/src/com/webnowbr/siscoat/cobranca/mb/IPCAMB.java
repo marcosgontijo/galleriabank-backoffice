@@ -25,6 +25,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesParcialDao;
 import com.webnowbr.siscoat.cobranca.db.op.IPCADao;
+import com.webnowbr.siscoat.cobranca.service.IpcaService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.job.IpcaJobCalcular;
@@ -298,12 +299,16 @@ public class IPCAMB {
 	
 	public void atualizaIPCAChamadaTela(String numeroContrato) {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+
+		IpcaService ipcaService = new IpcaService();
 		
 		this.numeroContrato = numeroContrato;
 		
 		List<ContratoCobranca> contratosCobranca = contratoCobrancaDao.findByFilter("numeroContrato", numeroContrato);
 
 		LOGGER.info("incio atualizaIPCAPorContrato");
+		LOGGER.info("atualiza o ipca");
+		ipcaService.verificaNovoIPCA();
 		
 		if (contratosCobranca.size() > 0) {	
 			ContratoCobranca contrato = contratosCobranca.get(0);
