@@ -382,13 +382,14 @@ public class PajuService {
 									.mesmoValor(b.getCodigoTipoTemplateBloco(), BLOCO_PESSOA_FISICA_DOCUMENTOS_PLEXI))
 							.findFirst().orElse(null);
 					if (!CommonsUtil.semValor(blocoFilho)) {
-						if (!CommonsUtil.semValor(plexiConsulta.getPlexiWebhookRetorno()) &&
-								!CommonsUtil.booleanValue(plexiConsulta.getPlexiWebhookRetorno().getError()))
+						if (!CommonsUtil.semValor(plexiConsulta.getPlexiWebhookRetorno())
+								&& !CommonsUtil.booleanValue(plexiConsulta.getPlexiWebhookRetorno().getError())
+								&& CommonsUtil.booleanValue(plexiConsulta.getPlexiDocumentos().isMostrarPaju()))
 							adicionaParagrafoPlexi(docTemplate, paragrafoDocumentoTemplate, blocoFilho, plexiConsulta);
 					}
 				}
 			}
-			
+
 			if (!CommonsUtil.semValor(participante.getNetrinConsultas())) {
 				for (NetrinConsulta netrinConsulta : participante.getNetrinConsultas()) {
 
@@ -397,14 +398,16 @@ public class PajuService {
 									.mesmoValor(b.getCodigoTipoTemplateBloco(), BLOCO_PESSOA_FISICA_DOCUMENTOS_NETRIN))
 							.findFirst().orElse(null);
 					if (!CommonsUtil.semValor(blocoFilho)) {
-						if (!CommonsUtil.semValor(netrinConsulta.getRetorno()))
-							adicionaParagrafoNetrin(docTemplate, paragrafoDocumentoTemplate, blocoFilho, netrinConsulta);
+						if (!CommonsUtil.semValor(netrinConsulta.getRetorno())
+								&& CommonsUtil.booleanValue(netrinConsulta.getNetrinDocumentos().isMostrarPaju()))
+							adicionaParagrafoNetrin(docTemplate, paragrafoDocumentoTemplate, blocoFilho,
+									netrinConsulta);
 					}
 				}
 			}
-			
+
 //			adicionaParagrafo(docTemplate, paragrafoDocumentoTemplate, bloco, documentosParticipanteFiltro);
-			
+
 		}
 
 		if (paragrafoTemplate != null) {
@@ -467,8 +470,9 @@ public class PajuService {
 								CommonsUtil.somenteNumeros(participante.getCnpjcpf())))
 						.collect(Collectors.toList());
 				for (DocketDocumento docketDocumento : documentosParticipanteFiltro) {
-					ContratoTipoTemplateBloco blocoFilho = bloco.getBlocosFilho().stream().filter(
-							b -> CommonsUtil.mesmoValor(b.getCodigoTipoTemplateBloco(), BLOCO_PESSOA_JURIDICA_DOCUMENTOS))
+					ContratoTipoTemplateBloco blocoFilho = bloco
+							.getBlocosFilho().stream().filter(b -> CommonsUtil
+									.mesmoValor(b.getCodigoTipoTemplateBloco(), BLOCO_PESSOA_JURIDICA_DOCUMENTOS))
 							.findFirst().orElse(null);
 					if (!CommonsUtil.semValor(blocoFilho))
 						adicionaParagrafo(docTemplate, paragrafoDocumentoTemplate, blocoFilho, docketDocumento);
@@ -483,28 +487,32 @@ public class PajuService {
 									.mesmoValor(b.getCodigoTipoTemplateBloco(), BLOCO_PESSOA_JURIDICA_DOCUMENTOS_PLEXI))
 							.findFirst().orElse(null);
 					if (!CommonsUtil.semValor(blocoFilho)) {
-						if (!CommonsUtil.booleanValue(plexiConsulta.getPlexiWebhookRetorno().getError()))
+
+						if (!CommonsUtil.semValor(plexiConsulta.getPlexiWebhookRetorno())
+								&& !CommonsUtil.booleanValue(plexiConsulta.getPlexiWebhookRetorno().getError())
+								&& CommonsUtil.booleanValue(plexiConsulta.getPlexiDocumentos().isMostrarPaju()))
 							adicionaParagrafoPlexi(docTemplate, paragrafoDocumentoTemplate, blocoFilho, plexiConsulta);
 					}
 
 				}
 
 			}
-			
+
 			if (!CommonsUtil.semValor(participante.getNetrinConsultas())) {
 				for (NetrinConsulta netrinConsulta : participante.getNetrinConsultas()) {
 
-					ContratoTipoTemplateBloco blocoFilho = bloco
-							.getBlocosFilho().stream().filter(b -> CommonsUtil
-									.mesmoValor(b.getCodigoTipoTemplateBloco(), BLOCO_PESSOA_FISICA_DOCUMENTOS_NETRIN))
+					ContratoTipoTemplateBloco blocoFilho = bloco.getBlocosFilho().stream().filter(b -> CommonsUtil
+							.mesmoValor(b.getCodigoTipoTemplateBloco(), BLOCO_PESSOA_JURIDICA_DOCUMENTOS_NETRIN))
 							.findFirst().orElse(null);
 					if (!CommonsUtil.semValor(blocoFilho)) {
-						if (!CommonsUtil.semValor(netrinConsulta.getRetorno()))
-							adicionaParagrafoNetrin(docTemplate, paragrafoDocumentoTemplate, blocoFilho, netrinConsulta);
+						if (!CommonsUtil.semValor(netrinConsulta.getRetorno())
+								&& CommonsUtil.booleanValue(netrinConsulta.getNetrinDocumentos().isMostrarPaju()))
+							adicionaParagrafoNetrin(docTemplate, paragrafoDocumentoTemplate, blocoFilho,
+									netrinConsulta);
 					}
 				}
 			}
-			
+
 //			adicionaParagrafo(docTemplate, paragrafoDocumentoTemplate, bloco, documentosParticipanteFiltro);
 
 		}
@@ -643,7 +651,7 @@ public class PajuService {
 
 		addParagrafoVazio((ContentAccessor) paragrafoTemplate.get(0).getParent());
 	}
-	
+
 	private void adicionaParagrafoPlexi(WordprocessingMLPackage template, List<P> paragrafoTemplate,
 			ContratoTipoTemplateBloco bloco, PlexiConsulta plexiConsulta) throws SiscoatException {
 
@@ -664,8 +672,7 @@ public class PajuService {
 				valor = getValor(campo.getExpressao(), plexiConsulta);
 			else
 				valor = campo.getExpressao().replace("\"", "");
-		
-		
+
 			if (CommonsUtil.semValor((String) valor)
 					&& CommonsUtil.mesmoValorIgnoreCase("situacao", campo.getExpressao())) {
 				valor = "VERIFICAR CERTIDÃO";
@@ -686,7 +693,7 @@ public class PajuService {
 
 		addParagrafoVazio((ContentAccessor) paragrafoTemplate.get(0).getParent());
 	}
-	
+
 	private void adicionaParagrafoNetrin(WordprocessingMLPackage template, List<P> paragrafoTemplate,
 			ContratoTipoTemplateBloco bloco, NetrinConsulta netrinConsulta) throws SiscoatException {
 
@@ -707,8 +714,7 @@ public class PajuService {
 				valor = getValor(campo.getExpressao(), netrinConsulta);
 			else
 				valor = campo.getExpressao().replace("\"", "");
-		
-		
+
 			if (CommonsUtil.semValor((String) valor)
 					&& CommonsUtil.mesmoValorIgnoreCase("situacao", campo.getExpressao())) {
 				valor = "VERIFICAR CERTIDÃO";
