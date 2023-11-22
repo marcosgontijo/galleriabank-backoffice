@@ -21,7 +21,6 @@ import com.webnowbr.siscoat.infra.db.model.MenuFavorito;
 import com.webnowbr.siscoat.infra.db.model.MenuItem;
 import com.webnowbr.siscoat.infra.service.MenuService;
 import com.webnowbr.siscoat.security.LoginBean;
-import com.webnowbr.siscoat.security.LogoutBean;
 
 @ManagedBean(name = "menuItemMB")
 @SessionScoped
@@ -83,11 +82,7 @@ public class MenuItemMB {
 			menuCarregado = menuService.constroiMenu(IDmenus.cadastros.getIndice(), loginBean.getUsuarioLogado().getId(), false);
 
 		} else if (CommonsUtil.mesmoValor(menuAtual, "Relatorios")) {
-<<<<<<< HEAD
-			menuCarregado = menuService.constroiMenu(IDmenus.Relatorio.getIndice(), loginBean.getUsuarioLogado().getId(), false);	
-=======
 			menuCarregado = menuService.constroiMenu(IDmenus.Relatorio.getIndice(), loginBean.getUsuarioLogado().getId(), false);
->>>>>>> branch 'master' of https://github.com/Galleria-Bank-Developers/backoffice.git
 		} else if (CommonsUtil.mesmoValor(menuAtual, "Manutencao")) {
 			menuCarregado = menuService.constroiMenu(IDmenus.manutencao.getIndice(), loginBean.getUsuarioLogado().getId(), false);
 		} else if (CommonsUtil.mesmoValor(menuAtual, "Favoritos")) {
