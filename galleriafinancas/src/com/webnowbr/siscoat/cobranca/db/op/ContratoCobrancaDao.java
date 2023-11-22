@@ -7284,21 +7284,23 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					}
 					
 					if (tipoConsulta.equals("Geração do PAJU - Neves")) {
-						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
+						query = query + " and ((analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' "
 								+ " and pendenciaLaudoPaju = false "
 								+ " and pedidoLaudoPajuComercial = true and pagtoLaudoConfirmada = true and pajurFavoravel = false"
-								+ " and avaliacaoPaju = 'Neves' ";
-						order = " order by contratoprioridadealta desc, pagtolaudoconfirmadadata ";
+								+ " and avaliacaoPaju = 'Neves' ) "
+								+ " or (reanalisePronta = true and pajuAtualizado = false and avaliacaoPajuReanalise = 'Neves')) ";
+						order = " order by reanalisePronta desc, contratoprioridadealta desc, pagtolaudoconfirmadadata ";
 					}
 					
 					if (tipoConsulta.equals("Geração do PAJU - Luvison")) {
-						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
+						query = query + " and ((analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' "
 								+ " and pendenciaLaudoPaju = false "
 								+ " and pedidoLaudoPajuComercial = true and pagtoLaudoConfirmada = true and pajurFavoravel = false"
-								+ " and avaliacaoPaju = 'Luvison' ";
-						order = " order by contratoprioridadealta desc, pagtolaudoconfirmadadata ";
+								+ " and avaliacaoPaju = 'Luvison' ) "
+								+ " or (reanalisePronta = true and pajuAtualizado = false and avaliacaoPajuReanalise = 'Luvison')) ";
+						order = " order by reanalisePronta desc, contratoprioridadealta desc, pagtolaudoconfirmadadata  ";
 					}
 					
 					if (tipoConsulta.equals("Pedir PAJU")) {

@@ -2252,9 +2252,16 @@
 		<property name="nadaConstaTaxa" type="boolean">
 			<column name="nadaConstaTaxa" not-null="true" default="false"/>
 		</property>
-		
 		<property name="valorCartorio" type="big_decimal">
 			<column name="valorCartorio" />
+		</property>
+
+		<property name="dataPajuComentado" type="java.util.Date">
+			<column name="dataPajuComentado" />
+		</property>
+		
+		<property name="avaliacaoPajuReanalise" type="java.lang.String">
+			<column name="avaliacaoPajuReanalise" />
 		</property>
 		
 	</class>

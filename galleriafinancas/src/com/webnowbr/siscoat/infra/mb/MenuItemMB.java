@@ -15,6 +15,7 @@ import org.primefaces.model.menu.MenuModel;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.infra.db.dao.MenuFavoritoDao;
 import com.webnowbr.siscoat.infra.db.dao.MenuItemDao;
+import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.MenuFavorito;
 import com.webnowbr.siscoat.infra.db.model.MenuItem;
 import com.webnowbr.siscoat.infra.service.MenuService;
@@ -27,7 +28,8 @@ public class MenuItemMB {
 	@ManagedProperty(value = "#{loginBean}")
 	protected LoginBean loginBean;
 	private boolean clickFavorito;
-	private String menuAtual;
+	private String menuAtual = null;
+	private boolean temFavorito = false;
 	private MenuItemDao dao = new MenuItemDao();
 	private MenuItem objetoMenuItem = new MenuItem();
 	private MenuItem objetoItemFavorito;
@@ -38,6 +40,8 @@ public class MenuItemMB {
 	private List<MenuItem> menuItemItem = dao.exibeItem();
 	private MenuItem menu = new MenuItem();
 	private MenuService menuService = new MenuService();
+	private MenuModel menuCarregado = null;
+
 	private MenuModel modelMenuFavorito;
 	private MenuModel modelCadastro;// = menuService.constroiMenu((long) 17, loginBean.getUsuarioLogado().getId());
 	private MenuModel modelAtendimento;// = menuService.constroiMenu((long) 18, loginBean.getUsuarioLogado().getId());
@@ -58,41 +62,56 @@ public class MenuItemMB {
 		super();
 
 		if (loginBean != null) {
-			modelCadastro = menuService.constroiMenu((long) 17, loginBean.getUsuarioLogado().getId(),false);
-			modelRelatorio = menuService.constroiMenu((long) 22, loginBean.getUsuarioLogado().getId(),false);
-			modelManutencao = menuService.constroiMenu((long) 23, loginBean.getUsuarioLogado().getId(),false);
-			modelFavoritarCadastro = menuService.constroiMenu((long) 17, loginBean.getUsuarioLogado().getId(),true);
-			modelFavoritarAtendimento = menuService.constroiMenu((long) 18, loginBean.getUsuarioLogado().getId(),true);
-			modelFavoritarRelatorio = menuService.constroiMenu((long) 22, loginBean.getUsuarioLogado().getId(),true);
-			modelFavoritarManutencao = menuService.constroiMenu((long) 23, loginBean.getUsuarioLogado().getId(),true);
+			modelCadastro = menuService.constroiMenu((long) 17, loginBean.getUsuarioLogado().getId(), false);
+			modelRelatorio = menuService.constroiMenu((long) 22, loginBean.getUsuarioLogado().getId(), false);
+			modelManutencao = menuService.constroiMenu((long) 23, loginBean.getUsuarioLogado().getId(), false);
+			modelFavoritarCadastro = menuService.constroiMenu((long) 17, loginBean.getUsuarioLogado().getId(), true);
+			modelFavoritarAtendimento = menuService.constroiMenu((long) 18, loginBean.getUsuarioLogado().getId(), true);
+			modelFavoritarRelatorio = menuService.constroiMenu((long) 22, loginBean.getUsuarioLogado().getId(), true);
+			modelFavoritarManutencao = menuService.constroiMenu((long) 23, loginBean.getUsuarioLogado().getId(), true);
+			carregaMenu();
 		}
 
 	}
+
 	public String carregafavoritar() {
-		if(CommonsUtil.mesmoValor(menuAtual, "Atendimento")) {
-			modelMenuFavorito = menuService.constroiMenu((long) 18, loginBean.getUsuarioLogado().getId(),true);
-		} else if(CommonsUtil.mesmoValor(menuAtual, "Cadastros")) {
-			modelMenuFavorito = menuService.constroiMenu((long) 17, loginBean.getUsuarioLogado().getId(),true);
-		} else if(CommonsUtil.mesmoValor(menuAtual, "Relatorios")) {
-			modelMenuFavorito = menuService.constroiMenu((long) 22, loginBean.getUsuarioLogado().getId(),true);
-		}else if(CommonsUtil.mesmoValor(menuAtual, "Manutencao")){
-			modelMenuFavorito = menuService.constroiMenu((long) 23, loginBean.getUsuarioLogado().getId(),true);
+		if (CommonsUtil.mesmoValor(menuAtual, "Atendimento")) {
+			modelMenuFavorito = menuService.constroiMenu((long) 18, loginBean.getUsuarioLogado().getId(), true);
+		} else if (CommonsUtil.mesmoValor(menuAtual, "Cadastros")) {
+			modelMenuFavorito = menuService.constroiMenu((long) 17, loginBean.getUsuarioLogado().getId(), true);
+		} else if (CommonsUtil.mesmoValor(menuAtual, "Relatorios")) {
+			modelMenuFavorito = menuService.constroiMenu((long) 22, loginBean.getUsuarioLogado().getId(), true);
+		} else if (CommonsUtil.mesmoValor(menuAtual, "Manutencao")) {
+			modelMenuFavorito = menuService.constroiMenu((long) 23, loginBean.getUsuarioLogado().getId(), true);
 		} else {
-			modelMenuFavorito = menuService.constroiMenu((long)18, loginBean.getUsuarioLogado().getId(), true);
+			modelMenuFavorito = menuService.constroiMenu((long) 18, loginBean.getUsuarioLogado().getId(), true);
 		}
+		menuAtual = null;
 		return "/Favoritos/FavoritosMenu.xhtml";
-			
-			
+
+	}
+
+	public String carregaMenu() {
+		if (CommonsUtil.mesmoValor(menuAtual, "Atendimento")) {
+			menuCarregado = menuService.constroiMenu((long) 18, loginBean.getUsuarioLogado().getId(), false);
+		} else if (CommonsUtil.mesmoValor(menuAtual, "Cadastros")) {
+			menuCarregado = menuService.constroiMenu((long) 17, loginBean.getUsuarioLogado().getId(), false);
+
+		} else if (CommonsUtil.mesmoValor(menuAtual, "Relatorios")) {
+			menuCarregado = menuService.constroiMenu((long) 22, loginBean.getUsuarioLogado().getId(), false);
+		} else if (CommonsUtil.mesmoValor(menuAtual, "Manutencao")) {
+			menuCarregado = menuService.constroiMenu((long) 23, loginBean.getUsuarioLogado().getId(), false);
+		} else if (CommonsUtil.mesmoValor(menuAtual, "Favoritos")) {
+			menuCarregado = menuService.carregaFavoritos(loginBean.getUsuarioLogado());
+		} else {
+			menuCarregado = menuService.constroiMenu((long) 18, loginBean.getUsuarioLogado().getId(), false);
 		}
-		
-		
-		
-		
-		
-		
+		return "/Menus/Menu.xhtml";
+
+	}
 
 	public String carregarFavoritos() {
-		 setClickFavorito(true);
+		setClickFavorito(true);
 		modelFavoritoUsuario = menuService.carregaFavoritos(loginBean.getUsuarioLogado());
 
 		return "/Favoritos/MenuFavoritos.xhtml";
@@ -187,11 +206,11 @@ public class MenuItemMB {
 		MenuFavorito menuFavorito = new MenuFavorito();
 		MenuItemDao menuItemDao = new MenuItemDao();
 		MenuFavoritoDao favoritoDao = new MenuFavoritoDao();
+		UserDao userDao = new UserDao();
 		MenuItem menu = menuItemDao.findById(id);
 		menuFavorito.setFavoritado(true);
 		menuFavorito.setMenuItemFavorito(menu);
 		menuFavorito.setUser(loginBean.getUsuarioLogado());
-
 		favoritoDao.create(menuFavorito);
 		clearFieldsFavorito(id);
 
@@ -201,7 +220,7 @@ public class MenuItemMB {
 		MenuItem favorito = new MenuItem();
 		MenuItemDao dao = new MenuItemDao();
 		objetoItemFavorito = new MenuItem();
-		
+
 		this.objetoItemFavorito = dao.findById(id);
 		favorito = dao.consultaFavorito(objetoItemFavorito, loginBean.getUsuarioLogado());
 		if (favorito.getId() != null) {
@@ -209,24 +228,10 @@ public class MenuItemMB {
 
 		} else {
 			objetoItemFavorito.setFavorito(false);
+
 		}
-		if(CommonsUtil.mesmoValor(objetoItemFavorito.getItemPai().getItemPai().getNome() , "Atendimento")) {
-		return "/Favoritos/ItemFavoritoAtendimento.xhtml";
-		}
-		else if(CommonsUtil.mesmoValor(objetoItemFavorito.getItemPai().getItemPai().getNome(), "Relatorios")) {
-		return "/Favoritos/ItemFavoritoRelatorio.xhtml";
-		}
-		else if(CommonsUtil.mesmoValor(objetoItemFavorito.getItemPai().getItemPai().getNome(), "Cadastros")) {
-		return "/Favoritos/ItemFavoritoCadastros.xhtml";
-		}
-		else if(CommonsUtil.mesmoValor(objetoItemFavorito.getItemPai().getItemPai().getNome(), "Manutencao")) {
-			return "/Favoritos/ItemFavoritoManutencao.xhtml";
-		}
-		else {
-			return null;
-		}
+		return "/Favoritos/ItemFavorito.xhtml";
 	}
-		
 
 	public void desfavoritar(Long id) {
 		MenuFavorito menuFavorito = new MenuFavorito();
@@ -255,11 +260,14 @@ public class MenuItemMB {
 	}
 
 	public List<MenuItem> getMenuItemModulo() {
-		
+		if ( loginBean.getUsuarioLogado() == null )
+			return null;
+
 		if (menuItemModulo == null) {
-			 MenuItemDao dao = new MenuItemDao();
-			 menuItemModulo = dao.consultaMenuItem("Módulo" , 0l, loginBean.getUsuarioLogado().getId());
+			MenuItemDao dao = new MenuItemDao();
+			menuItemModulo = dao.consultaMenuItem("Módulo", 0l, loginBean.getUsuarioLogado().getId());
 		}
+		temFavorito = menuService.possuiFavorito(loginBean.getUsuarioLogado());
 		return menuItemModulo;
 	}
 
@@ -286,7 +294,7 @@ public class MenuItemMB {
 	public MenuModel getModelCadastro() {
 		if (modelCadastro == null)
 			modelCadastro = menuService.constroiMenu((long) 17, loginBean.getUsuarioLogado().getId(), false);
-		if(clickFavorito == true) {
+		if (clickFavorito == true) {
 			return modelFavoritoUsuario;
 		}
 		return modelCadastro;
@@ -299,7 +307,7 @@ public class MenuItemMB {
 	public MenuModel getModelAtendimento() {
 		if (modelAtendimento == null)
 			modelAtendimento = menuService.constroiMenu((long) 18, loginBean.getUsuarioLogado().getId(), false);
-		if(clickFavorito == true) {
+		if (clickFavorito == true) {
 			return modelFavoritoUsuario;
 		}
 		return modelAtendimento;
@@ -320,7 +328,7 @@ public class MenuItemMB {
 	public MenuModel getModelRelatorio() {
 		if (modelRelatorio == null)
 			modelRelatorio = menuService.constroiMenu((long) 22, loginBean.getUsuarioLogado().getId(), false);
-		if(clickFavorito == true) {
+		if (clickFavorito == true) {
 			return modelFavoritoUsuario;
 		}
 		return modelRelatorio;
@@ -333,7 +341,7 @@ public class MenuItemMB {
 	public MenuModel getModelManutencao() {
 		if (modelManutencao == null)
 			modelManutencao = menuService.constroiMenu((long) 23, loginBean.getUsuarioLogado().getId(), false);
-		if(clickFavorito == true) {
+		if (clickFavorito == true) {
 			return modelFavoritoUsuario;
 		}
 		return modelManutencao;
@@ -434,6 +442,31 @@ public class MenuItemMB {
 
 	public void setModelMenuFavorito(MenuModel modelMenuFavorito) {
 		this.modelMenuFavorito = modelMenuFavorito;
+	}
+
+	public boolean isTemFavorito() {
+		return temFavorito;
+	}
+
+	public void setTemFavorito(boolean temFavorito) {
+		this.temFavorito = temFavorito;
+	}
+
+	public MenuModel getMenuCarregado() {
+		if (menuCarregado == null) {
+			MenuModel temFavorito = menuService.carregaFavoritos(loginBean.getUsuarioLogado());
+			if (CommonsUtil.semValor(temFavorito.getElements())) {
+				menuCarregado = menuService.constroiMenu((long) 18, loginBean.getUsuarioLogado().getId(), false);
+			} else {
+				menuCarregado = menuService.carregaFavoritos(loginBean.getUsuarioLogado());
+
+			}
+		}
+		return menuCarregado;
+	}
+
+	public void setMenuCarregado(MenuModel menuCarregado) {
+		this.menuCarregado = menuCarregado;
 	}
 
 }

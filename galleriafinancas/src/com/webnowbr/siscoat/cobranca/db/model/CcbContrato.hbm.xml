@@ -497,7 +497,9 @@
 			<column name="usarNovoCustoEmissao" not-null="true" default="false" />
 		</property>	
 		
-		 
+		<property name="dataCompraImovel" type="java.util.Date">
+			<column name="dataCompraImovel" />
+		</property>
 		        
     </class>
 </hibernate-mapping>

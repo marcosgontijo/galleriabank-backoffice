@@ -104,6 +104,7 @@ public class CcbContrato implements Serializable{
 	private String bairroImovel;
 	private String cepImovel;
 	private BigDecimal precoVendaCompra;
+	private Date dataCompraImovel;
 	
 	private BigDecimal vendaLeilao;
 	private String elaboradorNome;
@@ -1259,5 +1260,14 @@ public class CcbContrato implements Serializable{
 
 	public void setCarencia(String carencia) {
 		this.carencia = carencia;
+	}
+
+	public Date getDataCompraImovel() {
+		return dataCompraImovel;
+	}
+
+	public void setDataCompraImovel(Date dataCompraImovel) {
+		this.dataCompraImovel = dataCompraImovel;
 	} 
+
 }
