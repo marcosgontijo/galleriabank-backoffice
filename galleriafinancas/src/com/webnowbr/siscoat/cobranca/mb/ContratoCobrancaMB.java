@@ -34375,9 +34375,13 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setChequeDevolvidoTaxa(false);
 		this.objetoContratoCobranca.setPefinTaxa(false);
 		this.objetoContratoCobranca.setProtestoTaxa(false);
-		this.objetoContratoCobranca.setScoreBaixoTaxa(false);
+		this.objetoContratoCobranca.setScoreBaixo450Taxa(false);
+		this.objetoContratoCobranca.setScoreBaixo700Taxa(false);
+		this.objetoContratoCobranca.setRiscoTotal20kTaxa(false);
+		this.objetoContratoCobranca.setRiscoTotal50kTaxa(false);
 		this.objetoContratoCobranca.setDividaVencidaTaxa(false);
 		this.objetoContratoCobranca.setPrejuizoBacenTaxa(false);
+		this.objetoContratoCobranca.setRelacionamentoBacenRecenteTaxa(false);
 		this.objetoContratoCobranca.setTerrenoOuBarracaoTaxa(false);
 		this.objetoContratoCobranca.setNadaConstaTaxa(false);
 		
@@ -34386,6 +34390,9 @@ public class ContratoCobrancaMB {
 		Set<String> ressalvaProtesto = new HashSet<String>();
 		Set<String> ressalvaTrabalhista = new HashSet<String>();
 		Set<String> ressalvaProcesso = new HashSet<String>();
+		
+		boolean isScore450 = false;
+		boolean isRisco20k = false;
 		
 		if (this.listaDocumentoAnalise != null && this.listaDocumentoAnalise.size() > 0) {
 			boolean nadaConsta = true;
@@ -34411,10 +34418,11 @@ public class ContratoCobrancaMB {
 						ressalvaProtesto.add(docAnalise.getRessalvaProtestoNome());
 					}
 					if (docAnalise.isScoreBaixo450()) {
-						this.objetoContratoCobranca.setScoreBaixo450Taxa(true);;
+						this.objetoContratoCobranca.setScoreBaixo450Taxa(true);
+						isScore450 = true;
 						nadaConsta = false;
 					}
-					if (docAnalise.isScoreBaixo700()) {
+					if (docAnalise.isScoreBaixo700() && !isScore450) {
 						this.objetoContratoCobranca.setScoreBaixo700Taxa(true);
 						nadaConsta = false;
 					}
@@ -34440,9 +34448,10 @@ public class ContratoCobrancaMB {
 					}
 					if (docAnalise.isRiscoTotal20k()) {
 						this.objetoContratoCobranca.setRiscoTotal20kTaxa(true);
+						isRisco20k = true;
 						nadaConsta = false;
 					}
-					if (docAnalise.isRiscoTotal50k()) {
+					if (docAnalise.isRiscoTotal50k() && !isRisco20k) {
 						this.objetoContratoCobranca.setRiscoTotal50kTaxa(true);
 						nadaConsta = false;
 					}
