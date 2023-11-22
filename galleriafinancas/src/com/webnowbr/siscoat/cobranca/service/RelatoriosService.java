@@ -192,9 +192,14 @@ public class RelatoriosService {
 
 			String retiraObservaco = processo.getNumero() + " - "
 					+ CommonsUtil.formataValorMonetario(processo.getValorAtualizado(), "R$ ") + "\n";
-
+			observacao = observacao.replace(retiraObservaco, "");
+			retiraObservaco = processo.getNumero() + " - "
+					+ CommonsUtil.formataValorMonetario(processo.getValorAtualizado(), "R$ ") + "\r\n";
 			observacao = observacao.replace(retiraObservaco, "");
 			despesa = despesa.add(processo.getValorAtualizado());
+
+			
+			
 			detalhesDespesas.add(new PreAprovadoPDFDetalheDespesas("Processo Nº " + processo.getNumero(),
 					CommonsUtil.formataValorMonetario(processo.getValorAtualizado(), "R$ ")));
 		}
@@ -202,7 +207,9 @@ public class RelatoriosService {
 		valorLiquido = simulador.getValorCredito().subtract(valorIOF).subtract(valorCustoEmissao).subtract(despesa);
 
 		// adicionar cep e carencia ( 1 + carencia * 30 )
-		PreAprovadoPDF documento = new PreAprovadoPDF(con.getPagador().getNome(), con.getDataContrato(),
+		PreAprovadoPDF documento = new PreAprovadoPDF(con.getPagador().getNome(),
+				(!CommonsUtil.semValor(con.getAprovadoComiteData()) ? con.getAprovadoComiteData()
+						: con.getDataContrato()),
 				con.getNumeroContrato(), cpf, con.getTaxaAprovada(), observacao, con.getImovel().getCidade(),
 				con.getImovel().getNumeroMatricula(), con.getImovel().getEstado(), con.getPrazoMaxAprovado().toString(),
 				simulador.getValorCredito(), con.getValorMercadoImovel(), parcelaPGTO, con.getTipoValorComite(), cep,

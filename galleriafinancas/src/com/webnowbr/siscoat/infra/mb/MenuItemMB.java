@@ -28,6 +28,7 @@ public class MenuItemMB {
 
 	@ManagedProperty(value = "#{loginBean}")
 	protected LoginBean loginBean;
+	
 	private boolean clickFavorito;
 	private String menuAtual = null;
 	private boolean temFavorito = false;

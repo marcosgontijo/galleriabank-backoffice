@@ -13,14 +13,23 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import org.json.JSONObject;
+import org.primefaces.PrimeFaces;
 
+import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.common.BancosEnum;
+import com.webnowbr.siscoat.common.CommonsUtil;
+
+import br.com.galleriabank.netrin.cliente.model.contabancaria.ValidaContaBancariaRequest;
+import br.com.galleriabank.netrin.cliente.model.contabancaria.ValidaContaBancariaResponse;
+import br.com.galleriabank.netrin.cliente.model.contabancaria.ValidaPixRequest;
+import br.com.galleriabank.netrin.cliente.model.contabancaria.ValidaPixResponse;
 
 public class Responsavel implements Serializable {
 
@@ -61,8 +70,17 @@ public class Responsavel implements Serializable {
 	private List<SelectItem> listaBancos;
 	private String agencia;
 	private String conta;
-	private String pix;
+	private String contaDigito;
 	private String tipoConta;
+	private boolean contaBancariaValidada;
+	
+	private String pix;
+	private String tipoPix;
+	private String bancoPix;
+	private String agenciaPix;
+	private String contaPix;
+	private String contaDigitoPix;
+	private boolean pixValidado;
 
 	
 	private String cep;
@@ -77,6 +95,7 @@ public class Responsavel implements Serializable {
 	private boolean superlogica;
 	private String cidadeFilial;
 	
+	private PagadorReceborDadosBancarios dadosBancariosOriginal;
 	
 	public Responsavel(){
 	}
@@ -185,6 +204,103 @@ public class Responsavel implements Serializable {
 		}
 		return null;
 	}
+	
+	public void salvarDadosBancarios() {
+		dadosBancariosOriginal = new PagadorReceborDadosBancarios(this);
+	}
+	
+	public String verificaAlteracaoContaCobranca() {
+
+		if (!CommonsUtil.mesmoValor(this.getBanco(),
+				dadosBancariosOriginal.getBanco())
+				|| !CommonsUtil.mesmoValor(this.getAgencia(),
+						dadosBancariosOriginal.getAgencia())
+				|| !CommonsUtil.mesmoValor(this.getConta(),
+						dadosBancariosOriginal.getConta())
+				|| !CommonsUtil.mesmoValor(this.getContaDigito(),
+						dadosBancariosOriginal.getContaDigito())
+				|| !CommonsUtil.mesmoValor(this.getTipoConta(),
+						dadosBancariosOriginal.getTipoConta())) {
+			this.setContaBancariaValidada(false);
+			PrimeFaces.current().ajax().update("form:comissaoCliente");
+		}		
+		return null;
+		
+	}
+	
+	public String verificaAlteracaoPix() {
+		if (!CommonsUtil.mesmoValor(this.getPix(), dadosBancariosOriginal.getPix())
+				|| !CommonsUtil.mesmoValor(this.getTipoPix(),
+						dadosBancariosOriginal.getTipoPix())) {
+			this.setPixValidado(false);
+			this.setBancoPix(null);
+			this.setAgenciaPix(null);
+			this.setContaPix(null);
+			this.setContaDigitoPix(null);
+			PrimeFaces.current().ajax().update("form:comissaoCliente");
+		}
+		return null;
+	}
+	
+	public String validaPix() {
+
+		FacesContext context = FacesContext.getCurrentInstance();
+		NetrinService netrinService = new NetrinService();
+		
+		
+		String documento = CommonsUtil.somenteNumeros( this.getCpf());
+		if (!CommonsUtil.semValor(this.getCnpj())) {
+			documento= CommonsUtil.somenteNumeros(this.getCnpj());
+		}
+		
+		ValidaPixRequest validaPixRequest = new ValidaPixRequest(this.getPix(), this.getTipoPix(), documento);
+		ValidaPixResponse result = netrinService.requestValidaPix(validaPixRequest, context);
+		
+		if (!CommonsUtil.semValor(result) && !CommonsUtil.semValor(result.getValidaPix())
+				&& CommonsUtil.mesmoValorIgnoreCase("Sim", result.getValidaPix().getValidacaoConta())) {
+			this.setPixValidado(true);
+			this.setBancoPix(result.getValidaPix().getConta().getCodigoBanco());
+			this.setAgenciaPix(result.getValidaPix().getConta().getAgencia());
+			this.setContaPix(result.getValidaPix().getConta().getConta());
+			this.setContaDigitoPix(result.getValidaPix().getConta().getContaDigito());
+			PrimeFaces.current().ajax().update("form:comissaoCliente");	
+		}
+		
+		return null;
+	}
+	
+	public String validaContaBancaria() {
+
+		FacesContext context = FacesContext.getCurrentInstance();
+		NetrinService netrinService = new NetrinService();
+		
+		String documento = CommonsUtil.somenteNumeros(this.getCpf());
+		if (!CommonsUtil.semValor( this.getCnpj())) {
+			documento= CommonsUtil.somenteNumeros( this.getCnpj());
+		}
+		
+		ValidaContaBancariaRequest validaContaBancariaRequest = new ValidaContaBancariaRequest(documento, this.getCodigoBanco(), 
+				this.getAgencia(), this.getConta(), this.getContaDigito(), 
+				this.getTipoConta());
+		ValidaContaBancariaResponse result = netrinService.requestValidaContaBancaria(validaContaBancariaRequest, context);
+
+		if (!CommonsUtil.semValor(result)
+				&& CommonsUtil.mesmoValorIgnoreCase("Sim", result.getValidaContaBancaria().getValidacaoConta())) {
+			this.setContaBancariaValidada(true);
+			PrimeFaces.current().ajax().update("form:comissaoCliente");
+		}
+		
+		return null;
+	}
+	
+	public String getCodigoBanco() {
+		String[] banco = getBanco().split(Pattern.quote("|"));
+		if (banco.length > 0) {
+			return CommonsUtil.trimNull(banco[0]);
+		} else
+			return null;
+	}
+	
 	
 	/**
 	 * @return the id
@@ -616,4 +732,69 @@ public class Responsavel implements Serializable {
 	public void setCidadeFilial(String cidadeFilial) {
 		this.cidadeFilial = cidadeFilial;
 	}
+
+	public String getContaDigito() {
+		return contaDigito;
+	}
+
+	public void setContaDigito(String contaDigito) {
+		this.contaDigito = contaDigito;
+	}
+
+	public boolean isContaBancariaValidada() {
+		return contaBancariaValidada;
+	}
+
+	public void setContaBancariaValidada(boolean contaBancariaValidada) {
+		this.contaBancariaValidada = contaBancariaValidada;
+	}
+
+	public String getTipoPix() {
+		return tipoPix;
+	}
+
+	public void setTipoPix(String tipoPix) {
+		this.tipoPix = tipoPix;
+	}
+
+	public String getBancoPix() {
+		return bancoPix;
+	}
+
+	public void setBancoPix(String bancoPix) {
+		this.bancoPix = bancoPix;
+	}
+
+	public String getAgenciaPix() {
+		return agenciaPix;
+	}
+
+	public void setAgenciaPix(String agenciaPix) {
+		this.agenciaPix = agenciaPix;
+	}
+
+	public String getContaPix() {
+		return contaPix;
+	}
+
+	public void setContaPix(String contaPix) {
+		this.contaPix = contaPix;
+	}
+
+	public String getContaDigitoPix() {
+		return contaDigitoPix;
+	}
+
+	public void setContaDigitoPix(String contaDigitoPix) {
+		this.contaDigitoPix = contaDigitoPix;
+	}
+
+	public boolean isPixValidado() {
+		return pixValidado;
+	}
+
+	public void setPixValidado(boolean pixValidado) {
+		this.pixValidado = pixValidado;
+	}
+
 }

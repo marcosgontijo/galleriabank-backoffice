@@ -127,18 +127,6 @@
 								</p:inputTextarea>
 								<p:outputLabel id="display" />
 							</h:panelGroup>
-							
-							<p:outputLabel for="processosPajuExterno"
-								value="Processos para quitar (Externo):" styleClass="labelBold" />
-							<h:panelGroup>
-								<p:inputTextarea id="processosPajuExterno" rows="10" cols="48"
-									counter="display2" maxlength="3000" onblur=""
-									counterTemplate="{0} characters remaining." autoResize="false"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.processosPajuExterno}" >
-									<p:ajax process="@this" partialSubmit="true" />
-								</p:inputTextarea>
-								<p:outputLabel id="display2" />
-							</h:panelGroup>
 						</h:panelGrid>
 						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel == true}">					
 							<p:outputLabel value="Valor Total Processos:" styleClass="labelBold" />

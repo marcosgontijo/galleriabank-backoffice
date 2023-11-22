@@ -1694,9 +1694,6 @@ public class ContratoCobrancaMB {
 					 */
 
 					this.objetoContratoCobranca.setResponsavel(responsavel);
-
-					clearDadosBancariosResponsavel();
-
 				}
 			}
 		}
@@ -2858,7 +2855,6 @@ public class ContratoCobrancaMB {
 			// verifica se o responsavel informado existe
 			if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0) {
 				Responsavel responsavel = responsavelDao.findByFilter("codigo", this.codigoResponsavel).get(0);
-				responsavel = populateDadosBancariosResponsavel(responsavel);
 				responsavelDao.merge(responsavel);
 
 				this.objetoContratoCobranca.setResponsavel(responsavel);
@@ -3251,12 +3247,14 @@ public class ContratoCobrancaMB {
 		}
 
 		if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0) {
-			Responsavel responsavel = responsavelDao.findByFilter("codigo", this.codigoResponsavel).get(0);
-
-			responsavel = populateDadosBancariosResponsavel(responsavel);
+			 Responsavel responsavel = responsavelDao.findByFilter("codigo", this.codigoResponsavel).get(0);
+			 if(!CommonsUtil.mesmoValor(responsavel.getId(), this.objetoContratoCobranca.getResponsavel().getId())) {
+				this.objetoContratoCobranca.setResponsavel(responsavel);
+			 }
+		}
+		
+			Responsavel responsavel = this.objetoContratoCobranca.getResponsavel();
 			responsavelDao.merge(responsavel);
-
-			this.objetoContratoCobranca.setResponsavel(responsavel);
 
 			if (CommonsUtil.mesmoValor(responsavel.getId(), CommonsUtil.longValue("46"))) {
 				this.objetoContratoCobranca.setContratoLead(true);
@@ -3327,7 +3325,6 @@ public class ContratoCobrancaMB {
 			// senao valida se houve alteração no checklist para envio de email.
 			if (!SiscoatConstants.DEV && !CommonsUtil.sistemaWindows()) {
 				enviaEmailAtualizacaoPreContratoNovo();
-				// System.out.println("editPreContrato");
 			}
 			contratoCobrancaCheckList = null;
 
@@ -3338,35 +3335,8 @@ public class ContratoCobrancaMB {
 							"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
 									+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
 							""));
-
-			// if (!this.preContratoCustom) {
 			CRMMB crmMb = new CRMMB();
-
 			return crmMb.clearFieldsDetalhado();
-			/*
-			 * } else { if (this.objetoContratoCobranca.getStatusLead().equals("Novo Lead"))
-			 * { return geraConsultaLeads("Novo Lead"); } if
-			 * (this.objetoContratoCobranca.getStatusLead().equals("Em Tratamento")) {
-			 * return geraConsultaLeads("Em Tratamento"); } if
-			 * (this.objetoContratoCobranca.getStatusLead().equals("Completo")) { return
-			 * geraConsultaLeads("Completo"); } if
-			 * (this.objetoContratoCobranca.getStatusLead().equals("Reprovado")) { return
-			 * geraConsultaLeads("Reprovado"); } if
-			 * (this.objetoContratoCobranca.getStatusLead().equals("Baixado")) { return
-			 * geraConsultaLeads("Baixado"); }
-			 * 
-			 * return ""; }
-			 */
-		} else {
-			if (context != null) {
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-						"Contrato Cobrança: Erro de validação: O código do responsável digitado não foi encontrado ("
-								+ this.codigoResponsavel + ")!",
-						""));
-			}
-
-			return null;
-		}
 	}
 
 	public String atualizaContratoAvaliacaoImovel() {
@@ -3842,12 +3812,14 @@ public class ContratoCobrancaMB {
 			}
 
 			if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0) {
-				Responsavel responsavel = responsavelDao.findByFilter("codigo", this.codigoResponsavel).get(0);
-
-				responsavel = populateDadosBancariosResponsavel(responsavel);
+				 Responsavel responsavel = responsavelDao.findByFilter("codigo", this.codigoResponsavel).get(0);
+				 if(!CommonsUtil.mesmoValor(responsavel.getId(), this.objetoContratoCobranca.getResponsavel().getId())) {
+					this.objetoContratoCobranca.setResponsavel(responsavel);
+				 }
+			}
+			
+				Responsavel responsavel = this.objetoContratoCobranca.getResponsavel();
 				responsavelDao.merge(responsavel);
-
-				this.objetoContratoCobranca.setResponsavel(responsavel);
 
 				if (CommonsUtil.mesmoValor(responsavel.getId(), CommonsUtil.longValue("46"))) {
 					this.objetoContratoCobranca.setContratoLead(true);
@@ -4017,16 +3989,7 @@ public class ContratoCobrancaMB {
 
 				return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
 
-			} else {
-				if (context != null) {
-					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-							"Contrato Cobrança: Erro de validação: O código do responsável digitado não foi encontrado ("
-									+ this.codigoResponsavel + ")!",
-							""));
-				}
-
-				return "";
-			}
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -9554,6 +9517,7 @@ public class ContratoCobrancaMB {
 		loadLovs();
 
 		loadSelectedLovsPendentes();
+		this.objetoContratoCobranca.getResponsavel().salvarDadosBancarios();
 		this.objetoContratoCobranca.calcularValorTotalContasPagas();
 
 		if (this.objetoContratoCobranca.getPagador() != null) {
@@ -10164,7 +10128,6 @@ public class ContratoCobrancaMB {
 
 		if (this.objetoContratoCobranca.getResponsavel() != null) {
 			this.codigoResponsavel = this.objetoContratoCobranca.getResponsavel().getCodigo();
-			clearDadosBancariosResponsavel();
 		}
 		// this.objetoContratoCobranca.setDataInicio(this.objetoContratoCobranca.getDataContrato());
 
@@ -16979,8 +16942,6 @@ public class ContratoCobrancaMB {
 			 * this.tipoResponsavelIsFisica = true; } else { this.tipoResponsavelIsFisica =
 			 * false; }
 			 */
-
-			clearDadosBancariosResponsavel();
 		}
 
 		if (this.objetoContratoCobranca.getImovel() != null) {
@@ -16995,41 +16956,6 @@ public class ContratoCobrancaMB {
 		listarPessoas();
 	}
 
-	public void clearDadosBancariosResponsavel() {
-		// cpfCCResp = this.objetoContratoCobranca.getResponsavel().getCpfCC();
-		// cnpjCCResp = this.objetoContratoCobranca.getResponsavel().getCnpjCC();
-		cpfCnpjCCResp = this.objetoContratoCobranca.getResponsavel().getCpfCnpjCC();
-		nomeCCResp = this.objetoContratoCobranca.getResponsavel().getNomeCC();
-		bancoResp = this.objetoContratoCobranca.getResponsavel().getBanco();
-		agenciaResp = this.objetoContratoCobranca.getResponsavel().getAgencia();
-		contaResp = this.objetoContratoCobranca.getResponsavel().getConta();
-		pixResp = this.objetoContratoCobranca.getResponsavel().getPix();
-	}
-
-	public Responsavel populateDadosBancariosResponsavel(Responsavel responsavel) {
-		// responsavel.setCpfCC(cpfCCResp);
-		// responsavel.setCnpjCC(cnpjCCResp);
-		cpfCnpjCCResp = CommonsUtil.somenteNumeros(cpfCnpjCCResp);
-		if (!CommonsUtil.semValor(cpfCnpjCCResp)) {
-			if (cpfCnpjCCResp.length() == 11) {
-				// transforma em cpf
-				cpfCnpjCCResp = CommonsUtil.formataCnpjCpf(cpfCnpjCCResp, false);
-			} else if (cpfCnpjCCResp.length() == 13) {
-				// transforma em cnpj
-				if (!(cpfCnpjCCResp.contains(".") && cpfCnpjCCResp.contains("-"))) {
-					cpfCnpjCCResp = CommonsUtil.formataCnpjCpf(cpfCnpjCCResp, false);
-				}
-			}
-
-			responsavel.setCpfCnpjCC(cpfCnpjCCResp);
-			responsavel.setNomeCC(nomeCCResp);
-			responsavel.setBanco(bancoResp);
-			responsavel.setAgencia(agenciaResp);
-			responsavel.setConta(contaResp);
-			responsavel.setPix(pixResp);
-		}
-		return responsavel;
-	}
 
 	public void clearSelectedLovsPendentes() {
 		this.selectedPagador = new PagadorRecebedor();

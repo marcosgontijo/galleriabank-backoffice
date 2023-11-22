@@ -2105,7 +2105,7 @@
 							</h:panelGroup>
 
 							<p:outputLabel for="processosPajuExterno"
-								value="Processos para quitar (Externo):" styleClass="labelBold" />
+								value="Observações p/ Comitê:" styleClass="labelBold" />
 							<h:panelGroup>
 								<p:inputTextarea id="processosPajuExterno" rows="10" cols="48"
 									counter="display2" maxlength="3000" onblur=""
@@ -3640,7 +3640,7 @@
 
 				<h:panelGroup id="Dados">
 					<p:panel header="Dados do Contrato" style="margin-bottom:10px;"
-						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agAssinatura}">
+						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio}">
 						<h:panelGrid columns="2">
 
 							<p:outputLabel for="empresa" value="Empresa: "
@@ -3819,7 +3819,7 @@
 
 					<p:panel id="Pagamento" header="Forma de Pagamento"
 						style="margin-bottom:10px;"
-						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agAssinatura}">
+						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio}">
 						<h:panelGrid columns="2">
 							<p:outputLabel for="dataInicio" value="Data Inicio: "
 								styleClass="labelBold" style="margin-right: 59px;" />
