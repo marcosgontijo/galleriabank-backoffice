@@ -429,6 +429,16 @@ public class MenuItemMB {
 	}
 
 	public String getMenuAtual() {
+		if (menuCarregado == null) {
+			 temFavorito = menuService.possuiFavorito(loginBean.getUsuarioLogado());
+			if(!temFavorito) {
+				menuAtual = "Atendimento";
+
+			} else {
+				menuAtual = "Favoritos";
+
+			}
+		}
 		return menuAtual;
 	}
 
@@ -454,12 +464,13 @@ public class MenuItemMB {
 
 	public MenuModel getMenuCarregado() {
 		if (menuCarregado == null) {
-			MenuModel temFavorito = menuService.carregaFavoritos(loginBean.getUsuarioLogado());
-			if(CommonsUtil.semValor(temFavorito.getElements())) {
+			 temFavorito = menuService.possuiFavorito(loginBean.getUsuarioLogado());
+			if(!temFavorito) {
 				menuCarregado = menuService.constroiMenu((long) 18, loginBean.getUsuarioLogado().getId(),false);
 
 			} else {
 				menuCarregado = menuService.carregaFavoritos(loginBean.getUsuarioLogado());
+				menuAtual = "Favoritos";
 
 			}
 		}
