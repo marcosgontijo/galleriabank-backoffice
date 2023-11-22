@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -161,6 +162,7 @@ public class ImovelCobranca implements Serializable {
 				cidades.add(cidade);
 			}
 		}
+		Collections.sort(cidades);
 		return cidades.stream().filter(t -> t.toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());
 	 }
 	
@@ -710,8 +712,8 @@ public class ImovelCobranca implements Serializable {
 			this.enderecoSemNumero = split[0].trim();
 			this.numeroImovel = split[1].trim();
 		} else {
-			this.enderecoSemNumero = "";
-			this.numeroImovel = "0";
+			this.enderecoSemNumero = string;
+			this.numeroImovel = "";
 		}
 	}
 	

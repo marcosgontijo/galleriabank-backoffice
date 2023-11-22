@@ -445,6 +445,8 @@ public class ContratoCobranca implements Serializable {
 	//
 	private boolean reanalise;
 	
+	private boolean agComite;
+	
 	private Date reanaliseProntaData;
 	private boolean reanalisePronta;
 	private String reanaliseProntaUsuario;
@@ -849,6 +851,12 @@ public class ContratoCobranca implements Serializable {
 	private boolean contratoPrioridadeAlta;
 	private Date contratoPrioridadeAltaData;
 	private String contratoPrioridadeAltaUser;
+	
+	private boolean isScoreBaixo450Taxa;
+	private boolean isScoreBaixo700Taxa;
+	private boolean isInicioRelacionamentoInexistenteTaxa;
+	private boolean isRiscoTotal20kTaxa;
+	private boolean isRiscoTotal50kTaxa;
 
 	//FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13	
 	public BigDecimal calcularValorTotalContasPagas() {
@@ -1115,18 +1123,18 @@ public class ContratoCobranca implements Serializable {
 						&& !this.laudoRecebido) {
 					if (!CommonsUtil.semValor(this.avaliacaoLaudo)
 							&& CommonsUtil.mesmoValor(this.avaliacaoLaudo, "Compass")) {
-						c.setStatusEsteira("Pedir Laudo Compass");
+						c.setStatusEsteira("Aguardando Laudo Compass");
 						if (!CommonsUtil.semValor(status)) {
 							status = status + " | ";
 						}
-						status = status + "Pedir Laudo Compass";
+						status = status + "Aguardando Laudo Compass";
 					} else if (!CommonsUtil.semValor(this.avaliacaoLaudo)
 							&& CommonsUtil.mesmoValor(this.avaliacaoLaudo, "Galache")) {
-						c.setStatusEsteira("Pedir Laudo Galache");
+						c.setStatusEsteira("Aguardando Laudo Galache");
 						if (!CommonsUtil.semValor(status)) {
 							status = status + " | ";
 						}
-						status = status + "Pedir Laudo Galache";
+						status = status + "Aguardando Laudo Galache";
 					} else {
 						c.setStatusEsteira("Ag. Laudo");
 						if (!CommonsUtil.semValor(status)) {
@@ -1405,9 +1413,7 @@ public class ContratoCobranca implements Serializable {
 			potuacao -= 100;
 		if (pefinTaxa)
 			potuacao -= 100;
-		if (refinTaxa)
-			potuacao -= 100;
-		if (scoreBaixoTaxa)
+		if (refinTaxa) 
 			potuacao -= 100;
 		if (terceiroGrantidorTaxa)
 			potuacao -= 150;
@@ -1417,10 +1423,18 @@ public class ContratoCobranca implements Serializable {
 			potuacao -= 150;
 		if (prejuizoBacenTaxa)
 			potuacao -= 150;
-		if (riscoTotalBaixoTaxa)
-			potuacao -= 150;
 		if (terrenoOuBarracaoTaxa)
 			potuacao -= 400;
+		if (isScoreBaixo450Taxa)
+			potuacao -= 200;
+		if (isScoreBaixo700Taxa)
+			potuacao -= 100;
+		if (isInicioRelacionamentoInexistenteTaxa)
+			potuacao -= 100;
+		if (isRiscoTotal20kTaxa)
+			potuacao -= 200;
+		if (isRiscoTotal50kTaxa)
+			potuacao -= 100;
 
 		if (potuacao < 400) {
 			taxaPreAprovada = BigDecimal.valueOf(1.89);
@@ -6992,14 +7006,14 @@ public class ContratoCobranca implements Serializable {
 					if (!CommonsUtil.semValor(status)) {
 						status = status + " | ";
 					}
-					status = status + "Pedir Laudo Compass";
+					status = status + "Aguardando Laudo Compass";
 				} else if (!CommonsUtil.semValor(this.avaliacaoLaudo)
 						&& CommonsUtil.mesmoValor(this.avaliacaoLaudo, "Galache")) {
 //						c.setStatus("Pedir Laudo Galache");
 					if (!CommonsUtil.semValor(status)) {
 						status = status + " | ";
 					}
-					status = status + "Pedir Laudo Galache";
+					status = status + "Aguardando Laudo Galache";
 				} else {
 //						c.setStatus("Ag. Laudo");
 					if (!CommonsUtil.semValor(status)) {
@@ -7332,6 +7346,47 @@ public class ContratoCobranca implements Serializable {
 	public void setValorCartorio(BigDecimal valorCartorio) {
 		this.valorCartorio = valorCartorio;
 	}
+
+	public boolean isScoreBaixo450Taxa() {
+		return isScoreBaixo450Taxa;
+	}
+
+	public void setScoreBaixo450Taxa(boolean isScoreBaixo450Taxa) {
+		this.isScoreBaixo450Taxa = isScoreBaixo450Taxa;
+	}
+
+	public boolean isScoreBaixo700Taxa() {
+		return isScoreBaixo700Taxa;
+	}
+
+	public void setScoreBaixo700Taxa(boolean isScoreBaixo700Taxa) {
+		this.isScoreBaixo700Taxa = isScoreBaixo700Taxa;
+	}
+
+	public boolean isInicioRelacionamentoInexistenteTaxa() {
+		return isInicioRelacionamentoInexistenteTaxa;
+	}
+
+	public void setInicioRelacionamentoInexistenteTaxa(boolean isInicioRelacionamentoInexistenteTaxa) {
+		this.isInicioRelacionamentoInexistenteTaxa = isInicioRelacionamentoInexistenteTaxa;
+	}
+
+	public boolean isRiscoTotal20kTaxa() {
+		return isRiscoTotal20kTaxa;
+	}
+
+	public void setRiscoTotal20kTaxa(boolean isRiscoTotal20kTaxa) {
+		this.isRiscoTotal20kTaxa = isRiscoTotal20kTaxa;
+	}
+
+	public boolean isRiscoTotal50kTaxa() {
+		return isRiscoTotal50kTaxa;
+	}
+
+	public void setRiscoTotal50kTaxa(boolean isRiscoTotal50kTaxa) {
+		this.isRiscoTotal50kTaxa = isRiscoTotal50kTaxa;
+	}
+	
 
 	public void setAgComite(boolean agComite) {
 		this.agComite = agComite;
