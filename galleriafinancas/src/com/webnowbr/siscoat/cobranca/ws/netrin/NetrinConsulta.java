@@ -5,13 +5,16 @@ import java.util.Date;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
-import org.apache.commons.lang3.math.Fraction;
-
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.GsonUtil;
+import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.infra.db.model.User;
 
+import br.com.galleriabank.netrin.cliente.model.cndestadual.CndEstadualResponse;
+import br.com.galleriabank.netrin.cliente.model.cndfederal.CndFederalResponse;
+import br.com.galleriabank.netrin.cliente.model.cndttst.CndTrabalhistaTSTResponse;
 public class NetrinConsulta {
 
 	private long id;
@@ -26,7 +29,7 @@ public class NetrinConsulta {
 	private User usuario;
 	private Date dataConsulta;
 	private boolean expirado;
-		
+
 	public NetrinConsulta() {
 		super();
 	}
@@ -39,20 +42,57 @@ public class NetrinConsulta {
 	}
 
 	public void populatePagadorRecebedor(PagadorRecebedor pagador) {
-		if(!CommonsUtil.semValor(pagador.getCpf())) {
+		if (!CommonsUtil.semValor(pagador.getCpf())) {
 			cpfCnpj = pagador.getCpf();
 		}
-		if(!CommonsUtil.semValor(pagador.getCnpj())) {
+		if (!CommonsUtil.semValor(pagador.getCnpj())) {
 			cpfCnpj = pagador.getCnpj();
 		}
-		if(!CommonsUtil.semValor(pagador.getCep())) {
+		if (!CommonsUtil.semValor(pagador.getCep())) {
 			cep = pagador.getCep();
 		}
-		
+
 	}
-	
+	/*
+	 * public INetrinCndResponse getNetrinResponse() { if
+	 * (CommonsUtil.mesmoValor(this.netrinDocumentos.getId(),
+	 * SiscoatConstants.NETRIN_CND_FEDERAL)) return GsonUtil.fromJson(this.retorno,
+	 * CndFederalCndResponse.class); else if
+	 * (CommonsUtil.mesmoValor(this.netrinDocumentos.getId(),
+	 * SiscoatConstants.NETRIN_CND_ESTADUAL)) return GsonUtil.fromJson(this.retorno,
+	 * CndFederalCndResponse.class); else if
+	 * (CommonsUtil.mesmoValor(this.netrinDocumentos.getId(),
+	 * SiscoatConstants.NETRIN_CND_TRABALHISTA)) return
+	 * GsonUtil.fromJson(this.retorno, CndFederalCndResponse.class); else return
+	 * null; }
+	 */
+
+	public String getStatusConsulta() {
+		if (CommonsUtil.mesmoValor(this.netrinDocumentos.getId(), SiscoatConstants.NETRIN_CND_FEDERAL)) {
+			CndFederalResponse response = GsonUtil.fromJson(this.retorno, CndFederalResponse.class);
+			if (!CommonsUtil.mesmoValor("Não", response.getReceitaFederalCND().getDebitosPendentesPGFN())
+					&& !CommonsUtil.mesmoValor("Não", response.getReceitaFederalCND().getDebitosPendentesRFB())) {
+				return "Não Possui debitos";
+			} else
+				return "Possui debitos";
+		} else if (CommonsUtil.mesmoValor(this.netrinDocumentos.getId(), SiscoatConstants.NETRIN_CND_ESTADUAL)) {
+			CndEstadualResponse response = GsonUtil.fromJson(this.retorno, CndEstadualResponse.class);
+			if (!CommonsUtil.mesmoValor("Não", response.getSefazCND().getEmitiuCertidao())) {
+				return "Não Possui debitos";
+			} else
+				return "Possui debitos";
+		} else if (CommonsUtil.mesmoValor(this.netrinDocumentos.getId(), SiscoatConstants.NETRIN_CND_TRABALHISTA)) {
+			CndTrabalhistaTSTResponse response = GsonUtil.fromJson(this.retorno, CndTrabalhistaTSTResponse.class);
+			if (!CommonsUtil.mesmoValor("Não", response.getTribunalSuperiorTrabalhoCNDT().getEmitiuCertidao())) {
+				return "Não Possui debitos";
+			} else
+				return "Possui debitos";
+		} else
+			return null;
+	}
+
 	public void popularCampos(NetrinConsulta consulta) {
-		this.status = consulta.getStatus(); 
+		this.status = consulta.getStatus();
 		this.uf = consulta.getUf();
 		this.pdf = consulta.getPdf();
 		this.retorno = consulta.getRetorno();
@@ -64,23 +104,23 @@ public class NetrinConsulta {
 	public String toString() {
 		return "NetrinConsulta [id=" + id + ", cpfCnpj=" + cpfCnpj + ", netrinDocumentos=" + netrinDocumentos + "]";
 	}
-	
+
 	public boolean verificaCamposDoc() {
 		NetrinConsulta netrinConsulta = this;
 		NetrinDocumentos doc = netrinConsulta.getNetrinDocumentos();
 		boolean retorno = true;
-		
-		if(CommonsUtil.mesmoValor(doc.getUrlService(), "/api/v1/CNDEstadual")
+
+		if (CommonsUtil.mesmoValor(doc.getUrlService(), "/api/v1/CNDEstadual")
 				&& CommonsUtil.mesmoValor(netrinConsulta.getUf().toUpperCase().trim(), "MG")) {
-			if(CommonsUtil.semValor(netrinConsulta.getCep())){
+			if (CommonsUtil.semValor(netrinConsulta.getCep())) {
 				retorno = false;
 				FacesContext.getCurrentInstance().addMessage(null,
-				new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Cep p/ MG", ""));
+						new FacesMessage(FacesMessage.SEVERITY_ERROR, doc.getNome() + " - Falta Cep p/ MG", ""));
 			}
 		}
 		return retorno;
 	}
-	
+
 	public String getNomeCompleto() {
 		String nome = netrinDocumentos.getNome();
 		if (!CommonsUtil.semValor(uf)) {
@@ -184,5 +224,5 @@ public class NetrinConsulta {
 
 	public void setExpirado(boolean expirado) {
 		this.expirado = expirado;
-	}	
+	}
 }
