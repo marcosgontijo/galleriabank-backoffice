@@ -8,14 +8,13 @@ import javax.faces.context.FacesContext;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.infra.db.model.User;
 
-import br.com.galleriabank.netrin.cliente.model.cndestadual.CndEstadualCndResponse;
-import br.com.galleriabank.netrin.cliente.model.cndfederal.CndFederalCndResponse;
+import br.com.galleriabank.netrin.cliente.model.cndestadual.CndEstadualResponse;
+import br.com.galleriabank.netrin.cliente.model.cndfederal.CndFederalResponse;
 import br.com.galleriabank.netrin.cliente.model.cndttst.CndTrabalhistaTSTResponse;
-import br.com.galleriabank.serasacrednet.cliente.util.GsonUtil;
-
 public class NetrinConsulta {
 
 	private long id;
@@ -70,24 +69,24 @@ public class NetrinConsulta {
 
 	public String getStatusConsulta() {
 		if (CommonsUtil.mesmoValor(this.netrinDocumentos.getId(), SiscoatConstants.NETRIN_CND_FEDERAL)) {
-			CndFederalCndResponse response = GsonUtil.fromJson(this.retorno, CndFederalCndResponse.class);
+			CndFederalResponse response = GsonUtil.fromJson(this.retorno, CndFederalResponse.class);
 			if (!CommonsUtil.mesmoValor("Não", response.getReceitaFederalCND().getDebitosPendentesPGFN())
 					&& !CommonsUtil.mesmoValor("Não", response.getReceitaFederalCND().getDebitosPendentesRFB())) {
-				return "Possui debitos";
-			} else
 				return "Não Possui debitos";
+			} else
+				return "Possui debitos";
 		} else if (CommonsUtil.mesmoValor(this.netrinDocumentos.getId(), SiscoatConstants.NETRIN_CND_ESTADUAL)) {
-			CndEstadualCndResponse response = GsonUtil.fromJson(this.retorno, CndEstadualCndResponse.class);
+			CndEstadualResponse response = GsonUtil.fromJson(this.retorno, CndEstadualResponse.class);
 			if (!CommonsUtil.mesmoValor("Não", response.getSefazCND().getEmitiuCertidao())) {
-				return "Possui debitos";
-			} else
 				return "Não Possui debitos";
+			} else
+				return "Possui debitos";
 		} else if (CommonsUtil.mesmoValor(this.netrinDocumentos.getId(), SiscoatConstants.NETRIN_CND_TRABALHISTA)) {
 			CndTrabalhistaTSTResponse response = GsonUtil.fromJson(this.retorno, CndTrabalhistaTSTResponse.class);
 			if (!CommonsUtil.mesmoValor("Não", response.getTribunalSuperiorTrabalhoCNDT().getEmitiuCertidao())) {
-				return "Possui debitos";
-			} else
 				return "Não Possui debitos";
+			} else
+				return "Possui debitos";
 		} else
 			return null;
 	}
