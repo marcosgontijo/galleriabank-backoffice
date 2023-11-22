@@ -470,7 +470,7 @@ public class MenuItemMB {
 		if (menuCarregado == null) {
 			MenuModel temFavorito = menuService.carregaFavoritos(loginBean.getUsuarioLogado());
 			if(CommonsUtil.semValor(temFavorito.getElements())) {
-				menuCarregado = menuService.constroiMenu((long) 18, loginBean.getUsuarioLogado().getId(),true);
+				menuCarregado = menuService.constroiMenu((long) 18, loginBean.getUsuarioLogado().getId(),false);
 			} else {
 				menuCarregado = menuService.carregaFavoritos(loginBean.getUsuarioLogado());
 				
