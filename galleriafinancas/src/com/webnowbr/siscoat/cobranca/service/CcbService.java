@@ -2779,6 +2779,88 @@ public class CcbService {
 		return null;
 	}
 	
+	public byte[] geraTermoIncomunicabilidadeImovel(CcbParticipantes participante) throws IOException{
+		try {
+			//PagadorRecebedor pagador
+			XWPFDocument document;
+			
+			document = new XWPFDocument(getClass().getResourceAsStream("/resource/TermoDeIncomunicabilidadeImovel.docx"));
+
+			String tipoUniao = ""; //sociedade conjugal/união estável 
+			String pronome = ""; //minha/meu
+			String tipoConjuge = ""; //cônjuge/companheiro
+			
+			if(CommonsUtil.mesmoValor(participante.getPessoa().getSexoConjuge(), "FEMININO")) {
+				pronome = "minha";
+				tipoConjuge = "companheira";
+			} else {
+				pronome = "meu";
+				tipoConjuge = "companheiro";
+			}
+			
+			if(participante.isUniaoEstavel()) {
+				tipoUniao = "união estável";
+			} else {
+				tipoUniao = "sociedade conjugal";
+				tipoConjuge = "cônjuge";
+			}
+			
+		    for (XWPFParagraph p : document.getParagraphs()) {
+				List<XWPFRun> runs = p.getRuns();
+			    if (runs != null) {  	
+			    	for (XWPFRun r : runs) {
+			            String text = r.getText(0);		            
+			            if(CommonsUtil.semValor(text)) {
+			            	continue;
+			            } 						
+						text = trocaValoresXWPF(text, r, "nomeEmitente", (participante.getPessoa().getNome()));    
+						text = trocaValoresXWPF(text, r, "cpfEmitente", (participante.getPessoa().getCpf()));    
+			            text = trocaValoresXWPF(text, r, "dataCompraImovel", objetoCcb.getDataCompraImovel());
+			            text = trocaValoresXWPF(text, r, "numeroMatricula", objetoCcb.getNumeroRegistroMatricula());		          
+			            text = trocaValoresXWPF(text, r, "cartorioImovel", objetoCcb.getCartorioImovel());
+						text = trocaValoresXWPF(text, r, "cidadeImovel", objetoCcb.getCidadeImovel());
+						text = trocaValoresXWPF(text, r, "ufImovel", objetoCcb.getUfImovel());
+						
+						text = trocaValoresXWPF(text, r, "tipoUniao", tipoUniao);
+						text = trocaValoresXWPF(text, r, "dataCasamento", participante.getPessoa().getDataCasamento());
+						text = trocaValoresXWPF(text, r, "pronome", pronome);
+						text = trocaValoresXWPF(text, r, "tipoConjuge", tipoConjuge);
+						
+						text = trocaValoresXWPF(text, r, "nomeConjuge", participante.getPessoa().getNomeConjuge());
+						text = trocaValoresXWPF(text, r, "cpfConjuge", participante.getPessoa().getCpfConjuge());
+						
+						text = trocaValoresXWPF(text, r, "emissaoDia", objetoCcb.getDataDeEmissao().getDate());
+						text = trocaValoresXWPF(text, r, "emissaoMes", CommonsUtil.formataMesExtenso(objetoCcb.getDataDeEmissao()).toLowerCase());
+						text = trocaValoresXWPF(text, r, "emissaoAno", (objetoCcb.getDataDeEmissao().getYear() + 1900));						
+					}
+			    }
+			}
+		    
+		    for (XWPFTable tbl : document.getTables()) {
+				for (XWPFTableRow row : tbl.getRows()) {
+					for (XWPFTableCell cell : row.getTableCells()) {
+						for (XWPFParagraph p : cell.getParagraphs()) {
+							for (XWPFRun r : p.getRuns()) {
+					            String text = r.getText(0);					            
+					            if(CommonsUtil.semValor(text)) {
+					            	continue;
+					            }				         
+							}
+						}
+					}
+				}
+			}
+		   
+		    ByteArrayOutputStream out = new ByteArrayOutputStream();
+			document.write(out);
+			document.close();
+			return out.toByteArray();
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public byte[] geraFichaPPE() throws IOException{
 		try {			
 			InputStream is = getClass().getResourceAsStream("/resource/Ficha PPE.pdf");

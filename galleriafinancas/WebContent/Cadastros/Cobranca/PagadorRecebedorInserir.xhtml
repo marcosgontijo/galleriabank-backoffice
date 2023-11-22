@@ -124,6 +124,15 @@
 							<p:ajax update="CNPJCC NomeCC Nome Endereco Numero Bairro Cidade Cep Estado EMail" event="valueChange"
 								listener="#{pagadorRecebedorMB.selectedCNPJ}" />
 						</p:inputMask>
+						
+						<p:outputLabel for="DtInicioEmpresa" value="Data Inicio Empresa: " 
+							rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisica}"/>
+						<p:inputMask id="DtInicioEmpresa"
+							rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisica}"
+							value="#{pagadorRecebedorMB.objetoPagadorRecebedor.inicioEmpresa}"
+							mask="99/99/9999" label="Data de fundação da Empresa">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:inputMask>
 	
 						<p:outputLabel for="Atividade" value="Profissão: "
 							styleClass="labelBold"

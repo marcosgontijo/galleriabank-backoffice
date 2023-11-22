@@ -2,6 +2,8 @@ package com.webnowbr.siscoat.cobranca.ws.plexi;
 
 import java.util.List;
 
+import com.webnowbr.siscoat.common.CommonsUtil;
+
 public class PlexiWebhookRetorno {
 
 	String codigoVerificador;
@@ -17,6 +19,13 @@ public class PlexiWebhookRetorno {
 	Boolean error;
 	Integer totalProcessos;
 	String mensagem;
+
+	public String getSituacao() {
+		if (!CommonsUtil.mesmoValorIgnoreCase("negativo", status))
+			return "Possui débitos";
+		else
+			return "Não possui débitos";
+	}
 
 	public String getCodigoVerificador() {
 		return codigoVerificador;

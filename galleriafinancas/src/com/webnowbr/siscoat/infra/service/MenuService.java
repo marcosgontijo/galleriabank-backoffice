@@ -103,6 +103,13 @@ public class MenuService {
 
 	}
 
+	
+	public boolean possuiFavorito(User user) {
+		MenuFavoritoDao favoritoDao = new MenuFavoritoDao();
+		List<MenuFavorito> favorito = favoritoDao.findByFilter("user", user);
+		return !CommonsUtil.semValor(favorito);
+	}
+	
 	public MenuModel carregaFavoritos(User user) {
 		List<MenuItem> listasubmenu = new ArrayList<>();
 		List<MenuItem> menuitem = new ArrayList<>();

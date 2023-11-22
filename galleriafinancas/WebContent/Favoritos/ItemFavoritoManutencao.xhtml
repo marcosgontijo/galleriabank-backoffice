@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+			    xmlns:ui="http://java.sun.com/jsf/facelets"
+			    xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+			    template="./FavoritosMenu.xhtml">
+	<ui:define name="conteudo">
+		<h:form id="Itemform">
+		
+
+	
+		<p:outputLabel value="#{menuItemMB.objetoItemFavorito.nome}"/>]
+		<p:spacer width="10px"></p:spacer>
+		
+		<p:commandButton value="Desfavoritar" action="#{menuItemMB.desfavoritar(menuItemMB.objetoItemFavorito.id)}" update="Itemform" rendered="#{menuItemMB.objetoItemFavorito.favorito == true}"></p:commandButton>
+		<p:commandButton value="Favoritar" action="#{menuItemMB.favoritar(menuItemMB.objetoItemFavorito.id)}" update="Itemform" rendered="#{menuItemMB.objetoItemFavorito.favorito == false}"></p:commandButton>		
+		
+		
+</h:form>
+</ui:define>
+</ui:composition>

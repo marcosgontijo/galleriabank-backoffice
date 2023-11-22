@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
+import com.webnowbr.siscoat.common.CommonsUtil;
 
 public class DocketDocumento {
 
@@ -57,6 +58,13 @@ public class DocketDocumento {
 
 	@SerializedName("campos")
 	private DocketDocumentoCampo campos;
+
+	public String getSituacaoPaju() {
+		if (!CommonsUtil.mesmoValorIgnoreCase("NEGATIVA", status))
+			return "Possui débitos";
+		else
+			return "Não possui débitos";
+	}
 
 	public String getDocumentKitId() {
 		return documentKitId;
@@ -193,5 +201,5 @@ public class DocketDocumento {
 	public void setCampos(DocketDocumentoCampo campos) {
 		this.campos = campos;
 	}
-	
+
 }

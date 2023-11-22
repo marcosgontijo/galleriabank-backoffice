@@ -24,6 +24,7 @@ import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 
+import br.com.galleriabank.bigdata.cliente.model.cadastro.DadosBasicosResultPj;
 import br.com.galleriabank.bigdata.cliente.model.processos.ProcessoResult;
 import br.com.galleriabank.bigdata.cliente.model.relacionamentos.Relacionamento;
 import br.com.galleriabank.bigdata.cliente.model.relacionamentos.RelacionamentoResult;
@@ -251,6 +252,88 @@ public class BigDataService {
 			myURLConnection.disconnect();
 			return base64;
 		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+	
+	public DadosBasicosResultPj requestCadastroPJ(PagadorRecebedor pagadorRecebedor) {
+
+		FacesMessage facesMessage = new FacesMessage();
+		DadosBasicosResultPj dadosBasicosResultPj;
+
+		PagadorRecebedorService pagaPagadorRecebedorService = new PagadorRecebedorService();
+		PagadorRecebedorConsulta pagadorRecebedorConsulta = pagaPagadorRecebedorService
+				.buscaConsultaNoPagadorRecebedor(pagadorRecebedor, DocumentosAnaliseEnum.CADASTROBB);
+
+		if (!CommonsUtil.semValor(pagadorRecebedorConsulta)
+				&& !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta())
+				&& DateUtil.getDaysBetweenDates(pagadorRecebedorConsulta.getDataConsulta(),
+						DateUtil.getDataHoje()) <= 30) {
+			dadosBasicosResultPj = GsonUtil.fromJson(pagadorRecebedorConsulta.getRetornoConsulta(), DadosBasicosResultPj.class);
+
+		} else
+			dadosBasicosResultPj = bigDataCriarConsultaCadastroPJ(pagadorRecebedor.getCnpj(), facesMessage);
+
+		if (!CommonsUtil.semValor(dadosBasicosResultPj.getResult().get(0).getBasicData().getOfficialName())) {
+			pagadorRecebedor.setNome(dadosBasicosResultPj.getResult().get(0).getBasicData().getOfficialName());
+			pagadorRecebedor.setEstado(dadosBasicosResultPj.getResult().get(0).getBasicData().getHeadquarterState());
+		}
+		
+		if (CommonsUtil.semValor(dadosBasicosResultPj.getResult().get(0).getBasicData().getFoundedDate())) {
+			pagadorRecebedor.setInicioEmpresa(dadosBasicosResultPj.getResult().get(0).getBasicData().getFoundedDate());
+		}
+		return dadosBasicosResultPj;
+	}
+	
+	public DadosBasicosResultPj bigDataCriarConsultaCadastroPJ(String sCpfCnpj, FacesMessage facesMessage) { 
+		try {
+			int HTTP_COD_SUCESSO = 200;
+			DadosBasicosResultPj resultPJ = null;
+			URL myURL;
+
+			myURL = new URL("https://servicos.galleriabank.com.br/bigdata/api/v1/cadastro/pj/"
+					+ CommonsUtil.somenteNumeros(sCpfCnpj));
+
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setRequestMethod("GET");
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			myURLConnection.setRequestProperty("Authorization",
+					"Bearer " + br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos());
+			myURLConnection.setDoOutput(true);
+
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
+				facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"BigData: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", "");
+			} else {
+				BufferedReader in;
+				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
+				String inputLine;
+				StringBuffer response = new StringBuffer();
+				while ((inputLine = in.readLine()) != null) {
+					response.append(inputLine);
+				}
+				in.close();
+
+				resultPJ = GsonUtil.fromJson(response.toString(), DadosBasicosResultPj.class);
+
+				facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
+
+			}
+			myURLConnection.disconnect();
+
+			return resultPJ;
+		} catch (
+
+				MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();

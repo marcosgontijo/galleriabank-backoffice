@@ -32,6 +32,11 @@
 					<p:outputLabel styleClass="labelBold" for="CNPJ" value="CNPJ: "  rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisica}"/>
 					<h:outputText id="CNPJ" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.cnpj}" label="CNPJ" mask="99.999.999/9999-99" rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisica}"/> 
 					
+					<p:outputLabel styleClass="labelBold" for="DtInicioEmpresa" value="Data de Inicio Empresa: " rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisica}"/>	
+					<h:outputText id="DtInicioEmpresa" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.inicioEmpresa}" label="Data de fundação da Empresa" rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisica}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>	
+					
 					<p:outputLabel styleClass="labelBold" for="Atividade" value="Profissão: "  rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}"/>
 					<p:outputLabel styleClass="labelBold" for="Atividade" value="Ramo de Atividade: " rendered="#{!pagadorRecebedorMB.tipoPessoaIsFisica}"/>
 					<h:outputText id="Atividade" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.atividade}" label="Atividade"/>

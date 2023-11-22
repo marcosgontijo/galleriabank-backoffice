@@ -71,6 +71,11 @@ public class SiscoatConstants {
 	public static final String  URL_SISCOAT_CAF_WEBHOOK	 = "https://backoffice.galleriabank.com.br/sistema/siscoat/caf/webhook?Token=";	
 	public static final String  URL_SISCOAT_PLEXI_WEBHOOK	 = "https://backoffice.galleriabank.com.br/sistema/siscoat/plexi/webhook?Token=";
 
+
+	public static final Long NETRIN_CND_ESTADUAL = 2L;
+	public static final Long NETRIN_CND_FEDERAL = 3L;
+	public static final Long NETRIN_CND_TRABALHISTA = 4L;
+	
 	public static int HTTP_COD_SUCESSO = 200;
 
 }
