@@ -6,8 +6,6 @@ import java.util.Optional;
 
 import javax.faces.bean.ManagedProperty;
 
-import org.primefaces.component.datatable.DataTable;
-import org.primefaces.component.graphicimage.GraphicImage;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.primefaces.model.menu.DefaultMenuModel;
 import org.primefaces.model.menu.DefaultSubMenu;
@@ -117,7 +115,7 @@ public class MenuService {
 		DefaultMenuItem menuPrime = new DefaultMenuItem();
 		MenuFavoritoDao favoritoDao = new MenuFavoritoDao();
 		MenuItemDao itemDao = new MenuItemDao();
-		List<MenuFavorito> favorito = favoritoDao.findByFilter("user", user);
+		List<MenuFavorito> favorito = favoritoDao.ConsultaFavoritoUsuario(user);
 		for (MenuFavorito menu : favorito) {
 			menuitem = itemDao.Consultaitemfavorito(menu.getMenuItemFavorito().getId());
 			for (MenuItem item : menuitem) {
