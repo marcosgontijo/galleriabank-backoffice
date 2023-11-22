@@ -1616,104 +1616,9 @@
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
-
-				<h:panelGroup id="PreAprovadoPanel" style="margin-bottom:20px;">
-					<p:panel header="Pré-Aprovado"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise and ( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus !='Pré-Comite'))}">
-						<f:facet name="header">
-							Pré-Aprovado
-							<p:commandButton icon="pi pi-refresh" value="Atualizar informações">
-									<p:ajax event="click" update="panelGridPreAprovado"
-									listener="#{contratoCobrancaMB.hasDocAnalise}"/>
-							</p:commandButton>
-						</f:facet>
-						<h:panelGrid columns="5" id="panelGridPreAprovado">
-							<p:outputLabel value="Tem Protesto" styleClass="labelBold" />
-							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.protestoTaxa}" id="protestoCBox">
-								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado taxaPreAprovadaPanel" 
-									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
-							</p:selectBooleanCheckbox>
-							<p:spacer width="5px"/>
-							<p:outputLabel value="Inicio Relacionamento Bacen &gt; 2018" styleClass="labelBold" />
-							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.relacionamentoBacenRecenteTaxa}">
-								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado" 
-									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
-							</p:selectBooleanCheckbox>
-							
-							<p:outputLabel value="Tem Cheque Devolvido" styleClass="labelBold" />
-							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.chequeDevolvidoTaxa}">
-								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado" 
-									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
-							</p:selectBooleanCheckbox>
-							<p:spacer width="5px"/>
-							<p:outputLabel value="Tem Divida Vencida" styleClass="labelBold" />
-							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.dividaVencidaTaxa}">
-								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado" 
-									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
-							</p:selectBooleanCheckbox>
-							
-							<p:outputLabel value="Tem Pefin/Refin" styleClass="labelBold" />
-							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.pefinTaxa}" id="pefinCBox">
-								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado taxaPreAprovadaPanel" 
-									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
-							</p:selectBooleanCheckbox>							
-							<p:spacer width="5px"/>
-							<p:outputLabel value="Tem Prejuízo Bacen " styleClass="labelBold" />
-							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.prejuizoBacenTaxa}">
-								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado" 
-									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
-							</p:selectBooleanCheckbox>
-													
-							<p:outputLabel value="Risco Total &lt; 20.000,00" styleClass="labelBold" />
-							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.riscoTotalBaixoTaxa}">
-								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado" 
-									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
-							</p:selectBooleanCheckbox>
-							<p:spacer width="5px"/>
-							<p:outputLabel value="Score &lt; 450" styleClass="labelBold" />
-							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.scoreBaixoTaxa}" id="scoreCBox">
-								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado taxaPreAprovadaPanel" 
-									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada}" />
-							</p:selectBooleanCheckbox>
-							
-							<p:outputLabel value="Garantia é Terreno ou Barracão?" styleClass="labelBold" />
-							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.terrenoOuBarracaoTaxa}">
-								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado" 
-									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
-							</p:selectBooleanCheckbox>							
-							<p:spacer width="5px"/>
-							<p:outputLabel value="Nada Consta" styleClass="labelBold" />
-							<p:selectBooleanCheckbox value="#{contratoCobrancaMB.objetoContratoCobranca.nadaConstaTaxa}">
-								<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado"
-									listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}"/>
-							</p:selectBooleanCheckbox>
-						</h:panelGrid>
-						<h:panelGrid columns="2">
-							<h:panelGroup id="taxaPreAprovadaPanel">
-								<h:panelGrid columns="2">
-									<p:outputLabel for="taxaPreAprovada"
-										value="Taxa Pré-Aprovada: " styleClass="labelBold" />
-									<h:panelGroup>
-										<h:panelGrid columns="2">
-											<p:outputLabel id="taxaPreAprovada"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.taxaPreAprovada}"
-												style="FONT-SIZE: 10pt;width:60px;"
-												disabled="#{contratoCobrancaMB.deleteMode}"
-												converter="bigDecimalConverter" />
-											<h:panelGrid columns="1">
-												<p:outputLabel value="% + IPCA a.m. - Mediante " />
-												<p:outputLabel value="comprovação de renda compatível" />
-											</h:panelGrid>
-										</h:panelGrid>
-									</h:panelGroup>
-									<p:outputLabel for="prazoMaxPreAprovado"
-										value="Prazo Maximo Pré-Aprovado: " styleClass="labelBold" />
-									<h:panelGroup>
-										<p:inputText id="prazoMaxPreAprovado" style="FONT-SIZE: 10pt;width:60px;"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.prazoMaxPreAprovado}"
-											size="100" />
-										<p:outputLabel value=" meses" />
-									</h:panelGroup>
+				
+				<ui:include
+					src="/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusCardPreAprovado.xhtml" />
 
 				<h:panelGroup id="RecebidoPajulaudoPanel"
 					style="margin-bottom:20px;">
@@ -4802,9 +4707,6 @@
 				</script>
 			</p:panel>	
 								
-			<p:panel id="UploadArquivosCci" header="Arquivos CCI" style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite' and contratoCobrancaMB.objetoContratoCobranca.aprovadoComite}"   >						
-				<p:panel id="ArquivosCci" header="Selecionar Arquivo Para Upload" style="margin-bottom:10px;text-align: center;" rendered="#{( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'))}">							
-
 			<p:panel id="UploadArquivosCci" header="Arquivos CCI"
 				style="margin-bottom:10px;"
 				rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite' and contratoCobrancaMB.objetoContratoCobranca.aprovadoComite}">
