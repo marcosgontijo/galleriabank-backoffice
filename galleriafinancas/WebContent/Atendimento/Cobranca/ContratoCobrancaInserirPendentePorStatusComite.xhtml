@@ -1484,8 +1484,16 @@
 										cols="48" maxlength="3000" onblur=""
 										counterTemplate="{0} characters remaining." autoResize="false"
 										value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridico}" />
+										
+									<p:outputLabel for="processosPajuExterno"
+										value="Observação jurídica para o Comitê: " styleClass="labelBold" />
+									<p:inputTextarea id="processosPajuExterno" rows="10"
+										cols="48" maxlength="3000" onblur=""
+										counterTemplate="{0} characters remaining." autoResize="false"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.processosPajuExterno}" />
+										
 									<p:outputLabel for="observacaoParaComiteView"
-										value="Observação para o Comitê: " styleClass="labelBold" />
+										value="Observação analise para o Comitê: " styleClass="labelBold" />
 									<p:inputTextarea id="observacaoParaComiteView" rows="10"
 										cols="48" maxlength="3000" onblur=""
 										counterTemplate="{0} characters remaining." autoResize="false"

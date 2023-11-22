@@ -620,6 +620,7 @@
 									<p:ajax event="valueChange"
 										listener="#{pagadorRecebedorMB.verificaAlteracaoContaCobranca}" />
 								</p:inputText>
+								
 								<p:outputLabel for="Conta" value="Conta: "
 									styleClass="labelBold">
 									<i class="fa font-solid #{pagadorRecebedorMB.objetoPagadorRecebedor.contaBancariaValidada?'fa-check green':'fa-ban red'}"
@@ -640,16 +641,16 @@
 										style="TEXT-DECORATION: bold" />
 								</h:panelGroup>
 								
-									<p:outputLabel for="ContaDigito" value="Conta Digito: "
+								<p:outputLabel for="ContaDigito" value="Conta Digito: "
 									styleClass="labelBold">									
 								</p:outputLabel>
-									<p:inputText id="ContaDigito"
-										value="#{pagadorRecebedorMB.objetoPagadorRecebedor.contaDigito}"
-										styleClass="labelBold" label="contaDigito" onblur="" maxlength="1"
-										style="width:100px;margin-right: 10px;">
-										<p:ajax event="valueChange"
-											listener="#{pagadorRecebedorMB.verificaAlteracaoContaCobranca}" />
-									</p:inputText>
+								<p:inputText id="ContaDigito"
+									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.contaDigito}"
+									styleClass="labelBold" label="contaDigito" onblur="" maxlength="1"
+									style="width:100px;margin-right: 10px;">
+									<p:ajax event="valueChange"
+										listener="#{pagadorRecebedorMB.verificaAlteracaoContaCobranca}" />
+								</p:inputText>
 								
 
 								<p:outputLabel for="tipoConta" value="Tipo Da Conta "
@@ -683,8 +684,6 @@
 										style="TEXT-DECORATION: bold" />
 								</h:panelGroup>
 
-
-
 								<p:outputLabel for="tipoPix" value="Tipo Do Pix "
 									styleClass="labelBold" />
 
@@ -700,7 +699,6 @@
 										listener="#{pagadorRecebedorMB.verificaAlteracaoPix}" />
 								</p:selectOneMenu>
 
-
 								<p:outputLabel value="Banco: " for="Banco"  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
 									styleClass="labelBold" />
 								<p:outputLabel  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
@@ -713,7 +711,6 @@
 									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.agenciaPix}"
 									styleClass="labelBold" />
 
-
 								<p:outputLabel for="Conta" value="Conta: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
 									styleClass="labelBold">
 								</p:outputLabel>
@@ -721,14 +718,12 @@
 									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.contaPix}"
 									styleClass="labelBold" />
 
-
 								<p:outputLabel for="ContaDigito" value="Conta Digito: "  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
 									styleClass="labelBold">
 								</p:outputLabel>
 								<p:outputLabel  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
 									value="#{pagadorRecebedorMB.objetoPagadorRecebedor.contaDigitoPix}"
 									styleClass="labelBold" />
-									
 
 							</h:panelGrid>
 						</div>

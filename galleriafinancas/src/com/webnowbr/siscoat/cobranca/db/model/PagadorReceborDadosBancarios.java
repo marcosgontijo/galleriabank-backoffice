@@ -26,6 +26,17 @@ public class PagadorReceborDadosBancarios {
 		this.pix = pagadorRecebedor.getPix();
 		this.tipoPix = pagadorRecebedor.getTipoPix();
 	}
+	
+	public PagadorReceborDadosBancarios(Responsavel responsavel) {
+		super();
+		this.banco = responsavel.getBanco();
+		this.agencia = responsavel.getAgencia();
+		this.conta = responsavel.getConta();
+		this.contaDigito = responsavel.getContaDigito();
+		this.tipoConta = responsavel.getTipoConta();
+		this.pix = responsavel.getPix();
+		this.tipoPix = responsavel.getTipoPix();
+	}
 
 	public String getBanco() {
 		return banco;
