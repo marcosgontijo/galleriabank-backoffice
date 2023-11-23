@@ -247,10 +247,12 @@ public class Responsavel implements Serializable {
 		FacesContext context = FacesContext.getCurrentInstance();
 		NetrinService netrinService = new NetrinService();
 		
-		
-		String documento = CommonsUtil.somenteNumeros( this.getCpf());
-		if (!CommonsUtil.semValor(this.getCnpj())) {
-			documento= CommonsUtil.somenteNumeros(this.getCnpj());
+		String documento = CommonsUtil.somenteNumeros( this.getCpfCnpjCC());
+		if (!CommonsUtil.semValor(this.getCpfCnpjCC())) {
+			documento = CommonsUtil.somenteNumeros( this.getCpf());
+			if (!CommonsUtil.semValor(this.getCnpj())) {
+				documento= CommonsUtil.somenteNumeros(this.getCnpj());
+			}
 		}
 		
 		ValidaPixRequest validaPixRequest = new ValidaPixRequest(this.getPix(), this.getTipoPix(), documento);
@@ -274,9 +276,12 @@ public class Responsavel implements Serializable {
 		FacesContext context = FacesContext.getCurrentInstance();
 		NetrinService netrinService = new NetrinService();
 		
-		String documento = CommonsUtil.somenteNumeros(this.getCpf());
-		if (!CommonsUtil.semValor( this.getCnpj())) {
-			documento= CommonsUtil.somenteNumeros( this.getCnpj());
+		String documento = CommonsUtil.somenteNumeros( this.getCpfCnpjCC());
+		if (!CommonsUtil.semValor(this.getCpfCnpjCC())) {
+			documento = CommonsUtil.somenteNumeros( this.getCpf());
+			if (!CommonsUtil.semValor(this.getCnpj())) {
+				documento= CommonsUtil.somenteNumeros(this.getCnpj());
+			}
 		}
 		
 		ValidaContaBancariaRequest validaContaBancariaRequest = new ValidaContaBancariaRequest(documento, this.getCodigoBanco(), 
