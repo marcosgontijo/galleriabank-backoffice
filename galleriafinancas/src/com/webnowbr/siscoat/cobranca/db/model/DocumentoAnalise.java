@@ -333,7 +333,9 @@ public class DocumentoAnalise implements Serializable {
 			if (engineRetorno.getTotalApontamentos() > 0) {
 				result.add(new DocumentoAnaliseResumo("Pefin/Refin:", String.format("%,.2f", engineRetorno.getTotalValorApontamentos()) 
 						+ " (" + CommonsUtil.stringValue(engineRetorno.getTotalApontamentos()) + ")"));
-				isPefinRefinAvailable = true;
+				if (engineRetorno.getTotalValorApontamentos().compareTo(new BigDecimal("1000.00")) > 0) {
+					isPefinRefinAvailable = true;
+				}
 				ressalvaPefinNome = engine.getRequestFields().stream().filter(f -> f.getField().equals("nome"))
 						.findFirst().orElse(null).getValue();
 			} else {
