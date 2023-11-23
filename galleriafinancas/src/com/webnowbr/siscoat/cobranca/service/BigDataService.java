@@ -297,7 +297,7 @@ public class BigDataService {
 			DadosBasicosResultPj resultPJ = null;
 			URL myURL;
 
-			myURL = new URL("https://servicos.galleriabank.com.br/bigdata/api/v1/cadastro/pj/"
+			myURL = new URL("https://servicos.galleriabank.com.br/bigData/api/v1/cadastro/pj/"
 					+ CommonsUtil.somenteNumeros(sCpfCnpj));
 
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
