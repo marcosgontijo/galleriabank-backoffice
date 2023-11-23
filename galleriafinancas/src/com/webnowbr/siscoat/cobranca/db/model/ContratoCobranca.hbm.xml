@@ -2230,7 +2230,13 @@
 		</property>	
 		<property name="scoreBaixoTaxa" type="boolean">
 			<column name="scoreBaixoTaxa" not-null="true" default="false"/>
+		</property>
+		<property name="scoreBaixo450Taxa" type="boolean">
+			<column name="scoreBaixo450Taxa" not-null="true" default="false"/>
 		</property>	
+		<property name="scoreBaixo700Taxa" type="boolean">
+			<column name="scoreBaixo700Taxa" not-null="true" default="false"/>
+		</property>		
 		<property name="terceiroGrantidorTaxa" type="boolean">
 			<column name="terceiroGrantidorTaxa" not-null="true" default="false"/>
 		</property>	
@@ -2245,6 +2251,12 @@
 		</property>	
 		<property name="riscoTotalBaixoTaxa" type="boolean">
 			<column name="riscoTotalBaixoTaxa" not-null="true" default="false"/>
+		</property>	
+		<property name="riscoTotal20kTaxa" type="boolean">
+			<column name="riscoTotal20kTaxa" not-null="true" default="false"/>
+		</property>	
+		<property name="riscoTotal50kTaxa" type="boolean">
+			<column name="riscoTotal50kTaxa" not-null="true" default="false"/>
 		</property>	
 		<property name="terrenoOuBarracaoTaxa" type="boolean">
 			<column name="terrenoOuBarracaoTaxa" not-null="true" default="false"/>
