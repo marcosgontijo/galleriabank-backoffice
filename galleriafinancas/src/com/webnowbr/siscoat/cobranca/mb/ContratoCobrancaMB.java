@@ -34439,10 +34439,9 @@ public class ContratoCobrancaMB {
 			}
     	}
     	
-    	if (isAllEngineProcessados) {
+    	if (isAllEngineProcessados && !CommonsUtil.mesmoValor(objetoContratoCobranca.getCadastroAprovadoValor(), "Aprovado")) {
     		hasDocAnalise();
     	}
-    	
 		return isAllEngineProcessados;
 	}
 
