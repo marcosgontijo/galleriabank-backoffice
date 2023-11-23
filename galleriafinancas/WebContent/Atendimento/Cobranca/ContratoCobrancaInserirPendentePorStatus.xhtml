@@ -1748,7 +1748,7 @@
 							
 							<p:outputLabel for="dataPajuComentado"
 								value="Data do Paju Comentado:" styleClass="labelBold" />
-							<p:calendar id="dataPajuComentado" showOn="button" required="true"
+							<p:calendar id="dataPajuComentado" showOn="button" 
 								value="#{contratoCobrancaMB.objetoContratoCobranca.dataPajuComentado}"
 								size="100" pattern="dd/MM/yyyy" styleClass="dateTimeField" />
 						</h:panelGrid>
@@ -1764,7 +1764,7 @@
 							rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel == true and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC'}">
 							<p:dataView var="pessoasProcessos" id="pessoasProcessos"
 								value="#{contratoCobrancaMB.pessoasProcessos}" paginator="false"
-								layout="list"
+								layout="list" style="width: 1200px; max-width: 100%"
 								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
 								<p:dataViewListItem>
 									<p:outputLabel value="#{pessoasProcessos.nome}"
@@ -1779,7 +1779,7 @@
 										oncomplete="PF('processoDialog').show();"
 										update="processoDialogdlg" />
 									<p:dataTable var="processosPessoas" id="processosPessoas"
-										value="#{pessoasProcessos.processos}" style="width:700px;"
+										value="#{pessoasProcessos.processos}"
 										size="small" sortBy="#{processosPessoas.id}"
 										sortOrder="ascending">
 
@@ -1801,7 +1801,7 @@
 												style="FONT-SIZE: 10pt;" />
 										</p:column>
 
-										<p:column style="text-align: center;" headerText="Obs">
+										<p:column style="text-align: center;" headerText="Obs" >
 											<p:outputLabel value="#{processosPessoas.observacao}"
 												style="FONT-SIZE: 10pt;" />
 										</p:column>
@@ -3892,7 +3892,7 @@
 											itemLabel="Conta Poupança" />
 	
 										<p:ajax event="valueChange"
-											listener="#{pagadorRecebedorMB.verificaAlteracaoContaCobranca}" />
+											listener="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.verificaAlteracaoContaCobranca}" />
 									</p:selectOneMenu>
 										
 

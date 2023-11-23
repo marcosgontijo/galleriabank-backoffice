@@ -3761,20 +3761,9 @@ public class ContratoCobrancaMB {
 		FacesContext context = FacesContext.getCurrentInstance();
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		
-		if(this.tituloTelaConsultaPreStatus.contains("Pedir")) {
-			if(CommonsUtil.mesmoValor(objetoContratoCobranca.getFormaDePagamentoLaudoPAJU(), "Antecipado")
-				&& CommonsUtil.semValor(objetoContratoCobranca.getValorLaudoPajuPago())) {
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-						"Contrato Cobrança: Falta Valor PAGO de Laudo + Paju!",
-								""));
-				return "";
-			}
-			if(CommonsUtil.semValor(objetoContratoCobranca.getValorLaudoPajuTotal())) {
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-						"Contrato Cobrança: Falta Valor TOTAL de Laudo + Paju!",
-								""));
-				return "";
-			}
+		boolean continuar = verificaCamposStatus(context);
+		if(!continuar) {
+			return "";
 		}
 		
 		try {
@@ -3996,6 +3985,35 @@ public class ContratoCobrancaMB {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + e, ""));
 			return "";
 		}
+	}
+
+	private boolean verificaCamposStatus(FacesContext context) {
+		if(this.tituloTelaConsultaPreStatus.contains("Pedir")) {
+			if(CommonsUtil.mesmoValor(objetoContratoCobranca.getFormaDePagamentoLaudoPAJU(), "Antecipado")
+				&& CommonsUtil.semValor(objetoContratoCobranca.getValorLaudoPajuPago())) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Contrato Cobrança: Falta Valor PAGO de Laudo + Paju!",
+								""));
+				return false;
+			}
+			if(CommonsUtil.semValor(objetoContratoCobranca.getValorLaudoPajuTotal())) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Contrato Cobrança: Falta Valor TOTAL de Laudo + Paju!",
+								""));
+				return false;
+			}
+		}
+		
+		if(CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Comentario Jurídico")) {
+			if(CommonsUtil.semValor(objetoContratoCobranca.getDataPajuComentado())
+					&& objetoContratoCobranca.isComentarioJuridicoEsteira()) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Contrato Cobrança: Falta Data do PAJU Comentado!",
+								""));
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public void notificaStatusWhatsApp(long idContrato) {
