@@ -25,6 +25,7 @@ import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.infra.db.model.User;
 
+import br.com.galleriabank.bigdata.cliente.model.cadastro.DadosBasicosResultPj;
 import br.com.galleriabank.netrin.cliente.model.cenprot.CenprotResponse;
 import br.com.galleriabank.netrin.cliente.model.contabancaria.ValidaContaBancariaRequest;
 import br.com.galleriabank.netrin.cliente.model.contabancaria.ValidaContaBancariaResponse;
@@ -743,26 +744,17 @@ public class NetrinService {
 		} else {
 
 			if (!CommonsUtil.semValor(pagadorRecebedor.getCnpj())) {
-
-				PagadorRecebedorConsulta pagadorRecebedorConsulta = pagaPagadorRecebedorService
-						.buscaConsultaNoPagadorRecebedor(pagadorRecebedor, DocumentosAnaliseEnum.RECEITA_FEDERAL);
-				ReceitaFederalPJ receitaFederalPJ = null;
-				if (!CommonsUtil.semValor(pagadorRecebedorConsulta)
-						&& !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta())
-						&& !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta().replace("{}", ""))) {
-					receitaFederalPJ = GsonUtil.fromJson(pagadorRecebedorConsulta.getRetornoConsulta(),
-							ReceitaFederalPJ.class);
-				} else {
-					receitaFederalPJ = requestCadastroPJ(pagadorRecebedor.getCnpj());
-				}
-
+				BigDataService bigDataService = new BigDataService();
+				DadosBasicosResultPj receitaFederalPJ = null;
+				receitaFederalPJ = bigDataService.requestCadastroPJ(pagadorRecebedor);				
+				
 				if (!CommonsUtil.semValor(receitaFederalPJ) && !CommonsUtil.semValor(pagadorRecebedor.getId())) {
 					pagaPagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagadorRecebedor,
-							DocumentosAnaliseEnum.RECEITA_FEDERAL, GsonUtil.toJson(receitaFederalPJ));
+							DocumentosAnaliseEnum.CADASTROBB, GsonUtil.toJson(receitaFederalPJ));
 				}
 
 				if (!CommonsUtil.semValor(receitaFederalPJ))
-					nomeConsultado = receitaFederalPJ.getReceitaFederal().getRazaoSocial();
+					nomeConsultado = receitaFederalPJ.getResult().get(0).getBasicData().getOfficialName();
 			}
 
 		}

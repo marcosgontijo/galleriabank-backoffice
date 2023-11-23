@@ -41,7 +41,7 @@ public class CcbParticipantes implements Serializable{
 	}
 	
 	public void atualizaDados() {
-		if(CommonsUtil.semValor(pessoa)) {
+		if(CommonsUtil.semValor(pessoa.getCpf())) {
 			this.setEmpresa(true);
 		}
 		if(this.pessoa.getSexo() != null) {
@@ -51,13 +51,6 @@ public class CcbParticipantes implements Serializable{
 				setFeminino(true);
 			} else {
 				setFeminino(false);
-			}
-		}
-		if(this.pessoa.getEstadocivil() != null) {
-			if(CommonsUtil.mesmoValor(this.pessoa.getEstadocivil(), "CASADO")) {
-				setUniaoEstavel(false);
-			} else if(CommonsUtil.mesmoValor(this.pessoa.getEstadocivil(), "UNIÃO ESTÁVEL")) {
-				setUniaoEstavel(true);
 			}
 		}
 	}

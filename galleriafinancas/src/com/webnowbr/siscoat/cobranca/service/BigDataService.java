@@ -297,7 +297,7 @@ public class BigDataService {
 			DadosBasicosResultPj resultPJ = null;
 			URL myURL;
 
-			myURL = new URL("https://servicos.galleriabank.com.br/bigdata/api/v1/cadastro/pj/"
+			myURL = new URL("https://servicos.galleriabank.com.br/bigData/api/v1/cadastro/pj/"
 					+ CommonsUtil.somenteNumeros(sCpfCnpj));
 
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
@@ -369,7 +369,8 @@ public class BigDataService {
 
 				List<String> tipoPessoa = new ArrayList<String>(Arrays.asList("CPF", "CNPJ"));
 				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
-				if(!CommonsUtil.semValor(retornoProcessoB.getRelacionamento()) 
+				if(!CommonsUtil.semValor(retornoProcessoB)
+						&& !CommonsUtil.semValor(retornoProcessoB.getRelacionamento()) 
 						&& !CommonsUtil.semValor(retornoProcessoB.getRelacionamento().getCurrentRelationships())) {
 					for (Relacionamento relacionamento : retornoProcessoB.getRelacionamento().getCurrentRelationships()
 							.stream().filter(r -> tipoPessoa.contains(r.getRelatedEntityTaxIdType()))
