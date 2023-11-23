@@ -7415,7 +7415,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 								+ " and analiseComercial = true and comentarioJuridicoEsteira = true and documentosCompletos = true and preAprovadoComite = true"
 								+ " and documentosComite = true and aprovadoComite = true and okCliente = true and documentosCompletos = true and certificadoEmitido = true"
 								+ " and ccbPronta = true and contratoConferido = true"
-								+ " and reanalise = true and (reanalisePronta = false or pajuAtualizado = false)";
+								+ " and reanalise = true and (reanalisePronta = false)";
 					}
 					
 					if (tipoConsulta.equals("Ag. Reanalise Juridico")) {

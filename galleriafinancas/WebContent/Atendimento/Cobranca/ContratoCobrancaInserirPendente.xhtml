@@ -1987,6 +1987,15 @@
 								<p:ajax event="valueChange" update=":form:Status"
 									listener="#{contratoCobrancaMB.changeGeracaoPAJU}" />
 							</p:selectOneMenu>
+							
+							<p:outputLabel styleClass="labelBold">Avaliação Paju Reanalise</p:outputLabel>
+							<p:selectOneMenu id="avaliacaoPajuReanalise"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoPajuReanalise}">
+								<f:selectItem itemValue="" itemLabel="" />
+								<f:selectItem itemValue="Neves" itemLabel="Neves" />
+								<f:selectItem itemValue="Luvison" itemLabel="Luvison" />
+								<f:selectItem itemValue="Outro" itemLabel="Outro" />
+							</p:selectOneMenu>
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
