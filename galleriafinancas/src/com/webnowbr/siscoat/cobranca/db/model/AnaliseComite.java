@@ -43,70 +43,74 @@ public class AnaliseComite implements Serializable {
 	private ContratoCobranca contratoCobranca;
 	
 	public void calcularValorParcela() {
-		SimulacaoVO simulador = new SimulacaoVO();	
-		BigDecimal tarifaIOFDiario = BigDecimal.ZERO;
-		BigDecimal tarifaIOFAdicional = SiscoatConstants.TARIFA_IOF_ADICIONAL.divide(BigDecimal.valueOf(100));
-	
-		simulador.setTipoPessoa(tipoPessoa);
+		try {
+			SimulacaoVO simulador = new SimulacaoVO();	
+			BigDecimal tarifaIOFDiario = BigDecimal.ZERO;
+			BigDecimal tarifaIOFAdicional = SiscoatConstants.TARIFA_IOF_ADICIONAL.divide(BigDecimal.valueOf(100));
 		
-		List<String> imoveis = Arrays.asList("Apartamento", "Casa", "Casa de Condomínio", "Terreno");
-		
-		if(!CommonsUtil.mesmoValor(tipoPessoa, "PF") &&
-				imoveis.contains(tipoImovel)
-				&& CommonsUtil.mesmoValor(tipoOp, "Emprestimo")) {
-			tarifaIOFDiario = BigDecimal.ZERO;
-			tarifaIOFAdicional = BigDecimal.ZERO;
-		} else {
-			if (CommonsUtil.mesmoValor(tipoPessoa, "PF")) {		
-				tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PF.divide(BigDecimal.valueOf(100));		
-			} else {		
-				tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PJ.divide(BigDecimal.valueOf(100));		
+			simulador.setTipoPessoa(tipoPessoa);
+			
+			List<String> imoveis = Arrays.asList("Apartamento", "Casa", "Casa de Condomínio", "Terreno");
+			
+			if(!CommonsUtil.mesmoValor(tipoPessoa, "PF") &&
+					imoveis.contains(tipoImovel)
+					&& CommonsUtil.mesmoValor(tipoOp, "Emprestimo")) {
+				tarifaIOFDiario = BigDecimal.ZERO;
+				tarifaIOFAdicional = BigDecimal.ZERO;
+			} else {
+				if (CommonsUtil.mesmoValor(tipoPessoa, "PF")) {		
+					tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PF.divide(BigDecimal.valueOf(100));		
+				} else {		
+					tarifaIOFDiario = SiscoatConstants.TARIFA_IOF_PJ.divide(BigDecimal.valueOf(100));		
+				}
 			}
-		}
-		
-		BigDecimal custoEmissaoValor = SiscoatConstants.CUSTO_EMISSAO_MINIMO;
-		
-		final BigDecimal custoEmissaoPercentual;
-		custoEmissaoPercentual = SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL_BRUTO_NOVO;
-
-		if (valorComite.multiply(custoEmissaoPercentual.divide(BigDecimal.valueOf(100)))
-				.compareTo(SiscoatConstants.CUSTO_EMISSAO_MINIMO) > 0) {
-			custoEmissaoValor = valorComite.multiply(custoEmissaoPercentual.divide(BigDecimal.valueOf(100)));
-		}
-		
-		simulador.setDataSimulacao(new Date());
-		simulador.setTarifaIOFDiario(tarifaIOFDiario);
-		simulador.setTarifaIOFAdicional(tarifaIOFAdicional);
-		simulador.setSeguroMIP(SiscoatConstants.SEGURO_MIP);
-		simulador.setSeguroDFI(SiscoatConstants.SEGURO_DFI);
-		simulador.setValorCredito(valorComite);
-		simulador.setTaxaJuros(taxaComite);
-		simulador.setCarencia(BigInteger.valueOf(carenciaComite));
-		simulador.setQtdParcelas(prazoMaxComite);
-		simulador.setValorImovel(vlrImovel);
-		simulador.setCustoEmissaoValor(custoEmissaoValor);
-		simulador.setCustoEmissaoPercentual(custoEmissaoPercentual);
-		simulador.setTipoCalculo("Price");
-		simulador.setNaoCalcularDFI(false);
-		simulador.setNaoCalcularMIP(false);
-		simulador.setNaoCalcularTxAdm(false);
-		if (CommonsUtil.mesmoValor("liquido", tipoValorComite)) {
-			GoalSeek goalSeek = new GoalSeek(CommonsUtil.doubleValue(simulador.getValorCredito()), 
-					CommonsUtil.doubleValue(simulador.getValorCredito().divide(BigDecimal.valueOf(1.5), MathContext.DECIMAL128)),
-					CommonsUtil.doubleValue(simulador.getValorCredito().multiply(BigDecimal.valueOf(1.5), MathContext.DECIMAL128)));		
-			GoalSeekFunction gsFunfction = new GoalSeekFunction();
-			BigDecimal valorBruto = CommonsUtil.bigDecimalValue(gsFunfction.getGoalSeek(goalSeek, simulador));
-			simulador.setValorCredito(valorBruto.setScale(2, RoundingMode.HALF_UP));
-		} else {
-			simulador.calcular();
-		}
-		
-		for(SimulacaoDetalheVO parcela : simulador.getParcelas()) {
-			if(!CommonsUtil.semValor(parcela.getAmortizacao().add(parcela.getJuros()))) {
-				vlrParcela = parcela.getAmortizacao().add(parcela.getJuros());
-				vlrParcela = vlrParcela.setScale(2, RoundingMode.HALF_UP);
-				break;
-			}		
+			
+			BigDecimal custoEmissaoValor = SiscoatConstants.CUSTO_EMISSAO_MINIMO;
+			
+			final BigDecimal custoEmissaoPercentual;
+			custoEmissaoPercentual = SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL_BRUTO_NOVO;
+	
+			if (valorComite.multiply(custoEmissaoPercentual.divide(BigDecimal.valueOf(100)))
+					.compareTo(SiscoatConstants.CUSTO_EMISSAO_MINIMO) > 0) {
+				custoEmissaoValor = valorComite.multiply(custoEmissaoPercentual.divide(BigDecimal.valueOf(100)));
+			}
+			
+			simulador.setDataSimulacao(new Date());
+			simulador.setTarifaIOFDiario(tarifaIOFDiario);
+			simulador.setTarifaIOFAdicional(tarifaIOFAdicional);
+			simulador.setSeguroMIP(SiscoatConstants.SEGURO_MIP);
+			simulador.setSeguroDFI(SiscoatConstants.SEGURO_DFI);
+			simulador.setValorCredito(valorComite);
+			simulador.setTaxaJuros(taxaComite);
+			simulador.setCarencia(BigInteger.valueOf(carenciaComite));
+			simulador.setQtdParcelas(prazoMaxComite);
+			simulador.setValorImovel(vlrImovel);
+			simulador.setCustoEmissaoValor(custoEmissaoValor);
+			simulador.setCustoEmissaoPercentual(custoEmissaoPercentual);
+			simulador.setTipoCalculo("Price");
+			simulador.setNaoCalcularDFI(false);
+			simulador.setNaoCalcularMIP(false);
+			simulador.setNaoCalcularTxAdm(false);
+			if (CommonsUtil.mesmoValor("liquido", tipoValorComite)) {
+				GoalSeek goalSeek = new GoalSeek(CommonsUtil.doubleValue(simulador.getValorCredito()), 
+						CommonsUtil.doubleValue(simulador.getValorCredito().divide(BigDecimal.valueOf(1.5), MathContext.DECIMAL128)),
+						CommonsUtil.doubleValue(simulador.getValorCredito().multiply(BigDecimal.valueOf(1.5), MathContext.DECIMAL128)));		
+				GoalSeekFunction gsFunfction = new GoalSeekFunction();
+				BigDecimal valorBruto = CommonsUtil.bigDecimalValue(gsFunfction.getGoalSeek(goalSeek, simulador));
+				simulador.setValorCredito(valorBruto.setScale(2, RoundingMode.HALF_UP));
+			} else {
+				simulador.calcular();
+			}
+			
+			for(SimulacaoDetalheVO parcela : simulador.getParcelas()) {
+				if(!CommonsUtil.semValor(parcela.getAmortizacao().add(parcela.getJuros()))) {
+					vlrParcela = parcela.getAmortizacao().add(parcela.getJuros());
+					vlrParcela = vlrParcela.setScale(2, RoundingMode.HALF_UP);
+					break;
+				}		
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
