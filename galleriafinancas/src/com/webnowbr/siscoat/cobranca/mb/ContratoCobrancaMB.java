@@ -3881,6 +3881,7 @@ public class ContratoCobrancaMB {
 								} else if (CommonsUtil.mesmoValor(comite.getVotoAnaliseComite(), "Reprovado")) {
 									this.objetoContratoCobranca.setQtdeVotosReprovadosComite(this.objetoContratoCobranca
 											.getQtdeVotosReprovadosComite().add(BigInteger.ONE));
+									comite.setValorComite(BigDecimal.ZERO);
 								}
 							}
 						}
@@ -9762,7 +9763,7 @@ public class ContratoCobrancaMB {
 		// !CommonsUtil.semValor(this.objetoContratoCobranca.getComentarioJuridico())){
 		// this.objetoAnaliseComite.setComentarioComite(this.objetoContratoCobranca.getComentarioJuridico());
 		// }
-		if (CommonsUtil.semValor(this.objetoAnaliseComite.getValorComite())) {
+		if (this.objetoAnaliseComite.getValorComite() == null) {
 			BigDecimal valorSugerido = BigDecimal.ZERO;
 			if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getImovel().getTipo(), "Apartamento")
 					|| CommonsUtil.mesmoValor(this.objetoContratoCobranca.getImovel().getTipo(), "Casa de Condomínio")
