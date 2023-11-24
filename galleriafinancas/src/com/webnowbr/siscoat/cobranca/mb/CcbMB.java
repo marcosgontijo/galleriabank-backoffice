@@ -57,7 +57,9 @@ import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.RegistroImovelTabelaDao;
+import com.webnowbr.siscoat.cobranca.model.cep.CepResult;
 import com.webnowbr.siscoat.cobranca.service.CcbService;
+import com.webnowbr.siscoat.cobranca.service.CepService;
 import com.webnowbr.siscoat.common.BancosEnum;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
@@ -1984,136 +1986,90 @@ public class CcbMB {
 	}
 	
 	public void getEnderecoByViaNet() {
+
 		try {
-			String inputCep = this.participanteSelecionado.getPessoa().getCep().replace("-", "");
-			int HTTP_COD_SUCESSO = 200;
+			CepService cepService = new CepService();
+			CepResult consultaCep = cepService.consultaCep(this.participanteSelecionado.getPessoa().getCep());
 
-			URL myURL = new URL("http://viacep.com.br/ws/" + inputCep + "/json/");
+			if (CommonsUtil.semValor(consultaCep) || !CommonsUtil.semValor(consultaCep.getErro())) {
 
-			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
-			myURLConnection.setUseCaches(false);
-			myURLConnection.setRequestMethod("GET");
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-			myURLConnection.setDoOutput(true);
-
-			JSONObject myResponse = null;
-
-			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
-				
 			} else {
-				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-				if(myResponse.has("logradouro")) {
-					this.participanteSelecionado.getPessoa().setEndereco(myResponse.get("logradouro").toString());
+
+				if (!CommonsUtil.semValor(consultaCep.getEndereco())) {
+					this.participanteSelecionado.getPessoa().setEndereco(consultaCep.getEndereco());
 				}
-				if(myResponse.has("bairro")) {
-					this.participanteSelecionado.getPessoa().setBairro(myResponse.get("bairro").toString());
-				}				
-				if(myResponse.has("localidade")) {
-					this.participanteSelecionado.getPessoa().setCidade(myResponse.get("localidade").toString());
-				}		
-				if(myResponse.has("uf")) {
-					this.participanteSelecionado.getPessoa().setEstado(myResponse.get("uf").toString());
+				if (!CommonsUtil.semValor(consultaCep.getBairro())) {
+					this.participanteSelecionado.getPessoa().setBairro(consultaCep.getBairro());
+				}
+				if (!CommonsUtil.semValor(consultaCep.getCidade())) {
+					this.participanteSelecionado.getPessoa().setCidade(consultaCep.getCidade());
+				}
+				if (!CommonsUtil.semValor(consultaCep.getEstado())) {
+					this.participanteSelecionado.getPessoa().setEstado(consultaCep.getEstado());
 				}
 			}
-			myURLConnection.disconnect();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 	}
 	
 	public void getEnderecoByViaNetSocio() {
+
 		try {
-			String inputCep = this.socioSelecionado.getPessoa().getCep().replace("-", "");
+			CepService cepService = new CepService();
+			CepResult consultaCep = cepService.consultaCep(this.socioSelecionado.getPessoa().getCep());
 
-			int HTTP_COD_SUCESSO = 200;
+			if (CommonsUtil.semValor(consultaCep) || !CommonsUtil.semValor(consultaCep.getErro())) {
 
-			URL myURL = new URL("http://viacep.com.br/ws/" + inputCep + "/json/");
-
-			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
-			myURLConnection.setUseCaches(false);
-			myURLConnection.setRequestMethod("GET");
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-			myURLConnection.setDoOutput(true);
-
-			JSONObject myResponse = null;
-
-			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
-				
 			} else {
-				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-				if(myResponse.has("logradouro")) {
-					this.socioSelecionado.getPessoa().setEndereco(myResponse.get("logradouro").toString());
+
+				if (!CommonsUtil.semValor(consultaCep.getEndereco())) {
+					this.socioSelecionado.getPessoa().setEndereco(consultaCep.getEndereco());
 				}
-				if(myResponse.has("bairro")) {
-					this.socioSelecionado.getPessoa().setBairro(myResponse.get("bairro").toString());
-				}				
-				if(myResponse.has("localidade")) {
-					this.socioSelecionado.getPessoa().setCidade(myResponse.get("localidade").toString());
-				}			
-				if(myResponse.has("uf")) {
-					this.socioSelecionado.getPessoa().setEstado(myResponse.get("uf").toString());
-				}				
+				if (!CommonsUtil.semValor(consultaCep.getBairro())) {
+					this.socioSelecionado.getPessoa().setBairro(consultaCep.getBairro());
+				}
+				if (!CommonsUtil.semValor(consultaCep.getCidade())) {
+					this.socioSelecionado.getPessoa().setCidade(consultaCep.getCidade());
+				}
+				if (!CommonsUtil.semValor(consultaCep.getEstado())) {
+					this.socioSelecionado.getPessoa().setEstado(consultaCep.getEstado());
+				}
 			}
-			myURLConnection.disconnect();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 	}
 	
 	public void getEnderecoByViaNetImovelCobranca() {
+		
 		try {
-			String inputCep = this.objetoCcb.getCepImovel().replace("-", "");
-			int HTTP_COD_SUCESSO = 200;
+			CepService cepService = new CepService();
+			CepResult consultaCep = cepService.consultaCep(this.objetoCcb.getCepImovel());
 
-			URL myURL = new URL("http://viacep.com.br/ws/" + inputCep + "/json/");
-
-			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
-			myURLConnection.setUseCaches(false);
-			myURLConnection.setRequestMethod("GET");
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-			myURLConnection.setDoOutput(true);
-			
-			JSONObject myResponse = null;
-
-			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
-
+			if (CommonsUtil.semValor(consultaCep) || !CommonsUtil.semValor(consultaCep.getErro())) {
+				
 			} else {
-				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-				if(myResponse.has("logradouro")) {
-					this.objetoCcb.setLogradouroRuaImovel(myResponse.get("logradouro").toString());
+
+				if (!CommonsUtil.semValor(consultaCep.getEndereco())) {
+					this.objetoCcb.setLogradouroRuaImovel(consultaCep.getEndereco());
 				}
-				if(myResponse.has("bairro")) {
-					this.objetoCcb.setBairroImovel(myResponse.get("bairro").toString());
-				}				
-				if(myResponse.has("localidade")) {
-					this.objetoCcb.setCidadeImovel(myResponse.get("localidade").toString());
-				}				
-				if(myResponse.has("uf")) {
-					this.objetoCcb.setUfImovel(myResponse.get("uf").toString());
+				if (!CommonsUtil.semValor(consultaCep.getBairro())) {
+					this.objetoCcb.setBairroImovel(consultaCep.getBairro());
+				}
+				if (!CommonsUtil.semValor(consultaCep.getCidade())) {
+					this.objetoCcb.setCidadeImovel(consultaCep.getCidade());
+				}
+				if (!CommonsUtil.semValor(consultaCep.getEstado())) {
+					this.objetoCcb.setUfImovel(consultaCep.getEstado());
 				}
 			}
-			myURLConnection.disconnect();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 	}
 	
 	public JSONObject getJsonSucesso(InputStream inputStream) {

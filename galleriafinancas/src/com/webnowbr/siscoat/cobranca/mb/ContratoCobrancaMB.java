@@ -185,7 +185,9 @@ import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.cobranca.db.op.SeguradoDAO;
 import com.webnowbr.siscoat.cobranca.db.op.StarkBankBaixaDAO;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
+import com.webnowbr.siscoat.cobranca.model.cep.CepResult;
 import com.webnowbr.siscoat.cobranca.service.BigDataService;
+import com.webnowbr.siscoat.cobranca.service.CepService;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.cobranca.service.EngineService;
 import com.webnowbr.siscoat.cobranca.service.FileService;
@@ -2281,153 +2283,94 @@ public class ContratoCobrancaMB {
 	 * vianet.com.br
 	 */
 	public void getEnderecoByViaNet() {
+		
 		try {
-			if (CommonsUtil.semValor(this.objetoPagadorRecebedor.getCep())) {
-				return;
-			}
-			String inputCep = this.objetoPagadorRecebedor.getCep().replace("-", "");
-			FacesContext context = FacesContext.getCurrentInstance();
+			CepService cepService = new CepService();
+			CepResult consultaCep = cepService.consultaCep(this.objetoPagadorRecebedor.getCep());
 
-			int HTTP_COD_SUCESSO = 200;
-
-			URL myURL = new URL("http://viacep.com.br/ws/" + inputCep + "/json/");
-
-			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
-			myURLConnection.setUseCaches(false);
-			myURLConnection.setRequestMethod("GET");
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-			myURLConnection.setDoOutput(true);
-
-			String erro = "";
-			JSONObject myResponse = null;
-
-			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
+			if (CommonsUtil.semValor(consultaCep) || !CommonsUtil.semValor(consultaCep.getErro())) {
 				this.objetoPagadorRecebedor.setEndereco("");
 				this.objetoPagadorRecebedor.setBairro("");
 				this.objetoPagadorRecebedor.setCidade("");
 				this.objetoPagadorRecebedor.setEstado("");
 			} else {
-				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-				if (myResponse.has("logradouro")) {
-					this.objetoPagadorRecebedor.setEndereco(myResponse.get("logradouro").toString());
+
+				if (!CommonsUtil.semValor(consultaCep.getEndereco())) {
+					this.objetoPagadorRecebedor.setEndereco(consultaCep.getEndereco());
 				}
-				if (myResponse.has("bairro")) {
-					this.objetoPagadorRecebedor.setBairro(myResponse.get("bairro").toString());
+				if (!CommonsUtil.semValor(consultaCep.getBairro())) {
+					this.objetoPagadorRecebedor.setBairro(consultaCep.getBairro());
 				}
-				if (myResponse.has("localidade")) {
-					this.objetoPagadorRecebedor.setCidade(myResponse.get("localidade").toString());
+				if (!CommonsUtil.semValor(consultaCep.getCidade())) {
+					this.objetoPagadorRecebedor.setCidade(consultaCep.getCidade());
 				}
-				if (myResponse.has("uf")) {
-					this.objetoPagadorRecebedor.setEstado(myResponse.get("uf").toString());
+				if (!CommonsUtil.semValor(consultaCep.getEstado())) {
+					this.objetoPagadorRecebedor.setEstado(consultaCep.getEstado());
 				}
 			}
-			myURLConnection.disconnect();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 	}
 
 	public void getEnderecoByViaNetPagador(PagadorRecebedor pagador) {
+
 		try {
-			String inputCep = pagador.getCep().replace("-", "");
-			FacesContext context = FacesContext.getCurrentInstance();
+			CepService cepService = new CepService();
+			CepResult consultaCep = cepService.consultaCep(pagador.getCep());
 
-			int HTTP_COD_SUCESSO = 200;
-
-			URL myURL = new URL("http://viacep.com.br/ws/" + inputCep + "/json/");
-
-			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
-			myURLConnection.setUseCaches(false);
-			myURLConnection.setRequestMethod("GET");
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-			myURLConnection.setDoOutput(true);
-
-			String erro = "";
-			JSONObject myResponse = null;
-
-			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
+			if (CommonsUtil.semValor(consultaCep) || !CommonsUtil.semValor(consultaCep.getErro())) {
 				pagador.setEndereco("");
 				pagador.setBairro("");
 				pagador.setCidade("");
 				pagador.setEstado("");
 			} else {
-				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-				if (myResponse.has("logradouro")) {
-					pagador.setEndereco(myResponse.get("logradouro").toString());
+
+				if (!CommonsUtil.semValor(consultaCep.getEndereco())) {
+					pagador.setEndereco(consultaCep.getEndereco());
 				}
-				if (myResponse.has("bairro")) {
-					pagador.setBairro(myResponse.get("bairro").toString());
+				if (!CommonsUtil.semValor(consultaCep.getBairro())) {
+					pagador.setBairro(consultaCep.getBairro());
 				}
-				if (myResponse.has("localidade")) {
-					pagador.setCidade(myResponse.get("localidade").toString());
+				if (!CommonsUtil.semValor(consultaCep.getCidade())) {
+					pagador.setCidade(consultaCep.getCidade());
 				}
-				if (myResponse.has("uf")) {
-					pagador.setEstado(myResponse.get("uf").toString());
+				if (!CommonsUtil.semValor(consultaCep.getEstado())) {
+					pagador.setEstado(consultaCep.getEstado());
 				}
 			}
-			myURLConnection.disconnect();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	public void getEnderecoByViaNetImovelCobranca() {
+
 		try {
-			String inputCep = this.objetoImovelCobranca.getCep().replace("-", "");
-			FacesContext context = FacesContext.getCurrentInstance();
+			CepService cepService = new CepService();
+			CepResult consultaCep = cepService.consultaCep(this.objetoImovelCobranca.getCep());
 
-			int HTTP_COD_SUCESSO = 200;
-
-			URL myURL = new URL("http://viacep.com.br/ws/" + inputCep + "/json/");
-
-			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
-			myURLConnection.setUseCaches(false);
-			myURLConnection.setRequestMethod("GET");
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-			myURLConnection.setDoOutput(true);
-
-			String erro = "";
-			JSONObject myResponse = null;
-
-			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
+			if (CommonsUtil.semValor(consultaCep) || !CommonsUtil.semValor(consultaCep.getErro())) {
 				this.objetoImovelCobranca.setEndereco("");
 				this.objetoImovelCobranca.setBairro("");
 				this.objetoImovelCobranca.setCidade("");
 				this.objetoImovelCobranca.setEstado("");
 			} else {
-				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-				if (myResponse.has("logradouro")) {
-					this.objetoImovelCobranca.setEndereco(myResponse.get("logradouro").toString());
+
+				if (!CommonsUtil.semValor(consultaCep.getEndereco())) {
+					this.objetoImovelCobranca.setEndereco(consultaCep.getEndereco());
 				}
-				if (myResponse.has("bairro")) {
-					this.objetoImovelCobranca.setBairro(myResponse.get("bairro").toString());
+				if (!CommonsUtil.semValor(consultaCep.getBairro())) {
+					this.objetoImovelCobranca.setBairro(consultaCep.getBairro());
 				}
-				if (myResponse.has("localidade")) {
-					this.objetoImovelCobranca.setCidade(myResponse.get("localidade").toString());
+				if (!CommonsUtil.semValor(consultaCep.getCidade())) {
+					this.objetoImovelCobranca.setCidade(consultaCep.getCidade());
 				}
-				if (myResponse.has("uf")) {
-					this.objetoImovelCobranca.setEstado(myResponse.get("uf").toString());
+				if (!CommonsUtil.semValor(consultaCep.getEstado())) {
+					this.objetoImovelCobranca.setEstado(consultaCep.getEstado());
 				}
 			}
-			myURLConnection.disconnect();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -2446,156 +2389,98 @@ public class ContratoCobrancaMB {
 	}
 
 	public void getEnderecoByViaNetConjuge() {
+		
 		try {
-			if (CommonsUtil.semValor(this.objetoPagadorRecebedor.getCepConjuge())) {
-				return;
-			}
-			String inputCep = this.objetoPagadorRecebedor.getCepConjuge().replace("-", "");
-			FacesContext context = FacesContext.getCurrentInstance();
+			CepService cepService = new CepService();
+			CepResult consultaCep = cepService.consultaCep(this.objetoPagadorRecebedor.getCepConjuge());
 
-			int HTTP_COD_SUCESSO = 200;
-
-			URL myURL = new URL("http://viacep.com.br/ws/" + inputCep + "/json/");
-
-			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
-			myURLConnection.setUseCaches(false);
-			myURLConnection.setRequestMethod("GET");
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-			myURLConnection.setDoOutput(true);
-
-			String erro = "";
-			JSONObject myResponse = null;
-
-			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
-				this.objetoPagadorRecebedor.setEndereco("");
-				this.objetoPagadorRecebedor.setBairro("");
-				this.objetoPagadorRecebedor.setCidade("");
-				this.objetoPagadorRecebedor.setEstado("");
+			if (CommonsUtil.semValor(consultaCep) || !CommonsUtil.semValor(consultaCep.getErro())) {
+				this.objetoPagadorRecebedor.setEnderecoConjuge("");
+				this.objetoPagadorRecebedor.setBairroConjuge("");
+				this.objetoPagadorRecebedor.setCidadeConjuge("");
+				this.objetoPagadorRecebedor.setEstadoConjuge("");
 			} else {
-				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-				if (myResponse.has("logradouro")) {
-					this.objetoPagadorRecebedor.setEnderecoConjuge(myResponse.get("logradouro").toString());
+
+				if (!CommonsUtil.semValor(consultaCep.getEndereco())) {
+					this.objetoPagadorRecebedor.setEnderecoConjuge(consultaCep.getEndereco());
 				}
-				if (myResponse.has("bairro")) {
-					this.objetoPagadorRecebedor.setBairroConjuge(myResponse.get("bairro").toString());
+				if (!CommonsUtil.semValor(consultaCep.getBairro())) {
+					this.objetoPagadorRecebedor.setBairroConjuge(consultaCep.getBairro());
 				}
-				if (myResponse.has("localidade")) {
-					this.objetoPagadorRecebedor.setCidadeConjuge(myResponse.get("localidade").toString());
+				if (!CommonsUtil.semValor(consultaCep.getCidade())) {
+					this.objetoPagadorRecebedor.setCidadeConjuge(consultaCep.getCidade());
 				}
-				if (myResponse.has("uf")) {
-					this.objetoPagadorRecebedor.setEstadoConjuge(myResponse.get("uf").toString());
+				if (!CommonsUtil.semValor(consultaCep.getEstado())) {
+					this.objetoPagadorRecebedor.setEstadoConjuge(consultaCep.getEstado());
 				}
 			}
-			myURLConnection.disconnect();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	public void getEnderecoByViaNetCoobrigado() {
+
 		try {
-			String inputCep = this.objetoPagadorRecebedor.getCep().replace("-", "");
-			FacesContext context = FacesContext.getCurrentInstance();
+			CepService cepService = new CepService();
+			CepResult consultaCep = cepService.consultaCep(this.objetoPagadorRecebedor.getCep());
 
-			int HTTP_COD_SUCESSO = 200;
-
-			URL myURL = new URL("http://viacep.com.br/ws/" + inputCep + "/json/");
-
-			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
-			myURLConnection.setUseCaches(false);
-			myURLConnection.setRequestMethod("GET");
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-			myURLConnection.setDoOutput(true);
-
-			String erro = "";
-			JSONObject myResponse = null;
-
-			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
+			if (CommonsUtil.semValor(consultaCep) || !CommonsUtil.semValor(consultaCep.getErro())) {
 				this.objetoPagadorRecebedor.setEndereco("");
 				this.objetoPagadorRecebedor.setBairro("");
 				this.objetoPagadorRecebedor.setCidade("");
 				this.objetoPagadorRecebedor.setEstado("");
 			} else {
-				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-				if (myResponse.has("logradouro")) {
-					this.objetoPagadorRecebedor.setEnderecoCoobrigado(myResponse.get("logradouro").toString());
+
+				if (!CommonsUtil.semValor(consultaCep.getEndereco())) {
+					this.objetoPagadorRecebedor.setEnderecoConjuge(consultaCep.getEndereco());
 				}
-				if (myResponse.has("bairro")) {
-					this.objetoPagadorRecebedor.setBairroCoobrigado(myResponse.get("bairro").toString());
+				if (!CommonsUtil.semValor(consultaCep.getBairro())) {
+					this.objetoPagadorRecebedor.setBairroConjuge(consultaCep.getBairro());
 				}
-				if (myResponse.has("localidade")) {
-					this.objetoPagadorRecebedor.setCidadeCoobrigado(myResponse.get("localidade").toString());
+				if (!CommonsUtil.semValor(consultaCep.getCidade())) {
+					this.objetoPagadorRecebedor.setCidadeConjuge(consultaCep.getCidade());
 				}
-				if (myResponse.has("uf")) {
-					this.objetoPagadorRecebedor.setEstadoCoobrigado(myResponse.get("uf").toString());
+				if (!CommonsUtil.semValor(consultaCep.getEstado())) {
+					this.objetoPagadorRecebedor.setEstadoConjuge(consultaCep.getEstado());
 				}
 			}
-			myURLConnection.disconnect();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 	}
 
 	public void getEnderecoByViaNetCoobrigadoCasado() {
+
 		try {
-			String inputCep = this.objetoPagadorRecebedor.getCep().replace("-", "");
-			FacesContext context = FacesContext.getCurrentInstance();
+			CepService cepService = new CepService();
+			CepResult consultaCep = cepService.consultaCep(this.objetoPagadorRecebedor.getCep());
 
-			int HTTP_COD_SUCESSO = 200;
-
-			URL myURL = new URL("http://viacep.com.br/ws/" + inputCep + "/json/");
-
-			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
-			myURLConnection.setUseCaches(false);
-			myURLConnection.setRequestMethod("GET");
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-			myURLConnection.setDoOutput(true);
-
-			String erro = "";
-			JSONObject myResponse = null;
-
-			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
+			if (CommonsUtil.semValor(consultaCep) || !CommonsUtil.semValor(consultaCep.getErro())) {
 				this.objetoPagadorRecebedor.setEndereco("");
 				this.objetoPagadorRecebedor.setBairro("");
 				this.objetoPagadorRecebedor.setCidade("");
 				this.objetoPagadorRecebedor.setEstado("");
 			} else {
-				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-				if (myResponse.has("logradouro")) {
-					this.objetoPagadorRecebedor.setEnderecoCoobrigadoCasado(myResponse.get("logradouro").toString());
+
+				if (!CommonsUtil.semValor(consultaCep.getEndereco())) {
+					this.objetoPagadorRecebedor.setEnderecoCoobrigadoCasado(consultaCep.getEndereco());
 				}
-				if (myResponse.has("bairro")) {
-					this.objetoPagadorRecebedor.setBairroCoobrigadoCasado(myResponse.get("bairro").toString());
+				if (!CommonsUtil.semValor(consultaCep.getBairro())) {
+					this.objetoPagadorRecebedor.setBairroCoobrigadoCasado(consultaCep.getBairro());
 				}
-				if (myResponse.has("localidade")) {
-					this.objetoPagadorRecebedor.setCidadeCoobrigadoCasado(myResponse.get("localidade").toString());
+				if (!CommonsUtil.semValor(consultaCep.getCidade())) {
+					this.objetoPagadorRecebedor.setCidadeCoobrigadoCasado(consultaCep.getCidade());
 				}
-				if (myResponse.has("uf")) {
-					this.objetoPagadorRecebedor.setEstadoCoobrigadoCasado(myResponse.get("uf").toString());
+				if (!CommonsUtil.semValor(consultaCep.getEstado())) {
+					this.objetoPagadorRecebedor.setEstadoCoobrigadoCasado(consultaCep.getEstado());
 				}
 			}
-			myURLConnection.disconnect();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 	}
 
 	/***
@@ -9817,7 +9702,7 @@ public class ContratoCobrancaMB {
 		// !CommonsUtil.semValor(this.objetoContratoCobranca.getComentarioJuridico())){
 		// this.objetoAnaliseComite.setComentarioComite(this.objetoContratoCobranca.getComentarioJuridico());
 		// }
-		if (CommonsUtil.semValor(this.objetoAnaliseComite.getValorComite())) {
+		if (this.objetoAnaliseComite.getValorComite() == null) {
 			BigDecimal valorSugerido = BigDecimal.ZERO;
 			if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getImovel().getTipo(), "Apartamento")
 					|| CommonsUtil.mesmoValor(this.objetoContratoCobranca.getImovel().getTipo(), "Casa de Condomínio")
@@ -31660,6 +31545,7 @@ public class ContratoCobrancaMB {
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 		documentoAnaliseDao.merge(documentoAnaliseAdicionar);
 		listaArquivosAnaliseDocumentos();
+		this.objetoContratoCobranca.setDocumentosAnalisados(false);
 	}
 	
 	public void adicionaEstado() {
@@ -34342,176 +34228,172 @@ public class ContratoCobrancaMB {
 	}
 	
 	public void hasDocAnalise() {
-//		if (!CommonsUtil.mesmoValor(this.objetoContratoCobranca.getCadastroAprovadoValor(), "Aprovado")) {
-//			User user = loginBean.getUsuarioLogado();
-//			if (!user.isProfileGerenteAnalise()) {
-//				this.objetoContratoCobranca.setChequeDevolvidoTaxa(false);
-//				this.objetoContratoCobranca.setPefinTaxa(false);
-//				this.objetoContratoCobranca.setProtestoTaxa(false);
-//				this.objetoContratoCobranca.setScoreBaixo450Taxa(false);
-//				this.objetoContratoCobranca.setScoreBaixo700Taxa(false);
-//				this.objetoContratoCobranca.setRiscoTotal20kTaxa(false);
-//				this.objetoContratoCobranca.setRiscoTotal50kTaxa(false);
-//				this.objetoContratoCobranca.setDividaVencidaTaxa(false);
-//				this.objetoContratoCobranca.setPrejuizoBacenTaxa(false);
-//				this.objetoContratoCobranca.setRelacionamentoBacenRecenteTaxa(false);
-//				this.objetoContratoCobranca.setTerrenoOuBarracaoTaxa(false);
-//				this.objetoContratoCobranca.setNadaConstaTaxa(false);
-//			}
-//			
-//			Set<String> ressalvaPefin = new HashSet<String>();
-//			Set<String> ressalvaCcf = new HashSet<String>();
-//			Set<String> ressalvaProtesto = new HashSet<String>();
-//			Set<String> ressalvaTrabalhista = new HashSet<String>();
-//			Set<String> ressalvaProcesso = new HashSet<String>();
-//			
-//			boolean isScore450 = false;
-//			boolean isRisco20k = false;
-//			
-//			if (this.listaDocumentoAnalise != null && this.listaDocumentoAnalise.size() > 0) {
-//				boolean nadaConsta = true;
-//				for (DocumentoAnalise docAnalise : listaDocumentoAnalise) {	
-//					if ((docAnalise.getMotivoAnalise().toLowerCase().contains("proprietario atual") || docAnalise.getMotivoAnalise().toLowerCase().contains("comprador")) 
-//							&& docAnalise.isLiberadoAnalise()) {
-//						docAnalise.getResumoEngine();
-//						docAnalise.getResumoScr();
-//						docAnalise.getResumoProcesso();
-//						if (docAnalise.isCcfApontamentosAvailable()) {
-//							this.objetoContratoCobranca.setChequeDevolvidoTaxa(true);
-//							nadaConsta = false;
-//							ressalvaCcf.add(docAnalise.getRessalvaCcfNome());
-//						}
-//						if (docAnalise.isPefinRefinAvailable()) {
-//							this.objetoContratoCobranca.setPefinTaxa(true);
-//							nadaConsta = false;
-//							ressalvaPefin.add(docAnalise.getRessalvaPefinNome());
-//						}
-//						if (docAnalise.isProtestosAvailable()) {
-//							this.objetoContratoCobranca.setProtestoTaxa(true);
-//							nadaConsta = false;
-//							ressalvaProtesto.add(docAnalise.getRessalvaProtestoNome());
-//						}
-//						if (docAnalise.isScoreBaixo450()) {
-//							this.objetoContratoCobranca.setScoreBaixo450Taxa(true);
-//							this.objetoContratoCobranca.setScoreBaixo700Taxa(false);
-//							isScore450 = true;
-//							nadaConsta = false;
-//						}
-//						if (docAnalise.isScoreBaixo700() && !isScore450) {
-//							this.objetoContratoCobranca.setScoreBaixo700Taxa(true);
-//							nadaConsta = false;
-//						}
-//						if (docAnalise.isDividaVencidaAvailable()) {
-//							this.objetoContratoCobranca.setDividaVencidaTaxa(true);
-//							nadaConsta = false;
-//						}
-//						if (docAnalise.isPrejuizoBacenAvailable()) {
-//							this.objetoContratoCobranca.setPrejuizoBacenTaxa(true);
-//							nadaConsta = false;
-//						}
-//						if (this.objetoImovelCobranca.getTipo().contains("Galpão") || this.objetoImovelCobranca.getTipo().contains("Terreno")) {
-//							this.objetoContratoCobranca.setTerrenoOuBarracaoTaxa(true);
-//							nadaConsta = false;
-//						}
-//						if (docAnalise.isRelacionamentoBacenIniciadoAvailable()) {
-//							this.objetoContratoCobranca.setRelacionamentoBacenRecenteTaxa(true);
-//							nadaConsta = false;
-//						}
-//						if (docAnalise.isInicioRelacionamentoInexistente()) {
-//							this.objetoContratoCobranca.setInicioRelacionamentoInexistenteTaxa(true);
-//							nadaConsta = false;
-//						}
-//						if (docAnalise.isRiscoTotal20k()) {
-//							this.objetoContratoCobranca.setRiscoTotal20kTaxa(true);
-//							this.objetoContratoCobranca.setRiscoTotal50kTaxa(false);
-//							isRisco20k = true;
-//							nadaConsta = false;
-//						}
-//						if (docAnalise.isRiscoTotal50k() && !isRisco20k) {
-//							this.objetoContratoCobranca.setRiscoTotal50kTaxa(true);
-//							nadaConsta = false;
-//						}
-//						if (docAnalise.isContemAcoesEngine() || docAnalise.isContemAcoesProcesso()) {
-//							if (!docAnalise.getRessalvaProcessosNome().isEmpty()) {
-//								ressalvaProcesso.add(docAnalise.getRessalvaProcessosNome());
-//							}			
-//						}
-//						if (!docAnalise.getRessalvaTrabalhistaNome().isEmpty()) {
-//							ressalvaTrabalhista.add(docAnalise.getRessalvaTrabalhistaNome());
-//						}
-//					}
-//				}
-//				
-//				this.objetoContratoCobranca.setPefinRefinRessalva(this.objetoContratoCobranca.getPefinRefinRessalva() == "" 
-//																	? String.join(", ", ressalvaPefin) 
-//																	: this.objetoContratoCobranca.getPefinRefinRessalva());
-//				this.objetoContratoCobranca.setChequeDevolvidoRessalva(this.objetoContratoCobranca.getChequeDevolvidoRessalva() == "" 
-//																	? String.join(", ", ressalvaCcf)
-//																	: this.objetoContratoCobranca.getChequeDevolvidoRessalva());
-//				this.objetoContratoCobranca.setProtestoRessalva(this.objetoContratoCobranca.getProtestoRessalva() == "" 
-//																	? String.join(", ", ressalvaProtesto) 
-//																	: this.objetoContratoCobranca.getProtestoRessalva());
-//				this.objetoContratoCobranca.setProcessosRessalva(this.objetoContratoCobranca.getProcessosRessalva() == "" 
-//																	? String.join(", ", ressalvaProcesso)
-//																	: this.objetoContratoCobranca.getProcessosRessalva());
-//				this.objetoContratoCobranca.setTrabalhistaRessalva(this.objetoContratoCobranca.getTrabalhistaRessalva() == "" 
-//																	? String.join(", ", ressalvaTrabalhista) 
-//																	: this.objetoContratoCobranca.getTrabalhistaRessalva());
-//				this.objetoContratoCobranca.setNadaConstaTaxa(nadaConsta);
-//			} else {
-//				this.objetoContratoCobranca.setNadaConstaTaxa(true);
-//			}
-//			this.objetoContratoCobranca.calcularTaxaPreAprovada();
-//			PrimeFaces current = PrimeFaces.current();
-//			current.ajax().update("form:PreAprovadoPanel");
-//		}
+		if (!this.objetoContratoCobranca.isDocumentosAnalisados()) {
+			if (this.listaDocumentoAnalise != null && this.listaDocumentoAnalise.size() > 0) {
+				List<DocumentoAnalise> compradores = new ArrayList<DocumentoAnalise>();
+				List<DocumentoAnalise> proprietarios = new ArrayList<DocumentoAnalise>();
+				Set<String> ressalvaPefin = new HashSet<String>();
+				Set<String> ressalvaCcf = new HashSet<String>();
+				Set<String> ressalvaProtesto = new HashSet<String>();
+				Set<String> ressalvaTrabalhista = new HashSet<String>();
+				Set<String> ressalvaProcesso = new HashSet<String>();
 
+				boolean isScore450 = false;
+				boolean isRisco20k = false;
+				boolean nadaConsta = true;
+
+				for (DocumentoAnalise docAnalise : listaDocumentoAnalise) {
+					if (CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise().toLowerCase(), "proprietario atual") && docAnalise.isLiberadoAnalise()) {
+						proprietarios.add(docAnalise);
+					} else if (CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise().toLowerCase(), "comprador") && docAnalise.isLiberadoAnalise()) {
+						compradores.add(docAnalise);				
+					}
+				}
+
+				if (compradores.size() > 0) {
+					for (DocumentoAnalise docAnalise : compradores) {	
+						analisaTaxasDocumentos(docAnalise, nadaConsta, isScore450, 
+								isRisco20k, ressalvaPefin, ressalvaCcf, 
+								ressalvaProtesto, ressalvaTrabalhista, ressalvaProcesso);
+					}
+					this.objetoContratoCobranca.setDocumentosAnalisados(true);
+				} else {
+					for (DocumentoAnalise docAnalise : proprietarios) {	
+						analisaTaxasDocumentos(docAnalise, nadaConsta, isScore450, 
+								isRisco20k, ressalvaPefin, ressalvaCcf, 
+								ressalvaProtesto, ressalvaTrabalhista, ressalvaProcesso);
+					}
+					this.objetoContratoCobranca.setDocumentosAnalisados(true);
+				}
+				this.objetoContratoCobranca.setPefinRefinRessalva(this.objetoContratoCobranca.getPefinRefinRessalva() == "" 
+						? String.join(", ", ressalvaPefin) 
+								: this.objetoContratoCobranca.getPefinRefinRessalva());
+				this.objetoContratoCobranca.setChequeDevolvidoRessalva(this.objetoContratoCobranca.getChequeDevolvidoRessalva() == "" 
+						? String.join(", ", ressalvaCcf)
+								: this.objetoContratoCobranca.getChequeDevolvidoRessalva());
+				this.objetoContratoCobranca.setProtestoRessalva(this.objetoContratoCobranca.getProtestoRessalva() == "" 
+						? String.join(", ", ressalvaProtesto) 
+								: this.objetoContratoCobranca.getProtestoRessalva());
+				this.objetoContratoCobranca.setProcessosRessalva(this.objetoContratoCobranca.getProcessosRessalva() == "" 
+						? String.join(", ", ressalvaProcesso)
+								: this.objetoContratoCobranca.getProcessosRessalva());
+				this.objetoContratoCobranca.setTrabalhistaRessalva(this.objetoContratoCobranca.getTrabalhistaRessalva() == "" 
+						? String.join(", ", ressalvaTrabalhista) 
+								: this.objetoContratoCobranca.getTrabalhistaRessalva());
+			} else {
+				this.objetoContratoCobranca.setNadaConstaTaxa(true);
+			}
+			this.objetoContratoCobranca.calcularTaxaPreAprovada();
+			PrimeFaces current = PrimeFaces.current();
+			current.ajax().update("form:PreAprovadoPanel");
 	}
-	
-	public void verificaEngineProcessados() {
-//		for (DocumentoAnalise doc : listaDocumentoAnalise) {
-//			if (doc.getEngine() == null) {
-//				setEngineProcessados(false);
-//				break;
-//			}
-//		}
-		setEngineProcessados(true);
-//		if (isEngineProcessados()) {
-//			hasDocAnalise();
-//		}
-	}
+}
 	
     public boolean isEngineProcessados() {
     	boolean isAllEngineProcessados = true;
     	
-//		docList = listaDocumentoAnalise
-//				.stream()
-//				.filter(x -> x.isLiberadoAnalise())
-//				.collect(Collectors.toList());
-//		
-//    	for (DocumentoAnalise docAnalise : docList) { 
-//			if (docAnalise.getEngine() == null) {
-//    			continue;
-//			}
-//			
-//			if (docAnalise.getEngine() != null && !CommonsUtil.semValor(docAnalise.getEngine().getIdCallManager())) {
-//				if (CommonsUtil.semValor(docAnalise.getRetornoEngine())) {
-//					isAllEngineProcessados = false;
-//					break;
-//				}
-//			}
-//    	}
-//    	
-//    	if (isAllEngineProcessados) {
-//    		hasDocAnalise();
-//    	}
+		docList = listaDocumentoAnalise
+				.stream()
+				.filter(x -> x.isLiberadoAnalise())
+				.collect(Collectors.toList());
+		
+    	for (DocumentoAnalise docAnalise : docList) { 
+			if (docAnalise.getEngine() == null) {
+    			continue;
+			}
+			
+			if (docAnalise.getEngine() != null && !CommonsUtil.semValor(docAnalise.getEngine().getIdCallManager())) {
+				if (CommonsUtil.semValor(docAnalise.getRetornoEngine())) {
+					isAllEngineProcessados = false;
+					break;
+				}
+			}
+    	}
     	
     	if (isAllEngineProcessados && !CommonsUtil.mesmoValor(objetoContratoCobranca.getCadastroAprovadoValor(), "Aprovado")) {
     		hasDocAnalise();
     	}
 		return isAllEngineProcessados;
 	}
-
+    
+    public void analisaTaxasDocumentos(DocumentoAnalise docAnalise, 
+    								   boolean nadaConsta,
+    								   boolean isScore450,
+    								   boolean isRisco20k,
+    								   Set<String> ressalvaPefin,
+    								   Set<String> ressalvaCcf,
+    								   Set<String> ressalvaProtesto,
+    								   Set<String> ressalvaTrabalhista,
+    								   Set<String> ressalvaProcesso) {
+		docAnalise.getResumoEngine();
+		docAnalise.getResumoScr();
+		docAnalise.getResumoProcesso();
+		if (docAnalise.isCcfApontamentosAvailable()) {
+			this.objetoContratoCobranca.setChequeDevolvidoTaxa(true);
+			nadaConsta = false;
+			ressalvaCcf.add(docAnalise.getRessalvaCcfNome());
+		}
+		if (docAnalise.isPefinRefinAvailable()) {
+			this.objetoContratoCobranca.setPefinTaxa(true);
+			nadaConsta = false;
+			ressalvaPefin.add(docAnalise.getRessalvaPefinNome());
+		}
+		if (docAnalise.isProtestosAvailable()) {
+			this.objetoContratoCobranca.setProtestoTaxa(true);
+			nadaConsta = false;
+			ressalvaProtesto.add(docAnalise.getRessalvaProtestoNome());
+		}
+		if (docAnalise.isScoreBaixo450()) {
+			this.objetoContratoCobranca.setScoreBaixo450Taxa(true);
+			this.objetoContratoCobranca.setScoreBaixo700Taxa(false);
+			isScore450 = true;
+			nadaConsta = false;
+		}
+		if (docAnalise.isScoreBaixo700() && !isScore450) {
+			this.objetoContratoCobranca.setScoreBaixo700Taxa(true);
+			nadaConsta = false;
+		}
+		if (docAnalise.isDividaVencidaAvailable()) {
+			this.objetoContratoCobranca.setDividaVencidaTaxa(true);
+			nadaConsta = false;
+		}
+		if (docAnalise.isPrejuizoBacenAvailable()) {
+			this.objetoContratoCobranca.setPrejuizoBacenTaxa(true);
+			nadaConsta = false;
+		}
+		if (this.objetoImovelCobranca.getTipo().contains("Galpão") || this.objetoImovelCobranca.getTipo().contains("Terreno")) {
+			this.objetoContratoCobranca.setTerrenoOuBarracaoTaxa(true);
+			nadaConsta = false;
+		}
+		if (docAnalise.isRelacionamentoBacenIniciadoAvailable()) {
+			this.objetoContratoCobranca.setRelacionamentoBacenRecenteTaxa(true);
+			nadaConsta = false;
+		}
+		if (docAnalise.isInicioRelacionamentoInexistente()) {
+			this.objetoContratoCobranca.setInicioRelacionamentoInexistenteTaxa(true);
+			nadaConsta = false;
+		}
+		if (docAnalise.isRiscoTotal20k()) {
+			this.objetoContratoCobranca.setRiscoTotal20kTaxa(true);
+			this.objetoContratoCobranca.setRiscoTotal50kTaxa(false);
+			isRisco20k = true;
+			nadaConsta = false;
+		}
+		if (docAnalise.isRiscoTotal50k() && !isRisco20k) {
+			this.objetoContratoCobranca.setRiscoTotal50kTaxa(true);
+			nadaConsta = false;
+		}
+		if (docAnalise.isContemAcoesEngine() || docAnalise.isContemAcoesProcesso()) {
+			if (!docAnalise.getRessalvaProcessosNome().isEmpty()) {
+				ressalvaProcesso.add(docAnalise.getRessalvaProcessosNome());
+			}			
+		}
+		if (!docAnalise.getRessalvaTrabalhistaNome().isEmpty()) {
+			ressalvaTrabalhista.add(docAnalise.getRessalvaTrabalhistaNome());
+		}
+		this.objetoContratoCobranca.setNadaConstaTaxa(nadaConsta);
+    }
+    
 	public void setEngineProcessados(boolean engineProcessados) {
 		this.engineProcessados = engineProcessados;
 	}
