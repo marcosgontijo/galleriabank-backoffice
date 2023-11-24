@@ -537,6 +537,7 @@ public class CcbMB {
 			this.objetoCcb.setLogradouroNumeroImovel(CommonsUtil.removeEspacos(endereco[1]));
 		}
 		this.objetoCcb.setBairroImovel(imovel.getBairro());
+		this.objetoCcb.setDataCompraImovel(imovel.getDataCompra());
 		//listaArquivos();
 		
 		//Popular Campos para Simulação
@@ -579,7 +580,9 @@ public class CcbMB {
 		listaTipoDownload.add("Declaração de União Estavel");
 		listaTipoDownload.add("Declaração Destinação Recursos");
 		listaTipoDownload.add("Termo Responsabilidade Paju");
+		listaTipoDownload.add("Termo Incomunicabilidade Imovel");
 		listaTipoDownload.add("Averbacao");
+		
 	}
 
 	public void clearContratoCobranca() {
@@ -915,6 +918,12 @@ public class CcbMB {
 			pesquisaParticipante();
 			populateSelectedPagadorRecebedor();	
 			addParticipante = true;
+			
+			if(participanteSelecionado.isEmpresa()) {
+				objetoCcb.setTipoPessoaEmitente("PJ");
+			} else {
+				objetoCcb.setTipoPessoaEmitente("PF");
+			}
 			
 			participanteSelecionado.setTipoParticipante("EMITENTE");
 			concluirParticipante();
@@ -1420,6 +1429,14 @@ public class CcbMB {
 		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
 		byte[] arquivos = null;
 		List<String> listaDocumentos = new ArrayList<String>();
+		for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
+			participante.atualizaDados();
+    		if(participante.getSocios().size() > 0){
+    			for(CcbParticipantes socio : participante.getSocios()) {
+    				socio.atualizaDados();
+    			}
+    		}
+    	}		    	
 		for(String s : listaTipoDownload) {
 			String s2 = new String(s);
 			listaDocumentos.add(s2);
@@ -1577,7 +1594,7 @@ public class CcbMB {
 			    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 			    		listaArquivos.put(nomeDoc, arquivo);
 			    	}
-			    }  else if(CommonsUtil.mesmoValor(tipoDownload,"Termo Responsabilidade Paju")) {
+			    } else if(CommonsUtil.mesmoValor(tipoDownload,"Termo Responsabilidade Paju")) {
 			    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
 			    		if(participante.getSocios().size() > 0){
 			    			for(CcbParticipantes socio : participante.getSocios()) {
@@ -1591,6 +1608,23 @@ public class CcbMB {
 			    		nomeDoc = participante.getPessoa().getNome() + "_" + "TermoPaju.docx";
 			    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc); 	
 			    		listaArquivos.put(nomeDoc, arquivo);
+			    	}
+			    } else if(CommonsUtil.mesmoValor(tipoDownload,"Termo Incomunicabilidade Imovel")) {
+			    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
+			    		if(participante.getSocios().size() > 0){
+			    			for(CcbParticipantes socio : participante.getSocios()) {
+			    				arquivo = ccbService.geraTermoIncomunicabilidadeImovel(socio);
+				    			nomeDoc = socio.getPessoa().getNome() + "_" + "TermoPaju.docx";
+					    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
+					    		listaArquivos.put(nomeDoc, arquivo);
+			    			}
+			    		}
+			    		if(!participante.isEmpresa() && !CommonsUtil.semValor(participante.getPessoa().getNomeConjuge())) {
+				    		arquivo = ccbService.geraTermoIncomunicabilidadeImovel(participante);
+				    		nomeDoc = participante.getPessoa().getNome() + "_" + "TermoPaju.docx";
+				    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc); 	
+				    		listaArquivos.put(nomeDoc, arquivo);
+			    		}
 			    	}
 			    } else if(CommonsUtil.mesmoValor(tipoDownload,"Averbacao")) {
 			    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
@@ -1615,15 +1649,27 @@ public class CcbMB {
 		    		
 		    	}
 	    	}
-	    	 
-	    	arquivos = CompactadorUtil.compactarZipByte(listaArquivos);
-			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
-					FacesContext.getCurrentInstance());
-			String nomeArquivoDownload = String.format(objetoCcb.getNumeroOperacao() + " Contratos.zip",
-					"");
-			gerador.open(nomeArquivoDownload);
-			gerador.feed(new ByteArrayInputStream(arquivos));
-			gerador.close();
+	    	
+	    	if(listaArquivos.size() > 1) {
+	    		arquivos = CompactadorUtil.compactarZipByte(listaArquivos);
+				final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+						FacesContext.getCurrentInstance());
+				String nomeArquivoDownload = String.format(objetoCcb.getNumeroOperacao() + " Contratos.zip",
+						"");
+				gerador.open(nomeArquivoDownload);
+				gerador.feed(new ByteArrayInputStream(arquivos));
+				gerador.close();
+	    	} else {
+	    		Map.Entry<String,byte[]> entry = listaArquivos.entrySet().iterator().next();
+	    		arquivos = entry.getValue();
+	    		String nomeArquivoDownload = entry.getKey();
+				final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+						FacesContext.getCurrentInstance());
+				gerador.open(nomeArquivoDownload);
+				gerador.feed(new ByteArrayInputStream(arquivos));
+				gerador.close();
+	    	}
+	    	
 			listaTipoDownload.clear();
 	  	    listaTipoDownload = listaDocumentos;
 	    } catch (Exception e) {

@@ -15,11 +15,11 @@
 			<ui:define name="menu">
 				<h:form style="margin-bottom:10px;" id="menuAtendimentoForm">
 
-					<p:commandButton value="Favoritar"
-						action="#{menuItemMB.carregafavoritar}" icon="ui-icon-star"></p:commandButton>
+					<p:commandButton value="Favoritar" rendered="#{menuItemMB.menuAtual != 'Favoritos'}"
+						action="#{menuItemMB.carregafavoritar}" icon="ui-icon-star" update="@all"></p:commandButton>
 
 					<p:menu style="width: 250px;"
-						model="#{menuItemMB.modelAtendimento}" />
+						model="#{menuItemMB.menuCarregado}" />
 
  				</h:form>
 			</ui:define>

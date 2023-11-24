@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.TimeZone;
 
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.infra.db.model.User;
 
 public class ContratoCobranca implements Serializable {
@@ -649,6 +650,7 @@ public class ContratoCobranca implements Serializable {
 	private String avaliacaoEngenharia;
 	private String avaliacaoEquipeLaudo;
 	
+	private Date dataPajuComentado;
 	private String processosPajuExterno;
 	private String processosPajuInterno;
 	
@@ -815,6 +817,7 @@ public class ContratoCobranca implements Serializable {
 	private boolean iniciouGeracaoLaudo;
 	private String avaliacaoPaju;
 	private boolean iniciouGeracaoPaju;
+	private String avaliacaoPajuReanalise;
 	
 	private boolean contatoDiferenteProprietario;
 	//private String geracaoLaudoObservacao;
@@ -848,11 +851,12 @@ public class ContratoCobranca implements Serializable {
 	private Date contratoPrioridadeAltaData;
 	private String contratoPrioridadeAltaUser;
 	
-	private boolean isScoreBaixo450Taxa;
-	private boolean isScoreBaixo700Taxa;
+	private boolean scoreBaixo450Taxa;
+	private boolean scoreBaixo700Taxa;
 	private boolean isInicioRelacionamentoInexistenteTaxa;
-	private boolean isRiscoTotal20kTaxa;
-	private boolean isRiscoTotal50kTaxa;
+	private boolean riscoTotal20kTaxa;
+	private boolean riscoTotal50kTaxa;
+	private boolean documentosAnalisados;
 
 	//FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13	
 	public BigDecimal calcularValorTotalContasPagas() {
@@ -1324,6 +1328,7 @@ public class ContratoCobranca implements Serializable {
 		return c;
 	}
 	
+	
 	public boolean isDadosAprovadosComercial() {
 		return !CommonsUtil.semValor(valorAprovadoComercial) || //
 				!CommonsUtil.semValor(prazoAprovadoComercial) || //
@@ -1370,21 +1375,31 @@ public class ContratoCobranca implements Serializable {
 		return pedidoLaudo && !pagtoLaudoConfirmada && !lstEmAnalise.contains(this.status) && leadCompleto && inicioAnalise;
 	}
 	public boolean isAgComite() {
-		ContratoCobranca c = this;
-		try {
-		if (c.isInicioAnalise() && "Aprovado".equals( c.getCadastroAprovadoValor())
-				&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
-				&& c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
-				&& c.isDocumentosComite() && !c.isAprovadoComite()) {
-			agComite = true;
-		
+		if (this.inicioAnalise && CommonsUtil.mesmoValor(cadastroAprovadoValor,"Aprovado")
+				&& this.pagtoLaudoConfirmada && this.laudoRecebido && this.pajurFavoravel
+				&& this.analiseComercial && this.comentarioJuridicoEsteira && this.preAprovadoComite
+				&& this.documentosComite && !this.aprovadoComite) {
+			return true;
+			
 		} else {
-			agComite = false;
-		}
-		return agComite;
-		} catch (Exception e) {
 			return false;
 		}
+	}
+	
+	public boolean isPajuVencido() {
+		boolean retorno = false;
+		if(!CommonsUtil.semValor(dataPajuComentado)) 
+			retorno = (DateUtil.getDaysBetweenDates(dataPajuComentado, DateUtil.gerarDataHoje()) > 30);
+		return retorno;
+	}
+
+	public boolean desabilitarEnviarParaCartorio() {
+		if(isPajuVencido()) 
+			return true;
+		if("RJ;PR".contains(imovel.getEstado()) && !reanaliseJuridico) 
+			return true;
+		
+		return false;
 	}
 
 	
@@ -1410,15 +1425,15 @@ public class ContratoCobranca implements Serializable {
 			potuacao -= 150;
 		if (terrenoOuBarracaoTaxa)
 			potuacao -= 400;
-		if (isScoreBaixo450Taxa)
+		if (scoreBaixo450Taxa)
 			potuacao -= 200;
-		if (isScoreBaixo700Taxa)
+		if (scoreBaixo700Taxa)
 			potuacao -= 100;
 		if (isInicioRelacionamentoInexistenteTaxa)
 			potuacao -= 100;
-		if (isRiscoTotal20kTaxa)
+		if (riscoTotal20kTaxa)
 			potuacao -= 200;
-		if (isRiscoTotal50kTaxa)
+		if (riscoTotal50kTaxa)
 			potuacao -= 100;
 
 		if (potuacao < 400) {
@@ -7333,19 +7348,19 @@ public class ContratoCobranca implements Serializable {
 	}
 
 	public boolean isScoreBaixo450Taxa() {
-		return isScoreBaixo450Taxa;
+		return scoreBaixo450Taxa;
 	}
 
 	public void setScoreBaixo450Taxa(boolean isScoreBaixo450Taxa) {
-		this.isScoreBaixo450Taxa = isScoreBaixo450Taxa;
+		this.scoreBaixo450Taxa = isScoreBaixo450Taxa;
 	}
 
 	public boolean isScoreBaixo700Taxa() {
-		return isScoreBaixo700Taxa;
+		return scoreBaixo700Taxa;
 	}
 
 	public void setScoreBaixo700Taxa(boolean isScoreBaixo700Taxa) {
-		this.isScoreBaixo700Taxa = isScoreBaixo700Taxa;
+		this.scoreBaixo700Taxa = isScoreBaixo700Taxa;
 	}
 
 	public boolean isInicioRelacionamentoInexistenteTaxa() {
@@ -7357,19 +7372,48 @@ public class ContratoCobranca implements Serializable {
 	}
 
 	public boolean isRiscoTotal20kTaxa() {
-		return isRiscoTotal20kTaxa;
+		return riscoTotal20kTaxa;
 	}
 
 	public void setRiscoTotal20kTaxa(boolean isRiscoTotal20kTaxa) {
-		this.isRiscoTotal20kTaxa = isRiscoTotal20kTaxa;
+		this.riscoTotal20kTaxa = isRiscoTotal20kTaxa;
 	}
 
 	public boolean isRiscoTotal50kTaxa() {
-		return isRiscoTotal50kTaxa;
+		return riscoTotal50kTaxa;
 	}
 
 	public void setRiscoTotal50kTaxa(boolean isRiscoTotal50kTaxa) {
-		this.isRiscoTotal50kTaxa = isRiscoTotal50kTaxa;
+		this.riscoTotal50kTaxa = isRiscoTotal50kTaxa;
+	}
+	
+
+	public void setAgComite(boolean agComite) {
+		this.agComite = agComite;
+	}
+
+	public Date getDataPajuComentado() {
+		return dataPajuComentado;
+	}
+
+	public void setDataPajuComentado(Date dataPajuComentado) {
+		this.dataPajuComentado = dataPajuComentado;
+	}
+
+	public String getAvaliacaoPajuReanalise() {
+		return avaliacaoPajuReanalise;
+	}
+
+	public void setAvaliacaoPajuReanalise(String avaliacaoPajuReanalise) {
+		this.avaliacaoPajuReanalise = avaliacaoPajuReanalise;
+	}
+
+	public boolean isDocumentosAnalisados() {
+		return documentosAnalisados;
+	}
+
+	public void setDocumentosAnalisados(boolean documentosAnalisados) {
+		this.documentosAnalisados = documentosAnalisados;
 	}
 	
 }

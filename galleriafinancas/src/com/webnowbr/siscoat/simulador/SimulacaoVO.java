@@ -178,8 +178,11 @@ public class SimulacaoVO implements ComputeInterface{
 				}
 				parcelaCalculo.setJuros(juros);
 
-				BigDecimal coeficienteAmortizacao = (parcelaAmortizacao.subtract(parcelaCalculo.getJuros()))
-						.divide(saldoDevedorCarencia, MathContext.DECIMAL128);
+				/*
+				 * BigDecimal coeficienteAmortizacao =
+				 * (parcelaAmortizacao.subtract(parcelaCalculo.getJuros()))
+				 * .divide(saldoDevedorCarencia, MathContext.DECIMAL128);
+				 */
 //				parcelaCalculo.setAmortizacao(this.valorCredito.multiply(coeficienteAmortizacao));
 
 				parcelaCalculo.setAmortizacao(parcelaAmortizacao.subtract(parcelaCalculo.getJuros()));

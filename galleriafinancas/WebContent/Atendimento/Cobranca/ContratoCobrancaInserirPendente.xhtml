@@ -1,21 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:p="http://primefaces.org/ui"
-	xmlns:shiro="http://shiro.apache.org/tags"
-	template="../MenuAtendimento.xhtml">
-	<ui:define name="conteudo">
-		<h:form id="form">
-			<script src="#{request.contextPath}/resources/js/functions.js"></script>
-			<script
-				src="#{request.contextPath}/resources/js/locale-primefaces.js"
-				library="javascript"></script>
-			<link rel="stylesheet" type="text/css"
-				href="#{request.contextPath}/resources/css/Style.css" title=""
-				media="all" />
-			<script src=".#{request.contextPath}/resources/js/jquery.mask.min.js"></script>
+			    xmlns:ui="http://java.sun.com/jsf/facelets"
+			    xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:shiro="http://shiro.apache.org/tags"
+			    template="/Menus/Menu.xhtml">
+	<ui:define name="conteudo">  
+		<h:form id="form">		
+		 	<script src="#{request.contextPath}/resources/js/functions.js"></script>
+		 	<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>			
+		 	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/css/Style.css" title="" media="all" /> 	
+		 	<script src=".#{request.contextPath}/resources/js/jquery.mask.min.js"></script>	
 			<script>
 		        function validatePhone() {
 		
@@ -1991,6 +1987,15 @@
 								<p:ajax event="valueChange" update=":form:Status"
 									listener="#{contratoCobrancaMB.changeGeracaoPAJU}" />
 							</p:selectOneMenu>
+							
+							<p:outputLabel styleClass="labelBold">Avaliação Paju Reanalise</p:outputLabel>
+							<p:selectOneMenu id="avaliacaoPajuReanalise"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoPajuReanalise}">
+								<f:selectItem itemValue="" itemLabel="" />
+								<f:selectItem itemValue="Neves" itemLabel="Neves" />
+								<f:selectItem itemValue="Luvison" itemLabel="Luvison" />
+								<f:selectItem itemValue="Outro" itemLabel="Outro" />
+							</p:selectOneMenu>
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
@@ -2109,7 +2114,7 @@
 							</h:panelGroup>
 
 							<p:outputLabel for="processosPajuExterno"
-								value="Processos para quitar (Externo):" styleClass="labelBold" />
+								value="Observações p/ Comitê:" styleClass="labelBold" />
 							<h:panelGroup>
 								<p:inputTextarea id="processosPajuExterno" rows="10" cols="48"
 									counter="display2" maxlength="3000" onblur=""
@@ -2119,6 +2124,12 @@
 								</p:inputTextarea>
 								<p:outputLabel id="display2" />
 							</h:panelGroup>
+							
+							<p:outputLabel for="dataPajuComentado"
+								value="Data do Paju Comentado:" styleClass="labelBold" />
+							<p:calendar id="dataPajuComentado" showOn="button" 
+								value="#{contratoCobrancaMB.objetoContratoCobranca.dataPajuComentado}"
+								size="100" pattern="dd/MM/yyyy" styleClass="dateTimeField" />
 						</h:panelGrid>
 						<h:panelGrid columns="2"
 							rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel == true}">
@@ -2132,7 +2143,7 @@
 							rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel == true}">
 							<p:dataView var="pessoasProcessos" id="pessoasProcessos"
 								value="#{contratoCobrancaMB.pessoasProcessos}" paginator="false"
-								layout="list"
+								layout="list" style="width: 1200px; max-width: 100%"
 								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
 								<p:dataViewListItem>
 									<p:outputLabel value="#{pessoasProcessos.nome}"
@@ -2147,7 +2158,7 @@
 										oncomplete="PF('processoDialog').show();"
 										update="processoDialogdlg" />
 									<p:dataTable var="processosPessoas" id="processosPessoas"
-										value="#{pessoasProcessos.processos}" style="width:700px;"
+										value="#{pessoasProcessos.processos}"
 										size="small" sortBy="#{processosPessoas.id}"
 										sortOrder="ascending">
 
@@ -2158,7 +2169,7 @@
 										</p:column>
 
 										<p:column style="text-align: center;width:75px;"
-											headerText=" ValorAtualizado: ">
+											headerText=" Valor Atualizado: ">
 											<p:outputLabel value="#{processosPessoas.valorAtualizado}"
 												style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
 										</p:column>
@@ -2169,7 +2180,7 @@
 												style="FONT-SIZE: 10pt;" />
 										</p:column>
 
-										<p:column style="text-align: center;" headerText="Obs">
+										<p:column style="text-align: center;" headerText="Obs" >
 											<p:outputLabel value="#{processosPessoas.observacao}"
 												style="FONT-SIZE: 10pt;" />
 										</p:column>
@@ -3644,7 +3655,7 @@
 
 				<h:panelGroup id="Dados">
 					<p:panel header="Dados do Contrato" style="margin-bottom:10px;"
-						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agAssinatura}">
+						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio}">
 						<h:panelGrid columns="2">
 
 							<p:outputLabel for="empresa" value="Empresa: "
@@ -3823,7 +3834,7 @@
 
 					<p:panel id="Pagamento" header="Forma de Pagamento"
 						style="margin-bottom:10px;"
-						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agAssinatura}">
+						rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio}">
 						<h:panelGrid columns="2">
 							<p:outputLabel for="dataInicio" value="Data Inicio: "
 								styleClass="labelBold" style="margin-right: 59px;" />

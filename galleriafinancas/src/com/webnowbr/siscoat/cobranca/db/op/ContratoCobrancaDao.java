@@ -7284,21 +7284,23 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					}
 					
 					if (tipoConsulta.equals("Geração do PAJU - Neves")) {
-						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
+						query = query + " and ((analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' "
 								+ " and pendenciaLaudoPaju = false "
 								+ " and pedidoLaudoPajuComercial = true and pagtoLaudoConfirmada = true and pajurFavoravel = false"
-								+ " and avaliacaoPaju = 'Neves' ";
-						order = " order by contratoprioridadealta desc, pagtolaudoconfirmadadata ";
+								+ " and avaliacaoPaju = 'Neves' ) "
+								+ " or (reanalisePronta = true and pajuAtualizado = false and avaliacaoPajuReanalise = 'Neves')) ";
+						order = " order by reanalisePronta desc, contratoprioridadealta desc, pagtolaudoconfirmadadata ";
 					}
 					
 					if (tipoConsulta.equals("Geração do PAJU - Luvison")) {
-						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
+						query = query + " and ((analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' "
 								+ " and pendenciaLaudoPaju = false "
 								+ " and pedidoLaudoPajuComercial = true and pagtoLaudoConfirmada = true and pajurFavoravel = false"
-								+ " and avaliacaoPaju = 'Luvison' ";
-						order = " order by contratoprioridadealta desc, pagtolaudoconfirmadadata ";
+								+ " and avaliacaoPaju = 'Luvison' ) "
+								+ " or (reanalisePronta = true and pajuAtualizado = false and avaliacaoPajuReanalise = 'Luvison')) ";
+						order = " order by reanalisePronta desc, contratoprioridadealta desc, pagtolaudoconfirmadadata  ";
 					}
 					
 					if (tipoConsulta.equals("Pedir PAJU")) {
@@ -7413,7 +7415,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 								+ " and analiseComercial = true and comentarioJuridicoEsteira = true and documentosCompletos = true and preAprovadoComite = true"
 								+ " and documentosComite = true and aprovadoComite = true and okCliente = true and documentosCompletos = true and certificadoEmitido = true"
 								+ " and ccbPronta = true and contratoConferido = true"
-								+ " and reanalise = true and (reanalisePronta = false or pajuAtualizado = false)";
+								+ " and reanalise = true and (reanalisePronta = false)";
 					}
 					
 					if (tipoConsulta.equals("Ag. Reanalise Juridico")) {

@@ -2,22 +2,22 @@ package com.webnowbr.siscoat.infra.db.model;
 
 public enum IDmenus {
 	
-	relatorio((long) 22),
-	Atedimento((long) 18),
-	cadastros((long) 17),
-	manutencao((long) 23);
+	Relatorio(22l),
+	Atedimento(18l),
+	cadastros(17l),
+	manutencao(23l);
 	
-	private Long indice;
+	private long indice;
 
-	IDmenus(Long i) {
+	IDmenus(long i) {
 		this.setIndice(i);
 	}
 
-	public Long getIndice() {
+	public long getIndice() {
 		return indice;
 	}
 
-	public void setIndice(Long indice) {
+	public void setIndice(long indice) {
 		this.indice = indice;
 	}
 

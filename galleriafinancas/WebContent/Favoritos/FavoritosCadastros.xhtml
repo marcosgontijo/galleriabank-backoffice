@@ -13,15 +13,12 @@
 		<h:body>
 			<ui:composition template="../index.xhtml">                	  
 				<ui:define name="menu">		
-					<h:form style="margin-bottom:10px;">	
-
-					<p:commandButton value="Favoritar" action="#{menuItemMB.carregafavoritar}" icon="ui-icon-star"></p:commandButton>	
-
-						<p:menu style="width: 250px;" model="#{menuItemMB.modelCadastro}"/>																		
+					<h:form style="margin-bottom:10px;">		
+						<p:menu style="width: 250px;" model="#{menuItemMB.modelFavoritarCadastro}"/>																		
 					  	
 					</h:form>				
 				</ui:define>
 			</ui:composition>					
 		</h:body>
 	</f:view>
-</html>            
+</html>              

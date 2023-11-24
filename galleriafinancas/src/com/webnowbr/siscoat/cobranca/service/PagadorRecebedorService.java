@@ -113,25 +113,29 @@ public class PagadorRecebedorService {
 //		if (!CommonsUtil.semValor(pagadorAdicionar.getCpf()) || !CommonsUtil.semValor(pagadorAdicionar.getCnpj()))
 //			pagadorAdicionar = buscaOuInsere(pagadorAdicionar);
 
+		DocumentosAnaliseEnum tipoConsulta = null;
 		if (!CommonsUtil.semValor(pagadorAdicionar.getCpf())) {
 
 			ReceitaFederalPF receitaFederalPF = netrinService.requestCadastroPF(pagadorAdicionar);
 
 			stringResponse = GsonUtil.toJson(receitaFederalPF);
+			tipoConsulta =  DocumentosAnaliseEnum.RECEITA_FEDERAL;
 
 		} else if (!CommonsUtil.semValor(pagadorAdicionar.getCnpj())) {			
 			DadosBasicosResultPj dadosBasicosResultPj = bigDataService.requestCadastroPJ(pagadorAdicionar);
 
 			stringResponse = GsonUtil.toJson(dadosBasicosResultPj);
+			tipoConsulta =  DocumentosAnaliseEnum.CADASTROBB;
 
 		}
 		if (!CommonsUtil.semValor(pagadorAdicionar.getCpf()) || !CommonsUtil.semValor(pagadorAdicionar.getCnpj()))
 			pagadorAdicionar = buscaOuInsere(pagadorAdicionar);
-
+		
 		if (!CommonsUtil.semValor(stringResponse) && !CommonsUtil.semValor(pagadorAdicionar.getId())) {
-			adicionarConsultaNoPagadorRecebedor(pagadorAdicionar, DocumentosAnaliseEnum.RECEITA_FEDERAL,
+			adicionarConsultaNoPagadorRecebedor(pagadorAdicionar, tipoConsulta,
 					stringResponse);
 		}
+		
 		return pagadorAdicionar;
 	}
 
