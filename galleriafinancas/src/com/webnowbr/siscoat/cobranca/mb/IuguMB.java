@@ -5460,8 +5460,12 @@ public class IuguMB {
 		jsonPayer = "\"payer\":{\"cpf_cnpj\":\"" + documento + "\",\"name\":\"" + this.selectedRecebedor.getNome() + "\",\"email\":\"" + emailFalso
 		+ "\",\"address\":{\"zip_code\":\"" + this.selectedRecebedor.getCep().replace(".", "").replace("-", "") + "\",\"street\":\"" + endereco 
 		+ "\",\"district\":\"" + bairro
+		+ "\",\"city\":\"" + this.selectedRecebedor.getCidade()
+		+ "\",\"state\":\"" + this.selectedRecebedor.getEstado()
+		+ "\",\"complement\":\"" + CommonsUtil.stringValueVazio( this.selectedRecebedor.getComplemento())		
 		+ "\",\"number\":\"" + this.selectedRecebedor.getNumero() + "\"}}";
-
+		//country
+		
 
 		jsonCustomVariables = "{\"value\":\"" + this.idContrato + "\",\"name\":\"idContrato\"},"
 				+ 			  "{\"value\":\"" + this.idParcela +   "\",\"name\":\"idParcela\"}";

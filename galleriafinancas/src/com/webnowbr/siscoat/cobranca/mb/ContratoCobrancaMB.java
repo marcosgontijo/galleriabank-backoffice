@@ -185,7 +185,9 @@ import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.cobranca.db.op.SeguradoDAO;
 import com.webnowbr.siscoat.cobranca.db.op.StarkBankBaixaDAO;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
+import com.webnowbr.siscoat.cobranca.model.cep.CepResult;
 import com.webnowbr.siscoat.cobranca.service.BigDataService;
+import com.webnowbr.siscoat.cobranca.service.CepService;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.cobranca.service.EngineService;
 import com.webnowbr.siscoat.cobranca.service.FileService;
@@ -2281,153 +2283,94 @@ public class ContratoCobrancaMB {
 	 * vianet.com.br
 	 */
 	public void getEnderecoByViaNet() {
+		
 		try {
-			if (CommonsUtil.semValor(this.objetoPagadorRecebedor.getCep())) {
-				return;
-			}
-			String inputCep = this.objetoPagadorRecebedor.getCep().replace("-", "");
-			FacesContext context = FacesContext.getCurrentInstance();
+			CepService cepService = new CepService();
+			CepResult consultaCep = cepService.consultaCep(this.objetoPagadorRecebedor.getCep());
 
-			int HTTP_COD_SUCESSO = 200;
-
-			URL myURL = new URL("http://viacep.com.br/ws/" + inputCep + "/json/");
-
-			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
-			myURLConnection.setUseCaches(false);
-			myURLConnection.setRequestMethod("GET");
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-			myURLConnection.setDoOutput(true);
-
-			String erro = "";
-			JSONObject myResponse = null;
-
-			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
+			if (CommonsUtil.semValor(consultaCep) || !CommonsUtil.semValor(consultaCep.getErro())) {
 				this.objetoPagadorRecebedor.setEndereco("");
 				this.objetoPagadorRecebedor.setBairro("");
 				this.objetoPagadorRecebedor.setCidade("");
 				this.objetoPagadorRecebedor.setEstado("");
 			} else {
-				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-				if (myResponse.has("logradouro")) {
-					this.objetoPagadorRecebedor.setEndereco(myResponse.get("logradouro").toString());
+
+				if (!CommonsUtil.semValor(consultaCep.getEndereco())) {
+					this.objetoPagadorRecebedor.setEndereco(consultaCep.getEndereco());
 				}
-				if (myResponse.has("bairro")) {
-					this.objetoPagadorRecebedor.setBairro(myResponse.get("bairro").toString());
+				if (!CommonsUtil.semValor(consultaCep.getBairro())) {
+					this.objetoPagadorRecebedor.setBairro(consultaCep.getBairro());
 				}
-				if (myResponse.has("localidade")) {
-					this.objetoPagadorRecebedor.setCidade(myResponse.get("localidade").toString());
+				if (!CommonsUtil.semValor(consultaCep.getCidade())) {
+					this.objetoPagadorRecebedor.setCidade(consultaCep.getCidade());
 				}
-				if (myResponse.has("uf")) {
-					this.objetoPagadorRecebedor.setEstado(myResponse.get("uf").toString());
+				if (!CommonsUtil.semValor(consultaCep.getEstado())) {
+					this.objetoPagadorRecebedor.setEstado(consultaCep.getEstado());
 				}
 			}
-			myURLConnection.disconnect();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 	}
 
 	public void getEnderecoByViaNetPagador(PagadorRecebedor pagador) {
+
 		try {
-			String inputCep = pagador.getCep().replace("-", "");
-			FacesContext context = FacesContext.getCurrentInstance();
+			CepService cepService = new CepService();
+			CepResult consultaCep = cepService.consultaCep(pagador.getCep());
 
-			int HTTP_COD_SUCESSO = 200;
-
-			URL myURL = new URL("http://viacep.com.br/ws/" + inputCep + "/json/");
-
-			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
-			myURLConnection.setUseCaches(false);
-			myURLConnection.setRequestMethod("GET");
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-			myURLConnection.setDoOutput(true);
-
-			String erro = "";
-			JSONObject myResponse = null;
-
-			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
+			if (CommonsUtil.semValor(consultaCep) || !CommonsUtil.semValor(consultaCep.getErro())) {
 				pagador.setEndereco("");
 				pagador.setBairro("");
 				pagador.setCidade("");
 				pagador.setEstado("");
 			} else {
-				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-				if (myResponse.has("logradouro")) {
-					pagador.setEndereco(myResponse.get("logradouro").toString());
+
+				if (!CommonsUtil.semValor(consultaCep.getEndereco())) {
+					pagador.setEndereco(consultaCep.getEndereco());
 				}
-				if (myResponse.has("bairro")) {
-					pagador.setBairro(myResponse.get("bairro").toString());
+				if (!CommonsUtil.semValor(consultaCep.getBairro())) {
+					pagador.setBairro(consultaCep.getBairro());
 				}
-				if (myResponse.has("localidade")) {
-					pagador.setCidade(myResponse.get("localidade").toString());
+				if (!CommonsUtil.semValor(consultaCep.getCidade())) {
+					pagador.setCidade(consultaCep.getCidade());
 				}
-				if (myResponse.has("uf")) {
-					pagador.setEstado(myResponse.get("uf").toString());
+				if (!CommonsUtil.semValor(consultaCep.getEstado())) {
+					pagador.setEstado(consultaCep.getEstado());
 				}
 			}
-			myURLConnection.disconnect();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	public void getEnderecoByViaNetImovelCobranca() {
+
 		try {
-			String inputCep = this.objetoImovelCobranca.getCep().replace("-", "");
-			FacesContext context = FacesContext.getCurrentInstance();
+			CepService cepService = new CepService();
+			CepResult consultaCep = cepService.consultaCep(this.objetoImovelCobranca.getCep());
 
-			int HTTP_COD_SUCESSO = 200;
-
-			URL myURL = new URL("http://viacep.com.br/ws/" + inputCep + "/json/");
-
-			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
-			myURLConnection.setUseCaches(false);
-			myURLConnection.setRequestMethod("GET");
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-			myURLConnection.setDoOutput(true);
-
-			String erro = "";
-			JSONObject myResponse = null;
-
-			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
+			if (CommonsUtil.semValor(consultaCep) || !CommonsUtil.semValor(consultaCep.getErro())) {
 				this.objetoImovelCobranca.setEndereco("");
 				this.objetoImovelCobranca.setBairro("");
 				this.objetoImovelCobranca.setCidade("");
 				this.objetoImovelCobranca.setEstado("");
 			} else {
-				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-				if (myResponse.has("logradouro")) {
-					this.objetoImovelCobranca.setEndereco(myResponse.get("logradouro").toString());
+
+				if (!CommonsUtil.semValor(consultaCep.getEndereco())) {
+					this.objetoImovelCobranca.setEndereco(consultaCep.getEndereco());
 				}
-				if (myResponse.has("bairro")) {
-					this.objetoImovelCobranca.setBairro(myResponse.get("bairro").toString());
+				if (!CommonsUtil.semValor(consultaCep.getBairro())) {
+					this.objetoImovelCobranca.setBairro(consultaCep.getBairro());
 				}
-				if (myResponse.has("localidade")) {
-					this.objetoImovelCobranca.setCidade(myResponse.get("localidade").toString());
+				if (!CommonsUtil.semValor(consultaCep.getCidade())) {
+					this.objetoImovelCobranca.setCidade(consultaCep.getCidade());
 				}
-				if (myResponse.has("uf")) {
-					this.objetoImovelCobranca.setEstado(myResponse.get("uf").toString());
+				if (!CommonsUtil.semValor(consultaCep.getEstado())) {
+					this.objetoImovelCobranca.setEstado(consultaCep.getEstado());
 				}
 			}
-			myURLConnection.disconnect();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -2446,156 +2389,98 @@ public class ContratoCobrancaMB {
 	}
 
 	public void getEnderecoByViaNetConjuge() {
+		
 		try {
-			if (CommonsUtil.semValor(this.objetoPagadorRecebedor.getCepConjuge())) {
-				return;
-			}
-			String inputCep = this.objetoPagadorRecebedor.getCepConjuge().replace("-", "");
-			FacesContext context = FacesContext.getCurrentInstance();
+			CepService cepService = new CepService();
+			CepResult consultaCep = cepService.consultaCep(this.objetoPagadorRecebedor.getCepConjuge());
 
-			int HTTP_COD_SUCESSO = 200;
-
-			URL myURL = new URL("http://viacep.com.br/ws/" + inputCep + "/json/");
-
-			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
-			myURLConnection.setUseCaches(false);
-			myURLConnection.setRequestMethod("GET");
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-			myURLConnection.setDoOutput(true);
-
-			String erro = "";
-			JSONObject myResponse = null;
-
-			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
-				this.objetoPagadorRecebedor.setEndereco("");
-				this.objetoPagadorRecebedor.setBairro("");
-				this.objetoPagadorRecebedor.setCidade("");
-				this.objetoPagadorRecebedor.setEstado("");
+			if (CommonsUtil.semValor(consultaCep) || !CommonsUtil.semValor(consultaCep.getErro())) {
+				this.objetoPagadorRecebedor.setEnderecoConjuge("");
+				this.objetoPagadorRecebedor.setBairroConjuge("");
+				this.objetoPagadorRecebedor.setCidadeConjuge("");
+				this.objetoPagadorRecebedor.setEstadoConjuge("");
 			} else {
-				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-				if (myResponse.has("logradouro")) {
-					this.objetoPagadorRecebedor.setEnderecoConjuge(myResponse.get("logradouro").toString());
+
+				if (!CommonsUtil.semValor(consultaCep.getEndereco())) {
+					this.objetoPagadorRecebedor.setEnderecoConjuge(consultaCep.getEndereco());
 				}
-				if (myResponse.has("bairro")) {
-					this.objetoPagadorRecebedor.setBairroConjuge(myResponse.get("bairro").toString());
+				if (!CommonsUtil.semValor(consultaCep.getBairro())) {
+					this.objetoPagadorRecebedor.setBairroConjuge(consultaCep.getBairro());
 				}
-				if (myResponse.has("localidade")) {
-					this.objetoPagadorRecebedor.setCidadeConjuge(myResponse.get("localidade").toString());
+				if (!CommonsUtil.semValor(consultaCep.getCidade())) {
+					this.objetoPagadorRecebedor.setCidadeConjuge(consultaCep.getCidade());
 				}
-				if (myResponse.has("uf")) {
-					this.objetoPagadorRecebedor.setEstadoConjuge(myResponse.get("uf").toString());
+				if (!CommonsUtil.semValor(consultaCep.getEstado())) {
+					this.objetoPagadorRecebedor.setEstadoConjuge(consultaCep.getEstado());
 				}
 			}
-			myURLConnection.disconnect();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	public void getEnderecoByViaNetCoobrigado() {
+
 		try {
-			String inputCep = this.objetoPagadorRecebedor.getCep().replace("-", "");
-			FacesContext context = FacesContext.getCurrentInstance();
+			CepService cepService = new CepService();
+			CepResult consultaCep = cepService.consultaCep(this.objetoPagadorRecebedor.getCep());
 
-			int HTTP_COD_SUCESSO = 200;
-
-			URL myURL = new URL("http://viacep.com.br/ws/" + inputCep + "/json/");
-
-			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
-			myURLConnection.setUseCaches(false);
-			myURLConnection.setRequestMethod("GET");
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-			myURLConnection.setDoOutput(true);
-
-			String erro = "";
-			JSONObject myResponse = null;
-
-			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
+			if (CommonsUtil.semValor(consultaCep) || !CommonsUtil.semValor(consultaCep.getErro())) {
 				this.objetoPagadorRecebedor.setEndereco("");
 				this.objetoPagadorRecebedor.setBairro("");
 				this.objetoPagadorRecebedor.setCidade("");
 				this.objetoPagadorRecebedor.setEstado("");
 			} else {
-				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-				if (myResponse.has("logradouro")) {
-					this.objetoPagadorRecebedor.setEnderecoCoobrigado(myResponse.get("logradouro").toString());
+
+				if (!CommonsUtil.semValor(consultaCep.getEndereco())) {
+					this.objetoPagadorRecebedor.setEnderecoConjuge(consultaCep.getEndereco());
 				}
-				if (myResponse.has("bairro")) {
-					this.objetoPagadorRecebedor.setBairroCoobrigado(myResponse.get("bairro").toString());
+				if (!CommonsUtil.semValor(consultaCep.getBairro())) {
+					this.objetoPagadorRecebedor.setBairroConjuge(consultaCep.getBairro());
 				}
-				if (myResponse.has("localidade")) {
-					this.objetoPagadorRecebedor.setCidadeCoobrigado(myResponse.get("localidade").toString());
+				if (!CommonsUtil.semValor(consultaCep.getCidade())) {
+					this.objetoPagadorRecebedor.setCidadeConjuge(consultaCep.getCidade());
 				}
-				if (myResponse.has("uf")) {
-					this.objetoPagadorRecebedor.setEstadoCoobrigado(myResponse.get("uf").toString());
+				if (!CommonsUtil.semValor(consultaCep.getEstado())) {
+					this.objetoPagadorRecebedor.setEstadoConjuge(consultaCep.getEstado());
 				}
 			}
-			myURLConnection.disconnect();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 	}
 
 	public void getEnderecoByViaNetCoobrigadoCasado() {
+
 		try {
-			String inputCep = this.objetoPagadorRecebedor.getCep().replace("-", "");
-			FacesContext context = FacesContext.getCurrentInstance();
+			CepService cepService = new CepService();
+			CepResult consultaCep = cepService.consultaCep(this.objetoPagadorRecebedor.getCep());
 
-			int HTTP_COD_SUCESSO = 200;
-
-			URL myURL = new URL("http://viacep.com.br/ws/" + inputCep + "/json/");
-
-			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
-			myURLConnection.setUseCaches(false);
-			myURLConnection.setRequestMethod("GET");
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-			myURLConnection.setDoOutput(true);
-
-			String erro = "";
-			JSONObject myResponse = null;
-
-			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
+			if (CommonsUtil.semValor(consultaCep) || !CommonsUtil.semValor(consultaCep.getErro())) {
 				this.objetoPagadorRecebedor.setEndereco("");
 				this.objetoPagadorRecebedor.setBairro("");
 				this.objetoPagadorRecebedor.setCidade("");
 				this.objetoPagadorRecebedor.setEstado("");
 			} else {
-				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-				if (myResponse.has("logradouro")) {
-					this.objetoPagadorRecebedor.setEnderecoCoobrigadoCasado(myResponse.get("logradouro").toString());
+
+				if (!CommonsUtil.semValor(consultaCep.getEndereco())) {
+					this.objetoPagadorRecebedor.setEnderecoCoobrigadoCasado(consultaCep.getEndereco());
 				}
-				if (myResponse.has("bairro")) {
-					this.objetoPagadorRecebedor.setBairroCoobrigadoCasado(myResponse.get("bairro").toString());
+				if (!CommonsUtil.semValor(consultaCep.getBairro())) {
+					this.objetoPagadorRecebedor.setBairroCoobrigadoCasado(consultaCep.getBairro());
 				}
-				if (myResponse.has("localidade")) {
-					this.objetoPagadorRecebedor.setCidadeCoobrigadoCasado(myResponse.get("localidade").toString());
+				if (!CommonsUtil.semValor(consultaCep.getCidade())) {
+					this.objetoPagadorRecebedor.setCidadeCoobrigadoCasado(consultaCep.getCidade());
 				}
-				if (myResponse.has("uf")) {
-					this.objetoPagadorRecebedor.setEstadoCoobrigadoCasado(myResponse.get("uf").toString());
+				if (!CommonsUtil.semValor(consultaCep.getEstado())) {
+					this.objetoPagadorRecebedor.setEstadoCoobrigadoCasado(consultaCep.getEstado());
 				}
 			}
-			myURLConnection.disconnect();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 	}
 
 	/***
