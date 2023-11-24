@@ -95,6 +95,28 @@ public class ContratoCobrancaDetalhes implements Serializable {
 		this.listContratoCobrancaDetalhesParcial = new ArrayList<ContratoCobrancaDetalhesParcial>();
 	}
 	
+	
+	
+	public ContratoCobrancaDetalhes(ContratoCobrancaDetalhes parcela) {
+		this.listContratoCobrancaFavorecidos = new ArrayList<ContratoCobrancaFavorecidos>();
+		this.listContratoCobrancaDetalhesParcial = new ArrayList<ContratoCobrancaDetalhesParcial>();
+		this.parcelaPaga = parcela.isParcelaPaga();
+		this.numeroParcela = parcela.getNumeroParcela();
+		this.dataVencimento = parcela.getDataVencimento();
+		this.vlrParcela = parcela.vlrParcela;
+		this.vlrJurosParcela = parcela.getVlrJurosParcela();
+		this.vlrAmortizacaoParcela = parcela.getVlrAmortizacaoParcela();
+		this.seguroDFI = parcela.getSeguroDFI();
+		this.seguroMIP = parcela.getSeguroMIP();
+		this.taxaAdm = parcela.getTaxaAdm();
+		this.vlrSaldoInicial = parcela.getVlrSaldoInicial();
+		this.dataUltimoPagamento = parcela.getDataUltimoPagamento();
+		this.valorTotalPagamento = parcela.getValorTotalPagamento();
+		this.vlrSaldoParcela = parcela.getVlrSaldoParcela();
+	}
+
+
+
 	public boolean isAmortizacao() {
 		return CommonsUtil.mesmoValor("Amortização", this.getNumeroParcela());
 	}

@@ -3881,6 +3881,7 @@ public class ContratoCobrancaMB {
 								} else if (CommonsUtil.mesmoValor(comite.getVotoAnaliseComite(), "Reprovado")) {
 									this.objetoContratoCobranca.setQtdeVotosReprovadosComite(this.objetoContratoCobranca
 											.getQtdeVotosReprovadosComite().add(BigInteger.ONE));
+									comite.setValorComite(BigDecimal.ZERO);
 								}
 							}
 						}
@@ -8468,6 +8469,8 @@ public class ContratoCobrancaMB {
 	private Date dataAmortizacao;
 	private BigDecimal valorPresenteTotal;
 	private BigDecimal amortizacaoPresenteTotal;
+	private BigDecimal porcentagemDesconto;
+	private BigDecimal valorComDesconto;
 	private String tipoAmortizacao;
 
 	private QuitacaoPDF quitacaoPDF = new QuitacaoPDF();
@@ -8618,6 +8621,83 @@ public class ContratoCobrancaMB {
 		return valorPresenteTotalContrato;
 	}
 
+	private List<ContratoCobrancaDetalhes> listContratoCobrancaDetalhesQuitar;
+
+	public void clearQuitarContratoDialog() {
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+		Date auxDataHoje = dataHoje.getTime();
+
+		this.numeroParcelaQuitar = 0;
+		this.dataQuitacao = auxDataHoje;
+		this.quitacaoPDF = new QuitacaoPDF();
+		this.porcentagemDesconto = BigDecimal.ZERO;
+		this.valorComDesconto = BigDecimal.ZERO;
+
+		simularQuitacaoContrato();
+	}
+
+	public void simularQuitacaoContrato() {
+		this.valorPresenteTotal = BigDecimal.ZERO;
+		//this.listContratoCobrancaDetalhesQuitar = this.objetoContratoCobranca.getListContratoCobrancaDetalhes();
+		this.listContratoCobrancaDetalhesQuitar = new ArrayList<ContratoCobrancaDetalhes>();
+		for (ContratoCobrancaDetalhes parcelaContrato : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
+			ContratoCobrancaDetalhes parcelaQuitacao = new ContratoCobrancaDetalhes(parcelaContrato);
+			this.listContratoCobrancaDetalhesQuitar.add(parcelaQuitacao);
+		}
+
+		String cpf = "";
+		if (!CommonsUtil.semValor(this.objetoContratoCobranca.getPagador().getCpf())) {
+			cpf = this.objetoContratoCobranca.getPagador().getCpf();
+		} else if (!CommonsUtil.semValor(this.objetoContratoCobranca.getPagador().getCnpj())) {
+			cpf = this.objetoContratoCobranca.getPagador().getCnpj();
+		}
+		quitacaoPDF = new QuitacaoPDF(this.objetoContratoCobranca.getPagador().getNome(), this.dataQuitacao,
+				this.objetoContratoCobranca.getNumeroContratoSeguro(), cpf);
+		valorComDesconto = BigDecimal.ZERO;
+		for (ContratoCobrancaDetalhes parcelas : listContratoCobrancaDetalhesQuitar) {
+			if (parcelas.isParcelaPaga()) {
+				continue;
+			}
+			this.valorPresenteParcela = BigDecimal.ZERO;
+			if (CommonsUtil.intValue(parcelas.getNumeroParcela()) >= numeroParcelaQuitar) {
+				BigDecimal valorParcelaPDF = parcelas.getVlrParcela();
+				BigDecimal desconto = BigDecimal.ZERO;
+
+				if (this.dataQuitacao.after(parcelas.getDataVencimento())
+						|| this.dataQuitacao.after(DateUtil.adicionarDias(parcelas.getDataVencimento(), -30))) {
+					calcularValorPresenteParcelaDataValor(this.dataQuitacao, parcelas, parcelas.getVlrParcela());
+				} else {
+					this.numeroPresenteParcela = CommonsUtil.intValue(parcelas.getNumeroParcela());
+					calcularValorPresenteParcelaData(this.dataQuitacao, parcelas);
+					if (this.objetoContratoCobranca.isTemTxAdm()) {
+						valorPresenteParcela = valorPresenteParcela.add(SiscoatConstants.TAXA_ADM);
+					}
+				}
+				valorPresenteTotal = valorPresenteTotal.add(this.valorPresenteParcela);
+				QuitacaoParcelasPDF parcelaPDF = new QuitacaoParcelasPDF(parcelas.getNumeroParcela(),
+						parcelas.getDataVencimento(), valorParcelaPDF, desconto, valorPresenteParcela);
+				quitacaoPDF.getParcelas().add(parcelaPDF);
+				
+				if(!CommonsUtil.semValor(porcentagemDesconto)) {
+					BigDecimal porcentagem = BigDecimal.valueOf(100).subtract(porcentagemDesconto);
+					porcentagem = porcentagem.divide(BigDecimal.valueOf(100));
+					valorComDesconto = valorComDesconto.add(valorPresenteParcela.multiply(porcentagem));
+					valorPresenteParcela = valorPresenteParcela.multiply(porcentagem);
+					valorPresenteParcela = valorPresenteParcela.setScale(2, RoundingMode.HALF_EVEN);
+				}
+				desconto = valorParcelaPDF.subtract(valorPresenteParcela);
+			}
+		}
+		if(CommonsUtil.semValor(porcentagemDesconto)) {
+			valorComDesconto = valorPresenteTotal;
+		}
+		valorComDesconto = valorComDesconto.setScale(2, RoundingMode.HALF_EVEN);
+		quitacaoPDF.setValorQuitacao(valorComDesconto);
+		quitarContrato(listContratoCobrancaDetalhesQuitar);
+	}
+	
 	public void quitarContrato(List<ContratoCobrancaDetalhes> listaParcelas) {
 		ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
@@ -8626,13 +8706,30 @@ public class ContratoCobrancaMB {
 
 		for (ContratoCobrancaDetalhes parcelas : listaParcelas) {
 			this.valorPresenteParcela = BigDecimal.ZERO;
-			if (!parcelas.isParcelaPaga()) {
-				this.numeroPresenteParcela = CommonsUtil.intValue(parcelas.getNumeroParcela());
-				calcularValorPresenteParcelaData(this.dataQuitacao, parcelas);
+			if (!parcelas.isParcelaPaga() && CommonsUtil.intValue(parcelas.getNumeroParcela()) >= numeroParcelaQuitar) {
+	
+				if (this.dataQuitacao.after(parcelas.getDataVencimento())
+						|| this.dataQuitacao.after(DateUtil.adicionarDias(parcelas.getDataVencimento(), -30))) {
+					calcularValorPresenteParcelaDataValor(this.dataQuitacao, parcelas, parcelas.getVlrParcela());
+				} else {
+					this.numeroPresenteParcela = CommonsUtil.intValue(parcelas.getNumeroParcela());
+					calcularValorPresenteParcelaData(this.dataQuitacao, parcelas);
+					if (this.objetoContratoCobranca.isTemTxAdm()) {
+						valorPresenteParcela = valorPresenteParcela.add(SiscoatConstants.TAXA_ADM);
+					}
+				}
+				
+				valorPresenteTotal = valorPresenteTotal.add(this.valorPresenteParcela);
+				if(!CommonsUtil.semValor(porcentagemDesconto)) {
+					BigDecimal porcentagem = BigDecimal.valueOf(100).subtract(porcentagemDesconto);
+					porcentagem = porcentagem.divide(BigDecimal.valueOf(100));
+					valorPresenteParcela = valorPresenteParcela.multiply(porcentagem);
+					valorPresenteParcela = valorPresenteParcela.setScale(2, RoundingMode.HALF_EVEN);
+				}
+				
 				parcelas.setValorTotalPagamento(this.valorPresenteParcela);
-				valorPresenteTotal = valorPresenteTotal.add(valorPresenteParcela);
 				parcelas.setDataUltimoPagamento(this.dataQuitacao);
-
+				
 				////////////////////////////////////////////////
 
 				TimeZone zone = TimeZone.getDefault();
@@ -8665,71 +8762,65 @@ public class ContratoCobrancaMB {
 				parcelas.getListContratoCobrancaDetalhesParcial().add(contratoCobrancaDetalhesParcial);
 				parcelas.setParcelaPaga(true);
 				parcelas.setOrigemBaixa("quitarContrato");
-
-				contratoCobrancaDetalhesDao.merge(parcelas);
-				this.selectedListContratoCobrancaDetalhes.add(parcelas);
+				if(parcelas.getId() > 0) {
+					contratoCobrancaDetalhesDao.merge(parcelas);
+					this.selectedListContratoCobrancaDetalhes.add(parcelas);
+				}
 			}
 		}
+		System.out.print("");
 	}
-
-	private List<ContratoCobrancaDetalhes> listContratoCobrancaDetalhesQuitar;
-
-	public void clearQuitarContratoDialog() {
-		TimeZone zone = TimeZone.getDefault();
-		Locale locale = new Locale("pt", "BR");
-		Calendar dataHoje = Calendar.getInstance(zone, locale);
-		Date auxDataHoje = dataHoje.getTime();
-
-		this.numeroParcelaQuitar = 0;
-		this.dataQuitacao = auxDataHoje;
-		this.quitacaoPDF = new QuitacaoPDF();
-
+	
+	public void calcularPorcentagemDesconto() {
+		if(CommonsUtil.semValor(valorComDesconto) ||
+				CommonsUtil.semValor(valorPresenteTotal)) 
+			return;
+		BigDecimal regra3 = valorComDesconto.multiply(BigDecimal.valueOf(100));
+		regra3 = regra3.divide(valorPresenteTotal, MathContext.DECIMAL128);
+		porcentagemDesconto = regra3;
+		porcentagemDesconto = porcentagemDesconto.subtract(BigDecimal.valueOf(100));
+		porcentagemDesconto = porcentagemDesconto.negate();
+		porcentagemDesconto = porcentagemDesconto.setScale(6, RoundingMode.HALF_EVEN);
 		simularQuitacaoContrato();
 	}
-
-	public void simularQuitacaoContrato() {
-		this.valorPresenteTotal = BigDecimal.ZERO;
-		this.listContratoCobrancaDetalhesQuitar = this.objetoContratoCobranca.getListContratoCobrancaDetalhes();
-
-		String cpf = "";
-		if (!CommonsUtil.semValor(this.objetoContratoCobranca.getPagador().getCpf())) {
-			cpf = this.objetoContratoCobranca.getPagador().getCpf();
-		} else if (!CommonsUtil.semValor(this.objetoContratoCobranca.getPagador().getCnpj())) {
-			cpf = this.objetoContratoCobranca.getPagador().getCnpj();
-		}
-		quitacaoPDF = new QuitacaoPDF(this.objetoContratoCobranca.getPagador().getNome(), this.dataQuitacao,
-				this.objetoContratoCobranca.getNumeroContratoSeguro(), cpf);
-
-		for (ContratoCobrancaDetalhes parcelas : listContratoCobrancaDetalhesQuitar) {
-			if (parcelas.isParcelaPaga()) {
-				continue;
+	
+	
+	public StreamedContent downloadPDFQuitacao() throws JRException, IOException {
+		if (!CommonsUtil.semValor(this.quitacaoPDF.getParcelas())) {
+			JasperPrint jp = null;
+			jp = geraPDFSimulacao();
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String identificacao = quitacaoPDF.getNome();
+			if (CommonsUtil.semValor(identificacao))
+				gerador.open("Galleria Bank - Quitação.pdf");
+			else {
+				String nomeArquivoDownload = String.format("Galleria Bank - Quitação %s.pdf", identificacao);
+				gerador.open(nomeArquivoDownload);
 			}
-			this.valorPresenteParcela = BigDecimal.ZERO;
-			if (CommonsUtil.intValue(parcelas.getNumeroParcela()) >= numeroParcelaQuitar) {
-				BigDecimal valorParcelaPDF = parcelas.getVlrParcela();
-				BigDecimal desconto = BigDecimal.ZERO;
-
-				if (this.dataQuitacao.after(parcelas.getDataVencimento())
-						|| this.dataQuitacao.after(DateUtil.adicionarDias(parcelas.getDataVencimento(), -30))) {
-					calcularValorPresenteParcelaDataValor(this.dataQuitacao, parcelas, parcelas.getVlrParcela());
-				} else {
-					this.numeroPresenteParcela = CommonsUtil.intValue(parcelas.getNumeroParcela());
-					calcularValorPresenteParcelaData(this.dataQuitacao, parcelas);
-					if (this.objetoContratoCobranca.isTemTxAdm()) {
-						valorPresenteParcela = valorPresenteParcela.add(SiscoatConstants.TAXA_ADM);
-					}
-				}
-
-				valorPresenteTotal = valorPresenteTotal.add(this.valorPresenteParcela);
-				desconto = valorParcelaPDF.subtract(valorPresenteParcela);
-
-				QuitacaoParcelasPDF parcelaPDF = new QuitacaoParcelasPDF(parcelas.getNumeroParcela(),
-						parcelas.getDataVencimento(), valorParcelaPDF, desconto, valorPresenteParcela);
-				quitacaoPDF.getParcelas().add(parcelaPDF);
-			}
+			gerador.feed(jp);
+			gerador.close();
 		}
-		quitacaoPDF.setValorQuitacao(valorPresenteTotal);
+		return null;
 	}
+	
+
+	public JasperPrint geraPDFSimulacao() throws JRException, IOException {
+		final ReportUtil ReportUtil = new ReportUtil();
+		JasperReport rptSimulacao = ReportUtil.getRelatorio("QuitacaoContrato");
+		JasperReport rptSimulacaoDetalhe = ReportUtil.getRelatorio("QuitacaoParcelas");
+		InputStream logoStream = getClass().getResourceAsStream("/resource/GalleriaBank.png");
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("SUBREPORT_DETALHE", rptSimulacaoDetalhe);
+		parameters.put("IMAGEMLOGO", IOUtils.toByteArray(logoStream));
+		parameters.put("REPORT_LOCALE", new Locale("pt", "BR"));
+		parameters.put("MOSTRARIPCA", true);
+		List<QuitacaoPDF> list = new ArrayList<QuitacaoPDF>();
+		list.add(quitacaoPDF);
+		final JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(list);
+		return JasperFillManager.fillReport(rptSimulacao, parameters, dataSource);
+	}
+	
 	
 	public void geraJSONLiquidacao() {
 		String nomeJSON = "";		
@@ -9240,42 +9331,6 @@ public class ContratoCobrancaMB {
 		return valorPresenteParcela;
 	}
 	
-
-	public StreamedContent downloadPDFQuitacao() throws JRException, IOException {
-		if (!CommonsUtil.semValor(this.quitacaoPDF.getParcelas())) {
-			JasperPrint jp = null;
-			jp = geraPDFSimulacao();
-			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
-					FacesContext.getCurrentInstance());
-			String identificacao = quitacaoPDF.getNome();
-			if (CommonsUtil.semValor(identificacao))
-				gerador.open("Galleria Bank - Quitação.pdf");
-			else {
-				String nomeArquivoDownload = String.format("Galleria Bank - Quitação %s.pdf", identificacao);
-				gerador.open(nomeArquivoDownload);
-			}
-			gerador.feed(jp);
-			gerador.close();
-		}
-		return null;
-	}
-
-	public JasperPrint geraPDFSimulacao() throws JRException, IOException {
-		final ReportUtil ReportUtil = new ReportUtil();
-		JasperReport rptSimulacao = ReportUtil.getRelatorio("QuitacaoContrato");
-		JasperReport rptSimulacaoDetalhe = ReportUtil.getRelatorio("QuitacaoParcelas");
-		InputStream logoStream = getClass().getResourceAsStream("/resource/GalleriaBank.png");
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put("SUBREPORT_DETALHE", rptSimulacaoDetalhe);
-		parameters.put("IMAGEMLOGO", IOUtils.toByteArray(logoStream));
-		parameters.put("REPORT_LOCALE", new Locale("pt", "BR"));
-		parameters.put("MOSTRARIPCA", true);
-		List<QuitacaoPDF> list = new ArrayList<QuitacaoPDF>();
-		list.add(quitacaoPDF);
-		final JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(list);
-		return JasperFillManager.fillReport(rptSimulacao, parameters, dataSource);
-	}
-
 	public Date getDataAmortizacao() {
 		return dataAmortizacao;
 	}
@@ -34467,5 +34522,21 @@ public class ContratoCobrancaMB {
 
 	public void setSelectedBoletosKobanaBaixa(BoletoKobana selectedBoletosKobanaBaixa) {
 		this.selectedBoletosKobanaBaixa = selectedBoletosKobanaBaixa;
+	}
+
+	public BigDecimal getPorcentagemDesconto() {
+		return porcentagemDesconto;
+	}
+
+	public void setPorcentagemDesconto(BigDecimal porcentagemDesconto) {
+		this.porcentagemDesconto = porcentagemDesconto;
+	}
+
+	public BigDecimal getValorComDesconto() {
+		return valorComDesconto;
+	}
+
+	public void setValorComDesconto(BigDecimal valorComDesconto) {
+		this.valorComDesconto = valorComDesconto;
 	}
 }
