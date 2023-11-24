@@ -25,6 +25,7 @@
 				<p:outputLabel value="Tem Protesto" styleClass="labelBold" />
 				<p:selectBooleanCheckbox
 					value="#{contratoCobrancaMB.objetoContratoCobranca.protestoTaxa}"
+					disabled="#{!contratoCobrancaMB.usuarioLogado.profileGerenteAnalise}"
 					id="protestoCBox">
 					<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado"
 						listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
@@ -33,6 +34,7 @@
 				<p:outputLabel value="Inicio Relacionamento Bacen &gt; 2018"
 					styleClass="labelBold" />
 				<p:selectBooleanCheckbox
+					disabled="#{!contratoCobrancaMB.usuarioLogado.profileGerenteAnalise}"
 					value="#{contratoCobrancaMB.objetoContratoCobranca.relacionamentoBacenRecenteTaxa}">
 					<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado"
 						listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
@@ -40,6 +42,7 @@
 
 				<p:outputLabel value="Tem Cheque Devolvido" styleClass="labelBold" />
 				<p:selectBooleanCheckbox
+					disabled="#{!contratoCobrancaMB.usuarioLogado.profileGerenteAnalise}"
 					value="#{contratoCobrancaMB.objetoContratoCobranca.chequeDevolvidoTaxa}">
 					<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado"
 						listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
@@ -47,6 +50,7 @@
 				<p:spacer width="5px" />
 				<p:outputLabel value="Tem Divida Vencida" styleClass="labelBold" />
 				<p:selectBooleanCheckbox
+					disabled="#{!contratoCobrancaMB.usuarioLogado.profileGerenteAnalise}"
 					value="#{contratoCobrancaMB.objetoContratoCobranca.dividaVencidaTaxa}">
 					<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado"
 						listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
@@ -54,6 +58,7 @@
 
 				<p:outputLabel value="Tem Pefin/Refin" styleClass="labelBold" />
 				<p:selectBooleanCheckbox
+					disabled="#{!contratoCobrancaMB.usuarioLogado.profileGerenteAnalise}"
 					value="#{contratoCobrancaMB.objetoContratoCobranca.pefinTaxa}"
 					id="pefinCBox">
 					<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado"
@@ -62,6 +67,7 @@
 				<p:spacer width="5px" />
 				<p:outputLabel value="Tem Prejuízo Bacen " styleClass="labelBold" />
 				<p:selectBooleanCheckbox
+					disabled="#{!contratoCobrancaMB.usuarioLogado.profileGerenteAnalise}"
 					value="#{contratoCobrancaMB.objetoContratoCobranca.prejuizoBacenTaxa}">
 					<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado"
 						listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
@@ -70,6 +76,7 @@
 				<p:outputLabel value="Risco Total &lt; 20.000,00"
 					styleClass="labelBold" />
 				<p:selectBooleanCheckbox
+					disabled="#{!contratoCobrancaMB.usuarioLogado.profileGerenteAnalise}"
 					value="#{contratoCobrancaMB.objetoContratoCobranca.riscoTotal20kTaxa}">
 					<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado"
 						listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
@@ -77,6 +84,7 @@
 				<p:spacer width="5px" />
 				<p:outputLabel value="Score &lt; 450" styleClass="labelBold" />
 				<p:selectBooleanCheckbox
+					disabled="#{!contratoCobrancaMB.usuarioLogado.profileGerenteAnalise}"
 					value="#{contratoCobrancaMB.objetoContratoCobranca.scoreBaixo450Taxa}">
 					<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado"
 						listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
@@ -85,6 +93,7 @@
 				<p:outputLabel value="Risco Total &lt; 50.000,00"
 					styleClass="labelBold" />
 				<p:selectBooleanCheckbox
+					disabled="#{!contratoCobrancaMB.usuarioLogado.profileGerenteAnalise}"
 					value="#{contratoCobrancaMB.objetoContratoCobranca.riscoTotal50kTaxa}">
 					<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado"
 						listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
@@ -92,6 +101,7 @@
 				<p:spacer width="5px" />
 				<p:outputLabel value="Score &lt; 700" styleClass="labelBold" />
 				<p:selectBooleanCheckbox
+					disabled="#{!contratoCobrancaMB.usuarioLogado.profileGerenteAnalise}"
 					value="#{contratoCobrancaMB.objetoContratoCobranca.scoreBaixo700Taxa}">
 					<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado"
 						listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
@@ -100,6 +110,7 @@
 				<p:outputLabel value="Garantia é Terreno ou Barracão?"
 					styleClass="labelBold" />
 				<p:selectBooleanCheckbox
+					disabled="#{!contratoCobrancaMB.usuarioLogado.profileGerenteAnalise}"
 					value="#{contratoCobrancaMB.objetoContratoCobranca.terrenoOuBarracaoTaxa}">
 					<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado"
 						listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
@@ -107,7 +118,8 @@
 				<p:spacer width="5px" />
 				<p:outputLabel value="Nada Consta" styleClass="labelBold" />
 				<p:selectBooleanCheckbox
-					value="#{contratoCobrancaMB.objetoContratoCobranca.nadaConstaTaxa}">
+					value="#{contratoCobrancaMB.objetoContratoCobranca.nadaConstaTaxa}"
+					disabled="#{!contratoCobrancaMB.usuarioLogado.profileGerenteAnalise}">
 					<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado"
 						listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
 				</p:selectBooleanCheckbox>
