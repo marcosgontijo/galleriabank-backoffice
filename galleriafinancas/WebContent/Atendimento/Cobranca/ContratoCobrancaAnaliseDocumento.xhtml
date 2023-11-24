@@ -68,10 +68,10 @@
 							<p:outputLabel value="" />
 					<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">						
 						<p:commandButton value="Adicionar Pessoa"
-							rendered="#{contratoCobrancaMB.objetoContratoCobranca.emAnalise and !contratoCobrancaMB.verificaReaProcessado}"
 							action="#{contratoCobrancaMB.preparaAdicionarPessoaAnalise}"
 							oncomplete="PF('adicionarPessoaAnaliseDlg').show();"
-							disabled="true" update="adicionarPessoaAnaliseForm">
+							disabled="#{!contratoCobrancaMB.objetoContratoCobranca.emAnalise or !contratoCobrancaMB.verificaReaProcessado}"
+							 update="adicionarPessoaAnaliseForm">
 
 						</p:commandButton>
 					</shiro:hasAnyRoles>

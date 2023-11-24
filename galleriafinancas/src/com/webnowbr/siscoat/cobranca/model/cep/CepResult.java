@@ -7,16 +7,16 @@ public class CepResult {
 	@SerializedName(value = "erro")
 	private String erro;
 
-	@SerializedName(value = "endereco", alternate={"logradouro"})
+	@SerializedName(value = "endereco", alternate={"logradouro, address"})
 	private String endereco;
 
-	@SerializedName(value = "bairro")
+	@SerializedName(value = "bairro, district")
 	private String bairro;
 
-	@SerializedName(value = "cidade", alternate={"localidade"})
+	@SerializedName(value = "cidade", alternate={"localidade, city"})
 	private String cidade;
 
-	@SerializedName(value = "estado", alternate={"uf"})
+	@SerializedName(value = "estado", alternate={"uf, state"})
 	private String estado;
 
 	
