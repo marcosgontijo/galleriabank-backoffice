@@ -202,7 +202,7 @@ public class MenuItemMB {
 
 		objetoItemFavorito = dao.findById(id);
 		favorito = dao.consultaFavorito(objetoItemFavorito, loginBean.getUsuarioLogado());
-		if (favorito.getId() != null) {
+		if (favorito != null && favorito.getId() != null ) {
 			objetoItemFavorito.setFavorito(true);
 
 		} else {
