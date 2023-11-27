@@ -89,10 +89,36 @@
 				        		<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoBaixaPagamentoStarkBank}" value="#{pagamento}" />
 			                </p:commandButton>
 			                <p:spacer width="10" height="10"/>		
+			                <p:commandButton oncomplete="PF('baixasStarkBankdlg').show();"
+											icon="ui-icon-video" title="Reprovar Pagamento" value="Reprovar Pagamento"
+											update=":starkBankBaixasForm">
+								<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoBaixaPagamentoStarkBank}" value="#{pagamento}" />								
+							</p:commandButton>
+			                <p:spacer width="10" height="10"/>	
 			            </shiro:hasAnyRoles>               
 		            </p:column>			        		               		        			        			           			 		
 				</p:dataTable>
 			</p:panel>
 		</h:form>
+		<p:dialog header="Reprova Pagamento - #{contratoCobrancaMB.objetoBaixaPagamentoStarkBank.contasPagar.contrato.numeroContrato} - #{contratoCobrancaMB.objetoBaixaPagamentoStarkBank.contasPagar.descricao}" overflow="auto"
+			widgetVar="baixasStarkBankdlg" resizable="true" style="FONT-SIZE: 13pt;">
+			<h:form id="starkBankBaixasForm">	
+				<h:panelGrid columns="1">
+					<p:outputLabel value="Comentário: " 
+						style="font-size: 20px !important;" styleClass="labelBold"/>
+					<h:inputTextarea id="observacaoReprova"
+								value="#{contratoCobrancaMB.objetoBaixaPagamentoStarkBank.comentario}"
+								rows="10" cols="48" maxlength="3000" onblur=""
+								counterTemplate="{0} characters remaining." autoResize="false"
+								style="FONT-SIZE: 10pt;width:400px;">
+								<p:ajax process="@this" partialSubmit="true" />
+					</h:inputTextarea>
+				</h:panelGrid>
+				
+				<div align="center" style="margin-top: 20px;">
+					<p:commandButton action="#{contratoCobrancaMB.processaReprovaPagamentoStarkBank()}" ajax="false" icon="ui-icon-print" value="Reprovar Pagamento" title="Reprovar Pagamento" oncomplete="PF('baixasStarkBankdlg').hide();" />
+				</div>
+			</h:form>
+		</p:dialog>
 	</ui:define>
 </ui:composition>
