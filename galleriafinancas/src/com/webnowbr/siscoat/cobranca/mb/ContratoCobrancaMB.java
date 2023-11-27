@@ -31546,6 +31546,8 @@ public class ContratoCobrancaMB {
 		documentoAnaliseDao.merge(documentoAnaliseAdicionar);
 		listaArquivosAnaliseDocumentos();
 		this.objetoContratoCobranca.setDocumentosAnalisados(false);
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		contratoCobrancaDao.merge(objetoContratoCobranca);
 	}
 	
 	public void adicionaEstado() {
@@ -34264,6 +34266,8 @@ public class ContratoCobrancaMB {
 								ressalvaProtesto, ressalvaTrabalhista, ressalvaProcesso);
 					}
 					this.objetoContratoCobranca.setDocumentosAnalisados(true);
+					ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+					contratoCobrancaDao.merge(objetoContratoCobranca);
 				}
 				this.objetoContratoCobranca.setPefinRefinRessalva(this.objetoContratoCobranca.getPefinRefinRessalva() == "" 
 						? String.join(", ", ressalvaPefin) 
