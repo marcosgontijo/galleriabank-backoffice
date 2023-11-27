@@ -449,21 +449,23 @@
 											style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
 										border-radius: 5px; padding: 10px;"
-											rendered="#{contratoCobrancaMB.objetoContratoCobranca.agAssinatura 
-										and contratoCobrancaMB.objetoContratoCobranca.contratoConferido
+											rendered="#{ contratoCobrancaMB.objetoContratoCobranca.contratoConferido
 										and !contratoCobrancaMB.objetoContratoCobranca.reanalisePronta}">
 											<p:outputLabel styleClass="labelBold">Aguardando Assinatura</p:outputLabel>
 											<p:spacer></p:spacer>
-											<p:selectBooleanButton id="agAssinatura"
+											<p:selectBooleanButton id="agAssinatura" 
 												value="#{contratoCobrancaMB.objetoContratoCobranca.agAssinatura}"
 												onLabel="Não assinado" offLabel="Assinado"
 												onIcon="ui-icon-close" offIcon="ui-icon-check"
 												style="width:=60px">
+												<p:ajax event="change"
+													 update="form:precisaReanalise"/>
 											</p:selectBooleanButton>
 											<p:spacer></p:spacer>
 											<p:outputLabel styleClass="labelBold">Precisa de Reanalise?</p:outputLabel>
 											<p:selectBooleanButton id="precisaReanalise"
 												value="#{contratoCobrancaMB.objetoContratoCobranca.reanalise}"
+												disabled="#{contratoCobrancaMB.objetoContratoCobranca.agAssinatura}"
 												onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 												offIcon="ui-icon-close" style="width:=60px" >
 												<p:ajax event="change"
