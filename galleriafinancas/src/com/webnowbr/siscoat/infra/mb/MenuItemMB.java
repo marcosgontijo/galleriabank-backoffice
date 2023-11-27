@@ -196,7 +196,7 @@ public class MenuItemMB {
 	}
 
 	public String clearFieldsFavorito(Long id) {
-		MenuItem favorito = new MenuItem();
+		MenuFavorito favorito = new MenuFavorito();
 		MenuItemDao dao = new MenuItemDao();
 		objetoItemFavorito = new MenuItem();
 

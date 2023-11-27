@@ -268,17 +268,17 @@ public class MenuItemDao extends HibernateDao<MenuItem, Long> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public MenuItem consultaFavorito(MenuItem menu, User user) {
+	public MenuFavorito consultaFavorito(MenuItem menu, User user) {
 
-		return (MenuItem) executeDBOperation(new DBRunnable() {
+		return (MenuFavorito) executeDBOperation(new DBRunnable() {
 
 			@Override
 			public Object run() throws Exception {
-				MenuItem menuItemItem = new MenuItem();
+				MenuFavorito menuItemItem = new MenuFavorito();
 				Connection connection = null;
 				PreparedStatement ps = null;
 				ResultSet rs = null;
-				String QUERY_VERIFICA_FAVORITO = "select f.id, m.id  from infra.menuitem m  left join infra.menufavorito f  on (m.id = f.idmenuitemfavorito) "
+				String QUERY_VERIFICA_FAVORITO = "select  F.id  from infra.menuitem m  left join infra.menufavorito f  on (m.id = f.idmenuitemfavorito) "
 						+ "where (iduser = " + user.getId() + " and m.id = " + menu.getId() + ")";
 				try {
 					connection = getConnection();
@@ -287,10 +287,10 @@ public class MenuItemDao extends HibernateDao<MenuItem, Long> {
 					ps = connection.prepareStatement(query.toString());
 					rs = ps.executeQuery();
 
-					MenuItemDao menuDao = new MenuItemDao();
+					MenuFavoritoDao menuFavoDao = new MenuFavoritoDao();
 
 					while (rs.next()) {
-						menuItemItem = menuDao.findById(rs.getLong(1));
+						menuItemItem = menuFavoDao.findById(rs.getLong(1));
 					}
 
 					closeResources(connection, ps, rs);
