@@ -28995,6 +28995,7 @@ public class ContratoCobrancaMB {
 		} catch (SchedulerException e) {
 			e.printStackTrace();
 		}
+		this.objetoContratoCobranca.setDocumentosAnalisados(false);
 	}
 
 	public boolean checkConsultasAnaliseDocumento() throws SchedulerException {
@@ -34259,7 +34260,9 @@ public class ContratoCobrancaMB {
 								ressalvaProtesto, ressalvaTrabalhista, ressalvaProcesso);
 					}
 					this.objetoContratoCobranca.setDocumentosAnalisados(true);
-				} else {
+					ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+					contratoCobrancaDao.merge(objetoContratoCobranca);
+				} else if (proprietarios.size() > 0) {
 					for (DocumentoAnalise docAnalise : proprietarios) {	
 						analisaTaxasDocumentos(docAnalise, nadaConsta, isScore450, 
 								isRisco20k, ressalvaPefin, ressalvaCcf, 
@@ -34269,6 +34272,7 @@ public class ContratoCobrancaMB {
 					ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 					contratoCobrancaDao.merge(objetoContratoCobranca);
 				}
+				
 				this.objetoContratoCobranca.setPefinRefinRessalva(this.objetoContratoCobranca.getPefinRefinRessalva() == "" 
 						? String.join(", ", ressalvaPefin) 
 								: this.objetoContratoCobranca.getPefinRefinRessalva());
@@ -34306,11 +34310,16 @@ public class ContratoCobrancaMB {
     			continue;
 			}
 			
-			if (docAnalise.getEngine() != null && !CommonsUtil.semValor(docAnalise.getEngine().getIdCallManager())) {
-				if (CommonsUtil.semValor(docAnalise.getRetornoEngine())) {
-					isAllEngineProcessados = false;
-					break;
+			if (CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise().toLowerCase(), "proprietario atual") 
+				|| CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise().toLowerCase(), "comprador")) {
+				if (docAnalise.getEngine() != null && !CommonsUtil.semValor(docAnalise.getEngine().getIdCallManager())) {
+					if (CommonsUtil.semValor(docAnalise.getRetornoEngine())) {
+						isAllEngineProcessados = false;
+						break;
+					}
 				}
+			} else {
+				continue;
 			}
     	}
     	
