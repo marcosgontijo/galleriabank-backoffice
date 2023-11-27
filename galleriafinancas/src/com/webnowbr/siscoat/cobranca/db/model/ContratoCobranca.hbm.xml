@@ -2275,6 +2275,8 @@
 		<property name="avaliacaoPajuReanalise" type="java.lang.String">
 			<column name="avaliacaoPajuReanalise" />
 		</property>
-		
+		<property name="documentosAnalisados" type="boolean">
+			<column name="documentosAnalisados" not-null="true" default="false"/>
+		</property>
 	</class>
 </hibernate-mapping>

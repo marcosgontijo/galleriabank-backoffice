@@ -1953,6 +1953,34 @@
 							<p:outputLabel id="observacaoContatoAgendaLaudoAvaliacao"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.observacaoContatoAgendaLaudoAvaliacao}"
 								style="FONT-SIZE: 10pt;width:100px;white-space: pre-wrap;" />
+								
+							<p:outputLabel for="contatoDiferenteProprietario"
+								value="Contato é diferente do Proprietário? "
+								styleClass="labelBold" />
+							<p:selectBooleanCheckbox id="contatoDiferenteProprietario"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.contatoDiferenteProprietario}" />
+
+							<p:outputLabel for="avaliacaoLaudoObservacao"
+								value="Observação Avaliação: " styleClass="labelBold" />
+							<p:inputTextarea id="avaliacaoLaudoObservacao" rows="5" cols="84"
+								maxlength="3000" onblur=""
+								counterTemplate="{0} characters remaining." autoResize="false"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudoObservacao}" />
+
+							<p:outputLabel for="comentarioContatoAgendaLaudoAvaliacao"
+								value="Comentário da Avaliação: " styleClass="labelBold" />
+							<p:inputTextarea id="comentarioContatoAgendaLaudoAvaliacao"
+								rows="5" cols="84" maxlength="3000" onblur=""
+								counterTemplate="{0} characters remaining." autoResize="false"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioContatoAgendaLaudoAvaliacao}"
+								readonly="true" />
+
+							<p:outputLabel for="geracaoLaudo" value="Observação PAJU: "
+								styleClass="labelBold" />
+							<p:inputTextarea id="geracaoLaudo" rows="5" cols="84"
+								maxlength="3000" onblur=""
+								counterTemplate="{0} characters remaining." autoResize="false"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.geracaoLaudoObservacao}" />
 
 							<p:outputLabel for="formaDePagamentoLaudoPAJU"
 								styleClass="labelBold" value="Forma de Pagamento" />

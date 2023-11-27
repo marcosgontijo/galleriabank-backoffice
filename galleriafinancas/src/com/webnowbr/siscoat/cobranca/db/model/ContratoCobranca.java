@@ -6,15 +6,12 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
-import java.util.TimeZone;
 
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
@@ -856,6 +853,7 @@ public class ContratoCobranca implements Serializable {
 	private boolean isInicioRelacionamentoInexistenteTaxa;
 	private boolean riscoTotal20kTaxa;
 	private boolean riscoTotal50kTaxa;
+	private boolean documentosAnalisados;
 
 	//FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13	
 	public BigDecimal calcularValorTotalContasPagas() {
@@ -7405,6 +7403,14 @@ public class ContratoCobranca implements Serializable {
 
 	public void setAvaliacaoPajuReanalise(String avaliacaoPajuReanalise) {
 		this.avaliacaoPajuReanalise = avaliacaoPajuReanalise;
+	}
+
+	public boolean isDocumentosAnalisados() {
+		return documentosAnalisados;
+	}
+
+	public void setDocumentosAnalisados(boolean documentosAnalisados) {
+		this.documentosAnalisados = documentosAnalisados;
 	}
 	
 }

@@ -3914,9 +3914,8 @@
 											style="TEXT-DECORATION: bold" />
 									</h:panelGroup>
 									
-									<p:outputLabel for="tipoPix" value="Tipo Do Pix "
+								<p:outputLabel for="tipoPix" value="Tipo Do Pix "
 									styleClass="labelBold" />
-
 								<p:selectOneMenu id="tipoPix"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.tipoPix}">
 									<f:selectItem itemValue="CPF" itemLabel="CPF" />
@@ -3929,7 +3928,7 @@
 										listener="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.verificaAlteracaoPix}" />
 								</p:selectOneMenu>
 
-								<p:outputLabel value="Banco: " for="Banco"  rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.pixValidado}"
+								<p:outputLabel value="Banco: " for="Banco"  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
 									styleClass="labelBold" />
 								<p:outputLabel  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.bancoPix}"

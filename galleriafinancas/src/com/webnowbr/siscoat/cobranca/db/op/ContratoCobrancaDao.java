@@ -6931,17 +6931,17 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 
 					String query = QUERY_CONTRATOS_PENDENTES_CONSULTA;
 					
-					String queryResponsavel = " res.codigo = '" + codResponsavel + "' ";
+					String queryResponsavel = " '" + codResponsavel + "' ";
 					
 					if (listResponsavel.size() > 0) {
 						for (Responsavel resp : listResponsavel) {
 							if (!resp.getCodigo().equals("")) { 
-								queryResponsavel = queryResponsavel + " or res.codigo = '" + resp.getCodigo() + "' ";
+								queryResponsavel = queryResponsavel + ",'" + resp.getCodigo() + "'";
 							}
 						}				
 					} 
 				
-					query = query + " where  " + queryResponsavel + " ";
+					query = query + " where  ( res.codigo in ( " + queryResponsavel + ") or  gerente.codigo in ( " + queryResponsavel + ") )";
 					
 					/*query = query + "  group by coco.id, numeroContrato, datacontrato, quantoPrecisa, res.nome, pare.nome, gerente.nome, res.superlogica,"
 							+ "	statuslead, inicioAnalise, cadastroAprovadoValor, matriculaAprovadaValor, pagtoLaudoConfirmada, "

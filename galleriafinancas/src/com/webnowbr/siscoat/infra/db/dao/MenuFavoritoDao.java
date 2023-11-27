@@ -15,7 +15,7 @@ import com.webnowbr.siscoat.infra.db.model.User;
 public class MenuFavoritoDao extends HibernateDao<MenuFavorito, Long> {
 
 	@SuppressWarnings("unchecked")
-	public boolean consultaMenu(User user, MenuItem menu) {
+	public boolean apagaMenu(User user, MenuItem menu) {
 
 		return (Boolean) executeDBOperation(new DBRunnable() {
 
