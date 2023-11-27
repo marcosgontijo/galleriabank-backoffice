@@ -191,7 +191,7 @@ public class MenuItemMB {
 		menuFavorito.setMenuItemFavorito(menu);
 		menuFavorito.setUser(loginBean.getUsuarioLogado());
 		favoritoDao.create(menuFavorito);
-		clearFieldsFavorito(id);
+		clearFieldsFavorito(menu.getId());
 
 	}
 
@@ -200,7 +200,7 @@ public class MenuItemMB {
 		MenuItemDao dao = new MenuItemDao();
 		objetoItemFavorito = new MenuItem();
 
-		this.objetoItemFavorito = dao.findById(id);
+		objetoItemFavorito = dao.findById(id);
 		favorito = dao.consultaFavorito(objetoItemFavorito, loginBean.getUsuarioLogado());
 		if (favorito.getId() != null) {
 			objetoItemFavorito.setFavorito(true);
@@ -217,9 +217,8 @@ public class MenuItemMB {
 		MenuItemDao menuItemDao = new MenuItemDao();
 		MenuFavoritoDao favoritoDao = new MenuFavoritoDao();
 		MenuItem menu = menuItemDao.findById(id);
-		favoritoDao.consultaMenu(loginBean.getUsuarioLogado(), menu);
-		favoritoDao.delete(menuFavorito);
-		clearFieldsFavorito(id);
+		favoritoDao.apagaMenu(loginBean.getUsuarioLogado(), menu);
+		clearFieldsFavorito(menu.getId());
 	}
 
 	public MenuItem getObjetoMenuItem() {
