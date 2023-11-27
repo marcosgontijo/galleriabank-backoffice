@@ -1313,6 +1313,24 @@ public class ContratoCobrancaMB {
 			this.relObjetoContratoCobranca = new ArrayList<RelatorioFinanceiroCobranca>();
 		}
 	}
+	
+	public void onRowEditBaixaStarkBank(RowEditEvent event) {
+		StarkBankBaixaDAO sbDao = new StarkBankBaixaDAO();
+		
+		StarkBankBaixa starkBankBaixaTmp = (StarkBankBaixa) event.getObject();
+
+		starkBankBaixaTmp.setStatusPagamento("Aguardando Aprovação");
+		
+		sbDao.merge(starkBankBaixaTmp);
+
+		FacesContext context = FacesContext.getCurrentInstance();
+		context.addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO, "Stark Bank Baixa: Enviado novamente para aprovação!", ""));
+	}
+	
+	public void onRowCancelBaixaStarkBank(RowEditEvent event) {
+
+	}
 
 	public void onRowEdit(RowEditEvent event) {
 		ContratoCobrancaDetalhesDao cDao = new ContratoCobrancaDetalhesDao();
@@ -19299,6 +19317,7 @@ public class ContratoCobrancaMB {
 	
 	public String processaPagamentoStarkBank() {
 		FacesContext context = FacesContext.getCurrentInstance();
+		
 		boolean finalizaOperacao = false;
 		
 		if (!CommonsUtil.semValor(this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getContaPagarValorTotal())) {
@@ -19433,6 +19452,20 @@ public class ContratoCobrancaMB {
 				cDao.merge(this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato());
 			}
 		}
+		
+		return consultaPagamentosStarkBankPendentes();
+	}
+	
+	public String processaReprovaPagamentoStarkBank() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		
+		this.objetoBaixaPagamentoStarkBank.setStatusPagamento("Reprovado");
+		
+		StarkBankBaixaDAO sbBaixaDao = new StarkBankBaixaDAO();
+		sbBaixaDao.merge(this.objetoBaixaPagamentoStarkBank);	
+		
+		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+				"Pagamento StarkBank: Reprovado com sucesso!", ""));
 		
 		return consultaPagamentosStarkBankPendentes();
 	}
