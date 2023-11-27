@@ -34374,6 +34374,8 @@ public class ContratoCobrancaMB {
 		docAnalise.getResumoEngine();
 		docAnalise.getResumoScr();
 		docAnalise.getResumoProcesso();
+		docAnalise.getResumoCenprot();
+		
 		if (docAnalise.isCcfApontamentosAvailable()) {
 			this.objetoContratoCobranca.setChequeDevolvidoTaxa(true);
 			nadaConsta = false;
@@ -34384,7 +34386,7 @@ public class ContratoCobrancaMB {
 			nadaConsta = false;
 			ressalvaPefin.add(docAnalise.getRessalvaPefinNome());
 		}
-		if (docAnalise.isProtestosAvailable()) {
+		if (docAnalise.isProtestosAvailable() || docAnalise.isProtestoCenprotAvailable()) {
 			this.objetoContratoCobranca.setProtestoTaxa(true);
 			nadaConsta = false;
 			ressalvaProtesto.add(docAnalise.getRessalvaProtestoNome());
