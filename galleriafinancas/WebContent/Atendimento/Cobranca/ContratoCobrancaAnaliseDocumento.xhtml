@@ -279,13 +279,15 @@
 							</p:commandButton>
 
 						</p:column>
-						<p:column>
-							<p:commandButton icon=" ui-icon-pencil"
-								onclick="PF('editarPessoaAnaliseDlg').show()" ajax="true" update="adicionarPessoaAnaliseEditarForm">
-								<f:setPropertyActionListener value="#{fileAnalise}"
-									target="#{contratoCobrancaMB.objetoDocumentoAnalise}" />
-							</p:commandButton>
-						</p:column>
+						<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
+							<p:column>
+								<p:commandButton icon=" ui-icon-pencil"
+									onclick="PF('editarPessoaAnaliseDlg').show()" ajax="true" update="adicionarPessoaAnaliseEditarForm">
+									<f:setPropertyActionListener value="#{fileAnalise}"
+										target="#{contratoCobrancaMB.objetoDocumentoAnalise}" />
+								</p:commandButton>
+							</p:column>
+						</shiro:hasAnyRoles>
 
 						<p:column style="width:100px;" rendered="#{false}">
 							<p:commandButton value="Download" ajax="false"
