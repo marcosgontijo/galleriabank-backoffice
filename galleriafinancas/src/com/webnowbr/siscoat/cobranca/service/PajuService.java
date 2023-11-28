@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
+import org.apache.pdfbox.text.PDFTextStripperByArea;
 import org.docx4j.XmlUtils;
 import org.docx4j.jaxb.Context;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
@@ -49,6 +54,7 @@ import com.webnowbr.siscoat.cobranca.ws.netrin.NetrinConsulta;
 import com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
+import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.common.WordUtil;
 import com.webnowbr.siscoat.exception.SiscoatException;
 
@@ -377,6 +383,9 @@ public class PajuService {
 			if (!CommonsUtil.semValor(participante.getPlexiConsultas())) {
 				for (PlexiConsulta plexiConsulta : participante.getPlexiConsultas()) {
 
+					List<String> debitos = new ArrayList<String>();
+					List<String> debitosSimilariedade = new ArrayList<String>();
+
 					ContratoTipoTemplateBloco blocoFilho = bloco
 							.getBlocosFilho().stream().filter(b -> CommonsUtil
 									.mesmoValor(b.getCodigoTipoTemplateBloco(), BLOCO_PESSOA_FISICA_DOCUMENTOS_PLEXI))
@@ -386,6 +395,92 @@ public class PajuService {
 								&& !CommonsUtil.booleanValue(plexiConsulta.getPlexiWebhookRetorno().getError())
 								&& CommonsUtil.booleanValue(plexiConsulta.getPlexiDocumentos().isMostrarPaju()))
 							adicionaParagrafoPlexi(docTemplate, paragrafoDocumentoTemplate, blocoFilho, plexiConsulta);
+
+						if ( CommonsUtil.mesmoValor(plexiConsulta.getPlexiDocumentos().getId(), 31L))
+						// faz leitura do PDF
+						if (CommonsUtil.mesmoValor(SiscoatConstants.CND_SITUACAO_POSSUI_DEBITOS,
+								plexiConsulta.getPlexiWebhookRetorno().getSituacao())) {
+							String texto = null;
+							try {
+								PDDocument document = PDDocument
+										.load(java.util.Base64.getDecoder().decode(plexiConsulta.getPdf()));
+
+								PDFTextStripperByArea stripper = new PDFTextStripperByArea();
+								stripper.setSortByPosition(true);
+
+								PDFTextStripper tStripper = new PDFTextStripper();
+
+								String pdfFileInText = tStripper.getText(document);
+
+								// split by whitespace
+								String lines[] = pdfFileInText.split("\\r?\\n");
+								List<String> pdfLines = new ArrayList<>();
+
+								List<String> pdfLinesSimilariedade = new ArrayList<>();
+								StringBuilder sb = new StringBuilder();
+								for (String line : lines) {
+									pdfLines.add(line);
+									sb.append(line + "\n");
+								}
+								
+								List<String> pdfLinesClean = pdfLines;
+								List<String> paginas =new ArrayList<String>();
+								
+								String textoInicio = pdfLines.get(0);
+								int iFinal =0;
+								int iInicial = getPosicaoLinha(pdfLinesClean, textoInicio);
+
+								while (iInicial > -1) {
+									iFinal = getPosicaoLinha(pdfLinesClean, "PEDIDO N°:");
+									if (iFinal == -1)
+										iFinal = pdfLinesClean.size();
+//									else
+//										iFinal = iFinal-2;
+//																		
+									paginas.addAll(pdfLinesClean.stream().limit(iFinal-2).skip(iInicial + 5)
+											.collect(Collectors.toList()));
+									
+									pdfLinesClean = pdfLinesClean.stream().skip(iFinal+1).collect(Collectors.toList());
+									
+									iInicial = getPosicaoLinha(pdfLinesClean, textoInicio);
+								}
+								
+								pdfLines = new ArrayList<String>(paginas);
+								
+								iInicial = getPosicaoLinha(pdfLines, "As seguintes distribuições:") + 1;
+
+								iFinal = getPosicaoLinha(pdfLines, "CERTIFICA  ainda  que");
+								if (iFinal == -1)
+									iFinal = getPosicaoLinha(pdfLines, "CERTIFICA ainda  que");
+								if (iFinal == -1)
+									iFinal = getPosicaoLinha(pdfLines,
+											"Esta   certidão   não   aponta   ordinariamente");
+								else
+									pdfLinesSimilariedade = pdfLines.stream().skip(iFinal).collect(Collectors.toList());
+
+								iFinal = iFinal - 1;
+
+								if (iInicial > -1 && iFinal > -1) {
+									debitos = pdfLines.stream().skip(iInicial).limit(iFinal)
+											.collect(Collectors.toList());
+								}
+
+								if (!CommonsUtil.semValor(pdfLinesSimilariedade)) {
+									iInicial = getPosicaoLinha(pdfLinesSimilariedade, "que pode referir-se a homônimo:")
+											+ 1;
+									iFinal = getPosicaoLinha(pdfLinesSimilariedade, "Esta certidão não aponta") ;
+
+									if (iInicial > -1 && iFinal > -1) {
+										debitosSimilariedade = pdfLinesSimilariedade.stream().limit(iFinal).skip(iInicial)
+												.collect(Collectors.toList());
+									}
+								}
+
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
 					}
 				}
 			}
@@ -416,6 +511,17 @@ public class PajuService {
 			removeParagrafo(docTemplate, paragrafoTemplate);
 		}
 
+	}
+
+	private int getPosicaoLinha(List<String> pdfLines, String pequisa) {
+		int iPosicao = -1;
+		Optional<String> linhaLocalizada = pdfLines.stream()
+				.filter(x -> x.trim().replaceAll("  +", " ").contains(pequisa.trim().replaceAll("  +", " ")))
+				.findFirst();
+		if (linhaLocalizada.isPresent())
+			iPosicao = pdfLines.indexOf(linhaLocalizada.get());
+
+		return iPosicao;
 	}
 
 	private void populaParagrafoCertidoesPJ(WordprocessingMLPackage docTemplate, ContratoTipoTemplateBloco bloco,
