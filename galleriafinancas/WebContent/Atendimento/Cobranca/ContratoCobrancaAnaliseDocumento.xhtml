@@ -67,6 +67,12 @@
 				<f:facet name="header"> Arquivo(s) Salvo(s) na analise 
 							<p:outputLabel value="" />
 					<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">						
+						<p:commandButton value="Documentos Analise REA"
+							action="#{contratoCobrancaMB.listaArquivosAnaliseDocumentos()}"
+							oncomplete="PF('documentosReaDlg').show();"
+							update="documentosAnaliseReaForm">
+						</p:commandButton>
+						
 						<p:commandButton value="Adicionar Pessoa"
 							action="#{contratoCobrancaMB.preparaAdicionarPessoaAnalise}"
 							oncomplete="PF('adicionarPessoaAnaliseDlg').show();"
@@ -116,7 +122,7 @@
 							<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"
 								rendered="#{!fileAnalise.isAnaliseBloqueada() and contratoCobrancaMB.objetoContratoCobranca.emAnalise  }"
 								onLabel="Sim" offLabel="Não" style="width:6rem">
-								<p:ajax event="change"
+								<p:ajax event="change" update="documentosAnaliseReaForm dtFilesAnalise"
 									listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
 							</p:selectBooleanButton>
 							<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"
