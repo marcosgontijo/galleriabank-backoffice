@@ -291,6 +291,7 @@ public class ContratoCobrancaMB {
 
 	private List<BoletoKobana> selectedBoletosKobana = new ArrayList<BoletoKobana>();
 	private List<DocumentoAnalise> listaDocumentoAnalise;
+	private List<DocumentoAnalise> listaDocumentoAnaliseRea;
 	private List<DocumentoAnalise> listaDeleteAnalise = new ArrayList<DocumentoAnalise>();
 	
 	private BoletoKobana selectedBoletosKobanaBaixa = null;
@@ -8592,6 +8593,7 @@ public class ContratoCobrancaMB {
 					}
 				}
 				
+				valorPresenteTotal = valorPresenteTotal.add(this.valorPresenteParcela);
 				if(!CommonsUtil.semValor(porcentagemDesconto)) {
 					BigDecimal porcentagem = BigDecimal.valueOf(100).subtract(porcentagemDesconto);
 					porcentagem = porcentagem.divide(BigDecimal.valueOf(100));
@@ -8601,7 +8603,6 @@ public class ContratoCobrancaMB {
 				}
 				desconto = valorParcelaPDF.subtract(valorPresenteParcela);
 				
-				valorPresenteTotal = valorPresenteTotal.add(this.valorPresenteParcela);
 				QuitacaoParcelasPDF parcelaPDF = new QuitacaoParcelasPDF(parcelas.getNumeroParcela(),
 						parcelas.getDataVencimento(), valorParcelaPDF, desconto, valorPresenteParcela);
 				quitacaoPDF.getParcelas().add(parcelaPDF);
@@ -8613,9 +8614,7 @@ public class ContratoCobrancaMB {
 		valorComDesconto = valorComDesconto.setScale(2, RoundingMode.HALF_EVEN);
 		quitacaoPDF.setValorQuitacao(valorComDesconto);
 		//quitarContrato(listContratoCobrancaDetalhesQuitar);
-	}
-	
-	
+	}	
 	
 	public void quitarContrato(List<ContratoCobrancaDetalhes> listaParcelas) {
 		ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
@@ -19941,7 +19940,7 @@ public class ContratoCobrancaMB {
 		Date dataProcesso = DateUtil.getFirstDayOfYear(CommonsUtil.intValue(CommonsUtil.somenteNumeros(ano)));
 		Date hoje = DateUtil.gerarDataHoje();
 		BigDecimal valorPresente = calcularValorPresente(dataProcesso, hoje, 
-				processoSelecionado.getValor(), BigDecimal.valueOf(1.5));
+				processoSelecionado.getValor(), BigDecimal.valueOf(1));
 		valorPresente = valorPresente.multiply(BigDecimal.valueOf(1.1));
 		valorPresente = valorPresente.setScale(2, BigDecimal.ROUND_HALF_UP);
 		processoSelecionado.setValorAtualizado(valorPresente);
@@ -29015,7 +29014,7 @@ public class ContratoCobrancaMB {
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 
 		documentoAnaliseDao.merge(documentoAnalise);
-
+		listaArquivosAnaliseDocumentos();
 	}
 
 	public void executarConsultasAnaliseDocumento() throws SchedulerException {
@@ -31570,6 +31569,7 @@ public class ContratoCobrancaMB {
 	public void listaArquivosAnaliseDocumentos() {
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 		this.listaDocumentoAnalise = documentoAnaliseDao.listagemDocumentoAnalise(this.objetoContratoCobranca);
+		this.listaDocumentoAnaliseRea = documentoAnaliseDao.listagemDocumentoAnaliseNaoAnalisados(this.objetoContratoCobranca);
 		Collections.sort(this.listaDocumentoAnalise, new Comparator<DocumentoAnalise>() {
 			@Override
 			public int compare(DocumentoAnalise one, DocumentoAnalise other) {
@@ -34489,4 +34489,13 @@ public class ContratoCobrancaMB {
 	public void setValorComDesconto(BigDecimal valorComDesconto) {
 		this.valorComDesconto = valorComDesconto;
 	}
+
+	public List<DocumentoAnalise> getListaDocumentoAnaliseRea() {
+		return listaDocumentoAnaliseRea;
+	}
+
+	public void setListaDocumentoAnaliseRea(List<DocumentoAnalise> listaDocumentoAnaliseRea) {
+		this.listaDocumentoAnaliseRea = listaDocumentoAnaliseRea;
+	}
+	
 }

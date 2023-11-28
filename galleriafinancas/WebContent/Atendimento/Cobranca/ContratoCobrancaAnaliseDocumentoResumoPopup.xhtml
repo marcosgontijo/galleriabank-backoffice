@@ -32,7 +32,7 @@
 		</f:facet>
 		<h:form id="resumoConsutlasForm">
 		
-		<h:panelGrid columns="1" rendered="#{contratoCobrancaMB.documentoAnalisePopup.resumoRelacionamentos.size() > 0}">
+			<h:panelGrid columns="1" rendered="#{contratoCobrancaMB.documentoAnalisePopup.resumoRelacionamentos.size() > 0}">
 				<p:panel style="justify-content:start;">
 					<f:facet name="header">
 						<h:outputText value="Relacionamentos" />
@@ -306,6 +306,67 @@
 	</p:dialog>
 
 	<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
+		<p:dialog header="Documentos REA" id="documentosReaDlgId"
+			widgetVar="documentosReaDlg" 
+			resizable="true" responsive="true" width="1000" closable="true" ajax="true">
+			
+			<h:form id="documentosAnaliseReaForm">
+				<div align="center">
+					<p:dataTable id="dtFilesAnalise" var="fileAnalise"
+						value="#{contratoCobrancaMB.listaDocumentoAnaliseRea}"
+						emptyMessage="">
+	
+						<p:column headerText="Liberado Análise" style="text-align: center; width:3rem">
+							<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"
+								rendered="#{!fileAnalise.isAnaliseBloqueada()}"
+								onLabel="Sim" offLabel="Não" style="width:3rem">
+								<p:ajax event="change" update="documentosAnaliseReaForm form:dtFilesAnalise"
+									listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
+							</p:selectBooleanButton>
+						</p:column>
+	
+						<p:column style="text-align: center; width:6rem" headerText="Identificação"
+							filterBy="#{fileAnalise.identificacao}"
+							filterMatchMode="contains" sortBy="#{fileAnalise.identificacao}">
+	
+							<h:outputText value="#{fileAnalise.identificacao}"
+								rendered="#{fileAnalise.podeChamarRea}" />
+							<h:outputText
+								value="#{fileAnalise.identificacao} #{fileAnalise.cnpjcpf} "
+								rendered="#{!fileAnalise.podeChamarRea}" />
+							<p:spacer height="10" />
+							<h:outputText
+								value="#{fileAnalise.pagador.estado}" />
+							<p:spacer height="10" />
+						</p:column>
+	
+						<p:column style="text-align: center; width:9rem" headerText="Motivo">
+							<p:selectOneMenu
+								value="#{fileAnalise.motivoAnalise}"
+								label="Tipo" style="width:250px;">
+								<f:selectItem itemValue="" itemLabel="Selecione o motivo" />
+								<f:selectItems value="#{fileAnalise.motivosAnalise()}" />
+							</p:selectOneMenu>
+						</p:column>
+	
+						<p:column style="text-align: center; width:4rem" headerText="Observação"
+							filterMatchMode="contains">
+							<h:outputText value="#{fileAnalise.observacao}" />
+						</p:column>
+						<shiro:hasAnyRoles name="ROOT">
+							<p:column style="text-align: center; width:2rem;padding: 0; border:0; " headerText="Estados"  >
+								<p:dataList id="estadosList" value="#{fileAnalise.estadosConsulta}" var="estado" 
+									type="definition">
+								</p:dataList>
+							</p:column>
+						</shiro:hasAnyRoles>
+					</p:dataTable>
+				</div>
+			</h:form>
+		</p:dialog>
+	</shiro:hasAnyRoles>
+
+	<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
 		<p:dialog header="Adicionar pessoa Analise" overflow="auto"
 			id="dialogAdicionarPessoaAnalise"
 			widgetVar="adicionarPessoaAnaliseDlg" resizable="true"
@@ -345,20 +406,7 @@
 							value="#{contratoCobrancaMB.documentoAnaliseAdicionar.motivoAnalise}"
 							label="Tipo" style="width:250px;">
 							<f:selectItem itemValue="" itemLabel="Selecione o motivo" />
-							<f:selectItem itemLabel="Proprietario Atual"
-								itemValue="Proprietario Atual" />
-							<f:selectItem itemLabel="Proprietario Anterior"
-								itemValue="Proprietario Anterior" />
-							<f:selectItem itemLabel="Comprador"
-								itemValue="Comprador" />
-							<f:selectItem itemLabel="Empresa Vinculada ao Proprietario Atual"
-								itemValue="Empresa Vinculada ao Proprietario Atual" />
-							<f:selectItem
-								itemLabel="Empresa Vinculada ao Proprietario Anterior"
-								itemValue="Empresa Vinculada ao Proprietario Anterior" />
-							<f:selectItem
-								itemLabel="Empresa vinculada ao Comprador"
-								itemValue="Empresa vinculada ao Comprador" />
+							<f:selectItems value="#{contratoCobrancaMB.documentoAnaliseAdicionar.motivosAnalise()}" />
 						</p:selectOneMenu>
 					</h:panelGrid>
 					<h:panelGrid columns="2" style="text-align:center">
