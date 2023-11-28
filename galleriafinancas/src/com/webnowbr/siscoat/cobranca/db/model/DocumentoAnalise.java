@@ -17,6 +17,8 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
+import javax.faces.model.SelectItem;
+
 import com.webnowbr.siscoat.cobranca.db.op.RelacionamentoPagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.mb.FileUploadMB.FileUploaded;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
@@ -959,6 +961,22 @@ public class DocumentoAnalise implements Serializable {
 			listaArquivos.put(nomeArquivo, pdfBytes);
 		}
 		return listaArquivos;
+	}
+	
+	public List<SelectItem>motivosAnalise(){
+		List<SelectItem> motivos = new ArrayList<SelectItem>();
+		motivos.add(new SelectItem("Proprietario Atual","Proprietario Atual"));
+		motivos.add(new SelectItem("Proprietario Anterior","Proprietario Anterior"));
+		motivos.add(new SelectItem("Comprador","Comprador"));
+		motivos.add(new SelectItem("Empresa Vinculada ao Proprietario Atual","Empresa Vinculada ao Proprietario Atual"));
+		motivos.add(new SelectItem("Empresa Vinculada ao Proprietario Anterior","Empresa Vinculada ao Proprietario Anterior"));
+		motivos.add(new SelectItem("Empresa Vinculada ao Comprador","Empresa Vinculada ao Comprador"));
+		motivos.add(new SelectItem("Sócio Vinculado ao Proprietario Atual","Sócio Vinculado ao Proprietario Atual"));
+		motivos.add(new SelectItem("Sócio Vinculado ao Proprietario Anterior","Sócio Vinculado ao Proprietario Anterior"));
+		motivos.add(new SelectItem("Sócio Vinculado ao Comprador","Sócio Vinculado ao Comprador"));
+		motivos.add(new SelectItem("Empresa Vinculada ao Sócio Vinculado ao Proprietario Atual","Empresa Vinculada ao Sócio Vinculado ao Proprietario Atual"));
+		motivos.add(new SelectItem("Matricula para consulta","Matricula para consulta"));
+		return motivos;
 	}
 	
 	@Override
