@@ -34279,9 +34279,13 @@ public class ContratoCobrancaMB {
 				boolean nadaConsta = true;
 
 				for (DocumentoAnalise docAnalise : listaDocumentoAnalise) {
-					if (CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise().toLowerCase(), "proprietario atual") && docAnalise.isLiberadoAnalise()) {
+					if ((CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise().toLowerCase(), "proprietario atual") 
+							|| CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise().toLowerCase(), "sócio vinculado ao proprietario atual")
+							&& docAnalise.isLiberadoAnalise())) {
 						proprietarios.add(docAnalise);
-					} else if (CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise().toLowerCase(), "comprador") && docAnalise.isLiberadoAnalise()) {
+					} else if ((CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise().toLowerCase(), "comprador") 
+							|| CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise().toLowerCase(), "sócio vinculado ao comprador")
+							&& docAnalise.isLiberadoAnalise())) {
 						compradores.add(docAnalise);				
 					}
 				}
