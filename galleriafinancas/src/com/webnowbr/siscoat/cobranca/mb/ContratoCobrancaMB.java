@@ -1479,6 +1479,19 @@ public class ContratoCobrancaMB {
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 		contratoCobrancaDao.limpaObservacoesNaoUsadas();
 	}
+	public void salvaAlteraçõesDocumentoAnálise() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		DocumentoAnaliseDao documentoDao = new DocumentoAnaliseDao();
+		if(!CommonsUtil.semValor(objetoDocumentoAnalise.getId())) {
+			documentoDao.merge(objetoDocumentoAnalise);
+			
+		}
+		else {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Ocorreu um erro ao salvar o documento", ""));
+			
+		}
+	}
 
 	public void excluirObservacaoDetalhes() {
 		List<ContratoCobrancaDetalhesObservacoes> listObservacoes = new ArrayList<ContratoCobrancaDetalhesObservacoes>();
@@ -8578,10 +8591,6 @@ public class ContratoCobrancaMB {
 						valorPresenteParcela = valorPresenteParcela.add(SiscoatConstants.TAXA_ADM);
 					}
 				}
-				valorPresenteTotal = valorPresenteTotal.add(this.valorPresenteParcela);
-				QuitacaoParcelasPDF parcelaPDF = new QuitacaoParcelasPDF(parcelas.getNumeroParcela(),
-						parcelas.getDataVencimento(), valorParcelaPDF, desconto, valorPresenteParcela);
-				quitacaoPDF.getParcelas().add(parcelaPDF);
 				
 				if(!CommonsUtil.semValor(porcentagemDesconto)) {
 					BigDecimal porcentagem = BigDecimal.valueOf(100).subtract(porcentagemDesconto);
@@ -8591,6 +8600,11 @@ public class ContratoCobrancaMB {
 					valorPresenteParcela = valorPresenteParcela.setScale(2, RoundingMode.HALF_EVEN);
 				}
 				desconto = valorParcelaPDF.subtract(valorPresenteParcela);
+				
+				valorPresenteTotal = valorPresenteTotal.add(this.valorPresenteParcela);
+				QuitacaoParcelasPDF parcelaPDF = new QuitacaoParcelasPDF(parcelas.getNumeroParcela(),
+						parcelas.getDataVencimento(), valorParcelaPDF, desconto, valorPresenteParcela);
+				quitacaoPDF.getParcelas().add(parcelaPDF);
 			}
 		}
 		if(CommonsUtil.semValor(porcentagemDesconto)) {
@@ -8598,14 +8612,16 @@ public class ContratoCobrancaMB {
 		}
 		valorComDesconto = valorComDesconto.setScale(2, RoundingMode.HALF_EVEN);
 		quitacaoPDF.setValorQuitacao(valorComDesconto);
-		quitarContrato(listContratoCobrancaDetalhesQuitar);
+		//quitarContrato(listContratoCobrancaDetalhesQuitar);
 	}
+	
+	
 	
 	public void quitarContrato(List<ContratoCobrancaDetalhes> listaParcelas) {
 		ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		valorPresenteTotal = BigDecimal.ZERO;
-		this.selectedListContratoCobrancaDetalhes = new ArrayList<ContratoCobrancaDetalhes>();
+		//this.selectedListContratoCobrancaDetalhes = new ArrayList<ContratoCobrancaDetalhes>();
 
 		for (ContratoCobrancaDetalhes parcelas : listaParcelas) {
 			this.valorPresenteParcela = BigDecimal.ZERO;
@@ -8667,7 +8683,7 @@ public class ContratoCobrancaMB {
 				parcelas.setOrigemBaixa("quitarContrato");
 				if(parcelas.getId() > 0) {
 					contratoCobrancaDetalhesDao.merge(parcelas);
-					this.selectedListContratoCobrancaDetalhes.add(parcelas);
+					//this.selectedListContratoCobrancaDetalhes.add(parcelas);
 				}
 			}
 		}

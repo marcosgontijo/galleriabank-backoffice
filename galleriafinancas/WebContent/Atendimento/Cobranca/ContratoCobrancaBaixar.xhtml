@@ -3280,6 +3280,11 @@
 						<p:outputLabel id="valorPresenteTotal"
 							value="#{contratoCobrancaMB.valorPresenteTotal}"
 							converter="bigDecimalConverter" />
+							
+						<p:outputLabel for="simularQuitacao" value="" />
+						<p:commandButton id="simularQuitacao" value="Simular Quitação"
+							update=":form:DetalheParcelas valorPresenteTotal dtParcelasQuitar"
+							action="#{contratoCobrancaMB.quitarContrato(contratoCobrancaMB.listContratoCobrancaDetalhesQuitar)}" />
 					</h:panelGrid>
 					<h:panelGrid columns="2">
 						<p:outputLabel for="porcentagemDesconto"
