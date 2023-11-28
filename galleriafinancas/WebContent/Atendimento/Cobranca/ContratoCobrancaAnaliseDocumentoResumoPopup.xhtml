@@ -561,6 +561,7 @@
 				</h:form>
 			</p:dialog>	
 		</shiro:hasAnyRoles>
+		<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
 		<p:dialog header="Editar pessoa Analise" overflow="auto"
 			id="dialogEditarPessoaAnalise"
 			widgetVar="editarPessoaAnaliseDlg" resizable="true"
@@ -588,11 +589,9 @@
 								itemLabel="Empresa vinculada ao Comprador"
 								itemValue="Empresa vinculada ao Comprador" />
 						</p:selectOneMenu>
-						<h:outputText value="Observação"/>
-						<p:inputText value="#{contratoCobrancaMB.objetoDocumentoAnalise.observacao}"></p:inputText>
 					</h:panelGrid>
 					<h:panelGrid columns="2" style="text-align:center">
-							<p:commandButton value="Salvar" icon="ui-icon ui-icon-cancel"
+							<p:commandButton value="Salvar" icon="ui-icon-check"
 								action="#{contratoCobrancaMB.salvaAlteraçõesDocumentoAnálise}"
 								update=":form:dtFilesAnalise"
 								onclick="PF('editarPessoaAnaliseDlg').hide();" />
@@ -603,5 +602,6 @@
 					</div>
 				</h:form>
 			</p:dialog>
+			</shiro:hasAnyRoles>
 	
 </ui:composition>
