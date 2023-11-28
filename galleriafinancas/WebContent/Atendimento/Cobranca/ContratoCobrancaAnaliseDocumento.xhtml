@@ -70,7 +70,7 @@
 						<p:commandButton value="Adicionar Pessoa"
 							action="#{contratoCobrancaMB.preparaAdicionarPessoaAnalise}"
 							oncomplete="PF('adicionarPessoaAnaliseDlg').show();"
-							disabled="#{!contratoCobrancaMB.objetoContratoCobranca.emAnalise or !contratoCobrancaMB.verificaReaProcessado}"
+							disabled="#{!(contratoCobrancaMB.objetoContratoCobranca.emAnalise || contratoCobrancaMB.objetoContratoCobranca.emPedirPaju)  or !contratoCobrancaMB.verificaReaProcessado}"
 							 update="adicionarPessoaAnaliseForm">
 
 						</p:commandButton>
@@ -273,6 +273,13 @@
 								target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
 							</p:commandButton>
 
+						</p:column>
+						<p:column>
+							<p:commandButton icon=" ui-icon-pencil"
+								onclick="PF('editarPessoaAnaliseDlg').show()" ajax="true" update="adicionarPessoaAnaliseEditarForm">
+								<f:setPropertyActionListener value="#{fileAnalise}"
+									target="#{contratoCobrancaMB.objetoDocumentoAnalise}" />
+							</p:commandButton>
 						</p:column>
 
 						<p:column style="width:100px;" rendered="#{false}">
