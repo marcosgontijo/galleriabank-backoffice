@@ -850,7 +850,7 @@ public class ContratoCobranca implements Serializable {
 	
 	private boolean scoreBaixo450Taxa;
 	private boolean scoreBaixo700Taxa;
-	private boolean isInicioRelacionamentoInexistenteTaxa;
+	private boolean inicioRelacionamentoInexistenteTaxa;
 	private boolean riscoTotal20kTaxa;
 	private boolean riscoTotal50kTaxa;
 	private boolean documentosAnalisados;
@@ -1426,8 +1426,8 @@ public class ContratoCobranca implements Serializable {
 			potuacao -= 200;
 		if (scoreBaixo700Taxa)
 			potuacao -= 100;
-		if (isInicioRelacionamentoInexistenteTaxa)
-			potuacao -= 100;
+		if (inicioRelacionamentoInexistenteTaxa)
+			potuacao -= 300;
 		if (riscoTotal20kTaxa)
 			potuacao -= 200;
 		if (riscoTotal50kTaxa)
@@ -7361,11 +7361,11 @@ public class ContratoCobranca implements Serializable {
 	}
 
 	public boolean isInicioRelacionamentoInexistenteTaxa() {
-		return isInicioRelacionamentoInexistenteTaxa;
+		return inicioRelacionamentoInexistenteTaxa;
 	}
 
 	public void setInicioRelacionamentoInexistenteTaxa(boolean isInicioRelacionamentoInexistenteTaxa) {
-		this.isInicioRelacionamentoInexistenteTaxa = isInicioRelacionamentoInexistenteTaxa;
+		this.inicioRelacionamentoInexistenteTaxa = isInicioRelacionamentoInexistenteTaxa;
 	}
 
 	public boolean isRiscoTotal20kTaxa() {

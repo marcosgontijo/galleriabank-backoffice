@@ -279,6 +279,13 @@
 							</p:commandButton>
 
 						</p:column>
+						<p:column>
+							<p:commandButton icon=" ui-icon-pencil"
+								onclick="PF('editarPessoaAnaliseDlg').show()" ajax="true" update="adicionarPessoaAnaliseEditarForm">
+								<f:setPropertyActionListener value="#{fileAnalise}"
+									target="#{contratoCobrancaMB.objetoDocumentoAnalise}" />
+							</p:commandButton>
+						</p:column>
 
 						<p:column style="width:100px;" rendered="#{false}">
 							<p:commandButton value="Download" ajax="false"

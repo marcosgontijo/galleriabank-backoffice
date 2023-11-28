@@ -1480,6 +1480,19 @@ public class ContratoCobrancaMB {
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 		contratoCobrancaDao.limpaObservacoesNaoUsadas();
 	}
+	public void salvaAlteraçõesDocumentoAnálise() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		DocumentoAnaliseDao documentoDao = new DocumentoAnaliseDao();
+		if(!CommonsUtil.semValor(objetoDocumentoAnalise.getId())) {
+			documentoDao.merge(objetoDocumentoAnalise);
+			
+		}
+		else {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Ocorreu um erro ao salvar o documento", ""));
+			
+		}
+	}
 
 	public void excluirObservacaoDetalhes() {
 		List<ContratoCobrancaDetalhesObservacoes> listObservacoes = new ArrayList<ContratoCobrancaDetalhesObservacoes>();
@@ -34282,9 +34295,13 @@ public class ContratoCobrancaMB {
 				boolean nadaConsta = true;
 
 				for (DocumentoAnalise docAnalise : listaDocumentoAnalise) {
-					if (CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise().toLowerCase(), "proprietario atual") && docAnalise.isLiberadoAnalise()) {
+					if ((CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise().toLowerCase(), "proprietario atual") 
+							|| CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise().toLowerCase(), "sócio vinculado ao proprietario atual")
+							&& docAnalise.isLiberadoAnalise())) {
 						proprietarios.add(docAnalise);
-					} else if (CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise().toLowerCase(), "comprador") && docAnalise.isLiberadoAnalise()) {
+					} else if ((CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise().toLowerCase(), "comprador") 
+							|| CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise().toLowerCase(), "sócio vinculado ao comprador")
+							&& docAnalise.isLiberadoAnalise())) {
 						compradores.add(docAnalise);				
 					}
 				}
