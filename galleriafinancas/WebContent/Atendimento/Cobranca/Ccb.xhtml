@@ -832,42 +832,7 @@
 										converter="bigDecimalConverter" />
 									<p:spacer width="10px"/>
 								</p:dataViewListItem>
-							</p:dataView>			
-							<h:panelGrid columns="2">
-								<p:outputLabel
-									value="Valor: " styleClass="labelBold"
-									style="font-weight: bold; font-size: 18px;" />
-								<p:inputText 
-									value="#{ccbMB.processoSelecionado.valor}"
-									label="Contrato" onkeypress="return isNumberKey(event);"
-									onkeydown="FormataValor(this, 13, event, 2);"
-									converter="bigDecimalConverter" /> 
-									
-								<p:outputLabel 
-									value="Numero: " styleClass="labelBold"
-									style="font-weight: bold; font-size: 18px;" />
-								<p:inputText
-									value="#{ccbMB.processoSelecionado.numero}"
-									label="Contrato" /> 
-									
-								<p:outputLabel
-									value="Quitar: " styleClass="labelBold"
-									style="font-weight: bold; font-size: 18px;" />
-								<p:selectOneMenu 
-									value="#{ccbMB.processoSelecionado.quitar}">
-									<f:selectItem itemValue="" itemLabel="Selecione" />
-									<f:selectItem itemValue="Quitar" itemLabel="Quitar" />
-									<f:selectItem itemValue="Quitar ou indicar bens" itemLabel="Quitar ou indicar bens" />
-									<f:selectItem itemValue="Indicar bens" itemLabel="Indicar bens" />
-								</p:selectOneMenu>
-									
-								<p:commandButton value="Inserir Processo"
-									icon="ui-icon-check"
-									action="#{ccbMB.addProcesso}" 
-									update="form:despesasPanel form:valorDespesas">
-								</p:commandButton>
-							</h:panelGrid>							
-
+							</p:dataView>
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>

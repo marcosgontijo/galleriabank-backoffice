@@ -128,6 +128,7 @@ public class DocumentoAnalise implements Serializable {
 	private boolean isInicioRelacionamentoInexistente = false;
 	private boolean isRiscoTotal20k = false;
 	private boolean isRiscoTotal50k = false;
+	private boolean isProtestoCenprotAvailable = false;
 	
 	private List<DocumentoAnaliseResumo> resumorelacionamentos;
 	
@@ -460,8 +461,8 @@ public class DocumentoAnalise implements Serializable {
 					String valorEstado = CommonsUtil.stringValue(String.format("%,.2f", estado.getValorTotal())) + " (" + estado.getQuantidadeTotal()
 							+ ") ";
 					cenprot.add(new DocumentoAnaliseResumo(estado.getEstado(), valorEstado));
-
 				}
+				isProtestoCenprotAvailable = true;
 			}
 		}
 
@@ -1446,5 +1447,13 @@ public class DocumentoAnalise implements Serializable {
 
 	public void setScoreBaixo700(boolean isScoreBaixo700) {
 		this.isScoreBaixo700 = isScoreBaixo700;
+	}
+
+	public boolean isProtestoCenprotAvailable() {
+		return isProtestoCenprotAvailable;
+	}
+
+	public void setProtestoCenprotAvailable(boolean isProtestoCenprotAvailable) {
+		this.isProtestoCenprotAvailable = isProtestoCenprotAvailable;
 	}
 }
