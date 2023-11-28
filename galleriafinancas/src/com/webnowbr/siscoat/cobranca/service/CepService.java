@@ -23,7 +23,7 @@ public class CepService {
 		CepResult result = new CepResult();
 		try {
 			String inputCep = cep.replace("-", "");
-			URL myURL = new URL("http://viacep.com.br/ws/" + inputCep + "/json/");
+			URL myURL = new URL("https://viacep.com.br/ws/" + inputCep + "/json/");
 			String myResponse = executaConsulta(myURL);
 			result = GsonUtil.fromJson(myResponse, CepResult.class);			
 		} catch (Exception e) {
