@@ -1461,6 +1461,19 @@ public class ContratoCobrancaMB {
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 		contratoCobrancaDao.limpaObservacoesNaoUsadas();
 	}
+	public void salvaAlteraçõesDocumentoAnálise() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		DocumentoAnaliseDao documentoDao = new DocumentoAnaliseDao();
+		if(!CommonsUtil.semValor(objetoDocumentoAnalise.getId())) {
+			documentoDao.merge(objetoDocumentoAnalise);
+			
+		}
+		else {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Ocorreu um erro ao salvar o documento", ""));
+			
+		}
+	}
 
 	public void excluirObservacaoDetalhes() {
 		List<ContratoCobrancaDetalhesObservacoes> listObservacoes = new ArrayList<ContratoCobrancaDetalhesObservacoes>();

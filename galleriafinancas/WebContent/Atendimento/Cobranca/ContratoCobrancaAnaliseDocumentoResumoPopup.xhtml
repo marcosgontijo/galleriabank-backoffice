@@ -561,5 +561,47 @@
 				</h:form>
 			</p:dialog>	
 		</shiro:hasAnyRoles>
+		<p:dialog header="Editar pessoa Analise" overflow="auto"
+			id="dialogEditarPessoaAnalise"
+			widgetVar="editarPessoaAnaliseDlg" resizable="true"
+			style="FONT-SIZE: 13pt;" width="800" minWidth="800">
+			<h:form id="adicionarPessoaAnaliseEditarForm">
+				<div align="center">
+					<h:panelGrid columns="2">
+						<h:outputText value="Motivo" />
+						<p:selectOneMenu
+							value="#{contratoCobrancaMB.objetoDocumentoAnalise.motivoAnalise}"
+							label="Tipo" style="width:250px;">
+							<f:selectItem itemValue="" itemLabel="Selecione o motivo" />
+							<f:selectItem itemLabel="Proprietario Atual"
+								itemValue="Proprietario Atual" />
+							<f:selectItem itemLabel="Proprietario Anterior"
+								itemValue="Proprietario Anterior" />
+							<f:selectItem itemLabel="Comprador"
+								itemValue="Comprador" />
+							<f:selectItem itemLabel="Empresa Vinculada ao Proprietario Atual"
+								itemValue="Empresa Vinculada ao Proprietario Atual" />
+							<f:selectItem
+								itemLabel="Empresa Vinculada ao Proprietario Anterior"
+								itemValue="Empresa Vinculada ao Proprietario Anterior" />
+							<f:selectItem
+								itemLabel="Empresa vinculada ao Comprador"
+								itemValue="Empresa vinculada ao Comprador" />
+						</p:selectOneMenu>
+						<h:outputText value="Observação"/>
+						<p:inputText value="#{contratoCobrancaMB.objetoDocumentoAnalise.observacao}"></p:inputText>
+					</h:panelGrid>
+					<h:panelGrid columns="2" style="text-align:center">
+							<p:commandButton value="Salvar" icon="ui-icon ui-icon-cancel"
+								action="#{contratoCobrancaMB.salvaAlteraçõesDocumentoAnálise}"
+								update=":form:dtFilesAnalise"
+								onclick="PF('editarPessoaAnaliseDlg').hide();" />
+	
+							<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
+								onclick="PF('editarPessoaAnaliseDlg').hide();" />
+						</h:panelGrid>
+					</div>
+				</h:form>
+			</p:dialog>
 	
 </ui:composition>
