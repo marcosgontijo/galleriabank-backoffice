@@ -774,7 +774,7 @@ public class CcbMB {
 					conta = objetoContratoCobranca.getResponsavel().getConta();
 				}
 				if(!CommonsUtil.semValor(objetoContratoCobranca.getResponsavel().getContaDigito())) {
-					conta = conta + objetoContratoCobranca.getResponsavel().getContaDigito();
+					conta = conta + "-" +  objetoContratoCobranca.getResponsavel().getContaDigito();
 				}
 				despesaTransferencia.setBancoTed(objetoContratoCobranca.getResponsavel().getBanco());
 				despesaTransferencia.setAgenciaTed(objetoContratoCobranca.getResponsavel().getAgencia());
@@ -794,7 +794,7 @@ public class CcbMB {
 				conta = objetoContratoCobranca.getResponsavel().getConta();
 			}
 			if(!CommonsUtil.semValor(objetoContratoCobranca.getResponsavel().getContaDigito())) {
-				conta = conta + objetoContratoCobranca.getResponsavel().getContaDigito();
+				conta = conta + "-" + objetoContratoCobranca.getResponsavel().getContaDigito();
 			}
 			objetoCcb.setIntermediacaoCC(conta);
 			objetoCcb.setIntermediacaoCNPJ(objetoContratoCobranca.getResponsavel().getCpfCnpjCC());
