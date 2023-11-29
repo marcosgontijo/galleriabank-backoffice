@@ -114,6 +114,16 @@
 									<f:setPropertyActionListener value="#{fileAnalise}"
 										target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
 								</p:commandButton>
+															
+								<p:commandButton value="Gravames"
+									oncomplete="PF('gravamesDialog').show()"
+									icon="pi pi-bars"
+									update="gravamesForm gravamesDialogHeader" ajax="true"
+									style="TEXT-DECORATION: bold;"
+									rendered="#{fileAnalise.tipo == 'Rea' and fileAnalise.gravamesRea.size() > 0}">
+									<f:setPropertyActionListener value="#{fileAnalise}"
+										target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
+								</p:commandButton>
 							</p:column>
 						</shiro:hasAnyRoles>
 

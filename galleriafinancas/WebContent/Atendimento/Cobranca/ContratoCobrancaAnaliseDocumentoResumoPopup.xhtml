@@ -31,7 +31,6 @@
 				value="#{contratoCobrancaMB.documentoAnalisePopup.dialogHeader}" />
 		</f:facet>
 		<h:form id="resumoConsutlasForm">
-		
 			<h:panelGrid columns="1" rendered="#{contratoCobrancaMB.documentoAnalisePopup.resumoRelacionamentos.size() > 0}">
 				<p:panel style="justify-content:start;">
 					<f:facet name="header">
@@ -45,8 +44,6 @@
 							<p:column>
 								<h:outputText value="#{relacionamentos.valor}"  style="text-transform:uppercase"/>
 							</p:column>
-
-
 						</p:dataTable>
 					</f:facet>
 				</p:panel>
@@ -59,7 +56,6 @@
 					<f:facet name="header">
 						<h:outputText value="Engine" />
 					</f:facet>
-
 					<p:dataTable id="resumocliente" var="engine"
 						rendered="#{contratoCobrancaMB.documentoAnalisePopup != null  and contratoCobrancaMB.documentoAnalisePopup.resumoEngine != null }"
 						value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoEngine()}">
@@ -69,7 +65,6 @@
 						<p:column>
 							<h:outputText value="#{engine.valor}"></h:outputText>
 						</p:column>
-
 					</p:dataTable>
 				</p:panel>
 
@@ -103,7 +98,6 @@
 							</p:column>
 						</p:dataTable>
 					</f:facet>
-
 				</p:panel>
 
 				<p:panel style="justify-content:start;">
@@ -118,8 +112,6 @@
 							<p:column>
 								<h:outputText value="#{Cenprot.valor}" />
 							</p:column>
-
-
 						</p:dataTable>
 					</f:facet>
 				</p:panel>
@@ -138,16 +130,59 @@
 							</p:column>
 						</p:dataTable>
 					</f:facet>
-
 				</p:panel>
-
-
-
-
 			</h:panelGrid>
+		</h:form>
+	</p:dialog>
 
-			
-
+	<p:dialog id="gravamesDialogHeader" widgetVar="gravamesDialog"
+		showEffect="fade" hideEffect="fade" resizable="false"  styleClass="overflowy" 
+		responsive="false" width="1000"  positionType="center center" 
+		closable="true" update="true">
+		<f:facet name="header">
+			<h:outputText value="Gravames Abertos" />
+		</f:facet>
+		<h:form id="gravamesForm">
+			<p:panel>
+				<p:dataTable id="resumocliente" 
+					value="#{contratoCobrancaMB.documentoAnalisePopup.gravamesRea}" var="gravames"
+					emptyMessage="" rows="10" paginator="true"
+	                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+	                currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+	                rowsPerPageTemplate="10,20,40,100">
+					<p:column>
+						<h:outputText value="#{gravames.numeroSequencia}"></h:outputText>
+					</p:column>
+					<p:column>
+						<h:outputText value="#{gravames.statusFechamentoGravame}"></h:outputText>
+					</p:column>
+					<p:column>
+						<h:outputText value="#{gravames.nomeClassificacao}"></h:outputText>
+					</p:column>
+					<p:column  style="text-align: center; width:25px">
+						<p:commandButton oncomplete="PF('textoDialog').show()"
+							icon="pi pi-eye" update="textoDialogHeader" ajax="true"
+							style="TEXT-DECORATION: bold;">
+							<f:setPropertyActionListener value="#{gravames}"
+								target="#{contratoCobrancaMB.gravamePopup}">
+							</f:setPropertyActionListener>
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+	</p:dialog>
+	
+	<p:dialog id="textoDialogHeader" widgetVar="textoDialog" 
+		width="1000" positionType="center center" closable="true" >
+		<f:facet name="header">
+			<h:outputText value="Texto" />
+		</f:facet>
+		<h:form id="textoForm">
+			<p:panel>
+				<h:outputText value="#{contratoCobrancaMB.gravamePopup.texto}">
+				</h:outputText>
+			</p:panel>
 		</h:form>
 	</p:dialog>
 
@@ -314,8 +349,10 @@
 				<div align="center">
 					<p:dataTable id="dtFilesAnalise" var="fileAnalise"
 						value="#{contratoCobrancaMB.listaDocumentoAnaliseRea}"
-						emptyMessage="">
-	
+						emptyMessage="" rows="10" paginator="true"
+		                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+		                currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+		                rowsPerPageTemplate="10,20,40,100">
 						<p:column headerText="Liberado Análise" style="text-align: center; width:3rem">
 							<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"
 								rendered="#{!fileAnalise.isAnaliseBloqueada()}"

@@ -148,6 +148,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaStatus;
 import com.webnowbr.siscoat.cobranca.db.model.DataVistoria;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.FilaInvestidores;
+import com.webnowbr.siscoat.cobranca.db.model.GravamesRea;
 import com.webnowbr.siscoat.cobranca.db.model.GruposFavorecidos;
 import com.webnowbr.siscoat.cobranca.db.model.GruposPagadores;
 import com.webnowbr.siscoat.cobranca.db.model.IPCA;
@@ -366,6 +367,7 @@ public class ContratoCobrancaMB {
 	private boolean gerenciaStatus;
 	private boolean addPessoaAnalise;
 	private DocumentoAnalise documentoAnalisePopup;
+	private GravamesRea gravamePopup;
 	private String estadoConsultaAdd;
 
 	/** Lista dos Pagadores utilizada pela LOV. */
@@ -34496,6 +34498,14 @@ public class ContratoCobrancaMB {
 
 	public void setListaDocumentoAnaliseRea(List<DocumentoAnalise> listaDocumentoAnaliseRea) {
 		this.listaDocumentoAnaliseRea = listaDocumentoAnaliseRea;
+	}
+
+	public GravamesRea getGravamePopup() {
+		return gravamePopup;
+	}
+
+	public void setGravamePopup(GravamesRea gravamePopup) {
+		this.gravamePopup = gravamePopup;
 	}
 	
 }

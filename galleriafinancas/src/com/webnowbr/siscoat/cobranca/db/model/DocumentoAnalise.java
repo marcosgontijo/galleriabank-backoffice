@@ -19,6 +19,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.faces.model.SelectItem;
 
+import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
+import com.webnowbr.siscoat.cobranca.db.op.GravamesReaDao;
 import com.webnowbr.siscoat.cobranca.db.op.RelacionamentoPagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.mb.FileUploadMB.FileUploaded;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
@@ -27,6 +29,8 @@ import com.webnowbr.siscoat.cobranca.service.EngineService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.cobranca.service.ScrService;
 import com.webnowbr.siscoat.cobranca.vo.FileGenerator;
+import com.webnowbr.siscoat.cobranca.ws.endpoint.ReaWebhookRetorno;
+import com.webnowbr.siscoat.cobranca.ws.endpoint.ReaWebhookRetornoBloco;
 import com.webnowbr.siscoat.cobranca.ws.netrin.NetrinConsulta;
 import com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta;
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -102,6 +106,8 @@ public class DocumentoAnalise implements Serializable {
 	private Set<DocketConsulta> docketConsultas = new HashSet<>();
 	private List<String> estadosConsulta = new ArrayList<String>();
 	private String estadosConsultaStr;
+	
+	private Set<GravamesRea> gravamesRea = new HashSet<>();
 	
 	private boolean politicamenteExposta = false;
 	private boolean isPepVip = false;
@@ -1473,5 +1479,13 @@ public class DocumentoAnalise implements Serializable {
 
 	public void setProtestoCenprotAvailable(boolean isProtestoCenprotAvailable) {
 		this.isProtestoCenprotAvailable = isProtestoCenprotAvailable;
+	}
+
+	public Set<GravamesRea> getGravamesRea() {
+		return gravamesRea;
+	}
+
+	public void setGravamesRea(Set<GravamesRea> gravamesRea) {
+		this.gravamesRea = gravamesRea;
 	}
 }
