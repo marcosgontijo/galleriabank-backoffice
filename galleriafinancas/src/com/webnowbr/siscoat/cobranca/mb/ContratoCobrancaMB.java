@@ -8774,7 +8774,7 @@ public class ContratoCobrancaMB {
 		
 		JSONArray jsonRecebiveis = new JSONArray();
 		
-		for (ContratoCobrancaDetalhes detalhes : listContratoCobrancaDetalhesQuitar) {
+		for (ContratoCobrancaDetalhes detalhes : objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
 			if (detalhes.isParcelaPaga()) {
 				continue;
 			}
@@ -9664,10 +9664,10 @@ public class ContratoCobrancaMB {
 			}
 		}
 		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Assinatura")) {
-			if(!CommonsUtil.semValor(this.objetoContratoCobranca.getDataPajuComentado())
-					&& getDifferenceDays(objetoContratoCobranca.getDataPajuComentado(), DateUtil.gerarDataHoje()) > 30){
-				this.objetoContratoCobranca.setReanalise(true);
-			}
+			if(objetoContratoCobranca.isPajuVencido())
+				objetoContratoCobranca.setReanalise(true);
+			if("RJ;PR".contains(objetoContratoCobranca.getImovel().getEstado()) && !objetoContratoCobranca.isReanaliseJuridico()) 
+				objetoContratoCobranca.setReanalise(true);
 		}
 		
 		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Registro")) {

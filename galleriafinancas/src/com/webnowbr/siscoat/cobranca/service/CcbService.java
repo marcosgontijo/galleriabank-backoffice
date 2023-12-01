@@ -2883,6 +2883,11 @@ public class CcbService {
 		return null;
 	}
 
+	public byte[] geraFichaCadastroNova(PagadorRecebedor pagador) throws IOException{
+		ImpressoesPDFMB impressaoMb = new ImpressoesPDFMB();
+		return impressaoMb.geraPdfCadastroPagadorRecebedorNovo(pagador);
+	}
+	
 	public byte[] geraFichaCadastro(PagadorRecebedor pagador) throws IOException{
 		ImpressoesPDFMB impressaoMb = new ImpressoesPDFMB();
 		return impressaoMb.geraPdfCadastroPagadorRecebedor(pagador);
