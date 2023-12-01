@@ -48,6 +48,7 @@
 							<div class="container-login100-form-btn m-t-32">
 								<p:commandLink id="aa" styleClass="login100-form-btn" actionListener="#{loginBean.loginNow}" update="messages" ajax="true">
 									LOGIN
+									<f:setPropertyActionListener value="#{null}" target="#{menuItemMB.menuCarregado}"></f:setPropertyActionListener>
 								</p:commandLink>
 								<p:defaultCommand target="aa" />	
 							</div>

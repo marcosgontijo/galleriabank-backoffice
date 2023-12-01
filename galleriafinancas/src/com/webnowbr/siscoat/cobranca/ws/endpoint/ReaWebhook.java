@@ -2,6 +2,7 @@ package com.webnowbr.siscoat.cobranca.ws.endpoint;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -14,8 +15,10 @@ import org.apache.commons.logging.LogFactory;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
+import com.webnowbr.siscoat.cobranca.db.model.GravamesRea;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
+import com.webnowbr.siscoat.cobranca.db.op.GravamesReaDao;
 import com.webnowbr.siscoat.cobranca.service.PagadorRecebedorService;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
@@ -94,12 +97,18 @@ public class ReaWebhook {
 
 				}
 //			}
-
 			}
-			
+			List<ReaWebhookRetornoBloco> blocosGravameAberto = reaWebhookRetorno.buscaGravameAbertos();
+			if(!CommonsUtil.semValor(blocosGravameAberto)) {
+				GravamesReaDao gravamesReaDao = new GravamesReaDao();
+				for(ReaWebhookRetornoBloco gravameAberto : blocosGravameAberto) {
+					GravamesRea gravameRea = new GravamesRea(documentoAnalise, gravameAberto);
+					gravamesReaDao.create(gravameRea);
+				}
+			}
 			documentoAnalise.setObservacao("REA processado");
 			documentoAnaliseDao.merge(documentoAnalise);
-
+			
 			return Response.status(200).entity("Processado").build();
 		} catch (io.jsonwebtoken.ExpiredJwtException eJwt) {
 			eJwt.printStackTrace();

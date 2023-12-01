@@ -163,6 +163,14 @@
             </key>
             <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.DocketConsulta" />
         </set>
+        
+        <set name="gravamesRea" table="GravamesRea" cascade="merge"
+                 lazy="false" fetch="select">
+            <key>
+                <column name="documentoAnalise" not-null="true" />
+            </key>
+            <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.GravamesRea" />
+        </set>
 						
     </class>
 </hibernate-mapping>

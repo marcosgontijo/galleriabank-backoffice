@@ -67,12 +67,17 @@
 				<f:facet name="header"> Arquivo(s) Salvo(s) na analise 
 							<p:outputLabel value="" />
 					<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">						
+						<p:commandButton value="Documentos Analise REA"
+							action="#{contratoCobrancaMB.listaArquivosAnaliseDocumentos()}"
+							oncomplete="PF('documentosReaDlg').show();"
+							update="documentosAnaliseReaForm">
+						</p:commandButton>
+						
 						<p:commandButton value="Adicionar Pessoa"
 							action="#{contratoCobrancaMB.preparaAdicionarPessoaAnalise}"
 							oncomplete="PF('adicionarPessoaAnaliseDlg').show();"
-							disabled="#{!contratoCobrancaMB.objetoContratoCobranca.emAnalise or !contratoCobrancaMB.verificaReaProcessado}"
+							disabled="#{!(contratoCobrancaMB.objetoContratoCobranca.emAnalise || contratoCobrancaMB.objetoContratoCobranca.emPedirPaju)  or !contratoCobrancaMB.verificaReaProcessado}"
 							 update="adicionarPessoaAnaliseForm">
-
 						</p:commandButton>
 					</shiro:hasAnyRoles>
 
@@ -109,6 +114,16 @@
 									<f:setPropertyActionListener value="#{fileAnalise}"
 										target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
 								</p:commandButton>
+															
+								<p:commandButton value="Gravames"
+									oncomplete="PF('gravamesDialog').show()"
+									icon="pi pi-bars"
+									update="gravamesForm gravamesDialogHeader" ajax="true"
+									style="TEXT-DECORATION: bold;"
+									rendered="#{fileAnalise.tipo == 'Rea' and fileAnalise.gravamesRea.size() > 0}">
+									<f:setPropertyActionListener value="#{fileAnalise}"
+										target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
+								</p:commandButton>
 							</p:column>
 						</shiro:hasAnyRoles>
 
@@ -116,7 +131,7 @@
 							<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"
 								rendered="#{!fileAnalise.isAnaliseBloqueada() and contratoCobrancaMB.objetoContratoCobranca.emAnalise  }"
 								onLabel="Sim" offLabel="Não" style="width:6rem">
-								<p:ajax event="change"
+								<p:ajax event="change" update="documentosAnaliseReaForm dtFilesAnalise"
 									listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
 							</p:selectBooleanButton>
 							<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"
@@ -274,6 +289,15 @@
 							</p:commandButton>
 
 						</p:column>
+						<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
+							<p:column>
+								<p:commandButton icon=" ui-icon-pencil"
+									onclick="PF('editarPessoaAnaliseDlg').show()" ajax="true" update="adicionarPessoaAnaliseEditarForm">
+									<f:setPropertyActionListener value="#{fileAnalise}"
+										target="#{contratoCobrancaMB.objetoDocumentoAnalise}" />
+								</p:commandButton>
+							</p:column>
+						</shiro:hasAnyRoles>
 
 						<p:column style="width:100px;" rendered="#{false}">
 							<p:commandButton value="Download" ajax="false"

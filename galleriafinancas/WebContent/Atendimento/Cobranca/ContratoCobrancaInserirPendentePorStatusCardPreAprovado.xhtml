@@ -116,6 +116,14 @@
 						listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
 				</p:selectBooleanCheckbox>
 				<p:spacer width="5px" />
+				<p:outputLabel value="Inicio Bacen Inexistente" styleClass="labelBold" />
+				<p:selectBooleanCheckbox
+					value="#{contratoCobrancaMB.objetoContratoCobranca.inicioRelacionamentoInexistenteTaxa}"
+					disabled="#{!(contratoCobrancaMB.usuarioLogado.profileGerenteAnalise or contratoCobrancaMB.usuarioLogado.administrador or contratoCobrancaMB.usuarioLogado.profileAnalistaCredito)}">
+					<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado"
+						listener="#{contratoCobrancaMB.objetoContratoCobranca.calcularTaxaPreAprovada()}" />
+				</p:selectBooleanCheckbox>
+				
 				<p:outputLabel value="Nada Consta" styleClass="labelBold" />
 				<p:selectBooleanCheckbox
 					value="#{contratoCobrancaMB.objetoContratoCobranca.nadaConstaTaxa}"

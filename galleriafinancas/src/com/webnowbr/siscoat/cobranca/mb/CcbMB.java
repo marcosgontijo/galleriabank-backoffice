@@ -576,6 +576,7 @@ public class CcbMB {
 		listaTipoDownload.add("Endossos Em Preto");
 		listaTipoDownload.add("FinanciamentoCCI");
 		listaTipoDownload.add("Aquisicao/Emprestimo");
+		listaTipoDownload.add("Ficha Cadastro Nova");
 		listaTipoDownload.add("Ficha PPE - PF");
 		listaTipoDownload.add("Ficha PLD e FT - PJ");
 		listaTipoDownload.add("Declaração Não União Estavel");
@@ -583,6 +584,7 @@ public class CcbMB {
 		listaTipoDownload.add("Declaração Destinação Recursos");
 		listaTipoDownload.add("Termo Responsabilidade Paju");
 		listaTipoDownload.add("Termo Incomunicabilidade Imovel");
+		listaTipoDownload.add("Ficha Cadastro");
 		listaTipoDownload.add("Averbacao");
 		
 	}
@@ -769,9 +771,16 @@ public class CcbMB {
 			if(CommonsUtil.semValor(objetoCcb.getIntermediacaoValor()) || CommonsUtil.semValor(despesaTransferencia)) {
 				criarDespesa("Transferência", valorTranferencia, "TED");
 			} else {
+				String conta = "";
+				if(!CommonsUtil.semValor(objetoContratoCobranca.getResponsavel().getConta())) {
+					conta = objetoContratoCobranca.getResponsavel().getConta();
+				}
+				if(!CommonsUtil.semValor(objetoContratoCobranca.getResponsavel().getContaDigito())) {
+					conta = conta + "-" +  objetoContratoCobranca.getResponsavel().getContaDigito();
+				}
 				despesaTransferencia.setBancoTed(objetoContratoCobranca.getResponsavel().getBanco());
 				despesaTransferencia.setAgenciaTed(objetoContratoCobranca.getResponsavel().getAgencia());
-				despesaTransferencia.setContaTed(objetoContratoCobranca.getResponsavel().getConta());
+				despesaTransferencia.setContaTed(conta);
 				despesaTransferencia.setCpfTed(objetoContratoCobranca.getResponsavel().getCpfCnpjCC());
 				despesaTransferencia.setNomeTed(objetoContratoCobranca.getResponsavel().getNomeCC());
 				despesaTransferencia.setPix(objetoContratoCobranca.getResponsavel().getPix());
@@ -782,11 +791,19 @@ public class CcbMB {
 			objetoCcb.setIntermediacaoValor(valorTranferencia);
 			objetoCcb.setIntermediacaoBanco(objetoContratoCobranca.getResponsavel().getBanco());
 			objetoCcb.setIntermediacaoAgencia(objetoContratoCobranca.getResponsavel().getAgencia());
-			objetoCcb.setIntermediacaoCC(objetoContratoCobranca.getResponsavel().getConta());
+			String conta = "";
+			if(!CommonsUtil.semValor(objetoContratoCobranca.getResponsavel().getConta())) {
+				conta = objetoContratoCobranca.getResponsavel().getConta();
+			}
+			if(!CommonsUtil.semValor(objetoContratoCobranca.getResponsavel().getContaDigito())) {
+				conta = conta + "-" + objetoContratoCobranca.getResponsavel().getContaDigito();
+			}
+			objetoCcb.setIntermediacaoCC(conta);
 			objetoCcb.setIntermediacaoCNPJ(objetoContratoCobranca.getResponsavel().getCpfCnpjCC());
 			objetoCcb.setIntermediacaoNome(objetoContratoCobranca.getResponsavel().getNomeCC());
 			objetoCcb.setIntermediacaoPix(objetoContratoCobranca.getResponsavel().getPix());
 			objetoCcb.setIntermediacaoTipoConta(objetoContratoCobranca.getResponsavel().getTipoConta());
+			
 		} else if(!CommonsUtil.semValor(despesaTransferencia)) {
 			despesaTransferencia.setValor(BigDecimal.ZERO);
 			objetoCcb.getDespesasAnexo2().remove(despesaTransferencia);
@@ -1644,6 +1661,36 @@ public class CcbMB {
 	    					continue;
 			    		arquivo = ccbService.geraAverbacao(participante);
 			    		nomeDoc = participante.getPessoa().getNome() + "_" + "Averbacao.docx";
+			    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc); 	
+			    		listaArquivos.put(nomeDoc, arquivo);
+			    	}
+			    } else if(CommonsUtil.mesmoValor(tipoDownload,"Ficha Cadastro Nova")) {
+			    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
+			    		if(participante.getSocios().size() > 0){
+			    			for(CcbParticipantes socio : participante.getSocios()) {
+			    				arquivo = ccbService.geraFichaCadastroNova(socio.getPessoa());
+				    			nomeDoc = socio.getPessoa().getNome() + "_" + "Ficha Cadastro.pdf";
+					    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
+					    		listaArquivos.put(nomeDoc, arquivo);
+			    			}
+			    		}
+			    		arquivo = ccbService.geraFichaCadastroNova(participante.getPessoa());
+			    		nomeDoc = participante.getPessoa().getNome() + "_" + "Ficha Cadastro.pdf";
+			    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc); 	
+			    		listaArquivos.put(nomeDoc, arquivo);
+			    	}
+			    } else if(CommonsUtil.mesmoValor(tipoDownload,"Ficha Cadastro")) {
+			    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
+			    		if(participante.getSocios().size() > 0){
+			    			for(CcbParticipantes socio : participante.getSocios()) {
+			    				arquivo = ccbService.geraFichaCadastro(socio.getPessoa());
+				    			nomeDoc = socio.getPessoa().getNome() + "_" + "Ficha Cadastro.pdf";
+					    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
+					    		listaArquivos.put(nomeDoc, arquivo);
+			    			}
+			    		}
+			    		arquivo = ccbService.geraFichaCadastro(participante.getPessoa());
+			    		nomeDoc = participante.getPessoa().getNome() + "_" + "Ficha Cadastro.pdf";
 			    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc); 	
 			    		listaArquivos.put(nomeDoc, arquivo);
 			    	}

@@ -17,6 +17,10 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
+import javax.faces.model.SelectItem;
+
+import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
+import com.webnowbr.siscoat.cobranca.db.op.GravamesReaDao;
 import com.webnowbr.siscoat.cobranca.db.op.RelacionamentoPagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.mb.FileUploadMB.FileUploaded;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
@@ -25,6 +29,8 @@ import com.webnowbr.siscoat.cobranca.service.EngineService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.cobranca.service.ScrService;
 import com.webnowbr.siscoat.cobranca.vo.FileGenerator;
+import com.webnowbr.siscoat.cobranca.ws.endpoint.ReaWebhookRetorno;
+import com.webnowbr.siscoat.cobranca.ws.endpoint.ReaWebhookRetornoBloco;
 import com.webnowbr.siscoat.cobranca.ws.netrin.NetrinConsulta;
 import com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta;
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -101,6 +107,8 @@ public class DocumentoAnalise implements Serializable {
 	private List<String> estadosConsulta = new ArrayList<String>();
 	private String estadosConsultaStr;
 	
+	private Set<GravamesRea> gravamesRea = new HashSet<>();
+	
 	private boolean politicamenteExposta = false;
 	private boolean isPepVip = false;
 	private String pessoasPoliticamenteExpostas = "0";
@@ -128,6 +136,7 @@ public class DocumentoAnalise implements Serializable {
 	private boolean isInicioRelacionamentoInexistente = false;
 	private boolean isRiscoTotal20k = false;
 	private boolean isRiscoTotal50k = false;
+	private boolean isProtestoCenprotAvailable = false;
 	
 	private List<DocumentoAnaliseResumo> resumorelacionamentos;
 	
@@ -460,8 +469,8 @@ public class DocumentoAnalise implements Serializable {
 					String valorEstado = CommonsUtil.stringValue(String.format("%,.2f", estado.getValorTotal())) + " (" + estado.getQuantidadeTotal()
 							+ ") ";
 					cenprot.add(new DocumentoAnaliseResumo(estado.getEstado(), valorEstado));
-
 				}
+				isProtestoCenprotAvailable = true;
 			}
 		}
 
@@ -960,6 +969,22 @@ public class DocumentoAnalise implements Serializable {
 		return listaArquivos;
 	}
 	
+	public List<SelectItem>motivosAnalise(){
+		List<SelectItem> motivos = new ArrayList<SelectItem>();
+		motivos.add(new SelectItem("Proprietario Atual","Proprietario Atual"));
+		motivos.add(new SelectItem("Proprietario Anterior","Proprietario Anterior"));
+		motivos.add(new SelectItem("Comprador","Comprador"));
+		motivos.add(new SelectItem("Empresa Vinculada ao Proprietario Atual","Empresa Vinculada ao Proprietario Atual"));
+		motivos.add(new SelectItem("Empresa Vinculada ao Proprietario Anterior","Empresa Vinculada ao Proprietario Anterior"));
+		motivos.add(new SelectItem("Empresa Vinculada ao Comprador","Empresa Vinculada ao Comprador"));
+		motivos.add(new SelectItem("Sócio Vinculado ao Proprietario Atual","Sócio Vinculado ao Proprietario Atual"));
+		motivos.add(new SelectItem("Sócio Vinculado ao Proprietario Anterior","Sócio Vinculado ao Proprietario Anterior"));
+		motivos.add(new SelectItem("Sócio Vinculado ao Comprador","Sócio Vinculado ao Comprador"));
+		motivos.add(new SelectItem("Empresa Vinculada ao Sócio Vinculado ao Proprietario Atual","Empresa Vinculada ao Sócio Vinculado ao Proprietario Atual"));
+		motivos.add(new SelectItem("Matricula para consulta","Matricula para consulta"));
+		return motivos;
+	}
+	
 	@Override
 	public String toString() {
 		return "DocumentoAnalise [id=" + id + ", tipo=" + tipo + "]";
@@ -1446,5 +1471,21 @@ public class DocumentoAnalise implements Serializable {
 
 	public void setScoreBaixo700(boolean isScoreBaixo700) {
 		this.isScoreBaixo700 = isScoreBaixo700;
+	}
+
+	public boolean isProtestoCenprotAvailable() {
+		return isProtestoCenprotAvailable;
+	}
+
+	public void setProtestoCenprotAvailable(boolean isProtestoCenprotAvailable) {
+		this.isProtestoCenprotAvailable = isProtestoCenprotAvailable;
+	}
+
+	public Set<GravamesRea> getGravamesRea() {
+		return gravamesRea;
+	}
+
+	public void setGravamesRea(Set<GravamesRea> gravamesRea) {
+		this.gravamesRea = gravamesRea;
 	}
 }

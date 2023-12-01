@@ -148,6 +148,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaStatus;
 import com.webnowbr.siscoat.cobranca.db.model.DataVistoria;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.FilaInvestidores;
+import com.webnowbr.siscoat.cobranca.db.model.GravamesRea;
 import com.webnowbr.siscoat.cobranca.db.model.GruposFavorecidos;
 import com.webnowbr.siscoat.cobranca.db.model.GruposPagadores;
 import com.webnowbr.siscoat.cobranca.db.model.IPCA;
@@ -245,6 +246,12 @@ public class ContratoCobrancaMB {
 	private String numeroContratoObjetoContratoCobranca;
 	private List<FileUploaded> documentoConsultarTodos;
 	private boolean verificaReaProcessado;
+	 private BigDecimal valorMercaoImovelPorcento;
+	 private BigDecimal valorMercadoImovelDez;
+	 private BigDecimal valorMercadoImovelVinte;
+	 private BigDecimal valorMercadoImovelTrinta;
+	 private BigDecimal valorMercadoImovelQuarenta;
+	 private BigDecimal valorMercadoImovelCinquenta;
 
 	private boolean updateMode = false;
 	private boolean deleteMode = false;
@@ -291,6 +298,7 @@ public class ContratoCobrancaMB {
 
 	private List<BoletoKobana> selectedBoletosKobana = new ArrayList<BoletoKobana>();
 	private List<DocumentoAnalise> listaDocumentoAnalise;
+	private List<DocumentoAnalise> listaDocumentoAnaliseRea;
 	private List<DocumentoAnalise> listaDeleteAnalise = new ArrayList<DocumentoAnalise>();
 	
 	private BoletoKobana selectedBoletosKobanaBaixa = null;
@@ -365,6 +373,7 @@ public class ContratoCobrancaMB {
 	private boolean gerenciaStatus;
 	private boolean addPessoaAnalise;
 	private DocumentoAnalise documentoAnalisePopup;
+	private GravamesRea gravamePopup;
 	private String estadoConsultaAdd;
 
 	/** Lista dos Pagadores utilizada pela LOV. */
@@ -913,11 +922,13 @@ public class ContratoCobrancaMB {
 					User usuarioLogado = new User();
 					UserDao u = new UserDao();
 					usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
+					
 
 					if (usuarioLogado != null) {
 						if (!usuarioLogado.isAdministrador()) {
 							filters.put("contratoRestritoAdm", "false");
 						}
+						
 					}
 				}
 
@@ -1478,6 +1489,19 @@ public class ContratoCobrancaMB {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 		contratoCobrancaDao.limpaObservacoesNaoUsadas();
+	}
+	public void salvaAlteraçõesDocumentoAnálise() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		DocumentoAnaliseDao documentoDao = new DocumentoAnaliseDao();
+		if(!CommonsUtil.semValor(objetoDocumentoAnalise.getId())) {
+			documentoDao.merge(objetoDocumentoAnalise);
+			
+		}
+		else {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Ocorreu um erro ao salvar o documento", ""));
+			
+		}
 	}
 
 	public void excluirObservacaoDetalhes() {
@@ -8578,11 +8602,8 @@ public class ContratoCobrancaMB {
 						valorPresenteParcela = valorPresenteParcela.add(SiscoatConstants.TAXA_ADM);
 					}
 				}
-				valorPresenteTotal = valorPresenteTotal.add(this.valorPresenteParcela);
-				QuitacaoParcelasPDF parcelaPDF = new QuitacaoParcelasPDF(parcelas.getNumeroParcela(),
-						parcelas.getDataVencimento(), valorParcelaPDF, desconto, valorPresenteParcela);
-				quitacaoPDF.getParcelas().add(parcelaPDF);
 				
+				valorPresenteTotal = valorPresenteTotal.add(this.valorPresenteParcela);
 				if(!CommonsUtil.semValor(porcentagemDesconto)) {
 					BigDecimal porcentagem = BigDecimal.valueOf(100).subtract(porcentagemDesconto);
 					porcentagem = porcentagem.divide(BigDecimal.valueOf(100));
@@ -8591,6 +8612,10 @@ public class ContratoCobrancaMB {
 					valorPresenteParcela = valorPresenteParcela.setScale(2, RoundingMode.HALF_EVEN);
 				}
 				desconto = valorParcelaPDF.subtract(valorPresenteParcela);
+				
+				QuitacaoParcelasPDF parcelaPDF = new QuitacaoParcelasPDF(parcelas.getNumeroParcela(),
+						parcelas.getDataVencimento(), valorParcelaPDF, desconto, valorPresenteParcela);
+				quitacaoPDF.getParcelas().add(parcelaPDF);
 			}
 		}
 		if(CommonsUtil.semValor(porcentagemDesconto)) {
@@ -8598,14 +8623,14 @@ public class ContratoCobrancaMB {
 		}
 		valorComDesconto = valorComDesconto.setScale(2, RoundingMode.HALF_EVEN);
 		quitacaoPDF.setValorQuitacao(valorComDesconto);
-		quitarContrato(listContratoCobrancaDetalhesQuitar);
-	}
+		//quitarContrato(listContratoCobrancaDetalhesQuitar);
+	}	
 	
 	public void quitarContrato(List<ContratoCobrancaDetalhes> listaParcelas) {
 		ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		valorPresenteTotal = BigDecimal.ZERO;
-		this.selectedListContratoCobrancaDetalhes = new ArrayList<ContratoCobrancaDetalhes>();
+		//this.selectedListContratoCobrancaDetalhes = new ArrayList<ContratoCobrancaDetalhes>();
 
 		for (ContratoCobrancaDetalhes parcelas : listaParcelas) {
 			this.valorPresenteParcela = BigDecimal.ZERO;
@@ -8667,7 +8692,7 @@ public class ContratoCobrancaMB {
 				parcelas.setOrigemBaixa("quitarContrato");
 				if(parcelas.getId() > 0) {
 					contratoCobrancaDetalhesDao.merge(parcelas);
-					this.selectedListContratoCobrancaDetalhes.add(parcelas);
+					//this.selectedListContratoCobrancaDetalhes.add(parcelas);
 				}
 			}
 		}
@@ -8757,7 +8782,7 @@ public class ContratoCobrancaMB {
 		
 		JSONArray jsonRecebiveis = new JSONArray();
 		
-		for (ContratoCobrancaDetalhes detalhes : listContratoCobrancaDetalhesQuitar) {
+		for (ContratoCobrancaDetalhes detalhes : objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
 			if (detalhes.isParcelaPaga()) {
 				continue;
 			}
@@ -9473,6 +9498,16 @@ public class ContratoCobrancaMB {
 		this.controleWhatsAppPreAprovado = false;
 		this.controleWhatsAppComite = false;
 	}
+	public void calculaPorcentagemImovel() {
+		
+		  valorMercaoImovelPorcento = objetoContratoCobranca.getValorMercadoImovel().divide(new BigDecimal(100));
+		  valorMercadoImovelDez = valorMercaoImovelPorcento.multiply(new BigDecimal(10));
+		  valorMercadoImovelVinte = valorMercaoImovelPorcento.multiply(new BigDecimal(20));
+		  valorMercadoImovelTrinta = valorMercaoImovelPorcento.multiply(new BigDecimal(30));
+		  valorMercadoImovelQuarenta = valorMercaoImovelPorcento.multiply(new BigDecimal(40));
+		  valorMercadoImovelCinquenta = valorMercaoImovelPorcento.multiply(new BigDecimal(50));
+
+	}
 
 	public String clearFieldsEditarPendentesAnalistas() {
 		clearMensagensWhatsApp();
@@ -9617,6 +9652,7 @@ public class ContratoCobrancaMB {
 				}
 			}
 			this.objetoContratoCobranca.setQtdeVotosNecessariosComite(definirQtdeVotoComite(this.objetoContratoCobranca));
+			calculaPorcentagemImovel();
 			gerarRecomendacaoComite();
 		}
 		
@@ -9647,10 +9683,10 @@ public class ContratoCobrancaMB {
 			}
 		}
 		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Assinatura")) {
-			if(!CommonsUtil.semValor(this.objetoContratoCobranca.getDataPajuComentado())
-					&& getDifferenceDays(objetoContratoCobranca.getDataPajuComentado(), DateUtil.gerarDataHoje()) > 30){
-				this.objetoContratoCobranca.setReanalise(true);
-			}
+			if(objetoContratoCobranca.isPajuVencido())
+				objetoContratoCobranca.setReanalise(true);
+			if("RJ;PR".contains(objetoContratoCobranca.getImovel().getEstado()) && !objetoContratoCobranca.isReanaliseJuridico()) 
+				objetoContratoCobranca.setReanalise(true);
 		}
 		
 		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Registro")) {
@@ -19993,7 +20029,7 @@ public class ContratoCobrancaMB {
 		Date dataProcesso = DateUtil.getFirstDayOfYear(CommonsUtil.intValue(CommonsUtil.somenteNumeros(ano)));
 		Date hoje = DateUtil.gerarDataHoje();
 		BigDecimal valorPresente = calcularValorPresente(dataProcesso, hoje, 
-				processoSelecionado.getValor(), BigDecimal.valueOf(1.5));
+				processoSelecionado.getValor(), BigDecimal.valueOf(1));
 		valorPresente = valorPresente.multiply(BigDecimal.valueOf(1.1));
 		valorPresente = valorPresente.setScale(2, BigDecimal.ROUND_HALF_UP);
 		processoSelecionado.setValorAtualizado(valorPresente);
@@ -29067,7 +29103,7 @@ public class ContratoCobrancaMB {
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 
 		documentoAnaliseDao.merge(documentoAnalise);
-
+		listaArquivosAnaliseDocumentos();
 	}
 
 	public void executarConsultasAnaliseDocumento() throws SchedulerException {
@@ -31622,6 +31658,7 @@ public class ContratoCobrancaMB {
 	public void listaArquivosAnaliseDocumentos() {
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 		this.listaDocumentoAnalise = documentoAnaliseDao.listagemDocumentoAnalise(this.objetoContratoCobranca);
+		this.listaDocumentoAnaliseRea = documentoAnaliseDao.listagemDocumentoAnaliseNaoAnalisados(this.objetoContratoCobranca);
 		Collections.sort(this.listaDocumentoAnalise, new Comparator<DocumentoAnalise>() {
 			@Override
 			public int compare(DocumentoAnalise one, DocumentoAnalise other) {
@@ -34347,9 +34384,13 @@ public class ContratoCobrancaMB {
 				boolean nadaConsta = true;
 
 				for (DocumentoAnalise docAnalise : listaDocumentoAnalise) {
-					if (CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise().toLowerCase(), "proprietario atual") && docAnalise.isLiberadoAnalise()) {
+					if ((CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise().toLowerCase(), "proprietario atual") 
+							|| CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise().toLowerCase(), "sócio vinculado ao proprietario atual")
+							&& docAnalise.isLiberadoAnalise())) {
 						proprietarios.add(docAnalise);
-					} else if (CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise().toLowerCase(), "comprador") && docAnalise.isLiberadoAnalise()) {
+					} else if ((CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise().toLowerCase(), "comprador") 
+							|| CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise().toLowerCase(), "sócio vinculado ao comprador")
+							&& docAnalise.isLiberadoAnalise())) {
 						compradores.add(docAnalise);				
 					}
 				}
@@ -34442,6 +34483,8 @@ public class ContratoCobrancaMB {
 		docAnalise.getResumoEngine();
 		docAnalise.getResumoScr();
 		docAnalise.getResumoProcesso();
+		docAnalise.getResumoCenprot();
+		
 		if (docAnalise.isCcfApontamentosAvailable()) {
 			this.objetoContratoCobranca.setChequeDevolvidoTaxa(true);
 			nadaConsta = false;
@@ -34452,7 +34495,7 @@ public class ContratoCobrancaMB {
 			nadaConsta = false;
 			ressalvaPefin.add(docAnalise.getRessalvaPefinNome());
 		}
-		if (docAnalise.isProtestosAvailable()) {
+		if (docAnalise.isProtestosAvailable() || docAnalise.isProtestoCenprotAvailable()) {
 			this.objetoContratoCobranca.setProtestoTaxa(true);
 			nadaConsta = false;
 			ressalvaProtesto.add(docAnalise.getRessalvaProtestoNome());
@@ -34535,4 +34578,69 @@ public class ContratoCobrancaMB {
 	public void setValorComDesconto(BigDecimal valorComDesconto) {
 		this.valorComDesconto = valorComDesconto;
 	}
+
+	public List<DocumentoAnalise> getListaDocumentoAnaliseRea() {
+		return listaDocumentoAnaliseRea;
+	}
+
+	public void setListaDocumentoAnaliseRea(List<DocumentoAnalise> listaDocumentoAnaliseRea) {
+		this.listaDocumentoAnaliseRea = listaDocumentoAnaliseRea;
+	}
+
+	public GravamesRea getGravamePopup() {
+		return gravamePopup;
+	}
+
+	public void setGravamePopup(GravamesRea gravamePopup) {
+		this.gravamePopup = gravamePopup;
+	}
+
+	public BigDecimal getValorMercaoImovelPorcento() {
+		return valorMercaoImovelPorcento;
+	}
+
+	public void setValorMercaoImovelPorcento(BigDecimal valorMercaoImovelPorcento) {
+		this.valorMercaoImovelPorcento = valorMercaoImovelPorcento;
+	}
+
+	public BigDecimal getValorMercadoImovelDez() {
+		return valorMercadoImovelDez;
+	}
+
+	public void setValorMercadoImovelDez(BigDecimal valorMercadoImovelDez) {
+		this.valorMercadoImovelDez = valorMercadoImovelDez;
+	}
+
+	public BigDecimal getValorMercadoImovelVinte() {
+		return valorMercadoImovelVinte;
+	}
+
+	public void setValorMercadoImovelVinte(BigDecimal valorMercadoImovelVinte) {
+		this.valorMercadoImovelVinte = valorMercadoImovelVinte;
+	}
+
+	public BigDecimal getValorMercadoImovelTrinta() {
+		return valorMercadoImovelTrinta;
+	}
+
+	public void setValorMercadoImovelTrinta(BigDecimal valorMercadoImovelTrinta) {
+		this.valorMercadoImovelTrinta = valorMercadoImovelTrinta;
+	}
+
+	public BigDecimal getValorMercadoImovelQuarenta() {
+		return valorMercadoImovelQuarenta;
+	}
+
+	public void setValorMercadoImovelQuarenta(BigDecimal valorMercadoImovelQuarenta) {
+		this.valorMercadoImovelQuarenta = valorMercadoImovelQuarenta;
+	}
+
+	public BigDecimal getValorMercadoImovelCinquenta() {
+		return valorMercadoImovelCinquenta;
+	}
+
+	public void setValorMercadoImovelCinquenta(BigDecimal valorMercadoImovelCinquenta) {
+		this.valorMercadoImovelCinquenta = valorMercadoImovelCinquenta;
+	}
+	
 }

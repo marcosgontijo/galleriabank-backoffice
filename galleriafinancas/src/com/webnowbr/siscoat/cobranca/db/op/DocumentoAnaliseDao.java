@@ -17,7 +17,10 @@ public class DocumentoAnaliseDao extends HibernateDao<DocumentoAnalise, Long> {
 
 
 	private static final String QUERY_VERIFICA_EXCLUIDO = "select id" + " from cobranca.documentosanalise "
-			+ "where contratocobranca  = ? and excluido = false ";
+			+ "where contratocobranca  = ? and excluido = false and liberadoAnalise = true";
+	
+	private static final String QUERY_NAO_ANALISADOS = "select id" + " from cobranca.documentosanalise "
+			+ "where contratocobranca  = ? and excluido = false and liberadoAnalise = false";
 
 
 	public DocumentoAnalise cadastradoAnalise(ContratoCobranca contratoCobranca, String cnpjCpf) {
@@ -51,7 +54,6 @@ public class DocumentoAnaliseDao extends HibernateDao<DocumentoAnalise, Long> {
 	@SuppressWarnings("unchecked")
 	public List<DocumentoAnalise> listagemDocumentoAnalise(ContratoCobranca contrato) {
 		return (List<DocumentoAnalise>) executeDBOperation(new DBRunnable() {
-
 			@Override
 			public Object run() throws Exception {
 				List<DocumentoAnalise> listaAnalise = new ArrayList<DocumentoAnalise>();
@@ -65,7 +67,32 @@ public class DocumentoAnaliseDao extends HibernateDao<DocumentoAnalise, Long> {
 					rs = ps.executeQuery();
 					while (rs.next()) {
 						listaAnalise.add(findById(rs.getLong("id")));
+					}
+				} finally {
+					closeResources(connection, ps, rs);
 
+				}
+				return listaAnalise;
+			}
+		});
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<DocumentoAnalise> listagemDocumentoAnaliseNaoAnalisados(ContratoCobranca contrato) {
+		return (List<DocumentoAnalise>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<DocumentoAnalise> listaAnalise = new ArrayList<DocumentoAnalise>();
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+					ps = connection.prepareStatement(QUERY_NAO_ANALISADOS);
+					ps.setLong(1, contrato.getId());
+					rs = ps.executeQuery();
+					while (rs.next()) {
+						listaAnalise.add(findById(rs.getLong("id")));
 					}
 				} finally {
 					closeResources(connection, ps, rs);
