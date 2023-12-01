@@ -939,6 +939,33 @@
 										</p:selectOneRadio>
 									</h:panelGrid>
 								</h:panelGroup>
+								<h:panelGroup>
+								<p:panel header="Porcentagem do imóvel">
+								<h:panelGrid columns="2">
+								<p:outputLabel style="padding: 5px;" value="Valor do imóvel: "/>
+								<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.valorMercadoImovel}"
+								converter="bigDecimalConverter"/>
+								<p:outputLabel value="LTV 10%: "/>
+								<p:outputLabel value="#{contratoCobrancaMB.valorMercadoImovelDez}"
+								converter="bigDecimalConverter"/>
+								<p:outputLabel value="LTV 20%: "/>
+								<p:outputLabel value="#{contratoCobrancaMB.valorMercadoImovelVinte}"
+								converter="bigDecimalConverter"/>
+								<p:outputLabel value="LTV 30%: "/>
+								<p:outputLabel value="#{contratoCobrancaMB.valorMercadoImovelTrinta}"
+								converter="bigDecimalConverter"/>
+								<p:outputLabel value="LTV 40%"/>
+								<p:outputLabel value="#{contratoCobrancaMB.valorMercadoImovelQuarenta}"
+								converter="bigDecimalConverter"/>
+								<p:outputLabel value="LTV 50%"/>
+								<p:outputLabel value="#{contratoCobrancaMB.valorMercadoImovelCinquenta}"
+								converter="bigDecimalConverter"/>
+								</h:panelGrid>
+								</p:panel>
+								</h:panelGroup>
+								
+								
+						
 
 								<h:panelGroup
 									rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 7}">

@@ -246,6 +246,12 @@ public class ContratoCobrancaMB {
 	private String numeroContratoObjetoContratoCobranca;
 	private List<FileUploaded> documentoConsultarTodos;
 	private boolean verificaReaProcessado;
+	 private BigDecimal valorMercaoImovelPorcento;
+	 private BigDecimal valorMercadoImovelDez;
+	 private BigDecimal valorMercadoImovelVinte;
+	 private BigDecimal valorMercadoImovelTrinta;
+	 private BigDecimal valorMercadoImovelQuarenta;
+	 private BigDecimal valorMercadoImovelCinquenta;
 
 	private boolean updateMode = false;
 	private boolean deleteMode = false;
@@ -916,11 +922,13 @@ public class ContratoCobrancaMB {
 					User usuarioLogado = new User();
 					UserDao u = new UserDao();
 					usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
+					
 
 					if (usuarioLogado != null) {
 						if (!usuarioLogado.isAdministrador()) {
 							filters.put("contratoRestritoAdm", "false");
 						}
+						
 					}
 				}
 
@@ -9490,6 +9498,16 @@ public class ContratoCobrancaMB {
 		this.controleWhatsAppPreAprovado = false;
 		this.controleWhatsAppComite = false;
 	}
+	public void calculaPorcentagemImovel() {
+		
+		  valorMercaoImovelPorcento = objetoContratoCobranca.getValorMercadoImovel().divide(new BigDecimal(100));
+		  valorMercadoImovelDez = valorMercaoImovelPorcento.multiply(new BigDecimal(10));
+		  valorMercadoImovelVinte = valorMercaoImovelPorcento.multiply(new BigDecimal(20));
+		  valorMercadoImovelTrinta = valorMercaoImovelPorcento.multiply(new BigDecimal(30));
+		  valorMercadoImovelQuarenta = valorMercaoImovelPorcento.multiply(new BigDecimal(40));
+		  valorMercadoImovelCinquenta = valorMercaoImovelPorcento.multiply(new BigDecimal(50));
+
+	}
 
 	public String clearFieldsEditarPendentesAnalistas() {
 		clearMensagensWhatsApp();
@@ -9634,6 +9652,7 @@ public class ContratoCobrancaMB {
 				}
 			}
 			this.objetoContratoCobranca.setQtdeVotosNecessariosComite(definirQtdeVotoComite(this.objetoContratoCobranca));
+			calculaPorcentagemImovel();
 			gerarRecomendacaoComite();
 		}
 		
@@ -34506,6 +34525,54 @@ public class ContratoCobrancaMB {
 
 	public void setGravamePopup(GravamesRea gravamePopup) {
 		this.gravamePopup = gravamePopup;
+	}
+
+	public BigDecimal getValorMercaoImovelPorcento() {
+		return valorMercaoImovelPorcento;
+	}
+
+	public void setValorMercaoImovelPorcento(BigDecimal valorMercaoImovelPorcento) {
+		this.valorMercaoImovelPorcento = valorMercaoImovelPorcento;
+	}
+
+	public BigDecimal getValorMercadoImovelDez() {
+		return valorMercadoImovelDez;
+	}
+
+	public void setValorMercadoImovelDez(BigDecimal valorMercadoImovelDez) {
+		this.valorMercadoImovelDez = valorMercadoImovelDez;
+	}
+
+	public BigDecimal getValorMercadoImovelVinte() {
+		return valorMercadoImovelVinte;
+	}
+
+	public void setValorMercadoImovelVinte(BigDecimal valorMercadoImovelVinte) {
+		this.valorMercadoImovelVinte = valorMercadoImovelVinte;
+	}
+
+	public BigDecimal getValorMercadoImovelTrinta() {
+		return valorMercadoImovelTrinta;
+	}
+
+	public void setValorMercadoImovelTrinta(BigDecimal valorMercadoImovelTrinta) {
+		this.valorMercadoImovelTrinta = valorMercadoImovelTrinta;
+	}
+
+	public BigDecimal getValorMercadoImovelQuarenta() {
+		return valorMercadoImovelQuarenta;
+	}
+
+	public void setValorMercadoImovelQuarenta(BigDecimal valorMercadoImovelQuarenta) {
+		this.valorMercadoImovelQuarenta = valorMercadoImovelQuarenta;
+	}
+
+	public BigDecimal getValorMercadoImovelCinquenta() {
+		return valorMercadoImovelCinquenta;
+	}
+
+	public void setValorMercadoImovelCinquenta(BigDecimal valorMercadoImovelCinquenta) {
+		this.valorMercadoImovelCinquenta = valorMercadoImovelCinquenta;
 	}
 	
 }
