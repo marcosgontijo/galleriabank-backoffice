@@ -831,8 +831,8 @@
 					<p:panel header="Comitê"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.documentosComite}">
 						<shiro:hasAnyRoles name="ROOT, COMITEEDITAR">
-							<h:panelGrid columns="3">
-								<h:panelGroup id="botaoLinkImovelComite" style="width: 30%">
+							<h:panelGrid columns="3" style="width: 300px">
+								<h:panelGroup id="botaoLinkImovelComite">
 									<h:panelGrid columns="2"
 										rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 7}">
 										<a href="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}"
@@ -940,7 +940,7 @@
 									</h:panelGrid>
 								</h:panelGroup>
 								<h:panelGroup style=" width: 300px; display: block;">
-								<p:panel header="Porcentagem do imóvel" style="width: 50%">
+								<p:panel header="Porcentagem do imóvel" style="width: 80%">
 								
 								<h:panelGrid columns="2">
 								

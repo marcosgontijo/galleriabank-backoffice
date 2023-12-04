@@ -9661,6 +9661,7 @@ public class ContratoCobrancaMB {
 			this.objetoContratoCobranca.setQtdeVotosNecessariosComite(definirQtdeVotoComite(this.objetoContratoCobranca));
 			calculaPorcentagemImovel();
 			gerarRecomendacaoComite();
+			objetoAnaliseComite.setValorComite(null);
 		}
 		
 		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. DOC")) {
@@ -9782,6 +9783,12 @@ public class ContratoCobrancaMB {
 			}
 			}
 
+			if (!CommonsUtil.semValor(this.objetoContratoCobranca.getValorEmprestimo())
+					&& this.objetoContratoCobranca.getValorEmprestimo().compareTo(valorSugerido) < 0) {
+			objetoAnaliseComite.setValorComite(this.objetoContratoCobranca.getValorEmprestimo());
+			} else {
+			this.objetoAnaliseComite.setValorComite(valorSugerido);
+			}
 			if(CommonsUtil.semValor(objetoImovelCobranca.getLinkGMaps())) {
 				getLinkMaps();
 			}
