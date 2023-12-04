@@ -615,12 +615,14 @@ public class IpcaJobCalcular {
 						//INICIO - Tratativa para validar status parcela
 						if (detalheIpca.getListContratoCobrancaDetalhesParcial().size() > 0) {
 							BigDecimal somaBaixas = BigDecimal.ZERO;
+							boolean temBaixa = false;
 	
 							for (ContratoCobrancaDetalhesParcial cBaixas : detalheIpca.getListContratoCobrancaDetalhesParcial()) {
 								somaBaixas = somaBaixas.add(cBaixas.getVlrRecebido());
+								temBaixa = true;
 							}
 							
-							if (somaBaixas.compareTo(detalheIpca.getVlrParcela()) >= 0) {
+							if (temBaixa && somaBaixas.compareTo(detalheIpca.getVlrParcela()) >= 0) {
 								detalheIpca.setParcelaPaga(true);
 								detalheIpca.setOrigemBaixa("calcularIPCACustom - Tratativa Status");
 							}	
