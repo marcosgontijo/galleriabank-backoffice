@@ -54,9 +54,11 @@ public class PlexiWebhook {
 			plexiConsulta.setWebhookRetorno(webhookRetorno);
 			if(webhookObject.has("pdf")) {
 				plexiConsulta.setPdf(webhookObject.getString("pdf"));
+				plexiConsulta.setStatus("Consulta Concluída");
 				//plexiService.salvarPdfRetornoPlexi(plexiConsulta, plexiConsultaDao);
-			}
-			plexiConsulta.setStatus("Consulta Concluída");
+			} else 
+				plexiConsulta.setStatus("Consulta Sem PDF");
+			//plexiConsulta.setStatus("Consulta Concluída");
 			plexiConsultaDao.merge(plexiConsulta);
 
 			return Response.status(200).entity("Processado").build();

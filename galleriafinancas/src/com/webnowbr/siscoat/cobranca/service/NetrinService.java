@@ -1765,7 +1765,10 @@ public class NetrinService {
 				System.out.println("falha no pdf netrin. ID:" + netrinConsulta.getId());
 				netrinConsulta.setStatus("Consulta Falhou");
 			} else {
-				netrinConsulta.setStatus("Consulta Concluída");
+				if(CommonsUtil.semValor(netrinConsulta.getPdf())) 
+					netrinConsulta.setStatus("Consulta Sem PDF");
+				else
+					netrinConsulta.setStatus("Consulta Concluída");
 			}
 			
 			if(netrinConsulta.getId() <=0) {
