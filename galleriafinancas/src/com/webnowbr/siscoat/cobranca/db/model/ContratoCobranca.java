@@ -13,9 +13,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.faces.bean.ManagedProperty;
+
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.infra.db.model.User;
+import com.webnowbr.siscoat.security.LoginBean;
 
 public class ContratoCobranca implements Serializable {
 
@@ -640,6 +643,7 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal taxaPreAprovada;
 	private BigInteger prazoMaxPreAprovado;	        
 	private BigDecimal valorMercadoImovel;
+	
 	private BigDecimal valorVendaForcadaImovel;
 	private String comentarioJuridico;
 	private BigDecimal valorPreLaudo;
@@ -890,6 +894,8 @@ public class ContratoCobranca implements Serializable {
 		this.listAverbacao = new HashSet<>();
 		this.listCadastroStatus = new HashSet<>();
 		this.listProcessos = new HashSet<>();
+		
+		
 		
 		limparPrimitivos();
 	}
@@ -7412,5 +7418,6 @@ public class ContratoCobranca implements Serializable {
 	public void setDocumentosAnalisados(boolean documentosAnalisados) {
 		this.documentosAnalisados = documentosAnalisados;
 	}
+
 	
 }

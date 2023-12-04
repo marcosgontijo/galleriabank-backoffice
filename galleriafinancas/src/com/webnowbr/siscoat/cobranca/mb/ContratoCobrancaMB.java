@@ -9653,6 +9653,7 @@ public class ContratoCobrancaMB {
 								this.objetoContratoCobranca.getQtdeVotosReprovadosComite().add(BigInteger.ONE));
 					}
 					if (CommonsUtil.mesmoValor(usuarioLogado.getLogin(), comite.getUsuarioComite())) {
+						comite.setValorComite(null);
 						this.objetoAnaliseComite = comite;
 					}
 				}
@@ -9762,32 +9763,25 @@ public class ContratoCobrancaMB {
 		// !CommonsUtil.semValor(this.objetoContratoCobranca.getComentarioJuridico())){
 		// this.objetoAnaliseComite.setComentarioComite(this.objetoContratoCobranca.getComentarioJuridico());
 		// }
-		if (this.objetoAnaliseComite.getValorComite() == null) {
-			BigDecimal valorSugerido = BigDecimal.ZERO;
-			if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getImovel().getTipo(), "Apartamento")
+	if (this.objetoAnaliseComite.getValorComite() == null) {
+		BigDecimal valorSugerido = BigDecimal.ZERO;
+		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getImovel().getTipo(), "Apartamento")
 					|| CommonsUtil.mesmoValor(this.objetoContratoCobranca.getImovel().getTipo(), "Casa de Condomínio")
 					|| CommonsUtil.mesmoValor(this.objetoContratoCobranca.getImovel().getTipo(),
-							"Casa de Condomínio acima1000")) {
+						"Casa de Condomínio acima1000")) {
 
 				if (!CommonsUtil.semValor(this.objetoContratoCobranca.getValorMercadoImovel())) {
 					valorSugerido = this.objetoContratoCobranca.getValorMercadoImovel()
 							.multiply(BigDecimal.valueOf(40));
 					valorSugerido = valorSugerido.divide(BigDecimal.valueOf(100), MathContext.DECIMAL128);
-				}
 			} else {
 				if (!CommonsUtil.semValor(this.objetoContratoCobranca.getValorVendaForcadaImovel())) {
 					valorSugerido = this.objetoContratoCobranca.getValorVendaForcadaImovel()
 							.multiply(BigDecimal.valueOf(50));
 					valorSugerido = valorSugerido.divide(BigDecimal.valueOf(100), MathContext.DECIMAL128);
-				}
+			}
 			}
 
-			if (!CommonsUtil.semValor(this.objetoContratoCobranca.getValorEmprestimo())
-					&& this.objetoContratoCobranca.getValorEmprestimo().compareTo(valorSugerido) < 0) {
-				objetoAnaliseComite.setValorComite(this.objetoContratoCobranca.getValorEmprestimo());
-			} else {
-				this.objetoAnaliseComite.setValorComite(valorSugerido);
-			}
 			if(CommonsUtil.semValor(objetoImovelCobranca.getLinkGMaps())) {
 				getLinkMaps();
 			}
@@ -9806,6 +9800,7 @@ public class ContratoCobrancaMB {
 			}
 		}
 		
+	}
 	}
 
 	public void gerarProcessosQuitarComite() {
