@@ -19217,6 +19217,74 @@ public class ContratoCobrancaMB {
 
 	}
 	
+	public void concluirContaPagamentoCliente() {
+		this.contasPagarSelecionada.setContrato(this.objetoContratoCobranca);
+		this.contasPagarSelecionada.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
+		this.contasPagarSelecionada.setPagadorRecebedor(this.objetoPagadorRecebedor);
+		this.contasPagarSelecionada.setTipoDespesa("C");
+		this.contasPagarSelecionada.setDescricao("Pagamento Cliente");
+		this.contasPagarSelecionada.setResponsavel(this.objetoContratoCobranca.getResponsavel());
+		this.contasPagarSelecionada.setValor(this.objetoContratoCobranca.getValorCartaSplit());		
+		
+		
+		if (!CommonsUtil.semValor(this.objetoContratoCobranca.getValorCartaSplit())) {
+			if (!CommonsUtil.semValor(this.objetoContratoCobranca.getContaPagarValorTotal())) {
+				this.objetoContratoCobranca.setContaPagarValorTotal(this.objetoContratoCobranca
+						.getContaPagarValorTotal().add(this.objetoContratoCobranca.getValorCartaSplit()));
+			} else {
+				this.objetoContratoCobranca.setContaPagarValorTotal(this.objetoContratoCobranca.getValorCartaSplit());
+			}
+			if (!CommonsUtil.semValor(this.contasPagarSelecionada.getValorPagamento())) {
+				if (CommonsUtil.mesmoValor(this.contasPagarSelecionada.getValorPagamento(),
+						this.objetoContratoCobranca.getValorCartaSplit())) {
+					this.contasPagarSelecionada.setContaPaga(true);
+				}
+				this.objetoContratoCobranca.setContaPagarValorTotal(this.objetoContratoCobranca
+						.getContaPagarValorTotal().subtract(this.contasPagarSelecionada.getValorPagamento()));
+			}
+		}
+
+		this.objetoContratoCobranca.getListContasPagar().add(this.contasPagarSelecionada);
+
+		BigDecimal valorDespesas = calcularValorTotalContasPagar();
+		this.objetoContratoCobranca.setContaPagarValorTotal(valorDespesas);
+		ContasPagarDao contasPagarDao = new ContasPagarDao();
+		if (contasPagarSelecionada.getId() <= 0) {
+			contasPagarDao.create(contasPagarSelecionada);
+		} else {
+			contasPagarDao.merge(contasPagarSelecionada);
+		}
+		this.contasPagarSelecionada = new ContasPagar();
+		this.addContasPagar = false;
+		this.objetoContratoCobranca.calcularValorTotalContasPagas();
+
+	}
+	
+	public void updateFieldsOrdemPagamentoStarkBank() {		
+		if (this.contasPagarSelecionada.getDescricao().equals("Laudo")) {
+			if (this.contasPagarSelecionada.getFormaTransferencia().equals("Pix") ) {
+				this.objetoContratoCobranca.setNomeBancarioContaPagar("Galleria Correspondente Bancário Eireli");
+				this.objetoContratoCobranca.setCpfCnpjBancarioContaPagar("34.787.885/0001-32");
+				this.objetoContratoCobranca.setBancoBancarioContaPagar("Banco do Brasil");
+				this.objetoContratoCobranca.setAgenciaBancarioContaPagar("1515-6");
+				this.objetoContratoCobranca.setContaBancarioContaPagar("131094-1");
+				this.objetoContratoCobranca.setChavePIXBancarioContaPagar("34.787.885/0001-32");
+			}
+			
+			if (this.contasPagarSelecionada.getFormaTransferencia().equals("TED") ) {
+				this.objetoContratoCobranca.setNomeBancarioContaPagar("Galleria Correspondente Bancário Eireli");
+				this.objetoContratoCobranca.setCpfCnpjBancarioContaPagar("34.787.885/0001-32");
+				this.objetoContratoCobranca.setBancoBancarioContaPagar("Banco do Brasil");
+				this.objetoContratoCobranca.setAgenciaBancarioContaPagar("1515-6");
+				this.objetoContratoCobranca.setContaBancarioContaPagar("131094-1");
+			}
+
+			if (this.contasPagarSelecionada.getFormaTransferencia().equals("Boleto") ) {
+				this.contasPagarSelecionada.setNumeroDocumentoPagadorStarkBank("34.787.885/0001-32");
+			}
+		}
+	}
+	
 	public void pagamentoStarkBank() {
 		FacesContext context = FacesContext.getCurrentInstance();
 

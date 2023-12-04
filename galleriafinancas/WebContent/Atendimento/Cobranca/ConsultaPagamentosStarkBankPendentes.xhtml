@@ -59,7 +59,10 @@
                  paginator="true"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                  currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
-                 rowsPerPageTemplate="10,50,100">      
+                 rowsPerPageTemplate="10,50,100">  
+                 	<p:column style="width:16px">
+			            <p:rowToggler />
+			        </p:column> 
                  	<p:column style="text-align: center;width:105px;" headerText="Contrato">
 			            <h:outputText value="#{pagamento.contasPagar.contrato.numeroContrato}" />
 			        </p:column>          
@@ -82,7 +85,77 @@
 						<p:outputLabel value="#{pagamento.valor}" 
 							style="FONT-SIZE: 10pt;"
 							converter="bigDecimalConverter" />
-					</p:column>       
+					</p:column>   
+					<p:rowExpansion>
+						<p:panel id="TEDStarkBank" header="TED"
+							style="margin-bottom:10px;" rendered="#{pagamento.contasPagar.formaTransferencia eq 'TED'}">
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Nome:" 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.contrato.nomeBancarioContaPagar}"/>	
+		
+								<p:outputLabel value="CPF/CNPJ: " 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.contrato.cpfCnpjBancarioContaPagar}"/>
+		
+								<p:outputLabel value="Banco: " 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.contrato.bancoBancarioContaPagar}"/>
+		
+								<p:outputLabel value="Agência: " 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.contrato.agenciaBancarioContaPagar}"/>
+		
+								<p:outputLabel value="C/C: " 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.contrato.contaBancarioContaPagar}"/>								
+							</h:panelGrid>												
+						</p:panel>
+						<p:panel id="PIXStarkBank" header="PIX"
+							style="margin-bottom:10px;" rendered="#{pagamento.contasPagar.formaTransferencia eq 'Pix'}">
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Nome:" 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.contrato.nomeBancarioContaPagar}"/>	
+		
+								<p:outputLabel value="CPF/CNPJ: " 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.contrato.cpfCnpjBancarioContaPagar}"/>
+		
+								<p:outputLabel value="Banco: " 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.contrato.bancoBancarioContaPagar}"/>
+		
+								<p:outputLabel value="Agência: " 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.contrato.agenciaBancarioContaPagar}"/>
+		
+								<p:outputLabel value="C/C: " 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.contrato.contaBancarioContaPagar}"/>	
+								
+								<p:outputLabel value="Chave Pix: " 
+									style="width:250px;" styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.contrato.chavePIXBancarioContaPagar}"/>														
+							</h:panelGrid>												
+						</p:panel>
+						<p:panel id="BoletoStarkBank" header="Boleto"
+							style="margin-bottom:10px;" rendered="#{pagamento.contasPagar.formaTransferencia eq 'Boleto'}">
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Recebedor:" 
+									styleClass="labelBold"/>
+								<p:outputLabel value=" "/>	
+		
+								<p:outputLabel value="CPF/CNPJ Recebedor boleto: " 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.numeroDocumentoPagadorStarkBank}"/>
+		
+								<p:outputLabel value="Linha Digitável: " 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.linhaDigitavelStarkBank}"/>												
+							</h:panelGrid>												
+						</p:panel>
+			        </p:rowExpansion>      
 			        <p:column styleClass="colunaResponsiva">	
 			       		<shiro:hasAnyRoles name="ROOT">  
 				        	<p:commandButton action="#{contratoCobrancaMB.processaPagamentoStarkBank()}" ajax="false" icon="ui-icon-print" value="Aprovar Pagamento" title="Aprovar Pagamento">
