@@ -39,7 +39,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
@@ -146,6 +145,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaParcelasInvestidor;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaStatus;
 import com.webnowbr.siscoat.cobranca.db.model.DataVistoria;
+import com.webnowbr.siscoat.cobranca.db.model.DocketConsulta;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.FilaInvestidores;
 import com.webnowbr.siscoat.cobranca.db.model.GravamesRea;
@@ -156,6 +156,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelEstoque;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorAdicionais;
+import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorConsulta;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorSocio;
 import com.webnowbr.siscoat.cobranca.db.model.PesquisaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.PreAprovadoPDF;
@@ -173,6 +174,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaParcelasInvestidorDao;
 import com.webnowbr.siscoat.cobranca.db.op.DashboardDao;
+import com.webnowbr.siscoat.cobranca.db.op.DocketConsultaDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocketDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.db.op.FilaInvestidoresDao;
@@ -180,6 +182,7 @@ import com.webnowbr.siscoat.cobranca.db.op.GruposFavorecidosDao;
 import com.webnowbr.siscoat.cobranca.db.op.GruposPagadoresDao;
 import com.webnowbr.siscoat.cobranca.db.op.IPCADao;
 import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
+import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorConsultaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.RegistroImovelTabelaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
@@ -193,7 +196,6 @@ import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.cobranca.service.EngineService;
 import com.webnowbr.siscoat.cobranca.service.FileService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
-import com.webnowbr.siscoat.cobranca.service.PagadorRecebedorService;
 import com.webnowbr.siscoat.cobranca.service.PajuService;
 import com.webnowbr.siscoat.cobranca.service.RelatoriosService;
 import com.webnowbr.siscoat.cobranca.service.ScrService;
@@ -201,6 +203,10 @@ import com.webnowbr.siscoat.cobranca.service.SerasaService;
 import com.webnowbr.siscoat.cobranca.vo.ContratosPagadorAnalisadoVO;
 import com.webnowbr.siscoat.cobranca.vo.FileGenerator;
 import com.webnowbr.siscoat.cobranca.vo.FileUploaded;
+import com.webnowbr.siscoat.cobranca.ws.netrin.NetrinConsulta;
+import com.webnowbr.siscoat.cobranca.ws.netrin.NetrinConsultaDao;
+import com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta;
+import com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsultaDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
@@ -8200,10 +8206,10 @@ public class ContratoCobrancaMB {
 				}
 
 				if (!CommonsUtil.semValor(objetoContratoCobranca.getDataUltimaAtualizacao())) {
-					if (getDifferenceDays(objetoContratoCobranca.getDataUltimaAtualizacao(), auxDataHoje) > 15) {
+					if (DateUtil.getDifferenceDays(objetoContratoCobranca.getDataUltimaAtualizacao(), auxDataHoje) > 15) {
 						if (!objetoContratoCobranca.isContratoResgatadoBaixar()) {
 							baixarPreContratoSemMensagem();
-						} else if (getDifferenceDays(objetoContratoCobranca.getContratoResgatadoData(),
+						} else if (DateUtil.getDifferenceDays(objetoContratoCobranca.getContratoResgatadoData(),
 								auxDataHoje) > 15) {
 							baixarPreContratoSemMensagem();
 						}
@@ -8211,7 +8217,7 @@ public class ContratoCobrancaMB {
 				} else {
 					if (!objetoContratoCobranca.isContratoResgatadoBaixar()) {
 						baixarPreContratoSemMensagem();
-					} else if (getDifferenceDays(objetoContratoCobranca.getContratoResgatadoData(), auxDataHoje) > 15) {
+					} else if (DateUtil.getDifferenceDays(objetoContratoCobranca.getContratoResgatadoData(), auxDataHoje) > 15) {
 						baixarPreContratoSemMensagem();
 					}
 				}
@@ -9647,6 +9653,7 @@ public class ContratoCobrancaMB {
 								this.objetoContratoCobranca.getQtdeVotosReprovadosComite().add(BigInteger.ONE));
 					}
 					if (CommonsUtil.mesmoValor(usuarioLogado.getLogin(), comite.getUsuarioComite())) {
+						comite.setValorComite(null);
 						this.objetoAnaliseComite = comite;
 					}
 				}
@@ -9654,6 +9661,7 @@ public class ContratoCobrancaMB {
 			this.objetoContratoCobranca.setQtdeVotosNecessariosComite(definirQtdeVotoComite(this.objetoContratoCobranca));
 			calculaPorcentagemImovel();
 			gerarRecomendacaoComite();
+			objetoAnaliseComite.setValorComite(null);
 		}
 		
 		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. DOC")) {
@@ -9756,31 +9764,30 @@ public class ContratoCobrancaMB {
 		// !CommonsUtil.semValor(this.objetoContratoCobranca.getComentarioJuridico())){
 		// this.objetoAnaliseComite.setComentarioComite(this.objetoContratoCobranca.getComentarioJuridico());
 		// }
-		if (this.objetoAnaliseComite.getValorComite() == null) {
-			BigDecimal valorSugerido = BigDecimal.ZERO;
-			if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getImovel().getTipo(), "Apartamento")
+	if (this.objetoAnaliseComite.getValorComite() == null) {
+		BigDecimal valorSugerido = BigDecimal.ZERO;
+		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getImovel().getTipo(), "Apartamento")
 					|| CommonsUtil.mesmoValor(this.objetoContratoCobranca.getImovel().getTipo(), "Casa de Condomínio")
 					|| CommonsUtil.mesmoValor(this.objetoContratoCobranca.getImovel().getTipo(),
-							"Casa de Condomínio acima1000")) {
+						"Casa de Condomínio acima1000")) {
 
 				if (!CommonsUtil.semValor(this.objetoContratoCobranca.getValorMercadoImovel())) {
 					valorSugerido = this.objetoContratoCobranca.getValorMercadoImovel()
 							.multiply(BigDecimal.valueOf(40));
 					valorSugerido = valorSugerido.divide(BigDecimal.valueOf(100), MathContext.DECIMAL128);
-				}
 			} else {
 				if (!CommonsUtil.semValor(this.objetoContratoCobranca.getValorVendaForcadaImovel())) {
 					valorSugerido = this.objetoContratoCobranca.getValorVendaForcadaImovel()
 							.multiply(BigDecimal.valueOf(50));
 					valorSugerido = valorSugerido.divide(BigDecimal.valueOf(100), MathContext.DECIMAL128);
-				}
+			}
 			}
 
 			if (!CommonsUtil.semValor(this.objetoContratoCobranca.getValorEmprestimo())
 					&& this.objetoContratoCobranca.getValorEmprestimo().compareTo(valorSugerido) < 0) {
-				objetoAnaliseComite.setValorComite(this.objetoContratoCobranca.getValorEmprestimo());
+			objetoAnaliseComite.setValorComite(this.objetoContratoCobranca.getValorEmprestimo());
 			} else {
-				this.objetoAnaliseComite.setValorComite(valorSugerido);
+			this.objetoAnaliseComite.setValorComite(valorSugerido);
 			}
 			if(CommonsUtil.semValor(objetoImovelCobranca.getLinkGMaps())) {
 				getLinkMaps();
@@ -9800,6 +9807,7 @@ public class ContratoCobrancaMB {
 			}
 		}
 		
+	}
 	}
 
 	public void gerarProcessosQuitarComite() {
@@ -14233,7 +14241,7 @@ public class ContratoCobrancaMB {
 			for (ContratoCobranca contratos : this.contratosPendentes) {
 				contratos = getContratoById(contratos.getId());
 				if (contratos.getAnaliseReprovadaData() != null && contratos.isAnaliseReprovada()) {
-					if (getDifferenceDays(contratos.getAnaliseReprovadaData(), auxDataHoje) > 14) {
+					if (DateUtil.getDifferenceDays(contratos.getAnaliseReprovadaData(), auxDataHoje) > 14) {
 						if (this.objetoContratoCobranca != null) {
 							this.objetoContratoCobranca = contratos;
 							reprovarContrato();
@@ -14331,12 +14339,6 @@ public class ContratoCobrancaMB {
 		for (Responsavel resp : responsaveis) {
 			takeBlipMB.getWhatsAppURL(resp);
 		}
-	}
-
-	public static long getDifferenceDays(Date d1, Date d2) {
-		long diff = d2.getTime() - d1.getTime();
-		diff = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
-		return diff;
 	}
 
 	public String geraConsultaLeads(String statuslead) {
@@ -19215,6 +19217,74 @@ public class ContratoCobrancaMB {
 		this.addContasPagar = false;
 		this.objetoContratoCobranca.calcularValorTotalContasPagas();
 
+	}
+	
+	public void concluirContaPagamentoCliente() {
+		this.contasPagarSelecionada.setContrato(this.objetoContratoCobranca);
+		this.contasPagarSelecionada.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
+		this.contasPagarSelecionada.setPagadorRecebedor(this.objetoPagadorRecebedor);
+		this.contasPagarSelecionada.setTipoDespesa("C");
+		this.contasPagarSelecionada.setDescricao("Pagamento Cliente");
+		this.contasPagarSelecionada.setResponsavel(this.objetoContratoCobranca.getResponsavel());
+		this.contasPagarSelecionada.setValor(this.objetoContratoCobranca.getValorCartaSplit());		
+		
+		
+		if (!CommonsUtil.semValor(this.objetoContratoCobranca.getValorCartaSplit())) {
+			if (!CommonsUtil.semValor(this.objetoContratoCobranca.getContaPagarValorTotal())) {
+				this.objetoContratoCobranca.setContaPagarValorTotal(this.objetoContratoCobranca
+						.getContaPagarValorTotal().add(this.objetoContratoCobranca.getValorCartaSplit()));
+			} else {
+				this.objetoContratoCobranca.setContaPagarValorTotal(this.objetoContratoCobranca.getValorCartaSplit());
+			}
+			if (!CommonsUtil.semValor(this.contasPagarSelecionada.getValorPagamento())) {
+				if (CommonsUtil.mesmoValor(this.contasPagarSelecionada.getValorPagamento(),
+						this.objetoContratoCobranca.getValorCartaSplit())) {
+					this.contasPagarSelecionada.setContaPaga(true);
+				}
+				this.objetoContratoCobranca.setContaPagarValorTotal(this.objetoContratoCobranca
+						.getContaPagarValorTotal().subtract(this.contasPagarSelecionada.getValorPagamento()));
+			}
+		}
+
+		this.objetoContratoCobranca.getListContasPagar().add(this.contasPagarSelecionada);
+
+		BigDecimal valorDespesas = calcularValorTotalContasPagar();
+		this.objetoContratoCobranca.setContaPagarValorTotal(valorDespesas);
+		ContasPagarDao contasPagarDao = new ContasPagarDao();
+		if (contasPagarSelecionada.getId() <= 0) {
+			contasPagarDao.create(contasPagarSelecionada);
+		} else {
+			contasPagarDao.merge(contasPagarSelecionada);
+		}
+		this.contasPagarSelecionada = new ContasPagar();
+		this.addContasPagar = false;
+		this.objetoContratoCobranca.calcularValorTotalContasPagas();
+
+	}
+	
+	public void updateFieldsOrdemPagamentoStarkBank() {		
+		if (this.contasPagarSelecionada.getDescricao().equals("Laudo")) {
+			if (this.contasPagarSelecionada.getFormaTransferencia().equals("Pix") ) {
+				this.objetoContratoCobranca.setNomeBancarioContaPagar("Galleria Correspondente Bancário Eireli");
+				this.objetoContratoCobranca.setCpfCnpjBancarioContaPagar("34.787.885/0001-32");
+				this.objetoContratoCobranca.setBancoBancarioContaPagar("Banco do Brasil");
+				this.objetoContratoCobranca.setAgenciaBancarioContaPagar("1515-6");
+				this.objetoContratoCobranca.setContaBancarioContaPagar("131094-1");
+				this.objetoContratoCobranca.setChavePIXBancarioContaPagar("34.787.885/0001-32");
+			}
+			
+			if (this.contasPagarSelecionada.getFormaTransferencia().equals("TED") ) {
+				this.objetoContratoCobranca.setNomeBancarioContaPagar("Galleria Correspondente Bancário Eireli");
+				this.objetoContratoCobranca.setCpfCnpjBancarioContaPagar("34.787.885/0001-32");
+				this.objetoContratoCobranca.setBancoBancarioContaPagar("Banco do Brasil");
+				this.objetoContratoCobranca.setAgenciaBancarioContaPagar("1515-6");
+				this.objetoContratoCobranca.setContaBancarioContaPagar("131094-1");
+			}
+
+			if (this.contasPagarSelecionada.getFormaTransferencia().equals("Boleto") ) {
+				this.contasPagarSelecionada.setNumeroDocumentoPagadorStarkBank("34.787.885/0001-32");
+			}
+		}
 	}
 	
 	public void pagamentoStarkBank() {
@@ -29031,9 +29101,7 @@ public class ContratoCobrancaMB {
 	}
 
 	public void marcaParaDocumentoAnalise(DocumentoAnalise documentoAnalise) {
-
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-
 		documentoAnaliseDao.merge(documentoAnalise);
 		listaArquivosAnaliseDocumentos();
 	}
@@ -29053,7 +29121,6 @@ public class ContratoCobrancaMB {
 			
 			String webHookJWT = JwtUtil.generateJWTWebhook(true);
 			String urlWenhook = SiscoatConstants.URL_SISCOAT_ENGINE_WEBHOOK + webHookJWT;
-			
 			jobDetail.getJobDataMap().put("listaDocumentoAnalise", listaDocumentoAnalise);
 			jobDetail.getJobDataMap().put("user", user);
 			jobDetail.getJobDataMap().put("urlWenhook", urlWenhook);
@@ -29080,58 +29147,94 @@ public class ContratoCobrancaMB {
 			return false;
 		}
 	}
-
-	public void executarConsultasPedirPajuDocumento(String estado) throws SchedulerException {
-		NetrinService netrinService = new NetrinService();
-		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+	
+	public void limparConsultasVencidas() {
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-
-		for (DocumentoAnalise documentoAnalise : this.listaDocumentoAnalise.stream()
-				.filter(d -> d.isLiberadoCertidoes()).collect(Collectors.toList())) {
-			String observacao = "";
-			if (documentoAnalise.isLiberadoAnalise() && !CommonsUtil.semValor(documentoAnalise.getPagador())) {
-				if (CommonsUtil.semValor(documentoAnalise.getRetornoCNDEstadual())) {
-					documentoAnalise.addObservacao("Processando CND Estadual");
-					if (CommonsUtil.semValor(documentoAnalise.getPagador().getEstado())) {
-						documentoAnalise.getPagador().setEstado(estado);
-						new PagadorRecebedorDao().merge(documentoAnalise.getPagador());
-
-						// observacao = observacao + "Falta UF para consulta estadual \n";
-						// documentoAnalise.addObservacao("Falta UF para consulta estadual");
-					}
-
-					if (CommonsUtil.mesmoValor(documentoAnalise.getPagador().getEstado().toLowerCase(), "mg")
-							&& CommonsUtil.semValor(documentoAnalise.getPagador().getCep())) {
-						observacao = observacao + "Falta CEP para consulta estadual de MG \n";
-						documentoAnalise.addObservacao("Falta CEP para consulta estadual de MG");
-					} else {
-						netrinService.requestCNDEstadual(documentoAnalise);
-						pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
-								DocumentosAnaliseEnum.CNDESTADUAL, documentoAnalise.getRetornoCNDEstadual());
-					}
-				}
-
-				if (CommonsUtil.semValor(documentoAnalise.getRetornoCNDFederal())) {
-					documentoAnalise.addObservacao("Processando CND Federal");
-					netrinService.requestCNDFederal(documentoAnalise);
-					pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
-							DocumentosAnaliseEnum.CNDFEDERAL, documentoAnalise.getRetornoCNDFederal());
-				}
-
-				if (CommonsUtil.semValor(documentoAnalise.getRetornoCNDTrabalhistaTST())) {
-					documentoAnalise.addObservacao("Processando CNDT TST");
-					netrinService.requestCNDTrabalhistaTST(documentoAnalise);
-					pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
-							DocumentosAnaliseEnum.CNDTTST, documentoAnalise.getRetornoCNDTrabalhistaTST());
-				}
-
-				observacao = observacao + "Pesquisas finalizadas";
-				documentoAnalise.addObservacao(observacao);
-				documentoAnaliseDao.merge(documentoAnalise);
+		for(DocumentoAnalise docAnalise : listaDocumentoAnalise) {
+			if(!docAnalise.isLiberadoAnalise()) 
+				continue;
+			PagadorRecebedorConsultaDao pagadorRecebedorConsultaDao = new PagadorRecebedorConsultaDao();
+			if(CommonsUtil.semValor(docAnalise.getPagador())) {
+				//TODO verificar rea
+				continue;
 			}
+			PagadorRecebedor pagador = docAnalise.getPagador();
+			PagadorRecebedorConsulta consultaEngine = pagadorRecebedorConsultaDao
+					.getConsultaVencidaByPagadorAndRetorno(pagador, docAnalise.getRetornoEngine());
+			if(!CommonsUtil.semValor(consultaEngine)) {
+				consultaEngine.setRetornoConsulta(null);
+				consultaEngine.setDataConsulta(new Date());
+				docAnalise.setEngine(null);
+				docAnalise.setRetornoEngine(null);
+				docAnalise.addObservacao("Engine Expirado");
+			}
+			PagadorRecebedorConsulta consultaProcessos = pagadorRecebedorConsultaDao
+					.getConsultaVencidaByPagadorAndRetorno(pagador, docAnalise.getRetornoProcesso());
+			if(!CommonsUtil.semValor(consultaProcessos)) {
+				consultaProcessos.setRetornoConsulta(null);
+				consultaProcessos.setDataConsulta(new Date());
+				docAnalise.setRetornoProcesso(null);
+				docAnalise.addObservacao("Processos Expirado");
+			}
+			PagadorRecebedorConsulta consultaRelacionamento = pagadorRecebedorConsultaDao
+					.getConsultaVencidaByPagadorAndRetorno(pagador, docAnalise.getRetornoRelacionamento());
+			if(!CommonsUtil.semValor(consultaRelacionamento)) {
+				consultaRelacionamento.setRetornoConsulta(null);
+				consultaRelacionamento.setDataConsulta(new Date());
+				docAnalise.setRetornoRelacionamento(null);
+				docAnalise.addObservacao("Relacionamento Expirado");
+			}
+			PagadorRecebedorConsulta consultaCenprot = pagadorRecebedorConsultaDao
+					.getConsultaVencidaByPagadorAndRetorno(pagador, docAnalise.getRetornoCenprot());
+			if(!CommonsUtil.semValor(consultaCenprot)) {
+				consultaCenprot.setRetornoConsulta(null);
+				consultaCenprot.setDataConsulta(new Date());
+				docAnalise.setRetornoCenprot(null);
+				docAnalise.addObservacao("Protesto Expirado");
+			}
+			PagadorRecebedorConsulta consultaSCR = pagadorRecebedorConsultaDao
+					.getConsultaVencidaByPagadorAndRetorno(pagador, docAnalise.getRetornoScr());
+			if(!CommonsUtil.semValor(consultaSCR)) {
+				consultaSCR.setRetornoConsulta(null);
+				consultaSCR.setDataConsulta(new Date());
+				docAnalise.setRetornoScr(null);
+				docAnalise.addObservacao("SCR Expirado");
+			}
+			Date hoje = DateUtil.gerarDataHoje();
+			PlexiConsultaDao plexiConsultaDao = new PlexiConsultaDao();
+			for(PlexiConsulta plexi : docAnalise.getPlexiConsultas()) {
+				if(DateUtil.getDifferenceDays(plexi.getDataConsulta(), hoje) >= 30) {
+					plexi.setRequestId(null);
+					plexi.setWebhookRetorno(null);
+					plexi.setPdf(null);
+					plexi.setStatus("Consulta Expirada");
+					plexiConsultaDao.merge(plexi);
+				}
+			}
+			NetrinConsultaDao netrinConsultaDao = new NetrinConsultaDao();
+			for(NetrinConsulta netrin : docAnalise.getNetrinConsultas()) {
+				if(DateUtil.getDifferenceDays(netrin.getDataConsulta(), hoje) >= 30) {
+					netrin.setRetorno(null);
+					netrin.setPdf(null);
+					netrin.setStatus("Consulta Expirada");
+					netrinConsultaDao.merge(netrin);
+				}
+			}
+			DocketConsultaDao docketConsultaDao = new DocketConsultaDao();
+			for(DocketConsulta docket : docAnalise.getDocketConsultas()) {
+				if(DateUtil.getDifferenceDays(docket.getDataConsulta(), hoje) >= 30) {
+					docket.setIdDocket(null);
+					docket.setRetorno(null);
+					docket.setPdf(null);
+					docket.setStatus("Consulta Expirada");
+					docketConsultaDao.merge(docket);
+				}
+			}
+			documentoAnaliseDao.merge(docAnalise);
 		}
 	}
-
+	
+	
 	/**
 	 * @return the fileRecibo
 	 */

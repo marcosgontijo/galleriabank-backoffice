@@ -974,13 +974,16 @@ public class DocumentoAnalise implements Serializable {
 		motivos.add(new SelectItem("Proprietario Atual","Proprietario Atual"));
 		motivos.add(new SelectItem("Proprietario Anterior","Proprietario Anterior"));
 		motivos.add(new SelectItem("Comprador","Comprador"));
-		motivos.add(new SelectItem("Empresa Vinculada ao Proprietario Atual","Empresa Vinculada ao Proprietario Atual"));
-		motivos.add(new SelectItem("Empresa Vinculada ao Proprietario Anterior","Empresa Vinculada ao Proprietario Anterior"));
-		motivos.add(new SelectItem("Empresa Vinculada ao Comprador","Empresa Vinculada ao Comprador"));
-		motivos.add(new SelectItem("Sócio Vinculado ao Proprietario Atual","Sócio Vinculado ao Proprietario Atual"));
-		motivos.add(new SelectItem("Sócio Vinculado ao Proprietario Anterior","Sócio Vinculado ao Proprietario Anterior"));
-		motivos.add(new SelectItem("Sócio Vinculado ao Comprador","Sócio Vinculado ao Comprador"));
-		motivos.add(new SelectItem("Empresa Vinculada ao Sócio Vinculado ao Proprietario Atual","Empresa Vinculada ao Sócio Vinculado ao Proprietario Atual"));
+		if(CommonsUtil.mesmoValor(tipoPessoa, "PJ")) {
+			motivos.add(new SelectItem("Empresa Vinculada ao Proprietario Atual","Empresa Vinculada ao Proprietario Atual"));
+			motivos.add(new SelectItem("Empresa Vinculada ao Proprietario Anterior","Empresa Vinculada ao Proprietario Anterior"));
+			motivos.add(new SelectItem("Empresa Vinculada ao Comprador","Empresa Vinculada ao Comprador"));
+			motivos.add(new SelectItem("Empresa Vinculada ao Sócio Vinculado ao Proprietario Atual","Empresa Vinculada ao Sócio Vinculado ao Proprietario Atual"));
+		} else if(CommonsUtil.mesmoValor(tipoPessoa, "PF")) {
+			motivos.add(new SelectItem("Sócio Vinculado ao Proprietario Atual","Sócio Vinculado ao Proprietario Atual"));
+			motivos.add(new SelectItem("Sócio Vinculado ao Proprietario Anterior","Sócio Vinculado ao Proprietario Anterior"));
+			motivos.add(new SelectItem("Sócio Vinculado ao Comprador","Sócio Vinculado ao Comprador"));
+		}
 		motivos.add(new SelectItem("Matricula para consulta","Matricula para consulta"));
 		return motivos;
 	}
