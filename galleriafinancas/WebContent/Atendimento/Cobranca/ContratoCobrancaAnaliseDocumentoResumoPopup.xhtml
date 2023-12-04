@@ -383,6 +383,7 @@
 								label="Tipo" style="width:250px;">
 								<f:selectItem itemValue="" itemLabel="Selecione o motivo" />
 								<f:selectItems value="#{fileAnalise.motivosAnalise()}" />
+								<p:ajax event="change" update="documentosAnaliseReaForm"/>
 							</p:selectOneMenu>
 						</p:column>
 	
