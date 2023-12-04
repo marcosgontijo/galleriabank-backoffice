@@ -2230,16 +2230,19 @@ public class BRLTrustMB {
 			
 			BigDecimal valorParcelaOriginal = parcela.getVlrJurosParcela().add(parcela.getVlrAmortizacaoParcela());
 			
-			if (parcela.getDataPagamento().before(parcela.getDataVencimento()) &&
+			if(DateUtil.getDifferenceDays(parcela.getDataPagamento(), parcela.getDataVencimento()) >= 30) {
+				valorParcelaOriginal = parcela.getVlrRecebido();
+			}
+			
+			/*if (parcela.getDataPagamento().before(parcela.getDataVencimento()) &&
 					parcela.getVlrRecebido().compareTo(valorParcelaOriginal) < 0) {
 				jsonValores.put("liquidacao", parcela.getVlrRecebido());
 				
 				this.valorTotalLiquidacao = this.valorTotalLiquidacao.add(parcela.getVlrRecebido());
-			} else {	
-				jsonValores.put("liquidacao", valorParcelaOriginal); 
-				
-				this.valorTotalLiquidacao = this.valorTotalLiquidacao.add(valorParcelaOriginal);
-			} 
+			} */
+			
+			jsonValores.put("liquidacao", valorParcelaOriginal); 
+			this.valorTotalLiquidacao = this.valorTotalLiquidacao.add(valorParcelaOriginal);
 			
 			this.qtdeLiquidados = this.qtdeLiquidados + 1;
 			

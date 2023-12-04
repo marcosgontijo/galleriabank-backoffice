@@ -11,6 +11,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -1033,5 +1034,11 @@ public final class DateUtil {
 			return null;
 
 		return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+	}
+	
+	public static long getDifferenceDays(Date d1, Date d2) {
+		long diff = d2.getTime() - d1.getTime();
+		diff = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+		return diff;
 	}
 }

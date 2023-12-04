@@ -9233,7 +9233,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						Date data = rs.getDate("ContratoResgatadoData");
 						boolean baixar = true;
 						if (rs.getBoolean("ContratoResgatadoBaixar")) {
-							if (getDifferenceDays(data, auxDataHoje) <= 15) {
+							if (DateUtil.getDifferenceDays(data, auxDataHoje) <= 15) {
 								baixar = false;
 							}
 						}
@@ -9350,12 +9350,6 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			}
 		});	
 	}	
-	
-	public static long getDifferenceDays(Date d1, Date d2) {
-	    long diff = d2.getTime() - d1.getTime();
-	    diff = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
-	    return diff;
-	}
 	
 	private static final String QUERY_CONTRATOS_DO_PAGADOR =  "select c2.id , r.id rId "
 			+ " 	from cobranca.contratocobranca c "
