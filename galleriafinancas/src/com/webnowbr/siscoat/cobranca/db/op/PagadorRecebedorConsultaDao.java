@@ -9,6 +9,7 @@ import java.util.List;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorConsulta;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.db.dao.*;
 
@@ -87,6 +88,61 @@ public class PagadorRecebedorConsultaDao extends HibernateDao<PagadorRecebedorCo
 
 					if (rs.next()) {
 						pagadorRecebedor = findById(rs.getLong(1));
+					}
+
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return pagadorRecebedor;
+			}
+		});
+	}
+	
+	
+	private static final String QUERY_PESQUISA_CONSULTA_RETORNO = "select id, retornoConsulta from cobranca.pagadorrecebedorconsulta "
+			+ " where pessoa = ?  "
+			+ " and (DATE_PART('day', ? ::timestamp - dataconsulta ) >= 30 or dataconsulta is null)";
+
+	@SuppressWarnings("unchecked")
+	public PagadorRecebedorConsulta getConsultaVencidaByPagadorAndRetorno(final PagadorRecebedor pagador,
+			final String retorno) {
+		
+		if (CommonsUtil.semValor(pagador) || CommonsUtil.semValor(retorno))
+			return null;
+		
+		return (PagadorRecebedorConsulta) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				PagadorRecebedorConsulta pagadorRecebedor = null;
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				java.sql.Date dtHojeSQL = new java.sql.Date(DateUtil.gerarDataHoje().getTime());
+				try {
+					connection = getConnection();
+					String query = QUERY_PESQUISA_CONSULTA_RETORNO;
+					
+					ps = connection.prepareStatement(query);
+					ps.setLong(1, pagador.getId());
+					//ps.setString(2, retorno);
+					ps.setDate(2, dtHojeSQL);
+					
+					rs = ps.executeQuery();
+
+					while (rs.next()) {
+						if(CommonsUtil.semValor(rs.getString(2))) {
+							pagadorRecebedor = findById(rs.getLong(1));
+							closeResources(connection, ps, rs);
+							return pagadorRecebedor;
+						}
+						int levDistance = CommonsUtil.levenshteinDistance(retorno, rs.getString(2));
+						int porcent = (((retorno.length() - levDistance) *100)/retorno.length());
+						//System.out.println("Levenshtein Distance between is: " + (100 - porcent));
+						if(porcent > 90) {
+							pagadorRecebedor = findById(rs.getLong(1));
+							closeResources(connection, ps, rs);
+							return pagadorRecebedor;
+						}
 					}
 
 				} finally {

@@ -1943,4 +1943,47 @@ public class CommonsUtil {
 		
 		return porcentagem;
 	}
+	
+	public static int levenshteinDistance(String a, String b) {
+        if (semValor(a)) {
+            if (!semValor(b)) {
+                return b.length();
+            }
+            return 0;
+        }
+
+        if (semValor(b)) {
+            if (!semValor(a)) {
+                return a.length();
+            }
+            return 0;
+        }
+
+        int cost;
+        int[][] d = new int[a.length() + 1][b.length() + 1];
+        int min1;
+        int min2;
+        int min3;
+
+        for (int i = 0; i <= a.length(); i++) {
+            d[i][0] = i;
+        }
+
+        for (int i = 0; i <= b.length(); i++) {
+            d[0][i] = i;
+        }
+
+        for (int i = 1; i <= a.length(); i++) {
+            for (int j = 1; j <= b.length(); j++) {
+                cost = (a.charAt(i - 1) != b.charAt(j - 1)) ? 1 : 0;
+
+                min1 = d[i - 1][j] + 1;
+                min2 = d[i][j - 1] + 1;
+                min3 = d[i - 1][j - 1] + cost;
+                d[i][j] = Math.min(Math.min(min1, min2), min3);
+            }
+        }
+
+        return d[a.length()][b.length()];
+    }
 }
