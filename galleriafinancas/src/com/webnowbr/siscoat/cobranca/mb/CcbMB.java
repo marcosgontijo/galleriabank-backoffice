@@ -1460,6 +1460,7 @@ public class CcbMB {
 	public StreamedContent readXWPFile() throws IOException {
 		FacesContext context = FacesContext.getCurrentInstance();
 		atualizaDadosEmitente();
+		calcularSimulador();
 		CcbService ccbService = new CcbService(filesList, objetoCcb, simulador);
 		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
 		byte[] arquivos = null;
