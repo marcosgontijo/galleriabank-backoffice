@@ -64,7 +64,7 @@ public class DocketService {
 	public void loginDocket(User user) { // POST pra pegar token
 		JSONObject jsonObj = new JSONObject();
 		try {
-			//FacesContext context = FacesContext.getCurrentInstance();
+			// FacesContext context = FacesContext.getCurrentInstance();
 			int HTTP_COD_SUCESSO = 200;
 
 			URL myURL;
@@ -148,20 +148,19 @@ public class DocketService {
 
 	@SuppressWarnings("unused")
 	public void uploadREA(DocumentoAnalise documentoAnalise, User user) { // POST para gerar pedido
-		//FacesContext context = FacesContext.getCurrentInstance();
-		
-		FileService fileService =  new FileService();
+		// FacesContext context = FacesContext.getCurrentInstance();
+
+		FileService fileService = new FileService();
 		FileUploaded selectedFile = new FileUploaded();
 		selectedFile.setPath(documentoAnalise.getPath().replace(documentoAnalise.getIdentificacao(), ""));
-		selectedFile.setName( CommonsUtil.removeAcentos( documentoAnalise.getIdentificacao()));
+		selectedFile.setName(CommonsUtil.removeAcentos(documentoAnalise.getIdentificacao()));
 		selectedFile.setPathOrigin("analise");
-		
-		InputStream  stream = new ByteArrayInputStream( fileService.abrirDocumentos(selectedFile
-				,documentoAnalise.getContratoCobranca().getNumeroContrato(),
-				user));
-		
+
+		InputStream stream = new ByteArrayInputStream(fileService.abrirDocumentos(selectedFile,
+				documentoAnalise.getContratoCobranca().getNumeroContrato(), user));
+
 //		File file = new File(documentoAnalise.getPath());
-		
+
 		String twoHyphens = "--";
 		String boundary = "*****";
 		String crlf = "\r\n";
@@ -199,9 +198,9 @@ public class DocketService {
 
 			JSONObject myResponse = null;
 			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
-				//context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-						//"Docket: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", ""));
-				//System.out.println(jsonREA.toString());
+				// context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+				// "Docket: Falha (Cod: " + myURLConnection.getResponseCode() + ")", ""));
+				// System.out.println(jsonREA.toString());
 			} else {
 				BufferedReader br = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream()));
 				StringBuffer response = new StringBuffer();
@@ -217,7 +216,8 @@ public class DocketService {
 
 				documentoAnalise.setIdRemoto(reaWebhookRetorno.getId());
 				documentoAnaliseDao.merge(documentoAnalise);
-				//context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Matrícula enviada com sucesso", ""));
+				// context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+				// "Matrícula enviada com sucesso", ""));
 				// myResponse = getJSONSucesso(myURLConnection.getInputStream());
 			}
 			myURLConnection.disconnect();
@@ -279,8 +279,8 @@ public class DocketService {
 
 		JSONObject jsonDocketPedido = new JSONObject();
 		String nomePedido = "";
-		if(CommonsUtil.semValor(objetoContratoCobranca.getId())){
-			if(listaPagador.size() > 0) {				
+		if (CommonsUtil.semValor(objetoContratoCobranca.getId())) {
+			if (listaPagador.size() > 0) {
 				nomePedido = "00000 - " + listaPagador.get(0).getNome();
 			} else {
 				nomePedido = "00000 - nome";
@@ -298,7 +298,6 @@ public class DocketService {
 		}
 		String webhook = SiscoatConstants.URL_SISCOAT_DOCKET_WEBHOOK + webHookJWT;
 		jsonDocketPedido.put("urlWebHookEntregaDocumento", webhook);
-		
 
 		return jsonDocketPedido;
 	}
@@ -353,11 +352,12 @@ public class DocketService {
 		// POST para gerar pedido
 		FacesContext context = FacesContext.getCurrentInstance();
 		DocketDao docketDao = new DocketDao();
-		if(!CommonsUtil.semValor(objetoContratoCobranca.getId())) {
+		if (!CommonsUtil.semValor(objetoContratoCobranca.getId())) {
 			ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 			cDao.merge(objetoContratoCobranca);
-			if(docketDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca).size() > 0) {
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Pedido desse contrato já existe!!!!!!", ""));	
+			if (docketDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca).size() > 0) {
+				context.addMessage(null,
+						new FacesMessage(FacesMessage.SEVERITY_FATAL, "Pedido desse contrato já existe!!!!!!", ""));
 				return null;
 			}
 		}
@@ -406,16 +406,17 @@ public class DocketService {
 				System.out.println(jsonWhatsApp.toString());
 				System.out.println("---------------- Docket Falha no Pedido ---------------- ");
 			} else {
-				
+
 				DocketRetorno myResponse = docketJSONRetorno(myURLConnection.getInputStream());
-				if(!CommonsUtil.semValor(objetoContratoCobranca.getId())) {
+				if (!CommonsUtil.semValor(objetoContratoCobranca.getId())) {
 					ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-					cDao.merge(objetoContratoCobranca);					
+					cDao.merge(objetoContratoCobranca);
 				} else {
 					objetoContratoCobranca = null;
 				}
 				Docket docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "", cidadeImovel, "",
-						user.getName(), DateUtil.gerarDataHoje(), myResponse.getPedido().getId(), myResponse.getPedido().getIdExibicao());
+						user.getName(), DateUtil.gerarDataHoje(), myResponse.getPedido().getId(),
+						myResponse.getPedido().getIdExibicao());
 				docketDao.create(docket);
 
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Pedido feito com sucesso", ""));
@@ -431,7 +432,7 @@ public class DocketService {
 		}
 		return null;
 	}
-		
+
 	private JSONObject getBodyJsonPedido(List<DocumentoAnalise> listaDocumentoAnalise, String etapa) { // JSON
 		// p/
 		// pedido
@@ -446,16 +447,16 @@ public class DocketService {
 		JSONArray jsonDocumentosArray = new JSONArray();
 		for (DocumentoAnalise docAnalise : listaDocumentoAnalise) {
 			PagadorRecebedor pagador = docAnalise.getPagador();
-			
+
 			for (DocketConsulta consultas : docAnalise.getDocketConsultas()) {
-				if(CommonsUtil.semValor(consultas.getIdDocket())) {
+				if (CommonsUtil.semValor(consultas.getIdDocket())) {
 					jsonDocumentosArray.put(getJsonDocumentos(pagador, consultas));
 				}
 			}
 		}
-		
+
 		ContratoCobranca contrato = listaDocumentoAnalise.get(0).getContratoCobranca();
-	
+
 		JSONObject jsonDocketPedido = new JSONObject();
 		String nomePedido = "";
 		if (CommonsUtil.semValor(contrato.getId())) {
@@ -467,7 +468,7 @@ public class DocketService {
 		} else {
 			nomePedido = contrato.getNumeroContrato() + " - " + contrato.getPagador().getNome().trim() + " - " + etapa;
 		}
-	// jsonDocketPedido = new JSONObject();
+		// jsonDocketPedido = new JSONObject();
 		jsonDocketPedido.put("lead", nomePedido);
 		jsonDocketPedido.put("documentos", jsonDocumentosArray);
 		String webHookJWT = JwtUtil.generateJWTWebhook(true);
@@ -476,19 +477,19 @@ public class DocketService {
 		}
 		String webhook = SiscoatConstants.URL_SISCOAT_DOCKET_WEBHOOK + webHookJWT;
 		jsonDocketPedido.put("urlWebHookEntregaDocumento", webhook);
-	
+
 		return jsonDocketPedido;
 	}
 
 	private JSONObject getJsonDocumentos(PagadorRecebedor pagador, DocketConsulta consulta) { // JSON
-	// p/
-	// pedido
-	// PagadorRecebedor pagador = new PagadorRecebedor();
+		// p/
+		// pedido
+		// PagadorRecebedor pagador = new PagadorRecebedor();
 		JSONObject jsonDocketDocumentos = new JSONObject();
 		DocumentosDocket documento = consulta.getDocketDocumentos();
 		String estadoId = consulta.getEstadoId();
 		String cidadeId = consulta.getCidadeId();
-	// jsonDocketDocumentos = new JSONObject();
+		// jsonDocketDocumentos = new JSONObject();
 		jsonDocketDocumentos.put("documentKitId", documento.getDocumentKitId());
 		jsonDocketDocumentos.put("produtoId", documento.getProdutoId());
 		jsonDocketDocumentos.put("kitId", kitIdGalleria);
@@ -500,17 +501,18 @@ public class DocketService {
 			jsonDocketDocumentos.put("titularTipo", "PESSOA_JURIDICA");
 		}
 		jsonDocketDocumentos.put("campos", getJsonCampos(pagador, estadoId, cidadeId));
-	
+
 		return jsonDocketDocumentos;
 	}
 
 	@SuppressWarnings("unused")
-	public FacesMessage criaPedidoDocketDocumentoAnalise(List<DocumentoAnalise> listaDocumentoAnalise, User user, String etapa) {
+	public FacesMessage criaPedidoDocketDocumentoAnalise(List<DocumentoAnalise> listaDocumentoAnalise, User user,
+			String etapa) {
 
 		// POST para gerar pedido
 		FacesContext context = FacesContext.getCurrentInstance();
 		DocketDao docketDao = new DocketDao();
-		
+
 		try {
 			loginDocket(user);
 			int HTTP_COD_SUCESSO = 200;
@@ -555,9 +557,9 @@ public class DocketService {
 			} else {
 				ContratoCobranca objetoContratoCobranca = listaDocumentoAnalise.get(0).getContratoCobranca();
 				DocketRetorno myResponse = docketJSONRetorno(myURLConnection.getInputStream());
-				if(!CommonsUtil.semValor(objetoContratoCobranca.getId())) {
+				if (!CommonsUtil.semValor(objetoContratoCobranca.getId())) {
 					ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-					cDao.merge(objetoContratoCobranca);					
+					cDao.merge(objetoContratoCobranca);
 				} else {
 					objetoContratoCobranca = null;
 				}
@@ -565,21 +567,25 @@ public class DocketService {
 				for (DocumentoAnalise documentoAnalise : listaDocumentoAnalise) {
 					listPagador.add(documentoAnalise.getPagador());
 				}
-				Docket docket = new Docket(objetoContratoCobranca, listPagador, "", "", "", "",
-						user.getName(), DateUtil.gerarDataHoje(), myResponse.getPedido().getId(), myResponse.getPedido().getIdExibicao());
+				Docket docket = new Docket(objetoContratoCobranca, listPagador, "", "", "", "", user.getName(),
+						DateUtil.gerarDataHoje(), myResponse.getPedido().getId(),
+						myResponse.getPedido().getIdExibicao());
 				docketDao.create(docket);
-				
+
 				DocketConsultaDao consultaDao = new DocketConsultaDao();
 				DocumentoAnaliseDao analiseDao = new DocumentoAnaliseDao();
-				
+
 				for (DocumentoAnalise documentoAnalise : listaDocumentoAnalise) {
-					for(DocketConsulta docketConsulta : documentoAnalise.getDocketConsultas()) {
+					for (DocketConsulta docketConsulta : documentoAnalise.getDocketConsultas()) {
 						for (DocketWebhookRetornoDocumento retorno : myResponse.getPedido().documentos) {
-							if(CommonsUtil.mesmoValor(retorno.documentKitId, docketConsulta.getDocketDocumentos().getDocumentKitId())
-								&&CommonsUtil.mesmoValor(retorno.campos.estado, docketConsulta.getEstadoId())
-								&& CommonsUtil.mesmoValor(retorno.campos.cidade, docketConsulta.getCidadeId())) {
-								if((CommonsUtil.mesmoValor(retorno.campos.cpf, CommonsUtil.somenteNumeros(documentoAnalise.getCnpjcpf())))
-									|| CommonsUtil.mesmoValor(retorno.campos.cnpj, CommonsUtil.somenteNumeros(documentoAnalise.getCnpjcpf()))){
+							if (CommonsUtil.mesmoValor(retorno.documentKitId,
+									docketConsulta.getDocketDocumentos().getDocumentKitId())
+									&& CommonsUtil.mesmoValor(retorno.campos.estado, docketConsulta.getEstadoId())
+									&& CommonsUtil.mesmoValor(retorno.campos.cidade, docketConsulta.getCidadeId())) {
+								if ((CommonsUtil.mesmoValor(retorno.campos.cpf,
+										CommonsUtil.somenteNumeros(documentoAnalise.getCnpjcpf())))
+										|| CommonsUtil.mesmoValor(retorno.campos.cnpj,
+												CommonsUtil.somenteNumeros(documentoAnalise.getCnpjcpf()))) {
 									docketConsulta.setIdDocket(retorno.id);
 									consultaDao.create(docketConsulta);
 								}
@@ -592,7 +598,7 @@ public class DocketService {
 					}
 					analiseDao.merge(documentoAnalise);
 				}
-				
+
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Pedido feito com sucesso", ""));
 			}
 
@@ -608,16 +614,18 @@ public class DocketService {
 	}
 
 	public DocketRetornoConsulta verificarCertidoesContrato(ContratoCobranca contrato, String idCallManager) {
-		
+
 		try {
 
 			loginDocket(null);
 			int HTTP_COD_SUCESSO = 200;
 			URL myURL;
 			if (SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
-				myURL = new URL(urlHomologacao + "/api/v2/" + organizacao_url + "/shopping-documentos/alpha/pedidos/" + idCallManager);
+				myURL = new URL(urlHomologacao + "/api/v2/" + organizacao_url + "/shopping-documentos/alpha/pedidos/"
+						+ idCallManager);
 			} else {
-				myURL = new URL(urlProducao + "/api/v2/" + organizacao_url + "/shopping-documentos/alpha/pedidos/" + idCallManager);
+				myURL = new URL(urlProducao + "/api/v2/" + organizacao_url + "/shopping-documentos/alpha/pedidos/"
+						+ idCallManager);
 			}
 
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
@@ -630,30 +638,32 @@ public class DocketService {
 			myURLConnection.setDoOutput(true);
 
 			int certidoesProntas = 0;
-			DocketRetornoConsulta docketRetorno =null;
-			
+			DocketRetornoConsulta docketRetorno = null;
+
 			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
-				System.out.println("Não foi possivle consultar docket. IdCallManager: " + idCallManager + " contrato: " + contrato.toString());
+				System.out.println("Não foi possivle consultar docket. IdCallManager: " + idCallManager + " contrato: "
+						+ contrato.toString());
 			} else {
 				JSONObject retornoConsulta = null;
 				retornoConsulta = getJsonSucesso(myURLConnection.getInputStream());
 
 //				System.out.println(retornoConsulta.toString());
-				docketRetorno =  GsonUtil.fromJson(retornoConsulta.toString(), DocketRetornoConsulta.class);
-				
-				if(CommonsUtil.semValor(docketRetorno)) {
-					return null;
-				}				
-				
-				if( CommonsUtil.semValor(docketRetorno.getPedido())) {
+				docketRetorno = GsonUtil.fromJson(retornoConsulta.toString(), DocketRetornoConsulta.class);
+
+				if (CommonsUtil.semValor(docketRetorno)) {
 					return null;
 				}
-				
-				if( CommonsUtil.semValor(docketRetorno.getPedido().getDocumentos())) {
+
+				if (CommonsUtil.semValor(docketRetorno.getPedido())) {
 					return null;
 				}
-				certidoesProntas = CommonsUtil.intValue( docketRetorno.getPedido().getDocumentos().stream().filter(d -> CommonsUtil.mesmoValor(d.getStatus(), "ENTREGUE")).count());
-				
+
+				if (CommonsUtil.semValor(docketRetorno.getPedido().getDocumentos())) {
+					return null;
+				}
+				certidoesProntas = CommonsUtil.intValue(docketRetorno.getPedido().getDocumentos().stream()
+						.filter(d -> CommonsUtil.mesmoValor(d.getStatus(), "ENTREGUE")).count());
+
 //				JSONArray documentos = pedido.getJSONArray("documentos");
 //				for(int i = 0 ; i < documentos.length(); i++) {
 //					JSONObject doc = documentos.getJSONObject(i);
@@ -679,16 +689,18 @@ public class DocketService {
 		}
 		return null;
 	}
-	
+
 	public DocketRetornoConsulta buscarRetornoPedido(String idCallManager) {
 		try {
 			loginDocket(null);
 			int HTTP_COD_SUCESSO = 200;
 			URL myURL;
 			if (SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
-				myURL = new URL(urlHomologacao + "/api/v2/" + organizacao_url + "/shopping-documentos/alpha/pedidos/" + idCallManager);
+				myURL = new URL(urlHomologacao + "/api/v2/" + organizacao_url + "/shopping-documentos/alpha/pedidos/"
+						+ idCallManager);
 			} else {
-				myURL = new URL(urlProducao + "/api/v2/" + organizacao_url + "/shopping-documentos/alpha/pedidos/" + idCallManager);
+				myURL = new URL(urlProducao + "/api/v2/" + organizacao_url + "/shopping-documentos/alpha/pedidos/"
+						+ idCallManager);
 			}
 
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
@@ -700,8 +712,8 @@ public class DocketService {
 			myURLConnection.setRequestProperty("Authorization", tokenLogin);
 			myURLConnection.setDoOutput(true);
 
-			DocketRetornoConsulta docketRetorno =null;
-			
+			DocketRetornoConsulta docketRetorno = null;
+
 			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
 				System.out.println("Não foi possivle consultar docket. IdCallManager: " + idCallManager);
 			} else {
@@ -709,17 +721,17 @@ public class DocketService {
 				retornoConsulta = getJsonSucesso(myURLConnection.getInputStream());
 
 //				System.out.println(retornoConsulta.toString());
-				docketRetorno =  GsonUtil.fromJson(retornoConsulta.toString(), DocketRetornoConsulta.class);
-				
-				if(CommonsUtil.semValor(docketRetorno)) {
-					return null;
-				}				
-				
-				if( CommonsUtil.semValor(docketRetorno.getPedido())) {
+				docketRetorno = GsonUtil.fromJson(retornoConsulta.toString(), DocketRetornoConsulta.class);
+
+				if (CommonsUtil.semValor(docketRetorno)) {
 					return null;
 				}
-				
-				if( CommonsUtil.semValor(docketRetorno.getPedido().getDocumentos())) {
+
+				if (CommonsUtil.semValor(docketRetorno.getPedido())) {
+					return null;
+				}
+
+				if (CommonsUtil.semValor(docketRetorno.getPedido().getDocumentos())) {
 					return null;
 				}
 			}
@@ -739,8 +751,7 @@ public class DocketService {
 	public JSONObject getJsonSucesso(InputStream inputStream) {
 		BufferedReader in;
 		try {
-			in = new BufferedReader(
-					new InputStreamReader(inputStream, "UTF-8"));
+			in = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
 
 			String inputLine;
 			StringBuffer response = new StringBuffer();
@@ -768,15 +779,25 @@ public class DocketService {
 	public String getPdfBase64(String documento) {
 		DocketWebhookRetornoDocumento documentoPdf = GsonUtil.fromJson(documento, DocketWebhookRetornoDocumento.class);
 		return getPdfBase64(documentoPdf);
-    }
-	
+	}
+
 	public String getPdfBase64(DocketWebhookRetornoDocumento documentoPdf) {
+		try {		
+			String idCallManager = documentoPdf.getArquivos().get(0).getId();
+			return getPdfBase64Web(idCallManager);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public String getPdfBase64Web(String idCallManager) {
 		try {
 			loginDocket(null);
 			int HTTP_COD_SUCESSO = 200;
 			URL myURL;
-			
-			String idCallManager = documentoPdf.getArquivos().get(0).getId();
+
 			if (SiscoatConstants.DEV && CommonsUtil.sistemaWindows()) {
 				myURL = new URL(urlHomologacao + "/api/v2/" + organizacao_url + "/downloads/" + idCallManager);
 			} else {
@@ -790,7 +811,8 @@ public class DocketService {
 			myURLConnection.setDoOutput(true);
 
 			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
-				System.out.println("Erro: "+ myURLConnection.getResponseCode() + " Não foi possivel consultar pdf docket. IdCallManager: " + idCallManager);
+				System.out.println("Erro: " + myURLConnection.getResponseCode()
+						+ " Não foi possivel consultar pdf docket. IdCallManager: " + idCallManager);
 			} else {
 				byte[] bytes = org.apache.commons.io.IOUtils.toByteArray(myURLConnection.getInputStream());
 				byte[] encoded = Base64.getEncoder().encode(bytes);
@@ -803,9 +825,9 @@ public class DocketService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-        return null;
-    }
-	
+		return null;
+	}
+
 	private JSONObject docketJSONSucesso(InputStream inputStream) { // Pega resultado da API
 		BufferedReader in;
 		try {

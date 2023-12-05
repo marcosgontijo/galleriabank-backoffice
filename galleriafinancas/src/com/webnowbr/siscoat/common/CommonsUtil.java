@@ -648,6 +648,21 @@ public class CommonsUtil {
 		final NumberFormat formatador = new DecimalFormat(formato, PT_BR_SYMBOLS);
 		return formatador.format(numero);
 	}
+	
+	
+	public static final String formataNumeroProcesso(String numeroProcesso) {
+		numeroProcesso = somenteNumeros(numeroProcesso);
+		StringBuilder formato = new StringBuilder();
+        formato.append(numeroProcesso.substring(0, 7)).append("-")
+               .append(numeroProcesso.substring(7, 9)).append(".")
+               .append(numeroProcesso.substring(9, 13)).append(".")
+               .append(numeroProcesso.substring(13, 14)).append(".")
+               .append(numeroProcesso.substring(14, 16)).append(".")
+               .append(numeroProcesso.substring(16));
+
+        return formato.toString();
+	}
+	
 
 	public static final String formataCEP(String cep) {
 		if (cep == null) {

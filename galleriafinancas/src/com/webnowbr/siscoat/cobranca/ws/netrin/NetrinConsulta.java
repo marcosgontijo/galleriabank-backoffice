@@ -70,23 +70,26 @@ public class NetrinConsulta {
 	public String getStatusConsulta() {
 		if (CommonsUtil.mesmoValor(this.netrinDocumentos.getId(), SiscoatConstants.NETRIN_CND_FEDERAL)) {
 			CndFederalResponse response = GsonUtil.fromJson(this.retorno, CndFederalResponse.class);
-			if (!CommonsUtil.mesmoValor("Não", response.getReceitaFederalCND().getDebitosPendentesPGFN())
-					&& !CommonsUtil.mesmoValor("Não", response.getReceitaFederalCND().getDebitosPendentesRFB())) {
-				return "Não possui débitos";
+			if(CommonsUtil.semValor( response.getReceitaFederalCND().getDebitosPendentesPGFN() ) &&
+					CommonsUtil.semValor( response.getReceitaFederalCND().getDebitosPendentesRFB() ))
+				return SiscoatConstants.CND_SITUACAO_ERRO_AO_CONSULTAR;
+			else if (CommonsUtil.mesmoValor("Não", response.getReceitaFederalCND().getDebitosPendentesPGFN())
+					&& CommonsUtil.mesmoValor("Não", response.getReceitaFederalCND().getDebitosPendentesRFB())) {
+				return SiscoatConstants.CND_SITUACAO_NAO_POSSUI_DEBITOS;
 			} else
-				return "Possui débitos";
+				return SiscoatConstants.CND_SITUACAO_POSSUI_DEBITOS;
 		} else if (CommonsUtil.mesmoValor(this.netrinDocumentos.getId(), SiscoatConstants.NETRIN_CND_ESTADUAL)) {
 			CndEstadualResponse response = GsonUtil.fromJson(this.retorno, CndEstadualResponse.class);
 			if (!CommonsUtil.mesmoValor("Não", response.getSefazCND().getEmitiuCertidao())) {
-				return "Não possui débitos";
+				return SiscoatConstants.CND_SITUACAO_NAO_POSSUI_DEBITOS;
 			} else
-				return "Possui débitos";
+				return SiscoatConstants.CND_SITUACAO_POSSUI_DEBITOS;
 		} else if (CommonsUtil.mesmoValor(this.netrinDocumentos.getId(), SiscoatConstants.NETRIN_CND_TRABALHISTA)) {
 			CndTrabalhistaTSTResponse response = GsonUtil.fromJson(this.retorno, CndTrabalhistaTSTResponse.class);
 			if (!CommonsUtil.mesmoValor("Não", response.getTribunalSuperiorTrabalhoCNDT().getEmitiuCertidao())) {
-				return "Não possui débitos";
+				return SiscoatConstants.CND_SITUACAO_NAO_POSSUI_DEBITOS;
 			} else
-				return "Possui débitos";
+				return SiscoatConstants.CND_SITUACAO_POSSUI_DEBITOS;
 		} else
 			return null;
 	}

@@ -1275,6 +1275,7 @@ public class CcbMB {
 				System.out.println("CCB Create ID: " + objetoCcb.getId() + " / "  + objetoCcb.getNumeroCcb() + " / "
 						+ objetoCcb.getNumeroOperacao() + " / " + objetoCcb.getNomeEmitente() + " / " + "Salvar");
 			}
+			salvarContrato();
 		} catch (Exception e) {
 			e.printStackTrace();
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "CCB: " + e.getCause(), ""));
@@ -1330,47 +1331,8 @@ public class CcbMB {
 				}
 			}
 			
-			if(!CommonsUtil.semValor(objetoCcb.getObjetoContratoCobranca())) {
-				ContratoCobranca contrato = objetoCcb.getObjetoContratoCobranca();
-				if(contrato.getId() > 0) {
-					//if(!CommonsUtil.semValor(this.objetoCcb.getDespesasAnexo2())) {
-					//	contrato.setListContasPagar(new HashSet<ContasPagar>(this.objetoCcb.getDespesasAnexo2()));
-					//}
-					
-					if(!CommonsUtil.semValor(objetoCcb.getNumeroCcb())) {
-						contrato.setNumeroContratoSeguro(objetoCcb.getNumeroCcb());
-					}
-					if(!CommonsUtil.semValor(objetoCcb.getDataDeEmissao())) {
-						contrato.setDataInicio(objetoCcb.getDataDeEmissao());
-					}
-					if(!CommonsUtil.semValor(objetoCcb.getSistemaAmortizacao())) {
-						contrato.setTipoCalculo(objetoCcb.getSistemaAmortizacao());
-					}
-					if(!CommonsUtil.semValor(objetoCcb.getPrazo())) {
-						contrato.setQtdeParcelas(CommonsUtil.intValue(objetoCcb.getPrazo()));
-					}
-					if(!CommonsUtil.semValor(objetoCcb.getValorCredito())) {
-						contrato.setValorCCB(objetoCcb.getValorCredito());
-					}
-					if(!CommonsUtil.semValor(objetoCcb.getTaxaDeJurosMes())) {
-						contrato.setTxJurosParcelas(objetoCcb.getTaxaDeJurosMes());
-					}
-					if(!CommonsUtil.semValor(objetoCcb.getCarencia())) {
-						contrato.setMesesCarencia(CommonsUtil.intValue(objetoCcb.getCarencia()));
-					}
-					
-					ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-					try {
-						cDao.merge(contrato);
-					} catch (TransientObjectException e) {
-						contrato.toString();
-						e.printStackTrace();
-					} catch (DAOException e) {
-						contrato.toString();
-						e.printStackTrace();
-					} 
-				}
-			}
+			salvarContrato();
+			
 			if (this.objetoCcb.getId() > 0) {
 				ccbDao.merge(this.objetoCcb);
 				System.out.println("CCB Merge ID: " + objetoCcb.getId() + " / "  + objetoCcb.getNumeroCcb() + " / "
@@ -1393,6 +1355,60 @@ public class CcbMB {
 				//		+ objetoCcb.getNumeroOperacao() + " / " + objetoCcb.getNomeEmitente());
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "CCB: Erro ao salvar contrato no sistema", ""));
 			}		
+		}
+	}
+
+	private void salvarContrato() {
+		if(!CommonsUtil.semValor(objetoCcb.getObjetoContratoCobranca())) {
+			ContratoCobranca contrato = objetoCcb.getObjetoContratoCobranca();
+			if(contrato.getId() > 0) {
+				if(!CommonsUtil.semValor(objetoCcb.getNumeroCcb())) {
+					contrato.setNumeroContratoSeguro(objetoCcb.getNumeroCcb());
+				}
+				if(!CommonsUtil.semValor(objetoCcb.getDataDeEmissao())) {
+					contrato.setDataInicio(objetoCcb.getDataDeEmissao());
+				}
+				if(!CommonsUtil.semValor(objetoCcb.getSistemaAmortizacao())) {
+					contrato.setTipoCalculo(objetoCcb.getSistemaAmortizacao());
+				}
+				if(!CommonsUtil.semValor(objetoCcb.getPrazo())) {
+					contrato.setQtdeParcelas(CommonsUtil.intValue(objetoCcb.getPrazo()));
+				}
+				if(!CommonsUtil.semValor(objetoCcb.getValorCredito())) {
+					contrato.setValorCCB(objetoCcb.getValorCredito());
+				}
+				if(!CommonsUtil.semValor(objetoCcb.getTaxaDeJurosMes())) {
+					contrato.setTxJurosParcelas(objetoCcb.getTaxaDeJurosMes());
+				}
+				if(!CommonsUtil.semValor(objetoCcb.getCarencia())) {
+					contrato.setMesesCarencia(CommonsUtil.intValue(objetoCcb.getCarencia()));
+				}
+				contrato.setValorCartaSplit(objetoCcb.getValorLiquidoCredito());
+				contrato.setNomeBancarioCartaSplit(objetoCcb.getNomeEmitente());
+				contrato.setCpfCnpjBancarioCartaSplit(objetoCcb.getCpfEmitente());
+				contrato.setBancoBancarioCartaSplit(objetoCcb.getNomeBanco());
+				contrato.setAgenciaBancarioCartaSplit(objetoCcb.getAgencia());
+				contrato.setContaBancarioCartaSplit(objetoCcb.getContaCorrente());		
+				contrato.setPixCartaSplit(objetoCcb.getPixBanco());
+				
+				contrato.setValorCartaSplitGalleria(objetoCcb.getValorDespesas());
+				contrato.setNomeBancarioCartaSplitGalleria("Galleria Correspondente Bancário Eireli");
+				contrato.setCpfCnpjBancarioCartaSplitGalleria("34.787.885/0001-32");
+				contrato.setBancoBancarioCartaSplitGalleria("Banco do Brasil");
+				contrato.setAgenciaBancarioCartaSplitGalleria("1515-6");
+				contrato.setContaBancarioCartaSplitGalleria("131094-1");	
+				
+				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+				try {
+					cDao.merge(contrato);
+				} catch (TransientObjectException e) {
+					contrato.toString();
+					e.printStackTrace();
+				} catch (DAOException e) {
+					contrato.toString();
+					e.printStackTrace();
+				} 
+			}
 		}
 	}
 	
@@ -1721,6 +1737,7 @@ public class CcbMB {
 	    	
 			listaTipoDownload.clear();
 	  	    listaTipoDownload = listaDocumentos;
+	  	    salvarCcb();
 	    } catch (Exception e) {
 			context.addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_ERROR,

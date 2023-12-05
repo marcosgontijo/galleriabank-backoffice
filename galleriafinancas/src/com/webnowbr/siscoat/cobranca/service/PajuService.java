@@ -1,18 +1,22 @@
 package com.webnowbr.siscoat.cobranca.service;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.text.PDFTextStripperByArea;
@@ -24,11 +28,15 @@ import org.docx4j.openpackaging.parts.WordprocessingML.HeaderPart;
 import org.docx4j.openpackaging.parts.relationships.Namespaces;
 import org.docx4j.openpackaging.parts.relationships.RelationshipsPart;
 import org.docx4j.relationships.Relationship;
+import org.docx4j.wml.Br;
 import org.docx4j.wml.ContentAccessor;
 import org.docx4j.wml.ObjectFactory;
 import org.docx4j.wml.P;
+import org.docx4j.wml.R;
+import org.docx4j.wml.STBrType;
 import org.docx4j.wml.Tbl;
 import org.docx4j.wml.Text;
+import org.json.JSONObject;
 import org.springframework.expression.EvaluationException;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
@@ -36,6 +44,7 @@ import org.springframework.expression.ParseException;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
+import com.google.gson.internal.LinkedTreeMap;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoTipoTemplate;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoTipoTemplateBloco;
@@ -50,13 +59,19 @@ import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.db.template.ContratoTipoTemplateDao;
 import com.webnowbr.siscoat.cobranca.model.docket.DocketDocumento;
 import com.webnowbr.siscoat.cobranca.model.docket.DocketRetornoConsulta;
+import com.webnowbr.siscoat.cobranca.vo.CertidoesPaju;
 import com.webnowbr.siscoat.cobranca.ws.netrin.NetrinConsulta;
 import com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
+import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.common.WordUtil;
 import com.webnowbr.siscoat.exception.SiscoatException;
+
+import br.com.galleriabank.bigdata.cliente.model.processos.AcaoJudicial;
+import br.com.galleriabank.bigdata.cliente.model.processos.ProcessoParte;
+import br.com.galleriabank.bigdata.cliente.model.processos.ProcessoResult;
 
 //import net.sf.jasperreports.engine.util.ExpressionParser;
 
@@ -69,12 +84,14 @@ public class PajuService {
 	private static final String BLOCO_PESSOA_FISICA_DOCUMENTOS = "PFDOCS";
 	private static final String BLOCO_PESSOA_FISICA_DOCUMENTOS_PLEXI = "PFDOCS_PLEXI";
 	private static final String BLOCO_PESSOA_FISICA_DOCUMENTOS_NETRIN = "PFDOCS_NETRIN";
+	private static final String BLOCO_PESSOA_FISICA_CERTIDOES_PLEXI = "PFCERTIDAO_PLEXI";
 
 	private static final String BLOCO_PESSOA_JURIDICA_CONSULTA = "PJC";
 	private static final String BLOCO_PESSOA_JURIDICA_CERTIDOES = "PJCERT";
 	private static final String BLOCO_PESSOA_JURIDICA_DOCUMENTOS = "PJDOCS";
 	private static final String BLOCO_PESSOA_JURIDICA_DOCUMENTOS_PLEXI = "PJDOCS_PLEXI";
 	private static final String BLOCO_PESSOA_JURIDICA_DOCUMENTOS_NETRIN = "PJDOCS_NETRIN";
+	private static final String BLOCO_PESSOA_JURIDICA_CERTIDOES_PLEXI = "PJCERTIDAO_PLEXI";
 
 	private ExpressionParser parser;
 
@@ -324,37 +341,8 @@ public class PajuService {
 			Set<DocumentoAnalise> participantes, DocketRetornoConsulta docketRetornoConsulta) throws SiscoatException {
 
 		List<P> paragrafoTemplate = getParagrafoBlocoTemplate(docTemplate, bloco.getTagIdentificacao());
-		List<P> paragrafoDocumentoTemplate = new ArrayList<>();
-		String startPlaceholder = "#{" + bloco.getBlocosFilho().get(0).getTagIdentificacao() + "}";
-		String endPlaceholder = "#{/" + bloco.getBlocosFilho().get(0).getTagIdentificacao() + "}";
-
-		boolean bfilho = false;
-		for (P p : paragrafoTemplate) {
-			if (CommonsUtil.mesmoValor(startPlaceholder, p.toString()))
-				bfilho = true;
-			else if (CommonsUtil.mesmoValor(endPlaceholder, p.toString())) {
-				bfilho = false;
-				paragrafoDocumentoTemplate.add(p);
-			}
-
-			if (bfilho) {
-				paragrafoDocumentoTemplate.add(p);
-			}
-		}
-		if (!CommonsUtil.semValor(paragrafoDocumentoTemplate)) {
-
-			paragrafoTemplate.removeAll(paragrafoDocumentoTemplate);
-
-			removeParagrafo(docTemplate, paragrafoDocumentoTemplate.get(0));
-			paragrafoDocumentoTemplate.remove(0);
-			removeParagrafo(docTemplate, paragrafoDocumentoTemplate.get(paragrafoDocumentoTemplate.size() - 1));
-			paragrafoDocumentoTemplate.remove(paragrafoDocumentoTemplate.size() - 1);
-
-			removeParagrafo(docTemplate, paragrafoTemplate.get(0));
-			paragrafoTemplate.remove(0);
-			removeParagrafo(docTemplate, paragrafoTemplate.get(paragrafoTemplate.size() - 1));
-			paragrafoTemplate.remove(paragrafoTemplate.size() - 1);
-		}
+		List<P> paragrafoDocumentoTemplate = getParagrafoDocumentoTemplate(bloco, paragrafoTemplate);
+		ajustaParagrafoTemplate(docTemplate, paragrafoTemplate, paragrafoDocumentoTemplate);
 
 //		List<P> paragrafoDocumentoTemplate = getParagrafoBlocoTemplate(docTemplate, bloco.getBlocosFilho().get(0).getTagIdentificacao());
 
@@ -363,8 +351,13 @@ public class PajuService {
 		}
 
 		for (DocumentoAnalise participante : participantes) {
+			ProcessoResult bigData = null;
+			if (CommonsUtil.mesmoValor(participante.getTipoProcesso(), "B")) {
+				bigData = GsonUtil.fromJson(participante.getRetornoProcesso(), ProcessoResult.class);
+			}
 
 			adicionaParagrafo(docTemplate, paragrafoTemplate, bloco, participante);
+			
 			if (!CommonsUtil.semValor(docketRetornoConsulta)) {
 				List<DocketDocumento> documentosParticipante = docketRetornoConsulta.getPedido().getDocumentos();
 				List<DocketDocumento> documentosParticipanteFiltro = documentosParticipante.stream()
@@ -375,111 +368,82 @@ public class PajuService {
 					ContratoTipoTemplateBloco blocoFilho = bloco.getBlocosFilho().stream().filter(
 							b -> CommonsUtil.mesmoValor(b.getCodigoTipoTemplateBloco(), BLOCO_PESSOA_FISICA_DOCUMENTOS))
 							.findFirst().orElse(null);
-					if (!CommonsUtil.semValor(blocoFilho))
-						adicionaParagrafo(docTemplate, paragrafoDocumentoTemplate, blocoFilho, docketDocumento);
+					if (!CommonsUtil.semValor(blocoFilho)) {
+						DocketService docketService = new DocketService();
+
+						String idCallManager = docketDocumento.getArquivos().get(0).getLinks().get(0).getHref()
+								.substring(docketDocumento.getArquivos().get(0).getLinks().get(0).getHref()
+										.lastIndexOf("/") + 1);
+						List<String> pdfLines = lerCND(docketService.getPdfBase64Web(idCallManager));
+						CertidoesPaju certidoesPaju = new CertidoesPaju();
+
+						// split by whitespace
+						StringBuilder sb = new StringBuilder();
+						boolean processos = false;
+						for (String line : pdfLines) {
+
+							if (processos && line.contains("Total de A"))
+								break;
+							if (processos && !CommonsUtil.semValor(line)) {
+								final String numeroProcsso = CommonsUtil
+										.somenteNumeros(line);
+								AcaoJudicial acao = bigData.getAcaoJudicial(numeroProcsso);
+
+								if (acao != null) {
+									String sLinha = "Processo: " + line.trim() + " - ";
+
+									ProcessoParte processoParte = acao.getParties().stream()
+											.filter(p -> CommonsUtil.mesmoValor(p.getType(), "CLAIMANT")).findFirst()
+											.orElse(null);
+									if (processoParte != null)
+										sLinha = sLinha + processoParte.getName();
+									sLinha = sLinha + " - Valor - " + CommonsUtil
+											.formataValorMonetario(CommonsUtil.bigDecimalValue(acao.getValue()), "");
+									certidoesPaju.getDebitosDocumento().add(sLinha);
+								} else {
+									String sLinha = "Processo: " + line.trim() 
+											+ " - não listado na Consulta Processos";
+									certidoesPaju.getDebitosDocumento().add(sLinha);
+								}
+								
+//								certidoesPaju.getDebitosDocumento().add(line);
+							}
+							if (line.contains("conforme listagem abaixo:"))
+								processos = true;
+
+						}
+
+						adicionaParagrafoDocket(docTemplate, paragrafoDocumentoTemplate, blocoFilho, docketDocumento,
+								certidoesPaju, bigData);
+					}
 				}
+			}else {
+				adicionaParagrafo(docTemplate, paragrafoTemplate, bloco, participante);
 			}
 
 			if (!CommonsUtil.semValor(participante.getPlexiConsultas())) {
-				for (PlexiConsulta plexiConsulta : participante.getPlexiConsultas()) {
 
-					List<String> debitos = new ArrayList<String>();
-					List<String> debitosSimilariedade = new ArrayList<String>();
+				for (PlexiConsulta plexiConsulta : participante.getPlexiConsultas()) {
 
 					ContratoTipoTemplateBloco blocoFilho = bloco
 							.getBlocosFilho().stream().filter(b -> CommonsUtil
 									.mesmoValor(b.getCodigoTipoTemplateBloco(), BLOCO_PESSOA_FISICA_DOCUMENTOS_PLEXI))
 							.findFirst().orElse(null);
 					if (!CommonsUtil.semValor(blocoFilho)) {
+
 						if (!CommonsUtil.semValor(plexiConsulta.getPlexiWebhookRetorno())
 								&& !CommonsUtil.booleanValue(plexiConsulta.getPlexiWebhookRetorno().getError())
-								&& CommonsUtil.booleanValue(plexiConsulta.getPlexiDocumentos().isMostrarPaju()))
-							adicionaParagrafoPlexi(docTemplate, paragrafoDocumentoTemplate, blocoFilho, plexiConsulta);
+								&& CommonsUtil.booleanValue(plexiConsulta.getPlexiDocumentos().isMostrarPaju())) {
 
-						if ( CommonsUtil.mesmoValor(plexiConsulta.getPlexiDocumentos().getId(), 31L))
-						// faz leitura do PDF
-						if (CommonsUtil.mesmoValor(SiscoatConstants.CND_SITUACAO_POSSUI_DEBITOS,
-								plexiConsulta.getPlexiWebhookRetorno().getSituacao())) {
-							String texto = null;
-							try {
-								PDDocument document = PDDocument
-										.load(java.util.Base64.getDecoder().decode(plexiConsulta.getPdf()));
+							CertidoesPaju certidoesPaju = new CertidoesPaju();
 
-								PDFTextStripperByArea stripper = new PDFTextStripperByArea();
-								stripper.setSortByPosition(true);
-
-								PDFTextStripper tStripper = new PDFTextStripper();
-
-								String pdfFileInText = tStripper.getText(document);
-
-								// split by whitespace
-								String lines[] = pdfFileInText.split("\\r?\\n");
-								List<String> pdfLines = new ArrayList<>();
-
-								List<String> pdfLinesSimilariedade = new ArrayList<>();
-								StringBuilder sb = new StringBuilder();
-								for (String line : lines) {
-									pdfLines.add(line);
-									sb.append(line + "\n");
-								}
-								
-								List<String> pdfLinesClean = pdfLines;
-								List<String> paginas =new ArrayList<String>();
-								
-								String textoInicio = pdfLines.get(0);
-								int iFinal =0;
-								int iInicial = getPosicaoLinha(pdfLinesClean, textoInicio);
-
-								while (iInicial > -1) {
-									iFinal = getPosicaoLinha(pdfLinesClean, "PEDIDO N°:");
-									if (iFinal == -1)
-										iFinal = pdfLinesClean.size();
-//									else
-//										iFinal = iFinal-2;
-//																		
-									paginas.addAll(pdfLinesClean.stream().limit(iFinal-2).skip(iInicial + 5)
-											.collect(Collectors.toList()));
-									
-									pdfLinesClean = pdfLinesClean.stream().skip(iFinal+1).collect(Collectors.toList());
-									
-									iInicial = getPosicaoLinha(pdfLinesClean, textoInicio);
-								}
-								
-								pdfLines = new ArrayList<String>(paginas);
-								
-								iInicial = getPosicaoLinha(pdfLines, "As seguintes distribuições:") + 1;
-
-								iFinal = getPosicaoLinha(pdfLines, "CERTIFICA  ainda  que");
-								if (iFinal == -1)
-									iFinal = getPosicaoLinha(pdfLines, "CERTIFICA ainda  que");
-								if (iFinal == -1)
-									iFinal = getPosicaoLinha(pdfLines,
-											"Esta   certidão   não   aponta   ordinariamente");
-								else
-									pdfLinesSimilariedade = pdfLines.stream().skip(iFinal).collect(Collectors.toList());
-
-								iFinal = iFinal - 1;
-
-								if (iInicial > -1 && iFinal > -1) {
-									debitos = pdfLines.stream().skip(iInicial).limit(iFinal)
-											.collect(Collectors.toList());
-								}
-
-								if (!CommonsUtil.semValor(pdfLinesSimilariedade)) {
-									iInicial = getPosicaoLinha(pdfLinesSimilariedade, "que pode referir-se a homônimo:")
-											+ 1;
-									iFinal = getPosicaoLinha(pdfLinesSimilariedade, "Esta certidão não aponta") ;
-
-									if (iInicial > -1 && iFinal > -1) {
-										debitosSimilariedade = pdfLinesSimilariedade.stream().limit(iFinal).skip(iInicial)
-												.collect(Collectors.toList());
-									}
-								}
-
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+							if (CommonsUtil.mesmoValor(plexiConsulta.getPlexiDocumentos().getId(), 31L)) {
+								processaCertidaoTJSP_1Grau(plexiConsulta, certidoesPaju);
+							} else if (CommonsUtil.mesmoValor(plexiConsulta.getPlexiDocumentos().getId(), 42L)) {
+								processaCertidaoTRT2_PJe(plexiConsulta, bigData, certidoesPaju);
 							}
+							adicionaParagrafoPlexi(docTemplate, paragrafoDocumentoTemplate, blocoFilho, plexiConsulta,
+									certidoesPaju, bigData);
 						}
 					}
 				}
@@ -513,21 +477,79 @@ public class PajuService {
 
 	}
 
-	private int getPosicaoLinha(List<String> pdfLines, String pequisa) {
-		int iPosicao = -1;
-		Optional<String> linhaLocalizada = pdfLines.stream()
-				.filter(x -> x.trim().replaceAll("  +", " ").contains(pequisa.trim().replaceAll("  +", " ")))
-				.findFirst();
-		if (linhaLocalizada.isPresent())
-			iPosicao = pdfLines.indexOf(linhaLocalizada.get());
+	private List<String> lerCND(String base64) {
+		// Query Url
 
-		return iPosicao;
+		List<String> result = new ArrayList<String>();
+		URL myURL;
+		try {
+
+			myURL = new URL("https://servicos.galleriabank.com.br/pdf/read");
+			JSONObject jsonObj = new JSONObject();
+			jsonObj.put("documento", base64);
+			byte[] postDataBytes = jsonObj.toString().getBytes();
+
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setRequestMethod("POST");
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			myURLConnection.setRequestProperty("Authorization",
+					"Bearer " + br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos());
+			myURLConnection.setDoOutput(true);
+			myURLConnection.getOutputStream().write(postDataBytes);
+
+			// try (OutputStream os = myURLConnection.getOutputStream()) {
+			// os.write(postDataBytes, 0, postDataBytes.length);
+			// }
+
+			String retornoConsulta = null;
+			if (myURLConnection.getResponseCode() == SiscoatConstants.HTTP_COD_SUCESSO) {
+				BufferedReader in;
+				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
+				String inputLine;
+				StringBuffer response = new StringBuffer();
+				while ((inputLine = in.readLine()) != null) {
+					response.append(inputLine);
+				}
+				in.close();
+
+				retornoConsulta = response.toString();
+			}
+
+			if (!CommonsUtil.semValor(retornoConsulta)) {
+				result = GsonUtil.fromJson(retornoConsulta, GsonUtil.getColletionType(result));
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return result;
 	}
 
-	private void populaParagrafoCertidoesPJ(WordprocessingMLPackage docTemplate, ContratoTipoTemplateBloco bloco,
-			Set<DocumentoAnalise> participantes, DocketRetornoConsulta docketRetornoConsulta) throws SiscoatException {
+	private void ajustaParagrafoTemplate(WordprocessingMLPackage docTemplate, List<P> paragrafoTemplate,
+			List<P> paragrafoDocumentoTemplate) {
+		if (!CommonsUtil.semValor(paragrafoDocumentoTemplate)) {
 
-		List<P> paragrafoTemplate = getParagrafoBlocoTemplate(docTemplate, bloco.getTagIdentificacao());
+			paragrafoTemplate.removeAll(paragrafoDocumentoTemplate);
+
+			removeParagrafo(docTemplate, paragrafoDocumentoTemplate.get(0));
+			paragrafoDocumentoTemplate.remove(0);
+			removeParagrafo(docTemplate, paragrafoDocumentoTemplate.get(paragrafoDocumentoTemplate.size() - 1));
+			paragrafoDocumentoTemplate.remove(paragrafoDocumentoTemplate.size() - 1);
+
+			removeParagrafo(docTemplate, paragrafoTemplate.get(0));
+			paragrafoTemplate.remove(0);
+			removeParagrafo(docTemplate, paragrafoTemplate.get(paragrafoTemplate.size() - 1));
+			paragrafoTemplate.remove(paragrafoTemplate.size() - 1);
+		}
+	}
+
+	private List<P> getParagrafoDocumentoTemplate(ContratoTipoTemplateBloco bloco, List<P> paragrafoTemplate) {
 		List<P> paragrafoDocumentoTemplate = new ArrayList<>();
 		String startPlaceholder = "#{" + bloco.getBlocosFilho().get(0).getTagIdentificacao() + "}";
 		String endPlaceholder = "#{/" + bloco.getBlocosFilho().get(0).getTagIdentificacao() + "}";
@@ -545,20 +567,174 @@ public class PajuService {
 				paragrafoDocumentoTemplate.add(p);
 			}
 		}
-		if (!CommonsUtil.semValor(paragrafoDocumentoTemplate)) {
+		return paragrafoDocumentoTemplate;
+	}
 
-			paragrafoTemplate.removeAll(paragrafoDocumentoTemplate);
+	private void processaCertidaoTJSP_1Grau(PlexiConsulta plexiConsulta, CertidoesPaju certidoesPaju) {
 
-			removeParagrafo(docTemplate, paragrafoDocumentoTemplate.get(0));
-			paragrafoDocumentoTemplate.remove(0);
-			removeParagrafo(docTemplate, paragrafoDocumentoTemplate.get(paragrafoDocumentoTemplate.size() - 1));
-			paragrafoDocumentoTemplate.remove(paragrafoDocumentoTemplate.size() - 1);
+		// faz leitura do PDF
+		if (CommonsUtil.mesmoValor(SiscoatConstants.CND_SITUACAO_POSSUI_DEBITOS,
+				plexiConsulta.getPlexiWebhookRetorno().getSituacao())) {
+			String texto = null;
+			try {
+				PDDocument document = PDDocument.load(java.util.Base64.getDecoder().decode(plexiConsulta.getPdf()));
 
-			removeParagrafo(docTemplate, paragrafoTemplate.get(0));
-			paragrafoTemplate.remove(0);
-			removeParagrafo(docTemplate, paragrafoTemplate.get(paragrafoTemplate.size() - 1));
-			paragrafoTemplate.remove(paragrafoTemplate.size() - 1);
+				PDFTextStripperByArea stripper = new PDFTextStripperByArea();
+				stripper.setSortByPosition(true);
+
+				PDFTextStripper tStripper = new PDFTextStripper();
+
+				String pdfFileInText = tStripper.getText(document);
+
+				// split by whitespace
+				String lines[] = pdfFileInText.split("\\r?\\n");
+				List<String> pdfLines = new ArrayList<>();
+
+				List<String> pdfLinesSimilariedade = new ArrayList<>();
+				StringBuilder sb = new StringBuilder();
+				for (String line : lines) {
+					pdfLines.add(line);
+					sb.append(line + "\n");
+				}
+
+				List<String> pdfLinesClean = pdfLines;
+				List<String> paginas = new ArrayList<String>();
+
+				String textoInicio = pdfLines.get(0);
+				int iFinal = 0;
+				int iInicial = getPosicaoLinha(pdfLinesClean, textoInicio);
+
+				while (iInicial > -1) {
+					iFinal = getPosicaoLinha(pdfLinesClean, "PEDIDO N°:");
+					if (iFinal == -1)
+						iFinal = pdfLinesClean.size();
+//									else
+//										iFinal = iFinal-2;
+//																		
+					paginas.addAll(
+							pdfLinesClean.stream().limit(iFinal - 1).skip(iInicial + 6).collect(Collectors.toList()));
+
+					pdfLinesClean = pdfLinesClean.stream().skip(iFinal + 1).collect(Collectors.toList());
+
+					iInicial = getPosicaoLinha(pdfLinesClean, textoInicio);
+				}
+
+				pdfLines = new ArrayList<String>(paginas);
+
+				iInicial = getPosicaoLinha(pdfLines, "As seguintes distribuições:") + 1;
+
+				iFinal = getPosicaoLinha(pdfLines, "CERTIFICA  ainda  que");
+				if (iFinal == -1)
+					iFinal = getPosicaoLinha(pdfLines, "CERTIFICA ainda  que");
+				if (iFinal == -1)
+					iFinal = getPosicaoLinha(pdfLines, "Esta   certidão   não   aponta   ordinariamente");
+				else
+					pdfLinesSimilariedade = pdfLines.stream().skip(iFinal).collect(Collectors.toList());
+
+				iFinal = iFinal - 1;
+
+				if (iInicial > -1 && iFinal > -1) {
+					certidoesPaju.setDebitosDocumento(
+							pdfLines.stream().limit(iFinal).skip(iInicial).collect(Collectors.toList()));
+				}
+
+				if (!CommonsUtil.semValor(pdfLinesSimilariedade)) {
+					iInicial = getPosicaoLinha(pdfLinesSimilariedade, "que pode referir-se a homônimo:") + 1;
+					iFinal = getPosicaoLinha(pdfLinesSimilariedade, "Esta certidão não aponta");
+
+					if (iInicial > -1 && iFinal > -1) {
+						certidoesPaju.setDebitosSimilariedade(pdfLinesSimilariedade.stream().limit(iFinal)
+								.skip(iInicial).collect(Collectors.toList()));
+					}
+				}
+
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
+	}
+
+	private void processaCertidaoTRT2_PJe(PlexiConsulta plexiConsulta, ProcessoResult bigData,
+			CertidoesPaju certidoesPaju) {
+
+		// faz leitura do PDF
+		if (CommonsUtil.mesmoValor(SiscoatConstants.CND_SITUACAO_POSSUI_DEBITOS,
+				plexiConsulta.getPlexiWebhookRetorno().getSituacao())) {
+			String texto = null;
+			try {
+				List<String> pdfLines = new ArrayList<>();
+				List<AcaoJudicial> acoesBigData = bigData.getProcessoResumo().getTrabalhistaProtesto();
+				for (Object objProcesso : plexiConsulta.getPlexiWebhookRetorno().getProcessos()) {
+
+					for (Entry<String, List<String>> valores : ((LinkedTreeMap<String, List<String>>) objProcesso)
+							.entrySet()) {
+						if (valores.getKey().equals("numeroProcessos")) {
+							final String numeroProcsso = CommonsUtil
+									.somenteNumeros(valores.getValue().get(0).toString());
+							AcaoJudicial acao = bigData.getAcaoJudicial(numeroProcsso);
+
+							if (acao != null) {
+								acoesBigData.remove(acao);
+								String sLinha = "Processo: " + valores.getValue().get(0) + " - ";
+
+								ProcessoParte processoParte = acao.getParties().stream()
+										.filter(p -> CommonsUtil.mesmoValor(p.getType(), "CLAIMANT")).findFirst()
+										.orElse(null);
+								if (processoParte != null)
+									sLinha = sLinha + processoParte.getName();
+								sLinha = sLinha + " - Valor - " + CommonsUtil
+										.formataValorMonetario(CommonsUtil.bigDecimalValue(acao.getValue()), "");
+								pdfLines.add(sLinha);
+							} else {
+								String sLinha = "Processo: " + valores.getValue().get(0)
+										+ " - não listado na Consulta Processos";
+								pdfLines.add(sLinha);
+							}
+						}
+					}
+				}
+				if (!CommonsUtil.semValor(acoesBigData))
+					for (AcaoJudicial acao : acoesBigData) {
+						if (!CommonsUtil.mesmoValor(acao.getNumber().substring(13, 14), "5"))
+							continue;
+						String sLinha = "Processo: " + CommonsUtil.formataNumeroProcesso(acao.getNumber()) + " - ";
+						ProcessoParte processoParte = acao.getParties().stream()
+								.filter(p -> CommonsUtil.mesmoValor(p.getType(), "CLAIMANT")).findFirst().orElse(null);
+						if (processoParte != null)
+							sLinha = sLinha + processoParte.getName();
+						sLinha = sLinha + " - Valor - "
+								+ CommonsUtil.formataValorMonetario(CommonsUtil.bigDecimalValue(acao.getValue()), "");
+
+						sLinha = sLinha + " - não listado na Consulta Plexi";
+						pdfLines.add(sLinha);
+					}
+				certidoesPaju.setDebitosDocumento(pdfLines);
+
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private int getPosicaoLinha(List<String> pdfLines, String pequisa) {
+		int iPosicao = -1;
+		Optional<String> linhaLocalizada = pdfLines.stream()
+				.filter(x -> x.trim().replaceAll("  +", " ").contains(pequisa.trim().replaceAll("  +", " ")))
+				.findFirst();
+		if (linhaLocalizada.isPresent())
+			iPosicao = pdfLines.indexOf(linhaLocalizada.get());
+
+		return iPosicao;
+	}
+
+	private void populaParagrafoCertidoesPJ(WordprocessingMLPackage docTemplate, ContratoTipoTemplateBloco bloco,
+			Set<DocumentoAnalise> participantes, DocketRetornoConsulta docketRetornoConsulta) throws SiscoatException {
+
+		List<P> paragrafoTemplate = getParagrafoBlocoTemplate(docTemplate, bloco.getTagIdentificacao());
+		List<P> paragrafoDocumentoTemplate = getParagrafoDocumentoTemplate(bloco, paragrafoTemplate);
+		ajustaParagrafoTemplate(docTemplate, paragrafoTemplate, paragrafoDocumentoTemplate);
 
 //		List<P> paragrafoDocumentoTemplate = getParagrafoBlocoTemplate(docTemplate, bloco.getBlocosFilho().get(0).getTagIdentificacao());
 
@@ -567,6 +743,11 @@ public class PajuService {
 		}
 
 		for (DocumentoAnalise participante : participantes) {
+			ProcessoResult bigData = null;
+			if (CommonsUtil.mesmoValor(participante.getTipoProcesso(), "B")) {
+				bigData = GsonUtil.fromJson(participante.getRetornoProcesso(), ProcessoResult.class);
+			}
+			
 
 			adicionaParagrafo(docTemplate, paragrafoTemplate, bloco, participante);
 			if (!CommonsUtil.semValor(docketRetornoConsulta)) {
@@ -576,32 +757,87 @@ public class PajuService {
 								CommonsUtil.somenteNumeros(participante.getCnpjcpf())))
 						.collect(Collectors.toList());
 				for (DocketDocumento docketDocumento : documentosParticipanteFiltro) {
-					ContratoTipoTemplateBloco blocoFilho = bloco
-							.getBlocosFilho().stream().filter(b -> CommonsUtil
-									.mesmoValor(b.getCodigoTipoTemplateBloco(), BLOCO_PESSOA_JURIDICA_DOCUMENTOS))
+
+					ContratoTipoTemplateBloco blocoFilho = bloco.getBlocosFilho().stream().filter(
+							b -> CommonsUtil.mesmoValor(b.getCodigoTipoTemplateBloco(), BLOCO_PESSOA_JURIDICA_DOCUMENTOS))
 							.findFirst().orElse(null);
-					if (!CommonsUtil.semValor(blocoFilho))
-						adicionaParagrafo(docTemplate, paragrafoDocumentoTemplate, blocoFilho, docketDocumento);
+					if (!CommonsUtil.semValor(blocoFilho)) {
+						DocketService docketService = new DocketService();
+
+						String idCallManager = docketDocumento.getArquivos().get(0).getLinks().get(0).getHref()
+								.substring(docketDocumento.getArquivos().get(0).getLinks().get(0).getHref()
+										.lastIndexOf("/") + 1);
+						List<String> pdfLines = lerCND(docketService.getPdfBase64Web(idCallManager));
+						CertidoesPaju certidoesPaju = new CertidoesPaju();
+
+						// split by whitespace
+						StringBuilder sb = new StringBuilder();
+						boolean processos = false;
+						for (String line : pdfLines) {
+
+							if (processos && line.contains("Total de A"))
+								break;
+							if (processos && !CommonsUtil.semValor(line)) {
+								final String numeroProcsso = CommonsUtil
+										.somenteNumeros(line);
+								AcaoJudicial acao = bigData.getAcaoJudicial(numeroProcsso);
+
+								if (acao != null) {
+									String sLinha = "Processo: " + line.trim() + " - ";
+
+									ProcessoParte processoParte = acao.getParties().stream()
+											.filter(p -> CommonsUtil.mesmoValor(p.getType(), "CLAIMANT")).findFirst()
+											.orElse(null);
+									if (processoParte != null)
+										sLinha = sLinha + processoParte.getName();
+									sLinha = sLinha + " - Valor - " + CommonsUtil
+											.formataValorMonetario(CommonsUtil.bigDecimalValue(acao.getValue()), "");
+									certidoesPaju.getDebitosDocumento().add(sLinha);
+								} else {
+									String sLinha = "Processo: " + line.trim() 
+											+ " - não listado na Consulta Processos";
+									certidoesPaju.getDebitosDocumento().add(sLinha);
+								}
+								
+//								certidoesPaju.getDebitosDocumento().add(line);
+							}
+							if (line.contains("conforme listagem abaixo:"))
+								processos = true;
+
+						}
+
+						adicionaParagrafoDocket(docTemplate, paragrafoDocumentoTemplate, blocoFilho, docketDocumento,
+								certidoesPaju, bigData);
+					}
 				}
 			}
 
 			if (!CommonsUtil.semValor(participante.getPlexiConsultas())) {
+
 				for (PlexiConsulta plexiConsulta : participante.getPlexiConsultas()) {
 
 					ContratoTipoTemplateBloco blocoFilho = bloco
 							.getBlocosFilho().stream().filter(b -> CommonsUtil
-									.mesmoValor(b.getCodigoTipoTemplateBloco(), BLOCO_PESSOA_JURIDICA_DOCUMENTOS_PLEXI))
+									.mesmoValor(b.getCodigoTipoTemplateBloco(), BLOCO_PESSOA_FISICA_DOCUMENTOS_PLEXI))
 							.findFirst().orElse(null);
 					if (!CommonsUtil.semValor(blocoFilho)) {
 
 						if (!CommonsUtil.semValor(plexiConsulta.getPlexiWebhookRetorno())
 								&& !CommonsUtil.booleanValue(plexiConsulta.getPlexiWebhookRetorno().getError())
-								&& CommonsUtil.booleanValue(plexiConsulta.getPlexiDocumentos().isMostrarPaju()))
-							adicionaParagrafoPlexi(docTemplate, paragrafoDocumentoTemplate, blocoFilho, plexiConsulta);
+								&& CommonsUtil.booleanValue(plexiConsulta.getPlexiDocumentos().isMostrarPaju())) {
+
+							CertidoesPaju certidoesPaju = new CertidoesPaju();
+
+							if (CommonsUtil.mesmoValor(plexiConsulta.getPlexiDocumentos().getId(), 31L)) {
+								processaCertidaoTJSP_1Grau(plexiConsulta, certidoesPaju);
+							} else if (CommonsUtil.mesmoValor(plexiConsulta.getPlexiDocumentos().getId(), 42L)) {
+								processaCertidaoTRT2_PJe(plexiConsulta, bigData, certidoesPaju);
+							}
+							adicionaParagrafoPlexi(docTemplate, paragrafoDocumentoTemplate, blocoFilho, plexiConsulta,
+									certidoesPaju, bigData);
+						}
 					}
-
 				}
-
 			}
 
 			if (!CommonsUtil.semValor(participante.getNetrinConsultas())) {
@@ -716,6 +952,7 @@ public class PajuService {
 		return null;
 	}
 
+	
 	private void adicionaParagrafo(WordprocessingMLPackage template, List<P> paragrafoTemplate,
 			ContratoTipoTemplateBloco bloco, Object dataSource) throws SiscoatException {
 
@@ -757,39 +994,306 @@ public class PajuService {
 
 		addParagrafoVazio((ContentAccessor) paragrafoTemplate.get(0).getParent());
 	}
-
-	private void adicionaParagrafoPlexi(WordprocessingMLPackage template, List<P> paragrafoTemplate,
-			ContratoTipoTemplateBloco bloco, PlexiConsulta plexiConsulta) throws SiscoatException {
+	
+	private void adicionaParagrafoDocket(WordprocessingMLPackage template, List<P> paragrafoTemplate,
+			ContratoTipoTemplateBloco bloco, Object dataSource, CertidoesPaju certidoesPaju, ProcessoResult bigData)
+			throws SiscoatException {
 
 		List<P> copy = new ArrayList<>();
-		// 3. copy the found paragraph to keep styling correct
 		for (P p : paragrafoTemplate) {
-			if (!p.toString().contains(bloco.getTagIdentificacao()))
-				copy.add((P) XmlUtils.deepCopy(p));
+			if (!p.toString().contains(bloco.getTagIdentificacao())) {
+				boolean addParagrafo = true;
+				if ((p.toString().contains("processosIdentificacaoCertidoesDocumento")
+						|| p.toString().contains("pfCertidoesDocumento")
+						|| p.toString().contains("pjCertidoesDocumento"))
+						&& (CommonsUtil.semValor(certidoesPaju)
+								|| CommonsUtil.semValor(certidoesPaju.getDebitosDocumento())))
+					addParagrafo = false;
+				else if ((p.toString().contains("processosIdentificacaoCertidoesSimilariedade")
+						|| p.toString().contains("pfCertidoesSimilariedade")
+						|| p.toString().contains("pjCertidoesSimilariedade"))
+						&& (CommonsUtil.semValor(certidoesPaju)
+								|| CommonsUtil.semValor(certidoesPaju.getDebitosSimilariedade())))
+					addParagrafo = false;
+				else if (p.toString().contains("situacao") && !CommonsUtil.semValor(certidoesPaju)
+						&& (!CommonsUtil.semValor(certidoesPaju.getDebitosDocumento())
+								|| !CommonsUtil.semValor(certidoesPaju.getDebitosSimilariedade()))) {
+					addParagrafo = false;
+				}
+
+				if (addParagrafo) {
+					copy.add((P) XmlUtils.deepCopy(p));
+				}
+			}
 		}
+
+//		for (P p : paragrafoTemplate) {
+//			if (!p.toString().contains(bloco.getTagIdentificacao())) {
+//				boolean addParagrafo = true;
+//				if ((p.toString().contains("processosIdentificacaoCertidoesDocumento")
+//						|| p.toString().contains("pfCertidoesDocumento")
+//						|| p.toString().contains("pjCertidoesDocumento"))
+////						&& CommonsUtil.semValor(debitosDocumento)
+//				)
+//					addParagrafo = false;
+//				else if ((p.toString().contains("processosIdentificacaoCertidoesSimilariedade")
+//						|| p.toString().contains("pfCertidoesSimilariedade")
+//						|| p.toString().contains("pjCertidoesSimilariedade"))
+////						&& CommonsUtil.semValor(debitosSimilariedade)
+//				)
+//					addParagrafo = false;
+//
+//				if (addParagrafo) {
+//					copy.add((P) XmlUtils.deepCopy(p));
+//				}
+//			}
+//		}
+
 //		List<P> copy =  XmlUtils.deepCopy(paragrafoTemplate);
 
 		for (ContratoTipoTemplateCampo campo : bloco.getCampos()) {
 			if (CommonsUtil.semValor(campo))
 				continue;
 
-			Object valor = null;
-			if (!campo.getExpressao().startsWith("\""))
-				valor = getValor(campo.getExpressao(), plexiConsulta);
-			else
+			Object valor;
+
+			if (!campo.getExpressao().startsWith("\"")) {
+				if (CommonsUtil.mesmoValor(campo.getTag(), "pfCertidoesDocumento")) {
+					if (!CommonsUtil.semValor(certidoesPaju)
+							&& !CommonsUtil.semValor(certidoesPaju.getDebitosDocumento())) {
+
+						P paragraph = new P();
+						for (String certidao : certidoesPaju.getDebitosDocumento()) {
+							R run = new R();
+							run.getContent().add(createText((String) certidao));
+							// Adicionar quebra de linha
+							Br lineBreak = new Br();
+							lineBreak.setType(STBrType.TEXT_WRAPPING);
+							run.getContent().add(lineBreak);
+							run.getContent().add(lineBreak);
+							paragraph.getContent().add(run);
+						}
+						valor = paragraph;
+
+					} else
+						valor = null;
+				} else if (CommonsUtil.mesmoValor(campo.getTag(), "pfCertidoesSimilariedade")) {
+					if (!CommonsUtil.semValor(certidoesPaju)
+							&& !CommonsUtil.semValor(certidoesPaju.getDebitosSimilariedade())) {
+						P paragraph = new P();
+						for (String certidao : certidoesPaju.getDebitosDocumento()) {
+							R run = new R();
+							run.getContent().add(createText(certidao));
+							// Adicionar quebra de linha
+							Br lineBreak = new Br();
+							lineBreak.setType(STBrType.TEXT_WRAPPING);
+							run.getContent().add(lineBreak);
+							run.getContent().add(lineBreak);
+							paragraph.getContent().add(run);
+
+						}
+						valor = paragraph;
+					} else
+						valor = null;
+				} else
+					valor = getValor(campo.getExpressao(), dataSource);
+			} else
 				valor = campo.getExpressao().replace("\"", "");
 
-			if (CommonsUtil.semValor((String) valor)
-					&& CommonsUtil.mesmoValorIgnoreCase("situacao", campo.getExpressao())) {
+//			if (CommonsUtil.semValor((String) valor)
+//					&& CommonsUtil.mesmoValorIgnoreCase("situacao", campo.getExpressao())) {
+//				valor = "VERIFICAR CERTIDÃO";
+//			}
+			if (CommonsUtil.semValor(valor)
+					|| (valor.getClass().getName().equals("java.lang.String") && CommonsUtil.semValor((String) valor))
+							&& CommonsUtil.mesmoValorIgnoreCase("situacao", campo.getExpressao())) {
 				valor = "VERIFICAR CERTIDÃO";
+			}
+
+			
+			for (P p : copy) {
+
+				List<Object> texts = wordUtil.getAllElementFromObject(p, Text.class);
+
+				boolean substitui = true;
+				boolean achou = false;
+				for (Object o2 : texts) {
+					if (((Text) o2).getValue().contains(campo.getTag()))
+						achou = true;
+					break;
+				}
+				if (achou) {
+//				if (campo.getTag().contains("pfCertidoesDocumento") || campo.getTag().contains("pjCertidoesDocumento")
+//						|| campo.getTag().contains("pfCertidoesSimilariedade")
+//						|| campo.getTag().contains("pjCertidoesSimilariedade")) {
+					if (!CommonsUtil.semValor(valor)) {
+						if (!valor.getClass().getName().equals("java.lang.String")) {
+							P pNovo = (P) valor;
+							p.getContent().clear();
+							p.getContent().addAll(pNovo.getContent());
+							substitui = false;
+						}
+					} else
+						valor = "";
+				}
+
+				if (substitui && valor.getClass().getName().equals("java.lang.String")) {
+					if (!CommonsUtil.semValor((String) valor))
+						replacePlaceholder(p, campo.getTag(), (String) valor);
+					else
+						replacePlaceholder(p, campo.getTag(), "");
+				}
+			}
+			
+			
+//			for (P p : copy) {
+//				if (!CommonsUtil.semValor((String) valor))
+//					replacePlaceholder(p, campo.getTag(), (String) valor);
+//				else
+//					replacePlaceholder(p, campo.getTag(), "");
+//			}
+			// }
+		}
+
+		// add the paragraph to the document
+		((ContentAccessor) paragrafoTemplate.get(0).getParent()).getContent().addAll(copy);
+
+		addParagrafoVazio((ContentAccessor) paragrafoTemplate.get(0).getParent());
+	}
+
+	private void adicionaParagrafoPlexi(WordprocessingMLPackage template, List<P> paragrafoTemplate,
+			ContratoTipoTemplateBloco bloco, PlexiConsulta plexiConsulta, CertidoesPaju certidoesPaju,
+			ProcessoResult bigData) throws SiscoatException {
+
+		List<P> copy = new ArrayList<>();
+		// 3. copy the found paragraph to keep styling correct
+		for (P p : paragrafoTemplate) {
+			if (!p.toString().contains(bloco.getTagIdentificacao())) {
+				boolean addParagrafo = true;
+				if ((p.toString().contains("processosIdentificacaoCertidoesDocumento")
+						|| p.toString().contains("pfCertidoesDocumento")
+						|| p.toString().contains("pjCertidoesDocumento"))
+						&& (CommonsUtil.semValor(certidoesPaju)
+								|| CommonsUtil.semValor(certidoesPaju.getDebitosDocumento())))
+					addParagrafo = false;
+				else if ((p.toString().contains("processosIdentificacaoCertidoesSimilariedade")
+						|| p.toString().contains("pfCertidoesSimilariedade")
+						|| p.toString().contains("pjCertidoesSimilariedade"))
+						&& (CommonsUtil.semValor(certidoesPaju)
+								|| CommonsUtil.semValor(certidoesPaju.getDebitosSimilariedade())))
+					addParagrafo = false;
+				else if (p.toString().contains("situacao") && !CommonsUtil.semValor(certidoesPaju)
+						&& (!CommonsUtil.semValor(certidoesPaju.getDebitosDocumento())
+								|| !CommonsUtil.semValor(certidoesPaju.getDebitosSimilariedade()))) {
+					addParagrafo = false;
+				}
+
+				if (addParagrafo) {
+					copy.add((P) XmlUtils.deepCopy(p));
+				}
+			}
+		}
+
+//		List<P> copy =  XmlUtils.deepCopy(paragrafoTemplate);
+
+		for (ContratoTipoTemplateCampo campo : bloco.getCampos()) {
+			if (CommonsUtil.semValor(campo))
+				continue;
+			Object valor = null;
+			if (!campo.getExpressao().startsWith("\"")) {
+				if (CommonsUtil.mesmoValor(campo.getTag(), "pfCertidoesDocumento")) {
+					if (!CommonsUtil.semValor(certidoesPaju)
+							&& !CommonsUtil.semValor(certidoesPaju.getDebitosDocumento())) {
+						if (CommonsUtil.mesmoValor(plexiConsulta.getPlexiDocumentos().getId(), 31L))
+							valor = getPlexiProcessosCertidaoSP(certidoesPaju.getDebitosDocumento(), bigData);
+						else {
+							P paragraph = null;
+							for (String certidao : certidoesPaju.getDebitosDocumento()) {
+								if (paragraph == null) {
+									paragraph = createParagraph((String) certidao);
+								} else {
+									R run = new R();
+									run.getContent().add(createText((String) certidao));
+									// Adicionar quebra de linha
+									Br lineBreak = new Br();
+									lineBreak.setType(STBrType.TEXT_WRAPPING);
+									run.getContent().add(lineBreak);
+									run.getContent().add(lineBreak);
+									paragraph.getContent().add(run);
+								}
+
+							}
+							valor = paragraph;
+						}
+
+					} else
+						valor = null;
+				} else if (CommonsUtil.mesmoValor(campo.getTag(), "pfCertidoesSimilariedade")) {
+					if (!CommonsUtil.semValor(certidoesPaju)
+							&& !CommonsUtil.semValor(certidoesPaju.getDebitosSimilariedade())) {
+						if (CommonsUtil.mesmoValor(plexiConsulta.getPlexiDocumentos().getId(), 31L))
+							valor = getPlexiProcessosCertidaoSP(certidoesPaju.getDebitosSimilariedade(), bigData);
+						else {
+							P paragraph = new P();
+							for (String certidao : certidoesPaju.getDebitosDocumento()) {
+								R run = new R();
+								run.getContent().add(createText(certidao));
+								// Adicionar quebra de linha
+								Br lineBreak = new Br();
+								lineBreak.setType(STBrType.TEXT_WRAPPING);
+								run.getContent().add(lineBreak);
+								run.getContent().add(lineBreak);
+								paragraph.getContent().add(run);
+
+							}
+							valor = paragraph;
+						}
+					} else
+						valor = null;
+				} else
+					valor = getValor(campo.getExpressao(), plexiConsulta);
+			} else
+				valor = campo.getExpressao().replace("\"", "");
+
+			if (CommonsUtil.semValor(valor)
+					|| (valor.getClass().getName().equals("java.lang.String") && CommonsUtil.semValor((String) valor))
+							&& CommonsUtil.mesmoValorIgnoreCase("situacao", campo.getExpressao())) {
+				valor = "";
 			}
 
 			// if (valor != null) {
 			for (P p : copy) {
-				if (!CommonsUtil.semValor((String) valor))
-					replacePlaceholder(p, campo.getTag(), (String) valor);
-				else
-					replacePlaceholder(p, campo.getTag(), "");
+
+				List<Object> texts = wordUtil.getAllElementFromObject(p, Text.class);
+
+				boolean substitui = true;
+				boolean achou = false;
+				for (Object o2 : texts) {
+					if (((Text) o2).getValue().contains(campo.getTag()))
+						achou = true;
+					break;
+				}
+				if (achou) {
+//				if (campo.getTag().contains("pfCertidoesDocumento") || campo.getTag().contains("pjCertidoesDocumento")
+//						|| campo.getTag().contains("pfCertidoesSimilariedade")
+//						|| campo.getTag().contains("pjCertidoesSimilariedade")) {
+					if (!CommonsUtil.semValor(valor)) {
+						if (!valor.getClass().getName().equals("java.lang.String")) {
+							P pNovo = (P) valor;
+							p.getContent().clear();
+							p.getContent().addAll(pNovo.getContent());
+							substitui = false;
+						}
+					} else
+						valor = "";
+				}
+
+				if (substitui && valor.getClass().getName().equals("java.lang.String")) {
+					if (!CommonsUtil.semValor((String) valor))
+						replacePlaceholder(p, campo.getTag(), (String) valor);
+					else
+						replacePlaceholder(p, campo.getTag(), "");
+				}
 			}
 			// }
 		}
@@ -800,15 +1304,95 @@ public class PajuService {
 		addParagrafoVazio((ContentAccessor) paragrafoTemplate.get(0).getParent());
 	}
 
+	private Object getPlexiProcessosCertidaoSP(List<String> certidoes, ProcessoResult bigData) {
+		Object valor;
+
+		P paragraph = new P();
+		;
+
+		valor = "";
+		for (String debito : certidoes) {
+			valor = valor + debito;
+		}
+		valor = ((String) valor);
+		String[] splitProcessos = ((String) valor).split("»");
+		valor = "";
+		for (String debito : splitProcessos) {
+			String svalor = "";
+			if (debito.indexOf("Processo:") > -1) {
+				svalor = debito.substring(debito.indexOf("Processo:")).replace("*", "");
+				while (svalor.indexOf("  ") > -1) {
+					svalor = svalor.replace("  ", " ");
+				}
+				svalor = svalor.substring(0, svalor.lastIndexOf(".") + 1);
+				String numeroProcesso = svalor.substring(10, 35);
+				AcaoJudicial acao = bigData.getAcaoJudicial(numeroProcesso);
+				if (CommonsUtil.semValor(acao)) {
+					svalor = svalor + " Valor: não localizado na consulta de processos";
+				} else if (CommonsUtil.semValor(acao.getValue())) {
+					svalor = svalor + " Valor: sem valor localiado";
+				} else
+					svalor = svalor + " Valor: "
+							+ CommonsUtil.formataValorMonetario(CommonsUtil.bigDecimalValue(acao.getValue()), "");
+
+				R run = new R();
+				run.getContent().add(createText(svalor));
+				// Adicionar quebra de linha
+				Br lineBreak = new Br();
+				lineBreak.setType(STBrType.TEXT_WRAPPING);
+				run.getContent().add(lineBreak);
+				run.getContent().add(lineBreak);
+				paragraph.getContent().add(run);
+//				}
+//				paragraph.getContent().add(createText((String) valor));
+
+			}
+		}
+		return paragraph;
+	}
+
+	private static P createParagraph(String text) {
+		P paragraph = new P();
+		R run = new R();
+		run.getContent().add(createText(text));
+
+		paragraph.getContent().add(run);
+		return paragraph;
+	}
+
+	private static Text createText(String text) {
+		Text t = new Text();
+		t.setValue(text);
+		return t;
+	}
+
 	private void adicionaParagrafoNetrin(WordprocessingMLPackage template, List<P> paragrafoTemplate,
 			ContratoTipoTemplateBloco bloco, NetrinConsulta netrinConsulta) throws SiscoatException {
 
 		List<P> copy = new ArrayList<>();
-		// 3. copy the found paragraph to keep styling correct
+
 		for (P p : paragrafoTemplate) {
-			if (!p.toString().contains(bloco.getTagIdentificacao()))
-				copy.add((P) XmlUtils.deepCopy(p));
+			if (!p.toString().contains(bloco.getTagIdentificacao())) {
+				boolean addParagrafo = true;
+				if ((p.toString().contains("processosIdentificacaoCertidoesDocumento")
+						|| p.toString().contains("pfCertidoesDocumento")
+						|| p.toString().contains("pjCertidoesDocumento"))
+//						&& CommonsUtil.semValor(debitosDocumento)
+				)
+					addParagrafo = false;
+				else if ((p.toString().contains("processosIdentificacaoCertidoesSimilariedade")
+						|| p.toString().contains("pfCertidoesSimilariedade")
+						|| p.toString().contains("pjCertidoesSimilariedade"))
+//						&& CommonsUtil.semValor(debitosSimilariedade)
+				)
+					addParagrafo = false;
+
+				if (addParagrafo) {
+					copy.add((P) XmlUtils.deepCopy(p));
+				}
+			}
 		}
+
 //		List<P> copy =  XmlUtils.deepCopy(paragrafoTemplate);
 
 		for (ContratoTipoTemplateCampo campo : bloco.getCampos()) {
