@@ -407,7 +407,7 @@
 		<dependency>
 			<groupId>br.com.galleriabank.bigdata-cliente</groupId>
 			<artifactId>bigdata-cliente</artifactId>
-			<version>1.0.8</version>
+			<version>1.0.9</version>
 		</dependency>		
 		<dependency>
 			<groupId>br.com.galleriabank.debit-cliente</groupId>

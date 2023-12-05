@@ -105,6 +105,12 @@ public class DocketDocumento {
 	public void setTitularTipo(String titularTipo) {
 		this.titularTipo = titularTipo;
 	}
+	
+	public String getNomePaju() {
+		return this.documentoNome + " - " + campos.getEstadoNome();
+	}
+	
+	
 
 	public String getDocumentoNome() {
 		return documentoNome;

@@ -1045,6 +1045,16 @@
 	padding-top: 10px;
 }
 
+
+.esquerda{		    
+	text-align: left!important;
+}
+.centro{		    
+	text-align: center!important;
+}
+.direita{		    
+	text-align: right!important;
+}
 .ui-accordion .ui-accordion-header {
 	font-size: 16px !important;
 	font-weight: bold !important;
