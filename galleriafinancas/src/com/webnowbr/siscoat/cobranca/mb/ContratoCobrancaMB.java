@@ -9506,19 +9506,32 @@ public class ContratoCobrancaMB {
 		this.controleWhatsAppComite = false;
 	}
 	private List<PorcentagemImovel> porcentagem = new ArrayList<>();
+	private BigDecimal porcentagemPersonalizada = BigDecimal.ZERO;
 	public void calculaPorcentagemImovel() {
 		porcentagem = new ArrayList<>();
-		BigDecimal valorSugerido = gerarRecomendacaoComite();
+		BigDecimal porcentagemLimite = new BigDecimal(100);
+		BigDecimal	valorSugerido = gerarRecomendacaoComite();
+		
+		if(porcentagemPersonalizada == null) {
+			porcentagemPersonalizada = BigDecimal.ZERO;
+		}
+		if( porcentagemPersonalizada.compareTo(porcentagemLimite) == 1) {
+			porcentagemPersonalizada = new BigDecimal(100);
+		}
 		
 		  valorMercaoImovelPorcento = objetoContratoCobranca.getValorMercadoImovel().divide(new BigDecimal(100));
-		  porcentagem.add(new PorcentagemImovel("Valor do imóvel: ", objetoContratoCobranca.getValorMercadoImovel(),false));
-		  porcentagem.add(new PorcentagemImovel("Recomendado:", valorSugerido, true ));
-		  porcentagem.add(new PorcentagemImovel("LTV 10%:", valorMercaoImovelPorcento.multiply(new BigDecimal(10)),true));
-		  porcentagem.add(new PorcentagemImovel("LTV 20%:", valorMercaoImovelPorcento.multiply(new BigDecimal(20)),true));
-		  porcentagem.add(new PorcentagemImovel("LTV 30%:", valorMercaoImovelPorcento.multiply(new BigDecimal(30)),true));
-		  porcentagem.add(new PorcentagemImovel("LTV 40%:", valorMercaoImovelPorcento.multiply(new BigDecimal(40)),true));
-		  porcentagem.add(new PorcentagemImovel("LTV 50%:", valorMercaoImovelPorcento.multiply(new BigDecimal(50)),true));
-
+		  porcentagem.add(new PorcentagemImovel("Valor do imóvel: ", objetoContratoCobranca.getValorMercadoImovel(),false,false));
+		  porcentagem.add(new PorcentagemImovel("Recomendado:", valorSugerido, true,false ));
+		  porcentagem.add(new PorcentagemImovel("LTV 10%:", valorMercaoImovelPorcento.multiply(new BigDecimal(10)),true,false));
+		  porcentagem.add(new PorcentagemImovel("LTV 20%:", valorMercaoImovelPorcento.multiply(new BigDecimal(20)),true,false));
+		  porcentagem.add(new PorcentagemImovel("LTV 30%:", valorMercaoImovelPorcento.multiply(new BigDecimal(30)),true,false));
+		  porcentagem.add(new PorcentagemImovel("LTV 40%:", valorMercaoImovelPorcento.multiply(new BigDecimal(40)),true,false));
+		  porcentagem.add(new PorcentagemImovel("LTV 50%:", valorMercaoImovelPorcento.multiply(new BigDecimal(50)),true,false));
+		  if(porcentagemPersonalizada != null) {
+		  porcentagem.add(new PorcentagemImovel("Personalizado", valorMercaoImovelPorcento.multiply(porcentagemPersonalizada), true, true));
+		  } 
+		  porcentagemPersonalizada = BigDecimal.ZERO;
+		 
 	}
 
 
@@ -34697,6 +34710,14 @@ public class ContratoCobrancaMB {
 
 	public void setValorMercadoImovelCinquenta(BigDecimal valorMercadoImovelCinquenta) {
 		this.valorMercadoImovelCinquenta = valorMercadoImovelCinquenta;
+	}
+
+	public BigDecimal getPorcentagemPersonalizada() {
+		return porcentagemPersonalizada;
+	}
+
+	public void setPorcentagemPersonalizada(BigDecimal porcentagemPersonalizada) {
+		this.porcentagemPersonalizada = porcentagemPersonalizada;
 	}
 	
 }

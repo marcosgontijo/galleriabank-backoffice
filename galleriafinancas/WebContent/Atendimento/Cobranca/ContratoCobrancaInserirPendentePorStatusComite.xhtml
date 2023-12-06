@@ -957,10 +957,18 @@
 															value="#{porcento.porcentagem}"
 															target="#{contratoCobrancaMB.objetoAnaliseComite.valorComite}" />
 													</p:commandButton>
+													<p:inputText value="#{contratoCobrancaMB.porcentagemPersonalizada}" rendered="#{porcento.personalizado == true}"
+													size="20">
+													<p:ajax event="blur" update="valorPorcentagem" listener="#{contratoCobrancaMB.calculaPorcentagemImovel()}"/>
+													</p:inputText>
+													
+													
 												</p:column>
 												<p:column styleClass="direita" style="width: 50%;">
-													<p:outputLabel value="#{porcento.porcentagem}"
-														converter="bigDecimalConverter"></p:outputLabel>
+													<p:outputLabel  value="#{porcento.porcentagem}"
+														converter="bigDecimalConverter" rendered="#{porcento.personalizado == false}"></p:outputLabel>
+														<p:outputLabel id="valorPorcentagem" value="#{porcento.porcentagem}"
+														converter="bigDecimalConverter" rendered="#{porcento.personalizado == true}"></p:outputLabel>
 												</p:column>
 
 
