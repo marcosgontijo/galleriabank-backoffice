@@ -1406,7 +1406,7 @@ public class CcbService {
 			    }
 			}	
 		
-			int indexSegurados = 62;
+			int indexSegurados = 61;
 			
 			for(Segurado segurado : objetoCcb.getListSegurados()) {
 				table = document.getTables().get(0);
