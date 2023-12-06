@@ -167,6 +167,7 @@ import com.webnowbr.siscoat.cobranca.db.model.Segurado;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankBaixa;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankBoleto;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankPix;
+import com.webnowbr.siscoat.cobranca.db.model.directd.PorcentagemImovel;
 import com.webnowbr.siscoat.cobranca.db.op.CcbDao;
 import com.webnowbr.siscoat.cobranca.db.op.CcbProcessosJudiciaisDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
@@ -9504,15 +9505,29 @@ public class ContratoCobrancaMB {
 		this.controleWhatsAppPreAprovado = false;
 		this.controleWhatsAppComite = false;
 	}
+	private List<PorcentagemImovel> porcentagem = new ArrayList<>();
 	public void calculaPorcentagemImovel() {
+		porcentagem = new ArrayList<>();
+		BigDecimal valorSugerido = gerarRecomendacaoComite();
 		
 		  valorMercaoImovelPorcento = objetoContratoCobranca.getValorMercadoImovel().divide(new BigDecimal(100));
-		  valorMercadoImovelDez = valorMercaoImovelPorcento.multiply(new BigDecimal(10));
-		  valorMercadoImovelVinte = valorMercaoImovelPorcento.multiply(new BigDecimal(20));
-		  valorMercadoImovelTrinta = valorMercaoImovelPorcento.multiply(new BigDecimal(30));
-		  valorMercadoImovelQuarenta = valorMercaoImovelPorcento.multiply(new BigDecimal(40));
-		  valorMercadoImovelCinquenta = valorMercaoImovelPorcento.multiply(new BigDecimal(50));
+		  porcentagem.add(new PorcentagemImovel("Valor do imóvel: ", objetoContratoCobranca.getValorMercadoImovel(),false));
+		  porcentagem.add(new PorcentagemImovel("Recomendado:", valorSugerido, true ));
+		  porcentagem.add(new PorcentagemImovel("LTV 10%:", valorMercaoImovelPorcento.multiply(new BigDecimal(10)),true));
+		  porcentagem.add(new PorcentagemImovel("LTV 20%:", valorMercaoImovelPorcento.multiply(new BigDecimal(20)),true));
+		  porcentagem.add(new PorcentagemImovel("LTV 20%:", valorMercaoImovelPorcento.multiply(new BigDecimal(30)),true));
+		  porcentagem.add(new PorcentagemImovel("LTV 40%:", valorMercaoImovelPorcento.multiply(new BigDecimal(40)),true));
+		  porcentagem.add(new PorcentagemImovel("LTV 50%:", valorMercaoImovelPorcento.multiply(new BigDecimal(50)),true));
 
+	}
+
+
+	public List<PorcentagemImovel> getPorcentagem() {
+		return porcentagem;
+	}
+
+	public void setPorcentagem(List<PorcentagemImovel> porcentagem) {
+		this.porcentagem = porcentagem;
 	}
 
 	public String clearFieldsEditarPendentesAnalistas() {
@@ -9747,7 +9762,8 @@ public class ContratoCobrancaMB {
 		}
 	}
 
-	private void gerarRecomendacaoComite() {
+	private BigDecimal gerarRecomendacaoComite() {
+		BigDecimal valorSugerido = BigDecimal.ZERO;
 		objetoAnaliseComite.setTipoPessoa(objetoContratoCobranca.getPagador().getCpf());
 		objetoAnaliseComite.setTipoImovel(objetoContratoCobranca.getImovel().getTipo()); 
 		objetoAnaliseComite.setTipoOp(objetoContratoCobranca.getTipoOperacao());
@@ -9765,7 +9781,7 @@ public class ContratoCobrancaMB {
 		// this.objetoAnaliseComite.setComentarioComite(this.objetoContratoCobranca.getComentarioJuridico());
 		// }
 	if (this.objetoAnaliseComite.getValorComite() == null) {
-		BigDecimal valorSugerido = BigDecimal.ZERO;
+		 valorSugerido = BigDecimal.ZERO;
 		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getImovel().getTipo(), "Apartamento")
 					|| CommonsUtil.mesmoValor(this.objetoContratoCobranca.getImovel().getTipo(), "Casa de Condomínio")
 					|| CommonsUtil.mesmoValor(this.objetoContratoCobranca.getImovel().getTipo(),
@@ -9808,7 +9824,9 @@ public class ContratoCobrancaMB {
 		}
 		
 	}
+	return valorSugerido;
 	}
+	
 
 	public void gerarProcessosQuitarComite() {
 //		if (CommonsUtil.semValor(this.objetoContratoCobranca.getProcessosQuitarComite())) {
