@@ -1194,12 +1194,20 @@ public class CcbService {
 			XWPFDocument document;	
 			XWPFRun run;
 			XWPFRun run2;
+			List<CcbParticipantes> segurados = new ArrayList<CcbParticipantes>();
 			for (CcbParticipantes participante : objetoCcb.getListaParticipantes()) {				
 				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "TERCEIRO GARANTIDOR")) {
 					objetoCcb.setTerceiroGarantidor(true);
 					participante.setTipoParticipante("DEVEDOR FIDUCIANTE");
+					segurados.add(participante);
+				}
+				 else if(CommonsUtil.mesmoValor(participante.getTipoParticipante(), "EMITENTE")){
+					segurados.add(participante);
+				}  else if(CommonsUtil.mesmoValor(participante.getTipoParticipante(), "COMPRADOR")){
+					segurados.add(participante);
 				}
 			}
+			
 			
 			if ( CommonsUtil.semValor( objetoCcb.getProcessosJucidiais() ) )
 				document = new XWPFDocument(getClass().getResourceAsStream("/resource/CCI - Financiamento202310SemProcesso.docx"));
@@ -1353,7 +1361,10 @@ public class CcbService {
 			}
 			if (totalProcessos.compareTo(BigDecimal.ZERO) > 0) {
 				int ultimaVirgula = numerosProcessos.lastIndexOf(", ");
-				numerosProcessos = numerosProcessos.substring(0,ultimaVirgula) + " e "  + numerosProcessos.substring(ultimaVirgula + 2);
+				if (ultimaVirgula > -1) {
+					numerosProcessos = numerosProcessos.substring(0, ultimaVirgula) + " e "
+							+ numerosProcessos.substring(ultimaVirgula + 2);
+				}
 				valorPorExtenso.setNumber(totalProcessos);
 				totalProcessosFormatado = CommonsUtil.formataValorMonetarioCci(totalProcessos, "") + " ("
 						+ valorPorExtenso.toString() + ")";
@@ -1406,6 +1417,8 @@ public class CcbService {
 			    }
 			}	
 		
+
+			organizaSegurados(segurados);
 			int indexSegurados = 61;
 			
 			for(Segurado segurado : objetoCcb.getListSegurados()) {
@@ -1782,7 +1795,7 @@ public class CcbService {
 				indexParcela++;////////////////////////////////////////////////////////////////////////////////
 			}
 		    
-//		    geraPaginaContratoII(document, "9DC83E", false);
+		    geraPaginaContratoII(document, "9DC83E", false);
 			table = document.getTableArray(1);			
 			CabecalhoAnexo1(table, 0, 1, CommonsUtil.formataData(objetoCcb.getDataDeEmissao(), "dd/MM/yyyy"));
 			CabecalhoAnexo1(table, 1, 1, CommonsUtil.formataData(objetoCcb.getVencimentoUltimaParcelaPagamento(), "dd/MM/yyyy"));	

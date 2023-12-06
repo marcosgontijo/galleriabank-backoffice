@@ -417,9 +417,10 @@ public class PajuService {
 								certidoesPaju, bigData);
 					}
 				}
-			}else {
-				adicionaParagrafo(docTemplate, paragrafoTemplate, bloco, participante);
 			}
+//			else {
+//				adicionaParagrafo(docTemplate, paragrafoTemplate, bloco, participante);
+//			}
 
 			if (!CommonsUtil.semValor(participante.getPlexiConsultas())) {
 
