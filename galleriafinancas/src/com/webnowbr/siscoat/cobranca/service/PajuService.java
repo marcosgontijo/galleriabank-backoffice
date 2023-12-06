@@ -442,6 +442,8 @@ public class PajuService {
 								processaCertidaoTJSP_1Grau(plexiConsulta, certidoesPaju);
 							} else if (CommonsUtil.mesmoValor(plexiConsulta.getPlexiDocumentos().getId(), 42L)) {
 								processaCertidaoTRT2_PJe(plexiConsulta, bigData, certidoesPaju);
+							} else if (CommonsUtil.mesmoValor(plexiConsulta.getPlexiDocumentos().getId(), 35L)) {
+								processaCertidaoTRF3_PJe(plexiConsulta, bigData, certidoesPaju);
 							}
 							adicionaParagrafoPlexi(docTemplate, paragrafoDocumentoTemplate, blocoFilho, plexiConsulta,
 									certidoesPaju, bigData);
@@ -719,6 +721,70 @@ public class PajuService {
 		}
 	}
 
+
+	private void processaCertidaoTRF3_PJe(PlexiConsulta plexiConsulta, ProcessoResult bigData,
+			CertidoesPaju certidoesPaju) {
+
+		// faz leitura do PDF
+		if (CommonsUtil.mesmoValor(SiscoatConstants.CND_SITUACAO_POSSUI_DEBITOS,
+				plexiConsulta.getPlexiWebhookRetorno().getSituacao())) {
+			String texto = null;
+			try {
+				List<String> pdfLines = new ArrayList<>();
+//				List<AcaoJudicial> acoesBigData = bigData.getProcessoResumo().getTrabalhistaProtesto();
+				for (Object objProcesso : plexiConsulta.getPlexiWebhookRetorno().getProcessos()) {
+
+					for (Entry<String, String> valores : ((LinkedTreeMap<String, String>) objProcesso)
+							.entrySet()) {
+						if (valores.getKey().equals("numero")) {
+							final String numeroProcsso = CommonsUtil
+									.somenteNumeros(valores.getValue().toString());
+							AcaoJudicial acao = bigData.getAcaoJudicial(numeroProcsso);
+
+							if (acao != null) {
+//								acoesBigData.remove(acao);
+								String sLinha = "Processo: " + valores.getValue() + " - ";
+
+								ProcessoParte processoParte = acao.getParties().stream()
+										.filter(p -> CommonsUtil.mesmoValor(p.getType(), "CLAIMANT")).findFirst()
+										.orElse(null);
+								if (processoParte != null)
+									sLinha = sLinha + processoParte.getName();
+								sLinha = sLinha + " - Valor - " + CommonsUtil
+										.formataValorMonetario(CommonsUtil.bigDecimalValue(acao.getValue()), "");
+								pdfLines.add(sLinha);
+							} else {
+								String sLinha = "Processo: " + valores.getValue()
+										+ " - não listado na Consulta Processos";
+								pdfLines.add(sLinha);
+							}
+						}
+					}
+				}
+//				if (!CommonsUtil.semValor(acoesBigData))
+//					for (AcaoJudicial acao : acoesBigData) {
+//						if (!CommonsUtil.mesmoValor(acao.getNumber().substring(13, 14), "5"))
+//							continue;
+//						String sLinha = "Processo: " + CommonsUtil.formataNumeroProcesso(acao.getNumber()) + " - ";
+//						ProcessoParte processoParte = acao.getParties().stream()
+//								.filter(p -> CommonsUtil.mesmoValor(p.getType(), "CLAIMANT")).findFirst().orElse(null);
+//						if (processoParte != null)
+//							sLinha = sLinha + processoParte.getName();
+//						sLinha = sLinha + " - Valor - "
+//								+ CommonsUtil.formataValorMonetario(CommonsUtil.bigDecimalValue(acao.getValue()), "");
+//
+//						sLinha = sLinha + " - não listado na Consulta Plexi";
+//						pdfLines.add(sLinha);
+//					}
+				certidoesPaju.setDebitosDocumento(pdfLines);
+
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
 	private int getPosicaoLinha(List<String> pdfLines, String pequisa) {
 		int iPosicao = -1;
 		Optional<String> linhaLocalizada = pdfLines.stream()
@@ -833,6 +899,8 @@ public class PajuService {
 								processaCertidaoTJSP_1Grau(plexiConsulta, certidoesPaju);
 							} else if (CommonsUtil.mesmoValor(plexiConsulta.getPlexiDocumentos().getId(), 42L)) {
 								processaCertidaoTRT2_PJe(plexiConsulta, bigData, certidoesPaju);
+							} else if (CommonsUtil.mesmoValor(plexiConsulta.getPlexiDocumentos().getId(), 35L)) {
+								processaCertidaoTRF3_PJe(plexiConsulta, bigData, certidoesPaju);
 							}
 							adicionaParagrafoPlexi(docTemplate, paragrafoDocumentoTemplate, blocoFilho, plexiConsulta,
 									certidoesPaju, bigData);
