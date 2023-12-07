@@ -939,44 +939,47 @@
 										</p:selectOneRadio>
 									</h:panelGrid>
 								</h:panelGroup>
-								<h:panelGroup style=" width: 300px; display: block;">
-								<p:panel header="Porcentagem do imóvel" style="width: 80%">
-								
-								<h:panelGrid columns="2" styleClass="centro direita"  style="width: 90%">
-								
-								<p:outputLabel  value="Valor do imóvel: "/>
-								<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.valorMercadoImovel}"
-								converter="bigDecimalConverter"/>
-								<p:commandButton value="LTV 10%: " update="ComitePanelNovo" ajax="true" action="#{contratoCobrancaMB.objetoAnaliseComite.calcularValorParcela()}">
-								<f:setPropertyActionListener value="#{contratoCobrancaMB.valorMercadoImovelDez}" target="#{contratoCobrancaMB.objetoAnaliseComite.valorComite}"/>
-								</p:commandButton>
-								<p:outputLabel value="#{contratoCobrancaMB.valorMercadoImovelDez}"
-								converter="bigDecimalConverter"/>
-								<p:commandButton value="LTV 20%: " update="ComitePanelNovo" ajax="true" action="#{contratoCobrancaMB.objetoAnaliseComite.calcularValorParcela()}">
-								<f:setPropertyActionListener value="#{contratoCobrancaMB.valorMercadoImovelVinte}" target="#{contratoCobrancaMB.objetoAnaliseComite.valorComite}"/>
-								</p:commandButton>
-								<p:outputLabel value="#{contratoCobrancaMB.valorMercadoImovelVinte}"
-								converter="bigDecimalConverter"/>
-								<p:commandButton value="LTV 30%: " update="ComitePanelNovo" ajax="true" action="#{contratoCobrancaMB.objetoAnaliseComite.calcularValorParcela()}">
-								<f:setPropertyActionListener value="#{contratoCobrancaMB.valorMercadoImovelTrinta}" target="#{contratoCobrancaMB.objetoAnaliseComite.valorComite}"/>
-								</p:commandButton>
-								<p:outputLabel value="#{contratoCobrancaMB.valorMercadoImovelTrinta}"
-								converter="bigDecimalConverter"/>
-								<p:commandButton value="LTV 40%: " update="ComitePanelNovo" ajax="true" action="#{contratoCobrancaMB.objetoAnaliseComite.calcularValorParcela()}">
-								<f:setPropertyActionListener value="#{contratoCobrancaMB.valorMercadoImovelQuarenta}" target="#{contratoCobrancaMB.objetoAnaliseComite.valorComite}"/>
-								</p:commandButton>
-								<p:outputLabel value="#{contratoCobrancaMB.valorMercadoImovelQuarenta}"
-								converter="bigDecimalConverter">
-								</p:outputLabel>
-								<p:commandButton value="LTV 50%: " update="ComitePanelNovo" ajax="true" action="#{contratoCobrancaMB.objetoAnaliseComite.calcularValorParcela()}">
-								<f:setPropertyActionListener value="#{contratoCobrancaMB.valorMercadoImovelCinquenta}" target="#{contratoCobrancaMB.objetoAnaliseComite.valorComite}"/>
-								</p:commandButton>
-								<p:outputLabel value="#{contratoCobrancaMB.valorMercadoImovelCinquenta}"
-								converter="bigDecimalConverter"/>
-								</h:panelGrid>
-								</p:panel>
+								<h:panelGroup style=" width: 400px; display: block;">
+									<p:panel header="Porcentagem do imóvel" style="width: 80%%">
+
+										<h:panelGrid columns="3" styleClass="centro direita"
+											style="width: 90%">
+											<p:dataTable var="porcento"
+												value="#{contratoCobrancaMB.porcentagem}">
+												<p:column styleClass="centro" width="100px">
+													<p:outputLabel value="#{porcento.descricao}"
+														rendered="#{porcento.eBotao == false}" />
+													<p:commandButton rendered="#{porcento.eBotao == true}"
+														value="#{porcento.descricao}"
+														update="form:ComitePanelNovo" ajax="true"
+														action="#{contratoCobrancaMB.objetoAnaliseComite.calcularValorParcela()}">
+														<f:setPropertyActionListener
+															value="#{porcento.porcentagem}"
+															target="#{contratoCobrancaMB.objetoAnaliseComite.valorComite}" />
+													</p:commandButton>
+										
+												</p:column>
+												<p:column style="width: 45px">
+												<p:inputMask value="#{contratoCobrancaMB.porcentagemPersonalizada}" rendered="#{porcento.personalizado == true}"
+													mask="99" style="width: 50%">
+													<p:ajax event="blur" update="valorPorcentagem" listener="#{contratoCobrancaMB.calculaPorcentagemImovel()}"/>
+													</p:inputMask>
+													<p:outputLabel value="%" style="width: 50%" rendered="#{porcento.personalizado == true}"/>
+									
+												</p:column>
+												<p:column styleClass="direita" >
+													<p:outputLabel  value="#{porcento.porcentagem}"
+														converter="bigDecimalConverter" rendered="#{porcento.personalizado == false}"></p:outputLabel>
+														<p:outputLabel id="valorPorcentagem" value="#{porcento.porcentagem}"
+														converter="bigDecimalConverter" rendered="#{porcento.personalizado == true}"></p:outputLabel>
+												</p:column>
+
+
+											</p:dataTable>
+										</h:panelGrid>
+									</p:panel>
 								</h:panelGroup>
-								
+
 								<h:panelGroup
 									rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 7}">
 									<h:panelGrid columns="2">
