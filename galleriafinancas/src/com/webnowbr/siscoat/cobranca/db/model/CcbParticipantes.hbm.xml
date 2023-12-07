@@ -63,6 +63,12 @@
 			<column name="uniaoEstavel" not-null="true" default="false" />
 		</property>
 		
+		<many-to-one name="contratoCobranca"
+			class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca"
+			lazy="false">
+			<column name="contratoCobranca" />
+		</many-to-one>
+		
 	 <!-- -->
         
     </class>

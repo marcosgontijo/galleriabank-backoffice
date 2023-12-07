@@ -977,9 +977,6 @@
 								</p:panel>
 								</h:panelGroup>
 								
-								
-						
-
 								<h:panelGroup
 									rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 7}">
 									<h:panelGrid columns="2">
@@ -990,11 +987,6 @@
 											counterTemplate="{0} characters remaining."
 											autoResize="false"
 											value="#{contratoCobrancaMB.objetoContratoCobranca.processosQuitarComite}" />
-
-										<p:outputLabel for="operacaoFundo"
-											value="Operação vai pro Fundo? " styleClass="labelBold" />
-										<p:selectBooleanCheckbox id="operacaoFundo"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.operacaoFundo}" />
 									</h:panelGrid>
 								</h:panelGroup>
 

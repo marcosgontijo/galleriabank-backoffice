@@ -1163,6 +1163,14 @@
             <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.Averbacao" />
         </set>
         
+        <set name="listaParticipantes" table="CcbParticipantes" cascade="all-delete-orphan"
+                 lazy="false" fetch="select">
+            <key>
+                <column name="contratoCobranca" not-null="true" />
+            </key>
+            <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.CcbParticipantes" />
+        </set>
+        
         <property name="tipoCalculoInvestidor1" type="java.lang.String">
 			<column name="tipoCalculoInvestidor1" />
 		</property>
