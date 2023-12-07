@@ -130,6 +130,7 @@ import com.webnowbr.siscoat.cobranca.db.model.AnaliseComite;
 import com.webnowbr.siscoat.cobranca.db.model.Averbacao;
 import com.webnowbr.siscoat.cobranca.db.model.BoletoKobana;
 import com.webnowbr.siscoat.cobranca.db.model.CcbContrato;
+import com.webnowbr.siscoat.cobranca.db.model.CcbParticipantes;
 import com.webnowbr.siscoat.cobranca.db.model.CcbProcessosJudiciais;
 import com.webnowbr.siscoat.cobranca.db.model.ContasPagar;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
@@ -167,7 +168,9 @@ import com.webnowbr.siscoat.cobranca.db.model.Segurado;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankBaixa;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankBoleto;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankPix;
+import com.webnowbr.siscoat.cobranca.db.model.directd.PorcentagemImovel;
 import com.webnowbr.siscoat.cobranca.db.op.CcbDao;
+import com.webnowbr.siscoat.cobranca.db.op.CcbParticipantesDao;
 import com.webnowbr.siscoat.cobranca.db.op.CcbProcessosJudiciaisDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
@@ -5753,6 +5756,7 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca
 						.setDataUltimaAtualizacao(this.objetoContratoCobranca.getPajuAtualizadoData());
 				this.objetoContratoCobranca.setPajuAtualizadoUsuario(getNomeUsuarioLogado());
+				this.objetoContratoCobranca.setDataPajuComentado(this.objetoContratoCobranca.getPajuAtualizadoData());
 			}
 		}
 
@@ -9504,15 +9508,44 @@ public class ContratoCobrancaMB {
 		this.controleWhatsAppPreAprovado = false;
 		this.controleWhatsAppComite = false;
 	}
+	private List<PorcentagemImovel> porcentagem = new ArrayList<>();
+	private BigDecimal porcentagemPersonalizada = BigDecimal.ZERO;
 	public void calculaPorcentagemImovel() {
+		porcentagem = new ArrayList<>();
+		BigDecimal porcentagemLimite = new BigDecimal(100);
+		BigDecimal	valorSugerido = gerarRecomendacaoComite();
+		
+		if(porcentagemPersonalizada == null) {
+			porcentagemPersonalizada = BigDecimal.ZERO;
+		}
+		if( porcentagemPersonalizada.compareTo(porcentagemLimite) == 1) {
+			porcentagemPersonalizada = new BigDecimal(100);
+		}	
+		
+	
 		
 		  valorMercaoImovelPorcento = objetoContratoCobranca.getValorMercadoImovel().divide(new BigDecimal(100));
-		  valorMercadoImovelDez = valorMercaoImovelPorcento.multiply(new BigDecimal(10));
-		  valorMercadoImovelVinte = valorMercaoImovelPorcento.multiply(new BigDecimal(20));
-		  valorMercadoImovelTrinta = valorMercaoImovelPorcento.multiply(new BigDecimal(30));
-		  valorMercadoImovelQuarenta = valorMercaoImovelPorcento.multiply(new BigDecimal(40));
-		  valorMercadoImovelCinquenta = valorMercaoImovelPorcento.multiply(new BigDecimal(50));
+		  porcentagem.add(new PorcentagemImovel("Valor do imóvel: ", objetoContratoCobranca.getValorMercadoImovel(),false,false));
+		  porcentagem.add(new PorcentagemImovel("Recomendado:", valorSugerido, true,false ));
+		  porcentagem.add(new PorcentagemImovel("LTV 10%:", valorMercaoImovelPorcento.multiply(new BigDecimal(10)),true,false));
+		  porcentagem.add(new PorcentagemImovel("LTV 20%:", valorMercaoImovelPorcento.multiply(new BigDecimal(20)),true,false));
+		  porcentagem.add(new PorcentagemImovel("LTV 30%:", valorMercaoImovelPorcento.multiply(new BigDecimal(30)),true,false));
+		  porcentagem.add(new PorcentagemImovel("LTV 40%:", valorMercaoImovelPorcento.multiply(new BigDecimal(40)),true,false));
+		  porcentagem.add(new PorcentagemImovel("LTV 50%:", valorMercaoImovelPorcento.multiply(new BigDecimal(50)),true,false));
+		  if(porcentagemPersonalizada != null) {
+		  porcentagem.add(new PorcentagemImovel("Personalizado", valorMercaoImovelPorcento.multiply(porcentagemPersonalizada), true, true));
+		  } 
+		  porcentagemPersonalizada = BigDecimal.ZERO;
+		 
+	}
 
+
+	public List<PorcentagemImovel> getPorcentagem() {
+		return porcentagem;
+	}
+
+	public void setPorcentagem(List<PorcentagemImovel> porcentagem) {
+		this.porcentagem = porcentagem;
 	}
 
 	public String clearFieldsEditarPendentesAnalistas() {
@@ -9640,6 +9673,11 @@ public class ContratoCobrancaMB {
 		}
 
 		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Comite")) {
+			
+			calculaPorcentagemImovel();
+			gerarRecomendacaoComite();
+			objetoAnaliseComite.setValorComite(null);
+			
 			if (!this.objetoContratoCobranca.getListaAnaliseComite().isEmpty()) {
 				for (AnaliseComite comite : this.objetoContratoCobranca.getListaAnaliseComite()) {
 					User usuarioLogado = new User();
@@ -9653,15 +9691,13 @@ public class ContratoCobrancaMB {
 								this.objetoContratoCobranca.getQtdeVotosReprovadosComite().add(BigInteger.ONE));
 					}
 					if (CommonsUtil.mesmoValor(usuarioLogado.getLogin(), comite.getUsuarioComite())) {
-						comite.setValorComite(null);
+						//comite.setValorComite(null);
 						this.objetoAnaliseComite = comite;
+						this.objetoAnaliseComite.calcularValorParcela();
 					}
 				}
 			}
 			this.objetoContratoCobranca.setQtdeVotosNecessariosComite(definirQtdeVotoComite(this.objetoContratoCobranca));
-			calculaPorcentagemImovel();
-			gerarRecomendacaoComite();
-			objetoAnaliseComite.setValorComite(null);
 		}
 		
 		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. DOC")) {
@@ -9747,7 +9783,8 @@ public class ContratoCobrancaMB {
 		}
 	}
 
-	private void gerarRecomendacaoComite() {
+	private BigDecimal gerarRecomendacaoComite() {
+		BigDecimal valorSugerido = BigDecimal.ZERO;
 		objetoAnaliseComite.setTipoPessoa(objetoContratoCobranca.getPagador().getCpf());
 		objetoAnaliseComite.setTipoImovel(objetoContratoCobranca.getImovel().getTipo()); 
 		objetoAnaliseComite.setTipoOp(objetoContratoCobranca.getTipoOperacao());
@@ -9764,8 +9801,8 @@ public class ContratoCobrancaMB {
 		// !CommonsUtil.semValor(this.objetoContratoCobranca.getComentarioJuridico())){
 		// this.objetoAnaliseComite.setComentarioComite(this.objetoContratoCobranca.getComentarioJuridico());
 		// }
-	if (this.objetoAnaliseComite.getValorComite() == null) {
-		BigDecimal valorSugerido = BigDecimal.ZERO;
+
+		 valorSugerido = BigDecimal.ZERO;
 		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getImovel().getTipo(), "Apartamento")
 					|| CommonsUtil.mesmoValor(this.objetoContratoCobranca.getImovel().getTipo(), "Casa de Condomínio")
 					|| CommonsUtil.mesmoValor(this.objetoContratoCobranca.getImovel().getTipo(),
@@ -9807,8 +9844,10 @@ public class ContratoCobrancaMB {
 			}
 		}
 		
+	
+	return valorSugerido;
 	}
-	}
+	
 
 	public void gerarProcessosQuitarComite() {
 //		if (CommonsUtil.semValor(this.objetoContratoCobranca.getProcessosQuitarComite())) {
@@ -11216,6 +11255,9 @@ public class ContratoCobrancaMB {
 	private BigDecimal totalAVencer;
 
 	private BarChartModel stackedGroupBarModel;
+	private CcbParticipantes participanteSelecionado;
+	private CcbParticipantes socioCcbSelecionado;
+	private boolean addSocioCcb = false;
 
 	public void clearCRI1() {
 		this.somaContratos240 = BigDecimal.ZERO;
@@ -19089,8 +19131,7 @@ public class ContratoCobrancaMB {
 		this.pagadorSecundarioSelecionado.setPessoa(new PagadorRecebedor());
 	}
 
-	public void pesquisaSocio() {
-
+	public void pesquisaCcbSocio() {
 		this.tituloPagadorRecebedorDialog = "Sócios";
 		this.tipoPesquisaPagadorRecebedor = "Socio";
 		this.updatePagadorRecebedor = ":form:SociosPanel";
@@ -19105,6 +19146,10 @@ public class ContratoCobrancaMB {
 			this.socioSelecionado.setPessoa(this.selectedPagadorGenerico);
 		} else if (CommonsUtil.mesmoValor("Pagador", tipoPesquisaPagadorRecebedor)) {
 			this.pagadorSecundarioSelecionado.setPessoa(this.selectedPagadorGenerico);
+		} else if (CommonsUtil.mesmoValor("Participante", tipoPesquisaPagadorRecebedor)) {
+			this.participanteSelecionado.setPessoa(this.selectedPagadorGenerico);
+		} else if (CommonsUtil.mesmoValor("SocioCCB", tipoPesquisaPagadorRecebedor)) {
+			this.socioCcbSelecionado.setPessoa(this.selectedPagadorGenerico);
 		} else if (CommonsUtil.mesmoValor("Analise Documento", tipoPesquisaPagadorRecebedor)) {
 
 			if (!CommonsUtil.semValor(selectedPagadorGenerico.getNome())
@@ -20303,6 +20348,81 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.getListDatasVistoria().add(dataVistoriaSelecionada);
 		this.dataVistoriaSelecionada = new DataVistoria();
 	}
+	
+	public void clearParticipante() {
+		this.participanteSelecionado = new CcbParticipantes();
+		this.participanteSelecionado.setPessoa(new PagadorRecebedor());
+	}
+	
+	public void pesquisaParticipante() {
+		this.tituloPagadorRecebedorDialog = "Participante";
+		this.updatePagadorRecebedor = "participanteCCBDialogForm";
+		this.tipoPesquisaPagadorRecebedor = "Participante";
+	}
+	
+	public void concluirParticipante() {
+		CcbParticipantesDao ccbDao = new CcbParticipantesDao();
+		this.participanteSelecionado.setTipoOriginal(participanteSelecionado.getTipoParticipante());
+		this.objetoContratoCobranca.getListaParticipantes().add(this.participanteSelecionado);
+		criarPagadorRecebedorNoSistema(this.participanteSelecionado.getPessoa());
+		this.participanteSelecionado.setContratoCobranca(objetoContratoCobranca);
+		if(participanteSelecionado.getId() > 0)
+			ccbDao.merge(this.participanteSelecionado);
+		else 
+			ccbDao.create(this.participanteSelecionado);
+		this.participanteSelecionado = new CcbParticipantes();
+		this.participanteSelecionado.setPessoa(new PagadorRecebedor());
+	}
+	
+	public void editarParticipante(CcbParticipantes participante) {
+		this.participanteSelecionado = new CcbParticipantes();
+		this.setParticipanteSelecionado(participante);
+	}
+	
+	public void removerParticipante(CcbParticipantes participante) {
+		participante.setContratoCobranca(null);
+		this.objetoContratoCobranca.getListaParticipantes().remove(participante);
+	}
+	
+	public void clearSocioCcb() {
+		this.socioCcbSelecionado = new CcbParticipantes();
+		this.socioCcbSelecionado.setPessoa(new PagadorRecebedor());
+	}
+	
+	public void pesquisaSocioCcb() {
+		this.tituloPagadorRecebedorDialog = "Socio";
+		this.tipoPesquisaPagadorRecebedor = "SocioCCB";
+		this.updatePagadorRecebedor = ":participanteCCBDialogForm:SocioCcbsPanel ";
+	}
+	
+	public void concluirSocioCcb() {
+		CcbParticipantesDao ccbDao = new CcbParticipantesDao();
+		if(!participanteSelecionado.getSocios().contains(socioCcbSelecionado))
+			this.getParticipanteSelecionado().getSocios().add(socioCcbSelecionado); 
+		criarPagadorRecebedorNoSistema(this.socioCcbSelecionado.getPessoa());
+		if(socioCcbSelecionado.getId() > 0)
+			ccbDao.merge(this.socioCcbSelecionado);
+		else 
+			ccbDao.create(this.socioCcbSelecionado);
+		ccbDao.create(socioCcbSelecionado);
+		this.socioCcbSelecionado = new CcbParticipantes();
+		this.socioCcbSelecionado.setPessoa(new PagadorRecebedor());
+		this.addSocioCcb = false;
+	}
+	
+	public void editarSocioCcb(CcbParticipantes socio) {
+		this.addSocioCcb = true;
+		this.socioCcbSelecionado = new CcbParticipantes();
+		this.setSocioCcbSelecionado(socio);
+	}
+	
+	public void removerSocioCcb(CcbParticipantes socio) {
+		socio.setContratoCobranca(null);
+		participanteSelecionado.getSocios().remove(socio);
+	}
+	
+	
+	
 
 	public void criarPagadorRecebedorNoSistema(PagadorRecebedor pagador) {
 		PagadorRecebedor pagadorRecebedor = null;
@@ -34676,6 +34796,38 @@ public class ContratoCobrancaMB {
 
 	public void setValorMercadoImovelCinquenta(BigDecimal valorMercadoImovelCinquenta) {
 		this.valorMercadoImovelCinquenta = valorMercadoImovelCinquenta;
+	}
+
+	public CcbParticipantes getParticipanteSelecionado() {
+		return participanteSelecionado;
+	}
+
+	public void setParticipanteSelecionado(CcbParticipantes participanteSelecionado) {
+		this.participanteSelecionado = participanteSelecionado;
+	}
+
+	public CcbParticipantes getSocioCcbSelecionado() {
+		return socioCcbSelecionado;
+	}
+
+	public void setSocioCcbSelecionado(CcbParticipantes socioCcbSelecionado) {
+		this.socioCcbSelecionado = socioCcbSelecionado;
+	}
+
+	public boolean isAddSocioCcb() {
+		return addSocioCcb;
+	}
+
+	public void setAddSocioCcb(boolean addSocioCcb) {
+		this.addSocioCcb = addSocioCcb;
+	}	
+
+	public BigDecimal getPorcentagemPersonalizada() {
+		return porcentagemPersonalizada;
+	}
+
+	public void setPorcentagemPersonalizada(BigDecimal porcentagemPersonalizada) {
+		this.porcentagemPersonalizada = porcentagemPersonalizada;
 	}
 	
 }

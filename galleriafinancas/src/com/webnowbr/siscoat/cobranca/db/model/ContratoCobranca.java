@@ -171,6 +171,7 @@ public class ContratoCobranca implements Serializable {
 	private Set<AnaliseComite> listaAnaliseComite;
 	private Set<DataVistoria> listDatasVistoria;
 	private Set<Averbacao> listAverbacao;
+	private Set<CcbParticipantes> listaParticipantes = new HashSet<>();
 	
 	
 	// n�o persistida a lista abaixo
@@ -7417,6 +7418,14 @@ public class ContratoCobranca implements Serializable {
 
 	public void setDocumentosAnalisados(boolean documentosAnalisados) {
 		this.documentosAnalisados = documentosAnalisados;
+	}
+
+	public Set<CcbParticipantes> getListaParticipantes() {
+		return listaParticipantes;
+	}
+
+	public void setListaParticipantes(Set<CcbParticipantes> listaParticipantes) {
+		this.listaParticipantes = listaParticipantes;
 	}
 
 	

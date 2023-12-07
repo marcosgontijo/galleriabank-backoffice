@@ -202,6 +202,12 @@ public class ImpressoesPDFMB {
 
 //						os = new FileOutputStream(this.pathPDF + this.nome);
 
+						if (this.nome.contains("/")) {
+							context.addMessage(null,
+									new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro: Favor REMOVER '/' do campo NOME", ""));
+							return;
+						}
+						
 						relatorioByte = relatorioService.geraPdfFichaIndividual(new FichaIndividualRequest(
 								this.origemChamada, this.tipoPessoaIsFisica, this.nome, this.documento));
 
