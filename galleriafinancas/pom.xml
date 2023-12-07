@@ -413,5 +413,10 @@
 			<artifactId>debit-cliente</artifactId>
 			<version>1.0.1</version>
 		</dependency>
+		<dependency>
+            <groupId>br.com.galleriabank.laudoimovel.cliente</groupId>
+            <artifactId>laudoimovel-cliente</artifactId>
+            <version>1.0.0</version>
+        </dependency>
 	</dependencies>
 </project>

@@ -536,7 +536,7 @@ public class DocumentoAnalise implements Serializable {
 				    NumberFormat formatoMoeda = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
 				    String somaFormatada = formatoMoeda.format(soma);
 
-				    scr.add(new DocumentoAnaliseResumo("Carteira de Crédito Tomado:", somaFormatada));
+				    scr.add(new DocumentoAnaliseResumo("Limite de Crédito:", somaFormatada));
 				}
 			}
 			
