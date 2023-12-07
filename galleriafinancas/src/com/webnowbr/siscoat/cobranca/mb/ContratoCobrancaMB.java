@@ -167,6 +167,7 @@ import com.webnowbr.siscoat.cobranca.db.model.Segurado;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankBaixa;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankBoleto;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankPix;
+import com.webnowbr.siscoat.cobranca.db.model.directd.PorcentagemImovel;
 import com.webnowbr.siscoat.cobranca.db.op.CcbDao;
 import com.webnowbr.siscoat.cobranca.db.op.CcbProcessosJudiciaisDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
@@ -9504,15 +9505,43 @@ public class ContratoCobrancaMB {
 		this.controleWhatsAppPreAprovado = false;
 		this.controleWhatsAppComite = false;
 	}
+	private List<PorcentagemImovel> porcentagem = new ArrayList<>();
+	private BigDecimal porcentagemPersonalizada = BigDecimal.ZERO;
 	public void calculaPorcentagemImovel() {
+		porcentagem = new ArrayList<>();
+		BigDecimal porcentagemLimite = new BigDecimal(100);
+		BigDecimal	valorSugerido = gerarRecomendacaoComite();
+		
+		if(porcentagemPersonalizada == null) {
+			porcentagemPersonalizada = BigDecimal.ZERO;
+		}
+		if( porcentagemPersonalizada.compareTo(porcentagemLimite) == 1) {
+			porcentagemPersonalizada = new BigDecimal(100);
+		}	
+		
 		
 		  valorMercaoImovelPorcento = objetoContratoCobranca.getValorMercadoImovel().divide(new BigDecimal(100));
-		  valorMercadoImovelDez = valorMercaoImovelPorcento.multiply(new BigDecimal(10));
-		  valorMercadoImovelVinte = valorMercaoImovelPorcento.multiply(new BigDecimal(20));
-		  valorMercadoImovelTrinta = valorMercaoImovelPorcento.multiply(new BigDecimal(30));
-		  valorMercadoImovelQuarenta = valorMercaoImovelPorcento.multiply(new BigDecimal(40));
-		  valorMercadoImovelCinquenta = valorMercaoImovelPorcento.multiply(new BigDecimal(50));
+		  porcentagem.add(new PorcentagemImovel("Valor do imóvel: ", objetoContratoCobranca.getValorMercadoImovel(),false,false));
+		  porcentagem.add(new PorcentagemImovel("Recomendado:", valorSugerido, true,false ));
+		  porcentagem.add(new PorcentagemImovel("LTV 10%:", valorMercaoImovelPorcento.multiply(new BigDecimal(10)),true,false));
+		  porcentagem.add(new PorcentagemImovel("LTV 20%:", valorMercaoImovelPorcento.multiply(new BigDecimal(20)),true,false));
+		  porcentagem.add(new PorcentagemImovel("LTV 30%:", valorMercaoImovelPorcento.multiply(new BigDecimal(30)),true,false));
+		  porcentagem.add(new PorcentagemImovel("LTV 40%:", valorMercaoImovelPorcento.multiply(new BigDecimal(40)),true,false));
+		  porcentagem.add(new PorcentagemImovel("LTV 50%:", valorMercaoImovelPorcento.multiply(new BigDecimal(50)),true,false));
+		  if(porcentagemPersonalizada != null) {
+		  porcentagem.add(new PorcentagemImovel("Personalizado", valorMercaoImovelPorcento.multiply(porcentagemPersonalizada), true, true));
+		  } 
+		  porcentagemPersonalizada = BigDecimal.ZERO;
+		 
+	}
 
+
+	public List<PorcentagemImovel> getPorcentagem() {
+		return porcentagem;
+	}
+
+	public void setPorcentagem(List<PorcentagemImovel> porcentagem) {
+		this.porcentagem = porcentagem;
 	}
 
 	public String clearFieldsEditarPendentesAnalistas() {
@@ -9640,6 +9669,11 @@ public class ContratoCobrancaMB {
 		}
 
 		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Comite")) {
+			
+			calculaPorcentagemImovel();
+			gerarRecomendacaoComite();
+			objetoAnaliseComite.setValorComite(null);
+			
 			if (!this.objetoContratoCobranca.getListaAnaliseComite().isEmpty()) {
 				for (AnaliseComite comite : this.objetoContratoCobranca.getListaAnaliseComite()) {
 					User usuarioLogado = new User();
@@ -9653,15 +9687,13 @@ public class ContratoCobrancaMB {
 								this.objetoContratoCobranca.getQtdeVotosReprovadosComite().add(BigInteger.ONE));
 					}
 					if (CommonsUtil.mesmoValor(usuarioLogado.getLogin(), comite.getUsuarioComite())) {
-						comite.setValorComite(null);
+						//comite.setValorComite(null);
 						this.objetoAnaliseComite = comite;
+						this.objetoAnaliseComite.calcularValorParcela();
 					}
 				}
 			}
 			this.objetoContratoCobranca.setQtdeVotosNecessariosComite(definirQtdeVotoComite(this.objetoContratoCobranca));
-			calculaPorcentagemImovel();
-			gerarRecomendacaoComite();
-			objetoAnaliseComite.setValorComite(null);
 		}
 		
 		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. DOC")) {
@@ -9747,7 +9779,8 @@ public class ContratoCobrancaMB {
 		}
 	}
 
-	private void gerarRecomendacaoComite() {
+	private BigDecimal gerarRecomendacaoComite() {
+		BigDecimal valorSugerido = BigDecimal.ZERO;
 		objetoAnaliseComite.setTipoPessoa(objetoContratoCobranca.getPagador().getCpf());
 		objetoAnaliseComite.setTipoImovel(objetoContratoCobranca.getImovel().getTipo()); 
 		objetoAnaliseComite.setTipoOp(objetoContratoCobranca.getTipoOperacao());
@@ -9764,8 +9797,8 @@ public class ContratoCobrancaMB {
 		// !CommonsUtil.semValor(this.objetoContratoCobranca.getComentarioJuridico())){
 		// this.objetoAnaliseComite.setComentarioComite(this.objetoContratoCobranca.getComentarioJuridico());
 		// }
-	if (this.objetoAnaliseComite.getValorComite() == null) {
-		BigDecimal valorSugerido = BigDecimal.ZERO;
+
+		 valorSugerido = BigDecimal.ZERO;
 		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getImovel().getTipo(), "Apartamento")
 					|| CommonsUtil.mesmoValor(this.objetoContratoCobranca.getImovel().getTipo(), "Casa de Condomínio")
 					|| CommonsUtil.mesmoValor(this.objetoContratoCobranca.getImovel().getTipo(),
@@ -9807,8 +9840,10 @@ public class ContratoCobrancaMB {
 			}
 		}
 		
+	
+	return valorSugerido;
 	}
-	}
+	
 
 	public void gerarProcessosQuitarComite() {
 //		if (CommonsUtil.semValor(this.objetoContratoCobranca.getProcessosQuitarComite())) {
@@ -34676,6 +34711,14 @@ public class ContratoCobrancaMB {
 
 	public void setValorMercadoImovelCinquenta(BigDecimal valorMercadoImovelCinquenta) {
 		this.valorMercadoImovelCinquenta = valorMercadoImovelCinquenta;
+	}
+
+	public BigDecimal getPorcentagemPersonalizada() {
+		return porcentagemPersonalizada;
+	}
+
+	public void setPorcentagemPersonalizada(BigDecimal porcentagemPersonalizada) {
+		this.porcentagemPersonalizada = porcentagemPersonalizada;
 	}
 	
 }

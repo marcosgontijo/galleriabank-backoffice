@@ -173,8 +173,8 @@ public class CcbContrato implements Serializable{
     private List<CcbProcessosJudiciais> processosJucidiais; 
     private List<ContasPagar> despesasAnexo2;
     
-    private List<Segurado> listSegurados;
     
+    private List<Segurado> listSegurados;
     private ArrayList<UploadedFile> filesList = new ArrayList<UploadedFile>();
     
     private ContratoCobranca objetoContratoCobranca;
