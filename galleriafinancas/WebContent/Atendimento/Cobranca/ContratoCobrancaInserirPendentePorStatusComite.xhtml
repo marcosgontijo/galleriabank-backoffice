@@ -942,11 +942,11 @@
 								<h:panelGroup style=" width: 400px; display: block;">
 									<p:panel header="Porcentagem do imóvel" style="width: 80%%">
 
-										<h:panelGrid columns="2" styleClass="centro direita"
+										<h:panelGrid columns="3" styleClass="centro direita"
 											style="width: 90%">
 											<p:dataTable var="porcento"
 												value="#{contratoCobrancaMB.porcentagem}">
-												<p:column styleClass="centro" style="width: 50%; ">
+												<p:column styleClass="centro" width="100px">
 													<p:outputLabel value="#{porcento.descricao}"
 														rendered="#{porcento.eBotao == false}" />
 													<p:commandButton rendered="#{porcento.eBotao == true}"
@@ -957,14 +957,17 @@
 															value="#{porcento.porcentagem}"
 															target="#{contratoCobrancaMB.objetoAnaliseComite.valorComite}" />
 													</p:commandButton>
-													<p:inputText value="#{contratoCobrancaMB.porcentagemPersonalizada}" rendered="#{porcento.personalizado == true}"
-													size="20">
-													<p:ajax event="blur" update="valorPorcentagem" listener="#{contratoCobrancaMB.calculaPorcentagemImovel()}"/>
-													</p:inputText>
-													
-													
+										
 												</p:column>
-												<p:column styleClass="direita" style="width: 50%;">
+												<p:column style="width: 45px">
+												<p:inputMask value="#{contratoCobrancaMB.porcentagemPersonalizada}" rendered="#{porcento.personalizado == true}"
+													mask="99" style="width: 50%">
+													<p:ajax event="blur" update="valorPorcentagem" listener="#{contratoCobrancaMB.calculaPorcentagemImovel()}"/>
+													</p:inputMask>
+													<p:outputLabel value="%" style="width: 50%" rendered="#{porcento.personalizado == true}"/>
+									
+												</p:column>
+												<p:column styleClass="direita" >
 													<p:outputLabel  value="#{porcento.porcentagem}"
 														converter="bigDecimalConverter" rendered="#{porcento.personalizado == false}"></p:outputLabel>
 														<p:outputLabel id="valorPorcentagem" value="#{porcento.porcentagem}"

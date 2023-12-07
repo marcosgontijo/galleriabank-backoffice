@@ -9517,7 +9517,8 @@ public class ContratoCobrancaMB {
 		}
 		if( porcentagemPersonalizada.compareTo(porcentagemLimite) == 1) {
 			porcentagemPersonalizada = new BigDecimal(100);
-		}
+		}	
+		
 		
 		  valorMercaoImovelPorcento = objetoContratoCobranca.getValorMercadoImovel().divide(new BigDecimal(100));
 		  porcentagem.add(new PorcentagemImovel("Valor do imóvel: ", objetoContratoCobranca.getValorMercadoImovel(),false,false));
@@ -9796,7 +9797,7 @@ public class ContratoCobrancaMB {
 		// !CommonsUtil.semValor(this.objetoContratoCobranca.getComentarioJuridico())){
 		// this.objetoAnaliseComite.setComentarioComite(this.objetoContratoCobranca.getComentarioJuridico());
 		// }
-	if (this.objetoAnaliseComite.getValorComite() == null) {
+
 		 valorSugerido = BigDecimal.ZERO;
 		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getImovel().getTipo(), "Apartamento")
 					|| CommonsUtil.mesmoValor(this.objetoContratoCobranca.getImovel().getTipo(), "Casa de Condomínio")
@@ -9839,7 +9840,7 @@ public class ContratoCobrancaMB {
 			}
 		}
 		
-	}
+	
 	return valorSugerido;
 	}
 	
