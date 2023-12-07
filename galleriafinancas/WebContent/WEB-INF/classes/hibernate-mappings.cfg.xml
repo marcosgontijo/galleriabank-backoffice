@@ -55,6 +55,7 @@
 		 
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/DataEngine.hbm.xml"/>
        	<mapping resource="com/webnowbr/siscoat/cobranca/db/model/DocumentosAnalise.hbm.xml"/>
+       	<mapping resource="com/webnowbr/siscoat/cobranca/db/model/GravamesRea.hbm.xml"/>
        	
        	<mapping resource="com/webnowbr/siscoat/cobranca/ws/caf/CombateAFraude.hbm.xml"/>
        	<mapping resource="com/webnowbr/siscoat/cobranca/ws/caf/CombateAFraudeFiles.hbm.xml"/>

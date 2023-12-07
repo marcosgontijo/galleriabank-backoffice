@@ -202,6 +202,12 @@ public class ImpressoesPDFMB {
 
 //						os = new FileOutputStream(this.pathPDF + this.nome);
 
+						if (this.nome.contains("/")) {
+							context.addMessage(null,
+									new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro: Favor REMOVER '/' do campo NOME", ""));
+							return;
+						}
+						
 						relatorioByte = relatorioService.geraPdfFichaIndividual(new FichaIndividualRequest(
 								this.origemChamada, this.tipoPessoaIsFisica, this.nome, this.documento));
 
@@ -559,6 +565,18 @@ public class ImpressoesPDFMB {
 		return null;
 	}
 	
+	public byte[] geraPdfCadastroPagadorRecebedorNovo(PagadorRecebedor pagador) throws IOException {
+		RelatoriosService relatorioService = new RelatoriosService();
+		byte[] relatorioByte = null;
+		if(!CommonsUtil.semValor(pagador.getCpf())) 
+			this.tipoPessoaIsFisica = true;
+		else
+			this.tipoPessoaIsFisica = false;
+		relatorioByte = relatorioService.geraPdfFichaIndividual(
+			new FichaIndividualRequest("FichaIndividual",
+					this.tipoPessoaIsFisica, pagador.getNome(), pagador.getCpfCnpj()));
+		return relatorioByte;
+	}
 	/**
 	 * GERA CONTRATO DE PESSOA FISICA - CONJUGE COMO PRINCIPAL
 	 */

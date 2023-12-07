@@ -17,6 +17,10 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
+import javax.faces.model.SelectItem;
+
+import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
+import com.webnowbr.siscoat.cobranca.db.op.GravamesReaDao;
 import com.webnowbr.siscoat.cobranca.db.op.RelacionamentoPagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.mb.FileUploadMB.FileUploaded;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
@@ -25,6 +29,8 @@ import com.webnowbr.siscoat.cobranca.service.EngineService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.cobranca.service.ScrService;
 import com.webnowbr.siscoat.cobranca.vo.FileGenerator;
+import com.webnowbr.siscoat.cobranca.ws.endpoint.ReaWebhookRetorno;
+import com.webnowbr.siscoat.cobranca.ws.endpoint.ReaWebhookRetornoBloco;
 import com.webnowbr.siscoat.cobranca.ws.netrin.NetrinConsulta;
 import com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta;
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -101,6 +107,8 @@ public class DocumentoAnalise implements Serializable {
 	private List<String> estadosConsulta = new ArrayList<String>();
 	private String estadosConsultaStr;
 	
+	private Set<GravamesRea> gravamesRea = new HashSet<>();
+	
 	private boolean politicamenteExposta = false;
 	private boolean isPepVip = false;
 	private String pessoasPoliticamenteExpostas = "0";
@@ -128,6 +136,7 @@ public class DocumentoAnalise implements Serializable {
 	private boolean isInicioRelacionamentoInexistente = false;
 	private boolean isRiscoTotal20k = false;
 	private boolean isRiscoTotal50k = false;
+	private boolean isProtestoCenprotAvailable = false;
 	
 	private List<DocumentoAnaliseResumo> resumorelacionamentos;
 	
@@ -299,40 +308,41 @@ public class DocumentoAnalise implements Serializable {
 	}
 	
 	private void populaResumoEngine(EngineRetorno engine, List<DocumentoAnaliseResumo> result) {
-		EngineRetornoExecutionResultConsultaNegative engineRetorno = (engine.getDadosCadastraisPJ() != null) 
-				   													? engine.getDadosCadastraisPJ().getNegative()
-				   													: engine.getConsultaCompleta().getNegative();
-		
-		EngineRetornoExecutionResultProcessos processo = (engine.getDadosCadastraisPJ() != null) 
-														? engine.getProcessosPJ()
-														: engine.getProcessos();
-		
+		EngineRetornoExecutionResultConsultaNegative engineRetorno = (engine.getDadosCadastraisPJ() != null)
+				? engine.getDadosCadastraisPJ().getNegative()
+				: (engine.getConsultaCompleta() != null ? engine.getConsultaCompleta().getNegative() : null);
+
+		EngineRetornoExecutionResultProcessos processo = (engine.getDadosCadastraisPJ() != null)
+				? engine.getProcessosPJ()
+				: engine.getProcessos();
+
 		if (engine.getDadosCadastraisPJ() == null && engine.getConsultaCompleta() == null) {
 			result.add(new DocumentoAnaliseResumo("Score:", "Não disponivel"));
 			result.add(new DocumentoAnaliseResumo("Prob. Pag:", "Não disponivel"));
 		} else {
-			EngineRetornoExecutionResultConsultaQuodScore score = (engine.getDadosCadastraisPJ() != null) 
-																? engine.getDadosCadastraisPJ().getQuodScorePJ() 
-																: engine.getConsultaCompleta().getQuodScore();
-			
+			EngineRetornoExecutionResultConsultaQuodScore score = (engine.getDadosCadastraisPJ() != null)
+					? engine.getDadosCadastraisPJ().getQuodScorePJ()
+					: engine.getConsultaCompleta().getQuodScore();
+
 			result.add(new DocumentoAnaliseResumo("Score:", CommonsUtil.stringValue(score.getScore())));
-			
+
 			if (score.getScore() > 0 && score.getScore() < 450) {
 				isScoreBaixo450 = true;
 			} else if (score.getScore() > 451 && score.getScore() < 700) {
 				isScoreBaixo700 = true;
 			}
-			
-			
-			result.add(new DocumentoAnaliseResumo("Prob. Pag:", CommonsUtil.stringValue(score.getProbabilityOfPayment() + "%")));
+
+			result.add(new DocumentoAnaliseResumo("Prob. Pag:",
+					CommonsUtil.stringValue(score.getProbabilityOfPayment() + "%")));
 		}
 
-		if(engine.getDadosCadastraisPJ() == null && engine.getConsultaCompleta() == null) {
+		if (engine.getDadosCadastraisPJ() == null && engine.getConsultaCompleta() == null) {
 			result.add(new DocumentoAnaliseResumo("Pefin/Refin:", "Não disponível"));
-		} else {			
+		} else {
 			if (engineRetorno.getTotalApontamentos() > 0) {
-				result.add(new DocumentoAnaliseResumo("Pefin/Refin:", String.format("%,.2f", engineRetorno.getTotalValorApontamentos()) 
-						+ " (" + CommonsUtil.stringValue(engineRetorno.getTotalApontamentos()) + ")"));
+				result.add(new DocumentoAnaliseResumo("Pefin/Refin:",
+						String.format("%,.2f", engineRetorno.getTotalValorApontamentos()) + " ("
+								+ CommonsUtil.stringValue(engineRetorno.getTotalApontamentos()) + ")"));
 				if (engineRetorno.getTotalValorApontamentos().compareTo(new BigDecimal("1000.00")) > 0) {
 					isPefinRefinAvailable = true;
 				}
@@ -340,60 +350,64 @@ public class DocumentoAnalise implements Serializable {
 						.findFirst().orElse(null).getValue();
 			} else {
 				result.add(new DocumentoAnaliseResumo("Pefin/Refin:", "0"));
-			}	
+			}
 		}
 
-		if(engine.getDadosCadastraisPJ() == null && engine.getConsultaCompleta() == null) {
+		if (engine.getDadosCadastraisPJ() == null && engine.getConsultaCompleta() == null) {
 			result.add(new DocumentoAnaliseResumo("Protesto:", "Não disponível"));
-		} else {	
+		} else {
 			if (engineRetorno.getTotalProtests() > 0) {
-				result.add(new DocumentoAnaliseResumo("Protesto:", String.format("%,.2f", engineRetorno.getTotalValorProtests())
-						+ " (" + CommonsUtil.stringValue(engineRetorno.getTotalProtests()) + ")"));
+				result.add(new DocumentoAnaliseResumo("Protesto:",
+						String.format("%,.2f", engineRetorno.getTotalValorProtests()) + " ("
+								+ CommonsUtil.stringValue(engineRetorno.getTotalProtests()) + ")"));
 				isProtestosAvailable = true;
 				ressalvaProtestoNome = engine.getRequestFields().stream().filter(f -> f.getField().equals("nome"))
 						.findFirst().orElse(null).getValue();
 			} else {
 				result.add(new DocumentoAnaliseResumo("Protesto:", "0"));
-			}		
+			}
 		}
 
-		if(engine.getDadosCadastraisPJ() == null && engine.getConsultaCompleta() == null) {
+		if (engine.getDadosCadastraisPJ() == null && engine.getConsultaCompleta() == null) {
 			result.add(new DocumentoAnaliseResumo("Cheque sem fundo:", "Não disponível"));
 		} else {
 			if (engineRetorno.getTotalCcfApontamentos() > 0) {
-				result.add(new DocumentoAnaliseResumo("Cheque sem fundo:", CommonsUtil.stringValue(engineRetorno.getTotalCcfApontamentos())));
+				result.add(new DocumentoAnaliseResumo("Cheque sem fundo:",
+						CommonsUtil.stringValue(engineRetorno.getTotalCcfApontamentos())));
 				isCcfApontamentosAvailable = true;
 				ressalvaCcfNome = engine.getRequestFields().stream().filter(f -> f.getField().equals("nome"))
 						.findFirst().orElse(null).getValue();
 			} else {
 				result.add(new DocumentoAnaliseResumo("Cheque sem fundo:", "0"));
-			}			
+			}
 		}
 
-		if(engine.getDadosCadastraisPJ() == null && engine.getConsultaCompleta() == null) {
+		if (engine.getDadosCadastraisPJ() == null && engine.getConsultaCompleta() == null) {
 			result.add(new DocumentoAnaliseResumo("Ações Judiciais:", "Não disponível"));
 		} else {
 			if (engineRetorno.getTotalLawSuitApontamentos() > 0) {
-				result.add(new DocumentoAnaliseResumo("Ações Judiciais:", String.format("%,.2f", engineRetorno.getTotalValorLawSuitApontamentos()) 
-						+ " (" + CommonsUtil.stringValue(engineRetorno.getTotalLawSuitApontamentos()) + ")"));
-				
+				result.add(new DocumentoAnaliseResumo("Ações Judiciais:",
+						String.format("%,.2f", engineRetorno.getTotalValorLawSuitApontamentos()) + " ("
+								+ CommonsUtil.stringValue(engineRetorno.getTotalLawSuitApontamentos()) + ")"));
+
 			} else {
 				result.add(new DocumentoAnaliseResumo("Ações Judiciais:", "0"));
-			}				
+			}
 		}
-		
+
 		if (engine.getDadosCadastraisPJ() != null && engine.getConsultaCompleta() == null) {
 			if (engine.getDadosCadastraisPJ().getBestInfo() == null) {
 				result.add(new DocumentoAnaliseResumo("Situação Cadastral:", "Nada consta"));
 			}
-			result.add(new DocumentoAnaliseResumo("Situação Cadastral:", engine.getDadosCadastraisPJ().getBestInfo().getCompanyStatus()));
+			result.add(new DocumentoAnaliseResumo("Situação Cadastral:",
+					engine.getDadosCadastraisPJ().getBestInfo().getCompanyStatus()));
 		}
-		
+
 		if (processo == null) {
 			result.add(new DocumentoAnaliseResumo("Nº de processos judiciais:", "Não disponível"));
 		} else {
-			result.add(new DocumentoAnaliseResumo("Nº de processos judiciais:",
-					CommonsUtil.stringValue(processo.getTotal_acoes_judicias_reu() + engineRetorno.getTotalLawSuitApontamentos())));
+			result.add(new DocumentoAnaliseResumo("Nº de processos judiciais:", CommonsUtil.stringValue(
+					processo.getTotal_acoes_judicias_reu() + engineRetorno.getTotalLawSuitApontamentos())));
 
 			if (processo.getTotal_acoes_judicias_reu() + engineRetorno.getTotalLawSuitApontamentos() > 0) {
 				contemAcoesEngine = true;
@@ -401,45 +415,46 @@ public class DocumentoAnalise implements Serializable {
 						.findFirst().orElse(null).getValue();
 			}
 		}
-		
-		if(engine.getConsultaCompleta() != null && engine.getDadosCadastraisPJ() == null) {
-			if(engine.getConsultaCompleta() == null) {
+
+		if (engine.getConsultaCompleta() != null && engine.getDadosCadastraisPJ() == null) {
+			if (engine.getConsultaCompleta() == null) {
 				result.add(new DocumentoAnaliseResumo("Participação em empresas:", "Não disponível"));
 			} else {
 				if (engine.getConsultaCompleta().getEnterpriseData().getPartnership() != null) {
-					result.add(new DocumentoAnaliseResumo("Participação em empresas:", 
-							CommonsUtil.stringValue(engine.getConsultaCompleta().getEnterpriseData().getPartnership().getPartnerships().size())));
+					result.add(new DocumentoAnaliseResumo("Participação em empresas:", CommonsUtil.stringValue(engine
+							.getConsultaCompleta().getEnterpriseData().getPartnership().getPartnerships().size())));
 				} else {
 					result.add(new DocumentoAnaliseResumo("Participação em empresas:", "0"));
 				}
 			}
 
-			if(engine.getConsultaCompleta() == null) {
+			if (engine.getConsultaCompleta() == null) {
 				result.add(new DocumentoAnaliseResumo("PEP ou VIP:", "Não disponível"));
 			} else {
 				if (CommonsUtil.mesmoValor(engine.getConsultaCompleta().getErrorMessage(), "Cliente PEP ou VIP")) {
 					result.add(new DocumentoAnaliseResumo("PEP ou VIP:", "Sim"));
 				} else {
 					result.add(new DocumentoAnaliseResumo("PEP ou VIP:", "Não"));
-				}	
+				}
 			}
-			
-			if(engine.getConsultaCompleta() == null) {
+
+			if (engine.getConsultaCompleta() == null) {
 				result.add(new DocumentoAnaliseResumo("PEP Relacionado:", "Não disponível"));
 			} else {
 				if (engine.getPep()) {
 					result.add(new DocumentoAnaliseResumo("PEP Relacionado:", "Sim"));
 				} else {
-					result.add(new DocumentoAnaliseResumo("PEP Relacionado:", "Não"));				
-					}	
-			}			
+					result.add(new DocumentoAnaliseResumo("PEP Relacionado:", "Não"));
+				}
+			}
 
 			if (engine.getConsultaAntecedenteCriminais() == null) {
 				result.add(new DocumentoAnaliseResumo("Antecedentes criminais:", "Não disponível"));
 			} else {
 				EngineRetornoExecutionResultAntecedenteCriminaisEvidences mensagem = engine
 						.getConsultaAntecedenteCriminais().getEvidences();
-				result.add(new DocumentoAnaliseResumo("Antecedentes criminais:",  (mensagem.getMessage() != null) ? mensagem.getMessage() : "Nada consta"));
+				result.add(new DocumentoAnaliseResumo("Antecedentes criminais:",
+						(mensagem.getMessage() != null) ? mensagem.getMessage() : "Nada consta"));
 			}
 		}
 	}
@@ -460,8 +475,8 @@ public class DocumentoAnalise implements Serializable {
 					String valorEstado = CommonsUtil.stringValue(String.format("%,.2f", estado.getValorTotal())) + " (" + estado.getQuantidadeTotal()
 							+ ") ";
 					cenprot.add(new DocumentoAnaliseResumo(estado.getEstado(), valorEstado));
-
 				}
+				isProtestoCenprotAvailable = true;
 			}
 		}
 
@@ -521,7 +536,7 @@ public class DocumentoAnalise implements Serializable {
 				    NumberFormat formatoMoeda = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
 				    String somaFormatada = formatoMoeda.format(soma);
 
-				    scr.add(new DocumentoAnaliseResumo("Carteira de Crédito Tomado:", somaFormatada));
+				    scr.add(new DocumentoAnaliseResumo("Limite de Crédito:", somaFormatada));
 				}
 			}
 			
@@ -958,6 +973,25 @@ public class DocumentoAnalise implements Serializable {
 			listaArquivos.put(nomeArquivo, pdfBytes);
 		}
 		return listaArquivos;
+	}
+	
+	public List<SelectItem>motivosAnalise(){
+		List<SelectItem> motivos = new ArrayList<SelectItem>();
+		motivos.add(new SelectItem("Proprietario Atual","Proprietario Atual"));
+		motivos.add(new SelectItem("Proprietario Anterior","Proprietario Anterior"));
+		motivos.add(new SelectItem("Comprador","Comprador"));
+		if(CommonsUtil.mesmoValor(tipoPessoa, "PJ")) {
+			motivos.add(new SelectItem("Empresa Vinculada ao Proprietario Atual","Empresa Vinculada ao Proprietario Atual"));
+			motivos.add(new SelectItem("Empresa Vinculada ao Proprietario Anterior","Empresa Vinculada ao Proprietario Anterior"));
+			motivos.add(new SelectItem("Empresa Vinculada ao Comprador","Empresa Vinculada ao Comprador"));
+			motivos.add(new SelectItem("Empresa Vinculada ao Sócio Vinculado ao Proprietario Atual","Empresa Vinculada ao Sócio Vinculado ao Proprietario Atual"));
+		} else if(CommonsUtil.mesmoValor(tipoPessoa, "PF")) {
+			motivos.add(new SelectItem("Sócio Vinculado ao Proprietario Atual","Sócio Vinculado ao Proprietario Atual"));
+			motivos.add(new SelectItem("Sócio Vinculado ao Proprietario Anterior","Sócio Vinculado ao Proprietario Anterior"));
+			motivos.add(new SelectItem("Sócio Vinculado ao Comprador","Sócio Vinculado ao Comprador"));
+		}
+		motivos.add(new SelectItem("Matricula para consulta","Matricula para consulta"));
+		return motivos;
 	}
 	
 	@Override
@@ -1446,5 +1480,21 @@ public class DocumentoAnalise implements Serializable {
 
 	public void setScoreBaixo700(boolean isScoreBaixo700) {
 		this.isScoreBaixo700 = isScoreBaixo700;
+	}
+
+	public boolean isProtestoCenprotAvailable() {
+		return isProtestoCenprotAvailable;
+	}
+
+	public void setProtestoCenprotAvailable(boolean isProtestoCenprotAvailable) {
+		this.isProtestoCenprotAvailable = isProtestoCenprotAvailable;
+	}
+
+	public Set<GravamesRea> getGravamesRea() {
+		return gravamesRea;
+	}
+
+	public void setGravamesRea(Set<GravamesRea> gravamesRea) {
+		this.gravamesRea = gravamesRea;
 	}
 }

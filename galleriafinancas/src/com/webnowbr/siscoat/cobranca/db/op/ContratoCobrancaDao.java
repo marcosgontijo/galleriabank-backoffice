@@ -4713,6 +4713,10 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					query_RELATORIO_FINANCEIRO_CUSTOM += QUERY_RELATORIO_FINANCEIRO_DIA_CRI_4;		
 				}
 				
+				if (tipoContratoCobrancaFinanceiroDia.equals("EspelhamentoCRI5")) {
+					query_RELATORIO_FINANCEIRO_CUSTOM += QUERY_RELATORIO_FINANCEIRO_DIA_CRI_5;		
+				}
+				
 				try {
 					connection = getConnection();
 
@@ -6931,17 +6935,17 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 
 					String query = QUERY_CONTRATOS_PENDENTES_CONSULTA;
 					
-					String queryResponsavel = " res.codigo = '" + codResponsavel + "' ";
+					String queryResponsavel = " '" + codResponsavel + "' ";
 					
 					if (listResponsavel.size() > 0) {
 						for (Responsavel resp : listResponsavel) {
 							if (!resp.getCodigo().equals("")) { 
-								queryResponsavel = queryResponsavel + " or res.codigo = '" + resp.getCodigo() + "' ";
+								queryResponsavel = queryResponsavel + ",'" + resp.getCodigo() + "'";
 							}
 						}				
 					} 
 				
-					query = query + " where  " + queryResponsavel + " ";
+					query = query + " where  ( res.codigo in ( " + queryResponsavel + ") or  gerente.codigo in ( " + queryResponsavel + ") )";
 					
 					/*query = query + "  group by coco.id, numeroContrato, datacontrato, quantoPrecisa, res.nome, pare.nome, gerente.nome, res.superlogica,"
 							+ "	statuslead, inicioAnalise, cadastroAprovadoValor, matriculaAprovadaValor, pagtoLaudoConfirmada, "
@@ -9233,7 +9237,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						Date data = rs.getDate("ContratoResgatadoData");
 						boolean baixar = true;
 						if (rs.getBoolean("ContratoResgatadoBaixar")) {
-							if (getDifferenceDays(data, auxDataHoje) <= 15) {
+							if (DateUtil.getDifferenceDays(data, auxDataHoje) <= 15) {
 								baixar = false;
 							}
 						}
@@ -9350,12 +9354,6 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			}
 		});	
 	}	
-	
-	public static long getDifferenceDays(Date d1, Date d2) {
-	    long diff = d2.getTime() - d1.getTime();
-	    diff = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
-	    return diff;
-	}
 	
 	private static final String QUERY_CONTRATOS_DO_PAGADOR =  "select c2.id , r.id rId "
 			+ " 	from cobranca.contratocobranca c "

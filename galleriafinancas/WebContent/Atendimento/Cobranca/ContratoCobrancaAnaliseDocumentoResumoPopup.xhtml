@@ -31,8 +31,7 @@
 				value="#{contratoCobrancaMB.documentoAnalisePopup.dialogHeader}" />
 		</f:facet>
 		<h:form id="resumoConsutlasForm">
-		
-		<h:panelGrid columns="1" rendered="#{contratoCobrancaMB.documentoAnalisePopup.resumoRelacionamentos.size() > 0}">
+			<h:panelGrid columns="1" rendered="#{contratoCobrancaMB.documentoAnalisePopup.resumoRelacionamentos.size() > 0}">
 				<p:panel style="justify-content:start;">
 					<f:facet name="header">
 						<h:outputText value="Relacionamentos" />
@@ -45,8 +44,6 @@
 							<p:column>
 								<h:outputText value="#{relacionamentos.valor}"  style="text-transform:uppercase"/>
 							</p:column>
-
-
 						</p:dataTable>
 					</f:facet>
 				</p:panel>
@@ -59,7 +56,6 @@
 					<f:facet name="header">
 						<h:outputText value="Engine" />
 					</f:facet>
-
 					<p:dataTable id="resumocliente" var="engine"
 						rendered="#{contratoCobrancaMB.documentoAnalisePopup != null  and contratoCobrancaMB.documentoAnalisePopup.resumoEngine != null }"
 						value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoEngine()}">
@@ -69,7 +65,6 @@
 						<p:column>
 							<h:outputText value="#{engine.valor}"></h:outputText>
 						</p:column>
-
 					</p:dataTable>
 				</p:panel>
 
@@ -103,7 +98,6 @@
 							</p:column>
 						</p:dataTable>
 					</f:facet>
-
 				</p:panel>
 
 				<p:panel style="justify-content:start;">
@@ -118,8 +112,6 @@
 							<p:column>
 								<h:outputText value="#{Cenprot.valor}" />
 							</p:column>
-
-
 						</p:dataTable>
 					</f:facet>
 				</p:panel>
@@ -138,16 +130,59 @@
 							</p:column>
 						</p:dataTable>
 					</f:facet>
-
 				</p:panel>
-
-
-
-
 			</h:panelGrid>
+		</h:form>
+	</p:dialog>
 
-			
-
+	<p:dialog id="gravamesDialogHeader" widgetVar="gravamesDialog"
+		showEffect="fade" hideEffect="fade" resizable="false"  styleClass="overflowy" 
+		responsive="false" width="1000"  positionType="center center" 
+		closable="true" update="true">
+		<f:facet name="header">
+			<h:outputText value="Gravames Abertos" />
+		</f:facet>
+		<h:form id="gravamesForm">
+			<p:panel>
+				<p:dataTable id="resumocliente" 
+					value="#{contratoCobrancaMB.documentoAnalisePopup.gravamesRea}" var="gravames"
+					emptyMessage="" rows="10" paginator="true"
+	                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+	                currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+	                rowsPerPageTemplate="10,20,40,100">
+					<p:column>
+						<h:outputText value="#{gravames.numeroSequencia}"></h:outputText>
+					</p:column>
+					<p:column>
+						<h:outputText value="#{gravames.statusFechamentoGravame}"></h:outputText>
+					</p:column>
+					<p:column>
+						<h:outputText value="#{gravames.nomeClassificacao}"></h:outputText>
+					</p:column>
+					<p:column  style="text-align: center; width:25px">
+						<p:commandButton oncomplete="PF('textoDialog').show()"
+							icon="pi pi-eye" update="textoDialogHeader" ajax="true"
+							style="TEXT-DECORATION: bold;">
+							<f:setPropertyActionListener value="#{gravames}"
+								target="#{contratoCobrancaMB.gravamePopup}">
+							</f:setPropertyActionListener>
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+	</p:dialog>
+	
+	<p:dialog id="textoDialogHeader" widgetVar="textoDialog" 
+		width="1000" positionType="center center" closable="true" >
+		<f:facet name="header">
+			<h:outputText value="Texto" />
+		</f:facet>
+		<h:form id="textoForm">
+			<p:panel>
+				<h:outputText value="#{contratoCobrancaMB.gravamePopup.texto}">
+				</h:outputText>
+			</p:panel>
 		</h:form>
 	</p:dialog>
 
@@ -306,6 +341,70 @@
 	</p:dialog>
 
 	<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
+		<p:dialog header="Documentos REA" id="documentosReaDlgId"
+			widgetVar="documentosReaDlg" 
+			resizable="true" responsive="true" width="1000" closable="true" ajax="true">
+			
+			<h:form id="documentosAnaliseReaForm">
+				<div align="center">
+					<p:dataTable id="dtFilesAnalise" var="fileAnalise"
+						value="#{contratoCobrancaMB.listaDocumentoAnaliseRea}"
+						emptyMessage="" rows="10" paginator="true"
+		                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+		                currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+		                rowsPerPageTemplate="10,20,40,100">
+						<p:column headerText="Liberado Análise" style="text-align: center; width:3rem">
+							<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"
+								rendered="#{!fileAnalise.isAnaliseBloqueada()}"
+								onLabel="Sim" offLabel="Não" style="width:3rem">
+								<p:ajax event="change" update="documentosAnaliseReaForm form:dtFilesAnalise"
+									listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
+							</p:selectBooleanButton>
+						</p:column>
+	
+						<p:column style="text-align: center; width:6rem" headerText="Identificação"
+							filterBy="#{fileAnalise.identificacao}"
+							filterMatchMode="contains" sortBy="#{fileAnalise.identificacao}">
+	
+							<h:outputText value="#{fileAnalise.identificacao}"
+								rendered="#{fileAnalise.podeChamarRea}" />
+							<h:outputText
+								value="#{fileAnalise.identificacao} #{fileAnalise.cnpjcpf} "
+								rendered="#{!fileAnalise.podeChamarRea}" />
+							<p:spacer height="10" />
+							<h:outputText
+								value="#{fileAnalise.pagador.estado}" />
+							<p:spacer height="10" />
+						</p:column>
+	
+						<p:column style="text-align: center; width:9rem" headerText="Motivo">
+							<p:selectOneMenu
+								value="#{fileAnalise.motivoAnalise}"
+								label="Tipo" style="width:250px;">
+								<f:selectItem itemValue="" itemLabel="Selecione o motivo" />
+								<f:selectItems value="#{fileAnalise.motivosAnalise()}" />
+								<p:ajax event="change" update="documentosAnaliseReaForm"/>
+							</p:selectOneMenu>
+						</p:column>
+	
+						<p:column style="text-align: center; width:4rem" headerText="Observação"
+							filterMatchMode="contains">
+							<h:outputText value="#{fileAnalise.observacao}" />
+						</p:column>
+						<shiro:hasAnyRoles name="ROOT">
+							<p:column style="text-align: center; width:2rem;padding: 0; border:0; " headerText="Estados"  >
+								<p:dataList id="estadosList" value="#{fileAnalise.estadosConsulta}" var="estado" 
+									type="definition">
+								</p:dataList>
+							</p:column>
+						</shiro:hasAnyRoles>
+					</p:dataTable>
+				</div>
+			</h:form>
+		</p:dialog>
+	</shiro:hasAnyRoles>
+
+	<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
 		<p:dialog header="Adicionar pessoa Analise" overflow="auto"
 			id="dialogAdicionarPessoaAnalise"
 			widgetVar="adicionarPessoaAnaliseDlg" resizable="true"
@@ -345,20 +444,7 @@
 							value="#{contratoCobrancaMB.documentoAnaliseAdicionar.motivoAnalise}"
 							label="Tipo" style="width:250px;">
 							<f:selectItem itemValue="" itemLabel="Selecione o motivo" />
-							<f:selectItem itemLabel="Proprietario Atual"
-								itemValue="Proprietario Atual" />
-							<f:selectItem itemLabel="Proprietario Anterior"
-								itemValue="Proprietario Anterior" />
-							<f:selectItem itemLabel="Comprador"
-								itemValue="Comprador" />
-							<f:selectItem itemLabel="Empresa Vinculada ao Proprietario Atual"
-								itemValue="Empresa Vinculada ao Proprietario Atual" />
-							<f:selectItem
-								itemLabel="Empresa Vinculada ao Proprietario Anterior"
-								itemValue="Empresa Vinculada ao Proprietario Anterior" />
-							<f:selectItem
-								itemLabel="Empresa vinculada ao Comprador"
-								itemValue="Empresa vinculada ao Comprador" />
+							<f:selectItems value="#{contratoCobrancaMB.documentoAnaliseAdicionar.motivosAnalise()}" />
 						</p:selectOneMenu>
 					</h:panelGrid>
 					<h:panelGrid columns="2" style="text-align:center">
@@ -561,5 +647,34 @@
 				</h:form>
 			</p:dialog>	
 		</shiro:hasAnyRoles>
+		<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
+		<p:dialog header="Editar pessoa Analise" overflow="auto"
+			id="dialogEditarPessoaAnalise"
+			widgetVar="editarPessoaAnaliseDlg" resizable="true"
+			style="FONT-SIZE: 13pt;" width="800" minWidth="800">
+			<h:form id="adicionarPessoaAnaliseEditarForm">
+				<div align="center">
+					<h:panelGrid columns="2">
+						<h:outputText value="Motivo" />
+						<p:selectOneMenu
+							value="#{contratoCobrancaMB.objetoDocumentoAnalise.motivoAnalise}"
+							label="Tipo" style="width:250px;">
+							<f:selectItem itemValue="" itemLabel="Selecione o motivo" />
+							<f:selectItems value="#{contratoCobrancaMB.objetoDocumentoAnalise.motivosAnalise()}" />
+						</p:selectOneMenu>
+					</h:panelGrid>
+					<h:panelGrid columns="2" style="text-align:center">
+							<p:commandButton value="Salvar" icon="ui-icon-check"
+								action="#{contratoCobrancaMB.salvaAlteraçõesDocumentoAnálise}"
+								update=":form:dtFilesAnalise"
+								onclick="PF('editarPessoaAnaliseDlg').hide();" />
+	
+							<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
+								onclick="PF('editarPessoaAnaliseDlg').hide();" />
+						</h:panelGrid>
+					</div>
+				</h:form>
+			</p:dialog>
+			</shiro:hasAnyRoles>
 	
 </ui:composition>

@@ -271,11 +271,11 @@ public class RelatoriosService {
 			/*
 			 * Configuração inicial do PDF - Cria o documento tamanho A4, margens de 2,54cm
 			 */
-			if (fichaIndividualRequest.getNome().contains("/")) {
-				context.addMessage(null,
-						new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro: Favor REMOVER '/' do campo NOME", ""));
-				return null;
-			}
+//			if (fichaIndividualRequest.getNome().contains("/")) {
+//				context.addMessage(null,
+//						new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro: Favor REMOVER '/' do campo NOME", ""));
+//				return null;
+//			}
 
 			doc = new Document(PageSize.A4, 10, 10, 10, 10);
 

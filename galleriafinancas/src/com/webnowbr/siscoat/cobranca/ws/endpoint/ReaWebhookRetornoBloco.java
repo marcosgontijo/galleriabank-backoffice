@@ -7,6 +7,7 @@ public class ReaWebhookRetornoBloco {
 	public Integer numeroPagina;
 	public Integer numeroSequencia;
 	public boolean relacionadoAoProprietarioAtual;
+	public String statusFechamentoGravame;
 
 	public ReaWebhookRetornoBlocoConteudo getConteudo() {
 		return conteudo;
@@ -56,4 +57,11 @@ public class ReaWebhookRetornoBloco {
 		this.relacionadoAoProprietarioAtual = relacionadoAoProprietarioAtual;
 	}
 
+	public String getStatusFechamentoGravame() {
+		return statusFechamentoGravame;
+	}
+
+	public void setStatusFechamentoGravame(String statusFechamentoGravame) {
+		this.statusFechamentoGravame = statusFechamentoGravame;
+	}
 }

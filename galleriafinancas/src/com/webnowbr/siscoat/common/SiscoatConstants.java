@@ -78,4 +78,9 @@ public class SiscoatConstants {
 	
 	public static int HTTP_COD_SUCESSO = 200;
 
+	public static final String CND_SITUACAO_POSSUI_DEBITOS = "Possui débitos";
+	public static final String CND_SITUACAO_NAO_POSSUI_DEBITOS = "Não possui débitos";
+	public static final String CND_SITUACAO_ERRO_AO_CONSULTAR = "Problemas ao consultar certidão";
+	
+
 }

@@ -47,6 +47,16 @@ public class ReaWebhookRetorno {
 			}
 		} 
 	}
+	
+	public List<ReaWebhookRetornoBloco> buscaGravameAbertos() {
+		List<ReaWebhookRetornoBloco> blocosGravameAberto = new ArrayList<ReaWebhookRetornoBloco>();
+		blocosGravameAberto = blocos.stream()
+				.filter(b -> !CommonsUtil.semValor(b.getStatusFechamentoGravame())
+						&& CommonsUtil.mesmoValor(b.getStatusFechamentoGravame(), "GRAVAME_ABERTO")
+				).sorted(Comparator.comparingInt(ReaWebhookRetornoBloco::getNumeroSequencia).reversed())
+				.collect(Collectors.toList());
+		return blocosGravameAberto;
+	}
 
 //	private ReaWebhookRetornoBloco getProprietarioAtual() {
 //		ReaWebhookRetornoBloco proprietarioAtual = blocos.stream()

@@ -955,10 +955,12 @@ public class KobanaMB {
 		jsonBoleto.put("fine_type", 1);
 		
 		if (parcela != null) {
-			if (parcela.getDataVencimento().before(getDataHoje())) {
-				jsonBoleto.put("fine_type", 0);
-			} else {
-				jsonBoleto.put("fine_type", 1);
+			if (parcela.getDataVencimento() != null) {
+				if (parcela.getDataVencimento().before(DateUtil.getDataHoje())) {
+					jsonBoleto.put("fine_type", 0);
+				} else {
+					jsonBoleto.put("fine_type", 1);
+				}
 			}
 			
 			/*
@@ -1368,10 +1370,12 @@ public class KobanaMB {
 		jsonBoleto.put("fine_type", 1);
 		
 		if (parcela != null) {
-			if (parcela.getDataVencimento().before(getDataHoje())) {
-				jsonBoleto.put("fine_type", 0);
-			} else {
-				jsonBoleto.put("fine_type", 1);
+			if (parcela.getDataVencimento() != null) {
+				if (parcela.getDataVencimento().before(DateUtil.getDataHoje())) {
+					jsonBoleto.put("fine_type", 0);
+				} else {
+					jsonBoleto.put("fine_type", 1);
+				}
 			}
 			
 			/*

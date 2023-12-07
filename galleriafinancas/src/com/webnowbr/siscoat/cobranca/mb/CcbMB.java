@@ -57,7 +57,9 @@ import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.RegistroImovelTabelaDao;
+import com.webnowbr.siscoat.cobranca.model.cep.CepResult;
 import com.webnowbr.siscoat.cobranca.service.CcbService;
+import com.webnowbr.siscoat.cobranca.service.CepService;
 import com.webnowbr.siscoat.common.BancosEnum;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
@@ -574,6 +576,7 @@ public class CcbMB {
 		listaTipoDownload.add("Endossos Em Preto");
 		listaTipoDownload.add("FinanciamentoCCI");
 		listaTipoDownload.add("Aquisicao/Emprestimo");
+		listaTipoDownload.add("Ficha Cadastro Nova");
 		listaTipoDownload.add("Ficha PPE - PF");
 		listaTipoDownload.add("Ficha PLD e FT - PJ");
 		listaTipoDownload.add("Declaração Não União Estavel");
@@ -581,6 +584,7 @@ public class CcbMB {
 		listaTipoDownload.add("Declaração Destinação Recursos");
 		listaTipoDownload.add("Termo Responsabilidade Paju");
 		listaTipoDownload.add("Termo Incomunicabilidade Imovel");
+		listaTipoDownload.add("Ficha Cadastro");
 		listaTipoDownload.add("Averbacao");
 		
 	}
@@ -767,9 +771,16 @@ public class CcbMB {
 			if(CommonsUtil.semValor(objetoCcb.getIntermediacaoValor()) || CommonsUtil.semValor(despesaTransferencia)) {
 				criarDespesa("Transferência", valorTranferencia, "TED");
 			} else {
+				String conta = "";
+				if(!CommonsUtil.semValor(objetoContratoCobranca.getResponsavel().getConta())) {
+					conta = objetoContratoCobranca.getResponsavel().getConta();
+				}
+				if(!CommonsUtil.semValor(objetoContratoCobranca.getResponsavel().getContaDigito())) {
+					conta = conta + "-" +  objetoContratoCobranca.getResponsavel().getContaDigito();
+				}
 				despesaTransferencia.setBancoTed(objetoContratoCobranca.getResponsavel().getBanco());
 				despesaTransferencia.setAgenciaTed(objetoContratoCobranca.getResponsavel().getAgencia());
-				despesaTransferencia.setContaTed(objetoContratoCobranca.getResponsavel().getConta());
+				despesaTransferencia.setContaTed(conta);
 				despesaTransferencia.setCpfTed(objetoContratoCobranca.getResponsavel().getCpfCnpjCC());
 				despesaTransferencia.setNomeTed(objetoContratoCobranca.getResponsavel().getNomeCC());
 				despesaTransferencia.setPix(objetoContratoCobranca.getResponsavel().getPix());
@@ -780,11 +791,19 @@ public class CcbMB {
 			objetoCcb.setIntermediacaoValor(valorTranferencia);
 			objetoCcb.setIntermediacaoBanco(objetoContratoCobranca.getResponsavel().getBanco());
 			objetoCcb.setIntermediacaoAgencia(objetoContratoCobranca.getResponsavel().getAgencia());
-			objetoCcb.setIntermediacaoCC(objetoContratoCobranca.getResponsavel().getConta());
+			String conta = "";
+			if(!CommonsUtil.semValor(objetoContratoCobranca.getResponsavel().getConta())) {
+				conta = objetoContratoCobranca.getResponsavel().getConta();
+			}
+			if(!CommonsUtil.semValor(objetoContratoCobranca.getResponsavel().getContaDigito())) {
+				conta = conta + "-" + objetoContratoCobranca.getResponsavel().getContaDigito();
+			}
+			objetoCcb.setIntermediacaoCC(conta);
 			objetoCcb.setIntermediacaoCNPJ(objetoContratoCobranca.getResponsavel().getCpfCnpjCC());
 			objetoCcb.setIntermediacaoNome(objetoContratoCobranca.getResponsavel().getNomeCC());
 			objetoCcb.setIntermediacaoPix(objetoContratoCobranca.getResponsavel().getPix());
 			objetoCcb.setIntermediacaoTipoConta(objetoContratoCobranca.getResponsavel().getTipoConta());
+			
 		} else if(!CommonsUtil.semValor(despesaTransferencia)) {
 			despesaTransferencia.setValor(BigDecimal.ZERO);
 			objetoCcb.getDespesasAnexo2().remove(despesaTransferencia);
@@ -1256,6 +1275,7 @@ public class CcbMB {
 				System.out.println("CCB Create ID: " + objetoCcb.getId() + " / "  + objetoCcb.getNumeroCcb() + " / "
 						+ objetoCcb.getNumeroOperacao() + " / " + objetoCcb.getNomeEmitente() + " / " + "Salvar");
 			}
+			salvarContrato();
 		} catch (Exception e) {
 			e.printStackTrace();
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "CCB: " + e.getCause(), ""));
@@ -1311,47 +1331,8 @@ public class CcbMB {
 				}
 			}
 			
-			if(!CommonsUtil.semValor(objetoCcb.getObjetoContratoCobranca())) {
-				ContratoCobranca contrato = objetoCcb.getObjetoContratoCobranca();
-				if(contrato.getId() > 0) {
-					//if(!CommonsUtil.semValor(this.objetoCcb.getDespesasAnexo2())) {
-					//	contrato.setListContasPagar(new HashSet<ContasPagar>(this.objetoCcb.getDespesasAnexo2()));
-					//}
-					
-					if(!CommonsUtil.semValor(objetoCcb.getNumeroCcb())) {
-						contrato.setNumeroContratoSeguro(objetoCcb.getNumeroCcb());
-					}
-					if(!CommonsUtil.semValor(objetoCcb.getDataDeEmissao())) {
-						contrato.setDataInicio(objetoCcb.getDataDeEmissao());
-					}
-					if(!CommonsUtil.semValor(objetoCcb.getSistemaAmortizacao())) {
-						contrato.setTipoCalculo(objetoCcb.getSistemaAmortizacao());
-					}
-					if(!CommonsUtil.semValor(objetoCcb.getPrazo())) {
-						contrato.setQtdeParcelas(CommonsUtil.intValue(objetoCcb.getPrazo()));
-					}
-					if(!CommonsUtil.semValor(objetoCcb.getValorCredito())) {
-						contrato.setValorCCB(objetoCcb.getValorCredito());
-					}
-					if(!CommonsUtil.semValor(objetoCcb.getTaxaDeJurosMes())) {
-						contrato.setTxJurosParcelas(objetoCcb.getTaxaDeJurosMes());
-					}
-					if(!CommonsUtil.semValor(objetoCcb.getCarencia())) {
-						contrato.setMesesCarencia(CommonsUtil.intValue(objetoCcb.getCarencia()));
-					}
-					
-					ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-					try {
-						cDao.merge(contrato);
-					} catch (TransientObjectException e) {
-						contrato.toString();
-						e.printStackTrace();
-					} catch (DAOException e) {
-						contrato.toString();
-						e.printStackTrace();
-					} 
-				}
-			}
+			salvarContrato();
+			
 			if (this.objetoCcb.getId() > 0) {
 				ccbDao.merge(this.objetoCcb);
 				System.out.println("CCB Merge ID: " + objetoCcb.getId() + " / "  + objetoCcb.getNumeroCcb() + " / "
@@ -1374,6 +1355,60 @@ public class CcbMB {
 				//		+ objetoCcb.getNumeroOperacao() + " / " + objetoCcb.getNomeEmitente());
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "CCB: Erro ao salvar contrato no sistema", ""));
 			}		
+		}
+	}
+
+	private void salvarContrato() {
+		if(!CommonsUtil.semValor(objetoCcb.getObjetoContratoCobranca())) {
+			ContratoCobranca contrato = objetoCcb.getObjetoContratoCobranca();
+			if(contrato.getId() > 0) {
+				if(!CommonsUtil.semValor(objetoCcb.getNumeroCcb())) {
+					contrato.setNumeroContratoSeguro(objetoCcb.getNumeroCcb());
+				}
+				if(!CommonsUtil.semValor(objetoCcb.getDataDeEmissao())) {
+					contrato.setDataInicio(objetoCcb.getDataDeEmissao());
+				}
+				if(!CommonsUtil.semValor(objetoCcb.getSistemaAmortizacao())) {
+					contrato.setTipoCalculo(objetoCcb.getSistemaAmortizacao());
+				}
+				if(!CommonsUtil.semValor(objetoCcb.getPrazo())) {
+					contrato.setQtdeParcelas(CommonsUtil.intValue(objetoCcb.getPrazo()));
+				}
+				if(!CommonsUtil.semValor(objetoCcb.getValorCredito())) {
+					contrato.setValorCCB(objetoCcb.getValorCredito());
+				}
+				if(!CommonsUtil.semValor(objetoCcb.getTaxaDeJurosMes())) {
+					contrato.setTxJurosParcelas(objetoCcb.getTaxaDeJurosMes());
+				}
+				if(!CommonsUtil.semValor(objetoCcb.getCarencia())) {
+					contrato.setMesesCarencia(CommonsUtil.intValue(objetoCcb.getCarencia()));
+				}
+				contrato.setValorCartaSplit(objetoCcb.getValorLiquidoCredito());
+				contrato.setNomeBancarioCartaSplit(objetoCcb.getNomeEmitente());
+				contrato.setCpfCnpjBancarioCartaSplit(objetoCcb.getCpfEmitente());
+				contrato.setBancoBancarioCartaSplit(objetoCcb.getNomeBanco());
+				contrato.setAgenciaBancarioCartaSplit(objetoCcb.getAgencia());
+				contrato.setContaBancarioCartaSplit(objetoCcb.getContaCorrente());		
+				contrato.setPixCartaSplit(objetoCcb.getPixBanco());
+				
+				contrato.setValorCartaSplitGalleria(objetoCcb.getValorDespesas());
+				contrato.setNomeBancarioCartaSplitGalleria("Galleria Correspondente Bancário Eireli");
+				contrato.setCpfCnpjBancarioCartaSplitGalleria("34.787.885/0001-32");
+				contrato.setBancoBancarioCartaSplitGalleria("Banco do Brasil");
+				contrato.setAgenciaBancarioCartaSplitGalleria("1515-6");
+				contrato.setContaBancarioCartaSplitGalleria("131094-1");	
+				
+				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+				try {
+					cDao.merge(contrato);
+				} catch (TransientObjectException e) {
+					contrato.toString();
+					e.printStackTrace();
+				} catch (DAOException e) {
+					contrato.toString();
+					e.printStackTrace();
+				} 
+			}
 		}
 	}
 	
@@ -1645,6 +1680,36 @@ public class CcbMB {
 			    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc); 	
 			    		listaArquivos.put(nomeDoc, arquivo);
 			    	}
+			    } else if(CommonsUtil.mesmoValor(tipoDownload,"Ficha Cadastro Nova")) {
+			    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
+			    		if(participante.getSocios().size() > 0){
+			    			for(CcbParticipantes socio : participante.getSocios()) {
+			    				arquivo = ccbService.geraFichaCadastroNova(socio.getPessoa());
+				    			nomeDoc = socio.getPessoa().getNome() + "_" + "Ficha Cadastro.pdf";
+					    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
+					    		listaArquivos.put(nomeDoc, arquivo);
+			    			}
+			    		}
+			    		arquivo = ccbService.geraFichaCadastroNova(participante.getPessoa());
+			    		nomeDoc = participante.getPessoa().getNome() + "_" + "Ficha Cadastro.pdf";
+			    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc); 	
+			    		listaArquivos.put(nomeDoc, arquivo);
+			    	}
+			    } else if(CommonsUtil.mesmoValor(tipoDownload,"Ficha Cadastro")) {
+			    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
+			    		if(participante.getSocios().size() > 0){
+			    			for(CcbParticipantes socio : participante.getSocios()) {
+			    				arquivo = ccbService.geraFichaCadastro(socio.getPessoa());
+				    			nomeDoc = socio.getPessoa().getNome() + "_" + "Ficha Cadastro.pdf";
+					    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
+					    		listaArquivos.put(nomeDoc, arquivo);
+			    			}
+			    		}
+			    		arquivo = ccbService.geraFichaCadastro(participante.getPessoa());
+			    		nomeDoc = participante.getPessoa().getNome() + "_" + "Ficha Cadastro.pdf";
+			    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc); 	
+			    		listaArquivos.put(nomeDoc, arquivo);
+			    	}
 			    } else {
 		    		
 		    	}
@@ -1672,6 +1737,7 @@ public class CcbMB {
 	    	
 			listaTipoDownload.clear();
 	  	    listaTipoDownload = listaDocumentos;
+	  	    salvarCcb();
 	    } catch (Exception e) {
 			context.addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_ERROR,
@@ -1984,136 +2050,90 @@ public class CcbMB {
 	}
 	
 	public void getEnderecoByViaNet() {
+
 		try {
-			String inputCep = this.participanteSelecionado.getPessoa().getCep().replace("-", "");
-			int HTTP_COD_SUCESSO = 200;
+			CepService cepService = new CepService();
+			CepResult consultaCep = cepService.consultaCep(this.participanteSelecionado.getPessoa().getCep());
 
-			URL myURL = new URL("http://viacep.com.br/ws/" + inputCep + "/json/");
+			if (CommonsUtil.semValor(consultaCep) || !CommonsUtil.semValor(consultaCep.getErro())) {
 
-			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
-			myURLConnection.setUseCaches(false);
-			myURLConnection.setRequestMethod("GET");
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-			myURLConnection.setDoOutput(true);
-
-			JSONObject myResponse = null;
-
-			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
-				
 			} else {
-				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-				if(myResponse.has("logradouro")) {
-					this.participanteSelecionado.getPessoa().setEndereco(myResponse.get("logradouro").toString());
+
+				if (!CommonsUtil.semValor(consultaCep.getEndereco())) {
+					this.participanteSelecionado.getPessoa().setEndereco(consultaCep.getEndereco());
 				}
-				if(myResponse.has("bairro")) {
-					this.participanteSelecionado.getPessoa().setBairro(myResponse.get("bairro").toString());
-				}				
-				if(myResponse.has("localidade")) {
-					this.participanteSelecionado.getPessoa().setCidade(myResponse.get("localidade").toString());
-				}		
-				if(myResponse.has("uf")) {
-					this.participanteSelecionado.getPessoa().setEstado(myResponse.get("uf").toString());
+				if (!CommonsUtil.semValor(consultaCep.getBairro())) {
+					this.participanteSelecionado.getPessoa().setBairro(consultaCep.getBairro());
+				}
+				if (!CommonsUtil.semValor(consultaCep.getCidade())) {
+					this.participanteSelecionado.getPessoa().setCidade(consultaCep.getCidade());
+				}
+				if (!CommonsUtil.semValor(consultaCep.getEstado())) {
+					this.participanteSelecionado.getPessoa().setEstado(consultaCep.getEstado());
 				}
 			}
-			myURLConnection.disconnect();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 	}
 	
 	public void getEnderecoByViaNetSocio() {
+
 		try {
-			String inputCep = this.socioSelecionado.getPessoa().getCep().replace("-", "");
+			CepService cepService = new CepService();
+			CepResult consultaCep = cepService.consultaCep(this.socioSelecionado.getPessoa().getCep());
 
-			int HTTP_COD_SUCESSO = 200;
+			if (CommonsUtil.semValor(consultaCep) || !CommonsUtil.semValor(consultaCep.getErro())) {
 
-			URL myURL = new URL("http://viacep.com.br/ws/" + inputCep + "/json/");
-
-			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
-			myURLConnection.setUseCaches(false);
-			myURLConnection.setRequestMethod("GET");
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-			myURLConnection.setDoOutput(true);
-
-			JSONObject myResponse = null;
-
-			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
-				
 			} else {
-				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-				if(myResponse.has("logradouro")) {
-					this.socioSelecionado.getPessoa().setEndereco(myResponse.get("logradouro").toString());
+
+				if (!CommonsUtil.semValor(consultaCep.getEndereco())) {
+					this.socioSelecionado.getPessoa().setEndereco(consultaCep.getEndereco());
 				}
-				if(myResponse.has("bairro")) {
-					this.socioSelecionado.getPessoa().setBairro(myResponse.get("bairro").toString());
-				}				
-				if(myResponse.has("localidade")) {
-					this.socioSelecionado.getPessoa().setCidade(myResponse.get("localidade").toString());
-				}			
-				if(myResponse.has("uf")) {
-					this.socioSelecionado.getPessoa().setEstado(myResponse.get("uf").toString());
-				}				
+				if (!CommonsUtil.semValor(consultaCep.getBairro())) {
+					this.socioSelecionado.getPessoa().setBairro(consultaCep.getBairro());
+				}
+				if (!CommonsUtil.semValor(consultaCep.getCidade())) {
+					this.socioSelecionado.getPessoa().setCidade(consultaCep.getCidade());
+				}
+				if (!CommonsUtil.semValor(consultaCep.getEstado())) {
+					this.socioSelecionado.getPessoa().setEstado(consultaCep.getEstado());
+				}
 			}
-			myURLConnection.disconnect();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 	}
 	
 	public void getEnderecoByViaNetImovelCobranca() {
+		
 		try {
-			String inputCep = this.objetoCcb.getCepImovel().replace("-", "");
-			int HTTP_COD_SUCESSO = 200;
+			CepService cepService = new CepService();
+			CepResult consultaCep = cepService.consultaCep(this.objetoCcb.getCepImovel());
 
-			URL myURL = new URL("http://viacep.com.br/ws/" + inputCep + "/json/");
-
-			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
-			myURLConnection.setUseCaches(false);
-			myURLConnection.setRequestMethod("GET");
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-			myURLConnection.setDoOutput(true);
-			
-			JSONObject myResponse = null;
-
-			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
-
+			if (CommonsUtil.semValor(consultaCep) || !CommonsUtil.semValor(consultaCep.getErro())) {
+				
 			} else {
-				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-				if(myResponse.has("logradouro")) {
-					this.objetoCcb.setLogradouroRuaImovel(myResponse.get("logradouro").toString());
+
+				if (!CommonsUtil.semValor(consultaCep.getEndereco())) {
+					this.objetoCcb.setLogradouroRuaImovel(consultaCep.getEndereco());
 				}
-				if(myResponse.has("bairro")) {
-					this.objetoCcb.setBairroImovel(myResponse.get("bairro").toString());
-				}				
-				if(myResponse.has("localidade")) {
-					this.objetoCcb.setCidadeImovel(myResponse.get("localidade").toString());
-				}				
-				if(myResponse.has("uf")) {
-					this.objetoCcb.setUfImovel(myResponse.get("uf").toString());
+				if (!CommonsUtil.semValor(consultaCep.getBairro())) {
+					this.objetoCcb.setBairroImovel(consultaCep.getBairro());
+				}
+				if (!CommonsUtil.semValor(consultaCep.getCidade())) {
+					this.objetoCcb.setCidadeImovel(consultaCep.getCidade());
+				}
+				if (!CommonsUtil.semValor(consultaCep.getEstado())) {
+					this.objetoCcb.setUfImovel(consultaCep.getEstado());
 				}
 			}
-			myURLConnection.disconnect();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 	}
 	
 	public JSONObject getJsonSucesso(InputStream inputStream) {

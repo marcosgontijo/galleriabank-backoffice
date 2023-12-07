@@ -22,6 +22,8 @@ import javax.faces.model.SelectItem;
 import org.json.JSONObject;
 import org.primefaces.PrimeFaces;
 
+import com.webnowbr.siscoat.cobranca.model.cep.CepResult;
+import com.webnowbr.siscoat.cobranca.service.CepService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.common.BancosEnum;
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -51,17 +53,17 @@ public class Responsavel implements Serializable {
 	private String observacao;
 	private String codigo;
 	private String contato;
-	
+
 	private Date dataCadastro;
 	private Responsavel responsavelCaptador;
 	private Responsavel responsavelAssistenteComercial;
 	private boolean desativado;
 	private Date dataDesativado;
-	
+
 	private String rg;
 	private String cpf;
 	private String cnpj;
-	
+
 	private String cpfCC;
 	private String cnpjCC;
 	private String cpfCnpjCC;
@@ -73,7 +75,7 @@ public class Responsavel implements Serializable {
 	private String contaDigito;
 	private String tipoConta;
 	private boolean contaBancariaValidada;
-	
+
 	private String pix;
 	private String tipoPix;
 	private String bancoPix;
@@ -82,27 +84,26 @@ public class Responsavel implements Serializable {
 	private String contaDigitoPix;
 	private boolean pixValidado;
 
-	
 	private String cep;
 	private Responsavel donoResponsavel;
-	
+
 	List<ComissaoResponsavel> taxasComissao;
-	
+
 	private BigDecimal taxaRemuneracao;
-	
+
 	private String whatsAppNumero;
-	
+
 	private boolean superlogica;
 	private String cidadeFilial;
-	
+
 	private PagadorReceborDadosBancarios dadosBancariosOriginal;
-	
-	public Responsavel(){
+
+	public Responsavel() {
 	}
-	
-	public Responsavel(long id, String nome, String endereco, String bairro, String complemento,
-						 String cidade, String estado, String telResidencial, String telCelular,
-						 String email, Date dtNascimento, String observacao, String rg, String cpf, String cep){
+
+	public Responsavel(long id, String nome, String endereco, String bairro, String complemento, String cidade,
+			String estado, String telResidencial, String telCelular, String email, Date dtNascimento, String observacao,
+			String rg, String cpf, String cep) {
 		this.id = id;
 		this.nome = nome;
 		this.endereco = endereco;
@@ -119,64 +120,44 @@ public class Responsavel implements Serializable {
 		this.cpf = cpf;
 		this.cep = cep;
 	}
-	
+
 	public List<String> completeBancos(String query) {
 		String queryLowerCase = query.toLowerCase();
 		List<String> bancos = new ArrayList<>();
-		for(BancosEnum banco : BancosEnum.values()) {
+		for (BancosEnum banco : BancosEnum.values()) {
 			String bancoStr = banco.getNomeCompleto().toString();
 			bancos.add(bancoStr);
 		}
 		return bancos.stream().filter(t -> t.toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());
 	}
-	
+
 	public void getEnderecoByViaNet() {
 		try {
-			String inputCep = this.cep.replace("-", "");
-			FacesContext context = FacesContext.getCurrentInstance();
+			CepService cepService = new CepService();
+			CepResult consultaCep = cepService.consultaCep(this.cep);
 
-			int HTTP_COD_SUCESSO = 200;
+			if (CommonsUtil.semValor(consultaCep) || !CommonsUtil.semValor(consultaCep.getErro())) {
 
-			URL myURL = new URL("http://viacep.com.br/ws/" + inputCep + "/json/");
-
-			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
-			myURLConnection.setUseCaches(false);
-			myURLConnection.setRequestMethod("GET");
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-			myURLConnection.setDoOutput(true);
-
-			String erro = "";
-			JSONObject myResponse = null;
-
-			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
-				
 			} else {
-				myResponse = getJsonSucesso(myURLConnection.getInputStream());
-				if(myResponse.has("logradouro")) {
-					this.setEndereco(myResponse.get("logradouro").toString());
+
+				if (!CommonsUtil.semValor(consultaCep.getEndereco())) {
+					this.setEndereco(consultaCep.getEndereco());
 				}
-				if(myResponse.has("bairro")) {
-					this.setBairro(myResponse.get("bairro").toString());
-				}				
-				if(myResponse.has("localidade")) {
-					this.setCidade(myResponse.get("localidade").toString());
-				}			
-				if(myResponse.has("uf")) {
-					this.setEstado(myResponse.get("uf").toString());
-				}				
+				if (!CommonsUtil.semValor(consultaCep.getBairro())) {
+					this.setBairro(consultaCep.getBairro());
+				}
+				if (!CommonsUtil.semValor(consultaCep.getCidade())) {
+					this.setCidade(consultaCep.getCidade());
+				}
+				if (!CommonsUtil.semValor(consultaCep.getEstado())) {
+					this.setEstado(consultaCep.getEstado());
+				}
 			}
-			myURLConnection.disconnect();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public JSONObject getJsonSucesso(InputStream inputStream) {
 		BufferedReader in;
 		try {
@@ -196,42 +177,36 @@ public class Responsavel implements Serializable {
 			return myResponse;
 
 		} catch (UnsupportedEncodingException e) {
-			
+
 			e.printStackTrace();
 		} catch (IOException e) {
-			
+
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
+
 	public void salvarDadosBancarios() {
 		dadosBancariosOriginal = new PagadorReceborDadosBancarios(this);
 	}
-	
+
 	public String verificaAlteracaoContaCobranca() {
 
-		if (!CommonsUtil.mesmoValor(this.getBanco(),
-				dadosBancariosOriginal.getBanco())
-				|| !CommonsUtil.mesmoValor(this.getAgencia(),
-						dadosBancariosOriginal.getAgencia())
-				|| !CommonsUtil.mesmoValor(this.getConta(),
-						dadosBancariosOriginal.getConta())
-				|| !CommonsUtil.mesmoValor(this.getContaDigito(),
-						dadosBancariosOriginal.getContaDigito())
-				|| !CommonsUtil.mesmoValor(this.getTipoConta(),
-						dadosBancariosOriginal.getTipoConta())) {
+		if (!CommonsUtil.mesmoValor(this.getBanco(), dadosBancariosOriginal.getBanco())
+				|| !CommonsUtil.mesmoValor(this.getAgencia(), dadosBancariosOriginal.getAgencia())
+				|| !CommonsUtil.mesmoValor(this.getConta(), dadosBancariosOriginal.getConta())
+				|| !CommonsUtil.mesmoValor(this.getContaDigito(), dadosBancariosOriginal.getContaDigito())
+				|| !CommonsUtil.mesmoValor(this.getTipoConta(), dadosBancariosOriginal.getTipoConta())) {
 			this.setContaBancariaValidada(false);
 			PrimeFaces.current().ajax().update("form:comissaoCliente");
-		}		
+		}
 		return null;
-		
+
 	}
-	
+
 	public String verificaAlteracaoPix() {
 		if (!CommonsUtil.mesmoValor(this.getPix(), dadosBancariosOriginal.getPix())
-				|| !CommonsUtil.mesmoValor(this.getTipoPix(),
-						dadosBancariosOriginal.getTipoPix())) {
+				|| !CommonsUtil.mesmoValor(this.getTipoPix(), dadosBancariosOriginal.getTipoPix())) {
 			this.setPixValidado(false);
 			this.setBancoPix(null);
 			this.setAgenciaPix(null);
@@ -241,23 +216,23 @@ public class Responsavel implements Serializable {
 		}
 		return null;
 	}
-	
+
 	public String validaPix() {
 
 		FacesContext context = FacesContext.getCurrentInstance();
 		NetrinService netrinService = new NetrinService();
-		
-		String documento = CommonsUtil.somenteNumeros( this.getCpfCnpjCC());
+
+		String documento = CommonsUtil.somenteNumeros(this.getCpfCnpjCC());
 		if (!CommonsUtil.semValor(this.getCpfCnpjCC())) {
-			documento = CommonsUtil.somenteNumeros( this.getCpf());
+			documento = CommonsUtil.somenteNumeros(this.getCpf());
 			if (!CommonsUtil.semValor(this.getCnpj())) {
-				documento= CommonsUtil.somenteNumeros(this.getCnpj());
+				documento = CommonsUtil.somenteNumeros(this.getCnpj());
 			}
 		}
-		
+
 		ValidaPixRequest validaPixRequest = new ValidaPixRequest(this.getPix(), this.getTipoPix(), documento);
 		ValidaPixResponse result = netrinService.requestValidaPix(validaPixRequest, context);
-		
+
 		if (!CommonsUtil.semValor(result) && !CommonsUtil.semValor(result.getValidaPix())
 				&& CommonsUtil.mesmoValorIgnoreCase("Sim", result.getValidaPix().getValidacaoConta())) {
 			this.setPixValidado(true);
@@ -265,39 +240,39 @@ public class Responsavel implements Serializable {
 			this.setAgenciaPix(result.getValidaPix().getConta().getAgencia());
 			this.setContaPix(result.getValidaPix().getConta().getConta());
 			this.setContaDigitoPix(result.getValidaPix().getConta().getContaDigito());
-			PrimeFaces.current().ajax().update("form:comissaoCliente");	
+			PrimeFaces.current().ajax().update("form:comissaoCliente");
 		}
-		
+
 		return null;
 	}
-	
+
 	public String validaContaBancaria() {
 
 		FacesContext context = FacesContext.getCurrentInstance();
 		NetrinService netrinService = new NetrinService();
-		
-		String documento = CommonsUtil.somenteNumeros( this.getCpfCnpjCC());
+
+		String documento = CommonsUtil.somenteNumeros(this.getCpfCnpjCC());
 		if (!CommonsUtil.semValor(this.getCpfCnpjCC())) {
-			documento = CommonsUtil.somenteNumeros( this.getCpf());
+			documento = CommonsUtil.somenteNumeros(this.getCpf());
 			if (!CommonsUtil.semValor(this.getCnpj())) {
-				documento= CommonsUtil.somenteNumeros(this.getCnpj());
+				documento = CommonsUtil.somenteNumeros(this.getCnpj());
 			}
 		}
-		
-		ValidaContaBancariaRequest validaContaBancariaRequest = new ValidaContaBancariaRequest(documento, this.getCodigoBanco(), 
-				this.getAgencia(), this.getConta(), this.getContaDigito(), 
-				this.getTipoConta());
-		ValidaContaBancariaResponse result = netrinService.requestValidaContaBancaria(validaContaBancariaRequest, context);
+
+		ValidaContaBancariaRequest validaContaBancariaRequest = new ValidaContaBancariaRequest(documento,
+				this.getCodigoBanco(), this.getAgencia(), this.getConta(), this.getContaDigito(), this.getTipoConta());
+		ValidaContaBancariaResponse result = netrinService.requestValidaContaBancaria(validaContaBancariaRequest,
+				context);
 
 		if (!CommonsUtil.semValor(result)
 				&& CommonsUtil.mesmoValorIgnoreCase("Sim", result.getValidaContaBancaria().getValidacaoConta())) {
 			this.setContaBancariaValidada(true);
 			PrimeFaces.current().ajax().update("form:comissaoCliente");
 		}
-		
+
 		return null;
 	}
-	
+
 	public String getCodigoBanco() {
 		String[] banco = getBanco().split(Pattern.quote("|"));
 		if (banco.length > 0) {
@@ -305,8 +280,7 @@ public class Responsavel implements Serializable {
 		} else
 			return null;
 	}
-	
-	
+
 	/**
 	 * @return the id
 	 */
@@ -453,8 +427,8 @@ public class Responsavel implements Serializable {
 	public Date getDtNascimento() {
 		return dtNascimento;
 	}
-	
-	 /**
+
+	/**
 	 * @return the observacao
 	 */
 	public String getObservacao() {
@@ -474,23 +448,23 @@ public class Responsavel implements Serializable {
 	public void setDtNascimento(Date dtNascimento) {
 		this.dtNascimento = dtNascimento;
 	}
-	
-	 @Override  
-	    public boolean equals(Object obj){  
-	        if (this == obj)  
-	            return true;  
-	        if (obj == null)  
-	            return false;  
-	        if (!(obj instanceof Responsavel))  
-	            return false;  
-	        Responsavel other = (Responsavel) obj;  
-	        if (nome == null){  
-	            if (other.nome != null)  
-	                return false;  
-	        } else if (!nome.equals(other.nome))  
-	            return false;  
-	        return true;  
-	    }
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof Responsavel))
+			return false;
+		Responsavel other = (Responsavel) obj;
+		if (nome == null) {
+			if (other.nome != null)
+				return false;
+		} else if (!nome.equals(other.nome))
+			return false;
+		return true;
+	}
 
 	/**
 	 * @return the rg

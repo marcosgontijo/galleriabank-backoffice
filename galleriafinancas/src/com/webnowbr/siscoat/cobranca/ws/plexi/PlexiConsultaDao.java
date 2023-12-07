@@ -19,7 +19,8 @@ public class PlexiConsultaDao extends HibernateDao<PlexiConsulta, Long> {
 			+ " where p.expirado = false "
 			+ " and cpfCnpj = ? "
 			+ " and plexiDocumentos = ? "
-			+ " and id != ? ";
+			+ " and id != ? "
+			+ " and requestId is not null";
 
 
 	@SuppressWarnings("unchecked")

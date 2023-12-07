@@ -6,19 +6,19 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
-import java.util.TimeZone;
+
+import javax.faces.bean.ManagedProperty;
 
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.infra.db.model.User;
+import com.webnowbr.siscoat.security.LoginBean;
 
 public class ContratoCobranca implements Serializable {
 
@@ -643,6 +643,7 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal taxaPreAprovada;
 	private BigInteger prazoMaxPreAprovado;	        
 	private BigDecimal valorMercadoImovel;
+	
 	private BigDecimal valorVendaForcadaImovel;
 	private String comentarioJuridico;
 	private BigDecimal valorPreLaudo;
@@ -853,7 +854,7 @@ public class ContratoCobranca implements Serializable {
 	
 	private boolean scoreBaixo450Taxa;
 	private boolean scoreBaixo700Taxa;
-	private boolean isInicioRelacionamentoInexistenteTaxa;
+	private boolean inicioRelacionamentoInexistenteTaxa;
 	private boolean riscoTotal20kTaxa;
 	private boolean riscoTotal50kTaxa;
 	private boolean documentosAnalisados;
@@ -893,6 +894,8 @@ public class ContratoCobranca implements Serializable {
 		this.listAverbacao = new HashSet<>();
 		this.listCadastroStatus = new HashSet<>();
 		this.listProcessos = new HashSet<>();
+		
+		
 		
 		limparPrimitivos();
 	}
@@ -1429,8 +1432,8 @@ public class ContratoCobranca implements Serializable {
 			potuacao -= 200;
 		if (scoreBaixo700Taxa)
 			potuacao -= 100;
-		if (isInicioRelacionamentoInexistenteTaxa)
-			potuacao -= 100;
+		if (inicioRelacionamentoInexistenteTaxa)
+			potuacao -= 300;
 		if (riscoTotal20kTaxa)
 			potuacao -= 200;
 		if (riscoTotal50kTaxa)
@@ -7364,11 +7367,11 @@ public class ContratoCobranca implements Serializable {
 	}
 
 	public boolean isInicioRelacionamentoInexistenteTaxa() {
-		return isInicioRelacionamentoInexistenteTaxa;
+		return inicioRelacionamentoInexistenteTaxa;
 	}
 
 	public void setInicioRelacionamentoInexistenteTaxa(boolean isInicioRelacionamentoInexistenteTaxa) {
-		this.isInicioRelacionamentoInexistenteTaxa = isInicioRelacionamentoInexistenteTaxa;
+		this.inicioRelacionamentoInexistenteTaxa = isInicioRelacionamentoInexistenteTaxa;
 	}
 
 	public boolean isRiscoTotal20kTaxa() {
@@ -7415,5 +7418,6 @@ public class ContratoCobranca implements Serializable {
 	public void setDocumentosAnalisados(boolean documentosAnalisados) {
 		this.documentosAnalisados = documentosAnalisados;
 	}
+
 	
 }

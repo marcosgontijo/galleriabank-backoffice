@@ -26,6 +26,9 @@
         <property name="formaPagamento" type="java.lang.String">
             <column name="formaPagamento"/>
         </property>	 
+         <property name="comentario" type="text">
+            <column name="comentario"/>
+        </property>	
         <property name="statusPagamento" type="java.lang.String">
             <column name="statusPagamento"/>
         </property>	 

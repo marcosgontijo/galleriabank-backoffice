@@ -89,8 +89,7 @@ public class PlexiMB {
 			atualizarDocumentos(docAnalise);
 			for(PlexiConsulta plexiConsulta : docAnalise.getPlexiConsultas()) {
 				List<PlexiConsulta> consultasExistentesRetorno = plexiConsultaDao.getConsultasExistentes(plexiConsulta);
-				if(consultasExistentesRetorno.size() > 0 && 
-						consultasExistentesRetorno.stream().filter(c -> !CommonsUtil.semValor( c.getRequestId())).findAny().isPresent() ){
+				if(consultasExistentesRetorno.size() > 0){
 					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
 							plexiConsulta.getPlexiDocumentos().getNome() + " - " + plexiConsulta.getNome() + ": Já existente", ""));
 					consultasExistentes.add(plexiConsulta);

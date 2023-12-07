@@ -1970,7 +1970,9 @@
 
 						<shiro:hasAnyRoles name="ROOT, COBRANCA_IUGU">
 						
-							<p:commandButton id="quitarContrato" oncomplete="PF('quitarContratoDialog').show();" value="Quitar Contrato" update="quitarContratoForm" action="#{contratoCobrancaMB.clearQuitarContratoDialog}"/>
+							<p:commandButton id="quitarContrato" oncomplete="PF('quitarContratoDialog').show();" 
+								value="Quitar Contrato" update="quitarContratoForm" 
+								action="#{contratoCobrancaMB.clearQuitarContratoDialog}"/>
 							<p:outputLabel value="" />
 							<p:outputLabel value="" />
 							
@@ -3250,39 +3252,68 @@
 			style="FONT-SIZE: 10pt;" responsive="true" height="480px" width="770px">
 			<h:form id="quitarContratoForm">
 				<h:panelGrid columns="2">
-					<p:outputLabel for="numeroParcelaQuitar"
-						value="Numero Parcela para Quitação" />
-					<p:inputText id="numeroParcelaQuitar"
-						value="#{contratoCobrancaMB.numeroParcelaQuitar}" >
-						<p:ajax event="blur" update="valorPresenteTotal"
-							listener="#{contratoCobrancaMB.simularQuitacaoContrato}" />
-					</p:inputText>
-
-					<p:outputLabel for="dataQuitacao" value="Data da Quitacao" />
-					<p:calendar id="dataQuitacao" showOn="button"
-						value="#{contratoCobrancaMB.dataQuitacao}" size="100"
-						pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" >
-						<p:ajax event="dateSelect" listener="#{contratoCobrancaMB.simularQuitacaoContrato}"
-                			update="@form" />
-                	</p:calendar>	
-                	
-                	<shiro:hasAnyRoles name="ROOT">                		
-						<p:outputLabel for="quitarContrato" value="" />
-						<p:commandButton id="quitarContrato" value="Quitar Contrato"
+					<h:panelGrid columns="2">
+						<p:outputLabel for="numeroParcelaQuitar"
+							value="Numero Parcela para Quitação" />
+						<p:inputText id="numeroParcelaQuitar"
+							value="#{contratoCobrancaMB.numeroParcelaQuitar}" >
+							<p:ajax event="blur" update="@form"
+								listener="#{contratoCobrancaMB.simularQuitacaoContrato}" />
+						</p:inputText>
+	
+						<p:outputLabel for="dataQuitacao" value="Data da Quitacao" />
+						<p:calendar id="dataQuitacao" showOn="button"
+							value="#{contratoCobrancaMB.dataQuitacao}" size="100"
+							pattern="dd/MM/yyyy" locale="pt" styleClass="dateTimeField" >
+							<p:ajax event="dateSelect" listener="#{contratoCobrancaMB.simularQuitacaoContrato}"
+	                			update="@form" />
+	                	</p:calendar>	
+	                	
+	                	<shiro:hasAnyRoles name="ROOT">                		
+							<p:outputLabel for="quitarContrato" value="" />
+							<p:commandButton id="quitarContrato" value="Quitar Contrato"
+								update=":form:DetalheParcelas valorPresenteTotal dtParcelasQuitar"
+								action="#{contratoCobrancaMB.quitarContrato(contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes)}" />
+						</shiro:hasAnyRoles>	
+						
+						<p:outputLabel for="valorPresenteTotal" value="Valor Presente Total" />
+						<p:outputLabel id="valorPresenteTotal"
+							value="#{contratoCobrancaMB.valorPresenteTotal}"
+							converter="bigDecimalConverter" />
+							
+						<p:outputLabel for="simularQuitacao" value="" />
+						<p:commandButton id="simularQuitacao" value="Simular Quitação"
 							update=":form:DetalheParcelas valorPresenteTotal dtParcelasQuitar"
 							action="#{contratoCobrancaMB.quitarContrato(contratoCobrancaMB.listContratoCobrancaDetalhesQuitar)}" />
-					</shiro:hasAnyRoles>	
-					
-					<p:outputLabel for="valorPresenteTotal" value="Valor Presente Total" />
-					<p:outputLabel id="valorPresenteTotal"
-						value="#{contratoCobrancaMB.valorPresenteTotal}"
-						converter="bigDecimalConverter" />
+					</h:panelGrid>
+					<h:panelGrid columns="2">
+						<p:outputLabel for="porcentagemDesconto"
+							value="Porcentagem de Desconto" />
+						<p:inputText id="porcentagemDesconto"
+							value="#{contratoCobrancaMB.porcentagemDesconto}" 
+							onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);"
+							converter="bigDecimalConverter">
+							<p:ajax event="blur" update="valorComDesconto, valorPresenteTotal, dtParcelasQuitar"
+								listener="#{contratoCobrancaMB.simularQuitacaoContrato}" />
+						</p:inputText>
+						
+						<p:outputLabel for="valorComDesconto"
+							value="Valor Com Desconto" />
+						<p:inputText id="valorComDesconto" value="#{contratoCobrancaMB.valorComDesconto}"
+							onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);"
+							converter="bigDecimalConverter" >
+							<p:ajax event="blur" update="@form"
+								listener="#{contratoCobrancaMB.calcularPorcentagemDesconto}" />
+						</p:inputText>
+					</h:panelGrid>
 				</h:panelGrid>
 				
 				<div align="center">
 					<p:commandButton value="Gerar PDF" ajax="false" icon="ui-icon-print" action="#{contratoCobrancaMB.downloadPDFQuitacao}" 
 						style="margin-bottom:10px;"/>
-					<p:commandButton value="Gerar JSON" ajax="false" icon="ui-icon-print" action="#{contratoCobrancaMB.geraJSONLiquidacao}" 
+					<p:commandButton value="Gerar JSON" ajax="false" icon="ui-icon-print" action="#{contratoCobrancaMB.geraJSONLiquidacao()}" 
 						style="margin-bottom:10px;"/>
 				</div>
 					
@@ -3290,7 +3321,12 @@
 						value="#{contratoCobrancaMB.listContratoCobrancaDetalhesQuitar}"
 						emptyMessage="" sortBy="#{contratos.numeroParcela}"
 						sortOrder="ascending"
-						rowStyleClass="#{(parcelas2.parcelaPaga eq false and parcelas2.listContratoCobrancaDetalhesParcial.size() gt 0) ? 'parcelaparcial' : parcelas2.numeroParcela eq 'Amortização' ? 'parcelaPaga': parcelas2.parcelaPaga eq true ? 'parcelaPaga' : parcelas2.parcelaVencida eq true ? 'parcelaAtraso' : parcelas2.parcelaVencendo eq true ? 'parcelaVencendo' : null}"
+						rowStyleClass="#{(parcelas2.parcelaPaga eq false and parcelas2.listContratoCobrancaDetalhesParcial.size() gt 0) ? 'parcelaparcial' 
+						: parcelas2.numeroParcela eq 'Amortização' ? 'parcelaPaga'
+						: parcelas2.parcelaPaga eq true ? 'parcelaPaga' 
+						: parcelas2.parcelaVencida eq true ? 'parcelaAtraso' 
+						: parcelas2.parcelaVencendo eq true ? 'parcelaVencendo' 
+						: null}"
 						rowKey="#{parcelas2.id}">
 
 						<p:column style="text-align: center;width: 45px;"

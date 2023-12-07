@@ -84,7 +84,7 @@ public class PlexiDocumentos {
 	}
 
 	public String getNomePaju() {
-		return (!CommonsUtil.semValor(nomePaju)) ? this.nomePaju : this.nome;
+		return ((!CommonsUtil.semValor(nomePaju)) ? this.nomePaju : this.nome );
 	}
 
 	public void setNomePaju(String nomePaju) {

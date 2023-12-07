@@ -3,6 +3,7 @@ package com.webnowbr.siscoat.cobranca.ws.plexi;
 import java.util.List;
 
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.SiscoatConstants;
 
 public class PlexiWebhookRetorno {
 
@@ -22,9 +23,9 @@ public class PlexiWebhookRetorno {
 
 	public String getSituacao() {
 		if (!CommonsUtil.mesmoValorIgnoreCase("negativo", status))
-			return "Possui débitos";
+			return SiscoatConstants.CND_SITUACAO_POSSUI_DEBITOS;
 		else
-			return "Não possui débitos";
+			return SiscoatConstants.CND_SITUACAO_NAO_POSSUI_DEBITOS;
 	}
 
 	public String getCodigoVerificador() {
