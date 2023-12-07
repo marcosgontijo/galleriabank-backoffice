@@ -2591,7 +2591,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			"where  " +
 			"cdbp.dataPagamento >= ? ::timestamp  " +	
 			"and cdbp.dataPagamento <= ? ::timestamp  " +
-			"and cc.empresa = 'CRI 4' " +
+			"and cc.empresa = 'CRI 5' " +
 			"order by cc.numerocontrato, cd.numeroparcela ";
 	
 	@SuppressWarnings("unchecked")
