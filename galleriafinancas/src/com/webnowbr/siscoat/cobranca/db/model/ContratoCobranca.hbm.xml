@@ -1163,6 +1163,14 @@
             <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.Averbacao" />
         </set>
         
+        <set name="listaParticipantes" table="CcbParticipantes" cascade="all-delete-orphan"
+                 lazy="false" fetch="select">
+            <key>
+                <column name="contratoCobranca" not-null="true" />
+            </key>
+            <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.CcbParticipantes" />
+        </set>
+        
         <property name="tipoCalculoInvestidor1" type="java.lang.String">
 			<column name="tipoCalculoInvestidor1" />
 		</property>
@@ -1343,7 +1351,11 @@
 		<property name="taxaPreAprovada" type="big_decimal">
 			<column name="TAXAPREAPROVADA" />
 		</property>
-						
+					
+		<property name="taxaPreDefinida" type="big_decimal">
+			<column name="taxaPreDefinida" />
+		</property>
+			
 		<property name="prazoMaxPreAprovado" type="big_integer">
 			<column name="PRAZOMAXPREAPROVADO" />
 		</property>

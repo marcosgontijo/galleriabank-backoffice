@@ -130,6 +130,7 @@ import com.webnowbr.siscoat.cobranca.db.model.AnaliseComite;
 import com.webnowbr.siscoat.cobranca.db.model.Averbacao;
 import com.webnowbr.siscoat.cobranca.db.model.BoletoKobana;
 import com.webnowbr.siscoat.cobranca.db.model.CcbContrato;
+import com.webnowbr.siscoat.cobranca.db.model.CcbParticipantes;
 import com.webnowbr.siscoat.cobranca.db.model.CcbProcessosJudiciais;
 import com.webnowbr.siscoat.cobranca.db.model.ContasPagar;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
@@ -169,6 +170,7 @@ import com.webnowbr.siscoat.cobranca.db.model.StarkBankBoleto;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankPix;
 import com.webnowbr.siscoat.cobranca.db.model.directd.PorcentagemImovel;
 import com.webnowbr.siscoat.cobranca.db.op.CcbDao;
+import com.webnowbr.siscoat.cobranca.db.op.CcbParticipantesDao;
 import com.webnowbr.siscoat.cobranca.db.op.CcbProcessosJudiciaisDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
@@ -194,6 +196,7 @@ import com.webnowbr.siscoat.cobranca.model.cep.CepResult;
 import com.webnowbr.siscoat.cobranca.service.BigDataService;
 import com.webnowbr.siscoat.cobranca.service.CepService;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
+import com.webnowbr.siscoat.cobranca.service.DocumentoAnaliseService;
 import com.webnowbr.siscoat.cobranca.service.EngineService;
 import com.webnowbr.siscoat.cobranca.service.FileService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
@@ -3968,7 +3971,7 @@ public class ContratoCobrancaMB {
 				if (!this.objetoContratoCobranca.getCadastroAprovadoValor()
 						.equals(statusContrato.getContratoPreAprovado())) {
 					if (this.objetoContratoCobranca.getCadastroAprovadoValor().equals("Aprovado")
-							&& this.objetoContratoCobranca.getTaxaPreAprovada() != null
+							&& this.objetoContratoCobranca.getTaxaPreAprovadaMaior() != null
 							&& this.objetoContratoCobranca.getPrazoMaxPreAprovado() != null) {
 						// if (this.objetoContratoCobranca.getTaxaPreAprovada() != null &&
 						// this.objetoContratoCobranca.getPrazoMaxPreAprovado() != null) {
@@ -3976,7 +3979,7 @@ public class ContratoCobrancaMB {
 						takeBlipMB.sendWhatsAppMessage(this.objetoContratoCobranca.getResponsavel(),
 								"contrato_pre_aprovado", this.objetoContratoCobranca.getPagador().getNome(),
 								this.objetoContratoCobranca.getNumeroContrato(),
-								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getTaxaPreAprovadaMaior().toString(),
 								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 						// }
 
@@ -3989,39 +3992,39 @@ public class ContratoCobrancaMB {
 									this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
 									"contrato_pre_aprovado", this.objetoContratoCobranca.getPagador().getNome(),
 									this.objetoContratoCobranca.getNumeroContrato(),
-									this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+									this.objetoContratoCobranca.getTaxaPreAprovadaMaior().toString(),
 									this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 
 							enviarWhatsappGislaine("contrato_pre_aprovado",
 									this.objetoContratoCobranca.getPagador().getNome(),
 									this.objetoContratoCobranca.getNumeroContrato(),
-									this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+									this.objetoContratoCobranca.getTaxaPreAprovadaMaior().toString(),
 									this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 							enviarWhatsappLuis("contrato_pre_aprovado",
 									this.objetoContratoCobranca.getPagador().getNome(),
 									this.objetoContratoCobranca.getNumeroContrato(),
-									this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+									this.objetoContratoCobranca.getTaxaPreAprovadaMaior().toString(),
 									this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 							enviarWhatsappEric("contrato_pre_aprovado",
 									this.objetoContratoCobranca.getPagador().getNome(),
 									this.objetoContratoCobranca.getNumeroContrato(),
-									this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+									this.objetoContratoCobranca.getTaxaPreAprovadaMaior().toString(),
 									this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 
 							enviarWhatsappJoaoAntonio("contrato_pre_aprovado",
 									this.objetoContratoCobranca.getPagador().getNome(),
 									this.objetoContratoCobranca.getNumeroContrato(),
-									this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+									this.objetoContratoCobranca.getTaxaPreAprovadaMaior().toString(),
 									this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 							enviarWhatsappAline("contrato_pre_aprovado",
 									this.objetoContratoCobranca.getPagador().getNome(),
 									this.objetoContratoCobranca.getNumeroContrato(),
-									this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+									this.objetoContratoCobranca.getTaxaPreAprovadaMaior().toString(),
 									this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 							enviarWhatsaPaula("contrato_pre_aprovado",
 									this.objetoContratoCobranca.getPagador().getNome(),
 									this.objetoContratoCobranca.getNumeroContrato(),
-									this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+									this.objetoContratoCobranca.getTaxaPreAprovadaMaior().toString(),
 									this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 
 						} else {
@@ -4030,7 +4033,7 @@ public class ContratoCobrancaMB {
 									this.objetoContratoCobranca.getResponsavel().getDonoResponsavel(),
 									"contrato_pre_aprovado", this.objetoContratoCobranca.getPagador().getNome(),
 									this.objetoContratoCobranca.getNumeroContrato(),
-									this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+									this.objetoContratoCobranca.getTaxaPreAprovadaMaior().toString(),
 									this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 						}
 					}
@@ -4126,16 +4129,16 @@ public class ContratoCobrancaMB {
 						enviarWhatsappJoaoAntonio("contrato_recebido_paju",
 								this.objetoContratoCobranca.getPagador().getNome(),
 								this.objetoContratoCobranca.getNumeroContrato(),
-								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getTaxaPreAprovadaMaior().toString(),
 								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 						enviarWhatsappAline("contrato_recebido_paju",
 								this.objetoContratoCobranca.getPagador().getNome(),
 								this.objetoContratoCobranca.getNumeroContrato(),
-								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getTaxaPreAprovadaMaior().toString(),
 								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 						enviarWhatsaPaula("contrato_recebido_paju", this.objetoContratoCobranca.getPagador().getNome(),
 								this.objetoContratoCobranca.getNumeroContrato(),
-								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getTaxaPreAprovadaMaior().toString(),
 								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 
 					} else {
@@ -4213,16 +4216,16 @@ public class ContratoCobrancaMB {
 						enviarWhatsappJoaoAntonio("contrato_recebido_laudo",
 								this.objetoContratoCobranca.getPagador().getNome(),
 								this.objetoContratoCobranca.getNumeroContrato(),
-								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getTaxaPreAprovadaMaior().toString(),
 								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 						enviarWhatsappAline("contrato_recebido_laudo",
 								this.objetoContratoCobranca.getPagador().getNome(),
 								this.objetoContratoCobranca.getNumeroContrato(),
-								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getTaxaPreAprovadaMaior().toString(),
 								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 						enviarWhatsaPaula("contrato_recebido_laudo", this.objetoContratoCobranca.getPagador().getNome(),
 								this.objetoContratoCobranca.getNumeroContrato(),
-								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getTaxaPreAprovadaMaior().toString(),
 								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 
 					} else {
@@ -4322,17 +4325,17 @@ public class ContratoCobrancaMB {
 						enviarWhatsappJoaoAntonio("comentado_juridico_interno",
 								this.objetoContratoCobranca.getPagador().getNome(),
 								this.objetoContratoCobranca.getNumeroContrato(),
-								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getTaxaPreAprovadaMaior().toString(),
 								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 						enviarWhatsappAline("comentado_juridico_interno",
 								this.objetoContratoCobranca.getPagador().getNome(),
 								this.objetoContratoCobranca.getNumeroContrato(),
-								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getTaxaPreAprovadaMaior().toString(),
 								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 						enviarWhatsaPaula("comentado_juridico_interno",
 								this.objetoContratoCobranca.getPagador().getNome(),
 								this.objetoContratoCobranca.getNumeroContrato(),
-								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getTaxaPreAprovadaMaior().toString(),
 								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 
 					} else {
@@ -4475,16 +4478,16 @@ public class ContratoCobrancaMB {
 						enviarWhatsappJoaoAntonio("aprovado_comite_ag_ccb",
 								this.objetoContratoCobranca.getPagador().getNome(),
 								this.objetoContratoCobranca.getNumeroContrato(),
-								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getTaxaPreAprovadaMaior().toString(),
 								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 						enviarWhatsappAline("aprovado_comite_ag_ccb",
 								this.objetoContratoCobranca.getPagador().getNome(),
 								this.objetoContratoCobranca.getNumeroContrato(),
-								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getTaxaPreAprovadaMaior().toString(),
 								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 						enviarWhatsaPaula("aprovado_comite_ag_ccb", this.objetoContratoCobranca.getPagador().getNome(),
 								this.objetoContratoCobranca.getNumeroContrato(),
-								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getTaxaPreAprovadaMaior().toString(),
 								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 
 					} else {
@@ -4604,17 +4607,17 @@ public class ContratoCobrancaMB {
 						enviarWhatsappJoaoAntonio("contrato_pronto_para_assinatura_operacao",
 								this.objetoContratoCobranca.getPagador().getNome(),
 								this.objetoContratoCobranca.getNumeroContrato(),
-								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getTaxaPreAprovadaMaior().toString(),
 								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 						enviarWhatsappAline("contrato_pronto_para_assinatura_operacao",
 								this.objetoContratoCobranca.getPagador().getNome(),
 								this.objetoContratoCobranca.getNumeroContrato(),
-								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getTaxaPreAprovadaMaior().toString(),
 								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 						enviarWhatsaPaula("contrato_pronto_para_assinatura_operacao",
 								this.objetoContratoCobranca.getPagador().getNome(),
 								this.objetoContratoCobranca.getNumeroContrato(),
-								this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+								this.objetoContratoCobranca.getTaxaPreAprovadaMaior().toString(),
 								this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 					} else {
 						takeBlipMB = new TakeBlipMB();
@@ -4661,17 +4664,17 @@ public class ContratoCobrancaMB {
 							enviarWhatsappJoaoAntonio("contrato_dado_entrada_cartorio",
 									this.objetoContratoCobranca.getPagador().getNome(),
 									this.objetoContratoCobranca.getNumeroContrato(),
-									this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+									this.objetoContratoCobranca.getTaxaPreAprovadaMaior().toString(),
 									this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 							enviarWhatsappAline("contrato_dado_entrada_cartorio",
 									this.objetoContratoCobranca.getPagador().getNome(),
 									this.objetoContratoCobranca.getNumeroContrato(),
-									this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+									this.objetoContratoCobranca.getTaxaPreAprovadaMaior().toString(),
 									this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 							enviarWhatsaPaula("contrato_dado_entrada_cartorio",
 									this.objetoContratoCobranca.getPagador().getNome(),
 									this.objetoContratoCobranca.getNumeroContrato(),
-									this.objetoContratoCobranca.getTaxaPreAprovada().toString(),
+									this.objetoContratoCobranca.getTaxaPreAprovadaMaior().toString(),
 									this.objetoContratoCobranca.getPrazoMaxPreAprovado().toString());
 						} else {
 							takeBlipMB = new TakeBlipMB();
@@ -5754,6 +5757,7 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca
 						.setDataUltimaAtualizacao(this.objetoContratoCobranca.getPajuAtualizadoData());
 				this.objetoContratoCobranca.setPajuAtualizadoUsuario(getNomeUsuarioLogado());
+				this.objetoContratoCobranca.setDataPajuComentado(this.objetoContratoCobranca.getPajuAtualizadoData());
 			}
 		}
 
@@ -6293,7 +6297,7 @@ public class ContratoCobrancaMB {
 			cpf = con.getPagador().getCnpj();
 		}
 		BigDecimal parcelaPGTO = BigDecimal
-				.valueOf(FinanceLib.pmt(con.getTaxaPreAprovada().divide(BigDecimal.valueOf(100)).doubleValue(), // taxa
+				.valueOf(FinanceLib.pmt(con.getTaxaPreAprovadaMaior().divide(BigDecimal.valueOf(100)).doubleValue(), // taxa
 						con.getPrazoMaxPreAprovado().intValue(), // prazo
 						con.getQuantoPrecisa().negate().doubleValue(), // valor credito - VP
 						Double.valueOf("0"), // VF
@@ -6315,7 +6319,7 @@ public class ContratoCobrancaMB {
 		simulador.setSeguroMIP(SiscoatConstants.SEGURO_MIP);
 		simulador.setSeguroDFI(SiscoatConstants.SEGURO_DFI);
 		simulador.setValorCredito(con.getQuantoPrecisa());
-		simulador.setTaxaJuros(con.getTaxaPreAprovada());
+		simulador.setTaxaJuros(con.getTaxaPreAprovadaMaior());
 		simulador.setCarencia(BigInteger.ONE);
 		simulador.setQtdParcelas(con.getPrazoMaxPreAprovado());
 		simulador.setValorImovel(con.getImovel().getValoEstimado());
@@ -6335,7 +6339,7 @@ public class ContratoCobrancaMB {
 
 		BigDecimal rendaMinima = parcelaPGTO.divide(BigDecimal.valueOf(0.3), MathContext.DECIMAL128);
 		PreAprovadoPDF documento = new PreAprovadoPDF(con.getPagador().getNome(), con.getDataContrato(),
-				con.getNumeroContrato(), cpf, con.getTaxaPreAprovada(), con.getMatriculaRessalva(),
+				con.getNumeroContrato(), cpf, con.getTaxaPreAprovadaMaior(), con.getMatriculaRessalva(),
 				con.getImovel().getCidade(), con.getImovel().getNumeroMatricula(), con.getImovel().getEstado(),
 				con.getPrazoMaxPreAprovado().toString(), con.getQuantoPrecisa(), con.getImovel().getValoEstimado(),
 				parcelaPGTO, rendaMinima);
@@ -9506,19 +9510,34 @@ public class ContratoCobrancaMB {
 		this.controleWhatsAppComite = false;
 	}
 	private List<PorcentagemImovel> porcentagem = new ArrayList<>();
+	private BigDecimal porcentagemPersonalizada = BigDecimal.ZERO;
 	public void calculaPorcentagemImovel() {
 		porcentagem = new ArrayList<>();
-		BigDecimal valorSugerido = gerarRecomendacaoComite();
+		BigDecimal porcentagemLimite = new BigDecimal(100);
+		BigDecimal	valorSugerido = gerarRecomendacaoComite();
+		
+		if(porcentagemPersonalizada == null) {
+			porcentagemPersonalizada = BigDecimal.ZERO;
+		}
+		if( porcentagemPersonalizada.compareTo(porcentagemLimite) == 1) {
+			porcentagemPersonalizada = new BigDecimal(100);
+		}	
+		
+	
 		
 		  valorMercaoImovelPorcento = objetoContratoCobranca.getValorMercadoImovel().divide(new BigDecimal(100));
-		  porcentagem.add(new PorcentagemImovel("Valor do imóvel: ", objetoContratoCobranca.getValorMercadoImovel(),false));
-		  porcentagem.add(new PorcentagemImovel("Recomendado:", valorSugerido, true ));
-		  porcentagem.add(new PorcentagemImovel("LTV 10%:", valorMercaoImovelPorcento.multiply(new BigDecimal(10)),true));
-		  porcentagem.add(new PorcentagemImovel("LTV 20%:", valorMercaoImovelPorcento.multiply(new BigDecimal(20)),true));
-		  porcentagem.add(new PorcentagemImovel("LTV 30%:", valorMercaoImovelPorcento.multiply(new BigDecimal(30)),true));
-		  porcentagem.add(new PorcentagemImovel("LTV 40%:", valorMercaoImovelPorcento.multiply(new BigDecimal(40)),true));
-		  porcentagem.add(new PorcentagemImovel("LTV 50%:", valorMercaoImovelPorcento.multiply(new BigDecimal(50)),true));
-
+		  porcentagem.add(new PorcentagemImovel("Valor do imóvel: ", objetoContratoCobranca.getValorMercadoImovel(),false,false));
+		  porcentagem.add(new PorcentagemImovel("Recomendado:", valorSugerido, true,false ));
+		  porcentagem.add(new PorcentagemImovel("LTV 10%:", valorMercaoImovelPorcento.multiply(new BigDecimal(10)),true,false));
+		  porcentagem.add(new PorcentagemImovel("LTV 20%:", valorMercaoImovelPorcento.multiply(new BigDecimal(20)),true,false));
+		  porcentagem.add(new PorcentagemImovel("LTV 30%:", valorMercaoImovelPorcento.multiply(new BigDecimal(30)),true,false));
+		  porcentagem.add(new PorcentagemImovel("LTV 40%:", valorMercaoImovelPorcento.multiply(new BigDecimal(40)),true,false));
+		  porcentagem.add(new PorcentagemImovel("LTV 50%:", valorMercaoImovelPorcento.multiply(new BigDecimal(50)),true,false));
+		  if(porcentagemPersonalizada != null) {
+		  porcentagem.add(new PorcentagemImovel("Personalizado", valorMercaoImovelPorcento.multiply(porcentagemPersonalizada), true, true));
+		  } 
+		  porcentagemPersonalizada = BigDecimal.ZERO;
+		 
 	}
 
 
@@ -9772,8 +9791,8 @@ public class ContratoCobrancaMB {
 		objetoAnaliseComite.setTipoOp(objetoContratoCobranca.getTipoOperacao());
 		objetoAnaliseComite.setVlrImovel(objetoContratoCobranca.getValorMercadoImovel());
 		if (CommonsUtil.semValor(this.objetoAnaliseComite.getTaxaComite())
-				&& !CommonsUtil.semValor(this.objetoContratoCobranca.getTaxaPreAprovada())) {
-			this.objetoAnaliseComite.setTaxaComite(this.objetoContratoCobranca.getTaxaPreAprovada());
+				&& !CommonsUtil.semValor(this.objetoContratoCobranca.getTaxaPreAprovadaMaior())) {
+			this.objetoAnaliseComite.setTaxaComite(this.objetoContratoCobranca.getTaxaPreAprovadaMaior());
 		}
 		if (CommonsUtil.semValor(this.objetoAnaliseComite.getPrazoMaxComite())
 				&& !CommonsUtil.semValor(this.objetoContratoCobranca.getPrazoMaxPreAprovado())) {
@@ -11237,6 +11256,9 @@ public class ContratoCobrancaMB {
 	private BigDecimal totalAVencer;
 
 	private BarChartModel stackedGroupBarModel;
+	private CcbParticipantes participanteSelecionado;
+	private CcbParticipantes socioCcbSelecionado;
+	private boolean addSocioCcb = false;
 
 	public void clearCRI1() {
 		this.somaContratos240 = BigDecimal.ZERO;
@@ -19110,8 +19132,7 @@ public class ContratoCobrancaMB {
 		this.pagadorSecundarioSelecionado.setPessoa(new PagadorRecebedor());
 	}
 
-	public void pesquisaSocio() {
-
+	public void pesquisaCcbSocio() {
 		this.tituloPagadorRecebedorDialog = "Sócios";
 		this.tipoPesquisaPagadorRecebedor = "Socio";
 		this.updatePagadorRecebedor = ":form:SociosPanel";
@@ -19126,6 +19147,10 @@ public class ContratoCobrancaMB {
 			this.socioSelecionado.setPessoa(this.selectedPagadorGenerico);
 		} else if (CommonsUtil.mesmoValor("Pagador", tipoPesquisaPagadorRecebedor)) {
 			this.pagadorSecundarioSelecionado.setPessoa(this.selectedPagadorGenerico);
+		} else if (CommonsUtil.mesmoValor("Participante", tipoPesquisaPagadorRecebedor)) {
+			this.participanteSelecionado.setPessoa(this.selectedPagadorGenerico);
+		} else if (CommonsUtil.mesmoValor("SocioCCB", tipoPesquisaPagadorRecebedor)) {
+			this.socioCcbSelecionado.setPessoa(this.selectedPagadorGenerico);
 		} else if (CommonsUtil.mesmoValor("Analise Documento", tipoPesquisaPagadorRecebedor)) {
 
 			if (!CommonsUtil.semValor(selectedPagadorGenerico.getNome())
@@ -20324,6 +20349,81 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.getListDatasVistoria().add(dataVistoriaSelecionada);
 		this.dataVistoriaSelecionada = new DataVistoria();
 	}
+	
+	public void clearParticipante() {
+		this.participanteSelecionado = new CcbParticipantes();
+		this.participanteSelecionado.setPessoa(new PagadorRecebedor());
+	}
+	
+	public void pesquisaParticipante() {
+		this.tituloPagadorRecebedorDialog = "Participante";
+		this.updatePagadorRecebedor = "participanteCCBDialogForm";
+		this.tipoPesquisaPagadorRecebedor = "Participante";
+	}
+	
+	public void concluirParticipante() {
+		CcbParticipantesDao ccbDao = new CcbParticipantesDao();
+		this.participanteSelecionado.setTipoOriginal(participanteSelecionado.getTipoParticipante());
+		this.objetoContratoCobranca.getListaParticipantes().add(this.participanteSelecionado);
+		criarPagadorRecebedorNoSistema(this.participanteSelecionado.getPessoa());
+		this.participanteSelecionado.setContratoCobranca(objetoContratoCobranca);
+		if(participanteSelecionado.getId() > 0)
+			ccbDao.merge(this.participanteSelecionado);
+		else 
+			ccbDao.create(this.participanteSelecionado);
+		this.participanteSelecionado = new CcbParticipantes();
+		this.participanteSelecionado.setPessoa(new PagadorRecebedor());
+	}
+	
+	public void editarParticipante(CcbParticipantes participante) {
+		this.participanteSelecionado = new CcbParticipantes();
+		this.setParticipanteSelecionado(participante);
+	}
+	
+	public void removerParticipante(CcbParticipantes participante) {
+		participante.setContratoCobranca(null);
+		this.objetoContratoCobranca.getListaParticipantes().remove(participante);
+	}
+	
+	public void clearSocioCcb() {
+		this.socioCcbSelecionado = new CcbParticipantes();
+		this.socioCcbSelecionado.setPessoa(new PagadorRecebedor());
+	}
+	
+	public void pesquisaSocioCcb() {
+		this.tituloPagadorRecebedorDialog = "Socio";
+		this.tipoPesquisaPagadorRecebedor = "SocioCCB";
+		this.updatePagadorRecebedor = ":participanteCCBDialogForm:SocioCcbsPanel ";
+	}
+	
+	public void concluirSocioCcb() {
+		CcbParticipantesDao ccbDao = new CcbParticipantesDao();
+		if(!participanteSelecionado.getSocios().contains(socioCcbSelecionado))
+			this.getParticipanteSelecionado().getSocios().add(socioCcbSelecionado); 
+		criarPagadorRecebedorNoSistema(this.socioCcbSelecionado.getPessoa());
+		if(socioCcbSelecionado.getId() > 0)
+			ccbDao.merge(this.socioCcbSelecionado);
+		else 
+			ccbDao.create(this.socioCcbSelecionado);
+		ccbDao.create(socioCcbSelecionado);
+		this.socioCcbSelecionado = new CcbParticipantes();
+		this.socioCcbSelecionado.setPessoa(new PagadorRecebedor());
+		this.addSocioCcb = false;
+	}
+	
+	public void editarSocioCcb(CcbParticipantes socio) {
+		this.addSocioCcb = true;
+		this.socioCcbSelecionado = new CcbParticipantes();
+		this.setSocioCcbSelecionado(socio);
+	}
+	
+	public void removerSocioCcb(CcbParticipantes socio) {
+		socio.setContratoCobranca(null);
+		participanteSelecionado.getSocios().remove(socio);
+	}
+	
+	
+	
 
 	public void criarPagadorRecebedorNoSistema(PagadorRecebedor pagador) {
 		PagadorRecebedor pagadorRecebedor = null;
@@ -29128,32 +29228,17 @@ public class ContratoCobrancaMB {
 	}
 
 	public void executarConsultasAnaliseDocumento() throws SchedulerException {
-		SchedulerFactory shedFact = new StdSchedulerFactory();
-		Scheduler scheduler = shedFact.getScheduler();
+		
 		try {
-			scheduler.start();
-			JobDetail jobDetail = JobBuilder.newJob(DocumentoAnaliseJob.class)
-					.withIdentity("documentoAnaliseJOB", objetoContratoCobranca.getNumeroContrato()).build();
-			User user = loginBean.getUsuarioLogado();
-			
-			FacesContext fContext = FacesContext.getCurrentInstance();
-			ExternalContext extContext = fContext.getExternalContext();
-			HttpServletRequest request = (HttpServletRequest) fContext.getExternalContext().getRequest();
-			
-			String webHookJWT = JwtUtil.generateJWTWebhook(true);
-			String urlWenhook = SiscoatConstants.URL_SISCOAT_ENGINE_WEBHOOK + webHookJWT;
-			jobDetail.getJobDataMap().put("listaDocumentoAnalise", listaDocumentoAnalise);
-			jobDetail.getJobDataMap().put("user", user);
-			jobDetail.getJobDataMap().put("urlWenhook", urlWenhook);
-			jobDetail.getJobDataMap().put("objetoContratoCobranca", objetoContratoCobranca);
-			Trigger trigger = TriggerBuilder.newTrigger()
-					.withIdentity("documentoAnaliseJOB", objetoContratoCobranca.getNumeroContrato()).startNow().build();
-			scheduler.scheduleJob(jobDetail, trigger);
+			DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
+			documentoAnaliseService.criandoJobExecutarConsultas(listaDocumentoAnalise, loginBean.getUsuarioLogado(), this.objetoContratoCobranca);
 		} catch (SchedulerException e) {
 			e.printStackTrace();
 		}
 		this.objetoContratoCobranca.setDocumentosAnalisados(false);
 	}
+
+	
 
 	public boolean checkConsultasAnaliseDocumento() throws SchedulerException {
 		try {
@@ -34536,6 +34621,9 @@ public class ContratoCobrancaMB {
     								   Set<String> ressalvaProtesto,
     								   Set<String> ressalvaTrabalhista,
     								   Set<String> ressalvaProcesso) {
+    	
+
+    	engineService.salvarDetalheDocumentoEngine(docAnalise);
 		docAnalise.getResumoEngine();
 		docAnalise.getResumoScr();
 		docAnalise.getResumoProcesso();
@@ -34697,6 +34785,38 @@ public class ContratoCobrancaMB {
 
 	public void setValorMercadoImovelCinquenta(BigDecimal valorMercadoImovelCinquenta) {
 		this.valorMercadoImovelCinquenta = valorMercadoImovelCinquenta;
+	}
+
+	public CcbParticipantes getParticipanteSelecionado() {
+		return participanteSelecionado;
+	}
+
+	public void setParticipanteSelecionado(CcbParticipantes participanteSelecionado) {
+		this.participanteSelecionado = participanteSelecionado;
+	}
+
+	public CcbParticipantes getSocioCcbSelecionado() {
+		return socioCcbSelecionado;
+	}
+
+	public void setSocioCcbSelecionado(CcbParticipantes socioCcbSelecionado) {
+		this.socioCcbSelecionado = socioCcbSelecionado;
+	}
+
+	public boolean isAddSocioCcb() {
+		return addSocioCcb;
+	}
+
+	public void setAddSocioCcb(boolean addSocioCcb) {
+		this.addSocioCcb = addSocioCcb;
+	}	
+
+	public BigDecimal getPorcentagemPersonalizada() {
+		return porcentagemPersonalizada;
+	}
+
+	public void setPorcentagemPersonalizada(BigDecimal porcentagemPersonalizada) {
+		this.porcentagemPersonalizada = porcentagemPersonalizada;
 	}
 	
 }

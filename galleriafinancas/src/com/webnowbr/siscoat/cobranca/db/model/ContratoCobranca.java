@@ -171,6 +171,7 @@ public class ContratoCobranca implements Serializable {
 	private Set<AnaliseComite> listaAnaliseComite;
 	private Set<DataVistoria> listDatasVistoria;
 	private Set<Averbacao> listAverbacao;
+	private Set<CcbParticipantes> listaParticipantes = new HashSet<>();
 	
 	
 	// n�o persistida a lista abaixo
@@ -641,6 +642,7 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal valorBoletoPreContrato;
 	private String valorBoletoPreContratoStr;
 	private BigDecimal taxaPreAprovada;
+	private BigDecimal taxaPreDefinida;
 	private BigInteger prazoMaxPreAprovado;	        
 	private BigDecimal valorMercadoImovel;
 	
@@ -868,6 +870,20 @@ public class ContratoCobranca implements Serializable {
 			}
 		}		
 		return somaValorPago;
+	}
+	
+	
+
+	public BigDecimal getTaxaPreAprovadaMaior() {
+		if (CommonsUtil.semValor(this.taxaPreDefinida))
+			return taxaPreAprovada;
+		else {
+			if (this.taxaPreDefinida.compareTo(taxaPreAprovada) > 0)
+				return taxaPreDefinida;
+			else
+				return taxaPreAprovada;
+		}
+
 	}
 	
 	public ContratoCobranca() {
@@ -4738,6 +4754,15 @@ public class ContratoCobranca implements Serializable {
 	public void setTaxaPreAprovada(BigDecimal taxaPreAprovada) {
 		this.taxaPreAprovada = taxaPreAprovada;
 	}
+	
+	public BigDecimal getTaxaPreDefinida() {
+		return taxaPreDefinida;
+	}
+
+	public void setTaxaPreDefinida(BigDecimal taxaPreDefinida) {
+		this.taxaPreDefinida = taxaPreDefinida;
+	}
+
 
 	public BigDecimal getValorMercadoImovel() {
 		return valorMercadoImovel;
@@ -7417,6 +7442,14 @@ public class ContratoCobranca implements Serializable {
 
 	public void setDocumentosAnalisados(boolean documentosAnalisados) {
 		this.documentosAnalisados = documentosAnalisados;
+	}
+
+	public Set<CcbParticipantes> getListaParticipantes() {
+		return listaParticipantes;
+	}
+
+	public void setListaParticipantes(Set<CcbParticipantes> listaParticipantes) {
+		this.listaParticipantes = listaParticipantes;
 	}
 
 	
