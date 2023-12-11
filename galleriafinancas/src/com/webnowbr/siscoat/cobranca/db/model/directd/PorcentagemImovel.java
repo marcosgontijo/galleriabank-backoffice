@@ -8,13 +8,14 @@ public class PorcentagemImovel {
 	
 	private BigDecimal porcentagem;
 	private boolean eBotao;
+	private boolean personalizado;
 	
 	
-	
-	public PorcentagemImovel(String descricao, BigDecimal porcentagem, boolean eBotao) {
+	public PorcentagemImovel(String descricao, BigDecimal porcentagem, boolean eBotao, boolean personalizado) {
 		this.descricao = descricao;
 		this.porcentagem = porcentagem;
 		this.eBotao = eBotao;
+		this.personalizado = personalizado;
 	}
 
 	public String getDescricao() {
@@ -39,6 +40,14 @@ public class PorcentagemImovel {
 
 	public void seteBotao(boolean eBotao) {
 		this.eBotao = eBotao;
+	}
+
+	public boolean isPersonalizado() {
+		return personalizado;
+	}
+
+	public void setPersonalizado(boolean personalizado) {
+		this.personalizado = personalizado;
 	}
 	
 	

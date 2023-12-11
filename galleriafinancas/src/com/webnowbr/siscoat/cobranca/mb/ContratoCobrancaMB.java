@@ -9802,7 +9802,7 @@ public class ContratoCobrancaMB {
 		// !CommonsUtil.semValor(this.objetoContratoCobranca.getComentarioJuridico())){
 		// this.objetoAnaliseComite.setComentarioComite(this.objetoContratoCobranca.getComentarioJuridico());
 		// }
-	if (this.objetoAnaliseComite.getValorComite() == null) {
+
 		 valorSugerido = BigDecimal.ZERO;
 		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getImovel().getTipo(), "Apartamento")
 					|| CommonsUtil.mesmoValor(this.objetoContratoCobranca.getImovel().getTipo(), "Casa de Condomínio")
@@ -9845,7 +9845,7 @@ public class ContratoCobrancaMB {
 			}
 		}
 		
-	}
+	
 	return valorSugerido;
 	}
 	
