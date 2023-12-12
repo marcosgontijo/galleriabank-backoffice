@@ -14238,6 +14238,12 @@ public class ContratoCobrancaMB {
 		
 		if (status.equals("Aguardando Análise") 
 				&& (!user.isProfileGerenteAnalise() && !user.isAdministrador())) {
+			if(contratoCobrancaDao.consultaQtdAnaliseUser(user.getLogin()) >= 3) {
+				FacesContext context = FacesContext.getCurrentInstance();
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+					"Analista com muitas operações em andamento!", ""));
+				return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
+			}
 			ContratoCobranca contratoAnalise = null;
 			for (ContratoCobranca contrato : contratosPendentes) {
 				if(CommonsUtil.semValor(contrato.getAnalisePendenciadaUsuario())) {

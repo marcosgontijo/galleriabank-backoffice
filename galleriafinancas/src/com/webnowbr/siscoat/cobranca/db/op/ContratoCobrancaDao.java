@@ -9588,4 +9588,43 @@ private String QUERY_ID_IMOVELESTOQUE = "select id from cobranca.contratocobranc
 		});
 	}
     
+    
+    private String QUERY_QTD_ANALISE_USER = "\r\n"
+    		+ "select count(id), inicioanaliseusuario from cobranca.contratocobranca c\r\n"
+    		+ "where status != 'Aprovado' and status != 'Reprovado' and status != 'Baixado' and status != 'Desistência Cliente' \r\n"
+    		+ "and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true and (cadastroAprovadoValor = '' or cadastroAprovadoValor is null) \r\n"
+    		+ "and (matriculaAprovadaValor = '' or matriculaAprovadaValor is null)\r\n"
+    		+ "and inicioanaliseusuario = ? \r\n"
+    		+ "group by inicioanaliseusuario";
+    
+    @SuppressWarnings("unchecked")
+	public int consultaQtdAnaliseUser(String analista) {
+		return (int) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				int qtdAnalise = 0;
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				
+				try {
+					connection = getConnection();
+					
+					ps = connection
+							.prepareStatement(QUERY_QTD_ANALISE_USER);
+					
+					ps.setString(1, analista);
+					
+					rs = ps.executeQuery();
+					if (rs.next()) {
+						qtdAnalise = rs.getInt(1);
+					}
+							
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return qtdAnalise;
+			}
+		});
+	}
 }
