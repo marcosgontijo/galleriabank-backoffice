@@ -73,7 +73,8 @@ public final class User implements Serializable {
     private boolean userLaudo;
     private boolean userGalache;
     private boolean userAgenteEspelhamento;
-   
+    private boolean userPlanejamento;
+    
     private boolean profileMarketing;
         
     private String codigoResponsavel;    
@@ -548,6 +549,14 @@ public final class User implements Serializable {
 
 	public void setUserAgenteEspelhamento(boolean userAgenteEspelhamento) {
 		this.userAgenteEspelhamento = userAgenteEspelhamento;
+	}
+
+	public boolean isUserPlanejamento() {
+		return userPlanejamento;
+	}
+
+	public void setUserPlanejamento(boolean userPlanejamento) {
+		this.userPlanejamento = userPlanejamento;
 	}
 
 	public boolean isUserGalache() {

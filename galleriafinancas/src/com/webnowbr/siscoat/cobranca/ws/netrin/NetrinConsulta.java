@@ -79,10 +79,12 @@ public class NetrinConsulta {
 			} else
 				return SiscoatConstants.CND_SITUACAO_POSSUI_DEBITOS;
 		} else if (CommonsUtil.mesmoValor(this.netrinDocumentos.getId(), SiscoatConstants.NETRIN_CND_ESTADUAL)) {
-			CndEstadualResponse response = GsonUtil.fromJson(this.retorno, CndEstadualResponse.class);
+			CndEstadualResponse response = GsonUtil.fromJson(this.retorno, CndEstadualResponse.class);			
 			if (!CommonsUtil.mesmoValor("Não", response.getSefazCND().getEmitiuCertidao())) {
 				return SiscoatConstants.CND_SITUACAO_NAO_POSSUI_DEBITOS;
-			} else
+			} else if (response.getSefazCND().getMensagem().contains("Não foi possível emitir a Certidão Negativa"))
+				return SiscoatConstants.CND_SITUACAO_ERRO_AO_CONSULTAR;
+			else				
 				return SiscoatConstants.CND_SITUACAO_POSSUI_DEBITOS;
 		} else if (CommonsUtil.mesmoValor(this.netrinDocumentos.getId(), SiscoatConstants.NETRIN_CND_TRABALHISTA)) {
 			CndTrabalhistaTSTResponse response = GsonUtil.fromJson(this.retorno, CndTrabalhistaTSTResponse.class);
