@@ -14245,12 +14245,16 @@ public class ContratoCobrancaMB {
 				return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
 			}
 			ContratoCobranca contratoAnalise = null;
+			boolean pendenciaOutroAnalista = false;
 			for (ContratoCobranca contrato : contratosPendentes) {
-				if(CommonsUtil.semValor(contrato.getAnalisePendenciadaUsuario())) {
+				if(CommonsUtil.mesmoValor(contrato.getAnalisePendenciadaUsuario(), user.getLogin())) {
 					contratoAnalise = contrato;
 					break;
-				} else if(CommonsUtil.mesmoValor(contrato.getAnalisePendenciadaUsuario(), user.getLogin())) {
+				} else {
 					contratoAnalise = contrato;
+					if(!CommonsUtil.semValor(contrato.getAnalisePendenciadaUsuario())) {
+						pendenciaOutroAnalista = true;
+					}
 					break;
 				}
 			}
@@ -14277,7 +14281,14 @@ public class ContratoCobrancaMB {
 				imovelCobrancaDao.merge(this.objetoImovelCobranca);
 				updateCheckList();
 				this.objetoContratoCobranca.populaStatusEsteira(getUsuarioLogadoNull());
+				if(pendenciaOutroAnalista) {
+					FacesContext context = FacesContext.getCurrentInstance();
+					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Pendência do analista: "+ objetoContratoCobranca.getAnalisePendenciadaUsuario(), ""));
+					objetoContratoCobranca.setInicioAnaliseUsuario(objetoContratoCobranca.getAnalisePendenciadaUsuario());
+				}
 				contratoCobrancaDao.merge(this.objetoContratoCobranca);
+				
 				return clearFieldsEditarPendentesAnalistas();
 			} else {
 				FacesContext context = FacesContext.getCurrentInstance();
