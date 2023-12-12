@@ -542,6 +542,15 @@ public class UsuarioMB {
 				}
 			}
 			
+			gAdm = gDao.findByFilter("acronym", "PLANEJAMENTO");
+			if (objetoUsuario.isUserPlanejamento()) {
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}
+			}
+			
 			
 
 

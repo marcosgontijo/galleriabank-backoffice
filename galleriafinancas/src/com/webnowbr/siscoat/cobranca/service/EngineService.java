@@ -74,17 +74,19 @@ public class EngineService {
 				documentoAnaliseDao.merge(documentoAnalise);
 				salvarDetalheDocumentoEngine(documentoAnalise);
 
-				EngineRetorno engineRetorno = GsonUtil.fromJson(documentoAnalise.getRetornoEngine(),
-						EngineRetorno.class);
-				if (CommonsUtil.semValor(engineRetorno.getIdCallManager())) {
-					engineRetorno.setIdCallManager(engine.getIdCallManager());
+				if (!CommonsUtil.semValor(documentoAnalise.getRetornoEngine())) {
+					EngineRetorno engineRetorno = GsonUtil.fromJson(documentoAnalise.getRetornoEngine(),
+							EngineRetorno.class);
+					if (CommonsUtil.semValor(engineRetorno.getIdCallManager())) {
+						engineRetorno.setIdCallManager(engine.getIdCallManager());
+					}
+
+					DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
+					PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+
+					processaWebHookEngine(documentoAnaliseService, engineRetorno, pagadorRecebedorService,
+							documentoAnaliseDao, documentoAnalise);
 				}
-
-				DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
-				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
-
-				processaWebHookEngine(documentoAnaliseService, engineRetorno, pagadorRecebedorService,
-						documentoAnaliseDao, documentoAnalise);
 			}
 			return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta já existente!" + engine.getIdCallManager(),
 					"");
@@ -146,7 +148,7 @@ public class EngineService {
 				// engine.getContrato().getId());
 				if (engine.getId() <= 0) {
 					engineDao.create(engine);
-				}else {
+				} else {
 					engineDao.merge(engine);
 				}
 
@@ -172,98 +174,6 @@ public class EngineService {
 
 	}
 
-	public FacesMessage engineCriarConsultaOld(DocumentoAnalise documentoAnalise, DataEngine engine,
-			User usuarioLogado) { // POST para gerar consulta
-		DataEngineDao engineDao = new DataEngineDao();
-//		if (engineDao.findByFilter("pagador", engine.getPagador()).size() > 0) {
-////			context.addMessage(null,);	
-//			return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta já existente!", "");
-//		}
-		if (!CommonsUtil.semValor(engine.getIdCallManager())) {
-			if (documentoAnalise != null) {
-				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-				documentoAnalise.setEngine(engine);
-				documentoAnalise.setRetornoEngine("consulta efetuada anteriormente Id: " + engine.getId());
-				documentoAnaliseDao.merge(documentoAnalise);
-			}
-
-			return new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta já existente!" + engine.getIdCallManager(),
-					"");
-		}
-		try {
-			// loginDocket();
-			int HTTP_COD_SUCESSO = 200;
-			int HTTP_COD_SUCESSO2 = 201;
-
-			URL myURL;
-			myURL = new URL(engineUrl + "/api/callmanager");
-
-			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
-			myURLConnection.setRequestMethod("POST");
-			myURLConnection.setUseCaches(false);
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json");
-			myURLConnection.setDoOutput(true);
-			myURLConnection.addRequestProperty("x-api-key", this.engineChaveApi);
-
-			JSONObject myResponse = null;
-			JSONObject jsonWhatsApp = engineBodyJsonEngine(engine.getPagador(), null);
-
-			try (OutputStream os = myURLConnection.getOutputStream()) {
-				byte[] input = jsonWhatsApp.toString().getBytes("utf-8");
-				os.write(input, 0, input.length);
-			}
-
-			FacesMessage result = null;
-			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO
-					&& myURLConnection.getResponseCode() != HTTP_COD_SUCESSO2) {
-
-				System.out.println(jsonWhatsApp.toString());
-				result = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-						"Engine: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", "");
-			} else {
-				// docket = new Docket(objetoContratoCobranca, listaPagador, estadoImovel, "" ,
-				// cidadeImovel, "", getNomeUsuarioLogado(), DateUtil.gerarDataHoje());
-
-				myResponse = engineJSONSucesso(myURLConnection.getInputStream());
-				engine.setIdCallManager(myResponse.get("idCallManager").toString());
-				engine.setData(DateUtil.gerarDataHoje());
-				engine.setUsuario(usuarioLogado.getName());
-				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-				if (engine.getContrato() != null && engine.getContrato().getId() > 0)
-					cDao.merge(engine.getContrato());
-				else
-					engine.setContrato(null);
-
-				// System.out.println("NumeroContrato Erro EngineDocket:" +
-				// engine.getContrato().getNumeroContrato() + ", " +
-				// engine.getContrato().getId());
-				if (engine.getId() <= 0) {
-					engineDao.create(engine);
-				}
-
-				if (documentoAnalise != null) {
-					DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-					documentoAnalise.setEngine(engine);
-					documentoAnaliseDao.merge(documentoAnalise);
-				}
-
-				result = new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", "");
-			}
-
-			myURLConnection.disconnect();
-			return result;
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-
-	}
 
 	public DataEngine engineInserirPessoa(PagadorRecebedor pagadorAdicionar, ContratoCobranca objetoContratoCobranca) {
 		DataEngineDao engineDao = new DataEngineDao();
@@ -425,15 +335,21 @@ public class EngineService {
 
 	public void salvarDetalheDocumentoEngine(DocumentoAnalise documentoAnalise) {
 		// FacesContext context = FacesContext.getCurrentInstance();
-		if (CommonsUtil.semValor(documentoAnalise.getEngine().getIdCallManager())) {
+		if (CommonsUtil.semValor(documentoAnalise.getEngine())
+				|| CommonsUtil.semValor(documentoAnalise.getEngine().getIdCallManager())) {
 			// context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 			// "Consulta sem IdCallManager", ""));
 			return;
 		}
-		documentoAnalise.setRetornoEngine(PegarDetalheDataEngine(documentoAnalise.getEngine()));
 
-		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-		documentoAnaliseDao.merge(documentoAnalise);
+		if (CommonsUtil.semValor(documentoAnalise.getRetornoEngine())) {			
+			String retorno = PegarDetalheDataEngine(documentoAnalise.getEngine());
+			if (!CommonsUtil.semValor(retorno)) {
+			documentoAnalise.setRetornoEngine(retorno);	
+			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+			documentoAnaliseDao.merge(documentoAnalise);
+			}
+		}
 	}
 
 	public void processaWebHookEngine(DocumentoAnaliseService documentoAnaliseService,
@@ -443,7 +359,7 @@ public class EngineService {
 		String webhookRetorno = GsonUtil.toJson(engineWebhookRetorno);
 
 		documentoAnalise.setRetornoEngine(webhookRetorno);
-		
+
 		NetrinService netrinService = new NetrinService();
 		UserService userService = new UserService();
 		ScrService scrService = new ScrService();
@@ -540,12 +456,14 @@ public class EngineService {
 
 							if (engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership
 									.getRelatedEntityTaxIdType().equalsIgnoreCase("CPF")) {
-								motivo = "Sócio Vinculado ao " + StringUtils.capitalize(documentoAnalise.getMotivoAnalise());
+								motivo = "Sócio Vinculado ao "
+										+ StringUtils.capitalize(documentoAnalise.getMotivoAnalise());
 //								if (!CommonsUtil.mesmoValor(documentoAnalise.getMotivoAnalise().toUpperCase(),
 //										"PROPRIETARIO ATUAL"))
 //									motivo = "Sócio Vinculado ao Proprietario Anterior";
 							} else {
-								motivo = "Empresa Vinculada ao "  + StringUtils.capitalize(documentoAnalise.getMotivoAnalise());
+								motivo = "Empresa Vinculada ao "
+										+ StringUtils.capitalize(documentoAnalise.getMotivoAnalise());
 //								if (!CommonsUtil.mesmoValor(documentoAnalise.getMotivoAnalise().toUpperCase(),
 //										"PROPRIETARIO ATUAL"))
 //									motivo = "Empresa Vinculada ao Proprietario Anterior";
@@ -587,7 +505,8 @@ public class EngineService {
 		documentoAnaliseDao.merge(documentoAnalise);
 		String base64 = documentoAnalise.getEngine().getPdfBase64();
 		FileService fileService = new FileService();
-		//fileService.salvarPdfRetorno(documentoAnalise, base64, "Processo", "interno");
+		// fileService.salvarPdfRetorno(documentoAnalise, base64, "Processo",
+		// "interno");
 
 	}
 
@@ -707,24 +626,24 @@ public class EngineService {
 				in.close();
 			}
 			myURLConnection.disconnect();
-			
-			///  trecho retirado do webhook
+
+			/// trecho retirado do webhook
 			PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
 			PagadorRecebedor pagaRecebedor = engine.getPagador();
 			pagadorRecebedorService.preecheDadosReceita(pagaRecebedor);
-			pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagaRecebedor,
-					DocumentosAnaliseEnum.ENGINE, result);
+			pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagaRecebedor, DocumentosAnaliseEnum.ENGINE,
+					result);
 			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-			DocumentoAnalise documentoAnalise = documentoAnaliseDao.findByFilter("engine", engine).stream()
-					.findFirst().orElse(null);
+			DocumentoAnalise documentoAnalise = documentoAnaliseDao.findByFilter("engine", engine).stream().findFirst()
+					.orElse(null);
 			DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
 			EngineRetorno engineWebhookRetorno = GsonUtil.fromJson(result, EngineRetorno.class);
 			if (!CommonsUtil.semValor(documentoAnalise)) {
-				processaWebHookEngine(documentoAnaliseService, engineWebhookRetorno,
-					pagadorRecebedorService, documentoAnaliseDao, documentoAnalise);
+				processaWebHookEngine(documentoAnaliseService, engineWebhookRetorno, pagadorRecebedorService,
+						documentoAnaliseDao, documentoAnalise);
 			}
-			///  trecho retirado do webhook
-			
+			/// trecho retirado do webhook
+
 			return result;
 
 		} catch (MalformedURLException e) {

@@ -152,6 +152,12 @@ public class ContractService {
 
 						this.objetoContratoCobranca
 								.setQuantoPrecisa(new BigDecimal(contratoAPP.getDouble("quantoPrecisa")));
+						
+
+						this.objetoContratoCobranca.setTaxaPreDefinida(contratoAPP.has("taxaPreDefinida")
+								? new BigDecimal(contratoAPP.getDouble("taxaPreDefinida"))
+								: this.objetoContratoCobranca.getTaxaPreDefinida());
+						
 						System.out.println("Contract Service - Criar Operacao - Imovel QuantoPrecisa: {} "
 								+ contratoAPP.getDouble("quantoPrecisa"));
 						this.objetoContratoCobranca.setObservacao(
@@ -485,6 +491,11 @@ public class ContractService {
 							this.objetoContratoCobranca.setQuantoPrecisa(contratoAPP.has("quantoPrecisa")
 									? new BigDecimal(contratoAPP.getDouble("quantoPrecisa"))
 									: this.objetoContratoCobranca.getQuantoPrecisa());
+							
+							this.objetoContratoCobranca.setTaxaPreDefinida(contratoAPP.has("taxaPreDefinida")
+									? new BigDecimal(contratoAPP.getDouble("taxaPreDefinida"))
+									: this.objetoContratoCobranca.getTaxaPreDefinida());
+							
 							this.objetoContratoCobranca.setObservacao(
 									contratoAPP.has("observacao") ? contratoAPP.getString("observacao") : null);
 

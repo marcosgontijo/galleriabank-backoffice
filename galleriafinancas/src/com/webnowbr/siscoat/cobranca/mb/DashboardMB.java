@@ -371,7 +371,7 @@ public class DashboardMB {
 		for (ContratoCobranca coco : lista) {
 			BigDecimal peso = BigDecimal.ZERO;
 			BigDecimal valor = BigDecimal.ZERO;
-			BigDecimal taxa = coco.getTaxaPreAprovada();
+			BigDecimal taxa = coco.getTaxaPreAprovadaMaior();
 			BigDecimal valorContrato = coco.getQuantoPrecisa();
 			if(!CommonsUtil.semValor(valorContrato) && !CommonsUtil.semValor(taxa)) {
 				peso = valorContrato.divide(BigDecimal.valueOf(100000), MathContext.DECIMAL128);
@@ -439,8 +439,8 @@ public class DashboardMB {
 		BigDecimal min = BigDecimal.valueOf(9999);
 		for (ContratoCobranca coco : lista) {
 			BigDecimal tx = BigDecimal.ZERO;
-			if(!CommonsUtil.semValor(coco.getTaxaPreAprovada())) {
-				tx = coco.getTaxaPreAprovada();
+			if(!CommonsUtil.semValor(coco.getTaxaPreAprovadaMaior())) {
+				tx = coco.getTaxaPreAprovadaMaior();
 			}
 			if(min.compareTo(tx) > 0) {
 				if(!CommonsUtil.semValor(tx)) {
@@ -494,8 +494,8 @@ public class DashboardMB {
 		BigDecimal max = BigDecimal.ZERO;
 		for (ContratoCobranca coco : lista) {
 			BigDecimal tx = BigDecimal.ZERO;
-			if(!CommonsUtil.semValor(coco.getTaxaPreAprovada())) {
-				tx = coco.getTaxaPreAprovada();
+			if(!CommonsUtil.semValor(coco.getTaxaPreAprovadaMaior())) {
+				tx = coco.getTaxaPreAprovadaMaior();
 			}
 			if(max.compareTo(tx) < 0) {
 				max = tx;

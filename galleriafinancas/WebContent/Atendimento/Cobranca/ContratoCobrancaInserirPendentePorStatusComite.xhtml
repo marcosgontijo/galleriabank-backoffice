@@ -863,6 +863,16 @@
 											</p:inputText>
 											<p:outputLabel value="% + IPCA a.m." />
 										</h:panelGroup>
+										<p:outputLabel for="taxaPreDefinidaComite" rendered="#{contratoCobrancaMB.objetoContratoCobranca.taxaPreDefinida} ne null"
+											value="Taxa Pre-Definida " styleClass="labelBold" />
+										<p:outputLabel id="taxaPreDefinidaComite"   rendered="#{contratoCobrancaMB.objetoContratoCobranca.taxaPreDefinida} ne null"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.taxaPreDefinida}"
+											styleClass="labelBold" />
+										<p:outputLabel for="taxaPreAprovadaComite"
+											value="Taxa Pre-Definida " styleClass="labelBold" />
+										<p:outputLabel id="taxaPreAprovadaComite"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.taxaPreAprovada}"
+											styleClass="labelBold" />
 
 										<p:outputLabel for="prazoMaxAprovadoComite"
 											value="Prazo Maximo Aprovado: " styleClass="labelBold" />
@@ -1627,6 +1637,21 @@
 										<h:panelGrid columns="2">
 											<p:inputText id="taxaPreAprovada"
 												value="#{contratoCobrancaMB.objetoContratoCobranca.taxaPreAprovada}"
+												style="FONT-SIZE: 10pt;width:60px;"
+												disabled="#{contratoCobrancaMB.deleteMode}"
+												converter="bigDecimalConverter" />
+											<h:panelGrid columns="1">
+												<p:outputLabel value="% + IPCA a.m. - Mediante " />
+												<p:outputLabel value="comprovação de renda compatível" />
+											</h:panelGrid>
+										</h:panelGrid>
+									</h:panelGroup>
+									<p:outputLabel for="taxaPreDefinida"
+										value="Taxa Pré-Definida: " styleClass="labelBold" />
+									<h:panelGroup>
+										<h:panelGrid columns="2">
+											<p:outputLabel id="taxaPreDefinida"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.taxaPreDefinida}"
 												style="FONT-SIZE: 10pt;width:60px;"
 												disabled="#{contratoCobrancaMB.deleteMode}"
 												converter="bigDecimalConverter" />

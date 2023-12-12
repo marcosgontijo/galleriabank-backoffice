@@ -892,6 +892,21 @@
 											</h:panelGrid>
 										</h:panelGrid>
 									</h:panelGroup>
+									<p:outputLabel for="taxaPreDefinida"
+										value="Taxa Pré-Definida: " styleClass="labelBold" />
+									<h:panelGroup>
+										<h:panelGrid columns="2">
+											<p:outputLabel id="taxaPreDefinida"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.taxaPreDefinida}"
+												style="FONT-SIZE: 10pt;width:60px;"
+												disabled="#{contratoCobrancaMB.deleteMode}"
+												converter="bigDecimalConverter" />
+											<h:panelGrid columns="1">
+												<p:outputLabel value="% + IPCA a.m. - Mediante " />
+												<p:outputLabel value="comprovação de renda compatível" />
+											</h:panelGrid>
+										</h:panelGrid>
+									</h:panelGroup>
 									<p:outputLabel for="prazoMaxPreAprovado"
 										value="Prazo Maximo Pré-Aprovado: " styleClass="labelBold" />
 									<h:panelGroup>
