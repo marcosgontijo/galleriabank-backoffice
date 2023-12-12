@@ -51,6 +51,8 @@ public class ContasPagar implements Serializable {
 	private StarkBankBoleto comprovantePagamentoStarkBank;
 	private StarkBankPix comprovantePagamentoPixStarkBank;
 	
+	private boolean contaCartaSplit;
+	
 	private List<StarkBankBaixa> listContasPagarBaixas = new ArrayList<StarkBankBaixa>();
 	
 	private Collection<FileUploaded> filesContas = new ArrayList<FileUploaded>();
@@ -348,5 +350,13 @@ public class ContasPagar implements Serializable {
 
 	public void setListContasPagarBaixas(List<StarkBankBaixa> listContasPagarBaixas) {
 		this.listContasPagarBaixas = listContasPagarBaixas;
+	}
+
+	public boolean isContaCartaSplit() {
+		return contaCartaSplit;
+	}
+
+	public void setContaCartaSplit(boolean contaCartaSplit) {
+		this.contaCartaSplit = contaCartaSplit;
 	}
 }

@@ -19396,6 +19396,85 @@ public class ContratoCobrancaMB {
 		}
 	}
 	
+	public void pagamentoStarkBankCartaSplit() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		
+		ContasPagar contaCartaSplit = new ContasPagar();
+		contaCartaSplit.setContaCartaSplit(true);
+		contaCartaSplit.setContrato(this.objetoContratoCobranca);
+		contaCartaSplit.setDataVencimento(DateUtil.gerarDataHoje());
+		contaCartaSplit.setDescricao("Pagamento Carta Split");					
+		//contaCartaSplit.setPagadorRecebedor(recebedor);
+		contaCartaSplit.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
+		contaCartaSplit.setResponsavel(this.objetoContratoCobranca.getResponsavel());
+		contaCartaSplit.setTipoDespesa("C");
+		contaCartaSplit.setValor(this.objetoContratoCobranca.getValorCartaSplit());	
+		
+		contaCartaSplit.setBancoTed(this.objetoContratoCobranca.getBancoBancarioCartaSplit());
+		contaCartaSplit.setAgenciaTed(this.objetoContratoCobranca.getAgenciaBancarioCartaSplit());
+		contaCartaSplit.setContaTed(this.objetoContratoCobranca.getContaBancarioCartaSplit());
+		contaCartaSplit.setPix(this.objetoContratoCobranca.getPixCartaSplit());
+		contaCartaSplit.setNomeTed(this.objetoContratoCobranca.getNomeBancarioCartaSplit());
+		
+		ContasPagarDao contasPagarDao = new ContasPagarDao();
+		if (contaCartaSplit.getId() <= 0) {
+			contasPagarDao.create(contaCartaSplit);
+		} else {
+			contasPagarDao.merge(contaCartaSplit);
+		}
+		
+		/*
+		if (contaCartaSplit.getFormaTransferencia().equals("Boleto")) {
+
+			contaCartaSplit.setDescricaoStarkBank("Pagamento de Conta");
+
+			StarkBankBaixa baixa = registraBaixaStarkBank(contaCartaSplit.getDataPagamento(),
+					contaCartaSplit.getNumeroDocumentoPagadorStarkBank(), null,
+					contaCartaSplit.getLinhaDigitavelStarkBank(), recebedor.getNome(),
+					contaCartaSplit.getValorPagamento(), contaCartaSplit, "Boleto", "Aguardando Aprovação");
+
+				contaCartaSplit.getListContasPagarBaixas().add(baixa);
+
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Pagamento StarkBank: Ordem de Pagamento de Boleto inserida com sucesso!", ""));
+		}
+		*/
+
+		if (this.objetoContratoCobranca.getPixCartaSplit() != null || !this.objetoContratoCobranca.getPixCartaSplit().equals("")) {
+			contaCartaSplit.setFormaTransferencia("PIX");
+			
+			StarkBankBaixa baixa = registraBaixaStarkBank(DateUtil.gerarDataHoje(),
+						this.objetoContratoCobranca.getCpfCnpjBancarioCartaSplit(), null, null,
+						contaCartaSplit.getNomeTed(), this.objetoContratoCobranca.getValorCartaSplit(),
+						contaCartaSplit, "PIX", "Aguardando Aprovação");
+
+				contaCartaSplit.getListContasPagarBaixas().add(baixa);
+
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Pagamento StarkBank: Ordem de Pagamento de PIX inserida com sucesso!", ""));
+		} else {
+			contaCartaSplit.setFormaTransferencia("TED");
+				StarkBankBaixa baixa = registraBaixaStarkBank(DateUtil.gerarDataHoje(),
+						this.objetoContratoCobranca.getCpfCnpjBancarioCartaSplit(), null, null,
+						contaCartaSplit.getNomeTed(), this.objetoContratoCobranca.getValorCartaSplit(),
+						contaCartaSplit, "TED", "Aguardando Aprovação");
+
+				contaCartaSplit.getListContasPagarBaixas().add(baixa);
+
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Pagamento StarkBank: Ordem de Pagamento de TED inserida com sucesso!", ""));
+		}
+		
+		//contaCartaSplit.setDataPagamento(DateUtil.gerarDataHoje());
+		//contaCartaSplit.setValorPagamento(valor);	
+		
+		if (contaCartaSplit.getId() <= 0) {
+			contasPagarDao.create(contaCartaSplit);
+		} else {
+			contasPagarDao.merge(contaCartaSplit);
+		}
+	}
+	
 	public String consultaPagamentosStarkBankPendentes() {
 		
 		StarkBankBaixaDAO starkBankBaixaDAO = new StarkBankBaixaDAO();
@@ -34264,6 +34343,42 @@ public class ContratoCobrancaMB {
 
 	public String pathComprovanteStarkBank;
 	public String nomeComprovanteStarkBank;
+	
+	public StreamedContent getDownloadComprovanteStarkBankCartaSplit(ContratoCobranca contrato) {
+		FacesContext context = FacesContext.getCurrentInstance();
+		
+		StarkBankBaixa baixa = null;
+		
+		for (ContasPagar contas : contrato.getListContasPagar()) {
+			if (contas.getDescricao().equals("")) {
+				if (contas.getListContasPagarBaixas().size() > 0) {
+					baixa = contas.getListContasPagarBaixas().get(0);
+				}
+			}
+		}
+		
+		if (baixa != null) {
+			geraReciboPagamentoStarkBank(baixa);
+	
+			String caminho = this.pathComprovanteStarkBank + this.nomeComprovanteStarkBank;
+			String arquivo = this.nomeComprovanteStarkBank;
+			FileInputStream stream = null;
+	
+			try {
+				stream = new FileInputStream(caminho);
+				downloadComprovanteStarkBank = new DefaultStreamedContent(stream, this.pathComprovanteStarkBank,
+						this.nomeComprovanteStarkBank);
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				System.out.println("StarkBank - Comprovante não encontrado!");
+			}
+	
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+					"[Stark Bank - Recibo de Pagamento] Recibo de pagamento gerado com sucesso!", ""));
+		} 
+		
+		return this.downloadComprovanteStarkBank;
+	}
 
 	public StreamedContent getDownloadComprovanteStarkBank(StarkBankBaixa baixaStarkBank) {
 		FacesContext context = FacesContext.getCurrentInstance();

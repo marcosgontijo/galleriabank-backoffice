@@ -333,6 +333,10 @@ public class KobanaMB {
 				
 				if (!objetoBoleto.isNull("document_number")) {
 					boleto.setDocumentNumber(objetoBoleto.getString("document_number"));
+					
+					if (boleto.getDocumentNumber().equals("57516")) {
+						System.out.println("teste");
+					}
 				}
 				
 				if (objetoBoleto.getString("status").equals("paid")) {
@@ -353,6 +357,11 @@ public class KobanaMB {
 							JSONObject objetoDataBoleto = objetoBoleto.getJSONObject("custom_data");
 							ContratoCobranca contrato = new ContratoCobranca();
 							contrato = contratoDao.findById(Long.valueOf(objetoDataBoleto.getString("idContrato")));
+							
+							if (contrato.getNumeroContrato().equals("57516")) {
+								System.out.println("teste");
+							}
+							
 							boleto.setContrato(contrato); 
 							
 							boleto.setVlrParcela(BigDecimal.ZERO);
@@ -837,7 +846,7 @@ public class KobanaMB {
 		}
 		
 		if (contrato.getEmpresa().equals("CRI 5")) {
-			jsonBoleto.put("bank_billet_account_id", 10132);
+			jsonBoleto.put("bank_billet_account_id", 10218);
 		}
 
 	    /*
@@ -1269,7 +1278,7 @@ public class KobanaMB {
 		}
 		
 		if (contrato.getEmpresa().equals("CRI 5")) {
-			jsonBoleto.put("bank_billet_account_id", 10132);
+			jsonBoleto.put("bank_billet_account_id", 10218);
 		}
 	    /*
 	    Número do Contrato
