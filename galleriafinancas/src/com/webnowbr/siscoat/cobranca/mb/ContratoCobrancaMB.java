@@ -5307,64 +5307,6 @@ public class ContratoCobrancaMB {
 		}
 	}
 
-	public boolean validaAlteracaoCheckList() {
-		boolean retorno = false;
-
-		if (this.objetoContratoCobranca != null && this.contratoCobrancaCheckList != null) {
-			if (this.objetoContratoCobranca.isInicioAnalise() != this.contratoCobrancaCheckList.isInicioAnalise()) {
-				retorno = true;
-			}
-
-			if (this.objetoContratoCobranca.getCadastroAprovadoValor() != null
-					&& this.contratoCobrancaCheckList.getCadastroAprovadoValor() != null) {
-				if (!this.objetoContratoCobranca.getCadastroAprovadoValor()
-						.equals(this.contratoCobrancaCheckList.getCadastroAprovadoValor())) {
-					retorno = true;
-				}
-			}
-
-			if (this.objetoContratoCobranca.getMatriculaAprovadaValor() != null
-					&& this.contratoCobrancaCheckList.getMatriculaAprovadaValor() != null) {
-				if (!this.objetoContratoCobranca.getMatriculaAprovadaValor()
-						.equals(this.contratoCobrancaCheckList.getMatriculaAprovadaValor())) {
-					retorno = true;
-				}
-			}
-
-			if (this.objetoContratoCobranca.isPagtoLaudoConfirmada() != this.contratoCobrancaCheckList
-					.isPagtoLaudoConfirmada()) {
-				retorno = true;
-			}
-
-			if (this.objetoContratoCobranca.isLaudoRecebido() != this.contratoCobrancaCheckList.isLaudoRecebido()) {
-				retorno = true;
-			}
-
-			if (this.objetoContratoCobranca.isPajurFavoravel() != this.contratoCobrancaCheckList.isPajurFavoravel()) {
-				retorno = true;
-			}
-
-			if (this.objetoContratoCobranca.isDocumentosCompletos() != this.contratoCobrancaCheckList
-					.isDocumentosCompletos()) {
-				retorno = true;
-			}
-
-			if (this.objetoContratoCobranca.isCcbPronta() != this.contratoCobrancaCheckList.isCcbPronta()) {
-				retorno = true;
-			}
-
-			if (this.objetoContratoCobranca.getStatusContrato() != null
-					&& this.contratoCobrancaCheckList.getStatusContrato() != null) {
-				if (!this.objetoContratoCobranca.getStatusContrato()
-						.equals(this.contratoCobrancaCheckList.getStatusContrato())) {
-					retorno = true;
-				}
-			}
-		}
-
-		return retorno;
-	}
-
 	/*******
 	 * Atualiza o check list com data e o usuário que setou se false limpa usuario e
 	 * data se true verificar se data e usuario nulo preeencher dados
@@ -9823,9 +9765,9 @@ public class ContratoCobrancaMB {
 
 			if (!CommonsUtil.semValor(this.objetoContratoCobranca.getValorEmprestimo())
 					&& this.objetoContratoCobranca.getValorEmprestimo().compareTo(valorSugerido) < 0) {
-			objetoAnaliseComite.setValorComite(this.objetoContratoCobranca.getValorEmprestimo());
+				objetoAnaliseComite.setValorComite(this.objetoContratoCobranca.getValorEmprestimo());
 			} else {
-			this.objetoAnaliseComite.setValorComite(valorSugerido);
+				this.objetoAnaliseComite.setValorComite(valorSugerido);
 			}
 			if(CommonsUtil.semValor(objetoImovelCobranca.getLinkGMaps())) {
 				getLinkMaps();

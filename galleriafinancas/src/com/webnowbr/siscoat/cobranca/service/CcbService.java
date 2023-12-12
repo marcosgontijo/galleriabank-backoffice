@@ -2657,7 +2657,7 @@ public class CcbService {
 			            text = trocaValoresXWPF(text, r, "cartorioImovel", objetoCcb.getCartorioImovel());
 						text = trocaValoresXWPF(text, r, "cidadeImovel", objetoCcb.getCidadeImovel());
 						text = trocaValoresXWPF(text, r, "ufImovel", objetoCcb.getUfImovel());
-						text = trocaValoresXWPF(text, r, "numeroMatricula", objetoCcb.getNumeroRegistroMatricula());
+						text = trocaValoresXWPF(text, r, "numeroMatricula", objetoCcb.getNumeroImovel());
 					}
 			    }
 			}
@@ -2676,7 +2676,7 @@ public class CcbService {
 					}
 				}
 			}
-		   
+		    
 		    ByteArrayOutputStream out = new ByteArrayOutputStream();
 			document.write(out);
 			document.close();

@@ -32,6 +32,9 @@
 		<property name="contaPaga" type="boolean">
 			<column name="contaPaga" />
 		</property>		
+		<property name="contaCartaSplit" type="boolean">
+			<column name="contaCartaSplit" not-null="true" default="false" />
+		</property>
 		<property name="dataPagamento" type="java.util.Date">
 			<column name="dataPagamento" />
 		</property>

@@ -380,6 +380,7 @@ public class PajuService {
 							b -> CommonsUtil.mesmoValor(b.getCodigoTipoTemplateBloco(), BLOCO_PESSOA_FISICA_DOCUMENTOS))
 							.findFirst().orElse(null);
 					if (!CommonsUtil.semValor(blocoFilho)) {
+<<<<<<< HEAD
 
 						CertidoesPaju certidoesPaju = new CertidoesPaju();
 						if (CommonsUtil.mesmoValor(SiscoatConstants.CND_SITUACAO_POSSUI_DEBITOS,
@@ -427,7 +428,59 @@ public class PajuService {
 							} catch (Exception e) {
 								System.out.println(GsonUtil.toJson(docketDocumento));
 								e.printStackTrace();
+=======
+						DocketService docketService = new DocketService();
+						try {
+							String idCallManager = docketDocumento.getArquivos().get(0).getLinks().get(0).getHref()
+									.substring(docketDocumento.getArquivos().get(0).getLinks().get(0).getHref()
+											.lastIndexOf("/") + 1);
+							List<String> pdfLines = lerCND(docketService.getPdfBase64Web(idCallManager));
+							CertidoesPaju certidoesPaju = new CertidoesPaju();
+	
+							// split by whitespace
+							StringBuilder sb = new StringBuilder();
+							boolean processos = false;
+							for (String line : pdfLines) {
+	
+								if (processos && line.contains("Total de A"))
+									break;
+								if (processos && !CommonsUtil.semValor(line)) {
+									final String numeroProcsso = CommonsUtil
+											.somenteNumeros(line);
+									AcaoJudicial acao = bigData.getAcaoJudicial(numeroProcsso);
+	
+									if (acao != null) {
+										String sLinha = "Processo: " + line.trim() + " - ";
+	
+										ProcessoParte processoParte = acao.getParties().stream()
+												.filter(p -> CommonsUtil.mesmoValor(p.getType(), "CLAIMANT")).findFirst()
+												.orElse(null);
+										if (processoParte != null)
+											sLinha = sLinha + processoParte.getName();
+										sLinha = sLinha + " - Valor - " + CommonsUtil
+												.formataValorMonetario(CommonsUtil.bigDecimalValue(acao.getValue()), "");
+										certidoesPaju.getDebitosDocumento().add(sLinha);
+									} else {
+										String sLinha = "Processo: " + line.trim() 
+												+ " - não listado na Consulta Processos";
+										certidoesPaju.getDebitosDocumento().add(sLinha);
+									}
+									
+	//								certidoesPaju.getDebitosDocumento().add(line);
+								}
+								if (line.contains("conforme listagem abaixo:"))
+									processos = true;
+	
+>>>>>>> branch 'master' of https://github.com/Galleria-Bank-Developers/backoffice.git
 							}
+<<<<<<< HEAD
+=======
+							adicionaParagrafoDocket(docTemplate, paragrafoDocumentoTemplate, blocoFilho, docketDocumento,
+									certidoesPaju, bigData);
+						} catch (Exception e) {
+							System.out.println(GsonUtil.toJson(docketDocumento));
+							e.printStackTrace();
+>>>>>>> branch 'master' of https://github.com/Galleria-Bank-Developers/backoffice.git
 						}
 					}
 				}
