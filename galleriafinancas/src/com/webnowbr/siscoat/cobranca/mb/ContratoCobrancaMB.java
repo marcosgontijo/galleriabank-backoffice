@@ -29342,17 +29342,29 @@ public class ContratoCobrancaMB {
 				continue;
 			}
 			PagadorRecebedor pagador = docAnalise.getPagador();
-			PagadorRecebedorConsulta consultaEngine = pagadorRecebedorConsultaDao
-					.getConsultaVencidaByPagadorAndRetorno(pagador, docAnalise.getRetornoEngine());
-			if(!CommonsUtil.semValor(consultaEngine)) {
-				consultaEngine.setRetornoConsulta(null);
-				consultaEngine.setDataConsulta(new Date());
-				docAnalise.setEngine(null);
-				docAnalise.setRetornoEngine(null);
-				docAnalise.addObservacao("Engine Expirado");
+			if(!CommonsUtil.semValor(docAnalise.getEngine())
+					&& !CommonsUtil.semValor(docAnalise.getEngine().getData())) {
+				if(DateUtil.getDifferenceDays(docAnalise.getEngine().getData(),
+						DateUtil.gerarDataHoje()) > 30) {
+					docAnalise.setEngine(null);
+					docAnalise.setRetornoEngine(null);
+					docAnalise.addObservacao("Engine Expirado");
+				}
+			} else {
+				PagadorRecebedorConsulta consultaEngine = pagadorRecebedorConsultaDao
+						.getConsultaVencidaByPagadorAndRetorno(pagador, DocumentosAnaliseEnum.ENGINE,
+								docAnalise.getRetornoEngine());
+				if(!CommonsUtil.semValor(consultaEngine)) {
+					consultaEngine.setRetornoConsulta(null);
+					consultaEngine.setDataConsulta(new Date());
+					docAnalise.setEngine(null);
+					docAnalise.setRetornoEngine(null);
+					docAnalise.addObservacao("Engine Expirado");
+				}
 			}
 			PagadorRecebedorConsulta consultaProcessos = pagadorRecebedorConsultaDao
-					.getConsultaVencidaByPagadorAndRetorno(pagador, docAnalise.getRetornoProcesso());
+					.getConsultaVencidaByPagadorAndRetorno(pagador, DocumentosAnaliseEnum.PROCESSOB,
+							docAnalise.getRetornoProcesso());
 			if(!CommonsUtil.semValor(consultaProcessos)) {
 				consultaProcessos.setRetornoConsulta(null);
 				consultaProcessos.setDataConsulta(new Date());
@@ -29360,7 +29372,8 @@ public class ContratoCobrancaMB {
 				docAnalise.addObservacao("Processos Expirado");
 			}
 			PagadorRecebedorConsulta consultaRelacionamento = pagadorRecebedorConsultaDao
-					.getConsultaVencidaByPagadorAndRetorno(pagador, docAnalise.getRetornoRelacionamento());
+					.getConsultaVencidaByPagadorAndRetorno(pagador, DocumentosAnaliseEnum.RELACIONAMENTO,
+							docAnalise.getRetornoRelacionamento());
 			if(!CommonsUtil.semValor(consultaRelacionamento)) {
 				consultaRelacionamento.setRetornoConsulta(null);
 				consultaRelacionamento.setDataConsulta(new Date());
@@ -29368,7 +29381,8 @@ public class ContratoCobrancaMB {
 				docAnalise.addObservacao("Relacionamento Expirado");
 			}
 			PagadorRecebedorConsulta consultaCenprot = pagadorRecebedorConsultaDao
-					.getConsultaVencidaByPagadorAndRetorno(pagador, docAnalise.getRetornoCenprot());
+					.getConsultaVencidaByPagadorAndRetorno(pagador, DocumentosAnaliseEnum.CENPROT,
+							docAnalise.getRetornoCenprot());
 			if(!CommonsUtil.semValor(consultaCenprot)) {
 				consultaCenprot.setRetornoConsulta(null);
 				consultaCenprot.setDataConsulta(new Date());
@@ -29376,7 +29390,8 @@ public class ContratoCobrancaMB {
 				docAnalise.addObservacao("Protesto Expirado");
 			}
 			PagadorRecebedorConsulta consultaSCR = pagadorRecebedorConsultaDao
-					.getConsultaVencidaByPagadorAndRetorno(pagador, docAnalise.getRetornoScr());
+					.getConsultaVencidaByPagadorAndRetorno(pagador, DocumentosAnaliseEnum.SCR,
+							docAnalise.getRetornoScr());
 			if(!CommonsUtil.semValor(consultaSCR)) {
 				consultaSCR.setRetornoConsulta(null);
 				consultaSCR.setDataConsulta(new Date());
