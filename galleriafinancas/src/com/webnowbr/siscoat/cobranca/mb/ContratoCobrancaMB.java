@@ -41,7 +41,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -3841,6 +3840,13 @@ public class ContratoCobrancaMB {
 							}
 						}
 					}
+				}
+				
+				if (!objetoContratoCobranca.isAgAssinatura() && CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Assinatura")) {
+					if(objetoContratoCobranca.isPajuVencido())
+						objetoContratoCobranca.setReanalise(true);
+					if("RJ;PR".contains(objetoContratoCobranca.getImovel().getEstado()) && !objetoContratoCobranca.isReanaliseJuridico()) 
+						objetoContratoCobranca.setReanalise(true);
 				}
 
 				updateCheckList();
@@ -9726,13 +9732,7 @@ public class ContratoCobrancaMB {
 					|| valorRegistro.compareTo(objetoContratoCobranca.getValorCartorio()) > 0) {
 				objetoContratoCobranca.setValorCartorio(valorRegistro);
 			}
-		}
-		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Assinatura")) {
-			if(objetoContratoCobranca.isPajuVencido())
-				objetoContratoCobranca.setReanalise(true);
-			if("RJ;PR".contains(objetoContratoCobranca.getImovel().getEstado()) && !objetoContratoCobranca.isReanaliseJuridico()) 
-				objetoContratoCobranca.setReanalise(true);
-		}
+		} 
 		
 		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Registro")) {
 			this.objetoContratoCobranca.setTxHonorario(BigDecimal.valueOf(20.00));
@@ -9818,7 +9818,7 @@ public class ContratoCobrancaMB {
 					valorSugerido = this.objetoContratoCobranca.getValorVendaForcadaImovel()
 							.multiply(BigDecimal.valueOf(50));
 					valorSugerido = valorSugerido.divide(BigDecimal.valueOf(100), MathContext.DECIMAL128);
-			}
+				}
 			}
 
 			if (!CommonsUtil.semValor(this.objetoContratoCobranca.getValorEmprestimo())
@@ -9844,9 +9844,7 @@ public class ContratoCobrancaMB {
 				processo.setSelecionadoComite(true);
 			}
 		}
-		
-	
-	return valorSugerido;
+		return valorSugerido;
 	}
 	
 
@@ -14295,6 +14293,50 @@ public class ContratoCobrancaMB {
 		}
 
 		/* consultaListagemCertidoes() */
+		
+		if (status.equals("Aguardando Análise") 
+				&& (!user.isProfileGerenteAnalise() && !user.isAdministrador())) {
+			ContratoCobranca contratoAnalise = null;
+			for (ContratoCobranca contrato : contratosPendentes) {
+				if(CommonsUtil.semValor(contrato.getAnalisePendenciadaUsuario())) {
+					contratoAnalise = contrato;
+					break;
+				} else if(CommonsUtil.mesmoValor(contrato.getAnalisePendenciadaUsuario(), user.getLogin())) {
+					contratoAnalise = contrato;
+					break;
+				}
+			}
+			if(!CommonsUtil.semValor(contratoAnalise)){
+				objetoContratoCobranca = contratoAnalise;
+				objetoPagadorRecebedor = contratoAnalise.getPagador();
+				objetoImovelCobranca = contratoAnalise.getImovel();
+				porcentagemPersonalizada = null;
+				updateMode = true;
+				crmMode = false;
+				deleteMode = false;
+				baixarMode = false;
+				
+				this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
+				this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
+				this.objetoPagadorRecebedor = this.objetoContratoCobranca.getPagador();
+				
+				saveEstadoCheckListAtual();
+				objetoContratoCobranca.setInicioAnalise(true);
+				//editPreContratoPorStatus();
+				this.objetoPagadorRecebedor.criarConjugeNoSistema();
+				ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
+				objetoImovelCobranca.popularObjetoCidade();
+				imovelCobrancaDao.merge(this.objetoImovelCobranca);
+				updateCheckList();
+				this.objetoContratoCobranca.populaStatusEsteira(getUsuarioLogadoNull());
+				contratoCobrancaDao.merge(this.objetoContratoCobranca);
+				return clearFieldsEditarPendentesAnalistas();
+			} else {
+				FacesContext context = FacesContext.getCurrentInstance();
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+					"Não há contratos para ser analisados! ", ""));
+			}
+		}
 
 		if (status.equals("Ag. Ok Cliente")) {
 			return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatusAgOkCliente.xhtml";
@@ -19394,6 +19436,85 @@ public class ContratoCobrancaMB {
 					contasPagarDao.merge(this.contasPagarSelecionada);
 				}
 			}
+		}
+	}
+	
+	public void pagamentoStarkBankCartaSplit() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		
+		ContasPagar contaCartaSplit = new ContasPagar();
+		contaCartaSplit.setContaCartaSplit(true);
+		contaCartaSplit.setContrato(this.objetoContratoCobranca);
+		contaCartaSplit.setDataVencimento(DateUtil.gerarDataHoje());
+		contaCartaSplit.setDescricao("Pagamento Carta Split");					
+		//contaCartaSplit.setPagadorRecebedor(recebedor);
+		contaCartaSplit.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
+		contaCartaSplit.setResponsavel(this.objetoContratoCobranca.getResponsavel());
+		contaCartaSplit.setTipoDespesa("C");
+		contaCartaSplit.setValor(this.objetoContratoCobranca.getValorCartaSplit());	
+		
+		contaCartaSplit.setBancoTed(this.objetoContratoCobranca.getBancoBancarioCartaSplit());
+		contaCartaSplit.setAgenciaTed(this.objetoContratoCobranca.getAgenciaBancarioCartaSplit());
+		contaCartaSplit.setContaTed(this.objetoContratoCobranca.getContaBancarioCartaSplit());
+		contaCartaSplit.setPix(this.objetoContratoCobranca.getPixCartaSplit());
+		contaCartaSplit.setNomeTed(this.objetoContratoCobranca.getNomeBancarioCartaSplit());
+		
+		ContasPagarDao contasPagarDao = new ContasPagarDao();
+		if (contaCartaSplit.getId() <= 0) {
+			contasPagarDao.create(contaCartaSplit);
+		} else {
+			contasPagarDao.merge(contaCartaSplit);
+		}
+		
+		/*
+		if (contaCartaSplit.getFormaTransferencia().equals("Boleto")) {
+
+			contaCartaSplit.setDescricaoStarkBank("Pagamento de Conta");
+
+			StarkBankBaixa baixa = registraBaixaStarkBank(contaCartaSplit.getDataPagamento(),
+					contaCartaSplit.getNumeroDocumentoPagadorStarkBank(), null,
+					contaCartaSplit.getLinhaDigitavelStarkBank(), recebedor.getNome(),
+					contaCartaSplit.getValorPagamento(), contaCartaSplit, "Boleto", "Aguardando Aprovação");
+
+				contaCartaSplit.getListContasPagarBaixas().add(baixa);
+
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Pagamento StarkBank: Ordem de Pagamento de Boleto inserida com sucesso!", ""));
+		}
+		*/
+
+		if (this.objetoContratoCobranca.getPixCartaSplit() != null || !this.objetoContratoCobranca.getPixCartaSplit().equals("")) {
+			contaCartaSplit.setFormaTransferencia("PIX");
+			
+			StarkBankBaixa baixa = registraBaixaStarkBank(DateUtil.gerarDataHoje(),
+						this.objetoContratoCobranca.getCpfCnpjBancarioCartaSplit(), null, null,
+						contaCartaSplit.getNomeTed(), this.objetoContratoCobranca.getValorCartaSplit(),
+						contaCartaSplit, "PIX", "Aguardando Aprovação");
+
+				contaCartaSplit.getListContasPagarBaixas().add(baixa);
+
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Pagamento StarkBank: Ordem de Pagamento de PIX inserida com sucesso!", ""));
+		} else {
+			contaCartaSplit.setFormaTransferencia("TED");
+				StarkBankBaixa baixa = registraBaixaStarkBank(DateUtil.gerarDataHoje(),
+						this.objetoContratoCobranca.getCpfCnpjBancarioCartaSplit(), null, null,
+						contaCartaSplit.getNomeTed(), this.objetoContratoCobranca.getValorCartaSplit(),
+						contaCartaSplit, "TED", "Aguardando Aprovação");
+
+				contaCartaSplit.getListContasPagarBaixas().add(baixa);
+
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Pagamento StarkBank: Ordem de Pagamento de TED inserida com sucesso!", ""));
+		}
+		
+		//contaCartaSplit.setDataPagamento(DateUtil.gerarDataHoje());
+		//contaCartaSplit.setValorPagamento(valor);	
+		
+		if (contaCartaSplit.getId() <= 0) {
+			contasPagarDao.create(contaCartaSplit);
+		} else {
+			contasPagarDao.merge(contaCartaSplit);
 		}
 	}
 	
@@ -29265,17 +29386,29 @@ public class ContratoCobrancaMB {
 				continue;
 			}
 			PagadorRecebedor pagador = docAnalise.getPagador();
-			PagadorRecebedorConsulta consultaEngine = pagadorRecebedorConsultaDao
-					.getConsultaVencidaByPagadorAndRetorno(pagador, docAnalise.getRetornoEngine());
-			if(!CommonsUtil.semValor(consultaEngine)) {
-				consultaEngine.setRetornoConsulta(null);
-				consultaEngine.setDataConsulta(new Date());
-				docAnalise.setEngine(null);
-				docAnalise.setRetornoEngine(null);
-				docAnalise.addObservacao("Engine Expirado");
+			if(!CommonsUtil.semValor(docAnalise.getEngine())
+					&& !CommonsUtil.semValor(docAnalise.getEngine().getData())) {
+				if(DateUtil.getDifferenceDays(docAnalise.getEngine().getData(),
+						DateUtil.gerarDataHoje()) > 30) {
+					docAnalise.setEngine(null);
+					docAnalise.setRetornoEngine(null);
+					docAnalise.addObservacao("Engine Expirado");
+				}
+			} else {
+				PagadorRecebedorConsulta consultaEngine = pagadorRecebedorConsultaDao
+						.getConsultaVencidaByPagadorAndRetorno(pagador, DocumentosAnaliseEnum.ENGINE,
+								docAnalise.getRetornoEngine());
+				if(!CommonsUtil.semValor(consultaEngine)) {
+					consultaEngine.setRetornoConsulta(null);
+					consultaEngine.setDataConsulta(new Date());
+					docAnalise.setEngine(null);
+					docAnalise.setRetornoEngine(null);
+					docAnalise.addObservacao("Engine Expirado");
+				}
 			}
 			PagadorRecebedorConsulta consultaProcessos = pagadorRecebedorConsultaDao
-					.getConsultaVencidaByPagadorAndRetorno(pagador, docAnalise.getRetornoProcesso());
+					.getConsultaVencidaByPagadorAndRetorno(pagador, DocumentosAnaliseEnum.PROCESSOB,
+							docAnalise.getRetornoProcesso());
 			if(!CommonsUtil.semValor(consultaProcessos)) {
 				consultaProcessos.setRetornoConsulta(null);
 				consultaProcessos.setDataConsulta(new Date());
@@ -29283,7 +29416,8 @@ public class ContratoCobrancaMB {
 				docAnalise.addObservacao("Processos Expirado");
 			}
 			PagadorRecebedorConsulta consultaRelacionamento = pagadorRecebedorConsultaDao
-					.getConsultaVencidaByPagadorAndRetorno(pagador, docAnalise.getRetornoRelacionamento());
+					.getConsultaVencidaByPagadorAndRetorno(pagador, DocumentosAnaliseEnum.RELACIONAMENTO,
+							docAnalise.getRetornoRelacionamento());
 			if(!CommonsUtil.semValor(consultaRelacionamento)) {
 				consultaRelacionamento.setRetornoConsulta(null);
 				consultaRelacionamento.setDataConsulta(new Date());
@@ -29291,7 +29425,8 @@ public class ContratoCobrancaMB {
 				docAnalise.addObservacao("Relacionamento Expirado");
 			}
 			PagadorRecebedorConsulta consultaCenprot = pagadorRecebedorConsultaDao
-					.getConsultaVencidaByPagadorAndRetorno(pagador, docAnalise.getRetornoCenprot());
+					.getConsultaVencidaByPagadorAndRetorno(pagador, DocumentosAnaliseEnum.CENPROT,
+							docAnalise.getRetornoCenprot());
 			if(!CommonsUtil.semValor(consultaCenprot)) {
 				consultaCenprot.setRetornoConsulta(null);
 				consultaCenprot.setDataConsulta(new Date());
@@ -29299,7 +29434,8 @@ public class ContratoCobrancaMB {
 				docAnalise.addObservacao("Protesto Expirado");
 			}
 			PagadorRecebedorConsulta consultaSCR = pagadorRecebedorConsultaDao
-					.getConsultaVencidaByPagadorAndRetorno(pagador, docAnalise.getRetornoScr());
+					.getConsultaVencidaByPagadorAndRetorno(pagador, DocumentosAnaliseEnum.SCR,
+							docAnalise.getRetornoScr());
 			if(!CommonsUtil.semValor(consultaSCR)) {
 				consultaSCR.setRetornoConsulta(null);
 				consultaSCR.setDataConsulta(new Date());
@@ -34250,6 +34386,42 @@ public class ContratoCobrancaMB {
 
 	public String pathComprovanteStarkBank;
 	public String nomeComprovanteStarkBank;
+	
+	public StreamedContent getDownloadComprovanteStarkBankCartaSplit(ContratoCobranca contrato) {
+		FacesContext context = FacesContext.getCurrentInstance();
+		
+		StarkBankBaixa baixa = null;
+		
+		for (ContasPagar contas : contrato.getListContasPagar()) {
+			if (contas.getDescricao().equals("")) {
+				if (contas.getListContasPagarBaixas().size() > 0) {
+					baixa = contas.getListContasPagarBaixas().get(0);
+				}
+			}
+		}
+		
+		if (baixa != null) {
+			geraReciboPagamentoStarkBank(baixa);
+	
+			String caminho = this.pathComprovanteStarkBank + this.nomeComprovanteStarkBank;
+			String arquivo = this.nomeComprovanteStarkBank;
+			FileInputStream stream = null;
+	
+			try {
+				stream = new FileInputStream(caminho);
+				downloadComprovanteStarkBank = new DefaultStreamedContent(stream, this.pathComprovanteStarkBank,
+						this.nomeComprovanteStarkBank);
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				System.out.println("StarkBank - Comprovante não encontrado!");
+			}
+	
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+					"[Stark Bank - Recibo de Pagamento] Recibo de pagamento gerado com sucesso!", ""));
+		} 
+		
+		return this.downloadComprovanteStarkBank;
+	}
 
 	public StreamedContent getDownloadComprovanteStarkBank(StarkBankBaixa baixaStarkBank) {
 		FacesContext context = FacesContext.getCurrentInstance();
