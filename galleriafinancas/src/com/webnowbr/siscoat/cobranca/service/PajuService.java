@@ -370,51 +370,54 @@ public class PajuService {
 							.findFirst().orElse(null);
 					if (!CommonsUtil.semValor(blocoFilho)) {
 						DocketService docketService = new DocketService();
-
-						String idCallManager = docketDocumento.getArquivos().get(0).getLinks().get(0).getHref()
-								.substring(docketDocumento.getArquivos().get(0).getLinks().get(0).getHref()
-										.lastIndexOf("/") + 1);
-						List<String> pdfLines = lerCND(docketService.getPdfBase64Web(idCallManager));
-						CertidoesPaju certidoesPaju = new CertidoesPaju();
-
-						// split by whitespace
-						StringBuilder sb = new StringBuilder();
-						boolean processos = false;
-						for (String line : pdfLines) {
-
-							if (processos && line.contains("Total de A"))
-								break;
-							if (processos && !CommonsUtil.semValor(line)) {
-								final String numeroProcsso = CommonsUtil
-										.somenteNumeros(line);
-								AcaoJudicial acao = bigData.getAcaoJudicial(numeroProcsso);
-
-								if (acao != null) {
-									String sLinha = "Processo: " + line.trim() + " - ";
-
-									ProcessoParte processoParte = acao.getParties().stream()
-											.filter(p -> CommonsUtil.mesmoValor(p.getType(), "CLAIMANT")).findFirst()
-											.orElse(null);
-									if (processoParte != null)
-										sLinha = sLinha + processoParte.getName();
-									sLinha = sLinha + " - Valor - " + CommonsUtil
-											.formataValorMonetario(CommonsUtil.bigDecimalValue(acao.getValue()), "");
-									certidoesPaju.getDebitosDocumento().add(sLinha);
-								} else {
-									String sLinha = "Processo: " + line.trim() 
-											+ " - não listado na Consulta Processos";
-									certidoesPaju.getDebitosDocumento().add(sLinha);
+						try {
+							String idCallManager = docketDocumento.getArquivos().get(0).getLinks().get(0).getHref()
+									.substring(docketDocumento.getArquivos().get(0).getLinks().get(0).getHref()
+											.lastIndexOf("/") + 1);
+							List<String> pdfLines = lerCND(docketService.getPdfBase64Web(idCallManager));
+							CertidoesPaju certidoesPaju = new CertidoesPaju();
+	
+							// split by whitespace
+							StringBuilder sb = new StringBuilder();
+							boolean processos = false;
+							for (String line : pdfLines) {
+	
+								if (processos && line.contains("Total de A"))
+									break;
+								if (processos && !CommonsUtil.semValor(line)) {
+									final String numeroProcsso = CommonsUtil
+											.somenteNumeros(line);
+									AcaoJudicial acao = bigData.getAcaoJudicial(numeroProcsso);
+	
+									if (acao != null) {
+										String sLinha = "Processo: " + line.trim() + " - ";
+	
+										ProcessoParte processoParte = acao.getParties().stream()
+												.filter(p -> CommonsUtil.mesmoValor(p.getType(), "CLAIMANT")).findFirst()
+												.orElse(null);
+										if (processoParte != null)
+											sLinha = sLinha + processoParte.getName();
+										sLinha = sLinha + " - Valor - " + CommonsUtil
+												.formataValorMonetario(CommonsUtil.bigDecimalValue(acao.getValue()), "");
+										certidoesPaju.getDebitosDocumento().add(sLinha);
+									} else {
+										String sLinha = "Processo: " + line.trim() 
+												+ " - não listado na Consulta Processos";
+										certidoesPaju.getDebitosDocumento().add(sLinha);
+									}
+									
+	//								certidoesPaju.getDebitosDocumento().add(line);
 								}
-								
-//								certidoesPaju.getDebitosDocumento().add(line);
+								if (line.contains("conforme listagem abaixo:"))
+									processos = true;
+	
 							}
-							if (line.contains("conforme listagem abaixo:"))
-								processos = true;
-
+							adicionaParagrafoDocket(docTemplate, paragrafoDocumentoTemplate, blocoFilho, docketDocumento,
+									certidoesPaju, bigData);
+						} catch (Exception e) {
+							System.out.println(GsonUtil.toJson(docketDocumento));
+							e.printStackTrace();
 						}
-
-						adicionaParagrafoDocket(docTemplate, paragrafoDocumentoTemplate, blocoFilho, docketDocumento,
-								certidoesPaju, bigData);
 					}
 				}
 			}
