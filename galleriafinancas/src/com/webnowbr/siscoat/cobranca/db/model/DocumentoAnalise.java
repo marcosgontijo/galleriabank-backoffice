@@ -343,7 +343,7 @@ public class DocumentoAnalise implements Serializable {
 				result.add(new DocumentoAnaliseResumo("Pefin/Refin:",
 						String.format("%,.2f", engineRetorno.getTotalValorApontamentos()) + " ("
 								+ CommonsUtil.stringValue(engineRetorno.getTotalApontamentos()) + ")"));
-				if (engineRetorno.getTotalValorApontamentos().compareTo(new BigDecimal("1000.00")) > 0) {
+				if (engineRetorno.getTotalValorApontamentos().compareTo(new BigDecimal(1000)) > 0) {
 					isPefinRefinAvailable = true;
 				}
 				ressalvaPefinNome = engine.getRequestFields().stream().filter(f -> f.getField().equals("nome"))
@@ -360,7 +360,9 @@ public class DocumentoAnalise implements Serializable {
 				result.add(new DocumentoAnaliseResumo("Protesto:",
 						String.format("%,.2f", engineRetorno.getTotalValorProtests()) + " ("
 								+ CommonsUtil.stringValue(engineRetorno.getTotalProtests()) + ")"));
-				isProtestosAvailable = true;
+				if (engineRetorno.getTotalValorProtests().compareTo(new BigDecimal(1000)) > 0) {
+					isProtestosAvailable = true;
+				}
 				ressalvaProtestoNome = engine.getRequestFields().stream().filter(f -> f.getField().equals("nome"))
 						.findFirst().orElse(null).getValue();
 			} else {
@@ -470,13 +472,16 @@ public class DocumentoAnalise implements Serializable {
 			if (CommonsUtil.semValor(data.getCenprotProtestos().getProtestosBrasil().getEstados())) {
 				cenprot.add(new DocumentoAnaliseResumo("Nada consta", null));
 			} else {
+				String valorEstado = "";
 				for (ProtestosBrasilEstado estado : data.getCenprotProtestos().getProtestosBrasil().getEstados()) {
 
-					String valorEstado = CommonsUtil.stringValue(String.format("%,.2f", estado.getValorTotal())) + " (" + estado.getQuantidadeTotal()
+					valorEstado = CommonsUtil.stringValue(String.format("%,.2f", estado.getValorTotal())) + " (" + estado.getQuantidadeTotal()
 							+ ") ";
 					cenprot.add(new DocumentoAnaliseResumo(estado.getEstado(), valorEstado));
 				}
-				isProtestoCenprotAvailable = true;
+				if (new BigDecimal(valorEstado).compareTo(new BigDecimal(1000)) > 0) {
+					isProtestoCenprotAvailable = true;
+				}
 			}
 		}
 
@@ -504,7 +509,7 @@ public class DocumentoAnalise implements Serializable {
 				String carteiraVencido = CommonsUtil
 						.formataValorMonetario(dado.getResumoDoClienteTraduzido().getCarteiraVencido());
 				scr.add(new DocumentoAnaliseResumo("Carteira vencido:", carteiraVencido));
-				if (dado.getResumoDoClienteTraduzido().getCarteiraVencido().compareTo(new BigDecimal("1000.00")) > 0) {
+				if (dado.getResumoDoClienteTraduzido().getCarteiraVencido().compareTo(new BigDecimal(1000)) > 0) {
 					isDividaVencidaAvailable = true;
 				}
 			}
@@ -514,7 +519,7 @@ public class DocumentoAnalise implements Serializable {
 			} else {
 				String prejuizo = CommonsUtil.formataValorMonetario(dado.getResumoDoClienteTraduzido().getPrejuizo());
 				scr.add(new DocumentoAnaliseResumo("Prejuizo:", prejuizo));
-				if (dado.getResumoDoClienteTraduzido().getPrejuizo().compareTo(new BigDecimal("1000.00")) > 0) {
+				if (dado.getResumoDoClienteTraduzido().getPrejuizo().compareTo(new BigDecimal(1000)) > 0) {
 					isPrejuizoBacenAvailable = true;
 				}
 			}			
@@ -560,10 +565,10 @@ public class DocumentoAnalise implements Serializable {
 				scr.add(new DocumentoAnaliseResumo("Data inicio relacionamento:", dataRelacionamento));
 			}
 			
-			if (dado.getResumoDoClienteTraduzido().getRiscoTotal().compareTo(new BigDecimal("20000")) < 0) {
+			if (dado.getResumoDoClienteTraduzido().getRiscoTotal().compareTo(new BigDecimal(20000)) < 0) {
 				setRiscoTotal20k(true);
-			} else if (dado.getResumoDoClienteTraduzido().getRiscoTotal().compareTo(new BigDecimal("20001")) > 0 
-					&& dado.getResumoDoClienteTraduzido().getRiscoTotal().compareTo(new BigDecimal("50000")) < 0) {
+			} else if (dado.getResumoDoClienteTraduzido().getRiscoTotal().compareTo(new BigDecimal(20001)) > 0 
+					&& dado.getResumoDoClienteTraduzido().getRiscoTotal().compareTo(new BigDecimal(50000)) < 0) {
 				setRiscoTotal50k(true);
 			}
 		}
