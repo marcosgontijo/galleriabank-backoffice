@@ -2293,5 +2293,13 @@
 		<property name="inicioRelacionamentoInexistenteTaxa" type="boolean">
 			<column name="inicioRelacionamentoInexistenteTaxa" not-null="true" default="false"/>
 		</property>
+		
+		<property name="comentarioJuricoApenasComConsultas" type="boolean">
+			<column name="comentarioJuricoSoConsultas" not-null="true" default="false"/>
+		</property>
+		<property name="comentarioJuricoComPajuVencido" type="boolean">
+			<column name="comentarioJuricoPajuVencido" not-null="true" default="false"/>
+		</property>
+		
 	</class>
 </hibernate-mapping>

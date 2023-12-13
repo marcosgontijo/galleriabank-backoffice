@@ -113,14 +113,17 @@ public class DocumentoAnaliseJobConsultar {
 									.startsWith("consulta efetuada anteriormente Id: ")) {
 								engineService.salvarDetalheDocumentoEngine(documentoAnalise);
 
-								engineRetorno = GsonUtil.fromJson(documentoAnalise.getRetornoEngine(),
-										EngineRetorno.class);
-								if (CommonsUtil.semValor(engineRetorno.getIdCallManager())) {
-									engineRetorno.setIdCallManager(engineRetorno.getIdCallManager());
+								if (!documentoAnalise.getRetornoEngine()
+										.startsWith("consulta efetuada anteriormente Id: ")) {
+									engineRetorno = GsonUtil.fromJson(documentoAnalise.getRetornoEngine(),
+											EngineRetorno.class);
+									if (CommonsUtil.semValor(engineRetorno.getIdCallManager())) {
+										engineRetorno.setIdCallManager(engineRetorno.getIdCallManager());
+									}
+									engineService.processaWebHookEngine(documentoAnaliseService, engineRetorno,
+											pagadorRecebedorService, documentoAnaliseDao, documentoAnalise);
 								}
-								engineService.processaWebHookEngine(documentoAnaliseService, engineRetorno,
-										pagadorRecebedorService, documentoAnaliseDao, documentoAnalise);
-							}
+								}
 						}
 						engineRetorno = GsonUtil.fromJson(documentoAnalise.getRetornoEngine(), EngineRetorno.class);
 					}

@@ -342,7 +342,8 @@ public class EngineService {
 			return;
 		}
 
-		if (CommonsUtil.semValor(documentoAnalise.getRetornoEngine())) {			
+		if (CommonsUtil.semValor(documentoAnalise.getRetornoEngine())
+				|| documentoAnalise.getRetornoEngine().startsWith("consulta efetuada anteriormente Id: ")) {			
 			String retorno = PegarDetalheDataEngine(documentoAnalise.getEngine());
 			if (!CommonsUtil.semValor(retorno)) {
 			documentoAnalise.setRetornoEngine(retorno);	
