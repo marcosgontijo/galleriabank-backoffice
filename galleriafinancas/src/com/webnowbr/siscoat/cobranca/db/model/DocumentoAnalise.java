@@ -477,11 +477,12 @@ public class DocumentoAnalise implements Serializable {
 
 					valorEstado = CommonsUtil.stringValue(String.format("%,.2f", estado.getValorTotal())) + " (" + estado.getQuantidadeTotal()
 							+ ") ";
+					if (estado.getValorTotal().compareTo(new BigDecimal(1000)) > 0) {
+						isProtestoCenprotAvailable = true;
+					}
 					cenprot.add(new DocumentoAnaliseResumo(estado.getEstado(), valorEstado));
 				}
-				if (new BigDecimal(valorEstado).compareTo(new BigDecimal(1000)) > 0) {
-					isProtestoCenprotAvailable = true;
-				}
+				
 			}
 		}
 
