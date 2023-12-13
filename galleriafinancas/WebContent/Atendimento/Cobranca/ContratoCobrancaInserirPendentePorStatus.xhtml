@@ -1802,6 +1802,12 @@
 											<p:outputLabel value=" #{processosPessoas.quitar}"
 												style="FONT-SIZE: 10pt;" />
 										</p:column>
+										
+										<p:column style="text-align: center;width:150px;"
+											headerText=" Natureza ">
+											<p:outputLabel value=" #{processosPessoas.natureza}"
+												style="FONT-SIZE: 10pt;" />
+										</p:column>
 
 										<p:column style="text-align: center;" headerText="Obs" >
 											<p:outputLabel value="#{processosPessoas.observacao}"
@@ -5573,17 +5579,23 @@
 							label="Contrato" onkeypress="return isNumberKey(event);"
 							onkeydown="FormataValor(this, 13, event, 2);"
 							converter="bigDecimalConverter" />
-
+							
 						<p:outputLabel value="Quitar: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />
 						<p:selectOneMenu
 							value="#{contratoCobrancaMB.processoSelecionado.quitar}">
 							<f:selectItem itemValue="" itemLabel="Selecione" />
 							<f:selectItem itemValue="Quitar" itemLabel="Quitar" />
-							<f:selectItem itemValue="Quitar ou indicar bens"
-								itemLabel="Quitar ou indicar bens" />
+							<f:selectItem itemValue="Quitar ou indicar bens" itemLabel="Quitar ou indicar bens" />
 							<f:selectItem itemValue="Indicar bens" itemLabel="Indicar bens" />
 						</p:selectOneMenu>
+						
+						<p:outputLabel value="Natureza do Processo: " styleClass="labelBold"
+							style="font-weight: bold; font-size: 18px;" />
+						<p:autoComplete value="#{contratoCobrancaMB.processoSelecionado.natureza}" dropdown="true"
+							completeMethod="#{contratoCobrancaMB.processoSelecionado.naturezaProcessos()}"
+							scrollHeight="250">
+						</p:autoComplete>
 
 						<p:outputLabel value="Obs: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />

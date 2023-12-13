@@ -410,9 +410,7 @@ public class PagadorRecebedor implements Serializable {
 		if(CommonsUtil.semValor(pagador.getCpfConjuge())){
 			return;
 		}
-		if(!CommonsUtil.mesmoValor(pagador.getEstadocivil(), "CASADO")){
-			return;
-		}
+		
 		
 		PagadorRecebedor conjuge = null;
 		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();

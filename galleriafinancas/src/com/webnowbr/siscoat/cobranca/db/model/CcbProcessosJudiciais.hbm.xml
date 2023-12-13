@@ -37,6 +37,10 @@
 		<property name="quitar" type="java.lang.String">
 			<column name="quitar" />
 		</property>
+		
+		<property name="natureza" type="java.lang.String">
+			<column name="natureza" />
+		</property>
         
         <property name="selecionadoComite" type="boolean">
 			<column name="selecionadoComite" not-null="true" default="false"/>
