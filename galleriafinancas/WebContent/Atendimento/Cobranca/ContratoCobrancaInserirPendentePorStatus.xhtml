@@ -322,7 +322,28 @@
 												offIcon="ui-icon-close" style="width:=60px" />
 											<p:commandButton id="acoesJuridico" value="Enviar para..."
 												style="width:=60px" onclick="PF('acoesJuridico').show();" />
+										
+																					
+											<p:outputLabel styleClass="labelBold">Analise apenas com consultas  ?</p:outputLabel>
+											<p:selectBooleanButton id="comentarioJuricoApenasComConsultas"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuricoApenasComConsultas}"												
+												onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+												offIcon="ui-icon-close" style="width:=60px" >
+												<p:ajax event="change"
+													update=":form:Status"/>
+											</p:selectBooleanButton>
+											
+											
+											<p:outputLabel styleClass="labelBold">Analise com paju vencido  ?</p:outputLabel>
+											<p:selectBooleanButton id="comentarioJuricoComPajuVencido"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuricoComPajuVencido}"
+												onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+												offIcon="ui-icon-close" style="width:=60px" >
+												<p:ajax event="change"
+													update=":form:Status"/>
+											</p:selectBooleanButton>
 										</h:panelGrid>
+										
 									</ui:fragment>
 									<ui:fragment
 										rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 6}">
@@ -472,6 +493,9 @@
 													update=":form:Status"/>
 											</p:selectBooleanButton>
 										</h:panelGrid>
+										
+										
+										
 										<h:panelGrid columns="2"
 											style="background-color: #e4e4e4;width: 250px; height: 110px; -webkit-border-radius: 5px;
 											-moz-border-radius: 5px; border-radius: 5px; padding: 10px;"
