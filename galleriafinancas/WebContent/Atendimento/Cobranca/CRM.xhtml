@@ -267,7 +267,7 @@
 						       	<div class="ui-g-12 ui-md-12 ui-lg-12" style="text-align: center; background-color: #dcdcdc !important; padding: 5px;margin-bottom: 10px;height: 25px;">
 						       		<h:outputText value="#{crmMB.valorTotalAgComite}" converter="bigDecimalConverter"/>
 						       	</div>						       	
-						        <p:dataGrid id="agComiteDG" var="agComite" value="#{crmMB.agComite}" columns="1"  emptyMessage="Nenhum contrato encontrado!!!">
+						        <p:dataGrid id="agComiteDG" var="agComite" value="#{crmMB.emAgComite}" columns="1"  emptyMessage="Nenhum contrato encontrado!!!">
 						            <p:panel id="agComitePanel" header="#{agComite.numeroContrato}" style="text-align:center">
 						                <h:panelGrid columns="1" style="width:100%">
 						                    <p:outputLabel for="data" value="Data " styleClass="labelBold" style="font-size: 18px;"/>						                  
