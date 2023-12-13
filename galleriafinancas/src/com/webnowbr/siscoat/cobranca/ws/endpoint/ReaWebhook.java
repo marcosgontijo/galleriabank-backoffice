@@ -139,7 +139,8 @@ public class ReaWebhook {
 			boolean cnpjCpfValido = false;
 
 			if (documentoAnalise.getTipoPessoa() == "PJ") {
-				try {
+				propietario.setCnpj(CommonsUtil.strZero(propietario.getCnpj(),11));
+				try {												
 					cnpjCpfValido = ValidaCNPJ.isCNPJ(CommonsUtil.somenteNumeros(propietario.getCnpj()));
 				} catch (Exception e) {
 					cnpjCpfValido = false;
@@ -150,6 +151,7 @@ public class ReaWebhook {
 					documentoAnalise.setCnpjcpf("CNPJ esta inválido");
 				documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.RELATO);
 			} else {
+				propietario.setCnpj(CommonsUtil.strZero(propietario.getCnpj(),14));
 				try {
 					cnpjCpfValido = ValidaCPF.isCPF(CommonsUtil.somenteNumeros(propietario.getCpf()));
 				} catch (Exception e) {

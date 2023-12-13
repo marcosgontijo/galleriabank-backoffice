@@ -1,5 +1,6 @@
 package com.webnowbr.siscoat.cobranca.service;
 
+import java.io.Console;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,7 +24,10 @@ import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
+import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
+import com.webnowbr.siscoat.common.ValidaCNPJ;
+import com.webnowbr.siscoat.common.ValidaCPF;
 import com.webnowbr.siscoat.infra.db.model.User;
 import com.webnowbr.siscoat.job.DocumentoAnaliseJob;
 
@@ -234,16 +238,27 @@ public class DocumentoAnaliseService {
 		documentoAnalise.setContratoCobranca(contratoCobranca);
 		documentoAnalise.setIdentificacao(pJPartnership.getRelatedEntityName());
 
+		boolean cnpjCpfValido = false;
 		if( CommonsUtil.mesmoValor( pJPartnership.getRelatedEntityTaxIdType(), "CPF" )) {
 			documentoAnalise.setTipoPessoa("PF");
-			documentoAnalise.setCnpjcpf( CommonsUtil.formataCpf(pJPartnership.getRelatedEntityTaxIdNumber()));
+			documentoAnalise.setCnpjcpf( CommonsUtil.formataCnpjCpf(CommonsUtil.strZero(pJPartnership.getRelatedEntityTaxIdNumber(),11),false));
 			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.CREDNET);
+			cnpjCpfValido = ValidaCPF.isCPF(CommonsUtil.somenteNumeros(documentoAnalise.getCnpjcpf()));
+			
 			pagador.setCpf(documentoAnalise.getCnpjcpf());
 		} else {
 			documentoAnalise.setTipoPessoa("PJ");
-			documentoAnalise.setCnpjcpf( CommonsUtil.formataCnpjCpf(pJPartnership.getRelatedEntityTaxIdNumber(),false));
+			documentoAnalise.setCnpjcpf( CommonsUtil.formataCnpjCpf(CommonsUtil.strZero(pJPartnership.getRelatedEntityTaxIdNumber(), 14),false));
 			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.RELATO);
+			cnpjCpfValido = ValidaCNPJ.isCNPJ(CommonsUtil.somenteNumeros(documentoAnalise.getCnpjcpf()));
+			
 			pagador.setCnpj(documentoAnalise.getCnpjcpf());
+		}
+		
+		if (!cnpjCpfValido) {
+			System.out.println("******** cnpjCpfValido Invalido /");
+			System.out.println(GsonUtil.toJson(pJPartnership));
+			return;
 		}
 		
 		if ( !CommonsUtil.semValor( documentoAnaliseDao.cadastradoAnalise(contratoCobranca, documentoAnalise.getCnpjcpf())))
@@ -275,9 +290,11 @@ public class DocumentoAnaliseService {
 		if (!CommonsUtil.mesmoValor(partnership.getEntityType(), "J")) {
 			return null;
 		} 
+		
+		String sCNPJ = CommonsUtil.formataCnpjCpf(CommonsUtil.strZero(partnership.getCNPJ(), 14), false);
 		PagadorRecebedor pagador = new PagadorRecebedor();
 		pagador.setId(0);
-		pagador.setCnpj(CommonsUtil.formataCnpjCpf(partnership.getCNPJ(), false));
+		pagador.setCnpj(sCNPJ);
 		pagador.setNome(partnership.getCompanyName());
 		pagador = pagadorRecebedorService.buscaOuInsere(pagador);
 		return pagador;
@@ -287,13 +304,17 @@ public class DocumentoAnaliseService {
 			PagadorRecebedorService pagadorRecebedorService) {
 		PagadorRecebedor pagador = new PagadorRecebedor();
 		pagador.setId(0);
-		String cnpjCpf;
-		cnpjCpf = partnership.getRelatedEntityTaxIdNumber();
+		String cnpjCpf = partnership.getRelatedEntityTaxIdNumber();
+
 		cnpjCpf = CommonsUtil.formataCnpjCpf(cnpjCpf, false);
 		if (CommonsUtil.mesmoValor(partnership.getRelatedEntityTaxIdType(), "CPF")) {
+			cnpjCpf = CommonsUtil.strZero(cnpjCpf, 11);
+			cnpjCpf = CommonsUtil.formataCnpjCpf(cnpjCpf, false);
 			pagador.setCpf(cnpjCpf);
 		} else {
-			pagador.setCnpj(cnpjCpf);	
+			cnpjCpf = CommonsUtil.strZero(cnpjCpf, 14);
+			cnpjCpf = CommonsUtil.formataCnpjCpf(cnpjCpf, false);
+			pagador.setCnpj(cnpjCpf);
 		}
 		pagador.setNome(partnership.getRelatedEntityName());
 		pagador = pagadorRecebedorService.buscaOuInsere(pagador);

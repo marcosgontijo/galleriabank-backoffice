@@ -9476,10 +9476,10 @@ public class ContratoCobrancaMB {
 		  valorMercaoImovelPorcento = objetoContratoCobranca.getValorMercadoImovel().divide(new BigDecimal(100));
 		  porcentagem.add(new PorcentagemImovel("Valor do imóvel: ", objetoContratoCobranca.getValorMercadoImovel(),false,false));
 		  porcentagem.add(new PorcentagemImovel("Recomendado:", valorSugerido, true,false ));
-		  porcentagem.add(new PorcentagemImovel("LTV 10%:", valorMercaoImovelPorcento.multiply(new BigDecimal(10)),true,false));
-		  porcentagem.add(new PorcentagemImovel("LTV 20%:", valorMercaoImovelPorcento.multiply(new BigDecimal(20)),true,false));
 		  porcentagem.add(new PorcentagemImovel("LTV 30%:", valorMercaoImovelPorcento.multiply(new BigDecimal(30)),true,false));
+		  porcentagem.add(new PorcentagemImovel("LTV 35%:", valorMercaoImovelPorcento.multiply(new BigDecimal(35)),true,false));
 		  porcentagem.add(new PorcentagemImovel("LTV 40%:", valorMercaoImovelPorcento.multiply(new BigDecimal(40)),true,false));
+		  porcentagem.add(new PorcentagemImovel("LTV 45%:", valorMercaoImovelPorcento.multiply(new BigDecimal(45)),true,false));
 		  porcentagem.add(new PorcentagemImovel("LTV 50%:", valorMercaoImovelPorcento.multiply(new BigDecimal(50)),true,false));
 		  if(porcentagemPersonalizada != null) {
 		  porcentagem.add(new PorcentagemImovel("Personalizado", valorMercaoImovelPorcento.multiply(porcentagemPersonalizada), true, true));
