@@ -312,7 +312,6 @@ public class PajuService {
 						DocumentoAnalise documentoAnalise = new DocumentoAnalise();
 						documentoAnalise.setPagador(pessoaConsultaDocket);
 						documentoAnalise.setCnpjcpf(pessoaConsultaDocket.getCnpj());
-
 						documentoAnalise.setTipoPessoa("PJ");
 						pessoasPJ.add(documentoAnalise);
 					}
