@@ -50,6 +50,9 @@
 			        <p:panel id="panelConsulta" header="Resultados" style="margin-bottom:10px;">
 		<p:panelGrid columns="1">
 			<p:dataTable id="menu" var="item" value="#{menuItemMB.menuConsultado}">
+			<f:facet name="header">
+				<p:commandButton value="Adicionar" action="#{menuItemMB.clearFieldsMenuItem}"/>
+			</f:facet>
 				<p:column headerText="Nome">
 					<p:outputLabel value="#{item.nome}"></p:outputLabel>
 				</p:column>

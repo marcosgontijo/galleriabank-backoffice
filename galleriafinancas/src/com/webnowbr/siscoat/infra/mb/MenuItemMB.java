@@ -60,11 +60,12 @@ public class MenuItemMB {
 		}
 
 	}
-	@SuppressWarnings("null")
 	public String clearFieldsMenu() {
-		parametroConsultaTabela = null;
-		listaParametros = null;
-		parametroMenuConsultar = null;
+		this.parametroConsultaTabela = null;
+		this.listaParametros = new ArrayList<>();
+		this.moduloParametro = null;
+		this.parametroMenuConsultar = null;
+		this.menuConsultado = new ArrayList<>();
 		
 		return "/Menus/MenuConsultar.xhtml";
 		
@@ -180,7 +181,7 @@ public class MenuItemMB {
 		}
 		objetoMenuItem = new MenuItem();
 		listaMenuRegistrados();
-		return "/Cadastros/Cobranca/MenuListagem.xhtml";
+		return "/Menus/MenuConsultar.xhtml";
 	}
 
 	public void listaMenuRegistrados() {
