@@ -1,16 +1,39 @@
 package com.webnowbr.siscoat.cobranca.service;
 
+import java.io.Console;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
+
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.SchedulerFactory;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.quartz.impl.StdSchedulerFactory;
+
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
+import com.webnowbr.siscoat.common.GsonUtil;
+import com.webnowbr.siscoat.common.SiscoatConstants;
+import com.webnowbr.siscoat.common.ValidaCNPJ;
+import com.webnowbr.siscoat.common.ValidaCPF;
 import com.webnowbr.siscoat.infra.db.model.User;
+import com.webnowbr.siscoat.job.DocumentoAnaliseJob;
 
-import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultRelacionamento;
 import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultRelacionamentosPessoaisPJPartnership;
 import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoRequestEnterprisePartnership;
+import br.com.galleriabank.jwt.common.JwtUtil;
 import br.com.galleriabank.serasacrednet.cliente.model.PessoaParticipacao;
 import br.com.galleriabank.serasarelato.cliente.model.Administrador;
 import br.com.galleriabank.serasarelato.cliente.model.Participada;
@@ -172,18 +195,18 @@ public class DocumentoAnaliseService {
 		documentoAnalise.setIdentificacao(partnership.getCompanyName());
 		String sCPFCNPJ ="";
 		
-		if (CommonsUtil.mesmoValor( partnership.getEntityType() , "J" ))
-		sCPFCNPJ =  CommonsUtil.formataCnpjCpf(CommonsUtil.strZero(partnership.getCNPJ(),14), false);
+		if (CommonsUtil.mesmoValor(partnership.getEntityType(), "J")) {
+			sCPFCNPJ = CommonsUtil.formataCnpjCpf(CommonsUtil.strZero(partnership.getCNPJ(), 14), false);
 //		else
 //			sCPFCNPJ =  CommonsUtil.formataCnpjCpf(CommonsUtil.strZero(partnership.getCNPJ(),9), false);
-		
-		documentoAnalise.setTipoPessoa("PJ");
-		documentoAnalise.setMotivoAnalise(motivo);
 
-		if (documentoAnalise.getTipoPessoa() == "PJ") {
+			documentoAnalise.setTipoPessoa("PJ");
+			documentoAnalise.setMotivoAnalise(motivo);
+
+			// if (documentoAnalise.getTipoPessoa() == "PJ") {
 			documentoAnalise.setCnpjcpf(sCPFCNPJ);
 			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.RELATO);
-			documentoAnalise.setLiberadoAnalise(false);
+			documentoAnalise.setLiberadoAnalise(true);
 		} else {
 			return;
 		}
@@ -215,23 +238,34 @@ public class DocumentoAnaliseService {
 		documentoAnalise.setContratoCobranca(contratoCobranca);
 		documentoAnalise.setIdentificacao(pJPartnership.getRelatedEntityName());
 
+		boolean cnpjCpfValido = false;
 		if( CommonsUtil.mesmoValor( pJPartnership.getRelatedEntityTaxIdType(), "CPF" )) {
 			documentoAnalise.setTipoPessoa("PF");
-			documentoAnalise.setCnpjcpf( CommonsUtil.formataCpf(pJPartnership.getRelatedEntityTaxIdNumber()));
+			documentoAnalise.setCnpjcpf( CommonsUtil.formataCnpjCpf(CommonsUtil.strZero(pJPartnership.getRelatedEntityTaxIdNumber(),11),false));
 			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.CREDNET);
+			cnpjCpfValido = ValidaCPF.isCPF(CommonsUtil.somenteNumeros(documentoAnalise.getCnpjcpf()));
+			
 			pagador.setCpf(documentoAnalise.getCnpjcpf());
 		} else {
 			documentoAnalise.setTipoPessoa("PJ");
-			documentoAnalise.setCnpjcpf( CommonsUtil.formataCnpjCpf(pJPartnership.getRelatedEntityTaxIdNumber(),false));
+			documentoAnalise.setCnpjcpf( CommonsUtil.formataCnpjCpf(CommonsUtil.strZero(pJPartnership.getRelatedEntityTaxIdNumber(), 14),false));
 			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.RELATO);
+			cnpjCpfValido = ValidaCNPJ.isCNPJ(CommonsUtil.somenteNumeros(documentoAnalise.getCnpjcpf()));
+			
 			pagador.setCnpj(documentoAnalise.getCnpjcpf());
+		}
+		
+		if (!cnpjCpfValido) {
+			System.out.println("******** cnpjCpfValido Invalido /");
+			System.out.println(GsonUtil.toJson(pJPartnership));
+			return;
 		}
 		
 		if ( !CommonsUtil.semValor( documentoAnaliseDao.cadastradoAnalise(contratoCobranca, documentoAnalise.getCnpjcpf())))
 			return;
 		
 		documentoAnalise.setMotivoAnalise(motivo);
-		documentoAnalise.setLiberadoAnalise(false);
+		documentoAnalise.setLiberadoAnalise(true);
 
 		pagador.setNome(documentoAnalise.getIdentificacao());
 		pagador = pagadorRecebedorService.buscaOuInsere(pagador);
@@ -239,6 +273,16 @@ public class DocumentoAnaliseService {
 		
 		documentoAnalise.adiconarEstadosPeloCadastro();
 		documentoAnaliseDao.create(documentoAnalise);
+		
+		
+		try {
+			List<DocumentoAnalise> listaDocumentoAnaliseAnalise = new ArrayList<DocumentoAnalise>(
+					Arrays.asList(documentoAnalise));
+			criandoJobExecutarConsultas(listaDocumentoAnaliseAnalise, user, documentoAnalise.getContratoCobranca());
+		} catch (SchedulerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public PagadorRecebedor cadastrarPartnershipRetornoEngine(EngineRetornoRequestEnterprisePartnership partnership, 
@@ -246,9 +290,11 @@ public class DocumentoAnaliseService {
 		if (!CommonsUtil.mesmoValor(partnership.getEntityType(), "J")) {
 			return null;
 		} 
+		
+		String sCNPJ = CommonsUtil.formataCnpjCpf(CommonsUtil.strZero(partnership.getCNPJ(), 14), false);
 		PagadorRecebedor pagador = new PagadorRecebedor();
 		pagador.setId(0);
-		pagador.setCnpj(CommonsUtil.formataCnpjCpf(partnership.getCNPJ(), false));
+		pagador.setCnpj(sCNPJ);
 		pagador.setNome(partnership.getCompanyName());
 		pagador = pagadorRecebedorService.buscaOuInsere(pagador);
 		return pagador;
@@ -258,17 +304,43 @@ public class DocumentoAnaliseService {
 			PagadorRecebedorService pagadorRecebedorService) {
 		PagadorRecebedor pagador = new PagadorRecebedor();
 		pagador.setId(0);
-		String cnpjCpf;
-		cnpjCpf = partnership.getRelatedEntityTaxIdNumber();
+		String cnpjCpf = partnership.getRelatedEntityTaxIdNumber();
+
 		cnpjCpf = CommonsUtil.formataCnpjCpf(cnpjCpf, false);
 		if (CommonsUtil.mesmoValor(partnership.getRelatedEntityTaxIdType(), "CPF")) {
+			cnpjCpf = CommonsUtil.strZero(cnpjCpf, 11);
+			cnpjCpf = CommonsUtil.formataCnpjCpf(cnpjCpf, false);
 			pagador.setCpf(cnpjCpf);
 		} else {
-			pagador.setCnpj(cnpjCpf);	
+			cnpjCpf = CommonsUtil.strZero(cnpjCpf, 14);
+			cnpjCpf = CommonsUtil.formataCnpjCpf(cnpjCpf, false);
+			pagador.setCnpj(cnpjCpf);
 		}
 		pagador.setNome(partnership.getRelatedEntityName());
 		pagador = pagadorRecebedorService.buscaOuInsere(pagador);
 		return pagador;
 	}
 
+	
+	public void criandoJobExecutarConsultas(List<DocumentoAnalise> listaDocumentoAnaliseAnalise, User user, ContratoCobranca objetoContratoCobranca) throws SchedulerException {
+		SchedulerFactory shedFact = new StdSchedulerFactory();
+		Scheduler scheduler = shedFact.getScheduler();
+		scheduler.start();
+		JobDetail jobDetail = JobBuilder.newJob(DocumentoAnaliseJob.class)
+				.withIdentity("documentoAnaliseJOB", objetoContratoCobranca.getNumeroContrato()).build();
+	
+		FacesContext fContext = FacesContext.getCurrentInstance();
+		ExternalContext extContext = fContext.getExternalContext();
+		HttpServletRequest request = (HttpServletRequest) fContext.getExternalContext().getRequest();
+		
+		String webHookJWT = JwtUtil.generateJWTWebhook(true);
+		String urlWenhook = SiscoatConstants.URL_SISCOAT_ENGINE_WEBHOOK + webHookJWT;
+		jobDetail.getJobDataMap().put("listaDocumentoAnalise", listaDocumentoAnaliseAnalise);
+		jobDetail.getJobDataMap().put("user", user);
+		jobDetail.getJobDataMap().put("urlWenhook", urlWenhook);
+		jobDetail.getJobDataMap().put("objetoContratoCobranca", objetoContratoCobranca);
+		Trigger trigger = TriggerBuilder.newTrigger()
+				.withIdentity("documentoAnaliseJOB", objetoContratoCobranca.getNumeroContrato()).startNow().build();
+		scheduler.scheduleJob(jobDetail, trigger);
+	}
 }

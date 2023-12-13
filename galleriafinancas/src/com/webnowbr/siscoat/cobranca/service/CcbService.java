@@ -2657,7 +2657,112 @@ public class CcbService {
 			            text = trocaValoresXWPF(text, r, "cartorioImovel", objetoCcb.getCartorioImovel());
 						text = trocaValoresXWPF(text, r, "cidadeImovel", objetoCcb.getCidadeImovel());
 						text = trocaValoresXWPF(text, r, "ufImovel", objetoCcb.getUfImovel());
+						text = trocaValoresXWPF(text, r, "numeroMatricula", objetoCcb.getNumeroImovel());
+					}
+			    }
+			}
+		    
+		    for (XWPFTable tbl : document.getTables()) {
+				for (XWPFTableRow row : tbl.getRows()) {
+					for (XWPFTableCell cell : row.getTableCells()) {
+						for (XWPFParagraph p : cell.getParagraphs()) {
+							for (XWPFRun r : p.getRuns()) {
+					            String text = r.getText(0);					            
+					            if(CommonsUtil.semValor(text)) {
+					            	continue;
+					            }				         
+							}
+						}
+					}
+				}
+			}
+		    
+		    ByteArrayOutputStream out = new ByteArrayOutputStream();
+			document.write(out);
+			document.close();
+			return out.toByteArray();
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public byte[] geraTermoResponsabilidadeAnuenciaPaju(CcbParticipantes participante) throws IOException{
+		try {
+			//PagadorRecebedor pagador
+			XWPFDocument document;
+			XWPFRun run;
+			XWPFRun run2;
+			int fontSize = 10;
+			
+			if(CommonsUtil.mesmoValor(objetoCcb.getUfImovel(), "PR") || CommonsUtil.mesmoValor(objetoCcb.getUfImovel(), "Paraná")) {
+				document = new XWPFDocument(getClass().getResourceAsStream("/resource/TermoDeResponsabilidadeAnuenciaPajuPR.docx"));
+				fontSize = 12;
+			} else if(CommonsUtil.mesmoValor(objetoCcb.getUfImovel(), "RJ") || CommonsUtil.mesmoValor(objetoCcb.getUfImovel(), "Rio de Janeiro")) {
+				document = new XWPFDocument(getClass().getResourceAsStream("/resource/TermoDeResponsabilidadeAnuenciaPajuRJ.docx"));
+				fontSize = 11;
+			} else {
+				document = new XWPFDocument(getClass().getResourceAsStream("/resource/TermoDeResponsabilidadeAnuenciaPaju.docx"));
+				fontSize = 10;
+			}
+						
+			CTFonts fonts = CTFonts.Factory.newInstance();
+			fonts.setHAnsi("Calibri");
+			fonts.setAscii("Calibri");
+			fonts.setEastAsia("Calibri");
+			fonts.setCs("Calibri");
+			document.getStyles().setDefaultFonts(fonts);
+			document.getStyle().getDocDefaults().getRPrDefault().getRPr().setRFonts(fonts);
+			
+			int paragraph = 2;
+			run = document.getParagraphs().get(paragraph).insertNewRun(0);
+			document.getParagraphs().get(paragraph).setAlignment(ParagraphAlignment.BOTH);
+			//run.setFontSize(12);
+			run.setText(participante.getPessoa().getNome().trim().toUpperCase() + ", ");
+			run.setBold(true);
+			run.setUnderline(UnderlinePatterns.NONE);
+			run.setCharacterSpacing(1*10);
+			run.setFontSize(fontSize);
+			run2 = document.getParagraphs().get(paragraph).insertNewRun(1);
+			run = document.getParagraphs().get(paragraph).insertNewRun(2);
+			//run2.setFontFamily("Calibri");
+			geraParagrafoPF(run2, participante);
+			run2.setUnderline(UnderlinePatterns.NONE);
+			run2.setFontSize(fontSize);
+			run2.setText(run2.getText(0).replace(';', ','));
+			//run2.addCarriageReturn();
+
+		    for (XWPFParagraph p : document.getParagraphs()) {
+				List<XWPFRun> runs = p.getRuns();
+			    if (runs != null) {  	
+			    	for (XWPFRun r : runs) {
+			            String text = r.getText(0);		            
+			            if(CommonsUtil.semValor(text)) {
+			            	continue;
+			            }			           
+			            
+			            text = trocaValoresXWPF(text, r, "emissaoDia", objetoCcb.getDataDeEmissao().getDate());
+						text = trocaValoresXWPF(text, r, "emissaoMes", CommonsUtil.formataMesExtenso(objetoCcb.getDataDeEmissao()).toLowerCase());
+						text = trocaValoresXWPF(text, r, "emissaoAno", (objetoCcb.getDataDeEmissao().getYear() + 1900));						
+						text = trocaValoresXWPF(text, r, "nomeEmitente", (participante.getPessoa().getNome()));    
+			            text = trocaValoresXWPF(text, r, "numeroCCI", objetoCcb.getNumeroCcb());		          
+			            text = trocaValoresXWPF(text, r, "cartorioImovel", objetoCcb.getCartorioImovel());
+						text = trocaValoresXWPF(text, r, "cidadeImovel", objetoCcb.getCidadeImovel());
+						text = trocaValoresXWPF(text, r, "ufImovel", objetoCcb.getUfImovel());
 						text = trocaValoresXWPF(text, r, "numeroMatricula", objetoCcb.getNumeroRegistroMatricula());
+						
+						text = trocaValoresXWPF(text, r, "nomeTestemunha1", objetoCcb.getNomeTestemunha1());
+						text = trocaValoresXWPF(text, r, "cpfTestemunha1", objetoCcb.getCpfTestemunha1());
+						text = trocaValoresXWPF(text, r, "rgTestemunha1", objetoCcb.getRgTestemunha1());						
+						text = trocaValoresXWPF(text, r, "nomeTestemunha2", objetoCcb.getNomeTestemunha2());
+						text = trocaValoresXWPF(text, r, "cpfTestemunha2", objetoCcb.getCpfTestemunha2());		
+						text = trocaValoresXWPF(text, r, "rgTestemunha2", objetoCcb.getRgTestemunha2());
+						
+						Date pajuGerado = objetoCcb.getObjetoContratoCobranca().getDataPajuComentado();
+						
+						text = trocaValoresXWPF(text, r, "pajuDia", pajuGerado.getDate());
+						text = trocaValoresXWPF(text, r, "pajuMes", CommonsUtil.formataMesExtenso(pajuGerado).toLowerCase());
+						text = trocaValoresXWPF(text, r, "pajuAno", (pajuGerado.getYear() + 1900));
 					}
 			    }
 			}
@@ -2687,7 +2792,7 @@ public class CcbService {
 		return null;
 	}
 	
-	public byte[] geraTermoResponsabilidadeAnuenciaPaju(CcbParticipantes participante) throws IOException{
+	public byte[] geraTermoPajuRJ_PR(CcbParticipantes participante) throws IOException{
 		try {
 			//PagadorRecebedor pagador
 			XWPFDocument document;
@@ -2702,8 +2807,7 @@ public class CcbService {
 				document = new XWPFDocument(getClass().getResourceAsStream("/resource/TermoDeResponsabilidadeAnuenciaPajuRJ.docx"));
 				fontSize = 11;
 			} else {
-				document = new XWPFDocument(getClass().getResourceAsStream("/resource/TermoDeResponsabilidadeAnuenciaPaju.docx"));
-				fontSize = 10;
+				return null;
 			}
 						
 			CTFonts fonts = CTFonts.Factory.newInstance();

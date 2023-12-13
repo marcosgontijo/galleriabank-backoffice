@@ -58,27 +58,28 @@ public class EngineWebhook {
 			DataEngine dataEngine = null;
 			if (engines.size() > 0) {
 				dataEngine = engines.get(0);
-				
+
 				EngineService engineService = new EngineService();
-				
+
 				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
-				
+
 				PagadorRecebedor pagaRecebedor = dataEngine.getPagador();
-				
+
 				pagadorRecebedorService.preecheDadosReceita(pagaRecebedor);
 
 				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 
-				DocumentoAnalise documentoAnalise = documentoAnaliseDao.findByFilter("engine", dataEngine).stream()
-						.findFirst().orElse(null);
+				List<DocumentoAnalise> documentosAnalise = documentoAnaliseDao.findByFilter("engine", dataEngine);
 
-				
-				pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagaRecebedor,
-						DocumentosAnaliseEnum.ENGINE, webhookRetorno);
+				for (DocumentoAnalise documentoAnalise : documentosAnalise) {
 
-				if (!CommonsUtil.semValor(documentoAnalise)) {
-					engineService.processaWebHookEngine( documentoAnaliseService, engineWebhookRetorno,
-							pagadorRecebedorService, documentoAnaliseDao, documentoAnalise);
+					pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagaRecebedor,
+							DocumentosAnaliseEnum.ENGINE, webhookRetorno);
+
+					if (!CommonsUtil.semValor(documentoAnalise)) {
+						engineService.processaWebHookEngine(documentoAnaliseService, engineWebhookRetorno,
+								pagadorRecebedorService, documentoAnaliseDao, documentoAnalise);
+					}
 				}
 			}
 			return Response.status(200).entity("Processado").build();

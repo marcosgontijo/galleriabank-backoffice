@@ -681,6 +681,13 @@
 								<p:inputText id="pixCartaSplit"
 									style="width:250px;font-weight: bold; font-size: 18px !important;"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.pixCartaSplit}" />
+										
+								<p:commandButton action="#{contratoCobrancaMB.pagamentoStarkBankCartaSplit}"
+											icon="ui-icon-video" title="Ordem de Pagamento" value="Ordem de Pagamento"
+											update=":form"/>	
+								<p:commandButton value="Comprovante" ajax="false" icon="ui-icon-arrowthick-1-s" update=":form:messageContasPagar">						       	 	
+						       	 	<p:fileDownload value="#{contratoCobrancaMB.getDownloadComprovanteStarkBank(baixas)}" />
+						    	</p:commandButton>								
 							</h:panelGrid>
 							<h:panelGrid columns="2">
 								<p:outputLabel for="valorCartaSplitGalleria"

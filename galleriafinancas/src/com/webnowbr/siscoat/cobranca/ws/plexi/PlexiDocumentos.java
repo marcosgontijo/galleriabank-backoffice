@@ -14,6 +14,8 @@ public class PlexiDocumentos {
 	private String nomePaju;
 	private boolean mostrarPaju;
 
+	private String tipoInformacao;
+	
 	@Override
 	public String toString() {
 		return "PlexiDocumentos [id=" + id + ", url=" + url + ", nome=" + nome + "]";
@@ -98,4 +100,14 @@ public class PlexiDocumentos {
 	public void setMostrarPaju(boolean mostrarPaju) {
 		this.mostrarPaju = mostrarPaju;
 	}
+	
+	public String getTipoInformacao() {
+		return tipoInformacao;
+	}
+
+	public void setTipoInformacao(String tipoInformacao) {
+		this.tipoInformacao = tipoInformacao;
+	}
+	
+	
 }

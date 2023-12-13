@@ -280,8 +280,6 @@ public class CcbMB {
 		this.participanteSelecionado.setPessoa(new PagadorRecebedor());
 	}
 	
-	
-	
 	public void pesquisaSocio() {
 		this.tituloPagadorRecebedorDialog = "Socio";
 		this.tipoPesquisa = "Socio";
@@ -582,7 +580,8 @@ public class CcbMB {
 		listaTipoDownload.add("Declaração Não União Estavel");
 		listaTipoDownload.add("Declaração de União Estavel");
 		listaTipoDownload.add("Declaração Destinação Recursos");
-		listaTipoDownload.add("Termo Responsabilidade Paju");
+		listaTipoDownload.add("Termo Responsabilidade Paju Vencido");
+		listaTipoDownload.add("Termo Responsabilidade Paju RJ/PR");
 		listaTipoDownload.add("Termo Incomunicabilidade Imovel");
 		listaTipoDownload.add("Ficha Cadastro");
 		listaTipoDownload.add("Averbacao");
@@ -930,39 +929,45 @@ public class CcbMB {
 		} else {
 			this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		}	
-		
+
 		if (objetoCcb.getListaParticipantes().size() <= 0) {
-			//procura e setta pagador	
-			this.selectedPagadorGenerico = getPagadorById(this.objetoContratoCobranca.getPagador().getId());
-			pesquisaParticipante();
-			populateSelectedPagadorRecebedor();	
-			addParticipante = true;
-			
-			if(participanteSelecionado.isEmpresa()) {
-				objetoCcb.setTipoPessoaEmitente("PJ");
+			if(objetoContratoCobranca.getListaParticipantes().size() > 0) {
+				for(CcbParticipantes participante : objetoContratoCobranca.getListaParticipantes()) {
+					objetoCcb.getListaParticipantes().add(participante);
+				}
 			} else {
-				objetoCcb.setTipoPessoaEmitente("PF");
-			}
-			
-			participanteSelecionado.setTipoParticipante("EMITENTE");
-			concluirParticipante();
-			
-			if(!CommonsUtil.semValor(objetoContratoCobranca.getPagador().getCpfConjuge())) {
-				selectedPagadorGenerico = null;
-				this.selectedPagadorGenerico = getPagadorByFilter("cpf", objetoContratoCobranca.getPagador().getCpfConjuge());
-				if(!CommonsUtil.semValor(selectedPagadorGenerico)) {
-					pesquisaParticipante();
-					populateSelectedPagadorRecebedor();	
-					addParticipante = true;
-					
-					if(participanteSelecionado.isEmpresa()) {
-						objetoCcb.setTipoPessoaEmitente("PJ");
-					} else {
-						objetoCcb.setTipoPessoaEmitente("PF");
+				//procura e setta pagador	
+				this.selectedPagadorGenerico = getPagadorById(this.objetoContratoCobranca.getPagador().getId());
+				pesquisaParticipante();
+				populateSelectedPagadorRecebedor();	
+				addParticipante = true;
+				
+				if(participanteSelecionado.isEmpresa()) {
+					objetoCcb.setTipoPessoaEmitente("PJ");
+				} else {
+					objetoCcb.setTipoPessoaEmitente("PF");
+				}
+				
+				participanteSelecionado.setTipoParticipante("EMITENTE");
+				concluirParticipante();
+				
+				if(!CommonsUtil.semValor(objetoContratoCobranca.getPagador().getCpfConjuge())) {
+					selectedPagadorGenerico = null;
+					this.selectedPagadorGenerico = getPagadorByFilter("cpf", objetoContratoCobranca.getPagador().getCpfConjuge());
+					if(!CommonsUtil.semValor(selectedPagadorGenerico)) {
+						pesquisaParticipante();
+						populateSelectedPagadorRecebedor();	
+						addParticipante = true;
+						
+						if(participanteSelecionado.isEmpresa()) {
+							objetoCcb.setTipoPessoaEmitente("PJ");
+						} else {
+							objetoCcb.setTipoPessoaEmitente("PF");
+						}
+						
+						participanteSelecionado.setTipoParticipante("EMITENTE");
+						concluirParticipante();
 					}
-					
-					participanteSelecionado.setTipoParticipante("EMITENTE");
-					concluirParticipante();
 				}
 			}
 		}
@@ -1629,7 +1634,7 @@ public class CcbMB {
 			    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 			    		listaArquivos.put(nomeDoc, arquivo);
 			    	}
-			    } else if(CommonsUtil.mesmoValor(tipoDownload,"Termo Responsabilidade Paju")) {
+			    } else if(CommonsUtil.mesmoValor(tipoDownload,"Termo Responsabilidade Paju Vencido")) {
 			    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
 			    		if(participante.getSocios().size() > 0){
 			    			for(CcbParticipantes socio : participante.getSocios()) {
@@ -1640,6 +1645,21 @@ public class CcbMB {
 			    			}
 			    		}
 			    		arquivo = ccbService.geraTermoResponsabilidadeAnuenciaPaju(participante);
+			    		nomeDoc = participante.getPessoa().getNome() + "_" + "TermoPaju.docx";
+			    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc); 	
+			    		listaArquivos.put(nomeDoc, arquivo);
+			    	}
+			    } else if(CommonsUtil.mesmoValor(tipoDownload,"Termo Responsabilidade Paju RJ/PR")) {
+			    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
+			    		if(participante.getSocios().size() > 0){
+			    			for(CcbParticipantes socio : participante.getSocios()) {
+			    				arquivo = ccbService.geraTermoPajuRJ_PR(socio);
+				    			nomeDoc = socio.getPessoa().getNome() + "_" + "TermoPaju.docx";
+					    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
+					    		listaArquivos.put(nomeDoc, arquivo);
+			    			}
+			    		}
+			    		arquivo = ccbService.geraTermoPajuRJ_PR(participante);
 			    		nomeDoc = participante.getPessoa().getNome() + "_" + "TermoPaju.docx";
 			    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc); 	
 			    		listaArquivos.put(nomeDoc, arquivo);
