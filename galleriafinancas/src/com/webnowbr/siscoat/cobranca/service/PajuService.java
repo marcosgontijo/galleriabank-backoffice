@@ -474,13 +474,15 @@ public class PajuService {
 
 			}
 
-			if (paragrafoTemplate != null) {
-
-				removeParagrafo(docTemplate, paragrafoDocumentoTemplate);
-				removeParagrafo(docTemplate, paragrafoTemplate);
-			}
-
+			
 		}
+		
+		if (paragrafoTemplate != null) {
+
+			removeParagrafo(docTemplate, paragrafoDocumentoTemplate);
+			removeParagrafo(docTemplate, paragrafoTemplate);
+		}
+
 	}
 
 	private String getDadosAcaoBigData(Map<String, List<String>> mapProcesos, final List<String> nomesParticipantes,
@@ -739,7 +741,7 @@ public class PajuService {
 							if (acao != null) {
 								acoesBigData.remove(acao);
 								String sLinha = "Processo: " + valores.getValue().get(0) + " - ";
-
+								 sLinha = sLinha+ " Ação: " + acao.getMainSubject() + " - ";
 								ProcessoParte processoParte = acao.getParties().stream()
 										.filter(p -> CommonsUtil.mesmoValor(p.getType(), "CLAIMANT")).findFirst()
 										.orElse(null);
@@ -761,6 +763,7 @@ public class PajuService {
 						if (!CommonsUtil.mesmoValor(acao.getNumber().substring(13, 14), "5"))
 							continue;
 						String sLinha = "Processo: " + CommonsUtil.formataNumeroProcesso(acao.getNumber()) + " - ";
+						 sLinha = sLinha+ " Ação: " + acao.getMainSubject() + " - ";
 						ProcessoParte processoParte = acao.getParties().stream()
 								.filter(p -> CommonsUtil.mesmoValor(p.getType(), "CLAIMANT")).findFirst().orElse(null);
 						if (processoParte != null)
@@ -944,7 +947,7 @@ public class PajuService {
 
 					ContratoTipoTemplateBloco blocoFilho = bloco
 							.getBlocosFilho().stream().filter(b -> CommonsUtil
-									.mesmoValor(b.getCodigoTipoTemplateBloco(), BLOCO_PESSOA_FISICA_DOCUMENTOS_PLEXI))
+									.mesmoValor(b.getCodigoTipoTemplateBloco(), BLOCO_PESSOA_JURIDICA_DOCUMENTOS_PLEXI))
 							.findFirst().orElse(null);
 					if (!CommonsUtil.semValor(blocoFilho)) {
 
@@ -1327,7 +1330,8 @@ public class PajuService {
 				continue;
 			Object valor = null;
 			if (!campo.getExpressao().startsWith("\"")) {
-				if (CommonsUtil.mesmoValor(campo.getTag(), "pfCertidoesDocumento")) {
+				if (CommonsUtil.mesmoValor(campo.getTag(), "pfCertidoesDocumento")
+						|| CommonsUtil.mesmoValor(campo.getTag(), "pjCertidoesDocumento")) {
 					if (!CommonsUtil.semValor(certidoesPaju)
 							&& !CommonsUtil.semValor(certidoesPaju.getDebitosDocumento())) {
 						if (CommonsUtil.mesmoValor(plexiConsulta.getPlexiDocumentos().getId(), 31L))
@@ -1355,7 +1359,8 @@ public class PajuService {
 
 					} else
 						valor = null;
-				} else if (CommonsUtil.mesmoValor(campo.getTag(), "pfCertidoesSimilariedade")) {
+				} else if (CommonsUtil.mesmoValor(campo.getTag(), "pfCertidoesSimilariedade")
+						|| CommonsUtil.mesmoValor(campo.getTag(), "pjCertidoesSimilariedade")) {
 					if (!CommonsUtil.semValor(certidoesPaju)
 							&& !CommonsUtil.semValor(certidoesPaju.getDebitosSimilariedade())) {
 						if (CommonsUtil.mesmoValor(plexiConsulta.getPlexiDocumentos().getId(), 31L))
