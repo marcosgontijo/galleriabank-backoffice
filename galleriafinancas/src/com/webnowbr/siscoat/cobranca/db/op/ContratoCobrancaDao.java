@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 
 import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.AnaliseComite;
+import com.webnowbr.siscoat.cobranca.db.model.CcbContrato;
 import com.webnowbr.siscoat.cobranca.db.model.Cidade;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaBRLLiquidacao;
@@ -34,6 +35,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PesquisaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.RelacionamentoPagadorRecebedor;
+import com.webnowbr.siscoat.cobranca.db.model.RelatorioB3;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.vo.ContratosPagadorAnalisadoVO;
 import com.webnowbr.siscoat.cobranca.vo.DemonstrativoResultadosGrupo;
@@ -9587,5 +9589,85 @@ private String QUERY_ID_IMOVELESTOQUE = "select id from cobranca.contratocobranc
 			}
 		});
 	}
+    
+    
+    private String QUERY_QTD_ANALISE_USER = "\r\n"
+    		+ "select count(id), inicioanaliseusuario from cobranca.contratocobranca c\r\n"
+    		+ "where status != 'Aprovado' and status != 'Reprovado' and status != 'Baixado' and status != 'Desistência Cliente' \r\n"
+    		+ "and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true and (cadastroAprovadoValor = '' or cadastroAprovadoValor is null) \r\n"
+    		+ "and (matriculaAprovadaValor = '' or matriculaAprovadaValor is null)\r\n"
+    		+ "and inicioanaliseusuario = ? \r\n"
+    		+ "group by inicioanaliseusuario";
+    
+    @SuppressWarnings("unchecked")
+	public int consultaQtdAnaliseUser(String analista) {
+		return (int) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				int qtdAnalise = 0;
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				
+				try {
+					connection = getConnection();
+					
+					ps = connection
+							.prepareStatement(QUERY_QTD_ANALISE_USER);
+					
+					ps.setString(1, analista);
+					
+					rs = ps.executeQuery();
+					if (rs.next()) {
+						qtdAnalise = rs.getInt(1);
+					}
+							
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return qtdAnalise;
+			}
+		});
+	}
+    
+    private String QUERY_CONTRATOS_B3 = "select c.id idContrato, c2.id idCcb, c.numerocontrato, c2.datadeemissao, c.datainicio, c2.vencimentoultimaparcelapagamento , c.valorccb, c.datainicio, c2.vencimentoultimaparcelapagamento , c.txJurosParcelas, c.numerocontratoseguro, c2.serieccb, \r\n"
+    		+ "	p.nome, p.cpf, p.cnpj, c2.tipopessoaemitente  , p.estado, p.cidade, p.endereco, p.numero, p.complemento, p.bairro, p.cep,\r\n"
+    		+ "	i.estado, i.cidade, i.endereco, c2.logradouroruaimovel, c2.logradouronumeroimovel, i.complemento, i.bairro, i.cep, i.numeromatricula, c2.tipopessoaemitente, c.numerocontrato  \r\n"
+    		+ "from cobranca.contratocobranca c \r\n"
+    		+ "inner join cobranca.pagadorrecebedor p on p.id = c.pagador \r\n"
+    		+ "inner join cobranca.imovelcobranca i on i.id = c.imovel\r\n"
+    		+ "left join cobranca.ccbcontrato c2 on c2.objetocontratocobranca = c.id\r\n"
+    		+ "where c.id = ?\r\n"
+    		+ "order by numerocontrato desc";
+    
+    @SuppressWarnings("unchecked")
+	public RelatorioB3 pegarRelatorioB3(ContratoCobranca contrato) {
+		return (RelatorioB3) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				RelatorioB3 relatorio = new RelatorioB3();
+				ContratoCobrancaDao contratoDao = new ContratoCobrancaDao();
+				CcbDao ccbDao = new CcbDao();
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+					ps = connection.prepareStatement(QUERY_CONTRATOS_B3);
+					ps.setLong(1, contrato.getId());
+					rs = ps.executeQuery();
+					if (rs.next()) {
+						ContratoCobranca contratoDB = contratoDao.findById(rs.getLong("idContrato"));
+						CcbContrato ccbDB = ccbDao.findById(rs.getLong("idCcb"));
+						relatorio = new RelatorioB3(contratoDB, ccbDB);
+					}
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return relatorio;
+			}
+		});
+	}
+    
     
 }

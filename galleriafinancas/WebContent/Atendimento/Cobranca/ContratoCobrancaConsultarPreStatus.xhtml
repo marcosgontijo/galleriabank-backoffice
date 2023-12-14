@@ -70,8 +70,8 @@
 				</h:panelGrid>
 			</p:panel>									
 			<p:panel id="ConsultaContratos" header="Pré-Contratos #{contratoCobrancaMB.tituloTelaConsultaPreStatus} - Consultar" style="margin-bottom:10px;">					    		    
-   		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratosPendentes}" selection="" emptyMessage=""
-   		         rowStyleClass="#{(contratos.agComite eq true) ? 'linhaBranca' : '' }
+   		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratosPendentes}"  emptyMessage=""
+   		         rowStyleClass="#{(contratos.emAgComite eq true) ? 'linhaBranca' : '' }
    		         	 #{(contratos.pendenciaPagamento eq true or contratos.contatoDiferenteProprietario eq true) ? 'parcelaVencendo' : '' }
 	   		         #{(contratos.laudoRecebido eq true and contratos.pajurFavoravel eq true) ? 'parcelaPaga' : '' }
 	   		         #{(contratos.cadastroAprovadoValor eq 'Pendente') ? 'linhaRoxa' : '' }
@@ -82,7 +82,8 @@
    		         rows="50" paginator="true"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                  currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
-                 rowsPerPageTemplate="50,100,150">  
+                 rowsPerPageTemplate="50,100,150"
+                 selection="#{contratoCobrancaMB.selectedContratos}" rowKey="#{contratos.id}" >  
    		         	<f:facet name="header">										
 						<p:commandButton value="Ficha Individual" icon="ui-icon-arrowthick-1-s" oncomplete="PF('fichaIndividual').show();" action="#{impressoesPDFMB.clearFieldsFichaIndividual}" update=":form:PanelPDF :form:dados">
 						</p:commandButton>
@@ -93,7 +94,14 @@
 							action="#{contratoCobrancaMB.consultaListagemCertidoes()}"
 							rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus ==  'Pedir PAJU'}" />
 							
-			        </f:facet>                 
+						<p:commandButton value="Gerar XLS B3" 
+							icon="ui-icon-arrowthick-1-s" ajax="false"
+							action="#{contratoCobrancaMB.geraXLSEnviarB3(contratoCobrancaMB.selectedContratos)}"
+							rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus ==  'Ag. Pagamento Op.'}" />
+							
+			        </f:facet>          
+			        <p:column selectionMode="multiple" style="width:16px;text-align:center"
+			      	  rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus ==  'Ag. Pagamento Op.'}"/>           
                 	<p:column style="text-align: center;width:100px;" headerText="Contrato" filterBy="#{contratos.numeroContrato}" filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
 			            <h:outputText value="#{contratos.numeroContrato}" />
 			        </p:column>
@@ -303,7 +311,10 @@
 					<f:facet name="footer">	
 						<p:commandButton value="Ficha Individual" icon="ui-icon-arrowthick-1-s" oncomplete="PF('fichaIndividual').show();" action="#{impressoesPDFMB.clearFieldsFichaIndividual}" update=":form:PanelPDF :form:dados">
 						</p:commandButton>						
-			        </f:facet>		            		        		               		        			        			           			 		
+			        </f:facet>		      
+			        <p:ajax event="rowSelectCheckbox" update=":form:ConsultaContratos" process="@this" listener="#{contratoCobrancaMB.fileSelectionListener()}"/>
+					<p:ajax event="rowUnselectCheckbox" update=":form:ConsultaContratos" process="@this" listener="#{contratoCobrancaMB.fileSelectionListener()}"/>
+					<p:ajax event="toggleSelect" update=":form:ConsultaContratos" process="@this" listener="#{contratoCobrancaMB.fileSelectionListener()}"/>      		        		               		        			        			           			 		
 				</p:dataTable>
 			</p:panel>
 			  

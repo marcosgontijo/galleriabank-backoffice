@@ -1705,6 +1705,12 @@
 											<p:outputLabel value="#{processosPessoas2.numero}"
 												style="FONT-SIZE: 10pt;" />
 										</p:column>
+										
+										<p:column style="text-align: center;width:75px;"
+											headerText=" Valor Original: ">
+											<p:outputLabel value="#{processosPessoas2.valor}"
+												style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+										</p:column>
 
 										<p:column style="text-align: center;width:75px;"
 											headerText=" Valor Atualizado: ">
@@ -1715,6 +1721,12 @@
 										<p:column style="text-align: center;width:150px;"
 											headerText=" Quitar? ">
 											<p:outputLabel value=" #{processosPessoas2.quitar}"
+												style="FONT-SIZE: 10pt;" />
+										</p:column>
+										
+										<p:column style="text-align: center;width:150px;"
+											headerText=" Natureza ">
+											<p:outputLabel value=" #{processosPessoas2.natureza}"
 												style="FONT-SIZE: 10pt;" />
 										</p:column>
 
@@ -2261,6 +2273,12 @@
 										<p:column style="text-align: center;width:150px;"
 											headerText=" Quitar? ">
 											<p:outputLabel value=" #{processosPessoas.quitar}"
+												style="FONT-SIZE: 10pt;" />
+										</p:column>
+										
+										<p:column style="text-align: center;width:150px;"
+											headerText=" Natureza ">
+											<p:outputLabel value=" #{processosPessoas.natureza}"
 												style="FONT-SIZE: 10pt;" />
 										</p:column>
 
@@ -5647,7 +5665,7 @@
 							value="#{contratoCobrancaMB.processoSelecionado.valorAtualizado}"
 							label="Contrato" onkeypress="return isNumberKey(event);"
 							onkeydown="FormataValor(this, 13, event, 2);"
-							converter="bigDecimalConverter" />
+							converter="bigDecimalConverter" />						
 
 						<p:outputLabel value="Quitar: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />
@@ -5659,6 +5677,13 @@
 								itemLabel="Quitar ou indicar bens" />
 							<f:selectItem itemValue="Indicar bens" itemLabel="Indicar bens" />
 						</p:selectOneMenu>
+						
+						<p:outputLabel value="Natureza do Processo: " styleClass="labelBold"
+							style="font-weight: bold; font-size: 18px;" />
+						<p:autoComplete value="#{contratoCobrancaMB.processoSelecionado.natureza}" dropdown="true"
+							completeMethod="#{contratoCobrancaMB.processoSelecionado.naturezaProcessos()}"
+							scrollHeight="250">
+						</p:autoComplete>
 
 						<p:outputLabel value="Obs: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />

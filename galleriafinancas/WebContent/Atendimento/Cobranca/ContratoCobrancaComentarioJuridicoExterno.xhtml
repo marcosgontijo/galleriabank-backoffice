@@ -155,6 +155,11 @@
 													style="FONT-SIZE: 10pt;" />
 											</p:column>
 											
+											<p:column style="text-align: center;width:75px;" headerText=" Valor Original: ">
+												<p:outputLabel value="#{processosPessoas.valor}"
+													style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+											</p:column>
+										
 											<p:column style="text-align: center;width:75px;" headerText=" Valor Atualizado: "  >
 												<p:outputLabel value="#{processosPessoas.valorAtualizado}" 
 													style="FONT-SIZE: 10pt;"
@@ -163,6 +168,11 @@
 											
 											<p:column style="text-align: center;width:150px;" headerText=" Quitar? "  >
 												<p:outputLabel value=" #{processosPessoas.quitar}" style="FONT-SIZE: 10pt;" />
+											</p:column>
+											
+											<p:column style="text-align: center;width:150px;" headerText=" Natureza ">
+												<p:outputLabel value=" #{processosPessoas.natureza}"
+													style="FONT-SIZE: 10pt;" />
 											</p:column>
 											
 											<p:column style="text-align: center;" headerText="Obs" >

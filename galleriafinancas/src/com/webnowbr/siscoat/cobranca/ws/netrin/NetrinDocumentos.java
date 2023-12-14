@@ -13,7 +13,9 @@ public class NetrinDocumentos {
 	private String obs;
 
 	private String nomePaju;
-	private boolean mostrarPaju;
+	private boolean mostrarPaju;	
+
+	private String tipoInformacao;
 
 	@Override
 	public String toString() {
@@ -99,4 +101,14 @@ public class NetrinDocumentos {
 	public void setMostrarPaju(boolean mostrarPaju) {
 		this.mostrarPaju = mostrarPaju;
 	}
+
+	public String getTipoInformacao() {
+		return tipoInformacao;
+	}
+
+	public void setTipoInformacao(String tipoInformacao) {
+		this.tipoInformacao = tipoInformacao;
+	}
+	
+	
 }

@@ -346,6 +346,21 @@
 							<h:outputLabel value="POSOPERACAO" />
 						</shiro:hasAnyRoles>
 					</h:panelGroup>
+					
+					<h:outputLabel for="PosOperacao" value="Planejamento "
+						class="labelBold" />
+					<h:panelGroup>
+						<p:selectBooleanButton id="Planejamento"
+							disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
+							value="#{usuarioMB.objetoUsuario.userPlanejamento}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+						</p:selectBooleanButton>
+						<shiro:hasAnyRoles name="ROOT">
+							<h:outputLabel value="PLANEJAMENTO" />
+						</shiro:hasAnyRoles>
+					</h:panelGroup>
+					
 				</h:panelGrid>
 				
 				<p:panel id="PanelProfiles"

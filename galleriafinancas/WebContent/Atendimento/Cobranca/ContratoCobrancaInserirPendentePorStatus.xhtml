@@ -322,7 +322,28 @@
 												offIcon="ui-icon-close" style="width:=60px" />
 											<p:commandButton id="acoesJuridico" value="Enviar para..."
 												style="width:=60px" onclick="PF('acoesJuridico').show();" />
+										
+																					
+											<p:outputLabel styleClass="labelBold">Analise apenas com consultas  ?</p:outputLabel>
+											<p:selectBooleanButton id="comentarioJuricoApenasComConsultas"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuricoApenasComConsultas}"												
+												onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+												offIcon="ui-icon-close" style="width:=60px" >
+												<p:ajax event="change"
+													update=":form:Status"/>
+											</p:selectBooleanButton>
+											
+											
+											<p:outputLabel styleClass="labelBold">Analise com paju vencido  ?</p:outputLabel>
+											<p:selectBooleanButton id="comentarioJuricoComPajuVencido"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuricoComPajuVencido}"
+												onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+												offIcon="ui-icon-close" style="width:=60px" >
+												<p:ajax event="change"
+													update=":form:Status"/>
+											</p:selectBooleanButton>
 										</h:panelGrid>
+										
 									</ui:fragment>
 									<ui:fragment
 										rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 6}">
@@ -458,8 +479,7 @@
 												onLabel="Não assinado" offLabel="Assinado"
 												onIcon="ui-icon-close" offIcon="ui-icon-check"
 												style="width:=60px">
-												<p:ajax event="change"
-													 update="form:precisaReanalise"/>
+												<p:ajax event="change"  update="form:precisaReanalise"/>
 											</p:selectBooleanButton>
 											<p:spacer></p:spacer>
 											<p:outputLabel styleClass="labelBold">Precisa de Reanalise?</p:outputLabel>
@@ -468,10 +488,16 @@
 												disabled="#{contratoCobrancaMB.objetoContratoCobranca.agAssinatura}"
 												onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 												offIcon="ui-icon-close" style="width:=60px" >
-												<p:ajax event="change"
-													update=":form:Status"/>
+												<p:ajax event="change" update=":form:Status"/>
 											</p:selectBooleanButton>
+											<p:outputLabel styleClass="labelBold">Data da Assinatura</p:outputLabel>
+											<p:calendar value="#{contratoCobrancaMB.objetoContratoCobranca.dataContratoAssinado}"
+												styleClass="dateTimeField" pattern="dd/MM/yyyy"
+												inputStyle="width:70px" />
 										</h:panelGrid>
+										
+										
+										
 										<h:panelGrid columns="2"
 											style="background-color: #e4e4e4;width: 250px; height: 110px; -webkit-border-radius: 5px;
 											-moz-border-radius: 5px; border-radius: 5px; padding: 10px;"
@@ -1790,6 +1816,12 @@
 											<p:outputLabel value="#{processosPessoas.numero}"
 												style="FONT-SIZE: 10pt;" />
 										</p:column>
+										
+										<p:column style="text-align: center;width:75px;"
+											headerText=" Valor Original: ">
+											<p:outputLabel value="#{processosPessoas.valor}"
+												style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+										</p:column>
 
 										<p:column style="text-align: center;width:75px;"
 											headerText=" Valor Atualizado: ">
@@ -1800,6 +1832,12 @@
 										<p:column style="text-align: center;width:150px;"
 											headerText=" Quitar? ">
 											<p:outputLabel value=" #{processosPessoas.quitar}"
+												style="FONT-SIZE: 10pt;" />
+										</p:column>
+										
+										<p:column style="text-align: center;width:150px;"
+											headerText=" Natureza ">
+											<p:outputLabel value=" #{processosPessoas.natureza}"
 												style="FONT-SIZE: 10pt;" />
 										</p:column>
 
@@ -5573,17 +5611,23 @@
 							label="Contrato" onkeypress="return isNumberKey(event);"
 							onkeydown="FormataValor(this, 13, event, 2);"
 							converter="bigDecimalConverter" />
-
+							
 						<p:outputLabel value="Quitar: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />
 						<p:selectOneMenu
 							value="#{contratoCobrancaMB.processoSelecionado.quitar}">
 							<f:selectItem itemValue="" itemLabel="Selecione" />
 							<f:selectItem itemValue="Quitar" itemLabel="Quitar" />
-							<f:selectItem itemValue="Quitar ou indicar bens"
-								itemLabel="Quitar ou indicar bens" />
+							<f:selectItem itemValue="Quitar ou indicar bens" itemLabel="Quitar ou indicar bens" />
 							<f:selectItem itemValue="Indicar bens" itemLabel="Indicar bens" />
 						</p:selectOneMenu>
+						
+						<p:outputLabel value="Natureza do Processo: " styleClass="labelBold"
+							style="font-weight: bold; font-size: 18px;" />
+						<p:autoComplete value="#{contratoCobrancaMB.processoSelecionado.natureza}" dropdown="true"
+							completeMethod="#{contratoCobrancaMB.processoSelecionado.naturezaProcessos()}"
+							scrollHeight="250">
+						</p:autoComplete>
 
 						<p:outputLabel value="Obs: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />

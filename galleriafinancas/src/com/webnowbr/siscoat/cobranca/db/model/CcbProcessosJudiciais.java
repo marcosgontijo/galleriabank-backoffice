@@ -2,6 +2,10 @@ package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.faces.model.SelectItem;
 
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
@@ -21,6 +25,7 @@ public class CcbProcessosJudiciais implements Serializable{
 	private ContratoCobranca contrato;
 	private PagadorRecebedor pagador;
 	private String quitar = "";
+	private String natureza = "";
 	private boolean selecionadoComite = false;
 	private String observacao = "";
 	
@@ -28,6 +33,19 @@ public class CcbProcessosJudiciais implements Serializable{
 		contaPagar = new ContasPagar();
 		this.valor = valor;
 		this.numero = numero;
+	}
+	
+	public List<String> naturezaProcessos() {
+		List<String> naturezas = new ArrayList<String>();
+		naturezas.add("Execução fiscal - diversos");
+		naturezas.add("Execução fiscal - IPTU");
+		naturezas.add("Reclamação Trabalhista");
+		naturezas.add("Execução de condomínio - diversos");
+		naturezas.add("Execução de condomínio - garantia");
+		naturezas.add("Execução de título - contratos bancários");
+		naturezas.add("Ação monitória - contratos bancários");
+		naturezas.add("Ação de cobrança - contratos bancários");
+		return naturezas;
 	}
 	
 	public CcbProcessosJudiciais() {
@@ -112,5 +130,13 @@ public class CcbProcessosJudiciais implements Serializable{
 
 	public void setValorAtualizado(BigDecimal valorAtualizado) {
 		this.valorAtualizado = valorAtualizado;
+	}
+
+	public String getNatureza() {
+		return natureza;
+	}
+
+	public void setNatureza(String natureza) {
+		this.natureza = natureza;
 	}	
 }

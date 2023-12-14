@@ -81,6 +81,11 @@ public class SiscoatConstants {
 	public static final String CND_SITUACAO_POSSUI_DEBITOS = "Possui débitos";
 	public static final String CND_SITUACAO_NAO_POSSUI_DEBITOS = "Não possui débitos";
 	public static final String CND_SITUACAO_ERRO_AO_CONSULTAR = "Problemas ao consultar certidão";
+	public static final String CND_SITUACAO_POSSUI_PROCESSOS = "Possui processos";
+	public static final String CND_SITUACAO_NAO_POSSUI_PROCESSOS = "Não possui processos";
+
+	public static final String TIPO_INFORMACAO_CONSULTA_CERTIDAO= "C";
+	public static final String TIPO_INFORMACAO_CONSULTA_PROCESSO = "P";
 	
 
 }
