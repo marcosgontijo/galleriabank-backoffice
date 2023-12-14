@@ -219,7 +219,6 @@ public class DocumentoAnaliseService {
 
 			DocumentoAnalise documentoAnalisePesquisa = documentoAnaliseDao.cadastradoAnalise(contratoCobranca,
 					sCPFCNPJ);
-			documentoAnalisePesquisa.setLiberadoAnalise(true);
 			if (!CommonsUtil.semValor(documentoAnalisePesquisa))
 				documentoAnalise = documentoAnalisePesquisa;
 
