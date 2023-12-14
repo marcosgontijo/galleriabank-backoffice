@@ -451,7 +451,7 @@ public class MenuItemDao extends HibernateDao<MenuItem, Long> {
 		});
 	}
 	@SuppressWarnings("unchecked")
-	public List<MenuItem> ConsultaItemMaior(MenuItem itempai, int ordem ) {
+	public List<MenuItem> ConsultaItemMaiorOuIgual(MenuItem itempai, int ordem ) {
 
 		return (List<MenuItem>) executeDBOperation(new DBRunnable() {
 
@@ -468,6 +468,44 @@ public class MenuItemDao extends HibernateDao<MenuItem, Long> {
 
 					query.append("select id from infra.menuitem ");
 					query.append("where itempai  = ? and ordem >= ? " );
+
+					ps = connection.prepareStatement(query.toString());
+					ps.setLong(1, itempai.getId());
+					ps.setInt(2, ordem);
+					
+					rs = ps.executeQuery();
+
+					MenuItemDao menuDao = new MenuItemDao();
+
+					while (rs.next()) {
+						menuItemItem.add(menuDao.findById(rs.getLong(1)));
+					}
+
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return menuItemItem;
+			}
+		});
+	}
+	@SuppressWarnings("unchecked")
+	public List<MenuItem> ConsultaItemMaior(MenuItem itempai, int ordem ) {
+
+		return (List<MenuItem>) executeDBOperation(new DBRunnable() {
+
+			@Override
+			public Object run() throws Exception {
+				List<MenuItem> menuItemItem = new ArrayList<MenuItem>();
+
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+					StringBuilder query = new StringBuilder();
+
+					query.append("select id from infra.menuitem ");
+					query.append("where itempai  = ? and ordem > ? " );
 
 					ps = connection.prepareStatement(query.toString());
 					ps.setLong(1, itempai.getId());
