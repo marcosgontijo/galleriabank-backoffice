@@ -198,6 +198,7 @@ import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.cobranca.service.DocumentoAnaliseService;
 import com.webnowbr.siscoat.cobranca.service.EngineService;
 import com.webnowbr.siscoat.cobranca.service.FileService;
+import com.webnowbr.siscoat.cobranca.service.LaudoImovelService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.cobranca.service.PajuService;
 import com.webnowbr.siscoat.cobranca.service.RelatoriosService;
@@ -29459,214 +29460,40 @@ public class ContratoCobrancaMB {
 	}
 	
 	public void geraLaudo() {
-		try {	
-			LaudoImovelObjectRequest laudoRoboObjectRequest = new LaudoImovelObjectRequest();
-			LaudoImovelSearchObject laudoRoboSearchObject = new LaudoImovelSearchObject();
-			LaudoImovelAssessingObject laudoRoboAssessingObject = new LaudoImovelAssessingObject();
-			LaudoImovelMoreFiltersObject laudoRoboMoreFiltersObject = new LaudoImovelMoreFiltersObject();
-			
-			this.objetoImovelCobranca.separaEnderecoNumero(this.objetoImovelCobranca.getEndereco());
-
-			laudoRoboAssessingObject.setCategory_id(this.objetoImovelCobranca.getCategoria());
-			laudoRoboAssessingObject.setLat(null);
-			laudoRoboAssessingObject.setLon(null);
-			laudoRoboAssessingObject.setNeighborhood(this.objetoImovelCobranca.getBairro());
-			laudoRoboAssessingObject.setArea(Integer.parseInt(this.objetoImovelCobranca.getAreaConstruida()));
-			laudoRoboAssessingObject.setStreet(this.objetoImovelCobranca.getEnderecoSemNumero());
-			laudoRoboAssessingObject.setNumber(this.objetoImovelCobranca.getNumeroImovel());
-			laudoRoboAssessingObject.setSub_category_id(this.objetoImovelCobranca.getCategoria());
-			laudoRoboAssessingObject.setCity(this.objetoImovelCobranca.getCidade());
-			laudoRoboAssessingObject.setPostal_code(this.objetoImovelCobranca.getCep());
-			laudoRoboAssessingObject.setState(this.objetoImovelCobranca.getEstado());
-			laudoRoboAssessingObject.setComplement(this.objetoImovelCobranca.getComplemento());
-			
-			LaudoImovelAssessingTypologyObject laudoRoboAssessingTypologyObject = new LaudoImovelAssessingTypologyObject();
-			laudoRoboAssessingTypologyObject.setFeatures_bathroom((this.objetoImovelCobranca.getNumeroBanheiros() <= 0) ? 1 : this.objetoImovelCobranca.getNumeroBanheiros());
-			laudoRoboAssessingTypologyObject.setFeatures_bedroom((this.objetoImovelCobranca.getNumeroQuartos() <= 0) ? 1 : this.objetoImovelCobranca.getNumeroQuartos());
-			laudoRoboAssessingTypologyObject.setFeatures_suite((this.objetoImovelCobranca.getNumeroSuites() <= 0) ? 1 : this.objetoImovelCobranca.getNumeroSuites());
-			laudoRoboAssessingTypologyObject.setFeatures_garage((this.objetoImovelCobranca.getNumeroGaragens() <= 0) ? 1 : this.objetoImovelCobranca.getNumeroGaragens());
-			
-			laudoRoboAssessingObject.setTypology(laudoRoboAssessingTypologyObject);
-			
-			LaudoImovelSearchAddressObject laudoRoboSearchAddressObject = new LaudoImovelSearchAddressObject();
-			laudoRoboSearchAddressObject.setStreet(this.objetoImovelCobranca.getEnderecoSemNumero());
-			laudoRoboSearchAddressObject.setNeighborhood(this.objetoImovelCobranca.getBairro());
-			laudoRoboSearchAddressObject.setCity(this.objetoImovelCobranca.getCidade());
-			laudoRoboSearchAddressObject.setPostal_code(this.objetoImovelCobranca.getCep());
-			laudoRoboSearchAddressObject.setState(this.objetoImovelCobranca.getEstado());
-			laudoRoboSearchAddressObject.setStreet_long(this.objetoImovelCobranca.getEnderecoSemNumero());
-			laudoRoboSearchAddressObject.setNumber(this.objetoImovelCobranca.getNumeroImovel());
-			
-			LaudoImovelSearchLocationObject locationObject = new LaudoImovelSearchLocationObject();
-			locationObject.setRadius(0);
-			locationObject.setLat(null);
-			locationObject.setLon(null);
-			
-			LaudoImovelSearchTypologyObject laudoRoboSearchTypologyObject = new LaudoImovelSearchTypologyObject();
-			laudoRoboSearchTypologyObject.setFeatures_bathroom(new int[] {});
-			laudoRoboSearchTypologyObject.setFeatures_bedroom(new int[] {});
-			laudoRoboSearchTypologyObject.setFeatures_garage(new int[] {});
-			laudoRoboSearchTypologyObject.setFeatures_suite(new int[] {});
-			
-			LaudoImovelSearchRealtyTypeObject laudoRoboSearchRealtyTypeObject = new LaudoImovelSearchRealtyTypeObject();
-			laudoRoboSearchRealtyTypeObject.setCategory_id((this.objetoImovelCobranca.getCategoria() == 1) ? new int[] {1} : new int[] {2});
-			laudoRoboSearchRealtyTypeObject.setSub_category_id(new int[] {});
-
-			LaudoImovelSearchPriceTotalObject laudoRoboSearchPriceTotalObject = new LaudoImovelSearchPriceTotalObject();
-			laudoRoboSearchPriceTotalObject.setValue(0);
-			laudoRoboSearchPriceTotalObject.setPercentage(100);
-			
-			LaudoImovelSearchUsefulObject laudoRoboSearchPriceUsefulObject = new LaudoImovelSearchUsefulObject();
-			laudoRoboSearchPriceUsefulObject.setValue(0);
-			laudoRoboSearchPriceUsefulObject.setPercentage(100);
-			
-			LaudoImovelSearchTotalObject laudoRoboSearchPriceAreaTotalObject = new LaudoImovelSearchTotalObject();
-			laudoRoboSearchPriceAreaTotalObject.setValue(0);
-			laudoRoboSearchPriceAreaTotalObject.setPercentage(100);
-			
-			LaudoImovelSearchPriceAreaObject laudoRoboSearchPriceAreaObject = new LaudoImovelSearchPriceAreaObject();
-			laudoRoboSearchPriceAreaObject.setUseful(laudoRoboSearchPriceUsefulObject);
-			laudoRoboSearchPriceAreaObject.setTotal(laudoRoboSearchPriceAreaTotalObject);
-			
-			LaudoImovelSearchUsefulObject laudoRoboSearchAreaUsefulObject = new LaudoImovelSearchUsefulObject();
-			laudoRoboSearchAreaUsefulObject.setValue(Integer.valueOf(this.objetoImovelCobranca.getAreaConstruida()));
-			laudoRoboSearchAreaUsefulObject.setPercentage(40);
-			
-			LaudoImovelSearchTotalObject laudoRoboSearchAreaTotalObject = new LaudoImovelSearchTotalObject();
-			laudoRoboSearchAreaTotalObject.setValue(0);
-			laudoRoboSearchAreaTotalObject.setPercentage(100);
-			
-			LaudoImovelSearchAreaObject laudoRoboSearchAreaObject = new LaudoImovelSearchAreaObject();
-			laudoRoboSearchAreaObject.setTotal(laudoRoboSearchAreaTotalObject);
-			laudoRoboSearchAreaObject.setUseful(laudoRoboSearchAreaUsefulObject);
-			
-			laudoRoboSearchObject.set_sale(true);
-			laudoRoboSearchObject.setMax_age(0);
-			laudoRoboSearchObject.setAddress(laudoRoboSearchAddressObject);
-			laudoRoboSearchObject.setTypology(laudoRoboSearchTypologyObject);
-			laudoRoboSearchObject.setArea(laudoRoboSearchAreaObject);
-			laudoRoboSearchObject.setPrice_area(laudoRoboSearchPriceAreaObject);
-			laudoRoboSearchObject.setPrice_total(laudoRoboSearchPriceTotalObject);
-			laudoRoboSearchObject.setLocation(locationObject);
-			laudoRoboSearchObject.setRealty_type(laudoRoboSearchRealtyTypeObject);
-			
-			laudoRoboMoreFiltersObject.setFull_address(true);
-			laudoRoboMoreFiltersObject.setRemove_duplicates(true);
-			laudoRoboMoreFiltersObject.setActive_ads(true);
-			laudoRoboMoreFiltersObject.setRecent_ads(false);
-			laudoRoboMoreFiltersObject.setMin_quantity_ad(2);
-			laudoRoboMoreFiltersObject.setMin_similarity(0.3);
-			
-			laudoRoboObjectRequest.setAssessing(laudoRoboAssessingObject);
-			laudoRoboObjectRequest.setMore_filters(laudoRoboMoreFiltersObject);
-			laudoRoboObjectRequest.setSearch(laudoRoboSearchObject);
-			
-			String json = GsonUtil.toJson(laudoRoboObjectRequest);
-
-			if(!this.objetoImovelCobranca.getAreaConstruida().isEmpty()) {
-				this.objetoImovelCobranca.setAreaConstruida(this.objetoImovelCobranca.getAreaConstruida());
-				PrimeFaces.current().ajax().update("form:Imovel");
-			}
-			
-			LaudoImovelRetornoPadrao laudoRoboRetornoPadrao = new LaudoImovelRetornoPadrao();
-			
-			String idAval = "";
-			
-			URL myURL = new URL("http://servicos.galleriabank.com.br/laudoimovel/api/v1/laudo/imovel/start");
-
-			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
-			myURLConnection.setRequestMethod("POST");
-			myURLConnection.setUseCaches(false);
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-			myURLConnection.setDoOutput(true);
-
-			try(OutputStream os = myURLConnection.getOutputStream()) {
-			    byte[] input = json.getBytes("utf-8");
-			    os.write(input, 0, input.length);
-			    os.close();
-			}
-			
-			if (myURLConnection.getResponseCode() == HttpURLConnection.HTTP_BAD_REQUEST) {
-				BufferedReader in = new BufferedReader(new InputStreamReader(myURLConnection.getErrorStream(), "utf-8"));
-				String inputLine;
-				StringBuilder response = new StringBuilder();
-
-				while ((inputLine = in.readLine()) != null) {
-					response.append(inputLine);
-				}
-				in.close();
-				erroPedidoLaudo = true;
-				JSONObject responseObj = new JSONObject(response.toString());
-				System.out.println("Retorno postER: " + responseObj);
-			}
-			
-			if (myURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-				BufferedReader in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "utf-8"));
-				String inputLine;
-				StringBuilder response = new StringBuilder();
-
-				while ((inputLine = in.readLine()) != null) {
-					response.append(inputLine);
-				}
-				in.close();
-
-				laudoRoboRetornoPadrao = GsonUtil.fromJson(response.toString(), LaudoImovelRetornoPadrao.class);
-				idAval = laudoRoboRetornoPadrao.getData();
-			}
-			myURLConnection.disconnect();
-			
-			laudoDone = getLaudoStatus(idAval);
-			
-			if (laudoDone && !erroPedidoLaudo) {
-				myURL = new URL("https://servicos.galleriabank.com.br/laudoimovel/api/v1/laudo/imovel/reportpdf/" + idAval);
-				
-				HttpURLConnection myURLConnectionPdf = (HttpURLConnection) myURL.openConnection();
-				myURLConnectionPdf.setRequestMethod("GET");
-				myURLConnectionPdf.setUseCaches(false);
-				myURLConnectionPdf.setRequestProperty("Accept", "application/json");
-				myURLConnectionPdf.setRequestProperty("Accept-Charset", "utf-8");
-				myURLConnectionPdf.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-
-				if (myURLConnectionPdf.getResponseCode() == HttpURLConnection.HTTP_OK) {
-					BufferedReader in = new BufferedReader(new InputStreamReader(myURLConnectionPdf.getInputStream()));
-					String inputLine;
-					StringBuffer response = new StringBuffer();
-
-					while ((inputLine = in.readLine()) != null) {
-						response.append(inputLine);
-					}
-					in.close();
-					
-					laudoRoboRetornoPadrao = GsonUtil.fromJson(response.toString(), LaudoImovelRetornoPadrao.class);
-
-					if (laudoRoboRetornoPadrao.getData() != null) {
-						String dataObj = laudoRoboRetornoPadrao.getData();
-						laudoEndereco = dataObj;					    
-					    FileService fileService = new FileService();
-					    fileService.salvarPdfRetorno("", this.objetoContratoCobranca.getNumeroContrato(), retornaBase64(laudoEndereco), "LaudoRobo", "interno");
-					    fileService.salvarPdfRetorno("", this.objetoContratoCobranca.getNumeroContrato(), retornaBase64(laudoEndereco), "LaudoRobo", "juridico");
-					    PrimeFaces.current().ajax().update("form:ArquivosInternosSalvos");
-					}
-				}
-				myURLConnection.disconnect();
-			}		    
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
+		LaudoImovelService laudoImovelService = new LaudoImovelService();
+		HashMap<String, String> mapRequestAval = new HashMap<String, String>();
+		HashMap<String, String> mapRequestPdf = new HashMap<String, String>();
+		String idAval = "";
+		boolean erroPedidoLaudo = false;
+		
+		mapRequestAval = laudoImovelService.requestIdAvaliacao(this.objetoImovelCobranca);
+		
+		if (mapRequestAval.containsKey("atualizar") && (CommonsUtil.mesmoValor(mapRequestAval.get("atualizar"), "true"))) {
+			PrimeFaces.current().ajax().update("form:Imovel");
 		}
-	}
-	
-	public String retornaBase64(String str) throws Exception {
-		java.net.URL url = new java.net.URL(str);
-        InputStream is = url.openStream();
-        byte[] bytes = org.apache.commons.io.IOUtils.toByteArray(is);
-        byte[] encoded = Base64.getEncoder().encode(bytes);
-        return new String(encoded);
+		if (mapRequestAval.containsKey("erroLaudo") && (CommonsUtil.mesmoValor(mapRequestAval.get("erroLaudo"), "true"))) {
+			erroPedidoLaudo = true;
+		}
+		if (mapRequestAval.containsKey("idAval") && !CommonsUtil.semValor(mapRequestAval.get("idAval"))) {
+			idAval = mapRequestAval.get("idAval");
+		}
+			
+		laudoDone = laudoImovelService.getLaudoStatus(idAval, this.objetoContratoCobranca);
+		if (laudoDone) {
+			PrimeFaces.current().ajax().update("form:RecebidoPajulaudoPanel");
+		}
+			
+		if (laudoDone && !erroPedidoLaudo) {
+			mapRequestPdf = laudoImovelService.requestLaudoPdf(idAval, this.objetoContratoCobranca);
+				
+			if (mapRequestPdf.containsKey("atualizar") && (CommonsUtil.mesmoValor(mapRequestPdf.get("atualizar"), "true"))) {
+				PrimeFaces.current().ajax().update("form:ArquivosInternosSalvos");
+			}
+			if (mapRequestPdf.containsKey("laudoRetorno") && !CommonsUtil.semValor(mapRequestPdf.get("laudoRetorno"))) {
+				laudoEndereco = mapRequestPdf.get("laudoRetorno");
+			}
+		}
+
 	}
 	
 	public void abreLaudo() throws IOException {
@@ -29674,67 +29501,7 @@ public class ContratoCobrancaMB {
 	    externalContext.redirect(getLaudoEndereco());
 	}
 	
-	public boolean getLaudoStatus(String avaliacaoString) {
-		LaudoImovelRetornoObterStatus laudoRoboRetornoObterStatus = new LaudoImovelRetornoObterStatus();
-		boolean isLaudoDone = false;
-		int quantidadePesquisa = 0;
-		
-		if (CommonsUtil.mesmoValor(avaliacaoString, "")) {
-			return false;
-		}
-		
-		while(!isLaudoDone && quantidadePesquisa < 7) {
-			try {
-				Thread.sleep(5000);
-				URL myURL = new URL("https://servicos.galleriabank.com.br/laudoimovel/api/v1/laudo/imovel/valuationstatus/"
-						+ avaliacaoString);
-
-				HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
-				myURLConnection.setRequestMethod("GET");
-				myURLConnection.setUseCaches(false);
-				myURLConnection.setRequestProperty("Accept", "application/json");
-				myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-				myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-				myURLConnection.setDoOutput(true);
-
-				if (myURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-					BufferedReader in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream()));
-					String inputLine;
-					StringBuffer response = new StringBuffer();
-
-					while ((inputLine = in.readLine()) != null) {					
-						response.append(inputLine);
-					}
-					in.close();
-
-					laudoRoboRetornoObterStatus = GsonUtil.fromJson(response.toString(), LaudoImovelRetornoObterStatus.class);
-					if (laudoRoboRetornoObterStatus.getData() != null) {
-						if (laudoRoboRetornoObterStatus.getData().getProgress() != null) {
-							if (CommonsUtil.mesmoValor(laudoRoboRetornoObterStatus.getData().getError_message(), "Numero mínimo de amostras selecionadas não foi atingido.")) {
-								break;
-							} else if (laudoRoboRetornoObterStatus.getData().getProgress().isSelection() 
-									&& laudoRoboRetornoObterStatus.getData().getProgress().isSearch()
-									&& laudoRoboRetornoObterStatus.getData().getProgress().isPrice()) {
-								isLaudoDone = true;
-								this.objetoContratoCobranca.setValorPreLaudo(laudoRoboRetornoObterStatus.getData().getPrice());
-								PrimeFaces.current().ajax().update("form:RecebidoPajulaudoPanel");
-							}
-						}
-					}
-				}
-				myURLConnection.disconnect();
-				quantidadePesquisa++;
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-			return isLaudoDone;
-
-	}
+	
 
 	/**
 	 * @param fileRecibo the fileRecibo to set
