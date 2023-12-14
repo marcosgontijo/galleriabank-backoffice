@@ -168,6 +168,7 @@ public class MenuItemMB {
 	}
 
 	public String salvarMenu() {
+		List<MenuItem> listaOrdemMaior;
 		MenuItemDao menuDao = new MenuItemDao();
 		if (objetoMenuItem.getItemPai().getId() != null) {
 			objetoMenuItem.setItemPai(menuDao.findById(objetoMenuItem.getItemPai().getId()));
@@ -175,12 +176,22 @@ public class MenuItemMB {
 			objetoMenuItem.setItemPai(null);
 		}
 		if (objetoMenuItem.getId() == null || objetoMenuItem.getId() <= 0) {
+			listaOrdemMaior = menuDao.ConsultaItemMaior(objetoMenuItem.getItemPai(), objetoMenuItem.getOrdem());
+			for(MenuItem menuOrdem : listaOrdemMaior) {
+				menuOrdem.setOrdem(menuOrdem.getOrdem() + 1);
+				menuDao.merge(menuOrdem);
+			}
 			menuDao.create(objetoMenuItem);
 		} else {
+			listaOrdemMaior = menuDao.ConsultaItemMaior(objetoMenuItem.getItemPai(), objetoMenuItem.getOrdem());
+			for(MenuItem menuOrdem : listaOrdemMaior) {
+				menuOrdem.setOrdem(menuOrdem.getOrdem() + 1);
+				menuDao.merge(menuOrdem);
+			}
 			menuDao.merge(objetoMenuItem);
 		}
 		objetoMenuItem = new MenuItem();
-		listaMenuRegistrados();
+		menuConsultado = new ArrayList<>();
 		return "/Menus/MenuConsultar.xhtml";
 	}
 
@@ -202,13 +213,13 @@ public class MenuItemMB {
 		try {
 
 			menuItemDao.delete(objetoMenuItem);
-			listaMenuRegistrados();
 		} catch (Exception e) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "ContaContabil: " + e, ""));
 
 			return "";
 		}
-		return "MenuListagem.xhtml";
+		menuConsultado = new ArrayList<>();
+		return "/Menus/MenuConsultar.xhtml";
 	}
 
 	public void favoritar(Long id) {
