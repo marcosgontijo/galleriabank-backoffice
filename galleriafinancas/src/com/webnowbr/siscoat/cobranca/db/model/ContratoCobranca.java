@@ -471,6 +471,8 @@ public class ContratoCobranca implements Serializable {
 	private boolean contratoConferido;
 	private String contratoConferidoUsuario;
 
+	private Date dataContratoAssinado;
+	
 	private Date agAssinaturaData;
 	private boolean agAssinatura;
 	private String agAssinaturaUsuario;
@@ -7404,4 +7406,12 @@ public class ContratoCobranca implements Serializable {
 		this.listaParticipantes = listaParticipantes;
 	}
 
+	public Date getDataContratoAssinado() {
+		return dataContratoAssinado;
+	}
+
+	public void setDataContratoAssinado(Date dataContratoAssinado) {
+		this.dataContratoAssinado = dataContratoAssinado;
+	}
 }
+

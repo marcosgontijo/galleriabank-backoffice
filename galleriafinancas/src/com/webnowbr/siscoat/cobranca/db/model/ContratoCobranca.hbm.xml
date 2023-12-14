@@ -2301,5 +2301,9 @@
 			<column name="comentarioJuricoPajuVencido" not-null="true" default="false"/>
 		</property>
 		
+		<property name="dataContratoAssinado" type="java.util.Date">
+			<column name="dataContratoAssinado" />
+		</property>
+		
 	</class>
 </hibernate-mapping>

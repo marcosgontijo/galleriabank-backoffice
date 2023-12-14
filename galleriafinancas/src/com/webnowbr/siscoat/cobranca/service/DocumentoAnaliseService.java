@@ -62,18 +62,27 @@ public class DocumentoAnaliseService {
 			documentoAnalise.setCnpjcpf(pessoaParticipacao.getCnpjcpf());
 			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.CREDNET);
 		}
+		
+		DocumentoAnalise documentoAnalisePesquisa = documentoAnaliseDao.cadastradoAnalise(contratoCobranca,
+				documentoAnalise.getCnpjcpf());
 
-		PagadorRecebedor pagador = new PagadorRecebedor();
-		pagador.setId(0);
+		if (!CommonsUtil.semValor(documentoAnalisePesquisa))
+			documentoAnalise = documentoAnalisePesquisa;
+		else {
+			PagadorRecebedor pagador = new PagadorRecebedor();
+			pagador.setId(0);
 
-		pagador.setCnpj(pessoaParticipacao.getCnpjcpf());
-		pagador.setNome(pessoaParticipacao.getNomeRazaoSocial());
+			pagador.setCnpj(pessoaParticipacao.getCnpjcpf());
+			pagador.setNome(pessoaParticipacao.getNomeRazaoSocial());
 
-		pagador = pagadorRecebedorService.buscaOuInsere(pagador);
-		documentoAnalise.setPagador(pagador);
+			pagador = pagadorRecebedorService.buscaOuInsere(pagador);
+			documentoAnalise.setPagador(pagador);
+		}	
+
+		
 		documentoAnalise.adiconarEstadosPeloCadastro();
 		documentoAnaliseDao.create(documentoAnalise);
-		return pagador;
+		return documentoAnalise.getPagador();
 	}
 	
 	public PagadorRecebedor cadastrarPagadorRetornoRelato(RelatoDadosCadastrais dados, 
@@ -191,6 +200,8 @@ public class DocumentoAnaliseService {
 			ContratoCobranca contratoCobranca, String motivo) {
 
 		DocumentoAnalise documentoAnalise = new DocumentoAnalise();
+		
+		
 		documentoAnalise.setContratoCobranca(contratoCobranca);
 		documentoAnalise.setIdentificacao(partnership.getCompanyName());
 		String sCPFCNPJ ="";
@@ -205,8 +216,19 @@ public class DocumentoAnaliseService {
 
 			// if (documentoAnalise.getTipoPessoa() == "PJ") {
 			documentoAnalise.setCnpjcpf(sCPFCNPJ);
+
+			DocumentoAnalise documentoAnalisePesquisa = documentoAnaliseDao.cadastradoAnalise(contratoCobranca,
+					sCPFCNPJ);
+			documentoAnalisePesquisa.setLiberadoAnalise(true);
+			if (!CommonsUtil.semValor(documentoAnalisePesquisa))
+				documentoAnalise = documentoAnalisePesquisa;
+
 			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.RELATO);
 			documentoAnalise.setLiberadoAnalise(true);
+			
+		
+			
+			
 		} else {
 			return;
 		}

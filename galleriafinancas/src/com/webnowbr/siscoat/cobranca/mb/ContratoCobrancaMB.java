@@ -31916,13 +31916,22 @@ public class ContratoCobrancaMB {
 		this.tituloPagadorRecebedorDialog = "";
 		this.tipoPesquisaPagadorRecebedor = "";
 		this.updatePagadorRecebedor = "";
-		documentoAnaliseAdicionar.adiconarEstadosPeloCadastro();
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-		documentoAnaliseDao.merge(documentoAnaliseAdicionar);
-		listaArquivosAnaliseDocumentos();
-		this.objetoContratoCobranca.setDocumentosAnalisados(false);
+		DocumentoAnalise documentoAnalisePesquisa = documentoAnaliseDao.cadastradoAnalise(this.objetoContratoCobranca,
+				documentoAnaliseAdicionar.getPagador().getCpf());
+
+		if (!CommonsUtil.semValor(documentoAnalisePesquisa))
+			documentoAnaliseAdicionar = documentoAnalisePesquisa;
+		else {
+			documentoAnaliseAdicionar.adiconarEstadosPeloCadastro();
+			documentoAnaliseDao.merge(documentoAnaliseAdicionar);
+			this.objetoContratoCobranca.setDocumentosAnalisados(false);
+		}
+		documentoAnaliseAdicionar.setLiberadoAnalise(true);
+		listaArquivosAnaliseDocumentos();		
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		contratoCobrancaDao.merge(objetoContratoCobranca);
+		
 	}
 	
 	public void adicionaEstado() {
