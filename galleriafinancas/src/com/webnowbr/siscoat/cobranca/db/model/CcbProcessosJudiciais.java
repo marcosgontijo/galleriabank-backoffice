@@ -43,6 +43,8 @@ public class CcbProcessosJudiciais implements Serializable{
 		naturezas.add("Execução de condomínio - diversos");
 		naturezas.add("Execução de condomínio - garantia");
 		naturezas.add("Execução de título - contratos bancários");
+		naturezas.add("Ação monitória - contratos bancários");
+		naturezas.add("Ação de cobrança - contratos bancários");
 		return naturezas;
 	}
 	
