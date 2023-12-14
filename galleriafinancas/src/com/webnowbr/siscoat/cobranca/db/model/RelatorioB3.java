@@ -59,7 +59,7 @@ public class RelatorioB3 implements Serializable {
 		if(!CommonsUtil.semValor(pagador.getCpf())) {
 			cpfCnpjDevedor = pagador.getCpf();
 			naturezaDevedor = "PF";
-		} else if(CommonsUtil.semValor(pagador.getCnpj())) {
+		} else if(!CommonsUtil.semValor(pagador.getCnpj())) {
 			cpfCnpjDevedor = pagador.getCnpj();
 			naturezaDevedor = "PJ";
 		}
