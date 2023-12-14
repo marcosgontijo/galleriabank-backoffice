@@ -71,7 +71,7 @@
 			</p:panel>									
 			<p:panel id="ConsultaContratos" header="Pré-Contratos #{contratoCobrancaMB.tituloTelaConsultaPreStatus} - Consultar" style="margin-bottom:10px;">					    		    
    		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratosPendentes}" selection="" emptyMessage=""
-   		         rowStyleClass="#{(contratos.agComite eq true) ? 'linhaBranca' : '' }
+   		         rowStyleClass="#{(contratos.emAgComite eq true) ? 'linhaBranca' : '' }
    		         	 #{(contratos.pendenciaPagamento eq true or contratos.contatoDiferenteProprietario eq true) ? 'parcelaVencendo' : '' }
 	   		         #{(contratos.laudoRecebido eq true and contratos.pajurFavoravel eq true) ? 'parcelaPaga' : '' }
 	   		         #{(contratos.cadastroAprovadoValor eq 'Pendente') ? 'linhaRoxa' : '' }
@@ -215,7 +215,13 @@
 					sortBy="#{contratos.observacaoRenda}"
 					rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Pedir PAJU'}">
 			            <h:outputText value="#{contratos.observacaoRenda}" style="FONT-SIZE: 10pt; white-space: pre-wrap;" />
-			        </p:column>			        
+			        </p:column>	
+			        
+			        <p:column style="text-align: center;width: 100px"
+						headerText="Analista Pendência" 
+						rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Aguardando Análise'}">
+						<h:outputText value="#{contratos.analisePendenciadaUsuario}"  escape="false" />
+					</p:column>		        
 					
 					<p:column style="text-align: center;width: 100px"
 						headerText="Analista" 

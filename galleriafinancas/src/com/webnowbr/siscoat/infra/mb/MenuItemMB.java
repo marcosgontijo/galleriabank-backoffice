@@ -45,6 +45,9 @@ public class MenuItemMB {
 	private MenuModel menuCarregado = null;
 	IDmenus idMenus;
 	private MenuModel modelMenuFavorito;
+	private String parametroMenuConsultar;
+	private String parametroConsultaTabela;
+	private long parametroConsultaLong;
 
 
 	public MenuItemMB() {
@@ -56,6 +59,33 @@ public class MenuItemMB {
 			carregaMenu();
 		}
 
+	}
+	public String clearFieldsMenu() {
+		this.parametroConsultaTabela = null;
+		this.listaParametros = new ArrayList<>();
+		this.moduloParametro = null;
+		this.parametroMenuConsultar = null;
+		this.menuConsultado = new ArrayList<>();
+		
+		return "/Menus/MenuConsultar.xhtml";
+		
+	}
+	public void apagaDados() {
+		this.parametroConsultaTabela = null;
+		this.parametroConsultaLong = 0;
+		this.listaParametros = null;
+		this.moduloParametro = null;
+	}
+	private List<MenuItem> menuConsultado = new ArrayList<>();
+	public void carregaListaMenuString() {
+		menuConsultado = new ArrayList<>();
+		MenuItemDao dao = new MenuItemDao();
+		 menuConsultado = dao.ConsultaitemConsultadoString(parametroMenuConsultar, parametroConsultaTabela);
+	}
+	public void carregaListaMenuNumero() {
+		menuConsultado = new ArrayList<>();
+		MenuItemDao dao = new MenuItemDao();
+		menuConsultado = dao.ConsultaitemConsultadoLong(parametroMenuConsultar, parametroConsultaLong);
 	}
 
 	public String carregafavoritar() {
@@ -122,11 +152,11 @@ public class MenuItemMB {
 		objetoMenuItem = new MenuItem();
 		objetoMenuItem.setItemPai(new MenuItem());
 
-		return "MenuCadastro.xhtml";
+		return "/Cadastros/Cobranca/MenuCadastro.xhtml";
 	}
 
 	public String clearFieldsExcluir() {
-		return "MenuItemDetalhes.xhtml";
+		return "/Cadastros/Cobranca/MenuItemDetalhes.xhtml";
 	}
 
 	public String clearFieldsUpdate() {
@@ -134,7 +164,7 @@ public class MenuItemMB {
 			objetoMenuItem.setItemPai(new MenuItem());
 		}
 
-		return "MenuCadastro.xhtml";
+		return "/Cadastros/Cobranca/MenuCadastro.xhtml";
 	}
 
 	public String salvarMenu() {
@@ -151,7 +181,7 @@ public class MenuItemMB {
 		}
 		objetoMenuItem = new MenuItem();
 		listaMenuRegistrados();
-		return "/Cadastros/Cobranca/MenuListagem.xhtml";
+		return "/Menus/MenuConsultar.xhtml";
 	}
 
 	public void listaMenuRegistrados() {
@@ -248,7 +278,27 @@ public class MenuItemMB {
 		temFavorito = menuService.possuiFavorito(loginBean.getUsuarioLogado());
 		return menuItemModulo;
 	}
+	private List<MenuItem> listaParametros = new ArrayList<>();
+	private Long moduloParametro;
+	public void consultaSubmodulo() {
+		listaParametros = new ArrayList<>();
+		MenuItemDao dao =  new MenuItemDao();
+		listaParametros = dao.Consultaitemsubmodulo(moduloParametro);
+		
+	}
 
+	public List<MenuItem> getListaParametros() {
+		return listaParametros;
+	}
+	public void setListaParametros(List<MenuItem> listaParametros) {
+		this.listaParametros = listaParametros;
+	}
+	public Long getModuloParametro() {
+		return moduloParametro;
+	}
+	public void setModuloParametro(Long moduloParametro) {
+		this.moduloParametro = moduloParametro;
+	}
 	public void setMenuItemModulo(List<MenuItem> menuItemModulo) {
 		this.menuItemModulo = menuItemModulo;
 	}
@@ -354,6 +404,30 @@ public class MenuItemMB {
 
 	public void setMenuCarregado(MenuModel menuCarregado) {
 		this.menuCarregado = menuCarregado;
+	}
+	public String getParametroMenuConsultar() {
+		return parametroMenuConsultar;
+	}
+	public void setParametroMenuConsultar(String parametroMenuConsultar) {
+		this.parametroMenuConsultar = parametroMenuConsultar;
+	}
+	public String getParametroConsultaTabela() {
+		return parametroConsultaTabela;
+	}
+	public void setParametroConsultaTabela(String parametroConsultaTabela) {
+		this.parametroConsultaTabela = parametroConsultaTabela;
+	}
+	public List<MenuItem> getMenuConsultado() {
+		return menuConsultado;
+	}
+	public void setMenuConsultado(List<MenuItem> menuConsultado) {
+		this.menuConsultado = menuConsultado;
+	}
+	public long getParametroConsultaLong() {
+		return parametroConsultaLong;
+	}
+	public void setParametroConsultaLong(long parametroConsultaLong) {
+		this.parametroConsultaLong = parametroConsultaLong;
 	}
 
 }

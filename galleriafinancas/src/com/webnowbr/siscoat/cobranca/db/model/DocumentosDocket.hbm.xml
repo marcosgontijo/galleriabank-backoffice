@@ -40,6 +40,10 @@
 		<property name="obs" type="java.lang.String">
 			<column name="obs" />
 		</property>
-		
+
+		<property name="tipoInformacao" type="java.lang.String">
+			<column name="tipoInformacao" />
+		</property>
+				
     </class>
 </hibernate-mapping>

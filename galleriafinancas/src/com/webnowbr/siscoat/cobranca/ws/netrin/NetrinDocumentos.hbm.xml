@@ -47,6 +47,10 @@
 		<property name="mostrarPaju" type="boolean">
 			<column name="mostrarPaju" not-null="true" default="true" />
 		</property>
+		
+		<property name="tipoInformacao" type="java.lang.String">
+			<column name="tipoInformacao" />
+		</property>
 
 	</class>
 </hibernate-mapping>

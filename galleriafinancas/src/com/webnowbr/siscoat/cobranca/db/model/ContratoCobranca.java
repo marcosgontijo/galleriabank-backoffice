@@ -13,12 +13,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.faces.bean.ManagedProperty;
-
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.infra.db.model.User;
-import com.webnowbr.siscoat.security.LoginBean;
 
 public class ContratoCobranca implements Serializable {
 
@@ -26,15 +23,15 @@ public class ContratoCobranca implements Serializable {
 	 * 
 	 */
 	private String cessionario;
-	
+
 	private BigDecimal valorAgilCessao;
 	private BigDecimal valorCessao;
-	
+
 	private String ispbPixContaPagar;
-	
+
 	private String cedenteBRLCessao;
 	private Date dataAquisicaoCessao;
-	
+
 	private Date dataCorteBaixaIPCAHibrido;
 
 	private String tipoCalculoInvestidor1;
@@ -42,13 +39,13 @@ public class ContratoCobranca implements Serializable {
 	private Integer qtdeParcelasInvestidor1;
 	private Integer carenciaInvestidor1;
 	private Date dataInicioInvestidor1;
-	
+
 	private String tipoCalculoInvestidor2;
 	private BigDecimal vlrInvestidor2;
 	private Integer qtdeParcelasInvestidor2;
 	private Integer carenciaInvestidor2;
 	private Date dataInicioInvestidor2;
-	
+
 	private Integer parcelasAVencer;
 
 	private String tipoCalculoInvestidor3;
@@ -74,7 +71,7 @@ public class ContratoCobranca implements Serializable {
 	private Integer qtdeParcelasInvestidor6;
 	private Integer carenciaInvestidor6;
 	private Date dataInicioInvestidor6;
-	
+
 	private String tipoCalculoInvestidor7;
 	private BigDecimal vlrInvestidor7;
 	private Integer qtdeParcelasInvestidor7;
@@ -98,21 +95,21 @@ public class ContratoCobranca implements Serializable {
 	private Integer qtdeParcelasInvestidor10;
 	private Integer carenciaInvestidor10;
 	private Date dataInicioInvestidor10;
-	
+
 	private static final long serialVersionUID = 1L;
 	private long id;
 	private Date dataInicio; // data de inicio das parcelas
 	private Date dataContrato; // data do contrato mas muda na aprovacao
-	private Date dataCadastro; //data que operacao foi inserida no sistema
+	private Date dataCadastro; // data que operacao foi inserida no sistema
 	private String userCadastro;
-	
+
 	private int diaMes;
 	private int qtdeParcelas;
-	
+
 	private int mesesCarencia;
-	
+
 	private int parcelasVencidas;
-	
+
 	private BigDecimal txAdministracao;
 	private BigDecimal txJuros;
 	private BigDecimal txJurosCessao;
@@ -128,16 +125,16 @@ public class ContratoCobranca implements Serializable {
 	private String urlLead;
 	private String statusLead;
 	private String iuguLaudoPaju;
-	
+
 	private String nomePagador;
 	private String nomeCidadeImovel;
 	private String nomeResponsavel;
 	private String nomeGerente;
 
 	private BigDecimal txJurosParcelas;
-	
+
 	private BigDecimal txMulta;
-	
+
 	private BigDecimal somatoriaValorPresente;
 
 	private PagadorRecebedor pagador;
@@ -162,7 +159,7 @@ public class ContratoCobranca implements Serializable {
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidor9;
 	private PagadorRecebedor recebedor10;
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidor10;
-	
+
 	private Set<Segurado> listSegurados;
 	private Set<PagadorRecebedorSocio> listSocios;
 	private Set<PagadorRecebedorAdicionais> listaPagadores;
@@ -171,8 +168,8 @@ public class ContratoCobranca implements Serializable {
 	private Set<AnaliseComite> listaAnaliseComite;
 	private Set<DataVistoria> listDatasVistoria;
 	private Set<Averbacao> listAverbacao;
-	
-	
+	private Set<CcbParticipantes> listaParticipantes = new HashSet<>();
+
 	// n�o persistida a lista abaixo
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionado;
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionadoEnvelope;
@@ -241,12 +238,12 @@ public class ContratoCobranca implements Serializable {
 	private Date dataInclusaoRecebedor8;
 	private Date dataInclusaoRecebedor9;
 	private Date dataInclusaoRecebedor10;
-	
+
 	private boolean corrigidoIPCA;
 	private boolean corrigidoNovoIPCA;
-	
+
 	private boolean recalculaIPCA;
-	
+
 	private boolean quitarInvestidor1;
 	private boolean quitarInvestidor2;
 	private boolean quitarInvestidor3;
@@ -257,7 +254,7 @@ public class ContratoCobranca implements Serializable {
 	private boolean quitarInvestidor8;
 	private boolean quitarInvestidor9;
 	private boolean quitarInvestidor10;
-	
+
 	private boolean exibeRecebedor1;
 	private boolean exibeRecebedor2;
 	private boolean exibeRecebedor3;
@@ -342,7 +339,7 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal vlrParcelaFinal;
 	private BigDecimal quantoPrecisa;
 	private BigDecimal valorEmprestimo;
-	
+
 	private String estadoCivil;
 	private String temMaisImoveis;
 	private String finalidade;
@@ -350,7 +347,7 @@ public class ContratoCobranca implements Serializable {
 	private String profissao;
 
 	/*** usados no sistema ***/
-	private boolean contratoLead; 
+	private boolean contratoLead;
 	private Date leadReprovadoData;
 	private Date leadEmTratamentoData;
 	private Date leadAgContatoData;
@@ -358,15 +355,16 @@ public class ContratoCobranca implements Serializable {
 	private boolean leadCompleto;
 	private Date leadCompletoData;
 	private String leadCompletoUsuario;
-	
-	/*private Date liberarAnaliseData;
-	private boolean liberarAnalise;
-	private String liberarAnaliseUsuario;*/
-	
+
+	/*
+	 * private Date liberarAnaliseData; private boolean liberarAnalise; private
+	 * String liberarAnaliseUsuario;
+	 */
+
 	private Date inicioAnaliseData;
 	private boolean inicioAnalise;
 	private String inicioAnaliseUsuario;
-	
+
 	private Date analiseReprovadaData;
 	private boolean analiseReprovada;
 	private String analiseReprovadaUsuario;
@@ -375,7 +373,7 @@ public class ContratoCobranca implements Serializable {
 	private boolean cadastroAprovado;
 	private String cadastroAprovadoValor;
 	private String cadastroAprovadoUsuario;
-	
+
 	private Date analisePendenciadaData;
 	private String analisePendenciadaUsuario;
 
@@ -383,11 +381,11 @@ public class ContratoCobranca implements Serializable {
 	private Date matriculaAprovadaData;
 	private String matriculaAprovadaValor;
 	private String matriculaAprovadaUsuario;
-	
+
 	private Date pedidoPreLaudoComercialData;
 	private boolean pedidoPreLaudoComercial;
 	private String pedidoPreLaudoComercialUsuario;
-	
+
 	private Date pedidoPreLaudoData;
 	private boolean pedidoPreLaudo;
 	private String pedidoPreLaudoUsuario;
@@ -395,19 +393,19 @@ public class ContratoCobranca implements Serializable {
 	private Date pagtoLaudoConfirmadaData;
 	private boolean pagtoLaudoConfirmada;
 	private String pagtoLaudoConfirmadaUsuario;
-	
+
 	private Date pedidoLaudoData;
 	private boolean pedidoLaudo;
 	private String pedidoLaudoUsuario;
-	
+
 	private Date pedidoLaudoPajuComercialData;
 	private boolean pedidoLaudoPajuComercial;
 	private String pedidoLaudoPajuComercialUsuario;
-	
+
 	private Date pedidoPajuComercialData;
 	private boolean pedidoPajuComercial;
 	private String pedidoPajuComercialUsuario;
-	
+
 	private Date laudoRecebidoData;
 	private boolean laudoRecebido;
 	private String laudoRecebidoUsuario;
@@ -415,7 +413,7 @@ public class ContratoCobranca implements Serializable {
 	private Date pajurFavoravelData;
 	private boolean pajurFavoravel;
 	private String pajurFavoravelUsuario;
-	
+
 	private Date pendenciaLaudoPajuData;
 	private boolean pendenciaLaudoPaju;
 	private String pendenciaLaudoPajuUsuario;
@@ -423,16 +421,19 @@ public class ContratoCobranca implements Serializable {
 	private Date analiseComercialData;
 	private boolean analiseComercial;
 	private String analiseComercialUsuario;
-	
+
+	private boolean comentarioJuricoApenasComConsultas;
+	private boolean comentarioJuricoComPajuVencido;
+
 	private Date comentarioJuridicoEsteiraData;
 	private boolean comentarioJuridicoEsteira;
 	private String comentarioJuridicoEsteiraUsuario;
-	
+
 	private Date comentarioJuridicoInternoData;
 	private boolean comentarioJuridicoInterno;
 	private String comentarioJuridicoInternoUsuario;
 	private boolean comentarioJuridicoPendente;
-	
+
 	private Date reprovadoJuridicoEsteiraData;
 	private boolean reprovadoJuridicoEsteira;
 	private String reprovadoJuridicoEsteiraUsuario;
@@ -440,24 +441,24 @@ public class ContratoCobranca implements Serializable {
 	private Date documentosCompletosData;
 	private boolean documentosCompletos;
 	private String documentosCompletosUsuario;
-	
+
 	//
 	private boolean reanalise;
-	
+
 	private boolean agComite;
-	
+
 	private Date reanaliseProntaData;
 	private boolean reanalisePronta;
 	private String reanaliseProntaUsuario;
-	
+
 	private Date pajuAtualizadoData;
 	private boolean pajuAtualizado;
 	private String pajuAtualizadoUsuario;
-	
+
 	private Date reanaliseJuridicoData;
 	private boolean reanaliseJuridico;
 	private String reanaliseJuridicoUsuario;
-	
+
 	private Date certificadoEmitidoData;
 	private boolean certificadoEmitido;
 	private String certificadoEmitidoUsuario;
@@ -465,7 +466,7 @@ public class ContratoCobranca implements Serializable {
 	private Date ccbProntaData;
 	private boolean ccbPronta;
 	private String ccbProntaUsuario;
-	
+
 	private Date contratoConferidoData;
 	private boolean contratoConferido;
 	private String contratoConferidoUsuario;
@@ -473,35 +474,35 @@ public class ContratoCobranca implements Serializable {
 	private Date agAssinaturaData;
 	private boolean agAssinatura;
 	private String agAssinaturaUsuario;
-	
+
 	private Date agEnvioCartorioData;
 	private boolean agEnvioCartorio;
 	private String agEnvioCartorioUsuario;
-	
+
 	private Date agRegistroData;
 	private boolean agRegistro;
 	private String agRegistroUsuario;
-	
+
 	private Date documentosComiteData;
 	private boolean documentosComite;
 	private String documentosComiteUsuario;
-	
+
 	private Date preAprovadoComiteData;
 	private boolean preAprovadoComite;
 	private String preAprovadoComiteUsuario;
-	
+
 	private Date operacaoPagaData;
 	private boolean operacaoPaga;
 	private String operacaoPagaUsuario;
 	private boolean pendenciaPagamento;
-	
+
 	private Date aprovadoComiteData;
 	private boolean aprovadoComite;
 	private String aprovadoComiteUsuario;
 	private BigInteger qtdeVotosAprovadosComite;
 	private BigInteger qtdeVotosReprovadosComite;
 	private BigInteger qtdeVotosNecessariosComite;
-	
+
 	private boolean okCliente;
 	private Date okClienteData;
 	private String okClienteUsuario;
@@ -615,19 +616,19 @@ public class ContratoCobranca implements Serializable {
 	private Date contratoAssinadoData;
 	private boolean contratoAssinado;
 	private String contratoAssinadoUsuario;
-	
+
 	private Date dataPrevistaVistoria;
 	private String nomeVistoriador;
 	private boolean enviadoWhatsappVistoria;
-	
+
 	private String motivoReprovacaoAnalise;
 	private String motivoReprovaSelectItem;
 	private String motivoPendenteAnalise;
 	private String comentarioPendencia;
-	
+
 	private String observacaolead;
 	private String motivoReprovaLead;
-	
+
 	private boolean temSeguro;
 	private boolean temSeguroDFI;
 	private boolean temSeguroMIP;
@@ -636,32 +637,33 @@ public class ContratoCobranca implements Serializable {
 	private String numeroContratoSeguro;
 	private String termoCessao;
 	private boolean enviadoJsonBRL;
-	
+
 	private Date vencimentoBoleto;
 	private BigDecimal valorBoletoPreContrato;
 	private String valorBoletoPreContratoStr;
 	private BigDecimal taxaPreAprovada;
-	private BigInteger prazoMaxPreAprovado;	        
+	private BigDecimal taxaPreDefinida;
+	private BigInteger prazoMaxPreAprovado;
 	private BigDecimal valorMercadoImovel;
-	
+
 	private BigDecimal valorVendaForcadaImovel;
 	private String comentarioJuridico;
 	private BigDecimal valorPreLaudo;
-	
+
 	private String avaliacaoEngenharia;
 	private String avaliacaoEquipeLaudo;
-	
+
 	private Date dataPajuComentado;
 	private String processosPajuExterno;
 	private String processosPajuInterno;
-	
+
 	private BigDecimal taxaAprovada;
 	private BigInteger prazoMaxAprovado;
 	private BigDecimal valorAprovadoComite;
 	private BigDecimal valorAprovadoComercial;
-    private BigInteger  prazoAprovadoComercial;
-    private String tipoCalculoAprovadoComercial;
-    
+	private BigInteger prazoAprovadoComercial;
+	private String tipoCalculoAprovadoComercial;
+
 	private String tipoValorComite;
 	private String comentarioComite;
 	private String processosQuitarComite;
@@ -670,24 +672,24 @@ public class ContratoCobranca implements Serializable {
 	private boolean operacaoFundo;
 	private BigDecimal valorTotalProcessos;
 	private BigDecimal valorTotalAverbacao;
-	
+
 	private String empresaCertificado;
 	private Date dataSolicitacaoCertificado;
 	private String tipoCertificado;
 	private String ticketCertificado;
 	private String dispositivoCertificado;
-	
+
 	private BigDecimal valorLaudoPajuTotal;
 	private BigDecimal valorLaudoPajuPago;
 	private BigDecimal valorLaudoPajuFaltante;
-	
+
 	private String cobrarComissaoCliente;
 	private BigDecimal comissaoClientePorcentagem;
 	private BigDecimal comissaoClienteValorFixo;
 	private Boolean pagadorDonoGarantia;
 	private String tipoCobrarComissaoCliente;
 	private String brutoLiquidoCobrarComissaoCliente;
-	
+
 	private String nomeParticipanteCheckList;
 	private Boolean rgDocumentosCheckList;
 	private Boolean comprovanteEnderecoDocumentosCheckList;
@@ -695,7 +697,7 @@ public class ContratoCobranca implements Serializable {
 	private Boolean fichaCadastralDocumentosCheckList;
 	private Boolean bancoDocumentosCheckList;
 	private Boolean telefoneEmailDocumentosCheckList;
-	
+
 	private String nomeParticipanteSecundarioCheckList;
 	private Boolean rgDocumentosSecundarioCheckList;
 	private Boolean comprovanteEnderecoDocumentosSecundarioCheckList;
@@ -703,14 +705,14 @@ public class ContratoCobranca implements Serializable {
 	private Boolean fichaCadastralDocumentosSecundarioCheckList;
 	private Boolean bancoDocumentosSecundarioCheckList;
 	private Boolean telefoneEmailDocumentosSecundarioCheckList;
-	
+
 	private BigDecimal rendaComprovada;
 	private BigDecimal ccbxRenda;
 	private String observacaoRenda;
 	private String finalidadeRecurso;
-	
+
 	private BigDecimal somaValorPago;
-	
+
 	private BigDecimal contaPagarValorTotal;
 	private String nomeBancarioContaPagar;
 	private String cpfCnpjBancarioContaPagar;
@@ -719,7 +721,7 @@ public class ContratoCobranca implements Serializable {
 	private String contaBancarioContaPagar;
 	private String digitoContaBancarioContaPagar;
 	private String chavePIXBancarioContaPagar;
-			
+
 	private BigDecimal valorCartaSplit;
 	private String nomeBancarioCartaSplit;
 	private String cpfCnpjBancarioCartaSplit;
@@ -727,7 +729,7 @@ public class ContratoCobranca implements Serializable {
 	private String agenciaBancarioCartaSplit;
 	private String contaBancarioCartaSplit;
 	private String pixCartaSplit;
-	
+
 	private BigDecimal valorCartaSplitGalleria;
 	private String nomeBancarioCartaSplitGalleria;
 	private String cpfCnpjBancarioCartaSplitGalleria;
@@ -735,7 +737,7 @@ public class ContratoCobranca implements Serializable {
 	private String agenciaBancarioCartaSplitGalleria;
 	private String contaBancarioCartaSplitGalleria;
 	private String pixCartaSplitGalleria;
-	
+
 	private BigDecimal valorCustoEmissao;
 	private String nomeBancarioCustoEmissao;
 	private String cpfCnpjBancarioCustoEmissao;
@@ -743,67 +745,67 @@ public class ContratoCobranca implements Serializable {
 	private String agenciaBancarioCustoEmissao;
 	private String contaBancarioCustoEmissao;
 	private String pixCustoEmissao;
-	
+
 	private String observacaoPagamento;
-	
+
 	private String solicitarNota;
 	private boolean notaSolicitadaWhatsapp;
 	private BigDecimal valorNotaFiscal;
-	
+
 	private boolean contratoResgatadoBaixar;
 	private Date contratoResgatadoData;
-	
+
 	private Date dataUltimaAtualizacao;
 	private boolean enviadoWhatsAppLeadStandby;
-	
+
 	private String tipoOperacao;
-	
+
 	private String comentarioPreComite;
-	
+
 	private String tipoImovel;
 	private String empresaImovel;
-	
+
 	private Date entradaContratoCartorioData;
 	private Date preAnocaoCartorioData;
 	private Date exigenciasCartorioData;
 	private Date pagamentoCustasCartorioData;
 	private String exigenciasCartorioObservacao;
 	private String numeroPreAnotacaoCartorio;
-	
+
 	private BigDecimal cetMes;
-	
+
 	private String divida;
 	private BigDecimal dividaValor;
 	private String observacaoParaComite;
-	
+
 	private String codigoPropostaMoneyPlus;
 	private String statusPropostaMoneyPlus;
-	
+
 	private String proprietarioAnterior;
 	private String terciroGarantidorRessalva;
-	
+
 	private String matriculaRessalva;
 	private String pefinRefinRessalva;
 	private String protestoRessalva;
 	private String processosRessalva;
 	private String trabalhistaRessalva;
 	private String chequeDevolvidoRessalva;
-	
+
 	private String obsDocsPendentesRessalva;
-	
+
 	private boolean protestoTaxa;
 	private boolean chequeDevolvidoTaxa;
 	private boolean pefinTaxa;
 	private boolean refinTaxa;
 	private boolean scoreBaixoTaxa;
-	private boolean terceiroGrantidorTaxa; 
-	private boolean relacionamentoBacenRecenteTaxa; 
-	private boolean dividaVencidaTaxa; 
-	private boolean prejuizoBacenTaxa; 
-	private boolean riscoTotalBaixoTaxa; 
+	private boolean terceiroGrantidorTaxa;
+	private boolean relacionamentoBacenRecenteTaxa;
+	private boolean dividaVencidaTaxa;
+	private boolean prejuizoBacenTaxa;
+	private boolean riscoTotalBaixoTaxa;
 	private boolean terrenoOuBarracaoTaxa;
 	private boolean nadaConstaTaxa;
-	
+
 	private String formaDePagamentoLaudoPAJU;
 	private String nomeContatoAgendaLaudoAvaliacao;
 	private String contatoAgendamendoLaudoAvaliacao;
@@ -819,39 +821,39 @@ public class ContratoCobranca implements Serializable {
 	private String avaliacaoPaju;
 	private boolean iniciouGeracaoPaju;
 	private String avaliacaoPajuReanalise;
-	
+
 	private boolean contatoDiferenteProprietario;
-	//private String geracaoLaudoObservacao;
-	
+	// private String geracaoLaudoObservacao;
+
 	private String documentoPagador;
 	private boolean contratoQuitado;
-	
+
 	private BigDecimal valorCompraVenda;
 	private String recebedorCompraVenda;
-	
-	private Responsavel analistaGeracaoPAJU;	
-	
+
+	private Responsavel analistaGeracaoPAJU;
+
 	private Date notificacaoCartorioData;
-	
+
 	private boolean contratoEmCartorio;
 	private Date contratoEmCartorioData;
 	private String contratoEmCartorioUsuario;
-	
+
 	private boolean corrigidoIPCAHibrido;
-	
+
 	private BigDecimal dividaIPTU;
 	private BigDecimal dividaCondominio;
 	private BigDecimal valorCartorio;
-	
+
 	private String emailPagador;
 	private String celularPagador;
-	
+
 	private int totalCertidoesDocket;
 	private int certidoesProntas;
 	private boolean contratoPrioridadeAlta;
 	private Date contratoPrioridadeAltaData;
 	private String contratoPrioridadeAltaUser;
-	
+
 	private boolean scoreBaixo450Taxa;
 	private boolean scoreBaixo700Taxa;
 	private boolean inicioRelacionamentoInexistenteTaxa;
@@ -859,17 +861,29 @@ public class ContratoCobranca implements Serializable {
 	private boolean riscoTotal50kTaxa;
 	private boolean documentosAnalisados;
 
-	//FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13	
+	// FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13
 	public BigDecimal calcularValorTotalContasPagas() {
 		somaValorPago = BigDecimal.ZERO;
 		for (ContasPagar conta : this.getListContasPagar()) {
-			if(!CommonsUtil.semValor(conta.getValorPagamento())) {
+			if (!CommonsUtil.semValor(conta.getValorPagamento())) {
 				somaValorPago = somaValorPago.add(conta.getValorPagamento());
 			}
-		}		
+		}
 		return somaValorPago;
 	}
-	
+
+	public BigDecimal getTaxaPreAprovadaMaior() {
+		if (CommonsUtil.semValor(this.taxaPreDefinida))
+			return taxaPreAprovada;
+		else {
+			if (this.taxaPreDefinida.compareTo(taxaPreAprovada) > 0)
+				return taxaPreDefinida;
+			else
+				return taxaPreAprovada;
+		}
+
+	}
+
 	public ContratoCobranca() {
 		super();
 		this.pagador = new PagadorRecebedor();
@@ -894,17 +908,15 @@ public class ContratoCobranca implements Serializable {
 		this.listAverbacao = new HashSet<>();
 		this.listCadastroStatus = new HashSet<>();
 		this.listProcessos = new HashSet<>();
-		
-		
-		
+
 		limparPrimitivos();
 	}
-	
+
 	public void limparPrimitivos() {
 		this.diaMes = 0;
 		this.qtdeParcelas = 0;
 		this.mesesCarencia = 0;
-		this.parcelasVencidas = 0;	
+		this.parcelasVencidas = 0;
 		this.contratoResgatadoBaixar = false;
 		this.corrigidoIPCA = false;
 		this.recalculaIPCA = false;
@@ -957,16 +969,16 @@ public class ContratoCobranca implements Serializable {
 		this.parcelasAlteradas7 = false;
 		this.parcelasAlteradas8 = false;
 		this.parcelasAlteradas9 = false;
-		this.parcelasAlteradas10 = false;		
+		this.parcelasAlteradas10 = false;
 		this.geraParcelaFinal = false;
 		this.contratoRestritoAdm = false;
-		this.contratoLead = false; 
+		this.contratoLead = false;
 		this.leadCompleto = false;
 		this.inicioAnalise = false;
 		this.analiseReprovada = false;
 		this.cadastroAprovado = false;
 		this.matriculaAprovada = false;
-		this.laudoRecebido = false;	
+		this.laudoRecebido = false;
 		this.pajurFavoravel = false;
 		this.pagtoLaudoConfirmada = false;
 		this.analiseComercial = false;
@@ -979,44 +991,44 @@ public class ContratoCobranca implements Serializable {
 		this.preAprovadoComite = false;
 		this.aprovadoComite = false;
 		this.pedidoLaudoPajuComercial = false;
-		this.pedidoPreLaudo = false; 
+		this.pedidoPreLaudo = false;
 		this.pedidoPreLaudoComercial = false;
 		this.aguardandoDocumento = false;
 		this.matriculaReprovada = false;
-		this.fotoImovelAprovada = false;	
-		this.fotoImovelReprovada = false;		
-		this.aprovado = false;		
-		this.reprovado = false;		
-		this.semFotoImovel = false;	
+		this.fotoImovelAprovada = false;
+		this.fotoImovelReprovada = false;
+		this.aprovado = false;
+		this.reprovado = false;
+		this.semFotoImovel = false;
 		this.documentosIncompletos = false;
-		this.cadastroReprovado = false;	
+		this.cadastroReprovado = false;
 		this.aguardandoCertidoes = false;
-		this.aguardandoCND = false;	
-		this.agendarVisitaEmpresa = false;	
+		this.aguardandoCND = false;
+		this.agendarVisitaEmpresa = false;
 		this.visitaEmpresaAprovada = false;
-		this.visitaEmpresaReprovada = false;		
-		this.agendarVisitaImovel = false;	
+		this.visitaEmpresaReprovada = false;
+		this.agendarVisitaImovel = false;
 		this.visitaImovelAprovada = false;
-		this.visitaImovelReprovada = false;	
+		this.visitaImovelReprovada = false;
 		this.enviadoCobrancaLaudo = false;
-		this.laudoSolicitado = false;	
+		this.laudoSolicitado = false;
 		this.pajurSolicitado = false;
-		this.pajurDesfavoravel = false;		
-		this.reanalisarPajur = false;	
-		this.aguardandoInvestidor = false;	
+		this.pajurDesfavoravel = false;
+		this.reanalisarPajur = false;
+		this.aguardandoInvestidor = false;
 		this.agendadoCartorio = false;
 		this.contratoAssinado = false;
 		this.temSeguro = false;
 		this.temSeguroDFI = false;
 		this.temSeguroMIP = false;
 		this.enviadoJsonBRL = false;
-		this.pagadorDonoGarantia = true;	
+		this.pagadorDonoGarantia = true;
 		this.rgDocumentosCheckList = false;
 		this.comprovanteEnderecoDocumentosCheckList = false;
 		this.certidaoCasamentoNascimentoDocumentosCheckList = false;
 		this.fichaCadastralDocumentosCheckList = false;
 		this.bancoDocumentosCheckList = false;
-		this.telefoneEmailDocumentosCheckList = false;		
+		this.telefoneEmailDocumentosCheckList = false;
 		this.rgDocumentosSecundarioCheckList = false;
 		this.comprovanteEnderecoDocumentosSecundarioCheckList = false;
 		this.certidaoCasamentoNascimentoDocumentosSecundarioCheckList = false;
@@ -1027,11 +1039,11 @@ public class ContratoCobranca implements Serializable {
 		this.pedidoLaudo = false;
 		this.pendenciaLaudoPaju = false;
 	}
-	
+
 	private void reordenaListagemDetalhes() {
 		if (CommonsUtil.semValor(listContratoCobrancaDetalhes))
 			return;
-		
+
 		Collections.sort(this.listContratoCobrancaDetalhes, new Comparator<ContratoCobrancaDetalhes>() {
 			@Override
 			public int compare(ContratoCobrancaDetalhes one, ContratoCobrancaDetalhes other) {
@@ -1055,7 +1067,7 @@ public class ContratoCobranca implements Serializable {
 		// POPULA STATUS
 		String statusAnterior = statusEsteira;
 		ContratoCobranca c = this;
-		
+
 		if (CommonsUtil.mesmoValor(c.getStatus(), "Aprovado")) {
 			c.setStatusEsteira("Aprovado");
 		} else if (CommonsUtil.mesmoValor(c.getStatus(), "Reprovado")) {
@@ -1067,7 +1079,7 @@ public class ContratoCobranca implements Serializable {
 		} else {
 			if (CommonsUtil.semValor(c.getStatusLead())) {
 				c.setStatusEsteira("Não Definido");
-				if(!CommonsUtil.mesmoValor(statusEsteira, statusAnterior)) {
+				if (!CommonsUtil.mesmoValor(statusEsteira, statusAnterior)) {
 					CadastroStatus cadastroStatus = new CadastroStatus(statusEsteira, statusAnterior, this, user);
 					this.getListCadastroStatus().add(cadastroStatus);
 				}
@@ -1086,21 +1098,21 @@ public class ContratoCobranca implements Serializable {
 				} else if (c.getStatusLead().equals("Arquivado")) {
 					c.setStatusEsteira("Lead Arquivado");
 				}
-				
-				if(!CommonsUtil.mesmoValor(statusEsteira, statusAnterior)) {
+
+				if (!CommonsUtil.mesmoValor(statusEsteira, statusAnterior)) {
 					CadastroStatus cadastroStatus = new CadastroStatus(statusEsteira, statusAnterior, this, user);
 					this.getListCadastroStatus().add(cadastroStatus);
 				}
 				return c;
 			}
-			
-			c.setStatusEsteira("Lead Completo");				
-			
-			if (!this.inicioAnalise) 
-				c.setStatusEsteira("Ag. Análise");				
 
-			if (this.inicioAnalise) 
-				c.setStatusEsteira("Em Análise");				
+			c.setStatusEsteira("Lead Completo");
+
+			if (!this.inicioAnalise)
+				c.setStatusEsteira("Ag. Análise");
+
+			if (this.inicioAnalise)
+				c.setStatusEsteira("Em Análise");
 
 			if (this.cadastroAprovadoValor != null) {
 				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Pendente")) {
@@ -1116,8 +1128,8 @@ public class ContratoCobranca implements Serializable {
 
 				String status = "";
 
-				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado")
-						&& this.pedidoLaudoPajuComercial && !this.pedidoLaudo) {
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pedidoLaudoPajuComercial
+						&& !this.pedidoLaudo) {
 					c.setStatusEsteira("Pedir Laudo");
 					status = status + "Pedir Laudo";
 				}
@@ -1147,8 +1159,8 @@ public class ContratoCobranca implements Serializable {
 					}
 				}
 
-				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado")
-						&& this.pedidoLaudoPajuComercial && !this.pagtoLaudoConfirmada) {
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pedidoLaudoPajuComercial
+						&& !this.pagtoLaudoConfirmada) {
 					c.setStatusEsteira("Pedir PAJU");
 					if (!CommonsUtil.semValor(status)) {
 						status = status + " | ";
@@ -1156,8 +1168,8 @@ public class ContratoCobranca implements Serializable {
 					status = status + "Pedir PAJU";
 				}
 
-				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado")
-						&& this.pagtoLaudoConfirmada && !this.pajurFavoravel) {
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& !this.pajurFavoravel) {
 					c.setStatusEsteira("Ag. PAJU");
 					if (!CommonsUtil.semValor(status)) {
 						status = status + " | ";
@@ -1173,8 +1185,8 @@ public class ContratoCobranca implements Serializable {
 					}
 				}
 
-				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado")
-						&& this.pendenciaLaudoPaju && (!this.laudoRecebido || !this.pajurFavoravel)) {
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pendenciaLaudoPaju
+						&& (!this.laudoRecebido || !this.pajurFavoravel)) {
 					if (!CommonsUtil.semValor(status)) {
 						status = status + " | ";
 					}
@@ -1182,8 +1194,8 @@ public class ContratoCobranca implements Serializable {
 					// c.setStatusEsteira("Laudo + Paju Pendente");
 				}
 
-				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado")
-						&& this.pagtoLaudoConfirmada && this.pajurFavoravel && !this.analiseComercial) {
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.pajurFavoravel && !this.analiseComercial) {
 					if (!CommonsUtil.semValor(status)) {
 						status = status + " | ";
 					}
@@ -1191,9 +1203,8 @@ public class ContratoCobranca implements Serializable {
 					// c.setStatusEsteira("Análise Comercial");
 				}
 
-				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado")
-						&& this.pagtoLaudoConfirmada && this.pajurFavoravel && this.analiseComercial
-						&& !this.comentarioJuridicoEsteira) {
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.pajurFavoravel && this.analiseComercial && !this.comentarioJuridicoEsteira) {
 					if (!CommonsUtil.semValor(status)) {
 						status = status + " | ";
 					}
@@ -1201,9 +1212,9 @@ public class ContratoCobranca implements Serializable {
 					// c.setStatusEsteira("Comentário Jurídico");
 				}
 
-				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado")
-						&& this.pagtoLaudoConfirmada && this.pajurFavoravel && this.analiseComercial
-						&& this.comentarioJuridicoEsteira && !this.preAprovadoComite) {
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.pajurFavoravel && this.analiseComercial && this.comentarioJuridicoEsteira
+						&& !this.preAprovadoComite) {
 					if (!CommonsUtil.semValor(status)) {
 						status = status + " | ";
 					}
@@ -1215,105 +1226,96 @@ public class ContratoCobranca implements Serializable {
 					c.setStatusEsteira(status);
 				}
 
-				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado")
-						&& this.pagtoLaudoConfirmada && this.laudoRecebido && this.pajurFavoravel
-						&& this.analiseComercial && this.comentarioJuridicoEsteira && this.preAprovadoComite
-						&& !this.documentosComite) {
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+						&& this.comentarioJuridicoEsteira && this.preAprovadoComite && !this.documentosComite) {
 					c.setStatusEsteira("Ag. Validação DOCs");
 				}
 
-				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado")
-						&& this.pagtoLaudoConfirmada && this.laudoRecebido && this.pajurFavoravel
-						&& this.analiseComercial && this.comentarioJuridicoEsteira && this.preAprovadoComite
-						&& this.documentosComite && !this.aprovadoComite) {
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+						&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
+						&& !this.aprovadoComite) {
 					c.setStatusEsteira("Ag. Comite");
 				}
 
-				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado")
-						&& this.pagtoLaudoConfirmada && this.laudoRecebido && this.pajurFavoravel
-						&& this.analiseComercial && this.comentarioJuridicoEsteira && this.preAprovadoComite
-						&& this.documentosComite && this.aprovadoComite && !this.okCliente) {
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+						&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
+						&& this.aprovadoComite && !this.okCliente) {
 					c.setStatusEsteira("Ag. Ok Cliente");
 				}
 
-				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado")
-						&& this.pagtoLaudoConfirmada && this.laudoRecebido && this.pajurFavoravel
-						&& this.analiseComercial && this.comentarioJuridicoEsteira && this.preAprovadoComite
-						&& this.documentosComite && this.aprovadoComite && this.okCliente
-						&& !this.documentosCompletos) {
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+						&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
+						&& this.aprovadoComite && this.okCliente && !this.documentosCompletos) {
 					c.setStatusEsteira("Ag. DOC");
 				}
 
-				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado")
-						&& this.pagtoLaudoConfirmada && this.laudoRecebido && this.pajurFavoravel
-						&& this.analiseComercial && this.comentarioJuridicoEsteira && this.preAprovadoComite
-						&& this.documentosComite && this.aprovadoComite && this.okCliente
-						&& this.documentosCompletos && !this.reanalise && !this.certificadoEmitido) {
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+						&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
+						&& this.aprovadoComite && this.okCliente && this.documentosCompletos && !this.reanalise
+						&& !this.certificadoEmitido) {
 					c.setStatusEsteira("Ag. Certificado");
 				}
 
-				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado")
-						&& this.pagtoLaudoConfirmada && this.laudoRecebido && this.pajurFavoravel
-						&& this.analiseComercial && this.comentarioJuridicoEsteira && this.preAprovadoComite
-						&& this.documentosComite && this.aprovadoComite && this.okCliente
-						&& this.documentosCompletos && !this.reanalise && this.certificadoEmitido
-						&& !this.ccbPronta) {
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+						&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
+						&& this.aprovadoComite && this.okCliente && this.documentosCompletos && !this.reanalise
+						&& this.certificadoEmitido && !this.ccbPronta) {
 					c.setStatusEsteira("Ag. CCB");
 				}
 
-				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado")
-						&& this.pagtoLaudoConfirmada && this.laudoRecebido && this.pajurFavoravel
-						&& this.analiseComercial && this.comentarioJuridicoEsteira && this.preAprovadoComite
-						&& this.documentosComite && this.aprovadoComite && this.okCliente
-						&& this.documentosCompletos && this.certificadoEmitido && this.ccbPronta
-						&& !this.contratoConferido) {
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+						&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
+						&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
+						&& this.ccbPronta && !this.contratoConferido) {
 					c.setStatusEsteira("Ag. Conferência");
 				}
 
-				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado")
-						&& this.pagtoLaudoConfirmada && this.laudoRecebido && this.pajurFavoravel
-						&& this.analiseComercial && this.comentarioJuridicoEsteira && this.preAprovadoComite
-						&& this.documentosComite && this.aprovadoComite && this.okCliente
-						&& this.documentosCompletos && this.certificadoEmitido && this.ccbPronta
-						&& this.contratoConferido && this.agAssinatura) {
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+						&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
+						&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
+						&& this.ccbPronta && this.contratoConferido && this.agAssinatura) {
 					c.setStatusEsteira("Ag. Assinatura");
 				}
 
-				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado")
-						&& this.pagtoLaudoConfirmada && this.laudoRecebido && this.pajurFavoravel
-						&& this.analiseComercial && this.comentarioJuridicoEsteira && this.preAprovadoComite
-						&& this.documentosComite && this.aprovadoComite && this.okCliente
-						&& this.documentosCompletos && this.certificadoEmitido && this.ccbPronta
-						&& this.contratoConferido && this.reanalise && !this.reanalisePronta) {
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+						&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
+						&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
+						&& this.ccbPronta && this.contratoConferido && this.reanalise && !this.reanalisePronta) {
 					c.setStatusEsteira("Ag. Reanalise");
 				}
 
-				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado")
-						&& this.pagtoLaudoConfirmada && this.laudoRecebido && this.pajurFavoravel
-						&& this.analiseComercial && this.comentarioJuridicoEsteira && this.preAprovadoComite
-						&& this.documentosComite && this.aprovadoComite && this.okCliente
-						&& this.documentosCompletos && this.certificadoEmitido && this.ccbPronta
-						&& this.contratoConferido && this.reanalise && this.reanalisePronta
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+						&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
+						&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
+						&& this.ccbPronta && this.contratoConferido && this.reanalise && this.reanalisePronta
 						&& !this.reanaliseJuridico) {
 					c.setStatusEsteira("Ag. Reanalise Juridico");
 				}
 
-				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado")
-						&& this.pagtoLaudoConfirmada && this.laudoRecebido && this.pajurFavoravel
-						&& this.analiseComercial && this.comentarioJuridicoEsteira && this.preAprovadoComite
-						&& this.documentosComite && this.aprovadoComite && this.okCliente
-						&& this.documentosCompletos && this.certificadoEmitido && this.ccbPronta
-						&& this.contratoConferido && !this.agAssinatura && !this.reanalise
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+						&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
+						&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
+						&& this.ccbPronta && this.contratoConferido && !this.agAssinatura && !this.reanalise
 						&& this.agEnvioCartorio) {
 					c.setStatusEsteira("Ag. Envio Cartório");
 				}
 
-				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado")
-						&& this.pagtoLaudoConfirmada && this.laudoRecebido && this.pajurFavoravel
-						&& this.analiseComercial && this.comentarioJuridicoEsteira && this.preAprovadoComite
-						&& this.documentosComite && this.aprovadoComite && this.okCliente
-						&& this.documentosCompletos && this.certificadoEmitido && this.ccbPronta
-						&& this.contratoConferido && !this.agAssinatura && !this.agEnvioCartorio
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+						&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
+						&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
+						&& this.ccbPronta && this.contratoConferido && !this.agAssinatura && !this.agEnvioCartorio
 						&& this.agRegistro) {
 					c.setStatusEsteira("Ag. Registro");
 				}
@@ -1322,36 +1324,35 @@ public class ContratoCobranca implements Serializable {
 				c.setStatusEsteira("Análise Reprovada");
 			}
 		}
-		
-		if(!CommonsUtil.mesmoValor(statusEsteira, statusAnterior)) {
+
+		if (!CommonsUtil.mesmoValor(statusEsteira, statusAnterior)) {
 			CadastroStatus cadastroStatus = new CadastroStatus(statusEsteira, statusAnterior, this, user);
 			this.getListCadastroStatus().add(cadastroStatus);
 		}
-		
+
 		return c;
 	}
-	
-	
+
 	public boolean isDadosAprovadosComercial() {
 		return !CommonsUtil.semValor(valorAprovadoComercial) || //
 				!CommonsUtil.semValor(prazoAprovadoComercial) || //
 				!CommonsUtil.semValor(tipoCalculoAprovadoComercial);
 	}
-	
+
 	public BigDecimal getValorAprovadoCCB() {
 		if (!CommonsUtil.semValor(valorAprovadoComercial))
 			return valorAprovadoComercial;
 		else
 			return valorAprovadoComite;
 	}
-	
+
 	public BigInteger getPrazoAprovadoCCB() {
 		if (!CommonsUtil.semValor(prazoAprovadoComercial))
 			return prazoAprovadoComercial;
 		else
 			return prazoMaxAprovado;
 	}
-	
+
 	public String getTipoCalculoAprovadoCCB() {
 		if (CommonsUtil.semValor(tipoCalculoAprovadoComercial) && CommonsUtil.semValor(tipoCalculo))
 			return "Price";
@@ -1361,62 +1362,74 @@ public class ContratoCobranca implements Serializable {
 		else
 			return tipoCalculo;
 	}
-	
-	
+
 	@Override
 	public String toString() {
 		return "ContratoCobranca [id=" + id + ", numeroContrato=" + numeroContrato + "]";
 	}
 
 	public boolean isEmAnalise() {
-		List<String> lstEmAnalise =  Arrays.asList("Aprovado", "Reprovado", "Baixado", "Desistência Cliente");
-		return CommonsUtil.semValor(this.cadastroAprovadoValor) && !lstEmAnalise.contains(this.status) && leadCompleto && inicioAnalise;
+		List<String> lstEmAnalise = Arrays.asList("Aprovado", "Reprovado", "Baixado", "Desistência Cliente");
+		return CommonsUtil.semValor(this.cadastroAprovadoValor) && !lstEmAnalise.contains(this.status) && leadCompleto
+				&& inicioAnalise;
 	}
-	
+
 	public boolean isEmPedirPaju() {
-		List<String> lstEmAnalise =  Arrays.asList("Aprovado", "Reprovado", "Baixado", "Desistência Cliente");
-		return pedidoLaudo && !pagtoLaudoConfirmada && !lstEmAnalise.contains(this.status) && leadCompleto && inicioAnalise;
+		List<String> lstEmAnalise = Arrays.asList("Aprovado", "Reprovado", "Baixado", "Desistência Cliente");
+		return pedidoLaudo && !pagtoLaudoConfirmada && !lstEmAnalise.contains(this.status) && leadCompleto
+				&& inicioAnalise;
 	}
-	public boolean isAgComite() {
-		if (this.inicioAnalise && CommonsUtil.mesmoValor(cadastroAprovadoValor,"Aprovado")
-				&& this.pagtoLaudoConfirmada && this.laudoRecebido && this.pajurFavoravel
-				&& this.analiseComercial && this.comentarioJuridicoEsteira && this.preAprovadoComite
-				&& this.documentosComite && !this.aprovadoComite) {
+
+	public boolean isEmComentarioJuridico() {
+
+		if (this.inicioAnalise && CommonsUtil.mesmoValor(cadastroAprovadoValor, "Aprovado") && this.pagtoLaudoConfirmada
+				&& this.pajurFavoravel && this.analiseComercial && !this.comentarioJuridicoEsteira) {
 			return true;
-			
+
 		} else {
 			return false;
 		}
 	}
 	
+	public boolean isEmAgComite() {
+		if (this.inicioAnalise && CommonsUtil.mesmoValor(cadastroAprovadoValor, "Aprovado") && this.pagtoLaudoConfirmada
+				&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial && this.comentarioJuridicoEsteira
+				&& this.preAprovadoComite && this.documentosComite && !this.aprovadoComite) {
+			return true;
+
+		} else {
+			return false;
+		}
+	}
+	
+
 	public boolean isPajuVencido() {
 		boolean retorno = false;
-		if(!CommonsUtil.semValor(dataPajuComentado)) 
+		if (!CommonsUtil.semValor(dataPajuComentado))
 			retorno = (DateUtil.getDaysBetweenDates(dataPajuComentado, DateUtil.gerarDataHoje()) > 30);
 		return retorno;
 	}
 
 	public boolean desabilitarEnviarParaCartorio() {
-		if(isPajuVencido()) 
+		if (isPajuVencido())
 			return true;
-		if("RJ;PR".contains(imovel.getEstado()) && !reanaliseJuridico) 
+		if ("RJ;PR".contains(imovel.getEstado()) && !reanaliseJuridico)
 			return true;
-		
+
 		return false;
 	}
 
-	
 	public void calcularTaxaPreAprovada() {
 		int potuacao = 1000;
 		taxaPreAprovada = null;
-		
+
 		if (protestoTaxa)
 			potuacao -= 100;
 		if (chequeDevolvidoTaxa)
 			potuacao -= 100;
 		if (pefinTaxa)
 			potuacao -= 100;
-		if (refinTaxa) 
+		if (refinTaxa)
 			potuacao -= 100;
 		if (terceiroGrantidorTaxa)
 			potuacao -= 150;
@@ -1453,37 +1466,37 @@ public class ContratoCobranca implements Serializable {
 			taxaPreAprovada = BigDecimal.valueOf(1.39);
 		} else if (potuacao >= 900 && potuacao < 999) {
 			taxaPreAprovada = BigDecimal.valueOf(1.29);
-		} else if(nadaConstaTaxa) {
+		} else if (nadaConstaTaxa) {
 			taxaPreAprovada = BigDecimal.valueOf(1.19);
 		} else {
 			taxaPreAprovada = null;
 		}
-		
-		if(CommonsUtil.semValor(prazoMaxPreAprovado)) {
+
+		if (CommonsUtil.semValor(prazoMaxPreAprovado)) {
 			calcularPrazoPreAprovado();
 		}
-	}	
-	
-	public void calcularPrazoPreAprovado(){
+	}
+
+	public void calcularPrazoPreAprovado() {
 		long idade = 0;
-		if(!CommonsUtil.semValor(pagador)) {
+		if (!CommonsUtil.semValor(pagador)) {
 			idade = pagador.calcularIdadeLong();
 		}
-		if(idade == 0) {
+		if (idade == 0) {
 			prazoMaxPreAprovado = BigInteger.valueOf(0);
-		} else if(idade < 65) {
+		} else if (idade < 65) {
 			prazoMaxPreAprovado = BigInteger.valueOf(180);
-		} else if(idade >= 77) {
-			prazoMaxPreAprovado = BigInteger.valueOf(0); //Múmia n fazer
+		} else if (idade >= 77) {
+			prazoMaxPreAprovado = BigInteger.valueOf(0); // Múmia n fazer
 		} else {
-			prazoMaxPreAprovado = BigInteger.valueOf(new BigDecimal(((80 - idade) * 12)).setScale(0, RoundingMode.HALF_DOWN).intValue());
+			prazoMaxPreAprovado = BigInteger
+					.valueOf(new BigDecimal(((80 - idade) * 12)).setScale(0, RoundingMode.HALF_DOWN).intValue());
 		}
 	}
-		
-		
-		
-		/**
-	}
+
+	/**
+	 * }
+	 * 
 	 * @return the id
 	 */
 	public long getId() {
@@ -1683,7 +1696,7 @@ public class ContratoCobranca implements Serializable {
 	/**
 	 * @param observacao2 the observacao2 to set
 	 */
-	public void setObservacao2(String observacao2) { 
+	public void setObservacao2(String observacao2) {
 		this.observacao2 = observacao2;
 	}
 
@@ -4222,11 +4235,11 @@ public class ContratoCobranca implements Serializable {
 	public boolean isRecalculaIPCA() {
 		return recalculaIPCA;
 	}
-	
+
 	public void setRecalculaIPCA(boolean recalculaIPCA) {
 		this.recalculaIPCA = recalculaIPCA;
 	}
-	
+
 	public boolean isTemSeguro() {
 		return temSeguro;
 	}
@@ -4286,7 +4299,7 @@ public class ContratoCobranca implements Serializable {
 	public Date getAprovadoComiteData() {
 		return aprovadoComiteData;
 	}
-	
+
 	public void setAprovadoComiteData(Date aprovadoComiteData) {
 		this.aprovadoComiteData = aprovadoComiteData;
 	}
@@ -4722,7 +4735,7 @@ public class ContratoCobranca implements Serializable {
 	public void setDataInicioInvestidor10(Date dataInicioInvestidor10) {
 		this.dataInicioInvestidor10 = dataInicioInvestidor10;
 	}
-	
+
 	public BigDecimal getValorBoletoPreContrato() {
 		return valorBoletoPreContrato;
 	}
@@ -4737,6 +4750,14 @@ public class ContratoCobranca implements Serializable {
 
 	public void setTaxaPreAprovada(BigDecimal taxaPreAprovada) {
 		this.taxaPreAprovada = taxaPreAprovada;
+	}
+
+	public BigDecimal getTaxaPreDefinida() {
+		return taxaPreDefinida;
+	}
+
+	public void setTaxaPreDefinida(BigDecimal taxaPreDefinida) {
+		this.taxaPreDefinida = taxaPreDefinida;
 	}
 
 	public BigDecimal getValorMercadoImovel() {
@@ -4758,7 +4779,7 @@ public class ContratoCobranca implements Serializable {
 	public String getComentarioJuridico() {
 		return comentarioJuridico;
 	}
- 	
+
 	public void setComentarioJuridico(String comentarioJuridico) {
 		this.comentarioJuridico = comentarioJuridico;
 	}
@@ -4774,11 +4795,10 @@ public class ContratoCobranca implements Serializable {
 	public BigInteger getPrazoMaxPreAprovado() {
 		return prazoMaxPreAprovado;
 	}
-	
+
 	public void setPrazoMaxPreAprovado(BigInteger prazoMaxPreAprovado) {
 		this.prazoMaxPreAprovado = prazoMaxPreAprovado;
 	}
-
 
 	public String getCobrarComissaoCliente() {
 		return cobrarComissaoCliente;
@@ -4804,188 +4824,129 @@ public class ContratoCobranca implements Serializable {
 		this.comissaoClienteValorFixo = comissaoClienteValorFixo;
 	}
 
-
-
 	public Boolean getPagadorDonoGarantia() {
 		return pagadorDonoGarantia;
 	}
-
-
 
 	public void setPagadorDonoGarantia(Boolean pagadorDonoGarantia) {
 		this.pagadorDonoGarantia = pagadorDonoGarantia;
 	}
 
-
-
 	public Boolean getRgDocumentosCheckList() {
 		return rgDocumentosCheckList;
 	}
-
-
 
 	public void setRgDocumentosCheckList(Boolean rgDocumentosCheckList) {
 		this.rgDocumentosCheckList = rgDocumentosCheckList;
 	}
 
-
-
 	public Boolean getComprovanteEnderecoDocumentosCheckList() {
 		return comprovanteEnderecoDocumentosCheckList;
 	}
-
-
 
 	public void setComprovanteEnderecoDocumentosCheckList(Boolean comprovanteEnderecoDocumentosCheckList) {
 		this.comprovanteEnderecoDocumentosCheckList = comprovanteEnderecoDocumentosCheckList;
 	}
 
-
-
 	public Boolean getCertidaoCasamentoNascimentoDocumentosCheckList() {
 		return certidaoCasamentoNascimentoDocumentosCheckList;
 	}
 
-
-
-	public void setCertidaoCasamentoNascimentoDocumentosCheckList(Boolean certidaoCasamentoNascimentoDocumentosCheckList) {
+	public void setCertidaoCasamentoNascimentoDocumentosCheckList(
+			Boolean certidaoCasamentoNascimentoDocumentosCheckList) {
 		this.certidaoCasamentoNascimentoDocumentosCheckList = certidaoCasamentoNascimentoDocumentosCheckList;
 	}
-
-
 
 	public Boolean getFichaCadastralDocumentosCheckList() {
 		return fichaCadastralDocumentosCheckList;
 	}
 
-
-
 	public void setFichaCadastralDocumentosCheckList(Boolean fichaCadastralDocumentosCheckList) {
 		this.fichaCadastralDocumentosCheckList = fichaCadastralDocumentosCheckList;
 	}
-
-
 
 	public Boolean getBancoDocumentosCheckList() {
 		return bancoDocumentosCheckList;
 	}
 
-
-
 	public void setBancoDocumentosCheckList(Boolean bancoDocumentosCheckList) {
 		this.bancoDocumentosCheckList = bancoDocumentosCheckList;
 	}
-
 
 	public Boolean getTelefoneEmailDocumentosCheckList() {
 		return telefoneEmailDocumentosCheckList;
 	}
 
-
-
 	public void setTelefoneEmailDocumentosCheckList(Boolean telefoneEmailDocumentosCheckList) {
 		this.telefoneEmailDocumentosCheckList = telefoneEmailDocumentosCheckList;
 	}
-
-
 
 	public String getNomeParticipanteCheckList() {
 		return nomeParticipanteCheckList;
 	}
 
-
-
 	public void setNomeParticipanteCheckList(String nomeParticipanteCheckList) {
 		this.nomeParticipanteCheckList = nomeParticipanteCheckList;
 	}
-
-
 
 	public String getNomeParticipanteSecundarioCheckList() {
 		return nomeParticipanteSecundarioCheckList;
 	}
 
-
-
 	public void setNomeParticipanteSecundarioCheckList(String nomeParticipanteSecundarioCheckList) {
 		this.nomeParticipanteSecundarioCheckList = nomeParticipanteSecundarioCheckList;
 	}
-
-
 
 	public Boolean getRgDocumentosSecundarioCheckList() {
 		return rgDocumentosSecundarioCheckList;
 	}
 
-
-
 	public void setRgDocumentosSecundarioCheckList(Boolean rgDocumentosSecundarioCheckList) {
 		this.rgDocumentosSecundarioCheckList = rgDocumentosSecundarioCheckList;
 	}
 
-
-
 	public Boolean getComprovanteEnderecoDocumentosSecundarioCheckList() {
 		return comprovanteEnderecoDocumentosSecundarioCheckList;
 	}
-
-
 
 	public void setComprovanteEnderecoDocumentosSecundarioCheckList(
 			Boolean comprovanteEnderecoDocumentosSecundarioCheckList) {
 		this.comprovanteEnderecoDocumentosSecundarioCheckList = comprovanteEnderecoDocumentosSecundarioCheckList;
 	}
 
-
-
 	public Boolean getCertidaoCasamentoNascimentoDocumentosSecundarioCheckList() {
 		return certidaoCasamentoNascimentoDocumentosSecundarioCheckList;
 	}
-
-
 
 	public void setCertidaoCasamentoNascimentoDocumentosSecundarioCheckList(
 			Boolean certidaoCasamentoNascimentoDocumentosSecundarioCheckList) {
 		this.certidaoCasamentoNascimentoDocumentosSecundarioCheckList = certidaoCasamentoNascimentoDocumentosSecundarioCheckList;
 	}
 
-
-
 	public Boolean getFichaCadastralDocumentosSecundarioCheckList() {
 		return fichaCadastralDocumentosSecundarioCheckList;
 	}
-
-
 
 	public void setFichaCadastralDocumentosSecundarioCheckList(Boolean fichaCadastralDocumentosSecundarioCheckList) {
 		this.fichaCadastralDocumentosSecundarioCheckList = fichaCadastralDocumentosSecundarioCheckList;
 	}
 
-
-
 	public Boolean getBancoDocumentosSecundarioCheckList() {
 		return bancoDocumentosSecundarioCheckList;
 	}
-
-
 
 	public void setBancoDocumentosSecundarioCheckList(Boolean bancoDocumentosSecundarioCheckList) {
 		this.bancoDocumentosSecundarioCheckList = bancoDocumentosSecundarioCheckList;
 	}
 
-
 	public Boolean getTelefoneEmailDocumentosSecundarioCheckList() {
 		return telefoneEmailDocumentosSecundarioCheckList;
 	}
 
-
-
 	public void setTelefoneEmailDocumentosSecundarioCheckList(Boolean telefoneEmailDocumentosSecundarioCheckList) {
 		this.telefoneEmailDocumentosSecundarioCheckList = telefoneEmailDocumentosSecundarioCheckList;
 	}
-	
-	
-	
+
 	public String getNomePagador() {
 		return nomePagador;
 	}
@@ -5041,7 +5002,7 @@ public class ContratoCobranca implements Serializable {
 	public void setBrutoLiquidoCobrarComissaoCliente(String brutoLiquidoCobrarComissaoCliente) {
 		this.brutoLiquidoCobrarComissaoCliente = brutoLiquidoCobrarComissaoCliente;
 	}
-	
+
 	public Set<PagadorRecebedorSocio> getListSocios() {
 		return listSocios;
 	}
@@ -5049,7 +5010,7 @@ public class ContratoCobranca implements Serializable {
 	public void setListSocios(Set<PagadorRecebedorSocio> listSocios) {
 		this.listSocios = listSocios;
 	}
-	
+
 	public Set<ContasPagar> getListContasPagar() {
 		return listContasPagar;
 	}
@@ -5121,7 +5082,7 @@ public class ContratoCobranca implements Serializable {
 	public void setComentarioComite(String comentarioComite) {
 		this.comentarioComite = comentarioComite;
 	}
-	
+
 	public BigDecimal getValorLaudoPajuTotal() {
 		return valorLaudoPajuTotal;
 	}
@@ -5145,7 +5106,7 @@ public class ContratoCobranca implements Serializable {
 	public void setValorLaudoPajuFaltante(BigDecimal valorLaudoPajuFaltante) {
 		this.valorLaudoPajuFaltante = valorLaudoPajuFaltante;
 	}
-	
+
 	public String getValorBoletoPreContratoStr() {
 		return valorBoletoPreContratoStr;
 	}
@@ -5153,7 +5114,7 @@ public class ContratoCobranca implements Serializable {
 	public void setValorBoletoPreContratoStr(String valorBoletoPreContratoStr) {
 		this.valorBoletoPreContratoStr = valorBoletoPreContratoStr;
 	}
-	
+
 	public Set<PagadorRecebedorAdicionais> getListaPagadores() {
 		return listaPagadores;
 	}
@@ -5233,7 +5194,7 @@ public class ContratoCobranca implements Serializable {
 	public void setObservacaoRenda(String observacaoRenda) {
 		this.observacaoRenda = observacaoRenda;
 	}
-	
+
 	public Date getDataUltimaAtualizacao() {
 		return dataUltimaAtualizacao;
 	}
@@ -5241,7 +5202,7 @@ public class ContratoCobranca implements Serializable {
 	public void setDataUltimaAtualizacao(Date dataUltimaAtualizacao) {
 		this.dataUltimaAtualizacao = dataUltimaAtualizacao;
 	}
-	
+
 	public BigDecimal getContaPagarValorTotal() {
 		return contaPagarValorTotal;
 	}
@@ -5477,7 +5438,7 @@ public class ContratoCobranca implements Serializable {
 	public String getStatusPropostaMoneyPlus() {
 		return statusPropostaMoneyPlus;
 	}
-	
+
 	public void setStatusPropostaMoneyPlus(String statusPropostaMoneyPlus) {
 		this.statusPropostaMoneyPlus = statusPropostaMoneyPlus;
 	}
@@ -5545,11 +5506,11 @@ public class ContratoCobranca implements Serializable {
 	public void setTrabalhistaRessalva(String trabalhistaRessalva) {
 		this.trabalhistaRessalva = trabalhistaRessalva;
 	}
-	
+
 	public BigDecimal getSomatoriaValorPresente() {
 		return somatoriaValorPresente;
 	}
-	
+
 	public void setSomatoriaValorPresente(BigDecimal somatoriaValorPresente) {
 		this.somatoriaValorPresente = somatoriaValorPresente;
 	}
@@ -5557,7 +5518,7 @@ public class ContratoCobranca implements Serializable {
 	public int getParcelasVencidas() {
 		return parcelasVencidas;
 	}
-	
+
 	public void setParcelasVencidas(int parcelasVencidas) {
 		this.parcelasVencidas = parcelasVencidas;
 	}
@@ -5569,7 +5530,7 @@ public class ContratoCobranca implements Serializable {
 	public void setParcelasAVencer(Integer parcelasAVencer) {
 		this.parcelasAVencer = parcelasAVencer;
 	}
-	
+
 	public String getNomeVistoriador() {
 		return nomeVistoriador;
 	}
@@ -5624,6 +5585,22 @@ public class ContratoCobranca implements Serializable {
 
 	public void setAnaliseComercialUsuario(String analiseComercialUsuario) {
 		this.analiseComercialUsuario = analiseComercialUsuario;
+	}
+
+	public boolean isComentarioJuricoApenasComConsultas() {
+		return comentarioJuricoApenasComConsultas;
+	}
+
+	public void setComentarioJuricoApenasComConsultas(boolean comentarioJuricoApenasComConsultas) {
+		this.comentarioJuricoApenasComConsultas = comentarioJuricoApenasComConsultas;
+	}
+
+	public boolean isComentarioJuricoComPajuVencido() {
+		return comentarioJuricoComPajuVencido;
+	}
+
+	public void setComentarioJuricoComPajuVencido(boolean comentarioJuricoComPajuVencido) {
+		this.comentarioJuricoComPajuVencido = comentarioJuricoComPajuVencido;
 	}
 
 	public Date getComentarioJuridicoEsteiraData() {
@@ -5721,11 +5698,11 @@ public class ContratoCobranca implements Serializable {
 	public void setPedidoLaudoPajuComercialUsuario(String pedidoLaudoPajuComercialUsuario) {
 		this.pedidoLaudoPajuComercialUsuario = pedidoLaudoPajuComercialUsuario;
 	}
-	
+
 	public boolean isTemTxAdm() {
 		return temTxAdm;
 	}
-	
+
 	public void setTemTxAdm(boolean temTxAdm) {
 		this.temTxAdm = temTxAdm;
 	}
@@ -5733,11 +5710,11 @@ public class ContratoCobranca implements Serializable {
 	public String getFormaDePagamentoLaudoPAJU() {
 		return formaDePagamentoLaudoPAJU;
 	}
-	
+
 	public void setFormaDePagamentoLaudoPAJU(String formaDePagamentoLaudoPAJU) {
 		this.formaDePagamentoLaudoPAJU = formaDePagamentoLaudoPAJU;
 	}
-	
+
 	public String getNomeContatoAgendaLaudoAvaliacao() {
 		return nomeContatoAgendaLaudoAvaliacao;
 	}
@@ -5849,7 +5826,7 @@ public class ContratoCobranca implements Serializable {
 	public void setAvaliacaoLaudo(String avaliacaoLaudo) {
 		this.avaliacaoLaudo = avaliacaoLaudo;
 	}
-	
+
 	public String getProcessosQuitarComite() {
 		return processosQuitarComite;
 	}
@@ -6161,7 +6138,7 @@ public class ContratoCobranca implements Serializable {
 	public void setPendenciaPagamento(boolean pendenciaPagamento) {
 		this.pendenciaPagamento = pendenciaPagamento;
 	}
-	
+
 	public boolean isCorrigidoNovoIPCA() {
 		return corrigidoNovoIPCA;
 	}
@@ -6369,7 +6346,7 @@ public class ContratoCobranca implements Serializable {
 	public void setQuitarInvestidor10(boolean quitarInvestidor10) {
 		this.quitarInvestidor10 = quitarInvestidor10;
 	}
-	
+
 	public Date getAgEnvioCartorioData() {
 		return agEnvioCartorioData;
 	}
@@ -6521,7 +6498,7 @@ public class ContratoCobranca implements Serializable {
 	public void setBaixadoUsuario(String baixadoUsuario) {
 		this.baixadoUsuario = baixadoUsuario;
 	}
-	
+
 	public String getBaixaMotivoCancelamento() {
 		return baixaMotivoCancelamento;
 	}
@@ -6737,7 +6714,7 @@ public class ContratoCobranca implements Serializable {
 	public void setDispositivoCertificado(String dispositivoCertificado) {
 		this.dispositivoCertificado = dispositivoCertificado;
 	}
-	
+
 	public Set<CadastroStatus> getListCadastroStatus() {
 		return listCadastroStatus;
 	}
@@ -6872,7 +6849,8 @@ public class ContratoCobranca implements Serializable {
 
 	public void setDataCorteBaixaIPCAHibrido(Date dataCorteBaixaIPCAHibrido) {
 		this.dataCorteBaixaIPCAHibrido = dataCorteBaixaIPCAHibrido;
-	}	
+	}
+
 	public boolean isApenasPagamentoAntecipado() {
 		return apenasPagamentoAntecipado;
 	}
@@ -6904,7 +6882,7 @@ public class ContratoCobranca implements Serializable {
 	public void setCertidoesProntas(int certidoesProntas) {
 		this.certidoesProntas = certidoesProntas;
 	}
-	
+
 	public boolean isContratoPrioridadeAlta() {
 		return contratoPrioridadeAlta;
 	}
@@ -6912,7 +6890,7 @@ public class ContratoCobranca implements Serializable {
 	public void setContratoPrioridadeAlta(boolean contratoPrioridadeAlta) {
 		this.contratoPrioridadeAlta = contratoPrioridadeAlta;
 	}
-	
+
 	public Date getContratoPrioridadeAltaData() {
 		return contratoPrioridadeAltaData;
 	}
@@ -6920,7 +6898,7 @@ public class ContratoCobranca implements Serializable {
 	public void setContratoPrioridadeAltaData(Date contratoPrioridadeAltaData) {
 		this.contratoPrioridadeAltaData = contratoPrioridadeAltaData;
 	}
-	
+
 	public String getContratoPrioridadeAltaUser() {
 		return contratoPrioridadeAltaUser;
 	}
@@ -6952,7 +6930,7 @@ public class ContratoCobranca implements Serializable {
 	public void setAvaliacaoPaju(String avaliacaoPaju) {
 		this.avaliacaoPaju = avaliacaoPaju;
 	}
-		
+
 	public String getStatusEsteira() {
 
 		if (CommonsUtil.semValor(this.statusLead)) {
@@ -7389,7 +7367,6 @@ public class ContratoCobranca implements Serializable {
 	public void setRiscoTotal50kTaxa(boolean isRiscoTotal50kTaxa) {
 		this.riscoTotal50kTaxa = isRiscoTotal50kTaxa;
 	}
-	
 
 	public void setAgComite(boolean agComite) {
 		this.agComite = agComite;
@@ -7419,5 +7396,12 @@ public class ContratoCobranca implements Serializable {
 		this.documentosAnalisados = documentosAnalisados;
 	}
 
-	
+	public Set<CcbParticipantes> getListaParticipantes() {
+		return listaParticipantes;
+	}
+
+	public void setListaParticipantes(Set<CcbParticipantes> listaParticipantes) {
+		this.listaParticipantes = listaParticipantes;
+	}
+
 }

@@ -101,13 +101,15 @@ public class PagadorRecebedorConsultaDao extends HibernateDao<PagadorRecebedorCo
 	
 	private static final String QUERY_PESQUISA_CONSULTA_RETORNO = "select id, retornoConsulta from cobranca.pagadorrecebedorconsulta "
 			+ " where pessoa = ?  "
+			+ " and tipo = ?"
 			+ " and (DATE_PART('day', ? ::timestamp - dataconsulta ) >= 30 or dataconsulta is null)";
 
 	@SuppressWarnings("unchecked")
 	public PagadorRecebedorConsulta getConsultaVencidaByPagadorAndRetorno(final PagadorRecebedor pagador,
+			final DocumentosAnaliseEnum tipo,
 			final String retorno) {
 		
-		if (CommonsUtil.semValor(pagador) || CommonsUtil.semValor(retorno))
+		if (CommonsUtil.semValor(pagador))
 			return null;
 		
 		return (PagadorRecebedorConsulta) executeDBOperation(new DBRunnable() {
@@ -121,11 +123,11 @@ public class PagadorRecebedorConsultaDao extends HibernateDao<PagadorRecebedorCo
 				try {
 					connection = getConnection();
 					String query = QUERY_PESQUISA_CONSULTA_RETORNO;
-					
+					String nome = tipo.getNome();
 					ps = connection.prepareStatement(query);
 					ps.setLong(1, pagador.getId());
-					//ps.setString(2, retorno);
-					ps.setDate(2, dtHojeSQL);
+					ps.setString(2, nome);
+					ps.setDate(3, dtHojeSQL);
 					
 					rs = ps.executeQuery();
 
@@ -135,13 +137,17 @@ public class PagadorRecebedorConsultaDao extends HibernateDao<PagadorRecebedorCo
 							closeResources(connection, ps, rs);
 							return pagadorRecebedor;
 						}
-						int levDistance = CommonsUtil.levenshteinDistance(retorno, rs.getString(2));
-						int porcent = (((retorno.length() - levDistance) *100)/retorno.length());
-						//System.out.println("Levenshtein Distance between is: " + (100 - porcent));
-						if(porcent > 90) {
+						try {
+							/*int levDistance = CommonsUtil.levenshteinDistance(retorno, rs.getString(2));
+							int porcent = (((retorno.length() - levDistance) *100)/retorno.length());
+							//System.out.println("Levenshtein Distance between is: " + (100 - porcent));
+							if(porcent > 90) {*/
 							pagadorRecebedor = findById(rs.getLong(1));
 							closeResources(connection, ps, rs);
 							return pagadorRecebedor;
+							//}
+						} catch (Exception e) {
+							e.printStackTrace();
 						}
 					}
 

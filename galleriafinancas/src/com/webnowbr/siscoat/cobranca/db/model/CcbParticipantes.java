@@ -29,6 +29,7 @@ public class CcbParticipantes implements Serializable{
 	private String municipioEmpresa;
 	private String salaEmpresa;
 	private List<CcbParticipantes> socios;
+	private ContratoCobranca contratoCobranca;
 
 	
 	public CcbParticipantes() {
@@ -132,5 +133,11 @@ public class CcbParticipantes implements Serializable{
 	}
 	public void setUniaoEstavel(boolean uniaoEstavel) {
 		this.uniaoEstavel = uniaoEstavel;
+	}
+	public ContratoCobranca getContratoCobranca() {
+		return contratoCobranca;
+	}
+	public void setContratoCobranca(ContratoCobranca contratoCobranca) {
+		this.contratoCobranca = contratoCobranca;
 	}
 }
