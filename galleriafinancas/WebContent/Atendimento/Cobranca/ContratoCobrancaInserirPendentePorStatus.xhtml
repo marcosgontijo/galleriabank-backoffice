@@ -479,8 +479,7 @@
 												onLabel="Não assinado" offLabel="Assinado"
 												onIcon="ui-icon-close" offIcon="ui-icon-check"
 												style="width:=60px">
-												<p:ajax event="change"
-													 update="form:precisaReanalise"/>
+												<p:ajax event="change"  update="form:precisaReanalise"/>
 											</p:selectBooleanButton>
 											<p:spacer></p:spacer>
 											<p:outputLabel styleClass="labelBold">Precisa de Reanalise?</p:outputLabel>
@@ -489,9 +488,12 @@
 												disabled="#{contratoCobrancaMB.objetoContratoCobranca.agAssinatura}"
 												onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 												offIcon="ui-icon-close" style="width:=60px" >
-												<p:ajax event="change"
-													update=":form:Status"/>
+												<p:ajax event="change" update=":form:Status"/>
 											</p:selectBooleanButton>
+											<p:outputLabel styleClass="labelBold">Data da Assinatura</p:outputLabel>
+											<p:calendar value="#{contratoCobrancaMB.objetoContratoCobranca.dataContratoAssinado}"
+												styleClass="dateTimeField" pattern="dd/MM/yyyy"
+												inputStyle="width:70px" />
 										</h:panelGrid>
 										
 										
@@ -1813,6 +1815,12 @@
 											headerText="N°">
 											<p:outputLabel value="#{processosPessoas.numero}"
 												style="FONT-SIZE: 10pt;" />
+										</p:column>
+										
+										<p:column style="text-align: center;width:75px;"
+											headerText=" Valor Original: ">
+											<p:outputLabel value="#{processosPessoas.valor}"
+												style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
 										</p:column>
 
 										<p:column style="text-align: center;width:75px;"

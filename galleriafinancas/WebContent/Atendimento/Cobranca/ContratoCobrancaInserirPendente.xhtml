@@ -1705,6 +1705,12 @@
 											<p:outputLabel value="#{processosPessoas2.numero}"
 												style="FONT-SIZE: 10pt;" />
 										</p:column>
+										
+										<p:column style="text-align: center;width:75px;"
+											headerText=" Valor Original: ">
+											<p:outputLabel value="#{processosPessoas2.valor}"
+												style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+										</p:column>
 
 										<p:column style="text-align: center;width:75px;"
 											headerText=" Valor Atualizado: ">
