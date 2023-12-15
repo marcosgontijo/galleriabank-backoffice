@@ -19414,6 +19414,103 @@ public class ContratoCobrancaMB {
 		}
 	}
 	
+	public ContasPagar buscaDespesaCartaSplit(String despesa, String numeroContrato) { 
+		ContasPagarDao contasPagarDao = new ContasPagarDao();
+		List<ContasPagar> despesaBD = new ArrayList<ContasPagar>();
+		
+		try {
+			despesaBD = contasPagarDao.buscarDespesa(despesa, numeroContrato);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		if (despesaBD.size() > 0) {
+			return despesaBD.get(0);
+		} else {
+			return null;
+		}
+	}
+	
+	public void pagamentoStarkBankCartaSplitGalleria() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		
+		ContasPagar contaCartaSplit = new ContasPagar();
+		contaCartaSplit.setContaCartaSplit(true);
+		contaCartaSplit.setContrato(this.objetoContratoCobranca);
+		contaCartaSplit.setDataVencimento(DateUtil.gerarDataHoje());
+		contaCartaSplit.setDescricao("Pagamento Carta Split - Galleria");					
+		//contaCartaSplit.setPagadorRecebedor(recebedor);
+		contaCartaSplit.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
+		contaCartaSplit.setResponsavel(this.objetoContratoCobranca.getResponsavel());
+		contaCartaSplit.setTipoDespesa("C");
+		contaCartaSplit.setValor(this.objetoContratoCobranca.getValorCartaSplitGalleria());	
+		
+		contaCartaSplit.setBancoTed(this.objetoContratoCobranca.getBancoBancarioCartaSplitGalleria());
+		contaCartaSplit.setAgenciaTed(this.objetoContratoCobranca.getAgenciaBancarioCartaSplitGalleria());
+		contaCartaSplit.setContaTed(this.objetoContratoCobranca.getContaBancarioCartaSplitGalleria());
+		contaCartaSplit.setPix(this.objetoContratoCobranca.getPixCartaSplitGalleria());
+		contaCartaSplit.setNomeTed(this.objetoContratoCobranca.getNomeBancarioCartaSplitGalleria());
+		
+		ContasPagarDao contasPagarDao = new ContasPagarDao();
+		if (contaCartaSplit.getId() <= 0) {
+			contasPagarDao.create(contaCartaSplit);
+		} else {
+			contasPagarDao.merge(contaCartaSplit);
+		}
+		
+		/*
+		if (contaCartaSplit.getFormaTransferencia().equals("Boleto")) {
+
+			contaCartaSplit.setDescricaoStarkBank("Pagamento de Conta");
+
+			StarkBankBaixa baixa = registraBaixaStarkBank(contaCartaSplit.getDataPagamento(),
+					contaCartaSplit.getNumeroDocumentoPagadorStarkBank(), null,
+					contaCartaSplit.getLinhaDigitavelStarkBank(), recebedor.getNome(),
+					contaCartaSplit.getValorPagamento(), contaCartaSplit, "Boleto", "Aguardando Aprovação");
+
+				contaCartaSplit.getListContasPagarBaixas().add(baixa);
+
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Pagamento StarkBank: Ordem de Pagamento de Boleto inserida com sucesso!", ""));
+		}
+		*/
+
+		if (this.objetoContratoCobranca.getPixCartaSplit() != null || !this.objetoContratoCobranca.getPixCartaSplit().equals("")) {
+			contaCartaSplit.setFormaTransferencia("PIX");
+			
+			StarkBankBaixa baixa = registraBaixaStarkBank(DateUtil.gerarDataHoje(),
+						this.objetoContratoCobranca.getCpfCnpjBancarioCartaSplit(), null, null,
+						contaCartaSplit.getNomeTed(), this.objetoContratoCobranca.getValorCartaSplit(),
+						contaCartaSplit, "PIX", "Aguardando Aprovação");
+
+				contaCartaSplit.getListContasPagarBaixas().add(baixa);
+
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Pagamento StarkBank: Ordem de Pagamento de PIX inserida com sucesso!", ""));
+		} else {
+			contaCartaSplit.setFormaTransferencia("TED");
+				StarkBankBaixa baixa = registraBaixaStarkBank(DateUtil.gerarDataHoje(),
+						this.objetoContratoCobranca.getCpfCnpjBancarioCartaSplit(), null, null,
+						contaCartaSplit.getNomeTed(), this.objetoContratoCobranca.getValorCartaSplit(),
+						contaCartaSplit, "TED", "Aguardando Aprovação");
+
+				contaCartaSplit.getListContasPagarBaixas().add(baixa);
+
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Pagamento StarkBank: Ordem de Pagamento de TED inserida com sucesso!", ""));
+		}
+		
+		//contaCartaSplit.setDataPagamento(DateUtil.gerarDataHoje());
+		//contaCartaSplit.setValorPagamento(valor);	
+		
+		if (contaCartaSplit.getId() <= 0) {
+			contasPagarDao.create(contaCartaSplit);
+		} else {
+			contasPagarDao.merge(contaCartaSplit);
+		}
+	}
+	
 	public void pagamentoStarkBankCartaSplit() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		
