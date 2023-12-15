@@ -9462,7 +9462,8 @@ public class ContratoCobrancaMB {
 	public void calculaPorcentagemImovel() {
 		porcentagem = new ArrayList<>();
 		BigDecimal porcentagemLimite = new BigDecimal(100);
-		BigDecimal	valorSugerido = gerarRecomendacaoComite();
+		BigDecimal recomendacao = gerarRecomendacaoComite();
+		BigDecimal	valorSugerido = recomendacao.subtract(recomendacao.remainder(new BigDecimal(5000)));
 		
 		if(porcentagemPersonalizada == null) {
 			porcentagemPersonalizada = BigDecimal.ZERO;
@@ -9476,17 +9477,26 @@ public class ContratoCobrancaMB {
 		  valorMercaoImovelPorcento = objetoContratoCobranca.getValorMercadoImovel().divide(new BigDecimal(100));
 		  porcentagem.add(new PorcentagemImovel("Valor do imóvel: ", objetoContratoCobranca.getValorMercadoImovel(),false,false));
 		  porcentagem.add(new PorcentagemImovel("Recomendado:", valorSugerido, true,false ));
-		  porcentagem.add(new PorcentagemImovel("LTV 30%:", valorMercaoImovelPorcento.multiply(new BigDecimal(30)),true,false));
-		  porcentagem.add(new PorcentagemImovel("LTV 35%:", valorMercaoImovelPorcento.multiply(new BigDecimal(35)),true,false));
-		  porcentagem.add(new PorcentagemImovel("LTV 40%:", valorMercaoImovelPorcento.multiply(new BigDecimal(40)),true,false));
-		  porcentagem.add(new PorcentagemImovel("LTV 45%:", valorMercaoImovelPorcento.multiply(new BigDecimal(45)),true,false));
-		  porcentagem.add(new PorcentagemImovel("LTV 50%:", valorMercaoImovelPorcento.multiply(new BigDecimal(50)),true,false));
+		  porcentagem.add(new PorcentagemImovel("LTV 20%:", calculaValorLTV(new BigDecimal(20)),true,false));
+		  porcentagem.add(new PorcentagemImovel("LTV 30%:", calculaValorLTV(new BigDecimal(30)),true,false));
+		  porcentagem.add(new PorcentagemImovel("LTV 35%:", calculaValorLTV(new BigDecimal(35)),true,false));
+		  porcentagem.add(new PorcentagemImovel("LTV 40%:", calculaValorLTV(new BigDecimal(40)),true,false));
+		  porcentagem.add(new PorcentagemImovel("LTV 45%:", calculaValorLTV(new BigDecimal(45)),true,false));
+		  porcentagem.add(new PorcentagemImovel("LTV 50%:", calculaValorLTV(new BigDecimal(50)),true,false));
 		  if(porcentagemPersonalizada != null) {
-		  porcentagem.add(new PorcentagemImovel("Personalizado", valorMercaoImovelPorcento.multiply(porcentagemPersonalizada), true, true));
+		  porcentagem.add(new PorcentagemImovel("Personalizado", calculaValorLTV(porcentagemPersonalizada), true, true));
 		  } 
 		  porcentagemPersonalizada = BigDecimal.ZERO;
 		 
 	}
+	public BigDecimal calculaValorLTV(BigDecimal divisor) {
+		valorMercaoImovelPorcento = objetoContratoCobranca.getValorMercadoImovel().divide(new BigDecimal(100));
+	BigDecimal valorPorcentagem =	valorMercaoImovelPorcento.multiply(divisor);
+	
+BigDecimal valorDividido = valorPorcentagem.remainder(new BigDecimal(5000));
+BigDecimal valorTotal = valorPorcentagem.subtract(valorDividido);
+return valorTotal;
+}
 
 
 	public List<PorcentagemImovel> getPorcentagem() {
