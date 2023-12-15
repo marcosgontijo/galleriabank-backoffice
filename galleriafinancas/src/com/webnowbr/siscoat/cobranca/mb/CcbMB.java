@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -68,6 +69,7 @@ import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.common.ValidaCNPJ;
 import com.webnowbr.siscoat.common.ValidaCPF;
 import com.webnowbr.siscoat.db.dao.DAOException;
+import com.webnowbr.siscoat.security.LoginBean;
 import com.webnowbr.siscoat.simulador.GoalSeek;
 import com.webnowbr.siscoat.simulador.GoalSeekFunction;
 import com.webnowbr.siscoat.simulador.SimulacaoDetalheVO;
@@ -130,6 +132,10 @@ public class CcbMB {
    
     private List<ContratoCobranca> listaContratosConsultar = new ArrayList<ContratoCobranca>();
     
+
+	@ManagedProperty(value = "#{loginBean}")
+	protected LoginBean loginBean;
+	
 	ValorPorExtenso valorPorExtenso = new ValorPorExtenso();
 	NumeroPorExtenso numeroPorExtenso = new NumeroPorExtenso();
 	PorcentagemPorExtenso porcentagemPorExtenso = new PorcentagemPorExtenso();
@@ -570,8 +576,8 @@ public class CcbMB {
 		listaTipoDownload.add("CCI");
 		listaTipoDownload.add("Carta Split");
 		listaTipoDownload.add("AnexoII");
-//		listaTipoDownload.add("Cessao");
-//		listaTipoDownload.add("Endossos Em Preto");
+		listaTipoDownload.add("Cessao");
+		listaTipoDownload.add("Endossos Em Preto");
 		listaTipoDownload.add("FinanciamentoCCI");
 		listaTipoDownload.add("Aquisicao/Emprestimo");
 		listaTipoDownload.add("Ficha Cadastro Nova");
@@ -2434,6 +2440,14 @@ public class CcbMB {
 
 	public void setSelectedParticipante(CcbParticipantes selectedParticipante) {
 		this.selectedParticipante = selectedParticipante;
+	}
+
+	public LoginBean getLoginBean() {
+		return loginBean;
+	}
+
+	public void setLoginBean(LoginBean loginBean) {
+		this.loginBean = loginBean;
 	}	
 	
 	
