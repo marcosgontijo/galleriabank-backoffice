@@ -19525,7 +19525,8 @@ public class ContratoCobrancaMB {
 				StarkBankBoleto starkBankBoleto = starkBankAPI.paymentBoleto(
 						this.objetoBaixaPagamentoStarkBank.getContasPagar().getLinhaDigitavelStarkBank(), this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato(),
 						this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getPagador(), this.objetoBaixaPagamentoStarkBank.getContasPagar().getDescricaoStarkBank(),
-						this.objetoBaixaPagamentoStarkBank.getContasPagar().getNumeroDocumentoPagadorStarkBank());
+						this.objetoBaixaPagamentoStarkBank.getContasPagar().getNumeroDocumentoPagadorStarkBank(),
+						this.objetoBaixaPagamentoStarkBank.getContasPagar().getDescricao());
 
 				if (starkBankBoleto != null) {
 					// this.contasPagarSelecionada.setComprovantePagamentoStarkBank(starkBankBoleto);
@@ -19554,7 +19555,8 @@ public class ContratoCobrancaMB {
 						this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getCpfCnpjBancarioContaPagar(),
 						this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getNomeBancarioContaPagar(),
 						this.objetoBaixaPagamentoStarkBank.getContasPagar().getValorPagamento(),
-						this.objetoBaixaPagamentoStarkBank.getContasPagar().getFormaTransferencia());
+						this.objetoBaixaPagamentoStarkBank.getContasPagar().getFormaTransferencia(),
+						this.objetoBaixaPagamentoStarkBank.getContasPagar().getDescricao());
 
 				if (starkBankPix != null) {					
 					StarkBankBaixa baixa = updateBaixaStarkBank(this.objetoBaixaPagamentoStarkBank,							
@@ -19582,7 +19584,8 @@ public class ContratoCobrancaMB {
 						this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getCpfCnpjBancarioContaPagar(),
 						this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getNomeBancarioContaPagar(),
 						this.objetoBaixaPagamentoStarkBank.getContasPagar().getValorPagamento(),
-						this.objetoBaixaPagamentoStarkBank.getContasPagar().getFormaTransferencia());
+						this.objetoBaixaPagamentoStarkBank.getContasPagar().getFormaTransferencia(),
+						this.objetoBaixaPagamentoStarkBank.getContasPagar().getDescricao());
 
 				if (starkBankPix != null) {
 					StarkBankBaixa baixa = updateBaixaStarkBank(this.objetoBaixaPagamentoStarkBank,							
