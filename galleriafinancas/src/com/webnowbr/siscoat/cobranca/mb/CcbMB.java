@@ -570,8 +570,8 @@ public class CcbMB {
 		listaTipoDownload.add("CCI");
 		listaTipoDownload.add("Carta Split");
 		listaTipoDownload.add("AnexoII");
-//		listaTipoDownload.add("Cessao");
-//		listaTipoDownload.add("Endossos Em Preto");
+		listaTipoDownload.add("Cessao");
+		listaTipoDownload.add("Endossos Em Preto");
 		listaTipoDownload.add("FinanciamentoCCI");
 		listaTipoDownload.add("Aquisicao/Emprestimo");
 		listaTipoDownload.add("Ficha Cadastro Nova");
