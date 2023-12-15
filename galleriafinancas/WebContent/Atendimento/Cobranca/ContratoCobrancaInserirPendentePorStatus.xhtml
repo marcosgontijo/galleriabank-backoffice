@@ -1668,7 +1668,7 @@
 								</p:inputText>
 
 								<p:outputLabel for="valorMercadoImovel"
-									value="Valor de mercado do imóvel: " styleClass="labelBold" />
+									value="Valor de mercado total dos imóveis: " styleClass="labelBold" />
 								<p:inputText id="valorMercadoImovel"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.valorMercadoImovel}"
 									onkeypress="return isNumberKey(event);"
@@ -3217,6 +3217,15 @@
 							onkeypress="return isNumberKey(event);"
 							onkeydown="FormataValor(this, 13, event, 2);"
 							converter="bigDecimalConverter" />
+							
+						<p:outputLabel for="valorMercadoObjImovel"
+							value="Valor de mercado dos imóvel: " styleClass="labelBold" />
+						<p:inputText id="valorMercadoObjImovel"
+							value="#{contratoCobrancaMB.objetoImovelCobranca.valorMercado}"
+							onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);"
+							converter="bigDecimalConverter"
+							style="FONT-SIZE: 10pt;width:300px;" />
 
 						<p:outputLabel for="dataCompra" value="Data da compra do Imóvel " />
 						<h:panelGroup>

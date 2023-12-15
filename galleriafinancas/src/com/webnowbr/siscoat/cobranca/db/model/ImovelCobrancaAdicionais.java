@@ -14,6 +14,7 @@ public class ImovelCobrancaAdicionais implements Serializable {
 	private ContratoCobranca contratoCobranca;
 	
 	private BigDecimal porcentagem;
+	private BigDecimal valorRegistro;
 	private String relacaoComGarantia;
 	private boolean comprovanteMatriculaCheckList;
 	private boolean comprovanteFotosImovelCheckList;
@@ -109,6 +110,12 @@ public class ImovelCobrancaAdicionais implements Serializable {
 	}
 	public void setPorcentagem(BigDecimal porcentagem) {
 		this.porcentagem = porcentagem;
+	}
+	public BigDecimal getValorRegistro() {
+		return valorRegistro;
+	}
+	public void setValorRegistro(BigDecimal valorRegistro) {
+		this.valorRegistro = valorRegistro;
 	}
 }
 

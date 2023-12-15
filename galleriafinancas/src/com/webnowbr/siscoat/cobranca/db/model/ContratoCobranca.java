@@ -648,6 +648,7 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal taxaPreDefinida;
 	private BigInteger prazoMaxPreAprovado;
 	private BigDecimal valorMercadoImovel;
+	private BigDecimal porcentagemImovelPrincipal;
 
 	private BigDecimal valorVendaForcadaImovel;
 	private String comentarioJuridico;
@@ -7421,6 +7422,14 @@ public class ContratoCobranca implements Serializable {
 
 	public void setListaImoveis(Set<ImovelCobrancaAdicionais> listaImoveis) {
 		this.listaImoveis = listaImoveis;
-	}	
+	}
+
+	public BigDecimal getPorcentagemImovelPrincipal() {
+		return porcentagemImovelPrincipal;
+	}
+
+	public void setPorcentagemImovelPrincipal(BigDecimal porcentagemImovelPrincipal) {
+		this.porcentagemImovelPrincipal = porcentagemImovelPrincipal;
+	}
 }
 
