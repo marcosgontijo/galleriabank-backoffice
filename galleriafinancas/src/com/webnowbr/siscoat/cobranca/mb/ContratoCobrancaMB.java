@@ -153,6 +153,7 @@ import com.webnowbr.siscoat.cobranca.db.model.GruposFavorecidos;
 import com.webnowbr.siscoat.cobranca.db.model.GruposPagadores;
 import com.webnowbr.siscoat.cobranca.db.model.IPCA;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.ImovelCobrancaAdicionais;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelEstoque;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorAdicionais;
@@ -162,6 +163,7 @@ import com.webnowbr.siscoat.cobranca.db.model.PesquisaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.PreAprovadoPDF;
 import com.webnowbr.siscoat.cobranca.db.model.QuitacaoPDF;
 import com.webnowbr.siscoat.cobranca.db.model.QuitacaoParcelasPDF;
+import com.webnowbr.siscoat.cobranca.db.model.RelatorioB3;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.db.model.Segurado;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankBaixa;
@@ -183,6 +185,7 @@ import com.webnowbr.siscoat.cobranca.db.op.FilaInvestidoresDao;
 import com.webnowbr.siscoat.cobranca.db.op.GruposFavorecidosDao;
 import com.webnowbr.siscoat.cobranca.db.op.GruposPagadoresDao;
 import com.webnowbr.siscoat.cobranca.db.op.IPCADao;
+import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaAdicionaisDao;
 import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorConsultaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
@@ -360,6 +363,7 @@ public class ContratoCobrancaMB {
 	DocumentoAnalise documentoAnaliseAdicionar;
 	PagadorRecebedorSocio socioSelecionado;
 	PagadorRecebedorAdicionais pagadorSecundarioSelecionado;
+	ImovelCobrancaAdicionais imovelAdicional;
 	String updatePagadorRecebedor = "";
 	String updateResponsavel = "";
 	String tituloPagadorRecebedorDialog = "";
@@ -720,6 +724,7 @@ public class ContratoCobrancaMB {
 	private Collection<ContratoCobranca> contratos;
 	private Collection<ContratosPagadorAnalisadoVO> contratosPagadorAnalisado;
 	private Collection<ContratoCobranca> contratosImovelAnalisado;
+	private List<ContratoCobranca> selectedContratos = new ArrayList<ContratoCobranca>();
 	private String contratosLaudo;
 
 	private Date rowEditNewDate;
@@ -9660,30 +9665,31 @@ return valorTotal;
 		}
 		
 		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. DOC")) {
-			int qtdMatriculas = 1;
-			String matriculas = objetoContratoCobranca.getImovel().getNumeroMatricula().trim();
-			if (matriculas.endsWith(",")) {
-				matriculas = matriculas.substring(0, matriculas.lastIndexOf(",")).trim();
-			}
-		
-			qtdMatriculas = matriculas.split(",").length;
-			//se for apartamento é no minimo 3		
-			/*if (CommonsUtil.mesmoValorIgnoreCase("Apartamento", objetoContratoCobranca.getImovel().getTipo()) && qtdMatriculas == 1) {
-				qtdMatriculas = 3;
-			}*/
-
+			calcularPorcentagemImoveis();
+			BigDecimal valorTotalRegistro = BigDecimal.ZERO;
 			RegistroImovelTabelaDao rDao = new RegistroImovelTabelaDao();
-			BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoComite().
-					divide(BigDecimal.valueOf(qtdMatriculas), MathContext.DECIMAL128);
-			BigDecimal valorRegistro = rDao.getValorRegistro(valorPorMatricula);
-			valorRegistro = valorRegistro.multiply(BigDecimal.valueOf(qtdMatriculas));
-			// Emprestimo = financiamento
-			if (CommonsUtil.mesmoValorIgnoreCase("Emprestimo", objetoContratoCobranca.getTipoOperacao()))
-				valorRegistro = valorRegistro.multiply(CommonsUtil.bigDecimalValue(2));
-			if (CommonsUtil.semValor(objetoContratoCobranca.getValorCartorio()) 
-					|| valorRegistro.compareTo(objetoContratoCobranca.getValorCartorio()) > 0) {
-				objetoContratoCobranca.setValorCartorio(valorRegistro);
+			ImovelCobrancaAdicionaisDao imovelCobrancaAdicionaisDao = new ImovelCobrancaAdicionaisDao();
+			for(ImovelCobrancaAdicionais imovelAdicional : objetoContratoCobranca.getListaImoveis()) {
+				BigDecimal porcentagem = imovelAdicional.getPorcentagem().divide(BigDecimal.valueOf(100), MathContext.DECIMAL128);
+				BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoComite().multiply(porcentagem);
+				BigDecimal valorRegistro = rDao.getValorRegistro(valorPorMatricula);
+				valorTotalRegistro = valorTotalRegistro.add(valorRegistro);
+				imovelAdicional.setValorRegistro(valorRegistro);	
+				imovelCobrancaAdicionaisDao.merge(imovelAdicional);
 			}
+			if(!CommonsUtil.semValor(objetoContratoCobranca.getPorcentagemImovelPrincipal())) {
+				BigDecimal porcentagem = objetoContratoCobranca.getPorcentagemImovelPrincipal()
+						.divide(BigDecimal.valueOf(100), MathContext.DECIMAL128);
+				BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoComite().multiply(porcentagem);
+				BigDecimal valorRegistro = rDao.getValorRegistro(valorPorMatricula);
+				valorTotalRegistro = valorTotalRegistro.add(valorRegistro);
+			}
+			
+			if (CommonsUtil.semValor(objetoContratoCobranca.getValorCartorio()) 
+					|| valorTotalRegistro.compareTo(objetoContratoCobranca.getValorCartorio()) > 0) {
+				objetoContratoCobranca.setValorCartorio(valorTotalRegistro);
+			}
+			//calcularRegistroVelho();
 		} 
 		
 		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Registro")) {
@@ -9733,6 +9739,33 @@ return valorTotal;
 			return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusAgPagamentoOperacao.xhtml";
 		} else {
 			return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatus.xhtml";
+		}
+	}
+
+	private void calcularRegistroVelho() {
+		int qtdMatriculas = 1;
+		String matriculas = objetoContratoCobranca.getImovel().getNumeroMatricula().trim();
+		if (matriculas.endsWith(",")) {
+			matriculas = matriculas.substring(0, matriculas.lastIndexOf(",")).trim();
+		}
+
+		qtdMatriculas = matriculas.split(",").length;
+		//se for apartamento é no minimo 3		
+		/*if (CommonsUtil.mesmoValorIgnoreCase("Apartamento", objetoContratoCobranca.getImovel().getTipo()) && qtdMatriculas == 1) {
+			qtdMatriculas = 3;
+		}*/
+
+		RegistroImovelTabelaDao rDao = new RegistroImovelTabelaDao();
+		BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoComite().
+				divide(BigDecimal.valueOf(qtdMatriculas), MathContext.DECIMAL128);
+		BigDecimal valorRegistro = rDao.getValorRegistro(valorPorMatricula);
+		valorRegistro = valorRegistro.multiply(BigDecimal.valueOf(qtdMatriculas));
+		// Emprestimo = financiamento
+		if (CommonsUtil.mesmoValorIgnoreCase("Emprestimo", objetoContratoCobranca.getTipoOperacao()))
+			valorRegistro = valorRegistro.multiply(CommonsUtil.bigDecimalValue(2));
+		if (CommonsUtil.semValor(objetoContratoCobranca.getValorCartorio()) 
+				|| valorRegistro.compareTo(objetoContratoCobranca.getValorCartorio()) > 0) {
+			objetoContratoCobranca.setValorCartorio(valorRegistro);
 		}
 	}
 
@@ -13773,15 +13806,23 @@ return valorTotal;
 	private void gravaCelula(Integer celula, Double value, XSSFRow linha, CellStyle cell_style) {
 		if (linha.getCell(celula) == null)
 			linha.createCell(celula);
-		linha.getCell(celula).setCellValue(value);
+		if(!CommonsUtil.semValor(value)) {
+			linha.getCell(celula).setCellValue(value);
+		} else {
+			linha.getCell(celula).setCellValue(0);
+		}
 		linha.getCell(celula).setCellType(CellType.NUMERIC);
 		linha.getCell(celula).setCellStyle(cell_style);
+		
 	}
 
 	private void gravaCelula(Integer celula, String value, XSSFRow linha) {
 		if (linha.getCell(celula) == null)
 			linha.createCell(celula);
-		linha.getCell(celula).setCellValue(value);
+		if(!CommonsUtil.semValor(value))
+			linha.getCell(celula).setCellValue(value);
+		else 
+			linha.getCell(celula).setCellValue("");
 	}
 
 	private void gravaCelula(Integer celula, String value, XSSFRow linha, CellStyle cell_style) {
@@ -13800,8 +13841,13 @@ return valorTotal;
 	private void gravaCelula(Integer celula, Date value, XSSFRow linha, CellStyle cell_style) {
 		if (linha.getCell(celula) == null)
 			linha.createCell(celula);
-		linha.getCell(celula).setCellValue(value);
-		linha.getCell(celula).setCellStyle(cell_style);
+		if(!CommonsUtil.semValor(value)) {
+			linha.getCell(celula).setCellValue(value);
+			linha.getCell(celula).setCellStyle(cell_style);
+		} else {
+			linha.getCell(celula).setCellValue("");
+		}
+		
 	}
 
 	private void gravaCelula(Integer celula, int value, XSSFRow linha) {
@@ -14321,6 +14367,7 @@ return valorTotal;
 		this.contratosPendentes = new ArrayList<ContratoCobranca>();
 
 		this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosAgPagoOp();
+		this.selectedContratos = new ArrayList<ContratoCobranca>();
 
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
 	}
@@ -19519,7 +19566,8 @@ return valorTotal;
 				StarkBankBoleto starkBankBoleto = starkBankAPI.paymentBoleto(
 						this.objetoBaixaPagamentoStarkBank.getContasPagar().getLinhaDigitavelStarkBank(), this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato(),
 						this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getPagador(), this.objetoBaixaPagamentoStarkBank.getContasPagar().getDescricaoStarkBank(),
-						this.objetoBaixaPagamentoStarkBank.getContasPagar().getNumeroDocumentoPagadorStarkBank());
+						this.objetoBaixaPagamentoStarkBank.getContasPagar().getNumeroDocumentoPagadorStarkBank(),
+						this.objetoBaixaPagamentoStarkBank.getContasPagar().getDescricao());
 
 				if (starkBankBoleto != null) {
 					// this.contasPagarSelecionada.setComprovantePagamentoStarkBank(starkBankBoleto);
@@ -19548,7 +19596,8 @@ return valorTotal;
 						this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getCpfCnpjBancarioContaPagar(),
 						this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getNomeBancarioContaPagar(),
 						this.objetoBaixaPagamentoStarkBank.getContasPagar().getValorPagamento(),
-						this.objetoBaixaPagamentoStarkBank.getContasPagar().getFormaTransferencia());
+						this.objetoBaixaPagamentoStarkBank.getContasPagar().getFormaTransferencia(),
+						this.objetoBaixaPagamentoStarkBank.getContasPagar().getDescricao());
 
 				if (starkBankPix != null) {					
 					StarkBankBaixa baixa = updateBaixaStarkBank(this.objetoBaixaPagamentoStarkBank,							
@@ -19576,7 +19625,8 @@ return valorTotal;
 						this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getCpfCnpjBancarioContaPagar(),
 						this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getNomeBancarioContaPagar(),
 						this.objetoBaixaPagamentoStarkBank.getContasPagar().getValorPagamento(),
-						this.objetoBaixaPagamentoStarkBank.getContasPagar().getFormaTransferencia());
+						this.objetoBaixaPagamentoStarkBank.getContasPagar().getFormaTransferencia(),
+						this.objetoBaixaPagamentoStarkBank.getContasPagar().getDescricao());
 
 				if (starkBankPix != null) {
 					StarkBankBaixa baixa = updateBaixaStarkBank(this.objetoBaixaPagamentoStarkBank,							
@@ -20213,6 +20263,60 @@ return valorTotal;
 	public void removeAverbacao(Averbacao averbacao) {
 		objetoContratoCobranca.getListAverbacao().remove(averbacao);
 		calcularValorTotalAverbacao();
+	}
+	
+	
+	public void clearImovelAdicionarDialog() {
+		ImovelCobranca imovel = new ImovelCobranca(objetoImovelCobranca);
+		imovelAdicional = new ImovelCobrancaAdicionais(imovel);
+	}
+
+	public void addImovel() {
+		ImovelCobrancaAdicionaisDao imovelCobrancaAdicionaisDao = new ImovelCobrancaAdicionaisDao();
+		ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
+		if(imovelAdicional.getImovel().getId() > 0) 
+			imovelCobrancaDao.merge(imovelAdicional.getImovel());
+		else 
+			imovelCobrancaDao.create(imovelAdicional.getImovel());
+		
+		if(imovelAdicional.getId() > 0) 
+			imovelCobrancaAdicionaisDao.merge(imovelAdicional);
+		else 
+			imovelCobrancaAdicionaisDao.create(imovelAdicional);
+			
+		imovelAdicional.setContratoCobranca(objetoContratoCobranca);
+		objetoContratoCobranca.getListaImoveis().add(imovelAdicional);
+		calcularPorcentagemImoveis();
+		imovelAdicional = new ImovelCobrancaAdicionais();
+	}
+
+	public void editImovel(ImovelCobrancaAdicionais imovel) {
+		imovelAdicional = imovel;
+	}
+
+	public void removeImovel(ImovelCobrancaAdicionais imovel) {
+		objetoContratoCobranca.getListaImoveis().remove(imovelAdicional);
+		imovelAdicional.setContratoCobranca(null);
+	}
+	
+	public void calcularPorcentagemImoveis() {
+		ImovelCobrancaAdicionaisDao imovelCobrancaAdicionaisDao = new ImovelCobrancaAdicionaisDao();
+		if(objetoContratoCobranca.getListaImoveis().size() <= 0) {
+			objetoImovelCobranca.setValorMercado(objetoContratoCobranca.getValorMercadoImovel());
+			objetoContratoCobranca.getImovel().setValorMercado(valorMercadoImovel);
+			objetoContratoCobranca.setPorcentagemImovelPrincipal(BigDecimal.valueOf(100));
+			return;
+		}
+		BigDecimal porcentagemTotal = BigDecimal.ZERO;
+		for(ImovelCobrancaAdicionais imovelAdicional : objetoContratoCobranca.getListaImoveis()) {
+			BigDecimal regra3 = BigDecimal.valueOf(100).multiply(imovelAdicional.getImovel().getValorMercado());
+			BigDecimal porcentagem = regra3.divide(valorMercadoImovel, MathContext.DECIMAL128);
+			porcentagem = porcentagem.setScale(2, RoundingMode.HALF_UP);
+			imovelAdicional.setPorcentagem(porcentagem);
+			porcentagemTotal = porcentagemTotal.add(porcentagem);
+			imovelCobrancaAdicionaisDao.merge(imovelAdicional);
+		}
+		objetoContratoCobranca.setPorcentagemImovelPrincipal(BigDecimal.valueOf(100).subtract(porcentagemTotal));
 	}
 
 	public void concluirComite(ContratoCobranca contrato) {
@@ -29045,6 +29149,190 @@ return valorTotal;
 		this.contratoGerado = true;
 	}
 
+	public StreamedContent geraXLSEnviarB3(List<ContratoCobranca> listaContratos) throws IOException {
+		XSSFWorkbook wb = new XSSFWorkbook(getClass().getResourceAsStream("/resource/TabelaVazia.xlsx"));
+		XSSFSheet sheet = wb.getSheetAt(0);
+		XSSFRow linha = sheet.getRow(0);
+		if (linha == null) {
+			sheet.createRow(0);
+			linha = sheet.getRow(0);
+		}
+
+		CellStyle cell_style = wb.createCellStyle();
+		XSSFFont font = wb.createFont();
+		font.setBold(true);
+		font.setFontHeightInPoints((short) 9);
+		cell_style.setFont(font);
+		cell_style.setAlignment(HorizontalAlignment.CENTER);
+		cell_style.setVerticalAlignment(VerticalAlignment.CENTER);
+		cell_style.setBorderBottom(BorderStyle.THIN);
+		cell_style.setBorderTop(BorderStyle.THIN);
+		cell_style.setBorderRight(BorderStyle.THIN);
+		cell_style.setBorderLeft(BorderStyle.THIN);
+		cell_style.setWrapText(true);
+
+		gravaCelula(0, "Data de Emissão", linha, cell_style);
+		gravaCelula(1, "Data de Vencimento", linha, cell_style);
+		gravaCelula(2, "Valor Financeiro de Emissão", linha, cell_style);
+		gravaCelula(3, "Data da Constituição do Crédito", linha, cell_style);
+		gravaCelula(4, "Data de Vencimento do Crédito", linha, cell_style);
+		gravaCelula(5, "Taxa de Juros / Spread", linha, cell_style);
+		gravaCelula(6, "Numeração CCI", linha, cell_style);
+		gravaCelula(7, "Série CCI", linha, cell_style);
+		gravaCelula(8, "Nome ou Razão Social do Devedor", linha, cell_style);
+		gravaCelula(9, "CPF/CNPJ do Devedor", linha, cell_style);
+		gravaCelula(10, "Natureza do Devedor", linha, cell_style);
+		gravaCelula(11, "UF do Endereço do Devedor", linha, cell_style);
+		gravaCelula(12, "Cidade do Devedor", linha, cell_style);
+		gravaCelula(13, "Logradouro do Endereço do Devedor", linha, cell_style);
+		gravaCelula(14, "Número do Endereço do Devedor", linha, cell_style);
+		gravaCelula(15, "Complemento do Endereço do Devedor", linha, cell_style);
+		gravaCelula(16, "Bairro do Endereço do Devedor", linha, cell_style);
+		gravaCelula(17, "CEP do Endereço do Devedor", linha, cell_style);
+		gravaCelula(18, "UF do Endereço do Imóvel", linha, cell_style);
+		gravaCelula(19, "Município do Endereço do Imóvel", linha, cell_style);
+		gravaCelula(20, "Logradouro do Endereço do Imóvel", linha, cell_style);
+		gravaCelula(21, "Número do Endereço do Imóvel", linha, cell_style);
+		gravaCelula(22, "Complemento do Endereço do Imóvel", linha, cell_style);
+		gravaCelula(23, "Bairro do Endereço do Imóvel", linha, cell_style);
+		gravaCelula(24, "CEP do Endereço do Imóvel", linha, cell_style);
+		gravaCelula(25, "Matrícula do Imóvel", linha, cell_style);
+		gravaCelula(26, "Natureza da Garantia (PF ou PJ)", linha, cell_style);
+		gravaCelula(27, "Numero Controle Interno (nº Contrato)", linha, cell_style);
+		
+		// cria estilo especifico para coluna type numérico
+		CellStyle numericStyle = wb.createCellStyle();
+		numericStyle.setFont(font);
+		numericStyle.setAlignment(HorizontalAlignment.CENTER);
+		numericStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		numericStyle.setBorderBottom(BorderStyle.THIN);
+		numericStyle.setBorderTop(BorderStyle.THIN);
+		numericStyle.setBorderRight(BorderStyle.THIN);
+		numericStyle.setBorderLeft(BorderStyle.THIN);
+		numericStyle.setWrapText(true);
+		// cria a formatação para moeda
+		CreationHelper ch = wb.getCreationHelper();
+		numericStyle.setDataFormat(
+				ch.createDataFormat().getFormat("_(R$* #,##0.00_);_(R$* (#,##0.00);_(R$* \"-\"??_);_(@_)"));
+
+		// cria estilo especifico para coluna type numérico
+		CellStyle numberStyle = wb.createCellStyle();
+		numberStyle.setFont(font);
+		numberStyle.setAlignment(HorizontalAlignment.CENTER);
+		numberStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		numberStyle.setBorderBottom(BorderStyle.THIN);
+		numberStyle.setBorderTop(BorderStyle.THIN);
+		numberStyle.setBorderRight(BorderStyle.THIN);
+		numberStyle.setBorderLeft(BorderStyle.THIN);
+		numberStyle.setWrapText(true);
+
+		// cria estilo especifico para coluna type Date
+		CellStyle dateStyle = wb.createCellStyle();
+		dateStyle.setFont(font);
+		dateStyle.setAlignment(HorizontalAlignment.CENTER);
+		dateStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		dateStyle.setBorderBottom(BorderStyle.THIN);
+		dateStyle.setBorderTop(BorderStyle.THIN);
+		dateStyle.setBorderRight(BorderStyle.THIN);
+		dateStyle.setBorderLeft(BorderStyle.THIN);
+		dateStyle.setWrapText(true);
+		// cria a formatação para Date
+		dateStyle.setDataFormat((short) BuiltinFormats.getBuiltinFormat("m/d/yy"));
+
+		int iLinha = 1;
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		int col = 0;
+		for (ContratoCobranca contrato : listaContratos) {
+			col = 0;
+			RelatorioB3 relatorio = contratoCobrancaDao.pegarRelatorioB3(contrato);
+			linha = sheet.getRow(iLinha);
+			if (linha == null) {
+				sheet.createRow(iLinha);
+				linha = sheet.getRow(iLinha);
+			}
+
+			Locale locale = new Locale("pt", "BR");
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", locale);
+			String dataStr = sdf.format(relatorio.dataEmissao);			
+			gravaCelula(col, relatorio.dataEmissao, linha, dateStyle);
+			col++;
+			gravaCelula(col, relatorio.dataVencimento, linha, dateStyle);
+			col++;
+			gravaCelula(col, relatorio.valorEmissao, linha, numberStyle);
+			col++;
+			gravaCelula(col, relatorio.dataConstituicaoCredito, linha, dateStyle);
+			col++;
+			gravaCelula(col, relatorio.dataVencimentoCredito, linha, dateStyle);
+			col++;
+			gravaCelula(col, relatorio.taxaJuros, linha, numberStyle);
+			col++;
+			gravaCelula(col, relatorio.numercaoCci, linha);
+			col++;
+			gravaCelula(col, relatorio.serieCci, linha);
+			col++;
+			gravaCelula(col, relatorio.nomeDevedor, linha);
+			col++;
+			gravaCelula(col, relatorio.cpfCnpjDevedor, linha);
+			col++;
+			gravaCelula(col, relatorio.naturezaDevedor, linha);
+			col++;
+			gravaCelula(col, relatorio.ufDevedor, linha);
+			col++;
+			gravaCelula(col, relatorio.cidadeDevedor, linha);
+			col++;
+			gravaCelula(col, relatorio.logradouroDevedor, linha);
+			col++;
+			gravaCelula(col, relatorio.numeroEnderecoDevedor, linha);
+			col++;
+			gravaCelula(col, relatorio.complementoDevedor, linha);
+			col++;
+			gravaCelula(col, relatorio.bairroDevedor, linha);
+			col++;
+			gravaCelula(col, relatorio.cepDevedor, linha);
+			col++;
+			gravaCelula(col, relatorio.ufImovel, linha);
+			col++;
+			gravaCelula(col, relatorio.municipioImovel, linha);
+			col++;
+			gravaCelula(col, relatorio.logradouroImovel, linha);
+			col++;
+			gravaCelula(col, relatorio.numeroEnderecoImovel, linha);
+			col++;
+			gravaCelula(col, relatorio.complementoImovel, linha);
+			col++;
+			gravaCelula(col, relatorio.bairroImovel, linha);
+			col++;
+			gravaCelula(col, relatorio.cepImovel, linha);
+			col++;
+			gravaCelula(col, relatorio.matriculaImovel, linha);
+			col++;
+			gravaCelula(col, relatorio.naturezaGarantia, linha);
+			col++;
+			gravaCelula(col, relatorio.numeroContrato, linha);
+			col++;
+			iLinha++;
+		}
+		for (int i = 0; i < col; i++) {
+			sheet.autoSizeColumn(i);
+		}
+		
+		for (int i = 0; i < iLinha; i++) {
+			sheet.getRow(i).setHeightInPoints((short) 12);
+		}
+		
+		ByteArrayOutputStream fileOut = new ByteArrayOutputStream();
+		wb.write(fileOut);
+		wb.close();
+		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+				FacesContext.getCurrentInstance());
+		String nomeArquivoDownload = String.format("Galleria Bank - Relatorio B3" +"%s.xlsx", "");
+		gerador.open(nomeArquivoDownload);
+		gerador.feed(new ByteArrayInputStream(fileOut.toByteArray()));
+		gerador.close();
+
+		return null;
+	}
+	
 	public void geraRecibo(ContratoCobrancaDetalhesParcial bpContratoDetalhes) {
 		FacesContext context = FacesContext.getCurrentInstance();
 
@@ -34968,5 +35256,20 @@ return valorTotal;
 	public void setPorcentagemPersonalizada(BigDecimal porcentagemPersonalizada) {
 		this.porcentagemPersonalizada = porcentagemPersonalizada;
 	}
-	
+
+	public List<ContratoCobranca> getSelectedContratos() {
+		return selectedContratos;
+	}
+
+	public void setSelectedContratos(List<ContratoCobranca> selectedContratos) {
+		this.selectedContratos = selectedContratos;
+	}
+
+	public ImovelCobrancaAdicionais getImovelAdicional() {
+		return imovelAdicional;
+	}
+
+	public void setImovelAdicional(ImovelCobrancaAdicionais imovelAdicional) {
+		this.imovelAdicional = imovelAdicional;
+	}
 }

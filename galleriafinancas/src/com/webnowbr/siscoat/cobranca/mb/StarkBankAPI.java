@@ -393,19 +393,23 @@ public class StarkBankAPI{
     	pagador = pDao.findById((long) 7);
     	
     	
-    	paymentBoleto(linhaDigitavel, null, pagador, descricao, null);
+    	paymentBoleto(linhaDigitavel, null, pagador, descricao, null, null);
     	
     	context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Boleto Stark Bank - Pago", ""));
     	
     }
 
-	public StarkBankBoleto paymentBoleto(String boleto, ContratoCobranca contrato, PagadorRecebedor pessoa, String descricao, String documentoPagadorCustom) {
+	public StarkBankBoleto paymentBoleto(String boleto, ContratoCobranca contrato, PagadorRecebedor pessoa, String descricao, String documentoPagadorCustom, String descricaoConta) {
 
 		FacesContext context = FacesContext.getCurrentInstance();
     	StarkBankBoleto boletoTransacao = null;
     	String[] tags = {""};
     	
-    	loginStarkBank();
+    	if (descricaoConta == null || !descricaoConta.equals("Pagamento Carta Split")) {
+    		loginStarkBank();
+    	} else {
+    		loginStarkBankSCD();
+    	}
     	
     	Settings.language = "pt-BR";
 
@@ -509,6 +513,28 @@ public class StarkBankAPI{
 			e1.printStackTrace();
 		}
 	}
+	
+	public static void loginStarkBankSCD() {
+    	Settings.language = "pt-BR";
+    	
+    	String privateKeyContent = "-----BEGIN EC PRIVATE KEY-----\nMHQCAQEEIE56ofDNqzdDCrYEAnwpq2CiEfknPhBV+NTWBtpYEy90oAcGBSuBBAAK\noUQDQgAEsXCtulqc9kC5Tkmy/wuJ6JIq8R+GWJzlqmp/pO4r4i76BFivs4hVBZrS\nD5Sil3MxCjUjKbr95ZxDjuq4dYCBOA==\n-----END EC PRIVATE KEY-----";
+    	
+    	Project project;
+		try {
+			project = new Project(
+				    "production",
+				    //"5465772415516672", // financas
+				    //"5092647223951360", // coban
+				    "6562009682280448",
+				    privateKeyContent
+				);
+			
+	    	Settings.user = project;
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
     
     public static void transfer() {
     	FacesContext context = FacesContext.getCurrentInstance();
@@ -547,16 +573,20 @@ public class StarkBankAPI{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    }
+    }    
     
-    public StarkBankPix paymentPix(String codigoPixBanco, String agencia, String numeroConta, String documento, String nomeBeneficiario, BigDecimal valor, String tipoOperacao) {
+    public StarkBankPix paymentPix(String codigoPixBanco, String agencia, String numeroConta, String documento, String nomeBeneficiario, BigDecimal valor, String tipoOperacao, String descricaoConta) {
     	FacesContext context = FacesContext.getCurrentInstance();
     	
     	List<Transfer> transfers = new ArrayList<>();
 
     	List<Transfer.Rule> rules = new ArrayList<>();
     
-    	loginStarkBank(); 
+    	if (descricaoConta == null || !descricaoConta.equals("Pagamento Carta Split")) {
+    		loginStarkBank();
+    	} else {
+    		loginStarkBankSCD();
+    	}
     	
     	Date dataHoje = DateUtil.gerarDataHoje();
     	
@@ -620,15 +650,19 @@ public class StarkBankAPI{
     	
     	return null;
     }
-    
-    public StarkBankPix paymentTED(String codigoBanco, String agencia, String numeroConta, String documento, String nomeBeneficiario, BigDecimal valor, String tipoOperacao) {
+    	
+    public StarkBankPix paymentTED(String codigoBanco, String agencia, String numeroConta, String documento, String nomeBeneficiario, BigDecimal valor, String tipoOperacao, String descricaoConta) {
     	FacesContext context = FacesContext.getCurrentInstance();
     	
     	List<Transfer> transfers = new ArrayList<>();
 
     	List<Transfer.Rule> rules = new ArrayList<>();
     
-    	loginStarkBank(); 
+    	if (descricaoConta == null || !descricaoConta.equals("Pagamento Carta Split")) {
+    		loginStarkBank();
+    	} else {
+    		loginStarkBankSCD();
+    	}
     	
     	Date dataHoje = DateUtil.gerarDataHoje();
     	

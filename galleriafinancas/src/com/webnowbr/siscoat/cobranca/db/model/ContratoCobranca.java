@@ -169,6 +169,7 @@ public class ContratoCobranca implements Serializable {
 	private Set<DataVistoria> listDatasVistoria;
 	private Set<Averbacao> listAverbacao;
 	private Set<CcbParticipantes> listaParticipantes = new HashSet<>();
+	private Set<ImovelCobrancaAdicionais> listaImoveis = new HashSet<>();
 
 	// n�o persistida a lista abaixo
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionado;
@@ -647,6 +648,7 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal taxaPreDefinida;
 	private BigInteger prazoMaxPreAprovado;
 	private BigDecimal valorMercadoImovel;
+	private BigDecimal porcentagemImovelPrincipal;
 
 	private BigDecimal valorVendaForcadaImovel;
 	private String comentarioJuridico;
@@ -7412,6 +7414,22 @@ public class ContratoCobranca implements Serializable {
 
 	public void setDataContratoAssinado(Date dataContratoAssinado) {
 		this.dataContratoAssinado = dataContratoAssinado;
+	}
+
+	public Set<ImovelCobrancaAdicionais> getListaImoveis() {
+		return listaImoveis;
+	}
+
+	public void setListaImoveis(Set<ImovelCobrancaAdicionais> listaImoveis) {
+		this.listaImoveis = listaImoveis;
+	}
+
+	public BigDecimal getPorcentagemImovelPrincipal() {
+		return porcentagemImovelPrincipal;
+	}
+
+	public void setPorcentagemImovelPrincipal(BigDecimal porcentagemImovelPrincipal) {
+		this.porcentagemImovelPrincipal = porcentagemImovelPrincipal;
 	}
 }
 
