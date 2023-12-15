@@ -48,6 +48,10 @@
 		<property name="simuladorCheckList" type="boolean">
 			<column name="simuladorCheckList" not-null="true" default="false"/>
 		</property>
+		
+		<property name="porcentagem" type="big_decimal">
+			<column name="porcentagem" />
+		</property> 
 		                                      
     </class>
 </hibernate-mapping>

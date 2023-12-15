@@ -1,6 +1,7 @@
 package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 
 public class ImovelCobrancaAdicionais implements Serializable {
@@ -12,6 +13,7 @@ public class ImovelCobrancaAdicionais implements Serializable {
 	private ImovelCobranca imovel = new ImovelCobranca();
 	private ContratoCobranca contratoCobranca;
 	
+	private BigDecimal porcentagem;
 	private String relacaoComGarantia;
 	private boolean comprovanteMatriculaCheckList;
 	private boolean comprovanteFotosImovelCheckList;
@@ -102,7 +104,12 @@ public class ImovelCobrancaAdicionais implements Serializable {
 	public void setSimuladorCheckList(boolean simuladorCheckList) {
 		this.simuladorCheckList = simuladorCheckList;
 	}
-
+	public BigDecimal getPorcentagem() {
+		return porcentagem;
+	}
+	public void setPorcentagem(BigDecimal porcentagem) {
+		this.porcentagem = porcentagem;
+	}
 }
 
 

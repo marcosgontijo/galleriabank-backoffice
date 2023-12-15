@@ -138,6 +138,10 @@
 			lazy="false">
 			<column name="objetoCidade" />
 		</many-to-one>
+		
+		<property name="valorMercado" type="big_decimal">
+			<column name="valorMercado" />
+		</property> 
 
     </class>
 </hibernate-mapping>

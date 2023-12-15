@@ -50,6 +50,7 @@ public class ImovelCobranca implements Serializable {
 	private String nomeProprietario;
 	private BigDecimal valorIptu;
 	private BigDecimal valorCondominio;
+	private BigDecimal valorMercado;
 	private String inscricaoMunicipal;
 	private boolean comprovanteMatriculaCheckList;
 	private boolean comprovanteFotosImovelCheckList;
@@ -777,4 +778,12 @@ public class ImovelCobranca implements Serializable {
 	public String getEnderecoSemNumero() {
 		return enderecoSemNumero;
 	}
+
+	public BigDecimal getValorMercado() {
+		return valorMercado;
+	}
+
+	public void setValorMercado(BigDecimal valorMercado) {
+		this.valorMercado = valorMercado;
+	}	
 }
