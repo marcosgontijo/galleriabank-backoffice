@@ -273,7 +273,10 @@ public class DocumentoAnalise implements Serializable {
 		if (this.pagador.getInicioEmpresa() != null) {
 			str = String.join(" - ", str, calcularIdade(this.pagador.getInicioEmpresa()) + " Anos");
 		}
-		return str;
+		if(!CommonsUtil.semValor(str))
+			return str;
+		else
+			return "Header";
 	}
 	
 	public String calcularIdade(Date data) {

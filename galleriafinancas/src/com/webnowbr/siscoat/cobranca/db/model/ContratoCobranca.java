@@ -169,6 +169,7 @@ public class ContratoCobranca implements Serializable {
 	private Set<DataVistoria> listDatasVistoria;
 	private Set<Averbacao> listAverbacao;
 	private Set<CcbParticipantes> listaParticipantes = new HashSet<>();
+	private Set<ImovelCobrancaAdicionais> listaImoveis = new HashSet<>();
 
 	// n�o persistida a lista abaixo
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionado;
@@ -7413,5 +7414,13 @@ public class ContratoCobranca implements Serializable {
 	public void setDataContratoAssinado(Date dataContratoAssinado) {
 		this.dataContratoAssinado = dataContratoAssinado;
 	}
+
+	public Set<ImovelCobrancaAdicionais> getListaImoveis() {
+		return listaImoveis;
+	}
+
+	public void setListaImoveis(Set<ImovelCobrancaAdicionais> listaImoveis) {
+		this.listaImoveis = listaImoveis;
+	}	
 }
 

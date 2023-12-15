@@ -1171,6 +1171,14 @@
             <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.CcbParticipantes" />
         </set>
         
+        <set name="listaImoveis" table="ImovelCobrancaAdicionais" cascade="all-delete-orphan"
+                 lazy="false" fetch="select">
+            <key>
+                <column name="contratoCobranca" not-null="true" />
+            </key>
+            <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.ImovelCobrancaAdicionais" />
+        </set>
+        
         <property name="tipoCalculoInvestidor1" type="java.lang.String">
 			<column name="tipoCalculoInvestidor1" />
 		</property>

@@ -153,6 +153,7 @@ import com.webnowbr.siscoat.cobranca.db.model.GruposFavorecidos;
 import com.webnowbr.siscoat.cobranca.db.model.GruposPagadores;
 import com.webnowbr.siscoat.cobranca.db.model.IPCA;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.ImovelCobrancaAdicionais;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelEstoque;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorAdicionais;
@@ -184,6 +185,7 @@ import com.webnowbr.siscoat.cobranca.db.op.FilaInvestidoresDao;
 import com.webnowbr.siscoat.cobranca.db.op.GruposFavorecidosDao;
 import com.webnowbr.siscoat.cobranca.db.op.GruposPagadoresDao;
 import com.webnowbr.siscoat.cobranca.db.op.IPCADao;
+import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaAdicionaisDao;
 import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorConsultaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
@@ -361,6 +363,7 @@ public class ContratoCobrancaMB {
 	DocumentoAnalise documentoAnaliseAdicionar;
 	PagadorRecebedorSocio socioSelecionado;
 	PagadorRecebedorAdicionais pagadorSecundarioSelecionado;
+	ImovelCobrancaAdicionais imovelAdicional;
 	String updatePagadorRecebedor = "";
 	String updateResponsavel = "";
 	String tituloPagadorRecebedorDialog = "";
@@ -20223,6 +20226,39 @@ public class ContratoCobrancaMB {
 		objetoContratoCobranca.getListAverbacao().remove(averbacao);
 		calcularValorTotalAverbacao();
 	}
+	
+	
+	public void clearImovelAdicionarDialog() {
+		ImovelCobranca imovel = new ImovelCobranca(objetoImovelCobranca);
+		imovelAdicional = new ImovelCobrancaAdicionais(imovel);
+	}
+
+	public void addImovel() {
+		ImovelCobrancaAdicionaisDao imovelCobrancaAdicionaisDao = new ImovelCobrancaAdicionaisDao();
+		ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
+		if(imovelAdicional.getImovel().getId() > 0) 
+			imovelCobrancaDao.merge(imovelAdicional.getImovel());
+		else 
+			imovelCobrancaDao.create(imovelAdicional.getImovel());
+		
+		if(imovelAdicional.getId() > 0) 
+			imovelCobrancaAdicionaisDao.merge(imovelAdicional);
+		else 
+			imovelCobrancaAdicionaisDao.create(imovelAdicional);
+			
+		imovelAdicional.setContratoCobranca(objetoContratoCobranca);
+		objetoContratoCobranca.getListaImoveis().add(imovelAdicional);
+		imovelAdicional = new ImovelCobrancaAdicionais();
+	}
+
+	public void editImovel(ImovelCobrancaAdicionais imovel) {
+		imovelAdicional = imovel;
+	}
+
+	public void removeImovel(ImovelCobrancaAdicionais imovel) {
+		objetoContratoCobranca.getListaImoveis().remove(imovelAdicional);
+		imovelAdicional.setContratoCobranca(null);
+	}
 
 	public void concluirComite(ContratoCobranca contrato) {
 		BigDecimal maiorTaxaAprovada = BigDecimal.ZERO;
@@ -35168,5 +35204,13 @@ public class ContratoCobrancaMB {
 
 	public void setSelectedContratos(List<ContratoCobranca> selectedContratos) {
 		this.selectedContratos = selectedContratos;
+	}
+
+	public ImovelCobrancaAdicionais getImovelAdicional() {
+		return imovelAdicional;
+	}
+
+	public void setImovelAdicional(ImovelCobrancaAdicionais imovelAdicional) {
+		this.imovelAdicional = imovelAdicional;
 	}
 }

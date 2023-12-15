@@ -3260,6 +3260,46 @@
 
 					</h:panelGrid>
 				</p:panel>
+				
+				<h:panelGroup id="ImovelAdicionarPanel"
+					style="margin-bottom:20px;">
+					<p:panel header="Adicionar Matriculas"
+						rendered="#{( usuarioMB.objetoUsuario.administrador or contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro')}">
+						<p:commandButton icon="ui-icon-plus" style="margin-left: 10px;"
+							action="#{contratoCobrancaMB.clearImovelAdicionarDialog()}"
+							oncomplete="PF('imovelAdiconalDialog').show();"
+							update="imovelAdiconalForm">
+						</p:commandButton>
+							
+						<p:dataTable var="imovelAdd" id="imovelAdicionarDV"
+							value="#{contratoCobrancaMB.objetoContratoCobranca.listaImoveis}" 
+							paginator="false" style="width: 1200px; max-width: 100%"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+							<p:column style="text-align: center;width:175px;"
+								headerText="N° Matricula">
+								<p:outputLabel value="#{imovelAdd.imovel.numeroMatricula}"
+									style="FONT-SIZE: 10pt;" />
+							</p:column>
+							
+							<p:column style="text-align: center;width:75px;"
+								headerText=" Valor Estimado: ">
+								<p:outputLabel value="#{imovelAdd.imovel.valoEstimado}"
+									style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+							</p:column>
+							
+							<p:column style="text-align: center;width:75px;" headerText="">
+								<p:commandButton icon="ui-icon-pencil"
+									action="#{contratoCobrancaMB.editImovel(imovelAdd)}"
+									oncomplete="PF('imovelAdiconalDialog').show();"
+									update="imovelAdiconalForm" />
+
+								<p:commandButton icon="ui-icon-trash"
+									action="#{contratoCobrancaMB.removeImovel(imovelAdd)}"
+									update="form:ImovelAdicionarPanel" />
+							</p:column>
+						</p:dataTable>
+					</p:panel>
+				</h:panelGroup>
 
 				<h:panelGroup id="Dados">
 					<p:panel header="Dados do Contrato" style="margin-bottom:10px;"
@@ -3930,7 +3970,7 @@
 
 									<p:outputLabel for="ContaResp" value="Conta: "
 										styleClass="labelBold">
-										<i class="fa font-solid #{pagadorRecebedorMB.objetoPagadorRecebedor.contaBancariaValidada?'fa-check green':'fa-ban red'}"
+										<i class="fa font-solid #{contratoCobrancaMB.objetoContratoCobranca.responsavel.contaBancariaValidada?'fa-check green':'fa-ban red'}"
 											id="contaValidacao" />
 									</p:outputLabel>
 									
@@ -6345,6 +6385,10 @@
 				</h:panelGroup>
 			</h:form>
 		</p:dialog>
+		
+		<ui:include src="../../Dialog/ImovelCobrancaAdicionaisDialog.xhtml">
+			<ui:param name="mbean" value="#{contratoCobrancaMB}"></ui:param>		
+		</ui:include>
 		
 	</ui:define>
 </ui:composition>
