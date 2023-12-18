@@ -74,6 +74,8 @@ import com.webnowbr.siscoat.exception.SiscoatException;
 import br.com.galleriabank.bigdata.cliente.model.processos.AcaoJudicial;
 import br.com.galleriabank.bigdata.cliente.model.processos.ProcessoParte;
 import br.com.galleriabank.bigdata.cliente.model.processos.ProcessoResult;
+import br.com.galleriabank.drcalc.cliente.model.DebitosJudiciais;
+import br.com.galleriabank.drcalc.cliente.model.DebitosJudiciaisRequest;
 
 //import net.sf.jasperreports.engine.util.ExpressionParser;
 
@@ -494,10 +496,22 @@ public class PajuService {
 				return sLinha + " ." + svalor;
 			} else if (CommonsUtil.semValor(acao.getValue())) {
 				svalor = svalor + " Valor: sem valor localiado";
-			} else
+			} else {
 				svalor = svalor + " Valor: "
 						+ CommonsUtil.formataValorMonetario(CommonsUtil.bigDecimalValue(acao.getValue()), "");
+				DebitosJudiciaisRequest debitosJudiciaisRequest = new DebitosJudiciaisRequest();
+				debitosJudiciaisRequest.setHonorario( CommonsUtil.bigDecimalValue(10));
+				debitosJudiciaisRequest.setVencimento( "0101" +  numeroProcesso.substring(11,15) );
+				debitosJudiciaisRequest.setValor( CommonsUtil.bigDecimalValue(acao.getValue()));
+				DrCalcService drCalcService = new DrCalcService();
+				DebitosJudiciais debitosJudiciais  = drCalcService.criarConsultaAtualizacaoMonetaria(debitosJudiciaisRequest);
 
+				if (debitosJudiciais != null) {
+					svalor = svalor + " - valor em  " + debitosJudiciais.getMes() + " de "
+							+ debitosJudiciais.getAno() + ": "
+							+ CommonsUtil.formataValorMonetario(debitosJudiciais.getTotal(), "");
+				}
+			}
 			ProcessoParte processoParte = acao.getParties().stream()
 					.filter(p -> CommonsUtil.mesmoValor(p.getType(), "CLAIMANT")).findFirst().orElse(null);
 			if (processoParte != null)
@@ -749,6 +763,20 @@ public class PajuService {
 									sLinha = sLinha + processoParte.getName();
 								sLinha = sLinha + " - Valor - " + CommonsUtil
 										.formataValorMonetario(CommonsUtil.bigDecimalValue(acao.getValue()), "");
+								
+								DebitosJudiciaisRequest debitosJudiciaisRequest = new DebitosJudiciaisRequest();
+								debitosJudiciaisRequest.setHonorario( CommonsUtil.bigDecimalValue(10));
+								debitosJudiciaisRequest.setVencimento( "0101" +   valores.getValue().get(0).substring(11,15) );
+								debitosJudiciaisRequest.setValor( CommonsUtil.bigDecimalValue(acao.getValue()));
+								DrCalcService drCalcService = new DrCalcService();
+								DebitosJudiciais debitosJudiciais  = drCalcService.criarConsultaAtualizacaoMonetaria(debitosJudiciaisRequest);
+
+								if (debitosJudiciais != null) {
+									sLinha = sLinha + " - valor em  " + debitosJudiciais.getMes() + " de "
+											+ debitosJudiciais.getAno() + ": "
+											+ CommonsUtil.formataValorMonetario(debitosJudiciais.getTotal(), "");
+								}
+								
 								pdfLines.add(sLinha);
 							} else {
 								String sLinha = "Processo: " + valores.getValue().get(0)
@@ -811,6 +839,20 @@ public class PajuService {
 									sLinha = sLinha + processoParte.getName();
 								sLinha = sLinha + " - Valor - " + CommonsUtil
 										.formataValorMonetario(CommonsUtil.bigDecimalValue(acao.getValue()), "");
+								
+								DebitosJudiciaisRequest debitosJudiciaisRequest = new DebitosJudiciaisRequest();
+								debitosJudiciaisRequest.setHonorario( CommonsUtil.bigDecimalValue(10));
+								debitosJudiciaisRequest.setVencimento( "0101" +   valores.getValue().substring(11,15) );
+								debitosJudiciaisRequest.setValor( CommonsUtil.bigDecimalValue(acao.getValue()));
+								DrCalcService drCalcService = new DrCalcService();
+								DebitosJudiciais debitosJudiciais  = drCalcService.criarConsultaAtualizacaoMonetaria(debitosJudiciaisRequest);
+
+								if (debitosJudiciais != null) {
+									sLinha = sLinha + " - valor em  " + debitosJudiciais.getMes() + " de "
+											+ debitosJudiciais.getAno() + ": "
+											+ CommonsUtil.formataValorMonetario(debitosJudiciais.getTotal(), "");
+								}
+								
 								pdfLines.add(sLinha);
 							} else {
 								String sLinha = "Processo: " + valores.getValue()
@@ -922,6 +964,24 @@ public class PajuService {
 										sLinha = sLinha + processoParte.getName();
 									sLinha = sLinha + " - Valor - " + CommonsUtil
 											.formataValorMonetario(CommonsUtil.bigDecimalValue(acao.getValue()), "");
+									
+									DebitosJudiciaisRequest debitosJudiciaisRequest = new DebitosJudiciaisRequest();
+									debitosJudiciaisRequest.setHonorario( CommonsUtil.bigDecimalValue(10));
+									debitosJudiciaisRequest.setVencimento( "0101" +  line.trim().substring(11,15) );
+									debitosJudiciaisRequest.setValor( CommonsUtil.bigDecimalValue(acao.getValue()));
+									DrCalcService drCalcService = new DrCalcService();
+									DebitosJudiciais debitosJudiciais  = drCalcService.criarConsultaAtualizacaoMonetaria(debitosJudiciaisRequest);
+
+									if (debitosJudiciais != null) {
+
+										sLinha = sLinha + " - valor em  " + debitosJudiciais.getMes() + " de "
+												+ debitosJudiciais.getAno() + ": "
+												+ CommonsUtil.formataValorMonetario(debitosJudiciais.getTotal(), "");
+										
+									}
+									
+									
+									
 									certidoesPaju.getDebitosDocumento().add(sLinha);
 								} else {
 									String sLinha = "Processo: " + line.trim() + " - não listado na Consulta Processos";

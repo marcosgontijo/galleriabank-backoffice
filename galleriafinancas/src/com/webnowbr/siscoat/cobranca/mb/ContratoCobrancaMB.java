@@ -199,6 +199,7 @@ import com.webnowbr.siscoat.cobranca.service.BigDataService;
 import com.webnowbr.siscoat.cobranca.service.CepService;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.cobranca.service.DocumentoAnaliseService;
+import com.webnowbr.siscoat.cobranca.service.DrCalcService;
 import com.webnowbr.siscoat.cobranca.service.EngineService;
 import com.webnowbr.siscoat.cobranca.service.FileService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
@@ -238,6 +239,8 @@ import com.webnowbr.siscoat.simulador.SimulacaoIPCADadosV2;
 import com.webnowbr.siscoat.simulador.SimulacaoVO;
 import com.webnowbr.siscoat.simulador.SimuladorMB;
 
+import br.com.galleriabank.drcalc.cliente.model.DebitosJudiciais;
+import br.com.galleriabank.drcalc.cliente.model.DebitosJudiciaisRequest;
 import br.com.galleriabank.jwt.common.JwtUtil;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -19520,12 +19523,12 @@ return valorTotal;
 		}
 		*/
 
-		if (this.objetoContratoCobranca.getPixCartaSplit() != null || !this.objetoContratoCobranca.getPixCartaSplit().equals("")) {
+		if (this.objetoContratoCobranca.getPixCartaSplitGalleria() != null || !this.objetoContratoCobranca.getPixCartaSplitGalleria().equals("")) {
 			contaCartaSplit.setFormaTransferencia("PIX");
 			
 			StarkBankBaixa baixa = registraBaixaStarkBank(DateUtil.gerarDataHoje(),
-						this.objetoContratoCobranca.getCpfCnpjBancarioCartaSplit(), null, null,
-						contaCartaSplit.getNomeTed(), this.objetoContratoCobranca.getValorCartaSplit(),
+						this.objetoContratoCobranca.getCpfCnpjBancarioCartaSplitGalleria(), null, null,
+						contaCartaSplit.getNomeTed(), this.objetoContratoCobranca.getValorCartaSplitGalleria(),
 						contaCartaSplit, "PIX", "Aguardando Aprovação");
 
 				contaCartaSplit.getListContasPagarBaixas().add(baixa);
@@ -19535,8 +19538,8 @@ return valorTotal;
 		} else {
 			contaCartaSplit.setFormaTransferencia("TED");
 				StarkBankBaixa baixa = registraBaixaStarkBank(DateUtil.gerarDataHoje(),
-						this.objetoContratoCobranca.getCpfCnpjBancarioCartaSplit(), null, null,
-						contaCartaSplit.getNomeTed(), this.objetoContratoCobranca.getValorCartaSplit(),
+						this.objetoContratoCobranca.getCpfCnpjBancarioCartaSplitGalleria(), null, null,
+						contaCartaSplit.getNomeTed(), this.objetoContratoCobranca.getValorCartaSplitGalleria(),
 						contaCartaSplit, "TED", "Aguardando Aprovação");
 
 				contaCartaSplit.getListContasPagarBaixas().add(baixa);
@@ -20306,21 +20309,38 @@ return valorTotal;
 	}
 	
 	public void atualizarValorProcesso() {
-		if(CommonsUtil.semValor(processoSelecionado.getNumero()))
-			return;
-		if(CommonsUtil.semValor(processoSelecionado.getValor()))
-			return;
+//		if(CommonsUtil.semValor(processoSelecionado.getNumero()))
+//			return;
+//		if(CommonsUtil.semValor(processoSelecionado.getValor()))
+//			return;
+//		String[] numeroArray = processoSelecionado.getNumero().split("\\.");
+//		if(numeroArray.length <= 1) 
+//			return;
+//		String ano = numeroArray[1];
+//		Date dataProcesso = DateUtil.getFirstDayOfYear(CommonsUtil.intValue(CommonsUtil.somenteNumeros(ano)));
+//		Date hoje = DateUtil.gerarDataHoje();
+//		BigDecimal valorPresente = calcularValorPresente(dataProcesso, hoje, 
+//				processoSelecionado.getValor(), BigDecimal.valueOf(1));
+//		valorPresente = valorPresente.multiply(BigDecimal.valueOf(1.1));
+//		valorPresente = valorPresente.setScale(2, BigDecimal.ROUND_HALF_UP);
+//		processoSelecionado.setValorAtualizado(valorPresente);
+		
+		
 		String[] numeroArray = processoSelecionado.getNumero().split("\\.");
 		if(numeroArray.length <= 1) 
 			return;
 		String ano = numeroArray[1];
-		Date dataProcesso = DateUtil.getFirstDayOfYear(CommonsUtil.intValue(CommonsUtil.somenteNumeros(ano)));
-		Date hoje = DateUtil.gerarDataHoje();
-		BigDecimal valorPresente = calcularValorPresente(dataProcesso, hoje, 
-				processoSelecionado.getValor(), BigDecimal.valueOf(1));
-		valorPresente = valorPresente.multiply(BigDecimal.valueOf(1.1));
-		valorPresente = valorPresente.setScale(2, BigDecimal.ROUND_HALF_UP);
-		processoSelecionado.setValorAtualizado(valorPresente);
+		DebitosJudiciaisRequest debitosJudiciaisRequest = new DebitosJudiciaisRequest();
+		debitosJudiciaisRequest.setHonorario( CommonsUtil.bigDecimalValue(10));
+		debitosJudiciaisRequest.setVencimento( "0101" + ano );
+		debitosJudiciaisRequest.setValor( CommonsUtil.bigDecimalValue(processoSelecionado.getValor()));
+		DrCalcService drCalcService = new DrCalcService();
+		DebitosJudiciais debitosJudiciais  = drCalcService.criarConsultaAtualizacaoMonetaria(debitosJudiciaisRequest);
+
+		if (debitosJudiciais != null) {
+			processoSelecionado.setValorAtualizado(debitosJudiciais.getTotal());
+		}
+		
 	}
 
 	public void editProcesso(CcbProcessosJudiciais processo) {
