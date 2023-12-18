@@ -19517,12 +19517,12 @@ return valorTotal;
 		}
 		*/
 
-		if (this.objetoContratoCobranca.getPixCartaSplit() != null || !this.objetoContratoCobranca.getPixCartaSplit().equals("")) {
+		if (this.objetoContratoCobranca.getPixCartaSplitGalleria() != null || !this.objetoContratoCobranca.getPixCartaSplitGalleria().equals("")) {
 			contaCartaSplit.setFormaTransferencia("PIX");
 			
 			StarkBankBaixa baixa = registraBaixaStarkBank(DateUtil.gerarDataHoje(),
-						this.objetoContratoCobranca.getCpfCnpjBancarioCartaSplit(), null, null,
-						contaCartaSplit.getNomeTed(), this.objetoContratoCobranca.getValorCartaSplit(),
+						this.objetoContratoCobranca.getCpfCnpjBancarioCartaSplitGalleria(), null, null,
+						contaCartaSplit.getNomeTed(), this.objetoContratoCobranca.getValorCartaSplitGalleria(),
 						contaCartaSplit, "PIX", "Aguardando Aprovação");
 
 				contaCartaSplit.getListContasPagarBaixas().add(baixa);
@@ -19532,8 +19532,8 @@ return valorTotal;
 		} else {
 			contaCartaSplit.setFormaTransferencia("TED");
 				StarkBankBaixa baixa = registraBaixaStarkBank(DateUtil.gerarDataHoje(),
-						this.objetoContratoCobranca.getCpfCnpjBancarioCartaSplit(), null, null,
-						contaCartaSplit.getNomeTed(), this.objetoContratoCobranca.getValorCartaSplit(),
+						this.objetoContratoCobranca.getCpfCnpjBancarioCartaSplitGalleria(), null, null,
+						contaCartaSplit.getNomeTed(), this.objetoContratoCobranca.getValorCartaSplitGalleria(),
 						contaCartaSplit, "TED", "Aguardando Aprovação");
 
 				contaCartaSplit.getListContasPagarBaixas().add(baixa);
