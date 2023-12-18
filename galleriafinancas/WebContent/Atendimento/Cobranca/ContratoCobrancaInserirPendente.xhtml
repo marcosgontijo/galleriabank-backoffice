@@ -1683,7 +1683,7 @@
 
 							<p:dataView var="pessoasProcessos2" id="pessoasProcessos2"
 								value="#{contratoCobrancaMB.pessoasProcessos}" paginator="false"
-								layout="list"
+								layout="list" style="width: 1200px; max-width: 100%"
 								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
 								<p:dataViewListItem>
 									<p:outputLabel value="#{pessoasProcessos2.nome}"
@@ -1694,7 +1694,7 @@
 										style="FONT-SIZE: 15pt;" styleClass="labelBold"
 										converter="bigDecimalConverter" />
 									<p:dataTable var="processosPessoas2" id="processosPessoas2"
-										value="#{pessoasProcessos2.processos}" style="width:700px;"
+										value="#{pessoasProcessos2.processos}" 
 										size="small" sortBy="#{processosPessoas2.id}"
 										sortOrder="ascending"
 										rowStyleClass="#{(processosPessoas2.selecionadoComite eq false

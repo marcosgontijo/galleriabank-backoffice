@@ -1084,7 +1084,7 @@
 							</h:panelGrid>
 							<p:dataView var="pessoasProcessos" id="pessoasProcessos"
 								value="#{contratoCobrancaMB.pessoasProcessos}" paginator="false"
-								layout="list"
+								layout="list"  style="width: 1200px; max-width: 100%"
 								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
 								<p:dataViewListItem>
 									<p:outputLabel value="#{pessoasProcessos.nome}"
@@ -1095,7 +1095,7 @@
 										style="FONT-SIZE: 15pt;" styleClass="labelBold"
 										converter="bigDecimalConverter" />
 									<p:dataTable var="processosPessoas" id="processosPessoas"
-										value="#{pessoasProcessos.processos}" style="width:700px;"
+										value="#{pessoasProcessos.processos}"
 										size="small" sortBy="#{processosPessoas.id}"
 										sortOrder="ascending">
 
