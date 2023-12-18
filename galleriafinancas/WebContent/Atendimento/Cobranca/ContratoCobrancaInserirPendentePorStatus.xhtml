@@ -1056,7 +1056,6 @@
 				<!-- painel de analise de documento -->
 				<ui:include src="ContratoCobrancaAnaliseDocumento.xhtml"></ui:include>
 
-
 				<h:panelGroup id="comentarioComitePanel" style="margin-bottom:20px;">
 					<p:panel header="Comentário Comitê"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite.size() > 0 and ( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'))}">
@@ -1668,7 +1667,7 @@
 								</p:inputText>
 
 								<p:outputLabel for="valorMercadoImovel"
-									value="Valor de mercado do imóvel: " styleClass="labelBold" />
+									value="Valor de mercado total dos imóveis: " styleClass="labelBold" />
 								<p:inputText id="valorMercadoImovel"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.valorMercadoImovel}"
 									onkeypress="return isNumberKey(event);"
@@ -3217,6 +3216,15 @@
 							onkeypress="return isNumberKey(event);"
 							onkeydown="FormataValor(this, 13, event, 2);"
 							converter="bigDecimalConverter" />
+							
+						<p:outputLabel for="valorMercadoObjImovel"
+							value="Valor de mercado do imóvel: " styleClass="labelBold" />
+						<p:inputText id="valorMercadoObjImovel"
+							value="#{contratoCobrancaMB.objetoImovelCobranca.valorMercado}"
+							onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);"
+							converter="bigDecimalConverter"
+							style="FONT-SIZE: 10pt;width:300px;" />
 
 						<p:outputLabel for="dataCompra" value="Data da compra do Imóvel " />
 						<h:panelGroup>
@@ -3260,6 +3268,66 @@
 
 					</h:panelGrid>
 				</p:panel>
+				
+				<h:panelGroup id="ImovelAdicionarPanel"
+					style="margin-bottom:20px;">
+					<p:panel header="Adicionar Matriculas"
+						rendered="#{( usuarioMB.objetoUsuario.administrador or contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro')}">
+						<p:commandButton icon="ui-icon-plus" style="margin-left: 10px;"
+							action="#{contratoCobrancaMB.clearImovelAdicionarDialog()}"
+							oncomplete="PF('imovelAdiconalDialog').show();"
+							update="imovelAdiconalForm">
+						</p:commandButton>
+						
+						<p:outputLabel value="Imovel Principal: " styleClass="labelBold" style="FONT-SIZE: 10pt;" />
+						<p:outputLabel value="Porcentagem: " style="FONT-SIZE: 10pt;" />
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.porcentagemImovelPrincipal}"
+							style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+						<p:outputLabel value="% - Registro: R$ " style="FONT-SIZE: 10pt;" />
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.valorRegistroImovelPrincipal}"
+							style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+							
+						<p:dataTable var="imovelAdd" id="imovelAdicionarDV"
+							value="#{contratoCobrancaMB.objetoContratoCobranca.listaImoveis}" 
+							paginator="false" style="width: 1200px; max-width: 100%"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+							<p:column style="text-align: center;width:175px;"
+								headerText="N° Matricula">
+								<p:outputLabel value="#{imovelAdd.imovel.numeroMatricula}"
+									style="FONT-SIZE: 10pt;" />
+							</p:column>
+							
+							<p:column style="text-align: center;width:75px;"
+								headerText=" Valor de Mercado: ">
+								<p:outputLabel value="#{imovelAdd.imovel.valorMercado}"
+									style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+							</p:column>
+							
+							<p:column style="text-align: center;width:75px;"
+								headerText="Porcentagem do valor total: ">
+								<p:outputLabel value="#{imovelAdd.porcentagem}"
+									style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+							</p:column>
+							
+							<p:column style="text-align: center;width:75px;"
+								headerText=" Valor Registro: ">
+								<p:outputLabel value="#{imovelAdd.valorRegistro}"
+									style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+							</p:column>
+							
+							<p:column style="text-align: center;width:75px;" headerText="">
+								<p:commandButton icon="ui-icon-pencil"
+									action="#{contratoCobrancaMB.editImovel(imovelAdd)}"
+									oncomplete="PF('imovelAdiconalDialog').show();"
+									update="imovelAdiconalForm" />
+
+								<p:commandButton icon="ui-icon-trash"
+									action="#{contratoCobrancaMB.removeImovel(imovelAdd)}"
+									update="form:ImovelAdicionarPanel" />
+							</p:column>
+						</p:dataTable>
+					</p:panel>
+				</h:panelGroup>
 
 				<h:panelGroup id="Dados">
 					<p:panel header="Dados do Contrato" style="margin-bottom:10px;"
@@ -3930,7 +3998,7 @@
 
 									<p:outputLabel for="ContaResp" value="Conta: "
 										styleClass="labelBold">
-										<i class="fa font-solid #{pagadorRecebedorMB.objetoPagadorRecebedor.contaBancariaValidada?'fa-check green':'fa-ban red'}"
+										<i class="fa font-solid #{contratoCobrancaMB.objetoContratoCobranca.responsavel.contaBancariaValidada?'fa-check green':'fa-ban red'}"
 											id="contaValidacao" />
 									</p:outputLabel>
 									
@@ -6345,6 +6413,10 @@
 				</h:panelGroup>
 			</h:form>
 		</p:dialog>
+		
+		<ui:include src="../../Dialog/ImovelCobrancaAdicionaisDialog.xhtml">
+			<ui:param name="mbean" value="#{contratoCobrancaMB}"></ui:param>		
+		</ui:include>
 		
 	</ui:define>
 </ui:composition>

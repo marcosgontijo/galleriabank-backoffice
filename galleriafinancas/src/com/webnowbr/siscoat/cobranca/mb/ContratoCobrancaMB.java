@@ -153,6 +153,7 @@ import com.webnowbr.siscoat.cobranca.db.model.GruposFavorecidos;
 import com.webnowbr.siscoat.cobranca.db.model.GruposPagadores;
 import com.webnowbr.siscoat.cobranca.db.model.IPCA;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.ImovelCobrancaAdicionais;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelEstoque;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorAdicionais;
@@ -184,6 +185,7 @@ import com.webnowbr.siscoat.cobranca.db.op.FilaInvestidoresDao;
 import com.webnowbr.siscoat.cobranca.db.op.GruposFavorecidosDao;
 import com.webnowbr.siscoat.cobranca.db.op.GruposPagadoresDao;
 import com.webnowbr.siscoat.cobranca.db.op.IPCADao;
+import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaAdicionaisDao;
 import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorConsultaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
@@ -361,6 +363,7 @@ public class ContratoCobrancaMB {
 	DocumentoAnalise documentoAnaliseAdicionar;
 	PagadorRecebedorSocio socioSelecionado;
 	PagadorRecebedorAdicionais pagadorSecundarioSelecionado;
+	ImovelCobrancaAdicionais imovelAdicional;
 	String updatePagadorRecebedor = "";
 	String updateResponsavel = "";
 	String tituloPagadorRecebedorDialog = "";
@@ -9464,7 +9467,8 @@ public class ContratoCobrancaMB {
 	public void calculaPorcentagemImovel() {
 		porcentagem = new ArrayList<>();
 		BigDecimal porcentagemLimite = new BigDecimal(100);
-		BigDecimal	valorSugerido = gerarRecomendacaoComite();
+		BigDecimal recomendacao = gerarRecomendacaoComite();
+		BigDecimal	valorSugerido = recomendacao.subtract(recomendacao.remainder(new BigDecimal(5000)));
 		
 		if(porcentagemPersonalizada == null) {
 			porcentagemPersonalizada = BigDecimal.ZERO;
@@ -9478,17 +9482,26 @@ public class ContratoCobrancaMB {
 		  valorMercaoImovelPorcento = objetoContratoCobranca.getValorMercadoImovel().divide(new BigDecimal(100));
 		  porcentagem.add(new PorcentagemImovel("Valor do imóvel: ", objetoContratoCobranca.getValorMercadoImovel(),false,false));
 		  porcentagem.add(new PorcentagemImovel("Recomendado:", valorSugerido, true,false ));
-		  porcentagem.add(new PorcentagemImovel("LTV 30%:", valorMercaoImovelPorcento.multiply(new BigDecimal(30)),true,false));
-		  porcentagem.add(new PorcentagemImovel("LTV 35%:", valorMercaoImovelPorcento.multiply(new BigDecimal(35)),true,false));
-		  porcentagem.add(new PorcentagemImovel("LTV 40%:", valorMercaoImovelPorcento.multiply(new BigDecimal(40)),true,false));
-		  porcentagem.add(new PorcentagemImovel("LTV 45%:", valorMercaoImovelPorcento.multiply(new BigDecimal(45)),true,false));
-		  porcentagem.add(new PorcentagemImovel("LTV 50%:", valorMercaoImovelPorcento.multiply(new BigDecimal(50)),true,false));
+		  porcentagem.add(new PorcentagemImovel("LTV 20%:", calculaValorLTV(new BigDecimal(20)),true,false));
+		  porcentagem.add(new PorcentagemImovel("LTV 30%:", calculaValorLTV(new BigDecimal(30)),true,false));
+		  porcentagem.add(new PorcentagemImovel("LTV 35%:", calculaValorLTV(new BigDecimal(35)),true,false));
+		  porcentagem.add(new PorcentagemImovel("LTV 40%:", calculaValorLTV(new BigDecimal(40)),true,false));
+		  porcentagem.add(new PorcentagemImovel("LTV 45%:", calculaValorLTV(new BigDecimal(45)),true,false));
+		  porcentagem.add(new PorcentagemImovel("LTV 50%:", calculaValorLTV(new BigDecimal(50)),true,false));
 		  if(porcentagemPersonalizada != null) {
-		  porcentagem.add(new PorcentagemImovel("Personalizado", valorMercaoImovelPorcento.multiply(porcentagemPersonalizada), true, true));
+		  porcentagem.add(new PorcentagemImovel("Personalizado", calculaValorLTV(porcentagemPersonalizada), true, true));
 		  } 
 		  porcentagemPersonalizada = BigDecimal.ZERO;
 		 
 	}
+	public BigDecimal calculaValorLTV(BigDecimal divisor) {
+		valorMercaoImovelPorcento = objetoContratoCobranca.getValorMercadoImovel().divide(new BigDecimal(100));
+	BigDecimal valorPorcentagem =	valorMercaoImovelPorcento.multiply(divisor);
+	
+BigDecimal valorDividido = valorPorcentagem.remainder(new BigDecimal(5000));
+BigDecimal valorTotal = valorPorcentagem.subtract(valorDividido);
+return valorTotal;
+}
 
 
 	public List<PorcentagemImovel> getPorcentagem() {
@@ -9652,30 +9665,34 @@ public class ContratoCobrancaMB {
 		}
 		
 		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. DOC")) {
-			int qtdMatriculas = 1;
-			String matriculas = objetoContratoCobranca.getImovel().getNumeroMatricula().trim();
-			if (matriculas.endsWith(",")) {
-				matriculas = matriculas.substring(0, matriculas.lastIndexOf(",")).trim();
-			}
-		
-			qtdMatriculas = matriculas.split(",").length;
-			//se for apartamento é no minimo 3		
-			/*if (CommonsUtil.mesmoValorIgnoreCase("Apartamento", objetoContratoCobranca.getImovel().getTipo()) && qtdMatriculas == 1) {
-				qtdMatriculas = 3;
-			}*/
-
+			calcularPorcentagemImoveis();
+			BigDecimal valorTotalRegistro = BigDecimal.ZERO;
 			RegistroImovelTabelaDao rDao = new RegistroImovelTabelaDao();
-			BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoComite().
-					divide(BigDecimal.valueOf(qtdMatriculas), MathContext.DECIMAL128);
-			BigDecimal valorRegistro = rDao.getValorRegistro(valorPorMatricula);
-			valorRegistro = valorRegistro.multiply(BigDecimal.valueOf(qtdMatriculas));
-			// Emprestimo = financiamento
-			if (CommonsUtil.mesmoValorIgnoreCase("Emprestimo", objetoContratoCobranca.getTipoOperacao()))
-				valorRegistro = valorRegistro.multiply(CommonsUtil.bigDecimalValue(2));
-			if (CommonsUtil.semValor(objetoContratoCobranca.getValorCartorio()) 
-					|| valorRegistro.compareTo(objetoContratoCobranca.getValorCartorio()) > 0) {
-				objetoContratoCobranca.setValorCartorio(valorRegistro);
+			ImovelCobrancaAdicionaisDao imovelCobrancaAdicionaisDao = new ImovelCobrancaAdicionaisDao();
+			for(ImovelCobrancaAdicionais imovelAdicional : objetoContratoCobranca.getListaImoveis()) {
+				if(CommonsUtil.semValor(imovelAdicional.getPorcentagem()))
+						continue;
+				BigDecimal porcentagem = imovelAdicional.getPorcentagem().divide(BigDecimal.valueOf(100), MathContext.DECIMAL128);
+				BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoComite().multiply(porcentagem);
+				BigDecimal valorRegistro = rDao.getValorRegistro(valorPorMatricula);
+				valorTotalRegistro = valorTotalRegistro.add(valorRegistro);
+				imovelAdicional.setValorRegistro(valorRegistro);	
+				imovelCobrancaAdicionaisDao.merge(imovelAdicional);
 			}
+			if(!CommonsUtil.semValor(objetoContratoCobranca.getPorcentagemImovelPrincipal())) {
+				BigDecimal porcentagem = objetoContratoCobranca.getPorcentagemImovelPrincipal()
+						.divide(BigDecimal.valueOf(100), MathContext.DECIMAL128);
+				BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoComite().multiply(porcentagem);
+				BigDecimal valorRegistro = rDao.getValorRegistro(valorPorMatricula);
+				valorTotalRegistro = valorTotalRegistro.add(valorRegistro);
+				objetoContratoCobranca.setValorRegistroImovelPrincipal(valorRegistro);
+			}
+			
+			if (CommonsUtil.semValor(objetoContratoCobranca.getValorCartorio()) 
+					|| valorTotalRegistro.compareTo(objetoContratoCobranca.getValorCartorio()) > 0) {
+				objetoContratoCobranca.setValorCartorio(valorTotalRegistro);
+			}
+			//calcularRegistroVelho();
 		} 
 		
 		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Registro")) {
@@ -9725,6 +9742,33 @@ public class ContratoCobrancaMB {
 			return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusAgPagamentoOperacao.xhtml";
 		} else {
 			return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatus.xhtml";
+		}
+	}
+
+	private void calcularRegistroVelho() {
+		int qtdMatriculas = 1;
+		String matriculas = objetoContratoCobranca.getImovel().getNumeroMatricula().trim();
+		if (matriculas.endsWith(",")) {
+			matriculas = matriculas.substring(0, matriculas.lastIndexOf(",")).trim();
+		}
+
+		qtdMatriculas = matriculas.split(",").length;
+		//se for apartamento é no minimo 3		
+		/*if (CommonsUtil.mesmoValorIgnoreCase("Apartamento", objetoContratoCobranca.getImovel().getTipo()) && qtdMatriculas == 1) {
+			qtdMatriculas = 3;
+		}*/
+
+		RegistroImovelTabelaDao rDao = new RegistroImovelTabelaDao();
+		BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoComite().
+				divide(BigDecimal.valueOf(qtdMatriculas), MathContext.DECIMAL128);
+		BigDecimal valorRegistro = rDao.getValorRegistro(valorPorMatricula);
+		valorRegistro = valorRegistro.multiply(BigDecimal.valueOf(qtdMatriculas));
+		// Emprestimo = financiamento
+		if (CommonsUtil.mesmoValorIgnoreCase("Emprestimo", objetoContratoCobranca.getTipoOperacao()))
+			valorRegistro = valorRegistro.multiply(CommonsUtil.bigDecimalValue(2));
+		if (CommonsUtil.semValor(objetoContratoCobranca.getValorCartorio()) 
+				|| valorRegistro.compareTo(objetoContratoCobranca.getValorCartorio()) > 0) {
+			objetoContratoCobranca.setValorCartorio(valorRegistro);
 		}
 	}
 
@@ -19414,6 +19458,103 @@ public class ContratoCobrancaMB {
 		}
 	}
 	
+	public ContasPagar buscaDespesaCartaSplit(String despesa, String numeroContrato) { 
+		ContasPagarDao contasPagarDao = new ContasPagarDao();
+		List<ContasPagar> despesaBD = new ArrayList<ContasPagar>();
+		
+		try {
+			despesaBD = contasPagarDao.buscarDespesa(despesa, numeroContrato);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		if (despesaBD.size() > 0) {
+			return despesaBD.get(0);
+		} else {
+			return null;
+		}
+	}
+	
+	public void pagamentoStarkBankCartaSplitGalleria() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		
+		ContasPagar contaCartaSplit = new ContasPagar();
+		contaCartaSplit.setContaCartaSplit(true);
+		contaCartaSplit.setContrato(this.objetoContratoCobranca);
+		contaCartaSplit.setDataVencimento(DateUtil.gerarDataHoje());
+		contaCartaSplit.setDescricao("Pagamento Carta Split - Galleria");					
+		//contaCartaSplit.setPagadorRecebedor(recebedor);
+		contaCartaSplit.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
+		contaCartaSplit.setResponsavel(this.objetoContratoCobranca.getResponsavel());
+		contaCartaSplit.setTipoDespesa("C");
+		contaCartaSplit.setValor(this.objetoContratoCobranca.getValorCartaSplitGalleria());	
+		
+		contaCartaSplit.setBancoTed(this.objetoContratoCobranca.getBancoBancarioCartaSplitGalleria());
+		contaCartaSplit.setAgenciaTed(this.objetoContratoCobranca.getAgenciaBancarioCartaSplitGalleria());
+		contaCartaSplit.setContaTed(this.objetoContratoCobranca.getContaBancarioCartaSplitGalleria());
+		contaCartaSplit.setPix(this.objetoContratoCobranca.getPixCartaSplitGalleria());
+		contaCartaSplit.setNomeTed(this.objetoContratoCobranca.getNomeBancarioCartaSplitGalleria());
+		
+		ContasPagarDao contasPagarDao = new ContasPagarDao();
+		if (contaCartaSplit.getId() <= 0) {
+			contasPagarDao.create(contaCartaSplit);
+		} else {
+			contasPagarDao.merge(contaCartaSplit);
+		}
+		
+		/*
+		if (contaCartaSplit.getFormaTransferencia().equals("Boleto")) {
+
+			contaCartaSplit.setDescricaoStarkBank("Pagamento de Conta");
+
+			StarkBankBaixa baixa = registraBaixaStarkBank(contaCartaSplit.getDataPagamento(),
+					contaCartaSplit.getNumeroDocumentoPagadorStarkBank(), null,
+					contaCartaSplit.getLinhaDigitavelStarkBank(), recebedor.getNome(),
+					contaCartaSplit.getValorPagamento(), contaCartaSplit, "Boleto", "Aguardando Aprovação");
+
+				contaCartaSplit.getListContasPagarBaixas().add(baixa);
+
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Pagamento StarkBank: Ordem de Pagamento de Boleto inserida com sucesso!", ""));
+		}
+		*/
+
+		if (this.objetoContratoCobranca.getPixCartaSplit() != null || !this.objetoContratoCobranca.getPixCartaSplit().equals("")) {
+			contaCartaSplit.setFormaTransferencia("PIX");
+			
+			StarkBankBaixa baixa = registraBaixaStarkBank(DateUtil.gerarDataHoje(),
+						this.objetoContratoCobranca.getCpfCnpjBancarioCartaSplit(), null, null,
+						contaCartaSplit.getNomeTed(), this.objetoContratoCobranca.getValorCartaSplit(),
+						contaCartaSplit, "PIX", "Aguardando Aprovação");
+
+				contaCartaSplit.getListContasPagarBaixas().add(baixa);
+
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Pagamento StarkBank: Ordem de Pagamento de PIX inserida com sucesso!", ""));
+		} else {
+			contaCartaSplit.setFormaTransferencia("TED");
+				StarkBankBaixa baixa = registraBaixaStarkBank(DateUtil.gerarDataHoje(),
+						this.objetoContratoCobranca.getCpfCnpjBancarioCartaSplit(), null, null,
+						contaCartaSplit.getNomeTed(), this.objetoContratoCobranca.getValorCartaSplit(),
+						contaCartaSplit, "TED", "Aguardando Aprovação");
+
+				contaCartaSplit.getListContasPagarBaixas().add(baixa);
+
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Pagamento StarkBank: Ordem de Pagamento de TED inserida com sucesso!", ""));
+		}
+		
+		//contaCartaSplit.setDataPagamento(DateUtil.gerarDataHoje());
+		//contaCartaSplit.setValorPagamento(valor);	
+		
+		if (contaCartaSplit.getId() <= 0) {
+			contasPagarDao.create(contaCartaSplit);
+		} else {
+			contasPagarDao.merge(contaCartaSplit);
+		}
+	}
+	
 	public void pagamentoStarkBankCartaSplit() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		
@@ -20222,6 +20363,58 @@ public class ContratoCobrancaMB {
 	public void removeAverbacao(Averbacao averbacao) {
 		objetoContratoCobranca.getListAverbacao().remove(averbacao);
 		calcularValorTotalAverbacao();
+	}
+	
+	
+	public void clearImovelAdicionarDialog() {
+		ImovelCobranca imovel = new ImovelCobranca(objetoImovelCobranca);
+		imovelAdicional = new ImovelCobrancaAdicionais(imovel);
+	}
+
+	public void addImovel() {
+		ImovelCobrancaAdicionaisDao imovelCobrancaAdicionaisDao = new ImovelCobrancaAdicionaisDao();
+		ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
+		if(imovelAdicional.getImovel().getId() > 0) 
+			imovelCobrancaDao.merge(imovelAdicional.getImovel());
+		else 
+			imovelCobrancaDao.create(imovelAdicional.getImovel());
+		
+		if(imovelAdicional.getId() > 0) 
+			imovelCobrancaAdicionaisDao.merge(imovelAdicional);
+		else 
+			imovelCobrancaAdicionaisDao.create(imovelAdicional);
+			
+		imovelAdicional.setContratoCobranca(objetoContratoCobranca);
+		objetoContratoCobranca.getListaImoveis().add(imovelAdicional);
+		calcularPorcentagemImoveis();
+		imovelAdicional = new ImovelCobrancaAdicionais();
+	}
+
+	public void editImovel(ImovelCobrancaAdicionais imovel) {
+		imovelAdicional = imovel;
+	}
+
+	public void removeImovel(ImovelCobrancaAdicionais imovel) {
+		objetoContratoCobranca.getListaImoveis().remove(imovelAdicional);
+		imovelAdicional.setContratoCobranca(null);
+	}
+	
+	public void calcularPorcentagemImoveis() {
+		if(CommonsUtil.semValor(objetoContratoCobranca.getValorMercadoImovel()))
+			return;
+		ImovelCobrancaAdicionaisDao imovelCobrancaAdicionaisDao = new ImovelCobrancaAdicionaisDao();
+		BigDecimal porcentagemTotal = BigDecimal.ZERO;
+		for(ImovelCobrancaAdicionais imovelAdicional : objetoContratoCobranca.getListaImoveis()) {
+			if(CommonsUtil.semValor(imovelAdicional.getImovel().getValorMercado()))
+				continue;
+			BigDecimal regra3 = imovelAdicional.getImovel().getValorMercado().multiply(BigDecimal.valueOf(100));
+			BigDecimal porcentagem = regra3.divide(objetoContratoCobranca.getValorMercadoImovel(), MathContext.DECIMAL128);
+			porcentagem = porcentagem.setScale(2, RoundingMode.HALF_UP);
+			imovelAdicional.setPorcentagem(porcentagem);
+			porcentagemTotal = porcentagemTotal.add(porcentagem);
+			imovelCobrancaAdicionaisDao.merge(imovelAdicional);
+		}
+		objetoContratoCobranca.setPorcentagemImovelPrincipal(BigDecimal.valueOf(100).subtract(porcentagemTotal));
 	}
 
 	public void concluirComite(ContratoCobranca contrato) {
@@ -35168,5 +35361,13 @@ public class ContratoCobrancaMB {
 
 	public void setSelectedContratos(List<ContratoCobranca> selectedContratos) {
 		this.selectedContratos = selectedContratos;
+	}
+
+	public ImovelCobrancaAdicionais getImovelAdicional() {
+		return imovelAdicional;
+	}
+
+	public void setImovelAdicional(ImovelCobrancaAdicionais imovelAdicional) {
+		this.imovelAdicional = imovelAdicional;
 	}
 }

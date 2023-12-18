@@ -1171,6 +1171,14 @@
             <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.CcbParticipantes" />
         </set>
         
+        <set name="listaImoveis" table="ImovelCobrancaAdicionais" cascade="all-delete-orphan"
+                 lazy="false" fetch="select">
+            <key>
+                <column name="contratoCobranca" not-null="true" />
+            </key>
+            <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.ImovelCobrancaAdicionais" />
+        </set>
+        
         <property name="tipoCalculoInvestidor1" type="java.lang.String">
 			<column name="tipoCalculoInvestidor1" />
 		</property>
@@ -2303,6 +2311,14 @@
 		
 		<property name="dataContratoAssinado" type="java.util.Date">
 			<column name="dataContratoAssinado" />
+		</property>
+		
+		<property name="porcentagemImovelPrincipal" type="big_decimal">
+			<column name="porcentagemImovelPrincipal" />
+		</property>
+		
+		<property name="valorRegistroImovelPrincipal" type="big_decimal">
+			<column name="valorRegistroImovelPrincipal" />
 		</property>
 		
 	</class>

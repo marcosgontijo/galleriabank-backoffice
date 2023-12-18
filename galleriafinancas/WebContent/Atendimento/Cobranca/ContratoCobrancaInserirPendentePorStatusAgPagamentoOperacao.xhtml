@@ -684,9 +684,10 @@
 										
 								<p:commandButton action="#{contratoCobrancaMB.pagamentoStarkBankCartaSplit}"
 											icon="ui-icon-video" title="Ordem de Pagamento" value="Ordem de Pagamento"
-											update=":form"/>	
-								<p:commandButton value="Comprovante" ajax="false" icon="ui-icon-arrowthick-1-s" update=":form:messageContasPagar">						       	 	
-						       	 	<p:fileDownload value="#{contratoCobrancaMB.getDownloadComprovanteStarkBank(baixas)}" />
+											update=":form" disabled="#{contratoCobrancaMB.buscaDespesaCartaSplit('Pagamento Carta Split', contratoCobrancaMB.objetoContratoCobranca.numeroContrato) != null}"/>	
+								<p:commandButton value="Comprovante" ajax="false" icon="ui-icon-arrowthick-1-s" update=":form:messageContasPagar"
+								 disabled="#{contratoCobrancaMB.buscaDespesaCartaSplit('Pagamento Carta Split', contratoCobrancaMB.objetoContratoCobranca.numeroContrato) == null}">						       	 	
+						       	 	<p:fileDownload value="#{contratoCobrancaMB.getDownloadComprovanteStarkBank(contratoCobrancaMB.buscaDespesaCartaSplit('Pagamento Carta Split', contratoCobrancaMB.objetoContratoCobranca.numeroContrato).listContasPagarBaixas)}"/>
 						    	</p:commandButton>								
 							</h:panelGrid>
 							<h:panelGrid columns="2">
@@ -730,11 +731,19 @@
 									style="width:250px;font-weight: bold; font-size: 18px !important;"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.contaBancarioCartaSplitGalleria}" />
 									
-									<p:outputLabel for="pixCartaSplitGalleria" value="Pix: " 
+								<p:outputLabel for="pixCartaSplitGalleria" value="Pix: " 
 									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
 								<p:inputText id="pixCartaSplitGalleria"
 									style="width:250px;font-weight: bold; font-size: 18px !important;"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.pixCartaSplitGalleria}" />
+									
+								<p:commandButton action="#{contratoCobrancaMB.pagamentoStarkBankCartaSplitGalleria}"
+											icon="ui-icon-video" title="Ordem de Pagamento" value="Ordem de Pagamento"
+											update=":form" disabled="#{contratoCobrancaMB.buscaDespesaCartaSplit('Pagamento Carta Split - Galleria', contratoCobrancaMB.objetoContratoCobranca.numeroContrato) != null}"/>	
+								<p:commandButton value="Comprovante" ajax="false" icon="ui-icon-arrowthick-1-s" update=":form:messageContasPagar"
+								disabled="#{contratoCobrancaMB.buscaDespesaCartaSplit('Pagamento Carta Split - Galleria', contratoCobrancaMB.objetoContratoCobranca.numeroContrato) == null}">						       	 	
+						       	 	<p:fileDownload value="#{contratoCobrancaMB.getDownloadComprovanteStarkBank(contratoCobrancaMB.buscaDespesaCartaSplit('Pagamento Carta Split - Galleria', contratoCobrancaMB.objetoContratoCobranca.numeroContrato).listContasPagarBaixas)}" />
+						    	</p:commandButton>		
 							</h:panelGrid>
 							<h:panelGrid columns="2">
 								<p:outputLabel for="valorCustoEmissao"
