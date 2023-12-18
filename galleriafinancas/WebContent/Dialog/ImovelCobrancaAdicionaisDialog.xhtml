@@ -125,6 +125,15 @@
 						onkeypress="return isNumberKey(event);"
 						onkeydown="FormataValor(this, 13, event, 2);"
 						converter="bigDecimalConverter" />
+						
+					<p:outputLabel for="valorMercadoObjImovel"
+						value="Valor de mercado do imóvel: " styleClass="labelBold" />
+					<p:inputText id="valorMercadoObjImovel"
+						value="#{mbean.imovelAdicional.imovel.valorMercado}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);"
+						converter="bigDecimalConverter"
+						style="FONT-SIZE: 10pt;width:300px;" />
 	
 					<p:outputLabel for="dataCompra" value="Data da compra do Imóvel " />
 					<h:panelGroup>

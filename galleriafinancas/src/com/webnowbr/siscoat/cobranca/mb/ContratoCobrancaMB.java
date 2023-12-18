@@ -9660,6 +9660,8 @@ public class ContratoCobrancaMB {
 			RegistroImovelTabelaDao rDao = new RegistroImovelTabelaDao();
 			ImovelCobrancaAdicionaisDao imovelCobrancaAdicionaisDao = new ImovelCobrancaAdicionaisDao();
 			for(ImovelCobrancaAdicionais imovelAdicional : objetoContratoCobranca.getListaImoveis()) {
+				if(CommonsUtil.semValor(imovelAdicional.getPorcentagem()))
+						continue;
 				BigDecimal porcentagem = imovelAdicional.getPorcentagem().divide(BigDecimal.valueOf(100), MathContext.DECIMAL128);
 				BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoComite().multiply(porcentagem);
 				BigDecimal valorRegistro = rDao.getValorRegistro(valorPorMatricula);
@@ -9673,6 +9675,7 @@ public class ContratoCobrancaMB {
 				BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoComite().multiply(porcentagem);
 				BigDecimal valorRegistro = rDao.getValorRegistro(valorPorMatricula);
 				valorTotalRegistro = valorTotalRegistro.add(valorRegistro);
+				objetoContratoCobranca.setValorRegistroImovelPrincipal(valorRegistro);
 			}
 			
 			if (CommonsUtil.semValor(objetoContratoCobranca.getValorCartorio()) 
@@ -20290,17 +20293,15 @@ public class ContratoCobrancaMB {
 	}
 	
 	public void calcularPorcentagemImoveis() {
-		ImovelCobrancaAdicionaisDao imovelCobrancaAdicionaisDao = new ImovelCobrancaAdicionaisDao();
-		if(objetoContratoCobranca.getListaImoveis().size() <= 0) {
-			objetoImovelCobranca.setValorMercado(objetoContratoCobranca.getValorMercadoImovel());
-			objetoContratoCobranca.getImovel().setValorMercado(valorMercadoImovel);
-			objetoContratoCobranca.setPorcentagemImovelPrincipal(BigDecimal.valueOf(100));
+		if(CommonsUtil.semValor(objetoContratoCobranca.getValorMercadoImovel()))
 			return;
-		}
+		ImovelCobrancaAdicionaisDao imovelCobrancaAdicionaisDao = new ImovelCobrancaAdicionaisDao();
 		BigDecimal porcentagemTotal = BigDecimal.ZERO;
 		for(ImovelCobrancaAdicionais imovelAdicional : objetoContratoCobranca.getListaImoveis()) {
-			BigDecimal regra3 = BigDecimal.valueOf(100).multiply(imovelAdicional.getImovel().getValorMercado());
-			BigDecimal porcentagem = regra3.divide(valorMercadoImovel, MathContext.DECIMAL128);
+			if(CommonsUtil.semValor(imovelAdicional.getImovel().getValorMercado()))
+				continue;
+			BigDecimal regra3 = imovelAdicional.getImovel().getValorMercado().multiply(BigDecimal.valueOf(100));
+			BigDecimal porcentagem = regra3.divide(objetoContratoCobranca.getValorMercadoImovel(), MathContext.DECIMAL128);
 			porcentagem = porcentagem.setScale(2, RoundingMode.HALF_UP);
 			imovelAdicional.setPorcentagem(porcentagem);
 			porcentagemTotal = porcentagemTotal.add(porcentagem);
