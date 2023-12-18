@@ -355,10 +355,18 @@ public class SimulacaoVO implements ComputeInterface{
 					.multiply(tarifaIOFDiario.multiply(BigDecimal.valueOf(diasVencimento)))
 					).setScale(2, RoundingMode.HALF_EVEN);
 		}else {
-			 valorOParcelaIOF = (parcelaCalculo.getAmortizacao()
-						.multiply(tarifaIOFDiario.multiply(BigDecimal.valueOf(diasVencimento)))
-						).setScale(2, RoundingMode.HALF_EVEN);			 
+			BigDecimal taxa = BigDecimal.ZERO;
+			if(diasVencimento >= 365) {
+				taxa = tarifaIOFDiario.multiply(BigDecimal.valueOf(diasVencimento)).setScale(3, RoundingMode.HALF_DOWN);
+			} else {
+				taxa = tarifaIOFDiario.multiply(BigDecimal.valueOf(diasVencimento));
+			}
+			 valorOParcelaIOF = parcelaCalculo.getAmortizacao()
+						.multiply(taxa); 
+			 valorOParcelaIOF = valorOParcelaIOF.setScale(3,RoundingMode.HALF_UP);	
+			 valorOParcelaIOF = valorOParcelaIOF.setScale(2,RoundingMode.HALF_DOWN);
 		}
+		
 		
 //				long diasVencimento = i * 30l;
 		boolean calcularIOF = true;
