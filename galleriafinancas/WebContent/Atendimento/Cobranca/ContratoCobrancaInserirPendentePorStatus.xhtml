@@ -1056,7 +1056,6 @@
 				<!-- painel de analise de documento -->
 				<ui:include src="ContratoCobrancaAnaliseDocumento.xhtml"></ui:include>
 
-
 				<h:panelGroup id="comentarioComitePanel" style="margin-bottom:20px;">
 					<p:panel header="Comentário Comitê"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.listaAnaliseComite.size() > 0 and ( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'))}">
@@ -3219,7 +3218,7 @@
 							converter="bigDecimalConverter" />
 							
 						<p:outputLabel for="valorMercadoObjImovel"
-							value="Valor de mercado dos imóvel: " styleClass="labelBold" />
+							value="Valor de mercado do imóvel: " styleClass="labelBold" />
 						<p:inputText id="valorMercadoObjImovel"
 							value="#{contratoCobrancaMB.objetoImovelCobranca.valorMercado}"
 							onkeypress="return isNumberKey(event);"
@@ -3279,6 +3278,14 @@
 							oncomplete="PF('imovelAdiconalDialog').show();"
 							update="imovelAdiconalForm">
 						</p:commandButton>
+						
+						<p:outputLabel value="Imovel Principal: " styleClass="labelBold" style="FONT-SIZE: 10pt;" />
+						<p:outputLabel value="Porcentagem: " style="FONT-SIZE: 10pt;" />
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.porcentagemImovelPrincipal}"
+							style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+						<p:outputLabel value="% - Registro: R$ " style="FONT-SIZE: 10pt;" />
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.valorRegistroImovelPrincipal}"
+							style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
 							
 						<p:dataTable var="imovelAdd" id="imovelAdicionarDV"
 							value="#{contratoCobrancaMB.objetoContratoCobranca.listaImoveis}" 
@@ -3291,8 +3298,20 @@
 							</p:column>
 							
 							<p:column style="text-align: center;width:75px;"
-								headerText=" Valor Estimado: ">
-								<p:outputLabel value="#{imovelAdd.imovel.valoEstimado}"
+								headerText=" Valor de Mercado: ">
+								<p:outputLabel value="#{imovelAdd.imovel.valorMercado}"
+									style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+							</p:column>
+							
+							<p:column style="text-align: center;width:75px;"
+								headerText="Porcentagem do valor total: ">
+								<p:outputLabel value="#{imovelAdd.porcentagem}"
+									style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+							</p:column>
+							
+							<p:column style="text-align: center;width:75px;"
+								headerText=" Valor Registro: ">
+								<p:outputLabel value="#{imovelAdd.valorRegistro}"
 									style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
 							</p:column>
 							

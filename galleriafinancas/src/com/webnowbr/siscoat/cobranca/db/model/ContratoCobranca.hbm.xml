@@ -2313,5 +2313,13 @@
 			<column name="dataContratoAssinado" />
 		</property>
 		
+		<property name="porcentagemImovelPrincipal" type="big_decimal">
+			<column name="porcentagemImovelPrincipal" />
+		</property>
+		
+		<property name="valorRegistroImovelPrincipal" type="big_decimal">
+			<column name="valorRegistroImovelPrincipal" />
+		</property>
+		
 	</class>
 </hibernate-mapping>
