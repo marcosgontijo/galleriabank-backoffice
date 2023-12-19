@@ -4263,57 +4263,6 @@
 								</h:panelGroup>
 								<h:panelGrid columns="2"
 									rendered="#{contratoCobrancaMB.objetoContratoCobranca.cobrarComissaoCliente == 'Sim'}">
-									<h:outputText for="tipoCobrarComissaoCliente" value="Em " />
-										<p:selectOneMenu id="tipoCobrarComissaoCliente"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.tipoCobrarComissaoCliente}">
-											<f:selectItem itemValue="" itemLabel="Selecione" />
-											<f:selectItem itemValue="Real" itemLabel="Real" />
-											<f:selectItem itemValue="Porcentagem" itemLabel="Porcentagem" />
-											<p:ajax update="comissaoCliente" event="change" />
-										</p:selectOneMenu>
-
-										<h:outputText for="comissaoClientePorcentagem"
-											value="Comissão do Cliente em Porcentagem"
-											rendered="#{contratoCobrancaMB.objetoContratoCobranca.tipoCobrarComissaoCliente == 'Porcentagem'}" />
-										<h:panelGroup
-											rendered="#{contratoCobrancaMB.objetoContratoCobranca.tipoCobrarComissaoCliente == 'Porcentagem'}">
-											<p:inputText id="comissaoClientePorcentagem"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.comissaoClientePorcentagem}"
-												style="FONT-SIZE: 10pt;width:300px;"
-												disabled="#{contratoCobrancaMB.deleteMode}"
-												onkeypress="return isNumberKey(event);"
-												onkeydown="FormataValor(this, 3, event, 2);"
-												converter="bigDecimalConverter" />
-											<h:outputText value=" %" />
-										</h:panelGroup>
-
-										<h:outputText for="comissaoClienteValorFixo"
-											value="Comissão do Cliente em Valor Fixo"
-											rendered="#{contratoCobrancaMB.objetoContratoCobranca.tipoCobrarComissaoCliente == 'Real'}" />
-										<h:panelGroup
-											rendered="#{contratoCobrancaMB.objetoContratoCobranca.tipoCobrarComissaoCliente == 'Real'}">
-											<h:outputText value="R$ " />
-											<p:inputText id="comissaoClienteValorFixo"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.comissaoClienteValorFixo}"
-												style="FONT-SIZE: 10pt;width:300px;"
-												disabled="#{contratoCobrancaMB.deleteMode}"
-												onkeypress="return isNumberKey(event);"
-												onkeydown="FormataValor(this, 13, event, 2);"
-												converter="bigDecimalConverter" />
-										</h:panelGroup>
-
-										<h:outputText for="brutoLiquidoCobrarComissaoCliente"
-											value="Sobre Valor Bruto ou Líquido? " />
-										<p:selectOneMenu id="brutoLiquidoCobrarComissaoCliente"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.brutoLiquidoCobrarComissaoCliente}">
-											<f:selectItem itemValue="" itemLabel="Selecione" />
-											<f:selectItem itemValue="Bruto" itemLabel="Bruto" />
-											<f:selectItem itemValue="Liquido" itemLabel="Líquido" />
-										</p:selectOneMenu>
-									</h:panelGrid>
-								</h:panelGroup>
-								<h:panelGrid columns="2"
-									rendered="#{contratoCobrancaMB.objetoContratoCobranca.cobrarComissaoCliente == 'Sim'}">
 									<p:outputLabel for="cpfCnpjCC" value="CPF / CNPJ: "
 										styleClass="labelBold" />
 									<p:inputText id="cpfCnpjCC"
