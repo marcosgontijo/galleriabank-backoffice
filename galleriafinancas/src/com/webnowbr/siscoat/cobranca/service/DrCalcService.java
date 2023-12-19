@@ -38,7 +38,8 @@ public class DrCalcService {
 			String retornoConsulta;
 
 			URL myURL;
-			String sUrl = "https://servicos.galleriabank.com.br/drcalc/api/v1";
+			//String sUrl = "https://servicos.galleriabank.com.br/drcalc/api/v1";
+			String sUrl = "http://localhost:8085/api/v1";
 			myURL = new URL(sUrl);
 
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
