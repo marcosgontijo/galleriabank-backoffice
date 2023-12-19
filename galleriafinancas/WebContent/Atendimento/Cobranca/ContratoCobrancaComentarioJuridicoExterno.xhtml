@@ -135,7 +135,7 @@
 						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel == true}">									
 							<p:dataView var="pessoasProcessos" id="pessoasProcessos"
 								value="#{contratoCobrancaMB.pessoasProcessos}"
-								paginator="false" layout="list" 
+								paginator="false" layout="list" style="width: 1200px; max-width: 100%"
 								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
 								<p:dataViewListItem>
 									<p:outputLabel value="#{pessoasProcessos.nome}" style="FONT-SIZE: 15pt;" 
@@ -1201,12 +1201,27 @@
 						<p:inputText  value="#{contratoCobrancaMB.processoSelecionado.valor}"
 							label="Contrato" onkeypress="return isNumberKey(event);"
 							onkeydown="FormataValor(this, 13, event, 2);"
-							converter="bigDecimalConverter" /> 
-							
-						<p:outputLabel  value="Numero: " styleClass="labelBold"
+							converter="bigDecimalConverter">
+							<p:ajax event="valueChange" update="valorAtualizadoProcesso"
+								listener="#{contratoCobrancaMB.atualizarValorProcesso()}" />
+						</p:inputText>
+
+						<p:outputLabel value="Numero: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />
-						<p:inputText value="#{contratoCobrancaMB.processoSelecionado.numero}"
-							label="Contrato" />
+						<p:inputText
+							value="#{contratoCobrancaMB.processoSelecionado.numero}"
+							label="Contrato">
+							<p:ajax event="valueChange" update="valorAtualizadoProcesso"
+								listener="#{contratoCobrancaMB.atualizarValorProcesso()}" />
+						</p:inputText>
+
+						<p:outputLabel value="Valor Atualizado: " styleClass="labelBold"
+							style="font-weight: bold; font-size: 18px;" />
+						<p:inputText id="valorAtualizadoProcesso"
+							value="#{contratoCobrancaMB.processoSelecionado.valorAtualizado}"
+							label="Contrato" onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);"
+							converter="bigDecimalConverter" />				
 							
 						<p:outputLabel value="Quitar: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />

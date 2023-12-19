@@ -7430,7 +7430,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 								+ " and analiseComercial = true and comentarioJuridicoEsteira = true and documentosCompletos = true and preAprovadoComite = true"
 								+ " and documentosComite = true and aprovadoComite = true and okCliente = true and documentosCompletos = true and certificadoEmitido = true"
 								+ " and ccbPronta = true and contratoConferido = true"
-								+ " and reanalise = true and reanalisePronta = true and pajuAtualizado = true and reanaliseJuridico = false";
+								+ " and reanalise = true and reanalisePronta = true and (pajuAtualizado = true or (pajuAtualizado = false and avaliacaoPajuReanalise = 'Outro')) and reanaliseJuridico = false";
 					}
 
 					if (tipoConsulta.equals("Ag. Envio Cartorio")) {

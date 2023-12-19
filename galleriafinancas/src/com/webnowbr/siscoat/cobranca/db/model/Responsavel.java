@@ -198,7 +198,6 @@ public class Responsavel implements Serializable {
 				|| !CommonsUtil.mesmoValor(this.getContaDigito(), dadosBancariosOriginal.getContaDigito())
 				|| !CommonsUtil.mesmoValor(this.getTipoConta(), dadosBancariosOriginal.getTipoConta())) {
 			this.setContaBancariaValidada(false);
-			PrimeFaces.current().ajax().update("form:comissaoCliente");
 		}
 		return null;
 
@@ -212,7 +211,6 @@ public class Responsavel implements Serializable {
 			this.setAgenciaPix(null);
 			this.setContaPix(null);
 			this.setContaDigitoPix(null);
-			PrimeFaces.current().ajax().update("form:comissaoCliente");
 		}
 		return null;
 	}

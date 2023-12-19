@@ -74,6 +74,10 @@ import com.webnowbr.siscoat.exception.SiscoatException;
 import br.com.galleriabank.bigdata.cliente.model.processos.AcaoJudicial;
 import br.com.galleriabank.bigdata.cliente.model.processos.ProcessoParte;
 import br.com.galleriabank.bigdata.cliente.model.processos.ProcessoResult;
+import br.com.galleriabank.drcalc.cliente.model.DebitosJudiciais;
+import br.com.galleriabank.drcalc.cliente.model.DebitosJudiciaisRequest;
+import br.com.galleriabank.drcalc.cliente.model.DebitosJudiciaisRequestValor;
+import br.com.galleriabank.drcalc.cliente.model.DebitosJudiciaisValores;
 
 //import net.sf.jasperreports.engine.util.ExpressionParser;
 
@@ -389,6 +393,35 @@ public class PajuService {
 								// split by whitespace
 								StringBuilder sb = new StringBuilder();
 								boolean processos = false;
+
+								DebitosJudiciaisRequest debitosJudiciaisRequest = new DebitosJudiciaisRequest();
+								debitosJudiciaisRequest.setHonorario(CommonsUtil.bigDecimalValue(10));
+
+								DebitosJudiciais debitosJudiciais = null;
+								for (String line : pdfLines) {
+									if (processos && line.contains("Total de A"))
+										break;
+									if (processos && !CommonsUtil.semValor(line)) {
+										final String numeroProcesso = CommonsUtil.somenteNumeros(line);
+										AcaoJudicial acao = bigData.getAcaoJudicial(numeroProcesso);
+
+										if (acao != null) {
+											DebitosJudiciaisRequestValor debitosJudiciaisRequestValor = new DebitosJudiciaisRequestValor();
+											debitosJudiciaisRequestValor.setDescricao(numeroProcesso);
+											debitosJudiciaisRequestValor
+													.setVencimento("0101" + numeroProcesso.substring(11, 15));
+											debitosJudiciaisRequestValor
+													.setValor(CommonsUtil.bigDecimalValue(acao.getValue()));
+
+											debitosJudiciaisRequest.getValores().add(debitosJudiciaisRequestValor);
+										}
+									}
+									if (!CommonsUtil.semValor(debitosJudiciaisRequest.getValores())) {
+										DrCalcService drCalcService = new DrCalcService();
+										debitosJudiciais = drCalcService
+												.criarConsultaAtualizacaoMonetaria(debitosJudiciaisRequest);
+									}
+								}
 								for (String line : pdfLines) {
 
 									if (processos && line.contains("Total de A"))
@@ -401,7 +434,7 @@ public class PajuService {
 											String sLinha = "Processo: " + line.trim() + " - ";
 
 											sLinha = getDadosAcaoBigData(mapProcesos, nomesParticipantes, participante,
-													numeroProcesso, acao, sLinha);
+													numeroProcesso, acao, debitosJudiciais, sLinha);
 
 											certidoesPaju.getDebitosDocumento().add(sLinha);
 										} else {
@@ -474,9 +507,8 @@ public class PajuService {
 
 			}
 
-			
 		}
-		
+
 		if (paragrafoTemplate != null) {
 
 			removeParagrafo(docTemplate, paragrafoDocumentoTemplate);
@@ -486,7 +518,8 @@ public class PajuService {
 	}
 
 	private String getDadosAcaoBigData(Map<String, List<String>> mapProcesos, final List<String> nomesParticipantes,
-			DocumentoAnalise participante, final String numeroProcesso, AcaoJudicial acao, String sLinha) {
+			DocumentoAnalise participante, final String numeroProcesso, AcaoJudicial acao,
+			DebitosJudiciais debitosJudiciais, String sLinha) {
 		if (!mapProcesos.keySet().contains(numeroProcesso)) {
 			String svalor = "";
 			if (CommonsUtil.semValor(acao)) {
@@ -494,10 +527,20 @@ public class PajuService {
 				return sLinha + " ." + svalor;
 			} else if (CommonsUtil.semValor(acao.getValue())) {
 				svalor = svalor + " Valor: sem valor localiado";
-			} else
+			} else {
 				svalor = svalor + " Valor: "
 						+ CommonsUtil.formataValorMonetario(CommonsUtil.bigDecimalValue(acao.getValue()), "");
 
+				DebitosJudiciaisValores debitosJudiciaisValores = debitosJudiciais.getValores().stream()
+						.filter(d -> CommonsUtil.mesmoValor(d.getDescricao(),
+								CommonsUtil.formataNumeroProcesso(acao.getNumber())))
+						.findFirst().orElse(null);
+
+				if (debitosJudiciaisValores != null) {
+					svalor = svalor + " - valor em  " + debitosJudiciais.getMes() + " de " + debitosJudiciais.getAno()
+							+ ": " + CommonsUtil.formataValorMonetario(debitosJudiciaisValores.getTotal(), "");
+				}
+			}
 			ProcessoParte processoParte = acao.getParties().stream()
 					.filter(p -> CommonsUtil.mesmoValor(p.getType(), "CLAIMANT")).findFirst().orElse(null);
 			if (processoParte != null)
@@ -729,19 +772,62 @@ public class PajuService {
 			try {
 				List<String> pdfLines = new ArrayList<>();
 				List<AcaoJudicial> acoesBigData = bigData.getProcessoResumo().getTrabalhistaProtesto();
+				DebitosJudiciais debitosJudiciais = null;
 				for (Object objProcesso : plexiConsulta.getPlexiWebhookRetorno().getProcessos()) {
+
+					DebitosJudiciaisRequest debitosJudiciaisRequest = new DebitosJudiciaisRequest();
+					debitosJudiciaisRequest.setHonorario(CommonsUtil.bigDecimalValue(10));
+
+					// adiciona todas do bigdata
+					for (AcaoJudicial acao : acoesBigData) {
+						DebitosJudiciaisRequestValor debitosJudiciaisRequestValor = new DebitosJudiciaisRequestValor();
+						debitosJudiciaisRequestValor.setDescricao(CommonsUtil.formataNumeroProcesso(acao.getNumber()));
+						debitosJudiciaisRequestValor.setVencimento(
+								"0101" + CommonsUtil.formataNumeroProcesso(acao.getNumber()).substring(11, 15));
+						debitosJudiciaisRequestValor.setValor(CommonsUtil.bigDecimalValue(acao.getValue()));
+
+						debitosJudiciaisRequest.getValores().add(debitosJudiciaisRequestValor);
+					}
 
 					for (Entry<String, List<String>> valores : ((LinkedTreeMap<String, List<String>>) objProcesso)
 							.entrySet()) {
 						if (valores.getKey().equals("numeroProcessos")) {
-							final String numeroProcsso = CommonsUtil
+							final String numeroProcesso = CommonsUtil
 									.somenteNumeros(valores.getValue().get(0).toString());
-							AcaoJudicial acao = bigData.getAcaoJudicial(numeroProcsso);
+							AcaoJudicial acao = bigData.getAcaoJudicial(numeroProcesso);
+
+							if (acao != null) {
+								if (!debitosJudiciais.getValores().stream()
+										.filter(d -> CommonsUtil.mesmoValor(d.getDescricao(),
+												CommonsUtil.formataNumeroProcesso(acao.getNumber())))
+										.findFirst().isPresent()) {
+									DebitosJudiciaisRequestValor debitosJudiciaisRequestValor = new DebitosJudiciaisRequestValor();
+									debitosJudiciaisRequestValor.setDescricao(numeroProcesso);
+									debitosJudiciaisRequestValor
+											.setVencimento("0101" + numeroProcesso.substring(11, 15));
+									debitosJudiciaisRequestValor.setValor(CommonsUtil.bigDecimalValue(acao.getValue()));
+
+									debitosJudiciaisRequest.getValores().add(debitosJudiciaisRequestValor);
+								}
+							}
+						}
+						if (!CommonsUtil.semValor(debitosJudiciaisRequest.getValores())) {
+							DrCalcService drCalcService = new DrCalcService();
+							debitosJudiciais = drCalcService.criarConsultaAtualizacaoMonetaria(debitosJudiciaisRequest);
+						}
+					}
+
+					for (Entry<String, List<String>> valores : ((LinkedTreeMap<String, List<String>>) objProcesso)
+							.entrySet()) {
+						if (valores.getKey().equals("numeroProcessos")) {
+							final String numeroProcesso = CommonsUtil
+									.somenteNumeros(valores.getValue().get(0).toString());
+							AcaoJudicial acao = bigData.getAcaoJudicial(numeroProcesso);
 
 							if (acao != null) {
 								acoesBigData.remove(acao);
 								String sLinha = "Processo: " + valores.getValue().get(0) + " - ";
-								 sLinha = sLinha+ " Ação: " + acao.getMainSubject() + " - ";
+								sLinha = sLinha + " Ação: " + acao.getMainSubject() + " - ";
 								ProcessoParte processoParte = acao.getParties().stream()
 										.filter(p -> CommonsUtil.mesmoValor(p.getType(), "CLAIMANT")).findFirst()
 										.orElse(null);
@@ -749,6 +835,18 @@ public class PajuService {
 									sLinha = sLinha + processoParte.getName();
 								sLinha = sLinha + " - Valor - " + CommonsUtil
 										.formataValorMonetario(CommonsUtil.bigDecimalValue(acao.getValue()), "");
+
+								DebitosJudiciaisValores debitosJudiciaisValores = debitosJudiciais.getValores().stream()
+										.filter(d -> CommonsUtil.mesmoValor(d.getDescricao(),
+												CommonsUtil.formataNumeroProcesso(acao.getNumber())))
+										.findFirst().orElse(null);
+
+								if (debitosJudiciaisValores != null) {
+									sLinha = sLinha + " - valor em  " + debitosJudiciais.getMes() + " de "
+											+ debitosJudiciais.getAno() + ": "
+											+ CommonsUtil.formataValorMonetario(debitosJudiciaisValores.getTotal(), "");
+								}
+
 								pdfLines.add(sLinha);
 							} else {
 								String sLinha = "Processo: " + valores.getValue().get(0)
@@ -763,13 +861,35 @@ public class PajuService {
 						if (!CommonsUtil.mesmoValor(acao.getNumber().substring(13, 14), "5"))
 							continue;
 						String sLinha = "Processo: " + CommonsUtil.formataNumeroProcesso(acao.getNumber()) + " - ";
-						 sLinha = sLinha+ " Ação: " + acao.getMainSubject() + " - ";
+						sLinha = sLinha + " Ação: " + acao.getMainSubject() + " - ";
 						ProcessoParte processoParte = acao.getParties().stream()
 								.filter(p -> CommonsUtil.mesmoValor(p.getType(), "CLAIMANT")).findFirst().orElse(null);
 						if (processoParte != null)
 							sLinha = sLinha + processoParte.getName();
 						sLinha = sLinha + " - Valor - "
 								+ CommonsUtil.formataValorMonetario(CommonsUtil.bigDecimalValue(acao.getValue()), "");
+//
+//						DebitosJudiciaisRequest debitosJudiciaisRequest = new DebitosJudiciaisRequest();
+//						debitosJudiciaisRequest.setHonorario(CommonsUtil.bigDecimalValue(10));
+//						DebitosJudiciaisRequestValor debitosJudiciaisRequestValor = new DebitosJudiciaisRequestValor();
+//						debitosJudiciaisRequestValor.setDescricao(CommonsUtil.formataNumeroProcesso(acao.getNumber()));
+//						debitosJudiciaisRequestValor.setVencimento(
+//								"0101" + CommonsUtil.formataNumeroProcesso(acao.getNumber()).substring(11, 15));
+//						debitosJudiciaisRequestValor.setValor(CommonsUtil.bigDecimalValue(acao.getValue()));
+//
+//						debitosJudiciaisRequest.getValores().add(debitosJudiciaisRequestValor);
+
+						if (debitosJudiciais != null) {
+							DebitosJudiciaisValores debitosJudiciaisValores = debitosJudiciais.getValores().stream()
+									.filter(d -> CommonsUtil.mesmoValor(d.getDescricao(),
+											CommonsUtil.formataNumeroProcesso(acao.getNumber())))
+									.findFirst().orElse(null);
+							if (debitosJudiciaisValores != null) {
+							sLinha = sLinha + " - valor em  " + debitosJudiciais.getMes() + " de "
+									+ debitosJudiciais.getAno() + ": "
+									+ CommonsUtil.formataValorMonetario(debitosJudiciaisValores.getTotal(), "");
+							}
+						}
 
 						sLinha = sLinha + " - não listado na Consulta Plexi";
 						pdfLines.add(sLinha);
@@ -792,7 +912,37 @@ public class PajuService {
 			String texto = null;
 			try {
 				List<String> pdfLines = new ArrayList<>();
-//				List<AcaoJudicial> acoesBigData = bigData.getProcessoResumo().getTrabalhistaProtesto();
+
+				DebitosJudiciais debitosJudiciais = null;
+
+				DebitosJudiciaisRequest debitosJudiciaisRequest = new DebitosJudiciaisRequest();
+				debitosJudiciaisRequest.setHonorario(CommonsUtil.bigDecimalValue(10));
+
+				for (Object objProcesso : plexiConsulta.getPlexiWebhookRetorno().getProcessos()) {
+
+					for (Entry<String, String> valores : ((LinkedTreeMap<String, String>) objProcesso).entrySet()) {
+						if (valores.getKey().equals("numero")) {
+							final String numeroProcesso = CommonsUtil.somenteNumeros(valores.getValue().toString());
+
+							AcaoJudicial acao = bigData.getAcaoJudicial(numeroProcesso);
+
+							if (acao != null) {
+								DebitosJudiciaisRequestValor debitosJudiciaisRequestValor = new DebitosJudiciaisRequestValor();
+								debitosJudiciaisRequestValor.setDescricao(numeroProcesso);
+								debitosJudiciaisRequestValor.setVencimento("0101" + numeroProcesso.substring(11, 15));
+								debitosJudiciaisRequestValor.setValor(CommonsUtil.bigDecimalValue(acao.getValue()));
+
+								debitosJudiciaisRequest.getValores().add(debitosJudiciaisRequestValor);
+
+							}
+						}
+					}
+					if (!CommonsUtil.semValor(debitosJudiciaisRequest.getValores())) {
+						DrCalcService drCalcService = new DrCalcService();
+						debitosJudiciais = drCalcService.criarConsultaAtualizacaoMonetaria(debitosJudiciaisRequest);
+					}
+				}
+
 				for (Object objProcesso : plexiConsulta.getPlexiWebhookRetorno().getProcessos()) {
 
 					for (Entry<String, String> valores : ((LinkedTreeMap<String, String>) objProcesso).entrySet()) {
@@ -811,6 +961,31 @@ public class PajuService {
 									sLinha = sLinha + processoParte.getName();
 								sLinha = sLinha + " - Valor - " + CommonsUtil
 										.formataValorMonetario(CommonsUtil.bigDecimalValue(acao.getValue()), "");
+
+//								DebitosJudiciaisRequest debitosJudiciaisRequest = new DebitosJudiciaisRequest();
+//								debitosJudiciaisRequest.setHonorario(CommonsUtil.bigDecimalValue(10));
+//								DebitosJudiciaisRequestValor debitosJudiciaisRequestValor = new DebitosJudiciaisRequestValor();
+//								debitosJudiciaisRequestValor
+//										.setDescricao(CommonsUtil.formataNumeroProcesso(acao.getNumber()));
+//								debitosJudiciaisRequestValor
+//										.setVencimento("0101" + valores.getValue().substring(11, 15));
+//								debitosJudiciaisRequestValor.setValor(CommonsUtil.bigDecimalValue(acao.getValue()));
+//
+//								debitosJudiciaisRequest.getValores().add(debitosJudiciaisRequestValor);
+//								DrCalcService drCalcService = new DrCalcService();
+//								DebitosJudiciais debitosJudiciais = drCalcService
+//										.criarConsultaAtualizacaoMonetaria(debitosJudiciaisRequest);
+
+								DebitosJudiciaisValores debitosJudiciaisValores = debitosJudiciais.getValores().stream()
+										.filter(d -> CommonsUtil.mesmoValor(d.getDescricao(),
+												CommonsUtil.formataNumeroProcesso(acao.getNumber())))
+										.findFirst().orElse(null);
+								if (debitosJudiciaisValores != null) {
+									sLinha = sLinha + " - valor em  " + debitosJudiciais.getMes() + " de "
+											+ debitosJudiciais.getAno() + ": "
+											+ CommonsUtil.formataValorMonetario(debitosJudiciaisValores.getTotal(), "");
+								}
+
 								pdfLines.add(sLinha);
 							} else {
 								String sLinha = "Processo: " + valores.getValue()
@@ -922,6 +1097,29 @@ public class PajuService {
 										sLinha = sLinha + processoParte.getName();
 									sLinha = sLinha + " - Valor - " + CommonsUtil
 											.formataValorMonetario(CommonsUtil.bigDecimalValue(acao.getValue()), "");
+
+									DebitosJudiciaisRequest debitosJudiciaisRequest = new DebitosJudiciaisRequest();
+									debitosJudiciaisRequest.setHonorario(CommonsUtil.bigDecimalValue(10));
+									DebitosJudiciaisRequestValor debitosJudiciaisRequestValor = new DebitosJudiciaisRequestValor();
+									debitosJudiciaisRequestValor
+											.setDescricao(CommonsUtil.formataNumeroProcesso(acao.getNumber()));
+									debitosJudiciaisRequestValor.setVencimento("0101" + line.trim().substring(11, 15));
+									debitosJudiciaisRequestValor.setValor(CommonsUtil.bigDecimalValue(acao.getValue()));
+
+									debitosJudiciaisRequest.getValores().add(debitosJudiciaisRequestValor);
+
+									DrCalcService drCalcService = new DrCalcService();
+									DebitosJudiciais debitosJudiciais = drCalcService
+											.criarConsultaAtualizacaoMonetaria(debitosJudiciaisRequest);
+
+									if (debitosJudiciais != null) {
+
+										sLinha = sLinha + " - valor em  " + debitosJudiciais.getMes() + " de "
+												+ debitosJudiciais.getAno() + ": " + CommonsUtil.formataValorMonetario(
+														debitosJudiciais.getValores().get(0).getTotal(), "");
+
+									}
+
 									certidoesPaju.getDebitosDocumento().add(sLinha);
 								} else {
 									String sLinha = "Processo: " + line.trim() + " - não listado na Consulta Processos";
@@ -1452,6 +1650,36 @@ public class PajuService {
 		valor = ((String) valor);
 		String[] splitProcessos = ((String) valor).split("»");
 		valor = "";
+
+		DebitosJudiciaisRequest debitosJudiciaisRequest = new DebitosJudiciaisRequest();
+		debitosJudiciaisRequest.setHonorario(CommonsUtil.bigDecimalValue(10));
+
+		for (String debito : splitProcessos) {
+			if (debito.indexOf("Processo:") > -1) {
+				String sLinha = debito.substring(debito.indexOf("Processo:")).replace("*", "");
+				while (sLinha.indexOf("  ") > -1) {
+					sLinha = sLinha.replace("  ", " ");
+				}
+				sLinha = sLinha.substring(0, sLinha.lastIndexOf(".") + 1);
+				String numeroProcesso = sLinha.substring(10, 35);
+				AcaoJudicial acao = bigData.getAcaoJudicial(numeroProcesso);
+				if (acao != null) {
+					DebitosJudiciaisRequestValor debitosJudiciaisRequestValor = new DebitosJudiciaisRequestValor();
+					debitosJudiciaisRequestValor.setDescricao(CommonsUtil.formataNumeroProcesso(acao.getNumber()));
+					debitosJudiciaisRequestValor.setVencimento(
+							"0101" + CommonsUtil.formataNumeroProcesso(acao.getNumber()).substring(11, 15));
+					debitosJudiciaisRequestValor.setValor(CommonsUtil.bigDecimalValue(acao.getValue()));
+
+					debitosJudiciaisRequest.getValores().add(debitosJudiciaisRequestValor);
+				}
+			}
+		}
+		DebitosJudiciais debitosJudiciais = null;
+		if (!CommonsUtil.semValor(debitosJudiciaisRequest.getValores())) {
+			DrCalcService drCalcService = new DrCalcService();
+			debitosJudiciais = drCalcService.criarConsultaAtualizacaoMonetaria(debitosJudiciaisRequest);
+		}
+
 		for (String debito : splitProcessos) {
 			String sLinha = "";
 			if (debito.indexOf("Processo:") > -1) {
@@ -1464,7 +1692,7 @@ public class PajuService {
 				AcaoJudicial acao = bigData.getAcaoJudicial(numeroProcesso);
 
 				sLinha = getDadosAcaoBigData(mapProcesos, nomesParticipantes, participante, numeroProcesso, acao,
-						sLinha);
+						debitosJudiciais, sLinha);
 
 				R run = new R();
 				run.getContent().add(createText(sLinha));

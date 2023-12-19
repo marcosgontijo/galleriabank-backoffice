@@ -536,7 +536,10 @@
 												<p:selectBooleanButton id="pajuAtualizado"
 													value="#{contratoCobrancaMB.objetoContratoCobranca.pajuAtualizado}"
 													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-													offIcon="ui-icon-close" style="width:=60px" />
+													offIcon="ui-icon-close" style="width:=60px" >
+													<p:ajax event="valueChange"
+													update=":form:Status"/>
+												</p:selectBooleanButton>
 											</h:panelGrid>
 											<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajuAtualizado}">
 												<p:outputLabel styleClass="labelBold">Reanalise Jurídico</p:outputLabel>
@@ -1974,6 +1977,7 @@
 				<p:panel id="Pessoas" header="Responsável"
 					style="margin-bottom:10px;"
 					rendered="#{( usuarioMB.objetoUsuario.administrador or contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro')}">
+					<p:messages />
 					<h:panelGrid columns="2">
 						<p:outputLabel for="Codigo1" value="Código do Responsável: "
 							styleClass="labelBold"
@@ -1989,13 +1993,17 @@
 							<p:inputText id="Codigo2"
 								value="#{contratoCobrancaMB.codigoResponsavel}"
 								label="Código do Responsável" style="width:150px;"
-								rendered="#{contratoCobrancaMB.updateMode}" />
+								rendered="#{contratoCobrancaMB.updateMode}" >
+								<f:ajax event="change" listener="#{contratoCobrancaMB.atualizaResponsavel()}" render="Pessoas comissaoCliente" ></f:ajax>
+							</p:inputText>
 						</shiro:lacksRole>
 						<shiro:hasAnyRoles name="PROFILE_ANALISTA_CREDITO">
 							<p:inputText id="Codigo2"
 								value="#{contratoCobrancaMB.codigoResponsavel}"
 								label="Código do Responsável" style="width:150px;"
-								disabled="true" rendered="#{contratoCobrancaMB.updateMode}" />
+								disabled="true" rendered="#{contratoCobrancaMB.updateMode}" >
+								<f:ajax event="change" listener="#{contratoCobrancaMB.atualizaResponsavel()}" render="Pessoas comissaoCliente" ></f:ajax>
+							</p:inputText>
 						</shiro:hasAnyRoles>
 						<p:outputLabel for="NomeResp" value="Nome do Responsável: "
 							styleClass="labelBold"
@@ -3890,9 +3898,10 @@
 					</p:panel>
 				</h:panelGroup>
 
-				<shiro:hasAnyRoles
+				
+				<h:panelGroup id="comissaoCliente" style="margin-bottom:20px;">
+					<shiro:hasAnyRoles
 					name="ROOT, PROFILE_CONTRATO, PROFILE_ANALISTA_POS_COMITE">
-					<h:panelGroup id="comissaoCliente" style="margin-bottom:20px;">
 						<p:panel header="Comissão Cliente" style="margin-bottom:10px;"
 							rendered="#{( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'))}">
 							<h:panelGrid columns="2">
@@ -3977,11 +3986,10 @@
 									<p:autoComplete id="BancoResp" value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.banco}"
 										completeMethod="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.completeBancos}"
 										var="banco" itemLabel="#{banco}" itemValue="#{banco}"
-
 										forceSelection="true" styleClass="labelBold" label="Conta" 
 										style="width:100px;"
 										scrollHeight="250" >
-										<p:ajax event="itemSelect" 
+										<p:ajax event="itemSelect"  update="contaRespValidacao"
 											listener="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.verificaAlteracaoContaCobranca}" />
 									</p:autoComplete>		
 
@@ -3991,15 +3999,14 @@
 										value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.agencia}"
 										label="Agência" onblur=""
 										style="width:100px;" >
-										<p:ajax event="valueChange"
+										<p:ajax event="valueChange"  update="contaRespValidacao"
 											listener="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.verificaAlteracaoContaCobranca}" />
 									</p:inputText>				
 													
 
-									<p:outputLabel for="ContaResp" value="Conta: "
+									<p:outputLabel id="contaRespValidacao" for="ContaResp" value="Conta: "
 										styleClass="labelBold">
-										<i class="fa font-solid #{contratoCobrancaMB.objetoContratoCobranca.responsavel.contaBancariaValidada?'fa-check green':'fa-ban red'}"
-											id="contaValidacao" />
+										<i class="fa font-solid #{contratoCobrancaMB.objetoContratoCobranca.responsavel.contaBancariaValidada?'fa-check green':'fa-ban red'}" />
 									</p:outputLabel>
 									
 									<h:panelGroup>
@@ -4007,7 +4014,7 @@
 											value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.conta}"
 											styleClass="labelBold" label="Conta"
 											onblur="" style="width:100px;" >
-											<p:ajax event="valueChange"
+											<p:ajax event="valueChange" update="contaRespValidacao"
 												listener="#{pagadorRecebedorMB.verificaAlteracaoContaCobranca}" />
 										</p:inputText>
 										<p:commandButton value="Verificar"  ajax="true" 
@@ -4023,7 +4030,7 @@
 										value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.contaDigito}"
 										styleClass="labelBold" label="contaDigito" onblur="" maxlength="1"
 										style="width:100px;margin-right: 10px;">
-										<p:ajax event="valueChange"
+										<p:ajax event="valueChange"  update="contaRespValidacao"
 											listener="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.verificaAlteracaoContaCobranca}" />
 									</p:inputText>
 									
@@ -4036,75 +4043,74 @@
 										<f:selectItem itemValue="CONTA_POUPANCA"
 											itemLabel="Conta Poupança" />
 	
-										<p:ajax event="valueChange"
+										<p:ajax event="valueChange" update="contaRespValidacao"
 											listener="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.verificaAlteracaoContaCobranca}" />
 									</p:selectOneMenu>
 										
 
-									<p:outputLabel for="PixResp" value="Pix: "
+									<p:outputLabel id="pixRespValidacao"  for="PixResp" value="Pix: "
 										styleClass="labelBold" >
 										<i class="fa font-solid #{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado?'fa-check green':'fa-ban red'}"
-										id="pixValidacao" />
+										/>
 									</p:outputLabel>
 									<h:panelGroup>
 										<p:inputText id="PixResp"
 											value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pix}"
 											styleClass="labelBold" label="Conta"
 											onblur="" style="width:100px;" >
-											<p:ajax event="valueChange"
+											<p:ajax event="valueChange" update="pixRespValidacao"
 												listener="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.verificaAlteracaoPix}" />
 										</p:inputText>
-										<p:commandButton value="Verificar" ajax="true" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
+										<p:commandButton  value="Verificar" ajax="true" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
 											icon="ui-icon-check" action="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.validaPix}"
 											style="TEXT-DECORATION: bold" />
 									</h:panelGroup>
 									
-								<p:outputLabel for="tipoPix" value="Tipo Do Pix "
-									styleClass="labelBold" />
-								<p:selectOneMenu id="tipoPix"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.tipoPix}">
-									<f:selectItem itemValue="CPF" itemLabel="CPF" />
-									<f:selectItem itemValue="CNPJ" itemLabel="CNPJ" />
-									<f:selectItem itemValue="TELEFONE" itemLabel="Telefone" />
-									<f:selectItem itemValue="EMAIL" itemLabel="E-mail" />
-									<f:selectItem itemValue="CHAVE_ALEATORIA"
-										itemLabel="Chave Aleatória" />
-									<p:ajax event="valueChange"
-										listener="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.verificaAlteracaoPix}" />
-								</p:selectOneMenu>
-
-								<p:outputLabel value="Banco: " for="Banco"  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
-									styleClass="labelBold" />
-								<p:outputLabel  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.bancoPix}"
-									styleClass="labelBold" />
-
-								<p:outputLabel for="Agencia" value="Agência: "  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
-									styleClass="labelBold" />
-								<p:outputLabel  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.agenciaPix}"
-									styleClass="labelBold" />
-
-								<p:outputLabel for="Conta" value="Conta: "  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
-									styleClass="labelBold">
-								</p:outputLabel>
-								<p:outputLabel  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.contaPix}"
-									styleClass="labelBold" />
-
-								<p:outputLabel for="ContaDigito" value="Conta Digito: "  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
-									styleClass="labelBold">
-								</p:outputLabel>
-								<p:outputLabel  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.contaDigitoPix}"
-									styleClass="labelBold" />
-									
-
+									<p:outputLabel for="tipoPix" value="Tipo Do Pix "
+										styleClass="labelBold" />
+									<p:selectOneMenu id="tipoPix"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.tipoPix}">
+										<f:selectItem itemValue="CPF" itemLabel="CPF" />
+										<f:selectItem itemValue="CNPJ" itemLabel="CNPJ" />
+										<f:selectItem itemValue="TELEFONE" itemLabel="Telefone" />
+										<f:selectItem itemValue="EMAIL" itemLabel="E-mail" />
+										<f:selectItem itemValue="CHAVE_ALEATORIA"
+											itemLabel="Chave Aleatória" />
+										<p:ajax event="valueChange" update="pixRespValidacao"
+											listener="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.verificaAlteracaoPix}" />
+									</p:selectOneMenu>
+	
+									<p:outputLabel value="Banco: " for="Banco"  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
+										styleClass="labelBold" />
+									<p:outputLabel  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.bancoPix}"
+										styleClass="labelBold" />
+	
+									<p:outputLabel for="Agencia" value="Agência: "  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
+										styleClass="labelBold" />
+									<p:outputLabel  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.agenciaPix}"
+										styleClass="labelBold" />
+	
+									<p:outputLabel for="Conta" value="Conta: "  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
+										styleClass="labelBold">
+									</p:outputLabel>
+									<p:outputLabel  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.contaPix}"
+										styleClass="labelBold" />
+	
+									<p:outputLabel for="ContaDigito" value="Conta Digito: "  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
+										styleClass="labelBold">
+									</p:outputLabel>
+									<p:outputLabel  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.contaDigitoPix}"
+										styleClass="labelBold" />
 								</h:panelGrid>
 							</h:panelGrid>
 						</p:panel>
-					</h:panelGroup>
-				</shiro:hasAnyRoles>
+					</shiro:hasAnyRoles>
+				</h:panelGroup>
+				
 
 				<h:panelGroup id="DividasPanel" style="margin-bottom:20px;">
 					<p:panel header="Dívidas" style="margin-bottom:10px;"
@@ -5659,7 +5665,7 @@
 							label="Contrato" onkeypress="return isNumberKey(event);"
 							onkeydown="FormataValor(this, 13, event, 2);"
 							converter="bigDecimalConverter">
-							<p:ajax event="blur" update="valorAtualizadoProcesso"
+							<p:ajax event="valueChange" update="valorAtualizadoProcesso"
 								listener="#{contratoCobrancaMB.atualizarValorProcesso()}" />
 						</p:inputText>
 
@@ -5668,7 +5674,7 @@
 						<p:inputText
 							value="#{contratoCobrancaMB.processoSelecionado.numero}"
 							label="Contrato">
-							<p:ajax event="blur" update="valorAtualizadoProcesso"
+							<p:ajax event="valueChange" update="valorAtualizadoProcesso"
 								listener="#{contratoCobrancaMB.atualizarValorProcesso()}" />
 						</p:inputText>
 
