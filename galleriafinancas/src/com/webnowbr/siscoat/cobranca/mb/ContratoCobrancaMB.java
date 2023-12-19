@@ -3191,12 +3191,12 @@ public class ContratoCobrancaMB {
 			return "";
 		}
 
-		if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0) {
+		/*if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0) {
 			 Responsavel responsavel = responsavelDao.findByFilter("codigo", this.codigoResponsavel).get(0);
 			 if(!CommonsUtil.mesmoValor(responsavel.getId(), this.objetoContratoCobranca.getResponsavel().getId())) {
 				this.objetoContratoCobranca.setResponsavel(responsavel);
 			 }
-		}
+		}*/
 		
 			Responsavel responsavel = this.objetoContratoCobranca.getResponsavel();
 			responsavelDao.merge(responsavel);
@@ -3282,6 +3282,25 @@ public class ContratoCobrancaMB {
 							""));
 			CRMMB crmMb = new CRMMB();
 			return crmMb.clearFieldsDetalhado();
+	}
+	
+	public void atualizaResponsavel() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		ResponsavelDao responsavelDao = new ResponsavelDao();
+		try {
+			if(!CommonsUtil.mesmoValor(this.codigoResponsavel, this.objetoContratoCobranca.getResponsavel().getCodigo())) {
+				if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0) {
+					Responsavel responsavel = responsavelDao.findByFilter("codigo", this.codigoResponsavel).get(0);
+					this.objetoContratoCobranca.setResponsavel(responsavel);
+				} else {
+					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + "Responsável não encontrado", ""));
+					this.codigoResponsavel = this.objetoContratoCobranca.getResponsavel().getCodigo();
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + e, ""));
+		}
 	}
 
 	public String atualizaContratoAvaliacaoImovel() {
@@ -3745,12 +3764,12 @@ public class ContratoCobrancaMB {
 				}
 			}
 
-			if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0) {
+			/*if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0) {
 				 Responsavel responsavel = responsavelDao.findByFilter("codigo", this.codigoResponsavel).get(0);
 				 if(!CommonsUtil.mesmoValor(responsavel.getId(), this.objetoContratoCobranca.getResponsavel().getId())) {
 					this.objetoContratoCobranca.setResponsavel(responsavel);
 				 }
-			}
+			}*/
 			
 				Responsavel responsavel = this.objetoContratoCobranca.getResponsavel();
 				responsavelDao.merge(responsavel);
