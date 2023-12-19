@@ -241,6 +241,7 @@ import com.webnowbr.siscoat.simulador.SimuladorMB;
 
 import br.com.galleriabank.drcalc.cliente.model.DebitosJudiciais;
 import br.com.galleriabank.drcalc.cliente.model.DebitosJudiciaisRequest;
+import br.com.galleriabank.drcalc.cliente.model.DebitosJudiciaisRequestValor;
 import br.com.galleriabank.jwt.common.JwtUtil;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -20332,13 +20333,18 @@ return valorTotal;
 		String ano = numeroArray[1];
 		DebitosJudiciaisRequest debitosJudiciaisRequest = new DebitosJudiciaisRequest();
 		debitosJudiciaisRequest.setHonorario( CommonsUtil.bigDecimalValue(10));
-		debitosJudiciaisRequest.setVencimento( "0101" + ano );
-		debitosJudiciaisRequest.setValor( CommonsUtil.bigDecimalValue(processoSelecionado.getValor()));
+		DebitosJudiciaisRequestValor debitosJudiciaisRequestValor = new DebitosJudiciaisRequestValor();
+		debitosJudiciaisRequestValor.setDescricao(  processoSelecionado.getNumero());
+		debitosJudiciaisRequestValor.setVencimento( "0101" +  processoSelecionado.getNumero().substring(11,15) );
+		debitosJudiciaisRequestValor.setValor(CommonsUtil.bigDecimalValue(processoSelecionado.getValor()));
+
+		debitosJudiciaisRequest.getValores().add(debitosJudiciaisRequestValor);
+		
 		DrCalcService drCalcService = new DrCalcService();
 		DebitosJudiciais debitosJudiciais  = drCalcService.criarConsultaAtualizacaoMonetaria(debitosJudiciaisRequest);
 
 		if (debitosJudiciais != null) {
-			processoSelecionado.setValorAtualizado(debitosJudiciais.getTotal());
+			processoSelecionado.setValorAtualizado(debitosJudiciais.getValores().get(0).getTotal());
 		}
 		
 	}
