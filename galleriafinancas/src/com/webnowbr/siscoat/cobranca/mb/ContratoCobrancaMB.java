@@ -199,6 +199,7 @@ import com.webnowbr.siscoat.cobranca.service.BigDataService;
 import com.webnowbr.siscoat.cobranca.service.CepService;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.cobranca.service.DocumentoAnaliseService;
+import com.webnowbr.siscoat.cobranca.service.DrCalcService;
 import com.webnowbr.siscoat.cobranca.service.EngineService;
 import com.webnowbr.siscoat.cobranca.service.FileService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
@@ -238,6 +239,8 @@ import com.webnowbr.siscoat.simulador.SimulacaoIPCADadosV2;
 import com.webnowbr.siscoat.simulador.SimulacaoVO;
 import com.webnowbr.siscoat.simulador.SimuladorMB;
 
+import br.com.galleriabank.drcalc.cliente.model.DebitosJudiciais;
+import br.com.galleriabank.drcalc.cliente.model.DebitosJudiciaisRequest;
 import br.com.galleriabank.jwt.common.JwtUtil;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -3187,12 +3190,12 @@ public class ContratoCobrancaMB {
 			return "";
 		}
 
-		if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0) {
+		/*if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0) {
 			 Responsavel responsavel = responsavelDao.findByFilter("codigo", this.codigoResponsavel).get(0);
 			 if(!CommonsUtil.mesmoValor(responsavel.getId(), this.objetoContratoCobranca.getResponsavel().getId())) {
 				this.objetoContratoCobranca.setResponsavel(responsavel);
 			 }
-		}
+		}*/
 		
 			Responsavel responsavel = this.objetoContratoCobranca.getResponsavel();
 			responsavelDao.merge(responsavel);
@@ -3278,6 +3281,25 @@ public class ContratoCobrancaMB {
 							""));
 			CRMMB crmMb = new CRMMB();
 			return crmMb.clearFieldsDetalhado();
+	}
+	
+	public void atualizaResponsavel() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		ResponsavelDao responsavelDao = new ResponsavelDao();
+		try {
+			if(!CommonsUtil.mesmoValor(this.codigoResponsavel, this.objetoContratoCobranca.getResponsavel().getCodigo())) {
+				if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0) {
+					Responsavel responsavel = responsavelDao.findByFilter("codigo", this.codigoResponsavel).get(0);
+					this.objetoContratoCobranca.setResponsavel(responsavel);
+				} else {
+					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + "Responsável não encontrado", ""));
+					this.codigoResponsavel = this.objetoContratoCobranca.getResponsavel().getCodigo();
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + e, ""));
+		}
 	}
 
 	public String atualizaContratoAvaliacaoImovel() {
@@ -3741,12 +3763,12 @@ public class ContratoCobrancaMB {
 				}
 			}
 
-			if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0) {
+			/*if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0) {
 				 Responsavel responsavel = responsavelDao.findByFilter("codigo", this.codigoResponsavel).get(0);
 				 if(!CommonsUtil.mesmoValor(responsavel.getId(), this.objetoContratoCobranca.getResponsavel().getId())) {
 					this.objetoContratoCobranca.setResponsavel(responsavel);
 				 }
-			}
+			}*/
 			
 				Responsavel responsavel = this.objetoContratoCobranca.getResponsavel();
 				responsavelDao.merge(responsavel);
@@ -20306,21 +20328,38 @@ return valorTotal;
 	}
 	
 	public void atualizarValorProcesso() {
-		if(CommonsUtil.semValor(processoSelecionado.getNumero()))
-			return;
-		if(CommonsUtil.semValor(processoSelecionado.getValor()))
-			return;
+//		if(CommonsUtil.semValor(processoSelecionado.getNumero()))
+//			return;
+//		if(CommonsUtil.semValor(processoSelecionado.getValor()))
+//			return;
+//		String[] numeroArray = processoSelecionado.getNumero().split("\\.");
+//		if(numeroArray.length <= 1) 
+//			return;
+//		String ano = numeroArray[1];
+//		Date dataProcesso = DateUtil.getFirstDayOfYear(CommonsUtil.intValue(CommonsUtil.somenteNumeros(ano)));
+//		Date hoje = DateUtil.gerarDataHoje();
+//		BigDecimal valorPresente = calcularValorPresente(dataProcesso, hoje, 
+//				processoSelecionado.getValor(), BigDecimal.valueOf(1));
+//		valorPresente = valorPresente.multiply(BigDecimal.valueOf(1.1));
+//		valorPresente = valorPresente.setScale(2, BigDecimal.ROUND_HALF_UP);
+//		processoSelecionado.setValorAtualizado(valorPresente);
+		
+		
 		String[] numeroArray = processoSelecionado.getNumero().split("\\.");
 		if(numeroArray.length <= 1) 
 			return;
 		String ano = numeroArray[1];
-		Date dataProcesso = DateUtil.getFirstDayOfYear(CommonsUtil.intValue(CommonsUtil.somenteNumeros(ano)));
-		Date hoje = DateUtil.gerarDataHoje();
-		BigDecimal valorPresente = calcularValorPresente(dataProcesso, hoje, 
-				processoSelecionado.getValor(), BigDecimal.valueOf(1));
-		valorPresente = valorPresente.multiply(BigDecimal.valueOf(1.1));
-		valorPresente = valorPresente.setScale(2, BigDecimal.ROUND_HALF_UP);
-		processoSelecionado.setValorAtualizado(valorPresente);
+		DebitosJudiciaisRequest debitosJudiciaisRequest = new DebitosJudiciaisRequest();
+		debitosJudiciaisRequest.setHonorario( CommonsUtil.bigDecimalValue(10));
+		debitosJudiciaisRequest.setVencimento( "0101" + ano );
+		debitosJudiciaisRequest.setValor( CommonsUtil.bigDecimalValue(processoSelecionado.getValor()));
+		DrCalcService drCalcService = new DrCalcService();
+		DebitosJudiciais debitosJudiciais  = drCalcService.criarConsultaAtualizacaoMonetaria(debitosJudiciaisRequest);
+
+		if (debitosJudiciais != null) {
+			processoSelecionado.setValorAtualizado(debitosJudiciais.getTotal());
+		}
+		
 	}
 
 	public void editProcesso(CcbProcessosJudiciais processo) {

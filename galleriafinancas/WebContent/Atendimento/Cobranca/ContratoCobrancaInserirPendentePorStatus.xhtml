@@ -1974,6 +1974,7 @@
 				<p:panel id="Pessoas" header="Responsável"
 					style="margin-bottom:10px;"
 					rendered="#{( usuarioMB.objetoUsuario.administrador or contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro')}">
+					<p:messages />
 					<h:panelGrid columns="2">
 						<p:outputLabel for="Codigo1" value="Código do Responsável: "
 							styleClass="labelBold"
@@ -1989,13 +1990,17 @@
 							<p:inputText id="Codigo2"
 								value="#{contratoCobrancaMB.codigoResponsavel}"
 								label="Código do Responsável" style="width:150px;"
-								rendered="#{contratoCobrancaMB.updateMode}" />
+								rendered="#{contratoCobrancaMB.updateMode}" >
+								<f:ajax event="change" listener="#{contratoCobrancaMB.atualizaResponsavel()}" render="Pessoas comissaoCliente" ></f:ajax>
+							</p:inputText>
 						</shiro:lacksRole>
 						<shiro:hasAnyRoles name="PROFILE_ANALISTA_CREDITO">
 							<p:inputText id="Codigo2"
 								value="#{contratoCobrancaMB.codigoResponsavel}"
 								label="Código do Responsável" style="width:150px;"
-								disabled="true" rendered="#{contratoCobrancaMB.updateMode}" />
+								disabled="true" rendered="#{contratoCobrancaMB.updateMode}" >
+								<f:ajax event="change" listener="#{contratoCobrancaMB.atualizaResponsavel()}" render="Pessoas comissaoCliente" ></f:ajax>
+							</p:inputText>
 						</shiro:hasAnyRoles>
 						<p:outputLabel for="NomeResp" value="Nome do Responsável: "
 							styleClass="labelBold"
