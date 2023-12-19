@@ -9565,7 +9565,8 @@ return valorTotal;
 		// this.objetoContratoCobranca.setDataInicio(this.objetoContratoCobranca.getDataContrato());
 	
 		this.objetoContratoCobranca.calcularTaxaPreAprovada();
-
+		
+		carregaValorIOFCustos();
 
 		saveEstadoCheckListAtual();
 
@@ -9743,6 +9744,21 @@ return valorTotal;
 		} else {
 			return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatus.xhtml";
 		}
+	}
+	
+	public void carregaValorIOFCustos() {
+		CcbDao ccbDao = new CcbDao();
+		CcbContrato ccb = ccbDao.ConsultaCcbPorContratoNew(this.objetoContratoCobranca);
+		
+		if (ccb.getId() > 0) {
+			this.objetoContratoCobranca.setValorCustoEmissao(ccb.getValorIOF());			
+		}
+		
+		this.objetoContratoCobranca.setNomeBancarioCustoEmissao("Galleria SCD");
+		this.objetoContratoCobranca.setBancoBancarioCustoEmissao("001");
+		this.objetoContratoCobranca.setAgenciaBancarioCustoEmissao("6937-X");
+		this.objetoContratoCobranca.setContaBancarioCustoEmissao("120621-4");
+		this.objetoContratoCobranca.setCpfCnpjBancarioCustoEmissao("51.604.356/0001-75");
 	}
 
 	private void calcularRegistroVelho() {
@@ -19521,12 +19537,12 @@ return valorTotal;
 		*/
 
 		if (this.objetoContratoCobranca.getPixCartaSplitGalleria() != null || !this.objetoContratoCobranca.getPixCartaSplitGalleria().equals("")) {
-			contaCartaSplit.setFormaTransferencia("PIX");
+			contaCartaSplit.setFormaTransferencia("Pix");
 			
 			StarkBankBaixa baixa = registraBaixaStarkBank(DateUtil.gerarDataHoje(),
 						this.objetoContratoCobranca.getCpfCnpjBancarioCartaSplitGalleria(), null, null,
 						contaCartaSplit.getNomeTed(), this.objetoContratoCobranca.getValorCartaSplitGalleria(),
-						contaCartaSplit, "PIX", "Aguardando Aprovação");
+						contaCartaSplit, "Pix", "Aguardando Aprovação");
 
 				contaCartaSplit.getListContasPagarBaixas().add(baixa);
 
