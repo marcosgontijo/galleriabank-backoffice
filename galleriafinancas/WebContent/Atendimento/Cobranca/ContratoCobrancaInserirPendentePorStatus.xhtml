@@ -536,7 +536,10 @@
 												<p:selectBooleanButton id="pajuAtualizado"
 													value="#{contratoCobrancaMB.objetoContratoCobranca.pajuAtualizado}"
 													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-													offIcon="ui-icon-close" style="width:=60px" />
+													offIcon="ui-icon-close" style="width:=60px" >
+													<p:ajax event="valueChange"
+													update=":form:Status"/>
+												</p:selectBooleanButton>
 											</h:panelGrid>
 											<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajuAtualizado}">
 												<p:outputLabel styleClass="labelBold">Reanalise Jurídico</p:outputLabel>
@@ -5660,7 +5663,7 @@
 							label="Contrato" onkeypress="return isNumberKey(event);"
 							onkeydown="FormataValor(this, 13, event, 2);"
 							converter="bigDecimalConverter">
-							<p:ajax event="blur" update="valorAtualizadoProcesso"
+							<p:ajax event="valueChange" update="valorAtualizadoProcesso"
 								listener="#{contratoCobrancaMB.atualizarValorProcesso()}" />
 						</p:inputText>
 
@@ -5669,7 +5672,7 @@
 						<p:inputText
 							value="#{contratoCobrancaMB.processoSelecionado.numero}"
 							label="Contrato">
-							<p:ajax event="blur" update="valorAtualizadoProcesso"
+							<p:ajax event="valueChange" update="valorAtualizadoProcesso"
 								listener="#{contratoCobrancaMB.atualizarValorProcesso()}" />
 						</p:inputText>
 

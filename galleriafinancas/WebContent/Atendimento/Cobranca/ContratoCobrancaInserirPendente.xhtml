@@ -5749,7 +5749,7 @@
 							label="Contrato" onkeypress="return isNumberKey(event);"
 							onkeydown="FormataValor(this, 13, event, 2);"
 							converter="bigDecimalConverter">
-							<p:ajax event="blur" update="valorAtualizadoProcesso"
+							<p:ajax event="valueChange" update="valorAtualizadoProcesso"
 								listener="#{contratoCobrancaMB.atualizarValorProcesso()}" />
 						</p:inputText>
 
@@ -5758,7 +5758,7 @@
 						<p:inputText
 							value="#{contratoCobrancaMB.processoSelecionado.numero}"
 							label="Contrato">
-							<p:ajax event="blur" update="valorAtualizadoProcesso"
+							<p:ajax event="valueChange" update="valorAtualizadoProcesso"
 								listener="#{contratoCobrancaMB.atualizarValorProcesso()}" />
 						</p:inputText>
 
