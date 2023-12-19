@@ -799,6 +799,19 @@ public class PajuService {
 						sLinha = sLinha + " - Valor - "
 								+ CommonsUtil.formataValorMonetario(CommonsUtil.bigDecimalValue(acao.getValue()), "");
 
+						DebitosJudiciaisRequest debitosJudiciaisRequest = new DebitosJudiciaisRequest();
+						debitosJudiciaisRequest.setHonorario( CommonsUtil.bigDecimalValue(10));
+						debitosJudiciaisRequest.setVencimento( "0101" +  CommonsUtil.formataNumeroProcesso(acao.getNumber()).substring(11,15) );
+						debitosJudiciaisRequest.setValor( CommonsUtil.bigDecimalValue(acao.getValue()));
+						DrCalcService drCalcService = new DrCalcService();
+						DebitosJudiciais debitosJudiciais  = drCalcService.criarConsultaAtualizacaoMonetaria(debitosJudiciaisRequest);
+
+						if (debitosJudiciais != null) {
+							sLinha = sLinha + " - valor em  " + debitosJudiciais.getMes() + " de "
+									+ debitosJudiciais.getAno() + ": "
+									+ CommonsUtil.formataValorMonetario(debitosJudiciais.getTotal(), "");
+						}
+						
 						sLinha = sLinha + " - não listado na Consulta Plexi";
 						pdfLines.add(sLinha);
 					}
