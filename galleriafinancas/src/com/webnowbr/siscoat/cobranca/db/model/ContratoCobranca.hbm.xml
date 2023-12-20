@@ -2014,6 +2014,11 @@
 			<column name="analisePendenciadaUsuario" />
 		</property>
 		
+		<property name="origem" type="java.lang.String">
+			<column name="origem" />
+		</property>	
+		
+		
 		<property name="userCadastro" type="java.lang.String">
 			<column name="userCadastro" />
 		</property>	

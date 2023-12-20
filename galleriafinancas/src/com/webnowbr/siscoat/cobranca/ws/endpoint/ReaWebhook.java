@@ -71,7 +71,7 @@ public class ReaWebhook {
 
 			if (reaWebhookRetorno.getProprietarioAtual() != null) {
 				cadastrarPessoRetornoRea(reaWebhookRetorno.getProprietarioAtual(), documentoAnaliseDao,
-						documentoAnalise.getContratoCobranca(), "Proprietario Atual");
+						documentoAnalise.getContratoCobranca(), "Proprietario Atual", documentoAnalise.getUsuarioCadastro());
 				dataVendaAtual = DateUtil
 						.getDecodeDateExtenso(reaWebhookRetorno.getProprietarioAtual().getConteudo().getTexto());
 			}
@@ -92,7 +92,7 @@ public class ReaWebhook {
 					cadastrarPessoRetornoRea(proprietarioAnterior, documentoAnaliseDao,
 							documentoAnalise.getContratoCobranca(),
 							"Proprietario Anterior" + (CommonsUtil.semValor(dataVenda) ? " Data venda não localizada"
-									: " Data venda:" + CommonsUtil.formataData(dataVenda, "dd/MM/yyyy")));
+									: " Data venda:" + CommonsUtil.formataData(dataVenda, "dd/MM/yyyy")), documentoAnalise.getUsuarioCadastro());
 //					}
 
 				}
@@ -123,7 +123,7 @@ public class ReaWebhook {
 	}
 
 	private void cadastrarPessoRetornoRea(ReaWebhookRetornoBloco bloco, DocumentoAnaliseDao documentoAnaliseDao,
-			ContratoCobranca contratoCobranca, String motivo) {
+			ContratoCobranca contratoCobranca, String motivo, String usuarioConsultaREA) {
 
 		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
 
@@ -168,6 +168,10 @@ public class ReaWebhook {
 				
 				DocumentoAnalise documentoAnaliseCadastrado = documentoAnaliseDao.cadastradoAnalise(contratoCobranca, documentoAnalise.getCnpjcpf());
 				if (CommonsUtil.semValor(documentoAnaliseCadastrado)) {
+					
+					documentoAnaliseCadastrado.setOrigem("REA");
+					documentoAnaliseCadastrado.setDataCadastro(DateUtil.getDataHoraAgora());
+					documentoAnaliseCadastrado.setUsuarioCadastro(usuarioConsultaREA);
 
 					PagadorRecebedor pagador = new PagadorRecebedor();
 					pagador.setId(0);
