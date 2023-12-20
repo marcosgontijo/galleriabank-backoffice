@@ -791,6 +791,14 @@
 								<p:inputText id="pixCustoEmissao"
 									style="width:250px;font-weight: bold; font-size: 18px !important;"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.pixCustoEmissao}" />
+									
+								<p:commandButton action="#{contratoCobrancaMB.pagamentoStarkBankCartaSplitCustoEmissao}"
+											icon="ui-icon-video" title="Ordem de Pagamento" value="Ordem de Pagamento"
+											update=":form" disabled="#{contratoCobrancaMB.buscaDespesaCartaSplit('Pagamento Carta Split - IOF', contratoCobrancaMB.objetoContratoCobranca.numeroContrato) != null}"/>	
+								<p:commandButton value="Comprovante" ajax="false" icon="ui-icon-arrowthick-1-s" update=":form:messageContasPagar"
+								disabled="#{contratoCobrancaMB.buscaDespesaCartaSplit('Pagamento Carta Split - IOF', contratoCobrancaMB.objetoContratoCobranca.numeroContrato) == null}">						       	 	
+						       	 	<p:fileDownload value="#{contratoCobrancaMB.getDownloadComprovanteStarkBank(contratoCobrancaMB.buscaDespesaCartaSplit('Pagamento Carta Split - IOF', contratoCobrancaMB.objetoContratoCobranca.numeroContrato).listContasPagarBaixas)}" />
+						    	</p:commandButton>	
 							</h:panelGrid>
 						</h:panelGrid>
 					</p:panel>
