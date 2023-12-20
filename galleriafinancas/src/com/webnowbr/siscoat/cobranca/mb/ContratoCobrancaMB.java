@@ -32485,6 +32485,9 @@ return valorTotal;
 		if (!CommonsUtil.semValor(documentoAnalisePesquisa))
 			documentoAnaliseAdicionar = documentoAnalisePesquisa;
 		else {
+			documentoAnaliseAdicionar.setOrigem("ContratCobranca");
+			documentoAnaliseAdicionar.setDataCadastro(DateUtil.getDataHoraAgora());
+			documentoAnaliseAdicionar.setUsuarioCadastro(loginBean.getUsuarioLogado().getLogin());
 			documentoAnaliseAdicionar.adiconarEstadosPeloCadastro();
 			documentoAnaliseDao.merge(documentoAnaliseAdicionar);
 			this.objetoContratoCobranca.setDocumentosAnalisados(false);

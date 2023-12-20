@@ -76,6 +76,10 @@ public class BigDataService {
 			// busca dados da receita se nao tiver ainda
 			netrinService.atualizaDadosPagadoRecebedorComReceitaFederal(documentoAnalise.getPagador());
 			String nomeConsultado = documentoAnalise.getPagador().getNome();
+			
+			if ( !CommonsUtil.mesmoValorIgnoreCase(documentoAnalise.getIdentificacao(), nomeConsultado)) {
+				documentoAnalise.setIdentificacao(nomeConsultado);
+			}
 
 			String cnpjcpf = documentoAnalise.getCnpjcpf();
 			if (!CommonsUtil.semValor(documentoAnalise.getPagador())) {
@@ -412,6 +416,9 @@ public class BigDataService {
 			// busca dados da receita se nao tiver ainda
 			netrinService.atualizaDadosPagadoRecebedorComReceitaFederal(documentoAnalise.getPagador());
 			String nomeConsultado = documentoAnalise.getPagador().getNome();
+			if ( !CommonsUtil.mesmoValorIgnoreCase(documentoAnalise.getIdentificacao(), nomeConsultado)) {
+				documentoAnalise.setIdentificacao(nomeConsultado);
+			}
 
 			String cnpjcpf = documentoAnalise.getCnpjcpf();
 			if (!CommonsUtil.semValor(documentoAnalise.getPagador())) {

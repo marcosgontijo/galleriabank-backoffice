@@ -44,6 +44,20 @@
 			<column name="tipo" />
 		</property>
 		
+		
+		<property name="origem" type="java.lang.String">
+			<column name="origem" />
+		</property>	
+		
+		<property name="usuarioCadastro" type="java.lang.String">
+			<column name="usuarioCadastro" />
+		</property>	
+		
+		<property name="dataCadastro"
+			type="java.util.Date">
+			<column name="dataCadastro" />
+		</property>
+				
 		<property name="excluido" type="boolean">
 			<column name="excluido" not-null="true" default ="false"/>
 		</property>

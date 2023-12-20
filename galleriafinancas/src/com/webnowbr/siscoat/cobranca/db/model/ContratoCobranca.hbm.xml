@@ -2013,7 +2013,7 @@
 		<property name="analisePendenciadaUsuario" type="java.lang.String">
 			<column name="analisePendenciadaUsuario" />
 		</property>
-		
+					
 		<property name="userCadastro" type="java.lang.String">
 			<column name="userCadastro" />
 		</property>	

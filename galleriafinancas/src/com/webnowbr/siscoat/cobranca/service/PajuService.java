@@ -797,7 +797,7 @@ public class PajuService {
 							AcaoJudicial acao = bigData.getAcaoJudicial(numeroProcesso);
 
 							if (acao != null) {
-								if (!debitosJudiciais.getValores().stream()
+								if (!debitosJudiciaisRequest.getValores().stream()
 										.filter(d -> CommonsUtil.mesmoValor(d.getDescricao(),
 												CommonsUtil.formataNumeroProcesso(acao.getNumber())))
 										.findFirst().isPresent()) {
