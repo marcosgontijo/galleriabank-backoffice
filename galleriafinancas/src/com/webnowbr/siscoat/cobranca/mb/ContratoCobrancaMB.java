@@ -128,6 +128,7 @@ import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobrancaResumo;
 import com.webnowbr.siscoat.cobranca.db.model.AnaliseComite;
 import com.webnowbr.siscoat.cobranca.db.model.Averbacao;
 import com.webnowbr.siscoat.cobranca.db.model.BoletoKobana;
+import com.webnowbr.siscoat.cobranca.db.model.Cartorio;
 import com.webnowbr.siscoat.cobranca.db.model.CcbContrato;
 import com.webnowbr.siscoat.cobranca.db.model.CcbParticipantes;
 import com.webnowbr.siscoat.cobranca.db.model.CcbProcessosJudiciais;
@@ -169,6 +170,7 @@ import com.webnowbr.siscoat.cobranca.db.model.StarkBankBoleto;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankPix;
 import com.webnowbr.siscoat.cobranca.db.model.directd.PorcentagemImovel;
 import com.webnowbr.siscoat.cobranca.db.op.CcbDao;
+import com.webnowbr.siscoat.cobranca.db.op.CartorioDao;
 import com.webnowbr.siscoat.cobranca.db.op.CcbParticipantesDao;
 import com.webnowbr.siscoat.cobranca.db.op.CcbProcessosJudiciaisDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
@@ -258,12 +260,14 @@ public class ContratoCobrancaMB {
 	private String numeroContratoObjetoContratoCobranca;
 	private List<FileUploaded> documentoConsultarTodos;
 	private boolean verificaReaProcessado;
-	 private BigDecimal valorMercaoImovelPorcento;
+	private Cartorio objetoCartorio = new Cartorio();
+	private BigDecimal valorMercaoImovelPorcento;
 	 private BigDecimal valorMercadoImovelDez;
 	 private BigDecimal valorMercadoImovelVinte;
 	 private BigDecimal valorMercadoImovelTrinta;
 	 private BigDecimal valorMercadoImovelQuarenta;
 	 private BigDecimal valorMercadoImovelCinquenta;
+	 private boolean apagaListaCartorio;
 
 	private boolean updateMode = false;
 	private boolean deleteMode = false;
@@ -275,7 +279,6 @@ public class ContratoCobrancaMB {
 
 	private String tipoParametroConsultaContrato;
 	private String parametroConsultaContrato;
-
 	private String tituloTelaConsultaPreStatus;
 	private String tituloTelaLead = "";
 
@@ -864,6 +867,47 @@ public class ContratoCobrancaMB {
 	public String rowSelected() {
     	return null;
     }
+private	List<Cartorio> listaCartorio = new ArrayList<>();
+	
+	public void consultaCartorio(){
+		CartorioDao dao = new CartorioDao();
+		listaCartorio = dao.consultaCartorio(objetoContratoCobranca);
+		if(listaCartorio.isEmpty()) {
+			listaCartorio = null;
+		}
+		
+	}
+
+	public void excluiLista() {
+		CartorioDao dao = new CartorioDao();
+		List<Cartorio> cartorioExcluir = dao.consultaCartorio(objetoContratoCobranca);
+		for (Cartorio cartorioItem : cartorioExcluir) {
+			dao.delete(cartorioItem);
+		}
+		listaCartorio = dao.consultaCartorio(objetoContratoCobranca);
+		consultaCartorio();
+	}
+
+	public void salvaCartorio() {
+		User usuarioLogado = getUsuarioLogado();
+		CartorioDao dao = new CartorioDao();
+
+		if (objetoCartorio.getStatus() == null) {
+			objetoCartorio.setStatus("Enviado Para cartório");
+		}
+		if (objetoCartorio.getDataStatus() == null) {
+			objetoCartorio.setDataStatus(DateUtil.getDataHoje());
+		}
+		if (usuarioLogado != null && objetoCartorio != null) {
+			this.objetoCartorio.setNomeUsuario(usuarioLogado.getName());
+			this.objetoCartorio.setIdContrato(objetoContratoCobranca);
+		}
+		dao.create(objetoCartorio);
+		objetoCartorio = new Cartorio();
+		if (objetoContratoCobranca.isContratoEmCartorio()) {
+			listaCartorio = dao.consultaCartorio(objetoContratoCobranca);
+		}
+	}
 	
 	public void saveContratoEmCartorio() {
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -34670,5 +34714,27 @@ public class ContratoCobrancaMB {
 	public void setPorcentagemPersonalizada(BigDecimal porcentagemPersonalizada) {
 		this.porcentagemPersonalizada = porcentagemPersonalizada;
 	}
+
+	public boolean isApagaListaCartorio() {
+		return apagaListaCartorio;
+	}
+
+	public void setApagaListaCartorio(boolean apagaListaCartorio) {
+		this.apagaListaCartorio = apagaListaCartorio;
+	}
+	 public Cartorio getObjetoCartorio() {
+			return objetoCartorio;
+		}
+
+		public void setObjetoCartorio(Cartorio objetoCartorio) {
+			this.objetoCartorio = objetoCartorio;
+		}
+		public List<Cartorio> getListaCartorio() {
+			return listaCartorio;
+		}
+
+		public void setListaCartorio(List<Cartorio> listaCartorio) {
+			this.listaCartorio = listaCartorio;
+		}
 	
 }
