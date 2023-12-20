@@ -90,6 +90,33 @@ public class CcbDao extends HibernateDao <CcbContrato,Long> {
 		});	
 	}	
 	
+	@SuppressWarnings("unchecked")
+	public CcbContrato ConsultaCcbPorContratoNew(ContratoCobranca contrato) {
+		return (CcbContrato) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				CcbContrato object = new CcbContrato();
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				
+				try {
+					connection = getConnection();
+					ps = connection.prepareStatement(QUERY_CONSULTA_CCB_CONTRATO);
+					ps.setLong(1, contrato.getId());
+					rs = ps.executeQuery();
+					while (rs.next()) {
+						CcbDao ccbDao = new CcbDao();
+						object = ccbDao.findById(rs.getLong("id"));												
+					}
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return object;
+			}
+		});	
+	}
 
 	private static final String QUERY_CONSULTA_TESTEMUNHAS= "select id, nome, cpf, rg from cobranca.pagadorrecebedor p ";
 	
