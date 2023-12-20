@@ -71,6 +71,10 @@ public class DocumentoAnalise implements Serializable {
 	private String motivoAnalise;
 	private String path;
 	private String tipo;
+	private String origem;
+	private Date dataCadastro; 
+	private String usuarioCadastro;
+	
 	private boolean liberadoAnalise;	
 	private boolean liberadoContinuarAnalise;
 	private boolean liberadoCertidoes;	
@@ -1073,6 +1077,30 @@ public class DocumentoAnalise implements Serializable {
 //			this.tipoEnum = DocumentosAnaliseEnum.CREDNET;
 //			break;
 //		}
+	}
+
+	public String getOrigem() {
+		return origem;
+	}
+
+	public void setOrigem(String origem) {
+		this.origem = origem;
+	}
+
+	public Date getDataCadastro() {
+		return dataCadastro;
+	}
+
+	public void setDataCadastro(Date dataCadastro) {
+		this.dataCadastro = dataCadastro;
+	}
+
+	public String getUsuarioCadastro() {
+		return usuarioCadastro;
+	}
+
+	public void setUsuarioCadastro(String usuarioCadastro) {
+		this.usuarioCadastro = usuarioCadastro;
 	}
 
 	public boolean isLiberadoAnalise() {
