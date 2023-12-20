@@ -222,56 +222,60 @@ public class DocumentoAnalise implements Serializable {
 	
 	private String dialogHeader() {
 		String str = "";
-		EngineRetorno engine = null;
-		engine = GsonUtil.fromJson(getRetornoEngine(), EngineRetorno.class);
-		if (engine != null) {
-			if (engine.getConsultaCompleta() != null) {
-				EngineRetornoRequestFields nome = engine.getRequestFields().stream().filter(f -> f.getField().equals("nome"))
-						.findFirst().orElse(null);
-
-				EngineRetornoRequestFields cpf = engine.getRequestFields().stream().filter(g -> g.getField().equals("cpf"))
+		try {
+			EngineRetorno engine = null;
+			engine = GsonUtil.fromJson(getRetornoEngine(), EngineRetorno.class);
+			if (engine != null) {
+				if (engine.getConsultaCompleta() != null) {
+					EngineRetornoRequestFields nome = engine.getRequestFields().stream().filter(f -> f.getField().equals("nome"))
 							.findFirst().orElse(null);
-
-				EngineRetornoRequestFields cnpj = engine.getRequestFields().stream()
-							.filter(s -> s.getField().equals("cnpj")).findFirst().orElse(null);
-				
-				if (nome != null) {
-					str = nome.getValue();
-					str = str.trim();
-				}
-				
-				if (cpf != null) {
-					if (engine.getConsultaCompleta() != null && engine.getConsultaCompleta().getBestInfo().getAge() != null) {
-						str = String.join(" - ", str, engine.getConsultaCompleta().getBestInfo().getAge() + " Anos");
-					} else {
-						str = String.join(" - ", str, null);
+	
+					EngineRetornoRequestFields cpf = engine.getRequestFields().stream().filter(g -> g.getField().equals("cpf"))
+								.findFirst().orElse(null);
+	
+					EngineRetornoRequestFields cnpj = engine.getRequestFields().stream()
+								.filter(s -> s.getField().equals("cnpj")).findFirst().orElse(null);
+					
+					if (nome != null) {
+						str = nome.getValue();
+						str = str.trim();
 					}
 					
-					str = String.join(" - ", str, cpf.getValue());
-				}
-				
-				if (cnpj != null) {
-					str = String.join(" - ", str, cnpj.getValue());
-				}
-				if (getMotivoAnalise() != null && !getMotivoAnalise().isEmpty()) {
-					str = String.join(" - ", str, getMotivoAnalise());
-				}
-			} else {
-				if (engine.getDadosCadastraisPJ() != null) {
-					if (engine.getDadosCadastraisPJ().getBestInfo() != null) {						
-						str = engine.getDadosCadastraisPJ().getBestInfo().getCompanyName();
-						str = str.trim();
-						str = String.join(" - ", str, engine.getDadosCadastraisPJ().getCnpj());
+					if (cpf != null) {
+						if (engine.getConsultaCompleta() != null && engine.getConsultaCompleta().getBestInfo().getAge() != null) {
+							str = String.join(" - ", str, engine.getConsultaCompleta().getBestInfo().getAge() + " Anos");
+						} else {
+							str = String.join(" - ", str, null);
+						}
+						
+						str = String.join(" - ", str, cpf.getValue());
 					}
-				}
-			}			
-		} else {
-			str = this.getIdentificacao();
-			str = String.join(" - ", str, this.cnpjcpf);
-
-		}
-		if (this.pagador.getInicioEmpresa() != null) {
-			str = String.join(" - ", str, calcularIdade(this.pagador.getInicioEmpresa()) + " Anos");
+					
+					if (cnpj != null) {
+						str = String.join(" - ", str, cnpj.getValue());
+					}
+					if (getMotivoAnalise() != null && !getMotivoAnalise().isEmpty()) {
+						str = String.join(" - ", str, getMotivoAnalise());
+					}
+				} else {
+					if (engine.getDadosCadastraisPJ() != null) {
+						if (engine.getDadosCadastraisPJ().getBestInfo() != null) {						
+							str = engine.getDadosCadastraisPJ().getBestInfo().getCompanyName();
+							str = str.trim();
+							str = String.join(" - ", str, engine.getDadosCadastraisPJ().getCnpj());
+						}
+					}
+				}			
+			} else {
+				str = this.getIdentificacao();
+				str = String.join(" - ", str, this.cnpjcpf);
+	
+			}
+			if (this.pagador.getInicioEmpresa() != null) {
+				str = String.join(" - ", str, calcularIdade(this.pagador.getInicioEmpresa()) + " Anos");
+			}
+		} catch (Exception e) {
+			//e.printStackTrace();
 		}
 		if(!CommonsUtil.semValor(str))
 			return str;
