@@ -47,10 +47,12 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import com.google.gson.internal.LinkedTreeMap;
+import com.webnowbr.siscoat.cobranca.db.model.CcbProcessosJudiciais;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoTipoTemplate;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoTipoTemplateBloco;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoTipoTemplateCampo;
+import com.webnowbr.siscoat.cobranca.db.model.DocketConsulta;
 import com.webnowbr.siscoat.cobranca.db.model.DocketEstados;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
@@ -459,52 +461,51 @@ public class PajuService {
 						}
 					}
 				}
+			}
 
-				if (!CommonsUtil.semValor(participante.getPlexiConsultas())) {
+			if (!CommonsUtil.semValor(participante.getPlexiConsultas())) {
 
-					for (PlexiConsulta plexiConsulta : participante.getPlexiConsultas()) {
+				for (PlexiConsulta plexiConsulta : participante.getPlexiConsultas()) {
 
-						ContratoTipoTemplateBloco blocoFilho = bloco.getBlocosFilho().stream().filter(b -> CommonsUtil
-								.mesmoValor(b.getCodigoTipoTemplateBloco(), BLOCO_PESSOA_FISICA_DOCUMENTOS_PLEXI))
-								.findFirst().orElse(null);
-						if (!CommonsUtil.semValor(blocoFilho)) {
+					ContratoTipoTemplateBloco blocoFilho = bloco.getBlocosFilho().stream().filter(b -> CommonsUtil
+							.mesmoValor(b.getCodigoTipoTemplateBloco(), BLOCO_PESSOA_FISICA_DOCUMENTOS_PLEXI))
+							.findFirst().orElse(null);
+					if (!CommonsUtil.semValor(blocoFilho)) {
 
-							if (!CommonsUtil.semValor(plexiConsulta.getPlexiWebhookRetorno())
-									&& !CommonsUtil.booleanValue(plexiConsulta.getPlexiWebhookRetorno().getError())
-									&& CommonsUtil.booleanValue(plexiConsulta.getPlexiDocumentos().isMostrarPaju())) {
+						if (!CommonsUtil.semValor(plexiConsulta.getPlexiWebhookRetorno())
+								&& !CommonsUtil.booleanValue(plexiConsulta.getPlexiWebhookRetorno().getError())
+								&& CommonsUtil.booleanValue(plexiConsulta.getPlexiDocumentos().isMostrarPaju())) {
 
-								CertidoesPaju certidoesPaju = new CertidoesPaju();
+							CertidoesPaju certidoesPaju = new CertidoesPaju();
 
-								if (CommonsUtil.mesmoValor(plexiConsulta.getPlexiDocumentos().getId(), 31L)) {
-									processaCertidaoTJSP_1Grau(plexiConsulta, certidoesPaju);
-								} else if (CommonsUtil.mesmoValor(plexiConsulta.getPlexiDocumentos().getId(), 42L)) {
-									processaCertidaoTRT2_PJe(plexiConsulta, bigData, certidoesPaju);
-								} else if (CommonsUtil.mesmoValor(plexiConsulta.getPlexiDocumentos().getId(), 35L)) {
-									processaCertidaoTRF3_PJe(plexiConsulta, bigData, certidoesPaju);
-								}
-								adicionaParagrafoPlexi(docTemplate, paragrafoDocumentoTemplate, blocoFilho,
-										plexiConsulta, certidoesPaju, bigData, mapProcesos, nomesParticipantes,
-										participante);
+							if (CommonsUtil.mesmoValor(plexiConsulta.getPlexiDocumentos().getId(), 31L)) {
+								processaCertidaoTJSP_1Grau(plexiConsulta, certidoesPaju);
+							} else if (CommonsUtil.mesmoValor(plexiConsulta.getPlexiDocumentos().getId(), 42L)) {
+								processaCertidaoTRT2_PJe(plexiConsulta, bigData, certidoesPaju);
+							} else if (CommonsUtil.mesmoValor(plexiConsulta.getPlexiDocumentos().getId(), 35L)) {
+								processaCertidaoTRF3_PJe(plexiConsulta, bigData, certidoesPaju);
 							}
+							adicionaParagrafoPlexi(docTemplate, paragrafoDocumentoTemplate, blocoFilho,
+									plexiConsulta, certidoesPaju, bigData, mapProcesos, nomesParticipantes,
+									participante);
 						}
 					}
 				}
+			}
 
-				if (!CommonsUtil.semValor(participante.getNetrinConsultas())) {
-					for (NetrinConsulta netrinConsulta : participante.getNetrinConsultas()) {
+			if (!CommonsUtil.semValor(participante.getNetrinConsultas())) {
+				for (NetrinConsulta netrinConsulta : participante.getNetrinConsultas()) {
 
-						ContratoTipoTemplateBloco blocoFilho = bloco.getBlocosFilho().stream().filter(b -> CommonsUtil
-								.mesmoValor(b.getCodigoTipoTemplateBloco(), BLOCO_PESSOA_FISICA_DOCUMENTOS_NETRIN))
-								.findFirst().orElse(null);
-						if (!CommonsUtil.semValor(blocoFilho)) {
-							if (!CommonsUtil.semValor(netrinConsulta.getRetorno())
-									&& CommonsUtil.booleanValue(netrinConsulta.getNetrinDocumentos().isMostrarPaju()))
-								adicionaParagrafoNetrin(docTemplate, paragrafoDocumentoTemplate, blocoFilho,
-										netrinConsulta);
-						}
+					ContratoTipoTemplateBloco blocoFilho = bloco.getBlocosFilho().stream().filter(b -> CommonsUtil
+							.mesmoValor(b.getCodigoTipoTemplateBloco(), BLOCO_PESSOA_FISICA_DOCUMENTOS_NETRIN))
+							.findFirst().orElse(null);
+					if (!CommonsUtil.semValor(blocoFilho)) {
+						if (!CommonsUtil.semValor(netrinConsulta.getRetorno())
+								&& CommonsUtil.booleanValue(netrinConsulta.getNetrinDocumentos().isMostrarPaju()))
+							adicionaParagrafoNetrin(docTemplate, paragrafoDocumentoTemplate, blocoFilho,
+									netrinConsulta);
 					}
 				}
-
 			}
 
 		}
@@ -520,18 +521,19 @@ public class PajuService {
 	private String getDadosAcaoBigData(Map<String, List<String>> mapProcesos, final List<String> nomesParticipantes,
 			DocumentoAnalise participante, final String numeroProcesso, AcaoJudicial acao,
 			DebitosJudiciais debitosJudiciais, String sLinha) {
+		DebitosJudiciaisValores debitosJudiciaisValores = null;
 		if (!mapProcesos.keySet().contains(numeroProcesso)) {
 			String svalor = "";
 			if (CommonsUtil.semValor(acao)) {
 				svalor = svalor + "Valor: não localizado na consulta de processos";
 				return sLinha + " ." + svalor;
 			} else if (CommonsUtil.semValor(acao.getValue())) {
-				svalor = svalor + " Valor: sem valor localiado";
+				svalor = svalor + " Valor: sem valor localizado";
 			} else {
 				svalor = svalor + " Valor: "
 						+ CommonsUtil.formataValorMonetario(CommonsUtil.bigDecimalValue(acao.getValue()), "");
 
-				DebitosJudiciaisValores debitosJudiciaisValores = debitosJudiciais.getValores().stream()
+				debitosJudiciaisValores = debitosJudiciais.getValores().stream()
 						.filter(d -> CommonsUtil.mesmoValor(d.getDescricao(),
 								CommonsUtil.formataNumeroProcesso(acao.getNumber())))
 						.findFirst().orElse(null);
@@ -823,10 +825,11 @@ public class PajuService {
 							final String numeroProcesso = CommonsUtil
 									.somenteNumeros(valores.getValue().get(0).toString());
 							AcaoJudicial acao = bigData.getAcaoJudicial(numeroProcesso);
-
+							DebitosJudiciaisValores debitosJudiciaisValores = null;
+							String sLinha = "";
 							if (acao != null) {
 								acoesBigData.remove(acao);
-								String sLinha = "Processo: " + valores.getValue().get(0) + " - ";
+								sLinha = "Processo: " + valores.getValue().get(0) + " - ";
 								sLinha = sLinha + " Ação: " + acao.getMainSubject() + " - ";
 								ProcessoParte processoParte = acao.getParties().stream()
 										.filter(p -> CommonsUtil.mesmoValor(p.getType(), "CLAIMANT")).findFirst()
@@ -836,7 +839,7 @@ public class PajuService {
 								sLinha = sLinha + " - Valor - " + CommonsUtil
 										.formataValorMonetario(CommonsUtil.bigDecimalValue(acao.getValue()), "");
 
-								DebitosJudiciaisValores debitosJudiciaisValores = debitosJudiciais.getValores().stream()
+								debitosJudiciaisValores = debitosJudiciais.getValores().stream()
 										.filter(d -> CommonsUtil.mesmoValor(d.getDescricao(),
 												CommonsUtil.formataNumeroProcesso(acao.getNumber())))
 										.findFirst().orElse(null);
@@ -849,10 +852,12 @@ public class PajuService {
 
 								pdfLines.add(sLinha);
 							} else {
-								String sLinha = "Processo: " + valores.getValue().get(0)
+								sLinha = "Processo: " + valores.getValue().get(0)
 										+ " - não listado na Consulta Processos";
 								pdfLines.add(sLinha);
 							}
+							criarProcessoContrato(plexiConsulta.getDocumentoAnalise(), acao,
+									debitosJudiciaisValores, sLinha);
 						}
 					}
 				}
@@ -1904,16 +1909,30 @@ public class PajuService {
 
 	}
 
+	public void criarProcessoContrato(DocumentoAnalise participante, AcaoJudicial acao,
+			DebitosJudiciaisValores debitosJudiciaisValores, String sLinha) {
+		CcbProcessosJudiciais processo = new CcbProcessosJudiciais();
+		String obs = "";
+		if (CommonsUtil.semValor(acao)) {
+			obs = obs + "Valor: não localizado na consulta de processos";
+		} else if (CommonsUtil.semValor(acao.getValue())) {
+			obs = obs + " Valor: sem valor localiado";
+		}
+		processo.setPagador(participante.getPagador());
+		processo.setNumero(CommonsUtil.formataNumeroProcesso(acao.getNumber()));
+		processo.setValor(CommonsUtil.bigDecimalValue(acao.getValue()));
+		processo.setValorAtualizado(debitosJudiciaisValores.getTotal());
+		processo.setObservacao(obs);
+	}
+	
 	public ContratoCobranca getContrato() {
 		return contrato;
 	}
 
 	public void setContrato(ContratoCobranca contrato) {
 		this.contrato = contrato;
-
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 		this.listaDocumentoAnalise = documentoAnaliseDao.listagemDocumentoAnalise(this.contrato);
-
 	}
 
 }
