@@ -336,6 +336,8 @@
 							<p:ajax update="form:PanelCasado" event="valueChange" />
 						</p:selectOneMenu>
 					</h:panelGrid>
+					<div style="display: flex; flex-direction: row">
+					<div style="display: flex; flex-direction: column">
 					<h:panelGrid columns="2" 
 					rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'
 					 or pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'UNIÃO ESTÁVEL'}">
@@ -515,9 +517,22 @@
 								<f:selectItem itemValue="TO" itemLabel="TOCANTINS" />
 							</p:selectOneMenu>
 						</h:panelGrid>
-						<h:panelGroup style="width: 75%;" layout="block">													
+						</h:panelGrid>
+						</div>
+						
+					<div style="align-items: flex-start;">
+						<h:panelGroup rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'UNIÃO ESTÁVEL'}"  style=" align-items: flex-start;">	
+							<h:panelGrid>
+								<p:selectOneRadio value="#{pagadorRecebedorMB.objetoPagadorRecebedor.tipoUniao}">
+								<f:selectItem itemLabel="Escritura publica" itemValue="Escritura publica"/>
+								<f:selectItem itemLabel="Declaração de união" itemValue="Declaração de uniao"/>
+								<p:ajax event="valueChange" update="form:PanelCasado"/>
+								</p:selectOneRadio>
+								
+								</h:panelGrid>
+							<h:panelGrid rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.tipoUniao eq 'Escritura publica'}">										
 							<p:outputLabel
-								value="Conforme pacto antenupcial registrado no " styleClass="labelBold"
+								value="Conforme escritura pública registrado no " styleClass="labelBold"
 								style="font-weight: bold; font-size: 16px;" />
 							<p:inputText id="registroPacto" 
 								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.registroPactoAntenupcial}" />
@@ -538,8 +553,11 @@
 								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dataPactoAntenupcial}" 
 								size="100" pattern="dd/MM/yyyy" locale="pt"
 								styleClass="dateTimeField" />
+								</h:panelGrid>
 						</h:panelGroup>
-					</h:panelGrid>
+						</div>
+						</div>
+					
 				</p:panel>
 							
 				<p:panel id="PanelInvestidor" header="Habilitar Portal Investidor"

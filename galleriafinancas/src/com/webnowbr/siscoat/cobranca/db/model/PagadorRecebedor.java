@@ -51,7 +51,7 @@ public class PagadorRecebedor implements Serializable {
 	private String codigoMoneyPlus;
 	
 	private String estadocivil;
-	
+	private String tipoUniao;
 	private Date dataCasamento;
 	private String regimeCasamento; 
 	private String registroPactoAntenupcial;
@@ -102,6 +102,7 @@ public class PagadorRecebedor implements Serializable {
 	private List<SelectItem> listaBancos;
 	private String banco;
 	private String agencia;
+	private String agenciaDigito;
 	private String conta;
 	private String contaDigito;
 	private String nomeCC;
@@ -2386,4 +2387,19 @@ public class PagadorRecebedor implements Serializable {
 	public void setInicioEmpresa(Date inicioEmpresa) {
 		this.inicioEmpresa = inicioEmpresa;
 	}	
+	public String getAgenciaDigito() {
+		return agenciaDigito;
+	}
+
+	public void setAgenciaDigito(String agenciaDigito) {
+		this.agenciaDigito = agenciaDigito;
+	}
+
+	public String getTipoUniao() {
+		return tipoUniao;
+	}
+
+	public void setTipoUniao(String tipoUniao) {
+		this.tipoUniao = tipoUniao;
+	}
 }
