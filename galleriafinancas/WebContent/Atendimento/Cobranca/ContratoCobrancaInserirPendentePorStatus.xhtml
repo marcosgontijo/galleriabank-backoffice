@@ -1781,6 +1781,12 @@
 							<p:calendar id="dataPajuComentado" showOn="button" 
 								value="#{contratoCobrancaMB.objetoContratoCobranca.dataPajuComentado}"
 								size="100" pattern="dd/MM/yyyy" styleClass="dateTimeField" />
+								
+							<p:commandButton value="Download Modelo PAJU" ajax="false"
+								icon="ui-icon-check"
+								action="#{contratoCobrancaMB.downloadModeloPaju}"
+								style="TEXT-DECORATION: bold; ">
+							</p:commandButton>
 						</h:panelGrid>
 						<h:panelGrid columns="2"
 							rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel == true and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC'}">

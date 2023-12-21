@@ -20433,6 +20433,7 @@ return valorTotal;
 		}
 		CcbProcessosJudiciaisDao ccbProcessosJudiciaisDao = new CcbProcessosJudiciaisDao();
 		if (processoSelecionado.getId() <= 0) {
+			processoSelecionado.setOrigem("Manual: " + getUsuarioLogadoNull().getLogin());
 			ccbProcessosJudiciaisDao.create(processoSelecionado);
 			objetoContratoCobranca.getListProcessos().add(processoSelecionado);
 		} else {
@@ -20475,7 +20476,7 @@ return valorTotal;
 		debitosJudiciaisRequest.setHonorario( CommonsUtil.bigDecimalValue(10));
 		DebitosJudiciaisRequestValor debitosJudiciaisRequestValor = new DebitosJudiciaisRequestValor();
 		debitosJudiciaisRequestValor.setDescricao(  processoSelecionado.getNumero());
-		debitosJudiciaisRequestValor.setVencimento( "0101" +  processoSelecionado.getNumero().substring(11,15) );
+		debitosJudiciaisRequestValor.setVencimento( "0101" + DateUtil.getAnoProcesso(processoSelecionado.getNumero().substring(11,15)));
 		debitosJudiciaisRequestValor.setValor(CommonsUtil.bigDecimalValue(processoSelecionado.getValor()));
 
 		debitosJudiciaisRequest.getValores().add(debitosJudiciaisRequestValor);

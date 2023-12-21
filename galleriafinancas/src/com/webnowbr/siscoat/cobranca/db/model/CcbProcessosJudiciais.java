@@ -28,6 +28,8 @@ public class CcbProcessosJudiciais implements Serializable{
 	private String natureza = "";
 	private boolean selecionadoComite = false;
 	private String observacao = "";
+	private String outrosParticipantes = "";
+	private String origem = "";
 	
 	public CcbProcessosJudiciais(BigDecimal valor, String numero) {
 		contaPagar = new ContasPagar();
@@ -139,5 +141,21 @@ public class CcbProcessosJudiciais implements Serializable{
 
 	public void setNatureza(String natureza) {
 		this.natureza = natureza;
-	}	
+	}
+
+	public String getOutrosParticipantes() {
+		return outrosParticipantes;
+	}
+
+	public void setOutrosParticipantes(String outrosParticipantes) {
+		this.outrosParticipantes = outrosParticipantes;
+	}
+
+	public String getOrigem() {
+		return origem;
+	}
+
+	public void setOrigem(String origem) {
+		this.origem = origem;
+	}
 }
