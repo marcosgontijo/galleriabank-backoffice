@@ -20451,25 +20451,10 @@ return valorTotal;
 	}
 	
 	public void atualizarValorProcesso() {
-//		if(CommonsUtil.semValor(processoSelecionado.getNumero()))
-//			return;
-//		if(CommonsUtil.semValor(processoSelecionado.getValor()))
-//			return;
-//		String[] numeroArray = processoSelecionado.getNumero().split("\\.");
-//		if(numeroArray.length <= 1) 
-//			return;
-//		String ano = numeroArray[1];
-//		Date dataProcesso = DateUtil.getFirstDayOfYear(CommonsUtil.intValue(CommonsUtil.somenteNumeros(ano)));
-//		Date hoje = DateUtil.gerarDataHoje();
-//		BigDecimal valorPresente = calcularValorPresente(dataProcesso, hoje, 
-//				processoSelecionado.getValor(), BigDecimal.valueOf(1));
-//		valorPresente = valorPresente.multiply(BigDecimal.valueOf(1.1));
-//		valorPresente = valorPresente.setScale(2, BigDecimal.ROUND_HALF_UP);
-//		processoSelecionado.setValorAtualizado(valorPresente);
-		
-		
 		String[] numeroArray = processoSelecionado.getNumero().split("\\.");
 		if(numeroArray.length <= 1) 
+			return;
+		if(CommonsUtil.semValor(processoSelecionado.getValor()))
 			return;
 		String ano = numeroArray[1];
 		DebitosJudiciaisRequest debitosJudiciaisRequest = new DebitosJudiciaisRequest();
@@ -20477,7 +20462,7 @@ return valorTotal;
 		DebitosJudiciaisRequestValor debitosJudiciaisRequestValor = new DebitosJudiciaisRequestValor();
 		debitosJudiciaisRequestValor.setDescricao(  processoSelecionado.getNumero());
 		debitosJudiciaisRequestValor.setVencimento( "0101" + DateUtil.getAnoProcesso(processoSelecionado.getNumero().substring(11,15)));
-		debitosJudiciaisRequestValor.setValor(CommonsUtil.bigDecimalValue(processoSelecionado.getValor()));
+		debitosJudiciaisRequestValor.setValor(processoSelecionado.getValor());
 
 		debitosJudiciaisRequest.getValores().add(debitosJudiciaisRequestValor);
 		
@@ -20488,6 +20473,30 @@ return valorTotal;
 			processoSelecionado.setValorAtualizado(debitosJudiciais.getValores().get(0).getTotal());
 		}
 		
+	}
+	
+	public void atualizarNumeroProcesso() {
+		CcbProcessosJudiciaisDao processosJudiciaisDao = new CcbProcessosJudiciaisDao();
+		CcbProcessosJudiciais processoDB = processosJudiciaisDao.getProcessosExistentes(
+						CommonsUtil.formataNumeroProcesso(processoSelecionado.getNumero()),objetoContratoCobranca);
+		if(!CommonsUtil.semValor(processoSelecionado.getValor()))
+			processoDB.setValor(processoSelecionado.getValor());
+		processoDB.setPagador(processoSelecionado.getPagador());
+		processoDB.setNumero(processoSelecionado.getNumero());
+		if(processoDB.getId() > 0) {
+			String origem = processoDB.getOrigem();
+			if(origem.contains("Editado por:")) {
+				String origemAux = origem.substring(0, origem.lastIndexOf(" "));
+				origemAux = origemAux + " " + getNomeUsuarioLogado();
+				processoDB.setOrigem(origemAux);
+			} else {
+				origem = origem + " Editado por: " + getNomeUsuarioLogado();
+				processoDB.setOrigem(origem);
+			}
+		}
+		processoSelecionado = processoDB; 
+		atualizarValorProcesso();
+		return;
 	}
 
 	public void editProcesso(CcbProcessosJudiciais processo) {
