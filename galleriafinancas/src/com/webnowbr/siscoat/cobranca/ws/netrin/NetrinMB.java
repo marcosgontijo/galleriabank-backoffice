@@ -296,6 +296,7 @@ public class NetrinMB {
 							//senão, duplica
 							} else {
 								netrinConsulta.popularCampos(consultasExistentesRetorno.get(0));
+								docAnalise.getNetrinConsultas().add(netrinConsulta);
 							}
 						}
 					}
@@ -320,6 +321,7 @@ public class NetrinMB {
 						//senão, duplica
 						} else {
 							netrinConsulta.popularCampos(consultasExistentesRetorno.get(0));
+							docAnalise.getNetrinConsultas().add(netrinConsulta);
 						}
 					}
 				}

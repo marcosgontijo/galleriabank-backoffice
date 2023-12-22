@@ -20431,11 +20431,22 @@ return valorTotal;
 				cpDao.merge(processoSelecionado.getContaPagar());
 			}
 		}
+		
 		CcbProcessosJudiciaisDao ccbProcessosJudiciaisDao = new CcbProcessosJudiciaisDao();
 		if (processoSelecionado.getId() <= 0) {
+			processoSelecionado.setOrigem("Manual: " + getUsuarioLogadoNull().getLogin());
 			ccbProcessosJudiciaisDao.create(processoSelecionado);
 			objetoContratoCobranca.getListProcessos().add(processoSelecionado);
 		} else {
+			String origem = processoSelecionado.getOrigem();
+			if(origem.contains("Editado por:")) {
+				String origemAux = origem.substring(0, origem.lastIndexOf(" "));
+				origemAux = origemAux + " " + getNomeUsuarioLogado();
+				processoSelecionado.setOrigem(origemAux);
+			} else {
+				origem = origem + " - Editado por: " + getNomeUsuarioLogado();
+				processoSelecionado.setOrigem(origem);
+			}
 			ccbProcessosJudiciaisDao.merge(processoSelecionado);
 			PrimeFaces current = PrimeFaces.current();
 			current.executeScript("PF('processoDialog').hide();");
@@ -20450,33 +20461,18 @@ return valorTotal;
 	}
 	
 	public void atualizarValorProcesso() {
-//		if(CommonsUtil.semValor(processoSelecionado.getNumero()))
-//			return;
-//		if(CommonsUtil.semValor(processoSelecionado.getValor()))
-//			return;
-//		String[] numeroArray = processoSelecionado.getNumero().split("\\.");
-//		if(numeroArray.length <= 1) 
-//			return;
-//		String ano = numeroArray[1];
-//		Date dataProcesso = DateUtil.getFirstDayOfYear(CommonsUtil.intValue(CommonsUtil.somenteNumeros(ano)));
-//		Date hoje = DateUtil.gerarDataHoje();
-//		BigDecimal valorPresente = calcularValorPresente(dataProcesso, hoje, 
-//				processoSelecionado.getValor(), BigDecimal.valueOf(1));
-//		valorPresente = valorPresente.multiply(BigDecimal.valueOf(1.1));
-//		valorPresente = valorPresente.setScale(2, BigDecimal.ROUND_HALF_UP);
-//		processoSelecionado.setValorAtualizado(valorPresente);
-		
-		
 		String[] numeroArray = processoSelecionado.getNumero().split("\\.");
 		if(numeroArray.length <= 1) 
+			return;
+		if(CommonsUtil.semValor(processoSelecionado.getValor()))
 			return;
 		String ano = numeroArray[1];
 		DebitosJudiciaisRequest debitosJudiciaisRequest = new DebitosJudiciaisRequest();
 		debitosJudiciaisRequest.setHonorario( CommonsUtil.bigDecimalValue(10));
 		DebitosJudiciaisRequestValor debitosJudiciaisRequestValor = new DebitosJudiciaisRequestValor();
 		debitosJudiciaisRequestValor.setDescricao(  processoSelecionado.getNumero());
-		debitosJudiciaisRequestValor.setVencimento( "0101" +  processoSelecionado.getNumero().substring(11,15) );
-		debitosJudiciaisRequestValor.setValor(CommonsUtil.bigDecimalValue(processoSelecionado.getValor()));
+		debitosJudiciaisRequestValor.setVencimento( "0101" + DateUtil.getAnoProcesso(processoSelecionado.getNumero().substring(11,15)));
+		debitosJudiciaisRequestValor.setValor(processoSelecionado.getValor());
 
 		debitosJudiciaisRequest.getValores().add(debitosJudiciaisRequestValor);
 		
@@ -20488,7 +20484,7 @@ return valorTotal;
 		}
 		
 	}
-
+	
 	public void editProcesso(CcbProcessosJudiciais processo) {
 		processoSelecionado = processo;
 	}

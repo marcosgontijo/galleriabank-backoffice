@@ -773,10 +773,26 @@ public class CcbMB {
 				}
 			}
 			
+			objetoCcb.setIntermediacaoValor(valorTranferencia);
+			String conta = "";
+			if(!CommonsUtil.semValor(objetoContratoCobranca.getResponsavel().getConta())) {
+				conta = objetoContratoCobranca.getResponsavel().getConta();
+			}
+			if(!CommonsUtil.semValor(objetoContratoCobranca.getResponsavel().getContaDigito())) {
+				conta = conta + "-" + objetoContratoCobranca.getResponsavel().getContaDigito();
+			}
+			objetoCcb.setIntermediacaoBanco(objetoContratoCobranca.getResponsavel().getBanco());
+			objetoCcb.setIntermediacaoAgencia(objetoContratoCobranca.getResponsavel().getAgencia());
+			objetoCcb.setIntermediacaoCC(conta);
+			objetoCcb.setIntermediacaoCNPJ(objetoContratoCobranca.getResponsavel().getCpfCnpjCC());
+			objetoCcb.setIntermediacaoNome(objetoContratoCobranca.getResponsavel().getNomeCC());
+			objetoCcb.setIntermediacaoPix(objetoContratoCobranca.getResponsavel().getPix());
+			objetoCcb.setIntermediacaoTipoConta(objetoContratoCobranca.getResponsavel().getTipoConta());
+			
 			if(CommonsUtil.semValor(objetoCcb.getIntermediacaoValor()) || CommonsUtil.semValor(despesaTransferencia)) {
 				criarDespesa("Transferência", valorTranferencia, "TED");
 			} else {
-				String conta = "";
+				conta = "";
 				if(!CommonsUtil.semValor(objetoContratoCobranca.getResponsavel().getConta())) {
 					conta = objetoContratoCobranca.getResponsavel().getConta();
 				}
@@ -793,22 +809,6 @@ public class CcbMB {
 				despesaTransferencia.setValor(valorTranferencia);
 				contasPagarDao.merge(despesaTransferencia);
 			}
-			objetoCcb.setIntermediacaoValor(valorTranferencia);
-			objetoCcb.setIntermediacaoBanco(objetoContratoCobranca.getResponsavel().getBanco());
-			objetoCcb.setIntermediacaoAgencia(objetoContratoCobranca.getResponsavel().getAgencia());
-			String conta = "";
-			if(!CommonsUtil.semValor(objetoContratoCobranca.getResponsavel().getConta())) {
-				conta = objetoContratoCobranca.getResponsavel().getConta();
-			}
-			if(!CommonsUtil.semValor(objetoContratoCobranca.getResponsavel().getContaDigito())) {
-				conta = conta + "-" + objetoContratoCobranca.getResponsavel().getContaDigito();
-			}
-			objetoCcb.setIntermediacaoCC(conta);
-			objetoCcb.setIntermediacaoCNPJ(objetoContratoCobranca.getResponsavel().getCpfCnpjCC());
-			objetoCcb.setIntermediacaoNome(objetoContratoCobranca.getResponsavel().getNomeCC());
-			objetoCcb.setIntermediacaoPix(objetoContratoCobranca.getResponsavel().getPix());
-			objetoCcb.setIntermediacaoTipoConta(objetoContratoCobranca.getResponsavel().getTipoConta());
-			
 		} else if(!CommonsUtil.semValor(despesaTransferencia)) {
 			despesaTransferencia.setValor(BigDecimal.ZERO);
 			objetoCcb.getDespesasAnexo2().remove(despesaTransferencia);

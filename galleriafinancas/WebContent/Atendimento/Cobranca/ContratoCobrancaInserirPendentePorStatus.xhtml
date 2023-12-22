@@ -1781,6 +1781,12 @@
 							<p:calendar id="dataPajuComentado" showOn="button" 
 								value="#{contratoCobrancaMB.objetoContratoCobranca.dataPajuComentado}"
 								size="100" pattern="dd/MM/yyyy" styleClass="dateTimeField" />
+								
+							<p:commandButton value="Download Modelo PAJU" ajax="false"
+								icon="ui-icon-check"
+								action="#{contratoCobrancaMB.downloadModeloPaju}"
+								style="TEXT-DECORATION: bold; ">
+							</p:commandButton>
 						</h:panelGrid>
 						<h:panelGrid columns="2"
 							rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel == true and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC'}">
@@ -1845,6 +1851,9 @@
 
 										<p:column style="text-align: center;" headerText="Obs" >
 											<p:outputLabel value="#{processosPessoas.observacao}"
+												style="FONT-SIZE: 10pt;" />
+												<br/>
+											<p:outputLabel value="#{processosPessoas.origem}"
 												style="FONT-SIZE: 10pt;" />
 										</p:column>
 
@@ -5675,7 +5684,7 @@
 							value="#{contratoCobrancaMB.processoSelecionado.numero}"
 							label="Contrato">
 							<p:ajax event="valueChange" update="valorAtualizadoProcesso"
-								listener="#{contratoCobrancaMB.atualizarValorProcesso()}" />
+								listener="#{contratoCobrancaMB.atualizarNumeroProcesso()}" />
 						</p:inputText>
 
 						<p:outputLabel value="Valor Atualizado: " styleClass="labelBold"
