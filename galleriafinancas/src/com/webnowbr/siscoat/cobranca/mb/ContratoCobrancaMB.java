@@ -20431,12 +20431,22 @@ return valorTotal;
 				cpDao.merge(processoSelecionado.getContaPagar());
 			}
 		}
+		
 		CcbProcessosJudiciaisDao ccbProcessosJudiciaisDao = new CcbProcessosJudiciaisDao();
 		if (processoSelecionado.getId() <= 0) {
 			processoSelecionado.setOrigem("Manual: " + getUsuarioLogadoNull().getLogin());
 			ccbProcessosJudiciaisDao.create(processoSelecionado);
 			objetoContratoCobranca.getListProcessos().add(processoSelecionado);
 		} else {
+			String origem = processoSelecionado.getOrigem();
+			if(origem.contains("Editado por:")) {
+				String origemAux = origem.substring(0, origem.lastIndexOf(" "));
+				origemAux = origemAux + " " + getNomeUsuarioLogado();
+				processoSelecionado.setOrigem(origemAux);
+			} else {
+				origem = origem + " - Editado por: " + getNomeUsuarioLogado();
+				processoSelecionado.setOrigem(origem);
+			}
 			ccbProcessosJudiciaisDao.merge(processoSelecionado);
 			PrimeFaces current = PrimeFaces.current();
 			current.executeScript("PF('processoDialog').hide();");
@@ -20475,30 +20485,6 @@ return valorTotal;
 		
 	}
 	
-	public void atualizarNumeroProcesso() {
-		CcbProcessosJudiciaisDao processosJudiciaisDao = new CcbProcessosJudiciaisDao();
-		CcbProcessosJudiciais processoDB = processosJudiciaisDao.getProcessosExistentes(
-						CommonsUtil.formataNumeroProcesso(processoSelecionado.getNumero()),objetoContratoCobranca);
-		if(!CommonsUtil.semValor(processoSelecionado.getValor()))
-			processoDB.setValor(processoSelecionado.getValor());
-		processoDB.setPagador(processoSelecionado.getPagador());
-		processoDB.setNumero(processoSelecionado.getNumero());
-		if(processoDB.getId() > 0) {
-			String origem = processoDB.getOrigem();
-			if(origem.contains("Editado por:")) {
-				String origemAux = origem.substring(0, origem.lastIndexOf(" "));
-				origemAux = origemAux + " " + getNomeUsuarioLogado();
-				processoDB.setOrigem(origemAux);
-			} else {
-				origem = origem + " Editado por: " + getNomeUsuarioLogado();
-				processoDB.setOrigem(origem);
-			}
-		}
-		processoSelecionado = processoDB; 
-		atualizarValorProcesso();
-		return;
-	}
-
 	public void editProcesso(CcbProcessosJudiciais processo) {
 		processoSelecionado = processo;
 	}
