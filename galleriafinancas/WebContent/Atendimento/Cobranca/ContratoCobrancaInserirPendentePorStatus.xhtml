@@ -1817,7 +1817,10 @@
 									<p:dataTable var="processosPessoas" id="processosPessoas"
 										value="#{pessoasProcessos.processos}"
 										size="small" sortBy="#{processosPessoas.id}"
-										sortOrder="ascending">
+										sortOrder="ascending" 
+										rowKey="#{processosPessoas.id}">
+										
+										<p:column selectionMode="multiple" style="width:16px;text-align:center"/>      
 
 										<p:column style="text-align: center;width:175px;"
 											headerText="N°">
@@ -1868,7 +1871,14 @@
 												update="form:RecebidoPajulaudoPanel form:ComitePanelView form:pessoasProcessos
 													processosPessoas " />
 										</p:column>
-									</p:dataTable>
+										
+									    <p:ajax event="rowSelectCheckbox" 
+									            listener="#{contratoCobrancaMB.onRowSelectProcessos}" update="form:pessoasProcessos"/>
+									    <p:ajax event="rowUnselectCheckbox" 
+									            listener="#{contratoCobrancaMB.onRowUnselectProcessos}" update="form:pessoasProcessos"/>
+									    <p:ajax event="toggleSelect" 
+									            listener="#{contratoCobrancaMB.onAllRowsSelectProcessos}" update="form:pessoasProcessos"/>
+            						</p:dataTable>
 								</p:dataViewListItem>
 							</p:dataView>
 
@@ -1880,6 +1890,13 @@
 									icon="ui-icon ui-icon-plus" ajax="true"
 									oncomplete="PF('pessoaDialog').show();"
 									update="pessoaDialogdlg" />
+									
+								<p:outputLabel value="Atualizar Valores: " styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:commandButton
+									action="#{contratoCobrancaMB.atualizarValorProcessoEmLote(contratoCobrancaMB.listProcessosSelecionado)}"
+									icon="ui-icon ui-icon-arrowrefresh-1-e" ajax="true"
+									update="form:pessoasProcessos" />
 							</h:panelGrid>
 						</h:panelGrid>
 
@@ -5674,8 +5691,6 @@
 							label="Contrato" onkeypress="return isNumberKey(event);"
 							onkeydown="FormataValor(this, 13, event, 2);"
 							converter="bigDecimalConverter">
-							<p:ajax event="valueChange" update="valorAtualizadoProcesso"
-								listener="#{contratoCobrancaMB.atualizarValorProcesso()}" />
 						</p:inputText>
 
 						<p:outputLabel value="Numero: " styleClass="labelBold"
@@ -5683,17 +5698,20 @@
 						<p:inputText
 							value="#{contratoCobrancaMB.processoSelecionado.numero}"
 							label="Contrato">
-							<p:ajax event="valueChange" update="valorAtualizadoProcesso"
-								listener="#{contratoCobrancaMB.atualizarNumeroProcesso()}" />
 						</p:inputText>
 
 						<p:outputLabel value="Valor Atualizado: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />
-						<p:inputText id="valorAtualizadoProcesso"
-							value="#{contratoCobrancaMB.processoSelecionado.valorAtualizado}"
-							label="Contrato" onkeypress="return isNumberKey(event);"
-							onkeydown="FormataValor(this, 13, event, 2);"
-							converter="bigDecimalConverter" />
+						<h:panelGroup>
+							<p:inputText id="valorAtualizadoProcesso"
+								value="#{contratoCobrancaMB.processoSelecionado.valorAtualizado}"
+								label="Contrato" onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 13, event, 2);"
+								converter="bigDecimalConverter" />
+							<p:commandButton action="#{contratoCobrancaMB.atualizarValorProcesso()}"
+								icon="ui-icon ui-icon-arrowrefresh-1-e" ajax="true"
+								update="valorAtualizadoProcesso" />
+						</h:panelGroup>
 							
 						<p:outputLabel value="Quitar: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />
