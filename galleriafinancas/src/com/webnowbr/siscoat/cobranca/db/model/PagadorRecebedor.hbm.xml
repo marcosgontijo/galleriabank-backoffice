@@ -656,5 +656,10 @@
 		<property name="inicioEmpresa" type="java.util.Date">
 			<column name="inicioEmpresa"/>
 		</property>
+		
+		<property name="restricao" type="boolean">
+			<column name="restricao" not-null="true" default="false" />
+		</property>
+		
     </class>
 </hibernate-mapping>

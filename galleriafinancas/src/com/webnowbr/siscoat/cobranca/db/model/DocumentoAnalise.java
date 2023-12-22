@@ -516,11 +516,11 @@ public class DocumentoAnalise implements Serializable {
 			}
 
 			if (dado.getResumoDoClienteTraduzido().getCarteiraVencido() == null) {
-				scr.add(new DocumentoAnaliseResumo("Carteira vencido:", "Não Disponível"));
+				scr.add(new DocumentoAnaliseResumo("Carteira vencida:", "Não Disponível"));
 			} else {
 				String carteiraVencido = CommonsUtil
 						.formataValorMonetario(dado.getResumoDoClienteTraduzido().getCarteiraVencido());
-				scr.add(new DocumentoAnaliseResumo("Carteira vencido:", carteiraVencido));
+				scr.add(new DocumentoAnaliseResumo("Carteira vencida:", carteiraVencido));
 				if (dado.getResumoDoClienteTraduzido().getCarteiraVencido().compareTo(new BigDecimal(1000)) > 0) {
 					isDividaVencidaAvailable = true;
 				}
@@ -553,12 +553,12 @@ public class DocumentoAnalise implements Serializable {
 				    NumberFormat formatoMoeda = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
 				    String somaFormatada = formatoMoeda.format(soma);
 
-				    scr.add(new DocumentoAnaliseResumo("Carteira de Crédito Tomado:", somaFormatada));
+				    scr.add(new DocumentoAnaliseResumo("Limite de Crédito:", somaFormatada));
 				}
 			}
 			
 			if (dado.getResumoDoClienteTraduzido().getDtInicioRelacionamento() == null) {
-				scr.add(new DocumentoAnaliseResumo("Data inicio relacionamento:", "--"));
+				scr.add(new DocumentoAnaliseResumo("Inicio relacionamento:", "--"));
 				setInicioRelacionamentoInexistente(true);
 			} else {		
 				String[] str = dado.getResumoDoClienteTraduzido().getDtInicioRelacionamento().split("-");
