@@ -19781,7 +19781,7 @@ return valorTotal;
 		
 		System.out.println("processaPagamentoStarkBank");
 
-		if (!CommonsUtil.semValor(this.objetoBaixaPagamentoStarkBank.getContasPagar().getValorPagamento())) {
+		//if (!CommonsUtil.semValor(this.objetoBaixaPagamentoStarkBank.getContasPagar().getValorPagamento())) {
 			StarkBankAPI starkBankAPI = new StarkBankAPI();
 
 			if (this.objetoBaixaPagamentoStarkBank.getContasPagar().getFormaTransferencia().equals("Boleto")) {
@@ -19893,7 +19893,7 @@ return valorTotal;
 
 					finalizaOperacao = true;
 				}
-			}
+			//}
 		
 			if (finalizaOperacao) {
 				BigDecimal saldoConta = getSaldoContaPagar(this.objetoBaixaPagamentoStarkBank.getContasPagar());
