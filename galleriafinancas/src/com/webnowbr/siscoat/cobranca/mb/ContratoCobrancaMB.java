@@ -53,7 +53,6 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
@@ -81,9 +80,12 @@ import org.hibernate.JDBCException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.primefaces.PrimeFaces;
+import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.event.ToggleSelectEvent;
+import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.DualListModel;
 import org.primefaces.model.LazyDataModel;
@@ -203,6 +205,7 @@ import com.webnowbr.siscoat.cobranca.service.DrCalcService;
 import com.webnowbr.siscoat.cobranca.service.EngineService;
 import com.webnowbr.siscoat.cobranca.service.FileService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
+import com.webnowbr.siscoat.cobranca.service.PagadorRecebedorService;
 import com.webnowbr.siscoat.cobranca.service.PajuService;
 import com.webnowbr.siscoat.cobranca.service.RelatoriosService;
 import com.webnowbr.siscoat.cobranca.service.ScrService;
@@ -231,7 +234,6 @@ import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
 import com.webnowbr.siscoat.job.CertidoesJob;
-import com.webnowbr.siscoat.job.DocumentoAnaliseJob;
 import com.webnowbr.siscoat.security.LoginBean;
 import com.webnowbr.siscoat.simulador.SimulacaoDetalheVO;
 import com.webnowbr.siscoat.simulador.SimulacaoIPCACalculoV2;
@@ -242,7 +244,7 @@ import com.webnowbr.siscoat.simulador.SimuladorMB;
 import br.com.galleriabank.drcalc.cliente.model.DebitosJudiciais;
 import br.com.galleriabank.drcalc.cliente.model.DebitosJudiciaisRequest;
 import br.com.galleriabank.drcalc.cliente.model.DebitosJudiciaisRequestValor;
-import br.com.galleriabank.jwt.common.JwtUtil;
+import br.com.galleriabank.drcalc.cliente.model.DebitosJudiciaisValores;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -273,6 +275,7 @@ public class ContratoCobrancaMB {
 	private boolean deleteMode = false;
 	private boolean crmMode = false;
 	private boolean baixarMode = false;
+	private List<String> restricaoOperacao = new ArrayList<String>();
 	private String tituloPainel = null;
 	private String origemTelaBaixar;
 	private String empresa;
@@ -378,6 +381,7 @@ public class ContratoCobrancaMB {
 	ContasPagar contasPagarSelecionada;
 	ContasPagar contasPagarArquivos;
 	CcbProcessosJudiciais processoSelecionado;
+	private List<CcbProcessosJudiciais> listProcessosSelecionado = new ArrayList<CcbProcessosJudiciais>();
 	PagadorRecebedor pagadorProcesso;
 	private boolean tipoPagadorProcesso;
 	private boolean mostrarTodosProcessos;
@@ -9337,6 +9341,9 @@ public class ContratoCobrancaMB {
 
 	public String clearFieldsEditarPendentes() {
 		listaArquivosAnaliseDocumentos();
+		this.restricaoOperacao= new ArrayList<>();
+
+		listaRestricoesPessoas();
 
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
@@ -9598,6 +9605,10 @@ return valorTotal;
 		// monta listagem de Arquivo para analise
 		listaArquivosAnaliseDocumentos();
 
+		this.restricaoOperacao= new ArrayList<>();
+
+		listaRestricoesPessoas();
+
 		verificaPagamentoAntecipado();
 		verificaPagamentoIntegral();
 
@@ -9606,6 +9617,8 @@ return valorTotal;
 		this.objetoContratoCobranca.setQtdeVotosReprovadosComite(BigInteger.ZERO);
 		this.contratosPagadorAnalisado = new ArrayList<>();
 		this.contratosImovelAnalisado = new ArrayList<>();
+		
+		
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 
 		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Aguardando Análise")
@@ -9658,6 +9671,8 @@ return valorTotal;
 					objetoContratoCobranca.setPagtoLaudoConfirmada(true);
 				}
 			}
+			
+
 		}
 
 		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Comite")) {
@@ -9768,6 +9783,25 @@ return valorTotal;
 			return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatus.xhtml";
 		}
 	}
+
+	private void listaRestricoesPessoas() {
+		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();		
+		List<String> result = pagadorRecebedorService.verificaRestricao(objetoContratoCobranca.getPagador());
+		
+		if (!CommonsUtil.semValor(result))
+			this.restricaoOperacao.addAll(result);
+
+		for (DocumentoAnalise documento : this.listaDocumentoAnalise) {
+			if (documento.isLiberadoAnalise()) {
+				if (!CommonsUtil.semValor(documento.getPagador())) {
+					result = pagadorRecebedorService.verificaRestricao(documento.getPagador());
+					result.removeAll(this.restricaoOperacao);
+					if (!CommonsUtil.semValor(result))
+						this.restricaoOperacao.addAll(result);
+				}
+			}
+		}
+	}
 	
 	public void carregaValorIOFCustos() {
 		CcbDao ccbDao = new CcbDao();
@@ -9813,6 +9847,7 @@ return valorTotal;
 
 	private BigDecimal gerarRecomendacaoComite() {
 		BigDecimal valorSugerido = BigDecimal.ZERO;
+	
 		objetoAnaliseComite.setTipoPessoa(objetoContratoCobranca.getPagador().getCpf());
 		objetoAnaliseComite.setTipoImovel(objetoContratoCobranca.getImovel().getTipo()); 
 		objetoAnaliseComite.setTipoOp(objetoContratoCobranca.getTipoOperacao());
@@ -9872,8 +9907,8 @@ return valorTotal;
 			}
 		}
 		return valorSugerido;
-	}
 	
+	}
 
 	public void gerarProcessosQuitarComite() {
 //		if (CommonsUtil.semValor(this.objetoContratoCobranca.getProcessosQuitarComite())) {
@@ -9912,7 +9947,11 @@ return valorTotal;
 
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
+	
 		listaArquivosAnaliseDocumentos();
+		this.restricaoOperacao= new ArrayList<>();
+
+		listaRestricoesPessoas();
 
 		return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusAvaliacaoImovel.xhtml";
 	}
@@ -9929,6 +9968,9 @@ return valorTotal;
 			this.codigoResponsavel = this.objetoContratoCobranca.getResponsavel().getCodigo();
 		}
 		listaArquivosAnaliseDocumentos();
+		this.restricaoOperacao= new ArrayList<>();
+
+		listaRestricoesPessoas();
 
 		filesInterno = new ArrayList<FileUploaded>();
 		filesInterno = listaArquivosInterno();
@@ -9955,6 +9997,9 @@ return valorTotal;
 			this.idAnalistaGeracaoPAJU = 0;
 		}
 		listaArquivosAnaliseDocumentos();
+		this.restricaoOperacao= new ArrayList<>();
+
+		//listaRestricoesPessoas();
 
 		this.tituloPainel = "Editar";
 
@@ -19776,7 +19821,7 @@ return valorTotal;
 		
 		System.out.println("processaPagamentoStarkBank");
 
-		if (!CommonsUtil.semValor(this.objetoBaixaPagamentoStarkBank.getContasPagar().getValorPagamento())) {
+		//if (!CommonsUtil.semValor(this.objetoBaixaPagamentoStarkBank.getContasPagar().getValorPagamento())) {
 			StarkBankAPI starkBankAPI = new StarkBankAPI();
 
 			if (this.objetoBaixaPagamentoStarkBank.getContasPagar().getFormaTransferencia().equals("Boleto")) {
@@ -19888,7 +19933,7 @@ return valorTotal;
 
 					finalizaOperacao = true;
 				}
-			}
+			//}
 		
 			if (finalizaOperacao) {
 				BigDecimal saldoConta = getSaldoContaPagar(this.objetoBaixaPagamentoStarkBank.getContasPagar());
@@ -20433,9 +20478,19 @@ return valorTotal;
 		}
 		CcbProcessosJudiciaisDao ccbProcessosJudiciaisDao = new CcbProcessosJudiciaisDao();
 		if (processoSelecionado.getId() <= 0) {
+			processoSelecionado.setOrigem("Manual: " + getUsuarioLogadoNull().getLogin());
 			ccbProcessosJudiciaisDao.create(processoSelecionado);
 			objetoContratoCobranca.getListProcessos().add(processoSelecionado);
 		} else {
+			String origem = processoSelecionado.getOrigem();
+			if(origem.contains("Editado por:")) {
+				String origemAux = origem.substring(0, origem.lastIndexOf(" "));
+				origemAux = origemAux + " " + getNomeUsuarioLogado();
+				processoSelecionado.setOrigem(origemAux);
+			} else {
+				origem = origem + " - Editado por: " + getNomeUsuarioLogado();
+				processoSelecionado.setOrigem(origem);
+			}
 			ccbProcessosJudiciaisDao.merge(processoSelecionado);
 			PrimeFaces current = PrimeFaces.current();
 			current.executeScript("PF('processoDialog').hide();");
@@ -20450,33 +20505,18 @@ return valorTotal;
 	}
 	
 	public void atualizarValorProcesso() {
-//		if(CommonsUtil.semValor(processoSelecionado.getNumero()))
-//			return;
-//		if(CommonsUtil.semValor(processoSelecionado.getValor()))
-//			return;
-//		String[] numeroArray = processoSelecionado.getNumero().split("\\.");
-//		if(numeroArray.length <= 1) 
-//			return;
-//		String ano = numeroArray[1];
-//		Date dataProcesso = DateUtil.getFirstDayOfYear(CommonsUtil.intValue(CommonsUtil.somenteNumeros(ano)));
-//		Date hoje = DateUtil.gerarDataHoje();
-//		BigDecimal valorPresente = calcularValorPresente(dataProcesso, hoje, 
-//				processoSelecionado.getValor(), BigDecimal.valueOf(1));
-//		valorPresente = valorPresente.multiply(BigDecimal.valueOf(1.1));
-//		valorPresente = valorPresente.setScale(2, BigDecimal.ROUND_HALF_UP);
-//		processoSelecionado.setValorAtualizado(valorPresente);
-		
-		
 		String[] numeroArray = processoSelecionado.getNumero().split("\\.");
 		if(numeroArray.length <= 1) 
+			return;
+		if(CommonsUtil.semValor(processoSelecionado.getValor()))
 			return;
 		String ano = numeroArray[1];
 		DebitosJudiciaisRequest debitosJudiciaisRequest = new DebitosJudiciaisRequest();
 		debitosJudiciaisRequest.setHonorario( CommonsUtil.bigDecimalValue(10));
 		DebitosJudiciaisRequestValor debitosJudiciaisRequestValor = new DebitosJudiciaisRequestValor();
 		debitosJudiciaisRequestValor.setDescricao(  processoSelecionado.getNumero());
-		debitosJudiciaisRequestValor.setVencimento( "0101" +  processoSelecionado.getNumero().substring(11,15) );
-		debitosJudiciaisRequestValor.setValor(CommonsUtil.bigDecimalValue(processoSelecionado.getValor()));
+		debitosJudiciaisRequestValor.setVencimento( "0101" + DateUtil.getAnoProcesso(processoSelecionado.getNumero().substring(11,15)));
+		debitosJudiciaisRequestValor.setValor(processoSelecionado.getValor());
 
 		debitosJudiciaisRequest.getValores().add(debitosJudiciaisRequestValor);
 		
@@ -20486,9 +20526,92 @@ return valorTotal;
 		if (debitosJudiciais != null) {
 			processoSelecionado.setValorAtualizado(debitosJudiciais.getValores().get(0).getTotal());
 		}
-		
+	}
+	
+	public void onRowSelectProcessos(SelectEvent event) {
+	    if (event != null && event.getObject() != null && 
+	        event.getObject() instanceof CcbProcessosJudiciais) {
+	        if (listProcessosSelecionado == null) {
+	        	listProcessosSelecionado = new ArrayList<CcbProcessosJudiciais>();
+	        }
+	        if (!listProcessosSelecionado.contains((CcbProcessosJudiciais) event.getObject())) {
+	        	listProcessosSelecionado.add((CcbProcessosJudiciais) event.getObject());
+	        }
+	    }
 	}
 
+	public void onRowUnselectProcessos(UnselectEvent event) {
+	    if (event != null && event.getObject() != null && 
+	        event.getObject() instanceof CcbProcessosJudiciais && 
+	        listProcessosSelecionado != null && listProcessosSelecionado.contains((CcbProcessosJudiciais) event.getObject())) {
+	    	listProcessosSelecionado.remove((CcbProcessosJudiciais) event.getObject());
+	    }
+	}
+
+	public void onAllRowsSelectProcessos(ToggleSelectEvent event) {
+		List<CcbProcessosJudiciais> listToggle = new ArrayList<CcbProcessosJudiciais>();
+		if (event != null && event.getSource() != null && 
+			event.getSource() instanceof DataTable) {
+			DataTable dataTable = (DataTable) event.getSource();
+			listToggle = (List<CcbProcessosJudiciais>) dataTable.getValue();
+		}
+	    if (event.isSelected()) {
+	    	for(CcbProcessosJudiciais processo : listToggle) {
+	    		if (!listProcessosSelecionado.contains(processo)) {
+		        	listProcessosSelecionado.add(processo);
+		        }
+	    	}
+	    } else {
+	    	for(CcbProcessosJudiciais processo : listToggle) {
+	    		if (listProcessosSelecionado.contains(processo)) {
+		        	listProcessosSelecionado.remove(processo);
+		        }
+	    	}
+	    }
+	}
+	
+	public void atualizarValorProcessoEmLote(List<CcbProcessosJudiciais> listProcessosSelecionado) {
+		DebitosJudiciaisRequest debitosJudiciaisRequest = new DebitosJudiciaisRequest();
+		debitosJudiciaisRequest.setHonorario(CommonsUtil.bigDecimalValue(10));
+		DebitosJudiciais debitosJudiciais = null;
+		DebitosJudiciaisValores debitosJudiciaisValores = null;
+		CcbProcessosJudiciaisDao processosJudiciaisDao = new CcbProcessosJudiciaisDao();
+		ContasPagarDao contasPagarDao = new ContasPagarDao();
+		for (CcbProcessosJudiciais processo : listProcessosSelecionado) {
+			String[] numeroArray = processo.getNumero().split("\\.");
+			if(numeroArray.length <= 1) 
+				continue;
+			if(CommonsUtil.semValor(processo.getValor()))
+				continue;
+			DebitosJudiciaisRequestValor debitosJudiciaisRequestValor = new DebitosJudiciaisRequestValor();
+			debitosJudiciaisRequestValor.setDescricao(CommonsUtil.formataNumeroProcesso(processo.getNumero()));
+			debitosJudiciaisRequestValor.setVencimento(
+					"0101" + DateUtil.getAnoProcesso(CommonsUtil.formataNumeroProcesso(processo.getNumero()).substring(11, 15)));
+			debitosJudiciaisRequestValor.setValor(CommonsUtil.bigDecimalValue(processo.getValor()));
+			debitosJudiciaisRequest.getValores().add(debitosJudiciaisRequestValor);
+		}
+		
+		if (!CommonsUtil.semValor(debitosJudiciaisRequest.getValores())) {
+			DrCalcService drCalcService = new DrCalcService();
+			debitosJudiciais = drCalcService.criarConsultaAtualizacaoMonetaria(debitosJudiciaisRequest);
+		}
+		for (CcbProcessosJudiciais processo : listProcessosSelecionado) {
+			if (debitosJudiciais != null) {
+				debitosJudiciaisValores = debitosJudiciais.getValores().stream()
+						.filter(d -> CommonsUtil.mesmoValor(d.getDescricao(),
+								CommonsUtil.formataNumeroProcesso(processo.getNumero())))
+						.findFirst().orElse(null);
+				
+				if(!CommonsUtil.semValor(debitosJudiciaisValores) && !CommonsUtil.semValor(debitosJudiciaisValores.getTotal())) {					
+					processo.getContaPagar().setValor(debitosJudiciaisValores.getTotal());
+					contasPagarDao.merge(processo.getContaPagar());
+					processo.setValorAtualizado(debitosJudiciaisValores.getTotal());
+					processosJudiciaisDao.merge(processo);
+				}
+			}
+		}
+	}
+	
 	public void editProcesso(CcbProcessosJudiciais processo) {
 		processoSelecionado = processo;
 	}
@@ -29867,6 +29990,7 @@ return valorTotal;
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 		documentoAnaliseDao.merge(documentoAnalise);
 		listaArquivosAnaliseDocumentos();
+		listaRestricoesPessoas();
 	}
 
 	public void executarConsultasAnaliseDocumento() throws SchedulerException {
@@ -32378,6 +32502,9 @@ return valorTotal;
 		}
 
 		listaArquivosAnaliseDocumentos();
+		this.restricaoOperacao= new ArrayList<>();
+
+		listaRestricoesPessoas();
 
 	}
 
@@ -32493,7 +32620,9 @@ return valorTotal;
 			this.objetoContratoCobranca.setDocumentosAnalisados(false);
 		}
 		documentoAnaliseAdicionar.setLiberadoAnalise(true);
-		listaArquivosAnaliseDocumentos();		
+		listaArquivosAnaliseDocumentos();	
+
+		listaRestricoesPessoas();
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		contratoCobrancaDao.merge(objetoContratoCobranca);
 		
@@ -32906,8 +33035,12 @@ return valorTotal;
 	public BigDecimal calculaTotalVlrParcelaBaixaLoteSelecionadas() {
 		BigDecimal valorTotal = BigDecimal.ZERO;
 
-		for (BoletoKobana boletos : this.selectedBoletosKobana) {
-			valorTotal = valorTotal.add(boletos.getVlrParcela());
+		if (this.selectedBoletosKobana != null) {
+			for (BoletoKobana boletos : this.selectedBoletosKobana) {
+				if (boletos.getVlrParcela() != null) {
+					valorTotal = valorTotal.add(boletos.getVlrParcela());
+				}			
+			}
 		}
 
 		return valorTotal;
@@ -35292,30 +35425,37 @@ return valorTotal;
 				.stream()
 				.filter(x -> x.isLiberadoAnalise())
 				.collect(Collectors.toList());
-		
-    	for (DocumentoAnalise docAnalise : docList) { 
-			if (docAnalise.getEngine() == null) {
-    			continue;
+		PagadorRecebedorService  pagadorRecebedorService = new PagadorRecebedorService();
+		for (DocumentoAnalise docAnalise : docList) {
+
+			if (!CommonsUtil.semValor(docAnalise.getPagador())) {
+				List<String> result = pagadorRecebedorService.verificaRestricao(docAnalise.getPagador());
+				result.removeAll(this.restricaoOperacao);
+				if (!CommonsUtil.semValor(result))
+					this.restricaoOperacao.addAll(result);
 			}
-			
-			if (CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise().toLowerCase(), "proprietario atual") 
-				|| CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise().toLowerCase(), "comprador")) {
-				if (docAnalise.getEngine() != null && !CommonsUtil.semValor(docAnalise.getEngine().getIdCallManager())) {
-					if (CommonsUtil.semValor(docAnalise.getRetornoEngine())) {
-						isAllEngineProcessados = false;
-						break;
-					}
-				}
-			} else {
+
+			if (docAnalise.getEngine() == null) {
 				continue;
 			}
-    	}
+
+			if (CommonsUtil.mesmoValorIgnoreCase(docAnalise.getMotivoAnalise().toLowerCase(), "proprietario atual")
+					|| CommonsUtil.mesmoValorIgnoreCase(docAnalise.getMotivoAnalise().toLowerCase(), "comprador")) {
+				if (docAnalise.getEngine() != null
+						&& !CommonsUtil.semValor(docAnalise.getEngine().getIdCallManager())) {
+					if (CommonsUtil.semValor(docAnalise.getRetornoEngine())) {
+						isAllEngineProcessados = false;
+					}
+				}
+			}
+		}
     	
     	if (isAllEngineProcessados && !CommonsUtil.mesmoValor(objetoContratoCobranca.getCadastroAprovadoValor(), "Aprovado")) {
     		hasDocAnalise();
     	}
 		return isAllEngineProcessados;
 	}
+    
     
     public void analisaTaxasDocumentos(DocumentoAnalise docAnalise, 
     								   boolean nadaConsta,
@@ -35539,4 +35679,25 @@ return valorTotal;
 	public void setImovelAdicional(ImovelCobrancaAdicionais imovelAdicional) {
 		this.imovelAdicional = imovelAdicional;
 	}
+
+	public List<CcbProcessosJudiciais> getListProcessosSelecionado() {
+		return listProcessosSelecionado;
+	}
+
+	public void setListProcessosSelecionado(List<CcbProcessosJudiciais> listProcessosSelecionado) {
+		this.listProcessosSelecionado = listProcessosSelecionado;
+	}
+	
+	public boolean isPossuiBlacFlag() {
+		return !CommonsUtil.semValor(restricaoOperacao);
+	}
+
+	public List<String> getRestricaoOperacao() {
+		return restricaoOperacao;
+	}
+
+	public void setRestricaoOperacao(List<String> restricaoOperacao) {
+		this.restricaoOperacao = restricaoOperacao;
+	}
+ 	
 }
