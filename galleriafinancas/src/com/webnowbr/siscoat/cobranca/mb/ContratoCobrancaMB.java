@@ -32906,8 +32906,12 @@ return valorTotal;
 	public BigDecimal calculaTotalVlrParcelaBaixaLoteSelecionadas() {
 		BigDecimal valorTotal = BigDecimal.ZERO;
 
-		for (BoletoKobana boletos : this.selectedBoletosKobana) {
-			valorTotal = valorTotal.add(boletos.getVlrParcela());
+		if (this.selectedBoletosKobana != null) {
+			for (BoletoKobana boletos : this.selectedBoletosKobana) {
+				if (boletos.getVlrParcela() != null) {
+					valorTotal = valorTotal.add(boletos.getVlrParcela());
+				}			
+			}
 		}
 
 		return valorTotal;
