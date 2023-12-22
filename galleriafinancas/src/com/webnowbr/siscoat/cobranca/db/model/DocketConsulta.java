@@ -23,6 +23,7 @@ public class DocketConsulta {
 	
 	private String estadoId;
 	private String cidadeId;
+	private String pedidoId;
 		
 	public DocketConsulta() {
 		super();
@@ -191,6 +192,13 @@ public class DocketConsulta {
 
 	public void setCidadeId(String cidadeId) {
 		this.cidadeId = cidadeId;
+	}
+
+	public String getPedidoId() {
+		return pedidoId;
+	}
+
+	public void setPedidoId(String pedidoId) {
+		this.pedidoId = pedidoId;
 	}	
-	
 }
