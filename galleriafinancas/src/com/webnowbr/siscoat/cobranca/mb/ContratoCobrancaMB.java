@@ -245,6 +245,10 @@ import br.com.galleriabank.drcalc.cliente.model.DebitosJudiciais;
 import br.com.galleriabank.drcalc.cliente.model.DebitosJudiciaisRequest;
 import br.com.galleriabank.drcalc.cliente.model.DebitosJudiciaisRequestValor;
 import br.com.galleriabank.drcalc.cliente.model.DebitosJudiciaisValores;
+<<<<<<< HEAD
+=======
+import br.com.galleriabank.jwt.common.JwtUtil;
+>>>>>>> branch 'master' of https://github.com/Galleria-Bank-Developers/backoffice.git
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -20476,6 +20480,7 @@ return valorTotal;
 				cpDao.merge(processoSelecionado.getContaPagar());
 			}
 		}
+		
 		CcbProcessosJudiciaisDao ccbProcessosJudiciaisDao = new CcbProcessosJudiciaisDao();
 		if (processoSelecionado.getId() <= 0) {
 			processoSelecionado.setOrigem("Manual: " + getUsuarioLogadoNull().getLogin());
@@ -35687,6 +35692,7 @@ return valorTotal;
 	public void setListProcessosSelecionado(List<CcbProcessosJudiciais> listProcessosSelecionado) {
 		this.listProcessosSelecionado = listProcessosSelecionado;
 	}
+<<<<<<< HEAD
 	
 	public boolean isPossuiBlacFlag() {
 		return !CommonsUtil.semValor(restricaoOperacao);
@@ -35700,4 +35706,6 @@ return valorTotal;
 		this.restricaoOperacao = restricaoOperacao;
 	}
  	
+=======
+>>>>>>> branch 'master' of https://github.com/Galleria-Bank-Developers/backoffice.git
 }

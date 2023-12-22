@@ -72,6 +72,10 @@
 		<property name="expirado" type="boolean">
 			<column name="expirado" not-null="true" default="false"/>
 		</property>
+		
+		<property name="pedidoId" type="java.lang.String">
+			<column name="pedidoId" />
+		</property>
 				
 	</class>
 </hibernate-mapping>

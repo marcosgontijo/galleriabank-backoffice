@@ -125,6 +125,7 @@ public class DocketMB {
 					//senão, duplica
 					} else {
 						docketConsulta.popularCampos(consultasExistentesRetorno.get(0));
+						docAnalise.getDocketConsultas().add(docketConsulta);
 					}
 				}
 			}
@@ -192,14 +193,14 @@ public class DocketMB {
 			//atualizarDocumentos(docAnalise);
 			for(DocketConsulta docketConsulta : docAnalise.getDocketConsultas()) {
 				docketConsulta.populatePagadorRecebedor(docAnalise.getPagador());
-				List<DocketConsulta> consultasExistentesRetorno = docketConsultaDao.getConsultasExistentes(docketConsulta);
+				/*List<DocketConsulta> consultasExistentesRetorno = docketConsultaDao.getConsultasExistentes(docketConsulta);
 				if(consultasExistentesRetorno.size() > 0) {
 					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
 							docketConsulta.getDocketDocumentos().getDocumentoNome() + " - " + docketConsulta.getCpfCnpj() + ": Já existente", ""));
 					consultasExistentes.add(docketConsulta);
 					consultasExistentesDB.add(consultasExistentesRetorno.get(0));
 					continue;
-				}
+				}*/
 				
 				if(!CommonsUtil.semValor(docketConsulta.getIdDocket())) 
 				continue;

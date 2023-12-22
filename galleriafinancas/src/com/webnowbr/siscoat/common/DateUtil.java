@@ -1041,4 +1041,14 @@ public final class DateUtil {
 		diff = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
 		return diff;
 	}
+	
+	public static String getAnoProcesso(String ano) {
+		int anoInt = CommonsUtil.intValue(ano);
+		if(anoInt < 1800) {
+			anoInt = anoInt/100;
+			anoInt = anoInt + 2000;
+			ano = anoInt + "";
+		}
+		return ano;
+	}
 }

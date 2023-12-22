@@ -173,6 +173,7 @@ public class DadosEmpresaMB {
 			
 
 		for(ContratoCobranca contrato : this.contratos) {
+			BigDecimal valorVencido = BigDecimal.ZERO;
 			this.qtdDeparcelasVencidas = 0;
 			for (ContratoCobrancaDetalhes ccd : contrato.getListContratoCobrancaDetalhes()) {
 				dataVencimentoParcela.setTime(ccd.getDataVencimento());		
@@ -207,8 +208,9 @@ public class DadosEmpresaMB {
 				} else if (ccd.isParcelaVencida()) {
 					if(dataVencimentoParcela.after(dataVencimentoMínima)) {
 						this.qtdDeparcelasVencidas++;
+						valorVencido = valorVencido.add(ccd.getVlrParcela());
 					}
-					
+				
 					this.totalAVencer = this.totalAVencer.add(valorParcela);
 				}  else {
 					this.totalAVencer = this.totalAVencer.add(valorParcela);
@@ -218,6 +220,9 @@ public class DadosEmpresaMB {
 					ltv = ccd.getVlrSaldoParcela().divide(contrato.getValorImovel(), MathContext.DECIMAL128);
 				}
 			}
+			
+			contrato.qtdParcelasAtraso = qtdDeparcelasVencidas;
+			contrato.somaParcelasAtraso = valorVencido;
 			
 			if(CommonsUtil.mesmoValor(this.prazoContrato, 0) || CommonsUtil.mesmoValor(this.valorUltimaPareclaPaga, BigDecimal.ZERO)) {
 				this.totalContratosConsultar--;

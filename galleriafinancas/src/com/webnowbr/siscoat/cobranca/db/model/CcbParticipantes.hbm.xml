@@ -67,9 +67,7 @@
 			class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca"
 			lazy="false">
 			<column name="contratoCobranca" />
-		</many-to-one>
-		
-	 <!-- -->
+		</many-to-one>		
         
     </class>
 </hibernate-mapping>
