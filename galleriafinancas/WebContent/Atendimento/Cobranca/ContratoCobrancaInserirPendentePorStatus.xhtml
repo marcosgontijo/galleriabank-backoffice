@@ -1881,11 +1881,11 @@
 										</p:column>
 										
 									    <p:ajax event="rowSelectCheckbox" 
-									            listener="#{contratoCobrancaMB.onRowSelectProcessos}" update="form:pessoasProcessos"/>
+									            listener="#{contratoCobrancaMB.onRowSelectProcessos}" />
 									    <p:ajax event="rowUnselectCheckbox" 
-									            listener="#{contratoCobrancaMB.onRowUnselectProcessos}" update="form:pessoasProcessos"/>
+									            listener="#{contratoCobrancaMB.onRowUnselectProcessos}"  />
 									    <p:ajax event="toggleSelect" 
-									            listener="#{contratoCobrancaMB.onAllRowsSelectProcessos}" update="form:pessoasProcessos"/>
+									            listener="#{contratoCobrancaMB.onAllRowsSelectProcessos}"  />
             						</p:dataTable>
 								</p:dataViewListItem>
 							</p:dataView>
@@ -1902,7 +1902,7 @@
 								<p:outputLabel value="Atualizar Valores: " styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />
 								<p:commandButton
-									action="#{contratoCobrancaMB.atualizarValorProcessoEmLote(contratoCobrancaMB.listProcessosSelecionado)}"
+									action="#{contratoCobrancaMB.atualizarValorProcessoEmLote()}"
 									icon="ui-icon ui-icon-arrowrefresh-1-e" ajax="true"
 									update="form:pessoasProcessos" />
 							</h:panelGrid>

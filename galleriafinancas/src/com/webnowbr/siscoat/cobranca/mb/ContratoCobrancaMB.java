@@ -20571,7 +20571,7 @@ return valorTotal;
 	    }
 	}
 	
-	public void atualizarValorProcessoEmLote(List<CcbProcessosJudiciais> listProcessosSelecionado) {
+	public void atualizarValorProcessoEmLote() {
 		DebitosJudiciaisRequest debitosJudiciaisRequest = new DebitosJudiciaisRequest();
 		debitosJudiciaisRequest.setHonorario(CommonsUtil.bigDecimalValue(10));
 		DebitosJudiciais debitosJudiciais = null;
@@ -20611,6 +20611,7 @@ return valorTotal;
 				}
 			}
 		}
+		listProcessosSelecionado = new ArrayList<CcbProcessosJudiciais>();
 	}
 	
 	public void editProcesso(CcbProcessosJudiciais processo) {
