@@ -3875,9 +3875,11 @@ public class ContratoCobrancaMB {
 				}
 				
 				if (!objetoContratoCobranca.isAgAssinatura() && CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Assinatura")) {
-					if(objetoContratoCobranca.isPajuVencido())
+					if(objetoContratoCobranca.isPajuVencido() || objetoContratoCobranca.isComentarioJuricoComPajuVencido())
 						objetoContratoCobranca.setReanalise(true);
 					if("RJ;PR".contains(objetoContratoCobranca.getImovel().getEstado()) && !objetoContratoCobranca.isReanaliseJuridico()) 
+						objetoContratoCobranca.setReanalise(true);
+					if(objetoContratoCobranca.isComentarioJuricoApenasComConsultas()) 
 						objetoContratoCobranca.setReanalise(true);
 				}
 
