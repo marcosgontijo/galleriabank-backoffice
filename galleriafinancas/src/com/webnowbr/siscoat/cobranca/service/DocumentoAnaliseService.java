@@ -217,7 +217,7 @@ public class DocumentoAnaliseService {
 	
 	public void cadastrarPessoRetornoEngine(EngineRetornoRequestEnterprisePartnership partnership, User user,
 			DocumentoAnaliseDao documentoAnaliseDao, PagadorRecebedorService pagadorRecebedorService,
-			ContratoCobranca contratoCobranca, String motivo) {
+			ContratoCobranca contratoCobranca, String motivo,DocumentoAnalise documentoAnaliseConsulta) {
 
 		DocumentoAnalise documentoAnalise = new DocumentoAnalise();
 		
@@ -243,8 +243,8 @@ public class DocumentoAnaliseService {
 				documentoAnalise = documentoAnalisePesquisa;
 
 			documentoAnalise.setOrigem("Engine2");
-			documentoAnalise.setDataCadastro(DateUtil.getDataHoraAgora());
-			documentoAnalise.setUsuarioCadastro(loginBean.getUsuarioLogado().getLogin());
+			documentoAnalise.setDataCadastro(DateUtil.getDataHoraAgora());			
+			documentoAnalise.setUsuarioCadastro(documentoAnaliseConsulta.getUsuarioCadastro());
 			
 			
 			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.RELATO);
@@ -272,7 +272,7 @@ public class DocumentoAnaliseService {
 	}
 	public void cadastrarPessoRetornoEngine(EngineRetornoExecutionResultRelacionamentosPessoaisPJPartnership pJPartnership, User user,
 			DocumentoAnaliseDao documentoAnaliseDao, PagadorRecebedorService pagadorRecebedorService,
-			ContratoCobranca contratoCobranca, String motivo) {
+			ContratoCobranca contratoCobranca, String motivo,DocumentoAnalise documentoAnaliseConsulta) {
 		
 		
 
@@ -312,7 +312,7 @@ public class DocumentoAnaliseService {
 		
 		documentoAnalise.setOrigem("Engine1");
 		documentoAnalise.setDataCadastro(DateUtil.getDataHoraAgora());
-		documentoAnalise.setUsuarioCadastro(loginBean.getUsuarioLogado().getLogin());
+		documentoAnalise.setUsuarioCadastro(documentoAnaliseConsulta.getUsuarioCadastro());
 		
 		
 		documentoAnalise.setMotivoAnalise(motivo);

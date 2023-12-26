@@ -259,6 +259,8 @@ public class PagadorRecebedor implements Serializable {
 	private String whatsAppNumero;
 	
 	private Date inicioEmpresa;
+	
+	private boolean restricao;
 
 	public PagadorRecebedor(){
 		resetarBololean();
@@ -2385,5 +2387,15 @@ public class PagadorRecebedor implements Serializable {
 
 	public void setInicioEmpresa(Date inicioEmpresa) {
 		this.inicioEmpresa = inicioEmpresa;
-	}	
+	}
+
+	public boolean isRestricao() {
+		return restricao;
+	}
+
+	public void setRestricao(boolean restricao) {
+		this.restricao = restricao;
+	}
+	
+	
 }
