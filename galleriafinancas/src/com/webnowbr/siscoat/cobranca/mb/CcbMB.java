@@ -769,7 +769,7 @@ public class CcbMB {
 				if(CommonsUtil.mesmoValor(objetoContratoCobranca.getBrutoLiquidoCobrarComissaoCliente(), "Bruto")) {
 					valorTranferencia = objetoContratoCobranca.getValorAprovadoComite().multiply(comissao);
 				} else if(CommonsUtil.mesmoValor(objetoContratoCobranca.getBrutoLiquidoCobrarComissaoCliente(), "Liquido")) {
-					valorTranferencia = objetoCcb.getValorLiquidoCredito().multiply(comissao);
+					valorTranferencia = objetoCcb.getValorLiquidoCredito().add(objetoCcb.getValorDespesas()).multiply(comissao);
 				}
 			}
 			
