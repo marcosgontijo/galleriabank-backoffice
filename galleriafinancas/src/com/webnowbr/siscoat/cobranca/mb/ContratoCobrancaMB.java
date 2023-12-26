@@ -9779,9 +9779,10 @@ return valorTotal;
 		
 		this.objetoContratoCobranca.setNomeBancarioCustoEmissao("Galleria SCD");
 		this.objetoContratoCobranca.setBancoBancarioCustoEmissao("001");
-		this.objetoContratoCobranca.setAgenciaBancarioCustoEmissao("6937-X");
+		this.objetoContratoCobranca.setAgenciaBancarioCustoEmissao("6937");
 		this.objetoContratoCobranca.setContaBancarioCustoEmissao("120621-4");
 		this.objetoContratoCobranca.setCpfCnpjBancarioCustoEmissao("51.604.356/0001-75");
+		this.objetoContratoCobranca.setPixCustoEmissao("51.604.356/0001-75");
 		
 		// carta split cliente
 		this.objetoContratoCobranca.setValorCartaSplit(ccb.getValorCredito());
