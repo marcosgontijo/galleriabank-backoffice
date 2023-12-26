@@ -10,15 +10,12 @@
 			<column name="ID" />
 			<generator class="increment" />
 		</id>
-
-
+		
 		<many-to-one name="contratoCobranca"
 			class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca">
 			<column name="contratocobranca" />
-		</many-to-one>     
-		
-		
-		
+		</many-to-one> 
+				
 		<property name="numeroMatricula" type="java.lang.String">
 			<column name="numeroMatricula" />
 		</property>
