@@ -9830,9 +9830,34 @@ return valorTotal;
 		
 		this.objetoContratoCobranca.setNomeBancarioCustoEmissao("Galleria SCD");
 		this.objetoContratoCobranca.setBancoBancarioCustoEmissao("001");
-		this.objetoContratoCobranca.setAgenciaBancarioCustoEmissao("6937-X");
+		this.objetoContratoCobranca.setAgenciaBancarioCustoEmissao("6937");
 		this.objetoContratoCobranca.setContaBancarioCustoEmissao("120621-4");
 		this.objetoContratoCobranca.setCpfCnpjBancarioCustoEmissao("51.604.356/0001-75");
+		this.objetoContratoCobranca.setPixCustoEmissao("51.604.356/0001-75");
+		
+		// carta split cliente
+		this.objetoContratoCobranca.setValorCartaSplit(ccb.getValorCredito());
+		this.objetoContratoCobranca.setNomeBancarioCartaSplit(ccb.getTitularConta());
+		
+		if (this.objetoContratoCobranca.getPagador().getCpf() != null && !this.objetoContratoCobranca.getPagador().getCpf().equals("")) {
+			this.objetoContratoCobranca.setCpfCnpjBancarioCartaSplit(this.objetoContratoCobranca.getPagador().getCpf());
+		} else {
+			this.objetoContratoCobranca.setCpfCnpjBancarioCartaSplit(this.objetoContratoCobranca.getPagador().getCnpj());	
+		}
+		
+		this.objetoContratoCobranca.setBancoBancarioCartaSplit(String.valueOf(ccb.getNumeroBanco()));
+		this.objetoContratoCobranca.setAgenciaBancarioCartaSplit(ccb.getAgencia());
+		this.objetoContratoCobranca.setContaBancarioCartaSplit(ccb.getContaCorrente());
+		this.objetoContratoCobranca.setPixCartaSplit(ccb.getPixBanco());
+
+		// carta split Galleria
+		this.objetoContratoCobranca.setValorCartaSplitGalleria(ccb.getValorDespesas());
+		this.objetoContratoCobranca.setNomeBancarioCartaSplitGalleria("Galleria Correspondente Bancário Eireli");
+		this.objetoContratoCobranca.setCpfCnpjBancarioCartaSplitGalleria("34.787.885/0001-32");
+		this.objetoContratoCobranca.setBancoBancarioCartaSplitGalleria("");
+		this.objetoContratoCobranca.setAgenciaBancarioCartaSplitGalleria("");
+		this.objetoContratoCobranca.setContaBancarioCartaSplitGalleria("");
+		this.objetoContratoCobranca.setPixCartaSplitGalleria("b56b12e2-f476-4272-8d16-c1a5a31cc660");
 	}
 
 	private void calcularRegistroVelho() {
@@ -19594,7 +19619,8 @@ return valorTotal;
 		contaCartaSplit.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
 		contaCartaSplit.setResponsavel(this.objetoContratoCobranca.getResponsavel());
 		contaCartaSplit.setTipoDespesa("C");
-		contaCartaSplit.setValor(this.objetoContratoCobranca.getValorCartaSplitGalleria());	
+		contaCartaSplit.setValor(this.objetoContratoCobranca.getValorCartaSplitGalleria());
+		contaCartaSplit.setValorPagamento(this.objetoContratoCobranca.getValorCartaSplitGalleria());	
 		
 		contaCartaSplit.setBancoTed(this.objetoContratoCobranca.getBancoBancarioCartaSplitGalleria());
 		contaCartaSplit.setAgenciaTed(this.objetoContratoCobranca.getAgenciaBancarioCartaSplitGalleria());
@@ -19674,6 +19700,7 @@ return valorTotal;
 		contaCartaSplit.setResponsavel(this.objetoContratoCobranca.getResponsavel());
 		contaCartaSplit.setTipoDespesa("C");
 		contaCartaSplit.setValor(this.objetoContratoCobranca.getValorCustoEmissao());	
+		contaCartaSplit.setValorPagamento(this.objetoContratoCobranca.getValorCustoEmissao());	
 		
 		contaCartaSplit.setBancoTed(this.objetoContratoCobranca.getBancoBancarioCustoEmissao());
 		contaCartaSplit.setAgenciaTed(this.objetoContratoCobranca.getAgenciaBancarioCustoEmissao());
@@ -19753,6 +19780,7 @@ return valorTotal;
 		contaCartaSplit.setResponsavel(this.objetoContratoCobranca.getResponsavel());
 		contaCartaSplit.setTipoDespesa("C");
 		contaCartaSplit.setValor(this.objetoContratoCobranca.getValorCartaSplit());	
+		contaCartaSplit.setValorPagamento(this.objetoContratoCobranca.getValorCartaSplit());	
 		
 		contaCartaSplit.setBancoTed(this.objetoContratoCobranca.getBancoBancarioCartaSplit());
 		contaCartaSplit.setAgenciaTed(this.objetoContratoCobranca.getAgenciaBancarioCartaSplit());
