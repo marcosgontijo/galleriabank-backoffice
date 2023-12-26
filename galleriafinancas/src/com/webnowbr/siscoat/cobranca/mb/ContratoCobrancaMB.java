@@ -204,6 +204,7 @@ import com.webnowbr.siscoat.cobranca.service.DocumentoAnaliseService;
 import com.webnowbr.siscoat.cobranca.service.DrCalcService;
 import com.webnowbr.siscoat.cobranca.service.EngineService;
 import com.webnowbr.siscoat.cobranca.service.FileService;
+import com.webnowbr.siscoat.cobranca.service.ImovelCobrancaRestricaoService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.cobranca.service.PagadorRecebedorService;
 import com.webnowbr.siscoat.cobranca.service.PajuService;
@@ -276,6 +277,7 @@ public class ContratoCobrancaMB {
 	private boolean crmMode = false;
 	private boolean baixarMode = false;
 	private List<String> restricaoOperacao = new ArrayList<String>();
+	private List<String> restricaoImovel = new ArrayList<String>();
 	private String tituloPainel = null;
 	private String origemTelaBaixar;
 	private String empresa;
@@ -9342,14 +9344,18 @@ public class ContratoCobrancaMB {
 	public String clearFieldsEditarPendentes() {
 		listaArquivosAnaliseDocumentos();
 		this.restricaoOperacao= new ArrayList<>();
+		this.restricaoImovel= new ArrayList<>();
 
-		listaRestricoesPessoas();
+		
 
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
 		this.objetoPagadorRecebedor = this.objetoContratoCobranca.getPagador();
 		this.tituloPainel = "Editar";
 
+		listaRestricoesPessoas();
+		listaRestricoesImovel();
+		
 		this.valorPresenteParcela = BigDecimal.ZERO;
 
 		listaTodasSubpastas();
@@ -9606,8 +9612,10 @@ return valorTotal;
 		listaArquivosAnaliseDocumentos();
 
 		this.restricaoOperacao= new ArrayList<>();
+		this.restricaoImovel= new ArrayList<>();
 
 		listaRestricoesPessoas();
+		listaRestricoesImovel();
 
 		verificaPagamentoAntecipado();
 		verificaPagamentoIntegral();
@@ -9803,6 +9811,15 @@ return valorTotal;
 		}
 	}
 	
+	private void listaRestricoesImovel() {
+		ImovelCobrancaRestricaoService imovelCobrancaRestricaoService = new ImovelCobrancaRestricaoService();		
+		List<String> result = imovelCobrancaRestricaoService.verificaRestricao(objetoContratoCobranca);
+		
+		if (!CommonsUtil.semValor(result))
+			this.restricaoImovel = result;
+
+	}
+	
 	public void carregaValorIOFCustos() {
 		CcbDao ccbDao = new CcbDao();
 		CcbContrato ccb = ccbDao.ConsultaCcbPorContratoNew(this.objetoContratoCobranca);
@@ -9950,8 +9967,10 @@ return valorTotal;
 	
 		listaArquivosAnaliseDocumentos();
 		this.restricaoOperacao= new ArrayList<>();
+		this.restricaoImovel= new ArrayList<>();
 
 		listaRestricoesPessoas();
+		listaRestricoesImovel();
 
 		return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusAvaliacaoImovel.xhtml";
 	}
@@ -9969,8 +9988,10 @@ return valorTotal;
 		}
 		listaArquivosAnaliseDocumentos();
 		this.restricaoOperacao= new ArrayList<>();
+		this.restricaoImovel= new ArrayList<>();
 
 		listaRestricoesPessoas();
+		listaRestricoesImovel();
 
 		filesInterno = new ArrayList<FileUploaded>();
 		filesInterno = listaArquivosInterno();
@@ -9998,6 +10019,7 @@ return valorTotal;
 		}
 		listaArquivosAnaliseDocumentos();
 		this.restricaoOperacao= new ArrayList<>();
+		this.restricaoImovel= new ArrayList<>();
 
 		//listaRestricoesPessoas();
 
@@ -20516,7 +20538,7 @@ return valorTotal;
 		debitosJudiciaisRequest.setHonorario( CommonsUtil.bigDecimalValue(10));
 		DebitosJudiciaisRequestValor debitosJudiciaisRequestValor = new DebitosJudiciaisRequestValor();
 		debitosJudiciaisRequestValor.setDescricao(  processoSelecionado.getNumero());
-		debitosJudiciaisRequestValor.setVencimento( "0101" + DateUtil.getAnoProcesso(processoSelecionado.getNumero().substring(11,15)));
+		debitosJudiciaisRequestValor.setVencimento( "0101" + DateUtil.getAnoProcesso(processoSelecionado.getNumero()));
 		debitosJudiciaisRequestValor.setValor(processoSelecionado.getValor());
 
 		debitosJudiciaisRequest.getValores().add(debitosJudiciaisRequestValor);
@@ -20571,14 +20593,19 @@ return valorTotal;
 	    }
 	}
 	
-	public void atualizarValorProcessoEmLote(List<CcbProcessosJudiciais> listProcessosSelecionado) {
+	public void atualizarValorProcessoEmLote() {
 		DebitosJudiciaisRequest debitosJudiciaisRequest = new DebitosJudiciaisRequest();
 		debitosJudiciaisRequest.setHonorario(CommonsUtil.bigDecimalValue(10));
 		DebitosJudiciais debitosJudiciais = null;
 		DebitosJudiciaisValores debitosJudiciaisValores = null;
 		CcbProcessosJudiciaisDao processosJudiciaisDao = new CcbProcessosJudiciaisDao();
 		ContasPagarDao contasPagarDao = new ContasPagarDao();
-		for (CcbProcessosJudiciais processo : listProcessosSelecionado) {
+		List<CcbProcessosJudiciais> processos = new ArrayList<CcbProcessosJudiciais>();
+		if(CommonsUtil.semValor(listProcessosSelecionado))
+			processos.addAll(objetoContratoCobranca.getListProcessos());
+		else
+			processos = listProcessosSelecionado;
+		for (CcbProcessosJudiciais processo : processos) {
 			String[] numeroArray = processo.getNumero().split("\\.");
 			if(numeroArray.length <= 1) 
 				continue;
@@ -20587,7 +20614,7 @@ return valorTotal;
 			DebitosJudiciaisRequestValor debitosJudiciaisRequestValor = new DebitosJudiciaisRequestValor();
 			debitosJudiciaisRequestValor.setDescricao(CommonsUtil.formataNumeroProcesso(processo.getNumero()));
 			debitosJudiciaisRequestValor.setVencimento(
-					"0101" + DateUtil.getAnoProcesso(CommonsUtil.formataNumeroProcesso(processo.getNumero()).substring(11, 15)));
+					"0101" + DateUtil.getAnoProcesso(processo.getNumero()));
 			debitosJudiciaisRequestValor.setValor(CommonsUtil.bigDecimalValue(processo.getValor()));
 			debitosJudiciaisRequest.getValores().add(debitosJudiciaisRequestValor);
 		}
@@ -20596,7 +20623,9 @@ return valorTotal;
 			DrCalcService drCalcService = new DrCalcService();
 			debitosJudiciais = drCalcService.criarConsultaAtualizacaoMonetaria(debitosJudiciaisRequest);
 		}
-		for (CcbProcessosJudiciais processo : listProcessosSelecionado) {
+		for (CcbProcessosJudiciais processo : processos) {
+			if(CommonsUtil.semValor(processo.getValor()))
+				continue;
 			if (debitosJudiciais != null) {
 				debitosJudiciaisValores = debitosJudiciais.getValores().stream()
 						.filter(d -> CommonsUtil.mesmoValor(d.getDescricao(),
@@ -20611,6 +20640,7 @@ return valorTotal;
 				}
 			}
 		}
+		listProcessosSelecionado = new ArrayList<CcbProcessosJudiciais>();
 	}
 	
 	public void editProcesso(CcbProcessosJudiciais processo) {
@@ -20677,6 +20707,7 @@ return valorTotal;
 		imovelAdicional.setContratoCobranca(objetoContratoCobranca);
 		objetoContratoCobranca.getListaImoveis().add(imovelAdicional);
 		calcularPorcentagemImoveis();
+		listaRestricoesImovel();
 		imovelAdicional = new ImovelCobrancaAdicionais();
 	}
 
@@ -32504,6 +32535,7 @@ return valorTotal;
 
 		listaArquivosAnaliseDocumentos();
 		this.restricaoOperacao= new ArrayList<>();
+		this.restricaoImovel= new ArrayList<>();
 
 		listaRestricoesPessoas();
 
@@ -35690,7 +35722,7 @@ return valorTotal;
 	}
 	
 	public boolean isPossuiBlacFlag() {
-		return !CommonsUtil.semValor(restricaoOperacao);
+		return !CommonsUtil.semValor(restricaoOperacao) || !CommonsUtil.semValor(restricaoImovel)  ;
 	}
 
 	public List<String> getRestricaoOperacao() {
@@ -35699,6 +35731,14 @@ return valorTotal;
 
 	public void setRestricaoOperacao(List<String> restricaoOperacao) {
 		this.restricaoOperacao = restricaoOperacao;
+	}
+
+	public List<String> getRestricaoImovel() {
+		return restricaoImovel;
+	}
+
+	public void setRestricaoImovel(List<String> restricaoImovel) {
+		this.restricaoImovel = restricaoImovel;
 	}
  	
 }
