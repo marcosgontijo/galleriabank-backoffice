@@ -385,89 +385,43 @@ public class PajuService {
 						.filter(d -> CommonsUtil.mesmoValor(d.getCampos().getCpf(),
 								CommonsUtil.somenteNumeros(participante.getCnpjcpf())))
 						.collect(Collectors.toList());
-				for (DocketDocumento docketDocumento : documentosParticipanteFiltro) {
+				for (DocketConsulta docketDocumento : participante.getDocketConsultas()) {
 					ContratoTipoTemplateBloco blocoFilho = bloco.getBlocosFilho().stream().filter(
 							b -> CommonsUtil.mesmoValor(b.getCodigoTipoTemplateBloco(), BLOCO_PESSOA_FISICA_DOCUMENTOS))
 							.findFirst().orElse(null);
 					if (!CommonsUtil.semValor(blocoFilho)) {
 
 						CertidoesPaju certidoesPaju = new CertidoesPaju();
-						if (CommonsUtil.mesmoValor(SiscoatConstants.CND_SITUACAO_POSSUI_DEBITOS,
-								docketDocumento.getSituacaoPaju())) {
+						//if (CommonsUtil.mesmoValor(SiscoatConstants.CND_SITUACAO_POSSUI_DEBITOS,
+						//		docketDocumento.getSituacaoPaju())) {
 							DocketService docketService = new DocketService();
 							try {
-								String idCallManager = docketDocumento.getArquivos().get(0).getLinks().get(0).getHref()
-										.substring(docketDocumento.getArquivos().get(0).getLinks().get(0).getHref()
-												.lastIndexOf("/") + 1);
-								List<String> pdfLines = lerCND(docketService.getPdfBase64Web(idCallManager));
+								//String idCallManager = docketDocumento.getArquivos().get(0).getLinks().get(0).getHref()
+								//		.substring(docketDocumento.getArquivos().get(0).getLinks().get(0).getHref()
+								//				.lastIndexOf("/") + 1);
+								List<String> pdfLines = lerCND(docketDocumento.getPdf());
 
 								// split by whitespace
 								StringBuilder sb = new StringBuilder();
-								boolean processos = false;
-
-								DebitosJudiciaisRequest debitosJudiciaisRequest = new DebitosJudiciaisRequest();
-								debitosJudiciaisRequest.setHonorario(CommonsUtil.bigDecimalValue(10));
-
-								DebitosJudiciais debitosJudiciais = null;
-								for (String line : pdfLines) {
-									if (processos && line.contains("Total de A"))
-										break;
-									if (processos && !CommonsUtil.semValor(line)) {
-										final String numeroProcesso = CommonsUtil.somenteNumeros(line);
-										AcaoJudicial acao = bigData.getAcaoJudicial(numeroProcesso);
-
-										if (acao != null) {
-											DebitosJudiciaisRequestValor debitosJudiciaisRequestValor = new DebitosJudiciaisRequestValor();
-											debitosJudiciaisRequestValor.setDescricao(numeroProcesso);
-											debitosJudiciaisRequestValor
-													.setVencimento("0101" + DateUtil.getAnoProcesso(numeroProcesso.substring(11, 15)));
-											debitosJudiciaisRequestValor
-													.setValor(CommonsUtil.bigDecimalValue(acao.getValue()));
-
-											debitosJudiciaisRequest.getValores().add(debitosJudiciaisRequestValor);
-										}
-									}
-									if (!CommonsUtil.semValor(debitosJudiciaisRequest.getValores())) {
-										DrCalcService drCalcService = new DrCalcService();
-										debitosJudiciais = drCalcService
-												.criarConsultaAtualizacaoMonetaria(debitosJudiciaisRequest);
-									}
+								
+								if(docketDocumento.getDocketDocumentos().getId() == 7L &&
+										CommonsUtil.mesmoValor(docketDocumento.getUf(), "MT")) {
+									processaDocketMT(docTemplate, mapProcesos, paragrafoDocumentoTemplate,
+											nomesParticipantes, participante, bigData, docketDocumento, blocoFilho,
+											certidoesPaju, pdfLines);
+								} else {
+									processaDocketSP(docTemplate, mapProcesos, paragrafoDocumentoTemplate,
+											nomesParticipantes, participante, bigData, docketDocumento, blocoFilho,
+											certidoesPaju, pdfLines);
 								}
-								for (String line : pdfLines) {
-
-									if (processos && line.contains("Total de A"))
-										break;
-									if (processos && !CommonsUtil.semValor(line)) {
-										final String numeroProcesso = CommonsUtil.somenteNumeros(line);
-										AcaoJudicial acao = bigData.getAcaoJudicial(numeroProcesso);
-
-										if (acao != null) {
-											String sLinha = "Processo: " + line.trim() + " - ";
-
-											sLinha = getDadosAcaoBigData(mapProcesos, nomesParticipantes, participante,
-													numeroProcesso, acao, debitosJudiciais, sLinha);
-
-											certidoesPaju.getDebitosDocumento().add(sLinha);
-										} else {
-											String sLinha = "Processo: " + line.trim()
-													+ " - não listado na Consulta Processos";
-											certidoesPaju.getDebitosDocumento().add(sLinha);
-										}
-
-									}
-									if (line.contains("conforme listagem abaixo:"))
-										processos = true;
-
-								}
-								adicionaParagrafoDocket(docTemplate, paragrafoDocumentoTemplate, blocoFilho,
-										docketDocumento, certidoesPaju, bigData);
+								
 
 							} catch (Exception e) {
 								System.out.println(GsonUtil.toJson(docketDocumento));
 								e.printStackTrace();
 
 							}
-						}
+						//}
 					}
 				}
 			}
@@ -527,15 +481,136 @@ public class PajuService {
 
 	}
 
+	private void processaDocketSP(WordprocessingMLPackage docTemplate, Map<String, List<String>> mapProcesos,
+			List<P> paragrafoDocumentoTemplate, final List<String> nomesParticipantes, DocumentoAnalise participante,
+			ProcessoResult bigData, DocketConsulta docketDocumento, ContratoTipoTemplateBloco blocoFilho,
+			CertidoesPaju certidoesPaju, List<String> pdfLines)
+			throws SiscoatException {
+		boolean processos = false;
+		DebitosJudiciaisRequest debitosJudiciaisRequest = new DebitosJudiciaisRequest();
+		debitosJudiciaisRequest.setHonorario(CommonsUtil.bigDecimalValue(10));
+		DebitosJudiciais debitosJudiciais = null;
+		for (String line : pdfLines) {
+			if (processos && line.contains("Total de A"))
+				break;
+			if (processos && !CommonsUtil.semValor(line)) {
+				final String numeroProcesso = CommonsUtil.somenteNumeros(line);
+				AcaoJudicial acao = bigData.getAcaoJudicial(numeroProcesso);
+
+				if (acao != null) {
+					DebitosJudiciaisRequestValor debitosJudiciaisRequestValor = new DebitosJudiciaisRequestValor();
+					debitosJudiciaisRequestValor.setDescricao(numeroProcesso);
+					debitosJudiciaisRequestValor
+							.setVencimento("0101" + DateUtil.getAnoProcesso(numeroProcesso));
+					debitosJudiciaisRequestValor
+							.setValor(CommonsUtil.bigDecimalValue(acao.getValue()));
+
+					debitosJudiciaisRequest.getValores().add(debitosJudiciaisRequestValor);
+				}
+			}
+			if (!CommonsUtil.semValor(debitosJudiciaisRequest.getValores())) {
+				DrCalcService drCalcService = new DrCalcService();
+				debitosJudiciais = drCalcService
+						.criarConsultaAtualizacaoMonetaria(debitosJudiciaisRequest);
+			}
+		}
+		for (String line : pdfLines) {
+
+			if (processos && line.contains("Total de A"))
+				break;
+			if (processos && !CommonsUtil.semValor(line)) {
+				final String numeroProcesso = CommonsUtil.somenteNumeros(line);
+				AcaoJudicial acao = bigData.getAcaoJudicial(numeroProcesso);
+				String sLinha = "Processo: " + line.trim();
+				sLinha = getDadosAcaoBigData(mapProcesos, nomesParticipantes, participante,
+						numeroProcesso, acao, debitosJudiciais, sLinha, "Docket - TJSP");
+				certidoesPaju.getDebitosDocumento().add(sLinha);
+			}
+			if (line.contains("conforme listagem abaixo:"))
+				processos = true;
+
+		}
+		adicionaParagrafoDocket(docTemplate, paragrafoDocumentoTemplate, blocoFilho,
+				docketDocumento, certidoesPaju, bigData);
+	}
+	
+	private void processaDocketMT(WordprocessingMLPackage docTemplate, Map<String, List<String>> mapProcesos,
+			List<P> paragrafoDocumentoTemplate, final List<String> nomesParticipantes, DocumentoAnalise participante,
+			ProcessoResult bigData, DocketConsulta docketDocumento, ContratoTipoTemplateBloco blocoFilho,
+			CertidoesPaju certidoesPaju, List<String> pdfLines)
+			throws SiscoatException {
+		DebitosJudiciaisRequest debitosJudiciaisRequest = new DebitosJudiciaisRequest();
+		debitosJudiciaisRequest.setHonorario(CommonsUtil.bigDecimalValue(10));
+		DebitosJudiciais debitosJudiciais = null;
+		try {
+			
+		for (String line : pdfLines) {
+			if (CommonsUtil.semValor(line))
+				continue;
+			if (!line.contains("Processo: "))
+				continue;
+			if (line.contains("Situação do Processo:"))
+				continue;
+			if (line.split("\\s+").length < 2) 
+				continue;
+			
+			final String numeroProcesso = line.split("\\s+")[1];
+			AcaoJudicial acao = bigData.getAcaoJudicial(numeroProcesso);
+			if (acao != null) {
+				DebitosJudiciaisRequestValor debitosJudiciaisRequestValor = new DebitosJudiciaisRequestValor();
+				debitosJudiciaisRequestValor.setDescricao(numeroProcesso);
+				debitosJudiciaisRequestValor
+						.setVencimento("0101" + DateUtil.getAnoProcesso(numeroProcesso));
+				debitosJudiciaisRequestValor
+						.setValor(CommonsUtil.bigDecimalValue(acao.getValue()));
+				debitosJudiciaisRequest.getValores().add(debitosJudiciaisRequestValor);
+			}
+		}
+		if (!CommonsUtil.semValor(debitosJudiciaisRequest.getValores())) {
+			DrCalcService drCalcService = new DrCalcService();
+			debitosJudiciais = drCalcService
+					.criarConsultaAtualizacaoMonetaria(debitosJudiciaisRequest);
+		}
+		for (String line : pdfLines) {
+			if (!CommonsUtil.semValor(line)) {
+				if (CommonsUtil.semValor(line))
+					continue;
+				if (!line.contains("Processo: "))
+					continue;
+				if (line.split("\\s+").length < 2) 
+					continue;
+				if (!CommonsUtil.mesmoValor(line.split("\\s+")[0], "Processo:"))
+					continue;
+				
+				
+				final String numeroProcesso = line.split("\\s+")[1];
+				AcaoJudicial acao = bigData.getAcaoJudicial(numeroProcesso);
+				String sLinha = "Processo: " + CommonsUtil.formataNumeroProcesso(numeroProcesso);
+				sLinha = getDadosAcaoBigData(mapProcesos, nomesParticipantes, participante,
+						numeroProcesso, acao, debitosJudiciais, sLinha, "Docket - TJMT");
+				certidoesPaju.getDebitosDocumento().add(sLinha);		
+			}
+		}
+		adicionaParagrafoDocket(docTemplate, paragrafoDocumentoTemplate, blocoFilho,
+				docketDocumento, certidoesPaju, bigData);
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	private String getDadosAcaoBigData(Map<String, List<String>> mapProcesos, final List<String> nomesParticipantes,
 			DocumentoAnalise participante, final String numeroProcesso, AcaoJudicial acao,
-			DebitosJudiciais debitosJudiciais, String sLinha) {
+			DebitosJudiciais debitosJudiciais, String sLinha, String origem) {
 		DebitosJudiciaisValores debitosJudiciaisValores = null;
+		sLinha = "Processo: " + CommonsUtil.formataNumeroProcesso(numeroProcesso) + " - ";
 		if (!mapProcesos.keySet().contains(numeroProcesso)) {
 			String svalor = "";
 			if (CommonsUtil.semValor(acao)) {
-				svalor = svalor + "Valor: não localizado na consulta de processos";
-				return sLinha + " ." + svalor;
+				svalor = svalor + "Não localizado na consulta de processos";
+				sLinha = sLinha + svalor;
+				criarProcessoContrato(participante, acao, debitosJudiciaisValores, sLinha, numeroProcesso, origem);
+				return sLinha;
 			} else if (CommonsUtil.semValor(acao.getValue())) {
 				svalor = svalor + " Valor: sem valor localizado";
 			} else {
@@ -555,15 +630,16 @@ public class PajuService {
 			ProcessoParte processoParte = acao.getParties().stream()
 					.filter(p -> CommonsUtil.mesmoValor(p.getType(), "CLAIMANT")).findFirst().orElse(null);
 			if (processoParte != null)
-				sLinha = sLinha + processoParte.getName();
+				sLinha = sLinha + processoParte.getName() + " - ";
 
-			sLinha = sLinha + " ." + svalor;
+			sLinha = sLinha + acao.getMainSubject() + " - ";
+			sLinha = sLinha + svalor;
 
 			List<String> processoPartes = getPartesProcesso(mapProcesos, nomesParticipantes, numeroProcesso, acao,
 					participante);
 			if (!CommonsUtil.semValor(processoPartes)) {
 				if (processoPartes.size() > 1) {
-					sLinha = sLinha + " .Outros Partcipantes: ";
+					sLinha = sLinha + ". Outros Partcipantes: ";
 					String prefixo = "";
 					for (String nomeParticipante : nomesParticipantes) {
 						if (!CommonsUtil.mesmoValor(nomeParticipante, participante.getPagador().getNome())) {
@@ -576,6 +652,7 @@ public class PajuService {
 		} else {
 			sLinha = sLinha + "Já mencionado em : " + mapProcesos.get(numeroProcesso).get(0);
 		}
+		criarProcessoContrato(participante, acao, debitosJudiciaisValores, sLinha, numeroProcesso, origem);
 		return sLinha;
 	}
 
@@ -794,7 +871,7 @@ public class PajuService {
 						DebitosJudiciaisRequestValor debitosJudiciaisRequestValor = new DebitosJudiciaisRequestValor();
 						debitosJudiciaisRequestValor.setDescricao(CommonsUtil.formataNumeroProcesso(acao.getNumber()));
 						debitosJudiciaisRequestValor.setVencimento(
-								"0101" + DateUtil.getAnoProcesso(CommonsUtil.formataNumeroProcesso(acao.getNumber()).substring(11, 15)));
+								"0101" + DateUtil.getAnoProcesso(acao.getNumber()));
 						debitosJudiciaisRequestValor.setValor(CommonsUtil.bigDecimalValue(acao.getValue()));
 
 						debitosJudiciaisRequest.getValores().add(debitosJudiciaisRequestValor);
@@ -815,7 +892,7 @@ public class PajuService {
 									DebitosJudiciaisRequestValor debitosJudiciaisRequestValor = new DebitosJudiciaisRequestValor();
 									debitosJudiciaisRequestValor.setDescricao(numeroProcesso);
 									debitosJudiciaisRequestValor
-											.setVencimento("0101" + DateUtil.getAnoProcesso(numeroProcesso.substring(11, 15)));
+											.setVencimento("0101" + DateUtil.getAnoProcesso(numeroProcesso));
 									debitosJudiciaisRequestValor.setValor(CommonsUtil.bigDecimalValue(acao.getValue()));
 
 									debitosJudiciaisRequest.getValores().add(debitosJudiciaisRequestValor);
@@ -947,7 +1024,7 @@ public class PajuService {
 							if (acao != null) {
 								DebitosJudiciaisRequestValor debitosJudiciaisRequestValor = new DebitosJudiciaisRequestValor();
 								debitosJudiciaisRequestValor.setDescricao(numeroProcesso);
-								debitosJudiciaisRequestValor.setVencimento("0101" + DateUtil.getAnoProcesso(numeroProcesso.substring(11, 15)));
+								debitosJudiciaisRequestValor.setVencimento("0101" + DateUtil.getAnoProcesso(numeroProcesso));
 								debitosJudiciaisRequestValor.setValor(CommonsUtil.bigDecimalValue(acao.getValue()));
 
 								debitosJudiciaisRequest.getValores().add(debitosJudiciaisRequestValor);
@@ -1125,7 +1202,7 @@ public class PajuService {
 									DebitosJudiciaisRequestValor debitosJudiciaisRequestValor = new DebitosJudiciaisRequestValor();
 									debitosJudiciaisRequestValor
 											.setDescricao(CommonsUtil.formataNumeroProcesso(acao.getNumber()));
-									debitosJudiciaisRequestValor.setVencimento("0101" + DateUtil.getAnoProcesso(line.trim().substring(11, 15)));
+									debitosJudiciaisRequestValor.setVencimento("0101" + DateUtil.getAnoProcesso(line.trim()));
 									debitosJudiciaisRequestValor.setValor(CommonsUtil.bigDecimalValue(acao.getValue()));
 
 									debitosJudiciaisRequest.getValores().add(debitosJudiciaisRequestValor);
@@ -1688,8 +1765,7 @@ public class PajuService {
 				if (acao != null) {
 					DebitosJudiciaisRequestValor debitosJudiciaisRequestValor = new DebitosJudiciaisRequestValor();
 					debitosJudiciaisRequestValor.setDescricao(CommonsUtil.formataNumeroProcesso(acao.getNumber()));
-					debitosJudiciaisRequestValor.setVencimento(
-							"0101" + DateUtil.getAnoProcesso(CommonsUtil.formataNumeroProcesso(acao.getNumber()).substring(11, 15)));
+					debitosJudiciaisRequestValor.setVencimento("0101" + DateUtil.getAnoProcesso(acao.getNumber()));
 					debitosJudiciaisRequestValor.setValor(CommonsUtil.bigDecimalValue(acao.getValue()));
 
 					debitosJudiciaisRequest.getValores().add(debitosJudiciaisRequestValor);
@@ -1714,7 +1790,7 @@ public class PajuService {
 				AcaoJudicial acao = bigData.getAcaoJudicial(numeroProcesso);
 
 				sLinha = getDadosAcaoBigData(mapProcesos, nomesParticipantes, participante, numeroProcesso, acao,
-						debitosJudiciais, sLinha);
+						debitosJudiciais, sLinha, "Plexi - TJSP 1Grau");
 
 				R run = new R();
 				run.getContent().add(createText(sLinha));
@@ -2032,7 +2108,6 @@ public class PajuService {
 			}
 		}
 	}
-	
 	
 	public ContratoCobranca getContrato() {
 		return contrato;

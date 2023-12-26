@@ -1042,7 +1042,9 @@ public final class DateUtil {
 		return diff;
 	}
 	
-	public static String getAnoProcesso(String ano) {
+	public static String getAnoProcesso(String processo) {
+		processo = CommonsUtil.formataNumeroProcesso(processo);
+		String ano = processo.substring(11, 15);
 		int anoInt = CommonsUtil.intValue(ano);
 		if(anoInt < 1800) {
 			anoInt = anoInt/100;

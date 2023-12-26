@@ -20476,7 +20476,7 @@ return valorTotal;
 		debitosJudiciaisRequest.setHonorario( CommonsUtil.bigDecimalValue(10));
 		DebitosJudiciaisRequestValor debitosJudiciaisRequestValor = new DebitosJudiciaisRequestValor();
 		debitosJudiciaisRequestValor.setDescricao(  processoSelecionado.getNumero());
-		debitosJudiciaisRequestValor.setVencimento( "0101" + DateUtil.getAnoProcesso(processoSelecionado.getNumero().substring(11,15)));
+		debitosJudiciaisRequestValor.setVencimento( "0101" + DateUtil.getAnoProcesso(processoSelecionado.getNumero()));
 		debitosJudiciaisRequestValor.setValor(processoSelecionado.getValor());
 
 		debitosJudiciaisRequest.getValores().add(debitosJudiciaisRequestValor);
@@ -20547,7 +20547,7 @@ return valorTotal;
 			DebitosJudiciaisRequestValor debitosJudiciaisRequestValor = new DebitosJudiciaisRequestValor();
 			debitosJudiciaisRequestValor.setDescricao(CommonsUtil.formataNumeroProcesso(processo.getNumero()));
 			debitosJudiciaisRequestValor.setVencimento(
-					"0101" + DateUtil.getAnoProcesso(CommonsUtil.formataNumeroProcesso(processo.getNumero()).substring(11, 15)));
+					"0101" + DateUtil.getAnoProcesso(processo.getNumero()));
 			debitosJudiciaisRequestValor.setValor(CommonsUtil.bigDecimalValue(processo.getValor()));
 			debitosJudiciaisRequest.getValores().add(debitosJudiciaisRequestValor);
 		}
