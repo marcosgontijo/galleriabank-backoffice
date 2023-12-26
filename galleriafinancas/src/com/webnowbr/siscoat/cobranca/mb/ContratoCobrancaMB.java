@@ -20471,7 +20471,9 @@ return valorTotal;
 		PagadorRecebedorDao pDao = new PagadorRecebedorDao();
 		for (CcbProcessosJudiciais processo : this.objetoContratoCobranca.getListProcessos()) {
 			if (!CommonsUtil.semValor(processo.getPagador())) {
-				if (!pessoasProcessos.contains(processo.getPagador())) {
+				PagadorRecebedor pessoa = pessoasProcessos.stream().filter(p -> CommonsUtil.mesmoValor(p.getId(),
+						processo.getPagador().getId())).findFirst().orElse(null);
+				if (CommonsUtil.semValor(pessoa)) {
 					PagadorRecebedor pagador = pDao.findById(processo.getPagador().getId());
 					pessoasProcessos.add(pagador);
 				}
