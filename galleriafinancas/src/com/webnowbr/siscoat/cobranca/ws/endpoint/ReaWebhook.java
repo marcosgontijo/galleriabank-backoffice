@@ -169,9 +169,9 @@ public class ReaWebhook {
 				DocumentoAnalise documentoAnaliseCadastrado = documentoAnaliseDao.cadastradoAnalise(contratoCobranca, documentoAnalise.getCnpjcpf());
 				if (CommonsUtil.semValor(documentoAnaliseCadastrado)) {
 					
-					documentoAnaliseCadastrado.setOrigem("REA");
-					documentoAnaliseCadastrado.setDataCadastro(DateUtil.getDataHoraAgora());
-					documentoAnaliseCadastrado.setUsuarioCadastro(usuarioConsultaREA);
+					documentoAnalise.setOrigem("REA");
+					documentoAnalise.setDataCadastro(DateUtil.getDataHoraAgora());
+					documentoAnalise.setUsuarioCadastro(usuarioConsultaREA);
 
 					PagadorRecebedor pagador = new PagadorRecebedor();
 					pagador.setId(0);

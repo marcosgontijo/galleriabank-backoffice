@@ -865,6 +865,9 @@ public class ContratoCobranca implements Serializable {
 	private boolean riscoTotal20kTaxa;
 	private boolean riscoTotal50kTaxa;
 	private boolean documentosAnalisados;
+	
+	public int qtdParcelasAtraso;
+	public BigDecimal somaParcelasAtraso;
 
 	// FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13
 	public BigDecimal calcularValorTotalContasPagas() {
@@ -7440,5 +7443,21 @@ public class ContratoCobranca implements Serializable {
 	public void setValorRegistroImovelPrincipal(BigDecimal valorRegistroImovelPrincipal) {
 		this.valorRegistroImovelPrincipal = valorRegistroImovelPrincipal;
 	}
+
+	public int getQtdParcelasAtraso() {
+		return qtdParcelasAtraso;
+	}
+
+	public void setQtdParcelasAtraso(int qtdParcelasAtraso) {
+		this.qtdParcelasAtraso = qtdParcelasAtraso;
+	}
+
+	public BigDecimal getSomaParcelasAtraso() {
+		return somaParcelasAtraso;
+	}
+
+	public void setSomaParcelasAtraso(BigDecimal somaParcelasAtraso) {
+		this.somaParcelasAtraso = somaParcelasAtraso;
+	}	
 }
 
