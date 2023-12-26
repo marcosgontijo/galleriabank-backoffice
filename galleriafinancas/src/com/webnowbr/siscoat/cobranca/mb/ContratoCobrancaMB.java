@@ -20578,7 +20578,12 @@ return valorTotal;
 		DebitosJudiciaisValores debitosJudiciaisValores = null;
 		CcbProcessosJudiciaisDao processosJudiciaisDao = new CcbProcessosJudiciaisDao();
 		ContasPagarDao contasPagarDao = new ContasPagarDao();
-		for (CcbProcessosJudiciais processo : listProcessosSelecionado) {
+		List<CcbProcessosJudiciais> processos = new ArrayList<CcbProcessosJudiciais>();
+		if(CommonsUtil.semValor(listProcessosSelecionado))
+			processos.addAll(objetoContratoCobranca.getListProcessos());
+		else
+			processos = listProcessosSelecionado;
+		for (CcbProcessosJudiciais processo : processos) {
 			String[] numeroArray = processo.getNumero().split("\\.");
 			if(numeroArray.length <= 1) 
 				continue;
@@ -20596,7 +20601,9 @@ return valorTotal;
 			DrCalcService drCalcService = new DrCalcService();
 			debitosJudiciais = drCalcService.criarConsultaAtualizacaoMonetaria(debitosJudiciaisRequest);
 		}
-		for (CcbProcessosJudiciais processo : listProcessosSelecionado) {
+		for (CcbProcessosJudiciais processo : processos) {
+			if(CommonsUtil.semValor(processo.getValor()))
+				continue;
 			if (debitosJudiciais != null) {
 				debitosJudiciaisValores = debitosJudiciais.getValores().stream()
 						.filter(d -> CommonsUtil.mesmoValor(d.getDescricao(),
