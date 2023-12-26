@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="cobranca">
+	<class
+		name="com.webnowbr.siscoat.cobranca.db.model.ImovelCobrancaRestricao"
+		table="IMOVELCOBRANCARESTRICAO">
+		<id name="id" type="long">
+			<column name="ID" />
+			<generator class="increment" />
+		</id>
+		
+		<many-to-one name="contratoCobranca"
+			class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca">
+			<column name="contratocobranca" />
+		</many-to-one> 
+				
+		<property name="numeroMatricula" type="java.lang.String">
+			<column name="numeroMatricula" />
+		</property>
+		
+		<property name="numeroCartorio" type="java.lang.String">
+			<column name="numeroCartorio" />
+		</property>
+
+		<property name="cartorioEstado" type="java.lang.String">
+			<column name="cartorioEstado" />
+		</property>
+
+		<property name="cartorioMunicipio" type="java.lang.String">
+			<column name="cartorioMunicipio" />
+		</property>
+
+		<property name="dataCadastro" type="java.util.Date">
+			<column name="dataCadastro" />
+		</property>
+
+		<property name="usuarioCadastro" type="java.lang.String">
+			<column name="usuarioCadastro" />
+		</property>
+
+		<property name="ativa" type="boolean">
+			<column name="ativa" not-null="true" default="true" />
+		</property>
+
+	</class>
+</hibernate-mapping>

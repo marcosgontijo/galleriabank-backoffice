@@ -204,6 +204,7 @@ import com.webnowbr.siscoat.cobranca.service.DocumentoAnaliseService;
 import com.webnowbr.siscoat.cobranca.service.DrCalcService;
 import com.webnowbr.siscoat.cobranca.service.EngineService;
 import com.webnowbr.siscoat.cobranca.service.FileService;
+import com.webnowbr.siscoat.cobranca.service.ImovelCobrancaRestricaoService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.cobranca.service.PagadorRecebedorService;
 import com.webnowbr.siscoat.cobranca.service.PajuService;
@@ -276,6 +277,7 @@ public class ContratoCobrancaMB {
 	private boolean crmMode = false;
 	private boolean baixarMode = false;
 	private List<String> restricaoOperacao = new ArrayList<String>();
+	private List<String> restricaoImovel = new ArrayList<String>();
 	private String tituloPainel = null;
 	private String origemTelaBaixar;
 	private String empresa;
@@ -9344,14 +9346,18 @@ public class ContratoCobrancaMB {
 	public String clearFieldsEditarPendentes() {
 		listaArquivosAnaliseDocumentos();
 		this.restricaoOperacao= new ArrayList<>();
+		this.restricaoImovel= new ArrayList<>();
 
-		listaRestricoesPessoas();
+		
 
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
 		this.objetoPagadorRecebedor = this.objetoContratoCobranca.getPagador();
 		this.tituloPainel = "Editar";
 
+		listaRestricoesPessoas();
+		listaRestricoesImovel();
+		
 		this.valorPresenteParcela = BigDecimal.ZERO;
 
 		listaTodasSubpastas();
@@ -9608,8 +9614,10 @@ return valorTotal;
 		listaArquivosAnaliseDocumentos();
 
 		this.restricaoOperacao= new ArrayList<>();
+		this.restricaoImovel= new ArrayList<>();
 
 		listaRestricoesPessoas();
+		listaRestricoesImovel();
 
 		verificaPagamentoAntecipado();
 		verificaPagamentoIntegral();
@@ -9805,6 +9813,15 @@ return valorTotal;
 		}
 	}
 	
+	private void listaRestricoesImovel() {
+		ImovelCobrancaRestricaoService imovelCobrancaRestricaoService = new ImovelCobrancaRestricaoService();		
+		List<String> result = imovelCobrancaRestricaoService.verificaRestricao(objetoContratoCobranca);
+		
+		if (!CommonsUtil.semValor(result))
+			this.restricaoImovel = result;
+
+	}
+	
 	public void carregaValorIOFCustos() {
 		CcbDao ccbDao = new CcbDao();
 		CcbContrato ccb = ccbDao.ConsultaCcbPorContratoNew(this.objetoContratoCobranca);
@@ -9815,9 +9832,34 @@ return valorTotal;
 		
 		this.objetoContratoCobranca.setNomeBancarioCustoEmissao("Galleria SCD");
 		this.objetoContratoCobranca.setBancoBancarioCustoEmissao("001");
-		this.objetoContratoCobranca.setAgenciaBancarioCustoEmissao("6937-X");
+		this.objetoContratoCobranca.setAgenciaBancarioCustoEmissao("6937");
 		this.objetoContratoCobranca.setContaBancarioCustoEmissao("120621-4");
 		this.objetoContratoCobranca.setCpfCnpjBancarioCustoEmissao("51.604.356/0001-75");
+		this.objetoContratoCobranca.setPixCustoEmissao("51.604.356/0001-75");
+		
+		// carta split cliente
+		this.objetoContratoCobranca.setValorCartaSplit(ccb.getValorLiquidoCredito());
+		this.objetoContratoCobranca.setNomeBancarioCartaSplit(ccb.getTitularConta());
+		
+		if (this.objetoContratoCobranca.getPagador().getCpf() != null && !this.objetoContratoCobranca.getPagador().getCpf().equals("")) {
+			this.objetoContratoCobranca.setCpfCnpjBancarioCartaSplit(this.objetoContratoCobranca.getPagador().getCpf());
+		} else {
+			this.objetoContratoCobranca.setCpfCnpjBancarioCartaSplit(this.objetoContratoCobranca.getPagador().getCnpj());	
+		}
+		
+		this.objetoContratoCobranca.setBancoBancarioCartaSplit(String.valueOf(ccb.getNumeroBanco()));
+		this.objetoContratoCobranca.setAgenciaBancarioCartaSplit(ccb.getAgencia());
+		this.objetoContratoCobranca.setContaBancarioCartaSplit(ccb.getContaCorrente());
+		this.objetoContratoCobranca.setPixCartaSplit(ccb.getPixBanco());
+
+		// carta split Galleria
+		this.objetoContratoCobranca.setValorCartaSplitGalleria(ccb.getValorDespesas());
+		this.objetoContratoCobranca.setNomeBancarioCartaSplitGalleria("Galleria Correspondente Bancário Eireli");
+		this.objetoContratoCobranca.setCpfCnpjBancarioCartaSplitGalleria("34.787.885/0001-32");
+		this.objetoContratoCobranca.setBancoBancarioCartaSplitGalleria("");
+		this.objetoContratoCobranca.setAgenciaBancarioCartaSplitGalleria("");
+		this.objetoContratoCobranca.setContaBancarioCartaSplitGalleria("");
+		this.objetoContratoCobranca.setPixCartaSplitGalleria("b56b12e2-f476-4272-8d16-c1a5a31cc660");
 	}
 
 	private void calcularRegistroVelho() {
@@ -9952,8 +9994,10 @@ return valorTotal;
 	
 		listaArquivosAnaliseDocumentos();
 		this.restricaoOperacao= new ArrayList<>();
+		this.restricaoImovel= new ArrayList<>();
 
 		listaRestricoesPessoas();
+		listaRestricoesImovel();
 
 		return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusAvaliacaoImovel.xhtml";
 	}
@@ -9971,8 +10015,10 @@ return valorTotal;
 		}
 		listaArquivosAnaliseDocumentos();
 		this.restricaoOperacao= new ArrayList<>();
+		this.restricaoImovel= new ArrayList<>();
 
 		listaRestricoesPessoas();
+		listaRestricoesImovel();
 
 		filesInterno = new ArrayList<FileUploaded>();
 		filesInterno = listaArquivosInterno();
@@ -10000,6 +10046,7 @@ return valorTotal;
 		}
 		listaArquivosAnaliseDocumentos();
 		this.restricaoOperacao= new ArrayList<>();
+		this.restricaoImovel= new ArrayList<>();
 
 		//listaRestricoesPessoas();
 
@@ -19574,7 +19621,8 @@ return valorTotal;
 		contaCartaSplit.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
 		contaCartaSplit.setResponsavel(this.objetoContratoCobranca.getResponsavel());
 		contaCartaSplit.setTipoDespesa("C");
-		contaCartaSplit.setValor(this.objetoContratoCobranca.getValorCartaSplitGalleria());	
+		contaCartaSplit.setValor(this.objetoContratoCobranca.getValorCartaSplitGalleria());
+		contaCartaSplit.setValorPagamento(this.objetoContratoCobranca.getValorCartaSplitGalleria());	
 		
 		contaCartaSplit.setBancoTed(this.objetoContratoCobranca.getBancoBancarioCartaSplitGalleria());
 		contaCartaSplit.setAgenciaTed(this.objetoContratoCobranca.getAgenciaBancarioCartaSplitGalleria());
@@ -19654,6 +19702,7 @@ return valorTotal;
 		contaCartaSplit.setResponsavel(this.objetoContratoCobranca.getResponsavel());
 		contaCartaSplit.setTipoDespesa("C");
 		contaCartaSplit.setValor(this.objetoContratoCobranca.getValorCustoEmissao());	
+		contaCartaSplit.setValorPagamento(this.objetoContratoCobranca.getValorCustoEmissao());	
 		
 		contaCartaSplit.setBancoTed(this.objetoContratoCobranca.getBancoBancarioCustoEmissao());
 		contaCartaSplit.setAgenciaTed(this.objetoContratoCobranca.getAgenciaBancarioCustoEmissao());
@@ -19733,6 +19782,7 @@ return valorTotal;
 		contaCartaSplit.setResponsavel(this.objetoContratoCobranca.getResponsavel());
 		contaCartaSplit.setTipoDespesa("C");
 		contaCartaSplit.setValor(this.objetoContratoCobranca.getValorCartaSplit());	
+		contaCartaSplit.setValorPagamento(this.objetoContratoCobranca.getValorCartaSplit());	
 		
 		contaCartaSplit.setBancoTed(this.objetoContratoCobranca.getBancoBancarioCartaSplit());
 		contaCartaSplit.setAgenciaTed(this.objetoContratoCobranca.getAgenciaBancarioCartaSplit());
@@ -20687,6 +20737,7 @@ return valorTotal;
 		imovelAdicional.setContratoCobranca(objetoContratoCobranca);
 		objetoContratoCobranca.getListaImoveis().add(imovelAdicional);
 		calcularPorcentagemImoveis();
+		listaRestricoesImovel();
 		imovelAdicional = new ImovelCobrancaAdicionais();
 	}
 
@@ -32514,6 +32565,7 @@ return valorTotal;
 
 		listaArquivosAnaliseDocumentos();
 		this.restricaoOperacao= new ArrayList<>();
+		this.restricaoImovel= new ArrayList<>();
 
 		listaRestricoesPessoas();
 
@@ -35700,7 +35752,7 @@ return valorTotal;
 	}
 	
 	public boolean isPossuiBlacFlag() {
-		return !CommonsUtil.semValor(restricaoOperacao);
+		return !CommonsUtil.semValor(restricaoOperacao) || !CommonsUtil.semValor(restricaoImovel)  ;
 	}
 
 	public List<String> getRestricaoOperacao() {
@@ -35709,6 +35761,14 @@ return valorTotal;
 
 	public void setRestricaoOperacao(List<String> restricaoOperacao) {
 		this.restricaoOperacao = restricaoOperacao;
+	}
+
+	public List<String> getRestricaoImovel() {
+		return restricaoImovel;
+	}
+
+	public void setRestricaoImovel(List<String> restricaoImovel) {
+		this.restricaoImovel = restricaoImovel;
 	}
  	
 }
