@@ -9819,7 +9819,7 @@ return valorTotal;
 		this.objetoContratoCobranca.setPixCustoEmissao("51.604.356/0001-75");
 		
 		// carta split cliente
-		this.objetoContratoCobranca.setValorCartaSplit(ccb.getValorCredito());
+		this.objetoContratoCobranca.setValorCartaSplit(ccb.getValorLiquidoCredito());
 		this.objetoContratoCobranca.setNomeBancarioCartaSplit(ccb.getTitularConta());
 		
 		if (this.objetoContratoCobranca.getPagador().getCpf() != null && !this.objetoContratoCobranca.getPagador().getCpf().equals("")) {
