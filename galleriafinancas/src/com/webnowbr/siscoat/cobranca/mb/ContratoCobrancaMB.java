@@ -276,6 +276,7 @@ public class ContratoCobrancaMB {
 	private boolean deleteMode = false;
 	private boolean crmMode = false;
 	private boolean baixarMode = false;
+	private boolean blockForm = false;
 	private List<String> restricaoOperacao = new ArrayList<String>();
 	private List<String> restricaoImovel = new ArrayList<String>();
 	private String tituloPainel = null;
@@ -8403,7 +8404,8 @@ public class ContratoCobrancaMB {
 		for (ContratoCobranca contratos : this.contratosPendentes) {
 
 			this.objetoContratoCobranca = contratoCobrancaDao.findById(contratos.getId());
-			Date dataVencimento = DateUtil.adicionarDias(this.objetoContratoCobranca.getNotificacaoCobrancaData(), 10);
+			Date dataVencimento = objetoContratoCobranca.getListContratoCobrancaDetalhes().get(objetoContratoCobranca.getMesesCarencia() + 1).getDataVencimento();
+					//DateUtil.adicionarDias(this.objetoContratoCobranca.getNotificacaoCobrancaData(), 10);
 			
 			this.objetoContratoCobranca.setNotificacaoCobrancaData(null);
 			contratoCobrancaDao.merge(this.objetoContratoCobranca);
@@ -9544,6 +9546,15 @@ public class ContratoCobrancaMB {
 			return "/Atendimento/Cobranca/ContratoCobrancaPreCustomizadoDetalhes.xhtml";
 		} else {
 			return "/Atendimento/Cobranca/ContratoCobrancaInserirPendente.xhtml";
+		}
+	}
+	
+	public void bloquearForm() {
+		PrimeFaces current = PrimeFaces.current();
+		if(blockForm) {
+			current.executeScript("PF('blockForm').show();");
+		} else {
+			current.executeScript("PF('blockForm').hide();");
 		}
 	}
 
@@ -35913,5 +35924,12 @@ return valorTotal;
 	public void setRestricaoImovel(List<String> restricaoImovel) {
 		this.restricaoImovel = restricaoImovel;
 	}
- 	
+
+	public boolean isBlockForm() {
+		return blockForm;
+	}
+
+	public void setBlockForm(boolean blockForm) {
+		this.blockForm = blockForm;
+	}
 }
