@@ -260,6 +260,7 @@ public class PagadorRecebedor implements Serializable {
 	private String whatsAppNumero;
 	
 	private Date inicioEmpresa;
+	private String retornoFinancas;
 
 	public PagadorRecebedor(){
 		resetarBololean();
@@ -2386,6 +2387,14 @@ public class PagadorRecebedor implements Serializable {
 
 	public void setInicioEmpresa(Date inicioEmpresa) {
 		this.inicioEmpresa = inicioEmpresa;
+	}
+
+	public String getRetornoFinancas() {
+		return retornoFinancas;
+	}
+
+	public void setRetornoFinancas(String retornoFinancas) {
+		this.retornoFinancas = retornoFinancas;
 	}	
 	public String getAgenciaDigito() {
 		return agenciaDigito;
