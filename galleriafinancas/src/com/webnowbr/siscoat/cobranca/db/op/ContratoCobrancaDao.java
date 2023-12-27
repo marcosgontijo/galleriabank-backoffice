@@ -6883,6 +6883,10 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setCertificadoEmitido(rs.getBoolean("certificadoEmitido"));
 						contratoCobranca.setContratoPrioridadeAlta(rs.getBoolean("contratoPrioridadeAlta"));
 						contratoCobranca.setOkCliente(rs.getBoolean("okCliente"));
+						
+						contratoCobranca.setPendenciaExternaCartorio(rs.getBoolean("pendenciaExternaCartorio"));
+						contratoCobranca.setPendenciaResolvidaCartorio(rs.getBoolean("pendenciaResolvidaCartorio"));
+						contratoCobranca.setResolucaoExigenciaCartorio(rs.getBoolean("resolucaoExigenciaCartorio"));
 						//contratoCobranca = findById(rs.getLong(1));
 						
 						ImovelCobranca imovel = new ImovelCobranca();
@@ -6913,7 +6917,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "	coco.agRegistro, coco.preAprovadoComite, coco.documentosComite, coco.aprovadoComite, coco.analiseReprovada, coco.analiseComercial, coco.comentarioJuridicoEsteira, coco.status,"
 			+ " pedidoLaudo, pedidoLaudoPajuComercial, pedidoPreLaudo, pedidoPreLaudoComercial, pedidoPajuComercial, pendenciaLaudoPaju, avaliacaoLaudo , contratoConferido, agEnvioCartorio, "
 			+ " reanalise, reanalisePronta, reanaliseJuridico, certificadoEmitido, pare.id idPagador,"
-			+ " imv.cidade, imv.estado, c2.pintarLinha, coco.contratoPrioridadeAlta, coco.okCliente"
+			+ " imv.cidade, imv.estado, c2.pintarLinha, coco.contratoPrioridadeAlta, coco.okCliente, "
+			+ "	coco.pendenciaExternaCartorio, coco.pendenciaResolvidaCartorio, coco.resolucaoExigenciaCartorio "
 			+ "	from cobranca.contratocobranca coco "
 			+ "	inner join cobranca.responsavel res on coco.responsavel = res.id "
 			+ "	inner join cobranca.pagadorrecebedor pare on pare.id = coco.pagador "
@@ -7010,6 +7015,10 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setCertificadoEmitido(rs.getBoolean("certificadoEmitido"));
 						contratoCobranca.setContratoPrioridadeAlta(rs.getBoolean("contratoPrioridadeAlta"));
 						contratoCobranca.setOkCliente(rs.getBoolean("okCliente"));
+						
+						contratoCobranca.setPendenciaExternaCartorio(rs.getBoolean("pendenciaExternaCartorio"));
+						contratoCobranca.setPendenciaResolvidaCartorio(rs.getBoolean("pendenciaResolvidaCartorio"));
+						contratoCobranca.setResolucaoExigenciaCartorio(rs.getBoolean("resolucaoExigenciaCartorio"));
 						//contratoCobranca = findById(rs.getLong(1));
 						
 						ImovelCobranca imovel = new ImovelCobranca();
@@ -7441,7 +7450,25 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 								+ " and ccbPronta = true and contratoConferido = true and agAssinatura = false"
 								+ " and agEnvioCartorio = true";
 					}
-
+					
+					if (tipoConsulta.equals("Ag. Resolução Pendência")) {
+						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
+								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true"
+								+ " and analiseComercial = true and comentarioJuridicoEsteira = true and documentosCompletos = true and preAprovadoComite = true"
+								+ " and documentosComite = true and aprovadoComite = true and okCliente = true and documentosCompletos = true and reanalise = false and certificadoEmitido = true"
+								+ " and ccbPronta = true and contratoConferido = true and agAssinatura = false"
+								+ " and agEnvioCartorio = false and pendenciaExternaCartorio = true and pendenciaResolvidaCartorio = false";
+					}
+					
+					if (tipoConsulta.equals("Ag. Resolução Exigencias/Pagamentos")) {
+						query = query + "  and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
+								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true"
+								+ " and analiseComercial = true and comentarioJuridicoEsteira = true and documentosCompletos = true and preAprovadoComite = true"
+								+ " and documentosComite = true and aprovadoComite = true and okCliente = true and documentosCompletos = true and reanalise = false and certificadoEmitido = true"
+								+ " and ccbPronta = true and contratoConferido = true and agAssinatura = false"
+								+ " and agEnvioCartorio = false and pendenciaExternaCartorio = false and resolucaoExigenciaCartorio = false";
+					}
+					
 					if (tipoConsulta.equals("Ag. Registro")) {
 						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and laudoRecebido = true and pajurFavoravel = true"

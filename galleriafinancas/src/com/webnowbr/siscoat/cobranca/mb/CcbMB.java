@@ -455,6 +455,7 @@ public class CcbMB {
 	
 	public void removeDespesa(ContasPagar conta) {
 		this.objetoCcb.getDespesasAnexo2().remove(conta);
+		conta.setNumeroDocumento(null);
 		if(!CommonsUtil.semValor(conta.getContrato())) {
 			conta.setContrato(null);
 		}
@@ -753,7 +754,7 @@ public class CcbMB {
 		}
 		
 		ContasPagar despesaTransferencia = buscarDespesa("Transferência", objetoContratoCobranca.getNumeroContrato());
-		if(CommonsUtil.mesmoValor(objetoContratoCobranca.getCobrarComissaoCliente(), "Sim")) {		
+		if(CommonsUtil.mesmoValor(objetoContratoCobranca.getCobrarComissaoCliente(), "Sim")) {
 			BigDecimal valorTranferencia = BigDecimal.ZERO;
 			BigDecimal comissao = BigDecimal.ZERO;
 			if(CommonsUtil.mesmoValor(objetoContratoCobranca.getTipoCobrarComissaoCliente(), "Real")) {
@@ -769,7 +770,7 @@ public class CcbMB {
 				if(CommonsUtil.mesmoValor(objetoContratoCobranca.getBrutoLiquidoCobrarComissaoCliente(), "Bruto")) {
 					valorTranferencia = objetoContratoCobranca.getValorAprovadoComite().multiply(comissao);
 				} else if(CommonsUtil.mesmoValor(objetoContratoCobranca.getBrutoLiquidoCobrarComissaoCliente(), "Liquido")) {
-					valorTranferencia = objetoCcb.getValorLiquidoCredito().add(objetoCcb.getValorDespesas()).multiply(comissao);
+					valorTranferencia = objetoCcb.getValorLiquidoCredito().add(objetoCcb.getIntermediacaoValor()).multiply(comissao);
 				}
 			}
 			

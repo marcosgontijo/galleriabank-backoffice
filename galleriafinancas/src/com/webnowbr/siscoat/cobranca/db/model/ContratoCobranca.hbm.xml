@@ -2321,5 +2321,33 @@
 			<column name="valorRegistroImovelPrincipal" />
 		</property>
 		
+		<property name="pendenciaExternaCartorio" type="boolean">
+			<column name="pendenciaExternaCartorio" not-null="true" default="false"/>
+		</property>
+		
+		<property name="pendenciaResolvidaCartorioData" type="java.util.Date">
+			<column name="pendenciaResolvidaCartorioData" />
+		</property>
+		<property name="pendenciaResolvidaCartorio" type="boolean">
+			<column name="pendenciaResolvidaCartorio" not-null="true" default="false"/>
+		</property>	
+		<property name="pendenciaResolvidaCartorioUsuario" type="java.lang.String">
+			<column name="pendenciaResolvidaCartorioUsuario" />
+		</property>
+		
+		<property name="resolucaoExigenciaCartorioData" type="java.util.Date">
+			<column name="resolucaoExigenciaCartorioData" />
+		</property>
+		<property name="resolucaoExigenciaCartorio" type="boolean">
+			<column name="resolucaoExigenciaCartorio" not-null="true" default="false"/>
+		</property>	
+		<property name="resolucaoExigenciaCartorioUsuario" type="java.lang.String">
+			<column name="resolucaoExigenciaCartorioUsuario" />
+		</property>
+		
+		<property name="pendenciaCartorioObservacao" type="java.lang.String">
+			<column name="pendenciaCartorioObservacao" />
+		</property>
+		
 	</class>
 </hibernate-mapping>

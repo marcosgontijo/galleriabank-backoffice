@@ -558,7 +558,7 @@
 											style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
 										border-radius: 5px; padding: 10px; 
-										margin-left: 20px;">
+										margin-left: 20px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio}">
 											<p:outputLabel styleClass="labelBold">Aguardando Envio Cartório</p:outputLabel>
 											<p:spacer></p:spacer>
 											<p:selectBooleanButton id="agEnvioCartorio"
@@ -566,6 +566,47 @@
 												value="#{contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio}"
 												onLabel="Não enviado" offLabel="Enviado"
 												onIcon="ui-icon-close" offIcon="ui-icon-check"
+												style="width:=60px">
+											</p:selectBooleanButton>
+											<p:spacer></p:spacer>
+											<p:commandButton value="Enviar p/ Pendência Externa" ajax="false" icon="ui-icon-check"
+												disabled="#{contratoCobrancaMB.objetoContratoCobranca.desabilitarEnviarParaCartorio()}"
+												action="#{contratoCobrancaMB.enviarParaPendenciaExterna}"
+												style="TEXT-DECORATION: bold;" >
+											</p:commandButton>
+											<p:commandButton value="Enviar p/ Exigências/Pagamentos" ajax="false" icon="ui-icon-check"
+												disabled="#{contratoCobrancaMB.objetoContratoCobranca.desabilitarEnviarParaCartorio()}"
+												action="#{contratoCobrancaMB.enviarParaExigenciasPagamentos}"
+												style="TEXT-DECORATION: bold;" >
+											</p:commandButton>
+										</h:panelGrid>
+										<h:panelGrid columns="2"
+											style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
+										-moz-border-radius: 5px;
+										border-radius: 5px; padding: 10px; 
+										margin-left: 20px;" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio 
+											and contratoCobrancaMB.objetoContratoCobranca.pendenciaExternaCartorio}">
+											<p:outputLabel styleClass="labelBold">Pendência Externa Resolvida?</p:outputLabel>
+											<p:spacer></p:spacer>
+											<p:selectBooleanButton id="pendenciaResolvidaCartorio"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaResolvidaCartorio}"
+												onLabel="Sim" offLabel="Não"
+												onIcon="ui-icon-check" offIcon="ui-icon-close"
+												style="width:=60px">
+											</p:selectBooleanButton>
+										</h:panelGrid>
+										<h:panelGrid columns="2"
+											style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
+										-moz-border-radius: 5px;
+										border-radius: 5px; padding: 10px; 
+										margin-left: 20px;" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio 
+											and !contratoCobrancaMB.objetoContratoCobranca.pendenciaExternaCartorio}">
+											<p:outputLabel styleClass="labelBold">Exigências/Pagamentos Resolvidos?</p:outputLabel>
+											<p:spacer></p:spacer>
+											<p:selectBooleanButton id="resolucaoExigenciaCartorio"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.resolucaoExigenciaCartorio}"
+												onLabel="Sim" offLabel="Não"
+												onIcon="ui-icon-check" offIcon="ui-icon-close"
 												style="width:=60px">
 											</p:selectBooleanButton>
 										</h:panelGrid>
@@ -1126,6 +1167,15 @@
 									label="Data" size="100" pattern="dd/MM/yyyy"
 									styleClass="dateTimeField" />
 							</h:panelGrid>
+						</h:panelGrid>
+						
+						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio}">
+							<p:outputLabel for="pendenciaCartorioObservacao"
+								value="Descrição da pendência: " styleClass="labelBold" />
+							<p:inputTextarea id="pendenciaCartorioObservacao" rows="10"
+								cols="48" maxlength="3000" onblur=""
+								counterTemplate="{0} characters remaining." autoResize="false"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaCartorioObservacao}" />
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>

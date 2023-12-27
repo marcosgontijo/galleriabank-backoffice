@@ -80,7 +80,10 @@
 						<p:commandButton value="Adicionar Pessoa"
 							action="#{contratoCobrancaMB.preparaAdicionarPessoaAnalise}"
 							oncomplete="PF('adicionarPessoaAnaliseDlg').show();"
-							disabled="#{!(contratoCobrancaMB.objetoContratoCobranca.emAnalise || contratoCobrancaMB.objetoContratoCobranca.emPedirPaju)  or !contratoCobrancaMB.verificaReaProcessado}"
+							disabled="#{!(contratoCobrancaMB.objetoContratoCobranca.emAnalise 
+							|| contratoCobrancaMB.objetoContratoCobranca.emPedirPaju 
+							|| contratoCobrancaMB.objetoContratoCobranca.emReanalise) 
+							 or !contratoCobrancaMB.verificaReaProcessado}"
 							 update="adicionarPessoaAnaliseForm">
 						</p:commandButton>
 					</shiro:hasAnyRoles>

@@ -346,7 +346,7 @@ public class PlexiMB {
 		
 		if(CommonsUtil.mesmoValor(doc.getUrl(), 
 				"/api/maestro/tjsp/certidao-negativa")) {
-			String[] modeloArray = {"6", "52"};
+			String[] modeloArray = {"6", "52", "41"};
 			for(String modelo : modeloArray) {
 				if(!CommonsUtil.semValor(plexiConsulta.getCnpj()) && CommonsUtil.mesmoValor(modelo, "6")) 
 					continue;
