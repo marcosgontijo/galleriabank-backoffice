@@ -2,6 +2,7 @@ package com.webnowbr.siscoat.cobranca.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,11 +11,9 @@ import java.util.stream.Collectors;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobrancaRestricao;
-import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
-import com.webnowbr.siscoat.cobranca.db.model.RelacionamentoPagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaRestricaoDao;
-import com.webnowbr.siscoat.cobranca.db.op.RelacionamentoPagadorRecebedorDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.infra.db.model.User;
 
 public class ImovelCobrancaRestricaoService {
 
@@ -130,4 +129,46 @@ public class ImovelCobrancaRestricaoService {
 		return restricoes;
 		
 	}
+	
+	public boolean adicionarBlackFlagImovel(ImovelCobranca imovelCobranca, ContratoCobranca contratoCobranca,
+			User usuario) {
+		try {
+			ImovelCobrancaRestricaoDao icrDao = new ImovelCobrancaRestricaoDao();			
+			ImovelCobrancaRestricao imovelCobrancaRestricao = new ImovelCobrancaRestricao();
+			imovelCobrancaRestricao.setNumeroMatricula(imovelCobranca.getNumeroMatricula());
+			imovelCobrancaRestricao.setCartorio(imovelCobranca.getCartorio());
+			imovelCobrancaRestricao.setNumeroCartorio(imovelCobranca.getNumeroCartorio());
+			imovelCobrancaRestricao.setCartorioEstado(imovelCobranca.getCartorioEstado());
+			imovelCobrancaRestricao.setCartorioMunicipio(imovelCobranca.getCartorioMunicipio());
+			imovelCobrancaRestricao.setAtiva(true);
+			imovelCobrancaRestricao.setUsuarioCadastro(usuario.getLogin());
+			imovelCobrancaRestricao.setDataCadastro(new Date());
+			imovelCobrancaRestricao.setContratoCobranca(contratoCobranca);
+			icrDao.create(imovelCobrancaRestricao);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+
+	}
+
+	public boolean removerBlackFlagImovel(ImovelCobranca imovelCobranca, ContratoCobranca contratoCobranca,
+			User usuario) {
+		ImovelCobrancaRestricaoDao icrDao = new ImovelCobrancaRestricaoDao();
+
+		try {
+			List<ImovelCobrancaRestricao> imovelCobrancaRestricoes = icrDao.findByFilter("numeroMatricula",
+					imovelCobranca.getNumeroMatricula());
+			for (ImovelCobrancaRestricao imovelCobrancaRestricao : imovelCobrancaRestricoes) {
+				imovelCobrancaRestricao.setAtiva(false);
+				imovelCobrancaRestricao.setUsuarioInativa(usuario.getLogin());
+				imovelCobrancaRestricao.setDataInativa(new Date());
+				icrDao.update(imovelCobrancaRestricao);
+			}
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 }
