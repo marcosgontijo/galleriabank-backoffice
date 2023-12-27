@@ -1291,6 +1291,97 @@
 									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
 								</h:outputText>
 							</h:panelGrid>
+							
+							<h:panelGrid columns="1"
+								style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px;
+									border-radius: 5px; padding: 10px;">
+								<p:outputLabel styleClass="labelBold">Tem Pendência Externa?</p:outputLabel>
+								<h:panelGroup>
+									<shiro:lacksRole name="PROFILE_ANALISTA_POS_COMITE">
+										<p:selectBooleanButton id="pendenciaExternaCartorioView"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaExternaCartorio}"
+											onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+											offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
+										<p:spacer width="50px" height="1px"></p:spacer>
+									</shiro:lacksRole>
+									<shiro:hasAnyRoles
+										name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_POS_COMITE, PROFILE_GERENTE_ANALISE">
+										<p:selectBooleanButton id="pendenciaExternaCartorio"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaExternaCartorio}"
+											onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+											offIcon="ui-icon-cancel" style="width:=60px" />
+									</shiro:hasAnyRoles>
+								</h:panelGroup>
+							</h:panelGrid>
+							
+							<h:panelGrid columns="1"
+								style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px; 
+									border-radius: 5px; padding: 10px;">
+								<p:outputLabel styleClass="labelBold">Pendência Externa Resolvida</p:outputLabel>
+								<h:panelGroup>
+									<shiro:lacksRole name="PROFILE_ANALISTA_POS_COMITE">
+										<p:selectBooleanButton id="pendenciaResolvidaCartorioView"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaResolvidaCartorio}"
+											onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+											offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
+											<p:spacer width="50px" height="1px"></p:spacer>
+									</shiro:lacksRole>
+									<shiro:hasAnyRoles
+										name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_POS_COMITE, PROFILE_GERENTE_ANALISE">
+										<p:selectBooleanButton id="pendenciaResolvidaCartorio"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaResolvidaCartorio}"
+											onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+											offIcon="ui-icon-cancel" style="width:=60px" />
+									</shiro:hasAnyRoles>
+								</h:panelGroup>
+								<h:panelGroup>
+									<p:outputLabel>Atualizado por: </p:outputLabel>
+									<h:outputText id="pendenciaResolvidaCartorioUsuario"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaResolvidaCartorioUsuario}"
+										style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+								</h:panelGroup>
+								<h:outputText id="pendenciaResolvidaCartorioData"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaResolvidaCartorioData}"
+									style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+									<f:convertDateTime locale="pt_BR" />
+									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+								</h:outputText>
+							</h:panelGrid>
+							
+							<h:panelGrid columns="1"
+								style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px; 
+									border-radius: 5px; padding: 10px;">
+								<p:outputLabel styleClass="labelBold">Exigências/Pagamentos Resolvidos</p:outputLabel>
+								<h:panelGroup>
+									<shiro:lacksRole name="PROFILE_ANALISTA_POS_COMITE">
+										<p:selectBooleanButton id="resolucaoExigenciaCartorioView"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.resolucaoExigenciaCartorio}"
+											onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+											offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
+											<p:spacer width="50px" height="1px"></p:spacer>
+									</shiro:lacksRole>
+									<shiro:hasAnyRoles
+										name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_POS_COMITE, PROFILE_GERENTE_ANALISE">
+										<p:selectBooleanButton id="resolucaoExigenciaCartorio"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.resolucaoExigenciaCartorio}"
+											onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+											offIcon="ui-icon-cancel" style="width:=60px" />
+									</shiro:hasAnyRoles>
+								</h:panelGroup>
+								<h:panelGroup>
+									<p:outputLabel>Atualizado por: </p:outputLabel>
+									<h:outputText id="resolucaoExigenciaCartorioUsuario"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.resolucaoExigenciaCartorioUsuario}"
+										style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+								</h:panelGroup>
+								<h:outputText id="resolucaoExigenciaCartorioData"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.resolucaoExigenciaCartorioData}"
+									style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+									<f:convertDateTime locale="pt_BR" />
+									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+								</h:outputText>
+							</h:panelGrid>
+							
 							<h:panelGrid columns="1"
 								style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px; width: 250px; height: 110px;
 									border-radius: 5px; padding: 10px;">
@@ -1423,6 +1514,14 @@
 									label="Data" size="100" pattern="dd/MM/yyyy"
 									styleClass="dateTimeField" />
 							</h:panelGrid>
+						</h:panelGrid>
+						<h:panelGrid columns="2" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio}">
+							<p:outputLabel for="pendenciaCartorioObservacao"
+								value="Descrição da pendência: " styleClass="labelBold" />
+							<p:inputTextarea id="pendenciaCartorioObservacao" rows="10"
+								cols="48" maxlength="3000" onblur=""
+								counterTemplate="{0} characters remaining." autoResize="false"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaCartorioObservacao}" />
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>

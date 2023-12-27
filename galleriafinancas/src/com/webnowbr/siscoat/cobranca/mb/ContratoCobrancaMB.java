@@ -3822,12 +3822,21 @@ public class ContratoCobrancaMB {
 						bigDecimalConverter.getAsString(null, null, this.objetoContratoCobranca.getVlrParcela()));
 			}
 
+<<<<<<< HEAD
 			// gerando parcelas quando contrato esta em ag registro
 			if (this.objetoContratoCobranca.getAgEnvioCartorioData() != null
 					&& this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() <= 0
 					&& !CommonsUtil.semValor(this.objetoContratoCobranca.getValorCCB())) {
 				geraContratoCobrancaDetalhes(contratoCobrancaDao);
 			}
+=======
+				// gerando parcelas quando contrato esta em ag registro
+				if (this.objetoContratoCobranca.getResolucaoExigenciaCartorioData() != null
+						&& this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() <= 0
+						&& !CommonsUtil.semValor(this.objetoContratoCobranca.getValorCCB())) {
+					geraContratoCobrancaDetalhes(contratoCobrancaDao);
+				}
+>>>>>>> branch 'master' of https://github.com/Galleria-Bank-Developers/backoffice.git
 
 			if (this.objetoAnaliseComite != null) {
 				if (!(CommonsUtil.semValor(this.objetoAnaliseComite.getVotoAnaliseComite())
@@ -5827,7 +5836,35 @@ public class ContratoCobrancaMB {
 						.setNotificacaoCartorioData(DateUtil.adicionarDias(DateUtil.gerarDataHoje(), 5));
 			}
 		}
-
+		
+		if (!this.objetoContratoCobranca.isPendenciaResolvidaCartorio()) {
+			this.objetoContratoCobranca.setPendenciaResolvidaCartorioData(null);
+			this.objetoContratoCobranca.setPendenciaResolvidaCartorioUsuario(null);
+		} else {
+			if (this.objetoContratoCobranca.getPendenciaResolvidaCartorioData() == null) {
+				this.objetoContratoCobranca.setStatus("Pendente");
+				this.objetoContratoCobranca.setPendenciaResolvidaCartorioData(DateUtil.gerarDataHoje());
+				this.objetoContratoCobranca.setPendenciaResolvidaCartorioUsuario(getNomeUsuarioLogado());
+				this.objetoContratoCobranca
+						.setDataUltimaAtualizacao(this.objetoContratoCobranca.getPendenciaResolvidaCartorioData());
+				this.objetoContratoCobranca.setPendenciaExternaCartorio(false);
+			}
+		}
+		
+		if (!this.objetoContratoCobranca.isResolucaoExigenciaCartorio()) {
+			this.objetoContratoCobranca.setResolucaoExigenciaCartorioData(null);
+			this.objetoContratoCobranca.setResolucaoExigenciaCartorioUsuario(null);
+		} else {
+			if (this.objetoContratoCobranca.getResolucaoExigenciaCartorioData() == null) {
+				this.objetoContratoCobranca.setStatus("Pendente");
+				this.objetoContratoCobranca.setResolucaoExigenciaCartorioData(DateUtil.gerarDataHoje());
+				this.objetoContratoCobranca.setResolucaoExigenciaCartorioUsuario(getNomeUsuarioLogado());
+				this.objetoContratoCobranca
+						.setDataUltimaAtualizacao(this.objetoContratoCobranca.getResolucaoExigenciaCartorioData());
+			}
+		}
+		
+		
 		if (this.objetoContratoCobranca.isAgRegistro()) {
 			this.objetoContratoCobranca.setAgRegistroData(null);
 			this.objetoContratoCobranca.setAgRegistroUsuario(null);
@@ -6052,6 +6089,40 @@ public class ContratoCobrancaMB {
 						""));
 		return geraConsultaContratosPorStatus("Análise Aprovada");
 	}
+	
+	public String enviarParaPendenciaExterna() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		FacesContext context = FacesContext.getCurrentInstance();
+		this.objetoContratoCobranca.setPendenciaExternaCartorio(true);
+		this.objetoContratoCobranca.setAgEnvioCartorio(false);
+		updateCheckList();
+		this.objetoContratoCobranca.populaStatusEsteira(getUsuarioLogadoNull());
+		contratoCobrancaDao.merge(this.objetoContratoCobranca);
+		context.addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
+								+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
+						""));
+		return geraConsultaContratosPorStatus("Ag. Envio Cartorio");
+	}
+	
+	public String enviarParaExigenciasPagamentos() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		FacesContext context = FacesContext.getCurrentInstance();
+		this.objetoContratoCobranca.setPendenciaExternaCartorio(false);
+		this.objetoContratoCobranca.setAgEnvioCartorio(false);
+		updateCheckList();
+		this.objetoContratoCobranca.populaStatusEsteira(getUsuarioLogadoNull());
+		contratoCobrancaDao.merge(this.objetoContratoCobranca);
+		context.addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
+								+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
+						""));
+		return geraConsultaContratosPorStatus("Ag. Envio Cartorio");
+	}
+	
+	
 
 	public void clearEnviarLeadParaComercial() {
 		ResponsavelDao rdao = new ResponsavelDao();
@@ -8303,6 +8374,56 @@ public class ContratoCobrancaMB {
 					this.objetoContratoCobranca.getNotificacaoCartorioData());
 		}
 	}
+	
+	public void agendarWhatsappCobranca(){
+		Date dataNotificacao = DateUtil.adicionarMes(objetoContratoCobranca.getDataInicio(), objetoContratoCobranca.getMesesCarencia() + 1);
+		dataNotificacao = DateUtil.adicionarDias(dataNotificacao, -10);
+		this.objetoContratoCobranca.setNotificacaoCobrancaData(dataNotificacao);
+	}
+	
+	public void enviaZapCobranca() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.contratosPendentes = new ArrayList<ContratoCobranca>();
+
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+		Date auxDataHoje = dataHoje.getTime();
+
+		this.contratosPendentes = contratoCobrancaDao.ConsultaContratosCobranca(auxDataHoje);
+
+		ResponsavelDao rDao = new ResponsavelDao();
+
+		Responsavel rCcb1 = new Responsavel();
+		Responsavel rCcb2 = new Responsavel();
+		Responsavel rCcb3 = new Responsavel();
+		Responsavel rCcb4 = new Responsavel();
+
+		// Camilo
+		rCcb1 = rDao.findById((long) 1175);
+		
+		// Ana Beatriz
+		rCcb2 = rDao.findById((long) 2049);
+		
+		// Lucas
+		//rCcb1 = rDao.findById((long) 1137);
+		
+		for (ContratoCobranca contratos : this.contratosPendentes) {
+
+			this.objetoContratoCobranca = contratoCobrancaDao.findById(contratos.getId());
+			Date dataVencimento = DateUtil.adicionarDias(this.objetoContratoCobranca.getNotificacaoCobrancaData(), 10);
+			
+			this.objetoContratoCobranca.setNotificacaoCobrancaData(null);
+			contratoCobrancaDao.merge(this.objetoContratoCobranca);
+
+			TakeBlipMB tkblpMb = new TakeBlipMB();
+			tkblpMb.sendWhatsAppMessageCobranca(rCcb1, "notificacao_parcela_vencendo", dataVencimento,
+					this.objetoContratoCobranca.getNumeroContrato(), this.objetoContratoCobranca.getPagador().getNome());
+			
+			tkblpMb.sendWhatsAppMessageCobranca(rCcb2, "notificacao_parcela_vencendo", dataVencimento,
+					this.objetoContratoCobranca.getNumeroContrato(), this.objetoContratoCobranca.getPagador().getNome());
+		}
+	}
 
 	public void recuperarContratoReprovado() {
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -10244,7 +10365,8 @@ public class ContratoCobrancaMB {
 						&& this.objetoContratoCobranca.isCcbPronta()
 						&& this.objetoContratoCobranca.isContratoConferido()
 						&& !this.objetoContratoCobranca.isAgAssinatura()
-						&& this.objetoContratoCobranca.isAgEnvioCartorio()
+						//&& this.objetoContratoCobranca.isAgEnvioCartorio()
+						&& !this.objetoContratoCobranca.isResolucaoExigenciaCartorio()
 						&& this.objetoContratoCobranca.isAgRegistro()) {
 					this.indexStepsStatusContrato = 12;
 
@@ -10264,6 +10386,7 @@ public class ContratoCobrancaMB {
 						&& this.objetoContratoCobranca.isContratoConferido()
 						&& !this.objetoContratoCobranca.isAgAssinatura()
 						&& !this.objetoContratoCobranca.isAgEnvioCartorio()
+						&& this.objetoContratoCobranca.isResolucaoExigenciaCartorio()
 						&& this.objetoContratoCobranca.isAgRegistro()) {
 					this.indexStepsStatusContrato = 13;
 
@@ -14260,14 +14383,34 @@ public class ContratoCobrancaMB {
 							&& c.isAgEnvioCartorio()) {
 						c.setStatus("Ag. Envio Cartório");
 					}
+					
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+							&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
+							&& c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isOkCliente()
+							&& c.isDocumentosCompletos() && c.isCertificadoEmitido() && c.isCcbPronta()
+							&& c.isContratoConferido() && !c.isAgAssinatura() && !c.isReanalise()
+							&& !c.isAgEnvioCartorio() && c.isPendenciaExternaCartorio() && !c.isPendenciaResolvidaCartorio()) {
+						c.setStatus("Ag. Resolução Pendência Cartório");
+					}
+					
+					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
+							&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
+							&& c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
+							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isOkCliente()
+							&& c.isDocumentosCompletos() && c.isCertificadoEmitido() && c.isCcbPronta()
+							&& c.isContratoConferido() && !c.isAgAssinatura() && !c.isReanalise()
+							&& !c.isAgEnvioCartorio() && !c.isPendenciaExternaCartorio() && !c.isResolucaoExigenciaCartorio()) {
+						c.setStatus("Ag. Resolução Exigências/Pagamento");
+					}
 
 					if (c.isInicioAnalise() && c.getCadastroAprovadoValor().equals("Aprovado")
 							&& c.isPagtoLaudoConfirmada() && c.isLaudoRecebido() && c.isPajurFavoravel()
 							&& c.isAnaliseComercial() && c.isComentarioJuridicoEsteira() && c.isPreAprovadoComite()
 							&& c.isDocumentosComite() && c.isAprovadoComite() && c.isOkCliente()
 							&& c.isDocumentosCompletos() && c.isCertificadoEmitido() && c.isCcbPronta()
-							&& c.isContratoConferido() && !c.isAgAssinatura() && !c.isAgEnvioCartorio()
-							&& c.isAgRegistro()) {
+							&& c.isContratoConferido() && !c.isAgAssinatura() && !c.isAgEnvioCartorio() 
+							&& c.isResolucaoExigenciaCartorio() && c.isAgRegistro()) {
 						c.setStatus("Ag. Registro");
 					}
 				}
@@ -14416,6 +14559,12 @@ public class ContratoCobrancaMB {
 		}
 		if (status.equals("Ag. Envio Cartorio")) {
 			this.tituloTelaConsultaPreStatus = "Ag. Envio Cartório";
+		}
+		if (status.equals("Ag. Resolução Pendência")) {
+			this.tituloTelaConsultaPreStatus = "Ag. Resolução Pendência";
+		}
+		if (status.equals("Ag. Resolução Exigencias/Pagamentos")) {
+			this.tituloTelaConsultaPreStatus = "Ag. Resolução Exigencias/Pagamentos";
 		}
 		if (status.equals("Ag. Registro")) {
 			this.tituloTelaConsultaPreStatus = "Ag. Registro";
@@ -18474,6 +18623,7 @@ public class ContratoCobrancaMB {
 		// se esta editando pela primeira vez o contrato aprovado
 		// gera remuneracao responsaveis
 		geraContasPagarRemuneracao(this.objetoContratoCobranca);
+		agendarWhatsappCobranca();
 
 		// processa parcelas
 		/*
