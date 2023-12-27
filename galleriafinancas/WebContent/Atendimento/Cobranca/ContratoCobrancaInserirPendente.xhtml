@@ -7,7 +7,9 @@
 				xmlns:shiro="http://shiro.apache.org/tags"
 			    template="/Menus/Menu.xhtml">
 	<ui:define name="conteudo">  
-		<h:form id="form">		
+	 	<p:remoteCommand name="onload" action="#{contratoCobrancaMB.bloquearForm}" autoRun="true" />
+		<p:blockUI block="form" widgetVar="blockForm"/>
+		<h:form id="form" >
 		 	<script src="#{request.contextPath}/resources/js/functions.js"></script>
 		 	<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>			
 		 	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/css/Style.css" title="" media="all" /> 	

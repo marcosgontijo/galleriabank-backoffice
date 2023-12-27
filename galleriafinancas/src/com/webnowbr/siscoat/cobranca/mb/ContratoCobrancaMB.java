@@ -3822,22 +3822,14 @@ public class ContratoCobrancaMB {
 						bigDecimalConverter.getAsString(null, null, this.objetoContratoCobranca.getVlrParcela()));
 			}
 
-<<<<<<< HEAD
+
 			// gerando parcelas quando contrato esta em ag registro
-			if (this.objetoContratoCobranca.getAgEnvioCartorioData() != null
+			if (this.objetoContratoCobranca.getResolucaoExigenciaCartorioData() != null
 					&& this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() <= 0
 					&& !CommonsUtil.semValor(this.objetoContratoCobranca.getValorCCB())) {
 				geraContratoCobrancaDetalhes(contratoCobrancaDao);
 			}
-=======
-				// gerando parcelas quando contrato esta em ag registro
-				if (this.objetoContratoCobranca.getResolucaoExigenciaCartorioData() != null
-						&& this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() <= 0
-						&& !CommonsUtil.semValor(this.objetoContratoCobranca.getValorCCB())) {
-					geraContratoCobrancaDetalhes(contratoCobrancaDao);
-				}
->>>>>>> branch 'master' of https://github.com/Galleria-Bank-Developers/backoffice.git
-
+			
 			if (this.objetoAnaliseComite != null) {
 				if (!(CommonsUtil.semValor(this.objetoAnaliseComite.getVotoAnaliseComite())
 						|| CommonsUtil.mesmoValor(this.objetoAnaliseComite.getVotoAnaliseComite(), ""))) {
@@ -30736,6 +30728,53 @@ public class ContratoCobrancaMB {
 
 	}
 
+	
+	
+	public void adicionarBlackFlagImovel() {
+		ImovelCobrancaRestricaoService imovelCobrancaRestricaoService = new ImovelCobrancaRestricaoService();
+
+		FacesContext context = FacesContext.getCurrentInstance();
+
+		if (imovelCobrancaRestricaoService.adicionarBlackFlagImovel(objetoImovelCobranca, objetoContratoCobranca,
+				getUsuarioLogado())) {
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO, "Imovel adicionado na lista de Black Flag "
+							+ this.objetoImovelCobranca.getNumeroMatricula() + " com sucesso!!!", ""));
+			this.restricaoImovel = new ArrayList<>();
+			listaRestricoesImovel();			
+			PrimeFaces.current().ajax().update("form:Imovel");
+			PrimeFaces.current().ajax().update("form:panelRestricao");
+		}else
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO, "Erro ao adicionar imvóvel na lista de Black Flag "
+							+ this.objetoImovelCobranca.getNumeroMatricula(), ""));
+
+	}
+
+	public void removerBlackFlagImovel() {
+
+		ImovelCobrancaRestricaoService imovelCobrancaRestricaoService = new ImovelCobrancaRestricaoService();
+
+		FacesContext context = FacesContext.getCurrentInstance();
+
+		if (imovelCobrancaRestricaoService.removerBlackFlagImovel(objetoImovelCobranca, objetoContratoCobranca,
+				getUsuarioLogado())) {
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO, "Imovel removida da lista de Black Flag "
+							+ this.objetoImovelCobranca.getNumeroMatricula() + " com sucesso!!!", ""));
+			this.restricaoImovel = new ArrayList<>();
+			listaRestricoesImovel();			
+			PrimeFaces.current().ajax().update("form:Imovel");
+			PrimeFaces.current().ajax().update("form:panelRestricao");
+		}else
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+					"Erro ao remvover imvóvel na lista de Black Flag " + this.objetoImovelCobranca.getNumeroMatricula(),
+					""));
+
+	}
+	
+	
+	
 	/**
 	 * @param fileRecibo the fileRecibo to set
 	 */
@@ -35955,8 +35994,12 @@ public class ContratoCobrancaMB {
 		this.listProcessosSelecionado = listProcessosSelecionado;
 	}
 
-	public boolean isPossuiBlacFlag() {
+	public boolean isPossuiBlackFlag() {
 		return !CommonsUtil.semValor(restricaoOperacao) || !CommonsUtil.semValor(restricaoImovel);
+	}
+	
+	public boolean isPossuiBlackFlagImovel() {
+		return !CommonsUtil.semValor(restricaoImovel);
 	}
 
 	public List<String> getRestricaoOperacao() {
