@@ -3818,7 +3818,7 @@ public class ContratoCobrancaMB {
 				}
 
 				// gerando parcelas quando contrato esta em ag registro
-				if (this.objetoContratoCobranca.getAgEnvioCartorioData() != null
+				if (this.objetoContratoCobranca.getResolucaoExigenciaCartorioData() != null
 						&& this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() <= 0
 						&& !CommonsUtil.semValor(this.objetoContratoCobranca.getValorCCB())) {
 					geraContratoCobrancaDetalhes(contratoCobrancaDao);
@@ -8364,6 +8364,56 @@ public class ContratoCobrancaMB {
 			tkblpMb.sendWhatsAppMessageCartorio(rCcb4, "notificacao_cartorio",
 					this.objetoContratoCobranca.getNumeroContrato(), this.objetoContratoCobranca.getPagador().getNome(),
 					this.objetoContratoCobranca.getNotificacaoCartorioData());
+		}
+	}
+	
+	public void agendarWhatsappCobranca(){
+		Date dataNotificacao = DateUtil.adicionarMes(objetoContratoCobranca.getDataInicio(), objetoContratoCobranca.getMesesCarencia() + 1);
+		dataNotificacao = DateUtil.adicionarDias(dataNotificacao, -10);
+		this.objetoContratoCobranca.setNotificacaoCobrancaData(dataNotificacao);
+	}
+	
+	public void enviaZapCobranca() {
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.contratosPendentes = new ArrayList<ContratoCobranca>();
+
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+		Date auxDataHoje = dataHoje.getTime();
+
+		this.contratosPendentes = contratoCobrancaDao.ConsultaContratosCobranca(auxDataHoje);
+
+		ResponsavelDao rDao = new ResponsavelDao();
+
+		Responsavel rCcb1 = new Responsavel();
+		Responsavel rCcb2 = new Responsavel();
+		Responsavel rCcb3 = new Responsavel();
+		Responsavel rCcb4 = new Responsavel();
+
+		// Camilo
+		rCcb1 = rDao.findById((long) 1175);
+		
+		// Ana Beatriz
+		rCcb2 = rDao.findById((long) 2049);
+		
+		// Lucas
+		//rCcb1 = rDao.findById((long) 1137);
+		
+		for (ContratoCobranca contratos : this.contratosPendentes) {
+
+			this.objetoContratoCobranca = contratoCobrancaDao.findById(contratos.getId());
+			Date dataVencimento = DateUtil.adicionarDias(this.objetoContratoCobranca.getNotificacaoCobrancaData(), 10);
+			
+			this.objetoContratoCobranca.setNotificacaoCobrancaData(null);
+			contratoCobrancaDao.merge(this.objetoContratoCobranca);
+
+			TakeBlipMB tkblpMb = new TakeBlipMB();
+			tkblpMb.sendWhatsAppMessageCobranca(rCcb1, "notificacao_parcela_vencendo", dataVencimento,
+					this.objetoContratoCobranca.getNumeroContrato(), this.objetoContratoCobranca.getPagador().getNome());
+			
+			tkblpMb.sendWhatsAppMessageCobranca(rCcb2, "notificacao_parcela_vencendo", dataVencimento,
+					this.objetoContratoCobranca.getNumeroContrato(), this.objetoContratoCobranca.getPagador().getNome());
 		}
 	}
 
@@ -18535,6 +18585,7 @@ return valorTotal;
 		// se esta editando pela primeira vez o contrato aprovado
 		// gera remuneracao responsaveis
 		geraContasPagarRemuneracao(this.objetoContratoCobranca);
+		agendarWhatsappCobranca();
 
 		// processa parcelas
 		/*

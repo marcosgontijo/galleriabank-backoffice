@@ -2349,5 +2349,9 @@
 			<column name="pendenciaCartorioObservacao" />
 		</property>
 		
+		<property name="notificacaoCobrancaData" type="java.util.Date">
+			<column name="notificacaoCobrancaData" />
+		</property>
+		
 	</class>
 </hibernate-mapping>

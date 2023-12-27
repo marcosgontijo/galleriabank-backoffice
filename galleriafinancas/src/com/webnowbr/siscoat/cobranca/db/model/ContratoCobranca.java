@@ -850,6 +850,7 @@ public class ContratoCobranca implements Serializable {
 	private Responsavel analistaGeracaoPAJU;
 
 	private Date notificacaoCartorioData;
+	private Date notificacaoCobrancaData;
 
 	private boolean contratoEmCartorio;
 	private Date contratoEmCartorioData;
@@ -7576,6 +7577,13 @@ public class ContratoCobranca implements Serializable {
 	public void setPendenciaCartorioObservacao(String pendenciaCartorioObservacao) {
 		this.pendenciaCartorioObservacao = pendenciaCartorioObservacao;
 	}
-	
+
+	public Date getNotificacaoCobrancaData() {
+		return notificacaoCobrancaData;
+	}
+
+	public void setNotificacaoCobrancaData(Date notificacaoCobrancaData) {
+		this.notificacaoCobrancaData = notificacaoCobrancaData;
+	}
 }
 

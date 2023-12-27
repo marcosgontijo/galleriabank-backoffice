@@ -1169,7 +1169,7 @@
 							</h:panelGrid>
 						</h:panelGrid>
 						
-						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio}">
+						<h:panelGrid columns="2" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio}">
 							<p:outputLabel for="pendenciaCartorioObservacao"
 								value="Descrição da pendência: " styleClass="labelBold" />
 							<p:inputTextarea id="pendenciaCartorioObservacao" rows="10"
