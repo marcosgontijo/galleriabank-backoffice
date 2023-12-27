@@ -36029,8 +36029,6 @@ public class ContratoCobrancaMB {
 		this.restricaoImovel = restricaoImovel;
 	}
 
-<<<<<<< HEAD
-=======
 	public boolean isBlockForm() {
 		return blockForm;
 	}
@@ -36038,5 +36036,5 @@ public class ContratoCobrancaMB {
 	public void setBlockForm(boolean blockForm) {
 		this.blockForm = blockForm;
 	}
->>>>>>> branch 'master' of https://github.com/Galleria-Bank-Developers/backoffice.git
+
 }
