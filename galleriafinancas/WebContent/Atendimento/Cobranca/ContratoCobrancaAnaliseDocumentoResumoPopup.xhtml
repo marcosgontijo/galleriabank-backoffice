@@ -24,7 +24,7 @@
 
 	<p:dialog id="resumoDialogHeader" widgetVar="resumoConsutlasDialog"
 		showEffect="fade" hideEffect="fade" resizable="false"  styleClass="overflowy" 
-		responsive="false" width="1000"  positionType="center center" 
+		responsive="false" width="1200"  positionType="center center" 
 		closable="true" update="true">
 		<f:facet name="header">
 			<h:outputText
@@ -95,6 +95,22 @@
 							</p:column>l
 							<p:column>
 								<h:outputText value="#{scr.valor}" />
+							</p:column>
+						</p:dataTable>
+					</f:facet>
+				</p:panel>
+				
+				<p:panel>
+					<f:facet name="header">
+						<h:outputText value="Financas Estimadas" />
+						<p:dataTable id="resumoFinancas" var="financas"
+							rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
+							value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoFinancas()}">
+							<p:column>
+								<h:outputText value="#{financas.descricao}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="#{financas.valor}" />
 							</p:column>
 						</p:dataTable>
 					</f:facet>
