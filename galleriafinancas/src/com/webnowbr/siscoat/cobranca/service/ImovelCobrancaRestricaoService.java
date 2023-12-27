@@ -92,7 +92,7 @@ public class ImovelCobrancaRestricaoService {
 	}
 
 	public List<String> verificaRestricao(ContratoCobranca contratoCobranca) {
-		ImovelCobrancaRestricaoDao icrDao = new ImovelCobrancaRestricaoDao();
+		
 
 		Set<ImovelCobranca> lstImovel = new HashSet<ImovelCobranca>(Arrays.asList(contratoCobranca.getImovel()));
 
@@ -102,12 +102,7 @@ public class ImovelCobrancaRestricaoService {
 		Set<ImovelCobrancaRestricao> restricoes = new HashSet<ImovelCobrancaRestricao>(0);
 
 		for (ImovelCobranca imovelCobranca : lstImovel) {
-			String[] sMatriculas = imovelCobranca.getNumeroMatricula().split(",");
-
-			for (String matricula : sMatriculas) {
-				restricoes.addAll(icrDao.pesquisaImovelRestricao(matricula, imovelCobranca.getNumeroCartorio(),
-						imovelCobranca.getCartorioEstado(), imovelCobranca.getCartorioMunicipio()));
-			}
+			restricoes.addAll( getImovelRestricoes( imovelCobranca));
 		}
 
 		List<String> result = new ArrayList<String>(0);
@@ -120,5 +115,19 @@ public class ImovelCobrancaRestricaoService {
 									: ""))
 					.collect(Collectors.toList());
 		return result;
+	}
+
+	public  Set<ImovelCobrancaRestricao>  getImovelRestricoes(ImovelCobranca imovelCobranca) {
+		ImovelCobrancaRestricaoDao icrDao = new ImovelCobrancaRestricaoDao();
+		
+		String[] sMatriculas = imovelCobranca.getNumeroMatricula().split(",");
+		Set<ImovelCobrancaRestricao> restricoes = new HashSet<ImovelCobrancaRestricao>();
+		for (String matricula : sMatriculas) {
+			restricoes.addAll(icrDao.pesquisaImovelRestricao(matricula, imovelCobranca.getNumeroCartorio(),
+					imovelCobranca.getCartorio(), imovelCobranca.getCartorioEstado(), imovelCobranca.getCartorioMunicipio()));
+		}
+		
+		return restricoes;
+		
 	}
 }
