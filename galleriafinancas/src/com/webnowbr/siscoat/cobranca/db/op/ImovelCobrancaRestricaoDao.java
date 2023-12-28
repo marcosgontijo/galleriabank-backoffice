@@ -18,10 +18,10 @@ import com.webnowbr.siscoat.db.dao.HibernateDao.DBRunnable;
  *
  */
 public class ImovelCobrancaRestricaoDao extends HibernateDao<ImovelCobrancaRestricao, Long> {
-	private String QUERY_PESQUISA_RESTRICAO = "select id from cobranca.imovelcobrancarestricao where ativa and  numeroMatricula like '%' || ? || '%' and numeroCartorio = ? and cartorioEstado = ? and cartorioMunicipio = ?";
+	private String QUERY_PESQUISA_RESTRICAO = "select id from cobranca.imovelcobrancarestricao where ativa and  numeroMatricula like '%' || ? || '%' and numeroCartorio = ? and cartorio = ? and cartorioEstado = ? and cartorioMunicipio = ?";
 
 	@SuppressWarnings("unchecked")
-	public List<ImovelCobrancaRestricao> pesquisaImovelRestricao(String numeroMatricula, String numeroCartorio,
+	public List<ImovelCobrancaRestricao> pesquisaImovelRestricao(String numeroMatricula, String numeroCartorio, String cartorio,
 			String cartorioEstado, String cartorioMunicipio) {
 		return (List<ImovelCobrancaRestricao>) executeDBOperation(new DBRunnable() {
 			@Override
@@ -39,8 +39,9 @@ public class ImovelCobrancaRestricaoDao extends HibernateDao<ImovelCobrancaRestr
 
 					ps.setString(1, numeroMatricula);
 					ps.setString(2, numeroCartorio);
-					ps.setString(3, cartorioEstado);
-					ps.setString(4, cartorioMunicipio);
+					ps.setString(3, cartorio);
+					ps.setString(4, cartorioEstado);
+					ps.setString(5, cartorioMunicipio);
 					
 					rs = ps.executeQuery();
 

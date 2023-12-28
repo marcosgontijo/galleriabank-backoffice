@@ -28,6 +28,7 @@ public class ImovelCobrancaRestricao implements Serializable {
 	private ContratoCobranca contratoCobranca;
 	private String numeroMatricula;
 	private String numeroCartorio;
+	private String cartorio;
 	private String cartorioEstado;
 	private String cartorioMunicipio;
 
@@ -35,6 +36,9 @@ public class ImovelCobrancaRestricao implements Serializable {
 	private String usuarioCadastro;
 
 	private boolean ativa;
+
+	private Date dataInativa;
+	private String usuarioInativa;
 
 	public long getId() {
 		return id;
@@ -66,6 +70,14 @@ public class ImovelCobrancaRestricao implements Serializable {
 
 	public void setNumeroCartorio(String numeroCartorio) {
 		this.numeroCartorio = numeroCartorio;
+	}
+
+	public String getCartorio() {
+		return cartorio;
+	}
+
+	public void setCartorio(String cartorio) {
+		this.cartorio = cartorio;
 	}
 
 	public String getCartorioEstado() {
@@ -106,6 +118,22 @@ public class ImovelCobrancaRestricao implements Serializable {
 
 	public void setAtiva(boolean ativa) {
 		this.ativa = ativa;
+	}
+
+	public Date getDataInativa() {
+		return dataInativa;
+	}
+
+	public void setDataInativa(Date dataInativa) {
+		this.dataInativa = dataInativa;
+	}
+
+	public String getUsuarioInativa() {
+		return usuarioInativa;
+	}
+
+	public void setUsuarioInativa(String usuarioInativa) {
+		this.usuarioInativa = usuarioInativa;
 	}
 
 }

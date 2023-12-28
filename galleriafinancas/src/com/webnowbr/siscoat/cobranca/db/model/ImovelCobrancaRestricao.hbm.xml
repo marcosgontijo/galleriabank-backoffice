@@ -19,6 +19,10 @@
 		<property name="numeroMatricula" type="java.lang.String">
 			<column name="numeroMatricula" />
 		</property>
+	
+		<property name="cartorio" type="java.lang.String">
+			<column name="cartorio" />
+		</property>
 		
 		<property name="numeroCartorio" type="java.lang.String">
 			<column name="numeroCartorio" />
@@ -43,6 +47,16 @@
 		<property name="ativa" type="boolean">
 			<column name="ativa" not-null="true" default="true" />
 		</property>
+
+		<property name="usuarioInativa" type="java.lang.String">
+			<column name="usuarioInativa" />
+		</property>
+		
+		<property name="dataInativa" type="java.util.Date">
+			<column name="dataInativa" />
+		</property>
+
+
 
 	</class>
 </hibernate-mapping>
