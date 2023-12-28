@@ -35738,9 +35738,26 @@ public class ContratoCobrancaMB {
 
 	public boolean isEngineProcessados() {
 		boolean isAllEngineProcessados = true;
-
+		boolean hasComprador = false;
 		docList = listaDocumentoAnalise.stream().filter(x -> x.isLiberadoAnalise()).collect(Collectors.toList());
-		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();	
+		
+		hasComprador = hasComprador = docList.stream().anyMatch(doc -> "comprador".equals(doc.getMotivoAnalise().toLowerCase()));
+		
+		
+
+		if (engineService == null)
+			engineService = new EngineService();
+		
+		//verificando se tem pelo menos um com engine
+		boolean pedidoUmEngine = docList.stream().filter( d -> (d.getMotivoAnalise().toLowerCase().contains("proprietario atual")
+				|| d.getMotivoAnalise().toLowerCase().contains("comprador")) 
+				 && !CommonsUtil.semValor(d.getEngine()) 
+				 && !CommonsUtil.semValor(d.getEngine().getIdCallManager())).findFirst().isPresent();
+		
+		if (!pedidoUmEngine)
+			isAllEngineProcessados = false;
+		
 		for (DocumentoAnalise docAnalise : docList) {
 
 			if (!CommonsUtil.semValor(docAnalise.getPagador())) {
@@ -35750,19 +35767,35 @@ public class ContratoCobrancaMB {
 					this.restricaoOperacao.addAll(result);
 			}
 
+			if (!pedidoUmEngine) 
+				continue;
+			
 			if (docAnalise.getEngine() == null) {
 				continue;
 			}
 
-			if (CommonsUtil.mesmoValorIgnoreCase(docAnalise.getMotivoAnalise().toLowerCase(), "proprietario atual")
-					|| CommonsUtil.mesmoValorIgnoreCase(docAnalise.getMotivoAnalise().toLowerCase(), "comprador")) {
-				if (docAnalise.getEngine() != null
-						&& !CommonsUtil.semValor(docAnalise.getEngine().getIdCallManager())) {
-					if (CommonsUtil.semValor(docAnalise.getRetornoEngine())) {
-						isAllEngineProcessados = false;
+
+			if (!hasComprador) {
+				if (docAnalise.getMotivoAnalise().toLowerCase().contains("proprietario atual")) {
+					if (docAnalise.getEngine() != null
+							&& !CommonsUtil.semValor(docAnalise.getEngine().getIdCallManager())) {
+						if (CommonsUtil.semValor(docAnalise.getRetornoEngine())) {
+							isAllEngineProcessados = false;
+						}
+					}
+
+				}
+			} else {
+				if (docAnalise.getMotivoAnalise().toLowerCase().contains("comprador")) {
+					if (docAnalise.getEngine() != null
+							&& !CommonsUtil.semValor(docAnalise.getEngine().getIdCallManager())) {
+						if (CommonsUtil.semValor(docAnalise.getRetornoEngine())) {
+							isAllEngineProcessados = false;
+						}
 					}
 				}
 			}
+
 		}
 
 		if (isAllEngineProcessados
