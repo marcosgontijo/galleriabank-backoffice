@@ -20730,6 +20730,8 @@ public class ContratoCobrancaMB {
 			objetoContratoCobranca.getListProcessos().add(processoSelecionado);
 		} else {
 			String origem = processoSelecionado.getOrigem();
+			if(CommonsUtil.semValor(origem))
+				origem = "";
 			if (origem.contains("Editado por:")) {
 				String origemAux = origem.substring(0, origem.lastIndexOf(" "));
 				origemAux = origemAux + " " + getNomeUsuarioLogado();
