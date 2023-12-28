@@ -35744,6 +35744,7 @@ public class ContratoCobrancaMB {
 		
 		hasComprador = hasComprador = docList.stream().anyMatch(doc -> "comprador".equals(doc.getMotivoAnalise().toLowerCase()));
 		
+<<<<<<< HEAD
 		
 
 		if (engineService == null)
@@ -35758,6 +35759,8 @@ public class ContratoCobrancaMB {
 		if (!pedidoUmEngine)
 			isAllEngineProcessados = false;
 		
+=======
+>>>>>>> branch 'master' of https://github.com/Galleria-Bank-Developers/backoffice.git
 		for (DocumentoAnalise docAnalise : docList) {
 
 			if (!CommonsUtil.semValor(docAnalise.getPagador())) {
@@ -35773,6 +35776,7 @@ public class ContratoCobrancaMB {
 			if (docAnalise.getEngine() == null) {
 				continue;
 			}
+
 
 			if (!hasComprador) {
 				if (docAnalise.getMotivoAnalise().toLowerCase().contains("proprietario atual")) {
@@ -35794,6 +35798,7 @@ public class ContratoCobrancaMB {
 					}
 				}
 			}
+
 		}
 
 		if (isAllEngineProcessados
