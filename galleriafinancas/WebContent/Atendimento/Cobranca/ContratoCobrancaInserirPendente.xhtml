@@ -8,7 +8,7 @@
 			    template="/Menus/Menu.xhtml">
 	<ui:define name="conteudo">  
 	 	<p:remoteCommand name="onload" action="#{contratoCobrancaMB.bloquearForm}" autoRun="true" />
-		<p:blockUI block="form" widgetVar="blockForm"/>
+		<p:blockUI block="form:PanelLocador form:CheckListDocumentos" widgetVar="blockForm"/>
 		<h:form id="form" >
 		 	<script src="#{request.contextPath}/resources/js/functions.js"></script>
 		 	<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>			
