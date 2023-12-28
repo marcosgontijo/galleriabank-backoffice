@@ -314,10 +314,9 @@ public class ContratoCobrancaMB {
 	private List<BoletoKobana> selectedBoletosKobana = new ArrayList<BoletoKobana>();
 	private List<DocumentoAnalise> listaDocumentoAnalise;
 	private List<DocumentoAnalise> listaDocumentoAnaliseRea;
-	private List<DocumentoAnalise> listaDeleteAnalise = new ArrayList<DocumentoAnalise>();
+	private List<DocumentoAnalise> listaSelectAnalise = new ArrayList<>();
 	
 	private BoletoKobana selectedBoletosKobanaBaixa = null;
-
 	/************************************************************
 	 * Objetos para antecipacao de parcela
 	 ************************************************************/
@@ -31566,7 +31565,7 @@ private	List<Cartorio> listaCartorio = new ArrayList<>();
 	public void deleteArquivosAnalisados() {
 		DocumentoAnaliseDao daoDocumentoAnalise = new DocumentoAnaliseDao();
 
-		for (DocumentoAnalise d : listaDeleteAnalise) {
+		for (DocumentoAnalise d : listaSelectAnalise) {
 			d.setExcluido(true);
 			daoDocumentoAnalise.merge(d);
 		}
@@ -34083,14 +34082,6 @@ private	List<Cartorio> listaCartorio = new ArrayList<>();
 		this.baixaMultiParcelasComTxADM = baixaMultiParcelasComTxADM;
 	}
 
-	public List<DocumentoAnalise> getListaDeleteAnalise() {
-		return listaDeleteAnalise;
-	}
-
-	public void setListaDeleteAnalise(List<DocumentoAnalise> listaDeleteAnalise) {
-
-		this.listaDeleteAnalise = listaDeleteAnalise;
-	}
 
 	public String getContratosLaudo() {
 		return contratosLaudo;
@@ -34735,6 +34726,13 @@ private	List<Cartorio> listaCartorio = new ArrayList<>();
 
 		public void setListaCartorio(List<Cartorio> listaCartorio) {
 			this.listaCartorio = listaCartorio;
+		}
+		public List<DocumentoAnalise> getListaSelectAnalise() {
+			return listaSelectAnalise;
+		}
+
+		public void setListaSelectAnalise(List<DocumentoAnalise> listaSelectAnalise) {
+			this.listaSelectAnalise = listaSelectAnalise;
 		}
 	
 }
