@@ -64,5 +64,9 @@
 			<column name="origem" />
 		</property>
 		
+		 <property name="riscoAtivo" type="boolean">
+			<column name="riscoAtivo" not-null="true" default="false"/>
+		</property>
+		
     </class>
 </hibernate-mapping>

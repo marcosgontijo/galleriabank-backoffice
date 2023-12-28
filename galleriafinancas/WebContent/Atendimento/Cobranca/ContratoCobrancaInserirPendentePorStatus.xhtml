@@ -1881,6 +1881,7 @@
 										value="#{pessoasProcessos.processos}"
 										size="small" sortBy="#{processosPessoas.id}"
 										sortOrder="ascending" 
+										rowStyleClass="#{(processosPessoas.riscoAtivo eq true) ? 'riscoAtivo' : '' }"
 										rowKey="#{processosPessoas.id}">
 										
 										<p:column selectionMode="multiple" style="width:16px;text-align:center"/>      
@@ -1913,6 +1914,15 @@
 											headerText=" Natureza ">
 											<p:outputLabel value=" #{processosPessoas.natureza}"
 												style="FONT-SIZE: 10pt;" />
+										</p:column>
+										
+										<p:column style="text-align: center;width:30px;" headerText="Risco Ativo" >
+											<p:outputLabel value="Sim"
+												style="FONT-SIZE: 10pt;" 
+												rendered="#{processosPessoas.riscoAtivo}"/>
+											<p:outputLabel value="Não"
+												style="FONT-SIZE: 10pt;" 
+												rendered="#{!processosPessoas.riscoAtivo}"/>
 										</p:column>
 
 										<p:column style="text-align: center;" headerText="Obs" >
@@ -5570,6 +5580,10 @@
 							completeMethod="#{contratoCobrancaMB.processoSelecionado.naturezaProcessos()}"
 							scrollHeight="250">
 						</p:autoComplete>
+						
+						<p:outputLabel value="Risco Ativo: " styleClass="labelBold"
+							style="font-weight: bold; font-size: 18px;" />
+						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.processoSelecionado.riscoAtivo}" />
 
 						<p:outputLabel value="Obs: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />

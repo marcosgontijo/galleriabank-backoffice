@@ -1104,7 +1104,8 @@
 									<p:dataTable var="processosPessoas" id="processosPessoas"
 										value="#{pessoasProcessos.processos}"
 										size="small" sortBy="#{processosPessoas.id}"
-										sortOrder="ascending">
+										sortOrder="ascending"
+										rowStyleClass="#{(processosPessoas.riscoAtivo eq true) ? 'riscoAtivo' : '' }">
 
 										<p:column style="text-align: center;width:175px;"
 											headerText="N°">
@@ -1131,8 +1132,19 @@
 											<p:outputLabel value=" #{processosPessoas.natureza}"
 												style="FONT-SIZE: 10pt;" />
 										</p:column>
-										<p:column style="text-align: center;" headerText="Obs">
+										<p:column style="text-align: center;width:30px;" headerText="Risco Ativo" >
+											<p:outputLabel value="Sim"
+												style="FONT-SIZE: 10pt;" 
+												rendered="#{processosPessoas2.riscoAtivo}"/>
+											<p:outputLabel value="Não"
+												style="FONT-SIZE: 10pt;" 
+												rendered="#{!processosPessoas2.riscoAtivo}"/>
+										</p:column>
+										<p:column style="text-align: center;" headerText="Obs" >
 											<p:outputLabel value="#{processosPessoas.observacao}"
+												style="FONT-SIZE: 10pt;" />
+												<br/>
+											<p:outputLabel value="#{processosPessoas.origem}"
 												style="FONT-SIZE: 10pt;" />
 										</p:column>
 										<p:column style="text-align: center;width:25px;" headerText="">
