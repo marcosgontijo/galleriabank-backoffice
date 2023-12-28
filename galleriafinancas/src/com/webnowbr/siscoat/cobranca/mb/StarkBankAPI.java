@@ -658,10 +658,10 @@ public class StarkBankAPI{
 
     	List<Transfer.Rule> rules = new ArrayList<>();
     
-    	if (descricaoConta == null || !descricaoConta.equals("Pagamento Carta Split")) {
-    		loginStarkBank();
-    	} else {
+    	if (descricaoConta != null || descricaoConta.contains("Pagamento Carta Split")) {
     		loginStarkBankSCD();
+    	} else {
+    		loginStarkBank();    		
     	}
     	
     	Date dataHoje = DateUtil.gerarDataHoje();

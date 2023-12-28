@@ -204,7 +204,6 @@ import com.webnowbr.siscoat.cobranca.service.DocumentoAnaliseService;
 import com.webnowbr.siscoat.cobranca.service.DrCalcService;
 import com.webnowbr.siscoat.cobranca.service.EngineService;
 import com.webnowbr.siscoat.cobranca.service.FileService;
-import com.webnowbr.siscoat.cobranca.service.ImovelCobrancaRestricaoService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.cobranca.service.PagadorRecebedorService;
 import com.webnowbr.siscoat.cobranca.service.PajuService;
@@ -277,7 +276,6 @@ public class ContratoCobrancaMB {
 	private boolean crmMode = false;
 	private boolean baixarMode = false;
 	private List<String> restricaoOperacao = new ArrayList<String>();
-	private List<String> restricaoImovel = new ArrayList<String>();
 	private String tituloPainel = null;
 	private String origemTelaBaixar;
 	private String empresa;
@@ -9344,18 +9342,14 @@ public class ContratoCobrancaMB {
 	public String clearFieldsEditarPendentes() {
 		listaArquivosAnaliseDocumentos();
 		this.restricaoOperacao= new ArrayList<>();
-		this.restricaoImovel= new ArrayList<>();
 
-		
+		listaRestricoesPessoas();
 
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
 		this.objetoPagadorRecebedor = this.objetoContratoCobranca.getPagador();
 		this.tituloPainel = "Editar";
 
-		listaRestricoesPessoas();
-		listaRestricoesImovel();
-		
 		this.valorPresenteParcela = BigDecimal.ZERO;
 
 		listaTodasSubpastas();
@@ -9612,10 +9606,8 @@ return valorTotal;
 		listaArquivosAnaliseDocumentos();
 
 		this.restricaoOperacao= new ArrayList<>();
-		this.restricaoImovel= new ArrayList<>();
 
 		listaRestricoesPessoas();
-		listaRestricoesImovel();
 
 		verificaPagamentoAntecipado();
 		verificaPagamentoIntegral();
@@ -9811,15 +9803,6 @@ return valorTotal;
 		}
 	}
 	
-	private void listaRestricoesImovel() {
-		ImovelCobrancaRestricaoService imovelCobrancaRestricaoService = new ImovelCobrancaRestricaoService();		
-		List<String> result = imovelCobrancaRestricaoService.verificaRestricao(objetoContratoCobranca);
-		
-		if (!CommonsUtil.semValor(result))
-			this.restricaoImovel = result;
-
-	}
-	
 	public void carregaValorIOFCustos() {
 		CcbDao ccbDao = new CcbDao();
 		CcbContrato ccb = ccbDao.ConsultaCcbPorContratoNew(this.objetoContratoCobranca);
@@ -9992,10 +9975,8 @@ return valorTotal;
 	
 		listaArquivosAnaliseDocumentos();
 		this.restricaoOperacao= new ArrayList<>();
-		this.restricaoImovel= new ArrayList<>();
 
 		listaRestricoesPessoas();
-		listaRestricoesImovel();
 
 		return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusAvaliacaoImovel.xhtml";
 	}
@@ -10013,10 +9994,8 @@ return valorTotal;
 		}
 		listaArquivosAnaliseDocumentos();
 		this.restricaoOperacao= new ArrayList<>();
-		this.restricaoImovel= new ArrayList<>();
 
 		listaRestricoesPessoas();
-		listaRestricoesImovel();
 
 		filesInterno = new ArrayList<FileUploaded>();
 		filesInterno = listaArquivosInterno();
@@ -10044,7 +10023,6 @@ return valorTotal;
 		}
 		listaArquivosAnaliseDocumentos();
 		this.restricaoOperacao= new ArrayList<>();
-		this.restricaoImovel= new ArrayList<>();
 
 		//listaRestricoesPessoas();
 
@@ -19944,8 +19922,8 @@ return valorTotal;
 							"Aprovado",
 							null);
 
-					this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().setContaPagarValorTotal(this.objetoContratoCobranca
-							.getContaPagarValorTotal().subtract(this.contasPagarSelecionada.getValorPagamento()));
+					this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().setContaPagarValorTotal(this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato()
+							.getContaPagarValorTotal().subtract(this.objetoBaixaPagamentoStarkBank.getContasPagar().getValor()));
 
 					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
 							"Pagamento StarkBank: PIX efetuado com sucesso!", ""));
@@ -19976,14 +19954,14 @@ return valorTotal;
 							null);
 
 					this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().setContaPagarValorTotal(this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato()
-							.getContaPagarValorTotal().subtract(this.objetoBaixaPagamentoStarkBank.getContasPagar().getValorPagamento()));
+							.getContaPagarValorTotal().subtract(this.objetoBaixaPagamentoStarkBank.getContasPagar().getValor()));
 
 					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
 							"Pagamento StarkBank: TED efetuado com sucesso!", ""));
 
 					finalizaOperacao = true;
 				}
-			//}
+			}
 		
 			if (finalizaOperacao) {
 				BigDecimal saldoConta = getSaldoContaPagar(this.objetoBaixaPagamentoStarkBank.getContasPagar());
@@ -20022,7 +20000,7 @@ return valorTotal;
 				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 				cDao.merge(this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato());
 			}
-		}
+		//}
 		
 		return consultaPagamentosStarkBankPendentes();
 	}
@@ -20735,7 +20713,6 @@ return valorTotal;
 		imovelAdicional.setContratoCobranca(objetoContratoCobranca);
 		objetoContratoCobranca.getListaImoveis().add(imovelAdicional);
 		calcularPorcentagemImoveis();
-		listaRestricoesImovel();
 		imovelAdicional = new ImovelCobrancaAdicionais();
 	}
 
@@ -32563,7 +32540,6 @@ return valorTotal;
 
 		listaArquivosAnaliseDocumentos();
 		this.restricaoOperacao= new ArrayList<>();
-		this.restricaoImovel= new ArrayList<>();
 
 		listaRestricoesPessoas();
 
@@ -35750,7 +35726,7 @@ return valorTotal;
 	}
 	
 	public boolean isPossuiBlacFlag() {
-		return !CommonsUtil.semValor(restricaoOperacao) || !CommonsUtil.semValor(restricaoImovel)  ;
+		return !CommonsUtil.semValor(restricaoOperacao);
 	}
 
 	public List<String> getRestricaoOperacao() {
@@ -35759,14 +35735,6 @@ return valorTotal;
 
 	public void setRestricaoOperacao(List<String> restricaoOperacao) {
 		this.restricaoOperacao = restricaoOperacao;
-	}
-
-	public List<String> getRestricaoImovel() {
-		return restricaoImovel;
-	}
-
-	public void setRestricaoImovel(List<String> restricaoImovel) {
-		this.restricaoImovel = restricaoImovel;
 	}
  	
 }
