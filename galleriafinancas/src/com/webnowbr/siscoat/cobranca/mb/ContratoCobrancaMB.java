@@ -35738,9 +35738,12 @@ public class ContratoCobrancaMB {
 
 	public boolean isEngineProcessados() {
 		boolean isAllEngineProcessados = true;
-
+		boolean hasComprador = false;
 		docList = listaDocumentoAnalise.stream().filter(x -> x.isLiberadoAnalise()).collect(Collectors.toList());
-		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();	
+		
+		hasComprador = hasComprador = docList.stream().anyMatch(doc -> "comprador".equals(doc.getMotivoAnalise().toLowerCase()));
+		
 		for (DocumentoAnalise docAnalise : docList) {
 
 			if (!CommonsUtil.semValor(docAnalise.getPagador())) {
@@ -35753,16 +35756,29 @@ public class ContratoCobrancaMB {
 			if (docAnalise.getEngine() == null) {
 				continue;
 			}
-
-			if (CommonsUtil.mesmoValorIgnoreCase(docAnalise.getMotivoAnalise().toLowerCase(), "proprietario atual")
-					|| CommonsUtil.mesmoValorIgnoreCase(docAnalise.getMotivoAnalise().toLowerCase(), "comprador")) {
-				if (docAnalise.getEngine() != null
-						&& !CommonsUtil.semValor(docAnalise.getEngine().getIdCallManager())) {
-					if (CommonsUtil.semValor(docAnalise.getRetornoEngine())) {
-						isAllEngineProcessados = false;
+			
+			if (!hasComprador) {
+				if (CommonsUtil.mesmoValorIgnoreCase(docAnalise.getMotivoAnalise().toLowerCase(), "proprietario atual")
+						|| CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise().toLowerCase(), "sócio vinculado ao proprietario atual")) {
+					if (docAnalise.getEngine() != null
+							&& !CommonsUtil.semValor(docAnalise.getEngine().getIdCallManager())) {
+						if (CommonsUtil.semValor(docAnalise.getRetornoEngine())) {
+							isAllEngineProcessados = false;
+						}
+					}
+				}
+			} else {
+				if (CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise().toLowerCase(), "comprador")
+						|| CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise().toLowerCase(), "sócio vinculado ao comprador")) {
+					if (docAnalise.getEngine() != null
+							&& !CommonsUtil.semValor(docAnalise.getEngine().getIdCallManager())) {
+						if (CommonsUtil.semValor(docAnalise.getRetornoEngine())) {
+							isAllEngineProcessados = false;
+						}
 					}
 				}
 			}
+
 		}
 
 		if (isAllEngineProcessados
