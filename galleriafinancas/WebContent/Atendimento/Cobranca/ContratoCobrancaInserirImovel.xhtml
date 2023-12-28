@@ -14,15 +14,21 @@
 			<i style="margin-right: 10px;"
 				class="fa font-solid #{contratoCobrancaMB.possuiBlackFlagImovel?'fa-flag':' fa-flag-o'}"
 				id="blackFlagImovel"  />
-
+	
+	<p:commandButton value="Ativar Black Flaga" ajax="true"
+				rendered="#{contratoCobrancaMB.usuarioLogado.profileGerenteAnalise or contratoCobrancaMB.usuarioLogado.administrador}"
+				action="#{contratoCobrancaMB.adicionarBlackFlagImovel}" update="Imovel PanelLocador"
+				style="TEXT-DECORATION: bold" />
+	
+			
 			<p:commandButton value="Ativar Black Flag" ajax="true"
-				rendered="#{!contratoCobrancaMB.possuiBlackFlagImovel}"
-				action="#{contratoCobrancaMB.adicionarBlackFlagImovel}"
+				rendered="#{(!contratoCobrancaMB.possuiBlackFlagImovel) and (contratoCobrancaMB.usuarioLogado.profileGerenteAnalise or contratoCobrancaMB.usuarioLogado.administrador)}"
+				action="#{contratoCobrancaMB.adicionarBlackFlagImovel}" update="Imovel PanelLocador"
 				style="TEXT-DECORATION: bold" />
 
 			<p:commandButton value="Remover Black Flag" ajax="true"
-				rendered="#{contratoCobrancaMB.possuiBlackFlagImovel}"
-				action="#{contratoCobrancaMB.removerBlackFlagImovel}"
+				rendered="#{contratoCobrancaMB.possuiBlackFlagImovel and ( contratoCobrancaMB.usuarioLogado.profileGerenteAnalise or contratoCobrancaMB.usuarioLogado.administrador)}"
+				action="#{contratoCobrancaMB.removerBlackFlagImovel}" update="Imovel PanelLocador"
 				style="TEXT-DECORATION: bold" />
 
 		</f:facet>

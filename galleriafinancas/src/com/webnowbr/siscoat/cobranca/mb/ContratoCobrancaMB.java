@@ -30746,8 +30746,6 @@ public class ContratoCobrancaMB {
 							+ this.objetoImovelCobranca.getNumeroMatricula() + " com sucesso!!!", ""));
 			this.restricaoImovel = new ArrayList<>();
 			listaRestricoesImovel();			
-			PrimeFaces.current().ajax().update("form:Imovel");
-			PrimeFaces.current().ajax().update("form:panelRestricao");
 		}else
 			context.addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO, "Erro ao adicionar imvóvel na lista de Black Flag "
@@ -30768,8 +30766,7 @@ public class ContratoCobrancaMB {
 							+ this.objetoImovelCobranca.getNumeroMatricula() + " com sucesso!!!", ""));
 			this.restricaoImovel = new ArrayList<>();
 			listaRestricoesImovel();			
-			PrimeFaces.current().ajax().update("form:Imovel");
-			PrimeFaces.current().ajax().update("form:panelRestricao");
+		
 		}else
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
 					"Erro ao remvover imvóvel na lista de Black Flag " + this.objetoImovelCobranca.getNumeroMatricula(),
