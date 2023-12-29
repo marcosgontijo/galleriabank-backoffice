@@ -130,6 +130,7 @@ import com.webnowbr.siscoat.cobranca.auxiliar.RelatorioFinanceiroCobrancaResumo;
 import com.webnowbr.siscoat.cobranca.db.model.AnaliseComite;
 import com.webnowbr.siscoat.cobranca.db.model.Averbacao;
 import com.webnowbr.siscoat.cobranca.db.model.BoletoKobana;
+import com.webnowbr.siscoat.cobranca.db.model.Cartorio;
 import com.webnowbr.siscoat.cobranca.db.model.CcbContrato;
 import com.webnowbr.siscoat.cobranca.db.model.CcbParticipantes;
 import com.webnowbr.siscoat.cobranca.db.model.CcbProcessosJudiciais;
@@ -173,6 +174,7 @@ import com.webnowbr.siscoat.cobranca.db.model.StarkBankBoleto;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankPix;
 import com.webnowbr.siscoat.cobranca.db.model.directd.PorcentagemImovel;
 import com.webnowbr.siscoat.cobranca.db.op.CcbDao;
+import com.webnowbr.siscoat.cobranca.db.op.CartorioDao;
 import com.webnowbr.siscoat.cobranca.db.op.CcbParticipantesDao;
 import com.webnowbr.siscoat.cobranca.db.op.CcbProcessosJudiciaisDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
@@ -290,7 +292,6 @@ public class ContratoCobrancaMB {
 
 	private String tipoParametroConsultaContrato;
 	private String parametroConsultaContrato;
-
 	private String tituloTelaConsultaPreStatus;
 	private String tituloTelaLead = "";
 
@@ -30441,51 +30442,13 @@ public class ContratoCobrancaMB {
 		ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
 		externalContext.redirect(getLaudoEndereco());
 	}
+<<<<<<< HEAD
+	
+=======
+>>>>>>> branch 'master' of https://github.com/Galleria-Bank-Developers/backoffice.git
 	
 	
-	
-	public void adicionarBlackFlagImovel() {
-		ImovelCobrancaRestricaoService imovelCobrancaRestricaoService = new ImovelCobrancaRestricaoService();
 
-		FacesContext context = FacesContext.getCurrentInstance();
-
-		if (imovelCobrancaRestricaoService.adicionarBlackFlagImovel(objetoImovelCobranca, objetoContratoCobranca,
-				getUsuarioLogado())) {
-			context.addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_INFO, "Imovel adicionado na lista de Black Flag "
-							+ this.objetoImovelCobranca.getNumeroMatricula() + " com sucesso!!!", ""));
-			this.restricaoImovel = new ArrayList<>();
-			listaRestricoesImovel();			
-		}else
-			context.addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_INFO, "Erro ao adicionar imvóvel na lista de Black Flag "
-							+ this.objetoImovelCobranca.getNumeroMatricula(), ""));
-
-	}
-
-	public void removerBlackFlagImovel() {
-
-		ImovelCobrancaRestricaoService imovelCobrancaRestricaoService = new ImovelCobrancaRestricaoService();
-
-		FacesContext context = FacesContext.getCurrentInstance();
-
-		if (imovelCobrancaRestricaoService.removerBlackFlagImovel(objetoImovelCobranca, objetoContratoCobranca,
-				getUsuarioLogado())) {
-			context.addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_INFO, "Imovel removida da lista de Black Flag "
-							+ this.objetoImovelCobranca.getNumeroMatricula() + " com sucesso!!!", ""));
-			this.restricaoImovel = new ArrayList<>();
-			listaRestricoesImovel();			
-		
-		}else
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-					"Erro ao remvover imvóvel na lista de Black Flag " + this.objetoImovelCobranca.getNumeroMatricula(),
-					""));
-
-	}
-	
-	
-	
 	/**
 	 * @param fileRecibo the fileRecibo to set
 	 */

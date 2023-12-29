@@ -96,6 +96,9 @@
         <property name="agencia" type="java.lang.String">
             <column name="AGENCIA"/>
         </property> 
+         <property name="agenciaDigito" type="java.lang.String">
+            <column name="AGENCIADIGITO"/>
+        </property> 
         <property name="conta" type="java.lang.String">
             <column name="CONTA"/>
         </property>         
@@ -655,6 +658,9 @@
 		
 		<property name="inicioEmpresa" type="java.util.Date">
 			<column name="inicioEmpresa"/>
+		</property>
+		<property name="tipoUniao" type="java.lang.String">
+			<column name="tipoUniao" />
 		</property>
 		
 		<property name="restricao" type="boolean">

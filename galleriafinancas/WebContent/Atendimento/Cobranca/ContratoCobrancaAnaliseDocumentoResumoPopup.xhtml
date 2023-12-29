@@ -24,7 +24,7 @@
 
 	<p:dialog id="resumoDialogHeader" widgetVar="resumoConsutlasDialog"
 		showEffect="fade" hideEffect="fade" resizable="false"  styleClass="overflowy" 
-		responsive="false" width="1000"  positionType="center center" 
+		responsive="false" width="1200"  positionType="center center" 
 		closable="true" update="true">
 		<f:facet name="header">
 			<h:outputText value="#{contratoCobrancaMB.documentoAnalisePopup.dialogHeader}" />
@@ -114,25 +114,73 @@
 								</p:column>
 							</p:dataTable>
 						</f:facet>
+						
 					</p:panel>
-	
-					<p:panel>
-						<f:facet name="header">
-							<h:outputText value="Processo" />
-							<p:dataTable id="resumoProcesso" var="Processo"
-								rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
-								value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoProcesso()}">
-								<p:column>
-									<h:outputText value="#{Processo.descricao}" />
-								</p:column>
-								<p:column>
-									<h:outputText value="#{Processo.valor}" />
-								</p:column>
-							</p:dataTable>
-						</f:facet>
-					</p:panel>
-				</h:panelGrid>
-			</h:panelGroup>
+
+				<p:panel>
+					<f:facet name="header">
+						<h:outputText value="SCR" />
+						<p:dataTable id="resumoScr" var="scr"
+							rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
+							value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoScr()}">
+							<p:column>
+								<h:outputText value="#{scr.descricao}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="#{scr.valor}" />
+							</p:column>
+						</p:dataTable>
+					</f:facet>
+				</p:panel>
+				
+				<p:panel>
+					<f:facet name="header">
+						<h:outputText value="Financas Estimadas" />
+						<p:dataTable id="resumoFinancas" var="financas"
+							rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
+							value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoFinancas()}">
+							<p:column>
+								<h:outputText value="#{financas.descricao}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="#{financas.valor}" />
+							</p:column>
+						</p:dataTable>
+					</f:facet>
+				</p:panel>
+
+				<p:panel style="justify-content:start;">
+					<f:facet name="header">
+						<h:outputText value="Cenprot" />
+						<p:dataTable id="resumoCenprot" var="Cenprot"
+							rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
+							value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoCenprot()}">
+							<p:column>
+								<h:outputText value="#{Cenprot.descricao}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="#{Cenprot.valor}" />
+							</p:column>
+						</p:dataTable>
+					</f:facet>
+				</p:panel>
+
+				<p:panel>
+					<f:facet name="header">
+						<h:outputText value="Processo" />
+						<p:dataTable id="resumoProcesso" var="Processo"
+							rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
+							value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoProcesso()}">
+							<p:column>
+								<h:outputText value="#{Processo.descricao}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="#{Processo.valor}" />
+							</p:column>
+						</p:dataTable>
+					</f:facet>
+				</p:panel>
+			</h:panelGrid>
 		</h:form>
 	</p:dialog>
 
