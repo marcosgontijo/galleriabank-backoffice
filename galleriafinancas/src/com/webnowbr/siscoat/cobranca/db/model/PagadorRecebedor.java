@@ -51,7 +51,7 @@ public class PagadorRecebedor implements Serializable {
 	private String codigoMoneyPlus;
 	
 	private String estadocivil;
-	
+	private String tipoUniao;
 	private Date dataCasamento;
 	private String regimeCasamento; 
 	private String registroPactoAntenupcial;
@@ -102,6 +102,7 @@ public class PagadorRecebedor implements Serializable {
 	private List<SelectItem> listaBancos;
 	private String banco;
 	private String agencia;
+	private String agenciaDigito;
 	private String conta;
 	private String contaDigito;
 	private String nomeCC;
@@ -259,6 +260,7 @@ public class PagadorRecebedor implements Serializable {
 	private String whatsAppNumero;
 	
 	private Date inicioEmpresa;
+	private String retornoFinancas;
 	
 	private boolean restricao;
 
@@ -2380,5 +2382,27 @@ public class PagadorRecebedor implements Serializable {
 		this.restricao = restricao;
 	}
 	
-	
+
+	public String getRetornoFinancas() {
+		return retornoFinancas;
+	}
+
+	public void setRetornoFinancas(String retornoFinancas) {
+		this.retornoFinancas = retornoFinancas;
+	}	
+	public String getAgenciaDigito() {
+		return agenciaDigito;
+	}
+
+	public void setAgenciaDigito(String agenciaDigito) {
+		this.agenciaDigito = agenciaDigito;
+	}
+
+	public String getTipoUniao() {
+		return tipoUniao;
+	}
+
+	public void setTipoUniao(String tipoUniao) {
+		this.tipoUniao = tipoUniao;
+	}
 }

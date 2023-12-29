@@ -122,15 +122,19 @@
 							converter="bigDecimalConverter" styleClass="labelBold" style="font-weight: bold; font-size: 18px;" />
 				</h:panelGrid>
 			
-                 <p:dataTable id="dtContratos" var="contratos" value="#{brlTrustMB.contratos}" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending"
-   		         reflow="true"
-                 selection="#{brlTrustMB.selectedContratos}" rowKey="#{contratos.id}">    
+                <p:dataTable id="dtContratos" var="contratos" value="#{brlTrustMB.contratos}" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending"
+	   		        reflow="true"
+	                selection="#{brlTrustMB.selectedContratos}" rowKey="#{contratos.id}">    
                  	<f:facet name="header">
 						<p:commandButton action="#{brlTrustMB.geraJSONLiquidacaoMigracao()}"
 						ajax="false"  icon="ui-icon-print" value="Gerar JSON Liquidação Migração" title="Gerar JSON Liquidação Migração"/>
 						<p:commandButton value="Gerar XLS" ajax="false"
 							icon="ui-icon-print" action="#{brlTrustMB.processaRelatorioFIDCMigracao()}"
 							update="PanelPDF PanelXLS"  />
+						<p:commandButton value="Selecionar pelo Excel" 
+							icon="ui-icon-check" style="TEXT-DECORATION: bold;margin-bottom: 25px;"
+							update="fileDialogdlg" oncomplete="PF('fileDialog').show();"
+							action="#{brlTrustMB.clearDialog}" />
 					</f:facet>   	
 					<p:column selectionMode="multiple" style="width:16px;text-align:center"/>         
                 	<p:column style="text-align: center;width:105px;" headerText="Contrato" filterBy="#{contratos.numeroContrato}" filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
@@ -172,5 +176,30 @@
 				</p:dataTable>				    		    
 			</p:panel>
 		</h:form>
+		
+		<p:dialog header="Usar Excel p/ Selecionar" widgetVar="fileDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="800">
+			<h:form id="fileDialogdlg">
+				<div align="center">
+					<h:panelGrid columns="1">
+						<p:fileUpload label="Selecionar Arquivo(s)"
+							uploadLabel="Salvar Arquivo(s)" multiple="true"
+							cancelLabel="Cancelar"
+							fileUploadListener="#{brlTrustMB.handleFileUpload}"
+							mode="advanced" dragDropSupport="true" 
+							update="file"/>
+							
+						<h:outputText id="file" value="#{brlTrustMB.uploadedFile.fileName}" />				
+						
+						<p:commandButton value="Selecionar Contratos " 
+							icon="ui-icon-check" style="margin-top: 5px; margin-bottom: 5px;"
+							action="#{brlTrustMB.selecionarContratosPorXLS()}" 
+							onclick="PF('fileDialog').hide();" update="form">
+						</p:commandButton>
+					</h:panelGrid>
+				</div>
+			</h:form>
+		</p:dialog>
+		
 	</ui:define>
 </ui:composition>

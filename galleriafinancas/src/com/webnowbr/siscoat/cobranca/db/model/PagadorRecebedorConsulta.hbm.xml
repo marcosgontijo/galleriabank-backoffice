@@ -26,7 +26,6 @@
 	
 		<property name="retornoConsulta" type="java.lang.String"  length="65000">
 			<column name="retornoConsulta" />
-		</property>
-						 
+		</property>						 
     </class>
 </hibernate-mapping>

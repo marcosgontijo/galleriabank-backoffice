@@ -30,6 +30,7 @@ public class CcbProcessosJudiciais implements Serializable{
 	private String observacao = "";
 	private String outrosParticipantes = "";
 	private String origem = "";
+	private boolean riscoAtivo = false;
 	
 	public CcbProcessosJudiciais(BigDecimal valor, String numero) {
 		contaPagar = new ContasPagar();
@@ -157,5 +158,13 @@ public class CcbProcessosJudiciais implements Serializable{
 
 	public void setOrigem(String origem) {
 		this.origem = origem;
+	}
+
+	public boolean isRiscoAtivo() {
+		return riscoAtivo;
+	}
+
+	public void setRiscoAtivo(boolean riscoAtivo) {
+		this.riscoAtivo = riscoAtivo;
 	}
 }

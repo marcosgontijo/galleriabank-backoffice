@@ -132,7 +132,7 @@
 							<p:outputLabel value="Valor Total Processos:" styleClass="labelBold" />
 							<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.valorTotalProcessos}" converter="bigDecimalConverter"  />
 						</h:panelGrid>
-						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel == true}">									
+						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel == true}">								
 							<p:dataView var="pessoasProcessos" id="pessoasProcessos"
 								value="#{contratoCobrancaMB.pessoasProcessos}"
 								paginator="false" layout="list" style="width: 1200px; max-width: 100%"
@@ -148,7 +148,8 @@
 										oncomplete="PF('processoDialog').show();"
 										update="processoDialogdlg" />
 										<p:dataTable var="processosPessoas" id="processosPessoas" value="#{pessoasProcessos.processos}"
-											style="width:700px;" size="small" sortBy="#{processosPessoas.id}" sortOrder="ascending" >
+											style="width:700px;" size="small" sortBy="#{processosPessoas.id}" sortOrder="ascending"
+											rowStyleClass="#{(processosPessoas.riscoAtivo eq true) ? 'riscoAtivo' : '' }" >
 											
 											<p:column style="text-align: center;width:175px;" headerText="N°"  >
 												<p:outputLabel value="#{processosPessoas.numero}" 
@@ -173,6 +174,15 @@
 											<p:column style="text-align: center;width:150px;" headerText=" Natureza ">
 												<p:outputLabel value=" #{processosPessoas.natureza}"
 													style="FONT-SIZE: 10pt;" />
+											</p:column>
+											
+											<p:column style="text-align: center;width:30px;" headerText="Risco Ativo" >
+												<p:outputLabel value="Sim"
+													style="FONT-SIZE: 10pt;" 
+													rendered="#{processosPessoas.riscoAtivo}"/>
+												<p:outputLabel value="Não"
+													style="FONT-SIZE: 10pt;" 
+													rendered="#{!processosPessoas.riscoAtivo}"/>
 											</p:column>
 											
 											<p:column style="text-align: center;" headerText="Obs" >
@@ -886,8 +896,6 @@
 			</p:panel>	
 						
 			<p:messages/>
-		
-			
 					
 			<div align="center">
 				<p:commandButton value="Atualizar" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.editPreContratoPorStatus()}" style="TEXT-DECORATION: bold;" rendered="#{contratoCobrancaMB.updateMode}">
@@ -1059,6 +1067,10 @@
 							value="#{contratoCobrancaMB.processoSelecionado.observacao}" >
 							<p:ajax process="@this" partialSubmit="true" />
 						</h:inputTextarea>
+						
+						<p:outputLabel value="Risco Ativo: " styleClass="labelBold"
+							style="font-weight: bold; font-size: 18px;" />
+						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.processoSelecionado.riscoAtivo}" />
 				
 						<p:outputLabel value="Pessoa: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />

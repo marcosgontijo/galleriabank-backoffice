@@ -8,7 +8,7 @@
 			    template="/Menus/Menu.xhtml">
 	<ui:define name="conteudo">  
 	 	<p:remoteCommand name="onload" action="#{contratoCobrancaMB.bloquearForm}" autoRun="true" />
-		<p:blockUI block="form" widgetVar="blockForm"/>
+		<p:blockUI block="form:PanelLocador form:CheckListDocumentos" widgetVar="blockForm"/>
 		<h:form id="form" >
 		 	<script src="#{request.contextPath}/resources/js/functions.js"></script>
 		 	<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>			
@@ -1799,7 +1799,8 @@
 										size="small" sortBy="#{processosPessoas2.id}"
 										sortOrder="ascending"
 										rowStyleClass="#{(processosPessoas2.selecionadoComite eq false
-											 	and contratoCobrancaMB.mostrarTodosProcessos eq false ) ? 'ui-helper-hidden' : ''}">
+											 	and contratoCobrancaMB.mostrarTodosProcessos eq false ) ? 'ui-helper-hidden' : ''}
+												#{(processosPessoas2.riscoAtivo eq true) ? 'riscoAtivo' : '' }">
 
 										<p:column style="text-align: center;width:175px;"
 											headerText="N°">
@@ -1829,6 +1830,15 @@
 											headerText=" Natureza ">
 											<p:outputLabel value=" #{processosPessoas2.natureza}"
 												style="FONT-SIZE: 10pt;" />
+										</p:column>
+										
+										<p:column style="text-align: center;width:30px;" headerText="Risco Ativo" >
+											<p:outputLabel value="Sim"
+												style="FONT-SIZE: 10pt;" 
+												rendered="#{processosPessoas2.riscoAtivo}"/>
+											<p:outputLabel value="Não"
+												style="FONT-SIZE: 10pt;" 
+												rendered="#{!processosPessoas2.riscoAtivo}"/>
 										</p:column>
 
 										<p:column style="text-align: center;" headerText="Obs">
@@ -2360,12 +2370,19 @@
 									<p:dataTable var="processosPessoas" id="processosPessoas"
 										value="#{pessoasProcessos.processos}"
 										size="small" sortBy="#{processosPessoas.id}"
-										sortOrder="ascending">
+										sortOrder="ascending"
+										rowStyleClass="#{(processosPessoas.riscoAtivo eq true) ? 'riscoAtivo' : '' }">
 
 										<p:column style="text-align: center;width:175px;"
 											headerText="N°">
 											<p:outputLabel value="#{processosPessoas.numero}"
 												style="FONT-SIZE: 10pt;" />
+										</p:column>
+										
+										<p:column style="text-align: center;width:75px;"
+											headerText=" Valor Original: ">
+											<p:outputLabel value="#{processosPessoas.valor}"
+												style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
 										</p:column>
 
 										<p:column style="text-align: center;width:75px;"
@@ -2384,6 +2401,15 @@
 											headerText=" Natureza ">
 											<p:outputLabel value=" #{processosPessoas.natureza}"
 												style="FONT-SIZE: 10pt;" />
+										</p:column>
+										
+										<p:column style="text-align: center;width:30px;" headerText="Risco Ativo" >
+											<p:outputLabel value="Sim"
+												style="FONT-SIZE: 10pt;" 
+												rendered="#{processosPessoas.riscoAtivo}"/>
+											<p:outputLabel value="Não"
+												style="FONT-SIZE: 10pt;" 
+												rendered="#{!processosPessoas.riscoAtivo}"/>
 										</p:column>
 
 										<p:column style="text-align: center;" headerText="Obs" >
@@ -5679,6 +5705,10 @@
 							completeMethod="#{contratoCobrancaMB.processoSelecionado.naturezaProcessos()}"
 							scrollHeight="250">
 						</p:autoComplete>
+						
+						<p:outputLabel value="Risco Ativo: " styleClass="labelBold"
+							style="font-weight: bold; font-size: 18px;" />
+						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.processoSelecionado.riscoAtivo}" />
 
 						<p:outputLabel value="Obs: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />
