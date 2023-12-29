@@ -830,6 +830,7 @@ public class ContratoCobrancaMB {
 	private BigDecimal vlrComissaoFinalNew;
 
 	private List<StarkBankBaixa> pagamentosStarkBankPendentes = new ArrayList<StarkBankBaixa>();
+	private List<StarkBankBaixa> pagamentosStarkBankPendentesCartaSplit = new ArrayList<StarkBankBaixa>();
 	private StarkBankBaixa objetoBaixaPagamentoStarkBank = new StarkBankBaixa();
 
 	private DualListModel<PagadorRecebedor> dualListModelRecebedores;
@@ -9996,8 +9997,68 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setAgenciaBancarioCartaSplitGalleria("");
 		this.objetoContratoCobranca.setContaBancarioCartaSplitGalleria("");
 		this.objetoContratoCobranca.setPixCartaSplitGalleria("b56b12e2-f476-4272-8d16-c1a5a31cc660");
+		
+		// cria despesas processos
+		for (CcbProcessosJudiciais processos : ccb.getProcessosJucidiais()) {
+			if (!buscaDespesaRepetida(processos.getNumero())) {
+				concluirContaProcesso(processos.getNumero(), processos.getValorAtualizado());
+			}
+		}
+	}
+	
+	public boolean buscaDespesaRepetida(String descricao) {
+		boolean temDespesaRepetida = false;
+		
+		for (ContasPagar contas : this.objetoContratoCobranca.getListContasPagar()) {
+			if (contas.getDescricao().equals(descricao)) {
+				temDespesaRepetida = true;
+			}
+		}
+		
+		return temDespesaRepetida;
 	}
 
+	public void concluirContaProcesso(String descricao, BigDecimal valorProcesso) {
+		this.contasPagarSelecionada.setContrato(this.objetoContratoCobranca);
+		this.contasPagarSelecionada.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
+		this.contasPagarSelecionada.setPagadorRecebedor(this.objetoPagadorRecebedor);
+		this.contasPagarSelecionada.setTipoDespesa("C");
+		this.contasPagarSelecionada.setDescricao(descricao);
+		this.contasPagarSelecionada.setResponsavel(this.objetoContratoCobranca.getResponsavel());
+		this.contasPagarSelecionada.setValor(valorProcesso);
+
+		if (!CommonsUtil.semValor(valorProcesso)) {
+			if (!CommonsUtil.semValor(this.objetoContratoCobranca.getContaPagarValorTotal())) {
+				this.objetoContratoCobranca.setContaPagarValorTotal(this.objetoContratoCobranca
+						.getContaPagarValorTotal().add(valorProcesso));
+			} else {
+				this.objetoContratoCobranca.setContaPagarValorTotal(valorProcesso);
+			}
+			if (!CommonsUtil.semValor(this.contasPagarSelecionada.getValorPagamento())) {
+				if (CommonsUtil.mesmoValor(this.contasPagarSelecionada.getValorPagamento(),
+						valorProcesso)) {
+					this.contasPagarSelecionada.setContaPaga(true);
+				}
+				this.objetoContratoCobranca.setContaPagarValorTotal(this.objetoContratoCobranca
+						.getContaPagarValorTotal().subtract(this.contasPagarSelecionada.getValorPagamento()));
+			}
+		}
+
+		this.objetoContratoCobranca.getListContasPagar().add(this.contasPagarSelecionada);
+
+		BigDecimal valorDespesas = calcularValorTotalContasPagar();
+		this.objetoContratoCobranca.setContaPagarValorTotal(valorDespesas);
+		ContasPagarDao contasPagarDao = new ContasPagarDao();
+		if (contasPagarSelecionada.getId() <= 0) {
+			contasPagarDao.create(contasPagarSelecionada);
+		} else {
+			contasPagarDao.merge(contasPagarSelecionada);
+		}
+		this.contasPagarSelecionada = new ContasPagar();
+		this.addContasPagar = false;
+		this.objetoContratoCobranca.calcularValorTotalContasPagas();
+
+	}
 	private void calcularRegistroVelho() {
 		int qtdMatriculas = 1;
 		String matriculas = objetoContratoCobranca.getImovel().getNumeroMatricula().trim();
@@ -19963,7 +20024,7 @@ public class ContratoCobrancaMB {
 		contaCartaSplit.setContaCartaSplit(true);
 		contaCartaSplit.setContrato(this.objetoContratoCobranca);
 		contaCartaSplit.setDataVencimento(DateUtil.gerarDataHoje());
-		contaCartaSplit.setDescricao("Pagamento Carta Split");
+		contaCartaSplit.setDescricao("Pagamento Carta Split - Cliente");
 		// contaCartaSplit.setPagadorRecebedor(recebedor);
 		contaCartaSplit.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
 		contaCartaSplit.setResponsavel(this.objetoContratoCobranca.getResponsavel());
@@ -20043,8 +20104,23 @@ public class ContratoCobrancaMB {
 
 		StarkBankBaixaDAO starkBankBaixaDAO = new StarkBankBaixaDAO();
 		this.pagamentosStarkBankPendentes = new ArrayList<StarkBankBaixa>();
+		this.pagamentosStarkBankPendentesCartaSplit = new ArrayList<StarkBankBaixa>();
 
 		this.pagamentosStarkBankPendentes = starkBankBaixaDAO.findByFilter("statusPagamento", "Aguardando Aprovação");
+		
+		// popula despesas carta split
+		for (StarkBankBaixa baixas : this.pagamentosStarkBankPendentes) {
+			if (baixas.getContasPagar() != null) {
+				if (baixas.getContasPagar().getDescricao().contains("Pagamento Carta Split")) {
+					this.pagamentosStarkBankPendentesCartaSplit.add(baixas);
+				}
+			}
+		}
+		
+		// remove despesas carta plit
+		for (StarkBankBaixa baixas : this.pagamentosStarkBankPendentesCartaSplit) {
+			this.pagamentosStarkBankPendentes.remove(baixas);
+		}
 
 		return "/Atendimento/Cobranca/ConsultaPagamentosStarkBankPendentes.xhtml";
 	}
@@ -20103,7 +20179,7 @@ public class ContratoCobrancaMB {
 				
 				StarkBankPix starkBankPix;
 				
-				if (this.objetoBaixaPagamentoStarkBank.getContasPagar().getDescricao().equals("Pagamento Carta Split - Galleria")) {
+				if (this.objetoBaixaPagamentoStarkBank.getContasPagar().getDescricao().contains("Pagamento Carta Split")) {
 					System.out.println("processaPagamentoStarkBank - Galleria - Pix");
 					starkBankPix = starkBankAPI.paymentPix(
 							this.objetoBaixaPagamentoStarkBank.getContasPagar().getPix(),
@@ -36030,4 +36106,11 @@ public class ContratoCobrancaMB {
 		this.blockForm = blockForm;
 	}
 
+	public List<StarkBankBaixa> getPagamentosStarkBankPendentesCartaSplit() {
+		return pagamentosStarkBankPendentesCartaSplit;
+	}
+
+	public void setPagamentosStarkBankPendentesCartaSplit(List<StarkBankBaixa> pagamentosStarkBankPendentesCartaSplit) {
+		this.pagamentosStarkBankPendentesCartaSplit = pagamentosStarkBankPendentesCartaSplit;
+	}
 }

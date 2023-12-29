@@ -494,6 +494,7 @@ public class StarkBankAPI{
     }
 	
 	public static void loginStarkBank() {
+		System.out.println("processaPagamentoStarkBank - Login Correspondente");
     	Settings.language = "pt-BR";
     	
     	String privateKeyContent = "-----BEGIN EC PARAMETERS-----\nBgUrgQQACg==\n-----END EC PARAMETERS-----\n-----BEGIN EC PRIVATE KEY-----\nMHQCAQEEIAKGZfO+lee7tdtcLGbCT++oGyUcmm/2Jdozg8D8mF4ioAcGBSuBBAAKoUQDQgAEUvi66NomZ1HeFqEwrXvnM/IjDQEJjVp6nYYojlOsTP1tYO34tW+bO1ypWln5lfkDNCcARQ710SmPPrLRHRbMAA==\n-----END EC PRIVATE KEY-----";
@@ -515,6 +516,8 @@ public class StarkBankAPI{
 	}
 	
 	public static void loginStarkBankSCD() {
+		System.out.println("processaPagamentoStarkBank - Login SCD");
+		
     	Settings.language = "pt-BR";
     	
     	String privateKeyContent = "-----BEGIN EC PRIVATE KEY-----\nMHQCAQEEIE56ofDNqzdDCrYEAnwpq2CiEfknPhBV+NTWBtpYEy90oAcGBSuBBAAK\noUQDQgAEsXCtulqc9kC5Tkmy/wuJ6JIq8R+GWJzlqmp/pO4r4i76BFivs4hVBZrS\nD5Sil3MxCjUjKbr95ZxDjuq4dYCBOA==\n-----END EC PRIVATE KEY-----";
@@ -582,10 +585,10 @@ public class StarkBankAPI{
 
     	List<Transfer.Rule> rules = new ArrayList<>();
     
-    	if (descricaoConta == null || !descricaoConta.equals("Pagamento Carta Split")) {
-    		loginStarkBank();
-    	} else {
+    	if (descricaoConta != null || descricaoConta.contains("Pagamento Carta Split")) {
     		loginStarkBankSCD();
+    	} else {
+    		loginStarkBank();    		
     	}
     	
     	Date dataHoje = DateUtil.gerarDataHoje();
