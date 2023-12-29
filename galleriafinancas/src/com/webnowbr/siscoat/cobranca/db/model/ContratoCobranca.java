@@ -508,6 +508,14 @@ public class ContratoCobranca implements Serializable {
 	private boolean operacaoPaga;
 	private String operacaoPagaUsuario;
 	private boolean pendenciaPagamento;
+	
+	private Date notaFiscalEmitidaData;
+	private boolean notaFiscalEmitida;
+	private String notaFiscalEmitidaUsuario;
+	
+	private Date notaFiscalPagaData;
+	private boolean notaFiscalPaga;
+	private String notaFiscalPagaUsuario;
 
 	private Date aprovadoComiteData;
 	private boolean aprovadoComite;
@@ -7585,5 +7593,54 @@ public class ContratoCobranca implements Serializable {
 	public void setNotificacaoCobrancaData(Date notificacaoCobrancaData) {
 		this.notificacaoCobrancaData = notificacaoCobrancaData;
 	}
+
+	public Date getNotaFiscalEmitidaData() {
+		return notaFiscalEmitidaData;
+	}
+
+	public void setNotaFiscalEmitidaData(Date notaFiscalEmitidaData) {
+		this.notaFiscalEmitidaData = notaFiscalEmitidaData;
+	}
+
+	public boolean isNotaFiscalEmitida() {
+		return notaFiscalEmitida;
+	}
+
+	public void setNotaFiscalEmitida(boolean notaFiscalEmitida) {
+		this.notaFiscalEmitida = notaFiscalEmitida;
+	}
+
+	public String getNotaFiscalEmitidaUsuario() {
+		return notaFiscalEmitidaUsuario;
+	}
+
+	public void setNotaFiscalEmitidaUsuario(String notaFiscalEmitidaUsuario) {
+		this.notaFiscalEmitidaUsuario = notaFiscalEmitidaUsuario;
+	}
+
+	public Date getNotaFiscalPagaData() {
+		return notaFiscalPagaData;
+	}
+
+	public void setNotaFiscalPagaData(Date notaFiscalPagaData) {
+		this.notaFiscalPagaData = notaFiscalPagaData;
+	}
+
+	public boolean isNotaFiscalPaga() {
+		return notaFiscalPaga;
+	}
+
+	public void setNotaFiscalPaga(boolean notaFiscalPaga) {
+		this.notaFiscalPaga = notaFiscalPaga;
+	}
+
+	public String getNotaFiscalPagaUsuario() {
+		return notaFiscalPagaUsuario;
+	}
+
+	public void setNotaFiscalPagaUsuario(String notaFiscalPagaUsuario) {
+		this.notaFiscalPagaUsuario = notaFiscalPagaUsuario;
+	}
+	
 }
 

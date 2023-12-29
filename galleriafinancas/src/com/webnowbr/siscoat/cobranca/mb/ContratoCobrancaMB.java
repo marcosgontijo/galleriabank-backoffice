@@ -27,6 +27,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Collection;
@@ -5882,6 +5883,28 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setOperacaoPagaUsuario(getNomeUsuarioLogado());
 			}
 		}
+		
+		if (!this.objetoContratoCobranca.isNotaFiscalEmitida()) {
+			this.objetoContratoCobranca.setNotaFiscalEmitidaData(null);
+			this.objetoContratoCobranca.setNotaFiscalEmitidaUsuario(null);
+		} else {
+			if (this.objetoContratoCobranca.getNotaFiscalEmitidaData() == null) {
+				this.objetoContratoCobranca.setNotaFiscalEmitidaData(DateUtil.gerarDataHoje());
+				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getNotaFiscalEmitidaData());
+				this.objetoContratoCobranca.setNotaFiscalEmitidaUsuario(getNomeUsuarioLogado());
+			}
+		}
+		
+		if (!this.objetoContratoCobranca.isNotaFiscalPaga()) {
+			this.objetoContratoCobranca.setNotaFiscalPagaData(null);
+			this.objetoContratoCobranca.setNotaFiscalPagaUsuario(null);
+		} else {
+			if (this.objetoContratoCobranca.getNotaFiscalPagaData() == null) {
+				this.objetoContratoCobranca.setNotaFiscalPagaData(DateUtil.gerarDataHoje());
+				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getNotaFiscalPagaData());
+				this.objetoContratoCobranca.setNotaFiscalPagaUsuario(getNomeUsuarioLogado());
+			}
+		}
 
 		this.objetoContratoCobranca.setStatusContratoData(DateUtil.gerarDataHoje());
 		this.objetoContratoCobranca.setStatusContratoUsuario(getNomeUsuarioLogado());
@@ -9904,6 +9927,8 @@ public class ContratoCobrancaMB {
 		this.inserirImovelDisable = false;
 		this.inserirImovelOcultarValorMercadoImovel = false;
 
+		
+		
 		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Pré-Comite")
 				|| CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Análise Comercial")
 				|| CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Análise Pré-Aprovada")) {
@@ -9921,7 +9946,7 @@ public class ContratoCobrancaMB {
 		} else if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Comite")) {
 			this.inserirImovelOcultarValorMercadoImovel = true;
 			return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusComite.xhtml";
-		} else if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Pagamento Op.")) {
+		} else if (Arrays.asList("Ag. Pagamento Op.", "Ag. Pagamento NFs", "Ag. Emissão NFs").contains(this.tituloTelaConsultaPreStatus)) {
 			return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusAgPagamentoOperacao.xhtml";
 		} else {
 			return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatus.xhtml";
@@ -10210,10 +10235,14 @@ public class ContratoCobrancaMB {
 	public void getIndexStepContrato() {
 		this.indexStepsStatusContrato = 0;
 
-		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getStatus(), "Aprovado")
-				&& (!this.objetoContratoCobranca.isOperacaoPaga()
-						|| this.objetoContratoCobranca.isPendenciaPagamento())) {
-			this.indexStepsStatusContrato = 14;
+		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getStatus(), "Aprovado")) {
+			if (!this.objetoContratoCobranca.isOperacaoPaga()|| this.objetoContratoCobranca.isPendenciaPagamento()) {
+				this.indexStepsStatusContrato = 14;
+			} else if (this.objetoContratoCobranca.isOperacaoPaga() && !this.objetoContratoCobranca.isNotaFiscalEmitida()) {
+				this.indexStepsStatusContrato = 15;
+			} else if (this.objetoContratoCobranca.isNotaFiscalEmitida() && !this.objetoContratoCobranca.isNotaFiscalPaga()) {
+				this.indexStepsStatusContrato = 16;
+			}
 		} else if (!this.objetoContratoCobranca.isInicioAnalise()) {
 			this.indexStepsStatusContrato = 0;
 		} else if (this.objetoContratoCobranca.isAnaliseReprovada()) {
@@ -14669,13 +14698,21 @@ public class ContratoCobrancaMB {
 		}
 	}
 
-	public String consultaAgPagamentoOp() {
-		this.tituloTelaConsultaPreStatus = "Ag. Pagamento Op.";
+	public String consultaAgPagamentoOp(String status) {
+		if (status.equals("Ag. Pagamento Op.")) {
+			this.tituloTelaConsultaPreStatus = "Ag. Pagamento Op.";
+		}
+		if (status.equals("Ag. Emissão NFs")) {
+			this.tituloTelaConsultaPreStatus = "Ag. Emissão NFs";
+		}
+		if (status.equals("Ag. Pagamento NFs")) {
+			this.tituloTelaConsultaPreStatus = "Ag. Pagamento NFs";
+		}
 
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.contratosPendentes = new ArrayList<ContratoCobranca>();
 
-		this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosAgPagoOp();
+		this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosAgPagoOp(status);
 		this.selectedContratos = new ArrayList<ContratoCobranca>();
 
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";

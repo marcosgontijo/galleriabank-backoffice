@@ -2353,5 +2353,25 @@
 			<column name="notificacaoCobrancaData" />
 		</property>
 		
+		<property name="notaFiscalEmitidaData" type="java.util.Date">
+			<column name="notaFiscalEmitidaData" />
+		</property>
+		<property name="notaFiscalEmitida" type="boolean">
+			<column name="notaFiscalEmitida" not-null="true" default="false"/>
+		</property>	
+		<property name="notaFiscalEmitidaUsuario" type="java.lang.String">
+			<column name="notaFiscalEmitidaUsuario" />
+		</property>
+		
+		<property name="notaFiscalPagaData" type="java.util.Date">
+			<column name="notaFiscalPagaData" />
+		</property>
+		<property name="notaFiscalPaga" type="boolean">
+			<column name="notaFiscalPaga" not-null="true" default="false"/>
+		</property>	
+		<property name="notaFiscalPagaUsuario" type="java.lang.String">
+			<column name="notaFiscalPagaUsuario" />
+		</property>
+		
 	</class>
 </hibernate-mapping>
