@@ -27,111 +27,112 @@
 		responsive="false" width="1000"  positionType="center center" 
 		closable="true" update="true">
 		<f:facet name="header">
-			<h:outputText
-				value="#{contratoCobrancaMB.documentoAnalisePopup.dialogHeader}" />
+			<h:outputText value="#{contratoCobrancaMB.documentoAnalisePopup.dialogHeader}" />
 		</f:facet>
 		<h:form id="resumoConsutlasForm">
-			<h:panelGrid columns="1" rendered="#{contratoCobrancaMB.documentoAnalisePopup.resumoRelacionamentos.size() > 0}">
-				<p:panel style="justify-content:start;">
-					<f:facet name="header">
-						<h:outputText value="Relacionamentos" />
-						<p:dataTable id="resumoRelacionamentos" var="relacionamentos"
-							rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
-							value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoRelacionamentos()}">
-							<p:column>
-								<h:outputText value="#{relacionamentos.descricao}" />
-							</p:column>
-							<p:column>
-								<h:outputText value="#{relacionamentos.valor}"  style="text-transform:uppercase"/>
-							</p:column>
-						</p:dataTable>
-					</f:facet>
-				</p:panel>
-			</h:panelGrid>
-			
-			<h:panelGrid columns="5"
-				columnClasses="painelResumo,painelResumo,painelResumo,painelResumo,painelResumo">
-
-				<p:panel>
-					<f:facet name="header">
-						<h:outputText value="Engine" />
-					</f:facet>
-					<p:dataTable id="resumocliente" var="engine"
-						rendered="#{contratoCobrancaMB.documentoAnalisePopup != null  and contratoCobrancaMB.documentoAnalisePopup.resumoEngine != null }"
-						value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoEngine()}">
-						<p:column>
-							<h:outputText value="#{engine.descricao}"></h:outputText>
-						</p:column>
-						<p:column>
-							<h:outputText value="#{engine.valor}"></h:outputText>
-						</p:column>
-					</p:dataTable>
-				</p:panel>
-
-				<!--<p:panel style="justify-content:start;">
+			<h:panelGroup rendered="#{contratoCobrancaMB.documentoAnalisePopup.tipo != 'Rea'}">
+				<h:panelGrid columns="1" rendered="#{contratoCobrancaMB.documentoAnalisePopup.resumoRelacionamentos.size() > 0}">
+					<p:panel style="justify-content:start;">
 						<f:facet name="header">
-							<h:outputText value="Serasa" />
-							<p:dataTable id="resumoSerasa" var="Serasa" rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
-							value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoSerasa()}">
+							<h:outputText value="Relacionamentos" />
+							<p:dataTable id="resumoRelacionamentos" var="relacionamentos"
+								rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
+								value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoRelacionamentos()}">
 								<p:column>
-									<h:outputText value="#{Serasa.descricao}"></h:outputText>
+									<h:outputText value="#{relacionamentos.descricao}" />
 								</p:column>
 								<p:column>
-									<h:outputText value="#{Serasa.valor}"></h:outputText>
+									<h:outputText value="#{relacionamentos.valor}"  style="text-transform:uppercase"/>
 								</p:column>
-								</p:dataTable>
+							</p:dataTable>
 						</f:facet>
-						
-					</p:panel>-->
-
-				<p:panel>
-					<f:facet name="header">
-						<h:outputText value="SCR" />
-						<p:dataTable id="resumoScr" var="scr"
-							rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
-							value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoScr()}">
+					</p:panel>
+				</h:panelGrid>
+				
+				<h:panelGrid columns="5"
+					columnClasses="painelResumo,painelResumo,painelResumo,painelResumo,painelResumo">
+	
+					<p:panel>
+						<f:facet name="header">
+							<h:outputText value="Engine" />
+						</f:facet>
+						<p:dataTable id="resumocliente" var="engine"
+							rendered="#{contratoCobrancaMB.documentoAnalisePopup != null  and contratoCobrancaMB.documentoAnalisePopup.resumoEngine != null }"
+							value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoEngine()}">
 							<p:column>
-								<h:outputText value="#{scr.descricao}" />
-							</p:column>l
+								<h:outputText value="#{engine.descricao}"></h:outputText>
+							</p:column>
 							<p:column>
-								<h:outputText value="#{scr.valor}" />
+								<h:outputText value="#{engine.valor}"></h:outputText>
 							</p:column>
 						</p:dataTable>
-					</f:facet>
-				</p:panel>
-
-				<p:panel style="justify-content:start;">
-					<f:facet name="header">
-						<h:outputText value="Cenprot" />
-						<p:dataTable id="resumoCenprot" var="Cenprot"
-							rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
-							value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoCenprot()}">
-							<p:column>
-								<h:outputText value="#{Cenprot.descricao}" />
-							</p:column>
-							<p:column>
-								<h:outputText value="#{Cenprot.valor}" />
-							</p:column>
-						</p:dataTable>
-					</f:facet>
-				</p:panel>
-
-				<p:panel>
-					<f:facet name="header">
-						<h:outputText value="Processo" />
-						<p:dataTable id="resumoProcesso" var="Processo"
-							rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
-							value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoProcesso()}">
-							<p:column>
-								<h:outputText value="#{Processo.descricao}" />
-							</p:column>
-							<p:column>
-								<h:outputText value="#{Processo.valor}" />
-							</p:column>
-						</p:dataTable>
-					</f:facet>
-				</p:panel>
-			</h:panelGrid>
+					</p:panel>
+	
+					<!--<p:panel style="justify-content:start;">
+							<f:facet name="header">
+								<h:outputText value="Serasa" />
+								<p:dataTable id="resumoSerasa" var="Serasa" rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
+								value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoSerasa()}">
+									<p:column>
+										<h:outputText value="#{Serasa.descricao}"></h:outputText>
+									</p:column>
+									<p:column>
+										<h:outputText value="#{Serasa.valor}"></h:outputText>
+									</p:column>
+									</p:dataTable>
+							</f:facet>
+							
+						</p:panel>-->
+	
+					<p:panel>
+						<f:facet name="header">
+							<h:outputText value="SCR" />
+							<p:dataTable id="resumoScr" var="scr"
+								rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
+								value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoScr()}">
+								<p:column>
+									<h:outputText value="#{scr.descricao}" />
+								</p:column>l
+								<p:column>
+									<h:outputText value="#{scr.valor}" />
+								</p:column>
+							</p:dataTable>
+						</f:facet>
+					</p:panel>
+	
+					<p:panel style="justify-content:start;">
+						<f:facet name="header">
+							<h:outputText value="Cenprot" />
+							<p:dataTable id="resumoCenprot" var="Cenprot"
+								rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
+								value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoCenprot()}">
+								<p:column>
+									<h:outputText value="#{Cenprot.descricao}" />
+								</p:column>
+								<p:column>
+									<h:outputText value="#{Cenprot.valor}" />
+								</p:column>
+							</p:dataTable>
+						</f:facet>
+					</p:panel>
+	
+					<p:panel>
+						<f:facet name="header">
+							<h:outputText value="Processo" />
+							<p:dataTable id="resumoProcesso" var="Processo"
+								rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
+								value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoProcesso()}">
+								<p:column>
+									<h:outputText value="#{Processo.descricao}" />
+								</p:column>
+								<p:column>
+									<h:outputText value="#{Processo.valor}" />
+								</p:column>
+							</p:dataTable>
+						</f:facet>
+					</p:panel>
+				</h:panelGrid>
+			</h:panelGroup>
 		</h:form>
 	</p:dialog>
 

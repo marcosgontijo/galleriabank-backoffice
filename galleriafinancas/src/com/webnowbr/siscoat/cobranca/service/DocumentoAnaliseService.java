@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.faces.bean.ManagedProperty;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +24,7 @@ import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
@@ -30,6 +32,7 @@ import com.webnowbr.siscoat.common.ValidaCNPJ;
 import com.webnowbr.siscoat.common.ValidaCPF;
 import com.webnowbr.siscoat.infra.db.model.User;
 import com.webnowbr.siscoat.job.DocumentoAnaliseJob;
+import com.webnowbr.siscoat.security.LoginBean;
 
 import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoExecutionResultRelacionamentosPessoaisPJPartnership;
 import br.com.galleriabank.dataengine.cliente.model.retorno.consulta.EngineRetornoRequestEnterprisePartnership;
@@ -42,6 +45,20 @@ import br.com.galleriabank.serasarelato.cliente.model.Socio;
 import br.com.galleriabank.serasarelato.cliente.model.embedded.RelatoDadosCadastrais;
 
 public class DocumentoAnaliseService {
+	
+
+	@ManagedProperty(value = "#{loginBean}")
+	protected LoginBean loginBean;
+	
+	
+
+	public LoginBean getLoginBean() {
+		return loginBean;
+	}
+
+	public void setLoginBean(LoginBean loginBean) {
+		this.loginBean = loginBean;
+	}
 
 	public PagadorRecebedor cadastrarPessoRetornoCredNet(PessoaParticipacao pessoaParticipacao, User user,
 			DocumentoAnaliseDao documentoAnaliseDao, PagadorRecebedorService pagadorRecebedorService,
@@ -62,18 +79,30 @@ public class DocumentoAnaliseService {
 			documentoAnalise.setCnpjcpf(pessoaParticipacao.getCnpjcpf());
 			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.CREDNET);
 		}
+		documentoAnalise.setOrigem("CredNet");
+		documentoAnalise.setDataCadastro(DateUtil.getDataHoraAgora());
+		documentoAnalise.setUsuarioCadastro(loginBean.getUsuarioLogado().getLogin());
+		
+		DocumentoAnalise documentoAnalisePesquisa = documentoAnaliseDao.cadastradoAnalise(contratoCobranca,
+				documentoAnalise.getCnpjcpf());
 
-		PagadorRecebedor pagador = new PagadorRecebedor();
-		pagador.setId(0);
+		if (!CommonsUtil.semValor(documentoAnalisePesquisa))
+			documentoAnalise = documentoAnalisePesquisa;
+		else {
+			PagadorRecebedor pagador = new PagadorRecebedor();
+			pagador.setId(0);
 
-		pagador.setCnpj(pessoaParticipacao.getCnpjcpf());
-		pagador.setNome(pessoaParticipacao.getNomeRazaoSocial());
+			pagador.setCnpj(pessoaParticipacao.getCnpjcpf());
+			pagador.setNome(pessoaParticipacao.getNomeRazaoSocial());
 
-		pagador = pagadorRecebedorService.buscaOuInsere(pagador);
-		documentoAnalise.setPagador(pagador);
+			pagador = pagadorRecebedorService.buscaOuInsere(pagador);
+			documentoAnalise.setPagador(pagador);
+		}	
+
+		
 		documentoAnalise.adiconarEstadosPeloCadastro();
 		documentoAnaliseDao.create(documentoAnalise);
-		return pagador;
+		return documentoAnalise.getPagador();
 	}
 	
 	public PagadorRecebedor cadastrarPagadorRetornoRelato(RelatoDadosCadastrais dados, 
@@ -188,9 +217,11 @@ public class DocumentoAnaliseService {
 	
 	public void cadastrarPessoRetornoEngine(EngineRetornoRequestEnterprisePartnership partnership, User user,
 			DocumentoAnaliseDao documentoAnaliseDao, PagadorRecebedorService pagadorRecebedorService,
-			ContratoCobranca contratoCobranca, String motivo) {
+			ContratoCobranca contratoCobranca, String motivo,DocumentoAnalise documentoAnaliseConsulta) {
 
 		DocumentoAnalise documentoAnalise = new DocumentoAnalise();
+		
+		
 		documentoAnalise.setContratoCobranca(contratoCobranca);
 		documentoAnalise.setIdentificacao(partnership.getCompanyName());
 		String sCPFCNPJ ="";
@@ -205,8 +236,23 @@ public class DocumentoAnaliseService {
 
 			// if (documentoAnalise.getTipoPessoa() == "PJ") {
 			documentoAnalise.setCnpjcpf(sCPFCNPJ);
+
+			DocumentoAnalise documentoAnalisePesquisa = documentoAnaliseDao.cadastradoAnalise(contratoCobranca,
+					sCPFCNPJ);
+			if (!CommonsUtil.semValor(documentoAnalisePesquisa))
+				documentoAnalise = documentoAnalisePesquisa;
+
+			documentoAnalise.setOrigem("Engine2");
+			documentoAnalise.setDataCadastro(DateUtil.getDataHoraAgora());			
+			documentoAnalise.setUsuarioCadastro(documentoAnaliseConsulta.getUsuarioCadastro());
+			
+			
 			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.RELATO);
 			documentoAnalise.setLiberadoAnalise(true);
+			
+		
+			
+			
 		} else {
 			return;
 		}
@@ -226,7 +272,7 @@ public class DocumentoAnaliseService {
 	}
 	public void cadastrarPessoRetornoEngine(EngineRetornoExecutionResultRelacionamentosPessoaisPJPartnership pJPartnership, User user,
 			DocumentoAnaliseDao documentoAnaliseDao, PagadorRecebedorService pagadorRecebedorService,
-			ContratoCobranca contratoCobranca, String motivo) {
+			ContratoCobranca contratoCobranca, String motivo,DocumentoAnalise documentoAnaliseConsulta) {
 		
 		
 
@@ -263,6 +309,11 @@ public class DocumentoAnaliseService {
 		
 		if ( !CommonsUtil.semValor( documentoAnaliseDao.cadastradoAnalise(contratoCobranca, documentoAnalise.getCnpjcpf())))
 			return;
+		
+		documentoAnalise.setOrigem("Engine1");
+		documentoAnalise.setDataCadastro(DateUtil.getDataHoraAgora());
+		documentoAnalise.setUsuarioCadastro(documentoAnaliseConsulta.getUsuarioCadastro());
+		
 		
 		documentoAnalise.setMotivoAnalise(motivo);
 		documentoAnalise.setLiberadoAnalise(true);

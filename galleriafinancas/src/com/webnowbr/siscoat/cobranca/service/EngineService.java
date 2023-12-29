@@ -243,7 +243,7 @@ public class EngineService {
 					documentoAnaliseService.cadastrarPessoRetornoEngine(partnership, usuarioLogado, documentoAnaliseDao,
 							pagadorRecebedorService, documentoAnalise.getContratoCobranca(),
 							((CommonsUtil.mesmoValor("INAPTO", partnership.getCNPJStatus())) ? "INAPTO" : "")
-									+ "Empresa Vinculada ao " + documentoAnalise.getMotivoAnalise());
+									+ "Empresa Vinculada ao " + documentoAnalise.getMotivoAnalise(), documentoAnalise);
 				}
 			}
 
@@ -437,7 +437,7 @@ public class EngineService {
 					.getEnterpriseData().getPartnership().getPartnerships()) {
 
 				documentoAnaliseService.cadastrarPessoRetornoEngine(partnership, userSistema, documentoAnaliseDao,
-						pagadorRecebedorService, documentoAnalise.getContratoCobranca(), motivo);
+						pagadorRecebedorService, documentoAnalise.getContratoCobranca(), motivo, documentoAnalise);
 
 			}
 		}
@@ -473,7 +473,7 @@ public class EngineService {
 							documentoAnaliseService.cadastrarPessoRetornoEngine(
 									engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership, userSistema,
 									documentoAnaliseDao, pagadorRecebedorService,
-									documentoAnalise.getContratoCobranca(), motivo);
+									documentoAnalise.getContratoCobranca(), motivo, documentoAnalise);
 						}
 
 					if (!CommonsUtil.semValor(engineRetornoExecutionResultRelacionamentosPessoaisPJ.getRelationships()
@@ -483,7 +483,7 @@ public class EngineService {
 							documentoAnaliseService.cadastrarPessoRetornoEngine(
 									engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership, userSistema,
 									documentoAnaliseDao, pagadorRecebedorService,
-									documentoAnalise.getContratoCobranca(), motivo);
+									documentoAnalise.getContratoCobranca(), motivo, documentoAnalise);
 						}
 
 					if (!CommonsUtil.semValor(engineRetornoExecutionResultRelacionamentosPessoaisPJ.getRelationships()
@@ -493,7 +493,7 @@ public class EngineService {
 							documentoAnaliseService.cadastrarPessoRetornoEngine(
 									engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership, userSistema,
 									documentoAnaliseDao, pagadorRecebedorService,
-									documentoAnalise.getContratoCobranca(), motivo);
+									documentoAnalise.getContratoCobranca(), motivo, documentoAnalise);
 						}
 
 				}

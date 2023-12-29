@@ -13,7 +13,7 @@
 			<f:facet name="header">
 				<p:commandButton value="Adicionar" action="#{menuItemMB.clearFieldsMenuItem}"/>
 			</f:facet>
-				<p:column headerText="Nome">
+				<p:column headerText="Nome" filterBy="#{item.nome}" filterMatchMode="contains" sortBy="#{item.nome}">
 					<p:outputLabel value="#{item.nome}"></p:outputLabel>
 				</p:column>
 				<p:column headerText="Ação">
@@ -25,10 +25,10 @@
 				<p:column headerText="Permissão">
 				<p:outputLabel value="#{item.permissao}"></p:outputLabel>
 				</p:column>
-				<p:column headerText="Ordem">
+				<p:column headerText="Ordem" filterBy="#{item.ordem}" filterMatchMode="contains" sortBy="#{item.ordem}">
 				<p:outputLabel value="#{item.ordem}"/>
 				</p:column>
-				<p:column headerText="Tipo">
+				<p:column headerText="Tipo" filterBy="#{item.tipo}" filterMatchMode="contains" sortBy="#{item.tipo}">
 				<p:outputLabel value="#{item.tipo}"/>
 				</p:column>
 				<p:column headerText="ItemPai">

@@ -1299,7 +1299,7 @@ public class CcbService {
 							objetoCcb.setCpfEmitente(participante.getPessoa().getCnpj());
 						}
 					}
-					participante.setTipoParticipante("Devedor");
+					participante.setTipoParticipante("Comprador");
 								
 					run = tableRowAux.getCell(0).getParagraphArray(0).createRun();	
 					run.setFontSize(12);
@@ -1369,6 +1369,7 @@ public class CcbService {
 				totalProcessosFormatado = CommonsUtil.formataValorMonetarioCci(totalProcessos, "") + " ("
 						+ valorPorExtenso.toString() + ")";
 			}
+			XWPFRun runAssinatura = null;
 			for (XWPFParagraph p : document.getParagraphs()) {
 				List<XWPFRun> runs = p.getRuns();
 			    if (runs != null) {  	
@@ -1413,11 +1414,40 @@ public class CcbService {
 								r.addCarriageReturn();
 							}
 						}
+						
+						if(CommonsUtil.mesmoValor(text, "TextoAssinatura")){
+							text = trocaValoresXWPF(text, r, "TextoAssinatura", "");	 	
+							runAssinatura = r;
+							
+						}
 			        }
 			    }
-			}	
-		
-
+			}
+			if(!CommonsUtil.semValor(runAssinatura)) {
+				XWPFRun r = runAssinatura;
+				for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
+					r = r.getParagraph().createRun();
+					r.setText("______________________________________");
+					r.setBold(false);
+					r.setFontSize(12);
+					r.setFontFamily("Calibri");
+					r.addCarriageReturn();
+					XWPFRun r2 = r.getParagraph().createRun();
+					r2.setBold(true);
+					r2.setFontSize(12);
+					r2.setFontFamily("Calibri");
+					r2.setText(participante.getPessoa().getNome());
+					r2.addCarriageReturn();
+					r = r.getParagraph().createRun();
+					r.setFontSize(12);
+					r.setFontFamily("Calibri");
+					r.setText(participante.getTipoParticipante().toUpperCase());
+					r.addCarriageReturn();
+					r.addCarriageReturn();
+				}
+			}
+			
+			
 			organizaSegurados(segurados);
 			int indexSegurados = 61;
 			

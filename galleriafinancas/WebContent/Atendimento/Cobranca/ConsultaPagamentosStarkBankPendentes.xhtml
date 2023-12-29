@@ -155,6 +155,50 @@
 								<p:outputLabel value="#{pagamento.contasPagar.linhaDigitavelStarkBank}"/>												
 							</h:panelGrid>												
 						</p:panel>
+						<p:panel id="PixStarkBank" header="PIX"
+							style="margin-bottom:10px;" rendered="#{pagamento.contasPagar.formaTransferencia eq 'PIX'}">
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Chave PIX:" 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.pix}"/>	
+								
+								<p:outputLabel value="Banco:" 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.bancoTed}"/>	
+		
+								<p:outputLabel value="Banco:" 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.agenciaTed}"/>
+								
+								<p:outputLabel value="Banco:" 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.contaTed}"/>		
+								
+								<p:outputLabel value="Nome: " 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.nomeTed}"/>													
+							</h:panelGrid>												
+						</p:panel>
+						<p:panel id="TedStarkBank" header="TED"
+							style="margin-bottom:10px;" rendered="#{pagamento.contasPagar.formaTransferencia eq 'TED'}">
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Banco:" 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.bancoTed}"/>	
+		
+								<p:outputLabel value="Banco:" 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.agenciaTed}"/>
+								
+								<p:outputLabel value="Banco:" 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.contaTed}"/>		
+								
+								<p:outputLabel value="Nome: " 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.nomeTed}"/>										
+							</h:panelGrid>												
+						</p:panel>
 			        </p:rowExpansion>      
 			        <p:column styleClass="colunaResponsiva">	
 			       		<shiro:hasAnyRoles name="ROOT">  
