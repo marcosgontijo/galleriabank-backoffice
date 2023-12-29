@@ -17,6 +17,11 @@
 			</f:facet>
 			<h:panelGrid id="panelGridPreAprovadoSemEngine"
 				rendered="#{contratoCobrancaMB.isEngineProcessados() == false}">
+				<ui:repeat value="#{contratoCobrancaMB.preAprovadoPendencia}"
+					var="pendencia">
+					<p:outputLabel value="#{pendencia}" styleClass="labelBold" />
+				</ui:repeat>
+
 				<p:outputLabel value="Engine ainda não processado"
 					styleClass="labelBold" />
 			</h:panelGrid>

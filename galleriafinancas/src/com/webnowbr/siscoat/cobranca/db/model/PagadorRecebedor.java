@@ -2382,8 +2382,6 @@ public class PagadorRecebedor implements Serializable {
 		this.restricao = restricao;
 	}
 	
-	
-	}
 
 	public String getRetornoFinancas() {
 		return retornoFinancas;

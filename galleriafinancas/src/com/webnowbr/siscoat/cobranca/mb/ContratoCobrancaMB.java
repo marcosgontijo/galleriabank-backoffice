@@ -30442,12 +30442,6 @@ public class ContratoCobrancaMB {
 		ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
 		externalContext.redirect(getLaudoEndereco());
 	}
-<<<<<<< HEAD
-	
-=======
->>>>>>> branch 'master' of https://github.com/Galleria-Bank-Developers/backoffice.git
-	
-	
 
 	/**
 	 * @param fileRecibo the fileRecibo to set
