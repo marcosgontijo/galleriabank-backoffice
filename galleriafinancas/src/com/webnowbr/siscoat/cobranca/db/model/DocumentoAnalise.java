@@ -6,9 +6,11 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -16,6 +18,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
 
@@ -36,6 +40,8 @@ import com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
 
+import br.com.galleriabank.bigdata.cliente.model.financas.FinancasResponse;
+import br.com.galleriabank.bigdata.cliente.model.financas.FinancasResponseResultFinantialDataTaxReturns;
 import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
 import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetornoRequestFields;
 import br.com.galleriabank.dataengine.cliente.model.retorno.AntecedentesCriminais.EngineRetornoExecutionResultAntecedenteCriminaisEvidences;
@@ -48,6 +54,7 @@ import br.com.galleriabank.netrin.cliente.model.cenprot.ProtestosBrasilEstado;
 import br.com.galleriabank.netrin.cliente.model.dossie.DossieRequest;
 import br.com.galleriabank.netrin.cliente.model.processos.ProcessoResponse;
 import br.com.galleriabank.serasacrednet.cliente.util.GsonUtil;
+import io.jsonwebtoken.lang.Collections;
 
 public class DocumentoAnalise implements Serializable {
 
@@ -71,6 +78,10 @@ public class DocumentoAnalise implements Serializable {
 	private String motivoAnalise;
 	private String path;
 	private String tipo;
+	private String origem;
+	private Date dataCadastro; 
+	private String usuarioCadastro;
+	
 	private boolean liberadoAnalise;	
 	private boolean liberadoContinuarAnalise;
 	private boolean liberadoCertidoes;	
@@ -139,6 +150,8 @@ public class DocumentoAnalise implements Serializable {
 	private boolean isProtestoCenprotAvailable = false;
 	
 	private List<DocumentoAnaliseResumo> resumorelacionamentos;
+	
+	private String retornoFinancas;
 	
 
 	public List<DocumentoAnaliseResumo> getResumoProcesso() {
@@ -222,58 +235,65 @@ public class DocumentoAnalise implements Serializable {
 	
 	private String dialogHeader() {
 		String str = "";
-		EngineRetorno engine = null;
-		engine = GsonUtil.fromJson(getRetornoEngine(), EngineRetorno.class);
-		if (engine != null) {
-			if (engine.getConsultaCompleta() != null) {
-				EngineRetornoRequestFields nome = engine.getRequestFields().stream().filter(f -> f.getField().equals("nome"))
-						.findFirst().orElse(null);
-
-				EngineRetornoRequestFields cpf = engine.getRequestFields().stream().filter(g -> g.getField().equals("cpf"))
+		try {
+			EngineRetorno engine = null;
+			engine = GsonUtil.fromJson(getRetornoEngine(), EngineRetorno.class);
+			if (engine != null) {
+				if (engine.getConsultaCompleta() != null) {
+					EngineRetornoRequestFields nome = engine.getRequestFields().stream().filter(f -> f.getField().equals("nome"))
 							.findFirst().orElse(null);
-
-				EngineRetornoRequestFields cnpj = engine.getRequestFields().stream()
-							.filter(s -> s.getField().equals("cnpj")).findFirst().orElse(null);
-				
-				if (nome != null) {
-					str = nome.getValue();
-					str = str.trim();
-				}
-				
-				if (cpf != null) {
-					if (engine.getConsultaCompleta() != null && engine.getConsultaCompleta().getBestInfo().getAge() != null) {
-						str = String.join(" - ", str, engine.getConsultaCompleta().getBestInfo().getAge() + " Anos");
-					} else {
-						str = String.join(" - ", str, null);
+	
+					EngineRetornoRequestFields cpf = engine.getRequestFields().stream().filter(g -> g.getField().equals("cpf"))
+								.findFirst().orElse(null);
+	
+					EngineRetornoRequestFields cnpj = engine.getRequestFields().stream()
+								.filter(s -> s.getField().equals("cnpj")).findFirst().orElse(null);
+					
+					if (nome != null) {
+						str = nome.getValue();
+						str = str.trim();
 					}
 					
-					str = String.join(" - ", str, cpf.getValue());
-				}
-				
-				if (cnpj != null) {
-					str = String.join(" - ", str, cnpj.getValue());
-				}
-				if (getMotivoAnalise() != null && !getMotivoAnalise().isEmpty()) {
-					str = String.join(" - ", str, getMotivoAnalise());
-				}
-			} else {
-				if (engine.getDadosCadastraisPJ() != null) {
-					if (engine.getDadosCadastraisPJ().getBestInfo() != null) {						
-						str = engine.getDadosCadastraisPJ().getBestInfo().getCompanyName();
-						str = str.trim();
-						str = String.join(" - ", str, engine.getDadosCadastraisPJ().getCnpj());
+					if (cpf != null) {
+						if (engine.getConsultaCompleta() != null && engine.getConsultaCompleta().getBestInfo().getAge() != null) {
+							str = String.join(" - ", str, engine.getConsultaCompleta().getBestInfo().getAge() + " Anos");
+						} else {
+							str = String.join(" - ", str, null);
+						}
+						
+						str = String.join(" - ", str, cpf.getValue());
 					}
-				}
-			}			
-		} else {
-			str = this.getIdentificacao();
-			str = String.join(" - ", str, this.cnpjcpf);
-
+					
+					if (cnpj != null) {
+						str = String.join(" - ", str, cnpj.getValue());
+					}
+					if (getMotivoAnalise() != null && !getMotivoAnalise().isEmpty()) {
+						str = String.join(" - ", str, getMotivoAnalise());
+					}
+				} else {
+					if (engine.getDadosCadastraisPJ() != null) {
+						if (engine.getDadosCadastraisPJ().getBestInfo() != null) {						
+							str = engine.getDadosCadastraisPJ().getBestInfo().getCompanyName();
+							str = str.trim();
+							str = String.join(" - ", str, engine.getDadosCadastraisPJ().getCnpj());
+						}
+					}
+				}			
+			} else {
+				str = this.getIdentificacao();
+				str = String.join(" - ", str, this.cnpjcpf);
+	
+			}
+			if (this.pagador.getInicioEmpresa() != null) {
+				str = String.join(" - ", str, calcularIdade(this.pagador.getInicioEmpresa()) + " Anos");
+			}
+		} catch (Exception e) {
+			//e.printStackTrace();
 		}
-		if (this.pagador.getInicioEmpresa() != null) {
-			str = String.join(" - ", str, calcularIdade(this.pagador.getInicioEmpresa()) + " Anos");
-		}
-		return str;
+		if(!CommonsUtil.semValor(str))
+			return str;
+		else
+			return "Header";
 	}
 	
 	public String calcularIdade(Date data) {
@@ -505,11 +525,11 @@ public class DocumentoAnalise implements Serializable {
 			}
 
 			if (dado.getResumoDoClienteTraduzido().getCarteiraVencido() == null) {
-				scr.add(new DocumentoAnaliseResumo("Carteira vencido:", "Não Disponível"));
+				scr.add(new DocumentoAnaliseResumo("Carteira vencida:", "Não Disponível"));
 			} else {
 				String carteiraVencido = CommonsUtil
 						.formataValorMonetario(dado.getResumoDoClienteTraduzido().getCarteiraVencido());
-				scr.add(new DocumentoAnaliseResumo("Carteira vencido:", carteiraVencido));
+				scr.add(new DocumentoAnaliseResumo("Carteira vencida:", carteiraVencido));
 				if (dado.getResumoDoClienteTraduzido().getCarteiraVencido().compareTo(new BigDecimal(1000)) > 0) {
 					isDividaVencidaAvailable = true;
 				}
@@ -547,7 +567,7 @@ public class DocumentoAnalise implements Serializable {
 			}
 			
 			if (dado.getResumoDoClienteTraduzido().getDtInicioRelacionamento() == null) {
-				scr.add(new DocumentoAnaliseResumo("Data inicio relacionamento:", "--"));
+				scr.add(new DocumentoAnaliseResumo("Inicio relacionamento:", "--"));
 				setInicioRelacionamentoInexistente(true);
 			} else {		
 				String[] str = dado.getResumoDoClienteTraduzido().getDtInicioRelacionamento().split("-");
@@ -576,6 +596,85 @@ public class DocumentoAnalise implements Serializable {
 
 		return scr;
 	}
+	
+	public List<DocumentoAnaliseResumo> getResumoFinancas() {
+		List<DocumentoAnaliseResumo> financas = new ArrayList<>();
+		String texto = getRetornoFinancas();
+		FinancasResponse dado = GsonUtil.fromJson(getRetornoFinancas(), FinancasResponse.class);
+		
+		if (dado == null || dado.getResult() == null) {
+			financas.add(new DocumentoAnaliseResumo("Dados não disponíveis", "0"));
+		} else {
+			if (dado.getResult().get(0) != null) {
+				if (dado.getResult().get(0).getFinantialData() != null) {
+					financas.add(new DocumentoAnaliseResumo("Patrimonio", convertString(dado.getResult().get(0).getFinantialData().getTotalAssets())));
+					if (dado.getResult().get(0).getFinantialData().getTaxReturns() != null) {
+						List<FinancasResponseResultFinantialDataTaxReturns> lista = dado.getResult().get(0).getFinantialData().getTaxReturns().stream().collect(Collectors.toList());
+						lista = lista.stream().sorted(Comparator.comparing(FinancasResponseResultFinantialDataTaxReturns::getYear).reversed()).collect(Collectors.toList());
+						if (lista.size() > 3) {
+							for (int i = 0; i < 3; i++) {
+								financas.add(new DocumentoAnaliseResumo("IR ("+ lista.get(i).getYear() +")", lista.get(i).getStatus()));
+							}
+						} else {
+							for (int i = 0; i < lista.size(); i++) {
+								financas.add(new DocumentoAnaliseResumo("IR ("+ lista.get(i).getYear() +")", lista.get(i).getStatus()));
+							}
+						}
+					} else {
+						financas.add(new DocumentoAnaliseResumo("IR", "Não Disponível"));
+					}
+					if (dado.getResult().get(0).getFinantialData().getIncomeEstimates() != null) {
+						if (dado.getResult().get(0).getFinantialData().getIncomeEstimates().getCompanyOwnership() != null) {
+							financas.add(new DocumentoAnaliseResumo("Pró-labore", convertString(dado.getResult().get(0).getFinantialData().getIncomeEstimates().getCompanyOwnership())));
+						} else {
+							financas.add(new DocumentoAnaliseResumo("Pró-labore", "Não Disponível"));
+						}
+						if (dado.getResult().get(0).getFinantialData().getIncomeEstimates().getBigDateV2() != null) {
+							financas.add(new DocumentoAnaliseResumo("Renda", convertString(dado.getResult().get(0).getFinantialData().getIncomeEstimates().getBigDateV2()))); 
+						} else {
+							financas.add(new DocumentoAnaliseResumo("Renda", "Não Disponível"));
+						}
+					}
+				} else {
+					financas.add(new DocumentoAnaliseResumo("Patrimonio", "Não Disponível"));
+					financas.add(new DocumentoAnaliseResumo("IR", "Não Disponível"));
+					financas.add(new DocumentoAnaliseResumo("Pró-labore", "Não Disponível"));
+					financas.add(new DocumentoAnaliseResumo("Renda", "Não Disponível"));
+				}
+			}
+		}
+		
+		return financas;
+	}
+	
+    private String convertString(String input) {
+        String result = input.replaceAll("MM", " Milhões");
+        StringBuilder finalResult = new StringBuilder();
+
+        if (result.contains("SM")) {
+        	finalResult.append(multiplyNumbers(result.toString())).append(" ");
+        } else {
+        	finalResult.append(result).append(" ");
+        }
+        
+        return finalResult.toString().trim();
+    }
+
+    private String multiplyNumbers(String input) {
+        String[] words = input.split(" ");
+
+        StringBuilder result = new StringBuilder();
+        for (String word : words) {
+        	if (CommonsUtil.mesmoValor("SM", word)) continue;
+            try {
+                int number = Integer.parseInt(word);
+                result.append(String.valueOf(number * 1000)).append(" ");
+            } catch (NumberFormatException e) {
+                result.append(word).append(" ");
+            }
+        }
+        return result.toString().trim();
+    }
 	
 	public List<DocumentoAnaliseResumo> getResumoRelacionamentos() {
 		
@@ -631,6 +730,10 @@ public class DocumentoAnalise implements Serializable {
 	public boolean isPodeChamarEngine() {
 		return !isEngineProcessado() && (!this.motivoAnalise.startsWith("Empresa Vinculada")
 				&& !this.motivoAnalise.startsWith("Sócio Vinculado ao Proprietario Anterior"));
+	}
+	
+	public boolean isPodeChamarFinancas() {
+		return CommonsUtil.mesmoValor("PF", tipoPessoa) && CommonsUtil.semValor(getRetornoFinancas());
 	}
 
 	public boolean isEngineProcessado() {
@@ -1068,6 +1171,30 @@ public class DocumentoAnalise implements Serializable {
 //		}
 	}
 
+	public String getOrigem() {
+		return origem;
+	}
+
+	public void setOrigem(String origem) {
+		this.origem = origem;
+	}
+
+	public Date getDataCadastro() {
+		return dataCadastro;
+	}
+
+	public void setDataCadastro(Date dataCadastro) {
+		this.dataCadastro = dataCadastro;
+	}
+
+	public String getUsuarioCadastro() {
+		return usuarioCadastro;
+	}
+
+	public void setUsuarioCadastro(String usuarioCadastro) {
+		this.usuarioCadastro = usuarioCadastro;
+	}
+
 	public boolean isLiberadoAnalise() {
 		return liberadoAnalise;
 	}
@@ -1502,5 +1629,13 @@ public class DocumentoAnalise implements Serializable {
 
 	public void setGravamesRea(Set<GravamesRea> gravamesRea) {
 		this.gravamesRea = gravamesRea;
+	}
+
+	public String getRetornoFinancas() {
+		return retornoFinancas;
+	}
+
+	public void setRetornoFinancas(String retornoFinancas) {
+		this.retornoFinancas = retornoFinancas;
 	}
 }

@@ -83,6 +83,7 @@
 					</h:panelGrid>
 				</shiro:hasAnyRoles>
 
+				
 				<p:panel id="Status" header="Check-List" style="margin-bottom:20px;">
 
 					<ui:fragment
@@ -479,8 +480,7 @@
 												onLabel="Não assinado" offLabel="Assinado"
 												onIcon="ui-icon-close" offIcon="ui-icon-check"
 												style="width:=60px">
-												<p:ajax event="change"
-													 update="form:precisaReanalise"/>
+												<p:ajax event="change"  update="form:precisaReanalise"/>
 											</p:selectBooleanButton>
 											<p:spacer></p:spacer>
 											<p:outputLabel styleClass="labelBold">Precisa de Reanalise?</p:outputLabel>
@@ -489,9 +489,12 @@
 												disabled="#{contratoCobrancaMB.objetoContratoCobranca.agAssinatura}"
 												onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
 												offIcon="ui-icon-close" style="width:=60px" >
-												<p:ajax event="change"
-													update=":form:Status"/>
+												<p:ajax event="change" update=":form:Status"/>
 											</p:selectBooleanButton>
+											<p:outputLabel styleClass="labelBold">Data da Assinatura</p:outputLabel>
+											<p:calendar value="#{contratoCobrancaMB.objetoContratoCobranca.dataContratoAssinado}"
+												styleClass="dateTimeField" pattern="dd/MM/yyyy"
+												inputStyle="width:70px" />
 										</h:panelGrid>
 										
 										
@@ -534,7 +537,10 @@
 												<p:selectBooleanButton id="pajuAtualizado"
 													value="#{contratoCobrancaMB.objetoContratoCobranca.pajuAtualizado}"
 													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-													offIcon="ui-icon-close" style="width:=60px" />
+													offIcon="ui-icon-close" style="width:=60px" >
+													<p:ajax event="valueChange"
+													update=":form:Status"/>
+												</p:selectBooleanButton>
 											</h:panelGrid>
 											<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajuAtualizado}">
 												<p:outputLabel styleClass="labelBold">Reanalise Jurídico</p:outputLabel>
@@ -552,7 +558,7 @@
 											style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
 										border-radius: 5px; padding: 10px; 
-										margin-left: 20px;">
+										margin-left: 20px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio}">
 											<p:outputLabel styleClass="labelBold">Aguardando Envio Cartório</p:outputLabel>
 											<p:spacer></p:spacer>
 											<p:selectBooleanButton id="agEnvioCartorio"
@@ -560,6 +566,47 @@
 												value="#{contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio}"
 												onLabel="Não enviado" offLabel="Enviado"
 												onIcon="ui-icon-close" offIcon="ui-icon-check"
+												style="width:=60px">
+											</p:selectBooleanButton>
+											<p:spacer></p:spacer>
+											<p:commandButton value="Enviar p/ Pendência Externa" ajax="false" icon="ui-icon-check"
+												disabled="#{contratoCobrancaMB.objetoContratoCobranca.desabilitarEnviarParaCartorio()}"
+												action="#{contratoCobrancaMB.enviarParaPendenciaExterna}"
+												style="TEXT-DECORATION: bold;" >
+											</p:commandButton>
+											<p:commandButton value="Enviar p/ Exigências/Pagamentos" ajax="false" icon="ui-icon-check"
+												disabled="#{contratoCobrancaMB.objetoContratoCobranca.desabilitarEnviarParaCartorio()}"
+												action="#{contratoCobrancaMB.enviarParaExigenciasPagamentos}"
+												style="TEXT-DECORATION: bold;" >
+											</p:commandButton>
+										</h:panelGrid>
+										<h:panelGrid columns="2"
+											style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
+										-moz-border-radius: 5px;
+										border-radius: 5px; padding: 10px; 
+										margin-left: 20px;" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio 
+											and contratoCobrancaMB.objetoContratoCobranca.pendenciaExternaCartorio}">
+											<p:outputLabel styleClass="labelBold">Pendência Externa Resolvida?</p:outputLabel>
+											<p:spacer></p:spacer>
+											<p:selectBooleanButton id="pendenciaResolvidaCartorio"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaResolvidaCartorio}"
+												onLabel="Sim" offLabel="Não"
+												onIcon="ui-icon-check" offIcon="ui-icon-close"
+												style="width:=60px">
+											</p:selectBooleanButton>
+										</h:panelGrid>
+										<h:panelGrid columns="2"
+											style="background-color: #e4e4e4; width: 250px; height: 110px; -webkit-border-radius: 5px;
+										-moz-border-radius: 5px;
+										border-radius: 5px; padding: 10px; 
+										margin-left: 20px;" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio 
+											and !contratoCobrancaMB.objetoContratoCobranca.pendenciaExternaCartorio}">
+											<p:outputLabel styleClass="labelBold">Exigências/Pagamentos Resolvidos?</p:outputLabel>
+											<p:spacer></p:spacer>
+											<p:selectBooleanButton id="resolucaoExigenciaCartorio"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.resolucaoExigenciaCartorio}"
+												onLabel="Sim" offLabel="Não"
+												onIcon="ui-icon-check" offIcon="ui-icon-close"
 												style="width:=60px">
 											</p:selectBooleanButton>
 										</h:panelGrid>
@@ -1119,6 +1166,15 @@
 									styleClass="dateTimeField" />
 							</h:panelGrid>
 						</h:panelGrid>
+						
+						<h:panelGrid columns="2" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio}">
+							<p:outputLabel for="pendenciaCartorioObservacao"
+								value="Descrição da pendência: " styleClass="labelBold" />
+							<p:inputTextarea id="pendenciaCartorioObservacao" rows="10"
+								cols="48" maxlength="3000" onblur=""
+								counterTemplate="{0} characters remaining." autoResize="false"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaCartorioObservacao}" />
+						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
 
@@ -1319,7 +1375,14 @@
 							<p:outputLabel id="tipoValorComiteView"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.tipoValorComite}"
 								label="Status" style="width:100px;" />
-
+								
+							<p:outputLabel value="Carência: " styleClass="labelBold" />
+							<h:panelGroup>
+								<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.carenciaComite}" size="100"
+									style="width:60px;" />
+								<p:outputLabel value=" meses" />
+							</h:panelGroup>
+							
 							<p:outputLabel for="comentarioComiteView"
 								value="Comentários comitê: " styleClass="labelBold" />
 							<p:outputLabel id="comentarioComiteView" rows="10" cols="48"
@@ -1644,6 +1707,10 @@
 				</h:panelGroup>
 				
 				<ui:include
+					src="/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusCardRestricao.xhtml" />
+				
+				
+				<ui:include
 					src="/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusCardPreAprovado.xhtml" />
 
 				<h:panelGroup id="RecebidoPajulaudoPanel"
@@ -1666,7 +1733,7 @@
 								</p:inputText>
 
 								<p:outputLabel for="valorMercadoImovel"
-									value="Valor de mercado do imóvel: " styleClass="labelBold" />
+									value="Valor de mercado total dos imóveis: " styleClass="labelBold" />
 								<p:inputText id="valorMercadoImovel"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.valorMercadoImovel}"
 									onkeypress="return isNumberKey(event);"
@@ -1777,6 +1844,12 @@
 							<p:calendar id="dataPajuComentado" showOn="button" 
 								value="#{contratoCobrancaMB.objetoContratoCobranca.dataPajuComentado}"
 								size="100" pattern="dd/MM/yyyy" styleClass="dateTimeField" />
+								
+							<p:commandButton value="Download Modelo PAJU" ajax="false"
+								icon="ui-icon-check"
+								action="#{contratoCobrancaMB.downloadModeloPaju}"
+								style="TEXT-DECORATION: bold; ">
+							</p:commandButton>
 						</h:panelGrid>
 						<h:panelGrid columns="2"
 							rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel == true and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC'}">
@@ -1807,12 +1880,22 @@
 									<p:dataTable var="processosPessoas" id="processosPessoas"
 										value="#{pessoasProcessos.processos}"
 										size="small" sortBy="#{processosPessoas.id}"
-										sortOrder="ascending">
+										sortOrder="ascending" 
+										rowStyleClass="#{(processosPessoas.riscoAtivo eq true) ? 'riscoAtivo' : '' }"
+										rowKey="#{processosPessoas.id}">
+										
+										<p:column selectionMode="multiple" style="width:16px;text-align:center"/>      
 
 										<p:column style="text-align: center;width:175px;"
 											headerText="N°">
 											<p:outputLabel value="#{processosPessoas.numero}"
 												style="FONT-SIZE: 10pt;" />
+										</p:column>
+										
+										<p:column style="text-align: center;width:75px;"
+											headerText=" Valor Original: ">
+											<p:outputLabel value="#{processosPessoas.valor}"
+												style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
 										</p:column>
 
 										<p:column style="text-align: center;width:75px;"
@@ -1826,9 +1909,27 @@
 											<p:outputLabel value=" #{processosPessoas.quitar}"
 												style="FONT-SIZE: 10pt;" />
 										</p:column>
+										
+										<p:column style="text-align: center;width:150px;"
+											headerText=" Natureza ">
+											<p:outputLabel value=" #{processosPessoas.natureza}"
+												style="FONT-SIZE: 10pt;" />
+										</p:column>
+										
+										<p:column style="text-align: center;width:30px;" headerText="Risco Ativo" >
+											<p:outputLabel value="Sim"
+												style="FONT-SIZE: 10pt;" 
+												rendered="#{processosPessoas.riscoAtivo}"/>
+											<p:outputLabel value="Não"
+												style="FONT-SIZE: 10pt;" 
+												rendered="#{!processosPessoas.riscoAtivo}"/>
+										</p:column>
 
 										<p:column style="text-align: center;" headerText="Obs" >
 											<p:outputLabel value="#{processosPessoas.observacao}"
+												style="FONT-SIZE: 10pt;" />
+												<br/>
+											<p:outputLabel value="#{processosPessoas.origem}"
 												style="FONT-SIZE: 10pt;" />
 										</p:column>
 
@@ -1843,7 +1944,14 @@
 												update="form:RecebidoPajulaudoPanel form:ComitePanelView form:pessoasProcessos
 													processosPessoas " />
 										</p:column>
-									</p:dataTable>
+										
+									    <p:ajax event="rowSelectCheckbox" 
+									            listener="#{contratoCobrancaMB.onRowSelectProcessos}" />
+									    <p:ajax event="rowUnselectCheckbox" 
+									            listener="#{contratoCobrancaMB.onRowUnselectProcessos}"  />
+									    <p:ajax event="toggleSelect" 
+									            listener="#{contratoCobrancaMB.onAllRowsSelectProcessos}"  />
+            						</p:dataTable>
 								</p:dataViewListItem>
 							</p:dataView>
 
@@ -1855,6 +1963,13 @@
 									icon="ui-icon ui-icon-plus" ajax="true"
 									oncomplete="PF('pessoaDialog').show();"
 									update="pessoaDialogdlg" />
+									
+								<p:outputLabel value="Atualizar Valores: " styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+								<p:commandButton
+									action="#{contratoCobrancaMB.atualizarValorProcessoEmLote()}"
+									icon="ui-icon ui-icon-arrowrefresh-1-e" ajax="true"
+									update="form:pessoasProcessos" />
 							</h:panelGrid>
 						</h:panelGrid>
 
@@ -1961,6 +2076,7 @@
 				<p:panel id="Pessoas" header="Responsável"
 					style="margin-bottom:10px;"
 					rendered="#{( usuarioMB.objetoUsuario.administrador or contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro')}">
+					<p:messages />
 					<h:panelGrid columns="2">
 						<p:outputLabel for="Codigo1" value="Código do Responsável: "
 							styleClass="labelBold"
@@ -1976,13 +2092,17 @@
 							<p:inputText id="Codigo2"
 								value="#{contratoCobrancaMB.codigoResponsavel}"
 								label="Código do Responsável" style="width:150px;"
-								rendered="#{contratoCobrancaMB.updateMode}" />
+								rendered="#{contratoCobrancaMB.updateMode}" >
+								<f:ajax event="change" listener="#{contratoCobrancaMB.atualizaResponsavel()}" render="Pessoas comissaoCliente" ></f:ajax>
+							</p:inputText>
 						</shiro:lacksRole>
 						<shiro:hasAnyRoles name="PROFILE_ANALISTA_CREDITO">
 							<p:inputText id="Codigo2"
 								value="#{contratoCobrancaMB.codigoResponsavel}"
 								label="Código do Responsável" style="width:150px;"
-								disabled="true" rendered="#{contratoCobrancaMB.updateMode}" />
+								disabled="true" rendered="#{contratoCobrancaMB.updateMode}" >
+								<f:ajax event="change" listener="#{contratoCobrancaMB.atualizaResponsavel()}" render="Pessoas comissaoCliente" ></f:ajax>
+							</p:inputText>
 						</shiro:hasAnyRoles>
 						<p:outputLabel for="NomeResp" value="Nome do Responsável: "
 							styleClass="labelBold"
@@ -3029,223 +3149,70 @@
 
 				</p:panel>
 
-				<p:panel id="Imovel" header="Imóvel Ofertado Como Garantia"
-					style="margin-bottom:10px;"
-					rendered="#{( usuarioMB.objetoUsuario.administrador or contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro')}">
-					<h:panelGrid columns="2">
-						<p:outputLabel for="NumeroMatricula" value="Numero Matrícula: " />
-						<p:inputText id="NumeroMatricula"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.numeroMatricula}"
-							label="NumeroMatricula" onblur="" style="width:400px;" />
 
-						<p:outputLabel for="Cartorio" value="Cartório de Registro: " />
-						<p:inputText id="Cartorio"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.cartorio}"
-							label="Cartório" onblur="" style="width:400px;" />
+				<!-- painel do inserir imovel-->
+				<ui:include src="ContratoCobrancaInserirImovel.xhtml"></ui:include>
+				
+				
+				<h:panelGroup id="ImovelAdicionarPanel"
+					style="margin-bottom:20px;">
+					<p:panel header="Adicionar Matriculas"
+						rendered="#{( usuarioMB.objetoUsuario.administrador or contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro')}">
+						<p:commandButton icon="ui-icon-plus" style="margin-left: 10px;"
+							action="#{contratoCobrancaMB.clearImovelAdicionarDialog()}"
+							oncomplete="PF('imovelAdiconalDialog').show();"
+							update="imovelAdiconalForm">
+						</p:commandButton>
+						
+						<p:outputLabel value="Imovel Principal: " styleClass="labelBold" style="FONT-SIZE: 10pt;" />
+						<p:outputLabel value="Porcentagem: " style="FONT-SIZE: 10pt;" />
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.porcentagemImovelPrincipal}"
+							style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+						<p:outputLabel value="% - Registro: R$ " style="FONT-SIZE: 10pt;" />
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.valorRegistroImovelPrincipal}"
+							style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+							
+						<p:dataTable var="imovelAdd" id="imovelAdicionarDV"
+							value="#{contratoCobrancaMB.objetoContratoCobranca.listaImoveis}" 
+							paginator="false" style="width: 1200px; max-width: 100%"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+							<p:column style="text-align: center;width:175px;"
+								headerText="N° Matricula">
+								<p:outputLabel value="#{imovelAdd.imovel.numeroMatricula}"
+									style="FONT-SIZE: 10pt;" />
+							</p:column>
+							
+							<p:column style="text-align: center;width:75px;"
+								headerText=" Valor de Mercado: ">
+								<p:outputLabel value="#{imovelAdd.imovel.valorMercado}"
+									style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+							</p:column>
+							
+							<p:column style="text-align: center;width:75px;"
+								headerText="Porcentagem do valor total: ">
+								<p:outputLabel value="#{imovelAdd.porcentagem}"
+									style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+							</p:column>
+							
+							<p:column style="text-align: center;width:75px;"
+								headerText=" Valor Registro: ">
+								<p:outputLabel value="#{imovelAdd.valorRegistro}"
+									style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+							</p:column>
+							
+							<p:column style="text-align: center;width:75px;" headerText="">
+								<p:commandButton icon="ui-icon-pencil"
+									action="#{contratoCobrancaMB.editImovel(imovelAdd)}"
+									oncomplete="PF('imovelAdiconalDialog').show();"
+									update="imovelAdiconalForm" />
 
-						<p:outputLabel for="cartorioEstado" value="Estado Cartório: " />
-						<h:panelGroup>
-							<p:inputText id="cartorioEstado"
-								value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioEstado}" />
-							<p:outputLabel for="cartorioMunicipio"
-								value="Município Cartório: " />
-							<p:inputText id="cartorioMunicipio"
-								value="#{contratoCobrancaMB.objetoImovelCobranca.cartorioMunicipio}" />
-						</h:panelGroup>
-
-						<p:outputLabel for="numeroCartorio" value="Numero Cartório: " />
-						<p:inputText id="numeroCartorio"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.numeroCartorio}" />
-
-						<p:outputLabel for="CepImovel" value="Cep: " />
-						<p:inputMask id="CepImovel"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.cep}"
-							mask="99999-999" label="Cep">
-							<p:ajax event="blur"
-								update="EnderecoImovel BairroImovel CidadeImovel EstadoImovel"
-								listener="#{contratoCobrancaMB.getEnderecoByViaNet()}" />
-						</p:inputMask>
-
-						<p:outputLabel value="" />
-						<p:outputLabel
-							value="O sistema irá preencher automaticamente o endereço de acordo com o CEP informado. " />
-
-						<p:outputLabel for="EnderecoImovel" value="Endereço: " />
-						<p:inputText id="EnderecoImovel"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.endereco}"
-							label="Endereço" onblur="" style="width:400px;" />
-
-						<p:outputLabel for="ComplementoImovel" value="Complemento: " />
-						<p:inputText id="ComplementoImovel"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.complemento}"
-							label="Complemento" onblur="" style="width:400px;" />
-
-						<p:outputLabel for="BairroImovel" value="Bairro: " />
-						<p:inputText id="BairroImovel"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.bairro}"
-							label="Bairro" onblur="" style="width:400px;" />
-
-						<p:outputLabel for="EstadoImovel" value="Estado: " />
-						<p:selectOneMenu id="EstadoImovel"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.estado}"
-							label="Estado" style="width:410px;">
-							<f:selectItem itemValue="" itemLabel="Escolha o Estado" />
-							<f:selectItem itemValue="AC" itemLabel="Acre" />
-							<f:selectItem itemValue="AL" itemLabel="Alagoas" />
-							<f:selectItem itemValue="AP" itemLabel="Amapá" />
-							<f:selectItem itemValue="AM" itemLabel="Amazonas" />
-							<f:selectItem itemValue="BA" itemLabel="Bahia" />
-							<f:selectItem itemValue="CE" itemLabel="Ceará" />
-							<f:selectItem itemValue="DF" itemLabel="Distrito Federal" />
-							<f:selectItem itemValue="ES" itemLabel="Espirito Santo" />
-							<f:selectItem itemValue="GO" itemLabel="Goiás" />
-							<f:selectItem itemValue="MA" itemLabel="Maranhão" />
-							<f:selectItem itemValue="MT" itemLabel="Mato Grosso" />
-							<f:selectItem itemValue="MS" itemLabel="Mato Grosso Do Sul" />
-							<f:selectItem itemValue="MG" itemLabel="Minas Gerais" />
-							<f:selectItem itemValue="PA" itemLabel="Pará" />
-							<f:selectItem itemValue="PB" itemLabel="Paraiba" />
-							<f:selectItem itemValue="PR" itemLabel="Paraná" />
-							<f:selectItem itemValue="PE" itemLabel="Pernambuco" />
-							<f:selectItem itemValue="PI" itemLabel="Piauí" />
-							<f:selectItem itemValue="RJ" itemLabel="Rio De Janeiro" />
-							<f:selectItem itemValue="RN" itemLabel="Rio Grande Do Norte" />
-							<f:selectItem itemValue="RS" itemLabel="Rio Grande Do Sul" />
-							<f:selectItem itemValue="RO" itemLabel="Rondônia" />
-							<f:selectItem itemValue="RR" itemLabel="Roraima" />
-							<f:selectItem itemValue="SC" itemLabel="Santa Catarina" />
-							<f:selectItem itemValue="SP" itemLabel="São Paulo" />
-							<f:selectItem itemValue="SE" itemLabel="Sergipe" />
-							<f:selectItem itemValue="TO" itemLabel="Tocantins" />
-							<p:ajax event="valueChange" update="CidadeImovel"
-								listener="#{contratoCobrancaMB.objetoImovelCobranca.completeCidadesImovel}" />
-						</p:selectOneMenu>
-
-						<p:outputLabel for="CidadeImovel" value="Cidade: "
-							style="FONT-SIZE: 10pt;" />
-						<p:autoComplete id="CidadeImovel"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.cidade}"
-							completeMethod="#{contratoCobrancaMB.objetoImovelCobranca.completeCidadesImovel}"
-							var="cidade" itemLabel="#{cidade}" itemValue="#{cidade}"
-							dropdown="true" forceSelection="false" scrollHeight="250">
-						</p:autoComplete>
-
-						<!-- <p:outputLabel for="CidadeImovel" value="Cidade: " />
-						<p:inputText id="CidadeImovel"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.cidade}"
-							label="Cidade" onblur="" style="width:400px;" /> -->
-
-						<p:outputLabel for="linkGMapsImovel" value="Link Google Maps: " />
-						<p:inputText id="linkGMapsImovel"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}"
-							label="Link Google Maps" style="width:400px;">
-							<p:ajax event="keyup" update="gerarLinkimovel" />
-						</p:inputText>
-
-						<p:commandButton id="gerarLinkimovel" value="Gerar Link"
-							action="#{contratoCobrancaMB.getLinkMaps()}"
-							disabled="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps ne null 
-								and contratoCobrancaMB.objetoImovelCobranca.linkGMaps ne ''}"
-							update="linkGMapsImovel botaoLinkImovel gerarLinkimovel" />
-
-						<h:panelGroup id="botaoLinkImovel">
-							<a href="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}"
-								class="linkPDF" target="_blank"
-								style="background: linear-gradient(90deg, rgba(159, 196, 24, 1) 0%, rgba(115, 158, 46, 1) 100%); padding: 5px; -webkit-border-radius: 5px; text-decoration: none; -moz-border-radius: 5px; border-radius: 5px;"><b>Abrir
-									link no Google Maps</b></a>
-						</h:panelGroup>
-
-						<p:outputLabel for="Tipo" value="Tipo: " />
-						<p:autoComplete id="Tipo"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.tipo}"
-							completeMethod="#{contratoCobrancaMB.objetoImovelCobranca.completeTipoImovel}"
-							autocomplete="no" dropdown="true" forceSelection="true"
-							var="tipo"
-							itemValue="#{contratoCobrancaMB.objetoImovelCobranca.getValue(tipo)}"
-							itemLabel="#{contratoCobrancaMB.objetoImovelCobranca.getLabel(tipo)}"
-							scrollHeight="250">
-						</p:autoComplete>
-
-						<p:outputLabel for="AreaTotal"
-							value="Área Total / Terreno (metros):  " />
-						<h:panelGroup>
-							<p:inputText id="AreaTotal"
-								value="#{contratoCobrancaMB.objetoImovelCobranca.areaTotal}"
-								style="width:150px;" />
-							<p:spacer width="10px" />
-							<p:outputLabel for="valorIptu" value="Valor IPTU: " />
-							<p:inputText id="valorIptu"
-								value="#{contratoCobrancaMB.objetoImovelCobranca.valorIptu}"
-								onkeypress="return isNumberKey(event);"
-								onkeydown="FormataValor(this, 13, event, 2);"
-								converter="bigDecimalConverter" />
-						</h:panelGroup>
-
-						<p:outputLabel for="AreaConstruida"
-							value="Área Útil / Construída (metros): " />
-						<h:panelGroup>
-							<p:inputText id="AreaConstruida"
-								value="#{contratoCobrancaMB.objetoImovelCobranca.areaConstruida}"
-								style="width:150px;" />
-							<p:spacer width="10px" />
-							<p:outputLabel for="valorCondominio" value="Valor Condomínio: " />
-							<p:inputText id="valorCondominio"
-								value="#{contratoCobrancaMB.objetoImovelCobranca.valorCondominio}"
-								onkeypress="return isNumberKey(event);"
-								onkeydown="FormataValor(this, 13, event, 2);"
-								converter="bigDecimalConverter" />
-						</h:panelGroup>
-
-						<p:outputLabel for="valorEstimado"
-							value="Qual o valor estimado do imóvel? " />
-						<p:inputText id="valorEstimado"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.valoEstimado}"
-							onkeypress="return isNumberKey(event);"
-							onkeydown="FormataValor(this, 13, event, 2);"
-							converter="bigDecimalConverter" />
-
-						<p:outputLabel for="dataCompra" value="Data da compra do Imóvel " />
-						<h:panelGroup>
-							<p:inputMask id="dataCompra"
-								value="#{contratoCobrancaMB.objetoImovelCobranca.dataCompra}"
-								mask="99/99/9999" label="Data de Nascimento">
-								<p:ajax event="blur" update="idadeCompra"
-									listener="#{contratoCobrancaMB.objetoImovelCobranca.calcularDataDeCompra()}" />
-								<f:convertDateTime pattern="dd/MM/yyyy" />
-							</p:inputMask>
-							<p:spacer width="10px" />
-							<p:outputLabel for="idadeCompra" value="Idade da Compra:  " />
-							<p:inputText id="idadeCompra"
-								value="#{contratoCobrancaMB.objetoImovelCobranca.idadeCompra}" />
-						</h:panelGroup>
-
-						<p:outputLabel for="nomeProprietario"
-							value="Nome do Proprietario: " />
-						<p:inputText id="nomeProprietario"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.nomeProprietario}"
-							style="width:400px;" />
-
-						<p:outputLabel for="Ocupacao" value="Ocupação: " />
-						<p:selectOneMenu id="Ocupacao"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.ocupacao}"
-							label="Ocupação" style="width:410px;">
-							<f:selectItem itemValue="" itemLabel="Selecione" />
-							<f:selectItem itemValue="Ocupado" itemLabel="Ocupado" />
-							<f:selectItem itemValue="Ocupado por mim"
-								itemLabel="Ocupado por mim" />
-							<f:selectItem itemValue="Alugado" itemLabel="Alugado" />
-							<f:selectItem itemValue="Vazio" itemLabel="Vazio" />
-							<f:selectItem itemValue="Não sei" itemLabel="Não sei" />
-						</p:selectOneMenu>
-
-						<p:outputLabel for="inscricaoMunicipal"
-							value="Inscrição Municipal: " />
-						<p:inputText id="inscricaoMunicipal"
-							value="#{contratoCobrancaMB.objetoImovelCobranca.inscricaoMunicipal}" />
-
-
-					</h:panelGrid>
-				</p:panel>
+								<p:commandButton icon="ui-icon-trash"
+									action="#{contratoCobrancaMB.removeImovel(imovelAdd)}"
+									update="form:ImovelAdicionarPanel" />
+							</p:column>
+						</p:dataTable>
+					</p:panel>
+				</h:panelGroup>
 
 				<h:panelGroup id="Dados">
 					<p:panel header="Dados do Contrato" style="margin-bottom:10px;"
@@ -3808,9 +3775,10 @@
 					</p:panel>
 				</h:panelGroup>
 
-				<shiro:hasAnyRoles
+				
+				<h:panelGroup id="comissaoCliente" style="margin-bottom:20px;">
+					<shiro:hasAnyRoles
 					name="ROOT, PROFILE_CONTRATO, PROFILE_ANALISTA_POS_COMITE">
-					<h:panelGroup id="comissaoCliente" style="margin-bottom:20px;">
 						<p:panel header="Comissão Cliente" style="margin-bottom:10px;"
 							rendered="#{( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'))}">
 							<h:panelGrid columns="2">
@@ -3895,11 +3863,10 @@
 									<p:autoComplete id="BancoResp" value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.banco}"
 										completeMethod="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.completeBancos}"
 										var="banco" itemLabel="#{banco}" itemValue="#{banco}"
-
 										forceSelection="true" styleClass="labelBold" label="Conta" 
 										style="width:100px;"
 										scrollHeight="250" >
-										<p:ajax event="itemSelect" 
+										<p:ajax event="itemSelect"  update="contaRespValidacao"
 											listener="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.verificaAlteracaoContaCobranca}" />
 									</p:autoComplete>		
 
@@ -3909,15 +3876,14 @@
 										value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.agencia}"
 										label="Agência" onblur=""
 										style="width:100px;" >
-										<p:ajax event="valueChange"
+										<p:ajax event="valueChange"  update="contaRespValidacao"
 											listener="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.verificaAlteracaoContaCobranca}" />
 									</p:inputText>				
 													
 
-									<p:outputLabel for="ContaResp" value="Conta: "
+									<p:outputLabel id="contaRespValidacao" for="ContaResp" value="Conta: "
 										styleClass="labelBold">
-										<i class="fa font-solid #{pagadorRecebedorMB.objetoPagadorRecebedor.contaBancariaValidada?'fa-check green':'fa-ban red'}"
-											id="contaValidacao" />
+										<i class="fa font-solid #{contratoCobrancaMB.objetoContratoCobranca.responsavel.contaBancariaValidada?'fa-check green':'fa-ban red'}" />
 									</p:outputLabel>
 									
 									<h:panelGroup>
@@ -3925,7 +3891,7 @@
 											value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.conta}"
 											styleClass="labelBold" label="Conta"
 											onblur="" style="width:100px;" >
-											<p:ajax event="valueChange"
+											<p:ajax event="valueChange" update="contaRespValidacao"
 												listener="#{pagadorRecebedorMB.verificaAlteracaoContaCobranca}" />
 										</p:inputText>
 										<p:commandButton value="Verificar"  ajax="true" 
@@ -3941,7 +3907,7 @@
 										value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.contaDigito}"
 										styleClass="labelBold" label="contaDigito" onblur="" maxlength="1"
 										style="width:100px;margin-right: 10px;">
-										<p:ajax event="valueChange"
+										<p:ajax event="valueChange"  update="contaRespValidacao"
 											listener="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.verificaAlteracaoContaCobranca}" />
 									</p:inputText>
 									
@@ -3954,75 +3920,74 @@
 										<f:selectItem itemValue="CONTA_POUPANCA"
 											itemLabel="Conta Poupança" />
 	
-										<p:ajax event="valueChange"
+										<p:ajax event="valueChange" update="contaRespValidacao"
 											listener="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.verificaAlteracaoContaCobranca}" />
 									</p:selectOneMenu>
 										
 
-									<p:outputLabel for="PixResp" value="Pix: "
+									<p:outputLabel id="pixRespValidacao"  for="PixResp" value="Pix: "
 										styleClass="labelBold" >
 										<i class="fa font-solid #{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado?'fa-check green':'fa-ban red'}"
-										id="pixValidacao" />
+										/>
 									</p:outputLabel>
 									<h:panelGroup>
 										<p:inputText id="PixResp"
 											value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pix}"
 											styleClass="labelBold" label="Conta"
 											onblur="" style="width:100px;" >
-											<p:ajax event="valueChange"
+											<p:ajax event="valueChange" update="pixRespValidacao"
 												listener="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.verificaAlteracaoPix}" />
 										</p:inputText>
-										<p:commandButton value="Verificar" ajax="true" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
+										<p:commandButton  value="Verificar" ajax="true" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
 											icon="ui-icon-check" action="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.validaPix}"
 											style="TEXT-DECORATION: bold" />
 									</h:panelGroup>
 									
-								<p:outputLabel for="tipoPix" value="Tipo Do Pix "
-									styleClass="labelBold" />
-								<p:selectOneMenu id="tipoPix"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.tipoPix}">
-									<f:selectItem itemValue="CPF" itemLabel="CPF" />
-									<f:selectItem itemValue="CNPJ" itemLabel="CNPJ" />
-									<f:selectItem itemValue="TELEFONE" itemLabel="Telefone" />
-									<f:selectItem itemValue="EMAIL" itemLabel="E-mail" />
-									<f:selectItem itemValue="CHAVE_ALEATORIA"
-										itemLabel="Chave Aleatória" />
-									<p:ajax event="valueChange"
-										listener="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.verificaAlteracaoPix}" />
-								</p:selectOneMenu>
-
-								<p:outputLabel value="Banco: " for="Banco"  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
-									styleClass="labelBold" />
-								<p:outputLabel  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.bancoPix}"
-									styleClass="labelBold" />
-
-								<p:outputLabel for="Agencia" value="Agência: "  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
-									styleClass="labelBold" />
-								<p:outputLabel  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.agenciaPix}"
-									styleClass="labelBold" />
-
-								<p:outputLabel for="Conta" value="Conta: "  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
-									styleClass="labelBold">
-								</p:outputLabel>
-								<p:outputLabel  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.contaPix}"
-									styleClass="labelBold" />
-
-								<p:outputLabel for="ContaDigito" value="Conta Digito: "  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
-									styleClass="labelBold">
-								</p:outputLabel>
-								<p:outputLabel  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
-									value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.contaDigitoPix}"
-									styleClass="labelBold" />
-									
-
+									<p:outputLabel for="tipoPix" value="Tipo Do Pix "
+										styleClass="labelBold" />
+									<p:selectOneMenu id="tipoPix"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.tipoPix}">
+										<f:selectItem itemValue="CPF" itemLabel="CPF" />
+										<f:selectItem itemValue="CNPJ" itemLabel="CNPJ" />
+										<f:selectItem itemValue="TELEFONE" itemLabel="Telefone" />
+										<f:selectItem itemValue="EMAIL" itemLabel="E-mail" />
+										<f:selectItem itemValue="CHAVE_ALEATORIA"
+											itemLabel="Chave Aleatória" />
+										<p:ajax event="valueChange" update="pixRespValidacao"
+											listener="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.verificaAlteracaoPix}" />
+									</p:selectOneMenu>
+	
+									<p:outputLabel value="Banco: " for="Banco"  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
+										styleClass="labelBold" />
+									<p:outputLabel  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.bancoPix}"
+										styleClass="labelBold" />
+	
+									<p:outputLabel for="Agencia" value="Agência: "  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
+										styleClass="labelBold" />
+									<p:outputLabel  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.agenciaPix}"
+										styleClass="labelBold" />
+	
+									<p:outputLabel for="Conta" value="Conta: "  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
+										styleClass="labelBold">
+									</p:outputLabel>
+									<p:outputLabel  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.contaPix}"
+										styleClass="labelBold" />
+	
+									<p:outputLabel for="ContaDigito" value="Conta Digito: "  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
+										styleClass="labelBold">
+									</p:outputLabel>
+									<p:outputLabel  rendered="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.contaDigitoPix}"
+										styleClass="labelBold" />
 								</h:panelGrid>
 							</h:panelGrid>
 						</p:panel>
-					</h:panelGroup>
-				</shiro:hasAnyRoles>
+					</shiro:hasAnyRoles>
+				</h:panelGroup>
+				
 
 				<h:panelGroup id="DividasPanel" style="margin-bottom:20px;">
 					<p:panel header="Dívidas" style="margin-bottom:10px;"
@@ -4700,7 +4665,7 @@
 				</script>
 			</p:panel>	
 			  	
-			<p:panel id="UploadArquivosInternos" header="Arquivo Interno(s)" style="margin-bottom:10px;" rendered="#{( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' ))}">						
+			<p:panel id="UploadArquivosInternos" header="Arquivo Interno(s)" style="margin-bottom:10px;" rendered="#{( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' ))}">						
 				<p:panel id="ArquivosInternos" header="Selecionar Arquivo  Para Upload" style="margin-bottom:10px;text-align: center;">							
 					<h:panelGrid columns="1">		
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileInternoUpload}" mode="advanced" dragDropSupport="true"
@@ -4785,7 +4750,7 @@
 				</script>
 			</p:panel>
 				
-			<p:panel id="UploadArquivosFaltantes" header="Arquivo Faltante(s)" style="margin-bottom:10px;" rendered="#{( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' ))}">						
+			<p:panel id="UploadArquivosFaltantes" header="Arquivo Faltante(s)" style="margin-bottom:10px;" rendered="#{( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' ))}">						
 				<p:panel id="ArquivosFaltantes" header="Selecionar Arquivo Para Upload" style="margin-bottom:10px;text-align: center;">							
 					<h:panelGrid columns="1">		
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileFaltanteUpload}" mode="advanced" dragDropSupport="true"
@@ -4968,7 +4933,7 @@
 			<p:messages/>
 		
 			<p:panel id="UploadArquivos" header="Arquivo(s)" style="margin-bottom:10px;" >						
-				<p:panel id="Arquivos" header="Selecionar Arquivo Para Upload" style="margin-bottom:10px;text-align: center;" rendered="#{( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC'))}">							
+				<p:panel id="Arquivos" header="Selecionar Arquivo Para Upload" style="margin-bottom:10px;text-align: center;" rendered="#{( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' ))}">							
 					<h:panelGrid columns="1">		
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileUpload}" mode="advanced" dragDropSupport="true"
                           update="ArquivosSalvos msgArquivo" />								
@@ -5577,8 +5542,6 @@
 							label="Contrato" onkeypress="return isNumberKey(event);"
 							onkeydown="FormataValor(this, 13, event, 2);"
 							converter="bigDecimalConverter">
-							<p:ajax event="blur" update="valorAtualizadoProcesso"
-								listener="#{contratoCobrancaMB.atualizarValorProcesso()}" />
 						</p:inputText>
 
 						<p:outputLabel value="Numero: " styleClass="labelBold"
@@ -5586,28 +5549,41 @@
 						<p:inputText
 							value="#{contratoCobrancaMB.processoSelecionado.numero}"
 							label="Contrato">
-							<p:ajax event="blur" update="valorAtualizadoProcesso"
-								listener="#{contratoCobrancaMB.atualizarValorProcesso()}" />
 						</p:inputText>
 
 						<p:outputLabel value="Valor Atualizado: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />
-						<p:inputText id="valorAtualizadoProcesso"
-							value="#{contratoCobrancaMB.processoSelecionado.valorAtualizado}"
-							label="Contrato" onkeypress="return isNumberKey(event);"
-							onkeydown="FormataValor(this, 13, event, 2);"
-							converter="bigDecimalConverter" />
-
+						<h:panelGroup>
+							<p:inputText id="valorAtualizadoProcesso"
+								value="#{contratoCobrancaMB.processoSelecionado.valorAtualizado}"
+								label="Contrato" onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 13, event, 2);"
+								converter="bigDecimalConverter" />
+							<p:commandButton action="#{contratoCobrancaMB.atualizarValorProcesso()}"
+								icon="ui-icon ui-icon-arrowrefresh-1-e" ajax="true"
+								update="valorAtualizadoProcesso" />
+						</h:panelGroup>
+							
 						<p:outputLabel value="Quitar: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />
 						<p:selectOneMenu
 							value="#{contratoCobrancaMB.processoSelecionado.quitar}">
 							<f:selectItem itemValue="" itemLabel="Selecione" />
 							<f:selectItem itemValue="Quitar" itemLabel="Quitar" />
-							<f:selectItem itemValue="Quitar ou indicar bens"
-								itemLabel="Quitar ou indicar bens" />
+							<f:selectItem itemValue="Quitar ou indicar bens" itemLabel="Quitar ou indicar bens" />
 							<f:selectItem itemValue="Indicar bens" itemLabel="Indicar bens" />
 						</p:selectOneMenu>
+						
+						<p:outputLabel value="Natureza do Processo: " styleClass="labelBold"
+							style="font-weight: bold; font-size: 18px;" />
+						<p:autoComplete value="#{contratoCobrancaMB.processoSelecionado.natureza}" dropdown="true"
+							completeMethod="#{contratoCobrancaMB.processoSelecionado.naturezaProcessos()}"
+							scrollHeight="250">
+						</p:autoComplete>
+						
+						<p:outputLabel value="Risco Ativo: " styleClass="labelBold"
+							style="font-weight: bold; font-size: 18px;" />
+						<p:selectBooleanCheckbox value="#{contratoCobrancaMB.processoSelecionado.riscoAtivo}" />
 
 						<p:outputLabel value="Obs: " styleClass="labelBold"
 							style="font-weight: bold; font-size: 18px;" />
@@ -6325,6 +6301,10 @@
 				</h:panelGroup>
 			</h:form>
 		</p:dialog>
+		
+		<ui:include src="../../Dialog/ImovelCobrancaAdicionaisDialog.xhtml">
+			<ui:param name="mbean" value="#{contratoCobrancaMB}"></ui:param>		
+		</ui:include>
 		
 	</ui:define>
 </ui:composition>

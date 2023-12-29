@@ -171,6 +171,7 @@
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="false" />
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" />
+		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.blockForm}" value="false" />
 		                </p:commandButton>					              
 		           
 		                <p:commandButton value="PDF P.A." ajax="false" icon="ui-icon-print" rendered="#{contratos.analiseReprovada == false 
@@ -220,6 +221,7 @@
 							<f:setPropertyActionListener target="#{contratoCobrancaMB.crmMode}" value="false" />
 							<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
 							<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" />
+							<f:setPropertyActionListener target="#{contratoCobrancaMB.blockForm}" value="false" />
 						</p:commandButton>
 						<p:spacer height="10" />					
 						<p:commandButton value="Ficha Individual" icon="ui-icon-arrowthick-1-s" oncomplete="PF('fichaIndividual').show();" action="#{impressoesPDFMB.clearFieldsFichaIndividual}" update=":form:PanelPDF :form:dados">

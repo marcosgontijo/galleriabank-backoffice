@@ -20,6 +20,7 @@ public class PagadorRecebedorConsulta implements Serializable {
 	private Date dataConsulta;
 
 	private String retornoConsulta;
+	private String retornoFinancas;
 
 	public long getId() {
 		return id;
@@ -74,6 +75,14 @@ public class PagadorRecebedorConsulta implements Serializable {
 	public void setTipo(String tipo) {
 		this.tipo = tipo;
 		this.tipoEnum = DocumentosAnaliseEnum.parse(tipo);
+	}
+
+	public String getRetornoFinancas() {
+		return retornoFinancas;
+	}
+
+	public void setRetornoFinancas(String retornoFinancas) {
+		this.retornoFinancas = retornoFinancas;
 	}
 
 

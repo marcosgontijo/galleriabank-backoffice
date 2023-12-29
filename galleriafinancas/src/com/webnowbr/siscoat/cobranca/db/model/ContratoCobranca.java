@@ -169,6 +169,7 @@ public class ContratoCobranca implements Serializable {
 	private Set<DataVistoria> listDatasVistoria;
 	private Set<Averbacao> listAverbacao;
 	private Set<CcbParticipantes> listaParticipantes = new HashSet<>();
+	private Set<ImovelCobrancaAdicionais> listaImoveis = new HashSet<>();
 
 	// n�o persistida a lista abaixo
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionado;
@@ -471,6 +472,8 @@ public class ContratoCobranca implements Serializable {
 	private boolean contratoConferido;
 	private String contratoConferidoUsuario;
 
+	private Date dataContratoAssinado;
+	
 	private Date agAssinaturaData;
 	private boolean agAssinatura;
 	private String agAssinaturaUsuario;
@@ -478,6 +481,16 @@ public class ContratoCobranca implements Serializable {
 	private Date agEnvioCartorioData;
 	private boolean agEnvioCartorio;
 	private String agEnvioCartorioUsuario;
+	
+	private boolean pendenciaExternaCartorio;
+	
+	private Date pendenciaResolvidaCartorioData;
+	private boolean pendenciaResolvidaCartorio;
+	private String pendenciaResolvidaCartorioUsuario;
+	
+	private Date resolucaoExigenciaCartorioData;
+	private boolean resolucaoExigenciaCartorio;
+	private String resolucaoExigenciaCartorioUsuario;
 
 	private Date agRegistroData;
 	private boolean agRegistro;
@@ -645,6 +658,8 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal taxaPreDefinida;
 	private BigInteger prazoMaxPreAprovado;
 	private BigDecimal valorMercadoImovel;
+	private BigDecimal porcentagemImovelPrincipal;
+	private BigDecimal valorRegistroImovelPrincipal;
 
 	private BigDecimal valorVendaForcadaImovel;
 	private String comentarioJuridico;
@@ -771,6 +786,7 @@ public class ContratoCobranca implements Serializable {
 	private Date pagamentoCustasCartorioData;
 	private String exigenciasCartorioObservacao;
 	private String numeroPreAnotacaoCartorio;
+	private String pendenciaCartorioObservacao;
 
 	private BigDecimal cetMes;
 
@@ -834,6 +850,7 @@ public class ContratoCobranca implements Serializable {
 	private Responsavel analistaGeracaoPAJU;
 
 	private Date notificacaoCartorioData;
+	private Date notificacaoCobrancaData;
 
 	private boolean contratoEmCartorio;
 	private Date contratoEmCartorioData;
@@ -860,6 +877,9 @@ public class ContratoCobranca implements Serializable {
 	private boolean riscoTotal20kTaxa;
 	private boolean riscoTotal50kTaxa;
 	private boolean documentosAnalisados;
+	
+	public int qtdParcelasAtraso;
+	public BigDecimal somaParcelasAtraso;
 
 	// FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13
 	public BigDecimal calcularValorTotalContasPagas() {
@@ -1310,13 +1330,31 @@ public class ContratoCobranca implements Serializable {
 						&& this.agEnvioCartorio) {
 					c.setStatusEsteira("Ag. Envio Cartório");
 				}
+				
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+						&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
+						&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
+						&& this.ccbPronta && this.contratoConferido && !this.agAssinatura && !this.reanalise
+						&& !this.agEnvioCartorio && this.pendenciaExternaCartorio && !this.pendenciaResolvidaCartorio) {
+					c.setStatusEsteira("Ag. Resolução Pendência Cartório");
+				}
+				
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+						&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
+						&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
+						&& this.ccbPronta && this.contratoConferido && !this.agAssinatura && !this.reanalise
+						&& !this.agEnvioCartorio && !this.pendenciaExternaCartorio && !this.resolucaoExigenciaCartorio) {
+					c.setStatusEsteira("Ag. Resolução Exigências/Pagamento");
+				}
 
 				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
 						&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
 						&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
 						&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
 						&& this.ccbPronta && this.contratoConferido && !this.agAssinatura && !this.agEnvioCartorio
-						&& this.agRegistro) {
+						&& this.resolucaoExigenciaCartorio && this.agRegistro) {
 					c.setStatusEsteira("Ag. Registro");
 				}
 			}
@@ -1389,6 +1427,12 @@ public class ContratoCobranca implements Serializable {
 		} else {
 			return false;
 		}
+	}
+	
+	public boolean isEmReanalise() {
+		List<String> lstEmAnalise = Arrays.asList("Aprovado", "Reprovado", "Baixado", "Desistência Cliente");
+		return reanalise && !reanalisePronta && !lstEmAnalise.contains(this.status) && leadCompleto
+				&& inicioAnalise;
 	}
 	
 	public boolean isEmAgComite() {
@@ -7154,13 +7198,31 @@ public class ContratoCobranca implements Serializable {
 					&& this.agEnvioCartorio) {
 				this.statusEsteira = "Ag. Envio Cartório";
 			}
+			
+			if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+					&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+					&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
+					&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
+					&& this.ccbPronta && this.contratoConferido && !this.agAssinatura && !this.reanalise
+					&& !this.agEnvioCartorio && this.pendenciaExternaCartorio && !this.pendenciaResolvidaCartorio) {
+				this.statusEsteira = "Ag. Resolução Pendência Cartório";
+			}
+			
+			if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+					&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+					&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
+					&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
+					&& this.ccbPronta && this.contratoConferido && !this.agAssinatura && !this.reanalise
+					&& !this.agEnvioCartorio && !this.pendenciaExternaCartorio && !this.resolucaoExigenciaCartorio) {
+				this.statusEsteira = "Ag. Resolução Exigências/Pagamento";
+			}
 
 			if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
 					&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
 					&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
 					&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
 					&& this.ccbPronta && this.contratoConferido && !this.agAssinatura && !this.agEnvioCartorio
-					&& this.agRegistro) {
+					&& this.resolucaoExigenciaCartorio && this.agRegistro) {
 				this.statusEsteira = "Ag. Registro";
 			}
 		}
@@ -7404,4 +7466,124 @@ public class ContratoCobranca implements Serializable {
 		this.listaParticipantes = listaParticipantes;
 	}
 
+	public Date getDataContratoAssinado() {
+		return dataContratoAssinado;
+	}
+
+	public void setDataContratoAssinado(Date dataContratoAssinado) {
+		this.dataContratoAssinado = dataContratoAssinado;
+	}
+
+	public Set<ImovelCobrancaAdicionais> getListaImoveis() {
+		return listaImoveis;
+	}
+
+	public void setListaImoveis(Set<ImovelCobrancaAdicionais> listaImoveis) {
+		this.listaImoveis = listaImoveis;
+	}
+
+	public BigDecimal getPorcentagemImovelPrincipal() {
+		return porcentagemImovelPrincipal;
+	}
+
+	public void setPorcentagemImovelPrincipal(BigDecimal porcentagemImovelPrincipal) {
+		this.porcentagemImovelPrincipal = porcentagemImovelPrincipal;
+	}
+
+	public BigDecimal getValorRegistroImovelPrincipal() {
+		return valorRegistroImovelPrincipal;
+	}
+
+	public void setValorRegistroImovelPrincipal(BigDecimal valorRegistroImovelPrincipal) {
+		this.valorRegistroImovelPrincipal = valorRegistroImovelPrincipal;
+	}
+
+	public int getQtdParcelasAtraso() {
+		return qtdParcelasAtraso;
+	}
+
+	public void setQtdParcelasAtraso(int qtdParcelasAtraso) {
+		this.qtdParcelasAtraso = qtdParcelasAtraso;
+	}
+
+	public BigDecimal getSomaParcelasAtraso() {
+		return somaParcelasAtraso;
+	}
+
+	public void setSomaParcelasAtraso(BigDecimal somaParcelasAtraso) {
+		this.somaParcelasAtraso = somaParcelasAtraso;
+	}
+
+	public boolean isPendenciaExternaCartorio() {
+		return pendenciaExternaCartorio;
+	}
+
+	public void setPendenciaExternaCartorio(boolean pendenciaExternaCartorio) {
+		this.pendenciaExternaCartorio = pendenciaExternaCartorio;
+	}
+
+	public Date getPendenciaResolvidaCartorioData() {
+		return pendenciaResolvidaCartorioData;
+	}
+
+	public void setPendenciaResolvidaCartorioData(Date pendenciaResolvidaCartorioData) {
+		this.pendenciaResolvidaCartorioData = pendenciaResolvidaCartorioData;
+	}
+
+	public boolean isPendenciaResolvidaCartorio() {
+		return pendenciaResolvidaCartorio;
+	}
+
+	public void setPendenciaResolvidaCartorio(boolean pendenciaResolvidaCartorio) {
+		this.pendenciaResolvidaCartorio = pendenciaResolvidaCartorio;
+	}
+
+	public String getPendenciaResolvidaCartorioUsuario() {
+		return pendenciaResolvidaCartorioUsuario;
+	}
+
+	public void setPendenciaResolvidaCartorioUsuario(String pendenciaResolvidaCartorioUsuario) {
+		this.pendenciaResolvidaCartorioUsuario = pendenciaResolvidaCartorioUsuario;
+	}
+
+	public Date getResolucaoExigenciaCartorioData() {
+		return resolucaoExigenciaCartorioData;
+	}
+
+	public void setResolucaoExigenciaCartorioData(Date resolucaoExigenciaCartorioData) {
+		this.resolucaoExigenciaCartorioData = resolucaoExigenciaCartorioData;
+	}
+
+	public boolean isResolucaoExigenciaCartorio() {
+		return resolucaoExigenciaCartorio;
+	}
+
+	public void setResolucaoExigenciaCartorio(boolean resolucaoExigenciaCartorio) {
+		this.resolucaoExigenciaCartorio = resolucaoExigenciaCartorio;
+	}
+
+	public String getResolucaoExigenciaCartorioUsuario() {
+		return resolucaoExigenciaCartorioUsuario;
+	}
+
+	public void setResolucaoExigenciaCartorioUsuario(String resolucaoExigenciaCartorioUsuario) {
+		this.resolucaoExigenciaCartorioUsuario = resolucaoExigenciaCartorioUsuario;
+	}
+
+	public String getPendenciaCartorioObservacao() {
+		return pendenciaCartorioObservacao;
+	}
+
+	public void setPendenciaCartorioObservacao(String pendenciaCartorioObservacao) {
+		this.pendenciaCartorioObservacao = pendenciaCartorioObservacao;
+	}
+
+	public Date getNotificacaoCobrancaData() {
+		return notificacaoCobrancaData;
+	}
+
+	public void setNotificacaoCobrancaData(Date notificacaoCobrancaData) {
+		this.notificacaoCobrancaData = notificacaoCobrancaData;
+	}
 }
+

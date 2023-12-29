@@ -67,6 +67,9 @@
 								event="valueChange"
 								listener="#{pagadorRecebedorMB.selectedTipoPessoa}" />
 						</p:selectOneRadio>
+						
+						
+						
 	
 						<p:outputLabel for="Cpf" value="CPF: " styleClass="labelBold"
 							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
@@ -289,15 +292,7 @@
 							<f:selectItem itemValue="TO" itemLabel="TOCANTINS" />
 						</p:selectOneMenu>
 						
-						<shiro:lacksRole name="PROFILE_COBRANCA">
-							<p:outputLabel for="Observacao1" value="Observação: " />
-							<p:inputTextarea id="Observacao1" rows="10" cols="48"
-								maxlength="3000"
-								onblur=""
-								counterTemplate="{0} characters remaining." autoResize="false"
-								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.observacao1}" />
-								<p:outputLabel id="display" />		
-						</shiro:lacksRole>
+					
 					</h:panelGrid>
 					
 					<!--  <h:panelGrid columns="1">
@@ -315,6 +310,25 @@
 					</h:panelGrid> -->
 					
 				</h:panelGrid>
+				
+				<p:panel id="PanelBlackFlag" header="Black Flag"
+					style="margin-bottom:10px;margin-top:20px;">
+						<h:panelGrid columns="1">
+						<p:selectBooleanButton id="Restricao" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.restricao}" onLabel="Sim" offLabel="Não" onIcon="ui-icon ui-icon-check" offIcon="ui-icon ui-icon-close" style="width:60px">
+				        </p:selectBooleanButton>
+				        
+					</h:panelGrid><h:panelGrid columns="2">
+						<shiro:lacksRole name="PROFILE_COBRANCA">
+							<p:outputLabel for="Observacao1" value="Observação: " />
+							<p:inputTextarea id="Observacao1" rows="10" cols="48"
+								maxlength="3000"
+								onblur=""
+								counterTemplate="{0} characters remaining." autoResize="false"
+								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.observacao1}" />
+								<p:outputLabel id="display" />		
+						</shiro:lacksRole>		
+						</h:panelGrid>
+				</p:panel>
 
 				<p:panel id="PanelCasado" header="Estado Civil"
 					style="margin-bottom:10px;margin-top:20px;"
@@ -336,6 +350,8 @@
 							<p:ajax update="form:PanelCasado" event="valueChange" />
 						</p:selectOneMenu>
 					</h:panelGrid>
+					<div style="display: flex; flex-direction: row">
+					<div style="display: flex; flex-direction: column">
 					<h:panelGrid columns="2" 
 					rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'
 					 or pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'UNIÃO ESTÁVEL'}">
@@ -515,9 +531,22 @@
 								<f:selectItem itemValue="TO" itemLabel="TOCANTINS" />
 							</p:selectOneMenu>
 						</h:panelGrid>
-						<h:panelGroup style="width: 75%;" layout="block">													
+						</h:panelGrid>
+						</div>
+						
+					<div style="align-items: flex-start;">
+						<h:panelGroup rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'UNIÃO ESTÁVEL'}"  style=" align-items: flex-start;">	
+							<h:panelGrid>
+								<p:selectOneRadio value="#{pagadorRecebedorMB.objetoPagadorRecebedor.tipoUniao}">
+								<f:selectItem itemLabel="Escritura publica" itemValue="Escritura publica"/>
+								<f:selectItem itemLabel="Declaração de união" itemValue="Declaração de uniao"/>
+								<p:ajax event="valueChange" update="form:PanelCasado"/>
+								</p:selectOneRadio>
+								
+								</h:panelGrid>
+							<h:panelGrid rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.tipoUniao eq 'Escritura publica'}">										
 							<p:outputLabel
-								value="Conforme pacto antenupcial registrado no " styleClass="labelBold"
+								value="Conforme escritura pública registrado no " styleClass="labelBold"
 								style="font-weight: bold; font-size: 16px;" />
 							<p:inputText id="registroPacto" 
 								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.registroPactoAntenupcial}" />
@@ -538,8 +567,11 @@
 								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dataPactoAntenupcial}" 
 								size="100" pattern="dd/MM/yyyy" locale="pt"
 								styleClass="dateTimeField" />
+								</h:panelGrid>
 						</h:panelGroup>
-					</h:panelGrid>
+						</div>
+						</div>
+					
 				</p:panel>
 							
 				<p:panel id="PanelInvestidor" header="Habilitar Portal Investidor"

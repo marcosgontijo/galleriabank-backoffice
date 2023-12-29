@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -68,6 +69,7 @@ import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.common.ValidaCNPJ;
 import com.webnowbr.siscoat.common.ValidaCPF;
 import com.webnowbr.siscoat.db.dao.DAOException;
+import com.webnowbr.siscoat.security.LoginBean;
 import com.webnowbr.siscoat.simulador.GoalSeek;
 import com.webnowbr.siscoat.simulador.GoalSeekFunction;
 import com.webnowbr.siscoat.simulador.SimulacaoDetalheVO;
@@ -130,6 +132,10 @@ public class CcbMB {
    
     private List<ContratoCobranca> listaContratosConsultar = new ArrayList<ContratoCobranca>();
     
+
+	@ManagedProperty(value = "#{loginBean}")
+	protected LoginBean loginBean;
+	
 	ValorPorExtenso valorPorExtenso = new ValorPorExtenso();
 	NumeroPorExtenso numeroPorExtenso = new NumeroPorExtenso();
 	PorcentagemPorExtenso porcentagemPorExtenso = new PorcentagemPorExtenso();
@@ -449,6 +455,7 @@ public class CcbMB {
 	
 	public void removeDespesa(ContasPagar conta) {
 		this.objetoCcb.getDespesasAnexo2().remove(conta);
+		conta.setNumeroDocumento(null);
 		if(!CommonsUtil.semValor(conta.getContrato())) {
 			conta.setContrato(null);
 		}
@@ -747,7 +754,7 @@ public class CcbMB {
 		}
 		
 		ContasPagar despesaTransferencia = buscarDespesa("Transferência", objetoContratoCobranca.getNumeroContrato());
-		if(CommonsUtil.mesmoValor(objetoContratoCobranca.getCobrarComissaoCliente(), "Sim")) {		
+		if(CommonsUtil.mesmoValor(objetoContratoCobranca.getCobrarComissaoCliente(), "Sim")) {
 			BigDecimal valorTranferencia = BigDecimal.ZERO;
 			BigDecimal comissao = BigDecimal.ZERO;
 			if(CommonsUtil.mesmoValor(objetoContratoCobranca.getTipoCobrarComissaoCliente(), "Real")) {
@@ -763,14 +770,30 @@ public class CcbMB {
 				if(CommonsUtil.mesmoValor(objetoContratoCobranca.getBrutoLiquidoCobrarComissaoCliente(), "Bruto")) {
 					valorTranferencia = objetoContratoCobranca.getValorAprovadoComite().multiply(comissao);
 				} else if(CommonsUtil.mesmoValor(objetoContratoCobranca.getBrutoLiquidoCobrarComissaoCliente(), "Liquido")) {
-					valorTranferencia = objetoCcb.getValorLiquidoCredito().multiply(comissao);
+					valorTranferencia = objetoCcb.getValorLiquidoCredito().add(objetoCcb.getIntermediacaoValor()).multiply(comissao);
 				}
 			}
+			
+			objetoCcb.setIntermediacaoValor(valorTranferencia);
+			String conta = "";
+			if(!CommonsUtil.semValor(objetoContratoCobranca.getResponsavel().getConta())) {
+				conta = objetoContratoCobranca.getResponsavel().getConta();
+			}
+			if(!CommonsUtil.semValor(objetoContratoCobranca.getResponsavel().getContaDigito())) {
+				conta = conta + "-" + objetoContratoCobranca.getResponsavel().getContaDigito();
+			}
+			objetoCcb.setIntermediacaoBanco(objetoContratoCobranca.getResponsavel().getBanco());
+			objetoCcb.setIntermediacaoAgencia(objetoContratoCobranca.getResponsavel().getAgencia());
+			objetoCcb.setIntermediacaoCC(conta);
+			objetoCcb.setIntermediacaoCNPJ(objetoContratoCobranca.getResponsavel().getCpfCnpjCC());
+			objetoCcb.setIntermediacaoNome(objetoContratoCobranca.getResponsavel().getNomeCC());
+			objetoCcb.setIntermediacaoPix(objetoContratoCobranca.getResponsavel().getPix());
+			objetoCcb.setIntermediacaoTipoConta(objetoContratoCobranca.getResponsavel().getTipoConta());
 			
 			if(CommonsUtil.semValor(objetoCcb.getIntermediacaoValor()) || CommonsUtil.semValor(despesaTransferencia)) {
 				criarDespesa("Transferência", valorTranferencia, "TED");
 			} else {
-				String conta = "";
+				conta = "";
 				if(!CommonsUtil.semValor(objetoContratoCobranca.getResponsavel().getConta())) {
 					conta = objetoContratoCobranca.getResponsavel().getConta();
 				}
@@ -787,22 +810,6 @@ public class CcbMB {
 				despesaTransferencia.setValor(valorTranferencia);
 				contasPagarDao.merge(despesaTransferencia);
 			}
-			objetoCcb.setIntermediacaoValor(valorTranferencia);
-			objetoCcb.setIntermediacaoBanco(objetoContratoCobranca.getResponsavel().getBanco());
-			objetoCcb.setIntermediacaoAgencia(objetoContratoCobranca.getResponsavel().getAgencia());
-			String conta = "";
-			if(!CommonsUtil.semValor(objetoContratoCobranca.getResponsavel().getConta())) {
-				conta = objetoContratoCobranca.getResponsavel().getConta();
-			}
-			if(!CommonsUtil.semValor(objetoContratoCobranca.getResponsavel().getContaDigito())) {
-				conta = conta + "-" + objetoContratoCobranca.getResponsavel().getContaDigito();
-			}
-			objetoCcb.setIntermediacaoCC(conta);
-			objetoCcb.setIntermediacaoCNPJ(objetoContratoCobranca.getResponsavel().getCpfCnpjCC());
-			objetoCcb.setIntermediacaoNome(objetoContratoCobranca.getResponsavel().getNomeCC());
-			objetoCcb.setIntermediacaoPix(objetoContratoCobranca.getResponsavel().getPix());
-			objetoCcb.setIntermediacaoTipoConta(objetoContratoCobranca.getResponsavel().getTipoConta());
-			
 		} else if(!CommonsUtil.semValor(despesaTransferencia)) {
 			despesaTransferencia.setValor(BigDecimal.ZERO);
 			objetoCcb.getDespesasAnexo2().remove(despesaTransferencia);
@@ -2434,6 +2441,14 @@ public class CcbMB {
 
 	public void setSelectedParticipante(CcbParticipantes selectedParticipante) {
 		this.selectedParticipante = selectedParticipante;
+	}
+
+	public LoginBean getLoginBean() {
+		return loginBean;
+	}
+
+	public void setLoginBean(LoginBean loginBean) {
+		this.loginBean = loginBean;
 	}	
 	
 	

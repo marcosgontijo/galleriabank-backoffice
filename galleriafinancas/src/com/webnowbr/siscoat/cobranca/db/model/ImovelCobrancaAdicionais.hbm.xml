@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping schema="cobranca">
+    <class name="com.webnowbr.siscoat.cobranca.db.model.ImovelCobrancaAdicionais" table="ImovelCobrancaAdicionais">
+       <id name="id" type="long">
+			<column name="ID" />
+			<generator class="increment" />
+		</id>
+		 <many-to-one name="imovel"
+			class="com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca">
+			<column name="imovel" />
+		</many-to-one>
+		<many-to-one name="contratoCobranca"
+			class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca">
+			<column name="contratocobranca" />
+		</many-to-one>     
+				 
+		<property name="relacaoComGarantia" type="java.lang.String">
+            <column name="relacaoComGarantia"/>
+        </property>  
+        
+        <property name="comprovanteMatriculaCheckList" type="boolean">
+			<column name="comprovanteMatriculaCheckList" not-null="true" default="false"/>
+		</property>	
+		
+		<property name="comprovanteFotosImovelCheckList" type="boolean">
+			<column name="comprovanteFotosImovelCheckList" not-null="true" default="false"/>
+		</property>
+		
+		<property name="comprovanteIptuImovelCheckList" type="boolean">
+			<column name="comprovanteIptuImovelCheckList" not-null="true" default="false"/>
+		</property>
+		
+		<property name="cndIptuExtratoDebitoCheckList" type="boolean">
+			<column name="cndIptuExtratoDebitoCheckList" not-null="true" default="false"/>
+		</property>
+		
+		<property name="cndCondominioExtratoDebitoCheckList" type="boolean">
+			<column name="cndCondominioExtratoDebitoCheckList" not-null="true" default="false"/>
+		</property>
+		
+		<property name="matriculaGaragemCheckList" type="boolean">
+			<column name="matriculaGaragemCheckList" not-null="true" default="false"/>
+		</property>
+		
+		<property name="simuladorCheckList" type="boolean">
+			<column name="simuladorCheckList" not-null="true" default="false"/>
+		</property>
+		
+		<property name="porcentagem" type="big_decimal">
+			<column name="porcentagem" />
+		</property> 
+		
+		<property name="valorRegistro" type="big_decimal">
+			<column name="valorRegistro" />
+		</property> 
+		                                      
+    </class>
+</hibernate-mapping>

@@ -5,20 +5,77 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:p="http://primefaces.org/ui" template="/Menus/Menu.xhtml">
 	<ui:define name="conteudo">
-		<h:form id="form">
+		<h:form>
 			<script src="#{request.contextPath}/resources/js/functions.js"></script>
 			<script src="#{request.contextPath}/resources/js/jquery.mask.min.js"></script>
+
+			<p:messages id="mensagens" showDetail="true" />
 
 			<p:panel id="PanelPagadorRecebedor"
 				header="Pagador / Recebedor - #{pagadorRecebedorMB.tituloPainel}"
 				style="margin-bottom:10px;">
 				<p:focus />
-				<p:messages />
+
+				<p:dataTable id="dtPagadorRecebedor" var="pagadorRecebedor"
+					value="#{relacionamentoMB.listPessoas}" paginator="true" rows="20"
+					lazy="true"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					currentPageReportTemplate="( {currentPage}   de   {totalPages} )"
+					rowsPerPageTemplate="20,40,60,80" selection="" emptyMessage=""
+					sortBy="#{pagadorRecebedor.nome}">
+					<p:column style="text-align: center;" headerText="Nome"
+						filterBy="#{agadorRecebedor.pagadorRecebedor.nome}"
+						filterMatchMode="contains" sortBy="#{pagadorRecebedor.nome}">
+						<h:outputText value="#{pagadorRecebedor.nome}" />
+					</p:column>
+					<p:column style="text-align: center;" headerText="CPF"
+						filterBy="#{pagadorRecebedor.cpf}" filterMatchMode="contains"
+						sortBy="#{pagadorRecebedor.cpf}">
+						<h:outputText value="#{pagadorRecebedor.cpf}" />
+					</p:column>
+					<p:column style="text-align: center;" headerText="CNPJ"
+						filterBy="#{pagadorRecebedor.cnpj}" filterMatchMode="contains"
+						sortBy="#{pagadorRecebedor.cnpj}">
+						<h:outputText value="#{pagadorRecebedor.cnpj}" />
+					</p:column>
+					<p:column style="width:120px;">
+
+						<p:commandButton action="#{pagadorRecebedorMB.clearFieldsView}"
+							ajax="false" icon="ui-icon-search" title="Detalhes">
+							<f:setPropertyActionListener
+								target="#{pagadorRecebedorMB.objetoPagadorRecebedor}"
+								value="#{pagadorRecebedor}" />
+							<f:setPropertyActionListener
+								target="#{pagadorRecebedorMB.updateMode}" value="false" />
+							<f:setPropertyActionListener
+								target="#{pagadorRecebedorMB.deleteMode}" value="false" />
+						</p:commandButton>
+						<p:spacer width="10" height="10" />
+						<p:commandButton action="#{pagadorRecebedorMB.clearFieldsUpdate}"
+							ajax="false" icon="ui-icon-pencil" title="Editar">
+							<f:setPropertyActionListener
+								target="#{pagadorRecebedorMB.objetoPagadorRecebedor}"
+								value="#{pagadorRecebedor}" />
+							<f:setPropertyActionListener
+								target="#{pagadorRecebedorMB.updateMode}" value="true" />
+							<f:setPropertyActionListener
+								target="#{pagadorRecebedorMB.deleteMode}" value="false" />
+						</p:commandButton>
+
+					</p:column>
+				</p:dataTable>
 				<div class="card">
-					<p:diagram value="#{relacionamentoPagadorRecebedorMB.model}"
-						style="height:700px" styleClass="ui-widget-content" />
+					<p:diagram value="#{relacionamentoMB.model}" var="pessoa"
+						style="height:700px" styleClass="ui-widget-content">
+						<f:facet name="element" >
+								<h:outputText value="#{pessoa.nome}" style="background-color: black;color:white" rendered="#{pessoa.restricao}" />
+								<h:outputText value="#{pessoa.nome}"  rendered="#{!pessoa.restricao}" />
+						</f:facet>
+					</p:diagram>
 				</div>
+
 			</p:panel>
 		</h:form>
+
 	</ui:define>
 </ui:composition>

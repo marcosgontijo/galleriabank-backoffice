@@ -51,7 +51,7 @@ public class PagadorRecebedor implements Serializable {
 	private String codigoMoneyPlus;
 	
 	private String estadocivil;
-	
+	private String tipoUniao;
 	private Date dataCasamento;
 	private String regimeCasamento; 
 	private String registroPactoAntenupcial;
@@ -102,6 +102,7 @@ public class PagadorRecebedor implements Serializable {
 	private List<SelectItem> listaBancos;
 	private String banco;
 	private String agencia;
+	private String agenciaDigito;
 	private String conta;
 	private String contaDigito;
 	private String nomeCC;
@@ -259,6 +260,9 @@ public class PagadorRecebedor implements Serializable {
 	private String whatsAppNumero;
 	
 	private Date inicioEmpresa;
+	private String retornoFinancas;
+	
+	private boolean restricao;
 
 	public PagadorRecebedor(){
 		resetarBololean();
@@ -410,9 +414,7 @@ public class PagadorRecebedor implements Serializable {
 		if(CommonsUtil.semValor(pagador.getCpfConjuge())){
 			return;
 		}
-		if(!CommonsUtil.mesmoValor(pagador.getEstadocivil(), "CASADO")){
-			return;
-		}
+		
 		
 		PagadorRecebedor conjuge = null;
 		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
@@ -699,23 +701,6 @@ public class PagadorRecebedor implements Serializable {
 		this.dtNascimento = dtNascimento;
 	}
 	
-	 @Override  
-	    public boolean equals(Object obj){  
-	        if (this == obj)  
-	            return true;  
-	        if (obj == null)  
-	            return false;  
-	        if (!(obj instanceof PagadorRecebedor))  
-	            return false;  
-	        PagadorRecebedor other = (PagadorRecebedor) obj;  
-	        if (nome == null){  
-	            if (other.nome != null)  
-	                return false;  
-	        } else if (!nome.equals(other.nome))  
-	            return false;  
-	        return true;  
-	    }
-
 	/**
 	 * @return the rg
 	 */
@@ -2387,5 +2372,39 @@ public class PagadorRecebedor implements Serializable {
 
 	public void setInicioEmpresa(Date inicioEmpresa) {
 		this.inicioEmpresa = inicioEmpresa;
+	}
+
+	public boolean isRestricao() {
+		return restricao;
+	}
+
+	public void setRestricao(boolean restricao) {
+		this.restricao = restricao;
+	}
+	
+	
+	}
+
+	public String getRetornoFinancas() {
+		return retornoFinancas;
+	}
+
+	public void setRetornoFinancas(String retornoFinancas) {
+		this.retornoFinancas = retornoFinancas;
 	}	
+	public String getAgenciaDigito() {
+		return agenciaDigito;
+	}
+
+	public void setAgenciaDigito(String agenciaDigito) {
+		this.agenciaDigito = agenciaDigito;
+	}
+
+	public String getTipoUniao() {
+		return tipoUniao;
+	}
+
+	public void setTipoUniao(String tipoUniao) {
+		this.tipoUniao = tipoUniao;
+	}
 }

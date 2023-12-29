@@ -88,14 +88,14 @@ public class PlexiMB {
 			boolean podeChamar = true;
 			atualizarDocumentos(docAnalise);
 			for(PlexiConsulta plexiConsulta : docAnalise.getPlexiConsultas()) {
-				List<PlexiConsulta> consultasExistentesRetorno = plexiConsultaDao.getConsultasExistentes(plexiConsulta);
+				/*List<PlexiConsulta> consultasExistentesRetorno = plexiConsultaDao.getConsultasExistentes(plexiConsulta);
 				if(consultasExistentesRetorno.size() > 0){
 					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
 							plexiConsulta.getPlexiDocumentos().getNome() + " - " + plexiConsulta.getNome() + ": Já existente", ""));
 					consultasExistentes.add(plexiConsulta);
 					consultasExistentesDB.add(consultasExistentesRetorno.get(0));
 					continue;
-				}
+				}*/
 				podeChamar = plexiConsulta.verificaCamposDoc();
 				if(!podeChamar) {
 					break;
@@ -255,6 +255,7 @@ public class PlexiMB {
 						//senão, duplica
 						} else {
 							plexiConsulta.popularCampos(consultasExistentesRetorno.get(0));
+							docAnalise.getPlexiConsultas().add(plexiConsulta);
 						}
 					}
 				}
@@ -345,7 +346,7 @@ public class PlexiMB {
 		
 		if(CommonsUtil.mesmoValor(doc.getUrl(), 
 				"/api/maestro/tjsp/certidao-negativa")) {
-			String[] modeloArray = {"6", "52"};
+			String[] modeloArray = {"6", "52", "41"};
 			for(String modelo : modeloArray) {
 				if(!CommonsUtil.semValor(plexiConsulta.getCnpj()) && CommonsUtil.mesmoValor(modelo, "6")) 
 					continue;
