@@ -117,21 +117,7 @@
 						
 					</p:panel>
 
-				<p:panel>
-					<f:facet name="header">
-						<h:outputText value="SCR" />
-						<p:dataTable id="resumoScr" var="scr"
-							rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
-							value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoScr()}">
-							<p:column>
-								<h:outputText value="#{scr.descricao}" />
-							</p:column>
-							<p:column>
-								<h:outputText value="#{scr.valor}" />
-							</p:column>
-						</p:dataTable>
-					</f:facet>
-				</p:panel>
+				
 				
 				<p:panel>
 					<f:facet name="header">
@@ -149,21 +135,6 @@
 					</f:facet>
 				</p:panel>
 
-				<p:panel style="justify-content:start;">
-					<f:facet name="header">
-						<h:outputText value="Cenprot" />
-						<p:dataTable id="resumoCenprot" var="Cenprot"
-							rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
-							value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoCenprot()}">
-							<p:column>
-								<h:outputText value="#{Cenprot.descricao}" />
-							</p:column>
-							<p:column>
-								<h:outputText value="#{Cenprot.valor}" />
-							</p:column>
-						</p:dataTable>
-					</f:facet>
-				</p:panel>
 
 				<p:panel>
 					<f:facet name="header">
@@ -181,6 +152,7 @@
 					</f:facet>
 				</p:panel>
 			</h:panelGrid>
+			</h:panelGroup>
 		</h:form>
 	</p:dialog>
 

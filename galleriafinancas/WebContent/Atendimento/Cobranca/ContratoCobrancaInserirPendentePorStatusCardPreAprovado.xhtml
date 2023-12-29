@@ -22,8 +22,6 @@
 					<p:outputLabel value="#{pendencia}" styleClass="labelBold" />
 				</ui:repeat>
 
-				<p:outputLabel value="Engine ainda não processado"
-					styleClass="labelBold" />
 			</h:panelGrid>
 			<h:panelGrid columns="5" id="panelGridPreAprovado"
 				rendered="#{contratoCobrancaMB.isEngineProcessados() == true}">
