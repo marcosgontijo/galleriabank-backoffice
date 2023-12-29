@@ -97,6 +97,10 @@
 			background-color: #ffffff;
 		}
 		
+		.ui-datatable .ui-datatable-data .riscoAtivo td{
+			background-color: #fbe1e1;
+		}
+		
 
 		.campoRequerido {
 			color: #cd0a0a;

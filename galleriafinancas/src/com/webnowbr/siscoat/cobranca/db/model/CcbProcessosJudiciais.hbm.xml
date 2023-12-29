@@ -56,5 +56,17 @@
 			<column name="observacao" />
 		</property>
 		
+		<property name="outrosParticipantes" type="java.lang.String">
+			<column name="outrosParticipantes" />
+		</property>
+		
+		<property name="origem" type="java.lang.String">
+			<column name="origem" />
+		</property>
+		
+		 <property name="riscoAtivo" type="boolean">
+			<column name="riscoAtivo" not-null="true" default="false"/>
+		</property>
+		
     </class>
 </hibernate-mapping>

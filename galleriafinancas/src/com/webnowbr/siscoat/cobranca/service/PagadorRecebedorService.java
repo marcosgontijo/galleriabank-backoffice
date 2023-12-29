@@ -1,8 +1,12 @@
 package com.webnowbr.siscoat.cobranca.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedorConsulta;
@@ -119,23 +123,22 @@ public class PagadorRecebedorService {
 			ReceitaFederalPF receitaFederalPF = netrinService.requestCadastroPF(pagadorAdicionar);
 
 			stringResponse = GsonUtil.toJson(receitaFederalPF);
-			tipoConsulta =  DocumentosAnaliseEnum.RECEITA_FEDERAL;
+			tipoConsulta = DocumentosAnaliseEnum.RECEITA_FEDERAL;
 
-		} else if (!CommonsUtil.semValor(pagadorAdicionar.getCnpj())) {			
+		} else if (!CommonsUtil.semValor(pagadorAdicionar.getCnpj())) {
 			DadosBasicosResultPj dadosBasicosResultPj = bigDataService.requestCadastroPJ(pagadorAdicionar);
 
 			stringResponse = GsonUtil.toJson(dadosBasicosResultPj);
-			tipoConsulta =  DocumentosAnaliseEnum.CADASTROBB;
+			tipoConsulta = DocumentosAnaliseEnum.CADASTROBB;
 
 		}
 		if (!CommonsUtil.semValor(pagadorAdicionar.getCpf()) || !CommonsUtil.semValor(pagadorAdicionar.getCnpj()))
 			pagadorAdicionar = buscaOuInsere(pagadorAdicionar);
-		
+
 		if (!CommonsUtil.semValor(stringResponse) && !CommonsUtil.semValor(pagadorAdicionar.getId())) {
-			adicionarConsultaNoPagadorRecebedor(pagadorAdicionar, tipoConsulta,
-					stringResponse);
+			adicionarConsultaNoPagadorRecebedor(pagadorAdicionar, tipoConsulta, stringResponse);
 		}
-		
+
 		return pagadorAdicionar;
 	}
 
@@ -185,7 +188,7 @@ public class PagadorRecebedorService {
 		pagadorRecebedorConsultaDao.merge(pagadorRecebedorConsulta);
 
 	}
-	
+
 	public void adicionarConsultaNoPagadorRecebedor(PagadorRecebedor pagador, DocumentosAnaliseEnum tipoConsulta,
 			String consulta, String uf) {
 
@@ -220,7 +223,7 @@ public class PagadorRecebedorService {
 		return pagadorRecebedorConsulta;
 
 	}
-	
+
 	public PagadorRecebedorConsulta buscaConsultaNoPagadorRecebedor(PagadorRecebedor pagador,
 			DocumentosAnaliseEnum tipoConsulta, String uf) {
 
@@ -239,9 +242,27 @@ public class PagadorRecebedorService {
 				pessoaChild, porcentagem);
 
 		RelacionamentoPagadorRecebedorDao rDao = new RelacionamentoPagadorRecebedorDao();
-		 List<RelacionamentoPagadorRecebedor> relacaoExistente = rDao.verificaRelacaoExistente(pessoaRoot, pessoaChild);
+		List<RelacionamentoPagadorRecebedor> relacaoExistente = rDao.verificaRelacaoExistente(pessoaRoot, pessoaChild);
 		if (relacaoExistente.size() <= 0) {
 			rDao.create(relacioanameto);
 		}
+	}
+
+	public List<String> verificaRestricao(PagadorRecebedor pessoa) {
+		List<RelacionamentoPagadorRecebedor> listRelacoes = new ArrayList<RelacionamentoPagadorRecebedor>();
+		RelacionamentoPagadorRecebedorDao rprDao = new RelacionamentoPagadorRecebedorDao();
+		listRelacoes = rprDao.getRelacionamentos(pessoa, listRelacoes);
+
+		Set<PagadorRecebedor> unique = new HashSet<PagadorRecebedor>();
+		unique.add(pessoa);
+		if (!CommonsUtil.semValor(listRelacoes)) {
+			unique.addAll(listRelacoes.stream().map(m -> m.getPessoaRoot()).collect(Collectors.toSet()));
+			unique.addAll(listRelacoes.stream().map(m -> m.getPessoaChild()).collect(Collectors.toSet()));
+		}
+
+		if (!CommonsUtil.semValor(unique))
+			return unique.stream().filter(u -> u.isRestricao()).map( m -> m.getNome() + " (" + (!CommonsUtil.semValor(m.getCpf())?m.getCpf():m.getCnpj()) + ")").collect(Collectors.toList());
+		else
+			return null;
 	}
 }

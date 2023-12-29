@@ -168,19 +168,35 @@ public class MenuItemMB {
 	}
 
 	public String salvarMenu() {
+		List<MenuItem> listaOrdemMaior;
 		MenuItemDao menuDao = new MenuItemDao();
+		MenuItem menuatual = new MenuItem();
 		if (objetoMenuItem.getItemPai().getId() != null) {
 			objetoMenuItem.setItemPai(menuDao.findById(objetoMenuItem.getItemPai().getId()));
 		} else {
 			objetoMenuItem.setItemPai(null);
 		}
 		if (objetoMenuItem.getId() == null || objetoMenuItem.getId() <= 0) {
+			listaOrdemMaior = menuDao.ConsultaItemMaiorOuIgual(objetoMenuItem.getItemPai(), objetoMenuItem.getOrdem());
+			for(MenuItem menuOrdem : listaOrdemMaior) {
+				menuOrdem.setOrdem(menuOrdem.getOrdem() + 1);
+				menuDao.merge(menuOrdem);
+			}
 			menuDao.create(objetoMenuItem);
 		} else {
+			listaOrdemMaior = menuDao.ConsultaItemMaiorOuIgual(objetoMenuItem.getItemPai(), objetoMenuItem.getOrdem());
+			menuatual = menuDao.findById(objetoMenuItem.getId());
+			
+			for(MenuItem menuOrdem : listaOrdemMaior) {
+				if(objetoMenuItem.getOrdem() != menuatual.getOrdem()) {
+				menuOrdem.setOrdem(menuOrdem.getOrdem() + 1);
+				menuDao.merge(menuOrdem);
+				}
+			}
 			menuDao.merge(objetoMenuItem);
 		}
 		objetoMenuItem = new MenuItem();
-		listaMenuRegistrados();
+		menuConsultado = new ArrayList<>();
 		return "/Menus/MenuConsultar.xhtml";
 	}
 
@@ -198,17 +214,23 @@ public class MenuItemMB {
 	public String excluirMenuItem() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		MenuItemDao menuItemDao = new MenuItemDao();
-
+		List<MenuItem> menuMaior = new ArrayList<>();
 		try {
+			menuMaior = menuItemDao.ConsultaItemMaior(objetoMenuItem.getItemPai(), objetoMenuItem.getOrdem());
+			
+			for(MenuItem item : menuMaior) {
+				item.setOrdem(item.getOrdem() - 1);
+				menuItemDao.merge(item);
+			}
 
 			menuItemDao.delete(objetoMenuItem);
-			listaMenuRegistrados();
 		} catch (Exception e) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "ContaContabil: " + e, ""));
 
 			return "";
 		}
-		return "MenuListagem.xhtml";
+		menuConsultado = new ArrayList<>();
+		return "/Menus/MenuConsultar.xhtml";
 	}
 
 	public void favoritar(Long id) {

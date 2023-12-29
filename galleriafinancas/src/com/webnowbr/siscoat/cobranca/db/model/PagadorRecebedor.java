@@ -261,6 +261,8 @@ public class PagadorRecebedor implements Serializable {
 	
 	private Date inicioEmpresa;
 	private String retornoFinancas;
+	
+	private boolean restricao;
 
 	public PagadorRecebedor(){
 		resetarBololean();
@@ -699,23 +701,6 @@ public class PagadorRecebedor implements Serializable {
 		this.dtNascimento = dtNascimento;
 	}
 	
-	 @Override  
-	    public boolean equals(Object obj){  
-	        if (this == obj)  
-	            return true;  
-	        if (obj == null)  
-	            return false;  
-	        if (!(obj instanceof PagadorRecebedor))  
-	            return false;  
-	        PagadorRecebedor other = (PagadorRecebedor) obj;  
-	        if (nome == null){  
-	            if (other.nome != null)  
-	                return false;  
-	        } else if (!nome.equals(other.nome))  
-	            return false;  
-	        return true;  
-	    }
-
 	/**
 	 * @return the rg
 	 */
@@ -2387,6 +2372,17 @@ public class PagadorRecebedor implements Serializable {
 
 	public void setInicioEmpresa(Date inicioEmpresa) {
 		this.inicioEmpresa = inicioEmpresa;
+	}
+
+	public boolean isRestricao() {
+		return restricao;
+	}
+
+	public void setRestricao(boolean restricao) {
+		this.restricao = restricao;
+	}
+	
+	
 	}
 
 	public String getRetornoFinancas() {

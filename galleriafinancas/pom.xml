@@ -412,6 +412,10 @@
 			<groupId>br.com.galleriabank.debit-cliente</groupId>
 			<artifactId>debit-cliente</artifactId>
 			<version>1.0.1</version>
+		</dependency><dependency>
+			<groupId>br.com.galleriabank.drcalc-cliente</groupId>
+			<artifactId>drcalc-cliente</artifactId>
+			<version>1.0.1</version>
 		</dependency>
 		<dependency>
             <groupId>br.com.galleriabank.laudoimovel.cliente</groupId>

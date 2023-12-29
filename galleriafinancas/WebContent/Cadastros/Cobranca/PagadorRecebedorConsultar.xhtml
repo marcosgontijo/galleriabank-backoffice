@@ -29,7 +29,7 @@
 					</shiro:lacksRole>
 						<p:commandButton value="popular Geral" ajax="false"
 							icon="ui-icon-plus" disabled="true"
-							action="#{relacionamentoPagadorRecebedorMB.populaGeral}" />
+							action="#{relacionamentoMB.populaGeral}" />
 					</f:facet>			        
 			        <p:column style="text-align: center;" headerText="Nome" filterBy="#{PagadorRecebedor.nome}" filterMatchMode="contains" sortBy="#{PagadorRecebedor.nome}">
 			            <h:outputText value="#{PagadorRecebedor.nome}" />
@@ -63,7 +63,7 @@
 			                
 			                <p:spacer width="10" height="10"/>
 		               	</shiro:hasAnyRoles>
-		               	<p:commandButton action="#{relacionamentoPagadorRecebedorMB.clearFieldsMindMap(PagadorRecebedor)}"
+		               	<p:commandButton action="#{relacionamentoMB.clearFieldsMindMap(PagadorRecebedor)}"
 							ajax="false" icon="ui-icon-search" value="MindMap" />
 						
 		            </p:column>			        		               		        			        			           			 		

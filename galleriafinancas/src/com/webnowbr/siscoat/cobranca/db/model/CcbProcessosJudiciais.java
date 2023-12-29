@@ -28,6 +28,9 @@ public class CcbProcessosJudiciais implements Serializable{
 	private String natureza = "";
 	private boolean selecionadoComite = false;
 	private String observacao = "";
+	private String outrosParticipantes = "";
+	private String origem = "";
+	private boolean riscoAtivo = false;
 	
 	public CcbProcessosJudiciais(BigDecimal valor, String numero) {
 		contaPagar = new ContasPagar();
@@ -43,6 +46,9 @@ public class CcbProcessosJudiciais implements Serializable{
 		naturezas.add("Execução de condomínio - diversos");
 		naturezas.add("Execução de condomínio - garantia");
 		naturezas.add("Execução de título - contratos bancários");
+		naturezas.add("Ação monitória - contratos bancários");
+		naturezas.add("Ação de cobrança - contratos bancários");
+		naturezas.add("Cumprimento de Sentença");
 		return naturezas;
 	}
 	
@@ -136,5 +142,29 @@ public class CcbProcessosJudiciais implements Serializable{
 
 	public void setNatureza(String natureza) {
 		this.natureza = natureza;
-	}	
+	}
+
+	public String getOutrosParticipantes() {
+		return outrosParticipantes;
+	}
+
+	public void setOutrosParticipantes(String outrosParticipantes) {
+		this.outrosParticipantes = outrosParticipantes;
+	}
+
+	public String getOrigem() {
+		return origem;
+	}
+
+	public void setOrigem(String origem) {
+		this.origem = origem;
+	}
+
+	public boolean isRiscoAtivo() {
+		return riscoAtivo;
+	}
+
+	public void setRiscoAtivo(boolean riscoAtivo) {
+		this.riscoAtivo = riscoAtivo;
+	}
 }

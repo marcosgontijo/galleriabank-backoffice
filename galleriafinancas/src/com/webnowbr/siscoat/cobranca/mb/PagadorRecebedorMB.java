@@ -1,6 +1,7 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
 import java.io.BufferedReader;
+import java.io.Console;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -15,6 +16,7 @@ import java.util.Map;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -92,6 +94,17 @@ public class PagadorRecebedorMB {
 		};
 	}
 
+//	@ManagedProperty("#{paramValues.foo}")
+//	private String[] foos;
+//	
+	
+	
+	public void specialMethod()
+	{
+	    Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+	    String param1 = params.get("param1");
+	}
+	
 	public String clearFields() {
 		objetoPagadorRecebedor = new PagadorRecebedor();
 		this.tituloPainel = "Adicionar";
@@ -657,6 +670,7 @@ public class PagadorRecebedorMB {
 	public void setObjetoPagadorRecebedor(PagadorRecebedor objetoPagadorRecebedor) {
 		this.objetoPagadorRecebedor = objetoPagadorRecebedor;
 	}
+	
 
 	/**
 	 * @return the updateMode

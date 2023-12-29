@@ -364,6 +364,10 @@ public class NetrinService {
 			String nomeConsultado = documentoAnalise.getPagador().getNome();
 			String numeorsCpfCnpj = CommonsUtil.somenteNumeros(documentoAnalise.getCnpjcpf());
 
+			if ( !CommonsUtil.mesmoValorIgnoreCase(documentoAnalise.getIdentificacao(), nomeConsultado)) {
+				documentoAnalise.setIdentificacao(nomeConsultado);
+			}
+			
 			retornoConsulta = netrinCriarExecutaConsultaCadastroPpePF(numeorsCpfCnpj, nomeConsultado);
 
 			if (CommonsUtil.semValor(retornoConsulta)) {
@@ -595,6 +599,9 @@ public class NetrinService {
 			// busca dados da receita se nao tiver ainda
 			atualizaDadosPagadoRecebedorComReceitaFederal(documentoAnalise.getPagador());
 			String nomeConsultado = documentoAnalise.getPagador().getNome();
+			if ( !CommonsUtil.mesmoValorIgnoreCase(documentoAnalise.getIdentificacao(), nomeConsultado)) {
+				documentoAnalise.setIdentificacao(nomeConsultado);
+			}
 
 			String cnpjcpf = documentoAnalise.getCnpjcpf();
 			if (!CommonsUtil.semValor(documentoAnalise.getPagador())) {
@@ -1116,6 +1123,9 @@ public class NetrinService {
 			// busca dados da receita se nao tiver ainda
 			atualizaDadosPagadoRecebedorComReceitaFederal(documentoAnalise.getPagador());
 			String nomeConsultado = documentoAnalise.getPagador().getNome();
+			if ( !CommonsUtil.mesmoValorIgnoreCase(documentoAnalise.getIdentificacao(), nomeConsultado)) {
+				documentoAnalise.setIdentificacao(nomeConsultado);
+			}
 
 			String cnpjcpf = documentoAnalise.getCnpjcpf();
 			if (!CommonsUtil.semValor(documentoAnalise.getPagador())) {
@@ -1326,6 +1336,9 @@ public class NetrinService {
 			// busca dados da receita se nao tiver ainda
 			atualizaDadosPagadoRecebedorComReceitaFederal(documentoAnalise.getPagador());
 			String nomeConsultado = documentoAnalise.getPagador().getNome();
+			if ( !CommonsUtil.mesmoValorIgnoreCase(documentoAnalise.getIdentificacao(), nomeConsultado)) {
+				documentoAnalise.setIdentificacao(nomeConsultado);
+			}
 
 			String cnpjcpf = documentoAnalise.getCnpjcpf();
 			if (!CommonsUtil.semValor(documentoAnalise.getPagador())) {
@@ -1535,6 +1548,9 @@ public class NetrinService {
 			// busca dados da receita se nao tiver ainda
 			atualizaDadosPagadoRecebedorComReceitaFederal(documentoAnalise.getPagador());
 			String nomeConsultado = documentoAnalise.getPagador().getNome();
+			if ( !CommonsUtil.mesmoValorIgnoreCase(documentoAnalise.getIdentificacao(), nomeConsultado)) {
+				documentoAnalise.setIdentificacao(nomeConsultado);
+			}
 
 			String cnpjcpf = documentoAnalise.getCnpjcpf();
 			if (!CommonsUtil.semValor(documentoAnalise.getPagador())) {
@@ -1738,9 +1754,16 @@ public class NetrinService {
 		try {
 			String url = netrinConsulta.getNetrinDocumentos().getUrlService();
 			DocumentoAnalise documentoAnalise = netrinConsulta.getDocumentoAnalise();
-			atualizaDadosPagadoRecebedorComReceitaFederal(documentoAnalise.getPagador());
 			String cnpjcpf = documentoAnalise.getCnpjcpf();
+			
 			if (!CommonsUtil.semValor(documentoAnalise.getPagador())) {
+
+				atualizaDadosPagadoRecebedorComReceitaFederal(documentoAnalise.getPagador());			
+				String nomeConsultado = documentoAnalise.getPagador().getNome(); 
+				if ( !CommonsUtil.mesmoValorIgnoreCase(documentoAnalise.getIdentificacao(), nomeConsultado)) {
+					documentoAnalise.setIdentificacao(nomeConsultado);
+				}
+				
 				if (CommonsUtil.mesmoValor("PF", documentoAnalise.getTipoPessoa()))
 					cnpjcpf = documentoAnalise.getPagador().getCpf();
 				else

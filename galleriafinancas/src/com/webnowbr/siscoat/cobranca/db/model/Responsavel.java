@@ -198,7 +198,6 @@ public class Responsavel implements Serializable {
 				|| !CommonsUtil.mesmoValor(this.getContaDigito(), dadosBancariosOriginal.getContaDigito())
 				|| !CommonsUtil.mesmoValor(this.getTipoConta(), dadosBancariosOriginal.getTipoConta())) {
 			this.setContaBancariaValidada(false);
-			PrimeFaces.current().ajax().update("form:comissaoCliente");
 		}
 		return null;
 
@@ -212,7 +211,6 @@ public class Responsavel implements Serializable {
 			this.setAgenciaPix(null);
 			this.setContaPix(null);
 			this.setContaDigitoPix(null);
-			PrimeFaces.current().ajax().update("form:comissaoCliente");
 		}
 		return null;
 	}
@@ -252,10 +250,12 @@ public class Responsavel implements Serializable {
 		NetrinService netrinService = new NetrinService();
 
 		String documento = CommonsUtil.somenteNumeros(this.getCpfCnpjCC());
-		if (!CommonsUtil.semValor(this.getCpfCnpjCC())) {
-			documento = CommonsUtil.somenteNumeros(this.getCpf());
-			if (!CommonsUtil.semValor(this.getCnpj())) {
-				documento = CommonsUtil.somenteNumeros(this.getCnpj());
+		if (CommonsUtil.semValor(documento)) {
+			if (!CommonsUtil.semValor(this.getCpfCC())) {
+				documento = CommonsUtil.somenteNumeros(this.getCpfCC());
+			}
+			if (!CommonsUtil.semValor(this.getCnpjCC())) {
+				documento = CommonsUtil.somenteNumeros(this.getCnpjCC());
 			}
 		}
 
