@@ -25,6 +25,7 @@ import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
 
 import br.com.galleriabank.bigdata.cliente.model.cadastro.DadosBasicosResultPj;
+import br.com.galleriabank.bigdata.cliente.model.financas.FinancasResponse;
 import br.com.galleriabank.bigdata.cliente.model.processos.ProcessoResult;
 import br.com.galleriabank.bigdata.cliente.model.relacionamentos.Relacionamento;
 import br.com.galleriabank.bigdata.cliente.model.relacionamentos.RelacionamentoResult;
@@ -335,9 +336,82 @@ public class BigDataService {
 			myURLConnection.disconnect();
 
 			return resultPJ;
-		} catch (
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-				MalformedURLException e) {
+		return null;
+	}
+	
+	public void requestFinancas(DocumentoAnalise documentoAnalise) {
+		if (CommonsUtil.semValor(documentoAnalise.getRetornoFinancas())) {
+
+			PagadorRecebedorService pagaPagadorRecebedorService = new PagadorRecebedorService();
+			PagadorRecebedorConsulta pagadorRecebedorConsulta = pagaPagadorRecebedorService
+					.buscaConsultaNoPagadorRecebedor(documentoAnalise.getPagador(), DocumentosAnaliseEnum.FINANCASBB);
+
+			if (!CommonsUtil.semValor(pagadorRecebedorConsulta)
+					&& !CommonsUtil.semValor(pagadorRecebedorConsulta.getRetornoConsulta())
+					&& DateUtil.getDaysBetweenDates(pagadorRecebedorConsulta.getDataConsulta(),
+							DateUtil.getDataHoje()) <= 30) {
+				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+				documentoAnalise.setRetornoProcesso(pagadorRecebedorConsulta.getRetornoConsulta());
+				documentoAnaliseDao.merge(documentoAnalise);
+			} else {
+				String retornoFinancas;
+				retornoFinancas = bigDataCriarConsultaFinancas(documentoAnalise.getCnpjcpf());
+			
+				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+				documentoAnalise.setRetornoFinancas(retornoFinancas);
+				documentoAnaliseDao.merge(documentoAnalise);
+				
+				PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+				pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+						DocumentosAnaliseEnum.FINANCASBB, retornoFinancas);
+			}
+		}
+	}
+	
+	public String bigDataCriarConsultaFinancas(String cpf) {
+		try {
+			int HTTP_COD_SUCESSO = 200;
+			String financas = null;
+			URL myURL;
+
+			myURL = new URL("http://localhost:8085/api/v1/financas/"
+					+ CommonsUtil.somenteNumeros(cpf));
+
+			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+			myURLConnection.setRequestMethod("GET");
+			myURLConnection.setUseCaches(false);
+			myURLConnection.setRequestProperty("Accept", "application/json");
+			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
+			myURLConnection.setRequestProperty("Content-Type", "application/json");
+			myURLConnection.setRequestProperty("Authorization",
+					"Bearer " + br.com.galleriabank.jwt.common.JwtUtil.generateJWTServicos());
+			myURLConnection.setDoOutput(true);
+
+			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
+			} else {
+				BufferedReader in;
+				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
+				String inputLine;
+				StringBuffer response = new StringBuffer();
+				while ((inputLine = in.readLine()) != null) {
+					response.append(inputLine);
+				}
+				in.close();
+
+				financas = response.toString();
+			}
+			myURLConnection.disconnect();
+
+			return financas;
+		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -154,6 +154,10 @@
 			<column name="estadosConsultaStr" />
 		</property>
 		
+		<property name="retornoFinancas" type="java.lang.String" length="65000">
+			<column name="retornoFinancas" />
+		</property>
+		
 		<set name="plexiConsultas" table="PlexiConsultas" cascade="merge"
                  lazy="false" fetch="select">
             <key>

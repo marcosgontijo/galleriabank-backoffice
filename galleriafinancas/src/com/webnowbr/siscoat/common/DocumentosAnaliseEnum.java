@@ -15,6 +15,7 @@ public enum DocumentosAnaliseEnum {
 	CNDFEDERAL("CNDFederal"),
 	CNDESTADUAL("CNDEstadual"),
 	RELACIONAMENTO("Relacionamentos"),
+	FINANCASBB("FinancasBigData"),
 	CADASTROBB("CadastroBasicoBigData");
 
 	private String nome;
