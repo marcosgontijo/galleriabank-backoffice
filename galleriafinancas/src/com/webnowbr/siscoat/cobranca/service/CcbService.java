@@ -3483,6 +3483,8 @@ public class CcbService {
 	}
 
 	private void geraParagrafoPF(XWPFRun run2, CcbParticipantes participante){
+		if(participante.isEmpresa())
+			return;
 		run2.setFontSize(12);
 		String filho;
 		String nacionalidade = null;
