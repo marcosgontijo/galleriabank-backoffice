@@ -19,9 +19,9 @@
 				rendered="#{contratoCobrancaMB.isEngineProcessados() == false}">
 				<ui:repeat value="#{contratoCobrancaMB.preAprovadoPendencia}"
 					var="pendencia">
-					<p:outputLabel value="#{pendencia}" styleClass="labelBold" />
+					<p:outputLabel value="#{pendencia}" styleClass="labelBold" />				
+					<br />
 				</ui:repeat>
-
 			</h:panelGrid>
 			<h:panelGrid columns="5" id="panelGridPreAprovado"
 				rendered="#{contratoCobrancaMB.isEngineProcessados() == true}">

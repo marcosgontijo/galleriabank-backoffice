@@ -561,14 +561,6 @@
 										margin-left: 20px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio}">
 											<p:outputLabel styleClass="labelBold">Aguardando Envio Cartório</p:outputLabel>
 											<p:spacer></p:spacer>
-											<p:selectBooleanButton id="agEnvioCartorio"
-												disabled="#{contratoCobrancaMB.objetoContratoCobranca.desabilitarEnviarParaCartorio()}"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio}"
-												onLabel="Não enviado" offLabel="Enviado"
-												onIcon="ui-icon-close" offIcon="ui-icon-check"
-												style="width:=60px">
-											</p:selectBooleanButton>
-											<p:spacer></p:spacer>
 											<p:commandButton value="Enviar p/ Pendência Externa" ajax="false" icon="ui-icon-check"
 												disabled="#{contratoCobrancaMB.objetoContratoCobranca.desabilitarEnviarParaCartorio()}"
 												action="#{contratoCobrancaMB.enviarParaPendenciaExterna}"
@@ -609,6 +601,12 @@
 												onIcon="ui-icon-check" offIcon="ui-icon-close"
 												style="width:=60px">
 											</p:selectBooleanButton>
+											<p:spacer></p:spacer>
+											<p:commandButton value="Voltar p/ Pendência Externa" ajax="false" icon="ui-icon-check"
+												disabled="#{contratoCobrancaMB.objetoContratoCobranca.desabilitarEnviarParaCartorio()}"
+												action="#{contratoCobrancaMB.enviarParaPendenciaExterna}"
+												style="TEXT-DECORATION: bold;" >
+											</p:commandButton>
 										</h:panelGrid>
 									</ui:fragment>
 									<ui:fragment
