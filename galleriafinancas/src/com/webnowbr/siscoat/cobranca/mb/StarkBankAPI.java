@@ -673,7 +673,8 @@ public class StarkBankAPI{
 	    	rules.add(new Transfer.Rule("resendingLimit", 5));
 	
 	    	HashMap<String, Object> data = new HashMap<>();
-	    	data.put("amount", valor);
+	    	String valorStr = valor.toString();
+	    	data.put("amount", Long.valueOf(valorStr.replace(".", "").replace(",", "")));	
 	    	data.put("bankCode", codigoBanco);
 	    	data.put("branchCode", agencia);
 	    	data.put("accountNumber", numeroConta);
@@ -706,7 +707,7 @@ public class StarkBankAPI{
 	    	starkBankPixDAO.create(pixTransacao);
 	    	
 	    	context.addMessage(null, new FacesMessage(
-					FacesMessage.SEVERITY_ERROR, "StarkBank TED: Pagamento efetuado com sucesso!", ""));
+					FacesMessage.SEVERITY_INFO, "StarkBank TED: Pagamento efetuado com sucesso!", ""));
 	    	
 	    	return pixTransacao;
 		} catch (Exception e) {
