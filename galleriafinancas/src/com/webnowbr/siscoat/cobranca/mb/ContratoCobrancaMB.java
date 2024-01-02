@@ -35543,9 +35543,9 @@ public class ContratoCobrancaMB {
 			}
 
 		}
-		t
+		
 		if (!pedidoUmEngine) 
-			preAprovadoPendencia.add(0, "Não foi consutlado nenhum Engine");
+			preAprovadoPendencia.add(0, "Não foi consultado nenhum Engine");
 		else if (!CommonsUtil.semValor(preAprovadoPendencia))
 			preAprovadoPendencia.add(0, "Engine faltando das pessoas abaixo:");
 
