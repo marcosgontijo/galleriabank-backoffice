@@ -7466,7 +7466,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 								+ " and analiseComercial = true and comentarioJuridicoEsteira = true and documentosCompletos = true and preAprovadoComite = true"
 								+ " and documentosComite = true and aprovadoComite = true and okCliente = true and documentosCompletos = true and reanalise = false and certificadoEmitido = true"
 								+ " and ccbPronta = true and contratoConferido = true and agAssinatura = false"
-								+ " and agEnvioCartorio = false and pendenciaExternaCartorio = false and resolucaoExigenciaCartorio = false";
+								+ " and agEnvioCartorio = false and pendenciaExternaCartorio = false and resolucaoExigenciaCartorio = false ";
 					}
 					
 					if (tipoConsulta.equals("Ag. Registro")) {
@@ -7475,7 +7475,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 								+ " and analiseComercial = true and comentarioJuridicoEsteira = true and documentosCompletos = true and preAprovadoComite = true"
 								+ " and documentosComite = true and aprovadoComite = true and okCliente = true and documentosCompletos = true and reanalise = false and certificadoEmitido = true"
 								+ " and ccbPronta = true and contratoConferido = true and agAssinatura = false"
-								+ " and agEnvioCartorio = false and agRegistro = true";
+								+ " and agEnvioCartorio = false and pendenciaExternaCartorio = false and pendenciaResolvidaCartorio and agRegistro = true ";
 					}
 					
 					if (tipoConsulta.equals("Análise Reprovada")) {
