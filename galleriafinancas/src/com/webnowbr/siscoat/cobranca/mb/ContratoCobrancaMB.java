@@ -6148,6 +6148,7 @@ public class ContratoCobrancaMB {
 		FacesContext context = FacesContext.getCurrentInstance();
 		this.objetoContratoCobranca.setPendenciaExternaCartorio(false);
 		this.objetoContratoCobranca.setAgEnvioCartorio(false);
+		this.objetoContratoCobranca.setPendenciaResolvidaCartorio(false);
 		updateCheckList();
 		this.objetoContratoCobranca.populaStatusEsteira(getUsuarioLogadoNull());
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
