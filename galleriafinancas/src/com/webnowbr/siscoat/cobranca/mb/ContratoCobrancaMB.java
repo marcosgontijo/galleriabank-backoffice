@@ -35543,11 +35543,11 @@ public class ContratoCobrancaMB {
 			}
 
 		}
-		
+		t
 		if (!pedidoUmEngine) 
-			preAprovadoPendencia.add(0, "Engine ainda não processado");
+			preAprovadoPendencia.add(0, "Não foi consutlado nenhum Engine");
 		else if (!CommonsUtil.semValor(preAprovadoPendencia))
-			preAprovadoPendencia.add(0, "Engine faltando das pessoas abaixo");
+			preAprovadoPendencia.add(0, "Engine faltando das pessoas abaixo:");
 
 		if (isAllEngineProcessados
 				&& !CommonsUtil.mesmoValor(objetoContratoCobranca.getCadastroAprovadoValor(), "Aprovado")) {
