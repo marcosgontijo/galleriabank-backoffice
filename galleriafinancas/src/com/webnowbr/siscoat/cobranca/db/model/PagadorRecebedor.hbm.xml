@@ -662,5 +662,8 @@
 		<property name="tipoUniao" type="java.lang.String">
 			<column name="tipoUniao" />
 		</property>
+		<property name="uniaoEstavel" type="boolean">
+			<column name="uniaoEstavel" not-null="true" default="false" />
+		</property>
     </class>
 </hibernate-mapping>

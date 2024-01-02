@@ -327,48 +327,64 @@
 							label="Status" style="width:190px;">
 							<f:selectItem itemValue="NÃO INFORMADO" itemLabel="NÃO INFORMADO" />
 							<f:selectItem itemValue="SOLTEIRO" itemLabel="SOLTEIRO" />
-							<f:selectItem itemValue="CASADO" itemLabel="CASADO" />
+							<f:selectItem itemValue="CASADO" itemLabel="CASADO"  />
 							<f:selectItem itemValue="VIÚVO" itemLabel="VIÚVO" />
-							<f:selectItem itemValue="UNIÃO ESTÁVEL" itemLabel="UNIÃO ESTÁVEL" />
 							<f:selectItem itemValue="DIVORCIADO" itemLabel="DIVORCIADO" />
 							<f:selectItem itemValue="SEPARADO" itemLabel="SEPARADO" />
 							<f:selectItem itemValue="SEPARADO JUDICIALMENTE" itemLabel="SEPARADO JUDICIALMENTE" />
 							<p:ajax update="form:PanelCasado" event="valueChange" />
 						</p:selectOneMenu>
 					</h:panelGrid>
+					<h:panelGrid rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'SOLTEIRO'}">
+					<p:outputLabel value="Está em união estável?"/>
+					<p:selectBooleanCheckbox value="#{pagadorRecebedorMB.objetoPagadorRecebedor.uniaoEstavel}"  >
+					<p:ajax event="valueChange" update="form:PanelCasado"/>
+					</p:selectBooleanCheckbox>
+					</h:panelGrid>
 					<div style="display: flex; flex-direction: row">
 					<div style="display: flex; flex-direction: column">
 					<h:panelGrid columns="2" 
 					rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'
-					 or pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'UNIÃO ESTÁVEL'}">
+					 or pagadorRecebedorMB.objetoPagadorRecebedor.uniaoEstavel eq true}">
 						<h:panelGrid columns="2">
 							<p:outputLabel for="dataCasamento"
-								value="Data de Casamento: " />
-							<p:inputMask id="dataCasamento"
-								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dataCasamento}"
-								mask="99/99/9999" label="Data de Casamento">
+								value="Data de Casamento: " rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+							<p:inputMask rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" id="dataCasamento"
+												value="#{pagadorRecebedorMB.objetoPagadorRecebedor.dataCasamento}"
+												mask="99/99/9999" label="Data de Casamento">
 								<f:convertDateTime pattern="dd/MM/yyyy" />
 							</p:inputMask>
-							
-							<p:outputLabel for="regimeCasamentoEmitente" 
-								value="Regime do Casamento: " styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-							<p:selectOneMenu id="regimeCasamentoEmitente" 
-								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.regimeCasamento}" ajax="true">			
-								<f:selectItem itemValue="universal de bens" 
-									itemLabel="Universal de bens" />
-								<f:selectItem itemValue="parcial de bens" 
-									itemLabel="Comunhão parcial de bens" />
-								<f:selectItem itemValue="de separação total de bens" 
-									itemLabel="Separação total de bens" />
-								<f:selectItem itemValue="de separação legal de bens" 
-									itemLabel="Legal de bens" />
-								<f:selectItem itemValue="de separação obrigatório de bens" 
-									itemLabel="Obrigatório de separação de bens" />							
-							</p:selectOneMenu>
-							
-							
-							<p:outputLabel for="NomeConjuge" value="Nome: "
+
+									<p:outputLabel for="regimeCasamentoEmitente"
+										value="Regime do Casamento: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;"
+										rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}" />
+									<p:selectOneMenu id="regimeCasamentoEmitente"
+										value="#{pagadorRecebedorMB.objetoPagadorRecebedor.regimeCasamento}"
+										ajax="true"
+										rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}">
+										<f:selectItem itemValue="universal de bens"
+											itemLabel="Universal de bens" />
+										<f:selectItem itemValue="parcial de bens"
+											itemLabel="Comunhão parcial de bens" />
+										<f:selectItem itemValue="de separação total de bens"
+											itemLabel="Separação total de bens" />
+										<f:selectItem itemValue="de separação legal de bens"
+											itemLabel="Legal de bens" />
+										<f:selectItem itemValue="de separação obrigatório de bens"
+											itemLabel="Obrigatório de separação de bens" />
+									</p:selectOneMenu>
+									<p:outputLabel value="tipo de documento:" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.uniaoEstavel eq true and pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil != 'CASADO'}"/>
+											<p:selectOneRadio
+												value="#{pagadorRecebedorMB.objetoPagadorRecebedor.tipoUniao}" rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.uniaoEstavel eq true and pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil != 'CASADO'}">
+												<f:selectItem itemLabel="Escritura publica"
+													itemValue="Escritura publica" />
+												<f:selectItem itemLabel="Declaração de união"
+													itemValue="Declaração de uniao" />
+												<p:ajax event="valueChange" update="form:PanelCasado" />
+											</p:selectOneRadio>
+
+									<p:outputLabel for="NomeConjuge" value="Nome: "
 								styleClass="labelBold" />
 							<p:inputText id="NomeConjuge"
 								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.nomeConjuge}"
@@ -521,16 +537,8 @@
 						</div>
 						
 					<div style="align-items: flex-start;">
-						<h:panelGroup rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil eq 'UNIÃO ESTÁVEL'}"  style=" align-items: flex-start;">	
-							<h:panelGrid>
-								<p:selectOneRadio value="#{pagadorRecebedorMB.objetoPagadorRecebedor.tipoUniao}">
-								<f:selectItem itemLabel="Escritura publica" itemValue="Escritura publica"/>
-								<f:selectItem itemLabel="Declaração de união" itemValue="Declaração de uniao"/>
-								<p:ajax event="valueChange" update="form:PanelCasado"/>
-								</p:selectOneRadio>
-								
-								</h:panelGrid>
-							<h:panelGrid rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.tipoUniao eq 'Escritura publica'}">										
+						<h:panelGroup rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.uniaoEstavel eq true}"  style=" align-items: flex-start;">	
+							<h:panelGrid rendered="#{pagadorRecebedorMB.objetoPagadorRecebedor.tipoUniao eq 'Escritura publica' and pagadorRecebedorMB.objetoPagadorRecebedor.uniaoEstavel eq true and pagadorRecebedorMB.objetoPagadorRecebedor.estadocivil != 'CASADO'}">										
 							<p:outputLabel
 								value="Conforme escritura pública registrado no " styleClass="labelBold"
 								style="font-weight: bold; font-size: 16px;" />
