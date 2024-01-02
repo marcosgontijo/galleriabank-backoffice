@@ -74,7 +74,7 @@
        	<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ImovelEstoque.hbm.xml"/>
        	<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ImovelCobrancaAdicionais.hbm.xml"/>
        	<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ImovelCobrancaRestricao.hbm.xml"/>
-       	
+       	<mapping resource="com/webnowbr/siscoat/cobranca/db/model/Cartorio.hbm.xml"/>
        	
        	<mapping resource="com/webnowbr/siscoat/cobranca/db/model/DataVistoria.hbm.xml"/>
        	<mapping resource="com/webnowbr/siscoat/cobranca/db/model/Averbacao.hbm.xml"/>
