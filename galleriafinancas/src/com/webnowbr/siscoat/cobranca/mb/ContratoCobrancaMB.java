@@ -284,6 +284,7 @@ public class ContratoCobrancaMB {
 	private boolean blockForm = false;
 	private List<String> restricaoOperacao = new ArrayList<String>();
 	private List<String> restricaoImovel = new ArrayList<String>();
+	private List<String> preAprovadoPendencia = new ArrayList<String>();
 	private String tituloPainel = null;
 	private String origemTelaBaixar;
 	private String empresa;
@@ -9517,6 +9518,7 @@ public class ContratoCobrancaMB {
 		listaArquivosAnaliseDocumentos();
 		this.restricaoOperacao = new ArrayList<>();
 		this.restricaoImovel = new ArrayList<>();
+		this.preAprovadoPendencia = new ArrayList<>();
 
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
@@ -9794,6 +9796,7 @@ public class ContratoCobrancaMB {
 
 		this.restricaoOperacao = new ArrayList<>();
 		this.restricaoImovel = new ArrayList<>();
+		this.preAprovadoPendencia = new ArrayList<>();
 
 		listaRestricoesPessoas();
 		listaRestricoesImovel();
@@ -10242,6 +10245,8 @@ public class ContratoCobrancaMB {
 		listaArquivosAnaliseDocumentos();
 		this.restricaoOperacao = new ArrayList<>();
 		this.restricaoImovel = new ArrayList<>();
+		this.preAprovadoPendencia = new ArrayList<>();
+		
 
 		listaRestricoesPessoas();
 		listaRestricoesImovel();
@@ -10266,6 +10271,7 @@ public class ContratoCobrancaMB {
 		listaArquivosAnaliseDocumentos();
 		this.restricaoOperacao = new ArrayList<>();
 		this.restricaoImovel = new ArrayList<>();
+		this.preAprovadoPendencia = new ArrayList<>();
 
 		listaRestricoesPessoas();
 		listaRestricoesImovel();
@@ -10299,6 +10305,7 @@ public class ContratoCobrancaMB {
 		listaArquivosAnaliseDocumentos();
 		this.restricaoOperacao = new ArrayList<>();
 		this.restricaoImovel = new ArrayList<>();
+		this.preAprovadoPendencia = new ArrayList<>();
 
 		// listaRestricoesPessoas();
 
@@ -20888,6 +20895,8 @@ public class ContratoCobrancaMB {
 			objetoContratoCobranca.getListProcessos().add(processoSelecionado);
 		} else {
 			String origem = processoSelecionado.getOrigem();
+			if(CommonsUtil.semValor(origem))
+				origem = "";
 			if (origem.contains("Editado por:")) {
 				String origemAux = origem.substring(0, origem.lastIndexOf(" "));
 				origemAux = origemAux + " " + getNomeUsuarioLogado();
@@ -30546,394 +30555,47 @@ public class ContratoCobrancaMB {
 	}
 
 	public void geraLaudo() {
-		try {
-			String apikey = "cApKsaLHk1dgXwlkXbVGaqwnL4CPOuq3ICbMc8Va";
-			this.objetoImovelCobranca.separaEnderecoNumero(this.objetoImovelCobranca.getEndereco());
-			getLatAndLon(this.objetoImovelCobranca.getEndereco());
-
-			JSONObject assessingObj = new JSONObject();
-			assessingObj.put("category_id", this.objetoImovelCobranca.getCategoria());
-			assessingObj.put("lat", imovelCobrancaLatitude);
-			assessingObj.put("lon", imovelCobrancaLongitude);
-			assessingObj.put("neighborhood", this.objetoImovelCobranca.getBairro());
-			assessingObj.put("area", (this.objetoImovelCobranca.getAreaConstruida().isEmpty()) ? 0.0
-					: Double.valueOf(this.objetoImovelCobranca.getAreaConstruida().replace(",", "\\.")));
-			assessingObj.put("street", this.objetoImovelCobranca.getEnderecoSemNumero());
-			assessingObj.put("number", this.objetoImovelCobranca.getNumeroImovel());
-			assessingObj.put("sub_category_id", this.objetoImovelCobranca.getCategoria());
-			assessingObj.put("city", this.objetoImovelCobranca.getCidade());
-			assessingObj.put("postal_code", this.objetoImovelCobranca.getCep());
-			assessingObj.put("state", this.objetoImovelCobranca.getEstado());
-			assessingObj.put("complement", this.objetoImovelCobranca.getComplemento());
-
-			JSONObject assessingTypo = new JSONObject();
-			assessingTypo.put("features_bathroom", (this.objetoImovelCobranca.getNumeroBanheiros() <= 0) ? 1
-					: this.objetoImovelCobranca.getNumeroBanheiros());
-			assessingTypo.put("features_bedroom", (this.objetoImovelCobranca.getNumeroQuartos() <= 0) ? 1
-					: this.objetoImovelCobranca.getNumeroQuartos());
-			assessingTypo.put("features_suite", (this.objetoImovelCobranca.getNumeroSuites() <= 0) ? 1
-					: this.objetoImovelCobranca.getNumeroSuites());
-			assessingTypo.put("features_garage", (this.objetoImovelCobranca.getNumeroGaragens() <= 0) ? 1
-					: this.objetoImovelCobranca.getNumeroGaragens());
-
-			assessingObj.put("typology", assessingTypo);
-
-			JSONObject address = new JSONObject();
-			address.put("street", this.objetoImovelCobranca.getEnderecoSemNumero());
-			address.put("neighborhood", this.objetoImovelCobranca.getBairro());
-			address.put("city", this.objetoImovelCobranca.getCidade());
-			address.put("postal_code", this.objetoImovelCobranca.getCep());
-			address.put("state", this.objetoImovelCobranca.getEstado());
-			address.put("street_long", this.objetoImovelCobranca.getEnderecoSemNumero());
-			address.put("number", this.objetoImovelCobranca.getNumeroImovel());
-
-			JSONObject location = new JSONObject();
-			location.put("radius", 0);
-			location.put("lat", imovelCobrancaLatitude);
-			location.put("lon", imovelCobrancaLongitude);
-
-			JSONObject typologyWithArray = new JSONObject();
-			typologyWithArray.put("features_bathroom", new JSONArray());
-			typologyWithArray.put("features_bedroom", new JSONArray());
-			typologyWithArray.put("features_suite", new JSONArray());
-			typologyWithArray.put("features_garage", new JSONArray());
-
-			JSONObject realty_type = new JSONObject();
-			JSONArray catArray = new JSONArray();
-			catArray = (this.objetoImovelCobranca.getCategoria() == 1) ? catArray.put(1) : catArray.put(2);
-			realty_type.put("category_id", catArray);
-			realty_type.put("sub_category_id", new JSONArray());
-
-			JSONObject price_total = new JSONObject();
-			price_total.put("value", 0);
-			price_total.put("percentage", 100);
-
-			JSONObject priceAreaUsefulObj = new JSONObject();
-			priceAreaUsefulObj.put("value", 0);
-			priceAreaUsefulObj.put("percentage", 100);
-
-			JSONObject priceAreaTotalObj = new JSONObject();
-			priceAreaTotalObj.put("value", 0);
-			priceAreaTotalObj.put("percentage", 100);
-
-			JSONObject price_AreaObj = new JSONObject();
-			price_AreaObj.put("useful", priceAreaUsefulObj);
-			price_AreaObj.put("total", priceAreaTotalObj);
-
-			JSONObject areaUsefulObj = new JSONObject();
-			areaUsefulObj.put("value", Double.valueOf(this.objetoImovelCobranca.getAreaConstruida()));
-			areaUsefulObj.put("percentage", 40);
-
-			JSONObject areaTotalObj = new JSONObject();
-			areaTotalObj.put("value", 0);
-			areaTotalObj.put("percentage", 100);
-
-			JSONObject areaObj = new JSONObject();
-			areaObj.put("useful", areaUsefulObj);
-			areaObj.put("total", areaTotalObj);
-
-			JSONObject searchObj = new JSONObject();
-			searchObj.put("is_sale", true);
-			searchObj.put("max_age", 0);
-			searchObj.put("address", address);
-			searchObj.put("typology", typologyWithArray);
-			searchObj.put("area", areaObj);
-			searchObj.put("price_area", price_AreaObj);
-			searchObj.put("price_total", price_total);
-			searchObj.put("location", location);
-			searchObj.put("realty_type", realty_type);
-
-			JSONObject moreFilters = new JSONObject();
-			moreFilters.put("full_address", true);
-			moreFilters.put("remove_duplicates", true);
-			moreFilters.put("active_ads", true);
-			moreFilters.put("recent_ads", false);
-			moreFilters.put("min_quantity_ad", 2);
-			moreFilters.put("min_similarity", 0.3);
-
-			JSONObject postObj = new JSONObject();
-			postObj.put("search", searchObj);
-			postObj.put("assessing", assessingObj);
-			postObj.put("more_filters", moreFilters);
-
-			if (!this.objetoImovelCobranca.getAreaConstruida().isEmpty()) {
-				this.objetoImovelCobranca.setAreaConstruida(this.objetoImovelCobranca.getAreaConstruida());
-				PrimeFaces.current().ajax().update("form:Imovel");
-			}
-
-			String idAval = "";
-
-			URL myURL = new URL(
-					"https://api.prd.valuation.eemovel.com.br/valuation/assessment/internal/realty/calculator");
-
-			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
-			myURLConnection.setRequestMethod("POST");
-			myURLConnection.setUseCaches(false);
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-			myURLConnection.setRequestProperty("x-api-key", apikey);
-			myURLConnection.setDoOutput(true);
-
-			try (OutputStream os = myURLConnection.getOutputStream()) {
-				byte[] input = postObj.toString().getBytes("utf-8");
-				os.write(input, 0, input.length);
-				os.close();
-			}
-
-			if (myURLConnection.getResponseCode() == HttpURLConnection.HTTP_INTERNAL_ERROR) {
-				BufferedReader in = new BufferedReader(
-						new InputStreamReader(myURLConnection.getErrorStream(), "utf-8"));
-				String inputLine;
-				StringBuilder response = new StringBuilder();
-
-				while ((inputLine = in.readLine()) != null) {
-					response.append(inputLine);
-				}
-				in.close();
-				erroPedidoLaudo = true;
-				JSONObject responseObj = new JSONObject(response.toString());
-				System.out.println("Retorno postER: " + responseObj);
-			}
-
-			if (myURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-				BufferedReader in = new BufferedReader(
-						new InputStreamReader(myURLConnection.getInputStream(), "utf-8"));
-				String inputLine;
-				StringBuilder response = new StringBuilder();
-
-				while ((inputLine = in.readLine()) != null) {
-					response.append(inputLine);
-				}
-				in.close();
-
-				JSONObject responseObj = new JSONObject(response.toString());
-
-				if (responseObj.has("data")) {
-					idAval = responseObj.getString("data");
-				}
-			}
-			myURLConnection.disconnect();
-
-			laudoDone = getLaudoStatus(idAval, apikey);
-
-			if (laudoDone && !erroPedidoLaudo) {
-				myURL = new URL("https://api.prd.valuation.eemovel.com.br/valuation/files/public/report/" + idAval);
-
-				HttpURLConnection myURLConnectionPdf = (HttpURLConnection) myURL.openConnection();
-				myURLConnectionPdf.setRequestMethod("GET");
-				myURLConnectionPdf.setUseCaches(false);
-				myURLConnectionPdf.setRequestProperty("Accept", "application/json");
-				myURLConnectionPdf.setRequestProperty("Accept-Charset", "utf-8");
-				myURLConnectionPdf.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-				myURLConnectionPdf.setRequestProperty("x-api-key", apikey);
-
-				if (myURLConnectionPdf.getResponseCode() == HttpURLConnection.HTTP_OK) {
-					BufferedReader in = new BufferedReader(new InputStreamReader(myURLConnectionPdf.getInputStream()));
-					String inputLine;
-					StringBuffer response = new StringBuffer();
-
-					while ((inputLine = in.readLine()) != null) {
-						response.append(inputLine);
-					}
-					in.close();
-
-					JSONObject responseObj = new JSONObject(response.toString());
-					if (responseObj.has("data")) {
-						String dataObj = responseObj.getString("data");
-						laudoEndereco = dataObj;
-						FileService fileService = new FileService();
-						fileService.salvarPdfRetorno("", this.objetoContratoCobranca.getNumeroContrato(),
-								retornaBase64(laudoEndereco), "LaudoRobo", "interno");
-						fileService.salvarPdfRetorno("", this.objetoContratoCobranca.getNumeroContrato(),
-								retornaBase64(laudoEndereco), "LaudoRobo", "juridico");
-						PrimeFaces.current().ajax().update("form:ArquivosInternosSalvos");
-					}
-				}
-				myURLConnection.disconnect();
-			}
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
+		LaudoImovelService laudoImovelService = new LaudoImovelService();
+		HashMap<String, String> mapRequestAval = new HashMap<String, String>();
+		HashMap<String, String> mapRequestPdf = new HashMap<String, String>();
+		String idAval = "";
+		boolean erroPedidoLaudo = false;
+		
+		mapRequestAval = laudoImovelService.requestIdAvaliacao(this.objetoImovelCobranca);
+		
+		if (mapRequestAval.containsKey("atualizar") && (CommonsUtil.mesmoValor(mapRequestAval.get("atualizar"), "true"))) {
+			PrimeFaces.current().ajax().update("form:Imovel");
 		}
-	}
+		if (mapRequestAval.containsKey("erroLaudo") && (CommonsUtil.mesmoValor(mapRequestAval.get("erroLaudo"), "true"))) {
+			erroPedidoLaudo = true;
+		}
+		if (mapRequestAval.containsKey("idAval") && !CommonsUtil.semValor(mapRequestAval.get("idAval"))) {
+			idAval = mapRequestAval.get("idAval");
+		}
+			
+		laudoDone = laudoImovelService.getLaudoStatus(idAval, this.objetoContratoCobranca);
+		if (laudoDone) {
+			PrimeFaces.current().ajax().update("form:RecebidoPajulaudoPanel");
+		}
+			
+		if (laudoDone && !erroPedidoLaudo) {
+			mapRequestPdf = laudoImovelService.requestLaudoPdf(idAval, this.objetoContratoCobranca);
+				
+			if (mapRequestPdf.containsKey("atualizar") && (CommonsUtil.mesmoValor(mapRequestPdf.get("atualizar"), "true"))) {
+				PrimeFaces.current().ajax().update("form:ArquivosInternosSalvos");
+			}
+			if (mapRequestPdf.containsKey("laudoRetorno") && !CommonsUtil.semValor(mapRequestPdf.get("laudoRetorno"))) {
+				laudoEndereco = mapRequestPdf.get("laudoRetorno");
+			}
+		}
 
-	public String retornaBase64(String str) throws Exception {
-		java.net.URL url = new java.net.URL(str);
-		InputStream is = url.openStream();
-		byte[] bytes = org.apache.commons.io.IOUtils.toByteArray(is);
-		byte[] encoded = Base64.getEncoder().encode(bytes);
-		return new String(encoded);
 	}
-
+	
 	public void abreLaudo() throws IOException {
 		ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
 		externalContext.redirect(getLaudoEndereco());
 	}
 
-	private void getLatAndLon(String endereco) {
-		try {
-			int HTTP_COD_SUCESSO = 200;
-			String accessKey = "pk.771df7af1e6ab5e0ea29d01bbdf717a7";
-
-			URL myURL = new URL("https://us1.locationiq.com/v1/search/structured?street="
-					+ this.objetoImovelCobranca.getEnderecoSemNumero() + " "
-					+ this.objetoImovelCobranca.getNumeroImovel() + "&city=" + this.objetoImovelCobranca.getCidade()
-					+ "&state=" + this.objetoImovelCobranca.getEstado() + "&country=Brazil&postalcode="
-					+ this.objetoImovelCobranca.getCep() + "&format=json&key=" + accessKey);
-
-			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
-			myURLConnection.setUseCaches(false);
-			myURLConnection.setRequestMethod("GET");
-			myURLConnection.setRequestProperty("Accept", "application/json");
-			myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-			myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-			myURLConnection.setDoOutput(true);
-
-			if (myURLConnection.getResponseCode() != HTTP_COD_SUCESSO) {
-
-			} else {
-
-				BufferedReader in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream()));
-				String inputLine;
-				StringBuffer response = new StringBuffer();
-
-				while ((inputLine = in.readLine()) != null) {
-					response.append(inputLine);
-				}
-				in.close();
-
-				JSONArray jsonObj = new JSONArray(response.toString());
-				JSONObject dataObj = jsonObj.getJSONObject(0);
-				if (dataObj.has("lat")) {
-					imovelCobrancaLatitude = dataObj.getBigDecimal("lat");
-				}
-
-				if (dataObj.has("lon")) {
-					imovelCobrancaLongitude = dataObj.getBigDecimal("lon");
-				}
-			}
-			myURLConnection.disconnect();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	public boolean getLaudoStatus(String avaliacaoString, String apikey) {
-		boolean isLaudoDone = false;
-		int quantidadePesquisa = 0;
-
-		if (CommonsUtil.mesmoValor(avaliacaoString, "")) {
-			return false;
-		}
-
-		while (!isLaudoDone && quantidadePesquisa < 7) {
-			try {
-				Thread.sleep(5000);
-				URL myURL = new URL("https://api.prd.valuation.eemovel.com.br/valuation/assessment/internal/status/"
-						+ avaliacaoString);
-
-				HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
-				myURLConnection.setRequestMethod("GET");
-				myURLConnection.setUseCaches(false);
-				myURLConnection.setRequestProperty("Accept", "application/json");
-				myURLConnection.setRequestProperty("Accept-Charset", "utf-8");
-				myURLConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-				myURLConnection.setRequestProperty("x-api-key", apikey);
-				myURLConnection.setDoOutput(true);
-
-				if (myURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-					BufferedReader in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream()));
-					String inputLine;
-					StringBuffer response = new StringBuffer();
-
-					while ((inputLine = in.readLine()) != null) {
-						response.append(inputLine);
-					}
-					in.close();
-
-					JSONObject responseObj = new JSONObject(response.toString());
-					if (responseObj.has("data")) {
-						JSONObject dataObj = responseObj.getJSONObject("data");
-						if (dataObj.has("progress")) {
-							JSONObject progressObj = dataObj.getJSONObject("progress");
-							if (CommonsUtil.mesmoValor(progressObj.get("selection"),
-									"Numero mínimo de amostras selecionadas não foi atingido.")) {
-								break;
-							} else if (progressObj.getBoolean("selection") && progressObj.getBoolean("search")
-									&& progressObj.getBoolean("price")) {
-								isLaudoDone = true;
-								this.objetoContratoCobranca.setValorPreLaudo(dataObj.getBigDecimal("price"));
-								PrimeFaces.current().ajax().update("form:RecebidoPajulaudoPanel");
-							}
-						}
-					}
-				}
-				myURLConnection.disconnect();
-				quantidadePesquisa++;
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return isLaudoDone;
-
-	}
-
-	
-	
-	public void adicionarBlackFlagImovel() {
-		ImovelCobrancaRestricaoService imovelCobrancaRestricaoService = new ImovelCobrancaRestricaoService();
-
-		FacesContext context = FacesContext.getCurrentInstance();
-
-		if (imovelCobrancaRestricaoService.adicionarBlackFlagImovel(objetoImovelCobranca, objetoContratoCobranca,
-				getUsuarioLogado())) {
-			context.addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_INFO, "Imovel adicionado na lista de Black Flag "
-							+ this.objetoImovelCobranca.getNumeroMatricula() + " com sucesso!!!", ""));
-			this.restricaoImovel = new ArrayList<>();
-			listaRestricoesImovel();			
-			PrimeFaces.current().ajax().update("form:Imovel");
-			PrimeFaces.current().ajax().update("form:panelRestricao");
-		}else
-			context.addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_INFO, "Erro ao adicionar imvóvel na lista de Black Flag "
-							+ this.objetoImovelCobranca.getNumeroMatricula(), ""));
-
-	}
-
-	public void removerBlackFlagImovel() {
-
-		ImovelCobrancaRestricaoService imovelCobrancaRestricaoService = new ImovelCobrancaRestricaoService();
-
-		FacesContext context = FacesContext.getCurrentInstance();
-
-		if (imovelCobrancaRestricaoService.removerBlackFlagImovel(objetoImovelCobranca, objetoContratoCobranca,
-				getUsuarioLogado())) {
-			context.addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_INFO, "Imovel removida da lista de Black Flag "
-							+ this.objetoImovelCobranca.getNumeroMatricula() + " com sucesso!!!", ""));
-			this.restricaoImovel = new ArrayList<>();
-			listaRestricoesImovel();			
-			PrimeFaces.current().ajax().update("form:Imovel");
-			PrimeFaces.current().ajax().update("form:panelRestricao");
-		}else
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-					"Erro ao remvover imvóvel na lista de Black Flag " + this.objetoImovelCobranca.getNumeroMatricula(),
-					""));
-
-	}
 	
 	
 	
@@ -31021,7 +30683,8 @@ public class ContratoCobrancaMB {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
 					"Erro ao remvover imvóvel na lista de Black Flag " + this.objetoImovelCobranca.getNumeroMatricula(),
 					""));
-		
+	}	
+	
 	/**
 	 * @param objetoContratoCobranca the objetoContratoCobranca to set
 	 */
@@ -33006,6 +32669,7 @@ public class ContratoCobrancaMB {
 		listaArquivosAnaliseDocumentos();
 		this.restricaoOperacao = new ArrayList<>();
 		this.restricaoImovel = new ArrayList<>();
+		this.preAprovadoPendencia = new ArrayList<>();
 
 		listaRestricoesPessoas();
 
@@ -35940,9 +35604,28 @@ public class ContratoCobrancaMB {
 
 	public boolean isEngineProcessados() {
 		boolean isAllEngineProcessados = true;
-
+		boolean hasComprador = false;
 		docList = listaDocumentoAnalise.stream().filter(x -> x.isLiberadoAnalise()).collect(Collectors.toList());
-		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();	
+		
+		hasComprador = hasComprador = docList.stream().anyMatch(doc -> "comprador".equals(doc.getMotivoAnalise().toLowerCase()));
+		
+		
+
+		if (engineService == null)
+			engineService = new EngineService();
+		
+		preAprovadoPendencia = new ArrayList<String>();
+		
+		//verificando se tem pelo menos um com engine
+		boolean pedidoUmEngine = docList.stream().filter( d -> (d.getMotivoAnalise().toLowerCase().contains("proprietario atual")
+				|| d.getMotivoAnalise().toLowerCase().contains("comprador")) 
+				 && !CommonsUtil.semValor(d.getEngine()) 
+				 && !CommonsUtil.semValor(d.getEngine().getIdCallManager())).findFirst().isPresent();
+		
+		if (!pedidoUmEngine)
+			isAllEngineProcessados = false;
+		
 		for (DocumentoAnalise docAnalise : docList) {
 
 			if (!CommonsUtil.semValor(docAnalise.getPagador())) {
@@ -35952,26 +35635,44 @@ public class ContratoCobrancaMB {
 					this.restricaoOperacao.addAll(result);
 			}
 
+			if (!pedidoUmEngine) 
+				continue;
+			
 			if (docAnalise.getEngine() == null) {
 				continue;
 			}
 
-			if (CommonsUtil.mesmoValorIgnoreCase(docAnalise.getMotivoAnalise().toLowerCase(), "proprietario atual")
-					|| CommonsUtil.mesmoValorIgnoreCase(docAnalise.getMotivoAnalise().toLowerCase(), "comprador")) {
-				if (docAnalise.getEngine() != null
-						&& !CommonsUtil.semValor(docAnalise.getEngine().getIdCallManager())) {
-					if (CommonsUtil.semValor(docAnalise.getRetornoEngine())) {
-						isAllEngineProcessados = false;
+
+			if (!hasComprador) {
+				if (docAnalise.getMotivoAnalise().toLowerCase().contains("proprietario atual")) {
+					if (docAnalise.getEngine() != null
+							&& !CommonsUtil.semValor(docAnalise.getEngine().getIdCallManager())) {
+						if (CommonsUtil.semValor(docAnalise.getRetornoEngine())) {
+							preAprovadoPendencia.add(docAnalise.getIdentificacao());
+							isAllEngineProcessados = false;
+						}
+					}
+
+				}
+			} else {
+				if (docAnalise.getMotivoAnalise().toLowerCase().contains("comprador")) {
+					if (docAnalise.getEngine() != null
+							&& !CommonsUtil.semValor(docAnalise.getEngine().getIdCallManager())) {
+						if (CommonsUtil.semValor(docAnalise.getRetornoEngine())) {
+							preAprovadoPendencia.add(docAnalise.getIdentificacao());
+							isAllEngineProcessados = false;
+						}
 					}
 				}
 			}
+
 		}
-		/*
+		
 		if (!pedidoUmEngine) 
 			preAprovadoPendencia.add(0, "Não foi consultado nenhum Engine");
 		else if (!CommonsUtil.semValor(preAprovadoPendencia))
 			preAprovadoPendencia.add(0, "Engine faltando das pessoas abaixo:");
-		*/
+
 		if (isAllEngineProcessados
 				&& !CommonsUtil.mesmoValor(objetoContratoCobranca.getCadastroAprovadoValor(), "Aprovado")) {
 			hasDocAnalise();
@@ -36253,6 +35954,14 @@ public class ContratoCobrancaMB {
 
 	public boolean isBlockForm() {
 		return blockForm;
+	}
+
+	public List<String> getPreAprovadoPendencia() {
+		return preAprovadoPendencia;
+	}
+
+	public void setPreAprovadoPendencia(List<String> preAprovadoPendencia) {
+		this.preAprovadoPendencia = preAprovadoPendencia;
 	}
 
 	public void setBlockForm(boolean blockForm) {
