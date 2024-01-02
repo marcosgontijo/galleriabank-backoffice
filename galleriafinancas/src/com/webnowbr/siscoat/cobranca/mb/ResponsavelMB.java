@@ -2,9 +2,11 @@ package com.webnowbr.siscoat.cobranca.mb;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.faces.application.FacesMessage;
@@ -473,14 +475,17 @@ public class ResponsavelMB {
 	
 	public void adicionarComissao(List<ComissaoResponsavel> lista) {
 		this.selectedComissao = new ComissaoResponsavel();
-		if(CommonsUtil.semValor(lista)) {
+	
+		Optional<BigDecimal> valorMinimo = Optional.of(BigDecimal.ZERO);
+		if (CommonsUtil.semValor(lista)) {
 			lista = new ArrayList<ComissaoResponsavel>();
-			this.selectedComissao.setValorMinimo(BigDecimal.ZERO);
 		} else {
-			int size = lista.size();
-			ComissaoResponsavel comissao = lista.get(size - 1);
-			this.selectedComissao.setValorMinimo(comissao.getValorMaximo().add(BigDecimal.valueOf(0.01)));
+			valorMinimo = lista.stream().map(m -> m.getValorMaximo()).max(Comparator.naturalOrder());
+			if (valorMinimo.isPresent())
+				valorMinimo=  Optional.of(valorMinimo.get().add(BigDecimal.valueOf(0.01)));
 		}
+		if (valorMinimo.isPresent())
+			this.selectedComissao.setValorMinimo(valorMinimo.get());
 	}
 	
 	public void concluirComissao(List<ComissaoResponsavel> lista) {
@@ -493,19 +498,28 @@ public class ResponsavelMB {
 		if(CommonsUtil.semValor(lista)) {
 			//lista = new ArrayList<ComissaoResponsavel>();
 		} else {
-			for(ComissaoResponsavel comissao : lista) {
-				if(this.selectedComissao.getValorMinimo().compareTo(comissao.getValorMinimo()) >= 1 
-						&& this.selectedComissao.getValorMinimo().compareTo(comissao.getValorMaximo()) <= 0 ) {
-					erro = erro + "Valor minimo Indisponivel";	
-				}
-				if(this.selectedComissao.getValorMaximo().compareTo(comissao.getValorMinimo()) >= 1 
-						&& this.selectedComissao.getValorMaximo().compareTo(comissao.getValorMaximo()) <= 0 ) {
-					if(erro.length() > 1) {
-						erro = erro + " / ";	
-					}		
-					erro = erro + "Valor maximo Indisponivel";	
-				}
-			}
+			
+			if ( lista.stream().filter( comissao -> this.selectedComissao.getValorMinimo().compareTo(comissao.getValorMinimo()) >= 1 
+					&& this.selectedComissao.getValorMinimo().compareTo(comissao.getValorMaximo()) <= 0  ).findAny().isPresent())
+				erro = erro + "Valor minimo Indisponivel";	
+			
+			if ( lista.stream().filter( comissao -> this.selectedComissao.getValorMaximo().compareTo(comissao.getValorMinimo()) >= 1 
+					&& this.selectedComissao.getValorMaximo().compareTo(comissao.getValorMaximo()) <= 0  ).findAny().isPresent())
+				erro = erro + "Valor maximo Indisponivel";	
+			
+//			for(ComissaoResponsavel comissao : lista) {
+//				if(this.selectedComissao.getValorMinimo().compareTo(comissao.getValorMinimo()) >= 1 
+//						&& this.selectedComissao.getValorMinimo().compareTo(comissao.getValorMaximo()) <= 0 ) {
+//					erro = erro + "Valor minimo Indisponivel";	
+//				}
+//				if(this.selectedComissao.getValorMaximo().compareTo(comissao.getValorMinimo()) >= 1 
+//						&& this.selectedComissao.getValorMaximo().compareTo(comissao.getValorMaximo()) <= 0 ) {
+//					if(erro.length() > 1) {
+//						erro = erro + " / ";	
+//					}		
+//					erro = erro + "Valor maximo Indisponivel";	
+//				}
+//			}
 			if(erro.length() > 1) {
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, erro , ""));
 				return;
@@ -622,6 +636,7 @@ public class ResponsavelMB {
 	 */
 	public void setObjetoResponsavel(Responsavel objetoResponsavel) {
 		this.objetoResponsavel = objetoResponsavel;
+		addComissao = false;
 	}
 
 	/**
