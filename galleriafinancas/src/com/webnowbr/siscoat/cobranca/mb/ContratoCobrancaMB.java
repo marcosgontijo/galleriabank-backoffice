@@ -30600,6 +30600,49 @@ public class ContratoCobrancaMB {
 		return objetoContratoCobranca;
 	}
 
+	
+
+	public void adicionarBlackFlagImovel() {
+		ImovelCobrancaRestricaoService imovelCobrancaRestricaoService = new ImovelCobrancaRestricaoService();
+
+		FacesContext context = FacesContext.getCurrentInstance();
+
+		if (imovelCobrancaRestricaoService.adicionarBlackFlagImovel(objetoImovelCobranca, objetoContratoCobranca,
+				getUsuarioLogado())) {
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO, "Imovel adicionado na lista de Black Flag "
+							+ this.objetoImovelCobranca.getNumeroMatricula() + " com sucesso!!!", ""));
+			this.restricaoImovel = new ArrayList<>();
+			listaRestricoesImovel();			
+			PrimeFaces.current().ajax().update("form:Imovel");
+			PrimeFaces.current().ajax().update("form:panelRestricao");
+		}else
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO, "Erro ao adicionar imvóvel na lista de Black Flag "
+							+ this.objetoImovelCobranca.getNumeroMatricula(), ""));
+
+	}
+
+	public void removerBlackFlagImovel() {
+
+		ImovelCobrancaRestricaoService imovelCobrancaRestricaoService = new ImovelCobrancaRestricaoService();
+
+		FacesContext context = FacesContext.getCurrentInstance();
+
+		if (imovelCobrancaRestricaoService.removerBlackFlagImovel(objetoImovelCobranca, objetoContratoCobranca,
+				getUsuarioLogado())) {
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO, "Imovel removida da lista de Black Flag "
+							+ this.objetoImovelCobranca.getNumeroMatricula() + " com sucesso!!!", ""));
+			this.restricaoImovel = new ArrayList<>();
+			listaRestricoesImovel();			
+			PrimeFaces.current().ajax().update("form:Imovel");
+			PrimeFaces.current().ajax().update("form:panelRestricao");
+		}else
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+					"Erro ao remvover imvóvel na lista de Black Flag " + this.objetoImovelCobranca.getNumeroMatricula(),
+					""));
+		
 	/**
 	 * @param objetoContratoCobranca the objetoContratoCobranca to set
 	 */
