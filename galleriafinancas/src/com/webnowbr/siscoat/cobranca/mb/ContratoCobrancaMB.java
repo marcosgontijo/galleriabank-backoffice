@@ -19,9 +19,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -173,8 +170,8 @@ import com.webnowbr.siscoat.cobranca.db.model.StarkBankBaixa;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankBoleto;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankPix;
 import com.webnowbr.siscoat.cobranca.db.model.directd.PorcentagemImovel;
-import com.webnowbr.siscoat.cobranca.db.op.CcbDao;
 import com.webnowbr.siscoat.cobranca.db.op.CartorioDao;
+import com.webnowbr.siscoat.cobranca.db.op.CcbDao;
 import com.webnowbr.siscoat.cobranca.db.op.CcbParticipantesDao;
 import com.webnowbr.siscoat.cobranca.db.op.CcbProcessosJudiciaisDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
@@ -206,8 +203,8 @@ import com.webnowbr.siscoat.cobranca.service.DocumentoAnaliseService;
 import com.webnowbr.siscoat.cobranca.service.DrCalcService;
 import com.webnowbr.siscoat.cobranca.service.EngineService;
 import com.webnowbr.siscoat.cobranca.service.FileService;
-import com.webnowbr.siscoat.cobranca.service.LaudoImovelService;
 import com.webnowbr.siscoat.cobranca.service.ImovelCobrancaRestricaoService;
+import com.webnowbr.siscoat.cobranca.service.LaudoImovelService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.cobranca.service.PagadorRecebedorService;
 import com.webnowbr.siscoat.cobranca.service.PajuService;
@@ -245,9 +242,6 @@ import com.webnowbr.siscoat.simulador.SimulacaoIPCADadosV2;
 import com.webnowbr.siscoat.simulador.SimulacaoVO;
 import com.webnowbr.siscoat.simulador.SimuladorMB;
 
-import br.com.galleriabank.jwt.common.JwtUtil;
-import br.com.galleriabank.laudoimovel.cliente.model.retorno.*;
-import br.com.galleriabank.laudoimovel.cliente.model.request.*;
 import br.com.galleriabank.drcalc.cliente.model.DebitosJudiciais;
 import br.com.galleriabank.drcalc.cliente.model.DebitosJudiciaisRequest;
 import br.com.galleriabank.drcalc.cliente.model.DebitosJudiciaisRequestValor;
@@ -271,12 +265,14 @@ public class ContratoCobrancaMB {
 	private String numeroContratoObjetoContratoCobranca;
 	private List<FileUploaded> documentoConsultarTodos;
 	private boolean verificaReaProcessado;
+	private Cartorio objetoCartorio = new Cartorio();
 	private BigDecimal valorMercaoImovelPorcento;
 	private BigDecimal valorMercadoImovelDez;
 	private BigDecimal valorMercadoImovelVinte;
 	private BigDecimal valorMercadoImovelTrinta;
 	private BigDecimal valorMercadoImovelQuarenta;
 	private BigDecimal valorMercadoImovelCinquenta;
+	 private boolean apagaListaCartorio;
 
 	private boolean updateMode = false;
 	private boolean deleteMode = false;
@@ -885,7 +881,48 @@ public class ContratoCobrancaMB {
 	public String rowSelected() {
 		return null;
 	}
+	
+	private	List<Cartorio> listaCartorio = new ArrayList<>();
+	
+	public void consultaCartorio(){
+		CartorioDao dao = new CartorioDao();
+		listaCartorio = dao.consultaCartorio(objetoContratoCobranca);
+		if(listaCartorio.isEmpty()) {
+			listaCartorio = null;
+		}
+		
+	}
 
+	public void excluiLista() {
+		CartorioDao dao = new CartorioDao();
+		List<Cartorio> cartorioExcluir = dao.consultaCartorio(objetoContratoCobranca);
+		for (Cartorio cartorioItem : cartorioExcluir) {
+			dao.delete(cartorioItem);
+		}
+		listaCartorio = dao.consultaCartorio(objetoContratoCobranca);
+		consultaCartorio();
+	}
+
+	public void salvaCartorio() {
+		User usuarioLogado = getUsuarioLogado();
+		CartorioDao dao = new CartorioDao();
+
+		if (objetoCartorio.getStatus() == null) {
+			objetoCartorio.setStatus("Enviado Para cartório");
+		}
+		if (objetoCartorio.getDataStatus() == null) {
+			objetoCartorio.setDataStatus(DateUtil.getDataHoje());
+		}
+		if (usuarioLogado != null && objetoCartorio != null) {
+			this.objetoCartorio.setNomeUsuario(usuarioLogado.getName());
+			this.objetoCartorio.setIdContrato(objetoContratoCobranca);
+		}
+		dao.create(objetoCartorio);
+		objetoCartorio = new Cartorio();
+		if (objetoContratoCobranca.isContratoEmCartorio()) {
+			listaCartorio = dao.consultaCartorio(objetoContratoCobranca);
+		}
+	}
 	public void saveContratoEmCartorio() {
 		FacesContext context = FacesContext.getCurrentInstance();
 
@@ -35778,7 +35815,30 @@ public class ContratoCobrancaMB {
 	public List<CcbProcessosJudiciais> getListProcessosSelecionado() {
 		return listProcessosSelecionado;
 	}
+	public Cartorio getObjetoCartorio() {
+		return objetoCartorio;
+	}
 
+	public void setObjetoCartorio(Cartorio objetoCartorio) {
+		this.objetoCartorio = objetoCartorio;
+	}
+	
+	public List<Cartorio> getListaCartorio() {
+		return listaCartorio;
+	}
+	
+	public void setListaCartorio(List<Cartorio> listaCartorio) {
+		this.listaCartorio = listaCartorio;
+	}
+	
+	public boolean isApagaListaCartorio() {
+		return apagaListaCartorio;
+	}
+	
+	public void setApagaListaCartorio(boolean apagaListaCartorio) {
+		this.apagaListaCartorio = apagaListaCartorio;
+	}
+	
 	public void setListProcessosSelecionado(List<CcbProcessosJudiciais> listProcessosSelecionado) {
 		this.listProcessosSelecionado = listProcessosSelecionado;
 	}
