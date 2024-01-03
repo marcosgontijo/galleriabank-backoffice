@@ -7,18 +7,17 @@ import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import org.hibernate.annotations.Filter;
 import org.json.JSONObject;
 import org.primefaces.PrimeFaces;
 
@@ -26,6 +25,7 @@ import com.webnowbr.siscoat.cobranca.model.cep.CepResult;
 import com.webnowbr.siscoat.cobranca.service.CepService;
 import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.common.BancosEnum;
+import com.webnowbr.siscoat.common.ComissaoOrigemEnum;
 import com.webnowbr.siscoat.common.CommonsUtil;
 
 import br.com.galleriabank.netrin.cliente.model.contabancaria.ValidaContaBancariaRequest;
@@ -86,8 +86,9 @@ public class Responsavel implements Serializable {
 
 	private String cep;
 	private Responsavel donoResponsavel;
-
-	List<ComissaoResponsavel> taxasComissao;
+	
+	Set<ComissaoResponsavel> taxasComissao;
+	
 
 	private BigDecimal taxaRemuneracao;
 
@@ -656,11 +657,20 @@ public class Responsavel implements Serializable {
 		this.pix = pix;
 	}
 
-	public List<ComissaoResponsavel> getTaxasComissao() {
+	public Set<ComissaoResponsavel> getTaxasComissao() {
 		return taxasComissao;
 	}
+	
+	public List<ComissaoResponsavel> getTaxasComissao(ComissaoOrigemEnum origem) {
+		if (!CommonsUtil.semValor(taxasComissao))
+			return taxasComissao.stream().filter(c -> c.isAtiva() && origem.getNome().equals(c.getOrigem()))
+					.sorted((o1, o2) -> (o1.getValorMinimo().compareTo(o2.getValorMinimo())))
+					.collect(Collectors.toList());
+		else
+			return null;
+	}
 
-	public void setTaxasComissao(List<ComissaoResponsavel> taxasComissao) {
+	public void setTaxasComissao(Set<ComissaoResponsavel> taxasComissao) {
 		this.taxasComissao = taxasComissao;
 	}
 

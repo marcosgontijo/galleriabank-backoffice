@@ -8,6 +8,9 @@ import java.util.List;
 
 public class SiscoatConstants {
 	public static final int GALLERIA_FINANCAS_ID = 14;
+
+	public static final Long RESPONSAVEL_GERAL_ID = -1L;
+	
 	
 	public static final Long ASSISTENTE_ISA = 1556L;
 	public static final Long ASSISTENTE_BIA = 359L;
