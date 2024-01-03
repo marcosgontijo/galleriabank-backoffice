@@ -591,7 +591,8 @@
 							<p:selectOneRadio id="contratoEmCartorio"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.contratoEmCartorio}">
 								<f:selectItem itemLabel="Sim" itemValue="true" />
-								<f:selectItem itemLabel="Não" itemValue="false" />
+								<f:selectItem itemLabel="Não" itemValue="false"/>
+								<p:ajax event="valueChange" listener="#{contratoCobrancaMB.mudaBotaoCartorio}" update="contratoEmCartorioForm"></p:ajax>
 							</p:selectOneRadio>
 						</h:panelGrid>
 						<h:panelGrid columns="2">
@@ -668,13 +669,13 @@
 					</p:panel>
 				</div>
 				<div align="center">
-					<p:commandButton value="Salvar"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.contratoEmCartorio == false}"
+					<p:commandButton id="botaoSalvar" value="Salvar" rendered="#{contratoCobrancaMB.cartorioMudou}"
 						action="#{contratoCobrancaMB.saveContratoEmCartorio}"
 						icon="ui-icon ui-icon-check" update=":form:ConsultaContratosResultados :form:mensagens :form:dtContratos contratoEmCartorioForm"
-						oncomplete="PF('contratoEmCartorioDialog').hide();" />
+						oncomplete="PF('contratoEmCartorioDialog').hide();" >
+						<f:setPropertyActionListener value="#{false}" target="#{contratoCobrancaMB.cartorioMudou}"></f:setPropertyActionListener>
+						</p:commandButton>
 					<p:commandButton value="Cancelar"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.contratoEmCartorio == false}"
 						icon="ui-icon ui-icon-cancel"
 						oncomplete="PF('contratoEmCartorioDialog').hide();" />
 				</div>
