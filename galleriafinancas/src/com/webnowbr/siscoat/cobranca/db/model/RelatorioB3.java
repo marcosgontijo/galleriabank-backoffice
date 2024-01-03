@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import com.webnowbr.siscoat.common.CommonsUtil;
 
@@ -73,8 +74,14 @@ public class RelatorioB3 implements Serializable {
 		ImovelCobranca imovel = contrato.getImovel();
 		ufImovel = imovel.getEstado();
 		municipioImovel = imovel.getCidade();
-		logradouroImovel = ccb.getLogradouroRuaImovel();
-		numeroEnderecoImovel = ccb.getLogradouroNumeroImovel();
+		String[] endereco = imovel.getEndereco().split(Pattern.quote(","));
+		if(endereco.length >= 2) {
+			logradouroImovel = endereco[0];
+			numeroEnderecoImovel = CommonsUtil.removeEspacos(endereco[1]);
+		} else {
+			logradouroImovel = ccb.getLogradouroRuaImovel();
+			numeroEnderecoImovel = ccb.getLogradouroNumeroImovel();
+		}
 		complementoImovel = imovel.getComplemento();
 		bairroImovel = imovel.getBairro();
 		cepImovel = imovel.getCep();
