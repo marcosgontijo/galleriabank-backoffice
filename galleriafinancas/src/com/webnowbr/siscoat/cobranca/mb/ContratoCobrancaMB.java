@@ -19,6 +19,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -289,6 +292,7 @@ public class ContratoCobrancaMB {
 
 	private String tipoParametroConsultaContrato;
 	private String parametroConsultaContrato;
+
 	private String tituloTelaConsultaPreStatus;
 	private String tituloTelaLead = "";
 
@@ -6157,6 +6161,7 @@ public class ContratoCobrancaMB {
 		FacesContext context = FacesContext.getCurrentInstance();
 		this.objetoContratoCobranca.setPendenciaExternaCartorio(false);
 		this.objetoContratoCobranca.setAgEnvioCartorio(false);
+		this.objetoContratoCobranca.setPendenciaResolvidaCartorio(false);
 		updateCheckList();
 		this.objetoContratoCobranca.populaStatusEsteira(getUsuarioLogadoNull());
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
@@ -20233,7 +20238,8 @@ public class ContratoCobrancaMB {
 				}
 			}
 
-			if (this.objetoBaixaPagamentoStarkBank.getContasPagar().getFormaTransferencia().equals("Pix")) {
+			if (this.objetoBaixaPagamentoStarkBank.getContasPagar().getFormaTransferencia().equals("Pix") || 
+					this.objetoBaixaPagamentoStarkBank.getContasPagar().getFormaTransferencia().equals("PIX")) {
 				
 				System.out.println("processaPagamentoStarkBank - Pix");
 				
@@ -20285,16 +20291,48 @@ public class ContratoCobrancaMB {
 			if (this.objetoBaixaPagamentoStarkBank.getContasPagar().getFormaTransferencia().equals("TED")) {
 				System.out.println("processaPagamentoStarkBank - TED");
 				
-				StarkBankPix starkBankPix = starkBankAPI.paymentTED(
-						this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getBancoBancarioContaPagar(),
-						this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getAgenciaBancarioContaPagar(),
-						this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getContaBancarioContaPagar(),
-						this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getCpfCnpjBancarioContaPagar(),
-						this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getNomeBancarioContaPagar(),
-						this.objetoBaixaPagamentoStarkBank.getContasPagar().getValorPagamento(),
-						this.objetoBaixaPagamentoStarkBank.getContasPagar().getFormaTransferencia(),
-						this.objetoBaixaPagamentoStarkBank.getContasPagar().getDescricao());
+				StarkBankPix starkBankPix;
+				
+				if (this.objetoBaixaPagamentoStarkBank.getContasPagar().getDescricao().contains("Pagamento Carta Split")) {
+					System.out.println("processaPagamentoStarkBank - Galleria - TED");
 
+					String nomePagador = null;
+					String documentoPagador = null;
+					
+					if (this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getPagador().getCpf() != null &&
+							!this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getPagador().getCpf().equals("")) {
+						nomePagador = this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getPagador().getNome();
+						documentoPagador = this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getPagador().getCpf();
+					} else {
+						nomePagador = this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getPagador().getNome();
+						documentoPagador = this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getPagador().getCnpj();
+					}
+					
+					if (documentoPagador != null) {
+						documentoPagador = documentoPagador.replace(".", "").replace("-","").replace("/", "");
+					}
+					
+					starkBankPix = starkBankAPI.paymentTED(
+							this.objetoBaixaPagamentoStarkBank.getContasPagar().getBancoTed(),
+							this.objetoBaixaPagamentoStarkBank.getContasPagar().getAgenciaTed(),
+							this.objetoBaixaPagamentoStarkBank.getContasPagar().getContaTed(),
+							documentoPagador,
+							nomePagador,
+							this.objetoBaixaPagamentoStarkBank.getContasPagar().getValorPagamento(),
+							this.objetoBaixaPagamentoStarkBank.getContasPagar().getFormaTransferencia(),
+							this.objetoBaixaPagamentoStarkBank.getContasPagar().getDescricao());
+				} else {
+					starkBankPix = starkBankAPI.paymentTED(
+							this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getBancoBancarioContaPagar(),
+							this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getAgenciaBancarioContaPagar(),
+							this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getContaBancarioContaPagar(),
+							this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getCpfCnpjBancarioContaPagar(),
+							this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getNomeBancarioContaPagar(),
+							this.objetoBaixaPagamentoStarkBank.getContasPagar().getValorPagamento(),
+							this.objetoBaixaPagamentoStarkBank.getContasPagar().getFormaTransferencia(),
+							this.objetoBaixaPagamentoStarkBank.getContasPagar().getDescricao());
+				}
+				
 				if (starkBankPix != null) {
 					StarkBankBaixa baixa = updateBaixaStarkBank(this.objetoBaixaPagamentoStarkBank,							
 							String.valueOf(starkBankPix.getId()),
@@ -30567,6 +30605,9 @@ public class ContratoCobrancaMB {
 		externalContext.redirect(getLaudoEndereco());
 	}
 
+	
+	
+	
 	/**
 	 * @param fileRecibo the fileRecibo to set
 	 */
@@ -30609,6 +30650,50 @@ public class ContratoCobrancaMB {
 		return objetoContratoCobranca;
 	}
 
+	
+
+	public void adicionarBlackFlagImovel() {
+		ImovelCobrancaRestricaoService imovelCobrancaRestricaoService = new ImovelCobrancaRestricaoService();
+
+		FacesContext context = FacesContext.getCurrentInstance();
+
+		if (imovelCobrancaRestricaoService.adicionarBlackFlagImovel(objetoImovelCobranca, objetoContratoCobranca,
+				getUsuarioLogado())) {
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO, "Imovel adicionado na lista de Black Flag "
+							+ this.objetoImovelCobranca.getNumeroMatricula() + " com sucesso!!!", ""));
+			this.restricaoImovel = new ArrayList<>();
+			listaRestricoesImovel();			
+			PrimeFaces.current().ajax().update("form:Imovel");
+			PrimeFaces.current().ajax().update("form:panelRestricao");
+		}else
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO, "Erro ao adicionar imvóvel na lista de Black Flag "
+							+ this.objetoImovelCobranca.getNumeroMatricula(), ""));
+
+	}
+
+	public void removerBlackFlagImovel() {
+
+		ImovelCobrancaRestricaoService imovelCobrancaRestricaoService = new ImovelCobrancaRestricaoService();
+
+		FacesContext context = FacesContext.getCurrentInstance();
+
+		if (imovelCobrancaRestricaoService.removerBlackFlagImovel(objetoImovelCobranca, objetoContratoCobranca,
+				getUsuarioLogado())) {
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO, "Imovel removida da lista de Black Flag "
+							+ this.objetoImovelCobranca.getNumeroMatricula() + " com sucesso!!!", ""));
+			this.restricaoImovel = new ArrayList<>();
+			listaRestricoesImovel();			
+			PrimeFaces.current().ajax().update("form:Imovel");
+			PrimeFaces.current().ajax().update("form:panelRestricao");
+		}else
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+					"Erro ao remvover imvóvel na lista de Black Flag " + this.objetoImovelCobranca.getNumeroMatricula(),
+					""));
+	}	
+	
 	/**
 	 * @param objetoContratoCobranca the objetoContratoCobranca to set
 	 */
@@ -35875,7 +35960,7 @@ public class ContratoCobrancaMB {
 	public void setRestricaoImovel(List<String> restricaoImovel) {
 		this.restricaoImovel = restricaoImovel;
 	}
-	
+
 	public boolean isBlockForm() {
 		return blockForm;
 	}

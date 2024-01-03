@@ -673,16 +673,19 @@ public class StarkBankAPI{
 	    	rules.add(new Transfer.Rule("resendingLimit", 5));
 	
 	    	HashMap<String, Object> data = new HashMap<>();
-	    	data.put("amount", valor);
+	    	String valorStr = valor.toString();
+	    	data.put("amount", Long.valueOf(valorStr.replace(".", "").replace(",", "")));	
 	    	data.put("bankCode", codigoBanco);
 	    	data.put("branchCode", agencia);
 	    	data.put("accountNumber", numeroConta);
 	    	data.put("taxId", documento);
 	    	data.put("name", nomeBeneficiario);
-	    	data.put("externalId", "PagamentoPix-" + nomeBeneficiario.replace(" ", "") + DateUtil.todayInMilli());
+	    	data.put("externalId", "PagamentoTED-" + nomeBeneficiario.replace(" ", "") + DateUtil.todayInMilli());
 	    	//data.put("scheduled", "2020-08-14");
 	    	//data.put("tags", new String[]{"daenerys", "invoice/1234"});
 	    	//data.put("rules", rules);
+	    	
+	    	System.out.println("Payment TED Payload - " + data);
 	    	
 			transfers.add(new Transfer(data));
 			
@@ -704,12 +707,12 @@ public class StarkBankAPI{
 	    	starkBankPixDAO.create(pixTransacao);
 	    	
 	    	context.addMessage(null, new FacesMessage(
-					FacesMessage.SEVERITY_ERROR, "StarkBank PIX: Pagamento efetuado com sucesso!", ""));
+					FacesMessage.SEVERITY_INFO, "StarkBank TED: Pagamento efetuado com sucesso!", ""));
 	    	
 	    	return pixTransacao;
 		} catch (Exception e) {
 			context.addMessage(null, new FacesMessage(
-					FacesMessage.SEVERITY_ERROR, "StarkBank PIX: Ocorreu um problema ao fazer PIX/TED! Erro: " + e, ""));
+					FacesMessage.SEVERITY_ERROR, "StarkBank TED: Ocorreu um problema ao fazer TED! Erro: " + e, ""));
 			
 			// TODO Auto-generated catch block
 			e.printStackTrace();
