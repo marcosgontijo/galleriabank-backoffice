@@ -280,6 +280,7 @@ public class ContratoCobrancaMB {
 	private boolean blockForm = false;
 	private List<String> restricaoOperacao = new ArrayList<String>();
 	private List<String> restricaoImovel = new ArrayList<String>();
+	private List<String> preAprovadoPendencia = new ArrayList<String>();
 	private String tituloPainel = null;
 	private String origemTelaBaixar;
 	private String empresa;
@@ -30649,11 +30650,13 @@ public class ContratoCobrancaMB {
 		byte[] encoded = Base64.getEncoder().encode(bytes);
 		return new String(encoded);
 	}
-
+	
 	public void abreLaudo() throws IOException {
 		ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
 		externalContext.redirect(getLaudoEndereco());
 	}
+
+
 
 	private void getLatAndLon(String endereco) {
 		try {
@@ -30773,6 +30776,7 @@ public class ContratoCobrancaMB {
 
 	
 	
+
 	public void adicionarBlackFlagImovel() {
 		ImovelCobrancaRestricaoService imovelCobrancaRestricaoService = new ImovelCobrancaRestricaoService();
 
@@ -30785,6 +30789,8 @@ public class ContratoCobrancaMB {
 							+ this.objetoImovelCobranca.getNumeroMatricula() + " com sucesso!!!", ""));
 			this.restricaoImovel = new ArrayList<>();
 			listaRestricoesImovel();			
+			PrimeFaces.current().ajax().update("form:Imovel");
+			PrimeFaces.current().ajax().update("form:panelRestricao");
 		}else
 			context.addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO, "Erro ao adicionar imvóvel na lista de Black Flag "
@@ -35834,6 +35840,11 @@ public class ContratoCobrancaMB {
 			}
 
 		}
+		
+		if (!pedidoUmEngine) 
+			preAprovadoPendencia.add(0, "Não foi consultado nenhum Engine");
+		else if (!CommonsUtil.semValor(preAprovadoPendencia))
+			preAprovadoPendencia.add(0, "Engine faltando das pessoas abaixo:");
 
 		if (isAllEngineProcessados
 				&& !CommonsUtil.mesmoValor(objetoContratoCobranca.getCadastroAprovadoValor(), "Aprovado")) {

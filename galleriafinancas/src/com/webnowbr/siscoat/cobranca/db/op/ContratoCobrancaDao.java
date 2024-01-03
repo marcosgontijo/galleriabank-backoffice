@@ -7660,7 +7660,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<ContratoCobranca> geraConsultaContratosAgPagoOp() {
+	public List<ContratoCobranca> geraConsultaContratosAgPagoOp(String status) {
 		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -7676,14 +7676,22 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 							+ " from cobranca.contratocobranca c"
 							+ " inner join cobranca.responsavel res on c.responsavel = res.id inner join cobranca.pagadorrecebedor"
 							+ " pr on pr.id = c.pagador inner join cobranca.imovelcobranca im on c.imovel = im.id ";
-					
-					query = query + "where status = 'Aprovado' and c.pagador != 14 and c.operacaoPaga = false or c.pendenciapagamento = true";				
-					query = query + " order by id desc";				
+					query = query + "where status = 'Aprovado' and c.pagador != 14 ";
+					if (status.equals("Ag. Pagamento Op.")) {
+						query = query + " and c.operacaoPaga = false or c.pendenciapagamento = true";			
+					}
+					if (status.equals("Ag. Emissão NFs")) {
+						query = query + " and c.operacaoPaga = true and notaFiscalEmitida = false";				
+					}
+					if (status.equals("Ag. Pagamento NFs")) {
+						query = query + " and c.operacaoPaga = true and notaFiscalEmitida = true and notaFiscalPaga = false";				
+					}
+					query = query + " order by id desc";
 					connection = getConnection();
 					ps = connection.prepareStatement(query);	
 					rs = ps.executeQuery();				
 					ContratoCobranca contratoCobranca = new ContratoCobranca();
-					List<String> idsContratoCobranca = new ArrayList<String>(0);
+					//List<String> idsContratoCobranca = new ArrayList<String>(0);
 					
 					while (rs.next()) {
 						
@@ -7702,7 +7710,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setPendenciaPagamento(rs.getBoolean("pendenciaPagamento"));
 						contratoCobranca.setValorCCB(rs.getBigDecimal(12));
 						contratoCobranca.setDataInicio(rs.getDate(13));
-						idsContratoCobranca.add( CommonsUtil.stringValue(contratoCobranca.getId()));
+						//idsContratoCobranca.add( CommonsUtil.stringValue(contratoCobranca.getId()));
 
 						
 						//contratoCobranca = findById(rs.getLong(1));
