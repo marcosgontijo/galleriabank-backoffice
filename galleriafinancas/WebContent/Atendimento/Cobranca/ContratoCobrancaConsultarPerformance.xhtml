@@ -206,6 +206,7 @@
 		                <shiro:hasAnyRoles name="ROOT, PROFILE_COBRANCA">  	                
 			                <p:commandButton action="#{contratoCobrancaMB.consultaCartorio}" oncomplete="PF('contratoEmCartorioDialog').show();" icon="ui-icon-info" value="Contrato em Cartório?" update="contratoEmCartorioForm">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+			                	<f:setPropertyActionListener value="#{null}" target="#{contratoCobrancaMB.objetoCartorio.status}"></f:setPropertyActionListener>
 			                </p:commandButton>	            		                		               
 			                <p:spacer width="10" height="10"/>
 			            </shiro:hasAnyRoles>      
@@ -607,10 +608,11 @@
 							</p:datePicker>
 						</h:panelGrid>
 						<p:panelGrid columns="2"
-							rendered="#{contratoCobrancaMB.objetoContratoCobranca.contratoEmCartorio}">
+							rendered="#{contratoCobrancaMB.objetoContratoCobranca.contratoEmCartorio and contratoCobrancaMB.cartorioMudou == false}">
 							<p:outputLabel value="Status" styleClass="labelBold" />
 							<p:selectOneMenu
 								value="#{contratoCobrancaMB.objetoCartorio.status}">
+								<f:selectItem itemLabel="selecione o status" itemValue="#{null}"></f:selectItem>
 								<f:selectItem itemLabel="1- Ag.Cartas" itemValue="Ag.Cartas"></f:selectItem>
 								<f:selectItem itemLabel="2- Ag.Envio ONA"
 									itemValue="Ag.Envio ONA"></f:selectItem>
@@ -640,7 +642,7 @@
 						</p:panelGrid>
 					</div>
 					<p:panel id="panelStatus"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.contratoEmCartorio and contratoCobrancaMB.listaCartorio != null}">
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.contratoEmCartorio and contratoCobrancaMB.listaCartorio != null and contratoCobrancaMB.cartorioMudou == false }">
 						<p:panelGrid columns="3">
 							<p:dataTable var="cartorio"
 								value="#{contratoCobrancaMB.listaCartorio}">
