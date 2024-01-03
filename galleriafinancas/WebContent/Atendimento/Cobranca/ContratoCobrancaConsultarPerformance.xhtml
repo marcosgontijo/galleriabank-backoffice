@@ -642,7 +642,7 @@
 						</p:panelGrid>
 					</div>
 					<p:panel id="panelStatus"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.contratoEmCartorio and contratoCobrancaMB.listaCartorio != null and contratoCobrancaMB.cartorioMudou == false }">
+						rendered="#{contratoCobrancaMB.listaCartorio != null }">
 						<p:panelGrid columns="3">
 							<p:dataTable var="cartorio"
 								value="#{contratoCobrancaMB.listaCartorio}">
