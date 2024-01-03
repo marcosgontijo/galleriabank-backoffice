@@ -19,8 +19,9 @@ public class BigDecimalConverter implements javax.faces.convert.Converter {
 
     /** Log. */
     private Log log = LogFactory.getLog(BigDecimalConverter.class);
-
-    /**
+    
+    
+	/**
      * Obtem o objeto.
      * @param ctx FacesContext
      * @param comp UIComponent
@@ -80,7 +81,13 @@ public class BigDecimalConverter implements javax.faces.convert.Converter {
                 log.error("Erro ao tentar converter valor para bigdecimal. valor: " + value);
                 e.printStackTrace();
             }
+            String decimal = valor.subtract(
+            		  new BigDecimal(valor.intValue())).multiply( new BigDecimal(100)).toPlainString();
+           
             String str = valor.toString();
+            if (decimal.length() < 2)
+				str = valor.setScale(2).toString();
+
             String nValueFinal = "";
 
             String nValue = "";

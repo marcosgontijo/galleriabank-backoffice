@@ -26,6 +26,7 @@ public class ContratoCobranca implements Serializable {
 
 	private BigDecimal valorAgilCessao;
 	private BigDecimal valorCessao;
+	private boolean enviadoCartorio = false;
 
 	private String ispbPixContaPagar;
 
@@ -7640,6 +7641,15 @@ public class ContratoCobranca implements Serializable {
 
 	public void setNotaFiscalPagaUsuario(String notaFiscalPagaUsuario) {
 		this.notaFiscalPagaUsuario = notaFiscalPagaUsuario;
+	}
+	
+
+	public boolean isEnviadoCartorio() {
+		return enviadoCartorio;
+	}
+
+	public void setEnviadoCartorio(boolean enviadoCartorio) {
+		this.enviadoCartorio = enviadoCartorio;
 	}
 	
 }

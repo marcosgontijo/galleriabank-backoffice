@@ -13,6 +13,8 @@ public class ComissaoResponsavel implements Serializable {
 	private BigDecimal valorMinimo;
 	private BigDecimal valorMaximo;
 	private BigDecimal taxaRemuneracao;
+	private String origem;
+	private boolean ativa;
 	private Date dataCriacao;
 	private String loginCriacao;
 	private User userCriacao;
@@ -28,6 +30,7 @@ public class ComissaoResponsavel implements Serializable {
 		this.setValorMinimo(comissao.getValorMinimo());
 		this.setValorMaximo(comissao.getValorMaximo());
 		this.setTaxaRemuneracao(comissao.getTaxaRemuneracao());	
+		this.setAtiva(true);
 	}
 
 	public long getId() {
@@ -60,6 +63,22 @@ public class ComissaoResponsavel implements Serializable {
 
 	public void setTaxaRemuneracao(BigDecimal taxaRemuneracao) {
 		this.taxaRemuneracao = taxaRemuneracao;
+	}
+
+	public String getOrigem() {
+		return origem;
+	}
+
+	public void setOrigem(String origem) {
+		this.origem = origem;
+	}
+
+	public boolean isAtiva() {
+		return ativa;
+	}
+
+	public void setAtiva(boolean ativa) {
+		this.ativa = ativa;
 	}
 
 	public Date getDataCriacao() {

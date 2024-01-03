@@ -2,10 +2,14 @@ package com.webnowbr.siscoat.cobranca.mb;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -22,8 +26,10 @@ import com.webnowbr.siscoat.cobranca.db.model.ComissaoResponsavel;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.db.op.ComissaoResponsavelDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
+import com.webnowbr.siscoat.common.ComissaoOrigemEnum;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
+import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.common.ValidaCNPJ;
 import com.webnowbr.siscoat.common.ValidaCPF;
 import com.webnowbr.siscoat.db.dao.DAOException;
@@ -43,6 +49,7 @@ public class ResponsavelMB {
 	private LazyDataModel<Responsavel> lazyModel;
 	/** Variavel. */
 	private Responsavel objetoResponsavel;
+	private Responsavel objetoResponsavelGeral;
 	private boolean updateMode = false;
 	private boolean deleteMode = false;
 	private String tituloPainel = null;
@@ -467,20 +474,46 @@ public class ResponsavelMB {
 		this.selectedComissao = new ComissaoResponsavel();
 		this.taxasComissao = new ArrayList<ComissaoResponsavel>();
 		this.objetoResponsavel = null;
+		this.objetoResponsavel = getObjetoResponsavelGeral();
 		this.addComissao = false;
 		loadLovResponsavel();
 	}
 	
+	public void adicionarComissao(List<ComissaoResponsavel> lista, 	ComissaoResponsavel selectedComissao) {
+		this.selectedComissao = selectedComissao;
+		this.selectedComissao = new ComissaoResponsavel();
+		this.selectedComissao.setOrigem(ComissaoOrigemEnum.INDIVIDUAL.getNome());
+		this.selectedComissao.setAtiva(true);
+	
+		Optional<BigDecimal> valorMinimo = Optional.of(BigDecimal.ZERO);
+		if (CommonsUtil.semValor(lista)) {
+			lista = new ArrayList<ComissaoResponsavel>();
+		} else {
+			valorMinimo = lista.stream().map(m -> m.getValorMaximo()).max(Comparator.naturalOrder());
+			if (valorMinimo.isPresent())
+				valorMinimo=  Optional.of(valorMinimo.get().add(BigDecimal.valueOf(0.01)));
+		}
+		if (valorMinimo.isPresent())
+			this.selectedComissao.setValorMinimo(valorMinimo.get());
+	}
+	
 	public void adicionarComissao(List<ComissaoResponsavel> lista) {
 		this.selectedComissao = new ComissaoResponsavel();
-		if(CommonsUtil.semValor(lista)) {
+		if ( CommonsUtil.mesmoValor( this.objetoResponsavel.getId() , SiscoatConstants.RESPONSAVEL_GERAL_ID  ))
+			this.selectedComissao.setOrigem(ComissaoOrigemEnum.GERAL.getNome());
+		else
+			this.selectedComissao.setOrigem(ComissaoOrigemEnum.INDIVIDUAL.getNome());
+	
+		Optional<BigDecimal> valorMinimo = Optional.of(BigDecimal.ZERO);
+		if (CommonsUtil.semValor(lista)) {
 			lista = new ArrayList<ComissaoResponsavel>();
-			this.selectedComissao.setValorMinimo(BigDecimal.ZERO);
 		} else {
-			int size = lista.size();
-			ComissaoResponsavel comissao = lista.get(size - 1);
-			this.selectedComissao.setValorMinimo(comissao.getValorMaximo().add(BigDecimal.valueOf(0.01)));
+			valorMinimo = lista.stream().map(m -> m.getValorMaximo()).max(Comparator.naturalOrder());
+			if (valorMinimo.isPresent())
+				valorMinimo=  Optional.of(valorMinimo.get().add(BigDecimal.valueOf(0.01)));
 		}
+		if (valorMinimo.isPresent())
+			this.selectedComissao.setValorMinimo(valorMinimo.get());
 	}
 	
 	public void concluirComissao(List<ComissaoResponsavel> lista) {
@@ -493,19 +526,30 @@ public class ResponsavelMB {
 		if(CommonsUtil.semValor(lista)) {
 			//lista = new ArrayList<ComissaoResponsavel>();
 		} else {
-			for(ComissaoResponsavel comissao : lista) {
-				if(this.selectedComissao.getValorMinimo().compareTo(comissao.getValorMinimo()) >= 1 
-						&& this.selectedComissao.getValorMinimo().compareTo(comissao.getValorMaximo()) <= 0 ) {
-					erro = erro + "Valor minimo Indisponivel";	
-				}
-				if(this.selectedComissao.getValorMaximo().compareTo(comissao.getValorMinimo()) >= 1 
-						&& this.selectedComissao.getValorMaximo().compareTo(comissao.getValorMaximo()) <= 0 ) {
-					if(erro.length() > 1) {
-						erro = erro + " / ";	
-					}		
-					erro = erro + "Valor maximo Indisponivel";	
-				}
-			}
+			
+			if ( lista.stream().filter( comissao -> !CommonsUtil.mesmoValor(this.selectedComissao.getId(), comissao.getId()) 
+					&& this.selectedComissao.getValorMinimo().compareTo(comissao.getValorMinimo()) >= 1 
+					&& this.selectedComissao.getValorMinimo().compareTo(comissao.getValorMaximo()) <= 0  ).findAny().isPresent())
+				erro = erro + "Valor minimo Indisponivel";	
+			
+			if ( lista.stream().filter( comissao -> !CommonsUtil.mesmoValor(this.selectedComissao.getId(), comissao.getId()) 
+					&& this.selectedComissao.getValorMaximo().compareTo(comissao.getValorMinimo()) >= 1 
+					&& this.selectedComissao.getValorMaximo().compareTo(comissao.getValorMaximo()) <= 0  ).findAny().isPresent())
+				erro = erro + "Valor maximo Indisponivel";	
+			
+//			for(ComissaoResponsavel comissao : lista) {
+//				if(this.selectedComissao.getValorMinimo().compareTo(comissao.getValorMinimo()) >= 1 
+//						&& this.selectedComissao.getValorMinimo().compareTo(comissao.getValorMaximo()) <= 0 ) {
+//					erro = erro + "Valor minimo Indisponivel";	
+//				}
+//				if(this.selectedComissao.getValorMaximo().compareTo(comissao.getValorMinimo()) >= 1 
+//						&& this.selectedComissao.getValorMaximo().compareTo(comissao.getValorMaximo()) <= 0 ) {
+//					if(erro.length() > 1) {
+//						erro = erro + " / ";	
+//					}		
+//					erro = erro + "Valor maximo Indisponivel";	
+//				}
+//			}
 			if(erro.length() > 1) {
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, erro , ""));
 				return;
@@ -517,23 +561,28 @@ public class ResponsavelMB {
 		this.selectedComissao.setUserCriacao(getUsuarioLogado());
 		this.selectedComissao.setLoginCriacao(getNomeUsuarioLogado());
 		this.selectedComissao.setDataCriacao(DateUtil.gerarDataHoje());
-		
+		this.selectedComissao.setAtiva(true);
 		ComissaoResponsavelDao comDao = new ComissaoResponsavelDao();
-		comDao.create(this.selectedComissao);
-		lista.add(this.selectedComissao);
+		if (CommonsUtil.semValor(this.selectedComissao.getId()))
+			comDao.create(this.selectedComissao);
+		else
+			comDao.merge(this.selectedComissao);
+
+		this.objetoResponsavel.getTaxasComissao().add(selectedComissao);
+//		lista.add(this.selectedComissao);
 		this.setAddComissao(false);
 	}
 	
 	public void editarComissao(ComissaoResponsavel comissao) {
 		this.setAddComissao(true);
-		selectedComissao = new ComissaoResponsavel(comissao);
-		removerComissao(comissao);
+		selectedComissao = comissao;
 	}
 	
 	public void removerComissao(ComissaoResponsavel comissao) {
 		comissao.setUserRemocao(getUsuarioLogado());
 		comissao.setLoginRemocao(getNomeUsuarioLogado());
 		comissao.setDataRemocao(DateUtil.gerarDataHoje());
+		comissao.setAtiva(false);
 		ComissaoResponsavelDao comDao = new ComissaoResponsavelDao();
 		comDao.merge(comissao);
 		this.objetoResponsavel.getTaxasComissao().remove(comissao);
@@ -545,7 +594,7 @@ public class ResponsavelMB {
 			this.objetoResponsavel = r;
 			if(!CommonsUtil.semValor(this.objetoResponsavel.getTaxasComissao())) {
 				while(this.objetoResponsavel.getTaxasComissao().size() > 0) {
-					removerComissao(this.objetoResponsavel.getTaxasComissao().get(0));
+					removerComissao(this.objetoResponsavel.getTaxasComissao().stream().collect(Collectors.toList()).get(0));
 				}
 				/*for(ComissaoResponsavel c : this.objetoResponsavel.getTaxasComissao()) {
 					removerComissao(c);
@@ -553,13 +602,53 @@ public class ResponsavelMB {
 			}
 			for(ComissaoResponsavel c : this.taxasComissao) {
 				this.selectedComissao = new ComissaoResponsavel(c);
-				concluirComissao(this.objetoResponsavel.getTaxasComissao());
+				concluirComissao(this.objetoResponsavel.getTaxasComissao().stream().collect(Collectors.toList()));
 			}
 			rDao.merge(r);
 		}
 		this.objetoResponsavel = new Responsavel();
 		PrimeFaces current = PrimeFaces.current();
 		current.executeScript("PF('ComissaoResponsaveis').hide();");
+	}
+	
+
+	public List<ComissaoResponsavel> getTaxasComissao() {
+		
+		if( CommonsUtil.semValor(this.objetoResponsavel ) )
+			return null;
+		if ( CommonsUtil.mesmoValor( this.objetoResponsavel.getId() , SiscoatConstants.RESPONSAVEL_GERAL_ID  ))
+			return this.objetoResponsavel.getTaxasComissao(ComissaoOrigemEnum.GERAL);
+		else
+			return this.objetoResponsavel.getTaxasComissao(ComissaoOrigemEnum.INDIVIDUAL);
+	}
+
+	public void setTaxasComissao(List<ComissaoResponsavel> taxasComissao) {
+		this.taxasComissao = taxasComissao;
+	}
+	
+	public List<ComissaoResponsavel> getTaxasComissaoIndividual() {
+		return this.objetoResponsavel.getTaxasComissao(ComissaoOrigemEnum.INDIVIDUAL);
+	}
+	
+	public List<ComissaoResponsavel> getTaxasComissaoGlobal() {
+		getObjetoResponsavelGeral();
+		return this.objetoResponsavelGeral.getTaxasComissao(ComissaoOrigemEnum.GERAL);
+	}
+
+	private Responsavel getObjetoResponsavelGeral() {
+		if ( CommonsUtil.semValor(objetoResponsavelGeral)) {
+			ResponsavelDao rDao = new ResponsavelDao();
+			objetoResponsavelGeral = rDao.findById(SiscoatConstants.RESPONSAVEL_GERAL_ID);
+			if ( CommonsUtil.semValor(objetoResponsavelGeral)) {
+				objetoResponsavelGeral = new Responsavel();
+				objetoResponsavelGeral.setNome("RESPONSAVEL GERAL");
+				objetoResponsavelGeral.setId(SiscoatConstants.RESPONSAVEL_GERAL_ID);
+				objetoResponsavelGeral.setDataCadastro(new Date());
+				objetoResponsavelGeral.setDesativado(true);
+				rDao.create(objetoResponsavelGeral);
+			}				
+		}
+		return objetoResponsavelGeral;
 	}
 	
 	public User getUsuarioLogado() {
@@ -622,6 +711,7 @@ public class ResponsavelMB {
 	 */
 	public void setObjetoResponsavel(Responsavel objetoResponsavel) {
 		this.objetoResponsavel = objetoResponsavel;
+		addComissao = false;
 	}
 
 	/**
@@ -831,11 +921,5 @@ public class ResponsavelMB {
 		this.loginBean = loginBean;
 	}
 
-	public List<ComissaoResponsavel> getTaxasComissao() {
-		return taxasComissao;
-	}
-
-	public void setTaxasComissao(List<ComissaoResponsavel> taxasComissao) {
-		this.taxasComissao = taxasComissao;
-	}	
+		
 }
