@@ -206,6 +206,7 @@
 		                <shiro:hasAnyRoles name="ROOT, PROFILE_COBRANCA">  	                
 			                <p:commandButton action="#{contratoCobrancaMB.consultaCartorio}" oncomplete="PF('contratoEmCartorioDialog').show();" icon="ui-icon-info" value="Contrato em Cartório?" update="contratoEmCartorioForm">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+			                	<f:setPropertyActionListener value="#{null}" target="#{contratoCobrancaMB.objetoCartorio.status}"></f:setPropertyActionListener>
 			                </p:commandButton>	            		                		               
 			                <p:spacer width="10" height="10"/>
 			            </shiro:hasAnyRoles>      
@@ -591,7 +592,8 @@
 							<p:selectOneRadio id="contratoEmCartorio"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.contratoEmCartorio}">
 								<f:selectItem itemLabel="Sim" itemValue="true" />
-								<f:selectItem itemLabel="Não" itemValue="false" />
+								<f:selectItem itemLabel="Não" itemValue="false"/>
+								<p:ajax event="valueChange" listener="#{contratoCobrancaMB.mudaBotaoCartorio}" update="contratoEmCartorioForm"></p:ajax>
 							</p:selectOneRadio>
 						</h:panelGrid>
 						<h:panelGrid columns="2">
@@ -606,10 +608,11 @@
 							</p:datePicker>
 						</h:panelGrid>
 						<p:panelGrid columns="2"
-							rendered="#{contratoCobrancaMB.objetoContratoCobranca.contratoEmCartorio}">
+							rendered="#{contratoCobrancaMB.objetoContratoCobranca.contratoEmCartorio and contratoCobrancaMB.cartorioMudou == false}">
 							<p:outputLabel value="Status" styleClass="labelBold" />
 							<p:selectOneMenu
 								value="#{contratoCobrancaMB.objetoCartorio.status}">
+								<f:selectItem itemLabel="selecione o status" itemValue="#{null}"></f:selectItem>
 								<f:selectItem itemLabel="1- Ag.Cartas" itemValue="Ag.Cartas"></f:selectItem>
 								<f:selectItem itemLabel="2- Ag.Envio ONA"
 									itemValue="Ag.Envio ONA"></f:selectItem>
@@ -639,7 +642,7 @@
 						</p:panelGrid>
 					</div>
 					<p:panel id="panelStatus"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.contratoEmCartorio and contratoCobrancaMB.listaCartorio != null}">
+						rendered="#{contratoCobrancaMB.listaCartorio != null }">
 						<p:panelGrid columns="3">
 							<p:dataTable var="cartorio"
 								value="#{contratoCobrancaMB.listaCartorio}">
@@ -668,13 +671,13 @@
 					</p:panel>
 				</div>
 				<div align="center">
-					<p:commandButton value="Salvar"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.contratoEmCartorio == false}"
+					<p:commandButton id="botaoSalvar" value="Salvar" rendered="#{contratoCobrancaMB.cartorioMudou}"
 						action="#{contratoCobrancaMB.saveContratoEmCartorio}"
 						icon="ui-icon ui-icon-check" update=":form:ConsultaContratosResultados :form:mensagens :form:dtContratos contratoEmCartorioForm"
-						oncomplete="PF('contratoEmCartorioDialog').hide();" />
+						oncomplete="PF('contratoEmCartorioDialog').hide();" >
+						<f:setPropertyActionListener value="#{false}" target="#{contratoCobrancaMB.cartorioMudou}"></f:setPropertyActionListener>
+						</p:commandButton>
 					<p:commandButton value="Cancelar"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.contratoEmCartorio == false}"
 						icon="ui-icon ui-icon-cancel"
 						oncomplete="PF('contratoEmCartorioDialog').hide();" />
 				</div>

@@ -10,6 +10,17 @@ public class Cartorio {
 	private String status;
 	private Date dataStatus;
 	private String nomeUsuario;
+	public Cartorio() {
+		super();
+	}
+	
+	public Cartorio(ContratoCobranca idContrato, String status,Date dataStatus, String nomeUsuario){
+		this.idContrato = idContrato;
+		this.status = status;
+		this.dataStatus = dataStatus;
+		this.nomeUsuario = nomeUsuario;
+		
+	}
 	public Date getDataStatus() {
 		return dataStatus;
 	}

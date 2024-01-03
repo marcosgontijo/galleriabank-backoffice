@@ -268,6 +268,7 @@ public class ContratoCobrancaMB {
 	private String numeroContratoObjetoContratoCobranca;
 	private List<FileUploaded> documentoConsultarTodos;
 	private boolean verificaReaProcessado;
+	private boolean cartorioMudou = false;
 	private Cartorio objetoCartorio = new Cartorio();
 	private BigDecimal valorMercaoImovelPorcento;
 	private BigDecimal valorMercadoImovelDez;
@@ -881,6 +882,10 @@ public class ContratoCobrancaMB {
 	private boolean erroPedidoLaudo = false;
 	private boolean engineProcessados = false;
 	private List<DocumentoAnalise> docList = new ArrayList<DocumentoAnalise>();
+	public void mudaBotaoCartorio(){
+		this.setCartorioMudou(true);
+		
+	}
 
 	public String rowSelected() {
 		return null;
@@ -922,7 +927,6 @@ public class ContratoCobrancaMB {
 			this.objetoCartorio.setIdContrato(objetoContratoCobranca);
 		}
 		dao.create(objetoCartorio);
-		objetoCartorio = new Cartorio();
 		if (objetoContratoCobranca.isContratoEmCartorio()) {
 			listaCartorio = dao.consultaCartorio(objetoContratoCobranca);
 		}
@@ -944,6 +948,11 @@ public class ContratoCobrancaMB {
 		}
 
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		CartorioDao cartorioDao = new CartorioDao();
+		if(this.objetoContratoCobranca.isContratoEmCartorio()) {
+			cartorioDao.create(new Cartorio(objetoContratoCobranca,"enviado para cartório",DateUtil.gerarDataHoje(),getUsuarioLogado().getName()));
+		}
+		
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
 		geraConsultaContratosPerformance();
@@ -36001,5 +36010,13 @@ public class ContratoCobrancaMB {
 
 	public void setPagamentosStarkBankPendentesCartaSplit(List<StarkBankBaixa> pagamentosStarkBankPendentesCartaSplit) {
 		this.pagamentosStarkBankPendentesCartaSplit = pagamentosStarkBankPendentesCartaSplit;
+	}
+
+	public boolean isCartorioMudou() {
+		return cartorioMudou;
+	}
+
+	public void setCartorioMudou(boolean cartorioMudou) {
+		this.cartorioMudou = cartorioMudou;
 	}
 }
