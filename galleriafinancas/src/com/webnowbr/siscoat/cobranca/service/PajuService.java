@@ -2020,6 +2020,9 @@ public class PajuService {
 		if(!CommonsUtil.semValor(debitosJudiciaisValores) && !CommonsUtil.semValor(debitosJudiciaisValores.getTotal()))
 			valorAtualizado = debitosJudiciaisValores.getTotal();
 		if(CommonsUtil.semValor(processo)) {
+			if(!participante.getMotivoAnalise().contains("Proprietario Atual")) {
+				return;
+			}
 			processo = processosJudiciaisDao.getProcessosExistentes(CommonsUtil.formataNumeroProcesso(numeroProcesso),
 					participante.getContratoCobranca());
 			if(processo.getId() <= 0) {
