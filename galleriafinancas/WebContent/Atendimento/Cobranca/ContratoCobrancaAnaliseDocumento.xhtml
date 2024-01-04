@@ -92,16 +92,19 @@
 				<h:panelGrid columns="1">
 					<p:dataTable id="dtFilesAnalise" var="fileAnalise"
 						value="#{contratoCobrancaMB.listaDocumentoAnalise}"
-						rowKey="#{fileAnalise}" selection="#{contratoCobrancaMB.listaDeleteAnalise}" 
+						rowKey="#{fileAnalise.id}"
+						paginator="true"
+						rows="10"  selection="#{contratoCobrancaMB.listaSelectAnalise}" 
 						emptyMessage=""
 						rowStyleClass="#{(fileAnalise.observacao ne null
 							or contratoCobrancaMB.objetoContratoCobranca.emAnalise) ? '' : 'ui-helper-hidden'}">
 						
 						<f:facet name="header">		
 						<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">						 
-							<p:commandButton value="Excluir Selecionado(s)" ajax="false" immediate="true" icon="ui-icon-trash" update="dtFilesAnalise" action="#{contratoCobrancaMB.deleteArquivosAnalisados}">
+							<p:commandButton value="Excluir Selecionado(s)" ajax="true"  icon="ui-icon-trash" update="dtFilesAnalise" action="#{contratoCobrancaMB.deleteArquivosAnalisados}">
 								<p:confirm header="Confirmação" message="Deseja Excluir os itens selecionados?"/>
-							</p:commandButton>
+							</p:commandButton> 
+							<p:commandButton value="ver Multiplos Resumos" onclick="PF('resumoConsutlasDialogMultiplo').show()" update="resumoConsutlasMultiploForm"></p:commandButton>
 						</shiro:hasAnyRoles>
 							<p:commandButton value="Download das certidoes" ajax="false" immediate="true" icon="ui-icon-arrowthick-1-s"
 								action="#{contratoCobrancaMB.testedDownloadCertidoesPastas(contratoCobrancaMB.listaDocumentoAnalise)}">
