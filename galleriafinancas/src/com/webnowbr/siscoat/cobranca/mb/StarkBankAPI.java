@@ -494,6 +494,7 @@ public class StarkBankAPI{
     }
 	
 	public static void loginStarkBank() {
+		System.out.println("processaPagamentoStarkBank - Login Correspondente");
     	Settings.language = "pt-BR";
     	
     	String privateKeyContent = "-----BEGIN EC PARAMETERS-----\nBgUrgQQACg==\n-----END EC PARAMETERS-----\n-----BEGIN EC PRIVATE KEY-----\nMHQCAQEEIAKGZfO+lee7tdtcLGbCT++oGyUcmm/2Jdozg8D8mF4ioAcGBSuBBAAKoUQDQgAEUvi66NomZ1HeFqEwrXvnM/IjDQEJjVp6nYYojlOsTP1tYO34tW+bO1ypWln5lfkDNCcARQ710SmPPrLRHRbMAA==\n-----END EC PRIVATE KEY-----";
@@ -515,6 +516,8 @@ public class StarkBankAPI{
 	}
 	
 	public static void loginStarkBankSCD() {
+		System.out.println("processaPagamentoStarkBank - Login SCD");
+		
     	Settings.language = "pt-BR";
     	
     	String privateKeyContent = "-----BEGIN EC PRIVATE KEY-----\nMHQCAQEEIE56ofDNqzdDCrYEAnwpq2CiEfknPhBV+NTWBtpYEy90oAcGBSuBBAAK\noUQDQgAEsXCtulqc9kC5Tkmy/wuJ6JIq8R+GWJzlqmp/pO4r4i76BFivs4hVBZrS\nD5Sil3MxCjUjKbr95ZxDjuq4dYCBOA==\n-----END EC PRIVATE KEY-----";
@@ -582,10 +585,10 @@ public class StarkBankAPI{
 
     	List<Transfer.Rule> rules = new ArrayList<>();
     
-    	if (descricaoConta == null || !descricaoConta.equals("Pagamento Carta Split")) {
-    		loginStarkBank();
-    	} else {
+    	if (descricaoConta != null || descricaoConta.contains("Pagamento Carta Split")) {
     		loginStarkBankSCD();
+    	} else {
+    		loginStarkBank();    		
     	}
     	
     	Date dataHoje = DateUtil.gerarDataHoje();
@@ -670,16 +673,19 @@ public class StarkBankAPI{
 	    	rules.add(new Transfer.Rule("resendingLimit", 5));
 	
 	    	HashMap<String, Object> data = new HashMap<>();
-	    	data.put("amount", valor);
+	    	String valorStr = valor.toString();
+	    	data.put("amount", Long.valueOf(valorStr.replace(".", "").replace(",", "")));	
 	    	data.put("bankCode", codigoBanco);
 	    	data.put("branchCode", agencia);
 	    	data.put("accountNumber", numeroConta);
 	    	data.put("taxId", documento);
 	    	data.put("name", nomeBeneficiario);
-	    	data.put("externalId", "PagamentoPix-" + nomeBeneficiario.replace(" ", "") + DateUtil.todayInMilli());
+	    	data.put("externalId", "PagamentoTED-" + nomeBeneficiario.replace(" ", "") + DateUtil.todayInMilli());
 	    	//data.put("scheduled", "2020-08-14");
 	    	//data.put("tags", new String[]{"daenerys", "invoice/1234"});
 	    	//data.put("rules", rules);
+	    	
+	    	System.out.println("Payment TED Payload - " + data);
 	    	
 			transfers.add(new Transfer(data));
 			
@@ -701,12 +707,12 @@ public class StarkBankAPI{
 	    	starkBankPixDAO.create(pixTransacao);
 	    	
 	    	context.addMessage(null, new FacesMessage(
-					FacesMessage.SEVERITY_ERROR, "StarkBank PIX: Pagamento efetuado com sucesso!", ""));
+					FacesMessage.SEVERITY_INFO, "StarkBank TED: Pagamento efetuado com sucesso!", ""));
 	    	
 	    	return pixTransacao;
 		} catch (Exception e) {
 			context.addMessage(null, new FacesMessage(
-					FacesMessage.SEVERITY_ERROR, "StarkBank PIX: Ocorreu um problema ao fazer PIX/TED! Erro: " + e, ""));
+					FacesMessage.SEVERITY_ERROR, "StarkBank TED: Ocorreu um problema ao fazer TED! Erro: " + e, ""));
 			
 			// TODO Auto-generated catch block
 			e.printStackTrace();

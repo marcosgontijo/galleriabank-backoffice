@@ -212,6 +212,10 @@ public class DocumentoAnaliseJobConsultar {
 					stepDescricao = "Processando SCR";
 					scrService.requestScr(documentoAnalise);
 				}
+				
+				if (documentoAnalise.isPodeChamarFinancas()) {
+					bigDataService.requestFinancas(documentoAnalise);
+				}
 
 				documentoAnalise.addObservacao("Pesquisas finalizadas");
 				documentoAnaliseDao.merge(documentoAnalise);
