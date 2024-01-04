@@ -382,7 +382,7 @@ public class BigDataService {
 			String financas = null;
 			URL myURL;
 
-			myURL = new URL("http://localhost:8085/api/v1/financas/"
+			myURL = new URL("https://servicos.galleriabank.com.br/bigData/api/v1/financas/"
 					+ CommonsUtil.somenteNumeros(cpf));
 
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
