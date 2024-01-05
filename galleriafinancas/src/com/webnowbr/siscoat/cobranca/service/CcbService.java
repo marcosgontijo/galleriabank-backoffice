@@ -3963,6 +3963,7 @@ public class CcbService {
 			}
 		} else {
 			for(Segurado segurado : objetoCcb.getObjetoContratoCobranca().getListSegurados()) {
+				objetoCcb.getObjetoContratoCobranca().getListSegurados().remove(segurado);
 				segurado.setContratoCobranca(null);
 				seguradoDAO.delete(segurado);
 			}
