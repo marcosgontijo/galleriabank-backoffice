@@ -906,13 +906,5 @@ public class ResponsavelMB {
 
 	public void setLoginBean(LoginBean loginBean) {
 		this.loginBean = loginBean;
-	}
-
-	public List<ComissaoResponsavel> getTaxasComissao() {
-		return taxasComissao;
-	}
-
-	public void setTaxasComissao(List<ComissaoResponsavel> taxasComissao) {
-		this.taxasComissao = taxasComissao;
 	}	
 }

@@ -7651,14 +7651,5 @@ public class ContratoCobranca implements Serializable {
 	public void setEnviadoCartorio(boolean enviadoCartorio) {
 		this.enviadoCartorio = enviadoCartorio;
 	}
-	
-
-	public boolean isEnviadoCartorio() {
-		return enviadoCartorio;
-	}
-
-	public void setEnviadoCartorio(boolean enviadoCartorio) {
-		this.enviadoCartorio = enviadoCartorio;
-	}
 }
 
