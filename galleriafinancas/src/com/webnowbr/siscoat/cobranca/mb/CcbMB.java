@@ -592,7 +592,7 @@ public class CcbMB {
 		listaTipoDownload.add("Termo Incomunicabilidade Imovel");
 		listaTipoDownload.add("Ficha Cadastro");
 		listaTipoDownload.add("Averbacao");
-		
+		listaTipoDownload.add("Aditamento Carta de Desconto");
 	}
 
 	public void clearContratoCobranca() {
@@ -1014,6 +1014,19 @@ public class CcbMB {
 		return "/Atendimento/Cobranca/Ccb.xhtml";
 	}
 	
+	public void emitirAditamento(List<ContasPagar> despesas) {
+		try {
+			EmitirCcbPreContrato();
+			this.objetoCcb.setDespesasAnexo2(despesas);
+			listaTipoDownload.clear();
+			listaTipoDownload.add("Aditamento Carta de Desconto");
+			readXWPFile();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public ContratoCobranca getContratoById(long idContrato) {
 		ContratoCobranca contrato; //= new ContratoCobranca();
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();				
@@ -1420,9 +1433,18 @@ public class CcbMB {
 				contrato.setValorCartaSplitGalleria(objetoCcb.getValorDespesas());
 				contrato.setNomeBancarioCartaSplitGalleria("Galleria Correspondente Bancário Eireli");
 				contrato.setCpfCnpjBancarioCartaSplitGalleria("34.787.885/0001-32");
-				contrato.setBancoBancarioCartaSplitGalleria("Banco do Brasil");
+				contrato.setBancoBancarioCartaSplitGalleria("001 | Banco do Brasil S.A.");
 				contrato.setAgenciaBancarioCartaSplitGalleria("1515-6");
 				contrato.setContaBancarioCartaSplitGalleria("131094-1");	
+				contrato.setPixCartaSplitGalleria("b56b12e2-f476-4272-8d16-c1a5a31cc660");
+
+				contrato.setValorCustoEmissao(objetoCcb.getValorIOF());
+				contrato.setNomeBancarioCustoEmissao("Galleria SCD");
+				contrato.setBancoBancarioCustoEmissao("001 | Banco do Brasil S.A.");
+				contrato.setAgenciaBancarioCustoEmissao("6937");
+				contrato.setContaBancarioCustoEmissao("120621-4");
+				contrato.setCpfCnpjBancarioCustoEmissao("51.604.356/0001-75");
+				contrato.setPixCustoEmissao("51.604.356/0001-75");
 				
 				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 				try {
@@ -1588,6 +1610,13 @@ public class CcbMB {
 				} else if (CommonsUtil.mesmoValor(tipoDownload, "FinanciamentoCCI")) {
 					arquivo = ccbService.geraCciFinanciamento();
 					nomeDoc = "FinanciamentoCCI.docx";
+					if (arquicoUnico)
+						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
+					else
+						listaArquivos.put(nomeDoc, arquivo);
+				} else if (CommonsUtil.mesmoValor(tipoDownload, "Aditamento Carta de Desconto")) {
+					arquivo = ccbService.geraAditamentoCartaDeDesconto();
+					nomeDoc = "AditamentoCartaDesconto.docx";
 					if (arquicoUnico)
 						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 					else

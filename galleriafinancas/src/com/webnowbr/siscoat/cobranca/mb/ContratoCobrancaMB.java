@@ -9794,7 +9794,7 @@ public class ContratoCobrancaMB {
 
 		this.objetoContratoCobranca.calcularTaxaPreAprovada();
 
-		carregaValorIOFCustos();
+		//carregaValorIOFCustos();
 
 		saveEstadoCheckListAtual();
 
@@ -10059,8 +10059,8 @@ public class ContratoCobrancaMB {
 		
 		// cria despesas processos
 		for (CcbProcessosJudiciais processos : ccb.getProcessosJucidiais()) {
-			if (!buscaDespesaRepetida(processos.getNumero())) {
-				concluirContaProcesso(processos.getNumero(), processos.getValorAtualizado());
+			if (!buscaDespesaRepetida("Processo N°: " + processos.getNumero())) {
+				concluirContaProcesso("Processo N°: " + processos.getNumero(), processos.getValorAtualizado());
 			}
 		}
 	}
