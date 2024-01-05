@@ -681,6 +681,7 @@ public class DocumentoAnalise implements Serializable {
 		if (resumorelacionamentos != null) {
 			return resumorelacionamentos;
 		}
+	
 		resumorelacionamentos = new ArrayList<DocumentoAnaliseResumo>();
 		
 //		List<DocumentoAnaliseResumo> resumorelacionamentos = new ArrayList<>();
@@ -707,6 +708,9 @@ public class DocumentoAnalise implements Serializable {
 		}
 
 
+		if(CommonsUtil.semValor(resumorelacionamentos)) {
+			resumorelacionamentos = null;
+		}
 		return resumorelacionamentos;
 
 	}

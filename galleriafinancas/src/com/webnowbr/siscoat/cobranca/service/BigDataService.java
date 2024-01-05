@@ -359,7 +359,7 @@ public class BigDataService {
 					&& DateUtil.getDaysBetweenDates(pagadorRecebedorConsulta.getDataConsulta(),
 							DateUtil.getDataHoje()) <= 30) {
 				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-				documentoAnalise.setRetornoProcesso(pagadorRecebedorConsulta.getRetornoConsulta());
+				documentoAnalise.setRetornoFinancas(pagadorRecebedorConsulta.getRetornoConsulta());;
 				documentoAnaliseDao.merge(documentoAnalise);
 			} else {
 				String retornoFinancas;
