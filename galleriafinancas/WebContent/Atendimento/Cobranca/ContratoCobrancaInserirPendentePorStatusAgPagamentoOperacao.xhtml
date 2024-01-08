@@ -472,6 +472,7 @@
 									<f:selectItem itemValue="TED" itemLabel="TED" />
 									<f:selectItem itemValue="Pix" itemLabel="Pix" />
 									<f:selectItem itemValue="Boleto" itemLabel="Boleto" />
+									<f:selectItem itemValue="Imposto" itemLabel="Imposto" />
 									<p:ajax event="change" 
 										update="tedGrid contasDT" />
 								</p:selectOneMenu>
@@ -1027,6 +1028,30 @@
 								onkeydown="FormataValor(this, 13, event, 2);" required="true"
 								converter="bigDecimalConverter" />
 								
+							<p:outputLabel for="ContaPagarDataPagamentoBoletoStarkBank"
+								value="Data Pagamento: " styleClass="labelBold" />
+							<p:calendar id="ContaPagarDataPagamentoBoletoStarkBank"
+								value="#{contratoCobrancaMB.contasPagarSelecionada.dataPagamento}"
+								label="Data" size="100" pattern="dd/MM/yyyy"
+								styleClass="dateTimeField" />
+						</h:panelGrid>
+					</h:panelGroup>
+				</p:panel>
+				<p:panel id="ImpostoStarkBank" header="Imposto"
+					style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.contasPagarSelecionada.formaTransferencia eq 'Imposto'}">
+					<h:panelGroup id="starkBankGrid" >
+						<h:panelGrid columns="2">
+							<p:outputLabel for="linhaDigitavel" styleClass="labelBold" value="Linha Digitável (sem pontos e espaço): " />
+							<p:inputText id="linhaDigitavel" value="#{contratoCobrancaMB.contasPagarSelecionada.linhaDigitavelStarkBank}" style="width:100px;" required="true"/>	
+							<p:outputLabel for="descricao" styleClass="labelBold" value="Descrição: " />
+							<p:inputText id="descricao" value="#{contratoCobrancaMB.contasPagarSelecionada.descricaoStarkBank}" style="width:100px;" required="true"/>						
+							<p:outputLabel for="ContaPagarValorPagoBoletoStarkBank" value="Valor Pago: "
+								styleClass="labelBold" />
+							<p:inputText id="ContaPagarValorPagoBoletoStarkBank"
+								value="#{contratoCobrancaMB.contasPagarSelecionada.valorPagamento}"
+								onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 13, event, 2);" required="true"
+								converter="bigDecimalConverter" />
 							<p:outputLabel for="ContaPagarDataPagamentoBoletoStarkBank"
 								value="Data Pagamento: " styleClass="labelBold" />
 							<p:calendar id="ContaPagarDataPagamentoBoletoStarkBank"

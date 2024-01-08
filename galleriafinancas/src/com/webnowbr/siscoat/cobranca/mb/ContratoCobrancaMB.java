@@ -172,6 +172,7 @@ import com.webnowbr.siscoat.cobranca.db.model.Segurado;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankBaixa;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankBoleto;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankPix;
+import com.webnowbr.siscoat.cobranca.db.model.StarkBankTax;
 import com.webnowbr.siscoat.cobranca.db.model.directd.PorcentagemImovel;
 import com.webnowbr.siscoat.cobranca.db.op.CartorioDao;
 import com.webnowbr.siscoat.cobranca.db.op.CcbDao;
@@ -19862,6 +19863,22 @@ public class ContratoCobrancaMB {
 					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
 							"Pagamento StarkBank: Ordem de Pagamento de Boleto inserida com sucesso!", ""));
 				}
+				
+				if (this.contasPagarSelecionada.getFormaTransferencia().equals("Imposto")) {
+
+					//this.contasPagarSelecionada.setDescricaoStarkBank("Pagamento de Conta");
+
+					StarkBankBaixa baixa = registraBaixaStarkBank(this.contasPagarSelecionada.getDataPagamento(),
+							this.contasPagarSelecionada.getNumeroDocumentoPagadorStarkBank(), null,
+							this.contasPagarSelecionada.getLinhaDigitavelStarkBank(),
+							this.objetoPagadorRecebedor.getNome(), this.contasPagarSelecionada.getValorPagamento(),
+							this.contasPagarSelecionada, "Imposto", "Aguardando Aprovação");
+
+					this.contasPagarSelecionada.getListContasPagarBaixas().add(baixa);
+
+					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+							"Pagamento StarkBank: Ordem de Pagamento de Boleto inserida com sucesso!", ""));
+				}
 
 				if (this.contasPagarSelecionada.getFormaTransferencia().equals("Pix")) {
 					StarkBankBaixa baixa = registraBaixaStarkBank(DateUtil.gerarDataHoje(),
@@ -20233,6 +20250,34 @@ public class ContratoCobrancaMB {
 
 					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
 							"Pagamento StarkBank: Boleto pago sucesso!", ""));
+
+					finalizaOperacao = true;
+				}
+			}
+			
+			if (this.objetoBaixaPagamentoStarkBank.getContasPagar().getFormaTransferencia().equals("Imposto")) {
+				
+				System.out.println("processaPagamentoStarkBank - Imposto");
+
+				//this.objetoBaixaPagamentoStarkBank.getContasPagar().setDescricaoStarkBank("Pagamento de Conta");
+
+				StarkBankTax starkBankTax = starkBankAPI.paymentTax(
+						this.objetoBaixaPagamentoStarkBank.getContasPagar().getLinhaDigitavelStarkBank(), this.objetoBaixaPagamentoStarkBank.getContasPagar().getDescricaoStarkBank());
+
+				if (starkBankTax != null) {
+					// this.contasPagarSelecionada.setComprovantePagamentoStarkBank(starkBankBoleto);
+					StarkBankBaixa baixa = updateBaixaStarkBank(this.objetoBaixaPagamentoStarkBank,							
+							String.valueOf(starkBankTax.getId()),
+							starkBankTax.getCreated(),
+							this.objetoBaixaPagamentoStarkBank.getContasPagar().getValor(),
+							"Aprovado",
+							starkBankTax.getLine());
+
+					this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().setContaPagarValorTotal(this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getContaPagarValorTotal()
+							.subtract(this.objetoBaixaPagamentoStarkBank.getContasPagar().getValor()));
+
+					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+							"Pagamento StarkBank: Imposto pago sucesso!", ""));
 
 					finalizaOperacao = true;
 				}
