@@ -95,7 +95,8 @@ public class IpcaJob implements Job {
 									continue;
 								
 								try {
-									if (!ipcaJobCalcular.calcularIPCACustom(ipcaDao, contratoCobrancaDetalhesDao, contratoCobrancaDao, contratoCobrancaDetalhesParcialDao, contratoCobranca.getListContratoCobrancaDetalhes().get(iDetalhe), contratoCobranca))
+									if (!ipcaJobCalcular.calcularIPCACustom(ipcaDao, contratoCobrancaDetalhesDao, contratoCobrancaDao, contratoCobrancaDetalhesParcialDao, 
+													contratoCobranca.getListContratoCobrancaDetalhes().get(iDetalhe), contratoCobranca))
 										break;
 								} catch (Exception e) {
 									LOGGER.error("IpcaJobContrato.execute " + "atualizaIPCAInicioContrato: EXCEPTION", e);
