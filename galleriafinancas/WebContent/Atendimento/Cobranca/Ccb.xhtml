@@ -110,6 +110,7 @@
 								layout="list"
 								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
 								<p:dataViewListItem>
+
 									<p:outputLabel value="Nome: " styleClass="labelBold" />
 									<p:outputLabel value="#{participante.pessoa.nome}"
 										styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
@@ -201,7 +202,7 @@
 										<f:selectItem itemValue="SEPARADO" itemLabel="Separado" />
 										<f:selectItem itemValue="SEPARADO JUDICIALMENTE" 
 											itemLabel="Separado Judicialmente" />
-										<p:ajax update=":form:conjugueParticipante" event="change" />
+										<p:ajax update="form:conjugueParticipante form:adicionarParticipante" event="change" />
 									</p:selectOneMenu>
 
 									<p:outputLabel for="numeroRgParticipante"
@@ -212,9 +213,22 @@
 										label="Contrato" />
 										
 									<p:outputLabel value="Está em União Estavel: " styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:selectBooleanCheckbox id="uniaoEstavelParticipante"
-										value="#{ccbMB.participanteSelecionado.uniaoEstavel}" />
+										style="font-weight: bold; font-size: 18px;" rendered="#{ccbMB.participanteSelecionado.pessoa.estadocivil eq 'SOLTEIRO'}" />
+									<p:selectBooleanCheckbox id="uniaoEstavelParticipante" rendered="#{ccbMB.participanteSelecionado.pessoa.estadocivil eq 'SOLTEIRO'}"
+										value="#{ccbMB.participanteSelecionado.pessoa.uniaoEstavel}" >
+										<p:ajax event="valueChange" update="form:conjugueParticipante form:adicionarParticipante"></p:ajax>
+										</p:selectBooleanCheckbox>
+										<p:outputLabel value="tipo de documento:" rendered="#{ccbMB.participanteSelecionado.pessoa.uniaoEstavel eq true}"/>
+											<p:selectOneRadio
+												value="#{ccbMB.participanteSelecionado.pessoa.tipoUniao}" rendered="#{ccbMB.participanteSelecionado.pessoa.uniaoEstavel eq true}">
+												<f:selectItem itemLabel="Escritura publica"
+													itemValue="Escritura publica" />
+												<f:selectItem itemLabel="Declaração de união"
+													itemValue="Declaração de uniao" />
+												<p:ajax event="valueChange" update="form:conjugueParticipante" />
+											</p:selectOneRadio>
+										
+										
 										
 									<p:outputLabel for="ufParticipante" value="UF: "
 										styleClass="labelBold"
@@ -307,7 +321,7 @@
 								<h:panelGroup id="conjugueParticipante">
 									<p:panel header="Conjuge Participante"
 										style="margin-bottom:10px;"
-										rendered="#{ccbMB.participanteSelecionado.pessoa.estadocivil == 'CASADO' and !ccbMB.participanteSelecionado.empresa}">
+										rendered="#{ccbMB.participanteSelecionado.pessoa.estadocivil == 'CASADO' and !ccbMB.participanteSelecionado.empresa or ccbMB.participanteSelecionado.pessoa.uniaoEstavel eq true}">
 										<h:panelGrid columns="4">
 										
 											<p:outputLabel for="dataCasamento"
@@ -352,7 +366,7 @@
 												value="#{ccbMB.participanteSelecionado.pessoa.cpfConjuge}"
 												label="Contrato" mask="999.999.999-99" />
 										</h:panelGrid>
-										<h:panelGroup style="width: 50%;" layout="block">													
+										<h:panelGroup style="width: 50%;" layout="block" rendered="#{ccbMB.participanteSelecionado.pessoa.tipoUniao == 'Escritura publica'}">													
 											<p:outputLabel
 												value="Conforme escritura pública registrado no " styleClass="labelBold"
 												style="font-weight: bold; font-size: 16px;" />
@@ -372,6 +386,30 @@
 												value=" datada de " styleClass="labelBold"
 												style="font-weight: bold; font-size: 16px;" />												
 											<p:calendar id="dataPacto" showOn="button"
+												value="#{ccbMB.participanteSelecionado.pessoa.dataPactoAntenupcial}" 
+												size="100" pattern="dd/MM/yyyy" locale="pt"
+												styleClass="dateTimeField" />
+										</h:panelGroup>
+										<h:panelGroup style="width: 50%;" layout="block" rendered="#{ccbMB.participanteSelecionado.pessoa.estadocivil == 'CASADO'}">													
+											<p:outputLabel
+												value="Conforme pacto antenupcial registrado no " styleClass="labelBold"
+												style="font-weight: bold; font-size: 16px;" />
+											<p:inputText id="registroPactoCasamento" 
+												value="#{ccbMB.participanteSelecionado.pessoa.registroPactoAntenupcial}" />
+											<p:outputLabel
+												value=" sob livro " styleClass="labelBold"
+												style="font-weight: bold; font-size: 16px;" />
+											<p:inputText id="livroPactoCasamento" 
+												value="#{ccbMB.participanteSelecionado.pessoa.livroPactoAntenupcial}" />
+											<p:outputLabel
+												value=" folhas " styleClass="labelBold"
+												style="font-weight: bold; font-size: 16px;" />
+											<p:inputText id="folhasPactoCasamento" 
+												value="#{ccbMB.participanteSelecionado.pessoa.folhasPactoAntenupcial}" />
+											<p:outputLabel
+												value=" datada de " styleClass="labelBold"
+												style="font-weight: bold; font-size: 16px;" />												
+											<p:calendar id="dataPactoCasamento" showOn="button"
 												value="#{ccbMB.participanteSelecionado.pessoa.dataPactoAntenupcial}" 
 												size="100" pattern="dd/MM/yyyy" locale="pt"
 												styleClass="dateTimeField" />
