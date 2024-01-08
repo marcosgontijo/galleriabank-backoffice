@@ -1379,6 +1379,35 @@ public class ContratoCobranca implements Serializable {
 		return c;
 	}
 
+	
+	public  String getEnderecoCompleto() {
+		if ( !CommonsUtil.semValor(imovel))
+			return imovel.getEnderecoCompleto();
+		else return null;
+		
+	}
+
+	private transient Date imovelEstoqueConsolidado;
+
+
+	private transient String imovelEstoqueEstado;
+	
+	public Date getImovelEstoqueConsolidado() {
+		if (!CommonsUtil.semValor(imovel) && !CommonsUtil.semValor(imovel.getImovelEstoque()))
+			return imovel.getImovelEstoque().getDataConsolidado();
+		else
+			return null;
+
+	}
+
+	public String getImovelEstoqueEstado() {
+		if (!CommonsUtil.semValor(imovel) && !CommonsUtil.semValor(imovel.getImovelEstoque()))
+			return imovel.getImovelEstoque().getStatusAtual();
+		else
+			return null;
+
+	}
+	
 	public boolean isDadosAprovadosComercial() {
 		return !CommonsUtil.semValor(valorAprovadoComercial) || //
 				!CommonsUtil.semValor(prazoAprovadoComercial) || //
