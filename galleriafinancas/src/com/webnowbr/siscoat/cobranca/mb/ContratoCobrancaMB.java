@@ -343,6 +343,7 @@ public class ContratoCobrancaMB {
 	 ************************************************************/
 	private BigInteger numeroParcelaReparcelamento;
 	private BigDecimal saldoDevedorReparcelamento;
+	private BigDecimal saldoDevedorOriginalReparcelamento;
 	private BigInteger carenciaReparcelamento;
 	private Date dataParcela;
 	/************************************************************
@@ -1390,7 +1391,7 @@ public class ContratoCobrancaMB {
 			// verifica se tem baixa parcial e se a parcela é diferente de paga
 			for (ContratoCobrancaDetalhes ccd : rfc.getContratoCobranca().getListContratoCobrancaDetalhes()) {
 				if (rfc.getIdParcela() == ccd.getId()) {
-					if (CommonsUtil.mesmoValor(ccd.getNumeroParcela(), "0") || ccd.isAmortizacao())
+					if (CommonsUtil.mesmoValor(ccd.getNumeroParcela(), "0") || ccd.isAmortizacao()|| ccd.isAcertoSaldo())
 						continue;
 					if (ccd.getListContratoCobrancaDetalhesParcial().size() == 0 && !ccd.isParcelaPaga()) {
 						totalQtedParcelas = totalQtedParcelas + 1;
@@ -7567,15 +7568,18 @@ public class ContratoCobrancaMB {
 			}
 
 			BigDecimal somaBaixas = BigDecimal.ZERO;
-			if (ccd.isAmortizacao()) {
+			if (!ccd.isAcertoSaldo()) {
 				somaBaixas = ccd.getVlrParcela();
-			} else {
-				for (ContratoCobrancaDetalhesParcial cBaixas : ccd.getListContratoCobrancaDetalhesParcial()) {
-					if (!CommonsUtil.semValor(cBaixas.getDataPagamento())) {
-						ccd.setDataUltimoPagamento(cBaixas.getDataPagamento());
-					}
-					if (!CommonsUtil.semValor(cBaixas.getVlrRecebido())) {
-						somaBaixas = somaBaixas.add(cBaixas.getVlrRecebido());
+				if (ccd.isAmortizacao() ) {
+					somaBaixas = ccd.getVlrParcela();
+				} else {
+					for (ContratoCobrancaDetalhesParcial cBaixas : ccd.getListContratoCobrancaDetalhesParcial()) {
+						if (!CommonsUtil.semValor(cBaixas.getDataPagamento())) {
+							ccd.setDataUltimoPagamento(cBaixas.getDataPagamento());
+						}
+						if (!CommonsUtil.semValor(cBaixas.getVlrRecebido())) {
+							somaBaixas = somaBaixas.add(cBaixas.getVlrRecebido());
+						}
 					}
 				}
 			}
@@ -9293,7 +9297,7 @@ public class ContratoCobrancaMB {
 			// ATUALIZA STATUS PARCELAS
 			for (ContratoCobrancaDetalhes ccd : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
 
-				if (ccd.isAmortizacao()) {
+				if (ccd.isAmortizacao() || ccd.isAcertoSaldo()) {
 					ccd.setValorTotalPagamento(ccd.getVlrParcela());
 					continue;
 				}
@@ -9794,7 +9798,7 @@ public class ContratoCobrancaMB {
 
 		this.objetoContratoCobranca.calcularTaxaPreAprovada();
 
-		carregaValorIOFCustos();
+		//carregaValorIOFCustos();
 
 		saveEstadoCheckListAtual();
 
@@ -10059,8 +10063,8 @@ public class ContratoCobrancaMB {
 		
 		// cria despesas processos
 		for (CcbProcessosJudiciais processos : ccb.getProcessosJucidiais()) {
-			if (!buscaDespesaRepetida(processos.getNumero())) {
-				concluirContaProcesso(processos.getNumero(), processos.getValorAtualizado());
+			if (!buscaDespesaRepetida("Processo N°: " + processos.getNumero())) {
+				concluirContaProcesso("Processo N°: " + processos.getNumero(), processos.getValorAtualizado());
 			}
 		}
 	}
@@ -19420,9 +19424,36 @@ public class ContratoCobrancaMB {
 			dataVencimentoNova = this.dataParcela;
 		}
 
+		
+		ContratoCobrancaDetalhes acrescimo = new ContratoCobrancaDetalhes();
+		if (this.simuladorParcelas.getValorCredito().compareTo(this.saldoDevedorOriginalReparcelamento) != 0) {
+
+			
+			/// inserir acrescimo de saldo
+//			 acrescimo.setVlrSaldoParcela();
+			acrescimo.setVlrJurosParcela(BigDecimal.ZERO);
+			acrescimo.setSeguroDFI(BigDecimal.ZERO);
+			acrescimo.setSeguroMIP(BigDecimal.ZERO);
+			acrescimo.setTaxaAdm(BigDecimal.ZERO);
+			acrescimo.setVlrParcela(
+					this.simuladorParcelas.getValorCredito().subtract(this.saldoDevedorOriginalReparcelamento));
+			acrescimo.setNumeroParcela("Acerto Saldo");
+			acrescimo.setParcelaPaga(true);
+			acrescimo.setOrigemBaixa("reparcelamento");
+			acrescimo.setDataVencimento(this.dataParcela);
+			acrescimo.setDataPagamento(acrescimo.getDataVencimento());
+			acrescimo.setValorTotalPagamento(acrescimo.getVlrParcela());
+			acrescimo.setVlrSaldoParcela(this.simuladorParcelas.getValorCredito());
+			objetoContratoCobranca.getListContratoCobrancaDetalhes().add(acrescimo);
+		}
+		
 		for (SimulacaoDetalheVO parcela : this.simuladorParcelas.getParcelas()) {
 			boolean encontrouParcela = false;
 			BigDecimal saldoAnterior = BigDecimal.ZERO;
+			
+			if ( !CommonsUtil.semValor(acrescimo)){
+				saldoAnterior= acrescimo.getVlrSaldoParcela();
+			}
 
 			for (ContratoCobrancaDetalhes detalhe : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
 
@@ -19430,7 +19461,7 @@ public class ContratoCobrancaMB {
 
 					Date dataParcela = null;
 
-					if (!detalhe.isAmortizacao())
+					if (!detalhe.isAmortizacao()  && !detalhe.isAcertoSaldo())
 						dataParcela = contratoCobrancaDao
 								.geraDataParcela((CommonsUtil.intValue(parcela.getNumeroParcela())
 										- this.numeroParcelaReparcelamento.intValue()), dataVencimentoNova);
@@ -19519,13 +19550,17 @@ public class ContratoCobrancaMB {
 
 			ultimaParcela = parcela.getNumeroParcela();
 		}
+		
+	
 
 		// valida se tem parcela para se retirada, tem que ser ao contrario o for
 		for (Integer iDetalhe = this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size()
 				- 1; iDetalhe >= 0; iDetalhe--) {
 			ContratoCobrancaDetalhes detalhe = this.objetoContratoCobranca.getListContratoCobrancaDetalhes()
 					.get(iDetalhe);
-			if (!CommonsUtil.mesmoValor(detalhe.getNumeroParcela(), "Armotização") && !detalhe.isParcelaPaga()) {
+			if (!CommonsUtil.mesmoValor(detalhe.getNumeroParcela(), "Armotização")
+					&& !CommonsUtil.mesmoValor(detalhe.getNumeroParcela(), "Acerto Saldo")
+					&& !detalhe.isParcelaPaga()) {
 				if (CommonsUtil.intValue(detalhe.getNumeroParcela()) > ultimaParcela.intValue()) {
 					this.objetoContratoCobranca.getListContratoCobrancaDetalhes().remove(detalhe);
 				}
@@ -19555,11 +19590,11 @@ public class ContratoCobrancaMB {
 				break;
 			} else {
 				this.setSaldoDevedorReparcelamento(detalhe.getVlrSaldoParcela());
-				if (!detalhe.isAmortizacao()) {
+				if (!detalhe.isAmortizacao() && !detalhe.isAcertoSaldo()) {
 
 					ContratoCobrancaDetalhes detalheProximo = this.objetoContratoCobranca
 							.getListContratoCobrancaDetalhes().get(iDetalhe + 1);
-					if (!detalheProximo.isAmortizacao()) {
+					if (!detalheProximo.isAmortizacao() && !detalhe.isAcertoSaldo()) {
 						this.setDataParcela(detalheProximo.getDataVencimento());
 						this.setNumeroParcelaReparcelamento(
 								BigInteger.valueOf(CommonsUtil.intValue(detalheProximo.getNumeroParcela())));
@@ -19568,6 +19603,7 @@ public class ContratoCobrancaMB {
 				this.setCarenciaReparcelamento(BigInteger.ZERO);
 			}
 		}
+		this.saldoDevedorOriginalReparcelamento = this.getSaldoDevedorReparcelamento();
 	}
 
 	public void concluirReparcelamentoAutomatico() {
@@ -22800,7 +22836,7 @@ public class ContratoCobrancaMB {
 		// ATUALIZA STATUS PARCELAS
 		for (ContratoCobrancaDetalhes ccd : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
 
-			if (ccd.isAmortizacao()) {
+			if (ccd.isAmortizacao() || ccd.isAcertoSaldo()) {
 				ccd.setValorTotalPagamento(ccd.getVlrParcela());
 				continue;
 			}
