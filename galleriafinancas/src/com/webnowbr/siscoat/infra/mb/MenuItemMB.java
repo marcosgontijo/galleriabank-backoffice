@@ -33,7 +33,7 @@ public class MenuItemMB {
 	private String menuAtual = null;
 	private boolean temFavorito = false;
 	private MenuItemDao dao = new MenuItemDao();
-	private MenuItem objetoMenuItem = new MenuItem();
+	private MenuItem objetoMenuItem;
 	private MenuItem objetoItemFavorito;
 	private MenuFavorito objetoMenuFavorito = new MenuFavorito();
 	private List<MenuItem> listaMenuItem = new ArrayList<>();
@@ -149,9 +149,11 @@ public class MenuItemMB {
 	}
 
 	public String clearFieldsMenuItem() {
+		 
 		objetoMenuItem = new MenuItem();
 		objetoMenuItem.setItemPai(new MenuItem());
-
+		
+		
 		return "/Cadastros/Cobranca/MenuCadastro.xhtml";
 	}
 
