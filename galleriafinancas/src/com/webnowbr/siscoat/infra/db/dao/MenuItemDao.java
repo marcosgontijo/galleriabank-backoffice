@@ -356,7 +356,7 @@ public class MenuItemDao extends HibernateDao<MenuItem, Long> {
 					StringBuilder query = new StringBuilder();
 
 					query.append("select id from infra.menuitem ");
-					query.append("where " + tipoParametro + " = ? " );
+					query.append(" where  upper(" + tipoParametro + ") like upper(?)");
 
 					ps = connection.prepareStatement(query.toString());
 					ps.setString(1, parametro);

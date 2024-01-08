@@ -8017,7 +8017,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						demonstrativoResultadosGrupoDetalhe.setNumeroContrato(rs.getString("numeroContrato"));
 						demonstrativoResultadosGrupoDetalhe.setNome(rs.getString("nome"));
 						
-						if(CommonsUtil.mesmoValor(rs.getString("numeroParcela"), "Amortização")) {
+						if(CommonsUtil.mesmoValor(rs.getString("numeroParcela"), "Amortização") ||
+								CommonsUtil.mesmoValor(rs.getString("numeroParcela"), "Acerto Saldo")) {
 							continue;
 						}
 						
@@ -8184,7 +8185,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						demonstrativoResultadosGrupoDetalhe.setNumeroContrato(rs.getString("numeroContrato"));
 						demonstrativoResultadosGrupoDetalhe.setNome(rs.getString("nome"));
 						
-						if(CommonsUtil.mesmoValor(rs.getString("numeroParcela"), "Amortização")) {
+						if(CommonsUtil.mesmoValor(rs.getString("numeroParcela"), "Amortização")||
+								CommonsUtil.mesmoValor(rs.getString("numeroParcela"), "Acerto Saldo")) {
 							continue;
 						}
 					
@@ -8911,7 +8913,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		int totalParcelas = 0;
 		
 		totalParcelas = CommonsUtil.intValue(listContratoCobrancaDetalhes.stream()
-				.filter(d -> !CommonsUtil.mesmoValor(d.getNumeroParcela(), "0") || d.isAmortizacao()).count());
+				.filter(d -> !CommonsUtil.mesmoValor(d.getNumeroParcela(), "0") || d.isAmortizacao() || !d.isAcertoSaldo()).count());
 
 //		for (ContratoCobrancaDetalhes contratoCobrancaDetalhes : listContratoCobrancaDetalhes) {
 //			if (CommonsUtil.mesmoValor(contratoCobrancaDetalhes.getNumeroParcela(), "0")

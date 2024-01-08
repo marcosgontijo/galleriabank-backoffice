@@ -1070,12 +1070,19 @@ public class ContratoCobranca implements Serializable {
 			public int compare(ContratoCobrancaDetalhes one, ContratoCobrancaDetalhes other) {
 				int result = one.getDataVencimento().compareTo(other.getDataVencimento());
 				if (result == 0) {
-					try {
-						Integer oneParcela = Integer.parseInt(one.getNumeroParcela());
-						Integer otherParcela = Integer.parseInt(other.getNumeroParcela());
-						result = oneParcela.compareTo(otherParcela);
-					} catch (Exception e) {
-						result = 0;
+					if (CommonsUtil.mesmoValorIgnoreCase("Acerto Saldo", one.getNumeroParcela())
+							|| CommonsUtil.mesmoValorIgnoreCase("Acerto Saldo", other.getNumeroParcela())
+							|| CommonsUtil.mesmoValorIgnoreCase("Amortização", one.getNumeroParcela())
+							|| CommonsUtil.mesmoValorIgnoreCase("Amortização", other.getNumeroParcela())) {
+						result = other.getNumeroParcela().compareTo(one.getNumeroParcela());
+					} else {
+						try {
+							Integer oneParcela = Integer.parseInt(one.getNumeroParcela());
+							Integer otherParcela = Integer.parseInt(other.getNumeroParcela());
+							result = oneParcela.compareTo(otherParcela);
+						} catch (Exception e) {
+							result = 0;
+						}
 					}
 				}
 				return result;
