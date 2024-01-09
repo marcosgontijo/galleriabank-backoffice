@@ -239,7 +239,7 @@ public class ImovelEstoqueMB {
 
 		// Ajusta automaticamente o tamanho das colunas com base no conteúdo
 		for (int i = 0; i < headerTexts.length; i++) {
-			sheet.autoSizeColumn(i);
+			sheet.setColumnWidth(i, 30*256);
 		}
 
 		// Cria uma instância de XSSFCellStyle para a formatação das linhas pares
@@ -285,7 +285,8 @@ public class ImovelEstoqueMB {
 		int rowNum = 0;
 
 		for (RelatorioEstoque relatorio : listRelatorioEstoque) {
-			XSSFRow linha = sheet.createRow(rowNum + 1); // Comece a partir da segunda linha (0 é o cabeçalho)
+			XSSFRow linha = sheet.createRow(rowNum + 1);// Comece a partir da segunda linha (0 é o cabeçalho)
+			
 
 			// Aplicar o estilo alternado com base no número da linha
 			// XSSFCellStyle rowStyle = (rowNum % 2 == 0) ? evenRowStyle : oddRowStyle;
@@ -305,6 +306,7 @@ public class ImovelEstoqueMB {
 		if (linha == null) {
 			sheet.createRow(iLinha);
 			linha = sheet.getRow(iLinha);
+			
 		}
 
 		gravaCelula(0, "N° CONTRATO", linha);
