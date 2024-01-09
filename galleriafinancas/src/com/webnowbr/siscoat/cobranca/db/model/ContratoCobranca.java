@@ -1579,19 +1579,19 @@ public class ContratoCobranca implements Serializable {
 	
 	public List<SelectItem>listagemEmpresas(){
 		List<SelectItem> empresas = new ArrayList<SelectItem>();
-		if(CommonsUtil.semValor(this.empresa)) {
+		//if(CommonsUtil.semValor(this.empresa)) {
 			empresas.add(new SelectItem("GALLERIA FINANÇAS SECURITIZADORA S.A.","GALLERIA FINANÇAS SECURITIZADORA S.A."));
 			empresas.add(new SelectItem("GALLERIA CORRESPONDENTE BANCARIO EIRELI","GALLERIA CORRESPONDENTE BANCARIO EIRELI"));
-		} else if(CommonsUtil.mesmoValor(this.empresa, "GALLERIA FINANÇAS SECURITIZADORA S.A.") ||
-				CommonsUtil.mesmoValor(this.empresa, "GALLERIA CORRESPONDENTE BANCARIO EIRELI")) {
+		//} else if(CommonsUtil.mesmoValor(this.empresa, "GALLERIA FINANÇAS SECURITIZADORA S.A.") ||
+		//		CommonsUtil.mesmoValor(this.empresa, "GALLERIA CORRESPONDENTE BANCARIO EIRELI")) {
 			empresas.add(new SelectItem("FIDC GALLERIA","FIDC GALLERIA"));
-		} else if(CommonsUtil.mesmoValor(this.empresa, "FIDC GALLERIA")) {
+		//} else if(CommonsUtil.mesmoValor(this.empresa, "FIDC GALLERIA")) {
 			empresas.add(new SelectItem("CRI 1","CRI 1"));
 			empresas.add(new SelectItem("CRI 2","CRI 2"));
 			empresas.add(new SelectItem("CRI 3","CRI 3"));
 			empresas.add(new SelectItem("CRI 4","CRI 4"));
 			empresas.add(new SelectItem("CRI 5","CRI 5"));
-		}
+		//}
 		return empresas;
 	}
 
