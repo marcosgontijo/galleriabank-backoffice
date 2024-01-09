@@ -92,18 +92,7 @@
 								value="#{contratoCobrancaMB.objetoContratoCobranca.empresa}"
 								label="Status" style="width:345px;" required="true">
 								<f:selectItem itemValue="" itemLabel="SELECIONE" />
-								<f:selectItem itemValue="GALLERIA FINANÇAS SECURITIZADORA S.A."
-									itemLabel="GALLERIA FINANÇAS SECURITIZADORA S.A." />
-								<f:selectItem
-									itemValue="GALLERIA CORRESPONDENTE BANCARIO EIRELI"
-									itemLabel="GALLERIA CORRESPONDENTE BANCARIO EIRELI" />
-								<f:selectItem itemValue="FIDC GALLERIA"
-									itemLabel="FIDC GALLERIA" />
-								<f:selectItem itemValue="CRI 1" itemLabel="CRI 1" />
-								<f:selectItem itemValue="CRI 2" itemLabel="CRI 2" />
-								<f:selectItem itemValue="CRI 3" itemLabel="CRI 3" />
-								<f:selectItem itemValue="CRI 4" itemLabel="CRI 4" />
-								<f:selectItem itemValue="CRI 5" itemLabel="CRI 5" />
+								<f:selectItems value="#{contratoCobrancaMB.objetoContratoCobranca.listagemEmpresas()}" />
 							</p:selectOneMenu>
 						</h:panelGrid>
 						<h:panelGrid columns="4">
