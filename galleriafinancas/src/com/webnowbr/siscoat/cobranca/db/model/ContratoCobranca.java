@@ -141,7 +141,7 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal somatoriaValorPresente;
 
 	private PagadorRecebedor pagador;
-	private String empresa;
+	private String empresa = "GALLERIA FINANÇAS SECURITIZADORA S.A.";
 	private PagadorRecebedor recebedor;
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidor1;
 	private PagadorRecebedor recebedor2;
