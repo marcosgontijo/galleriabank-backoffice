@@ -942,8 +942,6 @@ public class ContratoCobrancaMB {
 			if (usuarioLogado != null) {
 				this.objetoContratoCobranca.setContratoEmCartorioUsuario(usuarioLogado.getName());
 			}
-
-			this.objetoContratoCobranca.setContratoEmCartorioData(DateUtil.gerarDataHoje());
 		} else {
 			this.objetoContratoCobranca.setContratoEmCartorioUsuario("");
 			this.objetoContratoCobranca.setContratoEmCartorioData(null);
@@ -952,8 +950,14 @@ public class ContratoCobrancaMB {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		CartorioDao cartorioDao = new CartorioDao();
 		if(this.objetoContratoCobranca.isContratoEmCartorio()) {
-			cartorioDao.create(new Cartorio(objetoContratoCobranca,"enviado para cartório",DateUtil.gerarDataHoje(),getUsuarioLogado().getName()));
-		}
+			if(objetoContratoCobranca.getContratoEmCartorioData() != null) {
+			
+				cartorioDao.create(new Cartorio(objetoContratoCobranca,"Enviado para cartório",objetoContratoCobranca.getContratoEmCartorioData(),getUsuarioLogado().getName()));
+					} else {
+						cartorioDao.create(new Cartorio(objetoContratoCobranca,"Enviado para cartório",DateUtil.getDataHoje(),getUsuarioLogado().getName()));
+					}
+			}
+			
 		
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
