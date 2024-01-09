@@ -10122,6 +10122,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.calcularValorTotalContasPagas();
 
 	}
+	
 	private void calcularRegistroVelho() {
 		int qtdMatriculas = 1;
 		String matriculas = objetoContratoCobranca.getImovel().getNumeroMatricula().trim();
@@ -19800,9 +19801,181 @@ public class ContratoCobrancaMB {
 		this.contasPagarSelecionada = new ContasPagar();
 		this.addContasPagar = false;
 		this.objetoContratoCobranca.calcularValorTotalContasPagas();
-
+	}
+	
+	public void cirarDespesasContrato() {
+		for(CcbProcessosJudiciais processo : objetoContratoCobranca.getListProcessos()) {
+			if(!processo.isSelecionadoComite()) {
+				continue;
+			}
+			processo.getContaPagar().setContrato(objetoContratoCobranca);
+			objetoContratoCobranca.getListContasPagar().add(processo.getContaPagar());
+		}
+		
+		ContasPagarDao contasPagarDao = new ContasPagarDao();
+		
+		ContasPagar despesaLaudo = buscarDespesa("Laudo", objetoContratoCobranca.getNumeroContrato());
+		if(!CommonsUtil.semValor(objetoContratoCobranca.getValorLaudoPajuFaltante())) {
+			BigDecimal valorLaudoPaju = objetoContratoCobranca.getValorLaudoPajuFaltante();
+			if(objetoContratoCobranca.isPajuVencido()) {
+				valorLaudoPaju = valorLaudoPaju.add(BigDecimal.valueOf(500));
+			}
+			if(CommonsUtil.semValor(despesaLaudo)) {
+				criarDespesa("Laudo", valorLaudoPaju);
+			} else {
+				despesaLaudo.setValor(valorLaudoPaju);
+				contasPagarDao.merge(despesaLaudo);
+			}
+		}
+		
+		ContasPagar despesaTransferencia = buscarDespesa("Transferência", objetoContratoCobranca.getNumeroContrato());
+		if(CommonsUtil.mesmoValor(objetoContratoCobranca.getCobrarComissaoCliente(), "Sim")) {
+			BigDecimal valorTranferencia = BigDecimal.ZERO;
+			BigDecimal comissao = BigDecimal.ZERO;
+			if(CommonsUtil.mesmoValor(objetoContratoCobranca.getTipoCobrarComissaoCliente(), "Real")) {
+				if(!CommonsUtil.semValor(objetoContratoCobranca.getComissaoClienteValorFixo())) {
+					valorTranferencia = objetoContratoCobranca.getComissaoClienteValorFixo();
+				}
+			} else if(CommonsUtil.mesmoValor(objetoContratoCobranca.getTipoCobrarComissaoCliente(), "Porcentagem")) {
+				if(!CommonsUtil.semValor(objetoContratoCobranca.getComissaoClientePorcentagem())) {
+					comissao = objetoContratoCobranca.getComissaoClientePorcentagem();
+					comissao = comissao.divide(BigDecimal.valueOf(100), MathContext.DECIMAL128);
+				}
+				
+				if(CommonsUtil.mesmoValor(objetoContratoCobranca.getBrutoLiquidoCobrarComissaoCliente(), "Bruto")) {
+					valorTranferencia = objetoContratoCobranca.getValorAprovadoComite().multiply(comissao);
+				} 
+			}
+			
+			String conta = "";
+			if(!CommonsUtil.semValor(objetoContratoCobranca.getResponsavel().getConta())) {
+				conta = objetoContratoCobranca.getResponsavel().getConta();
+			}
+			if(!CommonsUtil.semValor(objetoContratoCobranca.getResponsavel().getContaDigito())) {
+				conta = conta + "-" + objetoContratoCobranca.getResponsavel().getContaDigito();
+			}
+			
+			if(CommonsUtil.semValor(despesaTransferencia)) {
+				criarDespesa("Transferência", valorTranferencia, "TED");
+			} else {
+				conta = "";
+				if(!CommonsUtil.semValor(objetoContratoCobranca.getResponsavel().getConta())) {
+					conta = objetoContratoCobranca.getResponsavel().getConta();
+				}
+				if(!CommonsUtil.semValor(objetoContratoCobranca.getResponsavel().getContaDigito())) {
+					conta = conta + "-" +  objetoContratoCobranca.getResponsavel().getContaDigito();
+				}
+				despesaTransferencia.setBancoTed(objetoContratoCobranca.getResponsavel().getBanco());
+				despesaTransferencia.setAgenciaTed(objetoContratoCobranca.getResponsavel().getAgencia());
+				despesaTransferencia.setContaTed(conta);
+				despesaTransferencia.setCpfTed(objetoContratoCobranca.getResponsavel().getCpfCnpjCC());
+				despesaTransferencia.setNomeTed(objetoContratoCobranca.getResponsavel().getNomeCC());
+				despesaTransferencia.setPix(objetoContratoCobranca.getResponsavel().getPix());
+				
+				despesaTransferencia.setValor(valorTranferencia);
+				contasPagarDao.merge(despesaTransferencia);
+			}
+		} else if(!CommonsUtil.semValor(despesaTransferencia)) {
+			despesaTransferencia.setValor(BigDecimal.ZERO);
+			objetoContratoCobranca.getListContasPagar().remove(despesaTransferencia);
+		}
+		
+		ContasPagar despesaIQ = buscarDespesa("IQ", objetoContratoCobranca.getNumeroContrato());
+		if(CommonsUtil.mesmoValor(objetoContratoCobranca.getDivida(), "Sim")) {
+			if(CommonsUtil.semValor(despesaIQ)) {
+				criarDespesa("IQ", objetoContratoCobranca.getDividaValor());				
+			} else {
+				despesaIQ.setValor(objetoContratoCobranca.getDividaValor());
+				contasPagarDao.merge(despesaIQ);
+			}
+		} else if(!CommonsUtil.semValor(despesaIQ)) {
+			despesaIQ.setValor(BigDecimal.ZERO);
+			objetoContratoCobranca.getListContasPagar().remove(despesaIQ);
+		}
+		
+		ContasPagar despesaIPTU = buscarDespesa("IPTU", objetoContratoCobranca.getNumeroContrato());
+		if(!CommonsUtil.semValor(objetoContratoCobranca.getDividaIPTU())) {
+			if(CommonsUtil.semValor(CommonsUtil.semValor(despesaIPTU))) {
+				criarDespesa("IPTU", objetoContratoCobranca.getDividaIPTU());
+			} else {
+				despesaIPTU.setValor(objetoContratoCobranca.getDividaIPTU());
+				contasPagarDao.merge(despesaIPTU);
+			}
+		} else if(!CommonsUtil.semValor(despesaIPTU)) {
+			despesaIPTU.setValor(BigDecimal.ZERO);
+			objetoContratoCobranca.getListContasPagar().remove(despesaIPTU);
+		}
+		
+		ContasPagar despesaCondominio = buscarDespesa("Condomínio", objetoContratoCobranca.getNumeroContrato());
+		if(!CommonsUtil.semValor(objetoContratoCobranca.getDividaCondominio())) {
+			if(CommonsUtil.semValor(despesaCondominio)) {
+				criarDespesa("Condomínio", objetoContratoCobranca.getDividaCondominio());
+			} else {
+				despesaCondominio.setValor(objetoContratoCobranca.getDividaCondominio());
+				contasPagarDao.merge(despesaCondominio);
+			}
+			objetoCcb.setCondominioEmAtrasoValor(objetoContratoCobranca.getDividaCondominio());
+		} else if(!CommonsUtil.semValor(despesaCondominio)) {
+			despesaCondominio.setValor(BigDecimal.ZERO);
+			objetoContratoCobranca.getListContasPagar().remove(despesaCondominio);
+		}
+		
+		ContasPagar despesaAverbacao = buscarDespesa("Averbação", objetoContratoCobranca.getNumeroContrato());
+		if(objetoContratoCobranca.getListAverbacao().size() > 0) {		
+			BigDecimal averbacaoTotal = BigDecimal.ZERO;
+			for(Averbacao averbacao : objetoContratoCobranca.getListAverbacao()) {
+				averbacaoTotal = averbacaoTotal.add(averbacao.getValor());
+			}
+			if (CommonsUtil.semValor(despesaAverbacao)) {
+				criarDespesa("Averbação", averbacaoTotal);
+			} else {
+				despesaAverbacao.setValor(averbacaoTotal);
+				contasPagarDao.merge(despesaAverbacao);
+			}
+		} else if(!CommonsUtil.semValor(despesaAverbacao)) {
+			despesaAverbacao.setValor(BigDecimal.ZERO);
+			objetoContratoCobranca.getListContasPagar().remove(despesaAverbacao);
+		}
+		
+		ContasPagar despesaRegistro = buscarDespesa("Cartório", objetoContratoCobranca.getNumeroContrato());
+		if(CommonsUtil.semValor(despesaRegistro))
+			despesaRegistro = buscarDespesa("Registro", objetoContratoCobranca.getNumeroContrato());
+		if(!CommonsUtil.semValor(objetoContratoCobranca.getValorCartorio())) {
+			BigDecimal valorRegistro = objetoContratoCobranca.getValorCartorio();
+			if(CommonsUtil.semValor(despesaRegistro)) {
+				criarDespesa("Cartório", valorRegistro);
+			} else {
+				despesaRegistro.setValor(valorRegistro);
+				contasPagarDao.merge(despesaRegistro);
+			}
+		} else if(!CommonsUtil.semValor(despesaRegistro)) {
+			despesaRegistro.setValor(BigDecimal.ZERO);
+			objetoContratoCobranca.getListContasPagar().remove(despesaRegistro);
+		}
 	}
 
+	public ContasPagar buscarDespesa(String descricao, String numeroContrato) {
+		try {
+			ContasPagarDao contasPagarDao = new ContasPagarDao();
+			List<ContasPagar> lista = contasPagarDao.buscarDespesa(descricao, numeroContrato);
+			if(lista.size() > 0)
+				return lista.get(0);
+		} catch (Exception e) {
+		}
+		return null;
+	}
+	
+	public void criarDespesa(String descricao, BigDecimal valor) {
+		criarDespesa(descricao, valor, "Boleto");
+	}
+	
+	public void criarDespesa(String descricao, BigDecimal valor, String formaTransferencia) {
+		contasPagarSelecionada = new ContasPagar();
+		contasPagarSelecionada.setDescricao(descricao);
+		contasPagarSelecionada.setValor(valor);
+		contasPagarSelecionada.setFormaTransferencia(formaTransferencia);
+	}
+	
 	public void concluirContaPagamentoCliente() {
 		this.contasPagarSelecionada.setContrato(this.objetoContratoCobranca);
 		this.contasPagarSelecionada.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
@@ -21377,6 +21550,10 @@ public class ContratoCobrancaMB {
 			conta.setDataPagamento(DateUtil.gerarDataHoje());
 			cDao.merge(conta);
 		}
+	}
+	
+	public void clearConta() {
+		contasPagarSelecionada = new ContasPagar();
 	}
 
 	public void removeDataVistoria(DataVistoria data) {

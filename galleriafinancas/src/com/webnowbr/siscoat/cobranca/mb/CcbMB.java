@@ -467,6 +467,10 @@ public class CcbMB {
 		calcularValorDespesa();
 	}
 	
+	public void editDespesa(ContasPagar conta) {
+		despesaSelecionada = conta;
+	}
+	
 	public void addProcesso() {
 		processoSelecionado.getContaPagar().setValor(processoSelecionado.getValorAtualizado());
 		processoSelecionado.getContaPagar().setDescricao("Processo N°: " + processoSelecionado.getNumero());
@@ -721,6 +725,38 @@ public class CcbMB {
 		this.objetoCcb.setValorDespesas(total);
 	}
 	
+	public void atualizaValorTransferencia() {
+		ContasPagar despesaTransferencia = buscarDespesa("Transferência", objetoContratoCobranca.getNumeroContrato());
+		ContasPagarDao contasPagarDao = new ContasPagarDao();
+		if(!CommonsUtil.mesmoValor(objetoContratoCobranca.getCobrarComissaoCliente(), "Sim")) 
+			return;		
+		if(CommonsUtil.mesmoValor(objetoContratoCobranca.getTipoCobrarComissaoCliente(), "Real")) 
+			return;		
+		if(CommonsUtil.mesmoValor(objetoContratoCobranca.getBrutoLiquidoCobrarComissaoCliente(), "Bruto")) 
+			return;
+		
+		BigDecimal valorTranferencia = BigDecimal.ZERO;
+		BigDecimal comissao = BigDecimal.ZERO;
+		if(!CommonsUtil.semValor(objetoContratoCobranca.getComissaoClientePorcentagem())) {
+			comissao = objetoContratoCobranca.getComissaoClientePorcentagem();
+			comissao = comissao.divide(BigDecimal.valueOf(100), MathContext.DECIMAL128);
+		}
+		if(CommonsUtil.semValor(objetoCcb.getValorLiquidoCredito())) 
+			return;
+		valorTranferencia = objetoCcb.getValorLiquidoCredito().add(objetoCcb.getIntermediacaoValor()).multiply(comissao);
+		
+		if(CommonsUtil.mesmoValor(valorTranferencia, objetoCcb.getIntermediacaoValor())) 
+			return;
+		if(CommonsUtil.semValor(despesaTransferencia)) 
+			return;
+		
+		objetoCcb.setIntermediacaoValor(valorTranferencia);
+		despesaTransferencia.setValor(valorTranferencia);
+		calcularValorDespesa();
+		calcularSimulador();
+		contasPagarDao.merge(despesaTransferencia);
+	}
+	
 	private void prepararDespesasContrato() {
 		//Adicionar Despesas
 		this.objetoCcb.getProcessosJucidiais().clear();
@@ -738,14 +774,17 @@ public class CcbMB {
 		
 		ContasPagar despesaLaudo = buscarDespesa("Laudo", objetoContratoCobranca.getNumeroContrato());
 		if(!CommonsUtil.semValor(objetoContratoCobranca.getValorLaudoPajuFaltante())) {
+			BigDecimal valorLaudoPaju = objetoContratoCobranca.getValorLaudoPajuFaltante();
+			if(objetoContratoCobranca.isPajuVencido()) {
+				valorLaudoPaju = valorLaudoPaju.add(BigDecimal.valueOf(500));
+			}
 			if(CommonsUtil.semValor(objetoCcb.getLaudoDeAvaliacaoValor()) || CommonsUtil.semValor(despesaLaudo)) {
-				criarDespesa("Laudo", objetoContratoCobranca.getValorLaudoPajuFaltante());
+				criarDespesa("Laudo", valorLaudoPaju);
 			} else {
-				despesaLaudo.setValor(objetoCcb.getLaudoDeAvaliacaoValor());
+				despesaLaudo.setValor(valorLaudoPaju);
 				contasPagarDao.merge(despesaLaudo);
 			}
-			
-			objetoCcb.setLaudoDeAvaliacaoValor(objetoContratoCobranca.getValorLaudoPajuFaltante());
+			objetoCcb.setLaudoDeAvaliacaoValor(valorLaudoPaju);
 		} else if(!CommonsUtil.semValor(despesaLaudo)) {
 			despesaLaudo.setValor(BigDecimal.ZERO);
 			objetoCcb.getDespesasAnexo2().remove(despesaLaudo);
@@ -911,6 +950,12 @@ public class CcbMB {
 			objetoContratoCobranca.getListContasPagar().remove(despesaRegistro);
 			objetoCcb.setRegistroImovelValor(BigDecimal.ZERO);
 			contasPagarDao.delete(despesaRegistro);
+		}
+		
+		for(ContasPagar conta : objetoContratoCobranca.getListContasPagar()) {
+			if(!objetoCcb.getDespesasAnexo2().contains(conta)) {
+				objetoCcb.getDespesasAnexo2().add(conta);
+			}
 		}
 	}
 	
@@ -2043,6 +2088,7 @@ public class CcbMB {
 		calculaValorLiquidoCredito();
 		
 		calculaPorcentagemImovel();
+		atualizaValorTransferencia();
 		FacesContext context = FacesContext.getCurrentInstance();
 		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Percelas Geradas com sucesso", ""));	
 	}
@@ -2065,7 +2111,7 @@ public class CcbMB {
 		this.addSegurador = false;
 		CcbDao ccbDao = new CcbDao();
 		this.objetoCcb = ccbDao.findById(objetoCcb.getId());
-		
+		objetoContratoCobranca = objetoCcb.getObjetoContratoCobranca();
 		if(!CommonsUtil.semValor(objetoCcb.getPrazo()) && !CommonsUtil.semValor(objetoCcb.getNumeroParcelasPagamento())){
 			objetoCcb.setCarencia(CommonsUtil.stringValue(CommonsUtil.integerValue(objetoCcb.getPrazo())
 					- CommonsUtil.integerValue(objetoCcb.getNumeroParcelasPagamento())));
