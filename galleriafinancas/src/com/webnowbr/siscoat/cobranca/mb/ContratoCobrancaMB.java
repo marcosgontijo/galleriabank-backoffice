@@ -942,8 +942,6 @@ public class ContratoCobrancaMB {
 			if (usuarioLogado != null) {
 				this.objetoContratoCobranca.setContratoEmCartorioUsuario(usuarioLogado.getName());
 			}
-
-			this.objetoContratoCobranca.setContratoEmCartorioData(DateUtil.gerarDataHoje());
 		} else {
 			this.objetoContratoCobranca.setContratoEmCartorioUsuario("");
 			this.objetoContratoCobranca.setContratoEmCartorioData(null);
@@ -952,8 +950,14 @@ public class ContratoCobrancaMB {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		CartorioDao cartorioDao = new CartorioDao();
 		if(this.objetoContratoCobranca.isContratoEmCartorio()) {
-			cartorioDao.create(new Cartorio(objetoContratoCobranca,"enviado para cartório",DateUtil.gerarDataHoje(),getUsuarioLogado().getName()));
-		}
+			if(objetoContratoCobranca.getContratoEmCartorioData() != null) {
+			
+				cartorioDao.create(new Cartorio(objetoContratoCobranca,"Enviado para cartório",objetoContratoCobranca.getContratoEmCartorioData(),getUsuarioLogado().getName()));
+					} else {
+						cartorioDao.create(new Cartorio(objetoContratoCobranca,"Enviado para cartório",DateUtil.getDataHoje(),getUsuarioLogado().getName()));
+					}
+			}
+			
 		
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
@@ -1391,7 +1395,7 @@ public class ContratoCobrancaMB {
 			this.objetoContratoCobranca = rfc.getContratoCobranca();
 			// verifica se tem baixa parcial e se a parcela é diferente de paga
 			for (ContratoCobrancaDetalhes ccd : rfc.getContratoCobranca().getListContratoCobrancaDetalhes()) {
-				if (rfc.getIdParcela() == ccd.getId()) {
+				if (!CommonsUtil.semValor(ccd) &&  rfc.getIdParcela() == ccd.getId()) {
 					if (CommonsUtil.mesmoValor(ccd.getNumeroParcela(), "0") || ccd.isAmortizacao()|| ccd.isAcertoSaldo())
 						continue;
 					if (ccd.getListContratoCobrancaDetalhesParcial().size() == 0 && !ccd.isParcelaPaga()) {
@@ -10833,6 +10837,8 @@ public class ContratoCobrancaMB {
 		dataHoje.set(Calendar.MILLISECOND, 0);
 
 		for (ContratoCobrancaDetalhes ccd : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
+			if ( CommonsUtil.semValor(ccd))
+					continue;
 			dataVencimentoParcela.setTime(ccd.getDataVencimento());
 			dataHoje.set(Calendar.HOUR_OF_DAY, 0);
 			dataHoje.set(Calendar.MINUTE, 0);
@@ -19429,10 +19435,14 @@ public class ContratoCobrancaMB {
 		} else {
 			dataVencimentoNova = this.dataParcela;
 		}
-
 		
+		if ( this.numeroParcelaReparcelamento.compareTo(BigInteger.ZERO) != 0)
+		saldoDevedorOriginalReparcelamento = this.objetoContratoCobranca.getListContratoCobrancaDetalhes().stream().filter( d ->d.getNumeroParcela().equals((this.numeroParcelaReparcelamento.subtract(BigInteger.ONE)) .toString())).findAny().get().getVlrSaldoParcela();
+		else
+			saldoDevedorOriginalReparcelamento = null;
+			
 		ContratoCobrancaDetalhes acrescimo = new ContratoCobrancaDetalhes();
-		if (this.simuladorParcelas.getValorCredito().compareTo(this.saldoDevedorOriginalReparcelamento) != 0) {
+		if ( !CommonsUtil.semValor(saldoDevedorOriginalReparcelamento)  && this.simuladorParcelas.getValorCredito().compareTo(this.saldoDevedorOriginalReparcelamento) != 0) {
 
 			
 			/// inserir acrescimo de saldo
@@ -19581,6 +19591,10 @@ public class ContratoCobrancaMB {
 				.size(); iDetalhe++) {
 			ContratoCobrancaDetalhes detalhe = this.objetoContratoCobranca.getListContratoCobrancaDetalhes()
 					.get(iDetalhe);
+			
+			if ( CommonsUtil.semValor(detalhe) )
+				continue;
+			
 			if (!detalhe.isParcelaPaga()) {
 				if (CommonsUtil.mesmoValor(iDetalhe, 0)) {
 					this.setNumeroParcelaReparcelamento(
@@ -19600,7 +19614,7 @@ public class ContratoCobrancaMB {
 
 					ContratoCobrancaDetalhes detalheProximo = this.objetoContratoCobranca
 							.getListContratoCobrancaDetalhes().get(iDetalhe + 1);
-					if (!detalheProximo.isAmortizacao() && !detalhe.isAcertoSaldo()) {
+					if (!CommonsUtil.semValor(detalheProximo) && !detalheProximo.isAmortizacao() && !detalheProximo.isAcertoSaldo()) {
 						this.setDataParcela(detalheProximo.getDataVencimento());
 						this.setNumeroParcelaReparcelamento(
 								BigInteger.valueOf(CommonsUtil.intValue(detalheProximo.getNumeroParcela())));
