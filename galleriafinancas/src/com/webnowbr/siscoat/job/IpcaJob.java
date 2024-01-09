@@ -78,7 +78,7 @@ public class IpcaJob implements Job {
 			LOGGER.info("atualiza o ipca");
 			ipcaService.verificaNovoIPCA();
 			//buscar somente contratos com parcelas para atualizar
-			List<ContratoCobranca> contratosCobranca = contratoCobrancaDao.findAll();
+			List<ContratoCobranca> contratosCobranca = contratoCobrancaDao.consultaContratosAtualizacaoIPCA();
 
 			
 			//atualiza o ipca
