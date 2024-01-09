@@ -655,7 +655,7 @@ public class StarkBankAPI{
 
     	List<Transfer.Rule> rules = new ArrayList<>();
     
-    	if (descricaoConta != null || descricaoConta.contains("Pagamento Carta Split")) {
+    	if (descricaoConta != null && descricaoConta.contains("Pagamento Carta Split")) {
     		loginStarkBankSCD();
     	} else {
     		loginStarkBank();    		
@@ -731,7 +731,7 @@ public class StarkBankAPI{
 
     	List<Transfer.Rule> rules = new ArrayList<>();
     
-    	if (descricaoConta != null || descricaoConta.contains("Pagamento Carta Split")) {
+    	if (descricaoConta != null && descricaoConta.contains("Pagamento Carta Split")) {
     		loginStarkBankSCD();
     	} else {
     		loginStarkBank();    		
