@@ -3841,6 +3841,9 @@
 								action="#{contratoCobrancaMB.clearConta()}"
 								oncomplete="PF('despesaDialog').show();"
 								update="despesaDialogForm" />
+							<p:commandButton icon="ui-icon-arrowrefresh-1-w"
+								action="#{contratoCobrancaMB.cirarDespesasContrato}"
+								update="ContasPagarPanel" />	
 						</f:facet>
 
 						<p:outputLabel for="ContaPagarValorTotal"

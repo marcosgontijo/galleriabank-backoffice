@@ -14734,7 +14734,11 @@ public class ContratoCobrancaMB {
 		/* consultaListagemCertidoes() */
 
 		if (status.equals("Aguardando Análise") && (!user.isProfileGerenteAnalise() && !user.isAdministrador())) {
-			if (contratoCobrancaDao.consultaQtdAnaliseUser(user.getLogin()) >= 3) {
+			ParametrosDao pDao = new ParametrosDao();
+			int limiteOp = 3;
+			if(pDao.findByFilter("nome", "LIMITE_OP_ANALISTA").size() > 0)
+				limiteOp = pDao.findByFilter("nome", "LIMITE_OP_ANALISTA").get(0).getValorInt();
+			if (contratoCobrancaDao.consultaQtdAnaliseUser(user.getLogin()) >= limiteOp) {
 				FacesContext context = FacesContext.getCurrentInstance();
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
 						"Analista com muitas operações em andamento!", ""));
@@ -19915,7 +19919,6 @@ public class ContratoCobrancaMB {
 				despesaCondominio.setValor(objetoContratoCobranca.getDividaCondominio());
 				contasPagarDao.merge(despesaCondominio);
 			}
-			objetoCcb.setCondominioEmAtrasoValor(objetoContratoCobranca.getDividaCondominio());
 		} else if(!CommonsUtil.semValor(despesaCondominio)) {
 			despesaCondominio.setValor(BigDecimal.ZERO);
 			objetoContratoCobranca.getListContasPagar().remove(despesaCondominio);
@@ -19953,6 +19956,8 @@ public class ContratoCobrancaMB {
 			despesaRegistro.setValor(BigDecimal.ZERO);
 			objetoContratoCobranca.getListContasPagar().remove(despesaRegistro);
 		}
+		
+		calcularValorTotalContasPagar();
 	}
 
 	public ContasPagar buscarDespesa(String descricao, String numeroContrato) {
@@ -19975,6 +19980,7 @@ public class ContratoCobrancaMB {
 		contasPagarSelecionada.setDescricao(descricao);
 		contasPagarSelecionada.setValor(valor);
 		contasPagarSelecionada.setFormaTransferencia(formaTransferencia);
+		objetoContratoCobranca.getListContasPagar().add(contasPagarSelecionada);
 	}
 	
 	public void concluirContaPagamentoCliente() {
