@@ -1013,7 +1013,7 @@
 			<h:form id="starkBankForm">				
 				<p:panel id="BoletoStarkBank" header="Boleto"
 					style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.contasPagarSelecionada.formaTransferencia eq 'Boleto'}">
-					<h:panelGroup id="starkBankGrid" >
+					<h:panelGroup id="starkBankGridBoleto" >
 						<h:panelGrid columns="2">
 							<p:outputLabel for="linhaDigitavel" styleClass="labelBold" value="Linha Digitável: " />
 							<p:inputText id="linhaDigitavel" value="#{contratoCobrancaMB.contasPagarSelecionada.linhaDigitavelStarkBank}" style="width:100px;" required="true"/>							
@@ -1039,22 +1039,22 @@
 				</p:panel>
 				<p:panel id="ImpostoStarkBank" header="Imposto"
 					style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.contasPagarSelecionada.formaTransferencia eq 'Imposto'}">
-					<h:panelGroup id="starkBankGrid" >
+					<h:panelGroup id="starkBankGridImposto" >
 						<h:panelGrid columns="2">
-							<p:outputLabel for="linhaDigitavel" styleClass="labelBold" value="Linha Digitável (sem pontos e espaço): " />
-							<p:inputText id="linhaDigitavel" value="#{contratoCobrancaMB.contasPagarSelecionada.linhaDigitavelStarkBank}" style="width:100px;" required="true"/>	
-							<p:outputLabel for="descricao" styleClass="labelBold" value="Descrição: " />
-							<p:inputText id="descricao" value="#{contratoCobrancaMB.contasPagarSelecionada.descricaoStarkBank}" style="width:100px;" required="true"/>						
-							<p:outputLabel for="ContaPagarValorPagoBoletoStarkBank" value="Valor Pago: "
+							<p:outputLabel for="linhaDigitavelImposto" styleClass="labelBold" value="Linha Digitável (sem pontos e espaço): " />
+							<p:inputText id="linhaDigitavelImposto" value="#{contratoCobrancaMB.contasPagarSelecionada.linhaDigitavelStarkBank}" style="width:100px;" required="true"/>	
+							<p:outputLabel for="descricaoImposto" styleClass="labelBold" value="Descrição: " />
+							<p:inputText id="descricaoImposto" value="#{contratoCobrancaMB.contasPagarSelecionada.descricaoStarkBank}" style="width:100px;" required="true"/>						
+							<p:outputLabel for="ContaPagarValorPagoBoletoStarkBankImposto" value="Valor Pago: "
 								styleClass="labelBold" />
-							<p:inputText id="ContaPagarValorPagoBoletoStarkBank"
+							<p:inputText id="ContaPagarValorPagoBoletoStarkBankImposto"
 								value="#{contratoCobrancaMB.contasPagarSelecionada.valorPagamento}"
 								onkeypress="return isNumberKey(event);"
 								onkeydown="FormataValor(this, 13, event, 2);" required="true"
 								converter="bigDecimalConverter" />
-							<p:outputLabel for="ContaPagarDataPagamentoBoletoStarkBank"
+							<p:outputLabel for="ContaPagarDataPagamentoBoletoStarkBankImposto"
 								value="Data Pagamento: " styleClass="labelBold" />
-							<p:calendar id="ContaPagarDataPagamentoBoletoStarkBank"
+							<p:calendar id="ContaPagarDataPagamentoBoletoStarkBankImposto"
 								value="#{contratoCobrancaMB.contasPagarSelecionada.dataPagamento}"
 								label="Data" size="100" pattern="dd/MM/yyyy"
 								styleClass="dateTimeField" />

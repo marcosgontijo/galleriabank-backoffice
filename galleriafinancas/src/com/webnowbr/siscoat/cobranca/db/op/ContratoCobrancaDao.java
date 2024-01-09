@@ -8913,7 +8913,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		int totalParcelas = 0;
 		
 		totalParcelas = CommonsUtil.intValue(listContratoCobrancaDetalhes.stream()
-				.filter(d -> !CommonsUtil.mesmoValor(d.getNumeroParcela(), "0") || d.isAmortizacao() || !d.isAcertoSaldo()).count());
+				.filter(d -> !CommonsUtil.semValor(d) && ( !CommonsUtil.mesmoValor(d.getNumeroParcela(), "0") || d.isAmortizacao() || !d.isAcertoSaldo())).count());
 
 //		for (ContratoCobrancaDetalhes contratoCobrancaDetalhes : listContratoCobrancaDetalhes) {
 //			if (CommonsUtil.mesmoValor(contratoCobrancaDetalhes.getNumeroParcela(), "0")
@@ -9742,6 +9742,44 @@ private String QUERY_ID_IMOVELESTOQUE = "select id from cobranca.contratocobranc
 					closeResources(connection, ps, rs);					
 				}
 				return relatorio;
+			}
+		});
+	}
+    
+    
+private String QUERY_CONTRATOS_IPCA = "select distinct c.* "
+		+ "	 from cobranca.contratocobranca c "
+		+ "	 inner join cobranca.contratocobranca_detalhes_join cdj on c.id  = cdj.idcontratocobranca "
+		+ "	 inner join cobranca.contratocobrancadetalhes c2 on cdj.idcontratocobrancadetalhes  = c2.id  and parcelapaga = false "
+		+ "	 where c.status = 'Aprovado' and ( c.recalculaipca or c.corrigidoipcahibrido or c.corrigidoipca or c.corrigidonovoipca ) ";
+    
+    @SuppressWarnings("unchecked")
+	public List<ContratoCobranca> consultaContratosAtualizacaoIPCA() {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+				
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				
+				try {
+					connection = getConnection();
+					
+					ps = connection
+							.prepareStatement(QUERY_CONTRATOS_IPCA);
+					
+					rs = ps.executeQuery();
+					
+					while (rs.next()) {
+						objects.add(findById(rs.getLong(1)));
+					}
+							
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
 			}
 		});
 	}

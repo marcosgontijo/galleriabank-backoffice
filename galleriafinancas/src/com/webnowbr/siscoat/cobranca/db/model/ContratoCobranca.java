@@ -13,6 +13,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.faces.model.SelectItem;
+
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.infra.db.model.User;
@@ -139,7 +141,7 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal somatoriaValorPresente;
 
 	private PagadorRecebedor pagador;
-	private String empresa;
+	private String empresa = "GALLERIA FINANÇAS SECURITIZADORA S.A.";
 	private PagadorRecebedor recebedor;
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidor1;
 	private PagadorRecebedor recebedor2;
@@ -1068,6 +1070,8 @@ public class ContratoCobranca implements Serializable {
 		Collections.sort(this.listContratoCobrancaDetalhes, new Comparator<ContratoCobrancaDetalhes>() {
 			@Override
 			public int compare(ContratoCobrancaDetalhes one, ContratoCobrancaDetalhes other) {
+				if ( CommonsUtil.semValor(one) ||  CommonsUtil.semValor(other)  )
+					return 0;
 				int result = one.getDataVencimento().compareTo(other.getDataVencimento());
 				if (result == 0) {
 					if (CommonsUtil.mesmoValorIgnoreCase("Acerto Saldo", one.getNumeroParcela())
@@ -1379,6 +1383,35 @@ public class ContratoCobranca implements Serializable {
 		return c;
 	}
 
+	
+	public  String getEnderecoCompleto() {
+		if ( !CommonsUtil.semValor(imovel))
+			return imovel.getEnderecoCompleto();
+		else return null;
+		
+	}
+
+	private transient Date imovelEstoqueConsolidado;
+
+
+	private transient String imovelEstoqueEstado;
+	
+	public Date getImovelEstoqueConsolidado() {
+		if (!CommonsUtil.semValor(imovel) && !CommonsUtil.semValor(imovel.getImovelEstoque()))
+			return imovel.getImovelEstoque().getDataConsolidado();
+		else
+			return null;
+
+	}
+
+	public String getImovelEstoqueEstado() {
+		if (!CommonsUtil.semValor(imovel) && !CommonsUtil.semValor(imovel.getImovelEstoque()))
+			return imovel.getImovelEstoque().getStatusAtual();
+		else
+			return null;
+
+	}
+	
 	public boolean isDadosAprovadosComercial() {
 		return !CommonsUtil.semValor(valorAprovadoComercial) || //
 				!CommonsUtil.semValor(prazoAprovadoComercial) || //
@@ -1544,6 +1577,24 @@ public class ContratoCobranca implements Serializable {
 			prazoMaxPreAprovado = BigInteger
 					.valueOf(new BigDecimal(((80 - idade) * 12)).setScale(0, RoundingMode.HALF_DOWN).intValue());
 		}
+	}
+	
+	public List<SelectItem>listagemEmpresas(){
+		List<SelectItem> empresas = new ArrayList<SelectItem>();
+		//if(CommonsUtil.semValor(this.empresa)) {
+			empresas.add(new SelectItem("GALLERIA FINANÇAS SECURITIZADORA S.A.","GALLERIA FINANÇAS SECURITIZADORA S.A."));
+			empresas.add(new SelectItem("GALLERIA CORRESPONDENTE BANCARIO EIRELI","GALLERIA CORRESPONDENTE BANCARIO EIRELI"));
+		//} else if(CommonsUtil.mesmoValor(this.empresa, "GALLERIA FINANÇAS SECURITIZADORA S.A.") ||
+		//		CommonsUtil.mesmoValor(this.empresa, "GALLERIA CORRESPONDENTE BANCARIO EIRELI")) {
+			empresas.add(new SelectItem("FIDC GALLERIA","FIDC GALLERIA"));
+		//} else if(CommonsUtil.mesmoValor(this.empresa, "FIDC GALLERIA")) {
+			empresas.add(new SelectItem("CRI 1","CRI 1"));
+			empresas.add(new SelectItem("CRI 2","CRI 2"));
+			empresas.add(new SelectItem("CRI 3","CRI 3"));
+			empresas.add(new SelectItem("CRI 4","CRI 4"));
+			empresas.add(new SelectItem("CRI 5","CRI 5"));
+		//}
+		return empresas;
 	}
 
 	/**
