@@ -883,6 +883,7 @@ public class ContratoCobranca implements Serializable {
 	
 	public int qtdParcelasAtraso;
 	public BigDecimal somaParcelasAtraso;
+	public Cartorio ultimoCartorio;
 
 	// FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13
 	public BigDecimal calcularValorTotalContasPagas() {
@@ -7651,6 +7652,14 @@ public class ContratoCobranca implements Serializable {
 
 	public void setEnviadoCartorio(boolean enviadoCartorio) {
 		this.enviadoCartorio = enviadoCartorio;
+	}
+
+	public Cartorio getUltimoCartorio() {
+		return ultimoCartorio;
+	}
+
+	public void setUltimoCartorio(Cartorio ultimoCartorio) {
+		this.ultimoCartorio = ultimoCartorio;
 	}
 }
 
