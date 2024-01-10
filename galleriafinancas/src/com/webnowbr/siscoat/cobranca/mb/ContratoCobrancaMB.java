@@ -20110,6 +20110,13 @@ public class ContratoCobrancaMB {
 				}
 
 				if (this.contasPagarSelecionada.getFormaTransferencia().equals("Pix")) {
+					this.contasPagarSelecionada.setCpfTed(this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar());
+					this.contasPagarSelecionada.setNomeTed(this.objetoContratoCobranca.getNomeBancarioContaPagar());
+					this.contasPagarSelecionada.setAgenciaTed(this.objetoContratoCobranca.getAgenciaBancarioContaPagar());
+					this.contasPagarSelecionada.setBancoTed(this.objetoContratoCobranca.getBancoBancarioContaPagar());
+					this.contasPagarSelecionada.setContaTed(this.objetoContratoCobranca.getContaBancarioContaPagar());
+					this.contasPagarSelecionada.setPix(this.objetoContratoCobranca.getChavePIXBancarioContaPagar());
+					
 					StarkBankBaixa baixa = registraBaixaStarkBank(DateUtil.gerarDataHoje(),
 							this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar(), null, null,
 							this.objetoPagadorRecebedor.getNome(), this.contasPagarSelecionada.getValorPagamento(),
@@ -20122,6 +20129,11 @@ public class ContratoCobrancaMB {
 				}
 
 				if (this.contasPagarSelecionada.getFormaTransferencia().equals("TED")) {
+					this.contasPagarSelecionada.setCpfTed(this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar());
+					this.contasPagarSelecionada.setNomeTed(this.objetoContratoCobranca.getNomeBancarioContaPagar());
+					this.contasPagarSelecionada.setAgenciaTed(this.objetoContratoCobranca.getAgenciaBancarioContaPagar());
+					this.contasPagarSelecionada.setBancoTed(this.objetoContratoCobranca.getBancoBancarioContaPagar());
+					this.contasPagarSelecionada.setContaTed(this.objetoContratoCobranca.getContaBancarioContaPagar());
 
 					StarkBankBaixa baixa = registraBaixaStarkBank(DateUtil.gerarDataHoje(),
 							this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar(), null, null,
@@ -20139,6 +20151,13 @@ public class ContratoCobrancaMB {
 					contasPagarDao.create(this.contasPagarSelecionada);
 				} else {
 					contasPagarDao.merge(this.contasPagarSelecionada);
+				}
+				
+				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+				if (this.objetoContratoCobranca.getId() <= 0) {
+					cDao.create(this.objetoContratoCobranca);
+				} else {
+					cDao.merge(this.objetoContratoCobranca);
 				}
 			}
 		}
@@ -20660,7 +20679,7 @@ public class ContratoCobrancaMB {
 				this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().calcularValorTotalContasPagas();
 	
 				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-				cDao.merge(this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato());
+				cDao.merge(this.objetoContratoCobranca);
 			}
 		//}
 		
