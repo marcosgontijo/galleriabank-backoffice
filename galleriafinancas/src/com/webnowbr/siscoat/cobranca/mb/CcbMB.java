@@ -726,19 +726,19 @@ public class CcbMB {
 	}
 	
 	public void atualizaValorTransferencia() {
-		ContasPagar despesaTransferencia = buscarDespesa("Transferência", objetoContratoCobranca.getNumeroContrato());
+		ContasPagar despesaTransferencia = buscarDespesa("Transferência", objetoCcb.getObjetoContratoCobranca().getNumeroContrato());
 		ContasPagarDao contasPagarDao = new ContasPagarDao();
-		if(!CommonsUtil.mesmoValor(objetoContratoCobranca.getCobrarComissaoCliente(), "Sim")) 
+		if(!CommonsUtil.mesmoValor( objetoCcb.getObjetoContratoCobranca().getCobrarComissaoCliente(), "Sim")) 
 			return;		
-		if(CommonsUtil.mesmoValor(objetoContratoCobranca.getTipoCobrarComissaoCliente(), "Real")) 
+		if(CommonsUtil.mesmoValor( objetoCcb.getObjetoContratoCobranca().getTipoCobrarComissaoCliente(), "Real")) 
 			return;		
-		if(CommonsUtil.mesmoValor(objetoContratoCobranca.getBrutoLiquidoCobrarComissaoCliente(), "Bruto")) 
+		if(CommonsUtil.mesmoValor( objetoCcb.getObjetoContratoCobranca().getBrutoLiquidoCobrarComissaoCliente(), "Bruto")) 
 			return;
 		
 		BigDecimal valorTranferencia = BigDecimal.ZERO;
 		BigDecimal comissao = BigDecimal.ZERO;
-		if(!CommonsUtil.semValor(objetoContratoCobranca.getComissaoClientePorcentagem())) {
-			comissao = objetoContratoCobranca.getComissaoClientePorcentagem();
+		if(!CommonsUtil.semValor( objetoCcb.getObjetoContratoCobranca().getComissaoClientePorcentagem())) {
+			comissao =  objetoCcb.getObjetoContratoCobranca().getComissaoClientePorcentagem();
 			comissao = comissao.divide(BigDecimal.valueOf(100), MathContext.DECIMAL128);
 		}
 		if(CommonsUtil.semValor(objetoCcb.getValorLiquidoCredito())) 

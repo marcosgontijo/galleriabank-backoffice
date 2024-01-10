@@ -3944,6 +3944,16 @@ public class ContratoCobrancaMB {
 					}
 				}
 			}
+			
+			if (!CommonsUtil.semValor(objetoContratoCobranca.getListContasPagar())) {
+				for (ContasPagar conta : objetoContratoCobranca.getListContasPagar()) {
+					if (conta.getId() <= 0) {
+						cpDao.create(conta);
+					} else {
+						cpDao.merge(conta);
+					}
+				}
+			}
 
 			if (!objetoContratoCobranca.isAgAssinatura()
 					&& CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Assinatura")) {
