@@ -14748,7 +14748,8 @@ public class ContratoCobrancaMB {
 				FacesContext context = FacesContext.getCurrentInstance();
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
 						"Analista com muitas operações em andamento!", ""));
-				return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
+				//return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
+				return geraConsultaContratosPorStatus("Em Analise");
 			}
 			ContratoCobranca contratoAnalise = null;
 			boolean pendenciaOutroAnalista = false;
