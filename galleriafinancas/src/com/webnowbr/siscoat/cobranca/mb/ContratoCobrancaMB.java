@@ -8702,6 +8702,16 @@ private	List<Cartorio> listaCartorio = new ArrayList<>();
 			}
 		}
 		System.out.print("");
+		cadastraImovel();
+	}
+	public void cadastraImovel() {
+		ImovelEstoqueMB imovelMB = new ImovelEstoqueMB();
+		imovelMB.setObjetoContratoCobranca(objetoContratoCobranca);
+		imovelMB.setObjetoImovelCobranca(objetoContratoCobranca.getImovel());
+		imovelMB.salvarEstoque();
+		
+		
+		
 	}
 	
 	public void calcularPorcentagemDesconto() {
