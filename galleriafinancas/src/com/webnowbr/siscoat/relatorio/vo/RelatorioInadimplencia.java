@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
+import com.webnowbr.siscoat.cobranca.db.op.CartorioDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 
 public class RelatorioInadimplencia {
@@ -14,6 +15,7 @@ public class RelatorioInadimplencia {
 	public String numeroContrato;
 	public String nomePagador;
 	public boolean estaEmCartorio;
+	public String statusCartorio;
 	public BigDecimal valorCcb;
 	public BigDecimal valorGarantia;
 	public ContratoCobranca contrato;
@@ -49,6 +51,9 @@ public class RelatorioInadimplencia {
 				nomePagador = contrato.getPagador().getNome();
 			}
 		}
+		CartorioDao dao = new CartorioDao();
+		if(!CommonsUtil.semValor(dao.consultaUltimoCartorio(contrato)))
+			statusCartorio = dao.consultaUltimoCartorio(contrato).getStatus();
 	}
 
 	public String getEmpresa() {
@@ -153,5 +158,13 @@ public class RelatorioInadimplencia {
 
 	public void setQtdParcelasAtraso(int qtdParcelasAtraso) {
 		this.qtdParcelasAtraso = qtdParcelasAtraso;
+	}
+
+	public String getStatusCartorio() {
+		return statusCartorio;
+	}
+
+	public void setStatusCartorio(String statusCartorio) {
+		this.statusCartorio = statusCartorio;
 	}
 }	
