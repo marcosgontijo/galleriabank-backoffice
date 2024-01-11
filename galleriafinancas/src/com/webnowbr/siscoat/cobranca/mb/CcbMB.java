@@ -1839,15 +1839,15 @@ public class CcbMB {
 				gerador.open(nomeArquivoDownload);
 				gerador.feed(new ByteArrayInputStream(arquivos));
 				gerador.close();
-	    	} else {
-	    		/*Map.Entry<String,byte[]> entry = listaArquivos.entrySet().iterator().next();
+	    	} else if(listaArquivos.size() == 1) {
+	    		Map.Entry<String,byte[]> entry = listaArquivos.entrySet().iterator().next();
 	    		arquivos = entry.getValue();
 	    		String nomeArquivoDownload = entry.getKey();
 				final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 						FacesContext.getCurrentInstance());
 				gerador.open(nomeArquivoDownload);
 				gerador.feed(new ByteArrayInputStream(arquivos));
-				gerador.close();*/
+				gerador.close();
 	    	}
 	    	
 			listaTipoDownload.clear();
@@ -1859,6 +1859,9 @@ public class CcbMB {
 					new FacesMessage(FacesMessage.SEVERITY_ERROR,
 							"Contrato de Cobrança: Ocorreu um problema ao gerar o documento!  " + e + ";" + e.getCause(),
 							""));
+			listaTipoDownload.clear();
+	  	    listaTipoDownload = listaDocumentos;
+	  	    salvarCcb();
 	    }  
 	  
 	    listarDownloads();
