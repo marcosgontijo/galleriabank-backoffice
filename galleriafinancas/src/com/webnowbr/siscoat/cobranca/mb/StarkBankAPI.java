@@ -414,7 +414,7 @@ public class StarkBankAPI{
     	try {
 	    	List<BoletoPayment> payments = new ArrayList<>();
 	    	HashMap<String, Object> data = new HashMap<>();
-	    	data.put("barCode", barCode);    	
+	    	data.put("line", barCode);    	
 
 	    	data.put("scheduled", DateUtil.getDataHojeAmericano());
 	    	data.put("description", descricao);
