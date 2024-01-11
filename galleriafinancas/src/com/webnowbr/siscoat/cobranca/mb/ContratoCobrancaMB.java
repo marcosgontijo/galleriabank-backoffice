@@ -3209,12 +3209,6 @@ public class ContratoCobrancaMB {
 
 			updateCheckList();
 
-			// gerando parcelas quando contrato esta em ag registro
-			if (!this.objetoContratoCobranca.isAgEnvioCartorio()
-					&& this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() <= 0
-					&& !CommonsUtil.semValor(this.objetoContratoCobranca.getValorCCB())) {
-				geraContratoCobrancaDetalhes(contratoCobrancaDao);
-			}
 			this.objetoContratoCobranca.populaStatusEsteira(getUsuarioLogadoNull());
 			contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
@@ -3317,7 +3311,7 @@ public class ContratoCobrancaMB {
 		updateCheckList();
 
 		// gerando parcelas quando contrato esta em ag registro
-		if (!this.objetoContratoCobranca.isAgEnvioCartorio()
+		if (this.objetoContratoCobranca.getResolucaoExigenciaCartorioData() != null
 				&& this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() <= 0
 				&& !CommonsUtil.semValor(this.objetoContratoCobranca.getValorCCB())) {
 			geraContratoCobrancaDetalhes(contratoCobrancaDao);
