@@ -20679,7 +20679,7 @@ public class ContratoCobrancaMB {
 				this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().calcularValorTotalContasPagas();
 	
 				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-				cDao.merge(this.objetoContratoCobranca);
+				cDao.merge(this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato());
 			}
 		//}
 		
