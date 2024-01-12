@@ -37,6 +37,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorAdicionaisDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
+import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
@@ -677,11 +678,21 @@ public class ContractService {
 							this.objetoContratoCobranca
 									.setContratoPrioridadeAlta(contratoAPP.has("contratoPrioridadeAlta")
 											? contratoAPP.getBoolean("contratoPrioridadeAlta")
-											: false);
-							this.objetoContratoCobranca
-									.setContratoPrioridadeAltaData(contratoAPP.has("contratoPrioridadeAltaData")
-											? dataPadraoSql.parse(contratoAPP.getString("contratoPrioridadeAltaData"))
-											: null);
+											: false); 
+											
+							if (contratoAPP.has("contratoPrioridadeAltaData")) {
+								Date datePrioridade;
+								try {
+									datePrioridade = dataPadraoSql
+											.parse(contratoAPP.getString("contratoPrioridadeAltaData"));
+								} catch (Exception e) {
+									datePrioridade = CommonsUtil.dateValue(
+											contratoAPP.getString("contratoPrioridadeAltaData"), "yyyy-MM-dd HH:mm");
+								}
+
+								this.objetoContratoCobranca.setContratoPrioridadeAltaData(datePrioridade);
+							}
+							
 							this.objetoContratoCobranca
 									.setContratoPrioridadeAltaUser(contratoAPP.has("contratoPrioridadeAltaUser")
 											? contratoAPP.getString("contratoPrioridadeAltaUser")
