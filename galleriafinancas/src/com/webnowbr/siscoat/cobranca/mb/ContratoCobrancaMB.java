@@ -3209,12 +3209,6 @@ public class ContratoCobrancaMB {
 
 			updateCheckList();
 
-			// gerando parcelas quando contrato esta em ag registro
-			if (!this.objetoContratoCobranca.isAgEnvioCartorio()
-					&& this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() <= 0
-					&& !CommonsUtil.semValor(this.objetoContratoCobranca.getValorCCB())) {
-				geraContratoCobrancaDetalhes(contratoCobrancaDao);
-			}
 			this.objetoContratoCobranca.populaStatusEsteira(getUsuarioLogadoNull());
 			contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
@@ -3317,7 +3311,7 @@ public class ContratoCobrancaMB {
 		updateCheckList();
 
 		// gerando parcelas quando contrato esta em ag registro
-		if (!this.objetoContratoCobranca.isAgEnvioCartorio()
+		if (this.objetoContratoCobranca.getResolucaoExigenciaCartorioData() != null
 				&& this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() <= 0
 				&& !CommonsUtil.semValor(this.objetoContratoCobranca.getValorCCB())) {
 			geraContratoCobrancaDetalhes(contratoCobrancaDao);
@@ -19447,15 +19441,21 @@ public class ContratoCobrancaMB {
 			dataVencimentoNova = this.dataParcela;
 		}
 		
-		if ( this.numeroParcelaReparcelamento.compareTo(BigInteger.ZERO) != 0)
-		saldoDevedorOriginalReparcelamento = this.objetoContratoCobranca.getListContratoCobrancaDetalhes().stream().filter( d ->d.getNumeroParcela().equals((this.numeroParcelaReparcelamento.subtract(BigInteger.ONE)) .toString())).findAny().get().getVlrSaldoParcela();
+		Date dataParcelaAcresimo = this.dataParcela;
+		
+		if ( this.numeroParcelaReparcelamento.compareTo(BigInteger.ZERO) != 0) {
+			ContratoCobrancaDetalhes contratoCobrancaDetalhesAnterior = this.objetoContratoCobranca.getListContratoCobrancaDetalhes().stream()
+					.filter( d ->d.getNumeroParcela().equals((this.numeroParcelaReparcelamento.subtract(BigInteger.ONE)).toString()))
+					.findAny().get();	
+			saldoDevedorOriginalReparcelamento = contratoCobrancaDetalhesAnterior.getVlrSaldoParcela();
+			dataParcelaAcresimo = contratoCobrancaDetalhesAnterior.getDataVencimento();
+		}
 		else
 			saldoDevedorOriginalReparcelamento = null;
 			
 		ContratoCobrancaDetalhes acrescimo = new ContratoCobrancaDetalhes();
 		if ( !CommonsUtil.semValor(saldoDevedorOriginalReparcelamento)  && this.simuladorParcelas.getValorCredito().compareTo(this.saldoDevedorOriginalReparcelamento) != 0) {
 
-			
 			/// inserir acrescimo de saldo
 //			 acrescimo.setVlrSaldoParcela();
 			acrescimo.setVlrJurosParcela(BigDecimal.ZERO);
@@ -19467,7 +19467,7 @@ public class ContratoCobrancaMB {
 			acrescimo.setNumeroParcela("Acerto Saldo");
 			acrescimo.setParcelaPaga(true);
 			acrescimo.setOrigemBaixa("reparcelamento");
-			acrescimo.setDataVencimento(this.dataParcela);
+			acrescimo.setDataVencimento(dataParcelaAcresimo);
 			acrescimo.setDataPagamento(acrescimo.getDataVencimento());
 			acrescimo.setValorTotalPagamento(acrescimo.getVlrParcela());
 			acrescimo.setVlrSaldoParcela(this.simuladorParcelas.getValorCredito());
@@ -20690,7 +20690,7 @@ public class ContratoCobrancaMB {
 				this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().calcularValorTotalContasPagas();
 	
 				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
-				cDao.merge(this.objetoContratoCobranca);
+				cDao.merge(this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato());
 			}
 		//}
 		
@@ -21464,7 +21464,7 @@ public class ContratoCobrancaMB {
 					menorCarencia = comite.getCarenciaComite();
 				}
 			}
-			comentarioComiteFinal += comite.getUsuarioComite() + ": " + comite.getComentarioComite() + "  //  ";
+			comentarioComiteFinal += comite.getUsuarioComite() + ": " + comite.getComentarioComite() + "  //\n  ";
 		}
 
 //		não  precisa mais incluir para sair na ficha do cliente
