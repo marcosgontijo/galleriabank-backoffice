@@ -685,7 +685,8 @@
 				</h:panelGroup>
 
 				<h:panelGroup id="despesasPanel">
-					<p:panel header="Despesas" rendered="#{ccbMB.tipoDownload == 'AnexoII'}">
+					<p:panel header="Despesas" rendered="#{ccbMB.tipoDownload == 'AnexoII' or
+					ccbMB.tipoDownload == 'Aditamento Carta de Desconto'}">
 						<h:panelGrid columns="1">
 							
 							<p:dataTable var="despesas" id="ListaDespesas"

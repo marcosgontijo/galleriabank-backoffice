@@ -2531,7 +2531,6 @@ public class ContratoCobrancaMB {
 				this.objetoPagadorRecebedor.setCidadeConjuge("");
 				this.objetoPagadorRecebedor.setEstadoConjuge("");
 			} else {
-
 				if (!CommonsUtil.semValor(consultaCep.getEndereco())) {
 					this.objetoPagadorRecebedor.setEnderecoConjuge(consultaCep.getEndereco());
 				}

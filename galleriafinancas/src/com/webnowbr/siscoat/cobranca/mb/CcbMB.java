@@ -513,7 +513,7 @@ public class CcbMB {
 	
 	public void populateSelectedContratoCobranca() {
 		ContratoCobranca contrato = objetoContratoCobranca;
-		listarDownloads();
+		//listarDownloads();
 		this.objetoCcb.setObjetoContratoCobranca(contrato);
 		this.objetoCcb.setNumeroOperacao(contrato.getNumeroContrato());
 		DateFormat dateFormat = new SimpleDateFormat("MMyy");  
@@ -596,6 +596,14 @@ public class CcbMB {
 		listaTipoDownload.add("Termo Incomunicabilidade Imovel");
 		listaTipoDownload.add("Ficha Cadastro");
 		listaTipoDownload.add("Averbacao");
+		listaTipoDownload.add("Aditamento Carta de Desconto");
+	}
+	
+	private void listarDownloadsAditamento() {
+		listaTipoDownload.clear();
+		listaTipoDownload.add("TODOS");
+		listaTipoDownload.add("CCI");
+		listaTipoDownload.add("AnexoII");
 		listaTipoDownload.add("Aditamento Carta de Desconto");
 	}
 
@@ -975,12 +983,19 @@ public class CcbMB {
 		listaCrea.add("CAU A40301-6");
 		return listaCrea;
 	}
-	
 	public String EmitirCcbPreContrato() {
+		return EmitirCcbPreContrato("normal");
+	}
+	
+	public String EmitirCcbPreContrato(String tipoEmissao) {
 		clearFieldsInserirCcb();
 		List<CcbContrato> ccbContratoDB = new ArrayList<CcbContrato>();
 		CcbDao ccbDao = new CcbDao();
 		ccbContratoDB = ccbDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca);
+		
+		if(CommonsUtil.mesmoValor(tipoEmissao, "aditamento")) {
+			listarDownloadsAditamento();
+		}
 
 		if (ccbContratoDB.size() > 0) {
 			objetoCcb = ccbContratoDB.get(0);
