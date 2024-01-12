@@ -1079,7 +1079,7 @@ public class ContratoCobranca implements Serializable {
 							|| CommonsUtil.mesmoValorIgnoreCase("Acerto Saldo", other.getNumeroParcela())
 							|| CommonsUtil.mesmoValorIgnoreCase("Amortização", one.getNumeroParcela())
 							|| CommonsUtil.mesmoValorIgnoreCase("Amortização", other.getNumeroParcela())) {
-						result = other.getNumeroParcela().compareTo(one.getNumeroParcela());
+						result = one.getNumeroParcela().compareTo(other.getNumeroParcela());
 					} else {
 						try {
 							Integer oneParcela = Integer.parseInt(one.getNumeroParcela());
