@@ -2667,7 +2667,8 @@ public class CcbService {
 			geraParagrafoPF(run2, participante);
 			run2.setUnderline(UnderlinePatterns.NONE);
 			run2.setFontSize(11);
-			run2.setText(run2.getText(0).replace(';', ','));
+			if(!participante.isEmpresa())
+				run2.setText(run2.getText(0).replace(';', ','));
 			//run2.addCarriageReturn();
 
 		    for (XWPFParagraph p : document.getParagraphs()) {
@@ -2759,7 +2760,8 @@ public class CcbService {
 			geraParagrafoPF(run2, participante);
 			run2.setUnderline(UnderlinePatterns.NONE);
 			run2.setFontSize(fontSize);
-			run2.setText(run2.getText(0).replace(';', ','));
+			if(!participante.isEmpresa())
+				run2.setText(run2.getText(0).replace(';', ','));
 			//run2.addCarriageReturn();
 
 		    for (XWPFParagraph p : document.getParagraphs()) {
@@ -2863,7 +2865,8 @@ public class CcbService {
 			geraParagrafoPF(run2, participante);
 			run2.setUnderline(UnderlinePatterns.NONE);
 			run2.setFontSize(fontSize);
-			run2.setText(run2.getText(0).replace(';', ','));
+			if(!participante.isEmpresa())
+				run2.setText(run2.getText(0).replace(';', ','));
 			//run2.addCarriageReturn();
 
 		    for (XWPFParagraph p : document.getParagraphs()) {
@@ -3069,7 +3072,8 @@ public class CcbService {
 			run2 = document.getParagraphs().get(2).insertNewRun(3);
 			run2.setFontSize(12);
 			geraParagrafoPF(run2, participante);
-			run2.getText(0).replace("; ", "");
+			if(!participante.isEmpresa())
+				run2.getText(0).replace("; ", "");
 			runText = run2.getText(0);
 			trocaValoresXWPF(runText, run2, "; ", "");
 			

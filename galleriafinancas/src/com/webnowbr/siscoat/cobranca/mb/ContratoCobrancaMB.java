@@ -2531,7 +2531,6 @@ public class ContratoCobrancaMB {
 				this.objetoPagadorRecebedor.setCidadeConjuge("");
 				this.objetoPagadorRecebedor.setEstadoConjuge("");
 			} else {
-
 				if (!CommonsUtil.semValor(consultaCep.getEndereco())) {
 					this.objetoPagadorRecebedor.setEnderecoConjuge(consultaCep.getEndereco());
 				}
@@ -21458,7 +21457,7 @@ public class ContratoCobrancaMB {
 					menorCarencia = comite.getCarenciaComite();
 				}
 			}
-			comentarioComiteFinal += comite.getUsuarioComite() + ": " + comite.getComentarioComite() + "  //  ";
+			comentarioComiteFinal += comite.getUsuarioComite() + ": " + comite.getComentarioComite() + "  //\n  ";
 		}
 
 //		não  precisa mais incluir para sair na ficha do cliente
