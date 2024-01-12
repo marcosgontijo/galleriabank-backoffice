@@ -8700,19 +8700,21 @@ private	List<Cartorio> listaCartorio = new ArrayList<>();
 					//this.selectedListContratoCobrancaDetalhes.add(parcelas);
 				}
 			}
+			
+		
 		}
 		System.out.print("");
-		cadastraImovel();
 	}
-	public void cadastraImovel() {
+	public void salvarEstoque(){
 		ImovelEstoqueMB imovelMB = new ImovelEstoqueMB();
 		imovelMB.setObjetoContratoCobranca(objetoContratoCobranca);
 		imovelMB.setObjetoImovelCobranca(objetoContratoCobranca.getImovel());
+		imovelMB.setObjetoImovelEstoque(objetoContratoCobranca.getImovel().getImovelEstoque());
 		imovelMB.salvarEstoque();
 		
 		
-		
 	}
+
 	
 	public void calcularPorcentagemDesconto() {
 		if(CommonsUtil.semValor(valorComDesconto) ||
@@ -8963,6 +8965,7 @@ private	List<Cartorio> listaCartorio = new ArrayList<>();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		salvarEstoque();
 	}
 	
 	public BigDecimal calcularValorPresenteParcelaJson(Long idParcela, BigDecimal txJuros, Date dataAquisicao){

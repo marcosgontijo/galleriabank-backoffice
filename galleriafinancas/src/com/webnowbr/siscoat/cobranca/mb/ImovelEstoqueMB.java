@@ -86,18 +86,19 @@ public class ImovelEstoqueMB {
 		FacesContext context = FacesContext.getCurrentInstance();
 		ImovelEstoqueDao imovelEstoqueDao = new ImovelEstoqueDao();
 		
+		if(objetoImovelEstoque == null) {
+			objetoImovelEstoque = new ImovelEstoque();
+		}
+		objetoImovelEstoque.setObjetoImovelCobranca(objetoImovelCobranca);
+		objetoImovelEstoque.setObjetoContratoCobranca(objetoContratoCobranca);
 		
 		try {
 			
-			if(CommonsUtil.semValor(this.objetoImovelEstoque.getId())) {
-				imovelEstoqueDao.create(this.objetoImovelEstoque);
-				
-			}
-			else imovelEstoqueDao.merge(this.objetoImovelEstoque);
 			
 			
 			if(CommonsUtil.semValor(objetoImovelCobranca.getImovelEstoque())) {
-				objetoImovelCobranca.setImovelEstoque(objetoImovelEstoque);	
+				objetoImovelCobranca.setImovelEstoque(objetoImovelEstoque);
+				
 			
 			}
 			
@@ -113,6 +114,11 @@ public class ImovelEstoqueMB {
 		     if(objetoContratoCobranca != null) {
 		    	 preencherCamposComDadosContrato();
 		     }
+		     if(CommonsUtil.semValor(this.objetoImovelEstoque.getId())) {
+					imovelEstoqueDao.create(this.objetoImovelEstoque);
+					
+				}
+				else imovelEstoqueDao.merge(this.objetoImovelEstoque);
 		     imovelCobrancaDao.merge(objetoImovelCobranca);    
 		     imovelEstoqueDao.merge(this.objetoImovelEstoque); 
 
