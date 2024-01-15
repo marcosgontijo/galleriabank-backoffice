@@ -344,7 +344,7 @@ public class EngineService {
 
 		if (CommonsUtil.semValor(documentoAnalise.getRetornoEngine())
 				|| documentoAnalise.getRetornoEngine().startsWith("consulta efetuada anteriormente Id: ")) {			
-			String retorno = PegarDetalheDataEngine(documentoAnalise.getEngine());
+			String retorno = PegarDetalheDataEngine(documentoAnalise);
 			if (!CommonsUtil.semValor(retorno)) {
 			documentoAnalise.setRetornoEngine(retorno);	
 			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
@@ -573,8 +573,9 @@ public class EngineService {
 		}
 	}
 
-	private String PegarDetalheDataEngine(DataEngine engine) { // POST para pegar pdf
+	private String PegarDetalheDataEngine(DocumentoAnalise documentoAnalise) { // POST para pegar pdf
 		// FacesContext context = FacesContext.getCurrentInstance();
+		DataEngine engine = documentoAnalise.getEngine();
 		if (CommonsUtil.semValor(engine.getIdCallManager())) {
 			// context.addMessage(null,
 			// new FacesMessage(FacesMessage.SEVERITY_FATAL, "Não Foi gerado ID da
@@ -635,8 +636,8 @@ public class EngineService {
 			pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagaRecebedor, DocumentosAnaliseEnum.ENGINE,
 					result);
 			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-			DocumentoAnalise documentoAnalise = documentoAnaliseDao.findByFilter("engine", engine).stream().findFirst()
-					.orElse(null);
+			/*DocumentoAnalise documentoAnalise = documentoAnaliseDao.findByFilter("engine", engine).stream().findFirst()
+					.orElse(null);*/
 			DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
 			EngineRetorno engineWebhookRetorno = GsonUtil.fromJson(result, EngineRetorno.class);
 			if (!CommonsUtil.semValor(documentoAnalise)) {

@@ -121,6 +121,7 @@ public class RelatorioInadimplenciaMB {
 				"Valor da Garantia", 
 				"Parcelas Pagas", 
 				"Está em Cartório?", 
+				"Status Cartório",
 				"Empresa"};
 		
 		/*gravaCelula(0, "N° Contrato", linha);
@@ -153,6 +154,7 @@ public class RelatorioInadimplenciaMB {
 					BigDecimalToString(relIna.valorGarantia), 
 					relIna.qtdParcelasPagas + "",
 					booleanToString(relIna.estaEmCartorio), 
+					relIna.statusCartorio,
 					relIna.empresa};
 			
 			for(int i = 0; i < colunas.length; i++) {
@@ -181,7 +183,7 @@ public class RelatorioInadimplenciaMB {
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 				FacesContext.getCurrentInstance());
 		
-		String nomeArquivoDownload = String.format("Galleria Bank - Relatorio FIDC %s.xlsx", "");
+		String nomeArquivoDownload = String.format("Galleria Bank - Relatorio Inadimplencia %s.xlsx", "");
 		gerador.open(nomeArquivoDownload);		
 		gerador.feed( new ByteArrayInputStream(fileOut.toByteArray()));
 		gerador.close();

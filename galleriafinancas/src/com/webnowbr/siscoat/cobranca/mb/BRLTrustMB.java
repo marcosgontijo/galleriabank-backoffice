@@ -1586,6 +1586,7 @@ public class BRLTrustMB {
 		jsonFundo.put("identificacao", Long.valueOf("37294759000134"));
 		jsonFundo.put("nome", "FIDC GALLERIA");		
 		jsonSchema.put("fundo", jsonFundo);
+		objetoContratoCobranca.setEmpresa("FIDC GALLERIA");
 		
 		JSONObject jsonCessao = new JSONObject();
 		
@@ -1607,6 +1608,7 @@ public class BRLTrustMB {
 		for (ContratoCobrancaDetalhes parcela : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
 			if (parcela.getNumeroParcela().equals("0")) {
 				temParcelaZeo = true;
+				break;
 			}
 		}
 		
@@ -1831,7 +1833,6 @@ public class BRLTrustMB {
 		}
 		
 		this.jsonGerado = true;
-		
 		atualizaContratoValorAquisicaoCessaoBRL(this.valorTotalAquisicaoCessao);
 		
 		context.addMessage(null,

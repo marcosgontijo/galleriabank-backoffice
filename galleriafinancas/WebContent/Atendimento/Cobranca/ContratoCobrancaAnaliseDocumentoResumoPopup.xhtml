@@ -8,13 +8,13 @@
 
 	<h:outputStylesheet name="primeicons/primeicons.css"
 		library="primefaces" />
-		
+
 	<p:ajaxStatus onstart="PF('statusDialog2').show()"
 		oncomplete="PF('statusDialog2').hide()"
 		onsuccess="PF('statusDialog2').hide()"
 		onerror="PF('statusDialog2').hide()" />
-		
-		
+
+
 	<p:dialog widgetVar="statusDialog2" modal="true" draggable="false"
 		closable="false" resizable="false" showHeader="false">
 		<div class="text-center">
@@ -23,154 +23,39 @@
 	</p:dialog>
 
 	<p:dialog id="resumoDialogHeader" widgetVar="resumoConsutlasDialog"
-		showEffect="fade" hideEffect="fade" resizable="false"  styleClass="overflowy" 
-		responsive="false" width="1200"  positionType="center center" 
-		closable="true" update="true">
+		showEffect="fade" hideEffect="fade" resizable="false"
+		styleClass="overflowy" responsive="false" width="1200"
+		positionType="center center" closable="true" update="true">
 		<f:facet name="header">
-			<h:outputText value="#{contratoCobrancaMB.documentoAnalisePopup.dialogHeader}" />
+			<h:outputText
+				value="#{contratoCobrancaMB.documentoAnalisePopup.dialogHeader}" />
 		</f:facet>
 		<h:form id="resumoConsutlasForm">
-			<h:panelGroup rendered="#{contratoCobrancaMB.documentoAnalisePopup.tipo != 'Rea'}">
-				<h:panelGrid columns="1" rendered="#{contratoCobrancaMB.documentoAnalisePopup.resumoRelacionamentos.size() > 0}">
-					<p:panel style="justify-content:start;">
-						<f:facet name="header">
-							<h:outputText value="Relacionamentos" />
-							<p:dataTable id="resumoRelacionamentos" var="relacionamentos"
-								rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
-								value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoRelacionamentos()}">
-								<p:column>
-									<h:outputText value="#{relacionamentos.descricao}" />
-								</p:column>
-								<p:column>
-									<h:outputText value="#{relacionamentos.valor}"  style="text-transform:uppercase"/>
-								</p:column>
-							</p:dataTable>
-						</f:facet>
-					</p:panel>
-				</h:panelGrid>
-				
-				<h:panelGrid columns="5"
-					columnClasses="painelResumo,painelResumo,painelResumo,painelResumo,painelResumo">
-	
-					<p:panel>
-						<f:facet name="header">
-							<h:outputText value="Engine" />
-						</f:facet>
-						<p:dataTable id="resumocliente" var="engine"
-							rendered="#{contratoCobrancaMB.documentoAnalisePopup != null  and contratoCobrancaMB.documentoAnalisePopup.resumoEngine != null }"
-							value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoEngine()}">
-							<p:column>
-								<h:outputText value="#{engine.descricao}"></h:outputText>
-							</p:column>
-							<p:column>
-								<h:outputText value="#{engine.valor}"></h:outputText>
-							</p:column>
-						</p:dataTable>
-					</p:panel>
-	
-					<!--<p:panel style="justify-content:start;">
-							<f:facet name="header">
-								<h:outputText value="Serasa" />
-								<p:dataTable id="resumoSerasa" var="Serasa" rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
-								value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoSerasa()}">
-									<p:column>
-										<h:outputText value="#{Serasa.descricao}"></h:outputText>
-									</p:column>
-									<p:column>
-										<h:outputText value="#{Serasa.valor}"></h:outputText>
-									</p:column>
-									</p:dataTable>
-							</f:facet>
-							
-						</p:panel>-->
-	
-					<p:panel>
-						<f:facet name="header">
-							<h:outputText value="SCR" />
-							<p:dataTable id="resumoScr" var="scr"
-								rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
-								value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoScr()}">
-								<p:column>
-									<h:outputText value="#{scr.descricao}" />
-								</p:column>l
-								<p:column>
-									<h:outputText value="#{scr.valor}" />
-								</p:column>
-							</p:dataTable>
-						</f:facet>
-					</p:panel>
-	
-					<p:panel style="justify-content:start;">
-						<f:facet name="header">
-							<h:outputText value="Cenprot" />
-							<p:dataTable id="resumoCenprot" var="Cenprot"
-								rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
-								value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoCenprot()}">
-								<p:column>
-									<h:outputText value="#{Cenprot.descricao}" />
-								</p:column>
-								<p:column>
-									<h:outputText value="#{Cenprot.valor}" />
-								</p:column>
-							</p:dataTable>
-						</f:facet>
-						
-					</p:panel>
 
-				
-				
-				<p:panel>
-					<f:facet name="header">
-						<h:outputText value="Financas Estimadas" />
-						<p:dataTable id="resumoFinancas" var="financas"
-							rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
-							value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoFinancas()}">
-							<p:column>
-								<h:outputText value="#{financas.descricao}" />
-							</p:column>
-							<p:column>
-								<h:outputText value="#{financas.valor}" />
-							</p:column>
-						</p:dataTable>
-					</f:facet>
-				</p:panel>
+			<ui:include
+				src="ConstratoCobrancaAnaliseDocumentoResumoDetalhe.xhtml">
+				<ui:param name="paramDocumentoAnalise"
+					value="#{contratoCobrancaMB.documentoAnalisePopup}"></ui:param>
+			</ui:include>
 
-
-				<p:panel>
-					<f:facet name="header">
-						<h:outputText value="Processo" />
-						<p:dataTable id="resumoProcesso" var="Processo"
-							rendered="#{contratoCobrancaMB.documentoAnalisePopup != null}"
-							value="#{contratoCobrancaMB.documentoAnalisePopup.getResumoProcesso()}">
-							<p:column>
-								<h:outputText value="#{Processo.descricao}" />
-							</p:column>
-							<p:column>
-								<h:outputText value="#{Processo.valor}" />
-							</p:column>
-						</p:dataTable>
-					</f:facet>
-				</p:panel>
-			</h:panelGrid>
-			</h:panelGroup>
 		</h:form>
 	</p:dialog>
 
 	<p:dialog id="gravamesDialogHeader" widgetVar="gravamesDialog"
-		showEffect="fade" hideEffect="fade" resizable="false"  styleClass="overflowy" 
-		responsive="false" width="1000"  positionType="center center" 
-		closable="true" update="true">
+		showEffect="fade" hideEffect="fade" resizable="false"
+		styleClass="overflowy" responsive="false" width="1000"
+		positionType="center center" closable="true" update="true">
 		<f:facet name="header">
 			<h:outputText value="Gravames Abertos" />
 		</f:facet>
 		<h:form id="gravamesForm">
 			<p:panel>
-				<p:dataTable id="resumocliente" 
-					value="#{contratoCobrancaMB.documentoAnalisePopup.gravamesRea}" var="gravames"
-					emptyMessage="" rows="10" paginator="true"
-	                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-	                currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
-	                rowsPerPageTemplate="10,20,40,100">
+				<p:dataTable id="resumocliente"
+					value="#{contratoCobrancaMB.documentoAnalisePopup.gravamesRea}"
+					var="gravames" emptyMessage="" rows="10" paginator="true"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+					rowsPerPageTemplate="10,20,40,100">
 					<p:column>
 						<h:outputText value="#{gravames.numeroSequencia}"></h:outputText>
 					</p:column>
@@ -180,7 +65,7 @@
 					<p:column>
 						<h:outputText value="#{gravames.nomeClassificacao}"></h:outputText>
 					</p:column>
-					<p:column  style="text-align: center; width:25px">
+					<p:column style="text-align: center; width:25px">
 						<p:commandButton oncomplete="PF('textoDialog').show()"
 							icon="pi pi-eye" update="textoDialogHeader" ajax="true"
 							style="TEXT-DECORATION: bold;">
@@ -193,9 +78,9 @@
 			</p:panel>
 		</h:form>
 	</p:dialog>
-	
-	<p:dialog id="textoDialogHeader" widgetVar="textoDialog" 
-		width="1000" positionType="center center" closable="true" >
+
+	<p:dialog id="textoDialogHeader" widgetVar="textoDialog" width="1000"
+		positionType="center center" closable="true">
 		<f:facet name="header">
 			<h:outputText value="Texto" />
 		</f:facet>
@@ -209,7 +94,8 @@
 
 	<p:dialog header="Laudo robô" id="laudoRoboDialog"
 		widgetVar="laudoRoboDialog" showEffect="fade" hideEffect="fade"
-		resizable="false" responsive="false" width="1000" closable="true" ajax="true">
+		resizable="false" responsive="false" width="1000" closable="true"
+		ajax="true">
 		<p:ajax event="close" listener="#{contratoCobrancaMB.limpaLaudo}" />
 		<h:form id="laudoRoboForm">
 			<h:panelGrid columns="2">
@@ -307,7 +193,7 @@
 						onkeydown="FormataValor(this, 13, event, 2);"
 						converter="bigDecimalConverter" disabled="true" />
 
-					
+
 
 					<h:panelGrid columns="2" id="botoesPanelGrid">
 						<h:panelGroup id="botaoLinkImovel">
@@ -361,60 +247,66 @@
 		</h:form>
 	</p:dialog>
 
-	<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
+	<shiro:hasAnyRoles
+		name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
 		<p:dialog header="Documentos REA" id="documentosReaDlgId"
-			widgetVar="documentosReaDlg" 
-			resizable="true" responsive="true" width="1000" closable="true" ajax="true">
-			
+			widgetVar="documentosReaDlg" resizable="true" responsive="true"
+			width="1000" closable="true" ajax="true">
+
 			<h:form id="documentosAnaliseReaForm">
 				<div align="center">
 					<p:dataTable id="dtFilesAnalise" var="fileAnalise"
 						value="#{contratoCobrancaMB.listaDocumentoAnaliseRea}"
 						emptyMessage="" rows="10" paginator="true"
-		                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-		                currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
-		                rowsPerPageTemplate="10,20,40,100">
-						<p:column headerText="Liberado Análise" style="text-align: center; width:3rem">
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+						rowsPerPageTemplate="10,20,40,100">
+						<p:column headerText="Liberado Análise"
+							style="text-align: center; width:3rem">
 							<p:selectBooleanButton value="#{fileAnalise.liberadoAnalise}"
-								rendered="#{!fileAnalise.isAnaliseBloqueada()}"
-								onLabel="Sim" offLabel="Não" style="width:3rem">
-								<p:ajax event="change" update="documentosAnaliseReaForm form:dtFilesAnalise"
+								rendered="#{!fileAnalise.isAnaliseBloqueada()}" onLabel="Sim"
+								offLabel="Não" style="width:3rem">
+								<p:ajax event="change"
+									update="documentosAnaliseReaForm form:dtFilesAnalise"
 									listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileAnalise)}" />
 							</p:selectBooleanButton>
 						</p:column>
-	
-						<p:column style="text-align: center; width:6rem" headerText="Identificação"
+
+						<p:column style="text-align: center; width:6rem"
+							headerText="Identificação"
 							filterBy="#{fileAnalise.identificacao}"
 							filterMatchMode="contains" sortBy="#{fileAnalise.identificacao}">
-	
+
 							<h:outputText value="#{fileAnalise.identificacao}"
 								rendered="#{fileAnalise.podeChamarRea}" />
 							<h:outputText
 								value="#{fileAnalise.identificacao} #{fileAnalise.cnpjcpf} "
 								rendered="#{!fileAnalise.podeChamarRea}" />
 							<p:spacer height="10" />
-							<h:outputText
-								value="#{fileAnalise.pagador.estado}" />
+							<h:outputText value="#{fileAnalise.pagador.estado}" />
 							<p:spacer height="10" />
 						</p:column>
-	
-						<p:column style="text-align: center; width:9rem" headerText="Motivo">
-							<p:selectOneMenu
-								value="#{fileAnalise.motivoAnalise}"
+
+						<p:column style="text-align: center; width:9rem"
+							headerText="Motivo">
+							<p:selectOneMenu value="#{fileAnalise.motivoAnalise}"
 								label="Tipo" style="width:250px;">
 								<f:selectItem itemValue="" itemLabel="Selecione o motivo" />
 								<f:selectItems value="#{fileAnalise.motivosAnalise()}" />
-								<p:ajax event="change" update="documentosAnaliseReaForm"/>
+								<p:ajax event="change" update="documentosAnaliseReaForm" />
 							</p:selectOneMenu>
 						</p:column>
-	
-						<p:column style="text-align: center; width:4rem" headerText="Observação"
-							filterMatchMode="contains">
+
+						<p:column style="text-align: center; width:4rem"
+							headerText="Observação" filterMatchMode="contains">
 							<h:outputText value="#{fileAnalise.observacao}" />
 						</p:column>
 						<shiro:hasAnyRoles name="ROOT">
-							<p:column style="text-align: center; width:2rem;padding: 0; border:0; " headerText="Estados"  >
-								<p:dataList id="estadosList" value="#{fileAnalise.estadosConsulta}" var="estado" 
+							<p:column
+								style="text-align: center; width:2rem;padding: 0; border:0; "
+								headerText="Estados">
+								<p:dataList id="estadosList"
+									value="#{fileAnalise.estadosConsulta}" var="estado"
 									type="definition">
 								</p:dataList>
 							</p:column>
@@ -425,7 +317,8 @@
 		</p:dialog>
 	</shiro:hasAnyRoles>
 
-	<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
+	<shiro:hasAnyRoles
+		name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
 		<p:dialog header="Adicionar pessoa Analise" overflow="auto"
 			id="dialogAdicionarPessoaAnalise"
 			widgetVar="adicionarPessoaAnaliseDlg" resizable="true"
@@ -465,214 +358,217 @@
 							value="#{contratoCobrancaMB.documentoAnaliseAdicionar.motivoAnalise}"
 							label="Tipo" style="width:250px;">
 							<f:selectItem itemValue="" itemLabel="Selecione o motivo" />
-							<f:selectItems value="#{contratoCobrancaMB.documentoAnaliseAdicionar.motivosAnalise()}" />
+							<f:selectItems
+								value="#{contratoCobrancaMB.documentoAnaliseAdicionar.motivosAnalise()}" />
 						</p:selectOneMenu>
 					</h:panelGrid>
 					<h:panelGrid columns="2" style="text-align:center">
-							<p:commandButton value="Salvar" icon="ui-icon ui-icon-cancel"
-								action="#{contratoCobrancaMB.adicionarPessoaAnalise}"
-								update=":form:dtFilesAnalise"
-								oncomplete="PF('adicionarPessoaAnaliseDlg').hide();" />
-	
-							<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
-								oncomplete="PF('adicionarPessoaAnaliseDlg').hide();" />
-						</h:panelGrid>
-					</div>
-				</h:form>
-			</p:dialog>
-		</shiro:hasAnyRoles>
-		
-		<p:dialog header="Consultas Docket" overflow="auto"
-			id="dialogConsultasDocket"
-			widgetVar="consultasDocketDlg" resizable="true"
-			style="FONT-SIZE: 13pt;" width="800" minWidth="800">
-			<h:form id="ConsultasDocketForm">
-				<div align="center">
-					<p:dataTable id="dtConsultasDocket" var="docketConsulta"
-						value="#{contratoCobrancaMB.documentoAnalisePopup.docketConsultas}"
-						emptyMessage="" rows="10" paginator="true"
-		                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-		                currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
-		                rowsPerPageTemplate="10,20,40,100,140">
-						
-						<p:column style="text-align: center;" headerText="Identificação"
-							filterBy="#{docketConsulta.docketDocumentos.documentoNome}"
-							filterMatchMode="contains" sortBy="#{docketConsulta.docketDocumentos.documentoNome}">
-							<h:outputText value="#{docketConsulta.docketDocumentos.documentoNome}"/>
-						</p:column>
-						
-						<p:column style="text-align: center;width: 100px;" headerText="Status"
-							filterBy="#{docketConsulta.status}"
-							filterMatchMode="contains" sortBy="#{docketConsulta.status}">
-							<h:outputText value="#{docketConsulta.status}"/>
-						</p:column>
-						
-						<p:column style="text-align: center;width: 150px;" headerText="" >
-							<!-- <p:commandButton
+						<p:commandButton value="Salvar" icon="ui-icon ui-icon-cancel"
+							action="#{contratoCobrancaMB.adicionarPessoaAnalise}"
+							update=":form:dtFilesAnalise"
+							oncomplete="PF('adicionarPessoaAnaliseDlg').hide();" />
+
+						<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
+							oncomplete="PF('adicionarPessoaAnaliseDlg').hide();" />
+					</h:panelGrid>
+				</div>
+			</h:form>
+		</p:dialog>
+	</shiro:hasAnyRoles>
+
+	<p:dialog header="Consultas Docket" overflow="auto"
+		id="dialogConsultasDocket" widgetVar="consultasDocketDlg"
+		resizable="true" style="FONT-SIZE: 13pt;" width="800" minWidth="800">
+		<h:form id="ConsultasDocketForm">
+			<div align="center">
+				<p:dataTable id="dtConsultasDocket" var="docketConsulta"
+					value="#{contratoCobrancaMB.documentoAnalisePopup.docketConsultas}"
+					emptyMessage="" rows="10" paginator="true"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+					rowsPerPageTemplate="10,20,40,100,140">
+
+					<p:column style="text-align: center;" headerText="Identificação"
+						filterBy="#{docketConsulta.docketDocumentos.documentoNome}"
+						filterMatchMode="contains"
+						sortBy="#{docketConsulta.docketDocumentos.documentoNome}">
+						<h:outputText
+							value="#{docketConsulta.docketDocumentos.documentoNome}" />
+					</p:column>
+
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Status" filterBy="#{docketConsulta.status}"
+						filterMatchMode="contains" sortBy="#{docketConsulta.status}">
+						<h:outputText value="#{docketConsulta.status}" />
+					</p:column>
+
+					<p:column style="text-align: center;width: 150px;" headerText="">
+						<!-- <p:commandButton
 								action="#{docketMB.decodarBaixarArquivo(docketConsulta)}"
 								icon="ui-icon ui-icon-print" value="Download PDF"
 								rendered="#{docketConsulta.pdf != null}"
 								ajax="false" /> -->
-								
-							<p:commandButton 
-								action="#{docketMB.viewFileDocket(docketConsulta)}"
-								icon="ui-icon ui-icon-print" value="Abrir PDF"
-								onclick="target='_blank'" onblur="target='_self'"
-								rendered="#{docketConsulta.pdf != null
-									and docketConsulta.pdf != ''}" ajax="false" />
-						</p:column>
-					</p:dataTable>
-				</div>
-			</h:form>
-		</p:dialog>
-		
-		<p:dialog header="Consultas Plexi" overflow="auto"
-			id="dialogConsultasPlexi"
-			widgetVar="consultasPlexiDlg" resizable="true"
-			style="FONT-SIZE: 13pt;" width="800" minWidth="800">
-			<h:form id="ConsultasPlexiForm">
-				<div align="center">
-					<p:dataTable id="dtConsultasPlexi" var="plexiConsulta"
-						value="#{contratoCobrancaMB.documentoAnalisePopup.plexiConsultas}"
-						emptyMessage="" rows="10" paginator="true"
-						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-						currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
-						rowsPerPageTemplate="10,20,40,100,140">
 
-						<p:column style="text-align: center;" headerText="Identificação"
-							filterBy="#{plexiConsulta.nomeCompleto}"
-							filterMatchMode="contains" sortBy="#{plexiConsulta.nomeCompleto}">
-							<h:outputText value="#{plexiConsulta.nomeCompleto}" />
-						</p:column>
+						<p:commandButton
+							action="#{docketMB.viewFileDocket(docketConsulta)}"
+							icon="ui-icon ui-icon-print" value="Abrir PDF"
+							onclick="target='_blank'" onblur="target='_self'"
+							rendered="#{docketConsulta.pdf != null
+									and docketConsulta.pdf != ''}"
+							ajax="false" />
+					</p:column>
+				</p:dataTable>
+			</div>
+		</h:form>
+	</p:dialog>
 
-						<p:column style="text-align: center;width: 100px;"
-							headerText="Status" filterBy="#{plexiConsulta.status}"
-							filterMatchMode="contains" sortBy="#{plexiConsulta.status}">
-							<h:outputText value="#{plexiConsulta.status}" />
-						</p:column>
+	<p:dialog header="Consultas Plexi" overflow="auto"
+		id="dialogConsultasPlexi" widgetVar="consultasPlexiDlg"
+		resizable="true" style="FONT-SIZE: 13pt;" width="800" minWidth="800">
+		<h:form id="ConsultasPlexiForm">
+			<div align="center">
+				<p:dataTable id="dtConsultasPlexi" var="plexiConsulta"
+					value="#{contratoCobrancaMB.documentoAnalisePopup.plexiConsultas}"
+					emptyMessage="" rows="10" paginator="true"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+					rowsPerPageTemplate="10,20,40,100,140">
 
-						<p:column style="text-align: center;width: 150px;" headerText="">
-							<!-- <p:commandButton
+					<p:column style="text-align: center;" headerText="Identificação"
+						filterBy="#{plexiConsulta.nomeCompleto}"
+						filterMatchMode="contains" sortBy="#{plexiConsulta.nomeCompleto}">
+						<h:outputText value="#{plexiConsulta.nomeCompleto}" />
+					</p:column>
+
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Status" filterBy="#{plexiConsulta.status}"
+						filterMatchMode="contains" sortBy="#{plexiConsulta.status}">
+						<h:outputText value="#{plexiConsulta.status}" />
+					</p:column>
+
+					<p:column style="text-align: center;width: 150px;" headerText="">
+						<!-- <p:commandButton
 								action="#{plexiMB.decodarBaixarArquivo(plexiConsulta)}"
 								icon="ui-icon ui-icon-print" value="Download PDF"
 								rendered="#{plexiConsulta.pdf != null}"
 								ajax="false" /> -->
 
-							<p:commandButton action="#{plexiMB.viewFilePlexi(plexiConsulta)}"
-								icon="ui-icon ui-icon-print" value="Abrir PDF"
-								onclick="target='_blank'" onblur="target='_self'"
-								rendered="#{plexiConsulta.pdf != null
+						<p:commandButton action="#{plexiMB.viewFilePlexi(plexiConsulta)}"
+							icon="ui-icon ui-icon-print" value="Abrir PDF"
+							onclick="target='_blank'" onblur="target='_self'"
+							rendered="#{plexiConsulta.pdf != null
 									and plexiConsulta.pdf != ''}"
-								ajax="false" />
-						</p:column>
-					</p:dataTable>
-				</div>
-			</h:form>
-		</p:dialog>
-		
-		<p:dialog header="Consultas Netrin" overflow="auto"
-			id="dialogConsultasNetrin"
-			widgetVar="consultasNetrinDlg" resizable="true"
-			style="FONT-SIZE: 13pt;" width="800" minWidth="800">
-			<h:form id="ConsultasNetrinForm">
-				<div align="center">
-					<p:dataTable id="dtConsultasNetrin" var="netrinConsulta"
-						value="#{contratoCobrancaMB.documentoAnalisePopup.netrinConsultas}"
-						emptyMessage="" rows="10" paginator="true"
-		                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-		                currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
-		                rowsPerPageTemplate="10,20,40,100,140">
-						
-						<p:column style="text-align: center;" headerText="Identificação"
-							filterBy="#{netrinConsulta.nomeCompleto}"
-							filterMatchMode="contains" sortBy="#{netrinConsulta.netrinDocumentos.nome}">
-							<h:outputText value="#{netrinConsulta.netrinDocumentos.nome}"/>
-							<h:outputText value=" - #{netrinConsulta.uf}" rendered="#{netrinConsulta.uf ne null}"/>
-						</p:column>
-						
-						<p:column style="text-align: center;width: 100px;" headerText="Status"
-							filterBy="#{netrinConsulta.status}"
-							filterMatchMode="contains" sortBy="#{netrinConsulta.status}">
-							<h:outputText value="#{netrinConsulta.status}"/>
-						</p:column>
-						
-						<p:column style="text-align: center;width: 150px;" headerText="" >
-							<!-- <p:commandButton
+							ajax="false" />
+					</p:column>
+				</p:dataTable>
+			</div>
+		</h:form>
+	</p:dialog>
+
+	<p:dialog header="Consultas Netrin" overflow="auto"
+		id="dialogConsultasNetrin" widgetVar="consultasNetrinDlg"
+		resizable="true" style="FONT-SIZE: 13pt;" width="800" minWidth="800">
+		<h:form id="ConsultasNetrinForm">
+			<div align="center">
+				<p:dataTable id="dtConsultasNetrin" var="netrinConsulta"
+					value="#{contratoCobrancaMB.documentoAnalisePopup.netrinConsultas}"
+					emptyMessage="" rows="10" paginator="true"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+					rowsPerPageTemplate="10,20,40,100,140">
+
+					<p:column style="text-align: center;" headerText="Identificação"
+						filterBy="#{netrinConsulta.nomeCompleto}"
+						filterMatchMode="contains"
+						sortBy="#{netrinConsulta.netrinDocumentos.nome}">
+						<h:outputText value="#{netrinConsulta.netrinDocumentos.nome}" />
+						<h:outputText value=" - #{netrinConsulta.uf}"
+							rendered="#{netrinConsulta.uf ne null}" />
+					</p:column>
+
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Status" filterBy="#{netrinConsulta.status}"
+						filterMatchMode="contains" sortBy="#{netrinConsulta.status}">
+						<h:outputText value="#{netrinConsulta.status}" />
+					</p:column>
+
+					<p:column style="text-align: center;width: 150px;" headerText="">
+						<!-- <p:commandButton
 								action="#{netrinMB.decodarBaixarArquivo(netrinConsulta)}"
 								icon="ui-icon ui-icon-print" value="Download PDF"
 								rendered="#{netrinConsulta.pdf != null}"
 								ajax="false" /> -->
-								
-							<p:commandButton 
-								action="#{netrinMB.viewFileNetrin(netrinConsulta)}"
-								icon="ui-icon ui-icon-print" value="Abrir PDF"
-								onclick="target='_blank'" onblur="target='_self'"
-								rendered="#{netrinConsulta.pdf != null
-									and netrinConsulta.pdf != ''}" ajax="false" />
-						</p:column>
-					</p:dataTable>
+
+						<p:commandButton
+							action="#{netrinMB.viewFileNetrin(netrinConsulta)}"
+							icon="ui-icon ui-icon-print" value="Abrir PDF"
+							onclick="target='_blank'" onblur="target='_self'"
+							rendered="#{netrinConsulta.pdf != null
+									and netrinConsulta.pdf != ''}"
+							ajax="false" />
+					</p:column>
+				</p:dataTable>
+			</div>
+		</h:form>
+	</p:dialog>
+
+	<shiro:hasAnyRoles
+		name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
+		<p:dialog header="Inserir Estado" widgetVar="estadoDialog"
+			resizable="false" style="FONT-SIZE: 10pt;" width="400">
+			<h:form id="estadoDialogdlg">
+				<div align="center">
+					<h:panelGrid columns="2">
+						<p:outputLabel for="estadoConsultaInserir" value="Estado: " />
+						<p:selectOneMenu id="estadoConsultaInserir"
+							value="#{contratoCobrancaMB.estadoConsultaAdd}" label="Estado"
+							style="width:200px;">
+							<f:selectItem itemValue="" itemLabel="Escolha o Estado" />
+							<f:selectItem itemValue="AC" itemLabel="Acre" />
+							<f:selectItem itemValue="AL" itemLabel="Alagoas" />
+							<f:selectItem itemValue="AP" itemLabel="Amapá" />
+							<f:selectItem itemValue="AM" itemLabel="Amazonas" />
+							<f:selectItem itemValue="BA" itemLabel="Bahia" />
+							<f:selectItem itemValue="CE" itemLabel="Ceará" />
+							<f:selectItem itemValue="DF" itemLabel="Distrito Federal" />
+							<f:selectItem itemValue="ES" itemLabel="Espirito Santo" />
+							<f:selectItem itemValue="GO" itemLabel="Goiás" />
+							<f:selectItem itemValue="MA" itemLabel="Maranhão" />
+							<f:selectItem itemValue="MT" itemLabel="Mato Grosso" />
+							<f:selectItem itemValue="MS" itemLabel="Mato Grosso Do Sul" />
+							<f:selectItem itemValue="MG" itemLabel="Minas Gerais" />
+							<f:selectItem itemValue="PA" itemLabel="Pará" />
+							<f:selectItem itemValue="PB" itemLabel="Paraiba" />
+							<f:selectItem itemValue="PR" itemLabel="Paraná" />
+							<f:selectItem itemValue="PE" itemLabel="Pernambuco" />
+							<f:selectItem itemValue="PI" itemLabel="Piauí" />
+							<f:selectItem itemValue="RJ" itemLabel="Rio De Janeiro" />
+							<f:selectItem itemValue="RN" itemLabel="Rio Grande Do Norte" />
+							<f:selectItem itemValue="RS" itemLabel="Rio Grande Do Sul" />
+							<f:selectItem itemValue="RO" itemLabel="Rondônia" />
+							<f:selectItem itemValue="RR" itemLabel="Roraima" />
+							<f:selectItem itemValue="SC" itemLabel="Santa Catarina" />
+							<f:selectItem itemValue="SP" itemLabel="São Paulo" />
+							<f:selectItem itemValue="SE" itemLabel="Sergipe" />
+							<f:selectItem itemValue="TO" itemLabel="Tocantins" />
+							<p:ajax update="estadoDialogdlg"></p:ajax>
+						</p:selectOneMenu>
+					</h:panelGrid>
+					<p:commandButton value="Inserir Estado" icon="ui-icon-check"
+						style="margin-top: 5px; margin-bottom: 5px;"
+						action="#{contratoCobrancaMB.adicionaEstado()}"
+						disabled="#{contratoCobrancaMB.estadoConsultaAdd eq null}"
+						onclick="PF('estadoDialog').hide();" update="form:dtFilesAnalise">
+					</p:commandButton>
 				</div>
 			</h:form>
 		</p:dialog>
-		
-		<shiro:hasAnyRoles
+	</shiro:hasAnyRoles>
+	<shiro:hasAnyRoles
 		name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
-			<p:dialog header="Inserir Estado" widgetVar="estadoDialog"
-				resizable="false" style="FONT-SIZE: 10pt;" width="400">
-				<h:form id="estadoDialogdlg">			
-					<div align="center">		
-						<h:panelGrid columns="2">
-							<p:outputLabel for="estadoConsultaInserir" value="Estado: " />
-							<p:selectOneMenu id="estadoConsultaInserir"
-								value="#{contratoCobrancaMB.estadoConsultaAdd}"
-								label="Estado" style="width:200px;">
-								<f:selectItem itemValue="" itemLabel="Escolha o Estado" />
-								<f:selectItem itemValue="AC" itemLabel="Acre" />
-								<f:selectItem itemValue="AL" itemLabel="Alagoas" />
-								<f:selectItem itemValue="AP" itemLabel="Amapá" />
-								<f:selectItem itemValue="AM" itemLabel="Amazonas" />
-								<f:selectItem itemValue="BA" itemLabel="Bahia" />
-								<f:selectItem itemValue="CE" itemLabel="Ceará" />
-								<f:selectItem itemValue="DF" itemLabel="Distrito Federal" />
-								<f:selectItem itemValue="ES" itemLabel="Espirito Santo" />
-								<f:selectItem itemValue="GO" itemLabel="Goiás" />
-								<f:selectItem itemValue="MA" itemLabel="Maranhão" />
-								<f:selectItem itemValue="MT" itemLabel="Mato Grosso" />
-								<f:selectItem itemValue="MS" itemLabel="Mato Grosso Do Sul" />
-								<f:selectItem itemValue="MG" itemLabel="Minas Gerais" />
-								<f:selectItem itemValue="PA" itemLabel="Pará" />
-								<f:selectItem itemValue="PB" itemLabel="Paraiba" />
-								<f:selectItem itemValue="PR" itemLabel="Paraná" />
-								<f:selectItem itemValue="PE" itemLabel="Pernambuco" />
-								<f:selectItem itemValue="PI" itemLabel="Piauí" />
-								<f:selectItem itemValue="RJ" itemLabel="Rio De Janeiro" />
-								<f:selectItem itemValue="RN" itemLabel="Rio Grande Do Norte" />
-								<f:selectItem itemValue="RS" itemLabel="Rio Grande Do Sul" />
-								<f:selectItem itemValue="RO" itemLabel="Rondônia" />
-								<f:selectItem itemValue="RR" itemLabel="Roraima" />
-								<f:selectItem itemValue="SC" itemLabel="Santa Catarina" />
-								<f:selectItem itemValue="SP" itemLabel="São Paulo" />
-								<f:selectItem itemValue="SE" itemLabel="Sergipe" />
-								<f:selectItem itemValue="TO" itemLabel="Tocantins" />
-								<p:ajax update="estadoDialogdlg" ></p:ajax>
-							</p:selectOneMenu>
-						</h:panelGrid>
-						<p:commandButton value="Inserir Estado" 
-							icon="ui-icon-check" style="margin-top: 5px; margin-bottom: 5px;"
-							action="#{contratoCobrancaMB.adicionaEstado()}"
-							disabled="#{contratoCobrancaMB.estadoConsultaAdd eq null}"
-							onclick="PF('estadoDialog').hide();"
-							update="form:dtFilesAnalise" >
-						</p:commandButton>
-					</div>
-				</h:form>
-			</p:dialog>	
-		</shiro:hasAnyRoles>
-		<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
 		<p:dialog header="Editar pessoa Analise" overflow="auto"
-			id="dialogEditarPessoaAnalise"
-			widgetVar="editarPessoaAnaliseDlg" resizable="true"
-			style="FONT-SIZE: 13pt;" width="800" minWidth="800">
+			id="dialogEditarPessoaAnalise" widgetVar="editarPessoaAnaliseDlg"
+			resizable="true" style="FONT-SIZE: 13pt;" width="800" minWidth="800">
 			<h:form id="adicionarPessoaAnaliseEditarForm">
 				<div align="center">
 					<h:panelGrid columns="2">
@@ -681,21 +577,40 @@
 							value="#{contratoCobrancaMB.objetoDocumentoAnalise.motivoAnalise}"
 							label="Tipo" style="width:250px;">
 							<f:selectItem itemValue="" itemLabel="Selecione o motivo" />
-							<f:selectItems value="#{contratoCobrancaMB.objetoDocumentoAnalise.motivosAnalise()}" />
+							<f:selectItems
+								value="#{contratoCobrancaMB.objetoDocumentoAnalise.motivosAnalise()}" />
 						</p:selectOneMenu>
 					</h:panelGrid>
 					<h:panelGrid columns="2" style="text-align:center">
-							<p:commandButton value="Salvar" icon="ui-icon-check"
-								action="#{contratoCobrancaMB.salvaAlteraçõesDocumentoAnálise}"
-								update=":form:dtFilesAnalise"
-								onclick="PF('editarPessoaAnaliseDlg').hide();" />
-	
-							<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
-								onclick="PF('editarPessoaAnaliseDlg').hide();" />
-						</h:panelGrid>
-					</div>
-				</h:form>
-			</p:dialog>
-			</shiro:hasAnyRoles>
-	
+						<p:commandButton value="Salvar" icon="ui-icon-check"
+							action="#{contratoCobrancaMB.salvaAlteraçõesDocumentoAnálise}"
+							update=":form:dtFilesAnalise"
+							onclick="PF('editarPessoaAnaliseDlg').hide();" />
+
+						<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
+							onclick="PF('editarPessoaAnaliseDlg').hide();" />
+					</h:panelGrid>
+				</div>
+			</h:form>
+		</p:dialog>
+	</shiro:hasAnyRoles>
+
+	<p:dialog id="resumoDialogMultiploHeader"
+		widgetVar="resumoConsutlasDialogMultiplo" showEffect="fade"
+		hideEffect="fade" resizable="false" responsive="false" width="1200"
+		height="600" positionType="center center" closable="true"
+		update="true">
+		<h:form id="resumoConsutlasMultiploForm">
+			<p:repeat value="#{contratoCobrancaMB.listaSelectAnalise}"
+				var="multiplo">
+				<h:outputText value="#{multiplo.dialogHeader}"
+					styleClass="labelBold" />
+
+				<ui:include src="ConstratoCobrancaAnaliseDocumentoResumoDetalhe.xhtml">
+					<ui:param name="paramDocumentoAnalise" value="#{multiplo}"></ui:param>
+				</ui:include>
+			</p:repeat>
+		</h:form>
+	</p:dialog>
+
 </ui:composition>

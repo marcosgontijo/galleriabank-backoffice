@@ -78,6 +78,10 @@ public class ContratoCobrancaFinanceiroDiaConsultaDetalhesVO implements Serializ
 	public boolean isAmortizacao() {
 		return CommonsUtil.mesmoValor("Amortização", this.getNumeroParcela());
 	}
+
+	public boolean isAcertoSaldo() {
+		return CommonsUtil.mesmoValor("Acerto Saldo", this.getNumeroParcela());
+	}
 	
 	public long getId() {
 		return id;

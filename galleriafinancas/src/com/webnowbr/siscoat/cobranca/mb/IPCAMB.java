@@ -506,7 +506,7 @@ public class IPCAMB {
 					
 					Date dataParcela =null;
 					
-					if (!detalhe.isAmortizacao())
+					if (!detalhe.isAmortizacao() && !detalhe.isAcertoSaldo())
 						dataParcela = contratoCobrancaDao
 								.geraDataParcela((CommonsUtil.intValue(parcela.getNumeroParcela())
 										- numeroParcelaReparcelamento), dataVencimentoNova);
@@ -597,7 +597,8 @@ public class IPCAMB {
 				- 1; iDetalhe >= 0; iDetalhe--) {
 			ContratoCobrancaDetalhes detalhe = contratoCobrancaMB.getObjetoContratoCobranca().getListContratoCobrancaDetalhes()
 					.get(iDetalhe);
-			if (!CommonsUtil.mesmoValor(detalhe.getNumeroParcela(), "Armotização") && !detalhe.isParcelaPaga()) {
+			if (!CommonsUtil.mesmoValor(detalhe.getNumeroParcela(), "Armotização")&&
+					!CommonsUtil.mesmoValor(detalhe.getNumeroParcela(), "Acerto Saldo") && !detalhe.isParcelaPaga()) {
 				if (CommonsUtil.intValue(detalhe.getNumeroParcela()) > ultimaParcela.intValue()) {
 					contratoCobrancaMB.getObjetoContratoCobranca().getListContratoCobrancaDetalhes().remove(detalhe);
 				} 

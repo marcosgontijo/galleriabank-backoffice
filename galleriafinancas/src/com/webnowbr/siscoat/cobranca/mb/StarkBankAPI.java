@@ -40,9 +40,11 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankBoleto;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankPix;
+import com.webnowbr.siscoat.cobranca.db.model.StarkBankTax;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.StarkBankBoletoDAO;
 import com.webnowbr.siscoat.cobranca.db.op.StarkBankPixDAO;
+import com.webnowbr.siscoat.cobranca.db.op.StarkBankTaxDAO;
 import com.webnowbr.siscoat.common.DateUtil;
 
 @ManagedBean(name = "starkBankAPI")
@@ -398,6 +400,74 @@ public class StarkBankAPI{
     	context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Boleto Stark Bank - Pago", ""));
     	
     }
+    
+	public StarkBankTax paymentTax(String barCode, String descricao) {
+
+		FacesContext context = FacesContext.getCurrentInstance();
+		StarkBankTax taxTransacao = null;
+    	String[] tags = {""};
+    	
+    	loginStarkBank();
+
+    	Settings.language = "pt-BR";
+
+    	try {
+	    	List<BoletoPayment> payments = new ArrayList<>();
+	    	HashMap<String, Object> data = new HashMap<>();
+	    	data.put("line", barCode);    	
+
+	    	data.put("scheduled", DateUtil.getDataHojeAmericano());
+	    	data.put("description", descricao);
+	
+			payments.add(new BoletoPayment(data));
+	
+	    	payments = BoletoPayment.create(payments);
+
+	    	for (BoletoPayment payment : payments){
+	    		String tagsStr = "";
+	    		if (payment.tags.length > 0) {
+	    			for (String tag : tags) {
+	    				if (tag.equals("")) {
+	    					tagsStr = tag;
+	    				} else {
+	    					tagsStr = tagsStr + " | " + tag;
+	    				}
+	    			}
+	    		}
+	    
+	    		taxTransacao = new StarkBankTax(Long.valueOf(payment.id), BigDecimal.valueOf(payment.amount), tagsStr, payment.description, payment.scheduled,
+	    				payment.line, payment.barCode, payment.status, DateUtil.convertDateTimeToDate(payment.created), null, null);
+	    		
+	    		StarkBankTaxDAO starkBankTaxDAO = new StarkBankTaxDAO();
+	    		starkBankTaxDAO.create(taxTransacao);
+	    		
+	    		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"[StarkBank - Pagamento Imposto] Imposto Pago com Sucesso! Transação: " + payment.id, ""));
+	    	}
+    	
+		} catch (Exception e) {
+			JSONObject erroStarkBank = new JSONObject(e.getMessage());
+			JSONArray erros = new JSONArray(erroStarkBank.getJSONArray("errors"));
+			
+			String errosStrStarkBank = "";
+			for (int i = 0; i < erros.length(); i++) {
+				JSONObject dados = erros.getJSONObject(i);
+				
+				if (errosStrStarkBank.equals("")) {
+					errosStrStarkBank = i + "-" + dados.getString("message").replace("Element 0: ", "");
+				} else {
+					errosStrStarkBank = errosStrStarkBank + " | " + i + "-" + dados.getString("message").replace("Element 0: ", "");
+				}
+			}	
+			
+			if (!errosStrStarkBank.equals("")) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"[StarkBank - Pagamento Boleto] Falha no pagamento: " + errosStrStarkBank, ""));
+			}
+		}
+    	
+    	 return taxTransacao;
+    }
 
 	public StarkBankBoleto paymentBoleto(String boleto, ContratoCobranca contrato, PagadorRecebedor pessoa, String descricao, String documentoPagadorCustom, String descricaoConta) {
 
@@ -585,7 +655,7 @@ public class StarkBankAPI{
 
     	List<Transfer.Rule> rules = new ArrayList<>();
     
-    	if (descricaoConta != null || descricaoConta.contains("Pagamento Carta Split")) {
+    	if (descricaoConta != null && descricaoConta.contains("Pagamento Carta Split")) {
     		loginStarkBankSCD();
     	} else {
     		loginStarkBank();    		
@@ -661,7 +731,7 @@ public class StarkBankAPI{
 
     	List<Transfer.Rule> rules = new ArrayList<>();
     
-    	if (descricaoConta != null || descricaoConta.contains("Pagamento Carta Split")) {
+    	if (descricaoConta != null && descricaoConta.contains("Pagamento Carta Split")) {
     		loginStarkBankSCD();
     	} else {
     		loginStarkBank();    		
