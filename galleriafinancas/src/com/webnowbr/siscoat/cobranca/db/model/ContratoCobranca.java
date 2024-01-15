@@ -1098,7 +1098,13 @@ public class ContratoCobranca implements Serializable {
 		ContratoCobranca c = this;
 
 		if (CommonsUtil.mesmoValor(c.getStatus(), "Aprovado")) {
-			c.setStatusEsteira("Aprovado");
+			if(!c.isNotaFiscalEmitida() && !c.isNotaFiscalPaga()) {
+				c.setStatusEsteira("Ag. Emissão NFs");
+			} else if (c.isNotaFiscalEmitida() && !c.isNotaFiscalPaga()) {
+				c.setStatusEsteira("Ag. Pagamento NFs");
+			} else {
+				c.setStatusEsteira("Aprovado");
+			}
 		} else if (CommonsUtil.mesmoValor(c.getStatus(), "Reprovado")) {
 			c.setStatusEsteira("Reprovado");
 		} else if (CommonsUtil.mesmoValor(c.getStatus(), "Baixado")) {

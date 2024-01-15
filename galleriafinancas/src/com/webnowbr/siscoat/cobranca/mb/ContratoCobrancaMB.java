@@ -1087,6 +1087,8 @@ public class ContratoCobrancaMB {
 		this.objetoImovelCobranca = new ImovelCobranca();
 		this.objetoPagadorRecebedor = new PagadorRecebedor();
 		this.tipoPessoaIsFisica = true;
+		this.objetoContratoCobranca.setNotaFiscalEmitida(false);
+		this.objetoContratoCobranca.setNotaFiscalPaga(false);
 		// FIM - Tratamento para Pré-Contrato
 	}
 
@@ -14725,7 +14727,14 @@ public class ContratoCobrancaMB {
 		if (status.equals("Ag. Registro")) {
 			this.tituloTelaConsultaPreStatus = "Ag. Registro";
 		}
-
+		//TODO Verificar se aqui ele irá realizar pesquisa de NFs, aparentemente aqui só pesquisa com status Pendente
+		/*if (status.equals("Ag. Emissão NFs")) {
+			this.tituloTelaConsultaPreStatus = "Ag. Emissão NFs";
+		}
+		if (status.equals("Ag. Pagamento NFs")) {
+			this.tituloTelaConsultaPreStatus = "Ag. Pagamento NFs";
+		}*/
+		
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.contratosPendentes = new ArrayList<ContratoCobranca>();
 
