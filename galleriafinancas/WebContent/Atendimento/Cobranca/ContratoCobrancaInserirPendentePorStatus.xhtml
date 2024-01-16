@@ -3834,7 +3834,6 @@
 				<h:panelGroup id="ContasPagarPanel">
 					<p:panel header="Contas a Pagar" style="margin-bottom:10px;"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.okCliente and ( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'))}">
-
 						<f:facet name="header"> Despesas 
 							<p:outputLabel value="" />							
 							<p:commandButton icon="ui-icon-plus"
@@ -3845,54 +3844,59 @@
 								action="#{contratoCobrancaMB.cirarDespesasContrato}"
 								update="ContasPagarPanel" />	
 						</f:facet>
-
+						
 						<p:outputLabel for="ContaPagarValorTotal"
 							value="Valor Total (R$): " styleClass="labelBold" />
 						<p:outputLabel id="ContaPagarValorTotal" styleClass="labelBold"
 							value="#{contratoCobrancaMB.objetoContratoCobranca.contaPagarValorTotal}"
 							converter="bigDecimalConverter" />
 
-						<p:dataTable var="contas"
-							value="#{contratoCobrancaMB.objetoContratoCobranca.listContasPagar}"
-							id="contasDT" style="width:1000px;" size="small">
-
-							<p:column style="text-align: center;" headerText="Descrição">
-								<p:outputLabel value="#{contas.descricao}"
-									style="FONT-SIZE: 10pt;" />
-							</p:column>
-
-							<p:column style="text-align: center;" headerText="Valor ">
-								<p:outputLabel value="#{contas.valor}" style="FONT-SIZE: 10pt;"
-									converter="bigDecimalConverter" />
-							</p:column>
-
-							<p:column style="text-align: center;"
-								headerText="Data Vencimento">
-								<h:outputText value="#{contas.dataVencimento}">
-									<f:convertDateTime pattern="dd/MM/yyyy" />
-								</h:outputText>
-							</p:column>
-
-							<p:column style="text-align: center;" headerText="Valor Pago">
-								<p:outputLabel value="#{contas.valorPagamento}"
-									converter="bigDecimalConverter"
-									style="FONT-SIZE: 10pt;width:100px;" />
-							</p:column>
-
-							<p:column style="text-align: center;width:260px;" headerText="">
-								<p:commandButton value="Editar" icon="ui-icon-pencil"
-									action="#{contratoCobrancaMB.editarConta(contas)}"
-									oncomplete="PF('despesaDialog').show();"
-									update="despesaDialogForm" />
-								<p:commandButton value="Remover" icon="ui-icon-trash"
-									action="#{contratoCobrancaMB.removerConta(contas)}" ajax="true"
-									update=":form:ContasPagarPanel" />
-								<p:commandButton value="Arquivos" icon="ui-icon-print"
-									action="#{contratoCobrancaMB.populateFilesContasPagar(contas)}"
-									ajax="true" update=":form:ContasPagarPanel contaArquivosForm" />
-							</p:column>
-						</p:dataTable>
-
+						<h:panelGrid columns="2">
+							<p:dataTable var="contas"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.listContasPagar}"
+								id="contasDT" style="width:1000px;" size="small">
+	
+								<p:column style="text-align: center;" headerText="Descrição">
+									<p:outputLabel value="#{contas.descricao}"
+										style="FONT-SIZE: 10pt;" />
+								</p:column>
+	
+								<p:column style="text-align: center;" headerText="Valor ">
+									<p:outputLabel value="#{contas.valor}" style="FONT-SIZE: 10pt;"
+										converter="bigDecimalConverter" />
+								</p:column>
+	
+								<p:column style="text-align: center;"
+									headerText="Data Vencimento">
+									<h:outputText value="#{contas.dataVencimento}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</p:column>
+	
+								<p:column style="text-align: center;" headerText="Valor Pago">
+									<p:outputLabel value="#{contas.valorPagamento}"
+										converter="bigDecimalConverter"
+										style="FONT-SIZE: 10pt;width:100px;" />
+								</p:column>
+	
+								<p:column style="text-align: center;width:260px;" headerText="">
+									<p:commandButton value="Editar" icon="ui-icon-pencil"
+										action="#{contratoCobrancaMB.editarConta(contas)}"
+										oncomplete="PF('despesaDialog').show();"
+										update="despesaDialogForm" />
+									<p:commandButton value="Remover" icon="ui-icon-trash"
+										action="#{contratoCobrancaMB.removerConta(contas)}" ajax="true"
+										update=":form:ContasPagarPanel" />
+									<p:commandButton value="Arquivos" icon="ui-icon-print"
+										action="#{contratoCobrancaMB.populateFilesContasPagar(contas)}"
+										ajax="true" update=":form:ContasPagarPanel contaArquivosForm" />
+								</p:column>
+							</p:dataTable>
+	
+							<p:commandButton value="Emitir Aditamento" action="#{ccbMB.emitirAditamento(contratoCobrancaMB.objetoContratoCobranca.listContasPagar)}">
+			                	<f:setPropertyActionListener  target="#{ccbMB.objetoContratoCobranca}" value="#{contratoCobrancaMB.objetoContratoCobranca}" />
+			                </p:commandButton>
+		                </h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
 
@@ -4386,7 +4390,7 @@
 				</p:dataView>
 			</p:panel>
 			
-			<p:messages id="msgArquivo"/>			
+			<p:messages id="msgArquivo"/>
 			
 			<p:panel id="UploadArquivosJuridico" header="Arquivo Juridico(s)" style="margin-bottom:10px;" >						
 				<p:panel id="ArquivosJuridico" header="Selecionar Arquivo Para Upload" style="margin-bottom:10px;text-align: center;" rendered="#{( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'))}">							
@@ -4580,7 +4584,7 @@
 									action="#{contratoCobrancaMB.deleteFileFaltante}" />
 								<p:commandButton value="Download selecionados" ajax="false">
 									<p:fileDownload
-										value="#{contratoCobrancaMB.downloadArquivosFaltantes}"></p:fileDownload>
+										value="#{contratoCobrancaMB.getDownloadAllFilesInterno()}"></p:fileDownload>
 								</p:commandButton>
 							</f:facet>
 							<p:column style="text-align: center;"
