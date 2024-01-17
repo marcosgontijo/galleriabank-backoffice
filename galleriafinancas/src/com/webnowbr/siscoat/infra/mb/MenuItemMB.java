@@ -1,6 +1,7 @@
 
 package com.webnowbr.siscoat.infra.mb;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.primefaces.model.menu.MenuModel;
 
@@ -411,12 +413,11 @@ public class MenuItemMB {
 		this.temFavorito = temFavorito;
 	}
 
-	public MenuModel getMenuCarregado() {
+	public MenuModel getMenuCarregado() throws IOException {
 		if (menuCarregado == null) {
 			 temFavorito = menuService.possuiFavorito(loginBean.getUsuarioLogado());
 			if(!temFavorito) {
 				menuCarregado = menuService.constroiMenu(IDmenus.Atedimento.getIndice(), loginBean.getUsuarioLogado().getId(),false);
-
 			} else {
 				menuCarregado = menuService.carregaFavoritos(loginBean.getUsuarioLogado());
 				menuAtual = "Favoritos";

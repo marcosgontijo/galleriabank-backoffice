@@ -127,7 +127,7 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 							} else {
 								seguroTabelaVO.setCodigoSegurado("02");
 							}
-							
+							seguroTabelaVO.setNumeroContrato(rs.getString("numerocontrato"));
 							seguroTabelaVO.setNumeroContratoSeguro(rs.getString("numerocontratoseguro"));
 							seguroTabelaVO.setAvaliacao(rs.getBigDecimal("valorimovel")); 
 							seguroTabelaVO.setParcelasOriginais(rs.getString("qtdeparcelas"));

@@ -9,7 +9,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import javax.faces.application.FacesMessage;
@@ -1465,15 +1468,18 @@ public class TakeBlipMB {
 		
 		return whatsAppNumber;
 	}
+	 
 	public void sendWhatsAppMessageNovaConta(String numeroDoContrato) {
 				
-		JSONObject jsonWhatsApp = new JSONObject();
-		jsonWhatsApp.put("id", generateUUID());
-
-		//jsonWhatsApp.put("to", getWhatsAppURLPagadorRecebedor(pessoa));
-		jsonWhatsApp.put("to", "5519996733216@wa.gw.msging.net");
+		JSONObject jsonWhatsAppBase = new JSONObject();
+		String patricia= "5519996733216@wa.gw.msging.net";
+		String isabelle= "5519996907780@wa.gw.msging.net";
+		
+		List<String> jsonEnvios = new ArrayList<>(Arrays.asList(patricia,isabelle));
 				
-		jsonWhatsApp.put("type", "application/json"); 
+//		jsonWhatsAppBase.put("to", "5519996733216@wa.gw.msging.net");
+				
+		jsonWhatsAppBase.put("type", "application/json"); 
 		
 		JSONArray jsonWhatsAppComponents = new JSONArray();
 		JSONObject jsonWhatsAppComponent = new JSONObject();
@@ -1505,17 +1511,27 @@ public class TakeBlipMB {
 			
 			jsonWhatsAppConteudo.put("template", jsonWhatsAppTemplate);	
 			
-			jsonWhatsApp.put("content", jsonWhatsAppConteudo);
+			jsonWhatsAppBase.put("content", jsonWhatsAppConteudo);
 			
-			senderWhatsAppMessage(jsonWhatsApp);
+			for (String to : jsonEnvios) {
+				if (jsonWhatsAppBase.keySet().contains("id"))
+					jsonWhatsAppBase.remove("id");
+				jsonWhatsAppBase.put("id", generateUUID());
+				if (jsonWhatsAppBase.keySet().contains("to"))
+					jsonWhatsAppBase.remove("to");
+				jsonWhatsAppBase.put("to", to);
+
+				senderWhatsAppMessage(jsonWhatsAppBase);
+			}
 		}
-	public String formatTelefoneWhatsApp(String telefone) {		
-		String telefoneFormatado = "55" + telefone;
-		
-		telefoneFormatado = telefoneFormatado.replace("(", "").replace(")", "").replace("-", "").replace(" ", "");
-		
-		return telefoneFormatado;
-	}
+	
+		public String formatTelefoneWhatsApp(String telefone) {
+			String telefoneFormatado = "55" + telefone;
+
+			telefoneFormatado = telefoneFormatado.replace("(", "").replace(")", "").replace("-", "").replace(" ", "");
+
+			return telefoneFormatado;
+		}
 		
 	public String generateUUID() {		
 		UUID uuid = UUID.randomUUID();
