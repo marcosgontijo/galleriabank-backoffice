@@ -3921,7 +3921,12 @@ public class CcbService {
 					pessoa.getNomeConjuge() + " " + pessoa.getCpfConjuge() + "), conforme pacto antenupcial registrado no "+
 					pessoa.getRegistroPactoAntenupcial() + ", sob livro " + pessoa.getLivroPactoAntenupcial() + ", folhas " + 
 					pessoa.getFolhasPactoAntenupcial() + ", datada de " + CommonsUtil.formataData(pessoa.getDataPactoAntenupcial()) ;
-			} else {
+			} else if(pessoa.isUniaoEstavel() && pessoa.getTipoUniao() == "Escritura publica") {
+				conjugeStr = ", na vigência da lei 6.515/77 (" + 
+						pessoa.getNomeConjuge() + " " + pessoa.getCpfConjuge() + "), conforme escritura pública registrado no "+
+						pessoa.getRegistroPactoAntenupcial() + ", sob livro " + pessoa.getLivroPactoAntenupcial() + ", folhas " + 
+						pessoa.getFolhasPactoAntenupcial() + ", datada de " + CommonsUtil.formataData(pessoa.getDataPactoAntenupcial()) ;
+			}	else  {
 				conjugeStr = ", sob o regime " + pessoa.getRegimeCasamento() + ", na vigência da lei 6.515/77 (" + 
 						pessoa.getNomeConjuge() + " " + pessoa.getCpfConjuge() + ")" ;
 			}

@@ -332,9 +332,7 @@ public class ContratoCobrancaMB {
 	private List<DocumentoAnalise> listaDocumentoAnalise;
 	private List<DocumentoAnalise> listaDocumentoAnaliseRea;
 	private List<DocumentoAnalise> listaSelectAnalise = new ArrayList<>();
-
 	private BoletoKobana selectedBoletosKobanaBaixa = null;
-
 	/************************************************************
 	 * Objetos para antecipacao de parcela
 	 ************************************************************/
@@ -8901,10 +8899,22 @@ public class ContratoCobrancaMB {
 					// this.selectedListContratoCobrancaDetalhes.add(parcelas);
 				}
 			}
+			
+		
 		}
 		System.out.print("");
 	}
+	public void salvarEstoque(){
+		ImovelEstoqueMB imovelMB = new ImovelEstoqueMB();
+		imovelMB.setObjetoContratoCobranca(objetoContratoCobranca);
+		imovelMB.setObjetoImovelCobranca(objetoContratoCobranca.getImovel());
+		imovelMB.setObjetoImovelEstoque(objetoContratoCobranca.getImovel().getImovelEstoque());
+		imovelMB.salvarEstoque();
+		
+		
+	}
 
+	
 	public void calcularPorcentagemDesconto() {
 		if (CommonsUtil.semValor(valorComDesconto) || CommonsUtil.semValor(valorPresenteTotal))
 			return;
@@ -9160,6 +9170,7 @@ public class ContratoCobrancaMB {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		salvarEstoque();
 	}
 
 	public BigDecimal calcularValorPresenteParcelaJson(Long idParcela, BigDecimal txJuros, Date dataAquisicao) {
@@ -36283,17 +36294,23 @@ public class ContratoCobrancaMB {
 		return objetoCartorio;
 	}
 
-	public void setObjetoCartorio(Cartorio objetoCartorio) {
-		this.objetoCartorio = objetoCartorio;
-	}
-	
-	public List<Cartorio> getListaCartorio() {
-		return listaCartorio;
-	}
-	
-	public void setListaCartorio(List<Cartorio> listaCartorio) {
-		this.listaCartorio = listaCartorio;
-	}
+		public void setObjetoCartorio(Cartorio objetoCartorio) {
+			this.objetoCartorio = objetoCartorio;
+		}
+		public List<Cartorio> getListaCartorio() {
+			return listaCartorio;
+		}
+
+		public void setListaCartorio(List<Cartorio> listaCartorio) {
+			this.listaCartorio = listaCartorio;
+		}
+		public List<DocumentoAnalise> getListaSelectAnalise() {
+			return listaSelectAnalise;
+		}
+
+		public void setListaSelectAnalise(List<DocumentoAnalise> listaSelectAnalise) {
+			this.listaSelectAnalise = listaSelectAnalise;
+		}
 	
 	public boolean isApagaListaCartorio() {
 		return apagaListaCartorio;
