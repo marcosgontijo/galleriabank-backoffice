@@ -139,26 +139,26 @@ public class ReaWebhook {
 			boolean cnpjCpfValido = false;
 
 			if (documentoAnalise.getTipoPessoa() == "PJ") {
-				propietario.setCnpj(CommonsUtil.strZero(propietario.getCnpj(),11));
+				propietario.setCnpj(CommonsUtil.strZero(CommonsUtil.somenteNumeros(propietario.getCnpj()),14));
 				try {												
-					cnpjCpfValido = ValidaCNPJ.isCNPJ(CommonsUtil.somenteNumeros(propietario.getCnpj()));
+					cnpjCpfValido = ValidaCNPJ.isCNPJ(propietario.getCnpj());
 				} catch (Exception e) {
 					cnpjCpfValido = false;
 				}
 				if (cnpjCpfValido)
-					documentoAnalise.setCnpjcpf(propietario.getCnpj());
+					documentoAnalise.setCnpjcpf(CommonsUtil.formataCnpjCpf(propietario.getCnpj(), false));
 				else
 					documentoAnalise.setCnpjcpf("CNPJ esta inválido");
 				documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.RELATO);
 			} else {
-				propietario.setCnpj(CommonsUtil.strZero(propietario.getCnpj(),14));
+				propietario.setCpf(CommonsUtil.strZero(CommonsUtil.somenteNumeros(propietario.getCpf()),11));
 				try {
-					cnpjCpfValido = ValidaCPF.isCPF(CommonsUtil.somenteNumeros(propietario.getCpf()));
+					cnpjCpfValido = ValidaCPF.isCPF(propietario.getCpf());
 				} catch (Exception e) {
 					cnpjCpfValido = false;
 				}
 				if (cnpjCpfValido)
-					documentoAnalise.setCnpjcpf(propietario.getCpf());
+					documentoAnalise.setCnpjcpf(CommonsUtil.formataCnpjCpf(propietario.getCpf(), false));
 				else
 					documentoAnalise.setCnpjcpf("CPF esta inválido");
 				documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.CREDNET);
@@ -176,10 +176,10 @@ public class ReaWebhook {
 					PagadorRecebedor pagador = new PagadorRecebedor();
 					pagador.setId(0);
 					if (CommonsUtil.mesmoValor(documentoAnalise.getTipoPessoa(), "PF")) {
-						pagador.setCpf(propietario.getCpf());
+						pagador.setCpf(documentoAnalise.getCnpjcpf());
 						pagador.setRg(propietario.getRg());
 					} else {
-						pagador.setCnpj(propietario.getCnpj());
+						pagador.setCnpj(documentoAnalise.getCnpjcpf());
 					}
 					pagador.setNome(propietario.getNome());
 					pagador = pagadorRecebedorService.buscaOuInsere(pagador);
