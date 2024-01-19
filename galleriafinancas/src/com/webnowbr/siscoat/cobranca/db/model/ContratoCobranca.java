@@ -7304,6 +7304,16 @@ public class ContratoCobranca implements Serializable {
 		if (this.analiseReprovada) {
 			this.statusEsteira = "Análise Reprovada";
 		}
+		
+		if(this.status.equals("Aprovado")) {
+			if (!this.isNotaFiscalEmitida() && !this.isNotaFiscalPaga()) {
+				this.statusEsteira = "Ag. Emissão NFs";
+			} else if (this.isNotaFiscalEmitida() && !this.isNotaFiscalPaga()) {
+				this.statusEsteira = "Ag. Pagamento NFs";
+			} else {
+				this.statusEsteira = "Aprovado";
+			}
+		}
 
 		return this.statusEsteira;
 	}
