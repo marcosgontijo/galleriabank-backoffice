@@ -20686,11 +20686,16 @@ public class ContratoCobrancaMB {
 
 	public String processaReprovaPagamentoStarkBank() {
 		FacesContext context = FacesContext.getCurrentInstance();
-
-		this.objetoBaixaPagamentoStarkBank.setStatusPagamento("Reprovado");
-
-		StarkBankBaixaDAO sbBaixaDao = new StarkBankBaixaDAO();
-		sbBaixaDao.merge(this.objetoBaixaPagamentoStarkBank);
+		
+		if (this.objetoBaixaPagamentoStarkBank.getContasPagar().getDescricao().contains("Pagamento Carta Split")) {
+			ContasPagarDao despesa = new ContasPagarDao();
+			despesa.delete(this.objetoBaixaPagamentoStarkBank.getContasPagar());
+		} else {
+			this.objetoBaixaPagamentoStarkBank.setStatusPagamento("Reprovado");
+			
+			StarkBankBaixaDAO sbBaixaDao = new StarkBankBaixaDAO();
+			sbBaixaDao.merge(this.objetoBaixaPagamentoStarkBank);
+		}
 
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO, "Pagamento StarkBank: Reprovado com sucesso!", ""));
