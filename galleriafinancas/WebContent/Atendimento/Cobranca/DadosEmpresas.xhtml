@@ -301,7 +301,7 @@
 		
 		<p:dialog header="1 Parcela em Atraso - Contratos" overflow="auto"
 			widgetVar="ina30Dialog" resizable="true" style="FONT-SIZE: 13pt;"
-			width="800" minWidth="800">
+			width="1000" minWidth="1000">
 			<h:form id="ina30Form">
 				<p:dataTable var="ina30" rows="10" paginator="true"
 					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
@@ -320,6 +320,11 @@
 						<p:outputLabel value="#{ina30.pagador.nome}"
 							style="FONT-SIZE: 10pt;width:100px;" />
 						<p:spacer width="10" height="10" />
+					</p:column>
+					
+					<p:column style="text-align: center;"  headerText="Status Cartorio"
+						filterBy="#{ina30.ultimoCartorio.status}" filterMatchMode="contains">
+						<p:outputLabel value="#{ina30.ultimoCartorio.status}" />
 					</p:column>
 
 					<p:column>
@@ -392,14 +397,14 @@
 		</p:dialog>
 		<p:dialog header="2 Parcelas em Atraso - Contratos" overflow="auto"
 			widgetVar="ina60Dialog" resizable="true" style="FONT-SIZE: 13pt;"
-			width="800" minWidth="800">
+			width="1000" minWidth="1000">
 			<h:form id="ina60Form">
 				<p:dataTable var="ina60" rows="10" paginator="true"
 					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
 					value="#{dadosEmpresaMB.contratosInadimplencia60}"
 					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
 
-					<p:column style="text-align: center" headerText="Numero Contrato"
+					<p:column style="text-align: center; width:65px" headerText="Numero Contrato"
 						filterBy="#{ina60.numeroContrato}" filterMatchMode="contains">
 						<p:outputLabel value="#{ina60.numeroContrato}"
 							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
@@ -411,6 +416,30 @@
 						<p:outputLabel value="#{ina60.pagador.nome}"
 							style="FONT-SIZE: 10pt;width:100px;" />
 						<p:spacer width="10" height="10" />
+					</p:column>
+					
+					<p:column style="text-align: center; width:75px"  headerText="Valor CCI"
+						filterBy="#{ina60.valorCCB}" filterMatchMode="contains">
+						<p:outputLabel value="#{ina60.valorCCB}"
+							converter="bigDecimalConverter"
+							style="FONT-SIZE: 10pt;" />
+					</p:column>
+					
+					<p:column style="text-align: center; width:75px"  headerText="Soma Parcelas Atraso"
+						filterBy="#{ina60.somaParcelasAtraso}" filterMatchMode="contains">
+						<p:outputLabel value="#{ina60.somaParcelasAtraso}"
+							converter="bigDecimalConverter" />
+					</p:column>
+					
+					<p:column style="text-align: center; width:20px"  headerText="Está em cartório?"
+						filterBy="#{ina60.contratoEmCartorio}" filterMatchMode="contains" >
+						<p:outputLabel value="Sim" rendered="#{ina60.contratoEmCartorio}" style="FONT-SIZE: 10pt;" />
+						<p:outputLabel value="Não" rendered="#{!ina60.contratoEmCartorio}" style="FONT-SIZE: 10pt;" />
+					</p:column>
+					
+					<p:column style="text-align: center;"  headerText="Status Cartorio"
+						filterBy="#{ina60.ultimoCartorio.status}" filterMatchMode="contains">
+						<p:outputLabel value="#{ina60.ultimoCartorio.status}" />
 					</p:column>
 
 					<p:column>
@@ -483,28 +512,56 @@
 		</p:dialog>	
 		<p:dialog header="3 ou Mais Parcelas em Atraso - Contratos" overflow="auto"
 			widgetVar="ina90Dialog" resizable="true" style="FONT-SIZE: 13pt;"
-			width="800" minWidth="800">
+			width="1000" minWidth="1000">
 			<h:form id="ina90Form">
 				<p:dataTable var="ina90" rows="10" paginator="true"
 					currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
 					value="#{dadosEmpresaMB.contratosInadimplencia90}"
 					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
 
-					<p:column style="text-align: center"  headerText="Numero Contrato"
+					<p:column style="text-align: center; width:65px"  headerText="Numero Contrato"
 						filterBy="#{ina90.numeroContrato}" filterMatchMode="contains">
 						<p:outputLabel value="#{ina90.numeroContrato}"
-							styleClass="labelBold" style="FONT-SIZE: 10pt;width:100px;" />
-						<p:spacer width="10" height="10" />
+							styleClass="labelBold" style="FONT-SIZE: 10pt;" />
 					</p:column>
 
 					<p:column style="text-align: center"  headerText="Pagador"
 						filterBy="#{ina90.pagador.nome}" filterMatchMode="contains">
 						<p:outputLabel value="#{ina90.pagador.nome}"
-							style="FONT-SIZE: 10pt;width:100px;" />
-						<p:spacer width="10" height="10" />
+							style="FONT-SIZE: 10pt;" />
+					</p:column>
+					
+					<p:column style="text-align: center; width:75px"  headerText="Valor CCI"
+						filterBy="#{ina90.valorCCB}" filterMatchMode="contains">
+						<p:outputLabel value="#{ina90.valorCCB}"
+							converter="bigDecimalConverter"
+							style="FONT-SIZE: 10pt;" />
+					</p:column>
+					
+					<p:column style="text-align: center; width:20px"  headerText="Qtd Parcelas Atraso"
+						filterBy="#{ina90.qtdParcelasAtraso}" filterMatchMode="contains" >
+						<p:outputLabel value="#{ina90.qtdParcelasAtraso}"
+							style="FONT-SIZE: 10pt;" />
+					</p:column>
+					
+					<p:column style="text-align: center; width:20px"  headerText="Está em cartório?"
+						filterBy="#{ina90.contratoEmCartorio}" filterMatchMode="contains" >
+						<p:outputLabel value="Sim" rendered="#{ina90.contratoEmCartorio}" style="FONT-SIZE: 10pt;" />
+						<p:outputLabel value="Não" rendered="#{!ina90.contratoEmCartorio}" style="FONT-SIZE: 10pt;" />
+					</p:column>
+					
+					<p:column style="text-align: center; width:75px"  headerText="Soma Parcelas Atraso"
+						filterBy="#{ina90.somaParcelasAtraso}" filterMatchMode="contains">
+						<p:outputLabel value="#{ina90.somaParcelasAtraso}"
+							converter="bigDecimalConverter" />
+					</p:column>
+					
+					<p:column style="text-align: center;"  headerText="Status Cartorio"
+						filterBy="#{ina90.ultimoCartorio.status}" filterMatchMode="contains">
+						<p:outputLabel value="#{ina90.ultimoCartorio.status}" />
 					</p:column>
 
-					<p:column>
+					<p:column style="width:200px" >
 						<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA, PROFILE_COBRANCA">
 							<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditar}"
 								ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar">
@@ -516,7 +573,7 @@
 								<f:setPropertyActionListener
 									target="#{contratoCobrancaMB.deleteMode}" value="false" />
 							</p:commandButton>
-							<p:spacer width="5" />
+							<p:spacer width="2" />
 						</shiro:hasAnyRoles>
 
 						<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA">
@@ -534,7 +591,7 @@
 									target="#{contratoCobrancaMB.origemTelaBaixar}"
 									value="CobrancaConsultar" />
 							</p:commandButton>
-							<p:spacer width="5" />
+							<p:spacer width="2" />
 						</shiro:hasAnyRoles>
 
 						<shiro:hasAnyRoles name="ROOT">
@@ -630,7 +687,7 @@
 							<p:spacer width="5" />
 						</shiro:hasAnyRoles>
 
-						<shiro:hasAnyRoles name="ROOT">-
+						<shiro:hasAnyRoles name="ROOT">
 							<p:commandButton
 								action="#{contratoCobrancaMB.clearFieldsExcluir}" ajax="false"
 								icon="ui-icon-trash" value="Excluir" title="Excluir">

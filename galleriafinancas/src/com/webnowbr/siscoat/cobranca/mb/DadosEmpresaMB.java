@@ -33,6 +33,7 @@ import org.primefaces.model.charts.optionconfig.tooltip.Tooltip;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
+import com.webnowbr.siscoat.cobranca.db.op.CartorioDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
@@ -173,6 +174,7 @@ public class DadosEmpresaMB {
 			
 
 		for(ContratoCobranca contrato : this.contratos) {
+			BigDecimal valorVencido = BigDecimal.ZERO;
 			this.qtdDeparcelasVencidas = 0;
 			for (ContratoCobrancaDetalhes ccd : contrato.getListContratoCobrancaDetalhes()) {
 				dataVencimentoParcela.setTime(ccd.getDataVencimento());		
@@ -201,14 +203,15 @@ public class DadosEmpresaMB {
 				
 				if (ccd.isParcelaPaga()) {
 					this.valorUltimaPareclaPaga = ccd.getVlrSaldoParcela();
-					if(!CommonsUtil.mesmoValor(ccd.getNumeroParcela(), "Amortização")) {
+					if(!CommonsUtil.mesmoValor(ccd.getNumeroParcela(), "Amortização") && !CommonsUtil.mesmoValor(ccd.getNumeroParcela(), "Acerto Saldo")) {
 						this.prazoContrato = contrato.getQtdeParcelas() - CommonsUtil.intValue(ccd.getNumeroParcela());
 					}
 				} else if (ccd.isParcelaVencida()) {
 					if(dataVencimentoParcela.after(dataVencimentoMínima)) {
 						this.qtdDeparcelasVencidas++;
+						valorVencido = valorVencido.add(ccd.getVlrParcela());
 					}
-					
+				
 					this.totalAVencer = this.totalAVencer.add(valorParcela);
 				}  else {
 					this.totalAVencer = this.totalAVencer.add(valorParcela);
@@ -218,6 +221,11 @@ public class DadosEmpresaMB {
 					ltv = ccd.getVlrSaldoParcela().divide(contrato.getValorImovel(), MathContext.DECIMAL128);
 				}
 			}
+			
+			CartorioDao dao = new CartorioDao();
+			contrato.qtdParcelasAtraso = qtdDeparcelasVencidas;
+			contrato.somaParcelasAtraso = valorVencido;
+			contrato.ultimoCartorio = dao.consultaUltimoCartorio(contrato);
 			
 			if(CommonsUtil.mesmoValor(this.prazoContrato, 0) || CommonsUtil.mesmoValor(this.valorUltimaPareclaPaga, BigDecimal.ZERO)) {
 				this.totalContratosConsultar--;

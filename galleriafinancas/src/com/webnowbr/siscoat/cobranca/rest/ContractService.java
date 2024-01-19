@@ -37,6 +37,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorAdicionaisDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
+import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
@@ -665,6 +666,63 @@ public class ContractService {
 									: this.objetoContratoCobranca.getImovel().getValoEstimado());
 
 							this.objetoContratoCobranca.setImovel(this.objetoImovelCobranca);
+							
+							//Novos campos referentes a NF
+							this.objetoContratoCobranca
+									.setNotaFiscalEmitida(contratoAPP.has("notaFiscalEmitida") ? contratoAPP.getBoolean("notaFiscalEmitida")
+									: this.objetoContratoCobranca.isNotaFiscalEmitida());
+							
+							this.objetoContratoCobranca
+									.setNotaFiscalEmitidaUsuario(contratoAPP.has("usuarioNotaFiscalEmitida") ? contratoAPP.getString("usuarioNotaFiscalEmitida")
+									: this.objetoContratoCobranca.getNotaFiscalEmitidaUsuario());
+							
+							if (contratoAPP.has("dataNotaFiscalEmitida")) {
+								Date dateNotaFiscalEmitida;
+								try {
+									dateNotaFiscalEmitida = dataPadraoSql
+											.parse(contratoAPP.getString("dataNotaFiscalEmitida"));
+								} catch (Exception e) {
+									dateNotaFiscalEmitida = CommonsUtil.dateValue(
+											contratoAPP.getString("dataNotaFiscalEmitida"), "yyyy-MM-dd HH:mm");
+								}
+		
+								this.objetoContratoCobranca.setNotaFiscalEmitidaData(dateNotaFiscalEmitida);
+							}
+							
+							this.objetoContratoCobranca
+									.setNotaFiscalPaga(contratoAPP.has("notaFiscalPaga") ? contratoAPP.getBoolean("notaFiscalPaga")
+									: this.objetoContratoCobranca.isNotaFiscalPaga());
+					
+							this.objetoContratoCobranca
+									.setNotaFiscalPagaUsuario(contratoAPP.has("usuarioNotaFiscalPaga") ? contratoAPP.getString("usuarioNotaFiscalPaga")
+									: this.objetoContratoCobranca.getNotaFiscalPagaUsuario());
+							
+							if (contratoAPP.has("dataNotaFiscalPaga")) {
+								Date dateNotaFiscalPaga;
+								try {
+									dateNotaFiscalPaga = dataPadraoSql
+											.parse(contratoAPP.getString("dataNotaFiscalPaga"));
+								} catch (Exception e) {
+									dateNotaFiscalPaga = CommonsUtil.dateValue(
+											contratoAPP.getString("dataNotaFiscalPaga"), "yyyy-MM-dd HH:mm");
+								}
+		
+								this.objetoContratoCobranca.setNotaFiscalEmitidaData(dateNotaFiscalPaga);
+							}
+							
+							/*if (contratoAPP.has("dataUltimaAtualizacao")) {
+								Date dateUltimaAtualizacao;
+								try {
+									dateUltimaAtualizacao = dataPadraoSql
+											.parse(contratoAPP.getString("dataUltimaAtualizacao"));
+								} catch (Exception e) {
+									dateUltimaAtualizacao = CommonsUtil.dateValue(
+											contratoAPP.getString("dataUltimaAtualizacao"), "yyyy-MM-dd HH:mm");
+								}
+		
+								this.objetoContratoCobranca.setDataUltimaAtualizacao(dateUltimaAtualizacao);
+							}*/
+							
 
 							// atualizar contrato
 							atualizarContratoBD();
@@ -677,16 +735,26 @@ public class ContractService {
 							this.objetoContratoCobranca
 									.setContratoPrioridadeAlta(contratoAPP.has("contratoPrioridadeAlta")
 											? contratoAPP.getBoolean("contratoPrioridadeAlta")
-											: false);
-							this.objetoContratoCobranca
-									.setContratoPrioridadeAltaData(contratoAPP.has("contratoPrioridadeAltaData")
-											? dataPadraoSql.parse(contratoAPP.getString("contratoPrioridadeAltaData"))
-											: null);
+											: false); 
+											
+							if (contratoAPP.has("contratoPrioridadeAltaData")) {
+								Date datePrioridade;
+								try {
+									datePrioridade = dataPadraoSql
+											.parse(contratoAPP.getString("contratoPrioridadeAltaData"));
+								} catch (Exception e) {
+									datePrioridade = CommonsUtil.dateValue(
+											contratoAPP.getString("contratoPrioridadeAltaData"), "yyyy-MM-dd HH:mm");
+								}
+
+								this.objetoContratoCobranca.setContratoPrioridadeAltaData(datePrioridade);
+							}
+							
 							this.objetoContratoCobranca
 									.setContratoPrioridadeAltaUser(contratoAPP.has("contratoPrioridadeAltaUser")
 											? contratoAPP.getString("contratoPrioridadeAltaUser")
 											: null);
-
+	
 							try {
 								contratoCobrancaDao.merge(this.objetoContratoCobranca);
 							} catch (RuntimeException e) {

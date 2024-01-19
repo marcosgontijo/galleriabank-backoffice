@@ -8,6 +8,7 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -143,6 +144,7 @@ public class SimuladorMB {
 	
 		
 		SimulacaoVO simulador = new SimulacaoVO();
+		//simulador.setDataSimulacao(new Date(2024-1900, 1, 10));
 		simulador.setDataSimulacao(DateUtil.getDataHoje());
 		simulador.setTarifaIOFDiario(tarifaIOFDiario);
 		simulador.setTarifaIOFAdicional(tarifaIOFAdicional);

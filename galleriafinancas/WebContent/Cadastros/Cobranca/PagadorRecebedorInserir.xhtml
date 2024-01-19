@@ -67,6 +67,9 @@
 								event="valueChange"
 								listener="#{pagadorRecebedorMB.selectedTipoPessoa}" />
 						</p:selectOneRadio>
+						
+						
+						
 	
 						<p:outputLabel for="Cpf" value="CPF: " styleClass="labelBold"
 							rendered="#{pagadorRecebedorMB.tipoPessoaIsFisica}" />
@@ -289,15 +292,7 @@
 							<f:selectItem itemValue="TO" itemLabel="TOCANTINS" />
 						</p:selectOneMenu>
 						
-						<shiro:lacksRole name="PROFILE_COBRANCA">
-							<p:outputLabel for="Observacao1" value="Observação: " />
-							<p:inputTextarea id="Observacao1" rows="10" cols="48"
-								maxlength="3000"
-								onblur=""
-								counterTemplate="{0} characters remaining." autoResize="false"
-								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.observacao1}" />
-								<p:outputLabel id="display" />		
-						</shiro:lacksRole>
+					
 					</h:panelGrid>
 					
 					<!--  <h:panelGrid columns="1">
@@ -315,6 +310,25 @@
 					</h:panelGrid> -->
 					
 				</h:panelGrid>
+				
+				<p:panel id="PanelBlackFlag" header="Black Flag"
+					style="margin-bottom:10px;margin-top:20px;">
+						<h:panelGrid columns="1">
+						<p:selectBooleanButton id="Restricao" value="#{pagadorRecebedorMB.objetoPagadorRecebedor.restricao}" onLabel="Sim" offLabel="Não" onIcon="ui-icon ui-icon-check" offIcon="ui-icon ui-icon-close" style="width:60px">
+				        </p:selectBooleanButton>
+				        
+					</h:panelGrid><h:panelGrid columns="2">
+						<shiro:lacksRole name="PROFILE_COBRANCA">
+							<p:outputLabel for="Observacao1" value="Observação: " />
+							<p:inputTextarea id="Observacao1" rows="10" cols="48"
+								maxlength="3000"
+								onblur=""
+								counterTemplate="{0} characters remaining." autoResize="false"
+								value="#{pagadorRecebedorMB.objetoPagadorRecebedor.observacao1}" />
+								<p:outputLabel id="display" />		
+						</shiro:lacksRole>		
+						</h:panelGrid>
+				</p:panel>
 
 				<p:panel id="PanelCasado" header="Estado Civil"
 					style="margin-bottom:10px;margin-top:20px;"

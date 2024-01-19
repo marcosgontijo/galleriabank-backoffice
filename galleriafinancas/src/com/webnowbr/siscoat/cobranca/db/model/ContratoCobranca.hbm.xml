@@ -1171,6 +1171,14 @@
             <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.CcbParticipantes" />
         </set>
         
+        <set name="listaImoveis" table="ImovelCobrancaAdicionais" cascade="all-delete-orphan"
+                 lazy="false" fetch="select">
+            <key>
+                <column name="contratoCobranca" not-null="true" />
+            </key>
+            <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.ImovelCobrancaAdicionais" />
+        </set>
+        
         <property name="tipoCalculoInvestidor1" type="java.lang.String">
 			<column name="tipoCalculoInvestidor1" />
 		</property>
@@ -2005,7 +2013,7 @@
 		<property name="analisePendenciadaUsuario" type="java.lang.String">
 			<column name="analisePendenciadaUsuario" />
 		</property>
-		
+					
 		<property name="userCadastro" type="java.lang.String">
 			<column name="userCadastro" />
 		</property>	
@@ -2299,6 +2307,70 @@
 		</property>
 		<property name="comentarioJuricoComPajuVencido" type="boolean">
 			<column name="comentarioJuricoPajuVencido" not-null="true" default="false"/>
+		</property>
+		
+		<property name="dataContratoAssinado" type="java.util.Date">
+			<column name="dataContratoAssinado" />
+		</property>
+		
+		<property name="porcentagemImovelPrincipal" type="big_decimal">
+			<column name="porcentagemImovelPrincipal" />
+		</property>
+		
+		<property name="valorRegistroImovelPrincipal" type="big_decimal">
+			<column name="valorRegistroImovelPrincipal" />
+		</property>
+		
+		<property name="pendenciaExternaCartorio" type="boolean">
+			<column name="pendenciaExternaCartorio" not-null="true" default="false"/>
+		</property>
+		
+		<property name="pendenciaResolvidaCartorioData" type="java.util.Date">
+			<column name="pendenciaResolvidaCartorioData" />
+		</property>
+		<property name="pendenciaResolvidaCartorio" type="boolean">
+			<column name="pendenciaResolvidaCartorio" not-null="true" default="false"/>
+		</property>	
+		<property name="pendenciaResolvidaCartorioUsuario" type="java.lang.String">
+			<column name="pendenciaResolvidaCartorioUsuario" />
+		</property>
+		
+		<property name="resolucaoExigenciaCartorioData" type="java.util.Date">
+			<column name="resolucaoExigenciaCartorioData" />
+		</property>
+		<property name="resolucaoExigenciaCartorio" type="boolean">
+			<column name="resolucaoExigenciaCartorio" not-null="true" default="false"/>
+		</property>	
+		<property name="resolucaoExigenciaCartorioUsuario" type="java.lang.String">
+			<column name="resolucaoExigenciaCartorioUsuario" />
+		</property>
+		
+		<property name="pendenciaCartorioObservacao" type="java.lang.String">
+			<column name="pendenciaCartorioObservacao" />
+		</property>
+		
+		<property name="notificacaoCobrancaData" type="java.util.Date">
+			<column name="notificacaoCobrancaData" />
+		</property>
+		
+		<property name="notaFiscalEmitidaData" type="java.util.Date">
+			<column name="dataNotaFiscalEmitida" />
+		</property>
+		<property name="notaFiscalEmitida" type="boolean">
+			<column name="notaFiscalEmitida" not-null="true" default="false"/>
+		</property>	
+		<property name="notaFiscalEmitidaUsuario" type="java.lang.String">
+			<column name="usuarioNotaFiscalEmitida" />
+		</property>
+		
+		<property name="notaFiscalPagaData" type="java.util.Date">
+			<column name="dataNotaFiscalPaga" />
+		</property>
+		<property name="notaFiscalPaga" type="boolean">
+			<column name="notaFiscalPaga" not-null="true" default="false"/>
+		</property>	
+		<property name="notaFiscalPagaUsuario" type="java.lang.String">
+			<column name="usuarioNotaFiscalPaga" />
 		</property>
 		
 	</class>

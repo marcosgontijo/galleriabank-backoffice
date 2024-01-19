@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui">
+	<br/>
+	<p:panel id="panelRestricao"
+					style="margin-bottom:20px;background-color: black;"
+					rendered="#{contratoCobrancaMB.possuiBlackFlag}">
+					<p:outputLabel value="Restricao" styleClass="labelBold"
+						style="width:250px;font-weight: bold; font-size: 18px;margin-top: 50px;color:white" />
+
+					<h:panelGrid columns="1">
+					
+						<ui:repeat value="#{contratoCobrancaMB.restricaoImovel}"
+							var="restricao">
+							<p:outputLabel value="#{restricao}" styleClass="labelBold"
+								style="width:250px;font-weight: bold; font-size: 18px;margin-top: 50px;color:white" />								
+							<br />
+						</ui:repeat>
+					
+						<ui:repeat value="#{contratoCobrancaMB.restricaoOperacao}"
+							var="restricao">
+							<p:outputLabel value="#{restricao}" styleClass="labelBold"
+								style="width:250px;font-weight: bold; font-size: 18px;margin-top: 50px;color:white" />								
+							<br />
+						</ui:repeat>
+						
+					</h:panelGrid>
+				</p:panel>
+</ui:composition>

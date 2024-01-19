@@ -52,7 +52,7 @@
 
 				</h:panelGrid>
 			</p:panel>
-			<p:panel id="ConsultaContratosResultados" header="StarkBank - Aprovação de Pagamentos Pendentes" style="margin-bottom:10px;">		    		    
+			<p:panel id="ConsultaContratosResultados" header="[Despesas] StarkBank - Aprovação de Pagamentos Pendentes" style="margin-bottom:10px;">		    		    
                  <p:dataTable id="dtContratos" var="pagamento" value="#{contratoCobrancaMB.pagamentosStarkBankPendentes}" selection="" emptyMessage="" sortBy="#{pagamento.dataPagamento}" sortOrder="descending"
    		         reflow="true"
    		         rows="10"
@@ -153,6 +153,214 @@
 								<p:outputLabel value="Linha Digitável: " 
 									styleClass="labelBold"/>
 								<p:outputLabel value="#{pagamento.contasPagar.linhaDigitavelStarkBank}"/>												
+							</h:panelGrid>												
+						</p:panel>
+						<p:panel id="PixStarkBank" header="PIX"
+							style="margin-bottom:10px;" rendered="#{pagamento.contasPagar.formaTransferencia eq 'PIX'}">
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Chave PIX:" 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.pix}"/>	
+								
+								<p:outputLabel value="Banco:" 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.bancoTed}"/>	
+		
+								<p:outputLabel value="Banco:" 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.agenciaTed}"/>
+								
+								<p:outputLabel value="Banco:" 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.contaTed}"/>		
+								
+								<p:outputLabel value="Nome: " 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.nomeTed}"/>													
+							</h:panelGrid>												
+						</p:panel>
+						<p:panel id="TedStarkBank" header="TED"
+							style="margin-bottom:10px;" rendered="#{pagamento.contasPagar.formaTransferencia eq 'TED'}">
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Banco:" 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.bancoTed}"/>	
+		
+								<p:outputLabel value="Banco:" 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.agenciaTed}"/>
+								
+								<p:outputLabel value="Banco:" 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.contaTed}"/>		
+								
+								<p:outputLabel value="Nome: " 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.nomeTed}"/>										
+							</h:panelGrid>												
+						</p:panel>
+			        </p:rowExpansion>      
+			        <p:column styleClass="colunaResponsiva">	
+			       		<shiro:hasAnyRoles name="ROOT">  
+				        	<p:commandButton action="#{contratoCobrancaMB.processaPagamentoStarkBank()}" ajax="false" icon="ui-icon-print" value="Aprovar Pagamento" title="Aprovar Pagamento">
+				        		<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoBaixaPagamentoStarkBank}" value="#{pagamento}" />
+			                </p:commandButton>
+			                <p:spacer width="10" height="10"/>		
+			                <p:commandButton oncomplete="PF('baixasStarkBankdlg').show();"
+											icon="ui-icon-video" title="Reprovar Pagamento" value="Reprovar Pagamento"
+											update=":starkBankBaixasForm">
+								<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoBaixaPagamentoStarkBank}" value="#{pagamento}" />								
+							</p:commandButton>
+			                <p:spacer width="10" height="10"/>	
+			            </shiro:hasAnyRoles>               
+		            </p:column>			        		               		        			        			           			 		
+				</p:dataTable>
+			</p:panel>
+			<p:panel id="ConsultaContratosResultadosCartaSplit" header="[Carta Split] StarkBank - Aprovação de Pagamentos Pendentes" style="margin-bottom:10px;">		    		    
+                 <p:dataTable id="dtContratosCartaSplit" var="pagamento" value="#{contratoCobrancaMB.pagamentosStarkBankPendentesCartaSplit}" selection="" emptyMessage="" sortBy="#{pagamento.dataPagamento}" sortOrder="descending"
+	   		         reflow="true"
+	   		         rows="10"
+	                 paginator="true"
+	                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+	                 currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+	                 rowsPerPageTemplate="10,50,100">  
+                 	<p:column style="width:16px">
+			            <p:rowToggler />
+			        </p:column> 
+                 	<p:column style="text-align: center;width:105px;" headerText="Contrato">
+			            <h:outputText value="#{pagamento.contasPagar.contrato.numeroContrato}" />
+			        </p:column>          
+                	<p:column style="text-align: center;width:105px;" headerText="Nome" >
+			            <h:outputText value="#{pagamento.nomePagador}" />
+			        </p:column>
+			        <p:column style="text-align: center;width:105px;" headerText="Despesa" >
+			            <h:outputText value="#{pagamento.contasPagar.descricao}" />
+			        </p:column>
+			        <p:column style="text-align: center;width:105px;" headerText="Forma de Pagamento">
+			            <h:outputText value="#{pagamento.formaPagamento}" />
+			        </p:column>  
+			        <p:column style="text-align: center;" headerText="Data Pagamento" sortBy="#{pagamento.dataPagamento}">
+			            <h:outputText value="#{pagamento.dataPagamento}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+			            </h:outputText>
+			        </p:column>		
+			        <p:column style="text-align: center;" headerText="Valor (R$)"  >
+						<p:outputLabel value="#{pagamento.valor}" 
+							style="FONT-SIZE: 10pt;"
+							converter="bigDecimalConverter" />
+					</p:column>   
+					<p:rowExpansion>
+						<p:panel id="TEDStarkBankCartaSplit" header="TED"
+							style="margin-bottom:10px;" rendered="#{pagamento.contasPagar.formaTransferencia eq 'TED'}">
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Nome:" 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.contrato.nomeBancarioContaPagar}"/>	
+		
+								<p:outputLabel value="CPF/CNPJ: " 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.contrato.cpfCnpjBancarioContaPagar}"/>
+		
+								<p:outputLabel value="Banco: " 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.contrato.bancoBancarioContaPagar}"/>
+		
+								<p:outputLabel value="Agência: " 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.contrato.agenciaBancarioContaPagar}"/>
+		
+								<p:outputLabel value="C/C: " 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.contrato.contaBancarioContaPagar}"/>								
+							</h:panelGrid>												
+						</p:panel>
+						<p:panel id="PIXStarkBankCartaSplit" header="PIX"
+							style="margin-bottom:10px;" rendered="#{pagamento.contasPagar.formaTransferencia eq 'Pix'}">
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Nome:" 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.contrato.nomeBancarioContaPagar}"/>	
+		
+								<p:outputLabel value="CPF/CNPJ: " 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.contrato.cpfCnpjBancarioContaPagar}"/>
+		
+								<p:outputLabel value="Banco: " 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.contrato.bancoBancarioContaPagar}"/>
+		
+								<p:outputLabel value="Agência: " 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.contrato.agenciaBancarioContaPagar}"/>
+		
+								<p:outputLabel value="C/C: " 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.contrato.contaBancarioContaPagar}"/>	
+								
+								<p:outputLabel value="Chave Pix: " 
+									style="width:250px;" styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.contrato.chavePIXBancarioContaPagar}"/>														
+							</h:panelGrid>												
+						</p:panel>
+						<p:panel id="BoletoStarkBankCartaSplit" header="Boleto"
+							style="margin-bottom:10px;" rendered="#{pagamento.contasPagar.formaTransferencia eq 'Boleto'}">
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Recebedor:" 
+									styleClass="labelBold"/>
+								<p:outputLabel value=" "/>	
+		
+								<p:outputLabel value="CPF/CNPJ Recebedor boleto: " 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.numeroDocumentoPagadorStarkBank}"/>
+		
+								<p:outputLabel value="Linha Digitável: " 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.linhaDigitavelStarkBank}"/>												
+							</h:panelGrid>												
+						</p:panel>
+						<p:panel id="PixStarkBankCartaSplit" header="PIX"
+							style="margin-bottom:10px;" rendered="#{pagamento.contasPagar.formaTransferencia eq 'PIX'}">
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Chave PIX:" 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.pix}"/>	
+								
+								<p:outputLabel value="Banco:" 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.bancoTed}"/>	
+		
+								<p:outputLabel value="Banco:" 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.agenciaTed}"/>
+								
+								<p:outputLabel value="Banco:" 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.contaTed}"/>		
+								
+								<p:outputLabel value="Nome: " 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.nomeTed}"/>													
+							</h:panelGrid>												
+						</p:panel>
+						<p:panel id="TedStarkBankCartaSplit" header="TED"
+							style="margin-bottom:10px;" rendered="#{pagamento.contasPagar.formaTransferencia eq 'TED'}">
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Banco:" 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.bancoTed}"/>	
+		
+								<p:outputLabel value="Banco:" 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.agenciaTed}"/>
+								
+								<p:outputLabel value="Banco:" 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.contaTed}"/>		
+								
+								<p:outputLabel value="Nome: " 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.nomeTed}"/>										
 							</h:panelGrid>												
 						</p:panel>
 			        </p:rowExpansion>      

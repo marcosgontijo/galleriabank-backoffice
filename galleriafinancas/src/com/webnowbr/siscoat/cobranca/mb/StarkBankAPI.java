@@ -40,9 +40,11 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankBoleto;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankPix;
+import com.webnowbr.siscoat.cobranca.db.model.StarkBankTax;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.StarkBankBoletoDAO;
 import com.webnowbr.siscoat.cobranca.db.op.StarkBankPixDAO;
+import com.webnowbr.siscoat.cobranca.db.op.StarkBankTaxDAO;
 import com.webnowbr.siscoat.common.DateUtil;
 
 @ManagedBean(name = "starkBankAPI")
@@ -393,19 +395,91 @@ public class StarkBankAPI{
     	pagador = pDao.findById((long) 7);
     	
     	
-    	paymentBoleto(linhaDigitavel, null, pagador, descricao, null);
+    	paymentBoleto(linhaDigitavel, null, pagador, descricao, null, null);
     	
     	context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Boleto Stark Bank - Pago", ""));
     	
     }
+    
+	public StarkBankTax paymentTax(String barCode, String descricao) {
 
-	public StarkBankBoleto paymentBoleto(String boleto, ContratoCobranca contrato, PagadorRecebedor pessoa, String descricao, String documentoPagadorCustom) {
+		FacesContext context = FacesContext.getCurrentInstance();
+		StarkBankTax taxTransacao = null;
+    	String[] tags = {""};
+    	
+    	loginStarkBank();
+
+    	Settings.language = "pt-BR";
+
+    	try {
+	    	List<BoletoPayment> payments = new ArrayList<>();
+	    	HashMap<String, Object> data = new HashMap<>();
+	    	data.put("line", barCode);    	
+
+	    	data.put("scheduled", DateUtil.getDataHojeAmericano());
+	    	data.put("description", descricao);
+	
+			payments.add(new BoletoPayment(data));
+	
+	    	payments = BoletoPayment.create(payments);
+
+	    	for (BoletoPayment payment : payments){
+	    		String tagsStr = "";
+	    		if (payment.tags.length > 0) {
+	    			for (String tag : tags) {
+	    				if (tag.equals("")) {
+	    					tagsStr = tag;
+	    				} else {
+	    					tagsStr = tagsStr + " | " + tag;
+	    				}
+	    			}
+	    		}
+	    
+	    		taxTransacao = new StarkBankTax(Long.valueOf(payment.id), BigDecimal.valueOf(payment.amount), tagsStr, payment.description, payment.scheduled,
+	    				payment.line, payment.barCode, payment.status, DateUtil.convertDateTimeToDate(payment.created), null, null);
+	    		
+	    		StarkBankTaxDAO starkBankTaxDAO = new StarkBankTaxDAO();
+	    		starkBankTaxDAO.create(taxTransacao);
+	    		
+	    		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"[StarkBank - Pagamento Imposto] Imposto Pago com Sucesso! Transação: " + payment.id, ""));
+	    	}
+    	
+		} catch (Exception e) {
+			JSONObject erroStarkBank = new JSONObject(e.getMessage());
+			JSONArray erros = new JSONArray(erroStarkBank.getJSONArray("errors"));
+			
+			String errosStrStarkBank = "";
+			for (int i = 0; i < erros.length(); i++) {
+				JSONObject dados = erros.getJSONObject(i);
+				
+				if (errosStrStarkBank.equals("")) {
+					errosStrStarkBank = i + "-" + dados.getString("message").replace("Element 0: ", "");
+				} else {
+					errosStrStarkBank = errosStrStarkBank + " | " + i + "-" + dados.getString("message").replace("Element 0: ", "");
+				}
+			}	
+			
+			if (!errosStrStarkBank.equals("")) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"[StarkBank - Pagamento Boleto] Falha no pagamento: " + errosStrStarkBank, ""));
+			}
+		}
+    	
+    	 return taxTransacao;
+    }
+
+	public StarkBankBoleto paymentBoleto(String boleto, ContratoCobranca contrato, PagadorRecebedor pessoa, String descricao, String documentoPagadorCustom, String descricaoConta) {
 
 		FacesContext context = FacesContext.getCurrentInstance();
     	StarkBankBoleto boletoTransacao = null;
     	String[] tags = {""};
     	
-    	loginStarkBank();
+    	if (descricaoConta == null || !descricaoConta.equals("Pagamento Carta Split")) {
+    		loginStarkBank();
+    	} else {
+    		loginStarkBankSCD();
+    	}
     	
     	Settings.language = "pt-BR";
 
@@ -490,6 +564,7 @@ public class StarkBankAPI{
     }
 	
 	public static void loginStarkBank() {
+		System.out.println("processaPagamentoStarkBank - Login Correspondente");
     	Settings.language = "pt-BR";
     	
     	String privateKeyContent = "-----BEGIN EC PARAMETERS-----\nBgUrgQQACg==\n-----END EC PARAMETERS-----\n-----BEGIN EC PRIVATE KEY-----\nMHQCAQEEIAKGZfO+lee7tdtcLGbCT++oGyUcmm/2Jdozg8D8mF4ioAcGBSuBBAAKoUQDQgAEUvi66NomZ1HeFqEwrXvnM/IjDQEJjVp6nYYojlOsTP1tYO34tW+bO1ypWln5lfkDNCcARQ710SmPPrLRHRbMAA==\n-----END EC PRIVATE KEY-----";
@@ -500,6 +575,30 @@ public class StarkBankAPI{
 				    "production",
 				    //"5465772415516672", // financas
 				    "5092647223951360", // coban
+				    privateKeyContent
+				);
+			
+	    	Settings.user = project;
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+	
+	public static void loginStarkBankSCD() {
+		System.out.println("processaPagamentoStarkBank - Login SCD");
+		
+    	Settings.language = "pt-BR";
+    	
+    	String privateKeyContent = "-----BEGIN EC PRIVATE KEY-----\nMHQCAQEEIE56ofDNqzdDCrYEAnwpq2CiEfknPhBV+NTWBtpYEy90oAcGBSuBBAAK\noUQDQgAEsXCtulqc9kC5Tkmy/wuJ6JIq8R+GWJzlqmp/pO4r4i76BFivs4hVBZrS\nD5Sil3MxCjUjKbr95ZxDjuq4dYCBOA==\n-----END EC PRIVATE KEY-----";
+    	
+    	Project project;
+		try {
+			project = new Project(
+				    "production",
+				    //"5465772415516672", // financas
+				    //"5092647223951360", // coban
+				    "6562009682280448",
 				    privateKeyContent
 				);
 			
@@ -547,16 +646,20 @@ public class StarkBankAPI{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    }
+    }    
     
-    public StarkBankPix paymentPix(String codigoPixBanco, String agencia, String numeroConta, String documento, String nomeBeneficiario, BigDecimal valor, String tipoOperacao) {
+    public StarkBankPix paymentPix(String codigoPixBanco, String agencia, String numeroConta, String documento, String nomeBeneficiario, BigDecimal valor, String tipoOperacao, String descricaoConta) {
     	FacesContext context = FacesContext.getCurrentInstance();
     	
     	List<Transfer> transfers = new ArrayList<>();
 
     	List<Transfer.Rule> rules = new ArrayList<>();
     
-    	loginStarkBank(); 
+    	if (descricaoConta != null && descricaoConta.contains("Pagamento Carta Split")) {
+    		loginStarkBankSCD();
+    	} else {
+    		loginStarkBank();    		
+    	}
     	
     	Date dataHoje = DateUtil.gerarDataHoje();
     	
@@ -620,15 +723,19 @@ public class StarkBankAPI{
     	
     	return null;
     }
-    
-    public StarkBankPix paymentTED(String codigoBanco, String agencia, String numeroConta, String documento, String nomeBeneficiario, BigDecimal valor, String tipoOperacao) {
+    	
+    public StarkBankPix paymentTED(String codigoBanco, String agencia, String numeroConta, String documento, String nomeBeneficiario, BigDecimal valor, String tipoOperacao, String descricaoConta) {
     	FacesContext context = FacesContext.getCurrentInstance();
     	
     	List<Transfer> transfers = new ArrayList<>();
 
     	List<Transfer.Rule> rules = new ArrayList<>();
     
-    	loginStarkBank(); 
+    	if (descricaoConta != null && descricaoConta.contains("Pagamento Carta Split")) {
+    		loginStarkBankSCD();
+    	} else {
+    		loginStarkBank();    		
+    	}
     	
     	Date dataHoje = DateUtil.gerarDataHoje();
     	
@@ -636,16 +743,19 @@ public class StarkBankAPI{
 	    	rules.add(new Transfer.Rule("resendingLimit", 5));
 	
 	    	HashMap<String, Object> data = new HashMap<>();
-	    	data.put("amount", valor);
+	    	String valorStr = valor.toString();
+	    	data.put("amount", Long.valueOf(valorStr.replace(".", "").replace(",", "")));	
 	    	data.put("bankCode", codigoBanco);
 	    	data.put("branchCode", agencia);
 	    	data.put("accountNumber", numeroConta);
 	    	data.put("taxId", documento);
 	    	data.put("name", nomeBeneficiario);
-	    	data.put("externalId", "PagamentoPix-" + nomeBeneficiario.replace(" ", "") + DateUtil.todayInMilli());
+	    	data.put("externalId", "PagamentoTED-" + nomeBeneficiario.replace(" ", "") + DateUtil.todayInMilli());
 	    	//data.put("scheduled", "2020-08-14");
 	    	//data.put("tags", new String[]{"daenerys", "invoice/1234"});
 	    	//data.put("rules", rules);
+	    	
+	    	System.out.println("Payment TED Payload - " + data);
 	    	
 			transfers.add(new Transfer(data));
 			
@@ -667,12 +777,12 @@ public class StarkBankAPI{
 	    	starkBankPixDAO.create(pixTransacao);
 	    	
 	    	context.addMessage(null, new FacesMessage(
-					FacesMessage.SEVERITY_ERROR, "StarkBank PIX: Pagamento efetuado com sucesso!", ""));
+					FacesMessage.SEVERITY_INFO, "StarkBank TED: Pagamento efetuado com sucesso!", ""));
 	    	
 	    	return pixTransacao;
 		} catch (Exception e) {
 			context.addMessage(null, new FacesMessage(
-					FacesMessage.SEVERITY_ERROR, "StarkBank PIX: Ocorreu um problema ao fazer PIX/TED! Erro: " + e, ""));
+					FacesMessage.SEVERITY_ERROR, "StarkBank TED: Ocorreu um problema ao fazer TED! Erro: " + e, ""));
 			
 			// TODO Auto-generated catch block
 			e.printStackTrace();

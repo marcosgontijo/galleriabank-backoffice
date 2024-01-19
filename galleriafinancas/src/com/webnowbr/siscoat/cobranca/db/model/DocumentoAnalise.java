@@ -78,6 +78,10 @@ public class DocumentoAnalise implements Serializable {
 	private String motivoAnalise;
 	private String path;
 	private String tipo;
+	private String origem;
+	private Date dataCadastro; 
+	private String usuarioCadastro;
+	
 	private boolean liberadoAnalise;	
 	private boolean liberadoContinuarAnalise;
 	private boolean liberadoCertidoes;	
@@ -231,58 +235,65 @@ public class DocumentoAnalise implements Serializable {
 	
 	private String dialogHeader() {
 		String str = "";
-		EngineRetorno engine = null;
-		engine = GsonUtil.fromJson(getRetornoEngine(), EngineRetorno.class);
-		if (engine != null) {
-			if (engine.getConsultaCompleta() != null) {
-				EngineRetornoRequestFields nome = engine.getRequestFields().stream().filter(f -> f.getField().equals("nome"))
-						.findFirst().orElse(null);
-
-				EngineRetornoRequestFields cpf = engine.getRequestFields().stream().filter(g -> g.getField().equals("cpf"))
+		try {
+			EngineRetorno engine = null;
+			engine = GsonUtil.fromJson(getRetornoEngine(), EngineRetorno.class);
+			if (engine != null) {
+				if (engine.getConsultaCompleta() != null) {
+					EngineRetornoRequestFields nome = engine.getRequestFields().stream().filter(f -> f.getField().equals("nome"))
 							.findFirst().orElse(null);
-
-				EngineRetornoRequestFields cnpj = engine.getRequestFields().stream()
-							.filter(s -> s.getField().equals("cnpj")).findFirst().orElse(null);
-				
-				if (nome != null) {
-					str = nome.getValue();
-					str = str.trim();
-				}
-				
-				if (cpf != null) {
-					if (engine.getConsultaCompleta() != null && engine.getConsultaCompleta().getBestInfo().getAge() != null) {
-						str = String.join(" - ", str, engine.getConsultaCompleta().getBestInfo().getAge() + " Anos");
-					} else {
-						str = String.join(" - ", str, null);
+	
+					EngineRetornoRequestFields cpf = engine.getRequestFields().stream().filter(g -> g.getField().equals("cpf"))
+								.findFirst().orElse(null);
+	
+					EngineRetornoRequestFields cnpj = engine.getRequestFields().stream()
+								.filter(s -> s.getField().equals("cnpj")).findFirst().orElse(null);
+					
+					if (nome != null) {
+						str = nome.getValue();
+						str = str.trim();
 					}
 					
-					str = String.join(" - ", str, cpf.getValue());
-				}
-				
-				if (cnpj != null) {
-					str = String.join(" - ", str, cnpj.getValue());
-				}
-				if (getMotivoAnalise() != null && !getMotivoAnalise().isEmpty()) {
-					str = String.join(" - ", str, getMotivoAnalise());
-				}
-			} else {
-				if (engine.getDadosCadastraisPJ() != null) {
-					if (engine.getDadosCadastraisPJ().getBestInfo() != null) {						
-						str = engine.getDadosCadastraisPJ().getBestInfo().getCompanyName();
-						str = str.trim();
-						str = String.join(" - ", str, engine.getDadosCadastraisPJ().getCnpj());
+					if (cpf != null) {
+						if (engine.getConsultaCompleta() != null && engine.getConsultaCompleta().getBestInfo().getAge() != null) {
+							str = String.join(" - ", str, engine.getConsultaCompleta().getBestInfo().getAge() + " Anos");
+						} else {
+							str = String.join(" - ", str, null);
+						}
+						
+						str = String.join(" - ", str, cpf.getValue());
 					}
-				}
-			}			
-		} else {
-			str = this.getIdentificacao();
-			str = String.join(" - ", str, this.cnpjcpf);
-
+					
+					if (cnpj != null) {
+						str = String.join(" - ", str, cnpj.getValue());
+					}
+					if (getMotivoAnalise() != null && !getMotivoAnalise().isEmpty()) {
+						str = String.join(" - ", str, getMotivoAnalise());
+					}
+				} else {
+					if (engine.getDadosCadastraisPJ() != null) {
+						if (engine.getDadosCadastraisPJ().getBestInfo() != null) {						
+							str = engine.getDadosCadastraisPJ().getBestInfo().getCompanyName();
+							str = str.trim();
+							str = String.join(" - ", str, engine.getDadosCadastraisPJ().getCnpj());
+						}
+					}
+				}			
+			} else {
+				str = this.getIdentificacao();
+				str = String.join(" - ", str, this.cnpjcpf);
+	
+			}
+			if (this.pagador.getInicioEmpresa() != null) {
+				str = String.join(" - ", str, calcularIdade(this.pagador.getInicioEmpresa()) + " Anos");
+			}
+		} catch (Exception e) {
+			//e.printStackTrace();
 		}
-		if (this.pagador.getInicioEmpresa() != null) {
-			str = String.join(" - ", str, calcularIdade(this.pagador.getInicioEmpresa()) + " Anos");
-		}
-		return str;
+		if(!CommonsUtil.semValor(str))
+			return str;
+		else
+			return "Header";
 	}
 	
 	public String calcularIdade(Date data) {
@@ -514,11 +525,11 @@ public class DocumentoAnalise implements Serializable {
 			}
 
 			if (dado.getResumoDoClienteTraduzido().getCarteiraVencido() == null) {
-				scr.add(new DocumentoAnaliseResumo("Carteira vencido:", "Não Disponível"));
+				scr.add(new DocumentoAnaliseResumo("Carteira vencida:", "Não Disponível"));
 			} else {
 				String carteiraVencido = CommonsUtil
 						.formataValorMonetario(dado.getResumoDoClienteTraduzido().getCarteiraVencido());
-				scr.add(new DocumentoAnaliseResumo("Carteira vencido:", carteiraVencido));
+				scr.add(new DocumentoAnaliseResumo("Carteira vencida:", carteiraVencido));
 				if (dado.getResumoDoClienteTraduzido().getCarteiraVencido().compareTo(new BigDecimal(1000)) > 0) {
 					isDividaVencidaAvailable = true;
 				}
@@ -556,7 +567,7 @@ public class DocumentoAnalise implements Serializable {
 			}
 			
 			if (dado.getResumoDoClienteTraduzido().getDtInicioRelacionamento() == null) {
-				scr.add(new DocumentoAnaliseResumo("Data inicio relacionamento:", "--"));
+				scr.add(new DocumentoAnaliseResumo("Inicio relacionamento:", "--"));
 				setInicioRelacionamentoInexistente(true);
 			} else {		
 				String[] str = dado.getResumoDoClienteTraduzido().getDtInicioRelacionamento().split("-");
@@ -670,6 +681,7 @@ public class DocumentoAnalise implements Serializable {
 		if (resumorelacionamentos != null) {
 			return resumorelacionamentos;
 		}
+	
 		resumorelacionamentos = new ArrayList<DocumentoAnaliseResumo>();
 		
 //		List<DocumentoAnaliseResumo> resumorelacionamentos = new ArrayList<>();
@@ -696,6 +708,9 @@ public class DocumentoAnalise implements Serializable {
 		}
 
 
+		if(CommonsUtil.semValor(resumorelacionamentos)) {
+			resumorelacionamentos = null;
+		}
 		return resumorelacionamentos;
 
 	}
@@ -1158,6 +1173,30 @@ public class DocumentoAnalise implements Serializable {
 //			this.tipoEnum = DocumentosAnaliseEnum.CREDNET;
 //			break;
 //		}
+	}
+
+	public String getOrigem() {
+		return origem;
+	}
+
+	public void setOrigem(String origem) {
+		this.origem = origem;
+	}
+
+	public Date getDataCadastro() {
+		return dataCadastro;
+	}
+
+	public void setDataCadastro(Date dataCadastro) {
+		this.dataCadastro = dataCadastro;
+	}
+
+	public String getUsuarioCadastro() {
+		return usuarioCadastro;
+	}
+
+	public void setUsuarioCadastro(String usuarioCadastro) {
+		this.usuarioCadastro = usuarioCadastro;
 	}
 
 	public boolean isLiberadoAnalise() {

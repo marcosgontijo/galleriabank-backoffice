@@ -44,6 +44,20 @@
 			<column name="tipo" />
 		</property>
 		
+		
+		<property name="origem" type="java.lang.String">
+			<column name="origem" />
+		</property>	
+		
+		<property name="usuarioCadastro" type="java.lang.String">
+			<column name="usuarioCadastro" />
+		</property>	
+		
+		<property name="dataCadastro"
+			type="java.util.Date">
+			<column name="dataCadastro" />
+		</property>
+				
 		<property name="excluido" type="boolean">
 			<column name="excluido" not-null="true" default ="false"/>
 		</property>
@@ -82,23 +96,23 @@
 		<property name="tipoPessoa" type="java.lang.String"  length="65000">
 			<column name="tipoPessoa" />
 		</property>
-		<property name="retorno" type="java.lang.String"  length="65000">
+		<property name="retorno" type="java.lang.String" >
 			<column name="retorno" />
 		</property>
-		<property name="retornoEngine" type="java.lang.String"  length="65000">
+		<property name="retornoEngine" type="java.lang.String" >
 			<column name="retornoEngine" />
 		</property>		
-		<property name="retornoSerasa" type="java.lang.String"  length="65000">
+		<property name="retornoSerasa" type="java.lang.String" >
 			<column name="retornoSerasa" />
 		</property>	
-		<property name="retornoCenprot" type="java.lang.String"  length="65000">
+		<property name="retornoCenprot" type="java.lang.String"  >
 			<column name="retornoCenprot" />
 		</property>
-		<property name="retornoScr" type="java.lang.String"  length="65000">
+		<property name="retornoScr" type="java.lang.String"  >
 			<column name="retornoScr" />
 		</property>
 		
-		<property name="retornoProcesso" type="java.lang.String"  length="65000">
+		<property name="retornoProcesso" type="java.lang.String"  >
 			<column name="retornoProcesso" />
 		</property>
 		
@@ -107,11 +121,11 @@
 		</property>
 		
 		
-		<property name="retornoPpe" type="java.lang.String"  length="65000">
+		<property name="retornoPpe" type="java.lang.String"  >
 			<column name="retornoPpe" />
 		</property>
 		
-		<property name="retornoRelacionamento" type="java.lang.String"  length="65000">
+		<property name="retornoRelacionamento" type="java.lang.String"  >
 			<column name="retornoRelacionamento" />
 		</property>
 		
@@ -128,11 +142,11 @@
 			<column name="retornoCNDTrabalhistaTST" />
 		</property>
 		
-		<property name="retornoCNDFederal" type="java.lang.String"  length="65000">
+		<property name="retornoCNDFederal" type="java.lang.String">
 			<column name="retornoCNDFederal" />
 		</property>
 		
-		<property name="retornoCNDEstadual" type="java.lang.String"  length="65000">
+		<property name="retornoCNDEstadual" type="java.lang.String" >
 			<column name="retornoCNDEstadual" />
 		</property>
 		
@@ -140,7 +154,7 @@
 			<column name="estadosConsultaStr" />
 		</property>
 		
-		<property name="retornoFinancas" type="java.lang.String" length="65000">
+		<property name="retornoFinancas" type="java.lang.String" >
 			<column name="retornoFinancas" />
 		</property>
 		

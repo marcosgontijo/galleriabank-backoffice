@@ -243,7 +243,7 @@ public class EngineService {
 					documentoAnaliseService.cadastrarPessoRetornoEngine(partnership, usuarioLogado, documentoAnaliseDao,
 							pagadorRecebedorService, documentoAnalise.getContratoCobranca(),
 							((CommonsUtil.mesmoValor("INAPTO", partnership.getCNPJStatus())) ? "INAPTO" : "")
-									+ "Empresa Vinculada ao " + documentoAnalise.getMotivoAnalise());
+									+ "Empresa Vinculada ao " + documentoAnalise.getMotivoAnalise(), documentoAnalise);
 				}
 			}
 
@@ -344,7 +344,7 @@ public class EngineService {
 
 		if (CommonsUtil.semValor(documentoAnalise.getRetornoEngine())
 				|| documentoAnalise.getRetornoEngine().startsWith("consulta efetuada anteriormente Id: ")) {			
-			String retorno = PegarDetalheDataEngine(documentoAnalise.getEngine());
+			String retorno = PegarDetalheDataEngine(documentoAnalise);
 			if (!CommonsUtil.semValor(retorno)) {
 			documentoAnalise.setRetornoEngine(retorno);	
 			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
@@ -437,7 +437,7 @@ public class EngineService {
 					.getEnterpriseData().getPartnership().getPartnerships()) {
 
 				documentoAnaliseService.cadastrarPessoRetornoEngine(partnership, userSistema, documentoAnaliseDao,
-						pagadorRecebedorService, documentoAnalise.getContratoCobranca(), motivo);
+						pagadorRecebedorService, documentoAnalise.getContratoCobranca(), motivo, documentoAnalise);
 
 			}
 		}
@@ -473,7 +473,7 @@ public class EngineService {
 							documentoAnaliseService.cadastrarPessoRetornoEngine(
 									engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership, userSistema,
 									documentoAnaliseDao, pagadorRecebedorService,
-									documentoAnalise.getContratoCobranca(), motivo);
+									documentoAnalise.getContratoCobranca(), motivo, documentoAnalise);
 						}
 
 					if (!CommonsUtil.semValor(engineRetornoExecutionResultRelacionamentosPessoaisPJ.getRelationships()
@@ -483,7 +483,7 @@ public class EngineService {
 							documentoAnaliseService.cadastrarPessoRetornoEngine(
 									engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership, userSistema,
 									documentoAnaliseDao, pagadorRecebedorService,
-									documentoAnalise.getContratoCobranca(), motivo);
+									documentoAnalise.getContratoCobranca(), motivo, documentoAnalise);
 						}
 
 					if (!CommonsUtil.semValor(engineRetornoExecutionResultRelacionamentosPessoaisPJ.getRelationships()
@@ -493,7 +493,7 @@ public class EngineService {
 							documentoAnaliseService.cadastrarPessoRetornoEngine(
 									engineRetornoExecutionResultRelacionamentosPessoaisPJPartnership, userSistema,
 									documentoAnaliseDao, pagadorRecebedorService,
-									documentoAnalise.getContratoCobranca(), motivo);
+									documentoAnalise.getContratoCobranca(), motivo, documentoAnalise);
 						}
 
 				}
@@ -573,8 +573,9 @@ public class EngineService {
 		}
 	}
 
-	private String PegarDetalheDataEngine(DataEngine engine) { // POST para pegar pdf
+	private String PegarDetalheDataEngine(DocumentoAnalise documentoAnalise) { // POST para pegar pdf
 		// FacesContext context = FacesContext.getCurrentInstance();
+		DataEngine engine = documentoAnalise.getEngine();
 		if (CommonsUtil.semValor(engine.getIdCallManager())) {
 			// context.addMessage(null,
 			// new FacesMessage(FacesMessage.SEVERITY_FATAL, "Não Foi gerado ID da
@@ -635,8 +636,8 @@ public class EngineService {
 			pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(pagaRecebedor, DocumentosAnaliseEnum.ENGINE,
 					result);
 			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-			DocumentoAnalise documentoAnalise = documentoAnaliseDao.findByFilter("engine", engine).stream().findFirst()
-					.orElse(null);
+			/*DocumentoAnalise documentoAnalise = documentoAnaliseDao.findByFilter("engine", engine).stream().findFirst()
+					.orElse(null);*/
 			DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
 			EngineRetorno engineWebhookRetorno = GsonUtil.fromJson(result, EngineRetorno.class);
 			if (!CommonsUtil.semValor(documentoAnalise)) {

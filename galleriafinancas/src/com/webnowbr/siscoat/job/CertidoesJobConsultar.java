@@ -66,7 +66,7 @@ public class CertidoesJobConsultar {
 			List<NetrinConsulta> consultasExistentes = new ArrayList<NetrinConsulta>();
 			List<NetrinConsulta> consultasExistentesDB = new ArrayList<NetrinConsulta>();
 			for(NetrinConsulta netrinConsulta : docAnalise.getNetrinConsultas()) {
-				List<NetrinConsulta> consultasExistentesRetorno = netrinConsultaDao.getConsultasExistentes(netrinConsulta);
+				/*List<NetrinConsulta> consultasExistentesRetorno = netrinConsultaDao.getConsultasExistentes(netrinConsulta);
 				if(consultasExistentesRetorno.size() > 0) {
 					System.out.println("CertidoesJobConsultar WARN: " + 
 						netrinConsulta.getNetrinDocumentos().getNome() + 
@@ -74,7 +74,7 @@ public class CertidoesJobConsultar {
 					consultasExistentes.add(netrinConsulta);
 					consultasExistentesDB.add(consultasExistentesRetorno.get(0));
 					continue;
-				}
+				}*/
 			}
 			docAnalise.getNetrinConsultas().removeAll(consultasExistentes);
 			List<NetrinConsulta> consultasFalhadas = new ArrayList<NetrinConsulta>();

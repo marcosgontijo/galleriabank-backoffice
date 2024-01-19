@@ -42,8 +42,10 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
+import org.primefaces.model.UploadedFile;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaBRLLiquidacao;
@@ -106,6 +108,8 @@ public class BRLTrustMB {
 	
 	List<ContratoCobrancaBRLLiquidacao> parcelasLiquidacao = new ArrayList<ContratoCobrancaBRLLiquidacao>();
 	ContratoCobrancaBRLLiquidacao parcelaLiquidacao = new ContratoCobrancaBRLLiquidacao();
+	
+	public UploadedFile uploadedFile;
 
 	public String clearFieldsBRLJson() {			
 		this.numContrato = "";
@@ -1582,6 +1586,7 @@ public class BRLTrustMB {
 		jsonFundo.put("identificacao", Long.valueOf("37294759000134"));
 		jsonFundo.put("nome", "FIDC GALLERIA");		
 		jsonSchema.put("fundo", jsonFundo);
+		objetoContratoCobranca.setEmpresa("FIDC GALLERIA");
 		
 		JSONObject jsonCessao = new JSONObject();
 		
@@ -1603,6 +1608,7 @@ public class BRLTrustMB {
 		for (ContratoCobrancaDetalhes parcela : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
 			if (parcela.getNumeroParcela().equals("0")) {
 				temParcelaZeo = true;
+				break;
 			}
 		}
 		
@@ -1827,7 +1833,6 @@ public class BRLTrustMB {
 		}
 		
 		this.jsonGerado = true;
-		
 		atualizaContratoValorAquisicaoCessaoBRL(this.valorTotalAquisicaoCessao);
 		
 		context.addMessage(null,
@@ -2001,8 +2006,8 @@ public class BRLTrustMB {
 					JSONObject jsonCessionarioPessoa = new JSONObject();
 					
 					jsonCessionarioPessoa.put("tipo", "PJ");
-					jsonCessionarioPessoa.put("identificacao", "12.130.744/0001-00");
-					jsonCessionarioPessoa.put("nome", "True Securitizadora S.A.");
+					jsonCessionarioPessoa.put("identificacao", "04.200.649/0001-071");
+					jsonCessionarioPessoa.put("nome", "COMPANHIA PROVÍNCIA DE SECURITIZAÇÃO");
 					
 					jsonCessionario.put("pessoa", jsonCessionarioPessoa);
 					jsonCessionario.put("conta", "16182008");
@@ -2742,6 +2747,66 @@ public class BRLTrustMB {
 		return dataHoje.getTime();
 	}
 
+	public void handleFileUpload(FileUploadEvent event) {
+		uploadedFile = event.getFile();
+	}
+	
+	public void clearDialog() {
+		this.uploadedFile = null;
+	}
+	
+	public void selecionarContratosPorXLS() throws IOException {
+		XSSFWorkbook wb = new XSSFWorkbook((uploadedFile.getInputstream()));
+		XSSFSheet sheet = wb.getSheetAt(0);
+
+		int iLinha = 0;
+		XSSFRow linha = sheet.getRow(iLinha);
+		List<String> contratosNaoEncontrados = new ArrayList<String>();
+		while (!CommonsUtil.semValor(linha)) {
+			linha = sheet.getRow(iLinha);
+			if (CommonsUtil.semValor(linha) || CommonsUtil.semValor(linha.getCell(0))) {
+				break;
+			}
+			String numeroContrato = "";
+			try {
+				if (!CommonsUtil.semValor(linha.getCell(0).getNumericCellValue())) {
+					numeroContrato = CommonsUtil.stringValue(linha.getCell(0).getNumericCellValue());
+					if(numeroContrato.contains("\\."));
+						numeroContrato = numeroContrato.split("\\.")[0];
+				} else if (!CommonsUtil.semValor(linha.getCell(0).getStringCellValue())) {
+					numeroContrato = CommonsUtil.stringValue(linha.getCell(0).getStringCellValue());
+				}
+			} catch (Exception e) {
+				if (!CommonsUtil.semValor(linha.getCell(0).getStringCellValue())) {
+					numeroContrato = CommonsUtil.stringValue(linha.getCell(0).getStringCellValue());
+				}
+			}
+			if(!CommonsUtil.eSomenteNumero(numeroContrato)) {
+				iLinha++;
+				continue;
+			}
+			if (numeroContrato.length() == 4) {
+				numeroContrato = "0" + numeroContrato;
+			} 
+			final String numeroFinal = numeroContrato;
+			ContratoCobranca contratoSelecionado = contratos.stream()
+					.filter(d -> CommonsUtil.mesmoValor(d.getNumeroContrato(), numeroFinal))
+					.findFirst().orElse(null);
+			if(!CommonsUtil.semValor(contratoSelecionado)) {
+				selectedContratos.add(contratoSelecionado);
+			} else {
+				contratosNaoEncontrados.add(numeroFinal);
+			}
+			iLinha++;
+		}
+		this.somatoriaValorePresenteContratos = calculaValorPresenteTotalContrato();
+		if(contratosNaoEncontrados.size() > 0) {
+			FacesContext context = FacesContext.getCurrentInstance();
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contratos Não Encontrados: " + contratosNaoEncontrados.toString(), ""));
+		}
+	}
+	
 	public boolean isJsonGerado() {
 		return jsonGerado;
 	}
@@ -3018,6 +3083,14 @@ public class BRLTrustMB {
 
 	public void setQtdSelecionadoLiquidacao(int qtdSelecionadoLiquidacao) {
 		this.qtdSelecionadoLiquidacao = qtdSelecionadoLiquidacao;
+	}
+
+	public UploadedFile getUploadedFile() {
+		return uploadedFile;
+	}
+
+	public void setUploadedFile(UploadedFile uploadedFile) {
+		this.uploadedFile = uploadedFile;
 	}
 
 }

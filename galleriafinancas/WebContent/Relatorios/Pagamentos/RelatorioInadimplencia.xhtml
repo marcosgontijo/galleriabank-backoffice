@@ -90,6 +90,13 @@
 						<h:outputText rendered="#{relatorio.estaEmCartorio}" value="Sim"/>
 						<h:outputText rendered="#{!relatorio.estaEmCartorio}" value="Não"/>
 					</p:column>
+					
+					<p:column style="text-align: center;width: 100px;"
+						headerText="Status Cartorio" 
+						sortBy="#{relatorio.statusCartorio}">
+						<p:outputLabel value="#{relatorio.statusCartorio}" />
+					</p:column>
+					
 					<p:column style="text-align: center;width: 100px;"
 						headerText="Empresa" 
 						filterBy="#{relatorio.empresa}" 

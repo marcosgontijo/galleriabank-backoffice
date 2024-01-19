@@ -255,7 +255,8 @@ public class SeguradoDAO extends HibernateDao <Segurado,Long> {
 							String numeroparcela = rs.getString("numeroparcela");
 							
 							if(CommonsUtil.semValor(rs.getBigDecimal("saldodevedor"))) {
-								if(!CommonsUtil.mesmoValor(numeroparcela, "Amortização")) {
+								if(!CommonsUtil.mesmoValor(numeroparcela, "Amortização") &&
+										!CommonsUtil.mesmoValor(rs.getString("numeroParcela"), "Acerto Saldo")) {
 									String numeroparcelaAnterior = CommonsUtil.stringValue((CommonsUtil.integerValue(numeroparcela) - 1));
 									seguroTabelaVO.setSaldoDevedor(cDao.getSaldoDevedorByContratoNumeroParcela(rs.getString("numerocontrato"), numeroparcelaAnterior));
 									if(CommonsUtil.semValor(seguroTabelaVO.getSaldoDevedor())) {

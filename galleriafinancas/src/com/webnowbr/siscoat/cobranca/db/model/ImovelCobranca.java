@@ -4,13 +4,11 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
@@ -52,6 +50,7 @@ public class ImovelCobranca implements Serializable {
 	private String nomeProprietario;
 	private BigDecimal valorIptu;
 	private BigDecimal valorCondominio;
+	private BigDecimal valorMercado;
 	private String inscricaoMunicipal;
 	private boolean comprovanteMatriculaCheckList;
 	private boolean comprovanteFotosImovelCheckList;
@@ -91,6 +90,33 @@ public class ImovelCobranca implements Serializable {
 		this.cep = cep;
 	}
 	
+	
+	
+	public ImovelCobranca(ImovelCobranca imovel) {
+		super();
+		this.endereco = imovel.getEndereco();
+		this.bairro = imovel.getBairro();
+		this.complemento = imovel.getComplemento();
+		this.cidade = imovel.getCidade();
+		this.estado = imovel.getEstado();
+		this.cep = imovel.getCep();
+		this.numeroCartorio = imovel.getNumeroCartorio();
+		this.cartorio = imovel.getCartorio();
+		this.cartorioEstado = imovel.getCartorioEstado();
+		this.cartorioMunicipio = imovel.getCartorioMunicipio();
+		this.linkGMaps = imovel.getLinkGMaps();
+		this.possuiDivida = imovel.getPossuiDivida();
+		this.ocupacao = imovel.getOcupacao();
+		this.valoEstimado = imovel.getValoEstimado();
+		this.dataCompra = imovel.getDataCompra();
+		this.idadeCompra = imovel.getIdadeCompra();
+		this.nomeProprietario = imovel.getNomeProprietario();
+		this.valorIptu = imovel.getValorIptu();
+		this.valorCondominio = imovel.getValorCondominio();
+		this.inscricaoMunicipal = imovel.getInscricaoMunicipal();
+		this.objetoCidade = imovel.getObjetoCidade();
+	}
+
 	public void calcularDataDeCompra() {
 		TimeZone zone = TimeZone.getDefault();
 		Locale locale = new Locale("pt", "BR");
@@ -111,7 +137,7 @@ public class ImovelCobranca implements Serializable {
 		this.comprovanteIptuImovelCheckList = false;
 	}
 	
-	private static final Map<String, String> siglasEstados = new HashMap<>();
+	private static LinkedHashMap<String, String> siglasEstados = new LinkedHashMap<>();
     static {
         siglasEstados.put("AC", "Acre");
         siglasEstados.put("AL", "Alagoas");
@@ -143,6 +169,37 @@ public class ImovelCobranca implements Serializable {
     }
     public static String getEstadoPorSigla(String sigla) {
         return siglasEstados.getOrDefault(sigla, "UF de estado inválido");
+    }
+    public  LinkedHashMap<String, String> getSiglasEstados(){
+    	siglasEstados = new LinkedHashMap<>();
+        siglasEstados.put("AC", "Acre");
+        siglasEstados.put("AL", "Alagoas");
+        siglasEstados.put("AP", "Amapá");
+        siglasEstados.put("AM", "Amazonas");
+        siglasEstados.put("BA", "Bahia");
+        siglasEstados.put("CE", "Ceará");
+        siglasEstados.put("DF", "Distrito Federal");
+        siglasEstados.put("ES", "Espírito Santo");
+        siglasEstados.put("GO", "Goiás");
+        siglasEstados.put("MA", "Maranhão");
+        siglasEstados.put("MT", "Mato Grosso");
+        siglasEstados.put("MS", "Mato Grosso do Sul");
+        siglasEstados.put("MG", "Minas Gerais");
+        siglasEstados.put("PA", "Pará");
+        siglasEstados.put("PB", "Paraíba");
+        siglasEstados.put("PR", "Paraná");
+        siglasEstados.put("PE", "Pernambuco");
+        siglasEstados.put("PI", "Piauí");
+        siglasEstados.put("RJ", "Rio de Janeiro");
+        siglasEstados.put("RN", "Rio Grande do Norte");
+        siglasEstados.put("RS", "Rio Grande do Sul");
+        siglasEstados.put("RO", "Rondônia");
+        siglasEstados.put("RR", "Roraima");
+        siglasEstados.put("SC", "Santa Catarina");
+        siglasEstados.put("SP", "São Paulo");
+        siglasEstados.put("SE", "Sergipe");
+        siglasEstados.put("TO", "Tocantins");
+        return siglasEstados;
     }
 	
 	public List<String> pegarListaCidades() {
@@ -185,6 +242,7 @@ public class ImovelCobranca implements Serializable {
 		tipos.add("Prédio Comercial,Prédio Comercial");
 		tipos.add("Prédio Misto,Prédio Misto");
 		tipos.add("Casa de Condomínio,Casa de condomínio");
+		tipos.add("Garagem,Garagem");
 		//tipos.add("Casa de Condomínio acima1000,Casa de condomínio (acima 1000m²)");
 		tipos.add("Terreno,Terreno");
 		//tipos.add("Terreno de Condomínio,Terreno de Condomínio");
@@ -720,4 +778,12 @@ public class ImovelCobranca implements Serializable {
 	public String getEnderecoSemNumero() {
 		return enderecoSemNumero;
 	}
+
+	public BigDecimal getValorMercado() {
+		return valorMercado;
+	}
+
+	public void setValorMercado(BigDecimal valorMercado) {
+		this.valorMercado = valorMercado;
+	}	
 }

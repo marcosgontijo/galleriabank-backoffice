@@ -25,6 +25,14 @@
 			<column name="loginCriacao" />
 		</property>
 		
+		<property name="origem" type="java.lang.String" >
+			<column name="origem" />
+		</property>
+		
+		<property name="ativa" type="boolean">
+			<column name="ativa" not-null="true" default="true"/>
+		</property>
+		
 		<many-to-one name="userCriacao"
 			class="com.webnowbr.siscoat.infra.db.model.User"
 			lazy="false">

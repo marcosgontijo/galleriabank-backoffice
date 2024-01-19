@@ -71,7 +71,7 @@ public class ReaWebhook {
 
 			if (reaWebhookRetorno.getProprietarioAtual() != null) {
 				cadastrarPessoRetornoRea(reaWebhookRetorno.getProprietarioAtual(), documentoAnaliseDao,
-						documentoAnalise.getContratoCobranca(), "Proprietario Atual");
+						documentoAnalise.getContratoCobranca(), "Proprietario Atual", documentoAnalise.getUsuarioCadastro());
 				dataVendaAtual = DateUtil
 						.getDecodeDateExtenso(reaWebhookRetorno.getProprietarioAtual().getConteudo().getTexto());
 			}
@@ -92,7 +92,7 @@ public class ReaWebhook {
 					cadastrarPessoRetornoRea(proprietarioAnterior, documentoAnaliseDao,
 							documentoAnalise.getContratoCobranca(),
 							"Proprietario Anterior" + (CommonsUtil.semValor(dataVenda) ? " Data venda não localizada"
-									: " Data venda:" + CommonsUtil.formataData(dataVenda, "dd/MM/yyyy")));
+									: " Data venda:" + CommonsUtil.formataData(dataVenda, "dd/MM/yyyy")), documentoAnalise.getUsuarioCadastro());
 //					}
 
 				}
@@ -123,7 +123,7 @@ public class ReaWebhook {
 	}
 
 	private void cadastrarPessoRetornoRea(ReaWebhookRetornoBloco bloco, DocumentoAnaliseDao documentoAnaliseDao,
-			ContratoCobranca contratoCobranca, String motivo) {
+			ContratoCobranca contratoCobranca, String motivo, String usuarioConsultaREA) {
 
 		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
 
@@ -139,26 +139,26 @@ public class ReaWebhook {
 			boolean cnpjCpfValido = false;
 
 			if (documentoAnalise.getTipoPessoa() == "PJ") {
-				propietario.setCnpj(CommonsUtil.strZero(propietario.getCnpj(),11));
+				propietario.setCnpj(CommonsUtil.strZero(CommonsUtil.somenteNumeros(propietario.getCnpj()),14));
 				try {												
-					cnpjCpfValido = ValidaCNPJ.isCNPJ(CommonsUtil.somenteNumeros(propietario.getCnpj()));
+					cnpjCpfValido = ValidaCNPJ.isCNPJ(propietario.getCnpj());
 				} catch (Exception e) {
 					cnpjCpfValido = false;
 				}
 				if (cnpjCpfValido)
-					documentoAnalise.setCnpjcpf(propietario.getCnpj());
+					documentoAnalise.setCnpjcpf(CommonsUtil.formataCnpjCpf(propietario.getCnpj(), false));
 				else
 					documentoAnalise.setCnpjcpf("CNPJ esta inválido");
 				documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.RELATO);
 			} else {
-				propietario.setCnpj(CommonsUtil.strZero(propietario.getCnpj(),14));
+				propietario.setCpf(CommonsUtil.strZero(CommonsUtil.somenteNumeros(propietario.getCnpj()),11));
 				try {
-					cnpjCpfValido = ValidaCPF.isCPF(CommonsUtil.somenteNumeros(propietario.getCpf()));
+					cnpjCpfValido = ValidaCPF.isCPF(propietario.getCpf());
 				} catch (Exception e) {
 					cnpjCpfValido = false;
 				}
 				if (cnpjCpfValido)
-					documentoAnalise.setCnpjcpf(propietario.getCpf());
+					documentoAnalise.setCnpjcpf(CommonsUtil.formataCnpjCpf(propietario.getCpf(), false));
 				else
 					documentoAnalise.setCnpjcpf("CPF esta inválido");
 				documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.CREDNET);
@@ -168,6 +168,10 @@ public class ReaWebhook {
 				
 				DocumentoAnalise documentoAnaliseCadastrado = documentoAnaliseDao.cadastradoAnalise(contratoCobranca, documentoAnalise.getCnpjcpf());
 				if (CommonsUtil.semValor(documentoAnaliseCadastrado)) {
+					
+					documentoAnalise.setOrigem("REA");
+					documentoAnalise.setDataCadastro(DateUtil.getDataHoraAgora());
+					documentoAnalise.setUsuarioCadastro(usuarioConsultaREA);
 
 					PagadorRecebedor pagador = new PagadorRecebedor();
 					pagador.setId(0);

@@ -77,6 +77,10 @@ public class BigDataService {
 			// busca dados da receita se nao tiver ainda
 			netrinService.atualizaDadosPagadoRecebedorComReceitaFederal(documentoAnalise.getPagador());
 			String nomeConsultado = documentoAnalise.getPagador().getNome();
+			
+			if ( !CommonsUtil.mesmoValorIgnoreCase(documentoAnalise.getIdentificacao(), nomeConsultado)) {
+				documentoAnalise.setIdentificacao(nomeConsultado);
+			}
 
 			String cnpjcpf = documentoAnalise.getCnpjcpf();
 			if (!CommonsUtil.semValor(documentoAnalise.getPagador())) {
@@ -355,7 +359,7 @@ public class BigDataService {
 					&& DateUtil.getDaysBetweenDates(pagadorRecebedorConsulta.getDataConsulta(),
 							DateUtil.getDataHoje()) <= 30) {
 				DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
-				documentoAnalise.setRetornoProcesso(pagadorRecebedorConsulta.getRetornoConsulta());
+				documentoAnalise.setRetornoFinancas(pagadorRecebedorConsulta.getRetornoConsulta());;
 				documentoAnaliseDao.merge(documentoAnalise);
 			} else {
 				String retornoFinancas;
@@ -378,7 +382,7 @@ public class BigDataService {
 			String financas = null;
 			URL myURL;
 
-			myURL = new URL("http://localhost:8085/api/v1/financas/"
+			myURL = new URL("https://servicos.galleriabank.com.br/bigData/api/v1/financas/"
 					+ CommonsUtil.somenteNumeros(cpf));
 
 			HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
@@ -486,6 +490,9 @@ public class BigDataService {
 			// busca dados da receita se nao tiver ainda
 			netrinService.atualizaDadosPagadoRecebedorComReceitaFederal(documentoAnalise.getPagador());
 			String nomeConsultado = documentoAnalise.getPagador().getNome();
+			if ( !CommonsUtil.mesmoValorIgnoreCase(documentoAnalise.getIdentificacao(), nomeConsultado)) {
+				documentoAnalise.setIdentificacao(nomeConsultado);
+			}
 
 			String cnpjcpf = documentoAnalise.getCnpjcpf();
 			if (!CommonsUtil.semValor(documentoAnalise.getPagador())) {

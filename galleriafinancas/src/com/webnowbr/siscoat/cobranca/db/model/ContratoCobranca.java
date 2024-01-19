@@ -13,6 +13,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.faces.model.SelectItem;
+
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.infra.db.model.User;
@@ -26,6 +28,7 @@ public class ContratoCobranca implements Serializable {
 
 	private BigDecimal valorAgilCessao;
 	private BigDecimal valorCessao;
+	private boolean enviadoCartorio = false;
 
 	private String ispbPixContaPagar;
 
@@ -138,7 +141,7 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal somatoriaValorPresente;
 
 	private PagadorRecebedor pagador;
-	private String empresa;
+	private String empresa = "GALLERIA FINANÇAS SECURITIZADORA S.A.";
 	private PagadorRecebedor recebedor;
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidor1;
 	private PagadorRecebedor recebedor2;
@@ -169,6 +172,7 @@ public class ContratoCobranca implements Serializable {
 	private Set<DataVistoria> listDatasVistoria;
 	private Set<Averbacao> listAverbacao;
 	private Set<CcbParticipantes> listaParticipantes = new HashSet<>();
+	private Set<ImovelCobrancaAdicionais> listaImoveis = new HashSet<>();
 
 	// n�o persistida a lista abaixo
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionado;
@@ -471,6 +475,8 @@ public class ContratoCobranca implements Serializable {
 	private boolean contratoConferido;
 	private String contratoConferidoUsuario;
 
+	private Date dataContratoAssinado;
+	
 	private Date agAssinaturaData;
 	private boolean agAssinatura;
 	private String agAssinaturaUsuario;
@@ -478,6 +484,16 @@ public class ContratoCobranca implements Serializable {
 	private Date agEnvioCartorioData;
 	private boolean agEnvioCartorio;
 	private String agEnvioCartorioUsuario;
+	
+	private boolean pendenciaExternaCartorio;
+	
+	private Date pendenciaResolvidaCartorioData;
+	private boolean pendenciaResolvidaCartorio;
+	private String pendenciaResolvidaCartorioUsuario;
+	
+	private Date resolucaoExigenciaCartorioData;
+	private boolean resolucaoExigenciaCartorio;
+	private String resolucaoExigenciaCartorioUsuario;
 
 	private Date agRegistroData;
 	private boolean agRegistro;
@@ -495,6 +511,14 @@ public class ContratoCobranca implements Serializable {
 	private boolean operacaoPaga;
 	private String operacaoPagaUsuario;
 	private boolean pendenciaPagamento;
+	
+	private Date notaFiscalEmitidaData;
+	private boolean notaFiscalEmitida;
+	private String notaFiscalEmitidaUsuario;
+	
+	private Date notaFiscalPagaData;
+	private boolean notaFiscalPaga;
+	private String notaFiscalPagaUsuario;
 
 	private Date aprovadoComiteData;
 	private boolean aprovadoComite;
@@ -645,6 +669,8 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal taxaPreDefinida;
 	private BigInteger prazoMaxPreAprovado;
 	private BigDecimal valorMercadoImovel;
+	private BigDecimal porcentagemImovelPrincipal;
+	private BigDecimal valorRegistroImovelPrincipal;
 
 	private BigDecimal valorVendaForcadaImovel;
 	private String comentarioJuridico;
@@ -771,6 +797,7 @@ public class ContratoCobranca implements Serializable {
 	private Date pagamentoCustasCartorioData;
 	private String exigenciasCartorioObservacao;
 	private String numeroPreAnotacaoCartorio;
+	private String pendenciaCartorioObservacao;
 
 	private BigDecimal cetMes;
 
@@ -834,6 +861,7 @@ public class ContratoCobranca implements Serializable {
 	private Responsavel analistaGeracaoPAJU;
 
 	private Date notificacaoCartorioData;
+	private Date notificacaoCobrancaData;
 
 	private boolean contratoEmCartorio;
 	private Date contratoEmCartorioData;
@@ -860,6 +888,10 @@ public class ContratoCobranca implements Serializable {
 	private boolean riscoTotal20kTaxa;
 	private boolean riscoTotal50kTaxa;
 	private boolean documentosAnalisados;
+	
+	public int qtdParcelasAtraso;
+	public BigDecimal somaParcelasAtraso;
+	public Cartorio ultimoCartorio;
 
 	// FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13
 	public BigDecimal calcularValorTotalContasPagas() {
@@ -1047,14 +1079,23 @@ public class ContratoCobranca implements Serializable {
 		Collections.sort(this.listContratoCobrancaDetalhes, new Comparator<ContratoCobrancaDetalhes>() {
 			@Override
 			public int compare(ContratoCobrancaDetalhes one, ContratoCobrancaDetalhes other) {
+				if ( CommonsUtil.semValor(one) ||  CommonsUtil.semValor(other)  )
+					return 0;
 				int result = one.getDataVencimento().compareTo(other.getDataVencimento());
 				if (result == 0) {
-					try {
-						Integer oneParcela = Integer.parseInt(one.getNumeroParcela());
-						Integer otherParcela = Integer.parseInt(other.getNumeroParcela());
-						result = oneParcela.compareTo(otherParcela);
-					} catch (Exception e) {
-						result = 0;
+					if (CommonsUtil.mesmoValorIgnoreCase("Acerto Saldo", one.getNumeroParcela())
+							|| CommonsUtil.mesmoValorIgnoreCase("Acerto Saldo", other.getNumeroParcela())
+							|| CommonsUtil.mesmoValorIgnoreCase("Amortização", one.getNumeroParcela())
+							|| CommonsUtil.mesmoValorIgnoreCase("Amortização", other.getNumeroParcela())) {
+						result = one.getNumeroParcela().compareTo(other.getNumeroParcela());
+					} else {
+						try {
+							Integer oneParcela = Integer.parseInt(one.getNumeroParcela());
+							Integer otherParcela = Integer.parseInt(other.getNumeroParcela());
+							result = oneParcela.compareTo(otherParcela);
+						} catch (Exception e) {
+							result = 0;
+						}
 					}
 				}
 				return result;
@@ -1069,7 +1110,13 @@ public class ContratoCobranca implements Serializable {
 		ContratoCobranca c = this;
 
 		if (CommonsUtil.mesmoValor(c.getStatus(), "Aprovado")) {
-			c.setStatusEsteira("Aprovado");
+			if(!c.isNotaFiscalEmitida() && !c.isNotaFiscalPaga()) {
+				c.setStatusEsteira("Ag. Emissão NFs");
+			} else if (c.isNotaFiscalEmitida() && !c.isNotaFiscalPaga()) {
+				c.setStatusEsteira("Ag. Pagamento NFs");
+			} else {
+				c.setStatusEsteira("Aprovado");
+			}
 		} else if (CommonsUtil.mesmoValor(c.getStatus(), "Reprovado")) {
 			c.setStatusEsteira("Reprovado");
 		} else if (CommonsUtil.mesmoValor(c.getStatus(), "Baixado")) {
@@ -1310,13 +1357,31 @@ public class ContratoCobranca implements Serializable {
 						&& this.agEnvioCartorio) {
 					c.setStatusEsteira("Ag. Envio Cartório");
 				}
+				
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+						&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
+						&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
+						&& this.ccbPronta && this.contratoConferido && !this.agAssinatura && !this.reanalise
+						&& !this.agEnvioCartorio && this.pendenciaExternaCartorio && !this.pendenciaResolvidaCartorio) {
+					c.setStatusEsteira("Ag. Resolução Pendência Cartório");
+				}
+				
+				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+						&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+						&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
+						&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
+						&& this.ccbPronta && this.contratoConferido && !this.agAssinatura && !this.reanalise
+						&& !this.agEnvioCartorio && !this.pendenciaExternaCartorio && !this.resolucaoExigenciaCartorio) {
+					c.setStatusEsteira("Ag. Resolução Exigências/Pagamento");
+				}
 
 				if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
 						&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
 						&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
 						&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
 						&& this.ccbPronta && this.contratoConferido && !this.agAssinatura && !this.agEnvioCartorio
-						&& this.agRegistro) {
+						&& this.resolucaoExigenciaCartorio && this.agRegistro) {
 					c.setStatusEsteira("Ag. Registro");
 				}
 			}
@@ -1333,6 +1398,35 @@ public class ContratoCobranca implements Serializable {
 		return c;
 	}
 
+	
+	public  String getEnderecoCompleto() {
+		if ( !CommonsUtil.semValor(imovel))
+			return imovel.getEnderecoCompleto();
+		else return null;
+		
+	}
+
+	private transient Date imovelEstoqueConsolidado;
+
+
+	private transient String imovelEstoqueEstado;
+	
+	public Date getImovelEstoqueConsolidado() {
+		if (!CommonsUtil.semValor(imovel) && !CommonsUtil.semValor(imovel.getImovelEstoque()))
+			return imovel.getImovelEstoque().getDataConsolidado();
+		else
+			return null;
+
+	}
+
+	public String getImovelEstoqueEstado() {
+		if (!CommonsUtil.semValor(imovel) && !CommonsUtil.semValor(imovel.getImovelEstoque()))
+			return imovel.getImovelEstoque().getStatusAtual();
+		else
+			return null;
+
+	}
+	
 	public boolean isDadosAprovadosComercial() {
 		return !CommonsUtil.semValor(valorAprovadoComercial) || //
 				!CommonsUtil.semValor(prazoAprovadoComercial) || //
@@ -1389,6 +1483,12 @@ public class ContratoCobranca implements Serializable {
 		} else {
 			return false;
 		}
+	}
+	
+	public boolean isEmReanalise() {
+		List<String> lstEmAnalise = Arrays.asList("Aprovado", "Reprovado", "Baixado", "Desistência Cliente");
+		return reanalise && !reanalisePronta && !lstEmAnalise.contains(this.status) && leadCompleto
+				&& inicioAnalise;
 	}
 	
 	public boolean isEmAgComite() {
@@ -1492,6 +1592,24 @@ public class ContratoCobranca implements Serializable {
 			prazoMaxPreAprovado = BigInteger
 					.valueOf(new BigDecimal(((80 - idade) * 12)).setScale(0, RoundingMode.HALF_DOWN).intValue());
 		}
+	}
+	
+	public List<SelectItem>listagemEmpresas(){
+		List<SelectItem> empresas = new ArrayList<SelectItem>();
+		//if(CommonsUtil.semValor(this.empresa)) {
+			empresas.add(new SelectItem("GALLERIA FINANÇAS SECURITIZADORA S.A.","GALLERIA FINANÇAS SECURITIZADORA S.A."));
+			empresas.add(new SelectItem("GALLERIA CORRESPONDENTE BANCARIO EIRELI","GALLERIA CORRESPONDENTE BANCARIO EIRELI"));
+		//} else if(CommonsUtil.mesmoValor(this.empresa, "GALLERIA FINANÇAS SECURITIZADORA S.A.") ||
+		//		CommonsUtil.mesmoValor(this.empresa, "GALLERIA CORRESPONDENTE BANCARIO EIRELI")) {
+			empresas.add(new SelectItem("FIDC GALLERIA","FIDC GALLERIA"));
+		//} else if(CommonsUtil.mesmoValor(this.empresa, "FIDC GALLERIA")) {
+			empresas.add(new SelectItem("CRI 1","CRI 1"));
+			empresas.add(new SelectItem("CRI 2","CRI 2"));
+			empresas.add(new SelectItem("CRI 3","CRI 3"));
+			empresas.add(new SelectItem("CRI 4","CRI 4"));
+			empresas.add(new SelectItem("CRI 5","CRI 5"));
+		//}
+		return empresas;
 	}
 
 	/**
@@ -7154,19 +7272,47 @@ public class ContratoCobranca implements Serializable {
 					&& this.agEnvioCartorio) {
 				this.statusEsteira = "Ag. Envio Cartório";
 			}
+			
+			if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+					&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+					&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
+					&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
+					&& this.ccbPronta && this.contratoConferido && !this.agAssinatura && !this.reanalise
+					&& !this.agEnvioCartorio && this.pendenciaExternaCartorio && !this.pendenciaResolvidaCartorio) {
+				this.statusEsteira = "Ag. Resolução Pendência Cartório";
+			}
+			
+			if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
+					&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
+					&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
+					&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
+					&& this.ccbPronta && this.contratoConferido && !this.agAssinatura && !this.reanalise
+					&& !this.agEnvioCartorio && !this.pendenciaExternaCartorio && !this.resolucaoExigenciaCartorio) {
+				this.statusEsteira = "Ag. Resolução Exigências/Pagamento";
+			}
 
 			if (this.inicioAnalise && this.cadastroAprovadoValor.equals("Aprovado") && this.pagtoLaudoConfirmada
 					&& this.laudoRecebido && this.pajurFavoravel && this.analiseComercial
 					&& this.comentarioJuridicoEsteira && this.preAprovadoComite && this.documentosComite
 					&& this.aprovadoComite && this.okCliente && this.documentosCompletos && this.certificadoEmitido
 					&& this.ccbPronta && this.contratoConferido && !this.agAssinatura && !this.agEnvioCartorio
-					&& this.agRegistro) {
+					&& this.resolucaoExigenciaCartorio && this.agRegistro) {
 				this.statusEsteira = "Ag. Registro";
 			}
 		}
 
 		if (this.analiseReprovada) {
 			this.statusEsteira = "Análise Reprovada";
+		}
+		
+		if(this.status.equals("Aprovado")) {
+			if (!this.isNotaFiscalEmitida() && !this.isNotaFiscalPaga()) {
+				this.statusEsteira = "Ag. Emissão NFs";
+			} else if (this.isNotaFiscalEmitida() && !this.isNotaFiscalPaga()) {
+				this.statusEsteira = "Ag. Pagamento NFs";
+			} else {
+				this.statusEsteira = "Aprovado";
+			}
 		}
 
 		return this.statusEsteira;
@@ -7404,4 +7550,189 @@ public class ContratoCobranca implements Serializable {
 		this.listaParticipantes = listaParticipantes;
 	}
 
+	public Date getDataContratoAssinado() {
+		return dataContratoAssinado;
+	}
+
+	public void setDataContratoAssinado(Date dataContratoAssinado) {
+		this.dataContratoAssinado = dataContratoAssinado;
+	}
+
+	public Set<ImovelCobrancaAdicionais> getListaImoveis() {
+		return listaImoveis;
+	}
+
+	public void setListaImoveis(Set<ImovelCobrancaAdicionais> listaImoveis) {
+		this.listaImoveis = listaImoveis;
+	}
+
+	public BigDecimal getPorcentagemImovelPrincipal() {
+		return porcentagemImovelPrincipal;
+	}
+
+	public void setPorcentagemImovelPrincipal(BigDecimal porcentagemImovelPrincipal) {
+		this.porcentagemImovelPrincipal = porcentagemImovelPrincipal;
+	}
+
+	public BigDecimal getValorRegistroImovelPrincipal() {
+		return valorRegistroImovelPrincipal;
+	}
+
+	public void setValorRegistroImovelPrincipal(BigDecimal valorRegistroImovelPrincipal) {
+		this.valorRegistroImovelPrincipal = valorRegistroImovelPrincipal;
+	}
+
+	public int getQtdParcelasAtraso() {
+		return qtdParcelasAtraso;
+	}
+
+	public void setQtdParcelasAtraso(int qtdParcelasAtraso) {
+		this.qtdParcelasAtraso = qtdParcelasAtraso;
+	}
+
+	public BigDecimal getSomaParcelasAtraso() {
+		return somaParcelasAtraso;
+	}
+
+	public void setSomaParcelasAtraso(BigDecimal somaParcelasAtraso) {
+		this.somaParcelasAtraso = somaParcelasAtraso;
+	}
+
+	public boolean isPendenciaExternaCartorio() {
+		return pendenciaExternaCartorio;
+	}
+
+	public void setPendenciaExternaCartorio(boolean pendenciaExternaCartorio) {
+		this.pendenciaExternaCartorio = pendenciaExternaCartorio;
+	}
+
+	public Date getPendenciaResolvidaCartorioData() {
+		return pendenciaResolvidaCartorioData;
+	}
+
+	public void setPendenciaResolvidaCartorioData(Date pendenciaResolvidaCartorioData) {
+		this.pendenciaResolvidaCartorioData = pendenciaResolvidaCartorioData;
+	}
+
+	public boolean isPendenciaResolvidaCartorio() {
+		return pendenciaResolvidaCartorio;
+	}
+
+	public void setPendenciaResolvidaCartorio(boolean pendenciaResolvidaCartorio) {
+		this.pendenciaResolvidaCartorio = pendenciaResolvidaCartorio;
+	}
+
+	public String getPendenciaResolvidaCartorioUsuario() {
+		return pendenciaResolvidaCartorioUsuario;
+	}
+
+	public void setPendenciaResolvidaCartorioUsuario(String pendenciaResolvidaCartorioUsuario) {
+		this.pendenciaResolvidaCartorioUsuario = pendenciaResolvidaCartorioUsuario;
+	}
+
+	public Date getResolucaoExigenciaCartorioData() {
+		return resolucaoExigenciaCartorioData;
+	}
+
+	public void setResolucaoExigenciaCartorioData(Date resolucaoExigenciaCartorioData) {
+		this.resolucaoExigenciaCartorioData = resolucaoExigenciaCartorioData;
+	}
+
+	public boolean isResolucaoExigenciaCartorio() {
+		return resolucaoExigenciaCartorio;
+	}
+
+	public void setResolucaoExigenciaCartorio(boolean resolucaoExigenciaCartorio) {
+		this.resolucaoExigenciaCartorio = resolucaoExigenciaCartorio;
+	}
+
+	public String getResolucaoExigenciaCartorioUsuario() {
+		return resolucaoExigenciaCartorioUsuario;
+	}
+
+	public void setResolucaoExigenciaCartorioUsuario(String resolucaoExigenciaCartorioUsuario) {
+		this.resolucaoExigenciaCartorioUsuario = resolucaoExigenciaCartorioUsuario;
+	}
+
+	public String getPendenciaCartorioObservacao() {
+		return pendenciaCartorioObservacao;
+	}
+
+	public void setPendenciaCartorioObservacao(String pendenciaCartorioObservacao) {
+		this.pendenciaCartorioObservacao = pendenciaCartorioObservacao;
+	}
+
+	public Date getNotificacaoCobrancaData() {
+		return notificacaoCobrancaData;
+	}
+
+	public void setNotificacaoCobrancaData(Date notificacaoCobrancaData) {
+		this.notificacaoCobrancaData = notificacaoCobrancaData;
+	}
+
+	public Date getNotaFiscalEmitidaData() {
+		return notaFiscalEmitidaData;
+	}
+
+	public void setNotaFiscalEmitidaData(Date notaFiscalEmitidaData) {
+		this.notaFiscalEmitidaData = notaFiscalEmitidaData;
+	}
+
+	public boolean isNotaFiscalEmitida() {
+		return notaFiscalEmitida;
+	}
+
+	public void setNotaFiscalEmitida(boolean notaFiscalEmitida) {
+		this.notaFiscalEmitida = notaFiscalEmitida;
+	}
+
+	public String getNotaFiscalEmitidaUsuario() {
+		return notaFiscalEmitidaUsuario;
+	}
+
+	public void setNotaFiscalEmitidaUsuario(String notaFiscalEmitidaUsuario) {
+		this.notaFiscalEmitidaUsuario = notaFiscalEmitidaUsuario;
+	}
+
+	public Date getNotaFiscalPagaData() {
+		return notaFiscalPagaData;
+	}
+
+	public void setNotaFiscalPagaData(Date notaFiscalPagaData) {
+		this.notaFiscalPagaData = notaFiscalPagaData;
+	}
+
+	public boolean isNotaFiscalPaga() {
+		return notaFiscalPaga;
+	}
+
+	public void setNotaFiscalPaga(boolean notaFiscalPaga) {
+		this.notaFiscalPaga = notaFiscalPaga;
+	}
+
+	public String getNotaFiscalPagaUsuario() {
+		return notaFiscalPagaUsuario;
+	}
+
+	public void setNotaFiscalPagaUsuario(String notaFiscalPagaUsuario) {
+		this.notaFiscalPagaUsuario = notaFiscalPagaUsuario;
+	}
+	
+
+	public boolean isEnviadoCartorio() {
+		return enviadoCartorio;
+	}
+
+	public void setEnviadoCartorio(boolean enviadoCartorio) {
+		this.enviadoCartorio = enviadoCartorio;
+	}
+
+	public Cartorio getUltimoCartorio() {
+		return ultimoCartorio;
+	}
+
+	public void setUltimoCartorio(Cartorio ultimoCartorio) {
+		this.ultimoCartorio = ultimoCartorio;
+	}
 }
+

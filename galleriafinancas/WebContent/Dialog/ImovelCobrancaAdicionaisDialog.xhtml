@@ -1,0 +1,171 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<p:dialog header="Imovel Adicional" widgetVar="imovelAdiconalDialog"
+		height="420" >
+		<h:form id="imovelAdiconalForm">
+			<p:panel header="Dados da Ficha"
+				style="margin-bottom:10px;">
+				<h:panelGrid columns="2">
+					<p:outputLabel for="NumeroMatricula" value="Numero Matrícula: " />
+					<p:inputText id="NumeroMatricula"
+						value="#{mbean.imovelAdicional.imovel.numeroMatricula}"
+						label="NumeroMatricula" onblur="" style="width:400px;" />
+	
+					<p:outputLabel for="Cartorio" value="Cartório de Registro: " />
+					<p:inputText id="Cartorio"
+						value="#{mbean.imovelAdicional.imovel.cartorio}"
+						label="Cartório" onblur="" style="width:400px;" />
+	
+					<p:outputLabel for="cartorioEstado" value="Estado Cartório: " />
+					<h:panelGroup>
+						<p:inputText id="cartorioEstado"
+							value="#{mbean.imovelAdicional.imovel.cartorioEstado}" />
+						<p:outputLabel for="cartorioMunicipio"
+							value="Município Cartório: " />
+						<p:inputText id="cartorioMunicipio"
+							value="#{mbean.imovelAdicional.imovel.cartorioMunicipio}" />
+					</h:panelGroup>
+	
+					<p:outputLabel for="numeroCartorio" value="Numero Cartório: " />
+					<p:inputText id="numeroCartorio"
+						value="#{mbean.imovelAdicional.imovel.numeroCartorio}" />
+	
+					<p:outputLabel for="CepImovel" value="Cep: " />
+					<p:inputMask id="CepImovel"
+						value="#{mbean.imovelAdicional.imovel.cep}"
+						mask="99999-999" label="Cep">
+					</p:inputMask>
+	
+					<p:outputLabel for="EnderecoImovel" value="Endereço: " />
+					<p:inputText id="EnderecoImovel"
+						value="#{mbean.imovelAdicional.imovel.endereco}"
+						label="Endereço" onblur="" style="width:400px;" />
+	
+					<p:outputLabel for="ComplementoImovel" value="Complemento: " />
+					<p:inputText id="ComplementoImovel"
+						value="#{mbean.imovelAdicional.imovel.complemento}"
+						label="Complemento" onblur="" style="width:400px;" />
+	
+					<p:outputLabel for="BairroImovel" value="Bairro: " />
+					<p:inputText id="BairroImovel"
+						value="#{mbean.imovelAdicional.imovel.bairro}"
+						label="Bairro" onblur="" style="width:400px;" />
+	
+					<p:outputLabel for="EstadoImovel" value="Estado: " />
+					<p:selectOneMenu id="EstadoImovel"
+						value="#{mbean.imovelAdicional.imovel.estado}"
+						label="Estado" style="width:410px;">
+						<f:selectItem itemValue="" itemLabel="Escolha o Estado" />
+						<f:selectItems value="#{mbean.imovelAdicional.imovel.siglasEstados.entrySet()}"
+							var="estadoSI" itemValue="#{estadoSI.key}" itemLabel="#{estadoSI.value}" />
+						<p:ajax event="valueChange" update="CidadeImovel"
+							listener="#{mbean.imovelAdicional.imovel.completeCidadesImovel}" />
+					</p:selectOneMenu>
+	
+					<p:outputLabel for="CidadeImovel" value="Cidade: "
+						style="FONT-SIZE: 10pt;" />
+					<p:autoComplete id="CidadeImovel"
+						value="#{mbean.imovelAdicional.imovel.cidade}"
+						completeMethod="#{mbean.imovelAdicional.imovel.completeCidadesImovel}"
+						var="cidade" itemLabel="#{cidade}" itemValue="#{cidade}"
+						dropdown="true" forceSelection="false" scrollHeight="250">
+					</p:autoComplete>
+	
+					<p:outputLabel for="Tipo" value="Tipo: " />
+					<p:autoComplete id="Tipo"
+						value="#{mbean.imovelAdicional.imovel.tipo}"
+						completeMethod="#{mbean.imovelAdicional.imovel.completeTipoImovel}"
+						autocomplete="no" dropdown="true" forceSelection="true"
+						var="tipo"
+						itemValue="#{mbean.imovelAdicional.imovel.getValue(tipo)}"
+						itemLabel="#{mbean.imovelAdicional.imovel.getLabel(tipo)}"
+						scrollHeight="250">
+					</p:autoComplete>
+	
+					<p:outputLabel for="AreaTotal"
+						value="Área Total / Terreno (metros):  " />
+					<h:panelGroup>
+						<p:inputText id="AreaTotal"
+							value="#{mbean.imovelAdicional.imovel.areaTotal}"
+							style="width:150px;" />
+						<p:spacer width="10px" />
+						<p:outputLabel for="valorIptu" value="Valor IPTU: " />
+						<p:inputText id="valorIptu"
+							value="#{mbean.imovelAdicional.imovel.valorIptu}"
+							onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);"
+							converter="bigDecimalConverter" />
+					</h:panelGroup>
+	
+					<p:outputLabel for="AreaConstruida"
+						value="Área Útil / Construída (metros): " />
+					<h:panelGroup>
+						<p:inputText id="AreaConstruida"
+							value="#{mbean.imovelAdicional.imovel.areaConstruida}"
+							style="width:150px;" />
+						<p:spacer width="10px" />
+						<p:outputLabel for="valorCondominio" value="Valor Condomínio: " />
+						<p:inputText id="valorCondominio"
+							value="#{mbean.imovelAdicional.imovel.valorCondominio}"
+							onkeypress="return isNumberKey(event);"
+							onkeydown="FormataValor(this, 13, event, 2);"
+							converter="bigDecimalConverter" />
+					</h:panelGroup>
+	
+					<p:outputLabel for="valorEstimado"
+						value="Qual o valor estimado do imóvel? " />
+					<p:inputText id="valorEstimado"
+						value="#{mbean.imovelAdicional.imovel.valoEstimado}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);"
+						converter="bigDecimalConverter" />
+						
+					<p:outputLabel for="valorMercadoObjImovel"
+						value="Valor de mercado do imóvel: " styleClass="labelBold" />
+					<p:inputText id="valorMercadoObjImovel"
+						value="#{mbean.imovelAdicional.imovel.valorMercado}"
+						onkeypress="return isNumberKey(event);"
+						onkeydown="FormataValor(this, 13, event, 2);"
+						converter="bigDecimalConverter"
+						style="FONT-SIZE: 10pt;width:300px;" />
+	
+					<p:outputLabel for="dataCompra" value="Data da compra do Imóvel " />
+					<h:panelGroup>
+						<p:inputMask id="dataCompra"
+							value="#{mbean.imovelAdicional.imovel.dataCompra}"
+							mask="99/99/9999" label="Data de Nascimento">
+							<p:ajax event="blur" update="idadeCompra"
+								listener="#{mbean.imovelAdicional.imovel.calcularDataDeCompra()}" />
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:inputMask>
+						<p:spacer width="10px" />
+						<p:outputLabel for="idadeCompra" value="Idade da Compra:  " />
+						<p:inputText id="idadeCompra"
+							value="#{mbean.imovelAdicional.imovel.idadeCompra}" />
+					</h:panelGroup>
+	
+					<p:outputLabel for="inscricaoMunicipal"
+						value="Inscrição Municipal: " />
+					<p:inputText id="inscricaoMunicipal"
+						value="#{mbean.imovelAdicional.imovel.inscricaoMunicipal}" />
+				</h:panelGrid>
+	
+				<f:facet name="footer">
+					<p:commandButton value="Selecionar"
+						action="#{mbean.addImovel}"
+						icon="ui-icon ui-icon-check"
+						update=":form:ImovelAdicionarPanel"
+						oncomplete="PF('imovelAdiconalDialog').hide();" />
+					<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
+						oncomplete="PF('imovelAdiconalDialog').hide();" />
+				</f:facet>
+			</p:panel>
+		</h:form>
+	</p:dialog>
+</ui:composition>
