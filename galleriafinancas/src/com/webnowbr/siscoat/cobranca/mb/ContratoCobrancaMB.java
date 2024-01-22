@@ -20698,11 +20698,16 @@ public class ContratoCobrancaMB {
 
 	public String processaReprovaPagamentoStarkBank() {
 		FacesContext context = FacesContext.getCurrentInstance();
-
-		this.objetoBaixaPagamentoStarkBank.setStatusPagamento("Reprovado");
-
-		StarkBankBaixaDAO sbBaixaDao = new StarkBankBaixaDAO();
-		sbBaixaDao.merge(this.objetoBaixaPagamentoStarkBank);
+		
+		if (this.objetoBaixaPagamentoStarkBank.getContasPagar().getDescricao().contains("Pagamento Carta Split")) {
+			ContasPagarDao despesa = new ContasPagarDao();
+			despesa.delete(this.objetoBaixaPagamentoStarkBank.getContasPagar());
+		} else {
+			this.objetoBaixaPagamentoStarkBank.setStatusPagamento("Reprovado");
+			
+			StarkBankBaixaDAO sbBaixaDao = new StarkBankBaixaDAO();
+			sbBaixaDao.merge(this.objetoBaixaPagamentoStarkBank);
+		}
 
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO, "Pagamento StarkBank: Reprovado com sucesso!", ""));
@@ -20742,6 +20747,12 @@ public class ContratoCobrancaMB {
 			Font header = new Font(FontFamily.HELVETICA, 12, Font.BOLD);
 
 			Font titulo = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
+			Font tituloGray = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
+			tituloGray.setColor(BaseColor.LIGHT_GRAY);
+			
+			Font tituloGreen = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
+			tituloGreen.setColor(158, 195, 32);
+			
 			Font tituloBranco = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
 			tituloBranco.setColor(BaseColor.WHITE);
 			Font normal = new Font(FontFamily.HELVETICA, 10);
@@ -20760,7 +20771,7 @@ public class ContratoCobrancaMB {
 			 * Configuração inicial do PDF - Cria o documento tamanho A4, margens de 2,54cm
 			 */
 
-			doc = new Document(PageSize.A4.rotate(), 10, 80, 10, 80);
+			doc = new Document(PageSize.A4);
 			this.nomeComprovanteStarkBank = "Recibo Pagamento -  " + nomePagador + ".pdf";
 			this.pathComprovanteStarkBank = pDao.findByFilter("nome", "RECIBOS_IUGU").get(0).getValorString();
 
@@ -20775,177 +20786,231 @@ public class ContratoCobrancaMB {
 			 * Paragraph p1 = new Paragraph("RECIBO DE PAGAMENTO - " + favorecido, titulo);
 			 * p1.setAlignment(Element.ALIGN_CENTER); p1.setSpacingAfter(10); doc.add(p1);
 			 */
-			PdfPTable table = new PdfPTable(new float[] { 0.8f, 0.8f });
-			table.setWidthPercentage(50.0f);
+			PdfPTable table = new PdfPTable(2);
+			//table.setWidthPercentage(100.0f);
 
-			BufferedImage buff = ImageIO.read(getClass().getResourceAsStream("/resource/logoStarkBank.jpg"));
+			BufferedImage buff = ImageIO.read(getClass().getResourceAsStream("/resource/pgto430.png"));
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			ImageIO.write(buff, "jpg", bos);
+			ImageIO.write(buff, "png", bos);
 			Image img = Image.getInstance(bos.toByteArray());
 
 			img.setAlignment(Element.ALIGN_CENTER);
 
 			PdfPCell cell1 = new PdfPCell(img);
 			cell1.setBorder(0);
-			cell1.setPaddingLeft(8f);
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(10f);
-			cell1.setPaddingBottom(10f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase("StarkBank - Sistema de Pagamento online", header));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setPaddingBottom(15f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-
-			if (baixaStarkBank.getFormaPagamento().equals("Boleto")) {
-				cell1 = new PdfPCell(new Phrase("Comprovante de Pagamento - Boleto", tituloBranco));
-			}
-			if (baixaStarkBank.getFormaPagamento().equals("PIX")) {
-				cell1 = new PdfPCell(new Phrase("Comprovante de Pagamento - PIX", tituloBranco));
-			}
-			if (baixaStarkBank.getFormaPagamento().equals("TED")) {
-				cell1 = new PdfPCell(new Phrase("Comprovante de Pagamento - TED", tituloBranco));
-			}
-
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(new BaseColor(92, 156, 204));
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase("ID da Transação: " + baixaStarkBank.getIdTransacao(), titulo));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
 			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(10f);
-			cell1.setPaddingBottom(2f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(
-					new Phrase("Data: " + sdfDataRelComHoras.format(baixaStarkBank.getDataPagamento()), titulo));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(2f);
+			cell1.setPaddingTop(20f);
 			cell1.setPaddingBottom(10f);
 			cell1.setColspan(2);
 			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase("Valor R$ " + df.format(baixaStarkBank.getValor()), titulo));
+			
+			cell1 = new PdfPCell(new Phrase("Pagador", tituloGreen));
 			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(10f);
-			cell1.setPaddingBottom(10f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase("CPF/CNPJ: " + baixaStarkBank.getDocumento(), titulo));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(10f);
-			cell1.setPaddingBottom(2f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase("Nome: " + baixaStarkBank.getNomePagador(), titulo));
-			cell1.setBorder(0);
-			cell1.setBorderWidthBottom(1);
-			cell1.setBorderColorBottom(BaseColor.BLACK);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);
 			cell1.setPaddingLeft(8f);
 			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
 			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setUseBorderPadding(true);
 			cell1.setPaddingTop(20f);
-			cell1.setPaddingBottom(10f);
+			cell1.setPaddingBottom(2f);
 			cell1.setColspan(2);
 			table.addCell(cell1);
-
-			if (baixaStarkBank.getFormaPagamento().equals("Boleto")) {
-				cell1 = new PdfPCell(new Phrase("Obs.: Compensação no próximo dia útil.", titulo));
+			
+			if (baixaStarkBank.getContasPagar().getDescricao().contains("Pagamento Carta Split")) {
+				cell1 = new PdfPCell(new Phrase("Galleria SCD", titulo));
 				cell1.setBorder(0);
-				cell1.setBorderWidthBottom(1);
-				cell1.setBorderColorBottom(BaseColor.BLACK);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);
 				cell1.setPaddingLeft(8f);
 				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
 				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
 				cell1.setBackgroundColor(BaseColor.WHITE);
 				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(20f);
-				cell1.setPaddingBottom(10f);
-				cell1.setColspan(2);
+				cell1.setPaddingTop(10f);
+				cell1.setPaddingBottom(2f);
+				table.addCell(cell1);
+				
+				cell1 = new PdfPCell(new Phrase("CNPJ: 51.604.356/0001-75", titulo));
+				cell1.setBorder(0);
+				cell1.setPaddingLeft(8f);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_RIGHT);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingTop(10f);
+				cell1.setPaddingBottom(30f);
+				table.addCell(cell1);
+			} else {
+				cell1 = new PdfPCell(new Phrase("Galleria Correspondente Bancário Eireli", titulo));
+				cell1.setBorder(0);
+				cell1.setPaddingLeft(8f);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingTop(10f);
+				cell1.setPaddingBottom(2f);
+				table.addCell(cell1);
+				
+				cell1 = new PdfPCell(new Phrase("CNPJ: 34.787.885/0001-32", titulo));
+				cell1.setBorder(0);
+				cell1.setPaddingLeft(8f);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_RIGHT);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingTop(10f);
+				cell1.setPaddingBottom(2f);
 				table.addCell(cell1);
 			}
+			
+			cell1 = new PdfPCell(new Phrase("Recebedor", tituloGreen));
+			cell1.setBorder(0);
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(20f);
+			cell1.setPaddingBottom(2f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase(baixaStarkBank.getNomePagador(), titulo));
+			cell1.setBorder(0);
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(10f);
+			cell1.setPaddingBottom(2f);
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase("CPF/CNPJ: " + baixaStarkBank.getDocumento(), titulo));
+			cell1.setBorder(0);
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_RIGHT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(10f);
+			cell1.setPaddingBottom(2f);
+			table.addCell(cell1);
+			
+			
+			if (baixaStarkBank.getContasPagar().getBancoTed() != null && baixaStarkBank.getContasPagar().getAgenciaTed() != null && 
+					baixaStarkBank.getContasPagar().getContaTed() != null) {
+				
+				if (baixaStarkBank.getContasPagar().getFormaTransferencia().equals("Pix") || baixaStarkBank.getContasPagar().getFormaTransferencia().equals("PIX")) {										
+					cell1 = new PdfPCell(new Phrase("Banco: " + baixaStarkBank.getContasPagar().getBancoTed(), titulo));
+					cell1.setBorder(0);
+					cell1.setPaddingLeft(8f);
+					cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+					cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+					cell1.setBackgroundColor(BaseColor.WHITE);
+					cell1.setUseBorderPadding(true);
+					cell1.setPaddingTop(10f);
+					cell1.setPaddingBottom(2f);
+					cell1.setPaddingBottom(2f);	
+					table.addCell(cell1);
+					
+					cell1 = new PdfPCell(new Phrase("Ag.: " + baixaStarkBank.getContasPagar().getAgenciaTed() + " | C/C: " + baixaStarkBank.getContasPagar().getContaTed(), titulo));
+					cell1.setBorder(0);
+					cell1.setPaddingLeft(8f);
+					cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+					cell1.setHorizontalAlignment(Element.ALIGN_RIGHT);
+					cell1.setBackgroundColor(BaseColor.WHITE);
+					cell1.setUseBorderPadding(true);
+					cell1.setPaddingTop(10f);
+					cell1.setPaddingBottom(2f);
+					table.addCell(cell1);
+					
+					cell1 = new PdfPCell(new Phrase("PIX: " + baixaStarkBank.getContasPagar().getPix(), titulo));
+					cell1.setBorder(0);
+					cell1.setPaddingLeft(8f);
+					cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+					cell1.setHorizontalAlignment(Element.ALIGN_RIGHT);
+					cell1.setBackgroundColor(BaseColor.WHITE);
+					cell1.setUseBorderPadding(true);
+					cell1.setPaddingTop(10f);
+					cell1.setColspan(2);
+					cell1.setPaddingBottom(20f);	
+					table.addCell(cell1);
+				} else {					
+					cell1 = new PdfPCell(new Phrase("Banco: " + baixaStarkBank.getContasPagar().getBancoTed(), titulo));
+					cell1.setBorder(0);
+					cell1.setPaddingLeft(8f);
+					cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+					cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+					cell1.setBackgroundColor(BaseColor.WHITE);
+					cell1.setUseBorderPadding(true);
+					cell1.setPaddingTop(10f);
+					cell1.setPaddingBottom(20f);	
+					table.addCell(cell1);
+					
+					cell1 = new PdfPCell(new Phrase("Ag.: " + baixaStarkBank.getContasPagar().getAgenciaTed() + " | C/C: " + baixaStarkBank.getContasPagar().getContaTed(), titulo));
+					cell1.setBorder(0);
+					cell1.setPaddingLeft(8f);
+					cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+					cell1.setHorizontalAlignment(Element.ALIGN_RIGHT);
+					cell1.setBackgroundColor(BaseColor.WHITE);
+					cell1.setUseBorderPadding(true);
+					cell1.setPaddingTop(10f);
+					cell1.setPaddingBottom(20f);
+					table.addCell(cell1);
+				}
+			}
+			
+			cell1 = new PdfPCell(new Phrase("Transferência - " + baixaStarkBank.getFormaPagamento(), tituloGreen));
+			cell1.setBorder(0);
+			cell1.setBorderWidthTop(1);
+			cell1.setBorderColorTop(BaseColor.LIGHT_GRAY);
+			cell1.setUseBorderPadding(true);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(20f);
+			cell1.setColspan(2);
+			cell1.setPaddingBottom(10f);			
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase("Valor: R$ " + df.format(baixaStarkBank.getValor()), titulo));
+			cell1.setBorder(0);
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(10f);
+			cell1.setPaddingBottom(2f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase("Data do Pagamento: " + sdfDataRelComHoras.format(baixaStarkBank.getDataPagamento()), titulo));
+			cell1.setBorder(0);
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(10f);
+			cell1.setPaddingBottom(2f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase("Autenticação: " + baixaStarkBank.getIdTransacao(), titulo));
+			cell1.setBorder(0);
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(10f);
+			cell1.setPaddingBottom(2f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
 
 			doc.add(table);
 
