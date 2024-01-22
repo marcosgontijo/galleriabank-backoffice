@@ -56,6 +56,8 @@ public class ContasPagar implements Serializable {
 	private List<StarkBankBaixa> listContasPagarBaixas = new ArrayList<StarkBankBaixa>();
 	
 	private Collection<FileUploaded> filesContas = new ArrayList<FileUploaded>();
+	
+	private ContasPagar ContasPagarOriginal;
 
 	public ContasPagar() {
 	}
@@ -358,5 +360,13 @@ public class ContasPagar implements Serializable {
 
 	public void setContaCartaSplit(boolean contaCartaSplit) {
 		this.contaCartaSplit = contaCartaSplit;
+	}
+
+	public ContasPagar getContasPagarOriginal() {
+		return ContasPagarOriginal;
+	}
+
+	public void setContasPagarOriginal(ContasPagar contasPagarOriginal) {
+		ContasPagarOriginal = contasPagarOriginal;
 	}
 }
