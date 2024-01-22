@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.simulador.SimulacaoDetalheVO;
 
 public class ContratoCobrancaDetalhes implements Serializable {
 
@@ -123,6 +124,22 @@ public class ContratoCobrancaDetalhes implements Serializable {
 	
 	public boolean isAcertoSaldo() {
 		return CommonsUtil.mesmoValor("Acerto Saldo", this.getNumeroParcela());
+	}
+	
+	public void atualizaDadosComParcelaSimulador(SimulacaoDetalheVO parcela) {
+		setVlrParcela(parcela.getValorParcela().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+		setVlrJurosParcela(parcela.getJuros().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+		setVlrAmortizacaoParcela(parcela.getAmortizacao().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+		setSeguroDFI(parcela.getSeguroDFI());
+		setSeguroMIP(parcela.getSeguroMIP());
+		setTaxaAdm(parcela.getTxAdm());
+		if (parcela.getValorParcela().compareTo(BigDecimal.ZERO) == 0) {
+			setParcelaPaga(true);
+			setOrigemBaixa("concluirReparcelamento");
+			setDataPagamento(getDataVencimento());
+			setVlrParcela(BigDecimal.ZERO);
+		}
+		
 	}
 
 	/**
