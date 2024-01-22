@@ -685,151 +685,53 @@
 				</h:panelGroup>
 
 				<h:panelGroup id="despesasPanel">
-					<p:panel header="Despesas" rendered="#{ccbMB.tipoDownload == 'AnexoII'}">
-						<h:panelGrid columns="2">
-						
-							<p:dataView var="despesas" id="ListaDespesas"
-								value="#{ccbMB.objetoCcb.despesasAnexo2}"
-								paginator="false" layout="list"
-								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
-								<p:dataViewListItem>
-									<p:outputLabel value="N°: " styleClass="labelBold" />
-									<p:outputLabel value="#{despesas.descricao}" styleClass="labelBold"
-										style="FONT-SIZE: 10pt;width:100px;" />
-									<p:outputLabel value=" Valor: " styleClass="labelBold" />
-									<p:outputLabel value="#{despesas.valor}" styleClass="labelBold"
-										style="FONT-SIZE: 10pt;width:100px;"
-										converter="bigDecimalConverter" />
-									<p:spacer width="10px"/>
-								</p:dataViewListItem>
-							</p:dataView>				
-							<h:panelGroup>
-								<h:panelGrid columns="2">
-									<p:outputLabel 
-										value="Valor: " styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:inputText 
-										value="#{ccbMB.despesaSelecionada.valor}"
-										label="Contrato" onkeypress="return isNumberKey(event);"
-										onkeydown="FormataValor(this, 13, event, 2);"
-										converter="bigDecimalConverter" /> 
-										
-									<p:outputLabel  value="Descrição: " styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:autoComplete id="ContaPagarDescricao" dropdown="true"
-										value="#{ccbMB.despesaSelecionada.descricao}"
-										completeMethod="#{ccbMB.despesaSelecionada.contaPagarDescricaoLista}"
-										scrollHeight="250" >
-										<p:ajax event="blur" update="tedGrid" />
-									</p:autoComplete>								
-										
-									<p:outputLabel for="formaTransferencia" value="Forma de Tranferência: "
-										styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-									<p:selectOneMenu id="formaTransferencia"
-										value="#{ccbMB.despesaSelecionada.formaTransferencia}">
-										<f:selectItem itemValue="" itemLabel="Selecione" />
-										<f:selectItem itemValue="TED" itemLabel="TED" />
-										<f:selectItem itemValue="Pix" itemLabel="Pix" />
-										<f:selectItem itemValue="Boleto" itemLabel="Boleto" />
-										<p:ajax event="change"  update="tedGrid" />
-									</p:selectOneMenu>
-								</h:panelGrid>
-								<h:panelGroup id="tedGrid">
-									<h:panelGroup rendered="#{ccbMB.despesaSelecionada.descricao eq 'Crédito CCI'}">
-										<h:panelGrid columns="2" rendered="#{ccbMB.despesaSelecionada.formaTransferencia eq 'TED'}">
-											<p:outputLabel value="Banco: " styleClass="labelBold"
-												style="font-weight: bold; font-size: 18px;" />
-											<p:inputText value="#{ccbMB.objetoCcb.CCBBanco}" />
-											<p:outputLabel value="Agência: " styleClass="labelBold"
-												style="font-weight: bold; font-size: 18px;" />
-											<p:inputText value="#{ccbMB.objetoCcb.CCBAgencia}" />
-											<p:outputLabel value="C/C: " styleClass="labelBold"
-												style="font-weight: bold; font-size: 18px;" />
-											<p:inputText value="#{ccbMB.objetoCcb.CCBCC}" />
-											<p:outputLabel value="Dígito C/C: " styleClass="labelBold"
-												style="font-weight: bold; font-size: 18px;" />
-											<p:inputText value="#{ccbMB.objetoCcb.CCBDigito}" />
-											<p:outputLabel value="Tipo Da Conta " styleClass="labelBold" />
-											<p:selectOneMenu value="#{ccbMB.objetoCcb.CCBTipoConta}" >
-												<f:selectItem itemValue="Conta Corrente" itemLabel="Conta Corrente" />
-												<f:selectItem itemValue="Conta Poupança" itemLabel="Conta Poupança" />
-											</p:selectOneMenu>
-											<p:outputLabel value="CPF/CNPJ: " styleClass="labelBold"
-												style="font-weight: bold; font-size: 18px;" />
-											<p:inputText value="#{ccbMB.objetoCcb.CCBCNPJ}" />
-											<p:outputLabel value="Nome: " styleClass="labelBold"
-												style="font-weight: bold; font-size: 18px;" />
-											<p:inputText value="#{ccbMB.objetoCcb.CCBNome}" />
-											<p:outputLabel value="Pix: " styleClass="labelBold"
-												style="font-weight: bold; font-size: 18px;" />
-											<p:inputText value="#{ccbMB.objetoCcb.CCBPix}" />
-										</h:panelGrid>
-									
-										<h:panelGrid columns="2" rendered="#{ccbMB.despesaSelecionada.formaTransferencia eq 'Pix'}">
-											<p:outputLabel value="Chave Pix: " styleClass="labelBold"
-												style="font-weight: bold; font-size: 18px;" />
-											<p:inputText value="#{ccbMB.objetoCcb.CCBPix}" />
-										</h:panelGrid>
-									</h:panelGroup>
-									
-									<h:panelGroup rendered="#{ccbMB.despesaSelecionada.descricao eq 'Transferência'}">
-										<h:panelGrid columns="2" rendered="#{ccbMB.despesaSelecionada.formaTransferencia eq 'TED'}">
-											<p:outputLabel value="Banco: " styleClass="labelBold"
-												style="font-weight: bold; font-size: 18px;" />
-											<p:inputText value="#{ccbMB.objetoCcb.intermediacaoBanco}" />
-											<p:outputLabel value="Agência: " styleClass="labelBold"
-												style="font-weight: bold; font-size: 18px;" />
-											<p:inputText value="#{ccbMB.objetoCcb.intermediacaoAgencia}" />
-											<p:outputLabel value="C/C: " styleClass="labelBold"
-												style="font-weight: bold; font-size: 18px;" />
-											<p:inputText value="#{ccbMB.objetoCcb.intermediacaoCC}" />
-											<p:outputLabel value="Tipo Da Conta: " styleClass="labelBold" />
-											<p:selectOneMenu value="#{ccbMB.objetoCcb.intermediacaoTipoConta}" >
-												<f:selectItem itemValue="Conta Corrente" itemLabel="Conta Corrente" />
-												<f:selectItem itemValue="Conta Poupança" itemLabel="Conta Poupança" />
-											</p:selectOneMenu>
-											<p:outputLabel value="CPF/CNPJ: " styleClass="labelBold"
-												style="font-weight: bold; font-size: 18px;" />
-											<p:inputText value="#{ccbMB.objetoCcb.intermediacaoCNPJ}" />
-											<p:outputLabel value="Nome: " styleClass="labelBold"
-												style="font-weight: bold; font-size: 18px;" />
-											<p:inputText value="#{ccbMB.objetoCcb.intermediacaoNome}" />
-											<p:outputLabel value="Pix: " styleClass="labelBold"
-												style="font-weight: bold; font-size: 18px;" />
-											<p:inputText value="#{ccbMB.objetoCcb.intermediacaoPix}" />
-										</h:panelGrid>
-										
-										<h:panelGrid columns="2" rendered="#{ccbMB.despesaSelecionada.formaTransferencia eq 'Pix'}">
-											<p:outputLabel value="Pix: " styleClass="labelBold"
-												style="font-weight: bold; font-size: 18px;" />
-											<p:inputText value="#{ccbMB.objetoCcb.intermediacaoPix}" />
-										</h:panelGrid>
-									</h:panelGroup>
-								</h:panelGroup>
-																		
-								<p:commandButton value="Inserir Despesa" 
-									icon="ui-icon-check"
-									action="#{ccbMB.addDespesa}" 
-									update="form:despesasPanel form:valorDespesas">
-								</p:commandButton>				
-							</h:panelGroup>
+					<p:panel header="Despesas" rendered="#{ccbMB.tipoDownload == 'AnexoII' or
+					ccbMB.tipoDownload == 'Aditamento Carta de Desconto'}">
+						<h:panelGrid columns="1">
 							
-							<p:dataView var="processos" id="ListaProcessos"
-								value="#{ccbMB.objetoCcb.processosJucidiais}"
-								paginator="false" layout="list"
-								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
-								<p:dataViewListItem>
-									<p:outputLabel value="N°: " styleClass="labelBold" />
-									<p:outputLabel value="#{processos.numero}" styleClass="labelBold"
-										style="FONT-SIZE: 10pt;width:100px;" />
-									<p:outputLabel value=" Valor: " styleClass="labelBold" />
-									<p:outputLabel value="#{processos.valorAtualizado}" styleClass="labelBold"
-										style="FONT-SIZE: 10pt;width:100px;"
+							<p:dataTable var="despesas" id="ListaDespesas"
+								value="#{ccbMB.objetoCcb.despesasAnexo2}"
+								size="small" >
+								<f:facet name="header">
+									<p:outputLabel value="Adicionar Despesa " styleClass="labelBold" />
+									<p:commandButton icon="ui-icon-plus"
+										action="#{ccbMB.clearDespesas()}"
+										oncomplete="PF('despesaDialog').show();"
+										update="despesaDialogForm" />
+								</f:facet>
+								
+								<p:column style="text-align: center;" headerText="Descrição">
+									<p:outputLabel value="#{despesas.descricao}" styleClass="labelBold" />
+								</p:column>
+								
+								<p:column style="text-align: center;" headerText="Valor">
+									<p:outputLabel value="#{despesas.valor}" styleClass="labelBold" 
 										converter="bigDecimalConverter" />
-									<p:spacer width="10px"/>
-								</p:dataViewListItem>
-							</p:dataView>
+								</p:column>
+								
+								<p:column style="text-align: center;width:75px;" headerText="">
+									<p:commandButton icon="ui-icon-pencil"
+										action="#{ccbMB.editDespesa(despesas)}"
+										oncomplete="PF('despesaDialog').show();"
+										update="despesaDialogForm" />
+
+									<p:commandButton icon="ui-icon-trash"
+										action="#{ccbMB.removeDespesa(despesas)}"
+										update="form:despesasPanel" />
+								</p:column>
+							</p:dataTable>
+							
+							<p:dataTable var="processos" id="ListaProcessos"
+								value="#{ccbMB.objetoCcb.processosJucidiais}"
+								size="small" >
+								<p:column style="text-align: center;" headerText="N°">
+									<p:outputLabel value="#{processos.numero}" styleClass="labelBold" />
+								</p:column>
+								<p:column style="text-align: center;" headerText="Valor">
+									<p:outputLabel value="#{processos.valorAtualizado}" styleClass="labelBold" converter="bigDecimalConverter" />
+								</p:column>
+							</p:dataTable>
+							
 						</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
@@ -917,7 +819,7 @@
 									converter="bigDecimalConverter"
 									disabled="false" />
 									
-								<p:outputLabel for="valorDespesas" value="Valor do Despesas: "
+								<p:outputLabel for="valorDespesas" value="Valor das Despesas: "
 									styleClass="labelBold"
 									style="font-weight: bold; font-size: 18px;" />									
 								<p:inputText id="valorDespesas" value="#{ccbMB.objetoCcb.valorDespesas}"
@@ -1702,6 +1604,124 @@
 							oncomplete="PF('participanteDialog').hide();" />
 					</f:facet>
 				</p:dataTable>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="Nova Despesa" widgetVar="despesaDialog" style="FONT-SIZE: 10pt;" width="400">
+			<h:form id="despesaDialogForm">
+				<div align="center">
+					<h:panelGroup>
+						<h:panelGrid columns="2">
+							<p:outputLabel 
+								value="Valor: " styleClass="labelBold"
+								style="font-weight: bold; font-size: 18px;" />
+							<p:inputText 
+								value="#{ccbMB.despesaSelecionada.valor}"
+								label="Contrato" onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 13, event, 2);"
+								converter="bigDecimalConverter" /> 
+								
+							<p:outputLabel  value="Descrição: " styleClass="labelBold"
+								style="font-weight: bold; font-size: 18px;" />
+							<p:autoComplete id="ContaPagarDescricao" dropdown="true"
+								value="#{ccbMB.despesaSelecionada.descricao}"
+								completeMethod="#{ccbMB.despesaSelecionada.contaPagarDescricaoLista}"
+								scrollHeight="250" >
+								<p:ajax event="blur" update="tedGrid" />
+							</p:autoComplete>								
+								
+							<p:outputLabel for="formaTransferencia" value="Forma de Tranferência: "
+								styleClass="labelBold"
+								style="font-weight: bold; font-size: 18px;" />
+							<p:selectOneMenu id="formaTransferencia"
+								value="#{ccbMB.despesaSelecionada.formaTransferencia}">
+								<f:selectItem itemValue="" itemLabel="Selecione" />
+								<f:selectItem itemValue="TED" itemLabel="TED" />
+								<f:selectItem itemValue="Pix" itemLabel="Pix" />
+								<f:selectItem itemValue="Boleto" itemLabel="Boleto" />
+								<p:ajax event="change"  update="tedGrid" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+						<h:panelGroup id="tedGrid">
+							<h:panelGroup rendered="#{ccbMB.despesaSelecionada.descricao eq 'Crédito CCI'}">
+								<h:panelGrid columns="2" rendered="#{ccbMB.despesaSelecionada.formaTransferencia eq 'TED'}">
+									<p:outputLabel value="Banco: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText value="#{ccbMB.objetoCcb.CCBBanco}" />
+									<p:outputLabel value="Agência: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText value="#{ccbMB.objetoCcb.CCBAgencia}" />
+									<p:outputLabel value="C/C: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText value="#{ccbMB.objetoCcb.CCBCC}" />
+									<p:outputLabel value="Dígito C/C: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText value="#{ccbMB.objetoCcb.CCBDigito}" />
+									<p:outputLabel value="Tipo Da Conta " styleClass="labelBold" />
+									<p:selectOneMenu value="#{ccbMB.objetoCcb.CCBTipoConta}" >
+										<f:selectItem itemValue="Conta Corrente" itemLabel="Conta Corrente" />
+										<f:selectItem itemValue="Conta Poupança" itemLabel="Conta Poupança" />
+									</p:selectOneMenu>
+									<p:outputLabel value="CPF/CNPJ: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText value="#{ccbMB.objetoCcb.CCBCNPJ}" />
+									<p:outputLabel value="Nome: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText value="#{ccbMB.objetoCcb.CCBNome}" />
+									<p:outputLabel value="Pix: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText value="#{ccbMB.objetoCcb.CCBPix}" />
+								</h:panelGrid>
+							
+								<h:panelGrid columns="2" rendered="#{ccbMB.despesaSelecionada.formaTransferencia eq 'Pix'}">
+									<p:outputLabel value="Chave Pix: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText value="#{ccbMB.objetoCcb.CCBPix}" />
+								</h:panelGrid>
+							</h:panelGroup>
+							
+							<h:panelGroup rendered="#{ccbMB.despesaSelecionada.descricao eq 'Transferência'}">
+								<h:panelGrid columns="2" rendered="#{ccbMB.despesaSelecionada.formaTransferencia eq 'TED'}">
+									<p:outputLabel value="Banco: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText value="#{ccbMB.objetoCcb.intermediacaoBanco}" />
+									<p:outputLabel value="Agência: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText value="#{ccbMB.objetoCcb.intermediacaoAgencia}" />
+									<p:outputLabel value="C/C: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText value="#{ccbMB.objetoCcb.intermediacaoCC}" />
+									<p:outputLabel value="Tipo Da Conta: " styleClass="labelBold" />
+									<p:selectOneMenu value="#{ccbMB.objetoCcb.intermediacaoTipoConta}" >
+										<f:selectItem itemValue="Conta Corrente" itemLabel="Conta Corrente" />
+										<f:selectItem itemValue="Conta Poupança" itemLabel="Conta Poupança" />
+									</p:selectOneMenu>
+									<p:outputLabel value="CPF/CNPJ: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText value="#{ccbMB.objetoCcb.intermediacaoCNPJ}" />
+									<p:outputLabel value="Nome: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText value="#{ccbMB.objetoCcb.intermediacaoNome}" />
+									<p:outputLabel value="Pix: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText value="#{ccbMB.objetoCcb.intermediacaoPix}" />
+								</h:panelGrid>
+								
+								<h:panelGrid columns="2" rendered="#{ccbMB.despesaSelecionada.formaTransferencia eq 'Pix'}">
+									<p:outputLabel value="Pix: " styleClass="labelBold"
+										style="font-weight: bold; font-size: 18px;" />
+									<p:inputText value="#{ccbMB.objetoCcb.intermediacaoPix}" />
+								</h:panelGrid>
+							</h:panelGroup>
+						</h:panelGroup>
+																
+						<p:commandButton value="Inserir Despesa" 
+							icon="ui-icon-check"
+							action="#{ccbMB.addDespesa}" 
+							update="form:despesasPanel form:valorDespesas">
+						</p:commandButton>				
+					</h:panelGroup>
+				</div>
 			</h:form>
 		</p:dialog>
 				

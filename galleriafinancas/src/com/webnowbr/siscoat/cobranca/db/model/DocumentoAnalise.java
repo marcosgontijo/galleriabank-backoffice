@@ -667,8 +667,11 @@ public class DocumentoAnalise implements Serializable {
         for (String word : words) {
         	if (CommonsUtil.mesmoValor("SM", word)) continue;
             try {
-                int number = Integer.parseInt(word);
-                result.append(String.valueOf(number * 1000)).append(" ");
+                int number = Integer.parseInt(word);                
+                Locale locale = new Locale("pt", "BR");      
+                NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(locale);
+                
+                result.append(currencyFormatter.format(number*1000)).append(" ");
             } catch (NumberFormatException e) {
                 result.append(word).append(" ");
             }
@@ -681,6 +684,7 @@ public class DocumentoAnalise implements Serializable {
 		if (resumorelacionamentos != null) {
 			return resumorelacionamentos;
 		}
+	
 		resumorelacionamentos = new ArrayList<DocumentoAnaliseResumo>();
 		
 //		List<DocumentoAnaliseResumo> resumorelacionamentos = new ArrayList<>();
@@ -707,6 +711,9 @@ public class DocumentoAnalise implements Serializable {
 		}
 
 
+		if(CommonsUtil.semValor(resumorelacionamentos)) {
+			resumorelacionamentos = null;
+		}
 		return resumorelacionamentos;
 
 	}

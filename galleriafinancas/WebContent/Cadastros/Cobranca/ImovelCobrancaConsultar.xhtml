@@ -31,7 +31,8 @@
 			        <p:column style="text-align: center;" headerText="Número Matrícula" filterBy="#{ImovelCobranca.numeroMatricula}" filterMatchMode="contains" sortBy="#{ImovelCobranca.numeroMatricula}">
 			            <h:outputText value="#{ImovelCobranca.numeroMatricula}" />
 			        </p:column>                 
-			        <p:column style="text-align: center;" headerText="Descrição" filterBy="#{ImovelCobranca.nome}" filterMatchMode="contains" sortBy="#{ImovelCobranca.nome}">
+			        <p:column style="text-align: center;" headerText="Descrição" filterBy="#{ImovelCobranca.nome}" filterMatchMode="contains" 
+			        sortBy="#{ImovelCobranca.pagador.nome}">
 			            <h:outputText value="#{ImovelCobranca.nome}" />
 			        </p:column>
 			        <p:column style="text-align: center;" headerText="CEP" filterBy="#{ImovelCobranca.cep}" filterMatchMode="contains" sortBy="#{ImovelCobranca.cep}">

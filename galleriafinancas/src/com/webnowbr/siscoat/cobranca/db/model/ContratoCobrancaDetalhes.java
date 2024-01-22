@@ -120,6 +120,10 @@ public class ContratoCobrancaDetalhes implements Serializable {
 	public boolean isAmortizacao() {
 		return CommonsUtil.mesmoValor("Amortização", this.getNumeroParcela());
 	}
+	
+	public boolean isAcertoSaldo() {
+		return CommonsUtil.mesmoValor("Acerto Saldo", this.getNumeroParcela());
+	}
 
 	/**
 	 * @return the id

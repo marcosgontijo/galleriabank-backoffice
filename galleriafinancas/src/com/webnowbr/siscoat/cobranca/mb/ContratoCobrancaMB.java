@@ -173,6 +173,7 @@ import com.webnowbr.siscoat.cobranca.db.model.Segurado;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankBaixa;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankBoleto;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankPix;
+import com.webnowbr.siscoat.cobranca.db.model.StarkBankTax;
 import com.webnowbr.siscoat.cobranca.db.model.directd.PorcentagemImovel;
 import com.webnowbr.siscoat.cobranca.db.op.CartorioDao;
 import com.webnowbr.siscoat.cobranca.db.op.CcbDao;
@@ -330,7 +331,7 @@ public class ContratoCobrancaMB {
 	private List<BoletoKobana> selectedBoletosKobana = new ArrayList<BoletoKobana>();
 	private List<DocumentoAnalise> listaDocumentoAnalise;
 	private List<DocumentoAnalise> listaDocumentoAnaliseRea;
-	private List<DocumentoAnalise> listaDeleteAnalise = new ArrayList<DocumentoAnalise>();
+	private List<DocumentoAnalise> listaSelectAnalise = new ArrayList<>();
 
 	private BoletoKobana selectedBoletosKobanaBaixa = null;
 
@@ -344,6 +345,7 @@ public class ContratoCobrancaMB {
 	 ************************************************************/
 	private BigInteger numeroParcelaReparcelamento;
 	private BigDecimal saldoDevedorReparcelamento;
+	private BigDecimal saldoDevedorOriginalReparcelamento;
 	private BigInteger carenciaReparcelamento;
 	private Date dataParcela;
 	/************************************************************
@@ -941,8 +943,6 @@ public class ContratoCobrancaMB {
 			if (usuarioLogado != null) {
 				this.objetoContratoCobranca.setContratoEmCartorioUsuario(usuarioLogado.getName());
 			}
-
-			this.objetoContratoCobranca.setContratoEmCartorioData(DateUtil.gerarDataHoje());
 		} else {
 			this.objetoContratoCobranca.setContratoEmCartorioUsuario("");
 			this.objetoContratoCobranca.setContratoEmCartorioData(null);
@@ -951,8 +951,14 @@ public class ContratoCobrancaMB {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		CartorioDao cartorioDao = new CartorioDao();
 		if(this.objetoContratoCobranca.isContratoEmCartorio()) {
-			cartorioDao.create(new Cartorio(objetoContratoCobranca,"enviado para cartório",DateUtil.gerarDataHoje(),getUsuarioLogado().getName()));
-		}
+			if(objetoContratoCobranca.getContratoEmCartorioData() != null) {
+			
+				cartorioDao.create(new Cartorio(objetoContratoCobranca,"Enviado para cartório",objetoContratoCobranca.getContratoEmCartorioData(),getUsuarioLogado().getName()));
+					} else {
+						cartorioDao.create(new Cartorio(objetoContratoCobranca,"Enviado para cartório",DateUtil.getDataHoje(),getUsuarioLogado().getName()));
+					}
+			}
+			
 		
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
@@ -1390,8 +1396,8 @@ public class ContratoCobrancaMB {
 			this.objetoContratoCobranca = rfc.getContratoCobranca();
 			// verifica se tem baixa parcial e se a parcela é diferente de paga
 			for (ContratoCobrancaDetalhes ccd : rfc.getContratoCobranca().getListContratoCobrancaDetalhes()) {
-				if (rfc.getIdParcela() == ccd.getId()) {
-					if (CommonsUtil.mesmoValor(ccd.getNumeroParcela(), "0") || ccd.isAmortizacao())
+				if (!CommonsUtil.semValor(ccd) &&  rfc.getIdParcela() == ccd.getId()) {
+					if (CommonsUtil.mesmoValor(ccd.getNumeroParcela(), "0") || ccd.isAmortizacao()|| ccd.isAcertoSaldo())
 						continue;
 					if (ccd.getListContratoCobrancaDetalhesParcial().size() == 0 && !ccd.isParcelaPaga()) {
 						totalQtedParcelas = totalQtedParcelas + 1;
@@ -2526,7 +2532,6 @@ public class ContratoCobrancaMB {
 				this.objetoPagadorRecebedor.setCidadeConjuge("");
 				this.objetoPagadorRecebedor.setEstadoConjuge("");
 			} else {
-
 				if (!CommonsUtil.semValor(consultaCep.getEndereco())) {
 					this.objetoPagadorRecebedor.setEnderecoConjuge(consultaCep.getEndereco());
 				}
@@ -7590,15 +7595,18 @@ public class ContratoCobrancaMB {
 			}
 
 			BigDecimal somaBaixas = BigDecimal.ZERO;
-			if (ccd.isAmortizacao()) {
-				somaBaixas = ccd.getVlrParcela();
-			} else {
-				for (ContratoCobrancaDetalhesParcial cBaixas : ccd.getListContratoCobrancaDetalhesParcial()) {
-					if (!CommonsUtil.semValor(cBaixas.getDataPagamento())) {
-						ccd.setDataUltimoPagamento(cBaixas.getDataPagamento());
-					}
-					if (!CommonsUtil.semValor(cBaixas.getVlrRecebido())) {
-						somaBaixas = somaBaixas.add(cBaixas.getVlrRecebido());
+			if (!ccd.isAcertoSaldo()) {
+//				somaBaixas = ccd.getVlrParcela();
+				if (ccd.isAmortizacao() ) {
+					somaBaixas = ccd.getVlrParcela();
+				} else {
+					for (ContratoCobrancaDetalhesParcial cBaixas : ccd.getListContratoCobrancaDetalhesParcial()) {
+						if (!CommonsUtil.semValor(cBaixas.getDataPagamento())) {
+							ccd.setDataUltimoPagamento(cBaixas.getDataPagamento());
+						}
+						if (!CommonsUtil.semValor(cBaixas.getVlrRecebido())) {
+							somaBaixas = somaBaixas.add(cBaixas.getVlrRecebido());
+						}
 					}
 				}
 			}
@@ -9316,7 +9324,7 @@ public class ContratoCobrancaMB {
 			// ATUALIZA STATUS PARCELAS
 			for (ContratoCobrancaDetalhes ccd : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
 
-				if (ccd.isAmortizacao()) {
+				if (ccd.isAmortizacao() || ccd.isAcertoSaldo()) {
 					ccd.setValorTotalPagamento(ccd.getVlrParcela());
 					continue;
 				}
@@ -9817,7 +9825,7 @@ public class ContratoCobrancaMB {
 
 		this.objetoContratoCobranca.calcularTaxaPreAprovada();
 
-		carregaValorIOFCustos();
+		//carregaValorIOFCustos();
 
 		saveEstadoCheckListAtual();
 
@@ -10082,8 +10090,8 @@ public class ContratoCobrancaMB {
 		
 		// cria despesas processos
 		for (CcbProcessosJudiciais processos : ccb.getProcessosJucidiais()) {
-			if (!buscaDespesaRepetida(processos.getNumero())) {
-				concluirContaProcesso(processos.getNumero(), processos.getValorAtualizado());
+			if (!buscaDespesaRepetida("Processo N°: " + processos.getNumero())) {
+				concluirContaProcesso("Processo N°: " + processos.getNumero(), processos.getValorAtualizado());
 			}
 		}
 	}
@@ -10141,6 +10149,7 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.calcularValorTotalContasPagas();
 
 	}
+	
 	private void calcularRegistroVelho() {
 		int qtdMatriculas = 1;
 		String matriculas = objetoContratoCobranca.getImovel().getNumeroMatricula().trim();
@@ -10854,6 +10863,8 @@ public class ContratoCobrancaMB {
 		dataHoje.set(Calendar.MILLISECOND, 0);
 
 		for (ContratoCobrancaDetalhes ccd : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
+			if ( CommonsUtil.semValor(ccd))
+					continue;
 			dataVencimentoParcela.setTime(ccd.getDataVencimento());
 			dataHoje.set(Calendar.HOUR_OF_DAY, 0);
 			dataHoje.set(Calendar.MINUTE, 0);
@@ -14755,7 +14766,11 @@ public class ContratoCobrancaMB {
 		/* consultaListagemCertidoes() */
 
 		if (status.equals("Aguardando Análise") && (!user.isProfileGerenteAnalise() && !user.isAdministrador())) {
-			if (contratoCobrancaDao.consultaQtdAnaliseUser(user.getLogin()) >= 3) {
+			ParametrosDao pDao = new ParametrosDao();
+			int limiteOp = 3;
+			if(pDao.findByFilter("nome", "LIMITE_OP_ANALISTA").size() > 0)
+				limiteOp = pDao.findByFilter("nome", "LIMITE_OP_ANALISTA").get(0).getValorInt();
+			if (contratoCobrancaDao.consultaQtdAnaliseUser(user.getLogin()) >= limiteOp) {
 				FacesContext context = FacesContext.getCurrentInstance();
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
 						"Analista com muitas operações em andamento!", ""));
@@ -15189,13 +15204,6 @@ public class ContratoCobrancaMB {
 		relObjetoContratoCobrancaAux = contratoCobrancaDao
 				.relatorioControleEstoqueAtrasoFullFIDC(DateUtil.gerarDataHoje());
 
-		// exclui o registro, quando o pagador é a Galleria SA
-		/*
-		 * if (relObjetoContratoCobrancaAux.size() > 0) { for
-		 * (RelatorioFinanceiroCobranca r : relObjetoContratoCobrancaAux) { if
-		 * (r.getContratoCobranca().getPagador().getId() != 14) {
-		 * this.relObjetoContratoCobranca.add(r); } } }
-		 */
 		if (relObjetoContratoCobrancaAux.size() > 0) {
 			this.relObjetoContratoCobranca = relObjetoContratoCobrancaAux;
 		}
@@ -19454,10 +19462,47 @@ public class ContratoCobrancaMB {
 		} else {
 			dataVencimentoNova = this.dataParcela;
 		}
+		
+		Date dataParcelaAcresimo = this.dataParcela;
+		
+		if ( this.numeroParcelaReparcelamento.compareTo(BigInteger.ZERO) != 0) {
+			ContratoCobrancaDetalhes contratoCobrancaDetalhesAnterior = this.objetoContratoCobranca.getListContratoCobrancaDetalhes().stream()
+					.filter( d ->d.getNumeroParcela().equals((this.numeroParcelaReparcelamento.subtract(BigInteger.ONE)).toString()))
+					.findAny().get();	
+			saldoDevedorOriginalReparcelamento = contratoCobrancaDetalhesAnterior.getVlrSaldoParcela();
+			dataParcelaAcresimo = contratoCobrancaDetalhesAnterior.getDataVencimento();
+		}
+		else
+			saldoDevedorOriginalReparcelamento = null;
+			
+		ContratoCobrancaDetalhes acrescimo = new ContratoCobrancaDetalhes();
+		if ( !CommonsUtil.semValor(saldoDevedorOriginalReparcelamento)  && this.simuladorParcelas.getValorCredito().compareTo(this.saldoDevedorOriginalReparcelamento) != 0) {
 
+			/// inserir acrescimo de saldo
+//			 acrescimo.setVlrSaldoParcela();
+			acrescimo.setVlrJurosParcela(BigDecimal.ZERO);
+			acrescimo.setSeguroDFI(BigDecimal.ZERO);
+			acrescimo.setSeguroMIP(BigDecimal.ZERO);
+			acrescimo.setTaxaAdm(BigDecimal.ZERO);
+			acrescimo.setVlrParcela(
+					this.simuladorParcelas.getValorCredito().subtract(this.saldoDevedorOriginalReparcelamento));
+			acrescimo.setNumeroParcela("Acerto Saldo");
+			acrescimo.setParcelaPaga(true);
+			acrescimo.setOrigemBaixa("reparcelamento");
+			acrescimo.setDataVencimento(dataParcelaAcresimo);
+			acrescimo.setDataPagamento(acrescimo.getDataVencimento());
+			acrescimo.setValorTotalPagamento(acrescimo.getVlrParcela());
+			acrescimo.setVlrSaldoParcela(this.simuladorParcelas.getValorCredito());
+			objetoContratoCobranca.getListContratoCobrancaDetalhes().add(acrescimo);
+		}
+		
 		for (SimulacaoDetalheVO parcela : this.simuladorParcelas.getParcelas()) {
 			boolean encontrouParcela = false;
 			BigDecimal saldoAnterior = BigDecimal.ZERO;
+			
+			if ( !CommonsUtil.semValor(acrescimo)){
+				saldoAnterior= acrescimo.getVlrSaldoParcela();
+			}
 
 			for (ContratoCobrancaDetalhes detalhe : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
 
@@ -19465,7 +19510,7 @@ public class ContratoCobrancaMB {
 
 					Date dataParcela = null;
 
-					if (!detalhe.isAmortizacao())
+					if (!detalhe.isAmortizacao()  && !detalhe.isAcertoSaldo())
 						dataParcela = contratoCobrancaDao
 								.geraDataParcela((CommonsUtil.intValue(parcela.getNumeroParcela())
 										- this.numeroParcelaReparcelamento.intValue()), dataVencimentoNova);
@@ -19554,13 +19599,17 @@ public class ContratoCobrancaMB {
 
 			ultimaParcela = parcela.getNumeroParcela();
 		}
+		
+	
 
 		// valida se tem parcela para se retirada, tem que ser ao contrario o for
 		for (Integer iDetalhe = this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size()
 				- 1; iDetalhe >= 0; iDetalhe--) {
 			ContratoCobrancaDetalhes detalhe = this.objetoContratoCobranca.getListContratoCobrancaDetalhes()
 					.get(iDetalhe);
-			if (!CommonsUtil.mesmoValor(detalhe.getNumeroParcela(), "Armotização") && !detalhe.isParcelaPaga()) {
+			if (!CommonsUtil.mesmoValor(detalhe.getNumeroParcela(), "Armotização")
+					&& !CommonsUtil.mesmoValor(detalhe.getNumeroParcela(), "Acerto Saldo")
+					&& !detalhe.isParcelaPaga()) {
 				if (CommonsUtil.intValue(detalhe.getNumeroParcela()) > ultimaParcela.intValue()) {
 					this.objetoContratoCobranca.getListContratoCobrancaDetalhes().remove(detalhe);
 				}
@@ -19575,6 +19624,10 @@ public class ContratoCobrancaMB {
 				.size(); iDetalhe++) {
 			ContratoCobrancaDetalhes detalhe = this.objetoContratoCobranca.getListContratoCobrancaDetalhes()
 					.get(iDetalhe);
+			
+			if ( CommonsUtil.semValor(detalhe) )
+				continue;
+			
 			if (!detalhe.isParcelaPaga()) {
 				if (CommonsUtil.mesmoValor(iDetalhe, 0)) {
 					this.setNumeroParcelaReparcelamento(
@@ -19590,11 +19643,11 @@ public class ContratoCobrancaMB {
 				break;
 			} else {
 				this.setSaldoDevedorReparcelamento(detalhe.getVlrSaldoParcela());
-				if (!detalhe.isAmortizacao()) {
+				if (!detalhe.isAmortizacao() && !detalhe.isAcertoSaldo()) {
 
 					ContratoCobrancaDetalhes detalheProximo = this.objetoContratoCobranca
 							.getListContratoCobrancaDetalhes().get(iDetalhe + 1);
-					if (!detalheProximo.isAmortizacao()) {
+					if (!CommonsUtil.semValor(detalheProximo) && !detalheProximo.isAmortizacao() && !detalheProximo.isAcertoSaldo()) {
 						this.setDataParcela(detalheProximo.getDataVencimento());
 						this.setNumeroParcelaReparcelamento(
 								BigInteger.valueOf(CommonsUtil.intValue(detalheProximo.getNumeroParcela())));
@@ -19603,6 +19656,7 @@ public class ContratoCobrancaMB {
 				this.setCarenciaReparcelamento(BigInteger.ZERO);
 			}
 		}
+		this.saldoDevedorOriginalReparcelamento = this.getSaldoDevedorReparcelamento();
 	}
 
 	public void concluirReparcelamentoAutomatico() {
@@ -19799,9 +19853,183 @@ public class ContratoCobrancaMB {
 		this.contasPagarSelecionada = new ContasPagar();
 		this.addContasPagar = false;
 		this.objetoContratoCobranca.calcularValorTotalContasPagas();
-
+	}
+	
+	public void cirarDespesasContrato() {
+		for(CcbProcessosJudiciais processo : objetoContratoCobranca.getListProcessos()) {
+			if(!processo.isSelecionadoComite()) {
+				continue;
+			}
+			processo.getContaPagar().setContrato(objetoContratoCobranca);
+			objetoContratoCobranca.getListContasPagar().add(processo.getContaPagar());
+		}
+		
+		ContasPagarDao contasPagarDao = new ContasPagarDao();
+		
+		ContasPagar despesaLaudo = buscarDespesa("Laudo", objetoContratoCobranca.getNumeroContrato());
+		if(!CommonsUtil.semValor(objetoContratoCobranca.getValorLaudoPajuFaltante())) {
+			BigDecimal valorLaudoPaju = objetoContratoCobranca.getValorLaudoPajuFaltante();
+			if(objetoContratoCobranca.isPajuVencido()) {
+				valorLaudoPaju = valorLaudoPaju.add(BigDecimal.valueOf(500));
+			}
+			if(CommonsUtil.semValor(despesaLaudo)) {
+				criarDespesa("Laudo", valorLaudoPaju);
+			} else {
+				despesaLaudo.setValor(valorLaudoPaju);
+				contasPagarDao.merge(despesaLaudo);
+			}
+		}
+		
+		ContasPagar despesaTransferencia = buscarDespesa("Transferência", objetoContratoCobranca.getNumeroContrato());
+		if(CommonsUtil.mesmoValor(objetoContratoCobranca.getCobrarComissaoCliente(), "Sim")) {
+			BigDecimal valorTranferencia = BigDecimal.ZERO;
+			BigDecimal comissao = BigDecimal.ZERO;
+			if(CommonsUtil.mesmoValor(objetoContratoCobranca.getTipoCobrarComissaoCliente(), "Real")) {
+				if(!CommonsUtil.semValor(objetoContratoCobranca.getComissaoClienteValorFixo())) {
+					valorTranferencia = objetoContratoCobranca.getComissaoClienteValorFixo();
+				}
+			} else if(CommonsUtil.mesmoValor(objetoContratoCobranca.getTipoCobrarComissaoCliente(), "Porcentagem")) {
+				if(!CommonsUtil.semValor(objetoContratoCobranca.getComissaoClientePorcentagem())) {
+					comissao = objetoContratoCobranca.getComissaoClientePorcentagem();
+					comissao = comissao.divide(BigDecimal.valueOf(100), MathContext.DECIMAL128);
+				}
+				
+				if(CommonsUtil.mesmoValor(objetoContratoCobranca.getBrutoLiquidoCobrarComissaoCliente(), "Bruto")) {
+					valorTranferencia = objetoContratoCobranca.getValorAprovadoComite().multiply(comissao);
+				} 
+			}
+			
+			String conta = "";
+			if(!CommonsUtil.semValor(objetoContratoCobranca.getResponsavel().getConta())) {
+				conta = objetoContratoCobranca.getResponsavel().getConta();
+			}
+			if(!CommonsUtil.semValor(objetoContratoCobranca.getResponsavel().getContaDigito())) {
+				conta = conta + "-" + objetoContratoCobranca.getResponsavel().getContaDigito();
+			}
+			
+			if(CommonsUtil.semValor(despesaTransferencia)) {
+				criarDespesa("Transferência", valorTranferencia, "TED");
+			} else {
+				conta = "";
+				if(!CommonsUtil.semValor(objetoContratoCobranca.getResponsavel().getConta())) {
+					conta = objetoContratoCobranca.getResponsavel().getConta();
+				}
+				if(!CommonsUtil.semValor(objetoContratoCobranca.getResponsavel().getContaDigito())) {
+					conta = conta + "-" +  objetoContratoCobranca.getResponsavel().getContaDigito();
+				}
+				despesaTransferencia.setBancoTed(objetoContratoCobranca.getResponsavel().getBanco());
+				despesaTransferencia.setAgenciaTed(objetoContratoCobranca.getResponsavel().getAgencia());
+				despesaTransferencia.setContaTed(conta);
+				despesaTransferencia.setCpfTed(objetoContratoCobranca.getResponsavel().getCpfCnpjCC());
+				despesaTransferencia.setNomeTed(objetoContratoCobranca.getResponsavel().getNomeCC());
+				despesaTransferencia.setPix(objetoContratoCobranca.getResponsavel().getPix());
+				
+				despesaTransferencia.setValor(valorTranferencia);
+				contasPagarDao.merge(despesaTransferencia);
+			}
+		} else if(!CommonsUtil.semValor(despesaTransferencia)) {
+			despesaTransferencia.setValor(BigDecimal.ZERO);
+			objetoContratoCobranca.getListContasPagar().remove(despesaTransferencia);
+		}
+		
+		ContasPagar despesaIQ = buscarDespesa("IQ", objetoContratoCobranca.getNumeroContrato());
+		if(CommonsUtil.mesmoValor(objetoContratoCobranca.getDivida(), "Sim")) {
+			if(CommonsUtil.semValor(despesaIQ)) {
+				criarDespesa("IQ", objetoContratoCobranca.getDividaValor());				
+			} else {
+				despesaIQ.setValor(objetoContratoCobranca.getDividaValor());
+				contasPagarDao.merge(despesaIQ);
+			}
+		} else if(!CommonsUtil.semValor(despesaIQ)) {
+			despesaIQ.setValor(BigDecimal.ZERO);
+			objetoContratoCobranca.getListContasPagar().remove(despesaIQ);
+		}
+		
+		ContasPagar despesaIPTU = buscarDespesa("IPTU", objetoContratoCobranca.getNumeroContrato());
+		if(!CommonsUtil.semValor(objetoContratoCobranca.getDividaIPTU())) {
+			if(CommonsUtil.semValor(CommonsUtil.semValor(despesaIPTU))) {
+				criarDespesa("IPTU", objetoContratoCobranca.getDividaIPTU());
+			} else {
+				despesaIPTU.setValor(objetoContratoCobranca.getDividaIPTU());
+				contasPagarDao.merge(despesaIPTU);
+			}
+		} else if(!CommonsUtil.semValor(despesaIPTU)) {
+			despesaIPTU.setValor(BigDecimal.ZERO);
+			objetoContratoCobranca.getListContasPagar().remove(despesaIPTU);
+		}
+		
+		ContasPagar despesaCondominio = buscarDespesa("Condomínio", objetoContratoCobranca.getNumeroContrato());
+		if(!CommonsUtil.semValor(objetoContratoCobranca.getDividaCondominio())) {
+			if(CommonsUtil.semValor(despesaCondominio)) {
+				criarDespesa("Condomínio", objetoContratoCobranca.getDividaCondominio());
+			} else {
+				despesaCondominio.setValor(objetoContratoCobranca.getDividaCondominio());
+				contasPagarDao.merge(despesaCondominio);
+			}
+		} else if(!CommonsUtil.semValor(despesaCondominio)) {
+			despesaCondominio.setValor(BigDecimal.ZERO);
+			objetoContratoCobranca.getListContasPagar().remove(despesaCondominio);
+		}
+		
+		ContasPagar despesaAverbacao = buscarDespesa("Averbação", objetoContratoCobranca.getNumeroContrato());
+		if(objetoContratoCobranca.getListAverbacao().size() > 0) {		
+			BigDecimal averbacaoTotal = BigDecimal.ZERO;
+			for(Averbacao averbacao : objetoContratoCobranca.getListAverbacao()) {
+				averbacaoTotal = averbacaoTotal.add(averbacao.getValor());
+			}
+			if (CommonsUtil.semValor(despesaAverbacao)) {
+				criarDespesa("Averbação", averbacaoTotal);
+			} else {
+				despesaAverbacao.setValor(averbacaoTotal);
+				contasPagarDao.merge(despesaAverbacao);
+			}
+		} else if(!CommonsUtil.semValor(despesaAverbacao)) {
+			despesaAverbacao.setValor(BigDecimal.ZERO);
+			objetoContratoCobranca.getListContasPagar().remove(despesaAverbacao);
+		}
+		
+		ContasPagar despesaRegistro = buscarDespesa("Cartório", objetoContratoCobranca.getNumeroContrato());
+		if(CommonsUtil.semValor(despesaRegistro))
+			despesaRegistro = buscarDespesa("Registro", objetoContratoCobranca.getNumeroContrato());
+		if(!CommonsUtil.semValor(objetoContratoCobranca.getValorCartorio())) {
+			BigDecimal valorRegistro = objetoContratoCobranca.getValorCartorio();
+			if(CommonsUtil.semValor(despesaRegistro)) {
+				criarDespesa("Cartório", valorRegistro);
+			} else {
+				despesaRegistro.setValor(valorRegistro);
+				contasPagarDao.merge(despesaRegistro);
+			}
+		} else if(!CommonsUtil.semValor(despesaRegistro)) {
+			despesaRegistro.setValor(BigDecimal.ZERO);
+			objetoContratoCobranca.getListContasPagar().remove(despesaRegistro);
+		}
+		
+		calcularValorTotalContasPagar();
 	}
 
+	public ContasPagar buscarDespesa(String descricao, String numeroContrato) {
+		try {
+			ContasPagarDao contasPagarDao = new ContasPagarDao();
+			List<ContasPagar> lista = contasPagarDao.buscarDespesa(descricao, numeroContrato);
+			if(lista.size() > 0)
+				return lista.get(0);
+		} catch (Exception e) {
+		}
+		return null;
+	}
+	
+	public void criarDespesa(String descricao, BigDecimal valor) {
+		criarDespesa(descricao, valor, "Boleto");
+	}
+	
+	public void criarDespesa(String descricao, BigDecimal valor, String formaTransferencia) {
+		contasPagarSelecionada = new ContasPagar();
+		contasPagarSelecionada.setDescricao(descricao);
+		contasPagarSelecionada.setValor(valor);
+		contasPagarSelecionada.setFormaTransferencia(formaTransferencia);
+		objetoContratoCobranca.getListContasPagar().add(contasPagarSelecionada);
+	}
+	
 	public void concluirContaPagamentoCliente() {
 		this.contasPagarSelecionada.setContrato(this.objetoContratoCobranca);
 		this.contasPagarSelecionada.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
@@ -19897,8 +20125,31 @@ public class ContratoCobrancaMB {
 					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
 							"Pagamento StarkBank: Ordem de Pagamento de Boleto inserida com sucesso!", ""));
 				}
+				
+				if (this.contasPagarSelecionada.getFormaTransferencia().equals("Imposto")) {
+
+					//this.contasPagarSelecionada.setDescricaoStarkBank("Pagamento de Conta");
+
+					StarkBankBaixa baixa = registraBaixaStarkBank(this.contasPagarSelecionada.getDataPagamento(),
+							this.contasPagarSelecionada.getNumeroDocumentoPagadorStarkBank(), null,
+							this.contasPagarSelecionada.getLinhaDigitavelStarkBank(),
+							this.objetoPagadorRecebedor.getNome(), this.contasPagarSelecionada.getValorPagamento(),
+							this.contasPagarSelecionada, "Imposto", "Aguardando Aprovação");
+
+					this.contasPagarSelecionada.getListContasPagarBaixas().add(baixa);
+
+					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+							"Pagamento StarkBank: Ordem de Pagamento de Boleto inserida com sucesso!", ""));
+				}
 
 				if (this.contasPagarSelecionada.getFormaTransferencia().equals("Pix")) {
+					this.contasPagarSelecionada.setCpfTed(this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar());
+					this.contasPagarSelecionada.setNomeTed(this.objetoContratoCobranca.getNomeBancarioContaPagar());
+					this.contasPagarSelecionada.setAgenciaTed(this.objetoContratoCobranca.getAgenciaBancarioContaPagar());
+					this.contasPagarSelecionada.setBancoTed(this.objetoContratoCobranca.getBancoBancarioContaPagar());
+					this.contasPagarSelecionada.setContaTed(this.objetoContratoCobranca.getContaBancarioContaPagar());
+					this.contasPagarSelecionada.setPix(this.objetoContratoCobranca.getChavePIXBancarioContaPagar());
+					
 					StarkBankBaixa baixa = registraBaixaStarkBank(DateUtil.gerarDataHoje(),
 							this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar(), null, null,
 							this.objetoPagadorRecebedor.getNome(), this.contasPagarSelecionada.getValorPagamento(),
@@ -19911,6 +20162,11 @@ public class ContratoCobrancaMB {
 				}
 
 				if (this.contasPagarSelecionada.getFormaTransferencia().equals("TED")) {
+					this.contasPagarSelecionada.setCpfTed(this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar());
+					this.contasPagarSelecionada.setNomeTed(this.objetoContratoCobranca.getNomeBancarioContaPagar());
+					this.contasPagarSelecionada.setAgenciaTed(this.objetoContratoCobranca.getAgenciaBancarioContaPagar());
+					this.contasPagarSelecionada.setBancoTed(this.objetoContratoCobranca.getBancoBancarioContaPagar());
+					this.contasPagarSelecionada.setContaTed(this.objetoContratoCobranca.getContaBancarioContaPagar());
 
 					StarkBankBaixa baixa = registraBaixaStarkBank(DateUtil.gerarDataHoje(),
 							this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar(), null, null,
@@ -19928,6 +20184,13 @@ public class ContratoCobrancaMB {
 					contasPagarDao.create(this.contasPagarSelecionada);
 				} else {
 					contasPagarDao.merge(this.contasPagarSelecionada);
+				}
+				
+				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+				if (this.objetoContratoCobranca.getId() <= 0) {
+					cDao.create(this.objetoContratoCobranca);
+				} else {
+					cDao.merge(this.objetoContratoCobranca);
 				}
 			}
 		}
@@ -20272,6 +20535,34 @@ public class ContratoCobrancaMB {
 					finalizaOperacao = true;
 				}
 			}
+			
+			if (this.objetoBaixaPagamentoStarkBank.getContasPagar().getFormaTransferencia().equals("Imposto")) {
+				
+				System.out.println("processaPagamentoStarkBank - Imposto");
+
+				//this.objetoBaixaPagamentoStarkBank.getContasPagar().setDescricaoStarkBank("Pagamento de Conta");
+
+				StarkBankTax starkBankTax = starkBankAPI.paymentTax(
+						this.objetoBaixaPagamentoStarkBank.getContasPagar().getLinhaDigitavelStarkBank(), this.objetoBaixaPagamentoStarkBank.getContasPagar().getDescricaoStarkBank());
+
+				if (starkBankTax != null) {
+					// this.contasPagarSelecionada.setComprovantePagamentoStarkBank(starkBankBoleto);
+					StarkBankBaixa baixa = updateBaixaStarkBank(this.objetoBaixaPagamentoStarkBank,							
+							String.valueOf(starkBankTax.getId()),
+							starkBankTax.getCreated(),
+							this.objetoBaixaPagamentoStarkBank.getContasPagar().getValor(),
+							"Aprovado",
+							starkBankTax.getLine());
+
+					this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().setContaPagarValorTotal(this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getContaPagarValorTotal()
+							.subtract(this.objetoBaixaPagamentoStarkBank.getContasPagar().getValor()));
+
+					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+							"Pagamento StarkBank: Imposto pago sucesso!", ""));
+
+					finalizaOperacao = true;
+				}
+			}
 
 			if (this.objetoBaixaPagamentoStarkBank.getContasPagar().getFormaTransferencia().equals("Pix") || 
 					this.objetoBaixaPagamentoStarkBank.getContasPagar().getFormaTransferencia().equals("PIX")) {
@@ -20430,11 +20721,16 @@ public class ContratoCobrancaMB {
 
 	public String processaReprovaPagamentoStarkBank() {
 		FacesContext context = FacesContext.getCurrentInstance();
-
-		this.objetoBaixaPagamentoStarkBank.setStatusPagamento("Reprovado");
-
-		StarkBankBaixaDAO sbBaixaDao = new StarkBankBaixaDAO();
-		sbBaixaDao.merge(this.objetoBaixaPagamentoStarkBank);
+		
+		if (this.objetoBaixaPagamentoStarkBank.getContasPagar().getDescricao().contains("Pagamento Carta Split")) {
+			ContasPagarDao despesa = new ContasPagarDao();
+			despesa.delete(this.objetoBaixaPagamentoStarkBank.getContasPagar());
+		} else {
+			this.objetoBaixaPagamentoStarkBank.setStatusPagamento("Reprovado");
+			
+			StarkBankBaixaDAO sbBaixaDao = new StarkBankBaixaDAO();
+			sbBaixaDao.merge(this.objetoBaixaPagamentoStarkBank);
+		}
 
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO, "Pagamento StarkBank: Reprovado com sucesso!", ""));
@@ -20474,6 +20770,12 @@ public class ContratoCobrancaMB {
 			Font header = new Font(FontFamily.HELVETICA, 12, Font.BOLD);
 
 			Font titulo = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
+			Font tituloGray = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
+			tituloGray.setColor(BaseColor.LIGHT_GRAY);
+			
+			Font tituloGreen = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
+			tituloGreen.setColor(158, 195, 32);
+			
 			Font tituloBranco = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
 			tituloBranco.setColor(BaseColor.WHITE);
 			Font normal = new Font(FontFamily.HELVETICA, 10);
@@ -20492,7 +20794,7 @@ public class ContratoCobrancaMB {
 			 * Configuração inicial do PDF - Cria o documento tamanho A4, margens de 2,54cm
 			 */
 
-			doc = new Document(PageSize.A4.rotate(), 10, 80, 10, 80);
+			doc = new Document(PageSize.A4);
 			this.nomeComprovanteStarkBank = "Recibo Pagamento -  " + nomePagador + ".pdf";
 			this.pathComprovanteStarkBank = pDao.findByFilter("nome", "RECIBOS_IUGU").get(0).getValorString();
 
@@ -20507,177 +20809,231 @@ public class ContratoCobrancaMB {
 			 * Paragraph p1 = new Paragraph("RECIBO DE PAGAMENTO - " + favorecido, titulo);
 			 * p1.setAlignment(Element.ALIGN_CENTER); p1.setSpacingAfter(10); doc.add(p1);
 			 */
-			PdfPTable table = new PdfPTable(new float[] { 0.8f, 0.8f });
-			table.setWidthPercentage(50.0f);
+			PdfPTable table = new PdfPTable(2);
+			//table.setWidthPercentage(100.0f);
 
-			BufferedImage buff = ImageIO.read(getClass().getResourceAsStream("/resource/logoStarkBank.jpg"));
+			BufferedImage buff = ImageIO.read(getClass().getResourceAsStream("/resource/pgto430.png"));
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			ImageIO.write(buff, "jpg", bos);
+			ImageIO.write(buff, "png", bos);
 			Image img = Image.getInstance(bos.toByteArray());
 
 			img.setAlignment(Element.ALIGN_CENTER);
 
 			PdfPCell cell1 = new PdfPCell(img);
 			cell1.setBorder(0);
-			cell1.setPaddingLeft(8f);
-			cell1.setBorderWidthTop(1);
-			cell1.setBorderColorTop(BaseColor.BLACK);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(10f);
-			cell1.setPaddingBottom(10f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase("StarkBank - Sistema de Pagamento online", header));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setPaddingBottom(15f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-
-			if (baixaStarkBank.getFormaPagamento().equals("Boleto")) {
-				cell1 = new PdfPCell(new Phrase("Comprovante de Pagamento - Boleto", tituloBranco));
-			}
-			if (baixaStarkBank.getFormaPagamento().equals("PIX")) {
-				cell1 = new PdfPCell(new Phrase("Comprovante de Pagamento - PIX", tituloBranco));
-			}
-			if (baixaStarkBank.getFormaPagamento().equals("TED")) {
-				cell1 = new PdfPCell(new Phrase("Comprovante de Pagamento - TED", tituloBranco));
-			}
-
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(new BaseColor(92, 156, 204));
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setPaddingBottom(5f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase("ID da Transação: " + baixaStarkBank.getIdTransacao(), titulo));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
 			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(10f);
-			cell1.setPaddingBottom(2f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(
-					new Phrase("Data: " + sdfDataRelComHoras.format(baixaStarkBank.getDataPagamento()), titulo));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(2f);
+			cell1.setPaddingTop(20f);
 			cell1.setPaddingBottom(10f);
 			cell1.setColspan(2);
 			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase("Valor R$ " + df.format(baixaStarkBank.getValor()), titulo));
+			
+			cell1 = new PdfPCell(new Phrase("Pagador", tituloGreen));
 			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(10f);
-			cell1.setPaddingBottom(10f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase("CPF/CNPJ: " + baixaStarkBank.getDocumento(), titulo));
-			cell1.setBorder(0);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(10f);
-			cell1.setPaddingBottom(2f);
-			cell1.setColspan(2);
-			table.addCell(cell1);
-
-			cell1 = new PdfPCell(new Phrase("Nome: " + baixaStarkBank.getNomePagador(), titulo));
-			cell1.setBorder(0);
-			cell1.setBorderWidthBottom(1);
-			cell1.setBorderColorBottom(BaseColor.BLACK);
-			cell1.setBorderWidthLeft(1);
-			cell1.setBorderColorLeft(BaseColor.BLACK);
-			cell1.setBorderWidthRight(1);
-			cell1.setBorderColorRight(BaseColor.BLACK);
 			cell1.setPaddingLeft(8f);
 			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
 			cell1.setBackgroundColor(BaseColor.WHITE);
 			cell1.setUseBorderPadding(true);
 			cell1.setPaddingTop(20f);
-			cell1.setPaddingBottom(10f);
+			cell1.setPaddingBottom(2f);
 			cell1.setColspan(2);
 			table.addCell(cell1);
-
-			if (baixaStarkBank.getFormaPagamento().equals("Boleto")) {
-				cell1 = new PdfPCell(new Phrase("Obs.: Compensação no próximo dia útil.", titulo));
+			
+			if (baixaStarkBank.getContasPagar().getDescricao().contains("Pagamento Carta Split")) {
+				cell1 = new PdfPCell(new Phrase("Galleria SCD", titulo));
 				cell1.setBorder(0);
-				cell1.setBorderWidthBottom(1);
-				cell1.setBorderColorBottom(BaseColor.BLACK);
-				cell1.setBorderWidthLeft(1);
-				cell1.setBorderColorLeft(BaseColor.BLACK);
-				cell1.setBorderWidthRight(1);
-				cell1.setBorderColorRight(BaseColor.BLACK);
 				cell1.setPaddingLeft(8f);
 				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
 				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
 				cell1.setBackgroundColor(BaseColor.WHITE);
 				cell1.setUseBorderPadding(true);
-				cell1.setPaddingTop(20f);
-				cell1.setPaddingBottom(10f);
-				cell1.setColspan(2);
+				cell1.setPaddingTop(10f);
+				cell1.setPaddingBottom(2f);
+				table.addCell(cell1);
+				
+				cell1 = new PdfPCell(new Phrase("CNPJ: 51.604.356/0001-75", titulo));
+				cell1.setBorder(0);
+				cell1.setPaddingLeft(8f);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_RIGHT);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingTop(10f);
+				cell1.setPaddingBottom(30f);
+				table.addCell(cell1);
+			} else {
+				cell1 = new PdfPCell(new Phrase("Galleria Correspondente Bancário Eireli", titulo));
+				cell1.setBorder(0);
+				cell1.setPaddingLeft(8f);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingTop(10f);
+				cell1.setPaddingBottom(2f);
+				table.addCell(cell1);
+				
+				cell1 = new PdfPCell(new Phrase("CNPJ: 34.787.885/0001-32", titulo));
+				cell1.setBorder(0);
+				cell1.setPaddingLeft(8f);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_RIGHT);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingTop(10f);
+				cell1.setPaddingBottom(2f);
 				table.addCell(cell1);
 			}
+			
+			cell1 = new PdfPCell(new Phrase("Recebedor", tituloGreen));
+			cell1.setBorder(0);
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(20f);
+			cell1.setPaddingBottom(2f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase(baixaStarkBank.getNomePagador(), titulo));
+			cell1.setBorder(0);
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(10f);
+			cell1.setPaddingBottom(2f);
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase("CPF/CNPJ: " + baixaStarkBank.getDocumento(), titulo));
+			cell1.setBorder(0);
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_RIGHT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(10f);
+			cell1.setPaddingBottom(2f);
+			table.addCell(cell1);
+			
+			
+			if (baixaStarkBank.getContasPagar().getBancoTed() != null && baixaStarkBank.getContasPagar().getAgenciaTed() != null && 
+					baixaStarkBank.getContasPagar().getContaTed() != null) {
+				
+				if (baixaStarkBank.getContasPagar().getFormaTransferencia().equals("Pix") || baixaStarkBank.getContasPagar().getFormaTransferencia().equals("PIX")) {										
+					cell1 = new PdfPCell(new Phrase("Banco: " + baixaStarkBank.getContasPagar().getBancoTed(), titulo));
+					cell1.setBorder(0);
+					cell1.setPaddingLeft(8f);
+					cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+					cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+					cell1.setBackgroundColor(BaseColor.WHITE);
+					cell1.setUseBorderPadding(true);
+					cell1.setPaddingTop(10f);
+					cell1.setPaddingBottom(2f);
+					cell1.setPaddingBottom(2f);	
+					table.addCell(cell1);
+					
+					cell1 = new PdfPCell(new Phrase("Ag.: " + baixaStarkBank.getContasPagar().getAgenciaTed() + " | C/C: " + baixaStarkBank.getContasPagar().getContaTed(), titulo));
+					cell1.setBorder(0);
+					cell1.setPaddingLeft(8f);
+					cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+					cell1.setHorizontalAlignment(Element.ALIGN_RIGHT);
+					cell1.setBackgroundColor(BaseColor.WHITE);
+					cell1.setUseBorderPadding(true);
+					cell1.setPaddingTop(10f);
+					cell1.setPaddingBottom(2f);
+					table.addCell(cell1);
+					
+					cell1 = new PdfPCell(new Phrase("PIX: " + baixaStarkBank.getContasPagar().getPix(), titulo));
+					cell1.setBorder(0);
+					cell1.setPaddingLeft(8f);
+					cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+					cell1.setHorizontalAlignment(Element.ALIGN_RIGHT);
+					cell1.setBackgroundColor(BaseColor.WHITE);
+					cell1.setUseBorderPadding(true);
+					cell1.setPaddingTop(10f);
+					cell1.setColspan(2);
+					cell1.setPaddingBottom(20f);	
+					table.addCell(cell1);
+				} else {					
+					cell1 = new PdfPCell(new Phrase("Banco: " + baixaStarkBank.getContasPagar().getBancoTed(), titulo));
+					cell1.setBorder(0);
+					cell1.setPaddingLeft(8f);
+					cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+					cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+					cell1.setBackgroundColor(BaseColor.WHITE);
+					cell1.setUseBorderPadding(true);
+					cell1.setPaddingTop(10f);
+					cell1.setPaddingBottom(20f);	
+					table.addCell(cell1);
+					
+					cell1 = new PdfPCell(new Phrase("Ag.: " + baixaStarkBank.getContasPagar().getAgenciaTed() + " | C/C: " + baixaStarkBank.getContasPagar().getContaTed(), titulo));
+					cell1.setBorder(0);
+					cell1.setPaddingLeft(8f);
+					cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+					cell1.setHorizontalAlignment(Element.ALIGN_RIGHT);
+					cell1.setBackgroundColor(BaseColor.WHITE);
+					cell1.setUseBorderPadding(true);
+					cell1.setPaddingTop(10f);
+					cell1.setPaddingBottom(20f);
+					table.addCell(cell1);
+				}
+			}
+			
+			cell1 = new PdfPCell(new Phrase("Transferência - " + baixaStarkBank.getFormaPagamento(), tituloGreen));
+			cell1.setBorder(0);
+			cell1.setBorderWidthTop(1);
+			cell1.setBorderColorTop(BaseColor.LIGHT_GRAY);
+			cell1.setUseBorderPadding(true);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(20f);
+			cell1.setColspan(2);
+			cell1.setPaddingBottom(10f);			
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase("Valor: R$ " + df.format(baixaStarkBank.getValor()), titulo));
+			cell1.setBorder(0);
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(10f);
+			cell1.setPaddingBottom(2f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase("Data do Pagamento: " + sdfDataRelComHoras.format(baixaStarkBank.getDataPagamento()), titulo));
+			cell1.setBorder(0);
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(10f);
+			cell1.setPaddingBottom(2f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
+			
+			cell1 = new PdfPCell(new Phrase("Autenticação: " + baixaStarkBank.getIdTransacao(), titulo));
+			cell1.setBorder(0);
+			cell1.setPaddingLeft(8f);
+			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+			cell1.setBackgroundColor(BaseColor.WHITE);
+			cell1.setUseBorderPadding(true);
+			cell1.setPaddingTop(10f);
+			cell1.setPaddingBottom(2f);
+			cell1.setColspan(2);
+			table.addCell(cell1);
 
 			doc.add(table);
 
@@ -21195,7 +21551,7 @@ public class ContratoCobrancaMB {
 					menorCarencia = comite.getCarenciaComite();
 				}
 			}
-			comentarioComiteFinal += comite.getUsuarioComite() + ": " + comite.getComentarioComite() + "  //  ";
+			comentarioComiteFinal += comite.getUsuarioComite() + ": " + comite.getComentarioComite() + "  //\n  ";
 		}
 
 //		não  precisa mais incluir para sair na ficha do cliente
@@ -21376,6 +21732,10 @@ public class ContratoCobrancaMB {
 			conta.setDataPagamento(DateUtil.gerarDataHoje());
 			cDao.merge(conta);
 		}
+	}
+	
+	public void clearConta() {
+		contasPagarSelecionada = new ContasPagar();
 	}
 
 	public void removeDataVistoria(DataVistoria data) {
@@ -22835,7 +23195,7 @@ public class ContratoCobrancaMB {
 		// ATUALIZA STATUS PARCELAS
 		for (ContratoCobrancaDetalhes ccd : this.objetoContratoCobranca.getListContratoCobrancaDetalhes()) {
 
-			if (ccd.isAmortizacao()) {
+			if (ccd.isAmortizacao() || ccd.isAcertoSaldo()) {
 				ccd.setValorTotalPagamento(ccd.getVlrParcela());
 				continue;
 			}
@@ -32732,7 +33092,7 @@ public class ContratoCobrancaMB {
 	public void deleteArquivosAnalisados() {
 		DocumentoAnaliseDao daoDocumentoAnalise = new DocumentoAnaliseDao();
 
-		for (DocumentoAnalise d : listaDeleteAnalise) {
+		for (DocumentoAnalise d : listaSelectAnalise) {
 			d.setExcluido(true);
 			daoDocumentoAnalise.merge(d);
 		}
@@ -35280,14 +35640,6 @@ public class ContratoCobrancaMB {
 		this.baixaMultiParcelasComTxADM = baixaMultiParcelasComTxADM;
 	}
 
-	public List<DocumentoAnalise> getListaDeleteAnalise() {
-		return listaDeleteAnalise;
-	}
-
-	public void setListaDeleteAnalise(List<DocumentoAnalise> listaDeleteAnalise) {
-
-		this.listaDeleteAnalise = listaDeleteAnalise;
-	}
 
 	public String getContratosLaudo() {
 		return contratosLaudo;
@@ -36053,5 +36405,12 @@ public class ContratoCobrancaMB {
 
 	public void setCartorioMudou(boolean cartorioMudou) {
 		this.cartorioMudou = cartorioMudou;
+	}
+	public List<DocumentoAnalise> getListaSelectAnalise() {
+		return listaSelectAnalise;
+	}
+
+	public void setListaSelectAnalise(List<DocumentoAnalise> listaSelectAnalise) {
+		this.listaSelectAnalise = listaSelectAnalise;
 	}
 }

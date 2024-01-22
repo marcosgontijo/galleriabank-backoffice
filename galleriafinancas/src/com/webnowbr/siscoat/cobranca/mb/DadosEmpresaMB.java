@@ -33,6 +33,7 @@ import org.primefaces.model.charts.optionconfig.tooltip.Tooltip;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
+import com.webnowbr.siscoat.cobranca.db.op.CartorioDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
@@ -202,7 +203,7 @@ public class DadosEmpresaMB {
 				
 				if (ccd.isParcelaPaga()) {
 					this.valorUltimaPareclaPaga = ccd.getVlrSaldoParcela();
-					if(!CommonsUtil.mesmoValor(ccd.getNumeroParcela(), "Amortização")) {
+					if(!CommonsUtil.mesmoValor(ccd.getNumeroParcela(), "Amortização") && !CommonsUtil.mesmoValor(ccd.getNumeroParcela(), "Acerto Saldo")) {
 						this.prazoContrato = contrato.getQtdeParcelas() - CommonsUtil.intValue(ccd.getNumeroParcela());
 					}
 				} else if (ccd.isParcelaVencida()) {
@@ -221,8 +222,10 @@ public class DadosEmpresaMB {
 				}
 			}
 			
+			CartorioDao dao = new CartorioDao();
 			contrato.qtdParcelasAtraso = qtdDeparcelasVencidas;
 			contrato.somaParcelasAtraso = valorVencido;
+			contrato.ultimoCartorio = dao.consultaUltimoCartorio(contrato);
 			
 			if(CommonsUtil.mesmoValor(this.prazoContrato, 0) || CommonsUtil.mesmoValor(this.valorUltimaPareclaPaga, BigDecimal.ZERO)) {
 				this.totalContratosConsultar--;

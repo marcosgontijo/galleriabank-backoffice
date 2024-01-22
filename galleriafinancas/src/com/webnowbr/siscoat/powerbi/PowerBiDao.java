@@ -491,18 +491,19 @@ public class PowerBiDao extends HibernateDao <PowerBiVO,Long> {
 								}
 
 								BigDecimal somaBaixas = BigDecimal.ZERO;
-								if (ccd.isAmortizacao()) {
-									somaBaixas = ccd.getVlrParcela();
-								} else {
-									for (ContratoCobrancaDetalhesParcial cBaixas : ccd
-											.getListContratoCobrancaDetalhesParcial()) {
-										ccd.setDataUltimoPagamento(cBaixas.getDataPagamento());
-										if(!CommonsUtil.semValor(cBaixas.getVlrRecebido())) {
-											somaBaixas = somaBaixas.add(cBaixas.getVlrRecebido());
-										}										
+								if (!ccd.isAcertoSaldo()) {
+									if (ccd.isAmortizacao()) {
+										somaBaixas = ccd.getVlrParcela();
+									} else {
+										for (ContratoCobrancaDetalhesParcial cBaixas : ccd
+												.getListContratoCobrancaDetalhesParcial()) {
+											ccd.setDataUltimoPagamento(cBaixas.getDataPagamento());
+											if (!CommonsUtil.semValor(cBaixas.getVlrRecebido())) {
+												somaBaixas = somaBaixas.add(cBaixas.getVlrRecebido());
+											}
+										}
 									}
 								}
-
 								ccd.setValorTotalPagamento(somaBaixas);
 
 								dataVencimentoParcela.setTime(ccd.getDataVencimento());
