@@ -86,17 +86,19 @@ public class ImovelEstoqueMB {
 		FacesContext context = FacesContext.getCurrentInstance();
 		ImovelEstoqueDao imovelEstoqueDao = new ImovelEstoqueDao();
 		
+		if(objetoImovelEstoque == null) {
+			objetoImovelEstoque = new ImovelEstoque();
+		}
+		objetoImovelEstoque.setObjetoImovelCobranca(objetoImovelCobranca);
+		objetoImovelEstoque.setObjetoContratoCobranca(objetoContratoCobranca);
 		
 		try {
-			if(CommonsUtil.semValor(this.objetoImovelEstoque.getId())) {
-				imovelEstoqueDao.create(objetoImovelEstoque);
+			
+			
+			
+			if(CommonsUtil.semValor(objetoImovelCobranca.getImovelEstoque())) {
+				objetoImovelCobranca.setImovelEstoque(objetoImovelEstoque);
 				
-			}
-			else imovelEstoqueDao.merge(this.objetoImovelEstoque);
-			
-			
-			if(CommonsUtil.semValor(this.objetoImovelCobranca.getImovelEstoque())) {
-				this.objetoImovelCobranca.setImovelEstoque(this.objetoImovelEstoque);	
 			
 			}
 			
@@ -108,8 +110,16 @@ public class ImovelEstoqueMB {
 		            calcularLtvLeilao(this.objetoImovelEstoque.getValorLeilao2(), this.objetoImovelEstoque.getValorMercado())
 		        );
 		        
-		     ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();				
-		     imovelCobrancaDao.merge(this.objetoImovelCobranca);    
+		     ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();	
+		     if(objetoContratoCobranca != null) {
+		    	 preencherCamposComDadosContrato();
+		     }
+		     if(CommonsUtil.semValor(this.objetoImovelEstoque.getId())) {
+					imovelEstoqueDao.create(this.objetoImovelEstoque);
+					
+				}
+				else imovelEstoqueDao.merge(this.objetoImovelEstoque);
+		     imovelCobrancaDao.merge(objetoImovelCobranca);    
 		     imovelEstoqueDao.merge(this.objetoImovelEstoque); 
 
 
@@ -571,6 +581,14 @@ public class ImovelEstoqueMB {
 
 	public void setListaConsultaEstoque(List<ContratoCobranca> listaConsultaEstoque) {
 		this.listaConsultaEstoque = listaConsultaEstoque;
+	}
+
+	public List<ImovelEstoque> getListImovelEstoque() {
+		return listImovelEstoque;
+	}
+
+	public void setListImovelEstoque(List<ImovelEstoque> listImovelEstoque) {
+		this.listImovelEstoque = listImovelEstoque;
 	}
 
 }

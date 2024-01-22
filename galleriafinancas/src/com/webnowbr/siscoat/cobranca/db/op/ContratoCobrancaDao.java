@@ -7197,7 +7197,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		    "c.avaliacaoLaudoObservacao, c.dataPrevistaVistoria, c.geracaoLaudoObservacao, c.iniciouGeracaoLaudo, c.analistaGeracaoPAJU , c.comentarioJuridicoPendente, " +
 			"c.valorAprovadoComite, c.contratoConferido, c.agEnvioCartorio, reanalise, reanalisePronta, reanaliseJuridico" +
 			" , gerente.nome nomeGerente, pr.id idPagador, res.superlogica, observacaoRenda, pagtoLaudoConfirmadaData, contatoDiferenteProprietario, c.iniciouGeracaoPaju, "
-			+ " im.estado, contratoPrioridadeAlta, c.analisePendenciadaUsuario " +
+			+ " im.estado, contratoPrioridadeAlta, c.analisePendenciadaUsuario, c.notaFiscalEmitida, c.notaFiscalEmitidaData, c.notaFiscalEmitidaUsuario "
+			+ " ,c.notaFiscalPaga, c.notaFiscalPagaData, c.notaFiscalPagaUsuario " +
 			"from cobranca.contratocobranca c " +		
 			"inner join cobranca.responsavel res on c.responsavel = res.id " +
 			"inner join cobranca.pagadorrecebedor pr on pr.id = c.pagador " +
@@ -7672,7 +7673,9 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				try {
 					String query = 
 							"select c.id, c.numeroContrato, c.dataContrato, res.nome, c.quantoPrecisa, im.cidade, pr.nome, "
-							+ " c.laudoRecebido, c.pajurFavoravel, c.dataUltimaAtualizacao, c.pendenciaPagamento, c.valorCCB, c.dataInicio"
+							+ " c.laudoRecebido, c.pajurFavoravel, c.dataUltimaAtualizacao, c.pendenciaPagamento, c.valorCCB, c.dataInicio, "
+							+ " c.notaFiscalEmitida, c.notaFiscalEmitidaData, c.notaFiscalEmitidaUsuario, "
+							+ " c.notaFiscalPaga, c.notaFiscalPagaData, c.notaFiscalPagaUsuario "
 							+ " from cobranca.contratocobranca c"
 							+ " inner join cobranca.responsavel res on c.responsavel = res.id inner join cobranca.pagadorrecebedor"
 							+ " pr on pr.id = c.pagador inner join cobranca.imovelcobranca im on c.imovel = im.id ";
@@ -7681,10 +7684,10 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						query = query + " and c.operacaoPaga = false or c.pendenciapagamento = true";			
 					}
 					if (status.equals("Ag. Emissão NFs")) {
-						query = query + " and c.operacaoPaga = true and notaFiscalEmitida = false";				
+						query = query + " and c.operacaoPaga = true and c.notaFiscalEmitida = false";				
 					}
 					if (status.equals("Ag. Pagamento NFs")) {
-						query = query + " and c.operacaoPaga = true and notaFiscalEmitida = true and notaFiscalPaga = false";				
+						query = query + " and c.operacaoPaga = true and c.notaFiscalEmitida = true and c.notaFiscalPaga = false";				
 					}
 					query = query + " order by id desc";
 					connection = getConnection();
@@ -7710,6 +7713,12 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setPendenciaPagamento(rs.getBoolean("pendenciaPagamento"));
 						contratoCobranca.setValorCCB(rs.getBigDecimal(12));
 						contratoCobranca.setDataInicio(rs.getDate(13));
+						contratoCobranca.setNotaFiscalEmitida(rs.getBoolean(14));
+						contratoCobranca.setNotaFiscalEmitidaData(rs.getDate(15));
+						contratoCobranca.setNotaFiscalEmitidaUsuario(rs.getString(16));
+						contratoCobranca.setNotaFiscalPaga(rs.getBoolean(17));
+						contratoCobranca.setNotaFiscalPagaData(rs.getDate(18));
+						contratoCobranca.setNotaFiscalPagaUsuario(rs.getString(19));
 						//idsContratoCobranca.add( CommonsUtil.stringValue(contratoCobranca.getId()));
 
 						
@@ -9750,6 +9759,74 @@ private String QUERY_ID_IMOVELESTOQUE = "select id from cobranca.contratocobranc
 					closeResources(connection, ps, rs);					
 				}
 				return relatorio;
+			}
+		});
+	}
+    
+    @SuppressWarnings("unchecked")
+	public List<ContratoCobranca> geraConsultaContratosNotaFiscal(String statusNota) {
+		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+	
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;			
+				try {
+					String query = 
+							"select c.id, c.numeroContrato, c.dataContrato, res.nome, c.quantoPrecisa, im.cidade, pr.nome, "
+							+ " c.laudoRecebido, c.pajurFavoravel, c.dataUltimaAtualizacao, c.pendenciaPagamento, c.valorCCB, c.dataInicio, "
+							+ " c.notaFiscalEmitida, c.notaFiscalEmitidaData, c.notaFiscalEmitidaUsuario, "
+							+ " c.notaFiscalPaga, c.notaFiscalPagaData, c.notaotaFiscalPagaUsuario "
+							+ " from cobranca.contratocobranca c"
+							+ " inner join cobranca.responsavel res on c.responsavel = res.id "
+							+ " inner join cobranca.pagadorrecebedor pr on pr.id = c.pagador "
+							+ " inner join cobranca.imovelcobranca im on c.imovel = im.id "
+							+ " where c.status = 'Aprovado' "
+							+ " and c.statusContrato = 'Aprovado' "
+							+ " and c.statusEsteira = ? "
+							+ " and c.pagador != 14 "
+							+ " and c.numeroContrato is not null ";
+					
+					connection = getConnection();
+					ps = connection.prepareStatement(query);
+					ps.setString(1, statusNota);
+					rs = ps.executeQuery();				
+					ContratoCobranca contratoCobranca = new ContratoCobranca();
+					
+					while (rs.next()) {
+						
+						contratoCobranca = new ContratoCobranca();
+
+						contratoCobranca.setId(rs.getLong(1));
+						contratoCobranca.setNumeroContrato(rs.getString(2));
+						contratoCobranca.setDataContrato(rs.getTimestamp(3));
+						contratoCobranca.setNomeResponsavel(rs.getString(4));
+						contratoCobranca.setQuantoPrecisa(rs.getBigDecimal(5));
+						contratoCobranca.setNomeCidadeImovel(rs.getString(6));
+						contratoCobranca.setNomePagador(rs.getString(7));
+						contratoCobranca.setLaudoRecebido(rs.getBoolean(8));
+						contratoCobranca.setPajurFavoravel(rs.getBoolean(9));
+						contratoCobranca.setDataUltimaAtualizacao(rs.getTimestamp(10));
+						contratoCobranca.setPendenciaPagamento(rs.getBoolean("pendenciaPagamento"));
+						contratoCobranca.setValorCCB(rs.getBigDecimal(12));
+						contratoCobranca.setDataInicio(rs.getDate(13));
+						contratoCobranca.setNotaFiscalEmitida(rs.getBoolean(14));
+						contratoCobranca.setNotaFiscalEmitidaData(rs.getDate(15));
+						contratoCobranca.setNotaFiscalEmitidaUsuario(rs.getString(16));
+						contratoCobranca.setNotaFiscalPaga(rs.getBoolean(17));
+						contratoCobranca.setNotaFiscalPagaData(rs.getDate(18));
+						contratoCobranca.setNotaFiscalPagaUsuario(rs.getString(19));
+						
+						objects.add(contratoCobranca);												
+					}
+					rs.close();
+
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return objects;
 			}
 		});
 	}

@@ -2354,23 +2354,23 @@
 		</property>
 		
 		<property name="notaFiscalEmitidaData" type="java.util.Date">
-			<column name="notaFiscalEmitidaData" />
+			<column name="dataNotaFiscalEmitida" />
 		</property>
 		<property name="notaFiscalEmitida" type="boolean">
 			<column name="notaFiscalEmitida" not-null="true" default="false"/>
 		</property>	
 		<property name="notaFiscalEmitidaUsuario" type="java.lang.String">
-			<column name="notaFiscalEmitidaUsuario" />
+			<column name="usuarioNotaFiscalEmitida" />
 		</property>
 		
 		<property name="notaFiscalPagaData" type="java.util.Date">
-			<column name="notaFiscalPagaData" />
+			<column name="dataNotaFiscalPaga" />
 		</property>
 		<property name="notaFiscalPaga" type="boolean">
 			<column name="notaFiscalPaga" not-null="true" default="false"/>
 		</property>	
 		<property name="notaFiscalPagaUsuario" type="java.lang.String">
-			<column name="notaFiscalPagaUsuario" />
+			<column name="usuarioNotaFiscalPaga" />
 		</property>
 		
 	</class>

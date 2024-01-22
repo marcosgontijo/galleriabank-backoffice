@@ -666,6 +666,63 @@ public class ContractService {
 									: this.objetoContratoCobranca.getImovel().getValoEstimado());
 
 							this.objetoContratoCobranca.setImovel(this.objetoImovelCobranca);
+							
+							//Novos campos referentes a NF
+							this.objetoContratoCobranca
+									.setNotaFiscalEmitida(contratoAPP.has("notaFiscalEmitida") ? contratoAPP.getBoolean("notaFiscalEmitida")
+									: this.objetoContratoCobranca.isNotaFiscalEmitida());
+							
+							this.objetoContratoCobranca
+									.setNotaFiscalEmitidaUsuario(contratoAPP.has("usuarioNotaFiscalEmitida") ? contratoAPP.getString("usuarioNotaFiscalEmitida")
+									: this.objetoContratoCobranca.getNotaFiscalEmitidaUsuario());
+							
+							if (contratoAPP.has("dataNotaFiscalEmitida")) {
+								Date dateNotaFiscalEmitida;
+								try {
+									dateNotaFiscalEmitida = dataPadraoSql
+											.parse(contratoAPP.getString("dataNotaFiscalEmitida"));
+								} catch (Exception e) {
+									dateNotaFiscalEmitida = CommonsUtil.dateValue(
+											contratoAPP.getString("dataNotaFiscalEmitida"), "yyyy-MM-dd HH:mm");
+								}
+		
+								this.objetoContratoCobranca.setNotaFiscalEmitidaData(dateNotaFiscalEmitida);
+							}
+							
+							this.objetoContratoCobranca
+									.setNotaFiscalPaga(contratoAPP.has("notaFiscalPaga") ? contratoAPP.getBoolean("notaFiscalPaga")
+									: this.objetoContratoCobranca.isNotaFiscalPaga());
+					
+							this.objetoContratoCobranca
+									.setNotaFiscalPagaUsuario(contratoAPP.has("usuarioNotaFiscalPaga") ? contratoAPP.getString("usuarioNotaFiscalPaga")
+									: this.objetoContratoCobranca.getNotaFiscalPagaUsuario());
+							
+							if (contratoAPP.has("dataNotaFiscalPaga")) {
+								Date dateNotaFiscalPaga;
+								try {
+									dateNotaFiscalPaga = dataPadraoSql
+											.parse(contratoAPP.getString("dataNotaFiscalPaga"));
+								} catch (Exception e) {
+									dateNotaFiscalPaga = CommonsUtil.dateValue(
+											contratoAPP.getString("dataNotaFiscalPaga"), "yyyy-MM-dd HH:mm");
+								}
+		
+								this.objetoContratoCobranca.setNotaFiscalEmitidaData(dateNotaFiscalPaga);
+							}
+							
+							/*if (contratoAPP.has("dataUltimaAtualizacao")) {
+								Date dateUltimaAtualizacao;
+								try {
+									dateUltimaAtualizacao = dataPadraoSql
+											.parse(contratoAPP.getString("dataUltimaAtualizacao"));
+								} catch (Exception e) {
+									dateUltimaAtualizacao = CommonsUtil.dateValue(
+											contratoAPP.getString("dataUltimaAtualizacao"), "yyyy-MM-dd HH:mm");
+								}
+		
+								this.objetoContratoCobranca.setDataUltimaAtualizacao(dateUltimaAtualizacao);
+							}*/
+							
 
 							// atualizar contrato
 							atualizarContratoBD();
@@ -697,7 +754,7 @@ public class ContractService {
 									.setContratoPrioridadeAltaUser(contratoAPP.has("contratoPrioridadeAltaUser")
 											? contratoAPP.getString("contratoPrioridadeAltaUser")
 											: null);
-
+	
 							try {
 								contratoCobrancaDao.merge(this.objetoContratoCobranca);
 							} catch (RuntimeException e) {

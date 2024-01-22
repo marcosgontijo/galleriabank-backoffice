@@ -332,9 +332,7 @@ public class ContratoCobrancaMB {
 	private List<DocumentoAnalise> listaDocumentoAnalise;
 	private List<DocumentoAnalise> listaDocumentoAnaliseRea;
 	private List<DocumentoAnalise> listaSelectAnalise = new ArrayList<>();
-
 	private BoletoKobana selectedBoletosKobanaBaixa = null;
-
 	/************************************************************
 	 * Objetos para antecipacao de parcela
 	 ************************************************************/
@@ -1093,6 +1091,8 @@ public class ContratoCobrancaMB {
 		this.objetoImovelCobranca = new ImovelCobranca();
 		this.objetoPagadorRecebedor = new PagadorRecebedor();
 		this.tipoPessoaIsFisica = true;
+		this.objetoContratoCobranca.setNotaFiscalEmitida(false);
+		this.objetoContratoCobranca.setNotaFiscalPaga(false);
 		// FIM - Tratamento para Pré-Contrato
 	}
 
@@ -8895,10 +8895,22 @@ public class ContratoCobrancaMB {
 					// this.selectedListContratoCobrancaDetalhes.add(parcelas);
 				}
 			}
+			
+		
 		}
 		System.out.print("");
 	}
+	public void salvarEstoque(){
+		ImovelEstoqueMB imovelMB = new ImovelEstoqueMB();
+		imovelMB.setObjetoContratoCobranca(objetoContratoCobranca);
+		imovelMB.setObjetoImovelCobranca(objetoContratoCobranca.getImovel());
+		imovelMB.setObjetoImovelEstoque(objetoContratoCobranca.getImovel().getImovelEstoque());
+		imovelMB.salvarEstoque();
+		
+		
+	}
 
+	
 	public void calcularPorcentagemDesconto() {
 		if (CommonsUtil.semValor(valorComDesconto) || CommonsUtil.semValor(valorPresenteTotal))
 			return;
@@ -9154,6 +9166,7 @@ public class ContratoCobrancaMB {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		salvarEstoque();
 	}
 
 	public BigDecimal calcularValorPresenteParcelaJson(Long idParcela, BigDecimal txJuros, Date dataAquisicao) {
@@ -14736,7 +14749,14 @@ public class ContratoCobrancaMB {
 		if (status.equals("Ag. Registro")) {
 			this.tituloTelaConsultaPreStatus = "Ag. Registro";
 		}
-
+		//TODO Verificar se aqui ele irá realizar pesquisa de NFs, aparentemente aqui só pesquisa com status Pendente
+		/*if (status.equals("Ag. Emissão NFs")) {
+			this.tituloTelaConsultaPreStatus = "Ag. Emissão NFs";
+		}
+		if (status.equals("Ag. Pagamento NFs")) {
+			this.tituloTelaConsultaPreStatus = "Ag. Pagamento NFs";
+		}*/
+		
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.contratosPendentes = new ArrayList<ContratoCobranca>();
 
@@ -36327,17 +36347,23 @@ public class ContratoCobrancaMB {
 		return objetoCartorio;
 	}
 
-	public void setObjetoCartorio(Cartorio objetoCartorio) {
-		this.objetoCartorio = objetoCartorio;
-	}
-	
-	public List<Cartorio> getListaCartorio() {
-		return listaCartorio;
-	}
-	
-	public void setListaCartorio(List<Cartorio> listaCartorio) {
-		this.listaCartorio = listaCartorio;
-	}
+		public void setObjetoCartorio(Cartorio objetoCartorio) {
+			this.objetoCartorio = objetoCartorio;
+		}
+		public List<Cartorio> getListaCartorio() {
+			return listaCartorio;
+		}
+
+		public void setListaCartorio(List<Cartorio> listaCartorio) {
+			this.listaCartorio = listaCartorio;
+		}
+		public List<DocumentoAnalise> getListaSelectAnalise() {
+			return listaSelectAnalise;
+		}
+
+		public void setListaSelectAnalise(List<DocumentoAnalise> listaSelectAnalise) {
+			this.listaSelectAnalise = listaSelectAnalise;
+		}
 	
 	public boolean isApagaListaCartorio() {
 		return apagaListaCartorio;
