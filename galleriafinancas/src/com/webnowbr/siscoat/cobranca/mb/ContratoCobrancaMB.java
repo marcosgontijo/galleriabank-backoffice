@@ -36379,11 +36379,5 @@ public class ContratoCobrancaMB {
 	public void setCartorioMudou(boolean cartorioMudou) {
 		this.cartorioMudou = cartorioMudou;
 	}
-	public List<DocumentoAnalise> getListaSelectAnalise() {
-		return listaSelectAnalise;
-	}
 
-	public void setListaSelectAnalise(List<DocumentoAnalise> listaSelectAnalise) {
-		this.listaSelectAnalise = listaSelectAnalise;
-	}
 }
