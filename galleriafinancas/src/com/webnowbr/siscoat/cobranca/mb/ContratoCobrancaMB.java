@@ -3208,12 +3208,6 @@ public class ContratoCobrancaMB {
 
 			updateCheckList();
 
-			// gerando parcelas quando contrato esta em ag registro
-			if (!this.objetoContratoCobranca.isAgEnvioCartorio()
-					&& this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() <= 0
-					&& !CommonsUtil.semValor(this.objetoContratoCobranca.getValorCCB())) {
-				geraContratoCobrancaDetalhes(contratoCobrancaDao);
-			}
 			this.objetoContratoCobranca.populaStatusEsteira(getUsuarioLogadoNull());
 			contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
@@ -3316,7 +3310,7 @@ public class ContratoCobrancaMB {
 		updateCheckList();
 
 		// gerando parcelas quando contrato esta em ag registro
-		if (!this.objetoContratoCobranca.isAgEnvioCartorio()
+		if (this.objetoContratoCobranca.getResolucaoExigenciaCartorioData() != null
 				&& this.objetoContratoCobranca.getListContratoCobrancaDetalhes().size() <= 0
 				&& !CommonsUtil.semValor(this.objetoContratoCobranca.getValorCCB())) {
 			geraContratoCobrancaDetalhes(contratoCobrancaDao);
@@ -3940,6 +3934,16 @@ public class ContratoCobrancaMB {
 						if (processo.getContaPagar().getId() <= 0) {
 							cpDao.create(processo.getContaPagar());
 						}
+					}
+				}
+			}
+			
+			if (!CommonsUtil.semValor(objetoContratoCobranca.getListContasPagar())) {
+				for (ContasPagar conta : objetoContratoCobranca.getListContasPagar()) {
+					if (conta.getId() <= 0) {
+						cpDao.create(conta);
+					} else {
+						cpDao.merge(conta);
 					}
 				}
 			}
@@ -14747,7 +14751,8 @@ public class ContratoCobrancaMB {
 				FacesContext context = FacesContext.getCurrentInstance();
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
 						"Analista com muitas operações em andamento!", ""));
-				return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
+				//return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
+				return geraConsultaContratosPorStatus("Em Analise");
 			}
 			ContratoCobranca contratoAnalise = null;
 			boolean pendenciaOutroAnalista = false;
@@ -15169,6 +15174,13 @@ public class ContratoCobrancaMB {
 		relObjetoContratoCobrancaAux = contratoCobrancaDao
 				.relatorioControleEstoqueAtrasoFullFIDC(DateUtil.gerarDataHoje());
 
+		// exclui o registro, quando o pagador é a Galleria SA
+		/*
+		 * if (relObjetoContratoCobrancaAux.size() > 0) { for
+		 * (RelatorioFinanceiroCobranca r : relObjetoContratoCobrancaAux) { if
+		 * (r.getContratoCobranca().getPagador().getId() != 14) {
+		 * this.relObjetoContratoCobranca.add(r); } } }
+		 */
 		if (relObjetoContratoCobrancaAux.size() > 0) {
 			this.relObjetoContratoCobranca = relObjetoContratoCobrancaAux;
 		}
