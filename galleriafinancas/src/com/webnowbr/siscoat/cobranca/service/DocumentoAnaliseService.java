@@ -267,8 +267,10 @@ public class DocumentoAnaliseService {
 		
 		documentoAnalise.setPagador(pagador);
 		documentoAnalise.adiconarEstadosPeloCadastro();
-		documentoAnaliseDao.create(documentoAnalise);
-
+		if(documentoAnalise.getId() <=0 )
+			documentoAnaliseDao.create(documentoAnalise);
+		else
+			documentoAnaliseDao.merge(documentoAnalise);
 	}
 	public void cadastrarPessoRetornoEngine(EngineRetornoExecutionResultRelacionamentosPessoaisPJPartnership pJPartnership, User user,
 			DocumentoAnaliseDao documentoAnaliseDao, PagadorRecebedorService pagadorRecebedorService,
