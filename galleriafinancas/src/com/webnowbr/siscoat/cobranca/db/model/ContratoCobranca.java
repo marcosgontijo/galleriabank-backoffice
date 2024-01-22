@@ -173,6 +173,8 @@ public class ContratoCobranca implements Serializable {
 	private Set<Averbacao> listAverbacao;
 	private Set<CcbParticipantes> listaParticipantes = new HashSet<>();
 	private Set<ImovelCobrancaAdicionais> listaImoveis = new HashSet<>();
+	
+	private List<ContasPagar> contasPagarList;
 
 	// n�o persistida a lista abaixo
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionado;
@@ -7661,5 +7663,13 @@ public class ContratoCobranca implements Serializable {
 	public void setUltimoCartorio(Cartorio ultimoCartorio) {
 		this.ultimoCartorio = ultimoCartorio;
 	}
-}
 
+	public List<ContasPagar> getContasPagarList() {
+		contasPagarList = new ArrayList<>(listContasPagar);
+		return contasPagarList;
+	}
+
+	public void setContasPagarList(List<ContasPagar> contasPagarList) {
+		this.contasPagarList = contasPagarList;
+	}
+}
