@@ -3954,7 +3954,18 @@ public class ContratoCobrancaMB {
 				if (objetoContratoCobranca.isComentarioJuricoApenasComConsultas())
 					objetoContratoCobranca.setReanalise(true);
 			}
-
+			
+			User usuarioLogado = new User();
+			UserDao u = new UserDao();
+			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
+						
+			// Nova condição caso o usuário flag pedindo o pre-laudo da Compass
+			if(this.objetoContratoCobranca.isPedidoPreLaudo() && (usuarioLogado.isAdministrador() || usuarioLogado.isProfileAvaliadorImovelCompass())) {
+				this.objetoContratoCobranca.setAvaliacaoLaudo("Compass");
+				this.objetoContratoCobranca.setPedidoPreLaudoData(new Date());
+				this.objetoContratoCobranca.setPedidoPreLaudoUsuario(loginBean.getUsername());
+			}
+			
 			updateCheckList();
 			this.objetoContratoCobranca.populaStatusEsteira(getUsuarioLogadoNull());
 			contratoCobrancaDao.merge(this.objetoContratoCobranca);
@@ -3972,9 +3983,6 @@ public class ContratoCobrancaMB {
 							"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
 									+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
 							""));
-			User usuarioLogado = new User();
-			UserDao u = new UserDao();
-			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
 
 			this.objetoCcb = null;
 

@@ -101,6 +101,10 @@
 			background-color: #fbe1e1;
 		}
 		
+		.ui-datatable .ui-datatable-data .linhaDourada td{
+		    background-color: #bf9b30;
+		}
+		
 
 		.campoRequerido {
 			color: #cd0a0a;
