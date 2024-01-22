@@ -151,7 +151,7 @@ public class ReaWebhook {
 					documentoAnalise.setCnpjcpf("CNPJ esta inválido");
 				documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.RELATO);
 			} else {
-				propietario.setCpf(CommonsUtil.strZero(CommonsUtil.somenteNumeros(propietario.getCnpj()),11));
+				propietario.setCpf(CommonsUtil.strZero(CommonsUtil.somenteNumeros(propietario.getCpf()),11));
 				try {
 					cnpjCpfValido = ValidaCPF.isCPF(propietario.getCpf());
 				} catch (Exception e) {

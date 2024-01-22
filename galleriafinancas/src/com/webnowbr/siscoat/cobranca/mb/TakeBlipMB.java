@@ -1474,6 +1474,8 @@ public class TakeBlipMB {
 		JSONObject jsonWhatsAppBase = new JSONObject();
 		String patricia= "5519996733216@wa.gw.msging.net";
 		String isabelle= "5519996907780@wa.gw.msging.net";
+		String chaveId = "id";
+		String chaveTo = "to";
 		
 		List<String> jsonEnvios = new ArrayList<>(Arrays.asList(patricia,isabelle));
 				
@@ -1514,12 +1516,12 @@ public class TakeBlipMB {
 			jsonWhatsAppBase.put("content", jsonWhatsAppConteudo);
 			
 			for (String to : jsonEnvios) {
-				if (jsonWhatsAppBase.keySet().contains("id"))
-					jsonWhatsAppBase.remove("id");
-				jsonWhatsAppBase.put("id", generateUUID());
-				if (jsonWhatsAppBase.keySet().contains("to"))
-					jsonWhatsAppBase.remove("to");
-				jsonWhatsAppBase.put("to", to);
+				if (jsonWhatsAppBase.keySet().contains(chaveId))
+					jsonWhatsAppBase.remove(chaveId);
+				jsonWhatsAppBase.put(chaveId, generateUUID());
+				if (jsonWhatsAppBase.keySet().contains(chaveTo))
+					jsonWhatsAppBase.remove(chaveTo);
+				jsonWhatsAppBase.put(chaveTo, to);
 
 				senderWhatsAppMessage(jsonWhatsAppBase);
 			}

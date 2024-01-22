@@ -118,16 +118,19 @@ public class ImovelCobrancaRestricaoService {
 
 	public  Set<ImovelCobrancaRestricao>  getImovelRestricoes(ImovelCobranca imovelCobranca) {
 		ImovelCobrancaRestricaoDao icrDao = new ImovelCobrancaRestricaoDao();
-		
-		String[] sMatriculas = imovelCobranca.getNumeroMatricula().split(",");
+
 		Set<ImovelCobrancaRestricao> restricoes = new HashSet<ImovelCobrancaRestricao>();
-		for (String matricula : sMatriculas) {
-			restricoes.addAll(icrDao.pesquisaImovelRestricao(matricula, imovelCobranca.getNumeroCartorio(),
-					imovelCobranca.getCartorio(), imovelCobranca.getCartorioEstado(), imovelCobranca.getCartorioMunicipio()));
+		if (!CommonsUtil.semValor(imovelCobranca.getNumeroMatricula())) {
+			String[] sMatriculas = imovelCobranca.getNumeroMatricula().split(",");
+
+			for (String matricula : sMatriculas) {
+				restricoes.addAll(icrDao.pesquisaImovelRestricao(matricula, imovelCobranca.getNumeroCartorio(),
+						imovelCobranca.getCartorio(), imovelCobranca.getCartorioEstado(),
+						imovelCobranca.getCartorioMunicipio()));
+			}
 		}
-		
 		return restricoes;
-		
+
 	}
 	
 	public boolean adicionarBlackFlagImovel(ImovelCobranca imovelCobranca, ContratoCobranca contratoCobranca,

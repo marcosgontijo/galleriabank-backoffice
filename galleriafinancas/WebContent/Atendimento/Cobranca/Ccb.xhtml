@@ -8,6 +8,7 @@
 	template="/Menus/Menu.xhtml">
 	
 	<ui:define name="conteudo">
+	 	<p:remoteCommand name="onload" action="#{ccbMB.bloquearForm}" autoRun="true" />
 		<h:form id="form">
 			<script
 				src="#{request.contextPath}/resources/resources/js/functions.js"></script>
@@ -1477,7 +1478,7 @@
 					</p:panel>
 				</p:panel>
 
-				<h:panelGrid columns="3">	
+				<h:panelGrid columns="3" id="AcoesUploadArquivos">	
 					<p:commandButton ajax="false" action="#{ccbMB.readXWPFile}"
 						icon="ui-icon ui-icon-print" value="Fazer Download"  update=" :form  msgs" />
 
@@ -1490,6 +1491,7 @@
 						icon="ui-icon ui-icon-print" value="Integrar Money Plus" />					
 				</h:panelGrid>
 			</p:panel>
+			<p:blockUI block="form:Dados form:pagadoresNovos form:UploadArquivos form:AcoesUploadArquivos " widgetVar="blockForm"/>
 		</h:form>
 	
 		<ui:include src="../../Dialog/DialogRecebedorPagador.xhtml">
