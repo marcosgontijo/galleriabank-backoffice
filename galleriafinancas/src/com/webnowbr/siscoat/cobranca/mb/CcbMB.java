@@ -513,9 +513,20 @@ public class CcbMB {
 	
 	public void populateSelectedContratoCobranca() {
 		ContratoCobranca contrato = objetoContratoCobranca;
-		//listarDownloads();
-		this.objetoCcb.setObjetoContratoCobranca(contrato);
-		this.objetoCcb.setNumeroOperacao(contrato.getNumeroContrato());
+		
+		CcbDao ccbDao = new CcbDao();
+		 List<CcbContrato> ccbs = ccbDao.findByFilter("objetoContratoCobranca", contrato);
+		
+		if(!CommonsUtil.semValor(ccbs)) {			
+			this.objetoCcb = ccbs.get(0);
+			objetoContratoCobranca = this.objetoCcb.getObjetoContratoCobranca();
+		}else {
+			//listarDownloads();
+			this.objetoCcb.setObjetoContratoCobranca(contrato);
+			this.objetoCcb.setNumeroOperacao(contrato.getNumeroContrato());
+			this.objetoCcb.setUsarNovoCustoEmissao(true);
+		}
+		
 		DateFormat dateFormat = new SimpleDateFormat("MMyy");  
 		String strDate = dateFormat.format(objetoCcb.getDataDeEmissao());  
 		String numeroCci = objetoContratoCobranca.getNumeroContrato() + strDate;
@@ -552,7 +563,6 @@ public class CcbMB {
 		//listaArquivos();
 		
 		//Popular Campos para Simulação
-		this.objetoCcb.setUsarNovoCustoEmissao(true);
 		this.objetoCcb.setVlrImovel(contrato.getValorMercadoImovel());
 		this.objetoCcb.setVendaLeilao(contrato.getValorVendaForcadaImovel());
 		this.objetoCcb.setPrecoVendaCompra(contrato.getValorCompraVenda());
