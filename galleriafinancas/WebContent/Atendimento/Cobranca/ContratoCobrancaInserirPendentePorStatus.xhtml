@@ -689,7 +689,8 @@
 										value="#{contratoCobrancaMB.objetoContratoCobranca.imovel.nome}"
 										label="Imóvel do pré-laudo" style="width:280px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">
 										<f:selectItem itemValue="" itemLabel="Escolha o Imóvel para solicitar o pré-laudo" />
-										<f:selectItem itemValue="#{contratoCobrancaMB.objetoContratoCobranca.imovel.endereco}" itemLabel="#{contratoCobrancaMB.objetoContratoCobranca.imovel.numeroMatricula} - #{contratoCobrancaMB.objetoContratoCobranca.imovel.endereco}" />
+										<f:selectItem itemValue="#{contratoCobrancaMB.objetoContratoCobranca.imovel.id}" itemLabel="#{contratoCobrancaMB.objetoContratoCobranca.imovel.numeroMatricula} - #{contratoCobrancaMB.objetoContratoCobranca.imovel.endereco}" />
+										<f:selectItems itemValue="#{contratoCobrancaMB.listTodosImoveisContrato.id}" itemLabel="#{contratoCobrancaMB.listTodosImoveisContrato.numeroMatricula} - #{contratoCobrancaMB.listTodosImoveisContrato.endereco}" />
 									</p:selectOneMenu>
 								</ui:fragment>
 								
@@ -815,6 +816,7 @@
 									label="Imóvel do pré-laudo" style="width:280px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">
 									<f:selectItem itemValue="" itemLabel="Escolha o Imóvel para solicitar o pré-laudo" />
 									<f:selectItem itemValue="#{contratoCobrancaMB.objetoContratoCobranca.imovel.endereco}" itemLabel="#{contratoCobrancaMB.objetoContratoCobranca.imovel.numeroMatricula} - #{contratoCobrancaMB.objetoContratoCobranca.imovel.endereco}" />
+									<f:selectItems itemValue="#{contratoCobrancaMB.listTodosImoveisContrato.id}" itemLabel="#{contratoCobrancaMB.listTodosImoveisContrato.numeroMatricula} - #{contratoCobrancaMB.listTodosImoveisContrato.endereco}" />
 								</p:selectOneMenu>
 							</ui:fragment>
 							

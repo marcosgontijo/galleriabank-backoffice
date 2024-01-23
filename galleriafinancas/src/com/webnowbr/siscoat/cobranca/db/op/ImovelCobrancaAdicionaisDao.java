@@ -19,14 +19,14 @@ import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
  */
 public class ImovelCobrancaAdicionaisDao extends HibernateDao <ImovelCobrancaAdicionais,Long> {
 	
-	private String QUERY_BUSCA_IMOVEIS_ADD = "SELECT ia.id, ia.imovel, ia.contratocobranca, ia.relacaocomgarantia, ia.valorregistro "
+	private String QUERY_BUSCA_IMOVEIS_ADD = "SELECT ia.imovel "
 											+ " FROM cobranca.imovelcobrancaadicionais ia "
-											+ " INNER JOIN cobranca.contratocobranca cc ON cc.id = ia.contratrocobranca "
+											+ " INNER JOIN cobranca.contratocobranca cc ON cc.id = ia.contratocobranca "
 											+ " WHERE cc.id = ? ";
 	
 	private String QUERY_BUSCA_IMOVEIS_PRE_LAUDO = "SELECT ia.id, ia.imovel, ia.contratocobranca, ia.relacaocomgarantia, ia.valorregistro "
 			+ " FROM cobranca.imovelcobrancaadicionais ia "
-			+ " INNER JOIN cobranca.contratocobranca cc ON cc.id = ia.contratrocobranca "
+			+ " INNER JOIN cobranca.contratocobranca cc ON cc.id = ia.contratocobranca "
 			+ " WHERE cc.id = ? "
 			+ " AND ia.prelaudocompass = true "
 			+ " AND cc.avaliacaolaudo = 'Compass' ";
@@ -56,9 +56,11 @@ public class ImovelCobrancaAdicionaisDao extends HibernateDao <ImovelCobrancaAdi
 					
 					ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
 					ImovelCobranca imovelCobranca = new ImovelCobranca();
+					Long idTeste;
 					
 					while (rs.next()) {
-						imovelCobranca = imovelCobrancaDao.findById(rs.getLong(2));
+						imovelCobranca = imovelCobrancaDao.findById(rs.getLong(1));
+						idTeste = rs.getLong(1);
 						objects.add(imovelCobranca);
 					}
 							

@@ -886,7 +886,11 @@ public class ContratoCobrancaMB {
 	private List<DocumentoAnalise> docList = new ArrayList<DocumentoAnalise>();
 	
 	// Lista de imóveis adicionais referentes ao contrato cobranca
-	private List<ImovelCobrancaAdicionais> listPreLaudoImoveis;
+	private List<ImovelCobranca> listSolicitaçãoPreLaudoImoveis;
+	private List<ImovelCobranca> listTodosImoveisContrato;
+	private Set<ImovelCobrancaAdicionais> setListaImoveisCobranca;
+	private List<ImovelCobranca> listPreLaudoImoveisRelac;
+	
 	
 	public void mudaBotaoCartorio(){
 		this.setCartorioMudou(true);
@@ -9779,6 +9783,7 @@ public class ContratoCobrancaMB {
 		// }
 
 		loadLovs();
+		getListaImoveisAdd();
 
 		loadSelectedLovsPendentes();
 		this.objetoContratoCobranca.getResponsavel().salvarDadosBancarios();
@@ -31097,7 +31102,12 @@ public class ContratoCobrancaMB {
 	
 	
 	public void getListaImoveisAdd() {
+		//TODO Criar uma função aqui que trás todos os imóveis cobranca add do contrato e retorna um array com eles, para que apareçam no dropdown
 		
+		ImovelCobrancaAdicionaisDao imovelAddDao = new ImovelCobrancaAdicionaisDao();
+		this.listTodosImoveisContrato = imovelAddDao.getListImoveisAdd(objetoContratoCobranca.getId());
+		
+		//this.setListaImoveisCobranca = this.objetoContratoCobranca.getListaImoveis();	
 		
 	}
 	
