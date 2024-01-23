@@ -884,6 +884,10 @@ public class ContratoCobrancaMB {
 	private boolean erroPedidoLaudo = false;
 	private boolean engineProcessados = false;
 	private List<DocumentoAnalise> docList = new ArrayList<DocumentoAnalise>();
+	
+	// Lista de imóveis adicionais referentes ao contrato cobranca
+	private List<ImovelCobrancaAdicionais> listPreLaudoImoveis;
+	
 	public void mudaBotaoCartorio(){
 		this.setCartorioMudou(true);
 		
@@ -3958,7 +3962,9 @@ public class ContratoCobrancaMB {
 			User usuarioLogado = new User();
 			UserDao u = new UserDao();
 			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
-						
+			
+			System.out.println(this.listImoveis);
+			
 			// Nova condição caso o usuário flag pedindo o pre-laudo da Compass
 			if(this.objetoContratoCobranca.isPedidoPreLaudo() && (usuarioLogado.isAdministrador() || usuarioLogado.isProfileAvaliadorImovelCompass())) {
 				this.objetoContratoCobranca.setAvaliacaoLaudo("Compass");
@@ -31088,6 +31094,12 @@ public class ContratoCobrancaMB {
 					"Erro ao remvover imvóvel na lista de Black Flag " + this.objetoImovelCobranca.getNumeroMatricula(),
 					""));
 	}	
+	
+	
+	public void getListaImoveisAdd() {
+		
+		
+	}
 	
 	/**
 	 * @param objetoContratoCobranca the objetoContratoCobranca to set
