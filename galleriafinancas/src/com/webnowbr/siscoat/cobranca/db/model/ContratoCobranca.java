@@ -691,6 +691,7 @@ public class ContratoCobranca implements Serializable {
 	private int carenciaComite;
 	private boolean operacaoFundo;
 	private BigDecimal valorTotalProcessos;
+	private BigDecimal valorTotalProcessosSelecionados;
 	private BigDecimal valorTotalAverbacao;
 
 	private String empresaCertificado;
@@ -842,6 +843,7 @@ public class ContratoCobranca implements Serializable {
 	private String avaliacaoPaju;
 	private boolean iniciouGeracaoPaju;
 	private String avaliacaoPajuReanalise;
+	private boolean esteriaComentarioLuvison;
 
 	private boolean contatoDiferenteProprietario;
 	// private String geracaoLaudoObservacao;
@@ -7324,6 +7326,14 @@ public class ContratoCobranca implements Serializable {
 		this.chavePIXBancarioContaPagar = chavePIXBancarioContaPagar;
 	}
 
+	public boolean isEsteriaComentarioLuvison() {
+		return esteriaComentarioLuvison;
+	}
+
+	public void setEsteriaComentarioLuvison(boolean esteriaComentarioLuvison) {
+		this.esteriaComentarioLuvison = esteriaComentarioLuvison;
+	}
+
 	public boolean isProtestoTaxa() {
 		return protestoTaxa;
 	}
@@ -7662,6 +7672,14 @@ public class ContratoCobranca implements Serializable {
 
 	public void setUltimoCartorio(Cartorio ultimoCartorio) {
 		this.ultimoCartorio = ultimoCartorio;
+	}
+	
+	public BigDecimal getValorTotalProcessosSelecionados() {
+		return valorTotalProcessosSelecionados;
+	}
+
+	public void setValorTotalProcessosSelecionados(BigDecimal valorTotalProcessosSelecionados) {
+		this.valorTotalProcessosSelecionados = valorTotalProcessosSelecionados;
 	}
 
 	public List<ContasPagar> getContasPagarList() {
