@@ -20987,11 +20987,35 @@ public class ContratoCobrancaMB {
 			cell1.setColspan(2);
 			table.addCell(cell1);
 			
-			if (baixaStarkBank.getContasPagar().getFormaTransferencia().equals("Pix") || baixaStarkBank.getContasPagar().getFormaTransferencia().equals("PIX")
-					|| baixaStarkBank.getContasPagar().getFormaTransferencia().equals("TED")) {	
-				
-				if (baixaStarkBank.getContasPagar() != null) {
-					cell1 = new PdfPCell(new Phrase(baixaStarkBank.getContasPagar().getNomeTed(), titulo));
+			if (baixaStarkBank.getContasPagar().getDescricao().contains("Pagamento Carta Split")) {
+				if (baixaStarkBank.getContasPagar().getFormaTransferencia().equals("Pix") || baixaStarkBank.getContasPagar().getFormaTransferencia().equals("PIX")
+						|| baixaStarkBank.getContasPagar().getFormaTransferencia().equals("TED")) {	
+					
+					if (baixaStarkBank.getContasPagar() != null) {
+						cell1 = new PdfPCell(new Phrase(baixaStarkBank.getContasPagar().getNomeTed(), titulo));
+						cell1.setBorder(0);
+						cell1.setPaddingLeft(8f);
+						cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+						cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+						cell1.setBackgroundColor(BaseColor.WHITE);
+						cell1.setUseBorderPadding(true);
+						cell1.setPaddingTop(10f);
+						cell1.setPaddingBottom(2f);
+						table.addCell(cell1);
+						
+						cell1 = new PdfPCell(new Phrase("CPF/CNPJ: " + baixaStarkBank.getContasPagar().getCpfTed(), titulo));
+						cell1.setBorder(0);
+						cell1.setPaddingLeft(8f);
+						cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+						cell1.setHorizontalAlignment(Element.ALIGN_RIGHT);
+						cell1.setBackgroundColor(BaseColor.WHITE);
+						cell1.setUseBorderPadding(true);
+						cell1.setPaddingTop(10f);
+						cell1.setPaddingBottom(2f);
+						table.addCell(cell1);
+					}
+				} else {
+					cell1 = new PdfPCell(new Phrase(baixaStarkBank.getNomePagador(), titulo));
 					cell1.setBorder(0);
 					cell1.setPaddingLeft(8f);
 					cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -21002,7 +21026,7 @@ public class ContratoCobrancaMB {
 					cell1.setPaddingBottom(2f);
 					table.addCell(cell1);
 					
-					cell1 = new PdfPCell(new Phrase("CPF/CNPJ: " + baixaStarkBank.getContasPagar().getCpfTed(), titulo));
+					cell1 = new PdfPCell(new Phrase("CPF/CNPJ: " + baixaStarkBank.getDocumento(), titulo));
 					cell1.setBorder(0);
 					cell1.setPaddingLeft(8f);
 					cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
