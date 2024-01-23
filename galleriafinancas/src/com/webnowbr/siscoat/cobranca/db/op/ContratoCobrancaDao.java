@@ -7674,8 +7674,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					String query = 
 							"select c.id, c.numeroContrato, c.dataContrato, res.nome, c.quantoPrecisa, im.cidade, pr.nome, "
 							+ " c.laudoRecebido, c.pajurFavoravel, c.dataUltimaAtualizacao, c.pendenciaPagamento, c.valorCCB, c.dataInicio, "
-							+ " c.notaFiscalEmitida, c.notaFiscalEmitidaData, c.notaFiscalEmitidaUsuario, "
-							+ " c.notaFiscalPaga, c.notaFiscalPagaData, c.notaFiscalPagaUsuario "
+							+ " c.notaFiscalEmitida, c.dataNotaFiscalEmitida, c.usuarioNotaFiscalEmitida, "
+							+ " c.notaFiscalPaga, c.dataNotaFiscalPaga, c.usuarioNotaFiscalPaga "
 							+ " from cobranca.contratocobranca c"
 							+ " inner join cobranca.responsavel res on c.responsavel = res.id inner join cobranca.pagadorrecebedor"
 							+ " pr on pr.id = c.pagador inner join cobranca.imovelcobranca im on c.imovel = im.id ";
@@ -9777,8 +9777,8 @@ private String QUERY_ID_IMOVELESTOQUE = "select id from cobranca.contratocobranc
 					String query = 
 							"select c.id, c.numeroContrato, c.dataContrato, res.nome, c.quantoPrecisa, im.cidade, pr.nome, "
 							+ " c.laudoRecebido, c.pajurFavoravel, c.dataUltimaAtualizacao, c.pendenciaPagamento, c.valorCCB, c.dataInicio, "
-							+ " c.notaFiscalEmitida, c.notaFiscalEmitidaData, c.notaFiscalEmitidaUsuario, "
-							+ " c.notaFiscalPaga, c.notaFiscalPagaData, c.notaotaFiscalPagaUsuario "
+							+ " c.notaFiscalEmitida, c.dataNotaFiscalEmitida, c.usuarioNotaFiscalEmitida, "
+							+ " c.notaFiscalPaga, c.dataNotaFiscalPaga, c.usuarioNotaFiscalPaga "
 							+ " from cobranca.contratocobranca c"
 							+ " inner join cobranca.responsavel res on c.responsavel = res.id "
 							+ " inner join cobranca.pagadorrecebedor pr on pr.id = c.pagador "
