@@ -1856,7 +1856,7 @@
 														<shiro:hasAnyRoles name="ROOT, COMITEEDITAR">
 															<p:selectBooleanCheckbox
 																value="#{processosPessoas2.selecionadoComite}">
-																<p:ajax event="change" update="form:pessoasProcessos2" />
+																<p:ajax event="change" update="form:pessoasProcessos2" listener="#{contratoCobrancaMB.gerarProcessosQuitarComite}" />
 															</p:selectBooleanCheckbox>
 															<p:selectBooleanCheckbox
 																value="#{processosPessoas2.selecionadoComite}"

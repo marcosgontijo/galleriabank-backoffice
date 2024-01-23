@@ -3938,6 +3938,11 @@ public class ContratoCobrancaMB {
 				}
 			}
 			
+			if(this.objetoContratoCobranca.isEsteriaComentarioLuvison()
+					&& this.objetoContratoCobranca.isComentarioJuridicoInterno()) {
+				this.objetoContratoCobranca.setEsteriaComentarioLuvison(false);
+			}
+			
 			if (!CommonsUtil.semValor(objetoContratoCobranca.getListContasPagar())) {
 				for (ContasPagar conta : objetoContratoCobranca.getListContasPagar()) {
 					if (conta.getId() <= 0) {
@@ -4055,7 +4060,8 @@ public class ContratoCobrancaMB {
 			}
 		}
 
-		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Comentario Jurídico")) {
+		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Comentario Jurídico") || 
+				CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Comentario Jurídico - Luvison")) {
 			if (CommonsUtil.semValor(objetoContratoCobranca.getDataPajuComentado())
 					&& objetoContratoCobranca.isComentarioJuridicoEsteira()) {
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
@@ -6032,6 +6038,25 @@ public class ContratoCobrancaMB {
 		return geraConsultaContratosPorStatus("Ag. DOC");
 	}
 
+	public String enviarContratoEsteiraLuvison(ContratoCobranca contrato) {
+		this.objetoContratoCobranca = getContratoById(objetoContratoCobranca.getId());
+		this.objetoContratoCobranca.setEsteriaComentarioLuvison(true);
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		contratoCobrancaDao.merge(objetoContratoCobranca);
+		return
+		geraConsultaContratosPorStatus("Comentario Jurídico");
+	}
+	
+	public String enviarContratoEsteiraInterna(ContratoCobranca contrato) {
+		this.objetoContratoCobranca = getContratoById(objetoContratoCobranca.getId());
+		this.objetoContratoCobranca.setEsteriaComentarioLuvison(false);
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		contratoCobrancaDao.merge(objetoContratoCobranca);
+		return
+		geraConsultaContratosPorStatus("Comentario Luvison");
+	}
+	
+	
 	public String voltarAnaliseComercial() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -9984,9 +10009,12 @@ public class ContratoCobrancaMB {
 			} else {
 				return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatus.xhtml";
 			}
-		} else if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Comentario Jurídico")) {
+		} else if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Comentario Jurídico") ||
+				CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Comentario Jurídico - Luvison")) {
 			if (usuarioLogado.isProfileComentarioJuridico() || usuarioLogado.isAdministrador()) {
 				return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatus.xhtml";
+			} else if(usuarioLogado.isProfilePajuLuvison()){
+				return "/Atendimento/Cobranca/ContratoCobrancaComentarioJuridicoExterno.xhtml";
 			} else {
 				return "/Atendimento/Cobranca/ContratoCobrancaDetalhesPendentePorStatus.xhtml";
 			}
@@ -10243,6 +10271,7 @@ public class ContratoCobrancaMB {
 		} else
 			this.objetoContratoCobranca.setProcessosQuitarComite(null);
 
+		calcularValorTotalProcessosSelecionados();
 //		}
 	}
 
@@ -14668,6 +14697,9 @@ public class ContratoCobrancaMB {
 		if (status.equals("Comentario Jurídico")) {
 			this.tituloTelaConsultaPreStatus = "Comentario Jurídico";
 		}
+		if (status.equals("Comentario Luvison")) {
+			this.tituloTelaConsultaPreStatus = "Comentario Jurídico - Luvison";
+		}
 		if (status.equals("Pré-Comite")) {
 			this.tituloTelaConsultaPreStatus = "Pré-Comite";
 		}
@@ -14724,7 +14756,15 @@ public class ContratoCobrancaMB {
 
 		User user = getUsuarioLogado();
 
+		/*if (CommonsUtil.mesmoValor(status, "Comentario Jurídico")
+				&& !CommonsUtil.semValor(user)
+				&& user.getId() > 0
+				&& user.isProfilePajuLuvison()) {
+			status = "Comentario Luvison";
+			this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, status);
+		} else {*/
 		this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, status);
+		//}
 
 		if (status.equals("Análise Reprovada")) {
 			for (ContratoCobranca contratos : this.contratosPendentes) {
@@ -21937,6 +21977,20 @@ public class ContratoCobrancaMB {
 			}
 		}
 		this.objetoContratoCobranca.setValorTotalProcessos(valorTotal);
+		calcularValorTotalProcessosSelecionados();
+		return valorTotal;
+	}
+	
+	private BigDecimal calcularValorTotalProcessosSelecionados() {
+		BigDecimal valorTotal = BigDecimal.ZERO;
+		if (!CommonsUtil.semValor(objetoContratoCobranca.getListProcessos())) {
+			for (CcbProcessosJudiciais processo : this.objetoContratoCobranca.getListProcessos()) {
+				if (processo.isSelecionadoComite() && !CommonsUtil.semValor(processo.getValorAtualizado())) {
+					valorTotal = valorTotal.add(processo.getValorAtualizado());
+				}
+			}
+		}
+		this.objetoContratoCobranca.setValorTotalProcessosSelecionados(valorTotal);
 		return valorTotal;
 	}
 

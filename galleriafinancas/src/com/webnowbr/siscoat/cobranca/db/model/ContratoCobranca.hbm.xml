@@ -2236,6 +2236,10 @@
 			<column name="contratoPrioridadeAltaUser" />
 		</property>
 		
+		<property name="esteriaComentarioLuvison" type="boolean">
+			<column name="esteriaComentarioLuvison" not-null="true" default="false"/>
+		</property>	
+		
 		<property name="protestoTaxa" type="boolean">
 			<column name="protestoTaxa" not-null="true" default="false"/>
 		</property>	
