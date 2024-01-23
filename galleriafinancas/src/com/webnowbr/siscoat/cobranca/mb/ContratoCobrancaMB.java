@@ -20987,7 +20987,7 @@ public class ContratoCobrancaMB {
 			cell1.setColspan(2);
 			table.addCell(cell1);
 			
-			if (baixaStarkBank.getContasPagar().contains("Pagamento Carta Split")) {
+			if (baixaStarkBank.getContasPagar().getDescricao().contains("Pagamento Carta Split")) {
 				if (baixaStarkBank.getContasPagar().getFormaTransferencia().equals("Pix") || baixaStarkBank.getContasPagar().getFormaTransferencia().equals("PIX")
 						|| baixaStarkBank.getContasPagar().getFormaTransferencia().equals("TED")) {	
 					
