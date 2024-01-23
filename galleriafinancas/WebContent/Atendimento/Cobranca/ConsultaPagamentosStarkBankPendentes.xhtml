@@ -59,7 +59,8 @@
                  paginator="true"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                  currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
-                 rowsPerPageTemplate="10,50,100">  
+                 rowsPerPageTemplate="10,50,100"
+                 rowStyleClass= "#{contratoCobrancaMB.getComparaValorDespesaPagto(pagamento.contasPagar.valor, pagamento.valor) eq true ? 'linhaRosa' : null} ">  
                  	<p:column style="width:16px">
 			            <p:rowToggler />
 			        </p:column> 
@@ -82,6 +83,11 @@
 			            </h:outputText>
 			        </p:column>		
 			        <p:column style="text-align: center;" headerText="Valor (R$)"  >
+						<p:outputLabel value="#{pagamento.contasPagar.valor}"
+							style="FONT-SIZE: 10pt;"
+							converter="bigDecimalConverter" />
+					</p:column>   
+					<p:column style="text-align: center;" headerText="Valor Pagamento (R$)"  >
 						<p:outputLabel value="#{pagamento.valor}" 
 							style="FONT-SIZE: 10pt;"
 							converter="bigDecimalConverter" />
@@ -223,7 +229,8 @@
 	                 paginator="true"
 	                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 	                 currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
-	                 rowsPerPageTemplate="10,50,100">  
+	                 rowsPerPageTemplate="10,50,100"
+	                 rowStyleClass= "#{contratoCobrancaMB.getComparaValorDespesaPagto(pagamento.contasPagar.valor, pagamento.valor) eq true ? 'linhaRosa' : null} "> 
                  	<p:column style="width:16px">
 			            <p:rowToggler />
 			        </p:column> 
@@ -246,10 +253,15 @@
 			            </h:outputText>
 			        </p:column>		
 			        <p:column style="text-align: center;" headerText="Valor (R$)"  >
-						<p:outputLabel value="#{pagamento.valor}" 
+						<p:outputLabel value="#{pagamento.contasPagar.valor}" 
 							style="FONT-SIZE: 10pt;"
 							converter="bigDecimalConverter" />
 					</p:column>   
+					<p:column style="text-align: center;" headerText="Valor Pagamento (R$)"  >
+						<p:outputLabel value="#{pagamento.valor}" 
+							style="FONT-SIZE: 10pt;"
+							converter="bigDecimalConverter" />
+					</p:column>  
 					<p:rowExpansion>
 						<p:panel id="TEDStarkBankCartaSplit" header="TED"
 							style="margin-bottom:10px;" rendered="#{pagamento.contasPagar.formaTransferencia eq 'TED'}">

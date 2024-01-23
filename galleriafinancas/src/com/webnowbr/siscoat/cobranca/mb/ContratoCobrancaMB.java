@@ -20735,6 +20735,77 @@ public class ContratoCobrancaMB {
 		
 		return consultaPagamentosStarkBankPendentes();
 	}
+	
+	public boolean getComparaValorDespesaPagto(BigDecimal valorDespesa, BigDecimal valorPago) {
+		boolean valorMaior = false;
+		
+		if (valorPago.compareTo(valorDespesa) == 1) {
+			valorMaior = true;
+		}
+		
+		return valorMaior;
+	}
+	
+	public boolean gerouSobraDespesa(Set<ContasPagar> despesas) {
+		boolean criado = false;
+		
+		for (ContasPagar despesa : despesas) {
+			if (despesa.getDescricao().contains("Sobra Despesas")) {
+				criado = true;
+			}
+		}
+		
+		return criado;
+	} 
+	
+	public BigDecimal calculaSobraDespesas(ContratoCobranca contrato) { 
+		BigDecimal saldo = BigDecimal.ZERO;
+		FacesContext context = FacesContext.getCurrentInstance(); 
+		
+		if (!gerouSobraDespesa(contrato.getListContasPagar())) {
+			for (ContasPagar despesa : contrato.getListContasPagar()) {
+				if (!despesa.getDescricao().contains("Pagamento Carta Split") && !despesa.getDescricao().contains("Sobra Despesas")) {
+					if (despesa.getValorPagamento() != null) {
+						saldo = saldo.add(despesa.getValorPagamento());	
+					}
+				}
+			}
+			
+			//Gastamos menos do que cobramos, devolvemos
+			if (saldo.compareTo(contrato.getValorCartaSplit()) < 1) {
+				
+				BigDecimal saldoAPagar = contrato.getValorCartaSplit().subtract(saldo);
+				
+				ContasPagarDao cDao = new ContasPagarDao();
+				ContasPagar contaPagar = new ContasPagar();
+				contaPagar.setTipoDespesa("C");
+				contaPagar.setResponsavel(contrato.getResponsavel());
+				contaPagar.setDataVencimento(getDataComMais15Dias(DateUtil.gerarDataHoje()));
+				contaPagar.setNumeroDocumento(contrato.getNumeroContrato());
+				contaPagar.setDescricao("Sobra Despesas");
+				contaPagar.setValor(saldoAPagar);
+				contaPagar.setContrato(contrato);
+				contaPagar.setBancoTed(contrato.getBancoBancarioCartaSplit());
+				contaPagar.setAgenciaTed(contrato.getAgenciaBancarioCartaSplit());				
+				contaPagar.setContaTed(contrato.getContaBancarioCartaSplit());
+				contaPagar.setCpfTed(contrato.getCpfCnpjBancarioCartaSplit());
+				contaPagar.setNomeTed(contrato.getNomeBancarioCartaSplit());
+				contaPagar.setPix(contrato.getPixCartaSplit());
+				contaPagar.setFormaTransferencia("TED");	
+				
+				cDao.create(contaPagar);
+				
+				contrato.getListContasPagar().add(contaPagar);
+				ContratoCobrancaDao contratoDao = new ContratoCobrancaDao();
+				contratoDao.merge(contrato);
+				
+				context.addMessage(null,
+						new FacesMessage(FacesMessage.SEVERITY_INFO, "Despesas: Despesa referente ao saldo criado com sucesso!", ""));
+			}
+		}
+		
+		return saldo;
+	}
 
 	public String processaReprovaPagamentoStarkBank() {
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -20916,28 +20987,55 @@ public class ContratoCobrancaMB {
 			cell1.setColspan(2);
 			table.addCell(cell1);
 			
-			cell1 = new PdfPCell(new Phrase(baixaStarkBank.getNomePagador(), titulo));
-			cell1.setBorder(0);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(10f);
-			cell1.setPaddingBottom(2f);
-			table.addCell(cell1);
-			
-			cell1 = new PdfPCell(new Phrase("CPF/CNPJ: " + baixaStarkBank.getDocumento(), titulo));
-			cell1.setBorder(0);
-			cell1.setPaddingLeft(8f);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_RIGHT);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(10f);
-			cell1.setPaddingBottom(2f);
-			table.addCell(cell1);
-			
+			if (baixaStarkBank.getContasPagar().getFormaTransferencia().equals("Pix") || baixaStarkBank.getContasPagar().getFormaTransferencia().equals("PIX")
+					|| baixaStarkBank.getContasPagar().getFormaTransferencia().equals("TED")) {	
+				
+				if (baixaStarkBank.getContasPagar() != null) {
+					cell1 = new PdfPCell(new Phrase(baixaStarkBank.getContasPagar().getNomeTed(), titulo));
+					cell1.setBorder(0);
+					cell1.setPaddingLeft(8f);
+					cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+					cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+					cell1.setBackgroundColor(BaseColor.WHITE);
+					cell1.setUseBorderPadding(true);
+					cell1.setPaddingTop(10f);
+					cell1.setPaddingBottom(2f);
+					table.addCell(cell1);
+					
+					cell1 = new PdfPCell(new Phrase("CPF/CNPJ: " + baixaStarkBank.getContasPagar().getCpfTed(), titulo));
+					cell1.setBorder(0);
+					cell1.setPaddingLeft(8f);
+					cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+					cell1.setHorizontalAlignment(Element.ALIGN_RIGHT);
+					cell1.setBackgroundColor(BaseColor.WHITE);
+					cell1.setUseBorderPadding(true);
+					cell1.setPaddingTop(10f);
+					cell1.setPaddingBottom(2f);
+					table.addCell(cell1);
+				}
+			} else {
+				cell1 = new PdfPCell(new Phrase(baixaStarkBank.getNomePagador(), titulo));
+				cell1.setBorder(0);
+				cell1.setPaddingLeft(8f);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingTop(10f);
+				cell1.setPaddingBottom(2f);
+				table.addCell(cell1);
+				
+				cell1 = new PdfPCell(new Phrase("CPF/CNPJ: " + baixaStarkBank.getDocumento(), titulo));
+				cell1.setBorder(0);
+				cell1.setPaddingLeft(8f);
+				cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell1.setHorizontalAlignment(Element.ALIGN_RIGHT);
+				cell1.setBackgroundColor(BaseColor.WHITE);
+				cell1.setUseBorderPadding(true);
+				cell1.setPaddingTop(10f);
+				cell1.setPaddingBottom(2f);
+				table.addCell(cell1);
+			}
 			
 			if (baixaStarkBank.getContasPagar().getBancoTed() != null && baixaStarkBank.getContasPagar().getAgenciaTed() != null && 
 					baixaStarkBank.getContasPagar().getContaTed() != null) {
@@ -36426,7 +36524,7 @@ public class ContratoCobrancaMB {
 		return pagamentosStarkBankPendentesCartaSplit;
 	}
 
-	public void setPagamentosStarkBankPendentesCartaSplit(List<StarkBankBaixa> pagamentosStarkBankPendentesCartaSplit) {
+	public void setPagamentosStarkBankPendentesCartaSplit(List<StarkBankBaixa> pagamentosStarkBankPendentesCartaSplit) { 
 		this.pagamentosStarkBankPendentesCartaSplit = pagamentosStarkBankPendentesCartaSplit;
 	}
 

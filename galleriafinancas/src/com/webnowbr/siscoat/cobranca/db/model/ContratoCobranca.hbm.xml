@@ -768,7 +768,7 @@
 			<column name="agRegistroUsuario" />
 		</property>
 		<property name="agRegistro" type="boolean">
-			<column name="agRegistro" />
+			<column name="agRegistro"  not-null="true" default="true" />
 		</property>
 		
 		<property name="preAprovadoComiteData"

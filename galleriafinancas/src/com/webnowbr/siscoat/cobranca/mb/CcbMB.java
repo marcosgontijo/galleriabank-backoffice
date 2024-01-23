@@ -10,9 +10,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,6 +31,7 @@ import javax.faces.context.FacesContext;
 
 import org.hibernate.TransientObjectException;
 import org.json.JSONObject;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
@@ -144,7 +142,27 @@ public class CcbMB {
 	PorcentagemPorExtenso porcentagemPorExtenso = new PorcentagemPorExtenso();
 	
 	SimulacaoVO simulador = new SimulacaoVO();
-		
+
+	private boolean blockForm = false;
+	
+	public void bloquearForm() {
+		PrimeFaces current = PrimeFaces.current();
+		if(blockForm) {
+			current.executeScript("PF('blockForm').show();");
+		} else {
+			current.executeScript("PF('blockForm').hide();");
+		}
+	}
+	
+	public boolean isBlockForm() {
+		return blockForm;
+	}
+
+	public void setBlockForm(boolean blockForm) {
+		this.blockForm = blockForm;
+	}
+	
+	
 	public void removerSegurado(Segurado segurado) {
 		this.objetoCcb.getListSegurados().remove(segurado);		
 		if(!CommonsUtil.semValor(this.objetoCcb.getObjetoContratoCobranca())) {
@@ -529,6 +547,8 @@ public class CcbMB {
 			this.objetoCcb.setNumeroOperacao(contrato.getNumeroContrato());
 			this.objetoCcb.setUsarNovoCustoEmissao(true);
 		}
+
+		blockForm = !this.objetoCcb.getObjetoContratoCobranca().isAgRegistro();
 		
 		DateFormat dateFormat = new SimpleDateFormat("MMyy");  
 		String strDate = dateFormat.format(objetoCcb.getDataDeEmissao());  
@@ -2222,6 +2242,10 @@ public class CcbMB {
 		this.addSegurador = false;
 		CcbDao ccbDao = new CcbDao();
 		this.objetoCcb = ccbDao.findById(objetoCcb.getId());
+		
+		blockForm = !this.objetoCcb.getObjetoContratoCobranca().isAgRegistro();
+		
+		
 		objetoContratoCobranca = objetoCcb.getObjetoContratoCobranca();
 		if(!CommonsUtil.semValor(objetoCcb.getPrazo()) && !CommonsUtil.semValor(objetoCcb.getNumeroParcelasPagamento())){
 			objetoCcb.setCarencia(CommonsUtil.stringValue(CommonsUtil.integerValue(objetoCcb.getPrazo())
