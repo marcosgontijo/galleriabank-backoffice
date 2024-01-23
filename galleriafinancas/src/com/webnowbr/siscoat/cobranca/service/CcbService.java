@@ -59,6 +59,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContasPagar;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.Segurado;
+import com.webnowbr.siscoat.cobranca.db.op.CcbDao;
 import com.webnowbr.siscoat.cobranca.db.op.CcbParticipantesDao;
 import com.webnowbr.siscoat.cobranca.db.op.PagadorRecebedorDao;
 import com.webnowbr.siscoat.cobranca.db.op.SeguradoDAO;
@@ -113,6 +114,8 @@ public class CcbService {
 					segurados.add(participante);
 				}
 			}
+			organizaSegurados(segurados);
+			
 			if(objetoCcb.isTerceiroGarantidor()) {
 				document = new XWPFDocument(getClass().getResourceAsStream("/resource/CciTg.docx"));
 			} else {
@@ -145,7 +148,7 @@ public class CcbService {
 			document.getStyles().setDefaultFonts(fonts);
 			document.getStyle().getDocDefaults().getRPrDefault().getRPr().setRFonts(fonts);
 			
-			organizaSegurados(segurados);
+			
 		
 			int indexSegurados = 41;
 			
@@ -1207,7 +1210,7 @@ public class CcbService {
 					segurados.add(participante);
 				}
 			}
-			
+			organizaSegurados(segurados);
 			
 			if ( CommonsUtil.semValor( objetoCcb.getProcessosJucidiais() ) )
 				document = new XWPFDocument(getClass().getResourceAsStream("/resource/CCI - Financiamento202310SemProcesso.docx"));
@@ -1448,7 +1451,7 @@ public class CcbService {
 			}
 			
 			
-			organizaSegurados(segurados);
+			
 			int indexSegurados = 61;
 			
 			for(Segurado segurado : objetoCcb.getListSegurados()) {
@@ -3958,7 +3961,7 @@ public class CcbService {
 		if(objetoCcb.getListSegurados().size() == segurados.size()) {
 			return;
 		}
-		
+		CcbDao ccbDao = new CcbDao();
 		SeguradoDAO seguradoDAO = new SeguradoDAO();
 		objetoCcb.getListSegurados().clear();
 		if(objetoCcb.getObjetoContratoCobranca().getListSegurados().size() == segurados.size()) {
@@ -3983,8 +3986,7 @@ public class CcbService {
 						segurado.setContratoCobranca(objetoCcb.getObjetoContratoCobranca());
 						objetoCcb.getObjetoContratoCobranca().getListSegurados().add(segurado);
 					}
-					if(!objetoCcb.getListSegurados().contains(segurado)) {	
-						
+					if(!objetoCcb.getListSegurados().contains(segurado)) {						
 						seguradoDAO.create(segurado);
 						objetoCcb.getListSegurados().add(segurado);
 					}
