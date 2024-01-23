@@ -2192,6 +2192,10 @@
 			<column name="valorTotalProcessos" />
 		</property>
 		
+		<property name="valorTotalProcessosSelecionados" type="big_decimal">
+			<column name="valorTotalProcessosSelecionados" />
+		</property>
+		
 		<property name="dividaIPTU" type="big_decimal">
 			<column name="dividaIPTU" />
 		</property>

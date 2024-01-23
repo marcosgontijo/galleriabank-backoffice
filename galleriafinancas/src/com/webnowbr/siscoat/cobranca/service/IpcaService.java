@@ -38,6 +38,7 @@ public class IpcaService {
 
 		// este método pegara o último IPCA na base, com data anterior a data base,
 		// mesmo que não do mesmo mês.
+		
 		IPCA ultimoIpca = ipcaDao.getUltimoIPCA(DateUtil.getDataHoje());
 
 		if (!CommonsUtil.semValor(tabelaIndices.getIndices())) {
@@ -71,6 +72,7 @@ public class IpcaService {
 			
 //			List<ContratoCobranca> contratosCobranca = contratoCobrancaDao.findByFilter("numeroContrato", numeroContrato);
 
+			verificaNovoIPCA();
 			LOGGER.info("incio atualizaIPCAPorContrato");
 			
 //			if (contratosCobranca.size() > 0) {		
@@ -118,6 +120,8 @@ public class IpcaService {
 
 //			List<ContratoCobranca> contratosCobranca = contratoCobrancaDao.findByFilter("numeroContrato", this.numeroContrato);
 
+			verificaNovoIPCA();
+			
 			LOGGER.info("incio atualizaIPCAPorContrato");
 
 //			if (contratosCobranca.size() > 0) {			
