@@ -10092,9 +10092,9 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setValorCartaSplitGalleria(ccb.getValorDespesas());
 		this.objetoContratoCobranca.setNomeBancarioCartaSplitGalleria("Galleria Correspondente Bancário Eireli");
 		this.objetoContratoCobranca.setCpfCnpjBancarioCartaSplitGalleria("34.787.885/0001-32");
-		this.objetoContratoCobranca.setBancoBancarioCartaSplitGalleria("");
-		this.objetoContratoCobranca.setAgenciaBancarioCartaSplitGalleria("");
-		this.objetoContratoCobranca.setContaBancarioCartaSplitGalleria("");
+		this.objetoContratoCobranca.setBancoBancarioCartaSplitGalleria("001 | Banco do Brasil S.A.");
+		this.objetoContratoCobranca.setAgenciaBancarioCartaSplitGalleria("1515-6");
+		this.objetoContratoCobranca.setContaBancarioCartaSplitGalleria("131094-1");	
 		this.objetoContratoCobranca.setPixCartaSplitGalleria("b56b12e2-f476-4272-8d16-c1a5a31cc660");
 		
 		// cria despesas processos
