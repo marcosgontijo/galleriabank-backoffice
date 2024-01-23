@@ -3938,11 +3938,6 @@ public class ContratoCobrancaMB {
 				}
 			}
 			
-			if(this.objetoContratoCobranca.isEsteriaComentarioLuvison()
-					&& this.objetoContratoCobranca.isComentarioJuridicoInterno()) {
-				this.objetoContratoCobranca.setEsteriaComentarioLuvison(false);
-			}
-			
 			if (!CommonsUtil.semValor(objetoContratoCobranca.getListContasPagar())) {
 				for (ContasPagar conta : objetoContratoCobranca.getListContasPagar()) {
 					if (conta.getId() <= 0) {
@@ -4060,8 +4055,7 @@ public class ContratoCobrancaMB {
 			}
 		}
 
-		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Comentario Jurídico") || 
-				CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Comentario Jurídico - Luvison")) {
+		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Comentario Jurídico")) {
 			if (CommonsUtil.semValor(objetoContratoCobranca.getDataPajuComentado())
 					&& objetoContratoCobranca.isComentarioJuridicoEsteira()) {
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
@@ -6038,25 +6032,6 @@ public class ContratoCobrancaMB {
 		return geraConsultaContratosPorStatus("Ag. DOC");
 	}
 
-	public String enviarContratoEsteiraLuvison(ContratoCobranca contrato) {
-		this.objetoContratoCobranca = getContratoById(objetoContratoCobranca.getId());
-		this.objetoContratoCobranca.setEsteriaComentarioLuvison(true);
-		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		contratoCobrancaDao.merge(objetoContratoCobranca);
-		return
-		geraConsultaContratosPorStatus("Comentario Jurídico");
-	}
-	
-	public String enviarContratoEsteiraInterna(ContratoCobranca contrato) {
-		this.objetoContratoCobranca = getContratoById(objetoContratoCobranca.getId());
-		this.objetoContratoCobranca.setEsteriaComentarioLuvison(false);
-		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		contratoCobrancaDao.merge(objetoContratoCobranca);
-		return
-		geraConsultaContratosPorStatus("Comentario Luvison");
-	}
-	
-	
 	public String voltarAnaliseComercial() {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -9831,7 +9806,7 @@ public class ContratoCobrancaMB {
 
 		this.objetoContratoCobranca.calcularTaxaPreAprovada();
 
-		//carregaValorIOFCustos();
+		carregaValorIOFCustos();
 
 		saveEstadoCheckListAtual();
 
@@ -10009,12 +9984,9 @@ public class ContratoCobrancaMB {
 			} else {
 				return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatus.xhtml";
 			}
-		} else if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Comentario Jurídico") ||
-				CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Comentario Jurídico - Luvison")) {
+		} else if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Comentario Jurídico")) {
 			if (usuarioLogado.isProfileComentarioJuridico() || usuarioLogado.isAdministrador()) {
 				return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatus.xhtml";
-			} else if(usuarioLogado.isProfilePajuLuvison()){
-				return "/Atendimento/Cobranca/ContratoCobrancaComentarioJuridicoExterno.xhtml";
 			} else {
 				return "/Atendimento/Cobranca/ContratoCobrancaDetalhesPendentePorStatus.xhtml";
 			}
@@ -10271,7 +10243,6 @@ public class ContratoCobrancaMB {
 		} else
 			this.objetoContratoCobranca.setProcessosQuitarComite(null);
 
-		calcularValorTotalProcessosSelecionados();
 //		}
 	}
 
@@ -14697,9 +14668,6 @@ public class ContratoCobrancaMB {
 		if (status.equals("Comentario Jurídico")) {
 			this.tituloTelaConsultaPreStatus = "Comentario Jurídico";
 		}
-		if (status.equals("Comentario Luvison")) {
-			this.tituloTelaConsultaPreStatus = "Comentario Jurídico - Luvison";
-		}
 		if (status.equals("Pré-Comite")) {
 			this.tituloTelaConsultaPreStatus = "Pré-Comite";
 		}
@@ -14756,15 +14724,7 @@ public class ContratoCobrancaMB {
 
 		User user = getUsuarioLogado();
 
-		/*if (CommonsUtil.mesmoValor(status, "Comentario Jurídico")
-				&& !CommonsUtil.semValor(user)
-				&& user.getId() > 0
-				&& user.isProfilePajuLuvison()) {
-			status = "Comentario Luvison";
-			this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, status);
-		} else {*/
 		this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, status);
-		//}
 
 		if (status.equals("Análise Reprovada")) {
 			for (ContratoCobranca contratos : this.contratosPendentes) {
@@ -20246,11 +20206,12 @@ public class ContratoCobrancaMB {
 		contaCartaSplit.setValor(this.objetoContratoCobranca.getValorCartaSplitGalleria());
 		contaCartaSplit.setValorPagamento(this.objetoContratoCobranca.getValorCartaSplitGalleria());
 
-		contaCartaSplit.setBancoTed(this.objetoContratoCobranca.getBancoBancarioCartaSplitGalleria());
-		contaCartaSplit.setAgenciaTed(this.objetoContratoCobranca.getAgenciaBancarioCartaSplitGalleria());
-		contaCartaSplit.setContaTed(this.objetoContratoCobranca.getContaBancarioCartaSplitGalleria());
-		contaCartaSplit.setPix(this.objetoContratoCobranca.getPixCartaSplitGalleria());
-		contaCartaSplit.setNomeTed(this.objetoContratoCobranca.getNomeBancarioCartaSplitGalleria());
+		//contaCartaSplit.setBancoTed(this.objetoContratoCobranca.getBancoBancarioCartaSplitGalleria());
+		//contaCartaSplit.setAgenciaTed(this.objetoContratoCobranca.getAgenciaBancarioCartaSplitGalleria());
+		//contaCartaSplit.setContaTed(this.objetoContratoCobranca.getContaBancarioCartaSplitGalleria());
+		contaCartaSplit.setPix("b56b12e2-f476-4272-8d16-c1a5a31cc660");
+		contaCartaSplit.setNomeTed("Galleria Correspondente Bancário");
+		contaCartaSplit.setCpfTed("34.787.885/0001-32");
 
 		ContasPagarDao contasPagarDao = new ContasPagarDao();
 		if (contaCartaSplit.getId() <= 0) {
@@ -20329,12 +20290,13 @@ public class ContratoCobrancaMB {
 		contaCartaSplit.setValor(this.objetoContratoCobranca.getValorCustoEmissao());
 		contaCartaSplit.setValorPagamento(this.objetoContratoCobranca.getValorCustoEmissao());
 
-		contaCartaSplit.setBancoTed(this.objetoContratoCobranca.getBancoBancarioCustoEmissao());
-		contaCartaSplit.setAgenciaTed(this.objetoContratoCobranca.getAgenciaBancarioCustoEmissao());
-		contaCartaSplit.setContaTed(this.objetoContratoCobranca.getContaBancarioCustoEmissao());
-		contaCartaSplit.setPix(this.objetoContratoCobranca.getPixCustoEmissao());
-		contaCartaSplit.setNomeTed(this.objetoContratoCobranca.getNomeBancarioCustoEmissao());
-
+		//contaCartaSplit.setBancoTed(this.objetoContratoCobranca.getBancoBancarioCustoEmissao());
+		//contaCartaSplit.setAgenciaTed(this.objetoContratoCobranca.getAgenciaBancarioCustoEmissao());
+		//contaCartaSplit.setContaTed(this.objetoContratoCobranca.getContaBancarioCustoEmissao());
+		contaCartaSplit.setPix("51604356000175");
+		contaCartaSplit.setNomeTed("Galleria SCD");
+		contaCartaSplit.setCpfTed("51.604.356/0001-75");
+		
 		ContasPagarDao contasPagarDao = new ContasPagarDao();
 		if (contaCartaSplit.getId() <= 0) {
 			contasPagarDao.create(contaCartaSplit);
@@ -20417,6 +20379,7 @@ public class ContratoCobrancaMB {
 		contaCartaSplit.setContaTed(this.objetoContratoCobranca.getContaBancarioCartaSplit());
 		contaCartaSplit.setPix(this.objetoContratoCobranca.getPixCartaSplit());
 		contaCartaSplit.setNomeTed(this.objetoContratoCobranca.getNomeBancarioCartaSplit());
+		contaCartaSplit.setCpfTed(this.objetoContratoCobranca.getCpfCnpjBancarioCartaSplit());
 
 		ContasPagarDao contasPagarDao = new ContasPagarDao();
 		if (contaCartaSplit.getId() <= 0) {
@@ -20594,7 +20557,7 @@ public class ContratoCobrancaMB {
 							this.objetoBaixaPagamentoStarkBank.getContasPagar().getPix(),
 							this.objetoBaixaPagamentoStarkBank.getContasPagar().getAgenciaTed(),
 							this.objetoBaixaPagamentoStarkBank.getContasPagar().getContaTed(),
-							"34.787.885/0001-32",
+							this.objetoBaixaPagamentoStarkBank.getContasPagar().getCpfTed(),
 							this.objetoBaixaPagamentoStarkBank.getContasPagar().getNomeTed(),
 							this.objetoBaixaPagamentoStarkBank.getContasPagar().getValorPagamento(),
 							this.objetoBaixaPagamentoStarkBank.getContasPagar().getFormaTransferencia(),
@@ -20987,7 +20950,7 @@ public class ContratoCobrancaMB {
 			cell1.setColspan(2);
 			table.addCell(cell1);
 			
-			if (baixaStarkBank.getContasPagar().contains("Pagamento Carta Split")) {
+			if (baixaStarkBank.getContasPagar().getDescricao().contains("Pagamento Carta Split")) {
 				if (baixaStarkBank.getContasPagar().getFormaTransferencia().equals("Pix") || baixaStarkBank.getContasPagar().getFormaTransferencia().equals("PIX")
 						|| baixaStarkBank.getContasPagar().getFormaTransferencia().equals("TED")) {	
 					
@@ -22099,20 +22062,6 @@ public class ContratoCobrancaMB {
 			}
 		}
 		this.objetoContratoCobranca.setValorTotalProcessos(valorTotal);
-		calcularValorTotalProcessosSelecionados();
-		return valorTotal;
-	}
-	
-	private BigDecimal calcularValorTotalProcessosSelecionados() {
-		BigDecimal valorTotal = BigDecimal.ZERO;
-		if (!CommonsUtil.semValor(objetoContratoCobranca.getListProcessos())) {
-			for (CcbProcessosJudiciais processo : this.objetoContratoCobranca.getListProcessos()) {
-				if (processo.isSelecionadoComite() && !CommonsUtil.semValor(processo.getValorAtualizado())) {
-					valorTotal = valorTotal.add(processo.getValorAtualizado());
-				}
-			}
-		}
-		this.objetoContratoCobranca.setValorTotalProcessosSelecionados(valorTotal);
 		return valorTotal;
 	}
 

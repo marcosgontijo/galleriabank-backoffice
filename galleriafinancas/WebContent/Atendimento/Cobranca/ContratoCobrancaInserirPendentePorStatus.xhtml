@@ -3833,7 +3833,8 @@
 
 				<h:panelGroup id="ContasPagarPanel">
 					<p:messages id="mensagensStarkBank"/>
-					<p:panel header="Dispesas" style="margin-bottom:10px;">
+					<p:panel header="Dispesas" style="margin-bottom:10px;"
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.aprovadoComite and( usuarioMB.objetoUsuario.administrador or ( contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Registro'))}">
 						<f:facet name="header"> Despesas 
 							<p:outputLabel value="" />
 							<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR, COBRANCA_FINANCEIRO">
@@ -4112,8 +4113,9 @@
 					</p:panel>
 				</h:panelGroup>
 				
-								<h:panelGroup id="Cliente">
-					<p:panel header="Cliente" style="margin-bottom:10px;">
+				<h:panelGroup id="Cliente">
+					<p:panel header="Cliente" style="margin-bottom:10px;"
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.aprovadoComite and( usuarioMB.objetoUsuario.administrador or ( contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Registro'))}">
 						<h:panelGrid columns="3">
 							<h:panelGrid columns="2">
 								<p:outputLabel for="valorCartaSplit"
