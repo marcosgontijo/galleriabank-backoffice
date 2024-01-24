@@ -768,7 +768,7 @@
 			<column name="agRegistroUsuario" />
 		</property>
 		<property name="agRegistro" type="boolean">
-			<column name="agRegistro" />
+			<column name="agRegistro"  not-null="true" default="true" />
 		</property>
 		
 		<property name="preAprovadoComiteData"
@@ -2192,6 +2192,10 @@
 			<column name="valorTotalProcessos" />
 		</property>
 		
+		<property name="valorTotalProcessosSelecionados" type="big_decimal">
+			<column name="valorTotalProcessosSelecionados" />
+		</property>
+		
 		<property name="dividaIPTU" type="big_decimal">
 			<column name="dividaIPTU" />
 		</property>
@@ -2235,6 +2239,10 @@
 		<property name="contratoPrioridadeAltaUser" type="java.lang.String">
 			<column name="contratoPrioridadeAltaUser" />
 		</property>
+		
+		<property name="esteriaComentarioLuvison" type="boolean">
+			<column name="esteriaComentarioLuvison" not-null="true" default="false"/>
+		</property>	
 		
 		<property name="protestoTaxa" type="boolean">
 			<column name="protestoTaxa" not-null="true" default="false"/>

@@ -90,5 +90,7 @@ public class SiscoatConstants {
 	public static final String TIPO_INFORMACAO_CONSULTA_CERTIDAO= "C";
 	public static final String TIPO_INFORMACAO_CONSULTA_PROCESSO = "P";
 	
+	public static final List<String> PARCELASIGNORADAS = Arrays.asList("Acerto Saldo", "Amortização") ;
+	
 
 }

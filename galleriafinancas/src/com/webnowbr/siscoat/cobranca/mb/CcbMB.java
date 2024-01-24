@@ -10,9 +10,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,6 +31,7 @@ import javax.faces.context.FacesContext;
 
 import org.hibernate.TransientObjectException;
 import org.json.JSONObject;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
@@ -48,6 +46,7 @@ import com.webnowbr.siscoat.cobranca.db.model.CcbParticipantes;
 import com.webnowbr.siscoat.cobranca.db.model.CcbProcessosJudiciais;
 import com.webnowbr.siscoat.cobranca.db.model.ContasPagar;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaDetalhes;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.Segurado;
@@ -61,6 +60,7 @@ import com.webnowbr.siscoat.cobranca.db.op.RegistroImovelTabelaDao;
 import com.webnowbr.siscoat.cobranca.model.cep.CepResult;
 import com.webnowbr.siscoat.cobranca.service.CcbService;
 import com.webnowbr.siscoat.cobranca.service.CepService;
+import com.webnowbr.siscoat.cobranca.service.IpcaService;
 import com.webnowbr.siscoat.common.BancosEnum;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
@@ -69,6 +69,7 @@ import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.common.ValidaCNPJ;
 import com.webnowbr.siscoat.common.ValidaCPF;
 import com.webnowbr.siscoat.db.dao.DAOException;
+import com.webnowbr.siscoat.job.IpcaJobCalcular;
 import com.webnowbr.siscoat.security.LoginBean;
 import com.webnowbr.siscoat.simulador.GoalSeek;
 import com.webnowbr.siscoat.simulador.GoalSeekFunction;
@@ -141,7 +142,27 @@ public class CcbMB {
 	PorcentagemPorExtenso porcentagemPorExtenso = new PorcentagemPorExtenso();
 	
 	SimulacaoVO simulador = new SimulacaoVO();
-		
+
+	private boolean blockForm = false;
+	
+	public void bloquearForm() {
+		PrimeFaces current = PrimeFaces.current();
+		if(blockForm) {
+			current.executeScript("PF('blockForm').show();");
+		} else {
+			current.executeScript("PF('blockForm').hide();");
+		}
+	}
+	
+	public boolean isBlockForm() {
+		return blockForm;
+	}
+
+	public void setBlockForm(boolean blockForm) {
+		this.blockForm = blockForm;
+	}
+	
+	
 	public void removerSegurado(Segurado segurado) {
 		this.objetoCcb.getListSegurados().remove(segurado);		
 		if(!CommonsUtil.semValor(this.objetoCcb.getObjetoContratoCobranca())) {
@@ -526,6 +547,8 @@ public class CcbMB {
 			this.objetoCcb.setNumeroOperacao(contrato.getNumeroContrato());
 			this.objetoCcb.setUsarNovoCustoEmissao(true);
 		}
+
+		blockForm = !this.objetoCcb.getObjetoContratoCobranca().isAgRegistro();
 		
 		DateFormat dateFormat = new SimpleDateFormat("MMyy");  
 		String strDate = dateFormat.format(objetoCcb.getDataDeEmissao());  
@@ -2027,7 +2050,87 @@ public class CcbMB {
 				cash_flows[i] = calc_value.doubleValue();
 			}
 			
+		
 			
+			
+			for (SimulacaoDetalheVO parcela : this.simulador.getParcelas()) {
+				boolean encontrouParcela = false;
+				BigDecimal saldoAnterior = BigDecimal.ZERO;				
+
+				for (ContratoCobrancaDetalhes detalhe : this.objetoCcb.getObjetoContratoCobranca().getListContratoCobrancaDetalhes()) {
+
+					if (CommonsUtil.mesmoValor(parcela.getNumeroParcela().toString(), detalhe.getNumeroParcela())) {
+
+						detalhe.setVlrSaldoInicial(saldoAnterior);
+						// detalhe.setVlrSaldoParcela(
+						// parcela.getSaldoDevedorInicial().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+
+						if (this.objetoContratoCobranca.isCorrigidoNovoIPCA()) {
+							detalhe.setVlrSaldoParcela(
+									parcela.getSaldoDevedorFinal().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+						} else {
+							detalhe.setVlrSaldoParcela(
+									parcela.getSaldoDevedorInicial().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+						}
+
+						detalhe.setVlrParcela(parcela.getValorParcela().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+						detalhe.setVlrJurosParcela(parcela.getJuros().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+						detalhe.setVlrAmortizacaoParcela(parcela.getAmortizacao().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+						detalhe.setSeguroDFI(parcela.getSeguroDFI());
+						detalhe.setSeguroMIP(parcela.getSeguroMIP());
+						detalhe.setTaxaAdm(parcela.getTxAdm());
+						if (parcela.getValorParcela().compareTo(BigDecimal.ZERO) == 0) {
+							detalhe.setParcelaPaga(true);
+							detalhe.setOrigemBaixa("concluirReparcelamento");
+							detalhe.setDataPagamento(detalhe.getDataVencimento());
+							detalhe.setVlrParcela(BigDecimal.ZERO);
+						}
+
+						if (DateUtil.isAfterDate(detalhe.getDataVencimento(), DateUtil.getDataHoje())
+								&& !detalhe.isParcelaPaga()) {
+							detalhe.setParcelaVencida(true);
+						} else
+							detalhe.setParcelaVencida(false);
+
+						if (DateUtil.isDataHoje(detalhe.getDataVencimento()) && !detalhe.isParcelaPaga()) {
+							detalhe.setParcelaVencendo(true);
+						} else
+							detalhe.setParcelaVencendo(false);
+
+
+						encontrouParcela = true;
+						break;
+					}
+					saldoAnterior = detalhe.getVlrSaldoParcela();
+				}
+			}
+					
+//			  REPROCESSA IPCA
+			  if ( this.objetoCcb.getObjetoContratoCobranca().isCorrigidoIPCA() &&
+					  !this.objetoCcb.getObjetoContratoCobranca().isCorrigidoNovoIPCA() ){
+				  
+
+					IpcaService ipcaService = new IpcaService();
+					IpcaJobCalcular ipcaJobCalcular = new IpcaJobCalcular();
+					
+				  Calendar dataCorteParcelasMalucas = Calendar.getInstance();
+					dataCorteParcelasMalucas.set(Calendar.YEAR, 2023);
+					dataCorteParcelasMalucas.set(Calendar.MONTH, 0);
+					dataCorteParcelasMalucas.set(Calendar.DAY_OF_MONTH, 1);
+					
+					 Date  dataCorteBaixa = dataCorteParcelasMalucas.getTime();
+					
+				  if (this.objetoCcb.getObjetoContratoCobranca().isCorrigidoIPCAHibrido()) {
+						// atualiza data corte da baixa no contrato e banco				
+					  this.objetoCcb.getObjetoContratoCobranca().setDataCorteBaixaIPCAHibrido(dataCorteBaixa);				
+						
+					  ipcaService.atualizaIPCAPorContratoMaluco(this.objetoCcb.getObjetoContratoCobranca(), dataCorteBaixa,ipcaJobCalcular);
+					} else {
+						if (this.objetoCcb.getObjetoContratoCobranca().isCorrigidoIPCA()) {
+							ipcaService.atualizaIPCAPorContrato(this.objetoCcb.getObjetoContratoCobranca(), dataCorteBaixa,ipcaJobCalcular);
+						}
+					}			
+			  }
 			int maxGuess = 500;
 			cetDouble = SimuladorMB.irr(cash_flows, maxGuess);
 			
@@ -2139,6 +2242,10 @@ public class CcbMB {
 		this.addSegurador = false;
 		CcbDao ccbDao = new CcbDao();
 		this.objetoCcb = ccbDao.findById(objetoCcb.getId());
+		
+		blockForm = !this.objetoCcb.getObjetoContratoCobranca().isAgRegistro();
+		
+		
 		objetoContratoCobranca = objetoCcb.getObjetoContratoCobranca();
 		if(!CommonsUtil.semValor(objetoCcb.getPrazo()) && !CommonsUtil.semValor(objetoCcb.getNumeroParcelasPagamento())){
 			objetoCcb.setCarencia(CommonsUtil.stringValue(CommonsUtil.integerValue(objetoCcb.getPrazo())
