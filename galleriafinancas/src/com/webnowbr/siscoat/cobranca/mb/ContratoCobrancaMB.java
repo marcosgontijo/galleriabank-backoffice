@@ -31102,12 +31102,86 @@ public class ContratoCobrancaMB {
 	
 	
 	public void getListaImoveisAdd() {
-		//TODO Criar uma função aqui que trás todos os imóveis cobranca add do contrato e retorna um array com eles, para que apareçam no dropdown
 		
 		ImovelCobrancaAdicionaisDao imovelAddDao = new ImovelCobrancaAdicionaisDao();
 		listTodosImoveisContrato = imovelAddDao.getListImoveisAdd(objetoContratoCobranca.getId());
 	
 	}
+	
+	public String clearFieldsPreLaudoCompass() {
+
+		clearMensagensWhatsApp();
+
+		this.tituloTelaConsultaPreStatus = "Pré-Laudo Compass";
+
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		this.contratosPendentes = new ArrayList<ContratoCobranca>();
+
+		this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosCRM(null, null, "Pré-Laudo Compass");
+
+		this.inserirImovelDisable = true;
+		this.inserirImovelOcultarValorMercadoImovel = true;
+
+		//return "";
+		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatusPreLaudoCompass.xhtml";
+	}
+	
+	public String clearFieldsEditarPreLaudoCompass() {
+		getListaImoveisAdd();
+		clearMensagensWhatsApp();
+		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
+		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
+		this.objetoPagadorRecebedor = this.objetoContratoCobranca.getPagador();
+
+		if (this.objetoContratoCobranca.getResponsavel() != null) {
+			this.codigoResponsavel = this.objetoContratoCobranca.getResponsavel().getCodigo();
+		}
+
+		this.tituloPainel = "Editar";
+
+		filesInterno = new ArrayList<FileUploaded>();
+		filesInterno = listaArquivosInterno();
+
+		filesJuridico = new ArrayList<FileUploaded>();
+		filesJuridico = listaArquivosJuridico();
+
+		listaArquivosAnaliseDocumentos();
+		this.restricaoOperacao = new ArrayList<>();
+		this.restricaoImovel = new ArrayList<>();
+		this.preAprovadoPendencia = new ArrayList<>();
+		
+
+		listaRestricoesPessoas();
+		listaRestricoesImovel();
+		
+		this.inserirImovelDisable = true;
+		this.inserirImovelOcultarValorMercadoImovel = true;
+
+		return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusPreLaudoCompass.xhtml";
+	}
+	
+	/*public String atualizaContratoPreLaudoCompass() { // TODO Ver isso aqui de atualizar depois de editado
+		FacesContext context = FacesContext.getCurrentInstance();
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+
+		try {
+			this.objetoContratoCobranca.populaStatusEsteira(getUsuarioLogadoNull());
+			contratoCobrancaDao.merge(this.objetoContratoCobranca);
+
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO,
+							"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
+									+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
+							""));
+
+			return clearFieldsAvaliacaoCompass();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + e, ""));
+			return "";
+		}
+	}*/
 	
 	/**
 	 * @param objetoContratoCobranca the objetoContratoCobranca to set
@@ -33058,6 +33132,24 @@ public class ContratoCobrancaMB {
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
 			filesCci = listaArquivosCci();
+		}
+	}
+	
+	public void handleFilePreLaudoUpload(FileUploadEvent event) throws IOException {
+		FacesContext context = FacesContext.getCurrentInstance();
+
+		if (event.getFile().getFileName().endsWith(".zip")) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
+		} else {
+
+			byte[] conteudo = event.getFile().getContents();
+			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(),
+					event.getFile().getFileName(), "//juridico/", getUsuarioLogado());
+
+			// atualiza lista de arquivos contidos no diretório
+			documentoConsultarTodos = new ArrayList<FileUploaded>();
+			filesJuridico = listaArquivosJuridico();
 		}
 	}
 

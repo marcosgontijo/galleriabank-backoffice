@@ -7290,6 +7290,14 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 								+ " and pedidoLaudoPajuComercial = true and pedidoLaudo = true and avaliacaoLaudo = 'Galache' and laudoRecebido = false ";
 					}
 					
+					//Novo tipo de consulta para contratos com pre-laudo da compass pendentes
+					if (tipoConsulta.equals("Pré-Laudo Compass")) {
+						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
+								+ " and cadastroAprovadoValor = 'Aprovado' "
+								+ " and pendenciaLaudoPaju = false "
+								+ " and pedidoPreLaudo = true and avaliacaoLaudo = 'Compass' and laudoRecebido = false ";
+					}
+					
 					if (tipoConsulta.equals("Geração do PAJU")) {
 						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and cadastroAprovadoValor = 'Aprovado' "
