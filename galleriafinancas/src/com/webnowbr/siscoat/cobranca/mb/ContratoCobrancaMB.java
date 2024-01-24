@@ -31105,10 +31105,8 @@ public class ContratoCobrancaMB {
 		//TODO Criar uma função aqui que trás todos os imóveis cobranca add do contrato e retorna um array com eles, para que apareçam no dropdown
 		
 		ImovelCobrancaAdicionaisDao imovelAddDao = new ImovelCobrancaAdicionaisDao();
-		this.listTodosImoveisContrato = imovelAddDao.getListImoveisAdd(objetoContratoCobranca.getId());
-		
-		//this.setListaImoveisCobranca = this.objetoContratoCobranca.getListaImoveis();	
-		
+		listTodosImoveisContrato = imovelAddDao.getListImoveisAdd(objetoContratoCobranca.getId());
+	
 	}
 	
 	/**
@@ -36407,5 +36405,13 @@ public class ContratoCobrancaMB {
 
 	public void setListaSelectAnalise(List<DocumentoAnalise> listaSelectAnalise) {
 		this.listaSelectAnalise = listaSelectAnalise;
+	}
+	
+	public List<ImovelCobranca> getlistTodosImoveisContrato() {
+		return listTodosImoveisContrato;
+	}
+	
+	public void setlistTodosImoveisContrato(List<ImovelCobranca> listTodosImoveisContrato) {
+		this.listTodosImoveisContrato = listTodosImoveisContrato;
 	}
 }

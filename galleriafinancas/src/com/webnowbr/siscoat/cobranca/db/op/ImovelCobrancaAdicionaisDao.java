@@ -19,10 +19,17 @@ import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
  */
 public class ImovelCobrancaAdicionaisDao extends HibernateDao <ImovelCobrancaAdicionais,Long> {
 	
-	private String QUERY_BUSCA_IMOVEIS_ADD = "SELECT ia.imovel "
-											+ " FROM cobranca.imovelcobrancaadicionais ia "
-											+ " INNER JOIN cobranca.contratocobranca cc ON cc.id = ia.contratocobranca "
-											+ " WHERE cc.id = ? ";
+	private String QUERY_BUSCA_IMOVEIS_ADD = "select i.id, i.numeromatricula, i.endereco, i.bairro, i.complemento, i.cidade, i.estado, i.cep, i.tipo, i.nomeproprietario, "
+											+ " i.valormercado "
+											+ " from cobranca.imovelcobranca i "
+											+ " inner join cobranca.contratocobranca c on i.id = c.imovel "
+											+ " where c.id = ? "
+											+ "	union all "
+											+ " select i.id, i.numeromatricula, i.endereco, i.bairro, i.complemento, i.cidade, i.estado, i.cep, i.tipo, i.nomeproprietario, "
+											+ " i.valormercado "
+											+ " from cobranca.imovelcobranca i "
+											+ " inner join cobranca.imovelcobrancaadicionais i2 on i2.imovel = i.id"
+											+ " where i2.contratocobranca = ? ";
 	
 	private String QUERY_BUSCA_IMOVEIS_PRE_LAUDO = "SELECT ia.id, ia.imovel, ia.contratocobranca, ia.relacaocomgarantia, ia.valorregistro "
 			+ " FROM cobranca.imovelcobrancaadicionais ia "
@@ -51,16 +58,30 @@ public class ImovelCobrancaAdicionaisDao extends HibernateDao <ImovelCobrancaAdi
 							.prepareStatement(QUERY_BUSCA_IMOVEIS_ADD_CUSTOM);
 					
 					ps.setLong(1, idContratoCobranca);
+					ps.setLong(2, idContratoCobranca);
 					
 					rs = ps.executeQuery();
 					
 					ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
-					ImovelCobranca imovelCobranca = new ImovelCobranca();
+					
 					Long idTeste;
 					
 					while (rs.next()) {
-						imovelCobranca = imovelCobrancaDao.findById(rs.getLong(1));
-						idTeste = rs.getLong(1);
+						ImovelCobranca imovelCobranca = new ImovelCobranca();
+						imovelCobranca.setId(rs.getLong(1));
+						imovelCobranca.setNumeroMatricula(rs.getString(2));
+						imovelCobranca.setEndereco(rs.getString(3));
+						imovelCobranca.setBairro(rs.getString(4));
+						imovelCobranca.setComplemento(rs.getString(5));
+						imovelCobranca.setCidade(rs.getString(6));
+						imovelCobranca.setEstado(rs.getString(7));
+						imovelCobranca.setCep(rs.getString(8));
+						imovelCobranca.setTipo(rs.getString(9));
+						imovelCobranca.setNomeProprietario(rs.getString(10));
+						imovelCobranca.setValorMercado(rs.getBigDecimal(11));
+						
+						//idTeste = rs.getLong(1);
+						//imovelCobranca = imovelCobrancaDao.findById(rs.getLong(1));
 						objects.add(imovelCobranca);
 					}
 							
