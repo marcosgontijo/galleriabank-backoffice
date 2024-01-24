@@ -264,7 +264,7 @@
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" />
 		                </p:commandButton>
 		                
-		                <!-- <shiro:hasAnyRoles name="ROOT, PROFILE_COMENTARIO_JURIDICO">  
+		               <shiro:hasAnyRoles name="ROOT, PROFILE_COMENTARIO_JURIDICO">  
 			                <p:commandButton value="Enviar..." ajax="true" icon="ui-icon-arrowreturnthick-1-e"
 			               		onclick="PF('enviarLuvison').show();" 
 			               		rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico'}">
@@ -278,7 +278,7 @@
 			               		rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico - Luvison'}">
 			               		<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 							</p:commandButton>
-						</shiro:hasAnyRoles> -->
+						</shiro:hasAnyRoles> 
 						
 		               	<p:commandButton value="PDF P.A." ajax="false" icon="ui-icon-print" 
 		               	rendered="#{contratos.analiseReprovada == false 
