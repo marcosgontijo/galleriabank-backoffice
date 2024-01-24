@@ -162,30 +162,7 @@ public class CcbMB {
 		this.blockForm = blockForm;
 	}
 	
-<<<<<<< HEAD
 
-	private boolean blockForm = false;
-	
-	public void bloquearForm() {
-		PrimeFaces current = PrimeFaces.current();
-		if(blockForm) {
-			current.executeScript("PF('blockForm').show();");
-		} else {
-			current.executeScript("PF('blockForm').hide();");
-		}
-	}
-	
-	public boolean isBlockForm() {
-		return blockForm;
-	}
-
-	public void setBlockForm(boolean blockForm) {
-		this.blockForm = blockForm;
-	}
-	
-=======
->>>>>>> branch 'homolog' of https://github.com/Galleria-Bank-Developers/backoffice.git
-	
 	public void removerSegurado(Segurado segurado) {
 		this.objetoCcb.getListSegurados().remove(segurado);		
 		if(!CommonsUtil.semValor(this.objetoCcb.getObjetoContratoCobranca())) {
