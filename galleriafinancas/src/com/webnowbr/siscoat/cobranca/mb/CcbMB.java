@@ -10,9 +10,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -165,6 +162,7 @@ public class CcbMB {
 		this.blockForm = blockForm;
 	}
 	
+<<<<<<< HEAD
 
 	private boolean blockForm = false;
 	
@@ -185,6 +183,8 @@ public class CcbMB {
 		this.blockForm = blockForm;
 	}
 	
+=======
+>>>>>>> branch 'homolog' of https://github.com/Galleria-Bank-Developers/backoffice.git
 	
 	public void removerSegurado(Segurado segurado) {
 		this.objetoCcb.getListSegurados().remove(segurado);		

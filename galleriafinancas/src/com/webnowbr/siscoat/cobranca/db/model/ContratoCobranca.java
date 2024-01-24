@@ -173,6 +173,8 @@ public class ContratoCobranca implements Serializable {
 	private Set<Averbacao> listAverbacao;
 	private Set<CcbParticipantes> listaParticipantes = new HashSet<>();
 	private Set<ImovelCobrancaAdicionais> listaImoveis = new HashSet<>();
+	
+	private List<ContasPagar> contasPagarList;
 
 	// n�o persistida a lista abaixo
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionado;
@@ -697,6 +699,7 @@ public class ContratoCobranca implements Serializable {
 	private int carenciaComite;
 	private boolean operacaoFundo;
 	private BigDecimal valorTotalProcessos;
+	private BigDecimal valorTotalProcessosSelecionados;
 	private BigDecimal valorTotalAverbacao;
 
 	private String empresaCertificado;
@@ -848,6 +851,7 @@ public class ContratoCobranca implements Serializable {
 	private String avaliacaoPaju;
 	private boolean iniciouGeracaoPaju;
 	private String avaliacaoPajuReanalise;
+	private boolean esteriaComentarioLuvison;
 
 	private boolean contatoDiferenteProprietario;
 	// private String geracaoLaudoObservacao;
@@ -7346,6 +7350,14 @@ public class ContratoCobranca implements Serializable {
 		this.chavePIXBancarioContaPagar = chavePIXBancarioContaPagar;
 	}
 
+	public boolean isEsteriaComentarioLuvison() {
+		return esteriaComentarioLuvison;
+	}
+
+	public void setEsteriaComentarioLuvison(boolean esteriaComentarioLuvison) {
+		this.esteriaComentarioLuvison = esteriaComentarioLuvison;
+	}
+
 	public boolean isProtestoTaxa() {
 		return protestoTaxa;
 	}
@@ -7734,5 +7746,21 @@ public class ContratoCobranca implements Serializable {
 	public void setUltimoCartorio(Cartorio ultimoCartorio) {
 		this.ultimoCartorio = ultimoCartorio;
 	}
-}
+	
+	public BigDecimal getValorTotalProcessosSelecionados() {
+		return valorTotalProcessosSelecionados;
+	}
 
+	public void setValorTotalProcessosSelecionados(BigDecimal valorTotalProcessosSelecionados) {
+		this.valorTotalProcessosSelecionados = valorTotalProcessosSelecionados;
+	}
+
+	public List<ContasPagar> getContasPagarList() {
+		contasPagarList = new ArrayList<>(listContasPagar);
+		return contasPagarList;
+	}
+
+	public void setContasPagarList(List<ContasPagar> contasPagarList) {
+		this.contasPagarList = contasPagarList;
+	}
+}

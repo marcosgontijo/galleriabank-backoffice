@@ -835,6 +835,16 @@
 						    	</p:commandButton>	
 							</h:panelGrid>
 						</h:panelGrid>
+						
+						<p:panel header="Calcular Sobra Despesas" style="margin-bottom:10px;margin-top:20px;">
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Calcular e gerar a despesa referente ao saldo do pagamento das despesas: " 
+									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+								<p:commandButton action="#{contratoCobrancaMB.calculaSobraDespesas(contratoCobrancaMB.objetoContratoCobranca)}"
+											icon="ui-icon-video" title="Calcular" value="Calcular" update=":form"
+											disabled="#{contratoCobrancaMB.gerouSobraDespesa(contratoCobrancaMB.objetoContratoCobranca.listContasPagar)}" />
+							</h:panelGrid>
+						</p:panel>
 					</p:panel>
 					
 				</h:panelGroup>
@@ -1191,7 +1201,7 @@
 					<p:commandButton value="Enviar Ordem de Pagamento" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.pagamentoStarkBank()}" style="TEXT-DECORATION: bold; margin-right: 20px;" update=":form:messageContasPagar"/>
 					<p:commandButton value="Fechar"
 						icon="ui-icon-arrowreturnthick-1-w"
-						oncomplete="PF('pagamentoStarkBankdlg').hide();" />
+						oncomplete="PF('pagamentoStarkBankdlg').hide();" />						
 				</div>
 			</h:form>
 		</p:dialog>
