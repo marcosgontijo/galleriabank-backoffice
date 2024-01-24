@@ -10098,11 +10098,11 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setPixCartaSplitGalleria("b56b12e2-f476-4272-8d16-c1a5a31cc660");
 		
 		// cria despesas processos
-		for (CcbProcessosJudiciais processos : ccb.getProcessosJucidiais()) {
-			if (!buscaDespesaRepetida("Processo N°: " + processos.getNumero())) {
-				concluirContaProcesso("Processo N°: " + processos.getNumero(), processos.getValorAtualizado());
-			}
-		}
+		//for (CcbProcessosJudiciais processos : ccb.getProcessosJucidiais()) {
+		//	if (!buscaDespesaRepetida("Processo N°: " + processos.getNumero())) {
+		//		concluirContaProcesso("Processo N°: " + processos.getNumero(), processos.getValorAtualizado());
+		//	}
+		//}
 	}
 	
 	public boolean buscaDespesaRepetida(String descricao) {
