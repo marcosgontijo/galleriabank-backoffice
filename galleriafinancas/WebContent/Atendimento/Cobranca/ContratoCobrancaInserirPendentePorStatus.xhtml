@@ -4169,7 +4169,7 @@
 											update=":form" disabled="#{contratoCobrancaMB.buscaDespesaCartaSplit('Pagamento Carta Split', contratoCobrancaMB.objetoContratoCobranca.numeroContrato) != null}"/>	
 								<p:commandButton value="Comprovante" ajax="false" icon="ui-icon-arrowthick-1-s" update=":form:messageContasPagar"
 								 disabled="#{contratoCobrancaMB.buscaDespesaCartaSplit('Pagamento Carta Split', contratoCobrancaMB.objetoContratoCobranca.numeroContrato) == null}">						       	 	
-						       	 	<p:fileDownload value="#{contratoCobrancaMB.getDownloadComprovanteStarkBank(contratoCobrancaMB.buscaDespesaCartaSplit('Pagamento Carta Split', contratoCobrancaMB.objetoContratoCobranca.numeroContrato).listContasPagarBaixas)}"/>
+						       	 	<p:fileDownload value="#{contratoCobrancaMB.getDownloadComprovanteStarkBankCartaSplit('Pagamento Carta Split', contratoCobrancaMB.objetoContratoCobranca)}"/>
 						    	</p:commandButton>								
 							</h:panelGrid>
 							<h:panelGrid columns="2">
@@ -4224,7 +4224,7 @@
 											update=":form" disabled="#{contratoCobrancaMB.buscaDespesaCartaSplit('Pagamento Carta Split - Galleria', contratoCobrancaMB.objetoContratoCobranca.numeroContrato) != null}"/>	
 								<p:commandButton value="Comprovante" ajax="false" icon="ui-icon-arrowthick-1-s" update=":form:messageContasPagar"
 								disabled="#{contratoCobrancaMB.buscaDespesaCartaSplit('Pagamento Carta Split - Galleria', contratoCobrancaMB.objetoContratoCobranca.numeroContrato) == null}">						       	 	
-						       	 	<p:fileDownload value="#{contratoCobrancaMB.getDownloadComprovanteStarkBank(contratoCobrancaMB.buscaDespesaCartaSplit('Pagamento Carta Split - Galleria', contratoCobrancaMB.objetoContratoCobranca.numeroContrato).listContasPagarBaixas)}" />
+						       	 	<p:fileDownload value="#{contratoCobrancaMB.getDownloadComprovanteStarkBankCartaSplit('Pagamento Carta Split - Galleria', contratoCobrancaMB.objetoContratoCobranca)}"/>
 						    	</p:commandButton>		
 							</h:panelGrid>
 							<h:panelGrid columns="2">
@@ -4279,7 +4279,7 @@
 											update=":form" disabled="#{contratoCobrancaMB.buscaDespesaCartaSplit('Pagamento Carta Split - IOF', contratoCobrancaMB.objetoContratoCobranca.numeroContrato) != null}"/>	
 								<p:commandButton value="Comprovante" ajax="false" icon="ui-icon-arrowthick-1-s" update=":form:messageContasPagar"
 								disabled="#{contratoCobrancaMB.buscaDespesaCartaSplit('Pagamento Carta Split - IOF', contratoCobrancaMB.objetoContratoCobranca.numeroContrato) == null}">						       	 	
-						       	 	<p:fileDownload value="#{contratoCobrancaMB.getDownloadComprovanteStarkBank(contratoCobrancaMB.buscaDespesaCartaSplit('Pagamento Carta Split - IOF', contratoCobrancaMB.objetoContratoCobranca.numeroContrato).listContasPagarBaixas)}" />
+						       	 	<p:fileDownload value="#{contratoCobrancaMB.getDownloadComprovanteStarkBankCartaSplit('Pagamento Carta Split - IOF', contratoCobrancaMB.objetoContratoCobranca)}"/>
 						    	</p:commandButton>	
 							</h:panelGrid>
 						</h:panelGrid>

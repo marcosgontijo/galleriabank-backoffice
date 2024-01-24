@@ -35776,15 +35776,16 @@ public class ContratoCobrancaMB {
 	public String pathComprovanteStarkBank;
 	public String nomeComprovanteStarkBank;
 
-	public StreamedContent getDownloadComprovanteStarkBankCartaSplit(ContratoCobranca contrato) {
+	public StreamedContent getDownloadComprovanteStarkBankCartaSplit(String descricao, ContratoCobranca contrato) {
 		FacesContext context = FacesContext.getCurrentInstance();
 
 		StarkBankBaixa baixa = null;
 
 		for (ContasPagar contas : contrato.getListContasPagar()) {
-			if (contas.getDescricao().equals("")) {
+			if (contas.getDescricao().equals(descricao)) {
 				if (contas.getListContasPagarBaixas().size() > 0) {
 					baixa = contas.getListContasPagarBaixas().get(0);
+					break;
 				}
 			}
 		}
