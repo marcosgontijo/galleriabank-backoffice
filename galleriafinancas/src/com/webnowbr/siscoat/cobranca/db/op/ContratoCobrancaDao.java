@@ -4285,15 +4285,15 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 								  "where cc.status = 'Aprovado' ";
 		            	
 		            	if (tipoParametroConsultaContrato.equals("nomePagador")) {
-		            		query_CONSULTAR_CONTRATO_PERFORMANCE = query_CONSULTAR_CONTRATO_PERFORMANCE + " and unaccent(p.nome) ilike unaccent('%" + parametroConsultaContrato + "%')";
+		            		query_CONSULTAR_CONTRATO_PERFORMANCE = query_CONSULTAR_CONTRATO_PERFORMANCE + " and unaccent(p.nome) ilike unaccent('%" + parametroConsultaContrato.trim() + "%')";
 		            	} 
 		            	
 		            	if (tipoParametroConsultaContrato.equals("cpfPagador")) {
-		            		query_CONSULTAR_CONTRATO_PERFORMANCE = query_CONSULTAR_CONTRATO_PERFORMANCE + " and p.cpf = '" + parametroConsultaContrato + "'";
+		            		query_CONSULTAR_CONTRATO_PERFORMANCE = query_CONSULTAR_CONTRATO_PERFORMANCE + " and p.cpf = '" + parametroConsultaContrato.trim() + "'";
 		            	} 
 		            	
 		            	if (tipoParametroConsultaContrato.equals("cnpjPagador")) {
-		            		query_CONSULTAR_CONTRATO_PERFORMANCE = query_CONSULTAR_CONTRATO_PERFORMANCE + " and p.cnpj = '" + parametroConsultaContrato + "'";
+		            		query_CONSULTAR_CONTRATO_PERFORMANCE = query_CONSULTAR_CONTRATO_PERFORMANCE + " and p.cnpj = '" + parametroConsultaContrato.trim() + "'";
 		            	}
 		            } else {
 		            	query_CONSULTAR_CONTRATO_PERFORMANCE =   "select cc.id " +
@@ -4301,11 +4301,11 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 								  "where cc.status = 'Aprovado' ";
 		            	
 		            	if (tipoParametroConsultaContrato.equals("numeroContrato")) {
-		            		query_CONSULTAR_CONTRATO_PERFORMANCE = query_CONSULTAR_CONTRATO_PERFORMANCE + " and cc.numerocontrato = '" + parametroConsultaContrato + "'";
+		            		query_CONSULTAR_CONTRATO_PERFORMANCE = query_CONSULTAR_CONTRATO_PERFORMANCE + " and cc.numerocontrato = '" + parametroConsultaContrato.trim()+ "'";
 		            	}
 		            	
 		            	if (tipoParametroConsultaContrato.equals("numeroCCB")) {
-		            		query_CONSULTAR_CONTRATO_PERFORMANCE = query_CONSULTAR_CONTRATO_PERFORMANCE + " and cc.numeroContratoSeguro = '" + parametroConsultaContrato + "'";
+		            		query_CONSULTAR_CONTRATO_PERFORMANCE = query_CONSULTAR_CONTRATO_PERFORMANCE + " and cc.numeroContratoSeguro = '" + parametroConsultaContrato.trim() + "'";
 		            	}
 		            }
 
