@@ -856,7 +856,8 @@
 						<p:panel id="ArquivosNotaFiscal" header="Selecionar Arquivo Para Upload" style="margin-bottom:10px;text-align: center;" rendered="#{( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro'))}">							
 		
 							<h:panelGrid columns="1">		
-								<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFileJuridicoUpload}" mode="advanced" dragDropSupport="true"
+								<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" 
+								fileUploadListener="#{contratoCobrancaMB.handleFileNotaFiscalUpload}" mode="advanced" dragDropSupport="true"
 		                          update="UploadArquivosNotaFiscalSalvos msgArquivo" />								
 							</h:panelGrid>  
 						</p:panel>	
@@ -876,10 +877,11 @@
 											icon="ui-icon-arrowthick-1-s" immediate="true"
 											action="#{contratoCobrancaMB.getDownloadAllfilesNotaFiscal()}">
 										</p:commandButton>
-										<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileJuridico}"/>
+										<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash"
+										 action="#{contratoCobrancaMB.deleteFileNotaFiscal}"/>
 										<p:commandButton value="Download Selecionado(s)" ajax="false"
 											icon="ui-icon-arrowthick-1-s" immediate="true"
-											action="#{contratoCobrancaMB.getDownloadAllfilesNotaFiscal()}">
+											action="#{contratoCobrancaMB.getDownloadAllFilesNotaFiscal()}">
 										</p:commandButton>	
 							        </f:facet>	        
 							        <p:column style="text-align: center;"
@@ -904,9 +906,10 @@
 						             <f:facet name="footer">
 						            	<p:commandButton value="Download Selecionado(s)" ajax="false"
 											icon="ui-icon-arrowthick-1-s" immediate="true"
-											action="#{contratoCobrancaMB.getDownloadAllfilesNotaFiscal()}">
+											action="#{contratoCobrancaMB.getDownloadAllFilesNotaFiscal()}">
 										</p:commandButton>	             
-										<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileJuridico}"/>								
+										<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" 
+										action="#{contratoCobrancaMB.deleteFileNotaFiscal}"/>								
 							        </f:facet>
 							        <p:ajax event="rowSelectCheckbox" process="@this"
 										listener="#{contratoCobrancaMB.fileSelectionListener()}" />
