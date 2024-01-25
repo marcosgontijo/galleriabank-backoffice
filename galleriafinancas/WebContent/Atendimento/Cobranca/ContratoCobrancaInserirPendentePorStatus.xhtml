@@ -685,12 +685,11 @@
 										<p:ajax event="valueChange" update=":form:Status"></p:ajax>
 									</p:selectBooleanButton>
 								
-									<p:selectOneMenu id="preLaudoImovel"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.imovel.nome}"
+									<p:selectManyMenu id="preLaudoImovel" showCheckbox="true"
+										value="#{contratoCobrancaMB.listSolicitaçãoPreLaudoImoveis}"
 										label="Imóvel do pré-laudo" style="width:280px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">
-										<f:selectItem itemValue="" itemLabel="Escolha o Imóvel para solicitar o pré-laudo" />
 										<f:selectItems value="#{contratoCobrancaMB.listTodosImoveisContrato}" var="imovelCobranca" itemValue="#{imovelCobranca.id}" itemLabel="#{imovelCobranca.numeroMatricula} - #{imovelCobranca.endereco}" />
-									</p:selectOneMenu>
+									</p:selectManyMenu>
 								</ui:fragment>
 								
 																
@@ -810,12 +809,11 @@
 									<p:ajax event="valueChange" update=":form:Status"></p:ajax>
 								</p:selectBooleanButton>
 								
-								<p:selectOneMenu
-									value="#{contratoCobrancaMB.objetoContratoCobranca.imovel.nome}"
+								<p:selectManyMenu showCheckbox="true"
+									value="#{contratoCobrancaMB.listSolicitaçãoPreLaudoImoveis}"
 									label="Imóvel do pré-laudo" style="width:280px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">
-									<f:selectItem itemValue="" itemLabel="Escolha o Imóvel para solicitar o pré-laudo" />
 									<f:selectItems value="#{contratoCobrancaMB.listTodosImoveisContrato}" var="imovelCobranca" itemValue="#{imovelCobranca.id}" itemLabel="#{imovelCobranca.numeroMatricula} - #{imovelCobranca.endereco}" />
-								</p:selectOneMenu>
+								</p:selectManyMenu>
 							</ui:fragment>
 							
 						</h:panelGrid>

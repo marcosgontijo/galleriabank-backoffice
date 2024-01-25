@@ -888,7 +888,6 @@ public class ContratoCobrancaMB {
 	// Lista de imóveis adicionais referentes ao contrato cobranca
 	private List<ImovelCobranca> listSolicitaçãoPreLaudoImoveis;
 	private List<ImovelCobranca> listTodosImoveisContrato;
-	private Set<ImovelCobrancaAdicionais> setListaImoveisCobranca;
 	private List<ImovelCobranca> listPreLaudoImoveisRelac;
 	
 	
@@ -36506,4 +36505,21 @@ public class ContratoCobrancaMB {
 	public void setlistTodosImoveisContrato(List<ImovelCobranca> listTodosImoveisContrato) {
 		this.listTodosImoveisContrato = listTodosImoveisContrato;
 	}
+	
+	public List<ImovelCobranca> getlistSolicitaçãoPreLaudoImoveis() {
+		return listSolicitaçãoPreLaudoImoveis;
+	}
+	
+	public void setlistSolicitaçãoPreLaudoImoveis(List<ImovelCobranca> listSolicitaçãoPreLaudoImoveis) {
+		this.listSolicitaçãoPreLaudoImoveis = listSolicitaçãoPreLaudoImoveis;
+	}
+	
+	public List<ImovelCobranca> getlistPreLaudoImoveisRelac() {
+		return listPreLaudoImoveisRelac;
+	}
+	
+	public void setlistPreLaudoImoveisRelac(List<ImovelCobranca> listPreLaudoImoveisRelac) {
+		this.listPreLaudoImoveisRelac = listPreLaudoImoveisRelac;
+	}
+	
 }
