@@ -33312,6 +33312,14 @@ public class ContratoCobrancaMB {
 		filesJuridico = listaArquivosJuridico();
 	}
 
+	public void deleteFileNotaFiscal() {
+		for (FileUploaded f : deletefilesNotaFiscal) {
+			deleteFile(f);
+		}
+
+		deletefilesNotaFiscal = new ArrayList<FileUploaded>();
+		filesNotaFiscal = listaArquivosNotaFiscal();
+	}
 	public void deleteFileComite() {
 		for (FileUploaded f : deletefilesComite) {
 			deleteFile(f);
