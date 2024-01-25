@@ -7197,8 +7197,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		    "c.avaliacaoLaudoObservacao, c.dataPrevistaVistoria, c.geracaoLaudoObservacao, c.iniciouGeracaoLaudo, c.analistaGeracaoPAJU , c.comentarioJuridicoPendente, " +
 			"c.valorAprovadoComite, c.contratoConferido, c.agEnvioCartorio, reanalise, reanalisePronta, reanaliseJuridico" +
 			" , gerente.nome nomeGerente, pr.id idPagador, res.superlogica, observacaoRenda, pagtoLaudoConfirmadaData, contatoDiferenteProprietario, c.iniciouGeracaoPaju, "
-			+ " im.estado, contratoPrioridadeAlta, c.analisePendenciadaUsuario, c.notaFiscalEmitida, c.notaFiscalEmitidaData, c.notaFiscalEmitidaUsuario "
-			+ " ,c.notaFiscalPaga, c.notaFiscalPagaData, c.notaFiscalPagaUsuario " +
+			+ " im.estado, contratoPrioridadeAlta, c.analisePendenciadaUsuario, c.notaFiscalEmitida, c.dataNotaFiscalEmitida, c.usuarioNotaFiscalEmitida "
+			+ " ,c.notaFiscalPaga, c.dataNotaFiscalPaga, c.usuarioNotaFiscalPaga " +
 			"from cobranca.contratocobranca c " +		
 			"inner join cobranca.responsavel res on c.responsavel = res.id " +
 			"inner join cobranca.pagadorrecebedor pr on pr.id = c.pagador " +
