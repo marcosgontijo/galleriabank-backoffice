@@ -1083,17 +1083,10 @@ public class CcbMB {
 		calculaPorcentagemImovel();
 		
 		if(CommonsUtil.semValor(objetoCcb.getCpfTestemunha1())) {
-			if(CommonsUtil.mesmoValor(loginBean.getUsuarioLogado().getId(), 210)) {
-				//larissa
-				pesquisaTestemunha1();
-				selectedPagadorGenerico = ccbDao.ConsultaTestemunha((long) 47572);
-				populateSelectedPagadorRecebedor();			
-			} else {
-				//luana
-				pesquisaTestemunha1();
-				selectedPagadorGenerico = ccbDao.ConsultaTestemunha((long) 11960);
-				populateSelectedPagadorRecebedor();							
-			}
+			//larissa
+			pesquisaTestemunha1();
+			selectedPagadorGenerico = ccbDao.ConsultaTestemunha((long) 47572);
+			populateSelectedPagadorRecebedor();
 		}
 		
 		if(CommonsUtil.semValor(objetoCcb.getCpfTestemunha2())) {

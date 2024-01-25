@@ -39,6 +39,8 @@ import com.webnowbr.siscoat.cobranca.ws.netrin.NetrinConsulta;
 import com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
+import com.webnowbr.siscoat.credlocaliza.response.CredlocalizaResponse;
+import com.webnowbr.siscoat.credlocaliza.response.CredlocalizaVeiculos;
 
 import br.com.galleriabank.bigdata.cliente.model.financas.FinancasResponse;
 import br.com.galleriabank.bigdata.cliente.model.financas.FinancasResponseResultFinantialDataTaxReturns;
@@ -152,6 +154,8 @@ public class DocumentoAnalise implements Serializable {
 	private List<DocumentoAnaliseResumo> resumorelacionamentos;
 	
 	private String retornoFinancas;
+	
+	private String retornoFrotaVeiculos;
 	
 
 	public List<DocumentoAnaliseResumo> getResumoProcesso() {
@@ -608,6 +612,32 @@ public class DocumentoAnalise implements Serializable {
 		}
 		
 		return financas;
+	}
+	
+	public List<DocumentoAnaliseResumo> getResumoFrotaVeiculo() {
+		List<DocumentoAnaliseResumo> veiculos = new ArrayList<>();
+		String retorno = getRetornoFrotaVeiculos();
+		CredlocalizaResponse dado = GsonUtil.fromJson(retorno, CredlocalizaResponse.class);
+		
+		if(CommonsUtil.semValor(dado))
+			veiculos.add(new DocumentoAnaliseResumo("Dados não disponíveis", "0"));
+		else if(CommonsUtil.semValor(dado.getVeiculo()))
+			veiculos.add(new DocumentoAnaliseResumo("Dados não disponíveis", "0"));
+		else if(CommonsUtil.semValor(dado.getVeiculo().getFrota()))
+			veiculos.add(new DocumentoAnaliseResumo("Dados não disponíveis", "0"));
+		else if(CommonsUtil.semValor(dado.getVeiculo().getFrota().getVeiculos()))
+			veiculos.add(new DocumentoAnaliseResumo("Dados não disponíveis", "0"));
+		else if(CommonsUtil.semValor(dado.getVeiculo().getFrota().getVeiculos().size() <= 0))
+			veiculos.add(new DocumentoAnaliseResumo("Dados não disponíveis", "0"));
+		
+		for(CredlocalizaVeiculos veiculo : dado.getVeiculo().getFrota().getVeiculos()) {
+			veiculos.add(new DocumentoAnaliseResumo("Placa", veiculo.getPlaca()));
+			veiculos.add(new DocumentoAnaliseResumo("Ano Fabricação", veiculo.getAno_fabricacao()));
+			veiculos.add(new DocumentoAnaliseResumo("Ano Modelo", veiculo.getAno_modelo()));
+			veiculos.add(new DocumentoAnaliseResumo("Marca / Modelo", veiculo.getMarca_modelo()));
+		}
+		
+		return veiculos;
 	}
 	
     private String convertString(String input) {
@@ -1608,4 +1638,12 @@ public class DocumentoAnalise implements Serializable {
 	public void setRetornoFinancas(String retornoFinancas) {
 		this.retornoFinancas = retornoFinancas;
 	}
+
+	public String getRetornoFrotaVeiculos() {
+		return retornoFrotaVeiculos;
+	}
+
+	public void setRetornoFrotaVeiculos(String retornoFrotaVeiculos) {
+		this.retornoFrotaVeiculos = retornoFrotaVeiculos;
+	}	
 }

@@ -57,6 +57,7 @@ import com.webnowbr.siscoat.cobranca.db.model.CcbParticipantes;
 import com.webnowbr.siscoat.cobranca.db.model.CcbProcessosJudiciais;
 import com.webnowbr.siscoat.cobranca.db.model.ContasPagar;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.ImovelCobrancaAdicionais;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.Segurado;
 import com.webnowbr.siscoat.cobranca.db.op.CcbDao;
@@ -269,7 +270,8 @@ public class CcbService {
 						runSociosNome.addCarriageReturn();
 					}
 				}									
-				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "EMITENTE")) {
+				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "EMITENTE")
+						|| CommonsUtil.mesmoValor(participante.getTipoParticipante(), "DEVEDOR FIDUCIANTE")) {
 					if(CommonsUtil.semValor(objetoCcb.getNomeEmitente())) {
 						objetoCcb.setNomeEmitente(participante.getPessoa().getNome());
 					}
@@ -334,7 +336,8 @@ public class CcbService {
 			if (!CommonsUtil.semValor(objetoCcb.getValorParcela()))
 				totalPrimeiraParcela = totalPrimeiraParcela.add(objetoCcb.getValorParcela());
 			totalPrimeiraParcela = totalPrimeiraParcela.add(taxaAdm);
-						
+			XWPFRun runLeilao = null;
+			
 		    for (XWPFTable tbl : document.getTables()) {
 				for (XWPFTableRow row : tbl.getRows()) {
 					for (XWPFTableCell cell : row.getTableCells()) {
@@ -387,8 +390,14 @@ public class CcbService {
 								text = trocaValoresXWPF(text, r, "ufImovel", objetoCcb.getUfImovel());
 								text = trocaValoresXWPF(text, r, "numeroImovel", objetoCcb.getNumeroImovel());
 								text = trocaValoresXWPF(text, r, "inscricaoMunicipal", objetoCcb.getInscricaoMunicipal());
-								text = trocaValoresXWPFCci(text, r, "vendaLeilao", objetoCcb.getVendaLeilao(), "R$ ");
-								text = trocaValoresDinheiroExtensoXWPF(text, r, "VendaLeilao", objetoCcb.getVendaLeilao());	
+								if (text != null && text.contains("vendaLeilao")) {
+									text = trocaValoresXWPF(text, r, "vendaLeilao", "");
+									trocaValoresXWPF(text, r, "ExtensoVendaLeilao", "");
+									trocaValoresXWPF(text, r, "(ExtensoVendaLeilao)", "");
+									runLeilao = r;
+								}
+								//text = trocaValoresXWPFCci(text, r, "vendaLeilao", objetoCcb.getVendaLeilao(), "R$ ");
+								//text = trocaValoresDinheiroExtensoXWPF(text, r, "VendaLeilao", objetoCcb.getVendaLeilao());	
 								
 								text = trocaValoresXWPF(text, r, "vencimentoUltimaParcelaPagamento", objetoCcb.getVencimentoUltimaParcelaPagamento());
 								
@@ -446,7 +455,7 @@ public class CcbService {
 				}
 			}
 		    
-		    
+		    geraTextoValorLeilao(runLeilao);
 		    
 		    XWPFTableRow tableRow2 = document.getTableArray(1).getRow(1);
 
@@ -637,6 +646,32 @@ public class CcbService {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	private void geraTextoValorLeilao(XWPFRun runLeilao) {
+		if(!CommonsUtil.semValor(runLeilao)) {
+			runLeilao.getText(0);
+			String textoLeilao = CommonsUtil.formataValorMonetarioCci(objetoCcb.getVendaLeilao(), "R$ ") + "";
+			valorPorExtenso.setNumber(objetoCcb.getVendaLeilao());
+			textoLeilao = textoLeilao + " (" + valorPorExtenso.toString() + ")";
+			if(objetoCcb.getObjetoContratoCobranca().getListaImoveis().size() > 0) {
+				textoLeilao = textoLeilao + " sendo que as matriculas: ";
+				//String textoImovel = ""; 
+				textoLeilao = textoLeilao + objetoCcb.getObjetoContratoCobranca().getImovel().getNumeroMatricula() + ": ";
+				textoLeilao = textoLeilao + CommonsUtil.formataValorMonetarioCci(objetoCcb.getObjetoContratoCobranca().getImovel().getValorLeilao(), "R$ ");
+				valorPorExtenso.setNumber(objetoCcb.getObjetoContratoCobranca().getImovel().getValorLeilao());
+				textoLeilao = textoLeilao + " (" + valorPorExtenso.toString() + "); ";
+				
+				for(ImovelCobrancaAdicionais imovelAdicional : objetoCcb.getObjetoContratoCobranca().getListaImoveis()) {
+					textoLeilao = textoLeilao + imovelAdicional.getImovel().getNumeroMatricula() + ": ";
+					textoLeilao = textoLeilao + CommonsUtil.formataValorMonetarioCci(imovelAdicional.getImovel().getValorLeilao(), "R$ ");
+					valorPorExtenso.setNumber(imovelAdicional.getImovel().getValorLeilao());
+					textoLeilao = textoLeilao + " (" + valorPorExtenso.toString() + "); ";
+					//textoLeilao = textoLeilao + textoImovel;
+				}
+			}
+			runLeilao.setText(textoLeilao);
+		}
 	}
 		
 	public byte[] geraCciAquisicao() throws IOException{
@@ -4165,7 +4200,7 @@ public class CcbService {
 
 	public String trocaValoresDinheiroExtensoXWPF(String text, XWPFRun r, String valorEscrito, BigDecimal valorSobrescrever) {
 		if (text != null && text.contains("Extenso" + valorEscrito)) {
-			if(CommonsUtil.semValor(valorSobrescrever)) {
+			if(CommonsUtil.semValor(valorSobrescrever) || valorSobrescrever.compareTo(BigDecimal.ZERO) <= 0) {
 				text = text.replace("Extenso" + valorEscrito , "Zero reais");
 				r.setText(text, 0);
 			} else {
@@ -4179,7 +4214,7 @@ public class CcbService {
 	
 	public String trocaValoresTaxaExtensoXWPF(String text, XWPFRun r, String valorEscrito, BigDecimal valorSobrescrever) {
 		if (text != null && text.contains("Extenso" + valorEscrito)) {
-			if(CommonsUtil.semValor(valorSobrescrever)) {
+			if(CommonsUtil.semValor(valorSobrescrever) || valorSobrescrever.compareTo(BigDecimal.ZERO) <= 0) {
 				text = text.replace("Extenso" + valorEscrito, "Zero");
 			} else {
 				porcentagemPorExtenso.setNumber(valorSobrescrever);

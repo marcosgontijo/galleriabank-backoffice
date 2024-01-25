@@ -219,6 +219,16 @@
 				onkeypress="return isNumberKey(event);"
 				onkeydown="FormataValor(this, 13, event, 2);"
 				converter="bigDecimalConverter" style="FONT-SIZE: 10pt;width:300px;" />
+				
+			<p:outputLabel for="valorLeilaoObjImovel"
+				rendered="#{!contratoCobrancaMB.inserirImovelOcultarValorMercadoImovel}"
+				value="Valor de Leilão do imóvel: " styleClass="labelBold" />
+			<p:inputText id="valorLeilaoObjImovel"
+				rendered="#{!contratoCobrancaMB.inserirImovelOcultarValorMercadoImovel}"
+				value="#{contratoCobrancaMB.objetoImovelCobranca.valorLeilao}"
+				onkeypress="return isNumberKey(event);"
+				onkeydown="FormataValor(this, 13, event, 2);"
+				converter="bigDecimalConverter" style="FONT-SIZE: 10pt;width:300px;" />
 
 			<p:outputLabel for="dataCompra" value="Data da compra do Imóvel " />
 			<h:panelGroup>

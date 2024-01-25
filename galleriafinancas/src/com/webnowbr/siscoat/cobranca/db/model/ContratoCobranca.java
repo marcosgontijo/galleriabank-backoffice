@@ -653,6 +653,7 @@ public class ContratoCobranca implements Serializable {
 	private boolean temTxAdm;
 	private BigDecimal valorImovel;
 	private String numeroContratoSeguro;
+	private String serieCci;
 	private String termoCessao;
 	private boolean enviadoJsonBRL;
 
@@ -1543,11 +1544,11 @@ public class ContratoCobranca implements Serializable {
 			potuacao -= 100;
 
 		if (potuacao < 400) {
-			taxaPreAprovada = BigDecimal.valueOf(1.89);
-		} else if (potuacao >= 400 && potuacao < 499) {
-			taxaPreAprovada = BigDecimal.valueOf(1.79);
-		} else if (potuacao >= 500 && potuacao < 599) {
 			taxaPreAprovada = BigDecimal.valueOf(1.69);
+		} else if (potuacao >= 400 && potuacao < 499) {
+			taxaPreAprovada = BigDecimal.valueOf(1.69);
+		} else if (potuacao >= 500 && potuacao < 599) {
+			taxaPreAprovada = BigDecimal.valueOf(1.59);
 		} else if (potuacao >= 600 && potuacao < 699) {
 			taxaPreAprovada = BigDecimal.valueOf(1.59);
 		} else if (potuacao >= 700 && potuacao < 799) {
@@ -7689,5 +7690,13 @@ public class ContratoCobranca implements Serializable {
 
 	public void setContasPagarList(List<ContasPagar> contasPagarList) {
 		this.contasPagarList = contasPagarList;
+	}
+
+	public String getSerieCci() {
+		return serieCci;
+	}
+
+	public void setSerieCci(String serieCci) {
+		this.serieCci = serieCci;
 	}
 }

@@ -142,6 +142,10 @@
 		<property name="valorMercado" type="big_decimal">
 			<column name="valorMercado" />
 		</property> 
+		
+		<property name="valorLeilao" type="big_decimal">
+			<column name="valorLeilao" />
+		</property> 
 
     </class>
 </hibernate-mapping>

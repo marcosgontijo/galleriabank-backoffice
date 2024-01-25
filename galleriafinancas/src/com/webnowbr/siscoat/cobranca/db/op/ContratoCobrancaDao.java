@@ -4581,7 +4581,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	+ "			i.cidade imovel_cidade, i.estado imovel_estado, c.valorCCB, c.txJurosParcelas, c.tipoCalculo, " 
 	+ "			c.temSeguroDFI, c.temSeguroMIP, c.mesesCarencia, c.temTxAdm, "
 	+ "	 c.empresa,	 c.valorImovel, tipoImovel, c.corrigidoIPCA, c.corrigidoNovoIPCA,"
-	+ "	 p.email  emailPagador, p.telcelular celularPagador, c.qtdeParcelas, c.numeroContratoSeguro "
+	+ "	 p.email  emailPagador, p.telcelular celularPagador, c.qtdeParcelas, c.numeroContratoSeguro, c.valorVendaForcadaImovel "
 	+ "  from cobranca.contratocobranca c inner join cobranca.pagadorrecebedor p on c.pagador  = p.id inner join cobranca.imovelcobranca i on c.imovel = i.id ";
 	
 	private static final String QUERY_BASE_RELATORIO_FINANCEIRO_DIA_DETALHE = 
@@ -4742,7 +4742,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 								rs.getString("empresa"), rs.getBigDecimal("valorImovel"), rs.getString("tipoImovel"),
 								rs.getBoolean("corrigidoIPCA"), rs.getBoolean("corrigidoNovoIPCA"),
 								rs.getString("emailPagador"), rs.getString("celularPagador"),
-								rs.getLong("qtdeParcelas"), rs.getString("numeroContratoSeguro"));
+								rs.getLong("qtdeParcelas"), rs.getString("numeroContratoSeguro"), 
+								rs.getBigDecimal("valorVendaForcadaImovel"));
 
 						// busca detalhes
 						PreparedStatement ps_det = connection
@@ -9750,6 +9751,42 @@ private String QUERY_ID_IMOVELESTOQUE = "select id from cobranca.contratocobranc
 					closeResources(connection, ps, rs);					
 				}
 				return relatorio;
+			}
+		});
+	}
+    
+    private String QUERY_SERIE_CCI_CONTRATO = "select c2.serieccb \r\n"
+    		+ "from cobranca.contratocobranca c \r\n"
+    		+ "left join cobranca.ccbcontrato c2 on c2.objetocontratocobranca = c.id\r\n"
+    		+ "where c.id = ?\r\n"
+    		+ "order by numerocontrato desc";
+    
+    @SuppressWarnings("unchecked")
+	public String pegarSerieCci(ContratoCobranca contrato) {
+    	return pegarSerieCci(contrato.getId());
+	}
+    
+    @SuppressWarnings("unchecked")
+	public String pegarSerieCci(long contrato) {
+		return (String) executeDBOperation(new DBRunnable() {
+			@Override
+			public String run() throws Exception {
+				String serieCci = "";
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+					ps = connection.prepareStatement(QUERY_SERIE_CCI_CONTRATO);
+					ps.setLong(1, contrato);
+					rs = ps.executeQuery();
+					if (rs.next()) {
+						serieCci = rs.getString("serieccb");
+					}
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return serieCci;
 			}
 		});
 	}
