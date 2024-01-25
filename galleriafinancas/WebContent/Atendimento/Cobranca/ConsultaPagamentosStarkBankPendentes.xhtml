@@ -114,7 +114,11 @@
 		
 								<p:outputLabel value="C/C: " 
 									styleClass="labelBold"/>
-								<p:outputLabel value="#{pagamento.contasPagar.contrato.contaBancarioContaPagar}"/>								
+								<p:outputLabel value="#{pagamento.contasPagar.contrato.contaBancarioContaPagar}"/>	
+								
+								<p:outputLabel value="Tipo da Conta: " 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.tipoContaBancaria}"/>									
 							</h:panelGrid>												
 						</p:panel>
 						<p:panel id="PIXStarkBank" header="PIX"
@@ -142,7 +146,11 @@
 								
 								<p:outputLabel value="Chave Pix: " 
 									style="width:250px;" styleClass="labelBold"/>
-								<p:outputLabel value="#{pagamento.contasPagar.contrato.chavePIXBancarioContaPagar}"/>														
+								<p:outputLabel value="#{pagamento.contasPagar.contrato.chavePIXBancarioContaPagar}"/>
+								
+								<p:outputLabel value="Tipo da Conta: " 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.tipoContaBancaria}"/>															
 							</h:panelGrid>												
 						</p:panel>
 						<p:panel id="BoletoStarkBank" header="Boleto"
@@ -182,7 +190,11 @@
 								
 								<p:outputLabel value="Nome: " 
 									styleClass="labelBold"/>
-								<p:outputLabel value="#{pagamento.contasPagar.nomeTed}"/>													
+								<p:outputLabel value="#{pagamento.contasPagar.nomeTed}"/>
+								
+								<p:outputLabel value="Tipo da Conta: " 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.tipoContaBancaria}"/>														
 							</h:panelGrid>												
 						</p:panel>
 						<p:panel id="TedStarkBank" header="TED"
@@ -202,7 +214,11 @@
 								
 								<p:outputLabel value="Nome: " 
 									styleClass="labelBold"/>
-								<p:outputLabel value="#{pagamento.contasPagar.nomeTed}"/>										
+								<p:outputLabel value="#{pagamento.contasPagar.nomeTed}"/>
+								
+								<p:outputLabel value="Tipo da Conta: " 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.contasPagar.tipoContaBancaria}"/>											
 							</h:panelGrid>												
 						</p:panel>
 			        </p:rowExpansion>      

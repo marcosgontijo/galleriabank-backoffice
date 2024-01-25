@@ -648,7 +648,7 @@ public class StarkBankAPI{
 		}
     }    
     
-    public StarkBankPix paymentPix(String codigoPixBanco, String agencia, String numeroConta, String documento, String nomeBeneficiario, BigDecimal valor, String tipoOperacao, String descricaoConta) {
+    public StarkBankPix paymentPix(String codigoPixBanco, String agencia, String numeroConta, String documento, String nomeBeneficiario, BigDecimal valor, String tipoOperacao, String descricaoConta, String tipoContaBancaria) {
     	FacesContext context = FacesContext.getCurrentInstance();
     	
     	List<Transfer> transfers = new ArrayList<>();
@@ -683,6 +683,12 @@ public class StarkBankAPI{
 		    	data.put("scheduled", sdf.format(DateUtil.gerarDataHoje()));
 		    	//data.put("tags", new String[]{"daenerys", "invoice/1234"});
 		    	//data.put("rules", rules);
+		    	
+		    	if (tipoContaBancaria != null) {
+		    		if (!tipoContaBancaria.equals("") && tipoContaBancaria.equals("Conta Poupança")) {
+		    			data.put("accountType", "savings");
+		    		}
+		    	}
 		    	
 				transfers.add(new Transfer(data));
 				
@@ -724,7 +730,7 @@ public class StarkBankAPI{
     	return null;
     }
     	
-    public StarkBankPix paymentTED(String codigoBanco, String agencia, String numeroConta, String documento, String nomeBeneficiario, BigDecimal valor, String tipoOperacao, String descricaoConta) {
+    public StarkBankPix paymentTED(String codigoBanco, String agencia, String numeroConta, String documento, String nomeBeneficiario, BigDecimal valor, String tipoOperacao, String descricaoConta, String tipoContaBancaria) {
     	FacesContext context = FacesContext.getCurrentInstance();
     	
     	List<Transfer> transfers = new ArrayList<>();

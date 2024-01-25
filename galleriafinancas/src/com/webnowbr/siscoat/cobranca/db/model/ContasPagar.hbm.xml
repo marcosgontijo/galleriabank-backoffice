@@ -73,6 +73,10 @@
 		
 		<property name="formaTransferencia" type="java.lang.String">
 			<column name="formaTransferencia" />
+		</property>	
+		
+		<property name="tipoContaBancaria" type="java.lang.String">
+			<column name="tipoContaBancaria" />
 		</property>		
 		
 		<property name="pix" type="java.lang.String">

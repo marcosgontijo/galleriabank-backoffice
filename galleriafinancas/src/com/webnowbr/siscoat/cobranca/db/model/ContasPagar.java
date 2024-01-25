@@ -51,6 +51,8 @@ public class ContasPagar implements Serializable {
 	private StarkBankBoleto comprovantePagamentoStarkBank;
 	private StarkBankPix comprovantePagamentoPixStarkBank;
 	
+	private String tipoContaBancaria;
+	
 	private boolean contaCartaSplit;
 	
 	private List<StarkBankBaixa> listContasPagarBaixas = new ArrayList<StarkBankBaixa>();
@@ -358,5 +360,13 @@ public class ContasPagar implements Serializable {
 
 	public void setContaCartaSplit(boolean contaCartaSplit) {
 		this.contaCartaSplit = contaCartaSplit;
+	}
+
+	public String getTipoContaBancaria() {
+		return tipoContaBancaria;
+	}
+
+	public void setTipoContaBancaria(String tipoContaBancaria) {
+		this.tipoContaBancaria = tipoContaBancaria;
 	}
 }

@@ -20601,7 +20601,8 @@ public class ContratoCobrancaMB {
 							this.objetoBaixaPagamentoStarkBank.getContasPagar().getNomeTed(),
 							this.objetoBaixaPagamentoStarkBank.getContasPagar().getValorPagamento(),
 							this.objetoBaixaPagamentoStarkBank.getContasPagar().getFormaTransferencia(),
-							this.objetoBaixaPagamentoStarkBank.getContasPagar().getDescricao());
+							this.objetoBaixaPagamentoStarkBank.getContasPagar().getDescricao(),
+							this.objetoBaixaPagamentoStarkBank.getContasPagar().getTipoContaBancaria());
 				} else {
 					System.out.println("processaPagamentoStarkBank - Pix");
 					starkBankPix = starkBankAPI.paymentPix(
@@ -20612,7 +20613,8 @@ public class ContratoCobrancaMB {
 							this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getNomeBancarioContaPagar(),
 							this.objetoBaixaPagamentoStarkBank.getContasPagar().getValorPagamento(),
 							this.objetoBaixaPagamentoStarkBank.getContasPagar().getFormaTransferencia(),
-							this.objetoBaixaPagamentoStarkBank.getContasPagar().getDescricao());
+							this.objetoBaixaPagamentoStarkBank.getContasPagar().getDescricao(),
+							this.objetoBaixaPagamentoStarkBank.getContasPagar().getTipoContaBancaria());
 				}
 				
 				if (starkBankPix != null) {	
@@ -20666,7 +20668,8 @@ public class ContratoCobrancaMB {
 							nomePagador,
 							this.objetoBaixaPagamentoStarkBank.getContasPagar().getValorPagamento(),
 							this.objetoBaixaPagamentoStarkBank.getContasPagar().getFormaTransferencia(),
-							this.objetoBaixaPagamentoStarkBank.getContasPagar().getDescricao());
+							this.objetoBaixaPagamentoStarkBank.getContasPagar().getDescricao(),
+							this.objetoBaixaPagamentoStarkBank.getContasPagar().getTipoContaBancaria());
 				} else {
 					starkBankPix = starkBankAPI.paymentTED(
 							this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getBancoBancarioContaPagar(),
@@ -20676,7 +20679,8 @@ public class ContratoCobrancaMB {
 							this.objetoBaixaPagamentoStarkBank.getContasPagar().getContrato().getNomeBancarioContaPagar(),
 							this.objetoBaixaPagamentoStarkBank.getContasPagar().getValorPagamento(),
 							this.objetoBaixaPagamentoStarkBank.getContasPagar().getFormaTransferencia(),
-							this.objetoBaixaPagamentoStarkBank.getContasPagar().getDescricao());
+							this.objetoBaixaPagamentoStarkBank.getContasPagar().getDescricao(),
+							this.objetoBaixaPagamentoStarkBank.getContasPagar().getTipoContaBancaria());
 				}
 				
 				if (starkBankPix != null) {

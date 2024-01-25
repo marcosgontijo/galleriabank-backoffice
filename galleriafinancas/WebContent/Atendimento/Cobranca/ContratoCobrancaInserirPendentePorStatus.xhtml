@@ -5306,6 +5306,16 @@
 								style="width:250px;"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.cpfCnpjBancarioContaPagar}" required="true" />
 	
+							<p:outputLabel for="tipoContaBancariaPix" value="Tipo da Conta: "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+							<p:selectOneMenu id="tipoContaBancariaPix"
+									value="#{contratoCobrancaMB.contasPagarSelecionada.tipoContaBancaria}">
+									<f:selectItem itemValue="" itemLabel="Selecione" />
+									<f:selectItem itemValue="Conta Corrente" itemLabel="Conta Corrente" />
+									<f:selectItem itemValue="Conta Poupança" itemLabel="Conta Poupança" />
+							</p:selectOneMenu>
+							
 							<p:outputLabel for="bancoBancarioContaPagarPixStarkBank" value="Banco: " 
 								style="width:250px;" styleClass="labelBold"/>
 							<p:inputText id="bancoBancarioContaPagarPixStarkBank"
@@ -5336,7 +5346,9 @@
 									value="#{contratoCobrancaMB.contasPagarSelecionada.valorPagamento}"
 									onkeypress="return isNumberKey(event);"
 									onkeydown="FormataValor(this, 13, event, 2);" required="true"
-									converter="bigDecimalConverter" />							
+									converter="bigDecimalConverter" />
+									
+														
 						</h:panelGrid> 											
 				</p:panel>
 				
@@ -5355,6 +5367,16 @@
 								style="width:250px;"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.cpfCnpjBancarioContaPagar}" required="true" />
 	
+							<p:outputLabel for="tipoContaBancariaTED" value="Tipo da Conta: "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+							<p:selectOneMenu id="tipoContaBancariaTED"
+									value="#{contratoCobrancaMB.contasPagarSelecionada.tipoContaBancaria}">
+									<f:selectItem itemValue="" itemLabel="Selecione" />
+									<f:selectItem itemValue="Conta Corrente" itemLabel="Conta Corrente" />
+									<f:selectItem itemValue="Conta Poupança" itemLabel="Conta Poupança" />
+							</p:selectOneMenu>
+							
 							<p:outputLabel for="bancoBancarioContaPagarTEDStarkBank" value="Banco: " 
 								style="width:250px;" styleClass="labelBold"/>
 							<p:inputText id="bancoBancarioContaPagarTEDStarkBank"
