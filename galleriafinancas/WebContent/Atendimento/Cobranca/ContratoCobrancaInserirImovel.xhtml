@@ -260,8 +260,14 @@
 			<p:outputLabel for="inscricaoMunicipal" value="Inscrição Municipal: " />
 			<p:inputText id="inscricaoMunicipal"
 				value="#{contratoCobrancaMB.objetoImovelCobranca.inscricaoMunicipal}" />
-
-
+				
+			<p:outputLabel for="DescricaoImovel" value="Descrição: " styleClass="labelBold" />
+			<h:inputTextarea id="DescricaoImovel" rows="5" cols="25" maxlength="3000" onblur=""
+				counterTemplate="{0} characters remaining." autoResize="false"
+				value="#{imovelCobrancaMB.objetoImovelCobranca.nome}">
+				<p:ajax process="@this" partialSubmit="true" />
+			</h:inputTextarea>
+			
 		</h:panelGrid>
 	</p:panel>
 </ui:composition>

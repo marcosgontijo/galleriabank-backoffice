@@ -1919,7 +1919,7 @@
 														<shiro:hasAnyRoles name="ROOT, COMITEEDITAR">
 															<p:selectBooleanCheckbox
 																value="#{processosPessoas2.selecionadoComite}">
-																<p:ajax event="change" update="form:pessoasProcessos2" />
+																<p:ajax event="change" update="form:pessoasProcessos2" listener="#{contratoCobrancaMB.gerarProcessosQuitarComite}" />
 															</p:selectBooleanCheckbox>
 															<p:selectBooleanCheckbox
 																value="#{processosPessoas2.selecionadoComite}"
@@ -3233,7 +3233,7 @@
 														<p:inputText id="SocioNome"
 															value="#{contratoCobrancaMB.socioSelecionado.pessoa.nome}"
 															required="false" style="FONT-SIZE: 10pt;width:300px;" />
-														<p:commandButton action="#{contratoCobrancaMB.pesquisaSocio}"
+														<p:commandButton action="#{contratoCobrancaMB.pesquisaCcbSocio}"
 															icon="ui-icon ui-icon-circle-zoomin"
 															oncomplete="PF('pagadorRecebedorDialog').show();"
 															update="formReceborPagador" />
@@ -5757,9 +5757,9 @@
 							value="#{contratoCobrancaMB.processoSelecionado.quitar}">
 							<f:selectItem itemValue="" itemLabel="Selecione" />
 							<f:selectItem itemValue="Quitar" itemLabel="Quitar" />
-							<f:selectItem itemValue="Quitar ou indicar bens"
-								itemLabel="Quitar ou indicar bens" />
+							<f:selectItem itemValue="Quitar ou indicar bens" itemLabel="Quitar ou indicar bens" />
 							<f:selectItem itemValue="Indicar bens" itemLabel="Indicar bens" />
+							<f:selectItem itemValue="Amparado" itemLabel="Amparado" />
 						</p:selectOneMenu>
 						
 						<p:outputLabel value="Natureza do Processo: " styleClass="labelBold"

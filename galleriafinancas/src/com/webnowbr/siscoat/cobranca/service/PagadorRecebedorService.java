@@ -29,6 +29,8 @@ public class PagadorRecebedorService {
 			PagadorRecebedorDao pDao = new PagadorRecebedorDao();
 			if (!CommonsUtil.semValor(pagadorAdicionar.getCpf())) {
 				List<PagadorRecebedor> cadastrados = pDao.findByFilter("cpf", pagadorAdicionar.getCpf());
+				cadastrados.addAll(pDao.findByFilter("cpf", 
+						CommonsUtil.somenteNumeros(pagadorAdicionar.getCpf())));
 				PagadorRecebedor pagadorCadastrado = new PagadorRecebedor();
 
 				if (cadastrados.size() > 0)
@@ -57,6 +59,8 @@ public class PagadorRecebedorService {
 
 			} else if (!CommonsUtil.semValor(pagadorAdicionar.getCnpj())) {
 				List<PagadorRecebedor> cadastrados = pDao.findByFilter("cnpj", pagadorAdicionar.getCnpj());
+				cadastrados.addAll(pDao.findByFilter("cnpj", 
+						CommonsUtil.somenteNumeros(pagadorAdicionar.getCnpj())));
 				PagadorRecebedor pagadorCadastrado = new PagadorRecebedor();
 
 				if (cadastrados.size() > 0)

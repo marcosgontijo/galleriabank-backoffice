@@ -1081,12 +1081,18 @@
 									</p:dataView>
 								</h:panelGrid>
 							</h:panelGrid>
-							<h:panelGrid columns="2"
+							<h:panelGrid columns="2" id="valoresProcessosComite"
 								rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel == true}">
 								<p:outputLabel value="Valor Total Processos:"
 									styleClass="labelBold" />
 								<p:outputLabel
 									value="#{contratoCobrancaMB.objetoContratoCobranca.valorTotalProcessos}"
+									converter="bigDecimalConverter" />
+									
+								<p:outputLabel value="Valor Total Processos Selecionados:"
+									styleClass="labelBold" />
+								<p:outputLabel
+									value="#{contratoCobrancaMB.objetoContratoCobranca.valorTotalProcessosSelecionados}"
 									converter="bigDecimalConverter" />
 							</h:panelGrid>
 							<p:dataView var="pessoasProcessos" id="pessoasProcessos"
@@ -1150,7 +1156,7 @@
 										<p:column style="text-align: center;width:25px;" headerText="">
 											<p:selectBooleanCheckbox
 												value="#{processosPessoas.selecionadoComite}">
-												<p:ajax event="change" update="form:pessoasProcessos form:processosQuitarComite" listener="#{contratoCobrancaMB.gerarProcessosQuitarComite}" />
+												<p:ajax event="change" update="form:pessoasProcessos form:processosQuitarComite form:valoresProcessosComite" listener="#{contratoCobrancaMB.gerarProcessosQuitarComite}" />
 											</p:selectBooleanCheckbox>
 										</p:column>
 									</p:dataTable>

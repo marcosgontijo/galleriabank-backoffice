@@ -15236,6 +15236,13 @@ public class ContratoCobrancaMB {
 		relObjetoContratoCobrancaAux = contratoCobrancaDao
 				.relatorioControleEstoqueAtrasoFullFIDC(DateUtil.gerarDataHoje());
 
+		// exclui o registro, quando o pagador é a Galleria SA
+		/*
+		 * if (relObjetoContratoCobrancaAux.size() > 0) { for
+		 * (RelatorioFinanceiroCobranca r : relObjetoContratoCobrancaAux) { if
+		 * (r.getContratoCobranca().getPagador().getId() != 14) {
+		 * this.relObjetoContratoCobranca.add(r); } } }
+		 */
 		if (relObjetoContratoCobrancaAux.size() > 0) {
 			this.relObjetoContratoCobranca = relObjetoContratoCobrancaAux;
 		}

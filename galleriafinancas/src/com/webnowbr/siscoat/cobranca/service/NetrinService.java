@@ -300,7 +300,7 @@ public class NetrinService {
 
 			String numeorsCpfCnpj = CommonsUtil.somenteNumeros(sCpfCnpj);
 
-			String tipoConsulta = CommonsUtil.pessoaFisicaJuridicaCnpjCpf(numeorsCpfCnpj);
+			//String tipoConsulta = CommonsUtil.pessoaFisicaJuridicaCnpjCpf(numeorsCpfCnpj);
 			URL myURL;
 
 			myURL = new URL("https://servicos.galleriabank.com.br/netrin/api/v1/cadastro/pf/"
@@ -746,8 +746,10 @@ public class NetrinService {
 						DocumentosAnaliseEnum.RECEITA_FEDERAL, GsonUtil.toJson(receitaFederalPF));
 			}
 
-			if (!CommonsUtil.semValor(receitaFederalPF))
+			if (!CommonsUtil.semValor(receitaFederalPF)) {
 				nomeConsultado = receitaFederalPF.getCpfBirthdate().getNome();
+				pagadorRecebedor.setCpf(CommonsUtil.formataCnpjCpf(receitaFederalPF.getCpf(), false));
+			}
 		} else {
 
 			if (!CommonsUtil.semValor(pagadorRecebedor.getCnpj())) {
@@ -760,10 +762,11 @@ public class NetrinService {
 							DocumentosAnaliseEnum.CADASTROBB, GsonUtil.toJson(receitaFederalPJ));
 				}
 
-				if (!CommonsUtil.semValor(receitaFederalPJ))
+				if (!CommonsUtil.semValor(receitaFederalPJ)) {
 					nomeConsultado = receitaFederalPJ.getResult().get(0).getBasicData().getOfficialName();
+					pagadorRecebedor.setCnpj(CommonsUtil.formataCnpjCpf(receitaFederalPJ.getCpfCnpj(), false));
+				}
 			}
-
 		}
 		return nomeConsultado;
 	}
