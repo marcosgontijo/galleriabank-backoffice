@@ -1543,11 +1543,11 @@ public class ContratoCobranca implements Serializable {
 			potuacao -= 100;
 
 		if (potuacao < 400) {
-			taxaPreAprovada = BigDecimal.valueOf(1.89);
-		} else if (potuacao >= 400 && potuacao < 499) {
-			taxaPreAprovada = BigDecimal.valueOf(1.79);
-		} else if (potuacao >= 500 && potuacao < 599) {
 			taxaPreAprovada = BigDecimal.valueOf(1.69);
+		} else if (potuacao >= 400 && potuacao < 499) {
+			taxaPreAprovada = BigDecimal.valueOf(1.69);
+		} else if (potuacao >= 500 && potuacao < 599) {
+			taxaPreAprovada = BigDecimal.valueOf(1.59);
 		} else if (potuacao >= 600 && potuacao < 699) {
 			taxaPreAprovada = BigDecimal.valueOf(1.59);
 		} else if (potuacao >= 700 && potuacao < 799) {

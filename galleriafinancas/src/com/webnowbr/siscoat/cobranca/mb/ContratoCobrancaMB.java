@@ -9941,34 +9941,7 @@ public class ContratoCobrancaMB {
 		}
 
 		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. DOC")) {
-			calcularPorcentagemImoveis();
-			BigDecimal valorTotalRegistro = BigDecimal.ZERO;
-			RegistroImovelTabelaDao rDao = new RegistroImovelTabelaDao();
-			ImovelCobrancaAdicionaisDao imovelCobrancaAdicionaisDao = new ImovelCobrancaAdicionaisDao();
-			for (ImovelCobrancaAdicionais imovelAdicional : objetoContratoCobranca.getListaImoveis()) {
-				if (CommonsUtil.semValor(imovelAdicional.getPorcentagem()))
-					continue;
-				BigDecimal porcentagem = imovelAdicional.getPorcentagem().divide(BigDecimal.valueOf(100),
-						MathContext.DECIMAL128);
-				BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoComite().multiply(porcentagem);
-				BigDecimal valorRegistro = rDao.getValorRegistro(valorPorMatricula);
-				valorTotalRegistro = valorTotalRegistro.add(valorRegistro);
-				imovelAdicional.setValorRegistro(valorRegistro);
-				imovelCobrancaAdicionaisDao.merge(imovelAdicional);
-			}
-			if (!CommonsUtil.semValor(objetoContratoCobranca.getPorcentagemImovelPrincipal())) {
-				BigDecimal porcentagem = objetoContratoCobranca.getPorcentagemImovelPrincipal()
-						.divide(BigDecimal.valueOf(100), MathContext.DECIMAL128);
-				BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoComite().multiply(porcentagem);
-				BigDecimal valorRegistro = rDao.getValorRegistro(valorPorMatricula);
-				valorTotalRegistro = valorTotalRegistro.add(valorRegistro);
-				objetoContratoCobranca.setValorRegistroImovelPrincipal(valorRegistro);
-			}
-
-			if (CommonsUtil.semValor(objetoContratoCobranca.getValorCartorio())
-					|| valorTotalRegistro.compareTo(objetoContratoCobranca.getValorCartorio()) > 0) {
-				objetoContratoCobranca.setValorCartorio(valorTotalRegistro);
-			}
+			calcularValorRegistro();
 			// calcularRegistroVelho();
 		}
 
@@ -10027,6 +10000,8 @@ public class ContratoCobrancaMB {
 			return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatus.xhtml";
 		}
 	}
+
+	
 
 	private void listaRestricoesPessoas() {
 		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
@@ -10157,6 +10132,37 @@ public class ContratoCobrancaMB {
 		this.addContasPagar = false;
 		this.objetoContratoCobranca.calcularValorTotalContasPagas();
 
+	}
+	
+	public void calcularValorRegistro() {
+		calcularPorcentagemImoveis();
+		BigDecimal valorTotalRegistro = BigDecimal.ZERO;
+		RegistroImovelTabelaDao rDao = new RegistroImovelTabelaDao();
+		ImovelCobrancaAdicionaisDao imovelCobrancaAdicionaisDao = new ImovelCobrancaAdicionaisDao();
+		for (ImovelCobrancaAdicionais imovelAdicional : objetoContratoCobranca.getListaImoveis()) {
+			if (CommonsUtil.semValor(imovelAdicional.getPorcentagem()))
+				continue;
+			BigDecimal porcentagem = imovelAdicional.getPorcentagem().divide(BigDecimal.valueOf(100),
+					MathContext.DECIMAL128);
+			BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoComite().multiply(porcentagem);
+			BigDecimal valorRegistro = rDao.getValorRegistro(valorPorMatricula);
+			valorTotalRegistro = valorTotalRegistro.add(valorRegistro);
+			imovelAdicional.setValorRegistro(valorRegistro);
+			imovelCobrancaAdicionaisDao.merge(imovelAdicional);
+		}
+		if (!CommonsUtil.semValor(objetoContratoCobranca.getPorcentagemImovelPrincipal())) {
+			BigDecimal porcentagem = objetoContratoCobranca.getPorcentagemImovelPrincipal()
+					.divide(BigDecimal.valueOf(100), MathContext.DECIMAL128);
+			BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoComite().multiply(porcentagem);
+			BigDecimal valorRegistro = rDao.getValorRegistro(valorPorMatricula);
+			valorTotalRegistro = valorTotalRegistro.add(valorRegistro);
+			objetoContratoCobranca.setValorRegistroImovelPrincipal(valorRegistro);
+		}
+
+		if (CommonsUtil.semValor(objetoContratoCobranca.getValorCartorio())
+				|| valorTotalRegistro.compareTo(objetoContratoCobranca.getValorCartorio()) > 0) {
+			objetoContratoCobranca.setValorCartorio(valorTotalRegistro);
+		}
 	}
 	
 	private void calcularRegistroVelho() {
@@ -21649,7 +21655,7 @@ public class ContratoCobrancaMB {
 
 		imovelAdicional.setContratoCobranca(objetoContratoCobranca);
 		objetoContratoCobranca.getListaImoveis().add(imovelAdicional);
-		calcularPorcentagemImoveis();
+		calcularValorRegistro();
 		listaRestricoesImovel();
 		imovelAdicional = new ImovelCobrancaAdicionais();
 	}
@@ -36325,6 +36331,8 @@ public class ContratoCobrancaMB {
 		if (docAnalise.isRelacionamentoBacenIniciadoAvailable()) {
 			this.objetoContratoCobranca.setRelacionamentoBacenRecenteTaxa(true);
 			nadaConsta = false;
+		} else if (CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise().toLowerCase(), "proprietario atual")) {
+			this.objetoContratoCobranca.setRelacionamentoBacenRecenteTaxa(false);
 		}
 		if (docAnalise.isInicioRelacionamentoInexistente()) {
 			this.objetoContratoCobranca.setInicioRelacionamentoInexistenteTaxa(true);

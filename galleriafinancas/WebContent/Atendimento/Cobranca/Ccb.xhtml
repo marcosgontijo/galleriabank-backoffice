@@ -1447,6 +1447,54 @@
 							</h:panelGroup>					
 						</p:panel>
 					</h:panelGroup>
+					
+					<h:panelGroup id="ImovelAdicionarPanel"
+						style="margin-bottom:20px;">
+						<p:panel header="Adicionar Matriculas">
+							<p:outputLabel value="Imovel Principal: " styleClass="labelBold" style="FONT-SIZE: 10pt;" />
+							<p:outputLabel value="Porcentagem: " style="FONT-SIZE: 10pt;" />
+							<p:outputLabel value="#{ccbMB.objetoCcb.objetoContratoCobranca.porcentagemImovelPrincipal}"
+								style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+							<p:outputLabel value="% - Registro: R$ " style="FONT-SIZE: 10pt;" />
+							<p:outputLabel value="#{ccbMB.objetoCcb.objetoContratoCobranca.valorRegistroImovelPrincipal}"
+								style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+								
+							<p:dataTable var="imovelAdd" id="imovelAdicionarDV"
+								value="#{ccbMB.objetoCcb.objetoContratoCobranca.listaImoveis}" 
+								paginator="false" style="width: 1200px; max-width: 100%"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+								<p:column style="text-align: center;width:175px;"
+									headerText="N° Matricula">
+									<p:outputLabel value="#{imovelAdd.imovel.numeroMatricula}"
+										style="FONT-SIZE: 10pt;" />
+								</p:column>
+								
+								<p:column style="text-align: center;width:75px;"
+									headerText=" Valor de Mercado: ">
+									<p:outputLabel value="#{imovelAdd.imovel.valorMercado}"
+										style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+								</p:column>
+								
+								<p:column style="text-align: center;width:75px;"
+									headerText=" Valor de Leilão: ">
+									<p:outputLabel value="#{imovelAdd.imovel.valorLeilao}"
+										style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+								</p:column>
+								
+								<p:column style="text-align: center;width:75px;"
+									headerText="Porcentagem do valor total: ">
+									<p:outputLabel value="#{imovelAdd.porcentagem}"
+										style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+								</p:column>
+								
+								<p:column style="text-align: center;width:75px;"
+									headerText=" Valor Registro: ">
+									<p:outputLabel value="#{imovelAdd.valorRegistro}"
+										style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+								</p:column>
+							</p:dataTable>
+						</p:panel>
+					</h:panelGroup>
 
 					<p:panel id="UploadArquivos" header="Upload de Arquivo(s)"
 						style="margin-bottom:10px;">
