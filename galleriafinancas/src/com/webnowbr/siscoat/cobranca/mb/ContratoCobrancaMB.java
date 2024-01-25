@@ -1084,6 +1084,7 @@ public class ContratoCobrancaMB {
 		filesInterno = new ArrayList<FileUploaded>();
 		filesFaltante = new ArrayList<FileUploaded>();
 		filesJuridico = new ArrayList<FileUploaded>();
+		filesNotaFiscal = new ArrayList<FileUploaded>();
 		filesComite = new ArrayList<FileUploaded>();
 
 		this.hasBaixaParcial = false;
@@ -1793,6 +1794,7 @@ public class ContratoCobrancaMB {
 		filesInterno = new ArrayList<FileUploaded>();
 		filesFaltante = new ArrayList<FileUploaded>();
 		filesJuridico = new ArrayList<FileUploaded>();
+		filesNotaFiscal = new ArrayList<FileUploaded>();
 		filesComite = new ArrayList<FileUploaded>();
 		this.hasBaixaParcial = false;
 
@@ -1886,6 +1888,7 @@ public class ContratoCobrancaMB {
 		filesFaltante = new ArrayList<FileUploaded>();
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesComite = new ArrayList<FileUploaded>();
+		filesNotaFiscal = new ArrayList<FileUploaded>();
 
 		this.objetoImovelCobranca = new ImovelCobranca();
 		this.objetoPagadorRecebedor = new PagadorRecebedor();
@@ -7205,6 +7208,7 @@ public class ContratoCobrancaMB {
 		filesInterno = new ArrayList<FileUploaded>();
 		filesFaltante = new ArrayList<FileUploaded>();
 		filesJuridico = new ArrayList<FileUploaded>();
+		filesNotaFiscal = new ArrayList<FileUploaded>();
 		filesComite = new ArrayList<FileUploaded>();
 		this.files = new ArrayList<FileUploaded>();
 
@@ -7276,6 +7280,7 @@ public class ContratoCobrancaMB {
 		filesFaltante = new ArrayList<FileUploaded>();
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesComite = new ArrayList<FileUploaded>();
+		filesNotaFiscal = new ArrayList<FileUploaded>();
 
 		clearSelectedRecebedores();
 
@@ -10300,6 +10305,8 @@ public class ContratoCobrancaMB {
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
 
+		filesNotaFiscal = new ArrayList<FileUploaded>();
+
 		listaArquivosAnaliseDocumentos();
 		this.restricaoOperacao = new ArrayList<>();
 		this.restricaoImovel = new ArrayList<>();
@@ -10374,7 +10381,7 @@ public class ContratoCobrancaMB {
 
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
-
+		filesNotaFiscal = new ArrayList<FileUploaded>();
 		this.tituloTelaConsultaPreStatus = "Geração de PAJU";
 		this.inserirImovelDisable = true;
 		this.inserirImovelOcultarValorMercadoImovel = true;
@@ -33028,9 +33035,11 @@ public class ContratoCobrancaMB {
 	Collection<FileUploaded> filesComite = new ArrayList<FileUploaded>();
 	Collection<FileUploaded> filesPagar = new ArrayList<FileUploaded>();
 	Collection<FileUploaded> filesCci = new ArrayList<FileUploaded>();
+	Collection<FileUploaded> filesNotaFiscal = new ArrayList<FileUploaded>();
 
 	List<FileUploaded> deletefilesInterno = new ArrayList<FileUploaded>();
 	List<FileUploaded> deletefilesFaltante = new ArrayList<FileUploaded>();
+	List<FileUploaded> deletefilesNotaFiscal = new ArrayList<FileUploaded>();
 	List<FileUploaded> deletefilesJuridico = new ArrayList<FileUploaded>();
 	List<FileUploaded> deletefilesComite = new ArrayList<FileUploaded>();
 	List<FileUploaded> deletefilesPagar = new ArrayList<FileUploaded>();
@@ -33451,6 +33460,13 @@ public class ContratoCobrancaMB {
 				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "juridico"))
 				.collect(Collectors.toList());
 	}
+	
+	public List<FileUploaded> listaArquivosNotaFiscal() {
+		carregaDocumentos();
+		return this.documentoConsultarTodos.stream()
+				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "nf"))
+				.collect(Collectors.toList());
+	}
 
 	public List<FileUploaded> listaArquivosComite() {
 		carregaDocumentos();
@@ -33504,6 +33520,11 @@ public class ContratoCobrancaMB {
 		filesFaltante = listaArquivosFaltante();
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
+
+		filesNotaFiscal = new ArrayList<FileUploaded>();
+		filesNotaFiscal = listaArquivosNotaFiscal();
+
+		
 		filesComite = new ArrayList<FileUploaded>();
 		filesComite = listaArquivosComite();
 		filesPagar = new ArrayList<FileUploaded>();
@@ -33978,6 +33999,23 @@ public class ContratoCobrancaMB {
 
 	public void setDeletefilesJuridico(List<FileUploaded> deletefilesJuridico) {
 		this.deletefilesJuridico = deletefilesJuridico;
+	}
+
+	
+	public Collection<FileUploaded> getFilesNotaFiscal() {
+		return filesNotaFiscal;
+	}
+
+	public void setFilesNotaFiscal(Collection<FileUploaded> filesNotaFiscal) {
+		this.filesNotaFiscal = filesNotaFiscal;
+	}
+
+	public List<FileUploaded> getDeletefilesNotaFiscal() {
+		return deletefilesNotaFiscal;
+	}
+
+	public void setDeletefilesNotaFiscal(List<FileUploaded> deletefilesNotaFiscal) {
+		this.deletefilesNotaFiscal = deletefilesNotaFiscal;
 	}
 
 	/**
