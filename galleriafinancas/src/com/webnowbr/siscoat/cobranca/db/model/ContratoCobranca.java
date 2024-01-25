@@ -653,6 +653,7 @@ public class ContratoCobranca implements Serializable {
 	private boolean temTxAdm;
 	private BigDecimal valorImovel;
 	private String numeroContratoSeguro;
+	private String serieCci;
 	private String termoCessao;
 	private boolean enviadoJsonBRL;
 
@@ -7689,5 +7690,13 @@ public class ContratoCobranca implements Serializable {
 
 	public void setContasPagarList(List<ContasPagar> contasPagarList) {
 		this.contasPagarList = contasPagarList;
+	}
+
+	public String getSerieCci() {
+		return serieCci;
+	}
+
+	public void setSerieCci(String serieCci) {
+		this.serieCci = serieCci;
 	}
 }
