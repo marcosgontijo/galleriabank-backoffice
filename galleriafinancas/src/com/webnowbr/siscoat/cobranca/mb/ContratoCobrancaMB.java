@@ -202,6 +202,7 @@ import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
 import com.webnowbr.siscoat.cobranca.model.cep.CepResult;
 import com.webnowbr.siscoat.cobranca.service.BigDataService;
 import com.webnowbr.siscoat.cobranca.service.CepService;
+import com.webnowbr.siscoat.cobranca.service.CredlocalizaService;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.cobranca.service.DocumentoAnaliseService;
 import com.webnowbr.siscoat.cobranca.service.DrCalcService;
@@ -14073,6 +14074,7 @@ public class ContratoCobrancaMB {
 				}
 			}
 		}
+		this.tituloTelaConsultaPreStatus = ".";
 
 		this.contratosPendentes = populaStatus(this.contratosPendentes);
 
@@ -31085,6 +31087,16 @@ public class ContratoCobrancaMB {
 			documentoAnaliseDao.merge(docAnalise);
 		}
 	}
+	
+	public void consultarFrotaVeiculosDocumentoAnalise(DocumentoAnalise documentoAnalise) { // POST para gerar consulta
+		try {
+			CredlocalizaService credilocalizaService = new CredlocalizaService();
+			credilocalizaService.requestFrotaVeiculos(documentoAnalise);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return;
+	}
 
 	/**
 	 * @return the fileRecibo
@@ -36117,6 +36129,12 @@ public class ContratoCobrancaMB {
 						analisaTaxasDocumentos(docAnalise, nadaConsta, isScore450, isRisco20k, ressalvaPefin,
 								ressalvaCcf, ressalvaProtesto, ressalvaTrabalhista, ressalvaProcesso);
 					}
+					for (DocumentoAnalise docAnalise : proprietarios) {
+						if (!docAnalise.isRelacionamentoBacenIniciadoAvailable() 
+								&& CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise().toLowerCase(), "proprietario atual")) {
+							this.objetoContratoCobranca.setRelacionamentoBacenRecenteTaxa(false);
+						}
+					}
 					this.objetoContratoCobranca.setDocumentosAnalisados(true);
 					ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 					contratoCobrancaDao.merge(objetoContratoCobranca);
@@ -36273,12 +36291,10 @@ public class ContratoCobrancaMB {
 			this.objetoContratoCobranca.setTerrenoOuBarracaoTaxa(true);
 			nadaConsta = false;
 		}
-		if (docAnalise.isRelacionamentoBacenIniciadoAvailable()) {
+		if (docAnalise.isRelacionamentoBacenIniciadoAvailable()) { 
 			this.objetoContratoCobranca.setRelacionamentoBacenRecenteTaxa(true);
 			nadaConsta = false;
-		} else if (CommonsUtil.mesmoValor(docAnalise.getMotivoAnalise().toLowerCase(), "proprietario atual")) {
-			this.objetoContratoCobranca.setRelacionamentoBacenRecenteTaxa(false);
-		}
+		} 
 		if (docAnalise.isInicioRelacionamentoInexistente()) {
 			this.objetoContratoCobranca.setInicioRelacionamentoInexistenteTaxa(true);
 			nadaConsta = false;
