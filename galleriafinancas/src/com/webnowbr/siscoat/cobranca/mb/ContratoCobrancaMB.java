@@ -33158,6 +33158,24 @@ public class ContratoCobrancaMB {
 		}
 	}
 
+	public void handleFileNotaFiscalUpload(FileUploadEvent event) throws IOException {
+		FacesContext context = FacesContext.getCurrentInstance();
+
+		if (event.getFile().getFileName().endsWith(".zip")) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
+		} else {
+
+			byte[] conteudo = event.getFile().getContents();
+			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(),
+					event.getFile().getFileName(), "//nf/", getUsuarioLogado());
+
+			// atualiza lista de arquivos contidos no diretório
+			documentoConsultarTodos = new ArrayList<FileUploaded>();
+			filesNotaFiscal = listaArquivosNotaFiscal();
+		}
+	}
+	
 	public void handleFileComiteUpload(FileUploadEvent event) throws IOException {
 		FacesContext context = FacesContext.getCurrentInstance();
 
@@ -33327,6 +33345,7 @@ public class ContratoCobrancaMB {
 		deletefilesNotaFiscal = new ArrayList<FileUploaded>();
 		filesNotaFiscal = listaArquivosNotaFiscal();
 	}
+	
 	public void deleteFileComite() {
 		for (FileUploaded f : deletefilesComite) {
 			deleteFile(f);
@@ -33736,6 +33755,30 @@ public class ContratoCobrancaMB {
 	}
 
 	public StreamedContent getDownloadAllFilesJuridico() {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+		try {
+			CompactadorUtil compac = new CompactadorUtil();
+			for (FileUploaded f : deletefilesJuridico) {
+				String arquivo = f.getName();
+				byte[] arquivoByte = fileService.abrirDocumentos(f, this.objetoContratoCobranca.getNumeroContrato(),
+						getUsuarioLogado());
+				listaArquivos.put(arquivo, arquivoByte);
+			}
+			arquivos = compac.compactarZipByte(listaArquivos);
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String
+					.format(objetoContratoCobranca.getNumeroContrato() + " Documentos_juridico.zip", "");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(arquivos));
+			gerador.close();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return null;
+	}
+	
+	public StreamedContent getDownloadAllFilesNotaFiscal() {
 		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
 		try {
 			CompactadorUtil compac = new CompactadorUtil();
