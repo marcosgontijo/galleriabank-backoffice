@@ -867,34 +867,36 @@
 		
 						<p:panel id="ArquivosNotaFiscalSalvos" header="Arquivo(s) Nota Fiscal Salvo(s) no Contrato" style="margin-bottom:10px;">							
 							<h:panelGrid columns="1">			                      								
-								<p:dataTable id="dtFilesNotaFiscal" var="filesJuridico" value="#{contratoCobrancaMB.filesNotaFiscal}" rowKey="#{filesJuridico.name}" selection="#{contratoCobrancaMB.deletefilesNotaFiscal}" emptyMessage="" sortBy="#{filesJuridico.name}" >	
+								<p:dataTable id="dtFilesNotaFiscal" var="filesNotaFiscal" value="#{contratoCobrancaMB.filesNotaFiscal}"
+								 rowKey="#{filesNotaFiscal.name}" selection="#{contratoCobrancaMB.deletefilesNotaFiscal}" 
+								 emptyMessage="" sortBy="#{filesNotaFiscal.name}" >	
 									<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
 									 <f:facet name="header">							 
 									 	<p:commandButton value="Download Selecionado(s)" ajax="false"
 											icon="ui-icon-arrowthick-1-s" immediate="true"
-											action="#{contratoCobrancaMB.getDownloadAllFilesJuridico()}">
+											action="#{contratoCobrancaMB.getDownloadAllfilesNotaFiscal()}">
 										</p:commandButton>
 										<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileJuridico}"/>
 										<p:commandButton value="Download Selecionado(s)" ajax="false"
 											icon="ui-icon-arrowthick-1-s" immediate="true"
-											action="#{contratoCobrancaMB.getDownloadAllFilesJuridico()}">
+											action="#{contratoCobrancaMB.getDownloadAllfilesNotaFiscal()}">
 										</p:commandButton>	
 							        </f:facet>	        
 							        <p:column style="text-align: center;"
-										headerText="Nome do Arquivo" filterBy="#{filesJuridico.name}"
-										filterMatchMode="contains" sortBy="#{filesJuridico.name}">
+										headerText="Nome do Arquivo" filterBy="#{filesNotaFiscal.name}"
+										filterMatchMode="contains" sortBy="#{filesNotaFiscal.name}">
 										<h:outputText
 										
-												value="#{filesJuridico.name}" />
+												value="#{filesNotaFiscal.name}" />
 										<p:spacer height="10" />
-										<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFile(filesJuridico)}"
+										<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFile(filesNotaFiscal)}"
 											immediate="true" icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
 										</p:commandButton>
 									</p:column>  
 							        
 							        <p:column style="width:100px;">
 										<p:commandButton value="Download" ajax="false"  icon="ui-icon-arrowthick-1-s">						       	 	
-								       	 	<f:setPropertyActionListener target="#{contratoCobrancaMB.selectedFile}" value="#{filesJuridico}" />
+								       	 	<f:setPropertyActionListener target="#{contratoCobrancaMB.selectedFile}" value="#{filesNotaFiscal}" />
 								       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
 								    	</p:commandButton>	
 						            </p:column>						        
@@ -902,7 +904,7 @@
 						             <f:facet name="footer">
 						            	<p:commandButton value="Download Selecionado(s)" ajax="false"
 											icon="ui-icon-arrowthick-1-s" immediate="true"
-											action="#{contratoCobrancaMB.getDownloadAllFilesJuridico()}">
+											action="#{contratoCobrancaMB.getDownloadAllfilesNotaFiscal()}">
 										</p:commandButton>	             
 										<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFileJuridico}"/>								
 							        </f:facet>
