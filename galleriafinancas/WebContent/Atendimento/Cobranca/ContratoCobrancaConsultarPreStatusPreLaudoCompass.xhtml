@@ -9,7 +9,8 @@
 	  template="/Menus/Menu.xhtml">
 
 	<ui:define name="conteudo">  
-		<h:form id="form" style="margin-bottom:10px;">	
+		<h:form id="form" style="margin-bottom:10px;">
+			<link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/css/Style.css" title="" media="all" />
 			<script src="#{request.contextPath}/resources/js/jquery.mask.min.js"></script>	
 			<script>
 		        function validatePhone() {
@@ -30,15 +31,15 @@
 		        }
 		        );
 			</script>			
-			<p:messages id="mensagens" showDetail="true"/>									
-			<p:panel id="ConsultaContratos" header="Pré-Contratos #{contratoCobrancaMB.tituloTelaConsultaPreStatus} - Consultar" style="margin-bottom:10px;">					    		    
-   		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratosPendentes}" selection="" emptyMessage=""
-   		         rowStyleClass="linhaDourada"
+			<p:panel id="ConsultaContratos" header="#{contratoCobrancaMB.tituloTelaConsultaPreStatus} - Consultar" style="margin-bottom:10px;">					    		    
+   		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratosPendentes}"
+   		         rowStyleClass="#{(contratos.pedidoPreLaudo eq true and contratos.avaliacaoLaudo eq 'Compass') ? 'linhaDourada' : null}"
    		         rows="50"
                  paginator="true"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                  currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
-                 rowsPerPageTemplate="50,100,150">  
+                 rowsPerPageTemplate="50,100,150"
+                 selection="#{contratoCobrancaMB.selectedContratos}" rowKey="#{contratos.id}">  
             
                 	<p:column style="text-align: center;width:100px;" headerText="Contrato" filterBy="#{contratos.numeroContrato}" filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
 			            <h:outputText value="#{contratos.numeroContrato}" />
@@ -98,7 +99,7 @@
 						</ui:fragment>
 			        </p:column>
 					
-					<p:column style="width:180px;">			
+					<p:column style="width:180px;" headerText="Funções">			
 		                <p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPreLaudoCompass}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar">
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{contratos.imovel}" />

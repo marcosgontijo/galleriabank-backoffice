@@ -31107,6 +31107,13 @@ public class ContratoCobrancaMB {
 	
 	}
 	
+	public void getListaImoveisPreLaudoCompass() {
+		
+		ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
+		listPreLaudoImoveisRelac = imovelCobrancaDao.listaTodosImoveisLaudoContrato(objetoContratoCobranca.getId());
+		
+	}
+	
 	public String clearFieldsPreLaudoCompass() {
 
 		clearMensagensWhatsApp();
@@ -31121,12 +31128,11 @@ public class ContratoCobrancaMB {
 		this.inserirImovelDisable = true;
 		this.inserirImovelOcultarValorMercadoImovel = true;
 
-		//return "";
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatusPreLaudoCompass.xhtml";
 	}
 	
 	public String clearFieldsEditarPreLaudoCompass() {
-		getListaImoveisAdd();
+		getListaImoveisPreLaudoCompass();
 		clearMensagensWhatsApp();
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();

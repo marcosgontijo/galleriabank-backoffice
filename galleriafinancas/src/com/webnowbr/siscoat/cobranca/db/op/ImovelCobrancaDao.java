@@ -62,7 +62,7 @@ public class ImovelCobrancaDao extends HibernateDao <ImovelCobranca,Long> {
     														+ " ,i.comprovanteiptuimovelchecklist, i.valoriptu, i.valorcondominio, i.cartoriomunicipio, i.numerocartorio, i.cartorioestado, i.cndiptuextratodebitochecklist"
     														+ " ,i.cndcondominioextratodebitochecklist, i.matriculagaragemchecklist, i.simuladorchecklist, i.inscricaomunicipal, i.objetocidade, i.imovelestoque, i.valormercado "
     														+ " FROM cobranca.imovelcobranca i "
-    														+ " INNER JOIN cobranca.contratocobranca_imoveis_laudo_join il i.id = il.idimovel "
+    														+ " INNER JOIN cobranca.contratocobranca_imoveis_laudos_join il ON i.id = il.idimovel "
     														+ " WHERE il.idcontratocobranca = ? ";
     
     @SuppressWarnings("unchecked")

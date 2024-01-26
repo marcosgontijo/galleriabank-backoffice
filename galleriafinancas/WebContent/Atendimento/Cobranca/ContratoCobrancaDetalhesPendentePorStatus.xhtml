@@ -234,7 +234,7 @@
 								
 								<p:selectManyMenu showCheckbox="true"
 									value="#{contratoCobrancaMB.listSolicitaçãoPreLaudoImoveis}"
-									label="Imóvel do pré-laudo" style="width:280px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">
+									label="Imóvel do pré-laudo" style="width:280px; margin-top:12px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">
 									<f:selectItems value="#{contratoCobrancaMB.listTodosImoveisContrato}" var="imovelCobranca" itemValue="#{imovelCobranca.id}" itemLabel="#{imovelCobranca.numeroMatricula} - #{imovelCobranca.endereco}" />
 								</p:selectManyMenu>
 							</ui:fragment>
