@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelEstoque;
 import com.webnowbr.siscoat.cobranca.mb.RelatorioEstoque;
 import com.webnowbr.siscoat.db.dao.HibernateDao;
@@ -51,6 +52,39 @@ public class ImovelEstoqueDao extends HibernateDao <ImovelEstoque,Long> {
 			}
 		});
 	}
+    @SuppressWarnings("unchecked")
+	public List<ContratoCobranca> consultaImovelEstoque() {
+  		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
+  			@Override
+  			public Object run() throws Exception {
+  				
+  				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+  				String QUERY_ID_ESTOQUE = "select c.id from cobranca.contratocobranca c  \r\n"
+  						+ "inner join cobranca.imovelcobranca i on i.id  = c.imovel  \r\n"
+  						+ "inner join cobranca.imovelestoque i2 on i.imovelestoque  = i2.id";
+  				Connection connection = null;
+  				PreparedStatement ps = null;
+  				ResultSet rs = null;
+  				
+  				try {
+  					connection = getConnection();
+  					
+  					ps = connection
+  							.prepareStatement(QUERY_ID_ESTOQUE);
+  					
+  					rs = ps.executeQuery();
+  					ContratoCobrancaDao contratoDao = new ContratoCobrancaDao();
+  					while (rs.next()) {
+  						objects.add(contratoDao.findById(rs.getLong(1)));	
+  					}
+  							
+  				} finally {
+  					closeResources(connection, ps, rs);					
+  				}
+  				return objects;
+  			}
+  		});
+  	}
     
     private String QUERY_RELATORIO_ESTOQUE = "select c.numerocontrato, ie.variacaocusto, ie.ltvleilao, ie.valoremprestimo, ie.vendaforcada, ie.valormercado, p.nome, i.numeromatricula, \r\n"
     		+ "concat (i.endereco, ', ', i.bairro, ', ', i.complemento, ', ', i.cidade, ', ', i.estado, '- ', i.cep) as Imovel, ie.dataconsolidado, ie.dataleilao1, ie.dataleilao2, \r\n"

@@ -49,7 +49,7 @@ import com.webnowbr.siscoat.infra.db.model.User;
 public class ImovelEstoqueMB {
 
 	/** Controle dos dados da Paginação. */
-	private LazyDataModel<ContratoCobranca> lazyModel;
+	private List<ContratoCobranca> listaImovelEstoque;
 	/** Variavel. */
 	private ImovelCobranca objetoImovelCobranca;
 	private ImovelEstoque objetoImovelEstoque;
@@ -150,29 +150,8 @@ public class ImovelEstoqueMB {
 
 	public void consultaEstoque() {
 //		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-
-		lazyModel = new LazyDataModel<ContratoCobranca>() {
-
-			/** Serial. */
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public List<ContratoCobranca> load(final int first, final int pageSize, final String sortField,
-					final SortOrder sortOrder, final Map<String, Object> filters) {
-
-				/*
-				 * Busca usuário logado para restringir retorno dos dados.
-				 */
-
-				filters.put("status", "Aprovado");
-
-				ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-
-				setRowCount(contratoCobrancaDao.count(filters));
-				return contratoCobrancaDao.findByFilter(first, pageSize, sortField, sortOrder.toString(), filters);
-			}
-		};
-
+ImovelEstoqueDao dao = new ImovelEstoqueDao();
+listaImovelEstoque = dao.consultaImovelEstoque();
 //		listaConsultaEstoque = contratoCobrancaDao.consultaImovelEstoque();
 	}
 
@@ -469,16 +448,11 @@ public class ImovelEstoqueMB {
 	/**
 	 * @return the lazyModel
 	 */
-	public LazyDataModel<ContratoCobranca> getLazyModel() {
-		return lazyModel;
-	}
+
 
 	/**
 	 * @param lazyModel the lazyModel to set
 	 */
-	public void setLazyModel(LazyDataModel<ContratoCobranca> lazyModel) {
-		this.lazyModel = lazyModel;
-	}
 
 	/**
 	 * @return the objetoImovelCobranca
@@ -589,6 +563,14 @@ public class ImovelEstoqueMB {
 
 	public void setListImovelEstoque(List<ImovelEstoque> listImovelEstoque) {
 		this.listImovelEstoque = listImovelEstoque;
+	}
+
+	public List<ContratoCobranca> getListaImovelEstoque() {
+		return listaImovelEstoque;
+	}
+
+	public void setListaImovelEstoque(List<ContratoCobranca> listaImovelEstoque) {
+		this.listaImovelEstoque = listaImovelEstoque;
 	}
 
 }
