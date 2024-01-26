@@ -1021,83 +1021,87 @@ public class CcbMB {
 	}
 	
 	public String EmitirCcbPreContrato(String tipoEmissao) {
-		clearFieldsInserirCcb();
-		List<CcbContrato> ccbContratoDB = new ArrayList<CcbContrato>();
-		CcbDao ccbDao = new CcbDao();
-		ccbContratoDB = ccbDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca);
-		
-		if(CommonsUtil.mesmoValor(tipoEmissao, "aditamento")) {
-			listarDownloadsAditamento();
-		}
+		try {
+			clearFieldsInserirCcb();
+			List<CcbContrato> ccbContratoDB = new ArrayList<CcbContrato>();
+			CcbDao ccbDao = new CcbDao();
+			ccbContratoDB = ccbDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca);
+			
+			if(CommonsUtil.mesmoValor(tipoEmissao, "aditamento")) {
+				listarDownloadsAditamento();
+			}
 
-		if (ccbContratoDB.size() > 0) {
-			objetoCcb = ccbContratoDB.get(0);
-			this.objetoContratoCobranca = objetoCcb.getObjetoContratoCobranca();
-		} else {
-			this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
-		}	
-
-		if (objetoCcb.getListaParticipantes().size() <= 0) {
-			if(objetoContratoCobranca.getListaParticipantes().size() > 0) {
-				for(CcbParticipantes participante : objetoContratoCobranca.getListaParticipantes()) {
-					objetoCcb.getListaParticipantes().add(participante);
-				}
+			if (ccbContratoDB.size() > 0) {
+				objetoCcb = ccbContratoDB.get(0);
+				this.objetoContratoCobranca = objetoCcb.getObjetoContratoCobranca();
 			} else {
-				//procura e setta pagador	
-				this.selectedPagadorGenerico = getPagadorById(this.objetoContratoCobranca.getPagador().getId());
-				pesquisaParticipante();
-				populateSelectedPagadorRecebedor();	
-				addParticipante = true;
-				
-				if(participanteSelecionado.isEmpresa()) {
-					objetoCcb.setTipoPessoaEmitente("PJ");
+				this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
+			}	
+
+			if (objetoCcb.getListaParticipantes().size() <= 0) {
+				if(objetoContratoCobranca.getListaParticipantes().size() > 0) {
+					for(CcbParticipantes participante : objetoContratoCobranca.getListaParticipantes()) {
+						objetoCcb.getListaParticipantes().add(participante);
+					}
 				} else {
-					objetoCcb.setTipoPessoaEmitente("PF");
-				}
-				
-				participanteSelecionado.setTipoParticipante("EMITENTE");
-				concluirParticipante();
-				
-				if(!CommonsUtil.semValor(objetoContratoCobranca.getPagador().getCpfConjuge())) {
-					selectedPagadorGenerico = null;
-					this.selectedPagadorGenerico = getPagadorByFilter("cpf", objetoContratoCobranca.getPagador().getCpfConjuge());
-					if(!CommonsUtil.semValor(selectedPagadorGenerico)) {
-						pesquisaParticipante();
-						populateSelectedPagadorRecebedor();	
-						addParticipante = true;
-						
-						if(participanteSelecionado.isEmpresa()) {
-							objetoCcb.setTipoPessoaEmitente("PJ");
-						} else {
-							objetoCcb.setTipoPessoaEmitente("PF");
+					//procura e setta pagador	
+					this.selectedPagadorGenerico = getPagadorById(this.objetoContratoCobranca.getPagador().getId());
+					pesquisaParticipante();
+					populateSelectedPagadorRecebedor();	
+					addParticipante = true;
+					
+					if(participanteSelecionado.isEmpresa()) {
+						objetoCcb.setTipoPessoaEmitente("PJ");
+					} else {
+						objetoCcb.setTipoPessoaEmitente("PF");
+					}
+					
+					participanteSelecionado.setTipoParticipante("EMITENTE");
+					concluirParticipante();
+					
+					if(!CommonsUtil.semValor(objetoContratoCobranca.getPagador().getCpfConjuge())) {
+						selectedPagadorGenerico = null;
+						this.selectedPagadorGenerico = getPagadorByFilter("cpf", objetoContratoCobranca.getPagador().getCpfConjuge());
+						if(!CommonsUtil.semValor(selectedPagadorGenerico)) {
+							pesquisaParticipante();
+							populateSelectedPagadorRecebedor();	
+							addParticipante = true;
+							
+							if(participanteSelecionado.isEmpresa()) {
+								objetoCcb.setTipoPessoaEmitente("PJ");
+							} else {
+								objetoCcb.setTipoPessoaEmitente("PF");
+							}
+							
+							participanteSelecionado.setTipoParticipante("EMITENTE");
+							concluirParticipante();
 						}
-						
-						participanteSelecionado.setTipoParticipante("EMITENTE");
-						concluirParticipante();
 					}
 				}
 			}
+			
+			populateSelectedContratoCobranca();
+			calculaPorcentagemImovel();
+			
+			if(CommonsUtil.semValor(objetoCcb.getCpfTestemunha1())) {
+				//larissa
+				pesquisaTestemunha1();
+				selectedPagadorGenerico = ccbDao.ConsultaTestemunha((long) 47572);
+				populateSelectedPagadorRecebedor();
+			}
+			
+			if(CommonsUtil.semValor(objetoCcb.getCpfTestemunha2())) {
+				//bianca
+				pesquisaTestemunha2();
+				selectedPagadorGenerico = ccbDao.ConsultaTestemunha((long) 47570);
+				populateSelectedPagadorRecebedor();
+			}
+			criarCcbNosistema();
+			return "/Atendimento/Cobranca/Ccb.xhtml";
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		
-		populateSelectedContratoCobranca();
-		calculaPorcentagemImovel();
-		
-		if(CommonsUtil.semValor(objetoCcb.getCpfTestemunha1())) {
-			//larissa
-			pesquisaTestemunha1();
-			selectedPagadorGenerico = ccbDao.ConsultaTestemunha((long) 47572);
-			populateSelectedPagadorRecebedor();
-		}
-		
-		if(CommonsUtil.semValor(objetoCcb.getCpfTestemunha2())) {
-			//bianca
-			pesquisaTestemunha2();
-			selectedPagadorGenerico = ccbDao.ConsultaTestemunha((long) 47570);
-			populateSelectedPagadorRecebedor();
-		}
-		
-		criarCcbNosistema();
-		return "/Atendimento/Cobranca/Ccb.xhtml";
+		return "";
 	}
 	
 	public void emitirAditamento(List<ContasPagar> despesas) {
