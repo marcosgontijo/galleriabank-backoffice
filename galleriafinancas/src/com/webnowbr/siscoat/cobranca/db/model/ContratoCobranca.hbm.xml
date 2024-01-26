@@ -2381,5 +2381,15 @@
 			<column name="usuarioNotaFiscalPaga" />
 		</property>
 		
+		<property name="notaFiscalAgendadaData" type="java.util.Date">
+			<column name="dataNotaFiscalAgendada" />
+		</property>
+		<property name="notaFiscalAgendada" type="boolean">
+			<column name="notaFiscalAgendada" not-null="true" default="false"/>
+		</property>	
+		<property name="notaFiscalAgendadaUsuario" type="java.lang.String">
+			<column name="usuarioNotaFiscalAgendada" />
+		</property>
+		
 	</class>
 </hibernate-mapping>
