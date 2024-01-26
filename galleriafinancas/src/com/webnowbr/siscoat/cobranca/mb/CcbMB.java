@@ -784,7 +784,7 @@ public class CcbMB {
 		}
 		if(CommonsUtil.semValor(objetoCcb.getValorLiquidoCredito())) 
 			return;
-		valorTranferencia = objetoCcb.getValorLiquidoCredito().add(objetoCcb.getIntermediacaoValor()).multiply(comissao);
+		valorTranferencia = (objetoCcb.getValorLiquidoCredito().add(objetoCcb.getIntermediacaoValor())).multiply(comissao);
 		
 		if(CommonsUtil.mesmoValor(valorTranferencia, objetoCcb.getIntermediacaoValor())) 
 			return;
