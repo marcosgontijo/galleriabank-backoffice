@@ -4076,6 +4076,13 @@ public class ContratoCobrancaMB {
 				return false;
 			}
 		}
+		
+		if(this.objetoContratoCobranca.isPedidoPreLaudo() && listSolicitaçãoPreLaudoImoveis.isEmpty()) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Contrato Cobrança: Nenhum imóvel selecionado para pré-laudo!", ""));
+			return false;
+		}
+		
 		return true;
 	}
 
