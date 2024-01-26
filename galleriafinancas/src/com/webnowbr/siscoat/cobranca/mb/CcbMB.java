@@ -794,7 +794,7 @@ public class CcbMB {
 		objetoCcb.setIntermediacaoValor(valorTranferencia);
 		despesaTransferencia.setValor(valorTranferencia);
 		calcularValorDespesa();
-		calcularSimulador();
+		calculaValorLiquidoCredito();
 		contasPagarDao.merge(despesaTransferencia);
 	}
 	
