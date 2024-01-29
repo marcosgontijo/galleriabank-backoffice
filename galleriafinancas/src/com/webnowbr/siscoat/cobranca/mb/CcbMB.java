@@ -1641,98 +1641,98 @@ public class CcbMB {
 	    		String nomeDoc;
 		    	if(CommonsUtil.mesmoValor(tipoDownload,"CCB")){
 		    		arquivo = ccbService.geraCcbDinamica();
-		    		nomeDoc = "CCB.docx";
+		    		nomeDoc = objetoCcb.getNumeroOperacao() + " - " + "CCB.docx";
 		    		if(arquicoUnico)
 		    			ccbService.geraDownloadByteArray(arquivo,nomeDoc);
 		    		else
 		    			listaArquivos.put(nomeDoc, arquivo);
 				} else if (CommonsUtil.mesmoValor(tipoDownload, "AF")) {
 					arquivo = ccbService.geraAFDinamica();
-					nomeDoc = "AF.docx";
+					nomeDoc = objetoCcb.getNumeroOperacao() + " - " + "AF.docx";
 					if (arquicoUnico)
 						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 					else
 						listaArquivos.put(nomeDoc, arquivo);
 				} else if (CommonsUtil.mesmoValor(tipoDownload, "NC")) {
 					arquivo = ccbService.geraNCDinamica();
-					nomeDoc = "NC.docx";
+					nomeDoc = objetoCcb.getNumeroOperacao() + " - " + "NC.docx";
 					if (arquicoUnico)
 						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 					else
 						listaArquivos.put(nomeDoc, arquivo);
 				} else if (CommonsUtil.mesmoValor(tipoDownload, "Carta Split")) {
 					arquivo = ccbService.geraCartaSplitDinamica();
-					nomeDoc = "CartaSplit.docx";
+					nomeDoc = objetoCcb.getNumeroOperacao() + " - " + "CartaSplit.docx";
 					if (arquicoUnico)
 						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 					else
 						listaArquivos.put(nomeDoc, arquivo);
 				} else if (CommonsUtil.mesmoValor(tipoDownload, "AnexoII")) {
 					arquivo = ccbService.geraAnexoII();
-					nomeDoc = "AnexoII.docx";
+					nomeDoc = objetoCcb.getNumeroOperacao() + " - " + "AnexoII.docx";
 					if (arquicoUnico)
 						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 					else
 						listaArquivos.put(nomeDoc, arquivo);
 				} else if (CommonsUtil.mesmoValor(tipoDownload, "CCI")) {
 					arquivo = ccbService.geraCci();
-					nomeDoc = "CCI.docx";
+					nomeDoc = objetoCcb.getNumeroOperacao() + " - " + "CCI.docx";
 					if (arquicoUnico)
 						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 					else
 						listaArquivos.put(nomeDoc, arquivo);
 				} else if (CommonsUtil.mesmoValor(tipoDownload, "Cessao")) {
 					arquivo = ccbService.geraCessao();
-					nomeDoc = "Cessao.docx";
+					nomeDoc = objetoCcb.getNumeroOperacao() + " - " + "Cessao.docx";
 					if (arquicoUnico)
 						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 					else
 						listaArquivos.put(nomeDoc, arquivo);
 				} else if (CommonsUtil.mesmoValor(tipoDownload, "InstrumentoEmissaoCCI")) {
 					arquivo = ccbService.geraInstrumentoEmissaoCCI();
-					nomeDoc = "InstrumentoEmissaoCCI.docx";
+					nomeDoc = objetoCcb.getNumeroOperacao() + " - " + "InstrumentoEmissaoCCI.docx";
 					if (arquicoUnico)
 						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 					else
 						listaArquivos.put(nomeDoc, arquivo);
 				} else if (CommonsUtil.mesmoValor(tipoDownload, "Endossos Em Preto")) {
 					arquivo = ccbService.geraEndossosEmPretoGalleria();
-					nomeDoc = "EndossosEmPretoGalleria.docx";
+					nomeDoc = objetoCcb.getNumeroOperacao() + " - " + "EndossosEmPretoGalleria.docx";
 					if (arquicoUnico)
 						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 					else
 						listaArquivos.put(nomeDoc, arquivo);
 				} else if (CommonsUtil.mesmoValor(tipoDownload, "Aquisicao/Emprestimo")) {
 					arquivo = ccbService.geraCciAquisicao();
-					nomeDoc = "AquisicaoCCI.docx";
+					nomeDoc = objetoCcb.getNumeroOperacao() + " - " + "AquisicaoCCI.docx";
 					if (arquicoUnico)
 						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 					else
 						listaArquivos.put(nomeDoc, arquivo);
 				} else if (CommonsUtil.mesmoValor(tipoDownload, "FinanciamentoCCI")) {
 					arquivo = ccbService.geraCciFinanciamento();
-					nomeDoc = "FinanciamentoCCI.docx";
+					nomeDoc = objetoCcb.getNumeroOperacao() + " - " + "FinanciamentoCCI.docx";
 					if (arquicoUnico)
 						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 					else
 						listaArquivos.put(nomeDoc, arquivo);
 				} else if (CommonsUtil.mesmoValor(tipoDownload, "Aditamento Carta de Desconto")) {
 					arquivo = ccbService.geraAditamentoCartaDeDesconto();
-					nomeDoc = "AditamentoCartaDesconto.docx";
+					nomeDoc = objetoCcb.getNumeroOperacao() + " - " + "AditamentoCartaDesconto.docx";
 					if (arquicoUnico)
 						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 					else
 						listaArquivos.put(nomeDoc, arquivo);
 				} else if (CommonsUtil.mesmoValor(tipoDownload, "Ficha PPE - PF")) {
 					arquivo = ccbService.geraFichaPPE();
-					nomeDoc = "Ficha PPE.pdf";
+					nomeDoc = objetoCcb.getNumeroOperacao() + " - " + "Ficha PPE.pdf";
 					if (arquicoUnico)
 						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 					else
 						listaArquivos.put(nomeDoc, arquivo);
 				} else if (CommonsUtil.mesmoValor(tipoDownload, "Ficha PLD e FT - PJ")) {
 					arquivo = ccbService.geraFichaPLDeFT();
-					nomeDoc = "Ficha PLD e FT.pdf";
+					nomeDoc = objetoCcb.getNumeroOperacao() + " - " + "Ficha PLD e FT.pdf";
 					if (arquicoUnico)
 						ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 					else
@@ -1742,14 +1742,14 @@ public class CcbMB {
 			    		if(participante.getSocios().size() > 0){
 			    			for(CcbParticipantes socio : participante.getSocios()) {
 			    				arquivo = ccbService.geraDeclaracaoNaoUniaoEstavel(socio);
-				    			nomeDoc = socio.getPessoa().getNome() + "_" + "DeclaracaoNaoUniaoEstavel.docx";
+				    			nomeDoc = objetoCcb.getNumeroOperacao() + " - " + socio.getPessoa().getNome() + "_" + "DeclaracaoNaoUniaoEstavel.docx";
 					    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 					    		listaArquivos.put(nomeDoc, arquivo);
 			    			}
 			    		}
 			    		if(!participante.isEmpresa() && !participante.isUniaoEstavel()) {
 			    			arquivo = ccbService.geraDeclaracaoNaoUniaoEstavel(participante);
-			    			nomeDoc = participante.getPessoa().getNome() + "_" + "DeclaracaoNaoUniaoEstavel.docx";
+			    			nomeDoc = objetoCcb.getNumeroOperacao() + " - " + participante.getPessoa().getNome() + "_" + "DeclaracaoNaoUniaoEstavel.docx";
 				    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 				    		listaArquivos.put(nomeDoc, arquivo);
 			    		}
@@ -1759,14 +1759,14 @@ public class CcbMB {
 			    		if(participante.getSocios().size() > 0){
 			    			for(CcbParticipantes socio : participante.getSocios()) {
 			    				arquivo = ccbService.geraDeclaracaoUniaoEstavel(socio);
-				    			nomeDoc = socio.getPessoa().getNome() + "_" + "DeclaracaoUniaoEstavel.docx";
+				    			nomeDoc = objetoCcb.getNumeroOperacao() + " - " + socio.getPessoa().getNome() + "_" + "DeclaracaoUniaoEstavel.docx";
 					    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 					    		listaArquivos.put(nomeDoc, arquivo);
 			    			}
 			    		}
 			    		if(!participante.isEmpresa() && participante.isUniaoEstavel()) {
 			    			arquivo = ccbService.geraDeclaracaoUniaoEstavel(participante);
-			    			nomeDoc = participante.getPessoa().getNome() + "_" + "DeclaracaoUniaoEstavel.docx";
+			    			nomeDoc = objetoCcb.getNumeroOperacao() + " - " + participante.getPessoa().getNome() + "_" + "DeclaracaoUniaoEstavel.docx";
 				    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc); 	
 				    		listaArquivos.put(nomeDoc, arquivo);
 			    		}
@@ -1776,13 +1776,13 @@ public class CcbMB {
 			    		if(participante.getSocios().size() > 0){
 			    			for(CcbParticipantes socio : participante.getSocios()) {
 			    				arquivo = ccbService.geraDeclaracaoDestinacaoRecursos(socio);
-				    			nomeDoc = socio.getPessoa().getNome() + "_" + "DeclaracaoDestinacaoRecursos.docx";
+				    			nomeDoc = objetoCcb.getNumeroOperacao() + " - " + socio.getPessoa().getNome() + "_" + "DeclaracaoDestinacaoRecursos.docx";
 					    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 					    		listaArquivos.put(nomeDoc, arquivo);
 			    			}
 			    		}
 		    			arquivo = ccbService.geraDeclaracaoDestinacaoRecursos(participante);
-		    			nomeDoc = participante.getPessoa().getNome() + "_" +  "DeclaracaoDestinacaoRecursos.docx";
+		    			nomeDoc = objetoCcb.getNumeroOperacao() + " - " + participante.getPessoa().getNome() + "_" +  "DeclaracaoDestinacaoRecursos.docx";
 			    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 			    		listaArquivos.put(nomeDoc, arquivo);
 			    	}
@@ -1791,13 +1791,13 @@ public class CcbMB {
 			    		if(participante.getSocios().size() > 0){
 			    			for(CcbParticipantes socio : participante.getSocios()) {
 			    				arquivo = ccbService.geraTermoResponsabilidadeAnuenciaPaju(socio);
-				    			nomeDoc = socio.getPessoa().getNome() + "_" + "TermoPaju.docx";
+				    			nomeDoc = objetoCcb.getNumeroOperacao() + " - " + socio.getPessoa().getNome() + "_" + "TermoPaju.docx";
 					    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 					    		listaArquivos.put(nomeDoc, arquivo);
 			    			}
 			    		}
 			    		arquivo = ccbService.geraTermoResponsabilidadeAnuenciaPaju(participante);
-			    		nomeDoc = participante.getPessoa().getNome() + "_" + "TermoPaju.docx";
+			    		nomeDoc = objetoCcb.getNumeroOperacao() + " - " + participante.getPessoa().getNome() + "_" + "TermoPaju.docx";
 			    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc); 	
 			    		listaArquivos.put(nomeDoc, arquivo);
 			    	}
@@ -1806,13 +1806,13 @@ public class CcbMB {
 			    		if(participante.getSocios().size() > 0){
 			    			for(CcbParticipantes socio : participante.getSocios()) {
 			    				arquivo = ccbService.geraTermoPajuRJ_PR(socio);
-				    			nomeDoc = socio.getPessoa().getNome() + "_" + "TermoPaju.docx";
+				    			nomeDoc = objetoCcb.getNumeroOperacao() + " - " + socio.getPessoa().getNome() + "_" + "TermoPaju.docx";
 					    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 					    		listaArquivos.put(nomeDoc, arquivo);
 			    			}
 			    		}
 			    		arquivo = ccbService.geraTermoPajuRJ_PR(participante);
-			    		nomeDoc = participante.getPessoa().getNome() + "_" + "TermoPaju.docx";
+			    		nomeDoc = objetoCcb.getNumeroOperacao() + " - " + participante.getPessoa().getNome() + "_" + "TermoPaju.docx";
 			    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc); 	
 			    		listaArquivos.put(nomeDoc, arquivo);
 			    	}
@@ -1821,14 +1821,14 @@ public class CcbMB {
 			    		if(participante.getSocios().size() > 0){
 			    			for(CcbParticipantes socio : participante.getSocios()) {
 			    				arquivo = ccbService.geraTermoIncomunicabilidadeImovel(socio);
-				    			nomeDoc = socio.getPessoa().getNome() + "_" + "TermoPaju.docx";
+				    			nomeDoc = objetoCcb.getNumeroOperacao() + " - " + socio.getPessoa().getNome() + "_" + "TermoPaju.docx";
 					    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 					    		listaArquivos.put(nomeDoc, arquivo);
 			    			}
 			    		}
 			    		if(!participante.isEmpresa() && !CommonsUtil.semValor(participante.getPessoa().getNomeConjuge())) {
 				    		arquivo = ccbService.geraTermoIncomunicabilidadeImovel(participante);
-				    		nomeDoc = participante.getPessoa().getNome() + "_" + "TermoPaju.docx";
+				    		nomeDoc = objetoCcb.getNumeroOperacao() + " - " + participante.getPessoa().getNome() + "_" + "TermoPaju.docx";
 				    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc); 	
 				    		listaArquivos.put(nomeDoc, arquivo);
 			    		}
@@ -1840,7 +1840,7 @@ public class CcbMB {
 			    				if(socio.getPessoa().getListAverbacao().size() <= 0) 
 			    					continue;
 			    				arquivo = ccbService.geraAverbacao(socio);
-				    			nomeDoc = socio.getPessoa().getNome() + "_" + "Averbacao.docx";
+				    			nomeDoc = objetoCcb.getNumeroOperacao() + " - " + socio.getPessoa().getNome() + "_" + "Averbacao.docx";
 					    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 					    		listaArquivos.put(nomeDoc, arquivo);
 			    			}
@@ -1848,7 +1848,7 @@ public class CcbMB {
 			    		if(participante.getPessoa().getListAverbacao().size() <= 0) 
 	    					continue;
 			    		arquivo = ccbService.geraAverbacao(participante);
-			    		nomeDoc = participante.getPessoa().getNome() + "_" + "Averbacao.docx";
+			    		nomeDoc = objetoCcb.getNumeroOperacao() + " - " + participante.getPessoa().getNome() + "_" + "Averbacao.docx";
 			    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc); 	
 			    		listaArquivos.put(nomeDoc, arquivo);
 			    	}
@@ -1857,13 +1857,13 @@ public class CcbMB {
 			    		if(participante.getSocios().size() > 0){
 			    			for(CcbParticipantes socio : participante.getSocios()) {
 			    				arquivo = ccbService.geraFichaCadastroNova(socio.getPessoa());
-				    			nomeDoc = socio.getPessoa().getNome() + "_" + "Ficha Cadastro.pdf";
+				    			nomeDoc = objetoCcb.getNumeroOperacao() + " - " + socio.getPessoa().getNome() + "_" + "Ficha Cadastro.pdf";
 					    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 					    		listaArquivos.put(nomeDoc, arquivo);
 			    			}
 			    		}
 			    		arquivo = ccbService.geraFichaCadastroNova(participante.getPessoa());
-			    		nomeDoc = participante.getPessoa().getNome() + "_" + "Ficha Cadastro.pdf";
+			    		nomeDoc = objetoCcb.getNumeroOperacao() + " - " + participante.getPessoa().getNome() + "_" + "Ficha Cadastro.pdf";
 			    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc); 	
 			    		listaArquivos.put(nomeDoc, arquivo);
 			    	}
@@ -1872,13 +1872,13 @@ public class CcbMB {
 			    		if(participante.getSocios().size() > 0){
 			    			for(CcbParticipantes socio : participante.getSocios()) {
 			    				arquivo = ccbService.geraFichaCadastro(socio.getPessoa());
-				    			nomeDoc = socio.getPessoa().getNome() + "_" + "Ficha Cadastro.pdf";
+				    			nomeDoc = objetoCcb.getNumeroOperacao() + " - " + socio.getPessoa().getNome() + "_" + "Ficha Cadastro.pdf";
 					    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
 					    		listaArquivos.put(nomeDoc, arquivo);
 			    			}
 			    		}
 			    		arquivo = ccbService.geraFichaCadastro(participante.getPessoa());
-			    		nomeDoc = participante.getPessoa().getNome() + "_" + "Ficha Cadastro.pdf";
+			    		nomeDoc = objetoCcb.getNumeroOperacao() + " - " + participante.getPessoa().getNome() + "_" + "Ficha Cadastro.pdf";
 			    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc); 	
 			    		listaArquivos.put(nomeDoc, arquivo);
 			    	}
