@@ -5860,6 +5860,24 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setCcbProntaData(DateUtil.gerarDataHoje());
 				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getCcbProntaData());
 				this.objetoContratoCobranca.setCcbProntaUsuario(getNomeUsuarioLogado());
+
+				try {
+					CcbDao ccbDao = new CcbDao();
+					CcbContrato ccbContrato = ccbDao.ConsultaCcbPorContrato(this.objetoContratoCobranca);
+					if (!CommonsUtil.semValor(ccbContrato)
+							&& CommonsUtil.semValor(this.objetoContratoCobranca.getEmpresaImovel()))
+						if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoLaudo(), "Compass"))
+							this.objetoContratoCobranca.setEmpresaImovel("Compasso");
+						else
+							this.objetoContratoCobranca.setEmpresaImovel("Galache");
+
+					if (!CommonsUtil.semValor(this.objetoContratoCobranca.getImovel())
+							&& CommonsUtil.semValor(this.objetoContratoCobranca.getTipoImovel()))
+						this.objetoContratoCobranca.setTipoImovel(this.objetoContratoCobranca.getImovel().getTipo());
+
+				} catch (Exception e) {
+					System.out.print(e.getMessage());
+				}
 			}
 		}
 

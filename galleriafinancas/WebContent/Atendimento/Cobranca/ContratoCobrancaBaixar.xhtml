@@ -2134,6 +2134,7 @@
 
 						<f:facet name="header">
 							<p:commandButton actionListener="#{contratoCobrancaMB.populaVlrBoletoKobana()}" oncomplete="PF('bpGerarBoletoKobanaPARCELASDialog').show();"
+							    rendered="#{contratoCobrancaMB.usuarioLogado.userCobranca}"
 								icon="ui-icon-video" title="Boleto Kobana PARCELAS" value="Boleto Kobana PARCELAS"
 								update=":formBpGerarBoletoKobanaPARCELAS">
 							</p:commandButton>
@@ -2142,13 +2143,14 @@
 						<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
 
 						<p:column style="width:150px" headerText="Ações"
+							rendered="#{contratoCobrancaMB.usuarioLogado.userCobranca}"
 							styleClass="colunaResponsivaRelFinanceiro">
 							<shiro:hasAnyRoles name="ROOT">
 								<p:commandButton onclick="PF('baixaParcialDialog').show();"
 									value="Baixar Parcela"
 									title="Baixar Parcela" icon="ui-icon-transferthick-e-w"
 									update=":formBaixaParcial" 
-									rendered="#{!parcelas.parcelaPaga}">
+									rendered="#{contratoCobrancaMB.usuarioLogado.userCobranca and !parcelas.parcelaPaga}">
 									<f:setPropertyActionListener
 										target="#{contratoCobrancaMB.bpContratoCobrancaDetalhesCustom}"
 										value="#{parcelas}" />
@@ -2164,7 +2166,7 @@
 									value="Baixar Galleria|Custas"
 									title="Baixar Galleria|Custas" icon="ui-icon-transferthick-e-w"
 									update=":formBaixaParcialGalleria" 
-									rendered="#{!parcelas.parcelaPaga}">
+									rendered="#{contratoCobrancaMB.usuarioLogado.userCobranca and !parcelas.parcelaPaga}">
 									<f:setPropertyActionListener
 										target="#{contratoCobrancaMB.bpContratoCobrancaDetalhesCustom}"
 										value="#{parcelas}" />
@@ -2181,7 +2183,7 @@
 							<p:commandButton onclick="PF('bpGerarBoletoKobanaDialog').show();"
 								icon="ui-icon-video" title="Boleto Kobana" value="Boleto Kobana"
 								update=":formBpGerarBoletoKobana"
-								rendered="#{!parcelas.parcelaPaga}">
+								rendered="{#contratoCobrancaMB.usuarioLogado.userCobranca and !parcelas.parcelaPaga}">
 								<f:setPropertyActionListener
 									target="#{contratoCobrancaMB.bpContratoCobrancaDetalhesCustom}"
 									value="#{parcelas}" />
@@ -2306,6 +2308,7 @@
 							</h:outputText>
 						</p:column>
 						<p:column style="text-align: center;width: 100px;"
+							rendered="#{contratoCobrancaMB.usuarioLogado.userCobranca}"
 							headerText="Kobana">
 							<ui:fragment rendered="#{parcelas.urlBoletoKonana ne null}">
 								<h:outputLink value="#{parcelas.urlBoletoKonana}" target="_blank" styleClass="botaoBoletoKobana">#{parcelas.urlBoletoKonana}</h:outputLink>
