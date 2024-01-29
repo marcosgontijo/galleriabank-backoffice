@@ -673,20 +673,20 @@ public class ContractService {
 									: this.objetoContratoCobranca.isNotaFiscalEmitida());
 							
 							this.objetoContratoCobranca
-									.setNotaFiscalEmitidaUsuario(contratoAPP.has("usuarioNotaFiscalEmitida") ? contratoAPP.getString("usuarioNotaFiscalEmitida")
+									.setNotaFiscalEmitidaUsuario(contratoAPP.has("notaFiscalEmitidaUsuario") ? contratoAPP.getString("notaFiscalEmitidaUsuario")
 									: this.objetoContratoCobranca.getNotaFiscalEmitidaUsuario());
 							
-							if (contratoAPP.has("dataNotaFiscalEmitida")) {
-								Date dateNotaFiscalEmitida;
+							if (contratoAPP.has("notaFiscalEmitidaData")) {
+								Date notaFiscalEmitidaData;
 								try {
-									dateNotaFiscalEmitida = dataPadraoSql
-											.parse(contratoAPP.getString("dataNotaFiscalEmitida"));
+									notaFiscalEmitidaData = dataPadraoSql
+											.parse(contratoAPP.getString("notaFiscalEmitidaData"));
 								} catch (Exception e) {
-									dateNotaFiscalEmitida = CommonsUtil.dateValue(
-											contratoAPP.getString("dataNotaFiscalEmitida"), "yyyy-MM-dd HH:mm");
+									notaFiscalEmitidaData = CommonsUtil.dateValue(
+											contratoAPP.getString("notaFiscalEmitidaData"), "yyyy-MM-dd HH:mm");
 								}
 		
-								this.objetoContratoCobranca.setNotaFiscalEmitidaData(dateNotaFiscalEmitida);
+								this.objetoContratoCobranca.setNotaFiscalEmitidaData(notaFiscalEmitidaData);
 							}
 							
 							this.objetoContratoCobranca
@@ -694,17 +694,17 @@ public class ContractService {
 									: this.objetoContratoCobranca.isNotaFiscalPaga());
 					
 							this.objetoContratoCobranca
-									.setNotaFiscalPagaUsuario(contratoAPP.has("usuarioNotaFiscalPaga") ? contratoAPP.getString("usuarioNotaFiscalPaga")
+									.setNotaFiscalPagaUsuario(contratoAPP.has("notaFiscalPagaUsuario") ? contratoAPP.getString("notaFiscalPagaUsuario")
 									: this.objetoContratoCobranca.getNotaFiscalPagaUsuario());
 							
-							if (contratoAPP.has("dataNotaFiscalPaga")) {
+							if (contratoAPP.has("notaFiscalPagaData")) {
 								Date dateNotaFiscalPaga;
 								try {
 									dateNotaFiscalPaga = dataPadraoSql
-											.parse(contratoAPP.getString("dataNotaFiscalPaga"));
+											.parse(contratoAPP.getString("notaFiscalPagaData"));
 								} catch (Exception e) {
 									dateNotaFiscalPaga = CommonsUtil.dateValue(
-											contratoAPP.getString("dataNotaFiscalPaga"), "yyyy-MM-dd HH:mm");
+											contratoAPP.getString("notaFiscalPagaData"), "yyyy-MM-dd HH:mm");
 								}
 		
 								this.objetoContratoCobranca.setNotaFiscalEmitidaData(dateNotaFiscalPaga);

@@ -2362,33 +2362,33 @@
 		</property>
 		
 		<property name="notaFiscalEmitidaData" type="java.util.Date">
-			<column name="dataNotaFiscalEmitida" />
+			<column name="notaFiscalEmitidaData" />
 		</property>
 		<property name="notaFiscalEmitida" type="boolean">
 			<column name="notaFiscalEmitida" not-null="true" default="false"/>
 		</property>	
 		<property name="notaFiscalEmitidaUsuario" type="java.lang.String">
-			<column name="usuarioNotaFiscalEmitida" />
+			<column name="notaFiscalEmitidaUsuario" />
 		</property>
 		
 		<property name="notaFiscalPagaData" type="java.util.Date">
-			<column name="dataNotaFiscalPaga" />
+			<column name="notaFiscalPagaData" />
 		</property>
 		<property name="notaFiscalPaga" type="boolean">
 			<column name="notaFiscalPaga" not-null="true" default="false"/>
 		</property>	
 		<property name="notaFiscalPagaUsuario" type="java.lang.String">
-			<column name="usuarioNotaFiscalPaga" />
+			<column name="notaFiscalPagaUsuario" />
 		</property>
 		
 		<property name="notaFiscalAgendadaData" type="java.util.Date">
-			<column name="dataNotaFiscalAgendada" />
+			<column name="notaFiscalAgendadaData" />
 		</property>
 		<property name="notaFiscalAgendada" type="boolean">
 			<column name="notaFiscalAgendada" not-null="true" default="false"/>
 		</property>	
 		<property name="notaFiscalAgendadaUsuario" type="java.lang.String">
-			<column name="usuarioNotaFiscalAgendada" />
+			<column name="notaFiscalAgendadaUsuario" />
 		</property>
 		
 	</class>

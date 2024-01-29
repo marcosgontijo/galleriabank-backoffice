@@ -3993,6 +3993,8 @@ public class ContratoCobrancaMB {
 				despesaNotaFiscal.setFormaTransferencia("PIX");
 				despesaNotaFiscal.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
 				despesaNotaFiscal.setResponsavel(this.objetoContratoCobranca.getResponsavel());
+				
+//				calcular valor nota
 
 				if (!CommonsUtil.semValor(this.objetoContratoCobranca.getResponsavel().getPix())) {
 					despesaNotaFiscal.setPix(this.objetoContratoCobranca.getResponsavel().getPix());
