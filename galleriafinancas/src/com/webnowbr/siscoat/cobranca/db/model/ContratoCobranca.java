@@ -517,6 +517,11 @@ public class ContratoCobranca implements Serializable {
 	private Date notaFiscalEmitidaData;
 	private boolean notaFiscalEmitida;
 	private String notaFiscalEmitidaUsuario;
+
+	private Date notaFiscalAgendadaData;
+	private boolean notaFiscalAgendada;
+	private String notaFiscalAgendadaUsuario;
+
 	
 	private Date notaFiscalPagaData;
 	private boolean notaFiscalPaga;
@@ -7730,6 +7735,30 @@ public class ContratoCobranca implements Serializable {
 		this.notaFiscalPagaUsuario = notaFiscalPagaUsuario;
 	}
 	
+
+	public Date getNotaFiscalAgendadaData() {
+		return notaFiscalAgendadaData;
+	}
+
+	public void setNotaFiscalAgendadaData(Date notaFiscalAgendadaData) {
+		this.notaFiscalAgendadaData = notaFiscalAgendadaData;
+	}
+
+	public boolean isNotaFiscalAgendada() {
+		return notaFiscalAgendada;
+	}
+
+	public void setNotaFiscalAgendada(boolean notaFiscalAgendada) {
+		this.notaFiscalAgendada = notaFiscalAgendada;
+	}
+
+	public String getNotaFiscalAgendadaUsuario() {
+		return notaFiscalAgendadaUsuario;
+	}
+
+	public void setNotaFiscalAgendadaUsuario(String notaFiscalAgendadaUsuario) {
+		this.notaFiscalAgendadaUsuario = notaFiscalAgendadaUsuario;
+	}
 
 	public boolean isEnviadoCartorio() {
 		return enviadoCartorio;

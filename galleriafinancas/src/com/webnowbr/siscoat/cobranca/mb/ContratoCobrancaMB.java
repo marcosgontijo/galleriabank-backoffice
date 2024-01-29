@@ -3965,6 +3965,57 @@ public class ContratoCobrancaMB {
 
 			updateCheckList();
 			this.objetoContratoCobranca.populaStatusEsteira(getUsuarioLogadoNull());
+			
+			//gerar contas stark bank
+			this.objetoContratoCobranca.setValorNotaFiscal(CommonsUtil.bigDecimalValue(10000));
+			
+
+			ContasPagarDao contasPagarDao = new ContasPagarDao();
+			
+			List<ContasPagar> listDespesaNotaFiscal = contasPagarDao.buscarDespesa("Pagamento nota fiscal", this.objetoContratoCobranca.getNumeroContrato());
+			if (CommonsUtil.semValor(listDespesaNotaFiscal)) {
+				ContasPagar despesaNotaFiscal;
+
+				if (!CommonsUtil.semValor(listDespesaNotaFiscal) && listDespesaNotaFiscal.size() == 1)
+					despesaNotaFiscal = listDespesaNotaFiscal.get(0);
+				else
+					despesaNotaFiscal = new ContasPagar();
+
+				despesaNotaFiscal.setDescricao("Pagamento nota fiscal");
+				despesaNotaFiscal.setValor(this.objetoContratoCobranca.getValorNotaFiscal());
+				
+				int diaSemanaHoje = this.objetoContratoCobranca.getNotaFiscalEmitidaData().getDay();
+//				achando a data da proxima terca
+				int diasVencimento =  7 - (diaSemanaHoje - 2);				
+				despesaNotaFiscal.setDataVencimento ( DateUtil.adicionarDias(this.objetoContratoCobranca.getNotaFiscalEmitidaData(), diasVencimento) );
+				despesaNotaFiscal.setTipoDespesa("C");
+				despesaNotaFiscal.setContrato(this.objetoContratoCobranca);
+				despesaNotaFiscal.setFormaTransferencia("PIX");
+				despesaNotaFiscal.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
+				despesaNotaFiscal.setResponsavel(this.objetoContratoCobranca.getResponsavel());
+				
+//				calcular valor nota
+
+				if (!CommonsUtil.semValor(this.objetoContratoCobranca.getResponsavel().getPix())) {
+					despesaNotaFiscal.setPix(this.objetoContratoCobranca.getResponsavel().getPix());
+				} else {
+					despesaNotaFiscal.setNomeTed(this.objetoContratoCobranca.getResponsavel().getNomeCC());
+					if (!CommonsUtil.semValor(this.objetoContratoCobranca.getResponsavel().getCpfCC()))
+						despesaNotaFiscal.setCpfTed(this.objetoContratoCobranca.getResponsavel().getCpfCC());
+					else
+						despesaNotaFiscal.setCpfTed(this.objetoContratoCobranca.getResponsavel().getCnpjCC());
+					despesaNotaFiscal.setBancoTed(this.objetoContratoCobranca.getResponsavel().getCodigoBanco());
+					despesaNotaFiscal.setAgenciaTed(this.objetoContratoCobranca.getResponsavel().getAgencia());
+					despesaNotaFiscal.setContaTed(this.objetoContratoCobranca.getResponsavel().getConta());
+					despesaNotaFiscal.setDigitoContaTed(this.objetoContratoCobranca.getResponsavel().getContaDigito());
+
+				}
+
+				if (CommonsUtil.semValor(despesaNotaFiscal.getId()))
+					contasPagarDao.create(despesaNotaFiscal);
+				else
+					contasPagarDao.merge(despesaNotaFiscal);
+			}
 			contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
 			// verifica se o contrato for aprovado, manda um tipo de email..
@@ -10393,12 +10444,16 @@ public class ContratoCobrancaMB {
 		this.indexStepsStatusContrato = 0;
 
 		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getStatus(), "Aprovado")) {
-			if (!this.objetoContratoCobranca.isOperacaoPaga()|| this.objetoContratoCobranca.isPendenciaPagamento()) {
+			
+			
+			if ( this.objetoContratoCobranca.isPendenciaPagamento()) {
 				this.indexStepsStatusContrato = 14;
 			} else if (this.objetoContratoCobranca.isOperacaoPaga() && !this.objetoContratoCobranca.isNotaFiscalEmitida()) {
 				this.indexStepsStatusContrato = 15;
-			} else if (this.objetoContratoCobranca.isNotaFiscalEmitida() && !this.objetoContratoCobranca.isNotaFiscalPaga()) {
+			} else if (this.objetoContratoCobranca.isOperacaoPaga() && this.objetoContratoCobranca.isNotaFiscalEmitida() && !this.objetoContratoCobranca.isNotaFiscalAgendada()) {
 				this.indexStepsStatusContrato = 16;
+			} else if (this.objetoContratoCobranca.isOperacaoPaga() && this.objetoContratoCobranca.isNotaFiscalEmitida() && !this.objetoContratoCobranca.isNotaFiscalPaga()) {
+				this.indexStepsStatusContrato = 17;
 			}
 		} else if (!this.objetoContratoCobranca.isInicioAnalise()) {
 			this.indexStepsStatusContrato = 0;
