@@ -392,7 +392,7 @@ public class MenuItemDao extends HibernateDao<MenuItem, Long> {
 					StringBuilder query = new StringBuilder();
 
 					query.append("select id from infra.menuitem \r\n"
-							+ "	where tipo  =  '" + parametro + "'");
+							+ "	where tipo  =  '" + parametro + "' order by ordem");
 					
 					ps = connection.prepareStatement(query.toString());
 					
