@@ -1982,11 +1982,14 @@ public class CcbMB {
 		BigDecimal custoEmissaoValor = SiscoatConstants.CUSTO_EMISSAO_MINIMO;
 		
 		final BigDecimal custoEmissaoPercentual;
-		if (objetoCcb.isUsarNovoCustoEmissao()) {
-			custoEmissaoPercentual = SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL_BRUTO_NOVO;
-		} else {
-			custoEmissaoPercentual = SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL_BRUTO;
-		}
+		if (CommonsUtil.semValor(objetoCcb.getPercentualCustoEmissao())) {
+			if (objetoCcb.isUsarNovoCustoEmissao()) {
+				objetoCcb.setPercentualCustoEmissao(SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL_BRUTO_NOVO);
+			} else {
+				objetoCcb.setPercentualCustoEmissao(SiscoatConstants.CUSTO_EMISSAO_PERCENTUAL_BRUTO);
+			}
+		}		
+		custoEmissaoPercentual = objetoCcb.getPercentualCustoEmissao();
 
 		if (objetoCcb.getValorCredito().multiply(custoEmissaoPercentual.divide(BigDecimal.valueOf(100)))
 				.compareTo(SiscoatConstants.CUSTO_EMISSAO_MINIMO) > 0) {
