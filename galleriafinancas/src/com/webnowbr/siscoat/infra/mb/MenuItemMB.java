@@ -10,14 +10,12 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
 
 import org.primefaces.model.menu.MenuModel;
 
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.infra.db.dao.MenuFavoritoDao;
 import com.webnowbr.siscoat.infra.db.dao.MenuItemDao;
-import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.IDmenus;
 import com.webnowbr.siscoat.infra.db.model.MenuFavorito;
 import com.webnowbr.siscoat.infra.db.model.MenuItem;
@@ -82,8 +80,14 @@ public class MenuItemMB {
 	public void carregaListaMenuString() {
 		menuConsultado = new ArrayList<>();
 		MenuItemDao dao = new MenuItemDao();
+		if(CommonsUtil.mesmoValor(parametroMenuConsultar , "tipo")) {
+			menuConsultado = dao.ConsultaitemConsultadoItem(parametroMenuConsultar, parametroConsultaTabela);
+		}
+		else {
 		 menuConsultado = dao.ConsultaitemConsultadoString(parametroMenuConsultar, parametroConsultaTabela);
-	}
+		}
+		}
+		
 	public void carregaListaMenuNumero() {
 		menuConsultado = new ArrayList<>();
 		MenuItemDao dao = new MenuItemDao();
@@ -175,10 +179,10 @@ public class MenuItemMB {
 		List<MenuItem> listaOrdemMaior;
 		MenuItemDao menuDao = new MenuItemDao();
 		MenuItem menuatual = new MenuItem();
-		if (objetoMenuItem.getItemPai().getId() != null) {
-			objetoMenuItem.setItemPai(menuDao.findById(objetoMenuItem.getItemPai().getId()));
-		} else {
+		if (objetoMenuItem.getItemPai() == null || objetoMenuItem.getItemPai().getId() == null ) {
 			objetoMenuItem.setItemPai(null);
+		} else {
+			objetoMenuItem.setItemPai(menuDao.findById(objetoMenuItem.getItemPai().getId()));
 		}
 		if (objetoMenuItem.getId() == null || objetoMenuItem.getId() <= 0) {
 			listaOrdemMaior = menuDao.ConsultaItemMaiorOuIgual(objetoMenuItem.getItemPai(), objetoMenuItem.getOrdem());
@@ -187,7 +191,20 @@ public class MenuItemMB {
 				menuDao.merge(menuOrdem);
 			}
 			menuDao.create(objetoMenuItem);
-		} else {
+		} else if(CommonsUtil.mesmoValor(objetoMenuItem.getTipo(), "Módulo")) {
+			listaOrdemMaior = menuDao.ConsultaModuloMaiorOuIgual(objetoMenuItem.getOrdem());
+			menuatual = menuDao.findById(objetoMenuItem.getId());
+			
+			for(MenuItem menuOrdem : listaOrdemMaior) {
+				if(objetoMenuItem.getOrdem() != menuatual.getOrdem()) {
+				menuOrdem.setOrdem(menuOrdem.getOrdem() + 1);
+				menuDao.merge(menuOrdem);
+				}
+			}
+			menuDao.merge(objetoMenuItem);
+		}
+		else {
+			
 			listaOrdemMaior = menuDao.ConsultaItemMaiorOuIgual(objetoMenuItem.getItemPai(), objetoMenuItem.getOrdem());
 			menuatual = menuDao.findById(objetoMenuItem.getId());
 			
@@ -241,7 +258,6 @@ public class MenuItemMB {
 		MenuFavorito menuFavorito = new MenuFavorito();
 		MenuItemDao menuItemDao = new MenuItemDao();
 		MenuFavoritoDao favoritoDao = new MenuFavoritoDao();
-		UserDao userDao = new UserDao();
 		MenuItem menu = menuItemDao.findById(id);
 		menuFavorito.setFavoritado(true);
 		menuFavorito.setMenuItemFavorito(menu);
@@ -269,7 +285,6 @@ public class MenuItemMB {
 	}
 
 	public void desfavoritar(Long id) {
-		MenuFavorito menuFavorito = new MenuFavorito();
 		MenuItemDao menuItemDao = new MenuItemDao();
 		MenuFavoritoDao favoritoDao = new MenuFavoritoDao();
 		MenuItem menu = menuItemDao.findById(id);
