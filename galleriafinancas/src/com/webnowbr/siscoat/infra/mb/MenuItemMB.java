@@ -82,8 +82,14 @@ public class MenuItemMB {
 	public void carregaListaMenuString() {
 		menuConsultado = new ArrayList<>();
 		MenuItemDao dao = new MenuItemDao();
+		if(CommonsUtil.mesmoValor(parametroMenuConsultar , "tipo")) {
+			menuConsultado = dao.ConsultaitemConsultadoItem(parametroMenuConsultar, parametroConsultaTabela);
+		}
+		else {
 		 menuConsultado = dao.ConsultaitemConsultadoString(parametroMenuConsultar, parametroConsultaTabela);
-	}
+		}
+		}
+		
 	public void carregaListaMenuNumero() {
 		menuConsultado = new ArrayList<>();
 		MenuItemDao dao = new MenuItemDao();
