@@ -61,8 +61,10 @@ public class CredlocalizaService {
 			switch (cpfCnpj.length()) {
 				case 11:
 					tipo = "cpf";
+					break;
 				case 14:
 					tipo = "cnpj";
+					break;
 			}
 			if (CommonsUtil.semValor(tipo)) 
 				return null;

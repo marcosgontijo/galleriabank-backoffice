@@ -769,11 +769,12 @@ public class CcbMB {
 	public void atualizaValorTransferencia() {
 		ContasPagar despesaTransferencia = buscarDespesa("Transferência", objetoCcb.getObjetoContratoCobranca().getNumeroContrato());
 		ContasPagarDao contasPagarDao = new ContasPagarDao();
-		if(!CommonsUtil.mesmoValor( objetoCcb.getObjetoContratoCobranca().getCobrarComissaoCliente(), "Sim")) 
+		if(!CommonsUtil.mesmoValor(objetoCcb.getObjetoContratoCobranca().getCobrarComissaoCliente(), "Sim")) 
 			return;		
-		if(CommonsUtil.mesmoValor( objetoCcb.getObjetoContratoCobranca().getTipoCobrarComissaoCliente(), "Real")) 
+		if(CommonsUtil.mesmoValor(objetoCcb.getObjetoContratoCobranca().getTipoCobrarComissaoCliente(), "Real")) 
 			return;		
-		if(CommonsUtil.mesmoValor( objetoCcb.getObjetoContratoCobranca().getBrutoLiquidoCobrarComissaoCliente(), "Bruto")) 
+		if(CommonsUtil.mesmoValor(objetoCcb.getObjetoContratoCobranca().getBrutoLiquidoCobrarComissaoCliente(), "Bruto") && 
+				CommonsUtil.mesmoValor(objetoCcb.getObjetoContratoCobranca().getTipoValorComite(), "bruto")) 
 			return;
 		
 		BigDecimal valorTranferencia = BigDecimal.ZERO;
@@ -782,9 +783,16 @@ public class CcbMB {
 			comissao =  objetoCcb.getObjetoContratoCobranca().getComissaoClientePorcentagem();
 			comissao = comissao.divide(BigDecimal.valueOf(100), MathContext.DECIMAL128);
 		}
-		if(CommonsUtil.semValor(objetoCcb.getValorLiquidoCredito())) 
-			return;
-		valorTranferencia = (objetoCcb.getValorLiquidoCredito().add(objetoCcb.getIntermediacaoValor())).multiply(comissao);
+		if(CommonsUtil.mesmoValor(objetoCcb.getObjetoContratoCobranca().getBrutoLiquidoCobrarComissaoCliente(), "Liquido")){
+			if(CommonsUtil.semValor(objetoCcb.getValorLiquidoCredito())) 
+				return;
+			valorTranferencia = (objetoCcb.getValorLiquidoCredito().add(objetoCcb.getIntermediacaoValor())).multiply(comissao);
+		} else if (CommonsUtil.mesmoValor(objetoCcb.getObjetoContratoCobranca().getBrutoLiquidoCobrarComissaoCliente(), "Bruto") && 
+				CommonsUtil.mesmoValor(objetoCcb.getObjetoContratoCobranca().getTipoValorComite(), "liquido")) {
+			if(CommonsUtil.semValor(objetoCcb.getValorCredito())) 
+				return;
+			valorTranferencia = objetoCcb.getValorCredito().multiply(comissao);
+		}
 		
 		if(CommonsUtil.mesmoValor(valorTranferencia, objetoCcb.getIntermediacaoValor())) 
 			return;
@@ -848,8 +856,12 @@ public class CcbMB {
 					comissao = comissao.divide(BigDecimal.valueOf(100), MathContext.DECIMAL128);
 				}
 				
-				if(CommonsUtil.mesmoValor(objetoContratoCobranca.getBrutoLiquidoCobrarComissaoCliente(), "Bruto")) {
+				if(CommonsUtil.mesmoValor(objetoContratoCobranca.getBrutoLiquidoCobrarComissaoCliente(), "Bruto") &&
+						CommonsUtil.mesmoValor(objetoContratoCobranca.getTipoValorComite(), "bruto")) {
 					valorTranferencia = objetoContratoCobranca.getValorAprovadoComite().multiply(comissao);
+				} else if(CommonsUtil.mesmoValor(objetoContratoCobranca.getBrutoLiquidoCobrarComissaoCliente(), "Bruto") &&
+						CommonsUtil.mesmoValor(objetoContratoCobranca.getTipoValorComite(), "liquido")) {
+					valorTranferencia = objetoCcb.getValorCredito().multiply(comissao);
 				} else if(CommonsUtil.mesmoValor(objetoContratoCobranca.getBrutoLiquidoCobrarComissaoCliente(), "Liquido")) {
 					valorTranferencia = objetoCcb.getValorLiquidoCredito().add(objetoCcb.getIntermediacaoValor()).multiply(comissao);
 				}
