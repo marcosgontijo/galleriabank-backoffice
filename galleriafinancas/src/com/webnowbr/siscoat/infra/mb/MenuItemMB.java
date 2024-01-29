@@ -181,10 +181,10 @@ public class MenuItemMB {
 		List<MenuItem> listaOrdemMaior;
 		MenuItemDao menuDao = new MenuItemDao();
 		MenuItem menuatual = new MenuItem();
-		if (objetoMenuItem.getItemPai().getId() != null) {
-			objetoMenuItem.setItemPai(menuDao.findById(objetoMenuItem.getItemPai().getId()));
-		} else {
+		if (objetoMenuItem.getItemPai() == null || objetoMenuItem.getItemPai().getId() == null ) {
 			objetoMenuItem.setItemPai(null);
+		} else {
+			objetoMenuItem.setItemPai(menuDao.findById(objetoMenuItem.getItemPai().getId()));
 		}
 		if (objetoMenuItem.getId() == null || objetoMenuItem.getId() <= 0) {
 			listaOrdemMaior = menuDao.ConsultaItemMaiorOuIgual(objetoMenuItem.getItemPai(), objetoMenuItem.getOrdem());
@@ -193,7 +193,20 @@ public class MenuItemMB {
 				menuDao.merge(menuOrdem);
 			}
 			menuDao.create(objetoMenuItem);
-		} else {
+		} else if(CommonsUtil.mesmoValor(objetoMenuItem.getTipo(), "Módulo")) {
+			listaOrdemMaior = menuDao.ConsultaModuloMaiorOuIgual(objetoMenuItem.getOrdem());
+			menuatual = menuDao.findById(objetoMenuItem.getId());
+			
+			for(MenuItem menuOrdem : listaOrdemMaior) {
+				if(objetoMenuItem.getOrdem() != menuatual.getOrdem()) {
+				menuOrdem.setOrdem(menuOrdem.getOrdem() + 1);
+				menuDao.merge(menuOrdem);
+				}
+			}
+			menuDao.merge(objetoMenuItem);
+		}
+		else {
+			
 			listaOrdemMaior = menuDao.ConsultaItemMaiorOuIgual(objetoMenuItem.getItemPai(), objetoMenuItem.getOrdem());
 			menuatual = menuDao.findById(objetoMenuItem.getId());
 			
