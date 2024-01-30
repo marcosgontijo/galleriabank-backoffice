@@ -173,6 +173,7 @@ import com.webnowbr.siscoat.cobranca.db.model.StarkBankBaixa;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankBoleto;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankPix;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankTax;
+import com.webnowbr.siscoat.cobranca.db.model.Laudo;
 import com.webnowbr.siscoat.cobranca.db.model.directd.PorcentagemImovel;
 import com.webnowbr.siscoat.cobranca.db.op.CartorioDao;
 import com.webnowbr.siscoat.cobranca.db.op.CcbDao;
@@ -198,6 +199,7 @@ import com.webnowbr.siscoat.cobranca.db.op.RegistroImovelTabelaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.cobranca.db.op.SeguradoDAO;
 import com.webnowbr.siscoat.cobranca.db.op.StarkBankBaixaDAO;
+import com.webnowbr.siscoat.cobranca.db.op.LaudoDao;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
 import com.webnowbr.siscoat.cobranca.model.cep.CepResult;
 import com.webnowbr.siscoat.cobranca.service.BigDataService;
@@ -890,6 +892,8 @@ public class ContratoCobrancaMB {
 	private List<ImovelCobranca> listTodosImoveisContrato;
 	private List<ImovelCobranca> listPreLaudoImoveisRelac;
 	
+	// Objetos referentes ao laudo
+	private Laudo objetLaudo;
 	
 	public void mudaBotaoCartorio(){
 		this.setCartorioMudou(true);
