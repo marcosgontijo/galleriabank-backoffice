@@ -20,6 +20,7 @@ import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GsonUtil;
 
 import br.com.galleriabank.laudoimovel.cliente.model.request.LaudoImovelAssessingObject;
+import br.com.galleriabank.laudoimovel.cliente.model.request.LaudoImovelAssessingTypologyObject;
 import br.com.galleriabank.laudoimovel.cliente.model.retorno.LaudoImovelRetornoObterStatus;
 import br.com.galleriabank.laudoimovel.cliente.model.retorno.LaudoImovelRetornoPadrao;
 
@@ -42,6 +43,10 @@ public class LaudoImovelService {
 		laudoRoboAssessingObject.setPostal_code(imovelCobranca.getCep());
 		laudoRoboAssessingObject.setState(imovelCobranca.getEstado());
 		laudoRoboAssessingObject.setComplement(imovelCobranca.getComplemento());
+		laudoRoboAssessingObject.setTypology(new LaudoImovelAssessingTypologyObject(imovelCobranca.getNumeroQuartos(), 
+																					imovelCobranca.getNumeroSuites(),
+																					imovelCobranca.getNumeroGaragens(),
+																					imovelCobranca.getNumeroBanheiros()));
 		
 		String json = GsonUtil.toJson(laudoRoboAssessingObject);
 
