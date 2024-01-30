@@ -173,7 +173,6 @@ import com.webnowbr.siscoat.cobranca.db.model.StarkBankBaixa;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankBoleto;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankPix;
 import com.webnowbr.siscoat.cobranca.db.model.StarkBankTax;
-import com.webnowbr.siscoat.cobranca.db.model.Laudo;
 import com.webnowbr.siscoat.cobranca.db.model.directd.PorcentagemImovel;
 import com.webnowbr.siscoat.cobranca.db.op.CartorioDao;
 import com.webnowbr.siscoat.cobranca.db.op.CcbDao;
@@ -199,7 +198,6 @@ import com.webnowbr.siscoat.cobranca.db.op.RegistroImovelTabelaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.cobranca.db.op.SeguradoDAO;
 import com.webnowbr.siscoat.cobranca.db.op.StarkBankBaixaDAO;
-import com.webnowbr.siscoat.cobranca.db.op.LaudoDao;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
 import com.webnowbr.siscoat.cobranca.model.cep.CepResult;
 import com.webnowbr.siscoat.cobranca.service.BigDataService;
@@ -888,7 +886,7 @@ public class ContratoCobrancaMB {
 	private List<DocumentoAnalise> docList = new ArrayList<DocumentoAnalise>();
 	
 	// Lista de imóveis adicionais referentes ao contrato cobranca
-	private List<ImovelCobranca> listSolicitaçãoPreLaudoImoveis;
+	private Set<ImovelCobranca> listSolicitacaoPreLaudoImoveis;
 	private List<ImovelCobranca> listTodosImoveisContrato;
 	private List<ImovelCobranca> listPreLaudoImoveisRelac;
 	
@@ -3846,7 +3844,25 @@ public class ContratoCobrancaMB {
 							.setAnalistaGeracaoPAJU(responsavelDao.findById(this.idAnalistaGeracaoPAJU));
 				}
 			}
-
+			
+			if(!this.listSolicitacaoPreLaudoImoveis.isEmpty()) {
+				
+				// Caso a lista de imoveis solicitando pre laudo nao esteja vazia, cria um laudo novo e insere as infos na tabela relacional
+				
+				ImovelCobrancaDao imovelDao = new ImovelCobrancaDao();
+			
+				//VOLTA AQUI
+				
+				for(Object imovelObj: this.listSolicitacaoPreLaudoImoveis) {
+					
+					Long idImovel = Long.parseLong(imovelObj.toString());
+					
+					ImovelCobranca imovel = imovelDao.findById(idImovel);
+					//imovel.setPreLaudoSolicitado(true);
+					
+				}
+				
+			}
 			/*
 			 * if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0)
 			 * { Responsavel responsavel = responsavelDao.findByFilter("codigo",
@@ -4081,7 +4097,7 @@ public class ContratoCobrancaMB {
 			}
 		}
 		
-		if(this.objetoContratoCobranca.isPedidoPreLaudo() && listSolicitaçãoPreLaudoImoveis.isEmpty()) {
+		if(this.objetoContratoCobranca.isPedidoPreLaudo() && listSolicitacaoPreLaudoImoveis.isEmpty()) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Contrato Cobrança: Nenhum imóvel selecionado para pré-laudo!", ""));
 			return false;
@@ -36523,12 +36539,12 @@ public class ContratoCobrancaMB {
 		this.listTodosImoveisContrato = listTodosImoveisContrato;
 	}
 	
-	public List<ImovelCobranca> getlistSolicitaçãoPreLaudoImoveis() {
-		return listSolicitaçãoPreLaudoImoveis;
+	public Set<ImovelCobranca> getlistSolicitacaoPreLaudoImoveis() {
+		return listSolicitacaoPreLaudoImoveis;
 	}
 	
-	public void setlistSolicitaçãoPreLaudoImoveis(List<ImovelCobranca> listSolicitaçãoPreLaudoImoveis) {
-		this.listSolicitaçãoPreLaudoImoveis = listSolicitaçãoPreLaudoImoveis;
+	public void setlistSolicitacaoPreLaudoImoveis(Set<ImovelCobranca> listSolicitacaoPreLaudoImoveis) {
+		this.listSolicitacaoPreLaudoImoveis = listSolicitacaoPreLaudoImoveis;
 	}
 	
 	public List<ImovelCobranca> getlistPreLaudoImoveisRelac() {
