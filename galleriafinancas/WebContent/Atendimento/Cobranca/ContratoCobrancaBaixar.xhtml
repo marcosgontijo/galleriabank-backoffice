@@ -2150,7 +2150,7 @@
 									value="Baixar Parcela"
 									title="Baixar Parcela" icon="ui-icon-transferthick-e-w"
 									update=":formBaixaParcial" 
-									rendered="#{contratoCobrancaMB.usuarioLogado.userCobranca and !parcelas.parcelaPaga}">
+									rendered="#{!parcelas.parcelaPaga}">
 									<f:setPropertyActionListener
 										target="#{contratoCobrancaMB.bpContratoCobrancaDetalhesCustom}"
 										value="#{parcelas}" />
@@ -2166,7 +2166,7 @@
 									value="Baixar Galleria|Custas"
 									title="Baixar Galleria|Custas" icon="ui-icon-transferthick-e-w"
 									update=":formBaixaParcialGalleria" 
-									rendered="#{contratoCobrancaMB.usuarioLogado.userCobranca and !parcelas.parcelaPaga}">
+									rendered="#{!parcelas.parcelaPaga}">
 									<f:setPropertyActionListener
 										target="#{contratoCobrancaMB.bpContratoCobrancaDetalhesCustom}"
 										value="#{parcelas}" />
@@ -2180,14 +2180,16 @@
 								</p:commandButton>
 								<p:spacer width="10" />
 							</shiro:hasAnyRoles>
+							<shiro:hasAnyRoles name="ROOT, COBRANCA">
 							<p:commandButton onclick="PF('bpGerarBoletoKobanaDialog').show();"
 								icon="ui-icon-video" title="Boleto Kobana" value="Boleto Kobana"
 								update=":formBpGerarBoletoKobana"
-								rendered="{#contratoCobrancaMB.usuarioLogado.userCobranca and !parcelas.parcelaPaga}">
+								rendered="#{!parcelas.parcelaPaga}">
 								<f:setPropertyActionListener
 									target="#{contratoCobrancaMB.bpContratoCobrancaDetalhesCustom}"
 									value="#{parcelas}" />
 							</p:commandButton>
+							</shiro:hasAnyRoles>
 							<p:spacer width="10" height="10" />
 							<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA">
 								<p:commandButton onclick="PF('bpHistoricoDialog').show();"
