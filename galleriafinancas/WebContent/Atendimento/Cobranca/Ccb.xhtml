@@ -1450,12 +1450,18 @@
 					
 					<h:panelGroup id="ImovelAdicionarPanel"
 						style="margin-bottom:20px;">
-						<p:panel header="Adicionar Matriculas">
+						<p:panel header="Matriculas Adicionais">								
 							<p:outputLabel value="Imovel Principal: " styleClass="labelBold" style="FONT-SIZE: 10pt;" />
-							<p:outputLabel value="Porcentagem: " style="FONT-SIZE: 10pt;" />
+							<p:outputLabel value="Porcentagem Mercado: " style="FONT-SIZE: 10pt;" />
 							<p:outputLabel value="#{ccbMB.objetoCcb.objetoContratoCobranca.porcentagemImovelPrincipal}"
 								style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
-							<p:outputLabel value="% - Registro: R$ " style="FONT-SIZE: 10pt;" />
+							<p:outputLabel value="% - Porcentagem Leilão: " style="FONT-SIZE: 10pt;" />
+							<p:outputLabel value="#{ccbMB.objetoCcb.objetoContratoCobranca.porcentagemLeilaoImovelPrincipal}"
+								style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+							<p:outputLabel value="% - Credito: R$ " style="FONT-SIZE: 10pt;" />
+							<p:outputLabel value="#{ccbMB.objetoCcb.objetoContratoCobranca.valorCreditoImovelPrincipal}"
+								style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+							<p:outputLabel value=" Registro: R$ " style="FONT-SIZE: 10pt;" />
 							<p:outputLabel value="#{ccbMB.objetoCcb.objetoContratoCobranca.valorRegistroImovelPrincipal}"
 								style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
 								
@@ -1482,8 +1488,20 @@
 								</p:column>
 								
 								<p:column style="text-align: center;width:75px;"
-									headerText="Porcentagem do valor total: ">
+									headerText="Porcentagem Mercado: ">
 									<p:outputLabel value="#{imovelAdd.porcentagem}"
+										style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+								</p:column>
+								
+								<p:column style="text-align: center;width:75px;"
+									headerText="Porcentagem Leilao: ">
+									<p:outputLabel value="#{imovelAdd.porcentagemLeilao}"
+										style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+								</p:column>
+								
+								<p:column style="text-align: center;width:75px;"
+									headerText=" Valor Credito: ">
+									<p:outputLabel value="#{imovelAdd.valorCredito}"
 										style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
 								</p:column>
 								

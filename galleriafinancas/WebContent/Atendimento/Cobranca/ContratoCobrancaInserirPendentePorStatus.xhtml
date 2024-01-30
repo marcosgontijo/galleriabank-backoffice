@@ -3164,16 +3164,28 @@
 							</p:commandButton>
 							<h:panelGroup id="imovelPrincipal" >
 								<p:outputLabel value="Imovel Principal: " styleClass="labelBold" style="FONT-SIZE: 10pt;" />
-								<p:outputLabel value="Porcentagem: " style="FONT-SIZE: 10pt;" />
+								<p:outputLabel value="Porcentagem Mercado: " style="FONT-SIZE: 10pt;" />
 								<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.porcentagemImovelPrincipal}"
 									style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
-								<p:outputLabel value="% - Registro: R$ " style="FONT-SIZE: 10pt;" />
+								<p:outputLabel value="% - Porcentagem Leilão: " style="FONT-SIZE: 10pt;" />
+								<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.porcentagemLeilaoImovelPrincipal}"
+									style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+								<p:outputLabel value="% - Credito: R$ " style="FONT-SIZE: 10pt;" />
+								<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.valorCreditoImovelPrincipal}"
+									style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+								<p:outputLabel value=" Registro: R$ " style="FONT-SIZE: 10pt;" />
 								<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.valorRegistroImovelPrincipal}"
 									style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
 							</h:panelGroup>
 							<p:outputLabel value="Recalcular valor registro" styleClass="labelBold" style="FONT-SIZE: 10pt;" />
 							<p:commandButton icon="ui-icon ui-icon-arrowrefresh-1-e" style="margin-left: 10px;"
 								action="#{contratoCobrancaMB.calcularValorRegistro()}"
+								update="ImovelAdicionarPanel valorCartorio">
+							</p:commandButton>
+							
+							<p:outputLabel value="Recalcular valor Credito" styleClass="labelBold" style="FONT-SIZE: 10pt;" />
+							<p:commandButton icon="ui-icon ui-icon-arrowrefresh-1-e" style="margin-left: 10px;"
+								action="#{contratoCobrancaMB.calcularValorCreditoPorImovel()}"
 								update="ImovelAdicionarPanel valorCartorio">
 							</p:commandButton>
 						</h:panelGrid>
@@ -3201,8 +3213,20 @@
 							</p:column>
 							
 							<p:column style="text-align: center;width:75px;"
-								headerText="Porcentagem do valor total: ">
+								headerText="Porcentagem Mercado: ">
 								<p:outputLabel value="#{imovelAdd.porcentagem}"
+									style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+							</p:column>
+							
+							<p:column style="text-align: center;width:75px;"
+								headerText="Porcentagem Leilao: ">
+								<p:outputLabel value="#{imovelAdd.porcentagemLeilao}"
+									style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+							</p:column>
+							
+							<p:column style="text-align: center;width:75px;"
+								headerText=" Valor Credito: ">
+								<p:outputLabel value="#{imovelAdd.valorCredito}"
 									style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
 							</p:column>
 							

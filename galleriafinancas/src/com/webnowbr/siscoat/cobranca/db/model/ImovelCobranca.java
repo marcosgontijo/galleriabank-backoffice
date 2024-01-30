@@ -114,7 +114,7 @@ public class ImovelCobranca implements Serializable {
 		this.nomeProprietario = imovel.getNomeProprietario();
 		this.valorIptu = imovel.getValorIptu();
 		this.valorCondominio = imovel.getValorCondominio();
-		this.inscricaoMunicipal = imovel.getInscricaoMunicipal();
+		//this.inscricaoMunicipal = imovel.getInscricaoMunicipal();
 		this.objetoCidade = imovel.getObjetoCidade();
 	}
 

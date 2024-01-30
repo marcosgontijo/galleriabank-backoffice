@@ -497,6 +497,10 @@
 			<column name="usarNovoCustoEmissao" not-null="true" default="false" />
 		</property>	
 		
+		<property name="percentualCustoEmissao" type="big_decimal">
+			<column name="percentualCustoEmissao" />
+		</property>
+		
 		<property name="dataCompraImovel" type="java.util.Date">
 			<column name="dataCompraImovel" />
 		</property>

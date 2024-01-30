@@ -356,13 +356,48 @@ public class MenuItemDao extends HibernateDao<MenuItem, Long> {
 					StringBuilder query = new StringBuilder();
 
 					query.append("select id from infra.menuitem ");
-					query.append(" where  upper(" + tipoParametro + ") like upper(?)");
+					query.append(" where  " + tipoParametro + " ILIKE " + "'%" + parametro + "%' order by ordem");
 
 					ps = connection.prepareStatement(query.toString());
-					ps.setString(1, parametro);
 					
 					rs = ps.executeQuery();
 
+					MenuItemDao menuDao = new MenuItemDao();
+
+					while (rs.next()) {
+						menuItemItem.add(menuDao.findById(rs.getLong(1)));
+					}
+
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return menuItemItem;
+			}
+		});
+	}
+	@SuppressWarnings("unchecked")
+	public List<MenuItem> ConsultaitemConsultadoItem(String tipoParametro, String parametro ) {
+
+		return (List<MenuItem>) executeDBOperation(new DBRunnable() {
+
+			@Override
+			public Object run() throws Exception {
+				List<MenuItem> menuItemItem = new ArrayList<MenuItem>();
+
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+					StringBuilder query = new StringBuilder();
+
+					query.append("select id from infra.menuitem \r\n"
+							+ "	where tipo  =  '" + parametro + "' order by ordem");
+					
+					ps = connection.prepareStatement(query.toString());
+					
+					rs = ps.executeQuery();
+					
 					MenuItemDao menuDao = new MenuItemDao();
 
 					while (rs.next()) {
@@ -393,7 +428,7 @@ public class MenuItemDao extends HibernateDao<MenuItem, Long> {
 					StringBuilder query = new StringBuilder();
 
 					query.append("select id from infra.menuitem ");
-					query.append("where " + tipoParametro + " = ? " );
+					query.append("where " + tipoParametro + " = ?  order by ordem" );
 
 					ps = connection.prepareStatement(query.toString());
 					ps.setLong(1, parametro);
@@ -472,6 +507,44 @@ public class MenuItemDao extends HibernateDao<MenuItem, Long> {
 					ps = connection.prepareStatement(query.toString());
 					ps.setLong(1, itempai.getId());
 					ps.setInt(2, ordem);
+					
+					rs = ps.executeQuery();
+
+					MenuItemDao menuDao = new MenuItemDao();
+
+					while (rs.next()) {
+						menuItemItem.add(menuDao.findById(rs.getLong(1)));
+					}
+
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return menuItemItem;
+			}
+		});
+	}
+	@SuppressWarnings("unchecked")
+	public List<MenuItem> ConsultaModuloMaiorOuIgual( int ordem ) {
+
+		return (List<MenuItem>) executeDBOperation(new DBRunnable() {
+
+			@Override
+			public Object run() throws Exception {
+				List<MenuItem> menuItemItem = new ArrayList<MenuItem>();
+
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+					StringBuilder query = new StringBuilder();
+
+					query.append("select id from infra.menuitem ");
+					query.append("where tipo = 'Módulo' and ordem >= ? " );
+
+					ps = connection.prepareStatement(query.toString());
+					
+					ps.setInt(1, ordem);
 					
 					rs = ps.executeQuery();
 

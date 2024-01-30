@@ -337,6 +337,9 @@ public class CcbService {
 				totalPrimeiraParcela = totalPrimeiraParcela.add(objetoCcb.getValorParcela());
 			totalPrimeiraParcela = totalPrimeiraParcela.add(taxaAdm);
 			XWPFRun runLeilao = null;
+			XWPFRun runCredito = null;
+			XWPFRun runMatricula = null;
+			XWPFRun runInscricao = null;
 			
 		    for (XWPFTable tbl : document.getTables()) {
 				for (XWPFTableRow row : tbl.getRows()) {
@@ -344,9 +347,14 @@ public class CcbService {
 						for (XWPFParagraph p : cell.getParagraphs()) {
 							for (XWPFRun r : p.getRuns()) {
 								String text = r.getText(0);										
-								
-								text = trocaValoresXWPFCci(text, r, "valorCredito", objetoCcb.getValorCredito(), "R$ ");
-								text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorCredito", objetoCcb.getValorCredito());									
+								if (text != null && text.contains("valorCredito")) {
+									text = trocaValoresXWPF(text, r, "valorCredito", "");
+									trocaValoresXWPF(text, r, "ExtensoValorCredito", "");
+									trocaValoresXWPF(text, r, "(ExtensoValorCredito)", "");
+									runCredito = r;
+								}
+								//text = trocaValoresXWPFCci(text, r, "valorCredito", objetoCcb.getValorCredito(), "R$ ");
+								//text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorCredito", objetoCcb.getValorCredito());									
 								text = trocaValoresXWPFCci(text, r, "valorLiquidoCredito", objetoCcb.getValorLiquidoCredito(), "R$ ");
 								text = trocaValoresDinheiroExtensoXWPF(text, r, "ValorLiquidoCredito", objetoCcb.getValorLiquidoCredito());								
 								text = trocaValoresXWPFCci(text, r, "custoEmissao", objetoCcb.getCustoEmissao(), "R$ ");
@@ -388,8 +396,17 @@ public class CcbService {
 								text = trocaValoresXWPF(text, r, "cartorioImovel", objetoCcb.getCartorioImovel());
 								text = trocaValoresXWPF(text, r, "cidadeImovel", objetoCcb.getCidadeImovel());
 								text = trocaValoresXWPF(text, r, "ufImovel", objetoCcb.getUfImovel());
-								text = trocaValoresXWPF(text, r, "numeroImovel", objetoCcb.getNumeroImovel());
-								text = trocaValoresXWPF(text, r, "inscricaoMunicipal", objetoCcb.getInscricaoMunicipal());
+								if (text != null && text.contains("numeroImovel")) {
+									text = trocaValoresXWPF(text, r, "numeroImovel", "");
+									runMatricula = r;
+								}
+								//text = trocaValoresXWPF(text, r, "numeroImovel", objetoCcb.getNumeroImovel());
+								
+								if (text != null && text.contains("inscricaoMunicipal")) {
+									text = trocaValoresXWPF(text, r, "inscricaoMunicipal", "");
+									runInscricao = r;
+								}
+								//text = trocaValoresXWPF(text, r, "inscricaoMunicipal", objetoCcb.getInscricaoMunicipal());
 								if (text != null && text.contains("vendaLeilao")) {
 									text = trocaValoresXWPF(text, r, "vendaLeilao", "");
 									trocaValoresXWPF(text, r, "ExtensoVendaLeilao", "");
@@ -456,6 +473,9 @@ public class CcbService {
 			}
 		    
 		    geraTextoValorLeilao(runLeilao);
+		    geraTextoValorCredito(runCredito);
+		    geraTextoMatriculas(runMatricula);
+		    geraTextoNumInscricao(runInscricao);
 		    
 		    XWPFTableRow tableRow2 = document.getTableArray(1).getRow(1);
 
@@ -672,6 +692,62 @@ public class CcbService {
 			}
 			runLeilao.setText(textoLeilao);
 		}
+	}
+	
+	private void geraTextoValorCredito(XWPFRun runCredito) {
+		if(!CommonsUtil.semValor(runCredito)) {
+			runCredito.getText(0);
+			String textoCredito = CommonsUtil.formataValorMonetarioCci(objetoCcb.getValorCredito(), "R$ ") + "";
+			valorPorExtenso.setNumber(objetoCcb.getValorCredito());
+			textoCredito = textoCredito + " (" + valorPorExtenso.toString() + ")";
+			if(objetoCcb.getObjetoContratoCobranca().getListaImoveis().size() > 0) {
+				textoCredito = textoCredito + " sendo que as matriculas: ";
+				//String textoImovel = ""; 
+				textoCredito = textoCredito + objetoCcb.getObjetoContratoCobranca().getImovel().getNumeroMatricula() + ": ";
+				textoCredito = textoCredito + CommonsUtil.formataValorMonetarioCci(objetoCcb.getObjetoContratoCobranca().getValorCreditoImovelPrincipal(), "R$ ");
+				valorPorExtenso.setNumber(objetoCcb.getObjetoContratoCobranca().getValorCreditoImovelPrincipal());
+				textoCredito = textoCredito + " (" + valorPorExtenso.toString() + "); ";
+				
+				for(ImovelCobrancaAdicionais imovelAdicional : objetoCcb.getObjetoContratoCobranca().getListaImoveis()) {
+					textoCredito = textoCredito + imovelAdicional.getImovel().getNumeroMatricula() + ": ";
+					textoCredito = textoCredito + CommonsUtil.formataValorMonetarioCci(imovelAdicional.getValorCredito(), "R$ ");
+					valorPorExtenso.setNumber(imovelAdicional.getValorCredito());
+					textoCredito = textoCredito + " (" + valorPorExtenso.toString() + "); ";
+					//textoLeilao = textoLeilao + textoImovel;
+				}
+			}
+			runCredito.setText(textoCredito);
+		}
+	}
+	
+	private void geraTextoMatriculas(XWPFRun runMatriculas) {
+		if(CommonsUtil.semValor(runMatriculas)) {
+			return;
+		}
+		runMatriculas.getText(0);
+		String textoMatriculas = objetoCcb.getNumeroImovel();
+		if(objetoCcb.getObjetoContratoCobranca().getListaImoveis().size() > 0) {
+			for(ImovelCobrancaAdicionais imovelAdicional : objetoCcb.getObjetoContratoCobranca().getListaImoveis()) {
+				if(!CommonsUtil.semValor(imovelAdicional.getImovel().getNumeroMatricula()))
+					textoMatriculas = textoMatriculas + " / " + imovelAdicional.getImovel().getNumeroMatricula();
+			}
+		}
+		runMatriculas.setText(textoMatriculas);
+	}
+	
+	private void geraTextoNumInscricao(XWPFRun runInscircao) {
+		if(CommonsUtil.semValor(runInscircao)) {
+			return;
+		}
+		runInscircao.getText(0);
+		String textoInscricao = objetoCcb.getInscricaoMunicipal();
+		if(objetoCcb.getObjetoContratoCobranca().getListaImoveis().size() > 0) {
+			for(ImovelCobrancaAdicionais imovelAdicional : objetoCcb.getObjetoContratoCobranca().getListaImoveis()) {
+				if(!CommonsUtil.semValor(imovelAdicional.getImovel().getInscricaoMunicipal()))
+					textoInscricao = textoInscricao + " / " + imovelAdicional.getImovel().getInscricaoMunicipal();
+			}
+		}
+		runInscircao.setText(textoInscricao);
 	}
 		
 	public byte[] geraCciAquisicao() throws IOException{

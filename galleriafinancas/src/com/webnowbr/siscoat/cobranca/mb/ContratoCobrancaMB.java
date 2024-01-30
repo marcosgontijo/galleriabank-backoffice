@@ -3703,10 +3703,10 @@ public class ContratoCobrancaMB {
 						"l.melara@nevesemaggioni.com.br", "[siscoat] Operação "
 								+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
 						mensagemHtmlTeste);
-				eec.enviarEmailHtmlResponsavelAdms(
+				/*eec.enviarEmailHtmlResponsavelAdms(
 						"j.massaro@nevesemaggioni.com.br", "[siscoat] Operação "
 								+ this.objetoContratoCobranca.getNumeroContrato() + " disponível para geração do PAJU",
-						mensagemHtmlTeste);
+						mensagemHtmlTeste);*/
 			} else if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoPaju(), "Luvison")) {
 				eec.enviarEmailHtmlResponsavelAdms(
 						"paola@luvisoncarvalho.com.br", "[siscoat] Operação "
@@ -5860,6 +5860,24 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setCcbProntaData(DateUtil.gerarDataHoje());
 				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getCcbProntaData());
 				this.objetoContratoCobranca.setCcbProntaUsuario(getNomeUsuarioLogado());
+
+				try {
+					CcbDao ccbDao = new CcbDao();
+					CcbContrato ccbContrato = ccbDao.ConsultaCcbPorContrato(this.objetoContratoCobranca);
+					if (!CommonsUtil.semValor(ccbContrato)
+							&& CommonsUtil.semValor(this.objetoContratoCobranca.getEmpresaImovel()))
+						if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getAvaliacaoLaudo(), "Compass"))
+							this.objetoContratoCobranca.setEmpresaImovel("Compasso");
+						else
+							this.objetoContratoCobranca.setEmpresaImovel("Galache");
+
+					if (!CommonsUtil.semValor(this.objetoContratoCobranca.getImovel())
+							&& CommonsUtil.semValor(this.objetoContratoCobranca.getTipoImovel()))
+						this.objetoContratoCobranca.setTipoImovel(this.objetoContratoCobranca.getImovel().getTipo());
+
+				} catch (Exception e) {
+					System.out.print(e.getMessage());
+				}
 			}
 		}
 
@@ -9943,6 +9961,7 @@ public class ContratoCobrancaMB {
 
 		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. DOC")) {
 			calcularValorRegistro();
+			calcularValorCreditoPorImovel();
 			// calcularRegistroVelho();
 		}
 
@@ -10141,6 +10160,7 @@ public class ContratoCobrancaMB {
 	
 	public void calcularValorRegistro() {
 		calcularPorcentagemImoveis();
+		calcularPorcentagemLeilaoImoveis();
 		BigDecimal valorTotalRegistro = BigDecimal.ZERO;
 		RegistroImovelTabelaDao rDao = new RegistroImovelTabelaDao();
 		ImovelCobrancaAdicionaisDao imovelCobrancaAdicionaisDao = new ImovelCobrancaAdicionaisDao();
@@ -10167,6 +10187,29 @@ public class ContratoCobrancaMB {
 		if (CommonsUtil.semValor(objetoContratoCobranca.getValorCartorio())
 				|| valorTotalRegistro.compareTo(objetoContratoCobranca.getValorCartorio()) > 0) {
 			objetoContratoCobranca.setValorCartorio(valorTotalRegistro);
+		}
+	}
+	
+	public void calcularValorCreditoPorImovel() {
+		//calcularPorcentagemImoveis();
+		calcularPorcentagemLeilaoImoveis();
+		ImovelCobrancaAdicionaisDao imovelCobrancaAdicionaisDao = new ImovelCobrancaAdicionaisDao();
+		for (ImovelCobrancaAdicionais imovelAdicional : objetoContratoCobranca.getListaImoveis()) {
+			if (CommonsUtil.semValor(imovelAdicional.getPorcentagemLeilao()))
+				continue;
+			BigDecimal porcentagem = imovelAdicional.getPorcentagemLeilao().divide(BigDecimal.valueOf(100),
+					MathContext.DECIMAL128);
+			BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoComite().multiply(porcentagem);
+			valorPorMatricula = valorPorMatricula.setScale(2, RoundingMode.HALF_UP);
+			imovelAdicional.setValorCredito(valorPorMatricula);
+			imovelCobrancaAdicionaisDao.merge(imovelAdicional);
+		}
+		if (!CommonsUtil.semValor(objetoContratoCobranca.getPorcentagemLeilaoImovelPrincipal())) {
+			BigDecimal porcentagem = objetoContratoCobranca.getPorcentagemLeilaoImovelPrincipal()
+					.divide(BigDecimal.valueOf(100), MathContext.DECIMAL128);
+			BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoComite().multiply(porcentagem);
+			valorPorMatricula = valorPorMatricula.setScale(2, RoundingMode.HALF_UP);
+			objetoContratoCobranca.setValorCreditoImovelPrincipal(valorPorMatricula);
 		}
 	}
 	
@@ -16753,7 +16796,7 @@ public class ContratoCobrancaMB {
 		if (record.getPagador_cpf() != null && !record.getPagador_cpf().equals("")) {
 			cell.setCellValue(record.getPagador_cpf());
 		} else {
-			cell.setCellValue(record.getPagador_cpf());
+			cell.setCellValue(record.getPagador_cnpj());
 		}
 		countCol++;
 
@@ -21598,6 +21641,41 @@ public class ContratoCobrancaMB {
 	public void addImovel() {
 		ImovelCobrancaAdicionaisDao imovelCobrancaAdicionaisDao = new ImovelCobrancaAdicionaisDao();
 		ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
+		
+		FacesContext context = FacesContext.getCurrentInstance();
+		BigDecimal valorMercado = objetoContratoCobranca.getImovel().getValorMercado();
+		if(!CommonsUtil.semValor(imovelAdicional.getImovel().getValorMercado()))
+			valorMercado = valorMercado.add(imovelAdicional.getImovel().getValorMercado());
+		for (ImovelCobrancaAdicionais imovelAdicional : objetoContratoCobranca.getListaImoveis()) {
+			if (CommonsUtil.semValor(imovelAdicional.getImovel().getValorMercado()))
+				continue;
+			if (CommonsUtil.mesmoValor(imovelAdicional.getId(), imovelAdicional.getId()))
+				continue;
+			valorMercado = valorMercado.add(imovelAdicional.getImovel().getValorMercado());
+			if(valorMercado.compareTo(objetoContratoCobranca.getValorMercadoImovel()) > 0) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Total excede o valor já registrado", 
+						"Valores de mercado excede o valor já registrado"));
+				return;
+			}
+		}
+		BigDecimal valorLeilao = objetoContratoCobranca.getImovel().getValorLeilao();
+		if(!CommonsUtil.semValor(imovelAdicional.getImovel().getValorLeilao()))
+			valorLeilao = valorLeilao.add(imovelAdicional.getImovel().getValorLeilao());
+		for (ImovelCobrancaAdicionais imovelAdicional : objetoContratoCobranca.getListaImoveis()) {
+			if (CommonsUtil.semValor(imovelAdicional.getImovel().getValorLeilao()))
+				continue;
+			if (CommonsUtil.mesmoValor(imovelAdicional.getId(), imovelAdicional.getId()))
+				continue;
+			valorLeilao = valorLeilao.add(imovelAdicional.getImovel().getValorLeilao());
+			if(valorLeilao.compareTo(objetoContratoCobranca.getValorVendaForcadaImovel()) > 0) {
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Total excede o valor já registrado", 
+						"Valores de leilão excede o valor já registrado"));
+				return;
+			}
+		}
+			
 		if (imovelAdicional.getImovel().getId() > 0)
 			imovelCobrancaDao.merge(imovelAdicional.getImovel());
 		else
@@ -21611,6 +21689,7 @@ public class ContratoCobrancaMB {
 		imovelAdicional.setContratoCobranca(objetoContratoCobranca);
 		objetoContratoCobranca.getListaImoveis().add(imovelAdicional);
 		calcularValorRegistro();
+		calcularValorCreditoPorImovel();
 		listaRestricoesImovel();
 		imovelAdicional = new ImovelCobrancaAdicionais();
 	}
@@ -21620,8 +21699,8 @@ public class ContratoCobrancaMB {
 	}
 
 	public void removeImovel(ImovelCobrancaAdicionais imovel) {
-		objetoContratoCobranca.getListaImoveis().remove(imovelAdicional);
-		imovelAdicional.setContratoCobranca(null);
+		objetoContratoCobranca.getListaImoveis().remove(imovel);
+		imovel.setContratoCobranca(null);
 	}
 
 	public void calcularPorcentagemImoveis() {
@@ -21641,6 +21720,25 @@ public class ContratoCobrancaMB {
 			imovelCobrancaAdicionaisDao.merge(imovelAdicional);
 		}
 		objetoContratoCobranca.setPorcentagemImovelPrincipal(BigDecimal.valueOf(100).subtract(porcentagemTotal));
+	}
+	
+	public void calcularPorcentagemLeilaoImoveis() {
+		if (CommonsUtil.semValor(objetoContratoCobranca.getValorVendaForcadaImovel()))
+			return;
+		ImovelCobrancaAdicionaisDao imovelCobrancaAdicionaisDao = new ImovelCobrancaAdicionaisDao();
+		BigDecimal porcentagemTotal = BigDecimal.ZERO;
+		for (ImovelCobrancaAdicionais imovelAdicional : objetoContratoCobranca.getListaImoveis()) {
+			if (CommonsUtil.semValor(imovelAdicional.getImovel().getValorLeilao()))
+				continue;
+			BigDecimal regra3 = imovelAdicional.getImovel().getValorLeilao().multiply(BigDecimal.valueOf(100));
+			BigDecimal porcentagem = regra3.divide(objetoContratoCobranca.getValorVendaForcadaImovel(),
+					MathContext.DECIMAL128);
+			porcentagem = porcentagem.setScale(2, RoundingMode.HALF_UP);
+			imovelAdicional.setPorcentagemLeilao(porcentagem);
+			porcentagemTotal = porcentagemTotal.add(porcentagem);
+			imovelCobrancaAdicionaisDao.merge(imovelAdicional);
+		}
+		objetoContratoCobranca.setPorcentagemLeilaoImovelPrincipal(BigDecimal.valueOf(100).subtract(porcentagemTotal));
 	}
 
 	public void concluirComite(ContratoCobranca contrato) {

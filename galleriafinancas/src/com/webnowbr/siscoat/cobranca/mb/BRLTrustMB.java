@@ -113,7 +113,7 @@ public class BRLTrustMB {
 
 	public String clearFieldsBRLJson() {			
 		this.numContrato = "";
-		this.cedenteCessao = "";		
+		this.cedenteCessao = "Galleria Finanças Securitizadora S.A ";		
 		this.contratos = new ArrayList<ContratoCobranca>();
 		this.dataAquisicao = new Date();
 		
