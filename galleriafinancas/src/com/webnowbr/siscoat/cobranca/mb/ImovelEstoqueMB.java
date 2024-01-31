@@ -106,6 +106,7 @@ public class ImovelEstoqueMB {
 		     ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();	
 		     if(objetoImovelEstoque.getId() <= 0) {
 		    	 objetoImovelEstoque.setQuitado(false);
+		    	 objetoImovelEstoque.setStatusAtual("Estoque");
 					imovelEstoqueDao.create(objetoImovelEstoque);
 
 				}

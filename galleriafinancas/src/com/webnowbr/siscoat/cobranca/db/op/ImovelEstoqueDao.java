@@ -61,7 +61,8 @@ public class ImovelEstoqueDao extends HibernateDao <ImovelEstoque,Long> {
   				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
   				String QUERY_ID_ESTOQUE = "select c.id from cobranca.contratocobranca c  \r\n"
   						+ "inner join cobranca.imovelcobranca i on i.id  = c.imovel  \r\n"
-  						+ "inner join cobranca.imovelestoque i2 on i.imovelestoque  = i2.id";
+  						+ "inner join cobranca.imovelestoque i2 on i.imovelestoque  = i2.id \r\n "
+  						+ "where i2.statusatual != 'Vendido' ";
   				Connection connection = null;
   				PreparedStatement ps = null;
   				ResultSet rs = null;
