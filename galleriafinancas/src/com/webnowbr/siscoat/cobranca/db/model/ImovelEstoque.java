@@ -30,7 +30,7 @@ public class ImovelEstoque implements Serializable {
 	private BigDecimal valorVenda;
 	private Date dataVenda;
 	private String tipoVenda;
-	private Boolean quitado = false;
+	private boolean quitado;
 	private ContratoCobranca objetoContratoCobranca;
 	private ImovelCobranca objetoImovelCobranca;
 	public ImovelEstoque() {

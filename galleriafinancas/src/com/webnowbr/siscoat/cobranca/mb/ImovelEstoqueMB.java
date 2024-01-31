@@ -87,8 +87,6 @@ public class ImovelEstoqueMB {
 		ImovelEstoqueDao imovelEstoqueDao = new ImovelEstoqueDao();
 		if(objetoImovelEstoque == null) {
 			objetoImovelEstoque = new ImovelEstoque();
-			objetoImovelEstoque.setObjetoContratoCobranca(objetoContratoCobranca);
-			objetoImovelEstoque.setObjetoImovelCobranca(objetoImovelCobranca);
 		}
 		
 		
@@ -111,7 +109,6 @@ public class ImovelEstoqueMB {
 		     }
 		     ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();	
 		     if(objetoImovelEstoque.getId() <= 0) {
-		    	 objetoImovelEstoque.setQuitado(false);
 		    	 objetoImovelEstoque.setStatusAtual("Estoque");
 					imovelEstoqueDao.create(objetoImovelEstoque);
 
