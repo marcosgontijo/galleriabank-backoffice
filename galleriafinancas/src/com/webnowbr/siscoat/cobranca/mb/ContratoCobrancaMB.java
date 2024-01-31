@@ -14101,11 +14101,11 @@ public class ContratoCobrancaMB {
 			UserDao u = new UserDao();
 			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
 
-			if (usuarioLogado != null) {
-				if (usuarioLogado.isAdministrador()) {
+			//if (usuarioLogado != null) {
+				//if (usuarioLogado.isAdministrador()) {
 					this.contratosPendentes = contratoCobrancaDao.consultaContratosPendentes(null,
 							tipoParametroConsultaContrato, parametroConsultaContrato);
-				} else {
+				/*} else {
 					if (usuarioLogado.getListResponsavel().size() > 0) {
 						this.contratosPendentes = contratoCobrancaDao.consultaContratosPendentesResponsaveis(
 								usuarioLogado.getCodigoResponsavel(), usuarioLogado.getListResponsavel());
@@ -14115,7 +14115,7 @@ public class ContratoCobrancaMB {
 								parametroConsultaContrato);
 					}
 				}
-			}
+			}*/
 		}
 		this.tituloTelaConsultaPreStatus = ".";
 

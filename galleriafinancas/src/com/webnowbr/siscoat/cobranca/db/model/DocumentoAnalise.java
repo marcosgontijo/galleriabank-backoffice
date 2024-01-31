@@ -629,14 +629,14 @@ public class DocumentoAnalise implements Serializable {
 			veiculos.add(new DocumentoAnaliseResumo("Dados não disponíveis", "0"));
 		else if(CommonsUtil.semValor(dado.getVeiculo().getFrota().getVeiculos().size() <= 0))
 			veiculos.add(new DocumentoAnaliseResumo("Dados não disponíveis", "0"));
-		
-		for(CredlocalizaVeiculos veiculo : dado.getVeiculo().getFrota().getVeiculos()) {
-			veiculos.add(new DocumentoAnaliseResumo("Placa", veiculo.getPlaca()));
-			veiculos.add(new DocumentoAnaliseResumo("Ano Fabricação", veiculo.getAno_fabricacao()));
-			veiculos.add(new DocumentoAnaliseResumo("Ano Modelo", veiculo.getAno_modelo()));
-			veiculos.add(new DocumentoAnaliseResumo("Marca / Modelo", veiculo.getMarca_modelo()));
+		else {
+			for(CredlocalizaVeiculos veiculo : dado.getVeiculo().getFrota().getVeiculos()) {
+				veiculos.add(new DocumentoAnaliseResumo("Placa", veiculo.getPlaca()));
+				veiculos.add(new DocumentoAnaliseResumo("Ano Fabricação", veiculo.getAno_fabricacao()));
+				veiculos.add(new DocumentoAnaliseResumo("Ano Modelo", veiculo.getAno_modelo()));
+				veiculos.add(new DocumentoAnaliseResumo("Marca / Modelo", veiculo.getMarca_modelo()));
+			}
 		}
-		
 		return veiculos;
 	}
 	
