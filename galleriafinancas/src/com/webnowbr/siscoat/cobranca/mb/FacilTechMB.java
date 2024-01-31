@@ -120,48 +120,86 @@ public class FacilTechMB {
 	public JSONObject getJSONCliente() {
 				
 		JSONObject jsonCliente = new JSONObject();
-	 
 		
-		jsonCliente.put("DadosDePessoaFisica", "");
+		PagadorRecebedor pagadorRecebedor = new PagadorRecebedor();
 		
-		JSONObject jsonDadosDePessoaFisica = new JSONObject();
-		jsonDadosDePessoaFisica.put("EmpreendedorIndividual", "false");
+		jsonCliente.put("SituacaoDoAssociado", "N");
+		jsonCliente.put("CodigoDaAgenciaDeCredito", "1");
 		
-		JSONObject jsonDadosPessoais = new JSONObject();
-		jsonDadosPessoais.put("CPF", "111.111.111-90");
-		jsonDadosPessoais.put("Nome", "João da Silva");
-		jsonDadosPessoais.put("TipoDeDocumentoDeIdentificacao", 0);
-		jsonDadosPessoais.put("NumeroDoDocumentoDeIdentificacao", "texto exemplo");
-		jsonDadosPessoais.put("DataDeNascimento", "10/03/1981");
-		jsonDadosPessoais.put("Naturalidade", "texto exemplo");
-		jsonDadosPessoais.put("Nacionalidade", "texto exemplo");
-		jsonDadosPessoais.put("EstadoCivil", 0);
-		jsonDadosPessoais.put("Genero", 0);
+		if (pagadorRecebedor.getCpf() != null && !pagadorRecebedor.getCpf().equals("")) {	
+			jsonCliente.put("TipoDePessoa", "F");
+			
+			JSONObject jsonDadosDePessoaFisica = new JSONObject();
+			jsonDadosDePessoaFisica.put("EmpreendedorIndividual", "false");
+			
+			JSONObject jsonDadosPessoais = new JSONObject();
+			jsonDadosPessoais.put("CPF", pagadorRecebedor.getCpf());
+			jsonDadosPessoais.put("Nome", pagadorRecebedor.getNome());
+			jsonDadosPessoais.put("TipoDeDocumentoDeIdentificacao", 0);
+			jsonDadosPessoais.put("NumeroDoDocumentoDeIdentificacao", pagadorRecebedor.getRg());
+			jsonDadosPessoais.put("DataDeNascimento", pagadorRecebedor.getDtNascimento());
+			jsonDadosPessoais.put("Naturalidade", " ");
+			jsonDadosPessoais.put("Nacionalidade", " ");
+			jsonDadosPessoais.put("EstadoCivil", 0);
+			jsonDadosPessoais.put("Genero", 0);
+			
+			JSONObject jsonDocumentoIdentidade = new JSONObject();
+			jsonDocumentoIdentidade.put("Numero", pagadorRecebedor.getRg());
+			jsonDocumentoIdentidade.put("OrgaoExpedidor", pagadorRecebedor.getOrgaoEmissorRG());
+			jsonDocumentoIdentidade.put("UF", pagadorRecebedor.getOrgaoEmissorRG());
+			jsonDocumentoIdentidade.put("DataDeEmissao", pagadorRecebedor.getDataEmissaoRG());
+			
+			jsonDadosPessoais.put("DocumentoDeIdentidade", jsonDocumentoIdentidade);
+			
+			jsonDadosDePessoaFisica.put("DadosPessoais", jsonDadosPessoais);
+			
+			JSONObject jsonEnderecoResidencial = new JSONObject();
+			
+			jsonEnderecoResidencial.put("Logradouro", pagadorRecebedor.getEndereco());
+			jsonEnderecoResidencial.put("Numero", pagadorRecebedor.getNumero());
+			jsonEnderecoResidencial.put("Complemento", pagadorRecebedor.getComplemento());
+			jsonEnderecoResidencial.put("Bairro", pagadorRecebedor.getBairro());
+			jsonEnderecoResidencial.put("Cidade", pagadorRecebedor.getCidade());
+			jsonEnderecoResidencial.put("UF", pagadorRecebedor.getEstado());
+			jsonEnderecoResidencial.put("CEP", pagadorRecebedor.getCep());
+			
+			jsonDadosDePessoaFisica.put("EnderecoResidencial", jsonEnderecoResidencial);
+			
+			jsonCliente.put("DadosDePessoaFisica", jsonDadosDePessoaFisica);
+		} else {			
+			jsonCliente.put("TipoDePessoa", "J");
+			
+			JSONObject jsonDadosDePessoaJuridica = new JSONObject();
+			
+			jsonDadosDePessoaJuridica.put("CNPJ", pagadorRecebedor.getCnpj());
+			jsonDadosDePessoaJuridica.put("RazaoSocial", pagadorRecebedor.getNome());
+			//jsonDadosDePessoaJuridica.put("DataDeConstituicao", pagadorRecebedor.getdt);
+			jsonDadosDePessoaJuridica.put("Email", pagadorRecebedor.getEmail());
+			jsonDadosDePessoaJuridica.put("OptantePeloSimples", false);
+			jsonDadosDePessoaJuridica.put("TipoDeInstituicao", "C");
+			
+			JSONObject jsonEnderecoComercial = new JSONObject();
+			
+			jsonEnderecoComercial.put("Logradouro", pagadorRecebedor.getEndereco());
+			jsonEnderecoComercial.put("Numero", pagadorRecebedor.getNumero());
+			jsonEnderecoComercial.put("Complemento", pagadorRecebedor.getComplemento());
+			jsonEnderecoComercial.put("Bairro", pagadorRecebedor.getBairro());
+			jsonEnderecoComercial.put("Cidade", pagadorRecebedor.getCidade());
+			jsonEnderecoComercial.put("UF", pagadorRecebedor.getEstado());
+			jsonEnderecoComercial.put("CEP", pagadorRecebedor.getCep());
+			
+			jsonDadosDePessoaJuridica.put("EnderecoComercial", jsonEnderecoComercial);
+			
+			jsonCliente.put("DadosDePessoaJuridica", jsonDadosDePessoaJuridica);
+		}
 		
-		JSONObject jsonDocumentoIdentidade = new JSONObject();
-		jsonDocumentoIdentidade.put("Numero", "999999");
-		jsonDocumentoIdentidade.put("OrgaoExpedidor", "SSP");
-		jsonDocumentoIdentidade.put("UF", "SP");
-		jsonDocumentoIdentidade.put("DataDeEmissao", "10/01/1981");
+		JSONObject jsonDadosDaEmpresa = new JSONObject();
 		
-		jsonDadosPessoais.put("DocumentoDeIdentidade", jsonDocumentoIdentidade);
+		jsonDadosDaEmpresa.put("CodigoDaEmpresa", "001");
+		jsonDadosDaEmpresa.put("CodigoDaUnidadeOuSetor", "001");
 		
-		jsonDadosDePessoaFisica.put("DadosPessoais", jsonDadosPessoais);
+		jsonCliente.put("DadosDaEmpresa", jsonDadosDaEmpresa);
 		
-		JSONObject jsonEnderecoResidencial = new JSONObject();
-		
-		jsonEnderecoResidencial.put("Logradouro", "Rua teste");
-		jsonEnderecoResidencial.put("Numero", "999");
-		jsonEnderecoResidencial.put("Complemento", "Complemento teste");
-		jsonEnderecoResidencial.put("Bairro", "Bairro Teste");
-		jsonEnderecoResidencial.put("Cidade", "Cidade Teste");
-		jsonEnderecoResidencial.put("UF", "SP");
-		jsonEnderecoResidencial.put("CEP", "99999-999");
-		
-		jsonDadosDePessoaFisica.put("EnderecoResidencial", jsonEnderecoResidencial);
-		
-		jsonDadosDePessoaFisica.put("DadosDePessoaFisica", jsonDadosDePessoaFisica);
-		
-		return jsonDadosDePessoaFisica;
+		return jsonCliente;
 	}
 }

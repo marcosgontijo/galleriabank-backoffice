@@ -9179,6 +9179,14 @@ public class ContratoCobrancaMB {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		cadastraImovel();
+	}
+	public void cadastraImovel() {
+		ImovelEstoqueMB imovelMB = new ImovelEstoqueMB();
+		imovelMB.setObjetoContratoCobranca(objetoContratoCobranca);
+		imovelMB.setObjetoImovelCobranca(objetoContratoCobranca.getImovel());
+		imovelMB.setObjetoImovelEstoque(objetoContratoCobranca.getImovel().getImovelEstoque());
+		imovelMB.salvarEstoque();
 	}
 
 	public BigDecimal calcularValorPresenteParcelaJson(Long idParcela, BigDecimal txJuros, Date dataAquisicao) {
@@ -10067,7 +10075,11 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setPixCustoEmissao("51.604.356/0001-75");
 
 		// carta split cliente
-		this.objetoContratoCobranca.setValorCartaSplit(ccb.getValorLiquidoCredito());
+		if (this.objetoContratoCobranca.getValorCartaSplit() == null || 
+				this.objetoContratoCobranca.getValorCartaSplit().compareTo(BigDecimal.ZERO) <= 0) {
+			this.objetoContratoCobranca.setValorCartaSplit(ccb.getValorLiquidoCredito());
+		}
+		
 		this.objetoContratoCobranca.setNomeBancarioCartaSplit(ccb.getTitularConta());
 
 		if (this.objetoContratoCobranca.getPagador().getCpf() != null

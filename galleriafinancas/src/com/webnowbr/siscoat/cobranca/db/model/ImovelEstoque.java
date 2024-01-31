@@ -30,7 +30,7 @@ public class ImovelEstoque implements Serializable {
 	private BigDecimal valorVenda;
 	private Date dataVenda;
 	private String tipoVenda;
-	private Boolean quitado;
+	private boolean quitado;
 	private ContratoCobranca objetoContratoCobranca;
 	private ImovelCobranca objetoImovelCobranca;
 	
@@ -148,6 +148,18 @@ public class ImovelEstoque implements Serializable {
 	}
 	public void setLeiloeiro(String leiloeiro) {
 		this.leiloeiro = leiloeiro;
+	}
+	public ImovelCobranca getObjetoImovelCobranca() {
+		return objetoImovelCobranca;
+	}
+	public void setObjetoImovelCobranca(ImovelCobranca objetoImovelCobranca) {
+		this.objetoImovelCobranca = objetoImovelCobranca;
+	}
+	public ContratoCobranca getObjetoContratoCobranca() {
+		return objetoContratoCobranca;
+	}
+	public void setObjetoContratoCobranca(ContratoCobranca objetoContratoCobranca) {
+		this.objetoContratoCobranca = objetoContratoCobranca;
 	}
 	
 	
