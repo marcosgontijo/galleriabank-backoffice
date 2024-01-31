@@ -309,7 +309,8 @@ public class ContasPagarDao extends HibernateDao<ContasPagar, Long> {
 	private static final String QUERY_BUSCAR_DEPESA = "select c.id "+		
 			" from cobranca.contaspagar c " +
 			" where descricao = ? " +
-			" and numeroDocumento = ? ";
+			" and numeroDocumento = ? " +
+			" and editada = false ";
 
 	public List<ContasPagar> buscarDespesa(final String descricao, final String NumeroDocumento) throws Exception {
 
