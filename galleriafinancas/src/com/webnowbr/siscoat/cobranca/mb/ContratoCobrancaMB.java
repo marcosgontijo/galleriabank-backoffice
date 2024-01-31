@@ -8960,15 +8960,6 @@ public class ContratoCobrancaMB {
 		}
 		System.out.print("");
 	}
-	public void salvarEstoque(){
-		ImovelEstoqueMB imovelMB = new ImovelEstoqueMB();
-		imovelMB.setObjetoContratoCobranca(objetoContratoCobranca);
-		imovelMB.setObjetoImovelCobranca(objetoContratoCobranca.getImovel());
-		imovelMB.setObjetoImovelEstoque(objetoContratoCobranca.getImovel().getImovelEstoque());
-		imovelMB.salvarEstoque();
-		
-		
-	}
 
 	
 	public void calcularPorcentagemDesconto() {
@@ -9226,7 +9217,14 @@ public class ContratoCobrancaMB {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		salvarEstoque();
+		cadastraImovel();
+	}
+	public void cadastraImovel() {
+		ImovelEstoqueMB imovelMB = new ImovelEstoqueMB();
+		imovelMB.setObjetoContratoCobranca(objetoContratoCobranca);
+		imovelMB.setObjetoImovelCobranca(objetoContratoCobranca.getImovel());
+		imovelMB.setObjetoImovelEstoque(objetoContratoCobranca.getImovel().getImovelEstoque());
+		imovelMB.salvarEstoque();
 	}
 
 	public BigDecimal calcularValorPresenteParcelaJson(Long idParcela, BigDecimal txJuros, Date dataAquisicao) {

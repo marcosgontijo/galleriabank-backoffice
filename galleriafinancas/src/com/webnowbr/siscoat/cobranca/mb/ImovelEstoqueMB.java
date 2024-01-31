@@ -85,42 +85,40 @@ public class ImovelEstoqueMB {
 	public String salvarEstoque() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		ImovelEstoqueDao imovelEstoqueDao = new ImovelEstoqueDao();
-		
 		if(objetoImovelEstoque == null) {
 			objetoImovelEstoque = new ImovelEstoque();
+			objetoImovelEstoque.setObjetoContratoCobranca(objetoContratoCobranca);
+			objetoImovelEstoque.setObjetoImovelCobranca(objetoImovelCobranca);
 		}
-		objetoImovelEstoque.setObjetoImovelCobranca(objetoImovelCobranca);
-		objetoImovelEstoque.setObjetoContratoCobranca(objetoContratoCobranca);
+		
 		
 		try {
-			
-			
-			
-			if(CommonsUtil.semValor(objetoImovelCobranca.getImovelEstoque())) {
-				objetoImovelCobranca.setImovelEstoque(objetoImovelEstoque);
-				
-			
+			if(CommonsUtil.semValor(objetoImovelCobranca.getImovelEstoque())){
+				objetoImovelCobranca.setImovelEstoque(objetoImovelEstoque);	
+
 			}
+	
 			
 			// Chama os métodos de cálculo e define os valores diretamente nos campos do objeto ImovelEstoque
 			this.objetoImovelEstoque.setVariacaoCusto(
-		            calcularVariacaoCustos(this.objetoImovelEstoque.getValorLeilao2(), this.objetoImovelEstoque.getValorEmprestimo())
+		            calcularVariacaoCustos(objetoImovelEstoque.getValorLeilao2(), objetoImovelEstoque.getValorEmprestimo())
 		        );
 		    this.objetoImovelEstoque.setLtvLeilao(
-		            calcularLtvLeilao(this.objetoImovelEstoque.getValorLeilao2(), this.objetoImovelEstoque.getValorMercado())
+		            calcularLtvLeilao(objetoImovelEstoque.getValorLeilao2(), objetoImovelEstoque.getValorMercado())
 		        );
-		        
-		     ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();	
 		     if(objetoContratoCobranca != null) {
 		    	 preencherCamposComDadosContrato();
 		     }
-		     if(CommonsUtil.semValor(this.objetoImovelEstoque.getId())) {
-					imovelEstoqueDao.create(this.objetoImovelEstoque);
-					
+		     ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();	
+		     if(objetoImovelEstoque.getId() <= 0) {
+		    	 objetoImovelEstoque.setQuitado(false);
+		    	 objetoImovelEstoque.setStatusAtual("Estoque");
+					imovelEstoqueDao.create(objetoImovelEstoque);
+
 				}
-				else imovelEstoqueDao.merge(this.objetoImovelEstoque);
-		     imovelCobrancaDao.merge(objetoImovelCobranca);    
-		     imovelEstoqueDao.merge(this.objetoImovelEstoque); 
+				else 
+				imovelEstoqueDao.merge(objetoImovelEstoque);
+				imovelCobrancaDao.merge(objetoImovelCobranca); 
 
 
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Estoque Inserido com sucesso!!", ""));
@@ -150,8 +148,8 @@ public class ImovelEstoqueMB {
 
 	public void consultaEstoque() {
 //		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-ImovelEstoqueDao dao = new ImovelEstoqueDao();
-listaImovelEstoque = dao.consultaImovelEstoque();
+		ImovelEstoqueDao dao = new ImovelEstoqueDao();
+		listaConsultaEstoque = dao.consultaImovelEstoque();
 //		listaConsultaEstoque = contratoCobrancaDao.consultaImovelEstoque();
 	}
 
