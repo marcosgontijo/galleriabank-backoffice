@@ -81,8 +81,6 @@ public class ImovelEstoqueMB {
 		ImovelEstoqueDao imovelEstoqueDao = new ImovelEstoqueDao();
 		if(objetoImovelEstoque == null) {
 			objetoImovelEstoque = new ImovelEstoque();
-			objetoImovelEstoque.setObjetoContratoCobranca(objetoContratoCobranca);
-			objetoImovelEstoque.setObjetoImovelCobranca(objetoImovelCobranca);
 		}
 		
 		
