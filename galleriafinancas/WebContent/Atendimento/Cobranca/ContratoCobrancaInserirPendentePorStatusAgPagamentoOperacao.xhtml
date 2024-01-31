@@ -87,7 +87,7 @@
 
 							<h:panelGroup id="pgSolicitar2">
 								<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA">  	
-									<h:panelGrid columns="2">
+									<h:panelGrid columns="3">
 										<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 14}">
 											<h:panelGrid columns="2"
 												style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
@@ -113,7 +113,7 @@
 												</h:panelGrid>
 											</h:panelGrid>
 										</ui:fragment>
-										<h:panelGrid columns="3" rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 15 or contratoCobrancaMB.indexStepsStatusContrato == 16 or contratoCobrancaMB.indexStepsStatusContrato == 17}">
+										<h:panelGrid columns="3" rendered="#{contratoCobrancaMB.indexStepsStatusContrato >= 14 }">
 										<ui:fragment >
 											<h:panelGrid columns="2"
 												style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
@@ -177,18 +177,19 @@
 									</h:panelGrid>
 								</shiro:hasAnyRoles>
 
-								<!-- <h:panelGroup id="pgSolicitar">
+								 <h:panelGroup id="pgSolicitar">
 									<h:panelGrid columns="1"
 										style="background-color: #e4e4e4; margin-left: 21px;width: 250px; height: 50px; -webkit-border-radius: 5px;
 												-moz-border-radius: 5px;
 												border-radius: 5px; padding: 10px;">
 										<h:panelGrid columns="1">
-											<p:outputLabel styleClass="labelBold">Solicitar Nota Fiscal?</p:outputLabel>
+											<p:outputLabel styleClass="labelBold">Solicitar Nota Fiscal ?</p:outputLabel>
 											<p:selectOneRadio id="solicitarNota"
 												value="#{contratoCobrancaMB.objetoContratoCobranca.solicitarNota}">
 												<f:selectItem itemLabel="Não" itemValue="Não" />
 												<f:selectItem itemLabel="Solicitado" itemValue="Solicitado" />
-											 	<p:ajax event="change" update="pgSolicitar pgSolicitar2"/>  
+											 	<p:ajax event="change" update="pgSolicitar pgSolicitar2"
+														 	listener="#{contratoCobrancaMB.calcularValorNotaFiscal}"/>  
 											</p:selectOneRadio>
 										</h:panelGrid>				
 									</h:panelGrid>
@@ -203,7 +204,7 @@
 											onkeydown="FormataValor(this, 13, event, 2);" required="true"
 											converter="bigDecimalConverter" />
 									</h:panelGrid>
-								</h:panelGroup> -->
+								</h:panelGroup> 
 							</h:panelGroup>
 						</h:panelGrid>
 					</ui:fragment>

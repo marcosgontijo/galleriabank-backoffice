@@ -3966,55 +3966,61 @@ public class ContratoCobrancaMB {
 			updateCheckList();
 			this.objetoContratoCobranca.populaStatusEsteira(getUsuarioLogadoNull());
 			
-			//gerar contas stark bank
-			this.objetoContratoCobranca.setValorNotaFiscal(CommonsUtil.bigDecimalValue(10000));
+		
 			
-
-			ContasPagarDao contasPagarDao = new ContasPagarDao();
+			if (this.objetoContratoCobranca.isNotaFiscalPaga()) {
 			
-			List<ContasPagar> listDespesaNotaFiscal = contasPagarDao.buscarDespesa("Pagamento nota fiscal", this.objetoContratoCobranca.getNumeroContrato());
-			if (CommonsUtil.semValor(listDespesaNotaFiscal)) {
-				ContasPagar despesaNotaFiscal;
+				//gerar contas stark bank
+				//TODO: HERMES OLHAR AQUI
+				ContasPagarDao contasPagarDao = new ContasPagarDao();
 
-				if (!CommonsUtil.semValor(listDespesaNotaFiscal) && listDespesaNotaFiscal.size() == 1)
-					despesaNotaFiscal = listDespesaNotaFiscal.get(0);
-				else
-					despesaNotaFiscal = new ContasPagar();
+				List<ContasPagar> listDespesaNotaFiscal = contasPagarDao.buscarDespesa("Pagamento nota fiscal",
+						this.objetoContratoCobranca.getNumeroContrato());
+				if (CommonsUtil.semValor(listDespesaNotaFiscal)) {
+					ContasPagar despesaNotaFiscal;
 
-				despesaNotaFiscal.setDescricao("Pagamento nota fiscal");
-				despesaNotaFiscal.setValor(this.objetoContratoCobranca.getValorNotaFiscal());
-				
-				int diaSemanaHoje = this.objetoContratoCobranca.getNotaFiscalEmitidaData().getDay();
-//				achando a data da proxima terca
-				int diasVencimento =  7 - (diaSemanaHoje - 2);				
-				despesaNotaFiscal.setDataVencimento ( DateUtil.adicionarDias(this.objetoContratoCobranca.getNotaFiscalEmitidaData(), diasVencimento) );
-				despesaNotaFiscal.setTipoDespesa("C");
-				despesaNotaFiscal.setContrato(this.objetoContratoCobranca);
-				despesaNotaFiscal.setFormaTransferencia("PIX");
-				despesaNotaFiscal.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
-				despesaNotaFiscal.setResponsavel(this.objetoContratoCobranca.getResponsavel());
-				
-//				calcular valor nota
-
-				if (!CommonsUtil.semValor(this.objetoContratoCobranca.getResponsavel().getPix())) {
-					despesaNotaFiscal.setPix(this.objetoContratoCobranca.getResponsavel().getPix());
-				} else {
-					despesaNotaFiscal.setNomeTed(this.objetoContratoCobranca.getResponsavel().getNomeCC());
-					if (!CommonsUtil.semValor(this.objetoContratoCobranca.getResponsavel().getCpfCC()))
-						despesaNotaFiscal.setCpfTed(this.objetoContratoCobranca.getResponsavel().getCpfCC());
+					if (!CommonsUtil.semValor(listDespesaNotaFiscal) && listDespesaNotaFiscal.size() == 1)
+						despesaNotaFiscal = listDespesaNotaFiscal.get(0);
 					else
-						despesaNotaFiscal.setCpfTed(this.objetoContratoCobranca.getResponsavel().getCnpjCC());
-					despesaNotaFiscal.setBancoTed(this.objetoContratoCobranca.getResponsavel().getCodigoBanco());
-					despesaNotaFiscal.setAgenciaTed(this.objetoContratoCobranca.getResponsavel().getAgencia());
-					despesaNotaFiscal.setContaTed(this.objetoContratoCobranca.getResponsavel().getConta());
-					despesaNotaFiscal.setDigitoContaTed(this.objetoContratoCobranca.getResponsavel().getContaDigito());
+						despesaNotaFiscal = new ContasPagar();
 
+					despesaNotaFiscal.setDescricao("Pagamento nota fiscal");
+					despesaNotaFiscal.setValor(this.objetoContratoCobranca.getValorNotaFiscal());
+
+					int diaSemanaHoje = this.objetoContratoCobranca.getNotaFiscalEmitidaData().getDay();
+					//achando a data da proxima terca
+					int diasVencimento = 7 - (diaSemanaHoje - 2);
+					despesaNotaFiscal.setDataVencimento(DateUtil
+							.adicionarDias(this.objetoContratoCobranca.getNotaFiscalEmitidaData(), diasVencimento));
+					despesaNotaFiscal.setTipoDespesa("C");
+					despesaNotaFiscal.setContrato(this.objetoContratoCobranca);
+					despesaNotaFiscal.setFormaTransferencia("PIX");
+					despesaNotaFiscal.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
+					despesaNotaFiscal.setResponsavel(this.objetoContratoCobranca.getResponsavel());
+
+					//calcular valor nota
+
+					if (!CommonsUtil.semValor(this.objetoContratoCobranca.getResponsavel().getPix())) {
+						despesaNotaFiscal.setPix(this.objetoContratoCobranca.getResponsavel().getPix());
+					} else {
+						despesaNotaFiscal.setNomeTed(this.objetoContratoCobranca.getResponsavel().getNomeCC());
+						if (!CommonsUtil.semValor(this.objetoContratoCobranca.getResponsavel().getCpfCC()))
+							despesaNotaFiscal.setCpfTed(this.objetoContratoCobranca.getResponsavel().getCpfCC());
+						else
+							despesaNotaFiscal.setCpfTed(this.objetoContratoCobranca.getResponsavel().getCnpjCC());
+						despesaNotaFiscal.setBancoTed(this.objetoContratoCobranca.getResponsavel().getCodigoBanco());
+						despesaNotaFiscal.setAgenciaTed(this.objetoContratoCobranca.getResponsavel().getAgencia());
+						despesaNotaFiscal.setContaTed(this.objetoContratoCobranca.getResponsavel().getConta());
+						despesaNotaFiscal
+								.setDigitoContaTed(this.objetoContratoCobranca.getResponsavel().getContaDigito());
+
+					}
+
+					if (CommonsUtil.semValor(despesaNotaFiscal.getId()))
+						contasPagarDao.create(despesaNotaFiscal);
+					else
+						contasPagarDao.merge(despesaNotaFiscal);
 				}
-
-				if (CommonsUtil.semValor(despesaNotaFiscal.getId()))
-					contasPagarDao.create(despesaNotaFiscal);
-				else
-					contasPagarDao.merge(despesaNotaFiscal);
 			}
 			contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
@@ -6025,6 +6031,19 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setNotaFiscalPagaUsuario(getNomeUsuarioLogado());
 			}
 		}
+		
+		
+		if (!this.objetoContratoCobranca.isNotaSolicitada()) {
+			this.objetoContratoCobranca.setSolicitarNotaData(null);
+			this.objetoContratoCobranca.setSolicitarNotaUsuario(null);
+
+		} else {
+			if (this.objetoContratoCobranca.getSolicitarNotaData() == null) {
+				this.objetoContratoCobranca.setSolicitarNotaData(DateUtil.gerarDataHoje());
+				this.objetoContratoCobranca.setSolicitarNotaUsuario(getNomeUsuarioLogado());
+			}
+		}
+		
 
 		this.objetoContratoCobranca.setStatusContratoData(DateUtil.gerarDataHoje());
 		this.objetoContratoCobranca.setStatusContratoUsuario(getNomeUsuarioLogado());
@@ -10444,15 +10463,19 @@ public class ContratoCobrancaMB {
 		this.indexStepsStatusContrato = 0;
 
 		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getStatus(), "Aprovado")) {
-			
-			
-			if ( this.objetoContratoCobranca.isPendenciaPagamento()) {
+
+			if (this.objetoContratoCobranca.isPendenciaPagamento() || !this.objetoContratoCobranca.isOperacaoPaga()) {
 				this.indexStepsStatusContrato = 14;
-			} else if (this.objetoContratoCobranca.isOperacaoPaga() && !this.objetoContratoCobranca.isNotaFiscalEmitida()) {
+			} else if (this.objetoContratoCobranca.isOperacaoPaga() && this.objetoContratoCobranca.isNotaSolicitada()
+					&& !this.objetoContratoCobranca.isNotaFiscalEmitida()) {
 				this.indexStepsStatusContrato = 15;
-			} else if (this.objetoContratoCobranca.isOperacaoPaga() && this.objetoContratoCobranca.isNotaFiscalEmitida() && !this.objetoContratoCobranca.isNotaFiscalAgendada()) {
+			} else if (this.objetoContratoCobranca.isOperacaoPaga() && this.objetoContratoCobranca.isNotaSolicitada()
+					&& this.objetoContratoCobranca.isNotaFiscalEmitida()
+					&& !this.objetoContratoCobranca.isNotaFiscalAgendada()) {
 				this.indexStepsStatusContrato = 16;
-			} else if (this.objetoContratoCobranca.isOperacaoPaga() && this.objetoContratoCobranca.isNotaFiscalEmitida() && !this.objetoContratoCobranca.isNotaFiscalPaga()) {
+			} else if (this.objetoContratoCobranca.isOperacaoPaga() && this.objetoContratoCobranca.isNotaSolicitada()
+					&& this.objetoContratoCobranca.isNotaFiscalEmitida()
+					&& !this.objetoContratoCobranca.isNotaFiscalPaga()) {
 				this.indexStepsStatusContrato = 17;
 			}
 		} else if (!this.objetoContratoCobranca.isInicioAnalise()) {
@@ -33711,6 +33734,14 @@ public class ContratoCobrancaMB {
 		// Apesar dessa função não fazer nada ela é importante para o funcionamento do
 		// download em zip.
 		// Não me pergunte o pq
+	}
+	
+	public void calcularValorNotaFiscal() {
+		if ( CommonsUtil.mesmoValor("Solicitado", this.objetoContratoCobranca.getSolicitarNota()) &&
+				CommonsUtil.semValor(this.objetoContratoCobranca.getValorNotaFiscal()))
+			this.objetoContratoCobranca.setValorNotaFiscal(CommonsUtil.bigDecimalValue(10000));
+		else
+			this.objetoContratoCobranca.setValorNotaFiscal(null);
 	}
 
 	public StreamedContent getDownloadAllFiles() {

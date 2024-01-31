@@ -222,8 +222,8 @@ public class RelatoriosService {
 	}
 
 	public byte[] geraPDFPAprovadoComiteByteArray(long idContrato) throws JRException, IOException {
-		JasperPrint jp = geraPDFPAprovadoComite(idContrato);
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		JasperPrint jp = geraPDFPAprovadoComite(idContrato);
 
 		JasperExportManager.exportReportToPdfStream(jp, bos);
 

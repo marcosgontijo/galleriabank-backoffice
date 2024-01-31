@@ -783,6 +783,11 @@ public class ContratoCobranca implements Serializable {
 	private String observacaoPagamento;
 
 	private String solicitarNota;
+	private Date solicitarNotaData;
+	private String solicitarNotaUsuario;
+	
+	
+	
 	private boolean notaSolicitadaWhatsapp;
 	private BigDecimal valorNotaFiscal;
 
@@ -1517,6 +1522,10 @@ public class ContratoCobranca implements Serializable {
 		if (!CommonsUtil.semValor(dataPajuComentado))
 			retorno = (DateUtil.getDaysBetweenDates(dataPajuComentado, DateUtil.gerarDataHoje()) > 30);
 		return retorno;
+	}
+	
+	public boolean isNotaSolicitada() {
+		return CommonsUtil.mesmoValorIgnoreCase("Solicitado", solicitarNota);
 	}
 
 	public boolean desabilitarEnviarParaCartorio() {
@@ -6856,6 +6865,22 @@ public class ContratoCobranca implements Serializable {
 
 	public void setSolicitarNota(String solicitarNota) {
 		this.solicitarNota = solicitarNota;
+	}	
+
+	public Date getSolicitarNotaData() {
+		return solicitarNotaData;
+	}
+
+	public void setSolicitarNotaData(Date solicitarNotaData) {
+		this.solicitarNotaData = solicitarNotaData;
+	}
+
+	public String getSolicitarNotaUsuario() {
+		return solicitarNotaUsuario;
+	}
+
+	public void setSolicitarNotaUsuario(String solicitarNotaUsuario) {
+		this.solicitarNotaUsuario = solicitarNotaUsuario;
 	}
 
 	public boolean isNotaSolicitadaWhatsapp() {
