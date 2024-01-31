@@ -9179,6 +9179,14 @@ public class ContratoCobrancaMB {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		cadastraImovel();
+	}
+	public void cadastraImovel() {
+		ImovelEstoqueMB imovelMB = new ImovelEstoqueMB();
+		imovelMB.setObjetoContratoCobranca(objetoContratoCobranca);
+		imovelMB.setObjetoImovelCobranca(objetoContratoCobranca.getImovel());
+		imovelMB.setObjetoImovelEstoque(objetoContratoCobranca.getImovel().getImovelEstoque());
+		imovelMB.salvarEstoque();
 	}
 
 	public BigDecimal calcularValorPresenteParcelaJson(Long idParcela, BigDecimal txJuros, Date dataAquisicao) {
