@@ -7736,13 +7736,12 @@ public class ContratoCobranca implements Serializable {
 		this.notaFiscalEmitidaUsuario = notaFiscalEmitidaUsuario;
 	}
 
-
-	public Date getNotaFiscalAgendadaPagamentoData() {
-		return notaFiscalAgendadaPagamentoData;
+	public Date getNotaFiscalAgendadaData() {
+		return notaFiscalAgendadaData;
 	}
 
-	public void setNotaFiscalAgendadaPagamentoData(Date notaFiscalAgendadaPagamentoData) {
-		this.notaFiscalAgendadaPagamentoData = notaFiscalAgendadaPagamentoData;
+	public void setNotaFiscalAgendadaData(Date notaFiscalAgendadaData) {
+		this.notaFiscalAgendadaData = notaFiscalAgendadaData;
 	}
 
 	public boolean isNotaFiscalAgendada() {
