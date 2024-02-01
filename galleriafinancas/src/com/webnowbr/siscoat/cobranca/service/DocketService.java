@@ -587,6 +587,7 @@ public class DocketService {
 										|| CommonsUtil.mesmoValor(retorno.campos.cnpj,
 												CommonsUtil.somenteNumeros(documentoAnalise.getCnpjcpf()))) {
 									docketConsulta.setIdDocket(retorno.id);
+									docketConsulta.setPedidoId(myResponse.getPedido().getId());
 									consultaDao.create(docketConsulta);
 								}
 							}

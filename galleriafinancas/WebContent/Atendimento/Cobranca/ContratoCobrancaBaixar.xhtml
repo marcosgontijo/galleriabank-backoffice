@@ -3247,7 +3247,7 @@
 			</h:form>
 		</p:dialog>
 
-		<p:dialog header="Quitar Contrato"
+		<p:dialog id="quitarContratoDialog" header="Quitar Contrato"
 			widgetVar="quitarContratoDialog" resizable="true"
 			style="FONT-SIZE: 10pt;" responsive="true" height="480px" width="770px">
 			<h:form id="quitarContratoForm">
@@ -3269,8 +3269,8 @@
 	                			update="@form" />
 	                	</p:calendar>	
 	                	
-	                	<shiro:hasAnyRoles name="ROOT">                		
-							<p:outputLabel for="quitarContrato" value="" />
+	                	<shiro:hasAnyRoles name="ROOT">  
+	                	<p:outputLabel for="quitarContrato " value=""></p:outputLabel>              		
 							<p:commandButton id="quitarContrato" value="Quitar Contrato"
 								update=":form:DetalheParcelas valorPresenteTotal dtParcelasQuitar"
 								action="#{contratoCobrancaMB.quitarContrato(contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes)}" />

@@ -2,9 +2,12 @@ package com.webnowbr.siscoat.job;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.time.DateUtils;
 
@@ -39,10 +42,9 @@ public class IpcaJobCalcular {
 
 		// primeira condição é para meses de mesmo ano; segunda condição é para os meses
 		// jan e fev da parcela IPCA
-		if ( CommonsUtil.mesmoValor(dataIPCA.getMonth(), ultimoIpca.getData().getMonth()) &&
-				CommonsUtil.mesmoValor(dataIPCA.getYear(), ultimoIpca.getData().getYear()) ) {
+		if (CommonsUtil.mesmoValor(dataIPCA.getMonth(), ultimoIpca.getData().getMonth())
+				&& CommonsUtil.mesmoValor(dataIPCA.getYear(), ultimoIpca.getData().getYear())) {
 
-			
 			// usar o reparcelamento aqui.
 
 			BigDecimal saldoDevedor = BigDecimal.ZERO;
@@ -50,8 +52,8 @@ public class IpcaJobCalcular {
 			BigDecimal valorSeguroDFI = BigDecimal.ZERO;
 			BigDecimal valorTxAdm = SiscoatConstants.TAXA_ADM;
 			BigDecimal saldoDevedorAnterior = BigDecimal.ZERO;
-			
-			if(contratoCobranca.isTemTxAdm()) {
+
+			if (contratoCobranca.isTemTxAdm()) {
 				valorTxAdm = SiscoatConstants.TAXA_ADM;
 			} else {
 				valorTxAdm = BigDecimal.ZERO;
@@ -61,7 +63,7 @@ public class IpcaJobCalcular {
 				valorSeguroDFI = contratoCobranca.getValorImovel()
 						.multiply(SiscoatConstants.SEGURO_DFI.divide(BigDecimal.valueOf(100)));
 			}
-			
+
 			Calendar dataCorteParcelasBaixadas = Calendar.getInstance();
 			dataCorteParcelasBaixadas.set(Calendar.YEAR, 2021);
 			dataCorteParcelasBaixadas.set(Calendar.MONTH, 10);
@@ -181,7 +183,7 @@ public class IpcaJobCalcular {
 							}
 
 							detalheIpca.setIpcaAtualizou(ultimoIpca);
-							//detalheIpca.setVlrRecebido(BigDecimal.valueOf(parcelaSimuladorReal.longValue()));
+							// detalheIpca.setVlrRecebido(BigDecimal.valueOf(parcelaSimuladorReal.longValue()));
 
 							detalheIpca
 									.setVlrParcela(parcela.getValorParcela().setScale(2, BigDecimal.ROUND_HALF_EVEN));
@@ -201,7 +203,8 @@ public class IpcaJobCalcular {
 										CommonsUtil.bigDecimalValue(contratoCobranca.getMesesCarencia() + 1)));
 								detalheIpca.setVlrParcela(detalheIpca.getVlrParcela().add(valorSeguroMIPCarencia)
 										.add(valorSeguroDFI.multiply(
-												CommonsUtil.bigDecimalValue(contratoCobranca.getMesesCarencia()))).add(valorTxAdm));
+												CommonsUtil.bigDecimalValue(contratoCobranca.getMesesCarencia())))
+										.add(valorTxAdm));
 							} else {
 								detalheIpca.setSeguroMIP(parcela.getSeguroMIP());
 								detalheIpca.setSeguroDFI(parcela.getSeguroDFI());
@@ -214,72 +217,67 @@ public class IpcaJobCalcular {
 							 * CODIGO MURTA OLD
 							 */
 							/*
-							if (detalheIpca.isParcelaPaga()) {		
-								BigDecimal vlrPago = BigDecimal.ZERO;
-								
-								List<ContratoCobrancaDetalhesParcial> detalhesParciais = detalheIpca
-										.getListContratoCobrancaDetalhesParcial();
-								
-								if (detalheIpca.getDataVencimento().before(dataCorteParcelasBaixadas.getTime())) {
-									for (ContratoCobrancaDetalhesParcial parcial : detalhesParciais) {	
-										if( parcial.getDataVencimento().compareTo(parcial.getDataPagamento())<0 &&
-										    parcial.getVlrParcela().compareTo(parcial.getVlrRecebido()) < 0) {
-											vlrPago = vlrPago.add(CommonsUtil.bigDecimalValue(parcial.getVlrParcela()));
-										}else {
-											vlrPago = vlrPago.add(CommonsUtil.bigDecimalValue(parcial.getVlrRecebido()));
-										}
-									}
-									if (vlrPago.compareTo(BigDecimal.ZERO) == 1) {
-
-										BigDecimal vlrParcela = vlrPago
-												.subtract(CommonsUtil.bigDecimalValue(detalheIpca.getSeguroDFI()))
-												.subtract(CommonsUtil.bigDecimalValue(detalheIpca.getSeguroMIP()));
-
-										BigDecimal vlrAmortizacaoOriginal = detalheIpca.getVlrAmortizacaoParcela();
-
-										detalheIpca.setVlrAmortizacaoParcela(vlrParcela.subtract(parcela.getJuros()));
-
-										vlrSaldoParcela = saldoDevedorIpca.subtract(detalheIpca.getVlrAmortizacaoParcela());
-										detalheIpca.setVlrParcela(vlrPago);
-									}
-								} else {	
-									for (ContratoCobrancaDetalhesParcial parcial : detalhesParciais) {											
-										vlrPago = vlrPago.add(CommonsUtil.bigDecimalValue(parcial.getVlrRecebido()));
-									}
-									
-									detalheIpca.setVlrParcela(vlrPago);
-									
-									if (vlrPago.compareTo(BigDecimal.ZERO) == 1) {
-										//BigDecimal vlrParcela = vlrPago
-										//		.subtract(CommonsUtil.bigDecimalValue(detalheIpca.getSeguroDFI()))
-										//		.subtract(CommonsUtil.bigDecimalValue(detalheIpca.getSeguroMIP()));
-	
-										//BigDecimal vlrAmortizacaoOriginal = detalheIpca.getVlrAmortizacaoParcela();
-	
-										//detalheIpca.setVlrAmortizacaoParcela(vlrParcela.subtract(parcela.getJuros()));
-										
-										detalheIpca.setVlrAmortizacaoParcela(parcela.getAmortizacao());
-	
-										vlrSaldoParcela = saldoDevedorIpca.subtract(detalheIpca.getVlrAmortizacaoParcela());										
-									}
-								}
-							}
-							*/
-							if (detalheIpca.isParcelaPaga()) {		
+							 * if (detalheIpca.isParcelaPaga()) { BigDecimal vlrPago = BigDecimal.ZERO;
+							 * 
+							 * List<ContratoCobrancaDetalhesParcial> detalhesParciais = detalheIpca
+							 * .getListContratoCobrancaDetalhesParcial();
+							 * 
+							 * if
+							 * (detalheIpca.getDataVencimento().before(dataCorteParcelasBaixadas.getTime()))
+							 * { for (ContratoCobrancaDetalhesParcial parcial : detalhesParciais) { if(
+							 * parcial.getDataVencimento().compareTo(parcial.getDataPagamento())<0 &&
+							 * parcial.getVlrParcela().compareTo(parcial.getVlrRecebido()) < 0) { vlrPago =
+							 * vlrPago.add(CommonsUtil.bigDecimalValue(parcial.getVlrParcela())); }else {
+							 * vlrPago = vlrPago.add(CommonsUtil.bigDecimalValue(parcial.getVlrRecebido()));
+							 * } } if (vlrPago.compareTo(BigDecimal.ZERO) == 1) {
+							 * 
+							 * BigDecimal vlrParcela = vlrPago
+							 * .subtract(CommonsUtil.bigDecimalValue(detalheIpca.getSeguroDFI()))
+							 * .subtract(CommonsUtil.bigDecimalValue(detalheIpca.getSeguroMIP()));
+							 * 
+							 * BigDecimal vlrAmortizacaoOriginal = detalheIpca.getVlrAmortizacaoParcela();
+							 * 
+							 * detalheIpca.setVlrAmortizacaoParcela(vlrParcela.subtract(parcela.getJuros()))
+							 * ;
+							 * 
+							 * vlrSaldoParcela =
+							 * saldoDevedorIpca.subtract(detalheIpca.getVlrAmortizacaoParcela());
+							 * detalheIpca.setVlrParcela(vlrPago); } } else { for
+							 * (ContratoCobrancaDetalhesParcial parcial : detalhesParciais) { vlrPago =
+							 * vlrPago.add(CommonsUtil.bigDecimalValue(parcial.getVlrRecebido())); }
+							 * 
+							 * detalheIpca.setVlrParcela(vlrPago);
+							 * 
+							 * if (vlrPago.compareTo(BigDecimal.ZERO) == 1) { //BigDecimal vlrParcela =
+							 * vlrPago // .subtract(CommonsUtil.bigDecimalValue(detalheIpca.getSeguroDFI()))
+							 * // .subtract(CommonsUtil.bigDecimalValue(detalheIpca.getSeguroMIP()));
+							 * 
+							 * //BigDecimal vlrAmortizacaoOriginal = detalheIpca.getVlrAmortizacaoParcela();
+							 * 
+							 * //detalheIpca.setVlrAmortizacaoParcela(vlrParcela.subtract(parcela.getJuros()
+							 * ));
+							 * 
+							 * detalheIpca.setVlrAmortizacaoParcela(parcela.getAmortizacao());
+							 * 
+							 * vlrSaldoParcela =
+							 * saldoDevedorIpca.subtract(detalheIpca.getVlrAmortizacaoParcela()); } } }
+							 */
+							if (detalheIpca.isParcelaPaga()) {
 								BigDecimal vlrPago = BigDecimal.ZERO;
 
 								List<ContratoCobrancaDetalhesParcial> detalhesParciais = detalheIpca
 										.getListContratoCobrancaDetalhesParcial();
-								
+
 								if (detalheIpca.getDataVencimento().before(dataCorteParcelasBaixadas.getTime())) {
-									//detalheIpca.setVlrAmortizacaoParcela(detalheIpca.getVlrAmortizacaoParcela());
-									
-									BigDecimal vlrParcela = parcela.getJuros().add(detalheIpca.getVlrAmortizacaoParcela())
-											.add(detalheIpca.getSeguroMIP()).add(detalheIpca.getSeguroDFI()).add(parcela.getTxAdm());
-											
-									//detalheIpca.setVlrParcela(parcela.getValorParcela());
+									// detalheIpca.setVlrAmortizacaoParcela(detalheIpca.getVlrAmortizacaoParcela());
+
+									BigDecimal vlrParcela = parcela.getJuros()
+											.add(detalheIpca.getVlrAmortizacaoParcela()).add(detalheIpca.getSeguroMIP())
+											.add(detalheIpca.getSeguroDFI()).add(parcela.getTxAdm());
+
+									// detalheIpca.setVlrParcela(parcela.getValorParcela());
 									detalheIpca.setVlrParcela(vlrParcela);
-								} else {	
+								} else {
 									detalheIpca.setVlrParcela(parcela.getValorParcela());
 								}
 							}
@@ -308,8 +306,8 @@ public class IpcaJobCalcular {
 								detalheIpca.setVlrSaldoInicial(saldoDevedorIpca);
 							} else
 								detalheIpca.setVlrSaldoInicial(saldoDevedorAnterior);
-								//detalheIpca.setVlrSaldoInicial(parcela.getSaldoDevedorInicial());
-							
+							// detalheIpca.setVlrSaldoInicial(parcela.getSaldoDevedorInicial());
+
 							saldoDevedorAnterior = detalheIpca.getVlrSaldoParcela();
 						}
 
@@ -355,7 +353,7 @@ public class IpcaJobCalcular {
 
 		return false;
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	public boolean calcularIPCACustom(IPCADao ipcaDao, ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao,
 			ContratoCobrancaDao contratoCobrancaDao,
@@ -363,9 +361,10 @@ public class IpcaJobCalcular {
 			ContratoCobrancaDetalhes contratoCobrancaDetalhes, ContratoCobranca contratoCobranca) {
 
 		Date dataIPCA = DateUtil.adicionarMes(contratoCobrancaDetalhes.getDataVencimento(), -2);
-		// este método pegara o último IPCA na base, com data anterior a data base, mesmo que não do mesmo mês.
+		// este método pegara o último IPCA na base, com data anterior a data base,
+		// mesmo que não do mesmo mês.
 		IPCA ultimoIpca = ipcaDao.getUltimoIPCA(dataIPCA);
-		
+
 		if (dataIPCA.getMonth() != ultimoIpca.getData().getMonth()
 				|| dataIPCA.getYear() != ultimoIpca.getData().getYear()) {
 			ultimoIpca = new IPCA();
@@ -376,10 +375,9 @@ public class IpcaJobCalcular {
 
 		// primeira condição é para meses de mesmo ano; segunda condição é para os meses
 		// jan e fev da parcela IPCA
-		if ( CommonsUtil.mesmoValor(dataIPCA.getMonth(), ultimoIpca.getData().getMonth()) &&
-				CommonsUtil.mesmoValor(dataIPCA.getYear(), ultimoIpca.getData().getYear()) ) {
+		if (CommonsUtil.mesmoValor(dataIPCA.getMonth(), ultimoIpca.getData().getMonth())
+				&& CommonsUtil.mesmoValor(dataIPCA.getYear(), ultimoIpca.getData().getYear())) {
 
-			
 			// usar o reparcelamento aqui.
 
 			BigDecimal saldoDevedor = BigDecimal.ZERO;
@@ -388,39 +386,47 @@ public class IpcaJobCalcular {
 			BigDecimal valorTxAdm = SiscoatConstants.TAXA_ADM;
 			BigDecimal saldoDevedorAnterior = BigDecimal.ZERO;
 
-			if(contratoCobranca.isTemTxAdm()) {
+			if (contratoCobranca.isTemTxAdm()) {
 				valorTxAdm = SiscoatConstants.TAXA_ADM;
 			} else {
 				valorTxAdm = BigDecimal.ZERO;
 			}
-			
+
 			if ((contratoCobranca.isTemSeguroMIP() && contratoCobranca.isTemSeguro())) {
 				valorSeguroDFI = contratoCobranca.getValorImovel()
 						.multiply(SiscoatConstants.SEGURO_DFI.divide(BigDecimal.valueOf(100)));
 			}
-			
+
 			Calendar dataCorteParcelasBaixadas = Calendar.getInstance();
 			dataCorteParcelasBaixadas.set(Calendar.YEAR, 2021);
 			dataCorteParcelasBaixadas.set(Calendar.MONTH, 9);
 			dataCorteParcelasBaixadas.set(Calendar.DAY_OF_MONTH, 13);
-			
+
 			Calendar dataCorteParcelasMalucas = Calendar.getInstance();
 			dataCorteParcelasMalucas.set(Calendar.YEAR, 2022);
 			dataCorteParcelasMalucas.set(Calendar.MONTH, 11);
 			dataCorteParcelasMalucas.set(Calendar.DAY_OF_MONTH, 15);
 
+//			 List<ContratoCobrancaDetalhes> listCobrancaDetalhesCalculo =  contratoCobranca.getListContratoCobrancaDetalhes()
+//					 .stream().filter(x-> !SiscoatConstants.PARCELASIGNORADAS.contains( x.getNumeroParcela())).collect(Collectors.toList());
+
+			List<ContratoCobrancaDetalhes> listCobrancaDetalhesCalculo = contratoCobranca
+					.getListContratoCobrancaDetalhes().stream().collect(Collectors.toList());
+
+			ContratoCobrancaDetalhes detalheValido = null;
 			for (int iDetalhe = 0; iDetalhe < contratoCobranca.getListContratoCobrancaDetalhes().size(); iDetalhe++) {
+//			 for (ContratoCobrancaDetalhes detalhe: listCobrancaDetalhesCalculo) {			 
 
 				ContratoCobrancaDetalhes detalhe = contratoCobranca.getListContratoCobrancaDetalhes().get(iDetalhe);
 
 				if (CommonsUtil.mesmoValor(contratoCobrancaDetalhes.getId(), detalhe.getId())) {
 
 					/*
-					if (!CommonsUtil.booleanValue(contratoCobranca.isRecalculaIPCA())
-							&& detalhe.getIpcaAtualizou() != null
-							&& CommonsUtil.mesmoValor(detalhe.getIpcaAtualizou().getId(), ultimoIpca.getId()))
-						continue;
-						*/
+					 * if (!CommonsUtil.booleanValue(contratoCobranca.isRecalculaIPCA()) &&
+					 * detalhe.getIpcaAtualizou() != null &&
+					 * CommonsUtil.mesmoValor(detalhe.getIpcaAtualizou().getId(),
+					 * ultimoIpca.getId())) continue;
+					 */
 
 					// reparcela
 					BigDecimal valorIpca = (saldoDevedor
@@ -460,12 +466,14 @@ public class IpcaJobCalcular {
 					simulador.setValorCredito(saldoDevedorIpca);
 					simulador.setTaxaJuros(contratoCobranca.getTxJurosParcelas());
 
-					if (contratoCobranca.getMesesCarencia() > CommonsUtil.intValue(detalhe.getNumeroParcela()))
+					if (!SiscoatConstants.PARCELASIGNORADAS.contains(contratoCobrancaDetalhes.getNumeroParcela())
+							&& contratoCobranca.getMesesCarencia() > CommonsUtil.intValue(detalhe.getNumeroParcela()))
 						simulador.setCarencia(
 								BigInteger.valueOf(CommonsUtil.longValue(contratoCobranca.getMesesCarencia()
 										- CommonsUtil.intValue(detalhe.getNumeroParcela()))));
-					else if (CommonsUtil.mesmoValor(contratoCobranca.getMesesCarencia(),
-							CommonsUtil.intValue(detalhe.getNumeroParcela())))
+					else if (!SiscoatConstants.PARCELASIGNORADAS.contains(contratoCobrancaDetalhes.getNumeroParcela())
+							&& CommonsUtil.mesmoValor(contratoCobranca.getMesesCarencia(),
+									CommonsUtil.intValue(detalhe.getNumeroParcela())))
 						simulador.setCarencia(BigInteger.valueOf(contratoCobranca.getMesesCarencia()));
 					else
 						simulador.setCarencia(BigInteger.ZERO);
@@ -477,7 +485,11 @@ public class IpcaJobCalcular {
 						contratoCobranca.setGeraParcelaFinal(false);
 					}
 
-					if (CommonsUtil.intValue(detalhe.getNumeroParcela()) > 0)
+					if (SiscoatConstants.PARCELASIGNORADAS.contains(contratoCobrancaDetalhes.getNumeroParcela())
+							&& detalheValido != null) {
+						simulador.setQtdParcelas(BigInteger
+								.valueOf(qtdParcelas - CommonsUtil.intValue(detalheValido.getNumeroParcela()) + 1));
+					} else if (CommonsUtil.intValue(detalhe.getNumeroParcela()) > 0)
 						simulador.setQtdParcelas(
 								BigInteger.valueOf(qtdParcelas - CommonsUtil.intValue(detalhe.getNumeroParcela()) + 1));
 					else
@@ -500,16 +512,23 @@ public class IpcaJobCalcular {
 
 						Integer parcelaSimuladorReal = 0;
 
-						if (CommonsUtil.intValue(detalhe.getNumeroParcela()) > 1)
+						if (SiscoatConstants.PARCELASIGNORADAS.contains(detalhe.getNumeroParcela())) {
+							detalhe.setVlrSaldoParcela(saldoDevedorIpca);
+							continue;
+						} else if (CommonsUtil.intValue(detalhe.getNumeroParcela()) > 1)
 							parcelaSimuladorReal = CommonsUtil.intValue(parcela.getNumeroParcela())
 									+ CommonsUtil.intValue(detalhe.getNumeroParcela()) - 1;
 						else
 							parcelaSimuladorReal = CommonsUtil.intValue(parcela.getNumeroParcela());
 
 						final int parcelaProcura = parcelaSimuladorReal;
-						ContratoCobrancaDetalhes detalheIpca = contratoCobranca
-								.getListContratoCobrancaDetalhes().stream().filter(x -> CommonsUtil
-										.mesmoValor(CommonsUtil.intValue(x.getNumeroParcela()), parcelaProcura))
+
+						ContratoCobrancaDetalhes detalheIpca = contratoCobranca.getListContratoCobrancaDetalhes()
+								.stream()
+								// .filter( x -> !SiscoatConstants.PARCELASIGNORADAS.contains(
+								// x.getNumeroParcela()))
+								.filter(x -> CommonsUtil.mesmoValor(CommonsUtil.stringValue(x.getNumeroParcela()),
+										CommonsUtil.stringValue(parcelaProcura)))
 								.findFirst().orElse(null);
 
 //						for (ContratoCobrancaDetalhes detalheIpca : contratoCobranca
@@ -527,7 +546,7 @@ public class IpcaJobCalcular {
 							if (ultimoIpca.getId() >= 0) {
 								detalheIpca.setIpcaAtualizou(ultimoIpca);
 							}
-							//detalheIpca.setVlrRecebido(BigDecimal.valueOf(parcelaSimuladorReal.longValue()));
+							// detalheIpca.setVlrRecebido(BigDecimal.valueOf(parcelaSimuladorReal.longValue()));
 
 							detalheIpca
 									.setVlrParcela(parcela.getValorParcela().setScale(2, BigDecimal.ROUND_HALF_EVEN));
@@ -545,10 +564,11 @@ public class IpcaJobCalcular {
 										CommonsUtil.bigDecimalValue(contratoCobranca.getMesesCarencia() + 1)));
 								detalheIpca.setTaxaAdm(valorTxAdm.multiply(
 										CommonsUtil.bigDecimalValue(contratoCobranca.getMesesCarencia() + 1)));
-								detalheIpca.setVlrParcela(detalheIpca.getVlrParcela()
-										.add(valorSeguroMIPCarencia)
-										.add(valorSeguroDFI.multiply(CommonsUtil.bigDecimalValue(contratoCobranca.getMesesCarencia())))
-										.add(valorTxAdm.multiply(CommonsUtil.bigDecimalValue(contratoCobranca.getMesesCarencia()))));
+								detalheIpca.setVlrParcela(detalheIpca.getVlrParcela().add(valorSeguroMIPCarencia)
+										.add(valorSeguroDFI.multiply(
+												CommonsUtil.bigDecimalValue(contratoCobranca.getMesesCarencia())))
+										.add(valorTxAdm.multiply(
+												CommonsUtil.bigDecimalValue(contratoCobranca.getMesesCarencia()))));
 							} else {
 								detalheIpca.setSeguroMIP(parcela.getSeguroMIP());
 								detalheIpca.setSeguroDFI(parcela.getSeguroDFI());
@@ -557,29 +577,31 @@ public class IpcaJobCalcular {
 
 							BigDecimal vlrSaldoParcela = parcela.getSaldoDevedorInicial();
 
-							if (detalheIpca.isParcelaPaga()) {		
+							if (detalheIpca.isParcelaPaga()) {
 								BigDecimal vlrPago = BigDecimal.ZERO;
 
 								List<ContratoCobrancaDetalhesParcial> detalhesParciais = detalheIpca
 										.getListContratoCobrancaDetalhesParcial();
-								
+
 								if (detalheIpca.getDataVencimento().before(dataCorteParcelasBaixadas.getTime())) {
-									//detalheIpca.setVlrAmortizacaoParcela(detalheIpca.getVlrAmortizacaoParcela());
-									
-									BigDecimal vlrParcela = parcela.getJuros().add(detalheIpca.getVlrAmortizacaoParcela())
-											.add(detalheIpca.getSeguroMIP()).add(detalheIpca.getSeguroDFI()).add(parcela.getTxAdm());
-											
-									//detalheIpca.setVlrParcela(parcela.getValorParcela());
+									// detalheIpca.setVlrAmortizacaoParcela(detalheIpca.getVlrAmortizacaoParcela());
+
+									BigDecimal vlrParcela = parcela.getJuros()
+											.add(detalheIpca.getVlrAmortizacaoParcela()).add(detalheIpca.getSeguroMIP())
+											.add(detalheIpca.getSeguroDFI()).add(parcela.getTxAdm());
+
+									// detalheIpca.setVlrParcela(parcela.getValorParcela());
 									detalheIpca.setVlrParcela(vlrParcela);
-									
-									for (ContratoCobrancaDetalhesParcial parcial : detalhesParciais) {		
+
+									for (ContratoCobrancaDetalhesParcial parcial : detalhesParciais) {
 										vlrPago = vlrPago.add(CommonsUtil.bigDecimalValue(parcial.getVlrRecebido()));
 									}
-									
+
 									BigDecimal diferencaPagto = vlrPago.subtract(vlrParcela);
-									
+
 									if (diferencaPagto.compareTo(BigDecimal.ZERO) == 1) {
-										detalheIpca.setVlrAmortizacaoParcela(detalheIpca.getVlrAmortizacaoParcela().add(diferencaPagto));
+										detalheIpca.setVlrAmortizacaoParcela(
+												detalheIpca.getVlrAmortizacaoParcela().add(diferencaPagto));
 										vlrSaldoParcela = vlrSaldoParcela.subtract(diferencaPagto);
 									}
 								} else {
@@ -605,29 +627,30 @@ public class IpcaJobCalcular {
 								detalheIpca.setVlrSaldoInicial(saldoDevedorIpca);
 							} else
 								detalheIpca.setVlrSaldoInicial(saldoDevedorAnterior);
-								//detalheIpca.setVlrSaldoInicial(parcela.getSaldoDevedorInicial());
-							
+							// detalheIpca.setVlrSaldoInicial(parcela.getSaldoDevedorInicial());
+
 							saldoDevedorAnterior = detalheIpca.getVlrSaldoParcela();
 						}
 
 						detalheIpca.setIpca(detalheIpca.getVlrParcela().subtract(detalheIpca.getVlrParcelaOriginal()));
-						
-						//INICIO - Tratativa para validar status parcela
+
+						// INICIO - Tratativa para validar status parcela
 						if (detalheIpca.getListContratoCobrancaDetalhesParcial().size() > 0) {
 							BigDecimal somaBaixas = BigDecimal.ZERO;
 							boolean temBaixa = false;
-	
-							for (ContratoCobrancaDetalhesParcial cBaixas : detalheIpca.getListContratoCobrancaDetalhesParcial()) {
+
+							for (ContratoCobrancaDetalhesParcial cBaixas : detalheIpca
+									.getListContratoCobrancaDetalhesParcial()) {
 								somaBaixas = somaBaixas.add(cBaixas.getVlrRecebido());
 								temBaixa = true;
 							}
-							
+
 							if (temBaixa && somaBaixas.compareTo(detalheIpca.getVlrParcela()) >= 0) {
 								detalheIpca.setParcelaPaga(true);
 								detalheIpca.setOrigemBaixa("calcularIPCACustom - Tratativa Status");
-							}	
+							}
 						}
-						//FIM - Tratativa para validar status parcela
+						// FIM - Tratativa para validar status parcela
 
 					}
 
@@ -639,6 +662,7 @@ public class IpcaJobCalcular {
 				saldoDevedorAnterior = detalhe.getVlrSaldoParcela();
 
 				if ((contratoCobranca.isTemSeguroMIP() && contratoCobranca.isTemSeguro())
+						&& !SiscoatConstants.PARCELASIGNORADAS.contains(detalhe.getNumeroParcela())
 						&& CommonsUtil.intValue(detalhe.getNumeroParcela()) <= contratoCobranca.getMesesCarencia()
 						&& CommonsUtil.intValue(detalhe.getNumeroParcela()) > 0) {
 					BigDecimal valorSeguroMIP = detalhe.getVlrSaldoParcela()
@@ -646,11 +670,14 @@ public class IpcaJobCalcular {
 					valorSeguroMIPCarencia = valorSeguroMIPCarencia.add(valorSeguroMIP);
 				}
 
-				if (CommonsUtil.mesmoValor(CommonsUtil.intValue(detalhe.getNumeroParcela()),
-						contratoCobranca.getMesesCarencia() + 1)) {
+				if (!SiscoatConstants.PARCELASIGNORADAS.contains(detalhe.getNumeroParcela())
+						&& CommonsUtil.mesmoValor(CommonsUtil.intValue(detalhe.getNumeroParcela()),
+								contratoCobranca.getMesesCarencia() + 1)) {
 					valorSeguroMIPCarencia = BigDecimal.ZERO;
 				}
 
+				if (!SiscoatConstants.PARCELASIGNORADAS.contains(detalhe.getNumeroParcela()))
+					detalheValido = detalhe;
 			}
 
 			contratoCobrancaDao.merge(contratoCobranca);
@@ -669,7 +696,7 @@ public class IpcaJobCalcular {
 
 		return false;
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	public boolean calcularIPCACustomMaluco(IPCADao ipcaDao, ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao,
 			ContratoCobrancaDao contratoCobrancaDao,
@@ -684,10 +711,9 @@ public class IpcaJobCalcular {
 
 		// primeira condição é para meses de mesmo ano; segunda condição é para os meses
 		// jan e fev da parcela IPCA
-		if ( CommonsUtil.mesmoValor(dataIPCA.getMonth(), ultimoIpca.getData().getMonth()) &&
-				CommonsUtil.mesmoValor(dataIPCA.getYear(), ultimoIpca.getData().getYear()) ) {
+		if (CommonsUtil.mesmoValor(dataIPCA.getMonth(), ultimoIpca.getData().getMonth())
+				&& CommonsUtil.mesmoValor(dataIPCA.getYear(), ultimoIpca.getData().getYear())) {
 
-			
 			// usar o reparcelamento aqui.
 
 			BigDecimal saldoDevedor = BigDecimal.ZERO;
@@ -695,8 +721,8 @@ public class IpcaJobCalcular {
 			BigDecimal valorSeguroDFI = BigDecimal.ZERO;
 			BigDecimal valorTxAdm = SiscoatConstants.TAXA_ADM;
 			BigDecimal saldoDevedorAnterior = BigDecimal.ZERO;
-			
-			if(contratoCobranca.isTemTxAdm()) {
+
+			if (contratoCobranca.isTemTxAdm()) {
 				valorTxAdm = SiscoatConstants.TAXA_ADM;
 			} else {
 				valorTxAdm = BigDecimal.ZERO;
@@ -706,12 +732,12 @@ public class IpcaJobCalcular {
 				valorSeguroDFI = contratoCobranca.getValorImovel()
 						.multiply(SiscoatConstants.SEGURO_DFI.divide(BigDecimal.valueOf(100)));
 			}
-			
+
 			Calendar dataCorteParcelasBaixadas = Calendar.getInstance();
 			dataCorteParcelasBaixadas.set(Calendar.YEAR, 2021);
 			dataCorteParcelasBaixadas.set(Calendar.MONTH, 9);
 			dataCorteParcelasBaixadas.set(Calendar.DAY_OF_MONTH, 13);
-			
+
 			Calendar dataCorteParcelasMalucas = Calendar.getInstance();
 			dataCorteParcelasMalucas.setTime(dataCorteBaixa);
 
@@ -722,11 +748,11 @@ public class IpcaJobCalcular {
 				if (CommonsUtil.mesmoValor(contratoCobrancaDetalhes.getId(), detalhe.getId())) {
 
 					/*
-					if (!CommonsUtil.booleanValue(contratoCobranca.isRecalculaIPCA())
-							&& detalhe.getIpcaAtualizou() != null
-							&& CommonsUtil.mesmoValor(detalhe.getIpcaAtualizou().getId(), ultimoIpca.getId()))
-						continue;
-						*/
+					 * if (!CommonsUtil.booleanValue(contratoCobranca.isRecalculaIPCA()) &&
+					 * detalhe.getIpcaAtualizou() != null &&
+					 * CommonsUtil.mesmoValor(detalhe.getIpcaAtualizou().getId(),
+					 * ultimoIpca.getId())) continue;
+					 */
 
 					// reparcela
 					BigDecimal valorIpca = (saldoDevedor
@@ -831,7 +857,7 @@ public class IpcaJobCalcular {
 							}
 
 							detalheIpca.setIpcaAtualizou(ultimoIpca);
-							//detalheIpca.setVlrRecebido(BigDecimal.valueOf(parcelaSimuladorReal.longValue()));
+							// detalheIpca.setVlrRecebido(BigDecimal.valueOf(parcelaSimuladorReal.longValue()));
 
 							detalheIpca
 									.setVlrParcela(parcela.getValorParcela().setScale(2, BigDecimal.ROUND_HALF_EVEN));
@@ -847,37 +873,41 @@ public class IpcaJobCalcular {
 								BigDecimal seguroMIPAcumulado = BigDecimal.ZERO;
 								BigDecimal seguroDFIAcumulado = BigDecimal.ZERO;
 								BigDecimal seguroTaxaADMAcumulado = BigDecimal.ZERO;
-								
-								
+
 								// percorre todas as parcelas da carência
 								/*
-								for (SimulacaoDetalheVO parcelaSeguros : simulador.getParcelas()) {
-									// se número parcela maior que 0 soma ao seguro
-									if (CommonsUtil.intValue(parcelaSeguros.getNumeroParcela()) < CommonsUtil.intValue(detalheIpca.getNumeroParcela())
-										&& CommonsUtil.intValue(parcelaSeguros.getNumeroParcela()) > 0) {
-										seguroDFIAcumulado = seguroDFIAcumulado.add(parcelaSeguros.getSeguroDFI());
-										seguroTaxaADMAcumulado = seguroTaxaADMAcumulado.add(parcelaSeguros.getSeguroMIP());
-									}						
-								}	
-								*/
-								
-								for (ContratoCobrancaDetalhes detalheSeguroMIP : contratoCobranca.getListContratoCobrancaDetalhes()) {
-									if (CommonsUtil.intValue(detalheSeguroMIP.getNumeroParcela()) < CommonsUtil.intValue(detalheIpca.getNumeroParcela())
+								 * for (SimulacaoDetalheVO parcelaSeguros : simulador.getParcelas()) { // se
+								 * número parcela maior que 0 soma ao seguro if
+								 * (CommonsUtil.intValue(parcelaSeguros.getNumeroParcela()) <
+								 * CommonsUtil.intValue(detalheIpca.getNumeroParcela()) &&
+								 * CommonsUtil.intValue(parcelaSeguros.getNumeroParcela()) > 0) {
+								 * seguroDFIAcumulado = seguroDFIAcumulado.add(parcelaSeguros.getSeguroDFI());
+								 * seguroTaxaADMAcumulado =
+								 * seguroTaxaADMAcumulado.add(parcelaSeguros.getSeguroMIP()); } }
+								 */
+
+								for (ContratoCobrancaDetalhes detalheSeguroMIP : contratoCobranca
+										.getListContratoCobrancaDetalhes()) {
+									if (CommonsUtil.intValue(detalheSeguroMIP.getNumeroParcela()) < CommonsUtil
+											.intValue(detalheIpca.getNumeroParcela())
 											&& CommonsUtil.intValue(detalheSeguroMIP.getNumeroParcela()) > 0) {
-										seguroMIPAcumulado = seguroMIPAcumulado.add(detalheSeguroMIP.getVlrSaldoInicial().multiply(SiscoatConstants.SEGURO_MIP_5_DIGITOS));
+										seguroMIPAcumulado = seguroMIPAcumulado.add(detalheSeguroMIP
+												.getVlrSaldoInicial().multiply(SiscoatConstants.SEGURO_MIP_5_DIGITOS));
 									}
 								}
-								
+
 								detalheIpca.setSeguroMIP(seguroMIPAcumulado);
-								detalheIpca.setSeguroDFI(parcela.getSeguroDFI().multiply(CommonsUtil.bigDecimalValue(contratoCobranca.getMesesCarencia())));
-								detalheIpca.setTaxaAdm(valorTxAdm.multiply(CommonsUtil.bigDecimalValue(contratoCobranca.getMesesCarencia())));
-								//detalheIpca.setTaxaAdm(valorTxAdm.multiply(
-								//		CommonsUtil.bigDecimalValue(contratoCobranca.getMesesCarencia() + 1)));
+								detalheIpca.setSeguroDFI(parcela.getSeguroDFI()
+										.multiply(CommonsUtil.bigDecimalValue(contratoCobranca.getMesesCarencia())));
+								detalheIpca.setTaxaAdm(valorTxAdm
+										.multiply(CommonsUtil.bigDecimalValue(contratoCobranca.getMesesCarencia())));
+								// detalheIpca.setTaxaAdm(valorTxAdm.multiply(
+								// CommonsUtil.bigDecimalValue(contratoCobranca.getMesesCarencia() + 1)));
 								detalheIpca.setVlrParcela(detalheIpca.getVlrParcela().add(detalheIpca.getSeguroMIP())
 										.add(detalheIpca.getSeguroDFI()).add(detalheIpca.getTaxaAdm()));
-								
-								// adiciona os valores da parcela 
-								
+
+								// adiciona os valores da parcela
+
 								detalheIpca.setSeguroMIP(detalheIpca.getSeguroMIP().add(parcela.getSeguroMIP()));
 								detalheIpca.setSeguroDFI(detalheIpca.getSeguroDFI().add(parcela.getSeguroDFI()));
 								detalheIpca.setTaxaAdm(detalheIpca.getTaxaAdm().add(valorTxAdm));
@@ -889,65 +919,71 @@ public class IpcaJobCalcular {
 
 							BigDecimal vlrSaldoParcela = parcela.getSaldoDevedorInicial();
 
-							if (detalheIpca.isParcelaPaga()) {		
+							if (detalheIpca.isParcelaPaga()) {
 								BigDecimal vlrPago = BigDecimal.ZERO;
 
 								List<ContratoCobrancaDetalhesParcial> detalhesParciais = detalheIpca
 										.getListContratoCobrancaDetalhesParcial();
-								
-								/*								
-								if (detalheIpca.getDataVencimento().before(dataCorteParcelasBaixadas.getTime())) {
-									//detalheIpca.setVlrAmortizacaoParcela(detalheIpca.getVlrAmortizacaoParcela());
-									
-									estaNoCorte = true;
-									
-									BigDecimal vlrParcela = parcela.getJuros().add(detalheIpca.getVlrAmortizacaoParcela())
-											.add(detalheIpca.getSeguroMIP()).add(detalheIpca.getSeguroDFI()).add(detalheIpca.getTaxaAdm());
-											
-									//detalheIpca.setVlrParcela(parcela.getValorParcela());
-									detalheIpca.setVlrParcela(vlrParcela);
-									
-									for (ContratoCobrancaDetalhesParcial parcial : detalhesParciais) {		
-										vlrPago = vlrPago.add(CommonsUtil.bigDecimalValue(parcial.getVlrRecebido()));
-									}
-									
-									BigDecimal diferencaPagto = vlrPago.subtract(vlrParcela);
-									
-									if (diferencaPagto.compareTo(BigDecimal.ZERO) == 1) {
-										detalheIpca.setVlrAmortizacaoParcela(detalheIpca.getVlrAmortizacaoParcela().add(diferencaPagto));
-										vlrSaldoParcela = vlrSaldoParcela.subtract(diferencaPagto);
-									} 
-								} 
-								*/
-								
+
+								/*
+								 * if
+								 * (detalheIpca.getDataVencimento().before(dataCorteParcelasBaixadas.getTime()))
+								 * {
+								 * //detalheIpca.setVlrAmortizacaoParcela(detalheIpca.getVlrAmortizacaoParcela()
+								 * );
+								 * 
+								 * estaNoCorte = true;
+								 * 
+								 * BigDecimal vlrParcela =
+								 * parcela.getJuros().add(detalheIpca.getVlrAmortizacaoParcela())
+								 * .add(detalheIpca.getSeguroMIP()).add(detalheIpca.getSeguroDFI()).add(
+								 * detalheIpca.getTaxaAdm());
+								 * 
+								 * //detalheIpca.setVlrParcela(parcela.getValorParcela());
+								 * detalheIpca.setVlrParcela(vlrParcela);
+								 * 
+								 * for (ContratoCobrancaDetalhesParcial parcial : detalhesParciais) { vlrPago =
+								 * vlrPago.add(CommonsUtil.bigDecimalValue(parcial.getVlrRecebido())); }
+								 * 
+								 * BigDecimal diferencaPagto = vlrPago.subtract(vlrParcela);
+								 * 
+								 * if (diferencaPagto.compareTo(BigDecimal.ZERO) == 1) {
+								 * detalheIpca.setVlrAmortizacaoParcela(detalheIpca.getVlrAmortizacaoParcela().
+								 * add(diferencaPagto)); vlrSaldoParcela =
+								 * vlrSaldoParcela.subtract(diferencaPagto); } }
+								 */
+
 								boolean estaNoCorte = false;
-								
-								if (detalheIpca.getDataVencimento().before(dataCorteParcelasMalucas.getTime()) && !estaNoCorte) {
-									//BigDecimal vlrParcela = parcela.getJuros().add(detalheIpca.getVlrAmortizacaoParcela())
-									//		.add(detalheIpca.getSeguroMIP()).add(detalheIpca.getSeguroDFI()).add(detalheIpca.getTaxaAdm());
-									
-									//detalheIpca.setVlrParcela(vlrParcela);
-												
+
+								if (detalheIpca.getDataVencimento().before(dataCorteParcelasMalucas.getTime())
+										&& !estaNoCorte) {
+									// BigDecimal vlrParcela =
+									// parcela.getJuros().add(detalheIpca.getVlrAmortizacaoParcela())
+									// .add(detalheIpca.getSeguroMIP()).add(detalheIpca.getSeguroDFI()).add(detalheIpca.getTaxaAdm());
+
+									// detalheIpca.setVlrParcela(vlrParcela);
+
 									estaNoCorte = true;
-									
-									for (ContratoCobrancaDetalhesParcial parcial : detalhesParciais) {		
+
+									for (ContratoCobrancaDetalhesParcial parcial : detalhesParciais) {
 										vlrPago = vlrPago.add(CommonsUtil.bigDecimalValue(parcial.getVlrRecebido()));
 									}
-									
+
 									BigDecimal diferencaPagto = vlrPago.subtract(detalheIpca.getVlrParcela());
-									
+
 									if (diferencaPagto.compareTo(BigDecimal.ZERO) == 1) {
-										detalheIpca.setVlrAmortizacaoParcela(detalheIpca.getVlrAmortizacaoParcela().add(diferencaPagto));
-										
-										//vlrParcela = parcela.getJuros().add(detalheIpca.getVlrAmortizacaoParcela())
-										//		.add(detalheIpca.getSeguroMIP()).add(detalheIpca.getSeguroDFI()).add(detalheIpca.getTaxaAdm());
-										
-										//detalheIpca.setVlrParcela(vlrParcela);
-										
-										vlrSaldoParcela = vlrSaldoParcela.subtract(diferencaPagto); 
+										detalheIpca.setVlrAmortizacaoParcela(
+												detalheIpca.getVlrAmortizacaoParcela().add(diferencaPagto));
+
+										// vlrParcela = parcela.getJuros().add(detalheIpca.getVlrAmortizacaoParcela())
+										// .add(detalheIpca.getSeguroMIP()).add(detalheIpca.getSeguroDFI()).add(detalheIpca.getTaxaAdm());
+
+										// detalheIpca.setVlrParcela(vlrParcela);
+
+										vlrSaldoParcela = vlrSaldoParcela.subtract(diferencaPagto);
 									}
 								}
-								
+
 								if (!estaNoCorte) {
 									detalheIpca.setVlrParcela(parcela.getValorParcela());
 								}
@@ -971,8 +1007,8 @@ public class IpcaJobCalcular {
 								detalheIpca.setVlrSaldoInicial(saldoDevedorIpca);
 							} else
 								detalheIpca.setVlrSaldoInicial(saldoDevedorAnterior);
-								//detalheIpca.setVlrSaldoInicial(parcela.getSaldoDevedorInicial());
-							
+							// detalheIpca.setVlrSaldoInicial(parcela.getSaldoDevedorInicial());
+
 							saldoDevedorAnterior = detalheIpca.getVlrSaldoParcela();
 						}
 

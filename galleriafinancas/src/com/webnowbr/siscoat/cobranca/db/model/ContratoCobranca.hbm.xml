@@ -768,7 +768,7 @@
 			<column name="agRegistroUsuario" />
 		</property>
 		<property name="agRegistro" type="boolean">
-			<column name="agRegistro" />
+			<column name="agRegistro"  not-null="true" default="true" />
 		</property>
 		
 		<property name="preAprovadoComiteData"
@@ -2192,6 +2192,10 @@
 			<column name="valorTotalProcessos" />
 		</property>
 		
+		<property name="valorTotalProcessosSelecionados" type="big_decimal">
+			<column name="valorTotalProcessosSelecionados" />
+		</property>
+		
 		<property name="dividaIPTU" type="big_decimal">
 			<column name="dividaIPTU" />
 		</property>
@@ -2235,6 +2239,10 @@
 		<property name="contratoPrioridadeAltaUser" type="java.lang.String">
 			<column name="contratoPrioridadeAltaUser" />
 		</property>
+		
+		<property name="esteriaComentarioLuvison" type="boolean">
+			<column name="esteriaComentarioLuvison" not-null="true" default="false"/>
+		</property>	
 		
 		<property name="protestoTaxa" type="boolean">
 			<column name="protestoTaxa" not-null="true" default="false"/>
@@ -2351,6 +2359,36 @@
 		
 		<property name="notificacaoCobrancaData" type="java.util.Date">
 			<column name="notificacaoCobrancaData" />
+		</property>
+		
+		<property name="notaFiscalEmitidaData" type="java.util.Date">
+			<column name="notaFiscalEmitidaData" />
+		</property>
+		<property name="notaFiscalEmitida" type="boolean">
+			<column name="notaFiscalEmitida" not-null="true" default="false"/>
+		</property>	
+		<property name="notaFiscalEmitidaUsuario" type="java.lang.String">
+			<column name="notaFiscalEmitidaUsuario" />
+		</property>
+		
+		<property name="notaFiscalPagaData" type="java.util.Date">
+			<column name="notaFiscalPagaData" />
+		</property>
+		<property name="notaFiscalPaga" type="boolean">
+			<column name="notaFiscalPaga" not-null="true" default="false"/>
+		</property>	
+		<property name="notaFiscalPagaUsuario" type="java.lang.String">
+			<column name="notaFiscalPagaUsuario" />
+		</property>
+		
+		<property name="notaFiscalAgendadaData" type="java.util.Date">
+			<column name="notaFiscalAgendadaData" />
+		</property>
+		<property name="notaFiscalAgendada" type="boolean">
+			<column name="notaFiscalAgendada" not-null="true" default="false"/>
+		</property>	
+		<property name="notaFiscalAgendadaUsuario" type="java.lang.String">
+			<column name="notaFiscalAgendadaUsuario" />
 		</property>
 		
 		<property name="todosPreLaudoEntregues" type="boolean">

@@ -8,6 +8,9 @@ import java.util.List;
 
 public class SiscoatConstants {
 	public static final int GALLERIA_FINANCAS_ID = 14;
+
+	public static final Long RESPONSAVEL_GERAL_ID = -1L;
+	
 	
 	public static final Long ASSISTENTE_ISA = 1556L;
 	public static final Long ASSISTENTE_BIA = 359L;
@@ -86,6 +89,8 @@ public class SiscoatConstants {
 
 	public static final String TIPO_INFORMACAO_CONSULTA_CERTIDAO= "C";
 	public static final String TIPO_INFORMACAO_CONSULTA_PROCESSO = "P";
+	
+	public static final List<String> PARCELASIGNORADAS = Arrays.asList("Acerto Saldo", "Amortização") ;
 	
 
 }

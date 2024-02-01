@@ -93,11 +93,12 @@
 					<p:dataTable id="dtFilesAnalise" var="fileAnalise"
 						value="#{contratoCobrancaMB.listaDocumentoAnalise}"
 						rowKey="#{fileAnalise.id}"
-						selection="#{contratoCobrancaMB.listaSelectAnalise}" 
+						paginator="true"
+						rows="10"  selection="#{contratoCobrancaMB.listaSelectAnalise}" 
 						emptyMessage=""
 						rowStyleClass="#{(fileAnalise.observacao ne null
 							or contratoCobrancaMB.objetoContratoCobranca.emAnalise) ? '' : 'ui-helper-hidden'}">
-						
+							
 						<f:facet name="header">		
 						<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">						 
 							<p:commandButton value="Excluir Selecionado(s)" ajax="true"  icon="ui-icon-trash" update="dtFilesAnalise" action="#{contratoCobrancaMB.deleteArquivosAnalisados}">

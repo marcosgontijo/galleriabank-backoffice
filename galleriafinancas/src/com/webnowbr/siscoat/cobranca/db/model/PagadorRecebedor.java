@@ -54,6 +54,7 @@ public class PagadorRecebedor implements Serializable {
 	private String tipoUniao;
 	private Date dataCasamento;
 	private String regimeCasamento; 
+	private boolean uniaoEstavel;
 	private String registroPactoAntenupcial;
 	private String livroPactoAntenupcial;
 	private String folhasPactoAntenupcial;
@@ -391,6 +392,22 @@ public class PagadorRecebedor implements Serializable {
 		}
 		return 0;
 	}
+	
+	public long calcularTempoEmpresaLong() {
+		TimeZone zone = TimeZone.getDefault();
+		Locale locale = new Locale("pt", "BR");
+		Calendar dataHoje = Calendar.getInstance(zone, locale);
+		Date dateHoje = dataHoje.getTime();
+		if(!CommonsUtil.semValor(this.getInicioEmpresa())) {
+			long idadeLong = dateHoje.getTime() - this.getInicioEmpresa().getTime();
+			idadeLong = TimeUnit.DAYS.convert(idadeLong, TimeUnit.MILLISECONDS);
+			idadeLong = idadeLong / 30;
+			idadeLong = idadeLong / 12;
+			return idadeLong;
+		}
+		return 0;
+	}
+	
 	
 	public void calcularIdadeConjuge() {
 		TimeZone zone = TimeZone.getDefault();
@@ -2404,5 +2421,13 @@ public class PagadorRecebedor implements Serializable {
 
 	public void setTipoUniao(String tipoUniao) {
 		this.tipoUniao = tipoUniao;
+	}
+
+	public boolean isUniaoEstavel() {
+		return uniaoEstavel;
+	}
+
+	public void setUniaoEstavel(boolean uniaoEstavel) {
+		this.uniaoEstavel = uniaoEstavel;
 	}
 }

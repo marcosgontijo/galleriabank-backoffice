@@ -173,6 +173,8 @@ public class ContratoCobranca implements Serializable {
 	private Set<Averbacao> listAverbacao;
 	private Set<CcbParticipantes> listaParticipantes = new HashSet<>();
 	private Set<ImovelCobrancaAdicionais> listaImoveis = new HashSet<>();
+	
+	private List<ContasPagar> contasPagarList;
 
 	// n�o persistida a lista abaixo
 	private List<ContratoCobrancaParcelasInvestidor> listContratoCobrancaParcelasInvestidorSelecionado;
@@ -511,6 +513,19 @@ public class ContratoCobranca implements Serializable {
 	private boolean operacaoPaga;
 	private String operacaoPagaUsuario;
 	private boolean pendenciaPagamento;
+	
+	private Date notaFiscalEmitidaData;
+	private boolean notaFiscalEmitida;
+	private String notaFiscalEmitidaUsuario;
+
+	private Date notaFiscalAgendadaData;
+	private boolean notaFiscalAgendada;
+	private String notaFiscalAgendadaUsuario;
+
+	
+	private Date notaFiscalPagaData;
+	private boolean notaFiscalPaga;
+	private String notaFiscalPagaUsuario;
 
 	private Date aprovadoComiteData;
 	private boolean aprovadoComite;
@@ -689,6 +704,7 @@ public class ContratoCobranca implements Serializable {
 	private int carenciaComite;
 	private boolean operacaoFundo;
 	private BigDecimal valorTotalProcessos;
+	private BigDecimal valorTotalProcessosSelecionados;
 	private BigDecimal valorTotalAverbacao;
 
 	private String empresaCertificado;
@@ -840,6 +856,7 @@ public class ContratoCobranca implements Serializable {
 	private String avaliacaoPaju;
 	private boolean iniciouGeracaoPaju;
 	private String avaliacaoPajuReanalise;
+	private boolean esteriaComentarioLuvison;
 
 	private boolean contatoDiferenteProprietario;
 	// private String geracaoLaudoObservacao;
@@ -1104,7 +1121,13 @@ public class ContratoCobranca implements Serializable {
 		ContratoCobranca c = this;
 
 		if (CommonsUtil.mesmoValor(c.getStatus(), "Aprovado")) {
-			c.setStatusEsteira("Aprovado");
+			if(!c.isNotaFiscalEmitida() && !c.isNotaFiscalPaga()) {
+				c.setStatusEsteira("Ag. Emissão NFs");
+			} else if (c.isNotaFiscalEmitida() && !c.isNotaFiscalPaga()) {
+				c.setStatusEsteira("Ag. Pagamento NFs");
+			} else {
+				c.setStatusEsteira("Aprovado");
+			}
 		} else if (CommonsUtil.mesmoValor(c.getStatus(), "Reprovado")) {
 			c.setStatusEsteira("Reprovado");
 		} else if (CommonsUtil.mesmoValor(c.getStatus(), "Baixado")) {
@@ -7292,6 +7315,16 @@ public class ContratoCobranca implements Serializable {
 		if (this.analiseReprovada) {
 			this.statusEsteira = "Análise Reprovada";
 		}
+		
+		if(this.status.equals("Aprovado")) {
+			if (!this.isNotaFiscalEmitida() && !this.isNotaFiscalPaga()) {
+				this.statusEsteira = "Ag. Emissão NFs";
+			} else if (this.isNotaFiscalEmitida() && !this.isNotaFiscalPaga()) {
+				this.statusEsteira = "Ag. Pagamento NFs";
+			} else {
+				this.statusEsteira = "Aprovado";
+			}
+		}
 
 		return this.statusEsteira;
 	}
@@ -7322,6 +7355,14 @@ public class ContratoCobranca implements Serializable {
 
 	public void setChavePIXBancarioContaPagar(String chavePIXBancarioContaPagar) {
 		this.chavePIXBancarioContaPagar = chavePIXBancarioContaPagar;
+	}
+
+	public boolean isEsteriaComentarioLuvison() {
+		return esteriaComentarioLuvison;
+	}
+
+	public void setEsteriaComentarioLuvison(boolean esteriaComentarioLuvison) {
+		this.esteriaComentarioLuvison = esteriaComentarioLuvison;
 	}
 
 	public boolean isProtestoTaxa() {
@@ -7648,6 +7689,79 @@ public class ContratoCobranca implements Serializable {
 		this.notificacaoCobrancaData = notificacaoCobrancaData;
 	}
 
+	public Date getNotaFiscalEmitidaData() {
+		return notaFiscalEmitidaData;
+	}
+
+	public void setNotaFiscalEmitidaData(Date notaFiscalEmitidaData) {
+		this.notaFiscalEmitidaData = notaFiscalEmitidaData;
+	}
+
+	public boolean isNotaFiscalEmitida() {
+		return notaFiscalEmitida;
+	}
+
+	public void setNotaFiscalEmitida(boolean notaFiscalEmitida) {
+		this.notaFiscalEmitida = notaFiscalEmitida;
+	}
+
+	public String getNotaFiscalEmitidaUsuario() {
+		return notaFiscalEmitidaUsuario;
+	}
+
+	public void setNotaFiscalEmitidaUsuario(String notaFiscalEmitidaUsuario) {
+		this.notaFiscalEmitidaUsuario = notaFiscalEmitidaUsuario;
+	}
+
+	public Date getNotaFiscalPagaData() {
+		return notaFiscalPagaData;
+	}
+
+	public void setNotaFiscalPagaData(Date notaFiscalPagaData) {
+		this.notaFiscalPagaData = notaFiscalPagaData;
+	}
+
+	public boolean isNotaFiscalPaga() {
+		return notaFiscalPaga;
+	}
+
+	public void setNotaFiscalPaga(boolean notaFiscalPaga) {
+		this.notaFiscalPaga = notaFiscalPaga;
+	}
+
+	public String getNotaFiscalPagaUsuario() {
+		return notaFiscalPagaUsuario;
+	}
+
+	public void setNotaFiscalPagaUsuario(String notaFiscalPagaUsuario) {
+		this.notaFiscalPagaUsuario = notaFiscalPagaUsuario;
+	}
+	
+
+	public Date getNotaFiscalAgendadaData() {
+		return notaFiscalAgendadaData;
+	}
+
+	public void setNotaFiscalAgendadaData(Date notaFiscalAgendadaData) {
+		this.notaFiscalAgendadaData = notaFiscalAgendadaData;
+	}
+
+	public boolean isNotaFiscalAgendada() {
+		return notaFiscalAgendada;
+	}
+
+	public void setNotaFiscalAgendada(boolean notaFiscalAgendada) {
+		this.notaFiscalAgendada = notaFiscalAgendada;
+	}
+
+	public String getNotaFiscalAgendadaUsuario() {
+		return notaFiscalAgendadaUsuario;
+	}
+
+	public void setNotaFiscalAgendadaUsuario(String notaFiscalAgendadaUsuario) {
+		this.notaFiscalAgendadaUsuario = notaFiscalAgendadaUsuario;
+	}
+
 	public boolean isEnviadoCartorio() {
 		return enviadoCartorio;
 	}
@@ -7671,5 +7785,21 @@ public class ContratoCobranca implements Serializable {
 	public void setTodosPreLaudoEntregues(boolean todosPreLaudoEntregues) {
 		this.todosPreLaudoEntregues = todosPreLaudoEntregues;
 	}
-}
+	
+	public BigDecimal getValorTotalProcessosSelecionados() {
+		return valorTotalProcessosSelecionados;
+	}
 
+	public void setValorTotalProcessosSelecionados(BigDecimal valorTotalProcessosSelecionados) {
+		this.valorTotalProcessosSelecionados = valorTotalProcessosSelecionados;
+	}
+
+	public List<ContasPagar> getContasPagarList() {
+		contasPagarList = new ArrayList<>(listContasPagar);
+		return contasPagarList;
+	}
+
+	public void setContasPagarList(List<ContasPagar> contasPagarList) {
+		this.contasPagarList = contasPagarList;
+	}
+}

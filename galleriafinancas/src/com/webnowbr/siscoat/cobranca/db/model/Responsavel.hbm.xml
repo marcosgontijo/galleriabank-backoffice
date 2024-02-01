@@ -120,13 +120,15 @@
             <column name="pix"/>
         </property> 	
         
-        <list name="taxasComissao"
-			table="Responsavel_Comissao_Join" cascade="all" lazy="false">
-			<key column="idResponsavel" />
-			<list-index></list-index>
-			<many-to-many column="idComissao"
-				class="com.webnowbr.siscoat.cobranca.db.model.ComissaoResponsavel" />
-		</list>
+ 	
+		<set name="taxasComissao" table="comissaoresponsavel"  cascade="merge"
+                 lazy="false" fetch="select">
+            <key>
+                <column name="responsavel" not-null="true" />
+            </key>
+            <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.ComissaoResponsavel" />
+        </set>
+        
 		
 		<property name="desativado" type="boolean">
 			<column name="desativado" not-null="true" default="false"/>
