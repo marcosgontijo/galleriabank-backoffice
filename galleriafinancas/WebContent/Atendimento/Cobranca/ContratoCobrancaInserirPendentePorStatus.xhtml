@@ -668,7 +668,7 @@
 
 
 
-								<h:panelGrid columns="2" style=" -webkit-border-radius: 5px;">
+								<h:panelGrid columns="2" style=" -webkit-border-radius: 5px;"> <!-- Check-List 1 -->
 									<p:commandButton value="Atualizar Check-List" ajax="false"
 										icon="ui-icon-check"
 										action="#{contratoCobrancaMB.editPreContratoPorStatus()}"
@@ -678,11 +678,24 @@
 											target="#{contratoCobrancaMB.preContratoCustom}"
 											value="false" />
 									</p:commandButton>
-
-
+									
+									
 								</h:panelGrid>
-
-
+								
+								<ui:fragment>
+									<p:selectBooleanButton value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}" rendered="#{contratoCobrancaMB.indexStepsStatusContrato ge 1 and contratoCobrancaMB.indexStepsStatusContrato le 5 }" 
+										onLabel="Pré-Laudo Compass Solicitado" offLabel="Pré-Laudo Compass Pendente" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px">
+										<p:ajax event="valueChange" update=":form:Status"></p:ajax>
+									</p:selectBooleanButton>
+								
+									<p:selectManyMenu id="preLaudoImovel" showCheckbox="true"
+										value="#{contratoCobrancaMB.listSolicitacaoPreLaudoImoveis}"
+										label="Imóvel do pré-laudo" style="width:280px; margin-top: 12px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">
+										<f:selectItems value="#{contratoCobrancaMB.listTodosImoveisContrato}" var="imovelCobranca" itemValue="#{imovelCobranca.id}" itemLabel="#{imovelCobranca.numeroMatricula} - #{imovelCobranca.endereco}" />
+									</p:selectManyMenu>
+								</ui:fragment>
+								
+																
 								<ui:fragment
 									rendered="#{contratoCobrancaMB.indexStepsStatusContrato ge 8 and contratoCobrancaMB.indexStepsStatusContrato le 11}">
 									<h:panelGrid columns="2"
@@ -782,7 +795,7 @@
 								</h:panelGrid>
 							</ui:fragment>
 
-							<h:panelGrid columns="2" style=" -webkit-border-radius: 5px;">
+							<h:panelGrid columns="2" style=" -webkit-border-radius: 5px;"> <!-- Check-List 2 -->
 								<p:commandButton value="Atualizar Check-List" ajax="false"
 									icon="ui-icon-check"
 									action="#{contratoCobrancaMB.editPreContratoPorStatus()}"
@@ -792,11 +805,27 @@
 										target="#{contratoCobrancaMB.preContratoCustom}" value="false" />
 								</p:commandButton>
 							</h:panelGrid>
+							
+							<ui:fragment>
+								<p:selectBooleanButton value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}" rendered="#{contratoCobrancaMB.indexStepsStatusContrato ge 1 and contratoCobrancaMB.indexStepsStatusContrato le 5 }" 
+									onLabel="Pré-Laudo Compass Solicitado" offLabel="Pré-Laudo Compass Pendente" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px">
+									<p:ajax event="valueChange" update=":form:Status"></p:ajax>
+								</p:selectBooleanButton>
+								
+								<p:selectManyMenu showCheckbox="true"
+									value="#{contratoCobrancaMB.listSolicitacaoPreLaudoImoveis}"
+									label="Imóvel do pré-laudo" style="width:280px; margin-top:20px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">
+									<f:selectItems value="#{contratoCobrancaMB.listTodosImoveisContrato}" var="imovelCobranca" itemValue="#{imovelCobranca.id}" itemLabel="#{imovelCobranca.numeroMatricula} - #{imovelCobranca.endereco}" />
+								</p:selectManyMenu>
+							</ui:fragment>
+							
 						</h:panelGrid>
 					</ui:fragment>
-
-
-
+					
+					<p:panel header="Envio de documento do pre-laudo" style="margin-bottom:10px" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">
+						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFilePreLaudoUpload}" mode="advanced" dragDropSupport="true"
+                          update="ArquivosJuridicoSalvos msgArquivo" />	
+					</p:panel>
 
 					<p:tooltip id="toolTipContentagAnaliseStep" for="agAnaliseStep"
 						position="bottom">

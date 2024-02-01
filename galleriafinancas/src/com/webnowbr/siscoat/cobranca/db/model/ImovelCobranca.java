@@ -70,6 +70,11 @@ public class ImovelCobranca implements Serializable {
 	
 	private Cidade objetoCidade;
 	
+	//Novos campos referente ao pre laudo
+	private boolean preLaudoSolicitado;
+	private boolean preLaudoEntregue;
+	private BigDecimal valorPreLaudo;
+	
 	public ImovelCobranca(){
 		resetarBololean();
 	}
@@ -115,6 +120,8 @@ public class ImovelCobranca implements Serializable {
 		this.valorCondominio = imovel.getValorCondominio();
 		this.inscricaoMunicipal = imovel.getInscricaoMunicipal();
 		this.objetoCidade = imovel.getObjetoCidade();
+		this.preLaudoSolicitado = imovel.isPreLaudoSolicitado();
+		this.preLaudoEntregue = imovel.isPreLaudoEntregue();	
 	}
 
 	public void calcularDataDeCompra() {
@@ -135,6 +142,8 @@ public class ImovelCobranca implements Serializable {
 		this.comprovanteMatriculaCheckList = false;
 		this.comprovanteFotosImovelCheckList = false;
 		this.comprovanteIptuImovelCheckList = false;
+		this.preLaudoEntregue = false;
+		this.preLaudoSolicitado = false;
 	}
 	
 	private static LinkedHashMap<String, String> siglasEstados = new LinkedHashMap<>();
@@ -785,5 +794,29 @@ public class ImovelCobranca implements Serializable {
 
 	public void setValorMercado(BigDecimal valorMercado) {
 		this.valorMercado = valorMercado;
-	}	
+	}
+	
+	public boolean isPreLaudoSolicitado() {
+		return this.preLaudoSolicitado;	
+	}
+	
+	public void setPreLaudoSolicitado( boolean preLaudoSolicitado) {
+		this.preLaudoSolicitado = preLaudoSolicitado;
+	}
+	
+	public boolean isPreLaudoEntregue() {
+		return this.preLaudoEntregue;	
+	}
+	
+	public void setPreLaudoEntregue( boolean preLaudoEntregue) {
+		this.preLaudoEntregue = preLaudoEntregue;
+	}
+	
+	public BigDecimal getValorPreLaudo() {
+		return this.valorPreLaudo;
+	}
+	
+	public void setValorPreLaudo( BigDecimal valorPreLaudo) {
+		this.valorPreLaudo = valorPreLaudo;
+	}
 }

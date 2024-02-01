@@ -2391,5 +2391,9 @@
 			<column name="notaFiscalAgendadaUsuario" />
 		</property>
 		
+		<property name="todosPreLaudoEntregues" type="boolean">
+			<column name="todosPreLaudoEntregues" not-null="true" default="false"/>
+		</property>
+		
 	</class>
 </hibernate-mapping>

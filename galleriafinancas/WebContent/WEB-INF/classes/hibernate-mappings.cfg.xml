@@ -95,9 +95,7 @@
         <mapping resource="com/webnowbr/siscoat/infra/db/model/UserPerfil.hbm.xml"/>
         <mapping resource="com/webnowbr/siscoat/infra/db/model/User.hbm.xml"/>
         <mapping resource="com/webnowbr/siscoat/infra/db/model/Parametros.hbm.xml"/>
-        <mapping resource="com/webnowbr/siscoat/infra/db/model/MenuItem.hbm.xml"/>
-        
-        
+        <mapping resource="com/webnowbr/siscoat/infra/db/model/MenuItem.hbm.xml"/>        
      
         
      
