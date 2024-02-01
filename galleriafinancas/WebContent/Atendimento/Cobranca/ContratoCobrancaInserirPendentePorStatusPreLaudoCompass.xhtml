@@ -406,7 +406,7 @@
 										
 									<p:outputLabel styleClass="labelBold">Geração Laudo Iniciada? </p:outputLabel>									
 									<p:selectBooleanButton value="#{contratoCobrancaMB.objetoContratoCobranca.iniciouGeracaoLaudo}" 
-											onLabel="Iniciado" offLabel="Não Iniciado" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px"/>													
+											onLabel="Iniciado" offLabel="Não Iniciado" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:80px"/>													
 										
 									<shiro:hasAnyRoles name="ROOT, AVALIADORIMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS">				
 										<p:outputLabel for="avaliacaoEngenharia"
@@ -425,7 +425,7 @@
 									<p:outputLabel styleClass="labelBold"
 										rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial and contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudo eq 'Compass'}">Laudo Pedido: </p:outputLabel>								
 									<p:selectBooleanButton id="pedirLaudoBtn" value="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido}" 
-										onLabel="Laudo Pronto" offLabel="Laudo Pendente" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px"
+										onLabel="Laudo Pronto" offLabel="Laudo Pendente" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:80px"
 										disabled="#{contratoCobrancaMB.objetoContratoCobranca.avaliacaoEngenharia eq null or contratoCobrancaMB.objetoContratoCobranca.avaliacaoEngenharia eq ''}"
 										rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudo
 										and contratoCobrancaMB.objetoContratoCobranca.avaliacaoLaudo eq 'Compass'}"/>			
