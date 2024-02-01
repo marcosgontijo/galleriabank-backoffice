@@ -7,7 +7,7 @@ public class CredlocalizaVeiculos {
 	private String uf;
 	private String renavam;
 	private String chassi;
-	private String motor;
+	private Object motor;
 	private String ano_fabricacao;
 	private String ano_modelo;
 	private String marca_modelo;
@@ -46,10 +46,10 @@ public class CredlocalizaVeiculos {
 	public void setChassi(String chassi) {
 		this.chassi = chassi;
 	}
-	public String getMotor() {
+	public Object getMotor() {
 		return motor;
 	}
-	public void setMotor(String motor) {
+	public void setMotor(Object motor) {
 		this.motor = motor;
 	}
 	public String getAno_fabricacao() {

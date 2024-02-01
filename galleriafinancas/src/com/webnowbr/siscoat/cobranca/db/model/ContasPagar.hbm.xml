@@ -140,6 +140,25 @@
 			<list-index></list-index>
 			<many-to-many column="idBaixaStarkBank"
 				class="com.webnowbr.siscoat.cobranca.db.model.StarkBankBaixa" />
-		</list>	
+		</list>
+		
+		<many-to-one name="contaPagarOriginal"
+			class="com.webnowbr.siscoat.cobranca.db.model.ContasPagar"
+			lazy="false">
+			<column name="contaPagarOriginal" />
+		</many-to-one>
+		
+		<property name="editada" type="boolean">
+			<column name="editada" not-null="true" default="false" />
+		</property>
+		
+		<property name="dataCriacao" type="java.util.Date">
+			<column name="dataCriacao" />
+		</property>
+		
+		<property name="userCriacao" type="java.lang.String">
+			<column name="userCriacao" />
+		</property>	
+		
 	</class>
 </hibernate-mapping>

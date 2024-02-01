@@ -151,7 +151,7 @@
 		                </shiro:hasAnyRoles>		                	                						
 						<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA, PRECOBRANCA">  	                
 			                <p:commandButton action="#{contratoCobrancaMB.clearFieldsBaixar}" ajax="false" icon="ui-icon-check" value="Baixar" title="Baixar Parcela">
-			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}"/>
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.origemTelaBaixar}" value="CobrancaConsultar" />
