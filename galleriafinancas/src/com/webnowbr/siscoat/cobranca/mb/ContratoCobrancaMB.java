@@ -1091,9 +1091,9 @@ public class ContratoCobrancaMB {
 
 		this.objetoImovelCobranca = new ImovelCobranca();
 		this.objetoPagadorRecebedor = new PagadorRecebedor();
-		this.tipoPessoaIsFisica = true;
-		this.objetoContratoCobranca.setNotaFiscalEmitida(false);
-		this.objetoContratoCobranca.setNotaFiscalPaga(false);
+//		this.tipoPessoaIsFisica = true;
+//		this.objetoContratoCobranca.setNotaFiscalEmitida(false);
+//		this.objetoContratoCobranca.setNotaFiscalAgendada(false);
 		// FIM - Tratamento para Pré-Contrato
 	}
 
@@ -3968,7 +3968,7 @@ public class ContratoCobrancaMB {
 			
 		
 			
-			if (this.objetoContratoCobranca.isNotaFiscalPaga()) {
+			if (this.objetoContratoCobranca.isNotaFiscalAgendada()) {
 			
 				//gerar contas stark bank
 				//TODO: HERMES OLHAR AQUI
@@ -6021,7 +6021,7 @@ public class ContratoCobrancaMB {
 			}
 		}
 		
-		if (!this.objetoContratoCobranca.isNotaFiscalPaga()) {
+		if (!this.objetoContratoCobranca.isNotaFiscalAgendada()) {
 			this.objetoContratoCobranca.setNotaFiscalPagaData(null);
 			this.objetoContratoCobranca.setNotaFiscalPagaUsuario(null);
 		} else {
@@ -10475,7 +10475,7 @@ public class ContratoCobrancaMB {
 				this.indexStepsStatusContrato = 16;
 			} else if (this.objetoContratoCobranca.isOperacaoPaga() && this.objetoContratoCobranca.isNotaSolicitada()
 					&& this.objetoContratoCobranca.isNotaFiscalEmitida()
-					&& !this.objetoContratoCobranca.isNotaFiscalPaga()) {
+					&& !this.objetoContratoCobranca.isNotaFiscalAgendada()) {
 				this.indexStepsStatusContrato = 17;
 			}
 		} else if (!this.objetoContratoCobranca.isInicioAnalise()) {

@@ -2,6 +2,10 @@ package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
+
+import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DateUtil;
 
 public class RelacionamentoPagadorRecebedor implements Serializable {
 
@@ -12,14 +16,18 @@ public class RelacionamentoPagadorRecebedor implements Serializable {
 	private String relacao;
 	private PagadorRecebedor pessoaChild;
 	private BigDecimal porcentagem;
+	private String origem;
+	private Date dataCadastro; 
 
 	public RelacionamentoPagadorRecebedor(PagadorRecebedor pessoaRoot, String relacao, PagadorRecebedor pessoaChild,
-			BigDecimal porcentagem) {
+			BigDecimal porcentagem, String origem) {
 		super();
 		this.pessoaRoot = pessoaRoot;
 		this.relacao = relacao;
 		this.pessoaChild = pessoaChild;
 		this.porcentagem = porcentagem;
+		this.origem = origem;
+		this.dataCadastro = DateUtil.getDataHoraAgora();
 	}
 	
 	public RelacionamentoPagadorRecebedor() {

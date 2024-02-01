@@ -1124,9 +1124,9 @@ public class ContratoCobranca implements Serializable {
 		ContratoCobranca c = this;
 
 		if (CommonsUtil.mesmoValor(c.getStatus(), "Aprovado")) {
-			if(!c.isNotaFiscalEmitida() && !c.isNotaFiscalPaga()) {
+			if(!c.isNotaFiscalEmitida() && !c.isNotaFiscalAgendada()) {
 				c.setStatusEsteira("Ag. Emissão NFs");
-			} else if (c.isNotaFiscalEmitida() && !c.isNotaFiscalPaga()) {
+			} else if (c.isNotaFiscalEmitida() && !c.isNotaFiscalAgendada()) {
 				c.setStatusEsteira("Ag. Pagamento NFs");
 			} else {
 				c.setStatusEsteira("Aprovado");
@@ -7340,9 +7340,9 @@ public class ContratoCobranca implements Serializable {
 		}
 		
 		if(this.status.equals("Aprovado")) {
-			if (!this.isNotaFiscalEmitida() && !this.isNotaFiscalPaga()) {
+			if (!this.isNotaFiscalEmitida() && !this.isNotaFiscalAgendada()) {
 				this.statusEsteira = "Ag. Emissão NFs";
-			} else if (this.isNotaFiscalEmitida() && !this.isNotaFiscalPaga()) {
+			} else if (this.isNotaFiscalEmitida() && !this.isNotaFiscalAgendada()) {
 				this.statusEsteira = "Ag. Pagamento NFs";
 			} else {
 				this.statusEsteira = "Aprovado";
@@ -7736,6 +7736,31 @@ public class ContratoCobranca implements Serializable {
 		this.notaFiscalEmitidaUsuario = notaFiscalEmitidaUsuario;
 	}
 
+
+	public Date getNotaFiscalAgendadaPagamentoData() {
+		return notaFiscalAgendadaPagamentoData;
+	}
+
+	public void setNotaFiscalAgendadaPagamentoData(Date notaFiscalAgendadaPagamentoData) {
+		this.notaFiscalAgendadaPagamentoData = notaFiscalAgendadaPagamentoData;
+	}
+
+	public boolean isNotaFiscalAgendada() {
+		return notaFiscalAgendada;
+	}
+
+	public void setNotaFiscalAgendada(boolean notaFiscalAgendada) {
+		this.notaFiscalAgendada = notaFiscalAgendada;
+	}
+
+	public String getNotaFiscalAgendadaUsuario() {
+		return notaFiscalAgendadaUsuario;
+	}
+
+	public void setNotaFiscalAgendadaUsuario(String notaFiscalAgendadaUsuario) {
+		this.notaFiscalAgendadaUsuario = notaFiscalAgendadaUsuario;
+	}
+
 	public Date getNotaFiscalPagaData() {
 		return notaFiscalPagaData;
 	}
@@ -7758,31 +7783,6 @@ public class ContratoCobranca implements Serializable {
 
 	public void setNotaFiscalPagaUsuario(String notaFiscalPagaUsuario) {
 		this.notaFiscalPagaUsuario = notaFiscalPagaUsuario;
-	}
-	
-
-	public Date getNotaFiscalAgendadaData() {
-		return notaFiscalAgendadaData;
-	}
-
-	public void setNotaFiscalAgendadaData(Date notaFiscalAgendadaData) {
-		this.notaFiscalAgendadaData = notaFiscalAgendadaData;
-	}
-
-	public boolean isNotaFiscalAgendada() {
-		return notaFiscalAgendada;
-	}
-
-	public void setNotaFiscalAgendada(boolean notaFiscalAgendada) {
-		this.notaFiscalAgendada = notaFiscalAgendada;
-	}
-
-	public String getNotaFiscalAgendadaUsuario() {
-		return notaFiscalAgendadaUsuario;
-	}
-
-	public void setNotaFiscalAgendadaUsuario(String notaFiscalAgendadaUsuario) {
-		this.notaFiscalAgendadaUsuario = notaFiscalAgendadaUsuario;
 	}
 
 	public boolean isEnviadoCartorio() {
