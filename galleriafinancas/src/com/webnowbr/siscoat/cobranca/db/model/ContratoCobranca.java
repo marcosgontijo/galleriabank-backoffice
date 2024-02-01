@@ -884,6 +884,8 @@ public class ContratoCobranca implements Serializable {
 	public int qtdParcelasAtraso;
 	public BigDecimal somaParcelasAtraso;
 	public Cartorio ultimoCartorio;
+	
+	private boolean todosPreLaudoEntregues;
 
 	// FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13
 	public BigDecimal calcularValorTotalContasPagas() {
@@ -7660,6 +7662,14 @@ public class ContratoCobranca implements Serializable {
 
 	public void setUltimoCartorio(Cartorio ultimoCartorio) {
 		this.ultimoCartorio = ultimoCartorio;
+	}
+	
+	public boolean isTodosPreLaudoEntregues() {
+		return this.todosPreLaudoEntregues;	
+	}
+	
+	public void setTodosPreLaudoEntregues(boolean todosPreLaudoEntregues) {
+		this.todosPreLaudoEntregues = todosPreLaudoEntregues;
 	}
 }
 

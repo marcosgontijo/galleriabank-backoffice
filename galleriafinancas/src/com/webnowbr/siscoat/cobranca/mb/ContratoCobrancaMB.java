@@ -889,10 +889,7 @@ public class ContratoCobrancaMB {
 	private Set<ImovelCobranca> listSolicitacaoPreLaudoImoveis;
 	private List<ImovelCobranca> listTodosImoveisContrato;
 	private List<ImovelCobranca> listPreLaudoImoveisRelac;
-	
-	// Objetos referentes ao laudo
-	private Laudo objetLaudo;
-	
+		
 	public void mudaBotaoCartorio(){
 		this.setCartorioMudou(true);
 		
@@ -3387,11 +3384,18 @@ public class ContratoCobrancaMB {
 	public String atualizaContratoAvaliacaoImovel() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		ImovelCobrancaDao imovelDao = new ImovelCobrancaDao();
 
 		try {
 			this.objetoContratoCobranca.populaStatusEsteira(getUsuarioLogadoNull());
 			contratoCobrancaDao.merge(this.objetoContratoCobranca);
-
+			
+			if(!listPreLaudoImoveisRelac.isEmpty()) {
+				for(ImovelCobranca imovel: listPreLaudoImoveisRelac) {
+					imovelDao.merge(imovel);
+				}
+			}
+			
 			context.addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO,
 							"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
@@ -3846,20 +3850,20 @@ public class ContratoCobrancaMB {
 			}
 			
 			if(!this.listSolicitacaoPreLaudoImoveis.isEmpty()) {
-				
+								
 				// Caso a lista de imoveis solicitando pre laudo nao esteja vazia, cria um laudo novo e insere as infos na tabela relacional
 				
 				ImovelCobrancaDao imovelDao = new ImovelCobrancaDao();
-			
+				
 				//VOLTA AQUI
 				
 				for(Object imovelObj: this.listSolicitacaoPreLaudoImoveis) {
-					
 					Long idImovel = Long.parseLong(imovelObj.toString());
+					ImovelCobranca imovel = new ImovelCobranca();
+					imovel = imovelDao.findById(idImovel);
 					
-					ImovelCobranca imovel = imovelDao.findById(idImovel);
-					//imovel.setPreLaudoSolicitado(true);
-					
+					imovel.setPreLaudoSolicitado(true);
+					imovelDao.merge(imovel);			
 				}
 				
 			}
@@ -14757,6 +14761,9 @@ public class ContratoCobrancaMB {
 
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.contratosPendentes = new ArrayList<ContratoCobranca>();
+		this.listSolicitacaoPreLaudoImoveis = new HashSet<ImovelCobranca>();
+		this.listTodosImoveisContrato = new ArrayList<ImovelCobranca>();
+		this.listPreLaudoImoveisRelac = new ArrayList<ImovelCobranca>();
 
 		TimeZone zone = TimeZone.getDefault();
 		Locale locale = new Locale("pt", "BR");
@@ -31128,7 +31135,7 @@ public class ContratoCobrancaMB {
 	
 	
 	public void getListaImoveisAdd() {
-		
+		getListaImoveisPreLaudoCompass();
 		ImovelCobrancaAdicionaisDao imovelAddDao = new ImovelCobrancaAdicionaisDao();
 		listTodosImoveisContrato = imovelAddDao.getListImoveisAdd(objetoContratoCobranca.getId());
 	
@@ -31154,6 +31161,10 @@ public class ContratoCobrancaMB {
 
 		this.inserirImovelDisable = true;
 		this.inserirImovelOcultarValorMercadoImovel = true;
+		
+		this.listSolicitacaoPreLaudoImoveis = new HashSet<ImovelCobranca>();
+		this.listTodosImoveisContrato = new ArrayList<ImovelCobranca>();
+		this.listPreLaudoImoveisRelac = new ArrayList<ImovelCobranca>();
 
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatusPreLaudoCompass.xhtml";
 	}
@@ -31192,11 +31203,31 @@ public class ContratoCobrancaMB {
 		return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusPreLaudoCompass.xhtml";
 	}
 	
-	/*public String atualizaContratoPreLaudoCompass() { // TODO Ver isso aqui de atualizar depois de editado
+	public String atualizaContratoPreLaudoCompass() { // TODO Ver isso aqui de atualizar depois de editado
 		FacesContext context = FacesContext.getCurrentInstance();
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		ImovelCobrancaDao imovelDao = new ImovelCobrancaDao();
+		
+		boolean todosLaudosComValor = true;
 
 		try {
+			
+			//Checa se todos os imoveis para pre laudo estão com valor de pre laudo
+			for(ImovelCobranca imoveis: this.listPreLaudoImoveisRelac) {
+				
+				if(imoveis.getValorPreLaudo().intValue() == 0 || imoveis.getValorPreLaudo() == null) {
+					todosLaudosComValor = false;
+					imoveis.setPreLaudoEntregue(false);
+				}
+				else {
+					imoveis.setPreLaudoEntregue(true);
+				}
+				imovelDao.merge(imoveis);
+			}
+			
+			this.objetoContratoCobranca.setTodosPreLaudoEntregues(todosLaudosComValor);			
+		
+			
 			this.objetoContratoCobranca.populaStatusEsteira(getUsuarioLogadoNull());
 			contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
@@ -31213,7 +31244,7 @@ public class ContratoCobrancaMB {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + e, ""));
 			return "";
 		}
-	}*/
+	}
 	
 	/**
 	 * @param objetoContratoCobranca the objetoContratoCobranca to set

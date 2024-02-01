@@ -20,13 +20,13 @@ import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 public class ImovelCobrancaAdicionaisDao extends HibernateDao <ImovelCobrancaAdicionais,Long> {
 	
 	private String QUERY_BUSCA_IMOVEIS_ADD = "select i.id, i.numeromatricula, i.endereco, i.bairro, i.complemento, i.cidade, i.estado, i.cep, i.tipo, i.nomeproprietario, "
-											+ " i.valormercado "
+											+ " i.valormercado, i.prelaudosolicitado, i.prelaudoentregue, i.valorprelaudo "
 											+ " from cobranca.imovelcobranca i "
 											+ " inner join cobranca.contratocobranca c on i.id = c.imovel "
 											+ " where c.id = ? "
 											+ "	union all "
 											+ " select i.id, i.numeromatricula, i.endereco, i.bairro, i.complemento, i.cidade, i.estado, i.cep, i.tipo, i.nomeproprietario, "
-											+ " i.valormercado "
+											+ " i.valormercado, i.prelaudosolicitado, i.prelaudoentregue, i.valorprelaudo "
 											+ " from cobranca.imovelcobranca i "
 											+ " inner join cobranca.imovelcobrancaadicionais i2 on i2.imovel = i.id"
 											+ " where i2.contratocobranca = ? ";
@@ -79,6 +79,9 @@ public class ImovelCobrancaAdicionaisDao extends HibernateDao <ImovelCobrancaAdi
 						imovelCobranca.setTipo(rs.getString(9));
 						imovelCobranca.setNomeProprietario(rs.getString(10));
 						imovelCobranca.setValorMercado(rs.getBigDecimal(11));
+						imovelCobranca.setPreLaudoSolicitado(rs.getBoolean(12));
+						imovelCobranca.setPreLaudoEntregue(rs.getBoolean(13));
+						imovelCobranca.setValorPreLaudo(rs.getBigDecimal(14));
 						
 						//idTeste = rs.getLong(1);
 						//imovelCobranca = imovelCobrancaDao.findById(rs.getLong(1));

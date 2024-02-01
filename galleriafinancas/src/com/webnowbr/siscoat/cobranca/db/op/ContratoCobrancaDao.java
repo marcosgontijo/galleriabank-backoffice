@@ -7197,7 +7197,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 		    "c.avaliacaoLaudoObservacao, c.dataPrevistaVistoria, c.geracaoLaudoObservacao, c.iniciouGeracaoLaudo, c.analistaGeracaoPAJU , c.comentarioJuridicoPendente, " +
 			"c.valorAprovadoComite, c.contratoConferido, c.agEnvioCartorio, reanalise, reanalisePronta, reanaliseJuridico" +
 			" , gerente.nome nomeGerente, pr.id idPagador, res.superlogica, observacaoRenda, pagtoLaudoConfirmadaData, contatoDiferenteProprietario, c.iniciouGeracaoPaju, "
-			+ " im.estado, contratoPrioridadeAlta, c.analisePendenciadaUsuario " + " ,c.avaliacaoLaudo " +
+			+ " im.estado, contratoPrioridadeAlta, c.analisePendenciadaUsuario " + " ,c.avaliacaoLaudo, c.imovel, c.todosPreLaudoEntregues " +
 			"from cobranca.contratocobranca c " +		
 			"inner join cobranca.responsavel res on c.responsavel = res.id " +
 			"inner join cobranca.pagadorrecebedor pr on pr.id = c.pagador " +
@@ -7610,11 +7610,16 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setContratoPrioridadeAlta(rs.getBoolean("contratoPrioridadeAlta"));
 						contratoCobranca.setAnalisePendenciadaUsuario(rs.getString("analisePendenciadaUsuario"));
 						contratoCobranca.setAvaliacaoLaudo(rs.getString("avaliacaoLaudo"));
+						contratoCobranca.setTodosPreLaudoEntregues(rs.getBoolean("todosPreLaudoEntregues"));
 					
 						ImovelCobranca imovel = new ImovelCobranca();
-						imovel.setCidade(rs.getString("cidade"));
-						imovel.setEstado(rs.getString("estado"));
-						imovel.consultarObjetoCidade();
+						ImovelCobrancaDao imovelDao = new ImovelCobrancaDao();
+						
+						imovel = imovelDao.findById(rs.getLong("imovel"));
+						
+						//imovel.setCidade(rs.getString("cidade"));
+						//imovel.setEstado(rs.getString("estado"));
+						//imovel.consultarObjetoCidade();
 						contratoCobranca.setImovel(imovel);
 						
 						idsContratoCobranca.add( CommonsUtil.stringValue(contratoCobranca.getId()));
