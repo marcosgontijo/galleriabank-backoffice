@@ -55,6 +55,7 @@ public class ImovelEstoqueMB {
 	private List<ContratoCobranca> listaConsultaEstoque = new ArrayList<ContratoCobranca>();
 	private List<ImovelEstoque> listImovelEstoque;
 	private boolean relatorioGerado = false;
+	private String parametroPesquisa = "Tudo";
 
 	/**
 	 * Construtor.
@@ -71,12 +72,12 @@ public class ImovelEstoqueMB {
 	public String clearFieldsEstoqueImoveis() {
 		objetoContratoCobranca = new ContratoCobranca();
 		objetoImovelCobranca = new ImovelCobranca();
-		this.consultaEstoque();
+		this.consultaEstoquePesquisa();
 
 		return "/Atendimento/Cobranca/ImovelEstoqueConsulta.xhtml";
 	}
 
-	public String salvarEstoque() {
+	public void salvarEstoque() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		ImovelEstoqueDao imovelEstoqueDao = new ImovelEstoqueDao();
 		if(objetoImovelEstoque == null) {
@@ -120,7 +121,7 @@ public class ImovelEstoqueMB {
 			e.printStackTrace();
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro: " + e, ""));
 		}
-		return clearFieldsEstoqueImoveis();
+		 clearFieldsEstoqueImoveis();
 	}
 
 	public String editarEstoque() {
@@ -141,8 +142,21 @@ public class ImovelEstoqueMB {
 	public void consultaEstoque() {
 //		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 ImovelEstoqueDao dao = new ImovelEstoqueDao();
-listaConsultaEstoque = dao.consultaImovelEstoque();
+listaConsultaEstoque = dao.consultaImovelEstoqueTudo();
 //		listaConsultaEstoque = contratoCobrancaDao.consultaImovelEstoque();
+	}
+	public void consultaEstoquePesquisa() {
+		ImovelEstoqueDao dao = new ImovelEstoqueDao();
+		if(CommonsUtil.mesmoValor( parametroPesquisa, "Tudo")){
+			listaConsultaEstoque = dao.consultaImovelEstoqueTudo();
+		} else if(CommonsUtil.mesmoValor(parametroPesquisa, "Vendido")) {
+			listaConsultaEstoque = dao.consultaImovelEstoqueVendido();
+			
+		} else if(CommonsUtil.mesmoValor(parametroPesquisa, "Estoque")) {
+			listaConsultaEstoque = dao.consultaImovelEstoqueNaoVendido();
+			
+		}
+		
 	}
 
 	public void preencherCamposComDadosContrato() {
@@ -560,6 +574,14 @@ listaConsultaEstoque = dao.consultaImovelEstoque();
 
 	public void setListaImovelEstoque(List<ContratoCobranca> listaImovelEstoque) {
 		this.listaImovelEstoque = listaImovelEstoque;
+	}
+
+	public String getParametroPesquisa() {
+		return parametroPesquisa;
+	}
+
+	public void setParametroPesquisa(String parametroPesquisa) {
+		this.parametroPesquisa = parametroPesquisa;
 	}
 
 }

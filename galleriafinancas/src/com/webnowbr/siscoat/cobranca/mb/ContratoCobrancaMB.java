@@ -8973,8 +8973,9 @@ public class ContratoCobrancaMB {
 		String nomeJSON = "";
 		BigDecimal valorTotalLiquidacao = BigDecimal.ZERO;
 		int qtdeLiquidados = 0;
-
+		FacesContext faces = FacesContext.getCurrentInstance();
 		String contratosErros = null;
+	ImovelEstoqueMB imovelMB = new ImovelEstoqueMB();
 
 		String patternyyyyMMdd = "yyyyMMdd";
 		SimpleDateFormat simpleDateFormatyyyyMMdd = new SimpleDateFormat(patternyyyyMMdd);
@@ -9170,6 +9171,7 @@ public class ContratoCobrancaMB {
 				+ "_ValorTotal_" + valorTotalLiquidacao + ".json";
 		try {
 			downloadJson(jsonSchema, nomeJSON);
+			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
