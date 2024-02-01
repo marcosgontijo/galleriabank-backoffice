@@ -606,7 +606,7 @@
 			</p:panel>	
 					
 			<div align="center">
-				<p:commandButton value="Atualizar" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.atualizaContratoAvaliacaoImovel()}" style="TEXT-DECORATION: bold;" rendered="#{contratoCobrancaMB.updateMode}">
+				<p:commandButton value="Atualizar" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.atualizaContratoPreLaudoCompass()}" style="TEXT-DECORATION: bold;" rendered="#{contratoCobrancaMB.updateMode}">
 					<f:setPropertyActionListener target="#{contratoCobrancaMB.preContratoCustom}" value="false" />	
 				</p:commandButton>		 						
 				<p:commandButton value="Cancelar" immediate="true" icon="ui-icon-cancel" onclick="window.history.back();" style="TEXT-DECORATION: bold; "/>								
