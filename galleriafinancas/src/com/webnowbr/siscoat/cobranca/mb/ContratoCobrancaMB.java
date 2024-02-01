@@ -36832,13 +36832,6 @@ public class ContratoCobrancaMB {
 		public void setListaCartorio(List<Cartorio> listaCartorio) {
 			this.listaCartorio = listaCartorio;
 		}
-		public List<DocumentoAnalise> getListaSelectAnalise() {
-			return listaSelectAnalise;
-		}
-
-		public void setListaSelectAnalise(List<DocumentoAnalise> listaSelectAnalise) {
-			this.listaSelectAnalise = listaSelectAnalise;
-		}
 	
 	public boolean isApagaListaCartorio() {
 		return apagaListaCartorio;

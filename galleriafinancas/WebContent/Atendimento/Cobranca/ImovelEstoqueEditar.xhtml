@@ -189,6 +189,203 @@
 					</h:panelGrid>			
 				</p:panel>
 			</p:panel>	
+			<p:panel id="DetalheParcelas"
+				header="Detalhamento - Forma de Pagamento"
+				style="margin-bottom:10px; width: 50%">
+				<p:dataTable id="dtParcelas" var="parcelas"
+					value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes}"
+					emptyMessage="" sortBy="#{contratos.numeroParcela}"
+					sortOrder="ascending"
+					rowStyleClass="#{(parcelas.pagoParcial eq true) ? 'parcelaparcial' : parcelas.numeroParcela eq 'Amortização' ? 'parcelaPaga': parcelas.parcelaPaga eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : parcelas.parcelaVencendo eq true ? 'parcelaVencendo' : null}"
+					selection="#{contratoCobrancaMB.selectedListContratoCobrancaDetalhes}"
+					rowKey="#{parcelas.id}">
+
+
+					<p:column selectionMode="multiple"
+						style="width:16px;text-align:center" />
+
+					<p:column style="width:150px" headerText="Ações"
+						rendered="#{contratoCobrancaMB.usuarioLogado.userCobranca}"
+						styleClass="colunaResponsivaRelFinanceiro">
+						<shiro:hasAnyRoles name="ROOT">
+							<p:commandButton onclick="PF('baixaParcialDialog').show();"
+								value="Baixar Parcela" title="Baixar Parcela"
+								icon="ui-icon-transferthick-e-w" update=":formBaixaParcial"
+								rendered="#{!parcelas.parcelaPaga}">
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.bpContratoCobrancaDetalhesCustom}"
+									value="#{parcelas}" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.reciboGerado}" value="false" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.txZero}" value="true" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.vlrRecebido}"
+									value="#{contratoCobrancaMB.vlrParcelaAtualizadaNew}" />
+							</p:commandButton>
+							<p:commandButton
+								onclick="PF('baixaParcialGalleriaDialog').show();"
+								value="Baixar Galleria|Custas" title="Baixar Galleria|Custas"
+								icon="ui-icon-transferthick-e-w"
+								update=":formBaixaParcialGalleria"
+								rendered="#{!parcelas.parcelaPaga}">
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.bpContratoCobrancaDetalhesCustom}"
+									value="#{parcelas}" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.reciboGerado}" value="false" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.txZero}" value="true" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.vlrRecebido}"
+									value="#{contratoCobrancaMB.vlrParcelaAtualizadaNew}" />
+							</p:commandButton>
+							<p:spacer width="10" />
+						</shiro:hasAnyRoles>
+						<shiro:hasAnyRoles name="ROOT, COBRANCA">
+							<p:commandButton
+								onclick="PF('bpGerarBoletoKobanaDialog').show();"
+								icon="ui-icon-video" title="Boleto Kobana" value="Boleto Kobana"
+								update=":formBpGerarBoletoKobana"
+								rendered="#{!parcelas.parcelaPaga}">
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.bpContratoCobrancaDetalhesCustom}"
+									value="#{parcelas}" />
+							</p:commandButton>
+						</shiro:hasAnyRoles>
+						<p:spacer width="10" height="10" />
+						<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA">
+							<p:commandButton onclick="PF('bpHistoricoDialog').show();"
+								title="Estorno e Histórico de Baixas" icon="ui-icon-search"
+								update=":formBpHistorico" style="height: 25px;width: 30px;">
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.bpContratoCobrancaDetalhesCustom}"
+									value="#{parcelas}" />
+							</p:commandButton>
+							<p:spacer width="10" height="10" />
+
+							<p:commandButton onclick="PF('observacoesDialog').show();"
+								title="Observação" icon="ui-icon-plus" update=":formObservacoes">
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.contratoCobrancaDetalhes}"
+									value="#{parcelas}" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.observacaoContratoDetalhes}"
+									value="#{contratoCobrancaMB.tituloPainel}" />
+							</p:commandButton>
+							<p:spacer width="10" height="10" />
+							<p:commandButton onclick="PF('promessaPagamentoDialog').show();"
+								title="Inserir Data de Promessa Pagamento"
+								icon="fa fa-fw fa-history" update=":formPromessaPagamento"
+								rendered="#{!parcelas.parcelaPaga}">
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.contratoCobrancaDetalhes}"
+									value="#{parcelas}" />
+								<f:setPropertyActionListener
+									target="#{contratoCobrancaMB.observacaoContratoDetalhes}"
+									value="#{contratoCobrancaMB.tituloPainel}" />
+							</p:commandButton>
+						</shiro:hasAnyRoles>
+					</p:column>
+
+					<p:column style="text-align: center;width: 45px;"
+						headerText="Parcela" filterMatchMode="contains"
+						sortBy="#{parcelas.numeroParcela}">
+						<h:outputText value="#{parcelas.numeroParcela}" />
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Saldo Inicial (R$)">
+						<h:outputText value="#{parcelas.vlrSaldoInicial}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 70px;"
+						headerText="Vencimento" sortBy="#{contratos.dataVencimento}">
+						<h:outputText value="#{parcelas.dataVencimento}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 70px;"
+						headerText="Dt. Último Pagto."
+						sortBy="#{parcelas.dataUltimoPagamento}">
+						<h:outputText value="#{parcelas.dataUltimoPagamento}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Valor Total Pago (R$)">
+						<h:outputText value="#{parcelas.valorTotalPagamento}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Valor (R$)">
+						<h:outputText value="#{parcelas.vlrParcela}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Juros (R$)">
+						<h:outputText value="#{parcelas.vlrJurosParcela}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Amortização (R$)">
+						<h:outputText value="#{parcelas.vlrAmortizacaoParcela}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Seguro DFI (R$)"
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}">
+						<h:outputText value="#{parcelas.seguroDFI}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Seguro MIP (R$)"
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}">
+						<h:outputText value="#{parcelas.seguroMIP}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Taxa Administação (R$)"
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.temTxAdm}">
+						<h:outputText value="#{parcelas.taxaAdm}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="IPCA (R$)"
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.corrigidoNovoIPCA}">
+						<h:outputText value="#{parcelas.ipca}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Saldo (R$)">
+						<h:outputText value="#{parcelas.vlrSaldoParcela}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 100px;"
+						rendered="#{contratoCobrancaMB.usuarioLogado.userCobranca}"
+						headerText="Kobana">
+						<ui:fragment rendered="#{parcelas.urlBoletoKonana ne null}">
+							<h:outputLink value="#{parcelas.urlBoletoKonana}" target="_blank"
+								styleClass="botaoBoletoKobana">#{parcelas.urlBoletoKonana}</h:outputLink>
+						</ui:fragment>
+					</p:column>
+
+
+
+
+				</p:dataTable>
+			</p:panel>
 		</h:form>
 	</ui:define>
 </ui:composition>
