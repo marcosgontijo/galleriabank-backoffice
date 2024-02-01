@@ -2420,7 +2420,7 @@
 			<column name="notaFiscalAgendadaProblemaData" />
 		</property>
 		<property name="notaFiscalAgendadaProblemaUsuario" type="java.lang.String">
-			<column name="notaFiscalEmitidaProblemaUsuario" />
+			<column name="notaFiscalAgendadaProblemaUsuario" />
 		</property>
 		
 		
