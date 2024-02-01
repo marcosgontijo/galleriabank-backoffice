@@ -88,7 +88,7 @@
 							<h:panelGroup id="pgSolicitar2">
 								<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA">  	
 									<h:panelGrid columns="3">
-										<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 14}">
+										<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato >= 14}">
 											<h:panelGrid columns="2"
 												style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
 												-moz-border-radius: 5px;
@@ -113,7 +113,7 @@
 												</h:panelGrid>
 											</h:panelGrid>
 										</ui:fragment>
-										<h:panelGrid columns="3" rendered="#{contratoCobrancaMB.indexStepsStatusContrato >= 14 }">
+										<h:panelGrid columns="3" rendered="#{contratoCobrancaMB.indexStepsStatusContrato >= 15 }">
 										<ui:fragment >
 											<h:panelGrid columns="2"
 												style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
@@ -130,7 +130,7 @@
 												</h:panelGrid>
 											</h:panelGrid>
 										</ui:fragment>
-										<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 16}">
+										<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato >= 15 }">
 											<h:panelGrid columns="2"
 												style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
 												-moz-border-radius: 5px;

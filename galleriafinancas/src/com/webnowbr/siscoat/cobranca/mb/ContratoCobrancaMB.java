@@ -10464,20 +10464,21 @@ public class ContratoCobrancaMB {
 
 		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getStatus(), "Aprovado")) {
 
-			if (this.objetoContratoCobranca.isPendenciaPagamento() || !this.objetoContratoCobranca.isOperacaoPaga()) {
-				this.indexStepsStatusContrato = 14;
-			} else if (this.objetoContratoCobranca.isOperacaoPaga() && this.objetoContratoCobranca.isNotaSolicitada()
-					&& !this.objetoContratoCobranca.isNotaFiscalEmitida()) {
-				this.indexStepsStatusContrato = 15;
-			} else if (this.objetoContratoCobranca.isOperacaoPaga() && this.objetoContratoCobranca.isNotaSolicitada()
+			if (this.objetoContratoCobranca.isOperacaoPaga() && this.objetoContratoCobranca.isNotaSolicitada()
+					&& this.objetoContratoCobranca.isNotaFiscalEmitida()
+					&& !this.objetoContratoCobranca.isNotaFiscalAgendada()) {
+				this.indexStepsStatusContrato = 17;
+			}else if (this.objetoContratoCobranca.isOperacaoPaga() && this.objetoContratoCobranca.isNotaSolicitada()
 					&& this.objetoContratoCobranca.isNotaFiscalEmitida()
 					&& !this.objetoContratoCobranca.isNotaFiscalAgendada()) {
 				this.indexStepsStatusContrato = 16;
 			} else if (this.objetoContratoCobranca.isOperacaoPaga() && this.objetoContratoCobranca.isNotaSolicitada()
-					&& this.objetoContratoCobranca.isNotaFiscalEmitida()
-					&& !this.objetoContratoCobranca.isNotaFiscalAgendada()) {
-				this.indexStepsStatusContrato = 17;
+					&& !this.objetoContratoCobranca.isNotaFiscalEmitida()) {
+				this.indexStepsStatusContrato = 15;
+			} if (this.objetoContratoCobranca.isPendenciaPagamento() || !this.objetoContratoCobranca.isOperacaoPaga()) {
+				this.indexStepsStatusContrato = 14;
 			}
+			
 		} else if (!this.objetoContratoCobranca.isInicioAnalise()) {
 			this.indexStepsStatusContrato = 0;
 		} else if (this.objetoContratoCobranca.isAnaliseReprovada()) {
