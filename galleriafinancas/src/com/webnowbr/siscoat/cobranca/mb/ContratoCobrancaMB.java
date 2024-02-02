@@ -4005,7 +4005,7 @@ public class ContratoCobrancaMB {
 			System.out.println(this.listImoveis);
 			
 			// Nova condição caso o usuário flag pedindo o pre-laudo da Compass
-			if(this.objetoContratoCobranca.isPedidoPreLaudo() && (usuarioLogado.isAdministrador() || usuarioLogado.isProfileAvaliadorImovelCompass())) {
+			if(this.objetoContratoCobranca.isPedidoPreLaudo()) {
 				this.objetoContratoCobranca.setAvaliacaoLaudo("Compass");
 				this.objetoContratoCobranca.setPedidoPreLaudoData(new Date());
 				this.objetoContratoCobranca.setPedidoPreLaudoUsuario(loginBean.getUsername());
