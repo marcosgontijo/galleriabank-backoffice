@@ -61,7 +61,9 @@ public class ImovelEstoqueMB {
 	private List<ImovelEstoque> listImovelEstoque;
 	private boolean relatorioGerado = false;
 	private String parametroPesquisa = "Tudo";
-
+	private List<ContratoCobranca> listaImovelTudo;
+	private List<ContratoCobranca> listaImovelVendido;
+	private List<ContratoCobranca> listaImovelEmEsdtoque;
 	/**
 	 * Construtor.
 	 */
@@ -70,8 +72,15 @@ public class ImovelEstoqueMB {
 		objetoImovelCobranca = new ImovelCobranca();
 		objetoImovelEstoque = new ImovelEstoque();
 
-//		consultaEstoque();
+		consultaEstoque();
 
+	}
+public void	consultaEstoque(){
+	ImovelEstoqueDao dao = new ImovelEstoqueDao();
+	listaImovelTudo = dao.consultaImovelEstoqueTudo();
+	listaImovelVendido =  dao.consultaImovelEstoqueVendido();
+	listaImovelEmEsdtoque = dao.consultaImovelEstoqueNaoVendido();
+		
 	}
 
 	public String clearFieldsEstoqueImoveis() {
@@ -147,12 +156,12 @@ public class ImovelEstoqueMB {
 	public void consultaEstoquePesquisa() {
 		ImovelEstoqueDao dao = new ImovelEstoqueDao();
 		if(CommonsUtil.mesmoValor( parametroPesquisa, "Tudo")){
-			listaConsultaEstoque = dao.consultaImovelEstoqueTudo();
+			listaConsultaEstoque = listaImovelTudo;
 		} else if(CommonsUtil.mesmoValor(parametroPesquisa, "Vendido")) {
-			listaConsultaEstoque = dao.consultaImovelEstoqueVendido();
+			listaConsultaEstoque = listaImovelVendido;
 			
 		} else if(CommonsUtil.mesmoValor(parametroPesquisa, "Estoque")) {
-			listaConsultaEstoque = dao.consultaImovelEstoqueNaoVendido();
+			listaConsultaEstoque = listaImovelEmEsdtoque;
 			
 		}
 		
