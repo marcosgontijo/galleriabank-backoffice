@@ -226,18 +226,21 @@
 								</p:commandButton>
 							</h:panelGrid>
 							
-							<ui:fragment>
-								<p:selectBooleanButton value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}" rendered="#{contratoCobrancaMB.indexStepsStatusContrato ge 1 and contratoCobrancaMB.indexStepsStatusContrato le 5 }"  
-									onLabel="Pré-Laudo Compass Solicitado" offLabel="Pré-Laudo Compass Pendente" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px">
-									<p:ajax event="valueChange" update="@this"></p:ajax>
-								</p:selectBooleanButton>
-								
-								<p:selectManyMenu showCheckbox="true"
-									value="#{contratoCobrancaMB.listSolicitacaoPreLaudoImoveis}"
-									label="Imóvel do pré-laudo" style="width:280px; margin-top:12px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">
-									<f:selectItems value="#{contratoCobrancaMB.listTodosImoveisContrato}" var="imovelCobranca" itemValue="#{imovelCobranca.id}" itemLabel="#{imovelCobranca.numeroMatricula} - #{imovelCobranca.endereco}" />
-								</p:selectManyMenu>
-							</ui:fragment>
+							<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_AVALIADOR_IMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_GERENTE_ANALISE">
+								<ui:fragment>
+									<p:selectBooleanButton value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}" rendered="#{contratoCobrancaMB.indexStepsStatusContrato ge 1 and contratoCobrancaMB.indexStepsStatusContrato le 5}"  
+										onLabel="Pré-Laudo Compass Solicitado" offLabel="Pré-Laudo Compass Pendente" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px">
+										<p:ajax event="valueChange" update="@this"></p:ajax>
+										
+									</p:selectBooleanButton>
+									
+									<p:selectManyMenu showCheckbox="true"
+										value="#{contratoCobrancaMB.listSolicitacaoPreLaudoImoveis}"
+										label="Imóvel do pré-laudo" style="width:280px; margin-top:12px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">
+										<f:selectItems value="#{contratoCobrancaMB.listTodosImoveisContrato}" var="imovelCobranca" itemValue="#{imovelCobranca.id}" itemLabel="#{imovelCobranca.numeroMatricula} - #{imovelCobranca.endereco}" />
+									</p:selectManyMenu>
+								</ui:fragment>
+							</shiro:hasAnyRoles>	
 					</ui:fragment>
 
 					<p:tooltip id="toolTipContentagAnaliseStep" for="agAnaliseStep"
