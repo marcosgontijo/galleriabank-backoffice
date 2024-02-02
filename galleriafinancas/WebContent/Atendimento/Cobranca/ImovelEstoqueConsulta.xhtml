@@ -36,8 +36,22 @@
 			        		filterMatchMode="contains" sortBy="#{estoque.pagador}">
 			            <h:outputText value="#{estoque.pagador.nome}" />
 			        </p:column>
-			        <p:column style="text-align: center;" headerText="Endereço Completo" filterBy="#{estoque.imovel.enderecoCompleto}" filterMatchMode="contains" sortBy="#{estoque.enderecoCompleto}">
-			            <h:outputText value="#{estoque.imovel.enderecoCompleto}" />
+			         <p:column style="text-align: center;" headerText="Empresa" filterBy="#{estoque.empresa}" 
+			        		filterMatchMode="contains" sortBy="#{estoque.empresa}">
+			            <h:outputText value="#{estoque.empresa}" />
+			        </p:column>
+			        <p:column style="text-align: center;" headerText="Cidade" filterBy="#{estoque.imovel.cidade}" filterMatchMode="contains" sortBy="#{estoque.imovel.cidade}">
+			            <h:outputText value="#{estoque.imovel.cidade}" />
+			        </p:column>
+			        <p:column style="text-align: center;" headerText="Tipo de imóvel" filterBy="#{estoque.imovel.tipo}" filterMatchMode="contains" sortBy="#{estoque.imovel.tipo}">
+			            <h:outputText value="#{estoque.imovel.tipo}" />
+			        </p:column>
+			         <p:column style="text-align: center;" headerText="Valor de mercado" filterBy="#{estoque.valorMercadoImovel}" filterMatchMode="contains" sortBy="#{estoque.valorMercadoImovel}">
+			            <h:outputText value="#{estoque.valorMercadoImovel}"  converter="bigDecimalConverter" />
+			        </p:column>
+			         <p:column style="text-align: center;" headerText="valor do CCB" filterBy="#{estoque.valorCCB}" 
+			        		filterMatchMode="contains" sortBy="#{estoque.valorCCB}">
+			            <h:outputText value="#{estoque.valorCCB}" converter="bigDecimalConverter" />
 			        </p:column>
 			        <p:column style="text-align: center;" headerText="Consolidado em" filterBy="#{estoque.imovel.imovelEstoque.dataConsolidado}" filterMatchMode="contains" 
 			           sortBy="#{estoque.imovel.imovelEstoque.dataConsolidado}">
