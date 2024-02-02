@@ -72,8 +72,6 @@ public class ImovelEstoqueMB {
 		objetoImovelCobranca = new ImovelCobranca();
 		objetoImovelEstoque = new ImovelEstoque();
 
-		consultaEstoque();
-
 	}
 public void	consultaEstoque(){
 	ImovelEstoqueDao dao = new ImovelEstoqueDao();
@@ -86,6 +84,7 @@ public void	consultaEstoque(){
 	public String clearFieldsEstoqueImoveis() {
 		objetoContratoCobranca = new ContratoCobranca();
 		objetoImovelCobranca = new ImovelCobranca();
+		this.consultaEstoque();
 		this.consultaEstoquePesquisa();
 
 		return "/Atendimento/Cobranca/ImovelEstoqueConsulta.xhtml";
