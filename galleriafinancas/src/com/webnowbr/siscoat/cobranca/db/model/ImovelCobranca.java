@@ -3,6 +3,7 @@ package com.webnowbr.siscoat.cobranca.db.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -70,6 +71,7 @@ public class ImovelCobranca implements Serializable {
 	private String enderecoSemNumero;
 	
 	private Cidade objetoCidade;
+	private List<Integer> subCategoria;
 	
 	public ImovelCobranca(){
 		resetarBololean();
@@ -750,13 +752,12 @@ public class ImovelCobranca implements Serializable {
 
 	public int getCategoria() {
 		if (CommonsUtil.mesmoValor(this.getTipo(), "Apartamento")) {
+			setSubCategoria(new ArrayList(Arrays.asList(1, 7, 8, 9, 10, 11, 12, 16)));
 			return 1;
 		}
-		if (CommonsUtil.mesmoValor(this.getTipo(), "Casa")) {
+		if (CommonsUtil.mesmoValor(this.getTipo(), "Casa") || this.getTipo().toLowerCase().contains("condomínio")) {
+			setSubCategoria(new ArrayList(Arrays.asList(2, 4, 13, 14, 15, 16)));
 			return 2;
-		}
-		if (this.getTipo().toLowerCase().contains("condomínio")) {
-			return 3;
 		}
 		return 0;
 	}
@@ -794,5 +795,13 @@ public class ImovelCobranca implements Serializable {
 
 	public void setValorLeilao(BigDecimal valorLeilao) {
 		this.valorLeilao = valorLeilao;
+	}
+
+	public List<Integer> getSubCategoria() {
+		return subCategoria;
+	}
+
+	public void setSubCategoria(List<Integer> subCategoria) {
+		this.subCategoria = subCategoria;
 	}
 }
