@@ -627,6 +627,66 @@
 												style="width:=60px" />
 										</h:panelGrid>
 									</ui:fragment>
+									
+									<ui:fragment rendered="#{contratoCobrancaMB.indexStepsStatusContrato == 14}">
+									<h:panelGrid columns="1">
+											<h:panelGrid columns="2"
+												style="background-color: #e4e4e4; margin-left: 20px;width: 250px; height: 110px; -webkit-border-radius: 5px;
+												-moz-border-radius: 5px;
+												border-radius: 5px; padding: 10px;">
+												<h:panelGrid columns="1">
+													<p:outputLabel styleClass="labelBold">Operação Paga</p:outputLabel>
+													<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">
+														<p:selectBooleanButton id="operacaoPaga"
+															value="#{contratoCobrancaMB.objetoContratoCobranca.operacaoPaga}"
+															onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+															offIcon="ui-icon-close" style="width:=60px" />
+													</shiro:hasAnyRoles>
+												</h:panelGrid>
+												<h:panelGrid columns="1">
+													<p:outputLabel styleClass="labelBold">Pendência</p:outputLabel>
+													<shiro:hasAnyRoles name="ROOT,COBRANCA,PRECOBRANCAANALISTA">
+														<p:selectBooleanButton id="pendenciaPagamento"
+															value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaPagamento}"
+															onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+															offIcon="ui-icon-close" style="width:=60px" />
+													</shiro:hasAnyRoles>
+												</h:panelGrid>
+												</h:panelGrid>
+												<h:panelGroup id="pgSolicitar">
+												<h:panelGrid columns="1"
+													style="background-color: #e4e4e4; margin-left: 21px;width: 250px; height: 50px; -webkit-border-radius: 5px;
+															-moz-border-radius: 5px;
+															border-radius: 5px; padding: 10px;">
+													<h:panelGrid columns="1">
+														<p:outputLabel styleClass="labelBold">Solicitar Nota Fiscal ?</p:outputLabel>
+														<p:selectOneRadio id="solicitarNota" onchange=""
+															value="#{contratoCobrancaMB.objetoContratoCobranca.solicitarNota}">
+															<f:selectItem itemLabel="Não" itemValue="Não" />
+															<f:selectItem itemLabel="Solicitado" itemValue="Solicitado" />
+														 	<p:ajax event="change"  update="pgSolicitar pgSolicitar2" 
+														 	listener="#{contratoCobrancaMB.calcularValorNotaFiscal}" />  
+														</p:selectOneRadio>
+													</h:panelGrid>	
+												</h:panelGrid>	
+																								
+												<h:panelGroup id="pgSolicitar2">
+													<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA">  	
+														<h:panelGrid columns="2" style="margin-left: 20px;" 
+															rendered="#{contratoCobrancaMB.objetoContratoCobranca.solicitarNota eq 'Solicitado'}">
+															<p:outputLabel value="Valor da Nota Fiscal" />
+															<p:inputText id="valorNotaFiscal"
+																value="#{contratoCobrancaMB.objetoContratoCobranca.valorNotaFiscal}"
+																onkeypress="return isNumberKey(event);"
+																style="width:100px;font-weight: bold; font-size: 12px !important; margin-left: 5px;"
+																onkeydown="FormataValor(this, 13, event, 2);" required="true"
+																converter="bigDecimalConverter" />
+														</h:panelGrid>
+													</shiro:hasAnyRoles>
+												</h:panelGroup> 								
+										</h:panelGroup>	</h:panelGrid>
+										</ui:fragment>
+
 
 									<ui:fragment
 										rendered="#{contratoCobrancaMB.contratosPagadorAnalisado.size() > 0
@@ -646,7 +706,7 @@
 									<ui:fragment
 										rendered="#{!(contratoCobrancaMB.indexStepsStatusContrato == 0  
 										|| contratoCobrancaMB.indexStepsStatusContrato == 1 || contratoCobrancaMB.indexStepsStatusContrato == 2 || contratoCobrancaMB.indexStepsStatusContrato == 5 || contratoCobrancaMB.indexStepsStatusContrato == 7
-										|| contratoCobrancaMB.indexStepsStatusContrato == 8)}">
+										|| contratoCobrancaMB.indexStepsStatusContrato == 8 || contratoCobrancaMB.indexStepsStatusContrato == 14)}">
 										<h:panelGrid columns="2"
 											style="background-color: #cfcfcf;width: 250px;height: 110px;-webkit-border-radius: 5px;
 										-moz-border-radius: 5px;
