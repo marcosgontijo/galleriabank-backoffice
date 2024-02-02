@@ -3987,11 +3987,11 @@ public class ContratoCobrancaMB {
 					despesaNotaFiscal.setDescricao("Pagamento nota fiscal");
 					despesaNotaFiscal.setValor(this.objetoContratoCobranca.getValorNotaFiscal());
 
-					int diaSemanaHoje = this.objetoContratoCobranca.getNotaFiscalEmitidaData().getDay();
+					int diaSemanaHoje = DateUtil.getDataHoraAgora().getDay();
 					//achando a data da proxima terca
 					int diasVencimento = 7 - (diaSemanaHoje - 2);
 					despesaNotaFiscal.setDataVencimento(DateUtil
-							.adicionarDias(this.objetoContratoCobranca.getNotaFiscalEmitidaData(), diasVencimento));
+							.adicionarDias(DateUtil.getDataHoraAgora(), diasVencimento));
 					despesaNotaFiscal.setTipoDespesa("C");
 					despesaNotaFiscal.setContrato(this.objetoContratoCobranca);
 					despesaNotaFiscal.setFormaTransferencia("PIX");
