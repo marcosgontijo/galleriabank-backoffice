@@ -191,6 +191,7 @@ public class PlexiService {
 			plexi.setRequestId(null);
 			atualizarDocumentos(plexi);
 			if(plexi.verificaCamposDoc())
+				plexi.setWebhookRetorno(null);
 				PedirConsulta(plexi, user);
 			plexiConsultaDao.merge(plexi);
 			return;
@@ -199,6 +200,7 @@ public class PlexiService {
 			plexi.setRequestId(null);
 			atualizarDocumentos(plexi);
 			if(plexi.verificaCamposDoc())
+				plexi.setWebhookRetorno(null);
 				PedirConsulta(plexi, user);
 			plexiConsultaDao.merge(plexi);
 		}
