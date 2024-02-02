@@ -3860,6 +3860,10 @@ public class ContratoCobrancaMB {
 					ImovelCobranca imovel = new ImovelCobranca();
 					imovel = imovelDao.findById(idImovel);
 					
+					if(CommonsUtil.mesmoValor(idImovel, this.objetoImovelCobranca.getId())) {
+						this.objetoImovelCobranca.setPreLaudoSolicitado(true);				
+					}
+					
 					imovel.setPreLaudoSolicitado(true);
 					imovelDao.merge(imovel);			
 				}
