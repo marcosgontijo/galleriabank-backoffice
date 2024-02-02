@@ -9858,7 +9858,7 @@ public class ContratoCobrancaMB {
 
 		this.objetoContratoCobranca.calcularTaxaPreAprovada();
 
-		carregaValorIOFCustos();
+		carregaDadosDespesas();
 
 		saveEstadoCheckListAtual();
 
@@ -20424,7 +20424,6 @@ public class ContratoCobrancaMB {
 		} else {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Pagamento StarkBank: Ordem de Pagamento não pode ser gerada! Contrato não informado, tente novamente!", ""));
-		}
 		}
 	}
 
