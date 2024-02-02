@@ -241,9 +241,9 @@ public class PagadorRecebedorService {
 	}
 
 	public void geraRelacionamento(PagadorRecebedor pessoaRoot, String relacao, PagadorRecebedor pessoaChild,
-			BigDecimal porcentagem) {
+			BigDecimal porcentagem, String origem) {
 		RelacionamentoPagadorRecebedor relacioanameto = new RelacionamentoPagadorRecebedor(pessoaRoot, relacao,
-				pessoaChild, porcentagem);
+				pessoaChild, porcentagem, origem);
 
 		RelacionamentoPagadorRecebedorDao rDao = new RelacionamentoPagadorRecebedorDao();
 		List<RelacionamentoPagadorRecebedor> relacaoExistente = rDao.verificaRelacaoExistente(pessoaRoot, pessoaChild);

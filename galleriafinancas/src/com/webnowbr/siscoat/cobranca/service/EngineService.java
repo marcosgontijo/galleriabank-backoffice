@@ -286,7 +286,7 @@ public class EngineService {
 						pagadorRecebedorService);
 				pagadorRecebedorService.geraRelacionamento(empresa, partnership.getRelationshipDescription(),
 						documentoAnalise.getPagador(),
-						CommonsUtil.bigDecimalValue(partnership.getPercentParticipation()));
+						CommonsUtil.bigDecimalValue(partnership.getPercentParticipation()), "Engine");
 			}
 		} else if (CommonsUtil.mesmoValor("PJ", documentoAnalise.getTipoPessoa())) {
 			if (CommonsUtil.semValor(engineRetorno.getRelacionamentosPessoaisPJ())
@@ -316,7 +316,7 @@ public class EngineService {
 					PagadorRecebedor pagadorParticipante = documentoAnaliseService
 							.cadastrarPartnershipRetornoEnginePJ(ererr, pagadorRecebedorService);
 					pagadorRecebedorService.geraRelacionamento(documentoAnalise.getPagador(), relacao,
-							pagadorParticipante, BigDecimal.ZERO);
+							pagadorParticipante, BigDecimal.ZERO, "Engine");
 				}
 			}
 		}

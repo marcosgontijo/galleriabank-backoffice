@@ -7695,7 +7695,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					String query = 
 							"select c.id, c.numeroContrato, c.dataContrato, res.nome, c.quantoPrecisa, im.cidade, pr.nome, "
 							+ " c.laudoRecebido, c.pajurFavoravel, c.dataUltimaAtualizacao, c.pendenciaPagamento, c.valorCCB, c.dataInicio, "
-							+ " c.notaFiscalEmitida, c.dataNotaFiscalEmitida, c.usuarioNotaFiscalEmitida, "
+							+ " c.solicitarnota, c.notaFiscalEmitida, c.dataNotaFiscalEmitida, c.usuarioNotaFiscalEmitida, "
 							+ " c.notaFiscalPaga, c.dataNotaFiscalPaga, c.usuarioNotaFiscalPaga "
 							+ " from cobranca.contratocobranca c"
 							+ " inner join cobranca.responsavel res on c.responsavel = res.id inner join cobranca.pagadorrecebedor"
@@ -7705,7 +7705,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						query = query + " and c.operacaoPaga = false or c.pendenciapagamento = true";			
 					}
 					if (status.equals("Ag. Emissão NFs")) {
-						query = query + " and c.operacaoPaga = true and c.notaFiscalEmitida = false";				
+						query = query + " and c.operacaoPaga = true and c.solicitarnota='Solicitado' and c.notaFiscalEmitida = false";				
 					}
 					if (status.equals("Ag. Pagamento NFs")) {
 						query = query + " and c.operacaoPaga = true and c.notaFiscalEmitida = true and c.notaFiscalPaga = false";				
@@ -7734,12 +7734,13 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setPendenciaPagamento(rs.getBoolean("pendenciaPagamento"));
 						contratoCobranca.setValorCCB(rs.getBigDecimal(12));
 						contratoCobranca.setDataInicio(rs.getDate(13));
-						contratoCobranca.setNotaFiscalEmitida(rs.getBoolean(14));
-						contratoCobranca.setNotaFiscalEmitidaData(rs.getDate(15));
-						contratoCobranca.setNotaFiscalEmitidaUsuario(rs.getString(16));
-						contratoCobranca.setNotaFiscalPaga(rs.getBoolean(17));
-						contratoCobranca.setNotaFiscalPagaData(rs.getDate(18));
-						contratoCobranca.setNotaFiscalPagaUsuario(rs.getString(19));
+						contratoCobranca.setSolicitarNota(rs.getString(14));
+						contratoCobranca.setNotaFiscalEmitida(rs.getBoolean(15));
+						contratoCobranca.setNotaFiscalEmitidaData(rs.getDate(16));
+						contratoCobranca.setNotaFiscalEmitidaUsuario(rs.getString(17));
+						contratoCobranca.setNotaFiscalPaga(rs.getBoolean(18));
+						contratoCobranca.setNotaFiscalPagaData(rs.getDate(19));
+						contratoCobranca.setNotaFiscalPagaUsuario(rs.getString(20));
 						//idsContratoCobranca.add( CommonsUtil.stringValue(contratoCobranca.getId()));
 
 						
