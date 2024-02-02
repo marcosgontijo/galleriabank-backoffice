@@ -83,7 +83,7 @@ public class SerasaService {
 							"Empresa Vinculada ao " + documentoAnalise.getMotivoAnalise());
 					BigDecimal porcentagem = CommonsUtil.bigDecimalValue(pessoaParticipacao.getParticipacao());
 					pagadorRecebedorService.geraRelacionamento(empresa, "Socio", documentoAnalise.getPagador(),
-							porcentagem);
+							porcentagem, "Serasa");
 				}
 			}
 		} else if (CommonsUtil.mesmoValor("PJ", documentoAnalise.getTipoPessoa())) {
@@ -104,10 +104,10 @@ public class SerasaService {
 						PagadorRecebedor pagadorParticipante = documentoAnaliseService
 								.cadastrarParticipanteRetornoRelato(participantes, pagadorRecebedorService);
 						pagadorRecebedorService.geraRelacionamento(pagadorParticipada, "Socio", pagadorParticipante,
-								porcentagem);
+								porcentagem, "Serasa");
 					}
 					pagadorRecebedorService.geraRelacionamento(pagador, "Participada", pagadorParticipada,
-							BigDecimal.ZERO);
+							BigDecimal.ZERO, "Serasa");
 				}
 			}
 			
@@ -116,7 +116,7 @@ public class SerasaService {
 					PagadorRecebedor administradorPagador =
 							documentoAnaliseService.cadastrarAdministradorRetornoRelato(administrador, pagadorRecebedorService);					
 					pagadorRecebedorService.geraRelacionamento(pagador, "Administrador", administradorPagador,
-							BigDecimal.ZERO);
+							BigDecimal.ZERO, "Serasa");
 				}
 				
 				for (Socio socio : relato.getQuadroAdminsitrativo().getSocios()) {
@@ -124,7 +124,7 @@ public class SerasaService {
 							documentoAnaliseService.cadastrarSocioRetornoRelato(socio, pagadorRecebedorService);					
 					BigDecimal porcentagem = CommonsUtil.bigDecimalValue(socio.getParticipacao());
 					pagadorRecebedorService.geraRelacionamento(pagador, "Socio", socioPagador,
-							porcentagem);
+							porcentagem, "Serasa");
 				}
 			}
 		}

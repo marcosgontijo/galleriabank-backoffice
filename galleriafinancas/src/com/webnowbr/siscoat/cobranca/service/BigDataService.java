@@ -468,7 +468,7 @@ public class BigDataService {
 							relacao = relacionamento.getRelationshipName();
 	
 						pagadorRecebedorService.geraRelacionamento(pagadorRecebedor, relacao, documentoAnalise.getPagador(),
-								null);
+								null, "BigData");
 	
 					}
 				}

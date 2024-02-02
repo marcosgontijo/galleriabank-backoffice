@@ -2394,6 +2394,38 @@
 		<property name="todosPreLaudoEntregues" type="boolean">
 			<column name="todosPreLaudoEntregues" not-null="true" default="false"/>
 		</property>
+
+		<property name="valorNotaFiscal" type="big_decimal">
+			<column name="valorNotaFiscal" />
+		</property>
+		<property name="solicitarNotaData" type="java.util.Date">
+			<column name="solicitarNotaData" />
+		</property>
+		<property name="solicitarNotaUsuario" type="java.lang.String">
+			<column name="solicitarNotaUsuario" />
+		</property>
+		
+		<property name="notaFiscalEmitidaProblema" type="java.lang.String">
+			<column name="notaFiscalEmitidaProblema" />
+		</property>
+		
+		<property name="notaFiscalEmitidaProblemaData" type="java.util.Date">
+			<column name="notaFiscalEmitidaProblemaData" />
+		</property>
+		
+		<property name="notaFiscalEmitidaProblemaUsuario" type="java.lang.String">
+			<column name="notaFiscalEmitidaProblemaUsuario" />
+		</property>
+		
+		<property name="notaFiscalAgendadaProblema" type="java.lang.String">
+			<column name="notaFiscalAgendadaProblema" />
+		</property>
+		<property name="notaFiscalAgendadaProblemaData" type="java.util.Date">
+			<column name="notaFiscalAgendadaProblemaData" />
+		</property>
+		<property name="notaFiscalAgendadaProblemaUsuario" type="java.lang.String">
+			<column name="notaFiscalAgendadaProblemaUsuario" />
+		</property>
 		
 	</class>
 </hibernate-mapping>

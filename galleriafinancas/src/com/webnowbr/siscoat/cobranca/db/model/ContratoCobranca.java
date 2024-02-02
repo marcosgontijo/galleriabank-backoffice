@@ -517,10 +517,18 @@ public class ContratoCobranca implements Serializable {
 	private Date notaFiscalEmitidaData;
 	private boolean notaFiscalEmitida;
 	private String notaFiscalEmitidaUsuario;
+	
+	private String notaFiscalEmitidaProblema;
+	private Date notaFiscalEmitidaProblemaData;
+	private String notaFiscalEmitidaProblemaUsuario;
 
 	private Date notaFiscalAgendadaData;
 	private boolean notaFiscalAgendada;
 	private String notaFiscalAgendadaUsuario;
+	
+	private String notaFiscalAgendadaProblema;
+	private Date notaFiscalAgendadaProblemaData;
+	private String notaFiscalAgendadaProblemaUsuario;
 
 	
 	private Date notaFiscalPagaData;
@@ -783,6 +791,11 @@ public class ContratoCobranca implements Serializable {
 	private String observacaoPagamento;
 
 	private String solicitarNota;
+	private Date solicitarNotaData;
+	private String solicitarNotaUsuario;
+	
+	
+	
 	private boolean notaSolicitadaWhatsapp;
 	private BigDecimal valorNotaFiscal;
 
@@ -1121,9 +1134,9 @@ public class ContratoCobranca implements Serializable {
 		ContratoCobranca c = this;
 
 		if (CommonsUtil.mesmoValor(c.getStatus(), "Aprovado")) {
-			if(!c.isNotaFiscalEmitida() && !c.isNotaFiscalPaga()) {
+			if(!c.isNotaFiscalEmitida() && !c.isNotaFiscalAgendada()) {
 				c.setStatusEsteira("Ag. Emissão NFs");
-			} else if (c.isNotaFiscalEmitida() && !c.isNotaFiscalPaga()) {
+			} else if (c.isNotaFiscalEmitida() && !c.isNotaFiscalAgendada()) {
 				c.setStatusEsteira("Ag. Pagamento NFs");
 			} else {
 				c.setStatusEsteira("Aprovado");
@@ -1519,6 +1532,10 @@ public class ContratoCobranca implements Serializable {
 		if (!CommonsUtil.semValor(dataPajuComentado))
 			retorno = (DateUtil.getDaysBetweenDates(dataPajuComentado, DateUtil.gerarDataHoje()) > 30);
 		return retorno;
+	}
+	
+	public boolean isNotaSolicitada() {
+		return CommonsUtil.mesmoValorIgnoreCase("Solicitado", solicitarNota);
 	}
 
 	public boolean desabilitarEnviarParaCartorio() {
@@ -6858,6 +6875,22 @@ public class ContratoCobranca implements Serializable {
 
 	public void setSolicitarNota(String solicitarNota) {
 		this.solicitarNota = solicitarNota;
+	}	
+
+	public Date getSolicitarNotaData() {
+		return solicitarNotaData;
+	}
+
+	public void setSolicitarNotaData(Date solicitarNotaData) {
+		this.solicitarNotaData = solicitarNotaData;
+	}
+
+	public String getSolicitarNotaUsuario() {
+		return solicitarNotaUsuario;
+	}
+
+	public void setSolicitarNotaUsuario(String solicitarNotaUsuario) {
+		this.solicitarNotaUsuario = solicitarNotaUsuario;
 	}
 
 	public boolean isNotaSolicitadaWhatsapp() {
@@ -7317,9 +7350,9 @@ public class ContratoCobranca implements Serializable {
 		}
 		
 		if(this.status.equals("Aprovado")) {
-			if (!this.isNotaFiscalEmitida() && !this.isNotaFiscalPaga()) {
+			if (!this.isNotaFiscalEmitida() && !this.isNotaFiscalAgendada()) {
 				this.statusEsteira = "Ag. Emissão NFs";
-			} else if (this.isNotaFiscalEmitida() && !this.isNotaFiscalPaga()) {
+			} else if (this.isNotaFiscalEmitida() && !this.isNotaFiscalAgendada()) {
 				this.statusEsteira = "Ag. Pagamento NFs";
 			} else {
 				this.statusEsteira = "Aprovado";
@@ -7713,30 +7746,29 @@ public class ContratoCobranca implements Serializable {
 		this.notaFiscalEmitidaUsuario = notaFiscalEmitidaUsuario;
 	}
 
-	public Date getNotaFiscalPagaData() {
-		return notaFiscalPagaData;
+	public String getNotaFiscalEmitidaProblema() {
+		return notaFiscalEmitidaProblema;
 	}
 
-	public void setNotaFiscalPagaData(Date notaFiscalPagaData) {
-		this.notaFiscalPagaData = notaFiscalPagaData;
+	public void setNotaFiscalEmitidaProblema(String notaFiscalEmitidaProblema) {
+		this.notaFiscalEmitidaProblema = notaFiscalEmitidaProblema;
 	}
 
-	public boolean isNotaFiscalPaga() {
-		return notaFiscalPaga;
+	public Date getNotaFiscalEmitidaProblemaData() {
+		return notaFiscalEmitidaProblemaData;
 	}
 
-	public void setNotaFiscalPaga(boolean notaFiscalPaga) {
-		this.notaFiscalPaga = notaFiscalPaga;
+	public void setNotaFiscalEmitidaProblemaData(Date notaFiscalEmitidaProblemaData) {
+		this.notaFiscalEmitidaProblemaData = notaFiscalEmitidaProblemaData;
 	}
 
-	public String getNotaFiscalPagaUsuario() {
-		return notaFiscalPagaUsuario;
+	public String getNotaFiscalEmitidaProblemaUsuario() {
+		return notaFiscalEmitidaProblemaUsuario;
 	}
 
-	public void setNotaFiscalPagaUsuario(String notaFiscalPagaUsuario) {
-		this.notaFiscalPagaUsuario = notaFiscalPagaUsuario;
+	public void setNotaFiscalEmitidaProblemaUsuario(String notaFiscalEmitidaProblemaUsuario) {
+		this.notaFiscalEmitidaProblemaUsuario = notaFiscalEmitidaProblemaUsuario;
 	}
-	
 
 	public Date getNotaFiscalAgendadaData() {
 		return notaFiscalAgendadaData;
@@ -7760,6 +7792,54 @@ public class ContratoCobranca implements Serializable {
 
 	public void setNotaFiscalAgendadaUsuario(String notaFiscalAgendadaUsuario) {
 		this.notaFiscalAgendadaUsuario = notaFiscalAgendadaUsuario;
+	}
+
+	public Date getNotaFiscalPagaData() {
+		return notaFiscalPagaData;
+	}
+
+	public void setNotaFiscalPagaData(Date notaFiscalPagaData) {
+		this.notaFiscalPagaData = notaFiscalPagaData;
+	}
+
+	public boolean isNotaFiscalPaga() {
+		return notaFiscalPaga;
+	}
+
+	public void setNotaFiscalPaga(boolean notaFiscalPaga) {
+		this.notaFiscalPaga = notaFiscalPaga;
+	}
+
+	public String getNotaFiscalPagaUsuario() {
+		return notaFiscalPagaUsuario;
+	}
+
+	public void setNotaFiscalPagaUsuario(String notaFiscalPagaUsuario) {
+		this.notaFiscalPagaUsuario = notaFiscalPagaUsuario;
+	}
+
+	public String getNotaFiscalAgendadaProblema() {
+		return notaFiscalAgendadaProblema;
+	}
+
+	public void setNotaFiscalAgendadaProblema(String notaFiscalAgendadaProblema) {
+		this.notaFiscalAgendadaProblema = notaFiscalAgendadaProblema;
+	}
+
+	public Date getNotaFiscalAgendadaProblemaData() {
+		return notaFiscalAgendadaProblemaData;
+	}
+
+	public void setNotaFiscalAgendadaProblemaData(Date notaFiscalAgendadaProblemaData) {
+		this.notaFiscalAgendadaProblemaData = notaFiscalAgendadaProblemaData;
+	}
+
+	public String getNotaFiscalAgendadaProblemaUsuario() {
+		return notaFiscalAgendadaProblemaUsuario;
+	}
+
+	public void setNotaFiscalAgendadaProblemaUsuario(String notaFiscalAgendadaProblemaUsuario) {
+		this.notaFiscalAgendadaProblemaUsuario = notaFiscalAgendadaProblemaUsuario;
 	}
 
 	public boolean isEnviadoCartorio() {
