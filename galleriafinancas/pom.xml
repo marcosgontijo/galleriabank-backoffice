@@ -486,7 +486,7 @@
 			<groupId>
 				br.com.galleriabank.bigdata-cliente</groupId>
 			<artifactId>bigdata-cliente</artifactId>
-			<version>1.0.14</version>
+			<version>1.0.15</version>
 		</dependency>		
 		<dependency>
 			<groupId>br.com.galleriabank.debit-cliente</groupId>
@@ -502,7 +502,7 @@
 				br.com.galleriabank.laudoimovel.cliente</groupId>
             <artifactId>
 				laudoimovel-cliente</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.3</version>
 		</dependency>
 	</dependencies>
 </project>

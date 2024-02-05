@@ -38,7 +38,7 @@ public class LaudoImovelService {
 		laudoRoboAssessingObject.setArea(Integer.parseInt(imovelCobranca.getAreaConstruida()));
 		laudoRoboAssessingObject.setStreet(imovelCobranca.getEnderecoSemNumero());
 		laudoRoboAssessingObject.setNumber(imovelCobranca.getNumeroImovel());
-		laudoRoboAssessingObject.setSub_category_id(imovelCobranca.getCategoria());
+		laudoRoboAssessingObject.setSub_category_id(imovelCobranca.getSubCategoria());
 		laudoRoboAssessingObject.setCity(imovelCobranca.getCidade());
 		laudoRoboAssessingObject.setPostal_code(imovelCobranca.getCep());
 		laudoRoboAssessingObject.setState(imovelCobranca.getEstado());

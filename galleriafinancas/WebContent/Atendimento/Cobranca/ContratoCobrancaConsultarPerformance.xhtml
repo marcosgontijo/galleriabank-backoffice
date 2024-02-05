@@ -151,7 +151,7 @@
 		                </shiro:hasAnyRoles>		                	                						
 						<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA, PRECOBRANCA">  	                
 			                <p:commandButton action="#{contratoCobrancaMB.clearFieldsBaixar}" ajax="false" icon="ui-icon-check" value="Baixar" title="Baixar Parcela">
-			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}"/>
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.origemTelaBaixar}" value="CobrancaConsultar" />
@@ -618,7 +618,7 @@
 									itemValue="Ag Consolidação"></f:selectItem>
 								<f:selectItem itemLabel="7- Leilão" itemValue="Leilão"></f:selectItem>
 								<f:selectItem itemLabel="8- Leilão positivo"
-									itemValue="leilão positivo"></f:selectItem>
+									itemValue="Leilão positivo"></f:selectItem>
 								<f:selectItem itemLabel="9- Leilão em andamento"	
 									itemValue="Leilão em andamento"></f:selectItem>	
 								<f:selectItem itemLabel="10- Leilão negativo"

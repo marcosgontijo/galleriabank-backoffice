@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -464,11 +465,28 @@ public class CcbMB {
 		}
 		
 		this.objetoCcb.getDespesasAnexo2().add(despesaSelecionada);
+		ContasPagarDao contasPagarDao = new ContasPagarDao();
+		if (!CommonsUtil.semValor(despesaSelecionada.getContaPagarOriginal()) && 
+				despesaSelecionada.getContaPagarOriginal().getId() > 0) {
+			despesaSelecionada.getContaPagarOriginal().setEditada(true);
+			despesaSelecionada.getContaPagarOriginal().setContrato(null);
+			this.objetoContratoCobranca.getListContasPagar().remove(despesaSelecionada.getContaPagarOriginal());
+			this.objetoCcb.getDespesasAnexo2().remove(despesaSelecionada);
+			contasPagarDao.merge(despesaSelecionada.getContaPagarOriginal());
+		} 
+		
+		if (despesaSelecionada.getId() <= 0) {
+			this.despesaSelecionada.setDataCriacao(DateUtil.gerarDataHoje());
+			this.despesaSelecionada.setUserCriacao(getLoginBean().getUsername());
+			contasPagarDao.create(despesaSelecionada);
+		} else {
+			contasPagarDao.merge(despesaSelecionada);
+		}
+		
 		if(CommonsUtil.semValor(this.objetoCcb.getValorDespesas())) {
 			this.objetoCcb.setValorDespesas(BigDecimal.ZERO);
 		}
 		calcularValorDespesa();
-		ContasPagarDao contasPagarDao = new ContasPagarDao();
 		contasPagarDao.create(despesaSelecionada);
 		despesaSelecionada = new ContasPagar();
 		calcularSimulador();
@@ -489,7 +507,9 @@ public class CcbMB {
 	}
 	
 	public void editDespesa(ContasPagar conta) {
-		despesaSelecionada = conta;
+		despesaSelecionada = new ContasPagar(conta);
+		despesaSelecionada.setContaPagarOriginal(conta);
+		//despesaSelecionada = conta;
 	}
 	
 	public void addProcesso() {
@@ -1116,17 +1136,37 @@ public class CcbMB {
 		return "";
 	}
 	
-	public void emitirAditamento(List<ContasPagar> despesas) {
+	public StreamedContent emitirAditamento(Set<ContasPagar> despesas) {
 		try {
-			EmitirCcbPreContrato();
-			this.objetoCcb.setDespesasAnexo2(despesas);
+			clearFieldsInserirCcb();
+			//EmitirCcbPreContrato();
+			ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+			contratoCobrancaDao.merge(objetoContratoCobranca);
+			List<CcbContrato> ccbContratoDB = new ArrayList<CcbContrato>();
+			CcbDao ccbDao = new CcbDao();
+			ccbContratoDB = ccbDao.findByFilter("objetoContratoCobranca", objetoContratoCobranca);
+			listarDownloadsAditamento();
+			if (ccbContratoDB.size() > 0) {
+				objetoCcb = ccbContratoDB.get(0);
+				this.objetoContratoCobranca = objetoCcb.getObjetoContratoCobranca();
+			} else {
+				FacesContext context = FacesContext.getCurrentInstance();
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Contrato de Cobrança: esse contrato não tem uma emissão feita!",""));
+				return null;
+			}
+			this.objetoCcb.setDespesasAnexo2(new ArrayList<ContasPagar>(despesas));
+			calcularValorDespesa();
+			calcularSimulador();
+			calculaValorLiquidoCredito();
 			listaTipoDownload.clear();
 			listaTipoDownload.add("Aditamento Carta de Desconto");
-			readXWPFile();
+			return readXWPFile();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return null;
 	}
 	
 	public ContratoCobranca getContratoById(long idContrato) {
@@ -1627,7 +1667,7 @@ public class CcbMB {
 			listaDocumentos.add(s2);
 		}
 	    try {
-	    	if(!CommonsUtil.mesmoValor(this.tipoDownload, "TODOS")) {
+	    	if(!CommonsUtil.semValor(this.tipoDownload) && !CommonsUtil.mesmoValor(this.tipoDownload, "TODOS")) {
 	    		listaDocumentos = listaTipoDownload;
 	    		listaTipoDownload.clear();
 	    		listaTipoDownload.add(this.tipoDownload);

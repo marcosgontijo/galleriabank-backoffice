@@ -896,9 +896,12 @@ public class ContratoCobranca implements Serializable {
 	public BigDecimal calcularValorTotalContasPagas() {
 		somaValorPago = BigDecimal.ZERO;
 		for (ContasPagar conta : this.getListContasPagar()) {
-			if (!CommonsUtil.semValor(conta.getValorPagamento())) {
-				somaValorPago = somaValorPago.add(conta.getValorPagamento());
-			}
+			if (conta.isEditada()) 
+				continue;
+			if (CommonsUtil.semValor(conta.getValorPagamento())) 
+				continue;
+			
+			somaValorPago = somaValorPago.add(conta.getValorPagamento());
 		}
 		return somaValorPago;
 	}
@@ -912,7 +915,6 @@ public class ContratoCobranca implements Serializable {
 			else
 				return taxaPreAprovada;
 		}
-
 	}
 
 	public ContratoCobranca() {
