@@ -71,7 +71,7 @@ public class ImovelCobranca implements Serializable {
 	private String enderecoSemNumero;
 	
 	private Cidade objetoCidade;
-	private List<Integer> subCategoria;
+	private int subCategoria;
 	
 	public ImovelCobranca(){
 		resetarBololean();
@@ -752,11 +752,11 @@ public class ImovelCobranca implements Serializable {
 
 	public int getCategoria() {
 		if (CommonsUtil.mesmoValor(this.getTipo(), "Apartamento")) {
-			setSubCategoria(new ArrayList(Arrays.asList(1, 7, 8, 9, 10, 11, 12, 16)));
+			setSubCategoria(1);
 			return 1;
 		}
 		if (CommonsUtil.mesmoValor(this.getTipo(), "Casa") || this.getTipo().toLowerCase().contains("condomínio")) {
-			setSubCategoria(new ArrayList(Arrays.asList(2, 4, 13, 14, 15, 16)));
+			setSubCategoria(2);
 			return 2;
 		}
 		return 0;
@@ -797,11 +797,11 @@ public class ImovelCobranca implements Serializable {
 		this.valorLeilao = valorLeilao;
 	}
 
-	public List<Integer> getSubCategoria() {
+	public int getSubCategoria() {
 		return subCategoria;
 	}
 
-	public void setSubCategoria(List<Integer> subCategoria) {
+	public void setSubCategoria(int subCategoria) {
 		this.subCategoria = subCategoria;
 	}
 }

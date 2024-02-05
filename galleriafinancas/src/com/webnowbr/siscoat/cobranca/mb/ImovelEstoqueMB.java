@@ -56,7 +56,9 @@ public class ImovelEstoqueMB {
 	private List<ImovelEstoque> listImovelEstoque;
 	private boolean relatorioGerado = false;
 	private String parametroPesquisa = "Tudo";
-
+	private List<ContratoCobranca> listaImovelTudo;
+	private List<ContratoCobranca> listaImovelVendido;
+	private List<ContratoCobranca> listaImovelEmEsdtoque;
 	/**
 	 * Construtor.
 	 */
@@ -65,13 +67,19 @@ public class ImovelEstoqueMB {
 		objetoImovelCobranca = new ImovelCobranca();
 		objetoImovelEstoque = new ImovelEstoque();
 
-//		consultaEstoque();
-
+	}
+public void	consultaEstoque(){
+	ImovelEstoqueDao dao = new ImovelEstoqueDao();
+	listaImovelTudo = dao.consultaImovelEstoqueTudo();
+	listaImovelVendido =  dao.consultaImovelEstoqueVendido();
+	listaImovelEmEsdtoque = dao.consultaImovelEstoqueNaoVendido();
+		
 	}
 
 	public String clearFieldsEstoqueImoveis() {
 		objetoContratoCobranca = new ContratoCobranca();
 		objetoImovelCobranca = new ImovelCobranca();
+		this.consultaEstoque();
 		this.consultaEstoquePesquisa();
 
 		return "/Atendimento/Cobranca/ImovelEstoqueConsulta.xhtml";
@@ -139,21 +147,16 @@ public class ImovelEstoqueMB {
 		return "/Atendimento/Cobranca/ImovelEstoqueEditar.xhtml";
 	}
 
-	public void consultaEstoque() {
-//		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-ImovelEstoqueDao dao = new ImovelEstoqueDao();
-listaConsultaEstoque = dao.consultaImovelEstoqueTudo();
-//		listaConsultaEstoque = contratoCobrancaDao.consultaImovelEstoque();
-	}
+
 	public void consultaEstoquePesquisa() {
 		ImovelEstoqueDao dao = new ImovelEstoqueDao();
 		if(CommonsUtil.mesmoValor( parametroPesquisa, "Tudo")){
-			listaConsultaEstoque = dao.consultaImovelEstoqueTudo();
+			listaConsultaEstoque = listaImovelTudo;
 		} else if(CommonsUtil.mesmoValor(parametroPesquisa, "Vendido")) {
-			listaConsultaEstoque = dao.consultaImovelEstoqueVendido();
+			listaConsultaEstoque = listaImovelVendido;
 			
 		} else if(CommonsUtil.mesmoValor(parametroPesquisa, "Estoque")) {
-			listaConsultaEstoque = dao.consultaImovelEstoqueNaoVendido();
+			listaConsultaEstoque = listaImovelEmEsdtoque;
 			
 		}
 		
