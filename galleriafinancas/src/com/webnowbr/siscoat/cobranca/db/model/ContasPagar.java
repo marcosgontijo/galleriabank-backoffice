@@ -39,6 +39,7 @@ public class ContasPagar implements Serializable {
 	private String contaTed;
 	private String digitoContaTed;
 	private String agenciaTed;
+	private String ispb;
 	
 	private String fileListId;
 	
@@ -439,5 +440,13 @@ public class ContasPagar implements Serializable {
 	
 	public void setUserCriacao(String userCriacao) {
 		this.userCriacao = userCriacao;
+	}
+
+	public String getIspb() {
+		return ispb;
+	}
+
+	public void setIspb(String ispb) {
+		this.ispb = ispb;
 	}
 }

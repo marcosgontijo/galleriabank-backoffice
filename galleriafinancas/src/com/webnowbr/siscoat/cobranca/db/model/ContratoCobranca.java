@@ -745,6 +745,7 @@ public class ContratoCobranca implements Serializable {
 	private String contaBancarioContaPagar;
 	private String digitoContaBancarioContaPagar;
 	private String chavePIXBancarioContaPagar;
+	private String ispbBancarioContaPagar;
 
 	private BigDecimal valorCartaSplit;
 	private String nomeBancarioCartaSplit;
@@ -753,6 +754,7 @@ public class ContratoCobranca implements Serializable {
 	private String agenciaBancarioCartaSplit;
 	private String contaBancarioCartaSplit;
 	private String pixCartaSplit;
+	private String ispbCartaSplit;
 
 	private BigDecimal valorCartaSplitGalleria;
 	private String nomeBancarioCartaSplitGalleria;
@@ -761,6 +763,7 @@ public class ContratoCobranca implements Serializable {
 	private String agenciaBancarioCartaSplitGalleria;
 	private String contaBancarioCartaSplitGalleria;
 	private String pixCartaSplitGalleria;
+	private String ispbCartaSplitGalleria;
 
 	private BigDecimal valorCustoEmissao;
 	private String nomeBancarioCustoEmissao;
@@ -769,6 +772,7 @@ public class ContratoCobranca implements Serializable {
 	private String agenciaBancarioCustoEmissao;
 	private String contaBancarioCustoEmissao;
 	private String pixCustoEmissao;
+	private String ispbCustoEmissao;
 
 	private String observacaoPagamento;
 
@@ -7718,5 +7722,37 @@ public class ContratoCobranca implements Serializable {
 
 	public void setValorCreditoImovelPrincipal(BigDecimal valorCreditoImovelPrincipal) {
 		this.valorCreditoImovelPrincipal = valorCreditoImovelPrincipal;
+	}
+
+	public String getIspbBancarioContaPagar() {
+		return ispbBancarioContaPagar;
+	}
+
+	public void setIspbBancarioContaPagar(String ispbBancarioContaPagar) {
+		this.ispbBancarioContaPagar = ispbBancarioContaPagar;
+	}
+
+	public String getIspbCartaSplit() {
+		return ispbCartaSplit;
+	}
+
+	public void setIspbCartaSplit(String ispbCartaSplit) {
+		this.ispbCartaSplit = ispbCartaSplit;
+	}
+
+	public String getIspbCartaSplitGalleria() {
+		return ispbCartaSplitGalleria;
+	}
+
+	public void setIspbCartaSplitGalleria(String ispbCartaSplitGalleria) {
+		this.ispbCartaSplitGalleria = ispbCartaSplitGalleria;
+	}
+
+	public String getIspbCustoEmissao() {
+		return ispbCustoEmissao;
+	}
+
+	public void setIspbCustoEmissao(String ispbCustoEmissao) {
+		this.ispbCustoEmissao = ispbCustoEmissao;
 	}
 }

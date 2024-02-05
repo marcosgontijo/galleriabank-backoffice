@@ -541,6 +541,12 @@
 								<p:inputText id="pixCartaSplit"
 									style="width:250px;font-weight: bold; font-size: 18px !important;"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.pixCartaSplit}" />
+									
+								<p:outputLabel for="ispbCartaSplit" value="ISPB (se não tem código PIX): "  
+									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+								<p:inputText id="ispbCartaSplit"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.ispbCartaSplit}" />
 										
 								<p:commandButton action="#{contratoCobrancaMB.pagamentoStarkBankCartaSplit}"
 											icon="ui-icon-video" title="Ordem de Pagamento" value="Ordem de Pagamento"
@@ -597,6 +603,12 @@
 									style="width:250px;font-weight: bold; font-size: 18px !important;"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.pixCartaSplitGalleria}" />
 									
+								<p:outputLabel for="ispbCartaSplitGalleria" value="ISPB (se não tem código PIX): " 
+									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+								<p:inputText id="ispbCartaSplitGalleria"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.ispbCartaSplitGalleria}" />
+									
 								<p:commandButton action="#{contratoCobrancaMB.pagamentoStarkBankCartaSplitGalleria}"
 											icon="ui-icon-video" title="Ordem de Pagamento" value="Ordem de Pagamento"
 											update=":form" disabled="#{contratoCobrancaMB.buscaDespesaCartaSplit('Pagamento Carta Split - Galleria', contratoCobrancaMB.objetoContratoCobranca.numeroContrato) != null}"/>	
@@ -646,11 +658,17 @@
 									style="width:250px;font-weight: bold; font-size: 18px !important;"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.contaBancarioCustoEmissao}" />
 									
-									<p:outputLabel for="pixCustoEmissao" value="Pix: " 
+								<p:outputLabel for="pixCustoEmissao" value="Pix: " 
 									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
 								<p:inputText id="pixCustoEmissao"
 									style="width:250px;font-weight: bold; font-size: 18px !important;"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.pixCustoEmissao}" />
+									
+								<p:outputLabel for="ispbCustoEmissao" value="ISPB (se não tem código PIX): " 
+									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+								<p:inputText id="ispbCustoEmissao"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.ispbCustoEmissao}" />
 									
 								<p:commandButton action="#{contratoCobrancaMB.pagamentoStarkBankCartaSplitCustoEmissao}"
 											icon="ui-icon-video" title="Ordem de Pagamento" value="Ordem de Pagamento"
@@ -978,7 +996,13 @@
 								style="width:250px;" styleClass="labelBold"/>
 							<p:inputText id="chavePIXBancarioContaPagar"
 								style="width:250px;"
-								value="#{contratoCobrancaMB.objetoContratoCobranca.chavePIXBancarioContaPagar}" required="true" />
+								value="#{contratoCobrancaMB.objetoContratoCobranca.chavePIXBancarioContaPagar}"  />
+								
+							<p:outputLabel for="ispbBancarioContaPagar" value="ISPB (se não tem chave PIX): " 
+								style="width:250px;" styleClass="labelBold"/>
+							<p:inputText id="ispbBancarioContaPagar"
+								style="width:250px;"
+								value="#{contratoCobrancaMB.objetoContratoCobranca.ispbBancarioContaPagar}"  />
 							
 							<p:outputLabel for="ContaPagarValorPagoPixStarkBank" value="Valor a Pagar: "
 									styleClass="labelBold" />

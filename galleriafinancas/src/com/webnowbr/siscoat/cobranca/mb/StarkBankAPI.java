@@ -646,9 +646,9 @@ public class StarkBankAPI{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    }    
+    }   
     
-    public StarkBankPix paymentPix(String codigoPixBanco, String agencia, String numeroConta, String documento, String nomeBeneficiario, BigDecimal valor, String tipoOperacao, String descricaoConta, String tipoContaBancaria) {
+    public StarkBankPix paymentPixCodigo(String codigoPixBanco, String agencia, String numeroConta, String documento, String nomeBeneficiario, BigDecimal valor, String tipoOperacao, String descricaoConta, String tipoContaBancaria) {
     	FacesContext context = FacesContext.getCurrentInstance();
     	
     	List<Transfer> transfers = new ArrayList<>();
@@ -722,6 +722,73 @@ public class StarkBankAPI{
 		} catch (Exception e) {
 			context.addMessage(null, new FacesMessage(
 					FacesMessage.SEVERITY_ERROR, "StarkBank PIX: Ocorreu um problema ao fazer PIX! Erro: " + e.getMessage(), "")); 
+			
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	return null;
+    }
+    
+    public StarkBankPix paymentPixDadosBancarios(String ispb, String agencia, String numeroConta, String documento, String nomeBeneficiario, BigDecimal valor, String tipoOperacao, String descricaoConta, String tipoContaBancaria) {
+    	FacesContext context = FacesContext.getCurrentInstance();
+    	
+    	List<Transfer> transfers = new ArrayList<>();
+
+    	List<Transfer.Rule> rules = new ArrayList<>();
+    
+    	if (descricaoConta != null && descricaoConta.contains("Pagamento Carta Split")) {
+    		loginStarkBankSCD();
+    	} else {
+    		loginStarkBank();    		
+    	}
+    	
+    	Date dataHoje = DateUtil.gerarDataHoje();
+    	
+    	try {
+	    	rules.add(new Transfer.Rule("resendingLimit", 5));
+	
+	    	HashMap<String, Object> data = new HashMap<>();
+	    	String valorStr = valor.toString();
+	    	data.put("amount", Long.valueOf(valorStr.replace(".", "").replace(",", "")));	
+	    	data.put("bankCode", ispb);
+	    	data.put("branchCode", agencia);
+	    	data.put("accountNumber", numeroConta);
+	    	data.put("taxId", documento);
+	    	data.put("name", nomeBeneficiario);
+	    	data.put("externalId", "Pagamento PIX Dados Bancários -" + nomeBeneficiario.replace(" ", "") + DateUtil.todayInMilli());
+	    	//data.put("scheduled", "2020-08-14");
+	    	//data.put("tags", new String[]{"daenerys", "invoice/1234"});
+	    	//data.put("rules", rules);
+	    	
+	    	System.out.println("Payment TED Payload - " + data);
+	    	
+			transfers.add(new Transfer(data));
+			
+			transfers = Transfer.create(transfers);
+
+			StarkBankPix pixTransacao = new StarkBankPix();
+	    	for (Transfer transfer : transfers){
+				 pixTransacao.setId(Long.valueOf(transfer.id));
+				 pixTransacao.setCreated(DateUtil.convertDateTimeToDate(transfer.created));
+				 pixTransacao.setScheduled(transfer.scheduled);
+				 pixTransacao.setNomeComprovante(nomeBeneficiario);
+				 pixTransacao.setAmount(valor);
+				 pixTransacao.setTaxId(documento);
+				 pixTransacao.setPathComprovante(null);
+				 pixTransacao.setNomeComprovante(null);
+	    	}
+	    	
+	    	StarkBankPixDAO starkBankPixDAO = new StarkBankPixDAO();
+	    	starkBankPixDAO.create(pixTransacao);
+	    	
+	    	context.addMessage(null, new FacesMessage(
+					FacesMessage.SEVERITY_INFO, "StarkBank PIX (Dados Bancários): Pagamento efetuado com sucesso!", ""));
+	    	
+	    	return pixTransacao;
+		} catch (Exception e) {
+			context.addMessage(null, new FacesMessage(
+					FacesMessage.SEVERITY_ERROR, "StarkBank PIX (Dados Bancários): Ocorreu um problema ao fazer TED! Erro: " + e, ""));
 			
 			// TODO Auto-generated catch block
 			e.printStackTrace();

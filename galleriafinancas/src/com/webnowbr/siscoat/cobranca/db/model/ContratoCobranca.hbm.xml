@@ -2369,5 +2369,20 @@
 			<column name="valorCreditoImovelPrincipal" />
 		</property>
 		
+		<property name="ispbBancarioContaPagar" type="java.lang.String">
+			<column name="ispbBancarioContaPagar" />
+		</property>
+		
+		<property name="ispbCartaSplit" type="java.lang.String">
+			<column name="ispbCartaSplit" />
+		</property>
+		
+		<property name="ispbCartaSplitGalleria" type="java.lang.String">
+			<column name="ispbCartaSplitGalleria" />
+		</property>
+		
+		<property name="ispbCustoEmissao" type="java.lang.String">
+			<column name="ispbCustoEmissao" />
+		</property>
 	</class>
 </hibernate-mapping>

@@ -19,7 +19,9 @@
 		<property name="descricao" type="java.lang.String">
 			<column name="descricao" />
 		</property>		
-		
+		<property name="ispb" type="java.lang.String">
+			<column name="ispb" />
+		</property>	
 		<many-to-one name="contrato"
 			class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca"
 			lazy="false">
