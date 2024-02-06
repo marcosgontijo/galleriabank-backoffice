@@ -55,7 +55,7 @@ public class ImovelEstoqueMB {
 	private List<ContratoCobranca> listaConsultaEstoque = new ArrayList<ContratoCobranca>();
 	private List<ImovelEstoque> listImovelEstoque;
 	private boolean relatorioGerado = false;
-	private String parametroPesquisa = "Tudo";
+	private String parametroPesquisa;
 	private List<ContratoCobranca> listaImovelTudo;
 	private List<ContratoCobranca> listaImovelVendido;
 	private List<ContratoCobranca> listaImovelEmEsdtoque;
@@ -159,6 +159,8 @@ public class ImovelEstoqueMB {
 		} else if(CommonsUtil.mesmoValor(parametroPesquisa, "Estoque")) {
 			listaConsultaEstoque = listaImovelEmEsdtoque;
 			
+		} else {
+			listaConsultaEstoque = listaImovelEmEsdtoque;
 		}
 		
 	}
