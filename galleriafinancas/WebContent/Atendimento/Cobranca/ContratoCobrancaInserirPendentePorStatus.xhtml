@@ -3875,14 +3875,14 @@
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.okCliente}">
 						<f:facet name="header"> Despesas 
 							<p:outputLabel value="" />
-							<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR, COBRANCA_FINANCEIRO">
+							<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR, COBRANCA_FINANCEIRO, PROFILE_CONTRATO, PROFILE_GERENTE_ANALISE">
 								<p:commandButton icon="ui-icon-plus"
-								action="#{contratoCobrancaMB.clearConta()}"
-								oncomplete="PF('despesaDialog').show();"
-								update="despesaDialogForm" />
-							<p:commandButton icon="ui-icon-arrowrefresh-1-w"
-								action="#{contratoCobrancaMB.cirarDespesasContrato}"
-								update="ContasPagarPanel" />
+									action="#{contratoCobrancaMB.clearConta()}"
+									oncomplete="PF('despesaDialog').show();"
+									update="despesaDialogForm" />
+								<p:commandButton icon="ui-icon-arrowrefresh-1-w"
+									action="#{contratoCobrancaMB.cirarDespesasContrato}"
+									update="ContasPagarPanel" />
 							</shiro:hasAnyRoles>
 						</f:facet>
 						

@@ -3421,6 +3421,13 @@ public class ContratoCobrancaMB {
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 
 		try {
+			Responsavel resp = this.objetoContratoCobranca.getResponsavel();
+			if (CommonsUtil.mesmoValor(resp.getCidadeFilial(), "Sorocaba")
+				|| (!CommonsUtil.semValor(resp.getDonoResponsavel()) 
+					&& CommonsUtil.mesmoValor(resp.getDonoResponsavel().getCidadeFilial(), "Sorocaba"))) {
+				this.objetoContratoCobranca.setEsteriaComentarioLuvison(true);
+			}
+			
 			updateCheckList();
 			this.objetoContratoCobranca.populaStatusEsteira(getUsuarioLogadoNull());
 			contratoCobrancaDao.merge(this.objetoContratoCobranca);
@@ -9928,12 +9935,12 @@ public class ContratoCobrancaMB {
 
 			if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Pedir PAJU")) {
 				Responsavel resp = objetoContratoCobranca.getResponsavel();
-				if (CommonsUtil.mesmoValor(resp.getCidadeFilial(), "Sorocaba")
+				/*if (CommonsUtil.mesmoValor(resp.getCidadeFilial(), "Sorocaba")
 						|| (!CommonsUtil.semValor(resp.getDonoResponsavel())
 								&& CommonsUtil.mesmoValor(resp.getDonoResponsavel().getCidadeFilial(), "Sorocaba"))) {
 					objetoContratoCobranca.setAvaliacaoPaju("Luvison");
 					objetoContratoCobranca.setPagtoLaudoConfirmada(true);
-				}
+				}*/
 			}
 
 		}
