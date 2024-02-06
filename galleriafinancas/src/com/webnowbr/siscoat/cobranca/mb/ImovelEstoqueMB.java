@@ -68,12 +68,13 @@ public class ImovelEstoqueMB {
 		objetoImovelEstoque = new ImovelEstoque();
 
 	}
-public void	consultaEstoque(){
-	ImovelEstoqueDao dao = new ImovelEstoqueDao();
-	listaImovelTudo = dao.consultaImovelEstoqueTudo();
-	listaImovelVendido =  dao.consultaImovelEstoqueVendido();
-	listaImovelEmEsdtoque = dao.consultaImovelEstoqueNaoVendido();
-		
+
+	public void consultaEstoque() {
+		ImovelEstoqueDao dao = new ImovelEstoqueDao();
+		listaImovelTudo = dao.consultaImovelEstoqueTudo();
+		listaImovelVendido = dao.consultaImovelEstoqueVendido();
+		listaImovelEmEsdtoque = dao.consultaImovelEstoqueNaoVendido();
+
 	}
 
 	public String clearFieldsEstoqueImoveis() {

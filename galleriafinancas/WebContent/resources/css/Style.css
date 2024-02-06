@@ -101,7 +101,14 @@
 			background-color: #fbe1e1;
 		}
 		
-
+		.ui-datatable .ui-datatable-data .linhaDourada td {
+		    background-color: #bf9b30 !important;
+		}
+		
+		.ui-datatable .ui-datatable-data .linhaAqua td {
+		    background-color: #7FFFD4 !important;
+		}
+		
 		.campoRequerido {
 			color: #cd0a0a;
 			font-weight: bold;

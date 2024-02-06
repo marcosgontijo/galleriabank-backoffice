@@ -73,6 +73,11 @@ public class ImovelCobranca implements Serializable {
 	private Cidade objetoCidade;
 	private int subCategoria;
 	
+	//Novos campos referente ao pre laudo
+	private boolean preLaudoSolicitado;
+	private boolean preLaudoEntregue;
+	private BigDecimal valorPreLaudo;
+	
 	public ImovelCobranca(){
 		resetarBololean();
 	}
@@ -116,8 +121,10 @@ public class ImovelCobranca implements Serializable {
 		this.nomeProprietario = imovel.getNomeProprietario();
 		this.valorIptu = imovel.getValorIptu();
 		this.valorCondominio = imovel.getValorCondominio();
-		//this.inscricaoMunicipal = imovel.getInscricaoMunicipal();
+		this.inscricaoMunicipal = imovel.getInscricaoMunicipal();
 		this.objetoCidade = imovel.getObjetoCidade();
+		this.preLaudoSolicitado = imovel.isPreLaudoSolicitado();
+		this.preLaudoEntregue = imovel.isPreLaudoEntregue();	
 	}
 
 	public void calcularDataDeCompra() {
@@ -138,6 +145,8 @@ public class ImovelCobranca implements Serializable {
 		this.comprovanteMatriculaCheckList = false;
 		this.comprovanteFotosImovelCheckList = false;
 		this.comprovanteIptuImovelCheckList = false;
+		this.preLaudoEntregue = false;
+		this.preLaudoSolicitado = false;
 	}
 	
 	private static LinkedHashMap<String, String> siglasEstados = new LinkedHashMap<>();
@@ -752,12 +761,13 @@ public class ImovelCobranca implements Serializable {
 
 	public int getCategoria() {
 		if (CommonsUtil.mesmoValor(this.getTipo(), "Apartamento")) {
-			setSubCategoria(1);
 			return 1;
 		}
-		if (CommonsUtil.mesmoValor(this.getTipo(), "Casa") || this.getTipo().toLowerCase().contains("condomínio")) {
-			setSubCategoria(2);
+		if (CommonsUtil.mesmoValor(this.getTipo(), "Casa")) {
 			return 2;
+		}
+		if (this.getTipo().toLowerCase().contains("condomínio")) {
+			return 3;
 		}
 		return 0;
 	}
@@ -789,6 +799,29 @@ public class ImovelCobranca implements Serializable {
 		this.valorMercado = valorMercado;
 	}
 
+	public boolean isPreLaudoSolicitado() {
+		return this.preLaudoSolicitado;	
+	}
+	
+	public void setPreLaudoSolicitado( boolean preLaudoSolicitado) {
+		this.preLaudoSolicitado = preLaudoSolicitado;
+	}
+	
+	public boolean isPreLaudoEntregue() {
+		return this.preLaudoEntregue;	
+	}
+	
+	public void setPreLaudoEntregue( boolean preLaudoEntregue) {
+		this.preLaudoEntregue = preLaudoEntregue;
+	}
+	
+	public BigDecimal getValorPreLaudo() {
+		return this.valorPreLaudo;
+	}
+	
+	public void setValorPreLaudo( BigDecimal valorPreLaudo) {
+		this.valorPreLaudo = valorPreLaudo;
+	}
 	public BigDecimal getValorLeilao() {
 		return valorLeilao;
 	}

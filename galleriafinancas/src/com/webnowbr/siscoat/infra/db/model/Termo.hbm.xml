@@ -12,6 +12,12 @@
 		<property name="identificacao" type="java.lang.String">
 			<column name="identificacao" not-null="true" />
 		</property>
+		<property name="descricao" type="java.lang.String">
+			<column name="descricao"  />
+		</property>
+		<property name="instrucao" type="java.lang.String">
+			<column name="instrucao"  />
+		</property>
 		 <property name="inicioValidade" type="java.util.Date">
             <column name="inicioValidade" />
         </property>  

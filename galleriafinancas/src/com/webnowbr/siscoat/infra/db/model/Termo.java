@@ -8,6 +8,10 @@ public class Termo {
 
 	private String identificacao;
 
+	private String descricao;
+	
+	private String instrucao;
+
 	private Date inicioValidade;
 
 	private Date fimValidade;
@@ -28,6 +32,22 @@ public class Termo {
 
 	public String getIdentificacao() {
 		return identificacao;
+	}
+		
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
+
+	public String getInstrucao() {
+		return instrucao;
+	}
+
+	public void setInstrucao(String instrucao) {
+		this.instrucao = instrucao;
 	}
 
 	public void setIdentificacao(String identificacao) {

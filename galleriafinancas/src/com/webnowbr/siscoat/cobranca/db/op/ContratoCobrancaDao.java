@@ -7197,8 +7197,9 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			"c.pedidoLaudo, c.pedidoLaudoPajuComercial, c.pedidoPreLaudo, c.pedidoPreLaudoComercial, c.pedidoPajuComercial, c.pendenciaLaudoPaju, " +
 		    "c.avaliacaoLaudoObservacao, c.dataPrevistaVistoria, c.geracaoLaudoObservacao, c.iniciouGeracaoLaudo, c.analistaGeracaoPAJU , c.comentarioJuridicoPendente, " +
 			"c.valorAprovadoComite, c.contratoConferido, c.agEnvioCartorio, reanalise, reanalisePronta, reanaliseJuridico" +
-			" , gerente.nome nomeGerente, pr.id idPagador, res.superlogica, observacaoRenda, pagtoLaudoConfirmadaData, contatoDiferenteProprietario, c.iniciouGeracaoPaju, "
-			+ " im.estado, contratoPrioridadeAlta, c.analisePendenciadaUsuario " +
+			" , gerente.nome nomeGerente, pr.id idPagador, res.superlogica, observacaoRenda, pagtoLaudoConfirmadaData, contatoDiferenteProprietario, c.iniciouGeracaoPaju, " +
+			" im.estado, contratoPrioridadeAlta, c.analisePendenciadaUsuario, " +
+			" c.avaliacaoLaudo, c.imovel, c.todosPreLaudoEntregues " +
 			"from cobranca.contratocobranca c " +		
 			"inner join cobranca.responsavel res on c.responsavel = res.id " +
 			"inner join cobranca.pagadorrecebedor pr on pr.id = c.pagador " +
@@ -7289,6 +7290,13 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 								+ " and cadastroAprovadoValor = 'Aprovado' "
 								+ " and pendenciaLaudoPaju = false "
 								+ " and pedidoLaudoPajuComercial = true and pedidoLaudo = true and avaliacaoLaudo = 'Galache' and laudoRecebido = false ";
+					}
+					
+					//Novo tipo de consulta para contratos com pre-laudo da compass pendentes
+					if (tipoConsulta.equals("Pré-Laudo Compass")) {
+						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
+								+ " and pendenciaLaudoPaju = false "
+								+ " and pedidoPreLaudo = true and avaliacaoLaudo = 'Compass' and laudoRecebido = false and todosPreLaudoEntregues = false "; // and todosPreLaudoEntregues = false
 					}
 					
 					if (tipoConsulta.equals("Geração do PAJU")) {
@@ -7610,11 +7618,17 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setIniciouGeracaoPaju(rs.getBoolean("iniciouGeracaoPaju"));
 						contratoCobranca.setContratoPrioridadeAlta(rs.getBoolean("contratoPrioridadeAlta"));
 						contratoCobranca.setAnalisePendenciadaUsuario(rs.getString("analisePendenciadaUsuario"));
+						contratoCobranca.setAvaliacaoLaudo(rs.getString("avaliacaoLaudo"));
+						contratoCobranca.setTodosPreLaudoEntregues(rs.getBoolean("todosPreLaudoEntregues"));
 					
 						ImovelCobranca imovel = new ImovelCobranca();
-						imovel.setCidade(rs.getString("cidade"));
-						imovel.setEstado(rs.getString("estado"));
-						imovel.consultarObjetoCidade();
+						ImovelCobrancaDao imovelDao = new ImovelCobrancaDao();
+						
+						imovel = imovelDao.findById(rs.getLong("imovel"));
+						
+						//imovel.setCidade(rs.getString("cidade"));
+						//imovel.setEstado(rs.getString("estado"));
+						//imovel.consultarObjetoCidade();
 						contratoCobranca.setImovel(imovel);
 						
 						idsContratoCobranca.add( CommonsUtil.stringValue(contratoCobranca.getId()));
