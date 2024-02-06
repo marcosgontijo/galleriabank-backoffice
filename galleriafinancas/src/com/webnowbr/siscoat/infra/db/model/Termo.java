@@ -12,8 +12,10 @@ public class Termo {
 	
 	private String instrucao;
 
+	private long diasAceite;
+	
 	private Date inicioValidade;
-
+			
 	private Date fimValidade;
 
 	private String arquivo;
@@ -52,6 +54,14 @@ public class Termo {
 
 	public void setIdentificacao(String identificacao) {
 		this.identificacao = identificacao;
+	}
+
+	public long getDiasAceite() {
+		return diasAceite;
+	}
+
+	public void setDiasAceite(long diasAceite) {
+		this.diasAceite = diasAceite;
 	}
 
 	public Date getInicioValidade() {

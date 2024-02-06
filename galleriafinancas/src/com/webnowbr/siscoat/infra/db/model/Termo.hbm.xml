@@ -18,20 +18,21 @@
 		<property name="instrucao" type="java.lang.String">
 			<column name="instrucao"  />
 		</property>
+		<property name="diasAceite" type="long">
+			<column name="diasAceite"  />
+		</property>		
 		 <property name="inicioValidade" type="java.util.Date">
             <column name="inicioValidade" />
         </property>  
          <property name="fimValidade" type="java.util.Date">
             <column name="fimValidade" />
-        </property>  
-
+        </property> 
 		<property name="arquivo" type="java.lang.String">
 			<column name="arquivo" not-null="true" unique="true" />
 		</property>
 		<property name="path" type="java.lang.String">
 			<column name="path" not-null="true" />
 		</property>
-
 		<many-to-one name="UserPerfil"
 			class="com.webnowbr.siscoat.infra.db.model.UserPerfil" lazy="false">
 			<column name="idUserPerfil" />
