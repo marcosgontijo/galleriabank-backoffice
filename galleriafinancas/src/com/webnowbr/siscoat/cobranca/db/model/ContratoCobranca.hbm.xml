@@ -2385,15 +2385,13 @@
 			<column name="ispbCustoEmissao" />
 		</property>
 		
-<<<<<<< HEAD
 			<property name="todosPreLaudoEntregues" type="boolean">
 			<column name="todosPreLaudoEntregues" not-null="true" default="false"/>
 		</property>
 		
-=======
 		<property name="tipoContaContaPagar" type="java.lang.String">
 			<column name="tipoContaContaPagar" />
 		</property>
->>>>>>> branch 'master' of https://github.com/Galleria-Bank-Developers/backoffice.git
+
 	</class>
 </hibernate-mapping>
