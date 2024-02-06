@@ -746,6 +746,7 @@ public class ContratoCobranca implements Serializable {
 	private String digitoContaBancarioContaPagar;
 	private String chavePIXBancarioContaPagar;
 	private String ispbBancarioContaPagar;
+	private String tipoContaContaPagar;
 
 	private BigDecimal valorCartaSplit;
 	private String nomeBancarioCartaSplit;
@@ -7754,5 +7755,13 @@ public class ContratoCobranca implements Serializable {
 
 	public void setIspbCustoEmissao(String ispbCustoEmissao) {
 		this.ispbCustoEmissao = ispbCustoEmissao;
+	}
+
+	public String getTipoContaContaPagar() {
+		return tipoContaContaPagar;
+	}
+
+	public void setTipoContaContaPagar(String tipoContaContaPagar) {
+		this.tipoContaContaPagar = tipoContaContaPagar;
 	}
 }

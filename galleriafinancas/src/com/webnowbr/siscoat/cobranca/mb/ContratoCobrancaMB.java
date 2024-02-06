@@ -10063,6 +10063,7 @@ public class ContratoCobrancaMB {
 		CcbDao ccbDao = new CcbDao();
 		CcbContrato ccb = ccbDao.ConsultaCcbPorContratoNew(this.objetoContratoCobranca);
 
+		// custo emissao
 		if (ccb.getId() > 0) {
 			this.objetoContratoCobranca.setValorCustoEmissao(ccb.getValorIOF());
 		}
@@ -10073,6 +10074,15 @@ public class ContratoCobrancaMB {
 		this.objetoContratoCobranca.setContaBancarioCustoEmissao("120621-4");
 		this.objetoContratoCobranca.setCpfCnpjBancarioCustoEmissao("51.604.356/0001-75");
 		this.objetoContratoCobranca.setPixCustoEmissao("51.604.356/0001-75");
+		
+		// despesa
+		this.objetoContratoCobranca.setNomeBancarioContaPagar(ccb.getIntermediacaoNome());
+		this.objetoContratoCobranca.setCpfCnpjBancarioContaPagar(ccb.getIntermediacaoCNPJ());
+		this.objetoContratoCobranca.setBancoBancarioContaPagar(ccb.getIntermediacaoBanco());
+		this.objetoContratoCobranca.setAgenciaBancarioContaPagar(ccb.getIntermediacaoAgencia());
+		this.objetoContratoCobranca.setContaBancarioContaPagar(ccb.getIntermediacaoCC());
+		this.objetoContratoCobranca.setChavePIXBancarioContaPagar(ccb.getIntermediacaoPix());
+		this.objetoContratoCobranca.setTipoContaContaPagar(ccb.getIntermediacaoTipoConta());
 
 		// carta split cliente
 		if (this.objetoContratoCobranca.getValorCartaSplit() == null || 
@@ -10104,6 +10114,8 @@ public class ContratoCobrancaMB {
 			this.objetoContratoCobranca.setAgenciaBancarioCartaSplit(pessoaVendedor.getAgencia() + pessoaVendedor.getAgenciaDigito());
 			this.objetoContratoCobranca.setContaBancarioCartaSplit(pessoaVendedor.getConta() + pessoaVendedor.getContaDigito());
 			this.objetoContratoCobranca.setPixCartaSplit(pessoaVendedor.getPix());
+			
+			this.objetoContratoCobranca.setNomeBancarioCartaSplit(pessoaVendedor.getNome());
 		} else {
 			if (this.objetoContratoCobranca.getPagador().getCpf() != null
 					&& !this.objetoContratoCobranca.getPagador().getCpf().equals("")) {
@@ -10117,6 +10129,8 @@ public class ContratoCobrancaMB {
 			this.objetoContratoCobranca.setAgenciaBancarioCartaSplit(ccb.getAgencia());
 			this.objetoContratoCobranca.setContaBancarioCartaSplit(ccb.getContaCorrente());
 			this.objetoContratoCobranca.setPixCartaSplit(ccb.getPixBanco());	
+			
+			this.objetoContratoCobranca.setNomeBancarioCartaSplit(ccb.getTitularConta());
 		}
 
 		// carta split Galleria
@@ -20211,6 +20225,7 @@ public class ContratoCobrancaMB {
 					this.contasPagarSelecionada.setContaTed(this.objetoContratoCobranca.getContaBancarioContaPagar());
 					this.contasPagarSelecionada.setPix(this.objetoContratoCobranca.getChavePIXBancarioContaPagar());
 					this.contasPagarSelecionada.setIspb(this.objetoContratoCobranca.getIspbBancarioContaPagar());
+					this.contasPagarSelecionada.setTipoContaBancaria(this.objetoContratoCobranca.getTipoContaContaPagar());
 					
 					StarkBankBaixa baixa = registraBaixaStarkBank(DateUtil.gerarDataHoje(),
 							this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar(), null, null,
@@ -20229,7 +20244,8 @@ public class ContratoCobrancaMB {
 					this.contasPagarSelecionada.setAgenciaTed(this.objetoContratoCobranca.getAgenciaBancarioContaPagar());
 					this.contasPagarSelecionada.setBancoTed(this.objetoContratoCobranca.getBancoBancarioContaPagar());
 					this.contasPagarSelecionada.setContaTed(this.objetoContratoCobranca.getContaBancarioContaPagar());
-
+					this.contasPagarSelecionada.setTipoContaBancaria(this.objetoContratoCobranca.getTipoContaContaPagar());
+					
 					StarkBankBaixa baixa = registraBaixaStarkBank(DateUtil.gerarDataHoje(),
 							this.objetoContratoCobranca.getCpfCnpjBancarioContaPagar(), null, null,
 							this.objetoPagadorRecebedor.getNome(), this.contasPagarSelecionada.getValorPagamento(),

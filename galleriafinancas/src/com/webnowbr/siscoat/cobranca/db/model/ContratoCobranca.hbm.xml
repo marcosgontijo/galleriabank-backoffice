@@ -2384,5 +2384,9 @@
 		<property name="ispbCustoEmissao" type="java.lang.String">
 			<column name="ispbCustoEmissao" />
 		</property>
+		
+		<property name="tipoContaContaPagar" type="java.lang.String">
+			<column name="tipoContaContaPagar" />
+		</property>
 	</class>
 </hibernate-mapping>
