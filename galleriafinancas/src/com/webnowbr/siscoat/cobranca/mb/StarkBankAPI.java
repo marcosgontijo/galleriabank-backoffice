@@ -756,12 +756,13 @@ public class StarkBankAPI{
 	    	data.put("accountNumber", numeroConta);
 	    	data.put("taxId", documento);
 	    	data.put("name", nomeBeneficiario);
-	    	data.put("externalId", "Pagamento PIX Dados Bancários -" + nomeBeneficiario.replace(" ", "") + DateUtil.todayInMilli());
+	    	data.put("externalId", "PagamentoPIXDadosBancarios-" + DateUtil.todayInMilli());
 	    	//data.put("scheduled", "2020-08-14");
 	    	//data.put("tags", new String[]{"daenerys", "invoice/1234"});
 	    	//data.put("rules", rules);
 	    	
-	    	System.out.println("Payment TED Payload - " + data);
+	    	System.out.println("Payment | " + "PagamentoPIXDadosBancarios-" + DateUtil.todayInMilli());
+	    	System.out.println("Payment | " + data);
 	    	
 			transfers.add(new Transfer(data));
 			
