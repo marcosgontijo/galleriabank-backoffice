@@ -2384,5 +2384,10 @@
 		<property name="ispbCustoEmissao" type="java.lang.String">
 			<column name="ispbCustoEmissao" />
 		</property>
+		
+			<property name="todosPreLaudoEntregues" type="boolean">
+			<column name="todosPreLaudoEntregues" not-null="true" default="false"/>
+		</property>
+		
 	</class>
 </hibernate-mapping>

@@ -678,8 +678,23 @@
 
 
 								</h:panelGrid>
-
-
+								
+								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_AVALIADOR_IMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_GERENTE_ANALISE">
+									<ui:fragment>
+										<p:selectBooleanButton value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}" rendered="#{contratoCobrancaMB.indexStepsStatusContrato ge 1 and contratoCobrancaMB.indexStepsStatusContrato le 5 }" 
+											onLabel="Pré-Laudo Compass Solicitado" offLabel="Pré-Laudo Compass Pendente" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px">
+											<p:ajax event="valueChange" update=":form:Status"></p:ajax>
+										</p:selectBooleanButton>
+									
+										<p:selectManyMenu id="preLaudoImovel" showCheckbox="true"
+											value="#{contratoCobrancaMB.listSolicitacaoPreLaudoImoveis}"
+											label="Imóvel do pré-laudo" style="width:280px; margin-top: 12px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">
+											<f:selectItems value="#{contratoCobrancaMB.listTodosImoveisContrato}" var="imovelCobranca" itemValue="#{imovelCobranca.id}" itemLabel="#{imovelCobranca.numeroMatricula} - #{imovelCobranca.endereco}" />
+										</p:selectManyMenu>
+									</ui:fragment>
+								</shiro:hasAnyRoles>	
+								
+																
 								<ui:fragment
 									rendered="#{contratoCobrancaMB.indexStepsStatusContrato ge 8 and contratoCobrancaMB.indexStepsStatusContrato le 11}">
 									<h:panelGrid columns="2"
@@ -789,8 +804,29 @@
 										target="#{contratoCobrancaMB.preContratoCustom}" value="false" />
 								</p:commandButton>
 							</h:panelGrid>
+							
+							<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_AVALIADOR_IMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_GERENTE_ANALISE">
+								<ui:fragment>
+									<p:selectBooleanButton value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}" rendered="#{contratoCobrancaMB.indexStepsStatusContrato ge 1 and contratoCobrancaMB.indexStepsStatusContrato le 5 }" 
+										onLabel="Pré-Laudo Compass Solicitado" offLabel="Pré-Laudo Compass Pendente" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px">
+										<p:ajax event="valueChange" update=":form:Status"></p:ajax>
+									</p:selectBooleanButton>
+									
+									<p:selectManyMenu showCheckbox="true"
+										value="#{contratoCobrancaMB.listSolicitacaoPreLaudoImoveis}"
+										label="Imóvel do pré-laudo" style="width:280px; margin-top:20px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">
+										<f:selectItems value="#{contratoCobrancaMB.listTodosImoveisContrato}" var="imovelCobranca" itemValue="#{imovelCobranca.id}" itemLabel="#{imovelCobranca.numeroMatricula} - #{imovelCobranca.endereco}" />
+									</p:selectManyMenu>
+								</ui:fragment>
+							</shiro:hasAnyRoles>
+							
 						</h:panelGrid>
 					</ui:fragment>
+					
+					<p:panel header="Envio de documento do pré-laudo" style="margin-bottom:10px" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">
+						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFilePreLaudoUpload}" mode="advanced" dragDropSupport="true"
+                          update="ArquivosJuridicoSalvos msgArquivo" />	
+					</p:panel>
 
 
 
@@ -3871,18 +3907,17 @@
 
 				<h:panelGroup id="ContasPagarPanel">
 					<p:messages id="mensagensStarkBank"/>
-					<p:panel header="Dispesas" style="margin-bottom:10px;"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.okCliente}">
+					<p:panel header="Dispesas" style="margin-bottom:10px;">
 						<f:facet name="header"> Despesas 
 							<p:outputLabel value="" />
-							<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR, COBRANCA_FINANCEIRO">
+							<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR, COBRANCA_FINANCEIRO, PROFILE_CONTRATO, PROFILE_GERENTE_ANALISE">
 								<p:commandButton icon="ui-icon-plus"
-								action="#{contratoCobrancaMB.clearConta()}"
-								oncomplete="PF('despesaDialog').show();"
-								update="despesaDialogForm" />
-							<p:commandButton icon="ui-icon-arrowrefresh-1-w"
-								action="#{contratoCobrancaMB.cirarDespesasContrato}"
-								update="ContasPagarPanel" />
+									action="#{contratoCobrancaMB.clearConta()}"
+									oncomplete="PF('despesaDialog').show();"
+									update="despesaDialogForm" />
+								<p:commandButton icon="ui-icon-arrowrefresh-1-w"
+									action="#{contratoCobrancaMB.cirarDespesasContrato}"
+									update="ContasPagarPanel" />
 							</shiro:hasAnyRoles>
 						</f:facet>
 						
@@ -3897,7 +3932,7 @@
 								value="#{contratoCobrancaMB.objetoContratoCobranca.contaPagarValorTotal}"
 								converter="bigDecimalConverter" />
 						</h:panelGrid>	
-						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Registro'}">
+						<h:panelGrid columns="2" >
 							<p:outputLabel for="nomeBancarioContaPagar" value="Nome:" 
 								style="width:250px;font-weight: bold; font-size: 18px !important;"/>
 							<p:inputText id="nomeBancarioContaPagar"
@@ -4002,20 +4037,21 @@
 									</shiro:hasAnyRoles>
 								</p:column>
 							</shiro:hasAnyRoles>
-						</p:dataTable>		
+						</p:dataTable>			
 						
-						<p:messages id="mensagemAditamento" />	
-						<p:commandButton value="Emitir Aditamento" ajax="false"
-							action="#{ccbMB.emitirAditamento(contratoCobrancaMB.objetoContratoCobranca.listContasPagar)}" 
-							rendered="#{contratoCobrancaMB.objetoContratoCobranca.ccbPronta}">
-                			<f:setPropertyActionListener  target="#{ccbMB.objetoContratoCobranca}" value="#{contratoCobrancaMB.objetoContratoCobranca}" />
-                		</p:commandButton>
+                		<!-- VALOR TOTAL PAGO -->
+						<p:outputLabel value="Valor total Pago: " styleClass="labelBold" />
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.somaValorPago}"
+							converter="bigDecimalConverter" styleClass="labelBold"
+							style="FONT-SIZE: 10pt;width:100px;" />
+						<p:spacer height="5" />
+						<p:outputLabel value="|" />
+						<p:spacer height="5" /> 
 					</p:panel>
 				</h:panelGroup>
 				
 				<h:panelGroup id="Cliente">
-					<p:panel header="Cliente" style="margin-bottom:10px;"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.aprovadoComite and( usuarioMB.objetoUsuario.administrador or ( contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Registro'))}">
+					<p:panel header="Cliente" style="margin-bottom:10px;">
 						<h:panelGrid columns="3">
 							<h:panelGrid columns="2">
 								<p:outputLabel for="valorCartaSplit"
@@ -4063,6 +4099,12 @@
 								<p:inputText id="pixCartaSplit"
 									style="width:250px;font-weight: bold; font-size: 18px !important;"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.pixCartaSplit}" />
+									
+								<p:outputLabel for="ispbCartaSplit" value="ISPB (se não tem código PIX): "  
+									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+								<p:inputText id="ispbCartaSplit"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.ispbCartaSplit}" />
 										
 								<p:commandButton action="#{contratoCobrancaMB.pagamentoStarkBankCartaSplit}"
 											icon="ui-icon-video" title="Ordem de Pagamento" value="Ordem de Pagamento"
@@ -4119,6 +4161,12 @@
 									style="width:250px;font-weight: bold; font-size: 18px !important;"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.pixCartaSplitGalleria}" />
 									
+								<p:outputLabel for="ispbCartaSplitGalleria" value="ISPB (se não tem código PIX): " 
+									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+								<p:inputText id="ispbCartaSplitGalleria"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.ispbCartaSplitGalleria}" />
+									
 								<p:commandButton action="#{contratoCobrancaMB.pagamentoStarkBankCartaSplitGalleria}"
 											icon="ui-icon-video" title="Ordem de Pagamento" value="Ordem de Pagamento"
 											update=":form" disabled="#{contratoCobrancaMB.buscaDespesaCartaSplit('Pagamento Carta Split - Galleria', contratoCobrancaMB.objetoContratoCobranca.numeroContrato) != null}"/>	
@@ -4168,11 +4216,17 @@
 									style="width:250px;font-weight: bold; font-size: 18px !important;"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.contaBancarioCustoEmissao}" />
 									
-									<p:outputLabel for="pixCustoEmissao" value="Pix: " 
+								<p:outputLabel for="pixCustoEmissao" value="Pix: " 
 									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
 								<p:inputText id="pixCustoEmissao"
 									style="width:250px;font-weight: bold; font-size: 18px !important;"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.pixCustoEmissao}" />
+									
+								<p:outputLabel for="ispbCustoEmissao" value="ISPB (se não tem código PIX): " 
+									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+								<p:inputText id="ispbCustoEmissao"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.ispbCustoEmissao}" />
 									
 								<p:commandButton action="#{contratoCobrancaMB.pagamentoStarkBankCartaSplitCustoEmissao}"
 											icon="ui-icon-video" title="Ordem de Pagamento" value="Ordem de Pagamento"
