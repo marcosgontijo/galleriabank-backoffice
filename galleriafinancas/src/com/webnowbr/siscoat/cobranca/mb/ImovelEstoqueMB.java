@@ -144,6 +144,7 @@ public class ImovelEstoqueMB {
 		if (objetoContratoCobranca != null) {
 			preencherCamposComDadosContrato(); // Chama o método para preencher os campos com os dados do contrato
 		}
+		
 
 		return "/Atendimento/Cobranca/ImovelEstoqueEditar.xhtml";
 	}
