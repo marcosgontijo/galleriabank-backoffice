@@ -83,6 +83,8 @@ public class DocumentoAnalise implements Serializable {
 	private String origem;
 	private Date dataCadastro; 
 	private String usuarioCadastro;
+	private DocumentoAnalise analiseOriginal;
+	private boolean reanalise;
 	
 	private boolean liberadoAnalise;	
 	private boolean liberadoContinuarAnalise;
@@ -157,6 +159,22 @@ public class DocumentoAnalise implements Serializable {
 	
 	private String retornoFrotaVeiculos;
 	
+	public DocumentoAnalise() {
+		super();
+	}
+
+	public DocumentoAnalise(DocumentoAnalise documentoAnalise) {
+		super();
+		this.contratoCobranca = documentoAnalise.getContratoCobranca();
+		this.pagador = documentoAnalise.getPagador();
+		this.identificacao = documentoAnalise.getIdentificacao();
+		this.cnpjcpf = documentoAnalise.getCnpjcpf();
+		this.tipoPessoa = documentoAnalise.getTipoPessoa();
+		this.motivoAnalise = documentoAnalise.getMotivoAnalise();
+		this.tipo = documentoAnalise.getTipo();
+		this.estadosConsultaStr = documentoAnalise.getEstadosConsultaStr();
+		this.estadosConsulta = documentoAnalise.getEstadosConsulta();
+	}
 
 	public List<DocumentoAnaliseResumo> getResumoProcesso() {
 		List<DocumentoAnaliseResumo> vProcesso = new ArrayList<>();
@@ -232,7 +250,6 @@ public class DocumentoAnalise implements Serializable {
 					contemAcoesProcesso = true;
 				}
 			}
-
 		}
 		return vProcesso;
 	}
@@ -569,7 +586,7 @@ public class DocumentoAnalise implements Serializable {
 		String texto = getRetornoFinancas();
 		FinancasResponse dado = GsonUtil.fromJson(getRetornoFinancas(), FinancasResponse.class);
 		
-		if (dado == null || dado.getResult() == null) {
+		if (dado == null || dado.getResult() == null || dado.getResult().size() == 0) {
 			financas.add(new DocumentoAnaliseResumo("Dados não disponíveis", "0"));
 		} else {
 			if (dado.getResult().get(0) != null) {
@@ -1645,5 +1662,21 @@ public class DocumentoAnalise implements Serializable {
 
 	public void setRetornoFrotaVeiculos(String retornoFrotaVeiculos) {
 		this.retornoFrotaVeiculos = retornoFrotaVeiculos;
-	}	
+	}
+
+	public DocumentoAnalise getAnaliseOriginal() {
+		return analiseOriginal;
+	}
+
+	public void setAnaliseOriginal(DocumentoAnalise analiseOriginal) {
+		this.analiseOriginal = analiseOriginal;
+	}
+	
+	public boolean isReanalise() {
+		return reanalise;
+	}
+
+	public void setReanalise(boolean reanalise) {
+		this.reanalise = reanalise;
+	}
 }

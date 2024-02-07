@@ -331,6 +331,7 @@ public class ContratoCobrancaMB {
 	private List<BoletoKobana> selectedBoletosKobana = new ArrayList<BoletoKobana>();
 	private List<DocumentoAnalise> listaDocumentoAnalise;
 	private List<DocumentoAnalise> listaDocumentoAnaliseRea;
+	private List<DocumentoAnalise> listaDocumentoAnaliseReanalise;
 	private List<DocumentoAnalise> listaSelectAnalise = new ArrayList<>();
 
 	private BoletoKobana selectedBoletosKobanaBaixa = null;
@@ -31267,7 +31268,17 @@ public class ContratoCobrancaMB {
 	}
 
 	public void executarConsultasAnaliseDocumento() throws SchedulerException {
-
+		try {
+			DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
+			documentoAnaliseService.criandoJobExecutarConsultas(listaDocumentoAnalise, loginBean.getUsuarioLogado(),
+					this.objetoContratoCobranca);
+		} catch (SchedulerException e) {
+			e.printStackTrace();
+		}
+		this.objetoContratoCobranca.setDocumentosAnalisados(false);
+	}
+	
+	public void executarConsultasAnaliseDocumento(List<DocumentoAnalise> listaDocumentoAnalise) throws SchedulerException {
 		try {
 			DocumentoAnaliseService documentoAnaliseService = new DocumentoAnaliseService();
 			documentoAnaliseService.criandoJobExecutarConsultas(listaDocumentoAnalise, loginBean.getUsuarioLogado(),
@@ -33474,6 +33485,41 @@ public class ContratoCobrancaMB {
 			listaArquivosAnaliseDocumentos();
 		}
 	}
+	
+	public void handleReanaliseDocumentoFileUpload(FileUploadEvent event) throws IOException {
+		FacesContext context = FacesContext.getCurrentInstance();
+
+		ParametrosDao pDao = new ParametrosDao();
+		String pathContrato = pDao.findByFilter("nome", "COBRANCA_DOCUMENTOS").get(0).getValorString();
+
+		pathContrato += this.objetoContratoCobranca.getNumeroContrato();
+		pathContrato += "/analise/";
+		// cria o arquivo
+		if (event.getFile().getFileName().endsWith(".zip")) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
+		} else {
+			byte[] conteudo = event.getFile().getContents();
+			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(),
+					event.getFile().getFileName() + "-Reanalise", "//analise/", getUsuarioLogado());
+
+			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+			DocumentoAnalise documentoAnalise = new DocumentoAnalise();
+			documentoAnalise.setContratoCobranca(this.objetoContratoCobranca);
+			documentoAnalise.setMotivoAnalise("Matricula para consulta");
+			documentoAnalise.setIdentificacao(event.getFile().getFileName() + "-Reanalise");
+			documentoAnalise.setPath(pathContrato + event.getFile().getFileName() + "-Reanalise");
+			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.REA);
+			documentoAnalise.setReanalise(true);
+			documentoAnalise.setLiberadoAnalise(true);
+			documentoAnalise.adiconarEstadosPeloCadastro();
+			documentoAnaliseDao.create(documentoAnalise);
+			// atualiza lista de arquivos contidos no diretório
+
+			documentoConsultarTodos = new ArrayList<FileUploaded>();
+			listaArquivosAnaliseDocumentos();
+		}
+	}
 
 	public void handleFileInternoUpload(FileUploadEvent event) throws IOException {
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -33619,7 +33665,6 @@ public class ContratoCobrancaMB {
 	
 	public void handleFilePreLaudoUpload(FileUploadEvent event) throws IOException {
 		FacesContext context = FacesContext.getCurrentInstance();
-
 		if (event.getFile().getFileName().endsWith(".zip")) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
@@ -33748,14 +33793,38 @@ public class ContratoCobrancaMB {
 	public void listaArquivosAnaliseDocumentos() {
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 		this.listaDocumentoAnalise = documentoAnaliseDao.listagemDocumentoAnalise(this.objetoContratoCobranca);
-		this.listaDocumentoAnaliseRea = documentoAnaliseDao
-				.listagemDocumentoAnaliseNaoAnalisados(this.objetoContratoCobranca);
+		this.listaDocumentoAnaliseRea = documentoAnaliseDao.listagemDocumentoAnaliseNaoAnalisados(this.objetoContratoCobranca);
+		this.listaDocumentoAnaliseReanalise = documentoAnaliseDao.listagemDocumentoAnaliseReanalise(this.objetoContratoCobranca);
 		Collections.sort(this.listaDocumentoAnalise, new Comparator<DocumentoAnalise>() {
 			@Override
 			public int compare(DocumentoAnalise one, DocumentoAnalise other) {
 				return CommonsUtil.castAsLong(one.getId()).compareTo(other.getId());
 			}
 		});
+	}
+	
+	public void inserirDocumentosAnlisadosReanalise() {
+		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+		this.listaDocumentoAnalise = documentoAnaliseDao.listagemDocumentoAnalise(this.objetoContratoCobranca);
+		this.listaDocumentoAnaliseReanalise = documentoAnaliseDao.listagemDocumentoAnaliseReanalise(this.objetoContratoCobranca);
+		for(DocumentoAnalise docAnalise : listaDocumentoAnalise) {
+			boolean inserir = true;
+			for(DocumentoAnalise docReanalise : listaDocumentoAnaliseReanalise) {
+				if(CommonsUtil.mesmoValor(docAnalise.getPagador(), docReanalise.getPagador())) {
+					inserir = false;
+					break;
+				}
+			}
+			if(inserir) {
+				this.documentoAnaliseAdicionar = new DocumentoAnalise(docAnalise);
+				documentoAnaliseAdicionar.setObservacao(".");
+				documentoAnaliseAdicionar.setLiberadoAnalise(true);
+				documentoAnaliseAdicionar.setLiberadoCertidoes(true);
+				documentoAnaliseAdicionar.setReanalise(true);
+				documentoAnaliseAdicionar.setAnaliseOriginal(docAnalise);
+				adicionarPessoaAnalise();
+			}
+		}
 	}
 
 	public void preparaAdicionarPessoaAnalise() {
@@ -33766,6 +33835,16 @@ public class ContratoCobrancaMB {
 		documentoAnaliseAdicionar.setLiberadoAnalise(true);
 		documentoAnaliseAdicionar.setLiberadoCertidoes(true);
 	}
+	
+	public void preparaAdicionarPessoaReanalise() {
+		this.documentoAnaliseAdicionar = new DocumentoAnalise();
+		documentoAnaliseAdicionar.setPagador(new PagadorRecebedor());
+		documentoAnaliseAdicionar.setContratoCobranca(this.objetoContratoCobranca);
+		documentoAnaliseAdicionar.setObservacao(".");
+		documentoAnaliseAdicionar.setLiberadoAnalise(true);
+		documentoAnaliseAdicionar.setLiberadoCertidoes(true);
+		documentoAnaliseAdicionar.setReanalise(true);
+	}
 
 	public void adicionarPessoaAnalise() {
 		this.tituloPagadorRecebedorDialog = "";
@@ -33773,7 +33852,7 @@ public class ContratoCobrancaMB {
 		this.updatePagadorRecebedor = "";
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 		DocumentoAnalise documentoAnalisePesquisa = documentoAnaliseDao.cadastradoAnalise(this.objetoContratoCobranca,
-				documentoAnaliseAdicionar.getPagador().getCpf());
+				documentoAnaliseAdicionar.getPagador().getCpf(), documentoAnaliseAdicionar.isReanalise());
 
 		if (!CommonsUtil.semValor(documentoAnalisePesquisa))
 			documentoAnaliseAdicionar = documentoAnalisePesquisa;
@@ -36987,6 +37066,14 @@ public class ContratoCobrancaMB {
 	public void setListaSelectAnalise(List<DocumentoAnalise> listaSelectAnalise) {
 		this.listaSelectAnalise = listaSelectAnalise;
 	}
+
+	public List<DocumentoAnalise> getListaDocumentoAnaliseReanalise() {
+		return listaDocumentoAnaliseReanalise;
+	}
+
+	public void setListaDocumentoAnaliseReanalise(List<DocumentoAnalise> listaDocumentoAnaliseReanalise) {
+		this.listaDocumentoAnaliseReanalise = listaDocumentoAnaliseReanalise;
+	}	
 	
 	public List<ImovelCobranca> getlistTodosImoveisContrato() {
 		return listTodosImoveisContrato;
@@ -37019,5 +37106,4 @@ public class ContratoCobrancaMB {
 	public void setTxAdm(BigDecimal txAdm) {
 		this.txAdm = txAdm;
 	}
-	
 }

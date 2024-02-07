@@ -324,48 +324,44 @@
 			</p:panel>
 			<shiro:hasAnyRoles
 							name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
-			<p:panel id="pnlCeridoesAnalise" header="Certidões"
+				<p:panel id="pnlCeridoesAnalise" header="Certidões"
+					rendered="#{!contratoCobrancaMB.objetoContratoCobranca.emReanalise}"
+					style="margin-bottom:10px;">
+	
+					<p:commandButton value="Executar Consultas" ajax="true"
+						action="#{contratoCobrancaMB.executarConsultasAnaliseDocumento}"
+						widgetVar="executeBtn" onclick="executeBtn.disable()" 
+						disabled="#{contratoCobrancaMB.checkConsultasAnaliseDocumento()}" />
+					<p:commandButton value="Analise Docket" ajax="false"
+						action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'analise', contratoCobrancaMB.objetoContratoCobranca)}" />
+					<p:commandButton value="Analise Plexi" ajax="false"
+						action="#{plexiMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'analise', contratoCobrancaMB.objetoContratoCobranca)}" />
+					<p:commandButton value="Analise Netrin" ajax="false"
+						action="#{netrinMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'analise', contratoCobrancaMB.objetoContratoCobranca)}" />
+				</p:panel>
 				
-				style="margin-bottom:10px;">
-
-				<p:commandButton value="Executar Consultas" ajax="true"
-					action="#{contratoCobrancaMB.executarConsultasAnaliseDocumento}"
-					widgetVar="executeBtn" onclick="executeBtn.disable()" 
-					disabled="#{contratoCobrancaMB.checkConsultasAnaliseDocumento()}" />
-				<p:commandButton value="Analise Docket" ajax="false"
-					action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'analise', contratoCobrancaMB.objetoContratoCobranca)}" />
-				<p:commandButton value="Analise Plexi" ajax="false"
-					action="#{plexiMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'analise', contratoCobrancaMB.objetoContratoCobranca)}" />
-				<p:commandButton value="Analise Netrin" ajax="false"
-					action="#{netrinMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'analise', contratoCobrancaMB.objetoContratoCobranca)}" />
-			</p:panel>
-			
-			<p:panel id="pnlCeridoesPedirPaju" header="Certidões"
-				
-				style="margin-bottom:10px;">
-				
-				<p:commandButton value="PAJU Docket" ajax="false"
-					action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'pedir paju', contratoCobrancaMB.objetoContratoCobranca)}" />		
-				<p:commandButton value="PAJU Plexi" ajax="false"
-					action="#{plexiMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'pedir paju', contratoCobrancaMB.objetoContratoCobranca)}" />				
-				<p:commandButton value="PAJU Netrin" ajax="false"
-					action="#{netrinMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'pedir paju', contratoCobrancaMB.objetoContratoCobranca)}" />
+				<p:panel id="pnlCeridoesPedirPaju" header="Certidões"
+					rendered="#{!contratoCobrancaMB.objetoContratoCobranca.emReanalise}"
+					style="margin-bottom:10px;">
 					
-			</p:panel>
-
-			<p:panel id="pnlLaudoRobo" header="Laudo Robô" style="margin-bottom:10px">
-				<p:commandButton value="Laudo"
-					onclick="PF('laudoRoboDialog').show()" update="laudoRoboForm"
-					ajax="true" rendered="#{fileAnalise.tipo != 'Rea'}">
-					<f:setPropertyActionListener value="#{fileAnalise}"
-						target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
-				</p:commandButton>
-
-					
-				
-			</p:panel>
+					<p:commandButton value="PAJU Docket" ajax="false"
+						action="#{docketMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'pedir paju', contratoCobrancaMB.objetoContratoCobranca)}" />		
+					<p:commandButton value="PAJU Plexi" ajax="false"
+						action="#{plexiMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'pedir paju', contratoCobrancaMB.objetoContratoCobranca)}" />				
+					<p:commandButton value="PAJU Netrin" ajax="false"
+						action="#{netrinMB.clearFieldsContratoCobranca(contratoCobrancaMB.listaDocumentoAnalise, 'pedir paju', contratoCobrancaMB.objetoContratoCobranca)}" />
+						
+				</p:panel>
+	
+				<p:panel id="pnlLaudoRobo" header="Laudo Robô" style="margin-bottom:10px">
+					<p:commandButton value="Laudo"
+						onclick="PF('laudoRoboDialog').show()" update="laudoRoboForm"
+						ajax="true" rendered="#{fileAnalise.tipo != 'Rea'}">
+						<f:setPropertyActionListener value="#{fileAnalise}"
+							target="#{contratoCobrancaMB.documentoAnalisePopup}"></f:setPropertyActionListener>
+					</p:commandButton>
+				</p:panel>
 			</shiro:hasAnyRoles>
-
 		</p:panel>
 
 
