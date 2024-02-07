@@ -79,6 +79,7 @@ public void	consultaEstoque(){
 	public String clearFieldsEstoqueImoveis() {
 		objetoContratoCobranca = new ContratoCobranca();
 		objetoImovelCobranca = new ImovelCobranca();
+		this.parametroPesquisa = null;
 		this.consultaEstoque();
 		this.consultaEstoquePesquisa();
 

@@ -225,8 +225,7 @@
 					value="#{contratoCobrancaMB.listContratoCobrancaDetalhesQuitar}"
 					emptyMessage="" sortBy="#{contratos.numeroParcela}"
 					sortOrder="ascending"
-					rowStyleClass="#{(parcelas.parcelaPaga eq false and parcelas2.listContratoCobrancaDetalhesParcial !=  0) ? 'parcelaparcial' 
-						: parcelas.numeroParcela eq 'Amortização' ? 'parcelaPaga'
+					rowStyleClass="#{parcelas.parcelaPaga eq false ? 'parcelaparcial' 
 						: parcelas.parcelaPaga eq true ? 'parcelaPaga' 
 						: parcelas.parcelaVencida eq true ? 'parcelaAtraso' 
 						: parcelas.parcelaVencendo eq true ? 'parcelaVencendo' 
