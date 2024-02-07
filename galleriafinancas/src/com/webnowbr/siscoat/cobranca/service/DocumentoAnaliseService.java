@@ -84,7 +84,7 @@ public class DocumentoAnaliseService {
 		documentoAnalise.setUsuarioCadastro(loginBean.getUsuarioLogado().getLogin());
 		
 		DocumentoAnalise documentoAnalisePesquisa = documentoAnaliseDao.cadastradoAnalise(contratoCobranca,
-				documentoAnalise.getCnpjcpf());
+				documentoAnalise.getCnpjcpf(), false);
 
 		if (!CommonsUtil.semValor(documentoAnalisePesquisa))
 			documentoAnalise = documentoAnalisePesquisa;
@@ -238,14 +238,14 @@ public class DocumentoAnaliseService {
 			documentoAnalise.setCnpjcpf(sCPFCNPJ);
 
 			DocumentoAnalise documentoAnalisePesquisa = documentoAnaliseDao.cadastradoAnalise(contratoCobranca,
-					sCPFCNPJ);
+					sCPFCNPJ, documentoAnaliseConsulta.isReanalise());
 			if (!CommonsUtil.semValor(documentoAnalisePesquisa))
 				documentoAnalise = documentoAnalisePesquisa;
 
 			documentoAnalise.setOrigem("Engine2");
 			documentoAnalise.setDataCadastro(DateUtil.getDataHoraAgora());			
 			documentoAnalise.setUsuarioCadastro(documentoAnaliseConsulta.getUsuarioCadastro());
-			
+			documentoAnalise.setReanalise(documentoAnaliseConsulta.isReanalise());
 			
 			documentoAnalise.setTipoEnum(DocumentosAnaliseEnum.RELATO);
 			documentoAnalise.setLiberadoAnalise(true);
@@ -309,7 +309,7 @@ public class DocumentoAnaliseService {
 			return;
 		}
 		
-		if ( !CommonsUtil.semValor( documentoAnaliseDao.cadastradoAnalise(contratoCobranca, documentoAnalise.getCnpjcpf())))
+		if ( !CommonsUtil.semValor( documentoAnaliseDao.cadastradoAnalise(contratoCobranca, documentoAnalise.getCnpjcpf(), documentoAnaliseConsulta.isReanalise())))
 			return;
 		
 		documentoAnalise.setOrigem("Engine1");
