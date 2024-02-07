@@ -8886,6 +8886,7 @@ public class ContratoCobrancaMB {
 		Locale locale = new Locale("pt", "BR");
 		Calendar dataHoje = Calendar.getInstance(zone, locale);
 		Date auxDataHoje = dataHoje.getTime();
+		this.txAdm = null;
 
 		this.numeroParcelaQuitar = 0;
 		this.dataQuitacao = auxDataHoje;
