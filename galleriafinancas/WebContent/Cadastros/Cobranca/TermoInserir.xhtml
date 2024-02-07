@@ -15,12 +15,24 @@
 				<h:panelGrid columns="2">
 
 
-					<p:outputLabel for="Identificacao" value="Identificacao" styleClass="labelBold" />
+					<p:outputLabel for="Identificacao" value="Identificação" styleClass="labelBold" />
 					<p:inputText id="Identificacao"
 						value="#{termoMB.objetoTermo.identificacao}"
 						label="Nome" required="true" onblur="" style="width:400px;">
 					</p:inputText>
-
+					
+					<p:outputLabel for="descricao" value="descrição" styleClass="labelBold" />
+					<p:inputText id="descricao"
+						value="#{termoMB.objetoTermo.descricao}"
+						label="Nome" required="true" onblur="" style="width:400px;">
+					</p:inputText>
+					
+					<p:outputLabel for="instrucao" value="instrução" styleClass="labelBold" />
+					<p:inputText id="instrucao"
+						value="#{termoMB.objetoTermo.instrucao}"
+						label="Nome" required="true" onblur="" style="width:400px;">
+					</p:inputText>
+					
 					<p:outputLabel for="DataInicio" value="Data Inicio" styleClass="labelBold" />
 				    <p:datePicker id="DataInicio"  value="#{termoMB.objetoTermo.inicioValidade}" pattern="dd/MM/yyyy"  locale="pt" required="true"/>
 	

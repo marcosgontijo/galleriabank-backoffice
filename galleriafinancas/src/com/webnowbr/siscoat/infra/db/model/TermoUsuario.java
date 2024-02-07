@@ -12,6 +12,8 @@ public class TermoUsuario {
 
 	private long idUsuario;
 
+	private Date dataCienca;
+	
 	private Date dataAceite;
 
 	public long getIdTermo() {
@@ -52,6 +54,14 @@ public class TermoUsuario {
 
 	public void setDataAceite(Date dataAceite) {
 		this.dataAceite = dataAceite;
+	}
+
+	public Date getDataCienca() {
+		return dataCienca;
+	}
+
+	public void setDataCienca(Date dataCienca) {
+		this.dataCienca = dataCienca;
 	}
 	
 	

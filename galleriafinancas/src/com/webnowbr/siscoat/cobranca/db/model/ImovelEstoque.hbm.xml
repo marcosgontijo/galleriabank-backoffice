@@ -62,5 +62,6 @@
         <property name="quitado" type="boolean">
             <column name="QUITADO" not-null="true" default="false"/>
         </property>
+ 
     </class>
 </hibernate-mapping>

@@ -2385,8 +2385,13 @@
 			<column name="ispbCustoEmissao" />
 		</property>
 		
+			<property name="todosPreLaudoEntregues" type="boolean">
+			<column name="todosPreLaudoEntregues" not-null="true" default="false"/>
+		</property>
+		
 		<property name="tipoContaContaPagar" type="java.lang.String">
 			<column name="tipoContaContaPagar" />
 		</property>
+
 	</class>
 </hibernate-mapping>

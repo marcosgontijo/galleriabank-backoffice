@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition 
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:shiro="http://shiro.apache.org/tags"
+	  xmlns:p="http://primefaces.org/ui"
+	  template="/Menus/Menu.xhtml">
+
+	<ui:define name="conteudo">  
+		<h:form id="form" style="margin-bottom:10px;">
+			<link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/css/Style.css" title="" media="all" />
+			<script src="#{request.contextPath}/resources/js/jquery.mask.min.js"></script>	
+			<script>
+		        function validatePhone() {
+		
+		            var masks = ['(00) 00000-0000', '(00) 0000-00009'],
+		                maskBehavior = function(val, e, field, options) {
+		                    return val.length > 14 ? masks[0] : masks[1];
+		                };
+		
+		            $('.phone').mask(maskBehavior, {onKeyPress:
+		                        function(val, e, field, options) {
+		                            field.mask(maskBehavior(val, e, field, options), options);
+		                        }
+		            });
+		        }
+		        $(document).ready(function() {
+		            validatePhone();
+		        }
+		        );
+			</script>			
+			<p:panel id="ConsultaContratos" header="#{contratoCobrancaMB.tituloTelaConsultaPreStatus} - Consultar" style="margin-bottom:10px;">					    		    
+   		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratosPendentes}"
+   		         rowStyleClass="#{(contratos.pedidoPreLaudo eq true and contratos.todosPreLaudoEntregues eq false and contratos.avaliacaoLaudo eq 'Compass') ? 'linhaDourada' : ''}
+   		         				#{(contratos.pedidoPreLaudo eq true and contratos.todosPreLaudoEntregues eq true and contratos.avaliacaoLaudo eq 'Compass') ? 'linhaAqua' : ''}"
+   		         rows="50"
+                 paginator="true"
+                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                 currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                 rowsPerPageTemplate="50,100,150"
+                 selection="#{contratoCobrancaMB.selectedContratos}" rowKey="#{contratos.id}">  
+            
+                	<p:column style="text-align: center;width:100px;" headerText="Contrato" filterBy="#{contratos.numeroContrato}" filterMatchMode="contains" sortBy="#{contratos.numeroContrato}">
+			            <h:outputText value="#{contratos.numeroContrato}" />
+			        </p:column>
+
+			        <p:column style="text-align: center;" headerText="Pagador" filterBy="#{contratos.nomePagador}" filterMatchMode="contains" sortBy="#{contratos.nomePagador}">
+			            <h:outputText value="#{contratos.nomePagador}" />
+			        </p:column>	    
+			        <p:column style="text-align: center;" headerText="Valor Solicitado (R$)">
+			            <h:outputText value="R$ " /><h:outputText value="#{contratos.quantoPrecisa}" converter="bigDecimalConverter" />
+			        </p:column>	
+						
+			        <p:column style="text-align: center;width: 100px" headerText="Data Ultima Atualização" filterBy="#{contratos.dataUltimaAtualizacao}" filterMatchMode="contains" sortBy="#{contratos.dataUltimaAtualizacao}">
+			           <p:outputLabel value="#{contratos.dataUltimaAtualizacao}" >			            	
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+						</p:outputLabel>
+			        </p:column>
+
+					<p:column style="text-align: center;width: 100px"
+						headerText="Aprovado Comite Por:" 
+						rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Comite'}">
+						
+						<p:repeat var="comite"  value="#{contratos.listaAnaliseComite}" >
+							<h:outputText value="#{comite.usuarioComite}&lt;br /&gt;"  escape="false" />
+						</p:repeat>	
+					</p:column>
+
+					<p:column style="text-align: center;" headerText="Cidade"
+						filterBy="#{contratos.nomeCidadeImovel}"
+						filterMatchMode="contains" sortBy="#{contratos.nomeCidadeImovel}">
+						<h:outputText value="#{contratos.nomeCidadeImovel}" />
+					</p:column>
+					
+					
+					<p:column style="text-align: center;width: 100px" headerText="Data Vistoria Imóvel" filterBy="#{contratos.dataPrevistaVistoria}" filterMatchMode="contains" sortBy="#{contratos.dataPrevistaVistoria}">
+			           <p:outputLabel value="#{contratos.dataPrevistaVistoria}" >			            	
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+						</p:outputLabel>
+			        </p:column>
+					
+					<p:column style="text-align: center;" headerText="Observação" filterBy="#{contratos.avaliacaoLaudoObservacao}" filterMatchMode="contains" sortBy="#{contratos.avaliacaoLaudoObservacao}">
+			            <h:outputText value="#{contratos.avaliacaoLaudoObservacao}" style="FONT-SIZE: 10pt; white-space: pre-wrap;" />
+			        </p:column>
+					
+					<p:column style="text-align: center;width: 100px"
+						headerText="Analista" 
+						rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Em Análise' or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Análise Pendente'}">
+						<h:outputText value="#{contratos.inicioAnaliseUsuario}"  escape="false" />
+					</p:column>
+					
+					<p:column style="text-align: center;" headerText="Iniciou geração?" sortBy="#{contratos.iniciouGeracaoLaudo}">
+			            <ui:fragment rendered="#{contratos.iniciouGeracaoLaudo}">
+							<h:outputText value="Sim" />
+						</ui:fragment>
+						<ui:fragment rendered="#{!contratos.iniciouGeracaoLaudo}">
+							<h:outputText value="Não" />
+						</ui:fragment>
+			        </p:column>
+					
+					<p:column style="width:180px;" headerText="Funções">			
+		                <p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPreLaudoCompass}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar">
+		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{contratos.imovel}" />
+		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
+		                </p:commandButton>			                
+		            </p:column>		            		        		               		        			        			           			 		
+				</p:dataTable>
+			</p:panel>			  
+		</h:form>
+	</ui:define>
+</ui:composition>	   

@@ -339,11 +339,13 @@ public class BRLTrustMB {
 		}
 			
 		// GERA XLS
-		try {
-			geraXLSFinanceiroDia();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (this.selectedContratos.size() > 0) {
+			try {
+				geraXLSFinanceiroDia();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 	}

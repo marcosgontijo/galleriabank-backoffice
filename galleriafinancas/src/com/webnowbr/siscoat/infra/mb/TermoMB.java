@@ -444,7 +444,27 @@ public class TermoMB {
 	}
 
 
-	public String carregaPdfTermo() throws IOException {
+	public String getDescricaoTermo() {
+		try {
+			if (!CommonsUtil.semValor(termos))
+				return CommonsUtil.stringValueVazio(termos.get(itermo).getDescricao());
+		} catch (Exception e) {
+			System.out.println(termos.get(itermo).getIdentificacao() + " sem descricao ");
+		}
+		return null;
+	}
+	public String getInstrucaoTermo() {
+		try {
+			if (!CommonsUtil.semValor(termos))
+				return CommonsUtil.stringValueVazio(termos.get(itermo).getInstrucao());
+		} catch (Exception e) {
+			System.out.println(termos.get(itermo).getIdentificacao() + " sem instrucao ");
+		}
+		return null;
+	}
+	
+	
+ 	public String carregaPdfTermo() throws IOException {
 
 //		if (CommonsUtil.semValor(termos)) {
 //			termos = termosNaoAssinadosUsuario(loginBean.getUsuarioLogado());

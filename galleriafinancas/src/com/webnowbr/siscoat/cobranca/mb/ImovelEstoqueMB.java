@@ -55,7 +55,7 @@ public class ImovelEstoqueMB {
 	private List<ContratoCobranca> listaConsultaEstoque = new ArrayList<ContratoCobranca>();
 	private List<ImovelEstoque> listImovelEstoque;
 	private boolean relatorioGerado = false;
-	private String parametroPesquisa = "Tudo";
+	private String parametroPesquisa;
 	private List<ContratoCobranca> listaImovelTudo;
 	private List<ContratoCobranca> listaImovelVendido;
 	private List<ContratoCobranca> listaImovelEmEsdtoque;
@@ -68,12 +68,13 @@ public class ImovelEstoqueMB {
 		objetoImovelEstoque = new ImovelEstoque();
 
 	}
-public void	consultaEstoque(){
-	ImovelEstoqueDao dao = new ImovelEstoqueDao();
-	listaImovelTudo = dao.consultaImovelEstoqueTudo();
-	listaImovelVendido =  dao.consultaImovelEstoqueVendido();
-	listaImovelEmEsdtoque = dao.consultaImovelEstoqueNaoVendido();
-		
+
+	public void consultaEstoque() {
+		ImovelEstoqueDao dao = new ImovelEstoqueDao();
+		listaImovelTudo = dao.consultaImovelEstoqueTudo();
+		listaImovelVendido = dao.consultaImovelEstoqueVendido();
+		listaImovelEmEsdtoque = dao.consultaImovelEstoqueNaoVendido();
+
 	}
 
 	public String clearFieldsEstoqueImoveis() {
@@ -143,6 +144,7 @@ public void	consultaEstoque(){
 		if (objetoContratoCobranca != null) {
 			preencherCamposComDadosContrato(); // Chama o método para preencher os campos com os dados do contrato
 		}
+		
 
 		return "/Atendimento/Cobranca/ImovelEstoqueEditar.xhtml";
 	}
@@ -158,6 +160,8 @@ public void	consultaEstoque(){
 		} else if(CommonsUtil.mesmoValor(parametroPesquisa, "Estoque")) {
 			listaConsultaEstoque = listaImovelEmEsdtoque;
 			
+		} else {
+			listaConsultaEstoque = listaImovelEmEsdtoque;
 		}
 		
 	}
