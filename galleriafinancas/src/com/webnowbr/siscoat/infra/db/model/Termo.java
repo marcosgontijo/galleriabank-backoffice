@@ -8,8 +8,14 @@ public class Termo {
 
 	private String identificacao;
 
-	private Date inicioValidade;
+	private String descricao;
+	
+	private String instrucao;
 
+	private long diasAceite;
+	
+	private Date inicioValidade;
+			
 	private Date fimValidade;
 
 	private String arquivo;
@@ -29,9 +35,33 @@ public class Termo {
 	public String getIdentificacao() {
 		return identificacao;
 	}
+		
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
+
+	public String getInstrucao() {
+		return instrucao;
+	}
+
+	public void setInstrucao(String instrucao) {
+		this.instrucao = instrucao;
+	}
 
 	public void setIdentificacao(String identificacao) {
 		this.identificacao = identificacao;
+	}
+
+	public long getDiasAceite() {
+		return diasAceite;
+	}
+
+	public void setDiasAceite(long diasAceite) {
+		this.diasAceite = diasAceite;
 	}
 
 	public Date getInicioValidade() {

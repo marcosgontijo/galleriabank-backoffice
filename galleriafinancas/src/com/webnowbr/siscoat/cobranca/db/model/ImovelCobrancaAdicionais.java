@@ -28,6 +28,8 @@ public class ImovelCobrancaAdicionais implements Serializable {
 
 	public ImovelCobrancaAdicionais() {
 		super();
+		this.imovel = new ImovelCobranca();
+		this.contratoCobranca = new ContratoCobranca();
 	}
 
 	public ImovelCobrancaAdicionais(ImovelCobranca imovel, ContratoCobranca contratoCobranca) {

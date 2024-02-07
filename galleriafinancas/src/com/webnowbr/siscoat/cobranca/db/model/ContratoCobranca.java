@@ -746,6 +746,7 @@ public class ContratoCobranca implements Serializable {
 	private String digitoContaBancarioContaPagar;
 	private String chavePIXBancarioContaPagar;
 	private String ispbBancarioContaPagar;
+	private String tipoContaContaPagar;
 
 	private BigDecimal valorCartaSplit;
 	private String nomeBancarioCartaSplit;
@@ -895,6 +896,8 @@ public class ContratoCobranca implements Serializable {
 	public int qtdParcelasAtraso;
 	public BigDecimal somaParcelasAtraso;
 	public Cartorio ultimoCartorio;
+	
+	private boolean todosPreLaudoEntregues;
 
 	// FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13
 	public BigDecimal calcularValorTotalContasPagas() {
@@ -7683,6 +7686,14 @@ public class ContratoCobranca implements Serializable {
 		this.ultimoCartorio = ultimoCartorio;
 	}
 	
+	public boolean isTodosPreLaudoEntregues() {
+		return this.todosPreLaudoEntregues;	
+	}
+	
+	public void setTodosPreLaudoEntregues(boolean todosPreLaudoEntregues) {
+		this.todosPreLaudoEntregues = todosPreLaudoEntregues;
+	}
+	
 	public BigDecimal getValorTotalProcessosSelecionados() {
 		return valorTotalProcessosSelecionados;
 	}
@@ -7754,5 +7765,13 @@ public class ContratoCobranca implements Serializable {
 
 	public void setIspbCustoEmissao(String ispbCustoEmissao) {
 		this.ispbCustoEmissao = ispbCustoEmissao;
+	}
+
+	public String getTipoContaContaPagar() {
+		return tipoContaContaPagar;
+	}
+
+	public void setTipoContaContaPagar(String tipoContaContaPagar) {
+		this.tipoContaContaPagar = tipoContaContaPagar;
 	}
 }

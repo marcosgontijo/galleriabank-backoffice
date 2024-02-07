@@ -822,7 +822,7 @@ public class KobanaMB {
 		JSONObject jsonBoleto = new JSONObject();
 	 
 	 	if (contrato.getEmpresa().equals("GALLERIA FINANÇAS SECURITIZADORA S.A.")) {
-	 		jsonBoleto.put("bank_billet_account_id", 8557);
+	 		jsonBoleto.put("bank_billet_account_id", 10299);
 	 	}
 		
 		if (contrato.getEmpresa().equals("FIDC GALLERIA")) {
@@ -1254,7 +1254,7 @@ public class KobanaMB {
 		JSONObject jsonBoleto = new JSONObject();
 	 
 	 	if (contrato.getEmpresa().equals("GALLERIA FINANÇAS SECURITIZADORA S.A.")) {
-	 		jsonBoleto.put("bank_billet_account_id", 8557);
+	 		jsonBoleto.put("bank_billet_account_id", 10299);
 	 	}
 		
 		if (contrato.getEmpresa().equals("FIDC GALLERIA")) {

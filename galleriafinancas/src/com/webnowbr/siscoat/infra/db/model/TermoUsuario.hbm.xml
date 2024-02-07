@@ -23,6 +23,10 @@
 		<property name="dataAceite" type="java.util.Date">
 			<column name="dataAceite" />
 		</property>
+				
+		<property name="dataCienca" type="java.util.Date">
+			<column name="dataCienca" />
+		</property>		
 		
 		<property name="idx" type="long">
 			<column name="idx" not-null="true" />

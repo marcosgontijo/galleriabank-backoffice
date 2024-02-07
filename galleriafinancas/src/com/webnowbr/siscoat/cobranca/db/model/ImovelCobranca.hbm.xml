@@ -141,7 +141,20 @@
 		
 		<property name="valorMercado" type="big_decimal">
 			<column name="valorMercado" />
+		</property>  
+		
+		<property name="preLaudoSolicitado" type="boolean">
+			<column name="preLaudoSolicitado" not-null="true" default="false"/>
 		</property> 
+		
+		<property name="preLaudoEntregue" type="boolean">
+			<column name="preLaudoEntregue" not-null="true" default="false"/>
+		</property> 
+		
+		<property name="valorPreLaudo" type="big_decimal">
+			<column name="valorPreLaudo"/>
+		</property> 
+		
 		
 		<property name="valorLeilao" type="big_decimal">
 			<column name="valorLeilao" />
