@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -29,8 +28,6 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.primefaces.model.LazyDataModel;
-import org.primefaces.model.SortOrder;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
@@ -39,8 +36,6 @@ import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ImovelEstoqueDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
-import com.webnowbr.siscoat.infra.db.dao.UserDao;
-import com.webnowbr.siscoat.infra.db.model.User;
 
 /** ManagedBean. */
 @ManagedBean(name = "imovelEstoqueMB")
@@ -60,7 +55,7 @@ public class ImovelEstoqueMB {
 	private List<ContratoCobranca> listaConsultaEstoque = new ArrayList<ContratoCobranca>();
 	private List<ImovelEstoque> listImovelEstoque;
 	private boolean relatorioGerado = false;
-	private String parametroPesquisa = "Tudo";
+	private String parametroPesquisa;
 	private List<ContratoCobranca> listaImovelTudo;
 	private List<ContratoCobranca> listaImovelVendido;
 	private List<ContratoCobranca> listaImovelEmEsdtoque;
@@ -137,8 +132,7 @@ public void	consultaEstoque(){
 	}
 
 	public String editarEstoque() {
-		FacesContext facesContext = FacesContext.getCurrentInstance();
-		ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
+
 
 		if (CommonsUtil.semValor(this.objetoImovelEstoque)) {
 			objetoImovelEstoque = new ImovelEstoque();
@@ -153,7 +147,6 @@ public void	consultaEstoque(){
 
 
 	public void consultaEstoquePesquisa() {
-		ImovelEstoqueDao dao = new ImovelEstoqueDao();
 		if(CommonsUtil.mesmoValor( parametroPesquisa, "Tudo")){
 			listaConsultaEstoque = listaImovelTudo;
 		} else if(CommonsUtil.mesmoValor(parametroPesquisa, "Vendido")) {
@@ -162,6 +155,8 @@ public void	consultaEstoque(){
 		} else if(CommonsUtil.mesmoValor(parametroPesquisa, "Estoque")) {
 			listaConsultaEstoque = listaImovelEmEsdtoque;
 			
+		} else {
+			listaConsultaEstoque = listaImovelEmEsdtoque;
 		}
 		
 	}

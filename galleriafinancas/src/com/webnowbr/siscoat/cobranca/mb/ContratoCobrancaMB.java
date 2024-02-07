@@ -367,6 +367,8 @@ public class ContratoCobrancaMB {
 
 	/** Nome do Pagador selecionado pela LoV. */
 	private String nomeGrupoFavorecido;
+	
+	private BigDecimal txAdm;
 
 	/** Id Objeto selecionado na LoV - Pagador. */
 	private long idGrupoFavorecido;
@@ -8974,8 +8976,14 @@ public class ContratoCobrancaMB {
 					this.numeroPresenteParcela = CommonsUtil.intValue(parcelas.getNumeroParcela());
 					calcularValorPresenteParcelaData(this.dataQuitacao, parcelas);
 					if (this.objetoContratoCobranca.isTemTxAdm()) {
-						valorPresenteParcela = valorPresenteParcela.add(SiscoatConstants.TAXA_ADM);
-					}
+						if(txAdm != null) {
+						valorPresenteParcela = valorPresenteParcela.add(txAdm);
+						}
+						else {
+							valorPresenteParcela = valorPresenteParcela.add(SiscoatConstants.TAXA_ADM);
+						}
+						}
+						
 				}
 
 				valorPresenteTotal = valorPresenteTotal.add(this.valorPresenteParcela);
@@ -9026,10 +9034,9 @@ public class ContratoCobrancaMB {
 					// this.selectedListContratoCobrancaDetalhes.add(parcelas);
 				}
 			}
-			
-		
 		}
 		System.out.print("");
+		FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Estoque Inserido com sucesso!!", ""));
 	}
 
 	
@@ -36966,6 +36973,13 @@ public class ContratoCobrancaMB {
 	
 	public void setlistPreLaudoImoveisRelac(List<ImovelCobranca> listPreLaudoImoveisRelac) {
 		this.listPreLaudoImoveisRelac = listPreLaudoImoveisRelac;
+	}
+	public BigDecimal getTxAdm() {
+		return txAdm;
+	}
+
+	public void setTxAdm(BigDecimal txAdm) {
+		this.txAdm = txAdm;
 	}
 	
 }
