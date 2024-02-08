@@ -19,9 +19,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -40,6 +37,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
@@ -214,6 +212,7 @@ import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.cobranca.service.PagadorRecebedorService;
 import com.webnowbr.siscoat.cobranca.service.PajuService;
 import com.webnowbr.siscoat.cobranca.service.RelatoriosService;
+import com.webnowbr.siscoat.cobranca.service.ResponsavelService;
 import com.webnowbr.siscoat.cobranca.service.ScrService;
 import com.webnowbr.siscoat.cobranca.service.SerasaService;
 import com.webnowbr.siscoat.cobranca.vo.ContratosPagadorAnalisadoVO;
@@ -33918,11 +33917,46 @@ public class ContratoCobrancaMB {
 	}
 	
 	public void calcularValorNotaFiscal() {
-		if ( CommonsUtil.mesmoValor("Solicitado", this.objetoContratoCobranca.getSolicitarNota()) &&
-				CommonsUtil.semValor(this.objetoContratoCobranca.getValorNotaFiscal()))
-			this.objetoContratoCobranca.setValorNotaFiscal(CommonsUtil.bigDecimalValue(10000));
-		else
-			this.objetoContratoCobranca.setValorNotaFiscal(null);
+		if (CommonsUtil.mesmoValor("Solicitado", this.objetoContratoCobranca.getSolicitarNota())
+				&& CommonsUtil.semValor(this.objetoContratoCobranca.getValorNotaFiscal())) {
+
+			ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+			BigDecimal contratosAssinados = contratoCobrancaDao
+					.consultaContratosAssisnadoNoPeriodo(this.objetoContratoCobranca);
+			BigDecimal percentual = BigDecimal.ZERO;
+
+			if (!CommonsUtil.semValor(this.objetoContratoCobranca.getResponsavel().getTaxaRemuneracao())) {
+				percentual = this.objetoContratoCobranca.getResponsavel().getTaxaRemuneracao();
+			} else {
+				Responsavel objetoResponsavel;
+				if (!CommonsUtil.semValor(this.objetoContratoCobranca.getResponsavel().getTaxasComissao()))
+					objetoResponsavel = this.objetoContratoCobranca.getResponsavel();
+				else {
+					ResponsavelService responsavelService = new ResponsavelService();
+					objetoResponsavel = responsavelService.getObjetoResponsavelGeral();
+				}
+
+				if (!CommonsUtil.semValor(objetoResponsavel.getTaxasComissao())) {
+					Optional<BigDecimal> taxasComissao = objetoResponsavel.getTaxasComissao().stream()
+							.filter(t -> t.getValorMinimo().compareTo(contratosAssinados) >= 0
+									&& t.getValorMaximo().compareTo(contratosAssinados) <= 0)
+							.map(t -> t.getTaxaRemuneracao()).findFirst();
+
+					if (taxasComissao.isPresent())
+						percentual = taxasComissao.get();
+				}
+			}
+
+			if (!CommonsUtil.semValor(percentual)) {
+				BigDecimal valorNotaFiscal = contratosAssinados
+						.multiply(percentual.divide(CommonsUtil.bigDecimalValue(100)));
+
+				this.objetoContratoCobranca.setValorNotaFiscal(CommonsUtil.bigDecimalValue(valorNotaFiscal));
+			} else {
+				this.objetoContratoCobranca.setValorNotaFiscal(BigDecimal.ZERO);
+			}
+
+		} 
 	}
 
 	public StreamedContent getDownloadAllFiles() {

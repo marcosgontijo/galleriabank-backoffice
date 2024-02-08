@@ -26,6 +26,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ComissaoResponsavel;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.db.op.ComissaoResponsavelDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
+import com.webnowbr.siscoat.cobranca.service.ResponsavelService;
 import com.webnowbr.siscoat.common.ComissaoOrigemEnum;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
@@ -474,7 +475,9 @@ public class ResponsavelMB {
 		this.selectedComissao = new ComissaoResponsavel();
 		this.taxasComissao = new ArrayList<ComissaoResponsavel>();
 		this.objetoResponsavel = null;
-		this.objetoResponsavel = getObjetoResponsavelGeral();
+
+		ResponsavelService responsavelService = new ResponsavelService();
+		objetoResponsavelGeral = responsavelService.getObjetoResponsavelGeral();
 		this.addComissao = false;
 		loadLovResponsavel();
 	}
@@ -618,25 +621,12 @@ public class ResponsavelMB {
 	}
 	
 	public List<ComissaoResponsavel> getTaxasComissaoGlobal() {
-		getObjetoResponsavelGeral();
+		ResponsavelService responsavelService = new ResponsavelService();
+		objetoResponsavelGeral = responsavelService.getObjetoResponsavelGeral();		
 		return this.objetoResponsavelGeral.getTaxasComissao(ComissaoOrigemEnum.GERAL);
 	}
 
-	private Responsavel getObjetoResponsavelGeral() {
-		if ( CommonsUtil.semValor(objetoResponsavelGeral)) {
-			ResponsavelDao rDao = new ResponsavelDao();
-			objetoResponsavelGeral = rDao.findById(SiscoatConstants.RESPONSAVEL_GERAL_ID);
-			if ( CommonsUtil.semValor(objetoResponsavelGeral)) {
-				objetoResponsavelGeral = new Responsavel();
-				objetoResponsavelGeral.setNome("RESPONSAVEL GERAL");
-				objetoResponsavelGeral.setId(SiscoatConstants.RESPONSAVEL_GERAL_ID);
-				objetoResponsavelGeral.setDataCadastro(new Date());
-				objetoResponsavelGeral.setDesativado(true);
-				rDao.create(objetoResponsavelGeral);
-			}				
-		}
-		return objetoResponsavelGeral;
-	}
+	
 	
 	public User getUsuarioLogado() {
 		User usuario = new User();

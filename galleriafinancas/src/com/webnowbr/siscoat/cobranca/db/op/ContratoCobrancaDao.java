@@ -9873,10 +9873,10 @@ private String QUERY_CONTRATOS_IPCA = "select distinct c.* "
 				
 				try {
 					connection = getConnection();
-					
+
 					ps = connection
 							.prepareStatement(QUERY_CONTRATOS_IPCA);
-					
+
 					rs = ps.executeQuery();
 					
 					while (rs.next()) {
@@ -9891,5 +9891,45 @@ private String QUERY_CONTRATOS_IPCA = "select distinct c.* "
 		});
 	}
     
+    
+    private static final String QUERY_VALOR_CONTRATOS_ASSINADOS_PERIODO = "select --c.responsavel , to_char(c.agassinaturadata, 'YYYY-MM') , count(*), " +
+    		 "sum( c.valorccb ) " +
+    		 "from cobranca.contratocobranca c " +
+    		 "inner join cobranca.contratocobranca c2 on c.responsavel = c2.responsavel " +
+    		 "                                       and to_char(c.agassinaturadata, 'YYYY-MM')  = to_char(c2.agassinaturadata, 'YYYY-MM') " +
+    		 "                                       and c2.numerocontrato = ?  " +
+    		 "where c.agassinaturadata is not null " +
+    		 "and  to_char(c.agassinaturadata, 'YYYY-MM') = '2024-01' " +
+    		 "group by c.responsavel  , to_char(c.agassinaturadata, 'YYYY-MM') ";
+    
+  	public BigDecimal consultaContratosAssisnadoNoPeriodo(ContratoCobranca contrato) {
+  		return (BigDecimal) executeDBOperation(new DBRunnable() {
+  			@Override
+			public Object run() throws Exception {
+				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
+
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				BigDecimal result = BigDecimal.ZERO;
+
+				try {
+					connection = getConnection();
+
+					ps = connection.prepareStatement(QUERY_VALOR_CONTRATOS_ASSINADOS_PERIODO);
+
+					ps.setLong(1, contrato.getId());
+					rs = ps.executeQuery();
+
+					result = rs.getBigDecimal(1);
+//					break;
+
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return result;
+			}
+  		});
+  	}
     
 }
