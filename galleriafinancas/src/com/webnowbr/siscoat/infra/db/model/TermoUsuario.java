@@ -6,13 +6,15 @@ public class TermoUsuario {
 	
 	private long id;
 	
-	private long idx;
+//	private long idx;
 
 	private long idTermo;
 
 	private long idUsuario;
 
 	private Date dataCienca;
+	
+	private Date dataAdiado;
 	
 	private Date dataAceite;
 
@@ -28,13 +30,13 @@ public class TermoUsuario {
 		this.id = id;
 	}
 
-	public long getIdx() {
-		return idx;
-	}
-
-	public void setIdx(long idx) {
-		this.idx = idx;
-	}
+//	public long getIdx() {
+//		return idx;
+//	}
+//
+//	public void setIdx(long idx) {
+//		this.idx = idx;
+//	}
 
 	public void setIdTermo(long idTermo) {
 		this.idTermo = idTermo;
@@ -46,6 +48,14 @@ public class TermoUsuario {
 
 	public void setIdUsuario(long idUsuario) {
 		this.idUsuario = idUsuario;
+	}
+
+	public Date getDataAdiado() {
+		return dataAdiado;
+	}
+
+	public void setDataAdiado(Date dataAdiado) {
+		this.dataAdiado = dataAdiado;
 	}
 
 	public Date getDataAceite() {

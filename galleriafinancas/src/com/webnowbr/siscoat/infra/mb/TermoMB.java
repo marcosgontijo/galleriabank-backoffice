@@ -10,8 +10,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -44,12 +42,12 @@ import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
+import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.text.Font.FontFamily;
 import com.webnowbr.siscoat.cobranca.db.model.TermoPopup;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
@@ -427,14 +425,38 @@ public class TermoMB {
 
 
 	public String verificaTermosNaoAssinados() throws IOException {
-
-		if (CommonsUtil.semValor(termos)) {
+		UserDao usuerDao = new UserDao();
+		//if (CommonsUtil.semValor(termos)) {
+//			TermoUsuarioDao termoUsuarioDao = new TermoUsuarioDao();
 			termos = termosNaoAssinadosUsuario(loginBean.getUsuarioLogado());
+			
+			for (Termo termo : termos) {				
+				TermoUsuario termoUsuario = loginBean.getUsuarioLogado().getListTermos().stream().filter(t -> CommonsUtil.mesmoValor( t.getId(), termo.getId())).findAny().orElse(null);
+//				TermoUsuario termoUsuario = termoUsuarioDao.termosUsuario(termo, loginBean.getUsuarioLogado());				
+				if ( !CommonsUtil.semValor( termoUsuario) ) {
+						if( CommonsUtil.semValor( termoUsuario.getDataCienca()) ) {
+							termoUsuario.setDataCienca(DateUtil.getDataHoraAgora());
+//							termoUsuarioDao.merge(termoUsuario);
+						}							
+				}else {
+					if ( termo.getId() > 0) {
+					termoUsuario = new TermoUsuario();
+					termoUsuario.setDataCienca(DateUtil.getDataHoraAgora());
+					termoUsuario.setIdTermo(termo.getId());
+					termoUsuario.setIdUsuario(loginBean.getUsuarioLogado().getId());
+					 loginBean.getUsuarioLogado().getListTermos().add(termoUsuario);
+					}
+				}
+				
+				termo.setTermoUsuario(termoUsuario);
+			}		
+			usuerDao.merge(loginBean.getUsuarioLogado());
+			
 			itermo = 0;
 			if (!CommonsUtil.semValor(termos)) {
 				PrimeFaces.current().executeScript("PF('dlgTermos').show();");
 			}
-		}
+		//}
 		
 		if (!CommonsUtil.semValor(termos)) {
 			PrimeFaces.current().executeScript("PF('dlgTermos').show();");
@@ -463,6 +485,15 @@ public class TermoMB {
 		return null;
 	}
 	
+	public String getAceiteExpirado() {
+		try {
+			if (!CommonsUtil.semValor(termos))
+				return CommonsUtil.stringValueVazio(termos.get(itermo).isAceiteExpirado());
+		} catch (Exception e) {
+			System.out.println(termos.get(itermo).getIdentificacao() + " sem descricao ");
+		}
+		return null;
+	}
 	
  	public String carregaPdfTermo() throws IOException {
 
@@ -534,19 +565,27 @@ public class TermoMB {
     }
 
 	public String aceitar() throws IOException {
-
-		TermoUsuarioDao termoUsuarioDao = new TermoUsuarioDao();
-		TermoUsuario termoUsuario = new TermoUsuario();
+		UserDao usuerDao = new UserDao();
+		TermoUsuario termoUsuario = loginBean.getUsuarioLogado().getListTermos().stream().filter(t -> CommonsUtil.mesmoValor(  t.getId(), termos.get(itermo).getId() )).findAny().orElse(null);
+//		TermoUsuario termoUsuario = termoUsuarioDao.termosUsuario(termos.get(itermo), loginBean.getUsuarioLogado());
 		termoUsuario.setDataAceite(DateUtil.getDataHoraAgora());
-		termoUsuario.setIdTermo(termos.get(itermo).getId());
-		termoUsuario.setIdUsuario(loginBean.getUsuarioLogado().getId());
-		termoUsuario.setIdx(0);
-		termoUsuarioDao.create(termoUsuario);
-		termos.remove(itermo);
+//		termoUsuarioDao.merge(termoUsuario);
+		usuerDao.merge(loginBean.getUsuarioLogado());
 		
+		termos.remove(itermo);		
 		return null;
 	}
 	
+	public String aceiteAdiado() throws IOException {
+		UserDao usuerDao = new UserDao();
+		TermoUsuario termoUsuario = loginBean.getUsuarioLogado().getListTermos().stream().filter(t -> CommonsUtil.mesmoValor(  t.getId(), termos.get(itermo).getId() )).findAny().orElse(null);		
+//		TermoUsuario termoUsuario = termoUsuarioDao.termosUsuario(termos.get(itermo), loginBean.getUsuarioLogado());
+		termoUsuario.setDataAdiado(DateUtil.getDataHoraAgora());
+		usuerDao.merge(loginBean.getUsuarioLogado());
+//		termoUsuarioDao.merge(termoUsuario);
+		termos.remove(itermo);
+		return null;
+	}
 	
 
 	public LoginBean getLoginBean() {

@@ -13,20 +13,20 @@
 			<column name="identificacao" not-null="true" />
 		</property>
 		<property name="descricao" type="java.lang.String">
-			<column name="descricao"  />
+			<column name="descricao" />
 		</property>
 		<property name="instrucao" type="java.lang.String">
-			<column name="instrucao"  />
+			<column name="instrucao" />
 		</property>
-		<property name="diasAceite" type="long">
-			<column name="diasAceite"  />
-		</property>		
-		 <property name="inicioValidade" type="java.util.Date">
-            <column name="inicioValidade" />
-        </property>  
-         <property name="fimValidade" type="java.util.Date">
-            <column name="fimValidade" />
-        </property> 
+		<property name="diasAceite" type="java.lang.Integer">
+			<column name="diasAceite" />
+		</property>
+		<property name="inicioValidade" type="java.util.Date">
+			<column name="inicioValidade" />
+		</property>
+		<property name="fimValidade" type="java.util.Date">
+			<column name="fimValidade" />
+		</property>
 		<property name="arquivo" type="java.lang.String">
 			<column name="arquivo" not-null="true" unique="true" />
 		</property>

@@ -3854,7 +3854,7 @@ public class ContratoCobrancaMB {
 				}
 			}
 			
-			if(!this.listSolicitacaoPreLaudoImoveis.isEmpty()) {
+			if (!CommonsUtil.semValor(this.listSolicitacaoPreLaudoImoveis)) {
 								
 				// Caso a lista de imoveis solicitando pre laudo nao esteja vazia, cria um laudo novo e insere as infos na tabela relacional
 				
@@ -4014,7 +4014,7 @@ public class ContratoCobrancaMB {
 			UserDao u = new UserDao();
 			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
 			
-			System.out.println(this.listImoveis);
+//			System.out.println(this.listImoveis);
 			
 			// Nova condição caso o usuário flag pedindo o pre-laudo da Compass
 			if(this.objetoContratoCobranca.isPedidoPreLaudo()) {
@@ -4126,7 +4126,7 @@ public class ContratoCobrancaMB {
 			}
 		}
 		
-		if(this.objetoContratoCobranca.isPedidoPreLaudo() && listSolicitacaoPreLaudoImoveis.isEmpty()) {
+		if(this.objetoContratoCobranca.isPedidoPreLaudo() && CommonsUtil.semValor(listSolicitacaoPreLaudoImoveis)) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Contrato Cobrança: Nenhum imóvel selecionado para pré-laudo!", ""));
 			return false;
@@ -6887,12 +6887,20 @@ public class ContratoCobrancaMB {
 
 		this.listRecebedores = this.listPagadores;
 
-		ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
-		this.listImoveis = imovelCobrancaDao.findAll();
+//		ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
+//		this.listImoveis = imovelCobrancaDao.findAll();
 
 		ResponsavelDao responsavelDao = new ResponsavelDao();
 		this.listResponsaveis = responsavelDao.findAll();
 	}
+	
+	public void carregaImoveis() {
+		if (CommonsUtil.semValor(this.listImoveis)) {
+			ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
+			this.listImoveis = imovelCobrancaDao.findAll();
+		}
+	}
+	
 
 	public final void populateSelectedGrupoFavorecido() {
 		this.idGrupoFavorecido = this.selectedGrupoFavorecido.getId();
