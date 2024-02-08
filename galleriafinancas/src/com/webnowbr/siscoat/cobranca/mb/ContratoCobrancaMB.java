@@ -23695,7 +23695,7 @@ public class ContratoCobrancaMB {
 		this.selectedBoletosKobanaBaixa = null;
 		
 		// VALIDA SE TEMOS PARCELAS NA BASE, COM BAIXAS (VALOR MAIOR OU IGUAL A PARCELA) NÃO BAIXADAS
-		contratoCobrancaDetalhesDao.baixarParcelasComBaixaNaoBaixadas();
+		//contratoCobrancaDetalhesDao.baixarParcelasComBaixaNaoBaixadas();
 
 		/*
 		 * //se valor atualizado == valor parcela //valor atualizado recebe null
