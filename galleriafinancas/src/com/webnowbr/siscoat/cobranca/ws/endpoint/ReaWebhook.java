@@ -71,7 +71,7 @@ public class ReaWebhook {
 
 			if (reaWebhookRetorno.getProprietarioAtual() != null) {
 				cadastrarPessoRetornoRea(reaWebhookRetorno.getProprietarioAtual(), documentoAnaliseDao,
-						documentoAnalise.getContratoCobranca(), "Proprietario Atual", documentoAnalise.getUsuarioCadastro());
+						documentoAnalise.getContratoCobranca(), "Proprietario Atual", documentoAnalise.getUsuarioCadastro(), documentoAnalise.isReanalise());
 				dataVendaAtual = DateUtil
 						.getDecodeDateExtenso(reaWebhookRetorno.getProprietarioAtual().getConteudo().getTexto());
 			}
@@ -92,7 +92,7 @@ public class ReaWebhook {
 					cadastrarPessoRetornoRea(proprietarioAnterior, documentoAnaliseDao,
 							documentoAnalise.getContratoCobranca(),
 							"Proprietario Anterior" + (CommonsUtil.semValor(dataVenda) ? " Data venda não localizada"
-									: " Data venda:" + CommonsUtil.formataData(dataVenda, "dd/MM/yyyy")), documentoAnalise.getUsuarioCadastro());
+									: " Data venda:" + CommonsUtil.formataData(dataVenda, "dd/MM/yyyy")), documentoAnalise.getUsuarioCadastro(), documentoAnalise.isReanalise());
 //					}
 
 				}
@@ -123,7 +123,7 @@ public class ReaWebhook {
 	}
 
 	private void cadastrarPessoRetornoRea(ReaWebhookRetornoBloco bloco, DocumentoAnaliseDao documentoAnaliseDao,
-			ContratoCobranca contratoCobranca, String motivo, String usuarioConsultaREA) {
+			ContratoCobranca contratoCobranca, String motivo, String usuarioConsultaREA, boolean reanalise) {
 
 		PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
 
@@ -165,8 +165,7 @@ public class ReaWebhook {
 			}
 
 			if (cnpjCpfValido) {
-				
-				DocumentoAnalise documentoAnaliseCadastrado = documentoAnaliseDao.cadastradoAnalise(contratoCobranca, documentoAnalise.getCnpjcpf());
+				DocumentoAnalise documentoAnaliseCadastrado = documentoAnaliseDao.cadastradoAnalise(contratoCobranca, documentoAnalise.getCnpjcpf(), documentoAnalise.isReanalise());
 				if (CommonsUtil.semValor(documentoAnaliseCadastrado)) {
 					
 					documentoAnalise.setOrigem("REA");
@@ -186,12 +185,19 @@ public class ReaWebhook {
 					documentoAnalise.setPagador(pagador);
 					documentoAnalise.adiconarEstadosPeloCadastro();
 					documentoAnaliseDao.create(documentoAnalise);
-				}else {
+				} else if(reanalise) {
+					documentoAnalise = new DocumentoAnalise(documentoAnaliseCadastrado);
+					documentoAnalise.setOrigem("REA");
+					documentoAnalise.setDataCadastro(DateUtil.getDataHoraAgora());
+					documentoAnalise.setUsuarioCadastro(usuarioConsultaREA);
+					documentoAnalise.setAnaliseOriginal(documentoAnaliseCadastrado);
+					documentoAnalise.setReanalise(true);
+					documentoAnaliseDao.create(documentoAnalise);
+				} else {
 					documentoAnaliseCadastrado.setExcluido(false);
 					documentoAnaliseDao.merge(documentoAnaliseCadastrado);					
 				}
 			}
 		}
-
 	}
 }

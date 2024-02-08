@@ -3,6 +3,7 @@ package com.webnowbr.siscoat.cobranca.db.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -51,6 +52,7 @@ public class ImovelCobranca implements Serializable {
 	private BigDecimal valorIptu;
 	private BigDecimal valorCondominio;
 	private BigDecimal valorMercado;
+	private BigDecimal valorLeilao;
 	private String inscricaoMunicipal;
 	private boolean comprovanteMatriculaCheckList;
 	private boolean comprovanteFotosImovelCheckList;
@@ -69,6 +71,12 @@ public class ImovelCobranca implements Serializable {
 	private String enderecoSemNumero;
 	
 	private Cidade objetoCidade;
+	private int subCategoria;
+	
+	//Novos campos referente ao pre laudo
+	private boolean preLaudoSolicitado;
+	private boolean preLaudoEntregue;
+	private BigDecimal valorPreLaudo;
 	
 	//Novos campos referente ao pre laudo
 	private boolean preLaudoSolicitado;
@@ -818,5 +826,21 @@ public class ImovelCobranca implements Serializable {
 	
 	public void setValorPreLaudo( BigDecimal valorPreLaudo) {
 		this.valorPreLaudo = valorPreLaudo;
+	}
+	
+	public BigDecimal getValorLeilao() {
+		return valorLeilao;
+	}
+
+	public void setValorLeilao(BigDecimal valorLeilao) {
+		this.valorLeilao = valorLeilao;
+	}
+
+	public int getSubCategoria() {
+		return subCategoria;
+	}
+
+	public void setSubCategoria(int subCategoria) {
+		this.subCategoria = subCategoria;
 	}
 }

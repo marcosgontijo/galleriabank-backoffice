@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -29,8 +28,6 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.primefaces.model.LazyDataModel;
-import org.primefaces.model.SortOrder;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
@@ -39,8 +36,6 @@ import com.webnowbr.siscoat.cobranca.db.op.ImovelCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ImovelEstoqueDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
-import com.webnowbr.siscoat.infra.db.dao.UserDao;
-import com.webnowbr.siscoat.infra.db.model.User;
 
 /** ManagedBean. */
 @ManagedBean(name = "imovelEstoqueMB")
@@ -61,7 +56,10 @@ public class ImovelEstoqueMB {
 	private List<ImovelEstoque> listImovelEstoque;
 	private boolean relatorioGerado = false;
 	private String parametroPesquisa = "Tudo";
-
+	private String parametroPesquisa;
+	private List<ContratoCobranca> listaImovelTudo;
+	private List<ContratoCobranca> listaImovelVendido;
+	private List<ContratoCobranca> listaImovelEmEsdtoque;
 	/**
 	 * Construtor.
 	 */
@@ -70,7 +68,13 @@ public class ImovelEstoqueMB {
 		objetoImovelCobranca = new ImovelCobranca();
 		objetoImovelEstoque = new ImovelEstoque();
 
-//		consultaEstoque();
+	}
+
+	public void consultaEstoque() {
+		ImovelEstoqueDao dao = new ImovelEstoqueDao();
+		listaImovelTudo = dao.consultaImovelEstoqueTudo();
+		listaImovelVendido = dao.consultaImovelEstoqueVendido();
+		listaImovelEmEsdtoque = dao.consultaImovelEstoqueNaoVendido();
 
 	}
 
@@ -78,11 +82,12 @@ public class ImovelEstoqueMB {
 		objetoContratoCobranca = new ContratoCobranca();
 		objetoImovelCobranca = new ImovelCobranca();
 		this.consultaEstoquePesquisa();
+		this.consultaEstoquePesquisa();
 
 		return "/Atendimento/Cobranca/ImovelEstoqueConsulta.xhtml";
 	}
 
-	public String salvarEstoque() {
+	public void salvarEstoque() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		ImovelEstoqueDao imovelEstoqueDao = new ImovelEstoqueDao();
 		if(objetoImovelEstoque == null) {
@@ -125,7 +130,7 @@ public class ImovelEstoqueMB {
 			e.printStackTrace();
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro: " + e, ""));
 		}
-		return clearFieldsEstoqueImoveis();
+		 clearFieldsEstoqueImoveis();
 	}
 
 	public String editarEstoque() {
@@ -139,6 +144,7 @@ public class ImovelEstoqueMB {
 		if (objetoContratoCobranca != null) {
 			preencherCamposComDadosContrato(); // Chama o método para preencher os campos com os dados do contrato
 		}
+		
 
 		return "/Atendimento/Cobranca/ImovelEstoqueEditar.xhtml";
 	}

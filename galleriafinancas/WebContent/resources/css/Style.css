@@ -29,6 +29,9 @@
 		.ui-datatable .ui-datatable-data .parcelaPaga td{
 		    background-color: #91ef9f;  
 		}
+		.parcelaPaga{
+		 background-color: #91ef9f;
+		}
 		
 		.ui-datatable .ui-datatable-data .parcelaBoletoPago td{
 		    background-color: #e2ef4c;  

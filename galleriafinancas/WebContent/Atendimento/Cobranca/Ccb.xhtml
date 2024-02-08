@@ -203,7 +203,7 @@
 										<f:selectItem itemValue="SEPARADO" itemLabel="Separado" />
 										<f:selectItem itemValue="SEPARADO JUDICIALMENTE" 
 											itemLabel="Separado Judicialmente" />
-										<p:ajax update="form:conjugueParticipante form:adicionarParticipante" event="change" />
+										<p:ajax update=":form:conjugueParticipante" event="change" />
 									</p:selectOneMenu>
 
 									<p:outputLabel for="numeroRgParticipante"
@@ -214,22 +214,9 @@
 										label="Contrato" />
 										
 									<p:outputLabel value="Está em União Estavel: " styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" rendered="#{ccbMB.participanteSelecionado.pessoa.estadocivil eq 'SOLTEIRO'}" />
-									<p:selectBooleanCheckbox id="uniaoEstavelParticipante" rendered="#{ccbMB.participanteSelecionado.pessoa.estadocivil eq 'SOLTEIRO'}"
-										value="#{ccbMB.participanteSelecionado.pessoa.uniaoEstavel}" >
-										<p:ajax event="valueChange" update="form:conjugueParticipante form:adicionarParticipante"></p:ajax>
-										</p:selectBooleanCheckbox>
-										<p:outputLabel value="tipo de documento:" rendered="#{ccbMB.participanteSelecionado.pessoa.uniaoEstavel eq true}"/>
-											<p:selectOneRadio
-												value="#{ccbMB.participanteSelecionado.pessoa.tipoUniao}" rendered="#{ccbMB.participanteSelecionado.pessoa.uniaoEstavel eq true}">
-												<f:selectItem itemLabel="Escritura publica"
-													itemValue="Escritura publica" />
-												<f:selectItem itemLabel="Declaração de união"
-													itemValue="Declaração de uniao" />
-												<p:ajax event="valueChange" update="form:conjugueParticipante" />
-											</p:selectOneRadio>
-										
-										
+										style="font-weight: bold; font-size: 18px;" />
+									<p:selectBooleanCheckbox id="uniaoEstavelParticipante"
+										value="#{ccbMB.participanteSelecionado.uniaoEstavel}" />
 										
 									<p:outputLabel for="ufParticipante" value="UF: "
 										styleClass="labelBold"
@@ -322,7 +309,7 @@
 								<h:panelGroup id="conjugueParticipante">
 									<p:panel header="Conjuge Participante"
 										style="margin-bottom:10px;"
-										rendered="#{ccbMB.participanteSelecionado.pessoa.estadocivil == 'CASADO' and !ccbMB.participanteSelecionado.empresa or ccbMB.participanteSelecionado.pessoa.uniaoEstavel eq true}">
+										rendered="#{ccbMB.participanteSelecionado.pessoa.estadocivil == 'CASADO' and !ccbMB.participanteSelecionado.empresa}">
 										<h:panelGrid columns="4">
 										
 											<p:outputLabel for="dataCasamento"
@@ -367,9 +354,9 @@
 												value="#{ccbMB.participanteSelecionado.pessoa.cpfConjuge}"
 												label="Contrato" mask="999.999.999-99" />
 										</h:panelGrid>
-										<h:panelGroup style="width: 50%;" layout="block" rendered="#{ccbMB.participanteSelecionado.pessoa.tipoUniao == 'Escritura publica'}">													
+										<h:panelGroup style="width: 50%;" layout="block">													
 											<p:outputLabel
-												value="Conforme escritura pública registrado no " styleClass="labelBold"
+												value="Conforme pacto antenupcial registrado no " styleClass="labelBold"
 												style="font-weight: bold; font-size: 16px;" />
 											<p:inputText id="registroPacto" 
 												value="#{ccbMB.participanteSelecionado.pessoa.registroPactoAntenupcial}" />
@@ -387,30 +374,6 @@
 												value=" datada de " styleClass="labelBold"
 												style="font-weight: bold; font-size: 16px;" />												
 											<p:calendar id="dataPacto" showOn="button"
-												value="#{ccbMB.participanteSelecionado.pessoa.dataPactoAntenupcial}" 
-												size="100" pattern="dd/MM/yyyy" locale="pt"
-												styleClass="dateTimeField" />
-										</h:panelGroup>
-										<h:panelGroup style="width: 50%;" layout="block" rendered="#{ccbMB.participanteSelecionado.pessoa.estadocivil == 'CASADO'}">													
-											<p:outputLabel
-												value="Conforme pacto antenupcial registrado no " styleClass="labelBold"
-												style="font-weight: bold; font-size: 16px;" />
-											<p:inputText id="registroPactoCasamento" 
-												value="#{ccbMB.participanteSelecionado.pessoa.registroPactoAntenupcial}" />
-											<p:outputLabel
-												value=" sob livro " styleClass="labelBold"
-												style="font-weight: bold; font-size: 16px;" />
-											<p:inputText id="livroPactoCasamento" 
-												value="#{ccbMB.participanteSelecionado.pessoa.livroPactoAntenupcial}" />
-											<p:outputLabel
-												value=" folhas " styleClass="labelBold"
-												style="font-weight: bold; font-size: 16px;" />
-											<p:inputText id="folhasPactoCasamento" 
-												value="#{ccbMB.participanteSelecionado.pessoa.folhasPactoAntenupcial}" />
-											<p:outputLabel
-												value=" datada de " styleClass="labelBold"
-												style="font-weight: bold; font-size: 16px;" />												
-											<p:calendar id="dataPactoCasamento" showOn="button"
 												value="#{ccbMB.participanteSelecionado.pessoa.dataPactoAntenupcial}" 
 												size="100" pattern="dd/MM/yyyy" locale="pt"
 												styleClass="dateTimeField" />
@@ -1485,6 +1448,72 @@
 							</h:panelGroup>					
 						</p:panel>
 					</h:panelGroup>
+					
+					<h:panelGroup id="ImovelAdicionarPanel"
+						style="margin-bottom:20px;">
+						<p:panel header="Matriculas Adicionais">								
+							<p:outputLabel value="Imovel Principal: " styleClass="labelBold" style="FONT-SIZE: 10pt;" />
+							<p:outputLabel value="Porcentagem Mercado: " style="FONT-SIZE: 10pt;" />
+							<p:outputLabel value="#{ccbMB.objetoCcb.objetoContratoCobranca.porcentagemImovelPrincipal}"
+								style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+							<p:outputLabel value="% - Porcentagem Leilão: " style="FONT-SIZE: 10pt;" />
+							<p:outputLabel value="#{ccbMB.objetoCcb.objetoContratoCobranca.porcentagemLeilaoImovelPrincipal}"
+								style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+							<p:outputLabel value="% - Credito: R$ " style="FONT-SIZE: 10pt;" />
+							<p:outputLabel value="#{ccbMB.objetoCcb.objetoContratoCobranca.valorCreditoImovelPrincipal}"
+								style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+							<p:outputLabel value=" Registro: R$ " style="FONT-SIZE: 10pt;" />
+							<p:outputLabel value="#{ccbMB.objetoCcb.objetoContratoCobranca.valorRegistroImovelPrincipal}"
+								style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+								
+							<p:dataTable var="imovelAdd" id="imovelAdicionarDV"
+								value="#{ccbMB.objetoCcb.objetoContratoCobranca.listaImoveis}" 
+								paginator="false" style="width: 1200px; max-width: 100%"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+								<p:column style="text-align: center;width:175px;"
+									headerText="N° Matricula">
+									<p:outputLabel value="#{imovelAdd.imovel.numeroMatricula}"
+										style="FONT-SIZE: 10pt;" />
+								</p:column>
+								
+								<p:column style="text-align: center;width:75px;"
+									headerText=" Valor de Mercado: ">
+									<p:outputLabel value="#{imovelAdd.imovel.valorMercado}"
+										style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+								</p:column>
+								
+								<p:column style="text-align: center;width:75px;"
+									headerText=" Valor de Leilão: ">
+									<p:outputLabel value="#{imovelAdd.imovel.valorLeilao}"
+										style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+								</p:column>
+								
+								<p:column style="text-align: center;width:75px;"
+									headerText="Porcentagem Mercado: ">
+									<p:outputLabel value="#{imovelAdd.porcentagem}"
+										style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+								</p:column>
+								
+								<p:column style="text-align: center;width:75px;"
+									headerText="Porcentagem Leilao: ">
+									<p:outputLabel value="#{imovelAdd.porcentagemLeilao}"
+										style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+								</p:column>
+								
+								<p:column style="text-align: center;width:75px;"
+									headerText=" Valor Credito: ">
+									<p:outputLabel value="#{imovelAdd.valorCredito}"
+										style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+								</p:column>
+								
+								<p:column style="text-align: center;width:75px;"
+									headerText=" Valor Registro: ">
+									<p:outputLabel value="#{imovelAdd.valorRegistro}"
+										style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+								</p:column>
+							</p:dataTable>
+						</p:panel>
+					</h:panelGroup>
 
 					<p:panel id="UploadArquivos" header="Upload de Arquivo(s)"
 						style="margin-bottom:10px;">
@@ -1596,8 +1625,7 @@
 				</p:dataTable>
 			</h:form>
 		</p:dialog>
-		
-	
+
 		<p:dialog widgetVar="participanteDialog" style="FONT-SIZE: 10pt;" width="800">
 			<h:form id="participanteDialogForm">
 				<p:dataTable id="participanteDialogdlg" var="participanteDialogdlg"

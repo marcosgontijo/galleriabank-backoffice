@@ -742,20 +742,21 @@
 									
 								</h:panelGrid>
 								
-								<ui:fragment>
-									<p:selectBooleanButton value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}" rendered="#{contratoCobrancaMB.indexStepsStatusContrato ge 1 and contratoCobrancaMB.indexStepsStatusContrato le 5 }" 
-										onLabel="Pré-Laudo Compass Solicitado" offLabel="Pré-Laudo Compass Pendente" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px">
-										<p:ajax event="valueChange" update=":form:Status"></p:ajax>
-									</p:selectBooleanButton>
-								
-									<p:selectManyMenu id="preLaudoImovel" showCheckbox="true"
-										value="#{contratoCobrancaMB.listSolicitacaoPreLaudoImoveis}"
-										label="Imóvel do pré-laudo" style="width:280px; margin-top: 12px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">
-										<f:selectItems value="#{contratoCobrancaMB.listTodosImoveisContrato}" var="imovelCobranca" itemValue="#{imovelCobranca.id}" itemLabel="#{imovelCobranca.numeroMatricula} - #{imovelCobranca.endereco}" />
-									</p:selectManyMenu>
-								</ui:fragment>
-								
-																
+								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_AVALIADOR_IMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_GERENTE_ANALISE">
+									<ui:fragment>
+										<p:selectBooleanButton value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}" rendered="#{contratoCobrancaMB.indexStepsStatusContrato ge 1 and contratoCobrancaMB.indexStepsStatusContrato le 5 }" 
+											onLabel="Pré-Laudo Compass Solicitado" offLabel="Pré-Laudo Compass Pendente" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px">
+											<p:ajax event="valueChange" update=":form:Status"></p:ajax>
+										</p:selectBooleanButton>
+									
+										<p:selectManyMenu id="preLaudoImovel" showCheckbox="true"
+											value="#{contratoCobrancaMB.listSolicitacaoPreLaudoImoveis}"
+											label="Imóvel do pré-laudo" style="width:280px; margin-top: 12px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">
+											<f:selectItems value="#{contratoCobrancaMB.listTodosImoveisContrato}" var="imovelCobranca" itemValue="#{imovelCobranca.id}" itemLabel="#{imovelCobranca.numeroMatricula} - #{imovelCobranca.endereco}" />
+										</p:selectManyMenu>
+									</ui:fragment>
+								</shiro:hasAnyRoles>	
+										
 								<ui:fragment
 									rendered="#{contratoCobrancaMB.indexStepsStatusContrato ge 8 and contratoCobrancaMB.indexStepsStatusContrato le 11}">
 									<h:panelGrid columns="2"
@@ -1190,6 +1191,8 @@
 
 				<!-- painel de analise de documento -->
 				<ui:include src="ContratoCobrancaAnaliseDocumento.xhtml"></ui:include>
+				
+				<ui:include src="ContratoCobrancaAnaliseDocumentoReanalise.xhtml"></ui:include>
 
 
 				<h:panelGroup id="comentarioComitePanel" style="margin-bottom:20px;">
@@ -3327,19 +3330,39 @@
 					style="margin-bottom:20px;">
 					<p:panel header="Adicionar Matriculas"
 						rendered="#{( usuarioMB.objetoUsuario.administrador or contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro')}">
-						<p:commandButton icon="ui-icon-plus" style="margin-left: 10px;"
-							action="#{contratoCobrancaMB.clearImovelAdicionarDialog()}"
-							oncomplete="PF('imovelAdiconalDialog').show();"
-							update="imovelAdiconalForm">
-						</p:commandButton>
-						
-						<p:outputLabel value="Imovel Principal: " styleClass="labelBold" style="FONT-SIZE: 10pt;" />
-						<p:outputLabel value="Porcentagem: " style="FONT-SIZE: 10pt;" />
-						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.porcentagemImovelPrincipal}"
-							style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
-						<p:outputLabel value="% - Registro: R$ " style="FONT-SIZE: 10pt;" />
-						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.valorRegistroImovelPrincipal}"
-							style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+						<h:panelGrid columns="2">
+							<p:commandButton icon="ui-icon-plus" style="margin-left: 10px;"
+								action="#{contratoCobrancaMB.clearImovelAdicionarDialog()}"
+								oncomplete="PF('imovelAdiconalDialog').show();"
+								update="imovelAdiconalForm">
+							</p:commandButton>
+							<h:panelGroup id="imovelPrincipal" >
+								<p:outputLabel value="Imovel Principal: " styleClass="labelBold" style="FONT-SIZE: 10pt;" />
+								<p:outputLabel value="Porcentagem Mercado: " style="FONT-SIZE: 10pt;" />
+								<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.porcentagemImovelPrincipal}"
+									style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+								<p:outputLabel value="% - Porcentagem Leilão: " style="FONT-SIZE: 10pt;" />
+								<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.porcentagemLeilaoImovelPrincipal}"
+									style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+								<p:outputLabel value="% - Credito: R$ " style="FONT-SIZE: 10pt;" />
+								<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.valorCreditoImovelPrincipal}"
+									style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+								<p:outputLabel value=" Registro: R$ " style="FONT-SIZE: 10pt;" />
+								<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.valorRegistroImovelPrincipal}"
+									style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+							</h:panelGroup>
+							<p:outputLabel value="Recalcular valor registro" styleClass="labelBold" style="FONT-SIZE: 10pt;" />
+							<p:commandButton icon="ui-icon ui-icon-arrowrefresh-1-e" style="margin-left: 10px;"
+								action="#{contratoCobrancaMB.calcularValorRegistro()}"
+								update="ImovelAdicionarPanel valorCartorio">
+							</p:commandButton>
+							
+							<p:outputLabel value="Recalcular valor Credito" styleClass="labelBold" style="FONT-SIZE: 10pt;" />
+							<p:commandButton icon="ui-icon ui-icon-arrowrefresh-1-e" style="margin-left: 10px;"
+								action="#{contratoCobrancaMB.calcularValorCreditoPorImovel()}"
+								update="ImovelAdicionarPanel valorCartorio">
+							</p:commandButton>
+						</h:panelGrid>
 							
 						<p:dataTable var="imovelAdd" id="imovelAdicionarDV"
 							value="#{contratoCobrancaMB.objetoContratoCobranca.listaImoveis}" 
@@ -3358,8 +3381,26 @@
 							</p:column>
 							
 							<p:column style="text-align: center;width:75px;"
-								headerText="Porcentagem do valor total: ">
+								headerText=" Valor de Leilão: ">
+								<p:outputLabel value="#{imovelAdd.imovel.valorLeilao}"
+									style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+							</p:column>
+							
+							<p:column style="text-align: center;width:75px;"
+								headerText="Porcentagem Mercado: ">
 								<p:outputLabel value="#{imovelAdd.porcentagem}"
+									style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+							</p:column>
+							
+							<p:column style="text-align: center;width:75px;"
+								headerText="Porcentagem Leilao: ">
+								<p:outputLabel value="#{imovelAdd.porcentagemLeilao}"
+									style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
+							</p:column>
+							
+							<p:column style="text-align: center;width:75px;"
+								headerText=" Valor Credito: ">
+								<p:outputLabel value="#{imovelAdd.valorCredito}"
 									style="FONT-SIZE: 10pt;" converter="bigDecimalConverter" />
 							</p:column>
 							
@@ -4011,16 +4052,17 @@
 				<h:panelGroup id="ContasPagarPanel">
 					<p:messages id="mensagensStarkBank"/>
 					<p:panel header="Dispesas" style="margin-bottom:10px;"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.aprovadoComite and( usuarioMB.objetoUsuario.administrador or ( contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Registro'))}">
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.okCliente}">
 						<f:facet name="header"> Despesas 
 							<p:outputLabel value="" />
-							<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR, COBRANCA_FINANCEIRO">
-								<p:selectBooleanButton
-									value="#{contratoCobrancaMB.addContasPagar}"
-									onLabel="Adicionar Conta" offLabel="Adicionar Conta"
-									onIcon="ui-icon-plus" offIcon="ui-icon-plus">
-									<p:ajax update=":form:ContasPagarPanel" event="change" />
-								</p:selectBooleanButton>
+							<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR, COBRANCA_FINANCEIRO, PROFILE_CONTRATO, PROFILE_GERENTE_ANALISE">
+								<p:commandButton icon="ui-icon-plus"
+									action="#{contratoCobrancaMB.clearConta()}"
+									oncomplete="PF('despesaDialog').show();"
+									update="despesaDialogForm" />
+								<p:commandButton icon="ui-icon-arrowrefresh-1-w"
+									action="#{contratoCobrancaMB.cirarDespesasContrato}"
+									update="ContasPagarPanel" />
 							</shiro:hasAnyRoles>
 						</f:facet>
 						
@@ -4034,7 +4076,8 @@
 								onkeydown="FormataValor(this, 13, event, 2);" 
 								value="#{contratoCobrancaMB.objetoContratoCobranca.contaPagarValorTotal}"
 								converter="bigDecimalConverter" />
-								
+						</h:panelGrid>	
+						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Registro'}">
 							<p:outputLabel for="nomeBancarioContaPagar" value="Nome:" 
 								style="width:250px;font-weight: bold; font-size: 18px !important;"/>
 							<p:inputText id="nomeBancarioContaPagar"
@@ -4071,149 +4114,6 @@
 								style="width:250px;font-weight: bold; font-size: 18px !important;"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.digitoContaBancarioContaPagar}" />	
 						</h:panelGrid>
-
-						<h:panelGroup id="adicionarContasPagar"
-							rendered="#{contratoCobrancaMB.addContasPagar}">
-							<h:panelGrid columns="2">
-								<p:spacer height="10" />
-								<p:spacer height="10" />
-
-								<p:outputLabel value="Adicionar Conta a Pagar"
-									styleClass="labelBold" />
-								<p:spacer width="0" />
-
-								<p:outputLabel for="ContaPagarDescricao" value="Descrição: "
-									styleClass="labelBold"
-									style="font-weight: bold; font-size: 18px;" />
-								<p:autoComplete id="ContaPagarDescricao" dropdown="true"
-									value="#{contratoCobrancaMB.contasPagarSelecionada.descricao}"
-									completeMethod="#{contratoCobrancaMB.contaPagarDescricaoLista()}"
-									scrollHeight="250" />
-
-								<p:outputLabel for="ContaPagarValor" value="Valor: "
-									styleClass="labelBold" />
-								<p:inputText id="ContaPagarValor"
-									value="#{contratoCobrancaMB.contasPagarSelecionada.valor}"
-									onkeypress="return isNumberKey(event);"
-									onkeydown="FormataValor(this, 13, event, 2);" required="false"
-									converter="bigDecimalConverter" />
-
-								<p:outputLabel for="ContaPagarDataVencimento"
-									value="Data Vencimento: " styleClass="labelBold" />
-								<p:calendar id="ContaPagarDataVencimento"
-									value="#{contratoCobrancaMB.contasPagarSelecionada.dataVencimento}"
-									label="Data" size="100" pattern="dd/MM/yyyy"
-									styleClass="dateTimeField" />
-									
-								<p:outputLabel for="ContaPagarValorPago" value="Valor Pago:  "
-									styleClass="labelBold" />
-								<p:inputText id="ContaPagarValorPago"
-									value="#{contratoCobrancaMB.contasPagarSelecionada.valorPagamento}"
-									onkeypress="return isNumberKey(event);"
-									onkeydown="FormataValor(this, 13, event, 2);" required="false"
-									converter="bigDecimalConverter" />
-									
-								<p:outputLabel for="ContaPagarDataPagamento"
-									value="Data Pagamento: " styleClass="labelBold" />
-								<p:calendar id="ContaPagarDataPagamento"
-									value="#{contratoCobrancaMB.contasPagarSelecionada.dataPagamento}"
-									label="Data" size="100" pattern="dd/MM/yyyy"
-									styleClass="dateTimeField" />
-									
-								<p:outputLabel for="ContaPagarObservacao" value="Observação: "
-								styleClass="labelBold"
-								style="font-weight: bold; font-size: 18px;" />
-								<p:inputTextarea id="ContaPagarObservacao"  rows="6" cols="33"
-								value="#{contratoCobrancaMB.contasPagarSelecionada.observacao}"/>
-							
-							<p:outputLabel for="formaTransferencia" value="Forma de Pagamento: "
-									styleClass="labelBold"
-									style="font-weight: bold; font-size: 18px;" />
-								<p:selectOneMenu id="formaTransferencia"
-									value="#{contratoCobrancaMB.contasPagarSelecionada.formaTransferencia}">
-									<f:selectItem itemValue="" itemLabel="Selecione" />
-									<f:selectItem itemValue="TED" itemLabel="TED" />
-									<f:selectItem itemValue="Pix" itemLabel="Pix" />
-									<f:selectItem itemValue="Boleto" itemLabel="Boleto" />
-									<f:selectItem itemValue="Imposto" itemLabel="Imposto" />
-									<p:ajax event="change" 
-										update="tedGrid contasDT" />
-								</p:selectOneMenu>
-							
-							</h:panelGrid>
-							
-							<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA, ASSISTENTEFINANCEIRO, COBRANCA_FINANCEIRO">  						
-					<p:panel id="ArquivosPagar" header="Selecionar conta a pagar" style="margin-bottom:10px;text-align: center;">							
-						<h:panelGrid columns="1">		
-							<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar"
-							fileUploadListener="#{contratoCobrancaMB.handleFileContaPagarUpload}" mode="advanced" dragDropSupport="true" update="ArquivosPagarSalvos" >
-								<f:attribute name="foo" value="#{contratoCobrancaMB.contasPagarSelecionada}" />
-							</p:fileUpload>							
-						</h:panelGrid>  
-					</p:panel>	
-					
-					<p:dialog modal="true" widgetVar="statusDialog" header="Status Downloading" draggable="false" closable="false" resizable="false">
-					    <p:graphicImage name="image/ajaxloadingbar.gif" />
-					</p:dialog>
-	
-					<p:panel id="ArquivosPagarSalvos" header="Arquivo(s) a Pagar Salvo(s) no Contrato" style="margin-bottom:10px;">							
-						<h:panelGrid columns="1">			                      								
-							<p:dataTable id="dtFilesPagar" var="filesPagar" value="#{contratoCobrancaMB.contasPagarSelecionada.filesContas}" rowKey="#{filesPagar.name}" selection="#{contratoCobrancaMB.deletefilesPagar}" emptyMessage="" sortBy="#{filesPagar.name}" >	
-								<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
-								 <f:facet name="header">											 
-									<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFilePagar}"/>
-						        </f:facet>	        
-						        <p:column style="text-align: center;"
-									headerText="Nome do Arquivo" filterBy="#{filesPagar.name}"
-									filterMatchMode="contains" sortBy="#{filesPagar.name}">
-									<h:outputText value="#{filesPagar.name}" />
-									<p:spacer height="10" />
-									<p:commandButton value="Abrir" ajax="false" action="#{contratoCobrancaMB.viewFile(filesPagar)}"
-										immediate="true" icon="ui-icon-search" onclick="target='_blank'" onblur="target='_self'">
-									</p:commandButton>
-								</p:column>  
-						        
-						        <p:column style="width:100px;">
-									<p:commandButton value="Download" ajax="false"  icon="ui-icon-arrowthick-1-s">						       	 	
-							       	 	<f:setPropertyActionListener target="#{contratoCobrancaMB.selectedFile}" value="#{filesPagar}" />
-							       	 	<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
-							    	</p:commandButton>	
-					            </p:column>						        
-	
-					             <f:facet name="footer">
-									<p:commandButton value="Excluir Selecionado(s)" ajax="false" icon="ui-icon-trash" action="#{contratoCobrancaMB.deleteFilePagar}"/>								
-						        </f:facet>             	        		               		        			        			           			 		
-							</p:dataTable>								
-						</h:panelGrid>  
-					</p:panel>
-					</shiro:hasAnyRoles>
-							<h:panelGroup id="tedGrid" >
-								<h:panelGrid columns="2" style="margin-left:20px;" rendered="#{contratoCobrancaMB.contasPagarSelecionada.formaTransferencia eq 'TED'}">									
-									<p:outputLabel for="nomeTed" value="Nome: " />
-									<p:inputText id="nomeTed" value="#{contratoCobrancaMB.contasPagarSelecionada.nomeTed}" />								
-									<p:outputLabel for="cpfTed" value="CPF/CNPJ: " />
-									<p:inputText id="cpfTed"
-										value="#{contratoCobrancaMB.contasPagarSelecionada.cpfTed}" />		
-									<p:outputLabel value="Banco: " for="bancoTed" />
-									<p:autoComplete id="bancoTed" value="#{contratoCobrancaMB.contasPagarSelecionada.bancoTed}"
-										completeMethod="#{contratoCobrancaMB.contasPagarSelecionada.completeBancos}"
-										var="banco" itemLabel="#{banco}" itemValue="#{banco}"
-										forceSelection="true" styleClass="labelBold" label="Conta" 
-										style="width:100px;"
-										scrollHeight="250" />														
-									<p:outputLabel for="contaTed" value="Conta: " />
-									<p:inputText id="contaTed"
-										value="#{contratoCobrancaMB.contasPagarSelecionada.contaTed}" />									
-									<p:outputLabel for="agenciaTed" value="Agência: " />
-									<p:inputText id="agenciaTed"
-										value="#{contratoCobrancaMB.contasPagarSelecionada.agenciaTed}" />							
-								</h:panelGrid>
-							</h:panelGroup>	
-							
-							<p:commandButton value="Concluir" ajax="true"
-								action="#{contratoCobrancaMB.concluirConta()}"
-								update=":form:ContasPagarPanel :form:messageContasPagar" icon="ui-icon ui-icon-check" />
-						</h:panelGroup>
 						
 						<p:messages id="messageContasPagar"/>
 						
@@ -4256,13 +4156,13 @@
 						
 							<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR, COBRANCA_FINANCEIRO">								
 								<p:column style="text-align: center;width:260px;" headerText="" >
-						    	
 									<p:commandButton value="Editar" icon="ui-icon-pencil"
-										action="#{contratoCobrancaMB.editarConta(contas)}" ajax="true"
-										update=":form:ContasPagarPanel" />
+										action="#{contratoCobrancaMB.editarConta(contas)}"
+										oncomplete="PF('despesaDialog').show();"
+										update="despesaDialogForm" />
 									<p:commandButton value="Remover" icon="ui-icon-trash"
-										action="#{contratoCobrancaMB.removerConta(contas)}"
-										ajax="true" update=":form:ContasPagarPanel" />
+										action="#{contratoCobrancaMB.removerConta(contas)}" ajax="true"
+										update=":form:ContasPagarPanel" />
 									<p:commandButton value="Arquivos" icon="ui-icon-print"
 										action="#{contratoCobrancaMB.populateFilesContasPagar(contas)}"
 										ajax="true" update=":form:ContasPagarPanel contaArquivosForm" />
@@ -4280,13 +4180,26 @@
 											<f:setPropertyActionListener target="#{contratoCobrancaMB.contasPagarSelecionada}" value="#{contas}" />									
 										</p:commandButton>
 									</shiro:hasAnyRoles>
-									
-									<p:commandButton value="Emitir Aditamento" action="#{ccbMB.emitirAditamento(contratoCobrancaMB.objetoContratoCobranca.listContasPagar)}">
-			                			<f:setPropertyActionListener  target="#{ccbMB.objetoContratoCobranca}" value="#{contratoCobrancaMB.objetoContratoCobranca}" />
-			                		</p:commandButton>
 								</p:column>
 							</shiro:hasAnyRoles>
 						</p:dataTable>			
+						
+						<h:panelGrid columns="1">
+							<h:panelGroup>
+								<p:outputLabel value="Valor total Pago: " styleClass="labelBold" />
+								<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.somaValorPago}"
+									converter="bigDecimalConverter" styleClass="labelBold"
+									style="FONT-SIZE: 10pt;width:100px;" />
+							</h:panelGroup>
+							<h:panelGrid columns="2">
+								<p:messages id="mensagemAditamento" />	
+								<p:commandButton value="Emitir Aditamento" ajax="false"
+									action="#{ccbMB.emitirAditamento(contratoCobrancaMB.objetoContratoCobranca.listContasPagar)}" 
+									rendered="#{contratoCobrancaMB.objetoContratoCobranca.ccbPronta}">
+		                			<f:setPropertyActionListener  target="#{ccbMB.objetoContratoCobranca}" value="#{contratoCobrancaMB.objetoContratoCobranca}" />
+		                		</p:commandButton>
+	                		</h:panelGrid>
+                		</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
 				
@@ -4340,13 +4253,19 @@
 								<p:inputText id="pixCartaSplit"
 									style="width:250px;font-weight: bold; font-size: 18px !important;"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.pixCartaSplit}" />
+									
+								<p:outputLabel for="ispbCartaSplit" value="ISPB (se não tem código PIX): "  
+									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+								<p:inputText id="ispbCartaSplit"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.ispbCartaSplit}" />
 										
 								<p:commandButton action="#{contratoCobrancaMB.pagamentoStarkBankCartaSplit}"
 											icon="ui-icon-video" title="Ordem de Pagamento" value="Ordem de Pagamento"
 											update=":form" disabled="#{contratoCobrancaMB.buscaDespesaCartaSplit('Pagamento Carta Split', contratoCobrancaMB.objetoContratoCobranca.numeroContrato) != null}"/>	
 								<p:commandButton value="Comprovante" ajax="false" icon="ui-icon-arrowthick-1-s" update=":form:messageContasPagar"
 								 disabled="#{contratoCobrancaMB.buscaDespesaCartaSplit('Pagamento Carta Split', contratoCobrancaMB.objetoContratoCobranca.numeroContrato) == null}">						       	 	
-						       	 	<p:fileDownload value="#{contratoCobrancaMB.getDownloadComprovanteStarkBank(contratoCobrancaMB.buscaDespesaCartaSplit('Pagamento Carta Split', contratoCobrancaMB.objetoContratoCobranca.numeroContrato).listContasPagarBaixas)}"/>
+						       	 	<p:fileDownload value="#{contratoCobrancaMB.getDownloadComprovanteStarkBankCartaSplit('Pagamento Carta Split', contratoCobrancaMB.objetoContratoCobranca)}"/>
 						    	</p:commandButton>								
 							</h:panelGrid>
 							<h:panelGrid columns="2">
@@ -4396,12 +4315,18 @@
 									style="width:250px;font-weight: bold; font-size: 18px !important;"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.pixCartaSplitGalleria}" />
 									
+								<p:outputLabel for="ispbCartaSplitGalleria" value="ISPB (se não tem código PIX): " 
+									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+								<p:inputText id="ispbCartaSplitGalleria"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.ispbCartaSplitGalleria}" />
+									
 								<p:commandButton action="#{contratoCobrancaMB.pagamentoStarkBankCartaSplitGalleria}"
 											icon="ui-icon-video" title="Ordem de Pagamento" value="Ordem de Pagamento"
 											update=":form" disabled="#{contratoCobrancaMB.buscaDespesaCartaSplit('Pagamento Carta Split - Galleria', contratoCobrancaMB.objetoContratoCobranca.numeroContrato) != null}"/>	
 								<p:commandButton value="Comprovante" ajax="false" icon="ui-icon-arrowthick-1-s" update=":form:messageContasPagar"
 								disabled="#{contratoCobrancaMB.buscaDespesaCartaSplit('Pagamento Carta Split - Galleria', contratoCobrancaMB.objetoContratoCobranca.numeroContrato) == null}">						       	 	
-						       	 	<p:fileDownload value="#{contratoCobrancaMB.getDownloadComprovanteStarkBank(contratoCobrancaMB.buscaDespesaCartaSplit('Pagamento Carta Split - Galleria', contratoCobrancaMB.objetoContratoCobranca.numeroContrato).listContasPagarBaixas)}" />
+						       	 	<p:fileDownload value="#{contratoCobrancaMB.getDownloadComprovanteStarkBankCartaSplit('Pagamento Carta Split - Galleria', contratoCobrancaMB.objetoContratoCobranca)}"/>
 						    	</p:commandButton>		
 							</h:panelGrid>
 							<h:panelGrid columns="2">
@@ -4445,18 +4370,24 @@
 									style="width:250px;font-weight: bold; font-size: 18px !important;"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.contaBancarioCustoEmissao}" />
 									
-									<p:outputLabel for="pixCustoEmissao" value="Pix: " 
+								<p:outputLabel for="pixCustoEmissao" value="Pix: " 
 									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
 								<p:inputText id="pixCustoEmissao"
 									style="width:250px;font-weight: bold; font-size: 18px !important;"
 									value="#{contratoCobrancaMB.objetoContratoCobranca.pixCustoEmissao}" />
+									
+								<p:outputLabel for="ispbCustoEmissao" value="ISPB (se não tem código PIX): " 
+									style="width:250px;font-weight: bold; font-size: 18px !important;"/>
+								<p:inputText id="ispbCustoEmissao"
+									style="width:250px;font-weight: bold; font-size: 18px !important;"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.ispbCustoEmissao}" />
 									
 								<p:commandButton action="#{contratoCobrancaMB.pagamentoStarkBankCartaSplitCustoEmissao}"
 											icon="ui-icon-video" title="Ordem de Pagamento" value="Ordem de Pagamento"
 											update=":form" disabled="#{contratoCobrancaMB.buscaDespesaCartaSplit('Pagamento Carta Split - IOF', contratoCobrancaMB.objetoContratoCobranca.numeroContrato) != null}"/>	
 								<p:commandButton value="Comprovante" ajax="false" icon="ui-icon-arrowthick-1-s" update=":form:messageContasPagar"
 								disabled="#{contratoCobrancaMB.buscaDespesaCartaSplit('Pagamento Carta Split - IOF', contratoCobrancaMB.objetoContratoCobranca.numeroContrato) == null}">						       	 	
-						       	 	<p:fileDownload value="#{contratoCobrancaMB.getDownloadComprovanteStarkBank(contratoCobrancaMB.buscaDespesaCartaSplit('Pagamento Carta Split - IOF', contratoCobrancaMB.objetoContratoCobranca.numeroContrato).listContasPagarBaixas)}" />
+						       	 	<p:fileDownload value="#{contratoCobrancaMB.getDownloadComprovanteStarkBankCartaSplit('Pagamento Carta Split - IOF', contratoCobrancaMB.objetoContratoCobranca)}"/>
 						    	</p:commandButton>	
 							</h:panelGrid>
 						</h:panelGrid>
@@ -5436,7 +5367,7 @@
 			</div>
 		</h:form>
 		
-				<p:dialog header="Pagamento StarkBank" overflow="auto"
+		<p:dialog header="Pagamento StarkBank" overflow="auto"
 			widgetVar="pagamentoStarkBankdlg" resizable="true" style="FONT-SIZE: 13pt;"
 			width="800" minWidth="800">
 			<h:form id="starkBankForm">				
@@ -5505,6 +5436,16 @@
 								style="width:250px;"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.cpfCnpjBancarioContaPagar}" required="true" />
 	
+							<p:outputLabel for="tipoContaBancariaPix" value="Tipo da Conta: "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+							<p:selectOneMenu id="tipoContaBancariaPix"
+									value="#{contratoCobrancaMB.contasPagarSelecionada.tipoContaBancaria}">
+									<f:selectItem itemValue="" itemLabel="Selecione" />
+									<f:selectItem itemValue="Conta Corrente" itemLabel="Conta Corrente" />
+									<f:selectItem itemValue="Conta Poupança" itemLabel="Conta Poupança" />
+							</p:selectOneMenu>
+							
 							<p:outputLabel for="bancoBancarioContaPagarPixStarkBank" value="Banco: " 
 								style="width:250px;" styleClass="labelBold"/>
 							<p:inputText id="bancoBancarioContaPagarPixStarkBank"
@@ -5535,7 +5476,9 @@
 									value="#{contratoCobrancaMB.contasPagarSelecionada.valorPagamento}"
 									onkeypress="return isNumberKey(event);"
 									onkeydown="FormataValor(this, 13, event, 2);" required="true"
-									converter="bigDecimalConverter" />							
+									converter="bigDecimalConverter" />
+									
+														
 						</h:panelGrid> 											
 				</p:panel>
 				
@@ -5554,6 +5497,16 @@
 								style="width:250px;"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.cpfCnpjBancarioContaPagar}" required="true" />
 	
+							<p:outputLabel for="tipoContaBancariaTED" value="Tipo da Conta: "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+							<p:selectOneMenu id="tipoContaBancariaTED"
+									value="#{contratoCobrancaMB.contasPagarSelecionada.tipoContaBancaria}">
+									<f:selectItem itemValue="" itemLabel="Selecione" />
+									<f:selectItem itemValue="Conta Corrente" itemLabel="Conta Corrente" />
+									<f:selectItem itemValue="Conta Poupança" itemLabel="Conta Poupança" />
+							</p:selectOneMenu>
+							
 							<p:outputLabel for="bancoBancarioContaPagarTEDStarkBank" value="Banco: " 
 								style="width:250px;" styleClass="labelBold"/>
 							<p:inputText id="bancoBancarioContaPagarTEDStarkBank"
@@ -6948,192 +6901,9 @@
 			<ui:param name="mbean" value="#{contratoCobrancaMB}"></ui:param>		
 		</ui:include>
 		
-		<p:dialog header="Nova Despesa" widgetVar="despesaDialog"
-			resizable="true" style="FONT-SIZE: 10pt;" width="800">
-			<h:form id="despesaDialogForm">
-				<div align="center">
-					<h:panelGroup id="adicionarContasPagar">
-						<h:panelGrid columns="2">
-							<h:panelGrid columns="2">
-								<p:spacer height="10" />
-								<p:spacer height="10" />
-	
-								<p:outputLabel value="Adicionar Conta a Pagar"
-									styleClass="labelBold" />
-								<p:spacer width="0" />
-	
-								<p:outputLabel for="ContaPagarDescricao" value="Descrição: "
-									styleClass="labelBold"
-									style="font-weight: bold; font-size: 18px;" />
-								<p:autoComplete id="ContaPagarDescricao" dropdown="true"
-									value="#{contratoCobrancaMB.contasPagarSelecionada.descricao}"
-									completeMethod="#{contratoCobrancaMB.contaPagarDescricaoLista()}"
-									scrollHeight="250" />
-	
-								<p:outputLabel for="ContaPagarValor" value="Valor: "
-									styleClass="labelBold" />
-								<p:inputText id="ContaPagarValor"
-									value="#{contratoCobrancaMB.contasPagarSelecionada.valor}"
-									onkeypress="return isNumberKey(event);"
-									onkeydown="FormataValor(this, 13, event, 2);" required="false"
-									converter="bigDecimalConverter" />
-	
-								<p:outputLabel for="ContaPagarDataVencimento"
-									value="Data Vencimento: " styleClass="labelBold" />
-								<p:calendar id="ContaPagarDataVencimento"
-									value="#{contratoCobrancaMB.contasPagarSelecionada.dataVencimento}"
-									label="Data" size="100" pattern="dd/MM/yyyy"
-									styleClass="dateTimeField" />
-	
-								<p:outputLabel for="ContaPagarValorPago" value="Valor Pago: "
-									styleClass="labelBold" />
-								<p:inputText id="ContaPagarValorPago"
-									value="#{contratoCobrancaMB.contasPagarSelecionada.valorPagamento}"
-									onkeypress="return isNumberKey(event);"
-									onkeydown="FormataValor(this, 13, event, 2);" required="false"
-									converter="bigDecimalConverter" />
-	
-								<p:outputLabel for="ContaPagarDataPagamento"
-									value="Data Pagamento: " styleClass="labelBold" />
-								<p:calendar id="ContaPagarDataPagamento"
-									value="#{contratoCobrancaMB.contasPagarSelecionada.dataPagamento}"
-									label="Data" size="100" pattern="dd/MM/yyyy"
-									styleClass="dateTimeField" />
-	
-								<p:outputLabel for="ContaPagarObservacao" value="Observação: "
-									styleClass="labelBold"
-									style="font-weight: bold; font-size: 18px;" />
-								<p:inputTextarea id="ContaPagarObservacao" rows="6" cols="33"
-									value="#{contratoCobrancaMB.contasPagarSelecionada.observacao}" />
-	
-								<p:outputLabel for="formaTransferencia"
-									value="Forma de Tranferência: " styleClass="labelBold"
-									style="font-weight: bold; font-size: 18px;" />
-								<p:selectOneMenu id="formaTransferencia"
-									value="#{contratoCobrancaMB.contasPagarSelecionada.formaTransferencia}">
-									<f:selectItem itemValue="" itemLabel="Selecione" />
-									<f:selectItem itemValue="TED" itemLabel="TED" />
-									<f:selectItem itemValue="Pix" itemLabel="Pix" />
-									<f:selectItem itemValue="Boleto" itemLabel="Boleto" />
-									<p:ajax event="change" update="tedGrid pixGrid" />
-								</p:selectOneMenu>
-							</h:panelGrid>
-							<h:panelGroup>
-								<h:panelGroup id="tedGrid">
-									<h:panelGrid columns="2" style="margin-left:20px;"
-										rendered="#{contratoCobrancaMB.contasPagarSelecionada.formaTransferencia eq 'TED'}">
-										<p:outputLabel for="nomeTed" value="Nome: " />
-										<p:inputText id="nomeTed"
-											value="#{contratoCobrancaMB.contasPagarSelecionada.nomeTed}" />
-										<p:outputLabel for="cpfTed" value="CPF/CNPJ: " />
-										<p:inputText id="cpfTed"
-											value="#{contratoCobrancaMB.contasPagarSelecionada.cpfTed}" />
-										<p:outputLabel value="Banco: " for="bancoTed" />
-										<p:autoComplete id="bancoTed"
-											value="#{contratoCobrancaMB.contasPagarSelecionada.bancoTed}"
-											completeMethod="#{contratoCobrancaMB.contasPagarSelecionada.completeBancos}"
-											var="banco" itemLabel="#{banco}" itemValue="#{banco}"
-											forceSelection="true" styleClass="labelBold" label="Conta"
-											style="width:100px;" scrollHeight="250" />
-										<p:outputLabel for="contaTed" value="Conta: " />
-										<p:inputText id="contaTed"
-											value="#{contratoCobrancaMB.contasPagarSelecionada.contaTed}" />
-										<p:outputLabel for="agenciaTed" value="Agência: " />
-										<p:inputText id="agenciaTed"
-											value="#{contratoCobrancaMB.contasPagarSelecionada.agenciaTed}" />
-									</h:panelGrid>
-								</h:panelGroup>
-								<h:panelGroup id="pixGrid">
-									<h:panelGrid columns="2" style="margin-left:20px;"
-										rendered="#{contratoCobrancaMB.contasPagarSelecionada.formaTransferencia eq 'Pix'}">
-										<p:outputLabel for="pix" value="Pix: " />
-										<p:inputText id="pix"
-											value="#{contratoCobrancaMB.contasPagarSelecionada.pix}" />
-									</h:panelGrid>
-								</h:panelGroup>
-							</h:panelGroup>
-						</h:panelGrid>
-						<shiro:hasAnyRoles
-							name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO">						
-							<p:dialog modal="true" widgetVar="statusDialog"
-								header="Status Downloading" draggable="false" closable="false"
-								resizable="false">
-								<p:graphicImage name="image/ajaxloadingbar.gif" />
-							</p:dialog>
-
-							<p:panel id="ArquivosPagarSalvos"
-								header="Arquivo(s) a Pagar Salvo(s) no Contrato"
-								style="margin-bottom:10px;">
-								<h:panelGrid columns="1">
-									<p:fileUpload label="Selecionar Arquivo(s)"
-										uploadLabel="Salvar Arquivo(s)" multiple="true"
-										cancelLabel="Cancelar"
-										fileUploadListener="#{contratoCobrancaMB.handleFileContaPagarUpload}"
-										mode="advanced" dragDropSupport="true"
-										update="ArquivosPagarSalvos">
-										<f:attribute name="foo"
-											value="#{contratoCobrancaMB.contasPagarSelecionada}" />
-									</p:fileUpload>
-									<p:dataTable id="dtFilesPagar" var="filesPagar"
-										value="#{contratoCobrancaMB.contasPagarSelecionada.filesContas}"
-										rowKey="#{filesPagar.name}"
-										selection="#{contratoCobrancaMB.deletefilesPagar}"
-										emptyMessage="" sortBy="#{filesPagar.name}">
-										<p:column selectionMode="multiple"
-											style="width:16px;text-align:center" />
-										<f:facet name="header">
-											<p:commandButton value="Download Selecionado(s)"
-												ajax="false" immediate="true" icon="ui-icon-arrowthick-1-s"
-												action="#{contratoCobrancaMB.getDownloadAllFilesContaPagar()}">
-											</p:commandButton>
-											<p:commandButton value="Excluir Selecionado(s)" ajax="false"
-												icon="ui-icon-trash"
-												action="#{contratoCobrancaMB.deleteFilePagar}" />
-										</f:facet>
-										<p:column style="text-align: center;"
-											headerText="Nome do Arquivo" filterBy="#{filesPagar.name}"
-											filterMatchMode="contains" sortBy="#{filesPagar.name}">
-											<h:outputText value="#{filesPagar.name}" />
-											<p:spacer height="10" />
-											<p:commandButton value="Abrir" ajax="false"
-												action="#{contratoCobrancaMB.viewFile(filesPagar)}"
-												immediate="true" icon="ui-icon-search"
-												onclick="target='_blank'" onblur="target='_self'">
-											</p:commandButton>
-										</p:column>
-
-										<p:column style="width:100px;">
-											<p:commandButton value="Download" ajax="false"
-												icon="ui-icon-arrowthick-1-s">
-												<f:setPropertyActionListener
-													target="#{contratoCobrancaMB.selectedFile}"
-													value="#{filesPagar}" />
-												<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
-											</p:commandButton>
-										</p:column>
-
-										<p:ajax event="rowSelectCheckbox" process="@this"
-											listener="#{contratoCobrancaMB.fileSelectionListener()}" />
-										<p:ajax event="rowUnselectCheckbox" process="@this"
-											listener="#{contratoCobrancaMB.fileSelectionListener()}" />
-										<p:ajax event="toggleSelect" process="@this"
-											listener="#{contratoCobrancaMB.fileSelectionListener()}" />
-									</p:dataTable>
-								</h:panelGrid>
-							</p:panel>
-
-						</shiro:hasAnyRoles>
-			
-					</h:panelGroup>
-					<p:commandButton value="Inserir Despesa" icon="ui-icon-check"
-						style="margin-top: 5px; margin-bottom: 5px;"
-						action="#{contratoCobrancaMB.concluirConta()}"
-						onclick="PF('despesaDialog').hide();"
-						update=":form:ContasPagarPanel">
-					</p:commandButton>
-				</div>
-			</h:form>
-		</p:dialog>
+		<ui:include src="../../Dialog/ConstasPagarInserirDialog.xhtml">
+			<ui:param name="mbean" value="#{contratoCobrancaMB}"></ui:param>		
+		</ui:include>
 		
 	</ui:define>
 </ui:composition>

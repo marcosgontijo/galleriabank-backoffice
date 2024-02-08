@@ -11,7 +11,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ImovelEstoque;
 import com.webnowbr.siscoat.cobranca.mb.RelatorioEstoque;
 import com.webnowbr.siscoat.db.dao.HibernateDao;
-import com.webnowbr.siscoat.relatorio.vo.RelatorioSemestre;
+import com.webnowbr.siscoat.db.dao.HibernateDao.DBRunnable;
 
 /**
  * DAO access layer for the Tecnico entity
@@ -52,6 +52,7 @@ public class ImovelEstoqueDao extends HibernateDao <ImovelEstoque,Long> {
 			}
 		});
 	}
+
     @SuppressWarnings("unchecked")
 	public List<ContratoCobranca> consultaImovelEstoqueNaoVendido() {
   		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
@@ -152,7 +153,8 @@ public class ImovelEstoqueDao extends HibernateDao <ImovelEstoque,Long> {
   				return objects;
   			}
   		});
-  	}    private String QUERY_RELATORIO_ESTOQUE = "select c.numerocontrato, ie.variacaocusto, ie.ltvleilao, ie.valoremprestimo, ie.vendaforcada, ie.valormercado, p.nome, i.numeromatricula, \r\n"
+  	}
+    private String QUERY_RELATORIO_ESTOQUE = "select c.numerocontrato, ie.variacaocusto, ie.ltvleilao, ie.valoremprestimo, ie.vendaforcada, ie.valormercado, p.nome, i.numeromatricula, \r\n"
     		+ "concat (i.endereco, ', ', i.bairro, ', ', i.complemento, ', ', i.cidade, ', ', i.estado, '- ', i.cep) as Imovel, ie.dataconsolidado, ie.dataleilao1, ie.dataleilao2, \r\n"
     		+ "ie.dataleilao3 as LeilaoEstoque, ie.statusleilao, ie.leiloeiro, ie.statusatual, ie.valorleilao2, ie.valorvenda, ie.datavenda, ie.tipovenda, ie.quitado \r\n"
     		+ "	from cobranca.contratocobranca c\r\n"

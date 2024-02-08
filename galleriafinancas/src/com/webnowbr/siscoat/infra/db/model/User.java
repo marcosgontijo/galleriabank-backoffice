@@ -3,6 +3,7 @@ package com.webnowbr.siscoat.infra.db.model;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 
@@ -24,6 +25,7 @@ public final class User implements Serializable {
     private String login;
     /** Senha. */
     private String password;
+    
     /** Perfil do usuario. */
     private UserPerfil userPerfil;
     
@@ -111,7 +113,7 @@ public final class User implements Serializable {
 	private boolean cadastraResponsavel;
     private boolean consultaIndividual;
     
-    private List<Termo> listTermos;
+    private Set<TermoUsuario> listTermos;
     
     /**
      * Construtor.
@@ -703,13 +705,12 @@ public final class User implements Serializable {
 		this.senhaDocket = senhaDocket;
 	}
 
-	public List<Termo> getListTermos() {
-		return listTermos;
-	}
-
-	public void setListTermos(List<Termo> listTermos) {
-		this.listTermos = listTermos;
-	}
+	
+	  public Set<TermoUsuario> getListTermos() { return listTermos; }
+	  
+	  public void setListTermos(Set<TermoUsuario> listTermos) { this.listTermos =
+	  listTermos; }
+	 
 
 	public boolean isProfilePajuNeves() {
 		return profilePajuNeves;

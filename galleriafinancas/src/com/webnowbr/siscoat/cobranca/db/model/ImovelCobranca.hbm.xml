@@ -141,7 +141,7 @@
 		
 		<property name="valorMercado" type="big_decimal">
 			<column name="valorMercado" />
-		</property> 
+		</property>  
 		
 		<property name="preLaudoSolicitado" type="boolean">
 			<column name="preLaudoSolicitado" not-null="true" default="false"/>
@@ -154,6 +154,12 @@
 		<property name="valorPreLaudo" type="big_decimal">
 			<column name="valorPreLaudo"/>
 		</property> 
+		
+		
+		<property name="valorLeilao" type="big_decimal">
+			<column name="valorLeilao" />
+		</property> 
+		
 
     </class>
 </hibernate-mapping>

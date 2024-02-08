@@ -674,6 +674,7 @@ public class ContratoCobranca implements Serializable {
 	private boolean temTxAdm;
 	private BigDecimal valorImovel;
 	private String numeroContratoSeguro;
+	private String serieCci;
 	private String termoCessao;
 	private boolean enviadoJsonBRL;
 
@@ -686,6 +687,8 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal valorMercadoImovel;
 	private BigDecimal porcentagemImovelPrincipal;
 	private BigDecimal valorRegistroImovelPrincipal;
+	private BigDecimal porcentagemLeilaoImovelPrincipal;
+	private BigDecimal valorCreditoImovelPrincipal;
 
 	private BigDecimal valorVendaForcadaImovel;
 	private String comentarioJuridico;
@@ -763,6 +766,8 @@ public class ContratoCobranca implements Serializable {
 	private String contaBancarioContaPagar;
 	private String digitoContaBancarioContaPagar;
 	private String chavePIXBancarioContaPagar;
+	private String ispbBancarioContaPagar;
+	private String tipoContaContaPagar;
 
 	private BigDecimal valorCartaSplit;
 	private String nomeBancarioCartaSplit;
@@ -771,6 +776,7 @@ public class ContratoCobranca implements Serializable {
 	private String agenciaBancarioCartaSplit;
 	private String contaBancarioCartaSplit;
 	private String pixCartaSplit;
+	private String ispbCartaSplit;
 
 	private BigDecimal valorCartaSplitGalleria;
 	private String nomeBancarioCartaSplitGalleria;
@@ -779,6 +785,7 @@ public class ContratoCobranca implements Serializable {
 	private String agenciaBancarioCartaSplitGalleria;
 	private String contaBancarioCartaSplitGalleria;
 	private String pixCartaSplitGalleria;
+	private String ispbCartaSplitGalleria;
 
 	private BigDecimal valorCustoEmissao;
 	private String nomeBancarioCustoEmissao;
@@ -787,6 +794,7 @@ public class ContratoCobranca implements Serializable {
 	private String agenciaBancarioCustoEmissao;
 	private String contaBancarioCustoEmissao;
 	private String pixCustoEmissao;
+	private String ispbCustoEmissao;
 
 	private String observacaoPagamento;
 
@@ -921,9 +929,12 @@ public class ContratoCobranca implements Serializable {
 	public BigDecimal calcularValorTotalContasPagas() {
 		somaValorPago = BigDecimal.ZERO;
 		for (ContasPagar conta : this.getListContasPagar()) {
-			if (!CommonsUtil.semValor(conta.getValorPagamento())) {
-				somaValorPago = somaValorPago.add(conta.getValorPagamento());
-			}
+			if (conta.isEditada()) 
+				continue;
+			if (CommonsUtil.semValor(conta.getValorPagamento())) 
+				continue;
+			
+			somaValorPago = somaValorPago.add(conta.getValorPagamento());
 		}
 		return somaValorPago;
 	}
@@ -1581,11 +1592,11 @@ public class ContratoCobranca implements Serializable {
 			potuacao -= 100;
 
 		if (potuacao < 400) {
-			taxaPreAprovada = BigDecimal.valueOf(1.89);
-		} else if (potuacao >= 400 && potuacao < 499) {
-			taxaPreAprovada = BigDecimal.valueOf(1.79);
-		} else if (potuacao >= 500 && potuacao < 599) {
 			taxaPreAprovada = BigDecimal.valueOf(1.69);
+		} else if (potuacao >= 400 && potuacao < 499) {
+			taxaPreAprovada = BigDecimal.valueOf(1.69);
+		} else if (potuacao >= 500 && potuacao < 599) {
+			taxaPreAprovada = BigDecimal.valueOf(1.59);
 		} else if (potuacao >= 600 && potuacao < 699) {
 			taxaPreAprovada = BigDecimal.valueOf(1.59);
 		} else if (potuacao >= 700 && potuacao < 799) {

@@ -9,6 +9,7 @@
 	
 	<ui:define name="conteudo">
 		<h:form id="form">
+		<p:messages id="mensagens" showDetail="true"/>
 			<script
 				src="#{request.contextPath}/resources/resources/js/functions.js"></script>
 			<script
@@ -29,166 +30,303 @@
 			<p:panel id="EditarEstoque" header="Estoque"
 				style="margin-bottom:10px;">
 				<p:focus />
-				<p:messages id="msgs" />	
-				<h:panelGrid columns="2">							
-					<p:outputLabel for="numeroContrato" value="Número do Contrato: " styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px;"/>
-					<h:outputText id="numeroContrato" value="#{imovelEstoqueMB.objetoContratoCobranca.numeroContrato}" label="Número do Contrato" style="font-weight: bold; font-size: 18px;"/>			
+				<p:messages id="msgs" />
+				<h:panelGrid columns="2">
+					<p:outputLabel for="numeroContrato" value="Número do Contrato: "
+						styleClass="labelBold"
+						style="width:250px;font-weight: bold; font-size: 18px;" />
+					<h:outputText id="numeroContrato"
+						value="#{imovelEstoqueMB.objetoContratoCobranca.numeroContrato}"
+						label="Número do Contrato"
+						style="font-weight: bold; font-size: 18px;" />
 				</h:panelGrid>
 
 				<p:panel id="Estoque" header="Estoque" style="margin-bottom:10px;">
 					<h:panelGrid columns="2">
-							<h:panelGrid columns="2">
-								
-								<p:outputLabel for="valorEmprestimo" value="Valor do empréstimo: "
-									styleClass="labelBold"
-									style="font-weight: bold; font-size: 18px;" />
-								<p:inputText id="valorEmprestimo" value="#{imovelEstoqueMB.objetoImovelEstoque.valorEmprestimo}"
-									onkeypress="return isNumberKey(event);"
-									onkeydown="FormataValor(this,13, event, 2);"
-									converter="bigDecimalConverter"/>
-									
-								<p:outputLabel for="vendaForcada" value="Venda Forçada: "
-									styleClass="labelBold"
-									style="font-weight: bold; font-size: 18px;" />
-								<p:inputText id="vendaForcada" value="#{imovelEstoqueMB.objetoImovelEstoque.vendaForcada}"
-									onkeypress="return isNumberKey(event);"
-									onkeydown="FormataValor(this,13, event, 2);"
-									converter="bigDecimalConverter"/>	
-								
-								<p:outputLabel for="valorMercado" value="Valor Mercado: "
-									styleClass="labelBold"
-									style="font-weight: bold; font-size: 18px;" />
-								<p:inputText id="valorMercado" value="#{imovelEstoqueMB.objetoImovelEstoque.valorMercado}"
-									onkeypress="return isNumberKey(event);"
-									onkeydown="FormataValor(this,13, event, 2);"
-									converter="bigDecimalConverter"/>
-									
-								<p:outputLabel for="dataConsolidado" value="Data de Consolidação: "
-									styleClass="labelBold"
-									style="font-weight: bold; font-size: 18px;" />
-								<p:calendar id="dataConsolidado" showOn="button"
-									value="#{imovelEstoqueMB.objetoImovelEstoque.dataConsolidado}"
-									size="100" pattern="dd/MM/yyyy" locale="pt"
-									styleClass="dateTimeField" />	
-									
-								<p:outputLabel for="dataLeilao1" value="Data 1º leilão: "
-									styleClass="labelBold"
-									style="font-weight: bold; font-size: 18px;" />
-								<p:calendar id="dataLeilao1" showOn="button"
-									value="#{imovelEstoqueMB.objetoImovelEstoque.dataLeilao1}"
-									size="100" pattern="dd/MM/yyyy" locale="pt"
-									styleClass="dateTimeField" />
-										
-								<p:outputLabel for="dataLeilao1" value="Data 2º leilão: "
-									styleClass="labelBold"
-									style="font-weight: bold; font-size: 18px;" />
-								<p:calendar id="dataLeilao2" showOn="button"
-									value="#{imovelEstoqueMB.objetoImovelEstoque.dataLeilao2}"
-									size="100" pattern="dd/MM/yyyy" locale="pt"
-									styleClass="dateTimeField" />	
-									
-									
-								<p:outputLabel for="dataLeilao3" value="Data leilão de estoque: "
-									styleClass="labelBold"
-									style="font-weight: bold; font-size: 18px;" />
-								<p:calendar id="dataLeilao3" showOn="button"
-									value="#{imovelEstoqueMB.objetoImovelEstoque.dataLeilao3}"
-									size="100" pattern="dd/MM/yyyy" locale="pt"
-									styleClass="dateTimeField" />	
-								
-								<p:outputLabel for="statusLeilao" value="Status do leilão: "
-									styleClass="labelBold" />
-								<p:selectOneMenu id="statusLeilao"
-									value="#{imovelEstoqueMB.objetoImovelEstoque.statusLeilao}" 
-									style="width: 180px;">
-									<f:selectItem itemValue="" itemLabel="" />	
-									<f:selectItem itemValue="Negativo" itemLabel="Negativo" />
-									<f:selectItem itemValue="Online" itemLabel="Online" />
-									<f:selectItem itemValue="Positivo" itemLabel="Positivo" />
-									<f:selectItem itemValue="Presencial" itemLabel="Presencial" />
-									<f:selectItem itemValue="Suspenso por decisão judicial" itemLabel="Suspenso por decisão judicial"/>
-								</p:selectOneMenu>
-								
-								<p:outputLabel for="leiloeiro" value="Leiloeiro: "
-									styleClass="labelBold" />
-								<p:selectOneMenu id="leiloeiro"
-									value="#{imovelEstoqueMB.objetoImovelEstoque.leiloeiro}" 
-									style="width: 180px;">
-									<f:selectItem itemValue="" itemLabel="" />
-									<f:selectItem itemValue="Leiloaria" itemLabel="Leiloaria" />	
-									<f:selectItem itemValue="Pecini" itemLabel="Pecini" />
-									<f:selectItem itemValue="Sato" itemLabel="Sato" />
-									<f:selectItem itemValue="Superbid" itemLabel="Superbid" />
-									</p:selectOneMenu>
-								
-								<p:outputLabel for="statusAtual" value="Status Atual: "
-									styleClass="labelBold" />
-								<p:selectOneMenu id="statusAtual"
-									value="#{imovelEstoqueMB.objetoImovelEstoque.statusAtual}" 
-									style="width: 180px;">
-									<f:selectItem itemValue="" itemLabel=""/>
-									<f:selectItem itemValue="Alugado" itemLabel="Alugado"/>	
-									<f:selectItem itemValue="Estoque" itemLabel="Estoque"/>
-									<f:selectItem itemValue="Leilão de Estoque" itemLabel="Leilão de Estoque"/>
-									<f:selectItem itemValue="Pendente por decisão judicial" itemLabel="Pendente por decisão judicial"/>
-									<f:selectItem itemValue="Reintegração de posse" itemLabel="Reintegração de posse"/>
-									<f:selectItem itemValue="Suspenso por decisão judicial" itemLabel="Suspenso por decisão judicial"/>
-									<f:selectItem itemValue="Vendido" itemLabel="Vendido"/>
-								</p:selectOneMenu>
-								
-								<p:outputLabel for="valorLeilao2" value="Valor 2º leilão: "
-									styleClass="labelBold"
-									style="font-weight: bold; font-size: 18px;" />
-								<p:inputText id="valorLeilao2" value="#{imovelEstoqueMB.objetoImovelEstoque.valorLeilao2}"
-									onkeypress="return isNumberKey(event);"
-									onkeydown="FormataValor(this,13, event, 2);"
-									converter="bigDecimalConverter"/>
-								
-								<p:outputLabel for="valorVenda" value="Valor da venda: "
-									styleClass="labelBold"
-									style="font-weight: bold; font-size: 18px;" />
-								<p:inputText id="valorVenda" value="#{imovelEstoqueMB.objetoImovelEstoque.valorVenda}"
-									onkeypress="return isNumberKey(event);"
-									onkeydown="FormataValor(this,13, event, 2);"
-									converter="bigDecimalConverter"/>
-									
-								<p:outputLabel for="dataVenda" value="Data da venda: "
-									styleClass="labelBold"
-									style="font-weight: bold; font-size: 18px;" />
-								<p:calendar id="dataVenda" showOn="button"
-									value="#{imovelEstoqueMB.objetoImovelEstoque.dataVenda}"
-									size="100" pattern="dd/MM/yyyy" locale="pt"
-									styleClass="dateTimeField" />	
-									
-								<p:outputLabel for="tipoVenda" value="Tipo venda: "
-									styleClass="labelBold" />
-								<p:selectOneMenu id="tipoVenda"
-									value="#{imovelEstoqueMB.objetoImovelEstoque.tipoVenda}" 
-									style="width: 180px;">
-									<f:selectItem itemValue="" itemLabel=""/>
-									<f:selectItem itemValue="Direta" itemLabel="Direta"/>	
-									<f:selectItem itemValue="Leilão AF" itemLabel="Leilão AF"/>
-									<f:selectItem itemValue="Leilão ESTQ" itemLabel="Leilão ESTQ"/>
-									<f:selectItem itemValue="Preferência" itemLabel="Preferência"/>
-								</p:selectOneMenu>	
-									
-								<p:outputLabel value="Contrato quitado?: " styleClass="labelBold"
-										style="font-weight: bold; font-size: 18px;" />
-							<p:selectBooleanCheckbox id="estoque" value="#{imovelEstoqueMB.objetoImovelEstoque.quitado}" >
+						<h:panelGrid columns="2">
+
+							<p:outputLabel for="valorEmprestimo"
+								value="Valor do empréstimo: " styleClass="labelBold"
+								style="font-weight: bold; font-size: 18px;" />
+							<p:inputText id="valorEmprestimo"
+								value="#{imovelEstoqueMB.objetoImovelEstoque.valorEmprestimo}"
+								onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this,13, event, 2);"
+								converter="bigDecimalConverter" />
+
+							<p:outputLabel for="vendaForcada" value="Venda Forçada: "
+								styleClass="labelBold"
+								style="font-weight: bold; font-size: 18px;" />
+							<p:inputText id="vendaForcada"
+								value="#{imovelEstoqueMB.objetoImovelEstoque.vendaForcada}"
+								onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this,13, event, 2);"
+								converter="bigDecimalConverter" />
+
+							<p:outputLabel for="valorMercado" value="Valor Mercado: "
+								styleClass="labelBold"
+								style="font-weight: bold; font-size: 18px;" />
+							<p:inputText id="valorMercado"
+								value="#{imovelEstoqueMB.objetoImovelEstoque.valorMercado}"
+								onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this,13, event, 2);"
+								converter="bigDecimalConverter" />
+
+							<p:outputLabel for="dataConsolidado"
+								value="Data de Consolidação: " styleClass="labelBold"
+								style="font-weight: bold; font-size: 18px;" />
+							<p:calendar id="dataConsolidado" showOn="button"
+								value="#{imovelEstoqueMB.objetoImovelEstoque.dataConsolidado}"
+								size="100" pattern="dd/MM/yyyy" locale="pt"
+								styleClass="dateTimeField" />
+
+							<p:outputLabel for="dataLeilao1" value="Data 1º leilão: "
+								styleClass="labelBold"
+								style="font-weight: bold; font-size: 18px;" />
+							<p:calendar id="dataLeilao1" showOn="button"
+								value="#{imovelEstoqueMB.objetoImovelEstoque.dataLeilao1}"
+								size="100" pattern="dd/MM/yyyy" locale="pt"
+								styleClass="dateTimeField" />
+
+							<p:outputLabel for="dataLeilao1" value="Data 2º leilão: "
+								styleClass="labelBold"
+								style="font-weight: bold; font-size: 18px;" />
+							<p:calendar id="dataLeilao2" showOn="button"
+								value="#{imovelEstoqueMB.objetoImovelEstoque.dataLeilao2}"
+								size="100" pattern="dd/MM/yyyy" locale="pt"
+								styleClass="dateTimeField" />
+
+
+							<p:outputLabel for="dataLeilao3" value="Data leilão de estoque: "
+								styleClass="labelBold"
+								style="font-weight: bold; font-size: 18px;" />
+							<p:calendar id="dataLeilao3" showOn="button"
+								value="#{imovelEstoqueMB.objetoImovelEstoque.dataLeilao3}"
+								size="100" pattern="dd/MM/yyyy" locale="pt"
+								styleClass="dateTimeField" />
+
+							<p:outputLabel for="statusLeilao" value="Status do leilão: "
+								styleClass="labelBold" />
+							<p:selectOneMenu id="statusLeilao"
+								value="#{imovelEstoqueMB.objetoImovelEstoque.statusLeilao}"
+								style="width: 180px;">
+								<f:selectItem itemValue="" itemLabel="" />
+								<f:selectItem itemValue="Negativo" itemLabel="Negativo" />
+								<f:selectItem itemValue="Online" itemLabel="Online" />
+								<f:selectItem itemValue="Positivo" itemLabel="Positivo" />
+								<f:selectItem itemValue="Presencial" itemLabel="Presencial" />
+								<f:selectItem itemValue="Suspenso por decisão judicial"
+									itemLabel="Suspenso por decisão judicial" />
+							</p:selectOneMenu>
+
+							<p:outputLabel for="leiloeiro" value="Leiloeiro: "
+								styleClass="labelBold" />
+							<p:selectOneMenu id="leiloeiro"
+								value="#{imovelEstoqueMB.objetoImovelEstoque.leiloeiro}"
+								style="width: 180px;">
+								<f:selectItem itemValue="" itemLabel="" />
+								<f:selectItem itemValue="Leiloaria" itemLabel="Leiloaria" />
+								<f:selectItem itemValue="Pecini" itemLabel="Pecini" />
+								<f:selectItem itemValue="Sato" itemLabel="Sato" />
+								<f:selectItem itemValue="Superbid" itemLabel="Superbid" />
+							</p:selectOneMenu>
+
+							<p:outputLabel for="statusAtual" value="Status Atual: "
+								styleClass="labelBold" />
+							<p:selectOneMenu id="statusAtual"
+								value="#{imovelEstoqueMB.objetoImovelEstoque.statusAtual}"
+								style="width: 180px;">
+								<f:selectItem itemValue="" itemLabel="" />
+								<f:selectItem itemValue="Alugado" itemLabel="Alugado" />
+								<f:selectItem itemValue="Estoque" itemLabel="Estoque" />
+								<f:selectItem itemValue="Leilão de Estoque"
+									itemLabel="Leilão de Estoque" />
+								<f:selectItem itemValue="Pendente por decisão judicial"
+									itemLabel="Pendente por decisão judicial" />
+								<f:selectItem itemValue="Reintegração de posse"
+									itemLabel="Reintegração de posse" />
+								<f:selectItem itemValue="Suspenso por decisão judicial"
+									itemLabel="Suspenso por decisão judicial" />
+								<f:selectItem itemValue="Vendido" itemLabel="Vendido" />
+							</p:selectOneMenu>
+
+							<p:outputLabel for="valorLeilao2" value="Valor 2º leilão: "
+								styleClass="labelBold"
+								style="font-weight: bold; font-size: 18px;" />
+							<p:inputText id="valorLeilao2"
+								value="#{imovelEstoqueMB.objetoImovelEstoque.valorLeilao2}"
+								onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this,13, event, 2);"
+								converter="bigDecimalConverter" />
+
+							<p:outputLabel for="valorVenda" value="Valor da venda: "
+								styleClass="labelBold"
+								style="font-weight: bold; font-size: 18px;" />
+							<p:inputText id="valorVenda"
+								value="#{imovelEstoqueMB.objetoImovelEstoque.valorVenda}"
+								onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this,13, event, 2);"
+								converter="bigDecimalConverter" />
+
+							<p:outputLabel for="dataVenda" value="Data da venda: "
+								styleClass="labelBold"
+								style="font-weight: bold; font-size: 18px;" />
+							<p:calendar id="dataVenda" showOn="button"
+								value="#{imovelEstoqueMB.objetoImovelEstoque.dataVenda}"
+								size="100" pattern="dd/MM/yyyy" locale="pt"
+								styleClass="dateTimeField" />
+
+							<p:outputLabel for="tipoVenda" value="Tipo venda: "
+								styleClass="labelBold" />
+							<p:selectOneMenu id="tipoVenda"
+								value="#{imovelEstoqueMB.objetoImovelEstoque.tipoVenda}"
+								style="width: 180px;">
+								<f:selectItem itemValue="" itemLabel="" />
+								<f:selectItem itemValue="Direta" itemLabel="Direta" />
+								<f:selectItem itemValue="Leilão AF" itemLabel="Leilão AF" />
+								<f:selectItem itemValue="Leilão ESTQ" itemLabel="Leilão ESTQ" />
+								<f:selectItem itemValue="Preferência" itemLabel="Preferência" />
+							</p:selectOneMenu>
+
+							<p:outputLabel value="Contrato quitado?: " styleClass="labelBold"
+								style="font-weight: bold; font-size: 18px;" />
+							<p:selectBooleanCheckbox id="estoque"
+								value="#{imovelEstoqueMB.objetoImovelEstoque.quitado}">
 								<p:ajax event="change" />
-							</p:selectBooleanCheckbox>	
-							</h:panelGrid>
-					<f:facet name="footer">
-						<p:commandButton value="Salvar" ajax="false"
-							icon="ui-icon-print" action="#{imovelEstoqueMB.salvarEstoque}" />
-						<p:spacer height="10"/>
-						<p:commandButton value="Cancelar" ajax="false" immediate="true"
-							icon="ui-icon-cancel" action="#{imovelCobrancaMB.clearFieldsEstoqueImoveis}"
-							style="TEXT-DECORATION: bold; "/>
-					</f:facet>
-					</h:panelGrid>			
+							</p:selectBooleanCheckbox>
+							<p:commandButton value="Ver parcelas" action="#{contratoCobrancaMB.clearQuitarContratoDialog}" oncomplete="PF('ParcelaDialog').show();"></p:commandButton>
+						</h:panelGrid>
+						<f:facet name="footer">
+							<p:commandButton value="Salvar" ajax="false" icon="ui-icon-print"
+								action="#{imovelEstoqueMB.salvarEstoque}" />
+							<p:spacer height="10" />
+							<p:commandButton value="Cancelar" ajax="false" immediate="true"
+								icon="ui-icon-cancel"
+								action="#{imovelCobrancaMB.clearFieldsEstoqueImoveis}"
+								style="TEXT-DECORATION: bold; " />
+						</f:facet>
+					</h:panelGrid>
 				</p:panel>
-			</p:panel>	
+			</p:panel>
+			<p:dialog header="Parcelas" widgetVar="ParcelaDialog"
+			resizable="true" style="FONT-SIZE: 10pt; overflow: hidden" responsive="false" width="100%"
+			height="360px">
+			<p:panel id="DetalheParcelas"
+				header="Parcelas"
+				style="margin-bottom:10px;">
+				<f:facet name="header">
+				<p:outputLabel value="Taxa Adm: "/>
+				<p:inputText value="#{contratoCobrancaMB.txAdm}" ></p:inputText>
+				
+				<p:commandButton value="Quitar Contrato" action="#{contratoCobrancaMB.quitarContrato(contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes)}"
+				oncomplete="PF('ParcelaDialog').hide();"></p:commandButton>
+				</f:facet>
+				<p:dataTable id="dtParcelas" var="parcelas"
+					value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes}"
+					emptyMessage="" sortBy="#{contratos.numeroParcela}"
+					sortOrder="ascending"
+					rowStyleClass="#{(parcelas.pagoParcial eq true) ? 'parcelaparcial' : parcelas.numeroParcela eq 'Amortização' ? 'parcelaPaga': parcelas.parcelaPaga eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : parcelas.parcelaVencendo eq true ? 'parcelaVencendo' : null}"
+					rowKey="#{parcelas.id}" style="overflow: auto;">
+
+					<p:column style="text-align: center;width: 45px;"
+						headerText="Parcela" filterMatchMode="contains"
+						sortBy="#{parcelas.numeroParcela}">
+						<h:outputText value="#{parcelas.numeroParcela}" />
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Saldo Inicial (R$)">
+						<h:outputText value="#{parcelas.vlrSaldoInicial}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 70px;"
+						headerText="Vencimento" sortBy="#{contratos.dataVencimento}">
+						<h:outputText value="#{parcelas.dataVencimento}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 70px;"
+						headerText="Dt. Último Pagto."
+						sortBy="#{parcelas.dataUltimoPagamento}">
+						<h:outputText value="#{parcelas.dataUltimoPagamento}">
+							<f:convertDateTime locale="pt_BR" />
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Valor Total Pago (R$)">
+						<h:outputText value="#{parcelas.valorTotalPagamento}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Valor (R$)">
+						<h:outputText value="#{parcelas.vlrParcela}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Juros (R$)">
+						<h:outputText value="#{parcelas.vlrJurosParcela}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Amortização (R$)">
+						<h:outputText value="#{parcelas.vlrAmortizacaoParcela}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Seguro DFI (R$)"
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}">
+						<h:outputText value="#{parcelas.seguroDFI}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Seguro MIP (R$)"
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.temSeguro}">
+						<h:outputText value="#{parcelas.seguroMIP}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Taxa Administação (R$)"
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.temTxAdm}">
+						<h:outputText value="#{parcelas.taxaAdm}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="IPCA (R$)"
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.corrigidoNovoIPCA}">
+						<h:outputText value="#{parcelas.ipca}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 110px;"
+						headerText="Saldo (R$)">
+						<h:outputText value="#{parcelas.vlrSaldoParcela}"
+							converter="bigDecimalConverter">
+						</h:outputText>
+					</p:column>
+					<p:column style="text-align: center;width: 100px;"
+						rendered="#{contratoCobrancaMB.usuarioLogado.userCobranca}"
+						headerText="Kobana">
+						<ui:fragment rendered="#{parcelas.urlBoletoKonana ne null}">
+							<h:outputLink value="#{parcelas.urlBoletoKonana}" target="_blank"
+								styleClass="botaoBoletoKobana">#{parcelas.urlBoletoKonana}</h:outputLink>
+						</ui:fragment>
+					</p:column>
+
+
+
+
+				</p:dataTable>
+			</p:panel>
+			</p:dialog>
 			<p:panel id="DetalheParcelas"
 				header="Detalhamento - Forma de Pagamento"
 				style="margin-bottom:10px; width: 100%">
