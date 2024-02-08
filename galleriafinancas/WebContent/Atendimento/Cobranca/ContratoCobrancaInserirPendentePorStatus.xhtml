@@ -3910,7 +3910,8 @@
 				<h:panelGroup id="ContasPagarPanel">
 					<p:messages id="mensagensStarkBank"/>
 					<p:panel header="Dispesas" style="margin-bottom:10px;"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.okCliente}">
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.okCliente or (contratoCobrancaMB.objetoContratoCobranca.aprovadoComite and( usuarioMB.objetoUsuario.administrador or ( contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Registro' or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Envio Cartório'
+							or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Resolução Pendência' or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Resolução Exigencias/Pagamentos')))}">
 						<f:facet name="header"> Despesas 
 							<p:outputLabel value="" />
 							<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR, COBRANCA_FINANCEIRO, PROFILE_CONTRATO, PROFILE_GERENTE_ANALISE">
@@ -4063,7 +4064,8 @@
 				
 				<h:panelGroup id="Cliente">
 					<p:panel header="Cliente" style="margin-bottom:10px;"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.aprovadoComite and( usuarioMB.objetoUsuario.administrador or ( contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Registro'))}">
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.aprovadoComite and( usuarioMB.objetoUsuario.administrador or ( contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Registro' or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Envio Cartório'
+						or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Resolução Pendência' or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Resolução Exigencias/Pagamentos'))}">
 						<h:panelGrid columns="3">
 							<h:panelGrid columns="2">
 								<p:outputLabel for="valorCartaSplit"
