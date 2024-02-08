@@ -145,6 +145,22 @@
 		
 		<property name="preLaudoSolicitado" type="boolean">
 			<column name="preLaudoSolicitado" not-null="true" default="false"/>
+<<<<<<< HEAD
+=======
+		</property> 
+		
+		<property name="preLaudoEntregue" type="boolean">
+			<column name="preLaudoEntregue" not-null="true" default="false"/>
+		</property> 
+		
+		<property name="valorPreLaudo" type="big_decimal">
+			<column name="valorPreLaudo"/>
+		</property> 
+		
+		
+		<property name="valorLeilao" type="big_decimal">
+			<column name="valorLeilao" />
+>>>>>>> refs/heads/master
 		</property> 
 		
 		<property name="preLaudoEntregue" type="boolean">

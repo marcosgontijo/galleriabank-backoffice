@@ -52,7 +52,10 @@ public class ImovelEstoqueDao extends HibernateDao <ImovelEstoque,Long> {
 			}
 		});
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> refs/heads/master
     @SuppressWarnings("unchecked")
 	public List<ContratoCobranca> consultaImovelEstoqueNaoVendido() {
   		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {

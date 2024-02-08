@@ -948,7 +948,6 @@ public class ContratoCobranca implements Serializable {
 			else
 				return taxaPreAprovada;
 		}
-
 	}
 
 	public ContratoCobranca() {
@@ -7892,5 +7891,69 @@ public class ContratoCobranca implements Serializable {
 
 	public void setContasPagarList(List<ContasPagar> contasPagarList) {
 		this.contasPagarList = contasPagarList;
+	}
+
+	public String getSerieCci() {
+		return serieCci;
+	}
+
+	public void setSerieCci(String serieCci) {
+		this.serieCci = serieCci;
+	}
+
+	public BigDecimal getPorcentagemLeilaoImovelPrincipal() {
+		return porcentagemLeilaoImovelPrincipal;
+	}
+
+	public void setPorcentagemLeilaoImovelPrincipal(BigDecimal porcentagemLeilaoImovelPrincipal) {
+		this.porcentagemLeilaoImovelPrincipal = porcentagemLeilaoImovelPrincipal;
+	}
+
+	public BigDecimal getValorCreditoImovelPrincipal() {
+		return valorCreditoImovelPrincipal;
+	}
+
+	public void setValorCreditoImovelPrincipal(BigDecimal valorCreditoImovelPrincipal) {
+		this.valorCreditoImovelPrincipal = valorCreditoImovelPrincipal;
+	}
+
+	public String getIspbBancarioContaPagar() {
+		return ispbBancarioContaPagar;
+	}
+
+	public void setIspbBancarioContaPagar(String ispbBancarioContaPagar) {
+		this.ispbBancarioContaPagar = ispbBancarioContaPagar;
+	}
+
+	public String getIspbCartaSplit() {
+		return ispbCartaSplit;
+	}
+
+	public void setIspbCartaSplit(String ispbCartaSplit) {
+		this.ispbCartaSplit = ispbCartaSplit;
+	}
+
+	public String getIspbCartaSplitGalleria() {
+		return ispbCartaSplitGalleria;
+	}
+
+	public void setIspbCartaSplitGalleria(String ispbCartaSplitGalleria) {
+		this.ispbCartaSplitGalleria = ispbCartaSplitGalleria;
+	}
+
+	public String getIspbCustoEmissao() {
+		return ispbCustoEmissao;
+	}
+
+	public void setIspbCustoEmissao(String ispbCustoEmissao) {
+		this.ispbCustoEmissao = ispbCustoEmissao;
+	}
+
+	public String getTipoContaContaPagar() {
+		return tipoContaContaPagar;
+	}
+
+	public void setTipoContaContaPagar(String tipoContaContaPagar) {
+		this.tipoContaContaPagar = tipoContaContaPagar;
 	}
 }

@@ -124,6 +124,11 @@
 			<div id="top" />
 
 			<div align="center">
+			<h1>#{termoMB.descricaoTermo}</h1>
+			<h3>#{termoMB.instrucaoTermo}</h3>
+			</div>
+			
+			<div align="center">
 				<img src="#{termoMB.carregaPdfTermo()}" width="100%" />
 			</div>
 
@@ -132,7 +137,15 @@
 				<p:commandButton value="Aceitar" ajax="true" icon="ui-icon-check"
 					id="btnAceite" update=":termoForm" action="#{termoMB.aceitar()}"
 					widgetVar="btnAceite"
-					onclick="PF('btnAceite').disable(); PF('statusDialogTermo').show()"
+					onclick="PF('btnAceite').disable();PF('btnAceiteAdiado').disable(); PF('statusDialogTermo').show()"
+					oncomplete="javascript:window.location='#top' ; PF('statusDialogTermo').hide()"
+					style="TEXT-DECORATION: bold;" />
+					
+					<p:commandButton value="Aceitar mais tarde" ajax="true" icon="ui-icon-check"
+					id="btnAceiteAdiado" update=":termoForm" action="#{termoMB.aceiteAdiado()}"
+					rendered="#{!termoMB.aceiteExpirado}"
+					widgetVar="termoMB.btnAceiteAdiado"
+					onclick="PF('btnAceite').disable();PF('btnAceiteAdiado').disable(); PF('statusDialogTermo').show()"
 					oncomplete="javascript:window.location='#top' ; PF('statusDialogTermo').hide()"
 					style="TEXT-DECORATION: bold;" />
 			</div>

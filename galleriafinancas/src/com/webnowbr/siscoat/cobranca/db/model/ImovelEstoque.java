@@ -36,8 +36,7 @@ public class ImovelEstoque implements Serializable {
 	public ImovelEstoque() {
 		super();
 	}
-	
-	
+
 	
 	
 	public long getId() {

@@ -30,7 +30,7 @@ public class ContratoCobrancaFinancerioDiaConsultaVO implements Serializable {
 	
 	private String numeroContrato;
 	private Date dataContrato; // data do contrato mas muda na aprovacao	
-	private Date dataInicio; // data de inicio das parcelas
+	private Date dataInicio; // data de inicio das parcelas	
 	
 	private String nomePagador;	
 	
@@ -63,6 +63,7 @@ public class ContratoCobrancaFinancerioDiaConsultaVO implements Serializable {
 	private String nomeCidadeImovel;
 	private boolean contratoQuitado;
 	private BigDecimal valorImovel;
+	private BigDecimal valorLeilaoImovel;
 	private String tipoImovel;
 
 	private boolean corrigidoIPCA;
@@ -73,6 +74,7 @@ public class ContratoCobrancaFinancerioDiaConsultaVO implements Serializable {
 	private String celularPagador;
 	private long qtdeParcelas;
 	private String numeroContratoSeguro;
+	private String serieCci;
 	
 	private List<ContratoCobrancaFinanceiroDiaConsultaDetalhesVO> listContratoCobrancaDetalhes;
 	
@@ -90,7 +92,8 @@ public class ContratoCobrancaFinancerioDiaConsultaVO implements Serializable {
 			boolean temSeguroDFI, boolean temSeguroMIP, long mesesCarencia, boolean temTxAdm,
 			String empresa, BigDecimal valorImovel,
 			String tipoImovel, boolean corrigidoIPCA, boolean corrigidoNovoIPCA, 
-			String emailPagador, String celularPagador, long qtdeParcelas, String numeroContratoSeguro
+			String emailPagador, String celularPagador, long qtdeParcelas, String numeroContratoSeguro,
+			BigDecimal valorLeilaoImovel
 			) {
 		super();
 		this.id = id;
@@ -133,6 +136,7 @@ public class ContratoCobrancaFinancerioDiaConsultaVO implements Serializable {
 		this.celularPagador = celularPagador;
 		this.qtdeParcelas = qtdeParcelas;
 		this.numeroContratoSeguro = numeroContratoSeguro;
+		this.valorLeilaoImovel = valorLeilaoImovel;
 		
 		
 		this.listContratoCobrancaDetalhes = new ArrayList<>();
@@ -416,7 +420,20 @@ public class ContratoCobrancaFinancerioDiaConsultaVO implements Serializable {
 	public void setNumeroContratoSeguro(String numeroContratoSeguro) {
 		this.numeroContratoSeguro = numeroContratoSeguro;
 	}
-	
-	
-	
+
+	public BigDecimal getValorLeilaoImovel() {
+		return valorLeilaoImovel;
+	}
+
+	public void setValorLeilaoImovel(BigDecimal valorLeilaoImovel) {
+		this.valorLeilaoImovel = valorLeilaoImovel;
+	}
+
+	public String getSerieCci() {
+		return serieCci;
+	}
+
+	public void setSerieCci(String serieCci) {
+		this.serieCci = serieCci;
+	}	
 }

@@ -10,7 +10,7 @@ public class ImovelCobrancaAdicionais implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	private long id;
-	private ImovelCobranca imovel;
+	private ImovelCobranca imovel = new ImovelCobranca();
 	private ContratoCobranca contratoCobranca;
 	
 	private BigDecimal porcentagem;

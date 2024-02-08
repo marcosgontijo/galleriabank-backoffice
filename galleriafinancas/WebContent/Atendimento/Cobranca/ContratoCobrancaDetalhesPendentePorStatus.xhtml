@@ -225,7 +225,11 @@
 										target="#{contratoCobrancaMB.preContratoCustom}" value="false" />
 								</p:commandButton>
 							</h:panelGrid>
+<<<<<<< HEAD
 									
+=======
+							
+>>>>>>> refs/heads/master
 							<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_AVALIADOR_IMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_GERENTE_ANALISE">
 								<ui:fragment>
 									<p:selectBooleanButton value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}" rendered="#{contratoCobrancaMB.indexStepsStatusContrato ge 1 and contratoCobrancaMB.indexStepsStatusContrato le 5}"  
@@ -355,7 +359,7 @@
 				       		</h:panelGrid>
 			   			 </p:tooltip>
 			   			 
-			   		<p:tooltip id="toolTipContentComentarioJuridicoEsteira" for="comentarioJuridicoStep" position="bottom">
+			   			<p:tooltip id="toolTipContentComentarioJuridicoEsteira" for="comentarioJuridicoStep" position="bottom">
 							<h:panelGrid columns="1">	
 						        <p:outputLabel value="Aprovador" styleClass="labelBold" style="font-weight: bold;"/>		        
 						        <p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoEsteiraUsuario}" styleClass="labelBold" style="width:250px;font-weight: bold; font-size: 18px !important;"/>

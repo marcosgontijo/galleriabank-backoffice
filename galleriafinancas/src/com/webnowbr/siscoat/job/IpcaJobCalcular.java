@@ -429,6 +429,8 @@ public class IpcaJobCalcular {
 					 */
 
 					// reparcela
+					if (detalhe.getNumeroParcela().equals("Acerto Saldo"))
+						saldoDevedor=saldoDevedor.add(detalhe.getVlrParcela());
 					BigDecimal valorIpca = (saldoDevedor
 							.multiply(ultimoIpca.getTaxa().divide(BigDecimal.valueOf(100))));
 
@@ -513,7 +515,7 @@ public class IpcaJobCalcular {
 						Integer parcelaSimuladorReal = 0;
 
 						if (SiscoatConstants.PARCELASIGNORADAS.contains(detalhe.getNumeroParcela())) {
-							detalhe.setVlrSaldoParcela(saldoDevedorIpca);
+//							detalhe.setVlrSaldoParcela(saldoDevedorIpca);
 							continue;
 						} else if (CommonsUtil.intValue(detalhe.getNumeroParcela()) > 1)
 							parcelaSimuladorReal = CommonsUtil.intValue(parcela.getNumeroParcela())

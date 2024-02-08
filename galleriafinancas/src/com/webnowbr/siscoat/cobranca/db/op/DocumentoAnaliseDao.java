@@ -13,17 +13,19 @@ import com.webnowbr.siscoat.db.dao.HibernateDao;
 public class DocumentoAnaliseDao extends HibernateDao<DocumentoAnalise, Long> {
 
 	private static final String QUERY_VERIFICA_PESSOA_ANALISE = " select id " + "from cobranca.documentosanalise "
-			+ "where contratocobranca  = ? and cnpjcpf = ? ";
-
+			+ "where contratocobranca  = ? and cnpjcpf = ? and reanalise = ? ";
 
 	private static final String QUERY_VERIFICA_EXCLUIDO = "select id" + " from cobranca.documentosanalise "
-			+ "where contratocobranca  = ? and excluido = false and liberadoAnalise = true";
+			+ "where contratocobranca  = ? and excluido = false and liberadoAnalise = true and reanalise = false";
+	
+	private static final String QUERY_REANALISE = "select id" + " from cobranca.documentosanalise "
+			+ "where contratocobranca  = ? and excluido = false and liberadoAnalise = true and reanalise = true";
 	
 	private static final String QUERY_NAO_ANALISADOS = "select id" + " from cobranca.documentosanalise "
 			+ "where contratocobranca  = ? and excluido = false and liberadoAnalise = false";
 
 
-	public DocumentoAnalise cadastradoAnalise(ContratoCobranca contratoCobranca, String cnpjCpf) {
+	public DocumentoAnalise cadastradoAnalise(ContratoCobranca contratoCobranca, String cnpjCpf, boolean reanalise) {
 		return (DocumentoAnalise) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -36,6 +38,7 @@ public class DocumentoAnaliseDao extends HibernateDao<DocumentoAnalise, Long> {
 
 					ps.setLong(1, contratoCobranca.getId());
 					ps.setString(2, cnpjCpf);
+					ps.setBoolean(3, reanalise);
 
 					ResultSet rs = ps.executeQuery();
 					if (rs.next())
@@ -89,6 +92,32 @@ public class DocumentoAnaliseDao extends HibernateDao<DocumentoAnalise, Long> {
 				try {
 					connection = getConnection();
 					ps = connection.prepareStatement(QUERY_NAO_ANALISADOS);
+					ps.setLong(1, contrato.getId());
+					rs = ps.executeQuery();
+					while (rs.next()) {
+						listaAnalise.add(findById(rs.getLong("id")));
+					}
+				} finally {
+					closeResources(connection, ps, rs);
+
+				}
+				return listaAnalise;
+			}
+		});
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<DocumentoAnalise> listagemDocumentoAnaliseReanalise(ContratoCobranca contrato) {
+		return (List<DocumentoAnalise>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				List<DocumentoAnalise> listaAnalise = new ArrayList<DocumentoAnalise>();
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+					ps = connection.prepareStatement(QUERY_REANALISE);
 					ps.setLong(1, contrato.getId());
 					rs = ps.executeQuery();
 					while (rs.next()) {

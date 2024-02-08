@@ -7,11 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
-import com.webnowbr.siscoat.cobranca.db.model.Cidade;
 import com.webnowbr.siscoat.db.dao.HibernateDao;
 import com.webnowbr.siscoat.cobranca.db.op.ImovelEstoqueDao;
 import com.webnowbr.siscoat.cobranca.db.op.CidadeDao;
-
 
 /**
  * DAO access layer for the Tecnico entity

@@ -77,7 +77,9 @@ public class CcbContrato implements Serializable{
 	private BigDecimal valorParcela;
 	private char tipoCalculoFinal; 
 	private boolean usarNovoCustoEmissao; 
-
+	 
+	private BigDecimal percentualCustoEmissao; 
+		
 	private String numeroParcelasDFI;
 	private Date vencimentoPrimeiraParcelaDFI;
 	private Date vencimentoUltimaParcelaDFI;
@@ -1236,6 +1238,14 @@ public class CcbContrato implements Serializable{
 
 	public void setUsarNovoCustoEmissao(boolean usarNovoCustoEmissao) {
 		this.usarNovoCustoEmissao = usarNovoCustoEmissao;
+	}
+
+	public BigDecimal getPercentualCustoEmissao() {
+		return percentualCustoEmissao;
+	}
+
+	public void setPercentualCustoEmissao(BigDecimal percentualCustoEmissao) {
+		this.percentualCustoEmissao = percentualCustoEmissao;
 	}
 
 	public String getCCBDigito() {

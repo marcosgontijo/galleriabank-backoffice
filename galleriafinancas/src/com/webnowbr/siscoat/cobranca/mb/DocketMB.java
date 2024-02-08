@@ -60,6 +60,12 @@ public class DocketMB {
 			|| (CommonsUtil.mesmoValor(etapa, "pedir paju") && docAnalise.isLiberadoCertidoes())) {
 				listPagador.add(docAnalise);
 				adiconarDocumentospagador(docAnalise);
+			} else if((CommonsUtil.mesmoValor(etapa, "ReAnalise") && docAnalise.isLiberadoAnalise())){
+				listPagador.add(docAnalise);
+				etapa = "analise";
+				adiconarDocumentospagador(docAnalise);
+				etapa = "pedir paju";
+				adiconarDocumentospagador(docAnalise);
 			} else {
 				continue;
 			}
@@ -240,7 +246,7 @@ public class DocketMB {
 		InputStream in = new ByteArrayInputStream(decoded);
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(FacesContext.getCurrentInstance());
 		String nomeArquivoDownload = "Galleria Bank - Docket " 
-		+ CommonsUtil.removeAcentos(consulta.getDocketDocumentos().getDocumentoNome())  + ".pdf";
+				+ CommonsUtil.removeAcentos(consulta.getDocketDocumentos().getDocumentoNome())  + ".pdf";
 		gerador.open(nomeArquivoDownload);
 		gerador.feed(in);
 		gerador.close();

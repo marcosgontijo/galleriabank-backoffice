@@ -247,4 +247,55 @@ public class ContratoCobrancaDetalhesDao extends HibernateDao <ContratoCobrancaD
 		
 		return parcelasVencidas;
 	}	
+	
+	private static final String QUERY_PARCELAS_BAIXA_NAO_BAIXADA = "select idcontrato, numerocontrato, idparcela, numeroparcela, vlparcela, valorrecebido from " +
+	"(select cc.id as idcontrato, cc.numerocontrato as numerocontrato, cd.id as idparcela, cd.numeroparcela as numeroparcela, cdp.vlrparcela as vlparcela, sum(cdp.vlrrecebido) as valorrecebido " +
+	    "from cobranca.contratocobranca cc " +
+	    "inner join cobranca.contratocobranca_detalhes_join cdj on cdj.idcontratocobranca = cc.id " +
+	    "inner join cobranca.contratocobrancadetalhes cd on cdj.idcontratocobrancadetalhes = cd.id " +
+	    "inner join cobranca.cobranca_detalhes_parcial_join cdpj on cdpj.idcontratocobrancadetalhes = cd.id " +
+	    "inner join cobranca.contratocobrancadetalhesparcial cdp on cdp.id = cdpj.idcontratocobrancadetalhesparcial " +
+	    "where  " +
+	        "parcelapaga = false " +
+	    "group by cc.id, cc.numerocontrato, cd.id, cd.numeroparcela, cdp.vlrparcela )  " +
+	"as buscabaixas " +
+	"where valorrecebido >= vlparcela " +
+	"and idparcela not in (10392,12244,20089,23280) " +
+	"order by numerocontrato, numeroparcela ";
+	
+	@SuppressWarnings("unchecked")
+	public List<ContratoCobrancaDetalhes> baixarParcelasComBaixaNaoBaixadas() {
+		return (List<ContratoCobrancaDetalhes>) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				Collection<ContratoCobrancaDetalhes> objects = new ArrayList<ContratoCobrancaDetalhes>();
+
+				Connection connection = null;
+				PreparedStatement ps = null;
+
+				ResultSet rs = null;
+				try {
+					connection = getConnection();
+
+					ps = connection.prepareStatement(QUERY_PARCELAS_BAIXA_NAO_BAIXADA);
+					
+					rs = ps.executeQuery();
+
+					ContratoCobrancaDetalhesDao contratoCobrancaDetalhesDao = new ContratoCobrancaDetalhesDao();
+					ContratoCobrancaDetalhes contratoCobrancaDetalhes = new ContratoCobrancaDetalhes();
+					
+					while (rs.next()) {						
+						contratoCobrancaDetalhes = contratoCobrancaDetalhesDao.findById(rs.getLong(3));
+						contratoCobrancaDetalhes.setParcelaPaga(true);
+
+						contratoCobrancaDetalhesDao.merge(contratoCobrancaDetalhes);
+					}
+
+				} finally {
+					closeResources(connection, ps, rs);
+				}
+				return objects;
+			}
+		});
+	}
 }

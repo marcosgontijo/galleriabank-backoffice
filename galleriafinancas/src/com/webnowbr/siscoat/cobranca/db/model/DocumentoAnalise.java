@@ -39,6 +39,8 @@ import com.webnowbr.siscoat.cobranca.ws.netrin.NetrinConsulta;
 import com.webnowbr.siscoat.cobranca.ws.plexi.PlexiConsulta;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DocumentosAnaliseEnum;
+import com.webnowbr.siscoat.credlocaliza.response.CredlocalizaResponse;
+import com.webnowbr.siscoat.credlocaliza.response.CredlocalizaVeiculos;
 
 import br.com.galleriabank.bigdata.cliente.model.financas.FinancasResponse;
 import br.com.galleriabank.bigdata.cliente.model.financas.FinancasResponseResultFinantialDataTaxReturns;
@@ -81,6 +83,8 @@ public class DocumentoAnalise implements Serializable {
 	private String origem;
 	private Date dataCadastro; 
 	private String usuarioCadastro;
+	private DocumentoAnalise analiseOriginal;
+	private boolean reanalise;
 	
 	private boolean liberadoAnalise;	
 	private boolean liberadoContinuarAnalise;
@@ -153,6 +157,24 @@ public class DocumentoAnalise implements Serializable {
 	
 	private String retornoFinancas;
 	
+	private String retornoFrotaVeiculos;
+	
+	public DocumentoAnalise() {
+		super();
+	}
+
+	public DocumentoAnalise(DocumentoAnalise documentoAnalise) {
+		super();
+		this.contratoCobranca = documentoAnalise.getContratoCobranca();
+		this.pagador = documentoAnalise.getPagador();
+		this.identificacao = documentoAnalise.getIdentificacao();
+		this.cnpjcpf = documentoAnalise.getCnpjcpf();
+		this.tipoPessoa = documentoAnalise.getTipoPessoa();
+		this.motivoAnalise = documentoAnalise.getMotivoAnalise();
+		this.tipo = documentoAnalise.getTipo();
+		this.estadosConsultaStr = documentoAnalise.getEstadosConsultaStr();
+		this.estadosConsulta = documentoAnalise.getEstadosConsulta();
+	}
 
 	public List<DocumentoAnaliseResumo> getResumoProcesso() {
 		List<DocumentoAnaliseResumo> vProcesso = new ArrayList<>();
@@ -228,7 +250,6 @@ public class DocumentoAnalise implements Serializable {
 					contemAcoesProcesso = true;
 				}
 			}
-
 		}
 		return vProcesso;
 	}
@@ -565,7 +586,7 @@ public class DocumentoAnalise implements Serializable {
 		String texto = getRetornoFinancas();
 		FinancasResponse dado = GsonUtil.fromJson(getRetornoFinancas(), FinancasResponse.class);
 		
-		if (dado == null || dado.getResult() == null) {
+		if (dado == null || dado.getResult() == null || dado.getResult().size() == 0) {
 			financas.add(new DocumentoAnaliseResumo("Dados não disponíveis", "0"));
 		} else {
 			if (dado.getResult().get(0) != null) {
@@ -608,6 +629,32 @@ public class DocumentoAnalise implements Serializable {
 		}
 		
 		return financas;
+	}
+	
+	public List<DocumentoAnaliseResumo> getResumoFrotaVeiculo() {
+		List<DocumentoAnaliseResumo> veiculos = new ArrayList<>();
+		String retorno = getRetornoFrotaVeiculos();
+		CredlocalizaResponse dado = GsonUtil.fromJson(retorno, CredlocalizaResponse.class);
+		
+		if(CommonsUtil.semValor(dado))
+			veiculos.add(new DocumentoAnaliseResumo("Dados não disponíveis", "0"));
+		else if(CommonsUtil.semValor(dado.getVeiculo()))
+			veiculos.add(new DocumentoAnaliseResumo("Dados não disponíveis", "0"));
+		else if(CommonsUtil.semValor(dado.getVeiculo().getFrota()))
+			veiculos.add(new DocumentoAnaliseResumo("Dados não disponíveis", "0"));
+		else if(CommonsUtil.semValor(dado.getVeiculo().getFrota().getVeiculos()))
+			veiculos.add(new DocumentoAnaliseResumo("Dados não disponíveis", "0"));
+		else if(CommonsUtil.semValor(dado.getVeiculo().getFrota().getVeiculos().size() <= 0))
+			veiculos.add(new DocumentoAnaliseResumo("Dados não disponíveis", "0"));
+		else {
+			for(CredlocalizaVeiculos veiculo : dado.getVeiculo().getFrota().getVeiculos()) {
+				veiculos.add(new DocumentoAnaliseResumo("Placa", veiculo.getPlaca()));
+				veiculos.add(new DocumentoAnaliseResumo("Ano Fabricação", veiculo.getAno_fabricacao()));
+				veiculos.add(new DocumentoAnaliseResumo("Ano Modelo", veiculo.getAno_modelo()));
+				veiculos.add(new DocumentoAnaliseResumo("Marca / Modelo", veiculo.getMarca_modelo()));
+			}
+		}
+		return veiculos;
 	}
 	
     private String convertString(String input) {
@@ -1065,6 +1112,7 @@ public class DocumentoAnalise implements Serializable {
 			motivos.add(new SelectItem("Empresa Vinculada ao Comprador","Empresa Vinculada ao Comprador"));
 			motivos.add(new SelectItem("Empresa Vinculada ao Sócio Vinculado ao Proprietario Atual","Empresa Vinculada ao Sócio Vinculado ao Proprietario Atual"));
 		} else if(CommonsUtil.mesmoValor(tipoPessoa, "PF")) {
+			motivos.add(new SelectItem("Anuente","Anuente"));
 			motivos.add(new SelectItem("Sócio Vinculado ao Proprietario Atual","Sócio Vinculado ao Proprietario Atual"));
 			motivos.add(new SelectItem("Sócio Vinculado ao Proprietario Anterior","Sócio Vinculado ao Proprietario Anterior"));
 			motivos.add(new SelectItem("Sócio Vinculado ao Comprador","Sócio Vinculado ao Comprador"));
@@ -1607,5 +1655,29 @@ public class DocumentoAnalise implements Serializable {
 
 	public void setRetornoFinancas(String retornoFinancas) {
 		this.retornoFinancas = retornoFinancas;
+	}
+
+	public String getRetornoFrotaVeiculos() {
+		return retornoFrotaVeiculos;
+	}
+
+	public void setRetornoFrotaVeiculos(String retornoFrotaVeiculos) {
+		this.retornoFrotaVeiculos = retornoFrotaVeiculos;
+	}
+
+	public DocumentoAnalise getAnaliseOriginal() {
+		return analiseOriginal;
+	}
+
+	public void setAnaliseOriginal(DocumentoAnalise analiseOriginal) {
+		this.analiseOriginal = analiseOriginal;
+	}
+	
+	public boolean isReanalise() {
+		return reanalise;
+	}
+
+	public void setReanalise(boolean reanalise) {
+		this.reanalise = reanalise;
 	}
 }

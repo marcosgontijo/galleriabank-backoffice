@@ -172,7 +172,6 @@ public class PajuService {
 
 			if (CommonsUtil.semValor(contrato.getPagador().getCnpj())) {
 				documentoAnalise.setCnpjcpf(contrato.getPagador().getCpf());
-				;
 				documentoAnalise.setTipoPessoa("PF");
 				pessoasPF.add(documentoAnalise);
 			} else {
@@ -864,6 +863,9 @@ public class PajuService {
 					debitosJudiciaisRequest.setHonorario(CommonsUtil.bigDecimalValue(10));
 
 					// adiciona todas do bigdata
+					if(CommonsUtil.semValor(acoesBigData)) {
+						acoesBigData = new ArrayList<AcaoJudicial>();
+					}
 					for (AcaoJudicial acao : acoesBigData) {
 						DebitosJudiciaisRequestValor debitosJudiciaisRequestValor = new DebitosJudiciaisRequestValor();
 						debitosJudiciaisRequestValor.setDescricao(CommonsUtil.formataNumeroProcesso(acao.getNumber()));
@@ -1039,8 +1041,8 @@ public class PajuService {
 
 					for (Entry<String, String> valores : ((LinkedTreeMap<String, String>) objProcesso).entrySet()) {
 						if (valores.getKey().equals("numero")) {
-							final String numeroProcsso = CommonsUtil.somenteNumeros(valores.getValue().toString());
-							AcaoJudicial acao = bigData.getAcaoJudicial(numeroProcsso);
+							final String numeroProcesso = CommonsUtil.somenteNumeros(valores.getValue().toString());
+							AcaoJudicial acao = bigData.getAcaoJudicial(numeroProcesso);
 							DebitosJudiciaisValores debitosJudiciaisValores = null;
 							String sLinha = "";
 							if (acao != null) {
@@ -1072,7 +1074,7 @@ public class PajuService {
 							}
 
 							criarProcessoContrato(plexiConsulta.getDocumentoAnalise(), acao, debitosJudiciaisValores,
-									sLinha, acao.getNumber(), "Plexi - TRF3 Pje");
+									sLinha, numeroProcesso, "Plexi - TRF3 Pje");
 						}
 					}
 				}

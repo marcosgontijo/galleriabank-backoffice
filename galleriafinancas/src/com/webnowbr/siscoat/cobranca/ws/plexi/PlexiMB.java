@@ -61,8 +61,13 @@ public class PlexiMB {
 				listPagador.add(docAnalise);
 				
 				//if(CommonsUtil.semValor(docAnalise.getPlexiConsultas()) || docAnalise.getPlexiConsultas().size() == 0) {
-					adiconarDocumentospagador(docAnalise);
+					adiconarDocumentospagador(docAnalise, etapa);
 				//}
+			} else if((CommonsUtil.mesmoValor(etapa, "ReAnalise") && docAnalise.isLiberadoAnalise())){
+				listPagador.add(docAnalise);
+				adiconarDocumentospagador(docAnalise, "analise");
+				adiconarDocumentospagador(docAnalise, "pedir paju");
+				//adiconarDocumentospagador(docAnalise, "ReAnalise");
 			} else {
 				continue;
 			}
@@ -219,7 +224,7 @@ public class PlexiMB {
 		listPagador.remove(docAnalise);
 	}
 	
-	public void adiconarDocumentospagador(DocumentoAnalise docAnalise) {
+	public void adiconarDocumentospagador(DocumentoAnalise docAnalise, String etapaConsulta) {
 		List<PlexiDocumentos> plexiDocumentos = new ArrayList<PlexiDocumentos>();
 		PlexiDocumentosDao plexiDocsDao = new PlexiDocumentosDao();
 		if(CommonsUtil.semValor(docAnalise.getPlexiConsultas())) {
@@ -227,9 +232,9 @@ public class PlexiMB {
 		}
 		
 		if(!CommonsUtil.semValor(docAnalise.getPagador().getCpf())) {
-			plexiDocumentos = plexiDocsDao.getDocumentosPF(docAnalise.getEstadosConsulta(), etapa);
+			plexiDocumentos = plexiDocsDao.getDocumentosPF(docAnalise.getEstadosConsulta(), etapaConsulta);
 		} else {
-			plexiDocumentos = plexiDocsDao.getDocumentosPJ(docAnalise.getEstadosConsulta(), etapa, docAnalise);
+			plexiDocumentos = plexiDocsDao.getDocumentosPJ(docAnalise.getEstadosConsulta(), etapaConsulta, docAnalise);
 		}
 		
 		PlexiConsultaDao plexiConsultaDao = new PlexiConsultaDao();

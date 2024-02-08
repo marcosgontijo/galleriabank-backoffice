@@ -80,6 +80,13 @@
 		<property name="formaTransferencia" type="java.lang.String">
 			<column name="formaTransferencia" />
 		</property>	
+<<<<<<< HEAD
+=======
+		
+		<property name="tipoContaBancaria" type="java.lang.String">
+			<column name="tipoContaBancaria" />
+		</property>		
+>>>>>>> refs/heads/master
 		
 		<property name="tipoContaBancaria" type="java.lang.String">
 			<column name="tipoContaBancaria" />

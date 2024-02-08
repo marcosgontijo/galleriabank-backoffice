@@ -77,11 +77,14 @@ public class ImovelCobranca implements Serializable {
 	private boolean preLaudoSolicitado;
 	private boolean preLaudoEntregue;
 	private BigDecimal valorPreLaudo;
+<<<<<<< HEAD
 	
 	//Novos campos referente ao pre laudo
 	private boolean preLaudoSolicitado;
 	private boolean preLaudoEntregue;
 	private BigDecimal valorPreLaudo;
+=======
+>>>>>>> refs/heads/master
 	
 	public ImovelCobranca(){
 		resetarBololean();
@@ -803,6 +806,7 @@ public class ImovelCobranca implements Serializable {
 	public void setValorMercado(BigDecimal valorMercado) {
 		this.valorMercado = valorMercado;
 	}
+<<<<<<< HEAD
 	
 	public boolean isPreLaudoSolicitado() {
 		return this.preLaudoSolicitado;	
@@ -828,6 +832,32 @@ public class ImovelCobranca implements Serializable {
 		this.valorPreLaudo = valorPreLaudo;
 	}
 	
+=======
+
+	public boolean isPreLaudoSolicitado() {
+		return this.preLaudoSolicitado;	
+	}
+	
+	public void setPreLaudoSolicitado( boolean preLaudoSolicitado) {
+		this.preLaudoSolicitado = preLaudoSolicitado;
+	}
+	
+	public boolean isPreLaudoEntregue() {
+		return this.preLaudoEntregue;	
+	}
+	
+	public void setPreLaudoEntregue( boolean preLaudoEntregue) {
+		this.preLaudoEntregue = preLaudoEntregue;
+	}
+	
+	public BigDecimal getValorPreLaudo() {
+		return this.valorPreLaudo;
+	}
+	
+	public void setValorPreLaudo( BigDecimal valorPreLaudo) {
+		this.valorPreLaudo = valorPreLaudo;
+	}
+>>>>>>> refs/heads/master
 	public BigDecimal getValorLeilao() {
 		return valorLeilao;
 	}

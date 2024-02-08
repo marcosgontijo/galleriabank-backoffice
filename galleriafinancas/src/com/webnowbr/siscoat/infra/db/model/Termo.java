@@ -2,11 +2,20 @@ package com.webnowbr.siscoat.infra.db.model;
 
 import java.util.Date;
 
+import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DateUtil;
+
 public class Termo {
 
 	private long id;
 
 	private String identificacao;
+
+	private String descricao;
+
+	private String instrucao;
+
+	private Integer diasAceite;
 
 	private Date inicioValidade;
 
@@ -17,6 +26,19 @@ public class Termo {
 	private String path;
 
 	private UserPerfil userPerfil;
+
+	private transient TermoUsuario termoUsuario;
+
+	public boolean isAceiteExpirado() {
+		if (CommonsUtil.semValor(termoUsuario))
+			return false;
+		else if (!CommonsUtil.semValor(termoUsuario.getDataAceite()))
+			return false;
+		else if (com.webnowbr.siscoat.common.DateUtil.getDifferenceDays(termoUsuario.getDataCienca(), DateUtil.getDataHoje() ) < CommonsUtil.intValue( this.diasAceite))
+			return false;
+		else
+			return true;
+	}
 
 	public long getId() {
 		return id;
@@ -30,8 +52,33 @@ public class Termo {
 		return identificacao;
 	}
 
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
+
+	public String getInstrucao() {
+		return instrucao;
+	}
+
+	public void setInstrucao(String instrucao) {
+		this.instrucao = instrucao;
+	}
+
 	public void setIdentificacao(String identificacao) {
 		this.identificacao = identificacao;
+	}
+
+	
+	public Integer getDiasAceite() {
+		return diasAceite;
+	}
+
+	public void setDiasAceite(Integer diasAceite) {
+		this.diasAceite = diasAceite;
 	}
 
 	public Date getInicioValidade() {
@@ -72,6 +119,14 @@ public class Termo {
 
 	public void setUserPerfil(UserPerfil userPerfil) {
 		this.userPerfil = userPerfil;
+	}
+
+	public TermoUsuario getTermoUsuario() {
+		return termoUsuario;
+	}
+
+	public void setTermoUsuario(TermoUsuario termoUsuario) {
+		this.termoUsuario = termoUsuario;
 	}
 
 }

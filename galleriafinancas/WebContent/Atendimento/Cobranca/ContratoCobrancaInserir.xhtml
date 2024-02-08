@@ -1693,8 +1693,8 @@
 									value="#{contratoCobrancaMB.nomeImovel}" label="Imóvel"
 									readonly="TRUE" required="true"
 									style="FONT-SIZE: 10pt;width:300px;" />
-								<p:commandButton id="botaoImovel" type="button"
-									onclick="PF('imovelDialog').show();"
+								<p:commandButton id="botaoImovel" oncomplete="PF('imovelDialog').show()"  
+									actionListener="#{contratoCobrancaMB.carregaImoveis}" 
 									icon="ui-icon ui-icon-circle-zoomin" />
 							</h:panelGroup>
 
