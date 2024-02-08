@@ -112,12 +112,9 @@
 								<h:outputText value="#{assinantes.data}" />
 							</p:column>
 						</p:dataTable>
-						<p:dataTable var="documento" value="#{termoMB}">
-							<p:column>
-								<p:commandButton action="#{documento.geraPDF}"
-									value="Download Documento" ajax="false"></p:commandButton>
-							</p:column>
-						</p:dataTable>
+						<p:commandButton action="#{termoMB.geraPDF}"
+							value="Download Documento" ajax="false"></p:commandButton>
+
 					</p:panel>
 				</h:panelGrid>
 			</h:form>
