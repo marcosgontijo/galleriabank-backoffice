@@ -1134,6 +1134,8 @@
 
 				<!-- painel de analise de documento -->
 				<ui:include src="ContratoCobrancaAnaliseDocumento.xhtml"></ui:include>
+				
+				<ui:include src="ContratoCobrancaAnaliseDocumentoReanalise.xhtml"></ui:include>
 
 
 				<h:panelGroup id="comentarioComitePanel" style="margin-bottom:20px;">
@@ -3907,7 +3909,8 @@
 
 				<h:panelGroup id="ContasPagarPanel">
 					<p:messages id="mensagensStarkBank"/>
-					<p:panel header="Dispesas" style="margin-bottom:10px;">
+					<p:panel header="Dispesas" style="margin-bottom:10px;"
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.okCliente}">
 						<f:facet name="header"> Despesas 
 							<p:outputLabel value="" />
 							<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR, COBRANCA_FINANCEIRO, PROFILE_CONTRATO, PROFILE_GERENTE_ANALISE">
@@ -3932,7 +3935,7 @@
 								value="#{contratoCobrancaMB.objetoContratoCobranca.contaPagarValorTotal}"
 								converter="bigDecimalConverter" />
 						</h:panelGrid>	
-						<h:panelGrid columns="2" >
+						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Registro'}">
 							<p:outputLabel for="nomeBancarioContaPagar" value="Nome:" 
 								style="width:250px;font-weight: bold; font-size: 18px !important;"/>
 							<p:inputText id="nomeBancarioContaPagar"
@@ -4039,19 +4042,28 @@
 							</shiro:hasAnyRoles>
 						</p:dataTable>			
 						
-                		<!-- VALOR TOTAL PAGO -->
-						<p:outputLabel value="Valor total Pago: " styleClass="labelBold" />
-						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.somaValorPago}"
-							converter="bigDecimalConverter" styleClass="labelBold"
-							style="FONT-SIZE: 10pt;width:100px;" />
-						<p:spacer height="5" />
-						<p:outputLabel value="|" />
-						<p:spacer height="5" /> 
+						<h:panelGrid columns="1">
+							<h:panelGroup>
+								<p:outputLabel value="Valor total Pago: " styleClass="labelBold" />
+								<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.somaValorPago}"
+									converter="bigDecimalConverter" styleClass="labelBold"
+									style="FONT-SIZE: 10pt;width:100px;" />
+							</h:panelGroup>
+							<h:panelGrid columns="2">
+								<p:messages id="mensagemAditamento" />	
+								<p:commandButton value="Emitir Aditamento" ajax="false"
+									action="#{ccbMB.emitirAditamento(contratoCobrancaMB.objetoContratoCobranca.listContasPagar)}" 
+									rendered="#{contratoCobrancaMB.objetoContratoCobranca.ccbPronta}">
+		                			<f:setPropertyActionListener  target="#{ccbMB.objetoContratoCobranca}" value="#{contratoCobrancaMB.objetoContratoCobranca}" />
+		                		</p:commandButton>
+	                		</h:panelGrid>
+                		</h:panelGrid>
 					</p:panel>
 				</h:panelGroup>
 				
 				<h:panelGroup id="Cliente">
-					<p:panel header="Cliente" style="margin-bottom:10px;">
+					<p:panel header="Cliente" style="margin-bottom:10px;"
+						rendered="#{contratoCobrancaMB.objetoContratoCobranca.aprovadoComite and( usuarioMB.objetoUsuario.administrador or ( contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Registro'))}">
 						<h:panelGrid columns="3">
 							<h:panelGrid columns="2">
 								<p:outputLabel for="valorCartaSplit"
