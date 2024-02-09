@@ -8,7 +8,9 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -28,6 +30,7 @@ import com.webnowbr.siscoat.common.BancosEnum;
 import com.webnowbr.siscoat.common.ComissaoOrigemEnum;
 import com.webnowbr.siscoat.common.CommonsUtil;
 
+import br.com.galleriabank.bigdata.cliente.model.financas.FinancasResponseResultFinantialDataTaxReturns;
 import br.com.galleriabank.netrin.cliente.model.contabancaria.ValidaContaBancariaRequest;
 import br.com.galleriabank.netrin.cliente.model.contabancaria.ValidaContaBancariaResponse;
 import br.com.galleriabank.netrin.cliente.model.contabancaria.ValidaPixRequest;
@@ -658,8 +661,15 @@ public class Responsavel implements Serializable {
 	}
 
 	public Set<ComissaoResponsavel> getTaxasComissao() {
-		return taxasComissao;
+		if (!CommonsUtil.semValor(taxasComissao))
+			return taxasComissao.stream().sorted(Comparator.comparing(ComissaoResponsavel::getValorMinimo))
+					.collect(Collectors.toSet());
+		else
+			return new HashSet<ComissaoResponsavel>();
 	}
+	
+
+	
 	
 	public List<ComissaoResponsavel> getTaxasComissao(ComissaoOrigemEnum origem) {
 		if (!CommonsUtil.semValor(taxasComissao))

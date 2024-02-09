@@ -7197,15 +7197,9 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			"c.pedidoLaudo, c.pedidoLaudoPajuComercial, c.pedidoPreLaudo, c.pedidoPreLaudoComercial, c.pedidoPajuComercial, c.pendenciaLaudoPaju, " +
 		    "c.avaliacaoLaudoObservacao, c.dataPrevistaVistoria, c.geracaoLaudoObservacao, c.iniciouGeracaoLaudo, c.analistaGeracaoPAJU , c.comentarioJuridicoPendente, " +
 			"c.valorAprovadoComite, c.contratoConferido, c.agEnvioCartorio, reanalise, reanalisePronta, reanaliseJuridico" +
-<<<<<<< HEAD
-			" , gerente.nome nomeGerente, pr.id idPagador, res.superlogica, observacaoRenda, pagtoLaudoConfirmadaData, contatoDiferenteProprietario, c.iniciouGeracaoPaju, "
-			+ " im.estado, contratoPrioridadeAlta, c.analisePendenciadaUsuario, c.notaFiscalEmitida, c.dataNotaFiscalEmitida, c.usuarioNotaFiscalEmitida "
-			+ " ,c.notaFiscalPaga, c.dataNotaFiscalPaga, c.usuarioNotaFiscalPaga, c.avaliacaoLaudo, c.imovel, c.todosPreLaudoEntregues  " +
-=======
 			" , gerente.nome nomeGerente, pr.id idPagador, res.superlogica, observacaoRenda, pagtoLaudoConfirmadaData, contatoDiferenteProprietario, c.iniciouGeracaoPaju, " +
 			" im.estado, contratoPrioridadeAlta, c.analisePendenciadaUsuario, " +
 			" c.avaliacaoLaudo, c.imovel, c.todosPreLaudoEntregues " +
->>>>>>> refs/heads/master
 			"from cobranca.contratocobranca c " +		
 			"inner join cobranca.responsavel res on c.responsavel = res.id " +
 			"inner join cobranca.pagadorrecebedor pr on pr.id = c.pagador " +
@@ -7302,11 +7296,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					if (tipoConsulta.equals("Pré-Laudo Compass")) {
 						query = query + " and analiseReprovada = false and c.statusLead = 'Completo' and inicioanalise = true"
 								+ " and pendenciaLaudoPaju = false "
-<<<<<<< HEAD
-								+ " and pedidoPreLaudo = true and avaliacaoLaudo = 'Compass' and laudoRecebido = false "; // and todosPreLaudoEntregues = false
-=======
 								+ " and pedidoPreLaudo = true and avaliacaoLaudo = 'Compass' and laudoRecebido = false and todosPreLaudoEntregues = false "; // and todosPreLaudoEntregues = false
->>>>>>> refs/heads/master
 					}
 					
 					if (tipoConsulta.equals("Geração do PAJU")) {
@@ -9796,7 +9786,6 @@ private String QUERY_ID_IMOVELESTOQUE = "select id from cobranca.contratocobranc
 		});
 	}
     
-<<<<<<< HEAD
     @SuppressWarnings("unchecked")
 	public List<ContratoCobranca> geraConsultaContratosNotaFiscal(String statusNota) {
 		return (List<ContratoCobranca>) executeDBOperation(new DBRunnable() {
@@ -9865,54 +9854,18 @@ private String QUERY_ID_IMOVELESTOQUE = "select id from cobranca.contratocobranc
 		});
 	}
     
-    private String QUERY_SERIE_CCI_CONTRATO = "select c2.serieccb \r\n"
-    		+ "from cobranca.contratocobranca c \r\n"
-    		+ "left join cobranca.ccbcontrato c2 on c2.objetocontratocobranca = c.id\r\n"
-    		+ "where c.id = ?\r\n"
-    		+ "order by numerocontrato desc";
-    
-    @SuppressWarnings("unchecked")
+	private String QUERY_SERIE_CCI_CONTRATO = "select c2.serieccb \r\n"
+			+ "from cobranca.contratocobranca c \r\n"
+			+ "left join cobranca.ccbcontrato c2 on c2.objetocontratocobranca = c.id\r\n"
+			+ "where c.id = ?\r\n"
+			+ "order by numerocontrato desc";
+	
+	@SuppressWarnings("unchecked")
 	public String pegarSerieCci(ContratoCobranca contrato) {
-    	return pegarSerieCci(contrato.getId());
+		return pegarSerieCci(contrato.getId());
 	}
-    
-    @SuppressWarnings("unchecked")
-	public String pegarSerieCci(long contrato) {
-		return (String) executeDBOperation(new DBRunnable() {
-			@Override
-			public String run() throws Exception {
-				String serieCci = "";
-				Connection connection = null;
-				PreparedStatement ps = null;
-				ResultSet rs = null;
-				try {
-					connection = getConnection();
-					ps = connection.prepareStatement(QUERY_SERIE_CCI_CONTRATO);
-					ps.setLong(1, contrato);
-					rs = ps.executeQuery();
-					if (rs.next()) {
-						serieCci = rs.getString("serieccb");
-					}
-				} finally {
-					closeResources(connection, ps, rs);					
-				}
-				return serieCci;
-			}
-		});
-	}
-=======
-    private String QUERY_SERIE_CCI_CONTRATO = "select c2.serieccb \r\n"
-    		+ "from cobranca.contratocobranca c \r\n"
-    		+ "left join cobranca.ccbcontrato c2 on c2.objetocontratocobranca = c.id\r\n"
-    		+ "where c.id = ?\r\n"
-    		+ "order by numerocontrato desc";
-    
-    @SuppressWarnings("unchecked")
-	public String pegarSerieCci(ContratoCobranca contrato) {
-    	return pegarSerieCci(contrato.getId());
-	}
-    
-    @SuppressWarnings("unchecked")
+	
+	@SuppressWarnings("unchecked")
 	public String pegarSerieCci(long contrato) {
 		return (String) executeDBOperation(new DBRunnable() {
 			@Override
@@ -9937,9 +9890,7 @@ private String QUERY_ID_IMOVELESTOQUE = "select id from cobranca.contratocobranc
 		});
 	}
     
->>>>>>> refs/heads/master
-    
-private String QUERY_CONTRATOS_IPCA = "select distinct c.* "
+	private String QUERY_CONTRATOS_IPCA = "select distinct c.* "
 		+ "	 from cobranca.contratocobranca c "
 		+ "	 inner join cobranca.contratocobranca_detalhes_join cdj on c.id  = cdj.idcontratocobranca "
 		+ "	 inner join cobranca.contratocobrancadetalhes c2 on cdj.idcontratocobrancadetalhes  = c2.id  and parcelapaga = false "
@@ -9977,15 +9928,12 @@ private String QUERY_CONTRATOS_IPCA = "select distinct c.* "
 	}
     
     
-    private static final String QUERY_VALOR_CONTRATOS_ASSINADOS_PERIODO = "select --c.responsavel , to_char(c.agassinaturadata, 'YYYY-MM') , count(*), " +
-    		 "sum( c.valorccb ) " +
-    		 "from cobranca.contratocobranca c " +
-    		 "inner join cobranca.contratocobranca c2 on c.responsavel = c2.responsavel " +
+    private static final String QUERY_VALOR_CONTRATOS_ASSINADOS_PERIODO = "select sum( c.valorccb ) " +
+    		 " from cobranca.contratocobranca c " +
+    		 " inner join cobranca.contratocobranca c2 on c.responsavel = c2.responsavel " +
     		 "                                       and to_char(c.agassinaturadata, 'YYYY-MM')  = to_char(c2.agassinaturadata, 'YYYY-MM') " +
-    		 "                                       and c2.numerocontrato = ?  " +
-    		 "where c.agassinaturadata is not null " +
-    		 "and  to_char(c.agassinaturadata, 'YYYY-MM') = '2024-01' " +
-    		 "group by c.responsavel  , to_char(c.agassinaturadata, 'YYYY-MM') ";
+    		 " where c.id = ? and c.agassinaturadata is not null " +
+    		 " group by c.responsavel  , to_char(c.agassinaturadata, 'YYYY-MM') ";
     
   	public BigDecimal consultaContratosAssisnadoNoPeriodo(ContratoCobranca contrato) {
   		return (BigDecimal) executeDBOperation(new DBRunnable() {
@@ -10005,9 +9953,9 @@ private String QUERY_CONTRATOS_IPCA = "select distinct c.* "
 
 					ps.setLong(1, contrato.getId());
 					rs = ps.executeQuery();
+					if( rs.next())					
+						result = rs.getBigDecimal(1);
 
-					result = rs.getBigDecimal(1);
-//					break;
 
 				} finally {
 					closeResources(connection, ps, rs);

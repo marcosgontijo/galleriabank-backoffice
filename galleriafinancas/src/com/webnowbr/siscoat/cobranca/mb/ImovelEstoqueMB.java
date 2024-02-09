@@ -55,10 +55,6 @@ public class ImovelEstoqueMB {
 	private List<ContratoCobranca> listaConsultaEstoque = new ArrayList<ContratoCobranca>();
 	private List<ImovelEstoque> listImovelEstoque;
 	private boolean relatorioGerado = false;
-<<<<<<< HEAD
-	private String parametroPesquisa = "Tudo";
-=======
->>>>>>> refs/heads/master
 	private String parametroPesquisa;
 	private List<ContratoCobranca> listaImovelTudo;
 	private List<ContratoCobranca> listaImovelVendido;
@@ -84,11 +80,7 @@ public class ImovelEstoqueMB {
 	public String clearFieldsEstoqueImoveis() {
 		objetoContratoCobranca = new ContratoCobranca();
 		objetoImovelCobranca = new ImovelCobranca();
-<<<<<<< HEAD
-		this.consultaEstoquePesquisa();
-=======
 		this.consultaEstoque();
->>>>>>> refs/heads/master
 		this.consultaEstoquePesquisa();
 
 		return "/Atendimento/Cobranca/ImovelEstoqueConsulta.xhtml";
@@ -121,10 +113,7 @@ public class ImovelEstoqueMB {
 		     }
 		     ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();	
 		     if(objetoImovelEstoque.getId() <= 0) {
-<<<<<<< HEAD
-=======
 		    	 objetoImovelEstoque.setQuitado(false);
->>>>>>> refs/heads/master
 		    	 objetoImovelEstoque.setStatusAtual("Estoque");
 					imovelEstoqueDao.create(objetoImovelEstoque);
 
@@ -164,15 +153,6 @@ public class ImovelEstoqueMB {
 	public void consultaEstoquePesquisa() {
 		ImovelEstoqueDao dao = new ImovelEstoqueDao();
 		if(CommonsUtil.mesmoValor( parametroPesquisa, "Tudo")){
-<<<<<<< HEAD
-			listaConsultaEstoque = dao.consultaImovelEstoqueTudo();
-		} else if(CommonsUtil.mesmoValor(parametroPesquisa, "Vendido")) {
-			listaConsultaEstoque = dao.consultaImovelEstoqueVendido();
-			
-		} else if(CommonsUtil.mesmoValor(parametroPesquisa, "Estoque")) {
-			listaConsultaEstoque = dao.consultaImovelEstoqueNaoVendido();
-			
-=======
 			listaConsultaEstoque = listaImovelTudo;
 		} else if(CommonsUtil.mesmoValor(parametroPesquisa, "Vendido")) {
 			listaConsultaEstoque = listaImovelVendido;
@@ -182,7 +162,6 @@ public class ImovelEstoqueMB {
 			
 		} else {
 			listaConsultaEstoque = listaImovelEmEsdtoque;
->>>>>>> refs/heads/master
 		}
 		
 	}
@@ -480,10 +459,6 @@ public class ImovelEstoqueMB {
 	/**
 	 * @return the lazyModel
 	 */
-<<<<<<< HEAD
-
-=======
->>>>>>> refs/heads/master
 
 	/**
 	 * @param lazyModel the lazyModel to set
@@ -607,10 +582,7 @@ public class ImovelEstoqueMB {
 	public void setListaImovelEstoque(List<ContratoCobranca> listaImovelEstoque) {
 		this.listaImovelEstoque = listaImovelEstoque;
 	}
-<<<<<<< HEAD
-=======
 
->>>>>>> refs/heads/master
 	public String getParametroPesquisa() {
 		return parametroPesquisa;
 	}

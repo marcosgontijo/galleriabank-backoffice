@@ -756,12 +756,7 @@
 										</p:selectManyMenu>
 									</ui:fragment>
 								</shiro:hasAnyRoles>	
-<<<<<<< HEAD
-										
-=======
-								
-																
->>>>>>> refs/heads/master
+
 								<ui:fragment
 									rendered="#{contratoCobrancaMB.indexStepsStatusContrato ge 8 and contratoCobrancaMB.indexStepsStatusContrato le 11}">
 									<h:panelGrid columns="2"
@@ -872,20 +867,7 @@
 								</p:commandButton>
 							</h:panelGrid>
 							
-<<<<<<< HEAD
-							<ui:fragment>
-								<p:selectBooleanButton value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}" rendered="#{contratoCobrancaMB.indexStepsStatusContrato ge 1 and contratoCobrancaMB.indexStepsStatusContrato le 5 }" 
-									onLabel="Pré-Laudo Compass Solicitado" offLabel="Pré-Laudo Compass Pendente" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px">
-									<p:ajax event="valueChange" update=":form:Status"></p:ajax>
-								</p:selectBooleanButton>
-								
-								<p:selectManyMenu showCheckbox="true"
-									value="#{contratoCobrancaMB.listSolicitacaoPreLaudoImoveis}"
-									label="Imóvel do pré-laudo" style="width:280px; margin-top:20px;" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">
-									<f:selectItems value="#{contratoCobrancaMB.listTodosImoveisContrato}" var="imovelCobranca" itemValue="#{imovelCobranca.id}" itemLabel="#{imovelCobranca.numeroMatricula} - #{imovelCobranca.endereco}" />
-								</p:selectManyMenu>
-							</ui:fragment>
-=======
+
 							<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_AVALIADOR_IMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_GERENTE_ANALISE">
 								<ui:fragment>
 									<p:selectBooleanButton value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}" rendered="#{contratoCobrancaMB.indexStepsStatusContrato ge 1 and contratoCobrancaMB.indexStepsStatusContrato le 5 }" 
@@ -900,25 +882,13 @@
 									</p:selectManyMenu>
 								</ui:fragment>
 							</shiro:hasAnyRoles>
->>>>>>> refs/heads/master
-							
 						</h:panelGrid>
 					</ui:fragment>
-					
-<<<<<<< HEAD
-					<p:panel header="Envio de documento do pre-laudo" style="margin-bottom:10px" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">
-						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFilePreLaudoUpload}" mode="advanced" dragDropSupport="true"
-                          update="ArquivosJuridicoSalvos msgArquivo" />	
-					</p:panel>
-=======
+				
 					<p:panel header="Envio de documento do pré-laudo" style="margin-bottom:10px" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" fileUploadListener="#{contratoCobrancaMB.handleFilePreLaudoUpload}" mode="advanced" dragDropSupport="true"
                           update="ArquivosJuridicoSalvos msgArquivo" />	
 					</p:panel>
-
-
-
->>>>>>> refs/heads/master
 
 					<p:tooltip id="toolTipContentagAnaliseStep" for="agAnaliseStep"
 						position="bottom">

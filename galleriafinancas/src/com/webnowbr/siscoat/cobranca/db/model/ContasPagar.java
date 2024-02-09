@@ -60,11 +60,7 @@ public class ContasPagar implements Serializable {
 	
 	private Collection<FileUploaded> filesContas = new ArrayList<FileUploaded>();
 	
-<<<<<<< HEAD
-	private ContasPagar ContasPagarOriginal;
-	
-=======
->>>>>>> refs/heads/master
+
 	private ContasPagar contaPagarOriginal = null;
 	private boolean editada;
 	
@@ -407,17 +403,6 @@ public class ContasPagar implements Serializable {
 		this.contaCartaSplit = contaCartaSplit;
 	}
 
-<<<<<<< HEAD
-	public ContasPagar getContasPagarOriginal() {
-		return ContasPagarOriginal;
-	}
-
-	public void setContasPagarOriginal(ContasPagar contasPagarOriginal) {
-		ContasPagarOriginal = contasPagarOriginal;
-	}
-
-=======
->>>>>>> refs/heads/master
 	public String getTipoContaBancaria() {
 		return tipoContaBancaria;
 	}

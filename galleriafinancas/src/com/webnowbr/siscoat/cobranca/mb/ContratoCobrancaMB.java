@@ -19,6 +19,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -1092,21 +1095,15 @@ public class ContratoCobrancaMB {
 		files = new ArrayList<FileUploaded>();
 		filesInterno = new ArrayList<FileUploaded>();
 		filesFaltante = new ArrayList<FileUploaded>();
-<<<<<<< HEAD
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesNotaFiscal = new ArrayList<FileUploaded>();
-=======
-		filesJuridico = new ArrayList<FileUploaded>();		
->>>>>>> refs/heads/master
 		filesComite = new ArrayList<FileUploaded>();
 
 		this.hasBaixaParcial = false;
 
 		this.objetoImovelCobranca = new ImovelCobranca();
 		this.objetoPagadorRecebedor = new PagadorRecebedor();
-//		this.tipoPessoaIsFisica = true;
-//		this.objetoContratoCobranca.setNotaFiscalEmitida(false);
-//		this.objetoContratoCobranca.setNotaFiscalAgendada(false);
+		this.tipoPessoaIsFisica = true;
 		// FIM - Tratamento para Pré-Contrato
 	}
 
@@ -3861,22 +3858,9 @@ public class ContratoCobrancaMB {
 				}
 			}
 			
-<<<<<<< HEAD
-			if(!this.listSolicitacaoPreLaudoImoveis.isEmpty()) {
-								
-				// Caso a lista de imoveis solicitando pre laudo nao esteja vazia, cria um laudo novo e insere as infos na tabela relacional
-				
-				ImovelCobrancaDao imovelDao = new ImovelCobrancaDao();
-				
-				//VOLTA AQUI
-				
-				for(Object imovelObj: this.listSolicitacaoPreLaudoImoveis) {
-					Long idImovel = Long.parseLong(imovelObj.toString());
-					ImovelCobranca imovel = new ImovelCobranca();
-					imovel = imovelDao.findById(idImovel);
-=======
+
 			if (!CommonsUtil.semValor(this.listSolicitacaoPreLaudoImoveis)) {
-								
+				
 				// Caso a lista de imoveis solicitando pre laudo nao esteja vazia, cria um laudo novo e insere as infos na tabela relacional
 				
 				ImovelCobrancaDao imovelDao = new ImovelCobrancaDao();
@@ -3891,13 +3875,13 @@ public class ContratoCobrancaMB {
 					if(CommonsUtil.mesmoValor(idImovel, this.objetoImovelCobranca.getId())) {
 						this.objetoImovelCobranca.setPreLaudoSolicitado(true);				
 					}
->>>>>>> refs/heads/master
 					
 					imovel.setPreLaudoSolicitado(true);
 					imovelDao.merge(imovel);			
 				}
 				
 			}
+			
 			/*
 			 * if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0)
 			 * { Responsavel responsavel = responsavelDao.findByFilter("codigo",
@@ -4036,17 +4020,10 @@ public class ContratoCobrancaMB {
 			UserDao u = new UserDao();
 			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
 			
-<<<<<<< HEAD
-			System.out.println(this.listImoveis);
-			
-			// Nova condição caso o usuário flag pedindo o pre-laudo da Compass
-			if(this.objetoContratoCobranca.isPedidoPreLaudo() && (usuarioLogado.isAdministrador() || usuarioLogado.isProfileAvaliadorImovelCompass())) {
-=======
 //			System.out.println(this.listImoveis);
 			
 			// Nova condição caso o usuário flag pedindo o pre-laudo da Compass
 			if(this.objetoContratoCobranca.isPedidoPreLaudo()) {
->>>>>>> refs/heads/master
 				this.objetoContratoCobranca.setAvaliacaoLaudo("Compass");
 				this.objetoContratoCobranca.setPedidoPreLaudoData(new Date());
 				this.objetoContratoCobranca.setPedidoPreLaudoUsuario(loginBean.getUsername());
@@ -4126,11 +4103,7 @@ public class ContratoCobrancaMB {
 							"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
 									+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
 							""));
-<<<<<<< HEAD
 
-=======
-			
->>>>>>> refs/heads/master
 			this.objetoCcb = null;
 
 			if (usuarioLogado.isComiteConsultar()) {
@@ -4216,16 +4189,11 @@ public class ContratoCobrancaMB {
 			}
 		}
 		
-<<<<<<< HEAD
-		if(this.objetoContratoCobranca.isPedidoPreLaudo() && listSolicitacaoPreLaudoImoveis.isEmpty()) {
-=======
 		if(this.objetoContratoCobranca.isPedidoPreLaudo() && CommonsUtil.semValor(listSolicitacaoPreLaudoImoveis)) {
->>>>>>> refs/heads/master
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Contrato Cobrança: Nenhum imóvel selecionado para pré-laudo!", ""));
 			return false;
-		}
-		
+		}		
 		return true;
 	}
 
@@ -9125,8 +9093,6 @@ public class ContratoCobrancaMB {
 					// this.selectedListContratoCobrancaDetalhes.add(parcelas);
 				}
 			}
-			
-		
 		}
 		System.out.print("");
 		FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Estoque Inserido com sucesso!!", ""));
@@ -31686,6 +31652,7 @@ public class ContratoCobrancaMB {
 		return objetoContratoCobranca;
 	}
 
+	
 
 	public void adicionarBlackFlagImovel() {
 		ImovelCobrancaRestricaoService imovelCobrancaRestricaoService = new ImovelCobrancaRestricaoService();
@@ -33851,10 +33818,6 @@ public class ContratoCobrancaMB {
 	
 	public void handleFilePreLaudoUpload(FileUploadEvent event) throws IOException {
 		FacesContext context = FacesContext.getCurrentInstance();
-<<<<<<< HEAD
-
-=======
->>>>>>> refs/heads/master
 		if (event.getFile().getFileName().endsWith(".zip")) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
@@ -34315,11 +34278,11 @@ public class ContratoCobrancaMB {
 					ResponsavelService responsavelService = new ResponsavelService();
 					objetoResponsavel = responsavelService.getObjetoResponsavelGeral();
 				}
-
+				
 				if (!CommonsUtil.semValor(objetoResponsavel.getTaxasComissao())) {
 					Optional<BigDecimal> taxasComissao = objetoResponsavel.getTaxasComissao().stream()
-							.filter(t -> t.getValorMinimo().compareTo(contratosAssinados) >= 0
-									&& t.getValorMaximo().compareTo(contratosAssinados) <= 0)
+							.filter(t -> t.getValorMinimo().compareTo(contratosAssinados) <= 0
+									&& t.getValorMaximo().compareTo(contratosAssinados) >= 1)
 							.map(t -> t.getTaxaRemuneracao()).findFirst();
 
 					if (taxasComissao.isPresent())
@@ -34328,10 +34291,10 @@ public class ContratoCobrancaMB {
 			}
 
 			if (!CommonsUtil.semValor(percentual)) {
-				BigDecimal valorNotaFiscal = contratosAssinados
+				BigDecimal valorNotaFiscal = this.objetoContratoCobranca.getValorCCB()
 						.multiply(percentual.divide(CommonsUtil.bigDecimalValue(100)));
 
-				this.objetoContratoCobranca.setValorNotaFiscal(CommonsUtil.bigDecimalValue(valorNotaFiscal));
+				this.objetoContratoCobranca.setValorNotaFiscal(CommonsUtil.bigDecimalValue(valorNotaFiscal).setScale(2, BigDecimal.ROUND_HALF_UP));
 			} else {
 				this.objetoContratoCobranca.setValorNotaFiscal(BigDecimal.ZERO);
 			}
@@ -37360,34 +37323,7 @@ public class ContratoCobrancaMB {
 	public void setListaSelectAnalise(List<DocumentoAnalise> listaSelectAnalise) {
 		this.listaSelectAnalise = listaSelectAnalise;
 	}
-<<<<<<< HEAD
 	
-	public List<ImovelCobranca> getlistTodosImoveisContrato() {
-		return listTodosImoveisContrato;
-	}
-	
-	public void setlistTodosImoveisContrato(List<ImovelCobranca> listTodosImoveisContrato) {
-		this.listTodosImoveisContrato = listTodosImoveisContrato;
-	}
-	
-	public Set<ImovelCobranca> getlistSolicitacaoPreLaudoImoveis() {
-		return listSolicitacaoPreLaudoImoveis;
-	}
-	
-	public void setlistSolicitacaoPreLaudoImoveis(Set<ImovelCobranca> listSolicitacaoPreLaudoImoveis) {
-		this.listSolicitacaoPreLaudoImoveis = listSolicitacaoPreLaudoImoveis;
-	}
-	
-	public List<ImovelCobranca> getlistPreLaudoImoveisRelac() {
-		return listPreLaudoImoveisRelac;
-	}
-	
-	public void setlistPreLaudoImoveisRelac(List<ImovelCobranca> listPreLaudoImoveisRelac) {
-		this.listPreLaudoImoveisRelac = listPreLaudoImoveisRelac;
-	}
-	
-=======
-
 	public List<DocumentoAnalise> getListaDocumentoAnaliseReanalise() {
 		return listaDocumentoAnaliseReanalise;
 	}
@@ -37427,5 +37363,4 @@ public class ContratoCobrancaMB {
 	public void setTxAdm(BigDecimal txAdm) {
 		this.txAdm = txAdm;
 	}
->>>>>>> refs/heads/master
 }

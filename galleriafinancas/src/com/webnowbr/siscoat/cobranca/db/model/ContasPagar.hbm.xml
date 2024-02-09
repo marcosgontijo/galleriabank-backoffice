@@ -18,8 +18,6 @@
 		</property>	
 		<property name="descricao" type="java.lang.String">
 			<column name="descricao" />
-		</property>
-
 		</property>		
 		<property name="ispb" type="java.lang.String">
 			<column name="ispb" />
@@ -29,48 +27,46 @@
 			lazy="false">
 			<column name="contrato" />
 		</many-to-one>
-
+		
 		<property name="valor" type="big_decimal">
 			<column name="valor" />
 		</property>
 		<property name="contaPaga" type="boolean">
 			<column name="contaPaga" />
-		</property>
+		</property>		
 		<property name="contaCartaSplit" type="boolean">
 			<column name="contaCartaSplit" not-null="true" default="false" />
 		</property>
 		<property name="dataPagamento" type="java.util.Date">
 			<column name="dataPagamento" />
 		</property>
-
+		
 		<!--Novos Campos -->
 		<property name="dataVencimento" type="java.util.Date">
 			<column name="dataVencimento" />
-		</property>
+		</property>		
 		<property name="valorPagamento" type="big_decimal">
 			<column name="valorPagamento" />
 		</property>
-		<property name="numeroDocumento" type="java.lang.String"
-			length="20">
+		<property name="numeroDocumento" type="java.lang.String"  length="20">
 			<column name="numeroDocumento" />
-		</property>
-		<property name="tipoDespesa" type="java.lang.String"
-			length="1">
+		</property>		
+		<property name="tipoDespesa" type="java.lang.String" length="1">
 			<column name="tipoDespesa" />
-		</property>
-
+		</property>	
+			
 		<many-to-one name="pagadorRecebedor"
 			class="com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor"
 			lazy="false">
 			<column name="pagadorRecebedor" />
 		</many-to-one>
-
+		
 		<many-to-one name="contaContabil"
 			class="com.webnowbr.siscoat.cobranca.db.model.ContaContabil"
 			lazy="false">
 			<column name="contaContabil" />
 		</many-to-one>
-
+		
 		<many-to-one name="responsavel"
 			class="com.webnowbr.siscoat.cobranca.db.model.Responsavel"
 			lazy="false">
@@ -80,64 +76,55 @@
 		<property name="formaTransferencia" type="java.lang.String">
 			<column name="formaTransferencia" />
 		</property>	
-<<<<<<< HEAD
-=======
 		
 		<property name="tipoContaBancaria" type="java.lang.String">
 			<column name="tipoContaBancaria" />
 		</property>		
->>>>>>> refs/heads/master
 		
-		<property name="tipoContaBancaria" type="java.lang.String">
-			<column name="tipoContaBancaria" />
-		</property>
-
 		<property name="pix" type="java.lang.String">
 			<column name="pix" />
-		</property>
-
+		</property>		
+		
 		<property name="nomeTed" type="java.lang.String">
 			<column name="nomeTed" />
-		</property>
-
+		</property>	
+		
 		<property name="cpfTed" type="java.lang.String">
 			<column name="cpfTed" />
-		</property>
-
+		</property>	
+		
 		<property name="bancoTed" type="java.lang.String">
 			<column name="bancoTed" />
-		</property>
-
+		</property>	
+		
 		<property name="contaTed" type="java.lang.String">
 			<column name="contaTed" />
-		</property>
-
+		</property>	
+		
 		<property name="digitoContaTed" type="java.lang.String">
 			<column name="digitoContaTed" />
 		</property>
-
+		
 		<property name="agenciaTed" type="java.lang.String">
 			<column name="agenciaTed" />
-		</property>
-
+		</property>	
+		
 		<property name="fileListId" type="java.lang.String">
 			<column name="fileListId" />
-		</property>
-
-		<property name="linhaDigitavelStarkBank"
-			type="java.lang.String">
+		</property>	
+		
+		<property name="linhaDigitavelStarkBank" type="java.lang.String">
 			<column name="linhaDigitavelStarkBank" />
-		</property>
-
+		</property>	
+		
 		<property name="descricaoStarkBank" type="java.lang.String">
 			<column name="descricaoStarkBank" />
-		</property>
-
-		<property name="numeroDocumentoPagadorStarkBank"
-			type="java.lang.String">
+		</property>	
+		
+		<property name="numeroDocumentoPagadorStarkBank" type="java.lang.String">
 			<column name="numeroDocumentoPagadorStarkBank" />
-		</property>
-
+		</property>	
+		
 		<many-to-one name="comprovantePagamentoStarkBank"
 			class="com.webnowbr.siscoat.cobranca.db.model.StarkBankBoleto"
 			lazy="false">
@@ -149,13 +136,7 @@
 			<column name="comprovantePagamentoPixStarkBank" />
 		</many-to-one>
 
-		<many-to-one name="ContasPagarOriginal"
-			class="com.webnowbr.siscoat.cobranca.db.model.ContasPagar">
-			<column name="ContasPagarOriginal" />
-		</many-to-one>
-
-
-		<list name="listContasPagarBaixas"
+        <list name="listContasPagarBaixas"
 			table="ContasPagarStarkBankBaixa" cascade="all" lazy="false">
 			<key column="idContasPagar" />
 			<list-index></list-index>

@@ -1,13 +1,13 @@
 package com.webnowbr.siscoat.cobranca.service;
 
 import java.util.Date;
+import java.util.HashSet;
 
+import com.webnowbr.siscoat.cobranca.db.model.ComissaoResponsavel;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.SiscoatConstants;
-import com.webnowbr.siscoat.infra.db.dao.UserDao;
-import com.webnowbr.siscoat.infra.db.model.User;
 
 public class ResponsavelService {
 	
@@ -24,6 +24,12 @@ public class ResponsavelService {
 			objetoResponsavelGeral.setDataCadastro(new Date());
 			objetoResponsavelGeral.setDesativado(true);
 			responsavelDao.create(objetoResponsavelGeral);
+		} else {
+			if (CommonsUtil.semValor(objetoResponsavelGeral.getTaxasComissao())) {
+				objetoResponsavelGeral.setTaxasComissao(new HashSet<ComissaoResponsavel>());
+			}
+			responsavelDao.update(objetoResponsavelGeral);
+
 		}
 
 		return objetoResponsavelGeral;

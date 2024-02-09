@@ -70,7 +70,6 @@ import com.webnowbr.siscoat.security.LoginBean;
 @ManagedBean(name = "termoMB")
 @SessionScoped
 public class TermoMB {
-	
 
 	@ManagedProperty(value = "#{loginBean}")
 	protected LoginBean loginBean;
@@ -118,7 +117,7 @@ public class TermoMB {
 
 	private List<TermoUsuario> termosUsuario;
 	private List<TermoPopup> usuarios = new ArrayList<>();
-	
+
 	private TermoUsuarioVO usuarioVO;
 	User usuarioNew = null;
 	Date dataAceite = null;
@@ -129,35 +128,31 @@ public class TermoMB {
 		UserDao usuario = new UserDao();
 		TermoUsuarioVO TermoUsuariovo = new TermoUsuarioVO();
 		termosUsuario = termoDao.findByFilter("idTermo", id);
-	
+
 		for (TermoUsuario user : termosUsuario) {
-		
+
 			User userPesquisa = usuario.findById(user.getIdUsuario());
 			TermoUsuariovo.setDataAceite(user.getDataAceite());
 			TermoUsuariovo.setUsuario(userPesquisa);
 			usuarios.add(new TermoPopup(TermoUsuariovo.getUsuario().getName(), TermoUsuariovo.getDataAceite()));
-			
-			
 
 		}
 
-
 	}
+
 	private boolean pdfGerado;
 	private String pathPDF;
 	private String nomePDF;
 	private StreamedContent filePDF;
-	
-	
+
 	public StreamedContent geraPDF() {
 		Document document = null;
 		ByteArrayOutputStream baos = null;
 		try {
-			
-			
-			 baos = new ByteArrayOutputStream();
+
+			baos = new ByteArrayOutputStream();
 			TermoUsuarioVO TermoUsuariovo = new TermoUsuarioVO();
-			
+
 			UserDao usuario = new UserDao();
 			Font header = new Font(FontFamily.HELVETICA, 12, Font.BOLD);
 
@@ -165,24 +160,22 @@ public class TermoMB {
 			Font tituloBranco = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
 			tituloBranco.setColor(BaseColor.WHITE);
 			Font normal = new Font(FontFamily.HELVETICA, 10);
-			Font subtitulo = new Font(FontFamily.HELVETICA, 10, Font.BOLD);	    	
+			Font subtitulo = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
 			Font subtituloIdent = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
 			Font destaque = new Font(FontFamily.HELVETICA, 8, Font.BOLD);
 
-			TimeZone zone = TimeZone.getDefault();  
-			Locale locale = new Locale("pt", "BR"); 
-			Calendar date = Calendar.getInstance(zone, locale);  
+			TimeZone zone = TimeZone.getDefault();
+			Locale locale = new Locale("pt", "BR");
+			Calendar date = Calendar.getInstance(zone, locale);
 			SimpleDateFormat sdfDataRel = new SimpleDateFormat("dd/MMM/yyyy", locale);
 			SimpleDateFormat sdfDataRelComHoras = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", locale);
- 
-			
+
 			document = new Document(PageSize.A4.rotate(), 10, 10, 10, 10);
 			PdfWriter.getInstance(document, baos);
 			document.open();
 			PdfPTable table = new PdfPTable(3);
-			
-		
-			table.setWidthPercentage(100.0f); 
+
+			table.setWidthPercentage(100.0f);
 			PdfPCell cell1 = new PdfPCell(new Phrase("Assinantes do Termo", header));
 			cell1.setRowspan(2);
 			cell1.setBorder(0);
@@ -195,8 +188,7 @@ public class TermoMB {
 			cell1.setPaddingBottom(15f);
 			table.addCell(cell1);
 
-			
-		PdfPCell cell2 = new PdfPCell(new Phrase("Nome: ", titulo));
+			PdfPCell cell2 = new PdfPCell(new Phrase("Nome: ", titulo));
 			cell2.setRowspan(0);
 			cell2.setBorder(0);
 			cell2.setPaddingLeft(8f);
@@ -207,24 +199,24 @@ public class TermoMB {
 			cell2.setPaddingTop(5f);
 			cell2.setPaddingBottom(15f);
 			table.addCell(cell2);
-			
+
 			for (TermoUsuario user : termosUsuario) {
-				
+
 				User userPesquisa = usuario.findById(user.getIdUsuario());
 				TermoUsuariovo.setDataAceite(user.getDataAceite());
 				TermoUsuariovo.setUsuario(userPesquisa);
-			 PdfPCell cell3 = new PdfPCell(new Phrase(TermoUsuariovo.getUsuario().getName(), normal));
-			cell3.setBorder(0);
-			cell3.setPaddingLeft(8f);
-			cell3.setBackgroundColor(BaseColor.WHITE);
-			cell3.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell3.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell3.setUseBorderPadding(true);
-			cell3.setPaddingTop(5f);
-			cell3.setPaddingBottom(15f);
-			table.addCell(cell3);
+				PdfPCell cell3 = new PdfPCell(new Phrase(TermoUsuariovo.getUsuario().getName(), normal));
+				cell3.setBorder(0);
+				cell3.setPaddingLeft(8f);
+				cell3.setBackgroundColor(BaseColor.WHITE);
+				cell3.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cell3.setHorizontalAlignment(Element.ALIGN_LEFT);
+				cell3.setUseBorderPadding(true);
+				cell3.setPaddingTop(5f);
+				cell3.setPaddingBottom(15f);
+				table.addCell(cell3);
 			}
-	
+
 			document.add(table);
 			document.close();
 
@@ -240,33 +232,22 @@ public class TermoMB {
 		}
 		return null;
 	}
-	
-			
-
-	
-
-
-
 
 	public User getUsuarioNew() {
 		return usuarioNew;
 	}
 
-
 	public void setUsuarioNew(User usuarioNew) {
 		this.usuarioNew = usuarioNew;
 	}
-
 
 	public List<TermoUsuario> getTermosUsuario() {
 		return termosUsuario;
 	}
 
-
 	public void setTermosUsuario(List<TermoUsuario> termosUsuario) {
 		this.termosUsuario = termosUsuario;
 	}
-
 
 	public String clearFields() {
 
@@ -421,50 +402,48 @@ public class TermoMB {
 		TermoDao termoDao = new TermoDao();
 		return termoDao.termosNaoAssinadosUsuario(usuario);
 	}
-	
-
 
 	public String verificaTermosNaoAssinados() throws IOException {
 		UserDao usuerDao = new UserDao();
-		//if (CommonsUtil.semValor(termos)) {
+		// if (CommonsUtil.semValor(termos)) {
 //			TermoUsuarioDao termoUsuarioDao = new TermoUsuarioDao();
-			termos = termosNaoAssinadosUsuario(loginBean.getUsuarioLogado());
-			
-			for (Termo termo : termos) {				
-				TermoUsuario termoUsuario = loginBean.getUsuarioLogado().getListTermos().stream().filter(t -> CommonsUtil.mesmoValor( t.getId(), termo.getId())).findAny().orElse(null);
+		termos = termosNaoAssinadosUsuario(loginBean.getUsuarioLogado());
+
+		for (Termo termo : termos) {
+			TermoUsuario termoUsuario = loginBean.getUsuarioLogado().getListTermos().stream()
+					.filter(t -> CommonsUtil.mesmoValor(t.getIdTermo(), termo.getId())).findAny().orElse(null);
 //				TermoUsuario termoUsuario = termoUsuarioDao.termosUsuario(termo, loginBean.getUsuarioLogado());				
-				if ( !CommonsUtil.semValor( termoUsuario) ) {
-						if( CommonsUtil.semValor( termoUsuario.getDataCienca()) ) {
-							termoUsuario.setDataCienca(DateUtil.getDataHoraAgora());
+			if (!CommonsUtil.semValor(termoUsuario)) {
+				if (CommonsUtil.semValor(termoUsuario.getDataCienca())) {
+					termoUsuario.setDataCienca(DateUtil.getDataHoraAgora());
 //							termoUsuarioDao.merge(termoUsuario);
-						}							
-				}else {
-					if ( termo.getId() > 0) {
+				}
+			} else {
+				if (termo.getId() > 0) {
 					termoUsuario = new TermoUsuario();
 					termoUsuario.setDataCienca(DateUtil.getDataHoraAgora());
 					termoUsuario.setIdTermo(termo.getId());
 					termoUsuario.setIdUsuario(loginBean.getUsuarioLogado().getId());
-					 loginBean.getUsuarioLogado().getListTermos().add(termoUsuario);
-					}
+					loginBean.getUsuarioLogado().getListTermos().add(termoUsuario);
 				}
-				
-				termo.setTermoUsuario(termoUsuario);
-			}		
-			usuerDao.merge(loginBean.getUsuarioLogado());
-			
-			itermo = 0;
-			if (!CommonsUtil.semValor(termos)) {
-				PrimeFaces.current().executeScript("PF('dlgTermos').show();");
 			}
-		//}
-		
+
+			termo.setTermoUsuario(termoUsuario);
+		}
+		usuerDao.merge(loginBean.getUsuarioLogado());
+
+		itermo = 0;
 		if (!CommonsUtil.semValor(termos)) {
 			PrimeFaces.current().executeScript("PF('dlgTermos').show();");
 		}
-		
+		// }
+
+		if (!CommonsUtil.semValor(termos)) {
+			PrimeFaces.current().executeScript("PF('dlgTermos').show();");
+		}
+
 		return null;
 	}
-
 
 	public String getDescricaoTermo() {
 		try {
@@ -475,6 +454,7 @@ public class TermoMB {
 		}
 		return null;
 	}
+
 	public String getInstrucaoTermo() {
 		try {
 			if (!CommonsUtil.semValor(termos))
@@ -484,7 +464,7 @@ public class TermoMB {
 		}
 		return null;
 	}
-	
+
 	public String getAceiteExpirado() {
 		try {
 			if (!CommonsUtil.semValor(termos))
@@ -494,8 +474,8 @@ public class TermoMB {
 		}
 		return null;
 	}
-	
- 	public String carregaPdfTermo() throws IOException {
+
+	public String carregaPdfTermo() throws IOException {
 
 //		if (CommonsUtil.semValor(termos)) {
 //			termos = termosNaoAssinadosUsuario(loginBean.getUsuarioLogado());
@@ -518,10 +498,11 @@ public class TermoMB {
 			PDDocument doc = PDDocument.load(new File(termos.get(itermo).getPath()));
 			PDFRenderer pdfRenderer = new PDFRenderer(doc);
 
-			BufferedImage joinBufferedImage = new BufferedImage(1,1, BufferedImage.TYPE_INT_ARGB);
+			BufferedImage joinBufferedImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
 
 			for (int x = 0; x < doc.getNumberOfPages(); x++) {
-				BufferedImage bImage = pdfRenderer.renderImageWithDPI(x, 115, org.apache.pdfbox.rendering.ImageType.RGB);
+				BufferedImage bImage = pdfRenderer.renderImageWithDPI(x, 115,
+						org.apache.pdfbox.rendering.ImageType.RGB);
 				joinBufferedImage = joinBufferedImage(joinBufferedImage, bImage);
 			}
 
@@ -540,53 +521,59 @@ public class TermoMB {
 		}
 		String base64 = Base64.getEncoder().encodeToString(bytes);
 		btnAceiteDesativado = false;
-		return "data:image/png;base64," + base64;	
+		return "data:image/png;base64," + base64;
 	}
-	
+
 	private BufferedImage joinBufferedImage(BufferedImage img1, BufferedImage img2) {
 
-        //do some calculate first
-        int offset = 5;
-        int wid = Math.max(img1.getWidth(), img2.getWidth()) + offset;
-        int height = img1.getHeight()+ img2.getHeight() + offset;
-        //create a new buffer and draw two image into the new image
-        BufferedImage newImage = new BufferedImage(wid, height, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g2 = newImage.createGraphics();
-        Color oldColor = g2.getColor();
-        //fill background
-        g2.setPaint(Color.WHITE);
-        g2.fillRect(0, 0, wid, height);
-        //draw image
-        g2.setColor(oldColor);
-        g2.drawImage(img1, null, 0, 0);
-        g2.drawImage(img2, null, 0 , img1.getHeight() + offset);
-        g2.dispose();
-        return newImage;
-    }
+		// do some calculate first
+		int offset = 5;
+		int wid = Math.max(img1.getWidth(), img2.getWidth()) + offset;
+		int height = img1.getHeight() + img2.getHeight() + offset;
+		// create a new buffer and draw two image into the new image
+		BufferedImage newImage = new BufferedImage(wid, height, BufferedImage.TYPE_INT_RGB);
+		Graphics2D g2 = newImage.createGraphics();
+		Color oldColor = g2.getColor();
+		// fill background
+		g2.setPaint(Color.WHITE);
+		g2.fillRect(0, 0, wid, height);
+		// draw image
+		g2.setColor(oldColor);
+		g2.drawImage(img1, null, 0, 0);
+		g2.drawImage(img2, null, 0, img1.getHeight() + offset);
+		g2.dispose();
+		return newImage;
+	}
 
 	public String aceitar() throws IOException {
 		UserDao usuerDao = new UserDao();
-		TermoUsuario termoUsuario = loginBean.getUsuarioLogado().getListTermos().stream().filter(t -> CommonsUtil.mesmoValor(  t.getId(), termos.get(itermo).getId() )).findAny().orElse(null);
+		TermoUsuario termoUsuario = loginBean.getUsuarioLogado().getListTermos().stream()
+				.filter(t -> CommonsUtil.mesmoValor(t.getIdTermo(), termos.get(itermo).getId())).findAny().orElse(null);
 //		TermoUsuario termoUsuario = termoUsuarioDao.termosUsuario(termos.get(itermo), loginBean.getUsuarioLogado());
-		termoUsuario.setDataAceite(DateUtil.getDataHoraAgora());
+
+		if (!CommonsUtil.semValor(termoUsuario)) {
+			termoUsuario.setDataAceite(DateUtil.getDataHoraAgora());
+
 //		termoUsuarioDao.merge(termoUsuario);
-		usuerDao.merge(loginBean.getUsuarioLogado());
-		
-		termos.remove(itermo);		
+			usuerDao.merge(loginBean.getUsuarioLogado());
+		}
+		termos.remove(itermo);
 		return null;
 	}
-	
+
 	public String aceiteAdiado() throws IOException {
 		UserDao usuerDao = new UserDao();
-		TermoUsuario termoUsuario = loginBean.getUsuarioLogado().getListTermos().stream().filter(t -> CommonsUtil.mesmoValor(  t.getId(), termos.get(itermo).getId() )).findAny().orElse(null);		
+		TermoUsuario termoUsuario = loginBean.getUsuarioLogado().getListTermos().stream()
+				.filter(t -> CommonsUtil.mesmoValor(t.getIdTermo(), termos.get(itermo).getId())).findAny().orElse(null);
 //		TermoUsuario termoUsuario = termoUsuarioDao.termosUsuario(termos.get(itermo), loginBean.getUsuarioLogado());
-		termoUsuario.setDataAdiado(DateUtil.getDataHoraAgora());
-		usuerDao.merge(loginBean.getUsuarioLogado());
+		if (!CommonsUtil.semValor(termoUsuario)) {
+			termoUsuario.setDataAdiado(DateUtil.getDataHoraAgora());
+			usuerDao.merge(loginBean.getUsuarioLogado());
+		}
 //		termoUsuarioDao.merge(termoUsuario);
 		termos.remove(itermo);
 		return null;
 	}
-	
 
 	public LoginBean getLoginBean() {
 		return loginBean;
@@ -676,89 +663,52 @@ public class TermoMB {
 		this.termoUsuarioPopup = termoUsuarioPopup;
 	}
 
-
-
-
-
 	public TermoUsuarioVO getUsuarioVO() {
 		return usuarioVO;
 	}
 
-
-
-
-
 	public void setUsuarioVO(TermoUsuarioVO usuarioVO) {
 		this.usuarioVO = usuarioVO;
 	}
+
 	public boolean isPdfGerado() {
 		return pdfGerado;
 	}
+
 	public void setPdfGerado(boolean pdfGerado) {
 		this.pdfGerado = pdfGerado;
 	}
+
 	public String getPathPDF() {
 		return pathPDF;
 	}
+
 	public void setPathPDF(String pathPDF) {
 		this.pathPDF = pathPDF;
 	}
+
 	public String getNomePDF() {
 		return nomePDF;
 	}
+
 	public void setNomePDF(String nomePDF) {
 		this.nomePDF = nomePDF;
 	}
+
 	public StreamedContent getFilePDF() {
 		return filePDF;
 	}
+
 	public void setFilePDF(StreamedContent filePDF) {
 		this.filePDF = filePDF;
 	}
-
-
-
-
-
-
-
 
 	public List<TermoPopup> getUsuarios() {
 		return usuarios;
 	}
 
-
-
-
-
-
-
-
 	public void setUsuarios(List<TermoPopup> usuarios) {
 		this.usuarios = usuarios;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	
-	
 
 }

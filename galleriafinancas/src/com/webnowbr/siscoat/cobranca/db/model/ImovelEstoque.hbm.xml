@@ -62,10 +62,6 @@
         <property name="quitado" type="boolean">
             <column name="QUITADO" not-null="true" default="false"/>
         </property>
-<<<<<<< HEAD
-
-=======
  
->>>>>>> refs/heads/master
     </class>
 </hibernate-mapping>

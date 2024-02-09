@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -477,17 +478,19 @@ public class ResponsavelMB {
 
 		ResponsavelService responsavelService = new ResponsavelService();
 		objetoResponsavelGeral = responsavelService.getObjetoResponsavelGeral();
+		objetoResponsavel = objetoResponsavelGeral ;
 		this.addComissao = false;
 		loadLovResponsavel();
 	}
 	public void adicionarComissao(List<ComissaoResponsavel> lista) {
 		this.selectedComissao = new ComissaoResponsavel();
 	
+		
 		Optional<BigDecimal> valorMinimo = Optional.of(BigDecimal.ZERO);
-		if (CommonsUtil.semValor(lista)) {
-			lista = new ArrayList<ComissaoResponsavel>();
+		if (CommonsUtil.semValor(this.objetoResponsavel.getTaxasComissao())) {
+			 this.objetoResponsavel.setTaxasComissao( new HashSet<ComissaoResponsavel>());
 		} else {
-			valorMinimo = lista.stream().map(m -> m.getValorMaximo()).max(Comparator.naturalOrder());
+			valorMinimo = this.objetoResponsavel.getTaxasComissao().stream().map(m -> m.getValorMaximo()).max(Comparator.naturalOrder());
 			if (valorMinimo.isPresent())
 				valorMinimo=  Optional.of(valorMinimo.get().add(BigDecimal.valueOf(0.01)));
 		}
@@ -499,10 +502,10 @@ public class ResponsavelMB {
 		this.selectedComissao = new ComissaoResponsavel();
 	
 		Optional<BigDecimal> valorMinimo = Optional.of(BigDecimal.ZERO);
-		if (CommonsUtil.semValor(lista)) {
-			lista = new ArrayList<ComissaoResponsavel>();
+		if (CommonsUtil.semValor(this.objetoResponsavel.getTaxasComissao())) {
+			 this.objetoResponsavel.setTaxasComissao( new HashSet<ComissaoResponsavel>());
 		} else {
-			valorMinimo = lista.stream().map(m -> m.getValorMaximo()).max(Comparator.naturalOrder());
+			valorMinimo = this.objetoResponsavel.getTaxasComissao().stream().map(m -> m.getValorMaximo()).max(Comparator.naturalOrder());
 			if (valorMinimo.isPresent())
 				valorMinimo=  Optional.of(valorMinimo.get().add(BigDecimal.valueOf(0.01)));
 		}
@@ -518,15 +521,15 @@ public class ResponsavelMB {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "valor minimo maior que maximo" , ""));
 			return;
 		}
-		if(CommonsUtil.semValor(lista)) {
-			//lista = new ArrayList<ComissaoResponsavel>();
+		if(CommonsUtil.semValor(this.objetoResponsavel.getTaxasComissao())) {
+			 this.objetoResponsavel.setTaxasComissao( new HashSet<ComissaoResponsavel>());
 		} else {
 			
-			if ( lista.stream().filter( comissao -> this.selectedComissao.getValorMinimo().compareTo(comissao.getValorMinimo()) >= 1 
+			if ( this.objetoResponsavel.getTaxasComissao().stream().filter( comissao -> this.selectedComissao.getValorMinimo().compareTo(comissao.getValorMinimo()) >= 1 
 					&& this.selectedComissao.getValorMinimo().compareTo(comissao.getValorMaximo()) <= 0  ).findAny().isPresent())
 				erro = erro + "Valor minimo Indisponivel";	
 			
-			if ( lista.stream().filter( comissao -> this.selectedComissao.getValorMaximo().compareTo(comissao.getValorMinimo()) >= 1 
+			if ( this.objetoResponsavel.getTaxasComissao().stream().filter( comissao -> this.selectedComissao.getValorMaximo().compareTo(comissao.getValorMinimo()) >= 1 
 					&& this.selectedComissao.getValorMaximo().compareTo(comissao.getValorMaximo()) <= 0  ).findAny().isPresent())
 				erro = erro + "Valor maximo Indisponivel";	
 			
@@ -554,10 +557,16 @@ public class ResponsavelMB {
 		this.selectedComissao.setUserCriacao(getUsuarioLogado());
 		this.selectedComissao.setLoginCriacao(getNomeUsuarioLogado());
 		this.selectedComissao.setDataCriacao(DateUtil.gerarDataHoje());
+		this.selectedComissao.setAtiva(true);
 		
 		ComissaoResponsavelDao comDao = new ComissaoResponsavelDao();
 		comDao.create(this.selectedComissao);
-		lista.add(this.selectedComissao);
+		Set<ComissaoResponsavel> taxasAtualizada = this.objetoResponsavel.getTaxasComissao();
+		taxasAtualizada.add(this.selectedComissao);
+		this.objetoResponsavel.setTaxasComissao(taxasAtualizada);
+		
+		ResponsavelDao respDao = new ResponsavelDao();
+		respDao.update(this.objetoResponsavel);
 		this.setAddComissao(false);
 	}
 	
