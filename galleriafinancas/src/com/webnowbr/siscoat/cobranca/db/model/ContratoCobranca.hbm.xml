@@ -2361,6 +2361,31 @@
 			<column name="notificacaoCobrancaData" />
 		</property>
 		
+		
+		<property name="ispbBancarioContaPagar" type="java.lang.String">
+			<column name="ispbBancarioContaPagar" />
+		</property>
+		
+		<property name="ispbCartaSplit" type="java.lang.String">
+			<column name="ispbCartaSplit" />
+		</property>
+		
+		<property name="ispbCartaSplitGalleria" type="java.lang.String">
+			<column name="ispbCartaSplitGalleria" />
+		</property>
+		
+		<property name="ispbCustoEmissao" type="java.lang.String">
+			<column name="ispbCustoEmissao" />
+		</property>
+		
+			<property name="todosPreLaudoEntregues" type="boolean">
+			<column name="todosPreLaudoEntregues" not-null="true" default="false"/>
+		</property>
+		
+		<property name="tipoContaContaPagar" type="java.lang.String">
+			<column name="tipoContaContaPagar" />
+		</property>
+		
 		<property name="notaFiscalEmitidaData" type="java.util.Date">
 			<column name="notaFiscalEmitidaData" />
 		</property>
@@ -2390,11 +2415,7 @@
 		<property name="notaFiscalAgendadaUsuario" type="java.lang.String">
 			<column name="notaFiscalAgendadaUsuario" />
 		</property>
-		
-		<property name="todosPreLaudoEntregues" type="boolean">
-			<column name="todosPreLaudoEntregues" not-null="true" default="false"/>
-		</property>
-
+				
 		<property name="valorNotaFiscal" type="big_decimal">
 			<column name="valorNotaFiscal" />
 		</property>
@@ -2427,5 +2448,14 @@
 			<column name="notaFiscalAgendadaProblemaUsuario" />
 		</property>
 		
+		<property name="porcentagemLeilaoImovelPrincipal" type="big_decimal">
+			<column name="porcentagemLeilaoImovelPrincipal" />
+		</property>
+		
+		<property name="valorCreditoImovelPrincipal" type="big_decimal">
+			<column name="valorCreditoImovelPrincipal" />
+		</property>
+				
+
 	</class>
 </hibernate-mapping>

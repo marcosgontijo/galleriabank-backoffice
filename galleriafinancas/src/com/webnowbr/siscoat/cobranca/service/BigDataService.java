@@ -59,6 +59,15 @@ public class BigDataService {
 					ProcessoResult retornoProcessoB = GsonUtil.fromJson(documentoAnalise.getRetornoProcesso(),
 							ProcessoResult.class);
 					documentoAnalise.adicionaEstados(CommonsUtil.stringToList(retornoProcessoB.getEstados()));
+					
+					if(!CommonsUtil.semValor(retornoProcessoB.getStatus()) &&
+							CommonsUtil.semValor(retornoProcessoB.getStatus().getDate_of_birth_validation()) &&
+							retornoProcessoB.getStatus().getDate_of_birth_validation().size() > 0 ) {
+						String mesagem = retornoProcessoB.getStatus().getDate_of_birth_validation().get(0).getMessage();
+						if(mesagem.contains("MINOR")) {
+							documentoAnalise.addObservacao("Pessoa menor de idade");
+						}
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

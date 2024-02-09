@@ -10,7 +10,7 @@
 			<p:panel id="MenuCadastro" header="Cadastro de menu" style="margin-bottom:10px;">
 			<p:focus/>
 			<p:messages/>
-			<p:panelGrid columns="1" style="border: none;" >
+			<p:panelGrid columns="2" style="border: none;" >
 			<p:outputLabel  value="nome:" styleClass="labelBold"></p:outputLabel>
 			<p:inputText value="#{menuItemMB.objetoMenuItem.nome}"  label="Nome"  style="width:400px;"></p:inputText>
 			
@@ -46,8 +46,14 @@
 						 itemValue="#{itemPai.id}"
 						 itemLabel="#{itemPai.nome}" />
 			</p:selectOneMenu>
-			<p:outputLabel  value="#{menuItemMB.objetoMenuItem.itemPai.id}" rendered="#{menuItemMB.objetoMenuItem.tipo == 'Item'}"></p:outputLabel> 
-			<p:commandButton rendered="#{menuItemMB.objetoMenuItem.tipo == 'Item'}" icon="ui-icon-zoomin" onclick="PF('dialogMenu').show();"></p:commandButton>
+			<p:selectOneMenu  value="#{menuItemMB.objetoMenuItem.itemPai.id}" rendered="#{menuItemMB.objetoMenuItem.tipo == 'Item'}">
+			<f:selectItem itemLabel="Insira o menu" itemValue=""/>
+			<f:selectItems value="#{menuItemMB.menuItemSubmodulo}"
+						var="itemPai"
+						 itemValue="#{itemPai.id}"
+						 itemLabel="#{itemPai.nome}" />
+						 
+			</p:selectOneMenu>
 			</p:panelGrid>
 			<div align="center">
 				<p:commandButton value="Ok" ajax="false" icon="ui-icon-check" action="#{menuItemMB.salvarMenu()}" style="TEXT-DECORATION: bold;"/>		 						
@@ -56,25 +62,7 @@
 				
 			</div>
 			</p:panel>
-		<p:dialog id="dialogMenu" widgetVar="dialogMenu">
-		<p:dataTable value="#{menuItemMB.menuItemSubmodulo}"
-		var="menu">
-		<p:column> 
-		<p:outputLabel value="#{menu.nome}"/>
-		</p:column>
-		<p:column>
-		<p:outputLabel value="#{menu.itemPai.id}"/>
-		</p:column>
-		<p:column>
-		<p:commandButton icon="ui-icon-check" onclick="PF('dialogMenu').hide();" update=":form:itemPai">
-		<f:setPropertyActionListener value="#{menu.id}" target="#{menuItemMB.objetoMenuItem.itemPai.id}"></f:setPropertyActionListener>
-		</p:commandButton>
-		</p:column>
 		
-		
-		
-		</p:dataTable>
-		</p:dialog>
 		
 		
 		

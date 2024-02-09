@@ -51,7 +51,7 @@
 
 		</h:panelGrid>
 		<p:dataView var="comissao"
-			value="#{responsavelMB.taxasComissao}" paginator="false"
+			value="#{responsavelMB.objetoResponsavel.taxasComissao}" paginator="false"
 			layout="list"
 			paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
 			<p:dataViewListItem>

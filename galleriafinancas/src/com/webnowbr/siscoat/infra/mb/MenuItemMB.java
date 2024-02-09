@@ -10,14 +10,12 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
 
 import org.primefaces.model.menu.MenuModel;
 
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.infra.db.dao.MenuFavoritoDao;
 import com.webnowbr.siscoat.infra.db.dao.MenuItemDao;
-import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.IDmenus;
 import com.webnowbr.siscoat.infra.db.model.MenuFavorito;
 import com.webnowbr.siscoat.infra.db.model.MenuItem;
@@ -260,7 +258,6 @@ public class MenuItemMB {
 		MenuFavorito menuFavorito = new MenuFavorito();
 		MenuItemDao menuItemDao = new MenuItemDao();
 		MenuFavoritoDao favoritoDao = new MenuFavoritoDao();
-		UserDao userDao = new UserDao();
 		MenuItem menu = menuItemDao.findById(id);
 		menuFavorito.setFavoritado(true);
 		menuFavorito.setMenuItemFavorito(menu);
@@ -288,7 +285,6 @@ public class MenuItemMB {
 	}
 
 	public void desfavoritar(Long id) {
-		MenuFavorito menuFavorito = new MenuFavorito();
 		MenuItemDao menuItemDao = new MenuItemDao();
 		MenuFavoritoDao favoritoDao = new MenuFavoritoDao();
 		MenuItem menu = menuItemDao.findById(id);

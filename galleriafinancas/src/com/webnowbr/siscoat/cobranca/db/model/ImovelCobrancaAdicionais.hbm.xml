@@ -56,6 +56,13 @@
 		<property name="valorRegistro" type="big_decimal">
 			<column name="valorRegistro" />
 		</property> 
-		                                      
+		
+		<property name="porcentagemLeilao" type="big_decimal">
+			<column name="porcentagemLeilao" />
+		</property> 
+		
+		<property name="valorCredito" type="big_decimal">
+			<column name="valorCredito" />
+		</property> 
     </class>
 </hibernate-mapping>

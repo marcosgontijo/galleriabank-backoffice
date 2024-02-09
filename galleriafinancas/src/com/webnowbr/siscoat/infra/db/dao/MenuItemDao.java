@@ -356,7 +356,7 @@ public class MenuItemDao extends HibernateDao<MenuItem, Long> {
 					StringBuilder query = new StringBuilder();
 
 					query.append("select id from infra.menuitem ");
-					query.append(" where  " + tipoParametro + " ILIKE " + "'%" + parametro + "%'");
+					query.append(" where  " + tipoParametro + " ILIKE " + "'%" + parametro + "%' order by ordem");
 
 					ps = connection.prepareStatement(query.toString());
 					
@@ -428,7 +428,7 @@ public class MenuItemDao extends HibernateDao<MenuItem, Long> {
 					StringBuilder query = new StringBuilder();
 
 					query.append("select id from infra.menuitem ");
-					query.append("where " + tipoParametro + " = ? " );
+					query.append("where " + tipoParametro + " = ?  order by ordem" );
 
 					ps = connection.prepareStatement(query.toString());
 					ps.setLong(1, parametro);

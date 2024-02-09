@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.db.dao.HibernateDao;
 import com.webnowbr.siscoat.infra.db.model.Termo;
 import com.webnowbr.siscoat.infra.db.model.User;
@@ -16,10 +17,13 @@ import com.webnowbr.siscoat.infra.db.model.User;
  */
 public class TermoDao extends HibernateDao<Termo, Long> {
 
-	
-	
-	private static final String QUERY_TERMOS_NAO_ASSINADOS_USUARIO = " select t.id from infra.termo t left join infra.termoUsuario tu on t.id = tu.idtermo and tu.idusuario = ? "
-			+ "where t.iduserPerfil <= ? and  tu.idtermo is null ";
+	private static final String QUERY_TERMOS_NAO_ASSINADOS_USUARIO = " select t.id from infra.termo t "
+			+ " left join infra.termoUsuario tu on t.id = tu.idtermo and tu.idusuario = ? "
+			+ " where t.iduserPerfil <= ? "  
+			+ " and ( tu.idtermo is null "
+			+ " or tu.dataAceite is null )"
+			+ " and( tu.dataAdiado is null or "
+			+ " cast(tu.dataAdiado as date) < cast( ?::timestamp as date)) ";
 
 	@SuppressWarnings("unchecked")
 	public List<Termo> termosNaoAssinadosUsuario(User usuario) {
@@ -31,7 +35,7 @@ public class TermoDao extends HibernateDao<Termo, Long> {
 				ResultSet rs = null;
 
 				List<Termo> retorno = new ArrayList<>();
-				if( CommonsUtil.semValor(usuario))
+				if (CommonsUtil.semValor(usuario))
 					return new ArrayList<>();
 
 				try {
@@ -45,6 +49,8 @@ public class TermoDao extends HibernateDao<Termo, Long> {
 						ps.setLong(2, usuario.getUserPerfil().getId());
 					else
 						ps.setLong(2, 1000);
+					java.sql.Date dtRelInicioSQL = new java.sql.Date(DateUtil.getDataHoje().getTime());
+					ps.setDate(3, dtRelInicioSQL);
 
 					rs = ps.executeQuery();
 
@@ -59,5 +65,5 @@ public class TermoDao extends HibernateDao<Termo, Long> {
 				return retorno;
 			}
 		});
-	}	
+	}
 }

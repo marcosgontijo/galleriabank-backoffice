@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,6 +27,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ComissaoResponsavel;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.db.op.ComissaoResponsavelDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
+import com.webnowbr.siscoat.cobranca.service.ResponsavelService;
 import com.webnowbr.siscoat.common.ComissaoOrigemEnum;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
@@ -34,7 +36,6 @@ import com.webnowbr.siscoat.common.ValidaCNPJ;
 import com.webnowbr.siscoat.common.ValidaCPF;
 import com.webnowbr.siscoat.db.dao.DAOException;
 import com.webnowbr.siscoat.db.dao.DBConnectionException;
-import com.webnowbr.siscoat.infra.db.dao.TermoUsuarioDao;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
 import com.webnowbr.siscoat.infra.mb.UsuarioMB;
@@ -474,18 +475,22 @@ public class ResponsavelMB {
 		this.selectedComissao = new ComissaoResponsavel();
 		this.taxasComissao = new ArrayList<ComissaoResponsavel>();
 		this.objetoResponsavel = null;
-		this.objetoResponsavel = getObjetoResponsavelGeral();
+
+		ResponsavelService responsavelService = new ResponsavelService();
+		objetoResponsavelGeral = responsavelService.getObjetoResponsavelGeral();
+		objetoResponsavel = objetoResponsavelGeral ;
 		this.addComissao = false;
 		loadLovResponsavel();
 	}
 	public void adicionarComissao(List<ComissaoResponsavel> lista) {
 		this.selectedComissao = new ComissaoResponsavel();
 	
+		
 		Optional<BigDecimal> valorMinimo = Optional.of(BigDecimal.ZERO);
-		if (CommonsUtil.semValor(lista)) {
-			lista = new ArrayList<ComissaoResponsavel>();
+		if (CommonsUtil.semValor(this.objetoResponsavel.getTaxasComissao())) {
+			 this.objetoResponsavel.setTaxasComissao( new HashSet<ComissaoResponsavel>());
 		} else {
-			valorMinimo = lista.stream().map(m -> m.getValorMaximo()).max(Comparator.naturalOrder());
+			valorMinimo = this.objetoResponsavel.getTaxasComissao().stream().map(m -> m.getValorMaximo()).max(Comparator.naturalOrder());
 			if (valorMinimo.isPresent())
 				valorMinimo=  Optional.of(valorMinimo.get().add(BigDecimal.valueOf(0.01)));
 		}
@@ -497,10 +502,10 @@ public class ResponsavelMB {
 		this.selectedComissao = new ComissaoResponsavel();
 	
 		Optional<BigDecimal> valorMinimo = Optional.of(BigDecimal.ZERO);
-		if (CommonsUtil.semValor(lista)) {
-			lista = new ArrayList<ComissaoResponsavel>();
+		if (CommonsUtil.semValor(this.objetoResponsavel.getTaxasComissao())) {
+			 this.objetoResponsavel.setTaxasComissao( new HashSet<ComissaoResponsavel>());
 		} else {
-			valorMinimo = lista.stream().map(m -> m.getValorMaximo()).max(Comparator.naturalOrder());
+			valorMinimo = this.objetoResponsavel.getTaxasComissao().stream().map(m -> m.getValorMaximo()).max(Comparator.naturalOrder());
 			if (valorMinimo.isPresent())
 				valorMinimo=  Optional.of(valorMinimo.get().add(BigDecimal.valueOf(0.01)));
 		}
@@ -516,15 +521,15 @@ public class ResponsavelMB {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "valor minimo maior que maximo" , ""));
 			return;
 		}
-		if(CommonsUtil.semValor(lista)) {
-			//lista = new ArrayList<ComissaoResponsavel>();
+		if(CommonsUtil.semValor(this.objetoResponsavel.getTaxasComissao())) {
+			 this.objetoResponsavel.setTaxasComissao( new HashSet<ComissaoResponsavel>());
 		} else {
 			
-			if ( lista.stream().filter( comissao -> this.selectedComissao.getValorMinimo().compareTo(comissao.getValorMinimo()) >= 1 
+			if ( this.objetoResponsavel.getTaxasComissao().stream().filter( comissao -> this.selectedComissao.getValorMinimo().compareTo(comissao.getValorMinimo()) >= 1 
 					&& this.selectedComissao.getValorMinimo().compareTo(comissao.getValorMaximo()) <= 0  ).findAny().isPresent())
 				erro = erro + "Valor minimo Indisponivel";	
 			
-			if ( lista.stream().filter( comissao -> this.selectedComissao.getValorMaximo().compareTo(comissao.getValorMinimo()) >= 1 
+			if ( this.objetoResponsavel.getTaxasComissao().stream().filter( comissao -> this.selectedComissao.getValorMaximo().compareTo(comissao.getValorMinimo()) >= 1 
 					&& this.selectedComissao.getValorMaximo().compareTo(comissao.getValorMaximo()) <= 0  ).findAny().isPresent())
 				erro = erro + "Valor maximo Indisponivel";	
 			
@@ -552,10 +557,16 @@ public class ResponsavelMB {
 		this.selectedComissao.setUserCriacao(getUsuarioLogado());
 		this.selectedComissao.setLoginCriacao(getNomeUsuarioLogado());
 		this.selectedComissao.setDataCriacao(DateUtil.gerarDataHoje());
+		this.selectedComissao.setAtiva(true);
 		
 		ComissaoResponsavelDao comDao = new ComissaoResponsavelDao();
 		comDao.create(this.selectedComissao);
-		lista.add(this.selectedComissao);
+		Set<ComissaoResponsavel> taxasAtualizada = this.objetoResponsavel.getTaxasComissao();
+		taxasAtualizada.add(this.selectedComissao);
+		this.objetoResponsavel.setTaxasComissao(taxasAtualizada);
+		
+		ResponsavelDao respDao = new ResponsavelDao();
+		respDao.update(this.objetoResponsavel);
 		this.setAddComissao(false);
 	}
 	
@@ -618,25 +629,12 @@ public class ResponsavelMB {
 	}
 	
 	public List<ComissaoResponsavel> getTaxasComissaoGlobal() {
-		getObjetoResponsavelGeral();
+		ResponsavelService responsavelService = new ResponsavelService();
+		objetoResponsavelGeral = responsavelService.getObjetoResponsavelGeral();		
 		return this.objetoResponsavelGeral.getTaxasComissao(ComissaoOrigemEnum.GERAL);
 	}
 
-	private Responsavel getObjetoResponsavelGeral() {
-		if ( CommonsUtil.semValor(objetoResponsavelGeral)) {
-			ResponsavelDao rDao = new ResponsavelDao();
-			objetoResponsavelGeral = rDao.findById(SiscoatConstants.RESPONSAVEL_GERAL_ID);
-			if ( CommonsUtil.semValor(objetoResponsavelGeral)) {
-				objetoResponsavelGeral = new Responsavel();
-				objetoResponsavelGeral.setNome("RESPONSAVEL GERAL");
-				objetoResponsavelGeral.setId(SiscoatConstants.RESPONSAVEL_GERAL_ID);
-				objetoResponsavelGeral.setDataCadastro(new Date());
-				objetoResponsavelGeral.setDesativado(true);
-				rDao.create(objetoResponsavelGeral);
-			}				
-		}
-		return objetoResponsavelGeral;
-	}
+	
 	
 	public User getUsuarioLogado() {
 		User usuario = new User();

@@ -51,6 +51,7 @@ public class ImovelCobranca implements Serializable {
 	private BigDecimal valorIptu;
 	private BigDecimal valorCondominio;
 	private BigDecimal valorMercado;
+	private BigDecimal valorLeilao;
 	private String inscricaoMunicipal;
 	private boolean comprovanteMatriculaCheckList;
 	private boolean comprovanteFotosImovelCheckList;
@@ -69,11 +70,13 @@ public class ImovelCobranca implements Serializable {
 	private String enderecoSemNumero;
 	
 	private Cidade objetoCidade;
+	private int subCategoria;
 	
 	//Novos campos referente ao pre laudo
 	private boolean preLaudoSolicitado;
 	private boolean preLaudoEntregue;
 	private BigDecimal valorPreLaudo;
+
 	
 	public ImovelCobranca(){
 		resetarBololean();
@@ -795,7 +798,7 @@ public class ImovelCobranca implements Serializable {
 	public void setValorMercado(BigDecimal valorMercado) {
 		this.valorMercado = valorMercado;
 	}
-	
+
 	public boolean isPreLaudoSolicitado() {
 		return this.preLaudoSolicitado;	
 	}
@@ -812,11 +815,28 @@ public class ImovelCobranca implements Serializable {
 		this.preLaudoEntregue = preLaudoEntregue;
 	}
 	
+
 	public BigDecimal getValorPreLaudo() {
 		return this.valorPreLaudo;
 	}
 	
 	public void setValorPreLaudo( BigDecimal valorPreLaudo) {
 		this.valorPreLaudo = valorPreLaudo;
+	}
+
+	public BigDecimal getValorLeilao() {
+		return valorLeilao;
+	}
+
+	public void setValorLeilao(BigDecimal valorLeilao) {
+		this.valorLeilao = valorLeilao;
+	}
+
+	public int getSubCategoria() {
+		return subCategoria;
+	}
+
+	public void setSubCategoria(int subCategoria) {
+		this.subCategoria = subCategoria;
 	}
 }

@@ -1,0 +1,193 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<p:dialog header="Nova Despesa" widgetVar="despesaDialog"
+		resizable="true" style="FONT-SIZE: 10pt;" width="800">
+		<h:form id="despesaDialogForm">
+			<div align="center">
+				<h:panelGroup id="adicionarContasPagar">
+					<h:panelGrid columns="2">
+						<h:panelGrid columns="2">
+							<p:spacer height="10" />
+							<p:spacer height="10" />
+
+							<p:outputLabel value="Adicionar Conta a Pagar"
+								styleClass="labelBold" />
+							<p:spacer width="0" />
+
+							<p:outputLabel for="ContaPagarDescricao" value="Descrição: "
+								styleClass="labelBold"
+								style="font-weight: bold; font-size: 18px;" />
+							<p:autoComplete id="ContaPagarDescricao" dropdown="true"
+								value="#{mbean.contasPagarSelecionada.descricao}"
+								completeMethod="#{mbean.contaPagarDescricaoLista()}"
+								scrollHeight="250" />
+
+							<p:outputLabel for="ContaPagarValor" value="Valor: "
+								styleClass="labelBold" />
+							<p:inputText id="ContaPagarValor"
+								value="#{mbean.contasPagarSelecionada.valor}"
+								onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 13, event, 2);" required="false"
+								converter="bigDecimalConverter" />
+
+							<p:outputLabel for="ContaPagarDataVencimento"
+								value="Data Vencimento: " styleClass="labelBold" />
+							<p:calendar id="ContaPagarDataVencimento"
+								value="#{mbean.contasPagarSelecionada.dataVencimento}"
+								label="Data" size="100" pattern="dd/MM/yyyy"
+								styleClass="dateTimeField" />
+
+							<p:outputLabel for="ContaPagarValorPago" value="Valor Pago: "
+								styleClass="labelBold" />
+							<p:inputText id="ContaPagarValorPago"
+								value="#{mbean.contasPagarSelecionada.valorPagamento}"
+								onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 13, event, 2);" required="false"
+								converter="bigDecimalConverter" />
+
+							<p:outputLabel for="ContaPagarDataPagamento"
+								value="Data Pagamento: " styleClass="labelBold" />
+							<p:calendar id="ContaPagarDataPagamento"
+								value="#{mbean.contasPagarSelecionada.dataPagamento}"
+								label="Data" size="100" pattern="dd/MM/yyyy"
+								styleClass="dateTimeField" />
+
+							<p:outputLabel for="ContaPagarObservacao" value="Observação: "
+								styleClass="labelBold"
+								style="font-weight: bold; font-size: 18px;" />
+							<p:inputTextarea id="ContaPagarObservacao" rows="6" cols="33"
+								value="#{mbean.contasPagarSelecionada.observacao}" />
+
+							<p:outputLabel for="formaTransferencia"
+								value="Forma de Tranferência: " styleClass="labelBold"
+								style="font-weight: bold; font-size: 18px;" />
+							<p:selectOneMenu id="formaTransferencia"
+								value="#{mbean.contasPagarSelecionada.formaTransferencia}">
+								<f:selectItem itemValue="" itemLabel="Selecione" />
+								<f:selectItem itemValue="TED" itemLabel="TED" />
+								<f:selectItem itemValue="Pix" itemLabel="Pix" />
+								<f:selectItem itemValue="Boleto" itemLabel="Boleto" />
+								<p:ajax event="change" update="tedGrid pixGrid" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+						<h:panelGroup>
+							<h:panelGroup id="tedGrid">
+								<h:panelGrid columns="2" style="margin-left:20px;"
+									rendered="#{mbean.contasPagarSelecionada.formaTransferencia eq 'TED'}">
+									<p:outputLabel for="nomeTed" value="Nome: " />
+									<p:inputText id="nomeTed"
+										value="#{mbean.contasPagarSelecionada.nomeTed}" />
+									<p:outputLabel for="cpfTed" value="CPF/CNPJ: " />
+									<p:inputText id="cpfTed"
+										value="#{mbean.contasPagarSelecionada.cpfTed}" />
+									<p:outputLabel value="Banco: " for="bancoTed" />
+									<p:autoComplete id="bancoTed"
+										value="#{mbean.contasPagarSelecionada.bancoTed}"
+										completeMethod="#{mbean.contasPagarSelecionada.completeBancos}"
+										var="banco" itemLabel="#{banco}" itemValue="#{banco}"
+										forceSelection="true" styleClass="labelBold" label="Conta"
+										style="width:100px;" scrollHeight="250" />
+									<p:outputLabel for="contaTed" value="Conta: " />
+									<p:inputText id="contaTed"
+										value="#{mbean.contasPagarSelecionada.contaTed}" />
+									<p:outputLabel for="agenciaTed" value="Agência: " />
+									<p:inputText id="agenciaTed"
+										value="#{mbean.contasPagarSelecionada.agenciaTed}" />
+								</h:panelGrid>
+							</h:panelGroup>
+							<h:panelGroup id="pixGrid">
+								<h:panelGrid columns="2" style="margin-left:20px;"
+									rendered="#{mbean.contasPagarSelecionada.formaTransferencia eq 'Pix'}">
+									<p:outputLabel for="pix" value="Pix: " />
+									<p:inputText id="pix"
+										value="#{mbean.contasPagarSelecionada.pix}" />
+								</h:panelGrid>
+							</h:panelGroup>
+						</h:panelGroup>
+					</h:panelGrid>
+					<shiro:hasAnyRoles
+						name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO">						
+						<p:dialog modal="true" widgetVar="statusDialog"
+							header="Status Downloading" draggable="false" closable="false"
+							resizable="false">
+							<p:graphicImage name="image/ajaxloadingbar.gif" />
+						</p:dialog>
+
+						<p:panel id="ArquivosPagarSalvos"
+							header="Arquivo(s) a Pagar Salvo(s) no Contrato"
+							style="margin-bottom:10px;">
+							<h:panelGrid columns="1">
+								<p:fileUpload label="Selecionar Arquivo(s)"
+									uploadLabel="Salvar Arquivo(s)" multiple="true"
+									cancelLabel="Cancelar"
+									fileUploadListener="#{mbean.handleFileContaPagarUpload}"
+									mode="advanced" dragDropSupport="true"
+									update="ArquivosPagarSalvos">
+									<f:attribute name="foo"
+										value="#{mbean.contasPagarSelecionada}" />
+								</p:fileUpload>
+								<p:dataTable id="dtFilesPagar" var="filesPagar"
+									value="#{mbean.contasPagarSelecionada.filesContas}"
+									rowKey="#{filesPagar.name}"
+									selection="#{mbean.deletefilesPagar}"
+									emptyMessage="" sortBy="#{filesPagar.name}">
+									<p:column selectionMode="multiple"
+										style="width:16px;text-align:center" />
+									<f:facet name="header">
+										<p:commandButton value="Download Selecionado(s)"
+											ajax="false" immediate="true" icon="ui-icon-arrowthick-1-s"
+											action="#{mbean.getDownloadAllFilesContaPagar()}">
+										</p:commandButton>
+										<p:commandButton value="Excluir Selecionado(s)" ajax="false"
+											icon="ui-icon-trash"
+											action="#{mbean.deleteFilePagar}" />
+									</f:facet>
+									<p:column style="text-align: center;"
+										headerText="Nome do Arquivo" filterBy="#{filesPagar.name}"
+										filterMatchMode="contains" sortBy="#{filesPagar.name}">
+										<h:outputText value="#{filesPagar.name}" />
+										<p:spacer height="10" />
+										<p:commandButton value="Abrir" ajax="false"
+											action="#{mbean.viewFile(filesPagar)}"
+											immediate="true" icon="ui-icon-search"
+											onclick="target='_blank'" onblur="target='_self'">
+										</p:commandButton>
+									</p:column>
+
+									<p:column style="width:100px;">
+										<p:commandButton value="Download" ajax="false"
+											icon="ui-icon-arrowthick-1-s">
+											<f:setPropertyActionListener
+												target="#{mbean.selectedFile}"
+												value="#{filesPagar}" />
+											<p:fileDownload value="#{mbean.downloadFile}" />
+										</p:commandButton>
+									</p:column>
+
+									<p:ajax event="rowSelectCheckbox" process="@this"
+										listener="#{mbean.fileSelectionListener()}" />
+									<p:ajax event="rowUnselectCheckbox" process="@this"
+										listener="#{mbean.fileSelectionListener()}" />
+									<p:ajax event="toggleSelect" process="@this"
+										listener="#{mbean.fileSelectionListener()}" />
+								</p:dataTable>
+							</h:panelGrid>
+						</p:panel>
+					</shiro:hasAnyRoles>
+				</h:panelGroup>
+				<p:commandButton value="Inserir Despesa" icon="ui-icon-check"
+					style="margin-top: 5px; margin-bottom: 5px;"
+					action="#{mbean.concluirConta()}"
+					onclick="PF('despesaDialog').hide();"
+					update=":form:ContasPagarPanel">
+				</p:commandButton>
+			</div>
+		</h:form>
+	</p:dialog>
+</ui:composition>

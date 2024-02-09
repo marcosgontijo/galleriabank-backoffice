@@ -29,8 +29,8 @@
 			</p:panel>
 		</h:panelGrid>
 
-		<h:panelGrid columns="5"
-			columnClasses="painelResumo,painelResumo,painelResumo,painelResumo,painelResumo">
+		<h:panelGrid columns="6"
+			columnClasses="painelResumo,painelResumo,painelResumo,painelResumo,painelResumo,painelResumo">
 
 			<p:panel>
 				<f:facet name="header">
@@ -94,11 +94,8 @@
 						</p:column>
 					</p:dataTable>
 				</f:facet>
-
 			</p:panel>
-
-
-
+			
 			<p:panel>
 				<f:facet name="header">
 					<h:outputText value="Financas Estimadas" />
@@ -131,6 +128,31 @@
 					</p:dataTable>
 				</f:facet>
 			</p:panel>
+			
+			<shiro:hasAnyRoles name="ROOT">
+				<p:panel id="panelVeiculos" >
+					<f:facet name="header">
+						<h:outputText value="Veículos" />
+						<p:commandButton value="Buscar Veiculos"
+							ajax="true" style="TEXT-DECORATION: bold;"
+							action="#{contratoCobrancaMB.consultarFrotaVeiculosDocumentoAnalise(paramDocumentoAnalise)}"
+							update="panelVeiculos"
+							rendered="#{paramDocumentoAnalise != null and paramDocumentoAnalise.retornoFrotaVeiculos == null}">
+						</p:commandButton>
+						<p:dataTable id="resumoVeiculo" var="Veiculo"
+							rendered="#{paramDocumentoAnalise != null and paramDocumentoAnalise.retornoFrotaVeiculos != null}"
+							value="#{paramDocumentoAnalise.getResumoFrotaVeiculo()}"
+							style="width: 250px">
+							<p:column>
+								<h:outputText value="#{Veiculo.descricao}" />
+							</p:column>
+							<p:column style="width: 130px">
+								<h:outputText value="#{Veiculo.valor}" />
+							</p:column>
+						</p:dataTable>
+					</f:facet>
+				</p:panel>
+			</shiro:hasAnyRoles>
 		</h:panelGrid>
 	</h:panelGroup>
 

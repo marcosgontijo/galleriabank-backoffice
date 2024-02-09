@@ -39,6 +39,7 @@ public class ContasPagar implements Serializable {
 	private String contaTed;
 	private String digitoContaTed;
 	private String agenciaTed;
+	private String ispb;
 	
 	private String fileListId;
 	
@@ -51,29 +52,71 @@ public class ContasPagar implements Serializable {
 	private StarkBankBoleto comprovantePagamentoStarkBank;
 	private StarkBankPix comprovantePagamentoPixStarkBank;
 	
+	private String tipoContaBancaria;
+	
 	private boolean contaCartaSplit;
 	
 	private List<StarkBankBaixa> listContasPagarBaixas = new ArrayList<StarkBankBaixa>();
 	
 	private Collection<FileUploaded> filesContas = new ArrayList<FileUploaded>();
 	
-	private ContasPagar ContasPagarOriginal;
+
+	private ContasPagar contaPagarOriginal = null;
+	private boolean editada;
+	
+	private Date dataCriacao;
+	private String userCriacao;
 
 	public ContasPagar() {
 	}
 	
-	 public List<String> completeBancos(String query) {
-	    String queryLowerCase = query.toLowerCase();
-	    List<String> bancos = new ArrayList<>();
-	    for(BancosEnum banco : BancosEnum.values()) {
-	    	String bancoStr = banco.getNomeCompleto().toString();
-	    	bancos.add(bancoStr);
-	    }
-	    return bancos.stream().filter(t -> t.toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());
-	 }
-	 
-	 
-	 public List<String> contaPagarDescricaoLista(String query){
+	public ContasPagar(ContasPagar contaOriginal) {
+		super();
+		this.dataPrevista = contaOriginal.getDataPrevista();
+		this.descricao = contaOriginal.getDescricao();
+		this.contrato = contaOriginal.getContrato();
+		this.valor = contaOriginal.getValor();
+		this.contaPaga = contaOriginal.isContaPaga();
+		this.dataPagamento = contaOriginal.getDataPagamento();
+		this.dataVencimento = contaOriginal.getDataVencimento();
+		this.valorPagamento = contaOriginal.getValorPagamento();
+		this.numeroDocumento = contaOriginal.getNumeroDocumento();
+		this.pagadorRecebedor = contaOriginal.getPagadorRecebedor();
+		this.tipoDespesa = contaOriginal.getTipoDespesa();
+		this.contaContabil = contaOriginal.getContaContabil();
+		this.observacao = contaOriginal.getObservacao();
+		this.formaTransferencia = contaOriginal.getFormaTransferencia();
+		this.pix = contaOriginal.getPix();
+		this.nomeTed = contaOriginal.getNomeTed();
+		this.cpfTed = contaOriginal.getCpfTed();
+		this.bancoTed = contaOriginal.getBancoTed();
+		this.contaTed = contaOriginal.getContaTed();
+		this.digitoContaTed = contaOriginal.getDigitoContaTed();
+		this.agenciaTed = contaOriginal.getAgenciaTed();
+		this.fileListId = contaOriginal.getFileListId();
+		this.responsavel = contaOriginal.getResponsavel();
+		this.linhaDigitavelStarkBank = contaOriginal.getLinhaDigitavelStarkBank();
+		this.descricaoStarkBank = contaOriginal.getDescricaoStarkBank();
+		this.numeroDocumentoPagadorStarkBank = contaOriginal.getNumeroDocumentoPagadorStarkBank();
+		this.comprovantePagamentoStarkBank = contaOriginal.getComprovantePagamentoStarkBank();
+		this.comprovantePagamentoPixStarkBank = contaOriginal.getComprovantePagamentoPixStarkBank();
+		this.tipoContaBancaria = contaOriginal.getTipoContaBancaria();
+		this.contaCartaSplit = contaOriginal.isContaCartaSplit();
+		this.listContasPagarBaixas = contaOriginal.getListContasPagarBaixas();
+		this.filesContas = contaOriginal.getFilesContas();
+	}
+
+	public List<String> completeBancos(String query) {
+		String queryLowerCase = query.toLowerCase();
+		List<String> bancos = new ArrayList<>();
+		for (BancosEnum banco : BancosEnum.values()) {
+			String bancoStr = banco.getNomeCompleto().toString();
+			bancos.add(bancoStr);
+		}
+		return bancos.stream().filter(t -> t.toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());
+	}
+
+	public List<String> contaPagarDescricaoLista(String query) {
 		String queryLowerCase = query.toLowerCase();
 		List<String> listaNome = new ArrayList<>();
 		listaNome.add("Crédito CCI");
@@ -83,7 +126,7 @@ public class ContasPagar implements Serializable {
 		listaNome.add("Certidão");
 		listaNome.add("Certidão de Casamento");
 		listaNome.add("Honorário");
-		listaNome.add("Devolução");	
+		listaNome.add("Devolução");
 		listaNome.add("IPTU");
 		listaNome.add("Condomínio");
 		listaNome.add("IQ");
@@ -94,7 +137,7 @@ public class ContasPagar implements Serializable {
 		listaNome.add("Registro");
 		listaNome.add("Laudo De Avaliação");
 		listaNome.add("Crédito Cliente");
-		
+
 		return listaNome.stream().filter(t -> t.toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());
 	}
 
@@ -159,8 +202,6 @@ public class ContasPagar implements Serializable {
 	public void setDataPagamento(Date dataPagamento) {
 		this.dataPagamento = dataPagamento;
 	}
-
-	
 	
 	public Date getDataVencimento() {
 		return dataVencimento;
@@ -362,11 +403,51 @@ public class ContasPagar implements Serializable {
 		this.contaCartaSplit = contaCartaSplit;
 	}
 
-	public ContasPagar getContasPagarOriginal() {
-		return ContasPagarOriginal;
+	public String getTipoContaBancaria() {
+		return tipoContaBancaria;
 	}
 
-	public void setContasPagarOriginal(ContasPagar contasPagarOriginal) {
-		ContasPagarOriginal = contasPagarOriginal;
+	public void setTipoContaBancaria(String tipoContaBancaria) {
+		this.tipoContaBancaria = tipoContaBancaria;
+	}
+
+	public ContasPagar getContaPagarOriginal() {
+		return contaPagarOriginal;
+	}
+
+	public void setContaPagarOriginal(ContasPagar contaPagarOriginal) {
+		this.contaPagarOriginal = contaPagarOriginal;
+	}
+
+	public boolean isEditada() {
+		return editada;
+	}
+
+	public void setEditada(boolean editada) {
+		this.editada = editada;
+	}
+
+	public Date getDataCriacao() {
+		return dataCriacao;
+	}
+
+	public void setDataCriacao(Date dataCriacao) {
+		this.dataCriacao = dataCriacao;
+	}
+
+	public String getUserCriacao() {
+		return userCriacao;
+	}
+	
+	public void setUserCriacao(String userCriacao) {
+		this.userCriacao = userCriacao;
+	}
+
+	public String getIspb() {
+		return ispb;
+	}
+
+	public void setIspb(String ispb) {
+		this.ispb = ispb;
 	}
 }

@@ -10,11 +10,13 @@ public class ImovelCobrancaAdicionais implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	private long id;
-	private ImovelCobranca imovel;
+	private ImovelCobranca imovel = new ImovelCobranca();
 	private ContratoCobranca contratoCobranca;
 	
 	private BigDecimal porcentagem;
+	private BigDecimal porcentagemLeilao;
 	private BigDecimal valorRegistro;
+	private BigDecimal valorCredito;
 	private String relacaoComGarantia;
 	private boolean comprovanteMatriculaCheckList;
 	private boolean comprovanteFotosImovelCheckList;
@@ -118,6 +120,18 @@ public class ImovelCobrancaAdicionais implements Serializable {
 	}
 	public void setValorRegistro(BigDecimal valorRegistro) {
 		this.valorRegistro = valorRegistro;
+	}
+	public BigDecimal getPorcentagemLeilao() {
+		return porcentagemLeilao;
+	}
+	public void setPorcentagemLeilao(BigDecimal porcentagemLeilao) {
+		this.porcentagemLeilao = porcentagemLeilao;
+	}
+	public BigDecimal getValorCredito() {
+		return valorCredito;
+	}
+	public void setValorCredito(BigDecimal valorCredito) {
+		this.valorCredito = valorCredito;
 	}
 }
 

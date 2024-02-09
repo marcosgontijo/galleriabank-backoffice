@@ -396,7 +396,7 @@
 							<p:commandButton onclick="PF('bpGerarBoletoKobanaDialog').show();"
 								icon="ui-icon-video" title="Boleto Kobana" value="Boleto Kobana"
 								update=":formBpGerarBoletoKobana"
-								rendered="#{!parcelas.parcelaPaga}">
+								rendered="#{contratoCobrancaMB.usuarioLogado.userCobranca and !parcelas.parcelaPaga}">
 								<f:setPropertyActionListener
 									target="#{contratoCobrancaMB.bpContratoCobrancaDetalhesCustom}"
 									value="#{parcelas}" />

@@ -22,6 +22,9 @@
 			        <p:column style="text-align: center;" headerText="Nome" filterBy="#{usuario.name}" filterMatchMode="contains" sortBy="#{usuario.name}">
 			            <h:outputText value="#{usuario.name}" />
 			        </p:column>	
+			         <p:column style="text-align: center;" headerText="Perfil" filterBy="#{usuario.perfil}" filterMatchMode="contains" sortBy="#{usuario.perfil.perfil}">
+			            <h:outputText value="#{usuario.userPerfil.perfil}" />
+			        </p:column>
 			        <p:column style="text-align: center;" headerText="Codigo" filterBy="#{usuario.codigoResponsavel}" filterMatchMode="contains" sortBy="#{usuario.codigoResponsavel}">
 			            <h:outputText value="#{usuario.codigoResponsavel}" />
 			        </p:column>	

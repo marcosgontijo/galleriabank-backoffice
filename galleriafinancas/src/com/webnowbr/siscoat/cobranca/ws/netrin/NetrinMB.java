@@ -71,8 +71,13 @@ public class NetrinMB {
 				listPagador.add(docAnalise);
 				
 				//if(CommonsUtil.semValor(docAnalise.getNetrinConsultas()) || docAnalise.getNetrinConsultas().size() == 0) {
-					adiconarDocumentospagador(docAnalise);
+					adiconarDocumentospagador(docAnalise, etapa);
 				//}
+			} else if((CommonsUtil.mesmoValor(etapa, "ReAnalise") && docAnalise.isLiberadoAnalise())){
+				listPagador.add(docAnalise);
+				adiconarDocumentospagador(docAnalise, "analise");
+				adiconarDocumentospagador(docAnalise, "pedir paju");
+				//adiconarDocumentospagador(docAnalise, "ReAnalise");
 			} else {
 				continue;
 			}
@@ -257,7 +262,7 @@ public class NetrinMB {
 		listPagador.remove(docAnalise);
 	}
 	
-	public void adiconarDocumentospagador(DocumentoAnalise docAnalise) {
+	public void adiconarDocumentospagador(DocumentoAnalise docAnalise, String etapaConsultas) {
 		List<NetrinDocumentos> netrinDocumentos = new ArrayList<NetrinDocumentos>();
 		NetrinDocumentosDao netrinDocsDao = new NetrinDocumentosDao();
 		if(CommonsUtil.semValor(docAnalise.getNetrinConsultas())) {
@@ -265,9 +270,9 @@ public class NetrinMB {
 		}
 		
 		if(!CommonsUtil.semValor(docAnalise.getPagador().getCpf())) {
-			netrinDocumentos = netrinDocsDao.getDocumentosPF(docAnalise.getEstadosConsulta(), etapa);
+			netrinDocumentos = netrinDocsDao.getDocumentosPF(docAnalise.getEstadosConsulta(), etapaConsultas);
 		} else {
-			netrinDocumentos = netrinDocsDao.getDocumentosPJ(docAnalise.getEstadosConsulta(), etapa);
+			netrinDocumentos = netrinDocsDao.getDocumentosPJ(docAnalise.getEstadosConsulta(), etapaConsultas);
 		}
 		
 		NetrinConsultaDao netrinConsultaDao = new NetrinConsultaDao();

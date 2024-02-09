@@ -151,7 +151,7 @@
 		                </shiro:hasAnyRoles>		                	                						
 						<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA, PRECOBRANCA">  	                
 			                <p:commandButton action="#{contratoCobrancaMB.clearFieldsBaixar}" ajax="false" icon="ui-icon-check" value="Baixar" title="Baixar Parcela">
-			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
+			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}"/>
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.origemTelaBaixar}" value="CobrancaConsultar" />
@@ -607,20 +607,30 @@
 								value="#{contratoCobrancaMB.objetoCartorio.status}">
 								<f:selectItem itemLabel="selecione o status" itemValue="#{null}"></f:selectItem>
 								<f:selectItem itemLabel="1- Ag.Cartas" itemValue="Ag.Cartas"></f:selectItem>
-								<f:selectItem itemLabel="2- Ag.Envio ONA"
-									itemValue="Ag.Envio ONA"></f:selectItem>
-								<f:selectItem itemLabel="3- Em intimação"
-									itemValue="Em intimação"></f:selectItem>
+								<f:selectItem itemLabel="2- Ag.Envio ONR"
+									itemValue="Ag.Envio ONR"></f:selectItem>
+								<f:selectItem itemLabel="3- Intimação em andamento"
+									itemValue="Intimação em andamento"></f:selectItem>
 								<f:selectItem itemLabel="4- Intimado" itemValue="Intimado"></f:selectItem>
 								<f:selectItem itemLabel="5- Ag.Pagamento ITBI"
 									itemValue="Ag.Pagamento ITBI"></f:selectItem>
 								<f:selectItem itemLabel="6- Ag Consolidação"
 									itemValue="Ag Consolidação"></f:selectItem>
 								<f:selectItem itemLabel="7- Leilão" itemValue="Leilão"></f:selectItem>
-								<f:selectItem itemLabel="8- Leilão aprovado"
-									itemValue="Leilão aprovado"></f:selectItem>
-								<f:selectItem itemLabel="8- Leilão reprovado"
-									itemValue="Leilão reprovado"></f:selectItem>
+								<f:selectItem itemLabel="8- Leilão em andamento"	
+									itemValue="Leilão em andamento"></f:selectItem>
+								<f:selectItem itemLabel="9- Leilão positivo"
+									itemValue="Leilão positivo"></f:selectItem>									
+								<f:selectItem itemLabel="10- Leilão negativo"
+									itemValue="Leilão negativo"></f:selectItem>
+								<f:selectItem itemLabel="11- Vendido"
+									itemValue="Vendido"></f:selectItem>
+								<f:selectItem itemLabel="12- Reintegração de posse"
+									itemValue="Reintegração de posse"></f:selectItem>
+								<f:selectItem itemLabel="13- Estoque/Alugado"
+									itemValue="Estoque/Alugado"></f:selectItem>
+								<f:selectItem itemLabel="14- Ag.Decisão judicial"	
+									itemValue="Ag.Decisão judicial"></f:selectItem>	
 
 							</p:selectOneMenu>
 							<p:outputLabel value="Data do status" styleClass="labelBold" />

@@ -16,7 +16,8 @@ public enum DocumentosAnaliseEnum {
 	CNDESTADUAL("CNDEstadual"),
 	RELACIONAMENTO("Relacionamentos"),
 	FINANCASBB("FinancasBigData"),
-	CADASTROBB("CadastroBasicoBigData");
+	CADASTROBB("CadastroBasicoBigData"),
+	VEICULOS("Veiculos");
 
 	private String nome;
 

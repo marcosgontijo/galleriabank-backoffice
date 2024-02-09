@@ -19,9 +19,8 @@ public class BigDecimalConverter implements javax.faces.convert.Converter {
 
     /** Log. */
     private Log log = LogFactory.getLog(BigDecimalConverter.class);
-    
-    
-	/**
+
+    /**
      * Obtem o objeto.
      * @param ctx FacesContext
      * @param comp UIComponent

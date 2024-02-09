@@ -158,6 +158,10 @@
 			<column name="retornoFinancas" />
 		</property>
 		
+		<property name="retornoFrotaVeiculos" type="java.lang.String" >
+			<column name="retornoFrotaVeiculos" />
+		</property>
+		
 		<set name="plexiConsultas" table="PlexiConsultas" cascade="merge"
                  lazy="false" fetch="select">
             <key>
@@ -189,6 +193,16 @@
             </key>
             <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.GravamesRea" />
         </set>
+        
+        <many-to-one name="analiseOriginal" 
+			class="com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise"
+			lazy="false">
+			<column name="analiseOriginal" />
+		</many-to-one>	
+		
+		<property name="reanalise" type="boolean">
+			<column name="reanalise" not-null="true" default ="false" />
+		</property>		
 						
     </class>
 </hibernate-mapping>
