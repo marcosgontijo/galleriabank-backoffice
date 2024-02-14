@@ -265,15 +265,7 @@
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" />
 		                </p:commandButton>
-		                
-		               <shiro:hasAnyRoles name="ROOT, PROFILE_COMENTARIO_JURIDICO">  
-			                <p:commandButton value="Enviar..." ajax="true" icon="ui-icon-arrowreturnthick-1-e"
-			               		onclick="PF('enviarLuvison').show();" 
-			               		rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico'}">
-			               		<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
-							</p:commandButton>
-						</shiro:hasAnyRoles>
-						
+		                						
 						<shiro:hasAnyRoles name="ROOT, PROFILE_COMENTARIO_JURIDICO">  
 			                <p:commandButton value="Enviar Esteira Interna" ajax="true" icon="ui-icon-arrowreturnthick-1-e"
 			               		onclick="PF('enviarEsteiraInterna').show();" 
