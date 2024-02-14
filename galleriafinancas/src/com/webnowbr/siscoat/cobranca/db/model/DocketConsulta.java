@@ -49,6 +49,7 @@ public class DocketConsulta {
 		this.expirado = consulta.isExpirado();
 		this.estadoId = consulta.getEstadoId();
 		this.cidadeId = consulta.getCidadeId();
+		this.pedidoId = consulta.getPedidoId();
 	}
 
 	public void populatePagadorRecebedor(PagadorRecebedor pagador) {
