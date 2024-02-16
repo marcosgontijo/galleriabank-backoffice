@@ -281,6 +281,7 @@ public class ContratoCobrancaMB {
 	private BigDecimal valorMercadoImovelTrinta;
 	private BigDecimal valorMercadoImovelQuarenta;
 	private BigDecimal valorMercadoImovelCinquenta;
+	private BigDecimal valorTotalContrato;
 	 private boolean apagaListaCartorio;
 
 	private boolean updateMode = false;
@@ -8920,7 +8921,7 @@ public class ContratoCobrancaMB {
 			this.valorPresenteParcela = (saldo).divide(CommonsUtil.bigDecimalValue(divisor), MathContext.DECIMAL128);
 			this.valorPresenteParcela = this.valorPresenteParcela.setScale(2, BigDecimal.ROUND_HALF_UP);
 
-			if (parcelas.getDataVencimento().before(getDataHoje())) {
+			if (parcelas.getDataVencimento().before(DateUtil.getDataHoje())) {
 				if (!CommonsUtil.semValor(parcelas.getSeguroDFI())) {
 					valorPresenteParcela = valorPresenteParcela.add(parcelas.getSeguroDFI());
 				}
@@ -8934,6 +8935,7 @@ public class ContratoCobrancaMB {
 
 			valorPresenteTotalContrato = valorPresenteTotalContrato.add(this.valorPresenteParcela);
 		}
+		this.valorTotalContrato = valorPresenteTotalContrato;
 
 		return valorPresenteTotalContrato;
 	}
@@ -8951,7 +8953,7 @@ public class ContratoCobrancaMB {
 		this.quitacaoPDF = new QuitacaoPDF();
 		this.porcentagemDesconto = BigDecimal.ZERO;
 		this.valorComDesconto = BigDecimal.ZERO;
-
+		this.valorTotalContrato = BigDecimal.ZERO;
 		simularQuitacaoContrato();
 	}
 
@@ -9637,6 +9639,7 @@ public class ContratoCobrancaMB {
 			}
 		}
 	}
+
 
 	public void calcularValorPresenteParcelaDataValor(Date data, ContratoCobrancaDetalhes parcelas, BigDecimal valor) {
 		BigDecimal juros = this.objetoContratoCobranca.getTxJurosParcelas();
@@ -37362,5 +37365,13 @@ public class ContratoCobrancaMB {
 
 	public void setTxAdm(BigDecimal txAdm) {
 		this.txAdm = txAdm;
+	}
+
+	public BigDecimal getValorTotalContrato() {
+		return valorTotalContrato;
+	}
+
+	public void setValorTotalContrato(BigDecimal valorTotalContrato) {
+		this.valorTotalContrato = valorTotalContrato;
 	}
 }

@@ -194,7 +194,7 @@
 								value="#{imovelEstoqueMB.objetoImovelEstoque.quitado}">
 								<p:ajax event="change" />
 							</p:selectBooleanCheckbox>
-							<p:commandButton value="Ver parcelas" action="#{contratoCobrancaMB.clearQuitarContratoDialog}" oncomplete="PF('ParcelaDialog').show();"></p:commandButton>
+							<p:commandButton value="Ver parcelas" action="#{contratoCobrancaMB.clearQuitarContratoDialog}" update="valorPresenteTotal" oncomplete="PF('ParcelaDialog').show();"></p:commandButton>
 						</h:panelGrid>
 						<f:facet name="footer">
 							<p:commandButton value="Salvar" ajax="false" icon="ui-icon-print"
@@ -218,10 +218,10 @@
 				<h:panelGrid columns="2">
 				<p:outputLabel value="Taxa de juros: "/>
 				<p:inputText value="#{contratoCobrancaMB.objetoContratoCobranca.txJurosParcelas}" >
-				<p:ajax event="blur" update="valorPresenteTotal" listener="#{contratoCobrancaMB.simularQuitacaoContrato}"></p:ajax>
+				<p:ajax event="blur" update="valorPresenteTotal" listener="#{contratoCobrancaMB.calcularValorPresenteTotalContrato(contratoCobrancaMB.objetoContratoCobranca)}"></p:ajax>
 				</p:inputText>
 				<p:outputLabel value="valor presente total"/>
-				<p:outputLabel id="valorPresenteTotal" value="#{contratoCobrancaMB.valorPresenteTotal}"/>
+				<p:outputLabel id="valorPresenteTotal" converter="bigDecimalConverter" value="#{contratoCobrancaMB.valorTotalContrato}"/>
 				<p:commandButton value="Quitar Contrato" action="#{contratoCobrancaMB.quitarContrato(contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes)}"
 				oncomplete="PF('ParcelaDialog').hide();"></p:commandButton>
 				</h:panelGrid>
