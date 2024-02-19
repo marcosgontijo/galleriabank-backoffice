@@ -281,7 +281,7 @@ public class ContratoCobrancaMB {
 	private BigDecimal valorMercadoImovelTrinta;
 	private BigDecimal valorMercadoImovelQuarenta;
 	private BigDecimal valorMercadoImovelCinquenta;
-	 private boolean apagaListaCartorio;
+	private boolean apagaListaCartorio;
 
 	private boolean updateMode = false;
 	private boolean deleteMode = false;
@@ -414,6 +414,16 @@ public class ContratoCobrancaMB {
 	private DocumentoAnalise documentoAnalisePopup;
 	private GravamesRea gravamePopup;
 	private String estadoConsultaAdd;
+
+
+	
+	public void setTravaCamposEsteira() {
+		objetoContratoCobranca.setTravaCamposEsteira(true);
+	}
+	
+	public void setDestravaCamposEsteira() {
+		objetoContratoCobranca.setTravaCamposEsteira(false);
+	}
 
 	/** Lista dos Pagadores utilizada pela LOV. */
 	private List<PagadorRecebedor> listPagadores;

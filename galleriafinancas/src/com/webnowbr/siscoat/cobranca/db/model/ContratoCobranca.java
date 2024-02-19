@@ -19,6 +19,11 @@ import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.infra.db.model.User;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class ContratoCobranca implements Serializable {
 
 	/**
@@ -29,6 +34,7 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal valorAgilCessao;
 	private BigDecimal valorCessao;
 	private boolean enviadoCartorio = false;
+	private boolean preContratoSalvo;
 
 	private String ispbPixContaPagar;
 
@@ -918,6 +924,8 @@ public class ContratoCobranca implements Serializable {
 	private boolean riscoTotal20kTaxa;
 	private boolean riscoTotal50kTaxa;
 	private boolean documentosAnalisados;
+	
+	private boolean travaCamposEsteira = false;
 	
 	public int qtdParcelasAtraso;
 	public BigDecimal somaParcelasAtraso;
@@ -7955,5 +7963,21 @@ public class ContratoCobranca implements Serializable {
 
 	public void setTipoContaContaPagar(String tipoContaContaPagar) {
 		this.tipoContaContaPagar = tipoContaContaPagar;
+	}
+
+	public boolean isPreContratoSalvo() {
+		return preContratoSalvo;
+	}
+
+	public void setPreContratoSalvo(boolean preContratoSalvo) {
+		this.preContratoSalvo = preContratoSalvo;
+	}
+
+	public boolean getTravaCamposEsteira() {
+		return travaCamposEsteira;
+	}
+
+	public void setTravaCamposEsteira(boolean travaCamposEsteira) {
+		this.travaCamposEsteira = travaCamposEsteira;
 	}
 }

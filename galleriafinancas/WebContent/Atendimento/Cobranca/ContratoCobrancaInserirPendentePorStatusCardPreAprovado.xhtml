@@ -5,14 +5,19 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:shiro="http://shiro.apache.org/tags"
 	xmlns:p="http://primefaces.org/ui">
-	<h:panelGroup id="PreAprovadoPanel" style="margin-bottom:20px;">
-		<p:panel header="Pré-Aprovado"
+	<h:panelGroup id="PreAprovadoPanel" style="margin-bottom:20px;"  >
+		<p:panel header="Pré-Aprovado" widgetVar="teste"
 			rendered="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise and ( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus !='Pré-Comite'))}">
-			<f:facet name="header">
-							Pré-Aprovado
-							<p:commandButton icon="pi pi-refresh" update="form:PreAprovadoPanel">
+			<f:facet name="header">Pré-Aprovado
+				<p:commandButton icon="pi pi-refresh" update="form:PreAprovadoPanel">
 					<p:ajax event="click" update="form:PreAprovadoPanel form:panelRestricao"
 						listener="#{contratoCobrancaMB.isEngineProcessados}" />
+				</p:commandButton>
+				
+				<p:commandButton value="Desbloquear Edição"
+					icon="pi pi-unlock" update="desbloqueiaEdicaoForm"
+					onclick="PF('desbloqueiaEdicaoId').show()" 
+					style="background: linear-gradient(90deg, rgba(255,165,0) 0%, rgba(255,165,0) 100%);">
 				</p:commandButton>
 			</f:facet>
 			<h:panelGrid id="panelGridPreAprovadoSemEngine"
@@ -61,7 +66,9 @@
 
 				<p:outputLabel value="Tem Pefin/Refin" styleClass="labelBold" />
 				<p:selectBooleanCheckbox
-					disabled="#{!(contratoCobrancaMB.usuarioLogado.profileGerenteAnalise or contratoCobrancaMB.usuarioLogado.administrador or contratoCobrancaMB.usuarioLogado.profileAnalistaCredito)}"
+					disabled="#{!(contratoCobrancaMB.usuarioLogado.profileGerenteAnalise or 
+					contratoCobrancaMB.usuarioLogado.administrador or 
+					contratoCobrancaMB.usuarioLogado.profileAnalistaCredito)}"
 					value="#{contratoCobrancaMB.objetoContratoCobranca.pefinTaxa}"
 					id="pefinCBox">
 					<p:ajax event="change" update="taxaPreAprovada prazoMaxPreAprovado"
@@ -174,7 +181,8 @@
 							<p:inputText id="prazoMaxPreAprovado"
 								style="FONT-SIZE: 10pt;width:60px;"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.prazoMaxPreAprovado}"
-								size="100" />
+								size="100"
+								disabled="#{(contratoCobrancaMB.objetoContratoCobranca.travaCamposEsteira)}" />
 							<p:outputLabel value=" meses" />
 						</h:panelGroup>
 
@@ -187,7 +195,8 @@
 								value="#{contratoCobrancaMB.objetoContratoCobranca.rendaComprovada}"
 								size="100" onkeypress="return isNumberKey(event);"
 								onkeydown="FormataValor(this, 13, event, 2);"
-								converter="bigDecimalConverter" />
+								converter="bigDecimalConverter"
+								disabled="#{(contratoCobrancaMB.objetoContratoCobranca.travaCamposEsteira)}" />
 						</h:panelGroup>
 
 						<p:outputLabel for="ccbxRenda" value="CCB X Renda: "
@@ -198,13 +207,15 @@
 								value="#{contratoCobrancaMB.objetoContratoCobranca.ccbxRenda}"
 								size="100" onkeypress="return isNumberKey(event);"
 								onkeydown="FormataValor(this, 13, event, 2);"
-								converter="bigDecimalConverter" />
+								converter="bigDecimalConverter"
+								disabled="#{(contratoCobrancaMB.objetoContratoCobranca.travaCamposEsteira)}" />
 						</h:panelGroup>
 
 						<p:outputLabel for="finalidadeRecursos"
 							value="Finalidade do Recurso " styleClass="labelBold" />
 						<p:inputText id="finalidadeRecursos"
 							value="#{contratoCobrancaMB.objetoContratoCobranca.finalidadeRecurso}"
+							disabled="#{(contratoCobrancaMB.objetoContratoCobranca.travaCamposEsteira)}"
 							style="width:300px;" />
 
 					</h:panelGrid>
@@ -216,7 +227,8 @@
 						<p:inputTextarea id="observacaoRenda" rows="10" cols="48"
 							maxlength="3000" onblur=""
 							counterTemplate="{0} characters remaining." autoResize="false"
-							value="#{contratoCobrancaMB.objetoContratoCobranca.observacaoRenda}" />
+							value="#{contratoCobrancaMB.objetoContratoCobranca.observacaoRenda}" 
+							disabled="#{(contratoCobrancaMB.objetoContratoCobranca.travaCamposEsteira)}" />
 					</h:panelGrid>
 				</h:panelGroup>
 				<h:panelGroup>
@@ -226,14 +238,14 @@
 						<p:inputText id="proprietarioAnterior"
 							value="#{contratoCobrancaMB.objetoContratoCobranca.proprietarioAnterior}"
 							style="FONT-SIZE: 10pt;width:260px;"
-							disabled="#{contratoCobrancaMB.deleteMode}" />
+							disabled="#{(contratoCobrancaMB.objetoContratoCobranca.travaCamposEsteira)}" />
 
 						<p:outputLabel for="terciroGarantidorRessalva"
 							value="3° Garantidor: " styleClass="labelBold" />
 						<p:inputText id="terciroGarantidorRessalva"
 							value="#{contratoCobrancaMB.objetoContratoCobranca.terciroGarantidorRessalva}"
 							style="FONT-SIZE: 10pt;width:260px;"
-							disabled="#{contratoCobrancaMB.deleteMode}" />
+							disabled="#{(contratoCobrancaMB.objetoContratoCobranca.travaCamposEsteira)}" />
 
 						<p:outputLabel value="Ressalvas / Pendências. "
 							styleClass="labelBold" />
@@ -244,42 +256,42 @@
 						<p:inputText id="matriculaRessalva"
 							value="#{contratoCobrancaMB.objetoContratoCobranca.matriculaRessalva}"
 							style="FONT-SIZE: 10pt;width:260px;"
-							disabled="#{contratoCobrancaMB.deleteMode}" />
+							disabled="#{(contratoCobrancaMB.objetoContratoCobranca.travaCamposEsteira)}" />
 
 						<p:outputLabel for="pefinRefinRessalva" value="Pefin / Refin: "
 							style="margin-left:30px;" />
 						<p:inputText id="pefinRefinRessalva"
 							value="#{contratoCobrancaMB.objetoContratoCobranca.pefinRefinRessalva}"
 							style="FONT-SIZE: 10pt;width:260px;"
-							disabled="#{contratoCobrancaMB.deleteMode}" />
+							disabled="#{(contratoCobrancaMB.objetoContratoCobranca.travaCamposEsteira)}" />
 
 						<p:outputLabel for="protestoRessalva" value="Protesto: "
 							style="margin-left:30px;" />
 						<p:inputText id="protestoRessalva"
 							value="#{contratoCobrancaMB.objetoContratoCobranca.protestoRessalva}"
 							style="FONT-SIZE: 10pt;width:260px;"
-							disabled="#{contratoCobrancaMB.deleteMode}" />
+							disabled="#{(contratoCobrancaMB.objetoContratoCobranca.travaCamposEsteira)}" />
 
 						<p:outputLabel for="processosRessalva" value="Processos: "
 							style="margin-left:30px;" />
 						<p:inputText id="processosRessalva"
 							value="#{contratoCobrancaMB.objetoContratoCobranca.processosRessalva}"
 							style="FONT-SIZE: 10pt;width:260px;"
-							disabled="#{contratoCobrancaMB.deleteMode}" />
+							disabled="#{(contratoCobrancaMB.objetoContratoCobranca.travaCamposEsteira)}"/>
 
 						<p:outputLabel for="trabalhistaRessalva" value="Trabalhista: "
 							style="margin-left:30px;" />
 						<p:inputText id="trabalhistaRessalva"
 							value="#{contratoCobrancaMB.objetoContratoCobranca.trabalhistaRessalva}"
 							style="FONT-SIZE: 10pt;width:260px;"
-							disabled="#{contratoCobrancaMB.deleteMode}" />
+							disabled="#{(contratoCobrancaMB.objetoContratoCobranca.travaCamposEsteira)}" />
 
 						<p:outputLabel for="chequeDevolvidoRessalva"
 							value="Cheque Devolvido: " style="margin-left:30px;" />
 						<p:inputText id="chequeDevolvidoRessalva"
 							value="#{contratoCobrancaMB.objetoContratoCobranca.chequeDevolvidoRessalva}"
 							style="FONT-SIZE: 10pt;width:260px;"
-							disabled="#{contratoCobrancaMB.deleteMode}" />
+							disabled="#{(contratoCobrancaMB.objetoContratoCobranca.travaCamposEsteira)}" />
 
 						<p:outputLabel for="obsDocsPendentesRessalva"
 							value="Obs. Documentos Pendentes: " style="margin-left:30px;" />
@@ -288,7 +300,7 @@
 							style="FONT-SIZE: 10pt;width:260px;" rows="10" cols="48"
 							maxlength="3000" onblur="" autoResize="false"
 							counterTemplate="{0} characters remaining."
-							disabled="#{contratoCobrancaMB.deleteMode}" />
+							disabled="#{(contratoCobrancaMB.objetoContratoCobranca.travaCamposEsteira)}" />
 
 					</h:panelGrid>
 				</h:panelGroup>
@@ -296,13 +308,25 @@
 					<h:panelGrid columns="2">
 						<p:outputLabel for="observacaoParaComite"
 							value="Observação para o Comitê: " styleClass="labelBold" />
-						<p:inputTextarea id="observacaoParaComite" rows="10" cols="48"
-							maxlength="3000" onblur=""
-							counterTemplate="{0} characters remaining." autoResize="false"
-							value="#{contratoCobrancaMB.objetoContratoCobranca.observacaoParaComite}" />
+						<p:inputTextarea id="observacaoParaComite" rows="10" cols="48" 
+							maxlength="3000" onblur="" 
+							counterTemplate="{0} characters remaining." autoResize="false" disabled="#{(contratoCobrancaMB.objetoContratoCobranca.travaCamposEsteira)}">
+							</p:inputTextarea>
 					</h:panelGrid>
 				</h:panelGroup>
+				
+				<p:commandButton 
+					value="Salvar Conteúdo"
+					icon="ui-icon ui-icon-circle-zoomin"
+					action="#{contratoCobrancaMB.setTravaCamposEsteira}"
+					update="PreAprovadoPanel"
+					style="background: linear-gradient(90deg, rgba(159,196,24,1) 0%, rgba(115,158,46,1) 100%);
+					padding: 5px;-webkit-border-radius: 5px;text-decoration: none;
+					-moz-border-radius: 5px; border-radius: 5px;">
+				</p:commandButton>
+				
 			</h:panelGrid>
 		</p:panel>
+		<ui:include src="ContratoCobrancaDesbloquearEdicaoPopup.xhtml"></ui:include>
 	</h:panelGroup>
 </ui:composition>
