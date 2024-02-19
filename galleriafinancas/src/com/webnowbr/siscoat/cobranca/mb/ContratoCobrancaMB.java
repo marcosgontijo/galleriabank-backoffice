@@ -8954,6 +8954,7 @@ public class ContratoCobrancaMB {
 		this.porcentagemDesconto = BigDecimal.ZERO;
 		this.valorComDesconto = BigDecimal.ZERO;
 		this.valorTotalContrato = BigDecimal.ZERO;
+		calcularValorPresenteTotalContrato(objetoContratoCobranca);
 		simularQuitacaoContrato();
 	}
 
