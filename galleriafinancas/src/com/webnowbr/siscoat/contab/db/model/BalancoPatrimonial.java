@@ -77,6 +77,7 @@ public class BalancoPatrimonial implements Serializable {
 	private BigDecimal taxaCri3;
 	private BigDecimal taxaCri4;
 	private BigDecimal taxaCri5;
+	private BigDecimal taxaCri6;
 	private BigDecimal kpmg;
 	
 	private BigDecimal custoPonderado;
@@ -297,6 +298,24 @@ public class BalancoPatrimonial implements Serializable {
 						
 						BigDecimal ipcaCalculo = ipca.divide(new BigDecimal(100));
 						BigDecimal taxaCriCalculo = taxaCri5.divide(new BigDecimal(100));
+						
+						jurosFidc = jurosFidc.add(ipcaCalculo);
+						jurosFidc = jurosFidc.add(taxaCriCalculo);
+						// juros ^ meses
+						jurosFidc = CommonsUtil.bigDecimalValue(
+								Math.pow(CommonsUtil.doubleValue(jurosFidc), CommonsUtil.doubleValue(quantidadeDeMeses)));
+						saldoAtualizado = valorFace.multiply(jurosFidc);
+					}
+				}
+				else if (CommonsUtil.mesmoValor(empresa, "CRI 6")) {
+					if (quantidadeDeMeses.compareTo(BigDecimal.ZERO) > 0) {
+						saldoAtualizado = vlrParcela.multiply(juros); // parcela * juros
+						saldoAtualizado = saldoAtualizado.multiply(multa.add(new BigDecimal(1))); // parcela * juros * multa
+					} else {
+						// (1 + IPCA + TAXA CRI5)
+						
+						BigDecimal ipcaCalculo = ipca.divide(new BigDecimal(100));
+						BigDecimal taxaCriCalculo = taxaCri6.divide(new BigDecimal(100));
 						
 						jurosFidc = jurosFidc.add(ipcaCalculo);
 						jurosFidc = jurosFidc.add(taxaCriCalculo);
@@ -1161,5 +1180,10 @@ public class BalancoPatrimonial implements Serializable {
 	public void setKpmg(BigDecimal kpmg) {
 		this.kpmg = kpmg;
 	}
-
+	public BigDecimal getTaxaCri6() {
+		return taxaCri6;
+	}
+	public void setTaxaCri6(BigDecimal taxaCri6) {
+		this.taxaCri6 = taxaCri6;
+	}
 }

@@ -1610,6 +1610,7 @@ public class ContratoCobranca implements Serializable {
 			empresas.add(new SelectItem("CRI 3","CRI 3"));
 			empresas.add(new SelectItem("CRI 4","CRI 4"));
 			empresas.add(new SelectItem("CRI 5","CRI 5"));
+			empresas.add(new SelectItem("CRI 6","CRI 6"));
 		//}
 		return empresas;
 	}
