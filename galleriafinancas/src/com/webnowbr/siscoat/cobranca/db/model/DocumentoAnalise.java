@@ -459,8 +459,12 @@ public class DocumentoAnalise implements Serializable {
 			} else {
 				EngineRetornoExecutionResultAntecedenteCriminaisEvidences mensagem = engine
 						.getConsultaAntecedenteCriminais().getEvidences();
-				result.add(new DocumentoAnaliseResumo("Antecedentes criminais:",
-						(mensagem.getMessage() != null) ? mensagem.getMessage() : "Nada consta"));
+				if(CommonsUtil.semValor(mensagem)) {
+					result.add(new DocumentoAnaliseResumo("Antecedentes criminais:", "Nada consta"));
+				} else {
+					result.add(new DocumentoAnaliseResumo("Antecedentes criminais:",
+							(mensagem.getMessage() != null) ? mensagem.getMessage() : "Nada consta"));
+				}
 			}
 		}
 	}
