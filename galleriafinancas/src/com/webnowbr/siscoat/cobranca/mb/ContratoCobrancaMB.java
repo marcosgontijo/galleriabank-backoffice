@@ -297,6 +297,7 @@ public class ContratoCobrancaMB {
 
 	private Date dataHoje;
 	private Date filtroDataCorteRelatorioDia;
+	private Date filtroDataCorteRelatorioInicio;
 	private boolean consideraDataCorteRelatorioDia;
 
 	SimulacaoIPCACalculoV2 simulacaoIPCACalculoV2 = new SimulacaoIPCACalculoV2();
@@ -4025,7 +4026,7 @@ public class ContratoCobrancaMB {
 					&& CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Assinatura")) {
 				if (objetoContratoCobranca.isPajuVencido() || objetoContratoCobranca.isComentarioJuricoComPajuVencido())
 					objetoContratoCobranca.setReanalise(true);
-				if ("RJ;PR".contains(objetoContratoCobranca.getImovel().getEstado())
+				if ("PR;MT;GO;MA;CE;PE;RS".contains(objetoContratoCobranca.getImovel().getEstado())
 						&& !objetoContratoCobranca.isReanaliseJuridico())
 					objetoContratoCobranca.setReanalise(true);
 				if (objetoContratoCobranca.isComentarioJuricoApenasComConsultas())
@@ -15850,7 +15851,8 @@ public class ContratoCobrancaMB {
 		this.contratoCobrancaFinanceiroDia = new ArrayList<>();
 
 		this.contratoCobrancaFinanceiroDia = contratoCobrancaDao
-				.relatorioFinanceiroDia(this.tipoContratoCobrancaFinanceiroDia);
+				.relatorioFinanceiroDia(this.tipoContratoCobrancaFinanceiroDia, 
+						filtroDataCorteRelatorioInicio, filtroDataCorteRelatorioDia);
 
 		// Verifica se há parcelas em atraso, se sim irá colorir a linha na tela
 		TimeZone zone = TimeZone.getDefault();
@@ -16044,7 +16046,8 @@ public class ContratoCobrancaMB {
 		this.contratoCobrancaFinanceiroDia = new ArrayList<>();
 
 		this.contratoCobrancaFinanceiroDia = contratoCobrancaDao
-				.relatorioFinanceiroDia(this.tipoContratoCobrancaFinanceiroDia);
+				.relatorioFinanceiroDia(this.tipoContratoCobrancaFinanceiroDia, 
+						filtroDataCorteRelatorioInicio, filtroDataCorteRelatorioDia);
 
 		// Verifica se há parcelas em atraso, se sim irá colorir a linha na tela
 		TimeZone zone = TimeZone.getDefault();
@@ -37488,5 +37491,13 @@ public class ContratoCobrancaMB {
 
 	public void setDataPagamentoOrdemPagamentoStark(Date dataPagamentoOrdemPagamentoStark) {
 		this.dataPagamentoOrdemPagamentoStark = dataPagamentoOrdemPagamentoStark;
+	}
+
+	public Date getFiltroDataCorteRelatorioInicio() {
+		return filtroDataCorteRelatorioInicio;
+	}
+
+	public void setFiltroDataCorteRelatorioInicio(Date filtroDataCorteRelatorioInicio) {
+		this.filtroDataCorteRelatorioInicio = filtroDataCorteRelatorioInicio;
 	}
 }
