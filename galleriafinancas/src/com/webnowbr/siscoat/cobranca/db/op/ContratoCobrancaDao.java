@@ -4605,7 +4605,12 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ " order by numerocontrato";
 	
 	private static final String QUERY_RELATORIO_FINANCEIRO_DIA_PRE_APROVADO =  
-			" where (c.status = 'Pendente' and c.resolucaoExigenciaCartorio = true and c.agregistro = true and (c.valorccb != null or c.valorccb != 0)) "
+			" where ("
+			//+ "c.status = 'Pendente' and "
+			+ "(c.agassinaturadata >= ? ::timestamp and "
+			+ "	c.agassinaturadata <= ? ::timestamp) "
+			//+ "	and c.agregistro = true "
+			+ " and (c.valorccb != null or c.valorccb != 0)) "
 			+ "	and c.pagador not in (15, 34,14, 182, 417, 803) "
 			+ "	order by numerocontrato ";
 	
@@ -4646,7 +4651,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "	order by numerocontrato ";
 
 	@SuppressWarnings("unchecked")
-	public List<ContratoCobrancaFinancerioDiaConsultaVO> relatorioFinanceiroDia(String tipoContratoCobrancaFinanceiroDia) {
+	public List<ContratoCobrancaFinancerioDiaConsultaVO> relatorioFinanceiroDia(String tipoContratoCobrancaFinanceiroDia, Date dataInicio, Date dataFim) {
 		return (List<ContratoCobrancaFinancerioDiaConsultaVO>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -4723,7 +4728,13 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					connection = getConnection();
 
 					ps = connection.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);
-
+					if (tipoContratoCobrancaFinanceiroDia.equals("PreAprovado")) {
+						java.sql.Date dtRelInicioSQL = new java.sql.Date(dataInicio.getTime());
+						java.sql.Date dtRelFimSQL = new java.sql.Date(dataFim.getTime());
+						ps.setDate(1, dtRelInicioSQL);
+						ps.setDate(2, dtRelFimSQL);
+					}
+					
 					rs = ps.executeQuery();
 					ContratoCobrancaFinancerioDiaConsultaVO contratoCobranca;
 

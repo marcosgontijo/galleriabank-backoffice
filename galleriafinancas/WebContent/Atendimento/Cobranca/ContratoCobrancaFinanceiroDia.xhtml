@@ -76,13 +76,24 @@
 						<f:selectItem itemLabel="Não" itemValue="false" />
 						<p:ajax update="ConsultaFinanceiro" event="valueChange" />
 					</p:selectOneRadio>
-					<p:outputLabel for="dataCorte" value="Data Corte Baixas: "
+					
+					<p:outputLabel for="dataCorteIni" value="Data Corte Baixas Inicio: "
+						styleClass="labelBold" style="margin-right: 59px;" rendered="#{contratoCobrancaMB.consideraDataCorteRelatorioDia and
+						contratoCobrancaMB.tipoContratoCobrancaFinanceiroDia eq 'PreAprovado' }"/>
+					<p:calendar id="dataCorteIni"
+						value="#{contratoCobrancaMB.filtroDataCorteRelatorioInicio}" required="true"
+						label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt"
+						styleClass="dateTimeField"
+						rendered="#{contratoCobrancaMB.consideraDataCorteRelatorioDia and
+						contratoCobrancaMB.tipoContratoCobrancaFinanceiroDia eq 'PreAprovado' }"/>
+						
+					<p:outputLabel for="dataCorte" value="Data Corte Baixas Fim: "
 						styleClass="labelBold" style="margin-right: 59px;" rendered="#{contratoCobrancaMB.consideraDataCorteRelatorioDia}"/>
 					<p:calendar id="dataCorte"
 						value="#{contratoCobrancaMB.filtroDataCorteRelatorioDia}" required="true"
 						label="Data Inicio" size="100" pattern="dd/MM/yyyy" locale="pt"
 						styleClass="dateTimeField"
-						rendered="#{contratoCobrancaMB.consideraDataCorteRelatorioDia}"/>
+						rendered="#{contratoCobrancaMB.consideraDataCorteRelatorioDia}"/>					
 				</h:panelGrid>
 
 				<p:commandButton value="Consultar"
