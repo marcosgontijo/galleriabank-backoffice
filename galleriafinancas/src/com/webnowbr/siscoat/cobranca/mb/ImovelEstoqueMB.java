@@ -388,7 +388,7 @@ public class ImovelEstoqueMB {
 
 		// fecha a escrita de dados nessa planilha
 		wb.close();
-
+		
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 				FacesContext.getCurrentInstance());
 
