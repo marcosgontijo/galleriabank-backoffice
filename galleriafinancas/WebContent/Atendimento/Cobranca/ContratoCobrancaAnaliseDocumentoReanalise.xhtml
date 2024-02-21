@@ -293,7 +293,7 @@
 			<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
 				<p:panel id="pnlCeridoesReanalise" header="Certidões" style="margin-bottom:10px;">
 					<p:commandButton value="Executar Consultas" ajax="true"
-						action="#{contratoCobrancaMB.executarConsultasAnaliseDocumento(listaDocumentoAnaliseReanalise)}"
+						action="#{contratoCobrancaMB.executarConsultasAnaliseDocumento(contratoCobrancaMB.listaDocumentoAnaliseReanalise)}"
 						widgetVar="executeBtn" onclick="executeBtn.disable()" 
 						disabled="#{contratoCobrancaMB.checkConsultasAnaliseDocumento()}" />
 					<p:commandButton value="Reanalise Docket" ajax="false"
