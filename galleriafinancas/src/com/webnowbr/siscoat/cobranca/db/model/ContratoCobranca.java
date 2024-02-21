@@ -7980,4 +7980,4 @@ public class ContratoCobranca implements Serializable {
 	public void setTravaCamposEsteira(boolean travaCamposEsteira) {
 		this.travaCamposEsteira = travaCamposEsteira;
 	}
-}
+	}
