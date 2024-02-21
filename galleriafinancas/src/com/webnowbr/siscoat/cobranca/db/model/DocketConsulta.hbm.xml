@@ -76,6 +76,10 @@
 		<property name="pedidoId" type="java.lang.String">
 			<column name="pedidoId" />
 		</property>
+		
+		<property name="valorCertidao" type="big_decimal">
+			<column name="valorCertidao" />
+		</property>
 				
 	</class>
 </hibernate-mapping>

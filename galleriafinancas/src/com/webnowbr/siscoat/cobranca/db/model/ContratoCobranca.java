@@ -876,6 +876,7 @@ public class ContratoCobranca implements Serializable {
 	private BigDecimal dividaIPTU;
 	private BigDecimal dividaCondominio;
 	private BigDecimal valorCartorio;
+	private BigDecimal valorCertidao;
 
 	private String emailPagador;
 	private String celularPagador;
@@ -7775,4 +7776,13 @@ public class ContratoCobranca implements Serializable {
 	public void setTipoContaContaPagar(String tipoContaContaPagar) {
 		this.tipoContaContaPagar = tipoContaContaPagar;
 	}
+
+	public BigDecimal getValorCertidao() {
+		return valorCertidao;
+	}
+
+	public void setValorCertidao(BigDecimal valorCertidao) {
+		this.valorCertidao = valorCertidao;
+	}
+	
 }

@@ -3836,6 +3836,12 @@
 									size="100" onkeypress="return isNumberKey(event);"
 									onkeydown="FormataValor(this, 13, event, 2);"
 									converter="bigDecimalConverter" />
+									
+								<p:commandButton icon="ui-icon-arrowrefresh-1-w"
+									action="#{docketMB.calcularValoresCertidoes(contratoCobrancaMB.listaDocumentoAnalise, contratoCobrancaMB.objetoContratoCobranca)}"
+									update="valorCartorio" 
+									value="Calcular Valor Certidoes" />
+								
 							</h:panelGroup>
 						</h:panelGrid>
 						
