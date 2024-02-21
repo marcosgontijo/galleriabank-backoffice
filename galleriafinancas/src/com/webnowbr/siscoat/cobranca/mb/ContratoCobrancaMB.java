@@ -20,9 +20,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -38,6 +35,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -137,6 +135,7 @@ import com.webnowbr.siscoat.cobranca.db.model.Cartorio;
 import com.webnowbr.siscoat.cobranca.db.model.CcbContrato;
 import com.webnowbr.siscoat.cobranca.db.model.CcbParticipantes;
 import com.webnowbr.siscoat.cobranca.db.model.CcbProcessosJudiciais;
+import com.webnowbr.siscoat.cobranca.db.model.ComparativoCamposEstera;
 import com.webnowbr.siscoat.cobranca.db.model.ContasPagar;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaBRLLiquidacao;
@@ -37412,6 +37411,20 @@ public class ContratoCobrancaMB {
 		clonandoValoresObjeto(objetoContratoCobranca, objetoContratoCobrancaOriginal);
 	}
 
+	public List<String> comparativoCamposEsteraLista() {
+		
+		ContratoCobrancaDao contratoCobrancaDaotest = new ContratoCobrancaDao();
+		List<String> resultado = contratoCobrancaDaotest.resultadoQueryTestList();
+		for (String string : resultado) {
+			System.out.println(string);
+		}
+		return contratoCobrancaDaotest.resultadoQueryTestList();
+		//prazomaxpreaprovado
+		//ccbxrenda
+		//rendacomprovada
+		//finalidaderecurso
+	}
+	
 	private void clonandoValoresObjeto(ContratoCobranca source, ContratoCobranca destination) {
 		Class<?> reflectionContratoCobranca = source.getClass();
 
@@ -37427,6 +37440,7 @@ public class ContratoCobrancaMB {
 
 	private void comparandoValores(ContratoCobranca valoresAtuais, ContratoCobranca valoresBanco) {
 		Class<?> reflectionValues = valoresAtuais.getClass();
+		comparativoCamposEsteraLista();
 		for (Field field : reflectionValues.getDeclaredFields()) {
 			try {
 				field.setAccessible(true);

@@ -3,7 +3,7 @@
                                          "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
 <session-factory name="">	
-           <mapping resource="com/webnowbr/siscoat/contab/db/model/BalancoPatrimonial.hbm.xml"/>
+        <mapping resource="com/webnowbr/siscoat/contab/db/model/BalancoPatrimonial.hbm.xml"/>
         	
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/SaqueIUGU.hbm.xml"/>
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/EmpresaCobranca.hbm.xml"/>
@@ -89,6 +89,7 @@
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ContratoTipoTemplate.hbm.xml"/>
 		
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ComparativoPopPupEstera.hbm.xml"/>
+		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ComparativoCamposEstera.hbm.xml"/>
 		
 		<mapping resource="com/webnowbr/siscoat/infra/db/model/MenuFavorito.hbm.xml"/>
        	<mapping resource="com/webnowbr/siscoat/infra/db/model/Termo.hbm.xml"/>
