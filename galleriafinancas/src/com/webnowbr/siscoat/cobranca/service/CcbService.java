@@ -3000,16 +3000,16 @@ public class CcbService {
 			XWPFRun run2;
 			int fontSize = 10;
 			
-			if(CommonsUtil.mesmoValor(objetoCcb.getUfImovel(), "PR") || CommonsUtil.mesmoValor(objetoCcb.getUfImovel(), "Paraná")) {
+			/*if(CommonsUtil.mesmoValor(objetoCcb.getUfImovel(), "PR") || CommonsUtil.mesmoValor(objetoCcb.getUfImovel(), "Paraná")) {
 				document = new XWPFDocument(getClass().getResourceAsStream("/resource/TermoDeResponsabilidadeAnuenciaPajuPR.docx"));
 				fontSize = 12;
 			} else if(CommonsUtil.mesmoValor(objetoCcb.getUfImovel(), "RJ") || CommonsUtil.mesmoValor(objetoCcb.getUfImovel(), "Rio de Janeiro")) {
 				document = new XWPFDocument(getClass().getResourceAsStream("/resource/TermoDeResponsabilidadeAnuenciaPajuRJ.docx"));
 				fontSize = 11;
-			} else {
+			} else {*/
 				document = new XWPFDocument(getClass().getResourceAsStream("/resource/TermoDeResponsabilidadeAnuenciaPaju.docx"));
 				fontSize = 10;
-			}
+			//}
 						
 			CTFonts fonts = CTFonts.Factory.newInstance();
 			fonts.setHAnsi("Calibri");

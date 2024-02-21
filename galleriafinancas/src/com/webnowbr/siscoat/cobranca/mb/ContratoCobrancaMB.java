@@ -7750,7 +7750,8 @@ public class ContratoCobrancaMB {
 					|| this.objetoContratoCobranca.getEmpresa().equals("CRI 2")
 					|| this.objetoContratoCobranca.getEmpresa().equals("CRI 3")
 					|| this.objetoContratoCobranca.getEmpresa().equals("CRI 4")
-					|| this.objetoContratoCobranca.getEmpresa().equals("CRI 5")) {
+					|| this.objetoContratoCobranca.getEmpresa().equals("CRI 5")
+					|| this.objetoContratoCobranca.getEmpresa().equals("CRI 6")) {
 				this.selectedRecebedor = prDao.findById((long) 15765);
 			} else {
 				this.selectedRecebedor = prDao.findById((long) 803);
@@ -21911,6 +21912,8 @@ public class ContratoCobrancaMB {
 		if (CommonsUtil.mesmoValor(processoSelecionado.getQuitar(), "Quitar")
 				|| CommonsUtil.mesmoValor(processoSelecionado.getQuitar(), "Quitar ou indicar bens")) {
 			processoSelecionado.setSelecionadoComite(true);
+		} else if (CommonsUtil.mesmoValor(processoSelecionado.getQuitar(), "Amparado")) {
+			processoSelecionado.setSelecionadoComite(false);
 		}
 
 		if (!CommonsUtil.semValor(processoSelecionado.getContaPagar())) {
@@ -23346,7 +23349,8 @@ public class ContratoCobrancaMB {
 						|| this.objetoContratoCobranca.getEmpresa().equals("CRI 2")
 						|| this.objetoContratoCobranca.getEmpresa().equals("CRI 3")
 						|| this.objetoContratoCobranca.getEmpresa().equals("CRI 4")
-						|| this.objetoContratoCobranca.getEmpresa().equals("CRI 5")) {
+						|| this.objetoContratoCobranca.getEmpresa().equals("CRI 5")
+						|| this.objetoContratoCobranca.getEmpresa().equals("CRI 6")) {
 					this.selectedRecebedor = prDao.findById((long) 15765);
 				} else {
 					this.selectedRecebedor = prDao.findById((long) 803);
@@ -23396,6 +23400,8 @@ public class ContratoCobrancaMB {
 				this.selectedRecebedor = prDao.findById((long) 57385);
 			} else if (this.objetoContratoCobranca.getEmpresa().equals("CRI 5")) {
 				this.selectedRecebedor = prDao.findById((long) 74381);
+			} else if (this.objetoContratoCobranca.getEmpresa().equals("CRI 6")) {
+				this.selectedRecebedor = prDao.findById((long) 74381);// ??????
 			} else {
 				this.selectedRecebedor = prDao.findById((long) 803); // galleria sec
 			}
@@ -23457,7 +23463,8 @@ public class ContratoCobrancaMB {
 						|| this.objetoContratoCobranca.getEmpresa().equals("CRI 2")
 						|| this.objetoContratoCobranca.getEmpresa().equals("CRI 3")
 						|| this.objetoContratoCobranca.getEmpresa().equals("CRI 4")
-						|| this.objetoContratoCobranca.getEmpresa().equals("CRI 5")) {
+						|| this.objetoContratoCobranca.getEmpresa().equals("CRI 5")
+						|| this.objetoContratoCobranca.getEmpresa().equals("CRI 6")) {
 					this.selectedRecebedor = prDao.findById((long) 15765);
 				} else {
 					this.selectedRecebedor = prDao.findById((long) 803);

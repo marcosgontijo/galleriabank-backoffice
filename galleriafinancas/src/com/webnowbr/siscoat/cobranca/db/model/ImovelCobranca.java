@@ -261,6 +261,7 @@ public class ImovelCobranca implements Serializable {
 		tipos.add("Chácara,Chácara");
 		tipos.add("Rural,Rural");
 		tipos.add("Casa em construção,Casa em construção");
+		tipos.add("Posto,Posto");
 		return tipos;
 	}
 	

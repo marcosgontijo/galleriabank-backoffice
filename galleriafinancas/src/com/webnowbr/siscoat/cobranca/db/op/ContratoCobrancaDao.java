@@ -4008,7 +4008,11 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					} else if (empresa.equals("CRI 5")) {
 						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM 
 								+  " and cc.empresa = 'CRI 5' ";
+					} else if (empresa.equals("CRI 6")) {
+						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM 
+								+  " and cc.empresa = 'CRI 6' ";
 					}
+					
 					
 					query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM 
 					+ " order by cc.datacontrato desc "
@@ -4138,6 +4142,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+  " and cc.empresa != 'CRI 3' "
 			+  " and cc.empresa != 'CRI 4' "
 			+  " and cc.empresa != 'CRI 5' "
+			+  " and cc.empresa != 'CRI 6' "
 			+ " and "
 			+ "	( (cdp.dataPagamento >= ? ::timestamp "
 			+ "	and cdp.dataPagamento <= ? ::timestamp) "
@@ -4334,6 +4339,11 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 					if (empresa.equals("CRI 5")) {
 						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM 
 								+  " and cc.empresa = 'CRI 5' ";
+					}
+					
+					if (empresa.equals("CRI 6")) {
+						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM 
+								+  " and cc.empresa = 'CRI 6' ";
 					}
 					query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM 
 					+ " order by cc.datacontrato desc ";
@@ -4865,6 +4875,10 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				
 				if (tipoContratoCobrancaFinanceiroDia.equals("CRI 5")) {
 					query_RELATORIO_FINANCEIRO_CUSTOM += QUERY_RELATORIO_FINANCEIRO_DIA_CRI_5;		
+				}
+				
+				if (tipoContratoCobrancaFinanceiroDia.equals("CRI 6")) {
+					query_RELATORIO_FINANCEIRO_CUSTOM += QUERY_RELATORIO_FINANCEIRO_DIA_CRI_6;		
 				}
 				
 				if (tipoContratoCobrancaFinanceiroDia.equals("EspelhamentoFIDC")) {
