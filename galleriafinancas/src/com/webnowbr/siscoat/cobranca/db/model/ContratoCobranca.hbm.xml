@@ -2361,6 +2361,13 @@
 			<column name="notificacaoCobrancaData" />
 		</property>
 		
+		<property name="porcentagemLeilaoImovelPrincipal" type="big_decimal">
+			<column name="porcentagemLeilaoImovelPrincipal" />
+		</property>
+		
+		<property name="valorCreditoImovelPrincipal" type="big_decimal">
+			<column name="valorCreditoImovelPrincipal" />
+		</property>
 		
 		<property name="ispbBancarioContaPagar" type="java.lang.String">
 			<column name="ispbBancarioContaPagar" />
