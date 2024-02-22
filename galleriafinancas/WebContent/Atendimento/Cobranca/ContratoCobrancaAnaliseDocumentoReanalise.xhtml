@@ -122,7 +122,7 @@
 							<p:selectBooleanButton value="#{fileReanalise.liberadoAnalise}"
 								rendered="#{!fileReanalise.isAnaliseBloqueada()}"
 								onLabel="Sim" offLabel="Não" style="width:6rem">
-								<p:ajax event="change" update="documentosAnaliseReaForm dtFilesReanalise"
+								<p:ajax event="change" update="dtFilesReanalise"
 									listener="#{contratoCobrancaMB.marcaParaDocumentoAnalise(fileReanalise)}" />
 							</p:selectBooleanButton>
 							<p:selectBooleanButton value="#{fileReanalise.liberadoContinuarAnalise}"

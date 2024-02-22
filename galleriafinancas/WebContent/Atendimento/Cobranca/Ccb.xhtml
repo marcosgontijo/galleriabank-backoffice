@@ -36,7 +36,7 @@
 					
 				<p:commandButton ajax="false" action="#{ccbMB.readXWPFile}"
 					icon="ui-icon ui-icon-print" value="Fazer Download"  update=" :form  msgs" />	
-				<h:panelGrid columns="2">	
+				<h:panelGrid columns="3">	
 					<h:panelGrid columns="2">							
 						<p:outputLabel for="tipoDownload"
 							value="Tipo Do Documento: " styleClass="labelBold" />
@@ -46,7 +46,7 @@
 							completeMethod="#{ccbMB.getListaTipoDownload()}"
 							scrollHeight="250"  >
 																		
-							<p:ajax update=" pagadoresNovos despesasPanel SeguradoresPanel PanelBanco PgmntBancoVendedor aditamentoPanel" 
+							<p:ajax update=" pagadoresNovos despesasPanel SeguradoresPanel PanelBanco PgmntBancoVendedor aditamentoPanel estadosTermoPaju" 
 								event="itemSelect" />
 						</p:autoComplete>	
 							
@@ -76,6 +76,16 @@
 								update="contrato contratoDialogdlg" />
 						</h:panelGroup>
 					</h:panelGrid>
+					<h:panelGroup id="estadosTermoPaju">
+						<h:panelGrid columns="2" rendered="#{ccbMB.tipoDownload == 'Termo Paju Estados'}">
+							<p:outputLabel value="Estado Termo Paju: " styleClass="labelBold"
+								style="font-weight: bold; font-size: 18px;" />
+							<p:autoComplete value="#{ccbMB.ufPaju}" dropdown="true"
+								completeMethod="#{ccbMB.estadosTermoPaju()}"
+								scrollHeight="250">
+							</p:autoComplete>
+						</h:panelGrid>
+					</h:panelGroup>
 					<h:panelGrid columns="2">
 						<p:outputLabel value="Emitente Principal: "
 							styleClass="labelBold"

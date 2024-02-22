@@ -3098,24 +3098,15 @@ public class CcbService {
 		return null;
 	}
 	
-	public byte[] geraTermoPajuRJ_PR(CcbParticipantes participante) throws IOException{
+	public byte[] geraTermoPajuEstado(CcbParticipantes participante, String uf) throws IOException{
 		try {
 			//PagadorRecebedor pagador
 			XWPFDocument document;
 			XWPFRun run;
 			XWPFRun run2;
-			int fontSize = 10;
-			
-			if(CommonsUtil.mesmoValor(objetoCcb.getUfImovel(), "PR") || CommonsUtil.mesmoValor(objetoCcb.getUfImovel(), "Paraná")) {
-				document = new XWPFDocument(getClass().getResourceAsStream("/resource/TermoDeResponsabilidadeAnuenciaPajuPR.docx"));
-				fontSize = 12;
-			} else if(CommonsUtil.mesmoValor(objetoCcb.getUfImovel(), "RJ") || CommonsUtil.mesmoValor(objetoCcb.getUfImovel(), "Rio de Janeiro")) {
-				document = new XWPFDocument(getClass().getResourceAsStream("/resource/TermoDeResponsabilidadeAnuenciaPajuRJ.docx"));
-				fontSize = 11;
-			} else {
-				return null;
-			}
-						
+			int fontSize = 11;
+			document = new XWPFDocument(getClass().getResourceAsStream("/resource/TermoDeResponsabilidadeAnuenciaPajuEstados.docx"));
+					
 			CTFonts fonts = CTFonts.Factory.newInstance();
 			fonts.setHAnsi("Calibri");
 			fonts.setAscii("Calibri");
@@ -3162,6 +3153,9 @@ public class CcbService {
 						text = trocaValoresXWPF(text, r, "ufImovel", objetoCcb.getUfImovel());
 						text = trocaValoresXWPF(text, r, "numeroMatricula", objetoCcb.getNumeroImovel());
 						
+						text = trocaValoresXWPF(text, r, "estadoUF", uf);
+						text = trocaValoresXWPF(text, r, "estadoExtenso", estadoPorExtenso(uf));
+						
 						text = trocaValoresXWPF(text, r, "nomeTestemunha1", objetoCcb.getNomeTestemunha1());
 						text = trocaValoresXWPF(text, r, "cpfTestemunha1", objetoCcb.getCpfTestemunha1());
 						text = trocaValoresXWPF(text, r, "rgTestemunha1", objetoCcb.getRgTestemunha1());						
@@ -3178,21 +3172,7 @@ public class CcbService {
 			    }
 			}
 		    
-		    for (XWPFTable tbl : document.getTables()) {
-				for (XWPFTableRow row : tbl.getRows()) {
-					for (XWPFTableCell cell : row.getTableCells()) {
-						for (XWPFParagraph p : cell.getParagraphs()) {
-							for (XWPFRun r : p.getRuns()) {
-					            String text = r.getText(0);					            
-					            if(CommonsUtil.semValor(text)) {
-					            	continue;
-					            }				         
-							}
-						}
-					}
-				}
-			}
-		   
+		    
 		    ByteArrayOutputStream out = new ByteArrayOutputStream();
 			document.write(out);
 			document.close();

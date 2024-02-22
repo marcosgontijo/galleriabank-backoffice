@@ -97,6 +97,7 @@ public class CcbMB {
 	
 	private String tipoPesquisa;
 	private String tipoDownload;
+	private String ufPaju;
 	
 	public UploadedFile uploadedFile;
     public String fileName;
@@ -645,7 +646,7 @@ public class CcbMB {
 		listaTipoDownload.add("Declaração de União Estavel");
 		listaTipoDownload.add("Declaração Destinação Recursos");
 		listaTipoDownload.add("Termo Responsabilidade Paju Vencido");
-		listaTipoDownload.add("Termo Responsabilidade Paju RJ/PR");
+		listaTipoDownload.add("Termo Paju Estados");
 		listaTipoDownload.add("Termo Incomunicabilidade Imovel");
 		listaTipoDownload.add("Ficha Cadastro");
 		listaTipoDownload.add("Averbacao");
@@ -1862,20 +1863,25 @@ public class CcbMB {
 			    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc); 	
 			    		listaArquivos.put(nomeDoc, arquivo);
 			    	}
-			    } else if(CommonsUtil.mesmoValor(tipoDownload,"Termo Responsabilidade Paju RJ/PR")) {
-			    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
-			    		if(participante.getSocios().size() > 0){
-			    			for(CcbParticipantes socio : participante.getSocios()) {
-			    				arquivo = ccbService.geraTermoPajuRJ_PR(socio);
-				    			nomeDoc = objetoCcb.getNumeroOperacao() + " - " + socio.getPessoa().getNome() + "_" + "TermoPaju.docx";
-					    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc);
-					    		listaArquivos.put(nomeDoc, arquivo);
-			    			}
-			    		}
-			    		arquivo = ccbService.geraTermoPajuRJ_PR(participante);
-			    		nomeDoc = objetoCcb.getNumeroOperacao() + " - " + participante.getPessoa().getNome() + "_" + "TermoPaju.docx";
-			    		//ccbService.geraDownloadByteArray(arquivo, nomeDoc); 	
-			    		listaArquivos.put(nomeDoc, arquivo);
+			    } else if(CommonsUtil.mesmoValor(tipoDownload,"Termo Paju Estados")) {
+			    	List<String> estados = estadosTermoPaju();
+			    	if(!CommonsUtil.semValor(ufPaju)) {
+		    			estados.clear();
+		    			estados.add(ufPaju);
+		    		}
+		    		for(String ufEstado : estados) {
+				    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
+				    		if(participante.getSocios().size() > 0){
+				    			for(CcbParticipantes socio : participante.getSocios()) {
+				    				arquivo = ccbService.geraTermoPajuEstado(socio, ufEstado);
+					    			nomeDoc = objetoCcb.getNumeroOperacao() + " - " + socio.getPessoa().getNome() + "_" + "TermoPaju"+ ufEstado +".docx";
+						    		listaArquivos.put(nomeDoc, arquivo);
+				    			}
+				    		}
+				    		arquivo = ccbService.geraTermoPajuEstado(participante, ufEstado);
+				    		nomeDoc = objetoCcb.getNumeroOperacao() + " - " + participante.getPessoa().getNome() + "_" + "TermoPaju"+ ufEstado +".docx";	
+				    		listaArquivos.put(nomeDoc, arquivo);
+				    	}
 			    	}
 			    } else if(CommonsUtil.mesmoValor(tipoDownload,"Termo Incomunicabilidade Imovel")) {
 			    	for(CcbParticipantes participante : objetoCcb.getListaParticipantes()) {
@@ -2378,6 +2384,17 @@ public class CcbMB {
 	    }*/
 	}
 	
+	public List<String> estadosTermoPaju() {
+		List<String> estados = new ArrayList<String>();
+		estados.add("MT");
+		estados.add("MA");
+		estados.add("GO");
+		estados.add("CE");
+		estados.add("PR");
+		estados.add("RS");
+		return estados;
+	}
+	
 	public void getEnderecoByViaNet() {
 
 		try {
@@ -2751,7 +2768,13 @@ public class CcbMB {
 
 	public void setLoginBean(LoginBean loginBean) {
 		this.loginBean = loginBean;
+	}
+
+	public String getUfPaju() {
+		return ufPaju;
+	}
+
+	public void setUfPaju(String ufPaju) {
+		this.ufPaju = ufPaju;
 	}	
-	
-	
 }
