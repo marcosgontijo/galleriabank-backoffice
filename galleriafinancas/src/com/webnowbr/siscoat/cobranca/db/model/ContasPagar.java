@@ -60,6 +60,7 @@ public class ContasPagar implements Serializable {
 	
 	private Collection<FileUploaded> filesContas = new ArrayList<FileUploaded>();
 	
+
 	private ContasPagar contaPagarOriginal = null;
 	private boolean editada;
 	

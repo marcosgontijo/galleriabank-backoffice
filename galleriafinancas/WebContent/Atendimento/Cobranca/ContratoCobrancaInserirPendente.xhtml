@@ -489,7 +489,70 @@
 													</p:selectBooleanButton>
 												</h:panelGroup>
 											</h:panelGrid>
-										</h:panelGrid>
+											
+								<h:panelGrid columns="1"
+									style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px; 
+										border-radius: 5px; padding: 10px;">
+									<p:outputLabel styleClass="labelBold">Nota Fiscal Emitida</p:outputLabel>
+									<h:panelGroup>
+										<p:selectBooleanButton id="notaFiscalEmitidaView"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.notaFiscalEmitida}"
+											onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+											offIcon="ui-icon-cancel" style="width:60px" disabled="true">
+										</p:selectBooleanButton>
+										<p:spacer width="50px" height="1px"></p:spacer>
+										<p:selectBooleanButton id="notaFiscalEmitida"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.notaFiscalEmitida}"
+											onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+											offIcon="ui-icon-cancel" style="width:=60px">
+										</p:selectBooleanButton>
+									</h:panelGroup>
+									<h:panelGroup>
+										<p:outputLabel>Atualizado por: </p:outputLabel>
+										<h:outputText id="notaFiscalEmitidaUsuario"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.notaFiscalEmitidaUsuario}"
+											style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+									</h:panelGroup>
+									<h:outputText id="notaFiscalEmitidaData"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.notaFiscalEmitidaData}"
+										style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+										<f:convertDateTime locale="pt_BR" />
+										<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+									</h:outputText>
+								</h:panelGrid>
+								
+								<h:panelGrid columns="1"
+									style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px; 
+										border-radius: 5px; padding: 10px;">
+									<p:outputLabel styleClass="labelBold">Nota Fiscal Paga</p:outputLabel>
+									<h:panelGroup>
+										<p:selectBooleanButton id="notaFiscalPagaView"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.notaFiscalPaga}"
+											onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+											offIcon="ui-icon-cancel" style="width:60px" disabled="true">
+										</p:selectBooleanButton>
+										<p:spacer width="50px" height="1px"></p:spacer>
+										<p:selectBooleanButton id="notaFiscalPaga"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.notaFiscalPaga}"
+											onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+											offIcon="ui-icon-cancel" style="width:=60px">
+										</p:selectBooleanButton>
+									</h:panelGroup>
+									<h:panelGroup>
+										<p:outputLabel>Atualizado por: </p:outputLabel>
+										<h:outputText id="notaFiscalPagaUsuario"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.notaFiscalPagaUsuario}"
+											style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+									</h:panelGroup>
+									<h:outputText id="notaFiscalPagaData"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.notaFiscalPagaData}"
+										style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+										<f:convertDateTime locale="pt_BR" />
+										<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+									</h:outputText>
+								</h:panelGrid>
+								
+							</h:panelGrid>
 									</shiro:hasAnyRoles>
 			
 									<h:panelGrid columns="5" style="margin-top: 20px;">

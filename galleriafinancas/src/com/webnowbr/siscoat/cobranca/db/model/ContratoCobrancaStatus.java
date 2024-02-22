@@ -30,6 +30,8 @@ public class ContratoCobrancaStatus implements Serializable {
 	private boolean contratoConferido;
 	private String contratoPreAprovado;
 	private BigDecimal valorPreLaudo;
+	private boolean notaFiscalEmitida;
+	private boolean notaFiscalPaga;
 	
 	public ContratoCobrancaStatus() {
 		
@@ -150,6 +152,20 @@ public class ContratoCobrancaStatus implements Serializable {
 		this.pajuAtualizado = pajuAtualizado;
 	}
 	
+	public boolean isNotaFiscalEmitida() {
+		return this.notaFiscalEmitida;
+	}
 	
+	public void setNotaFiscalEmitida( boolean notaFiscalEmitida ) {
+		this.notaFiscalEmitida = notaFiscalEmitida;
+	}
+	
+	public boolean isNotaFiscalPaga() {
+		return this.notaFiscalPaga;
+	}
+	
+	public void setNotaFiscalPaga( boolean notaFiscalPaga ) {
+		this.notaFiscalPaga = notaFiscalPaga;
+	}
 	
 }

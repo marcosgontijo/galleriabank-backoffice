@@ -24,6 +24,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Collection;
@@ -36,6 +37,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
@@ -211,6 +213,7 @@ import com.webnowbr.siscoat.cobranca.service.NetrinService;
 import com.webnowbr.siscoat.cobranca.service.PagadorRecebedorService;
 import com.webnowbr.siscoat.cobranca.service.PajuService;
 import com.webnowbr.siscoat.cobranca.service.RelatoriosService;
+import com.webnowbr.siscoat.cobranca.service.ResponsavelService;
 import com.webnowbr.siscoat.cobranca.service.ScrService;
 import com.webnowbr.siscoat.cobranca.service.SerasaService;
 import com.webnowbr.siscoat.cobranca.vo.ContratosPagadorAnalisadoVO;
@@ -331,9 +334,7 @@ public class ContratoCobrancaMB {
 	private List<DocumentoAnalise> listaDocumentoAnaliseRea;
 	private List<DocumentoAnalise> listaDocumentoAnaliseReanalise;
 	private List<DocumentoAnalise> listaSelectAnalise = new ArrayList<>();
-
 	private BoletoKobana selectedBoletosKobanaBaixa = null;
-
 	/************************************************************
 	 * Objetos para antecipacao de parcela
 	 ************************************************************/
@@ -1117,7 +1118,8 @@ public class ContratoCobrancaMB {
 		files = new ArrayList<FileUploaded>();
 		filesInterno = new ArrayList<FileUploaded>();
 		filesFaltante = new ArrayList<FileUploaded>();
-		filesJuridico = new ArrayList<FileUploaded>();		
+		filesJuridico = new ArrayList<FileUploaded>();
+		filesNotaFiscal = new ArrayList<FileUploaded>();
 		filesComite = new ArrayList<FileUploaded>();
 
 		this.hasBaixaParcial = false;
@@ -1825,6 +1827,7 @@ public class ContratoCobrancaMB {
 		filesInterno = new ArrayList<FileUploaded>();
 		filesFaltante = new ArrayList<FileUploaded>();
 		filesJuridico = new ArrayList<FileUploaded>();
+		filesNotaFiscal = new ArrayList<FileUploaded>();
 		filesComite = new ArrayList<FileUploaded>();
 		this.hasBaixaParcial = false;
 
@@ -1918,6 +1921,7 @@ public class ContratoCobrancaMB {
 		filesFaltante = new ArrayList<FileUploaded>();
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesComite = new ArrayList<FileUploaded>();
+		filesNotaFiscal = new ArrayList<FileUploaded>();
 
 		this.objetoImovelCobranca = new ImovelCobranca();
 		this.objetoPagadorRecebedor = new PagadorRecebedor();
@@ -3877,8 +3881,9 @@ public class ContratoCobrancaMB {
 				}
 			}
 			
+
 			if (!CommonsUtil.semValor(this.listSolicitacaoPreLaudoImoveis)) {
-								
+				
 				// Caso a lista de imoveis solicitando pre laudo nao esteja vazia, cria um laudo novo e insere as infos na tabela relacional
 				
 				ImovelCobrancaDao imovelDao = new ImovelCobrancaDao();
@@ -3899,6 +3904,7 @@ public class ContratoCobrancaMB {
 				}
 				
 			}
+			
 			/*
 			 * if (responsavelDao.findByFilter("codigo", this.codigoResponsavel).size() > 0)
 			 * { Responsavel responsavel = responsavelDao.findByFilter("codigo",
@@ -4048,6 +4054,63 @@ public class ContratoCobrancaMB {
 			
 			updateCheckList();
 			this.objetoContratoCobranca.populaStatusEsteira(getUsuarioLogadoNull());
+			
+		
+			
+			if (this.objetoContratoCobranca.isNotaFiscalAgendada()) {
+			
+				//gerar contas stark bank
+				//TODO: HERMES OLHAR AQUI
+				ContasPagarDao contasPagarDao = new ContasPagarDao();
+
+				List<ContasPagar> listDespesaNotaFiscal = contasPagarDao.buscarDespesa("Pagamento nota fiscal",
+						this.objetoContratoCobranca.getNumeroContrato());
+				if (CommonsUtil.semValor(listDespesaNotaFiscal)) {
+					ContasPagar despesaNotaFiscal;
+
+					if (!CommonsUtil.semValor(listDespesaNotaFiscal) && listDespesaNotaFiscal.size() == 1)
+						despesaNotaFiscal = listDespesaNotaFiscal.get(0);
+					else
+						despesaNotaFiscal = new ContasPagar();
+
+					despesaNotaFiscal.setDescricao("Pagamento nota fiscal");
+					despesaNotaFiscal.setValor(this.objetoContratoCobranca.getValorNotaFiscal());
+
+					int diaSemanaHoje = DateUtil.getDataHoraAgora().getDay();
+					//achando a data da proxima terca
+					int diasVencimento = 7 - (diaSemanaHoje - 2);
+					despesaNotaFiscal.setDataVencimento(DateUtil
+							.adicionarDias(DateUtil.getDataHoraAgora(), diasVencimento));
+					despesaNotaFiscal.setTipoDespesa("C");
+					despesaNotaFiscal.setContrato(this.objetoContratoCobranca);
+					despesaNotaFiscal.setFormaTransferencia("PIX");
+					despesaNotaFiscal.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
+					despesaNotaFiscal.setResponsavel(this.objetoContratoCobranca.getResponsavel());
+
+					//calcular valor nota
+
+					if (!CommonsUtil.semValor(this.objetoContratoCobranca.getResponsavel().getPix())) {
+						despesaNotaFiscal.setPix(this.objetoContratoCobranca.getResponsavel().getPix());
+					} else {
+						despesaNotaFiscal.setNomeTed(this.objetoContratoCobranca.getResponsavel().getNomeCC());
+						if (!CommonsUtil.semValor(this.objetoContratoCobranca.getResponsavel().getCpfCC()))
+							despesaNotaFiscal.setCpfTed(this.objetoContratoCobranca.getResponsavel().getCpfCC());
+						else
+							despesaNotaFiscal.setCpfTed(this.objetoContratoCobranca.getResponsavel().getCnpjCC());
+						despesaNotaFiscal.setBancoTed(this.objetoContratoCobranca.getResponsavel().getCodigoBanco());
+						despesaNotaFiscal.setAgenciaTed(this.objetoContratoCobranca.getResponsavel().getAgencia());
+						despesaNotaFiscal.setContaTed(this.objetoContratoCobranca.getResponsavel().getConta());
+						despesaNotaFiscal
+								.setDigitoContaTed(this.objetoContratoCobranca.getResponsavel().getContaDigito());
+
+					}
+
+					if (CommonsUtil.semValor(despesaNotaFiscal.getId()))
+						contasPagarDao.create(despesaNotaFiscal);
+					else
+						contasPagarDao.merge(despesaNotaFiscal);
+				}
+			}
 			contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
 			// verifica se o contrato for aprovado, manda um tipo de email..
@@ -4063,7 +4126,7 @@ public class ContratoCobrancaMB {
 							"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
 									+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
 							""));
-			
+
 			this.objetoCcb = null;
 
 			if (usuarioLogado.isComiteConsultar()) {
@@ -4153,8 +4216,7 @@ public class ContratoCobrancaMB {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Contrato Cobrança: Nenhum imóvel selecionado para pré-laudo!", ""));
 			return false;
-		}
-		
+		}		
 		return true;
 	}
 
@@ -6058,6 +6120,41 @@ public class ContratoCobrancaMB {
 				this.objetoContratoCobranca.setOperacaoPagaUsuario(getNomeUsuarioLogado());
 			}
 		}
+		
+		if (!this.objetoContratoCobranca.isNotaFiscalEmitida()) {
+			this.objetoContratoCobranca.setNotaFiscalEmitidaData(null);
+			this.objetoContratoCobranca.setNotaFiscalEmitidaUsuario(null);
+		} else {
+			if (this.objetoContratoCobranca.getNotaFiscalEmitidaData() == null) {
+				this.objetoContratoCobranca.setNotaFiscalEmitidaData(DateUtil.gerarDataHoje());
+				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getNotaFiscalEmitidaData());
+				this.objetoContratoCobranca.setNotaFiscalEmitidaUsuario(getNomeUsuarioLogado());
+			}
+		}
+		
+		if (!this.objetoContratoCobranca.isNotaFiscalAgendada()) {
+			this.objetoContratoCobranca.setNotaFiscalPagaData(null);
+			this.objetoContratoCobranca.setNotaFiscalPagaUsuario(null);
+		} else {
+			if (this.objetoContratoCobranca.getNotaFiscalPagaData() == null) {
+				this.objetoContratoCobranca.setNotaFiscalPagaData(DateUtil.gerarDataHoje());
+				this.objetoContratoCobranca.setDataUltimaAtualizacao(this.objetoContratoCobranca.getNotaFiscalPagaData());
+				this.objetoContratoCobranca.setNotaFiscalPagaUsuario(getNomeUsuarioLogado());
+			}
+		}
+		
+		
+		if (!this.objetoContratoCobranca.isNotaSolicitada()) {
+			this.objetoContratoCobranca.setSolicitarNotaData(null);
+			this.objetoContratoCobranca.setSolicitarNotaUsuario(null);
+
+		} else {
+			if (this.objetoContratoCobranca.getSolicitarNotaData() == null) {
+				this.objetoContratoCobranca.setSolicitarNotaData(DateUtil.gerarDataHoje());
+				this.objetoContratoCobranca.setSolicitarNotaUsuario(getNomeUsuarioLogado());
+			}
+		}
+		
 
 		this.objetoContratoCobranca.setStatusContratoData(DateUtil.gerarDataHoje());
 		this.objetoContratoCobranca.setStatusContratoUsuario(getNomeUsuarioLogado());
@@ -7317,6 +7414,7 @@ public class ContratoCobrancaMB {
 		filesInterno = new ArrayList<FileUploaded>();
 		filesFaltante = new ArrayList<FileUploaded>();
 		filesJuridico = new ArrayList<FileUploaded>();
+		filesNotaFiscal = new ArrayList<FileUploaded>();
 		filesComite = new ArrayList<FileUploaded>();
 		this.files = new ArrayList<FileUploaded>();
 
@@ -7388,6 +7486,7 @@ public class ContratoCobrancaMB {
 		filesFaltante = new ArrayList<FileUploaded>();
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesComite = new ArrayList<FileUploaded>();
+		filesNotaFiscal = new ArrayList<FileUploaded>();
 
 		clearSelectedRecebedores();
 
@@ -9023,6 +9122,7 @@ public class ContratoCobrancaMB {
 		FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Estoque Inserido com sucesso!!", ""));
 	}
 
+	
 	public void calcularPorcentagemDesconto() {
 		if (CommonsUtil.semValor(valorComDesconto) || CommonsUtil.semValor(valorPresenteTotal))
 			return;
@@ -10124,7 +10224,7 @@ public class ContratoCobrancaMB {
 		} else if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Comite")) {
 			this.inserirImovelOcultarValorMercadoImovel = true;
 			return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusComite.xhtml";
-		} else if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Ag. Pagamento Op.")) {
+		} else if (Arrays.asList("Ag. Pagamento Op.", "Ag. Pagamento NFs", "Ag. Emissão NFs").contains(this.tituloTelaConsultaPreStatus)) {
 			return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatusAgPagamentoOperacao.xhtml";
 		} else {
 			return "/Atendimento/Cobranca/ContratoCobrancaInserirPendentePorStatus.xhtml";
@@ -10499,6 +10599,8 @@ public class ContratoCobrancaMB {
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
 
+		filesNotaFiscal = new ArrayList<FileUploaded>();
+
 		listaArquivosAnaliseDocumentos();
 		this.restricaoOperacao = new ArrayList<>();
 		this.restricaoImovel = new ArrayList<>();
@@ -10573,7 +10675,7 @@ public class ContratoCobrancaMB {
 
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
-
+		filesNotaFiscal = new ArrayList<FileUploaded>();
 		this.tituloTelaConsultaPreStatus = "Geração de PAJU";
 		this.inserirImovelDisable = true;
 		this.inserirImovelOcultarValorMercadoImovel = true;
@@ -10584,10 +10686,23 @@ public class ContratoCobrancaMB {
 	public void getIndexStepContrato() {
 		this.indexStepsStatusContrato = 0;
 
-		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getStatus(), "Aprovado")
-				&& (!this.objetoContratoCobranca.isOperacaoPaga()
-						|| this.objetoContratoCobranca.isPendenciaPagamento())) {
-			this.indexStepsStatusContrato = 14;
+		if (CommonsUtil.mesmoValor(this.objetoContratoCobranca.getStatus(), "Aprovado")) {
+
+			if (this.objetoContratoCobranca.isOperacaoPaga() && this.objetoContratoCobranca.isNotaSolicitada()
+					&& this.objetoContratoCobranca.isNotaFiscalEmitida()
+					&& !this.objetoContratoCobranca.isNotaFiscalAgendada()) {
+				this.indexStepsStatusContrato = 17;
+			}else if (this.objetoContratoCobranca.isOperacaoPaga() && this.objetoContratoCobranca.isNotaSolicitada()
+					&& this.objetoContratoCobranca.isNotaFiscalEmitida()
+					&& !this.objetoContratoCobranca.isNotaFiscalAgendada()) {
+				this.indexStepsStatusContrato = 16;
+			} else if (this.objetoContratoCobranca.isOperacaoPaga() && this.objetoContratoCobranca.isNotaSolicitada()
+					&& !this.objetoContratoCobranca.isNotaFiscalEmitida()) {
+				this.indexStepsStatusContrato = 15;
+			} if (this.objetoContratoCobranca.isPendenciaPagamento() || !this.objetoContratoCobranca.isOperacaoPaga()) {
+				this.indexStepsStatusContrato = 14;
+			}
+			
 		} else if (!this.objetoContratoCobranca.isInicioAnalise()) {
 			this.indexStepsStatusContrato = 0;
 		} else if (this.objetoContratoCobranca.isAnaliseReprovada()) {
@@ -15052,9 +15167,19 @@ public class ContratoCobrancaMB {
 		if (status.equals("Ag. Registro")) {
 			this.tituloTelaConsultaPreStatus = "Ag. Registro";
 		}
-
+		//TODO Verificar se aqui ele irá realizar pesquisa de NFs, aparentemente aqui só pesquisa com status Pendente
+		/*if (status.equals("Ag. Emissão NFs")) {
+			this.tituloTelaConsultaPreStatus = "Ag. Emissão NFs";
+		}
+		if (status.equals("Ag. Pagamento NFs")) {
+			this.tituloTelaConsultaPreStatus = "Ag. Pagamento NFs";
+		}*/
+		
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.contratosPendentes = new ArrayList<ContratoCobranca>();
+		this.listSolicitacaoPreLaudoImoveis = new HashSet<ImovelCobranca>();
+		this.listTodosImoveisContrato = new ArrayList<ImovelCobranca>();
+		this.listPreLaudoImoveisRelac = new ArrayList<ImovelCobranca>();
 
 		TimeZone zone = TimeZone.getDefault();
 		Locale locale = new Locale("pt", "BR");
@@ -15162,13 +15287,21 @@ public class ContratoCobrancaMB {
 		}
 	}
 
-	public String consultaAgPagamentoOp() {
-		this.tituloTelaConsultaPreStatus = "Ag. Pagamento Op.";
+	public String consultaAgPagamentoOp(String status) {
+		if (status.equals("Ag. Pagamento Op.")) {
+			this.tituloTelaConsultaPreStatus = "Ag. Pagamento Op.";
+		}
+		if (status.equals("Ag. Emissão NFs")) {
+			this.tituloTelaConsultaPreStatus = "Ag. Emissão NFs";
+		}
+		if (status.equals("Ag. Pagamento NFs")) {
+			this.tituloTelaConsultaPreStatus = "Ag. Pagamento NFs";
+		}
 
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.contratosPendentes = new ArrayList<ContratoCobranca>();
 
-		this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosAgPagoOp();
+		this.contratosPendentes = contratoCobrancaDao.geraConsultaContratosAgPagoOp(status);
 		this.selectedContratos = new ArrayList<ContratoCobranca>();
 
 		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
@@ -33706,9 +33839,11 @@ public class ContratoCobrancaMB {
 	Collection<FileUploaded> filesComite = new ArrayList<FileUploaded>();
 	Collection<FileUploaded> filesPagar = new ArrayList<FileUploaded>();
 	Collection<FileUploaded> filesCci = new ArrayList<FileUploaded>();
+	Collection<FileUploaded> filesNotaFiscal = new ArrayList<FileUploaded>();
 
 	List<FileUploaded> deletefilesInterno = new ArrayList<FileUploaded>();
 	List<FileUploaded> deletefilesFaltante = new ArrayList<FileUploaded>();
+	List<FileUploaded> deletefilesNotaFiscal = new ArrayList<FileUploaded>();
 	List<FileUploaded> deletefilesJuridico = new ArrayList<FileUploaded>();
 	List<FileUploaded> deletefilesComite = new ArrayList<FileUploaded>();
 	List<FileUploaded> deletefilesPagar = new ArrayList<FileUploaded>();
@@ -33862,6 +33997,24 @@ public class ContratoCobrancaMB {
 		}
 	}
 
+	public void handleFileNotaFiscalUpload(FileUploadEvent event) throws IOException {
+		FacesContext context = FacesContext.getCurrentInstance();
+
+		if (event.getFile().getFileName().endsWith(".zip")) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Contrato Cobrança: não é possível anexar .zip", " não é possível anexar .zip"));
+		} else {
+
+			byte[] conteudo = event.getFile().getContents();
+			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(),
+					event.getFile().getFileName(), "//nf/", getUsuarioLogado());
+
+			// atualiza lista de arquivos contidos no diretório
+			documentoConsultarTodos = new ArrayList<FileUploaded>();
+			filesNotaFiscal = listaArquivosNotaFiscal();
+		}
+	}
+	
 	public void handleFileComiteUpload(FileUploadEvent event) throws IOException {
 		FacesContext context = FacesContext.getCurrentInstance();
 
@@ -34040,6 +34193,15 @@ public class ContratoCobrancaMB {
 		filesJuridico = listaArquivosJuridico();
 	}
 
+	public void deleteFileNotaFiscal() {
+		for (FileUploaded f : deletefilesNotaFiscal) {
+			deleteFile(f);
+		}
+
+		deletefilesNotaFiscal = new ArrayList<FileUploaded>();
+		filesNotaFiscal = listaArquivosNotaFiscal();
+	}
+	
 	public void deleteFileComite() {
 		for (FileUploaded f : deletefilesComite) {
 			deleteFile(f);
@@ -34215,6 +34377,13 @@ public class ContratoCobrancaMB {
 				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "juridico"))
 				.collect(Collectors.toList());
 	}
+	
+	public List<FileUploaded> listaArquivosNotaFiscal() {
+		carregaDocumentos();
+		return this.documentoConsultarTodos.stream()
+				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "nf"))
+				.collect(Collectors.toList());
+	}
 
 	public List<FileUploaded> listaArquivosComite() {
 		carregaDocumentos();
@@ -34268,6 +34437,11 @@ public class ContratoCobrancaMB {
 		filesFaltante = listaArquivosFaltante();
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
+
+		filesNotaFiscal = new ArrayList<FileUploaded>();
+		filesNotaFiscal = listaArquivosNotaFiscal();
+
+		
 		filesComite = new ArrayList<FileUploaded>();
 		filesComite = listaArquivosComite();
 		filesPagar = new ArrayList<FileUploaded>();
@@ -34373,6 +34547,49 @@ public class ContratoCobrancaMB {
 		// download em zip.
 		// Não me pergunte o pq
 	}
+	
+	public void calcularValorNotaFiscal() {
+		if (CommonsUtil.mesmoValor("Solicitado", this.objetoContratoCobranca.getSolicitarNota())
+				&& CommonsUtil.semValor(this.objetoContratoCobranca.getValorNotaFiscal())) {
+
+			ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+			BigDecimal contratosAssinados = contratoCobrancaDao
+					.consultaContratosAssisnadoNoPeriodo(this.objetoContratoCobranca);
+			BigDecimal percentual = BigDecimal.ZERO;
+
+			if (!CommonsUtil.semValor(this.objetoContratoCobranca.getResponsavel().getTaxaRemuneracao())) {
+				percentual = this.objetoContratoCobranca.getResponsavel().getTaxaRemuneracao();
+			} else {
+				Responsavel objetoResponsavel;
+				if (!CommonsUtil.semValor(this.objetoContratoCobranca.getResponsavel().getTaxasComissao()))
+					objetoResponsavel = this.objetoContratoCobranca.getResponsavel();
+				else {
+					ResponsavelService responsavelService = new ResponsavelService();
+					objetoResponsavel = responsavelService.getObjetoResponsavelGeral();
+				}
+				
+				if (!CommonsUtil.semValor(objetoResponsavel.getTaxasComissao())) {
+					Optional<BigDecimal> taxasComissao = objetoResponsavel.getTaxasComissao().stream()
+							.filter(t -> t.getValorMinimo().compareTo(contratosAssinados) <= 0
+									&& t.getValorMaximo().compareTo(contratosAssinados) >= 1)
+							.map(t -> t.getTaxaRemuneracao()).findFirst();
+
+					if (taxasComissao.isPresent())
+						percentual = taxasComissao.get();
+				}
+			}
+
+			if (!CommonsUtil.semValor(percentual)) {
+				BigDecimal valorNotaFiscal = this.objetoContratoCobranca.getValorCCB()
+						.multiply(percentual.divide(CommonsUtil.bigDecimalValue(100)));
+
+				this.objetoContratoCobranca.setValorNotaFiscal(CommonsUtil.bigDecimalValue(valorNotaFiscal).setScale(2, BigDecimal.ROUND_HALF_UP));
+			} else {
+				this.objetoContratoCobranca.setValorNotaFiscal(BigDecimal.ZERO);
+			}
+
+		} 
+	}
 
 	public StreamedContent getDownloadAllFiles() {
 		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
@@ -34471,6 +34688,30 @@ public class ContratoCobrancaMB {
 	}
 
 	public StreamedContent getDownloadAllFilesJuridico() {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+		try {
+			CompactadorUtil compac = new CompactadorUtil();
+			for (FileUploaded f : deletefilesJuridico) {
+				String arquivo = f.getName();
+				byte[] arquivoByte = fileService.abrirDocumentos(f, this.objetoContratoCobranca.getNumeroContrato(),
+						getUsuarioLogado());
+				listaArquivos.put(arquivo, arquivoByte);
+			}
+			arquivos = compac.compactarZipByte(listaArquivos);
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String
+					.format(objetoContratoCobranca.getNumeroContrato() + " Documentos_juridico.zip", "");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(arquivos));
+			gerador.close();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return null;
+	}
+	
+	public StreamedContent getDownloadAllFilesNotaFiscal() {
 		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
 		try {
 			CompactadorUtil compac = new CompactadorUtil();
@@ -34742,6 +34983,23 @@ public class ContratoCobrancaMB {
 
 	public void setDeletefilesJuridico(List<FileUploaded> deletefilesJuridico) {
 		this.deletefilesJuridico = deletefilesJuridico;
+	}
+
+	
+	public Collection<FileUploaded> getFilesNotaFiscal() {
+		return filesNotaFiscal;
+	}
+
+	public void setFilesNotaFiscal(Collection<FileUploaded> filesNotaFiscal) {
+		this.filesNotaFiscal = filesNotaFiscal;
+	}
+
+	public List<FileUploaded> getDeletefilesNotaFiscal() {
+		return deletefilesNotaFiscal;
+	}
+
+	public void setDeletefilesNotaFiscal(List<FileUploaded> deletefilesNotaFiscal) {
+		this.deletefilesNotaFiscal = deletefilesNotaFiscal;
 	}
 
 	/**
@@ -37269,17 +37527,16 @@ public class ContratoCobrancaMB {
 		return objetoCartorio;
 	}
 
-	public void setObjetoCartorio(Cartorio objetoCartorio) {
-		this.objetoCartorio = objetoCartorio;
-	}
-	
-	public List<Cartorio> getListaCartorio() {
-		return listaCartorio;
-	}
-	
-	public void setListaCartorio(List<Cartorio> listaCartorio) {
-		this.listaCartorio = listaCartorio;
-	}
+		public void setObjetoCartorio(Cartorio objetoCartorio) {
+			this.objetoCartorio = objetoCartorio;
+		}
+		public List<Cartorio> getListaCartorio() {
+			return listaCartorio;
+		}
+
+		public void setListaCartorio(List<Cartorio> listaCartorio) {
+			this.listaCartorio = listaCartorio;
+		}
 	
 	public boolean isApagaListaCartorio() {
 		return apagaListaCartorio;
@@ -37348,14 +37605,14 @@ public class ContratoCobrancaMB {
 	public void setCartorioMudou(boolean cartorioMudou) {
 		this.cartorioMudou = cartorioMudou;
 	}
+
 	public List<DocumentoAnalise> getListaSelectAnalise() {
 		return listaSelectAnalise;
 	}
-
 	public void setListaSelectAnalise(List<DocumentoAnalise> listaSelectAnalise) {
 		this.listaSelectAnalise = listaSelectAnalise;
 	}
-
+	
 	public List<DocumentoAnalise> getListaDocumentoAnaliseReanalise() {
 		return listaDocumentoAnaliseReanalise;
 	}

@@ -36,6 +36,7 @@ public class ImovelEstoque implements Serializable {
 	public ImovelEstoque() {
 		super();
 	}
+
 	
 	
 	public long getId() {
@@ -152,6 +153,4 @@ public class ImovelEstoque implements Serializable {
 	public void setLeiloeiro(String leiloeiro) {
 		this.leiloeiro = leiloeiro;
 	}
-	
-	
 }

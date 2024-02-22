@@ -175,10 +175,10 @@ public class ReaWebhook {
 					PagadorRecebedor pagador = new PagadorRecebedor();
 					pagador.setId(0);
 					if (CommonsUtil.mesmoValor(documentoAnalise.getTipoPessoa(), "PF")) {
-						pagador.setCpf(propietario.getCpf());
+						pagador.setCpf(documentoAnalise.getCnpjcpf());
 						pagador.setRg(propietario.getRg());
 					} else {
-						pagador.setCnpj(propietario.getCnpj());
+						pagador.setCnpj(documentoAnalise.getCnpjcpf());
 					}
 					pagador.setNome(propietario.getNome());
 					pagador = pagadorRecebedorService.buscaOuInsere(pagador);

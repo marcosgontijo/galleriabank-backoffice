@@ -164,7 +164,7 @@ public class CcbMB {
 		this.blockForm = blockForm;
 	}
 	
-	
+
 	public void removerSegurado(Segurado segurado) {
 		this.objetoCcb.getListSegurados().remove(segurado);		
 		if(!CommonsUtil.semValor(this.objetoCcb.getObjetoContratoCobranca())) {

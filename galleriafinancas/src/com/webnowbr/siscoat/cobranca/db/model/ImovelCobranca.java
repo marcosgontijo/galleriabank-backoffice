@@ -3,7 +3,6 @@ package com.webnowbr.siscoat.cobranca.db.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -77,6 +76,7 @@ public class ImovelCobranca implements Serializable {
 	private boolean preLaudoSolicitado;
 	private boolean preLaudoEntregue;
 	private BigDecimal valorPreLaudo;
+
 	
 	public ImovelCobranca(){
 		resetarBololean();
@@ -816,6 +816,7 @@ public class ImovelCobranca implements Serializable {
 		this.preLaudoEntregue = preLaudoEntregue;
 	}
 	
+
 	public BigDecimal getValorPreLaudo() {
 		return this.valorPreLaudo;
 	}
@@ -823,6 +824,7 @@ public class ImovelCobranca implements Serializable {
 	public void setValorPreLaudo( BigDecimal valorPreLaudo) {
 		this.valorPreLaudo = valorPreLaudo;
 	}
+
 	public BigDecimal getValorLeilao() {
 		return valorLeilao;
 	}

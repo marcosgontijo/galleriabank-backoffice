@@ -4,10 +4,13 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -24,8 +27,11 @@ import com.webnowbr.siscoat.cobranca.db.model.ComissaoResponsavel;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.db.op.ComissaoResponsavelDao;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
+import com.webnowbr.siscoat.cobranca.service.ResponsavelService;
+import com.webnowbr.siscoat.common.ComissaoOrigemEnum;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
+import com.webnowbr.siscoat.common.SiscoatConstants;
 import com.webnowbr.siscoat.common.ValidaCNPJ;
 import com.webnowbr.siscoat.common.ValidaCPF;
 import com.webnowbr.siscoat.db.dao.DAOException;
@@ -44,6 +50,7 @@ public class ResponsavelMB {
 	private LazyDataModel<Responsavel> lazyModel;
 	/** Variavel. */
 	private Responsavel objetoResponsavel;
+	private Responsavel objetoResponsavelGeral;
 	private boolean updateMode = false;
 	private boolean deleteMode = false;
 	private String tituloPainel = null;
@@ -468,24 +475,44 @@ public class ResponsavelMB {
 		this.selectedComissao = new ComissaoResponsavel();
 		this.taxasComissao = new ArrayList<ComissaoResponsavel>();
 		this.objetoResponsavel = null;
+
+		ResponsavelService responsavelService = new ResponsavelService();
+		objetoResponsavelGeral = responsavelService.getObjetoResponsavelGeral();
+		objetoResponsavel = objetoResponsavelGeral ;
 		this.addComissao = false;
 		loadLovResponsavel();
 	}
-	
 	public void adicionarComissao(List<ComissaoResponsavel> lista) {
 		this.selectedComissao = new ComissaoResponsavel();
 	
+		
 		Optional<BigDecimal> valorMinimo = Optional.of(BigDecimal.ZERO);
-		if (CommonsUtil.semValor(lista)) {
-			lista = new ArrayList<ComissaoResponsavel>();
+		if (CommonsUtil.semValor(this.objetoResponsavel.getTaxasComissao())) {
+			 this.objetoResponsavel.setTaxasComissao( new HashSet<ComissaoResponsavel>());
 		} else {
-			valorMinimo = lista.stream().map(m -> m.getValorMaximo()).max(Comparator.naturalOrder());
+			valorMinimo = this.objetoResponsavel.getTaxasComissao().stream().map(m -> m.getValorMaximo()).max(Comparator.naturalOrder());
 			if (valorMinimo.isPresent())
 				valorMinimo=  Optional.of(valorMinimo.get().add(BigDecimal.valueOf(0.01)));
 		}
 		if (valorMinimo.isPresent())
 			this.selectedComissao.setValorMinimo(valorMinimo.get());
 	}
+	
+	public void adicionarComissao(List<ComissaoResponsavel> lista, 	ComissaoResponsavel selectedComissao) {
+		this.selectedComissao = new ComissaoResponsavel();
+	
+		Optional<BigDecimal> valorMinimo = Optional.of(BigDecimal.ZERO);
+		if (CommonsUtil.semValor(this.objetoResponsavel.getTaxasComissao())) {
+			 this.objetoResponsavel.setTaxasComissao( new HashSet<ComissaoResponsavel>());
+		} else {
+			valorMinimo = this.objetoResponsavel.getTaxasComissao().stream().map(m -> m.getValorMaximo()).max(Comparator.naturalOrder());
+			if (valorMinimo.isPresent())
+				valorMinimo=  Optional.of(valorMinimo.get().add(BigDecimal.valueOf(0.01)));
+		}
+		if (valorMinimo.isPresent())
+			this.selectedComissao.setValorMinimo(valorMinimo.get());
+	}
+	
 	
 	public void concluirComissao(List<ComissaoResponsavel> lista) {
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -494,15 +521,15 @@ public class ResponsavelMB {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "valor minimo maior que maximo" , ""));
 			return;
 		}
-		if(CommonsUtil.semValor(lista)) {
-			//lista = new ArrayList<ComissaoResponsavel>();
+		if(CommonsUtil.semValor(this.objetoResponsavel.getTaxasComissao())) {
+			 this.objetoResponsavel.setTaxasComissao( new HashSet<ComissaoResponsavel>());
 		} else {
 			
-			if ( lista.stream().filter( comissao -> this.selectedComissao.getValorMinimo().compareTo(comissao.getValorMinimo()) >= 1 
+			if ( this.objetoResponsavel.getTaxasComissao().stream().filter( comissao -> this.selectedComissao.getValorMinimo().compareTo(comissao.getValorMinimo()) >= 1 
 					&& this.selectedComissao.getValorMinimo().compareTo(comissao.getValorMaximo()) <= 0  ).findAny().isPresent())
 				erro = erro + "Valor minimo Indisponivel";	
 			
-			if ( lista.stream().filter( comissao -> this.selectedComissao.getValorMaximo().compareTo(comissao.getValorMinimo()) >= 1 
+			if ( this.objetoResponsavel.getTaxasComissao().stream().filter( comissao -> this.selectedComissao.getValorMaximo().compareTo(comissao.getValorMinimo()) >= 1 
 					&& this.selectedComissao.getValorMaximo().compareTo(comissao.getValorMaximo()) <= 0  ).findAny().isPresent())
 				erro = erro + "Valor maximo Indisponivel";	
 			
@@ -530,10 +557,16 @@ public class ResponsavelMB {
 		this.selectedComissao.setUserCriacao(getUsuarioLogado());
 		this.selectedComissao.setLoginCriacao(getNomeUsuarioLogado());
 		this.selectedComissao.setDataCriacao(DateUtil.gerarDataHoje());
+		this.selectedComissao.setAtiva(true);
 		
 		ComissaoResponsavelDao comDao = new ComissaoResponsavelDao();
 		comDao.create(this.selectedComissao);
-		lista.add(this.selectedComissao);
+		Set<ComissaoResponsavel> taxasAtualizada = this.objetoResponsavel.getTaxasComissao();
+		taxasAtualizada.add(this.selectedComissao);
+		this.objetoResponsavel.setTaxasComissao(taxasAtualizada);
+		
+		ResponsavelDao respDao = new ResponsavelDao();
+		respDao.update(this.objetoResponsavel);
 		this.setAddComissao(false);
 	}
 	
@@ -547,6 +580,7 @@ public class ResponsavelMB {
 		comissao.setUserRemocao(getUsuarioLogado());
 		comissao.setLoginRemocao(getNomeUsuarioLogado());
 		comissao.setDataRemocao(DateUtil.gerarDataHoje());
+		comissao.setAtiva(false);
 		ComissaoResponsavelDao comDao = new ComissaoResponsavelDao();
 		comDao.merge(comissao);
 		this.objetoResponsavel.getTaxasComissao().remove(comissao);
@@ -558,7 +592,7 @@ public class ResponsavelMB {
 			this.objetoResponsavel = r;
 			if(!CommonsUtil.semValor(this.objetoResponsavel.getTaxasComissao())) {
 				while(this.objetoResponsavel.getTaxasComissao().size() > 0) {
-					removerComissao(this.objetoResponsavel.getTaxasComissao().get(0));
+					removerComissao(this.objetoResponsavel.getTaxasComissao().stream().collect(Collectors.toList()).get(0));
 				}
 				/*for(ComissaoResponsavel c : this.objetoResponsavel.getTaxasComissao()) {
 					removerComissao(c);
@@ -566,7 +600,7 @@ public class ResponsavelMB {
 			}
 			for(ComissaoResponsavel c : this.taxasComissao) {
 				this.selectedComissao = new ComissaoResponsavel(c);
-				concluirComissao(this.objetoResponsavel.getTaxasComissao());
+				concluirComissao(this.objetoResponsavel.getTaxasComissao().stream().collect(Collectors.toList()));
 			}
 			rDao.merge(r);
 		}
@@ -574,6 +608,33 @@ public class ResponsavelMB {
 		PrimeFaces current = PrimeFaces.current();
 		current.executeScript("PF('ComissaoResponsaveis').hide();");
 	}
+	
+
+	public List<ComissaoResponsavel> getTaxasComissao() {
+		
+		if( CommonsUtil.semValor(this.objetoResponsavel ) )
+			return null;
+		if ( CommonsUtil.mesmoValor( this.objetoResponsavel.getId() , SiscoatConstants.RESPONSAVEL_GERAL_ID  ))
+			return this.objetoResponsavel.getTaxasComissao(ComissaoOrigemEnum.GERAL);
+		else
+			return this.objetoResponsavel.getTaxasComissao(ComissaoOrigemEnum.INDIVIDUAL);
+	}
+
+	public void setTaxasComissao(List<ComissaoResponsavel> taxasComissao) {
+		this.taxasComissao = taxasComissao;
+	}
+	
+	public List<ComissaoResponsavel> getTaxasComissaoIndividual() {
+		return this.objetoResponsavel.getTaxasComissao(ComissaoOrigemEnum.INDIVIDUAL);
+	}
+	
+	public List<ComissaoResponsavel> getTaxasComissaoGlobal() {
+		ResponsavelService responsavelService = new ResponsavelService();
+		objetoResponsavelGeral = responsavelService.getObjetoResponsavelGeral();		
+		return this.objetoResponsavelGeral.getTaxasComissao(ComissaoOrigemEnum.GERAL);
+	}
+
+	
 	
 	public User getUsuarioLogado() {
 		User usuario = new User();
@@ -843,13 +904,5 @@ public class ResponsavelMB {
 
 	public void setLoginBean(LoginBean loginBean) {
 		this.loginBean = loginBean;
-	}
-
-	public List<ComissaoResponsavel> getTaxasComissao() {
-		return taxasComissao;
-	}
-
-	public void setTaxasComissao(List<ComissaoResponsavel> taxasComissao) {
-		this.taxasComissao = taxasComissao;
 	}	
 }
