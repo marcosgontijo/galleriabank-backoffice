@@ -5,150 +5,32 @@
 	xmlns:shiro="http://shiro.apache.org/tags"
 	xmlns:p="http://primefaces.org/ui">
 
-	<p:dialog header="Comparações dos campos que foram alterados." id="desbloqueiaEdicaoId"
-		widgetVar="desbloqueiaEdicaoId" showEffect="fade" hideEffect="fade"
-		resizable="false" responsive="false" width="700" height="700"
-		closable="true" ajax="true">
+	<p:dialog header="Comparações dos campos que foram alterados."
+		id="desbloqueiaEdicaoId" widgetVar="desbloqueiaEdicaoId"
+		showEffect="fade" hideEffect="fade" resizable="false"
+		responsive="false" width="1000" height="700" closable="true"
+		ajax="true">
 		<p:ajax event="close" listener="#{contratoCobrancaMB.limpaLaudo}" />
 		<h:form id="desbloqueiaEdicaoForm">
+			<div class="card">
+				<p:dataTable var="product" value="#{dtBasicView.products}">
+					<p:column headerText="Nome do campo">
+						<h:outputText value="#{product.code}" />
+					</p:column>
 
-			<p:panelGrid columns="3">
-			
-				<!-- Primeira coluna - OutputLabel -->
-				<h:outputLabel value="Campo 1:" />
-				
-				<!-- Segunda coluna - InputText -->
-				<p:inputText />
+					<p:column headerText="Antes da alteração">
+						<h:outputText value="#{product.name}" />
+					</p:column>
 
-				<!-- Terceira coluna - InputText -->
-				<p:inputText  />
-				
-				<!-- Primeira coluna - OutputLabel -->
-				<h:outputLabel value="Campo 2:" />
+					<p:column headerText="Depois">
+						<h:outputText value="#{product.category}" />
+					</p:column>
 
-				<!-- Segunda coluna - InputText -->
-				<p:inputText  />
-
-				<!-- Terceira coluna - InputText -->
-				<p:inputText  />
-				
-				<!-- Primeira coluna - OutputLabel -->
-				<h:outputLabel value="Campo 3:" />
-
-				<!-- Segunda coluna - InputText -->
-				<p:inputText  />
-
-				<!-- Terceira coluna - InputText -->
-				<p:inputText  />
-				<!-- Primeira coluna - OutputLabel -->
-				<h:outputLabel value="Campo 4:" />
-
-				<!-- Segunda coluna - InputText -->
-				<p:inputText  />
-
-				<!-- Terceira coluna - InputText -->
-				<p:inputText  />
-				
-				<!-- Primeira coluna - OutputLabel -->
-				<h:outputLabel value="Campo 5:" />
-
-				<!-- Segunda coluna - InputText -->
-				<p:inputText  />
-
-				<!-- Terceira coluna - InputText -->
-				<p:inputText  />
-				
-				<!-- Primeira coluna - OutputLabel -->
-				<h:outputLabel value="Campo 6:" />
-
-				<!-- Segunda coluna - InputText -->
-				<p:inputText  />
-
-				<!-- Terceira coluna - InputText -->
-				<p:inputText  />
-				<!-- Primeira coluna - OutputLabel -->
-				<h:outputLabel value="Campo 7:" />
-
-				<!-- Segunda coluna - InputText -->
-				<p:inputText  />
-
-				<!-- Terceira coluna - InputText -->
-				<p:inputText  />
-				
-				<!-- Primeira coluna - OutputLabel -->
-				<h:outputLabel value="Campo 8:" />
-
-				<!-- Segunda coluna - InputText -->
-				<p:inputText  />
-
-				<!-- Terceira coluna - InputText -->
-				<p:inputText  />
-				
-				<!-- Primeira coluna - OutputLabel -->
-				<h:outputLabel value="Campo 9:" />
-
-				<!-- Segunda coluna - InputText -->
-				<p:inputText  />
-
-				<!-- Terceira coluna - InputText -->
-				<p:inputText  />
-				<!-- Primeira coluna - OutputLabel -->
-				<h:outputLabel value="Campo 10:" />
-
-				<!-- Segunda coluna - InputText -->
-				<p:inputText  />
-
-				<!-- Terceira coluna - InputText -->
-				<p:inputText  />
-				
-				<!-- Primeira coluna - OutputLabel -->
-				<h:outputLabel value="Campo 11:" />
-
-				<!-- Segunda coluna - InputText -->
-				<p:inputText  />
-
-				<!-- Terceira coluna - InputText -->
-				<p:inputText  />
-				
-				<!-- Primeira coluna - OutputLabel -->
-				<h:outputLabel value="Campo 12:" />
-
-				<!-- Segunda coluna - InputText -->
-				<p:inputText  />
-
-				<!-- Terceira coluna - InputText -->
-				<p:inputText  />
-				<!-- Primeira coluna - OutputLabel -->
-				<h:outputLabel value="Campo 13:" />
-
-				<!-- Segunda coluna - InputText -->
-				<p:inputText  />
-
-				<!-- Terceira coluna - InputText -->
-				<p:inputText  />
-				
-				<!-- Primeira coluna - OutputLabel -->
-				<h:outputLabel value="Campo 14:" />
-
-				<!-- Segunda coluna - InputText -->
-				<p:inputText  />
-
-				<!-- Terceira coluna - InputText -->
-				<p:inputText  />
-				
-				<!-- Primeira coluna - OutputLabel -->
-				<h:outputLabel value="Campo 15:" />
-
-				<!-- Segunda coluna - InputText -->
-				<p:inputText  />
-
-				<!-- Terceira coluna - InputText -->
-				<p:inputText  />
-			</p:panelGrid>
-
-			<!-- Botão de Submissão -->
-			<p:commandButton value="Enviar" action="#{meuBean.seuMetodoDeAcao}" />
-
+					<p:column headerText="Data">
+						<h:outputText value="#{product.quantity}" />
+					</p:column>
+				</p:dataTable>
+			</div>
 		</h:form>
 
 	</p:dialog>

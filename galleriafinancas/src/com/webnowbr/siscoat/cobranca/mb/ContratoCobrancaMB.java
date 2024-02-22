@@ -35,7 +35,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -135,7 +134,6 @@ import com.webnowbr.siscoat.cobranca.db.model.Cartorio;
 import com.webnowbr.siscoat.cobranca.db.model.CcbContrato;
 import com.webnowbr.siscoat.cobranca.db.model.CcbParticipantes;
 import com.webnowbr.siscoat.cobranca.db.model.CcbProcessosJudiciais;
-import com.webnowbr.siscoat.cobranca.db.model.ComparativoCamposEstera;
 import com.webnowbr.siscoat.cobranca.db.model.ContasPagar;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaBRLLiquidacao;
@@ -146,6 +144,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFavorecidos;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFinanceiroDiaConsultaDetalhesParcialVO;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFinanceiroDiaConsultaDetalhesVO;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFinancerioDiaConsultaVO;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaLogsAlteracao;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaParcelasInvestidor;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaStatus;
@@ -415,6 +414,7 @@ public class ContratoCobrancaMB {
 	private DocumentoAnalise documentoAnalisePopup;
 	private GravamesRea gravamePopup;
 	private String estadoConsultaAdd;
+	private List<String> camposDeVerificacaoDeAlteracao;
 
 	public void setTravaCamposEsteira() {
 		objetoContratoCobranca.setTravaCamposEsteira(true);
@@ -1010,7 +1010,9 @@ public class ContratoCobrancaMB {
 	 * Construtor.
 	 */
 	public ContratoCobrancaMB() {
-
+		
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		
 		objetoContratoCobranca = new ContratoCobranca();
 
 		engineService = new EngineService();
@@ -1049,7 +1051,6 @@ public class ContratoCobrancaMB {
 			}
 		};
 
-		// TODO FILTER
 		responsaveisLazy = new LazyDataModel<Responsavel>() {
 
 			/** Serial. */
@@ -1115,6 +1116,8 @@ public class ContratoCobrancaMB {
 		this.objetoImovelCobranca = new ImovelCobranca();
 		this.objetoPagadorRecebedor = new PagadorRecebedor();
 		this.tipoPessoaIsFisica = true;
+		
+		this.camposDeVerificacaoDeAlteracao = contratoCobrancaDao.resultadoQueryTestList();
 		// FIM - Tratamento para Pré-Contrato
 	}
 
@@ -4098,7 +4101,7 @@ public class ContratoCobrancaMB {
 						contasPagarDao.merge(despesaNotaFiscal);
 				}
 			}
-			comparandoValores(this.objetoContratoCobranca, contratoCobrancaDao.findById(this.objetoContratoCobranca.getId()));
+			comparandoValores(this.objetoContratoCobranca, contratoCobrancaDao.findById(this.objetoContratoCobranca.getId()), camposDeVerificacaoDeAlteracao);
 			contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
 			// verifica se o contrato for aprovado, manda um tipo de email..
@@ -37427,7 +37430,6 @@ public class ContratoCobrancaMB {
 	
 	private void clonandoValoresObjeto(ContratoCobranca source, ContratoCobranca destination) {
 		Class<?> reflectionContratoCobranca = source.getClass();
-
 		for (Field field : reflectionContratoCobranca.getDeclaredFields()) {
 			try {
 				field.setAccessible(true);
@@ -37438,28 +37440,48 @@ public class ContratoCobrancaMB {
 		}
 	}
 
-	private void comparandoValores(ContratoCobranca valoresAtuais, ContratoCobranca valoresBanco) {
+	private void comparandoValores(ContratoCobranca valoresAtuais, ContratoCobranca valoresBanco,
+			List<String> camposParaVerificar) {
+
+		List<ContratoCobrancaLogsAlteracao> listaDeAlteracoes = new ArrayList<>();
 		Class<?> reflectionValues = valoresAtuais.getClass();
-		comparativoCamposEsteraLista();
+
 		for (Field field : reflectionValues.getDeclaredFields()) {
+			Boolean verificaCamposAlterados = camposParaVerificar.contains(field.getName().toLowerCase()) ? true
+					: false;
+			if (!verificaCamposAlterados)
+				continue;
 			try {
 				field.setAccessible(true);
-				Object currentValues = field.get(valoresAtuais); //escrevi agora
-				Object originalValues = field.get(valoresBanco);//estava no banco
+				Object currentValues = field.get(valoresAtuais); // escrevi agora
+				Object originalValues = field.get(valoresBanco);// estava no banco
 
-			if(currentValues != null) {
-				if (!currentValues.equals(originalValues)) {
-					System.out.println("Campo " + field.getName() + " foi alterado.");
-					System.out.println("Valor antigo: " + originalValues);
-					System.out.println("Novo valor: " + currentValues);
+				if (currentValues != null) {
+					if (!currentValues.equals(originalValues)) {
+						listaDeAlteracoes.add(new ContratoCobrancaLogsAlteracao(field.getName(),
+								CommonsUtil.stringValue(originalValues), CommonsUtil.stringValue(currentValues)));
+
+//						System.out.println("Campo " + field.getName() + " foi alterado.");
+//						System.out.println("Valor antigo: " + originalValues);
+//						System.out.println("Novo valor: " + currentValues);
+					}
 				}
-			} else {
-				System.out.println("======");
-			}
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			}
 		}
+		for (ContratoCobrancaLogsAlteracao contratoCobrancaLogsAlteracao : listaDeAlteracoes) {
+			System.out.println(contratoCobrancaLogsAlteracao.getNomeCampo());
+			System.out.println(contratoCobrancaLogsAlteracao.getValorAlterado());
+			System.out.println(contratoCobrancaLogsAlteracao.getValorBanco());
+		}
+
 	}
+	
+	private void exibePopPupComCamposAlterados() {
+		
+	}
+	
+	
 }
 
