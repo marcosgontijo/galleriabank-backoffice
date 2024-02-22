@@ -6,12 +6,12 @@
 	xmlns:p="http://primefaces.org/ui">
 
 	<p:dialog header="Comparações dos campos que foram alterados."
-		id="desbloqueiaEdicaoId" widgetVar="desbloqueiaEdicaoId"
+		id="comparacoesPopPupId" widgetVar="comparacoesPopPupId"
 		showEffect="fade" hideEffect="fade" resizable="false"
 		responsive="false" width="1000" height="700" closable="true"
 		ajax="true">
 		<p:ajax event="close" listener="#{contratoCobrancaMB.limpaLaudo}" />
-		<h:form id="desbloqueiaEdicaoForm">
+		<h:form id="comparacoesPopPupForm">
 			<div class="card">
 				<p:dataTable var="product" value="#{dtBasicView.products}">
 					<p:column headerText="Nome do campo">

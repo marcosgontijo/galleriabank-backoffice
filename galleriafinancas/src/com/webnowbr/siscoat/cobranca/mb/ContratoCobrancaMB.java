@@ -79,8 +79,10 @@ import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.hibernate.JDBCException;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.primefaces.PF;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
+import org.primefaces.context.PrimeRequestContext;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
@@ -411,6 +413,7 @@ public class ContratoCobrancaMB {
 	private boolean addContasPagar;
 	private boolean gerenciaStatus;
 	private boolean addPessoaAnalise;
+	private boolean telaPopPup = false;
 	private DocumentoAnalise documentoAnalisePopup;
 	private GravamesRea gravamePopup;
 	private String estadoConsultaAdd;
@@ -4102,6 +4105,7 @@ public class ContratoCobrancaMB {
 				}
 			}
 			comparandoValores(this.objetoContratoCobranca, contratoCobrancaDao.findById(this.objetoContratoCobranca.getId()), camposDeVerificacaoDeAlteracao);
+			//se listagem nao tiver vazia ja da um return do popppup, ai ja abre o poppup, se nao segue codigo
 			contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
 			// verifica se o contrato for aprovado, manda um tipo de email..
@@ -37440,17 +37444,14 @@ public class ContratoCobrancaMB {
 		}
 	}
 
-	private void comparandoValores(ContratoCobranca valoresAtuais, ContratoCobranca valoresBanco,
-			List<String> camposParaVerificar) {
-
+	private List<ContratoCobrancaLogsAlteracao> comparandoValores(ContratoCobranca valoresAtuais, ContratoCobranca valoresBanco, List<String> camposParaVerificar) {
+		
 		List<ContratoCobrancaLogsAlteracao> listaDeAlteracoes = new ArrayList<>();
 		Class<?> reflectionValues = valoresAtuais.getClass();
 
 		for (Field field : reflectionValues.getDeclaredFields()) {
-			Boolean verificaCamposAlterados = camposParaVerificar.contains(field.getName().toLowerCase()) ? true
-					: false;
-			if (!verificaCamposAlterados)
-				continue;
+			Boolean verificaCamposAlterados = camposParaVerificar.contains(field.getName().toLowerCase()) ? true : false;
+			if(!verificaCamposAlterados) continue;		
 			try {
 				field.setAccessible(true);
 				Object currentValues = field.get(valoresAtuais); // escrevi agora
@@ -37458,30 +37459,26 @@ public class ContratoCobrancaMB {
 
 				if (currentValues != null) {
 					if (!currentValues.equals(originalValues)) {
-						listaDeAlteracoes.add(new ContratoCobrancaLogsAlteracao(field.getName(),
-								CommonsUtil.stringValue(originalValues), CommonsUtil.stringValue(currentValues)));
-
+						listaDeAlteracoes.add(new ContratoCobrancaLogsAlteracao(field.getName(), CommonsUtil.stringValue(originalValues), CommonsUtil.stringValue(currentValues)));
+						
 //						System.out.println("Campo " + field.getName() + " foi alterado.");
 //						System.out.println("Valor antigo: " + originalValues);
 //						System.out.println("Novo valor: " + currentValues);
 					}
-				}
+				} 
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			}
 		}
-		for (ContratoCobrancaLogsAlteracao contratoCobrancaLogsAlteracao : listaDeAlteracoes) {
-			System.out.println(contratoCobrancaLogsAlteracao.getNomeCampo());
-			System.out.println(contratoCobrancaLogsAlteracao.getValorAlterado());
-			System.out.println(contratoCobrancaLogsAlteracao.getValorBanco());
+		if(!listaDeAlteracoes.isEmpty()) {
+			exibeTelaPopPup();
 		}
-
+		return listaDeAlteracoes;
 	}
 	
-	private void exibePopPupComCamposAlterados() {
+	public void exibeTelaPopPup() {
 		
 	}
-	
 	
 }
 
