@@ -2459,14 +2459,6 @@
 			<column name="notaFiscalAgendadaProblemaUsuario" />
 		</property>
 		
-		<property name="porcentagemLeilaoImovelPrincipal" type="big_decimal">
-			<column name="porcentagemLeilaoImovelPrincipal" />
-		</property>
-		
-		<property name="valorCreditoImovelPrincipal" type="big_decimal">
-			<column name="valorCreditoImovelPrincipal" />
-		</property>
-				
 
 	</class>
 </hibernate-mapping>
