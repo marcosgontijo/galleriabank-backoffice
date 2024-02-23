@@ -71,9 +71,9 @@ public class ImovelEstoqueMB {
 
 	public void consultaEstoque() {
 		ImovelEstoqueDao dao = new ImovelEstoqueDao();
-		listaImovelTudo = dao.consultaImovelEstoqueTudo();
-		listaImovelVendido = dao.consultaImovelEstoqueVendido();
-		listaImovelEmEsdtoque = dao.consultaImovelEstoqueNaoVendido();
+		listaImovelTudo = dao.consultaImovelEstoque("");
+		listaImovelVendido = dao.consultaImovelEstoque("where i2.statusatual = 'Vendido'");
+		listaImovelEmEsdtoque = dao.consultaImovelEstoque("where i2.statusatual != 'Vendido'");
 
 	}
 
@@ -388,7 +388,7 @@ public class ImovelEstoqueMB {
 
 		// fecha a escrita de dados nessa planilha
 		wb.close();
-
+		
 		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 				FacesContext.getCurrentInstance());
 
