@@ -15,7 +15,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
@@ -79,10 +78,8 @@ import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.hibernate.JDBCException;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.primefaces.PF;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
-import org.primefaces.context.PrimeRequestContext;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
@@ -205,6 +202,7 @@ import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
 import com.webnowbr.siscoat.cobranca.model.cep.CepResult;
 import com.webnowbr.siscoat.cobranca.service.BigDataService;
 import com.webnowbr.siscoat.cobranca.service.CepService;
+import com.webnowbr.siscoat.cobranca.service.ContratoCobrancaService;
 import com.webnowbr.siscoat.cobranca.service.CredlocalizaService;
 import com.webnowbr.siscoat.cobranca.service.DocketService;
 import com.webnowbr.siscoat.cobranca.service.DocumentoAnaliseService;
@@ -260,6 +258,7 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.json.expression.filter.FilterExpression.LOGICAL_OPERATOR;
 
 /** ManagedBean. */
 @ManagedBean(name = "contratoCobrancaMB")
@@ -272,6 +271,7 @@ public class ContratoCobrancaMB {
 	private DocumentoAnalise objetoDocumentoAnalise;
 	private ContratoCobranca objetoContratoCobranca;
 	private ContratoCobranca objetoContratoCobrancaOriginal;
+	private ContratoCobrancaService contratoCobrancaService = new ContratoCobrancaService() ;
 	private String numeroContratoObjetoContratoCobranca;
 	private List<FileUploaded> documentoConsultarTodos;
 	private boolean verificaReaProcessado;
@@ -413,11 +413,11 @@ public class ContratoCobrancaMB {
 	private boolean addContasPagar;
 	private boolean gerenciaStatus;
 	private boolean addPessoaAnalise;
-	private boolean telaPopPup = false;
 	private DocumentoAnalise documentoAnalisePopup;
 	private GravamesRea gravamePopup;
 	private String estadoConsultaAdd;
 	private List<String> camposDeVerificacaoDeAlteracao;
+	private List<ContratoCobrancaLogsAlteracao> listaDeAlteracoes;
 
 	public void setTravaCamposEsteira() {
 		objetoContratoCobranca.setTravaCamposEsteira(true);
@@ -906,10 +906,9 @@ public class ContratoCobrancaMB {
 	private Set<ImovelCobranca> listSolicitacaoPreLaudoImoveis;
 	private List<ImovelCobranca> listTodosImoveisContrato;
 	private List<ImovelCobranca> listPreLaudoImoveisRelac;
-
+	
 	public void mudaBotaoCartorio() {
 		this.setCartorioMudou(true);
-
 	}
 
 	public String rowSelected() {
@@ -4104,83 +4103,92 @@ public class ContratoCobrancaMB {
 						contasPagarDao.merge(despesaNotaFiscal);
 				}
 			}
-			comparandoValores(this.objetoContratoCobranca, contratoCobrancaDao.findById(this.objetoContratoCobranca.getId()), camposDeVerificacaoDeAlteracao);
-			//se listagem nao tiver vazia ja da um return do popppup, ai ja abre o poppup, se nao segue codigo
-			contratoCobrancaDao.merge(this.objetoContratoCobranca);
-
-			// verifica se o contrato for aprovado, manda um tipo de email..
-			// senao valida se houve alteração no checklist para envio de email.
-			if (!SiscoatConstants.DEV && !CommonsUtil.sistemaWindows()) {
-				enviaEmailAtualizacaoPreContratoNovo();
-				// System.out.println("editPreContratoPorStatus");
+			this.listaDeAlteracoes = contratoCobrancaService.comparandoValores(
+					this.objetoContratoCobranca, 
+					contratoCobrancaDao.findById(this.objetoContratoCobranca.getId()),
+					camposDeVerificacaoDeAlteracao);
+					
+			if (!listaDeAlteracoes.isEmpty()) {
+				//se caso a lista alteracoes nao for vazia, exibe  tela poppup.
+				return null;
 			}
-			contratoCobrancaCheckList = null;
-
-			context.addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_INFO,
-							"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
-									+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
-							""));
-
-			this.objetoCcb = null;
-
-			if (usuarioLogado.isComiteConsultar()) {
-				return "/Atendimento/Cobranca/ContratoCobrancaCRMConsultar.xhtml";
-			}
-
-			if (this.tituloTelaConsultaPreStatus.equals("Geração de PAJU")) {
-				return clearFieldsGeracaoPAJU(objetoContratoCobranca.getAvaliacaoPaju());
-			}
-			if (this.tituloTelaConsultaPreStatus.equals("Aguardando Análise")) {
-				return geraConsultaContratosPorStatus("Aguardando Análise");
-			}
-			if (this.tituloTelaConsultaPreStatus.equals("Análise Reprovada")) {
-				return geraConsultaContratosPorStatus("Análise Reprovada");
-			}
-			if (this.tituloTelaConsultaPreStatus.equals("Em Análise")) {
-				return geraConsultaContratosPorStatus("Em Analise");
-			}
-			if (this.tituloTelaConsultaPreStatus.equals("Ag. Pagto. Laudo")) {
-				return geraConsultaContratosPorStatus("Ag. Pagto. Laudo");
-			}
-			if (this.tituloTelaConsultaPreStatus.equals("Análise Pré-Aprovada")) {
-				return geraConsultaContratosPorStatus("Análise Aprovada");
-			}
-			if (this.tituloTelaConsultaPreStatus.equals("Ag. DOC")) {
-				return geraConsultaContratosPorStatus("Ag. DOC");
-			}
-			if (this.tituloTelaConsultaPreStatus.equals("Pré-Comite")) {
-				return geraConsultaContratosPorStatus("Pré-Comite");
-			}
-			if (this.tituloTelaConsultaPreStatus.equals("Ag. Comite")) {
-				loginBean.setNumeroContratosComite(contratoCobrancaDao.getQuantidadeContratosComite());
-				return geraConsultaContratosPorStatus("Ag. Comite");
-			}
-			if (this.tituloTelaConsultaPreStatus.equals("Ag. CCB")) {
-				return geraConsultaContratosPorStatus("Ag. CCB");
-			}
-			if (this.tituloTelaConsultaPreStatus.equals("Ag. Assinatura")) {
-				return geraConsultaContratosPorStatus("Ag. Assinatura");
-			}
-			if (this.tituloTelaConsultaPreStatus.equals("Ag. Envio Cartório")) {
-				return geraConsultaContratosPorStatus("Ag. Envio Cartorio");
-			}
-			if (this.tituloTelaConsultaPreStatus.equals("Ag. Registro")) {
-				return geraConsultaContratosPorStatus("Ag. Registro");
-			}
-			if (this.tituloTelaConsultaPreStatus.equals("PreContratos")) {
-				return geraConsultaContratosPendentes();
-			}
-
-			return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
+			return finalizaCheckListeStatus(context, contratoCobrancaDao, usuarioLogado);
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + e, ""));
 			return "";
 		}
 
+	}
+
+	private String finalizaCheckListeStatus(FacesContext context, ContratoCobrancaDao contratoCobrancaDao, User usuarioLogado) {
+		contratoCobrancaDao.merge(this.objetoContratoCobranca);
+
+		// verifica se o contrato for aprovado, manda um tipo de email..
+		// senao valida se houve alteração no checklist para envio de email.
+		if (!SiscoatConstants.DEV && !CommonsUtil.sistemaWindows()) {
+			enviaEmailAtualizacaoPreContratoNovo();
+		}
+		contratoCobrancaCheckList = null;
+
+		context.addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
+								+ this.objetoContratoCobranca.getNumeroContrato() + ")!",
+						""));
+
+		this.objetoCcb = null;
+
+		if (usuarioLogado.isComiteConsultar()) {
+			return "/Atendimento/Cobranca/ContratoCobrancaCRMConsultar.xhtml";
+		}
+
+		if (this.tituloTelaConsultaPreStatus.equals("Geração de PAJU")) {
+			return clearFieldsGeracaoPAJU(objetoContratoCobranca.getAvaliacaoPaju());
+		}
+		if (this.tituloTelaConsultaPreStatus.equals("Aguardando Análise")) {
+			return geraConsultaContratosPorStatus("Aguardando Análise");
+		}
+		if (this.tituloTelaConsultaPreStatus.equals("Análise Reprovada")) {
+			return geraConsultaContratosPorStatus("Análise Reprovada");
+		}
+		if (this.tituloTelaConsultaPreStatus.equals("Em Análise")) {
+			return geraConsultaContratosPorStatus("Em Analise");
+		}
+		if (this.tituloTelaConsultaPreStatus.equals("Ag. Pagto. Laudo")) {
+			return geraConsultaContratosPorStatus("Ag. Pagto. Laudo");
+		}
+		if (this.tituloTelaConsultaPreStatus.equals("Análise Pré-Aprovada")) {
+			return geraConsultaContratosPorStatus("Análise Aprovada");
+		}
+		if (this.tituloTelaConsultaPreStatus.equals("Ag. DOC")) {
+			return geraConsultaContratosPorStatus("Ag. DOC");
+		}
+		if (this.tituloTelaConsultaPreStatus.equals("Pré-Comite")) {
+			return geraConsultaContratosPorStatus("Pré-Comite");
+		}
+		if (this.tituloTelaConsultaPreStatus.equals("Ag. Comite")) {
+			loginBean.setNumeroContratosComite(contratoCobrancaDao.getQuantidadeContratosComite());
+			return geraConsultaContratosPorStatus("Ag. Comite");
+		}
+		if (this.tituloTelaConsultaPreStatus.equals("Ag. CCB")) {
+			return geraConsultaContratosPorStatus("Ag. CCB");
+		}
+		if (this.tituloTelaConsultaPreStatus.equals("Ag. Assinatura")) {
+			return geraConsultaContratosPorStatus("Ag. Assinatura");
+		}
+		if (this.tituloTelaConsultaPreStatus.equals("Ag. Envio Cartório")) {
+			return geraConsultaContratosPorStatus("Ag. Envio Cartorio");
+		}
+		if (this.tituloTelaConsultaPreStatus.equals("Ag. Registro")) {
+			return geraConsultaContratosPorStatus("Ag. Registro");
+		}
+		if (this.tituloTelaConsultaPreStatus.equals("PreContratos")) {
+			return geraConsultaContratosPendentes();
+		}
+
+		return "/Atendimento/Cobranca/ContratoCobrancaConsultarPreStatus.xhtml";
 	}
 
 	private boolean verificaCamposStatus(FacesContext context) {
@@ -37413,72 +37421,12 @@ public class ContratoCobrancaMB {
 		this.txAdm = txAdm;
 	}
 
-	public void preRenderView() {
-		// Clone os valores atuais para pessoaOriginal
-		clonandoValoresObjeto(objetoContratoCobranca, objetoContratoCobrancaOriginal);
-	}
-
-	public List<String> comparativoCamposEsteraLista() {
-		
-		ContratoCobrancaDao contratoCobrancaDaotest = new ContratoCobrancaDao();
-		List<String> resultado = contratoCobrancaDaotest.resultadoQueryTestList();
-		for (String string : resultado) {
-			System.out.println(string);
-		}
-		return contratoCobrancaDaotest.resultadoQueryTestList();
-		//prazomaxpreaprovado
-		//ccbxrenda
-		//rendacomprovada
-		//finalidaderecurso
-	}
-	
-	private void clonandoValoresObjeto(ContratoCobranca source, ContratoCobranca destination) {
-		Class<?> reflectionContratoCobranca = source.getClass();
-		for (Field field : reflectionContratoCobranca.getDeclaredFields()) {
-			try {
-				field.setAccessible(true);
-				Object value = field.get(source);
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	private List<ContratoCobrancaLogsAlteracao> comparandoValores(ContratoCobranca valoresAtuais, ContratoCobranca valoresBanco, List<String> camposParaVerificar) {
-		
-		List<ContratoCobrancaLogsAlteracao> listaDeAlteracoes = new ArrayList<>();
-		Class<?> reflectionValues = valoresAtuais.getClass();
-
-		for (Field field : reflectionValues.getDeclaredFields()) {
-			Boolean verificaCamposAlterados = camposParaVerificar.contains(field.getName().toLowerCase()) ? true : false;
-			if(!verificaCamposAlterados) continue;		
-			try {
-				field.setAccessible(true);
-				Object currentValues = field.get(valoresAtuais); // escrevi agora
-				Object originalValues = field.get(valoresBanco);// estava no banco
-
-				if (currentValues != null) {
-					if (!currentValues.equals(originalValues)) {
-						listaDeAlteracoes.add(new ContratoCobrancaLogsAlteracao(field.getName(), CommonsUtil.stringValue(originalValues), CommonsUtil.stringValue(currentValues)));
-						
-//						System.out.println("Campo " + field.getName() + " foi alterado.");
-//						System.out.println("Valor antigo: " + originalValues);
-//						System.out.println("Novo valor: " + currentValues);
-					}
-				} 
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			}
-		}
-		if(!listaDeAlteracoes.isEmpty()) {
-			exibeTelaPopPup();
-		}
+	public List<ContratoCobrancaLogsAlteracao> getListaDeAlteracoes() {
 		return listaDeAlteracoes;
 	}
-	
-	public void exibeTelaPopPup() {
-		
+
+	public void setListaDeAlteracoes(List<ContratoCobrancaLogsAlteracao> listaDeAlteracoes) {
+		this.listaDeAlteracoes = listaDeAlteracoes;
 	}
-	
 }
 

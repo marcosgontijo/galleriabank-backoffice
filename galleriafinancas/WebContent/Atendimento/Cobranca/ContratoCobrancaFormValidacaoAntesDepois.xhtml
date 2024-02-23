@@ -10,30 +10,24 @@
 		showEffect="fade" hideEffect="fade" resizable="false"
 		responsive="false" width="1000" height="700" closable="true"
 		ajax="true">
-		<p:ajax event="close" listener="#{contratoCobrancaMB.limpaLaudo}" />
+		<p:ajax event="close"/>
 		<h:form id="comparacoesPopPupForm">
 			<div class="card">
-				<p:dataTable var="product" value="#{dtBasicView.products}">
+				<p:dataTable id="tableId" var="item" value="#{contratoCobrancaMB.listaDeAlteracoes}">
 					<p:column headerText="Nome do campo">
-						<h:outputText value="#{product.code}" />
+						<h:outputText value="#{item.nomeCampo}" />
 					</p:column>
 
 					<p:column headerText="Antes da alteração">
-						<h:outputText value="#{product.name}" />
+						<h:outputText value="#{item.valorBanco}" />
 					</p:column>
 
 					<p:column headerText="Depois">
-						<h:outputText value="#{product.category}" />
-					</p:column>
-
-					<p:column headerText="Data">
-						<h:outputText value="#{product.quantity}" />
+						<h:outputText value="#{item.valorAlterado}" />
 					</p:column>
 				</p:dataTable>
 			</div>
 		</h:form>
 
 	</p:dialog>
-
-
 </ui:composition>
