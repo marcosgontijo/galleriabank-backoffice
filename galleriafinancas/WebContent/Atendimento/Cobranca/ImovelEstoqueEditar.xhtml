@@ -229,7 +229,7 @@
 					value="#{contratoCobrancaMB.objetoContratoCobranca.listContratoCobrancaDetalhes}"
 					emptyMessage="" sortBy="#{contratos.numeroParcela}"
 					sortOrder="ascending"
-					rowStyleClass="#{(parcelas.pagoParcial eq true) ? 'parcelaparcial' : parcelas.numeroParcela eq 'Amortização' ? 'parcelaPaga': parcelas.parcelaPaga eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : parcelas.parcelaVencendo eq true ? 'parcelaVencendo' : 'parcelaAtraso'}"
+					rowStyleClass="#{(parcelas.pagoParcial eq true ? 'parcelaparcial' : parcelas.parcelaPaga eq true ? 'parcelaPaga' : parcelas.parcelaVencida eq true ? 'parcelaAtraso' : parcelas.parcelaVencendo eq true ? 'parcelaVencendo' : null)}"
 					rowKey="#{parcelas.id}" style="overflow: auto;">
 
 					<p:column style="text-align: center;width: 45px;"

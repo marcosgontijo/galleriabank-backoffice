@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.simulador.SimulacaoDetalheVO;
 
 public class ContratoCobrancaDetalhes implements Serializable {
@@ -32,6 +33,7 @@ public class ContratoCobrancaDetalhes implements Serializable {
 	private BigDecimal vlrSaldoInicial;
 	private BigDecimal vlrSaldoParcela;
 	private BigDecimal vlrParcelaOriginal;
+	private Date datahoje = DateUtil.getDataHoje();
 	
 	private String origemBaixa;
 
