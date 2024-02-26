@@ -130,21 +130,6 @@
 				</f:facet>
 			</p:panel>
 
-			<p:panel>
-				<f:facet name="header">
-					<h:outputText value="Financas Estimadas" />
-					<p:dataTable id="resumoFinancas" var="financas"
-						rendered="#{paramDocumentoAnalise != null}"
-						value="#{paramDocumentoAnalise.getResumoFinancas()}">
-						<p:column>
-							<h:outputText value="#{financas.descricao}" />
-						</p:column>
-						<p:column>
-							<h:outputText value="#{financas.valor}" />
-						</p:column>
-					</p:dataTable>
-				</f:facet>
-			</p:panel>
 			
 			<shiro:hasAnyRoles name="ROOT">
 				<p:panel id="panelVeiculos" >
