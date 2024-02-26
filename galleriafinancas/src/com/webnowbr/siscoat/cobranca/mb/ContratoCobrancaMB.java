@@ -3415,7 +3415,7 @@ public class ContratoCobrancaMB {
 			this.objetoContratoCobranca.populaStatusEsteira(getUsuarioLogadoNull());
 			contratoCobrancaDao.merge(this.objetoContratoCobranca);
 			
-			if(!listPreLaudoImoveisRelac.isEmpty()) {
+			if(!CommonsUtil.semValor(listPreLaudoImoveisRelac)) {
 				for(ImovelCobranca imovel: listPreLaudoImoveisRelac) {
 					imovelDao.merge(imovel);
 				}
