@@ -11,10 +11,19 @@
 			<script src="#{request.contextPath}/resources/js/functions.js"></script>
 			<script src="#{request.contextPath}/resources/js/locale-primefaces.js" library="javascript"></script>
 			<p:messages id="mensagens" showDetail="true" />
+			
+			<p:panel id="testeFacil" header="TESTE FACIL"
+				style="margin-bottom:10px;">
+				<p:commandButton value="LOGIN"
+							ajax="false"
+							action="#{facilTechMB.getTesteCriaPessoa()}"
+							icon="ui-icon ui-icon-check"
+							style="TEXT-DECORATION: bold;" />
+			</p:panel>
 			<p:panel id="PanelJSON" header="Geração do JSON BRL"
 				style="margin-bottom:10px;" rendered="#{brlTrustMB.jsonGerado}">
 				<p:focus />
-				<p:messages />
+				<p:messages /> 
 				<h:panelGrid columns="2">
 					<p:outputLabel value="Total Face: "
 						styleClass="labelBold" />
