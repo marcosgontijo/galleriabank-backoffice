@@ -4111,6 +4111,16 @@ public class ContratoCobrancaMB {
 						contasPagarDao.merge(despesaNotaFiscal);
 				}
 			}
+			if (this.tituloTelaConsultaPreStatus.equals("Ag. Certificado")) {
+				this.objetoContratoCobranca.getImovel().setObservacao("O imóvel" +  this.objetoContratoCobranca.getImovel().getTipo() +
+						" objeto da matricula nº " + this.objetoContratoCobranca.getImovel().getNumeroMatricula() + 
+						" do " + this.objetoContratoCobranca.getImovel().getNumeroCartorio() + " oficial de registro de imóvel de " + 
+						this.objetoContratoCobranca.getImovel().getCartorioMunicipio() + " - " + this.objetoContratoCobranca.getImovel().getCartorioEstado() +
+				        ", localizado no municipio de" + this.objetoContratoCobranca.getImovel().getCidade()+
+				        ", estado de " + this.objetoContratoCobranca.getImovel().getEstado()+ ", no endereço " 
+				        + this.objetoContratoCobranca.getImovel().getEnderecoSimplificado());
+			}
+			
 			contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
 			// verifica se o contrato for aprovado, manda um tipo de email..
@@ -34114,7 +34124,7 @@ public class ContratoCobrancaMB {
 
 			byte[] conteudo = event.getFile().getContents();
 			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(),
-					event.getFile().getFileName(), "//juridico/", getUsuarioLogado());
+					event.getFile().getFileName(), "//pre-laudo/", getUsuarioLogado());
 
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();

@@ -307,12 +307,18 @@ public class ImovelCobranca implements Serializable {
 	
 	
 	public String getEnderecoCompleto() {
-		String enderecoCompleto =   (!CommonsUtil.semValor(endereco)? endereco:"") +
-									(!CommonsUtil.semValor(bairro)? ", " + bairro:"") +
-									(!CommonsUtil.semValor(complemento)? ", " + complemento:"") +
+		String enderecoCompleto =   getEnderecoSimplificado() +
 									(!CommonsUtil.semValor(cidade)? ", " + cidade:"") +
 									(!CommonsUtil.semValor(estado)? ", " + estado:"") +
 									(!CommonsUtil.semValor(cep)? ", " + cep:"");
+									
+		return enderecoCompleto;
+	}
+	
+	public String getEnderecoSimplificado() {
+		String enderecoCompleto =   (!CommonsUtil.semValor(endereco)? endereco:"") +
+									(!CommonsUtil.semValor(bairro)? ", " + bairro:"") +
+									(!CommonsUtil.semValor(complemento)? ", " + complemento:"") ;
 									
 		return enderecoCompleto;
 	}
