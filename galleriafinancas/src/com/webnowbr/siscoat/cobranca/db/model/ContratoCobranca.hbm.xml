@@ -2397,5 +2397,68 @@
 			<column name="valorCertidao" />
 		</property>
 
+		<property name="notaFiscalEmitidaData" type="java.util.Date">
+			<column name="notaFiscalEmitidaData" />
+		</property>
+		<property name="notaFiscalEmitida" type="boolean">
+			<column name="notaFiscalEmitida" not-null="true" default="false"/>
+		</property>	
+		<property name="notaFiscalEmitidaUsuario" type="java.lang.String">
+			<column name="notaFiscalEmitidaUsuario" />
+		</property>
+		
+		<property name="notaFiscalPagaData" type="java.util.Date">
+			<column name="notaFiscalPagaData" />
+		</property>
+		<property name="notaFiscalPaga" type="boolean">
+			<column name="notaFiscalPaga" not-null="true" default="false"/>
+		</property>	
+		<property name="notaFiscalPagaUsuario" type="java.lang.String">
+			<column name="notaFiscalPagaUsuario" />
+		</property>
+		
+		<property name="notaFiscalAgendadaData" type="java.util.Date">
+			<column name="notaFiscalAgendadaData" />
+		</property>
+		<property name="notaFiscalAgendada" type="boolean">
+			<column name="notaFiscalAgendada" not-null="true" default="false"/>
+		</property>	
+		<property name="notaFiscalAgendadaUsuario" type="java.lang.String">
+			<column name="notaFiscalAgendadaUsuario" />
+		</property>
+				
+		<property name="valorNotaFiscal" type="big_decimal">
+			<column name="valorNotaFiscal" />
+		</property>
+		<property name="solicitarNotaData" type="java.util.Date">
+			<column name="solicitarNotaData" />
+		</property>
+		<property name="solicitarNotaUsuario" type="java.lang.String">
+			<column name="solicitarNotaUsuario" />
+		</property>
+		
+		<property name="notaFiscalEmitidaProblema" type="java.lang.String">
+			<column name="notaFiscalEmitidaProblema" />
+		</property>
+		
+		<property name="notaFiscalEmitidaProblemaData" type="java.util.Date">
+			<column name="notaFiscalEmitidaProblemaData" />
+		</property>
+		
+		<property name="notaFiscalEmitidaProblemaUsuario" type="java.lang.String">
+			<column name="notaFiscalEmitidaProblemaUsuario" />
+		</property>
+		
+		<property name="notaFiscalAgendadaProblema" type="java.lang.String">
+			<column name="notaFiscalAgendadaProblema" />
+		</property>
+		<property name="notaFiscalAgendadaProblemaData" type="java.util.Date">
+			<column name="notaFiscalAgendadaProblemaData" />
+		</property>
+		<property name="notaFiscalAgendadaProblemaUsuario" type="java.lang.String">
+			<column name="notaFiscalAgendadaProblemaUsuario" />
+		</property>
+		
+
 	</class>
 </hibernate-mapping>

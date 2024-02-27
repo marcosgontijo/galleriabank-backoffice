@@ -54,6 +54,7 @@ public class PagadorRecebedor implements Serializable {
 	private String tipoUniao;
 	private Date dataCasamento;
 	private String regimeCasamento; 
+	private boolean uniaoEstavel;
 	private String registroPactoAntenupcial;
 	private String livroPactoAntenupcial;
 	private String folhasPactoAntenupcial;
@@ -2420,5 +2421,13 @@ public class PagadorRecebedor implements Serializable {
 
 	public void setTipoUniao(String tipoUniao) {
 		this.tipoUniao = tipoUniao;
+	}
+
+	public boolean isUniaoEstavel() {
+		return uniaoEstavel;
+	}
+
+	public void setUniaoEstavel(boolean uniaoEstavel) {
+		this.uniaoEstavel = uniaoEstavel;
 	}
 }

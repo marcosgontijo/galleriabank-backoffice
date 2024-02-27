@@ -3,7 +3,6 @@ package com.webnowbr.siscoat.cobranca.db.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -77,6 +76,7 @@ public class ImovelCobranca implements Serializable {
 	private boolean preLaudoSolicitado;
 	private boolean preLaudoEntregue;
 	private BigDecimal valorPreLaudo;
+
 	
 	public ImovelCobranca(){
 		resetarBololean();
@@ -307,12 +307,18 @@ public class ImovelCobranca implements Serializable {
 	
 	
 	public String getEnderecoCompleto() {
-		String enderecoCompleto =   (!CommonsUtil.semValor(endereco)? endereco:"") +
-									(!CommonsUtil.semValor(bairro)? ", " + bairro:"") +
-									(!CommonsUtil.semValor(complemento)? ", " + complemento:"") +
+		String enderecoCompleto =   getEnderecoSimplificado() +
 									(!CommonsUtil.semValor(cidade)? ", " + cidade:"") +
 									(!CommonsUtil.semValor(estado)? ", " + estado:"") +
 									(!CommonsUtil.semValor(cep)? ", " + cep:"");
+									
+		return enderecoCompleto;
+	}
+	
+	public String getEnderecoSimplificado() {
+		String enderecoCompleto =   (!CommonsUtil.semValor(endereco)? endereco:"") +
+									(!CommonsUtil.semValor(bairro)? ", " + bairro:"") +
+									(!CommonsUtil.semValor(complemento)? ", " + complemento:"") ;
 									
 		return enderecoCompleto;
 	}
@@ -816,6 +822,7 @@ public class ImovelCobranca implements Serializable {
 		this.preLaudoEntregue = preLaudoEntregue;
 	}
 	
+
 	public BigDecimal getValorPreLaudo() {
 		return this.valorPreLaudo;
 	}
@@ -823,6 +830,7 @@ public class ImovelCobranca implements Serializable {
 	public void setValorPreLaudo( BigDecimal valorPreLaudo) {
 		this.valorPreLaudo = valorPreLaudo;
 	}
+
 	public BigDecimal getValorLeilao() {
 		return valorLeilao;
 	}

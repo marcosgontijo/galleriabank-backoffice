@@ -64,21 +64,39 @@
 							
 						</p:panel>-->
 
-			<p:panel>
-				<f:facet name="header">
-					<h:outputText value="SCR" />
-					<p:dataTable id="resumoScr" var="scr"
-						rendered="#{paramDocumentoAnalise != null}"
-						value="#{paramDocumentoAnalise.getResumoScr()}">
-						<p:column>
-							<h:outputText value="#{scr.descricao}" />
-						</p:column>l
-								<p:column>
-							<h:outputText value="#{scr.valor}" />
-						</p:column>
-					</p:dataTable>
-				</f:facet>
-			</p:panel>
+			<h:panelGrid columns="1">
+				<p:panel>
+					<f:facet name="header">
+						<h:outputText value="SCR" />
+						<p:dataTable id="resumoScr" var="scr"
+							rendered="#{paramDocumentoAnalise != null}"
+							value="#{paramDocumentoAnalise.getResumoScr()}">
+							<p:column style="width:75px;">
+								<h:outputText value="#{scr.descricao}" />
+							</p:column>
+							<p:column >
+								<h:outputText value="#{scr.valor}" />
+							</p:column>
+						</p:dataTable>
+					</f:facet>
+				</p:panel>
+				
+				<p:panel>
+					<f:facet name="header">
+						<h:outputText value="Processo" />
+						<p:dataTable id="resumoProcesso" var="Processo"
+							rendered="#{paramDocumentoAnalise != null}"
+							value="#{paramDocumentoAnalise.getResumoProcesso()}">
+							<p:column>
+								<h:outputText value="#{Processo.descricao}" />
+							</p:column>
+							<p:column>
+								<h:outputText value="#{Processo.valor}" />
+							</p:column>
+						</p:dataTable>
+					</f:facet>
+				</p:panel>
+			</h:panelGrid>
 
 			<p:panel style="justify-content:start;">
 				<f:facet name="header">
@@ -112,22 +130,6 @@
 				</f:facet>
 			</p:panel>
 
-
-			<p:panel>
-				<f:facet name="header">
-					<h:outputText value="Processo" />
-					<p:dataTable id="resumoProcesso" var="Processo"
-						rendered="#{paramDocumentoAnalise != null}"
-						value="#{paramDocumentoAnalise.getResumoProcesso()}">
-						<p:column>
-							<h:outputText value="#{Processo.descricao}" />
-						</p:column>
-						<p:column>
-							<h:outputText value="#{Processo.valor}" />
-						</p:column>
-					</p:dataTable>
-				</f:facet>
-			</p:panel>
 			
 			<shiro:hasAnyRoles name="ROOT">
 				<p:panel id="panelVeiculos" >
