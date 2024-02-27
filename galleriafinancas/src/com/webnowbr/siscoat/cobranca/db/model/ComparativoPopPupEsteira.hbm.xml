@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 14/11/2011 14:34:14 by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping schema="cobranca">
-    <class name="com.webnowbr.siscoat.cobranca.db.model.ComparativoCamposEstera" table="COMPARATIVOCAMPOSESTERA">
+    <class name="com.webnowbr.siscoat.cobranca.db.model.ComparativoPopPupEsteira" table="COMPARATIVOPOPPUPESTEIRA">
        <id name="id" type="long">
 			<column name="ID" />
 			<generator class="increment" />
@@ -13,12 +13,16 @@
             <column name="id_form"/>
         </property>
        
+		<property name="data_modificacao" type="java.util.Date">
+			<column name="data_modificacao" />
+		</property>
+		
 		<property name="nome_propiedade" type="java.lang.String">
 			<column name="nome_propiedade" />
 		</property>
 		
-		<property name="descricao" type="java.lang.String">
-			<column name="descricao" />
+		<property name="nome_alterador" type="java.lang.String">
+			<column name="nome_alterador" />
 		</property>
     </class>
 </hibernate-mapping>

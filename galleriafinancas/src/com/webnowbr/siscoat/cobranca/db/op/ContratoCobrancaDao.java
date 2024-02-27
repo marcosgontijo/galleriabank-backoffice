@@ -9964,34 +9964,4 @@ private String QUERY_ID_IMOVELESTOQUE = "select id from cobranca.contratocobranc
 			}
   		});
   	}
-  	//select nome_propiedade from cobranca.comparativocamposestera
-  	
-  	private static final String QUERY_TESTE= "select nome_propiedade from cobranca.comparativocamposestera";
-   
- 	public List<String> resultadoQueryTestList() {
- 		return (List<String>) executeDBOperation(new DBRunnable() {
- 			@Override
-			public Object run() throws Exception {
-				List<String> objects = new ArrayList<String>();
-
-				Connection connection = null;
-				PreparedStatement ps = null;
-				ResultSet rs = null;
-
-				try {
-					connection = getConnection();
-
-					ps = connection.prepareStatement(QUERY_TESTE);
-
-					rs = ps.executeQuery();
-					while( rs.next())					
-						objects.add(rs.getString("nome_propiedade"));
-
-				} finally {
-					closeResources(connection, ps, rs);
-				}
-				return objects;
-			}
- 		});
- 	}
-}
+ }

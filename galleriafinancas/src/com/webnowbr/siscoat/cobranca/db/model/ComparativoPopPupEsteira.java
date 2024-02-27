@@ -3,7 +3,7 @@ package com.webnowbr.siscoat.cobranca.db.model;
 import java.util.Date;
 
 
-public class ComparativoPopPupEstera {
+public class ComparativoPopPupEsteira {
 	
 	private long id;
 	

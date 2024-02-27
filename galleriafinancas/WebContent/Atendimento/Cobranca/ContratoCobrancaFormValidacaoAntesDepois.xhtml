@@ -6,7 +6,7 @@
 	xmlns:p="http://primefaces.org/ui">
 
 	<p:dialog header="Comparações dos campos que foram alterados."
-		id="comparacoesPopPupId" widgetVar="comparacoesPopPupId"
+		id="comparacoesPopPupId" widgetVar="comparacoesPopPupIdvar"
 		showEffect="fade" hideEffect="fade" resizable="false"
 		responsive="false" width="1000" height="700" closable="true"
 		ajax="true">
@@ -15,7 +15,7 @@
 			<div class="card">
 				<p:dataTable id="tableId" var="item" value="#{contratoCobrancaMB.listaDeAlteracoes}">
 					<p:column headerText="Nome do campo">
-						<h:outputText value="#{item.nomeCampo}" />
+						<h:outputText value="#{contratoCobrancaMB.retornaDescricaoCampo(item.nomeCampo)}" />
 					</p:column>
 
 					<p:column headerText="Antes da alteração">

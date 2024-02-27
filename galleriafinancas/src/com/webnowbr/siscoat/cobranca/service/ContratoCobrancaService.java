@@ -3,6 +3,7 @@ package com.webnowbr.siscoat.cobranca.service;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.faces.bean.ApplicationScoped;
 
@@ -19,31 +20,12 @@ public class ContratoCobrancaService {
 	private ContratoCobranca objetoContratoCobranca;
 	private ContratoCobranca objetoContratoCobrancaCopiaCampos;
 	
-	public void preRenderView() {
-		// Clone os valores atuais para pessoaOriginal
-		clonandoValoresObjetoParaVerificacao(objetoContratoCobranca, objetoContratoCobrancaCopiaCampos);
-	}
-
-	public List<String> camposParaVerificarDaEstera() {
-		
-		ContratoCobrancaDao contratoCobrancaDaotest = new ContratoCobrancaDao();
-		List<String> resultado = contratoCobrancaDaotest.resultadoQueryTestList();
-		for (String string : resultado) {
-			System.out.println(string);
-		}
-		return contratoCobrancaDaotest.resultadoQueryTestList();
-		//prazomaxpreaprovado
-		//ccbxrenda
-		//rendacomprovada
-		//finalidaderecurso
-	}
-	
-	public void clonandoValoresObjetoParaVerificacao(ContratoCobranca source, ContratoCobranca destination) {
-		Class<?> reflectionContratoCobranca = source.getClass();
+	public void clonandoValoresObjetoParaVerificacao(ContratoCobranca original, ContratoCobranca copia) {
+		Class<?> reflectionContratoCobranca = original.getClass();
 		for (Field field : reflectionContratoCobranca.getDeclaredFields()) {
 			try {
 				field.setAccessible(true);
-				Object value = field.get(source);
+				Object value = field.get(original);
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			}
@@ -79,10 +61,4 @@ public class ContratoCobrancaService {
 		}
 		return listaDeAlteracoes;
 	}
-	
-//	public void exibeTelaPopPupAlteracoes() {
-//		PrimeFaces current = PrimeFaces.current();
-//		current.executeScript("PF('comparacoesPopPupId').show();");
-//		System.out.println("Tela poppup");
-//	}
 }

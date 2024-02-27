@@ -107,6 +107,7 @@ import org.quartz.SchedulerFactory;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
@@ -133,6 +134,7 @@ import com.webnowbr.siscoat.cobranca.db.model.Cartorio;
 import com.webnowbr.siscoat.cobranca.db.model.CcbContrato;
 import com.webnowbr.siscoat.cobranca.db.model.CcbParticipantes;
 import com.webnowbr.siscoat.cobranca.db.model.CcbProcessosJudiciais;
+import com.webnowbr.siscoat.cobranca.db.model.ComparativoCamposEsteira;
 import com.webnowbr.siscoat.cobranca.db.model.ContasPagar;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaBRLLiquidacao;
@@ -178,6 +180,7 @@ import com.webnowbr.siscoat.cobranca.db.op.CartorioDao;
 import com.webnowbr.siscoat.cobranca.db.op.CcbDao;
 import com.webnowbr.siscoat.cobranca.db.op.CcbParticipantesDao;
 import com.webnowbr.siscoat.cobranca.db.op.CcbProcessosJudiciaisDao;
+import com.webnowbr.siscoat.cobranca.db.op.ComparativoCamposEsteiraDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
@@ -258,7 +261,6 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.engine.json.expression.filter.FilterExpression.LOGICAL_OPERATOR;
 
 /** ManagedBean. */
 @ManagedBean(name = "contratoCobrancaMB")
@@ -418,7 +420,9 @@ public class ContratoCobrancaMB {
 	private String estadoConsultaAdd;
 	private List<String> camposDeVerificacaoDeAlteracao;
 	private List<ContratoCobrancaLogsAlteracao> listaDeAlteracoes;
-
+	private List<ComparativoCamposEsteira> comparativoCamposEsteira;
+	
+	
 	public void setTravaCamposEsteira() {
 		objetoContratoCobranca.setTravaCamposEsteira(true);
 	}
@@ -907,6 +911,8 @@ public class ContratoCobrancaMB {
 	private List<ImovelCobranca> listTodosImoveisContrato;
 	private List<ImovelCobranca> listPreLaudoImoveisRelac;
 	
+	private ComparativoCamposEsteiraDao comparativosCamposEsteraDao = new ComparativoCamposEsteiraDao();
+	
 	public void mudaBotaoCartorio() {
 		this.setCartorioMudou(true);
 	}
@@ -923,7 +929,6 @@ public class ContratoCobrancaMB {
 		if (listaCartorio.isEmpty()) {
 			listaCartorio = null;
 		}
-
 	}
 
 	public void excluiLista() {
@@ -1119,7 +1124,7 @@ public class ContratoCobrancaMB {
 		this.objetoPagadorRecebedor = new PagadorRecebedor();
 		this.tipoPessoaIsFisica = true;
 		
-		this.camposDeVerificacaoDeAlteracao = contratoCobrancaDao.resultadoQueryTestList();
+		//this.comparativoCamposEsteira = comparativosCamposEsteraDao.findAll();
 		// FIM - Tratamento para Pré-Contrato
 	}
 
@@ -4103,13 +4108,16 @@ public class ContratoCobrancaMB {
 						contasPagarDao.merge(despesaNotaFiscal);
 				}
 			}
+
+			this.comparativoCamposEsteira = comparativosCamposEsteraDao.findAll();
 			this.listaDeAlteracoes = contratoCobrancaService.comparandoValores(
 					this.objetoContratoCobranca, 
 					contratoCobrancaDao.findById(this.objetoContratoCobranca.getId()),
-					camposDeVerificacaoDeAlteracao);
+					comparativoCamposEsteira.stream().map(x -> x.getNome_propiedade()).collect(Collectors.toList()));
 					
 			if (!listaDeAlteracoes.isEmpty()) {
 				//se caso a lista alteracoes nao for vazia, exibe  tela poppup.
+				PrimeFaces.current().ajax().update("form:comparacoesPopPupForm");
 				return null;
 			}
 			return finalizaCheckListeStatus(context, contratoCobrancaDao, usuarioLogado);
@@ -4119,7 +4127,6 @@ public class ContratoCobrancaMB {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + e, ""));
 			return "";
 		}
-
 	}
 
 	private String finalizaCheckListeStatus(FacesContext context, ContratoCobrancaDao contratoCobrancaDao, User usuarioLogado) {
@@ -37427,6 +37434,18 @@ public class ContratoCobrancaMB {
 
 	public void setListaDeAlteracoes(List<ContratoCobrancaLogsAlteracao> listaDeAlteracoes) {
 		this.listaDeAlteracoes = listaDeAlteracoes;
+	}
+	
+	public String retornaDescricaoCampo(String nomePropiedade) {
+		Optional<String> descricao =  comparativoCamposEsteira.stream()
+				.filter(y -> y.getNome_propiedade().equals(nomePropiedade.toLowerCase()))
+				.map(x -> x.getDescricao()).findAny();
+		
+		if(descricao.isPresent()) {
+			return descricao.get();
+		} 
+		return null;
+		
 	}
 }
 

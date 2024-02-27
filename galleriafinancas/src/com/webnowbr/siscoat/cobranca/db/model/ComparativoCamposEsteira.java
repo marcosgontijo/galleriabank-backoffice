@@ -1,16 +1,16 @@
 package com.webnowbr.siscoat.cobranca.db.model;
 
-public class ComparativoCamposEstera {
+public class ComparativoCamposEsteira {
 
-	private long id;
+	private Long id;
 	private String id_form;
 	private String nome_propiedade;
 	private String descricao;
 	
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	public String getId_form() {
