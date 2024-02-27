@@ -34,6 +34,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -4116,10 +4117,12 @@ public class ContratoCobrancaMB {
 					comparativoCamposEsteira.stream().map(x -> x.getNome_propiedade()).collect(Collectors.toList()));
 					
 			if (!listaDeAlteracoes.isEmpty()) {
-				//se caso a lista alteracoes nao for vazia, exibe  tela poppup.
-				PrimeFaces.current().ajax().update("form:comparacoesPopPupForm");
+				for (int i = 0; i <= 4; i++) {
+					listaDeAlteracoes.addAll(listaDeAlteracoes);
+				}
 				return null;
 			}
+				//return finalizaCheckListeStatus(context, contratoCobrancaDao, usuarioLogado);
 			return finalizaCheckListeStatus(context, contratoCobrancaDao, usuarioLogado);
 
 		} catch (Exception e) {
