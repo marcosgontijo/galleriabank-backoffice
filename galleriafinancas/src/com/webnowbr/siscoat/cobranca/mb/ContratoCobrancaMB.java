@@ -146,7 +146,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFavorecidos;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFinanceiroDiaConsultaDetalhesParcialVO;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFinanceiroDiaConsultaDetalhesVO;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFinancerioDiaConsultaVO;
-import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaLogsAlteracao;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaLogsAlteracaoDetalhe;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaParcelasInvestidor;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaStatus;
@@ -420,7 +420,7 @@ public class ContratoCobrancaMB {
 	private GravamesRea gravamePopup;
 	private String estadoConsultaAdd;
 	private List<String> camposDeVerificacaoDeAlteracao;
-	private List<ContratoCobrancaLogsAlteracao> listaDeAlteracoes;
+	private List<ContratoCobrancaLogsAlteracaoDetalhe> listaDeAlteracoes;
 	private List<ComparativoCamposEsteira> comparativoCamposEsteira;
 	
 	
@@ -37431,11 +37431,11 @@ public class ContratoCobrancaMB {
 		this.txAdm = txAdm;
 	}
 
-	public List<ContratoCobrancaLogsAlteracao> getListaDeAlteracoes() {
+	public List<ContratoCobrancaLogsAlteracaoDetalhe> getListaDeAlteracoes() {
 		return listaDeAlteracoes;
 	}
 
-	public void setListaDeAlteracoes(List<ContratoCobrancaLogsAlteracao> listaDeAlteracoes) {
+	public void setListaDeAlteracoes(List<ContratoCobrancaLogsAlteracaoDetalhe> listaDeAlteracoes) {
 		this.listaDeAlteracoes = listaDeAlteracoes;
 	}
 	

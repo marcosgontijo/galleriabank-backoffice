@@ -10,7 +10,7 @@ import javax.faces.bean.ApplicationScoped;
 import org.primefaces.PrimeFaces;
 
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
-import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaLogsAlteracao;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaLogsAlteracaoDetalhe;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
 
@@ -32,9 +32,9 @@ public class ContratoCobrancaService {
 		}
 	}
 
-	public List<ContratoCobrancaLogsAlteracao> comparandoValores(ContratoCobranca valoresAtuais, ContratoCobranca valoresBanco, List<String> camposParaVerificar) {
+	public List<ContratoCobrancaLogsAlteracaoDetalhe> comparandoValores(ContratoCobranca valoresAtuais, ContratoCobranca valoresBanco, List<String> camposParaVerificar) {
 		
-		List<ContratoCobrancaLogsAlteracao> listaDeAlteracoes = new ArrayList<>();
+		List<ContratoCobrancaLogsAlteracaoDetalhe> listaDeAlteracoes = new ArrayList<>();
 		Class<?> reflectionValues = valoresAtuais.getClass();
 
 		for (Field field : reflectionValues.getDeclaredFields()) {
@@ -47,7 +47,7 @@ public class ContratoCobrancaService {
 
 				if (currentValues != null) {
 					if (!currentValues.equals(originalValues)) {
-						listaDeAlteracoes.add(new ContratoCobrancaLogsAlteracao(field.getName(), CommonsUtil.stringValue(originalValues), CommonsUtil.stringValue(currentValues)));
+						listaDeAlteracoes.add(new ContratoCobrancaLogsAlteracaoDetalhe(field.getName(), CommonsUtil.stringValue(originalValues), CommonsUtil.stringValue(currentValues)));
 						
 //						System.out.println("Campo " + field.getName() + " foi alterado.");
 //						System.out.println("Valor antigo: " + originalValues);

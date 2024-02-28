@@ -90,6 +90,8 @@
 		
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ComparativoPopPupEsteira.hbm.xml"/>
 		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ComparativoCamposEsteira.hbm.xml"/>
+		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ContratoCobrancaLogsAlteracao.hbm.xml"/>
+		<mapping resource="com/webnowbr/siscoat/cobranca/db/model/ContratoCobrancaLogsAlteracaoDetalhe.hbm.xml"/>
 		
 		
 		<mapping resource="com/webnowbr/siscoat/infra/db/model/MenuFavorito.hbm.xml"/>

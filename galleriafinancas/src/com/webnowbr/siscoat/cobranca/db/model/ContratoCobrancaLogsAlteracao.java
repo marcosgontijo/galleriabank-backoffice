@@ -1,35 +1,45 @@
 package com.webnowbr.siscoat.cobranca.db.model;
 
+import java.util.Date;
+import java.util.Set;
+
 public class ContratoCobrancaLogsAlteracao {
 	
-	private String nomeCampo;
-	private String valorBanco;
-	private String valorAlterado;
+	private long id;
+	private Date dataAlteracao;
+	private String usuario;
+	private String observacao;
+	private Set<ContratoCobrancaLogsAlteracaoDetalhe> detalhes;
 	
-	public ContratoCobrancaLogsAlteracao(String nomeCampo, String valorBanco, String valorAlterado) {
-		this.nomeCampo = nomeCampo;
-		this.valorBanco = valorBanco;
-		this.valorAlterado = valorAlterado;
+	public long getId() {
+		return id;
 	}
-	
-	public String getNomeCampo() {
-		return nomeCampo;
+	public void setId(long id) {
+		this.id = id;
 	}
-	public void setNomeCampo(String nomeCampo) {
-		this.nomeCampo = nomeCampo;
+	public Date getDataAlteracao() {
+		return dataAlteracao;
 	}
-	public String getValorBanco() {
-		return valorBanco;
+	public void setDataAlteracao(Date dataAlteracao) {
+		this.dataAlteracao = dataAlteracao;
 	}
-	public void setValorBanco(String valorBanco) {
-		this.valorBanco = valorBanco;
+	public String getUsuario() {
+		return usuario;
 	}
-	public String getValorAlterado() {
-		return valorAlterado;
+	public void setUsuario(String usuario) {
+		this.usuario = usuario;
 	}
-	public void setValorAlterado(String valorAlterado) {
-		this.valorAlterado = valorAlterado;
+	public String getObservacao() {
+		return observacao;
 	}
-	
-	
+	public void setObservacao(String observacao) {
+		this.observacao = observacao;
+	}
+	public Set<ContratoCobrancaLogsAlteracaoDetalhe> getDetalhes() {
+		return detalhes;
+	}
+	public void setDetalhes(Set<ContratoCobrancaLogsAlteracaoDetalhe> detalhes) {
+		this.detalhes = detalhes;
+	}
+
 }
