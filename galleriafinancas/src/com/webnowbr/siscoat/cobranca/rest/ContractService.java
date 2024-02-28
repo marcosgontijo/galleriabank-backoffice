@@ -65,6 +65,8 @@ public class ContractService {
 	@ManagedProperty(value = "#{loginBean}")
 	protected LoginBean loginBean;
 
+	private PagadorRecebedorDao objetoPagadorDao;
+
 	public static void main(String[] args) {
 
 		String authorization = "Basic d2Vibm93YnI6IVNpc0NvQXRAMjAyMSo=";
@@ -555,68 +557,93 @@ public class ContractService {
 							 */
 							JSONObject contratoAPPPagador = contratoAPP.getJSONObject("pagadorRecebedor");
 							this.objetoPagador = new PagadorRecebedor();
-							this.objetoPagador.setId(contratoAPPPagador.has("id") ? contratoAPPPagador.getLong("id")
-									: this.objetoContratoCobranca.getPagador().getId());
-
+							this.objetoPagadorDao = new PagadorRecebedorDao();
+							
+							//caso id seja encontrado => fazer find by ID usando PagadorDao
+							if(contratoAPPPagador.has("id")) {
+								this.objetoPagador = this.objetoPagadorDao.findById(contratoAPPPagador.getLong("id"));
+							}
+							//caso o cpf ja esteja no banco mas o id ainda nao => fazer find by CPF/CNPJ usando PagadorDao
+							else if (!contratoAPPPagador.has("id") && contratoAPPPagador.has("cpfCnpj") ) {
+								  
+								  this.objetoPagador = this.objetoPagadorDao.getConsultaByCpfCnpj(contratoAPPPagador.getString("cpfCnpj"));
+							        // Se existir, busca o pagador pelo cpf/cnpj e atualiza apenas os dados vazios
+								
+							}
+							//caso nao tenha nem id ou cpf/cnpj na base => novo cadastro
+							
 							if (StringUtils.isNotEmpty(tipoPessoa) && tipoPessoa.equals("PF")) {
-								this.objetoPagador.setCpf(
-										contratoAPPPagador.has("cpfCnpj") ? contratoAPPPagador.getString("cpfCnpj")
+								if(CommonsUtil.semValor(this.objetoPagador.getCpf())) 	
+									this.objetoPagador.setCpf(contratoAPPPagador.has("cpfCnpj") ? contratoAPPPagador.getString("cpfCnpj")
 												: this.objetoContratoCobranca.getPagador().getCpf());
 							} else if (StringUtils.isNotEmpty(tipoPessoa) && tipoPessoa.equals("PJ")) {
-								this.objetoPagador.setCnpj(
-										contratoAPPPagador.has("cpfCnpj") ? contratoAPPPagador.getString("cpfCnpj")
+								if(CommonsUtil.semValor(this.objetoPagador.getCnpj())) 
+								this.objetoPagador.setCnpj(contratoAPPPagador.has("cpfCnpj") ? contratoAPPPagador.getString("cpfCnpj")
 												: this.objetoContratoCobranca.getPagador().getCnpj());
 							}
-
-							this.objetoPagador
-									.setNome(contratoAPPPagador.has("nome") ? contratoAPPPagador.getString("nome")
+							if(CommonsUtil.semValor(this.objetoPagador.getNome())) 
+							this.objetoPagador.setNome(contratoAPPPagador.has("nome") ? contratoAPPPagador.getString("nome")
 											: this.objetoContratoCobranca.getPagador().getNome());
-							this.objetoPagador
-									.setEmail(contratoAPPPagador.has("email") ? contratoAPPPagador.getString("email")
+							if(CommonsUtil.semValor(this.objetoPagador.getEmail())) 
+							this.objetoPagador.setEmail(contratoAPPPagador.has("email") ? contratoAPPPagador.getString("email")
 											: this.objetoContratoCobranca.getPagador().getEmail());
+							if(CommonsUtil.semValor(this.objetoPagador.getTelCelular())) 
 							this.objetoPagador.setTelCelular(
 									contratoAPPPagador.has("telCelular") ? contratoAPPPagador.getString("telCelular")
 											: this.objetoContratoCobranca.getPagador().getTelCelular());
-							this.objetoPagador
-									.setSexo(contratoAPPPagador.has("sexo") ? contratoAPPPagador.getString("sexo")
+							if(CommonsUtil.semValor(this.objetoPagador.getSexo())) 
+							this.objetoPagador.setSexo(contratoAPPPagador.has("sexo") ? contratoAPPPagador.getString("sexo")
 											: this.objetoContratoCobranca.getPagador().getSexo());
 
 							SimpleDateFormat dtNascimento = new SimpleDateFormat("yyyy-MM-dd");
 							Date dtNascimentoDate = null;
-							try {
-								if (contratoAPPPagador.has("dataNascimento")) {
-									dtNascimentoDate = dtNascimento
-											.parse(contratoAPPPagador.getString("dataNascimento"));
-									this.objetoPagador.setDtNascimento(dtNascimentoDate);
-								} else {
-									this.objetoPagador.setDtNascimento(
-											this.objetoContratoCobranca.getPagador().getDtNascimento());
+							if(CommonsUtil.semValor(this.objetoPagador.getDtNascimento())) { 
+								try {
+									if (contratoAPPPagador.has("dataNascimento")) {
+										dtNascimentoDate = dtNascimento
+												.parse(contratoAPPPagador.getString("dataNascimento"));
+										this.objetoPagador.setDtNascimento(dtNascimentoDate);
+									} else {
+										this.objetoPagador.setDtNascimento(
+												this.objetoContratoCobranca.getPagador().getDtNascimento());
+									}
+								} catch (ParseException e) {
+									e.printStackTrace();
 								}
-							} catch (ParseException e) {
-								e.printStackTrace();
 							}
-
+							if(CommonsUtil.semValor(this.objetoPagador.getNomeMae())) 
 							this.objetoPagador.setNomeMae(
 									contratoAPPPagador.has("nomeMae") ? contratoAPPPagador.getString("nomeMae")
 											: this.objetoContratoCobranca.getPagador().getNomeMae());
+							if(CommonsUtil.semValor(this.objetoPagador.getEstadocivil())) 
 							this.objetoPagador.setEstadocivil(
 									contratoAPPPagador.has("estadoCivil") ? contratoAPPPagador.getString("estadoCivil")
 											: this.objetoContratoCobranca.getPagador().getEstadocivil());
+							if(CommonsUtil.semValor(this.objetoPagador.getCpfConjuge())) 
 							this.objetoPagador.setCpfConjuge(
 									contratoAPPPagador.has("cpfConjuge") ? contratoAPPPagador.getString("cpfConjuge")
 											: null);
+							if(CommonsUtil.semValor(this.objetoPagador.getNomeConjuge())) 
 							this.objetoPagador.setNomeConjuge(
 									contratoAPPPagador.has("nomeConjuge") ? contratoAPPPagador.getString("nomeConjuge")
 											: null);
+							if(CommonsUtil.semValor(this.objetoPagador.getDtNascimentoConjuge())) 
 							this.objetoPagador.setDtNascimentoConjuge(contratoAPPPagador.has("dtNascimentoConjuge")
 									? dtNascimento.parse(contratoAPPPagador.getString("dtNascimentoConjuge"))
 									: null);
+							if(CommonsUtil.semValor(this.objetoPagador.getNomeParticipanteCheckList())) 
 							this.objetoPagador
 									.setNomeParticipanteCheckList(contratoAPPPagador.has("nomeParticipanteCheckList")
 											? contratoAPPPagador.getString("nomeParticipanteCheckList")
 											: this.objetoContratoCobranca.getPagador().getNomeParticipanteCheckList());
-							this.objetoContratoCobranca.setPagador(this.objetoPagador);
+													     
+						
+							this.objetoContratoCobranca.setPagador(this.objetoPagador);	
+							
+							
 
+// Fazer uma coluna origem para checar de onde esta vindo o cadastro
+							
 							/***
 							 * OBJETO IMOVEL
 							 */
