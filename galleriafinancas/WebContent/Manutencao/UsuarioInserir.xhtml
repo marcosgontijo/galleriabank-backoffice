@@ -616,6 +616,20 @@
 							</shiro:hasAnyRoles>
 						</h:panelGroup>
 						
+						<h:outputLabel for="cartorio"
+							value="Cartorio:" class="labelBold" />
+						<h:panelGroup>
+							<p:selectBooleanButton id="cartorio"
+								disabled="!#{usuarioMB.objetoUsuario.userCobranca}"
+								value="#{usuarioMB.objetoUsuario.profileCartorio}" onLabel="Sim"
+								offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+								style="width:60px">
+							</p:selectBooleanButton>
+							<shiro:hasAnyRoles name="ROOT">
+								<h:outputLabel value="PROFILE_CARTORIO" />
+							</shiro:hasAnyRoles>
+						</h:panelGroup>
+						
 					</h:panelGrid>
 				</p:panel>
 				<p:panel id="PanelBlockBackoffice"

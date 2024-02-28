@@ -237,7 +237,10 @@
 		<property name="userPlanejamento" type="boolean">
 			<column name="userPlanejamento" not-null="true" default="false" />
 		</property>
-
+		
+		<property name="profileCartorio" type="boolean">
+			<column name="profileCartorio" not-null="true" default="false" />
+		</property>
 
     </class>
 </hibernate-mapping>
