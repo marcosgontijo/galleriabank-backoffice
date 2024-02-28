@@ -525,7 +525,7 @@
 			<column name="dataDeEmissaoAnterior" />
 		</property>
 		
-		<property name="vencimentoUltimaParcelaPagamentoAnterior" type="java.util.Date">
+		<property name="vencimentoUltimaParcelaPagamentoAnterior" type="java.lang.String">
 			<column name="vencimentoUltimaParcelaPagamentoAnterior" />
 		</property>
 		        

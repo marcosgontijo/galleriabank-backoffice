@@ -71,10 +71,10 @@
 						<p:dataTable id="resumoScr" var="scr"
 							rendered="#{paramDocumentoAnalise != null}"
 							value="#{paramDocumentoAnalise.getResumoScr()}">
-							<p:column style="width:75px;">
+							<p:column>
 								<h:outputText value="#{scr.descricao}" />
 							</p:column>
-							<p:column >
+							<p:column style="width:75px;">
 								<h:outputText value="#{scr.valor}" />
 							</p:column>
 						</p:dataTable>
@@ -123,8 +123,24 @@
 						<p:column>
 							<h:outputText value="#{financas.descricao}" />
 						</p:column>
-						<p:column>
+						<p:column style="width:75px;">
 							<h:outputText value="#{financas.valor}" />
+						</p:column>
+					</p:dataTable>
+				</f:facet>
+			</p:panel>
+			
+			<p:panel>
+				<f:facet name="header">
+					<h:outputText value="Grupo Empresarial" />
+					<p:dataTable id="resumoGrupoEmpresas" var="grupoEmpresa"
+						rendered="#{paramDocumentoAnalise != null}"
+						value="#{paramDocumentoAnalise.getResumoGrupoEmpresarial()}">
+						<p:column>
+							<h:outputText value="#{grupoEmpresa.descricao}" />
+						</p:column>
+						<p:column>
+							<h:outputText value="#{grupoEmpresa.valor}" />
 						</p:column>
 					</p:dataTable>
 				</f:facet>
