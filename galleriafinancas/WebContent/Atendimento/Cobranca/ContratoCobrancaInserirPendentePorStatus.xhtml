@@ -5336,14 +5336,15 @@
 			</p:panel>
 
 			<div align="center">
-				<p:commandButton value="Atualizar" ajax="false" icon="ui-icon-check"
+				<p:commandButton value="Atualizar nino" ajax="true" icon="ui-icon-check"
 					action="#{contratoCobrancaMB.editPreContratoPorStatus()}"
+					oncomplete="PF('comparacoesPopPupIdvar').show()"
+					update="comparacoesPopPupId "
 					style="TEXT-DECORATION: bold;"
 					rendered="#{contratoCobrancaMB.updateMode}">
 					<f:setPropertyActionListener
 						target="#{contratoCobrancaMB.preContratoCustom}" value="false" />
 				</p:commandButton>
-				<p:spacer height="10" />
 				<shiro:hasAnyRoles name="ROOT">
 					<p:commandButton value="Excluir" ajax="false" icon="ui-icon-trash"
 						action="#{contratoCobrancaMB.deletePreContrato()}"
