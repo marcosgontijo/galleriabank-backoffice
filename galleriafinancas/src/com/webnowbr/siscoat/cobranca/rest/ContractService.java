@@ -209,6 +209,7 @@ public class ContractService {
 						JSONObject contratoAPPPagador = contratoAPP.getJSONObject("pagadorRecebedor");
 						this.objetoPagador = new PagadorRecebedor();
 						PagadorRecebedorDao pagadorDao = new PagadorRecebedorDao();
+						this.objetoPagador.setOrigem("App");
 
 						if (contratoAPPPagador.has("id")) {
 							System.out.println("Contract Service - Criar Operacao - Pagador ID: {} "
