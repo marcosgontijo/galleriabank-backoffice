@@ -49,6 +49,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -77,6 +78,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.hibernate.JDBCException;
+import org.hibernate.SessionFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.primefaces.PrimeFaces;
@@ -146,6 +148,7 @@ import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFavorecidos;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFinanceiroDiaConsultaDetalhesParcialVO;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFinanceiroDiaConsultaDetalhesVO;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaFinancerioDiaConsultaVO;
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaLogsAlteracao;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaLogsAlteracaoDetalhe;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaObservacoes;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaParcelasInvestidor;
@@ -185,6 +188,7 @@ import com.webnowbr.siscoat.cobranca.db.op.ComparativoCamposEsteiraDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContasPagarDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaDetalhesDao;
+import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaLogsAlteracaoDao;
 import com.webnowbr.siscoat.cobranca.db.op.ContratoCobrancaParcelasInvestidorDao;
 import com.webnowbr.siscoat.cobranca.db.op.DashboardDao;
 import com.webnowbr.siscoat.cobranca.db.op.DocketConsultaDao;
@@ -257,6 +261,7 @@ import br.com.galleriabank.drcalc.cliente.model.DebitosJudiciais;
 import br.com.galleriabank.drcalc.cliente.model.DebitosJudiciaisRequest;
 import br.com.galleriabank.drcalc.cliente.model.DebitosJudiciaisRequestValor;
 import br.com.galleriabank.drcalc.cliente.model.DebitosJudiciaisValores;
+import jakarta.mail.Session;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -273,7 +278,6 @@ public class ContratoCobrancaMB {
 	/** Variavel. */
 	private DocumentoAnalise objetoDocumentoAnalise;
 	private ContratoCobranca objetoContratoCobranca;
-	private ContratoCobranca objetoContratoCobrancaOriginal;
 	private ContratoCobrancaService contratoCobrancaService = new ContratoCobrancaService() ;
 	private String numeroContratoObjetoContratoCobranca;
 	private List<FileUploaded> documentoConsultarTodos;
@@ -420,7 +424,9 @@ public class ContratoCobrancaMB {
 	private GravamesRea gravamePopup;
 	private String estadoConsultaAdd;
 	private List<String> camposDeVerificacaoDeAlteracao;
-	private List<ContratoCobrancaLogsAlteracaoDetalhe> listaDeAlteracoes;
+	//private List<ContratoCobrancaLogsAlteracaoDetalhe> listaDeAlteracoes;
+	private ContratoCobrancaLogsAlteracao contratoCobrancaLogsAlteracao = new ContratoCobrancaLogsAlteracao();
+	
 	private List<ComparativoCamposEsteira> comparativoCamposEsteira;
 	
 	
@@ -4111,19 +4117,28 @@ public class ContratoCobrancaMB {
 			}
 
 			this.comparativoCamposEsteira = comparativosCamposEsteraDao.findAll();
-			this.listaDeAlteracoes = contratoCobrancaService.comparandoValores(
+			
+			contratoCobrancaLogsAlteracao = new ContratoCobrancaLogsAlteracao();
+			contratoCobrancaLogsAlteracao.setDataAlteracao(DateUtil.getDataHoje());
+			contratoCobrancaLogsAlteracao.setUsuario(getUsuarioLogado().getLogin());
+			contratoCobrancaLogsAlteracao.setStatusEsteira(this.objetoContratoCobranca.getStatusEsteira());
+			contratoCobrancaLogsAlteracao.setContratoCobranca(objetoContratoCobranca);
+			
+			ContratoCobrancaLogsAlteracaoDao contratoCobrancaLogsAlteracaoDao = new ContratoCobrancaLogsAlteracaoDao();
+			contratoCobrancaLogsAlteracaoDao.merge(this.contratoCobrancaLogsAlteracao);
+
+			
+			
+			this.contratoCobrancaLogsAlteracao.setDetalhes(contratoCobrancaService.comparandoValores(
 					this.objetoContratoCobranca, 
 					contratoCobrancaDao.findById(this.objetoContratoCobranca.getId()),
-					comparativoCamposEsteira.stream().map(x -> x.getNome_propiedade()).collect(Collectors.toList()));
+					comparativoCamposEsteira.stream().map(x -> x.getNome_propiedade()).collect(Collectors.toList())).stream().collect(Collectors.toSet()));
 					
-			if (!listaDeAlteracoes.isEmpty()) {
-				for (int i = 0; i <= 4; i++) {
-					listaDeAlteracoes.addAll(listaDeAlteracoes);
-				}
+			if (!contratoCobrancaLogsAlteracao.getDetalhes().isEmpty()) {
 				return null;
 			}
 				//return finalizaCheckListeStatus(context, contratoCobrancaDao, usuarioLogado);
-			return finalizaCheckListeStatus(context, contratoCobrancaDao, usuarioLogado);
+			return finalizaCheckListStatus();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -4131,10 +4146,17 @@ public class ContratoCobrancaMB {
 			return "";
 		}
 	}
-
-	private String finalizaCheckListeStatus(FacesContext context, ContratoCobrancaDao contratoCobrancaDao, User usuarioLogado) {
+	
+	public String finalizaCheckListStatus() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
-
+		
+		if (!contratoCobrancaLogsAlteracao.getDetalhes().isEmpty()) {
+			ContratoCobrancaLogsAlteracaoDao contratoCobrancaLogsAlteracaoDao = new ContratoCobrancaLogsAlteracaoDao();
+			contratoCobrancaLogsAlteracaoDao.create(contratoCobrancaLogsAlteracao);
+		}
+		
 		// verifica se o contrato for aprovado, manda um tipo de email..
 		// senao valida se houve alteração no checklist para envio de email.
 		if (!SiscoatConstants.DEV && !CommonsUtil.sistemaWindows()) {
@@ -4150,7 +4172,7 @@ public class ContratoCobrancaMB {
 
 		this.objetoCcb = null;
 
-		if (usuarioLogado.isComiteConsultar()) {
+		if (getUsuarioLogado().isComiteConsultar()) {
 			return "/Atendimento/Cobranca/ContratoCobrancaCRMConsultar.xhtml";
 		}
 
@@ -37431,14 +37453,14 @@ public class ContratoCobrancaMB {
 		this.txAdm = txAdm;
 	}
 
-	public List<ContratoCobrancaLogsAlteracaoDetalhe> getListaDeAlteracoes() {
-		return listaDeAlteracoes;
+	public ContratoCobrancaLogsAlteracao getContratoCobrancaLogsAlteracao() {
+		return contratoCobrancaLogsAlteracao;
 	}
 
-	public void setListaDeAlteracoes(List<ContratoCobrancaLogsAlteracaoDetalhe> listaDeAlteracoes) {
-		this.listaDeAlteracoes = listaDeAlteracoes;
+	public void setContratoCobrancaLogsAlteracao(ContratoCobrancaLogsAlteracao contratoCobrancaLogsAlteracao) {
+		this.contratoCobrancaLogsAlteracao = contratoCobrancaLogsAlteracao;
 	}
-	
+
 	public String retornaDescricaoCampo(String nomePropiedade) {
 		Optional<String> descricao =  comparativoCamposEsteira.stream()
 				.filter(y -> y.getNome_propiedade().equals(nomePropiedade.toLowerCase()))
@@ -37448,7 +37470,6 @@ public class ContratoCobrancaMB {
 			return descricao.get();
 		} 
 		return null;
-		
 	}
 }
 

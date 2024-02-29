@@ -9,6 +9,8 @@ public class ContratoCobrancaLogsAlteracao {
 	private Date dataAlteracao;
 	private String usuario;
 	private String observacao;
+	private String statusEsteira;			
+	private ContratoCobranca contratoCobranca;
 	private Set<ContratoCobrancaLogsAlteracaoDetalhe> detalhes;
 	
 	public long getId() {
@@ -41,5 +43,17 @@ public class ContratoCobrancaLogsAlteracao {
 	public void setDetalhes(Set<ContratoCobrancaLogsAlteracaoDetalhe> detalhes) {
 		this.detalhes = detalhes;
 	}
-
+	public String getStatusEsteira() {
+		return statusEsteira;
+	}
+	public void setStatusEsteira(String statusEsteira) {
+		this.statusEsteira = statusEsteira;
+	}
+	public ContratoCobranca getContratoCobranca() {
+		return contratoCobranca;
+	}
+	public void setContratoCobranca(ContratoCobranca contratoCobranca) {
+		this.contratoCobranca = contratoCobranca;
+	}
+	
 }
