@@ -191,66 +191,80 @@ public class DocumentoAnalise implements Serializable {
 			vProcesso.add(new DocumentoAnaliseResumo("não disponível", null));
 		} else {
 			br.com.galleriabank.bigdata.cliente.model.processos.ProcessoResumo processo = processoResponse.getProcessoResumo();
-			if (processo.getCriminal() == null) {
-				vProcesso.add(new DocumentoAnaliseResumo("Criminal:", "Nada consta"));
-			} else {
-				String processosQuantidade = CommonsUtil.stringValue(processo.getCriminal().stream().mapToInt(p -> p.getQuatidade()).sum());
-				Double processosValor = processo.getCriminal().stream().mapToDouble(p -> p.getValor()).sum();
-				vProcesso.add(new DocumentoAnaliseResumo("Criminal:", String.format("%,.2f", processosValor) + " (" + processosQuantidade + ")"));
-				
-				if (Integer.parseInt(processosQuantidade) > 0) {
-					contemAcoesProcesso = true;
-					ressalvaProcessosNome = processoResponse.getNome();
-				}
-			}
+			if (!CommonsUtil.semValor(processo)) {
+				if (processo.getCriminal() == null) {
+					vProcesso.add(new DocumentoAnaliseResumo("Criminal:", "Nada consta"));
+				} else {
+					String processosQuantidade = CommonsUtil
+							.stringValue(processo.getCriminal().stream().mapToInt(p -> p.getQuatidade()).sum());
+					Double processosValor = processo.getCriminal().stream().mapToDouble(p -> p.getValor()).sum();
+					vProcesso.add(new DocumentoAnaliseResumo("Criminal:",
+							String.format("%,.2f", processosValor) + " (" + processosQuantidade + ")"));
 
-			if (processo.getTrabalhista() == null) {
-				vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:", "Nada consta"));
-			} else {
-				String processosQuantidade = CommonsUtil.stringValue(processo.getTrabalhista().stream().mapToInt(p -> p.getQuatidade()).sum());
-				Double processosValor = processo.getTrabalhista().stream().mapToDouble(p -> p.getValor()).sum();
-				
-				vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:", String.format("%,.2f", processosValor) + " (" + processosQuantidade + ")"));
-				ressalvaTrabalhistaNome = processoResponse.getNome();
-				
-				if (Integer.parseInt(processosQuantidade) > 0) {
-					contemAcoesProcesso = true;
+					if (Integer.parseInt(processosQuantidade) > 0) {
+						contemAcoesProcesso = true;
+						ressalvaProcessosNome = processoResponse.getNome();
+					}
 				}
-			}
 
-			if (processo.getTituloExtraJudicial() == null) {
-				vProcesso.add(new DocumentoAnaliseResumo("Execução de título:", "Nada consta"));
-			} else {
-				String processosQuantidade = CommonsUtil.stringValue(processo.getTituloExtraJudicial().stream().mapToInt(p -> p.getQuatidade()).sum());
-				Double processosValor = processo.getTituloExtraJudicial().stream().mapToDouble(p -> p.getValor()).sum();
-				vProcesso.add(new DocumentoAnaliseResumo("Execução de título:", String.format("%,.2f", processosValor) + " (" + processosQuantidade + ")"));
-				
-				if (Integer.parseInt(processosQuantidade) > 0) {
-					contemAcoesProcesso = true;
+				if (processo.getTrabalhista() == null) {
+					vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:", "Nada consta"));
+				} else {
+					String processosQuantidade = CommonsUtil
+							.stringValue(processo.getTrabalhista().stream().mapToInt(p -> p.getQuatidade()).sum());
+					Double processosValor = processo.getTrabalhista().stream().mapToDouble(p -> p.getValor()).sum();
+
+					vProcesso.add(new DocumentoAnaliseResumo("Trabalhista:",
+							String.format("%,.2f", processosValor) + " (" + processosQuantidade + ")"));
+					ressalvaTrabalhistaNome = processoResponse.getNome();
+
+					if (Integer.parseInt(processosQuantidade) > 0) {
+						contemAcoesProcesso = true;
+					}
 				}
-			}
 
-			if (processo.getTituloExecucaoFiscal() == null) {
-				vProcesso.add(new DocumentoAnaliseResumo("Execução Fiscal:", "Nada consta"));
-			} else {
-				String processosQuantidade = CommonsUtil.stringValue(processo.getTituloExecucaoFiscal().stream().mapToInt(p -> p.getQuatidade()).sum());
-				Double processosValor = processo.getTituloExecucaoFiscal().stream().mapToDouble(p -> p.getValor()).sum();
-				vProcesso.add(new DocumentoAnaliseResumo("Execução Fiscal:", String.format("%,.2f", processosValor) + " (" + processosQuantidade + ")"));
-				
-				if (Integer.parseInt(processosQuantidade) > 0) {
-					contemAcoesProcesso = true;
+				if (processo.getTituloExtraJudicial() == null) {
+					vProcesso.add(new DocumentoAnaliseResumo("Execução de título:", "Nada consta"));
+				} else {
+					String processosQuantidade = CommonsUtil.stringValue(
+							processo.getTituloExtraJudicial().stream().mapToInt(p -> p.getQuatidade()).sum());
+					Double processosValor = processo.getTituloExtraJudicial().stream().mapToDouble(p -> p.getValor())
+							.sum();
+					vProcesso.add(new DocumentoAnaliseResumo("Execução de título:",
+							String.format("%,.2f", processosValor) + " (" + processosQuantidade + ")"));
+
+					if (Integer.parseInt(processosQuantidade) > 0) {
+						contemAcoesProcesso = true;
+					}
 				}
-			}
 
-			if (processo.getOutros() == null) {
-				vProcesso.add(new DocumentoAnaliseResumo("Outros:", "Nada consta"));
-			} else {
-				String processosQuantidade = CommonsUtil.stringValue(processo.getOutros().stream().mapToInt(p -> p.getQuatidade()).sum());
-				Double processosValor = processo.getOutros().stream().mapToDouble(p -> p.getValor()).sum();
-				vProcesso.add(new DocumentoAnaliseResumo("Outros:", String.format("%,.2f", processosValor) + " (" + processosQuantidade + ")"));
-				
-				if (Integer.parseInt(processosQuantidade) > 0) {
-					contemAcoesProcesso = true;
+				if (processo.getTituloExecucaoFiscal() == null) {
+					vProcesso.add(new DocumentoAnaliseResumo("Execução Fiscal:", "Nada consta"));
+				} else {
+					String processosQuantidade = CommonsUtil.stringValue(
+							processo.getTituloExecucaoFiscal().stream().mapToInt(p -> p.getQuatidade()).sum());
+					Double processosValor = processo.getTituloExecucaoFiscal().stream().mapToDouble(p -> p.getValor())
+							.sum();
+					vProcesso.add(new DocumentoAnaliseResumo("Execução Fiscal:",
+							String.format("%,.2f", processosValor) + " (" + processosQuantidade + ")"));
+
+					if (Integer.parseInt(processosQuantidade) > 0) {
+						contemAcoesProcesso = true;
+					}
+				}
+
+				if (processo.getOutros() == null) {
+					vProcesso.add(new DocumentoAnaliseResumo("Outros:", "Nada consta"));
+				} else {
+					String processosQuantidade = CommonsUtil
+							.stringValue(processo.getOutros().stream().mapToInt(p -> p.getQuatidade()).sum());
+					Double processosValor = processo.getOutros().stream().mapToDouble(p -> p.getValor()).sum();
+					vProcesso.add(new DocumentoAnaliseResumo("Outros:",
+							String.format("%,.2f", processosValor) + " (" + processosQuantidade + ")"));
+
+					if (Integer.parseInt(processosQuantidade) > 0) {
+						contemAcoesProcesso = true;
+					}
 				}
 			}
 		}
