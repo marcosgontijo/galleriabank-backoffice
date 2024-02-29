@@ -216,6 +216,17 @@ public class DocumentoAnaliseJobConsultar {
 				if (documentoAnalise.isPodeChamarFinancas()) {
 					bigDataService.requestFinancas(documentoAnalise);
 				}
+				
+				if (documentoAnalise.isPodeChamarGrupoEmpresarial()) {
+					documentoAnalise.addObservacao("Processando Grupo Empresarial");
+//					PrimeFaces.current().ajax().update("form:ArquivosSalvosAnalise");
+					bigDataService.criarConsultaGrupoEmpresarial(documentoAnalise);
+
+//					PagadorRecebedorService pagadorRecebedorService = new PagadorRecebedorService();
+					pagadorRecebedorService.adicionarConsultaNoPagadorRecebedor(documentoAnalise.getPagador(),
+							DocumentosAnaliseEnum.GRUPOEMPRESARIAL, documentoAnalise.getRetornoGrupoEmpresarial());
+
+				}
 
 				documentoAnalise.addObservacao("Pesquisas finalizadas");
 				documentoAnaliseDao.merge(documentoAnalise);

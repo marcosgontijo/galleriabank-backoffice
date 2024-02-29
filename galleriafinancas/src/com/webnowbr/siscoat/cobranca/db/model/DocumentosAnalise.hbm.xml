@@ -162,6 +162,10 @@
 			<column name="retornoFrotaVeiculos" />
 		</property>
 		
+		<property name="retornoGrupoEmpresarial" type="java.lang.String" >
+			<column name="retornoGrupoEmpresarial" />
+		</property>
+		
 		<set name="plexiConsultas" table="PlexiConsultas" cascade="merge"
                  lazy="false" fetch="select">
             <key>

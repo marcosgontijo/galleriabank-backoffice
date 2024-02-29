@@ -93,8 +93,7 @@
 					<p:dataTable id="dtFilesAnalise" var="fileAnalise"
 						value="#{contratoCobrancaMB.listaDocumentoAnalise}"
 						rowKey="#{fileAnalise.id}"
-						paginator="true"
-						rows="10"  selection="#{contratoCobrancaMB.listaSelectAnalise}" 
+						 selection="#{contratoCobrancaMB.listaSelectAnalise}" 
 						emptyMessage=""
 						rowStyleClass="#{(fileAnalise.observacao ne null
 							or contratoCobrancaMB.objetoContratoCobranca.emAnalise) ? '' : 'ui-helper-hidden'}">

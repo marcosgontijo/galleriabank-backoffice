@@ -278,6 +278,7 @@ public class ContratoCobrancaMB {
 	private BigDecimal valorMercadoImovelTrinta;
 	private BigDecimal valorMercadoImovelQuarenta;
 	private BigDecimal valorMercadoImovelCinquenta;
+	private BigDecimal valorTotalContrato;
 	 private boolean apagaListaCartorio;
 
 	private boolean updateMode = false;
@@ -3416,7 +3417,7 @@ public class ContratoCobrancaMB {
 			this.objetoContratoCobranca.populaStatusEsteira(getUsuarioLogadoNull());
 			contratoCobrancaDao.merge(this.objetoContratoCobranca);
 			
-			if(!listPreLaudoImoveisRelac.isEmpty()) {
+			if(!CommonsUtil.semValor(listPreLaudoImoveisRelac)) {
 				for(ImovelCobranca imovel: listPreLaudoImoveisRelac) {
 					imovelDao.merge(imovel);
 				}
@@ -4112,6 +4113,16 @@ public class ContratoCobrancaMB {
 						contasPagarDao.merge(despesaNotaFiscal);
 				}
 			}
+			if (this.tituloTelaConsultaPreStatus.equals("Ag. Certificado")) {
+				this.objetoContratoCobranca.getImovel().setObservacao("O imóvel" +  this.objetoContratoCobranca.getImovel().getTipo() +
+						" objeto da matricula nº " + this.objetoContratoCobranca.getImovel().getNumeroMatricula() + 
+						" do " + this.objetoContratoCobranca.getImovel().getNumeroCartorio() + " oficial de registro de imóvel de " + 
+						this.objetoContratoCobranca.getImovel().getCartorioMunicipio() + " - " + this.objetoContratoCobranca.getImovel().getCartorioEstado() +
+				        ", localizado no municipio de" + this.objetoContratoCobranca.getImovel().getCidade()+
+				        ", estado de " + this.objetoContratoCobranca.getImovel().getEstado()+ ", no endereço " 
+				        + this.objetoContratoCobranca.getImovel().getEnderecoSimplificado());
+			}
+			
 			contratoCobrancaDao.merge(this.objetoContratoCobranca);
 
 			// verifica se o contrato for aprovado, manda um tipo de email..
@@ -8945,7 +8956,7 @@ public class ContratoCobrancaMB {
 			this.valorPresenteParcela = (saldo).divide(CommonsUtil.bigDecimalValue(divisor), MathContext.DECIMAL128);
 			this.valorPresenteParcela = this.valorPresenteParcela.setScale(2, BigDecimal.ROUND_HALF_UP);
 
-			if (parcelas.getDataVencimento().before(getDataHoje())) {
+			if (parcelas.getDataVencimento().before(DateUtil.getDataHoje())) {
 				if (!CommonsUtil.semValor(parcelas.getSeguroDFI())) {
 					valorPresenteParcela = valorPresenteParcela.add(parcelas.getSeguroDFI());
 				}
@@ -8959,6 +8970,7 @@ public class ContratoCobrancaMB {
 
 			valorPresenteTotalContrato = valorPresenteTotalContrato.add(this.valorPresenteParcela);
 		}
+		this.valorTotalContrato = valorPresenteTotalContrato;
 
 		return valorPresenteTotalContrato;
 	}
@@ -8976,6 +8988,8 @@ public class ContratoCobrancaMB {
 		this.quitacaoPDF = new QuitacaoPDF();
 		this.porcentagemDesconto = BigDecimal.ZERO;
 		this.valorComDesconto = BigDecimal.ZERO;
+		
+		calcularValorPresenteTotalContrato(objetoContratoCobranca);
 
 		simularQuitacaoContrato();
 	}
@@ -34169,7 +34183,7 @@ public class ContratoCobrancaMB {
 
 			byte[] conteudo = event.getFile().getContents();
 			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(),
-					event.getFile().getFileName(), "//juridico/", getUsuarioLogado());
+					event.getFile().getFileName(), "//pre-laudo/", getUsuarioLogado());
 
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
@@ -37820,6 +37834,7 @@ public class ContratoCobrancaMB {
 		this.filtroDataCorteRelatorioInicio = filtroDataCorteRelatorioInicio;
 	}
 
+<<<<<<< HEAD
 	public String getMetodoPixOrdemPagamentoStark() {
 		return metodoPixOrdemPagamentoStark;
 	}
@@ -37827,4 +37842,14 @@ public class ContratoCobrancaMB {
 	public void setMetodoPixOrdemPagamentoStark(String metodoPixOrdemPagamentoStark) {
 		this.metodoPixOrdemPagamentoStark = metodoPixOrdemPagamentoStark;
 	}
+=======
+	public BigDecimal getValorTotalContrato() {
+		return valorTotalContrato;
+	}
+
+	public void setValorTotalContrato(BigDecimal valorTotalContrato) {
+		this.valorTotalContrato = valorTotalContrato;
+	}
+	
+>>>>>>> e3746c86ecc690554b592960364747bf574f8c8e
 }

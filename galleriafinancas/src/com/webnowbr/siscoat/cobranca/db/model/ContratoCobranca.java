@@ -944,7 +944,7 @@ public class ContratoCobranca implements Serializable {
 		if (CommonsUtil.semValor(this.taxaPreDefinida))
 			return taxaPreAprovada;
 		else {
-			if (this.taxaPreDefinida.compareTo(taxaPreAprovada) > 0)
+			if (this.taxaPreDefinida.compareTo(CommonsUtil.bigDecimalValue(taxaPreAprovada)) > 0)
 				return taxaPreDefinida;
 			else
 				return taxaPreAprovada;
