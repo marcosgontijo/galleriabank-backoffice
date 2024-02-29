@@ -4156,8 +4156,9 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ " inner join cobranca.cobranca_detalhes_parcial_join cdpj on cdpj.idcontratocobrancadetalhes = cd.id "
 			+ " inner join cobranca.contratocobrancadetalhesparcial cdp on cdp.id = cdpj.idcontratocobrancadetalhesparcial " 
 			+ " inner join cobranca.contratocobranca_detalhes_join cdj on cd.id = cdj.idcontratocobrancadetalhes "
-			+ " inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca  "
-			+ " where cc.cedenteBRLCessao = ? "
+			+ " inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca  ";
+	
+	private static final String WHERE_JSON_LIQUIDACAO_DATA = " where cc.cedenteBRLCessao = ? "
 			+ " and cc.empresa = 'FIDC GALLERIA' "
 			+ " and "
 			+ "	( (cdp.dataPagamento >= ? ::timestamp "
@@ -4165,9 +4166,12 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "	or (cdp.baixagalleria "
 			+ "		and cdp.datapagamentogalleria >= ? ::timestamp "
 			+ "		and cdp.datapagamentogalleria <= ? ::timestamp))	";
+	
+	private static final String WHERE_JSON_LIQUIDACAO_CONTRATO = " where cc.numerocontrato = ? "
+			+ "and cd.numeroparcela = ?";
 
 	@SuppressWarnings("unchecked")
-	public List<ContratoCobrancaBRLLiquidacao> consultaContratosBRLLiquidacao(final Date dataBaixaInicial, final Date dataBaixaFinal, final String cedenteCessao) {
+	public List<ContratoCobrancaBRLLiquidacao> consultaContratosBRLLiquidacao(final Date dataBaixaInicial, final Date dataBaixaFinal, final String cedenteCessao, final boolean consultaContrato, final String numContrato, final String numParcela) {
 		return (List<ContratoCobrancaBRLLiquidacao>) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -4179,20 +4183,28 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 				String query_RELATORIO_FINANCEIRO_CUSTOM = null;				
 				try {
 					connection = getConnection();
-					
 					query_RELATORIO_FINANCEIRO_CUSTOM = QUERY_CONSULTA_BRL_CONTRATO_JSON_LIQUIDACAO;
+					if(!consultaContrato)
+						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + WHERE_JSON_LIQUIDACAO_DATA;
+					else
+						query_RELATORIO_FINANCEIRO_CUSTOM = query_RELATORIO_FINANCEIRO_CUSTOM + WHERE_JSON_LIQUIDACAO_CONTRATO;
 					
 					java.sql.Date dtRelInicioSQL = new java.sql.Date(dataBaixaInicial.getTime());
 					java.sql.Date dtRelFimSQL = new java.sql.Date(dataBaixaFinal.getTime());
 
 					ps = connection
 							.prepareStatement(query_RELATORIO_FINANCEIRO_CUSTOM);			
-	
-					ps.setString(1, cedenteCessao);
-					ps.setDate(2, dtRelInicioSQL);
-					ps.setDate(3, dtRelFimSQL);
-					ps.setDate(4, dtRelInicioSQL);
-					ps.setDate(5, dtRelFimSQL);
+					if(!consultaContrato) {
+						ps.setString(1, cedenteCessao);
+						ps.setDate(2, dtRelInicioSQL);
+						ps.setDate(3, dtRelFimSQL);
+						ps.setDate(4, dtRelInicioSQL);
+						ps.setDate(5, dtRelFimSQL);
+					} else {
+						ps.setString(1, numContrato);
+						ps.setString(2, numParcela);
+					}
+					
 					
 					rs = ps.executeQuery();
 					
