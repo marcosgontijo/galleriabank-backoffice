@@ -4226,7 +4226,7 @@
 													action="#{contratoCobrancaMB.excluirOrdemPagamentoStarkBank(pagamento.contasPagar, pagamento)}" 
 													style="TEXT-DECORATION: bold; margin-right: 20px;" update=":form:messageContasPagar :form:ConsultaBaixasDespesas"/>
 											</shiro:hasAnyRoles>     
-											<p:commandButton value="Comprovante" ajax="false" icon="ui-icon-arrowthick-1-s" update=":form:messageContasPagar" rendered="#{baixas.statusPagamento eq 'Aprovado'}">						       	 	
+											<p:commandButton value="Comprovante" ajax="false" icon="ui-icon-arrowthick-1-s" update=":form:messageContasPagar" rendered="#{pagamento.statusPagamento eq 'Aprovado'}">						       	 	
 									       	 	<p:fileDownload value="#{contratoCobrancaMB.getDownloadComprovanteStarkBank(pagamento)}" />
 									    	</p:commandButton>	
 										</p:column> 		               		        			        			           			 		
@@ -5615,7 +5615,7 @@
 				</div>
 			</h:form>
 		</p:dialog>
-		
+
 		<p:dialog header="Ordem de Pagamento StarkBank" overflow="auto"
 			widgetVar="pagamentoStarkBankMultidlg" resizable="true" style="FONT-SIZE: 13pt;"
 			width="800" minWidth="800">
@@ -5695,11 +5695,23 @@
 				<p:panel id="PixStarkBank" header="PIX"
 					style="margin-bottom:10px;" rendered="#{contratoCobrancaMB.formaTransferenciaDespesaBaixa eq 'Pix'}">
 						<h:panelGrid columns="2">
-							<p:outputLabel for="nomeBancarioContaPagarPixStarkBank" value="Nome:" 
+							<p:outputLabel for="metodoPixStarkBank" value="Método PIX:" 
 								style="width:250px;" styleClass="labelBold"/>
+							<p:selectOneRadio id="metodoPixStarkBank" value="#{contratoCobrancaMB.metodoPixOrdemPagamentoStark}" unselectable="true">
+					            <f:selectItem itemLabel="Chave Pix" itemValue="Chave Pix" />
+					            <f:selectItem itemLabel="Dados Bancários" itemValue="Dados Bancários" />
+					            <f:selectItem itemLabel="QR Code Copia e Cola" itemValue="QR Code Copia e Cola" />
+					            <p:ajax event="change" update="PixStarkBank"/>					            					            
+					        </p:selectOneRadio>
+						</h:panelGrid>
+						<h:panelGrid columns="2">
+							<p:outputLabel for="nomeBancarioContaPagarPixStarkBank" value="Nome:" 
+								style="width:250px;" styleClass="labelBold" rendered="#{contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'Dados Bancários' || 
+									contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'Chave Pix'}"/>
 							<p:inputText id="nomeBancarioContaPagarPixStarkBank"
 								style="width:250px;"
-								value="#{contratoCobrancaMB.nomeRecebedorOrdemPagamentoStark}" required="true"/>
+								value="#{contratoCobrancaMB.nomeRecebedorOrdemPagamentoStark}" required="true" rendered="#{contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'Dados Bancários' || 
+									contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'Chave Pix'}"/>
 	
 							<p:outputLabel for="cpfCnpjBancarioContaPagarPixStarkBank" value="CPF/CNPJ: " 
 								style="width:250px;" styleClass="labelBold"/>
@@ -5709,43 +5721,49 @@
 	
 							<p:outputLabel for="tipoContaBancariaPix" value="Tipo da Conta: "
 									styleClass="labelBold"
-									style="font-weight: bold; font-size: 18px;" />
+									style="font-weight: bold; font-size: 18px;"  rendered="#{contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'Dados Bancários'}"/>
 							<p:selectOneMenu id="tipoContaBancariaPix"
-									value="#{contratoCobrancaMB.tipoContaBancariaOrdemPagamentoStark}">
+									value="#{contratoCobrancaMB.tipoContaBancariaOrdemPagamentoStark}"  rendered="#{contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'Dados Bancários'}">
 									<f:selectItem itemValue="" itemLabel="Selecione" />
 									<f:selectItem itemValue="Conta Corrente" itemLabel="Conta Corrente" />
 									<f:selectItem itemValue="Conta Poupança" itemLabel="Conta Poupança" />
 							</p:selectOneMenu>
 							
 							<p:outputLabel for="bancoBancarioContaPagarPixStarkBank" value="Banco: " 
-								style="width:250px;" styleClass="labelBold"/>
+								style="width:250px;" styleClass="labelBold"  rendered="#{contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'Dados Bancários'}"/>
 							<p:inputText id="bancoBancarioContaPagarPixStarkBank"
 								style="width:250px;"
-								value="#{contratoCobrancaMB.bancoOrdemPagamentoStark}" required="true" />
+								value="#{contratoCobrancaMB.bancoOrdemPagamentoStark}" required="true" rendered="#{contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'Dados Bancários'}" />
 	
 							<p:outputLabel for="agenciaBancarioContaPagarPixStarkBank" value="Agência: " 
-								style="width:250px;" styleClass="labelBold"/>
+								style="width:250px;" styleClass="labelBold"  rendered="#{contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'Dados Bancários'}"/>
 							<p:inputText id="agenciaBancarioContaPagarPixStarkBank"
 								style="width:250px;"
-								value="#{contratoCobrancaMB.agenciaOrdemPagamentoStark}" required="true" />
+								value="#{contratoCobrancaMB.agenciaOrdemPagamentoStark}" required="true"  rendered="#{contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'Dados Bancários'}"/>
 	
 							<p:outputLabel for="contaBancarioContaPagarPixStarkBank" value="C/C: " 
-								style="width:250px;" styleClass="labelBold"/>
+								style="width:250px;" styleClass="labelBold"  rendered="#{contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'Dados Bancários'}"/>
 							<p:inputText id="contaBancarioContaPagarPixStarkBank"
 								style="width:250px;"
-								value="#{contratoCobrancaMB.contaOrdemPagamentoStark}" required="true" />
+								value="#{contratoCobrancaMB.contaOrdemPagamentoStark}" required="true"  rendered="#{contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'Dados Bancários'}"/>
 								
 							<p:outputLabel for="chavePIXBancarioContaPagar" value="Chave Pix: " 
-								style="width:250px;" styleClass="labelBold"/>
+								style="width:250px;" styleClass="labelBold"  rendered="#{contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'Chave Pix'}"/>
 							<p:inputText id="chavePIXBancarioContaPagar"
 								style="width:250px;"
-								value="#{contratoCobrancaMB.pixOrdemPagamentoStark}"  />
+								value="#{contratoCobrancaMB.pixOrdemPagamentoStark}" rendered="#{contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'Chave Pix'}"/>
+								
+							<p:outputLabel for="qrCodeContaPagar" value="QR Code - Copia e Cola: " 
+								style="width:250px;" styleClass="labelBold"  rendered="#{contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'QR Code Copia e Cola'}"/>
+							<p:inputText id="qrCodeContaPagar"
+								style="width:250px;"
+								value="#{contratoCobrancaMB.pixOrdemPagamentoStark}" rendered="#{contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'QR Code Copia e Cola'}"/>
 								
 							<p:outputLabel for="ispbBancarioContaPagar" value="ISPB (se não tem chave PIX): " 
-								style="width:250px;" styleClass="labelBold"/>
+								style="width:250px;" styleClass="labelBold" rendered="#{contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'Dados Bancários'}"/>
 							<p:inputText id="ispbBancarioContaPagar"
 								style="width:250px;"
-								value="#{contratoCobrancaMB.ispbOrdemPagamentoStark}"  />
+								value="#{contratoCobrancaMB.ispbOrdemPagamentoStark}" rendered="#{contratoCobrancaMB.metodoPixOrdemPagamentoStark eq 'Dados Bancários'}" />
 							
 							<p:outputLabel for="ContaPagarValorPagoPixStarkBank" value="Valor a Pagar: "
 									styleClass="labelBold" />

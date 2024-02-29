@@ -28,6 +28,7 @@ import org.json.JSONObject;
 
 import com.starkbank.Balance;
 import com.starkbank.BoletoPayment;
+import com.starkbank.BrcodePayment;
 import com.starkbank.DictKey;
 import com.starkbank.Project;
 import com.starkbank.Settings;
@@ -647,6 +648,68 @@ public class StarkBankAPI{
 			e.printStackTrace();
 		}
     }   
+    
+    public StarkBankPix paymentPixQRCode(String qrCode, String documento, BigDecimal valor, String descricaoConta) {
+    	FacesContext context = FacesContext.getCurrentInstance();
+    	
+    	List<BrcodePayment> payments = new ArrayList<>();
+    
+    	if (descricaoConta != null && descricaoConta.contains("Pagamento Carta Split")) {
+    		loginStarkBankSCD();
+    	} else {
+    		loginStarkBank();    		
+    	}
+    	
+    	Date dataHoje = DateUtil.gerarDataHoje();
+    	
+    	try {
+    		
+    		List<BrcodePayment.Rule> rules = new ArrayList<>();
+    		rules.add(new BrcodePayment.Rule("resendingLimit", 5));
+	    	
+	    	HashMap<String, Object> data = new HashMap<>();
+	    	String valorStr = valor.toString();
+	    	data.put("amount", Long.valueOf(valorStr.replace(".", "").replace(",", "")));	
+	    	data.put("brcode", qrCode);
+	    	data.put("taxId", documento);
+	    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	    	data.put("scheduled", sdf.format(DateUtil.gerarDataHoje()));
+	    	data.put("description", descricaoConta);
+	    	data.put("tags", new String[]{"pix", "qrcode"});
+	    	data.put("rules", rules);
+	    	payments.add(new BrcodePayment(data));
+	    	
+	    	payments = BrcodePayment.create(payments);
+
+			StarkBankPix pixTransacao = new StarkBankPix();
+	    	for (BrcodePayment transfer : payments){
+				 pixTransacao.setId(Long.valueOf(transfer.id));
+				 pixTransacao.setCreated(DateUtil.convertDateTimeToDate(transfer.created));
+				 pixTransacao.setScheduled(transfer.scheduled);
+				 pixTransacao.setNomeComprovante(transfer.name);
+				 pixTransacao.setAmount(valor);
+				 pixTransacao.setTaxId(documento);
+				 pixTransacao.setPathComprovante(null);
+				 pixTransacao.setNomeComprovante(null);
+	    	}
+	    	
+	    	StarkBankPixDAO starkBankPixDAO = new StarkBankPixDAO();
+	    	starkBankPixDAO.create(pixTransacao);
+	    	
+	    	context.addMessage(null, new FacesMessage(
+					FacesMessage.SEVERITY_INFO, "StarkBank PIX: Pagamento efetuado com sucesso!", ""));
+	    	
+	    	return pixTransacao;
+		} catch (Exception e) {
+			context.addMessage(null, new FacesMessage(
+					FacesMessage.SEVERITY_ERROR, "StarkBank PIX: Ocorreu um problema ao fazer PIX! Erro: " + e.getMessage(), "")); 
+			
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	return null;
+    }
     
     public StarkBankPix paymentPixCodigo(String codigoPixBanco, String agencia, String numeroConta, String documento, String nomeBeneficiario, BigDecimal valor, String tipoOperacao, String descricaoConta, String tipoContaBancaria) {
     	FacesContext context = FacesContext.getCurrentInstance();
