@@ -44,6 +44,8 @@ import com.webnowbr.siscoat.credlocaliza.response.CredlocalizaVeiculos;
 
 import br.com.galleriabank.bigdata.cliente.model.financas.FinancasResponse;
 import br.com.galleriabank.bigdata.cliente.model.financas.FinancasResponseResultFinantialDataTaxReturns;
+import br.com.galleriabank.bigdata.cliente.model.grupoEmpresarial.GrupoEmpresarialEconomicGroups;
+import br.com.galleriabank.bigdata.cliente.model.grupoEmpresarial.GrupoEmpresarialResponseResult;
 import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetorno;
 import br.com.galleriabank.dataengine.cliente.model.retorno.EngineRetornoRequestFields;
 import br.com.galleriabank.dataengine.cliente.model.retorno.AntecedentesCriminais.EngineRetornoExecutionResultAntecedenteCriminaisEvidences;
@@ -106,6 +108,9 @@ public class DocumentoAnalise implements Serializable {
 	private String retornoPpe;
 	private String retornoLaudoRobo;
 	private String retornoRelacionamento;
+	private String retornoFinancas;
+	private String retornoFrotaVeiculos;
+	private String retornoGrupoEmpresarial;
 
 	private String retornoScr;
 	private String observacao;
@@ -155,9 +160,7 @@ public class DocumentoAnalise implements Serializable {
 	
 	private List<DocumentoAnaliseResumo> resumorelacionamentos;
 	
-	private String retornoFinancas;
 	
-	private String retornoFrotaVeiculos;
 	
 	public DocumentoAnalise() {
 		super();
@@ -675,6 +678,29 @@ public class DocumentoAnalise implements Serializable {
 		return veiculos;
 	}
 	
+	public List<DocumentoAnaliseResumo> getResumoGrupoEmpresarial() {
+		List<DocumentoAnaliseResumo> grupoEmpresas = new ArrayList<>();
+		String retorno = getRetornoGrupoEmpresarial();
+		GrupoEmpresarialResponseResult dado = GsonUtil.fromJson(retorno, GrupoEmpresarialResponseResult.class);
+		
+		if(CommonsUtil.semValor(dado))
+			grupoEmpresas.add(new DocumentoAnaliseResumo("Dados não disponíveis", "0"));
+		else if(CommonsUtil.semValor(dado.getResult()))
+			grupoEmpresas.add(new DocumentoAnaliseResumo("Dados não disponíveis", "0"));
+		else if(CommonsUtil.semValor(dado.getResult().get(0).getEconomicGroups()))
+			grupoEmpresas.add(new DocumentoAnaliseResumo("Dados não disponíveis", "0"));
+		else if(CommonsUtil.semValor(dado.getResult().get(0).getEconomicGroups().get(0)))
+			grupoEmpresas.add(new DocumentoAnaliseResumo("Dados não disponíveis", "0"));
+		else {
+			GrupoEmpresarialEconomicGroups grupoDetalhes = dado.getResult().get(0).getEconomicGroups().get(0);
+			grupoEmpresas.add(new DocumentoAnaliseResumo("Idade Empresa + nova", CommonsUtil.stringValue(grupoDetalhes.getMinCompanyAge())));
+			grupoEmpresas.add(new DocumentoAnaliseResumo("Idade Empresa + velha", CommonsUtil.stringValue(grupoDetalhes.getMaxCompanyAge())));
+			grupoEmpresas.add(new DocumentoAnaliseResumo("Receita Total", grupoDetalhes.getTotalIncomeRange()));
+			grupoEmpresas.add(new DocumentoAnaliseResumo("Total de funcionarios", grupoDetalhes.getTotalEmployeesRange()));
+		}
+		return grupoEmpresas;
+	}
+	
     private String convertString(String input) {
         String result = input.replaceAll("MM", " Milhões");
         StringBuilder finalResult = new StringBuilder();
@@ -769,6 +795,10 @@ public class DocumentoAnalise implements Serializable {
 	
 	public boolean isPodeChamarFinancas() {
 		return CommonsUtil.mesmoValor("PF", tipoPessoa) && CommonsUtil.semValor(getRetornoFinancas());
+	}
+	
+	public boolean isPodeChamarGrupoEmpresarial() {
+		return CommonsUtil.mesmoValor("PF", tipoPessoa) && CommonsUtil.semValor(getRetornoGrupoEmpresarial());
 	}
 
 	public boolean isEngineProcessado() {
@@ -1698,4 +1728,13 @@ public class DocumentoAnalise implements Serializable {
 	public void setReanalise(boolean reanalise) {
 		this.reanalise = reanalise;
 	}
+
+	public String getRetornoGrupoEmpresarial() {
+		return retornoGrupoEmpresarial;
+	}
+
+	public void setRetornoGrupoEmpresarial(String retornoGrupoEmpresarial) {
+		this.retornoGrupoEmpresarial = retornoGrupoEmpresarial;
+	}
+	
 }

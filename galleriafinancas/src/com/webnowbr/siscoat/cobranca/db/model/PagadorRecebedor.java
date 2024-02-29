@@ -253,6 +253,7 @@ public class PagadorRecebedor implements Serializable {
 	private List<CcbProcessosJudiciais> processos;
 	private Set<Averbacao> listAverbacao;
 	private BigDecimal valorProcessos;
+	private String origem;
 	
 	private User usuario;
 	
@@ -2429,5 +2430,13 @@ public class PagadorRecebedor implements Serializable {
 
 	public void setUniaoEstavel(boolean uniaoEstavel) {
 		this.uniaoEstavel = uniaoEstavel;
+	}
+	
+	public void setOrigem(String origem) {
+		this.origem = origem;
+	}
+	
+	public String getOrigem() {
+		return origem;
 	}
 }
