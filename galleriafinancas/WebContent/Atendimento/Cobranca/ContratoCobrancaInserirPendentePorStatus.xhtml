@@ -3727,7 +3727,7 @@
 
 				<h:panelGroup id="comissaoCliente" style="margin-bottom:20px;">
 					<shiro:hasAnyRoles
-					name="ROOT, PROFILE_CONTRATO, PROFILE_ANALISTA_POS_COMITE">
+					name="ROOT, PROFILE_CONTRATO, PROFILE_ANALISTA_COMITE">
 						<p:panel header="Comissão Cliente" style="margin-bottom:10px;"
 							rendered="#{( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'))}">
 							<h:panelGrid columns="2">
