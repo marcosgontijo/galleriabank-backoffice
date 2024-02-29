@@ -5,7 +5,7 @@
 <hibernate-mapping schema="cobranca">
     <class name="com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaLogsAlteracaoDetalhe" table="contratocobrancalogsalteracaodetalhe">
       <id name="id" type="long">
-			<column name="ID" />
+			<column name="id" />
 			<generator class="increment" />
 		</id>
    

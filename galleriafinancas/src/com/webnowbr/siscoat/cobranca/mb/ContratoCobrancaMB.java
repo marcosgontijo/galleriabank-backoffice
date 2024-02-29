@@ -1,5 +1,7 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
+import static org.junit.jupiter.api.DynamicTest.stream;
+
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -42,6 +44,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -4125,14 +4128,18 @@ public class ContratoCobrancaMB {
 			contratoCobrancaLogsAlteracao.setContratoCobranca(objetoContratoCobranca);
 			
 			ContratoCobrancaLogsAlteracaoDao contratoCobrancaLogsAlteracaoDao = new ContratoCobrancaLogsAlteracaoDao();
-			contratoCobrancaLogsAlteracaoDao.merge(this.contratoCobrancaLogsAlteracao);
+//			contratoCobrancaLogsAlteracaoDao.merge(this.contratoCobrancaLogsAlteracao);
 
+			List<String> camposComparar = comparativoCamposEsteira
+					.stream().map(x -> x.getNome_propiedade()).collect(Collectors.toList());
 			
-			
-			this.contratoCobrancaLogsAlteracao.setDetalhes(contratoCobrancaService.comparandoValores(
+			Set<ContratoCobrancaLogsAlteracaoDetalhe> detalhes = contratoCobrancaService.comparandoValores(
 					this.objetoContratoCobranca, 
 					contratoCobrancaDao.findById(this.objetoContratoCobranca.getId()),
-					comparativoCamposEsteira.stream().map(x -> x.getNome_propiedade()).collect(Collectors.toList())).stream().collect(Collectors.toSet()));
+					camposComparar,
+					this.contratoCobrancaLogsAlteracao).stream().collect(Collectors.toSet());
+			
+			this.contratoCobrancaLogsAlteracao.setDetalhes(detalhes);
 					
 			if (!contratoCobrancaLogsAlteracao.getDetalhes().isEmpty()) {
 				return null;
@@ -4149,13 +4156,16 @@ public class ContratoCobrancaMB {
 	
 	public String finalizaCheckListStatus() {
 		FacesContext context = FacesContext.getCurrentInstance();
-		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 		
 		if (!contratoCobrancaLogsAlteracao.getDetalhes().isEmpty()) {
 			ContratoCobrancaLogsAlteracaoDao contratoCobrancaLogsAlteracaoDao = new ContratoCobrancaLogsAlteracaoDao();
 			contratoCobrancaLogsAlteracaoDao.create(contratoCobrancaLogsAlteracao);
 		}
+		
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+		contratoCobrancaDao.merge(this.objetoContratoCobranca);
+		
+		
 		
 		// verifica se o contrato for aprovado, manda um tipo de email..
 		// senao valida se houve alteração no checklist para envio de email.

@@ -5,20 +5,20 @@
 <hibernate-mapping schema="cobranca">
     <class name="com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaLogsAlteracao" table="contratocobrancalogsalteracao">
        <id name="id" type="long">
-			<column name="ID" />
+			<column name="id" />
 			<generator class="increment" />
 		</id>
    
 		<property name="dataAlteracao" type="java.util.Date">
-            <column name="dataAlteracao" not-null="true"/>
+            <column name="dataAlteracao" />
         </property>
        
 		<property name="usuario" type="java.lang.String">
-			<column name="usuario" not-null="true"  />
+			<column name="usuario"   />
 		</property>
 		
 		<property name="observacao" type="java.lang.String">
-			<column name="observacao" not-null="true" />
+			<column name="observacao"  />
 		</property>
 		
 		<many-to-one name="contratoCobranca"  
@@ -28,13 +28,13 @@
 		</many-to-one>		
 		
 		<property name="statusEsteira" type="java.lang.String">
-			<column name="statusEsteira" not-null="true"  />
+			<column name="statusEsteira"   />
 		</property>
 		
-		<set name="detalhes" table="contratocobrancalogsalteracaodetalhe" cascade="merge"
+		<set name="detalhes" table="contratocobrancalogsalteracaodetalhe" cascade="all"
                  lazy="false" fetch="select">
             <key>
-                <column name="detalhes" not-null="true" />
+                <column name="detalhes"/>
             </key>
             <one-to-many class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobrancaLogsAlteracaoDetalhe" />
         </set>

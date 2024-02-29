@@ -8,10 +8,11 @@ public class ContratoCobrancaLogsAlteracaoDetalhe {
 	private String valorAlterado;
 	private ContratoCobrancaLogsAlteracao alteracao;
 	
-	public ContratoCobrancaLogsAlteracaoDetalhe(String nomeCampo, String valorBanco, String valorAlterado) {
+	public ContratoCobrancaLogsAlteracaoDetalhe(String nomeCampo, String valorBanco, String valorAlterado, ContratoCobrancaLogsAlteracao alteracao) {
 		this.nomeCampo = nomeCampo;
 		this.valorBanco = valorBanco;
 		this.valorAlterado = valorAlterado;
+		this.alteracao = alteracao;
 	}
 	
 	public long getId() {
