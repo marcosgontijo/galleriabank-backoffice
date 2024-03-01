@@ -203,6 +203,7 @@ public class ContractService {
 						this.objetoContratoCobranca.setPedidoPajuComercial(false);
 						this.objetoContratoCobranca.setTemTxAdm(false);
 
+						
 						/***
 						 * OBJETO PAGADOR
 						 */
@@ -308,74 +309,280 @@ public class ContractService {
 						this.objetoContratoCobranca.setPagador(this.objetoPagador);
 
 						/***
+						 * OBJETO PAGADOR
+						
+						JSONObject contratoAPPPagador = contratoAPP.getJSONObject("pagadorRecebedor");
+						this.objetoPagador = new PagadorRecebedor();
+						PagadorRecebedorDao pagadorDao = new PagadorRecebedorDao();
+
+						if (contratoAPPPagador.has("id")) {
+							System.out.println("Contract Service - Criar Operacao - Pagador ID: {} "
+									+ contratoAPPPagador.getLong("id"));
+							this.objetoPagador = pagadorDao.findById(contratoAPPPagador.getLong("id"));
+						} else {
+							this.objetoPagador.setId(-1);
+
+							if (contratoAPPPagador.has("cpfCnpj")) {
+								if (contratoAPPPagador.getString("cpfCnpj").length() <= 14) {
+									System.out.println("Contract Service - Criar Operacao - Novo Pagador CPF: {} "
+											+ contratoAPPPagador.getString("cpfCnpj"));
+									this.objetoPagador.setCpf(contratoAPPPagador.getString("cpfCnpj"));
+								} else if (contratoAPPPagador.getString("cpfCnpj").length() >= 15) {
+									System.out.println("Contract Service - Criar Operacao - Novo Pagador CNPJ: {} "
+											+ contratoAPPPagador.getString("cpfCnpj"));
+									this.objetoPagador.setCnpj(contratoAPPPagador.getString("cpfCnpj"));
+								}
+							}
+
+							SimpleDateFormat dtNascimento = new SimpleDateFormat("yyyy-MM-dd");
+							Date dtNascimentoDate = null;
+							try {
+								if (contratoAPPPagador.has("dataNascimento")) {
+									dtNascimentoDate = dtNascimento
+											.parse(contratoAPPPagador.getString("dataNascimento"));
+									this.objetoPagador.setDtNascimento(dtNascimentoDate);
+								} else {
+									this.objetoPagador.setDtNascimento(null);
+								}
+							} catch (ParseException e) {
+								e.printStackTrace();
+							}
+
+							this.objetoPagador.setRgDocumentosCheckList(contratoAPPPagador.has("rgDocumentosCheckList")
+									? contratoAPPPagador.getBoolean("rgDocumentosCheckList")
+									: false);
+							this.objetoPagador.setComprovanteEnderecoDocumentosCheckList(
+									contratoAPPPagador.has("comprovanteEnderecoDocumentosCheckList")
+											? contratoAPPPagador.getBoolean("comprovanteEnderecoDocumentosCheckList")
+											: false);
+							this.objetoPagador.setCertidaoCasamentoNascimentoDocumentosCheckList(
+									contratoAPPPagador.has("certidaoCasamentoNascimentoDocumentosCheckList")
+											? contratoAPPPagador
+													.getBoolean("certidaoCasamentoNascimentoDocumentosCheckList")
+											: false);
+							this.objetoPagador.setFichaCadastralDocumentosCheckList(
+									contratoAPPPagador.has("fichaCadastralDocumentosCheckList")
+											? contratoAPPPagador.getBoolean("fichaCadastralDocumentosCheckList")
+											: false);
+							this.objetoPagador
+									.setBancoDocumentosCheckList(contratoAPPPagador.has("bancoDocumentosCheckList")
+											? contratoAPPPagador.getBoolean("bancoDocumentosCheckList")
+											: false);
+							this.objetoPagador.setTelefoneEmailDocumentosCheckList(
+									contratoAPPPagador.has("telefoneEmailDocumentosCheckList")
+											? contratoAPPPagador.getBoolean("telefoneEmailDocumentosCheckList")
+											: false);
+							this.objetoPagador
+									.setComprovanteRendaCheckList(contratoAPPPagador.has("comprovanteRendaCheckList")
+											? contratoAPPPagador.getBoolean("comprovanteRendaCheckList")
+											: false);
+							this.objetoPagador
+									.setCombateFraudeCheckList(contratoAPPPagador.has("combateFraudeCheckList")
+											? contratoAPPPagador.getBoolean("combateFraudeCheckList")
+											: false);
+							this.objetoPagador
+									.setCargoOcupacaoCheckList(contratoAPPPagador.has("cargoOcupacaoCheckList")
+											? contratoAPPPagador.getBoolean("cargoOcupacaoCheckList")
+											: false);
+							this.objetoPagador.setTaxaCheckList(contratoAPPPagador.has("taxaCheckList")
+									? contratoAPPPagador.getBoolean("taxaCheckList")
+									: false);
+						}
+
+						this.objetoPagador
+								.setNome(contratoAPPPagador.has("nome") ? contratoAPPPagador.getString("nome") : null);
+						this.objetoPagador.setEmail(
+								contratoAPPPagador.has("email") ? contratoAPPPagador.getString("email") : null);
+						this.objetoPagador.setTelCelular(
+								contratoAPPPagador.has("telCelular") ? contratoAPPPagador.getString("telCelular")
+										: null);
+						this.objetoPagador
+								.setSexo(contratoAPPPagador.has("sexo") ? contratoAPPPagador.getString("sexo") : null);
+						this.objetoPagador.setNomeMae(
+								contratoAPPPagador.has("nomeMae") ? contratoAPPPagador.getString("nomeMae") : null);
+						this.objetoPagador.setEstadocivil(
+								contratoAPPPagador.has("estadoCivil") ? contratoAPPPagador.getString("estadoCivil")
+										: null);
+						this.objetoPagador.setCpfConjuge(
+								contratoAPPPagador.has("cpfConjuge") ? contratoAPPPagador.getString("cpfConjuge")
+										: null);
+						this.objetoPagador.setNomeConjuge(
+								contratoAPPPagador.has("nomeConjuge") ? contratoAPPPagador.getString("nomeConjuge")
+										: null);
+						this.objetoContratoCobranca.setPagador(this.objetoPagador);
+						/***
 						 * OBJETO IMOVEL
 						 */
 						JSONObject contratoAPPImovel = contratoAPP.getJSONObject("imovelCobranca");
-						this.objetoImovelCobranca = new ImovelCobranca();
 						ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
-
+						ImovelCobranca imovelCobranca = new ImovelCobranca();
+						
+						
 						if (contratoAPPImovel.has("id")) {
 							this.objetoImovelCobranca = imovelCobrancaDao.findById(contratoAPPImovel.getLong("id"));
-						} else {
-							this.objetoImovelCobranca.setId(-1);
+							this.objetoContratoCobranca.setImovel(this.objetoImovelCobranca);
+
+						}
+
+						else if (contratoAPPImovel.has("numeroMatricula") && contratoAPPImovel.has("numeroCartorio")
+								&& contratoAPPImovel.has("cartorioMunicipio")) {
+
+							imovelCobranca = imovelCobrancaDao.findImovelDao(
+									contratoAPPImovel.getString("numeroMatricula"),
+									contratoAPPImovel.getString("numeroCartorio"),
+									contratoAPPImovel.getString("cartorioMunicipio"));
+
+							if (imovelCobranca != null)
+								this.objetoImovelCobranca = imovelCobranca;
+							this.objetoContratoCobranca.setImovel(this.objetoImovelCobranca);
+						}
+
+						else {
+
+							this.objetoImovelCobranca = new ImovelCobranca();
+							this.objetoImovelCobranca.setId(this.objetoContratoCobranca.getImovel().getId());
+
+						}
+
+						if (CommonsUtil.semValor(this.objetoImovelCobranca.getCep()))
 							this.objetoImovelCobranca
 									.setCep(contratoAPPImovel.has("cep") ? contratoAPPImovel.getString("cep") : null);
-							System.out.println("Contract Service - Criar Operacao - Imovel CEP: {} "
-									+ contratoAPPImovel.getString("cep"));
+						;
+
+						if (CommonsUtil.semValor(this.objetoImovelCobranca.getEndereco()))
 							if (contratoAPPImovel.has("numero")) {
-								this.objetoImovelCobranca.setEndereco(contratoAPPImovel.getString("endereco") + ", "
-										+ contratoAPPImovel.getString("numero"));
+								this.objetoImovelCobranca.setEndereco(contratoAPPImovel.has("endereco")
+										? contratoAPPImovel.getString("endereco") + ", "
+												+ contratoAPPImovel.getString("numero")
+										: this.objetoContratoCobranca.getImovel().getEndereco());
 							} else {
-								this.objetoImovelCobranca.setEndereco(contratoAPPImovel.getString("endereco"));
+								this.objetoImovelCobranca.setEndereco(
+										contratoAPPImovel.has("endereco") ? contratoAPPImovel.getString("endereco")
+												: this.objetoContratoCobranca.getImovel().getEndereco());
 							}
-							System.out.println("Contract Service - Criar Operacao - Imovel Endereço: {} "
-									+ contratoAPPImovel.getString("endereco"));
+
+						if (CommonsUtil.semValor(this.objetoImovelCobranca.getComplemento()))
 							this.objetoImovelCobranca.setComplemento(
 									contratoAPPImovel.has("complemento") ? contratoAPPImovel.getString("complemento")
-											: null);
-							this.objetoImovelCobranca.setCidade(
-									contratoAPPImovel.has("cidade") ? contratoAPPImovel.getString("cidade") : null);
-							this.objetoImovelCobranca.setBairro(
-									contratoAPPImovel.has("bairro") ? contratoAPPImovel.getString("bairro") : null);
-							this.objetoImovelCobranca.setEstado(
-									contratoAPPImovel.has("estado") ? contratoAPPImovel.getString("estado") : null);
+											: this.objetoContratoCobranca.getImovel().getComplemento());
+
+						if (CommonsUtil.semValor(this.objetoImovelCobranca.getCidade()))
+							this.objetoImovelCobranca.setCidade(contratoAPPImovel.getString("cidade"));
+
+						if (CommonsUtil.semValor(this.objetoImovelCobranca.getBairro()))
+							this.objetoImovelCobranca
+									.setBairro(contratoAPPImovel.has("bairro") ? contratoAPPImovel.getString("bairro")
+											: this.objetoContratoCobranca.getImovel().getBairro());
+
+						if (CommonsUtil.semValor(this.objetoImovelCobranca.getEstado()))
+							this.objetoImovelCobranca.setEstado(contratoAPPImovel.getString("estado"));
+
+						if (CommonsUtil.semValor(this.objetoImovelCobranca.getNumeroCartorio()))
 							this.objetoImovelCobranca.setNumeroCartorio(contratoAPPImovel.has("numeroCartorio")
 									? contratoAPPImovel.getString("numeroCartorio")
-									: null);
+									: this.objetoContratoCobranca.getImovel().getNumeroCartorio());
+
+						if (CommonsUtil.semValor(this.objetoImovelCobranca.getCartorio()))
 							this.objetoImovelCobranca.setCartorio(contratoAPPImovel.has("cartorioRegistro")
 									? contratoAPPImovel.getString("cartorioRegistro")
-									: null);
+									: this.objetoContratoCobranca.getImovel().getCartorio());
+
+						if (CommonsUtil.semValor(this.objetoImovelCobranca.getCartorioEstado()))
 							this.objetoImovelCobranca.setCartorioEstado(contratoAPPImovel.has("cartorioEstado")
 									? contratoAPPImovel.getString("cartorioEstado")
-									: null);
+									: this.objetoContratoCobranca.getImovel().getCartorioEstado());
+
+						if (CommonsUtil.semValor(this.objetoImovelCobranca.getCartorioMunicipio()))
 							this.objetoImovelCobranca.setCartorioMunicipio(contratoAPPImovel.has("cartorioMunicipio")
 									? contratoAPPImovel.getString("cartorioMunicipio")
-									: null);
+									: this.objetoContratoCobranca.getImovel().getCartorioMunicipio());
+
+						if (CommonsUtil.semValor(this.objetoImovelCobranca.getNumeroMatricula()))
 							this.objetoImovelCobranca.setNumeroMatricula(contratoAPPImovel.has("numeroMatricula")
 									? contratoAPPImovel.getString("numeroMatricula")
-									: null);
+									: this.objetoContratoCobranca.getImovel().getNumeroMatricula());
+
+						if (CommonsUtil.semValor(this.objetoImovelCobranca.getTipo()))
 							this.objetoImovelCobranca.setTipo(
 									contratoAPPImovel.has("tipoImovel") ? contratoAPPImovel.getString("tipoImovel")
-											: null);
-							this.objetoImovelCobranca.setComprovanteMatriculaCheckList(
-									contratoAPPImovel.has("comprovanteMatriculaCheckList")
-											? contratoAPPImovel.getBoolean("comprovanteMatriculaCheckList")
-											: false);
-							this.objetoImovelCobranca.setComprovanteFotosImovelCheckList(
-									contratoAPPImovel.has("comprovanteFotosImovelCheckList")
-											? contratoAPPImovel.getBoolean("comprovanteFotosImovelCheckList")
-											: false);
-							this.objetoImovelCobranca.setComprovanteIptuImovelCheckList(
-									contratoAPPImovel.has("comprovanteIptuImovelCheckList")
-											? contratoAPPImovel.getBoolean("comprovanteIptuImovelCheckList")
-											: false);
+											: this.objetoContratoCobranca.getImovel().getTipo());
 
-							this.objetoImovelCobranca.setValoEstimado(new BigDecimal(
-									contratoAPPImovel.has("valoEstimado") ? contratoAPPImovel.getDouble("valoEstimado")
-											: null));
-							System.out.println("Contract Service - Criar Operacao - Imovel ValoEstimado: {} "
-									+ contratoAPPImovel.getDouble("valoEstimado"));
-						}
+						if (CommonsUtil.semValor(this.objetoImovelCobranca.getValoEstimado()))
+							this.objetoImovelCobranca.setValoEstimado(contratoAPPImovel.has("valoEstimado")
+									? new BigDecimal(contratoAPPImovel.getDouble("valoEstimado"))
+									: this.objetoContratoCobranca.getImovel().getValoEstimado());
+
+						this.objetoContratoCobranca.setImovel(this.objetoImovelCobranca);
+
+//						/***
+//						 * OBJETO IMOVEL
+//						 */
+//						JSONObject contratoAPPImovel = contratoAPP.getJSONObject("imovelCobranca");
+//						this.objetoImovelCobranca = new ImovelCobranca();
+//						ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
+//
+//						if (contratoAPPImovel.has("id")) {
+//							this.objetoImovelCobranca = imovelCobrancaDao.findById(contratoAPPImovel.getLong("id"));
+//						} else {
+//							this.objetoImovelCobranca.setId(-1);
+//							this.objetoImovelCobranca
+//									.setCep(contratoAPPImovel.has("cep") ? contratoAPPImovel.getString("cep") : null);
+//							System.out.println("Contract Service - Criar Operacao - Imovel CEP: {} "
+//									+ contratoAPPImovel.getString("cep"));
+//							if (contratoAPPImovel.has("numero")) {
+//								this.objetoImovelCobranca.setEndereco(contratoAPPImovel.getString("endereco") + ", "
+//										+ contratoAPPImovel.getString("numero"));
+//							} else {
+//								this.objetoImovelCobranca.setEndereco(contratoAPPImovel.getString("endereco"));
+//							}
+//							System.out.println("Contract Service - Criar Operacao - Imovel Endereço: {} "
+//									+ contratoAPPImovel.getString("endereco"));
+//							this.objetoImovelCobranca.setComplemento(
+//									contratoAPPImovel.has("complemento") ? contratoAPPImovel.getString("complemento")
+//											: null);
+//							this.objetoImovelCobranca.setCidade(
+//									contratoAPPImovel.has("cidade") ? contratoAPPImovel.getString("cidade") : null);
+//							this.objetoImovelCobranca.setBairro(
+//									contratoAPPImovel.has("bairro") ? contratoAPPImovel.getString("bairro") : null);
+//							this.objetoImovelCobranca.setEstado(
+//									contratoAPPImovel.has("estado") ? contratoAPPImovel.getString("estado") : null);
+//							this.objetoImovelCobranca.setNumeroCartorio(contratoAPPImovel.has("numeroCartorio")
+//									? contratoAPPImovel.getString("numeroCartorio")
+//									: null);
+//							this.objetoImovelCobranca.setCartorio(contratoAPPImovel.has("cartorioRegistro")
+//									? contratoAPPImovel.getString("cartorioRegistro")
+//									: null);
+//							this.objetoImovelCobranca.setCartorioEstado(contratoAPPImovel.has("cartorioEstado")
+//									? contratoAPPImovel.getString("cartorioEstado")
+//									: null);
+//							this.objetoImovelCobranca.setCartorioMunicipio(contratoAPPImovel.has("cartorioMunicipio")
+//									? contratoAPPImovel.getString("cartorioMunicipio")
+//									: null);
+//							this.objetoImovelCobranca.setNumeroMatricula(contratoAPPImovel.has("numeroMatricula")
+//									? contratoAPPImovel.getString("numeroMatricula")
+//									: null);
+//							this.objetoImovelCobranca.setTipo(
+//									contratoAPPImovel.has("tipoImovel") ? contratoAPPImovel.getString("tipoImovel")
+//											: null);
+//							this.objetoImovelCobranca.setComprovanteMatriculaCheckList(
+//									contratoAPPImovel.has("comprovanteMatriculaCheckList")
+//											? contratoAPPImovel.getBoolean("comprovanteMatriculaCheckList")
+//											: false);
+//							this.objetoImovelCobranca.setComprovanteFotosImovelCheckList(
+//									contratoAPPImovel.has("comprovanteFotosImovelCheckList")
+//											? contratoAPPImovel.getBoolean("comprovanteFotosImovelCheckList")
+//											: false);
+//							this.objetoImovelCobranca.setComprovanteIptuImovelCheckList(
+//									contratoAPPImovel.has("comprovanteIptuImovelCheckList")
+//											? contratoAPPImovel.getBoolean("comprovanteIptuImovelCheckList")
+//											: false);
+//
+//							this.objetoImovelCobranca.setValoEstimado(new BigDecimal(
+//									contratoAPPImovel.has("valoEstimado") ? contratoAPPImovel.getDouble("valoEstimado")
+//											: null));
+//							System.out.println("Contract Service - Criar Operacao - Imovel ValoEstimado: {} "
+//									+ contratoAPPImovel.getDouble("valoEstimado"));
+//						}
 
 						this.objetoContratoCobranca.setImovel(this.objetoImovelCobranca);
 						User user = getUsuarioLogado();
@@ -558,140 +765,281 @@ public class ContractService {
 							 */
 							JSONObject contratoAPPPagador = contratoAPP.getJSONObject("pagadorRecebedor");
 							this.objetoPagador = new PagadorRecebedor();
-							this.objetoPagadorDao = new PagadorRecebedorDao();
-							
-							//caso id seja encontrado => fazer find by ID usando PagadorDao
-							if(contratoAPPPagador.has("id")) {
-								this.objetoPagador = this.objetoPagadorDao.findById(contratoAPPPagador.getLong("id"));
-							}
-							//caso o cpf ja esteja no banco mas o id ainda nao => fazer find by CPF/CNPJ usando PagadorDao
-							else if (!contratoAPPPagador.has("id") && contratoAPPPagador.has("cpfCnpj") ) {
-								  
-								  this.objetoPagador = this.objetoPagadorDao.getConsultaByCpfCnpj(contratoAPPPagador.getString("cpfCnpj"));
-							        // Se existir, busca o pagador pelo cpf/cnpj e atualiza apenas os dados vazios
-								
-							}
-							//caso nao tenha nem id ou cpf/cnpj na base => novo cadastro
-							
-							if (StringUtils.isNotEmpty(tipoPessoa) && tipoPessoa.equals("PF")) {
-								if(CommonsUtil.semValor(this.objetoPagador.getCpf())) 	
-									this.objetoPagador.setCpf(contratoAPPPagador.has("cpfCnpj") ? contratoAPPPagador.getString("cpfCnpj")
-												: this.objetoContratoCobranca.getPagador().getCpf());
-							} else if (StringUtils.isNotEmpty(tipoPessoa) && tipoPessoa.equals("PJ")) {
-								if(CommonsUtil.semValor(this.objetoPagador.getCnpj())) 
-								this.objetoPagador.setCnpj(contratoAPPPagador.has("cpfCnpj") ? contratoAPPPagador.getString("cpfCnpj")
-												: this.objetoContratoCobranca.getPagador().getCnpj());
-							}
-							if(CommonsUtil.semValor(this.objetoPagador.getNome())) 
-							this.objetoPagador.setNome(contratoAPPPagador.has("nome") ? contratoAPPPagador.getString("nome")
-											: this.objetoContratoCobranca.getPagador().getNome());
-							if(CommonsUtil.semValor(this.objetoPagador.getEmail())) 
-							this.objetoPagador.setEmail(contratoAPPPagador.has("email") ? contratoAPPPagador.getString("email")
-											: this.objetoContratoCobranca.getPagador().getEmail());
-							if(CommonsUtil.semValor(this.objetoPagador.getTelCelular())) 
-							this.objetoPagador.setTelCelular(
-									contratoAPPPagador.has("telCelular") ? contratoAPPPagador.getString("telCelular")
-											: this.objetoContratoCobranca.getPagador().getTelCelular());
-							if(CommonsUtil.semValor(this.objetoPagador.getSexo())) 
-							this.objetoPagador.setSexo(contratoAPPPagador.has("sexo") ? contratoAPPPagador.getString("sexo")
-											: this.objetoContratoCobranca.getPagador().getSexo());
+							PagadorRecebedorDao pagadorDao = new PagadorRecebedorDao();
+							this.objetoPagador.setOrigem("App");
 
-							SimpleDateFormat dtNascimento = new SimpleDateFormat("yyyy-MM-dd");
-							Date dtNascimentoDate = null;
-							if(CommonsUtil.semValor(this.objetoPagador.getDtNascimento())) { 
+							if (contratoAPPPagador.has("id")) {
+								System.out.println("Contract Service - Criar Operacao - Pagador ID: {} "
+										+ contratoAPPPagador.getLong("id"));
+								this.objetoPagador = pagadorDao.findById(contratoAPPPagador.getLong("id"));
+							} else {
+								this.objetoPagador.setId(-1);
+
+								if (contratoAPPPagador.has("cpfCnpj")) {
+									if (contratoAPPPagador.getString("cpfCnpj").length() <= 14) {
+										System.out.println("Contract Service - Criar Operacao - Novo Pagador CPF: {} "
+												+ contratoAPPPagador.getString("cpfCnpj"));
+										this.objetoPagador.setCpf(contratoAPPPagador.getString("cpfCnpj"));
+									} else if (contratoAPPPagador.getString("cpfCnpj").length() >= 15) {
+										System.out.println("Contract Service - Criar Operacao - Novo Pagador CNPJ: {} "
+												+ contratoAPPPagador.getString("cpfCnpj"));
+										this.objetoPagador.setCnpj(contratoAPPPagador.getString("cpfCnpj"));
+									}
+								}
+
+								SimpleDateFormat dtNascimento = new SimpleDateFormat("yyyy-MM-dd");
+								Date dtNascimentoDate = null;
 								try {
 									if (contratoAPPPagador.has("dataNascimento")) {
 										dtNascimentoDate = dtNascimento
 												.parse(contratoAPPPagador.getString("dataNascimento"));
 										this.objetoPagador.setDtNascimento(dtNascimentoDate);
 									} else {
-										this.objetoPagador.setDtNascimento(
-												this.objetoContratoCobranca.getPagador().getDtNascimento());
+										this.objetoPagador.setDtNascimento(null);
 									}
 								} catch (ParseException e) {
 									e.printStackTrace();
 								}
+
+								this.objetoPagador.setRgDocumentosCheckList(contratoAPPPagador.has("rgDocumentosCheckList")
+										? contratoAPPPagador.getBoolean("rgDocumentosCheckList")
+										: false);
+								this.objetoPagador.setComprovanteEnderecoDocumentosCheckList(
+										contratoAPPPagador.has("comprovanteEnderecoDocumentosCheckList")
+												? contratoAPPPagador.getBoolean("comprovanteEnderecoDocumentosCheckList")
+												: false);
+								this.objetoPagador.setCertidaoCasamentoNascimentoDocumentosCheckList(
+										contratoAPPPagador.has("certidaoCasamentoNascimentoDocumentosCheckList")
+												? contratoAPPPagador
+														.getBoolean("certidaoCasamentoNascimentoDocumentosCheckList")
+												: false);
+								this.objetoPagador.setFichaCadastralDocumentosCheckList(
+										contratoAPPPagador.has("fichaCadastralDocumentosCheckList")
+												? contratoAPPPagador.getBoolean("fichaCadastralDocumentosCheckList")
+												: false);
+								this.objetoPagador
+										.setBancoDocumentosCheckList(contratoAPPPagador.has("bancoDocumentosCheckList")
+												? contratoAPPPagador.getBoolean("bancoDocumentosCheckList")
+												: false);
+								this.objetoPagador.setTelefoneEmailDocumentosCheckList(
+										contratoAPPPagador.has("telefoneEmailDocumentosCheckList")
+												? contratoAPPPagador.getBoolean("telefoneEmailDocumentosCheckList")
+												: false);
+								this.objetoPagador
+										.setComprovanteRendaCheckList(contratoAPPPagador.has("comprovanteRendaCheckList")
+												? contratoAPPPagador.getBoolean("comprovanteRendaCheckList")
+												: false);
+								this.objetoPagador
+										.setCombateFraudeCheckList(contratoAPPPagador.has("combateFraudeCheckList")
+												? contratoAPPPagador.getBoolean("combateFraudeCheckList")
+												: false);
+								this.objetoPagador
+										.setCargoOcupacaoCheckList(contratoAPPPagador.has("cargoOcupacaoCheckList")
+												? contratoAPPPagador.getBoolean("cargoOcupacaoCheckList")
+												: false);
+								this.objetoPagador.setTaxaCheckList(contratoAPPPagador.has("taxaCheckList")
+										? contratoAPPPagador.getBoolean("taxaCheckList")
+										: false);
 							}
-							if(CommonsUtil.semValor(this.objetoPagador.getNomeMae())) 
+
+							this.objetoPagador
+									.setNome(contratoAPPPagador.has("nome") ? contratoAPPPagador.getString("nome") : null);
+							this.objetoPagador.setEmail(
+									contratoAPPPagador.has("email") ? contratoAPPPagador.getString("email") : null);
+							this.objetoPagador.setTelCelular(
+									contratoAPPPagador.has("telCelular") ? contratoAPPPagador.getString("telCelular")
+											: null);
+							this.objetoPagador
+									.setSexo(contratoAPPPagador.has("sexo") ? contratoAPPPagador.getString("sexo") : null);
 							this.objetoPagador.setNomeMae(
-									contratoAPPPagador.has("nomeMae") ? contratoAPPPagador.getString("nomeMae")
-											: this.objetoContratoCobranca.getPagador().getNomeMae());
-							if(CommonsUtil.semValor(this.objetoPagador.getEstadocivil())) 
+									contratoAPPPagador.has("nomeMae") ? contratoAPPPagador.getString("nomeMae") : null);
 							this.objetoPagador.setEstadocivil(
 									contratoAPPPagador.has("estadoCivil") ? contratoAPPPagador.getString("estadoCivil")
-											: this.objetoContratoCobranca.getPagador().getEstadocivil());
-							if(CommonsUtil.semValor(this.objetoPagador.getCpfConjuge())) 
+											: null);
 							this.objetoPagador.setCpfConjuge(
 									contratoAPPPagador.has("cpfConjuge") ? contratoAPPPagador.getString("cpfConjuge")
 											: null);
-							if(CommonsUtil.semValor(this.objetoPagador.getNomeConjuge())) 
 							this.objetoPagador.setNomeConjuge(
 									contratoAPPPagador.has("nomeConjuge") ? contratoAPPPagador.getString("nomeConjuge")
 											: null);
-							if(CommonsUtil.semValor(this.objetoPagador.getDtNascimentoConjuge())) 
-							this.objetoPagador.setDtNascimentoConjuge(contratoAPPPagador.has("dtNascimentoConjuge")
-									? dtNascimento.parse(contratoAPPPagador.getString("dtNascimentoConjuge"))
-									: null);
-							if(CommonsUtil.semValor(this.objetoPagador.getNomeParticipanteCheckList())) 
-							this.objetoPagador
-									.setNomeParticipanteCheckList(contratoAPPPagador.has("nomeParticipanteCheckList")
-											? contratoAPPPagador.getString("nomeParticipanteCheckList")
-											: this.objetoContratoCobranca.getPagador().getNomeParticipanteCheckList());
-													     
-						
-							this.objetoContratoCobranca.setPagador(this.objetoPagador);	
-							
-							
+							this.objetoContratoCobranca.setPagador(this.objetoPagador);
 
-// Fazer uma coluna origem para checar de onde esta vindo o cadastro
+							
+					
 							
 							/***
 							 * OBJETO IMOVEL
 							 */
 							JSONObject contratoAPPImovel = contratoAPP.getJSONObject("imovelCobranca");
-							this.objetoImovelCobranca = new ImovelCobranca();
+							ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
+							ImovelCobranca imovelCobranca = new ImovelCobranca();
+							
+							
+							if (contratoAPPImovel.has("id")) {
+								this.objetoImovelCobranca = imovelCobrancaDao.findById(contratoAPPImovel.getLong("id"));
+								this.objetoContratoCobranca.setImovel(this.objetoImovelCobranca);
 
-							this.objetoImovelCobranca
-									.setId(contratoAPPImovel.has("id") ? contratoAPPImovel.getLong("id")
-											: this.objetoContratoCobranca.getImovel().getId());
-							this.objetoImovelCobranca
-									.setCep(contratoAPPImovel.has("cep") ? contratoAPPImovel.getString("cep") : null);
-							if (contratoAPPImovel.has("numero")) {
-								this.objetoImovelCobranca.setEndereco(contratoAPPImovel.getString("endereco") + ", "
-										+ contratoAPPImovel.getString("numero"));
-							} else {
-								this.objetoImovelCobranca.setEndereco(contratoAPPImovel.getString("endereco"));
 							}
-							this.objetoImovelCobranca.setComplemento(
-									contratoAPPImovel.has("complemento") ? contratoAPPImovel.getString("complemento")
-											: this.objetoContratoCobranca.getImovel().getComplemento());
-							this.objetoImovelCobranca.setCidade(contratoAPPImovel.getString("cidade"));
-							this.objetoImovelCobranca
-									.setBairro(contratoAPPImovel.has("bairro") ? contratoAPPImovel.getString("bairro")
-											: this.objetoContratoCobranca.getImovel().getBairro());
-							this.objetoImovelCobranca.setEstado(contratoAPPImovel.getString("estado"));
-							this.objetoImovelCobranca.setNumeroCartorio(contratoAPPImovel.has("numeroCartorio")
-									? contratoAPPImovel.getString("numeroCartorio")
-									: this.objetoContratoCobranca.getImovel().getNumeroCartorio());
-							this.objetoImovelCobranca.setCartorio(contratoAPPImovel.has("cartorioRegistro")
-									? contratoAPPImovel.getString("cartorioRegistro")
-									: this.objetoContratoCobranca.getImovel().getCartorio());
-							this.objetoImovelCobranca.setCartorioEstado(contratoAPPImovel.has("cartorioEstado")
-									? contratoAPPImovel.getString("cartorioEstado")
-									: this.objetoContratoCobranca.getImovel().getCartorioEstado());
-							this.objetoImovelCobranca.setCartorioMunicipio(contratoAPPImovel.has("cartorioMunicipio")
-									? contratoAPPImovel.getString("cartorioMunicipio")
-									: this.objetoContratoCobranca.getImovel().getCartorioMunicipio());
-							this.objetoImovelCobranca.setNumeroMatricula(contratoAPPImovel.has("numeroMatricula")
-									? contratoAPPImovel.getString("numeroMatricula")
-									: this.objetoContratoCobranca.getImovel().getNumeroMatricula());
-							this.objetoImovelCobranca.setTipo(
-									contratoAPPImovel.has("tipoImovel") ? contratoAPPImovel.getString("tipoImovel")
-											: this.objetoContratoCobranca.getImovel().getTipo());
 
-							this.objetoImovelCobranca.setValoEstimado(contratoAPPImovel.has("valoEstimado")
-									? new BigDecimal(contratoAPPImovel.getDouble("valoEstimado"))
-									: this.objetoContratoCobranca.getImovel().getValoEstimado());
+							else if (contratoAPPImovel.has("numeroMatricula") && contratoAPPImovel.has("numeroCartorio")
+									&& contratoAPPImovel.has("cartorioMunicipio")) {
+
+								imovelCobranca = imovelCobrancaDao.findImovelDao(
+										contratoAPPImovel.getString("numeroMatricula"),
+										contratoAPPImovel.getString("numeroCartorio"),
+										contratoAPPImovel.getString("cartorioMunicipio"));
+
+								if (imovelCobranca != null)
+									this.objetoImovelCobranca = imovelCobranca;
+								this.objetoContratoCobranca.setImovel(this.objetoImovelCobranca);
+							}
+
+							else {
+
+								this.objetoImovelCobranca = new ImovelCobranca();
+								this.objetoImovelCobranca.setId(this.objetoContratoCobranca.getImovel().getId());
+
+							}
+
+							if (CommonsUtil.semValor(this.objetoImovelCobranca.getCep()))
+								this.objetoImovelCobranca
+										.setCep(contratoAPPImovel.has("cep") ? contratoAPPImovel.getString("cep") : null);
+							;
+
+							if (CommonsUtil.semValor(this.objetoImovelCobranca.getEndereco()))
+								if (contratoAPPImovel.has("numero")) {
+									this.objetoImovelCobranca.setEndereco(contratoAPPImovel.has("endereco")
+											? contratoAPPImovel.getString("endereco") + ", "
+													+ contratoAPPImovel.getString("numero")
+											: this.objetoContratoCobranca.getImovel().getEndereco());
+								} else {
+									this.objetoImovelCobranca.setEndereco(
+											contratoAPPImovel.has("endereco") ? contratoAPPImovel.getString("endereco")
+													: this.objetoContratoCobranca.getImovel().getEndereco());
+								}
+
+							if (CommonsUtil.semValor(this.objetoImovelCobranca.getComplemento()))
+								this.objetoImovelCobranca.setComplemento(
+										contratoAPPImovel.has("complemento") ? contratoAPPImovel.getString("complemento")
+												: this.objetoContratoCobranca.getImovel().getComplemento());
+
+							if (CommonsUtil.semValor(this.objetoImovelCobranca.getCidade()))
+								this.objetoImovelCobranca.setCidade(contratoAPPImovel.getString("cidade"));
+
+							if (CommonsUtil.semValor(this.objetoImovelCobranca.getBairro()))
+								this.objetoImovelCobranca
+										.setBairro(contratoAPPImovel.has("bairro") ? contratoAPPImovel.getString("bairro")
+												: this.objetoContratoCobranca.getImovel().getBairro());
+
+							if (CommonsUtil.semValor(this.objetoImovelCobranca.getEstado()))
+								this.objetoImovelCobranca.setEstado(contratoAPPImovel.getString("estado"));
+
+							if (CommonsUtil.semValor(this.objetoImovelCobranca.getNumeroCartorio()))
+								this.objetoImovelCobranca.setNumeroCartorio(contratoAPPImovel.has("numeroCartorio")
+										? contratoAPPImovel.getString("numeroCartorio")
+										: this.objetoContratoCobranca.getImovel().getNumeroCartorio());
+
+							if (CommonsUtil.semValor(this.objetoImovelCobranca.getCartorio()))
+								this.objetoImovelCobranca.setCartorio(contratoAPPImovel.has("cartorioRegistro")
+										? contratoAPPImovel.getString("cartorioRegistro")
+										: this.objetoContratoCobranca.getImovel().getCartorio());
+
+							if (CommonsUtil.semValor(this.objetoImovelCobranca.getCartorioEstado()))
+								this.objetoImovelCobranca.setCartorioEstado(contratoAPPImovel.has("cartorioEstado")
+										? contratoAPPImovel.getString("cartorioEstado")
+										: this.objetoContratoCobranca.getImovel().getCartorioEstado());
+
+							if (CommonsUtil.semValor(this.objetoImovelCobranca.getCartorioMunicipio()))
+								this.objetoImovelCobranca.setCartorioMunicipio(contratoAPPImovel.has("cartorioMunicipio")
+										? contratoAPPImovel.getString("cartorioMunicipio")
+										: this.objetoContratoCobranca.getImovel().getCartorioMunicipio());
+
+							if (CommonsUtil.semValor(this.objetoImovelCobranca.getNumeroMatricula()))
+								this.objetoImovelCobranca.setNumeroMatricula(contratoAPPImovel.has("numeroMatricula")
+										? contratoAPPImovel.getString("numeroMatricula")
+										: this.objetoContratoCobranca.getImovel().getNumeroMatricula());
+
+							if (CommonsUtil.semValor(this.objetoImovelCobranca.getTipo()))
+								this.objetoImovelCobranca.setTipo(
+										contratoAPPImovel.has("tipoImovel") ? contratoAPPImovel.getString("tipoImovel")
+												: this.objetoContratoCobranca.getImovel().getTipo());
+
+							if (CommonsUtil.semValor(this.objetoImovelCobranca.getValoEstimado()))
+								this.objetoImovelCobranca.setValoEstimado(contratoAPPImovel.has("valoEstimado")
+										? new BigDecimal(contratoAPPImovel.getDouble("valoEstimado"))
+										: this.objetoContratoCobranca.getImovel().getValoEstimado());
+
+							this.objetoContratoCobranca.setImovel(this.objetoImovelCobranca);
+
+//							/***
+//							 * OBJETO IMOVEL
+//							 */
+//							JSONObject contratoAPPImovel = contratoAPP.getJSONObject("imovelCobranca");
+//							this.objetoImovelCobranca = new ImovelCobranca();
+//							ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
+	//
+//							if (contratoAPPImovel.has("id")) {
+//								this.objetoImovelCobranca = imovelCobrancaDao.findById(contratoAPPImovel.getLong("id"));
+//							} else {
+//								this.objetoImovelCobranca.setId(-1);
+//								this.objetoImovelCobranca
+//										.setCep(contratoAPPImovel.has("cep") ? contratoAPPImovel.getString("cep") : null);
+//								System.out.println("Contract Service - Criar Operacao - Imovel CEP: {} "
+//										+ contratoAPPImovel.getString("cep"));
+//								if (contratoAPPImovel.has("numero")) {
+//									this.objetoImovelCobranca.setEndereco(contratoAPPImovel.getString("endereco") + ", "
+//											+ contratoAPPImovel.getString("numero"));
+//								} else {
+//									this.objetoImovelCobranca.setEndereco(contratoAPPImovel.getString("endereco"));
+//								}
+//								System.out.println("Contract Service - Criar Operacao - Imovel Endereço: {} "
+//										+ contratoAPPImovel.getString("endereco"));
+//								this.objetoImovelCobranca.setComplemento(
+//										contratoAPPImovel.has("complemento") ? contratoAPPImovel.getString("complemento")
+//												: null);
+//								this.objetoImovelCobranca.setCidade(
+//										contratoAPPImovel.has("cidade") ? contratoAPPImovel.getString("cidade") : null);
+//								this.objetoImovelCobranca.setBairro(
+//										contratoAPPImovel.has("bairro") ? contratoAPPImovel.getString("bairro") : null);
+//								this.objetoImovelCobranca.setEstado(
+//										contratoAPPImovel.has("estado") ? contratoAPPImovel.getString("estado") : null);
+//								this.objetoImovelCobranca.setNumeroCartorio(contratoAPPImovel.has("numeroCartorio")
+//										? contratoAPPImovel.getString("numeroCartorio")
+//										: null);
+//								this.objetoImovelCobranca.setCartorio(contratoAPPImovel.has("cartorioRegistro")
+//										? contratoAPPImovel.getString("cartorioRegistro")
+//										: null);
+//								this.objetoImovelCobranca.setCartorioEstado(contratoAPPImovel.has("cartorioEstado")
+//										? contratoAPPImovel.getString("cartorioEstado")
+//										: null);
+//								this.objetoImovelCobranca.setCartorioMunicipio(contratoAPPImovel.has("cartorioMunicipio")
+//										? contratoAPPImovel.getString("cartorioMunicipio")
+//										: null);
+//								this.objetoImovelCobranca.setNumeroMatricula(contratoAPPImovel.has("numeroMatricula")
+//										? contratoAPPImovel.getString("numeroMatricula")
+//										: null);
+//								this.objetoImovelCobranca.setTipo(
+//										contratoAPPImovel.has("tipoImovel") ? contratoAPPImovel.getString("tipoImovel")
+//												: null);
+//								this.objetoImovelCobranca.setComprovanteMatriculaCheckList(
+//										contratoAPPImovel.has("comprovanteMatriculaCheckList")
+//												? contratoAPPImovel.getBoolean("comprovanteMatriculaCheckList")
+//												: false);
+//								this.objetoImovelCobranca.setComprovanteFotosImovelCheckList(
+//										contratoAPPImovel.has("comprovanteFotosImovelCheckList")
+//												? contratoAPPImovel.getBoolean("comprovanteFotosImovelCheckList")
+//												: false);
+//								this.objetoImovelCobranca.setComprovanteIptuImovelCheckList(
+//										contratoAPPImovel.has("comprovanteIptuImovelCheckList")
+//												? contratoAPPImovel.getBoolean("comprovanteIptuImovelCheckList")
+//												: false);
+	//
+//								this.objetoImovelCobranca.setValoEstimado(new BigDecimal(
+//										contratoAPPImovel.has("valoEstimado") ? contratoAPPImovel.getDouble("valoEstimado")
+//												: null));
+//								System.out.println("Contract Service - Criar Operacao - Imovel ValoEstimado: {} "
+//										+ contratoAPPImovel.getDouble("valoEstimado"));
+//							}
 
 							this.objetoContratoCobranca.setImovel(this.objetoImovelCobranca);
 							
