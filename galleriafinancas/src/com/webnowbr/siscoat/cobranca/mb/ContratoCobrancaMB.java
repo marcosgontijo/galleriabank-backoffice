@@ -37834,7 +37834,6 @@ public class ContratoCobrancaMB {
 		this.filtroDataCorteRelatorioInicio = filtroDataCorteRelatorioInicio;
 	}
 
-<<<<<<< HEAD
 	public String getMetodoPixOrdemPagamentoStark() {
 		return metodoPixOrdemPagamentoStark;
 	}
@@ -37842,7 +37841,7 @@ public class ContratoCobrancaMB {
 	public void setMetodoPixOrdemPagamentoStark(String metodoPixOrdemPagamentoStark) {
 		this.metodoPixOrdemPagamentoStark = metodoPixOrdemPagamentoStark;
 	}
-=======
+
 	public BigDecimal getValorTotalContrato() {
 		return valorTotalContrato;
 	}
@@ -37851,5 +37850,4 @@ public class ContratoCobrancaMB {
 		this.valorTotalContrato = valorTotalContrato;
 	}
 	
->>>>>>> e3746c86ecc690554b592960364747bf574f8c8e
 }
