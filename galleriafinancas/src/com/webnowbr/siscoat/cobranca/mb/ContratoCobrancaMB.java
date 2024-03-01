@@ -21212,44 +21212,48 @@ public class ContratoCobrancaMB {
 					System.out.println("processaPagamentoStarkBank - Pix");
  
 					boolean processou = false;
-					if (this.objetoBaixaPagamentoStarkBank.getMetodoPix().equals("Chave Pix")) {
-						starkBankPix = starkBankAPI.paymentPixCodigo(
-								this.objetoBaixaPagamentoStarkBank.getPix(),
-								this.objetoBaixaPagamentoStarkBank.getAgencia(),
-								this.objetoBaixaPagamentoStarkBank.getConta(),
-								this.objetoBaixaPagamentoStarkBank.getDocumento(),
-								this.objetoBaixaPagamentoStarkBank.getNomeRecebedor(),
-								this.objetoBaixaPagamentoStarkBank.getValor(),
-								this.objetoBaixaPagamentoStarkBank.getFormaPagamento(),
-								this.objetoBaixaPagamentoStarkBank.getDescricaoStarkBank(),
-								this.objetoBaixaPagamentoStarkBank.getTipoContaBancaria());
-						
-						processou = true;
-					}
 					
-					if (this.objetoBaixaPagamentoStarkBank.getMetodoPix().equals("Dados Bancários")) {
-						starkBankPix = starkBankAPI.paymentPixDadosBancarios(
-								this.objetoBaixaPagamentoStarkBank.getIspb(),
-								this.objetoBaixaPagamentoStarkBank.getAgencia(),
-								this.objetoBaixaPagamentoStarkBank.getConta(),
-								this.objetoBaixaPagamentoStarkBank.getDocumento(),
-								this.objetoBaixaPagamentoStarkBank.getNomeRecebedor(),
-								this.objetoBaixaPagamentoStarkBank.getValor(),
-								this.objetoBaixaPagamentoStarkBank.getFormaPagamento(),
-								this.objetoBaixaPagamentoStarkBank.getDescricaoStarkBank(),
-								this.objetoBaixaPagamentoStarkBank.getTipoContaBancaria());
+					if (this.objetoBaixaPagamentoStarkBank.getMetodoPix() != null || 
+							!this.objetoBaixaPagamentoStarkBank.getMetodoPix().equals("")) {
+						if (this.objetoBaixaPagamentoStarkBank.getMetodoPix().equals("Chave Pix")) {
+							starkBankPix = starkBankAPI.paymentPixCodigo(
+									this.objetoBaixaPagamentoStarkBank.getPix(),
+									this.objetoBaixaPagamentoStarkBank.getAgencia(),
+									this.objetoBaixaPagamentoStarkBank.getConta(),
+									this.objetoBaixaPagamentoStarkBank.getDocumento(),
+									this.objetoBaixaPagamentoStarkBank.getNomeRecebedor(),
+									this.objetoBaixaPagamentoStarkBank.getValor(),
+									this.objetoBaixaPagamentoStarkBank.getFormaPagamento(),
+									this.objetoBaixaPagamentoStarkBank.getDescricaoStarkBank(),
+									this.objetoBaixaPagamentoStarkBank.getTipoContaBancaria());
+							
+							processou = true;
+						}
 						
-						processou = true;
-					}
-					
-					if (this.objetoBaixaPagamentoStarkBank.getMetodoPix().equals("QR Code Copia e Cola")) {
-						starkBankPix = starkBankAPI.paymentPixQRCode(
-								this.objetoBaixaPagamentoStarkBank.getPix(),
-								this.objetoBaixaPagamentoStarkBank.getDocumento(),
-								this.objetoBaixaPagamentoStarkBank.getValor(),
-								this.objetoBaixaPagamentoStarkBank.getDescricaoStarkBank());
+						if (this.objetoBaixaPagamentoStarkBank.getMetodoPix().equals("Dados Bancários")) {
+							starkBankPix = starkBankAPI.paymentPixDadosBancarios(
+									this.objetoBaixaPagamentoStarkBank.getIspb(),
+									this.objetoBaixaPagamentoStarkBank.getAgencia(),
+									this.objetoBaixaPagamentoStarkBank.getConta(),
+									this.objetoBaixaPagamentoStarkBank.getDocumento(),
+									this.objetoBaixaPagamentoStarkBank.getNomeRecebedor(),
+									this.objetoBaixaPagamentoStarkBank.getValor(),
+									this.objetoBaixaPagamentoStarkBank.getFormaPagamento(),
+									this.objetoBaixaPagamentoStarkBank.getDescricaoStarkBank(),
+									this.objetoBaixaPagamentoStarkBank.getTipoContaBancaria());
+							
+							processou = true;
+						}
 						
-						processou = true;
+						if (this.objetoBaixaPagamentoStarkBank.getMetodoPix().equals("QR Code Copia e Cola")) {
+							starkBankPix = starkBankAPI.paymentPixQRCode(
+									this.objetoBaixaPagamentoStarkBank.getPix(),
+									this.objetoBaixaPagamentoStarkBank.getDocumento(),
+									this.objetoBaixaPagamentoStarkBank.getValor(),
+									this.objetoBaixaPagamentoStarkBank.getDescricaoStarkBank());
+							
+							processou = true;
+						}
 					}
 
 					if (!processou) {
