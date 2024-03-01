@@ -28,7 +28,10 @@
         </property>
         <property name="formaPagamento" type="java.lang.String">
             <column name="formaPagamento"/>
-        </property>	 
+        </property>	
+        <property name="metodoPix" type="java.lang.String">
+            <column name="metodoPix"/>
+        </property>	  
          <property name="comentario" type="text">
             <column name="comentario"/>
         </property>	

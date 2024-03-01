@@ -73,7 +73,7 @@ public class BRLTrustMB {
 	private String pathXLS;
 	private String nomeXLS;
 	private boolean xlsGerado;
-	private StreamedContent xlsFile;	
+	private StreamedContent xlsFile;
 	
 	List<ContratoCobranca> contratos = new ArrayList<ContratoCobranca>();
 	private List<ContratoCobranca> selectedContratos = new ArrayList<ContratoCobranca>();
@@ -82,10 +82,13 @@ public class BRLTrustMB {
 	ContratoCobranca objetoContratoCobranca = new ContratoCobranca();
 	
 	private String numContrato;
+	private String numParcela;
 	private String cedenteCessao;
 	private Date dataAquisicao;
 	private Date dataBaixaInicial;
 	private Date dataBaixaFinal;
+	
+	private boolean consultaNumContrato;
 	
 	private boolean usaTaxaJurosDiferenciada;
 	private BigDecimal txJurosCessao;
@@ -180,7 +183,9 @@ public class BRLTrustMB {
 	
 	public String clearFieldsBRLJsonLiquidacao() {			
 		this.numContrato = "";
-		this.cedenteCessao = "";		
+		this.numParcela = "";
+		this.cedenteCessao = "Galleria Finanças Securitizadora S.A ";	
+		this.consultaNumContrato = false;
 		this.contratos = new ArrayList<ContratoCobranca>();
 		this.dataAquisicao = new Date();
 		this.selectedJsonLiquidacao = new ArrayList<ContratoCobrancaBRLLiquidacao>();
@@ -262,7 +267,8 @@ public class BRLTrustMB {
 		} 
 		
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		this.parcelasLiquidacao = contratoCobrancaDao.consultaContratosBRLLiquidacao(this.dataBaixaInicial, this.dataBaixaFinal, this.cedenteCessao);
+		this.parcelasLiquidacao = contratoCobrancaDao.consultaContratosBRLLiquidacao(this.dataBaixaInicial, this.dataBaixaFinal, this.cedenteCessao, 
+				consultaNumContrato, numContrato, numParcela);
 		
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -2965,4 +2971,19 @@ public class BRLTrustMB {
 		this.uploadedFile = uploadedFile;
 	}
 
+	public String getNumParcela() {
+		return numParcela;
+	}
+
+	public void setNumParcela(String numParcela) {
+		this.numParcela = numParcela;
+	}
+
+	public boolean isConsultaNumContrato() {
+		return consultaNumContrato;
+	}
+
+	public void setConsultaNumContrato(boolean consultaNumContrato) {
+		this.consultaNumContrato = consultaNumContrato;
+	}
 }

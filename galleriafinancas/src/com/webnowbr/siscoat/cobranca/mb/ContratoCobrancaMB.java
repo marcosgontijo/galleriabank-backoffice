@@ -907,6 +907,7 @@ public class ContratoCobrancaMB {
 	private String agenciaOrdemPagamentoStark;
 	private String ispbOrdemPagamentoStark;
 	private String linhaBoletoOrdemPagamentoStark;
+	private String metodoPixOrdemPagamentoStark;
 	
 	private String descricaoOrdemPagamentoStark;
 	
@@ -20543,6 +20544,7 @@ public class ContratoCobrancaMB {
 		this.descricaoOrdemPagamentoStark = "";
 		this.tipoContaBancariaOrdemPagamentoStark = "";
 		this.formaTransferenciaDespesaBaixa= ""; 
+		this.metodoPixOrdemPagamentoStark = ""; 
 		
 		this.valorOrdemPagamentoStark = BigDecimal.ZERO;
 		
@@ -20568,6 +20570,7 @@ public class ContratoCobrancaMB {
 				//}				
 				if (this.contasPagarSelecionada.getFormaTransferencia().equals("Pix")) {
 					this.pixOrdemPagamentoStark = ccb.getCCBPix();
+					this.metodoPixOrdemPagamentoStark = "Chave Pix";
 				}
 			}
 			
@@ -20582,6 +20585,7 @@ public class ContratoCobrancaMB {
 				//}				
 				if (this.contasPagarSelecionada.getFormaTransferencia().equals("Pix")) {
 					this.pixOrdemPagamentoStark = ccb.getIntermediacaoPix();
+					this.metodoPixOrdemPagamentoStark = "Chave Pix";
 				}
 			}
 		}
@@ -20596,6 +20600,7 @@ public class ContratoCobrancaMB {
 				this.pixOrdemPagamentoStark = "34.787.885/0001-32";
 				this.formaTransferenciaDespesaBaixa = "Pix";
 				this.tipoContaBancariaOrdemPagamentoStark = "Conta Corrente";
+				this.metodoPixOrdemPagamentoStark = "Chave Pix";
 			}
 
 			if (this.contasPagarSelecionada.getFormaTransferencia().equals("TED")) {
@@ -21168,7 +21173,13 @@ public class ContratoCobrancaMB {
 				
 				System.out.println("processaPagamentoStarkBank - Pix");
 				
-				StarkBankPix starkBankPix;
+				StarkBankPix starkBankPix = null;
+				
+				if (this.objetoBaixaPagamentoStarkBank.getDescricaoStarkBank() == null ||
+						this.objetoBaixaPagamentoStarkBank.getDescricaoStarkBank().equals("")){
+					
+					this.objetoBaixaPagamentoStarkBank.setDescricaoStarkBank("Pagamento StarkBank PIX");					
+				}
 				
 				if (this.objetoBaixaPagamentoStarkBank.getContasPagar().getDescricao().contains("Pagamento Carta Split")) {
 					System.out.println("processaPagamentoStarkBank - Galleria - Pix");
@@ -21200,8 +21211,8 @@ public class ContratoCobrancaMB {
 				} else {
 					System.out.println("processaPagamentoStarkBank - Pix");
  
-					if (this.objetoBaixaPagamentoStarkBank.getPix() != null && 
-							!this.objetoBaixaPagamentoStarkBank.getPix().equals("")) {						
+					boolean processou = false;
+					if (this.objetoBaixaPagamentoStarkBank.getMetodoPix().equals("Chave Pix")) {
 						starkBankPix = starkBankAPI.paymentPixCodigo(
 								this.objetoBaixaPagamentoStarkBank.getPix(),
 								this.objetoBaixaPagamentoStarkBank.getAgencia(),
@@ -21212,7 +21223,11 @@ public class ContratoCobrancaMB {
 								this.objetoBaixaPagamentoStarkBank.getFormaPagamento(),
 								this.objetoBaixaPagamentoStarkBank.getDescricaoStarkBank(),
 								this.objetoBaixaPagamentoStarkBank.getTipoContaBancaria());
-					} else {
+						
+						processou = true;
+					}
+					
+					if (this.objetoBaixaPagamentoStarkBank.getMetodoPix().equals("Dados Bancários")) {
 						starkBankPix = starkBankAPI.paymentPixDadosBancarios(
 								this.objetoBaixaPagamentoStarkBank.getIspb(),
 								this.objetoBaixaPagamentoStarkBank.getAgencia(),
@@ -21223,6 +21238,45 @@ public class ContratoCobrancaMB {
 								this.objetoBaixaPagamentoStarkBank.getFormaPagamento(),
 								this.objetoBaixaPagamentoStarkBank.getDescricaoStarkBank(),
 								this.objetoBaixaPagamentoStarkBank.getTipoContaBancaria());
+						
+						processou = true;
+					}
+					
+					if (this.objetoBaixaPagamentoStarkBank.getMetodoPix().equals("QR Code Copia e Cola")) {
+						starkBankPix = starkBankAPI.paymentPixQRCode(
+								this.objetoBaixaPagamentoStarkBank.getPix(),
+								this.objetoBaixaPagamentoStarkBank.getDocumento(),
+								this.objetoBaixaPagamentoStarkBank.getValor(),
+								this.objetoBaixaPagamentoStarkBank.getDescricaoStarkBank());
+						
+						processou = true;
+					}
+
+					if (!processou) {
+						if (this.objetoBaixaPagamentoStarkBank.getPix() != null && 
+								!this.objetoBaixaPagamentoStarkBank.getPix().equals("")) {						
+							starkBankPix = starkBankAPI.paymentPixCodigo(
+									this.objetoBaixaPagamentoStarkBank.getPix(),
+									this.objetoBaixaPagamentoStarkBank.getAgencia(),
+									this.objetoBaixaPagamentoStarkBank.getConta(),
+									this.objetoBaixaPagamentoStarkBank.getDocumento(),
+									this.objetoBaixaPagamentoStarkBank.getNomeRecebedor(),
+									this.objetoBaixaPagamentoStarkBank.getValor(),
+									this.objetoBaixaPagamentoStarkBank.getFormaPagamento(),
+									this.objetoBaixaPagamentoStarkBank.getDescricaoStarkBank(),
+									this.objetoBaixaPagamentoStarkBank.getTipoContaBancaria());
+						} else {
+							starkBankPix = starkBankAPI.paymentPixDadosBancarios(
+									this.objetoBaixaPagamentoStarkBank.getIspb(),
+									this.objetoBaixaPagamentoStarkBank.getAgencia(),
+									this.objetoBaixaPagamentoStarkBank.getConta(),
+									this.objetoBaixaPagamentoStarkBank.getDocumento(),
+									this.objetoBaixaPagamentoStarkBank.getNomeRecebedor(),
+									this.objetoBaixaPagamentoStarkBank.getValor(),
+									this.objetoBaixaPagamentoStarkBank.getFormaPagamento(),
+									this.objetoBaixaPagamentoStarkBank.getDescricaoStarkBank(),
+									this.objetoBaixaPagamentoStarkBank.getTipoContaBancaria());
+						}
 					}
 				}
 				
@@ -21894,6 +21948,7 @@ public class ContratoCobrancaMB {
 		if (this.formaTransferenciaDespesaBaixa.equals("Pix") || this.formaTransferenciaDespesaBaixa.equals("PIX")) {
 			starkBankBaixa.setIspb(this.ispbOrdemPagamentoStark);
 			starkBankBaixa.setPix(this.pixOrdemPagamentoStark);
+			starkBankBaixa.setMetodoPix(this.metodoPixOrdemPagamentoStark);
 		}
 		
 		if (this.formaTransferenciaDespesaBaixa.equals("Boleto")) {
@@ -37779,6 +37834,15 @@ public class ContratoCobrancaMB {
 		this.filtroDataCorteRelatorioInicio = filtroDataCorteRelatorioInicio;
 	}
 
+<<<<<<< HEAD
+	public String getMetodoPixOrdemPagamentoStark() {
+		return metodoPixOrdemPagamentoStark;
+	}
+
+	public void setMetodoPixOrdemPagamentoStark(String metodoPixOrdemPagamentoStark) {
+		this.metodoPixOrdemPagamentoStark = metodoPixOrdemPagamentoStark;
+	}
+=======
 	public BigDecimal getValorTotalContrato() {
 		return valorTotalContrato;
 	}
@@ -37787,4 +37851,5 @@ public class ContratoCobrancaMB {
 		this.valorTotalContrato = valorTotalContrato;
 	}
 	
+>>>>>>> e3746c86ecc690554b592960364747bf574f8c8e
 }

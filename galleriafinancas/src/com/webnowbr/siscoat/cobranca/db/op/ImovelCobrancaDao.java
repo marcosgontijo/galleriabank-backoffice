@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
+import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.db.dao.HibernateDao;
-import com.webnowbr.siscoat.cobranca.db.op.ImovelEstoqueDao;
-import com.webnowbr.siscoat.cobranca.db.op.CidadeDao;
+import com.webnowbr.siscoat.db.dao.HibernateDao.DBRunnable;
 
 /**
  * DAO access layer for the Tecnico entity
@@ -156,5 +156,42 @@ public class ImovelCobrancaDao extends HibernateDao <ImovelCobranca,Long> {
 			}
 		});
 	}
+    
+    
+    public ImovelCobranca findImovelDao(String numeroMatricula, String numeroCartorio, String cartorioMunicipio){
+		return (ImovelCobranca) executeDBOperation(new DBRunnable() {
+			@Override
+			public Object run() throws Exception {
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				ImovelCobranca imovel = new ImovelCobranca();
+				try {
+					connection = getConnection();
+					
+					ps = connection
+							.prepareStatement("SELECT * FROM cobranca.ImovelCobranca WHERE numeroMatricula = ? AND numeroCartorio = ? AND cartorioMunicipio = ?");
+					
+					ps.setString(1, numeroMatricula);
+					ps.setString(2, numeroCartorio);
+			        ps.setString(3, cartorioMunicipio);
+
+					rs = ps.executeQuery();
+					
+					 if (rs.next()) {
+		                    
+		                    imovel.setId(rs.getLong("id"));
+		                    return imovel;
+		                }
+	
+				} finally {
+					closeResources(connection, ps, rs);					
+				}
+				return imovel;
+				
+			}
+		});	
+	}
+    
     
 }

@@ -52,22 +52,48 @@
 						<f:selectItem itemValue="" itemLabel="SELECIONE" />
 						<f:selectItem itemValue="BMP Money Plus SCD S.A." itemLabel="BMP Money Plus SCD S.A." />
 						<f:selectItem itemValue="Galleria Finanças Securitizadora S.A " itemLabel="Galleria Finanças Securitizadora S.A " />
-					</p:selectOneMenu>		
-					<p:outputLabel for="DataBaixaInicial" value="Data Baixa Inicial: "
-						styleClass="labelBold" style="margin-right: 59px;" />
-					<p:calendar id="DataBaixaInicial"
-						value="#{brlTrustMB.dataBaixaInicial}"
-						required="true" label="Data Baixa" size="100"
-						pattern="dd/MM/yyyy" styleClass="dateTimeField">
-					</p:calendar>
-					<p:outputLabel for="DataBaixaFinal" value="Data Baixa Final: "
-						styleClass="labelBold" style="margin-right: 59px;" />
-					<p:calendar id="DataBaixaFinal"
-						value="#{brlTrustMB.dataBaixaFinal}"
-						required="true" label="Data Baixa" size="100"
-						pattern="dd/MM/yyyy" styleClass="dateTimeField">
-					</p:calendar>				
+					</p:selectOneMenu>	
+					
+					<p:outputLabel for="consultaNumContrato" value="Consultar por: " styleClass="labelBold" />
+					<p:selectOneRadio id="consultaNumContrato"
+						value="#{brlTrustMB.consultaNumContrato}" required="true">
+						<f:selectItem itemLabel="Data" itemValue="false" />
+						<f:selectItem itemLabel="Contrato" itemValue="true" />
+						<p:ajax update="groupTipoConsulta" 
+							event="valueChange"/>
+					</p:selectOneRadio>
 				</h:panelGrid>
+				<h:panelGroup id="groupTipoConsulta">
+					<h:panelGrid columns="2" rendered="#{!brlTrustMB.consultaNumContrato}" >
+						<p:outputLabel for="DataBaixaInicial" value="Data Baixa Inicial: "
+							styleClass="labelBold" style="margin-right: 59px;" />
+						<p:calendar id="DataBaixaInicial"
+							value="#{brlTrustMB.dataBaixaInicial}"
+							required="true" label="Data Baixa" size="100"
+							pattern="dd/MM/yyyy" styleClass="dateTimeField">
+						</p:calendar>
+						<p:outputLabel for="DataBaixaFinal" value="Data Baixa Final: "
+							styleClass="labelBold" style="margin-right: 59px;" />
+						<p:calendar id="DataBaixaFinal"
+							value="#{brlTrustMB.dataBaixaFinal}"
+							required="true" label="Data Baixa" size="100"
+							pattern="dd/MM/yyyy" styleClass="dateTimeField">
+						</p:calendar>	
+					</h:panelGrid>
+					
+					<h:panelGrid columns="2" rendered="#{brlTrustMB.consultaNumContrato}" >
+						<p:outputLabel for="numContrato"
+							value="Número do Contrato: " styleClass="labelBold" />
+						<p:inputText id="numContrato"
+							value="#{brlTrustMB.numContrato}" />		
+	
+						<p:outputLabel for="numParcela"
+							value="Número da Parcela: " styleClass="labelBold" />
+						<p:inputText id="numParcela"
+							value="#{brlTrustMB.numParcela}" />
+					</h:panelGrid>
+				</h:panelGroup>	
+					
 				<h:panelGrid columns="3">
 				<p:commandButton value="Pesquisar Contrato"
 						ajax="false"

@@ -65,7 +65,7 @@
 			            <p:rowToggler />
 			        </p:column> 
                  	<p:column style="text-align: center;width:105px;" headerText="Contrato">
-			            <h:outputText value="#{pagamento.contasPagar.contrato.numeroContrato}" />
+			            <h:outputText value="#{pagamento.contasPagar.contrato.numeroContrato}" /> 
 			        </p:column>          
                 	<p:column style="text-align: center;width:105px;" headerText="Nome" >
 			            <h:outputText value="#{pagamento.nomePagador}" />
@@ -73,6 +73,9 @@
 			        <p:column style="text-align: center;width:105px;" headerText="Despesa" >
 			            <h:outputText value="#{pagamento.contasPagar.descricao}" />
 			        </p:column>
+			        <p:column style="text-align: center;width:105px;" headerText="Esteira">
+			            <h:outputText value="#{pagamento.contasPagar.contrato.statusEsteira}" />
+			        </p:column>  
 			        <p:column style="text-align: center;width:105px;" headerText="Forma de Pagamento">
 			            <h:outputText value="#{pagamento.formaPagamento}" />
 			        </p:column>  
@@ -89,7 +92,7 @@
 					</p:column>   
 					<p:rowExpansion>
 						<p:panel id="TEDStarkBank" header="TED"
-							style="margin-bottom:10px;" rendered="#{pagamento.contasPagar.formaTransferencia eq 'TED'}">
+							style="margin-bottom:10px;" rendered="#{pagamento.formaPagamento eq 'TED'}">
 							<h:panelGrid columns="2">
 								<p:outputLabel value="Nome:" 
 									styleClass="labelBold"/>
@@ -117,8 +120,12 @@
 							</h:panelGrid>												
 						</p:panel>
 						<p:panel id="PIXStarkBank" header="PIX"
-							style="margin-bottom:10px;" rendered="#{pagamento.contasPagar.formaTransferencia eq 'Pix' || pagamento.contasPagar.formaTransferencia eq 'PIX' }">
+							style="margin-bottom:10px;" rendered="#{pagamento.formaPagamento eq 'Pix' || pagamento.formaPagamento eq 'PIX' }">
 							<h:panelGrid columns="2">
+								<p:outputLabel value="Método Pix: " 
+									styleClass="labelBold"/>
+								<p:outputLabel value="#{pagamento.metodoPix}"/>	
+								
 								<p:outputLabel value="Nome:" 
 									styleClass="labelBold"/>
 								<p:outputLabel value="#{pagamento.nomeRecebedor}"/>	
@@ -153,7 +160,7 @@
 							</h:panelGrid>												
 						</p:panel>
 						<p:panel id="BoletoStarkBank" header="Boleto"
-							style="margin-bottom:10px;" rendered="#{pagamento.contasPagar.formaTransferencia eq 'Boleto'}">
+							style="margin-bottom:10px;" rendered="#{pagamento.formaPagamento eq 'Boleto'}">
 							<h:panelGrid columns="2">		
 								<p:outputLabel value="CPF/CNPJ Recebedor boleto: " 
 									styleClass="labelBold"/>

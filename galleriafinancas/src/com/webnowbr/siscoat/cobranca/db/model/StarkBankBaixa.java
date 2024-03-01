@@ -21,6 +21,8 @@ public class StarkBankBaixa implements Serializable {
     public String comentario;
     public ContasPagar contasPagar;
     
+    public String metodoPix;
+    
 	private String pix;
 	private String nomeRecebedor;
 	private String banco;
@@ -227,5 +229,13 @@ public class StarkBankBaixa implements Serializable {
 
 	public void setValorPagamento(BigDecimal valorPagamento) {
 		this.valorPagamento = valorPagamento;
+	}
+
+	public String getMetodoPix() {
+		return metodoPix;
+	}
+
+	public void setMetodoPix(String metodoPix) {
+		this.metodoPix = metodoPix;
 	}
 }
