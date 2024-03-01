@@ -221,6 +221,12 @@ public class ContractService {
 							  this.objetoPagador = this.objetoPagadorDao.getConsultaByCpfCnpj(contratoAPPPagador.getString("cpfCnpj"));
 						        // Se existir, busca o pagador pelo cpf/cnpj e atualiza apenas os dados vazios							
 						}
+						
+						if (CommonsUtil.semValor(this.objetoPagador)) {
+							this.objetoPagador = new PagadorRecebedor();
+							this.objetoPagador.setOrigem("App");
+						}
+						
 						//caso nao tenha nem id ou cpf/cnpj na base => novo cadastro
 						String tipoPessoa = contratoAPP.has("tipoPessoa") ? contratoAPP.getString("tipoPessoa")
 								: null;
@@ -599,7 +605,13 @@ public class ContractService {
 							else if (!contratoAPPPagador.has("id") && contratoAPPPagador.has("cpfCnpj") ) {							  
 								  this.objetoPagador = this.objetoPagadorDao.getConsultaByCpfCnpj(contratoAPPPagador.getString("cpfCnpj"));
 							        // Se existir, busca o pagador pelo cpf/cnpj e atualiza apenas os dados vazios							
-							}							
+							}	
+							
+							if (CommonsUtil.semValor(this.objetoPagador)) {
+								this.objetoPagador = new PagadorRecebedor();
+								this.objetoPagador.setOrigem("App");
+							}
+							
 							//caso nao tenha nem id ou cpf/cnpj na base => novo cadastro
 							String tipoPessoa = contratoAPP.has("tipoPessoa") ? contratoAPP.getString("tipoPessoa")
 									: null;
@@ -716,8 +728,7 @@ public class ContractService {
 							if (CommonsUtil.semValor(this.objetoImovelCobranca.getCep()))
 								this.objetoImovelCobranca
 										.setCep(contratoAPPImovel.has("cep") ? contratoAPPImovel.getString("cep") : null);
-							;
-
+							
 							if (CommonsUtil.semValor(this.objetoImovelCobranca.getEndereco()))
 								if (contratoAPPImovel.has("numero")) {
 									this.objetoImovelCobranca.setEndereco(contratoAPPImovel.has("endereco")
