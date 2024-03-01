@@ -241,6 +241,10 @@
 		<property name="profileCartorio" type="boolean">
 			<column name="profileCartorio" not-null="true" default="false" />
 		</property>
+		
+		<property name="profileJuridicoCobranca" type="boolean">
+			<column name="profileJuridicoCobranca" not-null="true" default="false" />
+		</property>
 
     </class>
 </hibernate-mapping>

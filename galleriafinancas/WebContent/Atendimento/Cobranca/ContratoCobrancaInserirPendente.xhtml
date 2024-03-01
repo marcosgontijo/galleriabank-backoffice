@@ -2600,7 +2600,7 @@
 											</shiro:lacksRole>
 			
 											<shiro:hasAnyRoles
-												name="ROOT, PRECOBRANCAANALISTA, PROFILE_AVALIADOR_IMOVEL, PROFILE_LAUDO, PROFILE_GERENTE_ANALISE">
+												name="ROOT, PRECOBRANCAANALISTA, PROFILE_LAUDO, PROFILE_GERENTE_ANALISE">
 												<p:outputLabel for="dataVistoria"
 													value="Data Vistoria Imóvel: " styleClass="labelBold" />
 												<p:calendar id="dataVistoria" showOn="button"
@@ -2616,7 +2616,7 @@
 												style="FONT-SIZE: 10pt;width:300px;" />
 			
 											<shiro:hasAnyRoles
-												name="ROOT, USER_GALACHE, AVALIADORIMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_AVALIADOR_IMOVEL_GALACHE">
+												name="ROOT, USER_GALACHE, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_AVALIADOR_IMOVEL_GALACHE">
 												<p:outputLabel for="avaliacaoEngenharia"
 													value="Avaliação Engenharia: " styleClass="labelBold" />
 												<p:selectOneMenu id="avaliacaoEngenharia"
@@ -2639,15 +2639,15 @@
 													<p:spacer width="10px"></p:spacer>
 			
 													<shiro:hasAnyRoles
-														name="ROOT,PRECOBRANCAANALISTA,PRECOBRANCA, PROFILE_AVALIADOR_IMOVEL, PROFILE_LAUDO, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">
+														name="ROOT,PRECOBRANCAANALISTA,PRECOBRANCA, PROFILE_LAUDO, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">
 														<p:commandButton icon="ui-icon-trash"
 															action="#{contratoCobrancaMB.removeDataVistoria(data)}"
 															update="form:CheckListInformacoesAdicionais" />
 													</shiro:hasAnyRoles>
 			
 													<shiro:hasAnyRoles
-														name="ROOT, USER_GALACHE, AVALIADORIMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_AVALIADOR_IMOVEL_GALACHE, PROFILE_GERENTE_ANALISE,
-													PRECOBRANCAANALISTA,PRECOBRANCA, PROFILE_AVALIADOR_IMOVEL, PROFILE_LAUDO, PROFILE_ANALISTA_COMITE">
+														name="ROOT, USER_GALACHE, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_AVALIADOR_IMOVEL_GALACHE, PROFILE_GERENTE_ANALISE,
+													PRECOBRANCAANALISTA,PRECOBRANCA, PROFILE_LAUDO, PROFILE_ANALISTA_COMITE">
 														<p:commandButton icon="ui-icon-check"
 															rendered="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria == null 
 															|| contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria == ''}"

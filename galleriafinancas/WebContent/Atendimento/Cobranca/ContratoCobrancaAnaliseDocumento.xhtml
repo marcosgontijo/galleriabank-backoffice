@@ -20,7 +20,7 @@
 	</h:outputStylesheet>
 	<h:outputStylesheet name="primeicons/primeicons.css" library="primefaces"/>
 	<shiro:hasAnyRoles
-		name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO, PROFILE_PAJU_NEVES, PROFILE_PAJU_LUVISON">
+		name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_LAUDO, PROFILE_COMENTARIO_JURIDICO, PROFILE_PAJU_NEVES, PROFILE_PAJU_LUVISON">
 		<p:panel id="ImovelAnalisado" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Em Análise' or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Análise' }">
 			<f:facet name="header">
 				<h:outputText value="Cidade imovel" />				
@@ -52,7 +52,7 @@
 			</f:facet>
 
 			<shiro:hasAnyRoles
-				name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
+				name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_LAUDO, PROFILE_COMENTARIO_JURIDICO">
 
 				<h:panelGrid columns="1">
 					<p:fileUpload label="Selecionar Arquivo"
@@ -94,12 +94,10 @@
 						value="#{contratoCobrancaMB.listaDocumentoAnalise}"
 						rowKey="#{fileAnalise.id}"
 						 selection="#{contratoCobrancaMB.listaSelectAnalise}" 
-						emptyMessage=""
-						rowStyleClass="#{(fileAnalise.observacao ne null
-							or contratoCobrancaMB.objetoContratoCobranca.emAnalise) ? '' : 'ui-helper-hidden'}">
+						emptyMessage="" >
 							
 						<f:facet name="header">		
-						<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">						 
+						<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_LAUDO, PROFILE_COMENTARIO_JURIDICO">						 
 							<p:commandButton value="Excluir Selecionado(s)" ajax="true"  icon="ui-icon-trash" update="dtFilesAnalise" action="#{contratoCobrancaMB.deleteArquivosAnalisados}">
 								<p:confirm header="Confirmação" message="Deseja Excluir os itens selecionados?"/>
 							</p:commandButton> 
@@ -112,7 +110,7 @@
 						<p:column selectionMode="multiple"
 							style="width:16px;text-align:center" />
 						<shiro:hasAnyRoles
-							name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
+							name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_LAUDO, PROFILE_COMENTARIO_JURIDICO">
 							<p:column style="text-align: center; width:5rem;">
 								<p:commandButton value="ver Resumo"
 									oncomplete="PF('resumoConsutlasDialog').show()"
@@ -190,7 +188,7 @@
 							<h:outputText value="#{fileAnalise.observacao}" />
 						</p:column>
 						<shiro:hasAnyRoles
-							name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
+							name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_LAUDO, PROFILE_COMENTARIO_JURIDICO">
 						<p:column style="text-align: center; width:95px;padding: 0; border:0; " headerText="Estados"  >
 							<p:dataList id="estadosList" value="#{fileAnalise.estadosConsulta}" var="estado" 
 							 type="definition">
@@ -298,7 +296,7 @@
 							</p:commandButton>
 
 						</p:column>
-						<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
+						<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_LAUDO, PROFILE_COMENTARIO_JURIDICO">
 							<p:column>
 								<p:commandButton icon=" ui-icon-pencil"
 									onclick="PF('editarPessoaAnaliseDlg').show()" ajax="true" update="adicionarPessoaAnaliseEditarForm">
@@ -323,7 +321,7 @@
 
 			</p:panel>
 			<shiro:hasAnyRoles
-							name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_COMENTARIO_JURIDICO">
+							name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_LAUDO, PROFILE_COMENTARIO_JURIDICO">
 				<p:panel id="pnlCeridoesAnalise" header="Certidões"
 					rendered="#{!contratoCobrancaMB.objetoContratoCobranca.emReanalise}"
 					style="margin-bottom:10px;">
