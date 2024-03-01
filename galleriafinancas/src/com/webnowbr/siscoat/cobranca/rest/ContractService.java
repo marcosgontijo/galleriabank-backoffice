@@ -865,12 +865,8 @@ public class ContractService {
 							this.objetoPagador.setNomeConjuge(
 									contratoAPPPagador.has("nomeConjuge") ? contratoAPPPagador.getString("nomeConjuge")
 											: null);
-<<<<<<< HEAD
 							this.objetoContratoCobranca.setPagador(this.objetoPagador);
-
 							
-					
-=======
 							if(CommonsUtil.semValor(this.objetoPagador.getDtNascimentoConjuge())) 
 							this.objetoPagador.setDtNascimentoConjuge(contratoAPPPagador.has("dtNascimentoConjuge")
 									? dtNascimento.parse(contratoAPPPagador.getString("dtNascimentoConjuge"))
@@ -884,12 +880,11 @@ public class ContractService {
 						
 							this.objetoContratoCobranca.setPagador(this.objetoPagador);	
 							
->>>>>>> branch 'master' of https://github.com/Galleria-Bank-Developers/backoffice.git
-							
+					
 							/***
 							 * OBJETO IMOVEL
 							 */
-<<<<<<< HEAD
+
 							JSONObject contratoAPPImovel = contratoAPP.getJSONObject("imovelCobranca");
 							ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
 							ImovelCobranca imovelCobranca = new ImovelCobranca();
@@ -898,16 +893,9 @@ public class ContractService {
 							if (contratoAPPImovel.has("id")) {
 								this.objetoImovelCobranca = imovelCobrancaDao.findById(contratoAPPImovel.getLong("id"));
 								this.objetoContratoCobranca.setImovel(this.objetoImovelCobranca);
-=======
-							
->>>>>>> branch 'master' of https://github.com/Galleria-Bank-Developers/backoffice.git
-
-<<<<<<< HEAD
 							}
-
 							else if (contratoAPPImovel.has("numeroMatricula") && contratoAPPImovel.has("numeroCartorio")
 									&& contratoAPPImovel.has("cartorioMunicipio")) {
-
 								imovelCobranca = imovelCobrancaDao.findImovelDao(
 										contratoAPPImovel.getString("numeroMatricula"),
 										contratoAPPImovel.getString("numeroCartorio"),
@@ -917,12 +905,9 @@ public class ContractService {
 									this.objetoImovelCobranca = imovelCobranca;
 								this.objetoContratoCobranca.setImovel(this.objetoImovelCobranca);
 							}
-
 							else {
-
 								this.objetoImovelCobranca = new ImovelCobranca();
 								this.objetoImovelCobranca.setId(this.objetoContratoCobranca.getImovel().getId());
-
 							}
 
 							if (CommonsUtil.semValor(this.objetoImovelCobranca.getCep()))
