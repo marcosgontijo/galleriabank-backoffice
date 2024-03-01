@@ -219,7 +219,11 @@ public class ContractService {
 						//caso o cpf ja esteja no banco mas o id ainda nao => fazer find by CPF/CNPJ usando PagadorDao
 						else if (!contratoAPPPagador.has("id") && contratoAPPPagador.has("cpfCnpj") ) {							  
 							  this.objetoPagador = this.objetoPagadorDao.getConsultaByCpfCnpj(contratoAPPPagador.getString("cpfCnpj"));
-						        // Se existir, busca o pagador pelo cpf/cnpj e atualiza apenas os dados vazios							
+						        // Se existir, busca o pagador pelo cpf/cnpj e atualiza apenas os dados vazios
+							  if(CommonsUtil.semValor(objetoPagador)) {
+								  objetoPagador = new PagadorRecebedor();
+								  objetoPagador.setOrigem("App");
+							  }
 						}
 						//caso nao tenha nem id ou cpf/cnpj na base => novo cadastro
 						String tipoPessoa = contratoAPP.has("tipoPessoa") ? contratoAPP.getString("tipoPessoa")
