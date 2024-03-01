@@ -30,8 +30,10 @@
 			</div>
 			<div style="display:block; float:center;" align="center">
 				<p:inputTextarea id="inputTextareaId" value="#{contratoCobrancaMB.contratoCobrancaLogsAlteracao.observacao}" 
-					rows="5" cols="30" maxlength="200" 
-					style="padding: 5px; width: 80%;height: 100%; display:block; text-align:center"/>
+					rows="5" cols="30" maxlength="200"
+					style="padding: 5px; width: 80%;height: 100%; display:block; text-align:center">
+					<f:validateLength minimum="10"></f:validateLength>
+				</p:inputTextarea>
 			</div>
 			<div style="padding-top: 10px; padding-bottom: 10px; display:block ; text-align:center">
 			
