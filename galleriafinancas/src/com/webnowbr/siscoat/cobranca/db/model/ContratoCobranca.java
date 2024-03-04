@@ -953,8 +953,8 @@ public class ContratoCobranca implements Serializable {
 
 	public ContratoCobranca() {
 		super();
-		this.pagador = new PagadorRecebedor();
-		this.recebedor = new PagadorRecebedor();
+		this.pagador = new PagadorRecebedor("ContratoCobranca");
+		this.recebedor = new PagadorRecebedor("ContratoCobranca");
 		this.recebedor2 = null;
 		this.recebedor3 = null;
 		this.recebedor4 = null;

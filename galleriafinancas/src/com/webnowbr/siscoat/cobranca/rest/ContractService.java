@@ -208,9 +208,8 @@ public class ContractService {
 						 * OBJETO PAGADOR
 						 */
 						JSONObject contratoAPPPagador = contratoAPP.getJSONObject("pagadorRecebedor");
-						this.objetoPagador = new PagadorRecebedor();
+						this.objetoPagador = new PagadorRecebedor("App");
 						this.objetoPagadorDao = new PagadorRecebedorDao();
-						this.objetoPagador.setOrigem("App");
 						
 						//caso id seja encontrado => fazer find by ID usando PagadorDao
 						if(contratoAPPPagador.has("id")) {
@@ -219,8 +218,16 @@ public class ContractService {
 						//caso o cpf ja esteja no banco mas o id ainda nao => fazer find by CPF/CNPJ usando PagadorDao
 						else if (!contratoAPPPagador.has("id") && contratoAPPPagador.has("cpfCnpj") ) {							  
 							  this.objetoPagador = this.objetoPagadorDao.getConsultaByCpfCnpj(contratoAPPPagador.getString("cpfCnpj"));
-						        // Se existir, busca o pagador pelo cpf/cnpj e atualiza apenas os dados vazios							
+						        // Se existir, busca o pagador pelo cpf/cnpj e atualiza apenas os dados vazios
+							  if(CommonsUtil.semValor(objetoPagador)) {
+								  objetoPagador = new PagadorRecebedor("App");
+							  }
 						}
+						
+						if (CommonsUtil.semValor(this.objetoPagador)) {
+							this.objetoPagador = new PagadorRecebedor("App");
+						}
+						
 						//caso nao tenha nem id ou cpf/cnpj na base => novo cadastro
 						String tipoPessoa = contratoAPP.has("tipoPessoa") ? contratoAPP.getString("tipoPessoa")
 								: null;
@@ -586,9 +593,8 @@ public class ContractService {
 							 * OBJETO PAGADOR
 							 */
 							JSONObject contratoAPPPagador = contratoAPP.getJSONObject("pagadorRecebedor");
-							this.objetoPagador = new PagadorRecebedor();
+							this.objetoPagador = new PagadorRecebedor("App");
 							PagadorRecebedorDao pagadorDao = new PagadorRecebedorDao();
-							this.objetoPagador.setOrigem("App");
 
 							
 							//caso id seja encontrado => fazer find by ID usando PagadorDao
@@ -599,7 +605,12 @@ public class ContractService {
 							else if (!contratoAPPPagador.has("id") && contratoAPPPagador.has("cpfCnpj") ) {							  
 								  this.objetoPagador = this.objetoPagadorDao.getConsultaByCpfCnpj(contratoAPPPagador.getString("cpfCnpj"));
 							        // Se existir, busca o pagador pelo cpf/cnpj e atualiza apenas os dados vazios							
-							}							
+							}	
+							
+							if (CommonsUtil.semValor(this.objetoPagador)) {
+								this.objetoPagador = new PagadorRecebedor("App");
+							}
+							
 							//caso nao tenha nem id ou cpf/cnpj na base => novo cadastro
 							String tipoPessoa = contratoAPP.has("tipoPessoa") ? contratoAPP.getString("tipoPessoa")
 									: null;
@@ -716,8 +727,7 @@ public class ContractService {
 							if (CommonsUtil.semValor(this.objetoImovelCobranca.getCep()))
 								this.objetoImovelCobranca
 										.setCep(contratoAPPImovel.has("cep") ? contratoAPPImovel.getString("cep") : null);
-							;
-
+							
 							if (CommonsUtil.semValor(this.objetoImovelCobranca.getEndereco()))
 								if (contratoAPPImovel.has("numero")) {
 									this.objetoImovelCobranca.setEndereco(contratoAPPImovel.has("endereco")
@@ -998,7 +1008,7 @@ public class ContractService {
 						}
 
 						if (pessoas.isEmpty()) {
-							PagadorRecebedor pessoa = new PagadorRecebedor();
+							PagadorRecebedor pessoa = new PagadorRecebedor("App Adicionais");
 							pessoa.setNome(pagadoresAdicionaisAPP.getJSONObject(i).getString("nome"));
 
 							String pagadoresAdicionaisCpfCnpj = pagadoresAdicionaisAPP.getJSONObject(i)
@@ -1101,7 +1111,7 @@ public class ContractService {
 		this.objetoContratoCobranca.setGeraParcelaFinal(false);
 
 		this.objetoImovelCobranca = new ImovelCobranca();
-		this.objetoPagador = new PagadorRecebedor();
+		this.objetoPagador = new PagadorRecebedor("clearCriacaoContrato");
 
 		this.objetoContratoCobranca.setAgAssinatura(true);
 		this.objetoContratoCobranca.setAgEnvioCartorio(true);
@@ -1128,7 +1138,7 @@ public class ContractService {
 		this.objetoContratoCobranca.setUserCadastro(getNomeUsuarioLogado());
 		this.objetoContratoCobranca.setGeraParcelaFinal(false);
 		this.objetoImovelCobranca = new ImovelCobranca();
-		this.objetoPagador = new PagadorRecebedor();
+		this.objetoPagador = new PagadorRecebedor("clearEditarContrato");
 	}
 
 	/**
@@ -1144,7 +1154,8 @@ public class ContractService {
 		ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
 
 		// Cria objeto imovel, caso não exista
-		if (this.objetoImovelCobranca.getId() == -1) {
+		if (CommonsUtil.semValor(this.objetoImovelCobranca.getId() ) ||
+				this.objetoImovelCobranca.getId() == -1 ) {
 			long idImovel = imovelCobrancaDao.create(this.objetoImovelCobranca);
 			this.objetoImovelCobranca.setId(idImovel);
 			this.objetoContratoCobranca.setImovel(this.objetoImovelCobranca);

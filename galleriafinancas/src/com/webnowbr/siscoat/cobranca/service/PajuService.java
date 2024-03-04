@@ -293,7 +293,7 @@ public class PajuService {
 							.findAny().isPresent()) {
 						PagadorRecebedorService pagagadorRecebedorService = new PagadorRecebedorService();
 
-						PagadorRecebedor pessoaConsultaDocket = new PagadorRecebedor();
+						PagadorRecebedor pessoaConsultaDocket = new PagadorRecebedor("processaCertidoesDocket");
 						pessoaConsultaDocket
 								.setCpf(CommonsUtil.formataCnpjCpf(docketDocumento.getCampos().getCpf(), false));
 						pessoaConsultaDocket.setNome(docketDocumento.getCampos().getNomeCompleto());

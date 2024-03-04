@@ -38,12 +38,12 @@ public class AverbacaoMB {
 	}
     
     public void pesquisaPagador() {
-		this.pagadorSelecionado = new PagadorRecebedor();
+		this.pagadorSelecionado = new PagadorRecebedor("AverbacaoMB");
 	}
     
     public void populateSelectedPagador() {
     	averbacaoSelecionada.setPagador(pagadorSelecionado);
-		this.pagadorSelecionado = new PagadorRecebedor();
+		this.pagadorSelecionado = new PagadorRecebedor("AverbacaoMB");
 	}
     
     public void addAverbacao() {

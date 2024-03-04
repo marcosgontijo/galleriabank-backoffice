@@ -462,7 +462,7 @@ public class BigDataService {
 					for (Relacionamento relacionamento : retornoProcessoB.getRelacionamento().getCurrentRelationships()
 							.stream().filter(r -> tipoPessoa.contains(r.getRelatedEntityTaxIdType()))
 							.collect(Collectors.toList())) {
-						PagadorRecebedor pagadorRecebedor = new PagadorRecebedor();
+						PagadorRecebedor pagadorRecebedor = new PagadorRecebedor("requestRelacionamentos");
 						pagadorRecebedor.setNome(relacionamento.getRelatedEntityName());
 						if (CommonsUtil.mesmoValor("CPF", relacionamento.getRelatedEntityTaxIdType()))
 							pagadorRecebedor.setCpf(relacionamento.getRelatedEntityTaxIdNumber());

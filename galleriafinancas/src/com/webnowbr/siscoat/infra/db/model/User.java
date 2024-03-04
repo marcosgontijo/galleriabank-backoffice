@@ -110,6 +110,7 @@ public final class User implements Serializable {
     private boolean profileController;
     private boolean profileConsultaKobana;
     private boolean profileCartorio;
+    private boolean profileJuridicoCobranca;
     
 	private boolean cadastraResponsavel;
     private boolean consultaIndividual;
@@ -776,4 +777,12 @@ public final class User implements Serializable {
 	public void setProfileCartorio(boolean profileCartorio) {
 		this.profileCartorio = profileCartorio;
 	}
+
+	public boolean isProfileJuridicoCobranca() {
+		return profileJuridicoCobranca;
+	}
+
+	public void setProfileJuridicoCobranca(boolean profileJuridicoCobranca) {
+		this.profileJuridicoCobranca = profileJuridicoCobranca;
+	}	
 }
