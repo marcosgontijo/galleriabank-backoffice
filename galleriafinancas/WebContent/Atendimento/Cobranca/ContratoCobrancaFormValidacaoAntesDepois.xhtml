@@ -9,7 +9,6 @@
 		id="comparacoesPopPupId" widgetVar="comparacoesPopPupIdvar"
 		resizable="false"  width="1000" height="700" closable="true"
 		 showEffect="explode" hideEffect="fold">
-		<p:ajax event="close"/>
 			<div class="card">
 				<p:dataTable id="tableId" var="item" value="#{contratoCobrancaMB.contratoCobrancaLogsAlteracao.detalhes}">
 					<p:column headerText="Nome do campo">
@@ -35,6 +34,16 @@
 					<f:validateLength minimum="10"></f:validateLength>
 				</p:inputTextarea>
 			</div>
+			
+			<h:form>
+			    <p:inputTextarea id="texto" value="#{campoObservacaoPopPupAntesDepois.texto}" rows="5" cols="50" maxlength="201">
+			        <p:ajax event="keyup" listener="#{campoObservacaoPopPupAntesDepois.contarPalavras}" update="contador messages" />
+			    </p:inputTextarea>
+			    <p:outputLabel id="contador" value="#{contadorBean.palavrasRestantes}" styleClass="word-count" />
+			    
+			    <p:messages id="messages" showDetail="false" autoUpdate="true" />
+			</h:form>
+				
 			<div style="padding-top: 10px; padding-bottom: 10px; display:block ; text-align:center">
 			
 			</div>
@@ -46,7 +55,7 @@
 					style="background: linear-gradient(90deg, rgba(159,196,24,1) 0%, rgba(115,158,46,1) 100%);
 					float:center;
 					padding: 5px;-webkit-border-radius: 5px;text-decoration: none;
-					-moz-border-radius: 5px; border-radius: 5px;">
+					-moz-border-radius: 5px; border-radius: 5px;" disabled="contratoCobrancaMB.validaCampoObservacaoPoppup()">
 				</p:commandButton>
 			</div>
 	</p:dialog>

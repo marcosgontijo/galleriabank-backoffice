@@ -37479,5 +37479,13 @@ public class ContratoCobrancaMB {
 		} 
 		return null;
 	}
+	
+	//value -> contratoCobrancaMB.contratoCobrancaLogsAlteracao.observacao
+	
+	public boolean validaCampoObservacaoPoppup() {
+		return this.contratoCobrancaLogsAlteracao.getObservacao().length() < 10;
+
+	}
+	
 }
 
