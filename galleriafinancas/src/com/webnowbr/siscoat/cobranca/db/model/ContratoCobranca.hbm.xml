@@ -2455,7 +2455,6 @@
 		<property name="valorCreditoImovelPrincipal" type="big_decimal">
 			<column name="valorCreditoImovelPrincipal" />
 		</property>
-				
-
+		
 	</class>
 </hibernate-mapping>
