@@ -19,11 +19,6 @@ import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.infra.db.model.User;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
 public class ContratoCobranca implements Serializable {
 
 	/**

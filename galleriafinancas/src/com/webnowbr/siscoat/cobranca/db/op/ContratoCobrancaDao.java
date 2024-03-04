@@ -9927,7 +9927,6 @@ private String QUERY_ID_IMOVELESTOQUE = "select id from cobranca.contratocobranc
 		});
 	}
     
-    
     private static final String QUERY_VALOR_CONTRATOS_ASSINADOS_PERIODO = "select sum( c.valorccb ) " +
     		 " from cobranca.contratocobranca c " +
     		 " inner join cobranca.contratocobranca c2 on c.responsavel = c2.responsavel " +

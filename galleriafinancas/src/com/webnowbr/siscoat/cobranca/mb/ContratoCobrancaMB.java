@@ -427,12 +427,9 @@ public class ContratoCobrancaMB {
 	private DocumentoAnalise documentoAnalisePopup;
 	private GravamesRea gravamePopup;
 	private String estadoConsultaAdd;
-	private List<String> camposDeVerificacaoDeAlteracao;
-	//private List<ContratoCobrancaLogsAlteracaoDetalhe> listaDeAlteracoes;
 	private ContratoCobrancaLogsAlteracao contratoCobrancaLogsAlteracao = new ContratoCobrancaLogsAlteracao();
 	
 	private List<ComparativoCamposEsteira> comparativoCamposEsteira;
-	
 	
 	public void setTravaCamposEsteira() {
 		objetoContratoCobranca.setTravaCamposEsteira(true);
@@ -1135,7 +1132,6 @@ public class ContratoCobrancaMB {
 		this.objetoPagadorRecebedor = new PagadorRecebedor();
 		this.tipoPessoaIsFisica = true;
 		
-		//this.comparativoCamposEsteira = comparativosCamposEsteraDao.findAll();
 		// FIM - Tratamento para Pré-Contrato
 	}
 
@@ -1832,7 +1828,6 @@ public class ContratoCobrancaMB {
 		this.vlrComissaoFinal = null;
 		this.objetoContratoCobranca.setGeraParcelaFinal(false);
 		this.objetoContratoCobranca.setNumeroContrato(geraNumeroContrato());
-		// this.codigoResponsavel = null;
 		files = new ArrayList<FileUploaded>();
 		filesInterno = new ArrayList<FileUploaded>();
 		filesFaltante = new ArrayList<FileUploaded>();
@@ -3262,7 +3257,6 @@ public class ContratoCobrancaMB {
 			// senao valida se houve alteração no checklist para envio de email.
 			if (!SiscoatConstants.DEV && !CommonsUtil.sistemaWindows()) {
 				enviaEmailAtualizacaoPreContratoNovo();
-				// System.out.println("saveLeadTerceiros");
 			}
 			contratoCobrancaCheckList = null;
 
@@ -4053,8 +4047,6 @@ public class ContratoCobrancaMB {
 			UserDao u = new UserDao();
 			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
 
-//			System.out.println(this.listImoveis);
-
 			// Nova condição caso o usuário flag pedindo o pre-laudo da Compass
 			if (this.objetoContratoCobranca.isPedidoPreLaudo()) {
 				this.objetoContratoCobranca.setAvaliacaoLaudo("Compass");
@@ -4128,9 +4120,6 @@ public class ContratoCobrancaMB {
 			contratoCobrancaLogsAlteracao.setStatusEsteira(this.objetoContratoCobranca.getStatusEsteira());
 			contratoCobrancaLogsAlteracao.setContratoCobranca(objetoContratoCobranca);
 			
-			ContratoCobrancaLogsAlteracaoDao contratoCobrancaLogsAlteracaoDao = new ContratoCobrancaLogsAlteracaoDao();
-//			contratoCobrancaLogsAlteracaoDao.merge(this.contratoCobrancaLogsAlteracao);
-
 			List<String> camposComparar = comparativoCamposEsteira
 					.stream().map(x -> x.getNome_propiedade()).collect(Collectors.toList());
 			
@@ -4145,7 +4134,6 @@ public class ContratoCobrancaMB {
 			if (!contratoCobrancaLogsAlteracao.getDetalhes().isEmpty()) {
 				return null;
 			}
-				//return finalizaCheckListeStatus(context, contratoCobrancaDao, usuarioLogado);
 			return finalizaCheckListStatus();
 
 		} catch (Exception e) {
@@ -4165,8 +4153,6 @@ public class ContratoCobrancaMB {
 		
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
-		
-		
 		
 		// verifica se o contrato for aprovado, manda um tipo de email..
 		// senao valida se houve alteração no checklist para envio de email.
