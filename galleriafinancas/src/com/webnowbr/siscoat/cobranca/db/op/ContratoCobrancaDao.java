@@ -7085,15 +7085,18 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						where = where + " and res.codigo = '" + codResponsavel + "' ";			
 					} 	
 					
-					if(!CommonsUtil.semValor(tipoParametro) && !CommonsUtil.semValor(valorParametrto)) {
-						if(CommonsUtil.mesmoValor(tipoParametro, "Matricula")) {
+					if (!CommonsUtil.semValor(tipoParametro) && !CommonsUtil.semValor(valorParametrto)) {
+						if (CommonsUtil.mesmoValor(tipoParametro, "Matricula")) {
 							where = where + " and udf_GetNumeric(numeromatricula) like '%"
-							+ CommonsUtil.somenteNumeros(valorParametrto) + "%' ";
+									+ CommonsUtil.somenteNumeros(valorParametrto) + "%' ";
+						} else if (tipoParametro.equals("nomeParticipantes")) {
+							where = where + " and (unaccent(pare.nome) ilike unaccent('%" + valorParametrto + "%')";
+							where += " or unaccent(pareda.nome) ilike unaccent('%" + valorParametrto + "%'))";
 						} else if (tipoParametro.equals("nomePagador")) {
-		            		where = where + " and unaccent(pare.nome) ilike unaccent('%" + valorParametrto + "%')";
-		            	} else if (tipoParametro.equals("cpfPagador")) {
-		            		where = where + " and pare.cpf = '" + valorParametrto + "'";
-		            	} else if (tipoParametro.equals("cnpjPagador")) {
+							where = where + " and unaccent(pare.nome) ilike unaccent('%" + valorParametrto + "%')";
+						} else if (tipoParametro.equals("cpfPagador")) {
+							where = where + " and pare.cpf = '" + valorParametrto + "'";
+						} else if (tipoParametro.equals("cnpjPagador")) {
 		            		where = where + " and pare.cnpj = '" + valorParametrto + "'";
 		            	} else if (tipoParametro.equals("numeroContrato")) {
 		            		where = where + " and coco.numerocontrato = '" + valorParametrto + "'";
@@ -7191,13 +7194,16 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	}
 	
 	
-	private static final String QUERY_CONTRATOS_PENDENTES_CONSULTA = " select coco.id, coco.numeroContrato, coco.datacontrato, coco.quantoPrecisa, res.nome,  "
+	private static final String QUERY_CONTRATOS_PENDENTES_CONSULTA = " select distinct coco.id, coco.numeroContrato, coco.datacontrato, "
+			+ " coco.quantoPrecisa, res.nome,  "
 			+ "	pare.nome, gerente.nome, res.superlogica, "
-			+ "	coco.statuslead, coco.inicioAnalise, coco.cadastroAprovadoValor, coco.matriculaAprovadaValor, coco.pagtoLaudoConfirmada, "
+			+ "	coco.statuslead, coco.inicioAnalise, coco.cadastroAprovadoValor, coco.matriculaAprovadaValor,"
+			+ " coco.pagtoLaudoConfirmada, "
 			+ "	coco.laudoRecebido, coco.pajurFavoravel,  coco.documentosCompletos, coco.ccbPronta, coco.agAssinatura, "
 			+ "	coco.agRegistro, coco.preAprovadoComite, coco.documentosComite, coco.aprovadoComite, coco.analiseReprovada, coco.analiseComercial, coco.comentarioJuridicoEsteira, coco.status,"
-			+ " pedidoLaudo, pedidoLaudoPajuComercial, pedidoPreLaudo, pedidoPreLaudoComercial, pedidoPajuComercial, pendenciaLaudoPaju, avaliacaoLaudo , contratoConferido, agEnvioCartorio, "
-			+ " reanalise, reanalisePronta, reanaliseJuridico, certificadoEmitido, pare.id idPagador,"
+			+ " coco.pedidoLaudo, coco.pedidoLaudoPajuComercial, coco.pedidoPreLaudo, coco.pedidoPreLaudoComercial, coco.pedidoPajuComercial, coco.pendenciaLaudoPaju, coco.avaliacaoLaudo ,"
+			+ " coco.contratoConferido, agEnvioCartorio, "
+			+ " coco.reanalise, coco.reanalisePronta, coco.reanaliseJuridico, coco.certificadoEmitido, pare.id idPagador,"
 			+ " imv.cidade, imv.estado, c2.pintarLinha, coco.contratoPrioridadeAlta, coco.okCliente, "
 			+ "	coco.pendenciaExternaCartorio, coco.pendenciaResolvidaCartorio, coco.resolucaoExigenciaCartorio "
 			+ "	from cobranca.contratocobranca coco "
@@ -7205,7 +7211,9 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "	inner join cobranca.pagadorrecebedor pare on pare.id = coco.pagador "
 			+ "	inner join cobranca.imovelcobranca imv on imv.id = coco.imovel "
 			+ "	left join cobranca.responsavel gerente on res.donoresponsavel = gerente.id "
-			+ "	left join cobranca.cidade c2 on c2.id = imv.objetoCidade ";
+			+ "	left join cobranca.cidade c2 on c2.id = imv.objetoCidade "
+			+ "	left join cobranca.documentosanalise da on coco.id = da.contratocobranca "
+			+ "	left join cobranca.pagadorrecebedor pareda on da.pagador = pareda.id ";
 	
 	
 	@SuppressWarnings("unchecked")

@@ -172,7 +172,7 @@ public class ReaWebhook {
 					documentoAnalise.setDataCadastro(DateUtil.getDataHoraAgora());
 					documentoAnalise.setUsuarioCadastro(usuarioConsultaREA);
 
-					PagadorRecebedor pagador = new PagadorRecebedor();
+					PagadorRecebedor pagador = new PagadorRecebedor("cadastrarPessoRetornoRea");
 					pagador.setId(0);
 					if (CommonsUtil.mesmoValor(documentoAnalise.getTipoPessoa(), "PF")) {
 						pagador.setCpf(documentoAnalise.getCnpjcpf());

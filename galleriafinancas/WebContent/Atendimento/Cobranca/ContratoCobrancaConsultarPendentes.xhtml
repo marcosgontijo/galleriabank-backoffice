@@ -77,6 +77,7 @@
 						<f:selectItem itemLabel="Nome Pagador" itemValue="nomePagador" />
 			            <f:selectItem itemLabel="CPF Pagador" itemValue="cpfPagador" />
 			            <f:selectItem itemLabel="CNPJ Pagador" itemValue="cnpjPagador" />
+						<f:selectItem itemLabel="Nome Participantes" itemValue="nomeParticipantes" />
 			            <f:selectItem itemLabel="CCB" itemValue="numeroCCB" />
 						<p:ajax event="change" update="panelParametros, ConsultaContratos" 
 							listener="#{contratoCobrancaMB.changeStatusConsultaPreContratos}" />
@@ -86,6 +87,7 @@
 						value="#{contratoCobrancaMB.parametroConsultaContrato}"
 						label="Contrato" style="width:150px;" required="true"
 						rendered="#{contratoCobrancaMB.tipoParametroConsultaContrato eq 'nomePagador' || 
+									contratoCobrancaMB.tipoParametroConsultaContrato eq 'nomeParticipantes' || 						
 									contratoCobrancaMB.tipoParametroConsultaContrato eq 'numeroCCB' ||
 									contratoCobrancaMB.tipoParametroConsultaContrato eq 'Matricula'}" >
 					</p:inputText>
