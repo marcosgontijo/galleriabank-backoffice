@@ -7091,7 +7091,9 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 									+ CommonsUtil.somenteNumeros(valorParametrto) + "%' ";
 						} else if (tipoParametro.equals("nomeParticipantes")) {
 							where = where + " and (unaccent(pare.nome) ilike unaccent('%" + valorParametrto + "%')";
-							where += " or unaccent(pareda.nome) ilike unaccent('%" + valorParametrto + "%'))";
+							where += " or unaccent(pareda.nome) ilike unaccent('%" + valorParametrto + "%')";
+							where += " or unaccent(pareda.cpf) ilike unaccent('%" + valorParametrto + "%')";
+							where += " or unaccent(pareda.cnpj) ilike unaccent('%" + valorParametrto + "%'))";
 						} else if (tipoParametro.equals("nomePagador")) {
 							where = where + " and unaccent(pare.nome) ilike unaccent('%" + valorParametrto + "%')";
 						} else if (tipoParametro.equals("cpfPagador")) {
