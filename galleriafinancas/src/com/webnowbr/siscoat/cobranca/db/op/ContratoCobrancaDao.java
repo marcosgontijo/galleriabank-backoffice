@@ -9964,5 +9964,4 @@ private String QUERY_ID_IMOVELESTOQUE = "select id from cobranca.contratocobranc
 			}
   		});
   	}
-    
-}
+ }

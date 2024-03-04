@@ -726,19 +726,18 @@
 
 								</h:panelGroup>
 
-
-
 								<h:panelGrid columns="2" style=" -webkit-border-radius: 5px;"> <!-- Check-List 1 -->
-									<p:commandButton value="Atualizar Check-List" ajax="false"
+									<p:commandButton value="Atualizar Check-List" ajax="true"
 										icon="ui-icon-check"
-										action="#{contratoCobrancaMB.editPreContratoPorStatus()}"
+										action="#{contratoCobrancaMB.editPreContratoPorStatus}"
+										oncomplete="PF('comparacoesPopPupIdvar').show()"
 										style="TEXT-DECORATION: bold; width: 250px; height: 110px;"
-										rendered="#{contratoCobrancaMB.updateMode}">
+										rendered="#{contratoCobrancaMB.updateMode}"
+										update="comparacoesPopPupId ">
 										<f:setPropertyActionListener
 											target="#{contratoCobrancaMB.preContratoCustom}"
 											value="false" />
 									</p:commandButton>
-									
 									
 								</h:panelGrid>
 								
@@ -5339,14 +5338,15 @@
 			</p:panel>
 
 			<div align="center">
-				<p:commandButton value="Atualizar" ajax="false" icon="ui-icon-check"
+				<p:commandButton value="Atualizar nino" ajax="true" icon="ui-icon-check"
 					action="#{contratoCobrancaMB.editPreContratoPorStatus()}"
+					oncomplete="PF('comparacoesPopPupIdvar').show()"
+					update="comparacoesPopPupId "
 					style="TEXT-DECORATION: bold;"
 					rendered="#{contratoCobrancaMB.updateMode}">
 					<f:setPropertyActionListener
 						target="#{contratoCobrancaMB.preContratoCustom}" value="false" />
 				</p:commandButton>
-				<p:spacer height="10" />
 				<shiro:hasAnyRoles name="ROOT">
 					<p:commandButton value="Excluir" ajax="false" icon="ui-icon-trash"
 						action="#{contratoCobrancaMB.deletePreContrato()}"
@@ -6908,6 +6908,7 @@
 		<ui:include src="../../Dialog/ConstasPagarInserirDialog.xhtml">
 			<ui:param name="mbean" value="#{contratoCobrancaMB}"></ui:param>		
 		</ui:include>
+		<ui:include src="ContratoCobrancaFormValidacaoAntesDepois.xhtml"></ui:include>
 		
 	</ui:define>
 </ui:composition>
