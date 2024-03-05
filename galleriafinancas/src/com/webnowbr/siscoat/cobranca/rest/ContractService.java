@@ -65,7 +65,7 @@ public class ContractService {
 	@ManagedProperty(value = "#{loginBean}")
 	protected LoginBean loginBean;
 
-	private PagadorRecebedorDao objetoPagadorDao;
+	//private PagadorRecebedorDao objetoPagadorDao;
 
 	public static void main(String[] args) {
 
@@ -209,15 +209,15 @@ public class ContractService {
 						 */
 						JSONObject contratoAPPPagador = contratoAPP.getJSONObject("pagadorRecebedor");
 						this.objetoPagador = new PagadorRecebedor("App");
-						this.objetoPagadorDao = new PagadorRecebedorDao();
+						PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
 						
 						//caso id seja encontrado => fazer find by ID usando PagadorDao
 						if(contratoAPPPagador.has("id")) {
-							this.objetoPagador = this.objetoPagadorDao.findById(contratoAPPPagador.getLong("id"));
+							this.objetoPagador = pagadorRecebedorDao.findById(contratoAPPPagador.getLong("id"));
 						}
 						//caso o cpf ja esteja no banco mas o id ainda nao => fazer find by CPF/CNPJ usando PagadorDao
 						else if (!contratoAPPPagador.has("id") && contratoAPPPagador.has("cpfCnpj") ) {							  
-							  this.objetoPagador = this.objetoPagadorDao.getConsultaByCpfCnpj(contratoAPPPagador.getString("cpfCnpj"));
+							  this.objetoPagador = pagadorRecebedorDao.getConsultaByCpfCnpj(contratoAPPPagador.getString("cpfCnpj"));
 						        // Se existir, busca o pagador pelo cpf/cnpj e atualiza apenas os dados vazios
 							  if(CommonsUtil.semValor(objetoPagador)) {
 								  objetoPagador = new PagadorRecebedor("App");
@@ -594,16 +594,16 @@ public class ContractService {
 							 */
 							JSONObject contratoAPPPagador = contratoAPP.getJSONObject("pagadorRecebedor");
 							this.objetoPagador = new PagadorRecebedor("App");
-							PagadorRecebedorDao pagadorDao = new PagadorRecebedorDao();
+							PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
 
 							
 							//caso id seja encontrado => fazer find by ID usando PagadorDao
 							if(contratoAPPPagador.has("id")) {
-								this.objetoPagador = this.objetoPagadorDao.findById(contratoAPPPagador.getLong("id"));
+								this.objetoPagador = pagadorRecebedorDao.findById(contratoAPPPagador.getLong("id"));
 							}
 							//caso o cpf ja esteja no banco mas o id ainda nao => fazer find by CPF/CNPJ usando PagadorDao
 							else if (!contratoAPPPagador.has("id") && contratoAPPPagador.has("cpfCnpj") ) {							  
-								  this.objetoPagador = this.objetoPagadorDao.getConsultaByCpfCnpj(contratoAPPPagador.getString("cpfCnpj"));
+								  this.objetoPagador = pagadorRecebedorDao.getConsultaByCpfCnpj(contratoAPPPagador.getString("cpfCnpj"));
 							        // Se existir, busca o pagador pelo cpf/cnpj e atualiza apenas os dados vazios							
 							}	
 							
@@ -702,8 +702,7 @@ public class ContractService {
 							JSONObject contratoAPPImovel = contratoAPP.getJSONObject("imovelCobranca");
 							ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
 							ImovelCobranca imovelCobranca = new ImovelCobranca();
-							
-							
+														
 							if (contratoAPPImovel.has("id")) {
 								this.objetoImovelCobranca = imovelCobrancaDao.findById(contratoAPPImovel.getLong("id"));
 								this.objetoContratoCobranca.setImovel(this.objetoImovelCobranca);
