@@ -16931,6 +16931,10 @@ public class ContratoCobrancaMB {
 		cell.setCellStyle(cell_style);
 		countCol++;
 		cell = row.createCell(countCol);
+		cell.setCellValue("Data Assinatura");
+		cell.setCellStyle(cell_style);
+		countCol++;
+		cell = row.createCell(countCol);
 		cell.setCellValue("CCB-Parcela");
 		cell.setCellStyle(cell_style);
 		inicioColParcelas = countCol;
@@ -17365,6 +17369,14 @@ public class ContratoCobrancaMB {
 		cell.setCellStyle(cell_style);
 		if (record.getSerieCci() != null) {
 			cell.setCellValue(record.getSerieCci());
+		}
+		countCol++;
+		
+		// Data Assinatura
+		cell = row.createCell(countCol);
+		cell.setCellStyle(dateStyle);
+		if (record.getDataAssinatura() != null) {
+			cell.setCellValue(record.getDataAssinatura());
 		}
 		countCol++;
 	}

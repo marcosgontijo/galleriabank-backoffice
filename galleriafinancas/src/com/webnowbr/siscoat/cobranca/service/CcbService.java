@@ -4498,6 +4498,7 @@ public class CcbService {
 		String nacionalidade = null;
 		String estadoCivilStr = "";
 		String conjugeStr = "";
+		String dtNascimento = "";
 		PagadorRecebedor pessoa = participante.getPessoa();
 		
 		if(participante.isFeminino()) {
@@ -4552,9 +4553,12 @@ public class CcbService {
 			rgCnhString = "CNH";
 		}
 		
+		if(!CommonsUtil.semValor(pessoa.getDtNascimento())) {
+			dtNascimento = "nascido em " + CommonsUtil.formataData(pessoa.getDtNascimento()) + ", ";
+		}
 		
-		run2.setText( filho + " de " + pessoa.getNomeMae() + " e " + pessoa.getNomePai() + ", "
-				+ nacionalidade + ", "+ pessoa.getAtividade() + ", "+ estadoCivilStr 
+		run2.setText(filho + " de " + pessoa.getNomeMae() + " e " + pessoa.getNomePai() + ", "
+				+ nacionalidade + ", " + dtNascimento + pessoa.getAtividade() + ", "+ estadoCivilStr 
 				+ conjugeStr + ","
 				+ " portador(a) da Cédula de Identidade " + rgCnhString + " nº "+ pessoa.getRg() + " " + pessoa.getOrgaoEmissorRG() + ","
 				+ " inscrito(a) no CPF/MF sob o nº "+ pessoa.getCpf() +", endereço eletrônico: "+ pessoa.getEmail() +","
