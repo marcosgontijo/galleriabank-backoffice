@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	xmlns:p="http://primefaces.org/ui" 
+	template="/Menus/Menu.xhtml">
+
+	<ui:define name="conteudo">	
+		<h:form id="form" style="margin-bottom:10px;">
+		 	<script src="#{request.contextPath}/resources/js/functions.js" ></script>	
+		 	<script src="#{request.contextPath}/resources/js/locale-primefaces.js" ></script>	
+			<p:messages id="mensagens" showDetail="true" />
+			<p:panel id="CobrancaStarkBank" header="Conta Individual - StarkBank"
+				style="margin-bottom:10px;">
+				<h:panelGrid columns="2">						
+					<p:outputLabel for="formaTransferencia"
+						value="Forma de Tranferência: " styleClass="labelBold"
+						style="font-weight: bold; font-size: 18px;" />
+					<p:selectOneMenu id="formaTransferencia"
+						value="#{starkBankAPI.contaIndividual.formaPagamento}">
+						<f:selectItem itemValue="" itemLabel="Selecione" />
+						<f:selectItem itemValue="TED" itemLabel="TED" />
+						<f:selectItem itemValue="Pix" itemLabel="Pix" />
+						<f:selectItem itemValue="Boleto" itemLabel="Boleto" />
+						<f:selectItem itemValue="Imposto" itemLabel="Imposto" />
+						<p:ajax event="change" update="CobrancaStarkBank" />
+					</p:selectOneMenu>	
+					
+					<p:outputLabel for="DescricaoConta"
+						value="Descrição da Conta: " styleClass="labelBold"
+						style="font-weight: bold; font-size: 18px;" />
+					<p:inputText id="DescricaoConta" value="#{starkBankAPI.contaIndividual.descricaoStarkBank}" style="width:400px;" required="true"/>
+								
+				</h:panelGrid>
+				<p:panel id="BoletoStarkBank" header="Boleto"
+					style="margin-bottom:10px;" rendered="#{starkBankAPI.contaIndividual.formaPagamento eq 'Boleto'}">
+					<h:panelGroup id="starkBankGridBoleto" >
+						<h:panelGrid columns="2">
+							<p:outputLabel for="linhaDigitavel" styleClass="labelBold" value="Linha Digitável: " />
+							<p:inputText id="linhaDigitavel" value="#{starkBankAPI.contaIndividual.linhaBoleto}" style="width:100px;" required="true"/>							
+							<p:outputLabel for="cpfcnpjStark" styleClass="labelBold" value="CPF/CNPJ Recebedor boleto: " />
+							<p:inputText id="cpfcnpjStark" value="#{starkBankAPI.contaIndividual.documento}" required="true"/>
+							
+							<p:outputLabel for="ContaPagarValorPagoBoletoStarkBank" value="Valor a Pagar: "
+								styleClass="labelBold" />
+							<p:inputText id="ContaPagarValorPagoBoletoStarkBank"
+								value="#{starkBankAPI.contaIndividual.valor}"
+								onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 13, event, 2);" required="true"
+								converter="bigDecimalConverter" />
+								
+							<p:outputLabel for="ContaPagarDataPagamentoBoletoStarkBank"
+								value="Data Pagamento: " styleClass="labelBold" />
+							<p:calendar id="ContaPagarDataPagamentoBoletoStarkBank"
+								value="#{starkBankAPI.contaIndividual.dataPagamento}"
+								label="Data" size="100" pattern="dd/MM/yyyy"
+								styleClass="dateTimeField" />
+						</h:panelGrid>
+					</h:panelGroup>
+				</p:panel>
+				<p:panel id="ImpostoStarkBank" header="Imposto"
+					style="margin-bottom:10px;" rendered="#{starkBankAPI.contaIndividual.formaPagamento eq 'Imposto'}">
+					<h:panelGroup id="starkBankGridImposto" >
+						<h:panelGrid columns="2">
+							<p:outputLabel for="linhaDigitavelImposto" styleClass="labelBold" value="Linha Digitável (sem pontos e espaço): " />
+							<p:inputText id="linhaDigitavelImposto" value="#{starkBankAPI.contaIndividual.linhaBoleto}" style="width:100px;" required="true"/>														
+							<p:outputLabel for="ContaPagarValorPagoBoletoStarkBankImposto" value="Valor a Pagar: "
+								styleClass="labelBold" />
+							<p:inputText id="ContaPagarValorPagoBoletoStarkBankImposto"
+								value="#{starkBankAPI.contaIndividual.valor}"
+								onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 13, event, 2);" required="true"
+								converter="bigDecimalConverter" />
+							<p:outputLabel for="ContaPagarDataPagamentoBoletoStarkBankImposto"
+								value="Data Pagamento: " styleClass="labelBold" />
+							<p:calendar id="ContaPagarDataPagamentoBoletoStarkBankImposto"
+								value="#{starkBankAPI.contaIndividual.dataPagamento}"
+								label="Data" size="100" pattern="dd/MM/yyyy"
+								styleClass="dateTimeField" />
+						</h:panelGrid>
+					</h:panelGroup>
+				</p:panel>
+				<p:panel id="PixStarkBank" header="PIX"
+					style="margin-bottom:10px;" rendered="#{starkBankAPI.contaIndividual.formaPagamento eq 'Pix'}">
+						<h:panelGrid columns="2">
+							<p:outputLabel for="metodoPixStarkBank" value="Método PIX:" 
+								style="width:250px;" styleClass="labelBold"/>
+							<p:selectOneRadio id="metodoPixStarkBank" value="#{starkBankAPI.contaIndividual.metodoPix}" unselectable="true">
+					            <f:selectItem itemLabel="Chave Pix" itemValue="Chave Pix" />
+					            <f:selectItem itemLabel="Dados Bancários" itemValue="Dados Bancários" />
+					            <f:selectItem itemLabel="QR Code Copia e Cola" itemValue="QR Code Copia e Cola" />
+					            <p:ajax event="change" update="PixStarkBank"/>					            					            
+					        </p:selectOneRadio>
+					        
+					        <p:outputLabel for="ContaPagarDataPagamentoPIXStarkBank"
+								value="Data Pagamento: " styleClass="labelBold" />
+							<p:calendar id="ContaPagarDataPagamentoPIXStarkBank"
+								value="#{starkBankAPI.contaIndividual.dataPagamento}"
+								label="Data" size="100" pattern="dd/MM/yyyy"
+								styleClass="dateTimeField" />
+						</h:panelGrid>
+						<h:panelGrid columns="2">
+							<p:outputLabel for="nomeBancarioContaPagarPixStarkBank" value="Nome:" 
+								style="width:250px;" styleClass="labelBold" rendered="#{starkBankAPI.contaIndividual.metodoPix eq 'Dados Bancários' || 
+									starkBankAPI.contaIndividual.metodoPix eq 'Chave Pix'}"/>
+							<p:inputText id="nomeBancarioContaPagarPixStarkBank"
+								style="width:250px;"
+								value="#{starkBankAPI.contaIndividual.nomePagador}" required="true" rendered="#{starkBankAPI.contaIndividual.metodoPix eq 'Dados Bancários' || 
+									starkBankAPI.contaIndividual.metodoPix eq 'Chave Pix'}"/>
+	
+							<p:outputLabel for="cpfCnpjBancarioContaPagarPixStarkBank" value="CPF/CNPJ: " 
+								style="width:250px;" styleClass="labelBold"/>
+							<p:inputText id="cpfCnpjBancarioContaPagarPixStarkBank"
+								style="width:250px;"
+								value="#{starkBankAPI.contaIndividual.documento}" required="true" />
+	
+							<p:outputLabel for="tipoContaBancariaPix" value="Tipo da Conta: "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;"  rendered="#{starkBankAPI.contaIndividual.metodoPix eq 'Dados Bancários'}"/>
+							<p:selectOneMenu id="tipoContaBancariaPix"
+									value="#{starkBankAPI.contaIndividual.documento}"  rendered="#{starkBankAPI.contaIndividual.metodoPix eq 'Dados Bancários'}">
+									<f:selectItem itemValue="" itemLabel="Selecione" />
+									<f:selectItem itemValue="Conta Corrente" itemLabel="Conta Corrente" />
+									<f:selectItem itemValue="Conta Poupança" itemLabel="Conta Poupança" />
+							</p:selectOneMenu>
+							
+							<p:outputLabel for="bancoBancarioContaPagarPixStarkBank" value="Banco: " 
+								style="width:250px;" styleClass="labelBold"  rendered="#{starkBankAPI.contaIndividual.metodoPix eq 'Dados Bancários'}"/>
+							<p:inputText id="bancoBancarioContaPagarPixStarkBank"
+								style="width:250px;"
+								value="#{starkBankAPI.contaIndividual.banco}" required="true" rendered="#{starkBankAPI.contaIndividual.metodoPix eq 'Dados Bancários'}" />
+	
+							<p:outputLabel for="agenciaBancarioContaPagarPixStarkBank" value="Agência: " 
+								style="width:250px;" styleClass="labelBold"  rendered="#{starkBankAPI.contaIndividual.metodoPix eq 'Dados Bancários'}"/>
+							<p:inputText id="agenciaBancarioContaPagarPixStarkBank"
+								style="width:250px;"
+								value="#{starkBankAPI.contaIndividual.agencia}" required="true"  rendered="#{starkBankAPI.contaIndividual.metodoPix eq 'Dados Bancários'}"/>
+	
+							<p:outputLabel for="contaBancarioContaPagarPixStarkBank" value="C/C: " 
+								style="width:250px;" styleClass="labelBold"  rendered="#{starkBankAPI.contaIndividual.metodoPix eq 'Dados Bancários'}"/>
+							<p:inputText id="contaBancarioContaPagarPixStarkBank"
+								style="width:250px;"
+								value="#{starkBankAPI.contaIndividual.conta}" required="true"  rendered="#{starkBankAPI.contaIndividual.metodoPix eq 'Dados Bancários'}"/>
+								
+							<p:outputLabel for="chavePIXBancarioContaPagar" value="Chave Pix: " 
+								style="width:250px;" styleClass="labelBold"  rendered="#{starkBankAPI.contaIndividual.metodoPix eq 'Chave Pix'}"/>
+							<p:inputText id="chavePIXBancarioContaPagar"
+								style="width:250px;"
+								value="#{starkBankAPI.contaIndividual.pix}" rendered="#{starkBankAPI.contaIndividual.metodoPix eq 'Chave Pix'}"/>
+								
+							<p:outputLabel for="qrCodeContaPagar" value="QR Code - Copia e Cola: " 
+								style="width:250px;" styleClass="labelBold"  rendered="#{starkBankAPI.contaIndividual.metodoPix eq 'QR Code Copia e Cola'}"/>
+							<p:inputText id="qrCodeContaPagar"
+								style="width:250px;"
+								value="#{starkBankAPI.contaIndividual.pix}" rendered="#{starkBankAPI.contaIndividual.metodoPix eq 'QR Code Copia e Cola'}"/>
+								
+							<p:outputLabel for="ispbBancarioContaPagar" value="ISPB (se não tem chave PIX): " 
+								style="width:250px;" styleClass="labelBold" rendered="#{starkBankAPI.contaIndividual.metodoPix eq 'Dados Bancários'}"/>
+							<p:inputText id="ispbBancarioContaPagar"
+								style="width:250px;"
+								value="#{starkBankAPI.contaIndividual.ispb}" rendered="#{starkBankAPI.contaIndividual.metodoPix eq 'Dados Bancários'}" />
+							
+							<p:outputLabel for="ContaPagarValorPagoPixStarkBank" value="Valor a Pagar: "
+									styleClass="labelBold" />
+							<p:inputText id="ContaPagarValorPagoPixStarkBank"
+									value="#{starkBankAPI.contaIndividual.valor}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);" required="true"
+									converter="bigDecimalConverter" />							
+						</h:panelGrid> 											
+				</p:panel>
+				
+				<p:panel id="TEDStarkBank" header="TED"
+					style="margin-bottom:10px;" rendered="#{starkBankAPI.contaIndividual.formaPagamento eq 'TED'}">
+						<h:panelGrid columns="2">
+							<p:outputLabel for="nomeBancarioContaPagarTEDStarkBank" value="Nome:" 
+								style="width:250px;" styleClass="labelBold"/>
+							<p:inputText id="nomeBancarioContaPagarTEDStarkBank"
+								style="width:250px;"
+								value="#{starkBankAPI.contaIndividual.nomePagador}" required="true"/>
+	
+							<p:outputLabel for="cpfCnpjBancarioContaPagarTEDStarkBank" value="CPF/CNPJ: " 
+								style="width:250px;" styleClass="labelBold"/>
+							<p:inputText id="cpfCnpjBancarioContaPagarTEDStarkBank"
+								style="width:250px;"
+								value="#{starkBankAPI.contaIndividual.documento}" required="true" />
+								
+							<p:outputLabel for="ContaPagarDataPagamentoTEDStarkBank"
+								value="Data Pagamento: " styleClass="labelBold" />
+							<p:calendar id="ContaPagarDataPagamentoTEDStarkBank"
+								value="#{starkBankAPI.contaIndividual.dataPagamento}"
+								label="Data" size="100" pattern="dd/MM/yyyy"
+								styleClass="dateTimeField" />
+	
+							<p:outputLabel for="tipoContaBancariaTED" value="Tipo da Conta: "
+									styleClass="labelBold"
+									style="font-weight: bold; font-size: 18px;" />
+							<p:selectOneMenu id="tipoContaBancariaTED"
+									value="#{starkBankAPI.contaIndividual.tipoContaBancaria}">
+									<f:selectItem itemValue="" itemLabel="Selecione" />
+									<f:selectItem itemValue="Conta Corrente" itemLabel="Conta Corrente" />
+									<f:selectItem itemValue="Conta Poupança" itemLabel="Conta Poupança" />
+							</p:selectOneMenu>
+							
+							<p:outputLabel for="bancoBancarioContaPagarTEDStarkBank" value="Banco: " 
+								style="width:250px;" styleClass="labelBold"/>
+							<p:inputText id="bancoBancarioContaPagarTEDStarkBank"
+								style="width:250px;"
+								value="#{starkBankAPI.contaIndividual.banco}" required="true" />
+	
+							<p:outputLabel for="agenciaBancarioContaPagarTEDStarkBank" value="Agência: " 
+								style="width:250px;" styleClass="labelBold"/>
+							<p:inputText id="agenciaBancarioContaPagarTEDStarkBank"
+								style="width:250px;"
+								value="#{starkBankAPI.contaIndividual.agencia}" required="true" />
+	
+							<p:outputLabel for="contaBancarioContaPagarTEDStarkBank" value="C/C: " 
+								style="width:250px;" styleClass="labelBold"/>
+							<p:inputText id="contaBancarioContaPagarTEDStarkBank"
+								style="width:250px;"
+								value="#{starkBankAPI.contaIndividual.conta}" required="true" />
+							
+							<p:outputLabel for="ContaPagarValorPagoTEDStarkBank" value="Valor a Pagar: "
+									styleClass="labelBold" />
+							<p:inputText id="ContaPagarValorPagoTEDStarkBank"
+									value="#{starkBankAPI.contaIndividual.valor}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);" required="true"
+									converter="bigDecimalConverter" />
+						</h:panelGrid>												
+				</p:panel>
+				
+				<div align="center" style="margin-top: 20px;">
+					<p:commandButton value="Cadastrar Conta" ajax="false" icon="ui-icon-check" action="#{starkBankAPI.cadastrarContaIndividual}" style="TEXT-DECORATION: bold; margin-right: 20px;" update=":form:messageContasPagar"/>					
+				</div>
+			</p:panel>
+		</h:form>	
+		<h:form id="formFaturas" style="margin-bottom:10px;">
+			<p:panel id="FaturasIugu" header="Lista de Contas Individual"
+				style="margin-bottom:10px;">
+			   <p:dataTable id="dtFaturas" var="pagamento" value="#{starkBankAPI.contasIndividual}" sortOrder="descending" sortBy="#{pagamento.dataPagamento}"
+			   	rowStyleClass= "#{pagamento.statusPagamento eq 'Pago' ? 'parcelaPaga' : null} ">	                 
+                	<p:column style="text-align: center;width:105px;" headerText="Nome" >
+			            <h:outputText value="#{pagamento.nomePagador}" />
+			        </p:column>
+			        <p:column style="text-align: center;width:105px;" headerText="Conta" >
+			            <h:outputText value="#{pagamento.descricaoStarkBank}" />
+			        </p:column>
+			        <p:column style="text-align: center;width:105px;" headerText="Forma de Pagamento">
+			            <h:outputText value="#{pagamento.formaPagamento}" />
+			        </p:column>  
+			        <p:column style="text-align: center;" headerText="Data Pagamento" sortBy="#{pagamento.dataPagamento}">
+			            <h:outputText value="#{pagamento.dataPagamento}" >			            	
+			            	<f:convertDateTime locale="pt_BR"  />
+			            	<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+			            </h:outputText>
+			        </p:column>		
+					<p:column style="text-align: center;" headerText="Valor Pagamento (R$)"  >
+						<p:outputLabel value="#{pagamento.valor}" 
+							style="FONT-SIZE: 10pt;"
+							converter="bigDecimalConverter" />
+					</p:column>   	  
+					
+					<p:column style="text-align: center;" headerText="Status"  >
+						<p:outputLabel value="#{pagamento.statusPagamento}"
+							style="FONT-SIZE: 10pt;width:100px;" />
+					</p:column>
+			        <p:column>
+			        	<p:commandButton action="#{starkBankAPI.processarPagamentoContaIndividual}" ajax="false" icon="ui-icon-arrowthick-1-s" title="Processar Pagamento" value="Processar Pagamento" update="dtFaturas"/>
+			        	<p:commandButton action="#{starkBankAPI.deletarPagamentoContaIndividual}" ajax="false" icon="ui-icon-trash" title="Excluir Conta" value="Excluir Conta" update="dtFaturas"/>
+			        	<p:commandButton value="Comprovante" ajax="false" icon="ui-icon-arrowthick-1-s" update=":form:messageContasPagar" rendered="#{pagamento.statusPagamento eq 'Aprovado'}" >						       	 	
+							<p:fileDownload value="#{starkBankAPI.getDownloadComprovanteStarkBank(pagamento)}" />
+						</p:commandButton>	
+		            </p:column>	  		     			        	               			        	                   	        		               		        			        			           			 		
+				</p:dataTable>
+			</p:panel>	
+		</h:form>
+		<p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+		             
+		<p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+		    <p:graphicImage name="image/bluespinner.gif" />
+		</p:dialog>			
+	</ui:define>
+</ui:composition>
