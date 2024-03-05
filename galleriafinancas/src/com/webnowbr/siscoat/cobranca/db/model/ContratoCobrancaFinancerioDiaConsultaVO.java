@@ -31,6 +31,7 @@ public class ContratoCobrancaFinancerioDiaConsultaVO implements Serializable {
 	private String numeroContrato;
 	private Date dataContrato; // data do contrato mas muda na aprovacao	
 	private Date dataInicio; // data de inicio das parcelas	
+	private Date dataAssinatura; // data de inicio das parcelas	
 	
 	private String nomePagador;	
 	
@@ -93,7 +94,7 @@ public class ContratoCobrancaFinancerioDiaConsultaVO implements Serializable {
 			String empresa, BigDecimal valorImovel,
 			String tipoImovel, boolean corrigidoIPCA, boolean corrigidoNovoIPCA, 
 			String emailPagador, String celularPagador, long qtdeParcelas, String numeroContratoSeguro,
-			BigDecimal valorLeilaoImovel
+			BigDecimal valorLeilaoImovel, Date dataContratoAssinado, Date agassinaturadata
 			) {
 		super();
 		this.id = id;
@@ -137,6 +138,10 @@ public class ContratoCobrancaFinancerioDiaConsultaVO implements Serializable {
 		this.qtdeParcelas = qtdeParcelas;
 		this.numeroContratoSeguro = numeroContratoSeguro;
 		this.valorLeilaoImovel = valorLeilaoImovel;
+		if ( !CommonsUtil.semValor(dataContratoAssinado) )
+			this.dataAssinatura = dataContratoAssinado;
+		else
+			this.dataAssinatura = agassinaturadata;
 		
 		
 		this.listContratoCobrancaDetalhes = new ArrayList<>();
@@ -435,5 +440,13 @@ public class ContratoCobrancaFinancerioDiaConsultaVO implements Serializable {
 
 	public void setSerieCci(String serieCci) {
 		this.serieCci = serieCci;
-	}	
+	}
+
+	public Date getDataAssinatura() {
+		return dataAssinatura;
+	}
+
+	public void setDataAssinatura(Date dataAssinatura) {
+		this.dataAssinatura = dataAssinatura;
+	}		
 }
