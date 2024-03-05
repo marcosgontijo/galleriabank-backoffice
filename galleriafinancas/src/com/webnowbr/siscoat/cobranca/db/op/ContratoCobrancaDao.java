@@ -4167,7 +4167,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "		and cdp.datapagamentogalleria >= ? ::timestamp "
 			+ "		and cdp.datapagamentogalleria <= ? ::timestamp))	";
 	
-	private static final String WHERE_JSON_LIQUIDACAO_CONTRATO = " where cc.numerocontrato = ? "
+	private static final String WHERE_JSON_LIQUIDACAO_CONTRATO = " where cc.numeroContratoSeguro = ? "
 			+ "and cd.numeroparcela = ?";
 
 	@SuppressWarnings("unchecked")
