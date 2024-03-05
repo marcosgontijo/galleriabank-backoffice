@@ -9,7 +9,6 @@
 		id="comparacoesPopPupId" widgetVar="comparacoesPopPupIdvar"
 		resizable="false"  width="1000" height="700" closable="true"
 		 showEffect="explode" hideEffect="fold">
-		<p:ajax event="close"/>
 			<div class="card">
 				<p:dataTable id="tableId" var="item" value="#{contratoCobrancaMB.contratoCobrancaLogsAlteracao.detalhes}">
 					<p:column headerText="Nome do campo">
@@ -32,13 +31,13 @@
 				<p:inputTextarea id="inputTextareaId" value="#{contratoCobrancaMB.contratoCobrancaLogsAlteracao.observacao}" 
 					rows="5" cols="30" maxlength="200"
 					style="padding: 5px; width: 80%;height: 100%; display:block; text-align:center">
-					<f:validateLength minimum="10"></f:validateLength>
 				</p:inputTextarea>
 			</div>
+				
 			<div style="padding-top: 10px; padding-bottom: 10px; display:block ; text-align:center">
 			
 			</div>
-			<div align="center">	
+			<div align="center">
 				<p:commandButton 
 					value="Salvar Alterações" ajax="true"
 					icon="pi pi-copy"
@@ -48,6 +47,11 @@
 					padding: 5px;-webkit-border-radius: 5px;text-decoration: none;
 					-moz-border-radius: 5px; border-radius: 5px;">
 				</p:commandButton>
+			</div>
+			<div>
+				<h4 style="display: block; text-align: center">
+    			<span style="color: red;">Atenção :</span> O campo de observação deve ser preenchido com mais de 10 caracteres, caso contrário o mesmo não será salvo.
+				</h4>
 			</div>
 	</p:dialog>
 </ui:composition>

@@ -1,7 +1,5 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
-import static org.junit.jupiter.api.DynamicTest.stream;
-
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -4145,6 +4143,12 @@ public class ContratoCobrancaMB {
 	
 	public String finalizaCheckListStatus() {
 		FacesContext context = FacesContext.getCurrentInstance();
+		
+		String campoObservacao = this.contratoCobrancaLogsAlteracao.getObservacao();
+		
+		if (!this.verificaQuantidadeCampoObservacao(campoObservacao)) {
+            return null; 
+		} 
 		
 		if (!contratoCobrancaLogsAlteracao.getDetalhes().isEmpty()) {
 			ContratoCobrancaLogsAlteracaoDao contratoCobrancaLogsAlteracaoDao = new ContratoCobrancaLogsAlteracaoDao();
@@ -37479,5 +37483,24 @@ public class ContratoCobrancaMB {
 		} 
 		return null;
 	}
-}
+	
+	public boolean verificaQuantidadeCampoObservacao(String observacao) {
+		
+		boolean passouVerificacao = true;
+		
+        if (observacao == null || observacao.trim().isEmpty()) {
+        	passouVerificacao = false;
+        } else {
+            int quantidadePalavras = observacao.length();
 
+            if (quantidadePalavras > 200) {
+            	passouVerificacao = false;
+            	
+            } else if (quantidadePalavras < 10) {
+            	passouVerificacao = false;
+            } 
+        } 
+        return passouVerificacao;
+    }
+	
+}
