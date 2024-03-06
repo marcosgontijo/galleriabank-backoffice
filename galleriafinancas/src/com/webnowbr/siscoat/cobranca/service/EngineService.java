@@ -1,6 +1,7 @@
 package com.webnowbr.siscoat.cobranca.service;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -18,6 +19,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -554,14 +556,39 @@ public class EngineService {
 				context.addMessage(null,
 						new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", ""));
 				BufferedReader in;
-				in = new BufferedReader(new InputStreamReader(myURLConnection.getInputStream(), "UTF-8"));
+				InputStream engineReturn = myURLConnection.getInputStream();
+				in = new BufferedReader(new InputStreamReader(engineReturn, "UTF-8"));
 				String inputLine;
 				StringBuffer response = new StringBuffer();
+				
+				try {
+					PDDocument document = PDDocument.load(engineReturn);
+					ByteArrayOutputStream baos = new ByteArrayOutputStream();
+					document.save(baos);
+					engine.setPdfBase64(java.util.Base64.getEncoder().encodeToString(baos.toByteArray()));
+					return;
+				} catch (Exception e1) {
+					System.out.println(e1.getMessage());
+				}
+				
 				while ((inputLine = in.readLine()) != null) {
 					response.append(inputLine);
 				}
 				in.close();
-				engine.setPdfBase64(response.toString());
+//				try {
+//					PDDocument document = PDDocument.load(java.util.Base64.getDecoder().decode(response.toString().getBytes()));
+					engine.setPdfBase64(response.toString());
+//				} catch (Exception e) {
+//					try {
+//						PDDocument document = PDDocument.load(engineReturn);
+//						ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//						document.save(baos);
+//						engine.setPdfBase64(java.util.Base64.getEncoder().encodeToString(baos.toByteArray()));
+//					} catch (Exception e1) {
+//						System.out.println(e1.getMessage());
+//					}
+//
+//				}
 			}
 			myURLConnection.disconnect();
 		} catch (MalformedURLException e) {

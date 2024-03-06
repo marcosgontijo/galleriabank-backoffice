@@ -229,7 +229,8 @@
 							<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_LAUDO, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_GERENTE_ANALISE">
 								<ui:fragment>
 									<p:selectBooleanButton value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}" rendered="#{contratoCobrancaMB.indexStepsStatusContrato ge 1 and contratoCobrancaMB.indexStepsStatusContrato le 5}"  
-										onLabel="Pré-Laudo Compass Solicitado" offLabel="Pré-Laudo Compass Pendente" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px">
+										onLabel="Pré-Laudo Compass Solicitado" offLabel="Pré-Laudo Compass Pendente1" onIcon="ui-icon-check" 
+										offIcon="ui-icon-close" style="width:=80px">
 										<p:ajax event="valueChange" update="@this"></p:ajax>
 										
 									</p:selectBooleanButton>

@@ -951,12 +951,22 @@ public class ContratoCobrancaMB {
 	}
 
 	public void salvaCartorio() {
+
 		User usuarioLogado = getUsuarioLogado();
 		CartorioDao dao = new CartorioDao();
 
 		if (objetoCartorio.getStatus() == null) {
 			objetoCartorio.setStatus("Enviado Para cartório");
 		}
+		List<String> statusImoveEstoque = new ArrayList<String>(Arrays.asList("Consolidação", "Consolidado",
+				"Leilão em andamento", "Leilão Positivo", "Leilão negativo", "Vendido", "Estoque/Reintegração",
+				"Estoque/Alugado", "Estoque/Alugado", "Pendente Decisão judicial"));
+		if (!CommonsUtil.semValor(this.objetoContratoCobranca.getImovel())
+				&& CommonsUtil.semValor(this.objetoContratoCobranca.getImovel().getImovelEstoque())
+				&& statusImoveEstoque.contains(objetoCartorio.getStatus())) {
+			cadastraImovel();
+		}
+
 		if (objetoCartorio.getDataStatus() == null) {
 			objetoCartorio.setDataStatus(DateUtil.getDataHoje());
 		}
@@ -9402,6 +9412,7 @@ public class ContratoCobrancaMB {
 		}
 		cadastraImovel();
 	}
+	
 	public void cadastraImovel() {
 		ImovelEstoqueMB imovelMB = new ImovelEstoqueMB();
 		imovelMB.setObjetoContratoCobranca(objetoContratoCobranca);
@@ -33952,6 +33963,7 @@ public class ContratoCobrancaMB {
 	List<FileUploaded> deletefilesFaltante = new ArrayList<FileUploaded>();
 	List<FileUploaded> deletefilesNotaFiscal = new ArrayList<FileUploaded>();
 	List<FileUploaded> deletefilesJuridico = new ArrayList<FileUploaded>();
+	List<FileUploaded> deletefilesPreLaudo = new ArrayList<FileUploaded>();
 	List<FileUploaded> deletefilesComite = new ArrayList<FileUploaded>();
 	List<FileUploaded> deletefilesPagar = new ArrayList<FileUploaded>();
 	List<FileUploaded> deletefilesCci = new ArrayList<FileUploaded>();
@@ -33975,7 +33987,7 @@ public class ContratoCobrancaMB {
 		} else {
 			byte[] conteudo = event.getFile().getContents();
 			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(),
-					event.getFile().getFileName(), "/numContrato/", getUsuarioLogado());
+					event.getFile().getFileName(), "numContrato", getUsuarioLogado());
 
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
@@ -33998,7 +34010,7 @@ public class ContratoCobrancaMB {
 		} else {
 			byte[] conteudo = event.getFile().getContents();
 			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(),
-					event.getFile().getFileName(), "//analise/", getUsuarioLogado());
+					event.getFile().getFileName(), "analise", getUsuarioLogado());
 
 			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 			DocumentoAnalise documentoAnalise = new DocumentoAnalise();
@@ -34032,7 +34044,7 @@ public class ContratoCobrancaMB {
 		} else {
 			byte[] conteudo = event.getFile().getContents();
 			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(),
-					event.getFile().getFileName() + "-Reanalise", "//analise/", getUsuarioLogado());
+					event.getFile().getFileName() + "-Reanalise", "analise", getUsuarioLogado());
 
 			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 			DocumentoAnalise documentoAnalise = new DocumentoAnalise();
@@ -34078,7 +34090,7 @@ public class ContratoCobrancaMB {
 
 			byte[] conteudo = event.getFile().getContents();
 			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(),
-					event.getFile().getFileName(), "//faltante/", getUsuarioLogado());
+					event.getFile().getFileName(), "faltante", getUsuarioLogado());
 
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
@@ -34096,7 +34108,7 @@ public class ContratoCobrancaMB {
 
 			byte[] conteudo = event.getFile().getContents();
 			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(),
-					event.getFile().getFileName(), "//juridico/", getUsuarioLogado());
+					event.getFile().getFileName(), "juridico", getUsuarioLogado());
 
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
@@ -34114,7 +34126,7 @@ public class ContratoCobrancaMB {
 
 			byte[] conteudo = event.getFile().getContents();
 			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(),
-					event.getFile().getFileName(), "//nf/", getUsuarioLogado());
+					event.getFile().getFileName(), "nf", getUsuarioLogado());
 
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
@@ -34131,7 +34143,7 @@ public class ContratoCobrancaMB {
 		} else {
 			byte[] conteudo = event.getFile().getContents();
 			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(),
-					event.getFile().getFileName(), "//comite/", getUsuarioLogado());
+					event.getFile().getFileName(), "comite", getUsuarioLogado());
 
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
@@ -34157,7 +34169,7 @@ public class ContratoCobrancaMB {
 		} else {
 			byte[] conteudo = event.getFile().getContents();
 			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(),
-					event.getFile().getFileName(), "//pagar/", getUsuarioLogado());
+					event.getFile().getFileName(), "pagar", getUsuarioLogado());
 
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
@@ -34186,7 +34198,7 @@ public class ContratoCobrancaMB {
 			// event.getFile().getFileName();
 			byte[] conteudo = event.getFile().getContents();
 			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(),
-					event.getFile().getFileName(), "//pagar/" + conta.getFileListId() + "/", getUsuarioLogado());
+					event.getFile().getFileName(), "pagar" + conta.getFileListId() + "/", getUsuarioLogado());
 
 			// atualiza lista de arquivos contidos no diretório
 
@@ -34204,7 +34216,7 @@ public class ContratoCobrancaMB {
 		} else {
 			byte[] conteudo = event.getFile().getContents();
 			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(),
-					event.getFile().getFileName(), "//cci/", getUsuarioLogado());
+					event.getFile().getFileName(), "cci", getUsuarioLogado());
 
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
@@ -34220,8 +34232,9 @@ public class ContratoCobrancaMB {
 		} else {
 
 			byte[] conteudo = event.getFile().getContents();
+					
 			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(),
-					event.getFile().getFileName(), "//pre-laudo/", getUsuarioLogado());
+					event.getFile().getFileName(), "pre-laudo", getUsuarioLogado());
 
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
@@ -34298,6 +34311,15 @@ public class ContratoCobrancaMB {
 
 		deletefilesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
+	}
+	
+	public void deleteFilePreLaudo() {
+		for (FileUploaded f : deletefilesPreLaudo) {
+			deleteFile(f);
+		}
+
+		deletefilesPreLaudo = new ArrayList<FileUploaded>();
+		filesPreLaudo = listaArquivosJuridico();
 	}
 
 	public void deleteFileNotaFiscal() {
@@ -34490,7 +34512,7 @@ public class ContratoCobrancaMB {
 		return this.documentoConsultarTodos.stream()
 				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "pre-laudo"))
 				.collect(Collectors.toList());
-	}
+	} 
 	
 	
 	public List<FileUploaded> listaArquivosNotaFiscal() {
@@ -34553,7 +34575,7 @@ public class ContratoCobrancaMB {
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
 		filesPreLaudo = new ArrayList<FileUploaded>();
-		filesPreLaudo = listaArquivosJuridico();
+		filesPreLaudo = listaArquivosPreLaudo();
 		
 		filesNotaFiscal = new ArrayList<FileUploaded>();
 		filesNotaFiscal = listaArquivosNotaFiscal();
@@ -34828,11 +34850,11 @@ public class ContratoCobrancaMB {
 		return null;
 	}
 	
-	public StreamedContent getDownloadAllFilesNotaFiscal() {
+	public StreamedContent getDownloadAllFilesPreLaudo() {
 		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
 		try {
 			CompactadorUtil compac = new CompactadorUtil();
-			for (FileUploaded f : deletefilesJuridico) {
+			for (FileUploaded f : deletefilesPreLaudo) {
 				String arquivo = f.getName();
 				byte[] arquivoByte = fileService.abrirDocumentos(f, this.objetoContratoCobranca.getNumeroContrato(),
 						getUsuarioLogado());
@@ -34842,7 +34864,31 @@ public class ContratoCobrancaMB {
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 					FacesContext.getCurrentInstance());
 			String nomeArquivoDownload = String
-					.format(objetoContratoCobranca.getNumeroContrato() + " Documentos_juridico.zip", "");
+					.format(objetoContratoCobranca.getNumeroContrato() + " Documentos_preLaudo.zip", "");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(arquivos));
+			gerador.close();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return null;
+	}
+	
+	public StreamedContent getDownloadAllFilesNotaFiscal() {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+		try {
+			CompactadorUtil compac = new CompactadorUtil();
+			for (FileUploaded f : deletefilesNotaFiscal) {
+				String arquivo = f.getName();
+				byte[] arquivoByte = fileService.abrirDocumentos(f, this.objetoContratoCobranca.getNumeroContrato(),
+						getUsuarioLogado());
+				listaArquivos.put(arquivo, arquivoByte);
+			}
+			arquivos = compac.compactarZipByte(listaArquivos);
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String
+					.format(objetoContratoCobranca.getNumeroContrato() + " Documentos_notaFiscal.zip", "");
 			gerador.open(nomeArquivoDownload);
 			gerador.feed(new ByteArrayInputStream(arquivos));
 			gerador.close();
@@ -35111,6 +35157,14 @@ public class ContratoCobrancaMB {
 	}
 
 	
+	public List<FileUploaded> getDeletefilesPreLaudo() {
+		return deletefilesPreLaudo;
+	}
+
+	public void setDeletefilesPreLaudo(List<FileUploaded> deletefilesPreLaudo) {
+		this.deletefilesPreLaudo = deletefilesPreLaudo;
+	}
+
 	public Collection<FileUploaded> getFilesNotaFiscal() {
 		return filesNotaFiscal;
 	}
