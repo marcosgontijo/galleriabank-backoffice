@@ -334,7 +334,7 @@ public class KobanaMB {
 				if (!objetoBoleto.isNull("document_number")) {
 					boleto.setDocumentNumber(objetoBoleto.getString("document_number"));
 					
-					if (boleto.getDocumentNumber().equals("57516")) {
+					if (boleto.getDocumentNumber().equals("52340")) {
 						System.out.println("teste");
 					}
 				}

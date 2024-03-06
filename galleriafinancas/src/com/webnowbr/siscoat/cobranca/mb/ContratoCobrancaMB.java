@@ -21975,6 +21975,7 @@ public class ContratoCobrancaMB {
 		starkBankBaixa.setBanco(this.bancoOrdemPagamentoStark);
 		starkBankBaixa.setConta(this.contaOrdemPagamentoStark);
 		starkBankBaixa.setAgencia(this.agenciaOrdemPagamentoStark);
+		starkBankBaixa.setNomeRecebedor(this.nomeRecebedorOrdemPagamentoStark);
 		
 		starkBankBaixa.setDescricaoStarkBank(this.descricaoOrdemPagamentoStark);
 				
