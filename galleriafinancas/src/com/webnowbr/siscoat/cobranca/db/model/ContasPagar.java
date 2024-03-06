@@ -65,6 +65,9 @@ public class ContasPagar implements Serializable {
 	
 	private Date dataCriacao;
 	private String userCriacao;
+	
+	private ContasPagarOrigemEnum origem;
+	private String tipoOrigem;
 
 	public ContasPagar() {
 	}
@@ -103,6 +106,7 @@ public class ContasPagar implements Serializable {
 		this.contaCartaSplit = contaOriginal.isContaCartaSplit();
 		this.listContasPagarBaixas = contaOriginal.getListContasPagarBaixas();
 		this.filesContas = contaOriginal.getFilesContas();
+		this.origem = contaOriginal.getOrigem();
 	}
 
 	public List<String> completeBancos(String query) {
@@ -449,4 +453,24 @@ public class ContasPagar implements Serializable {
 	public void setIspb(String ispb) {
 		this.ispb = ispb;
 	}
+
+	public ContasPagarOrigemEnum getOrigem() {
+		return origem;
+	}
+
+	public void setOrigem(ContasPagarOrigemEnum origem) {
+		this.origem = origem;
+		this.tipoOrigem = origem.getNome();
+	}
+
+	public String getTipoOrigem() {
+		return tipoOrigem;
+	}
+
+	public void setTipoOrigem(String tipoOrigem) {
+		this.tipoOrigem = tipoOrigem;
+		this.origem = ContasPagarOrigemEnum.parse(tipoOrigem);
+	}
+	
+	
 }
