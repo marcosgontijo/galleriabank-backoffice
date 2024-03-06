@@ -20,10 +20,11 @@
 	</h:outputStylesheet>
 	<h:outputStylesheet name="primeicons/primeicons.css" library="primefaces"/>
 	
-	<p:panel header="Envio de documento do pré-laudo" style="margin-bottom:10px" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">
+	<p:panel header="Envio de documento do pré-laudo" style="margin-bottom:10px"   id="ArquivoPreLaudo" 
+			rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">
 						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" 
 						fileUploadListener="#{contratoCobrancaMB.handleFilePreLaudoUpload}" mode="advanced" dragDropSupport="true"
-                          update="ArquivosJuridicoSalvos msgArquivo" />	
+                          update="ArquivosPreLaudoSalvos msgArquivo" />	
                           
                           <p:panel id="ArquivosPreLaudoSalvos"
 					header="Arquivo(s) Pré Laudo Salvo(s) no Contrato"
@@ -32,30 +33,30 @@
 						<p:dataTable id="dtFilesPreLaudo" var="filesPreLaudo"
 							value="#{contratoCobrancaMB.filesPreLaudo}"
 							rowKey="#{filesPreLaudo.name}"
-							selection="#{contratoCobrancaMB.deletefilesJuridico}"
+							selection="#{contratoCobrancaMB.deletefilesPreLaudo}"
 							emptyMessage="" sortBy="#{filesPreLaudo.name}">
 							<p:column selectionMode="multiple"
 								style="width:16px;text-align:center" />
 							<f:facet name="header">
 								<p:commandButton value="Download Selecionado(s)" ajax="false"
 									icon="ui-icon-arrowthick-1-s" immediate="true"
-									action="#{contratoCobrancaMB.getDownloadAllFilesJuridico()}">
+									action="#{contratoCobrancaMB.getDownloadAllFilesPreLaudo()}">
 								</p:commandButton>
 								<p:commandButton value="Excluir Selecionado(s)" ajax="false"
 									icon="ui-icon-trash"
-									action="#{contratoCobrancaMB.deleteFileJuridico}" />
+									action="#{contratoCobrancaMB.deleteFilePreLaudo}" />
 								<p:commandButton value="Download Selecionado(s)" ajax="false"
 									icon="ui-icon-arrowthick-1-s" immediate="true"
-									action="#{contratoCobrancaMB.getDownloadAllFilesJuridico()}">
+									action="#{contratoCobrancaMB.getDownloadAllFilesPreLaudo()}">
 								</p:commandButton>
 							</f:facet>
 							<p:column style="text-align: center;"
-								headerText="Nome do Arquivo" filterBy="#{filesJuridico.name}"
-								filterMatchMode="contains" sortBy="#{filesJuridico.name}">
-								<h:outputText value="#{filesJuridico.name}" />
+								headerText="Nome do Arquivo" filterBy="#{filesPreLaudo.name}"
+								filterMatchMode="contains" sortBy="#{filesPreLaudo.name}">
+								<h:outputText value="#{filesPreLaudo.name}" />
 								<p:spacer height="10" />
 								<p:commandButton value="Abrir" ajax="false"
-									action="#{contratoCobrancaMB.viewFile(filesJuridico)}"
+									action="#{contratoCobrancaMB.viewFile(filesPreLaudo)}"
 									immediate="true" icon="ui-icon-search"
 									onclick="target='_blank'" onblur="target='_self'">
 								</p:commandButton>
@@ -66,7 +67,7 @@
 									icon="ui-icon-arrowthick-1-s">
 									<f:setPropertyActionListener
 										target="#{contratoCobrancaMB.selectedFile}"
-										value="#{filesJuridico}" />
+										value="#{filesPreLaudo}" />
 									<p:fileDownload value="#{contratoCobrancaMB.downloadFile}" />
 								</p:commandButton>
 							</p:column>

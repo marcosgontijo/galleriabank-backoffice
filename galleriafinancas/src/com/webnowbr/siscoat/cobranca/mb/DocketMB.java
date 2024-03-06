@@ -67,6 +67,8 @@ public class DocketMB {
 				adiconarDocumentospagador(docAnalise);
 				etapa = "pedir paju";
 				adiconarDocumentospagador(docAnalise);
+				etapa = "ReAnalise";
+				adiconarDocumentospagador(docAnalise);
 			} else {
 				continue;
 			}
