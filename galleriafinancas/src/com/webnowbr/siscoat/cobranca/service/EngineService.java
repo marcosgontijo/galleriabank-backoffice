@@ -1,6 +1,7 @@
 package com.webnowbr.siscoat.cobranca.service;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -557,15 +558,25 @@ public class EngineService {
 						new FacesMessage(FacesMessage.SEVERITY_INFO, "Consulta feita com sucesso", ""));
 				BufferedReader in;
 				InputStream engineReturn = myURLConnection.getInputStream();
-				in = new BufferedReader(new InputStreamReader(engineReturn, "UTF-8"));
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			    byte[] buffer = new byte[1024];
+			    int len;
+			    while ((len = engineReturn.read(buffer)) > 0) {
+			        baos.write(buffer, 0, len);
+			    }
+			    baos.flush();
+				InputStream enginePDF = new ByteArrayInputStream(baos.toByteArray());
+			    InputStream engineBase64 = new ByteArrayInputStream(baos.toByteArray());
+			    
+				in = new BufferedReader(new InputStreamReader(engineBase64, "UTF-8"));
 				String inputLine;
 				StringBuffer response = new StringBuffer();
 				
 				try {
-					PDDocument document = PDDocument.load(engineReturn);
-					ByteArrayOutputStream baos = new ByteArrayOutputStream();
-					document.save(baos);
-					engine.setPdfBase64(java.util.Base64.getEncoder().encodeToString(baos.toByteArray()));
+					PDDocument document = PDDocument.load(enginePDF);
+					ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
+					document.save(baos2);
+					engine.setPdfBase64(java.util.Base64.getEncoder().encodeToString(baos2.toByteArray()));
 					return;
 				} catch (Exception e1) {
 					System.out.println(e1.getMessage());
@@ -575,20 +586,7 @@ public class EngineService {
 					response.append(inputLine);
 				}
 				in.close();
-//				try {
-//					PDDocument document = PDDocument.load(java.util.Base64.getDecoder().decode(response.toString().getBytes()));
-					engine.setPdfBase64(response.toString());
-//				} catch (Exception e) {
-//					try {
-//						PDDocument document = PDDocument.load(engineReturn);
-//						ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//						document.save(baos);
-//						engine.setPdfBase64(java.util.Base64.getEncoder().encodeToString(baos.toByteArray()));
-//					} catch (Exception e1) {
-//						System.out.println(e1.getMessage());
-//					}
-//
-//				}
+				engine.setPdfBase64(response.toString());
 			}
 			myURLConnection.disconnect();
 		} catch (MalformedURLException e) {
