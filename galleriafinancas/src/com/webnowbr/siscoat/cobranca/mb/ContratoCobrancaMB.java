@@ -918,6 +918,9 @@ public class ContratoCobrancaMB {
 	private List<ImovelCobranca> listPreLaudoImoveisRelac;
 	
 	private ComparativoCamposEsteiraDao comparativosCamposEsteraDao = new ComparativoCamposEsteiraDao();
+	private Set<ContratoCobrancaLogsAlteracaoDetalhe> detalhes;
+	
+	private boolean continuar;
 	
 	public void mudaBotaoCartorio() {
 		this.setCartorioMudou(true);
@@ -3845,8 +3848,9 @@ public class ContratoCobrancaMB {
 		FacesContext context = FacesContext.getCurrentInstance();
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 
-		boolean continuar = verificaCamposStatus(context);
-		if (!continuar) {
+		this.setContinuar(verificaCamposStatus(context));
+		
+		if (!getContinuar()) {
 			return "";
 		}
 
@@ -4121,15 +4125,17 @@ public class ContratoCobrancaMB {
 			List<String> camposComparar = comparativoCamposEsteira
 					.stream().map(x -> x.getNome_propiedade()).collect(Collectors.toList());
 			
-			Set<ContratoCobrancaLogsAlteracaoDetalhe> detalhes = contratoCobrancaService.comparandoValores(
+			detalhes = contratoCobrancaService.comparandoValores(
 					this.objetoContratoCobranca, 
 					contratoCobrancaDao.findById(this.objetoContratoCobranca.getId()),
 					camposComparar,
 					this.contratoCobrancaLogsAlteracao).stream().collect(Collectors.toSet());
 			
 			this.contratoCobrancaLogsAlteracao.setDetalhes(detalhes);
-					
+				
 			if (!contratoCobrancaLogsAlteracao.getDetalhes().isEmpty()) {
+				PrimeFaces current = PrimeFaces.current();
+				current.executeScript("PF('comparacoesPopPupIdvar').show();");
 				return null;
 			}
 			return finalizaCheckListStatus();
@@ -4142,11 +4148,10 @@ public class ContratoCobrancaMB {
 	}
 	
 	public String finalizaCheckListStatus() {
-		FacesContext context = FacesContext.getCurrentInstance();
 		
 		String campoObservacao = this.contratoCobrancaLogsAlteracao.getObservacao();
 		
-		if (!this.verificaQuantidadeCampoObservacao(campoObservacao)) {
+		if (!detalhes.isEmpty() && !this.verificaQuantidadeCampoObservacao(campoObservacao)) {
             return null; 
 		} 
 		
@@ -4164,7 +4169,9 @@ public class ContratoCobrancaMB {
 			enviaEmailAtualizacaoPreContratoNovo();
 		}
 		contratoCobrancaCheckList = null;
-
+		
+		FacesContext context = FacesContext.getCurrentInstance();
+		
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO,
 						"Contrato Cobrança: Pré-Contrato editado com sucesso! (Contrato: "
@@ -37472,6 +37479,14 @@ public class ContratoCobrancaMB {
 	public void setContratoCobrancaLogsAlteracao(ContratoCobrancaLogsAlteracao contratoCobrancaLogsAlteracao) {
 		this.contratoCobrancaLogsAlteracao = contratoCobrancaLogsAlteracao;
 	}
+	
+	public boolean getContinuar() {
+		return continuar;
+	}
+
+	public void setContinuar(boolean continuar) {
+		this.continuar = continuar;
+	}
 
 	public String retornaDescricaoCampo(String nomePropiedade) {
 		Optional<String> descricao =  comparativoCamposEsteira.stream()
@@ -37503,4 +37518,7 @@ public class ContratoCobrancaMB {
         return passouVerificacao;
     }
 	
+	public void teste() {
+		System.out.println("Testando click");
+	}
 }
