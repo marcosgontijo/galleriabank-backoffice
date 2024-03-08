@@ -730,7 +730,7 @@
 
 									<p:commandButton icon="ui-icon-trash"
 										action="#{ccbMB.removeDespesa(despesas)}"
-										update="form:despesasPanel" />
+										update="form:despesasPanel valorDespesas" />
 								</p:column>
 							</p:dataTable>
 							
@@ -886,7 +886,7 @@
 									styleClass="labelBold" />
 								<p:selectOneMenu id="sistemaAmortizacao"
 									value="#{ccbMB.objetoCcb.sistemaAmortizacao}" required="true"
-									style="width: 80px;"  disabled="false" >
+									style="width: 80px;" disabled="false" >
 									<f:selectItem itemValue="Price" itemLabel="Price" />
 									<f:selectItem itemValue="SAC" itemLabel="SAC" />						
 								</p:selectOneMenu>
@@ -948,7 +948,7 @@
 								<p:commandButton ajax="true"
 									action="#{ccbMB.calcularSimulador}"
 									icon="ui-icon ui-icon-circle-zoomin"
-									value="Calcular Parcelas" update="msgs Dados" />
+									value="Calcular Parcelas" update="msgs Dados dadosOcultos" />
 							</h:panelGrid>
 						</p:panel>	
 						<p:panel header="Emissão / Banco" id="PanelBanco">

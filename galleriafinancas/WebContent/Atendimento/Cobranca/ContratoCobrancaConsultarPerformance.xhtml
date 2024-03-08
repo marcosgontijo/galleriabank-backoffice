@@ -641,7 +641,10 @@
 							</p:selectOneMenu>
 							<p:outputLabel value="Data do status" styleClass="labelBold" />
 							<p:datePicker
-								value="#{contratoCobrancaMB.objetoCartorio.dataStatus}"></p:datePicker>
+								value="#{contratoCobrancaMB.objetoCartorio.dataStatus}">
+								<f:convertDateTime locale="pt_BR" />
+								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+							</p:datePicker>
 							<p:commandButton value="Adicionar status"
 								action="#{contratoCobrancaMB.salvaCartorio}" ajax="true"
 								update="contratoEmCartorioForm"></p:commandButton>
