@@ -27,7 +27,7 @@ public class Termo {
 
 	private UserPerfil userPerfil;
 
-	private transient TermoUsuario termoUsuario;
+	private  TermoUsuario termoUsuario;
 
 	public boolean isAceiteExpirado() {
 		if (CommonsUtil.semValor(termoUsuario))
