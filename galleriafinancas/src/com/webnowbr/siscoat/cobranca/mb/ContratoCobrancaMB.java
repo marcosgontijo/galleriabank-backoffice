@@ -3874,20 +3874,13 @@ public class ContratoCobrancaMB {
 					comparativoCamposEsteira,
 					this.contratoCobrancaLogsAlteracao).stream().collect(Collectors.toSet());
 			
-//			imovelCobrancaDao.findById(this.objetoImovelCobranca.getId());
-//			System.out.println(imovelCobrancaDao.findById(this.objetoImovelCobranca.getId()));
-//			//ImovelCobranca valoresBanco = imovelCobrancaDao.findById(this.objetoImovelCobranca.getId());
-			
 			this.contratoCobrancaLogsAlteracao.setDetalhes(detalhes);
-//			this.contratoCobrancaLogsAlteracao.setDetalhes(detalhesImovel);
 				
 			if (!contratoCobrancaLogsAlteracao.getDetalhes().isEmpty()) {
 				PrimeFaces current = PrimeFaces.current();
 				current.executeScript("PF('comparacoesPopPupIdvar').show();");
 				return null;
 			}
-			
-
 
 			return finalizaCheckListStatus();
 
@@ -3899,13 +3892,10 @@ public class ContratoCobrancaMB {
 	}
 	
 	public String finalizaCheckListStatus() {
-		
-
 		ResponsavelDao responsavelDao = new ResponsavelDao();
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
 
-		
 		FacesContext context = FacesContext.getCurrentInstance();
 		
 		String campoObservacao = this.contratoCobrancaLogsAlteracao.getObservacao();
@@ -3914,7 +3904,6 @@ public class ContratoCobrancaMB {
             return null; 
 		} 
 		
-
 		try {
 
 		if (!SiscoatConstants.DEV && !CommonsUtil.sistemaWindows()) {
