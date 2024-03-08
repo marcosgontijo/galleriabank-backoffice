@@ -6,6 +6,8 @@ public class ComparativoCamposEsteira {
 	private String id_form;
 	private String nome_propiedade;
 	private String descricao;
+	private String validarClasses;
+	private boolean validar;
 	
 	public Long getId() {
 		return id;
@@ -39,4 +41,19 @@ public class ComparativoCamposEsteira {
 		this.descricao = descricao;
 	}
 
+	public String getValidarClasses() {
+		return validarClasses;
+	}
+
+	public void setValidarClasses(String validarClasses) {
+		this.validarClasses = validarClasses;
+	}
+
+	public boolean isValidar() {
+		return validar;
+	}
+
+	public void setValidar(boolean validar) {
+		this.validar = validar;
+	}
 }

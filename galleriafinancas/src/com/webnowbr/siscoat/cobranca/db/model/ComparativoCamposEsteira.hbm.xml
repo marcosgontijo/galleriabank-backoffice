@@ -20,5 +20,13 @@
 		<property name="descricao" type="java.lang.String">
 			<column name="descricao" />
 		</property>
+		
+		<property name="validarClasses" type="java.lang.String">
+			<column name="validarClasses" />
+		</property>
+		
+		<property name="validar" type="boolean">
+			<column name="validar" not-null="true" default="true"/>
+		</property>
     </class>
 </hibernate-mapping>

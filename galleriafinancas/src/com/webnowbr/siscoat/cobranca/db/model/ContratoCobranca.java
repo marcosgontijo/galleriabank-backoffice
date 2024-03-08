@@ -24,6 +24,8 @@ public class ContratoCobranca implements Serializable {
 	/**
 	 * 
 	 */
+	
+	private ImovelCobranca imovel;
 	private String cessionario;
 
 	private BigDecimal valorAgilCessao;
@@ -319,7 +321,7 @@ public class ContratoCobranca implements Serializable {
 
 	private Responsavel responsavel;
 
-	private ImovelCobranca imovel;
+	
 
 	private List<ContratoCobrancaDetalhes> listContratoCobrancaDetalhes;
 	private List<ContratoCobrancaObservacoes> listContratoCobrancaObservacoes;
