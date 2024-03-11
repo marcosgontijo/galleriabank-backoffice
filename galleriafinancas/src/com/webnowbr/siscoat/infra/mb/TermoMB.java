@@ -39,6 +39,7 @@ import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
 
 import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
@@ -168,13 +169,24 @@ public class TermoMB {
             Paragraph paragrafo = new Paragraph();
             Font fonteNegrito = FontFactory.getFont(FontFactory.TIMES_ROMAN, 16, Font.BOLD);
             paragrafo.setAlignment(Element.ALIGN_CENTER);
-            paragrafo.add(new Paragraph(objetoTermo.getIdentificacao(), fonteNegrito));
+            paragrafo.add(new Paragraph(objetoTermo.getIdentificacao() + " - Assinantes", fonteNegrito));
             document.add(paragrafo);
-            // Adicionar conteúdo ao documento
+            Paragraph spacer = new Paragraph("");
+            spacer.setSpacingAfter(20f);
+            document.add(spacer);
+            PdfPTable table = new PdfPTable(2);
+            table.setWidthPercentage(100);
             for(TermoUsuario user : termosUsuario) {
             	User usuario = userDao.findById(user.getIdUsuario());
-            document.add(new Paragraph("Nome: " + usuario.getName() + "  Data: " + CommonsUtil.formataData(user.getDataAceite())));
+            Paragraph	paragrafoUsuario = new Paragraph( usuario.getName());
+            paragrafoUsuario.setAlignment(Element.ALIGN_RIGHT);
+            table.addCell(paragrafoUsuario);
+            Paragraph paragrafoData = new Paragraph( CommonsUtil.formataData(user.getDataAceite()));
+            paragrafoData.setAlignment(Element.ALIGN_LEFT);
+            table.addCell(paragrafoData);
+           
             }
+            document.add(table);
             // Fechar o documento
             document.close();
 
