@@ -21,10 +21,7 @@ public class ContratoCobrancaService {
 			Object valoresBanco, List<ComparativoCamposEsteira> camposEsteira,
 			ContratoCobrancaLogsAlteracao alteracao) {
 		
-		//PEGAR A CLASSE DO valoresAtuais
 		String nomeClasse = valoresAtuais.getClass().getSimpleName();
-		System.out.println("Objeto pertence a classe" + nomeClasse);
-		
 		
 		List<String> camposParaVerificar = camposEsteira.stream()//
 				.filter(c -> c.getValidarClasses().equals(nomeClasse))//
@@ -36,18 +33,29 @@ public class ContratoCobrancaService {
 		Class<?> reflectionValues = valoresAtuais.getClass();
 
 		for (Field field : reflectionValues.getDeclaredFields()) {
-			Boolean verificaCamposAlterados = camposParaVerificar.contains(field.getName().toLowerCase()) ? true : false;			
+			Boolean verificaCamposAlterados = camposParaVerificar
+					.stream().filter(f -> f.equalsIgnoreCase(field.getName().toLowerCase()))
+					.findAny().isPresent();	
 			try {
 			if(!verificaCamposAlterados) {
 				String nomeClasseCampo = field.getType().getSimpleName();
-				if (camposEsteira.stream().filter(c -> c.getValidarClasses().equals(nomeClasseCampo)).findAny().isPresent()) { //SE TIVER CAMPOS P VALIDAR
+				if (camposEsteira.stream().filter(c -> c.getValidarClasses().equalsIgnoreCase(nomeClasseCampo.toLowerCase())).findAny().isPresent()) { 
 					field.setAccessible(true);
 					Object currentValues = field.get(valoresAtuais); 
 					Object originalValues = field.get(valoresBanco);
 					
-					listaDeAlteracoes.addAll(comparandoValores(currentValues, originalValues, camposEsteira, alteracao));
+					if (currentValues != null && originalValues == null) {
+						listaDeAlteracoes.add(new ContratoCobrancaLogsAlteracaoDetalhe(field.getName(), nomeClasse,
+								currentValues.toString(), "Não existia", alteracao));
+					}
+					if (currentValues == null && originalValues != null) {
+						listaDeAlteracoes.add(new ContratoCobrancaLogsAlteracaoDetalhe(field.getName(), nomeClasse,
+								"Removido", originalValues.toString(), alteracao));
+					} else if (currentValues != null && originalValues != null) {
+						listaDeAlteracoes
+								.addAll(comparandoValores(currentValues, originalValues, camposEsteira, alteracao));
+					}
 				}
-				// VERIFICA SE A CLASE TEM CAMPOS A VALIDAR SE SIM FAZ CHAMDADA RECURSIVA
 				continue;
 			}
 			

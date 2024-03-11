@@ -1404,7 +1404,7 @@
 						</h:panelGrid>
 						<h:panelGrid columns="2">
 							<p:outputLabel for="divida"
-								value="Tem previsão de pagamento de dívida do imóvel? (IQ) "
+								value="Tem previsão de pagamento de dívida do imóvel? (IQ)"
 								styleClass="labelBold" />
 							<p:selectOneMenu id="divida"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.divida}"
@@ -1683,7 +1683,7 @@
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado' and ( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'))}">
 						<h:panelGrid columns="2">
 							<p:outputLabel for="vencimentoBoleto"
-								value="Data Vencimeto Boleto: " styleClass="labelBold" />
+								value="Data Vencimeto Boleto:" styleClass="labelBold" />
 							<p:calendar id="vencimentoBoleto" showOn="button"
 								value="#{contratoCobrancaMB.objetoContratoCobranca.vencimentoBoleto}"
 								size="100" pattern="dd/MM/yyyy" locale="pt"
@@ -1850,23 +1850,23 @@
 							<h:panelGrid columns="2">
 								<p:outputLabel for="NumeroMatriculaLaudoPaju"
 									value="Numero Matrícula: " />
-								<p:inputText id="NumeroMatriculaLaudoPaju"
+								<p:inputText id="NumeroMatriculaLaudoPaju" readonly="true" disabled="true"
 									value="#{contratoCobrancaMB.objetoImovelCobranca.numeroMatricula}"
 									label="NumeroMatricula" onblur="" style="width:400px;" />
 
 								<p:outputLabel for="EnderecoImovelLaudoPaju" value="Endereço: " />
-								<p:inputText id="EnderecoImovelLaudoPaju"
+								<p:inputText id="EnderecoImovelLaudoPaju" readonly="true" disabled="true"
 									value="#{contratoCobrancaMB.objetoImovelCobranca.endereco}"
 									label="Endereço" onblur="" style="width:400px;" />
 
 								<p:outputLabel for="linkGMapsImovelLaudoPaju"
 									value="Link Google Maps: " />
-								<p:inputText id="linkGMapsImovelLaudoPaju"
+								<p:inputText id="linkGMapsImovelLaudoPaju" readonly="true" disabled="true"
 									value="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}"
 									label="Link Google Maps" style="width:400px;" />
 
 								<p:outputLabel for="TipoLaudoPaju" value="Tipo: " />
-								<p:autoComplete id="TipoLaudoPaju"
+								<p:autoComplete id="TipoLaudoPaju" readonly="true" disabled="true"
 									value="#{contratoCobrancaMB.objetoImovelCobranca.tipo}"
 									completeMethod="#{contratoCobrancaMB.objetoImovelCobranca.completeTipoImovel}"
 									autocomplete="no" dropdown="true" forceSelection="true"
@@ -1878,13 +1878,13 @@
 
 								<p:outputLabel for="AreaTotalLaudoPaju"
 									value="Área Total / Terreno (metros):  " />
-								<p:inputText id="AreaTotalLaudoPaju"
+								<p:inputText id="AreaTotalLaudoPaju" readonly="true" disabled="true"
 									value="#{contratoCobrancaMB.objetoImovelCobranca.areaTotal}"
 									style="width:150px;" />
 
 								<p:outputLabel for="AreaConstruidaLaudoPaju"
 									value="Área Útil / Construída (metros): " />
-								<p:inputText id="AreaConstruidaLaudoPaju"
+								<p:inputText id="AreaConstruidaLaudoPaju" readonly="true" disabled="true"
 									value="#{contratoCobrancaMB.objetoImovelCobranca.areaConstruida}"
 									style="width:150px;" />
 							</h:panelGrid>
@@ -2071,7 +2071,7 @@
 				</h:panelGroup>
 
 				<h:panelGroup id="CheckListInformacoesAdicionais">
-					<p:panel header="Check-List - Informações Adicionais"
+					<p:panel header="Check-List - Informações Adicionais "
 						style="margin-bottom:20px;"
 						rendered="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor == 'Aprovado' and ( usuarioMB.objetoUsuario.administrador or (contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. DOC' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Ag. Registro' and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Pré-Comite'))}">
 						<p:spacer height="10"></p:spacer>
@@ -5337,7 +5337,7 @@
 			</p:panel>
 
 			<div align="center">
-				<p:commandButton value="Atualizar nino" ajax="true" icon="ui-icon-check"
+				<p:commandButton value="Atualizar" ajax="true" icon="ui-icon-check"
 					action="#{contratoCobrancaMB.editPreContratoPorStatus()}"
 					oncomplete="PF('comparacoesPopPupIdvar').show()"
 					update="comparacoesPopPupId "

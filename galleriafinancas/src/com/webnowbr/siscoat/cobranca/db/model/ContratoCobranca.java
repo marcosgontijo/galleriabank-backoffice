@@ -24,7 +24,6 @@ public class ContratoCobranca implements Serializable {
 	/**
 	 * 
 	 */
-	
 	private ImovelCobranca imovel;
 	private String cessionario;
 
@@ -841,8 +840,8 @@ public class ContratoCobranca implements Serializable {
 	private String statusPropostaMoneyPlus;
 
 	private String proprietarioAnterior;
-	private String terciroGarantidorRessalva;
 
+	private String terciroGarantidorRessalva;
 	private String matriculaRessalva;
 	private String pefinRefinRessalva;
 	private String protestoRessalva;

@@ -239,9 +239,9 @@ public class ImovelCobranca implements Serializable {
 		String queryLowerCase = query.toLowerCase();
 		List<String> listaTipos = new ArrayList<>();
 		for(String tipo : listaTipoImovel()) {
-			listaTipos.add(tipo//.split(Pattern.quote(","))[0]
-					);
+			listaTipos.add(tipo);//.split(Pattern.quote(","))[0]
 		}
+		
 		return listaTipos.stream().filter(t -> t.toLowerCase().contains(queryLowerCase)).collect(Collectors.toList());
 	}
 	

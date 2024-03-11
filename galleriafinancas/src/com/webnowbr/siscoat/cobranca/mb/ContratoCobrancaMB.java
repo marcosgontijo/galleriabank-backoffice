@@ -37501,9 +37501,8 @@ public class ContratoCobrancaMB {
 
 	public String retornaDescricaoCampo(String nomePropiedade) {
 		Optional<String> descricao =  comparativoCamposEsteira.stream()
-				.filter(y -> y.getNome_propiedade().equals(nomePropiedade.toLowerCase()))
+				.filter(f -> f.getNome_propiedade().equalsIgnoreCase(nomePropiedade.toLowerCase()))
 				.map(x -> x.getDescricao()).findAny();
-		
 		if(descricao.isPresent()) {
 			return descricao.get();
 		} 
@@ -37528,8 +37527,4 @@ public class ContratoCobrancaMB {
         } 
         return passouVerificacao;
     }
-	
-	public void teste() {
-		System.out.println("Testando click");
-	}
 }
