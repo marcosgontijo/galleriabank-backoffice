@@ -9,6 +9,10 @@
 			<generator class="increment" />
 		</id>
    
+		<property name="nomeClasse" type="java.lang.String">
+			<column name="nomeClasse" />
+		</property>
+		
 		<property name="nomeCampo" type="java.lang.String">
 			<column name="nomeCampo" />
 		</property>
