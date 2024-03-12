@@ -156,15 +156,16 @@
 			        </p:column>	
 			        
 			        <p:column style="width:180px;">
-			        	<p:commandButton action="#{contratoCobrancaMB.clearFieldsDetalhesPendentes}" ajax="false" icon="ui-icon-pencil" value="Ver Detalhes" title="Ver Detalhes" 
-		        			disabled="#{contratos.status == 'Aprovado'}">
+			        	<p:commandButton action="#{contratoCobrancaMB.clearFieldsDetalhesPendentes}" 
+			        		ajax="false" icon="ui-icon-pencil" value="Ver Detalhes" title="Ver Detalhes" >
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoPagadorRecebedor}" value="#{contratos.pagador}" />
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoImovelCobranca}" value="#{contratos.imovel}" />
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.deleteMode}" value="false" />
 		                </p:commandButton>
-
+						
+					<shiro:hasAnyRoles name="ROOT"> 
 	                	<p:commandButton action="#{contratoCobrancaMB.clearFieldsEditarPendentes}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar" >
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
@@ -173,7 +174,7 @@
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.baixarMode}" value="false" />
 		                	<f:setPropertyActionListener target="#{contratoCobrancaMB.blockForm}" value="false" />
 		                </p:commandButton>					              
-		           
+		          	 </shiro:hasAnyRoles>
 		                <p:commandButton value="PDF P.A." ajax="false" icon="ui-icon-print" rendered="#{contratos.analiseReprovada == false 
 			                and contratos.statusLead == 'Completo' 
 			                and contratos.inicioAnalise == true

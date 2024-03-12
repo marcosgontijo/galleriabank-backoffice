@@ -22,13 +22,11 @@ public class ContratoCobrancaService {
 			ContratoCobrancaLogsAlteracao alteracao) {
 		
 		String nomeClasse = valoresAtuais.getClass().getSimpleName();
-		System.out.println("O nome da classe é: " + nomeClasse);
 		
-		List<String> camposParaVerificar = camposEsteira.stream()//
-				.filter(c -> c.getValidarClasses().equals(nomeClasse))//
-				.map(c -> c.getNome_propiedade()) //
+		List<String> camposParaVerificar = camposEsteira.stream()
+				.filter(c -> c.getValidarClasses().equals(nomeClasse))
+				.map(c -> c.getNome_propiedade())
 				.collect(Collectors.toList());
-		 
 		
 		List<ContratoCobrancaLogsAlteracaoDetalhe> listaDeAlteracoes = new ArrayList<>();
 		Class<?> reflectionValues = valoresAtuais.getClass();
@@ -53,8 +51,6 @@ public class ContratoCobrancaService {
 						listaDeAlteracoes.add(new ContratoCobrancaLogsAlteracaoDetalhe(field.getName(), nomeClasse,
 								"Removido", originalValues.toString(), alteracao));
 					} else if (currentValues != null && originalValues != null && !currentValues.equals(valoresAtuais) ) {
-
-						System.out.println("O nome da propriedade é: " + field.getName());
 						listaDeAlteracoes
 								.addAll(comparandoValores(currentValues, originalValues, camposEsteira, alteracao));
 					}
@@ -68,7 +64,6 @@ public class ContratoCobrancaService {
 
 				if (currentValues != null) {
 					if( !CommonsUtil.mesmoValor(currentValues, originalValues)) {
-//					if (!currentValues.equals(originalValues)) {
 						listaDeAlteracoes.add(new ContratoCobrancaLogsAlteracaoDetalhe(field.getName(), nomeClasse, CommonsUtil.stringValue(originalValues), CommonsUtil.stringValue(currentValues), alteracao));
 					}
 				} 
