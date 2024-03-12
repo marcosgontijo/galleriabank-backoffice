@@ -16283,6 +16283,8 @@ public class ContratoCobrancaMB {
 			}
 			
 			contratos.setSerieCci(contratoCobrancaDao.pegarSerieCci(contratos.getId()));
+			CartorioDao dao = new CartorioDao();
+			contratos.setUltimoCartorio(dao.consultaUltimoCartorio(contratos.getId()));
 
 			// calcula coluna valor atualizado
 			ContratoCobrancaUtilsMB contratoCobrancaUtilsMB;
@@ -16963,6 +16965,14 @@ public class ContratoCobrancaMB {
 		cell.setCellStyle(cell_style);
 		countCol++;
 		cell = row.createCell(countCol);
+		cell.setCellValue("Status Cartorio");
+		cell.setCellStyle(cell_style);
+		countCol++;
+		cell = row.createCell(countCol);
+		cell.setCellValue("Data Status Cartorio");
+		cell.setCellStyle(cell_style);
+		countCol++;
+		cell = row.createCell(countCol);
 		cell.setCellValue("CCB-Parcela");
 		cell.setCellStyle(cell_style);
 		inicioColParcelas = countCol;
@@ -17405,6 +17415,24 @@ public class ContratoCobrancaMB {
 		cell.setCellStyle(dateStyle);
 		if (record.getDataAssinatura() != null) {
 			cell.setCellValue(record.getDataAssinatura());
+		}
+		countCol++;
+		
+		// Status Cartorio
+		cell = row.createCell(countCol);
+		cell.setCellStyle(cell_style);
+		if (record.getUltimoCartorio() != null) {
+			if (record.getUltimoCartorio().getStatus() != null) 
+				cell.setCellValue(record.getUltimoCartorio().getStatus());
+		}
+		countCol++;
+		 
+		// Data Status Cartorio
+		cell = row.createCell(countCol);
+		cell.setCellStyle(dateStyle);
+		if (record.getUltimoCartorio() != null) {
+			if (record.getUltimoCartorio().getDataStatus() != null) 
+			cell.setCellValue(record.getUltimoCartorio().getDataStatus());
 		}
 		countCol++;
 	}
@@ -23756,7 +23784,7 @@ public class ContratoCobrancaMB {
 					contratoCobrancaDetalhesParcial.setDataVencimento(parcelasBoleto.getDataVencimento());
 					contratoCobrancaDetalhesParcial.setVlrParcela(parcelasBoleto.getVlrParcelaAtualizada());
 					contratoCobrancaDetalhesParcial.setDataPagamentoGalleria(dataPagamento.getTime());
-					contratoCobrancaDetalhesParcial.setVlrRecebido(parcelasBoleto.getVlrBoletoKobana());
+					contratoCobrancaDetalhesParcial.setVlrRecebido(this.vlrRecebido);
 
 					// TODO SOMAR BAIXAS PARCIAIS
 					for (QuitacaoParcelasPDF parcelaPresente : this.quitacaoPDF.getParcelas()) {
@@ -23765,7 +23793,7 @@ public class ContratoCobrancaMB {
 							BigDecimal totalBaixas = getTotalParcelasBaixadas(
 									parcelasBoleto.getListContratoCobrancaDetalhesParcial());
 							// adiciona valor baixado do boleto
-							totalBaixas = totalBaixas.add(parcelasBoleto.getVlrBoletoKobana());
+							totalBaixas = totalBaixas.add(this.vlrRecebido);
 							// se não considerar Tx Adm descontar valor
 							BigDecimal valorParcelaPresente = BigDecimal.ZERO;
 							valorParcelaPresente = parcelaPresente.getValorPresenteParcela();
@@ -34239,7 +34267,7 @@ public class ContratoCobrancaMB {
 
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
-			filesPreLaudo = listaArquivosJuridico();
+			filesPreLaudo = listaArquivosPreLaudo();
 		}
 	}
 
