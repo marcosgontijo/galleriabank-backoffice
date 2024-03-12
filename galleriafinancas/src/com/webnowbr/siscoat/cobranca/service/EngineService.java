@@ -579,7 +579,7 @@ public class EngineService {
 					engine.setPdfBase64(java.util.Base64.getEncoder().encodeToString(baos2.toByteArray()));
 					return;
 				} catch (Exception e1) {
-					System.out.println(e1.getMessage());
+				//	System.out.println(e1.getMessage());
 				}
 				
 				while ((inputLine = in.readLine()) != null) {

@@ -7362,9 +7362,11 @@ public class ContratoCobranca implements Serializable {
 		}
 		
 		if(this.status.equals("Aprovado")) {
-			if (!this.isNotaFiscalEmitida() && !this.isNotaFiscalAgendada()) {
+			if (CommonsUtil.mesmoValorIgnoreCase( "Solicitado", getSolicitarNota()) &&
+					!CommonsUtil.booleanValue( this.isNotaFiscalEmitida()) && 
+					!CommonsUtil.booleanValue(this.isNotaFiscalAgendada())) {
 				this.statusEsteira = "Ag. Emissão NFs";
-			} else if (this.isNotaFiscalEmitida() && !this.isNotaFiscalAgendada()) {
+			} else if (CommonsUtil.booleanValue(this.isNotaFiscalEmitida() ) && !CommonsUtil.booleanValue(this.isNotaFiscalAgendada())) {
 				this.statusEsteira = "Ag. Pagamento NFs";
 			} else {
 				this.statusEsteira = "Aprovado";
