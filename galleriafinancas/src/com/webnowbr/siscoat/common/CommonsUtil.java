@@ -438,6 +438,10 @@ public class CommonsUtil {
 	}
 
 	public static final boolean mesmoValor(Object a, Object b) {
+		
+		if( (a instanceof String) || (b instanceof String)) {
+			return mesmoValor((String) a, (String) b );
+		}
 		return a == null ? b == null : a.equals(b);
 	}
 
@@ -454,7 +458,7 @@ public class CommonsUtil {
 	}
 
 	public static final boolean mesmoValor(String a, String b) {
-		return a == null ? b == null : a.equals(b);
+		return a == null ? b == null : stringValueVazio(a).equals(stringValueVazio(b));
 	}
 	
 	public static final boolean mesmoValorIgnoreCase(String a, String b) {
