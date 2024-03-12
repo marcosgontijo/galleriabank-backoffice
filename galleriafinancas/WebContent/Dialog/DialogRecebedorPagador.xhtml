@@ -9,7 +9,7 @@
 		<p:dialog header="#{titulo}" widgetVar="pagadorRecebedorDialog"
 			resizable="false" style="FONT-SIZE: 10pt;" width="600">
 			
-			<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_LAUDO, PROFILE_COMENTARIO_JURIDICO">
+			<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_LAUDO, PROFILE_COMENTARIO_JURIDICO, PROFILE_ANALISTA_COMITE">
 				<p:commandButton value="Cadastrar Pessoa" rendered="#{permiteAdicionarPessoa}"
 					action="#{pagadorRecebedorCadastroMB.clearFieldsNovoCadastro}"
 					oncomplete="PF('pagadorRecebedorCadastroSimplesDialog').show();"
@@ -70,7 +70,7 @@
 		</p:dialog>
 	</h:form>
 	
-	<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_LAUDO, PROFILE_COMENTARIO_JURIDICO">
+	<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA,COBRANCA_FINANCEIRO, PROFILE_ANALISTA_CREDITO, PROFILE_LAUDO, PROFILE_COMENTARIO_JURIDICO, PROFILE_ANALISTA_COMITE">
 		<h:form id="formReceborPagadorCadastro" >
 			<p:dialog header="Cadastro simplificado"  rendered="#{permiteAdicionarPessoa}"
 				id="pagadorRecebedorCadastroSimples"

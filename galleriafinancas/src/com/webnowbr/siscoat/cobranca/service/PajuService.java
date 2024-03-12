@@ -416,7 +416,8 @@ public class PajuService {
 								
 
 							} catch (Exception e) {
-								System.out.println(GsonUtil.toJson(docketDocumento));
+								System.out.println(docketDocumento);
+								System.out.println(docketDocumento.getRetorno());
 								e.printStackTrace();
 
 							}
