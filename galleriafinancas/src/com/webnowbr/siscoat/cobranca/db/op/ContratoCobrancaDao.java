@@ -7175,6 +7175,13 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setPendenciaExternaCartorio(rs.getBoolean("pendenciaExternaCartorio"));
 						contratoCobranca.setPendenciaResolvidaCartorio(rs.getBoolean("pendenciaResolvidaCartorio"));
 						contratoCobranca.setResolucaoExigenciaCartorio(rs.getBoolean("resolucaoExigenciaCartorio"));
+						
+
+						contratoCobranca.setSolicitarNota(rs.getString("solicitarNota")); 
+						contratoCobranca.setNotaFiscalAgendada(rs.getBoolean("notaFiscalAgendada"));
+						contratoCobranca.setNotaFiscalEmitida(rs.getBoolean("notaFiscalEmitida"));
+						
+						
 						//contratoCobranca = findById(rs.getLong(1));
 						
 						ImovelCobranca imovel = new ImovelCobranca();
@@ -7209,7 +7216,8 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ " coco.contratoConferido, agEnvioCartorio, "
 			+ " coco.reanalise, coco.reanalisePronta, coco.reanaliseJuridico, coco.certificadoEmitido, pare.id idPagador,"
 			+ " imv.cidade, imv.estado, c2.pintarLinha, coco.contratoPrioridadeAlta, coco.okCliente, "
-			+ "	coco.pendenciaExternaCartorio, coco.pendenciaResolvidaCartorio, coco.resolucaoExigenciaCartorio "
+			+ "	coco.pendenciaExternaCartorio, coco.pendenciaResolvidaCartorio, coco.resolucaoExigenciaCartorio, "
+			+ " solicitarNota , notaFiscalAgendada, notaFiscalEmitida "
 			+ "	from cobranca.contratocobranca coco "
 			+ "	inner join cobranca.responsavel res on coco.responsavel = res.id "
 			+ "	inner join cobranca.pagadorrecebedor pare on pare.id = coco.pagador "
