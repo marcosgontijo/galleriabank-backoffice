@@ -169,8 +169,11 @@
 								<p:column>
 									<p:commandButton
 										action="#{termoMB.AbrirDocumentoTermo(termos)}"
-										onclick="target='_blank'" onblur="target='_self'"
-										icon="ui-icon ui-icon-print" value="Abrir Termo" ajax="false" />
+										oncomplete="PF('dialogTermo').show()"
+										update="dialogTermo"
+
+										icon="ui-icon ui-icon-print" value="Abrir Termo" ajax="true" >
+										</p:commandButton>
 								</p:column>
 								
 							</p:dataTable>
@@ -179,6 +182,10 @@
 					
 					</p:panel>
 				</h:form>
+			</p:dialog>
+			<p:dialog resizable="false"
+			closable="true"  width="30%" id="dialogTermo" widgetVar="dialogTermo">
+				<img width="100%" height="100%" src="#{termoMB.base64imagem}"></img>
 			</p:dialog>
 
 </h:body>

@@ -35,6 +35,7 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -97,6 +98,7 @@ public class TermoMB {
 	private LazyDataModel<Termo> lazyModel;
 
 	private Termo objetoTermo;
+	private String base64imagem;
 	private TermoUsuario objetoTermoUsuario;
 	private boolean updateMode = false;
 	private boolean deleteMode = false;
@@ -566,7 +568,7 @@ public class TermoMB {
 		usuarioTermosAssinados = dao.termosAssinados(loginBean.getUsuarioLogado());
 	
 	}
-	public void AbrirDocumentoTermo(Termo termo) {
+	public void AbrirDocumentoTermo(Termo termo) throws IOException {
 
 		Path arquivo = Paths.get(termo.getPath());
 
@@ -575,39 +577,39 @@ public class TermoMB {
 		HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
 		BufferedInputStream input = null;
 		BufferedOutputStream output = null;
-		try {
-			byte[] contrato = Files.readAllBytes(arquivo);
+		byte[] contrato = null;
+		
+			 try (PDDocument document = PDDocument.load(Files.newInputStream(arquivo))) {
+		            PDFRenderer pdfRenderer = new PDFRenderer(document);
+
+		            // Iterar sobre as páginas do PDF
+		            for (int pageIndex = 0; pageIndex < document.getNumberOfPages(); pageIndex++) {
+		                // Renderizar a página como uma imagem
+		                BufferedImage bim = pdfRenderer.renderImageWithDPI(pageIndex, 300);
+
+		                // Criar um ByteArrayOutputStream para armazenar os bytes da imagem
+		                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+		                // Escrever a imagem como PNG no ByteArrayOutputStream
+		                ImageIO.write(bim, "png", byteArrayOutputStream);
+
+		                // Obter os bytes da imagem
+		                contrato = byteArrayOutputStream.toByteArray();
+		                byteArrayOutputStream.close();
 			if (CommonsUtil.semValor(contrato)) {
 				facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-						"Processos: Ocorreu um problema ao gerar o PDF!", ""));
-				return;
+						"Processos: Ocorreu um problema ao gerar a imagem!", ""));
+				return ;
 			} else {
-
-				String mineFile = "application/pdf";
-				input = new BufferedInputStream(new ByteArrayInputStream(contrato));
-				response.reset();
-				// lire un fichier pdf
-				response.setHeader("Content-type", mineFile);
-
-				response.setContentLength(contrato.length);
-
-				response.setHeader("Content-disposition",
-						"inline; FileName=" + termo.getIdentificacao()  + ".pdf");
-				output = new BufferedOutputStream(response.getOutputStream(), 10240);
-				byte[] buffer = new byte[contrato.length];
-				int length;
-				while ((length = input.read(buffer)) > 0) {
-					output.write(buffer, 0, length);
-				}
-
-				// Finalize task.
-				output.flush();
-				output.close();
-				facesContext.responseComplete();
+		
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		            }
+		        
+			 }
+		
+			 String base64 = Base64.getEncoder().encodeToString(contrato);
+			
+			base64imagem = "data:image/png;base64," + base64;
 	}
 
 	public LoginBean getLoginBean() {
@@ -752,6 +754,14 @@ public class TermoMB {
 
 	public void setUsuarioTermosAssinados(List<Termo> usuarioTermosAssinados) {
 		this.usuarioTermosAssinados = usuarioTermosAssinados;
+	}
+
+	public String getBase64imagem() {
+		return base64imagem;
+	}
+
+	public void setBase64imagem(String base64imagem) {
+		this.base64imagem = base64imagem;
 	}
 
 }
