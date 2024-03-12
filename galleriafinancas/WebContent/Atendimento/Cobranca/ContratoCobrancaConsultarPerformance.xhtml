@@ -142,7 +142,7 @@
 			                </p:commandButton>
 			                <p:spacer width="10" height="10"/>		
 			            </shiro:hasAnyRoles>        
-		                <shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA, PROFILE_COBRANCA">  
+		                <shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, PRECOBRANCA, PROFILE_COBRANCA, PROFILE_JURIDICO_COBRANCA">  
 			                <p:commandButton action="#{contratoCobrancaMB.clearFieldsEditar}" ajax="false" icon="ui-icon-pencil" value="Editar" title="Editar">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.updateMode}" value="true" />
@@ -204,7 +204,7 @@
 						        <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-cancel" />
 					    	</p:confirmDialog>   
 		                </shiro:hasAnyRoles>      
-		                <shiro:hasAnyRoles name="ROOT, PROFILE_COBRANCA">  	                
+		                <shiro:hasAnyRoles name="ROOT, PROFILE_COBRANCA, PROFILE_JURIDICO_COBRANCA">  	                
 			                <p:commandButton action="#{contratoCobrancaMB.consultaCartorio}" oncomplete="PF('contratoEmCartorioDialog').show();" icon="ui-icon-info" value="Contrato em Cartório?" update="contratoEmCartorioForm">
 			                	<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{contratos}" />
 			                	<f:setPropertyActionListener value="#{null}" target="#{contratoCobrancaMB.objetoCartorio.status}"></f:setPropertyActionListener>

@@ -2029,7 +2029,7 @@
 						</h:panelGrid>
 					</p:panel>
 
-				<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, ASSISTENTEFINANCEIRO, PROFILE_COBRANCA">
+				<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, ASSISTENTEFINANCEIRO, PROFILE_COBRANCA, PROFILE_JURIDICO_COBRANCA">
 
 					<h:panelGroup id="ContasPagarPanel">
 						<p:panel header="Contas a Pagar" style="margin-bottom:10px;">
@@ -2212,7 +2212,7 @@
 								</p:dataViewListItem>
 							</p:dataView>
 							<shiro:hasAnyRoles
-								name="ROOT,PRECOBRANCAANALISTA, ASSISTENTEFINANCEIRO, COBRANCA_FINANCEIRO, POSOPERACAO, PROFILE_COBRANCA">
+								name="ROOT,PRECOBRANCAANALISTA, ASSISTENTEFINANCEIRO, COBRANCA_FINANCEIRO, POSOPERACAO, PROFILE_COBRANCA, PROFILE_JURIDICO_COBRANCA">
 								<p:panel id="ArquivosPagar" header="Selecionar conta a pagar"
 									style="margin-bottom:10px;text-align: center;">
 									<h:panelGrid columns="1">
@@ -2283,7 +2283,7 @@
 					</h:panelGroup>
 
 				</shiro:hasAnyRoles>
-				<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, ASSISTENTEFINANCEIRO, PROFILE_COBRANCA">
+				<shiro:hasAnyRoles name="ROOT, COBRANCA_EDITA, ASSISTENTEFINANCEIRO, PROFILE_COBRANCA, PROFILE_JURIDICO_COBRANCA">
 					<p:panel id="DetalheParcelas"
 						header="Detalhamento - Forma de Pagamento"
 						style="margin-bottom:10px;"
