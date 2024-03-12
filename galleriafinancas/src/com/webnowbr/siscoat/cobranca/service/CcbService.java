@@ -757,7 +757,7 @@ public class CcbService {
 			XWPFRun run2;
 			for (CcbParticipantes participante : objetoCcb.getListaParticipantes()) {				
 				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "TERCEIRO GARANTIDOR")) {
-					objetoCcb.setTerceiroGarantidor(true);
+					//objetoCcb.setTerceiroGarantidor(true);
 					participante.setTipoParticipante("DEVEDOR FIDUCIANTE");
 				}
 			}
@@ -1311,7 +1311,7 @@ public class CcbService {
 			List<CcbParticipantes> segurados = new ArrayList<CcbParticipantes>();
 			for (CcbParticipantes participante : objetoCcb.getListaParticipantes()) {				
 				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "TERCEIRO GARANTIDOR")) {
-					objetoCcb.setTerceiroGarantidor(true);
+					//objetoCcb.setTerceiroGarantidor(true);
 					participante.setTipoParticipante("DEVEDOR FIDUCIANTE");
 					segurados.add(participante);
 				}
@@ -1997,7 +1997,7 @@ public class CcbService {
 			XWPFDocument document;
 			for (CcbParticipantes participante : objetoCcb.getListaParticipantes()) {				
 				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "TERCEIRO GARANTIDOR")) {
-					objetoCcb.setTerceiroGarantidor(true);
+					//objetoCcb.setTerceiroGarantidor(true);
 				}
 			}
 			
@@ -2291,7 +2291,7 @@ public class CcbService {
 			XWPFDocument document;
 			for (CcbParticipantes participante : objetoCcb.getListaParticipantes()) {				
 				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "TERCEIRO GARANTIDOR")) {
-					objetoCcb.setTerceiroGarantidor(true);
+					//objetoCcb.setTerceiroGarantidor(true);
 				}
 			}
 			
@@ -2385,7 +2385,7 @@ public class CcbService {
 			XWPFDocument document;
 			for (CcbParticipantes participante : objetoCcb.getListaParticipantes()) {				
 				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "TERCEIRO GARANTIDOR")) {
-					objetoCcb.setTerceiroGarantidor(true);
+					//objetoCcb.setTerceiroGarantidor(true);
 				}
 			}	
 			document = new XWPFDocument(getClass().getResourceAsStream("/resource/EndossosEmPretoGalleria.docx"));			
@@ -4966,7 +4966,7 @@ public class CcbService {
 				}
 				
 				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "TERCEIRO GARANTIDOR")) {
-					objetoCcb.setTerceiroGarantidor(true);
+					//objetoCcb.setTerceiroGarantidor(true);
 				}
 
 				iParticipante++;

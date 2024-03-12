@@ -4063,7 +4063,7 @@
 							or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Resolução Pendência' or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Resolução Exigencias/Pagamentos')))}">
 						<f:facet name="header"> Despesas 
 							<p:outputLabel value="" />
-							<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR, COBRANCA_FINANCEIRO, PROFILE_CONTRATO, PROFILE_GERENTE_ANALISE">
+							<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR, COBRANCA_FINANCEIRO, PROFILE_CONTRATO, PROFILE_GERENTE_ANALISE, PROFILE_CARTORIO">
 								<p:commandButton icon="ui-icon-plus"
 									action="#{contratoCobrancaMB.clearConta()}"
 									oncomplete="PF('despesaDialog').show();"
@@ -4177,7 +4177,7 @@
 					                 rowsPerPageTemplate="10,50,100">  
 					                 
 						                 <f:facet name="header">							 
-										 	<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR, COBRANCA_FINANCEIRO">
+										 	<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR, COBRANCA_FINANCEIRO, PROFILE_CARTORIO">
 												<p:commandButton action="#{contratoCobrancaMB.updateFieldsOrdemPagamentoStarkBank()}" oncomplete="PF('pagamentoStarkBankMultidlg').show();"
 													icon="ui-icon-video" title="Pagamento - StarkBank" value="Pagamento - StarkBank"
 													update=":starkBankFormMulti :form">
@@ -4217,7 +4217,7 @@
 										</p:column>
 										
 										<p:column style="text-align: center;width:260px;" headerText="" >
-											<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR, COBRANCA_FINANCEIRO">
+											<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR, COBRANCA_FINANCEIRO, PROFILE_CARTORIO">
 												<p:commandButton oncomplete="PF('baixasStarkBankdlg').show();"
 													icon="ui-icon-video" title="Baixas - StarkBank" value="Baixas - StarkBank"
 													update=":starkBankBaixasForm:baixasDT :form">
@@ -4235,7 +4235,7 @@
 								</p:panel>						
 							</p:rowExpansion>
 												
-							<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR, COBRANCA_FINANCEIRO, PROFILE_CONTRATO, PROFILE_GERENTE_ANALISE">								
+							<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR, COBRANCA_FINANCEIRO, PROFILE_CONTRATO, PROFILE_GERENTE_ANALISE, PROFILE_CARTORIO">								
 								<p:column style="text-align: center;width:260px;" headerText="" >
 									<p:commandButton value="Editar" icon="ui-icon-pencil"
 										action="#{contratoCobrancaMB.editarConta(contas)}"
@@ -4247,7 +4247,7 @@
 									<p:commandButton value="Arquivos" icon="ui-icon-print"
 										action="#{contratoCobrancaMB.populateFilesContasPagar(contas)}"
 										ajax="true" update=":form:ContasPagarPanel contaArquivosForm" />	
-									<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR, COBRANCA_FINANCEIRO">
+									<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR, COBRANCA_FINANCEIRO, PROFILE_CARTORIO">
 												<p:commandButton action="#{contratoCobrancaMB.updateFieldsOrdemPagamentoStarkBank()}" oncomplete="PF('pagamentoStarkBankMultidlg').show();"
 													icon="ui-icon-video" title="Pagamento - StarkBank" value="Pagamento - StarkBank"
 													update=":starkBankFormMulti :form">

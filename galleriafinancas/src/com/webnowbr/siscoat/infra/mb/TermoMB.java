@@ -39,6 +39,7 @@ import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
 
 import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
@@ -47,6 +48,12 @@ import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.webnowbr.siscoat.cobranca.db.model.TermoPopup;
 import com.webnowbr.siscoat.common.CommonsUtil;
@@ -78,6 +85,7 @@ public class TermoMB {
 	private LazyDataModel<Termo> lazyModel;
 
 	private Termo objetoTermo;
+	private TermoUsuario objetoTermoUsuario;
 	private boolean updateMode = false;
 	private boolean deleteMode = false;
 	private boolean btnAceiteDesativado = false;
@@ -145,80 +153,45 @@ public class TermoMB {
 	private String nomePDF;
 	private StreamedContent filePDF;
 
-	public StreamedContent geraPDF() {
+	@SuppressWarnings("deprecation")
+	public StreamedContent geraPDF(Long id) {
+		TermoUsuarioDao termoUsuarioDao = new TermoUsuarioDao();
+		UserDao userDao = new UserDao();
 		Document document = null;
-		ByteArrayOutputStream baos = null;
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		termosUsuario = termoUsuarioDao.findByFilter("idTermo", id );
+		
 		try {
+            // Criar um novo documento PDF
+			 document = new Document();
+            PdfWriter.getInstance(document, baos);
+            document.open();
+            Paragraph paragrafo = new Paragraph();
+            Font fonteNegrito = FontFactory.getFont(FontFactory.TIMES_ROMAN, 16, Font.BOLD);
+            paragrafo.setAlignment(Element.ALIGN_CENTER);
+            paragrafo.add(new Paragraph(objetoTermo.getIdentificacao() + " - Assinantes", fonteNegrito));
+            document.add(paragrafo);
+            Paragraph spacer = new Paragraph("");
+            spacer.setSpacingAfter(20f);
+            document.add(spacer);
+            PdfPTable table = new PdfPTable(2);
+            table.setWidthPercentage(100);
+            for(TermoUsuario user : termosUsuario) {
+            	User usuario = userDao.findById(user.getIdUsuario());
+            Paragraph	paragrafoUsuario = new Paragraph( usuario.getName());
+            paragrafoUsuario.setAlignment(Element.ALIGN_RIGHT);
+            table.addCell(paragrafoUsuario);
+            Paragraph paragrafoData = new Paragraph( CommonsUtil.formataData(user.getDataAceite()));
+            paragrafoData.setAlignment(Element.ALIGN_LEFT);
+            table.addCell(paragrafoData);
+           
+            }
+            document.add(table);
+            // Fechar o documento
+            document.close();
 
-			baos = new ByteArrayOutputStream();
-			TermoUsuarioVO TermoUsuariovo = new TermoUsuarioVO();
+            System.out.println("PDF gerado com sucesso!");
 
-			UserDao usuario = new UserDao();
-			Font header = new Font(FontFamily.HELVETICA, 12, Font.BOLD);
-
-			Font titulo = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
-			Font tituloBranco = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
-			tituloBranco.setColor(BaseColor.WHITE);
-			Font normal = new Font(FontFamily.HELVETICA, 10);
-			Font subtitulo = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
-			Font subtituloIdent = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
-			Font destaque = new Font(FontFamily.HELVETICA, 8, Font.BOLD);
-
-			TimeZone zone = TimeZone.getDefault();
-			Locale locale = new Locale("pt", "BR");
-			Calendar date = Calendar.getInstance(zone, locale);
-			SimpleDateFormat sdfDataRel = new SimpleDateFormat("dd/MMM/yyyy", locale);
-			SimpleDateFormat sdfDataRelComHoras = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", locale);
-
-			document = new Document(PageSize.A4.rotate(), 10, 10, 10, 10);
-			PdfWriter.getInstance(document, baos);
-			document.open();
-			PdfPTable table = new PdfPTable(3);
-
-			table.setWidthPercentage(100.0f);
-			PdfPCell cell1 = new PdfPCell(new Phrase("Assinantes do Termo", header));
-			cell1.setRowspan(2);
-			cell1.setBorder(0);
-			cell1.setPaddingLeft(8f);
-			cell1.setBackgroundColor(BaseColor.WHITE);
-			cell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
-			cell1.setUseBorderPadding(true);
-			cell1.setPaddingTop(5f);
-			cell1.setPaddingBottom(15f);
-			table.addCell(cell1);
-
-			PdfPCell cell2 = new PdfPCell(new Phrase("Nome: ", titulo));
-			cell2.setRowspan(0);
-			cell2.setBorder(0);
-			cell2.setPaddingLeft(8f);
-			cell2.setBackgroundColor(BaseColor.WHITE);
-			cell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell2.setHorizontalAlignment(Element.ALIGN_LEFT);
-			cell2.setUseBorderPadding(true);
-			cell2.setPaddingTop(5f);
-			cell2.setPaddingBottom(15f);
-			table.addCell(cell2);
-
-			for (TermoUsuario user : termosUsuario) {
-
-				User userPesquisa = usuario.findById(user.getIdUsuario());
-				TermoUsuariovo.setDataAceite(user.getDataAceite());
-				TermoUsuariovo.setUsuario(userPesquisa);
-				PdfPCell cell3 = new PdfPCell(new Phrase(TermoUsuariovo.getUsuario().getName(), normal));
-				cell3.setBorder(0);
-				cell3.setPaddingLeft(8f);
-				cell3.setBackgroundColor(BaseColor.WHITE);
-				cell3.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell3.setHorizontalAlignment(Element.ALIGN_LEFT);
-				cell3.setUseBorderPadding(true);
-				cell3.setPaddingTop(5f);
-				cell3.setPaddingBottom(15f);
-				table.addCell(cell3);
-			}
-
-			document.add(table);
-			document.close();
 
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 					FacesContext.getCurrentInstance());

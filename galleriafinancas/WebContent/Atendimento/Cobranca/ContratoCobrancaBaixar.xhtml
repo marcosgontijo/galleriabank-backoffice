@@ -1968,7 +1968,7 @@
 						<p:spacer width="0" />
 
 
-						<shiro:hasAnyRoles name="ROOT, COBRANCA_IUGU">
+						<shiro:hasAnyRoles name="ROOT, COBRANCA_IUGU, PROFILE_COBRANCA">
 						
 							<p:commandButton id="quitarContrato" oncomplete="PF('quitarContratoDialog').show();" 
 								value="Quitar Contrato" update="quitarContratoForm" 
@@ -1976,7 +1976,7 @@
 							<p:outputLabel value="" />
 							<p:outputLabel value="" />
 							
-							<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA">
+							<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA, PROFILE_COBRANCA">
 								<p:commandButton id="amortizarContrato" oncomplete="PF('amortizarContratoDialog').show();" value="Amortizar Contrato" update="amortizarContratoForm"/>
 								<p:outputLabel value="" />
 								<p:outputLabel value="" />
@@ -2133,8 +2133,7 @@
 						rowKey="#{parcelas.id}">
 
 						<f:facet name="header">
-							<p:commandButton actionListener="#{contratoCobrancaMB.populaVlrBoletoKobana()}" oncomplete="PF('bpGerarBoletoKobanaPARCELASDialog').show();"
-							    rendered="#{contratoCobrancaMB.usuarioLogado.userCobranca}"
+							<p:commandButton actionListener="#{contratoCobrancaMB.populaVlrBoletoKobana()}" oncomplete="PF('bpGerarBoletoKobanaPARCELASDialog').show();"   
 								icon="ui-icon-video" title="Boleto Kobana PARCELAS" value="Boleto Kobana PARCELAS"
 								update=":formBpGerarBoletoKobanaPARCELAS">
 							</p:commandButton>
@@ -2143,7 +2142,6 @@
 						<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
 
 						<p:column style="width:150px" headerText="Ações"
-							rendered="#{contratoCobrancaMB.usuarioLogado.userCobranca}"
 							styleClass="colunaResponsivaRelFinanceiro">
 							<shiro:hasAnyRoles name="ROOT">
 								<p:commandButton onclick="PF('baixaParcialDialog').show();"
@@ -2180,7 +2178,7 @@
 								</p:commandButton>
 								<p:spacer width="10" />
 							</shiro:hasAnyRoles>
-							<shiro:hasAnyRoles name="ROOT, COBRANCA">
+							<shiro:hasAnyRoles name="ROOT, COBRANCA, PROFILE_COBRANCA">
 							<p:commandButton onclick="PF('bpGerarBoletoKobanaDialog').show();"
 								icon="ui-icon-video" title="Boleto Kobana" value="Boleto Kobana"
 								update=":formBpGerarBoletoKobana"
@@ -2191,7 +2189,7 @@
 							</p:commandButton>
 							</shiro:hasAnyRoles>
 							<p:spacer width="10" height="10" />
-							<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA">
+							<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA, PROFILE_COBRANCA">
 								<p:commandButton onclick="PF('bpHistoricoDialog').show();"
 									title="Estorno e Histórico de Baixas" icon="ui-icon-search"
 									update=":formBpHistorico" style="height: 25px;width: 30px;">
@@ -2310,7 +2308,6 @@
 							</h:outputText>
 						</p:column>
 						<p:column style="text-align: center;width: 100px;"
-							rendered="#{contratoCobrancaMB.usuarioLogado.userCobranca}"
 							headerText="Kobana">
 							<ui:fragment rendered="#{parcelas.urlBoletoKonana ne null}">
 								<h:outputLink value="#{parcelas.urlBoletoKonana}" target="_blank" styleClass="botaoBoletoKobana">#{parcelas.urlBoletoKonana}</h:outputLink>
@@ -2381,7 +2378,7 @@
 			</p:panel>
 
 			<div align="center">
-				<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA">
+				<shiro:hasAnyRoles name="ROOT, COBRANCA_BAIXA, PROFILE_COBRANCA">
 					<p:commandButton action="#{contratoCobrancaMB.baixarParcela}"
 						ajax="false" icon="ui-icon-transferthick-e-w" value="Baixar"
 						rendered="#{contratoCobrancaMB.origemTelaBaixar != 'CobrancaQuitados'}" />

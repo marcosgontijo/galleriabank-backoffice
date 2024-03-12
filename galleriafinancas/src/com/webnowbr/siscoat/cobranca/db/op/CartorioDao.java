@@ -50,6 +50,11 @@ public class CartorioDao extends HibernateDao<Cartorio, Long> {
 	
 	@SuppressWarnings("unchecked")
 	public Cartorio consultaUltimoCartorio(ContratoCobranca Contrato) {
+		return consultaUltimoCartorio(Contrato.getId());
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Cartorio consultaUltimoCartorio(long id) {
 		return (Cartorio) executeDBOperation(new DBRunnable() {
 			@Override
 			public Object run() throws Exception {
@@ -57,7 +62,7 @@ public class CartorioDao extends HibernateDao<Cartorio, Long> {
 				Connection connection = null;
 				PreparedStatement ps = null;
 				ResultSet rs = null;
-				String QUERY_VERIFICA_CARTORIO = "select id from cobranca.cartorio where idcontrato = " + Contrato.getId() + " and status != '' order by id desc " ;
+				String QUERY_VERIFICA_CARTORIO = "select id from cobranca.cartorio where idcontrato = " + id + " and status != '' order by id desc " ;
 				try {
 					connection = getConnection();
 					StringBuilder query = new StringBuilder(QUERY_VERIFICA_CARTORIO);

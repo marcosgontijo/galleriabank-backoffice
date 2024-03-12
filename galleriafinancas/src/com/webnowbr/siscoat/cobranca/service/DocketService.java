@@ -554,6 +554,17 @@ public class DocketService {
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 						"Docket: Falha  (Cod: " + myURLConnection.getResponseCode() + ")", ""));
 				System.out.println(jsonWhatsApp.toString());
+				try {
+					if(jsonWhatsApp.getJSONObject("pedido").getJSONArray("documentos").length() == 0) {
+						DocumentoAnaliseDao analiseDao = new DocumentoAnaliseDao();
+						for (DocumentoAnalise documentoAnalise : listaDocumentoAnalise) {
+							analiseDao.merge(documentoAnalise);
+						}
+					}
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+				
 			} else {
 				ContratoCobranca objetoContratoCobranca = listaDocumentoAnalise.get(0).getContratoCobranca();
 				DocketRetorno myResponse = docketJSONRetorno(myURLConnection.getInputStream());

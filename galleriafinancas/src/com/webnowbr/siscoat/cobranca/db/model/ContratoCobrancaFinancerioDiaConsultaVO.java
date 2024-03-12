@@ -76,6 +76,7 @@ public class ContratoCobrancaFinancerioDiaConsultaVO implements Serializable {
 	private long qtdeParcelas;
 	private String numeroContratoSeguro;
 	private String serieCci;
+	private Cartorio ultimoCartorio;
 	
 	private List<ContratoCobrancaFinanceiroDiaConsultaDetalhesVO> listContratoCobrancaDetalhes;
 	
@@ -94,8 +95,7 @@ public class ContratoCobrancaFinancerioDiaConsultaVO implements Serializable {
 			String empresa, BigDecimal valorImovel,
 			String tipoImovel, boolean corrigidoIPCA, boolean corrigidoNovoIPCA, 
 			String emailPagador, String celularPagador, long qtdeParcelas, String numeroContratoSeguro,
-			BigDecimal valorLeilaoImovel, Date dataContratoAssinado, Date agassinaturadata
-			) {
+			BigDecimal valorLeilaoImovel, Date dataContratoAssinado, Date agassinaturadata) {
 		super();
 		this.id = id;
 		this.numeroContrato = numeroContrato;
@@ -142,7 +142,6 @@ public class ContratoCobrancaFinancerioDiaConsultaVO implements Serializable {
 			this.dataAssinatura = dataContratoAssinado;
 		else
 			this.dataAssinatura = agassinaturadata;
-		
 		
 		this.listContratoCobrancaDetalhes = new ArrayList<>();
 	}
@@ -448,5 +447,13 @@ public class ContratoCobrancaFinancerioDiaConsultaVO implements Serializable {
 
 	public void setDataAssinatura(Date dataAssinatura) {
 		this.dataAssinatura = dataAssinatura;
-	}		
+	}
+
+	public Cartorio getUltimoCartorio() {
+		return ultimoCartorio;
+	}
+
+	public void setUltimoCartorio(Cartorio ultimoCartorio) {
+		this.ultimoCartorio = ultimoCartorio;
+	}
 }
