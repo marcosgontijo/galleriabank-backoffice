@@ -70,7 +70,7 @@
 					    	<br></br>
 					    	<p:clock pattern="dd/MM/yyyy HH:mm:ss"/>
 					    	</div>
-					    	<p:commandButton value="Ver Termos Assinados" action="#{termoMB.consultaTermosAssinados}" update="panelTermos" onclick="PF('DialogTermosAssinados').show();"></p:commandButton>					    	
+					    	<p:commandButton value="Ver Termos Assinados" action="#{termoMB.consultaTermosAssinados}" update="TermoForm" onclick="PF('DialogTermosAssinados').show();"></p:commandButton>					    	
 					    </div>
 					  </div>
 				<p:confirmDialog global="true" showEffect="fade" widgetVar="logout">
@@ -156,22 +156,29 @@
 	<p:dialog  widgetVar="DialogTermosAssinados"
 				header="Termos Assinados" draggable="false" closable="true"
 				resizable="false">
-				<p:panel id="panelTermos">
-				<h:panelGrid columns="2">
-				<p:dataTable var="termos" value="#{termoMB.usuarioTermosAssinados}">
-				<p:column>
-				<p:outputLabel value="#{termos.identificacao}"/>
-				</p:column>
-				<p:column>
-				<p:outputLabel value="#{termos.descricao}"/>
-				</p:column>
-				
-				</p:dataTable>
-				
-				</h:panelGrid>
-				
-				</p:panel>
-				
+				<h:form id="TermoForm">
+					<p:panel id="panelTermos">
+						<h:panelGrid columns="2">
+							<p:dataTable var="termos" value="#{termoMB.usuarioTermosAssinados}">
+								<p:column>
+									<p:outputLabel value="#{termos.identificacao}"/>
+								</p:column>
+								<p:column>
+									<p:outputLabel value="#{termos.descricao}"/>
+								</p:column>
+								<p:column>
+									<p:commandButton
+										action="#{termoMB.AbrirDocumentoTermo(termos)}"
+										onclick="target='_blank'" onblur="target='_self'"
+										icon="ui-icon ui-icon-print" value="Abrir Termo" ajax="false" />
+								</p:column>
+								
+							</p:dataTable>
+						
+						</h:panelGrid>
+					
+					</p:panel>
+				</h:form>
 			</p:dialog>
 
 </h:body>

@@ -3,6 +3,8 @@ package com.webnowbr.siscoat.infra.mb;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -10,6 +12,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -27,8 +32,10 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
@@ -55,10 +62,15 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
 import com.webnowbr.siscoat.cobranca.db.model.TermoPopup;
+import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
+import com.webnowbr.siscoat.cobranca.service.ScrService;
+import com.webnowbr.siscoat.cobranca.vo.FileGenerator;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
+import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.db.dao.DAOException;
 import com.webnowbr.siscoat.db.dao.DBConnectionException;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
@@ -553,6 +565,49 @@ public class TermoMB {
 		TermoUsuarioDao dao = new TermoUsuarioDao();
 		usuarioTermosAssinados = dao.termosAssinados(loginBean.getUsuarioLogado());
 	
+	}
+	public void AbrirDocumentoTermo(Termo termo) {
+
+		Path arquivo = Paths.get(termo.getPath());
+
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		ExternalContext externalContext = facesContext.getExternalContext();
+		HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+		BufferedInputStream input = null;
+		BufferedOutputStream output = null;
+		try {
+			byte[] contrato = Files.readAllBytes(arquivo);
+			if (CommonsUtil.semValor(contrato)) {
+				facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Processos: Ocorreu um problema ao gerar o PDF!", ""));
+				return;
+			} else {
+
+				String mineFile = "application/pdf";
+				input = new BufferedInputStream(new ByteArrayInputStream(contrato));
+				response.reset();
+				// lire un fichier pdf
+				response.setHeader("Content-type", mineFile);
+
+				response.setContentLength(contrato.length);
+
+				response.setHeader("Content-disposition",
+						"inline; FileName=" + termo.getIdentificacao()  + ".pdf");
+				output = new BufferedOutputStream(response.getOutputStream(), 10240);
+				byte[] buffer = new byte[contrato.length];
+				int length;
+				while ((length = input.read(buffer)) > 0) {
+					output.write(buffer, 0, length);
+				}
+
+				// Finalize task.
+				output.flush();
+				output.close();
+				facesContext.responseComplete();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public LoginBean getLoginBean() {
