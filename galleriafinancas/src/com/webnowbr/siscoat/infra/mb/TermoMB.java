@@ -122,6 +122,7 @@ public class TermoMB {
 			}
 		};
 	}
+	
 
 	private List<TermoUsuario> termosUsuario;
 	private List<TermoPopup> usuarios = new ArrayList<>();
@@ -547,6 +548,12 @@ public class TermoMB {
 		termos.remove(itermo);
 		return null;
 	}
+ private List<Termo> usuarioTermosAssinados = new ArrayList<>();
+	public void consultaTermosAssinados() {
+		TermoUsuarioDao dao = new TermoUsuarioDao();
+		usuarioTermosAssinados = dao.termosAssinados(loginBean.getUsuarioLogado());
+	
+	}
 
 	public LoginBean getLoginBean() {
 		return loginBean;
@@ -682,6 +689,14 @@ public class TermoMB {
 
 	public void setUsuarios(List<TermoPopup> usuarios) {
 		this.usuarios = usuarios;
+	}
+
+	public List<Termo> getUsuarioTermosAssinados() {
+		return usuarioTermosAssinados;
+	}
+
+	public void setUsuarioTermosAssinados(List<Termo> usuarioTermosAssinados) {
+		this.usuarioTermosAssinados = usuarioTermosAssinados;
 	}
 
 }
