@@ -112,7 +112,7 @@ public class ResponsavelMB {
 	public String clearFields() {
 		objetoResponsavel = new Responsavel();
 		objetoResponsavel.setDataCadastro(new Date());
-		
+		objetoResponsavel.salvarDadosBancarios();
 		this.tituloPainel = "Adicionar";
 		clearResponsavel();
 		loadLovResponsavel();
@@ -439,6 +439,8 @@ public class ResponsavelMB {
 			this.idResponsavelAssistenteComercial = 0;
 			this.nomeResponsavelAssistenteComercial = "";
 		}
+		
+		objetoResponsavel.salvarDadosBancarios();
 		
 		this.tipoPesquisa = "";
 	}
