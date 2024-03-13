@@ -20,6 +20,7 @@
 		name="font-awesome/5.8.2/css/all.min-jsf.css" />
 	<h:outputStylesheet library="webjars"
 		name="font-awesome/5.8.2/css/v4-shims.min-jsf.css" />
+		<h:outputStylesheet name="primeicons/primeicons.css" library="primefaces"/>
 	<script src="#{request.contextPath}/resources/js/functions.js"></script>
 	<script src="#{request.contextPath}/resources/js/locale-primefaces.js"></script>
 
@@ -65,12 +66,20 @@
 					    <div style="padding-top:5px; text-align: right; vertical-align: top; width: 30%" >
 					    <div style="vertical-align: top;">
 					    	<p:outputLabel value="Usuário:  " styleClass="usuarioLogin"/>
-					    	<h:outputText value="#{loginBean.username}" styleClass="usuarioLogin"/>
+					    	<h:outputText value="#{loginBean.username}" styleClass="usuarioLogin" />
+					    	<br />
+					    	<p:outputLabel id="opcoesLabel" value="Opções" style="cursor:pointer" styleClass="labelBold" />
+					    	<span class="pi pi-user"></span>
+					    	<p:overlayPanel id="opcoesMenu" for="opcoesLabel" showEffect="blind" hideEffect="blind" showEvent="mouseover" hideEvent="mousedown"
+                    	dismissable="false" showCloseIcon="true">
+                    		<p:panelGrid columns="1">
+                    			<p:commandButton value="Ver Termos Assinados" action="#{termoMB.consultaTermosAssinados}" update="TermoForm" onclick="PF('DialogTermosAssinados').show();"></p:commandButton>					    
+                    		</p:panelGrid>
+                    		</p:overlayPanel>
 					    	<br></br>
 					    	<br></br>
 					    	<p:clock pattern="dd/MM/yyyy HH:mm:ss"/>
-					    	</div>
-					    	<p:commandButton value="Ver Termos Assinados" action="#{termoMB.consultaTermosAssinados}" update="TermoForm" onclick="PF('DialogTermosAssinados').show();"></p:commandButton>					    	
+					    	</div>				    	
 					    </div>
 					  </div>
 				<p:confirmDialog global="true" showEffect="fade" widgetVar="logout">
@@ -155,7 +164,7 @@
 	</p:dialog>
 	<p:dialog  widgetVar="DialogTermosAssinados"
 				header="Termos Assinados" draggable="false" closable="true"
-				resizable="false">
+				resizable="false" style="top: 50% !important; left: 50% !important;transform: translate(-50%, -50%) !important;" width="30%">
 				<h:form id="TermoForm">
 					<p:panel id="panelTermos">
 						<h:panelGrid columns="2">
