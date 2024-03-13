@@ -66,10 +66,7 @@
 					    <div style="padding-top:5px; text-align: right; vertical-align: top; width: 30%" >
 					    <div style="vertical-align: top;">
 					    	<p:outputLabel value="Usuário:  " styleClass="usuarioLogin"/>
-					    	<h:outputText value="#{loginBean.username}" styleClass="usuarioLogin" />
-					    	<br />
-					    	<p:outputLabel id="opcoesLabel" value="Opções" style="cursor:pointer" styleClass="labelBold" />
-					    	<span class="pi pi-user"></span>
+					    	<h:outputText id="opcoesLabel"  value="#{loginBean.username}" styleClass="usuarioLogin" />
 					    	<p:overlayPanel id="opcoesMenu" for="opcoesLabel" showEffect="blind" hideEffect="blind" showEvent="mouseover" hideEvent="mousedown"
                     	dismissable="false" showCloseIcon="true">
                     		<p:panelGrid columns="1">
