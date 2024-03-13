@@ -7499,7 +7499,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			"c.valorAprovadoComite, c.contratoConferido, c.agEnvioCartorio, reanalise, reanalisePronta, reanaliseJuridico" +
 			" , gerente.nome nomeGerente, pr.id idPagador, res.superlogica, observacaoRenda, pagtoLaudoConfirmadaData, contatoDiferenteProprietario, c.iniciouGeracaoPaju, " +
 			" im.estado, contratoPrioridadeAlta, c.analisePendenciadaUsuario, " +
-			" c.avaliacaoLaudo, c.imovel, c.todosPreLaudoEntregues " +
+			" c.avaliacaoLaudo, c.imovel, c.todosPreLaudoEntregues, c.analiseComercialData " +
 			"from cobranca.contratocobranca c " +		
 			"inner join cobranca.responsavel res on c.responsavel = res.id " +
 			"inner join cobranca.pagadorrecebedor pr on pr.id = c.pagador " +
@@ -7920,6 +7920,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						contratoCobranca.setAnalisePendenciadaUsuario(rs.getString("analisePendenciadaUsuario"));
 						contratoCobranca.setAvaliacaoLaudo(rs.getString("avaliacaoLaudo"));
 						contratoCobranca.setTodosPreLaudoEntregues(rs.getBoolean("todosPreLaudoEntregues"));
+						contratoCobranca.setAnaliseComercialData(rs.getTimestamp("analiseComercialData"));
 					
 						ImovelCobranca imovel = new ImovelCobranca();
 						ImovelCobrancaDao imovelDao = new ImovelCobrancaDao();
