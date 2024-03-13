@@ -472,7 +472,7 @@ public class CcbMB {
 			despesaSelecionada.getContaPagarOriginal().setEditada(true);
 			despesaSelecionada.getContaPagarOriginal().setContrato(null);
 			this.objetoContratoCobranca.getListContasPagar().remove(despesaSelecionada.getContaPagarOriginal());
-			this.objetoCcb.getDespesasAnexo2().remove(despesaSelecionada);
+			this.objetoCcb.getDespesasAnexo2().remove(despesaSelecionada.getContaPagarOriginal());
 			contasPagarDao.merge(despesaSelecionada.getContaPagarOriginal());
 		} 
 		
@@ -490,7 +490,8 @@ public class CcbMB {
 		calcularValorDespesa();
 		contasPagarDao.create(despesaSelecionada);
 		despesaSelecionada = new ContasPagar();
-		calcularSimulador();
+		calculaValorLiquidoCredito();
+		//calcularSimulador();
 	}
 	
 	public void removeDespesa(ContasPagar conta) {
@@ -1053,6 +1054,7 @@ public class CcbMB {
 		listaCrea.add("CAU A40301-6");
 		return listaCrea;
 	}
+	
 	public String EmitirCcbPreContrato() {
 		return EmitirCcbPreContrato("normal");
 	}
@@ -1165,11 +1167,16 @@ public class CcbMB {
 			calculaValorLiquidoCredito();
 			listarDownloadsAditamento();
 			
-			this.objetoCcb.setCarenciaAnterior(this.objetoCcb.getCarencia());
-			this.objetoCcb.setPrazoAnterior(this.objetoCcb.getPrazo());
-			this.objetoCcb.setNumeroCcbAnterior(this.objetoCcb.getNumeroCcb());
-			this.objetoCcb.setDataDeEmissaoAnterior(this.objetoCcb.getDataDeEmissao());
-			this.objetoCcb.setVencimentoUltimaParcelaPagamentoAnterior(this.objetoCcb.getVencimentoUltimaParcelaPagamento());
+			if(CommonsUtil.semValor(this.objetoCcb.getCarenciaAnterior()))
+				this.objetoCcb.setCarenciaAnterior(this.objetoCcb.getCarencia());
+			if(CommonsUtil.semValor(this.objetoCcb.getPrazoAnterior()))
+				this.objetoCcb.setPrazoAnterior(this.objetoCcb.getPrazo());
+			if(CommonsUtil.semValor(this.objetoCcb.getNumeroCcbAnterior()))
+				this.objetoCcb.setNumeroCcbAnterior(this.objetoCcb.getNumeroCcb());
+			if(CommonsUtil.semValor(this.objetoCcb.getDataDeEmissaoAnterior()))
+				this.objetoCcb.setDataDeEmissaoAnterior(this.objetoCcb.getDataDeEmissao());
+			if(CommonsUtil.semValor(this.objetoCcb.getVencimentoUltimaParcelaPagamentoAnterior()))
+				this.objetoCcb.setVencimentoUltimaParcelaPagamentoAnterior(this.objetoCcb.getVencimentoUltimaParcelaPagamento());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -2328,14 +2335,15 @@ public class CcbMB {
 		
 		blockForm = !this.objetoCcb.getObjetoContratoCobranca().isAgRegistro();
 		
-		
 		objetoContratoCobranca = objetoCcb.getObjetoContratoCobranca();
 		if(!CommonsUtil.semValor(objetoCcb.getPrazo()) && !CommonsUtil.semValor(objetoCcb.getNumeroParcelasPagamento())){
 			objetoCcb.setCarencia(CommonsUtil.stringValue(CommonsUtil.integerValue(objetoCcb.getPrazo())
 					- CommonsUtil.integerValue(objetoCcb.getNumeroParcelasPagamento())));
 		}
-		
 		mostrarDadosOcultos = false;
+		
+		emitirAditamento(objetoContratoCobranca.getListContasPagar());
+		
 		return "/Atendimento/Cobranca/Ccb.xhtml";
 	}
 	

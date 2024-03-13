@@ -730,7 +730,7 @@
 
 									<p:commandButton icon="ui-icon-trash"
 										action="#{ccbMB.removeDespesa(despesas)}"
-										update="form:despesasPanel valorDespesas" />
+										update="form:despesasPanel form:valorDespesas" />
 								</p:column>
 							</p:dataTable>
 							
@@ -1909,7 +1909,8 @@
 						<p:commandButton value="Inserir Despesa" 
 							icon="ui-icon-check"
 							action="#{ccbMB.addDespesa}" 
-							update="form:despesasPanel form:valorDespesas">
+							oncomplete="PF('despesaDialog').hide();"
+							update=":form:despesasPanel :form:valorDespesas">
 						</p:commandButton>				
 					</h:panelGroup>
 				</div>
