@@ -455,6 +455,13 @@ public class ImovelEstoqueMB {
 			linha.createCell(celula);
 		linha.getCell(celula).setCellValue(value);
 	}
+	public void ApagaImovelEstoque(ImovelEstoque imovel) {
+		ImovelEstoqueDao dao = new ImovelEstoqueDao();
+		dao.delete(imovel);
+		this.consultaEstoque();
+		this.consultaEstoquePesquisa();
+	
+	}
 
 	/**
 	 * @return the lazyModel

@@ -9,7 +9,7 @@
 	  template="/Menus/Menu.xhtml">
 
 	<ui:define name="conteudo">  
-		<h:form style="margin-bottom:10px;">				
+		<h:form id="form" style="margin-bottom:10px;">				
 			<p:messages id="mensagens" showDetail="true"/>
 			<p:panel header="Filtrar estoque">
 			<p:selectOneRadio  value="#{imovelEstoqueMB.parametroPesquisa}">
@@ -70,8 +70,9 @@
 			        		<f:setPropertyActionListener target="#{imovelEstoqueMB.objetoImovelCobranca}" value="#{estoque.imovel}" />
 			        		<f:setPropertyActionListener target="#{imovelEstoqueMB.objetoContratoCobranca}" value="#{estoque}" />
 			        		<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{estoque}" />
-			      
+			      		
 		                </p:commandButton>
+		                <p:commandButton icon="ui-icon-trash" action="#{imovelEstoqueMB.ApagaImovelEstoque(estoque.imovel.imovelEstoque)}" update="@all"></p:commandButton>
 		            </p:column>			        		               		        			        			           			 		
 			        
 				</p:dataTable>

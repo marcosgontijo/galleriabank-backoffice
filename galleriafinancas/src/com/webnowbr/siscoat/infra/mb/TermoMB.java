@@ -64,7 +64,9 @@ import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.webnowbr.siscoat.cobranca.db.model.DocumentoAnalise;
+import com.webnowbr.siscoat.cobranca.db.model.ImovelEstoque;
 import com.webnowbr.siscoat.cobranca.db.model.TermoPopup;
+import com.webnowbr.siscoat.cobranca.db.op.ImovelEstoqueDao;
 import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
 import com.webnowbr.siscoat.cobranca.service.ScrService;
 import com.webnowbr.siscoat.cobranca.vo.FileGenerator;
@@ -611,6 +613,7 @@ public class TermoMB {
 			
 			base64imagem = "data:image/png;base64," + base64;
 	}
+	
 
 	public LoginBean getLoginBean() {
 		return loginBean;
