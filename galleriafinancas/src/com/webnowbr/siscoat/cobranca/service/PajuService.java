@@ -2149,6 +2149,8 @@ public class PajuService {
 		CcbProcessosJudiciaisDao processosJudiciaisDao = new CcbProcessosJudiciaisDao();
 		ContasPagarDao cpDao = new ContasPagarDao();
 		for (CcbProcessosJudiciais processo : listProcessos) {
+			if(CommonsUtil.semValor(processo.getValor()))
+				continue;
 			if (processo.getContaPagar().getId() <= 0) {
 				cpDao.create(processo.getContaPagar());
 			} else {
