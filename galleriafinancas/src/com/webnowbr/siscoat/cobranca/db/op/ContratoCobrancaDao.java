@@ -4765,7 +4765,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 	+ "			c.temSeguroDFI, c.temSeguroMIP, c.mesesCarencia, c.temTxAdm, "
 	+ "	 c.empresa,	 c.valorImovel, tipoImovel, c.corrigidoIPCA, c.corrigidoNovoIPCA,"
 	+ "	 p.email  emailPagador, p.telcelular celularPagador, c.qtdeParcelas, c.numeroContratoSeguro, c.valorVendaForcadaImovel, "
-	+ "	 c.datacontratoassinado, c.agassinaturadata "
+	+ "	 c.datacontratoassinado, c.agassinaturadata, c.tipoOperacao "
 	+ "  from cobranca.contratocobranca c inner join cobranca.pagadorrecebedor p on c.pagador  = p.id inner join cobranca.imovelcobranca i on c.imovel = i.id ";
 	
 	private static final String QUERY_BASE_RELATORIO_FINANCEIRO_DIA_DETALHE = 
@@ -4953,7 +4953,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 								rs.getString("emailPagador"), rs.getString("celularPagador"),
 								rs.getLong("qtdeParcelas"), rs.getString("numeroContratoSeguro"), 
 								rs.getBigDecimal("valorVendaForcadaImovel"), rs.getDate("datacontratoassinado"), 
-								rs.getDate("agassinaturadata"));
+								rs.getDate("agassinaturadata"), rs.getString("tipoOperacao"));
 
 						// busca detalhes
 						PreparedStatement ps_det = connection

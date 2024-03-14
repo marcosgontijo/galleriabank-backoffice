@@ -260,7 +260,7 @@ public class PajuService {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
 			docTemplate.save(baos);
-			criarProcessoBancoDados();
+			//criarProcessoBancoDados();
 		} catch (Exception e) {
 			throw new SiscoatException("Erro ao gerar modelo Paju: ", e);
 		}
