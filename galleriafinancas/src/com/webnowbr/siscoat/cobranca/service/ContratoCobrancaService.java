@@ -3,6 +3,7 @@ package com.webnowbr.siscoat.cobranca.service;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.faces.bean.ManagedBean;
@@ -32,11 +33,12 @@ public class ContratoCobrancaService {
 		Class<?> reflectionValues = valoresAtuais.getClass();
 
 		for (Field field : reflectionValues.getDeclaredFields()) {
-			Boolean verificaCamposAlterados = camposParaVerificar
-					.stream().filter(f -> f.equalsIgnoreCase(field.getName().toLowerCase()))
-					.findAny().isPresent();	
+			
+			Optional<ComparativoCamposEsteira> comparativoCamposEsteira  =camposEsteira
+					.stream().filter(f -> f.getNome_propiedade().equalsIgnoreCase(field.getName().toLowerCase()))
+					.findAny();
 			try {
-			if(!verificaCamposAlterados) {
+			if(!comparativoCamposEsteira.isPresent()) {
 				String nomeClasseCampo = field.getType().getSimpleName();
 				if (camposEsteira.stream().filter(c -> c.getValidarClasses().equalsIgnoreCase(nomeClasseCampo.toLowerCase())).findAny().isPresent()) { 
 					field.setAccessible(true);
@@ -44,12 +46,14 @@ public class ContratoCobrancaService {
 					Object originalValues = field.get(valoresBanco);
 					
 					if (currentValues != null && originalValues == null) {
-						listaDeAlteracoes.add(new ContratoCobrancaLogsAlteracaoDetalhe(field.getName(), nomeClasse,
-								currentValues.toString(), "Não existia", alteracao));
+						listaDeAlteracoes.add(new ContratoCobrancaLogsAlteracaoDetalhe(field.getName(),
+								nomeClasse,
+								currentValues.toString(), "Não existia", alteracao,  0l));
 					}
 					if (currentValues == null && originalValues != null) {
-						listaDeAlteracoes.add(new ContratoCobrancaLogsAlteracaoDetalhe(field.getName(), nomeClasse,
-								"Removido", originalValues.toString(), alteracao));
+						listaDeAlteracoes.add(new ContratoCobrancaLogsAlteracaoDetalhe(field.getName(),
+								nomeClasse,
+								"Removido", originalValues.toString(), alteracao, 0l));
 					} else if (currentValues != null && originalValues != null && !currentValues.equals(valoresAtuais) ) {
 						listaDeAlteracoes
 								.addAll(comparandoValores(currentValues, originalValues, camposEsteira, alteracao));
@@ -63,8 +67,11 @@ public class ContratoCobrancaService {
 				Object originalValues = field.get(valoresBanco);// valores que esta vindo atual
 
 				if (currentValues != null) {
-					if( !CommonsUtil.mesmoValor(currentValues, originalValues)) {
-						listaDeAlteracoes.add(new ContratoCobrancaLogsAlteracaoDetalhe(field.getName(), nomeClasse, CommonsUtil.stringValue(originalValues), CommonsUtil.stringValue(currentValues), alteracao));
+					if(!CommonsUtil.mesmoValor(currentValues, originalValues)) {
+						listaDeAlteracoes.add(new ContratoCobrancaLogsAlteracaoDetalhe(field.getName(),
+								nomeClasse, CommonsUtil.stringValue(originalValues),
+								CommonsUtil.stringValue(currentValues),
+								alteracao, comparativoCamposEsteira.get().getOrdem()));
 					}
 				} 
 			} catch (IllegalAccessException e) {

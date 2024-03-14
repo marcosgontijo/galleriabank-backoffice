@@ -26,7 +26,13 @@
 		</property>
 		
 		<property name="validar" type="boolean">
-			<column name="validar" not-null="true" default="true"/>
+			<column name="validar" default="true" not-null="true"/>
 		</property>
+		
+		<property name="ordem" type="long">
+			<column name="ordem" />
+		</property>
+		
+		
     </class>
 </hibernate-mapping>

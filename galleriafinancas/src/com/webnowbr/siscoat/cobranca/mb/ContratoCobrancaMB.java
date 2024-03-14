@@ -3851,6 +3851,8 @@ public class ContratoCobrancaMB {
 		this.setContinuar(verificaCamposStatus(context));
 		
 		if (!getContinuar()) {
+			PrimeFaces current = PrimeFaces.current();
+			current.executeScript("PF('comparacoesPopPupIdvar').show();");
 			return "";
 		}
 
@@ -3875,7 +3877,7 @@ public class ContratoCobrancaMB {
 					this.contratoCobrancaLogsAlteracao).stream().collect(Collectors.toSet());
 			
 			this.contratoCobrancaLogsAlteracao.setDetalhes(detalhes);
-				
+			
 			if (!contratoCobrancaLogsAlteracao.getDetalhes().isEmpty()) {
 				PrimeFaces current = PrimeFaces.current();
 				current.executeScript("PF('comparacoesPopPupIdvar').show();");
