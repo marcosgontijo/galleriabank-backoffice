@@ -51,6 +51,7 @@ import com.starkbank.Balance;
 import com.starkbank.BoletoPayment;
 import com.starkbank.BrcodePayment;
 import com.starkbank.DictKey;
+import com.starkbank.PaymentPreview;
 import com.starkbank.Project;
 import com.starkbank.Settings;
 import com.starkbank.Transfer;
@@ -1006,6 +1007,56 @@ public class StarkBankAPI{
 		}
 	}
 	
+
+	public void paymentPreview(String idPagamento) {
+		List<PaymentPreview> previews = new ArrayList<>();
+		
+		HashMap<String, Object> params = new HashMap<>();
+		params.put("id", idPagamento);
+		params.put("scheduled", DateUtil.getDataHojeAmericano());
+		
+		try {
+			previews.add(new PaymentPreview(params));
+			
+			PaymentPreview teste;
+			
+			previews = (List<PaymentPreview>) PaymentPreview.create(previews);
+			
+			for (PaymentPreview preview : previews) {
+			    System.out.println(preview);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		/*
+			PaymentPreview({
+			    "scheduled": "2023-01-29",
+			    "type": "brcode-payment",
+			    "payment": {
+			        "accountType": "savings",
+			        "allowChange": false,
+			        "amount": 1000.0,
+			        "bankCode": "01705236",
+			        "cashAmount": 0.0,
+			        "cashierBankCode": "",
+			        "cashierType": "",
+			        "discountAmount": 0.0,
+			        "fineAmount": 0.0,
+			        "interestAmount": 0.0,
+			        "name": "Humberto EI",
+			        "nominalAmount": 1000.0,
+			        "reconciliationId": "12345",
+			        "reductionAmount": 0.0,
+			        "status": "created",
+			        "taxId": "27.564.801/0001-36"
+			    },
+			    "id": "00020126580014br.gov.bcb.pix0136a629532e-7693-4846-852d-1bbff817b5a8520400005303986540510.005802BR5908T'Challa6009Sao Paulo62090505123456304B14A"
+			})
+		 */
+	}
+	
 	public String paymentBoletoLog(String idBoleto) {
 		
 		loginStarkBank();
@@ -1134,6 +1185,31 @@ public class StarkBankAPI{
     	
     	 return taxTransacao;
     }
+	
+	public void getDadosDePagamento() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		
+		loginStarkBank();
+		
+		List<PaymentPreview> previews = new ArrayList<>();
+		
+		HashMap<String, Object> data = new HashMap<>();
+		data.put("id", "34191.09008 71884.170946 05303.220007 3 96520000208889");
+		data.put("scheduled", DateUtil.getDataHojeAmericano());
+
+		try {
+			
+			previews.add(new PaymentPreview(data));	
+			previews = (List<PaymentPreview>) PaymentPreview.create(previews);
+			
+			for (PaymentPreview preview : previews) {
+			    System.out.println(preview);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+	}
 
 	public StarkBankBoleto paymentBoleto(String boleto, ContratoCobranca contrato, PagadorRecebedor pessoa, String descricao, String documentoPagadorCustom, String descricaoConta) {
 
