@@ -1,18 +1,32 @@
 package com.webnowbr.siscoat.cobranca.db.model;
 
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import com.webnowbr.siscoat.common.CommonsUtil;
 
 public class ContratoCobrancaLogsAlteracao {
-	
+
 	private long id;
 	private Date dataAlteracao;
 	private String usuario;
 	private String observacao;
-	private String statusEsteira;			
+	private String statusEsteira;
 	private ContratoCobranca contratoCobranca;
 	private Set<ContratoCobrancaLogsAlteracaoDetalhe> detalhes;
-	
+
+	public List<ContratoCobrancaLogsAlteracaoDetalhe> getDetalhesOrdenado() {
+		if (!CommonsUtil.semValor(detalhes))
+			return detalhes.stream() //
+					.sorted(Comparator.comparing(ContratoCobrancaLogsAlteracaoDetalhe::getOrdem))//
+					.collect(Collectors.toList());
+		else
+			return null;
+	}
+
 	public long getId() {
 		return id;
 	}
