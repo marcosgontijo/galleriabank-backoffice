@@ -739,7 +739,6 @@
 											value="false" />
 									</p:commandButton>
 									
-									
 								</h:panelGrid>
 								
 								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_LAUDO, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_GERENTE_ANALISE">
@@ -2540,7 +2539,7 @@
 								<div style="display: flex; flex-direction: column">
 									<h:panelGrid columns="2"
 										rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'
-					 or contratoCobrancaMB.objetoPagadorRecebedor.uniaoEstavel eq true}">
+					 								or contratoCobrancaMB.objetoPagadorRecebedor.uniaoEstavel eq true}">
 										<h:panelGrid columns="2">
 											<p:outputLabel for="dataCasamento"
 												value="Data de Casamento: "  rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
@@ -3792,7 +3791,7 @@
 										</p:selectOneMenu>
 									</h:panelGrid>
 								</h:panelGroup>
-								<h:panelGrid columns="2"
+								<h:panelGrid columns="2" id="gridCC"
 									rendered="#{contratoCobrancaMB.objetoContratoCobranca.cobrarComissaoCliente == 'Sim'}">
 									<p:outputLabel for="cpfCnpjCC" value="CPF / CNPJ: "
 										styleClass="labelBold" />
@@ -3814,7 +3813,7 @@
 										forceSelection="true" styleClass="labelBold" label="Conta" 
 										style="width:100px;"
 										scrollHeight="250" >
-										<p:ajax event="itemSelect"  update="contaRespValidacao"
+										<p:ajax event="itemSelect"  update="contaRespValidacao gridCC"
 											listener="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.verificaAlteracaoContaCobranca}" />
 									</p:autoComplete>
 
@@ -3824,7 +3823,7 @@
 										value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.agencia}"
 										label="Agência" onblur=""
 										style="width:100px;" >
-										<p:ajax event="valueChange"  update="contaRespValidacao"
+										<p:ajax event="valueChange"  update="contaRespValidacao gridCC"
 											listener="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.verificaAlteracaoContaCobranca}" />
 									</p:inputText>
 
@@ -3841,8 +3840,8 @@
 											value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.conta}"
 											styleClass="labelBold" label="Conta"
 											onblur="" style="width:100px;" >
-											<p:ajax event="valueChange" update="contaRespValidacao"
-												listener="#{pagadorRecebedorMB.verificaAlteracaoContaCobranca}" />
+											<p:ajax event="valueChange" update="contaRespValidacao gridCC"
+												listener="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.verificaAlteracaoContaCobranca}" />
 										</p:inputText>
 										<p:commandButton value="Verificar" ajax="true"
 											icon="ui-icon-check"
@@ -3858,7 +3857,7 @@
 										value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.contaDigito}"
 										styleClass="labelBold" label="contaDigito" onblur="" maxlength="1"
 										style="width:100px;margin-right: 10px;">
-										<p:ajax event="valueChange"  update="contaRespValidacao"
+										<p:ajax event="valueChange"  update="contaRespValidacao gridCC"
 											listener="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.verificaAlteracaoContaCobranca}" />
 									</p:inputText>
 
@@ -3871,7 +3870,7 @@
 										<f:selectItem itemValue="CONTA_POUPANCA"
 											itemLabel="Conta Poupança" />
 	
-										<p:ajax event="valueChange" update="contaRespValidacao"
+										<p:ajax event="valueChange" update="contaRespValidacao gridCC"
 											listener="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.verificaAlteracaoContaCobranca}" />
 									</p:selectOneMenu>
 
@@ -3886,7 +3885,7 @@
 											value="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.pix}"
 											styleClass="labelBold" label="Conta"
 											onblur="" style="width:100px;" >
-											<p:ajax event="valueChange" update="pixRespValidacao"
+											<p:ajax event="valueChange" update="pixRespValidacao gridCC"
 												listener="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.verificaAlteracaoPix}" />
 										</p:inputText>
 										<p:commandButton  value="Verificar" ajax="true" rendered="#{!contratoCobrancaMB.objetoContratoCobranca.responsavel.pixValidado}"
@@ -3904,7 +3903,7 @@
 										<f:selectItem itemValue="EMAIL" itemLabel="E-mail" />
 										<f:selectItem itemValue="CHAVE_ALEATORIA"
 											itemLabel="Chave Aleatória" />
-										<p:ajax event="valueChange" update="pixRespValidacao"
+										<p:ajax event="valueChange" update="pixRespValidacao gridCC"
 											listener="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.verificaAlteracaoPix}" />
 									</p:selectOneMenu>
 	

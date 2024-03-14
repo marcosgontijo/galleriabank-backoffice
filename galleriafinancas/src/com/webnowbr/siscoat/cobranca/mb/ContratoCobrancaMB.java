@@ -16973,6 +16973,10 @@ public class ContratoCobrancaMB {
 		cell.setCellStyle(cell_style);
 		countCol++;
 		cell = row.createCell(countCol);
+		cell.setCellValue("Tipo Operação");
+		cell.setCellStyle(cell_style);
+		countCol++;
+		cell = row.createCell(countCol);
 		cell.setCellValue("CCB-Parcela");
 		cell.setCellStyle(cell_style);
 		inicioColParcelas = countCol;
@@ -17433,6 +17437,14 @@ public class ContratoCobrancaMB {
 		if (record.getUltimoCartorio() != null) {
 			if (record.getUltimoCartorio().getDataStatus() != null) 
 			cell.setCellValue(record.getUltimoCartorio().getDataStatus());
+		}
+		countCol++;
+		
+		// Tipo Contrato
+		cell = row.createCell(countCol);
+		cell.setCellStyle(cell_style);
+		if (record.getTipoOperacao() != null) {
+			cell.setCellValue(record.getTipoOperacao());
 		}
 		countCol++;
 	}
@@ -34267,7 +34279,7 @@ public class ContratoCobrancaMB {
 
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
-			filesPreLaudo = listaArquivosJuridico();
+			filesPreLaudo = listaArquivosPreLaudo();
 		}
 	}
 

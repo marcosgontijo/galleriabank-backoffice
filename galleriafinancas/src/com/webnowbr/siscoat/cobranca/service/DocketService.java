@@ -912,6 +912,10 @@ public class DocketService {
 						for (DocketDocumento documento : retornoObject.getPedido().getDocumentos()) {
 							if (CommonsUtil.mesmoValor(documento.getId(), docket.getIdDocket())) {
 								docket.setRetorno(GsonUtil.toJson(documento));
+								if (!CommonsUtil.semValor(retornoObject.getPedido()) &&
+										!CommonsUtil.semValor(retornoObject.getPedido().getStatus())) {
+									docket.setStatus(retornoObject.getPedido().getStatus());
+								}
 							}
 						}
 					}
