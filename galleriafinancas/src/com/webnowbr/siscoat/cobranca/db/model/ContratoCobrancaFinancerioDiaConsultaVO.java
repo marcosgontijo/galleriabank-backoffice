@@ -78,6 +78,8 @@ public class ContratoCobrancaFinancerioDiaConsultaVO implements Serializable {
 	private String serieCci;
 	private Cartorio ultimoCartorio;
 	
+	private String tipoOperacao;
+	
 	private List<ContratoCobrancaFinanceiroDiaConsultaDetalhesVO> listContratoCobrancaDetalhes;
 	
 	
@@ -95,7 +97,7 @@ public class ContratoCobrancaFinancerioDiaConsultaVO implements Serializable {
 			String empresa, BigDecimal valorImovel,
 			String tipoImovel, boolean corrigidoIPCA, boolean corrigidoNovoIPCA, 
 			String emailPagador, String celularPagador, long qtdeParcelas, String numeroContratoSeguro,
-			BigDecimal valorLeilaoImovel, Date dataContratoAssinado, Date agassinaturadata) {
+			BigDecimal valorLeilaoImovel, Date dataContratoAssinado, Date agassinaturadata, String tipoOperacao) {
 		super();
 		this.id = id;
 		this.numeroContrato = numeroContrato;
@@ -142,6 +144,13 @@ public class ContratoCobrancaFinancerioDiaConsultaVO implements Serializable {
 			this.dataAssinatura = dataContratoAssinado;
 		else
 			this.dataAssinatura = agassinaturadata;
+		
+		if (CommonsUtil.mesmoValor(tipoOperacao, "Home Equity") )
+			this.tipoOperacao = "Home Equity";
+		else if (CommonsUtil.mesmoValor(tipoOperacao, "Emprestimo"))
+			this.tipoOperacao = "Financiamento";
+		else
+			this.tipoOperacao = tipoOperacao;
 		
 		this.listContratoCobrancaDetalhes = new ArrayList<>();
 	}
@@ -455,5 +464,13 @@ public class ContratoCobrancaFinancerioDiaConsultaVO implements Serializable {
 
 	public void setUltimoCartorio(Cartorio ultimoCartorio) {
 		this.ultimoCartorio = ultimoCartorio;
+	}
+
+	public String getTipoOperacao() {
+		return tipoOperacao;
+	}
+
+	public void setTipoOperacao(String tipoOperacao) {
+		this.tipoOperacao = tipoOperacao;
 	}
 }
