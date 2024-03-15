@@ -7129,7 +7129,7 @@ public class ContratoCobranca implements Serializable {
 
 		this.statusEsteira = "Lead Completo";
 
-		if (inicioAnalise)
+		if (!inicioAnalise)
 			this.statusEsteira = "Ag. Análise";
 
 		if (this.inicioAnalise)

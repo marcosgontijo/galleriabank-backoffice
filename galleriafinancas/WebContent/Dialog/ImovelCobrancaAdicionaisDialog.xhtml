@@ -9,6 +9,13 @@
 	<p:dialog header="Imovel Adicional" widgetVar="imovelAdiconalDialog"
 		height="420" >
 		<h:form id="imovelAdiconalForm">
+			<p:panel rendered="false">
+
+				<p:selectOneButton value="#{mbean.imovelAdicional.imovel.tipo}">
+					<f:selectItem itemValue="contrato"  itemLabel="Imovel para contrato" />
+					<f:selectItem itemValue="pre-laudo" itemLabel="Imovel para pré-laudo" />
+				</p:selectOneButton>
+        	</p:panel>
 			<p:panel header="Dados da Ficha"
 				style="margin-bottom:10px;">
 				<p:messages id="msgImoveis"/>

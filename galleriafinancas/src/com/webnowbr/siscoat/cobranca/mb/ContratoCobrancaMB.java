@@ -51,6 +51,7 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 
@@ -890,7 +891,7 @@ public class ContratoCobrancaMB {
 	private List<DocumentoAnalise> docList = new ArrayList<DocumentoAnalise>();
 	
 	// Lista de imóveis adicionais referentes ao contrato cobranca
-	private Set<ImovelCobranca> listSolicitacaoPreLaudoImoveis;
+	private Set<String> listSolicitacaoPreLaudoImoveis;
 	private List<ImovelCobranca> listTodosImoveisContrato;
 	private List<ImovelCobranca> listPreLaudoImoveisRelac;
 	
@@ -3905,8 +3906,8 @@ public class ContratoCobrancaMB {
 				
 				//VOLTA AQUI
 				
-				for(Object imovelObj: this.listSolicitacaoPreLaudoImoveis) {
-					Long idImovel = Long.parseLong(imovelObj.toString());
+				for(String imovelObj: this.listSolicitacaoPreLaudoImoveis) {
+					Long idImovel = Long.parseLong(imovelObj);
 					ImovelCobranca imovel = new ImovelCobranca();
 					imovel = imovelDao.findById(idImovel);
 					
@@ -15220,7 +15221,7 @@ public class ContratoCobrancaMB {
 		
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.contratosPendentes = new ArrayList<ContratoCobranca>();
-		this.listSolicitacaoPreLaudoImoveis = new HashSet<ImovelCobranca>();
+		this.listSolicitacaoPreLaudoImoveis = new HashSet<String>();
 		this.listTodosImoveisContrato = new ArrayList<ImovelCobranca>();
 		this.listPreLaudoImoveisRelac = new ArrayList<ImovelCobranca>();
 
@@ -32132,7 +32133,15 @@ public class ContratoCobrancaMB {
 		getListaImoveisPreLaudoCompass();
 		ImovelCobrancaAdicionaisDao imovelAddDao = new ImovelCobrancaAdicionaisDao();
 		listTodosImoveisContrato = imovelAddDao.getListImoveisAdd(objetoContratoCobranca.getId());
-	
+		
+//		itemValue="#{imovelCobranca.id}" itemLabel="#{imovelCobranca.numeroMatricula} - #{imovelCobranca.endereco}"
+				
+		listSolicitacaoPreLaudoImoveis = listTodosImoveisContrato.stream()
+		.filter( c -> c.isPreLaudoSolicitado())//
+		.map(c -> CommonsUtil.stringValue( c.getId()))//
+		//.map(c -> new SelectItem( c.getId(), c.getNumeroMatricula() + " - " + c.getEndereco() ))//
+		.collect(Collectors.toSet());
+
 	}
 	
 	public void getListaImoveisPreLaudoCompass() {
@@ -32156,7 +32165,7 @@ public class ContratoCobrancaMB {
 		this.inserirImovelDisable = true;
 		this.inserirImovelOcultarValorMercadoImovel = true;
 		
-		this.listSolicitacaoPreLaudoImoveis = new HashSet<ImovelCobranca>();
+		this.listSolicitacaoPreLaudoImoveis = new HashSet<String>();
 		this.listTodosImoveisContrato = new ArrayList<ImovelCobranca>();
 		this.listPreLaudoImoveisRelac = new ArrayList<ImovelCobranca>();
 
@@ -37837,11 +37846,11 @@ public class ContratoCobrancaMB {
 		this.listTodosImoveisContrato = listTodosImoveisContrato;
 	}
 	
-	public Set<ImovelCobranca> getlistSolicitacaoPreLaudoImoveis() {
+	public Set<String> getlistSolicitacaoPreLaudoImoveis() {
 		return listSolicitacaoPreLaudoImoveis;
 	}
 	
-	public void setlistSolicitacaoPreLaudoImoveis(Set<ImovelCobranca> listSolicitacaoPreLaudoImoveis) {
+	public void setlistSolicitacaoPreLaudoImoveis(Set<String> listSolicitacaoPreLaudoImoveis) {
 		this.listSolicitacaoPreLaudoImoveis = listSolicitacaoPreLaudoImoveis;
 	}
 	
