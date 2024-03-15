@@ -292,7 +292,7 @@
 						var="banco" itemLabel="#{banco}" itemValue="#{banco}"
 						forceSelection="true" styleClass="labelBold" label="Conta"
 						style="width:100px;" scrollHeight="250">
-						<p:ajax event="itemSelect" update="contaRespValidacao gridCC"
+						<p:ajax event="itemSelect" update="contaRespValidacao"
 							listener="#{responsavelMB.objetoResponsavel.verificaAlteracaoContaCobranca}" />
 					</p:autoComplete>
 
@@ -301,7 +301,7 @@
 					<p:inputText id="AgenciaResp"
 						value="#{responsavelMB.objetoResponsavel.agencia}"
 						label="Agência" onblur="" style="width:100px;">
-						<p:ajax event="valueChange" update="contaRespValidacao gridCC"
+						<p:ajax event="valueChange" update="contaRespValidacao"
 							listener="#{responsavelMB.objetoResponsavel.verificaAlteracaoContaCobranca}" />
 					</p:inputText>
 
@@ -318,7 +318,7 @@
 							value="#{responsavelMB.objetoResponsavel.conta}"
 							styleClass="labelBold" label="Conta" onblur=""
 							style="width:100px;">
-							<p:ajax event="valueChange" update="contaRespValidacao gridCC"
+							<p:ajax event="valueChange" update="contaRespValidacao"
 								listener="#{pagadorRecebedorMB.verificaAlteracaoContaCobranca}" />
 						</p:inputText>
 						<p:commandButton value="Verificar" ajax="true"
@@ -335,7 +335,7 @@
 						value="#{responsavelMB.objetoResponsavel.contaDigito}"
 						styleClass="labelBold" label="contaDigito" onblur="" maxlength="1"
 						style="width:100px;margin-right: 10px;">
-						<p:ajax event="valueChange" update="contaRespValidacao gridCC"
+						<p:ajax event="valueChange" update="contaRespValidacao"
 							listener="#{responsavelMB.objetoResponsavel.verificaAlteracaoContaCobranca}" />
 					</p:inputText>
 
@@ -348,7 +348,7 @@
 						<f:selectItem itemValue="CONTA_POUPANCA"
 							itemLabel="Conta Poupança" />
 
-						<p:ajax event="valueChange" update="contaRespValidacao gridCC"
+						<p:ajax event="valueChange" update="contaRespValidacao"
 							listener="#{responsavelMB.objetoResponsavel.verificaAlteracaoContaCobranca}" />
 					</p:selectOneMenu>
 
@@ -363,7 +363,7 @@
 							value="#{responsavelMB.objetoResponsavel.pix}"
 							styleClass="labelBold" label="Conta" onblur=""
 							style="width:100px;">
-							<p:ajax event="valueChange" update="pixRespValidacao gridCC"
+							<p:ajax event="valueChange" update="pixRespValidacao"
 								listener="#{responsavelMB.objetoResponsavel.verificaAlteracaoPix}" />
 						</p:inputText>
 						<p:commandButton value="Verificar" ajax="true"
@@ -383,7 +383,7 @@
 						<f:selectItem itemValue="EMAIL" itemLabel="E-mail" />
 						<f:selectItem itemValue="CHAVE_ALEATORIA"
 							itemLabel="Chave Aleatória" />
-						<p:ajax event="valueChange" update="pixRespValidacao gridCC"
+						<p:ajax event="valueChange" update="pixRespValidacao"
 							listener="#{responsavelMB.objetoResponsavel.verificaAlteracaoPix}" />
 					</p:selectOneMenu>
 

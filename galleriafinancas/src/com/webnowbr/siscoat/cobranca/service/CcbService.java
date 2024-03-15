@@ -1402,7 +1402,8 @@ public class CcbService {
 			iParticipante = 0;
 			for (CcbParticipantes participante : objetoCcb.getListaParticipantes()) {		
 				
-				if (CommonsUtil.mesmoValor(participante.getTipoOriginal(), "EMITENTE")) {
+				if (CommonsUtil.mesmoValor(participante.getTipoOriginal(), "EMITENTE")
+						|| CommonsUtil.mesmoValor(participante.getTipoOriginal(), "Vendedor")) {
 					if(CommonsUtil.semValor(objetoCcb.getNomeEmitente())) {
 						objetoCcb.setNomeEmitente(participante.getPessoa().getNome());
 					}

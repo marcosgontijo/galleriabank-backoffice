@@ -50,11 +50,9 @@
 				label="Estado" style="width:410px;" />
 
 			<p:outputLabel for="linkGMapsImovel" value="Link Google Maps: " />
-			<p:inputText id="linkGMapsImovel"
+			<p:outputLabel id="linkGMapsImovel" 
 				value="#{contratoCobrancaMB.objetoImovelCobranca.linkGMaps}"
-				label="Link Google Maps" style="width:400px;">
-				<p:ajax event="keyup" update="gerarLinkimovel" />
-			</p:inputText>
+				label="Link Google Maps" style="width:400px;"/>
 
 			<p:commandButton id="gerarLinkimovel" value="Gerar Link"
 				action="#{contratoCobrancaMB.getLinkMaps()}"
