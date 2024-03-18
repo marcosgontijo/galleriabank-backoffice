@@ -7667,6 +7667,7 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 								+ " and cadastroAprovadoValor = 'Aprovado' and pagtoLaudoConfirmada = true and pajurFavoravel = true and analiseComercial = true"
 								+ " and comentarioJuridicoEsteira = false "
 								+ " and esteriaComentarioLuvison = false ";
+						order = " order by contratoprioridadealta desc, analiseComercialData ";
 					} 
 					
 					if (tipoConsulta.equals("Comentario Luvison")) {

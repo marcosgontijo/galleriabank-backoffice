@@ -10483,7 +10483,7 @@ public class ContratoCobrancaMB {
 				continue;
 			BigDecimal porcentagem = imovelAdicional.getPorcentagem().divide(BigDecimal.valueOf(100),
 					MathContext.DECIMAL128);
-			BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoComite().multiply(porcentagem);
+			BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoCCB().multiply(porcentagem);
 			BigDecimal valorRegistro = rDao.getValorRegistro(valorPorMatricula);
 			valorTotalRegistro = valorTotalRegistro.add(valorRegistro);
 			imovelAdicional.setValorRegistro(valorRegistro);
@@ -10492,7 +10492,7 @@ public class ContratoCobrancaMB {
 		if (!CommonsUtil.semValor(objetoContratoCobranca.getPorcentagemImovelPrincipal())) {
 			BigDecimal porcentagem = objetoContratoCobranca.getPorcentagemImovelPrincipal()
 					.divide(BigDecimal.valueOf(100), MathContext.DECIMAL128);
-			BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoComite().multiply(porcentagem);
+			BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoCCB().multiply(porcentagem);
 			BigDecimal valorRegistro = rDao.getValorRegistro(valorPorMatricula);
 			valorTotalRegistro = valorTotalRegistro.add(valorRegistro);
 			objetoContratoCobranca.setValorRegistroImovelPrincipal(valorRegistro);
@@ -10513,7 +10513,7 @@ public class ContratoCobrancaMB {
 				continue;
 			BigDecimal porcentagem = imovelAdicional.getPorcentagemLeilao().divide(BigDecimal.valueOf(100),
 					MathContext.DECIMAL128);
-			BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoComite().multiply(porcentagem);
+			BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoCCB().multiply(porcentagem);
 			valorPorMatricula = valorPorMatricula.setScale(2, RoundingMode.HALF_UP);
 			imovelAdicional.setValorCredito(valorPorMatricula);
 			imovelCobrancaAdicionaisDao.merge(imovelAdicional);
@@ -10521,7 +10521,7 @@ public class ContratoCobrancaMB {
 		if (!CommonsUtil.semValor(objetoContratoCobranca.getPorcentagemLeilaoImovelPrincipal())) {
 			BigDecimal porcentagem = objetoContratoCobranca.getPorcentagemLeilaoImovelPrincipal()
 					.divide(BigDecimal.valueOf(100), MathContext.DECIMAL128);
-			BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoComite().multiply(porcentagem);
+			BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoCCB().multiply(porcentagem);
 			valorPorMatricula = valorPorMatricula.setScale(2, RoundingMode.HALF_UP);
 			objetoContratoCobranca.setValorCreditoImovelPrincipal(valorPorMatricula);
 		}
@@ -10543,7 +10543,7 @@ public class ContratoCobrancaMB {
 		 */
 
 		RegistroImovelTabelaDao rDao = new RegistroImovelTabelaDao();
-		BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoComite()
+		BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoCCB()
 				.divide(BigDecimal.valueOf(qtdMatriculas), MathContext.DECIMAL128);
 		BigDecimal valorRegistro = rDao.getValorRegistro(valorPorMatricula);
 		valorRegistro = valorRegistro.multiply(BigDecimal.valueOf(qtdMatriculas));
@@ -20464,7 +20464,7 @@ public class ContratoCobrancaMB {
 				}
 				
 				if(CommonsUtil.mesmoValor(objetoContratoCobranca.getBrutoLiquidoCobrarComissaoCliente(), "Bruto")) {
-					valorTranferencia = objetoContratoCobranca.getValorAprovadoComite().multiply(comissao);
+					valorTranferencia = objetoContratoCobranca.getValorAprovadoCCB().multiply(comissao);
 				} 
 			}
 			
