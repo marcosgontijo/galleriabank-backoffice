@@ -70,6 +70,9 @@
 			        <p:column style="text-align: center;" headerText="Origem">
 			           <h:outputText value="#{contratos.urlLead}" />
 			        </p:column>	
+			        <p:column style="text-align: center;" headerText="e-mail" filterBy="#{contratos.pagador.email}" filterMatchMode="contains" sortBy="#{contratos.pagador.email}">
+			            <h:outputText value="#{contratos.pagador.email}" />
+			        </p:column>	
 			        <p:column style="text-align: center;" headerText="Valor Solicitado (R$)">
 			            <h:outputText value="R$ " /><h:outputText value="#{contratos.quantoPrecisa}" converter="bigDecimalConverter" />
 			        </p:column>	
