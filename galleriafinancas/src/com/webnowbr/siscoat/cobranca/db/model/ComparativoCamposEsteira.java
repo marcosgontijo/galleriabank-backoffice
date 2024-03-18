@@ -8,6 +8,7 @@ public class ComparativoCamposEsteira {
 	private String descricao;
 	private String validarClasses;
 	private boolean validar;
+	private Long ordem;
 	
 	public Long getId() {
 		return id;
@@ -55,5 +56,13 @@ public class ComparativoCamposEsteira {
 
 	public void setValidar(boolean validar) {
 		this.validar = validar;
+	}
+
+	public Long getOrdem() {
+		return ordem;
+	}
+
+	public void setOrdem(Long ordem) {
+		this.ordem = ordem;
 	}
 }

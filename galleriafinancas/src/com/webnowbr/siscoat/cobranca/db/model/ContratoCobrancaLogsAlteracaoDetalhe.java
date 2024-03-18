@@ -8,14 +8,17 @@ public class ContratoCobrancaLogsAlteracaoDetalhe {
 	private String valorBanco;
 	private String valorAlterado;
 	private ContratoCobrancaLogsAlteracao alteracao;
+	//nao colocar no hbm somente transiente
+	private long ordem;
 
 	public ContratoCobrancaLogsAlteracaoDetalhe(String nomeCampo, String nomeClasse, String valorBanco,
-			String valorAlterado, ContratoCobrancaLogsAlteracao alteracao) {
+			String valorAlterado, ContratoCobrancaLogsAlteracao alteracao,long ordem) {
 		this.nomeCampo = nomeCampo;
 		this.setNomeClasse(nomeClasse);
 		this.valorBanco = valorBanco;
 		this.valorAlterado = valorAlterado;
 		this.alteracao = alteracao;
+		this.ordem= ordem;
 	}
 
 	public long getId() {
@@ -65,4 +68,13 @@ public class ContratoCobrancaLogsAlteracaoDetalhe {
 	public void setNomeClasse(String nomeClasse) {
 		this.nomeClasse = nomeClasse;
 	}
+
+	public long getOrdem() {
+		return ordem;
+	}
+
+	public void setOrdem(long ordem) {
+		this.ordem = ordem;
+	}
+	
 }
