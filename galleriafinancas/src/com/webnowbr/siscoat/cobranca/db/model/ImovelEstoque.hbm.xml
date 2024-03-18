@@ -62,6 +62,16 @@
         <property name="quitado" type="boolean">
             <column name="QUITADO" not-null="true" default="false"/>
         </property>
+         <many-to-one name="objetoImovelCobranca"
+			class="com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca"
+			lazy="false">
+			<column name="imovelCobranca"/>
+		</many-to-one>
+		 <many-to-one name="objetoContratoCobranca"
+			class="com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca"
+			lazy="false">
+			<column name="contratoCobranca"/>
+		</many-to-one>
  
     </class>
 </hibernate-mapping>

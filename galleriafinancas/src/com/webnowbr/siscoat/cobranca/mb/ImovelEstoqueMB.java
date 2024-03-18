@@ -72,8 +72,8 @@ public class ImovelEstoqueMB {
 	public void consultaEstoque() {
 		ImovelEstoqueDao dao = new ImovelEstoqueDao();
 		listaImovelTudo = dao.consultaImovelEstoque("");
-		listaImovelVendido = dao.consultaImovelEstoque("where i2.statusatual = 'Vendido'");
-		listaImovelEmEsdtoque = dao.consultaImovelEstoque("where i2.statusatual != 'Vendido'");
+		listaImovelVendido = dao.consultaImovelEstoque(" where i.statusatual = 'Vendido'");
+		listaImovelEmEsdtoque = dao.consultaImovelEstoque(" where i.statusatual != 'Vendido'");
 
 	}
 
@@ -91,13 +91,19 @@ public class ImovelEstoqueMB {
 		ImovelEstoqueDao imovelEstoqueDao = new ImovelEstoqueDao();
 		if(objetoImovelEstoque == null) {
 			objetoImovelEstoque = new ImovelEstoque();
+			if(!CommonsUtil.semValor(objetoImovelCobranca));{
+				objetoImovelEstoque.setObjetoImovelCobranca(objetoImovelCobranca);
+				
+			}
+			if(!CommonsUtil.semValor(objetoContratoCobranca)) {
+				objetoImovelEstoque.setObjetoContratoCobranca(objetoContratoCobranca);
+			}
 		}
 		
 		
 		try {
-			if(CommonsUtil.semValor(objetoImovelCobranca.getImovelEstoque())){
-				objetoImovelCobranca.setImovelEstoque(objetoImovelEstoque);	
-
+			if(CommonsUtil.semValor(objetoImovelCobranca.getImovelEstoque())) {
+				objetoImovelCobranca.setImovelEstoque(objetoImovelEstoque);
 			}
 	
 			
@@ -118,9 +124,9 @@ public class ImovelEstoqueMB {
 					imovelEstoqueDao.create(objetoImovelEstoque);
 
 				}
-				else 
+				else
 				imovelEstoqueDao.merge(objetoImovelEstoque);
-				imovelCobrancaDao.merge(objetoImovelCobranca); 
+		     	imovelCobrancaDao.merge(objetoImovelCobranca);
 
 
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Estoque Inserido com sucesso!!", ""));
@@ -144,6 +150,7 @@ public class ImovelEstoqueMB {
 		if (objetoContratoCobranca != null) {
 			preencherCamposComDadosContrato(); // Chama o método para preencher os campos com os dados do contrato
 		}
+		
 		
 
 		return "/Atendimento/Cobranca/ImovelEstoqueEditar.xhtml";
@@ -455,13 +462,22 @@ public class ImovelEstoqueMB {
 			linha.createCell(celula);
 		linha.getCell(celula).setCellValue(value);
 	}
-	public void ApagaImovelEstoque(ImovelEstoque imovel) {
-		ImovelEstoqueDao dao = new ImovelEstoqueDao();
-		dao.delete(imovel);
-		this.consultaEstoque();
-		this.consultaEstoquePesquisa();
+	public void ApagaImovelEstoque(ImovelEstoque estoque) {
+		ImovelEstoqueDao estoqueDao = new ImovelEstoqueDao();
+		ImovelCobrancaDao cobrancaDao = new ImovelCobrancaDao();
+		ImovelEstoque imovelEstoque = estoqueDao.findById(estoque.getId());
+	    if (imovelEstoque != null) {
+	       ImovelCobranca cobrancas = cobrancaDao.findById(estoque.getObjetoImovelCobranca().getId());
+	      
+	            cobrancas.setImovelEstoque(null);
+	            cobrancaDao.merge(cobrancas); 
+	        
+	    }
+	        estoqueDao.delete(imovelEstoque);
+	        this.consultaEstoque();
+	        this.consultaEstoquePesquisa();
+	}  	
 	
-	}
 
 	/**
 	 * @return the lazyModel

@@ -72,7 +72,9 @@
 			        		<f:setPropertyActionListener target="#{contratoCobrancaMB.objetoContratoCobranca}" value="#{estoque}" />
 			      		
 		                </p:commandButton>
-		                <p:commandButton icon="ui-icon-trash" action="#{imovelEstoqueMB.ApagaImovelEstoque(estoque.imovel.imovelEstoque)}" update="@all"></p:commandButton>
+		                <p:commandButton icon="ui-icon-trash" action="#{imovelEstoqueMB.ApagaImovelEstoque(estoque.imovel.imovelEstoque)}" update="@all">
+		              
+		                </p:commandButton>
 		            </p:column>			        		               		        			        			           			 		
 			        
 				</p:dataTable>
