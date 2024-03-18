@@ -1,5 +1,7 @@
 package com.webnowbr.siscoat.cobranca.db.model;
 
+import java.util.Set;
+
 public class ContratoCobrancaLogsAlteracaoDetalhe {
 
 	private long id;
@@ -10,7 +12,7 @@ public class ContratoCobrancaLogsAlteracaoDetalhe {
 	private ContratoCobrancaLogsAlteracao alteracao;
 	//nao colocar no hbm somente transiente
 	private long ordem;
-
+	
 	public ContratoCobrancaLogsAlteracaoDetalhe(String nomeCampo, String nomeClasse, String valorBanco,
 			String valorAlterado, ContratoCobrancaLogsAlteracao alteracao,long ordem) {
 		this.nomeCampo = nomeCampo;

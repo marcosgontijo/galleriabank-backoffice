@@ -54,6 +54,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 
@@ -918,8 +919,7 @@ public class ContratoCobrancaMB {
 	private List<ImovelCobranca> listPreLaudoImoveisRelac;
 	
 	private ComparativoCamposEsteiraDao comparativosCamposEsteraDao = new ComparativoCamposEsteiraDao();
-	private Set<ContratoCobrancaLogsAlteracaoDetalhe> detalhes;
-	private Set<ContratoCobrancaLogsAlteracaoDetalhe> detalhesImovel;
+
 	
 	private boolean continuar;
 	
@@ -3843,7 +3843,7 @@ public class ContratoCobrancaMB {
 			System.out.println(ex.getMessage());
 		}
 	}
-
+	
 	public String editPreContratoPorStatus() {
 		
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -3851,8 +3851,6 @@ public class ContratoCobrancaMB {
 		this.setContinuar(verificaCamposStatus(context));
 		
 		if (!getContinuar()) {
-			PrimeFaces current = PrimeFaces.current();
-			current.executeScript("PF('comparacoesPopPupIdvar').show();");
 			return "";
 		}
 
@@ -3870,7 +3868,9 @@ public class ContratoCobrancaMB {
 						
 			ContratoCobranca objetoContratoCobrancaBanco = contratoCobrancaDao.findById(this.objetoContratoCobranca.getId());
 			
-			detalhes = contratoCobrancaService.comparandoValores(
+			contratoCobrancaService.zerarListaDeDuplicidade();
+			
+			Set<ContratoCobrancaLogsAlteracaoDetalhe> detalhes = contratoCobrancaService.comparandoValores(
 					this.objetoContratoCobranca, 
 					objetoContratoCobrancaBanco,
 					comparativoCamposEsteira,
@@ -3880,6 +3880,7 @@ public class ContratoCobrancaMB {
 			
 			if (!contratoCobrancaLogsAlteracao.getDetalhes().isEmpty()) {
 				PrimeFaces current = PrimeFaces.current();
+				current.ajax().update("comparacoesPopPupId");
 				current.executeScript("PF('comparacoesPopPupIdvar').show();");
 				return null;
 			}
@@ -3902,8 +3903,8 @@ public class ContratoCobrancaMB {
 		
 		String campoObservacao = this.contratoCobrancaLogsAlteracao.getObservacao();
 		
-		if (!detalhes.isEmpty() && !this.verificaQuantidadeCampoObservacao(campoObservacao)) {
-            return null; 
+		if (!this.contratoCobrancaLogsAlteracao.getDetalhes().isEmpty() && !this.verificaQuantidadeCampoObservacao(campoObservacao)) {
+            //return null; 
 		} 
 		
 		try {
