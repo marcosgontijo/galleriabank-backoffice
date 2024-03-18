@@ -22216,6 +22216,9 @@ public class ContratoCobrancaMB {
 		if (CommonsUtil.semValor(objetoContratoCobranca.getListProcessos())) {
 			objetoContratoCobranca.setListProcessos(new HashSet<>());
 		}
+		if(CommonsUtil.semValor(processoSelecionado.getContaPagar())) {
+			processoSelecionado.setContaPagar(new ContasPagar());
+		}
 		processoSelecionado.getContaPagar().setValor(processoSelecionado.getValorAtualizado());
 		processoSelecionado.getContaPagar().setDescricao("Processo N°: " + processoSelecionado.getNumero());
 		processoSelecionado.getContaPagar().setFormaTransferencia("Boleto");
