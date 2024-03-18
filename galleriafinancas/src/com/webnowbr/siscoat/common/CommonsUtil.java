@@ -441,7 +441,10 @@ public class CommonsUtil {
 		
 		if( (a instanceof String) || (b instanceof String)) {
 			return mesmoValor((String) a, (String) b );
+		} else if( (a instanceof Number) || (b instanceof Number)) {
+			return mesmoValor((Number) a, (Number) b );
 		}
+		
 		return a == null ? b == null : a.equals(b);
 	}
 
