@@ -1,9 +1,13 @@
 package com.webnowbr.siscoat.cobranca.service;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.faces.bean.ManagedBean;
@@ -17,6 +21,8 @@ import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
 import com.webnowbr.siscoat.common.CommonsUtil;
 
 public class ContratoCobrancaService {
+	
+	private Set<Integer> verificaDuplicidadeDeIdParaNaoVerificar = new HashSet<Integer>();
 
 	public List<ContratoCobrancaLogsAlteracaoDetalhe> comparandoValores(Object valoresAtuais,
 			Object valoresBanco, List<ComparativoCamposEsteira> camposEsteira,
@@ -24,17 +30,26 @@ public class ContratoCobrancaService {
 		
 		String nomeClasse = valoresAtuais.getClass().getSimpleName();
 		
+		int tamanhoLista = verificaDuplicidadeDeIdParaNaoVerificar.size();
+		
+		verificaDuplicidadeDeIdParaNaoVerificar.add(valoresAtuais.hashCode());
+		
+		List<ContratoCobrancaLogsAlteracaoDetalhe> listaDeAlteracoes = new ArrayList<>();
+		
+		if(tamanhoLista == verificaDuplicidadeDeIdParaNaoVerificar.size()) {
+			return listaDeAlteracoes;
+		}
+		
 		List<String> camposParaVerificar = camposEsteira.stream()
 				.filter(c -> c.getValidarClasses().equals(nomeClasse))
 				.map(c -> c.getNome_propiedade())
 				.collect(Collectors.toList());
 		
-		List<ContratoCobrancaLogsAlteracaoDetalhe> listaDeAlteracoes = new ArrayList<>();
 		Class<?> reflectionValues = valoresAtuais.getClass();
 
 		for (Field field : reflectionValues.getDeclaredFields()) {
 			
-			Optional<ComparativoCamposEsteira> comparativoCamposEsteira  =camposEsteira
+			Optional<ComparativoCamposEsteira> comparativoCamposEsteira = camposEsteira
 					.stream().filter(f -> f.getNome_propiedade().equalsIgnoreCase(field.getName().toLowerCase()))
 					.findAny();
 			try {
@@ -59,12 +74,12 @@ public class ContratoCobrancaService {
 								.addAll(comparandoValores(currentValues, originalValues, camposEsteira, alteracao));
 					}
 				}
+				
 				continue;
 			}
 			
-				field.setAccessible(true);
-				Object currentValues = field.get(valoresAtuais); // valores que estao no banco
-				Object originalValues = field.get(valoresBanco);// valores que esta vindo atual
+				Object currentValues =  callGetMethods(valoresAtuais, field.getName()); // valores que estao no banco
+				Object originalValues = callGetMethods(valoresBanco, field.getName()); // valores que esta vindo atual
 
 				if (currentValues != null) {
 					if(!CommonsUtil.mesmoValor(currentValues, originalValues)) {
@@ -80,4 +95,44 @@ public class ContratoCobrancaService {
 		}
 		return listaDeAlteracoes;
 	}
+	
+	public void zerarListaDeDuplicidade() {
+		this.verificaDuplicidadeDeIdParaNaoVerificar = new HashSet<Integer>();
+	}
+
+	public static Object callGetMethods(Object obj, String propriedade) {
+        Class<?> clazz = obj.getClass();
+        Method[] methods = clazz.getDeclaredMethods();
+        
+		Optional<Method> method = CommonsUtil.getList(methods).stream()
+				.filter(m -> m.getName().toLowerCase().equalsIgnoreCase("get" + propriedade.toLowerCase())
+						|| m.getName().toLowerCase().equalsIgnoreCase("is" + propriedade.toLowerCase())).findAny();
+        
+            if ( method.isPresent() &&  isGetter(method.get())) {
+                try {
+                    Object value = method.get().invoke(obj);
+                    return value;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        return null;
+    }
+	
+	public static boolean isGetter(Method method) {
+        if (!Modifier.isPublic(method.getModifiers())) {
+            return false;
+        }
+        if (method.getParameterCount() != 0) {
+            return false;
+        }
+        if (void.class.equals(method.getReturnType())) {
+            return false;
+        }
+        if (!method.getName().startsWith("get") && !method.getName().startsWith("is")) {
+            return false;
+        }
+        return true;
+    }
+	
 }

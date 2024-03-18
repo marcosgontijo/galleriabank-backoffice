@@ -5,8 +5,6 @@
 	xmlns:shiro="http://shiro.apache.org/tags"
 	xmlns:p="http://primefaces.org/ui">
 	
-	
-	
 	<p:dialog header="Comparações dos campos que foram alterados."
 		id="comparacoesPopPupId" widgetVar="comparacoesPopPupIdvar"
 		resizable="false"  width="1000" height="700" closable="true"
@@ -14,8 +12,7 @@
 		 <p:messages />
 			<div class="card">
 				<p:dataTable id="tableId" var="item" 
-				value="#{contratoCobrancaMB.contratoCobrancaLogsAlteracao.detalhesOrdenado}"
-				 >
+				value="#{contratoCobrancaMB.contratoCobrancaLogsAlteracao.detalhesOrdenado}">
 					<p:column headerText="Nome do campo">
 						<h:outputText value="#{contratoCobrancaMB.retornaDescricaoCampo(item.nomeCampo)}" />
 					</p:column>
@@ -57,6 +54,7 @@
 					margin: auto;
 					padding: 5px;-webkit-border-radius: 5px;text-decoration: none;
 					-moz-border-radius: 5px; border-radius: 5px;">
+					<p:ajax process="@this" partialSubmit="true" />
 				</p:commandButton>
 			</div>
 	</p:dialog>
