@@ -8,6 +8,11 @@
 			<column name="ID" />
 			<generator class="increment" />
 		</id>
+		
+		<property name="tipoAnalise" type="java.lang.String">
+			<column name="tipoAnalise" />
+		</property>
+		
 		 <many-to-one name="imovel"
 			class="com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca">
 			<column name="imovel" />

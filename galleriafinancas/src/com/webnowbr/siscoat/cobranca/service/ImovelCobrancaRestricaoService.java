@@ -92,11 +92,12 @@ public class ImovelCobrancaRestricaoService {
 
 	public List<String> verificaRestricao(ContratoCobranca contratoCobranca) {
 		
-
 		Set<ImovelCobranca> lstImovel = new HashSet<ImovelCobranca>(Arrays.asList(contratoCobranca.getImovel()));
 
 		lstImovel.addAll(
-				contratoCobranca.getListaImoveis().stream().map(l -> l.getImovel()).collect(Collectors.toSet()));
+				contratoCobranca.getListaImoveis().stream() //
+				.filter(i -> !CommonsUtil.mesmoValor("pre-laudo", i.getTipoAnalise()))//
+				.map(l -> l.getImovel()).collect(Collectors.toSet()));
 
 		Set<ImovelCobrancaRestricao> restricoes = new HashSet<ImovelCobrancaRestricao>(0);
 

@@ -52,7 +52,7 @@ public class UsuarioMB {
 	private Responsavel selectedResponsaveis[];
 	private List<Responsavel> responsaveis;
 	private List<UserPerfil> perfil;
-	Optional<UserPerfil> userPerfilPublico;
+	Optional<UserPerfil> userSemPerfil;
 
 	/**
 	 * Construtor.
@@ -92,16 +92,16 @@ public class UsuarioMB {
 			UserPerfilDao userPerfilDao = new UserPerfilDao();
 			perfil = userPerfilDao.findAll().stream().sorted(Comparator.comparing(UserPerfil::getId))
 					.collect(Collectors.toList());
-			userPerfilPublico = perfil.stream().filter(p -> p.getId() == 1000l).findFirst();
+			userSemPerfil = perfil.stream().filter(p -> p.getId() == -1000).findFirst();
 		}
 	}
 
 	public String clearFields() {
 		objetoUsuario = new User();
 		
-		if (userPerfilPublico == null)
+		if (userSemPerfil == null)
 			carregaListaPerfil();
-		objetoUsuario.setUserPerfil(userPerfilPublico.get());
+		objetoUsuario.setUserPerfil(userSemPerfil.get());
 		
 		this.tituloPainel = "Adicionar";
 
@@ -732,9 +732,9 @@ public class UsuarioMB {
 	 */
 	public void setObjetoUsuario(User objetoUsuario) {
 		if (CommonsUtil.semValor(objetoUsuario.getUserPerfil())) {
-			if (userPerfilPublico == null)
+			if (userSemPerfil == null)
 				carregaListaPerfil();
-			objetoUsuario.setUserPerfil(userPerfilPublico.get());
+			objetoUsuario.setUserPerfil(userSemPerfil.get());
 		}
 		this.objetoUsuario = objetoUsuario;
 	}
