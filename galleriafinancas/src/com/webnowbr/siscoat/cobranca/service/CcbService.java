@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
 import javax.imageio.ImageIO;
@@ -682,7 +683,9 @@ public class CcbService {
 				valorPorExtenso.setNumber(objetoCcb.getObjetoContratoCobranca().getImovel().getValorLeilao());
 				textoLeilao = textoLeilao + " (" + valorPorExtenso.toString() + "); ";
 				
-				for(ImovelCobrancaAdicionais imovelAdicional : objetoCcb.getObjetoContratoCobranca().getListaImoveis()) {
+				for(ImovelCobrancaAdicionais imovelAdicional : objetoCcb.getObjetoContratoCobranca().getListaImoveis().stream() //
+						.filter(i -> !CommonsUtil.mesmoValor("pre-laudo", i.getTipoAnalise()))
+						.collect(Collectors.toList())) {
 					textoLeilao = textoLeilao + imovelAdicional.getImovel().getNumeroMatricula() + ": ";
 					textoLeilao = textoLeilao + CommonsUtil.formataValorMonetarioCci(imovelAdicional.getImovel().getValorLeilao(), "R$ ");
 					valorPorExtenso.setNumber(imovelAdicional.getImovel().getValorLeilao());
@@ -708,7 +711,9 @@ public class CcbService {
 				valorPorExtenso.setNumber(objetoCcb.getObjetoContratoCobranca().getValorCreditoImovelPrincipal());
 				textoCredito = textoCredito + " (" + valorPorExtenso.toString() + "); ";
 				
-				for(ImovelCobrancaAdicionais imovelAdicional : objetoCcb.getObjetoContratoCobranca().getListaImoveis()) {
+				for(ImovelCobrancaAdicionais imovelAdicional : objetoCcb.getObjetoContratoCobranca().getListaImoveis().stream() //
+						.filter(i -> !CommonsUtil.mesmoValor("pre-laudo", i.getTipoAnalise()))
+						.collect(Collectors.toList())) {
 					textoCredito = textoCredito + imovelAdicional.getImovel().getNumeroMatricula() + ": ";
 					textoCredito = textoCredito + CommonsUtil.formataValorMonetarioCci(imovelAdicional.getValorCredito(), "R$ ");
 					valorPorExtenso.setNumber(imovelAdicional.getValorCredito());
@@ -726,9 +731,12 @@ public class CcbService {
 		}
 		runMatriculas.getText(0);
 		String textoMatriculas = objetoCcb.getNumeroImovel();
-		if(objetoCcb.getObjetoContratoCobranca().getListaImoveis().size() > 0) {
-			for(ImovelCobrancaAdicionais imovelAdicional : objetoCcb.getObjetoContratoCobranca().getListaImoveis()) {
-				if(!CommonsUtil.semValor(imovelAdicional.getImovel().getNumeroMatricula()))
+		if (objetoCcb.getObjetoContratoCobranca().getListaImoveis().size() > 0) {
+			for (ImovelCobrancaAdicionais imovelAdicional : objetoCcb.getObjetoContratoCobranca().getListaImoveis() //
+					.stream() //
+					.filter(i -> !CommonsUtil.mesmoValor("pre-laudo", i.getTipoAnalise()))
+					.collect(Collectors.toList())) {
+				if (!CommonsUtil.semValor(imovelAdicional.getImovel().getNumeroMatricula()))
 					textoMatriculas = textoMatriculas + " / " + imovelAdicional.getImovel().getNumeroMatricula();
 			}
 		}
@@ -742,7 +750,10 @@ public class CcbService {
 		runInscircao.getText(0);
 		String textoInscricao = objetoCcb.getInscricaoMunicipal();
 		if(objetoCcb.getObjetoContratoCobranca().getListaImoveis().size() > 0) {
-			for(ImovelCobrancaAdicionais imovelAdicional : objetoCcb.getObjetoContratoCobranca().getListaImoveis()) {
+			for(ImovelCobrancaAdicionais imovelAdicional : objetoCcb.getObjetoContratoCobranca().getListaImoveis()
+					.stream() //
+					.filter(i -> !CommonsUtil.mesmoValor("pre-laudo", i.getTipoAnalise()))
+					.collect(Collectors.toList())) {
 				if(!CommonsUtil.semValor(imovelAdicional.getImovel().getInscricaoMunicipal()))
 					textoInscricao = textoInscricao + " / " + imovelAdicional.getImovel().getInscricaoMunicipal();
 			}
@@ -1402,7 +1413,8 @@ public class CcbService {
 			iParticipante = 0;
 			for (CcbParticipantes participante : objetoCcb.getListaParticipantes()) {		
 				
-				if (CommonsUtil.mesmoValor(participante.getTipoOriginal(), "EMITENTE")) {
+				if (CommonsUtil.mesmoValor(participante.getTipoOriginal(), "EMITENTE")
+						|| CommonsUtil.mesmoValor(participante.getTipoOriginal(), "Vendedor")) {
 					if(CommonsUtil.semValor(objetoCcb.getNomeEmitente())) {
 						objetoCcb.setNomeEmitente(participante.getPessoa().getNome());
 					}

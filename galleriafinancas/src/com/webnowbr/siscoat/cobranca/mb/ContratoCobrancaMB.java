@@ -3904,8 +3904,6 @@ public class ContratoCobrancaMB {
 				
 				ImovelCobrancaDao imovelDao = new ImovelCobrancaDao();
 				
-				//VOLTA AQUI
-				
 				for(String imovelObj: this.listSolicitacaoPreLaudoImoveis) {
 					Long idImovel = Long.parseLong(imovelObj);
 					ImovelCobranca imovel = new ImovelCobranca();
@@ -22440,7 +22438,12 @@ public class ContratoCobrancaMB {
 				return;
 			}
 		}
-			
+
+		if (CommonsUtil.mesmoValor("pre-laudo", imovelAdicional.getTipoAnalise())
+				&& !CommonsUtil.booleanValue(imovelAdicional.getImovel().isPreLaudoSolicitado())) {
+			imovelAdicional.getImovel().setPreLaudoSolicitado(true);
+		}
+		
 		if (imovelAdicional.getImovel().getId() > 0)
 			imovelCobrancaDao.merge(imovelAdicional.getImovel());
 		else
@@ -22453,9 +22456,12 @@ public class ContratoCobrancaMB {
 
 		imovelAdicional.setContratoCobranca(objetoContratoCobranca);
 		objetoContratoCobranca.getListaImoveis().add(imovelAdicional);
+		listTodosImoveisContrato.add(imovelAdicional.getImovel());
 		calcularValorRegistro();
 		calcularValorCreditoPorImovel();
-		listaRestricoesImovel();
+		listaRestricoesImovel();	
+		
+		listSolicitacaoPreLaudoImoveis.add(CommonsUtil.stringValue(imovelAdicional.getImovel().getId()));
 		imovelAdicional = new ImovelCobrancaAdicionais();
 	}
 
