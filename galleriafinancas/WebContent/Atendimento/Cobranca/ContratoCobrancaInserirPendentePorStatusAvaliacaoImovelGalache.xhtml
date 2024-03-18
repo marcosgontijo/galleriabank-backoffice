@@ -256,11 +256,22 @@
 									</p:commandButton>
 								</h:panelGroup>				
 								
-								<p:outputLabel for="dataVistoria"
-									value="Data Vistoria Imóvel: " styleClass="labelBold" />
-								<p:outputLabel id="dataVistoria" value="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria}" styleClass="labelBold" size="100">
-									<f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
-								</p:outputLabel>
+								<shiro:lacksRole name="PROFILE_LAUDO">
+									<p:outputLabel for="dataVistoriaView"
+										value="Data Vistoria Imóvel: " styleClass="labelBold" />
+									<p:outputLabel id="dataVistoriaView" value="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria}" styleClass="labelBold" size="100">
+										<f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+									</p:outputLabel>
+								</shiro:lacksRole>
+								
+								<shiro:hasAnyRoles name="ROOT, PROFILE_LAUDO">
+									<p:outputLabel for="dataVistoria"
+										value="Data Vistoria Imóvel: " styleClass="labelBold" />
+									<p:calendar id="dataVistoria" showOn="button"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria}"
+										label="Data Vistoria Imóvel" size="100"
+										pattern="dd/MM/yyyy HH:mm" styleClass="dateTimeField" />
+								</shiro:hasAnyRoles>
 								
 								<p:outputLabel for="nomeVistoriador"
 									value="Nome Vistoriador: " styleClass="labelBold" />
