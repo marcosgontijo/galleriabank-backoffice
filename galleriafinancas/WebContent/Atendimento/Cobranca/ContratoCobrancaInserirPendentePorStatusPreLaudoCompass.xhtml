@@ -132,7 +132,7 @@
 							</h:panelGrid>
 						</p:panel>
 					</h:panelGroup>
-				</ui:repeat>	
+				<!-- </ui:repeat> -->	
 
 				<!-- <h:panelGroup id="RecebidoPajulaudoPanel"
 					style="margin-bottom:20px;">
@@ -228,7 +228,7 @@
 					</p:panel>
 				</h:panelGroup> -->
 				
-				<ui:repeat value="#{contratoCobrancaMB.listPreLaudoImoveisRelac}" var="objetoImovelCobranca">
+				<!-- <ui:repeat value="#{contratoCobrancaMB.listPreLaudoImoveisRelac}" var="objetoImovelCobranca"> -->
 					<!-- painel do detalhe imovel-->
 					<ui:param name="objetoImovelCobranca" value="#{objetoImovelCobranca}"/>
 					<p:panel id="Imovel" header="Imóvel Ofertado Como Garantia - Matrícula #{objetoImovelCobranca.numeroMatricula}"
@@ -304,6 +304,19 @@
 							<p:outputLabel id="valorEstimado"
 								value="#{objetoImovelCobranca.valoEstimado}"
 								converter="bigDecimalConverter" />
+								
+								<p:outputLabel for="AreaTotalLaudoPaju"
+									value="Área Total / Terreno (metros):  " />
+								<p:outputLabel id="AreaTotalLaudoPaju"
+									value="#{contratoCobrancaMB.objetoImovelCobranca.areaTotal}"
+									style="width:150px;" />
+
+								<p:outputLabel for="AreaConstruidaLaudoPaju"
+									value="Área Útil / Construída (metros): " />
+								<p:outputLabel id="AreaConstruidaLaudoPaju"
+									value="#{contratoCobrancaMB.objetoImovelCobranca.areaConstruida}"
+									style="width:150px;" />
+									
 				
 							<p:outputLabel for="dataCompra" value="Data da compra do Imóvel " />
 							<h:panelGroup>
