@@ -50,6 +50,8 @@ public final class User implements Serializable {
     private boolean userCobranca;
     
     private boolean userIuguPosto;
+
+    private boolean userInterno;
     
     private boolean userCobrancaEdita;
     private boolean userCobrancaBaixa;
@@ -409,6 +411,14 @@ public final class User implements Serializable {
 
 	public void setUserIuguPosto(boolean userIuguPosto) {
 		this.userIuguPosto = userIuguPosto;
+	}	
+
+	public boolean isUserInterno() {
+		return userInterno;
+	}
+
+	public void setUserInterno(boolean userInterno) {
+		this.userInterno = userInterno;
 	}
 
 	public List<String> getDiasSemana() {
