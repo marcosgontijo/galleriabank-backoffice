@@ -32,6 +32,11 @@
 						value="#{termoMB.objetoTermo.instrucao}"
 						label="Nome" required="true" onblur="" style="width:400px;">
 					</p:inputText>
+					<p:outputLabel for="DiasAceite" value="Dias de aceite" styleClass="labelBold" />
+					<p:inputNumber id="DiasAceite"
+						value="#{termoMB.objetoTermo.diasAceite}"
+						label="Aceite" required="true" onblur="" style="width:100px;" minValue="0"  maxValue="99" maxlength="2" oninput="this.value = this.value.replace(/[^\d]/g, '')">
+					</p:inputNumber>
 					
 				    
 					<p:outputLabel for="DataInicio" value="Data Inicio" styleClass="labelBold" />
