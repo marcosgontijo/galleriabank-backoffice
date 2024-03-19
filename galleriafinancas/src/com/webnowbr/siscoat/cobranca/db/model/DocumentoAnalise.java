@@ -661,6 +661,10 @@ public class DocumentoAnalise implements Serializable {
 	public List<DocumentoAnaliseResumo> getResumoFrotaVeiculo() {
 		List<DocumentoAnaliseResumo> veiculos = new ArrayList<>();
 		String retorno = getRetornoFrotaVeiculos();
+		if(retorno.contains("sistema indisponivel")) {
+			veiculos.add(new DocumentoAnaliseResumo("sistema indisponivel", "0"));
+			return veiculos;
+		}
 		CredlocalizaResponse dado = GsonUtil.fromJson(retorno, CredlocalizaResponse.class);
 		
 		if(CommonsUtil.semValor(dado))
