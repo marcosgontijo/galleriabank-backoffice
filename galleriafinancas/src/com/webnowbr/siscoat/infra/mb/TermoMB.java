@@ -336,9 +336,10 @@ public class TermoMB {
 		String msgRetorno = null;
 
 		try {
+			if(CommonsUtil.semValor(objetoTermo.getArquivo())){
 			if (!validaFileUpload())
 				return "";
-
+			}
 			if (CommonsUtil.semValor(objetoTermo.getId())) {
 				termoDao.create(objetoTermo);
 				msgRetorno = "inserido";
