@@ -4151,10 +4151,10 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 			+ "		and cdp.datapagamentogalleria <= ? ::timestamp))	";	
 	
 	private static final String QUERY_CONSULTA_BRL_CONTRATO_JSON_LIQUIDACAO =  	"select cc.id, cd.numeroParcela, cd.vlrJurosParcela, cd.vlrAmortizacaoParcela, cdp.dataVencimento , cdp.dataPagamento , cdp.vlrParcela , cdp.vlrRecebido, cd.id, cd.valorJurosSemIPCA, cd.valorAmortizacaoSemIPCA, "
-			+ " cdp.baixagalleria, cdp.datapagamentogalleria, cdp.vlrRecebidoGalleria  "
+			+ " cdp.baixagalleria, cdp.datapagamentogalleria, cdp.vlrRecebidoGalleria, cd.datavencimento dtVencimentoCd, cd.vlrparcela vlrparcelaCd  "
 			+ " from cobranca.contratocobrancadetalhes cd "
-			+ " inner join cobranca.cobranca_detalhes_parcial_join cdpj on cdpj.idcontratocobrancadetalhes = cd.id "
-			+ " inner join cobranca.contratocobrancadetalhesparcial cdp on cdp.id = cdpj.idcontratocobrancadetalhesparcial " 
+			+ " left join cobranca.cobranca_detalhes_parcial_join cdpj on cdpj.idcontratocobrancadetalhes = cd.id "
+			+ " left join cobranca.contratocobrancadetalhesparcial cdp on cdp.id = cdpj.idcontratocobrancadetalhesparcial " 
 			+ " inner join cobranca.contratocobranca_detalhes_join cdj on cd.id = cdj.idcontratocobrancadetalhes "
 			+ " inner join cobranca.contratocobranca cc on cc.id = cdj.idcontratocobranca  ";
 	
@@ -4204,8 +4204,6 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 						ps.setString(1, numContrato);
 						ps.setString(2, numParcela);
 					}
-					
-					
 					rs = ps.executeQuery();
 					
 					ContratoCobranca contratoCobranca = new ContratoCobranca();
@@ -4229,21 +4227,27 @@ public class ContratoCobrancaDao extends HibernateDao <ContratoCobranca,Long> {
 							parcela = parcela;
 						}
 						contratoCobrancaBRLLiquidacao.setNumeroParcela(parcela);
-						contratoCobrancaBRLLiquidacao.setVlrJurosParcela(rs.getBigDecimal(3));
-						contratoCobrancaBRLLiquidacao.setVlrAmortizacaoParcela(rs.getBigDecimal(4));
-						contratoCobrancaBRLLiquidacao.setDataVencimento(rs.getDate(5));
-						contratoCobrancaBRLLiquidacao.setDataPagamento(rs.getDate(6));
-						contratoCobrancaBRLLiquidacao.setVlrParcela(rs.getBigDecimal(7));
-						contratoCobrancaBRLLiquidacao.setVlrRecebido(rs.getBigDecimal(8));
-						contratoCobrancaBRLLiquidacao.setId(rs.getLong(9));
-						contratoCobrancaBRLLiquidacao.setVlrJurosSemIPCA(rs.getBigDecimal(10));
-						contratoCobrancaBRLLiquidacao.setVlrAmortizacaoSemIPCA(rs.getBigDecimal(11));
-						if(rs.getBoolean("baixagalleria")) { //12
+						contratoCobrancaBRLLiquidacao.setVlrJurosParcela(rs.getBigDecimal(3));//cd.vlrJurosParcela
+						contratoCobrancaBRLLiquidacao.setVlrAmortizacaoParcela(rs.getBigDecimal(4));//cd.vlrAmortizacaoParcela
+						contratoCobrancaBRLLiquidacao.setDataVencimento(rs.getDate(5));//cdp.dataVencimento
+						contratoCobrancaBRLLiquidacao.setDataPagamento(rs.getDate(6));//cdp.dataPagamento
+						contratoCobrancaBRLLiquidacao.setVlrParcela(rs.getBigDecimal(7));//cdp.vlrParcela
+						contratoCobrancaBRLLiquidacao.setVlrRecebido(rs.getBigDecimal(8));//cdp.vlrRecebido
+						contratoCobrancaBRLLiquidacao.setId(rs.getLong(9));//cd.id
+						contratoCobrancaBRLLiquidacao.setVlrJurosSemIPCA(rs.getBigDecimal(10));//cd.valorJurosSemIPCA
+						contratoCobrancaBRLLiquidacao.setVlrAmortizacaoSemIPCA(rs.getBigDecimal(11));//cd.valorAmortizacaoSemIPCA
+						if(CommonsUtil.booleanValue(rs.getBoolean("baixagalleria"))) { //12
 							contratoCobrancaBRLLiquidacao.setDataPagamento(rs.getDate("datapagamentogalleria")); //13
 							contratoCobrancaBRLLiquidacao.setVlrRecebido(rs.getBigDecimal("vlrRecebidoGalleria")); //14
 						}
+						if(CommonsUtil.semValor(contratoCobrancaBRLLiquidacao.getDataVencimento())) {
+							contratoCobrancaBRLLiquidacao.setDataVencimento(rs.getDate("dtVencimentoCd"));//cdp.dataVencimento
+						}
+						if(CommonsUtil.semValor(contratoCobrancaBRLLiquidacao.getVlrParcela())) {
+							contratoCobrancaBRLLiquidacao.setVlrParcela(rs.getBigDecimal("vlrparcelaCd"));//cdp.dataVencimento
+						}
 						
-
+						
 						objects.add(contratoCobrancaBRLLiquidacao);
 					}
 	
