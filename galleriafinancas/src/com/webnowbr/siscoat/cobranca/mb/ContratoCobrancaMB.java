@@ -57,6 +57,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.poi.ss.formula.functions.FinanceLib;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
@@ -34202,6 +34203,17 @@ public class ContratoCobrancaMB {
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
 			filesJuridico = listaArquivosJuridico();
+			
+			if ((event.getFile().getFileName().toLowerCase().contains("paju") || 
+					CommonsUtil.removeAcentos(file.getName().toLowerCase()).contains("parecer juridico")) &&
+					event.getFile().getFileName().toLowerCase().endsWith(".pdf")) {
+				PDDocument doc = PDDocument.load(conteudo);
+				String texto = new PDFTextStripper().getText(doc);
+				if(texto.toLowerCase().contains("segredo de justiça")) {
+					//System.out.println("arquivo "+ event.getFile().getFileName() + " tem segredo de justiça");
+					this.objetoContratoCobranca.setContemSegredoJustica(true);
+				}
+			}
 		}
 	}
 
