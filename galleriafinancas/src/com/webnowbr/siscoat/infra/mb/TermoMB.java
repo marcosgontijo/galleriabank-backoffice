@@ -142,7 +142,7 @@ public class TermoMB {
 			User userPesquisa = usuario.findById(user.getIdUsuario());
 			TermoUsuariovo.setDataAceite(user.getDataAceite());
 			TermoUsuariovo.setUsuario(userPesquisa);
-			usuarios.add(new TermoPopup(TermoUsuariovo.getUsuario().getName(), TermoUsuariovo.getDataAceite()));
+			usuarios.add(new TermoPopup(TermoUsuariovo.getUsuario().getName(), CommonsUtil.formataData(TermoUsuariovo.getDataAceite())));
 
 		}
 
@@ -336,9 +336,10 @@ public class TermoMB {
 		String msgRetorno = null;
 
 		try {
+			if(CommonsUtil.semValor(objetoTermo.getArquivo())){
 			if (!validaFileUpload())
 				return "";
-
+			}
 			if (CommonsUtil.semValor(objetoTermo.getId())) {
 				termoDao.create(objetoTermo);
 				msgRetorno = "inserido";
