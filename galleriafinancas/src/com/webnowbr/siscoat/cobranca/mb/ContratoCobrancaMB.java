@@ -1,5 +1,7 @@
 package com.webnowbr.siscoat.cobranca.mb;
 
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -61,24 +63,17 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.poi.ss.formula.functions.FinanceLib;
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.BuiltinFormats;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.JDBCException;
 import org.hibernate.SessionFactory;
 import org.json.JSONArray;
@@ -252,6 +247,7 @@ import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
 import com.webnowbr.siscoat.infra.db.dao.UserDao;
 import com.webnowbr.siscoat.infra.db.model.User;
 import com.webnowbr.siscoat.job.CertidoesJob;
+import com.webnowbr.siscoat.relatorio.vo.RelatorioInadimplencia;
 import com.webnowbr.siscoat.security.LoginBean;
 import com.webnowbr.siscoat.simulador.SimulacaoDetalheVO;
 import com.webnowbr.siscoat.simulador.SimulacaoIPCACalculoV2;
@@ -3280,6 +3276,232 @@ public class ContratoCobrancaMB {
 			return null;
 		}
 	}
+	
+	        
+	          
+	          
+	       
+	        public void geraXLSXLeads() throws IOException{
+	        	 try (XSSFWorkbook wb = new XSSFWorkbook()) {
+	                 Sheet sheet = wb.createSheet("Contratos Cobrança");
+
+	                 int rowNum = 0;
+
+	                 Row headerRow = sheet.createRow(rowNum++);
+	                 String[] headers = {"Contrato", "Data Contrato", "Pagador", "Responsavel","Status", "origem", "E-mail", "Valor Solicitado", "Imóvel", "Cidade"};
+	                 CellStyle headerStyle = wb.createCellStyle();
+	                 XSSFFont font = wb.createFont();
+	                 font.setBold(true);
+	                 font.setColor(IndexedColors.WHITE.getIndex());
+	                 headerStyle.setFont(font);
+	                 headerStyle.setFillForegroundColor(IndexedColors.DARK_GREEN.getIndex());
+	                 headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+	                 
+	                 for (int i = 0; i < headers.length; i++) {
+	                     Cell cell = headerRow.createCell(i);
+	                     cell.setCellValue(headers[i]);
+	                     cell.setCellStyle(headerStyle);
+	                 }
+
+	                 for (ContratoCobranca contrato : contratosPendentes) {
+	                     Row dataRow = sheet.createRow(rowNum++);
+	                     dataRow.createCell(0).setCellValue(contrato.getNumeroContrato());
+	                     // Supondo que getDataContrato() retorna um objeto java.util.Date
+	                     dataRow.createCell(1).setCellValue(contrato.getDataContrato().toString());
+	                     dataRow.createCell(2).setCellValue(contrato.getPagador().getNome());
+	                     dataRow.createCell(3).setCellValue(contrato.getResponsavel().getNome());
+	                     dataRow.createCell(4).setCellValue(contrato.getObservacaolead());
+	                     dataRow.createCell(5).setCellValue(contrato.getUrlLead());
+	                     dataRow.createCell(6).setCellValue(contrato.getPagador().getEmail());
+	                     dataRow.createCell(7).setCellValue(contrato.getQuantoPrecisa().toString());
+	                     dataRow.createCell(8).setCellValue(contrato.getImovel().getNome());
+	                     dataRow.createCell(9).setCellValue(contrato.getImovel().getCidade());
+	                 }
+	                 
+	                 for (int i = 0; i < headers.length; i++) {
+	                     sheet.autoSizeColumn(i);
+	                 }
+	    		ByteArrayOutputStream  fileOut = new ByteArrayOutputStream ();
+	    		//escrever tudo o que foi feito no arquivo
+	    		wb.write(fileOut);
+
+	    		//fecha a escrita de dados nessa planilha
+	    		wb.close();
+	    		
+	    		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+	    				FacesContext.getCurrentInstance());
+	    		
+	    		String nomeArquivoDownload = String.format("Galleria Bank - Leads Terceiros %s.xlsx", "");
+	    		gerador.open(nomeArquivoDownload);		
+	    		gerador.feed( new ByteArrayInputStream(fileOut.toByteArray()));
+	    		gerador.close();
+	    		
+	    	}
+}
+	        public void geraXLSXLeadsCompletos() throws IOException{
+	        	 try (XSSFWorkbook wb = new XSSFWorkbook()) {
+	                 Sheet sheet = wb.createSheet("Contratos Cobrança");
+
+	                 int rowNum = 0;
+
+	                 Row headerRow = sheet.createRow(rowNum++);
+	                 String[] headers = {"Contrato", "Data Contrato", "Pagador", "Responsavel", "origem", "E-mail", "Valor Solicitado", "Imóvel", "Cidade"};
+	                 CellStyle headerStyle = wb.createCellStyle();
+	                 XSSFFont font = wb.createFont();
+	                 font.setBold(true);
+	                 font.setColor(IndexedColors.WHITE.getIndex());
+	                 headerStyle.setFont(font);
+	                 headerStyle.setFillForegroundColor(IndexedColors.DARK_GREEN.getIndex());
+	                 headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+	                 
+	                 for (int i = 0; i < headers.length; i++) {
+	                     Cell cell = headerRow.createCell(i);
+	                     cell.setCellValue(headers[i]);
+	                     cell.setCellStyle(headerStyle);
+	                 }
+
+	                 for (ContratoCobranca contrato : contratosPendentes) {
+	                     Row dataRow = sheet.createRow(rowNum++);
+	                     dataRow.createCell(0).setCellValue(contrato.getNumeroContrato());
+	                     // Supondo que getDataContrato() retorna um objeto java.util.Date
+	                     dataRow.createCell(1).setCellValue(contrato.getDataContrato().toString());
+	                     dataRow.createCell(2).setCellValue(contrato.getPagador().getNome());
+	                     dataRow.createCell(3).setCellValue(contrato.getResponsavel().getNome());
+	                     dataRow.createCell(4).setCellValue(contrato.getUrlLead());
+	                     dataRow.createCell(5).setCellValue(contrato.getPagador().getEmail());
+	                     dataRow.createCell(6).setCellValue(contrato.getQuantoPrecisa().toString());
+	                     dataRow.createCell(7).setCellValue(contrato.getImovel().getNome());
+	                     dataRow.createCell(8).setCellValue(contrato.getImovel().getCidade());
+	                 }
+	                 
+	                 for (int i = 0; i < headers.length; i++) {
+	                     sheet.autoSizeColumn(i);
+	                 }
+	    		ByteArrayOutputStream  fileOut = new ByteArrayOutputStream ();
+	    		//escrever tudo o que foi feito no arquivo
+	    		wb.write(fileOut);
+
+	    		//fecha a escrita de dados nessa planilha
+	    		wb.close();
+	    		
+	    		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+	    				FacesContext.getCurrentInstance());
+	    		
+	    		String nomeArquivoDownload = String.format("Galleria Bank - Leads Terceiros %s.xlsx", "");
+	    		gerador.open(nomeArquivoDownload);		
+	    		gerador.feed( new ByteArrayInputStream(fileOut.toByteArray()));
+	    		gerador.close();
+	    		
+	    	}
+}
+	        public void geraXLSXLeadsReprovados() throws IOException{
+	        	 try (XSSFWorkbook wb = new XSSFWorkbook()) {
+	                 Sheet sheet = wb.createSheet("Contratos Cobrança");
+
+	                 int rowNum = 0;
+
+	                 Row headerRow = sheet.createRow(rowNum++);
+	                 String[] headers = {"Contrato", "Data Contrato", "Pagador", "Responsavel", "Motivo Reprova", "E-mail", "Valor Solicitado", "Imóvel", "Cidade"};
+	                 CellStyle headerStyle = wb.createCellStyle();
+	                 XSSFFont font = wb.createFont();
+	                 font.setBold(true);
+	                 font.setColor(IndexedColors.WHITE.getIndex()); 
+	                 headerStyle.setFont(font);
+	                 headerStyle.setFillForegroundColor(IndexedColors.DARK_GREEN.getIndex());
+	                 headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+	                 
+	                 for (int i = 0; i < headers.length; i++) {
+	                     Cell cell = headerRow.createCell(i);
+	                     cell.setCellValue(headers[i]);
+	                     cell.setCellStyle(headerStyle);
+	                 }
+
+	                 for (ContratoCobranca contrato : contratosPendentes) {
+	                     Row dataRow = sheet.createRow(rowNum++);
+	                     dataRow.createCell(0).setCellValue(contrato.getNumeroContrato());
+	                     // Supondo que getDataContrato() retorna um objeto java.util.Date
+	                     dataRow.createCell(1).setCellValue(contrato.getDataContrato().toString());
+	                     dataRow.createCell(2).setCellValue(contrato.getPagador().getNome());
+	                     dataRow.createCell(3).setCellValue(contrato.getResponsavel().getNome());
+	                     dataRow.createCell(4).setCellValue(contrato.getMotivoReprovaLead());
+	                     dataRow.createCell(5).setCellValue(contrato.getPagador().getEmail());
+	                     dataRow.createCell(6).setCellValue(contrato.getQuantoPrecisa().toString());
+	                     dataRow.createCell(7).setCellValue(contrato.getImovel().getNome());
+	                     dataRow.createCell(8).setCellValue(contrato.getImovel().getCidade());
+	                 }
+	                 
+	                 for (int i = 0; i < headers.length; i++) {
+	                     sheet.autoSizeColumn(i);
+	                 }
+	    		ByteArrayOutputStream  fileOut = new ByteArrayOutputStream ();
+	    		//escrever tudo o que foi feito no arquivo
+	    		wb.write(fileOut);
+
+	    		//fecha a escrita de dados nessa planilha
+	    		wb.close();
+	    		
+	    		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+	    				FacesContext.getCurrentInstance());
+	    		
+	    		String nomeArquivoDownload = String.format("Galleria Bank - Leads Terceiros %s.xlsx", "");
+	    		gerador.open(nomeArquivoDownload);		
+	    		gerador.feed( new ByteArrayInputStream(fileOut.toByteArray()));
+	    		gerador.close();
+	    		
+	    	}
+}
+	        public void geraXLSXLeadsLazy() throws IOException{
+	       	 try (XSSFWorkbook wb = new XSSFWorkbook()) {
+	                Sheet sheet = wb.createSheet("Contratos Cobrança");
+
+	                int rowNum = 0;
+
+	                Row headerRow = sheet.createRow(rowNum++);
+	                String[] headers = {"Contrato", "Data Contrato", "Pagador", "Responsavel", "origem", "Valor Solicitado","Tel. Pagador","e-mail",  "Cidade"};
+	                for (int i = 0; i < headers.length; i++) {
+	                    Cell cell = headerRow.createCell(i);
+	                    cell.setCellValue(headers[i]);
+	                }
+	                if(!CommonsUtil.semValor(getLazyModel().getWrappedData())) {
+
+	                for (ContratoCobranca contrato : getLazyModel().getWrappedData() ) {
+	                    Row dataRow = sheet.createRow(rowNum++);
+	                    dataRow.createCell(0).setCellValue(contrato.getNumeroContrato());
+	                    // Supondo que getDataContrato() retorna um objeto java.util.Date
+	                    dataRow.createCell(1).setCellValue(contrato.getDataContrato().toString());
+	                    dataRow.createCell(2).setCellValue(contrato.getPagador().getNome());
+	                    dataRow.createCell(3).setCellValue(contrato.getResponsavel().getNome());
+	                    dataRow.createCell(4).setCellValue(contrato.getUrlLead());
+	                    dataRow.createCell(5).setCellValue(contrato.getQuantoPrecisa().toString());
+	                    dataRow.createCell(6).setCellValue(CommonsUtil.somenteNumeros(contrato.getPagador().getTelCelular()));
+	                    dataRow.createCell(7).setCellValue(contrato.getPagador().getEmail());
+	                    dataRow.createCell(8).setCellValue(contrato.getImovel().getCidade());
+	                }
+	                }
+	   		ByteArrayOutputStream  fileOut = new ByteArrayOutputStream ();
+	   		//escrever tudo o que foi feito no arquivo
+	   		wb.write(fileOut);
+
+	   		//fecha a escrita de dados nessa planilha
+	   		wb.close();
+	   		
+	   		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+	   				FacesContext.getCurrentInstance());
+	   		
+	   		String nomeArquivoDownload = String.format("Galleria Bank - Leads %s.xlsx", "");
+	   		gerador.open(nomeArquivoDownload);		
+	   		gerador.feed( new ByteArrayInputStream(fileOut.toByteArray()));
+	   		gerador.close();
+	   		
+	   	}
+	   }
+	       
+	        
+	 
+
+	
+	    
+
 
 	public String editPreContrato() {
 		ResponsavelDao responsavelDao = new ResponsavelDao();

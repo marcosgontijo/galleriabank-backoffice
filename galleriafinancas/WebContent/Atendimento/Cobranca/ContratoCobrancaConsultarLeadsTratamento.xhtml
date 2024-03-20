@@ -46,7 +46,12 @@
 
 				</h:panelGrid>
 			</p:panel>									
-			<p:panel id="ConsultaContratos" header="Leads #{contratoCobrancaMB.tituloTelaLead} - Consultar" style="margin-bottom:10px;">		    		    
+			<p:panel id="ConsultaContratos" header="Leads #{contratoCobrancaMB.tituloTelaLead} - Consultar" style="margin-bottom:10px;">
+			<f:facet name="header">
+			<div style="text-align: center;">
+			<p:commandButton value="Gerar Excel" action="#{contratoCobrancaMB.geraXLSXLeads()}" ajax="false"></p:commandButton>
+			</div>
+			</f:facet>		    				    		    
    		         <p:dataTable id="dtContratos" var="contratos" value="#{contratoCobrancaMB.contratosPendentes}" selection="" emptyMessage="" sortBy="#{contratos.dataContrato}" sortOrder="descending" 
    		         rows="50"
                  paginator="true"
