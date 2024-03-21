@@ -34271,7 +34271,7 @@ public class ContratoCobrancaMB {
 			filesJuridico = listaArquivosJuridico();
 			
 			if ((event.getFile().getFileName().toLowerCase().contains("paju") || 
-					CommonsUtil.removeAcentos(file.getName().toLowerCase()).contains("parecer juridico")) &&
+					CommonsUtil.removeAcentos(event.getFile().getFileName().toLowerCase()).contains("parecer juridico")) &&
 					event.getFile().getFileName().toLowerCase().endsWith(".pdf")) {
 				PDDocument doc = PDDocument.load(conteudo);
 				String texto = new PDFTextStripper().getText(doc);

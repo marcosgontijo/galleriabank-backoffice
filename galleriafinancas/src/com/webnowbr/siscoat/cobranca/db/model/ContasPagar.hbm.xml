@@ -162,5 +162,8 @@
 			<column name="userCriacao" />
 		</property>	
 		
+		<property name="tipoOrigem" type="java.lang.String">
+			<column name="origem"/>
+		</property>
 	</class>
 </hibernate-mapping>
