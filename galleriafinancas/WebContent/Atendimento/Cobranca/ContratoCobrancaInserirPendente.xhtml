@@ -2408,6 +2408,8 @@
 											value="#{contratoCobrancaMB.objetoContratoCobranca.dataPajuComentado}"
 											size="100" pattern="dd/MM/yyyy" styleClass="dateTimeField" />
 									</h:panelGrid>
+									<p:outputLabel value="Contem Segredo de Justiça?" styleClass="labelBold" />
+									<p:selectBooleanCheckbox id="contemSegredoJustica" value="#{contratoCobrancaMB.objetoContratoCobranca.contemSegredoJustica}" />
 									<h:panelGrid columns="2"
 										rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel == true}">
 										<p:outputLabel value="Valor Total Processos:"
@@ -5134,7 +5136,7 @@
 								cancelLabel="Cancelar"
 								fileUploadListener="#{contratoCobrancaMB.handleFileJuridicoUpload}"
 								mode="advanced" dragDropSupport="true"
-								update="ArquivosJuridicoSalvos msgArquivo" />
+								update="ArquivosJuridicoSalvos msgArquivo form:contemSegredoJustica" />
 						</h:panelGrid>
 					</p:panel>
 

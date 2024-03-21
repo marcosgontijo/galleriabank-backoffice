@@ -1161,7 +1161,23 @@ public class CcbMB {
 					"Contrato de Cobrança: esse contrato não tem uma emissão feita!",""));
 				return null;
 			}
+			this.objetoCcb.getProcessosJucidiais().clear();
 			this.objetoCcb.setDespesasAnexo2(new ArrayList<ContasPagar>(despesas));
+			for(CcbProcessosJudiciais processo : objetoContratoCobranca.getListProcessos()) {
+				if(!CommonsUtil.semValor(processo.getContaPagar())&&
+						this.objetoCcb.getDespesasAnexo2().contains(processo.getContaPagar())) {
+					this.objetoCcb.getDespesasAnexo2().remove(processo.getContaPagar());
+				}
+				
+				if(!processo.isSelecionadoComite()) {
+					continue;
+				}
+				
+				if(!this.objetoCcb.getProcessosJucidiais().contains(processo)) {
+					this.objetoCcb.getProcessosJucidiais().add(processo);
+				}
+			}
+			
 			calcularValorDespesa();
 			calcularSimulador();
 			calculaValorLiquidoCredito();
@@ -1503,21 +1519,7 @@ public class CcbMB {
 			
 			ContasPagarDao cpDao = new ContasPagarDao();
 			CcbProcessosJudiciaisDao pjDao = new CcbProcessosJudiciaisDao();
-			for (CcbProcessosJudiciais processo : this.objetoCcb.getProcessosJucidiais()) {
-				if(!CommonsUtil.semValor(processo.getContaPagar())) {
-					ContasPagar conta = processo.getContaPagar();
-					if(conta.getId() <= 0) {
-						cpDao.create(conta);
-					} else {
-						cpDao.merge(conta);
-					}
-				}
-				if(processo.getId() <= 0) {
-					pjDao.create(processo);
-				} else {
-					pjDao.merge(processo);
-				}
-			}
+			salvarProcessos();
 			
 			for (ContasPagar conta : this.objetoCcb.getDespesasAnexo2()) {
 				if(conta.getId() <= 0) {
@@ -1551,6 +1553,43 @@ public class CcbMB {
 				//		+ objetoCcb.getNumeroOperacao() + " / " + objetoCcb.getNomeEmitente());
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "CCB: Erro ao salvar contrato no sistema", ""));
 			}		
+		}
+	}
+
+	private void salvarProcessos() {
+		ContasPagarDao cpDao = new ContasPagarDao();
+		CcbProcessosJudiciaisDao pjDao = new CcbProcessosJudiciaisDao();
+		for (CcbProcessosJudiciais processo : this.objetoCcb.getObjetoContratoCobranca().getListProcessos()) {
+			if(!CommonsUtil.semValor(processo.getContaPagar())) {
+				ContasPagar conta = processo.getContaPagar();
+				conta.setContrato(null);
+				if(conta.getId() <= 0) {
+					cpDao.create(conta);
+				} else {
+					cpDao.merge(conta);
+				}
+			}
+			if(processo.getId() <= 0) {
+				pjDao.create(processo);
+			} else {
+				pjDao.merge(processo);
+			}
+		}
+		for (CcbProcessosJudiciais processo : this.objetoCcb.getProcessosJucidiais()) {
+			if(!CommonsUtil.semValor(processo.getContaPagar())) {
+				ContasPagar conta = processo.getContaPagar();
+				conta.setContrato(this.objetoCcb.getObjetoContratoCobranca());
+				if(conta.getId() <= 0) {
+					cpDao.create(conta);
+				} else {
+					cpDao.merge(conta);
+				}
+			}
+			if(processo.getId() <= 0) {
+				pjDao.create(processo);
+			} else {
+				pjDao.merge(processo);
+			}
 		}
 	}
 
@@ -1604,6 +1643,7 @@ public class CcbMB {
 				contrato.setPixCustoEmissao("51.604.356/0001-75");
 				
 				ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+				salvarProcessos();
 				try {
 					cDao.merge(contrato);
 				} catch (TransientObjectException e) {

@@ -1938,6 +1938,9 @@
 								value="#{contratoCobrancaMB.objetoContratoCobranca.dataPajuComentado}"
 								size="100" pattern="dd/MM/yyyy" styleClass="dateTimeField" />
 								
+							<p:outputLabel value="Contem Segredo de Justiça?" styleClass="labelBold" />
+							<p:selectBooleanCheckbox id="contemSegredoJustica" value="#{contratoCobrancaMB.objetoContratoCobranca.contemSegredoJustica}" />
+								
 							<p:commandButton value="Download Modelo PAJU" ajax="false"
 								icon="ui-icon-check"
 								action="#{contratoCobrancaMB.downloadModeloPaju}"
@@ -4983,7 +4986,7 @@
 							cancelLabel="Cancelar"
 							fileUploadListener="#{contratoCobrancaMB.handleFileJuridicoUpload}"
 							mode="advanced" dragDropSupport="true"
-							update="ArquivosJuridicoSalvos msgArquivo" />
+							update="ArquivosJuridicoSalvos msgArquivo form:contemSegredoJustica" />
 					</h:panelGrid>
 				</p:panel>
 
