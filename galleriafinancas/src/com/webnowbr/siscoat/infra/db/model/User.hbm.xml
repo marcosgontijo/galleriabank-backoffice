@@ -88,8 +88,8 @@
         <property name="userIuguPosto" type="boolean">
             <column name="userIuguPosto" />
         </property>    
-        <property name="userInterno" type="boolean" not-null="true" default="false" >
-            <column name="userInterno" />
+        <property name="userInterno" type="boolean">
+            <column name="userInterno" not-null="true" default="false"/>
         </property>        
         <property name="userInvestidor" type="boolean">
             <column name="userInvestidor" />

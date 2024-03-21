@@ -758,6 +758,8 @@ public class ContratoCobranca implements Serializable {
 
 	private BigDecimal somaValorPago;
 
+	private BigDecimal valorTotalDespesas;
+	
 	private BigDecimal contaPagarValorTotal;
 	private String nomeBancarioContaPagar;
 	private String cpfCnpjBancarioContaPagar;
@@ -929,6 +931,7 @@ public class ContratoCobranca implements Serializable {
 	// FUNÇÃO PARA CALCULAR O VALOR TOTAL PAGO NA ETAPA 13
 	public BigDecimal calcularValorTotalContasPagas() {
 		somaValorPago = BigDecimal.ZERO;
+		/*
 		for (ContasPagar conta : this.getListContasPagar()) {
 			if (conta.isEditada()) 
 				continue;
@@ -936,6 +939,20 @@ public class ContratoCobranca implements Serializable {
 				continue;
 			
 			somaValorPago = somaValorPago.add(conta.getValorPagamento());
+		}
+		*/
+		
+		for (ContasPagar conta : this.getListContasPagar()) {
+			if (conta.isEditada()) 
+				continue;
+			for (StarkBankBaixa baixas : conta.getListContasPagarBaixas()) {
+				if (CommonsUtil.semValor(baixas.getValor())) 
+					continue;
+				
+				if (baixas.getStatusPagamento().equals("Aprovado")){
+					somaValorPago = somaValorPago.add(baixas.getValor());
+				}
+			}
 		}
 		return somaValorPago;
 	}
@@ -7968,5 +7985,12 @@ public class ContratoCobranca implements Serializable {
 	public void setValorCertidao(BigDecimal valorCertidao) {
 		this.valorCertidao = valorCertidao;
 	}
-	
+
+	public BigDecimal getValorTotalDespesas() {
+		return valorTotalDespesas;
+	}
+
+	public void setValorTotalDespesas(BigDecimal valorTotalDespesas) {
+		this.valorTotalDespesas = valorTotalDespesas;
+	}
 }

@@ -10467,7 +10467,6 @@ public class ContratoCobrancaMB {
 		this.contasPagarSelecionada = new ContasPagar();
 		this.addContasPagar = false;
 		this.objetoContratoCobranca.calcularValorTotalContasPagas();
-
 	}
 	
 	public void calcularValorRegistro() {
@@ -20636,7 +20635,6 @@ public class ContratoCobrancaMB {
 		this.contasPagarSelecionada = new ContasPagar();
 		this.addContasPagar = false;
 		this.objetoContratoCobranca.calcularValorTotalContasPagas();
-
 	}
 	
 	public void clearFieldsOrdemPagamentoStarkBank() {
@@ -21234,7 +21232,7 @@ public class ContratoCobrancaMB {
 					// this.contasPagarSelecionada.setComprovantePagamentoStarkBank(starkBankBoleto);
 					StarkBankBaixa baixa = updateBaixaStarkBank(this.objetoBaixaPagamentoStarkBank,							
 							String.valueOf(starkBankBoleto.getId()),
-							starkBankBoleto.getCreated(),
+							DateUtil.getDataHoje(),
 							this.objetoBaixaPagamentoStarkBank.getValor(),
 							"Aprovado",
 							starkBankBoleto.getLine());
@@ -21262,7 +21260,7 @@ public class ContratoCobrancaMB {
 					// this.contasPagarSelecionada.setComprovantePagamentoStarkBank(starkBankBoleto);
 					StarkBankBaixa baixa = updateBaixaStarkBank(this.objetoBaixaPagamentoStarkBank,							
 							String.valueOf(starkBankTax.getId()),
-							starkBankTax.getCreated(),
+							DateUtil.getDataHoje(),
 							this.objetoBaixaPagamentoStarkBank.getValor(),
 							"Aprovado",
 							starkBankTax.getLine());
@@ -21397,7 +21395,7 @@ public class ContratoCobrancaMB {
 					System.out.println("processaPagamentoStarkBank - Update Baixa");
 					StarkBankBaixa baixa = updateBaixaStarkBank(this.objetoBaixaPagamentoStarkBank,							
 							String.valueOf(starkBankPix.getId()),
-							starkBankPix.getCreated(),
+							DateUtil.getDataHoje(),
 							starkBankPix.getAmount(),
 							"Aprovado",
 							null);
@@ -21462,7 +21460,7 @@ public class ContratoCobrancaMB {
 				if (starkBankPix != null) {
 					StarkBankBaixa baixa = updateBaixaStarkBank(this.objetoBaixaPagamentoStarkBank,							
 							String.valueOf(starkBankPix.getId()),
-							starkBankPix.getCreated(),
+							DateUtil.getDataHoje(),
 							starkBankPix.getAmount(),
 							"Aprovado",
 							null);
@@ -21544,47 +21542,73 @@ public class ContratoCobrancaMB {
 	public BigDecimal calculaSobraDespesas(ContratoCobranca contrato) { 
 		BigDecimal saldo = BigDecimal.ZERO;
 		FacesContext context = FacesContext.getCurrentInstance(); 
-		
-		if (!gerouSobraDespesa(contrato.getListContasPagar())) {
-			for (ContasPagar despesa : contrato.getListContasPagar()) {
-				if (!despesa.getDescricao().contains("Pagamento Carta Split") && !despesa.getDescricao().contains("Sobra Despesas")) {
-					if (despesa.getValorPagamento() != null) {
-						saldo = saldo.add(despesa.getValorPagamento());	
-					}
-				}
+
+		//Gastamos menos do que cobramos, devolvemos
+		if (contrato.getContaPagarValorTotal().compareTo(BigDecimal.ZERO) == 1) {
+			
+			BigDecimal saldoAPagar = contrato.getValorCartaSplit().subtract(saldo);
+			
+			ContasPagarDao cDao = new ContasPagarDao();
+			ContasPagar contaPagar = new ContasPagar();
+			contaPagar.setTipoDespesa("C");
+			contaPagar.setResponsavel(contrato.getResponsavel());
+			contaPagar.setDataVencimento(getDataComMais15Dias(DateUtil.gerarDataHoje()));
+			contaPagar.setNumeroDocumento(contrato.getNumeroContrato());
+			contaPagar.setDescricao("Sobra Despesas");
+			contaPagar.setValor(contrato.getContaPagarValorTotal());
+			contaPagar.setContrato(contrato);
+			contaPagar.setBancoTed(contrato.getBancoBancarioCartaSplit());
+			contaPagar.setAgenciaTed(contrato.getAgenciaBancarioCartaSplit());				
+			contaPagar.setContaTed(contrato.getContaBancarioCartaSplit());
+			contaPagar.setCpfTed(contrato.getCpfCnpjBancarioCartaSplit());
+			contaPagar.setNomeTed(contrato.getNomeBancarioCartaSplit());
+			contaPagar.setPix(contrato.getPixCartaSplit());
+			contaPagar.setIspb(contrato.getIspbCartaSplit());
+			contaPagar.setFormaTransferencia("Pix");
+					
+			cDao.create(contaPagar);
+			
+			StarkBankBaixaDAO sbDAO = new StarkBankBaixaDAO();
+			
+			StarkBankBaixa starkBankBaixa = new StarkBankBaixa();
+			starkBankBaixa.setDataPagamento(DateUtil.gerarDataHoje());
+			starkBankBaixa.setValor(contrato.getContaPagarValorTotal());
+			starkBankBaixa.setContasPagar(contaPagar);
+			starkBankBaixa.setStatusPagamento("Aguardando Aprovação");
+			starkBankBaixa.setDocumento(contrato.getNumeroContrato());		
+			starkBankBaixa.setNomePagador(contrato.getNomeBancarioCartaSplit());	
+			starkBankBaixa.setFormaPagamento("Pix");
+			starkBankBaixa.setTipoContaBancaria(this.tipoContaBancariaOrdemPagamentoStark);
+			starkBankBaixa.setBanco(contrato.getBancoBancarioCartaSplit());
+			starkBankBaixa.setConta(contrato.getContaBancarioCartaSplit());
+			starkBankBaixa.setAgencia(contrato.getAgenciaBancarioCartaSplit());			
+			starkBankBaixa.setNomeRecebedor(contrato.getNomeBancarioCartaSplit());
+			starkBankBaixa.setDescricaoStarkBank("Sobra Despesas");
+			
+			starkBankBaixa.setIspb(contrato.getIspbCartaSplit());
+			starkBankBaixa.setPix(contrato.getPixCartaSplit());
+			
+			if (contrato.getPixCartaSplit() != null || contrato.getPixCartaSplit().equals("")) {
+				starkBankBaixa.setMetodoPix("Chave Pix");
 			}
 			
-			//Gastamos menos do que cobramos, devolvemos
-			if (saldo.compareTo(contrato.getValorCartaSplit()) < 1) {
-				
-				BigDecimal saldoAPagar = contrato.getValorCartaSplit().subtract(saldo);
-				
-				ContasPagarDao cDao = new ContasPagarDao();
-				ContasPagar contaPagar = new ContasPagar();
-				contaPagar.setTipoDespesa("C");
-				contaPagar.setResponsavel(contrato.getResponsavel());
-				contaPagar.setDataVencimento(getDataComMais15Dias(DateUtil.gerarDataHoje()));
-				contaPagar.setNumeroDocumento(contrato.getNumeroContrato());
-				contaPagar.setDescricao("Sobra Despesas");
-				contaPagar.setValor(saldoAPagar);
-				contaPagar.setContrato(contrato);
-				contaPagar.setBancoTed(contrato.getBancoBancarioCartaSplit());
-				contaPagar.setAgenciaTed(contrato.getAgenciaBancarioCartaSplit());				
-				contaPagar.setContaTed(contrato.getContaBancarioCartaSplit());
-				contaPagar.setCpfTed(contrato.getCpfCnpjBancarioCartaSplit());
-				contaPagar.setNomeTed(contrato.getNomeBancarioCartaSplit());
-				contaPagar.setPix(contrato.getPixCartaSplit());
-				contaPagar.setFormaTransferencia("TED");	
-				
-				cDao.create(contaPagar);
-				
-				contrato.getListContasPagar().add(contaPagar);
-				ContratoCobrancaDao contratoDao = new ContratoCobrancaDao();
-				contratoDao.merge(contrato);
-				
-				context.addMessage(null,
-						new FacesMessage(FacesMessage.SEVERITY_INFO, "Despesas: Despesa referente ao saldo criado com sucesso!", ""));
+			if (contrato.getIspbCartaSplit() != null || contrato.getIspbCartaSplit().equals("")) {
+				starkBankBaixa.setMetodoPix("Dados Bancários");
 			}
+			
+			sbDAO.create(starkBankBaixa);
+			
+			List<StarkBankBaixa> listBaixas = new ArrayList<StarkBankBaixa>();
+			listBaixas.add(starkBankBaixa);
+
+			contaPagar.setListContasPagarBaixas(listBaixas);
+			
+			contrato.getListContasPagar().add(contaPagar);
+			ContratoCobrancaDao contratoDao = new ContratoCobrancaDao();
+			contratoDao.merge(contrato);
+			
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO, "Despesas: Despesa referente ao saldo criado com sucesso!", ""));
 		}
 		
 		return saldo;
@@ -22018,7 +22042,9 @@ public class ContratoCobrancaMB {
 
 		if (contaPagar.getListContasPagarBaixas().size() > 0) {
 			for (StarkBankBaixa baixas : contaPagar.getListContasPagarBaixas()) {
-				saldo = saldo.add(baixas.getValor());
+				if (baixas.getStatusPagamento().equals("Aprovado")) {
+					saldo = saldo.add(baixas.getValor());
+				}
 			}
 		} else {
 			saldo = contaPagar.getValorPagamento();

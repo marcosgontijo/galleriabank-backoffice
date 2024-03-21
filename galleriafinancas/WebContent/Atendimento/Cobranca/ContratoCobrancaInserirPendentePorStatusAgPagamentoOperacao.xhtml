@@ -498,17 +498,35 @@
 						</f:facet>
 						
 						<h:panelGrid columns="2">
+							<p:outputLabel for="ContaPagarValorTotalDespesa"
+								style="width:250px;font-weight: bold; font-size: 18px !important;"
+								value="Total Despesas (R$): " styleClass="labelBold" />
+							<p:inputText id="ContaPagarValorTotalDespesa" styleClass="labelBold"
+								style="width:250px;font-weight: bold; font-size: 18px !important;"
+								onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 13, event, 2);" 
+								value="#{contratoCobrancaMB.objetoContratoCobranca.valorCartaSplitGalleria}"
+								converter="bigDecimalConverter" />
+							<p:outputLabel for="ContaPagarValorTotalPago"
+								style="width:250px;font-weight: bold; font-size: 18px !important;"
+								value="Total Pago (R$): " styleClass="labelBold" />
+							<p:inputText id="ContaPagarValorTotalPago" styleClass="labelBold"
+								style="width:250px;font-weight: bold; font-size: 18px !important;"
+								onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 13, event, 2);" 
+								value="#{contratoCobrancaMB.objetoContratoCobranca.somaValorPago}"
+								converter="bigDecimalConverter" />
 							<p:outputLabel for="ContaPagarValorTotal"
 								style="width:250px;font-weight: bold; font-size: 18px !important;"
-								value="Valor Total (R$): " styleClass="labelBold" />
+								value="Sobra (R$): " styleClass="labelBold" />
 							<p:inputText id="ContaPagarValorTotal" styleClass="labelBold"
 								style="width:250px;font-weight: bold; font-size: 18px !important;"
 								onkeypress="return isNumberKey(event);"
 								onkeydown="FormataValor(this, 13, event, 2);" 
 								value="#{contratoCobrancaMB.objetoContratoCobranca.contaPagarValorTotal}"
-								converter="bigDecimalConverter" />
+								converter="bigDecimalConverter" />	
 						</h:panelGrid>	
-						<h:panelGrid columns="2" >
+						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Registro'}">
 							<p:outputLabel for="nomeBancarioContaPagar" value="Nome:" 
 								style="width:250px;font-weight: bold; font-size: 18px !important;"/>
 							<p:inputText id="nomeBancarioContaPagar"
