@@ -950,7 +950,7 @@ public class ContratoCobranca implements Serializable {
 				if (CommonsUtil.semValor(baixas.getValor())) 
 					continue;
 				
-				if (baixas.getStatusPagamento().equals("Aprovado")){
+				if (!conta.getDescricao().contains("Pagamento Carta Split") && baixas.getStatusPagamento().equals("Aprovado")){
 					somaValorPago = somaValorPago.add(baixas.getValor());
 				}
 			}
