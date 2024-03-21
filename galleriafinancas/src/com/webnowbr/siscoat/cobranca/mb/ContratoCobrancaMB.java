@@ -20659,6 +20659,11 @@ public class ContratoCobrancaMB {
 		this.dataPagamentoOrdemPagamentoStark = DateUtil.gerarDataHoje();
 	}
 
+	public void updateFieldsOrdemPagamentoForaSistema() {
+		this.formaTransferenciaDespesaBaixa = "Pagamento fora do Sistema";
+		this.valorOrdemPagamentoStark = this.contasPagarSelecionada.getValor();
+	}
+
 	public void updateFieldsOrdemPagamentoStarkBank() {
 		clearFieldsOrdemPagamentoStarkBank();
 		
@@ -20753,6 +20758,41 @@ public class ContratoCobrancaMB {
 		
 		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
 				"Ordem de Pagamento StarkBank: Ordem de Pagamento excluída com sucesso!", ""));
+	}
+
+	public void registrarPagamentoForaSistema() {
+		FacesContext context = FacesContext.getCurrentInstance();
+
+		this.contasPagarSelecionada.setContrato(this.objetoContratoCobranca);
+		this.contasPagarSelecionada.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
+		this.contasPagarSelecionada.setPagadorRecebedor(this.objetoPagadorRecebedor);
+		this.contasPagarSelecionada.setTipoDespesa("C");
+		this.contasPagarSelecionada.setResponsavel(this.objetoContratoCobranca.getResponsavel());
+		
+		StarkBankBaixa baixa = registraBaixaStarkBank(DateUtil.getDataHoje(),
+				this.contasPagarSelecionada.getNumeroDocumentoPagadorStarkBank(), this.valorOrdemPagamentoStark,
+				this.contasPagarSelecionada, "Aprovado");
+		
+		this.contasPagarSelecionada.getListContasPagarBaixas().add(baixa);
+
+		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+				"Pagamento StarkBank: Registro de pagamento inserido com sucesso!", ""));
+		
+		this.contasPagarSelecionada.setValorPagamento(this.valorOrdemPagamentoStark);
+		
+		ContasPagarDao contasPagarDao = new ContasPagarDao();
+		if (this.contasPagarSelecionada.getId() <= 0) {
+			contasPagarDao.create(this.contasPagarSelecionada);
+		} else {
+			contasPagarDao.merge(this.contasPagarSelecionada);
+		}
+		
+		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+		if (this.objetoContratoCobranca.getId() <= 0) {
+			cDao.create(this.objetoContratoCobranca);
+		} else {
+			cDao.merge(this.objetoContratoCobranca);
+		}
 	}
 
 	public void pagamentoStarkBank() {
@@ -22071,7 +22111,7 @@ public class ContratoCobrancaMB {
 
 		StarkBankBaixa starkBankBaixa = new StarkBankBaixa();
 		starkBankBaixa.setDataPagamento(dataPagamento);
-		starkBankBaixa.setValor(this.valorOrdemPagamentoStark);
+		starkBankBaixa.setValor(valorPago);
 		starkBankBaixa.setContasPagar(contaPagar);
 		starkBankBaixa.setIdTransacao(idTransacao);
 		starkBankBaixa.setStatusPagamento(statusPagamento);
