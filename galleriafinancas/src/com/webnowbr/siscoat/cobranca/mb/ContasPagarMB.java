@@ -32,6 +32,7 @@ import org.primefaces.model.StreamedContent;
 import com.webnowbr.siscoat.auxiliar.CompactadorUtil;
 import com.webnowbr.siscoat.cobranca.db.model.ContaContabil;
 import com.webnowbr.siscoat.cobranca.db.model.ContasPagar;
+import com.webnowbr.siscoat.cobranca.db.model.ContasPagarOrigemEnum;
 import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
@@ -476,6 +477,7 @@ public class ContasPagarMB {
 		this.objetoContasPagar.setNumeroDocumento(this.selectedContratoLov.getNumeroContrato());
 		this.objetoContasPagar.setPagadorRecebedor(this.selectedContratoLov.getPagador());
 		this.objetoContasPagar.setTipoDespesa("C");
+		this.objetoContasPagar.setOrigem(ContasPagarOrigemEnum.POS);
 		this.objetoContasPagar.setResponsavel(this.selectedContratoLov.getResponsavel());
 		if(!CommonsUtil.semValor(this.objetoContasPagar.getValor())) {
 			if(!CommonsUtil.semValor(this.selectedContratoLov.getContaPagarValorTotal())) {
@@ -507,7 +509,6 @@ public class ContasPagarMB {
 		
 		this.objetoContasPagar = new ContasPagar();
 		this.addContasPagar = false;
-		
 	}
 	
 	public void editarContaPosOperacao(ContasPagar conta) {
@@ -630,7 +631,9 @@ public class ContasPagarMB {
 		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
 		this.setSelectedContratoLov(cDao.findById(this.getSelectedContratoLov().getId()));
 		Set<ContasPagar> setResult = this.getSelectedContratoLov().getListContasPagar();
-		this.contasPagarPosOperacao =  new ArrayList<>(setResult);
+		this.contasPagarPosOperacao =  new ArrayList<>(setResult.stream()
+																.filter(x -> x.getOrigem() == ContasPagarOrigemEnum.POS)
+																.collect(Collectors.toList()));
 		
 		filesPagar = listaArquivosPagar();
 	}
