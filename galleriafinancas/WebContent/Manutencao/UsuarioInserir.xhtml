@@ -45,6 +45,20 @@
 					</p:selectOneMenu>
 
 
+				   <h:outputLabel for="Interno" value="Usuario Interno"
+						class="labelBold" />
+					<h:panelGroup>
+						<p:selectBooleanButton id="Interno"
+							value="#{usuarioMB.objetoUsuario.userInterno}" onLabel="Sim"
+							offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"
+							style="width:60px">
+						</p:selectBooleanButton>
+						<shiro:hasAnyRoles name="ROOT">
+							<h:outputLabel value="INTERNO" />
+						</shiro:hasAnyRoles>
+					</h:panelGroup>
+					
+
 					<h:outputLabel for="Administrador" value="Administrador: "
 						class="labelBold" />
 					<h:panelGroup>

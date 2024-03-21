@@ -164,6 +164,16 @@ public class UsuarioMB {
 			GroupDao gDao = new GroupDao();
 			List<GroupAdm> gAdm = new ArrayList<GroupAdm>();
 			List<GroupAdm> gAdmAux = new ArrayList<GroupAdm>();
+			
+			gAdm = gDao.findByFilter("acronym", "INTERNO");
+			if (!CommonsUtil.semValor(gAdm) && objetoUsuario.isUserInterno()) {
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null && objetoUsuario.getGroupList().contains(gAdm)) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}
+			}
+			
 			gAdm = gDao.findByFilter("acronym", "ROOT");
 			if (objetoUsuario.isAdministrador()) {
 				gAdmAux.add(gAdm.get(0));
