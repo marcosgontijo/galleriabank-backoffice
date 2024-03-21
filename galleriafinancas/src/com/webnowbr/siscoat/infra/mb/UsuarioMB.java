@@ -1,5 +1,8 @@
 package com.webnowbr.siscoat.infra.mb;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -11,11 +14,21 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.primefaces.model.LazyDataModel;
 
+import com.webnowbr.siscoat.cobranca.db.model.ContratoCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
 import com.webnowbr.siscoat.cobranca.db.op.ResponsavelDao;
 import com.webnowbr.siscoat.common.CommonsUtil;
+import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
 import com.webnowbr.siscoat.db.dao.DAOException;
 import com.webnowbr.siscoat.db.dao.DBConnectionException;
 import com.webnowbr.siscoat.infra.db.dao.GroupDao;
@@ -45,6 +58,10 @@ public class UsuarioMB {
 	private String tituloPainel = null;
 
 	private List<String> listPostos;
+	private List<User> usuarioLista;
+	private long idParametro;
+	private String parametro;
+	
 
 	private List<String> diasSemana;
 	private String[] selectedDiasSemana;
@@ -79,7 +96,23 @@ public class UsuarioMB {
 				return postoDao.findByFilter(first, pageSize, sortField, sortOrder.toString(), filters);
 			}
 		};
+		
+		
 	}
+	public void consultaParametroPesquisa() {
+		UserDao userDao = new UserDao();
+		if( CommonsUtil.mesmoValor(parametro , "interno")) {
+			idParametro = 2000;
+		}
+		if(CommonsUtil.mesmoValor(parametro,"restrito")) {
+			idParametro = 3000;
+		}
+		if(CommonsUtil.mesmoValor(parametro , "confidencial")) {
+			idParametro = 4000;
+		}
+		usuarioLista = userDao.PesquisaUserPorPerfil(idParametro);
+	}
+	
 
 	public void loadResponsavel() {
 		this.responsaveis = new ArrayList<Responsavel>();
@@ -616,6 +649,57 @@ public class UsuarioMB {
 		return "UsuarioConsultar.xhtml";
 	}
 
+	public void carregaUserXLSX() throws IOException {
+		try (XSSFWorkbook wb = new XSSFWorkbook()) {
+			Sheet sheet = wb.createSheet("Contratos Cobrança");
+
+			int rowNum = 0;
+
+			Row headerRow = sheet.createRow(rowNum++);
+			String[] headers = { "Login", "Nome", "Código", "Último acesso" };
+			CellStyle headerStyle = wb.createCellStyle();
+			XSSFFont font = wb.createFont();
+			font.setBold(true);
+			font.setColor(IndexedColors.WHITE.getIndex());
+			headerStyle.setFont(font);
+			headerStyle.setFillForegroundColor(IndexedColors.DARK_GREEN.getIndex());
+			headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+			for (int i = 0; i < headers.length; i++) {
+				Cell cell = headerRow.createCell(i);
+				cell.setCellValue(headers[i]);
+				cell.setCellStyle(headerStyle);
+			}
+
+			for (User user : usuarioLista) {
+				Row dataRow = sheet.createRow(rowNum++);
+				dataRow.createCell(0).setCellValue(user.getLogin());
+				dataRow.createCell(1).setCellValue(user.getName());
+				dataRow.createCell(2).setCellValue(user.getCodigoResponsavel());
+				dataRow.createCell(3).setCellValue(CommonsUtil.formataData(user.getUltimoAcesso()));
+			}
+
+			for (int i = 0; i < headers.length; i++) {
+				sheet.autoSizeColumn(i);
+			}
+			ByteArrayOutputStream fileOut = new ByteArrayOutputStream();
+			// escrever tudo o que foi feito no arquivo
+			wb.write(fileOut);
+
+			// fecha a escrita de dados nessa planilha
+			wb.close();
+
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+
+			String nomeArquivoDownload = String.format("Galleria Bank - Users Internos %s.xlsx", "");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(fileOut.toByteArray()));
+			gerador.close();
+
+		}
+	}
+	
 	public String excluir() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		UserDao postoDao = new UserDao();
@@ -832,5 +916,26 @@ public class UsuarioMB {
 
 	public void setPerfil(List<UserPerfil> perfil) {
 		this.perfil = perfil;
+	}
+
+	public long getIdParametro() {
+		return idParametro;
+	}
+	public void setIdParametro(long idParametro) {
+		this.idParametro = idParametro;
+	}
+	public List<User> getUsuarioLista() {
+		return usuarioLista;
+	}
+	public void setUsuarioLista(List<User> usuarioLista) {
+		this.usuarioLista = usuarioLista;
+	}
+
+	public String getParametro() {
+		return parametro;
+	}
+
+	public void setParametro(String parametro) {
+		this.parametro = parametro;
 	}
 }
