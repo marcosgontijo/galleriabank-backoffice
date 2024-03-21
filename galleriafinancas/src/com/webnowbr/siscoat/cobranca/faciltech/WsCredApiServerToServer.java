@@ -16,6 +16,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.json.JSONObject;
 
+import com.webnowbr.siscoat.common.CommonsUtil;
+
 public class WsCredApiServerToServer {
 	private final String baseServiceUrl;
 	private final String loginOperadorDeComunicacaoServerToServer;
@@ -55,11 +57,11 @@ public class WsCredApiServerToServer {
 		request.addHeader("Authorization", authorizationHeader);
 		request.addHeader("Signature", signatureInBase64);
 
-		if ((null != loginoperadorUser) && (!loginoperadorUser.isBlank()) && (!loginoperadorUser.isEmpty())) {
+		if (!CommonsUtil.semValor(loginoperadorUser)) {
 			request.addHeader("Impersonate-Operator", loginoperadorUser);
 		}
 		
-		if ((null != impersonationBy) && (!impersonationBy.isBlank()) && (!impersonationBy.isEmpty())) {
+		if (!CommonsUtil.semValor(impersonationBy)) {
 			request.addHeader("Impersonate-User", impersonationBy);
 		}
 
@@ -101,11 +103,10 @@ public class WsCredApiServerToServer {
 		request.addHeader("Authorization", authorizationHeader);
 		request.addHeader("Signature", signatureInBase64);
 
-		if ((null != loginoperadorUser) && (!loginoperadorUser.isBlank()) && (!loginoperadorUser.isEmpty())) {
+		if (!CommonsUtil.semValor(loginoperadorUser)){
 			request.addHeader("Impersonate-Operator", loginoperadorUser);
 		}
-		
-		if ((null != impersonationBy) && (!impersonationBy.isBlank()) && (!impersonationBy.isEmpty())) {
+		if (!CommonsUtil.semValor(impersonationBy)){
 			request.addHeader("Impersonate-User", impersonationBy);
 		}
 
