@@ -17,13 +17,20 @@ import com.webnowbr.siscoat.infra.db.model.User;
  */
 public class TermoDao extends HibernateDao<Termo, Long> {
 
-	private static final String QUERY_TERMOS_NAO_ASSINADOS_USUARIO = " select t.id from infra.termo t "
-			+ " left join infra.termoUsuario tu on t.id = tu.idtermo and tu.idusuario = ? "
-			+ " where t.iduserPerfil <= ? "  
-			+ " and ( tu.idtermo is null "
-			+ " or tu.dataAceite is null )"
-			+ " and( tu.dataAdiado is null or "
-			+ " cast(tu.dataAdiado as date) < cast( ?::timestamp as date)) ";
+	private static final String QUERY_TERMOS_NAO_ASSINADOS_USUARIO = " select t.id from infra.termo t "//
+			+ " left join infra.termoUsuario tu on t.id = tu.idtermo and tu.idusuario = ? "//
+			+ " where (t.iduserPerfil <= ? "//
+			+ " and ( tu.idtermo is null "//
+			+ " or tu.dataAceite is null )"//
+			+ " and( tu.dataAdiado is null or "//
+			+ " cast(tu.dataAdiado as date) < cast( ?::timestamp as date)) "//
+			+ "and cast(t.inicioValidade as date) <= cast(?::timestamp as date) " //
+			+ "and cast(t.fimValidade as date) >= cast(?::timestamp as date)) "//
+			+ "or (t.iduserPerfil = 5000 and tu.idTermo is not null and tu.dataAceite is null "//
+			+ "and( tu.dataAdiado is null or "//
+			+ " cast(tu.dataAdiado as date) < cast( ?::timestamp as date)) "//
+			+ "and cast(t.inicioValidade as date) <= cast(?::timestamp as date) " //
+			+ "and cast(t.fimValidade as date) >= cast(?::timestamp as date))";//
 
 	@SuppressWarnings("unchecked")
 	public List<Termo> termosNaoAssinadosUsuario(User usuario) {
@@ -47,10 +54,18 @@ public class TermoDao extends HibernateDao<Termo, Long> {
 					// se nao tiver perfil no usuario usa o publico
 					if (!CommonsUtil.semValor(usuario.getUserPerfil()))
 						ps.setLong(2, usuario.getUserPerfil().getId());
+//					else if(usuario.getUserPerfil().getId() ==  5000){
+//						ps.setLong(2, usuario.getId());
+//					}
 					else
 						ps.setLong(2, 1000);
 					java.sql.Date dtRelInicioSQL = new java.sql.Date(DateUtil.getDataHoje().getTime());
 					ps.setDate(3, dtRelInicioSQL);
+					ps.setDate(4, dtRelInicioSQL);
+					ps.setDate(5, dtRelInicioSQL);
+					ps.setDate(6, dtRelInicioSQL);
+					ps.setDate(7, dtRelInicioSQL);
+					ps.setDate(8, dtRelInicioSQL);
 
 					rs = ps.executeQuery();
 
