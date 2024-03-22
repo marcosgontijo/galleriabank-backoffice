@@ -11,7 +11,7 @@
 				header="Termo - #{termoMB.tituloPainel}" style="margin-bottom:10px;">
 				<p:focus />
 				<p:messages />
-				<h:panelGrid columns="2">
+				<h:panelGrid columns="2" id = "main">
 
 
 					<p:outputLabel for="Identificacao" value="Identificação"
@@ -58,10 +58,33 @@
 						value="#{termoMB.idPerfilSelecionado}">
 						<f:selectItems value="#{termoMB.perfil}" var="perfil"
 							itemLabel="#{perfil.perfil}" itemValue="#{perfil.id}" />
-						<p:ajax update="userPerfil" />
+						<p:ajax update="picklist" />
 					</p:selectOneMenu>
 
-					<h:outputLabel value="Incluir Usuario " rendered="#{termoMB.idPerfilSelecionado eq '5000'}"/>
+
+					<h:outputLabel value="Arquivo: " />
+					<h:panelGrid columns="1" id="dtFileTermo">
+
+						<p:fileUpload label="Selecionar Arquivo" multiple="false"
+							skinSimple="true"
+							rendered="#{termoMB.objetoTermo.arquivo == null}"
+							value="#{termoMB.file}" mode="simple" dragDropSupport="true"
+							update="dtFileTermo">
+						</p:fileUpload>
+						<h:outputLabel value="#{termoMB.objetoTermo.arquivo}"
+							rendered="#{termoMB.objetoTermo.arquivo != null}" />
+						<p:commandButton value="Trocar arquivo" ajax="true"
+							icon="ui-icon-check"
+							rendered="#{termoMB.objetoTermo.arquivo != null}"
+							action="#{termoMB.trocarArquivo()}" update="dtFileTermo"
+							style="TEXT-DECORATION: bold;" />
+
+					</h:panelGrid>
+
+
+				</h:panelGrid>
+				<h:panelGrid id ="picklist"> 
+					<h:outputLabel id = "incluir" value="Incluir Usuario " rendered="#{termoMB.idPerfilSelecionado eq '5000'}"/>
 					<h:panelGrid columns="1" id="termosusuario" rendered="#{termoMB.idPerfilSelecionado eq '5000'}" >
 
 						<p:pickList id="usersPickList"
@@ -89,29 +112,7 @@
 								</div>
 							</p:column>
 						</p:pickList>
-					</h:panelGrid>
-
-					<h:outputLabel value="Arquivo: " />
-					<h:panelGrid columns="1" id="dtFileTermo">
-
-						<p:fileUpload label="Selecionar Arquivo" multiple="false"
-							skinSimple="true"
-							rendered="#{termoMB.objetoTermo.arquivo == null}"
-							value="#{termoMB.file}" mode="simple" dragDropSupport="true"
-							update="dtFileTermo">
-						</p:fileUpload>
-						<h:outputLabel value="#{termoMB.objetoTermo.arquivo}"
-							rendered="#{termoMB.objetoTermo.arquivo != null}" />
-						<p:commandButton value="Trocar arquivo" ajax="true"
-							icon="ui-icon-check"
-							rendered="#{termoMB.objetoTermo.arquivo != null}"
-							action="#{termoMB.trocarArquivo()}" update="dtFileTermo"
-							style="TEXT-DECORATION: bold;" />
-
-					</h:panelGrid>
-
-
-				</h:panelGrid>
+					</h:panelGrid></h:panelGrid>
 			</p:panel>
 
 
