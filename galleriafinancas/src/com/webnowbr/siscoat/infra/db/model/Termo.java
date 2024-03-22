@@ -34,7 +34,7 @@ public class Termo {
 			return false;
 		else if (!CommonsUtil.semValor(termoUsuario.getDataAceite()))
 			return false;
-		else if (com.webnowbr.siscoat.common.DateUtil.getDifferenceDays(termoUsuario.getDataCienca(), DateUtil.getDataHoje() ) < CommonsUtil.intValue( this.diasAceite))
+		else if (com.webnowbr.siscoat.common.DateUtil.getDifferenceDays(termoUsuario.getDataCiencia(), DateUtil.getDataHoje() ) < CommonsUtil.intValue( this.diasAceite))
 			return false;
 		else
 			return true;
