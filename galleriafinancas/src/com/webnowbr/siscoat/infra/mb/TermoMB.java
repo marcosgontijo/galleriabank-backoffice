@@ -204,7 +204,8 @@ public class TermoMB {
 			User userPesquisa = usuario.findById(user.getIdUsuario());
 			TermoUsuariovo.setDataAceite(user.getDataAceite());
 			TermoUsuariovo.setUsuario(userPesquisa);
-			usuarios.add(new TermoPopup(TermoUsuariovo.getUsuario().getName(), CommonsUtil.formataData(TermoUsuariovo.getDataAceite())));
+			usuarios.add(new TermoPopup(TermoUsuariovo.getUsuario().getName(),
+					CommonsUtil.formataData(TermoUsuariovo.getDataAceite())));
 
 		}
 
@@ -221,39 +222,38 @@ public class TermoMB {
 		UserDao userDao = new UserDao();
 		Document document = null;
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		termosUsuario = termoUsuarioDao.findByFilter("idTermo", id );
-		
+		termosUsuario = termoUsuarioDao.findByFilter("idTermo", id);
+
 		try {
-            // Criar um novo documento PDF
-			 document = new Document();
-            PdfWriter.getInstance(document, baos);
-            document.open();
-            Paragraph paragrafo = new Paragraph();
-            Font fonteNegrito = FontFactory.getFont(FontFactory.TIMES_ROMAN, 16, Font.BOLD);
-            paragrafo.setAlignment(Element.ALIGN_CENTER);
-            paragrafo.add(new Paragraph(objetoTermo.getIdentificacao() + " - Assinantes", fonteNegrito));
-            document.add(paragrafo);
-            Paragraph spacer = new Paragraph("");
-            spacer.setSpacingAfter(20f);
-            document.add(spacer);
-            PdfPTable table = new PdfPTable(2);
-            table.setWidthPercentage(100);
-            for(TermoUsuario user : termosUsuario) {
-            	User usuario = userDao.findById(user.getIdUsuario());
-            Paragraph	paragrafoUsuario = new Paragraph( usuario.getName());
-            paragrafoUsuario.setAlignment(Element.ALIGN_RIGHT);
-            table.addCell(paragrafoUsuario);
-            Paragraph paragrafoData = new Paragraph( CommonsUtil.formataData(user.getDataAceite()));
-            paragrafoData.setAlignment(Element.ALIGN_LEFT);
-            table.addCell(paragrafoData);
-           
-            }
-            document.add(table);
-            // Fechar o documento
-            document.close();
+			// Criar um novo documento PDF
+			document = new Document();
+			PdfWriter.getInstance(document, baos);
+			document.open();
+			Paragraph paragrafo = new Paragraph();
+			Font fonteNegrito = FontFactory.getFont(FontFactory.TIMES_ROMAN, 16, Font.BOLD);
+			paragrafo.setAlignment(Element.ALIGN_CENTER);
+			paragrafo.add(new Paragraph(objetoTermo.getIdentificacao() + " - Assinantes", fonteNegrito));
+			document.add(paragrafo);
+			Paragraph spacer = new Paragraph("");
+			spacer.setSpacingAfter(20f);
+			document.add(spacer);
+			PdfPTable table = new PdfPTable(2);
+			table.setWidthPercentage(100);
+			for (TermoUsuario user : termosUsuario) {
+				User usuario = userDao.findById(user.getIdUsuario());
+				Paragraph paragrafoUsuario = new Paragraph(usuario.getName());
+				paragrafoUsuario.setAlignment(Element.ALIGN_RIGHT);
+				table.addCell(paragrafoUsuario);
+				Paragraph paragrafoData = new Paragraph(CommonsUtil.formataData(user.getDataAceite()));
+				paragrafoData.setAlignment(Element.ALIGN_LEFT);
+				table.addCell(paragrafoData);
 
-            System.out.println("PDF gerado com sucesso!");
+			}
+			document.add(table);
+			// Fechar o documento
+			document.close();
 
+			System.out.println("PDF gerado com sucesso!");
 
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 					FacesContext.getCurrentInstance());
@@ -305,7 +305,7 @@ public class TermoMB {
 		listaExcluir = new ArrayList<>();
 		listaOrigem.addAll(todosUsuario);
 		carregaListaPerfil();
-//		
+	
 
 		this.listaDeUsuariosPickList = new DualListModel<>(this.listaOrigem, this.listaDestino);
 
@@ -314,8 +314,8 @@ public class TermoMB {
 //			if (idPerfilSelecionado == "PUBLICO" && userPerfilPublico == null) {
 //				objetoTermo.setUserPerfil(userPerfilIndividual.get());
 //			}
-			objetoTermo.setUserPerfil(userPerfilPublico.get());
 			this.idPerfilSelecionado = CommonsUtil.stringValue(this.userPerfilPublico.get().getId());
+			objetoTermo.setUserPerfil(userPerfilPublico.get());
 			this.tituloPainel = "Inserir";
 
 		} else {
@@ -460,7 +460,6 @@ public class TermoMB {
 			PrimeFaces.current().executeScript("PF('dlgTermos').show();");
 		}
 
-
 		if (!CommonsUtil.semValor(termos)) {
 			PrimeFaces.current().executeScript("PF('dlgTermos').show();");
 		}
@@ -475,9 +474,9 @@ public class TermoMB {
 		TermoUsuarioDao termoUsuarioDao = new TermoUsuarioDao();
 
 		try {
-			if(CommonsUtil.semValor(objetoTermo.getArquivo())){
-			if (!validaFileUpload())
-				return "";
+			if (CommonsUtil.semValor(objetoTermo.getArquivo())) {
+				if (!validaFileUpload())
+					return "";
 			}
 			if (CommonsUtil.semValor(objetoTermo.getId())) {
 				termoDao.create(objetoTermo);
@@ -882,7 +881,10 @@ public class TermoMB {
 		return this.listaNomes;
 	}
 
+	@SuppressWarnings("unused")
 	public void onTransfer(TransferEvent event) {
+		List<User> itensTransferidos = (List<User>) event.getItems();
+		
 		if (!event.isAdd()) {
 			for (Object item : event.getItems()) {
 				if (item != null) {
@@ -902,7 +904,7 @@ public class TermoMB {
 					if (userR.isPresent())
 						this.listaExcluir.remove(userR.get());
 					this.listaDestino.add(usuario);
-					
+
 				}
 			}
 		}
