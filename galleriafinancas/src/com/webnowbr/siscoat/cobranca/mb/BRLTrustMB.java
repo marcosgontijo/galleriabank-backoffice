@@ -267,8 +267,13 @@ public class BRLTrustMB {
 		} 
 		
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
-		this.parcelasLiquidacao = contratoCobrancaDao.consultaContratosBRLLiquidacao(this.dataBaixaInicial, this.dataBaixaFinal, this.cedenteCessao, 
-				consultaNumContrato, numContrato, numParcela);
+		if(consultaNumContrato)
+			this.parcelasLiquidacao.addAll(contratoCobrancaDao.consultaContratosBRLLiquidacao(this.dataBaixaInicial, this.dataBaixaFinal, this.cedenteCessao, 
+					consultaNumContrato, numContrato, numParcela));
+		else
+			this.parcelasLiquidacao = contratoCobrancaDao.consultaContratosBRLLiquidacao(this.dataBaixaInicial, this.dataBaixaFinal, this.cedenteCessao, 
+					consultaNumContrato, numContrato, numParcela);
+			
 		
 		context.addMessage(null,
 				new FacesMessage(FacesMessage.SEVERITY_INFO,

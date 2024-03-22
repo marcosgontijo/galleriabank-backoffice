@@ -1023,6 +1023,9 @@ public class InvestidorMB {
 		for (ContratoCobrancaParcelasInvestidor parcela : parcelasInvestidorAnoAnterior) {
 			ContratoCobranca contrato = contratoCobrancaDao.findById( parcela.getIdContrato());
 			
+			if ( CommonsUtil.mesmoValor(parcela.getNumeroParcela(), "Antecipação"))
+				continue;
+			
 			if (verificarAnoBaseInvestidor(this.selectedPagador, contrato, dataInicioAnoAnterior,
 					dataFimAnoAnterior)) {
 				if (numeroContrato.equals(parcela.getNumeroContrato())) {

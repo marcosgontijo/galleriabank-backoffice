@@ -288,6 +288,7 @@ public class RelatorioSemestralMB {
 			double jurosDiario = Math.pow(CommonsUtil.doubleValue(juros), CommonsUtil.doubleValue(potencia));
 			debenturista.setTaxaDiaria(CommonsUtil.bigDecimalValue(jurosDiario).subtract(BigDecimal.ONE));
 			
+			
 			if(maiorQtdSaque < debenturista.getSaques().size()) {
 				maiorQtdSaque = debenturista.getSaques().size();
 			}

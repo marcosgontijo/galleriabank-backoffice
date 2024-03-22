@@ -1,5 +1,8 @@
 package com.webnowbr.siscoat.cobranca.db.model;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
@@ -21,8 +24,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import javax.faces.context.ExternalContext;
 import javax.faces.model.SelectItem;
+import javax.servlet.http.HttpServletResponse;
 
+import com.itextpdf.text.pdf.PdfReader;
 import com.webnowbr.siscoat.cobranca.db.op.DocumentoAnaliseDao;
 import com.webnowbr.siscoat.cobranca.db.op.GravamesReaDao;
 import com.webnowbr.siscoat.cobranca.db.op.RelacionamentoPagadorRecebedorDao;
@@ -655,6 +661,10 @@ public class DocumentoAnalise implements Serializable {
 	public List<DocumentoAnaliseResumo> getResumoFrotaVeiculo() {
 		List<DocumentoAnaliseResumo> veiculos = new ArrayList<>();
 		String retorno = getRetornoFrotaVeiculos();
+		if(retorno.contains("sistema indisponivel")) {
+			veiculos.add(new DocumentoAnaliseResumo("sistema indisponivel", "0"));
+			return veiculos;
+		}
 		CredlocalizaResponse dado = GsonUtil.fromJson(retorno, CredlocalizaResponse.class);
 		
 		if(CommonsUtil.semValor(dado))
@@ -1139,12 +1149,24 @@ public class DocumentoAnalise implements Serializable {
 			nomedoc = "CNDT TST";
 		}
 		String primeiroNome = getPagador().getNome().split(" ")[0];
-		String nomeArquivo = nomedoc + " " + primeiroNome.replace(",", "_") + 
-				"_" + CommonsUtil.somenteNumeros(getPagador().getCpfCnpj()) + ".pdf";
 		String documentoBase64 = netrin.getPdf();
 		if(!CommonsUtil.semValor(documentoBase64)) {
-			byte[] pdfBytes = java.util.Base64.getDecoder().decode(documentoBase64);
-			listaArquivos.put(nomeArquivo, pdfBytes);
+			byte[] pdfBytes = java.util.Base64.getDecoder().decode(netrin.getPdf());
+			BufferedInputStream input = null;
+			String fileExtension;
+			try {
+				PdfReader pdf = new PdfReader(pdfBytes);
+				fileExtension = "pdf"; 
+			} catch (Exception e) {
+				fileExtension = "html"; 
+			}		
+			input = new BufferedInputStream(new ByteArrayInputStream(pdfBytes));
+		
+			String nomeArquivo = nomedoc + " " + primeiroNome.replace(",", "_") + 
+				"_" + CommonsUtil.somenteNumeros(getPagador().getCpfCnpj()) + "." + fileExtension;
+		
+			byte[] pdfBytes2 = java.util.Base64.getDecoder().decode(documentoBase64);
+			listaArquivos.put(nomeArquivo, pdfBytes2);
 		}
 		return listaArquivos;
 	}

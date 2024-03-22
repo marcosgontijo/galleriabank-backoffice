@@ -260,7 +260,7 @@ public class PajuService {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
 			docTemplate.save(baos);
-			criarProcessoBancoDados();
+			//criarProcessoBancoDados();
 		} catch (Exception e) {
 			throw new SiscoatException("Erro ao gerar modelo Paju: ", e);
 		}
@@ -293,7 +293,7 @@ public class PajuService {
 							.findAny().isPresent()) {
 						PagadorRecebedorService pagagadorRecebedorService = new PagadorRecebedorService();
 
-						PagadorRecebedor pessoaConsultaDocket = new PagadorRecebedor();
+						PagadorRecebedor pessoaConsultaDocket = new PagadorRecebedor("processaCertidoesDocket");
 						pessoaConsultaDocket
 								.setCpf(CommonsUtil.formataCnpjCpf(docketDocumento.getCampos().getCpf(), false));
 						pessoaConsultaDocket.setNome(docketDocumento.getCampos().getNomeCompleto());
@@ -416,7 +416,8 @@ public class PajuService {
 								
 
 							} catch (Exception e) {
-								System.out.println(GsonUtil.toJson(docketDocumento));
+								System.out.println(docketDocumento);
+								System.out.println(docketDocumento.getRetorno());
 								e.printStackTrace();
 
 							}
@@ -2148,6 +2149,8 @@ public class PajuService {
 		CcbProcessosJudiciaisDao processosJudiciaisDao = new CcbProcessosJudiciaisDao();
 		ContasPagarDao cpDao = new ContasPagarDao();
 		for (CcbProcessosJudiciais processo : listProcessos) {
+			if(CommonsUtil.semValor(processo.getValor()))
+				continue;
 			if (processo.getContaPagar().getId() <= 0) {
 				cpDao.create(processo.getContaPagar());
 			} else {

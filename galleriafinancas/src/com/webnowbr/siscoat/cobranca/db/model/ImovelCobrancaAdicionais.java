@@ -3,6 +3,8 @@ package com.webnowbr.siscoat.cobranca.db.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import com.webnowbr.siscoat.common.CommonsUtil;
+
 
 public class ImovelCobrancaAdicionais implements Serializable {
 	/**
@@ -10,6 +12,8 @@ public class ImovelCobrancaAdicionais implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	private long id;
+	private String tipoAnalise;
+	
 	private ImovelCobranca imovel = new ImovelCobranca();
 	private ContratoCobranca contratoCobranca;
 	
@@ -43,12 +47,25 @@ public class ImovelCobrancaAdicionais implements Serializable {
 		this.imovel = imovel;
 	}
 	
+	public boolean getPossuiTipoAnalise() {
+		return !CommonsUtil.semValor(tipoAnalise);
+	}
+	
 	public long getId() {
 		return id;
 	}
 	public void setId(long id) {
 		this.id = id;
 	}
+
+	public String getTipoAnalise() {
+		return tipoAnalise;
+	}
+
+	public void setTipoAnalise(String tipoAnalise) {
+		this.tipoAnalise = tipoAnalise;
+	}	
+	
 	public ImovelCobranca getImovel() {
 		return imovel;
 	}

@@ -61,7 +61,7 @@ public class BigDataService {
 					documentoAnalise.adicionaEstados(CommonsUtil.stringToList(retornoProcessoB.getEstados()));
 					
 					if(!CommonsUtil.semValor(retornoProcessoB.getStatus()) &&
-							CommonsUtil.semValor(retornoProcessoB.getStatus().getDate_of_birth_validation()) &&
+							!CommonsUtil.semValor(retornoProcessoB.getStatus().getDate_of_birth_validation()) &&
 							retornoProcessoB.getStatus().getDate_of_birth_validation().size() > 0 ) {
 						String mesagem = retornoProcessoB.getStatus().getDate_of_birth_validation().get(0).getMessage();
 						if(mesagem.contains("MINOR")) {
@@ -462,7 +462,7 @@ public class BigDataService {
 					for (Relacionamento relacionamento : retornoProcessoB.getRelacionamento().getCurrentRelationships()
 							.stream().filter(r -> tipoPessoa.contains(r.getRelatedEntityTaxIdType()))
 							.collect(Collectors.toList())) {
-						PagadorRecebedor pagadorRecebedor = new PagadorRecebedor();
+						PagadorRecebedor pagadorRecebedor = new PagadorRecebedor("requestRelacionamentos");
 						pagadorRecebedor.setNome(relacionamento.getRelatedEntityName());
 						if (CommonsUtil.mesmoValor("CPF", relacionamento.getRelatedEntityTaxIdType()))
 							pagadorRecebedor.setCpf(relacionamento.getRelatedEntityTaxIdNumber());

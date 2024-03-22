@@ -608,7 +608,7 @@ public class BmpDigitalCCBMB {
 		 * 
 		 */
 		PagadorRecebedorDao pessoaDao = new PagadorRecebedorDao();
-		PagadorRecebedor pessoa = new PagadorRecebedor();
+		PagadorRecebedor pessoa = new PagadorRecebedor("integraCCBMoneyPlus");
 		
 		pessoa = pessoaDao.findById((long) 11184);
 		// Pessoa teste "a09b3f13-16c2-41a9-9cee-4cf60dfc19e7"

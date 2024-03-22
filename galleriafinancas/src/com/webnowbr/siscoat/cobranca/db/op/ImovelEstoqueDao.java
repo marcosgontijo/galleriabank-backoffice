@@ -58,9 +58,7 @@ public class ImovelEstoqueDao extends HibernateDao <ImovelEstoque,Long> {
   			public Object run() throws Exception {
   				
   				List<ContratoCobranca> objects = new ArrayList<ContratoCobranca>();
-  				String QUERY_ID_ESTOQUE = "select c.id from cobranca.contratocobranca c  \r\n"
-  						+ "inner join cobranca.imovelcobranca i on i.id  = c.imovel  \r\n"
-  						+ "inner join cobranca.imovelestoque i2 on i.imovelestoque  = i2.id \r\n "
+  				String QUERY_ID_ESTOQUE = "select  c.id from cobranca.contratocobranca c inner join cobranca.imovelestoque i on i.contratocobranca = c.id "
   						+ parametro;
   				Connection connection = null;
   				PreparedStatement ps = null;

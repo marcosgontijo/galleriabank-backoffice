@@ -2459,6 +2459,9 @@
 			<column name="notaFiscalAgendadaProblemaUsuario" />
 		</property>
 		
+		<property name="contemSegredoJustica" type="boolean">
+			<column name="contemSegredoJustica" not-null="true" default="false"/>
+		</property>	
 
 	</class>
 </hibernate-mapping>

@@ -78,6 +78,7 @@ public class ImovelCobranca implements Serializable {
 	private BigDecimal valorPreLaudo;
 
 	
+	
 	public ImovelCobranca(){
 		resetarBololean();
 	}
@@ -322,6 +323,8 @@ public class ImovelCobranca implements Serializable {
 									
 		return enderecoCompleto;
 	}
+	
+
 	
 	/**
 	 * @return the id
@@ -846,4 +849,6 @@ public class ImovelCobranca implements Serializable {
 	public void setSubCategoria(int subCategoria) {
 		this.subCategoria = subCategoria;
 	}
+
+	
 }

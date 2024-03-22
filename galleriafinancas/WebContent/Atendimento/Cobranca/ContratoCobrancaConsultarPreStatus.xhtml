@@ -79,7 +79,7 @@
 	   		         #{(contratos.cadastroAprovadoValor eq 'Pendente') ? 'linhaRoxa' : '' }
 	   		         #{(contratos.pendenciaLaudoPaju eq true) ? 'parcelaparcial' : '' } 
 	   		         #{(contratos.responsavel.superlogica) ? 'superlogica' : '' } 
-	   		         #{(contratos.imovel.objetoCidade.pintarLinha eq true) ? 'parcelaBoletoPago' : '' }
+	   		         #{(contratos.imovel.objetoCidade.pintarLinha eq true and (contratos.cadastroAprovadoValor eq '' or contratos.cadastroAprovadoValor eq null)) ? 'parcelaBoletoPago' : '' }
 	   		         #{(contratos.contratoPrioridadeAlta eq true) ? 'linhaRosa' : ''}"
    		         rows="50" paginator="true"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
@@ -166,8 +166,20 @@
 			            <h:outputText value="R$ " /><h:outputText value="#{contratos.valorCCB}"  rendered="#{!contratos.agRegistro}"  converter="bigDecimalConverter" />
 			        </p:column>	
 						
-			        <p:column style="text-align: center;width: 100px" headerText="Data Ultima Atualização" filterBy="#{contratos.dataUltimaAtualizacao}" filterMatchMode="contains" sortBy="#{contratos.dataUltimaAtualizacao}">
+			        <p:column style="text-align: center;width: 100px" headerText="Data Ultima Atualização" 
+				        filterBy="#{contratos.dataUltimaAtualizacao}" filterMatchMode="contains" sortBy="#{contratos.dataUltimaAtualizacao}"
+				        rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Comentario Jurídico'
+				        			and contratoCobrancaMB.tituloTelaConsultaPreStatus != 'Comentario Jurídico - Luvison'}">
 			           <p:outputLabel value="#{contratos.dataUltimaAtualizacao}" >			            	
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+						</p:outputLabel>
+			        </p:column>
+			        
+			         <p:column style="text-align: center;width: 100px" headerText="Data Entrada Esteira" 
+				         filterBy="#{contratos.analiseComercialData}" filterMatchMode="contains" sortBy="#{contratos.analiseComercialData}"
+				         rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico'
+				        			or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Comentario Jurídico - Luvison'}">
+			           <p:outputLabel value="#{contratos.analiseComercialData}" >			            	
 							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
 						</p:outputLabel>
 			        </p:column>

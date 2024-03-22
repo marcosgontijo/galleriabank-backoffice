@@ -461,9 +461,10 @@ public class TermoMB {
 		TermoUsuarioDao termoUsuarioDao = new TermoUsuarioDao();
 
 		try {
+			if(CommonsUtil.semValor(objetoTermo.getArquivo())){
 			if (!validaFileUpload())
 				return "";
-
+			}
 			if (CommonsUtil.semValor(objetoTermo.getId())) {
 				termoDao.create(objetoTermo);
 				msgRetorno = "inserido";

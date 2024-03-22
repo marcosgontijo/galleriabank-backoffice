@@ -50,6 +50,8 @@ public final class User implements Serializable {
     private boolean userCobranca;
     
     private boolean userIuguPosto;
+
+    private boolean userInterno;
     
     private boolean userCobrancaEdita;
     private boolean userCobrancaBaixa;
@@ -110,6 +112,7 @@ public final class User implements Serializable {
     private boolean profileController;
     private boolean profileConsultaKobana;
     private boolean profileCartorio;
+    private boolean profileJuridicoCobranca;
     
 	private boolean cadastraResponsavel;
     private boolean consultaIndividual;
@@ -408,6 +411,14 @@ public final class User implements Serializable {
 
 	public void setUserIuguPosto(boolean userIuguPosto) {
 		this.userIuguPosto = userIuguPosto;
+	}	
+
+	public boolean isUserInterno() {
+		return userInterno;
+	}
+
+	public void setUserInterno(boolean userInterno) {
+		this.userInterno = userInterno;
 	}
 
 	public List<String> getDiasSemana() {
@@ -776,4 +787,12 @@ public final class User implements Serializable {
 	public void setProfileCartorio(boolean profileCartorio) {
 		this.profileCartorio = profileCartorio;
 	}
+
+	public boolean isProfileJuridicoCobranca() {
+		return profileJuridicoCobranca;
+	}
+
+	public void setProfileJuridicoCobranca(boolean profileJuridicoCobranca) {
+		this.profileJuridicoCobranca = profileJuridicoCobranca;
+	}	
 }

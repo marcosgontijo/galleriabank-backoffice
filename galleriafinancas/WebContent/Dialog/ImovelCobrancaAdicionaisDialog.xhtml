@@ -6,13 +6,34 @@
 	xmlns:p="http://primefaces.org/ui">
 
 
+
+	<h:outputStylesheet>
+		.panelNoBorder, .panelNoBorder tr, .panelNoBorder td{
+			border: hidden;
+			border-color: white;
+		}	 
+   	</h:outputStylesheet>
+
+
 	<p:dialog header="Imovel Adicional" widgetVar="imovelAdiconalDialog"
 		height="420" >
 		<h:form id="imovelAdiconalForm">
-			<p:panel header="Dados da Ficha"
+			
+			<p:panel header="Dados da Ficha" id="imovelAdiconalbody" 
 				style="margin-bottom:10px;">
-				<p:messages id="msgImoveis"/>
-				<h:panelGrid columns="2">
+
+				<p:messages id="msgImoveis" />
+				<p:panel styleClass="panelNoBorder">
+					<p:selectOneRadio  value="#{mbean.imovelAdicional.tipoAnalise}"   >
+						<f:selectItem itemValue="contrato"
+							itemLabel="Imovel para contrato" />
+						<f:selectItem itemValue="pre-laudo"
+							itemLabel="Imovel para pré-laudo" />
+						<p:ajax event="change" update="imovelAdiconalForm" />
+					</p:selectOneRadio>
+				</p:panel>
+
+				<h:panelGrid columns="2" rendered="#{mbean.imovelAdicional.possuiTipoAnalise}">
 					<p:outputLabel for="NumeroMatricula" value="Numero Matrícula: " />
 					<p:inputText id="NumeroMatricula"
 						value="#{mbean.imovelAdicional.imovel.numeroMatricula}"
@@ -165,15 +186,15 @@
 					<p:inputText id="inscricaoMunicipal"
 						value="#{mbean.imovelAdicional.imovel.inscricaoMunicipal}" />
 				</h:panelGrid>
-	
+
 				<f:facet name="footer">
-					<p:commandButton value="Selecionar"
-						action="#{mbean.addImovel}"
-						icon="ui-icon ui-icon-check"
-						update=":form:ImovelAdicionarPanel"
-						oncomplete="PF('imovelAdiconalDialog').hide();" />
-					<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
-						oncomplete="PF('imovelAdiconalDialog').hide();" />
+					<p:panel rendered="#{mbean.imovelAdicional.possuiTipoAnalise}"  styleClass="panelNoBorder">
+						<p:commandButton value="Selecionar" action="#{mbean.addImovel}"
+							icon="ui-icon ui-icon-check" update=":form:ImovelAdicionarPanel :form:PanelLocador form:dtFilesPreLaudo"
+							oncomplete="PF('imovelAdiconalDialog').hide();" />
+						<p:commandButton value="Cancelar" icon="ui-icon ui-icon-cancel"
+							oncomplete="PF('imovelAdiconalDialog').hide();" />
+					</p:panel>
 				</f:facet>
 			</p:panel>
 		</h:form>

@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.webnowbr.siscoat.cobranca.db.model.ImovelCobranca;
 import com.webnowbr.siscoat.cobranca.db.model.PagadorRecebedor;
+import com.webnowbr.siscoat.cobranca.db.model.ImovelEstoque;
 import com.webnowbr.siscoat.db.dao.HibernateDao;
 import com.webnowbr.siscoat.db.dao.HibernateDao.DBRunnable;
 

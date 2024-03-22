@@ -24,7 +24,7 @@ public class StarkBankBaixa implements Serializable {
     public String metodoPix;
     
 	private String pix;
-	private String nomeRecebedor;
+	private String nomeRecebedor; 
 	private String banco;
 	private String conta;
 	private String agencia;
@@ -38,6 +38,8 @@ public class StarkBankBaixa implements Serializable {
 	
 	private StarkBankBoleto comprovantePagamentoStarkBank;
 	private StarkBankPix comprovantePagamentoPixStarkBank;
+	
+	private boolean contaIndividual;
 	
 	public StarkBankBaixa(){
 
@@ -238,4 +240,14 @@ public class StarkBankBaixa implements Serializable {
 	public void setMetodoPix(String metodoPix) {
 		this.metodoPix = metodoPix;
 	}
+
+	public boolean isContaIndividual() {
+		return contaIndividual;
+	}
+
+	public void setContaIndividual(boolean contaIndividual) {
+		this.contaIndividual = contaIndividual;
+	}
+	
+	
 }

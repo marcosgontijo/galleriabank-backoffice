@@ -322,7 +322,7 @@ public class PagadorRecebedorMB {
 							+ msgRetorno + " com sucesso! (PagadorRecebedor: "
 							+ objetoPagadorRecebedor.getNome() + ")", ""));
 			
-			objetoPagadorRecebedor = new PagadorRecebedor();
+			objetoPagadorRecebedor = new PagadorRecebedor("PagadorRecebedorMB");
 
 		} catch (DAOException e) {
 

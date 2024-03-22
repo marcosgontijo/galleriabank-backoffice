@@ -739,14 +739,14 @@
 											value="false" />
 									</p:commandButton>
 									
-									
 								</h:panelGrid>
 								
-								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_AVALIADOR_IMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_GERENTE_ANALISE">
+								<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_LAUDO, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_GERENTE_ANALISE">
 									<ui:fragment>
 										<p:selectBooleanButton value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}" rendered="#{contratoCobrancaMB.indexStepsStatusContrato ge 1 and contratoCobrancaMB.indexStepsStatusContrato le 5 }" 
-											onLabel="Pré-Laudo Compass Solicitado" offLabel="Pré-Laudo Compass Pendente" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px">
-											<p:ajax event="valueChange" update=":form:Status"></p:ajax>
+											onLabel="Pré-Laudo Compass Solicitado2" offLabel="Pré-Laudo Compass Pendente" 
+											onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px">
+											<p:ajax event="valueChange" update=":form:PanelLocador form:dtFilesPreLaudo"></p:ajax>
 										</p:selectBooleanButton>
 									
 										<p:selectManyMenu id="preLaudoImovel" showCheckbox="true"
@@ -868,10 +868,11 @@
 							</h:panelGrid>
 							
 
-							<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_AVALIADOR_IMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_GERENTE_ANALISE">
+							<shiro:hasAnyRoles name="ROOT, PRECOBRANCAANALISTA, PROFILE_LAUDO, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_GERENTE_ANALISE">
 								<ui:fragment>
 									<p:selectBooleanButton value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}" rendered="#{contratoCobrancaMB.indexStepsStatusContrato ge 1 and contratoCobrancaMB.indexStepsStatusContrato le 5 }" 
-										onLabel="Pré-Laudo Compass Solicitado" offLabel="Pré-Laudo Compass Pendente" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px">
+										onLabel="Pré-Laudo Compass Solicitado3" offLabel="Pré-Laudo Compass Pendente1"
+										 onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:=80px">
 										<p:ajax event="valueChange" update=":form:Status"></p:ajax>
 									</p:selectBooleanButton>
 									
@@ -885,11 +886,7 @@
 						</h:panelGrid>
 					</ui:fragment>
 				
-					<p:panel header="Envio de documento do pré-laudo" style="margin-bottom:10px" rendered="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}">
-						<p:fileUpload label="Selecionar Arquivo(s)" uploadLabel="Salvar Arquivo(s)" multiple="true" cancelLabel="Cancelar" 
-						fileUploadListener="#{contratoCobrancaMB.handleFilePreLaudoUpload}" mode="advanced" dragDropSupport="true"
-                          update="ArquivosJuridicoSalvos msgArquivo" />	
-					</p:panel>
+					
 
 					<p:tooltip id="toolTipContentagAnaliseStep" for="agAnaliseStep"
 						position="bottom">
@@ -1941,6 +1938,9 @@
 								value="#{contratoCobrancaMB.objetoContratoCobranca.dataPajuComentado}"
 								size="100" pattern="dd/MM/yyyy" styleClass="dateTimeField" />
 								
+							<p:outputLabel value="Contem Segredo de Justiça?" styleClass="labelBold" />
+							<p:selectBooleanCheckbox id="contemSegredoJustica" value="#{contratoCobrancaMB.objetoContratoCobranca.contemSegredoJustica}" />
+								
 							<p:commandButton value="Download Modelo PAJU" ajax="false"
 								icon="ui-icon-check"
 								action="#{contratoCobrancaMB.downloadModeloPaju}"
@@ -2082,7 +2082,7 @@
 							<h:panelGrid columns="2">
 
 								<shiro:lacksRole name="ROOT">
-									<shiro:lacksRole name="PROFILE_AVALIADOR_IMOVEL">
+									<shiro:lacksRole name="PROFILE_LAUDO">
 										<p:outputLabel value="Data Vistoria Imóvel: "
 											styleClass="labelBold" />
 										<p:outputLabel
@@ -2094,7 +2094,7 @@
 								</shiro:lacksRole>
 
 								<shiro:hasAnyRoles
-									name="ROOT, PRECOBRANCAANALISTA, PROFILE_AVALIADOR_IMOVEL, PROFILE_LAUDO, PROFILE_GERENTE_ANALISE">
+									name="ROOT, PRECOBRANCAANALISTA, PROFILE_LAUDO, PROFILE_GERENTE_ANALISE">
 									<p:outputLabel for="dataVistoria"
 										value="Data Vistoria Imóvel: " styleClass="labelBold" />
 									<p:calendar id="dataVistoria" showOn="button"
@@ -2110,7 +2110,7 @@
 									style="FONT-SIZE: 10pt;width:300px;" />
 
 								<shiro:hasAnyRoles
-									name="ROOT, USER_GALACHE, AVALIADORIMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_AVALIADOR_IMOVEL_GALACHE">
+									name="ROOT, USER_GALACHE, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_AVALIADOR_IMOVEL_GALACHE">
 									<p:outputLabel for="avaliacaoEngenharia"
 										value="Avaliação Engenharia: " styleClass="labelBold" />
 									<p:selectOneMenu id="avaliacaoEngenharia"
@@ -2133,15 +2133,15 @@
 										<p:spacer width="10px"></p:spacer>
 
 										<shiro:hasAnyRoles
-											name="ROOT,PRECOBRANCAANALISTA,PRECOBRANCA, PROFILE_AVALIADOR_IMOVEL, PROFILE_LAUDO, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">
+											name="ROOT,PRECOBRANCAANALISTA,PRECOBRANCA, PROFILE_LAUDO, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">
 											<p:commandButton icon="ui-icon-trash"
 												action="#{contratoCobrancaMB.removeDataVistoria(data)}"
 												update="form:CheckListInformacoesAdicionais" />
 										</shiro:hasAnyRoles>
 
 										<shiro:hasAnyRoles
-											name="ROOT, USER_GALACHE, AVALIADORIMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_AVALIADOR_IMOVEL_GALACHE, PROFILE_GERENTE_ANALISE
-										PRECOBRANCAANALISTA,PRECOBRANCA, PROFILE_AVALIADOR_IMOVEL, PROFILE_LAUDO, PROFILE_ANALISTA_COMITE">
+											name="ROOT, USER_GALACHE, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_AVALIADOR_IMOVEL_GALACHE, PROFILE_GERENTE_ANALISE
+										PRECOBRANCAANALISTA,PRECOBRANCA, PROFILE_LAUDO, PROFILE_ANALISTA_COMITE">
 											<p:commandButton icon="ui-icon-check"
 												rendered="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria == null 
 												|| contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria == ''}"
@@ -2542,7 +2542,7 @@
 								<div style="display: flex; flex-direction: column">
 									<h:panelGrid columns="2"
 										rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'
-					 or contratoCobrancaMB.objetoPagadorRecebedor.uniaoEstavel eq true}">
+					 								or contratoCobrancaMB.objetoPagadorRecebedor.uniaoEstavel eq true}">
 										<h:panelGrid columns="2">
 											<p:outputLabel for="dataCasamento"
 												value="Data de Casamento: "  rendered="#{contratoCobrancaMB.objetoPagadorRecebedor.estadocivil eq 'CASADO'}"/>
@@ -3794,7 +3794,7 @@
 										</p:selectOneMenu>
 									</h:panelGrid>
 								</h:panelGroup>
-								<h:panelGrid columns="2"
+								<h:panelGrid columns="2" id="gridCC"
 									rendered="#{contratoCobrancaMB.objetoContratoCobranca.cobrarComissaoCliente == 'Sim'}">
 									<p:outputLabel for="cpfCnpjCC" value="CPF / CNPJ: "
 										styleClass="labelBold" />
@@ -3844,7 +3844,7 @@
 											styleClass="labelBold" label="Conta"
 											onblur="" style="width:100px;" >
 											<p:ajax event="valueChange" update="contaRespValidacao"
-												listener="#{pagadorRecebedorMB.verificaAlteracaoContaCobranca}" />
+												listener="#{contratoCobrancaMB.objetoContratoCobranca.responsavel.verificaAlteracaoContaCobranca}" />
 										</p:inputText>
 										<p:commandButton value="Verificar" ajax="true"
 											icon="ui-icon-check"
@@ -4060,12 +4060,10 @@
 
 				<h:panelGroup id="ContasPagarPanel">
 					<p:messages id="mensagensStarkBank"/>
-					<p:panel header="Dispesas" style="margin-bottom:10px;"
-						rendered="#{contratoCobrancaMB.objetoContratoCobranca.okCliente or (contratoCobrancaMB.objetoContratoCobranca.aprovadoComite and( usuarioMB.objetoUsuario.administrador or ( contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Registro' or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Envio Cartório'
-							or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Resolução Pendência' or contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Resolução Exigencias/Pagamentos')))}">
+					<p:panel header="Dispesas" style="margin-bottom:10px;">
 						<f:facet name="header"> Despesas 
 							<p:outputLabel value="" />
-							<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR, COBRANCA_FINANCEIRO, PROFILE_CONTRATO, PROFILE_GERENTE_ANALISE">
+							<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR, COBRANCA_FINANCEIRO">
 								<p:commandButton icon="ui-icon-plus"
 									action="#{contratoCobrancaMB.clearConta()}"
 									oncomplete="PF('despesaDialog').show();"
@@ -4077,15 +4075,33 @@
 						</f:facet>
 						
 						<h:panelGrid columns="2">
+							<p:outputLabel for="ContaPagarValorTotalDespesa"
+								style="width:250px;font-weight: bold; font-size: 18px !important;"
+								value="Total Despesas (R$): " styleClass="labelBold" />
+							<p:inputText id="ContaPagarValorTotalDespesa" styleClass="labelBold"
+								style="width:250px;font-weight: bold; font-size: 18px !important;"
+								onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 13, event, 2);" 
+								value="#{contratoCobrancaMB.objetoContratoCobranca.valorCartaSplitGalleria}"
+								converter="bigDecimalConverter" />
+							<p:outputLabel for="ContaPagarValorTotalPago"
+								style="width:250px;font-weight: bold; font-size: 18px !important;"
+								value="Total Pago (R$): " styleClass="labelBold" />
+							<p:inputText id="ContaPagarValorTotalPago" styleClass="labelBold"
+								style="width:250px;font-weight: bold; font-size: 18px !important;"
+								onkeypress="return isNumberKey(event);"
+								onkeydown="FormataValor(this, 13, event, 2);" 
+								value="#{contratoCobrancaMB.objetoContratoCobranca.somaValorPago}"
+								converter="bigDecimalConverter" />
 							<p:outputLabel for="ContaPagarValorTotal"
 								style="width:250px;font-weight: bold; font-size: 18px !important;"
-								value="Valor Total (R$): " styleClass="labelBold" />
+								value="Sobra (R$): " styleClass="labelBold" />
 							<p:inputText id="ContaPagarValorTotal" styleClass="labelBold"
 								style="width:250px;font-weight: bold; font-size: 18px !important;"
 								onkeypress="return isNumberKey(event);"
 								onkeydown="FormataValor(this, 13, event, 2);" 
 								value="#{contratoCobrancaMB.objetoContratoCobranca.contaPagarValorTotal}"
-								converter="bigDecimalConverter" />
+								converter="bigDecimalConverter" />	
 						</h:panelGrid>	
 						<h:panelGrid columns="2" rendered="#{contratoCobrancaMB.tituloTelaConsultaPreStatus == 'Ag. Registro'}">
 							<p:outputLabel for="nomeBancarioContaPagar" value="Nome:" 
@@ -4220,11 +4236,6 @@
 										
 										<p:column style="text-align: center;width:260px;" headerText="" >
 											<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR, COBRANCA_FINANCEIRO">
-												<p:commandButton oncomplete="PF('baixasStarkBankdlg').show();"
-													icon="ui-icon-video" title="Baixas - StarkBank" value="Baixas - StarkBank"
-													update=":starkBankBaixasForm:baixasDT :form">
-													<f:setPropertyActionListener target="#{contratoCobrancaMB.contasPagarSelecionada}" value="#{contas}" />									
-												</p:commandButton>
 												<p:commandButton value="Excluir Ordem de Pagamento" ajax="false" icon="ui-icon-trash" 
 													action="#{contratoCobrancaMB.excluirOrdemPagamentoStarkBank(pagamento.contasPagar, pagamento)}" 
 													style="TEXT-DECORATION: bold; margin-right: 20px;" update=":form:messageContasPagar :form:ConsultaBaixasDespesas"/>
@@ -4256,27 +4267,25 @@
 													<f:setPropertyActionListener target="#{contratoCobrancaMB.contasPagarSelecionada}" value="#{contas}" />		
 													<f:setPropertyActionListener target="#{contratoCobrancaMB.contasPagarSelecionada.valorPagamento}" value="#{contas.valor}" />								
 												</p:commandButton>
+												<p:commandButton action="#{contratoCobrancaMB.updateFieldsOrdemPagamentoForaSistema()}" oncomplete="PF('registrarPagamentodlg').show();"
+													icon="ui-icon-video" title="Registrar Pagamento" value="Registrar Pagamento"
+													update=":registrarPagamentoForm :form">
+													<f:setPropertyActionListener target="#{contratoCobrancaMB.contasPagarSelecionada}" value="#{contas}" />		
+													<f:setPropertyActionListener target="#{contratoCobrancaMB.contasPagarSelecionada.valorPagamento}" value="#{contas.valor}" />								
+												</p:commandButton>
 									</shiro:hasAnyRoles>						
 								</p:column>
 							</shiro:hasAnyRoles>
 						</p:dataTable>			
 						
-						<h:panelGrid columns="1">
-							<h:panelGroup>
-								<p:outputLabel value="Valor total Pago: " styleClass="labelBold" />
-								<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.somaValorPago}"
-									converter="bigDecimalConverter" styleClass="labelBold"
-									style="FONT-SIZE: 10pt;width:100px;" />
-							</h:panelGroup>
-							<h:panelGrid columns="2">
-								<p:messages id="mensagemAditamento" />	
-								<p:commandButton value="Emitir Aditamento" ajax="false"
-									action="#{ccbMB.emitirAditamento(contratoCobrancaMB.objetoContratoCobranca.listContasPagar)}" 
-									rendered="#{contratoCobrancaMB.objetoContratoCobranca.ccbPronta}">
-		                			<f:setPropertyActionListener  target="#{ccbMB.objetoContratoCobranca}" value="#{contratoCobrancaMB.objetoContratoCobranca}" />
-		                		</p:commandButton>
-	                		</h:panelGrid>
-                		</h:panelGrid>
+                		<!-- VALOR TOTAL PAGO -->
+						<p:outputLabel value="Valor total Pago: " styleClass="labelBold" />
+						<p:outputLabel value="#{contratoCobrancaMB.objetoContratoCobranca.somaValorPago}"
+							converter="bigDecimalConverter" styleClass="labelBold"
+							style="FONT-SIZE: 10pt;width:100px;" />
+						<p:spacer height="5" />
+						<p:outputLabel value="|" />
+						<p:spacer height="5" /> 
 					</p:panel>
 				</h:panelGroup>
 				
@@ -4986,7 +4995,7 @@
 							cancelLabel="Cancelar"
 							fileUploadListener="#{contratoCobrancaMB.handleFileJuridicoUpload}"
 							mode="advanced" dragDropSupport="true"
-							update="ArquivosJuridicoSalvos msgArquivo" />
+							update="ArquivosJuridicoSalvos msgArquivo form:contemSegredoJustica" />
 					</h:panelGrid>
 				</p:panel>
 
@@ -5848,6 +5857,183 @@
 			</h:form>
 		</p:dialog>
 
+		<p:dialog header="Registrar Pagamento" overflow="auto"
+			widgetVar="registrarPagamentodlg" resizable="true" style="FONT-SIZE: 13pt;"
+			width="800" minWidth="800">
+			<h:form id="registrarPagamentoForm">
+				<h:panelGrid columns="2">	
+					<p:outputLabel 
+						value="Despesa: " styleClass="labelBold"
+						style="font-weight: bold; font-size: 18px;" />
+					<p:outputLabel 
+						styleClass="labelBold"
+						style="font-weight: bold; font-size: 18px;" 
+						value="#{contratoCobrancaMB.contasPagarSelecionada.descricao}"/>
+						
+					<p:outputLabel 
+						value="Forma de Tranferência: " styleClass="labelBold"
+						style="font-weight: bold; font-size: 18px;" />
+					<p:outputLabel 
+						styleClass="labelBold"
+						style="font-weight: bold; font-size: 18px;" 
+						value="#{contratoCobrancaMB.formaTransferenciaDespesaBaixa}"/>	
+				</h:panelGrid>
+				<p:panel id="foraSistema" header="Pagamento fora do Sistema"
+					style="margin-bottom:10px;">
+						<h:panelGrid columns="2">
+							<p:outputLabel for="nomeBancarioContaPagarPixStarkBank" value="Nome:" 
+								style="width:250px;" styleClass="labelBold"/>
+							<p:inputText id="nomeBancarioContaPagarPixStarkBank"
+								style="width:250px;"
+								value="#{contratoCobrancaMB.nomeRecebedorOrdemPagamentoStark}"/>
+	
+							<p:outputLabel for="cpfCnpjBancarioContaPagarPixStarkBank" value="CPF/CNPJ: " 
+								style="width:250px;" styleClass="labelBold"/>
+							<p:inputText id="cpfCnpjBancarioContaPagarPixStarkBank"
+								style="width:250px;"
+								value="#{contratoCobrancaMB.documentoRecebedorOrdemPagamentoStark}"/>
+	
+							<p:outputLabel for="bancoBancarioContaPagarPixStarkBank" value="Banco: " 
+								style="width:250px;" styleClass="labelBold"/>
+							<p:selectOneMenu id="bancoBancarioContaPagarPixStarkBank" value="#{contratoCobrancaMB.bancoOrdemPagamentoStark}"  label="Banco" style="width:410px;">
+								<f:selectItem itemValue="" itemLabel="Escolha o Banco" />
+								<f:selectItem itemValue="341 | Itaú Unibanco S.A." itemLabel="341 | Itaú Unibanco S.A."/>
+								<f:selectItem itemValue="399 | HSBC Bank Brasil S.A. - Banco Múltiplo" itemLabel="399 | HSBC Bank Brasil S.A. - Banco Múltiplo"/>
+								<f:selectItem itemValue="104 | Caixa Econômica Federal" itemLabel="104 | Caixa Econômica Federal"/>
+								<f:selectItem itemValue="477 | Citibank N.A." itemLabel="477 | Citibank N.A."/>
+								<f:selectItem itemValue="033 | Banco Santander S.A." itemLabel="033 | Banco Santander S.A."/>
+								<f:selectItem itemValue="237 | Banco Bradesco S.A." itemLabel="237 | Banco Bradesco S.A."/>
+								<f:selectItem itemValue="652 | Itaú Unibanco Holding S.A." itemLabel="652 | Itaú Unibanco Holding S.A."/>
+								<f:selectItem itemValue="246 | Banco ABC Brasil S.A." itemLabel="246 | Banco ABC Brasil S.A."/>
+								<f:selectItem itemValue="075 | Banco ABN AMRO S.A." itemLabel="075 | Banco ABN AMRO S.A."/>
+								<f:selectItem itemValue="025 | Banco Alfa S.A." itemLabel="025 | Banco Alfa S.A."/>
+								<f:selectItem itemValue="641 | Banco Alvorada S.A." itemLabel="641 | Banco Alvorada S.A."/>
+								<f:selectItem itemValue="065 | Banco Andbank (Brasil) S.A." itemLabel="065 | Banco Andbank (Brasil) S.A."/>
+								<f:selectItem itemValue="024 | Banco BANDEPE S.A." itemLabel="024 | Banco BANDEPE S.A."/>
+								<f:selectItem itemValue="000 | Banco Bankpar S.A." itemLabel="000 | Banco Bankpar S.A."/>
+								<f:selectItem itemValue="740 | Banco Barclays S.A." itemLabel="740 | Banco Barclays S.A."/>
+								<f:selectItem itemValue="107 | Banco BBM S.A." itemLabel="107 | Banco BBM S.A."/>
+								<f:selectItem itemValue="031 | Banco Beg S.A." itemLabel="031 | Banco Beg S.A."/>
+								<f:selectItem itemValue="096 | Banco BMFBOVESPA de Serviços de Liquidação e Custódia S.A" itemLabel="096 | Banco BMFBOVESPA de Serviços de Liquidação e Custódia S.A"/>
+								<f:selectItem itemValue="318 | Banco BMG S.A." itemLabel="318 | Banco BMG S.A."/>
+								<f:selectItem itemValue="752 | Banco BNP Paribas Brasil S.A." itemLabel="752 | Banco BNP Paribas Brasil S.A."/>
+								<f:selectItem itemValue="248 | Banco Boavista Interatlântico S.A." itemLabel="248 | Banco Boavista Interatlântico S.A."/>
+								<f:selectItem itemValue="218 | Banco Bonsucesso S.A." itemLabel="218 | Banco Bonsucesso S.A."/>
+								<f:selectItem itemValue="063 | Banco Bradescard S.A." itemLabel="063 | Banco Bradescard S.A."/>
+								<f:selectItem itemValue="036 | Banco Bradesco BBI S.A." itemLabel="036 | Banco Bradesco BBI S.A."/>
+								<f:selectItem itemValue="204 | Banco Bradesco Cartões S.A." itemLabel="204 | Banco Bradesco Cartões S.A."/>
+								<f:selectItem itemValue="394 | Banco Bradesco Financiamentos S.A." itemLabel="394 | Banco Bradesco Financiamentos S.A."/>
+								<f:selectItem itemValue="208 | Banco BTG Pactual S.A." itemLabel="208 | Banco BTG Pactual S.A."/>
+								<f:selectItem itemValue="263 | Banco Cacique S.A." itemLabel="263 | Banco Cacique S.A."/>
+								<f:selectItem itemValue="473 | Banco Caixa Geral - Brasil S.A." itemLabel="473 | Banco Caixa Geral - Brasil S.A."/>
+								<f:selectItem itemValue="040 | Banco Cargill S.A." itemLabel="040 | Banco Cargill S.A."/>
+								<f:selectItem itemValue="739 | Banco Cetelem S.A." itemLabel="739 | Banco Cetelem S.A."/>
+								<f:selectItem itemValue="233 | Banco Cifra S.A." itemLabel="233 | Banco Cifra S.A."/>
+								<f:selectItem itemValue="745 | Banco Citibank S.A." itemLabel="745 | Banco Citibank S.A."/>
+								<f:selectItem itemValue="000 | Banco CNH Industrial Capital S.A." itemLabel="000 | Banco CNH Industrial Capital S.A."/>
+								<f:selectItem itemValue="215 | Banco Comercial e de Investimento Sudameris S.A." itemLabel="215 | Banco Comercial e de Investimento Sudameris S.A."/>
+								<f:selectItem itemValue="095 | Banco Confidence de Câmbio S.A." itemLabel="095 | Banco Confidence de Câmbio S.A."/>
+								<f:selectItem itemValue="756 | Banco Cooperativo do Brasil S.A. - BANCOOB" itemLabel="756 | Banco Cooperativo do Brasil S.A. - BANCOOB"/>
+								<f:selectItem itemValue="748 | Banco Cooperativo Sicredi S.A." itemLabel="748 | Banco Cooperativo Sicredi S.A."/>
+								<f:selectItem itemValue="000 | Banco Credicard S.A." itemLabel="000 | Banco Credicard S.A."/>
+								<f:selectItem itemValue="222 | Banco Credit Agricole Brasil S.A." itemLabel="222 | Banco Credit Agricole Brasil S.A."/>
+								<f:selectItem itemValue="505 | Banco Credit Suisse (Brasil) S.A." itemLabel="505 | Banco Credit Suisse (Brasil) S.A."/>
+								<f:selectItem itemValue="003 | Banco da Amazônia S.A." itemLabel="003 | Banco da Amazônia S.A."/>
+								<f:selectItem itemValue="083-3 | Banco da China Brasil S.A." itemLabel="083-3 | Banco da China Brasil S.A."/>
+								<f:selectItem itemValue="707 | Banco Daycoval S.A." itemLabel="707 | Banco Daycoval S.A."/>
+								<f:selectItem itemValue="000 | Banco de Lage Landen Brasil S.A." itemLabel="000 | Banco de Lage Landen Brasil S.A."/>
+								<f:selectItem itemValue="456 | Banco de Tokyo-Mitsubishi UFJ Brasil S.A." itemLabel="456 | Banco de Tokyo-Mitsubishi UFJ Brasil S.A."/>
+								<f:selectItem itemValue="001 | Banco do Brasil S.A." itemLabel="001 | Banco do Brasil S.A."/>
+								<f:selectItem itemValue="047 | Banco do Estado de Sergipe S.A." itemLabel="047 | Banco do Estado de Sergipe S.A."/>
+								<f:selectItem itemValue="037 | Banco do Estado do Pará S.A." itemLabel="037 | Banco do Estado do Pará S.A."/>
+								<f:selectItem itemValue="041 | Banco do Estado do Rio Grande do Sul S.A." itemLabel="041 | Banco do Estado do Rio Grande do Sul S.A."/>
+								<f:selectItem itemValue="004 | Banco do Nordeste do Brasil S.A." itemLabel="004 | Banco do Nordeste do Brasil S.A."/>
+								<f:selectItem itemValue="265 | Banco Fator S.A." itemLabel="265 | Banco Fator S.A."/>
+								<f:selectItem itemValue="224 | Banco Fibra S.A." itemLabel="224 | Banco Fibra S.A."/>
+								<f:selectItem itemValue="626 | Banco Ficsa S.A." itemLabel="626 | Banco Ficsa S.A."/>
+								<f:selectItem itemValue="000 | Banco Ford S.A." itemLabel="000 | Banco Ford S.A."/>
+								<f:selectItem itemValue="000 | Banco GMAC S.A." itemLabel="000 | Banco GMAC S.A."/>
+								<f:selectItem itemValue="612 | Banco Guanabara S.A." itemLabel="612 | Banco Guanabara S.A."/>
+								<f:selectItem itemValue="000 | Banco Honda S.A." itemLabel="000 | Banco Honda S.A."/>
+								<f:selectItem itemValue="000 | Banco IBM S.A." itemLabel="000 | Banco IBM S.A."/>
+								<f:selectItem itemValue="012 | Banco INBURSA de Investimentos S.A." itemLabel="012 | Banco INBURSA de Investimentos S.A."/>
+								<f:selectItem itemValue="604 | Banco Industrial do Brasil S.A." itemLabel="604 | Banco Industrial do Brasil S.A."/>
+								<f:selectItem itemValue="320 | Banco Industrial e Comercial S.A." itemLabel="320 | Banco Industrial e Comercial S.A."/>
+								<f:selectItem itemValue="653 | Banco Indusval S.A." itemLabel="653 | Banco Indusval S.A."/>
+								<f:selectItem itemValue="249 | Banco Investcred Unibanco S.A." itemLabel="249 | Banco Investcred Unibanco S.A."/>
+								<f:selectItem itemValue="184 | Banco Itaú BBA S.A." itemLabel="184 | Banco Itaú BBA S.A."/>
+								<f:selectItem itemValue="029 | Banco Itaú BMG Consignado S.A." itemLabel="029 | Banco Itaú BMG Consignado S.A."/>
+								<f:selectItem itemValue="000 | Banco Itaú Veículos S.A." itemLabel="000 | Banco Itaú Veículos S.A."/>
+								<f:selectItem itemValue="479 | Banco ItaúBank S.A" itemLabel="479 | Banco ItaúBank S.A"/>
+								<f:selectItem itemValue="376 | Banco J. P. Morgan S.A." itemLabel="376 | Banco J. P. Morgan S.A."/>
+								<f:selectItem
+												itemValue="136 | Banco Unicred"
+												itemLabel="136 | Banco Unicred" />	
+								<f:selectItem itemValue="074 | Banco J. Safra S.A." itemLabel="074 | Banco J. Safra S.A."/>
+								<f:selectItem itemValue="217 | Banco John Deere S.A." itemLabel="217 | Banco John Deere S.A."/>
+								<f:selectItem itemValue="600 | Banco Luso Brasileiro S.A." itemLabel="600 | Banco Luso Brasileiro S.A."/>
+								<f:selectItem itemValue="389 | Banco Mercantil do Brasil S.A." itemLabel="389 | Banco Mercantil do Brasil S.A."/>
+								<f:selectItem itemValue="370 | Banco Mizuho do Brasil S.A." itemLabel="370 | Banco Mizuho do Brasil S.A."/>
+								<f:selectItem itemValue="746 | Banco Modal S.A." itemLabel="746 | Banco Modal S.A."/>
+								<f:selectItem itemValue="045 | Banco Opportunity de Investimento S.A." itemLabel="045 | Banco Opportunity de Investimento S.A."/>
+								<f:selectItem itemValue="212 | Banco Original S.A." itemLabel="212 | Banco Original S.A."/>
+								<f:selectItem itemValue="623 | Banco PAN S.A." itemLabel="623 | Banco PAN S.A."/>
+								<f:selectItem itemValue="611 | Banco Paulista S.A." itemLabel="611 | Banco Paulista S.A."/>
+								<f:selectItem itemValue="094-2 | Banco Petra S.A." itemLabel="094-2 | Banco Petra S.A."/>
+								<f:selectItem itemValue="643 | Banco Pine S.A." itemLabel="643 | Banco Pine S.A."/>
+								<f:selectItem itemValue="000 | Banco PSA Finance Brasil S.A." itemLabel="000 | Banco PSA Finance Brasil S.A."/>
+								<f:selectItem itemValue="747 | Banco Rabobank International Brasil S.A." itemLabel="747 | Banco Rabobank International Brasil S.A."/>
+								<f:selectItem itemValue="356 | Banco Real S.A." itemLabel="356 | Banco Real S.A."/>
+								<f:selectItem itemValue="633 | Banco Rendimento S.A." itemLabel="633 | Banco Rendimento S.A."/>
+								<f:selectItem itemValue="000 | Banco Rodobens S.A." itemLabel="000 | Banco Rodobens S.A."/>
+								<f:selectItem itemValue="422 | Banco Safra S.A." itemLabel="422 | Banco Safra S.A."/>
+								<f:selectItem itemValue="366 | Banco Société Générale Brasil S.A." itemLabel="366 | Banco Société Générale Brasil S.A."/>
+								<f:selectItem itemValue="464 | Banco Sumitomo Mitsui Brasileiro S.A." itemLabel="464 | Banco Sumitomo Mitsui Brasileiro S.A."/>
+								<f:selectItem itemValue="082-5 | Banco Topázio S.A." itemLabel="082-5 | Banco Topázio S.A."/>
+								<f:selectItem itemValue="000 | Banco Toyota do Brasil S.A." itemLabel="000 | Banco Toyota do Brasil S.A."/>
+								<f:selectItem itemValue="634 | Banco Triângulo S.A." itemLabel="634 | Banco Triângulo S.A."/>
+								<f:selectItem itemValue="000 | Banco Volkswagen S.A." itemLabel="000 | Banco Volkswagen S.A."/>
+								<f:selectItem itemValue="000 | Banco Volvo (Brasil) S.A." itemLabel="000 | Banco Volvo (Brasil) S.A."/>
+								<f:selectItem itemValue="655 | Banco Votorantim S.A." itemLabel="655 | Banco Votorantim S.A."/>
+								<f:selectItem itemValue="610 | Banco VR S.A." itemLabel="610 | Banco VR S.A."/>
+								<f:selectItem itemValue="119 | Banco Western Union do Brasil S.A." itemLabel="119 | Banco Western Union do Brasil S.A."/>
+								<f:selectItem itemValue="021 | BANESTES S.A. Banco do Estado do Espírito Santo" itemLabel="021 | BANESTES S.A. Banco do Estado do Espírito Santo"/>
+								<f:selectItem itemValue="719 | Banif-Banco Internacional do Funchal (Brasil)S.A." itemLabel="719 | Banif-Banco Internacional do Funchal (Brasil)S.A."/>
+								<f:selectItem itemValue="755 | Bank of America Merrill Lynch Banco Múltiplo S.A." itemLabel="755 | Bank of America Merrill Lynch Banco Múltiplo S.A."/>
+								<f:selectItem itemValue="073 | BB Banco Popular do Brasil S.A." itemLabel="073 | BB Banco Popular do Brasil S.A."/>
+								<f:selectItem itemValue="081-7 | BBN Banco Brasileiro de Negócios S.A." itemLabel="081-7 | BBN Banco Brasileiro de Negócios S.A."/>
+								<f:selectItem itemValue="250 | BCV - Banco de Crédito e Varejo S.A." itemLabel="250 | BCV - Banco de Crédito e Varejo S.A."/>
+								<f:selectItem itemValue="078 | BES Investimento do Brasil S.A.-Banco de Investimento" itemLabel="078 | BES Investimento do Brasil S.A.-Banco de Investimento"/>
+								<f:selectItem itemValue="069 | BPN Brasil Banco Múltiplo S.A." itemLabel="069 | BPN Brasil Banco Múltiplo S.A."/>
+								<f:selectItem itemValue="125 | Brasil Plural S.A. - Banco Múltiplo" itemLabel="125 | Brasil Plural S.A. - Banco Múltiplo"/>
+								<f:selectItem itemValue="070 | BRB - Banco de Brasília S.A." itemLabel="070 | BRB - Banco de Brasília S.A."/>
+								<f:selectItem itemValue="487 | Deutsche Bank S.A. - Banco Alemão" itemLabel="487 | Deutsche Bank S.A. - Banco Alemão"/>
+								<f:selectItem itemValue="064 | Goldman Sachs do Brasil Banco Múltiplo S.A." itemLabel="064 | Goldman Sachs do Brasil Banco Múltiplo S.A."/>
+								<f:selectItem itemValue="062 | Hipercard Banco Múltiplo S.A." itemLabel="062 | Hipercard Banco Múltiplo S.A."/>
+								<f:selectItem itemValue="492 | ING Bank N.V." itemLabel="492 | ING Bank N.V."/>
+								<f:selectItem itemValue="488 | JPMorgan Chase Bank" itemLabel="488 | JPMorgan Chase Bank"/>
+								<f:selectItem itemValue="254 | Paraná Banco S.A." itemLabel="254 | Paraná Banco S.A."/>
+								<f:selectItem itemValue="751 | Scotiabank Brasil S.A. Banco Múltiplo" itemLabel="751 | Scotiabank Brasil S.A. Banco Múltiplo"/>
+							</p:selectOneMenu>
+							<p:outputLabel for="ContaPagarValorPagoPixStarkBank" value="Valor a Pagar: "
+									styleClass="labelBold" />
+							<p:inputText id="ContaPagarValorPagoPixStarkBank"
+									value="#{contratoCobrancaMB.valorOrdemPagamentoStark}"
+									onkeypress="return isNumberKey(event);"
+									onkeydown="FormataValor(this, 13, event, 2);" required="true"
+									converter="bigDecimalConverter" />							
+						</h:panelGrid> 											
+				</p:panel>
+				
+				<div align="center" style="margin-top: 20px;">
+					<p:commandButton value="Registrar Pagamento" ajax="false" icon="ui-icon-check" action="#{contratoCobrancaMB.registrarPagamentoForaSistema()}" style="TEXT-DECORATION: bold; margin-right: 20px;" update=":form:messageContasPagar"/>
+					<p:commandButton value="Fechar"
+						icon="ui-icon-arrowreturnthick-1-w"
+						oncomplete="PF('registrarPagamentodlg').hide();" />						
+				</div>
+			</h:form>
+		</p:dialog>
+		
 		<p:dialog header="Baixas - StarkBank" overflow="auto"
 			widgetVar="baixasStarkBankdlg" resizable="true" style="FONT-SIZE: 13pt;"
 			width="1200" minWidth="1200">

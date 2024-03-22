@@ -95,7 +95,7 @@ public class PagadorRecebedorService {
 
 		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
 
-		PagadorRecebedor pagadorRecebedor = new PagadorRecebedor();
+		PagadorRecebedor pagadorRecebedor = new PagadorRecebedor("buscaOuInsere");
 
 		String tipoPessoa = CommonsUtil.pessoaFisicaJuridicaCnpjCpf(cnpjCpf);
 		if (CommonsUtil.mesmoValor("PF", tipoPessoa))

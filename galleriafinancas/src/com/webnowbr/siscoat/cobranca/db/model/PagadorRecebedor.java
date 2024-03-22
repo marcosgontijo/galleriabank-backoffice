@@ -270,6 +270,11 @@ public class PagadorRecebedor implements Serializable {
 		resetarBololean();
 	}
 	
+	public PagadorRecebedor(String origem){
+		resetarBololean();
+		this.setOrigem(origem);
+	}
+	
 	public PagadorRecebedor(long id, String nome, String endereco, String bairro, String complemento,
 						 String cidade, String estado, String telResidencial, String telCelular,
 						 String email, Date dtNascimento, String observacao1, String rg, String cpf, String cep){
@@ -448,7 +453,7 @@ public class PagadorRecebedor implements Serializable {
 				if (pagadorRecebedorBD.size() > 0) {
 					conjuge = pagadorRecebedorBD.get(0);
 				} else {
-					conjuge = new PagadorRecebedor();
+					conjuge = new PagadorRecebedor("criarConjugeNoSistema");
 					registraPagador = true;
 				}
 			} else {

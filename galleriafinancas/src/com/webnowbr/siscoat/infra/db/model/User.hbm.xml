@@ -88,6 +88,9 @@
         <property name="userIuguPosto" type="boolean">
             <column name="userIuguPosto" />
         </property>    
+        <property name="userInterno" type="boolean">
+            <column name="userInterno" not-null="true" default="false"/>
+        </property>        
         <property name="userInvestidor" type="boolean">
             <column name="userInvestidor" />
         </property>   
@@ -240,6 +243,10 @@
 		
 		<property name="profileCartorio" type="boolean">
 			<column name="profileCartorio" not-null="true" default="false" />
+		</property>
+		
+		<property name="profileJuridicoCobranca" type="boolean">
+			<column name="profileJuridicoCobranca" not-null="true" default="false" />
 		</property>
 
     </class>

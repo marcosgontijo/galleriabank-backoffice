@@ -14,7 +14,7 @@
         <property name="valor" type="big_decimal">
             <column name="valor" />
        	</property>  
-       	<property name="valorPagamento" type="big_decimal">
+       	<property name="valorPagamento" type="big_decimal"> 
             <column name="valorPagamento" />
        	</property>   
         <property name="idTransacao" type="java.lang.String">
@@ -74,6 +74,7 @@
 		<property name="agencia" type="java.lang.String">
 			<column name="agencia" />
 		</property>	
+
 		<property name="descricaoStarkBank" type="java.lang.String">
 			<column name="descricaoStarkBank" />
 		</property>	
@@ -89,6 +90,9 @@
 		</many-to-one>
 		<property name="tipoContaBancaria" type="java.lang.String">
 			<column name="tipoContaBancaria" />
-		</property>	          
+		</property>	  
+		<property name="contaIndividual" type="boolean">
+			<column name="contaIndividual" not-null="true" default="false"/>
+		</property>	        
     </class>
 </hibernate-mapping>

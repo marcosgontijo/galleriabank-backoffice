@@ -34,6 +34,7 @@
 						value="#{termoMB.objetoTermo.instrucao}" label="Nome"
 						required="true" onblur="" style="width:400px;">
 					</p:inputText>
+<<<<<<< HEAD
 
 					<p:outputLabel for="diasAceite" value="Dias para aceitar"
 						styleClass="labelBold" />
@@ -54,6 +55,24 @@
 						locale="pt" />
 
 
+=======
+					<p:outputLabel for="DiasAceite" value="Dias de aceite" styleClass="labelBold" />
+					
+					<p:inputNumber id="DiasAceite"
+						value="#{termoMB.objetoTermo.diasAceite}"
+						label="Aceite" required="true" onblur="" style="width:100px;" minValue="0"  maxValue="99" maxlength="2" oninput="this.value = this.value.replace(/[^\d]/g, '')">
+					</p:inputNumber>
+					
+				    
+					<p:outputLabel for="DataInicio" value="Data Inicio" styleClass="labelBold" />
+				    <p:datePicker id="DataInicio"  value="#{termoMB.objetoTermo.inicioValidade}" pattern="dd/MM/yyyy"  locale="pt" required="true"/>
+	
+				    <p:outputLabel for="DataFim" value="Data Fim" styleClass="labelBold" />
+				    <p:datePicker id="DataFim"  value="#{termoMB.objetoTermo.fimValidade}" pattern="dd/MM/yyyy"  locale="pt" />
+	
+	
+	
+>>>>>>> branch 'master' of https://github.com/Galleria-Bank-Developers/backoffice.git
 					<h:outputLabel for="userPerfil" value="Perfil: " />
 					<p:selectOneMenu id="userPerfil"
 						value="#{termoMB.idPerfilSelecionado}">

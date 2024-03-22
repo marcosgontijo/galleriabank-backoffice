@@ -79,589 +79,329 @@
 						<p:spacer width="5" />
 					</h:panelGrid>
 				</shiro:hasAnyRoles>
-</p:panel>
+			</p:panel>
 			<p:panel id="PanelNavegacao"
-							style="margin-bottom:10px;">
-							<h:panelGrid columns="2" style="width: 250px;">
-								<p:commandButton value="Contratos do Pagador"
-									onclick="PF('listaContratosPagador').show();"
-									rendered="#{contratoCobrancaMB.contratosPagadorAnalisado.size() > 0}" />
-								<p:commandButton value="Contratos do Imovel"
-									onclick="PF('listaContratosImovel').show();"
-									rendered="#{contratoCobrancaMB.contratosImovelAnalisado.size() > 0}" />
-							</h:panelGrid>
-			
+				style="margin-bottom:10px;">
+				<h:panelGrid columns="2" style="width: 250px;">
+					<p:commandButton value="Contratos do Pagador"
+						onclick="PF('listaContratosPagador').show();"
+						rendered="#{contratoCobrancaMB.contratosPagadorAnalisado.size() > 0}" />
+					<p:commandButton value="Contratos do Imovel"
+						onclick="PF('listaContratosImovel').show();"
+						rendered="#{contratoCobrancaMB.contratosImovelAnalisado.size() > 0}" />
+				</h:panelGrid>
 			</p:panel>
 			<p:panel id="PanelLocador"
 							style="margin-bottom:10px;">
 							
-							<shiro:hasAnyRoles
-								name="ROOT,PRECOBRANCAANALISTA, PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
-										PROFILE_GERENTE_ANALISE, PROFILE_CONTRATO,  
-										PROFILE_COMENTARIO_JURIDICO,  
-										PROFILE_LAUDO">
-								<p:panel id="Status" header="Check-List"
-									style="margin-bottom:20px;" toggleable="true"
-									toggleableHeader="true">
-									<h:panelGrid columns="7" style="margin-top:20px;">
-										<shiro:hasAnyRoles name="ROOT">
-											<h:panelGrid columns="2"
-												style=" background-color: #ded76c; width: 250px; height: 50; -webkit-border-radius: 5px;
-												-moz-border-radius: 5px;
-												border-radius: 5px; padding: 2px;">
-												<p:outputLabel styleClass="labelBold">Lead</p:outputLabel>
-												<p:selectOneRadio id="lead"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.statusLead}"
-													layout="responsive" columns="1" style="font-weight: bold;">
-													<f:selectItem itemLabel="Novo Lead" itemValue="Novo Lead" />
-													<f:selectItem itemLabel="Em Tratamento"
-														itemValue="Em Tratamento" />
-													<f:selectItem itemLabel="Ag. Contato" itemValue="Ag. Contato" />
-													<f:selectItem itemLabel="Ag. Doc." itemValue="Ag. Doc." />
-													<f:selectItem itemLabel="Completo" itemValue="Completo" />
-													<f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
-													<f:selectItem itemLabel="Arquivado" itemValue="Arquivado" />
-													<p:ajax event="change" update="Status" />
-												</p:selectOneRadio>
-												<p:outputLabel for="statusLeadTratamento" value="Status "
-													styleClass="labelBold"
-													rendered="#{contratoCobrancaMB.objetoContratoCobranca.statusLead eq 'Em Tratamento'}" />
-												<p:inputText id="statusLeadTratamento"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.observacaolead}"
-													label="Status Lead em Tratamento" onblur=""
-													style="width:250px;"
-													rendered="#{contratoCobrancaMB.objetoContratoCobranca.statusLead eq 'Em Tratamento'}" />
-												<p:outputLabel for="motivoReprova" styleClass="labelBold"
-													rendered="#{contratoCobrancaMB.objetoContratoCobranca.statusLead eq 'Reprovado'}">Motivo</p:outputLabel>
-												<p:selectOneMenu id="motivoReprova"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.motivoReprovaLead}"
-													label="Tipo" style="width:250px;"
-													rendered="#{contratoCobrancaMB.objetoContratoCobranca.statusLead eq 'Reprovado'}">
-													<f:selectItem itemValue="" itemLabel="Selecione o motivo" />
-													<f:selectItem itemLabel="Imóvel Ruim" itemValue="Imóvel Ruim" />
-													<f:selectItem itemLabel="Cliente não atendeu"
-														itemValue="Cliente não atendeu" />
-													<f:selectItem itemLabel="Operação Duplicada"
-														itemValue="Operação Duplicada" />
-													<f:selectItem itemLabel="Dados Inconsistentes"
-														itemValue="Dados Inconsistentes" />
-													<f:selectItem itemLabel="Cliente fora do perfil"
-														itemValue="Cliente fora do perfil" />
-													<f:selectItem itemLabel="Imóvel fora do perfil"
-														itemValue="Imóvel fora do perfil" />
-													<p:ajax event="change" update="Status" />
-												</p:selectOneMenu>
-											</h:panelGrid>
-										</shiro:hasAnyRoles>
-										<h:panelGrid columns="1"
-											style="background-color: #e4e4e4; width: 250px; height: 110px; 
-												border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Início Cadastro</p:outputLabel>
-											<h:panelGroup>
-												<p:outputLabel>Atualizado por: </p:outputLabel>
-												<h:outputText id="userCadastro"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.userCadastro}"
-													style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-											</h:panelGroup>
-											<h:outputText id="dataCadastro"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.dataCadastro}"
-												style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
-												<f:convertDateTime locale="pt_BR" />
-												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
-											</h:outputText>
-										</h:panelGrid>
-										<h:panelGrid columns="1"
-											style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px; 
-												border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Inicio Análise</p:outputLabel>
-											<h:panelGroup>
-												<shiro:lacksRole name="PROFILE_GERENTE_ANALISE">
-													<p:selectBooleanButton id="inicioAnaliseView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
-													<p:spacer width="50px" height="1px"></p:spacer>
-												</shiro:lacksRole>
-												<shiro:hasAnyRoles name="ROOT,COBRANCA,PROFILE_GERENTE_ANALISE">
-													<p:selectBooleanButton id="inicioAnalise"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px"
-														disabled="#{!contratoCobrancaMB.gerenciaStatus}" />
-												</shiro:hasAnyRoles>
-											</h:panelGroup>
-											<h:panelGroup>
-												<p:outputLabel>Atualizado por: </p:outputLabel>
-												<h:outputText id="inicioAnaliseUsuario"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnaliseUsuario}"
-													style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-											</h:panelGroup>
-											<h:outputText id="inicioAnaliseData"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnaliseData}"
-												style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
-												<f:convertDateTime locale="pt_BR" />
-												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
-											</h:outputText>
-										</h:panelGrid>
-										<h:panelGrid columns="1"
-											style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px;
-												border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Análise Reprovada</p:outputLabel>
-											<h:panelGroup>
-												<shiro:lacksRole name="PROFILE_GERENTE_ANALISE">
-													<p:selectBooleanButton id="analiseReprovadaView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px" disabled="true">
-														<p:ajax update="CheckListInformacoesAdicionais" event="change" />
-													</p:selectBooleanButton>
-													<p:spacer width="50px" height="1px"></p:spacer>
-												</shiro:lacksRole>
-												<shiro:hasAnyRoles
-													name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_GERENTE_ANALISE">
-													<p:selectBooleanButton id="analiseReprovadaEdit"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px">
-														<p:ajax update="CheckListInformacoesAdicionais" event="change" />
-													</p:selectBooleanButton>
-												</shiro:hasAnyRoles>
-											</h:panelGroup>
-											<h:panelGroup>
-												<p:outputLabel>Atualizado por: </p:outputLabel>
-												<h:outputText id="analiseReprovadaUsuario"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovadaUsuario}"
-													style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-											</h:panelGroup>
-											<h:outputText id="analiseReprovadaData"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovadaData}"
-												style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
-												<f:convertDateTime locale="pt_BR" />
-												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
-											</h:outputText>
-										</h:panelGrid>
-			
-										<h:panelGrid columns="1"
-											style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px;
-												border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Primeira Pendência</p:outputLabel>
-											<h:panelGroup>
-												<p:outputLabel>Atualizado por: </p:outputLabel>
-												<h:outputText id="analisePendenciadaUsuario"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.analisePendenciadaUsuario}"
-													style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-												</h:panelGroup>
-											<h:outputText id="analisePendenciadaData"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.analisePendenciadaData}"
-												style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
-												<f:convertDateTime locale="pt_BR" />
-												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
-											</h:outputText>
-										</h:panelGrid>
-			
-										<h:panelGrid columns="2"
-											style="background-color: #cfcfcf;margin-right: 15px; margin-top: 15px;width: 250px;height: 110px;-webkit-border-radius: 5px;
-												-moz-border-radius: 5px;
-												border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Pré-Cadastro</p:outputLabel>
-											<p:spacer></p:spacer>
-											<shiro:hasAnyRoles
-												name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_CREDITO, PROFILE_GERENTE_ANALISE">
-												<p:selectOneRadio id="cadastroAprovado" unselectable="true"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor}">
-													<f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
-													<f:selectItem itemLabel="Pendente" itemValue="Pendente" />
-													<f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
-													<p:ajax update="BoletoPanel" event="change" />
-												</p:selectOneRadio>
-											</shiro:hasAnyRoles>
-											<shiro:lacksRole
-												name="PROFILE_ANALISTA_CREDITO, PROFILE_GERENTE_ANALISE">
-												<p:selectOneRadio id="cadastroAprovadoView" unselectable="true"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor}"
-													disabled="true">
-													<f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
-													<f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
-													<p:ajax update="BoletoPanel" event="change" />
-												</p:selectOneRadio>
-											</shiro:lacksRole>
-											<p:spacer height="7"></p:spacer>
-											<p:spacer height="7"></p:spacer>
-											<p:spacer height="7"></p:spacer>
-											<p:outputLabel>Atualizado por: </p:outputLabel>
-											<p:spacer height="7"></p:spacer>
-											<h:outputText id="cadastroAprovadoUsuario"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoUsuario}"
-												style="font-weight: bold; font-size: 15px;padding-left: 10px;color: #0672de;" />
-											<h:outputText id="cadastroAprovadoData"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoData}"
-												style="font-weight: bold;color: #0672de; font-size: 15px;">
-												<f:convertDateTime locale="pt_BR" />
-												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm"
-													timeZone="GMT-3" />
-											</h:outputText>
-										</h:panelGrid>
-										<h:panelGrid columns="2"
-											style="background-color: #cfcfcf;margin-right: 15px; margin-top: 15px;width: 250px;height: 110px;-webkit-border-radius: 5px;
-												-moz-border-radius: 5px;
-												border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Imóvel</p:outputLabel>
-											<p:spacer></p:spacer>
-											<shiro:hasAnyRoles
-												name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_CREDITO, PROFILE_GERENTE_ANALISE">
-												<p:selectOneRadio id="imovelAprovado" unselectable="true"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.matriculaAprovadaValor}">
-													<f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
-													<f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
-												</p:selectOneRadio>
-											</shiro:hasAnyRoles>
-											<shiro:lacksRole
-												name="PROFILE_ANALISTA_CREDITO, PROFILE_GERENTE_ANALISE">
-												<p:selectOneRadio id="imovelAprovadoView" unselectable="true"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.matriculaAprovadaValor}"
-													disabled="true">
-													<f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
-													<f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
-												</p:selectOneRadio>
-											</shiro:lacksRole>
-											<p:spacer height="7"></p:spacer>
-											<p:spacer height="7"></p:spacer>
-											<p:spacer height="7"></p:spacer>
-											<p:outputLabel>Atualizado por: </p:outputLabel>
-											<p:spacer height="7"></p:spacer>
-											<h:outputText id="imovelAprovadoUsuario"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.matriculaAprovadaUsuario}"
-												style="font-weight: bold; font-size: 15px;padding-left: 10px;color: #0672de;" />
-											<h:outputText id="imovelAprovadoData"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.matriculaAprovadaData}"
-												style="font-weight: bold;color: #0672de; font-size: 15px;">
-												<f:convertDateTime locale="pt_BR" />
-												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm"
-													timeZone="GMT-3" />
-											</h:outputText>
-										</h:panelGrid>
-									</h:panelGrid>
-			
+							
+							<p:panel id="Status" header="Check-List"
+								style="margin-bottom:20px;" toggleable="true"
+								toggleableHeader="true">
+								<shiro:hasAnyRoles name="ROOT,PRECOBRANCAANALISTA, PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
+									PROFILE_GERENTE_ANALISE, PROFILE_CONTRATO,  
+									PROFILE_COMENTARIO_JURIDICO, PROFILE_CARTORIO,
+									PROFILE_LAUDO, PROFILE_COBRANCA">
+									
+								<h:panelGrid columns="7" style="margin-top:20px;">
 									<shiro:hasAnyRoles name="ROOT">
-										<h:panelGrid columns="5" style="margin-top: 20px;">
-											<h:panelGrid columns="1"
-												style="background-color: #e4e4e4; width: 250px; height: 110px;
-													border-radius: 5px; padding: 10px;">
-												<p:outputLabel styleClass="labelBold">Pedido Pré-Laudo Comercial</p:outputLabel>
-												<h:panelGroup>
-													<p:selectBooleanButton id="pedidoPreLaudoComercialView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoComercial}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:80px" disabled="true">
-														<p:ajax update="CheckListInformacoesAdicionais" event="change" />
-													</p:selectBooleanButton>
-													<p:selectBooleanButton id="pedidoPreLaudoComercial"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoComercial}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:=80px">
-														<p:ajax update="CheckListInformacoesAdicionais" event="change" />
-													</p:selectBooleanButton>
-												</h:panelGroup>
-												<h:panelGroup>
-													<p:outputLabel>Atualizado por: </p:outputLabel>
-													<h:outputText id="pedidoPreLaudoComercialUsuario"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoComercialUsuario}"
-														style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-												</h:panelGroup>
-												<h:outputText id="pedidoPreLaudoComercialData"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoComercialData}"
-													style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
-													<f:convertDateTime locale="pt_BR" />
-													<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
-												</h:outputText>
-											</h:panelGrid>
-											<h:panelGrid columns="1"
-												style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px; width: 250px; height: 110px; 
-													border-radius: 5px; padding: 10px;">
-												<p:outputLabel styleClass="labelBold">Pedido Pré-Laudo</p:outputLabel>
-												<h:panelGroup>
-													<p:selectBooleanButton id="pedidoPreLaudoView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px" disabled="true">
-														<p:ajax update="RecebidoPajulaudoPanel" event="change" />
-													</p:selectBooleanButton>
-													<p:spacer width="50px" height="1px"></p:spacer>
-													<p:selectBooleanButton id="pedidoPreLaudo"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:=60px">
-														<p:ajax update="RecebidoPajulaudoPanel" event="change" />
-													</p:selectBooleanButton>
-												</h:panelGroup>
-												<h:panelGroup>
-													<p:outputLabel>Atualizado por: </p:outputLabel>
-													<h:outputText id="pedidoPreLaudoUsuario"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoUsuario}"
-														style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-												</h:panelGroup>
-												<h:outputText id="pedidoPreLaudoData"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoData}"
-													style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
-													<f:convertDateTime locale="pt_BR" />
-													<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
-												</h:outputText>
-											</h:panelGrid>
-											<h:panelGrid columns="1"
-												style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px; 
-													border-radius: 5px; padding: 10px;">
-												<p:outputLabel styleClass="labelBold">Pedido PAJU Comercial</p:outputLabel>
-												<h:panelGroup>
-													<p:selectBooleanButton id="pedidoPajuComercialView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPajuComercial}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px" disabled="true">
-														<p:ajax update="RecebidoPajulaudoPanel" event="change" />
-													</p:selectBooleanButton>
-													<p:spacer width="50px" height="1px"></p:spacer>
-													<p:selectBooleanButton id="pedidoPajuComercial"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPajuComercial}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:=60px">
-														<p:ajax update="RecebidoPajulaudoPanel" event="change" />
-													</p:selectBooleanButton>
-												</h:panelGroup>
-												<h:panelGroup>
-													<p:outputLabel>Atualizado por: </p:outputLabel>
-													<h:outputText id="pedidoPajuComercialUsuario"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPajuComercialUsuario}"
-														style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-												</h:panelGroup>
-												<h:outputText id="pedidoPajuComercialData"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPajuComercialData}"
-													style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
-													<f:convertDateTime locale="pt_BR" />
-													<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
-												</h:outputText>
-											</h:panelGrid>
-											<h:panelGrid columns="1"
-												style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px; 
-													border-radius: 5px; padding: 10px;">
-												<p:outputLabel styleClass="labelBold">Operacao Paga</p:outputLabel>
-												<h:panelGroup>
-													<p:selectBooleanButton id="operacaoPagaView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.operacaoPaga}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px" disabled="true">
-													</p:selectBooleanButton>
-													<p:spacer width="50px" height="1px"></p:spacer>
-													<p:selectBooleanButton id="operacaoPaga"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.operacaoPaga}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:=60px">
-													</p:selectBooleanButton>
-												</h:panelGroup>
-												<h:panelGroup>
-													<p:outputLabel>Atualizado por: </p:outputLabel>
-													<h:outputText id="operacaoPagaUsuario"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.operacaoPagaUsuario}"
-														style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-												</h:panelGroup>
-												<h:outputText id="operacaoPagaData"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.operacaoPagaData}"
-													style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
-													<f:convertDateTime locale="pt_BR" />
-													<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
-												</h:outputText>
-											</h:panelGrid>
-											<h:panelGrid columns="1"
-												style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px; 
-													border-radius: 5px; padding: 10px;">
-												<p:outputLabel styleClass="labelBold">Pendencia Pagamento</p:outputLabel>
-												<h:panelGroup>
-													<p:selectBooleanButton id="pendenciaPagamentoView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaPagamento}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px" disabled="true">
-														<p:ajax update="RecebidoPajulaudoPanel" event="change" />
-													</p:selectBooleanButton>
-													<p:spacer width="50px" height="1px"></p:spacer>
-													<p:selectBooleanButton id="pendenciaPagamento"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaPagamento}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:=60px">
-													</p:selectBooleanButton>
-												</h:panelGroup>
-											</h:panelGrid>
-											
-								<h:panelGrid columns="1"
-									style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px; 
-										border-radius: 5px; padding: 10px;">
-									<p:outputLabel styleClass="labelBold">Nota Fiscal Emitida</p:outputLabel>
-									<h:panelGroup>
-										<p:selectBooleanButton id="notaFiscalEmitidaView"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.notaFiscalEmitida}"
-											onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-											offIcon="ui-icon-cancel" style="width:60px" disabled="true">
-										</p:selectBooleanButton>
-										<p:spacer width="50px" height="1px"></p:spacer>
-										<p:selectBooleanButton id="notaFiscalEmitida"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.notaFiscalEmitida}"
-											onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-											offIcon="ui-icon-cancel" style="width:=60px">
-										</p:selectBooleanButton>
-									</h:panelGroup>
-									<h:panelGroup>
-										<p:outputLabel>Atualizado por: </p:outputLabel>
-										<h:outputText id="notaFiscalEmitidaUsuario"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.notaFiscalEmitidaUsuario}"
-											style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-									</h:panelGroup>
-									<h:outputText id="notaFiscalEmitidaData"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.notaFiscalEmitidaData}"
-										style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
-										<f:convertDateTime locale="pt_BR" />
-										<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
-									</h:outputText>
-								</h:panelGrid>
-								
-								<h:panelGrid columns="1"
-									style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px; 
-										border-radius: 5px; padding: 10px;">
-									<p:outputLabel styleClass="labelBold">Nota Fiscal Paga</p:outputLabel>
-									<h:panelGroup>
-										<p:selectBooleanButton id="notaFiscalPagaView"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.notaFiscalPaga}"
-											onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-											offIcon="ui-icon-cancel" style="width:60px" disabled="true">
-										</p:selectBooleanButton>
-										<p:spacer width="50px" height="1px"></p:spacer>
-										<p:selectBooleanButton id="notaFiscalPaga"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.notaFiscalPaga}"
-											onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-											offIcon="ui-icon-cancel" style="width:=60px">
-										</p:selectBooleanButton>
-									</h:panelGroup>
-									<h:panelGroup>
-										<p:outputLabel>Atualizado por: </p:outputLabel>
-										<h:outputText id="notaFiscalPagaUsuario"
-											value="#{contratoCobrancaMB.objetoContratoCobranca.notaFiscalPagaUsuario}"
-											style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-									</h:panelGroup>
-									<h:outputText id="notaFiscalPagaData"
-										value="#{contratoCobrancaMB.objetoContratoCobranca.notaFiscalPagaData}"
-										style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
-										<f:convertDateTime locale="pt_BR" />
-										<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
-									</h:outputText>
-								</h:panelGrid>
-								
-							</h:panelGrid>
+										<h:panelGrid columns="2"
+											style=" background-color: #ded76c; width: 250px; height: 50; -webkit-border-radius: 5px;
+											-moz-border-radius: 5px;
+											border-radius: 5px; padding: 2px;">
+											<p:outputLabel styleClass="labelBold">Lead</p:outputLabel>
+											<p:selectOneRadio id="lead"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.statusLead}"
+												layout="responsive" columns="1" style="font-weight: bold;">
+												<f:selectItem itemLabel="Novo Lead" itemValue="Novo Lead" />
+												<f:selectItem itemLabel="Em Tratamento"
+													itemValue="Em Tratamento" />
+												<f:selectItem itemLabel="Ag. Contato" itemValue="Ag. Contato" />
+												<f:selectItem itemLabel="Ag. Doc." itemValue="Ag. Doc." />
+												<f:selectItem itemLabel="Completo" itemValue="Completo" />
+												<f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
+												<f:selectItem itemLabel="Arquivado" itemValue="Arquivado" />
+												<p:ajax event="change" update="Status" />
+											</p:selectOneRadio>
+											<p:outputLabel for="statusLeadTratamento" value="Status "
+												styleClass="labelBold"
+												rendered="#{contratoCobrancaMB.objetoContratoCobranca.statusLead eq 'Em Tratamento'}" />
+											<p:inputText id="statusLeadTratamento"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.observacaolead}"
+												label="Status Lead em Tratamento" onblur=""
+												style="width:250px;"
+												rendered="#{contratoCobrancaMB.objetoContratoCobranca.statusLead eq 'Em Tratamento'}" />
+											<p:outputLabel for="motivoReprova" styleClass="labelBold"
+												rendered="#{contratoCobrancaMB.objetoContratoCobranca.statusLead eq 'Reprovado'}">Motivo</p:outputLabel>
+											<p:selectOneMenu id="motivoReprova"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.motivoReprovaLead}"
+												label="Tipo" style="width:250px;"
+												rendered="#{contratoCobrancaMB.objetoContratoCobranca.statusLead eq 'Reprovado'}">
+												<f:selectItem itemValue="" itemLabel="Selecione o motivo" />
+												<f:selectItem itemLabel="Imóvel Ruim" itemValue="Imóvel Ruim" />
+												<f:selectItem itemLabel="Cliente não atendeu"
+													itemValue="Cliente não atendeu" />
+												<f:selectItem itemLabel="Operação Duplicada"
+													itemValue="Operação Duplicada" />
+												<f:selectItem itemLabel="Dados Inconsistentes"
+													itemValue="Dados Inconsistentes" />
+												<f:selectItem itemLabel="Cliente fora do perfil"
+													itemValue="Cliente fora do perfil" />
+												<f:selectItem itemLabel="Imóvel fora do perfil"
+													itemValue="Imóvel fora do perfil" />
+												<p:ajax event="change" update="Status" />
+											</p:selectOneMenu>
+										</h:panelGrid>
 									</shiro:hasAnyRoles>
-			
+									<h:panelGrid columns="1"
+										style="background-color: #e4e4e4; width: 250px; height: 110px; 
+											border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Início Cadastro</p:outputLabel>
+										<h:panelGroup>
+											<p:outputLabel>Atualizado por: </p:outputLabel>
+											<h:outputText id="userCadastro"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.userCadastro}"
+												style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+										</h:panelGroup>
+										<h:outputText id="dataCadastro"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.dataCadastro}"
+											style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+										</h:outputText>
+									</h:panelGrid>
+									<h:panelGrid columns="1"
+										style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px; 
+											border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Inicio Análise</p:outputLabel>
+										<h:panelGroup>
+											<shiro:lacksRole name="PROFILE_GERENTE_ANALISE">
+												<p:selectBooleanButton id="inicioAnaliseView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
+												<p:spacer width="50px" height="1px"></p:spacer>
+											</shiro:lacksRole>
+											<shiro:hasAnyRoles name="ROOT,COBRANCA,PROFILE_GERENTE_ANALISE">
+												<p:selectBooleanButton id="inicioAnalise"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnalise}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px"
+													disabled="#{!contratoCobrancaMB.gerenciaStatus}" />
+											</shiro:hasAnyRoles>
+										</h:panelGroup>
+										<h:panelGroup>
+											<p:outputLabel>Atualizado por: </p:outputLabel>
+											<h:outputText id="inicioAnaliseUsuario"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnaliseUsuario}"
+												style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+										</h:panelGroup>
+										<h:outputText id="inicioAnaliseData"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.inicioAnaliseData}"
+											style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+										</h:outputText>
+									</h:panelGrid>
+									<h:panelGrid columns="1"
+										style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px;
+											border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Análise Reprovada</p:outputLabel>
+										<h:panelGroup>
+											<shiro:lacksRole name="PROFILE_GERENTE_ANALISE">
+												<p:selectBooleanButton id="analiseReprovadaView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px" disabled="true">
+													<p:ajax update="CheckListInformacoesAdicionais" event="change" />
+												</p:selectBooleanButton>
+												<p:spacer width="50px" height="1px"></p:spacer>
+											</shiro:lacksRole>
+											<shiro:hasAnyRoles
+												name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_GERENTE_ANALISE">
+												<p:selectBooleanButton id="analiseReprovadaEdit"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovada}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px">
+													<p:ajax update="CheckListInformacoesAdicionais" event="change" />
+												</p:selectBooleanButton>
+											</shiro:hasAnyRoles>
+										</h:panelGroup>
+										<h:panelGroup>
+											<p:outputLabel>Atualizado por: </p:outputLabel>
+											<h:outputText id="analiseReprovadaUsuario"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovadaUsuario}"
+												style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+										</h:panelGroup>
+										<h:outputText id="analiseReprovadaData"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.analiseReprovadaData}"
+											style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+										</h:outputText>
+									</h:panelGrid>
+		
+									<h:panelGrid columns="1"
+										style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px;
+											border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Primeira Pendência</p:outputLabel>
+										<h:panelGroup>
+											<p:outputLabel>Atualizado por: </p:outputLabel>
+											<h:outputText id="analisePendenciadaUsuario"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.analisePendenciadaUsuario}"
+												style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+											</h:panelGroup>
+										<h:outputText id="analisePendenciadaData"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.analisePendenciadaData}"
+											style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+										</h:outputText>
+									</h:panelGrid>
+		
+									<h:panelGrid columns="2"
+										style="background-color: #cfcfcf;margin-right: 15px; margin-top: 15px;width: 250px;height: 110px;-webkit-border-radius: 5px;
+											-moz-border-radius: 5px;
+											border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Pré-Cadastro</p:outputLabel>
+										<p:spacer></p:spacer>
+										<shiro:hasAnyRoles
+											name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_CREDITO, PROFILE_GERENTE_ANALISE">
+											<p:selectOneRadio id="cadastroAprovado" unselectable="true"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor}">
+												<f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
+												<f:selectItem itemLabel="Pendente" itemValue="Pendente" />
+												<f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
+												<p:ajax update="BoletoPanel" event="change" />
+											</p:selectOneRadio>
+										</shiro:hasAnyRoles>
+										<shiro:lacksRole
+											name="PROFILE_ANALISTA_CREDITO, PROFILE_GERENTE_ANALISE">
+											<p:selectOneRadio id="cadastroAprovadoView" unselectable="true"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoValor}"
+												disabled="true">
+												<f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
+												<f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
+												<p:ajax update="BoletoPanel" event="change" />
+											</p:selectOneRadio>
+										</shiro:lacksRole>
+										<p:spacer height="7"></p:spacer>
+										<p:spacer height="7"></p:spacer>
+										<p:spacer height="7"></p:spacer>
+										<p:outputLabel>Atualizado por: </p:outputLabel>
+										<p:spacer height="7"></p:spacer>
+										<h:outputText id="cadastroAprovadoUsuario"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoUsuario}"
+											style="font-weight: bold; font-size: 15px;padding-left: 10px;color: #0672de;" />
+										<h:outputText id="cadastroAprovadoData"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.cadastroAprovadoData}"
+											style="font-weight: bold;color: #0672de; font-size: 15px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm"
+												timeZone="GMT-3" />
+										</h:outputText>
+									</h:panelGrid>
+									<h:panelGrid columns="2"
+										style="background-color: #cfcfcf;margin-right: 15px; margin-top: 15px;width: 250px;height: 110px;-webkit-border-radius: 5px;
+											-moz-border-radius: 5px;
+											border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Imóvel</p:outputLabel>
+										<p:spacer></p:spacer>
+										<shiro:hasAnyRoles
+											name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_CREDITO, PROFILE_GERENTE_ANALISE">
+											<p:selectOneRadio id="imovelAprovado" unselectable="true"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.matriculaAprovadaValor}">
+												<f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
+												<f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
+											</p:selectOneRadio>
+										</shiro:hasAnyRoles>
+										<shiro:lacksRole
+											name="PROFILE_ANALISTA_CREDITO, PROFILE_GERENTE_ANALISE">
+											<p:selectOneRadio id="imovelAprovadoView" unselectable="true"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.matriculaAprovadaValor}"
+												disabled="true">
+												<f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
+												<f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
+											</p:selectOneRadio>
+										</shiro:lacksRole>
+										<p:spacer height="7"></p:spacer>
+										<p:spacer height="7"></p:spacer>
+										<p:spacer height="7"></p:spacer>
+										<p:outputLabel>Atualizado por: </p:outputLabel>
+										<p:spacer height="7"></p:spacer>
+										<h:outputText id="imovelAprovadoUsuario"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.matriculaAprovadaUsuario}"
+											style="font-weight: bold; font-size: 15px;padding-left: 10px;color: #0672de;" />
+										<h:outputText id="imovelAprovadoData"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.matriculaAprovadaData}"
+											style="font-weight: bold;color: #0672de; font-size: 15px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm"
+												timeZone="GMT-3" />
+										</h:outputText>
+									</h:panelGrid>
+								</h:panelGrid>
+		
+								<shiro:hasAnyRoles name="ROOT">
 									<h:panelGrid columns="5" style="margin-top: 20px;">
-										
 										<h:panelGrid columns="1"
-											style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; 
+											style="background-color: #e4e4e4; width: 250px; height: 110px;
 												border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Pedido Laudo + Paju Comercial</p:outputLabel>
+											<p:outputLabel styleClass="labelBold">Pedido Pré-Laudo Comercial</p:outputLabel>
 											<h:panelGroup>
-												<shiro:lacksRole name="PRECOBRANCA">
-													<p:selectBooleanButton id="pedidoLaudoPajuComercialView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px" disabled="true">
-														<p:ajax update="RecebidoPajulaudoPanel" event="change" />
-													</p:selectBooleanButton>
-													<p:spacer width="50px" height="1px"></p:spacer>
-												</shiro:lacksRole>
-												<shiro:hasAnyRoles name="ROOT, PROFILE_GERENTE_ANALISE">
-													<p:selectBooleanButton id="pedidoLaudoPajuComercial"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:=60px">
-														<p:ajax update="RecebidoPajulaudoPanel" event="change" />
-													</p:selectBooleanButton>
-												</shiro:hasAnyRoles>
+												<p:selectBooleanButton id="pedidoPreLaudoComercialView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoComercial}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:80px" disabled="true">
+													<p:ajax update="CheckListInformacoesAdicionais" event="change" />
+												</p:selectBooleanButton>
+												<p:selectBooleanButton id="pedidoPreLaudoComercial"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoComercial}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:=80px">
+													<p:ajax update="CheckListInformacoesAdicionais" event="change" />
+												</p:selectBooleanButton>
 											</h:panelGroup>
 											<h:panelGroup>
 												<p:outputLabel>Atualizado por: </p:outputLabel>
-												<h:outputText id="pedidoLaudoPajuComercialUsuario"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercialUsuario}"
+												<h:outputText id="pedidoPreLaudoComercialUsuario"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoComercialUsuario}"
 													style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
 											</h:panelGroup>
-											<h:outputText id="pedidoLaudoPajuComercialData"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercialData}"
+											<h:outputText id="pedidoPreLaudoComercialData"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoComercialData}"
 												style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
 												<f:convertDateTime locale="pt_BR" />
 												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
-											</h:outputText>
-										</h:panelGrid>
-										<h:panelGrid columns="1"
-											style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px;
-												border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Pedido Laudo</p:outputLabel>
-											<h:panelGroup>
-												<shiro:lacksRole name="PROFILE_LAUDO">
-													<p:selectBooleanButton id="pedidoLaudoView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudo}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px" disabled="true">
-														<p:ajax update="RecebidoPajulaudoPanel" event="change" />
-													</p:selectBooleanButton>
-													<p:spacer width="50px" height="1px"></p:spacer>
-												</shiro:lacksRole>
-												<shiro:hasAnyRoles
-													name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_LAUDO, PROFILE_GERENTE_ANALISE">
-													<p:selectBooleanButton id="pedidoLaudo"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudo}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:=60px">
-														<p:ajax update="RecebidoPajulaudoPanel" event="change" />
-													</p:selectBooleanButton>
-												</shiro:hasAnyRoles>
-											</h:panelGroup>
-											<h:panelGroup>
-												<p:outputLabel>Atualizado por: </p:outputLabel>
-												<h:outputText id="pedidoLaudoUsuario"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoUsuario}"
-													style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-											</h:panelGroup>
-											<h:outputText id="pedidoLaudoData"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoData}"
-												style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
-												<f:convertDateTime locale="pt_BR" />
-												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm"
-													timeZone="GMT-3" />
 											</h:outputText>
 										</h:panelGrid>
 										<h:panelGrid columns="1"
 											style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px; width: 250px; height: 110px; 
 												border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Pedido PAJU</p:outputLabel>
+											<p:outputLabel styleClass="labelBold">Pedido Pré-Laudo</p:outputLabel>
 											<h:panelGroup>
-												<shiro:lacksRole name="PROFILE_LAUDO">
-													<p:selectBooleanButton id="pagtoLaudoConfirmadaView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px" disabled="true">
-														<p:ajax update="CheckListInformacoesAdicionais" event="change" />
-													</p:selectBooleanButton>
-													<p:spacer width="50px" height="1px"></p:spacer>
-												</shiro:lacksRole>
-												<shiro:hasAnyRoles
-													name="ROOT,COBRANCA,PRECOBRANCAANALISTA,PROFILE_LAUDO, PROFILE_GERENTE_ANALISE">
-													<p:selectBooleanButton id="pagtoLaudoConfirmada"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:=60px">
-														<p:ajax update="CheckListInformacoesAdicionais" event="change" />
-													</p:selectBooleanButton>
-												</shiro:hasAnyRoles>
+												<p:selectBooleanButton id="pedidoPreLaudoView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px" disabled="true">
+													<p:ajax update="RecebidoPajulaudoPanel" event="change" />
+												</p:selectBooleanButton>
+												<p:spacer width="50px" height="1px"></p:spacer>
+												<p:selectBooleanButton id="pedidoPreLaudo"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudo}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:=60px">
+													<p:ajax update="RecebidoPajulaudoPanel" event="change" />
+												</p:selectBooleanButton>
 											</h:panelGroup>
 											<h:panelGroup>
 												<p:outputLabel>Atualizado por: </p:outputLabel>
-												<h:outputText id="pagtoLaudoConfirmadaUsuario"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmadaUsuario}"
+												<h:outputText id="pedidoPreLaudoUsuario"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoUsuario}"
 													style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
 											</h:panelGroup>
-											<h:outputText id="pagtoLaudoConfirmadaData"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmadaData}"
+											<h:outputText id="pedidoPreLaudoData"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPreLaudoData}"
 												style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
 												<f:convertDateTime locale="pt_BR" />
 												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
@@ -670,184 +410,30 @@
 										<h:panelGrid columns="1"
 											style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px; 
 												border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Pendencia Laudo + Paju</p:outputLabel>
+											<p:outputLabel styleClass="labelBold">Pedido PAJU Comercial</p:outputLabel>
 											<h:panelGroup>
-												<shiro:lacksRole name="PROFILE_LAUDO">
-													<p:selectBooleanButton id="pendenciaLaudoPajuView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaLaudoPaju}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px" disabled="true">
-														<p:ajax update="RecebidoPajulaudoPanel" event="change" />
-													</p:selectBooleanButton>
-													<p:spacer width="50px" height="1px"></p:spacer>
-												</shiro:lacksRole>
-												<shiro:hasAnyRoles
-													name="ROOT,COBRANCA,PRECOBRANCAANALISTA,PROFILE_LAUDO, PROFILE_GERENTE_ANALISE">
-													<p:selectBooleanButton id="pendenciaLaudoPaju"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaLaudoPaju}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:=60px">
-														<p:ajax update="RecebidoPajulaudoPanel" event="change" />
-													</p:selectBooleanButton>
-												</shiro:hasAnyRoles>
+												<p:selectBooleanButton id="pedidoPajuComercialView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPajuComercial}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px" disabled="true">
+													<p:ajax update="RecebidoPajulaudoPanel" event="change" />
+												</p:selectBooleanButton>
+												<p:spacer width="50px" height="1px"></p:spacer>
+												<p:selectBooleanButton id="pedidoPajuComercial"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPajuComercial}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:=60px">
+													<p:ajax update="RecebidoPajulaudoPanel" event="change" />
+												</p:selectBooleanButton>
 											</h:panelGroup>
 											<h:panelGroup>
 												<p:outputLabel>Atualizado por: </p:outputLabel>
-												<h:outputText id="pendenciaLaudoPajuUsuario"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaLaudoPajuUsuario}"
+												<h:outputText id="pedidoPajuComercialUsuario"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPajuComercialUsuario}"
 													style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
 											</h:panelGroup>
-											<h:outputText id="pendenciaLaudoPajuData"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaLaudoPajuData}"
-												style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
-												<f:convertDateTime locale="pt_BR" />
-												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
-											</h:outputText>
-										</h:panelGrid>
-										<h:panelGrid columns="1"
-											style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px;
-												border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Laudo Recebido</p:outputLabel>
-											<h:panelGroup>
-												<shiro:lacksRole name="PROFILE_LAUDO">
-													<p:selectBooleanButton id="laudoRecebidoView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px" disabled="true">
-														<p:ajax update="RecebidoPajulaudoPanel" event="change" />
-													</p:selectBooleanButton>
-													<p:spacer width="50px" height="1px"></p:spacer>
-												</shiro:lacksRole>
-												<shiro:hasAnyRoles
-													name="ROOT,COBRANCA,PRECOBRANCAANALISTA,PROFILE_LAUDO, PROFILE_GERENTE_ANALISE">
-													<p:selectBooleanButton id="laudoRecebido"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:=60px">
-														<p:ajax update="RecebidoPajulaudoPanel" event="change" />
-													</p:selectBooleanButton>
-												</shiro:hasAnyRoles>
-											</h:panelGroup>
-											<h:panelGroup>
-												<p:outputLabel>Atualizado por: </p:outputLabel>
-												<h:outputText id="laudoRecebidoUsuario"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebidoUsuario}"
-													style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-											</h:panelGroup>
-											<h:outputText id="laudoRecebidoData"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebidoData}"
-												style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
-												<f:convertDateTime locale="pt_BR" />
-												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
-											</h:outputText>
-										</h:panelGrid>
-			
-										<h:panelGrid columns="1"
-											style="background-color: #e4e4e4; width: 250px; height: 110px;
-											 margin-right: 15px; margin-top: 15px; border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">PAJU Gerado</p:outputLabel>
-											<h:panelGroup>
-												<shiro:lacksRole name="PROFILE_LAUDO">
-													<p:selectBooleanButton id="pajurFavoravelView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px" disabled="true">
-														<p:ajax update="RecebidoPajulaudoPanel" event="change" />
-													</p:selectBooleanButton>
-													<p:spacer width="50px" height="1px"></p:spacer>
-												</shiro:lacksRole>
-												<shiro:hasAnyRoles
-													name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_LAUDO, PROFILE_GERENTE_ANALISE">
-													<p:selectBooleanButton id="pajurFavoravel"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:=60px">
-														<p:ajax update="RecebidoPajulaudoPanel" event="change" />
-													</p:selectBooleanButton>
-												</shiro:hasAnyRoles>
-											</h:panelGroup>
-											<h:panelGroup>
-												<p:outputLabel>Atualizado por: </p:outputLabel>
-												<h:outputText id="pajurFavoravelUsuario"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravelUsuario}"
-													style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-											</h:panelGroup>
-											<h:outputText id="pajurFavoravelData"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravelData}"
-												style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
-												<f:convertDateTime locale="pt_BR" />
-												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
-											</h:outputText>
-										</h:panelGrid>
-										<h:panelGrid columns="1"
-											style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px;
-												border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Análise Comercial</p:outputLabel>
-											<h:panelGroup>
-												<shiro:lacksRole name="ROOT">
-													<p:selectBooleanButton id="analiseComercialView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.analiseComercial}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px" disabled="true">
-														<p:ajax update="RecebidoPajulaudoPanel" event="change" />
-													</p:selectBooleanButton>
-													<p:spacer width="50px" height="1px"></p:spacer>
-												</shiro:lacksRole>
-												<shiro:hasAnyRoles name="ROOT, PROFILE_GERENTE_ANALISE">
-													<p:selectBooleanButton id="analiseComercial"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.analiseComercial}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:=60px">
-														<p:ajax update="RecebidoPajulaudoPanel" event="change" />
-													</p:selectBooleanButton>
-												</shiro:hasAnyRoles>
-											</h:panelGroup>
-											<h:panelGroup>
-												<p:outputLabel>Atualizado por: </p:outputLabel>
-												<h:outputText id="analiseComercialUsuario"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.analiseComercialUsuario}"
-													style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-											</h:panelGroup>
-											<h:outputText id="analiseComercialData"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.analiseComercialData}"
-												style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
-												<f:convertDateTime locale="pt_BR" />
-												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm"
-													timeZone="GMT-3" />
-											</h:outputText>
-										</h:panelGrid>
-										<h:panelGrid columns="1"
-											style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px; 
-												border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Comentário Jurídico (Esteira)</p:outputLabel>
-											<h:panelGroup>
-												<shiro:lacksRole name="PROFILE_COMENTARIO_JURIDICO">
-													<p:selectBooleanButton id="comentarioJuridicoEsteiraView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoEsteira}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px" disabled="true">
-														<p:ajax update="RecebidoPajulaudoPanel" event="change" />
-													</p:selectBooleanButton>
-													<p:spacer width="50px" height="1px"></p:spacer>
-												</shiro:lacksRole>
-												<shiro:hasAnyRoles
-													name="ROOT,COBRANCA,PRECOBRANCAANALISTA,PROFILE_COMENTARIO_JURIDICO, PROFILE_GERENTE_ANALISE">
-													<p:selectBooleanButton id="comentarioJuridicoEsteira"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoEsteira}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:=60px">
-														<p:ajax update="RecebidoPajulaudoPanel" event="change" />
-													</p:selectBooleanButton>
-												</shiro:hasAnyRoles>
-											</h:panelGroup>
-											<h:panelGroup>
-												<p:outputLabel>Atualizado por: </p:outputLabel>
-												<h:outputText id="comentarioJuridicoEsteiraUsuario"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoEsteiraUsuario}"
-													style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-											</h:panelGroup>
-											<h:outputText id="comentarioJuridicoEsteiraData"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoEsteiraData}"
+											<h:outputText id="pedidoPajuComercialData"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoPajuComercialData}"
 												style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
 												<f:convertDateTime locale="pt_BR" />
 												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
@@ -856,678 +442,1092 @@
 										<h:panelGrid columns="1"
 											style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px; 
 												border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Comentado pelo Jurídico</p:outputLabel>
+											<p:outputLabel styleClass="labelBold">Operacao Paga</p:outputLabel>
 											<h:panelGroup>
-												<shiro:lacksRole name="PROFILE_COMENTARIO_JURIDICO">
-													<p:selectBooleanButton id="comentarioJuridicoInternoView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoInterno}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px" disabled="true">
-														<p:ajax update="RecebidoPajulaudoPanel" event="change" />
-													</p:selectBooleanButton>
-													<p:spacer width="50px" height="1px"></p:spacer>
-												</shiro:lacksRole>
-												<shiro:hasAnyRoles
-													name="ROOT,COBRANCA,PRECOBRANCAANALISTA,PROFILE_COMENTARIO_JURIDICO, PROFILE_GERENTE_ANALISE">
-													<p:selectBooleanButton id="comentarioJuridicoInterno"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoInterno}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:=60px">
-														<p:ajax update="RecebidoPajulaudoPanel" event="change" />
-													</p:selectBooleanButton>
-												</shiro:hasAnyRoles>
+												<p:selectBooleanButton id="operacaoPagaView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.operacaoPaga}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px" disabled="true">
+												</p:selectBooleanButton>
+												<p:spacer width="50px" height="1px"></p:spacer>
+												<p:selectBooleanButton id="operacaoPaga"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.operacaoPaga}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:=60px">
+												</p:selectBooleanButton>
 											</h:panelGroup>
 											<h:panelGroup>
 												<p:outputLabel>Atualizado por: </p:outputLabel>
-												<h:outputText id="comentarioJuridicoInternoUsuario"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoInternoUsuario}"
+												<h:outputText id="operacaoPagaUsuario"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.operacaoPagaUsuario}"
 													style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
 											</h:panelGroup>
-											<h:outputText id="comentarioJuridicoInternoData"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoInternoData}"
+											<h:outputText id="operacaoPagaData"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.operacaoPagaData}"
 												style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
 												<f:convertDateTime locale="pt_BR" />
 												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
 											</h:outputText>
 										</h:panelGrid>
 										<h:panelGrid columns="1"
-											style="background-color: #e4e4e4; width: 250px; height: 110px; 
-											margin-right: 15px; margin-top: 15px; border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Pré Comitê</p:outputLabel>
+											style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px; 
+												border-radius: 5px; padding: 10px;">
+											<p:outputLabel styleClass="labelBold">Pendencia Pagamento</p:outputLabel>
 											<h:panelGroup>
-												<shiro:lacksRole name="COMITECONSULTAR">
-													<p:selectBooleanButton id="preAprovadoComiteView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
-													<p:spacer width="50px" height="1px"></p:spacer>
-												</shiro:lacksRole>
-												<shiro:hasAnyRoles
-													name="ROOT, COMITECONSULTAR, PROFILE_GERENTE_ANALISE">
-													<p:selectBooleanButton id="preAprovadoComite"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:=60px" />
-												</shiro:hasAnyRoles>
+												<p:selectBooleanButton id="pendenciaPagamentoView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaPagamento}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px" disabled="true">
+													<p:ajax update="RecebidoPajulaudoPanel" event="change" />
+												</p:selectBooleanButton>
+												<p:spacer width="50px" height="1px"></p:spacer>
+												<p:selectBooleanButton id="pendenciaPagamento"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaPagamento}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:=60px">
+												</p:selectBooleanButton>
 											</h:panelGroup>
-											<h:panelGroup>
-												<p:outputLabel>Atualizado por: </p:outputLabel>
-												<h:outputText id="preAprovadoComiteUsuario"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComiteUsuario}"
-													style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-											</h:panelGroup>
-											<h:outputText id="preAprovadoComiteData"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComiteData}"
-												style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
-												<f:convertDateTime locale="pt_BR" />
-												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
-											</h:outputText>
 										</h:panelGrid>
+										
+							<h:panelGrid columns="1"
+								style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px; 
+									border-radius: 5px; padding: 10px;">
+								<p:outputLabel styleClass="labelBold">Nota Fiscal Emitida</p:outputLabel>
+								<h:panelGroup>
+									<p:selectBooleanButton id="notaFiscalEmitidaView"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.notaFiscalEmitida}"
+										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+										offIcon="ui-icon-cancel" style="width:60px" disabled="true">
+									</p:selectBooleanButton>
+									<p:spacer width="50px" height="1px"></p:spacer>
+									<p:selectBooleanButton id="notaFiscalEmitida"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.notaFiscalEmitida}"
+										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+										offIcon="ui-icon-cancel" style="width:=60px">
+									</p:selectBooleanButton>
+								</h:panelGroup>
+								<h:panelGroup>
+									<p:outputLabel>Atualizado por: </p:outputLabel>
+									<h:outputText id="notaFiscalEmitidaUsuario"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.notaFiscalEmitidaUsuario}"
+										style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+								</h:panelGroup>
+								<h:outputText id="notaFiscalEmitidaData"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.notaFiscalEmitidaData}"
+									style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+									<f:convertDateTime locale="pt_BR" />
+									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+								</h:outputText>
+							</h:panelGrid>
+							
+							<h:panelGrid columns="1"
+								style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px; 
+									border-radius: 5px; padding: 10px;">
+								<p:outputLabel styleClass="labelBold">Nota Fiscal Paga</p:outputLabel>
+								<h:panelGroup>
+									<p:selectBooleanButton id="notaFiscalPagaView"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.notaFiscalPaga}"
+										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+										offIcon="ui-icon-cancel" style="width:60px" disabled="true">
+									</p:selectBooleanButton>
+									<p:spacer width="50px" height="1px"></p:spacer>
+									<p:selectBooleanButton id="notaFiscalPaga"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.notaFiscalPaga}"
+										onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+										offIcon="ui-icon-cancel" style="width:=60px">
+									</p:selectBooleanButton>
+								</h:panelGroup>
+								<h:panelGroup>
+									<p:outputLabel>Atualizado por: </p:outputLabel>
+									<h:outputText id="notaFiscalPagaUsuario"
+										value="#{contratoCobrancaMB.objetoContratoCobranca.notaFiscalPagaUsuario}"
+										style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+								</h:panelGroup>
+								<h:outputText id="notaFiscalPagaData"
+									value="#{contratoCobrancaMB.objetoContratoCobranca.notaFiscalPagaData}"
+									style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+									<f:convertDateTime locale="pt_BR" />
+									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+								</h:outputText>
+							</h:panelGrid>
+							
+						</h:panelGrid>
+								</shiro:hasAnyRoles>
+		
+								<h:panelGrid columns="5" style="margin-top: 20px;">
 									
-										<h:panelGrid columns="1"
-											style="background-color: #e4e4e4; width: 250px; height: 110px; 
-												margin-right: 15px; margin-top: 15px; border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Documentos Comite prontos</p:outputLabel>
-											<h:panelGroup>
-												<shiro:lacksRole name="PROFILE_ANALISTA_COMITE">
-													<p:selectBooleanButton id="documentosComiteView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.documentosComite}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
-													<p:spacer width="50px" height="1px"></p:spacer>
-												</shiro:lacksRole>
-												<shiro:hasAnyRoles
-													name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">
-													<p:selectBooleanButton id="documentosComite"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.documentosComite}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:=60px">
-													</p:selectBooleanButton>
-												</shiro:hasAnyRoles>
-											</h:panelGroup>
-											<h:panelGroup>
-												<p:outputLabel>Atualizado por: </p:outputLabel>
-												<h:outputText id="documentosComiteUsuario"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.documentosComiteUsuario}"
-													style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-											</h:panelGroup>
-											<h:outputText id="documentosComiteData"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.documentosComiteData}"
-												style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
-												<f:convertDateTime locale="pt_BR" />
-												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
-											</h:outputText>
-										</h:panelGrid>
-										<h:panelGrid columns="1"
-											style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px;
-												border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Aprovado Pelo Comitê</p:outputLabel>
-											<h:panelGroup>
-												<shiro:lacksRole name="COMITEEDITAR">
-													<p:selectBooleanButton id="aprovadoComiteView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.aprovadoComite}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
-													<p:spacer width="50px" height="1px"></p:spacer>
-												</shiro:lacksRole>
-												<shiro:hasAnyRoles
-													name="ROOT, COMITEEDITAR, PROFILE_GERENTE_ANALISE">
-													<p:selectBooleanButton id="aprovadoComite"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.aprovadoComite}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:=60px" />
-												</shiro:hasAnyRoles>
-											</h:panelGroup>
-											<h:panelGroup>
-												<p:outputLabel>Atualizado por: </p:outputLabel>
-												<h:outputText id="aprovadoComiteUsuario"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.aprovadoComiteUsuario}"
-													style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-											</h:panelGroup>
-											<h:outputText id="aprovadoComiteData"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.aprovadoComiteData}"
-												style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
-												<f:convertDateTime locale="pt_BR" />
-												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
-											</h:outputText>
-										</h:panelGrid>
-										<h:panelGrid columns="1"
-											style="background-color: #e4e4e4; width: 250px; height: 110px; 
-												margin-right: 15px; margin-top: 15px; border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Ok Cliente</p:outputLabel>
-											<h:panelGroup>
-												<shiro:lacksRole name="PROFILE_ANALISTA_COMITE">
-													<p:selectBooleanButton id="okClienteView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.okCliente}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
-														<p:spacer width="50px" height="1px"></p:spacer>
-												</shiro:lacksRole>
-												<shiro:hasAnyRoles
-													name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">
-													<p:selectBooleanButton id="okCliente"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.okCliente}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:=60px">
-													</p:selectBooleanButton>
-												</shiro:hasAnyRoles>
-											</h:panelGroup>
-											<h:panelGroup>
-												<p:outputLabel>Atualizado por: </p:outputLabel>
-												<h:outputText id="okClienteUsuario"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.okClienteUsuario}"
-													style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-											</h:panelGroup>
-											<h:outputText id="okClienteData"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.okClienteData}"
-												style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
-												<f:convertDateTime locale="pt_BR" />
-												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
-											</h:outputText>
-										</h:panelGrid>
-										<h:panelGrid columns="1"
-											style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px; 
-												border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Documentos Completos</p:outputLabel>
-											<h:panelGroup>
-												<shiro:lacksRole name="PROFILE_ANALISTA_COMITE">
-													<p:selectBooleanButton id="documentosCompletosView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.documentosCompletos}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
-													<p:spacer width="50px" height="1px"></p:spacer>
-												</shiro:lacksRole>
-												<shiro:hasAnyRoles
-													name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">
-													<p:selectBooleanButton id="documentosCompletos"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.documentosCompletos}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:=60px" />
-												</shiro:hasAnyRoles>
-											</h:panelGroup>
-											<h:panelGroup>
-												<p:outputLabel>Atualizado por: </p:outputLabel>
-												<h:outputText id="documentosCompletosUsuario"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.documentosCompletosUsuario}"
-													style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-											</h:panelGroup>
-											<h:outputText id="documentosCompletosData"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.documentosCompletosData}"
-												style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
-												<f:convertDateTime locale="pt_BR" />
-												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
-											</h:outputText>
-										</h:panelGrid>
-										<h:panelGrid columns="1"
-											style="background-color: #e4e4e4; width: 250px; height: 110px; 
-												margin-right: 15px; margin-top: 15px; border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Certificado Emitido</p:outputLabel>
-											<h:panelGroup>
-												<shiro:lacksRole name="PROFILE_ANALISTA_COMITE">
-													<p:selectBooleanButton id="certificadoEmitidoView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.certificadoEmitido}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
-													<p:spacer width="50px" height="1px"></p:spacer>
-												</shiro:lacksRole>
-												<shiro:hasAnyRoles
-													name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">
-													<p:selectBooleanButton id="certificadoEmitido"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.certificadoEmitido}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:=60px">
-													</p:selectBooleanButton>
-												</shiro:hasAnyRoles>
-											</h:panelGroup>
-											<h:panelGroup>
-												<p:outputLabel>Atualizado por: </p:outputLabel>
-												<h:outputText id="certificadoEmitidoUsuario"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.certificadoEmitidoUsuario}"
-													style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-											</h:panelGroup>
-											<h:outputText id="certificadoEmitidoData"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.certificadoEmitidoData}"
-												style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
-												<f:convertDateTime locale="pt_BR" />
-												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
-											</h:outputText>
-										</h:panelGrid>
-										
-										<h:panelGrid columns="1"
-											style="background-color: #e4e4e4; width: 250px; height: 110px; 
-													margin-right: 15px; margin-top: 15px; border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">CCB Pronta </p:outputLabel>
-											<h:panelGroup>
-												<shiro:lacksRole name="PROFILE_CONTRATO">
-													<p:selectBooleanButton id="ccbProntaView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.ccbPronta}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px" disabled="true">
-														<p:ajax update="Dados" event="change" />
-													</p:selectBooleanButton>
-													<p:spacer width="50px" height="1px"></p:spacer>
-												</shiro:lacksRole>
-												<shiro:hasAnyRoles
-													name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_CONTRATO, PROFILE_GERENTE_ANALISE">
-													<p:selectBooleanButton id="ccbPronta"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.ccbPronta}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:=60px">
-														<p:ajax update="Dados" event="change" />
-													</p:selectBooleanButton>
-											</shiro:hasAnyRoles>	
-											</h:panelGroup>
-											<h:panelGroup>
-												<p:outputLabel>Atualizado por: </p:outputLabel>
-												<h:outputText id="ccbProntaUsuario"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.ccbProntaUsuario}"
-													style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-											</h:panelGroup>
-											<h:outputText id="ccbProntaData"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.ccbProntaData}"
-												style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
-												<f:convertDateTime locale="pt_BR" />
-												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
-											</h:outputText>
-										</h:panelGrid>
-										
-										<h:panelGrid columns="1"
-											style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px;
-												border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Contrato Conferido </p:outputLabel>
-											<h:panelGroup>
-												<shiro:lacksRole name="PROFILE_CONTRATO">
-													<p:selectBooleanButton id="contratoConferidoView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.contratoConferido}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px" disabled="true">
-														<p:ajax update="Dados" event="change" />
-													</p:selectBooleanButton>
-													<p:spacer width="50px" height="1px"></p:spacer>
-												</shiro:lacksRole>
-												<shiro:hasAnyRoles
-													name="ROOT,COBRANCA,PRECOBRANCAANALISTA,PROFILE_CONTRATO, PROFILE_GERENTE_ANALISE">
-													<p:selectBooleanButton id="contratoConferido"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.contratoConferido}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:=60px">
-														<p:ajax update="Dados" event="change" />
-													</p:selectBooleanButton>
-												</shiro:hasAnyRoles>
-											</h:panelGroup>
-											<h:panelGroup>
-												<p:outputLabel>Atualizado por: </p:outputLabel>
-												<h:outputText id="contratoConferidoUsuario"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.contratoConferidoUsuario}"
-													style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-											</h:panelGroup>
-											<h:outputText id="contratoConferidoData"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.contratoConferidoData}"
-												style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
-												<f:convertDateTime locale="pt_BR" />
-												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
-											</h:outputText>
-										</h:panelGrid>
-										<h:panelGrid columns="1"
-											style="background-color: #e4e4e4; width: 250px; height: 110px;
-												margin-right: 15px; margin-top: 15px; border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Aguardando Assinatura</p:outputLabel>
-											<h:panelGroup>
-												<shiro:lacksRole name="PROFILE_CONTRATO">
-													<p:selectBooleanButton id="agAssinaturaView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.agAssinatura}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
-													<p:spacer width="50px" height="1px"></p:spacer>
-												</shiro:lacksRole>
-												<shiro:hasAnyRoles
-													name="ROOT,COBRANCA,PRECOBRANCAANALISTA,PROFILE_CONTRATO, PROFILE_GERENTE_ANALISE">
-													<p:selectBooleanButton id="agAssinatura"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.agAssinatura}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:=60px">
-													</p:selectBooleanButton>
-												</shiro:hasAnyRoles>
-											</h:panelGroup>
-											<h:panelGroup>
-												<p:outputLabel>Atualizado por: </p:outputLabel>
-												<h:outputText id="agAssinaturaUsuario"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.agAssinaturaUsuario}"
-													style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-											</h:panelGroup>
-											<h:outputText id="agAssinaturaData"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.agAssinaturaData}"
-												style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
-												<f:convertDateTime locale="pt_BR" />
-												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
-											</h:outputText>
-										</h:panelGrid>
-										
-										<h:panelGrid columns="1"
-											style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px;
-												border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Precisa de Reanalise?</p:outputLabel>
-											<h:panelGroup>
-												<shiro:lacksRole name="PROFILE_ANALISTA_COMITE">
-													<p:selectBooleanButton id="reanaliseView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.reanalise}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
-													<p:spacer width="50px" height="1px"></p:spacer>
-												</shiro:lacksRole>
-												<shiro:hasAnyRoles
-													name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">
-													<p:selectBooleanButton id="reanalise"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.reanalise}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:=60px" />
-												</shiro:hasAnyRoles>
-											</h:panelGroup>
-										</h:panelGrid>
-										
-										<h:panelGrid columns="1"
-											style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px; 
-												border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Reanalise Pronta</p:outputLabel>
-											<h:panelGroup>
-												<shiro:lacksRole name="PROFILE_ANALISTA_COMITE">
-													<p:selectBooleanButton id="reanaliseProntaView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.reanalisePronta}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
-														<p:spacer width="50px" height="1px"></p:spacer>
-												</shiro:lacksRole>
-												<shiro:hasAnyRoles
-													name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">
-													<p:selectBooleanButton id="reanalisePronta"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.reanalisePronta}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:=60px" />
-												</shiro:hasAnyRoles>
-											</h:panelGroup>
-											<h:panelGroup>
-												<p:outputLabel>Atualizado por: </p:outputLabel>
-												<h:outputText id="reanaliseProntaUsuario"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.reanaliseProntaUsuario}"
-													style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-											</h:panelGroup>
-											<h:outputText id="reanaliseProntaData"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.reanaliseProntaData}"
-												style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
-												<f:convertDateTime locale="pt_BR" />
-												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
-											</h:outputText>
-										</h:panelGrid>
-										
-										<h:panelGrid columns="1"
-											style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px;
-												border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">PAJU Atualizado</p:outputLabel>
-											<h:panelGroup>
-												<shiro:lacksRole name="PROFILE_ANALISTA_COMITE">
-													<p:selectBooleanButton id="pajuAtualizadoView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.pajuAtualizado}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
-													<p:spacer width="50px" height="1px"></p:spacer>
-												</shiro:lacksRole>
-												<shiro:hasAnyRoles
-													name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">
-													<p:selectBooleanButton id="pajuAtualizado"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.pajuAtualizado}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:=60px" />
-												</shiro:hasAnyRoles>
-											</h:panelGroup>
-											<h:panelGroup>
-												<p:outputLabel>Atualizado por: </p:outputLabel>
-												<h:outputText id="pajuAtualizadoUsuario"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.pajuAtualizadoUsuario}"
-													style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-											</h:panelGroup>
-											<h:outputText id="pajuAtualizadoData"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.pajuAtualizadoData}"
-												style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
-												<f:convertDateTime locale="pt_BR" />
-												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
-											</h:outputText>
-										</h:panelGrid>
-			
-										<h:panelGrid columns="1"
-											style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px; 
-												border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Reanalise Jurídico</p:outputLabel>
-											<h:panelGroup>
-												<shiro:lacksRole name="PROFILE_COMENTARIO_JURIDICO">
-													<p:selectBooleanButton id="reanaliseJuridicoView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.reanaliseJuridico}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
-													<p:spacer width="50px" height="1px"></p:spacer>
-												</shiro:lacksRole>
-												<shiro:hasAnyRoles
-													name="ROOT,COBRANCA,PRECOBRANCAANALISTA,	PROFILE_COMENTARIO_JURIDICO, PROFILE_GERENTE_ANALISE">
-													<p:selectBooleanButton id="reanaliseJuridico"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.reanaliseJuridico}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:=60px" />
-												</shiro:hasAnyRoles>
-											</h:panelGroup>
-											<h:panelGroup>
-												<p:outputLabel>Atualizado por: </p:outputLabel>
-												<h:outputText id="reanaliseJuridicoUsuario"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.reanaliseJuridicoUsuario}"
-													style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-											</h:panelGroup>
-											<h:outputText id="reanaliseJuridicoData"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.reanaliseJuridicoData}"
-												style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
-												<f:convertDateTime locale="pt_BR" />
-												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
-											</h:outputText>
-										</h:panelGrid>
-										
-										<h:panelGrid columns="1"
-											style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px; width: 250px; height: 110px;
-												border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Aguardando Envio Cartório</p:outputLabel>
-											<h:panelGroup>
-												<shiro:lacksRole name="PROFILE_CONTRATO">
-													<p:selectBooleanButton id="agEnvioCartorioView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
-													<p:spacer width="50px" height="1px"></p:spacer>
-												</shiro:lacksRole>
-												<shiro:hasAnyRoles
-													name="ROOT,COBRANCA,PRECOBRANCAANALISTA,PROFILE_CONTRATO, PROFILE_GERENTE_ANALISE">
-													<p:selectBooleanButton id="agEnvioCartorio"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:=60px">
-													</p:selectBooleanButton>
-												</shiro:hasAnyRoles>
-											</h:panelGroup>
-											<h:panelGroup>
-												<p:outputLabel>Atualizado por: </p:outputLabel>
-												<h:outputText id="agEnvioCartorioUsuario"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorioUsuario}"
-													style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-											</h:panelGroup>
-											<h:outputText id="agEnvioCartorioData"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorioData}"
-												style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
-												<f:convertDateTime locale="pt_BR" />
-												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
-											</h:outputText>
-										</h:panelGrid>
-										
-										<h:panelGrid columns="1"
-											style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px;
-												border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Tem Pendência Externa?</p:outputLabel>
-											<h:panelGroup>
-												<shiro:lacksRole name="PROFILE_ANALISTA_COMITE">
-													<p:selectBooleanButton id="pendenciaExternaCartorioView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaExternaCartorio}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
-													<p:spacer width="50px" height="1px"></p:spacer>
-												</shiro:lacksRole>
-												<shiro:hasAnyRoles
-													name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">
-													<p:selectBooleanButton id="pendenciaExternaCartorio"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaExternaCartorio}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:=60px" />
-												</shiro:hasAnyRoles>
-											</h:panelGroup>
-										</h:panelGrid>
-										
-										<h:panelGrid columns="1"
-											style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px; 
-												border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Pendência Externa Resolvida</p:outputLabel>
-											<h:panelGroup>
-												<shiro:lacksRole name="PROFILE_ANALISTA_COMITE">
-													<p:selectBooleanButton id="pendenciaResolvidaCartorioView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaResolvidaCartorio}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
-														<p:spacer width="50px" height="1px"></p:spacer>
-												</shiro:lacksRole>
-												<shiro:hasAnyRoles
-													name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">
-													<p:selectBooleanButton id="pendenciaResolvidaCartorio"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaResolvidaCartorio}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:=60px" />
-												</shiro:hasAnyRoles>
-											</h:panelGroup>
-											<h:panelGroup>
-												<p:outputLabel>Atualizado por: </p:outputLabel>
-												<h:outputText id="pendenciaResolvidaCartorioUsuario"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaResolvidaCartorioUsuario}"
-													style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-											</h:panelGroup>
-											<h:outputText id="pendenciaResolvidaCartorioData"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaResolvidaCartorioData}"
-												style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
-												<f:convertDateTime locale="pt_BR" />
-												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
-											</h:outputText>
-										</h:panelGrid>
-										
-										<h:panelGrid columns="1"
-											style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px; 
-												border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Exigências/Pagamentos Resolvidos</p:outputLabel>
-											<h:panelGroup>
-												<shiro:lacksRole name="PROFILE_ANALISTA_COMITE">
-													<p:selectBooleanButton id="resolucaoExigenciaCartorioView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.resolucaoExigenciaCartorio}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
-														<p:spacer width="50px" height="1px"></p:spacer>
-												</shiro:lacksRole>
-												<shiro:hasAnyRoles
-													name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">
-													<p:selectBooleanButton id="resolucaoExigenciaCartorio"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.resolucaoExigenciaCartorio}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:=60px" />
-												</shiro:hasAnyRoles>
-											</h:panelGroup>
-											<h:panelGroup>
-												<p:outputLabel>Atualizado por: </p:outputLabel>
-												<h:outputText id="resolucaoExigenciaCartorioUsuario"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.resolucaoExigenciaCartorioUsuario}"
-													style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-											</h:panelGroup>
-											<h:outputText id="resolucaoExigenciaCartorioData"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.resolucaoExigenciaCartorioData}"
-												style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
-												<f:convertDateTime locale="pt_BR" />
-												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
-											</h:outputText>
-										</h:panelGrid>
-										
-										<h:panelGrid columns="1"
-											style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px; width: 250px; height: 110px;
-												border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Aguardando Registro</p:outputLabel>
-											<h:panelGroup>
-												<shiro:lacksRole name="PROFILE_CONTRATO">
-													<p:selectBooleanButton id="agRegistroView"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.agRegistro}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:60px" disabled="true">
-													</p:selectBooleanButton>
-													<p:spacer width="50px" height="1px"></p:spacer>
-												</shiro:lacksRole>
-												<shiro:hasAnyRoles
-													name="ROOT,COBRANCA,PRECOBRANCAANALISTA,PROFILE_CONTRATO, PROFILE_GERENTE_ANALISE">
-													<p:selectBooleanButton id="agRegistro"
-														value="#{contratoCobrancaMB.objetoContratoCobranca.agRegistro}"
-														onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
-														offIcon="ui-icon-cancel" style="width:=60px">
-													</p:selectBooleanButton>
-												</shiro:hasAnyRoles>
-											</h:panelGroup>
-											<h:panelGroup>
-												<p:outputLabel>Atualizado por: </p:outputLabel>
-												<h:outputText id="agRegistroUsuario"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.agRegistroUsuario}"
-													style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
-											</h:panelGroup>
-											<h:outputText id="agRegistroData"
-												value="#{contratoCobrancaMB.objetoContratoCobranca.agRegistroData}"
-												style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
-												<f:convertDateTime locale="pt_BR" />
-												<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
-											</h:outputText>
-										</h:panelGrid>
+									<h:panelGrid columns="1"
+										style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; 
+											border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Pedido Laudo + Paju Comercial</p:outputLabel>
+										<h:panelGroup>
+											<shiro:lacksRole name="PRECOBRANCA">
+												<p:selectBooleanButton id="pedidoLaudoPajuComercialView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px" disabled="true">
+													<p:ajax update="RecebidoPajulaudoPanel" event="change" />
+												</p:selectBooleanButton>
+												<p:spacer width="50px" height="1px"></p:spacer>
+											</shiro:lacksRole>
+											<shiro:hasAnyRoles name="ROOT, PROFILE_GERENTE_ANALISE">
+												<p:selectBooleanButton id="pedidoLaudoPajuComercial"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercial}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:=60px">
+													<p:ajax update="RecebidoPajulaudoPanel" event="change" />
+												</p:selectBooleanButton>
+											</shiro:hasAnyRoles>
+										</h:panelGroup>
+										<h:panelGroup>
+											<p:outputLabel>Atualizado por: </p:outputLabel>
+											<h:outputText id="pedidoLaudoPajuComercialUsuario"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercialUsuario}"
+												style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+										</h:panelGroup>
+										<h:outputText id="pedidoLaudoPajuComercialData"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoPajuComercialData}"
+											style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+										</h:outputText>
 									</h:panelGrid>
-			
-									<h:panelGrid columns="4"
-										style="margin-top:20px; margin-bottom: 20px;">
-										<h:panelGrid columns="2"
-											style="margin-right: 15px; margin-top: 15px;background-color: #36963c; width: 525px; height: 50; -webkit-border-radius: 5px;
-													-moz-border-radius: 5px;
-													border-radius: 5px; padding: 10px;">
-											<p:outputLabel styleClass="labelBold">Contrato</p:outputLabel>
+									<h:panelGrid columns="1"
+										style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px;
+											border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Pedido Laudo</p:outputLabel>
+										<h:panelGroup>
+											<shiro:lacksRole name="PROFILE_LAUDO">
+												<p:selectBooleanButton id="pedidoLaudoView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudo}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px" disabled="true">
+													<p:ajax update="RecebidoPajulaudoPanel" event="change" />
+												</p:selectBooleanButton>
+												<p:spacer width="50px" height="1px"></p:spacer>
+											</shiro:lacksRole>
 											<shiro:hasAnyRoles
-												name="ROOT,COBRANCA,PRECOBRANCAANALISTA,PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
-										PROFILE_GERENTE_ANALISE, PROFILE_CONTRATO,  
-										PROFILE_COMENTARIO_JURIDICO,  
-										PROFILE_LAUDO">
-												<p:selectOneRadio id="aprovado"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.statusContrato}"
-													layout="responsive" columns="2" style="font-weight: bold;">
-													<f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
-													<f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
-													<f:selectItem itemLabel="Cancelado" itemValue="Cancelado" />
-													<f:selectItem itemLabel="Baixado" itemValue="Baixado" />
-													<f:selectItem itemLabel="Em Análise" itemValue="Em Análise" />
-												</p:selectOneRadio>
+												name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_LAUDO, PROFILE_GERENTE_ANALISE">
+												<p:selectBooleanButton id="pedidoLaudo"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudo}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:=60px">
+													<p:ajax update="RecebidoPajulaudoPanel" event="change" />
+												</p:selectBooleanButton>
 											</shiro:hasAnyRoles>
-											<shiro:hasAnyRoles name="PRECOBRANCA">
-												<p:selectOneRadio id="aprovadoView"
-													value="#{contratoCobrancaMB.objetoContratoCobranca.statusContrato}"
-													layout="responsive" columns="2" style="font-weight: bold;"
-													disabled="true">
-													<f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
-													<f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
-													<f:selectItem itemLabel="Cancelado" itemValue="Cancelado" />
-													<f:selectItem itemLabel="Baixado" itemValue="Baixado" />
-													<f:selectItem itemLabel="Em Análise" itemValue="Em Análise" />
-												</p:selectOneRadio>
-											</shiro:hasAnyRoles>
-										</h:panelGrid>
+										</h:panelGroup>
+										<h:panelGroup>
+											<p:outputLabel>Atualizado por: </p:outputLabel>
+											<h:outputText id="pedidoLaudoUsuario"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoUsuario}"
+												style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+										</h:panelGroup>
+										<h:outputText id="pedidoLaudoData"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.pedidoLaudoData}"
+											style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm"
+												timeZone="GMT-3" />
+										</h:outputText>
 									</h:panelGrid>
-			
-								</p:panel>
-							</shiro:hasAnyRoles>
+									<h:panelGrid columns="1"
+										style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px; width: 250px; height: 110px; 
+											border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Pedido PAJU</p:outputLabel>
+										<h:panelGroup>
+											<shiro:lacksRole name="PROFILE_LAUDO">
+												<p:selectBooleanButton id="pagtoLaudoConfirmadaView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px" disabled="true">
+													<p:ajax update="CheckListInformacoesAdicionais" event="change" />
+												</p:selectBooleanButton>
+												<p:spacer width="50px" height="1px"></p:spacer>
+											</shiro:lacksRole>
+											<shiro:hasAnyRoles
+												name="ROOT,COBRANCA,PRECOBRANCAANALISTA,PROFILE_LAUDO, PROFILE_GERENTE_ANALISE">
+												<p:selectBooleanButton id="pagtoLaudoConfirmada"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmada}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:=60px">
+													<p:ajax update="CheckListInformacoesAdicionais" event="change" />
+												</p:selectBooleanButton>
+											</shiro:hasAnyRoles>
+										</h:panelGroup>
+										<h:panelGroup>
+											<p:outputLabel>Atualizado por: </p:outputLabel>
+											<h:outputText id="pagtoLaudoConfirmadaUsuario"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmadaUsuario}"
+												style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+										</h:panelGroup>
+										<h:outputText id="pagtoLaudoConfirmadaData"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.pagtoLaudoConfirmadaData}"
+											style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+										</h:outputText>
+									</h:panelGrid>
+									<h:panelGrid columns="1"
+										style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px; 
+											border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Pendencia Laudo + Paju</p:outputLabel>
+										<h:panelGroup>
+											<shiro:lacksRole name="PROFILE_LAUDO">
+												<p:selectBooleanButton id="pendenciaLaudoPajuView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaLaudoPaju}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px" disabled="true">
+													<p:ajax update="RecebidoPajulaudoPanel" event="change" />
+												</p:selectBooleanButton>
+												<p:spacer width="50px" height="1px"></p:spacer>
+											</shiro:lacksRole>
+											<shiro:hasAnyRoles
+												name="ROOT,COBRANCA,PRECOBRANCAANALISTA,PROFILE_LAUDO, PROFILE_GERENTE_ANALISE">
+												<p:selectBooleanButton id="pendenciaLaudoPaju"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaLaudoPaju}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:=60px">
+													<p:ajax update="RecebidoPajulaudoPanel" event="change" />
+												</p:selectBooleanButton>
+											</shiro:hasAnyRoles>
+										</h:panelGroup>
+										<h:panelGroup>
+											<p:outputLabel>Atualizado por: </p:outputLabel>
+											<h:outputText id="pendenciaLaudoPajuUsuario"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaLaudoPajuUsuario}"
+												style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+										</h:panelGroup>
+										<h:outputText id="pendenciaLaudoPajuData"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaLaudoPajuData}"
+											style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+										</h:outputText>
+									</h:panelGrid>
+									<h:panelGrid columns="1"
+										style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px;
+											border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Laudo Recebido</p:outputLabel>
+										<h:panelGroup>
+											<shiro:lacksRole name="PROFILE_LAUDO">
+												<p:selectBooleanButton id="laudoRecebidoView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px" disabled="true">
+													<p:ajax update="RecebidoPajulaudoPanel" event="change" />
+												</p:selectBooleanButton>
+												<p:spacer width="50px" height="1px"></p:spacer>
+											</shiro:lacksRole>
+											<shiro:hasAnyRoles
+												name="ROOT,COBRANCA,PRECOBRANCAANALISTA,PROFILE_LAUDO, PROFILE_GERENTE_ANALISE">
+												<p:selectBooleanButton id="laudoRecebido"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebido}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:=60px">
+													<p:ajax update="RecebidoPajulaudoPanel" event="change" />
+												</p:selectBooleanButton>
+											</shiro:hasAnyRoles>
+										</h:panelGroup>
+										<h:panelGroup>
+											<p:outputLabel>Atualizado por: </p:outputLabel>
+											<h:outputText id="laudoRecebidoUsuario"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebidoUsuario}"
+												style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+										</h:panelGroup>
+										<h:outputText id="laudoRecebidoData"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.laudoRecebidoData}"
+											style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+										</h:outputText>
+									</h:panelGrid>
+		
+									<h:panelGrid columns="1"
+										style="background-color: #e4e4e4; width: 250px; height: 110px;
+										 margin-right: 15px; margin-top: 15px; border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">PAJU Gerado</p:outputLabel>
+										<h:panelGroup>
+											<shiro:lacksRole name="PROFILE_LAUDO">
+												<p:selectBooleanButton id="pajurFavoravelView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px" disabled="true">
+													<p:ajax update="RecebidoPajulaudoPanel" event="change" />
+												</p:selectBooleanButton>
+												<p:spacer width="50px" height="1px"></p:spacer>
+											</shiro:lacksRole>
+											<shiro:hasAnyRoles
+												name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_LAUDO, PROFILE_GERENTE_ANALISE">
+												<p:selectBooleanButton id="pajurFavoravel"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:=60px">
+													<p:ajax update="RecebidoPajulaudoPanel" event="change" />
+												</p:selectBooleanButton>
+											</shiro:hasAnyRoles>
+										</h:panelGroup>
+										<h:panelGroup>
+											<p:outputLabel>Atualizado por: </p:outputLabel>
+											<h:outputText id="pajurFavoravelUsuario"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravelUsuario}"
+												style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+										</h:panelGroup>
+										<h:outputText id="pajurFavoravelData"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravelData}"
+											style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+										</h:outputText>
+									</h:panelGrid>
+									<h:panelGrid columns="1"
+										style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px;
+											border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Análise Comercial</p:outputLabel>
+										<h:panelGroup>
+											<shiro:lacksRole name="ROOT">
+												<p:selectBooleanButton id="analiseComercialView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.analiseComercial}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px" disabled="true">
+													<p:ajax update="RecebidoPajulaudoPanel" event="change" />
+												</p:selectBooleanButton>
+												<p:spacer width="50px" height="1px"></p:spacer>
+											</shiro:lacksRole>
+											<shiro:hasAnyRoles name="ROOT, PROFILE_GERENTE_ANALISE">
+												<p:selectBooleanButton id="analiseComercial"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.analiseComercial}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:=60px">
+													<p:ajax update="RecebidoPajulaudoPanel" event="change" />
+												</p:selectBooleanButton>
+											</shiro:hasAnyRoles>
+										</h:panelGroup>
+										<h:panelGroup>
+											<p:outputLabel>Atualizado por: </p:outputLabel>
+											<h:outputText id="analiseComercialUsuario"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.analiseComercialUsuario}"
+												style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+										</h:panelGroup>
+										<h:outputText id="analiseComercialData"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.analiseComercialData}"
+											style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm"
+												timeZone="GMT-3" />
+										</h:outputText>
+									</h:panelGrid>
+									<h:panelGrid columns="1"
+										style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px; 
+											border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Comentário Jurídico (Esteira)</p:outputLabel>
+										<h:panelGroup>
+											<shiro:lacksRole name="PROFILE_COMENTARIO_JURIDICO">
+												<p:selectBooleanButton id="comentarioJuridicoEsteiraView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoEsteira}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px" disabled="true">
+													<p:ajax update="RecebidoPajulaudoPanel" event="change" />
+												</p:selectBooleanButton>
+												<p:spacer width="50px" height="1px"></p:spacer>
+											</shiro:lacksRole>
+											<shiro:hasAnyRoles
+												name="ROOT,COBRANCA,PRECOBRANCAANALISTA,PROFILE_COMENTARIO_JURIDICO, PROFILE_GERENTE_ANALISE">
+												<p:selectBooleanButton id="comentarioJuridicoEsteira"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoEsteira}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:=60px">
+													<p:ajax update="RecebidoPajulaudoPanel" event="change" />
+												</p:selectBooleanButton>
+											</shiro:hasAnyRoles>
+										</h:panelGroup>
+										<h:panelGroup>
+											<p:outputLabel>Atualizado por: </p:outputLabel>
+											<h:outputText id="comentarioJuridicoEsteiraUsuario"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoEsteiraUsuario}"
+												style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+										</h:panelGroup>
+										<h:outputText id="comentarioJuridicoEsteiraData"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoEsteiraData}"
+											style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+										</h:outputText>
+									</h:panelGrid>
+									<h:panelGrid columns="1"
+										style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px; 
+											border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Comentado pelo Jurídico</p:outputLabel>
+										<h:panelGroup>
+											<shiro:lacksRole name="PROFILE_COMENTARIO_JURIDICO">
+												<p:selectBooleanButton id="comentarioJuridicoInternoView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoInterno}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px" disabled="true">
+													<p:ajax update="RecebidoPajulaudoPanel" event="change" />
+												</p:selectBooleanButton>
+												<p:spacer width="50px" height="1px"></p:spacer>
+											</shiro:lacksRole>
+											<shiro:hasAnyRoles
+												name="ROOT,COBRANCA,PRECOBRANCAANALISTA,PROFILE_COMENTARIO_JURIDICO, PROFILE_GERENTE_ANALISE">
+												<p:selectBooleanButton id="comentarioJuridicoInterno"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoInterno}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:=60px">
+													<p:ajax update="RecebidoPajulaudoPanel" event="change" />
+												</p:selectBooleanButton>
+											</shiro:hasAnyRoles>
+										</h:panelGroup>
+										<h:panelGroup>
+											<p:outputLabel>Atualizado por: </p:outputLabel>
+											<h:outputText id="comentarioJuridicoInternoUsuario"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoInternoUsuario}"
+												style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+										</h:panelGroup>
+										<h:outputText id="comentarioJuridicoInternoData"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.comentarioJuridicoInternoData}"
+											style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+										</h:outputText>
+									</h:panelGrid>
+									<h:panelGrid columns="1"
+										style="background-color: #e4e4e4; width: 250px; height: 110px; 
+										margin-right: 15px; margin-top: 15px; border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Pré Comitê</p:outputLabel>
+										<h:panelGroup>
+											<shiro:lacksRole name="COMITECONSULTAR">
+												<p:selectBooleanButton id="preAprovadoComiteView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
+												<p:spacer width="50px" height="1px"></p:spacer>
+											</shiro:lacksRole>
+											<shiro:hasAnyRoles
+												name="ROOT, COMITECONSULTAR, PROFILE_GERENTE_ANALISE">
+												<p:selectBooleanButton id="preAprovadoComite"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComite}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:=60px" />
+											</shiro:hasAnyRoles>
+										</h:panelGroup>
+										<h:panelGroup>
+											<p:outputLabel>Atualizado por: </p:outputLabel>
+											<h:outputText id="preAprovadoComiteUsuario"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComiteUsuario}"
+												style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+										</h:panelGroup>
+										<h:outputText id="preAprovadoComiteData"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.preAprovadoComiteData}"
+											style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+										</h:outputText>
+									</h:panelGrid>
+								
+									<h:panelGrid columns="1"
+										style="background-color: #e4e4e4; width: 250px; height: 110px; 
+											margin-right: 15px; margin-top: 15px; border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Documentos Comite prontos</p:outputLabel>
+										<h:panelGroup>
+											<shiro:lacksRole name="PROFILE_ANALISTA_COMITE">
+												<p:selectBooleanButton id="documentosComiteView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.documentosComite}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
+												<p:spacer width="50px" height="1px"></p:spacer>
+											</shiro:lacksRole>
+											<shiro:hasAnyRoles
+												name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">
+												<p:selectBooleanButton id="documentosComite"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.documentosComite}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:=60px">
+												</p:selectBooleanButton>
+											</shiro:hasAnyRoles>
+										</h:panelGroup>
+										<h:panelGroup>
+											<p:outputLabel>Atualizado por: </p:outputLabel>
+											<h:outputText id="documentosComiteUsuario"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.documentosComiteUsuario}"
+												style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+										</h:panelGroup>
+										<h:outputText id="documentosComiteData"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.documentosComiteData}"
+											style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+										</h:outputText>
+									</h:panelGrid>
+									<h:panelGrid columns="1"
+										style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px;
+											border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Aprovado Pelo Comitê</p:outputLabel>
+										<h:panelGroup>
+											<shiro:lacksRole name="COMITEEDITAR">
+												<p:selectBooleanButton id="aprovadoComiteView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.aprovadoComite}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
+												<p:spacer width="50px" height="1px"></p:spacer>
+											</shiro:lacksRole>
+											<shiro:hasAnyRoles
+												name="ROOT, COMITEEDITAR, PROFILE_GERENTE_ANALISE">
+												<p:selectBooleanButton id="aprovadoComite"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.aprovadoComite}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:=60px" />
+											</shiro:hasAnyRoles>
+										</h:panelGroup>
+										<h:panelGroup>
+											<p:outputLabel>Atualizado por: </p:outputLabel>
+											<h:outputText id="aprovadoComiteUsuario"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.aprovadoComiteUsuario}"
+												style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+										</h:panelGroup>
+										<h:outputText id="aprovadoComiteData"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.aprovadoComiteData}"
+											style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+										</h:outputText>
+									</h:panelGrid>
+									<h:panelGrid columns="1"
+										style="background-color: #e4e4e4; width: 250px; height: 110px; 
+											margin-right: 15px; margin-top: 15px; border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Ok Cliente</p:outputLabel>
+										<h:panelGroup>
+											<shiro:lacksRole name="PROFILE_ANALISTA_COMITE">
+												<p:selectBooleanButton id="okClienteView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.okCliente}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
+													<p:spacer width="50px" height="1px"></p:spacer>
+											</shiro:lacksRole>
+											<shiro:hasAnyRoles
+												name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">
+												<p:selectBooleanButton id="okCliente"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.okCliente}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:=60px">
+												</p:selectBooleanButton>
+											</shiro:hasAnyRoles>
+										</h:panelGroup>
+										<h:panelGroup>
+											<p:outputLabel>Atualizado por: </p:outputLabel>
+											<h:outputText id="okClienteUsuario"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.okClienteUsuario}"
+												style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+										</h:panelGroup>
+										<h:outputText id="okClienteData"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.okClienteData}"
+											style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+										</h:outputText>
+									</h:panelGrid>
+									<h:panelGrid columns="1"
+										style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px; 
+											border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Documentos Completos</p:outputLabel>
+										<h:panelGroup>
+											<shiro:lacksRole name="PROFILE_ANALISTA_COMITE">
+												<p:selectBooleanButton id="documentosCompletosView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.documentosCompletos}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
+												<p:spacer width="50px" height="1px"></p:spacer>
+											</shiro:lacksRole>
+											<shiro:hasAnyRoles
+												name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">
+												<p:selectBooleanButton id="documentosCompletos"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.documentosCompletos}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:=60px" />
+											</shiro:hasAnyRoles>
+										</h:panelGroup>
+										<h:panelGroup>
+											<p:outputLabel>Atualizado por: </p:outputLabel>
+											<h:outputText id="documentosCompletosUsuario"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.documentosCompletosUsuario}"
+												style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+										</h:panelGroup>
+										<h:outputText id="documentosCompletosData"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.documentosCompletosData}"
+											style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+										</h:outputText>
+									</h:panelGrid>
+									<h:panelGrid columns="1"
+										style="background-color: #e4e4e4; width: 250px; height: 110px; 
+											margin-right: 15px; margin-top: 15px; border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Certificado Emitido</p:outputLabel>
+										<h:panelGroup>
+											<shiro:lacksRole name="PROFILE_ANALISTA_COMITE">
+												<p:selectBooleanButton id="certificadoEmitidoView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.certificadoEmitido}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
+												<p:spacer width="50px" height="1px"></p:spacer>
+											</shiro:lacksRole>
+											<shiro:hasAnyRoles
+												name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">
+												<p:selectBooleanButton id="certificadoEmitido"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.certificadoEmitido}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:=60px">
+												</p:selectBooleanButton>
+											</shiro:hasAnyRoles>
+										</h:panelGroup>
+										<h:panelGroup>
+											<p:outputLabel>Atualizado por: </p:outputLabel>
+											<h:outputText id="certificadoEmitidoUsuario"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.certificadoEmitidoUsuario}"
+												style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+										</h:panelGroup>
+										<h:outputText id="certificadoEmitidoData"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.certificadoEmitidoData}"
+											style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+										</h:outputText>
+									</h:panelGrid>
+									
+									<h:panelGrid columns="1"
+										style="background-color: #e4e4e4; width: 250px; height: 110px; 
+												margin-right: 15px; margin-top: 15px; border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">CCB Pronta </p:outputLabel>
+										<h:panelGroup>
+											<shiro:lacksRole name="PROFILE_CONTRATO">
+												<p:selectBooleanButton id="ccbProntaView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.ccbPronta}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px" disabled="true">
+													<p:ajax update="Dados" event="change" />
+												</p:selectBooleanButton>
+												<p:spacer width="50px" height="1px"></p:spacer>
+											</shiro:lacksRole>
+											<shiro:hasAnyRoles
+												name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_CONTRATO, PROFILE_GERENTE_ANALISE">
+												<p:selectBooleanButton id="ccbPronta"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.ccbPronta}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:=60px">
+													<p:ajax update="Dados" event="change" />
+												</p:selectBooleanButton>
+										</shiro:hasAnyRoles>	
+										</h:panelGroup>
+										<h:panelGroup>
+											<p:outputLabel>Atualizado por: </p:outputLabel>
+											<h:outputText id="ccbProntaUsuario"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.ccbProntaUsuario}"
+												style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+										</h:panelGroup>
+										<h:outputText id="ccbProntaData"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.ccbProntaData}"
+											style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+										</h:outputText>
+									</h:panelGrid>
+									
+									<h:panelGrid columns="1"
+										style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px;
+											border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Contrato Conferido </p:outputLabel>
+										<h:panelGroup>
+											<shiro:lacksRole name="PROFILE_CONTRATO">
+												<p:selectBooleanButton id="contratoConferidoView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.contratoConferido}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px" disabled="true">
+													<p:ajax update="Dados" event="change" />
+												</p:selectBooleanButton>
+												<p:spacer width="50px" height="1px"></p:spacer>
+											</shiro:lacksRole>
+											<shiro:hasAnyRoles
+												name="ROOT,COBRANCA,PRECOBRANCAANALISTA,PROFILE_CONTRATO, PROFILE_GERENTE_ANALISE">
+												<p:selectBooleanButton id="contratoConferido"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.contratoConferido}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:=60px">
+													<p:ajax update="Dados" event="change" />
+												</p:selectBooleanButton>
+											</shiro:hasAnyRoles>
+										</h:panelGroup>
+										<h:panelGroup>
+											<p:outputLabel>Atualizado por: </p:outputLabel>
+											<h:outputText id="contratoConferidoUsuario"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.contratoConferidoUsuario}"
+												style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+										</h:panelGroup>
+										<h:outputText id="contratoConferidoData"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.contratoConferidoData}"
+											style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+										</h:outputText>
+									</h:panelGrid>
+									<h:panelGrid columns="1"
+										style="background-color: #e4e4e4; width: 250px; height: 110px;
+											margin-right: 15px; margin-top: 15px; border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Aguardando Assinatura</p:outputLabel>
+										<h:panelGroup>
+											<shiro:lacksRole name="PROFILE_CONTRATO">
+												<p:selectBooleanButton id="agAssinaturaView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.agAssinatura}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
+												<p:spacer width="50px" height="1px"></p:spacer>
+											</shiro:lacksRole>
+											<shiro:hasAnyRoles
+												name="ROOT,COBRANCA,PRECOBRANCAANALISTA,PROFILE_CONTRATO, PROFILE_GERENTE_ANALISE">
+												<p:selectBooleanButton id="agAssinatura"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.agAssinatura}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:=60px">
+												</p:selectBooleanButton>
+											</shiro:hasAnyRoles>
+										</h:panelGroup>
+										<h:panelGroup>
+											<p:outputLabel>Atualizado por: </p:outputLabel>
+											<h:outputText id="agAssinaturaUsuario"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.agAssinaturaUsuario}"
+												style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+										</h:panelGroup>
+										<h:outputText id="agAssinaturaData"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.agAssinaturaData}"
+											style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+										</h:outputText>
+									</h:panelGrid>
+									
+									<h:panelGrid columns="1"
+										style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px;
+											border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Precisa de Reanalise?</p:outputLabel>
+										<h:panelGroup>
+											<shiro:lacksRole name="PROFILE_ANALISTA_COMITE">
+												<p:selectBooleanButton id="reanaliseView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.reanalise}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
+												<p:spacer width="50px" height="1px"></p:spacer>
+											</shiro:lacksRole>
+											<shiro:hasAnyRoles
+												name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">
+												<p:selectBooleanButton id="reanalise"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.reanalise}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:=60px" />
+											</shiro:hasAnyRoles>
+										</h:panelGroup>
+									</h:panelGrid>
+									
+									<h:panelGrid columns="1"
+										style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px; 
+											border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Reanalise Pronta</p:outputLabel>
+										<h:panelGroup>
+											<shiro:lacksRole name="PROFILE_ANALISTA_COMITE">
+												<p:selectBooleanButton id="reanaliseProntaView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.reanalisePronta}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
+													<p:spacer width="50px" height="1px"></p:spacer>
+											</shiro:lacksRole>
+											<shiro:hasAnyRoles
+												name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">
+												<p:selectBooleanButton id="reanalisePronta"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.reanalisePronta}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:=60px" />
+											</shiro:hasAnyRoles>
+										</h:panelGroup>
+										<h:panelGroup>
+											<p:outputLabel>Atualizado por: </p:outputLabel>
+											<h:outputText id="reanaliseProntaUsuario"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.reanaliseProntaUsuario}"
+												style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+										</h:panelGroup>
+										<h:outputText id="reanaliseProntaData"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.reanaliseProntaData}"
+											style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+										</h:outputText>
+									</h:panelGrid>
+									
+									<h:panelGrid columns="1"
+										style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px;
+											border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">PAJU Atualizado</p:outputLabel>
+										<h:panelGroup>
+											<shiro:lacksRole name="PROFILE_ANALISTA_COMITE">
+												<p:selectBooleanButton id="pajuAtualizadoView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.pajuAtualizado}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
+												<p:spacer width="50px" height="1px"></p:spacer>
+											</shiro:lacksRole>
+											<shiro:hasAnyRoles
+												name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">
+												<p:selectBooleanButton id="pajuAtualizado"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.pajuAtualizado}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:=60px" />
+											</shiro:hasAnyRoles>
+										</h:panelGroup>
+										<h:panelGroup>
+											<p:outputLabel>Atualizado por: </p:outputLabel>
+											<h:outputText id="pajuAtualizadoUsuario"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.pajuAtualizadoUsuario}"
+												style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+										</h:panelGroup>
+										<h:outputText id="pajuAtualizadoData"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.pajuAtualizadoData}"
+											style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+										</h:outputText>
+									</h:panelGrid>
+		
+									<h:panelGrid columns="1"
+										style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px; 
+											border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Reanalise Jurídico</p:outputLabel>
+										<h:panelGroup>
+											<shiro:lacksRole name="PROFILE_COMENTARIO_JURIDICO">
+												<p:selectBooleanButton id="reanaliseJuridicoView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.reanaliseJuridico}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
+												<p:spacer width="50px" height="1px"></p:spacer>
+											</shiro:lacksRole>
+											<shiro:hasAnyRoles
+												name="ROOT,COBRANCA,PRECOBRANCAANALISTA,	PROFILE_COMENTARIO_JURIDICO, PROFILE_GERENTE_ANALISE">
+												<p:selectBooleanButton id="reanaliseJuridico"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.reanaliseJuridico}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:=60px" />
+											</shiro:hasAnyRoles>
+										</h:panelGroup>
+										<h:panelGroup>
+											<p:outputLabel>Atualizado por: </p:outputLabel>
+											<h:outputText id="reanaliseJuridicoUsuario"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.reanaliseJuridicoUsuario}"
+												style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+										</h:panelGroup>
+										<h:outputText id="reanaliseJuridicoData"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.reanaliseJuridicoData}"
+											style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+										</h:outputText>
+									</h:panelGrid>
+									
+									<h:panelGrid columns="1"
+										style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px; width: 250px; height: 110px;
+											border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Aguardando Envio Cartório</p:outputLabel>
+										<h:panelGroup>
+											<shiro:lacksRole name="PROFILE_CONTRATO">
+												<p:selectBooleanButton id="agEnvioCartorioView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
+												<p:spacer width="50px" height="1px"></p:spacer>
+											</shiro:lacksRole>
+											<shiro:hasAnyRoles
+												name="ROOT,COBRANCA,PRECOBRANCAANALISTA,PROFILE_CONTRATO, PROFILE_GERENTE_ANALISE">
+												<p:selectBooleanButton id="agEnvioCartorio"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorio}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:=60px">
+												</p:selectBooleanButton>
+											</shiro:hasAnyRoles>
+										</h:panelGroup>
+										<h:panelGroup>
+											<p:outputLabel>Atualizado por: </p:outputLabel>
+											<h:outputText id="agEnvioCartorioUsuario"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorioUsuario}"
+												style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+										</h:panelGroup>
+										<h:outputText id="agEnvioCartorioData"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.agEnvioCartorioData}"
+											style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+										</h:outputText>
+									</h:panelGrid>
+									
+									<h:panelGrid columns="1"
+										style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px;
+											border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Tem Pendência Externa?</p:outputLabel>
+										<h:panelGroup>
+											<shiro:lacksRole name="PROFILE_ANALISTA_COMITE">
+												<p:selectBooleanButton id="pendenciaExternaCartorioView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaExternaCartorio}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
+												<p:spacer width="50px" height="1px"></p:spacer>
+											</shiro:lacksRole>
+											<shiro:hasAnyRoles
+												name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">
+												<p:selectBooleanButton id="pendenciaExternaCartorio"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaExternaCartorio}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:=60px" />
+											</shiro:hasAnyRoles>
+										</h:panelGroup>
+									</h:panelGrid>
+									
+									<h:panelGrid columns="1"
+										style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px; 
+											border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Pendência Externa Resolvida</p:outputLabel>
+										<h:panelGroup>
+											<shiro:lacksRole name="PROFILE_ANALISTA_COMITE">
+												<p:selectBooleanButton id="pendenciaResolvidaCartorioView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaResolvidaCartorio}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
+													<p:spacer width="50px" height="1px"></p:spacer>
+											</shiro:lacksRole>
+											<shiro:hasAnyRoles
+												name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">
+												<p:selectBooleanButton id="pendenciaResolvidaCartorio"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaResolvidaCartorio}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:=60px" />
+											</shiro:hasAnyRoles>
+										</h:panelGroup>
+										<h:panelGroup>
+											<p:outputLabel>Atualizado por: </p:outputLabel>
+											<h:outputText id="pendenciaResolvidaCartorioUsuario"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaResolvidaCartorioUsuario}"
+												style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+										</h:panelGroup>
+										<h:outputText id="pendenciaResolvidaCartorioData"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.pendenciaResolvidaCartorioData}"
+											style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+										</h:outputText>
+									</h:panelGrid>
+									
+									<h:panelGrid columns="1"
+										style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px;width: 250px; height: 110px; 
+											border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Exigências/Pagamentos Resolvidos</p:outputLabel>
+										<h:panelGroup>
+											<shiro:lacksRole name="PROFILE_ANALISTA_COMITE">
+												<p:selectBooleanButton id="resolucaoExigenciaCartorioView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.resolucaoExigenciaCartorio}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px" disabled="true" />
+													<p:spacer width="50px" height="1px"></p:spacer>
+											</shiro:lacksRole>
+											<shiro:hasAnyRoles
+												name="ROOT,COBRANCA,PRECOBRANCAANALISTA, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">
+												<p:selectBooleanButton id="resolucaoExigenciaCartorio"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.resolucaoExigenciaCartorio}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:=60px" />
+											</shiro:hasAnyRoles>
+										</h:panelGroup>
+										<h:panelGroup>
+											<p:outputLabel>Atualizado por: </p:outputLabel>
+											<h:outputText id="resolucaoExigenciaCartorioUsuario"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.resolucaoExigenciaCartorioUsuario}"
+												style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+										</h:panelGroup>
+										<h:outputText id="resolucaoExigenciaCartorioData"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.resolucaoExigenciaCartorioData}"
+											style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+										</h:outputText>
+									</h:panelGrid>
+									
+									<h:panelGrid columns="1"
+										style="background-color: #e4e4e4; margin-right: 15px; margin-top: 15px; width: 250px; height: 110px;
+											border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Aguardando Registro</p:outputLabel>
+										<h:panelGroup>
+											<shiro:lacksRole name="PROFILE_CONTRATO">
+												<p:selectBooleanButton id="agRegistroView"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.agRegistro}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:60px" disabled="true">
+												</p:selectBooleanButton>
+												<p:spacer width="50px" height="1px"></p:spacer>
+											</shiro:lacksRole>
+											<shiro:hasAnyRoles
+												name="ROOT,COBRANCA,PRECOBRANCAANALISTA,PROFILE_CONTRATO, PROFILE_GERENTE_ANALISE">
+												<p:selectBooleanButton id="agRegistro"
+													value="#{contratoCobrancaMB.objetoContratoCobranca.agRegistro}"
+													onLabel="Sim" offLabel="Não" onIcon="ui-icon-check"
+													offIcon="ui-icon-cancel" style="width:=60px">
+												</p:selectBooleanButton>
+											</shiro:hasAnyRoles>
+										</h:panelGroup>
+										<h:panelGroup>
+											<p:outputLabel>Atualizado por: </p:outputLabel>
+											<h:outputText id="agRegistroUsuario"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.agRegistroUsuario}"
+												style="font-weight: bold; font-size: 15px;color: #0672de;padding-top: 20px;" />
+										</h:panelGroup>
+										<h:outputText id="agRegistroData"
+											value="#{contratoCobrancaMB.objetoContratoCobranca.agRegistroData}"
+											style="font-weight: bold;color: #0672de; font-size: 15px;padding-top: 20px;">
+											<f:convertDateTime locale="pt_BR" />
+											<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm" timeZone="GMT-3" />
+										</h:outputText>
+									</h:panelGrid>
+								</h:panelGrid>
+		
+								<h:panelGrid columns="4"
+									style="margin-top:20px; margin-bottom: 20px;">
+									<h:panelGrid columns="2"
+										style="margin-right: 15px; margin-top: 15px;background-color: #36963c; width: 525px; height: 50; -webkit-border-radius: 5px;
+												-moz-border-radius: 5px;
+												border-radius: 5px; padding: 10px;">
+										<p:outputLabel styleClass="labelBold">Contrato</p:outputLabel>
+										<shiro:hasAnyRoles
+											name="ROOT,COBRANCA,PRECOBRANCAANALISTA,PROFILE_ANALISTA_CREDITO, PROFILE_ANALISTA_COMITE, 
+									PROFILE_GERENTE_ANALISE, PROFILE_CONTRATO,  
+									PROFILE_COMENTARIO_JURIDICO,  
+									PROFILE_LAUDO">
+											<p:selectOneRadio id="aprovado"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.statusContrato}"
+												layout="responsive" columns="2" style="font-weight: bold;">
+												<f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
+												<f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
+												<f:selectItem itemLabel="Cancelado" itemValue="Cancelado" />
+												<f:selectItem itemLabel="Baixado" itemValue="Baixado" />
+												<f:selectItem itemLabel="Em Análise" itemValue="Em Análise" />
+											</p:selectOneRadio>
+										</shiro:hasAnyRoles>
+										<shiro:hasAnyRoles name="PRECOBRANCA">
+											<p:selectOneRadio id="aprovadoView"
+												value="#{contratoCobrancaMB.objetoContratoCobranca.statusContrato}"
+												layout="responsive" columns="2" style="font-weight: bold;"
+												disabled="true">
+												<f:selectItem itemLabel="Aprovado" itemValue="Aprovado" />
+												<f:selectItem itemLabel="Reprovado" itemValue="Reprovado" />
+												<f:selectItem itemLabel="Cancelado" itemValue="Cancelado" />
+												<f:selectItem itemLabel="Baixado" itemValue="Baixado" />
+												<f:selectItem itemLabel="Em Análise" itemValue="Em Análise" />
+											</p:selectOneRadio>
+										</shiro:hasAnyRoles>
+									</h:panelGrid>
+								</h:panelGrid>
+								</shiro:hasAnyRoles>
+							</p:panel>
+							
 			
 							<h:panelGroup id="CartorioPanel">
 								<p:panel header="Cartório" style="margin-bottom:10px;"
@@ -2408,6 +2408,8 @@
 											value="#{contratoCobrancaMB.objetoContratoCobranca.dataPajuComentado}"
 											size="100" pattern="dd/MM/yyyy" styleClass="dateTimeField" />
 									</h:panelGrid>
+									<p:outputLabel value="Contem Segredo de Justiça?" styleClass="labelBold" />
+									<p:selectBooleanCheckbox id="contemSegredoJustica" value="#{contratoCobrancaMB.objetoContratoCobranca.contemSegredoJustica}" />
 									<h:panelGrid columns="2"
 										rendered="#{contratoCobrancaMB.objetoContratoCobranca.pajurFavoravel == true}">
 										<p:outputLabel value="Valor Total Processos:"
@@ -2600,7 +2602,7 @@
 											</shiro:lacksRole>
 			
 											<shiro:hasAnyRoles
-												name="ROOT, PRECOBRANCAANALISTA, PROFILE_AVALIADOR_IMOVEL, PROFILE_LAUDO, PROFILE_GERENTE_ANALISE">
+												name="ROOT, PRECOBRANCAANALISTA, PROFILE_LAUDO, PROFILE_GERENTE_ANALISE">
 												<p:outputLabel for="dataVistoria"
 													value="Data Vistoria Imóvel: " styleClass="labelBold" />
 												<p:calendar id="dataVistoria" showOn="button"
@@ -2616,7 +2618,7 @@
 												style="FONT-SIZE: 10pt;width:300px;" />
 			
 											<shiro:hasAnyRoles
-												name="ROOT, USER_GALACHE, AVALIADORIMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_AVALIADOR_IMOVEL_GALACHE">
+												name="ROOT, USER_GALACHE, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_AVALIADOR_IMOVEL_GALACHE">
 												<p:outputLabel for="avaliacaoEngenharia"
 													value="Avaliação Engenharia: " styleClass="labelBold" />
 												<p:selectOneMenu id="avaliacaoEngenharia"
@@ -2639,15 +2641,15 @@
 													<p:spacer width="10px"></p:spacer>
 			
 													<shiro:hasAnyRoles
-														name="ROOT,PRECOBRANCAANALISTA,PRECOBRANCA, PROFILE_AVALIADOR_IMOVEL, PROFILE_LAUDO, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">
+														name="ROOT,PRECOBRANCAANALISTA,PRECOBRANCA, PROFILE_LAUDO, PROFILE_ANALISTA_COMITE, PROFILE_GERENTE_ANALISE">
 														<p:commandButton icon="ui-icon-trash"
 															action="#{contratoCobrancaMB.removeDataVistoria(data)}"
 															update="form:CheckListInformacoesAdicionais" />
 													</shiro:hasAnyRoles>
 			
 													<shiro:hasAnyRoles
-														name="ROOT, USER_GALACHE, AVALIADORIMOVEL, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_AVALIADOR_IMOVEL_GALACHE, PROFILE_GERENTE_ANALISE,
-													PRECOBRANCAANALISTA,PRECOBRANCA, PROFILE_AVALIADOR_IMOVEL, PROFILE_LAUDO, PROFILE_ANALISTA_COMITE">
+														name="ROOT, USER_GALACHE, PROFILE_AVALIADOR_IMOVEL_COMPASS, PROFILE_AVALIADOR_IMOVEL_GALACHE, PROFILE_GERENTE_ANALISE,
+													PRECOBRANCAANALISTA,PRECOBRANCA, PROFILE_LAUDO, PROFILE_ANALISTA_COMITE">
 														<p:commandButton icon="ui-icon-check"
 															rendered="#{contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria == null 
 															|| contratoCobrancaMB.objetoContratoCobranca.dataPrevistaVistoria == ''}"
@@ -4001,7 +4003,7 @@
 			
 									<f:facet name="header"> Contas a Pagar 
 										<p:outputLabel value="" />
-										<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR">
+										<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR, PROFILE_GERENTE_ANALISE">
 											<p:selectBooleanButton
 												value="#{contratoCobrancaMB.addContasPagar}"
 												onLabel="Adicionar Conta" offLabel="Adicionar Conta"
@@ -4149,7 +4151,7 @@
 												style="FONT-SIZE: 10pt;width:100px;" />
 										</p:column>
 			
-										<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR">
+										<shiro:hasAnyRoles name="ROOT, ADMINISTRADOR, PROFILE_GERENTE_ANALISE">
 											<p:column style="text-align: center;width:260px;" headerText="">
 												<p:commandButton value="Editar" icon="ui-icon-pencil"
 													action="#{contratoCobrancaMB.editarConta(contas)}" ajax="true"
@@ -5134,7 +5136,7 @@
 								cancelLabel="Cancelar"
 								fileUploadListener="#{contratoCobrancaMB.handleFileJuridicoUpload}"
 								mode="advanced" dragDropSupport="true"
-								update="ArquivosJuridicoSalvos msgArquivo" />
+								update="ArquivosJuridicoSalvos msgArquivo form:contemSegredoJustica" />
 						</h:panelGrid>
 					</p:panel>
 

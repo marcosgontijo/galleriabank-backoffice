@@ -52,7 +52,7 @@ public class UsuarioMB {
 	private Responsavel selectedResponsaveis[];
 	private List<Responsavel> responsaveis;
 	private List<UserPerfil> perfil;
-	Optional<UserPerfil> userPerfilPublico;
+	Optional<UserPerfil> userSemPerfil;
 
 	/**
 	 * Construtor.
@@ -92,16 +92,16 @@ public class UsuarioMB {
 			UserPerfilDao userPerfilDao = new UserPerfilDao();
 			perfil = userPerfilDao.findAll().stream().sorted(Comparator.comparing(UserPerfil::getId))
 					.collect(Collectors.toList());
-			userPerfilPublico = perfil.stream().filter(p -> p.getId() == 1000l).findFirst();
+			userSemPerfil = perfil.stream().filter(p -> p.getId() == -1000).findFirst();
 		}
 	}
 
 	public String clearFields() {
 		objetoUsuario = new User();
 		
-		if (userPerfilPublico == null)
+		if (userSemPerfil == null)
 			carregaListaPerfil();
-		objetoUsuario.setUserPerfil(userPerfilPublico.get());
+		objetoUsuario.setUserPerfil(userSemPerfil.get());
 		
 		this.tituloPainel = "Adicionar";
 
@@ -164,6 +164,16 @@ public class UsuarioMB {
 			GroupDao gDao = new GroupDao();
 			List<GroupAdm> gAdm = new ArrayList<GroupAdm>();
 			List<GroupAdm> gAdmAux = new ArrayList<GroupAdm>();
+			
+			gAdm = gDao.findByFilter("acronym", "INTERNO");
+			if (!CommonsUtil.semValor(gAdm) && objetoUsuario.isUserInterno()) {
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null && objetoUsuario.getGroupList().contains(gAdm)) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}
+			}
+			
 			gAdm = gDao.findByFilter("acronym", "ROOT");
 			if (objetoUsuario.isAdministrador()) {
 				gAdmAux.add(gAdm.get(0));
@@ -560,8 +570,14 @@ public class UsuarioMB {
 				}
 			}
 			
-			
-
+			gAdm = gDao.findByFilter("acronym", "PROFILE_JURIDICO_COBRANCA");
+			if (objetoUsuario.isProfileJuridicoCobranca()) {
+				gAdmAux.add(gAdm.get(0));
+			} else {
+				if (objetoUsuario.getGroupList() != null) {
+					objetoUsuario.getGroupList().remove(gAdm);
+				}
+			}
 
 			if (!objetoUsuario.isUserInvestidor() && !objetoUsuario.isUserPreContrato()) {
 				objetoUsuario.setCodigoResponsavel(null);
@@ -726,9 +742,9 @@ public class UsuarioMB {
 	 */
 	public void setObjetoUsuario(User objetoUsuario) {
 		if (CommonsUtil.semValor(objetoUsuario.getUserPerfil())) {
-			if (userPerfilPublico == null)
+			if (userSemPerfil == null)
 				carregaListaPerfil();
-			objetoUsuario.setUserPerfil(userPerfilPublico.get());
+			objetoUsuario.setUserPerfil(userSemPerfil.get());
 		}
 		this.objetoUsuario = objetoUsuario;
 	}

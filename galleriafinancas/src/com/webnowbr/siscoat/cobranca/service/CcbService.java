@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
 import javax.imageio.ImageIO;
@@ -682,7 +683,9 @@ public class CcbService {
 				valorPorExtenso.setNumber(objetoCcb.getObjetoContratoCobranca().getImovel().getValorLeilao());
 				textoLeilao = textoLeilao + " (" + valorPorExtenso.toString() + "); ";
 				
-				for(ImovelCobrancaAdicionais imovelAdicional : objetoCcb.getObjetoContratoCobranca().getListaImoveis()) {
+				for(ImovelCobrancaAdicionais imovelAdicional : objetoCcb.getObjetoContratoCobranca().getListaImoveis().stream() //
+						.filter(i -> !CommonsUtil.mesmoValor("pre-laudo", i.getTipoAnalise()))
+						.collect(Collectors.toList())) {
 					textoLeilao = textoLeilao + imovelAdicional.getImovel().getNumeroMatricula() + ": ";
 					textoLeilao = textoLeilao + CommonsUtil.formataValorMonetarioCci(imovelAdicional.getImovel().getValorLeilao(), "R$ ");
 					valorPorExtenso.setNumber(imovelAdicional.getImovel().getValorLeilao());
@@ -708,7 +711,9 @@ public class CcbService {
 				valorPorExtenso.setNumber(objetoCcb.getObjetoContratoCobranca().getValorCreditoImovelPrincipal());
 				textoCredito = textoCredito + " (" + valorPorExtenso.toString() + "); ";
 				
-				for(ImovelCobrancaAdicionais imovelAdicional : objetoCcb.getObjetoContratoCobranca().getListaImoveis()) {
+				for(ImovelCobrancaAdicionais imovelAdicional : objetoCcb.getObjetoContratoCobranca().getListaImoveis().stream() //
+						.filter(i -> !CommonsUtil.mesmoValor("pre-laudo", i.getTipoAnalise()))
+						.collect(Collectors.toList())) {
 					textoCredito = textoCredito + imovelAdicional.getImovel().getNumeroMatricula() + ": ";
 					textoCredito = textoCredito + CommonsUtil.formataValorMonetarioCci(imovelAdicional.getValorCredito(), "R$ ");
 					valorPorExtenso.setNumber(imovelAdicional.getValorCredito());
@@ -726,9 +731,12 @@ public class CcbService {
 		}
 		runMatriculas.getText(0);
 		String textoMatriculas = objetoCcb.getNumeroImovel();
-		if(objetoCcb.getObjetoContratoCobranca().getListaImoveis().size() > 0) {
-			for(ImovelCobrancaAdicionais imovelAdicional : objetoCcb.getObjetoContratoCobranca().getListaImoveis()) {
-				if(!CommonsUtil.semValor(imovelAdicional.getImovel().getNumeroMatricula()))
+		if (objetoCcb.getObjetoContratoCobranca().getListaImoveis().size() > 0) {
+			for (ImovelCobrancaAdicionais imovelAdicional : objetoCcb.getObjetoContratoCobranca().getListaImoveis() //
+					.stream() //
+					.filter(i -> !CommonsUtil.mesmoValor("pre-laudo", i.getTipoAnalise()))
+					.collect(Collectors.toList())) {
+				if (!CommonsUtil.semValor(imovelAdicional.getImovel().getNumeroMatricula()))
 					textoMatriculas = textoMatriculas + " / " + imovelAdicional.getImovel().getNumeroMatricula();
 			}
 		}
@@ -742,7 +750,10 @@ public class CcbService {
 		runInscircao.getText(0);
 		String textoInscricao = objetoCcb.getInscricaoMunicipal();
 		if(objetoCcb.getObjetoContratoCobranca().getListaImoveis().size() > 0) {
-			for(ImovelCobrancaAdicionais imovelAdicional : objetoCcb.getObjetoContratoCobranca().getListaImoveis()) {
+			for(ImovelCobrancaAdicionais imovelAdicional : objetoCcb.getObjetoContratoCobranca().getListaImoveis()
+					.stream() //
+					.filter(i -> !CommonsUtil.mesmoValor("pre-laudo", i.getTipoAnalise()))
+					.collect(Collectors.toList())) {
 				if(!CommonsUtil.semValor(imovelAdicional.getImovel().getInscricaoMunicipal()))
 					textoInscricao = textoInscricao + " / " + imovelAdicional.getImovel().getInscricaoMunicipal();
 			}
@@ -757,7 +768,7 @@ public class CcbService {
 			XWPFRun run2;
 			for (CcbParticipantes participante : objetoCcb.getListaParticipantes()) {				
 				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "TERCEIRO GARANTIDOR")) {
-					objetoCcb.setTerceiroGarantidor(true);
+					//objetoCcb.setTerceiroGarantidor(true);
 					participante.setTipoParticipante("DEVEDOR FIDUCIANTE");
 				}
 			}
@@ -1311,7 +1322,7 @@ public class CcbService {
 			List<CcbParticipantes> segurados = new ArrayList<CcbParticipantes>();
 			for (CcbParticipantes participante : objetoCcb.getListaParticipantes()) {				
 				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "TERCEIRO GARANTIDOR")) {
-					objetoCcb.setTerceiroGarantidor(true);
+					//objetoCcb.setTerceiroGarantidor(true);
 					participante.setTipoParticipante("DEVEDOR FIDUCIANTE");
 					segurados.add(participante);
 				}
@@ -1402,7 +1413,8 @@ public class CcbService {
 			iParticipante = 0;
 			for (CcbParticipantes participante : objetoCcb.getListaParticipantes()) {		
 				
-				if (CommonsUtil.mesmoValor(participante.getTipoOriginal(), "EMITENTE")) {
+				if (CommonsUtil.mesmoValor(participante.getTipoOriginal(), "EMITENTE")
+						|| CommonsUtil.mesmoValor(participante.getTipoOriginal(), "Vendedor")) {
 					if(CommonsUtil.semValor(objetoCcb.getNomeEmitente())) {
 						objetoCcb.setNomeEmitente(participante.getPessoa().getNome());
 					}
@@ -1997,7 +2009,7 @@ public class CcbService {
 			XWPFDocument document;
 			for (CcbParticipantes participante : objetoCcb.getListaParticipantes()) {				
 				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "TERCEIRO GARANTIDOR")) {
-					objetoCcb.setTerceiroGarantidor(true);
+					//objetoCcb.setTerceiroGarantidor(true);
 				}
 			}
 			
@@ -2291,7 +2303,7 @@ public class CcbService {
 			XWPFDocument document;
 			for (CcbParticipantes participante : objetoCcb.getListaParticipantes()) {				
 				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "TERCEIRO GARANTIDOR")) {
-					objetoCcb.setTerceiroGarantidor(true);
+					//objetoCcb.setTerceiroGarantidor(true);
 				}
 			}
 			
@@ -2385,7 +2397,7 @@ public class CcbService {
 			XWPFDocument document;
 			for (CcbParticipantes participante : objetoCcb.getListaParticipantes()) {				
 				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "TERCEIRO GARANTIDOR")) {
-					objetoCcb.setTerceiroGarantidor(true);
+					//objetoCcb.setTerceiroGarantidor(true);
 				}
 			}	
 			document = new XWPFDocument(getClass().getResourceAsStream("/resource/EndossosEmPretoGalleria.docx"));			
@@ -4498,6 +4510,7 @@ public class CcbService {
 		String nacionalidade = null;
 		String estadoCivilStr = "";
 		String conjugeStr = "";
+		String dtNascimento = "";
 		PagadorRecebedor pessoa = participante.getPessoa();
 		
 		if(participante.isFeminino()) {
@@ -4552,9 +4565,12 @@ public class CcbService {
 			rgCnhString = "CNH";
 		}
 		
+		if(!CommonsUtil.semValor(pessoa.getDtNascimento())) {
+			dtNascimento = "nascido em " + CommonsUtil.formataData(pessoa.getDtNascimento()) + ", ";
+		}
 		
-		run2.setText( filho + " de " + pessoa.getNomeMae() + " e " + pessoa.getNomePai() + ", "
-				+ nacionalidade + ", "+ pessoa.getAtividade() + ", "+ estadoCivilStr 
+		run2.setText(filho + " de " + pessoa.getNomeMae() + " e " + pessoa.getNomePai() + ", "
+				+ nacionalidade + ", " + dtNascimento + pessoa.getAtividade() + ", "+ estadoCivilStr 
 				+ conjugeStr + ","
 				+ " portador(a) da Cédula de Identidade " + rgCnhString + " nº "+ pessoa.getRg() + " " + pessoa.getOrgaoEmissorRG() + ","
 				+ " inscrito(a) no CPF/MF sob o nº "+ pessoa.getCpf() +", endereço eletrônico: "+ pessoa.getEmail() +","
@@ -4962,7 +4978,7 @@ public class CcbService {
 				}
 				
 				if (CommonsUtil.mesmoValor(participante.getTipoParticipante(), "TERCEIRO GARANTIDOR")) {
-					objetoCcb.setTerceiroGarantidor(true);
+					//objetoCcb.setTerceiroGarantidor(true);
 				}
 
 				iParticipante++;
