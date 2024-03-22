@@ -23903,7 +23903,7 @@ public class ContratoCobrancaMB {
 					contratoCobrancaDetalhesParcial.setDataVencimento(parcelasBoleto.getDataVencimento());
 					contratoCobrancaDetalhesParcial.setVlrParcela(parcelasBoleto.getVlrParcelaAtualizada());
 					contratoCobrancaDetalhesParcial.setDataPagamentoGalleria(dataPagamento.getTime());
-					contratoCobrancaDetalhesParcial.setVlrRecebido(this.vlrRecebido);
+					contratoCobrancaDetalhesParcial.setVlrRecebido(parcelasBoleto.getVlrBoletoKobana());
 
 					// TODO SOMAR BAIXAS PARCIAIS
 					for (QuitacaoParcelasPDF parcelaPresente : this.quitacaoPDF.getParcelas()) {
@@ -23912,7 +23912,7 @@ public class ContratoCobrancaMB {
 							BigDecimal totalBaixas = getTotalParcelasBaixadas(
 									parcelasBoleto.getListContratoCobrancaDetalhesParcial());
 							// adiciona valor baixado do boleto
-							totalBaixas = totalBaixas.add(this.vlrRecebido);
+							totalBaixas = totalBaixas.add(parcelasBoleto.getVlrBoletoKobana());
 							// se não considerar Tx Adm descontar valor
 							BigDecimal valorParcelaPresente = BigDecimal.ZERO;
 							valorParcelaPresente = parcelaPresente.getValorPresenteParcela();

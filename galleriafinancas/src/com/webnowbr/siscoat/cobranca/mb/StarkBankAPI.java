@@ -1565,6 +1565,12 @@ public class StarkBankAPI{
 	    	//data.put("tags", new String[]{"daenerys", "invoice/1234"});
 	    	//data.put("rules", rules);
 	    	
+	    	if (tipoContaBancaria != null) {
+	    		if (!tipoContaBancaria.equals("") && tipoContaBancaria.equals("Conta Poupança")) {
+	    			data.put("accountType", "savings");
+	    		}
+	    	}
+	    	
 	    	System.out.println("Payment | " + "PagamentoPIXDadosBancarios-" + DateUtil.todayInMilli());
 	    	System.out.println("Payment | " + data);
 	    	
