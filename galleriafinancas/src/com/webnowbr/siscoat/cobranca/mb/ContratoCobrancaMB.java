@@ -51,11 +51,13 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.poi.ss.formula.functions.FinanceLib;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
@@ -890,7 +892,7 @@ public class ContratoCobrancaMB {
 	private List<DocumentoAnalise> docList = new ArrayList<DocumentoAnalise>();
 	
 	// Lista de imóveis adicionais referentes ao contrato cobranca
-	private Set<ImovelCobranca> listSolicitacaoPreLaudoImoveis;
+	private Set<String> listSolicitacaoPreLaudoImoveis;
 	private List<ImovelCobranca> listTodosImoveisContrato;
 	private List<ImovelCobranca> listPreLaudoImoveisRelac;
 	
@@ -951,12 +953,22 @@ public class ContratoCobrancaMB {
 	}
 
 	public void salvaCartorio() {
+
 		User usuarioLogado = getUsuarioLogado();
 		CartorioDao dao = new CartorioDao();
 
 		if (objetoCartorio.getStatus() == null) {
 			objetoCartorio.setStatus("Enviado Para cartório");
 		}
+		List<String> statusImoveEstoque = new ArrayList<String>(Arrays.asList("Consolidação", "Consolidado",
+				"Leilão em andamento", "Leilão Positivo", "Leilão negativo", "Vendido", "Estoque/Reintegração",
+				"Estoque/Alugado", "Estoque/Alugado", "Pendente Decisão judicial"));
+		if (!CommonsUtil.semValor(this.objetoContratoCobranca.getImovel())
+				&& CommonsUtil.semValor(this.objetoContratoCobranca.getImovel().getImovelEstoque())
+				&& statusImoveEstoque.contains(objetoCartorio.getStatus())) {
+			cadastraImovel();
+		}
+
 		if (objetoCartorio.getDataStatus() == null) {
 			objetoCartorio.setDataStatus(DateUtil.getDataHoje());
 		}
@@ -1121,6 +1133,7 @@ public class ContratoCobrancaMB {
 		filesInterno = new ArrayList<FileUploaded>();
 		filesFaltante = new ArrayList<FileUploaded>();
 		filesJuridico = new ArrayList<FileUploaded>();
+		filesPreLaudo = new ArrayList<FileUploaded>();
 		filesNotaFiscal = new ArrayList<FileUploaded>();
 		filesComite = new ArrayList<FileUploaded>();
 
@@ -1829,6 +1842,7 @@ public class ContratoCobrancaMB {
 		filesInterno = new ArrayList<FileUploaded>();
 		filesFaltante = new ArrayList<FileUploaded>();
 		filesJuridico = new ArrayList<FileUploaded>();
+		filesPreLaudo = new ArrayList<FileUploaded>();
 		filesNotaFiscal = new ArrayList<FileUploaded>();
 		filesComite = new ArrayList<FileUploaded>();
 		this.hasBaixaParcial = false;
@@ -1922,6 +1936,7 @@ public class ContratoCobrancaMB {
 		filesInterno = new ArrayList<FileUploaded>();
 		filesFaltante = new ArrayList<FileUploaded>();
 		filesJuridico = new ArrayList<FileUploaded>();
+		filesPreLaudo = new ArrayList<FileUploaded>();
 		filesComite = new ArrayList<FileUploaded>();
 		filesNotaFiscal = new ArrayList<FileUploaded>();
 
@@ -3890,10 +3905,8 @@ public class ContratoCobrancaMB {
 				
 				ImovelCobrancaDao imovelDao = new ImovelCobrancaDao();
 				
-				//VOLTA AQUI
-				
-				for(Object imovelObj: this.listSolicitacaoPreLaudoImoveis) {
-					Long idImovel = Long.parseLong(imovelObj.toString());
+				for(String imovelObj: this.listSolicitacaoPreLaudoImoveis) {
+					Long idImovel = Long.parseLong(imovelObj);
 					ImovelCobranca imovel = new ImovelCobranca();
 					imovel = imovelDao.findById(idImovel);
 					
@@ -7426,6 +7439,7 @@ public class ContratoCobrancaMB {
 		filesInterno = new ArrayList<FileUploaded>();
 		filesFaltante = new ArrayList<FileUploaded>();
 		filesJuridico = new ArrayList<FileUploaded>();
+		filesPreLaudo = new ArrayList<FileUploaded>();
 		filesNotaFiscal = new ArrayList<FileUploaded>();
 		filesComite = new ArrayList<FileUploaded>();
 		this.files = new ArrayList<FileUploaded>();
@@ -7497,6 +7511,7 @@ public class ContratoCobrancaMB {
 		filesInterno = new ArrayList<FileUploaded>();
 		filesFaltante = new ArrayList<FileUploaded>();
 		filesJuridico = new ArrayList<FileUploaded>();
+		filesPreLaudo = new ArrayList<FileUploaded>();
 		filesComite = new ArrayList<FileUploaded>();
 		filesNotaFiscal = new ArrayList<FileUploaded>();
 
@@ -9397,6 +9412,7 @@ public class ContratoCobrancaMB {
 		}
 		cadastraImovel();
 	}
+	
 	public void cadastraImovel() {
 		ImovelEstoqueMB imovelMB = new ImovelEstoqueMB();
 		imovelMB.setObjetoContratoCobranca(objetoContratoCobranca);
@@ -9905,25 +9921,57 @@ public class ContratoCobrancaMB {
 
 	public String clearFieldsDetalhesPendentes() {
 
+		listaArquivosAnaliseDocumentos();
+		this.restricaoOperacao = new ArrayList<>();
+		this.restricaoImovel = new ArrayList<>();
+		this.preAprovadoPendencia = new ArrayList<>();
+
 		this.objetoContratoCobranca = getContratoById(this.objetoContratoCobranca.getId());
 		this.objetoImovelCobranca = this.objetoContratoCobranca.getImovel();
 		this.objetoPagadorRecebedor = this.objetoContratoCobranca.getPagador();
-
 		this.tituloPainel = "Editar";
+
+		listaRestricoesPessoas();
+		listaRestricoesImovel();
 
 		this.valorPresenteParcela = BigDecimal.ZERO;
 
 		listaTodasSubpastas();
-
 		this.objetoContratoCobranca.setContaPagarValorTotal(calcularValorTotalContasPagar());
 
-		this.tituloTelaConsultaPreStatus = "PreContratos";
-
-		getIndexStepContrato();
-
 		loadLovs();
-
 		loadSelectedLovsPendentes();
+		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+		this.contratosPagadorAnalisado = cDao.getContratosDoPagador(this.objetoContratoCobranca);
+		this.contratosImovelAnalisado = cDao.getContratosDoImovel(this.objetoContratoCobranca);
+		contratosLaudo = "";
+		if (CommonsUtil.mesmoValor(this.tituloTelaConsultaPreStatus, "Pedir Laudo")) {
+			for (ContratoCobranca contratoImovel : contratosImovelAnalisado) {
+				if (contratoImovel.isLaudoRecebido()) {
+					if (CommonsUtil.semValor(contratosLaudo)) {
+						contratosLaudo = "Operações com pedido de laudo: ";
+					}
+					contratosLaudo = contratosLaudo + contratoImovel.getNumeroContrato() + "; ";
+				}
+			}
+		}
+
+		if (contratosPagadorAnalisado.size() > 0) {
+			for (ContratosPagadorAnalisadoVO contratosPagadorAnalisadoVO : contratosPagadorAnalisado) {
+//				for (ContratoCobranca contratoCobranca : contratosPagadorAnalisadoVO.getContratosPagadorAnalisado()) {
+//				contratosPagadorAnalisadoVO.setContratosPagadorAnalisado(
+				populaStatus(contratosPagadorAnalisadoVO.getContratosPagadorAnalisado());
+//				}
+			}
+			PrimeFaces current = PrimeFaces.current();
+			current.executeScript("PF('listaContratosPagador').show();");
+		}
+
+		if (contratosImovelAnalisado.size() > 0) {
+			this.contratosImovelAnalisado = populaStatus(contratosImovelAnalisado);
+			PrimeFaces current = PrimeFaces.current();
+			current.executeScript("PF('listaContratosImovel').show();");
+		}
 
 		if (this.objetoContratoCobranca.getPagador() != null) {
 			if (this.objetoContratoCobranca.getPagador().getCnpj() != null
@@ -9934,27 +9982,25 @@ public class ContratoCobrancaMB {
 			}
 		}
 
-		this.seguradoSelecionado = new Segurado();
-		this.seguradoSelecionado.setPessoa(new PagadorRecebedor());
-		this.socioSelecionado = new PagadorRecebedorSocio();
-		this.socioSelecionado.setPessoa(new PagadorRecebedor());
-		this.pagadorSecundarioSelecionado = new PagadorRecebedorAdicionais();
-		this.pagadorSecundarioSelecionado.setPessoa(new PagadorRecebedor());
-		this.addSegurador = false;
-		this.addSocio = false;
-		this.addPagador = false;
-		this.mostrarTodosProcessos = false;
+		// permissao para editar inicio analise
+		if (loginBean != null) {
+			User usuarioLogado = new User();
+			UserDao u = new UserDao();
+			usuarioLogado = u.findByFilter("login", loginBean.getUsername()).get(0);
 
-		this.objetoAnaliseComite = new AnaliseComite();
-		this.objetoContratoCobranca.setQtdeVotosAprovadosComite(BigInteger.ZERO);
-		this.objetoContratoCobranca.setQtdeVotosReprovadosComite(BigInteger.ZERO);
+			if (CommonsUtil.mesmoValor(usuarioLogado.getId(), (long) 778) || usuarioLogado.isAdministrador()
+					|| CommonsUtil.mesmoValor(usuarioLogado.getId(), (long) 210)) {
+				gerenciaStatus = true;
+			} else {
+				gerenciaStatus = false;
+			}
+		}
 
 		this.qtdeParcelas = String.valueOf(this.objetoContratoCobranca.getQtdeParcelas());
 
 		if (this.objetoContratoCobranca.getResponsavel() != null) {
 			this.codigoResponsavel = this.objetoContratoCobranca.getResponsavel().getCodigo();
 		}
-		// this.objetoContratoCobranca.setDataInicio(this.objetoContratoCobranca.getDataContrato());
 
 		saveEstadoCheckListAtual();
 
@@ -10422,7 +10468,6 @@ public class ContratoCobrancaMB {
 		this.contasPagarSelecionada = new ContasPagar();
 		this.addContasPagar = false;
 		this.objetoContratoCobranca.calcularValorTotalContasPagas();
-
 	}
 	
 	public void calcularValorRegistro() {
@@ -10436,7 +10481,7 @@ public class ContratoCobrancaMB {
 				continue;
 			BigDecimal porcentagem = imovelAdicional.getPorcentagem().divide(BigDecimal.valueOf(100),
 					MathContext.DECIMAL128);
-			BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoComite().multiply(porcentagem);
+			BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoCCB().multiply(porcentagem);
 			BigDecimal valorRegistro = rDao.getValorRegistro(valorPorMatricula);
 			valorTotalRegistro = valorTotalRegistro.add(valorRegistro);
 			imovelAdicional.setValorRegistro(valorRegistro);
@@ -10445,7 +10490,7 @@ public class ContratoCobrancaMB {
 		if (!CommonsUtil.semValor(objetoContratoCobranca.getPorcentagemImovelPrincipal())) {
 			BigDecimal porcentagem = objetoContratoCobranca.getPorcentagemImovelPrincipal()
 					.divide(BigDecimal.valueOf(100), MathContext.DECIMAL128);
-			BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoComite().multiply(porcentagem);
+			BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoCCB().multiply(porcentagem);
 			BigDecimal valorRegistro = rDao.getValorRegistro(valorPorMatricula);
 			valorTotalRegistro = valorTotalRegistro.add(valorRegistro);
 			objetoContratoCobranca.setValorRegistroImovelPrincipal(valorRegistro);
@@ -10466,7 +10511,7 @@ public class ContratoCobrancaMB {
 				continue;
 			BigDecimal porcentagem = imovelAdicional.getPorcentagemLeilao().divide(BigDecimal.valueOf(100),
 					MathContext.DECIMAL128);
-			BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoComite().multiply(porcentagem);
+			BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoCCB().multiply(porcentagem);
 			valorPorMatricula = valorPorMatricula.setScale(2, RoundingMode.HALF_UP);
 			imovelAdicional.setValorCredito(valorPorMatricula);
 			imovelCobrancaAdicionaisDao.merge(imovelAdicional);
@@ -10474,7 +10519,7 @@ public class ContratoCobrancaMB {
 		if (!CommonsUtil.semValor(objetoContratoCobranca.getPorcentagemLeilaoImovelPrincipal())) {
 			BigDecimal porcentagem = objetoContratoCobranca.getPorcentagemLeilaoImovelPrincipal()
 					.divide(BigDecimal.valueOf(100), MathContext.DECIMAL128);
-			BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoComite().multiply(porcentagem);
+			BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoCCB().multiply(porcentagem);
 			valorPorMatricula = valorPorMatricula.setScale(2, RoundingMode.HALF_UP);
 			objetoContratoCobranca.setValorCreditoImovelPrincipal(valorPorMatricula);
 		}
@@ -10496,7 +10541,7 @@ public class ContratoCobrancaMB {
 		 */
 
 		RegistroImovelTabelaDao rDao = new RegistroImovelTabelaDao();
-		BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoComite()
+		BigDecimal valorPorMatricula = objetoContratoCobranca.getValorAprovadoCCB()
 				.divide(BigDecimal.valueOf(qtdMatriculas), MathContext.DECIMAL128);
 		BigDecimal valorRegistro = rDao.getValorRegistro(valorPorMatricula);
 		valorRegistro = valorRegistro.multiply(BigDecimal.valueOf(qtdMatriculas));
@@ -10613,7 +10658,11 @@ public class ContratoCobrancaMB {
 
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
+		
+		filesPreLaudo = new ArrayList<FileUploaded>();
+		filesPreLaudo = listaArquivosPreLaudo();
 
+		
 		filesNotaFiscal = new ArrayList<FileUploaded>();
 
 		listaArquivosAnaliseDocumentos();
@@ -10655,6 +10704,10 @@ public class ContratoCobrancaMB {
 
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
+		
+		
+		filesPreLaudo = new ArrayList<FileUploaded>();
+		filesPreLaudo = listaArquivosPreLaudo();
 
 		this.inserirImovelDisable = true;
 		this.inserirImovelOcultarValorMercadoImovel = true;
@@ -10690,6 +10743,10 @@ public class ContratoCobrancaMB {
 
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
+		
+		filesPreLaudo = new ArrayList<FileUploaded>();
+		filesPreLaudo = listaArquivosPreLaudo();
+		
 		filesNotaFiscal = new ArrayList<FileUploaded>();
 		this.tituloTelaConsultaPreStatus = "Geração de PAJU";
 		this.inserirImovelDisable = true;
@@ -15192,7 +15249,7 @@ public class ContratoCobrancaMB {
 		
 		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		this.contratosPendentes = new ArrayList<ContratoCobranca>();
-		this.listSolicitacaoPreLaudoImoveis = new HashSet<ImovelCobranca>();
+		this.listSolicitacaoPreLaudoImoveis = new HashSet<String>();
 		this.listTodosImoveisContrato = new ArrayList<ImovelCobranca>();
 		this.listPreLaudoImoveisRelac = new ArrayList<ImovelCobranca>();
 
@@ -16255,6 +16312,8 @@ public class ContratoCobrancaMB {
 			}
 			
 			contratos.setSerieCci(contratoCobrancaDao.pegarSerieCci(contratos.getId()));
+			CartorioDao dao = new CartorioDao();
+			contratos.setUltimoCartorio(dao.consultaUltimoCartorio(contratos.getId()));
 
 			// calcula coluna valor atualizado
 			ContratoCobrancaUtilsMB contratoCobrancaUtilsMB;
@@ -16931,6 +16990,22 @@ public class ContratoCobrancaMB {
 		cell.setCellStyle(cell_style);
 		countCol++;
 		cell = row.createCell(countCol);
+		cell.setCellValue("Data Assinatura");
+		cell.setCellStyle(cell_style);
+		countCol++;
+		cell = row.createCell(countCol);
+		cell.setCellValue("Status Cartorio");
+		cell.setCellStyle(cell_style);
+		countCol++;
+		cell = row.createCell(countCol);
+		cell.setCellValue("Data Status Cartorio");
+		cell.setCellStyle(cell_style);
+		countCol++;
+		cell = row.createCell(countCol);
+		cell.setCellValue("Tipo Operação");
+		cell.setCellStyle(cell_style);
+		countCol++;
+		cell = row.createCell(countCol);
 		cell.setCellValue("CCB-Parcela");
 		cell.setCellStyle(cell_style);
 		inicioColParcelas = countCol;
@@ -17365,6 +17440,40 @@ public class ContratoCobrancaMB {
 		cell.setCellStyle(cell_style);
 		if (record.getSerieCci() != null) {
 			cell.setCellValue(record.getSerieCci());
+		}
+		countCol++;
+		
+		// Data Assinatura
+		cell = row.createCell(countCol);
+		cell.setCellStyle(dateStyle);
+		if (record.getDataAssinatura() != null) {
+			cell.setCellValue(record.getDataAssinatura());
+		}
+		countCol++;
+		
+		// Status Cartorio
+		cell = row.createCell(countCol);
+		cell.setCellStyle(cell_style);
+		if (record.getUltimoCartorio() != null) {
+			if (record.getUltimoCartorio().getStatus() != null) 
+				cell.setCellValue(record.getUltimoCartorio().getStatus());
+		}
+		countCol++;
+		 
+		// Data Status Cartorio
+		cell = row.createCell(countCol);
+		cell.setCellStyle(dateStyle);
+		if (record.getUltimoCartorio() != null) {
+			if (record.getUltimoCartorio().getDataStatus() != null) 
+			cell.setCellValue(record.getUltimoCartorio().getDataStatus());
+		}
+		countCol++;
+		
+		// Tipo Contrato
+		cell = row.createCell(countCol);
+		cell.setCellStyle(cell_style);
+		if (record.getTipoOperacao() != null) {
+			cell.setCellValue(record.getTipoOperacao());
 		}
 		countCol++;
 	}
@@ -20353,7 +20462,7 @@ public class ContratoCobrancaMB {
 				}
 				
 				if(CommonsUtil.mesmoValor(objetoContratoCobranca.getBrutoLiquidoCobrarComissaoCliente(), "Bruto")) {
-					valorTranferencia = objetoContratoCobranca.getValorAprovadoComite().multiply(comissao);
+					valorTranferencia = objetoContratoCobranca.getValorAprovadoCCB().multiply(comissao);
 				} 
 			}
 			
@@ -20527,7 +20636,6 @@ public class ContratoCobrancaMB {
 		this.contasPagarSelecionada = new ContasPagar();
 		this.addContasPagar = false;
 		this.objetoContratoCobranca.calcularValorTotalContasPagas();
-
 	}
 	
 	public void clearFieldsOrdemPagamentoStarkBank() {
@@ -20549,6 +20657,11 @@ public class ContratoCobrancaMB {
 		this.valorOrdemPagamentoStark = BigDecimal.ZERO;
 		
 		this.dataPagamentoOrdemPagamentoStark = DateUtil.gerarDataHoje();
+	}
+
+	public void updateFieldsOrdemPagamentoForaSistema() {
+		this.formaTransferenciaDespesaBaixa = "Pagamento fora do Sistema";
+		this.valorOrdemPagamentoStark = this.contasPagarSelecionada.getValor();
 	}
 
 	public void updateFieldsOrdemPagamentoStarkBank() {
@@ -20645,6 +20758,41 @@ public class ContratoCobrancaMB {
 		
 		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
 				"Ordem de Pagamento StarkBank: Ordem de Pagamento excluída com sucesso!", ""));
+	}
+
+	public void registrarPagamentoForaSistema() {
+		FacesContext context = FacesContext.getCurrentInstance();
+
+		this.contasPagarSelecionada.setContrato(this.objetoContratoCobranca);
+		this.contasPagarSelecionada.setNumeroDocumento(this.objetoContratoCobranca.getNumeroContrato());
+		this.contasPagarSelecionada.setPagadorRecebedor(this.objetoPagadorRecebedor);
+		this.contasPagarSelecionada.setTipoDespesa("C");
+		this.contasPagarSelecionada.setResponsavel(this.objetoContratoCobranca.getResponsavel());
+		
+		StarkBankBaixa baixa = registraBaixaStarkBank(DateUtil.getDataHoje(),
+				this.contasPagarSelecionada.getNumeroDocumentoPagadorStarkBank(), this.valorOrdemPagamentoStark,
+				this.contasPagarSelecionada, "Aprovado");
+		
+		this.contasPagarSelecionada.getListContasPagarBaixas().add(baixa);
+
+		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+				"Pagamento StarkBank: Registro de pagamento inserido com sucesso!", ""));
+		
+		this.contasPagarSelecionada.setValorPagamento(this.valorOrdemPagamentoStark);
+		
+		ContasPagarDao contasPagarDao = new ContasPagarDao();
+		if (this.contasPagarSelecionada.getId() <= 0) {
+			contasPagarDao.create(this.contasPagarSelecionada);
+		} else {
+			contasPagarDao.merge(this.contasPagarSelecionada);
+		}
+		
+		ContratoCobrancaDao cDao = new ContratoCobrancaDao();
+		if (this.objetoContratoCobranca.getId() <= 0) {
+			cDao.create(this.objetoContratoCobranca);
+		} else {
+			cDao.merge(this.objetoContratoCobranca);
+		}
 	}
 
 	public void pagamentoStarkBank() {
@@ -21125,7 +21273,7 @@ public class ContratoCobrancaMB {
 					// this.contasPagarSelecionada.setComprovantePagamentoStarkBank(starkBankBoleto);
 					StarkBankBaixa baixa = updateBaixaStarkBank(this.objetoBaixaPagamentoStarkBank,							
 							String.valueOf(starkBankBoleto.getId()),
-							starkBankBoleto.getCreated(),
+							DateUtil.getDataHoje(),
 							this.objetoBaixaPagamentoStarkBank.getValor(),
 							"Aprovado",
 							starkBankBoleto.getLine());
@@ -21153,7 +21301,7 @@ public class ContratoCobrancaMB {
 					// this.contasPagarSelecionada.setComprovantePagamentoStarkBank(starkBankBoleto);
 					StarkBankBaixa baixa = updateBaixaStarkBank(this.objetoBaixaPagamentoStarkBank,							
 							String.valueOf(starkBankTax.getId()),
-							starkBankTax.getCreated(),
+							DateUtil.getDataHoje(),
 							this.objetoBaixaPagamentoStarkBank.getValor(),
 							"Aprovado",
 							starkBankTax.getLine());
@@ -21212,44 +21360,48 @@ public class ContratoCobrancaMB {
 					System.out.println("processaPagamentoStarkBank - Pix");
  
 					boolean processou = false;
-					if (this.objetoBaixaPagamentoStarkBank.getMetodoPix().equals("Chave Pix")) {
-						starkBankPix = starkBankAPI.paymentPixCodigo(
-								this.objetoBaixaPagamentoStarkBank.getPix(),
-								this.objetoBaixaPagamentoStarkBank.getAgencia(),
-								this.objetoBaixaPagamentoStarkBank.getConta(),
-								this.objetoBaixaPagamentoStarkBank.getDocumento(),
-								this.objetoBaixaPagamentoStarkBank.getNomeRecebedor(),
-								this.objetoBaixaPagamentoStarkBank.getValor(),
-								this.objetoBaixaPagamentoStarkBank.getFormaPagamento(),
-								this.objetoBaixaPagamentoStarkBank.getDescricaoStarkBank(),
-								this.objetoBaixaPagamentoStarkBank.getTipoContaBancaria());
-						
-						processou = true;
-					}
 					
-					if (this.objetoBaixaPagamentoStarkBank.getMetodoPix().equals("Dados Bancários")) {
-						starkBankPix = starkBankAPI.paymentPixDadosBancarios(
-								this.objetoBaixaPagamentoStarkBank.getIspb(),
-								this.objetoBaixaPagamentoStarkBank.getAgencia(),
-								this.objetoBaixaPagamentoStarkBank.getConta(),
-								this.objetoBaixaPagamentoStarkBank.getDocumento(),
-								this.objetoBaixaPagamentoStarkBank.getNomeRecebedor(),
-								this.objetoBaixaPagamentoStarkBank.getValor(),
-								this.objetoBaixaPagamentoStarkBank.getFormaPagamento(),
-								this.objetoBaixaPagamentoStarkBank.getDescricaoStarkBank(),
-								this.objetoBaixaPagamentoStarkBank.getTipoContaBancaria());
+					if (this.objetoBaixaPagamentoStarkBank.getMetodoPix() != null || 
+							!this.objetoBaixaPagamentoStarkBank.getMetodoPix().equals("")) {
+						if (this.objetoBaixaPagamentoStarkBank.getMetodoPix().equals("Chave Pix")) {
+							starkBankPix = starkBankAPI.paymentPixCodigo(
+									this.objetoBaixaPagamentoStarkBank.getPix(),
+									this.objetoBaixaPagamentoStarkBank.getAgencia(),
+									this.objetoBaixaPagamentoStarkBank.getConta(),
+									this.objetoBaixaPagamentoStarkBank.getDocumento(),
+									this.objetoBaixaPagamentoStarkBank.getNomeRecebedor(),
+									this.objetoBaixaPagamentoStarkBank.getValor(),
+									this.objetoBaixaPagamentoStarkBank.getFormaPagamento(),
+									this.objetoBaixaPagamentoStarkBank.getDescricaoStarkBank(),
+									this.objetoBaixaPagamentoStarkBank.getTipoContaBancaria());
+							
+							processou = true;
+						}
 						
-						processou = true;
-					}
-					
-					if (this.objetoBaixaPagamentoStarkBank.getMetodoPix().equals("QR Code Copia e Cola")) {
-						starkBankPix = starkBankAPI.paymentPixQRCode(
-								this.objetoBaixaPagamentoStarkBank.getPix(),
-								this.objetoBaixaPagamentoStarkBank.getDocumento(),
-								this.objetoBaixaPagamentoStarkBank.getValor(),
-								this.objetoBaixaPagamentoStarkBank.getDescricaoStarkBank());
+						if (this.objetoBaixaPagamentoStarkBank.getMetodoPix().equals("Dados Bancários")) {
+							starkBankPix = starkBankAPI.paymentPixDadosBancarios(
+									this.objetoBaixaPagamentoStarkBank.getIspb(),
+									this.objetoBaixaPagamentoStarkBank.getAgencia(),
+									this.objetoBaixaPagamentoStarkBank.getConta(),
+									this.objetoBaixaPagamentoStarkBank.getDocumento(),
+									this.objetoBaixaPagamentoStarkBank.getNomeRecebedor(),
+									this.objetoBaixaPagamentoStarkBank.getValor(),
+									this.objetoBaixaPagamentoStarkBank.getFormaPagamento(),
+									this.objetoBaixaPagamentoStarkBank.getDescricaoStarkBank(),
+									this.objetoBaixaPagamentoStarkBank.getTipoContaBancaria());
+							
+							processou = true;
+						}
 						
-						processou = true;
+						if (this.objetoBaixaPagamentoStarkBank.getMetodoPix().equals("QR Code Copia e Cola")) {
+							starkBankPix = starkBankAPI.paymentPixQRCode(
+									this.objetoBaixaPagamentoStarkBank.getPix(),
+									this.objetoBaixaPagamentoStarkBank.getDocumento(),
+									this.objetoBaixaPagamentoStarkBank.getValor(),
+									this.objetoBaixaPagamentoStarkBank.getDescricaoStarkBank());
+							
+							processou = true;
+						}
 					}
 
 					if (!processou) {
@@ -21284,7 +21436,7 @@ public class ContratoCobrancaMB {
 					System.out.println("processaPagamentoStarkBank - Update Baixa");
 					StarkBankBaixa baixa = updateBaixaStarkBank(this.objetoBaixaPagamentoStarkBank,							
 							String.valueOf(starkBankPix.getId()),
-							starkBankPix.getCreated(),
+							DateUtil.getDataHoje(),
 							starkBankPix.getAmount(),
 							"Aprovado",
 							null);
@@ -21349,7 +21501,7 @@ public class ContratoCobrancaMB {
 				if (starkBankPix != null) {
 					StarkBankBaixa baixa = updateBaixaStarkBank(this.objetoBaixaPagamentoStarkBank,							
 							String.valueOf(starkBankPix.getId()),
-							starkBankPix.getCreated(),
+							DateUtil.getDataHoje(),
 							starkBankPix.getAmount(),
 							"Aprovado",
 							null);
@@ -21431,47 +21583,73 @@ public class ContratoCobrancaMB {
 	public BigDecimal calculaSobraDespesas(ContratoCobranca contrato) { 
 		BigDecimal saldo = BigDecimal.ZERO;
 		FacesContext context = FacesContext.getCurrentInstance(); 
-		
-		if (!gerouSobraDespesa(contrato.getListContasPagar())) {
-			for (ContasPagar despesa : contrato.getListContasPagar()) {
-				if (!despesa.getDescricao().contains("Pagamento Carta Split") && !despesa.getDescricao().contains("Sobra Despesas")) {
-					if (despesa.getValorPagamento() != null) {
-						saldo = saldo.add(despesa.getValorPagamento());	
-					}
-				}
+
+		//Gastamos menos do que cobramos, devolvemos
+		if (contrato.getContaPagarValorTotal().compareTo(BigDecimal.ZERO) == 1) {
+			
+			BigDecimal saldoAPagar = contrato.getValorCartaSplit().subtract(saldo);
+			
+			ContasPagarDao cDao = new ContasPagarDao();
+			ContasPagar contaPagar = new ContasPagar();
+			contaPagar.setTipoDespesa("C");
+			contaPagar.setResponsavel(contrato.getResponsavel());
+			contaPagar.setDataVencimento(getDataComMais15Dias(DateUtil.gerarDataHoje()));
+			contaPagar.setNumeroDocumento(contrato.getNumeroContrato());
+			contaPagar.setDescricao("Sobra Despesas");
+			contaPagar.setValor(contrato.getContaPagarValorTotal());
+			contaPagar.setContrato(contrato);
+			contaPagar.setBancoTed(contrato.getBancoBancarioCartaSplit());
+			contaPagar.setAgenciaTed(contrato.getAgenciaBancarioCartaSplit());				
+			contaPagar.setContaTed(contrato.getContaBancarioCartaSplit());
+			contaPagar.setCpfTed(contrato.getCpfCnpjBancarioCartaSplit());
+			contaPagar.setNomeTed(contrato.getNomeBancarioCartaSplit());
+			contaPagar.setPix(contrato.getPixCartaSplit());
+			contaPagar.setIspb(contrato.getIspbCartaSplit());
+			contaPagar.setFormaTransferencia("Pix");
+					
+			cDao.create(contaPagar);
+			
+			StarkBankBaixaDAO sbDAO = new StarkBankBaixaDAO();
+			
+			StarkBankBaixa starkBankBaixa = new StarkBankBaixa();
+			starkBankBaixa.setDataPagamento(DateUtil.gerarDataHoje());
+			starkBankBaixa.setValor(contrato.getContaPagarValorTotal());
+			starkBankBaixa.setContasPagar(contaPagar);
+			starkBankBaixa.setStatusPagamento("Aguardando Aprovação");
+			starkBankBaixa.setDocumento(contrato.getNumeroContrato());		
+			starkBankBaixa.setNomePagador(contrato.getNomeBancarioCartaSplit());	
+			starkBankBaixa.setFormaPagamento("Pix");
+			starkBankBaixa.setTipoContaBancaria(this.tipoContaBancariaOrdemPagamentoStark);
+			starkBankBaixa.setBanco(contrato.getBancoBancarioCartaSplit());
+			starkBankBaixa.setConta(contrato.getContaBancarioCartaSplit());
+			starkBankBaixa.setAgencia(contrato.getAgenciaBancarioCartaSplit());			
+			starkBankBaixa.setNomeRecebedor(contrato.getNomeBancarioCartaSplit());
+			starkBankBaixa.setDescricaoStarkBank("Sobra Despesas");
+			
+			starkBankBaixa.setIspb(contrato.getIspbCartaSplit());
+			starkBankBaixa.setPix(contrato.getPixCartaSplit());
+			
+			if (contrato.getPixCartaSplit() != null || contrato.getPixCartaSplit().equals("")) {
+				starkBankBaixa.setMetodoPix("Chave Pix");
 			}
 			
-			//Gastamos menos do que cobramos, devolvemos
-			if (saldo.compareTo(contrato.getValorCartaSplit()) < 1) {
-				
-				BigDecimal saldoAPagar = contrato.getValorCartaSplit().subtract(saldo);
-				
-				ContasPagarDao cDao = new ContasPagarDao();
-				ContasPagar contaPagar = new ContasPagar();
-				contaPagar.setTipoDespesa("C");
-				contaPagar.setResponsavel(contrato.getResponsavel());
-				contaPagar.setDataVencimento(getDataComMais15Dias(DateUtil.gerarDataHoje()));
-				contaPagar.setNumeroDocumento(contrato.getNumeroContrato());
-				contaPagar.setDescricao("Sobra Despesas");
-				contaPagar.setValor(saldoAPagar);
-				contaPagar.setContrato(contrato);
-				contaPagar.setBancoTed(contrato.getBancoBancarioCartaSplit());
-				contaPagar.setAgenciaTed(contrato.getAgenciaBancarioCartaSplit());				
-				contaPagar.setContaTed(contrato.getContaBancarioCartaSplit());
-				contaPagar.setCpfTed(contrato.getCpfCnpjBancarioCartaSplit());
-				contaPagar.setNomeTed(contrato.getNomeBancarioCartaSplit());
-				contaPagar.setPix(contrato.getPixCartaSplit());
-				contaPagar.setFormaTransferencia("TED");	
-				
-				cDao.create(contaPagar);
-				
-				contrato.getListContasPagar().add(contaPagar);
-				ContratoCobrancaDao contratoDao = new ContratoCobrancaDao();
-				contratoDao.merge(contrato);
-				
-				context.addMessage(null,
-						new FacesMessage(FacesMessage.SEVERITY_INFO, "Despesas: Despesa referente ao saldo criado com sucesso!", ""));
+			if (contrato.getIspbCartaSplit() != null || contrato.getIspbCartaSplit().equals("")) {
+				starkBankBaixa.setMetodoPix("Dados Bancários");
 			}
+			
+			sbDAO.create(starkBankBaixa);
+			
+			List<StarkBankBaixa> listBaixas = new ArrayList<StarkBankBaixa>();
+			listBaixas.add(starkBankBaixa);
+
+			contaPagar.setListContasPagarBaixas(listBaixas);
+			
+			contrato.getListContasPagar().add(contaPagar);
+			ContratoCobrancaDao contratoDao = new ContratoCobrancaDao();
+			contratoDao.merge(contrato);
+			
+			context.addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO, "Despesas: Despesa referente ao saldo criado com sucesso!", ""));
 		}
 		
 		return saldo;
@@ -21905,7 +22083,9 @@ public class ContratoCobrancaMB {
 
 		if (contaPagar.getListContasPagarBaixas().size() > 0) {
 			for (StarkBankBaixa baixas : contaPagar.getListContasPagarBaixas()) {
-				saldo = saldo.add(baixas.getValor());
+				if (baixas.getStatusPagamento().equals("Aprovado")) {
+					saldo = saldo.add(baixas.getValor());
+				}
 			}
 		} else {
 			saldo = contaPagar.getValorPagamento();
@@ -21931,7 +22111,7 @@ public class ContratoCobrancaMB {
 
 		StarkBankBaixa starkBankBaixa = new StarkBankBaixa();
 		starkBankBaixa.setDataPagamento(dataPagamento);
-		starkBankBaixa.setValor(this.valorOrdemPagamentoStark);
+		starkBankBaixa.setValor(valorPago);
 		starkBankBaixa.setContasPagar(contaPagar);
 		starkBankBaixa.setIdTransacao(idTransacao);
 		starkBankBaixa.setStatusPagamento(statusPagamento);
@@ -21942,6 +22122,7 @@ public class ContratoCobrancaMB {
 		starkBankBaixa.setBanco(this.bancoOrdemPagamentoStark);
 		starkBankBaixa.setConta(this.contaOrdemPagamentoStark);
 		starkBankBaixa.setAgencia(this.agenciaOrdemPagamentoStark);
+		starkBankBaixa.setNomeRecebedor(this.nomeRecebedorOrdemPagamentoStark);
 		
 		starkBankBaixa.setDescricaoStarkBank(this.descricaoOrdemPagamentoStark);
 				
@@ -22101,6 +22282,9 @@ public class ContratoCobrancaMB {
 	public void addProcesso() {
 		if (CommonsUtil.semValor(objetoContratoCobranca.getListProcessos())) {
 			objetoContratoCobranca.setListProcessos(new HashSet<>());
+		}
+		if(CommonsUtil.semValor(processoSelecionado.getContaPagar())) {
+			processoSelecionado.setContaPagar(new ContasPagar());
 		}
 		processoSelecionado.getContaPagar().setValor(processoSelecionado.getValorAtualizado());
 		processoSelecionado.getContaPagar().setDescricao("Processo N°: " + processoSelecionado.getNumero());
@@ -22354,7 +22538,12 @@ public class ContratoCobrancaMB {
 				return;
 			}
 		}
-			
+
+		if (CommonsUtil.mesmoValor("pre-laudo", imovelAdicional.getTipoAnalise())
+				&& !CommonsUtil.booleanValue(imovelAdicional.getImovel().isPreLaudoSolicitado())) {
+			imovelAdicional.getImovel().setPreLaudoSolicitado(true);
+		}
+		
 		if (imovelAdicional.getImovel().getId() > 0)
 			imovelCobrancaDao.merge(imovelAdicional.getImovel());
 		else
@@ -22367,9 +22556,12 @@ public class ContratoCobrancaMB {
 
 		imovelAdicional.setContratoCobranca(objetoContratoCobranca);
 		objetoContratoCobranca.getListaImoveis().add(imovelAdicional);
+		listTodosImoveisContrato.add(imovelAdicional.getImovel());
 		calcularValorRegistro();
 		calcularValorCreditoPorImovel();
-		listaRestricoesImovel();
+		listaRestricoesImovel();	
+		
+		listSolicitacaoPreLaudoImoveis.add(CommonsUtil.stringValue(imovelAdicional.getImovel().getId()));
 		imovelAdicional = new ImovelCobrancaAdicionais();
 	}
 
@@ -23711,7 +23903,7 @@ public class ContratoCobrancaMB {
 					contratoCobrancaDetalhesParcial.setDataVencimento(parcelasBoleto.getDataVencimento());
 					contratoCobrancaDetalhesParcial.setVlrParcela(parcelasBoleto.getVlrParcelaAtualizada());
 					contratoCobrancaDetalhesParcial.setDataPagamentoGalleria(dataPagamento.getTime());
-					contratoCobrancaDetalhesParcial.setVlrRecebido(parcelasBoleto.getVlrBoletoKobana());
+					contratoCobrancaDetalhesParcial.setVlrRecebido(this.vlrRecebido);
 
 					// TODO SOMAR BAIXAS PARCIAIS
 					for (QuitacaoParcelasPDF parcelaPresente : this.quitacaoPDF.getParcelas()) {
@@ -23720,7 +23912,7 @@ public class ContratoCobrancaMB {
 							BigDecimal totalBaixas = getTotalParcelasBaixadas(
 									parcelasBoleto.getListContratoCobrancaDetalhesParcial());
 							// adiciona valor baixado do boleto
-							totalBaixas = totalBaixas.add(parcelasBoleto.getVlrBoletoKobana());
+							totalBaixas = totalBaixas.add(this.vlrRecebido);
 							// se não considerar Tx Adm descontar valor
 							BigDecimal valorParcelaPresente = BigDecimal.ZERO;
 							valorParcelaPresente = parcelaPresente.getValorPresenteParcela();
@@ -32059,7 +32251,15 @@ public class ContratoCobrancaMB {
 		getListaImoveisPreLaudoCompass();
 		ImovelCobrancaAdicionaisDao imovelAddDao = new ImovelCobrancaAdicionaisDao();
 		listTodosImoveisContrato = imovelAddDao.getListImoveisAdd(objetoContratoCobranca.getId());
-	
+		
+//		itemValue="#{imovelCobranca.id}" itemLabel="#{imovelCobranca.numeroMatricula} - #{imovelCobranca.endereco}"
+				
+		listSolicitacaoPreLaudoImoveis = listTodosImoveisContrato.stream()
+		.filter( c -> c.isPreLaudoSolicitado())//
+		.map(c -> CommonsUtil.stringValue( c.getId()))//
+		//.map(c -> new SelectItem( c.getId(), c.getNumeroMatricula() + " - " + c.getEndereco() ))//
+		.collect(Collectors.toSet());
+
 	}
 	
 	public void getListaImoveisPreLaudoCompass() {
@@ -32083,7 +32283,7 @@ public class ContratoCobrancaMB {
 		this.inserirImovelDisable = true;
 		this.inserirImovelOcultarValorMercadoImovel = true;
 		
-		this.listSolicitacaoPreLaudoImoveis = new HashSet<ImovelCobranca>();
+		this.listSolicitacaoPreLaudoImoveis = new HashSet<String>();
 		this.listTodosImoveisContrato = new ArrayList<ImovelCobranca>();
 		this.listPreLaudoImoveisRelac = new ArrayList<ImovelCobranca>();
 
@@ -32108,6 +32308,9 @@ public class ContratoCobrancaMB {
 
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
+		
+		filesPreLaudo = new ArrayList<FileUploaded>();
+		filesPreLaudo = listaArquivosPreLaudo();
 
 		listaArquivosAnaliseDocumentos();
 		this.restricaoOperacao = new ArrayList<>();
@@ -33905,6 +34108,8 @@ public class ContratoCobrancaMB {
 	Collection<FileUploaded> filesInterno = new ArrayList<FileUploaded>();
 	Collection<FileUploaded> filesFaltante = new ArrayList<FileUploaded>();
 	Collection<FileUploaded> filesJuridico = new ArrayList<FileUploaded>();
+	Collection<FileUploaded> filesPreLaudo = new ArrayList<FileUploaded>();
+	
 	Collection<FileUploaded> filesComite = new ArrayList<FileUploaded>();
 	Collection<FileUploaded> filesPagar = new ArrayList<FileUploaded>();
 	Collection<FileUploaded> filesCci = new ArrayList<FileUploaded>();
@@ -33914,6 +34119,7 @@ public class ContratoCobrancaMB {
 	List<FileUploaded> deletefilesFaltante = new ArrayList<FileUploaded>();
 	List<FileUploaded> deletefilesNotaFiscal = new ArrayList<FileUploaded>();
 	List<FileUploaded> deletefilesJuridico = new ArrayList<FileUploaded>();
+	List<FileUploaded> deletefilesPreLaudo = new ArrayList<FileUploaded>();
 	List<FileUploaded> deletefilesComite = new ArrayList<FileUploaded>();
 	List<FileUploaded> deletefilesPagar = new ArrayList<FileUploaded>();
 	List<FileUploaded> deletefilesCci = new ArrayList<FileUploaded>();
@@ -33937,7 +34143,7 @@ public class ContratoCobrancaMB {
 		} else {
 			byte[] conteudo = event.getFile().getContents();
 			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(),
-					event.getFile().getFileName(), "/numContrato/", getUsuarioLogado());
+					event.getFile().getFileName(), "numContrato", getUsuarioLogado());
 
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
@@ -33960,7 +34166,7 @@ public class ContratoCobrancaMB {
 		} else {
 			byte[] conteudo = event.getFile().getContents();
 			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(),
-					event.getFile().getFileName(), "//analise/", getUsuarioLogado());
+					event.getFile().getFileName(), "analise", getUsuarioLogado());
 
 			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 			DocumentoAnalise documentoAnalise = new DocumentoAnalise();
@@ -33994,7 +34200,7 @@ public class ContratoCobrancaMB {
 		} else {
 			byte[] conteudo = event.getFile().getContents();
 			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(),
-					event.getFile().getFileName() + "-Reanalise", "//analise/", getUsuarioLogado());
+					event.getFile().getFileName() + "-Reanalise", "analise", getUsuarioLogado());
 
 			DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 			DocumentoAnalise documentoAnalise = new DocumentoAnalise();
@@ -34040,7 +34246,7 @@ public class ContratoCobrancaMB {
 
 			byte[] conteudo = event.getFile().getContents();
 			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(),
-					event.getFile().getFileName(), "//faltante/", getUsuarioLogado());
+					event.getFile().getFileName(), "faltante", getUsuarioLogado());
 
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
@@ -34058,11 +34264,22 @@ public class ContratoCobrancaMB {
 
 			byte[] conteudo = event.getFile().getContents();
 			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(),
-					event.getFile().getFileName(), "//juridico/", getUsuarioLogado());
+					event.getFile().getFileName(), "juridico", getUsuarioLogado());
 
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
 			filesJuridico = listaArquivosJuridico();
+			
+			if ((event.getFile().getFileName().toLowerCase().contains("paju") || 
+					CommonsUtil.removeAcentos(event.getFile().getFileName().toLowerCase()).contains("parecer juridico")) &&
+					event.getFile().getFileName().toLowerCase().endsWith(".pdf")) {
+				PDDocument doc = PDDocument.load(conteudo);
+				String texto = new PDFTextStripper().getText(doc);
+				if(texto.toLowerCase().contains("segredo de justiça")) {
+					//System.out.println("arquivo "+ event.getFile().getFileName() + " tem segredo de justiça");
+					this.objetoContratoCobranca.setContemSegredoJustica(true);
+				}
+			}
 		}
 	}
 
@@ -34076,7 +34293,7 @@ public class ContratoCobrancaMB {
 
 			byte[] conteudo = event.getFile().getContents();
 			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(),
-					event.getFile().getFileName(), "//nf/", getUsuarioLogado());
+					event.getFile().getFileName(), "nf", getUsuarioLogado());
 
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
@@ -34093,7 +34310,7 @@ public class ContratoCobrancaMB {
 		} else {
 			byte[] conteudo = event.getFile().getContents();
 			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(),
-					event.getFile().getFileName(), "//comite/", getUsuarioLogado());
+					event.getFile().getFileName(), "comite", getUsuarioLogado());
 
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
@@ -34119,7 +34336,7 @@ public class ContratoCobrancaMB {
 		} else {
 			byte[] conteudo = event.getFile().getContents();
 			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(),
-					event.getFile().getFileName(), "//pagar/", getUsuarioLogado());
+					event.getFile().getFileName(), "pagar", getUsuarioLogado());
 
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
@@ -34148,7 +34365,7 @@ public class ContratoCobrancaMB {
 			// event.getFile().getFileName();
 			byte[] conteudo = event.getFile().getContents();
 			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(),
-					event.getFile().getFileName(), "//pagar/" + conta.getFileListId() + "/", getUsuarioLogado());
+					event.getFile().getFileName(), "pagar" + conta.getFileListId() + "/", getUsuarioLogado());
 
 			// atualiza lista de arquivos contidos no diretório
 
@@ -34166,7 +34383,7 @@ public class ContratoCobrancaMB {
 		} else {
 			byte[] conteudo = event.getFile().getContents();
 			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(),
-					event.getFile().getFileName(), "//cci/", getUsuarioLogado());
+					event.getFile().getFileName(), "cci", getUsuarioLogado());
 
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
@@ -34182,12 +34399,13 @@ public class ContratoCobrancaMB {
 		} else {
 
 			byte[] conteudo = event.getFile().getContents();
+					
 			fileService.salvarDocumento(conteudo, this.objetoContratoCobranca.getNumeroContrato(),
-					event.getFile().getFileName(), "//pre-laudo/", getUsuarioLogado());
+					event.getFile().getFileName(), "pre-laudo", getUsuarioLogado());
 
 			// atualiza lista de arquivos contidos no diretório
 			documentoConsultarTodos = new ArrayList<FileUploaded>();
-			filesJuridico = listaArquivosJuridico();
+			filesPreLaudo = listaArquivosPreLaudo();
 		}
 	}
 
@@ -34260,6 +34478,15 @@ public class ContratoCobrancaMB {
 
 		deletefilesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
+	}
+	
+	public void deleteFilePreLaudo() {
+		for (FileUploaded f : deletefilesPreLaudo) {
+			deleteFile(f);
+		}
+
+		deletefilesPreLaudo = new ArrayList<FileUploaded>();
+		filesPreLaudo = listaArquivosJuridico();
 	}
 
 	public void deleteFileNotaFiscal() {
@@ -34447,6 +34674,14 @@ public class ContratoCobrancaMB {
 				.collect(Collectors.toList());
 	}
 	
+	public List<FileUploaded> listaArquivosPreLaudo() {
+		carregaDocumentos();
+		return this.documentoConsultarTodos.stream()
+				.filter(f -> CommonsUtil.mesmoValorIgnoreCase(f.getPathOrigin(), "pre-laudo"))
+				.collect(Collectors.toList());
+	} 
+	
+	
 	public List<FileUploaded> listaArquivosNotaFiscal() {
 		carregaDocumentos();
 		return this.documentoConsultarTodos.stream()
@@ -34506,7 +34741,9 @@ public class ContratoCobrancaMB {
 		filesFaltante = listaArquivosFaltante();
 		filesJuridico = new ArrayList<FileUploaded>();
 		filesJuridico = listaArquivosJuridico();
-
+		filesPreLaudo = new ArrayList<FileUploaded>();
+		filesPreLaudo = listaArquivosPreLaudo();
+		
 		filesNotaFiscal = new ArrayList<FileUploaded>();
 		filesNotaFiscal = listaArquivosNotaFiscal();
 
@@ -34780,11 +35017,11 @@ public class ContratoCobrancaMB {
 		return null;
 	}
 	
-	public StreamedContent getDownloadAllFilesNotaFiscal() {
+	public StreamedContent getDownloadAllFilesPreLaudo() {
 		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
 		try {
 			CompactadorUtil compac = new CompactadorUtil();
-			for (FileUploaded f : deletefilesJuridico) {
+			for (FileUploaded f : deletefilesPreLaudo) {
 				String arquivo = f.getName();
 				byte[] arquivoByte = fileService.abrirDocumentos(f, this.objetoContratoCobranca.getNumeroContrato(),
 						getUsuarioLogado());
@@ -34794,7 +35031,31 @@ public class ContratoCobrancaMB {
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 					FacesContext.getCurrentInstance());
 			String nomeArquivoDownload = String
-					.format(objetoContratoCobranca.getNumeroContrato() + " Documentos_juridico.zip", "");
+					.format(objetoContratoCobranca.getNumeroContrato() + " Documentos_preLaudo.zip", "");
+			gerador.open(nomeArquivoDownload);
+			gerador.feed(new ByteArrayInputStream(arquivos));
+			gerador.close();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return null;
+	}
+	
+	public StreamedContent getDownloadAllFilesNotaFiscal() {
+		Map<String, byte[]> listaArquivos = new HashMap<String, byte[]>();
+		try {
+			CompactadorUtil compac = new CompactadorUtil();
+			for (FileUploaded f : deletefilesNotaFiscal) {
+				String arquivo = f.getName();
+				byte[] arquivoByte = fileService.abrirDocumentos(f, this.objetoContratoCobranca.getNumeroContrato(),
+						getUsuarioLogado());
+				listaArquivos.put(arquivo, arquivoByte);
+			}
+			arquivos = compac.compactarZipByte(listaArquivos);
+			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+					FacesContext.getCurrentInstance());
+			String nomeArquivoDownload = String
+					.format(objetoContratoCobranca.getNumeroContrato() + " Documentos_notaFiscal.zip", "");
 			gerador.open(nomeArquivoDownload);
 			gerador.feed(new ByteArrayInputStream(arquivos));
 			gerador.close();
@@ -35046,6 +35307,14 @@ public class ContratoCobrancaMB {
 		this.filesJuridico = filesJuridico;
 	}
 
+	public Collection<FileUploaded> getFilesPreLaudo() {
+		return filesPreLaudo;
+	}
+
+	public void setFilesPreLaudo(Collection<FileUploaded> filesPreLaudo) {
+		this.filesPreLaudo = filesPreLaudo;
+	}
+
 	public List<FileUploaded> getDeletefilesJuridico() {
 		return deletefilesJuridico;
 	}
@@ -35055,6 +35324,14 @@ public class ContratoCobrancaMB {
 	}
 
 	
+	public List<FileUploaded> getDeletefilesPreLaudo() {
+		return deletefilesPreLaudo;
+	}
+
+	public void setDeletefilesPreLaudo(List<FileUploaded> deletefilesPreLaudo) {
+		this.deletefilesPreLaudo = deletefilesPreLaudo;
+	}
+
 	public Collection<FileUploaded> getFilesNotaFiscal() {
 		return filesNotaFiscal;
 	}
@@ -37698,11 +37975,11 @@ public class ContratoCobrancaMB {
 		this.listTodosImoveisContrato = listTodosImoveisContrato;
 	}
 	
-	public Set<ImovelCobranca> getlistSolicitacaoPreLaudoImoveis() {
+	public Set<String> getlistSolicitacaoPreLaudoImoveis() {
 		return listSolicitacaoPreLaudoImoveis;
 	}
 	
-	public void setlistSolicitacaoPreLaudoImoveis(Set<ImovelCobranca> listSolicitacaoPreLaudoImoveis) {
+	public void setlistSolicitacaoPreLaudoImoveis(Set<String> listSolicitacaoPreLaudoImoveis) {
 		this.listSolicitacaoPreLaudoImoveis = listSolicitacaoPreLaudoImoveis;
 	}
 	
@@ -37834,7 +38111,6 @@ public class ContratoCobrancaMB {
 		this.filtroDataCorteRelatorioInicio = filtroDataCorteRelatorioInicio;
 	}
 
-<<<<<<< HEAD
 	public String getMetodoPixOrdemPagamentoStark() {
 		return metodoPixOrdemPagamentoStark;
 	}
@@ -37842,7 +38118,6 @@ public class ContratoCobrancaMB {
 	public void setMetodoPixOrdemPagamentoStark(String metodoPixOrdemPagamentoStark) {
 		this.metodoPixOrdemPagamentoStark = metodoPixOrdemPagamentoStark;
 	}
-=======
 	public BigDecimal getValorTotalContrato() {
 		return valorTotalContrato;
 	}
@@ -37851,5 +38126,4 @@ public class ContratoCobrancaMB {
 		this.valorTotalContrato = valorTotalContrato;
 	}
 	
->>>>>>> e3746c86ecc690554b592960364747bf574f8c8e
 }
