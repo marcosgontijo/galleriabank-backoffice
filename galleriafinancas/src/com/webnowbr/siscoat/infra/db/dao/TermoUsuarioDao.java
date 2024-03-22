@@ -127,5 +127,43 @@ public class TermoUsuarioDao extends HibernateDao<TermoUsuario, Long> {
             }
         });
     }
+	@SuppressWarnings("unchecked")
+	public List<Termo> termosAssinados (User usuario) {
+		return (List<Termo>) executeDBOperation(new DBRunnable() {
+
+			@Override
+			public Object run() throws Exception {
+				Connection connection = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+
+				List<Termo> retorno = new ArrayList<>();
+				if (CommonsUtil.semValor(usuario))
+					return new ArrayList<>();
+
+			
+					connection = getConnection();
+					StringBuilder query = new StringBuilder();
+					query.append("select t.id" +
+							" from infra.termo t" + 
+							" inner join infra.termousuario t2 on t2.idtermo = t.id" +
+							" where t2.idusuario  = ?" );
+
+					ps = connection.prepareStatement(query.toString());
+
+				
+					ps.setLong(1, usuario.getId());
+
+					rs = ps.executeQuery();
+
+					while (rs.next()) {
+						TermoDao termoDao = new TermoDao();
+					retorno.add(termoDao.findById(rs.getLong(1)));
+					}
+				
+				return retorno;
+			}
+		});
+	}
 	 
 }
