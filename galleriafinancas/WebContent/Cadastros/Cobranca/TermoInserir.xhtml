@@ -35,6 +35,25 @@
 						required="true" onblur="" style="width:400px;">
 					</p:inputText>
 
+					<p:outputLabel for="diasAceite" value="Dias para aceitar"
+						styleClass="labelBold" />
+					<p:inputNumber id="diasAceite"
+						value="#{termoMB.objetoTermo.diasAceite}" decimalPlaces="0"
+						required="true" />
+
+					<p:outputLabel for="DataInicio" value="Data Inicio"
+						styleClass="labelBold" />
+					<p:datePicker id="DataInicio"
+						value="#{termoMB.objetoTermo.inicioValidade}" pattern="dd/MM/yyyy"
+						locale="pt" required="true" />
+
+					<p:outputLabel for="DataFim" value="Data Fim"
+						styleClass="labelBold" />
+					<p:datePicker id="DataFim"
+						value="#{termoMB.objetoTermo.fimValidade}" pattern="dd/MM/yyyy"
+						locale="pt" />
+
+
 					<p:outputLabel for="DiasAceite" value="Dias de aceite" styleClass="labelBold" />
 					
 					<p:inputNumber id="DiasAceite"
