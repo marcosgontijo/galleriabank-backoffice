@@ -38118,10 +38118,7 @@ public class ContratoCobrancaMB {
 	public void setMetodoPixOrdemPagamentoStark(String metodoPixOrdemPagamentoStark) {
 		this.metodoPixOrdemPagamentoStark = metodoPixOrdemPagamentoStark;
 	}
-<<<<<<< HEAD
-=======
 
->>>>>>> branch 'master' of https://github.com/Galleria-Bank-Developers/backoffice.git
 	public BigDecimal getValorTotalContrato() {
 		return valorTotalContrato;
 	}
