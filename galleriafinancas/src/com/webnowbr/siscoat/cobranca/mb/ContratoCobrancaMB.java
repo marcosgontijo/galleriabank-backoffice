@@ -15343,7 +15343,7 @@ public class ContratoCobrancaMB {
 							.setInicioAnaliseUsuario(objetoContratoCobranca.getAnalisePendenciadaUsuario());
 				}
 				contratoCobrancaDao.merge(this.objetoContratoCobranca);
-
+				this.tituloTelaConsultaPreStatus = "Em Análise";
 				return clearFieldsEditarPendentesAnalistas();
 			} else {
 				FacesContext context = FacesContext.getCurrentInstance();
