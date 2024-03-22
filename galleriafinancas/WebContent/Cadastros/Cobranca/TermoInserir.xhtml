@@ -58,7 +58,7 @@
 						value="#{termoMB.idPerfilSelecionado}">
 						<f:selectItems value="#{termoMB.perfil}" var="perfil"
 							itemLabel="#{perfil.perfil}" itemValue="#{perfil.id}" />
-						<p:ajax update="PanelContaContabil" />
+						<p:ajax update="userPerfil" />
 					</p:selectOneMenu>
 
 					<h:outputLabel value="Incluir Usuario " rendered="#{termoMB.idPerfilSelecionado eq '5000'}"/>
