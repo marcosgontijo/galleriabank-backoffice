@@ -3518,6 +3518,7 @@ public class ContratoCobrancaMB {
 		updateCheckList();
 		
 		geraParcelasSeContratoAgRegistro();
+		
 		salvarContasProcessos();
 
 		if (validaDiferencasCamposEsteira(context) == false) {
@@ -34241,9 +34242,26 @@ public class ContratoCobrancaMB {
 	}
 
 	public void adicionaEstado() {
+		
+		ContratoCobrancaService contratoCobrancaService = new ContratoCobrancaService();
+		
+		String valorAlteradoEstado = this.getDocumentoAnalisePopup().getIdentificacao() + " Adicionado (" + estadoConsultaAdd + " )";
+		
+		
+		System.out.println("Identificação: " + this.getDocumentoAnalisePopup().getIdentificacao());
+		
 		documentoAnalisePopup.adicionaEstados(estadoConsultaAdd);
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 		documentoAnaliseDao.merge(documentoAnalisePopup);
+		//SALVAR NA LISTA DE ALTERAÇÕES OS ESTADOS.
+		
+		contratoCobrancaService.adicionaNovoDetalheEstado(getUsuarioLogado(), this.getObjetoContratoCobranca(),
+				valorAlteradoEstado, "", "Estado");
+		
+	}
+	
+	public void testeTroller() {
+		System.out.println("TROLLERRRR");
 	}
 
 	public List<DocumentoAnalise> getListaDocumentoAnalise() {
@@ -37627,15 +37645,12 @@ public class ContratoCobrancaMB {
 		try {
 			
 			ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
+			ContratoCobrancaService contratoCobrancaService = new ContratoCobrancaService();
 
 			this.comparativoCamposEsteira = comparativosCamposEsteraDao.findByFilter("validar", true);
 			
-			contratoCobrancaLogsAlteracao = new ContratoCobrancaLogsAlteracao();
-			contratoCobrancaLogsAlteracao.setDataAlteracao(DateUtil.getDataHoje());
-			contratoCobrancaLogsAlteracao.setUsuario(getUsuarioLogado().getLogin());
-			contratoCobrancaLogsAlteracao.setStatusEsteira(this.objetoContratoCobranca.getStatusEsteira());
-			contratoCobrancaLogsAlteracao.setContratoCobranca(objetoContratoCobranca);
-						
+			this.contratoCobrancaLogsAlteracao = contratoCobrancaService.buscaOuCriaLogsAlteracao(getUsuarioLogado(), objetoContratoCobranca);
+			
 			ContratoCobranca objetoContratoCobrancaBanco = contratoCobrancaDao.findById(this.objetoContratoCobranca.getId());
 			
 			contratoCobrancaService.zerarListaDeDuplicidade();
@@ -37646,7 +37661,7 @@ public class ContratoCobrancaMB {
 					comparativoCamposEsteira,
 					this.contratoCobrancaLogsAlteracao).stream().collect(Collectors.toSet());
 			
-			this.contratoCobrancaLogsAlteracao.setDetalhes(detalhes);
+			this.contratoCobrancaLogsAlteracao.getDetalhes().addAll(detalhes);
 			
 			if (!contratoCobrancaLogsAlteracao.getDetalhes().isEmpty()) {
 				PrimeFaces current = PrimeFaces.current();
@@ -37762,4 +37777,6 @@ public class ContratoCobrancaMB {
 			}
 		}
 	}
+	
+	
 }

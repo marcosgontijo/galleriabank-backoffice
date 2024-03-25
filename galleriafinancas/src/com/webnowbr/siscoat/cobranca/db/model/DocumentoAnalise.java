@@ -83,7 +83,7 @@ public class DocumentoAnalise implements Serializable {
 	private String origem;
 	private Date dataCadastro; 
 	private String usuarioCadastro;
-	private DocumentoAnalise analiseOriginal;
+	private DocumentoAnalise analiseOriginal; 
 	private boolean reanalise;
 	
 	private boolean liberadoAnalise;	
@@ -970,6 +970,7 @@ public class DocumentoAnalise implements Serializable {
 			List<String> aux = getEstadosConsulta();
 			aux.remove(estado);
 			estadosConsultaStr = aux.toString();
+			System.out.println(getContratoCobranca());
 		}
 	}
 	

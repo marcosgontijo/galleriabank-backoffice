@@ -198,7 +198,9 @@
 								<h:panelGroup >
 									<p:commandButton icon="ui-icon ui-icon-trash" 
 										action="#{fileAnalise.removerEstado(estado)}"
-										ajax="true" update="estadosList" />
+										ajax="true" update="estadosList" actionListener="#{contratoCobrancaMB.testeTroller()}" > 
+										
+										 </p:commandButton>
 									<h:outputText value=" #{estado}"  />
 								</h:panelGroup>
 							</p:dataList>

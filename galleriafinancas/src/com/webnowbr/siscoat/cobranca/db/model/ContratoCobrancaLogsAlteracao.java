@@ -2,6 +2,7 @@ package com.webnowbr.siscoat.cobranca.db.model;
 
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -16,7 +17,8 @@ public class ContratoCobrancaLogsAlteracao {
 	private String observacao;
 	private String statusEsteira;
 	private ContratoCobranca contratoCobranca;
-	private Set<ContratoCobrancaLogsAlteracaoDetalhe> detalhes;
+	private Set<ContratoCobrancaLogsAlteracaoDetalhe> detalhes =  new HashSet<ContratoCobrancaLogsAlteracaoDetalhe>();
+	private boolean logJustificado;
 
 	public List<ContratoCobrancaLogsAlteracaoDetalhe> getDetalhesOrdenado() {
 		if (!CommonsUtil.semValor(detalhes))
@@ -81,5 +83,13 @@ public class ContratoCobrancaLogsAlteracao {
 
 	public void setContratoCobranca(ContratoCobranca contratoCobranca) {
 		this.contratoCobranca = contratoCobranca;
+	}
+
+	public Boolean getLogJustificado() {
+		return logJustificado;
+	}
+
+	public void setLogJustificado(Boolean logJustificado) {
+		this.logJustificado = logJustificado;
 	}
 }
