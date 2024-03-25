@@ -88,12 +88,13 @@
 					<h:panelGrid columns="1" id="termosusuario" rendered="#{termoMB.idPerfilSelecionado eq '5000'}" >
 
 						<p:pickList id="usersPickList"
-							value="#{termoMB.listaDeUsuariosPickList}" var="usuario"
-							itemValue="#{usuario}" itemLabel="#{usuario.name}"
+							value="#{termoMB.listaDeUsuariosPickList.id}" var="usuario"
+							itemValue="#{usuario}" itemLabel="#{usuario}"
 							showSourceControls="false" showTargetControls="false"
 							showCheckbox="true" showSourceFilter="true"
 							showTargetFilter="true" sourceFilterPlaceholder="Buscar usuarios"
 							targetFilterPlaceholder="Buscar usuarios selecionados"
+							converter="usuarioConverter"
 							filterMatchMode="contains" responsive="true">
 
 							<f:facet name="sourceCaption">Usuarios</f:facet>
@@ -106,9 +107,9 @@
 							
 							<p:column style="width:94%">
 								<div class="flex align-items-center">
-									<span class="flag flag-#{usuario.id} mr-2"
+									<span class="flag flag-#{usuario} mr-2"
 										style="width: 30px; height: 20px" />
-									<h:outputText value="#{usuario.name}" />
+									<h:outputText value="#{usuario}" />
 								</div>
 							</p:column>
 						</p:pickList>

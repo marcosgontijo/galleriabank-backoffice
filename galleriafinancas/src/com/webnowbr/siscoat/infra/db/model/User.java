@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
+import com.webnowbr.siscoat.common.CommonsUtil;
 
 /**
  * Classe de armazenamento de dados de usuario.
@@ -16,11 +17,11 @@ public final class User implements Serializable {
     /** serial. */
     private static final long serialVersionUID = -408744079447543740L;
     /** Chave primaria. */
-    private long id;
+    private Long id;
     /** Nome do usuario. */
     private String name;
     /** Nivel de operacao. */
-    private int level;
+    private Integer level;
     /** Nome de login do usuario. */
     private String login;
     /** Senha. */
@@ -119,22 +120,34 @@ public final class User implements Serializable {
     
     private Set<TermoUsuario> listTermos;
     
-    /**
+    
+    
+ 
+
+	/**
      * Construtor.
      */
     public User() {
     }
-
-    @Override
-	public String toString() {
-		return "User [id=" + id + ", name=" + name + ", login=" + login + "]";
-	}
     
+    
+    public User(Long id, String name, String login) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.login = login;
+	}
+
+//    @Override
+//	public String toString() {
+//		return "User [id=" + id + ", name=" + name + ", login=" + login + "]";
+//	}
+//    
 	/**
      * @see id.
      * @return the id
      */
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -142,8 +155,12 @@ public final class User implements Serializable {
      * @see id.
      * @param idI the id to set
      */
-    public void setId(final long idI) {
+    public void setId(final Long idI) {
         this.id = idI;
+    }
+    
+    public void setId(final Integer idI) {
+        this.id = CommonsUtil.castAsLong(idI);
     }
 
     /**
@@ -182,7 +199,7 @@ public final class User implements Serializable {
      * Get.
      * @return level.
      */
-    public int getLevel() {
+    public Integer getLevel() {
         return level;
     }
 
@@ -190,7 +207,7 @@ public final class User implements Serializable {
      * Set.
      * @param value - level
      */
-    public void setLevel(final int value) {
+    public void setLevel(final Integer value) {
         this.level = value;
     }
 

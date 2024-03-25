@@ -3,8 +3,6 @@ package com.webnowbr.siscoat.infra.mb;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -12,31 +10,21 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageOutputStream;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
@@ -50,32 +38,17 @@ import org.primefaces.model.SortOrder;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
 
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
-import com.itextpdf.text.Font.FontFamily;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Font;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.webnowbr.siscoat.cobranca.db.model.TermoPopup;
-import com.webnowbr.siscoat.cobranca.db.op.ImovelEstoqueDao;
-import com.webnowbr.siscoat.cobranca.model.bmpdigital.ScrResult;
-import com.webnowbr.siscoat.cobranca.service.ScrService;
-import com.webnowbr.siscoat.cobranca.vo.FileGenerator;
 import com.webnowbr.siscoat.common.CommonsUtil;
 import com.webnowbr.siscoat.common.DateUtil;
 import com.webnowbr.siscoat.common.GeradorRelatorioDownloadCliente;
-import com.webnowbr.siscoat.common.GsonUtil;
 import com.webnowbr.siscoat.db.dao.DAOException;
 import com.webnowbr.siscoat.db.dao.DBConnectionException;
 import com.webnowbr.siscoat.infra.db.dao.ParametrosDao;
@@ -88,6 +61,7 @@ import com.webnowbr.siscoat.infra.db.model.TermoUsuario;
 import com.webnowbr.siscoat.infra.db.model.TermoUsuarioVO;
 import com.webnowbr.siscoat.infra.db.model.User;
 import com.webnowbr.siscoat.infra.db.model.UserPerfil;
+import com.webnowbr.siscoat.infra.db.model.UserVO;
 import com.webnowbr.siscoat.security.LoginBean;
 
 /** ManagedBean. */
@@ -102,7 +76,6 @@ public class TermoMB {
 	private LazyDataModel<Termo> lazyModel;
 	private TermoUsuario termoUsuario;
 	private Termo objetoTermo;
-	private String base64imagem;
 	private TermoUsuario objetoTermoUsuario;
 	private boolean updateMode = false;
 	private boolean deleteMode = false;
@@ -128,23 +101,23 @@ public class TermoMB {
 	private List<TermoUsuario> termosUsuario;
 	private List<TermoPopup> usuarios;
 	private List<User> todosUsuario;
-	List<User> usuariosVinculados = new ArrayList<>();
-	List<User> listaOrigem = new ArrayList<>();
-	List<User> listaDestino = new ArrayList<>();
-	List<User> listaExcluir = new ArrayList<>();
+	List<UserVO> usuariosVinculados = new ArrayList<>();
+	List<UserVO> listaOrigem = new ArrayList<>();
+	List<UserVO> listaDestino = new ArrayList<>();
+	List<UserVO> listaExcluir = new ArrayList<>();
 	List<String> listaNomes = new ArrayList<>();
 
 	private TermoUsuarioVO usuarioVO;
 	User usuarioNew = null;
 	Date dataAceite = null;
 
-	private DualListModel<User> listaDeUsuariosPickList;
+	private DualListModel<UserVO> listaDeUsuariosPickList;
 
-	public DualListModel<User> getListaDeUsuariosPickList() {
+	public DualListModel<UserVO> getListaDeUsuariosPickList() {
 		return listaDeUsuariosPickList;
 	}
 
-	public void setListaDeUsuariosPickList(DualListModel<User> listaDeUsuariosPickList) {
+	public void setListaDeUsuariosPickList(DualListModel<UserVO> listaDeUsuariosPickList) {
 		this.listaDeUsuariosPickList = listaDeUsuariosPickList;
 	}
 
@@ -204,8 +177,7 @@ public class TermoMB {
 			User userPesquisa = usuario.findById(user.getIdUsuario());
 			TermoUsuariovo.setDataAceite(user.getDataAceite());
 			TermoUsuariovo.setUsuario(userPesquisa);
-			usuarios.add(new TermoPopup(TermoUsuariovo.getUsuario().getName(),
-					CommonsUtil.formataData(TermoUsuariovo.getDataAceite())));
+			usuarios.add(new TermoPopup(TermoUsuariovo.getUsuario().getName(), CommonsUtil.formataData(TermoUsuariovo.getDataAceite())));
 
 		}
 
@@ -222,38 +194,39 @@ public class TermoMB {
 		UserDao userDao = new UserDao();
 		Document document = null;
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		termosUsuario = termoUsuarioDao.findByFilter("idTermo", id);
-
+		termosUsuario = termoUsuarioDao.findByFilter("idTermo", id );
+		
 		try {
-			// Criar um novo documento PDF
-			document = new Document();
-			PdfWriter.getInstance(document, baos);
-			document.open();
-			Paragraph paragrafo = new Paragraph();
-			Font fonteNegrito = FontFactory.getFont(FontFactory.TIMES_ROMAN, 16, Font.BOLD);
-			paragrafo.setAlignment(Element.ALIGN_CENTER);
-			paragrafo.add(new Paragraph(objetoTermo.getIdentificacao() + " - Assinantes", fonteNegrito));
-			document.add(paragrafo);
-			Paragraph spacer = new Paragraph("");
-			spacer.setSpacingAfter(20f);
-			document.add(spacer);
-			PdfPTable table = new PdfPTable(2);
-			table.setWidthPercentage(100);
-			for (TermoUsuario user : termosUsuario) {
-				User usuario = userDao.findById(user.getIdUsuario());
-				Paragraph paragrafoUsuario = new Paragraph(usuario.getName());
-				paragrafoUsuario.setAlignment(Element.ALIGN_RIGHT);
-				table.addCell(paragrafoUsuario);
-				Paragraph paragrafoData = new Paragraph(CommonsUtil.formataData(user.getDataAceite()));
-				paragrafoData.setAlignment(Element.ALIGN_LEFT);
-				table.addCell(paragrafoData);
+            // Criar um novo documento PDF
+			 document = new Document();
+            PdfWriter.getInstance(document, baos);
+            document.open();
+            Paragraph paragrafo = new Paragraph();
+            Font fonteNegrito = FontFactory.getFont(FontFactory.TIMES_ROMAN, 16, Font.BOLD);
+            paragrafo.setAlignment(Element.ALIGN_CENTER);
+            paragrafo.add(new Paragraph(objetoTermo.getIdentificacao() + " - Assinantes", fonteNegrito));
+            document.add(paragrafo);
+            Paragraph spacer = new Paragraph("");
+            spacer.setSpacingAfter(20f);
+            document.add(spacer);
+            PdfPTable table = new PdfPTable(2);
+            table.setWidthPercentage(100);
+            for(TermoUsuario user : termosUsuario) {
+            	User usuario = userDao.findById(user.getIdUsuario());
+            Paragraph	paragrafoUsuario = new Paragraph( usuario.getName());
+            paragrafoUsuario.setAlignment(Element.ALIGN_RIGHT);
+            table.addCell(paragrafoUsuario);
+            Paragraph paragrafoData = new Paragraph( CommonsUtil.formataData(user.getDataAceite()));
+            paragrafoData.setAlignment(Element.ALIGN_LEFT);
+            table.addCell(paragrafoData);
+           
+            }
+            document.add(table);
+            // Fechar o documento
+            document.close();
 
-			}
-			document.add(table);
-			// Fechar o documento
-			document.close();
+            System.out.println("PDF gerado com sucesso!");
 
-			System.out.println("PDF gerado com sucesso!");
 
 			final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
 					FacesContext.getCurrentInstance());
@@ -303,9 +276,10 @@ public class TermoMB {
 		listaOrigem = new ArrayList<>();
 		listaDestino = new ArrayList<>();
 		listaExcluir = new ArrayList<>();
-		listaOrigem.addAll(todosUsuario);
+		listaOrigem.addAll(todosUsuario.stream()
+				.map(v -> new UserVO(v.getId(), v.getName())).collect(Collectors.toList()));
 		carregaListaPerfil();
-	
+//		
 
 		this.listaDeUsuariosPickList = new DualListModel<>(this.listaOrigem, this.listaDestino);
 
@@ -314,23 +288,25 @@ public class TermoMB {
 //			if (idPerfilSelecionado == "PUBLICO" && userPerfilPublico == null) {
 //				objetoTermo.setUserPerfil(userPerfilIndividual.get());
 //			}
-			this.idPerfilSelecionado = CommonsUtil.stringValue(this.userPerfilPublico.get().getId());
 			objetoTermo.setUserPerfil(userPerfilPublico.get());
+			this.idPerfilSelecionado = CommonsUtil.stringValue(this.userPerfilPublico.get().getId());
 			this.tituloPainel = "Inserir";
 
 		} else {
 			this.idPerfilSelecionado = CommonsUtil.stringValue(this.objetoTermo.getUserPerfil().getId());
 			this.tituloPainel = "Editar";
-			usuariosVinculados = termoUsuarioDao.findUsersByTermoId(objetoTermo.getId());
+			usuariosVinculados = termoUsuarioDao.findUsersByTermoId(objetoTermo.getId()).stream()
+					.map(v -> new UserVO(v.getId(), v.getName())).collect(Collectors.toList());
 //			 listaOrigem.removeAll(usuariosVinculados);
 //			 listaOrigem = listaOrigem.stream().filter(p -> !usuariosVinculados.stream().map(m -> m.getId()).collect(Collectors.toList()).contains(p.getId())).collect(Collectors.toList());
 			List<Long> f = usuariosVinculados.stream().map(m -> m.getId()).collect(Collectors.toList());
-			List<User> listaOrigemvinc = listaOrigem.stream().filter(p -> f.contains(p.getId()))
-					.collect(Collectors.toList());
+			List<UserVO> listaOrigemvinc = listaOrigem.stream().filter(p -> f.contains(p.getId()))
+					.map(v -> new UserVO(v.getId(), v.getName())).collect(Collectors.toList());
+
 			listaOrigem.removeAll(listaOrigemvinc);
 
 			listaDestino = usuariosVinculados;
-			DualListModel<User> novaListaDeUsuariosPickList = new DualListModel<>(listaOrigem, listaDestino);
+			DualListModel<UserVO> novaListaDeUsuariosPickList = new DualListModel<>(listaOrigem, listaDestino);
 			this.listaDeUsuariosPickList = novaListaDeUsuariosPickList;
 		}
 
@@ -460,6 +436,7 @@ public class TermoMB {
 			PrimeFaces.current().executeScript("PF('dlgTermos').show();");
 		}
 
+
 		if (!CommonsUtil.semValor(termos)) {
 			PrimeFaces.current().executeScript("PF('dlgTermos').show();");
 		}
@@ -474,9 +451,9 @@ public class TermoMB {
 		TermoUsuarioDao termoUsuarioDao = new TermoUsuarioDao();
 
 		try {
-			if (CommonsUtil.semValor(objetoTermo.getArquivo())) {
-				if (!validaFileUpload())
-					return "";
+			if(CommonsUtil.semValor(objetoTermo.getArquivo())){
+			if (!validaFileUpload())
+				return "";
 			}
 			if (CommonsUtil.semValor(objetoTermo.getId())) {
 				termoDao.create(objetoTermo);
@@ -491,7 +468,7 @@ public class TermoMB {
 			}
 
 			if (objetoTermo.getUserPerfil().getId() == 5000) {
-				for (User user : this.listaDestino) {
+				for (UserVO user : this.listaDestino) {
 					if (CommonsUtil.semValor(termoUsuarioDao.findTermoUsuario(objetoTermo.getId(), user.getId()))) {
 						TermoUsuario termoUsuario = new TermoUsuario();
 						termoUsuario.setIdTermo(objetoTermo.getId());
@@ -499,7 +476,7 @@ public class TermoMB {
 						termoUsuarioDao.merge(termoUsuario);
 					}
 				}
-				for (User user : this.listaExcluir) {
+				for (UserVO user : this.listaExcluir) {
 
 					TermoUsuario termoUsuario = termoUsuarioDao.findTermoUsuario(objetoTermo.getId(), user.getId());
 					if (!CommonsUtil.semValor(termoUsuario)) {
@@ -654,55 +631,6 @@ public class TermoMB {
 //		termoUsuarioDao.merge(termoUsuario);
 		termos.remove(itermo);
 		return null;
-	}
-	private List<Termo> usuarioTermosAssinados = new ArrayList<>();
-	public void consultaTermosAssinados() {
-		TermoUsuarioDao dao = new TermoUsuarioDao();
-		setUsuarioTermosAssinados(dao.termosAssinados(loginBean.getUsuarioLogado()));
-	
-	}
-	public void AbrirDocumentoTermo(Termo termo) throws IOException {
-
-		Path arquivo = Paths.get(termo.getPath());
-
-		FacesContext facesContext = FacesContext.getCurrentInstance();
-		ExternalContext externalContext = facesContext.getExternalContext();
-		HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-		BufferedInputStream input = null;
-		BufferedOutputStream output = null;
-		byte[] contrato = null;
-		
-			 try (PDDocument document = PDDocument.load(Files.newInputStream(arquivo))) {
-		            PDFRenderer pdfRenderer = new PDFRenderer(document);
-
-		            // Iterar sobre as páginas do PDF
-		            for (int pageIndex = 0; pageIndex < document.getNumberOfPages(); pageIndex++) {
-		                // Renderizar a página como uma imagem
-		                BufferedImage bim = pdfRenderer.renderImageWithDPI(pageIndex, 300);
-
-		                // Criar um ByteArrayOutputStream para armazenar os bytes da imagem
-		                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-
-		                // Escrever a imagem como PNG no ByteArrayOutputStream
-		                ImageIO.write(bim, "png", byteArrayOutputStream);
-
-		                // Obter os bytes da imagem
-		                contrato = byteArrayOutputStream.toByteArray();
-		                byteArrayOutputStream.close();
-			if (CommonsUtil.semValor(contrato)) {
-				facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-						"Processos: Ocorreu um problema ao gerar a imagem!", ""));
-				return ;
-			} else {
-		
-			}
-		            }
-		        
-			 }
-		
-			 String base64 = Base64.getEncoder().encodeToString(contrato);
-			
-			base64imagem = "data:image/png;base64," + base64;
 	}
 
 	public long buscarIdUsuarioPorNome(String nome, List<User> usuarios) {
@@ -860,19 +788,6 @@ public class TermoMB {
 		this.usuarios = usuarios;
 	}
 
-	public static User fromString(String userString) {
-		User user = new User();
-
-		int idStartIndex = userString.indexOf("id=") + 3;
-		int idEndIndex = userString.indexOf(",", idStartIndex);
-		user.setId(Long.parseLong(userString.substring(idStartIndex, idEndIndex).trim()));
-
-		int nameStartIndex = userString.indexOf("name=") + 5;
-		int nameEndIndex = userString.indexOf(",", nameStartIndex);
-		user.setName(userString.substring(nameStartIndex, nameEndIndex).trim());
-
-		return user;
-	}
 
 	public List<String> userNames(List<User> usuario) {
 		for (User items : usuario) {
@@ -881,31 +796,94 @@ public class TermoMB {
 		return this.listaNomes;
 	}
 
+	@SuppressWarnings({ "unused", "unchecked" })
 	public void onTransfer(TransferEvent event) {
+		
+
+		List<User> itensTransferidos = (List<User>) event.getItems();
+		
 		if (!event.isAdd()) {
 			for (Object item : event.getItems()) {
-				if (item != null) {
-					User usuario = new User();
-					usuario = fromString(item.toString());
+				UserVO usuario = (UserVO) item;
+				
+				if (usuario != null) {
 					this.listaExcluir.add(usuario);
 					this.listaOrigem.add(usuario);
-				}
-			}
-		} else {
-			for (Object item : event.getItems()) {
-				if (item != null) {
-					final User usuario = fromString(item.toString());
-					Optional<User> userR = this.listaExcluir.stream()
+					
+					Optional<UserVO> userR = this.listaDestino.stream()
 							.filter(u -> CommonsUtil.mesmoValor(u.getId(), usuario.getId())).findAny();
 
 					if (userR.isPresent())
-						this.listaExcluir.remove(userR.get());
-					this.listaDestino.add(usuario);
+						this.listaDestino.remove(userR.get());
+					
+				}}
+				
+			} else {
+				for (Object item : event.getItems()) {
+					if (item != null) {
+						UserVO usuario = (UserVO) item;
+						Optional<UserVO> userR = this.listaExcluir.stream()
+								.filter(u -> CommonsUtil.mesmoValor(u.getId(), usuario.getId())).findAny();
 
+						if (userR.isPresent())
+							this.listaExcluir.remove(userR.get());
+						this.listaDestino.add(usuario);
+					
+					}
 				}
 			}
-		}
+//				
+//				
+//				
+//				
+////	        builder.append(usuario.getName()).append(", ");
+//				if (event.isAdd()) {
+//					this.listaExcluir.remove(usuario); // Se o usuário foi transferido para a lista target, remova-o da
+//														// lista de removidos
+//				} else {
+//					this.listaExcluir.add(usuario); // Se o usuário foi transferido para a lista source, adicione-o à lista
+//													// de removidos
+//				}
+//			}
+//			
+//			
+//			for (Object item : event.getItems()) {
+//				if (item != null) {
+//					User usuario = new User();
+//					usuario = fromString(item.toString());
+//					this.listaExcluir.add(usuario);
+//					this.listaOrigem.add(usuario);
+//				}
+//			}
+//		} else {
+//			for (Object item : event.getItems()) {
+//				if (item != null) {
+//					final User usuario = fromString(item.toString());
+//					Optional<User> userR = this.listaExcluir.stream()
+//							.filter(u -> CommonsUtil.mesmoValor(u.getId(), usuario.getId())).findAny();
+//
+//					if (userR.isPresent())
+//						this.listaExcluir.remove(userR.get());
+//					this.listaDestino.add(usuario);
+//
+//				}
+//			}
+//		}
+//	
+//		
+//		for (Object item : event.getItems()) {
+//			UserVO usuario = (UserVO) item;
+////        builder.append(usuario.getName()).append(", ");
+//			if (event.isAdd()) {
+//				this.listaExcluir.remove(usuario); // Se o usuário foi transferido para a lista target, remova-o da
+//													// lista de removidos
+//			} else {
+//				this.listaExcluir.add(usuario); // Se o usuário foi transferido para a lista source, adicione-o à lista
+//												// de removidos
+//			}
+//		}
 	}
+	
 
 	public void onSelect(SelectEvent event) {
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -937,22 +915,6 @@ public class TermoMB {
 
 	public void setTermoUsuario(TermoUsuario termoUsuario) {
 		this.termoUsuario = termoUsuario;
-	}
-
-	public String getBase64imagem() {
-		return base64imagem;
-	}
-
-	public void setBase64imagem(String base64imagem) {
-		this.base64imagem = base64imagem;
-	}
-
-	public List<Termo> getUsuarioTermosAssinados() {
-		return usuarioTermosAssinados;
-	}
-
-	public void setUsuarioTermosAssinados(List<Termo> usuarioTermosAssinados) {
-		this.usuarioTermosAssinados = usuarioTermosAssinados;
 	}
 
 }
