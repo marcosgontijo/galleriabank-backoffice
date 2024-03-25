@@ -129,6 +129,22 @@ public final class User implements Serializable {
      */
     public User() {
     }
+<<<<<<< HEAD
+=======
+    
+    
+    public User(Long id, String name, String login) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.login = login;
+	}
+
+    @Override
+	public String toString() {
+		return "User [id=" + id + ", name=" + name + ", login=" + login + "]";
+	}
+>>>>>>> branch 'master' of https://github.com/Galleria-Bank-Developers/backoffice.git
     
     
     public User(Long id, String name, String login) {

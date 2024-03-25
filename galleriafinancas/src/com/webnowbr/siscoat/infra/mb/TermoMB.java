@@ -10,6 +10,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+<<<<<<< HEAD
+=======
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+>>>>>>> branch 'master' of https://github.com/Galleria-Bank-Developers/backoffice.git
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Comparator;
@@ -25,6 +31,10 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.imageio.ImageIO;
+<<<<<<< HEAD
+=======
+import javax.servlet.http.HttpServletResponse;
+>>>>>>> branch 'master' of https://github.com/Galleria-Bank-Developers/backoffice.git
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
@@ -828,7 +838,11 @@ public class TermoMB {
 						if (userR.isPresent())
 							this.listaExcluir.remove(userR.get());
 						this.listaDestino.add(usuario);
+<<<<<<< HEAD
 					
+=======
+
+>>>>>>> branch 'master' of https://github.com/Galleria-Bank-Developers/backoffice.git
 					}
 				}
 			}
