@@ -24,7 +24,7 @@
             <column name="NAME" not-null="true"/>
         </property>
         <property name="level" type="int">
-            <column name="LEVELUSR" not-null="true"/>
+            <column name="LEVELUSR"/>
         </property>
         <property name="login" type="java.lang.String">
             <column name="LOGIN" not-null="true" unique="true"/>
