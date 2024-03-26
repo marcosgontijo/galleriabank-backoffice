@@ -197,9 +197,11 @@
 							 type="definition">
 								<h:panelGroup >
 									<p:commandButton icon="ui-icon ui-icon-trash" 
-										action="#{fileAnalise.removerEstado(estado)}"
+										action="#{contratoCobrancaMB.removerEstado(estado)}"
 										ajax="true" update="estadosList"> 
-										
+											<f:setPropertyActionListener value="#{fileAnalise}"
+												target="#{contratoCobrancaMB.documentoAnalisePopup}">
+											</f:setPropertyActionListener>
 										 </p:commandButton>
 									<h:outputText value=" #{estado}"  />
 								</h:panelGroup>

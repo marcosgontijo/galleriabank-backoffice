@@ -34246,25 +34246,31 @@ public class ContratoCobrancaMB {
 		
 		ContratoCobrancaService contratoCobrancaService = new ContratoCobrancaService();
 		
-		String valorAlteradoEstado = this.getDocumentoAnalisePopup().getIdentificacao() + " Adicionado (" + estadoConsultaAdd + " )";
+		String valorAlteradoEstado = this.getDocumentoAnalisePopup().getIdentificacao() + " Adicionado (" +  estadoConsultaAdd + " )";
 		
-		
-		System.out.println("Identificação: " + this.getDocumentoAnalisePopup().getIdentificacao());
+		//System.out.println("Identificação: " + this.getDocumentoAnalisePopup().getIdentificacao());
 		
 		documentoAnalisePopup.adicionaEstados(estadoConsultaAdd);
 		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
 		documentoAnaliseDao.merge(documentoAnalisePopup);
-		//SALVAR NA LISTA DE ALTERAÇÕES OS ESTADOS.
 		
 		contratoCobrancaService.adicionaNovoDetalhe(getUsuarioLogado(), this.getObjetoContratoCobranca(),
 				valorAlteradoEstado, "", "Estado");
 		
 	}
 	
-	public void testeTroller() {
-		System.out.println("TROLLERRRR");
-	}
+	public void removerEstado(String estado) {
+		ContratoCobrancaService contratoCobrancaService = new ContratoCobrancaService();
+		String valorAlteradoEstado = this.getDocumentoAnalisePopup().getIdentificacao() + " Removido (" +  estado + " )";
+		
+		documentoAnalisePopup.removerEstado(estado);
+		DocumentoAnaliseDao documentoAnaliseDao = new DocumentoAnaliseDao();
+		documentoAnaliseDao.merge(documentoAnalisePopup);
 
+			contratoCobrancaService.adicionaNovoDetalhe(loginBean.getUsuarioLogado(), this.getObjetoContratoCobranca(), "",
+					valorAlteradoEstado, "Estado");
+	}
+	
 	public List<DocumentoAnalise> getListaDocumentoAnalise() {
 		return listaDocumentoAnalise;
 	}
