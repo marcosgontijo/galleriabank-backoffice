@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
+import com.webnowbr.siscoat.common.CommonsUtil;
 
 /**
  * Classe de armazenamento de dados de usuario.
@@ -50,6 +51,8 @@ public final class User implements Serializable {
     private boolean userCobranca;
     
     private boolean userIuguPosto;
+
+    private boolean userInterno;
     
     private boolean userCobrancaEdita;
     private boolean userCobrancaBaixa;
@@ -109,17 +112,31 @@ public final class User implements Serializable {
     private boolean profileCompliance;    
     private boolean profileController;
     private boolean profileConsultaKobana;
+    private boolean profileCartorio;
+    private boolean profileJuridicoCobranca;
     
 	private boolean cadastraResponsavel;
     private boolean consultaIndividual;
     
     private Set<TermoUsuario> listTermos;
     
-    /**
+    
+    
+ 
+
+	/**
      * Construtor.
      */
     public User() {
     }
+    
+    
+    public User(Long id, String name, String login) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.login = login;
+	}
 
     @Override
 	public String toString() {
@@ -136,12 +153,13 @@ public final class User implements Serializable {
 
     /**
      * @see id.
-     * @param idI the id to set
+     * @param id the id to set
      */
-    public void setId(final long idI) {
-        this.id = idI;
+    public void setId(final long id) {
+        this.id = id;
     }
-
+    
+   
     /**
      * Get.
      * @return lista de grupos.
@@ -407,6 +425,14 @@ public final class User implements Serializable {
 
 	public void setUserIuguPosto(boolean userIuguPosto) {
 		this.userIuguPosto = userIuguPosto;
+	}	
+
+	public boolean isUserInterno() {
+		return userInterno;
+	}
+
+	public void setUserInterno(boolean userInterno) {
+		this.userInterno = userInterno;
 	}
 
 	public List<String> getDiasSemana() {
@@ -766,5 +792,21 @@ public final class User implements Serializable {
 
 	public void setProfileConsultaKobana(boolean profileConsultaKobana) {
 		this.profileConsultaKobana = profileConsultaKobana;
+	}
+
+	public boolean isProfileCartorio() {
+		return profileCartorio;
+	}
+
+	public void setProfileCartorio(boolean profileCartorio) {
+		this.profileCartorio = profileCartorio;
+	}
+
+	public boolean isProfileJuridicoCobranca() {
+		return profileJuridicoCobranca;
+	}
+
+	public void setProfileJuridicoCobranca(boolean profileJuridicoCobranca) {
+		this.profileJuridicoCobranca = profileJuridicoCobranca;
 	}	
 }
