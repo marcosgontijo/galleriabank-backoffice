@@ -11,7 +11,7 @@
 				header="Termo - #{termoMB.tituloPainel}" style="margin-bottom:10px;">
 				<p:focus />
 				<p:messages />
-				<h:panelGrid columns="2">
+				<h:panelGrid columns="2" id = "main">
 
 
 					<p:outputLabel for="Identificacao" value="Identificação"
@@ -35,58 +35,32 @@
 						required="true" onblur="" style="width:400px;">
 					</p:inputText>
 
-					<p:outputLabel for="DiasAceite" value="Dias de aceite" styleClass="labelBold" />
-					
-					<p:inputNumber id="DiasAceite"
-						value="#{termoMB.objetoTermo.diasAceite}"
-						label="Aceite" required="true" onblur="" style="width:100px;" minValue="0"  maxValue="99" maxlength="2" oninput="this.value = this.value.replace(/[^\d]/g, '')">
-					</p:inputNumber>
-					
-				    
-					<p:outputLabel for="DataInicio" value="Data Inicio" styleClass="labelBold" />
-				    <p:datePicker id="DataInicio"  value="#{termoMB.objetoTermo.inicioValidade}" pattern="dd/MM/yyyy"  locale="pt" required="true"/>
-	
-				    <p:outputLabel for="DataFim" value="Data Fim" styleClass="labelBold" />
-				    <p:datePicker id="DataFim"  value="#{termoMB.objetoTermo.fimValidade}" pattern="dd/MM/yyyy"  locale="pt" />
-	
-	
+					<p:outputLabel for="diasAceite" value="Dias para aceitar"
+						styleClass="labelBold" />
+					<p:inputNumber id="diasAceite"
+						value="#{termoMB.objetoTermo.diasAceite}" decimalPlaces="0"
+						required="true" />
+
+					<p:outputLabel for="DataInicio" value="Data Inicio"
+						styleClass="labelBold" />
+					<p:datePicker id="DataInicio"
+						value="#{termoMB.objetoTermo.inicioValidade}" pattern="dd/MM/yyyy"
+						locale="pt" required="true" />
+
+					<p:outputLabel for="DataFim" value="Data Fim"
+						styleClass="labelBold" />
+					<p:datePicker id="DataFim"
+						value="#{termoMB.objetoTermo.fimValidade}" pattern="dd/MM/yyyy"
+						locale="pt" />
+
 					<h:outputLabel for="userPerfil" value="Perfil: " />
 					<p:selectOneMenu id="userPerfil"
 						value="#{termoMB.idPerfilSelecionado}">
 						<f:selectItems value="#{termoMB.perfil}" var="perfil"
 							itemLabel="#{perfil.perfil}" itemValue="#{perfil.id}" />
-						<p:ajax update="PanelContaContabil" />
+						<p:ajax update="picklist" />
 					</p:selectOneMenu>
 
-					<h:outputLabel value="Incluir Usuario " rendered="#{termoMB.idPerfilSelecionado eq '5000'}"/>
-					<h:panelGrid columns="1" id="termosusuario" rendered="#{termoMB.idPerfilSelecionado eq '5000'}" >
-
-						<p:pickList id="usersPickList"
-							value="#{termoMB.listaDeUsuariosPickList}" var="usuario"
-							itemValue="#{usuario}" itemLabel="#{usuario.name}"
-							showSourceControls="false" showTargetControls="false"
-							showCheckbox="true" showSourceFilter="true"
-							showTargetFilter="true" sourceFilterPlaceholder="Buscar usuarios"
-							targetFilterPlaceholder="Buscar usuarios selecionados"
-							filterMatchMode="contains" responsive="true">
-
-							<f:facet name="sourceCaption">Usuarios</f:facet>
-							<f:facet name="targetCaption">Usuarios Selecionados</f:facet>
-
-							<p:ajax event="transfer" listener="#{termoMB.onTransfer}" />
-							<p:ajax event="select" listener="#{termoMB.onSelect}" />
-							<p:ajax event="unselect" listener="#{termoMB.onUnselect}" />
-							<p:ajax event="reorder" listener="#{termoMB.onReorder}" />
-							
-							<p:column style="width:94%">
-								<div class="flex align-items-center">
-									<span class="flag flag-#{usuario.id} mr-2"
-										style="width: 30px; height: 20px" />
-									<h:outputText value="#{usuario.name}" />
-								</div>
-							</p:column>
-						</p:pickList>
-					</h:panelGrid>
 
 					<h:outputLabel value="Arquivo: " />
 					<h:panelGrid columns="1" id="dtFileTermo">
@@ -109,6 +83,37 @@
 
 
 				</h:panelGrid>
+				<h:panelGrid id ="picklist"> 
+					<h:outputLabel id = "incluir" value="Incluir Usuario " rendered="#{termoMB.idPerfilSelecionado eq '5000'}"/>
+					<h:panelGrid columns="1" id="termosusuario" rendered="#{termoMB.idPerfilSelecionado eq '5000'}" >
+
+						<p:pickList id="usersPickList"
+							value="#{termoMB.listaDeUsuariosPickList}" var="usuario"
+							itemValue="#{usuario}" itemLabel="#{usuario.name}"
+							showSourceControls="false" showTargetControls="false"
+							showCheckbox="true" showSourceFilter="true"
+							showTargetFilter="true" sourceFilterPlaceholder="Buscar usuarios"
+							targetFilterPlaceholder="Buscar usuarios selecionados"
+							converter="usuarioConverter"
+							filterMatchMode="contains" responsive="true">
+
+							<f:facet name="sourceCaption">Usuarios</f:facet>
+							<f:facet name="targetCaption">Usuarios Selecionados</f:facet>
+
+							<p:ajax event="transfer" listener="#{termoMB.onTransfer}" />
+							<p:ajax event="select" listener="#{termoMB.onSelect}" />
+							<p:ajax event="unselect" listener="#{termoMB.onUnselect}" />
+							<p:ajax event="reorder" listener="#{termoMB.onReorder}" />
+							
+							<p:column style="width:94%">
+								<div class="flex align-items-center">
+									<span class="flag flag-#{usuario.id} mr-2"
+										style="width: 30px; height: 20px" />
+									<h:outputText value="#{usuario.name}" />
+								</div>
+							</p:column>
+						</p:pickList>
+					</h:panelGrid></h:panelGrid>
 			</p:panel>
 
 

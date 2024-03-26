@@ -51,7 +51,6 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 
@@ -15343,7 +15342,7 @@ public class ContratoCobrancaMB {
 							.setInicioAnaliseUsuario(objetoContratoCobranca.getAnalisePendenciadaUsuario());
 				}
 				contratoCobrancaDao.merge(this.objetoContratoCobranca);
-
+				this.tituloTelaConsultaPreStatus = "Em Análise";
 				return clearFieldsEditarPendentesAnalistas();
 			} else {
 				FacesContext context = FacesContext.getCurrentInstance();
@@ -31469,12 +31468,19 @@ public class ContratoCobrancaMB {
 		 * int noOfColumns = sheet.getRow(0).getLastCellNum(); for (int i = 0; i <
 		 * noOfColumns; i++) { sheet.autoSizeColumn(i); }
 		 */
-		FileOutputStream fileOut = new FileOutputStream(excelFileName);
+		ByteArrayOutputStream fileOut = new ByteArrayOutputStream();
 
 		// write this workbook to an Outputstream.
 		wb.write(fileOut);
 		fileOut.flush();
 		fileOut.close();
+		final GeradorRelatorioDownloadCliente gerador = new GeradorRelatorioDownloadCliente(
+				FacesContext.getCurrentInstance());
+
+		String nomeArquivoDownload = String.format("Relatório Atraso " + relatorioTipo + ".xlsx", "");
+		gerador.open(nomeArquivoDownload);		
+		gerador.feed( new ByteArrayInputStream(fileOut.toByteArray()));
+		gerador.close();
 
 		this.contratoGerado = true;
 	}

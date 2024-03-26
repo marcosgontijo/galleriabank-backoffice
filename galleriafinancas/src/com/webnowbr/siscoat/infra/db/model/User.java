@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.webnowbr.siscoat.cobranca.db.model.Responsavel;
+import com.webnowbr.siscoat.common.CommonsUtil;
 
 /**
  * Classe de armazenamento de dados de usuario.
@@ -119,11 +120,23 @@ public final class User implements Serializable {
     
     private Set<TermoUsuario> listTermos;
     
-    /**
+    
+    
+ 
+
+	/**
      * Construtor.
      */
     public User() {
     }
+    
+    
+    public User(Long id, String name, String login) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.login = login;
+	}
 
     @Override
 	public String toString() {
@@ -140,12 +153,13 @@ public final class User implements Serializable {
 
     /**
      * @see id.
-     * @param idI the id to set
+     * @param id the id to set
      */
-    public void setId(final long idI) {
-        this.id = idI;
+    public void setId(final long id) {
+        this.id = id;
     }
-
+    
+   
     /**
      * Get.
      * @return lista de grupos.
