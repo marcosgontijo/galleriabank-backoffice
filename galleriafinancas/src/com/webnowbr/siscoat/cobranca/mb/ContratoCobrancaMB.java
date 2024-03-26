@@ -20759,6 +20759,19 @@ public class ContratoCobrancaMB {
 		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
 				"Ordem de Pagamento StarkBank: Ordem de Pagamento excluída com sucesso!", ""));
 	}
+	
+	public void enviarOrdemPagamentoStarkBank(StarkBankBaixa baixa) {
+		FacesContext context = FacesContext.getCurrentInstance();
+
+		StarkBankBaixaDAO sbDAO = new StarkBankBaixaDAO();
+
+		baixa.setStatusPagamento("Aguardando Aprovação");
+		
+		sbDAO.merge(baixa);
+		
+		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+				"Ordem de Pagamento StarkBank: Ordem de Pagamento enviada com sucesso!", ""));
+	}
 
 	public void registrarPagamentoForaSistema() {
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -21615,7 +21628,7 @@ public class ContratoCobrancaMB {
 			starkBankBaixa.setDataPagamento(DateUtil.gerarDataHoje());
 			starkBankBaixa.setValor(contrato.getContaPagarValorTotal());
 			starkBankBaixa.setContasPagar(contaPagar);
-			starkBankBaixa.setStatusPagamento("Aguardando Aprovação");
+			starkBankBaixa.setStatusPagamento("Enviar Aprovação");
 			starkBankBaixa.setDocumento(contrato.getNumeroContrato());		
 			starkBankBaixa.setNomePagador(contrato.getNomeBancarioCartaSplit());	
 			starkBankBaixa.setFormaPagamento("Pix");
