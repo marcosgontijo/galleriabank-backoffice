@@ -21,7 +21,7 @@ public final class User implements Serializable {
     /** Nome do usuario. */
     private String name;
     /** Nivel de operacao. */
-    private Integer level;
+    private int level;
     /** Nome de login do usuario. */
     private String login;
     /** Senha. */
