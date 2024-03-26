@@ -21,7 +21,7 @@ public final class User implements Serializable {
     /** Nome do usuario. */
     private String name;
     /** Nivel de operacao. */
-    private Integer level;
+    private int level;
     /** Nome de login do usuario. */
     private String login;
     /** Senha. */
@@ -199,7 +199,7 @@ public final class User implements Serializable {
      * Get.
      * @return level.
      */
-    public Integer getLevel() {
+    public int getLevel() {
         return level;
     }
 
@@ -207,7 +207,7 @@ public final class User implements Serializable {
      * Set.
      * @param value - level
      */
-    public void setLevel(final Integer value) {
+    public void setLevel(final int value) {
         this.level = value;
     }
 
