@@ -105,6 +105,7 @@ public class ContratoCobrancaService {
 		
 		ContratoCobrancaLogsAlteracao contratoCobrancaLogsAlteracao = new ContratoCobrancaLogsAlteracao();
 		ContratoCobrancaLogsAlteracaoDao contratoCobrancaLogsAlteracaoDao = new ContratoCobrancaLogsAlteracaoDao();
+		
 		contratoCobrancaLogsAlteracao = contratoCobrancaLogsAlteracaoDao.buscaLogAlteracao(usuario.getLogin(), contratoCobranca.getId());
 		
 		if (contratoCobrancaLogsAlteracao != null ) {
@@ -130,7 +131,7 @@ public class ContratoCobrancaService {
 	}
 	
 	public void zerarListaDeDuplicidade() {
-		this.verificaDuplicidadeDeIdParaNaoVerificar = new HashSet<Integer>();
+		this.verificaDuplicidadeDeIdParaNaoVerificar.clear();
 	}
 
 	public static Object callGetMethods(Object obj, String propriedade) {
@@ -168,7 +169,7 @@ public class ContratoCobrancaService {
         return true;
     }
 	
-	public void adicionaNovoDetalheEstado(User usuario, ContratoCobranca contratoCobranca, String valorAtual,
+	public void adicionaNovoDetalhe(User usuario, ContratoCobranca contratoCobranca, String valorAtual,
 			String valorBanco, String nomeCampo) {
 
 		ContratoCobrancaLogsAlteracao logAlteracao = buscaOuCriaLogsAlteracao(usuario, contratoCobranca);
@@ -178,9 +179,15 @@ public class ContratoCobrancaService {
 		logAlteracaoDetalhe.setValorAlterado(valorAtual);
 		logAlteracaoDetalhe.setValorBanco(valorBanco);
 		logAlteracaoDetalhe.setNomeCampo(nomeCampo);
-		
+		adicionaNovoDetalhe(logAlteracaoDetalhe);
+	}
+	
+	public void adicionaNovoDetalhe(ContratoCobrancaLogsAlteracaoDetalhe logAlteracaoDetalhe) {
 		ContratoCobrancaLogsAlteracaoDetalheDao contraLogsAlteracaoDetalheDao = new ContratoCobrancaLogsAlteracaoDetalheDao();
-		contraLogsAlteracaoDetalheDao.create(logAlteracaoDetalhe);
+		if (CommonsUtil.semValor(logAlteracaoDetalhe.getId()))
+			contraLogsAlteracaoDetalheDao.create(logAlteracaoDetalhe);
+		else
+			contraLogsAlteracaoDetalheDao.merge(logAlteracaoDetalhe);
 
 	}
 	

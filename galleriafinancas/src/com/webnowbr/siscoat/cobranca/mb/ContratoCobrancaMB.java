@@ -423,6 +423,8 @@ public class ContratoCobrancaMB {
 	private GravamesRea gravamePopup;
 	private String estadoConsultaAdd;
 	private ContratoCobrancaLogsAlteracao contratoCobrancaLogsAlteracao = new ContratoCobrancaLogsAlteracao();
+	private ContratoCobrancaLogsAlteracao contratoCobrancaLogsAlteracaoBase;
+	private Set<ContratoCobrancaLogsAlteracaoDetalhe> detalhes;
 	
 	private List<ComparativoCamposEsteira> comparativoCamposEsteira;
 	
@@ -3501,7 +3503,6 @@ public class ContratoCobrancaMB {
 	       
 	public String editPreContrato() {
 		FacesContext context = FacesContext.getCurrentInstance();
-		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 
 		try {
 			if (!SiscoatConstants.DEV && !CommonsUtil.sistemaWindows()) {
@@ -3512,23 +3513,17 @@ public class ContratoCobrancaMB {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + e, ""));
 			return "";
 		}
-
-		verificaPreContrato();
 		
-		updateCheckList();
-		
-		geraParcelasSeContratoAgRegistro();
-		
-		salvarContasProcessos();
+		if (this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(4000000)) == 1) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Contrato Cobrança: Erro de validação: Valor Acima do limite atual de R$4.000.000,00. !", ""));
+			return null;
+		}
 
 		if (validaDiferencasCamposEsteira(context) == false) {
 			return null;
-		} 
-
-		this.objetoContratoCobranca.populaStatusEsteira(getUsuarioLogadoNull());
-		contratoCobrancaDao.merge(this.objetoContratoCobranca);
-		
-		return verificaContratoSeAprovadoEnviaEmail();
+		} else 
+		   return editarPreContrato();
 	}
 
 	public void atualizaResponsavel() {
@@ -4206,7 +4201,6 @@ public class ContratoCobrancaMB {
 		if (this.objetoContratoCobranca.isNotaFiscalAgendada()) {
 
 			// gerar contas stark bank
-			// TODO: HERMES OLHAR AQUI
 			ContasPagarDao contasPagarDao = new ContasPagarDao();
 
 			List<ContasPagar> listDespesaNotaFiscal = contasPagarDao.buscarDespesa("Pagamento nota fiscal",
@@ -4260,9 +4254,16 @@ public class ContratoCobrancaMB {
 		
 		if (!contratoCobrancaLogsAlteracao.getDetalhes().isEmpty()) {
 			ContratoCobrancaLogsAlteracaoDao contratoCobrancaLogsAlteracaoDao = new ContratoCobrancaLogsAlteracaoDao();
-			contratoCobrancaLogsAlteracaoDao.create(contratoCobrancaLogsAlteracao);
+			this.contratoCobrancaLogsAlteracaoBase.setLogJustificado(true);
+			ContratoCobrancaService contratoCobrancaService = new ContratoCobrancaService();
+			
+			
+			contratoCobrancaLogsAlteracaoDao.merge(this.contratoCobrancaLogsAlteracaoBase);
+			for (ContratoCobrancaLogsAlteracaoDetalhe detalhe: this.detalhes) {
+				contratoCobrancaService.adicionaNovoDetalhe(detalhe);				
+			}
 		}
-				
+		
 		contratoCobrancaDao.merge(this.objetoContratoCobranca);
 		
 		// verifica se o contrato for aprovado, manda um tipo de email..
@@ -34255,7 +34256,7 @@ public class ContratoCobrancaMB {
 		documentoAnaliseDao.merge(documentoAnalisePopup);
 		//SALVAR NA LISTA DE ALTERAÇÕES OS ESTADOS.
 		
-		contratoCobrancaService.adicionaNovoDetalheEstado(getUsuarioLogado(), this.getObjetoContratoCobranca(),
+		contratoCobrancaService.adicionaNovoDetalhe(getUsuarioLogado(), this.getObjetoContratoCobranca(),
 				valorAlteradoEstado, "", "Estado");
 		
 	}
@@ -34265,9 +34266,6 @@ public class ContratoCobrancaMB {
 	}
 
 	public List<DocumentoAnalise> getListaDocumentoAnalise() {
-//		if (CommonsUtil.semValor(listaDocumentoAnalise)) {
-//			listaArquivosAnaliseDocumentos();
-//		}
 		return listaDocumentoAnalise;
 	}
 
@@ -37641,51 +37639,55 @@ public class ContratoCobrancaMB {
     }
 	
 	private Boolean validaDiferencasCamposEsteira(FacesContext context) {
-		
+
 		try {
-			
+
 			ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 			ContratoCobrancaService contratoCobrancaService = new ContratoCobrancaService();
 
 			this.comparativoCamposEsteira = comparativosCamposEsteraDao.findByFilter("validar", true);
-			
-			this.contratoCobrancaLogsAlteracao = contratoCobrancaService.buscaOuCriaLogsAlteracao(getUsuarioLogado(), objetoContratoCobranca);
-			
-			ContratoCobranca objetoContratoCobrancaBanco = contratoCobrancaDao.findById(this.objetoContratoCobranca.getId());
-			
+			contratoCobrancaLogsAlteracaoBase = contratoCobrancaService.buscaOuCriaLogsAlteracao(getUsuarioLogado(),
+					objetoContratoCobranca);
+
+			ContratoCobranca objetoContratoCobrancaBanco = contratoCobrancaDao
+					.findById(this.objetoContratoCobranca.getId());
+
 			contratoCobrancaService.zerarListaDeDuplicidade();
-			
-			Set<ContratoCobrancaLogsAlteracaoDetalhe> detalhes = contratoCobrancaService.comparandoValores(
-					this.objetoContratoCobranca, 
-					objetoContratoCobrancaBanco,
-					comparativoCamposEsteira,
-					this.contratoCobrancaLogsAlteracao).stream().collect(Collectors.toSet());
-			
-			this.contratoCobrancaLogsAlteracao.getDetalhes().addAll(detalhes);
-			
+
+			this.contratoCobrancaLogsAlteracao = new ContratoCobrancaLogsAlteracao();
+
+			this.detalhes = contratoCobrancaService
+					.comparandoValores(this.objetoContratoCobranca, objetoContratoCobrancaBanco,
+							comparativoCamposEsteira, this.contratoCobrancaLogsAlteracaoBase)
+					.stream().collect(Collectors.toSet());
+
+			this.contratoCobrancaLogsAlteracao.getDetalhes().addAll(this.detalhes);
+			if (!CommonsUtil.semValor(contratoCobrancaLogsAlteracaoBase.getDetalhes()))
+				this.contratoCobrancaLogsAlteracao.getDetalhes()
+						.addAll(contratoCobrancaLogsAlteracaoBase.getDetalhes());
+
 			if (!contratoCobrancaLogsAlteracao.getDetalhes().isEmpty()) {
 				PrimeFaces current = PrimeFaces.current();
-				//current.ajax().update("comparacoesPopPupId");
 				current.executeScript("PF('comparacoesPopPupIdvar').show();");
 				return false;
 			}
-			
+
 			return true;
 
-		} 
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contrato Cobrança: " + e, ""));
 			return false;
 		}
 	}
 	
-	private boolean verificaPreContrato() {
+	private String editarPreContrato() {
 		
 		Responsavel responsavel = this.objetoContratoCobranca.getResponsavel();
 		ResponsavelDao responsavelDao = new ResponsavelDao();
 		PagadorRecebedorDao pagadorRecebedorDao = new PagadorRecebedorDao();
 		ImovelCobrancaDao imovelCobrancaDao = new ImovelCobrancaDao();
+		ContratoCobrancaDao contratoCobrancaDao = new ContratoCobrancaDao();
 		
 		FacesContext context = FacesContext.getCurrentInstance(); 
 		
@@ -37722,14 +37724,29 @@ public class ContratoCobrancaMB {
 			this.objetoContratoCobranca.setVlrParcelaStr(
 					bigDecimalConverter.getAsString(null, null, this.objetoContratoCobranca.getVlrParcela()));
 		}
-
-		if (this.objetoContratoCobranca.getQuantoPrecisa().compareTo(BigDecimal.valueOf(4000000)) == 1) {
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"Contrato Cobrança: Erro de validação: Valor Acima do limite atual de R$4.000.000,00. !", ""));
-			return false;
+		
+		updateCheckList();
+		
+		geraParcelasSeContratoAgRegistro();
+		
+		salvarContasProcessos();
+		
+		this.objetoContratoCobranca.populaStatusEsteira(getUsuarioLogadoNull());
+		
+		contratoCobrancaDao.merge(this.objetoContratoCobranca);
+		
+		if (!contratoCobrancaLogsAlteracao.getDetalhes().isEmpty()) {
+			ContratoCobrancaLogsAlteracaoDao contratoCobrancaLogsAlteracaoDao = new ContratoCobrancaLogsAlteracaoDao();
+			contratoCobrancaLogsAlteracaoBase.setLogJustificado(true);	
+			
+			contratoCobrancaLogsAlteracaoDao.merge(contratoCobrancaLogsAlteracaoBase);
+			for (ContratoCobrancaLogsAlteracaoDetalhe detalhe: this.detalhes) {
+				contratoCobrancaService.adicionaNovoDetalhe(detalhe);				
+			}
 		}
 		
-		return true;
+		return verificaContratoSeAprovadoEnviaEmail();
+		
 	}
 	
 	private String verificaContratoSeAprovadoEnviaEmail() {

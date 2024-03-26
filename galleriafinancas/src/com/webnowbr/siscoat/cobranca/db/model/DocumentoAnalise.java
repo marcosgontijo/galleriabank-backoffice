@@ -970,7 +970,7 @@ public class DocumentoAnalise implements Serializable {
 			List<String> aux = getEstadosConsulta();
 			aux.remove(estado);
 			estadosConsultaStr = aux.toString();
-			System.out.println(getContratoCobranca());
+			
 		}
 	}
 	

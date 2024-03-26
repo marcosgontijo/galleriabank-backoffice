@@ -31,7 +31,7 @@
 			<column name="statusEsteira"   />
 		</property>
 		
-        <set name="detalhes" table="contratocobrancalogsalteracaodetalhe" cascade="none"
+        <set name="detalhes" table="contratocobrancalogsalteracaodetalhe" cascade="all"
                  lazy="false" fetch="select">
             <key>
                 <column name="logsalteracao" />
